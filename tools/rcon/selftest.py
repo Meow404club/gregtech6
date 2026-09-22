@@ -74,6 +74,12 @@ REAL_WAIT_DONE = gt6server.wait_done
 # gate, which the section-1 fake (`stop_server = lambda: {"faked": True}`)
 # would otherwise swallow for every later section.
 REAL_STOP_SERVER = gt6server.stop_server
+# And the real port pick: section 15 exercises the genuine segment stagger
+# (p34-pool-port-stagger), not the section-1 `pick_ports = lambda` stand-in.
+REAL_PICK_PORTS = gt6server.pick_ports
+# Section 8 also swaps assert_ports_free and never restores; section 15's
+# backstop check needs the genuine P17 gate.
+REAL_ASSERT_PORTS_FREE = gt6server.assert_ports_free
 
 P16_STEMS = ("p16_pattern_checker", "p16_aqua_fluids", "p16_side_io",
              "p16_machine_fluid_gui", "p16_drying_rows", "p16_form_scaffold",
@@ -1165,6 +1171,74 @@ class _FakeStepClient:
         return self.server.run_command(cmd)
 
 
+def check_15_port_segment_stagger():
+    """The fallback-segment stagger hooks (p34-pool-port-stagger).
+
+    Two parallel sessions booting the default 256xx segment at once used to
+    race into BootOwnershipError and the loser idled until the winner's
+    session ended. ① GT6_RCON_SEGMENT_OFFSET shifts the pick (parallel
+    sessions set different values -> disjoint segments); ② a listener inside
+    the candidate span flips the pick a whole segment instead of squeezing
+    +1 into the occupied neighbourhood; ③ the ownership backstop is
+    untouched — a grabbed exact target still fails fast in
+    assert_ports_free (never double-boot, P17 semantics kept). listening_ports
+    is faked (no dependence on this box's live listeners) and restored.
+    """
+    print("\n--- 15: port segment stagger (p34, offset + occupied flip)")
+    triple = framework.SESSION_PORTS["1.20.1"]      # (25662, 25672, 25652)
+    stride, span = gt6server.RCON_SEGMENT_STRIDE, gt6server.RCON_SEGMENT_SPAN
+    real_listen = gt6server.listening_ports
+    real_offset = os.environ.get("GT6_RCON_SEGMENT_OFFSET")
+    try:
+        os.environ.pop("GT6_RCON_SEGMENT_OFFSET", None)
+        gt6server.listening_ports = lambda: set()   # idle box
+        base = REAL_PICK_PORTS(triple)
+        check("15a idle box, offset 0: the fallback triple passes through",
+              tuple(base) == triple, str(base))
+        os.environ["GT6_RCON_SEGMENT_OFFSET"] = "1"
+        shifted = REAL_PICK_PORTS(triple)
+        check("15b offset=1 shifts every start by one stride",
+              tuple(shifted) == tuple(p + stride for p in base),
+              f"{base} -> {shifted}")
+        os.environ["GT6_RCON_SEGMENT_OFFSET"] = "2"
+        shifted2 = REAL_PICK_PORTS(triple)
+        all_ports = set(base) | set(shifted) | set(shifted2)
+        check("15c three parallel sessions (offsets 0/1/2) pick disjoint ports",
+              len(all_ports) == 3 * len(triple), str(sorted(all_ports)))
+        os.environ["GT6_RCON_SEGMENT_OFFSET"] = "garbage"
+        check("15d garbage offset parses as 0 (default behaviour kept)",
+              REAL_PICK_PORTS(triple) == base)
+        os.environ.pop("GT6_RCON_SEGMENT_OFFSET", None)
+
+        foreign = {25652, 25662, 25672}             # the incident: whole default segment live
+        gt6server.listening_ports = lambda: foreign
+        flipped = REAL_PICK_PORTS(triple)
+        clear = all(abs(port - busy) > span for port in flipped for busy in foreign)
+        check("15e occupied segment flips to a fresh one (no +1 squeeze into the span)",
+              clear and min(flipped) > max(foreign), f"{sorted(flipped)}")
+        check("15f the flip keeps the triple's internal shape (rcon, +10, -10)",
+              flipped[1] == flipped[0] + 10 and flipped[2] == flipped[0] - 10,
+              str(flipped))
+
+        # the backstop: even with the stagger active, a grabbed exact target
+        # is still refused by the P17 gate (BootOwnershipError semantics kept)
+        os.environ["GT6_RCON_SEGMENT_OFFSET"] = "1"
+        target = REAL_PICK_PORTS(triple)[0]
+        os.environ.pop("GT6_RCON_SEGMENT_OFFSET", None)
+        gt6server.listening_ports = lambda: {target}   # a racer grabbed OUR pick
+        try:
+            REAL_ASSERT_PORTS_FREE((target,), label="selftest")
+            check("15g BootOwnershipError backstop kept (never double-boot)", False)
+        except gt6server.BootOwnershipError:
+            check("15g BootOwnershipError backstop kept (never double-boot)", True)
+    finally:
+        gt6server.listening_ports = real_listen
+        if real_offset is None:
+            os.environ.pop("GT6_RCON_SEGMENT_OFFSET", None)
+        else:
+            os.environ["GT6_RCON_SEGMENT_OFFSET"] = real_offset
+
+
 def main():
     check_1_chain_node_writeback()
     check_2_session_slug()
@@ -1180,6 +1254,7 @@ def main():
     check_12_sweep_session_lock()
     check_13_structured_judge()
     check_14_tick_primitive()
+    check_15_port_segment_stagger()
     print(f"\n[selftest] {'ALL GREEN' if not FAILURES else 'FAILURES: ' + str(FAILURES)}")
     return 1 if FAILURES else 0
 
