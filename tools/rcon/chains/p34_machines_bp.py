@@ -72,8 +72,11 @@ steps = [
     Step(f"gt6energy type {F(BM_RIG)} RU", expect="type ENERGY.KINETIC_ROTATION"),
     Step(f"gt6energy volt {F(BM_RIG)} 32", expect="voltage 32"),  # the T1 window mid (min 16 / max 64)
     Step(f"gt6energy mode {F(BM_RIG)} on", expect="emitting true", sleep=2.0),
-    Step(f"gt6machine burner_mixer check {F(BM)}", expect="running=false",
-         poll=40.0),  # the ignition gate: a cold machine with armed inputs NEVER starts (the :724/:737 fold)
+    # the ignition gate: a cold machine with armed inputs NEVER CONSUMES (the :724/:737
+    # fold) — the pin is active=false progress=0/0 (running=true only means powered, the
+    # doWork :805 face; progress would move the moment the gate leaked)
+    Step(f"gt6machine burner_mixer check {F(BM)}", expect="active=false progress=0/0",
+         poll=40.0),
     Step(f"gt6machine burner_mixer ignite {F(BM)}", expect="GT6 machine ignite OK (mIgnited=40)"),
     Step(f"gt6machine burner_mixer fluid stat {F(BM)}",
          expect="out[0]=1500 L of gt6:distilled_water",  # the :220 row completed: H 1000 + O2 500 -> 1500
@@ -105,8 +108,10 @@ steps = [
     Step(f"gt6energy volt {F(PL_RIG)} 32", expect="voltage 32"),
     Step(f"gt6energy mode {F(PL_RIG)} on", expect="emitting true", sleep=2.0),
     Step(f"gt6machine plantalyzer input 1 {F(PL)}", expect="oak_sapling into slot 0"),
+    # zero rows never process (the P10 compat cut): active=false progress=0/0 — the
+    # powered-but-idle face (running=true only means powered, the doWork :805 face)
     Step(f"gt6machine plantalyzer check {F(PL)}",
-         expect="running=false",  # zero rows never start a process (the P10 compat cut)
+         expect="active=false progress=0/0",
          poll=40.0),
     Step(f"gt6machine plantalyzer fluid fill up minecraft:water 1000 {F(PL)}",
          expect="filled 1000/1000 L of minecraft:water (ACCEPTED), input tanks hold 1000 L"),  # the single tank-in face: the p34-gui fluid seat's live carrier
