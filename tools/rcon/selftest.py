@@ -811,8 +811,9 @@ def check_13_structured_judge():
     steps (the server-side RCON contract, GTMultiBlockCommand.java:1046);
     allow_failed keeps its ALLOWED semantics. ① pins the constructed cases,
     ② the allow_failed regression, ③ replays real recorded p31_fusion
-    forge-leg bodies (the /tmp/p31fs_sweep_forge2.log transcript, frozen
-    here) through the REAL chain steps — the sweep recorded 1492/1492 PASS,
+    forge-leg bodies (the post-p32-ignition-gate re-recording: the
+    /tmp/p34n_sweep_forge2.log transcript, session f33386e8, frozen
+    here) through the REAL chain steps — the sweep recorded 1498/1498 PASS,
     the replay excerpt must judge the same.
     """
     print("\n--- 13: structured step judge (p32, judge-literal blindspot)")
@@ -885,7 +886,8 @@ def check_13_structured_judge():
                 red[1].cmd: "STAT FAILED: no machine at 400, 64, 400"}),
               red, node="1.20.1-forge") == 2)
 
-    # ③ recorded p31_fusion replay excerpt (forge leg, /tmp/p31fs_sweep_forge2.log):
+    # ③ recorded p31_fusion replay excerpt (forge leg; re-recorded post
+    # p32-ignition-gate from /tmp/p34n_sweep_forge2.log, session f33386e8):
     # real Step objects of the chain, real recorded bodies, the recorded verdicts
     import p31_fusion
     recorded = [
@@ -897,11 +899,12 @@ def check_13_structured_judge():
         ("data get block 450 65 462",
          '450, 65, 462 has the following block data: {fake_source: 0b, '
          'stopped: 0b, te_name: "multiblock_fusion_reactor", '
-         'structure_okay: 1b, facing: 2b, active: 1b, ignited: 0b, '
+         'structure_okay: 1b, facing: 2b, active: 0b, ignited: 0b, '
          'inventory: {Size: 11, Items: [{Slot: 0, id: "gt6:integrated_circuit", '
          'Count: 1b, tag: {Damage: 2}}]}, maxprogress: 1760L, running: 1b, '
-         'output_items: [], x: 450, minenergy: 0L, progress: 7L, y: 65, '
-         'z: 462, id: "gt6:multiblock_fusion_reactor", energy: 0L, '
+         'charge_requirement: 230686720L, output_items: [], x: 450, '
+         'minenergy: 0L, progress: 0L, y: 65, z: 462, '
+         'id: "gt6:multiblock_fusion_reactor", energy: 0L, '
          'output_fluids: [{FluidName: "gt6:helium", Amount: 1000}]}'),
         ("gt6energy mode 441 65 461 off",
          "GT6 energy source mode at 441, 65, 461: emitting false"),
@@ -924,7 +927,7 @@ def check_13_structured_judge():
         _CannedClient({cmd: body for _, cmd, body in excerpt}),
         [step for step, _, _ in excerpt], ledger, node="1.20.1-forge")
     check("13n recorded p31_fusion bodies replay all-PASS, exit 0 "
-          "(the sweep's recorded ledger: 1492/1492 PASS, GREEN)",
+          "(the post-p32 re-recording's ledger: 1498/1498 PASS, GREEN)",
           failure == 0 and len(ledger) == len(recorded)
           and all(v["verdict"] == "PASS" for v in ledger))
 
