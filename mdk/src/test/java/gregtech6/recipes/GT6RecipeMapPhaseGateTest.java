@@ -82,9 +82,10 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 			"gregtech6.recipes.GT6RecipesAnvil",
 			"gregtech6.recipes.GT6RecipesWelder",
 			"gregtech6.recipes.GT6RecipesImplosion",
-			"gregtech6.recipes.GT6RecipesBees",
+			"gregtech6.recipes.GT6RecipesBees", // task p34-machines-bumblelyzer-crucible — the pour also fills the GT6RecipeMapBumblelyzer display stock (the sFakeRecipes list, outside mRecipeList)
 			"gregtech6.recipes.GT6RecipesMassfab",
 			"gregtech6.recipes.GT6RecipesFusion",
+			"gregtech6.recipes.maps.GT6RecipeMapBumblelyzer", // task p34-machines-bumblelyzer-crucible — the display-stock reset hook joins the ledger
 	};
 
 	/** The freeze-point snapshot: map field name → expected row count after the full census pour. Upstream registration order. */
@@ -93,8 +94,8 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("FURNACE", 0);
 		SNAPSHOT.put("COKE_OVEN", 39);
 		SNAPSHOT.put("SHREDDER", 353);
-		SNAPSHOT.put("CRUSHER", 1632);
-		SNAPSHOT.put("LATHE", 74);
+		SNAPSHOT.put("CRUSHER", 1643); // +11 task p34-machines-bumblelyzer-crucible — the bouleGt force-table item universe grows the ore-chain crush-back walk (the plate-gem/tiny/boule carriers)
+		SNAPSHOT.put("LATHE", 77); // +3 task p34-machines-bumblelyzer-crucible — the same cascade over the lathe rod/wire walk
 		SNAPSHOT.put("CHISEL", 36);
 		SNAPSHOT.put("ENGINE_FUELS", 7);
 		SNAPSHOT.put("FLUIDBED", 0);

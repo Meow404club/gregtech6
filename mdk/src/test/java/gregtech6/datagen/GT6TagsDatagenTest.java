@@ -60,7 +60,7 @@ class GT6TagsDatagenTest {
      * the band) + the 1 conscious multiblock join (the Lightning Rod pillar block, task
      * p24-lightning-rod — the wall/coil/controller follow the multiblock-family
      * non-membership convention, the provider javadoc) +
-     * the 6 metal/gem/raw prefixes' live pairs (3773 - 1096 blockDust = 2677) + the
+     * the 6 metal/gem/raw prefixes' live pairs (3777 - 1096 blockDust = 2681) + the
      * rolling batch 1 faces (task p24-tags-prefix-materials): 629 wires (the legacy
      * 1x/2x pair + 620 electric + 6 redstone + 1 laser — the whole-class
      * {@code GTWires.BLOCKS} walk) + 2 fluid pipes (the task card names GTFluidPipeBlock
@@ -82,8 +82,8 @@ class GT6TagsDatagenTest {
     // p29-w1-kinetic-roll-ladder, 55 -> 71, 3653 -> 3669); the six p29 process families
     // joined too (71 -> 95, 3669 -> 3693, task p29-w1-kinetic-process-ladder)
     // the sixteen hu-tu rows joined at task p29-w2-hu-tu-piggyback
-    // the +4 plate-gem block carriers join at task p34-machines-bumblelyzer-crucible (the bouleGt force-table cascade: blockPlateGem over Si/Ge/RedstoneAlloy/NikolineAlloy)
-    private static final int PINNED_PICKAXE_TOTAL = 272 + 238 + 1 + 2681 + 629 + 2 + 15 + 2; // the +14 eu-special (task p29-w2-eu-special), +30 exotic (task p29-w2-exotic-energy), +25 eu-core (task p29-w2-eu-core-5tier), +16 hu-tu (task p29-w2-hu-tu-piggyback), +5 heat-smelter (task p29-w3-heat-smelter) and +19 eu-bridge (task p29-w4-eu-bridge: the 15 converter rows + the 4 Roasting rows) and +5 small Massfab (task p31-massfab) machine blocks auto-ride the whole-class band (120 + 14 + 30 + 25 + 16 + 5 + 19 + 5) and +4 QU machines (task p32-qu-scanner-replicator: the molecular_scanner_t3 single + the replicator three-rung)
+    // the +4 plate-gem block carriers join at task p34-machines-bumblelyzer-crucible (the bouleGt force-table cascade: blockPlateGem over Si/Ge/RedstoneAlloy/NikolineAlloy) and the +9 p34 machine rows ride the whole-class machine band (bumblelyzer x5 + crystallisationcrucible x4)
+    private static final int PINNED_PICKAXE_TOTAL = 272 + 247 + 1 + 2681 + 629 + 2 + 15 + 2; // the +14 eu-special (task p29-w2-eu-special), +30 exotic (task p29-w2-exotic-energy), +25 eu-core (task p29-w2-eu-core-5tier), +16 hu-tu (task p29-w2-hu-tu-piggyback), +5 heat-smelter (task p29-w3-heat-smelter) and +19 eu-bridge (task p29-w4-eu-bridge: the 15 converter rows + the 4 Roasting rows) and +5 small Massfab (task p31-massfab) machine blocks auto-ride the whole-class band (120 + 14 + 30 + 25 + 16 + 5 + 19 + 5) and +4 QU machines (task p32-qu-scanner-replicator: the molecular_scanner_t3 single + the replicator three-rung)
 
     /** The 16 tier-ladder machine ids of the first machines card + the oven ladder + the ACT single-variant row (the dryer/distillery/canner rows ride the total pin). */
     private static final List<String> PINNED_LADDER_MACHINES = List.of(
@@ -167,7 +167,7 @@ class GT6TagsDatagenTest {
         assertEquals(2681, tPrefixPairs, "3777 storage pairs (+4 task p34-machines-bumblelyzer-crucible: the blockPlateGem cascade carriers over the quartet) - 1096 blockDust pairs");
         // exact product shape: no member outside the census families
         assertEquals(PINNED_PICKAXE_TOTAL, tValues.size(),
-                "272 stones + 234 machines + 1 rod + 2681 prefix blocks + 629 wires + 2 pipes + 15 barrels + 2 anvils"
+                "272 stones + 247 machines + 1 rod + 2681 prefix blocks + 629 wires + 2 pipes + 15 barrels + 2 anvils"
                 + " (the +14 eu-special machines of task p29-w2-eu-special, the +30 exotic machines of task p29-w2-exotic-energy, the +25 eu-core machines of task p29-w2-eu-core-5tier the +16 hu-tu machines of task p29-w2-hu-tu-piggyback and the +5 heat-smelter machines of task p29-w3-heat-smelter and the +5 small Massfab machines of task p31-massfab joined the machine walk)");
         assertTrue(tValues.stream().allMatch(v -> v.startsWith("gt6:")), "mod-face-only members");
     }
@@ -245,7 +245,7 @@ class GT6TagsDatagenTest {
 
     /**
      * The shovel band, rolling batch 1: the blockDust prefix family — walk-exact
-     * membership (mirror of the provider's filtered walk), the 3773-2677=1096 census count,
+     * membership (mirror of the provider's filtered walk), the 3777-2681=1096 census count,
      * all gt6. PIN recomputed at merge order (the conscious-update duty, S3 2045c78d):
      * p24-grass-block landed first and its addGrassBand rides the SAME shovel face — the
      * band is now the blockDust family PLUS the 6 GT grass variants (1096+6=1102).

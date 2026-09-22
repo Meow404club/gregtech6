@@ -466,6 +466,20 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tRoastingOven,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		// task p34-machines-bumblelyzer-crucible — the two machine families join (tail-append;
+		// the smelter/roasting shape): the Bumblelyzer's scan arm drinks the honey tank leg,
+		// the Crystallisation Crucible drinks the noble-gas + molten legs, both item faces
+		// load-bearing (the bee + the dust input, the scanned bee + the boule output)
+		BlockEntityType<TileEntityBasicMachine> tBumblelyzer = GTMachines.BUMBLELYZER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tBumblelyzer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tBumblelyzer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tCrystallisation = GTMachines.CRYSTALLISATION_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tCrystallisation,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCrystallisation,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.HEAT_EXCHANGER_BE.get();
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tHeatExchanger,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
