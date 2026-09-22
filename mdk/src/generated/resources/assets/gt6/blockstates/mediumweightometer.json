@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/mediumweightometer",
+      "x": 90
+    },
+    "facing=east": {
+      "model": "gt6:block/mediumweightometer",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/mediumweightometer"
+    },
+    "facing=south": {
+      "model": "gt6:block/mediumweightometer",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/mediumweightometer",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "gt6:block/mediumweightometer",
+      "y": 270
+    }
+  }
+}

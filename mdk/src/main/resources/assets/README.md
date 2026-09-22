@@ -8571,3 +8571,28 @@ Distillation Tower GUI pair textures, task p33-gui-distill-tower:
 RM.java:65/:66), byte-identical to upstream, sha256 verified:
 - `distillationtower.png` — `3c91fb1c405f64651f2502f44ab2fc0e588c018e0616a5d8d094acf11596c593`
 - `cryodistillationtower.png` — `165f2cb65e4f1d892d6f403327ac9ae33d61084fb73faacaf99385aa5a98bd53`
+
+Sensor block textures, batch 2 (15 rows), task p34-sensors-trivial-14 — same
+borrow/bake recipe as the three pioneer rows above (upstream snapshot
+`v6.17.06-22-g3703e4030`, `src/main/resources/assets/gregtech/textures/blocks
+/machines/redstone/sensors/<name>/`): the upstream `colored/front.png` with the
+sensor's own `overlay/front.png` (box-downscaled 4x, straight-alpha) baked
+src-over into ONE 16x16 canonical PNG, pixel-identical to the pioneer bake
+(PIL alpha_composite form re-verified against the three ledger hashes before
+the batch run):
+
+- `gt6/textures/block/thermometer.png` `5c8786895888a6369aadcaa6bd098a7aea1b693663125b5e2f0146a67b318b90`
+- `gt6/textures/block/luminometer.png` `285ab4f92673149366770be6926f23f9c1e38824fc9ee93dbbaadb1736e26eed`
+- `gt6/textures/block/chronometer.png` `65c20ba26c48cb23bdf3ad98f2d3edd3dd32f345fdecefb51278e1669ccb36df`
+- `gt6/textures/block/gibblometer.png` `06b8c076747878002c91f85bf3449e662e6132ebc5ac3bdd711468d09d0d8d51`
+- `gt6/textures/block/kilogibblometer.png` `854e40cf70b82c2d64615e0d5e6cbdf071ee83371ec4f73fa8e4cc5bd8bd2ecf`
+- `gt6/textures/block/itemometer.png` `ba7c08807d668e3281371534becd66488461cdb98dc3a52baae75f3ac3cef14e`
+- `gt6/textures/block/stackometer.png` `4e5381ca39b2589b493688c38a63e1df7c18b605fba3a3eff747717656995a9c`
+- `gt6/textures/block/bucketometer.png` `ba12c22cb3593f9557a5743bdb8fbea78dded541d2e6ded976cd8048f972f1dc`
+- `gt6/textures/block/kilobucketometer.png` `71524688233e99fcb5618c4e1cfe74d7ff61f23a7b3a54dab7973f8ea2c3ec7e`
+- `gt6/textures/block/lightweightometer.png` `744408246f3e7ff58bd962a332356688f6d5f68dad3bc46be399a300c6201871`
+- `gt6/textures/block/mediumweightometer.png` `7ae51a34cac58c2828f95265a387530e6e2278615cec706c80145b8b495c7b1a`
+- `gt6/textures/block/heavyweightometer.png` `3bdd5c49cdb0c8701f9cbbc796768d84cd9df9244c00485dea72dc76a9f392e2`
+- `gt6/textures/block/superheavyweightometer.png` `d8199fb95821db4132842b9c15d86863ac3bb437e76167145c2755a1c1249a05`
+- `gt6/textures/block/tpsmeter.png` `7571093ede617a3d1c88579d50faf419df52bc6c991337551084d8c840b0de01`
+- `gt6/textures/block/playercounter.png` `2013a9e65bb3a28603c390fe73f5f1a2d0feab28048b3410837c6fcb45ba93ed`

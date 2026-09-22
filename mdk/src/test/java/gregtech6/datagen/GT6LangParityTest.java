@@ -1179,7 +1179,7 @@ private static final int ZH_KEY_FLOOR = 3741; // +2 (task p33-bees-lv3-b-bumblia
 			+ " (the CRUCIBLE_ROWS walk grew 1 -> 8) + the seven dedicated GTCrucibleWallBlock"
 			+ " wall carriers over the metal-wall template; the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (1089 + 5 = 1094); the 4 Roasting row carriers joined at task p29-w4-eu-bridge (1094 + 4 = 1098); the 4 surface deco carriers joined at task p30-w6-rocks-sticks (1098 + 4 = 1102); the 31 vein-indicator rock carriers joined at task p30-w6-t3-large-veins (1102 + 31 = 1133, the spec ⑤ compensation set)"
 			+ " (+4 task p32-qu-scanner-replicator: the QU machine row carriers, 1138 + 4 = 1142, the molecular_scanner/replicator tier-word composed rungs the moment they registered)");
-		assertEquals(189, tChecked,  "the checked block census: every DeferredRegister block NOT"
+		assertEquals(204, tChecked,  "the checked block census: every DeferredRegister block NOT"
 			+ " twelve turbine/dynamo controllers joined at task p29-w3-turbine-dynamo (122 + 12;"
 			+ " the eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"
 			+ " and the transformer joined at 323c4ae4/1e07061d; the 28 p29-w3 part blocks"
@@ -1198,6 +1198,7 @@ private static final int ZH_KEY_FLOOR = 3741; // +2 (task p33-bees-lv3-b-bumblia
 			+ " ; the Logistics Core controller joined at task p32-logistics-lv3 (187 + 1 = 188 — GT6Logistics 2 checked, the atomic block.gt6.logistics_core key)"
 			+ " ; the 4 QU machine rungs joined as EXEMPT composed row carriers at task p32-qu-scanner-replicator (the checked pin HOLDS at 188 — the molecular_scanner/replicator rungs rode the composed-name exemption the moment they registered, the exempt pin carries the +4; rebase reconciliation over the merged 188 state)"
 			+ " ; the Juicer joined at task p33-food-machines-kitchen (188 + 1 = 189 — GT6Kitchen 4 -> 5 checked, the atomic block.gt6.juicer key, the dump gt.multitileentity.32722 face 榨汁机 both locales)"
+			+ " ; the 15 sensor-batch rows joined at task p34-sensors-trivial-14 (189 + 15 = 204 — GT6Sensors 3 -> 18 checked, the census-erratum batch over the upstream anchor Loader_MultiTileEntities.java:1979-1999, atomic keys both locales: the en rows verbatim + the zh dump rows gt.multitileentity.31000-31017)"
 			+ " — per-class checked: " + tWalkedByClass);
 		assertTrue(tMissing.isEmpty(),
 			"every registered block's vanilla descriptionId key must exist on BOTH lang faces"

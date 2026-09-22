@@ -8893,3 +8893,18 @@ direct	fluid.gt6.potion.coffee	咖啡	hand
 direct	fluid.gt6.potion.cafeaulait	欧蕾咖啡	hand
 direct	fluid.gt6.potion.laitaucafe	法式牛奶咖啡	hand
 direct	fluid.gt6.potion.darkchocolatemilk	苦味巧克力牛奶	hand
+direct	block.gt6.thermometer	温度传感器	hand
+direct	block.gt6.luminometer	环境光度传感器	hand
+direct	block.gt6.chronometer	精确时间传感器	hand
+direct	block.gt6.gibblometer	锅炉压力传感器(单位: Gibbl)	hand
+direct	block.gt6.kilogibblometer	锅炉压力传感器(单位: Kilo-Gibbl)	hand
+direct	block.gt6.itemometer	库存数量传感器	hand
+direct	block.gt6.stackometer	库存堆栈传感器	hand
+direct	block.gt6.bucketometer	流体体积传感器(单位: 桶)	hand
+direct	block.gt6.kilobucketometer	Kilo-Bucket-O-Meter Sensor	hand
+direct	block.gt6.lightweightometer	轻量级质量传感器	hand
+direct	block.gt6.mediumweightometer	中量级质量传感器	hand
+direct	block.gt6.heavyweightometer	重量级质量传感器	hand
+direct	block.gt6.superheavyweightometer	超重量级质量传感器	hand
+direct	block.gt6.tpsmeter	TPS传感器	hand
+direct	block.gt6.playercounter	玩家数量传感器	hand

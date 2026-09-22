@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:playercounter"
+    }
+  ],
+  "result": {
+    "item": "gt6:playercounter"
+  }
+}

@@ -333,15 +333,15 @@ public final class GTBlockEntities {
 					gregtech6.tileentity.inventories.GT6QueueHopperBlockEntity::new, GT6Hoppers.queueBlockArray()).build(null));
 
 	// -------------------------------------------------------------------------
-	// the sensors (task p26-sensors-core) — the three pioneer BET rows
+	// the sensors (task p26-sensors-core, batch p34-sensors-trivial-14) — the 18 BET rows
 	// -------------------------------------------------------------------------
 
 	/**
 	 * The Progressmeter BET (task p26-sensors-core — the BET type rows live here per the
 	 * card, the blocks/items in {@link GT6Sensors}; the CRANK_BE single-mount shape). One
-	 * BET per pioneer class: the three concrete sensors are unrelated subtypes of the
-	 * abstract {@code GTSensorBlockEntity} base, so the ADR-P3-1 one-type-many-blocks
-	 * degenerates per class (the family grows through the batch-2 card by appending rows).
+	 * BET per sensor class: the concrete sensors are unrelated subtypes of the abstract
+	 * {@code GTSensorBlockEntity} base, so the ADR-P3-1 one-type-many-blocks degenerates
+	 * per class (the family grows by appending rows — the p34 batch appended 15).
 	 * Registry path "progressmeter" mirrors getTileEntityName like every other row.
 	 */
 	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6ProgressmeterBlockEntity>> PROGRESSMETER_BE =
@@ -357,6 +357,56 @@ public final class GTBlockEntities {
 	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6ElectrometerBlockEntity>> ELECTROMETER_BE =
 			BLOCK_ENTITY_TYPES.register("electrometer", () -> BlockEntityType.Builder.of(
 					gregtech6.tileentity.sensors.GT6ElectrometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("electrometer").get()).build(null));
+
+	// The p34-sensors-trivial-14 batch — Loader_MultiTileEntities.java:1979-1994 row
+	// order, one BET per class over its own GT6Sensors block (the CRANK_BE form). The
+	// tachometer/geigercounter/laserometer rows stay pooled on their missing seams (the
+	// GT6Sensors census-erratum javadoc).
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6ThermometerBlockEntity>> THERMOMETER_BE =
+			BLOCK_ENTITY_TYPES.register("thermometer", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6ThermometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("thermometer").get()).build(null)); // :1979
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6LuminometerBlockEntity>> LUMINOMETER_BE =
+			BLOCK_ENTITY_TYPES.register("luminometer", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6LuminometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("luminometer").get()).build(null)); // :1980
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6ChronometerBlockEntity>> CHRONOMETER_BE =
+			BLOCK_ENTITY_TYPES.register("chronometer", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6ChronometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("chronometer").get()).build(null)); // :1981
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6GibblometerBlockEntity>> GIBBLOMETER_BE =
+			BLOCK_ENTITY_TYPES.register("gibblometer", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6GibblometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("gibblometer").get()).build(null)); // :1982
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6KiloGibblometerBlockEntity>> KILOGIBBLOMETER_BE =
+			BLOCK_ENTITY_TYPES.register("kilogibblometer", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6KiloGibblometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("kilogibblometer").get()).build(null)); // :1983
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6ItemometerBlockEntity>> ITEMOMETER_BE =
+			BLOCK_ENTITY_TYPES.register("itemometer", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6ItemometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("itemometer").get()).build(null)); // :1984
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6StackometerBlockEntity>> STACKOMETER_BE =
+			BLOCK_ENTITY_TYPES.register("stackometer", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6StackometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("stackometer").get()).build(null)); // :1985
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6BucketometerBlockEntity>> BUCKETOMETER_BE =
+			BLOCK_ENTITY_TYPES.register("bucketometer", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6BucketometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("bucketometer").get()).build(null)); // :1987
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6KiloBucketometerBlockEntity>> KILOBUCKETOMETER_BE =
+			BLOCK_ENTITY_TYPES.register("kilobucketometer", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6KiloBucketometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("kilobucketometer").get()).build(null)); // :1988
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6LightWeightometerBlockEntity>> LIGHTWEIGHTOMETER_BE =
+			BLOCK_ENTITY_TYPES.register("lightweightometer", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6LightWeightometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("lightweightometer").get()).build(null)); // :1989
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6MediumWeightometerBlockEntity>> MEDIUMWEIGHTOMETER_BE =
+			BLOCK_ENTITY_TYPES.register("mediumweightometer", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6MediumWeightometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("mediumweightometer").get()).build(null)); // :1990
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6HeavyWeightometerBlockEntity>> HEAVYWEIGHTOMETER_BE =
+			BLOCK_ENTITY_TYPES.register("heavyweightometer", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6HeavyWeightometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("heavyweightometer").get()).build(null)); // :1991
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6SuperHeavyWeightometerBlockEntity>> SUPERHEAVYWEIGHTOMETER_BE =
+			BLOCK_ENTITY_TYPES.register("superheavyweightometer", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6SuperHeavyWeightometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("superheavyweightometer").get()).build(null)); // :1992
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6TpsmeterBlockEntity>> TPSMETER_BE =
+			BLOCK_ENTITY_TYPES.register("tpsmeter", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6TpsmeterBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("tpsmeter").get()).build(null)); // :1993
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6PlayerCounterBlockEntity>> PLAYERCOUNTER_BE =
+			BLOCK_ENTITY_TYPES.register("playercounter", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6PlayerCounterBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("playercounter").get()).build(null)); // :1994
 
 	// -------------------------------------------------------------------------
 	// the static storage batch (task p26-storage-static-batch) — the six family rows

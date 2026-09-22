@@ -44,14 +44,14 @@ public class GT6FluidometerBlockEntity extends GTSensorBlockEntity {
 
 	@Override
 	public long getCurrentValue(@Nullable BlockEntity aTarget) {
-		long[] tTanks = tankCensus(aTarget);
+		long[] tTanks = tankCensus(aTarget, mSecondFacing);
 		if (tTanks != null) return sumContents(tTanks); // upstream :50-52 the tank sum
 		return stillFluidValue(); // upstream :55-58 the water/lava source arm
 	}
 
 	@Override
 	public long getCurrentMax(@Nullable BlockEntity aTarget) {
-		long[] tTanks = tankCensus(aTarget);
+		long[] tTanks = tankCensus(aTarget, mSecondFacing);
 		if (tTanks != null) return sumCapacity(tTanks); // upstream :70-72 the capacity sum
 		return 0; // upstream :76 verbatim — the source-block arm has NO max (a water/lava
 		          // source is 1000/0, so PERCENT reads 0 and scales 0 redstone, never 15)
@@ -60,11 +60,14 @@ public class GT6FluidometerBlockEntity extends GTSensorBlockEntity {
 	/**
 	 * The probe read, per tank {@code [content, capacity]} pairs (null = no handler — the
 	 * upstream {@code tInfo != null} gate :49/:69). The per-leg capability query lives in
-	 * {@link #probeHandler} below.
+	 * {@link #probeHandler} below. Package-static since p34-sensors-trivial-14: the
+	 * bucketometer pair reuses the census verbatim (upstream Bucketometer.java:31-40 is the
+	 * same tank walk at a /1000 divisor); the instance probe face rides the explicit
+	 * {@code aSecondFacing} argument — zero behavior change for this class.
 	 */
 	@Nullable
-	private long[] tankCensus(@Nullable BlockEntity aTarget) {
-		IFluidHandler tHandler = probeHandler(aTarget);
+	static long[] tankCensus(@Nullable BlockEntity aTarget, byte aSecondFacing) {
+		IFluidHandler tHandler = probeHandler(aTarget, aSecondFacing);
 		if (tHandler == null) return null;
 		long[] rCensus = new long[tHandler.getTanks() * 2];
 		for (int i = 0; i < tHandler.getTanks(); i++) {
@@ -110,16 +113,16 @@ public class GT6FluidometerBlockEntity extends GTSensorBlockEntity {
 	// package); the QUERY shape does not and is forked here.
 
 	//? if forge {
-	private net.minecraftforge.fluids.capability.IFluidHandler probeHandler(@Nullable BlockEntity aTarget) {
+	private static net.minecraftforge.fluids.capability.IFluidHandler probeHandler(@Nullable BlockEntity aTarget, byte aSecondFacing) {
 		if (aTarget == null || aTarget.isRemoved()) return null;
 		return aTarget.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER,
-				Direction.from3DDataValue(mSecondFacing).getOpposite()).orElse(null); // Barrel :297
+				Direction.from3DDataValue(aSecondFacing).getOpposite()).orElse(null); // Barrel :297
 	}
 	//?} else {
-	/*private net.neoforged.neoforge.fluids.capability.IFluidHandler probeHandler(@Nullable BlockEntity aTarget) {
+	/*private static net.neoforged.neoforge.fluids.capability.IFluidHandler probeHandler(@Nullable BlockEntity aTarget, byte aSecondFacing) {
 		if (aTarget == null || aTarget.isRemoved()) return null;
-		return getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
-				aTarget.getBlockPos(), Direction.from3DDataValue(mSecondFacing).getOpposite()); // Barrel :304
+		return aTarget.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+				aTarget.getBlockPos(), Direction.from3DDataValue(aSecondFacing).getOpposite()); // Barrel :304
 	}
 	*///?}
 }

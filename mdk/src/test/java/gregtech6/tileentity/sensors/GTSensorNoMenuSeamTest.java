@@ -42,6 +42,23 @@ public class GTSensorNoMenuSeamTest {
 			, GT6ProgressmeterBlockEntity.class
 			, GT6FluidometerBlockEntity.class
 			, GT6ElectrometerBlockEntity.class
+			// the p34-sensors-trivial-14 batch — the 15 appended rows join the audit
+			// (the batch-2 convention this census guard documents)
+			, GT6ThermometerBlockEntity.class
+			, GT6LuminometerBlockEntity.class
+			, GT6ChronometerBlockEntity.class
+			, GT6GibblometerBlockEntity.class
+			, GT6KiloGibblometerBlockEntity.class
+			, GT6ItemometerBlockEntity.class
+			, GT6StackometerBlockEntity.class
+			, GT6BucketometerBlockEntity.class
+			, GT6KiloBucketometerBlockEntity.class
+			, GT6LightWeightometerBlockEntity.class
+			, GT6MediumWeightometerBlockEntity.class
+			, GT6HeavyWeightometerBlockEntity.class
+			, GT6SuperHeavyWeightometerBlockEntity.class
+			, GT6TpsmeterBlockEntity.class
+			, GT6PlayerCounterBlockEntity.class
 			, gregtech6.block.sensors.GTSensorBlock.class
 			, GTSensorCommand.class
 			, gregtech6.registry.GT6Sensors.class
