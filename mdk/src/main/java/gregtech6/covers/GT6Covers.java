@@ -21,15 +21,25 @@ import gregtech6.covers.covers.CoverConveyor;
 import gregtech6.covers.covers.CoverControllerAutoRedstone;
 import gregtech6.covers.covers.CoverControllerCovers;
 import gregtech6.covers.covers.CoverControllerRedstone;
+import gregtech6.covers.covers.CoverDrain;
+import gregtech6.covers.covers.CoverFilterFluid;
 import gregtech6.covers.covers.CoverFilterItem;
+import gregtech6.covers.covers.CoverPressureValve;
 import gregtech6.covers.covers.CoverPump;
 import gregtech6.covers.covers.CoverRedstoneConductorIN;
 import gregtech6.covers.covers.CoverRedstoneConductorOUT;
 import gregtech6.covers.covers.CoverRedstoneEmitter;
+import gregtech6.covers.covers.CoverRedstoneRepeater;
+import gregtech6.covers.covers.CoverRedstoneTorch;
 import gregtech6.covers.covers.CoverRetrieverItem;
 import gregtech6.covers.covers.CoverRobotArm;
+import gregtech6.covers.covers.CoverSelectorButtonPanel;
+import gregtech6.covers.covers.CoverSelectorManual;
+import gregtech6.covers.covers.CoverSelectorRedstone;
+import gregtech6.covers.covers.CoverSelectorTag;
 import gregtech6.covers.covers.CoverShutter;
 import gregtech6.covers.covers.CoverTextureSimple;
+import gregtech6.covers.covers.CoverVent;
 import gregtech6.covers.covers.logistics.CoverLogisticsDisplayCPUControl;
 import gregtech6.covers.covers.logistics.CoverLogisticsDisplayCPUConversion;
 import gregtech6.covers.covers.logistics.CoverLogisticsDisplayCPULogic;
@@ -198,6 +208,36 @@ public final class GT6Covers {
 			() -> new Item(new Item.Properties()));
 
 	/**
+	 * The p34 gameplay cover family (task p34-covers-gameplay-10; upstream
+	 * MultiItemTechnological.java metas 1007/1008/1020/1022/1024/1027/2000) — the same
+	 * card-local ITEMS DeferredRegister as the rest of the cover family. The tag
+	 * selector ladder rides the 16-item static loop below (upstream ONE
+	 * CoverSelectorTag(i) per integrated-circuit meta, ItemIntegratedCircuit.java:87;
+	 * 1.20.1 items carry no meta axis, the p11 conveyor one-item-per-constant form).
+	 * The torch/repeater pair is its own item family (upstream they rode the vanilla
+	 * redstone torch/repeater items, GT_API.java:799-802 — the own-item form per the
+	 * card ruling).
+	 */
+	public static final RegistryObject<Item> COVER_VENT = ITEMS.register("cover_vent",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_DRAIN = ITEMS.register("cover_drain",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_PRESSURE_VALVE = ITEMS.register("cover_pressure_valve",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_FLUID_FILTER = ITEMS.register("cover_fluid_filter",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_REDSTONE_TORCH = ITEMS.register("cover_redstone_torch",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_REDSTONE_REPEATER = ITEMS.register("cover_redstone_repeater",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_SELECTOR_REDSTONE = ITEMS.register("cover_selector_redstone",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_SELECTOR_MANUAL = ITEMS.register("cover_selector_manual",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_SELECTOR_BUTTON_PANEL = ITEMS.register("cover_selector_button_panel",
+			() -> new Item(new Item.Properties()));
+
+	/**
 	 * The p11 auto redstone machine switch — the "lets it finish" controller (task
 	 * p11-cover-controllers; upstream MultiItemTechnological.java:65 meta 1006,
 	 * "Auto Redstone Machine Switch"). Holds a mid-process machine ON through a
@@ -237,6 +277,14 @@ public final class GT6Covers {
 	public static final String[] TIER_NAMES = {"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "PUV1"};
 
 	/**
+	 * The p34 tag-selector display template (task p34-covers-gameplay-10):
+	 * "{@code Tag Selector (%s)}" — the 16 ladder items compose the mode numeral
+	 * (the conveyor template form; the upstream tag selector IS the integrated-circuit
+	 * item, whose dump face 选择器标签 names the family).
+	 */
+	public static final String SELECTOR_TAG_DISPLAY_KEY = "gt6.cover.selector_tag.display";
+
+	/**
 	 * The p11 ten conveyor timing tiers — one item per tier, upstream
 	 * MultiItemTechnological.java:51 metas 12040+i ("Compact Electric Conveyor", each
 	 * carrying a {@link CoverConveyor} with the {@code 512>>i} tick PERIOD). Registered
@@ -271,6 +319,25 @@ public final class GT6Covers {
 				@Override
 				public Component getName(ItemStack aStack) {
 					return Component.translatable(ROBOT_ARM_DISPLAY_KEY, TIER_NAMES[tTier]);
+				}
+			}));
+		}
+	}
+
+	/**
+	 * The p34 16 tag-selector ladder items — one item per selector mode 0..15, upstream
+	 * the integrated-circuit meta ladder (ItemIntegratedCircuit.java:87). Each item
+	 * composes the {@link #SELECTOR_TAG_DISPLAY_KEY} template with the hex mode numeral
+	 * (the conveyor composed-display form).
+	 */
+	public static final List<RegistryObject<Item>> COVER_SELECTOR_TAGS = new ArrayList<>();
+	static {
+		for (int i = 0; i < 16; i++) {
+			final int tMode = i;
+			COVER_SELECTOR_TAGS.add(ITEMS.register("cover_selector_tag_" + tMode, () -> new Item(new Item.Properties()) {
+				@Override
+				public Component getName(ItemStack aStack) {
+					return Component.translatable(SELECTOR_TAG_DISPLAY_KEY, Integer.toHexString(tMode).toUpperCase());
 				}
 			}));
 		}
@@ -327,6 +394,19 @@ public final class GT6Covers {
 			aEvent.accept(new ItemStack(COVER_LOGISTICS_GENERIC_IMPORT.get()));
 			aEvent.accept(new ItemStack(COVER_LOGISTICS_GENERIC_STORAGE.get()));
 			aEvent.accept(new ItemStack(COVER_LOGISTICS_GENERIC_DUMP.get()));
+			// task p34-covers-gameplay-10 — the gameplay cover family joins the machines
+			// tab (the logistics-family precedent; upstream the MultiItemTechnological items
+			// ride the GT tab list)
+			aEvent.accept(new ItemStack(COVER_VENT.get()));
+			aEvent.accept(new ItemStack(COVER_DRAIN.get()));
+			aEvent.accept(new ItemStack(COVER_PRESSURE_VALVE.get()));
+			aEvent.accept(new ItemStack(COVER_FLUID_FILTER.get()));
+			aEvent.accept(new ItemStack(COVER_REDSTONE_TORCH.get()));
+			aEvent.accept(new ItemStack(COVER_REDSTONE_REPEATER.get()));
+			for (int i = 0; i < 16; i++) aEvent.accept(new ItemStack(COVER_SELECTOR_TAGS.get(i).get()));
+			aEvent.accept(new ItemStack(COVER_SELECTOR_REDSTONE.get()));
+			aEvent.accept(new ItemStack(COVER_SELECTOR_MANUAL.get()));
+			aEvent.accept(new ItemStack(COVER_SELECTOR_BUTTON_PANEL.get()));
 		}
 	}
 
@@ -362,6 +442,22 @@ public final class GT6Covers {
 		CoverRegistry.put(COVER_LOGISTICS_GENERIC_DUMP.get(), CoverLogisticsGenericDump.INSTANCE);
 		CoverRegistry.put(COVER_AUTO_REDSTONE_MACHINE_SWITCH.get(), new CoverControllerAutoRedstone()); // p11 — the lets-it-finish machine switch
 		CoverRegistry.put(COVER_CONTROLLER.get(), new CoverControllerCovers()); // p11 — the cover-layer stop switch + cross-face relay
+		// p34 — the gameplay cover family (upstream MultiItemTechnological 1007/1008/1020/1022/1024/1027/2000
+		// + the integrated-circuit tag ladder ItemIntegratedCircuit.java:87):
+		// the fluid trio + the fluid filter + the torch pair + the four selectors
+		CoverRegistry.put(COVER_VENT.get(), new CoverVent()); // p34 — the boiler air-intake face (the declared-minimal air seam)
+		CoverRegistry.put(COVER_DRAIN.get(), new CoverDrain()); // p34 — the rain/water/lava collection face
+		CoverRegistry.put(COVER_PRESSURE_VALVE.get(), new CoverPressureValve()); // p34 — the single-tank pipe safety valve
+		CoverRegistry.put(COVER_FLUID_FILTER.get(), new CoverFilterFluid()); // p34 — the whitelist/blacklist fluid face filter
+		CoverRegistry.put(COVER_REDSTONE_TORCH.get(), new CoverRedstoneTorch()); // p34 — the wire inverter face
+		CoverRegistry.put(COVER_REDSTONE_REPEATER.get(), new CoverRedstoneRepeater()); // p34 — the wire follower face
+		for (int i = 0; i < 16; i++) {
+			// p34 — the 16 tag-selector modes (upstream one CoverSelectorTag(i) per circuit meta)
+			CoverRegistry.put(COVER_SELECTOR_TAGS.get(i).get(), new CoverSelectorTag((byte) i));
+		}
+		CoverRegistry.put(COVER_SELECTOR_REDSTONE.get(), new CoverSelectorRedstone()); // p34 — the signal-driven dial
+		CoverRegistry.put(COVER_SELECTOR_MANUAL.get(), new CoverSelectorManual()); // p34 — the arrow/bit plate GUI
+		CoverRegistry.put(COVER_SELECTOR_BUTTON_PANEL.get(), new CoverSelectorButtonPanel()); // p34 — the 4x4 button grid
 		for (int i = 0; i < CoverConveyor.TIMING_TIERS.length; i++) {
 			// p11 — the ten timing tiers of the two item-transport covers (512>>i tick periods)
 			CoverRegistry.put(COVER_CONVEYORS.get(i).get(), new CoverConveyor(CoverConveyor.TIMING_TIERS[i]));

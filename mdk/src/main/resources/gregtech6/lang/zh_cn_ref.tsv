@@ -745,6 +745,7 @@ direct	gt.grass.tooltip	不会传播、被吃、改变颜色, 也不需要光照
 direct	gt.grass.tooltip.spray	喷漆罐也可以用来给草染色！	hand
 direct	gt6.cover.conveyor.display	小型电动输送机 (%s)	hand
 direct	gt6.cover.robot_arm.display	小型机械臂 (%s)	hand
+direct	gt6.cover.selector_tag.display	标签选择器 (%s)	hand
 direct	gt6.foamspray.owned	干燥后仅所有者可破坏	hand
 direct	gt6.foamspray.paint	可以喷射%s泡沫	hand
 direct	gt6.jade.crucible.empty	空	hand
@@ -1628,6 +1629,8 @@ direct	item.gt6.comp_laser_gas_empty	空的气体-激光镭射器	hand
 direct	item.gt6.comp_laser_gas_empty.tooltip	用于电力激光器	hand
 direct	item.gt6.cover_auto_redstone_machine_switch	自动红石机器开关	hand
 direct	item.gt6.cover_controller	面板控制器	hand
+direct	item.gt6.cover_drain	排液口	hand
+direct	item.gt6.cover_fluid_filter	液体过滤器	hand
 direct	item.gt6.cover_item_filter	物品过滤器	hand
 direct	item.gt6.cover_item_retriever	物品回收器面板	hand
 direct	item.gt6.cover_logistics_display_cpu_control	物流显示器 (CPU 控制)	hand
@@ -1644,11 +1647,18 @@ direct	item.gt6.cover_logistics_generic_storage	通用物流存储总线	hand
 direct	item.gt6.cover_logistics_item_export	过滤物流导出总线 (物品)	hand
 direct	item.gt6.cover_logistics_item_import	过滤物流导入总线 (物品)	hand
 direct	item.gt6.cover_logistics_item_storage	过滤物流存储总线 (物品)	hand
+direct	item.gt6.cover_pressure_valve	释压安全阀	hand
 direct	item.gt6.cover_redstone_conductor_in	红石导线面板（接收）	hand
 direct	item.gt6.cover_redstone_conductor_out	红石导线面板（发出）	hand
 direct	item.gt6.cover_redstone_emitter	红石发射器	hand
 direct	item.gt6.cover_redstone_machine_switch	红石机器开关	hand
+direct	item.gt6.cover_redstone_repeater	红石中继器面板	hand
+direct	item.gt6.cover_redstone_torch	红石火把面板	hand
+direct	item.gt6.cover_selector_button_panel	按钮覆盖板选择器	hand
+direct	item.gt6.cover_selector_manual	手动选择面板	hand
+direct	item.gt6.cover_selector_redstone	红石选择面板	hand
 direct	item.gt6.cover_shutter	挡板面板	hand
+direct	item.gt6.cover_vent	通风口	hand
 direct	item.gt6.crowbar	撬棍	hand
 direct	item.gt6.cutter	线缆剪	hand
 direct	item.gt6.energium_cyan_ev	青色能量水晶 (T4)	hand

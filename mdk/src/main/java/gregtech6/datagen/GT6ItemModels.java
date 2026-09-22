@@ -435,6 +435,22 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent(tRow[0], mcLoc("item/generated"))
                 .texture("layer0", modLoc("block/logistics/" + tRow[1]));
         }
+        // the p34 gameplay cover family (task p34-covers-gameplay-10) — the 9 singletons
+        // show their plate art (the visual-0 face); the 16 tag-selector ladder items each
+        // show their own mode plate (upstream the per-meta circuit art, underlay+digit
+        // pre-composited — the CoverSelectorTag class-doc cut)
+        for (String[] tRow : new String[][] {
+                {"cover_vent", "vent/front"}, {"cover_drain", "drain/front"}, {"cover_pressure_valve", "pressurevalve/front"},
+                {"cover_fluid_filter", "filterfluid/normal"}, {"cover_redstone_torch", "redstonetorch/on/front"},
+                {"cover_redstone_repeater", "redstonerepeater/on/front"}, {"cover_selector_redstone", "redstoneselector/0"},
+                {"cover_selector_manual", "manualselector/0"}, {"cover_selector_button_panel", "buttonselector/0"}}) {
+            withExistingParent(tRow[0], mcLoc("item/generated"))
+                .texture("layer0", modLoc("block/" + tRow[1]));
+        }
+        for (int i = 0; i < 16; i++) {
+            withExistingParent("cover_selector_tag_" + i, mcLoc("item/generated"))
+                .texture("layer0", modLoc("block/selectortag/" + i));
+        }
         // the p11 controller pair (task p11-cover-controllers) — the items show their
         // own plate art, byte-identical upstream borrows living in
         // textures/block/auto_redstone_switch/ and textures/block/cover_switch/

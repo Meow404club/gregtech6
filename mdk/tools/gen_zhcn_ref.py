@@ -2090,6 +2090,24 @@ LEGACY_ITEM_BACKFILL = {
     'item.gt6.cover_logistics_item_export': '过滤物流导出总线 (物品)',
     'item.gt6.cover_logistics_item_import': '过滤物流导入总线 (物品)',
     'item.gt6.cover_logistics_item_storage': '过滤物流存储总线 (物品)',
+    # ---- the 10 gameplay covers (task p34-covers-gameplay-10) — 9 atomic item faces +
+    # the tag-selector ladder template; the dump gt.multiitem.technological name column
+    # verbatim (1007 红石选择面板 :10203 / 1008 手动选择面板 :10205 / 1020 排液口 :10229 /
+    # 1022 通风口 :10273 / 1024 液体过滤器 :10301 / 1027 按钮覆盖板选择器 :10307 /
+    # 2000 释压安全阀 :10557), the torch/repeater pair + the template the hand rows
+    # (upstream the pair rode the vanilla item names, GT_API.java:799-802 — no dump face;
+    # the template mirrors the 选择器标签 integrated-circuit face over the conveyor
+    # template form)
+    'item.gt6.cover_vent': '通风口',
+    'item.gt6.cover_drain': '排液口',
+    'item.gt6.cover_pressure_valve': '释压安全阀',
+    'item.gt6.cover_fluid_filter': '液体过滤器',
+    'item.gt6.cover_redstone_torch': '红石火把面板',
+    'item.gt6.cover_redstone_repeater': '红石中继器面板',
+    'gt6.cover.selector_tag.display': '标签选择器 (%s)',
+    'item.gt6.cover_selector_redstone': '红石选择面板',
+    'item.gt6.cover_selector_manual': '手动选择面板',
+    'item.gt6.cover_selector_button_panel': '按钮覆盖板选择器',
     # ---- the gas-laser items (task p32-qu-laser-domain)
     'item.gt6.comp_laser_gas_co2': '二氧化碳激光镭射器',
     'item.gt6.comp_laser_gas_co2.tooltip': '用途: 强力材料加工',
