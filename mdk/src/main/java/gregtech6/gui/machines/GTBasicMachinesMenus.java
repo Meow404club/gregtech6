@@ -99,5 +99,11 @@ public final class GTBasicMachinesMenus {
 		LOGGER.info("GT6 machine menu 'cokeoven' registered (gt6:cokeoven — the TileEntityBase10MultiBlockMachine GUI path, task p8-cokeoven-gui-menu)");
 		LOGGER.info("GT6 machine menu 'dryer' registered (gt6:dryer — the four-tier Dryer family GUI path, task p16-machine-fluid-gui)");
 		LOGGER.info("GT6 machine menu 'canner' registered (gt6:canner — the four-tier Canner family GUI path, the 2-input menu shape, task p24-canner-machine)");
+		// task p34-bumbliary-gui — the bumbliary GUI pair rides the MUI factory identity
+		// (the OpenGuiPacket wire carries the factory name, so the scoop/normal variant
+		// needs no MenuType and no PosGuiData change; the P26 no-new-MenuType freeze holds)
+		brachy.modularui.factory.GuiManager.registerFactory(GT6BumbliaryMUI.Factory.NORMAL);
+		brachy.modularui.factory.GuiManager.registerFactory(GT6BumbliaryMUI.Factory.SCOOP);
+		LOGGER.info("GT6 bumbliary UI factories registered (gt6:bumbliary + gt6:bumbliary_scoop — the ModularUI factory-identity wire, task p34-bumbliary-gui)");
 	}
 }

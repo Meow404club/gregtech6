@@ -22,7 +22,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
+import brachy.modularui.factory.PosGuiData;
+import brachy.modularui.screen.ModularPanel;
+import brachy.modularui.screen.UISettings;
+import brachy.modularui.value.sync.PanelSyncManager;
+
 import gregtech6.block.stone.GTStoneBlock;
+import gregtech6.gui.machines.GT6BumbliaryMUI;
+import gregtech6.gui.machines.GT6MuiMachine;
 import gregtech6.items.bees.GT6BumbleGenes;
 import gregtech6.items.bees.GT6Bumbles;
 import gregtech6.items.bees.GT6BumbleItem;
@@ -82,7 +89,7 @@ import gregtech6.worldgen.GT6HiveFeature;
  * {@link #produceTick} through the {@link #sting} delegate (the :371-373 face, the
  * {@code GT6BumbleItem} family damage tables).
  */
-public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implements Container {
+public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implements Container, GT6MuiMachine {
 
 	// upstream NBT keys (CS.java:1175/:1230/:1251 verbatim, the :66-85 read/write pair)
 	/** The queen life counter (upstream NBT_PROGRESS). */
@@ -447,6 +454,48 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 	public static AABB aggroBox(BlockPos aPos) {
 		return new AABB(aPos.getX() - 4, aPos.getY() - 4, aPos.getZ() - 4,
 				aPos.getX() + 5, aPos.getY() + 5, aPos.getZ() + 5);
+	}
+
+	// -------------------------------------------------------------------------
+	// the GUI host face (task p34-bumbliary-gui — the :282-296 use walk and the
+	// :305-313 scoop walk; the panel factory is gregtech6.gui.machines.GT6BumbliaryMUI)
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The :282-296 top-face use walk (the server half; the top-face gate and the
+	 * scoop-tool dispatch live on the block): the creative poke opens the scoop panel
+	 * directly (:285-288), survival pays the penalty (:289), takes the sting (:290) and
+	 * gets the normal panel (:291).
+	 */
+	public void topUse(net.minecraft.server.level.ServerPlayer aPlayer) {
+		if (aPlayer.isCreative()) {
+			GT6BumbliaryMUI.Factory.SCOOP.open(aPlayer, this); // :286 openGUI 1
+			return;
+		}
+		penalize(false); // :289
+		sting(aPlayer); // :290
+		GT6MuiMachine.tryOpen(aPlayer, this); // :291 — openGUI 0, the normal panel
+	}
+
+	/**
+	 * The :305-313 scoop arm (the server half): the penalty with the creative exemption
+	 * (:307), the sting (:308) and the scoop panel (:309). The upstream 10000 scoop
+	 * durability charge is the tool domain's face and stays unported (the card scope).
+	 */
+	public void scoopUse(net.minecraft.server.level.ServerPlayer aPlayer) {
+		penalize(aPlayer.isCreative()); // :307
+		sting(aPlayer); // :308
+		GT6BumbliaryMUI.Factory.SCOOP.open(aPlayer, this); // :309 openGUI 1
+	}
+
+	/**
+	 * The MUI panel build (the IUIHolder.buildUI :21-44 contract) — the normal pair;
+	 * the scoop GUI opens through {@link GT6BumbliaryMUI.Factory#SCOOP} (the factory
+	 * carries the variant, no MenuType — the P26 no-new-MenuType ruling).
+	 */
+	@Override
+	public ModularPanel<?> buildUI(PosGuiData aData, PanelSyncManager aSyncManager, UISettings aSettings) {
+		return GT6BumbliaryMUI.buildPanel(this, aSyncManager, false);
 	}
 
 	/** The :214-267 pairing walk. */
