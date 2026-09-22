@@ -44,7 +44,7 @@ steps = [
     # consume removes bee + paper, the :583-584 input pair) — the item-override arm of the
     # input command (the BE carries no vanilla Container face, the /item replace route is
     # structurally unavailable — "Target position is not a container", the first sweep run)
-    Step(f"gt6machine bumblelyzer input item gt6:plate_tiny_paper 1 {F(BL1)}", expect="1x gt6:plate_tiny_paper into slot"),
+    Step(f"gt6machine bumblelyzer input item gt6:plate_tiny_paper 1 {F(BL1)}", expect="plate_tiny_paper into slot" # the namespace-free substring: the forge leg prints bare item names, the neo leg the full id),
     Step(f"gt6machine bumblelyzer fluid fill up gt6:honey 100 {F(BL1)}",
          expect="filled 100/100 L of gt6:honey (ACCEPTED), input tanks hold 100 L"),
     Step(f"gt6machine bumblelyzer check {F(BL1)}", expect="minIn=16 recIn=32 maxIn=64"),
