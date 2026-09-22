@@ -10,14 +10,16 @@ this chain pins the evidence; zero production code on the card):
     volt/amp dials carry the boiler-side rating figure (80 = the new GTFluids
     EU_PER_WATER) before returning to the oven-acceptable band (32 <= mInputMax 64).
 
-  B the emit pair against an EU oven (TileEntityOven.doInject, the upstream :501
-    reference gate): the HU-emitting rig books NOTHING into the adjacent oven
-    (energy stays 0, the machine stays idle), then the same rig retyped to EU opens
-    the gate (running=true — the doInject mStateNew arm; TileEntityBasicMachine.doWork
+  B the emit pair against the HU oven (task p34-oven-hu-conversion rebased the oven to
+    its upstream 20001-04 type, NBT_ENERGY_ACCEPTED = TD.Energy.HU; TileEntityOven.doInject,
+    the upstream :501 reference gate): the HU-emitting rig books into the adjacent oven
+    (running=true — the doInject mStateNew arm; TileEntityBasicMachine.doWork
     drains mInputMax unconditionally every tick, upstream :791, so the booked energy
-    never accumulates and the running flip is the durable booking evidence). The
-    positive control proves the refusal is the TYPE gate, not a broken emit path.
-    The offline mirror is HuEnergyHandshakeTest.huEmitIsRefusedByTheEuGate. The EU
+    never accumulates and the running flip is the durable booking evidence), then the
+    same rig retyped to EU books NOTHING (energy drains back to 0, the machine idles).
+    The negative control proves the refusal is the TYPE gate, not a broken emit path.
+    The offline mirrors are HuEnergyHandshakeTest.huEmitIsRefusedByTheEuGate (the EU-gate
+    refusal) and TileEntityOvenEnergyTest.netMode* (the HU booking pins). The EU
     TagData mName is ENERGY.ELECTRICITY (EU is the alias, TD.java); HU is ENERGY.HEAT.
 
 Run:  python3 tools/rcon/chains/p13_hu_steam_foundation.py
@@ -56,13 +58,13 @@ CHAIN = Chain(
         Step(f"gt6energy amp {F(RIG)} 1", expect="amperage 1"),
         Step(f"gt6energy volt {F(RIG)} 32", expect="voltage 32"),  # back under the oven mInputMax 64
 
-        phase("B: the emit pair — HU refused by the EU gate, EU books on the same rig"),
+        phase("B: the emit pair — HU books into the HU oven, the EU retype is the refused type"),
         Step(f"gt6oven place {F(OVEN)}", expect="GT6 oven placed"),
         Step(f"gt6energy mode {F(RIG)} on", expect="emitting true", sleep=2.0),
+        Step(f"gt6oven check {F(OVEN)}", expect="running=true"),
+        Step(f"gt6energy type {F(RIG)} EU", expect="type ENERGY.ELECTRICITY", sleep=2.0),
         Step(f"gt6oven check {F(OVEN)}", expect="energy=0 minenergy="),
         Step(f"gt6oven check {F(OVEN)}", expect="active=false running=false"),
-        Step(f"gt6energy type {F(RIG)} EU", expect="type ENERGY.ELECTRICITY", sleep=2.0),
-        Step(f"gt6oven check {F(OVEN)}", expect="running=true"),
 
         phase("C: teardown — the emitter off, the dial persisted"),
         Step(f"gt6energy mode {F(RIG)} off", expect="emitting false"),

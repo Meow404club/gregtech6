@@ -13,12 +13,14 @@ z=336 band as the charge leg, the chain-2 column x490..494):
     The battery stock (4 x 6400 EU) covers the row many times over while the
     20-tick pull returns up to min(mSizeRec,40)=8 packets per battery.
 
-  B THE V[i] GATE ON THE OUTPUT (x493): the same rig over an OVEN (the p8
-    idiom's consumer, minIn 16): every V[0]=8 packet dies below the oven's
-    input minimum — the EnergyGate small-packet arm SWALLOWS the offered
-    energy (the Root :717 arm), so the oven reports energy=0 through the
-    emission window: an ULV box cannot feed an LV machine, the tier wall
-    holds on the discharge side too.
+  B THE V[i] GATE ON THE OUTPUT (x493): the same rig over an ELECTRICLOOM (task
+    p34-oven-hu-conversion swapped the oven — it books HU since its 20001-04
+    rebase, so an 8 EU packet would die on the TYPE gate, not the V[i] size gate;
+    the loom is the in-registry EU consumer, minIn 16, the p29_w1 form): every
+    V[0]=8 packet dies below the loom's input minimum — the EnergyGate
+    small-packet arm SWALLOWS the offered energy (the Root :717 arm), so the
+    loom reports energy=0 through the emission window: an ULV box cannot feed an
+    LV machine, the tier wall holds on the discharge side too.
 
 passes=2 is the idempotency proof (the [0,0] of the group).
 Run:  GT6_SESSION=off python3 tools/rcon/chains/p29_w4_battery_discharge.py
@@ -100,15 +102,21 @@ steps = [
     Step(f"gt6machine wiremill check {MILL_P}", expect=MILL_OUT["1.20.1"], node_expects=MILL_OUT, poll=180.0),
 
     # ---------------------------------------------------------------- arm B
-    phase("B: the V[i] output gate — 8 EU packets into the LV oven (minIn 16) are swallowed white"),
+    phase("B: the V[i] output gate — 8 EU packets into the LV electricloom (minIn 16) are swallowed white"),
     Step(f"setblock {BOXB_P} {BOX_E}", expect="Changed the block", sleep=1.0),
     Step(CHARGE_B["1.20.1"], expect="Modified block data", node_cmds=CHARGE_B),
-    Step(f"gt6oven place {OVEN_P}", expect="GT6 oven placed", sleep=1.0),
-    Step(f"gt6oven input 8 {OVEN_P}", expect="8 cobblestone"),
-    # through the emission window the oven still reports energy=0 — every 8 EU
-    # packet dies below minIn 16 (the white burn; the box keeps paying, the oven
+    # p34 oven swap: the oven books HU since its rebase (the 8 EU packet would die
+    # on the TYPE gate, not the V[i] size gate) — the electricloom is the in-registry
+    # EU consumer with the same LV window; default north facing puts its west side
+    # face (FACING_ROTATIONS[north][west]=4=right) on the box's east front.
+    Step(f"gt6machine electricloom place {OVEN_P}", expect="GT6 electricloom placed", sleep=1.0),
+    Step(f"gt6machine electricloom input 4 {OVEN_P}",
+         expect="GT6 loom input: 4x string into slot 0",
+         node_expects={"1.21.1": "GT6 loom input: 4x minecraft:string into slot 0"}),
+    # through the emission window the loom still reports energy=0 — every 8 EU
+    # packet dies below minIn 16 (the white burn; the box keeps paying, the loom
     # never sees charge, exactly the p28 arm-B swallow shape on the battery leg)
-    Step(f"gt6oven check {OVEN_P}", expect="energy=0", poll=8.0),
+    Step(f"gt6machine electricloom check {OVEN_P}", expect="energy=0", poll=8.0),
 ]
 
 CHAIN = Chain(
