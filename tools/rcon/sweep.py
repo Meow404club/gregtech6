@@ -842,6 +842,14 @@ SESSION_GROUPS = (
     # (bbox-registered, no fresh_boot / mutates member).
     # --group p34_loot_inject matches through the chain's embedded name prefix.
     ("p34_loot_inject",),
+    (
+        # p34-covers-gameplay-10 — the gameplay cover family band z=300..312
+        # x560..584 (fresh band, x/z-disjoint from every registered sweep band;
+        # the p33 covers band sits z252..264 x509..531): the three metal-drum
+        # mounts (vent/drain/fluid filter) + the live selector placement-gate
+        # negative + the screwdriver whitelist/blacklist flip.
+        "p34_covers_g2",
+    ),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
