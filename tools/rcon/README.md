@@ -17,6 +17,27 @@ gt6rcon.py     客户端层：帧协议/断言判定（judge_output），CLI 与
 起服→两遍跑（第二遍=幂等证明，清场由 gt6world 自动 bbox）→按 PID 停服。
 旧 tmp 链是历史工件，不迁移不删除；要迁移见文末「从旧链迁移」。
 
+## 门禁用法（p34 起，一切重活统一入口）
+
+**一切测试/编译/RCON 启动经 `tools/gt6testgate.py` 统一门禁**（铁律 #8）——
+内存占用 >30G 排队不开新（env `GT6_GATE_MEM_LIMIT_MIB` 调阈），并发槽默认 4
+（env `GT6_GATE_MAX_CONCURRENT`），事件流水落 `/tmp/gt6_gate.log`：
+
+```bash
+# wrapper 用法：子进程 stdout/stderr 透传不截留，退出码透传
+python3 tools/gt6testgate.py --tag sweep-p32 -- \
+    python3 tools/rcon/sweep.py --mode session --group p32_placeables --node 1.20.1-forge
+
+# gradle 同理
+python3 tools/gt6testgate.py --tag cleanTest -- ./gradlew :mdk:cleanTest
+```
+
+门禁两层：**内存闸**（`MemTotal-MemAvailable` 超阈即按 10s 轮询排队，放行行带
+时间/当时 used/排队时长）与**测试槽**（/tmp O_EXCL 槽文件，2h mtime 陈旧回收，
+形同 gt6server 的 `/tmp/gt6_rcon_slots`）。gt6server 的 boot 路径
+（`acquire_rcon_slot`）已内挂同一内存闸——经 sweep/chains 起服自动继承，
+槽信号量语义不变；sweep 自身会话锁不叠加，`sweep.py` 与 `chains/*.py` 零改动。
+
 ```
 # 单条命令
 python3 tools/rcon/gt6rcon.py --password <pw> "gt6oven place 30 64 30"

@@ -148,6 +148,8 @@ BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
    阻塞会话）；≤5s 超时；stdin JSON 容错；副作用事件必须去重锁；**handler 不存在
    就整个不装 hook**；注入会话上下文必须真数据——缺失就明说，禁止打印硬编码的
    剧场表格（SessionStart 注入见 tools/context_inject.py）。
+8. **一切测试/编译/RCON 启动经 tools/gt6testgate.py 统一门禁**（p34，2026-09-22
+   WSL 一日三崩裁定）：内存占用 >30G 排队不开新，并发槽默认 4。
 
 ## 六、上下文工程纪律（Anthropic 上下文工程指南的落地）
 
