@@ -5000,6 +5000,159 @@ public final class GTMachines {
 					(aPos, aState) -> kineticMachine(GTMachines.ROASTING_BE.get(), aPos, aState),
 					roastingBlockArray()).build(null));
 
+	// ---------------------------------------------------------------------------
+	// the P34 machines-bumblelyzer-crucible section (task p34-machines-bumblelyzer-crucible,
+	// the GTMachines.java EXCLUSIVE append of the wave): the Bumblelyzer EU 5-tier ladder
+	// 20541-20545 (Loader_MultiTileEntities.java:1608-1612, the Electric_T[1..5] ladder, the
+	// hardness 4.0F constant, NBT_INPUT 32/128/512/2048/8192 through the TIER_INPUTS/EV window,
+	// NBT_TEXTURE "bumblelyzer", RM.Bumblelyzer, NBT_PARALLEL 64 with NO NBT_PARALLEL_DURATION
+	// → the :770-771 energy-scaling arm) and the Crystallisation Crucible HU 4-ladder
+	// 20251-20254 (:1437-1440, the Heat_T[1..4] ladder, hardness 6.0/4.0/9.0/12.5,
+	// NBT_TEXTURE "crystallisationcrucible", RM.CrystallisationCrucible, NO parallel keys —
+	// the 16/256 EUt fixed-clock crystalliser, the HU temperature face the crucible chain
+	// carries). ONE family BET per family over the SHARED euFiveTierMachine/kineticMachine
+	// factory bodies (the row drives everything, the Electrolyzer/Smelter precedents). The
+	// crafting-table tails ('WXW','ZMP','CYC' with the honey container 'Z'; 'wUh','PMP','BCB'
+	// with the furnace-class U items 1018/1039) are the unported crafting-table domain —
+	// data-only, the rows carry no column for them (the W2 cracker ruling).
+	//
+	// KJS face (the wave-plan declaration): REGISTRATION face only — nine MachineRow rows —
+	// covered by the p34-kjs-bindings generalized GT6Recipes facade over RecipeMap.RECIPE_MAPS
+	// (the two new maps are natural RECIPE_MAPS keys, zero adaptation). NO KubeJS surface.
+	// ---------------------------------------------------------------------------
+
+	/** The Bumblelyzer family unit word (the 5-tier voltage-key form; the upstream name column "Bumblelyzer ("+VN[tier]+")", :1608-1612). */
+	public static final String MACHINE_BUMBLELYZER_UNIT_KEY = "gt6.row.machine.bumblelyzer";
+
+	/** The Crystallisation Crucible family unit word (the Heat_T material-word form; the upstream name column "Crystallisation Crucible ("+aMat.getLocal()+")", :1437-1440). */
+	public static final String MACHINE_CRYSTALLISATION_UNIT_KEY = "gt6.row.machine.crystallisation_crucible";
+
+	/** The Bumblelyzer NBT_PARALLEL column (:1608-1612 — no NBT_PARALLEL_DURATION key, the :770-771 energy-scaling arm). */
+	public static final int BUMBLELYZER_PARALLEL = 64;
+
+	/** The five Bumblelyzer rows, upstream line order :1608-1612 (T1-T5, the VN ladder). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> BUMBLELYZER_ROWS = java.util.List.of(
+			bumblelyzer("bumblelyzer"   , 20541, 0),
+			bumblelyzer("bumblelyzer_t2", 20542, 1),
+			bumblelyzer("bumblelyzer_t3", 20543, 2),
+			bumblelyzer("bumblelyzer_t4", 20544, 3),
+			bumblelyzer("bumblelyzer_t5", 20545, 4));
+
+	/** The four Crystallisation Crucible rows, upstream line order :1437-1440 (T1-T4, the Heat_T ladder). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> CRYSTALLISATION_ROWS = java.util.List.of(
+			crystallisation("crystallisationcrucible"   , "steel"           , "Steel"           , 20251,  6.0F, 0),
+			crystallisation("crystallisationcrucible_t2", "invar"           , "Invar"           , 20252,  4.0F, 1),
+			crystallisation("crystallisationcrucible_t3", "titanium"        , "Titanium"        , 20253,  9.0F, 2),
+			crystallisation("crystallisationcrucible_t4", "tungsten_carbide", "Tungsten Carbide", 20254, 12.5F, 3));
+
+	/**
+	 * One Bumblelyzer row factory — the :1608 masks (item+tank in U|L with the item auto face
+	 * SIDE_LEFT and the tank auto face SIDE_TOP, out R|D with the item auto face SIDE_RIGHT,
+	 * NO tank-out key → the 127 field default, energy bottom) and RM.Bumblelyzer/EU + the
+	 * PARALLEL 64 duration-F ladder.
+	 */
+	private static GTBasicMachineBlock.MachineRow bumblelyzer(String aPath, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, VOLTAGE_WORDS[aTier][0], VOLTAGE_WORDS[aTier][1], electricTier(aTier), MACHINE_BUMBLELYZER_UNIT_KEY, aMetaId, 4.0F, aTier,
+				BUMBLELYZER_PARALLEL, false /*no NBT_PARALLEL_DURATION :1608-1612*/,
+				() -> GT6RecipeMaps.BUMBLELYZER, TD.Energy.EU, "bumblelyzer",
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B, the :151 read ORs SBIT_A*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_U|SBIT_D, the :143 read*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key → the upstream field default*/,
+				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U|SBIT_L, the :137 read*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_D, the :138 read*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)-1 /*no NBT_TANK_SIDE_AUTO_OUT key → SIDE_UNDEFINED*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier — zero new gt6:* MenuType*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
+	}
+
+	/**
+	 * One Crystallisation Crucible row factory — the :1437 masks (item+tank in L|B|U with BOTH
+	 * auto faces distinct: the item auto face SIDE_TOP, the tank auto face SIDE_LEFT; the item
+	 * out R auto RIGHT; NO tank-out key → the 127 field default — the fluids 3/0/1 no-output-
+	 * tank face; energy bottom; NO parallel keys) and RM.CrystallisationCrucible/HU over the
+	 * Heat_T material-word slot.
+	 */
+	private static GTBasicMachineBlock.MachineRow crystallisation(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, HEAT_T_LADDER.get(aTier), MACHINE_CRYSTALLISATION_UNIT_KEY, aMetaId, aHardness, aTier,
+				1, false /*no NBT_PARALLEL, no NBT_PARALLEL_DURATION :1437-1440*/,
+				() -> GT6RecipeMaps.CRYSTALLISATION_CRUCIBLE, TD.Energy.HU, "crystallisationcrucible",
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_D, the :151 read ORs SBIT_A*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_L|SBIT_B|SBIT_U, the :143 read*/,
+				(byte)127 /*no NBT_TANK_SIDE_OUT key → the upstream field default*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L|SBIT_B|SBIT_U, the :137 read*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R, the :138 read*/,
+				(byte)2 /*NBT_TANK_SIDE_AUTO_IN SIDE_LEFT*/, (byte)-1 /*no NBT_TANK_SIDE_AUTO_OUT key → SIDE_UNDEFINED*/,
+				(byte)1 /*NBT_INV_SIDE_AUTO_IN SIDE_TOP*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				null /*the menu-less carrier — zero new gt6:* MenuType*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
+	}
+
+	/** The registered Bumblelyzer blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> BUMBLELYZER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Bumblelyzer items, same keys as {@link #BUMBLELYZER_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> BUMBLELYZER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Crystallisation Crucible blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> CRYSTALLISATION_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Crystallisation Crucible items, same keys as {@link #CRYSTALLISATION_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> CRYSTALLISATION_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : BUMBLELYZER_ROWS) {
+			BUMBLELYZER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.BUMBLELYZER_BE.get(), tRow)));
+			BUMBLELYZER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.BUMBLELYZER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : CRYSTALLISATION_ROWS) {
+			CRYSTALLISATION_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.CRYSTALLISATION_BE.get(), tRow)));
+			CRYSTALLISATION_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Bumblelyzer block list in registration order (the loot/datagen walkers). */
+	public static Block[] bumblelyzerBlockArray() {
+		Block[] rBlocks = new Block[BUMBLELYZER_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : BUMBLELYZER_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The Crystallisation Crucible block list in registration order. */
+	public static Block[] crystallisationBlockArray() {
+		Block[] rBlocks = new Block[CRYSTALLISATION_BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<Block> tBlock : CRYSTALLISATION_BLOCKS_BY_PATH.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	/** The lookup for /gt6machine bumblelyzer — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block bumblelyzerBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = BUMBLELYZER_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The lookup for /gt6machine crystallisationcrucible — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block crystallisationBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = CRYSTALLISATION_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The Bumblelyzer family BET: the euFiveTierMachine factory, the five tier blocks multi-attached. */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> BUMBLELYZER_BE =
+			BLOCK_ENTITY_TYPES.register("bumblelyzer", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> euFiveTierMachine(GTMachines.BUMBLELYZER_BE.get(), aPos, aState),
+					bumblelyzerBlockArray()).build(null));
+
+	/** The Crystallisation Crucible family BET: the kineticMachine body, the four tier blocks multi-attached. */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> CRYSTALLISATION_BE =
+			BLOCK_ENTITY_TYPES.register("crystallisation_crucible", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> kineticMachine(GTMachines.CRYSTALLISATION_BE.get(), aPos, aState),
+					crystallisationBlockArray()).build(null));
+
 	private GTMachines() {}
 
 	/**

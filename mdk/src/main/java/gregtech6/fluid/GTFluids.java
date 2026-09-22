@@ -2208,7 +2208,25 @@ public final class GTFluids {
 		// (the dead-row class the GTFluids :1798 ruling cuts). The id turns the upstream
 		// "molten.<mat>" literal into the enderpearl_molten suffix form; tint = the material
 		// RGBa (200, 0, 0, MT.java:2326).
-		new ChemicalFluidSpec("redstone_molten"     , "Molten Redstone"       ,  500,  1000, 1000, 0xFFC80000, false,  5)); // molten.redstone=熔融红石 (tmp/gregtech.lang:584)
+		new ChemicalFluidSpec("redstone_molten"     , "Molten Redstone"       ,  500,  1000, 1000, 0xFFC80000, false,  5), // molten.redstone=熔融红石 (tmp/gregtech.lang:584)
+		// the crystallisation-crucible molten quintet (task p34-machines-bumblelyzer-crucible) —
+		// the :1077 createMolten walk rows the 39 boule rows reference as their molten leg
+		// (Loader_Recipes_Other.java:683-706: MT.Si/MT.Ge/MT.RedstoneAlloy/MT.NikolineAlloy/
+		// MT.Al2O3 .liquid(...) carriers; lands FIRST so the JSON rows never reference an
+		// unregistered id — the dead-row class the GTFluids :1798 ruling cuts). Ids = the
+		// sanitized internal name + the "_molten" suffix (the specOf/materialOf seam, the
+		// ancientdebris_molten form). Temperatures = the material melting points (Si/Ge the
+		// metalloid literals MT.java:987/:1025; the alloys the :398 component-weighted average
+		// — Redstone (1687+500)/2 = 1093, Nikoline (1687+1500)/2 = 1593; Alumina the
+		// .heat(2345, 3250) literal MT.java:1955); densities = the :1128-1136 formula over the
+		// live g/cm³ (Si 2.3296 → 2329, Ge 5.323 → 5323, the alloys the stealStatsElement(Si)
+		// 2.3296 → 2329, Alumina the uumMcfg 2×2.7 + 3×0.001429 → 5404); tints = the material
+		// RGBa; luminosity 10 = the createMolten literal.
+		new ChemicalFluidSpec("silicon_molten"      , "Molten Silicon"        , 1687,  2329, 1000, 0xFF3C3C50, false, 10), // molten.silicon=熔融硅 (tmp/gregtech.lang:593) — MT.Si mp 1687 (MT.java:987)
+		new ChemicalFluidSpec("germanium_molten"    , "Molten Germanium"      , 1211,  5323, 1000, 0xFFD4D4D4, false, 10), // molten.germanium=熔融锗 (tmp/gregtech.lang:503) — MT.Ge mp 1211, 1000×5.323 (MT.java:1025)
+		new ChemicalFluidSpec("redstonealloy_molten", "Molten Redstone Alloy" , 1093,  2329, 1000, 0xFF8C3232, false, 10), // molten.redstonealloy=熔融红石合金 (tmp/gregtech.lang:585) — (Si 1687 + Redstone 500)/2 (MT.java:2492)
+		new ChemicalFluidSpec("nikolinealloy_molten", "Molten Nikoline Alloy" , 1593,  2329, 1000, 0xFF325A8C, false, 10), // molten.nikolinealloy=熔融蓝石合金 (tmp/gregtech.lang:566) — (Si 1687 + Nikolite 1500)/2 (MT.java:2493)
+		new ChemicalFluidSpec("alumina_molten"      , "Molten Alumina"        , 2345,  5404, 1000, 0xFF78C3EB, false, 10)); // molten.alumina=熔融氧化铝 (tmp/gregtech.lang:429) — MT.Al2O3 internal "Alumina", the heat(2345) literal (MT.java:1955)
 
 	/** The chemical row for a gt6 id path, or null (the {@link #engineSpec} lookup shape). */
 	public static ChemicalFluidSpec chemicalSpec(String aName) {
@@ -2336,7 +2354,9 @@ public final class GTFluids {
 			chemicalFluid("boron11_molten"), chemicalFluid("carbon13_molten"), chemicalFluid("ancientdebris_molten"),
 			chemicalFluid("carbon_molten"), chemicalFluid("lithium_molten"), chemicalFluid("tungsten_molten"),
 			chemicalFluid("adamantium_molten"), // task p31-fusion — the fusion-row closure quartet
-			chemicalFluid("redstone_molten")); // task p32-qu-scanner-replicator — the replicator redstone carrier (:194)
+			chemicalFluid("redstone_molten"), // task p32-qu-scanner-replicator — the replicator redstone carrier (:194)
+			chemicalFluid("silicon_molten"), chemicalFluid("germanium_molten"), // task p34-machines-bumblelyzer-crucible — the crystallisation molten quintet
+			chemicalFluid("redstonealloy_molten"), chemicalFluid("nikolinealloy_molten"), chemicalFluid("alumina_molten"));
 
 	/**
 	 * The source-fluid handle for a chemical-family row name, or null when the name is not a

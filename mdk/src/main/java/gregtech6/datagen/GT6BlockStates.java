@@ -149,6 +149,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addHuTuFamilies(); // task p29-w2-hu-tu-piggyback — the seven hu-tu families (family textures, the addCanner shape)
         addHeatSmelterFamilies(); // task p29-w3-heat-smelter — the Smelter ladder + the Melter single (family textures, the addCanner shape)
         addRoastingFamilies(); // task p29-w4-eu-bridge — the Roasting Oven ladder (the "roaster" family textures)
+        addP34MachineFamilies(); // task p34-machines-bumblelyzer-crucible — the Bumblelyzer 5-ladder + the Crystallisation Crucible 4-ladder (family textures, the addCanner shape)
         addElectricBridges(); // task p29-w4-eu-bridge — the three EU-bridge converter families (the borrowed upstream colored front/side pairs)
         addLaserFamilies(); // task p32-qu-laser-domain — the CO2 Laser + Laser Absorber families (the borrowed upstream colored front/side pairs)
         addMagicAbsorber(); // task p32-magic-absorber — the Magic Field Absorber single (the six-way facing cube)
@@ -1081,6 +1082,23 @@ public final class GT6BlockStates extends BlockStateProvider {
     private void addRoastingFamilies() {
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.ROASTING_ROWS) {
             addMachine(GTMachines.ROASTING_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
+     * Task p34-machines-bumblelyzer-crucible — the two machine families (the Bumblelyzer
+     * EU 5-ladder :1608-1612 + the Crystallisation Crucible HU 4-ladder :1437-1440, every
+     * row NBT_TEXTURE riding its family token): the addHeatSmelterFamilies shape verbatim —
+     * model names per path, the FRONT TEXTURES stay on the family sets (the borrowed
+     * upstream basicmachines/{bumblelyzer,crystallisationcrucible} fronts — the
+     * borrow-or-declare rule, zero hand-drawn).
+     */
+    private void addP34MachineFamilies() {
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.BUMBLELYZER_ROWS) {
+            addMachine(GTMachines.BUMBLELYZER_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+        for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CRYSTALLISATION_ROWS) {
+            addMachine(GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
         }
     }
 

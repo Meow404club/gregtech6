@@ -212,7 +212,8 @@ public class GT6RecipeMaps {
 	 * recipe loaders' static initializers are the only intended callers, keeping this off
 	 * the public API surface.
 	 */
-	static void registerGenerationResetHook(Runnable aHook) {
+	/** Public since p34-machines-bumblelyzer-crucible: the {@code recipes.maps} subclasses join the generation too (GT6RecipeMapBumblelyzer's display stock). */
+	public static void registerGenerationResetHook(Runnable aHook) {
 		sGenerationResetHooks.addIfAbsent(aHook);
 	}
 
@@ -850,6 +851,29 @@ public class GT6RecipeMaps {
 	 * TileEntityFusionReactor class doc; the port has no NEI face, the data runs the gate).
 	 */
 	public static volatile RecipeMap FUSION;
+
+	/**
+	 * RM.java:73 — the Crystallisation Crucible map (task p34-machines-bumblelyzer-crucible):
+	 * items 1/1/1, fluids 3/0/1, MIN 1, AMP 1. Base-{@link RecipeMap} (RM.CrystallisationCrucible
+	 * IS a plain RecipeMap upstream). The 39 static rows (Loader_Recipes_Other.java:683-706, the
+	 * six noble gases × the Si/Ge/RedstoneAlloy/NikolineAlloy boule quartet + the Al2O3 sapphire
+	 * walk) pour via the tier-b JSON seam (key "crystallisationcrucible", {@code
+	 * data/gt6/recipe_maps/crystallisationcrucible.json}); the live findRecipe consumer is the
+	 * Crystallisation Crucible 4-ladder (20251-20254, the same card, the HU Heat_T rows).
+	 */
+	public static volatile RecipeMap CRYSTALLISATION_CRUCIBLE;
+
+	/**
+	 * RM.java:107 — the Bumblelyzer map (task p34-machines-bumblelyzer-crucible): items 2/2/0,
+	 * fluids 1/0/0, MIN 2, AMP 1. The {@link gregtech6.recipes.maps.GT6RecipeMapBumblelyzer}
+	 * subclass (RM.Bumblelyzer IS a RecipeMapBumblelyzer upstream) — the dynamic findRecipe scan
+	 * arm ports IN FULL (the Canner R1 ruling's second consumer); the upstream addFakeRecipe
+	 * display stock rides the subclass's {@code sFakeRecipes} list (the :293 "findRecipe wont
+	 * find fake Recipes" face), built by {@code GT6Bumbles.addScanFakeRecipes}. NO JSON key rows
+	 * — a bumblelyzer.json file would pour REAL rows the loader cannot mark fake (the v1
+	 * boundary), so the key is whitelist-only and empty on purpose.
+	 */
+	public static volatile gregtech6.recipes.maps.GT6RecipeMapBumblelyzer BUMBLELYZER;
 
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
@@ -1550,6 +1574,29 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 2, 6, 0,
 				/*MIN=*/ 2,
 				/*AMP=*/ 1);
+		// the P34 machine-four tail (task p34-machines-bumblelyzer-crucible, the Bumblelyzer +
+		// CrystallisationCrucible two of the four) — upstream RM.java declaration order
+		// (CrystallisationCrucible :73, Bumblelyzer :107); both DECLARED-empty at declaration,
+		// the content is the consumer arms' (the JSON pour / the dynamic findRecipe walk)
+		// RM.java:73 — items 1/1/1, fluids 3/0/1, MIN 1, AMP 1
+		CRYSTALLISATION_CRUCIBLE = new RecipeMap(new HashSet<>(),
+				"gt.recipe.crystallisationcrucible", "Crystallisation Crucible", null,
+				0, 1,
+				"gt6:textures/gui/machines/crystallisationcrucible",
+				/*IN-OUT-MIN-ITEM=*/ 1, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 3, 0, 1,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
+		// RM.java:107 — items 2/2/0, fluids 1/0/0, MIN 2, AMP 1 (the RecipeMapBumblelyzer
+		// subclass — the dynamic scan arm lives on the class)
+		BUMBLELYZER = new gregtech6.recipes.maps.GT6RecipeMapBumblelyzer(new HashSet<>(),
+				"gt.recipe.bumblelyzer", "Bumblelyzer", null,
+				0, 1,
+				"gt6:textures/gui/machines/bumblelyzer",
+				/*IN-OUT-MIN-ITEM=*/ 2, 2, 0,
+				/*IN-OUT-MIN-FLUID=*/ 1, 0, 0,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -1630,6 +1677,8 @@ public class GT6RecipeMaps {
 		MASSFAB = null;
 		REPLICATOR = null;
 		FUSION = null;
+		CRYSTALLISATION_CRUCIBLE = null;
+		BUMBLELYZER = null;
 		RecipeMap.reset();
 		sPhase = Phase.OPEN; // the phase joins the generation — a fresh generation always registers (task p32-rm-phase-gate)
 		for (Runnable tHook : sGenerationResetHooks) {

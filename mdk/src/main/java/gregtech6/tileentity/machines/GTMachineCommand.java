@@ -305,7 +305,20 @@ public final class GTMachineCommand {
 		.then(machine("roasting_oven", GTMachines.ROASTING_BLOCKS_BY_PATH.get("roasting_oven"), GTMachineCommand::firstCoalDust))
 		.then(machine("roasting_oven_t2", GTMachines.ROASTING_BLOCKS_BY_PATH.get("roasting_oven_t2"), GTMachineCommand::firstCoalDust))
 		.then(machine("roasting_oven_t3", GTMachines.ROASTING_BLOCKS_BY_PATH.get("roasting_oven_t3"), GTMachineCommand::firstCoalDust))
-		.then(machine("roasting_oven_t4", GTMachines.ROASTING_BLOCKS_BY_PATH.get("roasting_oven_t4"), GTMachineCommand::firstCoalDust));
+		.then(machine("roasting_oven_t4", GTMachines.ROASTING_BLOCKS_BY_PATH.get("roasting_oven_t4"), GTMachineCommand::firstCoalDust))
+		// task p34-machines-bumblelyzer-crucible: the Bumblelyzer 5-tier ladder — the feed
+		// is the WILD DRONE (the unscanned base face, FACES index 0; the scan arm's item leg),
+		// and the Crystallisation Crucible 4-ladder — the feed is the silicon dust of the
+		// :683 boule rows (the molten legs ride the fluid fill face, the boule the output slots)
+		.then(machine("bumblelyzer", GTMachines.BUMBLELYZER_BLOCKS_BY_PATH.get("bumblelyzer"), GTMachineCommand::firstWildDrone))
+		.then(machine("bumblelyzer_t2", GTMachines.BUMBLELYZER_BLOCKS_BY_PATH.get("bumblelyzer_t2"), GTMachineCommand::firstWildDrone))
+		.then(machine("bumblelyzer_t3", GTMachines.BUMBLELYZER_BLOCKS_BY_PATH.get("bumblelyzer_t3"), GTMachineCommand::firstWildDrone))
+		.then(machine("bumblelyzer_t4", GTMachines.BUMBLELYZER_BLOCKS_BY_PATH.get("bumblelyzer_t4"), GTMachineCommand::firstWildDrone))
+		.then(machine("bumblelyzer_t5", GTMachines.BUMBLELYZER_BLOCKS_BY_PATH.get("bumblelyzer_t5"), GTMachineCommand::firstWildDrone))
+		.then(machine("crystallisationcrucible", GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get("crystallisationcrucible"), GTMachineCommand::firstSiliconDust))
+		.then(machine("crystallisationcrucible_t2", GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get("crystallisationcrucible_t2"), GTMachineCommand::firstSiliconDust))
+		.then(machine("crystallisationcrucible_t3", GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get("crystallisationcrucible_t3"), GTMachineCommand::firstSiliconDust))
+		.then(machine("crystallisationcrucible_t4", GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get("crystallisationcrucible_t4"), GTMachineCommand::firstSiliconDust));
 		event.getDispatcher().register(tMachine);
 		event.getDispatcher().register(bridgeArm());
 		LOGGER.info("Registered GT6 bridge acceptance command /gt6bridge (heater|engine|motor x stat|reset, the EU->HU/KU/RU converter live face)");
@@ -315,8 +328,14 @@ public final class GTMachineCommand {
 		// and 9 + 2 + 3 family BETs — the press/extruder join = task p26-w1-press-extruder-
 		// molds, the roll-ladder join = task p29-w1-kinetic-roll-ladder; the RU RollingMill
 		// ladder shares the p28 ULV rung's rollingmill BET, so it adds blocks but no BET).
-		LOGGER.info("GT6 machine ladder registered: 125 blocks / 34 family BETs (T1-T4 validBlocks multi-attach), tiers "
+		LOGGER.info("GT6 machine ladder registered: 134 blocks / 36 family BETs (T1-T4 validBlocks multi-attach), tiers "
 			+ java.util.Arrays.deepToString(GTMachines.TIER_INPUTS) + " crusher parallel " + java.util.Arrays.toString(GTMachines.CRUSHER_PARALLEL));
+		// the p34 registration smoke line (the runServer gate asserts it): the Bumblelyzer
+		// 5-ladder + the Crystallisation Crucible 4-ladder resolve — the :1608/:1437 row
+		// shapes (EU bottom-face energy + parallel 64 / HU bottom-face energy, no parallel).
+		LOGGER.info("GT6 p34 machine families registered: 9 blocks / 2 family BETs (bumblelyzer EU 5-ladder 20541-20545 + "
+			+ "crystallisationcrucible HU 4-ladder 20251-20254), RM.Bumblelyzer/RM.CrystallisationCrucible "
+			+ "(gt.recipe.bumblelyzer/gt.recipe.crystallisationcrucible) row maps, bumblelyzer parallel " + GTMachines.BUMBLELYZER_PARALLEL);
 		// the p29-w2-hu-tu registration smoke line (the runServer gate asserts it): the
 		// seven family BETs resolve — the crackers/loom TIER_INPUTS ladders + the TU four
 		// with the {1, 1, 16} window, the six-face energy mask 63 and NO_CONSTANT_POWER.
@@ -376,7 +395,27 @@ public final class GTMachineCommand {
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(context -> input(context.getSource(), aFeed,
 							com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"),
-							BlockPosArgument.getLoadedBlockPos(context, "pos"))))));
+							BlockPosArgument.getLoadedBlockPos(context, "pos")))))
+			// task p34-machines-bumblelyzer-crucible — the item override arm: the multi-input
+			// rows' SECOND leg (the scan recipe's paper tiny) needs a non-default feed; the BE
+			// carries no vanilla Container face, so the /item replace write-point is
+			// structurally unavailable here ("Target position is not a container"). The
+			// literal-keyed form keeps the legacy count/pos parses unambiguous (the word arg
+			// would swallow the pos's first int, and brigadier does not backtrack past an
+			// executed-parse sibling).
+			.then(Commands.literal("item")
+				.then(Commands.argument("id", net.minecraft.commands.arguments.ResourceLocationArgument.id())
+					.executes(context -> itemInput(context.getSource(),
+							net.minecraft.commands.arguments.ResourceLocationArgument.getId(context, "id"), DEFAULT_INPUT_COUNT, null))
+					.then(Commands.argument("count", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 64))
+						.executes(context -> itemInput(context.getSource(),
+								net.minecraft.commands.arguments.ResourceLocationArgument.getId(context, "id"),
+								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"), null))
+						.then(Commands.argument("pos", BlockPosArgument.blockPos())
+							.executes(context -> itemInput(context.getSource(),
+									net.minecraft.commands.arguments.ResourceLocationArgument.getId(context, "id"),
+									com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"),
+									BlockPosArgument.getLoadedBlockPos(context, "pos"))))))));
 		tMachine.then(Commands.literal("run")
 			.then(Commands.argument("ticks", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 20000))
 				.executes(context -> run(context.getSource(),
@@ -599,6 +638,17 @@ public final class GTMachineCommand {
 	private static net.minecraft.world.item.Item firstPlatinumDust() {
 		RegistryObject<Item> tDust = gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.dust, gregapi.data.MT.Pt);
 		return tDust != null ? tDust.get() : net.minecraft.world.item.Items.COAL; // the firstCoalDust fallback shape — the merge chain pins the real dust
+	}
+
+	/** The p34 Bumblelyzer feed: the wild drone (the unscanned base face, {@code GT6Bumbles.FACES} index 0). */
+	private static net.minecraft.world.item.Item firstWildDrone() {
+		return gregtech6.items.bees.GT6Bumbles.BEE_ITEMS.get(0).get();
+	}
+
+	/** The p34 Crystallisation Crucible feed: the silicon dust (the :683 boule row's item input). */
+	private static net.minecraft.world.item.Item firstSiliconDust() {
+		RegistryObject<Item> tDust = gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.dust, gregapi.data.MT.Si);
+		return tDust != null ? tDust.get() : net.minecraft.world.item.Items.COAL; // the firstCoalDust fallback shape — the chain pins the real dust
 	}
 
 	/**
@@ -901,6 +951,42 @@ public final class GTMachineCommand {
 		source.sendSuccess(() -> Component.literal("GT6 " + tMachine.getTileEntityName() + " input: " + (tFeed.getCount() - tLeftover.getCount()) + "x "
 				+ tFeed.getItem() + " into slot " + TileEntityBasicMachine.SLOT_INPUT), false);
 		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The item-override arm (task p34-machines-bumblelyzer-crucible): pushes the named
+	 * {@code <namespace>:<path>} (or bare path → minecraft) item into the input slot —
+	 * the multi-input rows' second leg face. Unknown ids fail the command.
+	 */
+	private static int itemInput(CommandSourceStack source, net.minecraft.resources.ResourceLocation aId, int count, BlockPos pos) {
+		TileEntityBasicMachine tMachine = machineAt(source, pos);
+		if (tMachine == null) {
+			source.sendFailure(Component.literal("No TileEntityBasicMachine at " + (pos != null ? pos.toShortString() : "the source position")));
+			return 0;
+		}
+		Item tItem = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(aId);
+		if (tItem == null || tItem == net.minecraft.world.item.Items.AIR) {
+			source.sendFailure(Component.literal("Unknown item id: " + aId));
+			return 0;
+		}
+		// the multi-leg walk: SLOT_INPUT first, then the family's remaining input slots —
+		// SLOT_INPUT already holds the default feed in the two-leg rows (the scan recipe's
+		// bee + paper pair), so the second leg lands in the first slot that accepts it
+		ItemStack tFeed = new ItemStack(tItem, count);
+		int tInputs = tMachine.mRecipes == null ? 1 : tMachine.mRecipes.mInputItemsCount;
+		for (int tSlot = TileEntityBasicMachine.SLOT_INPUT; tSlot < TileEntityBasicMachine.SLOT_INPUT + tInputs; tSlot++) {
+			ItemStack tLeftover = tMachine.getInventory().insertItem(tSlot, tFeed, false);
+			if (tLeftover.isEmpty()) {
+				final int tLanded = tSlot, tCount = count;
+				source.sendSuccess(() -> Component.literal("GT6 " + tMachine.getTileEntityName() + " input: " + tCount + "x "
+						+ tItem + " into slot " + tLanded), false);
+				return Command.SINGLE_SUCCESS;
+			}
+			tFeed = tLeftover; // a partial accept continues into the next slot
+			count = tLeftover.getCount();
+		}
+		source.sendFailure(Component.literal("Input slots rejected " + tFeed.getCount() + " of the feed (blocked?)"));
+		return 0;
 	}
 
 	/** Drives the dispatcher and samples the three ContainerData states; asserts the acceptance trio + an output. */

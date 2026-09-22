@@ -2,10 +2,10 @@
  * Offline tests for task p8-prefixblock-render: the model-merging census, the SET_NONE
  * fallback rule, and the borrowed-PNG coverage — everything checkable without the MC
  * registries (the datagen JVM gates the generated-JSON counts themselves: runData first
- * run written>0 / second run written:0, and the loot-table file count == 3773).
+ * run written>0 / second run written:0, and the loot-table file count == 3777).
  *
  * <p>Pins measured 2026-08-31 over the card-A census walk
- * ({@link GTMaterialBlocks#registrationOrder()}, 3773 pairs): the per-prefix live
+ * ({@link GTMaterialBlocks#registrationOrder()}, 3777 pairs): the per-prefix live
  * texture-set lists (upstream TextureSet.java:188-228 names, resolved through
  * {@code material.mTextureSetsBlock}, OreDictMaterial.java:252 / MT.java:210-215) sum to
  * 175 shared (prefix x set) block models — NOT one model per material pair (the anti-bloat
@@ -37,7 +37,7 @@ import gregtech6.registry.GTMaterialItems;
 class GT6PrefixBlockRenderDatagenTest {
 
     /** The card-A census yardstick (GTMaterialBlocksRegistrationTest, re-pinned here for the render card). */
-    private static final int PINNED_TOTAL = 3773;
+    private static final int PINNED_TOTAL = 3777;
 
     /**
      * The live BLOCK texture-set list per storage prefix, measured 2026-08-31 (probe over the
@@ -63,7 +63,10 @@ class GT6PrefixBlockRenderDatagenTest {
         PINNED_LIVE_SETS.put("blockPlate", sets("BRICK", "COPPER", "DIAMOND", "DULL", "FIERY", "FINE", "FOOD",
                 "LAPIS", "LEAF", "LIGNITE", "MAGNETIC", "METALLIC", "POWDER", "QUARTZ", "RAD", "REDSTONE", "ROUGH",
                 "RUBBER", "RUBY", "SHINY", "SPACE", "STONE", "WOOD"));
-        PINNED_LIVE_SETS.put("blockPlateGem", sets("CUBE_SHINY", "DIAMOND", "DULL", "EMERALD", "FINE", "FLINT",
+        // the COPPER rung joined at task p34-machines-bumblelyzer-crucible — the bouleGt
+        // force-table's plateGem cascade face (Si/Ge/RedstoneAlloy/NikolineAlloy carry
+        // SET_COPPER; the Crystalline Silicon/… Alloy plates' block carrier)
+        PINNED_LIVE_SETS.put("blockPlateGem", sets("COPPER", "CUBE_SHINY", "DIAMOND", "DULL", "EMERALD", "FINE", "FLINT",
                 "GEM_HORIZONTAL", "GEM_VERTICAL", "GLASS", "HEX", "LAPIS", "LIGNITE", "METALLIC", "NETHERSTAR", "OPAL",
                 "PRISMARINE", "QUARTZ", "REDSTONE", "RUBY", "SHARDS", "SHINY"));
         PINNED_LIVE_SETS.put("blockSolid", sets("BRICK", "COPPER", "CUBE", "DIAMOND", "DULL", "FIERY", "FINE", "FOOD",
@@ -119,14 +122,14 @@ class GT6PrefixBlockRenderDatagenTest {
             tTotalModels += tLive.size();
             tUnion.addAll(tLive);
         }
-        assertEquals(175, tTotalModels, "shared (prefix x set) block models = the anti-bloat model count");
+        assertEquals(176, tTotalModels, "shared (prefix x set) block models = the anti-bloat model count");
         assertEquals(37, tUnion.size(), "distinct texture-set names across the seven prefixes");
     }
 
     /**
      * The SET_NONE fallback rule: an empty/blank mTextureSetsBlock resolves to "none"
      * (upstream TextureSet.java:188 SET_NONE — never a blind dereference), and over the
-     * registered 3773 pairs it fires ZERO times (measured 2026-08-31) — every pair borrows
+     * registered 3777 pairs it fires ZERO times (measured 2026-08-31) — every pair borrows
      * its real set texture.
      */
     @Test
@@ -144,7 +147,7 @@ class GT6PrefixBlockRenderDatagenTest {
 
     /**
      * Every registered pair's texture path exists among the borrowed PNGs — the borrow
-     * intersection is complete for ALL 3773 blocks, not just the 175 distinct models, and
+     * intersection is complete for ALL 3777 blocks, not just the 175 distinct models, and
      * every path satisfies the 1.20.1 ResourceLocation charset (the declared lowercase
      * deviation from the upstream CamelCase file names).
      */
@@ -185,21 +188,21 @@ class GT6PrefixBlockRenderDatagenTest {
                     .filter(p -> tReferenced.contains(p.getParent().getFileName() + "/" + p.getFileName()))
                     .count();
         }
-        assertEquals(175, tCount, "one borrowed PNG per referenced (prefix x set) model");
+        assertEquals(176, tCount, "one borrowed PNG per referenced (prefix x set) model");
     }
 
     /**
      * The loot 1:1 rule: the provider's generate() maps dropSelf over
      * {@link GT6LootTables#lootBlocks()} = the block array = the census walk, so the table
-     * count is the block count (3773). Offline the registries never fire, so this pins the
-     * enumeration side of the equality (3773 pairs); the generated-file side is gated by
-     * runData (loot_tables/blocks/*.json == 3773, written>0 then written:0).
+     * count is the block count (3777). Offline the registries never fire, so this pins the
+     * enumeration side of the equality (3777 pairs); the generated-file side is gated by
+     * runData (loot_tables/blocks/*.json == 3777, written>0 then written:0).
      */
     @Test
     void lootTableCountEqualsBlockCountByConstruction() {
         assertEquals(PINNED_TOTAL, GTMaterialBlocks.registrationOrder().size(), "the census walk the blocks and tables both derive from");
         assertEquals(GTMaterialBlocks.blockArray().length, GT6LootTables.lootBlocks().size(),
-                "lootBlocks is a snapshot of the block array (both empty offline, both 3773 in the datagen JVM)");
+                "lootBlocks is a snapshot of the block array (both empty offline, both 3777 in the datagen JVM)");
         assertEquals("block_ingot_coal", GTMaterialItems.itemIdOf(OP.blockIngot, MT.Coal),
                 "the vanilla default table location: gt6:blocks/block_ingot_coal (Block.getLootTable default, zero block code)");
     }

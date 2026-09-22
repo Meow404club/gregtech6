@@ -1269,6 +1269,12 @@ public class GT6EnUs extends LanguageProvider {
         // contract)
         add(gregtech6.registry.GTMachines.MACHINE_SMELTER_UNIT_KEY, "Smelter (%s)");
         add(gregtech6.registry.GTMachines.MELTER_DISPLAY_KEY, "Melter");
+        // task p34-machines-bumblelyzer-crucible — the two machine families: the Bumblelyzer
+        // rides the voltage-word slot (the upstream name column "Bumblelyzer ("+VN[tier]+")"
+        // :1608-1612); the Crystallisation Crucible the Heat_T material-word slot (the upstream
+        // name column "Crystallisation Crucible ("+aMat+")" :1437-1440)
+        add(gregtech6.registry.GTMachines.MACHINE_BUMBLELYZER_UNIT_KEY, "Bumblelyzer (%s)");
+        add(gregtech6.registry.GTMachines.MACHINE_CRYSTALLISATION_UNIT_KEY, "Crystallisation Crucible (%s)");
         // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
         // Loader_MultiTileEntities.java:136 name column)
         add("block.gt6.advanced_crafting_table", "Advanced Crafting Table");

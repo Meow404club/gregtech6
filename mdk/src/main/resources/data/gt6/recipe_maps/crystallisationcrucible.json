@@ -1,0 +1,3569 @@
+{
+  "comment": "task p34-machines-bumblelyzer-crucible — the RM.CrystallisationCrucible row stock (Loader_Recipes_Other.java:683-706 verbatim): the six-noble-gas loop x the Si/Ge/RedstoneAlloy/NikolineAlloy boule quartet (:683-690) + the Al2O3->Sapphire pair (:692-693) + the coloured-sapphire dopant walk (:695-706). Fluid amounts are the upstream material-amount legs resolved to mB: the gases ride the createGas 1000 mB/unit default (gas(U) = 1000 L), the molten legs the createMolten L=144 mB/unit convention (35*U9 = 35/9 x 144 = 560; 29*U9 = 464; 10*U3 = 480; full-unit legs x9/x3 scaled). The dopant-dust material AMOUNT faces (2*U3 vs 2*U) are the JSON-loader v1 boundary (item-id inputs only) — the row pairs stay distinguishable by their gas/molten legs, the upstream first-match-wins quirks inherit verbatim. Outputs are the bouleGt items the GTMaterialItems force-table lands (upstream OP.java:616/:619/:624).",
+  "recipes": [
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the helium leg: dust_Si U9 + Helium 1000 L + molten Si 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:silicon_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_silicon",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the helium leg: dust_Si full + Helium 9000 L + molten Si 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:silicon_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_silicon",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the helium leg: dust_Ge U9 + Helium 1000 L + molten Ge 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_germanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_germanium",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the helium leg: dust_Ge full + Helium 9000 L + molten Ge 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_germanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_germanium",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the helium leg: dust_RedstoneAlloy U9 + Helium 1000 L + molten RedstoneAlloy 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:redstonealloy_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the helium leg: dust_RedstoneAlloy full + Helium 9000 L + molten RedstoneAlloy 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:redstonealloy_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_redstone_alloy",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the helium leg: dust_NikolineAlloy U9 + Helium 1000 L + molten NikolineAlloy 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:nikolinealloy_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the helium leg: dust_NikolineAlloy full + Helium 9000 L + molten NikolineAlloy 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:nikolinealloy_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_nikoline_alloy",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:692 form — the helium leg: dust_alumina U9 + Helium 1000 L + molten alumina 464 L -> sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_alumina",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 464
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:693 form — the helium leg: dust_alumina full + Helium 9000 L + molten alumina 4176 L -> sapphire boule x9 (256 EUt, 156000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_alumina",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 4176
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_sapphire",
+          "count": 9
+        }
+      ],
+      "duration": 156000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the helium leg: dust_magnesium 2*U3 + Helium 1000 L + molten alumina 480 L -> green_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_green_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the helium leg: dust_magnesium 2*U + Helium 3000 L + molten alumina 1440 L -> green_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_green_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the helium leg: dust_titanium 2*U3 + Helium 1000 L + molten alumina 480 L -> yellow_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_titanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_yellow_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the helium leg: dust_titanium 2*U + Helium 3000 L + molten alumina 1440 L -> yellow_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_titanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_yellow_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the helium leg: dust_copper 2*U3 + Helium 1000 L + molten alumina 480 L -> orange_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_copper",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_orange_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the helium leg: dust_copper 2*U + Helium 3000 L + molten alumina 1440 L -> orange_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_copper",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_orange_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the helium leg: dust_iron 2*U3 + Helium 1000 L + molten alumina 480 L -> blue_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_iron",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_blue_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the helium leg: dust_iron 2*U + Helium 3000 L + molten alumina 1440 L -> blue_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_iron",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_blue_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the helium leg: dust_vanadium 2*U3 + Helium 1000 L + molten alumina 480 L -> purple_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_vanadium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_purple_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the helium leg: dust_vanadium 2*U + Helium 3000 L + molten alumina 1440 L -> purple_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_vanadium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_purple_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the helium leg: dust_chromium 2*U3 + Helium 1000 L + molten alumina 480 L -> ruby boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_chromium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_ruby",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the helium leg: dust_chromium 2*U + Helium 3000 L + molten alumina 1440 L -> ruby boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_chromium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_ruby",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the neon leg: dust_Si U9 + Neon 1000 L + molten Si 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:silicon_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_silicon",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the neon leg: dust_Si full + Neon 9000 L + molten Si 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:silicon_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_silicon",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the neon leg: dust_Ge U9 + Neon 1000 L + molten Ge 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_germanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_germanium",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the neon leg: dust_Ge full + Neon 9000 L + molten Ge 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_germanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_germanium",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the neon leg: dust_RedstoneAlloy U9 + Neon 1000 L + molten RedstoneAlloy 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:redstonealloy_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the neon leg: dust_RedstoneAlloy full + Neon 9000 L + molten RedstoneAlloy 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:redstonealloy_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_redstone_alloy",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the neon leg: dust_NikolineAlloy U9 + Neon 1000 L + molten NikolineAlloy 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:nikolinealloy_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the neon leg: dust_NikolineAlloy full + Neon 9000 L + molten NikolineAlloy 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:nikolinealloy_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_nikoline_alloy",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:692 form — the neon leg: dust_alumina U9 + Neon 1000 L + molten alumina 464 L -> sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_alumina",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 464
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:693 form — the neon leg: dust_alumina full + Neon 9000 L + molten alumina 4176 L -> sapphire boule x9 (256 EUt, 156000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_alumina",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 4176
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_sapphire",
+          "count": 9
+        }
+      ],
+      "duration": 156000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the neon leg: dust_magnesium 2*U3 + Neon 1000 L + molten alumina 480 L -> green_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_green_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the neon leg: dust_magnesium 2*U + Neon 3000 L + molten alumina 1440 L -> green_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_green_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the neon leg: dust_titanium 2*U3 + Neon 1000 L + molten alumina 480 L -> yellow_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_titanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_yellow_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the neon leg: dust_titanium 2*U + Neon 3000 L + molten alumina 1440 L -> yellow_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_titanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_yellow_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the neon leg: dust_copper 2*U3 + Neon 1000 L + molten alumina 480 L -> orange_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_copper",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_orange_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the neon leg: dust_copper 2*U + Neon 3000 L + molten alumina 1440 L -> orange_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_copper",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_orange_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the neon leg: dust_iron 2*U3 + Neon 1000 L + molten alumina 480 L -> blue_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_iron",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_blue_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the neon leg: dust_iron 2*U + Neon 3000 L + molten alumina 1440 L -> blue_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_iron",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_blue_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the neon leg: dust_vanadium 2*U3 + Neon 1000 L + molten alumina 480 L -> purple_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_vanadium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_purple_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the neon leg: dust_vanadium 2*U + Neon 3000 L + molten alumina 1440 L -> purple_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_vanadium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_purple_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the neon leg: dust_chromium 2*U3 + Neon 1000 L + molten alumina 480 L -> ruby boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_chromium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_ruby",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the neon leg: dust_chromium 2*U + Neon 3000 L + molten alumina 1440 L -> ruby boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_chromium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:neon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_ruby",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the argon leg: dust_Si U9 + Argon 1000 L + molten Si 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:silicon_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_silicon",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the argon leg: dust_Si full + Argon 9000 L + molten Si 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:silicon_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_silicon",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the argon leg: dust_Ge U9 + Argon 1000 L + molten Ge 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_germanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_germanium",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the argon leg: dust_Ge full + Argon 9000 L + molten Ge 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_germanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_germanium",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the argon leg: dust_RedstoneAlloy U9 + Argon 1000 L + molten RedstoneAlloy 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:redstonealloy_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the argon leg: dust_RedstoneAlloy full + Argon 9000 L + molten RedstoneAlloy 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:redstonealloy_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_redstone_alloy",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the argon leg: dust_NikolineAlloy U9 + Argon 1000 L + molten NikolineAlloy 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:nikolinealloy_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the argon leg: dust_NikolineAlloy full + Argon 9000 L + molten NikolineAlloy 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:nikolinealloy_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_nikoline_alloy",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:692 form — the argon leg: dust_alumina U9 + Argon 1000 L + molten alumina 464 L -> sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_alumina",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 464
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:693 form — the argon leg: dust_alumina full + Argon 9000 L + molten alumina 4176 L -> sapphire boule x9 (256 EUt, 156000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_alumina",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 4176
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_sapphire",
+          "count": 9
+        }
+      ],
+      "duration": 156000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the argon leg: dust_magnesium 2*U3 + Argon 1000 L + molten alumina 480 L -> green_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_green_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the argon leg: dust_magnesium 2*U + Argon 3000 L + molten alumina 1440 L -> green_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_green_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the argon leg: dust_titanium 2*U3 + Argon 1000 L + molten alumina 480 L -> yellow_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_titanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_yellow_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the argon leg: dust_titanium 2*U + Argon 3000 L + molten alumina 1440 L -> yellow_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_titanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_yellow_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the argon leg: dust_copper 2*U3 + Argon 1000 L + molten alumina 480 L -> orange_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_copper",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_orange_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the argon leg: dust_copper 2*U + Argon 3000 L + molten alumina 1440 L -> orange_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_copper",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_orange_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the argon leg: dust_iron 2*U3 + Argon 1000 L + molten alumina 480 L -> blue_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_iron",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_blue_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the argon leg: dust_iron 2*U + Argon 3000 L + molten alumina 1440 L -> blue_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_iron",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_blue_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the argon leg: dust_vanadium 2*U3 + Argon 1000 L + molten alumina 480 L -> purple_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_vanadium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_purple_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the argon leg: dust_vanadium 2*U + Argon 3000 L + molten alumina 1440 L -> purple_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_vanadium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_purple_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the argon leg: dust_chromium 2*U3 + Argon 1000 L + molten alumina 480 L -> ruby boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_chromium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_ruby",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the argon leg: dust_chromium 2*U + Argon 3000 L + molten alumina 1440 L -> ruby boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_chromium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:argon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_ruby",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the krypton leg: dust_Si U9 + Krypton 1000 L + molten Si 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:silicon_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_silicon",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the krypton leg: dust_Si full + Krypton 9000 L + molten Si 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:silicon_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_silicon",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the krypton leg: dust_Ge U9 + Krypton 1000 L + molten Ge 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_germanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_germanium",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the krypton leg: dust_Ge full + Krypton 9000 L + molten Ge 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_germanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_germanium",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the krypton leg: dust_RedstoneAlloy U9 + Krypton 1000 L + molten RedstoneAlloy 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:redstonealloy_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the krypton leg: dust_RedstoneAlloy full + Krypton 9000 L + molten RedstoneAlloy 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:redstonealloy_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_redstone_alloy",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the krypton leg: dust_NikolineAlloy U9 + Krypton 1000 L + molten NikolineAlloy 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:nikolinealloy_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the krypton leg: dust_NikolineAlloy full + Krypton 9000 L + molten NikolineAlloy 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:nikolinealloy_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_nikoline_alloy",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:692 form — the krypton leg: dust_alumina U9 + Krypton 1000 L + molten alumina 464 L -> sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_alumina",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 464
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:693 form — the krypton leg: dust_alumina full + Krypton 9000 L + molten alumina 4176 L -> sapphire boule x9 (256 EUt, 156000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_alumina",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 4176
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_sapphire",
+          "count": 9
+        }
+      ],
+      "duration": 156000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the krypton leg: dust_magnesium 2*U3 + Krypton 1000 L + molten alumina 480 L -> green_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_green_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the krypton leg: dust_magnesium 2*U + Krypton 3000 L + molten alumina 1440 L -> green_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_green_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the krypton leg: dust_titanium 2*U3 + Krypton 1000 L + molten alumina 480 L -> yellow_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_titanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_yellow_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the krypton leg: dust_titanium 2*U + Krypton 3000 L + molten alumina 1440 L -> yellow_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_titanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_yellow_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the krypton leg: dust_copper 2*U3 + Krypton 1000 L + molten alumina 480 L -> orange_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_copper",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_orange_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the krypton leg: dust_copper 2*U + Krypton 3000 L + molten alumina 1440 L -> orange_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_copper",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_orange_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the krypton leg: dust_iron 2*U3 + Krypton 1000 L + molten alumina 480 L -> blue_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_iron",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_blue_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the krypton leg: dust_iron 2*U + Krypton 3000 L + molten alumina 1440 L -> blue_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_iron",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_blue_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the krypton leg: dust_vanadium 2*U3 + Krypton 1000 L + molten alumina 480 L -> purple_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_vanadium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_purple_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the krypton leg: dust_vanadium 2*U + Krypton 3000 L + molten alumina 1440 L -> purple_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_vanadium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_purple_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the krypton leg: dust_chromium 2*U3 + Krypton 1000 L + molten alumina 480 L -> ruby boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_chromium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_ruby",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the krypton leg: dust_chromium 2*U + Krypton 3000 L + molten alumina 1440 L -> ruby boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_chromium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:krypton",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_ruby",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the xenon leg: dust_Si U9 + Xenon 1000 L + molten Si 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:silicon_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_silicon",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the xenon leg: dust_Si full + Xenon 9000 L + molten Si 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:silicon_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_silicon",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the xenon leg: dust_Ge U9 + Xenon 1000 L + molten Ge 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_germanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_germanium",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the xenon leg: dust_Ge full + Xenon 9000 L + molten Ge 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_germanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_germanium",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the xenon leg: dust_RedstoneAlloy U9 + Xenon 1000 L + molten RedstoneAlloy 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:redstonealloy_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the xenon leg: dust_RedstoneAlloy full + Xenon 9000 L + molten RedstoneAlloy 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:redstonealloy_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_redstone_alloy",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the xenon leg: dust_NikolineAlloy U9 + Xenon 1000 L + molten NikolineAlloy 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:nikolinealloy_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the xenon leg: dust_NikolineAlloy full + Xenon 9000 L + molten NikolineAlloy 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:nikolinealloy_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_nikoline_alloy",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:692 form — the xenon leg: dust_alumina U9 + Xenon 1000 L + molten alumina 464 L -> sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_alumina",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 464
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:693 form — the xenon leg: dust_alumina full + Xenon 9000 L + molten alumina 4176 L -> sapphire boule x9 (256 EUt, 156000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_alumina",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 4176
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_sapphire",
+          "count": 9
+        }
+      ],
+      "duration": 156000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the xenon leg: dust_magnesium 2*U3 + Xenon 1000 L + molten alumina 480 L -> green_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_green_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the xenon leg: dust_magnesium 2*U + Xenon 3000 L + molten alumina 1440 L -> green_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_green_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the xenon leg: dust_titanium 2*U3 + Xenon 1000 L + molten alumina 480 L -> yellow_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_titanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_yellow_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the xenon leg: dust_titanium 2*U + Xenon 3000 L + molten alumina 1440 L -> yellow_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_titanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_yellow_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the xenon leg: dust_copper 2*U3 + Xenon 1000 L + molten alumina 480 L -> orange_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_copper",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_orange_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the xenon leg: dust_copper 2*U + Xenon 3000 L + molten alumina 1440 L -> orange_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_copper",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_orange_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the xenon leg: dust_iron 2*U3 + Xenon 1000 L + molten alumina 480 L -> blue_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_iron",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_blue_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the xenon leg: dust_iron 2*U + Xenon 3000 L + molten alumina 1440 L -> blue_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_iron",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_blue_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the xenon leg: dust_vanadium 2*U3 + Xenon 1000 L + molten alumina 480 L -> purple_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_vanadium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_purple_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the xenon leg: dust_vanadium 2*U + Xenon 3000 L + molten alumina 1440 L -> purple_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_vanadium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_purple_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the xenon leg: dust_chromium 2*U3 + Xenon 1000 L + molten alumina 480 L -> ruby boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_chromium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_ruby",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the xenon leg: dust_chromium 2*U + Xenon 3000 L + molten alumina 1440 L -> ruby boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_chromium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:xenon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_ruby",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the radon leg: dust_Si U9 + Radon 1000 L + molten Si 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:silicon_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_silicon",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the radon leg: dust_Si full + Radon 9000 L + molten Si 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:silicon_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_silicon",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the radon leg: dust_Ge U9 + Radon 1000 L + molten Ge 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_germanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_germanium",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the radon leg: dust_Ge full + Radon 9000 L + molten Ge 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_germanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_germanium",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the radon leg: dust_RedstoneAlloy U9 + Radon 1000 L + molten RedstoneAlloy 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:redstonealloy_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the radon leg: dust_RedstoneAlloy full + Radon 9000 L + molten RedstoneAlloy 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:redstonealloy_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_redstone_alloy",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:683 form — the radon leg: dust_NikolineAlloy U9 + Radon 1000 L + molten NikolineAlloy 560 L -> boule x1 (16 EUt, 72000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:nikolinealloy_molten",
+          "amount": 560
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "duration": 72000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:687 form — the radon leg: dust_NikolineAlloy full + Radon 9000 L + molten NikolineAlloy 5040 L -> boule x9 (16 EUt, 648000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:nikolinealloy_molten",
+          "amount": 5040
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_nikoline_alloy",
+          "count": 9
+        }
+      ],
+      "duration": 648000,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:692 form — the radon leg: dust_alumina U9 + Radon 1000 L + molten alumina 464 L -> sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_alumina",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 464
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:693 form — the radon leg: dust_alumina full + Radon 9000 L + molten alumina 4176 L -> sapphire boule x9 (256 EUt, 156000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_alumina",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 9000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 4176
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_sapphire",
+          "count": 9
+        }
+      ],
+      "duration": 156000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the radon leg: dust_magnesium 2*U3 + Radon 1000 L + molten alumina 480 L -> green_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_green_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the radon leg: dust_magnesium 2*U + Radon 3000 L + molten alumina 1440 L -> green_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_green_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the radon leg: dust_titanium 2*U3 + Radon 1000 L + molten alumina 480 L -> yellow_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_titanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_yellow_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the radon leg: dust_titanium 2*U + Radon 3000 L + molten alumina 1440 L -> yellow_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_titanium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_yellow_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the radon leg: dust_copper 2*U3 + Radon 1000 L + molten alumina 480 L -> orange_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_copper",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_orange_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the radon leg: dust_copper 2*U + Radon 3000 L + molten alumina 1440 L -> orange_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_copper",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_orange_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the radon leg: dust_iron 2*U3 + Radon 1000 L + molten alumina 480 L -> blue_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_iron",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_blue_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the radon leg: dust_iron 2*U + Radon 3000 L + molten alumina 1440 L -> blue_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_iron",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_blue_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the radon leg: dust_vanadium 2*U3 + Radon 1000 L + molten alumina 480 L -> purple_sapphire boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_vanadium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_purple_sapphire",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the radon leg: dust_vanadium 2*U + Radon 3000 L + molten alumina 1440 L -> purple_sapphire boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_vanadium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_purple_sapphire",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:695 form — the radon leg: dust_chromium 2*U3 + Radon 1000 L + molten alumina 480 L -> ruby boule x1 (256 EUt, 18000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_chromium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 480
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_ruby",
+          "count": 1
+        }
+      ],
+      "duration": 18000,
+      "eut": 256
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:701 form — the radon leg: dust_chromium 2*U + Radon 3000 L + molten alumina 1440 L -> ruby boule x3 (256 EUt, 52000 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_chromium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:radon",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:alumina_molten",
+          "amount": 1440
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boule_gt_ruby",
+          "count": 3
+        }
+      ],
+      "duration": 52000,
+      "eut": 256
+    }
+  ]
+}

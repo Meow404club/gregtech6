@@ -92,8 +92,38 @@ public final class GTMaterialItems {
         MaterialRegistry.INSTANCE.open(); // createMaterial with a valid ID requires open (MaterialRegistry.java:130-131)
         MT.init();  // MT.java:2695, per-generation full refill (reg0000..reg0038 + AM/ANY/TECH/OREMATS/WOODS/UNUSED)
         OP.init();  // OP.java:621, idempotent; requires PrefixRegistry open (OreDictPrefix.createPrefix :117)
+        forceItemGeneration(); // the OP.java:603-625 force-table rows a port card consumes; see the method doc
         MaterialRegistry.INSTANCE.close(); // ADR-P2-2 open->closed; GTCEu CommonProxy.java:185-229 unfreeze->init->freeze isomorph
         GT6Mod.LOGGER.info("GT6 material system initialised: {} materials, {} prefixes", MaterialRegistry.INSTANCE.MATERIAL_MAP.size(), OreDictPrefix.VALUES.size());
+    }
+
+    /**
+     * The force-table slice (task p34-machines-bumblelyzer-crucible) — the upstream
+     * OP.java:603-625 disable/forceItemGeneration rows the port OP defers with the whole
+     * MT/ANY-dependent block, landed HERE (mdk-side, caller-of-OP.init timing) because a port
+     * row consumes the items. The p2-material-condition-system "47 unlocked prefixes" is the
+     * same pattern: the port keeps the upstream model and lands the table rows per consuming
+     * card. Exactly three rows, each upstream verbatim:
+     * <ul>
+     * <li>{@code :616 bouleGt.forceItemGeneration(MT.Si, MT.Ge, MT.RedstoneAlloy, MT.NikolineAlloy)}
+     *     — the boule quartet;</li>
+     * <li>the {@code :624} ANY.Sapphire loop face — the ruling takes the 39 crystallisation-row
+     *     output materials as the real count (Loader_Recipes_Other.java:683-706): the base
+     *     Sapphire plus the six coloured sapphires. (The Hexorium loop :625 stays with the
+     *     cutting-domain card — no port row consumes a Hexorium boule.)</li>
+     * <li>{@code :619 plateTiny.forceItemGeneration(MT.Paper)} — the Bumblelyzer scan leg's
+     *     paper tiny.</li>
+     * </ul>
+     * The known cascade is upstream-faithful, not an explosion: {@code plateGem}'s condition is
+     * {@code Or(gem, bouleGt) && PLATES}, so these forcings also yield the Crystalline
+     * Silicon/Germanium/Redstone-Alloy/Nikoline-Alloy gem plates (GT6MaterialsRegister.csv
+     * carries them upstream); GTMaterialItemsForceTest pins the exact item delta.
+     */
+    static void forceItemGeneration() {
+        gregapi.data.OP.bouleGt.forceItemGeneration(gregapi.data.MT.Si, gregapi.data.MT.Ge, gregapi.data.MT.RedstoneAlloy, gregapi.data.MT.NikolineAlloy);
+        gregapi.data.OP.bouleGt.forceItemGeneration(gregapi.data.MT.Sapphire, gregapi.data.MT.BlueSapphire, gregapi.data.MT.GreenSapphire,
+                gregapi.data.MT.YellowSapphire, gregapi.data.MT.OrangeSapphire, gregapi.data.MT.PurpleSapphire, gregapi.data.MT.Ruby);
+        gregapi.data.OP.plateTiny.forceItemGeneration(gregapi.data.MT.Paper);
     }
 
     /** Segment 2 (RegisterEvent, LOW priority): items and the creative tabs, one listener for both (task card). */

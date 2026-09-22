@@ -8604,3 +8604,21 @@ Bumbliary GUI pair textures, task p34-bumbliary-gui:
 MultiTileEntityBumbliaryAdvanced.java:469), byte-identical to upstream, sha256 verified:
 - `bumbliary.png` — `16e7d4156a0e2fd74240120b479136f0c6db8c757f68f3900df08e2ac2f3a4c3`
 - `bumbliaryadvanced.png` — `298d5d298dc2b5d46cc2865a81342276c2d66c3a12935f811d8d443451fb7f14`
+
+## Bumblelyzer + Crystallisation Crucible machine textures (task p34-machines-bumblelyzer-crucible)
+
+The two machine families' block texture sets under `gt6/textures/block/` are upstream
+borrows with the established conversion: `basicmachines/<family>/colored|overlay/
+overlay_running/<side>.png` → `<family>_<set>_<side>.png` byte-identical, and the
+`overlay_active` 16xN animation strips cropped to FRAME 0 and re-encoded — the P20
+"animation stays retired" deviation (the `.mcmeta` files NOT borrowed). License:
+upstream GregTech 6 assets are CC0 (see the Public Domain Dedication block above).
+
+- `block/bumblelyzer_colored_{front,back,left,right,top,bottom}.png` — upstream `bumblelyzer/colored/`
+- `block/bumblelyzer_overlay_{front,back,left,right,top,bottom}.png` — upstream `bumblelyzer/overlay/`
+- `block/bumblelyzer_overlay_running_{front,back,left,right,top,bottom}.png` — upstream `bumblelyzer/overlay_running/`
+- `block/bumblelyzer_overlay_active_{front,back,left,right,top,bottom}.png` — upstream `bumblelyzer/overlay_active/` (front: 16x64 strip → FRAME 0)
+- `block/crystallisationcrucible_colored_{front,back,left,right,top,bottom}.png` — upstream `crystallisationcrucible/colored/`
+- `block/crystallisationcrucible_overlay_{front,back,left,right,top,bottom}.png` — upstream `crystallisationcrucible/overlay/`
+- `block/crystallisationcrucible_overlay_running_{front,back,left,right,top,bottom}.png` — upstream `crystallisationcrucible/overlay_running/`
+- `block/crystallisationcrucible_overlay_active_{front,back,left,right,top,bottom}.png` — upstream `crystallisationcrucible/overlay_active/` (front: 16x160 strip → FRAME 0)

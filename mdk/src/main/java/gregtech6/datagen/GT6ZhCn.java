@@ -909,6 +909,12 @@ public class GT6ZhCn extends LanguageProvider {
 		// the atomic single-variant row; the zh words are the upstream dump verbatim
 		// (gt.multitileentity.20241-20244 液化炉, 22010 "Melter" ASCII → the hand row 熔化炉)
 		addDirect(gregtech6.registry.GTMachines.MACHINE_SMELTER_UNIT_KEY);
+		// p34 machine families (task p34-machines-bumblelyzer-crucible): the Bumblelyzer
+		// rides the voltage-word slot, the Crystallisation Crucible the Heat_T material-word
+		// slot; the zh words are the upstream dump verbatim
+		// (gt.multitileentity.20541-20545 膜翅目昆虫分析仪, 20251-20254 结晶器)
+		addDirect(gregtech6.registry.GTMachines.MACHINE_BUMBLELYZER_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_CRYSTALLISATION_UNIT_KEY);
 		addDirect("block.gt6.large_heat_exchanger"); // task p29-w3-heat-smelter — the HEX (the dump word 大型热交换器, gt.multitileentity.17197)
 		addDirect(gregtech6.registry.GTMachines.MELTER_DISPLAY_KEY);
 		// the fermenter's stainless_steel row word (the dump face the attachment walk

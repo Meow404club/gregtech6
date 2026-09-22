@@ -48,6 +48,14 @@ public final class FluidBridge {
 		// The handle rides the table-driven CHEMICALS registration through the chemicalSource
 		// seam (the bridge map stays material-name keyed).
 		MOLTEN_FLUIDS.put("redstone", GTFluids.chemicalSource("redstone_molten"));
+		// task p34-machines-bumblelyzer-crucible — the crystallisation quintet joins the same
+		// table-driven form (the keys are the sanitized lowercase internal names, the
+		// specOf/materialOf seam's id convention).
+		MOLTEN_FLUIDS.put("silicon", GTFluids.chemicalSource("silicon_molten"));
+		MOLTEN_FLUIDS.put("germanium", GTFluids.chemicalSource("germanium_molten"));
+		MOLTEN_FLUIDS.put("redstonealloy", GTFluids.chemicalSource("redstonealloy_molten"));
+		MOLTEN_FLUIDS.put("nikolinealloy", GTFluids.chemicalSource("nikolinealloy_molten"));
+		MOLTEN_FLUIDS.put("alumina", GTFluids.chemicalSource("alumina_molten"));
 	}
 
 	private FluidBridge() {}

@@ -258,7 +258,7 @@ public class GTFluidsFoodB1Test extends GTOfflineTestBase {
 		assertEquals(6, GTFluids.AQUA_SPECS.size());
 		assertEquals(2, GTFluids.SIMPLE_LIQUID_SPECS.size());
 		assertEquals(4, GTFluids.FOOD_FLUID_SPECS.size());
-		assertEquals(39, GTFluids.CHEMICAL_SPECS.size(), "the chemical domain is a different card — zero overlap");
+		assertEquals(44, GTFluids.CHEMICAL_SPECS.size(), "the chemical domain is a different card — zero overlap (39 + 5 task p34-machines-bumblelyzer-crucible molten quintet)");
 	}
 
 	/** The representative-row property assertions (one per family, acceptance 属性断言). */

@@ -850,6 +850,16 @@ SESSION_GROUPS = (
         # negative + the screwdriver whitelist/blacklist flip.
         "p34_covers_g2",
     ),
+    # p34-machines-bumblelyzer-crucible (task p34-machines-bumblelyzer-crucible): the
+    # Bumblelyzer scan arm + the Crystallisation Crucible :683 boule row live chain —
+    # a fresh band z=384 (z-disjoint from the p34_bumbliary_gui band z=376), the
+    # dynamic findRecipe scan arm over the wild drone + gt6:honey (the 1024-row
+    # budget @ the T1 EU window) and the :683 crystallisation row (dust silicon +
+    # helium 1000 L + molten silicon 560 L, the exact 72000-tick clock @ 16 HU) —
+    # the rigs are band-local setblocks/gt6machine places (the p33_cracker_machines
+    # admission form, no fresh_boot / mutates member).
+    # --group p34_machines_bc matches through the chain's embedded name prefix.
+    ("p34_machines_bc",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

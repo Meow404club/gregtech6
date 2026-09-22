@@ -10,8 +10,8 @@
  * yardstick for this card and for the render card (p8-prefixblock-render).
  *
  * <p>Measured 2026-08-31 (junit probe over GTMaterialItems.initMaterials): blockRaw 618,
- * blockGem 217, blockDust 1096, blockIngot 483, blockPlate 673, blockPlateGem 203,
- * blockSolid 483 — total 3773 (prefix-material pairs after alias-merge + pair dedup, the
+ * blockGem 217, blockDust 1096, blockIngot 483, blockPlate 673, blockPlateGem 207,
+ * blockSolid 483 — total 3777 (prefix-material pairs after alias-merge + pair dedup, the
  * same semantics as the production enumeration). Without pair dedup blockRaw walks 625
  * (7 alias-slot materials), which is why the census pins the deduped production walk.
  */
@@ -49,8 +49,8 @@ class GTMaterialBlocksRegistrationTest {
     /** The pinned census (2026-08-31, see class javadoc) — the card + render-card yardstick. */
     private static final Map<String, Integer> PINNED_CENSUS = Map.of(
         "blockRaw", 618, "blockGem", 217, "blockDust", 1096, "blockIngot", 483,
-        "blockPlate", 673, "blockPlateGem", 203, "blockSolid", 483);
-    private static final int PINNED_TOTAL = 3773;
+        "blockPlate", 673, "blockPlateGem", 207, "blockSolid", 483);
+    private static final int PINNED_TOTAL = 3777;
 
     @BeforeAll
     static void initMaterialSystem() {
