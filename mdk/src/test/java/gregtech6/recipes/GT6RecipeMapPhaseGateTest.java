@@ -418,7 +418,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 			assertEquals(SNAPSHOT.get(tEntry.getKey()), Integer.valueOf(tEntry.getValue().mRecipeList.size()),
 					tEntry.getKey() + " must be identical across the freeze");
 		}
-		assertEquals(71, RecipeMap.RECIPE_MAPS.size(), "the freeze-point registry census (the GT6RecipeMapsTest pin shape)");
+		assertEquals(73, RecipeMap.RECIPE_MAPS.size(), "the freeze-point registry census (the GT6RecipeMapsTest pin shape)");
 	}
 
 	/** The JSON reload window: a FROZEN /reload re-pour lands its rows and re-freezes; an OPEN pour owes no re-freeze. */
