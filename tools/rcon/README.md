@@ -321,7 +321,7 @@ import sys; sys.path.insert(0, "tools/rcon")
 import gt6server
 
 gt6server.ensure_eula("mdk/run")                     # eula 缺失=静默 24s 退场（ghost-poc 鉴戒），模块兜死
-ports = gt6server.pick_ports(25662, 2)               # ss 预检，占用则 +1 顺延；传元组则各起点独立顺延
+ports = gt6server.pick_ports(25662, 2)               # ss 预检；段被占整段翻页顺延，传元组则各起点独立顺延
 log, pid = gt6server.artifact_paths("myslug")        # /tmp/gt6_rs_<slug>.{log,pid}，12 阶段既成约定的唯一定义点
 gt6server.provision_run_dir(".", game_port, rcon_port, query_port, "gt6")
 pid = gt6server.start_server(".", log, pid)          # nohup 语义（start_new_session），绝不前台、绝不阻塞等
@@ -347,6 +347,24 @@ session pid 互踩实证）在 boot 时炸，而不是收尾时把句柄指向�
 事故（共享箱他者 cleanup 同默认口令 RCON stop 掉活跑中的 neo 腿）由此结构性不可能。
 人工清场走 `--force`（CLI 同名旗标，打印警告；CLI 拒绝退出码 3）。框架链与重启 probe
 同进程自停天然放行；2h 陈旧槽回收、槽满排队、纯 no-op 不设门，语义零回归。
+
+**端口段错开钩（p34-pool-port-stagger）**：一个会话 boot 占一个端口"段"
+（game=rcon-10 .. query=rcon+10，即 SESSION_PORTS 三元组的跨度）。并行会话
+（多 worktree 同时跑 sweep）撞默认段时，`BootOwnershipError` 会正确拒启，但输家
+只能干等赢家收场——两个错开钩让选择更聪明（`pick_ports` 一处生效，所有权/信号量
+语义零改动，P17 fail-fast 门原样兜底）：
+
+1. **env 错开（推荐并行会话主动设）**：`GT6_RCON_SEGMENT_OFFSET`（整数，默认 0，
+   非法值按 0）把全部 preferred 起点平移 `offset × RCON_SEGMENT_STRIDE(50)`。
+   并行会话各设不同值即错开——例如两个 1.20.1 会话分别 offset=0/1，落在
+   256xx 与 2570x 两段互不重叠；
+2. **空闲探测翻段（被动兜底，无需配置）**：候选起点 ±10 跨度内有任何 LISTEN
+   即视为该段被占，`pick_ports` 整段翻到下一段（步进 50）而不是 +1 挤进被占
+   段邻域；三元组各起点独立翻段。
+
+验证：`python3 tools/rcon/selftest.py`（section 15）。注意：offset 只影响
+`pick_ports` 的选择，pick 与 bind 之间的竞态窗口仍由 `assert_ports_free`
+fail-fast——这是"永不双 boot 同段"的最后防线，不会因错开钩而放松。
 
 ### 世界层 gt6world（站点注册 + bbox 自动清场）
 

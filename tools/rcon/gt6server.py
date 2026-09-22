@@ -7,8 +7,9 @@ card is baked in here as module behaviour:
 - EULA: a missing ``mdk/run/eula.txt`` makes runServer exit silently after
   ~24 s with a zero-error lookalike. :func:`ensure_eula` guarantees the file
   before boot, so the silent exit cannot happen.
-- ports: :func:`pick_ports` pre-checks with ``ss`` and bumps on a busy port,
-  so parallel cards never fight over a pinned pair.
+- ports: :func:`pick_ports` pre-checks with ``ss`` and yields on a busy
+  segment (whole-span flip, or env GT6_RCON_SEGMENT_OFFSET for a manual
+  stagger), so parallel cards never fight over a pinned pair.
 - boot: :func:`start_server` is the nohup semantics — detached session, log
   file, pid file. The game never exits; never foreground, never a blocking
   wait (process discipline 2026-08-29).
@@ -310,26 +311,67 @@ def listening_ports():
     return ports
 
 
+# p34-pool-port-stagger: a session boot occupies a port "segment" — the
+# session triple spans game=rcon-10 .. query=rcon+10 (the framework
+# SESSION_PORTS convention). Two stagger hooks keep parallel sessions off
+# each other's segment: GT6_RCON_SEGMENT_OFFSET shifts every preferred start
+# by offset*STRIDE (parallel sessions set different values), and the pick
+# flips a whole segment when the candidate span holds a listener instead of
+# squeezing +1 into the occupied neighbourhood (the incident shape: two
+# boots on the default 256xx segment, the loser failing fast in
+# assert_ports_free and idling until the winner finished). BootOwnershipError
+# stays the correctness backstop — assert_ports_free is untouched.
+RCON_SEGMENT_SPAN = 10     # half-width of one session's port span
+RCON_SEGMENT_STRIDE = 50   # next-segment jump; > 2*SPAN keeps segments disjoint
+# ponytail: fixed stride heuristic, and the flip is per-entry — a partially
+# occupied segment can split one triple across two segments (still all-free;
+# coordinate the flip over the whole triple only if that ever matters).
+
+
+def rcon_segment_offset():
+    """The env stagger offset (GT6_RCON_SEGMENT_OFFSET, integer, default 0)."""
+    try:
+        return int(os.environ.get("GT6_RCON_SEGMENT_OFFSET", "0"))
+    except ValueError:
+        return 0
+
+
+def _segment_occupied(start, used):
+    """True when a listener sits anywhere in [start-SPAN, start+SPAN]."""
+    return any(abs(port - start) <= RCON_SEGMENT_SPAN for port in used)
+
+
+def _free_segment_start(start, used, taken=()):
+    """The first segment anchor >= `start` (striding RCON_SEGMENT_STRIDE)
+    whose span is listener-free and whose anchor is not already picked."""
+    candidate = start
+    while _segment_occupied(candidate, used) or candidate in taken:
+        candidate += RCON_SEGMENT_STRIDE
+    return candidate
+
+
 def pick_ports(preferred, count=1):
-    """ss pre-check with bump: the first `count` free ports from `preferred` upward.
+    """ss pre-check with segment stagger: the first listener-free segment
+    from `preferred` upward (env GT6_RCON_SEGMENT_OFFSET shifts the start).
 
     `preferred` may also be an ordered tuple/list (rcon, query, game, ...) — then
     each entry is picked independently from its own start (`count` is ignored),
     which is how a chain pins a conventional pair like (25662, 25672) while still
-    yielding when another card took one of them.
+    yielding when another card took one of them. An occupied span flips the pick
+    to the next segment (stride jump) rather than bumping +1 inside the occupied
+    neighbourhood; the exact ports are re-checked at boot by assert_ports_free,
+    which stays the fail-fast backstop for the pick-to-bind race window.
     """
+    offset = rcon_segment_offset() * RCON_SEGMENT_STRIDE
     if isinstance(preferred, (tuple, list)):
         used = listening_ports()
         picked = []
         for start in preferred:
-            candidate = start
-            while candidate in used or candidate in picked:
-                candidate += 1
-            picked.append(candidate)
+            picked.append(_free_segment_start(start + offset, used, picked))
         return picked
     used = listening_ports()
     picked = []
-    candidate = preferred
+    candidate = _free_segment_start(preferred + offset, used)
     while len(picked) < count:
         if candidate not in used and candidate not in picked:
             picked.append(candidate)
