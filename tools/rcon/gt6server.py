@@ -36,6 +36,14 @@ from pathlib import Path
 
 import gt6rcon
 
+# p34-ops-test-gate: server boots share the test wrapper's memory cap. __file__-
+# relative (never cwd — /tmp live-run scripts once hijacked sys.path to a stale
+# main-checkout copy, p30 lesson).
+_TOOLS_DIR = str(Path(__file__).resolve().parents[1])
+if _TOOLS_DIR not in sys.path:
+    sys.path.insert(0, _TOOLS_DIR)
+import gt6testgate
+
 RUN_DIR_RELATIVE = Path("mdk") / "run"
 # Since the P15 stonecutter skeleton each loader node is its own gradle project with a
 # node-local run dir (mdk/versions/<node>/run — both build scripts' `gameDirectory =
@@ -85,6 +93,9 @@ def acquire_rcon_slot(poll=15.0, log=print, owner=None):
     the slot path; pair with :func:`release_rcon_slot` (stop_server does this
     via the ``<pid_file>.slot`` marker start_server leaves behind).
     """
+    # memory gate layered ON TOP of the slot semaphore (p34-ops-test-gate):
+    # waiting for memory must not hold a slot. Semaphore semantics unchanged.
+    gt6testgate.wait_memory(tag=f"rcon-boot:{owner or os.getpid()}", log=log)
     RCON_SLOT_DIR.mkdir(exist_ok=True)
     limit = rcon_slot_limit()
     waited = False
