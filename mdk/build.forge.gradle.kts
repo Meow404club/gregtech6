@@ -47,6 +47,17 @@ repositories {
         name = "Modrinth"
         url = uri("https://api.modrinth.com/maven")
     }
+    // KubeJS/Rhino（task p34-kjs-bindings）：dev.latvian.mods 组唯一分发渠道
+    // （GTCEu gradle/scripts/repositories.gradle:58-63 同源同组过滤）。
+    maven {
+        name = "latvian"
+        url = uri("https://maven.latvian.dev/releases")
+    }
+    // Architectury（dev.architectury 组，kubejs forge 腿运行时前置三件之一）：自家 maven。
+    maven {
+        name = "architectury"
+        url = uri("https://maven.architectury.dev")
+    }
 }
 
 java {
@@ -171,6 +182,20 @@ dependencies {
     // 机制），编译面与 jar 产物零触碰；默认缺省 = 全部既有 runClient 行为不变。
     if (providers.gradleProperty("gt6.embeddium").isPresent) {
         "modRuntimeOnly"("maven.modrinth:embeddium:0.3.31+mc1.20.1")
+    }
+    // KubeJS 绑定依赖段（task p34-kjs-bindings）：modCompileOnly 运行时可选零传染
+    // （GTCEu dependencies.gradle:43-46 先例——不 jarJar 不 modApi 不 modRuntime）。
+    // 可选性机制 = kubejs.plugins.txt 资源根发现（KubeJSPlugins.findResource，7.x 源 :38-41）
+    // 是 KubeJS 侧拉取：KubeJS 不在 = 无人读 plugins.txt = kjs 类零类加载 = NoClassDef 面不存在。
+    // 版本钉值 = 节点 gradle.properties（kubejs_version/rhino_version/architectury_version，
+    // 与 GTCEu forge.versions.toml:11-13 同 build）。留空 kubejs_version = 本段整体跳过 +
+    // mdk/stonecutter.gradle.kts 的 kjs 常量 false → gregtech6.integration.kjs 包编译为空
+    //（runtime-optional 双态证明的唯一开关，验收①的「拔依赖 compile 过」由此达成）。
+    val kubejsVer = property("kubejs_version").toString().trim()
+    if (kubejsVer.isNotEmpty()) {
+        "modCompileOnly"("dev.latvian.mods:kubejs-forge:${kubejsVer}")
+        "modCompileOnly"("dev.latvian.mods:rhino-forge:${property("rhino_version").toString().trim()}")
+        "modCompileOnly"("dev.architectury:architectury-forge:${property("architectury_version").toString().trim()}")
     }
     // mdk 单测（p3-be-framework + p3-fullprefix-creativetab 归一）：BE NBT round-trip /
     // onTick 分发 / 材料适配器 / 注册判定与 first-wins 断言；junit-bom 全模块一份。

@@ -44,6 +44,13 @@ repositories {
         name = "Modrinth"
         url = uri("https://api.modrinth.com/maven")
     }
+    // KubeJS/Rhino（task p34-kjs-bindings）：dev.latvian.mods 组唯一分发渠道
+    // （GTCEu gradle/scripts/repositories.gradle:58-63 同源同组过滤；7.x bundle 无
+    // architectury，故本节点无需 architectury maven——GTCEu 1.21 toml:131 同口径）。
+    maven {
+        name = "latvian"
+        url = uri("https://maven.latvian.dev/releases")
+    }
 }
 
 // 1.21.1 节点 = Java 21（本机 java-21-openjdk；ADR-P15-2：gregapi 钉 17，17 产物可被 21 工具链直接消费）
@@ -199,6 +206,21 @@ dependencies {
     // jade_version（15.10.6+neoforge，节点遮蔽根钉值，同 jei_version 先例）。
     compileOnly("maven.modrinth:jade:${jadeVer}")
     runtimeOnly("maven.modrinth:jade:${jadeVer}")
+    // KubeJS 绑定依赖段（task p34-kjs-bindings）：compileOnly 运行时可选零传染——
+    // 本节点无 mod* 重映射配置（NeoForge 1.20.5+ 发行即 official，JEI 段同论证），
+    // plain compileOnly 即编译面；不 jarJar 不 modApi 不 runtimeOnly（GTCEu
+    // dependencies.gradle:43-46 先例的可选性口径）。可选性机制 = kubejs.plugins.txt 资源根
+    // 发现是 KubeJS 侧拉取（KubeJSPlugins.findResource，7.x 源 :38-41）：KubeJS 不在 =
+    // 无人读 plugins.txt = kjs 类零类加载。
+    // 版本钉值 = 节点 gradle.properties（kubejs_version/rhino_version，与 GTCEu 1.21
+    // forge.versions.toml:8-9 同 build）。留空 kubejs_version = 本段整体跳过 +
+    // mdk/stonecutter.gradle.kts 的 kjs 常量 false → gregtech6.integration.kjs 包编译为空
+    //（runtime-optional 双态证明的唯一开关，验收①的「拔依赖 compile 过」由此达成）。
+    val kubejsVer = property("kubejs_version").toString().trim()
+    if (kubejsVer.isNotEmpty()) {
+        compileOnly("dev.latvian.mods:kubejs-neoforge:${kubejsVer}")
+        compileOnly("dev.latvian.mods:rhino:${property("rhino_version").toString().trim()}")
+    }
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
