@@ -37,6 +37,22 @@ frozen at gametime <g0+N>" is acceptance-②'s proof), then thaws; the forge (1.
 leg has no TickCommand at all and degrades to the DECLARED tick_fallback_poll resend
 loop — same probe, same expect, judge-once semantics.
 
+FORGE-LEG LESSON (2026-09-22, the first migrated double-leg run): the poll resend of
+a BUDGET-COUPLED fill is poison. Each resend is a real accept: a partial accept tops
+the tank back up AND its water later burns the booked HU, so the exact-litre expects
+("filled 128000/128000", "filled 112500/128000") starve — one pass pulled five tanks
+of water (the two command fills plus resend partials), burnt the whole 40.96M HU
+budget mid-window and parked the tank full with zero HU (conversion dead, ten straight
+rejects). Fix: the inject preceding each budget-coupled fill window carries
+sleep=DRAIN_WAIT — the drain (4 ticks) completes BEFORE the window's first probe, so
+attempt 1 lands at the calibrated rest and matches exactly (the resend loop then stops
+at its first accept; at most one bounded pull remains as jitter insurance). The round-3
+top-up fill deliberately keeps NO pre-wait: its bounded resend pulls are the emit-gate
+insurance (at the all-5000-efficiency floor the four converted rounds park the steam at
+~41M, only 0.1% over the 40.96M half gate — the same floor the old chain lived on).
+Read-only probes (stat/data get/check/execute-if) resend freely: a resend changes
+nothing the expect looks at.
+
 THE TICK BUDGETS (calibration, per the card: 锅炉转化/出汽/爆炸臂 three segments).
 Business ground, all in TileEntityLargeBoiler.java unless noted:
 
@@ -45,8 +61,11 @@ Business ground, all in TileEntityLargeBoiler.java unless noted:
     (:393, tank 81920000/2560; energy 20.48M/80 = 256000 > 128000 water => water-
     limited). The 128000 L water tank drains in EXACTLY 4 ticks, so at g0+10 the tank
     is empty and the next fill accepts the full 128000 deterministically (the old
-    poll=15 waited wall-clock for the same drain). N=10 = 2.5x the 4-tick drain.
-    forge degrade: poll 10s (drain ~1s at 20tps).
+    poll=15 waited wall-clock for the same drain; the post-migration shape waits the
+    drain out on the preceding inject's sleep=DRAIN_WAIT and the window judges the
+    full accept at an exact tick). N=10 = 2.5x the 4-tick drain.
+    forge degrade: poll 10s (attempt 1 lands at rest after DRAIN_WAIT; drain ~1s at
+    20tps).
   出汽段 (steam output) — the P1 collector window, tick_step=40:
     the emit only runs ABOVE half tank (tAmount = amount - capacity/2 > 0, :427-430)
     and pushes min(mOutput | mOutput*2, tAmount) per tick to the five collectors
@@ -71,11 +90,18 @@ Business ground, all in TileEntityLargeBoiler.java unless noted:
     B3 survive window, tick_step=20: the negative now proves the controller survives
     20 post-hole ticks, not merely one instant (the tick-window upgrade over the old
     sleep=2.0 + single execute-if).
-  engine tail — fill#8 window tick_step=20, crusher window tick_step=400:
+  engine tail — fill#8 window tick_step=20, stat window tick_step=20, crusher window
+    tick_step=400:
     the engine converts its WHOLE tank per tick (tConversions = amount/200 batches,
     GTSteamEngineBlockEntity.java:260, tank 25600 L), so the seven fills land
     back-to-back (the old sleep=0.5 pacing was pure conservatism) and fill#8's
-    head-room exists after <= 2 engine ticks; N=20 = margin. The crusher recipe is
+    head-room exists after <= 2 engine ticks; N=20 = margin. The active=true stat
+    rides its own N=20 window: mState refreshes ONLY on the aTimer%20==0 boundary
+    (GTSteamEngineBlockEntity.java:269) and mActive needs state >= 8 (:275,
+    tOutput*2 > mOutput), so ANY 20 consecutive ticks contain exactly one pulse that
+    lifts state to scale(energy) ~13-14 — the migrated back-to-back fills left the
+    old single-shot stat reading the pre-pulse state=0 (active=false) on BOTH legs.
+    The crusher recipe is
     KU-CUMULATIVE, not wall-paced: progress charges by the engine packet (~52-64 KU/t
     at state 12-14) up to maxProgress 16384 (the baseline probe read progress=16400
     at its 15 s give-up, the authoritative poll hit 1 s later => ~270-300 powered
@@ -138,7 +164,14 @@ N_DETONATE = 30     # 爆炸臂: the :262 probe detonates within ~8 ticks of the
 N_DISMANTLE = 10    # 爆炸臂: explode(T) is synchronous
 N_SURVIVE = 20      # 爆炸臂: the negative survives 20 post-hole ticks
 N_ENGINE = 20       # engine tail: the tank drains within 2 engine ticks
+N_STATE = 20        # engine tail: any 20 ticks hold one aTimer%20==0 state pulse (:269)
 N_CRUSHER = 400     # engine tail: 16384 KU at ~60 KU/t in-window + the pre-window feed
+
+# The wall-clock drain budget BEFORE a budget-coupled fill window (the forge-leg
+# lesson above): the 4-tick drain plus RCON jitter, 7x margin — the window's first
+# probe must land at the calibrated rest, never mid-drain (a mid-drain partial accept
+# burns booked HU and re-tops the tank, starving the exact-litre expect).
+DRAIN_WAIT = 1.5
 
 steps = []
 
@@ -169,17 +202,22 @@ steps += [
     # emit below; the pre-inject book is the firebox's 16 HU/t through the transmitter)
     Step(f"gt6multiblock boiler stat {LB}", expect="Stored Heat Units"),
     # round 1: 128000 water + 20480000 HU; the conversion (32000 L/t) drains the tank in
-    # 4 ticks, so the NEXT fill rides a freeze window and accepts the full 128000 at an
-    # exact tick (was: sleep=2.5 wall-clock pacing)
-    Step(f"gt6multiblock boiler inject-hu {LB} 20480000", expect="booked 20480000/20480000 HU (ACCEPTED)"),
+    # 4 ticks, and DRAIN_WAIT waits that drain out BEFORE the window so its first probe
+    # lands at the empty rest and accepts the full 128000 (was: sleep=2.5 wall-clock
+    # pacing)
+    Step(f"gt6multiblock boiler inject-hu {LB} 20480000", expect="booked 20480000/20480000 HU (ACCEPTED)",
+         sleep=DRAIN_WAIT),
     Step(f"gt6multiblock boiler fill {LB} 128000", expect="filled 128000/128000 L of minecraft:water (ACCEPTED)",
          tick_step=N_DRAIN, tick_fallback_poll=10.0),
     # round 2: same shape (was: sleep=2.5)
-    Step(f"gt6multiblock boiler inject-hu {LB} 20480000", expect="booked 20480000/20480000 HU (ACCEPTED)"),
+    Step(f"gt6multiblock boiler inject-hu {LB} 20480000", expect="booked 20480000/20480000 HU (ACCEPTED)",
+         sleep=DRAIN_WAIT),
     Step(f"gt6multiblock boiler fill {LB} 128000", expect="filled 128000/128000 L of minecraft:water (ACCEPTED)",
          tick_step=N_DRAIN, tick_fallback_poll=10.0),
-    # round 3 top-up: same drain guarantee (was: poll=15.0 — the fill#3 conversion empties
-    # the tank within 4 ticks, so the single frozen fill accepts the whole 128000)
+    # round 3 top-up: NO pre-wait by design — this window's bounded resend pulls are the
+    # emit-gate insurance (see the forge-leg lesson: at the all-5000 floor the four
+    # rounds park ~41M steam, 0.1% over the half gate); the resend full-accepts the
+    # moment the conversion empties the tank (was: poll=15.0)
     Step(f"gt6multiblock boiler fill {LB} 128000", expect="filled 128000/128000 L of minecraft:water (ACCEPTED)",
          tick_step=N_DRAIN, tick_fallback_poll=10.0),
     # the SS row config (STATIC mOutput — GTMultiBlockCommand.java:1236, not a live value)
@@ -212,7 +250,10 @@ steps += [
     # on the first send anyway)
     Step(f"gt6engine fill {ENGINE} 24000", expect="filled 24000/24000 L of gt6:steam (ACCEPTED)",
          tick_step=N_ENGINE, tick_fallback_poll=15.0),
-    Step(f"gt6engine stat {ENGINE}", expect="active=true"),
+    # the state pulse window (see the calibration table): the single-shot stat read the
+    # pre-pulse state=0 (active=false) on both legs of the first migrated run
+    Step(f"gt6engine stat {ENGINE}", expect="active=true",
+         tick_step=N_STATE, tick_fallback_poll=15.0),
     # the recipe's authoritative window: the row charges 16384 KU cumulatively at the
     # engine's ~52-64 KU/t packet (maxProgress 16384, the RM duration 512 x eut 32) —
     # 400 in-window ticks + the pre-window feed clears it ~1.5x, judged ONCE at the
@@ -239,7 +280,8 @@ steps += [
     # exact tick (was: sleep=3.0 + an expect-less bare fill; TWO rounds keep the gauge
     # >= 6 worst-case, the >= 5 effective gate for the :262 arm — the old comment's
     # "two rounds keep the gauge >= 8" was the pre-measurement estimate)
-    Step(f"gt6multiblock boiler inject-hu {B1_LB} 9000000", expect="booked 9000000/9000000 HU (ACCEPTED)"),
+    Step(f"gt6multiblock boiler inject-hu {B1_LB} 9000000", expect="booked 9000000/9000000 HU (ACCEPTED)",
+         sleep=DRAIN_WAIT),
     Step(f"gt6multiblock boiler fill {B1_LB} 128000", expect="filled 112500/128000 L of minecraft:water (ACCEPTED)",
          tick_step=N_TOPUP, tick_fallback_poll=10.0),
     Step(f"gt6multiblock boiler inject-hu {B1_LB} 9000000", expect="booked 9000000/9000000 HU (ACCEPTED)"),
@@ -262,7 +304,8 @@ steps += [
     Step(f"gt6multiblock boiler frame {B2_LB} {VARIANT}", expect="34 parts placed"),
     Step(f"gt6multiblock boiler wand {B2_LB} {VARIANT}", expect="boiler wand check OK"),
     Step(f"gt6multiblock boiler fill {B2_LB} 128000", expect="filled 128000/128000 L of minecraft:water (ACCEPTED)"),
-    Step(f"gt6multiblock boiler inject-hu {B2_LB} 9000000", expect="booked 9000000/9000000 HU (ACCEPTED)"),
+    Step(f"gt6multiblock boiler inject-hu {B2_LB} 9000000", expect="booked 9000000/9000000 HU (ACCEPTED)",
+         sleep=DRAIN_WAIT),
     Step(f"gt6multiblock boiler fill {B2_LB} 128000", expect="filled 112500/128000 L of minecraft:water (ACCEPTED)",
          tick_step=N_TOPUP, tick_fallback_poll=10.0),  # the exact 15500 L rest, see B1
     Step(f"gt6multiblock boiler inject-hu {B2_LB} 9000000", expect="booked 9000000/9000000 HU (ACCEPTED)"),
