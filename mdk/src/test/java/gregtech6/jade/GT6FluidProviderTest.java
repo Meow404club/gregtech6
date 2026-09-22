@@ -9,6 +9,8 @@ import java.util.List;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Fluids;
@@ -134,6 +136,21 @@ public class GT6FluidProviderTest extends GTOfflineTestBase {
 		assertEquals(OVERFLOW_AMOUNT, tLava.getLong(GT6FluidProvider.KEY_AMOUNT));
 		assertTrue(tLava.getLong(GT6FluidProvider.KEY_AMOUNT) > Integer.MAX_VALUE);
 		assertEquals(Long.MAX_VALUE, tLava.getLong(GT6FluidProvider.KEY_CAPACITY));
+	}
+
+	@Test
+	public void groupTitlesAreKeyedTranslatablesNotLiterals() {
+		// task p34-hygiene-lang acceptance ③: the decorator's literal band is keyed — the two
+		// known group ids map to the gt6.jade.fluid.group.* faces (both locales), so the tank
+		// headers localize instead of riding the sync id string.
+		TranslatableContents tIn = (TranslatableContents) GT6FluidProvider.groupTitle(GT6FluidProvider.GROUP_IN).getContents();
+		assertEquals(GT6FluidProvider.LANG_GROUP_IN, tIn.getKey());
+		TranslatableContents tOut = (TranslatableContents) GT6FluidProvider.groupTitle(GT6FluidProvider.GROUP_OUT).getContents();
+		assertEquals(GT6FluidProvider.LANG_GROUP_OUT, tOut.getKey());
+		// the defensive branch: an unknown id answers the raw-key face (vanilla missing-key
+		// rendering) — still a translatable, never a Component.literal.
+		Component tUnknown = GT6FluidProvider.groupTitle("Mystery Group");
+		assertEquals("Mystery Group", ((TranslatableContents) tUnknown.getContents()).getKey());
 	}
 
 	@Test

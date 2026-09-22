@@ -7,6 +7,8 @@ import java.util.HashSet;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -131,5 +133,48 @@ public class GT6MachineProviderTest extends GTOfflineTestBase {
 		gregapi.code.TagData tExotic = gregapi.code.TagData.createTagData("ENERGY.EXOTIC");
 		assertEquals("EXOTIC", GT6MachineProvider.energyTypeShortCode(tExotic));
 		assertEquals("", GT6MachineProvider.energyTypeShortCode(null), "null carrier answers empty, never throws");
+	}
+
+	@Test
+	public void tooltipLinesAreKeyedTranslatablesWithTheirSlots() {
+		// task p34-hygiene-lang acceptance ③: the v1 literal band is keyed — every fixed word
+		// rides a gt6.jade.machine.* face (en datagen row + tsv hand row), only the dynamic
+		// values move as %s slots.
+		// seconds face: the >=20t fold with %.1f-preformatted slots (Locale.ROOT pinned)
+		TranslatableContents tSeconds = (TranslatableContents) GT6MachineProvider.progressLine(40, 400).getContents();
+		assertEquals(GT6MachineProvider.LANG_PROGRESS_SECONDS, tSeconds.getKey());
+		assertEquals("2.0", tSeconds.getArgs()[0]);
+		assertEquals("20.0", tSeconds.getArgs()[1]);
+		// ticks face below the fold: the raw longs
+		TranslatableContents tTicks = (TranslatableContents) GT6MachineProvider.progressLine(7, 19).getContents();
+		assertEquals(GT6MachineProvider.LANG_PROGRESS_TICKS, tTicks.getKey());
+		assertEquals(7L, tTicks.getArgs()[0]);
+		assertEquals(19L, tTicks.getArgs()[1]);
+		// energy line: amount + the p27 short code (the "RU"/"KU" era successors)
+		TranslatableContents tEnergy = (TranslatableContents) GT6MachineProvider.energyLine(1234, "RU").getContents();
+		assertEquals(GT6MachineProvider.LANG_ENERGY, tEnergy.getKey());
+		assertEquals(1234L, tEnergy.getArgs()[0]);
+		assertEquals("RU", tEnergy.getArgs()[1]);
+		// input band: min/in/max in slot order
+		TranslatableContents tInput = (TranslatableContents) GT6MachineProvider.inputLine(16, 32, 64).getContents();
+		assertEquals(GT6MachineProvider.LANG_INPUT, tInput.getKey());
+		assertEquals(3, tInput.getArgs().length);
+		assertEquals(16L, tInput.getArgs()[0]);
+		assertEquals(32L, tInput.getArgs()[1]);
+		assertEquals(64L, tInput.getArgs()[2]);
+		// error tail
+		TranslatableContents tError = (TranslatableContents) GT6MachineProvider.errorLine("boom").getContents();
+		assertEquals(GT6MachineProvider.LANG_ERROR, tError.getKey());
+		assertEquals("boom", tError.getArgs()[0]);
+	}
+
+	@Test
+	public void structureLineCarriesTheTwoStateKeys() {
+		// the GREEN/RED styling is a single ternary in structureLine (the crucible
+		// temperatureLine posture — colors not re-pinned, the KEY split is the contract)
+		Component tFormed = GT6MachineProvider.structureLine(true);
+		assertEquals(GT6MachineProvider.LANG_STRUCTURE_FORMED, ((TranslatableContents) tFormed.getContents()).getKey());
+		Component tIncomplete = GT6MachineProvider.structureLine(false);
+		assertEquals(GT6MachineProvider.LANG_STRUCTURE_INCOMPLETE, ((TranslatableContents) tIncomplete.getContents()).getKey());
 	}
 }
