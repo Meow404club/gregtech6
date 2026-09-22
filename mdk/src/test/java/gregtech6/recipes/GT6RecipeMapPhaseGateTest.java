@@ -419,7 +419,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 			assertEquals(SNAPSHOT.get(tEntry.getKey()), Integer.valueOf(tEntry.getValue().mRecipeList.size()),
 					tEntry.getKey() + " must be identical across the freeze");
 		}
-		assertEquals(73, RecipeMap.RECIPE_MAPS.size(), "the freeze-point registry census (the GT6RecipeMapsTest pin shape)");
+		assertEquals(75, RecipeMap.RECIPE_MAPS.size(), "the freeze-point registry census (the GT6RecipeMapsTest pin shape; +2 task p34-machines-bumblelyzer-crucible (the crystallisationcrucible row stock + the bumblelyzer declared-empty) +2 task p34-machines-burner-plantalyzer (the Burner Mixer constants row + the declared-empty Plantalyzer compat map)))");
 	}
 
 	/** The JSON reload window: a FROZEN /reload re-pour lands its rows and re-freezes; an OPEN pour owes no re-freeze. */
