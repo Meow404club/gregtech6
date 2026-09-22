@@ -90,7 +90,11 @@ steps += [
     Step(f"gt6sensor read {F(S6)}", expect="value 0, max 65535"),  # WeightometerLight:65 constant
     Step(f"gt6sensor place itemometer {F(S9)}", expect="GT6 sensor placed at"),
     Step(f"gt6sensor read {F(S9)}", expect="value 0, max 0"),  # air probe, no handler
-    Step(f"gt6sensor place tpsmeter {F(S7)}", expect="GT6 sensor placed at"),
+    Step(f"gt6sensor place tpsmeter {F(S7)}", expect="GT6 sensor placed at",
+         sleep=2),  # the sample gate rides aTimer % getTickRate() = aTimer % 20 (GTSensorBlockEntity
+                    # :162 + Tpsmeter getTickRate) — the cached pair /gt6sensor read prints
+                    # (GTSensorBlockEntity :263/:268) fills at the FIRST sample, >= 1 s after
+                    # the place; every other arm samples every tick (getTickRate < 2 gate)
     Step(f"gt6sensor read {F(S7)}", expect="max 2000"),        # TPSmeter:50, the 20 TPS reference
     Step(f"gt6sensor place playercounter {F(S8)}", expect="GT6 sensor placed at"),
     Step(f"gt6sensor read {F(S8)}", expect="value 0"),         # headless: no players (the max is server-defined)
