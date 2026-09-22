@@ -88,12 +88,14 @@ public class GTSensorBatchCensusTest extends GTOfflineTestBase {
 
 	@Test
 	public void chronometerMinutesOfDayPinsTheDayCycle() {
-		// upstream Chronometer:34 ((time+6000)%24000*60)/1000 — the anchor points
-		assertEquals(720, GT6ChronometerBlockEntity.minutesOfDay(0));            // the +6000 noon anchor → 12:00
-		assertEquals(0, GT6ChronometerBlockEntity.minutesOfDay(18000));          // midnight
-		assertEquals(1410, GT6ChronometerBlockEntity.minutesOfDay(23000));       // 23:30
-		assertEquals(600, GT6ChronometerBlockEntity.minutesOfDay(6000));         // sunset → 18:00
-		assertEquals(720, GT6ChronometerBlockEntity.minutesOfDay(24000 + 0));    // the day rollover wraps
+		// upstream Chronometer:34 ((time+6000)%24000*60)/1000 — the anchor points.
+		// The +6000 offset puts tick 0 at minute 360 (the upstream meter reads 360 on a
+		// fresh world — minute 0 = tick 18000, the midnight fold).
+		assertEquals(360, GT6ChronometerBlockEntity.minutesOfDay(0));         // the +6000 offset → 06:00 slot
+		assertEquals(0, GT6ChronometerBlockEntity.minutesOfDay(18000));       // the midnight fold
+		assertEquals(300, GT6ChronometerBlockEntity.minutesOfDay(23000));     // 5000 ticks past the fold → 05:00 slot
+		assertEquals(720, GT6ChronometerBlockEntity.minutesOfDay(6000));      // sunset → 18:00 slot
+		assertEquals(360, GT6ChronometerBlockEntity.minutesOfDay(24000 + 0)); // the day rollover wraps
 	}
 
 	@Test
