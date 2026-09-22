@@ -69,15 +69,19 @@ steps += [
 ]
 for _ in range(6):
     steps.append(Step(f"loot insert {P['dungeon']} loot minecraft:chests/simple_dungeon",
-                      expect="%s" % P["dungeon"]))  # the roll ack (the loot-list echo)
+                      expect="Dropped"))  # the roll ack (the /loot feedback form)
 steps += [
     Step(f"data get block {P['dungeon']} Items", expect="gt6:"),
 ]
 
 # ------------------------------------------------- B: the targeted tables
-steps += [
-    phase("B: the other six injected tables — one roll each, GT entries by construction"),
-]
+# rolls-per-arm: most tables carry ONLY gt6-id rows (any pick lands a "gt6:" id),
+# but the mineshaft rows include seven minecraft:*_ore vanilla-id rows (upstream
+# ST.make(Blocks.coal_ore ...) verbatim) and the dispenser's fire-charge row is a
+# VANILLA id that merges into the vanilla fire-charge stack — a single "gt6:"
+# assert would flake whenever the weighted pick lands there, so those two arms
+# get six inserts (the A-arm multi-roll shape).
+MULTI = ("mineshaft", "dispenser")
 for name, table in [
     ("mineshaft", "minecraft:chests/abandoned_mineshaft"),
     ("village", "minecraft:chests/village/village_weaponsmith"),
@@ -88,7 +92,10 @@ for name, table in [
 ]:
     steps += [
         Step(f"setblock {P[name]} minecraft:chest", expect="Changed the block"),
-        Step(f"loot insert {P[name]} loot {table}", expect=P[name]),
+    ]
+    for _ in range(6 if name in MULTI else 1):
+        steps.append(Step(f"loot insert {P[name]} loot {table}", expect="Dropped"))
+    steps += [
         Step(f"data get block {P[name]} Items", expect="gt6:"),
     ]
 
@@ -96,15 +103,15 @@ for name, table in [
 steps += [
     phase("C: the gt.flawless/gems/misc bag tables — the gem tables and the misc load+roll"),
     Step(f"setblock {P['flawless']} minecraft:chest", expect="Changed the block"),
-    Step(f"loot insert {P['flawless']} loot gt6:chests/gt_flawless", expect=P["flawless"]),
+    Step(f"loot insert {P['flawless']} loot gt6:chests/gt_flawless", expect="Dropped"),
     Step(f"data get block {P['flawless']} Items", expect="gt6:gem"),
     Step(f"setblock {P['gems']} minecraft:chest", expect="Changed the block"),
-    Step(f"loot insert {P['gems']} loot gt6:chests/gt_gems", expect=P["gems"]),
+    Step(f"loot insert {P['gems']} loot gt6:chests/gt_gems", expect="Dropped"),
     Step(f"data get block {P['gems']} Items", expect="gt6:gem"),
     Step(f"setblock {P['misc']} minecraft:chest", expect="Changed the block"),
 ]
 for _ in range(5):
-    steps.append(Step(f"loot insert {P['misc']} loot gt6:chests/gt_misc", expect=P["misc"]))
+    steps.append(Step(f"loot insert {P['misc']} loot gt6:chests/gt_misc", expect="Dropped"))
 steps += [
     Step(f"data get block {P['misc']} Items", expect="minecraft:"),
 ]
