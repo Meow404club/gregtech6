@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
@@ -32,6 +31,7 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.Recipe;
@@ -82,8 +82,9 @@ import gregtech6.registry.GTMaterialItems;
 	 * a WARN and keeps the existing rows — restart-to-apply semantics, no reload crash.
 	 * Hot row changes remain the tier-b datapack seam's job (GT6RecipeMapJsonLoader +
 	 * the reopenWindow mechanism, gregtech6.recipes package-private). Script RE-RUNS are
-	 * idempotent per JVM: {@link #sAddedRows} tracks every row this module added per map
-	 * and removes them before re-adding, so a boot-window script re-run cannot double-pour.
+	 * idempotent per JVM: {@link #sAddedRows} keys every row this module added by its
+	 * content signature and {@link #addRow} replaces the same-signature instance, so a
+	 * boot-window script re-run cannot double-pour (distinct lines coexist untouched).
 	 * Removal writes {@code RecipeMap.mRecipeList} directly (public final collection) —
 	 * the declared direct-write seam pattern of GT6CokeOvenTagListener: the findRecipe
 	 * membership probe (RecipeMap.firstMatch) never serves a removed row and the size
@@ -98,8 +99,19 @@ import gregtech6.registry.GTMaterialItems;
 	/** Lock serializing pours: KubeJS finalizes added recipes on a parallel stream (6.x RecipesEventJS.createRecipe map building), and addRecipe funnels through the non-thread-safe HashSet. KJS rows are few — one global lock is the whole story. */
 	private static final Object S_POUR_LOCK = new Object();
 
-	/** Rows this module added per map name — the re-run idempotence ledger (see class doc). ponytail: identity-set keyed by map name holds dead-generation refs after a test reset; harmless (bounded by script row count), purge only if that grows. */
-	private static final Map<String, Set<Recipe>> sAddedRows = new ConcurrentHashMap<>();
+	/**
+	 * Rows this module added per map name, keyed by the row's content signature — the
+	 * re-run idempotence ledger. A re-executed script rebuilds the same-signature row;
+	 * addRow replaces it (remove the old instance, keep the fresh one) while
+	 * different-signature rows coexist. Recipe carries no equals, so the signature IS
+	 * the identity — and it must be a STRING, not a List of the arrays: {@code ItemStack}
+	 * has IDENTITY equals on 1.20.1 (vanilla 1.20.1 ItemStack.java overrides no instance
+	 * equals — only the static isSameItemSameTags :428), so content lists from two pours
+	 * of the same line never compared equal (the rerun pin caught it live). ponytail:
+	 * string keys, fine at script-row scale; fluid components are not distinguished
+	 * (script rows carry none — degrade direction is replace, never lose a row).
+	 */
+	private static final Map<String, Map<String, Recipe>> sAddedRows = new ConcurrentHashMap<>();
 
 	private GT6KJS() {}
 
@@ -171,10 +183,11 @@ import gregtech6.registry.GTMaterialItems;
 	}
 
 	/**
-	 * Pours one row: build via the builder, remove this module's previous rows for the
-	 * map (re-run idempotence), then {@link RecipeMap#addRecipe} (the single funnel —
-	 * its ghost-recipe guard, dedup and FROZEN gate all apply). FROZEN → WARN + false,
-	 * rows kept (the restart-to-apply semantics, class doc).
+	 * Pours one row: build, then {@link RecipeMap#addRecipe} (the single funnel — its
+	 * ghost-recipe guard, dedup and FROZEN gate all apply). On success the same-
+	 * signature previous row is replaced (the re-run idempotence, ledger doc). FROZEN
+	 * → the gate throws BEFORE anything mutated: WARN + false, rows kept exactly (the
+	 * restart-to-apply semantics, class doc).
 	 *
 	 * @return true = row poured; false = rejected (frozen / unknown map / ghost row).
 	 */
@@ -183,7 +196,6 @@ import gregtech6.registry.GTMaterialItems;
 		RecipeMap tMap = aRow.mMap;
 		Recipe tRecipe = aRow.build();
 		synchronized (S_POUR_LOCK) {
-			removeTracked(tMap);
 			try {
 				if (tMap.addRecipe(tRecipe) == null) return false; // ghost row (no inputs) — the funnel's silent rejection
 			} catch (IllegalStateException tFrozen) {
@@ -191,7 +203,10 @@ import gregtech6.registry.GTMaterialItems;
 				LOGGER.warn("GT6 KJS: script rows apply at server boot; a runtime /reload keeps the existing rows (restart to apply; hot changes = the gt6:recipe_maps datapack seam)");
 				return false;
 			}
-			sAddedRows.computeIfAbsent(tMap.mNameInternal, k -> ConcurrentHashMap.newKeySet()).add(tRecipe);
+			// Success: replace this row's previous same-signature instance (a script
+			// re-run re-pours the same content; distinct rows coexist untouched).
+			Recipe tPrevious = ledger(tMap.mNameInternal).put(signature(tRecipe), tRecipe);
+			if (tPrevious != null && tPrevious != tRecipe) tMap.mRecipeList.remove(tPrevious);
 		}
 		return true;
 	}
@@ -212,31 +227,50 @@ import gregtech6.registry.GTMaterialItems;
 		RecipeMap tMap = map(aMapName);
 		if (tMap == null || aFilter == null) return 0;
 		synchronized (S_POUR_LOCK) {
-			Set<Recipe> tTracked = sAddedRows.get(aMapName);
+			Map<String, Recipe> tTracked = sAddedRows.get(aMapName);
 			List<Recipe> tDoomed = new ArrayList<>();
 			for (Recipe tRecipe : tMap.mRecipeList) if (aFilter.test(tRecipe)) tDoomed.add(tRecipe);
 			tMap.mRecipeList.removeAll(tDoomed);
-			if (tTracked != null) tTracked.removeAll(tDoomed);
+			if (tTracked != null) tTracked.values().removeAll(tDoomed);
 			return tDoomed.size();
 		}
 	}
 
-	/** Drops this module's tracked rows for the map from its list (the re-run half of addRow). */
-	private static void removeTracked(RecipeMap aMap) {
-		Set<Recipe> tTracked = sAddedRows.get(aMap.mNameInternal);
-		if (tTracked == null || tTracked.isEmpty()) return;
-		aMap.mRecipeList.removeAll(tTracked);
-		tTracked.clear();
+	/** The per-map ledger (created on demand). */
+	private static Map<String, Recipe> ledger(String aMapName) {
+		return sAddedRows.computeIfAbsent(aMapName, k -> new ConcurrentHashMap<>());
 	}
 
 	/**
-	 * Test census: the per-map tracked-row ledger (package-visible read-only copy) —
-	 * pins that the idempotence ledger stays in step with what actually poured.
+	 * The row content signature (the ledger key): item slots as item/count/NBT-text,
+	 * fluid slots as fluid/amount, numerics appended — two script pours of the same
+	 * line produce the same signature, a different line never does. The stack key is
+	 * a STRING because 1.20.1 ItemStack carries identity equals only (no instance
+	 * equals override — the content-list signature never matched; see the ledger doc)
+	 * and the NBT-text half is the Recipe.java:388-393 leg fork (getTag vs
+	 * getComponentsPatch). Fluid keys skip fluid components (script rows carry none).
 	 */
-	static Map<String, Set<Recipe>> addedRowsLedger() {
-		Map<String, Set<Recipe>> rCopy = new LinkedHashMap<>();
-		sAddedRows.forEach((k, v) -> rCopy.put(k, Set.copyOf(v)));
-		return rCopy;
+	private static String signature(Recipe aRecipe) {
+		StringBuilder r = new StringBuilder(64);
+		for (ItemStack tStack : aRecipe.mInputs) r.append(stackKey(tStack)).append(';');
+		r.append('|');
+		for (ItemStack tStack : aRecipe.mOutputs) r.append(stackKey(tStack)).append(';');
+		r.append('|');
+		for (FluidStack tFluid : aRecipe.mFluidInputs) r.append(tFluid.getFluid()).append('/').append(tFluid.getAmount()).append(';');
+		r.append('|');
+		for (FluidStack tFluid : aRecipe.mFluidOutputs) r.append(tFluid.getFluid()).append('/').append(tFluid.getAmount()).append(';');
+		r.append('|').append(aRecipe.mDuration).append(',').append(aRecipe.mEUt).append(',')
+				.append(aRecipe.mSpecialValue).append(',').append(Arrays.toString(aRecipe.mChances));
+		return r.toString();
+	}
+
+	/** The item-slot key: item identity + count + the NBT/components text (content-true both legs). */
+	private static String stackKey(ItemStack aStack) {
+		//? if forge {
+		return aStack == null ? "-" : aStack.getItem() + "/" + aStack.getCount() + "/" + aStack.getTag();
+		//?} else {
+		/*return aStack == null ? "-" : aStack.getItem() + "/" + aStack.getCount() + "/" + aStack.getComponentsPatch();
+		 *///?}
 	}
 
 	/** Test reset seam: drops the whole ledger (the GT6RecipeMaps.reset generation rewind counterpart — the tracker must never outlive its maps in a test JVM). */
@@ -246,16 +280,8 @@ import gregtech6.registry.GTMaterialItems;
 
 	/** Visible-for-testing row assembly (the builder is the spec; this is its product readback). */
 	static Recipe[] ledgerRows(String aMapName) {
-		Set<Recipe> tRows = sAddedRows.get(aMapName);
-		return tRows == null ? new Recipe[0] : tRows.toArray(new Recipe[0]);
-	}
-
-	/** Array helper the builder uses (varargs null-tolerant trim, the Recipe ctor convention). */
-	static ItemStack[] trimNulls(ItemStack[] aArray) {
-		if (aArray == null) return new ItemStack[0];
-		int tEnd = aArray.length;
-		while (tEnd > 0 && (aArray[tEnd - 1] == null || aArray[tEnd - 1].isEmpty())) tEnd--;
-		return tEnd == aArray.length ? aArray : Arrays.copyOf(aArray, tEnd);
+		Map<String, Recipe> tRows = sAddedRows.get(aMapName);
+		return tRows == null ? new Recipe[0] : tRows.values().toArray(new Recipe[0]);
 	}
 }
 //?}
