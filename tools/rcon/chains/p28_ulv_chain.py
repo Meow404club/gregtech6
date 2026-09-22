@@ -42,29 +42,33 @@ probes — the GT6FeConverterCommand precedent form was NOT needed.
     (gt6:stick_copper, 1357 K) passes: inject 300x16 (>= the row's mMinEnergy
     16 — sub-min packets oscillate doInactive's CONSTANT_ENERGY progress
     reset, calibration run 1) completes wire_fine_copper — the control arm.
-    D TRANSFORMER THROUGH-TRICKLE (z=64): gt6fesource (budgeted 24576 FE = 768
-    whole 32 FE pulls, 6x the row's 4096-EU budget — the oven-era 12288 covered
-    512 EU, the loom row is bigger) feeds the gt6feconverter (auto-pull 1
-    packet/tick = steady 8 EU/t emit — the observed trickle rate is exactly
-    8 EU/t) DIRECTLY onto electric_transformer[facing=east] — gt.reversed
-    flipped by /data merge (the W3 driver face the transformer card's
-    NBT_REVERSED javadoc names this chain to drive): step-up input =
-    all-but-front (west = the converter face), output = front (east) INTO THE
-    ELECTRICLOOM DIRECTLY (the p34 EU consumer swap: default north facing puts
-    FACING_ROTATIONS[north][west]=4=right on the transformer front — both side
-    faces are energy faces, min 16): THROUGH but rate-pinned. NO WIRE in this
-    rig ON PURPOSE — the live probe measured a wire feedback loop (the cable
-    returns the step-up packets to the transformer's all-but-front input, the
-    capacitor self-locks and the trickle dies) plus the per-segment loss; the
+    D TRANSFORMER THROUGH-STEP-UP (z=64): TWO gt6fesources (12288 FE each = 384
+    whole 32 FE pulls, exact tails) feed THREE gt6feconverter units (west/north/
+    south of the transformer — each auto-pulls 1 packet/tick = 8 EU x 1 A, the
+    p28-b ULV single-band ruling; 3 x 8 = 24 EU/t steady into the input faces)
+    DIRECTLY onto electric_transformer[facing=east] — gt.reversed flipped by /data
+    merge (the W3 driver face the transformer card's NBT_REVERSED javadoc names
+    this chain to drive): step-up input = all-but-front (the three converter
+    faces), output = front (east) INTO THE ELECTRICLOOM DIRECTLY (the p34 EU
+    consumer swap: the setblock facing IS the state authority —
+    syncFacingFromState re-reads it every tick — and both loom side faces are
+    energy faces, min 16). BOTH THE RATE AND THE FE ADJACENCY ARE LOAD-BEARING:
+    doWork drains mInputMax 64 EVERY tick (BasicMachine :791) and CONSTANT_ENERGY
+    resets mProgress on any inactive tick (:894), so a row only advances while a
+    >= mMinEnergy (16) packet lands EVERY tick — the single-converter 8 EU/t
+    trickle books packets but can never complete a row (forge-leg live: progress
+    pinned 0/4096, energy 0), and pullOnce drains ADJACENT FE storages only, so
+    the v2 N/S converters without a touching fesource were dead weight (the rig
+    stayed at 8 EU/t). At 24 EU/t the reversed transformer emits its whole
+    capacitor every tick (units(mStorage,32,32) = storage, out-min 24): the loom
+    runs 4096 progress at 24/t in ~171 ticks and both budgets drain to EXACTLY
+    stored 0 FE (packet-quantised pulls, zero tails). NO WIRE in
+    this rig ON PURPOSE — the live probe measured a wire feedback loop (the
+    cable returns the step-up packets to the transformer's all-but-front input,
+    the capacitor self-locks and the trickle dies) plus the per-segment loss; the
     direct front-to-face hop is the clean closed form and the LV-wire leg is
-    already proven live in arm B. Nails: the mode read-back "reversed: 1b";
-    the pre-flip energy=0; the completion poll out[0]=1x white_wool (the row
-    completes on the trickle — 4096 progress at ~8/t ≈ 26 s, a full-rate
-    bypass would close in ~3 s); the source drained to EXACTLY stored 0 FE
-    (packet-quantised pulls, zero tail). The oven-era immediate
-    input-intact pin rode the per-smelt consume granularity — the loom
-    consumes its input at recipe bind, so the trickle rate rides the
-    completion-timing evidence instead.
+    already proven live in arm B. Nails: the mode read-back "reversed: 1b"; the
+    pre-flip energy=0; the completion poll out[0]=1x white_wool.
 
 passes=2 is the idempotency proof. The chain-level verdict is [0,0] per leg —
 the negative arms' expected-reds are IN-CHAIN explicit assertion steps, never
@@ -105,15 +109,25 @@ SRC_B = gt6world.Site(523, 64, 48)
 MILL_FE = gt6world.Site(530, 64, 56)
 MILL_CU = gt6world.Site(534, 64, 56)
 
-# --- arm D: converter -> step-up transformer -> LV electricloom trickle (z=64)
-FESRC = gt6world.Site(540, 64, 64)
+# --- arm D: 3x converter -> step-up transformer -> LV electricloom (z=64)
+#     TWO fesources so every converter has FE adjacency (pullOnce only drains
+#     ADJACENT FE storages — the v2 lesson: converters N/S of the transformer
+#     with the fesource only on the west were dead weight, the rig ran at the
+#     single-converter 8 EU/t): FESRC_N feeds FECONV+FECONV_N, FESRC_S feeds
+#     FECONV+FECONV_S (the west converter pulls north-first, so N drains at
+#     64 FE/t and S at 32 FE/t — both exact 32-FE packet tails).
+FESRC_N = gt6world.Site(541, 64, 63)
+FESRC_S = gt6world.Site(541, 64, 65)
 FECONV = gt6world.Site(541, 64, 64)
+FECONV_N = gt6world.Site(542, 64, 63)
+FECONV_S = gt6world.Site(542, 64, 65)
 TRANS = gt6world.Site(542, 64, 64)
 LOOM_D = gt6world.Site(543, 64, 64)
 
 MILL_A_P, MILL_FE_P, MILL_CU_P = F(MILL_A), F(MILL_FE), F(MILL_CU)
 LOOM_B_P, LOOM_D_P, SRC_B_P = F(LOOM_B), F(LOOM_D), F(SRC_B)
-TRANS_P, FESRC_P = F(TRANS), F(FESRC)
+TRANS_P = F(TRANS)
+FESRC_N_P, FESRC_S_P = F(FESRC_N), F(FESRC_S)
 MILL_A_P = F(MILL_A)
 
 DIESEL = "gt6:diesel_engine_bronze"
@@ -216,29 +230,40 @@ steps = [
     Step(f"gt6machine wiremill inject 300 16 {MILL_CU_P}", expect=CU_OUT, node_expects=CU_OUT),
 
     # ---------------------------------------------------------------- arm D
-    phase("D: transformer through-trickle — converter 8 EU/t -> gt.reversed step-up -> LV electricloom: THROUGH but rate-pinned"),
-    Step(f"gt6fesource place {FESRC_P}", expect="stored 100000 FE"),
+    phase("D: transformer through-step-up — 3x converter 24 EU/t -> gt.reversed -> LV electricloom completes"),
+    # TWO fesources x THREE converters = 24 EU/t steady into the transformer
+    # input faces: the rate is load-bearing (see the arm D header — doWork
+    # drains 64/t and CONSTANT_ENERGY resets progress on any inactive tick, so
+    # sub-16 EU/t averages book packets but can never complete a row), AND the
+    # FE adjacency is load-bearing (pullOnce drains ADJACENT FE storages only —
+    # the v2 run's N/S converters had none and the rig stayed at 8 EU/t)
+    Step(f"gt6fesource place {FESRC_N_P}", expect="stored 100000 FE"),
+    Step(f"gt6fesource place {FESRC_S_P}", expect="stored 100000 FE"),
     Step(f"gt6feconverter place {F(FECONV)}", expect="voltage 8 EU x 1 A"),
+    Step(f"gt6feconverter place {F(FECONV_N)}", expect="voltage 8 EU x 1 A"),
+    Step(f"gt6feconverter place {F(FECONV_S)}", expect="voltage 8 EU x 1 A"),
     Step(f"setblock {TRANS_P} {TRANSFORMER}", expect="Changed the block", sleep=1.0),
-    # the default north facing puts FACING_ROTATIONS[north][west]=4=right on the
-    # transformer's east front — both loom side faces are energy faces, no merge
+    # the setblock facing is the state authority — syncFacingFromState re-reads
+    # it every tick, so the front (reversed output) is EAST into the loom
     Step(f"gt6machine electricloom place {LOOM_D_P}", expect="GT6 electricloom placed"),
     # the pre-flip mode pin: upstream default = step-down
     Step(f"data get block {TRANS_P}", expect="reversed: 0b"),
     Step(f"gt6machine electricloom input 4 {LOOM_D_P}", expect=LOOM_INPUT, node_expects=LOOM_INPUT),
-    # the headroom budget: 24576 FE = 768 packet-quantised pulls (zero tail),
-    # the raw 6144 EU covers the 4096-progress row plus the measured transit loss
-    # (the oven-era budget 12288 FE covered 512 EU of smelts)
-    Step(f"gt6fesource set {FESRC_P} 24576", expect="stored 24576 FE"),
+    # the headroom budget: 12288 FE per fesource = 384 packet-quantised pulls
+    # each (zero tail); the row consumes ~4104 EU at 24/t (~16416 FE) and the
+    # idle loom eats the rest until both sources read exactly 0
+    Step(f"gt6fesource set {FESRC_N_P} 12288", expect="stored 12288 FE"),
+    Step(f"gt6fesource set {FESRC_S_P} 12288", expect="stored 12288 FE"),
     Step(f"gt6machine electricloom check {LOOM_D_P}", expect="energy=0"),
     # THE W3 DRIVER FACE: the NBT mode flip (clears the capacitor, Base11 :81)
     Step(f"data merge block {TRANS_P} {{gt.reversed:1b}}", expect="Modified block data"),
     Step(f"data get block {TRANS_P}", expect="reversed: 1b"),
     # the wall acceptance: the stepped-up packets DO complete the LV job — the
-    # 8 EU/t trickle walks 4096 progress in ~26 s (a full-rate bypass: ~3 s)
+    # 24 EU/t steady feed walks 4096 progress in ~171 ticks (~9 s)
     Step(f"gt6machine electricloom check {LOOM_D_P}", expect=LOOM_DONE, node_expects=LOOM_DONE, poll=40.0),
     # conservation: every FE crossed (packet-quantised pulls drain to exact zero)
-    Step(f"gt6fesource stat {FESRC_P}", expect="stored 0 FE", poll=60.0),
+    Step(f"gt6fesource stat {FESRC_N_P}", expect="stored 0 FE", poll=60.0),
+    Step(f"gt6fesource stat {FESRC_S_P}", expect="stored 0 FE", poll=60.0),
 ]
 
 CHAIN = Chain(
@@ -248,7 +273,7 @@ CHAIN = Chain(
         ENGINE, AXLE1, AXLE2, DYNAMO, MILL_A,
         LOOM_B, WIRE_B, SRC_B,
         MILL_FE, MILL_CU,
-        FESRC, FECONV, TRANS, LOOM_D),
+        FESRC_N, FESRC_S, FECONV, FECONV_N, FECONV_S, TRANS, LOOM_D),
     preferred_ports=(26170, 26180),      # this card's pinned rcon/query pair (fresh 2617x segment)
     passes=2,
     steps=steps,
