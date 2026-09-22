@@ -54,11 +54,11 @@ def merge_loot(pos):
         "1.20.1": (f'data merge block {pos} {{gt.inv:{{Items:['
                    '{Slot:0b,id:"gt6:comb_honey",Count:5b},'
                    '{Slot:1b,id:"gt6:bumble_princess",Count:1b,tag:{"gt.bumble.meta":0,"gt.bumble":{work:4500L,life:12000L}}},'
-                   '{Slot:2b,id:"gt6:bumble_drone",Count:3b,tag:{"gt.bumble.meta":0,"gt.bumble":{work:4500L,life:12000L}}}]}}}'),
+                   '{Slot:2b,id:"gt6:bumble_drone",Count:3b,tag:{"gt.bumble.meta":0,"gt.bumble":{work:4500L,life:12000L}}}]}}'),
         "1.21.1": (f'data merge block {pos} {{gt.inv:{{Items:['
                    '{Slot:0b,id:"gt6:comb_honey",count:5},'
                    '{Slot:1b,id:"gt6:bumble_princess",count:1,components:{"minecraft:custom_data":{"gt.bumble.meta":0,"gt.bumble":{work:4500L,life:12000L}}}},'
-                   '{Slot:2b,id:"gt6:bumble_drone",count:3,components:{"minecraft:custom_data":{"gt.bumble.meta":0,"gt.bumble":{work:4500L,life:12000L}}}}]}}}'),
+                   '{Slot:2b,id:"gt6:bumble_drone",count:3,components:{"minecraft:custom_data":{"gt.bumble.meta":0,"gt.bumble":{work:4500L,life:12000L}}}}]}}'),
     }
 
 
@@ -68,13 +68,14 @@ steps = [
 
     phase("B: the craft face — the ACT crafts the :2222 Bumbliary row (PPP/PBP/TdT)"),
     Step(f"gt6act place {F(ACT)}", expect="GT6 advanced_crafting_table placed"),
-    # the :2222 grid row-major on the SLOTS_CRAFTING band 21..29: P/P/P / B/P/B / T/d/T
+    # the :2222 grid row-major on the SLOTS_CRAFTING band 21..29: P/P/P / P/B/P / T/d/T
+    # ('B' = the hive, the CENTER cell slot 25 — the pattern row "PBP", the json pin)
     Step(f"gt6act fill 21 gt6:plate_wood_treated 1 {F(ACT)}", expect="GT6 ACT fill slot 21: 1x"),
     Step(f"gt6act fill 22 gt6:plate_wood_treated 1 {F(ACT)}", expect="GT6 ACT fill slot 22: 1x"),
     Step(f"gt6act fill 23 gt6:plate_wood_treated 1 {F(ACT)}", expect="GT6 ACT fill slot 23: 1x"),
-    Step(f"gt6act fill 24 gt6:bumble_hive 1 {F(ACT)}", expect="GT6 ACT fill slot 24: 1x"),
-    Step(f"gt6act fill 25 gt6:plate_wood_treated 1 {F(ACT)}", expect="GT6 ACT fill slot 25: 1x"),
-    Step(f"gt6act fill 26 gt6:bumble_hive 1 {F(ACT)}", expect="GT6 ACT fill slot 26: 1x"),
+    Step(f"gt6act fill 24 gt6:plate_wood_treated 1 {F(ACT)}", expect="GT6 ACT fill slot 24: 1x"),
+    Step(f"gt6act fill 25 gt6:bumble_hive 1 {F(ACT)}", expect="GT6 ACT fill slot 25: 1x"),
+    Step(f"gt6act fill 26 gt6:plate_wood_treated 1 {F(ACT)}", expect="GT6 ACT fill slot 26: 1x"),
     Step(f"gt6act fill 27 gt6:screw_iron 1 {F(ACT)}", expect="GT6 ACT fill slot 27: 1x"),
     Step(f"gt6act fill 28 gt6:screwdriver 1 {F(ACT)}", expect="GT6 ACT fill slot 28: 1x"),
     Step(f"gt6act fill 29 gt6:screw_iron 1 {F(ACT)}", expect="GT6 ACT fill slot 29: 1x"),
