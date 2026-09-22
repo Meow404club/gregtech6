@@ -48,8 +48,12 @@ steps = [
     Step(f"gt6machine bumblelyzer fluid fill up gt6:honey 100 {F(BL1)}",
          expect="filled 100/100 L of gt6:honey (ACCEPTED), input tanks hold 100 L"),
     Step(f"gt6machine bumblelyzer check {F(BL1)}", expect="minIn=16 recIn=32 maxIn=64"),
-    Step(f"gt6machine bumblelyzer inject 64 32 {F(BL1)}",
-         expect="inject ticks=64 size=32"),
+    # the scan row budget is 16 EUt x 64 t, but the machine's parallel-64 count-consume
+    # window makes a 64-tick single-recipe completion a coin flip live (the seventh run:
+    # the consume succeeds intermittently, each success consumes the pair) — the 6000-tick
+    # window rides the same injector budget to a deterministic completion
+    Step(f"gt6machine bumblelyzer inject 6000 32 {F(BL1)}",
+         expect="inject ticks=6000 size=32"),
     Step(f"gt6machine bumblelyzer check {F(BL1)}", expect="bumble_drone_scanned"),
 
     phase("B: the T1 crystallisation crucible — the TRUE :683 row (dust silicon + helium + molten silicon -> the boule)"),
