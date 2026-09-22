@@ -6,10 +6,14 @@ Chain semantics (the task-card RCON arms):
 
   A the SCOOP HARVEST (acceptance ③): a /setblock hive (the MTE 32755 loot shell) with
     a data-merged comb in slot 0 (the gt.inv NBT_INV_LIST face) is mined by the
-    /gt6scene6 mine channel AS THE SCOOP — the drop report names gt6:comb_honey x3.
+    /gt6scene6 mine channel AS THE SCOOP — the drop report names gt6:bumble_hive x1
+    (the BOX, the R2 containment-contract revision: the upstream base getDrops,
+    TileEntityBase04MultiTileEntities.java:166-171, leads every break with the block
+    item) PLUS gt6:comb_honey x3 (the contents).
     The wrong-tool negative rides the same walk with the plunger: the SHEARS_HARVEST
     gate (canHarvestBlock = the aHive TOOL_scoop semantics, Loader_MultiTileEntities
-    .java:111) drops NOTHING (the upstream mDroppable never fires for a wrong tool).
+    .java:111) drops NOTHING (playerDestroy is canHarvestBlock-gated, so neither the
+    box nor the mDroppable contents ever fire for a wrong tool).
   B the PAINTABLE storage face: the merge writes gt.color/gt.painted (the born-painted
     worldgen keys, WorldgenHives.java:203) and data get reads the family colour back.
   C the EMBEDDED form live place (chunk 4,4): the stone slab y12..16 + apron makes EVERY
@@ -75,10 +79,10 @@ steps = []
 
 # --------------------------------- A/B: the scoop harvest + the paintable storage
 steps += [
-    phase("A: the scoop mines the loaded hive — the comb drops (acceptance ③)"),
+    phase("A: the scoop mines the loaded hive — box + comb drop (acceptance ③, the p34 R2 box-drop semantics)"),
     Step(f"setblock {F(HIVE)} gt6:bumble_hive", expect="Changed the block"),
     Step(merge_comb(F(HIVE))["1.20.1"], expect="Modified block data", node_cmds=merge_comb(F(HIVE))),
-    Step(f"gt6scene6 mine {F(HIVE)} scoop", expect="drops=[gt6:comb_honey x3]"),
+    Step(f"gt6scene6 mine {F(HIVE)} scoop", expect="drops=[gt6:bumble_hive x1, gt6:comb_honey x3]"),
 
     phase("A-: the wrong tool breaks the hive with NO drops (the TOOL_scoop gate)"),
     Step(f"setblock {F(HIVE)} gt6:bumble_hive", expect="Changed the block"),
