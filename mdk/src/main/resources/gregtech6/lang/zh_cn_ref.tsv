@@ -910,6 +910,7 @@ direct	gt6.row.item_pipe.display.restrictive_medium	限流%s物品管道	hand
 direct	gt6.row.laminator.display	过胶机 (%s)	hand
 direct	gt6.row.large_boiler.display	%s锅炉气压计核心	hand
 direct	gt6.row.lightningprocessor.display	闪电处理器 (%s)	hand
+direct	gt6.row.machine.bumblelyzer	膜翅目昆虫分析仪 (%s)	hand
 direct	gt6.row.machine.buzzsaw	圆锯 (%s)	hand
 direct	gt6.row.machine.catalytic_cracker	催化裂解器 (%s)	hand
 direct	gt6.row.machine.centrifuge	离心机 (%s)	hand
@@ -918,6 +919,7 @@ direct	gt6.row.machine.compressor	压缩机 (%s)	hand
 direct	gt6.row.machine.crusher	破碎机	hand
 direct	gt6.row.machine.crusher.display	破碎机 (%s)	hand
 direct	gt6.row.machine.cryo_mixer	低温搅拌机 (%s)	hand
+direct	gt6.row.machine.crystallisation_crucible	结晶器 (%s)	hand
 direct	gt6.row.machine.display	%s (%s)	hand
 direct	gt6.row.machine.extruder	压模器	hand
 direct	gt6.row.machine.extruder.display	压模器 (%s)	hand

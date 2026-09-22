@@ -893,6 +893,11 @@ public final class GT6LootTables extends LootTableProvider {
         // EDIT ruling: the provider is the generic machine self-drop walker)
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.smelterBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.melterBlockArray());
+        // task p34-machines-bumblelyzer-crucible — the Bumblelyzer 5-ladder + the
+        // Crystallisation Crucible 4-ladder join the machine self-drop provider (the same
+        // MTE default self-drop, the tail-append EDIT ruling)
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.bumblelyzerBlockArray());
+        java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.crystallisationBlockArray());
         return rBlocks;
     }
 
