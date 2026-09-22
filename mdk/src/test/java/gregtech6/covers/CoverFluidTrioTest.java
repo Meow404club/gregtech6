@@ -148,6 +148,20 @@ public class CoverFluidTrioTest extends GTCoverTestBase {
 		assertEquals(16000, CoverDrain.INFINITE_WATER_FILL, "the infinite-pool bonus rate (upstream :127)");
 	}
 
+	@Test
+	public void drainInfiniteWaterRuleIsTheSeaLevelRiverBand() {
+		// upstream WD.java:690 verbatim shape — UT.Code.inside(waterLevel-15, waterLevel, y)
+		// over the waterLevel table (WD.java:417-440): sky-lit 62, no-sky 31. The BIOMES_RIVER_LAKE
+		// half rides the Level (the BiomeTags.IS_RIVER approximation, the method doc) — the
+		// band + level formula are the offline-pinnable rule core.
+		assertTrue(CoverDrain.inSeaLevelBand(62, CoverDrain.waterLevelOf(true)), "sea level itself is in the band");
+		assertTrue(CoverDrain.inSeaLevelBand(47, CoverDrain.waterLevelOf(true)), "waterLevel-15 is the band floor");
+		assertFalse(CoverDrain.inSeaLevelBand(46, CoverDrain.waterLevelOf(true)), "one below the floor is out — a sky-built pool above the band DRAINS the source");
+		assertFalse(CoverDrain.inSeaLevelBand(63, CoverDrain.waterLevelOf(true)), "one above the ceiling is out");
+		assertEquals(31, CoverDrain.waterLevelOf(false), "the no-sky water level (WD.java:433 hasNoSky arm)");
+		assertTrue(CoverDrain.inSeaLevelBand(31, CoverDrain.waterLevelOf(false)), "the no-sky band pins its own level");
+	}
+
 	// ------------------------------------------------------------------
 	// the pressure valve (upstream CoverPressureValve)
 	// ------------------------------------------------------------------

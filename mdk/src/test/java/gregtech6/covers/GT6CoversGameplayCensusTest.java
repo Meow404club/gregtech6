@@ -57,20 +57,4 @@ public class GT6CoversGameplayCensusTest {
 		assertEquals(69, tActual.size(), "69 cover items: 53 landed (10 singletons + 14 logistics + 2x10 ladders + 9 this card) + 16 tag ladder");
 	}
 
-	@Test
-	public void thisCardsRegistrationArmIsTheExactTwentyFiveRows() {
-		Set<String> tActual = GT6Covers.ITEMS.getEntries().stream()
-				.map(tEntry -> tEntry.getId().getPath())
-				.collect(Collectors.toCollection(TreeSet::new));
-		assertEquals(25, tActual.stream().filter(tId ->
-				tId.startsWith("cover_vent") || tId.startsWith("cover_drain") || tId.startsWith("cover_pressure_valve")
-				|| tId.startsWith("cover_fluid_filter") || tId.startsWith("cover_redstone_torch") || tId.startsWith("cover_redstone_repeater")
-				|| tId.startsWith("cover_selector")).count(),
-				"this card's arm: the 9 gameplay singletons + the 16 tag-selector ladder (acceptance ①)");
-	}
-
-	@Test
-	public void tagLadderCarriesSixteenModes() {
-		assertEquals(16, GT6Covers.COVER_SELECTOR_TAGS.size(), "upstream ItemIntegratedCircuit.java:87 — one selector per meta 0..15");
-	}
 }

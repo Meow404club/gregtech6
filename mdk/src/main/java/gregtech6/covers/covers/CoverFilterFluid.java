@@ -25,7 +25,9 @@ import gregtech6.covers.ICover;
  * covered face passes fluid transfer only when the fluid satisfies the filter: visual
  * 0 = WHITELIST (only the filter fluid passes), visual 1 = BLACKLIST (only the filter
  * fluid is refused), toggled with the screwdriver (:62-66). The filter fluid is set by
- * right-clicking the plate with a fluid container (:93-114), stored in the
+ * right-clicking the plate with a fluid container — ONLY while the lane is empty
+ * (:95, the CoverFilterItem :93/:94 same-shape gate; CHANGING it requires the
+ * soft-hammer clear first) — stored in the
  * {@link CoverData#mNBTs} lane under the verbatim upstream key {@code gt.filter.fluid}
  * (:95/:106), and cleared with the soft hammer (:67-70). NOT NBT sensitive — the
  * upstream match is {@code FL.equal(filter, stack, T)} (:121/:128), which this port
@@ -141,7 +143,7 @@ public class CoverFilterFluid extends AbstractCoverDefault {
 	@Override
 	public boolean onCoverClickedRight(byte aCoverSide, CoverData aData, Entity aPlayer, byte aSideClicked, float aHitX, float aHitY, float aHitZ) {
 		Player tPlayer = ICover.asPlayer(aPlayer); // upstream aPlayer instanceof EntityPlayer
-		if (tPlayer != null && aData.mTileEntity.isServerSideTE()) { // :94
+		if (tPlayer != null && aData.mTileEntity.isServerSideTE() && acceptsFilterWrite(aData, aCoverSide)) { // :94/:95
 			ItemStack tHeld = tPlayer.getMainHandItem(); // upstream getCurrentEquippedItem
 			if (!tHeld.isEmpty()) { // :97 ST.valid
 				Optional<FluidStack> tFluid = FluidUtil.getFluidContained(tHeld); // :98 FL.getFluid (the ore-dict container half rides the cut om system)
@@ -155,6 +157,16 @@ public class CoverFilterFluid extends AbstractCoverDefault {
 			}
 		}
 		return true; // :114
+	}
+
+	/**
+	 * Upstream :95 — only an EMPTY filter lane accepts the right-click write ({@code
+	 * mNBTs == null || !hasKey("gt.filter.fluid")}); CHANGING the filter fluid requires
+	 * the soft-hammer clear first (:67-70), the CoverFilterItem :93/:94 same-shape gate.
+	 * Pure for the offline pin (the click arm narrows the player above it).
+	 */
+	public static boolean acceptsFilterWrite(CoverData aData, byte aCoverSide) {
+		return aData.mNBTs[aCoverSide] == null || !aData.mNBTs[aCoverSide].contains(FILTER_KEY, Tag.TAG_STRING);
 	}
 
 	/**

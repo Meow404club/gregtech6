@@ -104,6 +104,21 @@ public class CoverFilterFluidTorchTest extends GTCoverTestBase {
 	}
 
 	@Test
+	public void fluidFilterRightClickRefusesToOverwriteASetFilter() {
+		// upstream :95 — only an EMPTY lane accepts the right-click write; changing the
+		// filter fluid requires the soft-hammer clear first (the CoverFilterItem :93 form)
+		GTBarrelMetalBlockEntity tBarrel = sBarrelType.create(COVER_POS, Blocks.STONE.defaultBlockState());
+		CoverData tCovers = filterData(tBarrel, Fluids.WATER);
+		assertFalse(CoverFilterFluid.acceptsFilterWrite(tCovers, (byte) 3),
+				"a set filter lane REFUSES the write — the held container cannot overwrite it");
+		tCovers.mNBTs[3].remove(CoverFilterFluid.FILTER_KEY); // the soft-hammer clear (:68)
+		assertTrue(CoverFilterFluid.acceptsFilterWrite(tCovers, (byte) 3),
+				"the cleared lane accepts the write again");
+		assertTrue(CoverFilterFluid.acceptsFilterWrite(new CoverData(tBarrel), (byte) 3),
+				"a fresh (null-lane) store accepts the write");
+	}
+
+	@Test
 	public void fluidFilterOtherFacesAreNotGated() {
 		GTBarrelMetalBlockEntity tBarrel = sBarrelType.create(COVER_POS, Blocks.STONE.defaultBlockState());
 		CoverData tCovers = filterData(tBarrel, Fluids.WATER);
