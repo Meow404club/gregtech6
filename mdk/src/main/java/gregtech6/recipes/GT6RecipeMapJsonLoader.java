@@ -215,7 +215,15 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// the P31 QU trio (task p31-qu-a-foundation): the three declared-empty maps get
 			// their keys WITH the card so the C/D machine cards never touch this loader; the
 			// three smoke rows ship with the keys (the datapack face)
-			"massfab", "replicator", "scannermolecular");
+			"massfab", "replicator", "scannermolecular",
+			// the P34 machine pair (task p34-machines-bumblelyzer-crucible): the
+			// crystallisationcrucible key ships WITH its 132-row stock (the
+			// Loader_Recipes_Other.java:683-706 verbatim pour); the bumblelyzer key is
+			// whitelist-only and empty ON PURPOSE — a bumblelyzer file would pour REAL rows
+			// the loader cannot mark fake (the v1 row-flags boundary), and the Bumblelyzer's
+			// live semantics ARE the dynamic findRecipe arm (the display stock rides
+			// GT6RecipeMapBumblelyzer.sFakeRecipes outside mRecipeList)
+			"crystallisationcrucible", "bumblelyzer");
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
 
@@ -626,6 +634,11 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "massfab" -> GT6RecipeMaps.MASSFAB;
 			case "replicator" -> GT6RecipeMaps.REPLICATOR;
 			case "scannermolecular" -> GT6RecipeMaps.SCANNER_MOLECULAR;
+			// the P34 machine pair (task p34-machines-bumblelyzer-crucible — the key/field
+			// pairs are the field-name snake case; CRYSTALLISATION_CRUCIBLE carries its row
+			// stock, BUMBLELYZER stays rowless, see the POURABLE note)
+			case "crystallisationcrucible" -> GT6RecipeMaps.CRYSTALLISATION_CRUCIBLE;
+			case "bumblelyzer" -> GT6RecipeMaps.BUMBLELYZER;
 		default -> null;
 		};
 	}
