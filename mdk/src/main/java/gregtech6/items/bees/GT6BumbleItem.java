@@ -81,6 +81,80 @@ public final class GT6BumbleItem extends Item {
 		return "gt6.row.bumble." + GT6BumbleGenes.codeOf(aStack);
 	}
 
+	// -------------------------------------------------------------------------
+	// the sting (task p34-bumbliary-gui — MultiItemBumbles.java:440-456 bumbleAttack;
+	// the Bumbliary queen-phase aggro walk and the top-use penalty both land here)
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The {@code :448-455} damage ladder as data (the pure half the offline pins ride): the
+	 * sting damage of a code, {@code (1 + tier)} scaled by the family multiplier — 0 marks
+	 * the {@code :452} family-8 no-sting.
+	 */
+	public static int stingDamage(int aCode) {
+		int tBase = 1 + GT6Bumbles.tierOf(aCode); // the {@code (1+((meta/10)%10))} sting base
+		return switch (GT6Bumbles.familyOf(aCode)) {
+			case 8 -> 0; // :452 — the passive family never stings
+			case 9 -> tBase * 2; // :450
+			case 6 -> tBase * 4; // :451
+			case 3 -> tBase * 2; // :453 — the nether family, the burn rider rides bumbleAttack
+			case 105, 200, 201, 202, 203 -> tBase * 10; // :454 — the elemental-elite quartet
+			default -> tBase; // :449
+		};
+	}
+
+	/**
+	 * The {@code :443-447} target immunity gate as data: the bone targets (the
+	 * {@code EntitySkeleton} + the type-4 skeleton horse of :443) and the snow golem
+	 * ({@code :444}, exact class at the call site) shrug the standard families off, the
+	 * nether fire family spares only skeletons and golems (the {@code :453} melt face —
+	 * the snow golem is deliberately NOT immune there), and the elemental-elite quartet
+	 * spares players ({@code :454}).
+	 */
+	public static boolean stingGate(int aFamily, boolean aSkeleton, boolean aSnowGolem, boolean aIronGolem, boolean aPlayer) {
+		return switch (aFamily) {
+			case 8 -> false; // :452
+			case 3 -> !aSkeleton && !aIronGolem; // :453
+			case 105, 200, 201, 202, 203 -> !aPlayer; // :454
+			default -> !aSkeleton && !aSnowGolem && !aIronGolem; // :449-451
+		};
+	}
+
+	/**
+	 * The {@code bumbleAttack} face ({@code MultiItemBumbles.java:440-456}): the
+	 * {@link #stingDamage}/{@link #stingGate} tables, then the vanilla {@code sting}
+	 * damage source (the {@code DamageSources.getBumbleDamage()} fold — the typed
+	 * {@code sting(LivingEntity)} is the only public form on both legs, so the victim
+	 * stands in as the source entity; the block-hosted walk has no bee entity, upstream
+	 * carried none either) and the {@code :453} burn rider
+	 * ({@code setFire((1+tier))*10} ticks = {@code (1+tier)} seconds) for the nether family.
+	 *
+	 * <p>ponytail: the {@code :441} {@code isWearingFullInsectHazmat} gate is cut — the
+	 * port carries no hazmat armor family, so nobody can pass it; the gate rides the
+	 * armor-pool card.
+	 */
+	public boolean bumbleAttack(ItemStack aBee, net.minecraft.world.entity.LivingEntity aAttacked) {
+		int tCode = GT6BumbleGenes.codeOf(aBee);
+		int tFamily = GT6Bumbles.familyOf(tCode);
+		int tDamage = stingDamage(tCode);
+		boolean tGate = stingGate(tFamily
+				, aAttacked instanceof net.minecraft.world.entity.monster.AbstractSkeleton
+						|| aAttacked instanceof net.minecraft.world.entity.animal.horse.SkeletonHorse // the :443 pair (the type-4 horse is the skeleton one)
+				, aAttacked.getClass() == net.minecraft.world.entity.animal.SnowGolem.class // :444 — the exact class
+				, aAttacked instanceof net.minecraft.world.entity.animal.IronGolem // :445
+				, aAttacked instanceof net.minecraft.world.entity.player.Player); // :446
+		if (tDamage <= 0 || !tGate) return false;
+		if (!aAttacked.hurt(aAttacked.damageSources().sting(aAttacked), tDamage)) return false;
+		if (tFamily == 3) { // the :453 burn rider
+			//? if forge {
+			aAttacked.setSecondsOnFire(tDamage / 2); // (1+tier)*10 ticks — setSecondsOnFire counts seconds
+			//?} else {
+			/*aAttacked.igniteForSeconds(tDamage / 2); // 21.1: setSecondsOnFire → igniteForSeconds (the float seconds form)
+			*///?}
+		}
+		return true;
+	}
+
 	//? if forge {
 	@Override
 	public void appendHoverText(ItemStack aStack, @Nullable Level aLevel, List<Component> aTooltip, TooltipFlag aFlag) {
