@@ -404,16 +404,16 @@ public final class GTMachineCommand {
 			// would swallow the pos's first int, and brigadier does not backtrack past an
 			// executed-parse sibling).
 			.then(Commands.literal("item")
-				.then(Commands.argument("id", com.mojang.brigadier.arguments.StringArgumentType.word())
+				.then(Commands.argument("id", net.minecraft.commands.arguments.ResourceLocationArgument.id())
 					.executes(context -> itemInput(context.getSource(),
-							com.mojang.brigadier.arguments.StringArgumentType.getString(context, "id"), DEFAULT_INPUT_COUNT, null))
+							net.minecraft.commands.arguments.ResourceLocationArgument.getId(context, "id"), DEFAULT_INPUT_COUNT, null))
 					.then(Commands.argument("count", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 64))
 						.executes(context -> itemInput(context.getSource(),
-								com.mojang.brigadier.arguments.StringArgumentType.getString(context, "id"),
+								net.minecraft.commands.arguments.ResourceLocationArgument.getId(context, "id"),
 								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"), null))
 						.then(Commands.argument("pos", BlockPosArgument.blockPos())
 							.executes(context -> itemInput(context.getSource(),
-									com.mojang.brigadier.arguments.StringArgumentType.getString(context, "id"),
+									net.minecraft.commands.arguments.ResourceLocationArgument.getId(context, "id"),
 									com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"),
 									BlockPosArgument.getLoadedBlockPos(context, "pos"))))))));
 		tMachine.then(Commands.literal("run")
@@ -958,16 +958,10 @@ public final class GTMachineCommand {
 	 * {@code <namespace>:<path>} (or bare path → minecraft) item into the input slot —
 	 * the multi-input rows' second leg face. Unknown ids fail the command.
 	 */
-	private static int itemInput(CommandSourceStack source, String aItemId, int count, BlockPos pos) {
-		// fromNamespaceAndPath, not the ctor: private in 1.21.1 and the single-string ctor
-		// is deprecated-pending-removal in 1.20.1 — the factory is the both-legs form
-		// (the GTOvenOverlayModel.spriteOf javap-proven shape)
-		String tFull = aItemId.contains(":") ? aItemId : "minecraft:" + aItemId;
-		net.minecraft.resources.ResourceLocation tId = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(
-				tFull.substring(0, tFull.indexOf(':')), tFull.substring(tFull.indexOf(':') + 1));
-		Item tItem = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(tId);
+	private static int itemInput(CommandSourceStack source, net.minecraft.resources.ResourceLocation aId, int count, BlockPos pos) {
+		Item tItem = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(aId);
 		if (tItem == null || tItem == net.minecraft.world.item.Items.AIR) {
-			source.sendFailure(Component.literal("Unknown item id: " + aItemId));
+			source.sendFailure(Component.literal("Unknown item id: " + aId));
 			return 0;
 		}
 		return input(source, () -> tItem, count, pos);
