@@ -1,0 +1,6 @@
+# GT6 KubeJS addon plugin (task p34-kjs-bindings).
+# Resource-root discovery: KubeJS reads this file ONLY when KubeJS itself is
+# installed — the runtime-optional dependency face (no KubeJS = this file is inert).
+# Format: bare FQCN per line (GTCEu kubejs.plugins.txt form); the plugin's dual-leg
+# fork (6.x extends / 7.x implements KubeJSPlugin) lives inside the class.
+gregtech6.integration.kjs.GT6KubeJSPlugin
