@@ -831,6 +831,17 @@ SESSION_GROUPS = (
     # the rigs are band-local setblocks).
     # --group p34_bee_recipes matches through the chain's embedded name prefix.
     ("p34_bee_recipes",),
+    # p34-loot-injection (task p34-loot-injection): the dungeon-loot injection live
+    # chain — a fresh x=700 z=200..218 band (clear of every registered band), the
+    # simple_dungeon multi-roll existence arm (six /loot insert rolls, the GLM
+    # [1,3]-roll lower bound makes "gt6:" deterministic) + one roll each of the other
+    # six injected vanilla tables + the gt.flawless/gems/misc bag-table rolls. The
+    # headless dedicated server has no online player, so the acceptance's /loot give
+    # rides its server-side twin /loot insert (the SAME LootTable.getRandomItems →
+    # ForgeHooks.modifyLoot path). Admission mirroring the p34_sensors form
+    # (bbox-registered, no fresh_boot / mutates member).
+    # --group p34_loot_inject matches through the chain's embedded name prefix.
+    ("p34_loot_inject",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
