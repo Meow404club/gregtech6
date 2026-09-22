@@ -77,6 +77,16 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	public static final TagKey<Item> TOOLS_SCREWDRIVER = gt6("tools/screwdriver");
 
 	/**
+	 * The crossbred-comb tag (task p34-bumbliary-recipes) — the {@code OD.beeCombCrossbred}
+	 * translation over the ten combs the upstream MultiItemFood rows tag with it
+	 * (:237-246: Clay/Sticky/Royal/Soul/Amnesic/Military + Pyro/Cryo/Aero/Tera, metas
+	 * 30100-30105/30200-30203; the GT6BeeCombs meta rows above 30100). The Advanced
+	 * Bumbliary recipe keys its 'R' on it (Loader_MultiTileEntities.java:2223
+	 * {@code 'R', OD.beeCombCrossbred}) — the any-crossbred-comb oredict semantics.
+	 */
+	public static final TagKey<Item> COMBS_CROSSBRED = gt6("combs/crossbred");
+
+	/**
 	 * The craftingToolHardHammer oredient translation — #gt6:tools/hard_hammer (task
 	 * p25-tool-hammer-wrench spec ④, the TOOLS_FILE/TOOLS_SAW snake shape). Upstream key
 	 * {@code OreDictToolNames.hammer = "craftingToolHardHammer"} (CS.java:1890); the
@@ -432,6 +442,19 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		addArmorTags(aProvider); // task p29-w5-t8-armor-24 — the 8 hazard-set tag faces
 		addTreeTags(); // task p30-w6-t1-trees-nine — the decisions.p25-leaves-logs-tags-deferred unlock
 		addFallenLogTags(); // task p30-w6-t2-surface-blocks — the 4 fallen-log item faces (the coke-oven rebuild source)
+		addCombTags(); // task p34-bumbliary-recipes — the OD.beeCombCrossbred face over the ten crossbred combs
+	}
+
+	/**
+	 * The crossbred-comb band (task p34-bumbliary-recipes): the ten combs the upstream
+	 * MultiItemFood rows tag {@code OD.beeCombCrossbred} with — the
+	 * {@link gregtech6.registry.GT6BeeCombs.CombSpec} walk above meta 30100 (the
+	 * declaration rows ARE the upstream tag membership, single-sourced).
+	 */
+	private void addCombTags() {
+		for (gregtech6.registry.GT6BeeCombs.CombSpec tSpec : gregtech6.registry.GT6BeeCombs.COMB_SPECS) {
+			if (tSpec.meta() >= 30100) tag(COMBS_CROSSBRED).add(item(gt6Rl(tSpec.itemId())));
+		}
 	}
 
 	/**

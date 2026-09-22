@@ -819,6 +819,18 @@ SESSION_GROUPS = (
     # mutates member).
     # --group p34_bumbliary_gui matches through the chain's embedded name prefix.
     ("p34_bumbliary_gui",),
+    # p34-bumbliary-recipes (task p34-bumbliary-recipes): the Bumbliary pair crafting +
+    # hive-carry live chain — a fresh band x-disjoint from the p33_bees_c band 479..520
+    # (the loot-walk cell 536,64,128 + the ACT craft rig 532,64,144), the /reload
+    # recipe-load face over the two new rows (gt6:bumbliary / gt6:bumbliary_advanced),
+    # the ACT craft of the :2222 row (PPP/PBP/TdT over the plates + the R2 hive
+    # BlockItem + the iron screws + the screwdriver) and the scoop-mine drops arm
+    # carrying the BOX + the contents (the p33_bees_c arm form, now with the
+    # TileEntityBase04MultiTileEntities.java:166-171 block-item face). Admission
+    # mirroring the p33_bees_c form (bbox-registered, no fresh_boot / mutates member —
+    # the rigs are band-local setblocks).
+    # --group p34_bee_recipes matches through the chain's embedded name prefix.
+    ("p34_bee_recipes",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

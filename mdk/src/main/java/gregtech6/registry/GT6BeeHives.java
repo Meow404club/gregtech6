@@ -29,10 +29,17 @@ import gregtech6.tileentity.bees.GT6BumbliaryBlockEntity;
  * (the GT6SprayCans/GT6BeeCombs precedent verbatim).
  *
  * <p>One block + one BE type: the MTE 32755 "Bumble Hive" port
- * (Loader_MultiTileEntities.java:2041, id row verbatim in the class javadocs). NO
- * BlockItem, NO creative tab — the worldgen-only loot shell is never obtainable as an
- * item (the GT6SurfaceBlocks rock/stick form; /setblock is the placement face, the
- * RCON chain drives it).
+ * (Loader_MultiTileEntities.java:2041, id row verbatim in the class javadocs).
+ *
+ * <p><b>THE R2 CONTAINMENT-CONTRACT REVISION (task p34-bumbliary-recipes)</b> — the
+ * p32 ruling "the hive never gains an item face" is BROKEN ONCE, declared: the MTE 32755
+ * HAS an item form upstream ({@code aRegistry.getItem(32755)} is the 32741 Bumbliary
+ * recipe's 'B' key, Loader_MultiTileEntities.java:2222; the base getDrops
+ * TileEntityBase04MultiTileEntities.java:166-171 puts the block item into EVERY break's
+ * drop list) — so a scooped wild hive is carryable, and the recipe chain needs the item
+ * to exist. The {@code gt6:bumble_hive} BlockItem lands (creative tab: the gt6:bee tab,
+ * the GT6BeeCombs home). Placing it gives an empty hive (the worldgen fill is the only
+ * content writer — the same face the upstream item placement gives).
  *
  * <p>Block properties: strength 1.0 (the upstream getBlockHardness/getExplosionResistance2
  * lit-pumpkin pair, MultiTileEntityBumbleHive.java:80-82 = vanilla jack_o_lantern
@@ -68,8 +75,14 @@ public final class GT6BeeHives {
 	// obtainable machines (the BlockItem face the worldgen-only hive never needed).
 	// ---------------------------------------------------------------------------
 
-	/** The Bumbliary ITEMS register (the machine pair; the hive stays itemless). */
+	/** The Bumbliary ITEMS register (the machine pair + the R2 hive BlockItem). */
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "gt6");
+
+	/** The hive BlockItem — the R2 ruling's carryable-wild-hive face (the class javadoc's
+	 *  containment-contract revision; the 32741 recipe's 'B' key upstream, :2222). The
+	 *  display name rides the BLOCK's key (the vanilla BlockItem.getDescriptionId walk). */
+	public static final RegistryObject<Item> HIVE_ITEM =
+			ITEMS.register("bumble_hive", () -> new BlockItem(HIVE.get(), new Item.Properties()));
 
 	/** The Bumbliary block — id {@code gt6:bumbliary} (the MTE 32741 "Bumbliary" flattened,
 	 *  Loader_MultiTileEntities.java:2222; the wooden hardness/resistance 5.0/5.0 row). */
@@ -133,7 +146,9 @@ public final class GT6BeeHives {
 	/**
 	 * The world-half paint tint over the hive block — the GTMachinePaintTint lambda reads
 	 * the BE's PAINT model data (the material fallback resolves null on the hive = the
-	 * white identity). Item half not needed: no BlockItem exists. CLIENT-ONLY nested
+	 * white identity). Item half not needed: the BlockItem's inventory model bakes the
+	 * unpainted-white face (the paint data lives on the BE, an item stack carries none —
+	 * the same face the Bumbliary BlockItems ride). CLIENT-ONLY nested
 	 * subscriber (the dist guard keeps the server classload clean).
 	 */
 	@Mod.EventBusSubscriber(modid = "gt6", value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)

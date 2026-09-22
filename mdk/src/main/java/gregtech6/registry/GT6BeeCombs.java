@@ -108,6 +108,7 @@ public final class GT6BeeCombs {
 						for (RegistryObject<Item> tRow : COMBS) {
 							aOutput.accept(new ItemStack(tRow.get()));
 						}
+						aOutput.accept(new ItemStack(GT6BeeHives.HIVE_ITEM.get())); // task p34-bumbliary-recipes — the R2 carryable hive rides the bee tab
 					})
 					.build());
 
