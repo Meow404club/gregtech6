@@ -45,8 +45,20 @@ stonecutter active "1.20.1-forge"
 // 执行序：string 先于 regex（ReplacementExecutor.replace 先 replaceString 后 replaceRegex）；
 // 同表内插入序即执行序，特定（长键）条目先于一般条目。
 // 锚定纪律：regex 一律字面量转义 + (?![A-Za-z_]) 边界断言，禁裸宽正则。
+// ---- kjs 常量（task p34-kjs-bindings）----
+// 节点 gradle.properties 的 kubejs_version 非空 = kjs 集成包参与编译（默认态，依赖段同时
+// 生效）；留空 = kjs 常量 false → gregtech6.integration.kjs 包内全部源（含 //? if kjs 包裹
+// 的测试）编译为空，同时 build.<loader>.gradle.kts 依赖段整体跳过——runtime-optional
+// 双态验证（验收①「拔依赖 compile 过」）的唯一开关，键 = 三处共读的 kubejs_version。
+// 实现注：常量容器 = DynamicMap<Identifier, Boolean>（stonecutter 0.7 Containers.kt:10-13，
+// tmp/harvest/stonecutter-src-07），put(name, Boolean) 即 //? if <name> 的判真值。
+val kjsPinned: (String) -> Boolean = { nodeName ->
+    project.file("versions/$nodeName/gradle.properties").readText()
+        .contains(Regex("""(?m)^kubejs_version\s*=\s*\S"""))
+}
 stonecutter parameters {
     constants.match(node.metadata.project.substringAfterLast('-'), "forge", "neoforge")
+    constants.put("kjs", kjsPinned(node.metadata.project))
 
     val neoforgeSide = node.metadata.project.endsWith("neoforge")
 
