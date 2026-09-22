@@ -9,17 +9,25 @@ self-reset).
     queen is CROWNED LIVE: `data merge {gt.cooldown:1}` forces the :215 pairing on the
     next tick and the :261 bumbleCrown puts the queen into the ROYAL slot, the p33_bees_b
     crowning walk), and the /gt6bumbliary use arm runs the :285-291 walk — the survival
-    penalty stomp to 6000 (:289), the sting through the crowned ROYAL (:290 → the
-    bumbleAttack family table, stung=true) and the panel construct half (the MUI network
-    half is the sanctioned fake-player SKIP, the client-boundary face).
+    penalty stomp to 6000 (:289), the sting through the crowned ROYAL (:290 — stung=false:
+    the fake player is invulnerable BY CONSTRUCTION, FakePlayer isInvulnerableTo returns
+    true for every source (the 1.20.1 ref :90; both legs live-verified), so the hurt half
+    can never fire — the sting tables stay offline-pinned in GT6BumbleItemStingTest) and
+    the panel construct half (the MUI network half is the sanctioned fake-player SKIP,
+    the client-boundary face).
 
   B THE ADVANCED PAIR: the 20-slot variant answers its own te_name (the Advanced :388),
     takes the princess into the ROYAL slot 7 + the drone into the main slot 12 and the
-    same data-merge crowning runs, and the :289 penalty SURVIVES the tick walk —
-    the raisedWindow soft reset (:119) only raises, so the /data get proof reads the full
+    same data-merge crowning runs, a `data merge {gt.progress:100000}` pins the queen
+    far from the :122 death walk while the asserts run, and the :289 penalty SURVIVES
+    the tick walk —
+    the raisedWindow soft reset (:119) only raises, so the whole-dump proof reads the full
     6000 after any tick (the primary would stomp to 1200 — the upstream quirk). The
     scoop arm (:307/:308/:309) re-runs the penalty with the exemption gate and opens the
-    scoop panel; the in-step /data merge reset returns the band to the pre-poke state.
+    scoop panel; the in-step /data merge reset then rides the same :119 face from below —
+    0 raised back to the 1200 window on the next tick (the dump reads the merged value
+    through the WHOLE-BE dump — the p32 dotted-key lesson: a dotted data path like
+    `gt.cooldown` parses as the nested {gt:{cooldown}} and answers "Found no elements").
 
   C THE OPEN ARMS: the /gt6bumbliary open arms build both variants' panels headless
     (the server half of the open chain verbatim — slots=36/20 + advanced=false/true).
@@ -62,7 +70,7 @@ steps = [
     Step(f"item replace block {P1} container.22 with gt6:bumble_drone 1", expect="Replaced"),
     Step(f"data merge block {P1} {{gt.cooldown:1}}", expect="Modified block data"),  # the :215 pairing fires next tick
     Step(dump(P1), expect="bumble_queen", tick_step=100, tick_fallback_poll=15),  # the :261 live crowning
-    Step(f"gt6bumbliary use {P1}", expect="penalty=6000 stung=true panel=bumbliary slots=36"),
+    Step(f"gt6bumbliary use {P1}", expect="penalty=6000 stung=false panel=bumbliary slots=36"),  # stung=false: the fake player is invulnerable by construction (the sanctioned face)
     Step(f"gt6bumbliary open {P1}", expect="panel=bumbliary slots=36 advanced=false"),
 
     phase("B: the advanced placement — the 6000 penalty survives the soft reset"),
@@ -72,11 +80,12 @@ steps = [
     Step(f"item replace block {P2} container.12 with gt6:bumble_drone 1", expect="Replaced"),
     Step(f"data merge block {P2} {{gt.cooldown:1}}", expect="Modified block data"),
     Step(dump(P2), expect="bumble_queen", tick_step=100, tick_fallback_poll=15),  # the same live crowning
-    Step(f"gt6bumbliary use {P2}", expect="penalty=6000 stung=true panel=bumbliary slots=20"),
-    Step(dump(P2, "gt.cooldown"), expect="6000"),                    # the :119 raisedWindow face — never lowers
-    Step(f"gt6bumbliary scoop {P2}", expect="penalty=6000 stung=true panel=bumbliary_scoop"),
-    Step(f"data merge block {P2} {{gt.cooldown:0}}", expect="Modified block data"),  # the in-step self-reset
-    Step(dump(P2, "gt.cooldown"), expect="0"),
+    Step(f"data merge block {P2} {{gt.progress:100000}}", expect="Modified block data"),  # the queen rides far from the :122 death walk while the asserts run
+    Step(f"gt6bumbliary use {P2}", expect="penalty=6000 stung=false panel=bumbliary slots=20"),
+    Step(dump(P2), expect="gt.cooldown: 6000L"),                     # the :119 raisedWindow face — never lowers (whole-dump, the dotted-key lesson)
+    Step(f"gt6bumbliary scoop {P2}", expect="penalty=6000 stung=false panel=bumbliary_scoop"),
+    Step(f"data merge block {P2} {{gt.cooldown:0}}", expect="Modified block data"),  # the in-step reset — the raise face reads it back
+    Step(dump(P2), expect="gt.cooldown: 1200L", tick_step=5, tick_fallback_poll=5),  # :119 raises 0 back to the pairing window on the next tick
 
     phase("E: teardown — the explicit band restore (no global state was touched)"),
     Step(f"fill {BAND} air", expect="filled"),
