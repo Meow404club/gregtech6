@@ -189,8 +189,8 @@ dependencies {
     // 是 KubeJS 侧拉取：KubeJS 不在 = 无人读 plugins.txt = kjs 类零类加载 = NoClassDef 面不存在。
     // 版本钉值 = 节点 gradle.properties（kubejs_version/rhino_version/architectury_version，
     // 与 GTCEu forge.versions.toml:11-13 同 build）。留空 kubejs_version = 本段整体跳过 +
-    // mdk/stonecutter.gradle.kts 的 kjs 常量 false → gregtech6.integration.kjs 包编译为空
-    //（runtime-optional 双态证明的唯一开关，验收①的「拔依赖 compile 过」由此达成）。
+    // kjs 源从编译面消失（下方 OFF 态包排光；stonecutter kjs 常量同步 false——非活动节点的
+    // 预处理面由它清空）＝runtime-optional 双态开关，验收①「拔依赖 compile 过」由此达成。
     val kubejsVer = property("kubejs_version").toString().trim()
     if (kubejsVer.isNotEmpty()) {
         "modCompileOnly"("dev.latvian.mods:kubejs-forge:${kubejsVer}")
@@ -202,6 +202,16 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+// kjs OFF 态包排光（task p34-kjs-bindings 双态验收①）：本节点是 stonecutter 活动节点，对共享源
+// mdk/src 原位裸编译——chisel `//? if kjs` 行在裸面上只是注释，常量置 false 不会让包裹源从裸
+// 编译消失（实证 /tmp/p34_duotest_off_forge.log：裸编译撞 dev.latvian.mods import 10 错）。
+// 包排光是活动节点 OFF 态的唯一机制；非活动节点（1.21.1-neoforge，编译 stonecutter 预处理产物）
+// 由 kjs 常量清空，两者互不依赖。ON 态本段不跑，行为零变化。
+if (property("kubejs_version").toString().trim().isEmpty()) {
+    sourceSets["main"].java.exclude("gregtech6/integration/kjs/**")
+    sourceSets["test"].java.exclude("gregtech6/integration/kjs/**")
 }
 
 // test sourceSet 复用 main 的输出与类路径：MDG（moddevgradle 2.0.144）只把游戏库配置

@@ -213,9 +213,10 @@ dependencies {
     // 发现是 KubeJS 侧拉取（KubeJSPlugins.findResource，7.x 源 :38-41）：KubeJS 不在 =
     // 无人读 plugins.txt = kjs 类零类加载。
     // 版本钉值 = 节点 gradle.properties（kubejs_version/rhino_version，与 GTCEu 1.21
-    // forge.versions.toml:8-9 同 build）。留空 kubejs_version = 本段整体跳过 +
-    // mdk/stonecutter.gradle.kts 的 kjs 常量 false → gregtech6.integration.kjs 包编译为空
-    //（runtime-optional 双态证明的唯一开关，验收①的「拔依赖 compile 过」由此达成）。
+    // forge.versions.toml:8-9 同 build）。留空 kubejs_version = 本段整体跳过 + kjs 源从
+    // 编译面消失：本节点编译 stonecutter 预处理产物，kjs 常量 false 即把 //? if kjs 包裹源
+    // 清空（下方包排光是活动节点裸编译面的对应机制，本节点冗余但对称保留——活动节点归属
+    // 只在 mdk/stonecutter.gradle.kts 一行，翻转时洞不重开）＝双态开关，验收①达成。
     val kubejsVer = property("kubejs_version").toString().trim()
     if (kubejsVer.isNotEmpty()) {
         compileOnly("dev.latvian.mods:kubejs-neoforge:${kubejsVer}")
@@ -224,6 +225,13 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+// kjs OFF 态包排光（与 build.forge.gradle.kts 同构对称；本节点主用途靠 stonecutter 常量，
+// 见上依赖段注释——活动节点翻转时此处接管裸编译面）。
+if (property("kubejs_version").toString().trim().isEmpty()) {
+    sourceSets["main"].java.exclude("gregtech6/integration/kjs/**")
+    sourceSets["test"].java.exclude("gregtech6/integration/kjs/**")
 }
 
 // test sourceSet 类路径接线（与 forge 节点 build.forge.gradle.kts 同构，双保险）：
