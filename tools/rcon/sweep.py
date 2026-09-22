@@ -792,6 +792,15 @@ SESSION_GROUPS = (
     # mutates member).
     # --group p33_bees_c matches through the chain's embedded name prefix.
     ("p33_bees_c",),
+    # p34-gui-basicmachine-fluids (task p34-gui-basicmachine-fluids): the shared
+    # basic-machine panel fluid-seat live chain — a fresh z=484 band (the roster census
+    # tops out at z=475, the p33_ore_overlay stage starts at z=508), the Fermenter 22003
+    # carrier (RM fluids 1/1, menu=null → the GT6MuiMachine MUI carrier, data=-2) + the
+    # new /gt6machine open arm (the sanctioned fake-player SKIP face). Admission
+    # mirroring the p33_gui_distill_tower form (bbox-registered, no fresh_boot /
+    # mutates member — the rig is a band-local setblock + fill teardown).
+    # --group p34_gui_bmach matches through the chain's embedded name prefix.
+    ("p34_gui_bmach",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
