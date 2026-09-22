@@ -952,8 +952,12 @@ public final class GTMachineCommand {
 	 * the multi-input rows' second leg face. Unknown ids fail the command.
 	 */
 	private static int itemInput(CommandSourceStack source, String aItemId, int count, BlockPos pos) {
-		net.minecraft.resources.ResourceLocation tId = new net.minecraft.resources.ResourceLocation(
-				aItemId.contains(":") ? aItemId : "minecraft:" + aItemId);
+		// fromNamespaceAndPath, not the ctor: private in 1.21.1 and the single-string ctor
+		// is deprecated-pending-removal in 1.20.1 — the factory is the both-legs form
+		// (the GTOvenOverlayModel.spriteOf javap-proven shape)
+		String tFull = aItemId.contains(":") ? aItemId : "minecraft:" + aItemId;
+		net.minecraft.resources.ResourceLocation tId = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(
+				tFull.substring(0, tFull.indexOf(':')), tFull.substring(tFull.indexOf(':') + 1));
 		Item tItem = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(tId);
 		if (tItem == null || tItem == net.minecraft.world.item.Items.AIR) {
 			source.sendFailure(Component.literal("Unknown item id: " + aItemId));
