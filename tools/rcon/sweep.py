@@ -859,7 +859,14 @@ SESSION_GROUPS = (
     # the rigs are band-local setblocks/gt6machine places (the p33_cracker_machines
     # admission form, no fresh_boot / mutates member).
     # --group p34_machines_bc matches through the chain's embedded name prefix.
-    ("p34_machines_bc",),
+    # p35-boule-consumption-rcon joins the cluster (task p35-boule-consumption-rcon):
+    # the boule consumption arms — the :75 crusher row live (boule_gt_sapphire 1 ->
+    # gem_sapphire x4; sapphire NOT silicon because the quartet has no gem item, the
+    # :75 both-side resolution skips it) and the :379 lathe row live (boule_gt_silicon
+    # 1 -> stick_long_silicon x3) — fresh bands z=416 / z=424 (z-disjoint from the
+    # z=384 band), each with its own crucible production leg; both declare the
+    # fakesource mutate (exclusive wave, the plan_waves downgrade).
+    ("p34_machines_bc", "p35_boule_crusher_gem4", "p35_boule_lathe_sticklong3"),
     # p34-machines-bp (task p34-machines-burner-plantalyzer): the Burner Mixer +
     # Plantalyzer live chain — a fresh z=350 band (z-disjoint from the p33 food band
     # z=340 and every registered band), the Burner Mixer :220 formation row LIVE
