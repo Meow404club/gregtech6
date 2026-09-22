@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "gt6:bumbliary"
+    },
+    "C": {
+      "tag": "c:chests"
+    },
+    "H": {
+      "item": "minecraft:honey_bottle"
+    },
+    "P": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "R": {
+      "tag": "gt6:combs/crossbred"
+    }
+  },
+  "pattern": [
+    "PRP",
+    "HBH",
+    "PCP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:bumbliary_advanced"
+  }
+}

@@ -32,6 +32,7 @@ import gregtech6.items.armor.GT6ArmorMaterials;
 import gregtech6.item.GT6Circuits;
 import gregtech6.items.GT6CircuitProgramRecipe;
 import gregtech6.registry.GT6Batteries;
+import gregtech6.registry.GT6BeeHives;
 import gregtech6.registry.GT6Placeables;
 import gregtech6.registry.GT6ElectricTransformers;
 import gregtech6.registry.GTWires;
@@ -170,6 +171,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * fold to the copper fine-wire tag, the 'I' plate key stays iron double plates.
 	 */
 	public static final ResourceLocation ELECTRIC_TRANSFORMER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "electric_transformer");
+
+	/** The Bumbliary pair row ids (task p34-bumbliary-recipes — the result-path convention). */
+	public static final ResourceLocation BUMBLIARY_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bumbliary");
+	public static final ResourceLocation BUMBLIARY_ADVANCED_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bumbliary_advanced");
 
 	/** The six dig-tool row ids (task p29-w5-t1-dig-six — the CR row id per tool, the WRENCH_ID shape). */
 	public static final ResourceLocation PICKAXE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pickaxe");
@@ -326,6 +331,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// (gt6:circuit_program) + the ventilation/processor-unit six (gt6 shaped)
 		circuitProgramRows(aConsumer);
 		partCircuitRows(aConsumer);
+		// task p34-bumbliary-recipes — the Bumbliary pair rows (the :2222/:2223 line-tail varargs)
+		bumbliaryBuilder().save(aConsumer, BUMBLIARY_ID);
+		advancedBumbliaryBuilder().save(aConsumer, BUMBLIARY_ADVANCED_ID);
 	}
 	//?} else {
 	/*@Override
@@ -441,6 +449,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// (gt6:circuit_program) + the ventilation/processor-unit six (gt6 shaped)
 		circuitProgramRows(aOutput);
 		partCircuitRows(aOutput);
+		// task p34-bumbliary-recipes — the Bumbliary pair rows (the :2222/:2223 line-tail varargs)
+		bumbliaryBuilder().save(aOutput, BUMBLIARY_ID);
+		advancedBumbliaryBuilder().save(aOutput, BUMBLIARY_ADVANCED_ID);
 	}
 	*///?}
 
@@ -3005,6 +3016,61 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			}
 		}
 	}
+	// ------------------------------------------------------------------
+	// task p34-bumbliary-recipes — the Bumbliary pair rows: the registration-line
+	// varargs transcriptions (Loader_MultiTileEntities.java:2222/:2223). The
+	// NBT_RECIPEMAP RM.BumbleQueens tag upstream rides the same lines — the DISPLAY-only
+	// fold (a null-backend fake-recipe map, MultiItemBumbles.java:614; the port BE has
+	// no RM consumption face — declared in the card account, the gui card owns the face).
+
+	/**
+	 * The Bumbliary row — the upstream :2222 line-tail varargs VERBATIM
+	 * {@code "PPP","PBP","TdT", 'B', getItem(32755), 'P', plate(WoodTreated), 'T',
+	 * screw(ANY.Iron)}: 'B' = the R2 hive BlockItem (the carryable wild hive,
+	 * {@link GT6BeeHives#HIVE_ITEM}), 'P' = the {@code plates/wood_treated} material tag
+	 * (the bathing-pot steel-plate precedent), 'T' = the iron screw — the ANY.Iron
+	 * oredict folds onto the iron member (the single-representative convergence, the
+	 * scissors steel-screw precedent), 'd' = the screwdriver tool tag (the drawer-row
+	 * shape). Result 1x {@code gt6:bumbliary}.
+	 */
+	private ShapedRecipeBuilder bumbliaryBuilder() {
+		TagKey<Item> tWoodPlates = GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "wood_treated");
+		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, GT6BeeHives.BUMBLIARY_ITEM.get())
+				.pattern("PPP").pattern("PBP").pattern("TdT")
+				.define('P', tWoodPlates)
+				.define('B', GT6BeeHives.HIVE_ITEM.get())
+				.define('T', GTMaterialItems.get(gregapi.data.OP.screw, gregapi.data.MT.Iron).get())
+				.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+				.unlockedBy("has_bumble_hive", has(GT6BeeHives.HIVE_ITEM.get()));
+	}
+
+	/**
+	 * The Advanced Bumbliary row — the upstream :2223 line-tail varargs VERBATIM
+	 * {@code "PRP","HBH","PCP", 'B', getItem(32741), 'P', plate(StainlessSteel), 'C',
+	 * craftingChest, 'R', beeCombCrossbred, 'H', container1000honey}: 'B' = the Bumbliary
+	 * BlockItem, 'P' = the {@code plates/stainless_steel} material tag, 'C' = the platform
+	 * chest tag (the static-storage LOCKER precedent), 'R' =
+	 * {@link GT6ItemTags#COMBS_CROSSBRED} (the OD.beeCombCrossbred translation), 'H' = the
+	 * vanilla honey bottle — THE DECLARED FOLD: {@code OD.container1000honey} is a SOFT
+	 * oredict upstream, satisfied by foreign-mod carriers only (LoaderItemList
+	 * :1123-:2038 — Forestry/GrowthCraft/ERE; GT6 core registers no carrier — the
+	 * itemGlue dormant-row class), so the port universe's vanilla-native honey container
+	 * stands in (the gregOLantern OD.blockTorch → Items.TORCH fold precedent; the
+	 * 1000 L quantity token is unobservable through the vanilla crafting face). Result
+	 * 1x {@code gt6:bumbliary_advanced}.
+	 */
+	private ShapedRecipeBuilder advancedBumbliaryBuilder() {
+		TagKey<Item> tSteelPlates = GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "stainless_steel");
+		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, GT6BeeHives.BUMBLIARY_ADVANCED_ITEM.get())
+				.pattern("PRP").pattern("HBH").pattern("PCP")
+				.define('P', tSteelPlates)
+				.define('B', GT6BeeHives.BUMBLIARY_ITEM.get())
+				.define('C', Tags.Items.CHESTS)
+				.define('R', GT6ItemTags.COMBS_CROSSBRED)
+				.define('H', Items.HONEY_BOTTLE)
+				.unlockedBy("has_bumbliary", has(GT6BeeHives.BUMBLIARY_ITEM.get()));
+	}
+
 //?} else {
 /*	private void machineLadderRows(net.minecraft.data.recipes.RecipeOutput aOutput) {
 		java.util.Set<String> tSeen = new java.util.HashSet<>();

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "gt6:bumble_hive"
+    },
+    "P": {
+      "tag": "c:plates/wood_treated"
+    },
+    "T": {
+      "item": "gt6:screw_iron"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PBP",
+    "TdT"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:bumbliary"
+  }
+}
