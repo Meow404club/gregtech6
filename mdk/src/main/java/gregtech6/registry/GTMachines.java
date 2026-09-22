@@ -33,6 +33,7 @@ import gregtech6.recipes.RecipeMap;
 import gregtech6.tileentity.energy.GT6DynamoBlockEntity;
 import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
+import gregtech6.tileentity.machines.TileEntityBurnerMixer;
 import gregtech6.tileentity.machines.TileEntityOven;
 
 /**
@@ -5056,6 +5057,90 @@ public final class GTMachines {
 				BUMBLELYZER_PARALLEL, false /*no NBT_PARALLEL_DURATION :1608-1612*/,
 				() -> GT6RecipeMaps.BUMBLELYZER, TD.Energy.EU, "bumblelyzer",
 				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B, the :151 read ORs SBIT_A*/,
+	// the p34 machine pair (task p34-machines-burner-plantalyzer) — Burner Mixer
+	// 20521-20524 + Plantalyzer 20531-20535, Loader_MultiTileEntities.java:1595-1598/
+	// :1601-1605. CARD ERRATUM: the task card's "HU 消费" is void — the :1595-1598 rows
+	// read NBT_ENERGY_ACCEPTED TD.Energy.RU (the Kinetic_T[1..4] materials) and carry
+	// NBT_NEEDS_IGNITION T + NBT_PARALLEL {4,8,16,32} + NBT_PARALLEL_DURATION T; the
+	// coordinator ruling 2026-09-22 pins RU + the ignition gate (the TileEntityBurnerMixer
+	// subclass — zero shared-class diff, the p32-ignition-gate single-block fuel).
+	//
+	// Burner Mixer (:1595-1598 verbatim): NBT_INPUT 32/128/512/2048 through TIER_INPUTS,
+	// hardness 7/6/9/12.5 == resistance, NBT_TEXTURE "burnmixer", the :1595 masks —
+	// energy SBIT_D (the :151 read ORs SBIT_A), item in SBIT_L|SBIT_U auto LEFT, item out
+	// SBIT_R|SBIT_B auto RIGHT, tank in SBIT_L|SBIT_U auto TOP, tank out SBIT_R|SBIT_B
+	// auto BACK. Crafting "PMP","PRP","hSw" lands in GT6CraftingRecipes (this card).
+	//
+	// Plantalyzer (:1601-1605 verbatim): MultiTileEntityBasicMachineElectric, EU,
+	// Electric_T[1..5], NBT_INPUT 32/128/512/2048/8192 through the euFiveTier window,
+	// hardness 4.0 on EVERY row, NBT_TEXTURE "plantalyzer", NBT_PARALLEL 64 with NO
+	// NBT_PARALLEL_DURATION key (→ F — the :770-771 speedup arm), masks — energy SBIT_B,
+	// item in SBIT_U|SBIT_L auto LEFT, item out SBIT_R|SBIT_D auto RIGHT, tank in
+	// SBIT_U|SBIT_D auto TOP, NO NBT_TANK_SIDE_OUT key → the 127 field default with no
+	// auto face. The controller crafting rows "WXW","ZMP","CYC" are CUT — the same
+	// absent-component ruling as the molecular scanner (the CABLES_01/EMITTERS/SENSORS
+	// columns and IL.Processor_Crystal_Diamond are absent port identities, the scanner
+	// note above); the machines stay reachable via the machines creative tab.
+	//
+	// The GUI clause: menu = the SHARED gt6:canner carrier on BOTH families (the generic
+	// GTBasicMachineMenu — slot shape and fluid banks read the live RecipeMap/Host, so the
+	// p34-gui-basicmachine-fluids fluid seats render for the two tank-carrying families at
+	// zero new gt6:* MenuType — the card's "顺享流体座" clause).
+	// ---------------------------------------------------------------------------
+
+	/** The Burner Mixer family unit word (upstream "Burner Mixer ("+aMat.getLocal()+")", :1595-1598; zh dump 燃烧反应室 (青铜/钢/钛/钨钢), tmp/gregtech.lang:11700-11703). */
+	public static final String MACHINE_BURNER_MIXER_UNIT_KEY = "gt6.row.machine.burner_mixer";
+
+	/** The Plantalyzer family unit word (upstream "Plantalyzer ("+VN[tier]+")", :1601-1605; zh dump 植物分析仪 (LV..IV), tmp/gregtech.lang:11705-11709). */
+	public static final String MACHINE_PLANTALYZER_UNIT_KEY = "gt6.row.machine.plantalyzer";
+
+	/** The :1595-1598 NBT_PARALLEL ladder (the Sifter/Compressor PARALLEL_4_32 band). */
+	public static final int[] BURNER_MIXER_PARALLEL = {4, 8, 16, 32};
+
+	/** The four Burner Mixer rows, upstream line order :1595-1598 (T1-T4, the Kinetic_T ladder). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> BURNER_MIXER_ROWS = java.util.List.of(
+			burnerMixer("burner_mixer"   , "bronze"       , "Bronze"       , 20521,  7.0F, 0),
+			burnerMixer("burner_mixer_t2", "steel"        , "Steel"        , 20522,  6.0F, 1),
+			burnerMixer("burner_mixer_t3", "titanium"     , "Titanium"     , 20523,  9.0F, 2),
+			burnerMixer("burner_mixer_t4", "tungstensteel", "Tungstensteel", 20524, 12.5F, 3));
+
+	/** The five Plantalyzer rows, upstream line order :1601-1605 (T1-T5, the Electric_T ladder + the T5 rung). */
+	public static final java.util.List<GTBasicMachineBlock.MachineRow> PLANTALYZER_ROWS = java.util.List.of(
+			plantalyzer("plantalyzer"   , 20531, 0),
+			plantalyzer("plantalyzer_t2", 20532, 1),
+			plantalyzer("plantalyzer_t3", 20533, 2),
+			plantalyzer("plantalyzer_t4", 20534, 3),
+			plantalyzer("plantalyzer_t5", 20535, 4));
+
+	/**
+	 * One Burner Mixer row factory — the :1595 masks and the NBT_PARALLEL_DURATION-T
+	 * ladder over RM.BURN_MIXER and the "burnmixer" texture, RU (the :1595 energy column —
+	 * the card erratum above), the shared canner menu carrier.
+	 */
+	private static GTBasicMachineBlock.MachineRow burnerMixer(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, KINETIC_T_LADDER.get(aTier), MACHINE_BURNER_MIXER_UNIT_KEY, aMetaId, aHardness, aTier,
+				BURNER_MIXER_PARALLEL[aTier], true /*NBT_PARALLEL_DURATION T :1595-1598*/,
+				() -> GT6RecipeMaps.BURN_MIXER, TD.Energy.RU, "burnmixer",
+				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_D, the :151 read ORs SBIT_A*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_L|SBIT_U, the :143 read*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_OUT SBIT_R|SBIT_B, the :144 read*/,
+				(byte)(GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_L|SBIT_U, the :137 read*/,
+				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_B, the :138 read*/,
+				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)5 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BACK*/,
+				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
+				GTBasicMachinesMenus.CANNER_MENU::get /*the SHARED canner carrier — zero new gt6:* MenuType, the p34-gui-basicmachine-fluids fluid seats ride the live Host banks*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
+	}
+
+	/**
+	 * One Plantalyzer row factory — the :1601 masks over RM.PLANTALYZER and EU + parallel
+	 * 64 / duration F (the NBT_PARALLEL key alone — the :770-771 arm), the shared canner
+	 * menu carrier.
+	 */
+	private static GTBasicMachineBlock.MachineRow plantalyzer(String aPath, int aMetaId, int aTier) {
+		return new GTBasicMachineBlock.MachineRow(aPath, VOLTAGE_WORDS[aTier][0], VOLTAGE_WORDS[aTier][1], electricTier(aTier), MACHINE_PLANTALYZER_UNIT_KEY, aMetaId, 4.0F, aTier,
+				64, false /*NBT_PARALLEL 64 with NO NBT_PARALLEL_DURATION key :1601-1605*/,
+				() -> GT6RecipeMaps.PLANTALYZER, TD.Energy.EU, "plantalyzer",
+				(byte)(GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
 				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_TANK_SIDE_IN SBIT_U|SBIT_D, the :143 read*/,
 				(byte)127 /*no NBT_TANK_SIDE_OUT key → the upstream field default*/,
 				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_IN SBIT_U|SBIT_L, the :137 read*/,
@@ -5152,6 +5237,90 @@ public final class GTMachines {
 			BLOCK_ENTITY_TYPES.register("crystallisation_crucible", () -> BlockEntityType.Builder.of(
 					(aPos, aState) -> kineticMachine(GTMachines.CRYSTALLISATION_BE.get(), aPos, aState),
 					crystallisationBlockArray()).build(null));
+				GTBasicMachinesMenus.CANNER_MENU::get /*the SHARED canner carrier — the single tank-in face keeps the p34-gui-basicmachine-fluids input seat*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
+	}
+
+	/** The registered Burner Mixer blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
+	public static final java.util.Map<String, RegistryObject<Block>> BURNER_MIXER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Burner Mixer items, same keys. */
+	public static final java.util.Map<String, RegistryObject<Item>> BURNER_MIXER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Plantalyzer blocks by path. */
+	public static final java.util.Map<String, RegistryObject<Block>> PLANTALYZER_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered Plantalyzer items, same keys. */
+	public static final java.util.Map<String, RegistryObject<Item>> PLANTALYZER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (GTBasicMachineBlock.MachineRow tRow : BURNER_MIXER_ROWS) {
+			BURNER_MIXER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.BURNER_MIXER_BE.get(), tRow)));
+			BURNER_MIXER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.BURNER_MIXER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : PLANTALYZER_ROWS) {
+			PLANTALYZER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.PLANTALYZER_BE.get(), tRow)));
+			PLANTALYZER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.PLANTALYZER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The Burner Mixer block list in registration order (the loot/datagen walkers). */
+	public static Block[] burnerMixerBlockArray() {
+		return blockArrayOf(BURNER_MIXER_BLOCKS_BY_PATH);
+	}
+
+	/** The Plantalyzer block list in registration order. */
+	public static Block[] plantalyzerBlockArray() {
+		return blockArrayOf(PLANTALYZER_BLOCKS_BY_PATH);
+	}
+
+	/** The lookup for /gt6machine burner_mixer — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block burnerMixerBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = BURNER_MIXER_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/** The lookup for /gt6machine plantalyzer — null for an unknown path. */
+	@javax.annotation.Nullable
+	public static Block plantalyzerBlockByPath(String aPath) {
+		RegistryObject<Block> tHandle = PLANTALYZER_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/**
+	 * The Burner Mixer family BET: the smelter shape — the four tier blocks multi-attached,
+	 * the IGNITION factory (the {@link TileEntityBurnerMixer} subclass, the NBT_NEEDS_IGNITION
+	 * family).
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> BURNER_MIXER_BE =
+			BLOCK_ENTITY_TYPES.register("burner_mixer", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> burnerMachine(GTMachines.BURNER_MIXER_BE.get(), aPos, aState),
+					burnerMixerBlockArray()).build(null));
+
+	/**
+	 * The Burner Mixer BET factory body — the kineticMachine body with the ignition
+	 * subclass instantiation (the cannerMachine extra-columns shape: the row drives the
+	 * recipe map, energy type, parallel and masks; the BET instantiates the family BE).
+	 */
+	private static TileEntityBasicMachine burnerMachine(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
+			net.minecraft.world.level.block.state.BlockState aState) {
+		GTBasicMachineBlock.MachineRow tRow = ((GTBasicMachineBlock)aState.getBlock()).row();
+		TileEntityBurnerMixer tMachine = new TileEntityBurnerMixer(aType, aPos, aState, tRow.recipes().get(), tRow.parallel(), tRow.parallelDuration(), tRow.menu());
+		tMachine.mEnergyTypeAccepted = tRow.energyType();
+		long[] tInputs = TIER_INPUTS[tRow.tier()];
+		tMachine.mInputMin = tInputs[0];
+		tMachine.mInput = tInputs[1];
+		tMachine.mInputMax = tInputs[2];
+		return applyRow(tMachine, tRow);
+	}
+
+	/** The Plantalyzer family BET: the eu-core shape — the five tier blocks multi-attached, the shared euFiveTierMachine factory. */
+	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> PLANTALYZER_BE =
+			BLOCK_ENTITY_TYPES.register("plantalyzer", () -> BlockEntityType.Builder.of(
+					(aPos, aState) -> euFiveTierMachine(GTMachines.PLANTALYZER_BE.get(), aPos, aState),
+					plantalyzerBlockArray()).build(null));
 
 	private GTMachines() {}
 
