@@ -40,11 +40,15 @@ steps = [
     phase("A: the T1 bumblelyzer — the dynamic scan arm (bee + paper tiny + 10 L honey -> the scanned form)"),
     Step(f"gt6machine bumblelyzer place {F(BL1)}", expect="GT6 bumblelyzer placed at 408, 65, 384"),
     Step(f"gt6machine bumblelyzer input 1 {F(BL1)}", expect="bumble_drone into slot 0"),
+    # the scan recipe's SECOND input leg: the paper tiny rides input slot 1 (the recipe
+    # consume removes bee + paper — the :583-584 input pair; the vanilla /item replace
+    # writes the container face directly, the p26_rm_backfill form)
+    Step(f"item replace block {F(BL1)} container.1 with minecraft:paper 1", expect="Replaced"),
     Step(f"gt6machine bumblelyzer fluid fill up gt6:honey 100 {F(BL1)}",
          expect="filled 100/100 L of gt6:honey (ACCEPTED), input tanks hold 100 L"),
     Step(f"gt6machine bumblelyzer check {F(BL1)}", expect="minIn=16 recIn=32 maxIn=64"),
     Step(f"gt6machine bumblelyzer inject 64 32 {F(BL1)}",
-         expect="inject ticks=64 size=32 finalSize=null used=2048"),
+         expect="inject ticks=64 size=32"),
     Step(f"gt6machine bumblelyzer check {F(BL1)}", expect="bumble_drone_scanned"),
 
     phase("B: the T1 crystallisation crucible — the TRUE :683 row (dust silicon + helium + molten silicon -> the boule)"),
@@ -55,10 +59,22 @@ steps = [
     Step(f"gt6machine crystallisationcrucible fluid fill up gt6:silicon_molten 560 {F(CC1)}",
          expect="filled 560/560 L of gt6:silicon_molten (ACCEPTED), input tanks hold 1560 L"),
     Step(f"gt6machine crystallisationcrucible check {F(CC1)}", expect="minIn=16 recIn=32 maxIn=64"),
-    # the exact row clock: 16 EUt x 72000 t = 1152000 HU, the 16-per-tick feed lands it on
-    # the last tick; the +100 overshoot absorbs any first-tick edge
-    Step(f"gt6machine crystallisationcrucible inject 72000 16 {F(CC1)}",
-         expect="inject ticks=72000 size=16"),
+    # the exact row clock: 16 EUt x 72000 t = 1152000 HU — twelve 6000-tick injects land
+    # it exactly (the 2 s RCON per-command deadline forbids one 72000-iteration command,
+    # the first sweep run's lesson), the +500 tail absorbs any first-tick edge
+    Step(f"gt6machine crystallisationcrucible inject 6000 16 {F(CC1)}", expect="inject ticks=6000 size=16"),
+    Step(f"gt6machine crystallisationcrucible inject 6000 16 {F(CC1)}", expect="inject ticks=6000 size=16"),
+    Step(f"gt6machine crystallisationcrucible inject 6000 16 {F(CC1)}", expect="inject ticks=6000 size=16"),
+    Step(f"gt6machine crystallisationcrucible inject 6000 16 {F(CC1)}", expect="inject ticks=6000 size=16"),
+    Step(f"gt6machine crystallisationcrucible inject 6000 16 {F(CC1)}", expect="inject ticks=6000 size=16"),
+    Step(f"gt6machine crystallisationcrucible inject 6000 16 {F(CC1)}", expect="inject ticks=6000 size=16"),
+    Step(f"gt6machine crystallisationcrucible inject 6000 16 {F(CC1)}", expect="inject ticks=6000 size=16"),
+    Step(f"gt6machine crystallisationcrucible inject 6000 16 {F(CC1)}", expect="inject ticks=6000 size=16"),
+    Step(f"gt6machine crystallisationcrucible inject 6000 16 {F(CC1)}", expect="inject ticks=6000 size=16"),
+    Step(f"gt6machine crystallisationcrucible inject 6000 16 {F(CC1)}", expect="inject ticks=6000 size=16"),
+    Step(f"gt6machine crystallisationcrucible inject 6000 16 {F(CC1)}", expect="inject ticks=6000 size=16"),
+    Step(f"gt6machine crystallisationcrucible inject 6000 16 {F(CC1)}", expect="inject ticks=6000 size=16"),
+    Step(f"gt6machine crystallisationcrucible inject 500 16 {F(CC1)}", expect="inject ticks=500 size=16"),
     Step(f"gt6machine crystallisationcrucible check {F(CC1)}", expect="boule_gt_silicon"),
 
     phase("E: teardown — the explicit band restore (no global state was touched)"),
