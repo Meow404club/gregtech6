@@ -75,6 +75,10 @@ import gregtech6.tileentity.TileEntityBase01Root;
  *     side-gated FLUID_HANDLER driver over the p14-machine-fluid-face carriers: the
  *     rotated row masks answer fill/draw (0 = REJECTED is a legitimate verdict) and stat
  *     dumps the tank census plus the live fluid/energy face lists (task p14-dryer-family).</li>
+ * <li>{@code open [<pos>]} (task p34-gui-basicmachine-fluids) — the MUI open-chain smoke
+ *     arm over {@link gregtech6.gui.machines.GT6MuiMachine#tryOpen} (buildUI + sync
+ *     construct + open packet): under RCON the sanctioned fake-player SKIP verdict fires
+ *     (the MUI open chain is client-boundary), a real exception is a red.</li>
  * <li>{@code paint <pos> <dye0-15|none>} / {@code unpaint <pos>} (task
  *     p21-paintable-storage-sync, ADR 2026-09-07-p21-paintable-rulings ruling 1) — the
  *     spray write-point arm over the SAME server {@link IPaintableTE} API the offline
@@ -305,7 +309,7 @@ public final class GTMachineCommand {
 		event.getDispatcher().register(tMachine);
 		event.getDispatcher().register(bridgeArm());
 		LOGGER.info("Registered GT6 bridge acceptance command /gt6bridge (heater|engine|motor x stat|reset, the EU->HU/KU/RU converter live face)");
-		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery|canner|sifter|compressor|wiremill|press|extruder|rollingmill_t1..t4|rollbender|rollformer|clustermill x t1..t4|smelter x t1..t4|melter | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid)");
+		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery|canner|sifter|compressor|wiremill|press|extruder|rollingmill_t1..t4|rollbender|rollformer|clustermill x t1..t4|smelter x t1..t4|melter | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid|open)");
 		// the p8 ladder registration line (the runServer gate asserts it): every family BET
 		// resolves — proof the RegistryObjects bound (the merge totals: 36 + 8 + 16 blocks
 		// and 9 + 2 + 3 family BETs — the press/extruder join = task p26-w1-press-extruder-
@@ -452,6 +456,15 @@ public final class GTMachineCommand {
 				.executes(context -> fluidStat(context.getSource(), null))
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(context -> fluidStat(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"))))));
+		// task p34-gui-basicmachine-fluids — the open smoke arm (the GTAdvancedCraftingTableCommand
+		// open :289-318 / GT6Distillation open :948-992 family shape, generic on purpose): one
+		// subcommand on EVERY family literal, dispatching the MUI open chain for the shared
+		// panel machines; a fake player reports the sanctioned SKIP verdict, a real exception
+		// is a red.
+		tMachine.then(Commands.literal("open")
+			.executes(context -> open(context.getSource(), null))
+			.then(Commands.argument("pos", BlockPosArgument.blockPos())
+				.executes(context -> open(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos")))));
 		return tMachine;
 	}
 
@@ -668,6 +681,54 @@ public final class GTMachineCommand {
 		} catch (IllegalStateException tMenuLess) {
 			return null;
 		}
+	}
+
+	/**
+	 * The openGUI smoke arm (task p34-gui-basicmachine-fluids, the GTAdvancedCraftingTableCommand
+	 * open :289-318 / GT6Distillation open :948-992 shape): dispatches the MUI open chain
+	 * ({@link gregtech6.gui.machines.GT6MuiMachine#tryOpen} — buildUI + the sync-manager
+	 * construct + the open packet dispatch) for the machine at pos. The MUI open chain
+	 * constructs the CLIENT screen behind the server half — under RCON the arm reports the
+	 * sanctioned SKIP verdict (fake player on forge, no source player on 21.1); a real
+	 * exception is a red. Real players ride factory.open via the block use() dispatch.
+	 */
+	private static int open(CommandSourceStack aSource, @javax.annotation.Nullable BlockPos aPos) {
+		TileEntityBasicMachine tMachine = machineAt(aSource, aPos);
+		if (tMachine == null) {
+			aSource.sendFailure(Component.literal("No TileEntityBasicMachine at " + (aPos != null ? aPos.toShortString() : "the source position")));
+			return 0;
+		}
+		//? if forge {
+		ServerPlayer tFake = FakePlayerFactory.getMinecraft(aSource.getLevel());
+		if (net.minecraftforge.common.util.FakePlayer.class.isAssignableFrom(tFake.getClass())) {
+			String tSkip = "GT6 machine open SKIP for the fake player (the MUI open chain is client-boundary; use() rides factory.open for real players)";
+			aSource.sendSuccess(() -> Component.literal(tSkip), false);
+			LOGGER.info(tSkip);
+			return Command.SINGLE_SUCCESS;
+		}
+		//?} else {
+		/*
+		// 21.1: the fake-player rework — the chain arm runs verbatim on the command source's
+		// player when one exists (the RCON source has none, so the SKIP verdict is the
+		// headless-legitimate face there too).
+		ServerPlayer tFake = aSource.getPlayer();
+		if (tFake == null) {
+			String tSkip = "GT6 machine open SKIP for the fake player (the MUI open chain is client-boundary; use() rides factory.open for real players)";
+			aSource.sendSuccess(() -> Component.literal(tSkip), false);
+			LOGGER.info(tSkip);
+			return Command.SINGLE_SUCCESS;
+		}
+		*///?}
+		try {
+			gregtech6.gui.machines.GT6MuiMachine.tryOpen(tFake, tMachine);
+			String tLine = "GT6 machine open dispatched (server buildUI + sync construct OK)";
+			aSource.sendSuccess(() -> Component.literal(tLine), false);
+			LOGGER.info(tLine);
+		} catch (Throwable tOpenFailure) {
+			aSource.sendFailure(Component.literal("GT6 machine open failed: " + tOpenFailure));
+			return 0;
+		}
+		return Command.SINGLE_SUCCESS;
 	}
 
 	/** The GT6 side word → Direction (the /gt6tank parse, mirrored so this driver stays self-contained). */
