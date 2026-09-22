@@ -5,12 +5,21 @@ import brachy.modularui.drawable.UITexture;
 import brachy.modularui.drawable.progress.ProgressDrawable;
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.value.sync.DoubleSyncValue;
+import brachy.modularui.value.sync.GenericSyncValue;
 import brachy.modularui.value.sync.PanelSyncManager;
+import brachy.modularui.widgets.FluidDisplayWidget;
 import brachy.modularui.widgets.ProgressWidget;
 import brachy.modularui.widgets.SlotGroupWidget;
 import brachy.modularui.widgets.slot.ItemSlot;
 import brachy.modularui.widgets.slot.ModularSlot;
 
+//? if forge {
+import net.minecraftforge.fluids.FluidStack;
+//?} else {
+/*import net.neoforged.neoforge.fluids.FluidStack;
+*///?}
+
+import gregtech6.fluid.FluidTankGT;
 import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 
@@ -42,11 +51,23 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  * arrow drawable ({@link GuiTextures#PROGRESS_ARROW}, modularui's own texture — zero new
  * art; the borrowed machine PNGs carry no baked-in arrow, assets/README.md:8-13).
  *
- * <p>NOT in this card (the boundary): fluid seats (the three machines' RecipeMaps are 0/0
- * fluid, batch B), the vanilla MenuType deregistration (card 3), BE/Block wiring (card 2).
- * The player-inventory bind is skipped when the sync manager has no container menu — the
- * offline panel-build fixture (headless tests, GT6MenuInputSlotExpansionTest shape); at
- * runtime both sides always have one, so the branch never fires in game.
+ * <p>Fluid seats (settled, task p34-gui-basicmachine-fluids — the Option B ruling that
+ * redeemed the batch-A boundary declared here before): the two {@link Host} fluid banks
+ * (the {@link GTBasicMachineMenu.Host#getFluidInputTanks}/{@link GTBasicMachineMenu.Host#getFluidOutputTanks}
+ * default-empty seams, GTBasicMachineMenu.java:117/:122) render one read-only display seat
+ * per declared tank at the upstream {@code Slot_Render} geometry
+ * ({@link GTBasicMachineMenu#fluidDisplayPos}: inputs descending from (53,63) right-to-left,
+ * outputs ascending from (107,63) left-to-right, both wrapping upward every 3). The seat
+ * form is the {@link GTDistillationTowerMUI} shape (GenericSyncValue.forFluid with the
+ * null→EMPTY gate, the {@link FluidTankGT#bindInt} drawn-capacity clamp, the amount text
+ * off — the upstream seat is icon-only), registered under the named sync keys
+ * {@code bm_fluid_in_<i>} / {@code bm_fluid_out_<i>}. A zero-fluid RecipeMap Host (the
+ * default banks) renders zero seats — the pre-p34 panel byte-identical.
+ *
+ * <p>NOT in this card: the vanilla MenuType deregistration (card 3, done), BE/Block wiring
+ * (card 2, done). The player-inventory bind is skipped when the sync manager has no
+ * container menu — the offline panel-build fixture (headless tests, GT6MenuInputSlotExpansionTest
+ * shape); at runtime both sides always have one, so the branch never fires in game.
  */
 public final class GTBasicMachineMUI {
 
@@ -55,6 +76,18 @@ public final class GTBasicMachineMUI {
 
 	/** The sync key of the progress ratio value (server getter = {@link #progressRatio}). */
 	public static final String SYNC_PROGRESS = "bm_progress";
+
+	/**
+	 * The sync-key prefix of the input fluid seats: {@code bm_fluid_in_} + the tank index
+	 * (task p34, one seat per {@link Host#getFluidInputTanks} element).
+	 */
+	public static final String SYNC_FLUID_IN = "bm_fluid_in_";
+
+	/**
+	 * The sync-key prefix of the output fluid seats: {@code bm_fluid_out_} + the tank index
+	 * (task p34, one seat per {@link Host#getFluidOutputTanks} element).
+	 */
+	public static final String SYNC_FLUID_OUT = "bm_fluid_out_";
 
 	/** The slot group of the input seat(s) — the shift-transfer source face. */
 	public static final String GROUP_INPUTS = "bm_inputs";
@@ -110,6 +143,24 @@ public final class GTBasicMachineMUI {
 					.pos(tPos[0], tPos[1])
 					.name("output_" + i));
 		}
+		// the fluid display seats — the Host bank seams consumed live (the
+		// GTBasicMachineMenu.java:117/:122 default-empty faces): one read-only seat per
+		// declared tank at the upstream :267/:268 Slot_Render geometry (fluidDisplayPos);
+		// a default-bank Host renders zero seats — the pre-p34 panel byte-identical
+		FluidTankGT[] tInTanks = aHost.getFluidInputTanks();
+		for (int i = 0; i < tInTanks.length; i++) {
+			int[] tPos = GTBasicMachineMenu.fluidDisplayPos(false, i);
+			tPanel.child(fluidSeat(aSyncManager, tInTanks[i], SYNC_FLUID_IN + i)
+					.pos(tPos[0], tPos[1])
+					.name("fluid_in_" + i));
+		}
+		FluidTankGT[] tOutTanks = aHost.getFluidOutputTanks();
+		for (int i = 0; i < tOutTanks.length; i++) {
+			int[] tPos = GTBasicMachineMenu.fluidDisplayPos(true, i);
+			tPanel.child(fluidSeat(aSyncManager, tOutTanks[i], SYNC_FLUID_OUT + i)
+					.pos(tPos[0], tPos[1])
+					.name("fluid_out_" + i));
+		}
 		// the progress bar — the vendored MUI default arrow drawable, zero new art
 		tPanel.child(new ProgressWidget()
 				.value(tProgress)
@@ -138,5 +189,38 @@ public final class GTBasicMachineMUI {
 		if (tValue >= GTBasicMachineMenu.PROGRESS_DONE) return 1.0D;
 		if (tValue < 0) return 0.0D;
 		return (double) tValue / GTBasicMachineMenu.PROGRESS_DONE;
+	}
+
+	/**
+	 * One read-only fluid seat — the {@link GTDistillationTowerMUI} seat form (:156-171)
+	 * mirrored: that file is frozen for this card (zero diff), so the three reuse elements
+	 * ride here instead of a shared helper — the {@link GenericSyncValue#forFluid} sync over
+	 * the tank's live stack (null → EMPTY: the getter must not return null), the drawn
+	 * capacity clamped through {@link FluidTankGT#bindInt}, the amount text off (the upstream
+	 * Slot_Render seat is icon-only, ContainerClientBasicMachine draws no amount text).
+	 *
+	 * <p>Unlike the tower form the value is REGISTERED under its named sync key here (the
+	 * {@code bm_fluid_in_<i>}/{@code bm_fluid_out_<i>} contract, task p34): an unregistered
+	 * widget-carried handler would land under the
+	 * {@code WidgetTree.collectSyncValues} auto key ({@code auto:<panel>} + a running id) —
+	 * the same shape the {@link #SYNC_PROGRESS} registration already rides.
+	 */
+	private static FluidDisplayWidget fluidSeat(PanelSyncManager aSyncManager, FluidTankGT aTank, String aSyncKey) {
+		// the leg-generic declaration (the tower :157-160 note): the forge factory returns
+		// GenericSyncValue<FluidStack>, the neoforge one
+		// GenericSyncValue<RegistryFriendlyByteBuf, FluidStack> — the same call shape, the
+		// var keeps one body over both (FluidDisplayWidget.value takes the IValue face both
+		// implement)
+		var tValue = GenericSyncValue.forFluid(
+				() -> {
+					FluidStack tContent = aTank.fluid();
+					return tContent == null ? FluidStack.EMPTY : tContent;
+				},
+				null);
+		aSyncManager.syncValue(aSyncKey, tValue);
+		return new FluidDisplayWidget()
+				.value(tValue)
+				.capacity(FluidTankGT.bindInt(aTank.getCapacity()))
+				.displayAmount(false);
 	}
 }

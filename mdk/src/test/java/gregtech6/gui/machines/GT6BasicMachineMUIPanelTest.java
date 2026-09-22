@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -13,17 +14,25 @@ import java.util.Set;
 import brachy.modularui.api.widget.IWidget;
 import brachy.modularui.drawable.UITexture;
 import brachy.modularui.screen.ModularPanel;
+import brachy.modularui.screen.UISettings;
 import brachy.modularui.value.sync.PanelSyncManager;
 import brachy.modularui.value.sync.ModularSyncManager;
+import brachy.modularui.widgets.FluidDisplayWidget;
 import brachy.modularui.widgets.slot.ItemSlot;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import gregtech6.fluid.FluidTankGT;
+import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
 import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
@@ -34,7 +43,7 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  * beyond the offline bootstrap (the GT6MenuInputSlotExpansionTest shape — the panel-build
  * face skips the player-inventory bind on the null-player fixture).
  *
- * <p>Four pinned faces:
+ * <p>Pinned faces:
  * <ul>
  * <li><b>the progressRatio three-state table</b> — the success flag → 1.0, the idle −1 →
  *     0.0, the running arm divides by PROGRESS_DONE with the units() round-up quantization
@@ -44,9 +53,13 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  *     SLOT_INPUT offset exactly like the vanilla menu;</li>
  * <li><b>the output-only face</b> — every output seat refuses insertion
  *     (mayPlace=false, the upstream setCanPut(F) :162) while the input accepts;</li>
- * <li><b>the zero-fluid-seat face</b> — the panel tree carries only item seats plus the
- *     progress bar, the slot groups are exactly the two content groups (no fluid group,
- *     no player group on the headless fixture) — the batch-B boundary held shut.</li>
+ * <li><b>the fluid-seat face</b> (task p34) — a Host with declared banks renders one
+ *     read-only seat per tank at the upstream :267/:268 geometry with the named sync keys
+ *     {@code bm_fluid_in_<i>}/{@code bm_fluid_out_<i>}, amount text off, the drawn capacity
+ *     clamped through bindInt; the open arm's server half (the BE buildUI delegation) rides
+ *     the same seam on a real Drying-machine fixture;</li>
+ * <li><b>the zero-fluid-seat face</b> — a default-bank Host (the interface default, the
+ *     multiblock/fake shape) renders zero fluid seats — the pre-p34 panel byte-identical.</li>
  * </ul>
  */
 class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
@@ -110,9 +123,51 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 		@Override public int getOutputSlotCount() { return 2; }
 	}
 
+	/**
+	 * The synthetic fluid-banked Host (task p34 acceptance ①): the shredder item shape plus
+	 * the declared banks 1 input (a 1000-capacity tank) + 2 output tanks (the default
+	 * capacity — the bindInt clamp face).
+	 */
+	private static final class FluidBankHost extends FakeHost {
+		final FluidTankGT mInTank = new FluidTankGT(1000);
+		final FluidTankGT[] mOutTanks = {new FluidTankGT(), new FluidTankGT()};
+
+		FluidBankHost() {
+			super(12);
+		}
+
+		@Override public FluidTankGT[] getFluidInputTanks() { return new FluidTankGT[] {mInTank}; }
+		@Override public FluidTankGT[] getFluidOutputTanks() { return mOutTanks; }
+	}
+
 	/** A fresh headless sync manager (no player → the panel builds without the inventory bind). */
 	private static PanelSyncManager headlessSyncManager() {
 		return new PanelSyncManager(new ModularSyncManager(false), true);
+	}
+
+	/** The widget by its build name ({@code null} = absent — the GT6DistillationTowerMUIPanelTest form). */
+	@javax.annotation.Nullable
+	private static IWidget named(ModularPanel<?> aPanel, String aName) {
+		return allWidgets(aPanel).stream().filter(w -> aName.equals(w.getName())).findFirst().orElse(null);
+	}
+
+	/** The widget build position — pos() lands in the resizer's start Unit (the Area only resolves at layout, which needs an initialized ResizeNode tree the headless build lacks); read the stored pixel value directly. */
+	private static int posOf(IWidget aWidget, boolean aX) throws Exception {
+		brachy.modularui.api.widget.IPositioned tPositioned = (brachy.modularui.api.widget.IPositioned) aWidget;
+		java.lang.reflect.Field tAxis = tPositioned.resizer().getClass().getDeclaredField(aX ? "x" : "y");
+		tAxis.setAccessible(true);
+		Object tSizer = tAxis.get(tPositioned.resizer());
+		java.lang.reflect.Field tStart = tSizer.getClass().getDeclaredField("start");
+		tStart.setAccessible(true);
+		Object tUnit = tStart.get(tSizer);
+		return (int) ((brachy.modularui.widget.sizer.Unit) tUnit).getValue();
+	}
+
+	private static void assertPos(ModularPanel<?> aPanel, String aName, int aX, int aY, String aWhat) throws Exception {
+		IWidget tWidget = named(aPanel, aName);
+		assertNotNull(tWidget, aWhat + " present");
+		assertEquals(aX, posOf(tWidget, true), aWhat + " x");
+		assertEquals(aY, posOf(tWidget, false), aWhat + " y");
 	}
 
 	/** Every ItemSlot in the panel tree, in child order. */
@@ -250,6 +305,105 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
+	// the fluid seats — the p34 Option B face: geometry, named sync keys, read-only form
+	// ---------------------------------------------------------------------------
+
+	@Test
+	void fluidBanksRenderSeatsAtTheUpstreamGeometryWithNamedSyncKeys() throws Exception {
+		FluidBankHost tHost = new FluidBankHost();
+		PanelSyncManager tSync = headlessSyncManager();
+		ModularPanel<?> tPanel = GTBasicMachineMUI.buildPanel(tHost, tSync);
+
+		// the seat count — one read-only display seat per declared tank
+		assertEquals(3, allWidgets(tPanel).stream().filter(w -> w instanceof FluidDisplayWidget).count(),
+				"1 input + 2 output fluid seats (the declared banks)");
+
+		// the upstream :267/:268 Slot_Render geometry (fluidDisplayPos): in[0] at (53,63),
+		// the outputs ascending from (107,63) left-to-right
+		assertPos(tPanel, "fluid_in_0", 53, 63, "fluid in 0");
+		assertPos(tPanel, "fluid_out_0", 107, 63, "fluid out 0");
+		assertPos(tPanel, "fluid_out_1", 125, 63, "fluid out 1");
+
+		// the named sync keys — registered explicitly under the bm_fluid_ prefixes
+		// (an unregistered widget-carried handler would land under the nameless WidgetTree
+		// auto key, the tower form)
+		assertNotNull(tSync.findSyncHandlerNullable(GTBasicMachineMUI.SYNC_FLUID_IN + 0), "bm_fluid_in_0 registered");
+		assertNotNull(tSync.findSyncHandlerNullable(GTBasicMachineMUI.SYNC_FLUID_OUT + 0), "bm_fluid_out_0 registered");
+		assertNotNull(tSync.findSyncHandlerNullable(GTBasicMachineMUI.SYNC_FLUID_OUT + 1), "bm_fluid_out_1 registered");
+		// the bank sizes the keys exactly: no phantom seat beyond the declared tanks
+		assertNotNull(named(tPanel, "fluid_in_0"), "seat fluid_in_0");
+		assertNotNull(named(tPanel, "fluid_out_0"), "seat fluid_out_0");
+		assertNotNull(named(tPanel, "fluid_out_1"), "seat fluid_out_1");
+
+		// the read-only display form: amount text off (the upstream icon-only seat), the
+		// drawn capacity clamped through bindInt (1000 stays; the Long.MAX_VALUE default
+		// clamps to Integer.MAX_VALUE)
+		FluidDisplayWidget tIn = (FluidDisplayWidget) named(tPanel, "fluid_in_0");
+		assertFalse(tIn.isDisplayAmount(), "the fluid seats draw no amount text");
+		assertEquals(1000, tIn.getCapacity(), "the 1000 tank capacity rides bindInt unchanged");
+		for (int i = 0; i < 2; i++) {
+			FluidDisplayWidget tOut = (FluidDisplayWidget) named(tPanel, "fluid_out_" + i);
+			assertFalse(tOut.isDisplayAmount(), "output seat " + i + " draws no amount text");
+			assertEquals(FluidTankGT.bindInt(tHost.mOutTanks[i].getCapacity()), tOut.getCapacity(),
+					"output seat " + i + " capacity is the bindInt clamp of its tank");
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// the open arm's server half — the BE buildUI delegation (the /gt6machine open face)
+	// ---------------------------------------------------------------------------
+
+	/** The offline machine BET (the GT6MachineFluidDisplayTest fixture form): a DRYING-map machine (fluids 1/3) with a null menu supplier. */
+	private static BlockEntityType<TileEntityBasicMachine> sMachineType;
+
+	private static final BlockPos POS = new BlockPos(100, 64, 100);
+
+	@BeforeAll
+	static void buildMachineFixture() {
+		@SuppressWarnings("unchecked")
+		BlockEntityType<TileEntityBasicMachine>[] tHolder = (BlockEntityType<TileEntityBasicMachine>[]) new BlockEntityType<?>[1];
+		tHolder[0] = BlockEntityType.Builder.of(
+				(aPos, aState) -> new TileEntityBasicMachine(tHolder[0], aPos, aState, GT6RecipeMaps.DRYING, 8, true, null),
+				Blocks.BRICKS).build(null);
+		sMachineType = tHolder[0];
+	}
+
+	@BeforeEach
+	void initRecipeMaps() {
+		GT6RecipeMaps.init();
+	}
+
+	@AfterEach
+	void resetRecipeMaps() {
+		GT6RecipeMaps.reset();
+	}
+
+	/**
+	 * The open-arm pin (task p34, the coordinator-approved /gt6machine open subcommand): the
+	 * command's verbatim dispatch face is the BE {@code buildUI} → {@link GTBasicMachineMUI#buildPanel}
+	 * over {@link GTBasicMachineMenu#hostOf} — on a real fluid-banked machine (the Drying
+	 * shape, the in-册 RCON target family form) it builds the panel and registers the named
+	 * fluid keys, no Player needed (the headless manager gate).
+	 */
+	@Test
+	void theOpenArmsServerHalfBuildsThePanelOnARealFluidBankedMachine() throws Exception {
+		TileEntityBasicMachine tMachine = sMachineType.create(POS, Blocks.BRICKS.defaultBlockState());
+		PanelSyncManager tSync = headlessSyncManager();
+
+		ModularPanel<?> tPanel = tMachine.buildUI(null, tSync, new UISettings());
+		assertNotNull(tPanel, "buildUI (the open arm's dispatch face) returns the panel");
+
+		// the Drying banks: 1 input + 3 output tanks → 4 read-only seats with named keys
+		assertEquals(4, allWidgets(tPanel).stream().filter(w -> w instanceof FluidDisplayWidget).count(),
+				"1 + 3 fluid seats on the Drying shape");
+		assertNotNull(tSync.findSyncHandlerNullable(GTBasicMachineMUI.SYNC_FLUID_IN + 0), "the named input key");
+		assertNotNull(tSync.findSyncHandlerNullable(GTBasicMachineMUI.SYNC_FLUID_OUT + 2), "the named output key");
+		// and the item content seats are untouched (1 in + 1 out on the Drying item shape)
+		assertEquals(2, allWidgets(tPanel).stream().filter(w -> w instanceof ItemSlot).count(),
+				"the Drying item shape rides the shared panel unchanged");
+	}
+
+	// ---------------------------------------------------------------------------
 	// the zero-fluid-seat face — item seats + progress bar only, groups clean
 	// ---------------------------------------------------------------------------
 
@@ -259,8 +413,9 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 		PanelSyncManager tSync = headlessSyncManager();
 		ModularPanel<?> tPanel = GTBasicMachineMUI.buildPanel(tHost, tSync);
 
-		// the tree: the panel itself + 13 item seats + the progress widget — nothing else
-		// (no fluid seat widget of any kind)
+		// the tree: the panel itself + 13 item seats + the progress widget — nothing else.
+		// The p34 face: the Host banks are the interface DEFAULT (empty) here, so zero fluid
+		// seats render — the pre-p34 panel byte-identical (the zero-bank regression).
 		List<IWidget> tAll = allWidgets(tPanel);
 		long tItemSeats = tAll.stream().filter(w -> w instanceof ItemSlot).count();
 		long tProgress = tAll.stream().filter(w -> w instanceof brachy.modularui.widgets.ProgressWidget).count();
@@ -274,9 +429,11 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 		assertEquals(Set.of(GTBasicMachineMUI.GROUP_INPUTS, GTBasicMachineMUI.GROUP_OUTPUTS), tGroupNames,
 				"no fluid group, no player group (the headless fixture)");
 
-		// no widget is named after a fluid seat
+		// no widget is named after a fluid seat, and no bm_fluid sync key exists
 		assertTrue(tAll.stream().map(IWidget::getName).filter(java.util.Objects::nonNull)
 				.noneMatch(n -> n.toLowerCase(java.util.Locale.ROOT).contains("fluid")), "no fluid-named widget");
+		assertEquals(null, tSync.findSyncHandlerNullable(GTBasicMachineMUI.SYNC_FLUID_IN + 0), "no input fluid key on the default banks");
+		assertEquals(null, tSync.findSyncHandlerNullable(GTBasicMachineMUI.SYNC_FLUID_OUT + 0), "no output fluid key on the default banks");
 
 		// the background rides the Host GUI path (the same parse the vanilla screen blits)
 		UITexture tBackground = assertInstanceOf(UITexture.class, tPanel.getBackground(), "the panel background is a texture");
