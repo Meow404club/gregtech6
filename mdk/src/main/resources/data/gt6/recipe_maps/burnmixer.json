@@ -97,7 +97,7 @@
     {
       "comment": "Loader_Recipes_Chem.java:239 — the soda roast: coal 2U + Na2CO3.liquid(U*6) = 6000 -> CO 6U (6000) + Na 2U, five coal-family members. 16 EUt x 128.",
       "inputs": [{ "item": "gt6:dust_carbon", "count": 2 }],
-      "fluidInputs": [{ "fluid": "gt6:sodiumcarbonate", "amount": 6000 }],
+      "fluidInputs": [{ "fluid": "gt6:sodiumcarbonate_molten", "amount": 6000 }],
       "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 6000 }],
       "outputs": [{ "item": "gt6:dust_na", "count": 2 }],
       "duration": 128,
@@ -106,7 +106,7 @@
     {
       "comment": ":239 — the Graphite member.",
       "inputs": [{ "item": "gt6:dust_graphite", "count": 2 }],
-      "fluidInputs": [{ "fluid": "gt6:sodiumcarbonate", "amount": 6000 }],
+      "fluidInputs": [{ "fluid": "gt6:sodiumcarbonate_molten", "amount": 6000 }],
       "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 6000 }],
       "outputs": [{ "item": "gt6:dust_na", "count": 2 }],
       "duration": 128,
@@ -115,7 +115,7 @@
     {
       "comment": ":239 — the CoalCoke member.",
       "inputs": [{ "item": "gt6:dust_coal_coke", "count": 2 }],
-      "fluidInputs": [{ "fluid": "gt6:sodiumcarbonate", "amount": 6000 }],
+      "fluidInputs": [{ "fluid": "gt6:sodiumcarbonate_molten", "amount": 6000 }],
       "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 6000 }],
       "outputs": [{ "item": "gt6:dust_na", "count": 2 }],
       "duration": 128,
@@ -124,7 +124,7 @@
     {
       "comment": ":239 — the Coal member.",
       "inputs": [{ "item": "gt6:dust_coal", "count": 2 }],
-      "fluidInputs": [{ "fluid": "gt6:sodiumcarbonate", "amount": 6000 }],
+      "fluidInputs": [{ "fluid": "gt6:sodiumcarbonate_molten", "amount": 6000 }],
       "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 6000 }],
       "outputs": [{ "item": "gt6:dust_na", "count": 2 }],
       "duration": 128,
@@ -133,7 +133,7 @@
     {
       "comment": ":239 — the Charcoal member.",
       "inputs": [{ "item": "gt6:dust_charcoal", "count": 2 }],
-      "fluidInputs": [{ "fluid": "gt6:sodiumcarbonate", "amount": 6000 }],
+      "fluidInputs": [{ "fluid": "gt6:sodiumcarbonate_molten", "amount": 6000 }],
       "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 6000 }],
       "outputs": [{ "item": "gt6:dust_na", "count": 2 }],
       "duration": 128,
