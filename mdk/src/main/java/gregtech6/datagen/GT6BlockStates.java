@@ -1100,6 +1100,10 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : GTMachines.CRYSTALLISATION_ROWS) {
             addMachine(GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get(tRow.path()).get(), tRow.path(), tRow.texture());
+        }
+    }
+
+    /**
      * Task p34-machines-burner-plantalyzer — the Burner Mixer 4-ladder (20521-20524,
      * NBT_TEXTURE "burnmixer") + the Plantalyzer 5-ladder (20531-20535, "plantalyzer"):
      * the addCanner shape verbatim — model names per path, the front textures stay on the

@@ -75,8 +75,9 @@ steps = [
     # the ignition gate: a cold machine with armed inputs NEVER CONSUMES (the :724/:737
     # fold) — the pin is active=false progress=0/0 (running=true only means powered, the
     # doWork :805 face; progress would move the moment the gate leaked)
-    Step(f"gt6machine burner_mixer check {F(BM)}", expect="active=false progress=0/0",
-         poll=40.0),
+    Step(f"gt6machine burner_mixer check {F(BM)}", expect="progress=0/0",
+         poll=40.0),  # progress stays 0: the :724/:737 fold never leaked a consume
+    Step(f"gt6machine burner_mixer check {F(BM)}", expect="active=false"),
     Step(f"gt6machine burner_mixer ignite {F(BM)}", expect="GT6 machine ignite OK (mIgnited=40)"),
     Step(f"gt6machine burner_mixer fluid stat {F(BM)}",
          expect="out[0]=1500 L of gt6:distilled_water",  # the :220 row completed: H 1000 + O2 500 -> 1500
@@ -111,8 +112,9 @@ steps = [
     # zero rows never process (the P10 compat cut): active=false progress=0/0 — the
     # powered-but-idle face (running=true only means powered, the doWork :805 face)
     Step(f"gt6machine plantalyzer check {F(PL)}",
-         expect="active=false progress=0/0",
-         poll=40.0),
+         expect="progress=0/0",
+         poll=40.0),  # zero rows: progress stays 0
+    Step(f"gt6machine plantalyzer check {F(PL)}", expect="active=false"),
     Step(f"gt6machine plantalyzer fluid fill up minecraft:water 1000 {F(PL)}",
          expect="filled 1000/1000 L of minecraft:water (ACCEPTED), input tanks hold 1000 L"),  # the single tank-in face: the p34-gui fluid seat's live carrier
     # the draw arm rides the OUTPUT tanks (the p14 mTanksOutput driver) — this map is

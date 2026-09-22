@@ -318,7 +318,7 @@ public final class GTMachineCommand {
 		.then(machine("crystallisationcrucible", GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get("crystallisationcrucible"), GTMachineCommand::firstSiliconDust))
 		.then(machine("crystallisationcrucible_t2", GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get("crystallisationcrucible_t2"), GTMachineCommand::firstSiliconDust))
 		.then(machine("crystallisationcrucible_t3", GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get("crystallisationcrucible_t3"), GTMachineCommand::firstSiliconDust))
-		.then(machine("crystallisationcrucible_t4", GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get("crystallisationcrucible_t4"), GTMachineCommand::firstSiliconDust));
+		.then(machine("crystallisationcrucible_t4", GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get("crystallisationcrucible_t4"), GTMachineCommand::firstSiliconDust))
 		// task p34-machines-burner-plantalyzer: the Burner Mixer ladder — the feed is the
 		// sulfate-roast row's Na2SO4 dust (burnmixer.json's first item face; the RU rig
 		// feeds through the inject arm, the ignition through the ignite arm, the fluid

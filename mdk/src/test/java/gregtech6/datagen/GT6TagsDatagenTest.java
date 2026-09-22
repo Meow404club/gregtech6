@@ -85,8 +85,6 @@ class GT6TagsDatagenTest {
     // the +9 burner/plantalyzer machine carriers join at task p34-machines-burner-plantalyzer (the machines bucket 247 -> 256)
     // the +4 plate-gem block carriers join at task p34-machines-bumblelyzer-crucible (the bouleGt force-table cascade: blockPlateGem over Si/Ge/RedstoneAlloy/NikolineAlloy) and the +9 p34 machine rows ride the whole-class machine band (bumblelyzer x5 + crystallisationcrucible x4)
     private static final int PINNED_PICKAXE_TOTAL = 272 + 256 + 1 + 2681 + 629 + 2 + 15 + 2; // the +14 eu-special (task p29-w2-eu-special), +30 exotic (task p29-w2-exotic-energy), +25 eu-core (task p29-w2-eu-core-5tier), +16 hu-tu (task p29-w2-hu-tu-piggyback), +5 heat-smelter (task p29-w3-heat-smelter) and +19 eu-bridge (task p29-w4-eu-bridge: the 15 converter rows + the 4 Roasting rows) and +5 small Massfab (task p31-massfab) machine blocks auto-ride the whole-class band (120 + 14 + 30 + 25 + 16 + 5 + 19 + 5) and +4 QU machines (task p32-qu-scanner-replicator: the molecular_scanner_t3 single + the replicator three-rung)
-    private static final int PINNED_PICKAXE_TOTAL = 272 + 256 + 1 + 2681 + 629 + 2 + 15 + 2; // the +14 eu-special (task p29-w2-eu-special), +30 exotic (task p29-w2-exotic-energy), +25 eu-core (task p29-w2-eu-core-5tier), +16 hu-tu (task p29-w2-hu-tu-piggyback), +5 heat-smelter (task p29-w3-heat-smelter) and +19 eu-bridge (task p29-w4-eu-bridge: the 15 converter rows + the 4 Roasting rows) and +5 small Massfab (task p31-massfab) machine blocks auto-ride the whole-class band (120 + 14 + 30 + 25 + 16 + 5 + 19 + 5) and +4 QU machines (task p32-qu-scanner-replicator: the molecular_scanner_t3 single + the replicator three-rung) and +9 (task p34-machines-burner-plantalyzer: the Burner Mixer 4-ladder + the Plantalyzer 5-ladder)
->>>>>>> 325ac5700 (test(census): 共享层四 census 棘轮随卡上抬（化学流体 39->42/图 71->73/pickaxe 带+9/命令树 +9 字面）)
 
     /** The 16 tier-ladder machine ids of the first machines card + the oven ladder + the ACT single-variant row (the dryer/distillery/canner rows ride the total pin). */
     private static final List<String> PINNED_LADDER_MACHINES = List.of(
@@ -170,7 +168,7 @@ class GT6TagsDatagenTest {
         assertEquals(2681, tPrefixPairs, "3777 storage pairs (+4 task p34-machines-bumblelyzer-crucible: the blockPlateGem cascade carriers over the quartet) - 1096 blockDust pairs");
         // exact product shape: no member outside the census families
         assertEquals(PINNED_PICKAXE_TOTAL, tValues.size(),
-                "272 stones + 256 machines + 1 rod + 2681 prefix blocks + 629 wires + 2 pipes + 15 barrels + 2 anvils" (test(census): 共享层四 census 棘轮随卡上抬（化学流体 39->42/图 71->73/pickaxe 带+9/命令树 +9 字面）)
+                "272 stones + 256 machines + 1 rod + 2681 prefix blocks + 629 wires + 2 pipes + 15 barrels + 2 anvils"
                 + " (the +14 eu-special machines of task p29-w2-eu-special, the +30 exotic machines of task p29-w2-exotic-energy, the +25 eu-core machines of task p29-w2-eu-core-5tier the +16 hu-tu machines of task p29-w2-hu-tu-piggyback and the +5 heat-smelter machines of task p29-w3-heat-smelter and the +5 small Massfab machines of task p31-massfab joined the machine walk)");
         assertTrue(tValues.stream().allMatch(v -> v.startsWith("gt6:")), "mod-face-only members");
     }

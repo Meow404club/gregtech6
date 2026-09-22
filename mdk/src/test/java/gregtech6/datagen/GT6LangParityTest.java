@@ -1186,7 +1186,7 @@ private static final int ZH_KEY_FLOOR = 3765; // +5 (task p34-machines-burner-pl
 			+ " (the CRUCIBLE_ROWS walk grew 1 -> 8) + the seven dedicated GTCrucibleWallBlock"
 			+ " wall carriers over the metal-wall template; the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (1089 + 5 = 1094); the 4 Roasting row carriers joined at task p29-w4-eu-bridge (1094 + 4 = 1098); the 4 surface deco carriers joined at task p30-w6-rocks-sticks (1098 + 4 = 1102); the 31 vein-indicator rock carriers joined at task p30-w6-t3-large-veins (1102 + 31 = 1133, the spec ⑤ compensation set)"
 			+ " (+4 task p32-qu-scanner-replicator: the QU machine row carriers, 1138 + 4 = 1142, the molecular_scanner/replicator tier-word composed rungs the moment they registered) (+9 task p34-machines-bumblelyzer-crucible: the Bumblelyzer 5-ladder + the Crystallisation Crucible 4-ladder row carriers, 1142 + 9 = 1151)"
-			+ " (+9 task p34-machines-burner-plantalyzer: the Burner Mixer 4-ladder + the Plantalyzer 5-ladder row carriers, 1151 + 9 = 1160)"); (feat(datagen): 两族 blockstate/loot/lang/crafting/48PNG+画漆普查 213->222)
+			+ " (+9 task p34-machines-burner-plantalyzer: the Burner Mixer 4-ladder + the Plantalyzer 5-ladder row carriers, 1151 + 9 = 1160)");
 		assertEquals(204, tChecked,  "the checked block census: every DeferredRegister block NOT"
 			+ " (the p34-machines-bumblelyzer-crucible nine row carriers ride the composed-name exemption below, the pin HOLDS at 204)"
 			+ " twelve turbine/dynamo controllers joined at task p29-w3-turbine-dynamo (122 + 12;"

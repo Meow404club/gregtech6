@@ -48,7 +48,7 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 			// task p32-qu-scanner-replicator — the :194 molten-redstone replicator carrier
 			"redstone_molten",
 			// task p34-machines-bumblelyzer-crucible — the crystallisation molten quintet (the :683-706 row carriers)
-			"silicon_molten", "germanium_molten", "redstonealloy_molten", "nikolinealloy_molten", "alumina_molten,
+			"silicon_molten", "germanium_molten", "redstonealloy_molten", "nikolinealloy_molten", "alumina_molten",
 			// task p34-machines-burner-plantalyzer — the three new Burner Mixer row
 			// carriers (the fourth, tritiatedwater, is the p29-w4-hot-lube closure row)
 			"titaniumtetrachloride", "sodiumcarbonate_molten", "calcite_molten");

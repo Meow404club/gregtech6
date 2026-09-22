@@ -479,6 +479,7 @@ public final class GT6CapabilityWiring {
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tCrystallisation,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCrystallisation,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 		// task p34-machines-burner-plantalyzer — the two machine families join (tail-append;
 		// the roasting shape): the Burner Mixer's tank-in face is the JSON row chemistry's
 		// load-bearing fluid INPUT, the Plantalyzer's single tank-in keeps the p34-gui
