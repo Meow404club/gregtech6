@@ -49,13 +49,16 @@ F = gt6world.fmt
 Z = 350
 BM = gt6world.Site(448, 65, Z)        # the Burner Mixer T1
 BMF = gt6world.fmt(BM)
-BM_RIG = gt6world.Site(449, 65, Z)    # the RU source (the SBIT_D bottom face feeds up? —
-                                      # the rig sits beside; doInject reaches the D face)
+BM_RIG = gt6world.Site(448, 64, Z)    # the RU source UNDER the machine (the SBIT_D
+                                      # bottom energy face; the p13 fermenter under-form —
+                                      # the p14 :511 side gate makes a beside-rig dead)
 BM2 = gt6world.Site(452, 65, Z)       # the Burner Mixer T2 (the inject ramp)
 BM3 = gt6world.Site(454, 65, Z)
 BM4 = gt6world.Site(456, 65, Z)
 PL = gt6world.Site(460, 65, Z)        # the Plantalyzer T1
-PL_RIG = gt6world.Site(461, 65, Z)    # the EU source (the SBIT_B back face)
+PL_RIG = gt6world.Site(460, 65, Z + 1)  # the EU source at the BACK (SBIT_B: the north-facing
+                                        # machine's back is world south; the p33 oven side-rig
+                                        # form rides the machine's own accepted-face map)
 
 steps = [
     phase("A: the Burner Mixer — the :220 formation row on the RU rig + the ignition gate"),
@@ -106,8 +109,11 @@ steps = [
          expect="running=false",  # zero rows never start a process (the P10 compat cut)
          poll=40.0),
     Step(f"gt6machine plantalyzer fluid fill up minecraft:water 1000 {F(PL)}",
-         expect="(ACCEPTED)"),  # the single tank-in face: the p34-gui fluid seat's live carrier
-    Step(f"gt6machine plantalyzer fluid draw up 1000 {F(PL)}", expect="drained"),
+         expect="filled 1000/1000 L of minecraft:water (ACCEPTED), input tanks hold 1000 L"),  # the single tank-in face: the p34-gui fluid seat's live carrier
+    # the draw arm rides the OUTPUT tanks (the p14 mTanksOutput driver) — this map is
+    # fluids 1/0/0, no output tank exists, so the face pins through the stat census
+    Step(f"gt6machine plantalyzer fluid stat {F(PL)}",
+         expect="in[0]=1000 L of minecraft:water"),
     Step(f"gt6machine plantalyzer open {F(PL)}", expect="open SKIP for the fake player"),
 
     phase("D: teardown — restore the band"),
