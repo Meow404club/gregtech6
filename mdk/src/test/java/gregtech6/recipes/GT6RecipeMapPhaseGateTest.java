@@ -112,7 +112,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		//? if forge {
 		SNAPSHOT.put("COMPRESSOR", 2630);
 		//?} else {
-		/*SNAPSHOT.put("COMPRESSOR", 2521);
+		/*SNAPSHOT.put("COMPRESSOR", 2517); // -4 task p34-machines-bumblelyzer-crucible — the compressor walk derives from the live item universe, which the bouleGt force-table changed (the row-level mechanism rides the exclusion filters over the new gem-plate/tiny/boule items; the ratchet protocol: bump the verified drift, the walk-level accounting is the cutting-domain card's audit face)
 		*///?}
 		SNAPSHOT.put("WIREMILL", 912);
 		SNAPSHOT.put("ROLLING_MILL", 0);
