@@ -48,6 +48,7 @@ F = gt6world.fmt
 # at dz+10 — the bbox admission is band-disjoint)
 Z = 350
 BM = gt6world.Site(448, 65, Z)        # the Burner Mixer T1
+BMF = gt6world.fmt(BM)
 BM_RIG = gt6world.Site(449, 65, Z)    # the RU source (the SBIT_D bottom face feeds up? —
                                       # the rig sits beside; doInject reaches the D face)
 BM2 = gt6world.Site(452, 65, Z)       # the Burner Mixer T2 (the inject ramp)
@@ -58,7 +59,7 @@ PL_RIG = gt6world.Site(461, 65, Z)    # the EU source (the SBIT_B back face)
 
 steps = [
     phase("A: the Burner Mixer — the :220 formation row on the RU rig + the ignition gate"),
-    Step(f"setblock {BM} gt6:burner_mixer", expect="Changed the block", sleep=1.0),
+    Step(f"setblock {BMF} gt6:burner_mixer", expect="Changed the block", sleep=1.0),
     # the negative gate FIRST: inputs armed + power on, NO ignite -> the machine never starts
     Step(f"gt6machine burner_mixer fluid fill up gt6:hydrogen 1000 {F(BM)}",
          expect="filled 1000/1000 L of gt6:hydrogen (ACCEPTED), input tanks hold 1000 L"),
@@ -87,15 +88,15 @@ steps = [
          poll=300.0),
 
     phase("B: the T2-T4 inject ramp — the window ladder (the sander form; the row chemistry rides the map)"),
-    Step(f"setblock {BM2} gt6:burner_mixer_t2", expect="Changed the block", sleep=1.0),
+    Step(f"setblock {F(BM2)} gt6:burner_mixer_t2", expect="Changed the block", sleep=1.0),
     Step(f"gt6machine burner_mixer check {F(BM2)}", expect="minIn=64 recIn=128 maxIn=256"),
-    Step(f"setblock {BM3} gt6:burner_mixer_t3", expect="Changed the block", sleep=1.0),
+    Step(f"setblock {F(BM3)} gt6:burner_mixer_t3", expect="Changed the block", sleep=1.0),
     Step(f"gt6machine burner_mixer check {F(BM3)}", expect="minIn=256 recIn=512 maxIn=1024"),
-    Step(f"setblock {BM4} gt6:burner_mixer_t4", expect="Changed the block", sleep=1.0),
+    Step(f"setblock {F(BM4)} gt6:burner_mixer_t4", expect="Changed the block", sleep=1.0),
     Step(f"gt6machine burner_mixer check {F(BM4)}", expect="minIn=1024 recIn=2048 maxIn=4096"),
 
     phase("C: the Plantalyzer — the declared-empty live face (place + power + idle)"),
-    Step(f"setblock {PL} gt6:plantalyzer", expect="Changed the block", sleep=1.0),
+    Step(f"setblock {F(PL)} gt6:plantalyzer", expect="Changed the block", sleep=1.0),
     Step(f"gt6energy place {F(PL_RIG)}", expect="GT6 energy source placed"),
     Step(f"gt6energy type {F(PL_RIG)} EU", expect="type ENERGY.ELECTRICITY"),
     Step(f"gt6energy volt {F(PL_RIG)} 32", expect="voltage 32"),
