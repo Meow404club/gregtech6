@@ -871,6 +871,18 @@ SESSION_GROUPS = (
     # p33_food_machines form (bbox-registered, no fresh_boot / mutates member).
     # --group p34_machines_bp matches through the chain's embedded name prefix.
     ("p34_machines_bp",),
+    # p34-pool-cover-hosts (task p34-pool-cover-hosts): the real cover-host live
+    # chain — a fresh band x696..724 z554..574 (x/z-disjoint from every registered
+    # band: the covers-g2 band z300..312 x548..572, the loot-inject x700 z200..218,
+    # the sensors x678..684 z125..143), the two production carriers mounting covers
+    # (the redstone wire: torch + selector_tag_5 with the gt.mode dial readback and
+    # the redstone-lamp live inversion through the host emission exit; the fluid
+    # pipe: the pressure valve with the endpoint-disconnect connections readback)
+    # + the drum gate negatives. Admission mirroring the p34_covers_g2 form
+    # (bbox-registered, no fresh_boot / mutates member — the rigs are band-local
+    # setblocks). --group p34_cover_hosts matches through the chain's embedded
+    # name prefix.
+    ("p34_cover_hosts",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
