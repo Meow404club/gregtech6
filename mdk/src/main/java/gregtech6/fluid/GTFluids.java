@@ -2227,19 +2227,18 @@ public final class GTFluids {
 		new ChemicalFluidSpec("redstonealloy_molten", "Molten Redstone Alloy" , 1093,  2329, 1000, 0xFF8C3232, false, 10), // molten.redstonealloy=熔融红石合金 (tmp/gregtech.lang:585) — (Si 1687 + Redstone 500)/2 (MT.java:2492)
 		new ChemicalFluidSpec("nikolinealloy_molten", "Molten Nikoline Alloy" , 1593,  2329, 1000, 0xFF325A8C, false, 10), // molten.nikolinealloy=熔融蓝石合金 (tmp/gregtech.lang:566) — (Si 1687 + Nikolite 1500)/2 (MT.java:2493)
 		new ChemicalFluidSpec("alumina_molten"      , "Molten Alumina"        , 2345,  5404, 1000, 0xFF78C3EB, false, 10), // molten.alumina=熔融氧化铝 (tmp/gregtech.lang:429) — MT.Al2O3 internal "Alumina", the heat(2345) literal (MT.java:1955)
-		// the Burner Mixer row carriers (task p34-machines-burner-plantalyzer) — the four
-		// material-state fluids the Loader_Recipes_Chem.java:220-259 rows reference. The
-		// auto-registration walks the port folds into this table: tritiatedwater is the
-		// :1072 createLiquid walk over MT.T2O (LIQUID tag, MT.java:1898) — temp = min(300,
-		// bp−1) = 300 over mp 280 (heat(CS.C+7, CS.C+104), CS.C = 273), density 1000×1.2112
-		// = 1211 (the explicit setDensity); titaniumtetrachloride the same walk over
-		// MT.TiCl4 (MT.java:1959, mp 249 < 300 → 300, the field-default 1.0 g/cm³ → 1000);
-		// the two molten rows the :1077 createMolten walk over MT.Na2CO3 / MT.CaCO3
+		// the Burner Mixer row carriers (task p34-machines-burner-plantalyzer) — the three
+		// NEW material-state fluids the Loader_Recipes_Chem.java:220-259 rows reference
+		// (the fourth, tritiatedwater, already lives in CLOSURE_FLUID_SPECS above — the
+		// :208 createLiquid MT.T2O row, temp 300 / density 1211, this card's json row
+		// consumes it as-is). The auto-registration walks the port folds into this table:
+		// titaniumtetrachloride the :1072 createLiquid walk over MT.TiCl4 (LIQUID tag,
+		// MT.java:1959, mp 249 < 300 → temp 300, the field-default 1.0 g/cm³ → density
+		// 1000); the two molten rows the :1077 createMolten walk over MT.Na2CO3 / MT.CaCO3
 		// (MOLTEN tags, MT.java:2005/:1975) — temp = the melting points 1124/1612, density
 		// 1000 (the 1.0 field default; the uumMcfg molecule recompute chain through the CO3
 		// radical is DECLARED untranscribed — the oils port-owned-value precedent).
-		new ChemicalFluidSpec("tritiatedwater"      , "Tritiated Water"       ,  300,  1211, 1000, 0xFF6464FF, false,  0), // tritiatedwater=超重水 (tmp/gregtech.lang:897) — MT.T2O 255,100,100 (MT.java:1898)
-		new ChemicalFluidSpec("titaniumtetrachloride", "Titanium Tetrachloride",  300,  1000, 1000, 0xFFE9F4DE, false,  0), // titaniumtetrachloride=四氯化钛 (:892) — MT.TiCl4 233,244,222 (MT.java:1959)
+		new ChemicalFluidSpec("titaniumtetrachloride", "Titanium Tetrachloride",  300,  1000, 1000, 0xFFE9F4DE, false,  0), // titaniumtetrachloride=四氯化钛 (tmp/gregtech.lang:892) — MT.TiCl4 233,244,222 (MT.java:1959)
 		new ChemicalFluidSpec("sodiumcarbonate_molten", "Molten Sodium Carbonate", 1124, 1000, 1000, 0xFFE6E6E6, false, 10), // molten.sodiumcarbonate=熔融碳酸钠 (:597) — MT.Na2CO3 230,230,230 (MT.java:2005)
 		new ChemicalFluidSpec("calcite_molten"      , "Molten Calcite"        , 1612,  1000, 1000, 0xFFFAE6DC, false, 10)); // molten.calcite=熔融方解石 (:463) — MT.CaCO3 250,230,220 (MT.java:1975)
 
@@ -2372,8 +2371,9 @@ public final class GTFluids {
 			chemicalFluid("redstone_molten"), // task p32-qu-scanner-replicator — the replicator redstone carrier (:194)
 			chemicalFluid("silicon_molten"), chemicalFluid("germanium_molten"), // task p34-machines-bumblelyzer-crucible — the crystallisation molten quintet
 			chemicalFluid("redstonealloy_molten"), chemicalFluid("nikolinealloy_molten"), chemicalFluid("alumina_molten"),
-			// the Burner Mixer row carriers (task p34-machines-burner-plantalyzer)
-			chemicalFluid("tritiatedwater"), chemicalFluid("titaniumtetrachloride"),
+			// the Burner Mixer row carriers (task p34-machines-burner-plantalyzer;
+			// tritiatedwater rides the CLOSURE row above)
+			chemicalFluid("titaniumtetrachloride"),
 			chemicalFluid("sodiumcarbonate_molten"), chemicalFluid("calcite_molten"));
 
 	/**
