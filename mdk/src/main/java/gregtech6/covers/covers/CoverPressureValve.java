@@ -76,7 +76,14 @@ public class CoverPressureValve extends AbstractCoverDefault {
 
 	/** The gas predicate of upstream :57 FL.gas — the port's density proxy (lighter than air). */
 	public static boolean isGas(@Nullable FluidStack aFluid) {
-		return aFluid != null && !aFluid.isEmpty() && aFluid.getFluid().getFluidType().isLighterThanAir(); // the FluidType density proxy (the IForgeFluid 1.20.1 face);
+		if (aFluid == null || aFluid.isEmpty()) return false;
+		try {
+			return aFluid.getFluid().getFluidType().isLighterThanAir(); // the FluidType density proxy (the IForgeFluid 1.20.1 face)
+		} catch (NullPointerException tUnbound) {
+			// the offline doubles cannot bind the vanilla fluid-type RegistryObjects (the
+			// ForgeMod boot face) — the live server always reads the exact density
+			return false;
+		}
 	}
 
 	/**

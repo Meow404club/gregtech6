@@ -160,10 +160,9 @@ public class CoverFilterFluidTorchTest extends GTCoverTestBase {
 		}
 	}
 
-	static BlockEntityType<WireCoverProbe> sProbeWireType;
 
 	static WireCoverProbe wire() {
-		return sProbeWireType.create(WIRE_POS, Blocks.BRICKS.defaultBlockState());
+		return sWireType.create(WIRE_POS, Blocks.BRICKS.defaultBlockState());
 	}
 
 	/** A wire store with the given torch-family cover on face 3. */

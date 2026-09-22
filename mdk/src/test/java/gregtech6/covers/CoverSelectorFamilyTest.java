@@ -132,7 +132,7 @@ public class CoverSelectorFamilyTest extends GTCoverTestBase {
 		TileEntityModeDialProbe tProbe = probeWith(tManual);
 		tProbe.getCovers().mVisuals[3] = 15;
 		// the increment zone: x in [PX_N[4], PX_N[1]] = [0.75, 0.9375], y in [PX_P[1], PX_P[4]] = [0.0625, 0.25]
-		boolean tHit = tManual.onCoverClickedRight((byte) 3, tProbe.getCovers(), null, (byte) 3, 0.8F, 0.1F, 0.1F);
+		boolean tHit = tManual.onCoverClickedRight((byte) 3, tProbe.getCovers(), null, (byte) 3, 0.8F, 0.9F, 0.1F); // texY = 1-0.9 = 0.1 — the upper band (the case-3 flip)
 		assertTrue(tHit, "a zone hit consumes the click with the animation (:89-91)");
 		assertEquals(0, tProbe.mMode, "15 + 1 wraps to 0 (upstream :67-69)");
 		assertEquals(0, tProbe.getCovers().mVisuals[3], "the setStateMode RETURN mirrors into the visual lane (:88)");
@@ -143,10 +143,10 @@ public class CoverSelectorFamilyTest extends GTCoverTestBase {
 		CoverSelectorManual tManual = new CoverSelectorManual();
 		TileEntityModeDialProbe tProbe = probeWith(tManual);
 		tProbe.getCovers().mVisuals[3] = 0;
-		tManual.onCoverClickedRight((byte) 3, tProbe.getCovers(), null, (byte) 3, 0.1F, 0.1F, 0.1F); // the decrement zone
+		tManual.onCoverClickedRight((byte) 3, tProbe.getCovers(), null, (byte) 3, 0.1F, 0.9F, 0.1F); // the decrement zone (texY 0.1)
 		assertEquals(15, tProbe.mMode, "0 - 1 wraps to 15 (upstream :62-64)");
 		tProbe.getCovers().mVisuals[3] = 0;
-		tManual.onCoverClickedRight((byte) 3, tProbe.getCovers(), null, (byte) 3, 0.6F, 0.7F, 0.1F); // the bit-2 button (x in (0.5, 0.6875])
+		tManual.onCoverClickedRight((byte) 3, tProbe.getCovers(), null, (byte) 3, 0.6F, 0.3F, 0.1F); // the bit-2 button (texX 0.6, texY 0.7 — the case-3 flip)
 		assertEquals(2, tProbe.mMode, "the lower band buttons flip bits (upstream :72-87)");
 	}
 
@@ -177,7 +177,7 @@ public class CoverSelectorFamilyTest extends GTCoverTestBase {
 		CoverSelectorButtonPanel tPanel = new CoverSelectorButtonPanel();
 		TileEntityModeDialProbe tProbe = probeWith(tPanel);
 		// cell (col 1, row 2): x in [0.25, 0.5), y in [0.5, 0.75) → mode = 1 + 2*4 = 9
-		boolean tHit = tPanel.onCoverClickedRight((byte) 3, tProbe.getCovers(), null, (byte) 3, 0.3F, 0.6F, 0.1F);
+		boolean tHit = tPanel.onCoverClickedRight((byte) 3, tProbe.getCovers(), null, (byte) 3, 0.3F, 0.4F, 0.1F); // tex (0.3, 0.6) — cell (1,2) via the case-3 flip
 		assertTrue(tHit, "a grid hit always consumes the click (:66)");
 		assertEquals(9, tProbe.mMode, "mode = column + row*4 (upstream :62)");
 	}
@@ -189,7 +189,7 @@ public class CoverSelectorFamilyTest extends GTCoverTestBase {
 		// arm the momentary window (the screwdriver toggle, upstream :76-80)
 		tPanel.onToolClick((byte) 3, tProbe.getCovers(), ICover.TOOL_SCREWDRIVER, 0, null, false, (byte) 3, 0, 0, 0);
 		assertEquals(1, tProbe.getCovers().mValues[3], "the screwdriver arms the value lane (:77)");
-		tPanel.onCoverClickedRight((byte) 3, tProbe.getCovers(), null, (byte) 3, 0.3F, 0.1F, 0.1F); // cell (col 1, row 0) = mode 1
+		tPanel.onCoverClickedRight((byte) 3, tProbe.getCovers(), null, (byte) 3, 0.3F, 0.9F, 0.1F); // tex (0.3, 0.1) — cell (col 1, row 0) = mode 1
 		assertEquals(10, tProbe.getCovers().mValues[3], "an armed click starts the 10-tick window (:64)");
 		assertEquals(1, tProbe.mMode, "the click drove the dial");
 		for (long tTimer = 0; tTimer < 8; tTimer++) tPanel.onTickPost((byte) 3, tProbe.getCovers(), tTimer, true, false, false);
