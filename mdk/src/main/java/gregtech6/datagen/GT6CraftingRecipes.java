@@ -281,6 +281,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (CrackerRecipeRow tRow : crackerRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
+		for (CrackerRecipeRow tRow : burnerMixerRecipeBuilders()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 		// task p29-w5-t1-dig-six — the six dig-tool steel-route rows (the wrench row shape)
 		pickaxeBuilder().save(aConsumer, PICKAXE_ID);
 		pickaxeGemBuilder().save(aConsumer, PICKAXE_GEM_ID);
@@ -398,6 +401,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 		for (CrackerRecipeRow tRow : crackerRecipeBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
+		for (CrackerRecipeRow tRow : burnerMixerRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 		// task p29-w5-t1-dig-six — the six dig-tool steel-route rows (the wrench row shape)
@@ -1031,6 +1037,49 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('C', gregtech6.registry.GTMaterialItems.get(tPlate, MT.Copper).get())
 					.unlockedBy("has_invar_plate", has(gregtech6.registry.GTMaterialItems.get(tPlate, MT.Invar).get())),
 					new ResourceLocation(GT6DataGenerators.MOD_ID, tCatPaths[i])));
+		}
+		return rRows;
+	}
+
+	// -------------------------------------------------------------------------
+	// task p34-machines-burner-plantalyzer — the Burner Mixer crafting family
+	// (Loader MultiTileEntities.java:1595-1598 grids VERBATIM, "PMP","PRP","hSw"
+	// four rows over the Kinetic_T ladder):
+	//   'M' = casingMachine.dat(aMat) → casingSmall (the cracker/transformer fold —
+	//   the prefix has no port item row);
+	//   'S' = stick.dat(aMat) — the port stick row exists (the locker precedent);
+	//   'R' = rotor.dat(MT.Invar);
+	//   'P' = plate/plateDouble/plateTriple/plateQuadruple.dat(MT.Invar) — the tier
+	//   ladder (single plate on T1, multi-plates carry items, the cracker 'I' column
+	//   precedent);
+	//   'h' = the hard hammer (GT6ItemTags.TOOLS_HARD_HAMMER, the food-can 'h' letter);
+	//   'w' = the wrench (GT6ItemTags.TOOLS_WRENCH, the cracker 'w' letter).
+	// One row per tier (T1-T4), result = the machine item, ids ride the block path
+	// (the diesel result-path convention). The Plantalyzer "WXW","ZMP","CYC" rows are
+	// CUT — the absent-component ruling (the GTMachines family note: the CABLES_01/
+	// EMITTERS/SENSORS columns and IL.Processor_Crystal_Diamond are absent port
+	// identities, the molecular-scanner ruling).
+	// -------------------------------------------------------------------------
+
+	private java.util.List<CrackerRecipeRow> burnerMixerRecipeBuilders() {
+		gregapi.oredict.OreDictMaterial[] tMats = {MT.Bronze, MT.Steel, MT.Ti, MT.TungstenSteel};
+		String[] tPaths = {"burner_mixer", "burner_mixer_t2", "burner_mixer_t3", "burner_mixer_t4"};
+		gregapi.oredict.OreDictPrefix[] tPlates = {gregapi.data.OP.plate, gregapi.data.OP.plateDouble, gregapi.data.OP.plateTriple, gregapi.data.OP.plateQuadruple};
+		java.util.List<CrackerRecipeRow> rRows = new java.util.ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			gregapi.oredict.OreDictMaterial tMat = tMats[i];
+			// the Burner Mixer :1595-1598 — "PMP","PRP","hSw"
+			rRows.add(new CrackerRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS,
+					gregtech6.registry.GTMachines.BURNER_MIXER_ITEMS_BY_PATH.get(tPaths[i]).get())
+					.pattern("PMP").pattern("PRP").pattern("hSw")
+					.define('P', gregtech6.registry.GTMaterialItems.get(tPlates[i], MT.Invar).get())
+					.define('M', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.casingSmall, tMat).get())
+					.define('R', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.rotor, MT.Invar).get())
+					.define('S', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.stick, tMat).get())
+					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+					.define('w', GT6ItemTags.TOOLS_WRENCH)
+					.unlockedBy("has_invar_plate", has(gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plate, MT.Invar).get())),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tPaths[i])));
 		}
 		return rRows;
 	}

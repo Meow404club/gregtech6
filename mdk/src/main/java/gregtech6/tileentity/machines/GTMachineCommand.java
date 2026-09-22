@@ -318,7 +318,23 @@ public final class GTMachineCommand {
 		.then(machine("crystallisationcrucible", GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get("crystallisationcrucible"), GTMachineCommand::firstSiliconDust))
 		.then(machine("crystallisationcrucible_t2", GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get("crystallisationcrucible_t2"), GTMachineCommand::firstSiliconDust))
 		.then(machine("crystallisationcrucible_t3", GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get("crystallisationcrucible_t3"), GTMachineCommand::firstSiliconDust))
-		.then(machine("crystallisationcrucible_t4", GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get("crystallisationcrucible_t4"), GTMachineCommand::firstSiliconDust));
+		.then(machine("crystallisationcrucible_t4", GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get("crystallisationcrucible_t4"), GTMachineCommand::firstSiliconDust))
+		// task p34-machines-burner-plantalyzer: the Burner Mixer ladder — the feed is the
+		// sulfate-roast row's Na2SO4 dust (burnmixer.json's first item face; the RU rig
+		// feeds through the inject arm, the ignition through the ignite arm, the fluid
+		// inputs through the fluid fill arm)
+		.then(machine("burner_mixer", GTMachines.BURNER_MIXER_BLOCKS_BY_PATH.get("burner_mixer"), () -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.dust, gregapi.data.MT.Na2SO4).get()))
+		.then(machine("burner_mixer_t2", GTMachines.BURNER_MIXER_BLOCKS_BY_PATH.get("burner_mixer_t2"), () -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.dust, gregapi.data.MT.Na2SO4).get()))
+		.then(machine("burner_mixer_t3", GTMachines.BURNER_MIXER_BLOCKS_BY_PATH.get("burner_mixer_t3"), () -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.dust, gregapi.data.MT.Na2SO4).get()))
+		.then(machine("burner_mixer_t4", GTMachines.BURNER_MIXER_BLOCKS_BY_PATH.get("burner_mixer_t4"), () -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.dust, gregapi.data.MT.Na2SO4).get()))
+		// the Plantalyzer 5-ladder — the map is DECLARED-empty (the P10 compat cut), the
+		// feed is a sapling stub (the upstream 'Z' column word OP.treeSapling); the chain
+		// asserts place + power + idle (zero rows never start a process)
+		.then(machine("plantalyzer", GTMachines.PLANTALYZER_BLOCKS_BY_PATH.get("plantalyzer"), () -> net.minecraft.world.item.Items.OAK_SAPLING))
+		.then(machine("plantalyzer_t2", GTMachines.PLANTALYZER_BLOCKS_BY_PATH.get("plantalyzer_t2"), () -> net.minecraft.world.item.Items.OAK_SAPLING))
+		.then(machine("plantalyzer_t3", GTMachines.PLANTALYZER_BLOCKS_BY_PATH.get("plantalyzer_t3"), () -> net.minecraft.world.item.Items.OAK_SAPLING))
+		.then(machine("plantalyzer_t4", GTMachines.PLANTALYZER_BLOCKS_BY_PATH.get("plantalyzer_t4"), () -> net.minecraft.world.item.Items.OAK_SAPLING))
+		.then(machine("plantalyzer_t5", GTMachines.PLANTALYZER_BLOCKS_BY_PATH.get("plantalyzer_t5"), () -> net.minecraft.world.item.Items.OAK_SAPLING));
 		event.getDispatcher().register(tMachine);
 		event.getDispatcher().register(bridgeArm());
 		LOGGER.info("Registered GT6 bridge acceptance command /gt6bridge (heater|engine|motor x stat|reset, the EU->HU/KU/RU converter live face)");
@@ -378,6 +394,12 @@ public final class GTMachineCommand {
 			+ "ElectricMixer/Loom/Sifter EU efficiency " + GTMachines.ELECTRIC_EFFICIENCY + " (half-speed/2x-energy face, the shared Mixer+Sifting maps) + "
 			+ "Boxinator/Unboxinator EU (no efficiency key) + Fermenter HU TIER_INPUTS[0]={16,32,64}, "
 			+ "the T5(EV) rows of the upstream Electric* ladders stay pooled (the Canner T5 precedent)");
+		// the p34 machine pair registration smoke line: the ignition 4-ladder resolves the
+		// TileEntityBurnerMixer BET (the NBT_NEEDS_IGNITION family), the Plantalyzer
+		// 5-ladder rides the shared eu-core factory.
+		LOGGER.info("GT6 p34 machine pair registered: 9 blocks / 2 family BETs (Burner Mixer 20521-20524 RU + NBT_NEEDS_IGNITION, "
+			+ "parallel " + java.util.Arrays.toString(GTMachines.BURNER_MIXER_PARALLEL) + " + duration T; Plantalyzer 20531-20535 EU parallel 64, "
+			+ "RM.PLANTALYZER declared-empty — the P10 compat cut)");
 	}
 
 	/** One machine literal with its four subcommands (the oven command shape, parameterised). */
@@ -504,7 +526,39 @@ public final class GTMachineCommand {
 			.executes(context -> open(context.getSource(), null))
 			.then(Commands.argument("pos", BlockPosArgument.blockPos())
 				.executes(context -> open(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos")))));
+		// task p34-machines-burner-plantalyzer — the ignite arm (the GTMultiBlockCommand
+		// {@code ignite} precedent): the TOOL_igniter stand-in for the NBT_NEEDS_IGNITION
+		// family (the port has no igniter item seam, GTBurnerCommand.java:44-46). Generic on
+		// the family literals: a non-ignition machine answers NOT-IGNITION (a legitimate
+		// verdict), a Burner Mixer sets mIgnited = 40 (the :374-377 branch verbatim).
+		tMachine.then(Commands.literal("ignite")
+			.executes(context -> ignite(context.getSource(), null))
+			.then(Commands.argument("pos", BlockPosArgument.blockPos())
+				.executes(context -> ignite(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos")))));
 		return tMachine;
+	}
+
+	/**
+	 * The TOOL_igniter branch driver: {@code mIgnited = 40} on the ignition family (the
+	 * {@link TileEntityBurnerMixer#ignite} seam), NOT-IGNITION elsewhere (a legitimate
+	 * verdict the chains can assert).
+	 */
+	private static int ignite(CommandSourceStack aSource, @javax.annotation.Nullable BlockPos aPos) {
+		TileEntityBasicMachine tMachine = machineAt(aSource, aPos);
+		if (tMachine == null) {
+			aSource.sendFailure(Component.literal("No TileEntityBasicMachine at " + (aPos != null ? aPos.toShortString() : "the source position")));
+			return 0;
+		}
+		if (!(tMachine instanceof TileEntityBurnerMixer tBurner)) {
+			String tLine = "GT6 machine ignite NOT-IGNITION (" + tMachine.getTileEntityName() + " carries no NBT_NEEDS_IGNITION)";
+			aSource.sendSuccess(() -> Component.literal(tLine), false);
+			return 0;
+		}
+		tBurner.ignite();
+		String tLine = "GT6 machine ignite OK (mIgnited=40)";
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
 	}
 
 	/**

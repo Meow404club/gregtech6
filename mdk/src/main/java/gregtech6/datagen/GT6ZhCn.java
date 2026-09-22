@@ -899,6 +899,12 @@ public class GT6ZhCn extends LanguageProvider {
 		// (gt.multitileentity.20491-20494/20481-20484/22000/22001/22002/22004/20211-20214)
 		addDirect(gregtech6.registry.GTMachines.MACHINE_STEAM_CRACKER_UNIT_KEY);
 		addDirect(gregtech6.registry.GTMachines.MACHINE_CATALYTIC_CRACKER_UNIT_KEY);
+		// task p34-machines-burner-plantalyzer — the two family templates (the dump faces
+		// 燃烧反应室 gt.multitileentity.20521-20524 / 植物分析仪 :11705-11709, the tsv
+		// direct band; the tier slots ride the EXISTING gt6.row.mat words — bronze/steel/
+		// titanium/tungstensteel and lv..iv)
+		addDirect(gregtech6.registry.GTMachines.MACHINE_BURNER_MIXER_UNIT_KEY);
+		addDirect(gregtech6.registry.GTMachines.MACHINE_PLANTALYZER_UNIT_KEY);
 		addDirect(gregtech6.registry.GTMachines.MACHINE_LOOM_UNIT_KEY);
 		addDirect(gregtech6.registry.GTMachines.COAGULATOR_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GTMachines.GENERIFIER_DISPLAY_KEY);

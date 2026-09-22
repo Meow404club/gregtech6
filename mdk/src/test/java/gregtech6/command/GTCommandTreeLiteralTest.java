@@ -96,7 +96,9 @@ public class GTCommandTreeLiteralTest {
 		// task p34-machines-bumblelyzer-crucible — the Bumblelyzer EU 5-ladder + the Crystallisation Crucible HU 4-ladder
 		"bumblelyzer", "bumblelyzer_t2", "bumblelyzer_t3", "bumblelyzer_t4", "bumblelyzer_t5",
 		"crystallisationcrucible", "crystallisationcrucible_t2", "crystallisationcrucible_t3", "crystallisationcrucible_t4",
-		"paint", "unpaint"); // task p21-paintable-storage-sync — the spray write-point arm
+		"paint", "unpaint", // task p21-paintable-storage-sync — the spray write-point arm
+		"burner_mixer", "burner_mixer_t2", "burner_mixer_t3", "burner_mixer_t4",
+		"plantalyzer", "plantalyzer_t2", "plantalyzer_t3", "plantalyzer_t4", "plantalyzer_t5"); // task p34-machines-burner-plantalyzer — the two machine families (+9 literals; the ignite arm rides EVERY family literal)
 
 	private static CommandSourceStack stack() {
 		// permission level 2 satisfies both commands' requires(...) gate; level/server are

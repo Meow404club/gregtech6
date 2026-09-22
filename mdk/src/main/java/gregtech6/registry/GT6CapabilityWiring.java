@@ -480,6 +480,20 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCrystallisation,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		// task p34-machines-burner-plantalyzer — the two machine families join (tail-append;
+		// the roasting shape): the Burner Mixer's tank-in face is the JSON row chemistry's
+		// load-bearing fluid INPUT, the Plantalyzer's single tank-in keeps the p34-gui
+		// fluid seat live on this node; both BETs item + fluid
+		BlockEntityType<TileEntityBasicMachine> tBurnerMixer = GTMachines.BURNER_MIXER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tBurnerMixer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tBurnerMixer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		BlockEntityType<TileEntityBasicMachine> tPlantalyzer = GTMachines.PLANTALYZER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tPlantalyzer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tPlantalyzer,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.HEAT_EXCHANGER_BE.get();
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tHeatExchanger,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));

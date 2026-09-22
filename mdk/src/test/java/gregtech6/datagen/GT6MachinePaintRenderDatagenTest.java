@@ -115,7 +115,9 @@ class GT6MachinePaintRenderDatagenTest {
             "loom", "loom_t2", "loom_t3", "loom_t4",
             "smelter", "smelter_t2", "smelter_t3", "smelter_t4", // task p29-w3-heat-smelter
             "melter",
-            "roasting_oven", "roasting_oven_t2", "roasting_oven_t3", "roasting_oven_t4"); // task p29-w4-eu-bridge — the Roasting ladder (the "roaster" NBT_TEXTURE token)
+            "roasting_oven", "roasting_oven_t2", "roasting_oven_t3", "roasting_oven_t4", // task p29-w4-eu-bridge — the Roasting ladder (the "roaster" NBT_TEXTURE token)
+            "burner_mixer", "burner_mixer_t2", "burner_mixer_t3", "burner_mixer_t4",
+            "plantalyzer", "plantalyzer_t2", "plantalyzer_t3", "plantalyzer_t4", "plantalyzer_t5"); // task p34-machines-burner-plantalyzer — the Burner Mixer 4-ladder + the Plantalyzer 5-ladder, +9
     /** The addMachine three-model split (inactive/active/running). */
     private static final List<String> MODEL_SUFFIXES = List.of("", "_active", "_running");
 
@@ -194,6 +196,7 @@ class GT6MachinePaintRenderDatagenTest {
             case "laser_welder" -> "laserwelder";
             case "cryo_mixer" -> "cryomixer";
             case "roasting_oven" -> "roaster"; // task p29-w4-eu-bridge — the roaster art token
+            case "burner_mixer" -> "burnmixer"; // task p34-machines-burner-plantalyzer — the upstream NBT_TEXTURE word
             default -> aBase;
         };
     }
@@ -208,9 +211,9 @@ class GT6MachinePaintRenderDatagenTest {
 
     @Test
     void pinnedMachinePaintCensus() {
-        assertEquals(213, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
-        assertEquals(213 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
-                "209 blocks x 3 models — the pinned tinted-model total");
+        assertEquals(222, MACHINE_BASES.size(), "the machine block census (paintableBlockArray)");
+        assertEquals(222 * 3, MACHINE_BASES.size() * MODEL_SUFFIXES.size(),
+                "222 blocks x 3 models — the pinned tinted-model total");
     }
 
     /**

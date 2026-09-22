@@ -860,6 +860,17 @@ SESSION_GROUPS = (
     # admission form, no fresh_boot / mutates member).
     # --group p34_machines_bc matches through the chain's embedded name prefix.
     ("p34_machines_bc",),
+    # p34-machines-bp (task p34-machines-burner-plantalyzer): the Burner Mixer +
+    # Plantalyzer live chain — a fresh z=350 band (z-disjoint from the p33 food band
+    # z=340 and every registered band), the Burner Mixer :220 formation row LIVE
+    # (hydrogen 1000 + oxygen 500 -> distilled water 1500, the RU rig + the
+    # /gt6machine ignite arm: the negative gate pinned BEFORE the ignite, the
+    # keep-alive second charge OFF the first ignite), the T2-T4 window ramp checks,
+    # and the Plantalyzer declared-empty live face (place + power + idle + the
+    # single tank-in fill/draw + the open SKIP). Admission mirroring the
+    # p33_food_machines form (bbox-registered, no fresh_boot / mutates member).
+    # --group p34_machines_bp matches through the chain's embedded name prefix.
+    ("p34_machines_bp",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

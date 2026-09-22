@@ -223,7 +223,12 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// the loader cannot mark fake (the v1 row-flags boundary), and the Bumblelyzer's
 			// live semantics ARE the dynamic findRecipe arm (the display stock rides
 			// GT6RecipeMapBumblelyzer.sFakeRecipes outside mRecipeList)
-			"crystallisationcrucible", "bumblelyzer");
+			"crystallisationcrucible", "bumblelyzer",
+			// the P34 machine pair (task p34-machines-burner-plantalyzer): burnmixer pours
+			// its 33 Loader_Recipes_Chem rows (Loader_Recipes_Chem.java:220-259); plantalyzer
+			// ships the key only — DECLARED-empty, the upstream rows are the Forestry/IC2
+			// compat scans of GT6_Main.java:321 (the P10 cut)
+			"burnmixer", "plantalyzer");
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
 
@@ -639,6 +644,9 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// stock, BUMBLELYZER stays rowless, see the POURABLE note)
 			case "crystallisationcrucible" -> GT6RecipeMaps.CRYSTALLISATION_CRUCIBLE;
 			case "bumblelyzer" -> GT6RecipeMaps.BUMBLELYZER;
+			// the P34 machine pair (task p34-machines-burner-plantalyzer)
+			case "burnmixer" -> GT6RecipeMaps.BURN_MIXER;
+			case "plantalyzer" -> GT6RecipeMaps.PLANTALYZER;
 		default -> null;
 		};
 	}
