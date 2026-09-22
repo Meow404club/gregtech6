@@ -268,6 +268,7 @@ direct	block.gt6.wood_fluid_pipe_small	小型木制流体管道	hand
 direct	block.gt6.wood_wall	木壁板	hand
 direct	fluid.gt6.adamantium_molten	熔融艾德曼合金	hand
 direct	fluid.gt6.alcopops	波普甜酒	hand
+direct	fluid.gt6.alumina_molten	熔融氧化铝	hand
 direct	fluid.gt6.ambrosia	琼浆	hand
 direct	fluid.gt6.ancientdebris_molten	熔融远古残骸	hand
 direct	fluid.gt6.applesmoothie	苹果冰沙	hand
@@ -402,6 +403,7 @@ direct	fluid.gt6.fluorine	氟	hand
 direct	fluid.gt6.for_honey	蜂蜜(林业)	hand
 direct	fluid.gt6.fruitsmoothie	果汁冰沙	hand
 direct	fluid.gt6.fuel	燃料	hand
+direct	fluid.gt6.germanium_molten	熔融锗	hand
 direct	fluid.gt6.glenmckenner	格伦·麦肯纳苏格兰威士忌, 格雷窖藏35年陈酿	hand
 direct	fluid.gt6.goldencarrotjuice	金胡萝卜汁	hand
 direct	fluid.gt6.gooseberryjuice	鹅莓汁	hand
@@ -531,6 +533,7 @@ direct	fluid.gt6.mushroomsoup	蘑菇煲	hand
 direct	fluid.gt6.natural_gas	天然气	hand
 direct	fluid.gt6.neon	氖	hand
 direct	fluid.gt6.neutralmatter	中性物质	hand
+direct	fluid.gt6.nikolinealloy_molten	熔融蓝石合金	hand
 direct	fluid.gt6.nitrofuel	硝基燃料	hand
 direct	fluid.gt6.nitrogen	氮	hand
 direct	fluid.gt6.nitrogen_plasma	氮离子	hand
@@ -671,6 +674,7 @@ direct	fluid.gt6.raspberryjuice	树莓汁	hand
 direct	fluid.gt6.raspberrysmoothie	树莓冰沙	hand
 direct	fluid.gt6.redgrapesmoothie	红葡萄冰沙	hand
 direct	fluid.gt6.redstone_molten	熔融红石	hand
+direct	fluid.gt6.redstonealloy_molten	熔融红石合金	hand
 direct	fluid.gt6.reedwater	芦苇水	hand
 direct	fluid.gt6.ricardosanchez	里卡多·桑切斯	hand
 direct	fluid.gt6.ricevinegar	米醋	hand
@@ -686,6 +690,7 @@ direct	fluid.gt6.seawater	海水	hand
 direct	fluid.gt6.seedoil	种子油	hand
 direct	fluid.gt6.semiheavywater	半重水	hand
 direct	fluid.gt6.short_mead	蜂蜜酒	hand
+direct	fluid.gt6.silicon_molten	熔融硅	hand
 direct	fluid.gt6.slime	史莱姆粘液	hand
 direct	fluid.gt6.slime_blue	蓝色史莱姆	hand
 direct	fluid.gt6.soda	苏打水	hand
