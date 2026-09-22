@@ -521,11 +521,16 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	 * mEnergyTypeCharged are outside the oven trimmed field set :133, declared deviation):
 	 * a stopped machine refuses (0, :490); an over-voltage packet overcharges
 	 * ({@code aSize > mInputMax = 64}) and reports the whole amount as used (:493-495);
-	 * accepted EU packets charge {@code min(mInputMax - mEnergy, size * amount)} energy,
+	 * accepted HU packets charge {@code min(mInputMax - mEnergy, size * amount)} energy,
 	 * consuming the corresponding packet count with the rounding-up remainder
 	 * (:501-505). Called through the Root gate (:717) — so simulation calls
-	 * ({@code aDoInject = false}) and below-minimum packets (Min = 16, swallowed) never
-	 * reach this body, and the overcharge flag is consumed by the machine's own next tick.
+	 * ({@code aDoInject = false}) never reach this body; HU sits in TD.Energy's
+	 * ALL_SIZE_IRRELEVANT (TD.java:218), so the gate's below-minimum swallow arm does not
+	 * apply to the accepted type and every packet reaches the body (the oven is the
+	 * upstream 20001-04 shape, NBT_ENERGY_ACCEPTED = TD.Energy.HU). The overcharge flag is
+	 * consumed by the machine's own next tick. (Task p34-oven-hu-conversion: the port
+	 * historically pinned EU here — a p4-era misreading of the :510 NBT-configured
+	 * mEnergyTypeAccepted as an EU identity — ruled R3 and re-based on HU.)
 	 */
 	@Override
 	public long doInject(TagData aEnergyType, byte aSide, long aSize, long aAmount, boolean aDoInject) {
@@ -537,7 +542,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 			return aAmount;
 		}
 		// :497-500 charging branch cut (mChargeRequirement/mEnergyTypeCharged, declared deviation)
-		if (aEnergyType == TD.Energy.EU) { // :501 mEnergyTypeAccepted == EU for the oven
+		if (aEnergyType == TD.Energy.HU) { // :501 mEnergyTypeAccepted — the 20001-04 rows configure HU (Loader:1288-1291)
 			if (aDoInject) mStateNew = tPositive;
 			long tInput = Math.min(mInputMax - mEnergy, aSize * aAmount), tConsumed = Math.min(aAmount, (tInput/aSize) + (tInput%aSize!=0?1:0));
 			if (aDoInject) mEnergy += tConsumed * aSize;
@@ -547,10 +552,14 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	}
 
 	/**
-	 * Upstream :510 for the oven shape: accepting EU only, emitting nothing
+	 * Upstream :510 for the oven shape: accepting HU only, emitting nothing
 	 * (mEnergyTypeEmitted is null) and the charging pair is cut with the charging branch.
+	 * The upstream :510 face compares the NBT-configured mEnergyTypeAccepted
+	 * (NBT_ENERGY_ACCEPTED, Loader_MultiTileEntities.java:1288-1291 = TD.Energy.HU for all
+	 * four oven rows) — the earlier port javadoc reading it as "accepting EU only" mistook
+	 * the configured carrier for an EU identity (ruled R3, task p34-oven-hu-conversion).
 	 */
-	@Override public boolean isEnergyType(TagData aEnergyType, byte aSide, boolean aEmitting) {return !aEmitting && aEnergyType == TD.Energy.EU;}
+	@Override public boolean isEnergyType(TagData aEnergyType, byte aSide, boolean aEmitting) {return !aEmitting && aEnergyType == TD.Energy.HU;}
 
 	/**
 	 * Upstream :511 minus the FACE_CONNECTED rotation-index mask item — the mask
@@ -577,13 +586,13 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	/** Upstream :515 + the oven trimmed field set :133 — also the overcharge threshold in {@link #doInject}. */
 	@Override public long getEnergySizeInputMax(TagData aEnergyType, byte aSide) {return mInputMax;}
 
-	/** Upstream :519 (mEnergyTypeAccepted.AS_LIST) — EU only. */
-	@Override public java.util.Collection<TagData> getEnergyTypes(byte aSide) {return TD.Energy.EU.AS_LIST;}
+	/** Upstream :519 (mEnergyTypeAccepted.AS_LIST) — HU (the 20001-04 NBT_ENERGY_ACCEPTED, Loader:1288-1291). */
+	@Override public java.util.Collection<TagData> getEnergyTypes(byte aSide) {return TD.Energy.HU.AS_LIST;}
 
 	/** Upstream :92 mStateNew — the alternating-state latch written by doInject :502. The
 	 * :815 alternating consumer is cut (the machine-family ADR keeps the alternating
-	 * half-maintain in the pool) and EU is not an ALL_ALTERNATING member (TD.java:219 =
-	 * (F, KU)), so the latch stays write-only here; kept for the verbatim :501-505 shape. */
+	 * half-maintain in the pool) and HU is not an ALL_ALTERNATING member (TD.java:219 =
+	 * (KU)), so the latch stays write-only here; kept for the verbatim :501-505 shape. */
 	public boolean mStateNew = false;
 
 	/** Upstream :1027 verbatim (manual stop toggle; the redstone latch is separate). */
