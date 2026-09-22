@@ -1,0 +1,89 @@
+{
+  "type": "gt6:gt6_dungeon_inject",
+  "conditions": [],
+  "entries": [
+    {
+      "item": "minecraft:coal_ore",
+      "max": 64,
+      "min": 16,
+      "weight": 4
+    },
+    {
+      "item": "minecraft:iron_ore",
+      "max": 64,
+      "min": 16,
+      "weight": 4
+    },
+    {
+      "item": "minecraft:gold_ore",
+      "max": 32,
+      "min": 8,
+      "weight": 2
+    },
+    {
+      "item": "minecraft:lapis_ore",
+      "max": 32,
+      "min": 8,
+      "weight": 2
+    },
+    {
+      "item": "minecraft:redstone_ore",
+      "max": 32,
+      "min": 8,
+      "weight": 2
+    },
+    {
+      "item": "minecraft:diamond_ore",
+      "max": 16,
+      "min": 4,
+      "weight": 1
+    },
+    {
+      "item": "minecraft:emerald_ore",
+      "max": 16,
+      "min": 4,
+      "weight": 1
+    },
+    {
+      "item": "gt6:tool_head_shovel_arsenic_bronze",
+      "max": 4,
+      "min": 1,
+      "weight": 5
+    },
+    {
+      "item": "gt6:tool_head_shovel_steel",
+      "max": 4,
+      "min": 1,
+      "weight": 3
+    },
+    {
+      "item": "gt6:tool_head_shovel_damascus_steel",
+      "max": 4,
+      "min": 1,
+      "weight": 1
+    },
+    {
+      "item": "gt6:tool_head_pickaxe_arsenic_bronze",
+      "max": 4,
+      "min": 1,
+      "weight": 5
+    },
+    {
+      "item": "gt6:tool_head_raw_pickaxe_steel",
+      "max": 4,
+      "min": 1,
+      "weight": 3
+    },
+    {
+      "item": "gt6:tool_head_pickaxe_damascus_steel",
+      "max": 4,
+      "min": 1,
+      "weight": 1
+    }
+  ],
+  "rolls": {
+    "max_inclusive": 3,
+    "min_inclusive": 1
+  },
+  "table": "minecraft:chests/abandoned_mineshaft"
+}

@@ -143,7 +143,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
                 new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task p32-placeables — the lantern + sandwich self-drops
                 new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task p33-bees-lv3-b-bumbliary — the Bumbliary pair self-drops
-                new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK)), // task p30-ore-4-loot — the 3922 ore tables
+                new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task p30-ore-4-loot — the 3922 ore tables
+                new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST)), // task p34-loot-injection — the gt.flawless/gems/misc bag tables
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
@@ -195,7 +196,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
                 new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task p32-placeables — the lantern + sandwich self-drops
                 new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task p33-bees-lv3-b-bumbliary — the Bumbliary pair self-drops
-                new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK))); // task p30-ore-4-loot — the 3922 ore tables
+                new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task p30-ore-4-loot — the 3922 ore tables
+                new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST))); // task p34-loot-injection — the gt.flawless/gems/misc bag tables
         //?}
     }
 
@@ -2484,6 +2486,73 @@ public final class GT6LootTables extends LootTableProvider {
         protected void generate() {
             dropSelf(gregtech6.registry.GT6BeeHives.BUMBLIARY.get());
             dropSelf(gregtech6.registry.GT6BeeHives.BUMBLIARY_ADVANCED.get());
+        }
+    }
+
+    /**
+     * The gt.flawless/gt.gems/gt.misc bag weight tables (task p34-loot-injection spec ③, the
+     * upstream ChestGenHooks categories {@code Loader_Loot.java:81-177}): one CHEST-param-set
+     * table each at {@code gt6:chests/<name>}, one pool rolling the {@code setMin(8)/setMax(24)}
+     * column ({@code :82-83/:107-108/:130-131} — the upstream roll count of a bag/category
+     * open), entries = the upstream {@code addLoot} rows verbatim (weight + the
+     * {@code set_count} [min,max] range). These are the rollable 对位 of the bag tables: the
+     * bag ITEMS are unported (the declared pool on {@code GT6LootInjectionDatagen}), so the
+     * tables serve the /loot face, the {@code GT6SafeBlockEntity} dungeonloot key (any table
+     * id) and pack authors. Pure item entries — no vanilla references, so the
+     * LootTableProvider self-validation the {@code gt6:chests/safe_*} statics dodged does not
+     * apply here.
+     */
+    public static final class GT6WeightTableLoot implements net.minecraft.data.loot.LootTableSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6WeightTableLoot(HolderLookup.Provider registries) {
+        }
+         *///?} else {
+        public GT6WeightTableLoot() {
+        }
+        //?}
+
+        @Override
+        //? if forge {
+        public void generate(java.util.function.BiConsumer<ResourceLocation, LootTable.Builder> aOutput) {
+            for (GT6LootInjectionDatagen.WeightRow tRow : GT6LootInjectionDatagen.weightTables()) {
+                aOutput.accept(new ResourceLocation("gt6", "chests/" + tRow.name()), table(tRow));
+            }
+        }
+        //?} else {
+        /*public void generate(java.util.function.BiConsumer<net.minecraft.resources.ResourceKey<LootTable>, LootTable.Builder> aOutput) {
+            for (GT6LootInjectionDatagen.WeightRow tRow : GT6LootInjectionDatagen.weightTables()) {
+                aOutput.accept(net.minecraft.resources.ResourceKey.create(Registries.LOOT_TABLE,
+                        tableId(tRow.name())), table(tRow));
+            }
+        }
+        *///?}
+
+        /** The {@code gt6:chests/<name>} id — the two-arg ctor is forge-only (the 21.1 removal). */
+        private static ResourceLocation tableId(String aName) {
+            //? if forge {
+            return new ResourceLocation("gt6", "chests/" + aName);
+            //?} else {
+            /*return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "chests/" + aName);
+            *///?}
+        }
+
+        /** The 8..24-roll pool over the weighted {@code set_count} entries (the bag-open face). */
+        private static LootTable.Builder table(GT6LootInjectionDatagen.WeightRow aRow) {
+            LootPool.Builder tPool = LootPool.lootPool()
+                    .setRolls(UniformGenerator.between(GT6LootInjectionDatagen.BAG_ROLL_MIN, GT6LootInjectionDatagen.BAG_ROLL_MAX));
+            for (GT6LootInjectionDatagen.EntryRow tEntry : aRow.entries()) {
+                Item tItem = GT6LootInjectionDatagen.resolveItem(tEntry.item());
+                if (tItem == Items.AIR) throw new IllegalStateException(
+                        "weight table row references an unregistered item: " + tEntry.item());
+                tPool.add(LootItem.lootTableItem(tItem).setWeight(tEntry.weight())
+                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(tEntry.min(), tEntry.max()))));
+            }
+            // the vanilla chest-table conventions: the CHEST param set + the table-id sequence
+            return LootTable.lootTable().setParamSet(LootContextParamSets.CHEST)
+                    .setRandomSequence(tableId(aRow.name()))
+                    .withPool(tPool);
         }
     }
 }

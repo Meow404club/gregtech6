@@ -11,7 +11,14 @@
     "gt6:branch_cutter_leaves",
     "gt6:sense_vegetal",
     "gt6:scissors_plant_self",
-    "gt6:scoop_plant_self"
+    "gt6:scoop_plant_self",
+    "gt6:dungeon_inject_simple_dungeon",
+    "gt6:dungeon_inject_desert_pyramid",
+    "gt6:dungeon_inject_jungle_temple",
+    "gt6:dungeon_inject_jungle_temple_dispenser",
+    "gt6:dungeon_inject_abandoned_mineshaft",
+    "gt6:dungeon_inject_village_weaponsmith",
+    "gt6:dungeon_inject_stronghold_corridor"
   ],
   "replace": false
 }

@@ -1,0 +1,47 @@
+{
+  "type": "gt6:gt6_dungeon_inject",
+  "conditions": [],
+  "entries": [
+    {
+      "item": "gt6:tool_head_sword_steel",
+      "max": 4,
+      "min": 1,
+      "weight": 12
+    },
+    {
+      "item": "gt6:tool_head_sword_damascus_steel",
+      "max": 4,
+      "min": 1,
+      "weight": 6
+    },
+    {
+      "item": "gt6:tool_head_axe_double_steel",
+      "max": 4,
+      "min": 1,
+      "weight": 12
+    },
+    {
+      "item": "gt6:tool_head_axe_double_damascus_steel",
+      "max": 4,
+      "min": 1,
+      "weight": 6
+    },
+    {
+      "item": "gt6:arrow_gt_wood_damascus_steel",
+      "max": 48,
+      "min": 16,
+      "weight": 6
+    },
+    {
+      "item": "gt6:arrow_gt_wood_sterling_silver",
+      "max": 24,
+      "min": 8,
+      "weight": 6
+    }
+  ],
+  "rolls": {
+    "max_inclusive": 3,
+    "min_inclusive": 1
+  },
+  "table": "minecraft:chests/stronghold_corridor"
+}
