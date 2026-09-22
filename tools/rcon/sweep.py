@@ -801,6 +801,15 @@ SESSION_GROUPS = (
     # mutates member — the rig is a band-local setblock + fill teardown).
     # --group p34_gui_bmach matches through the chain's embedded name prefix.
     ("p34_gui_bmach",),
+    # p34-sensors-trivial-14 (task p34-sensors-trivial-14): the sensor-batch live
+    # chain — a fresh band x=678..684 z=125..143 y=64 (clear of the p26 sensor band
+    # x432..436 and every registered band; the x=6xx electric/prospector chains sit
+    # at z 240/364), the representative place+read arms over ten of the 15 batch
+    # rows (the vanilla-world reads, the barrel census at two grains, the declared
+    # baselines). Admission mirroring the p26_sensors_core form (bbox-registered,
+    # no fresh_boot / mutates member).
+    # --group p34_sensors matches through the stem substring.
+    ("p34_sensors_trivial",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
