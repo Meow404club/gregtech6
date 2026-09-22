@@ -323,7 +323,8 @@ class GT6RecipeMapJsonLoaderTest extends GTRecipesOfflineTestBase {
 	@Test
 	void mapForResolvesExactlyThePourableKeys() {
 		for (String tKey : new String[] {"coke_oven", "shredder", "crusher", "lathe", "chisel", "engine_fuels",
-				"fluidbed", "burn", "distillery", "drying", "canner", "mixer", "bath", "roasting"}) {
+				"fluidbed", "burn", "distillery", "drying", "canner", "mixer", "bath", "roasting",
+				"burnmixer", "plantalyzer"}) {
 			assertNotNull(GT6RecipeMapJsonLoader.mapFor(tKey), tKey + " resolves");
 			assertFalse(tKey.equals("furnace") || tKey.equals("furnace_fuel"), "the forbidden pair stays outside the table");
 		}

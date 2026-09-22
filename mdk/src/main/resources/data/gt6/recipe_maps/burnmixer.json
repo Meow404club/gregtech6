@@ -1,0 +1,279 @@
+{
+  "recipes": [
+    {
+      "comment": "task p34-machines-burner-plantalyzer — the Burner Mixer rows, Loader_Recipes_Chem.java:220-221 (the FluidsGT.OXYGEN loop folds to the single gt6:oxygen fluid, the port single-name convention). Fluid conversion: 1 material U = 1000 mB for the auto-registered gas/liquid states (the GT6RecipesFusion calibration — upstream gas(U*2) D -> f(MT.D, 2000); cross-checked on the :220 stoichiometry 2H2 + O2 -> 2H2O: 1000 H + 500 O2 -> 1500 water). 16 EUt x 24.",
+      "fluidInputs": [{ "fluid": "gt6:hydrogen", "amount": 1000 }, { "fluid": "gt6:oxygen", "amount": 500 }],
+      "fluidOutputs": [{ "fluid": "gt6:distilled_water", "amount": 1500 }],
+      "duration": 24,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Chem.java:221 — T.gas(U) + O2 500 -> T2O.liquid(U2*3) = 1500 (the water-family liquid, 1000 mB/U, balanced with the :220 row). 16 EUt x 24.",
+      "fluidInputs": [{ "fluid": "gt6:tritium", "amount": 1000 }, { "fluid": "gt6:oxygen", "amount": 500 }],
+      "fluidOutputs": [{ "fluid": "gt6:tritiatedwater", "amount": 1500 }],
+      "duration": 24,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Chem.java:237-239 — the ANY.Coal.mToThis loop (MT.C, MT.Graphite, MT.CoalCoke, MT.Coal, MT.Charcoal — five members; Graphene excluded per the :237 guard) x the three rows. Dust counts are the whole-item OM.dust stack sizes (the GT6RecipesDrying count convention: Mirabilite 7 -> Na2SO4 7). The sulfate roast: Na2SO4 7U + coal 2U -> CO2 6U (6000) + Na2S 3U, 16 EUt x 144.",
+      "inputs": [{ "item": "gt6:dust_na2_so4", "count": 7 }, { "item": "gt6:dust_carbon", "count": 2 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbondioxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_na2_s", "count": 3 }],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": ":237 — the Graphite member.",
+      "inputs": [{ "item": "gt6:dust_na2_so4", "count": 7 }, { "item": "gt6:dust_graphite", "count": 2 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbondioxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_na2_s", "count": 3 }],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": ":237 — the CoalCoke member.",
+      "inputs": [{ "item": "gt6:dust_na2_so4", "count": 7 }, { "item": "gt6:dust_coal_coke", "count": 2 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbondioxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_na2_s", "count": 3 }],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": ":237 — the Coal member.",
+      "inputs": [{ "item": "gt6:dust_na2_so4", "count": 7 }, { "item": "gt6:dust_coal", "count": 2 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbondioxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_na2_s", "count": 3 }],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": ":237 — the Charcoal member.",
+      "inputs": [{ "item": "gt6:dust_na2_so4", "count": 7 }, { "item": "gt6:dust_charcoal", "count": 2 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbondioxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_na2_s", "count": 3 }],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Chem.java:238 — the K2SO4 twin of the :237 loop, five coal-family members. 16 EUt x 144.",
+      "inputs": [{ "item": "gt6:dust_k2_so4", "count": 7 }, { "item": "gt6:dust_carbon", "count": 2 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbondioxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_k2_s", "count": 3 }],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": ":238 — the Graphite member.",
+      "inputs": [{ "item": "gt6:dust_k2_so4", "count": 7 }, { "item": "gt6:dust_graphite", "count": 2 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbondioxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_k2_s", "count": 3 }],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": ":238 — the CoalCoke member.",
+      "inputs": [{ "item": "gt6:dust_k2_so4", "count": 7 }, { "item": "gt6:dust_coal_coke", "count": 2 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbondioxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_k2_s", "count": 3 }],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": ":238 — the Coal member.",
+      "inputs": [{ "item": "gt6:dust_k2_so4", "count": 7 }, { "item": "gt6:dust_coal", "count": 2 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbondioxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_k2_s", "count": 3 }],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": ":238 — the Charcoal member.",
+      "inputs": [{ "item": "gt6:dust_k2_so4", "count": 7 }, { "item": "gt6:dust_charcoal", "count": 2 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbondioxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_k2_s", "count": 3 }],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Chem.java:239 — the soda roast: coal 2U + Na2CO3.liquid(U*6) = 6000 -> CO 6U (6000) + Na 2U, five coal-family members. 16 EUt x 128.",
+      "inputs": [{ "item": "gt6:dust_carbon", "count": 2 }],
+      "fluidInputs": [{ "fluid": "gt6:sodiumcarbonate", "amount": 6000 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_na", "count": 2 }],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": ":239 — the Graphite member.",
+      "inputs": [{ "item": "gt6:dust_graphite", "count": 2 }],
+      "fluidInputs": [{ "fluid": "gt6:sodiumcarbonate", "amount": 6000 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_na", "count": 2 }],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": ":239 — the CoalCoke member.",
+      "inputs": [{ "item": "gt6:dust_coal_coke", "count": 2 }],
+      "fluidInputs": [{ "fluid": "gt6:sodiumcarbonate", "amount": 6000 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_na", "count": 2 }],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": ":239 — the Coal member.",
+      "inputs": [{ "item": "gt6:dust_coal", "count": 2 }],
+      "fluidInputs": [{ "fluid": "gt6:sodiumcarbonate", "amount": 6000 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_na", "count": 2 }],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": ":239 — the Charcoal member.",
+      "inputs": [{ "item": "gt6:dust_charcoal", "count": 2 }],
+      "fluidInputs": [{ "fluid": "gt6:sodiumcarbonate", "amount": 6000 }],
+      "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_na", "count": 2 }],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Chem.java:244-259 — the TiO2/Ilmenite chlorination 16 rows: reductant C/Graphite/CoalCoke/PetCoke x the four scale rungs. Fluids at 1000 mB/U: Cl.gas(U*4) = 4000, CaCO3.liquid(U) = 1000, TiCl4.liquid(U*5) = 5000, CO2.gas(U*3) = 3000. :244 — TiO2 1U + C 1U. 16 EUt x 256.",
+      "inputs": [{ "item": "gt6:dust_ti_o2", "count": 1 }, { "item": "gt6:dust_carbon", "count": 1 }],
+      "fluidInputs": [{ "fluid": "gt6:chlorine", "amount": 4000 }, { "fluid": "gt6:calcite_molten", "amount": 1000 }],
+      "fluidOutputs": [{ "fluid": "gt6:titaniumtetrachloride", "amount": 5000 }, { "fluid": "gt6:carbondioxide", "amount": 3000 }],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": ":245 — TiO2 2U + C 2U, double scale.",
+      "inputs": [{ "item": "gt6:dust_ti_o2", "count": 2 }, { "item": "gt6:dust_carbon", "count": 2 }],
+      "fluidInputs": [{ "fluid": "gt6:chlorine", "amount": 8000 }, { "fluid": "gt6:calcite_molten", "amount": 2000 }],
+      "fluidOutputs": [{ "fluid": "gt6:titaniumtetrachloride", "amount": 10000 }, { "fluid": "gt6:carbondioxide", "amount": 6000 }],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": ":246 — Ilmenite 5U + C 3U -> TiCl4 5000 + CO 6000 + FeCl3 4U.",
+      "inputs": [{ "item": "gt6:dust_ilmenite", "count": 5 }, { "item": "gt6:dust_carbon", "count": 3 }],
+      "fluidInputs": [{ "fluid": "gt6:chlorine", "amount": 7000 }, { "fluid": "gt6:calcite_molten", "amount": 1000 }],
+      "fluidOutputs": [{ "fluid": "gt6:titaniumtetrachloride", "amount": 5000 }, { "fluid": "gt6:carbonmonoxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_fe_cl3", "count": 4 }],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": ":247 — Ilmenite 10U + C 6U, double scale.",
+      "inputs": [{ "item": "gt6:dust_ilmenite", "count": 10 }, { "item": "gt6:dust_carbon", "count": 6 }],
+      "fluidInputs": [{ "fluid": "gt6:chlorine", "amount": 14000 }, { "fluid": "gt6:calcite_molten", "amount": 2000 }],
+      "fluidOutputs": [{ "fluid": "gt6:titaniumtetrachloride", "amount": 10000 }, { "fluid": "gt6:carbonmonoxide", "amount": 12000 }],
+      "outputs": [{ "item": "gt6:dust_fe_cl3", "count": 8 }],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": ":248-249 — the Graphite reductant pair (same numbers as :244-245).",
+      "inputs": [{ "item": "gt6:dust_ti_o2", "count": 1 }, { "item": "gt6:dust_graphite", "count": 1 }],
+      "fluidInputs": [{ "fluid": "gt6:chlorine", "amount": 4000 }, { "fluid": "gt6:calcite_molten", "amount": 1000 }],
+      "fluidOutputs": [{ "fluid": "gt6:titaniumtetrachloride", "amount": 5000 }, { "fluid": "gt6:carbondioxide", "amount": 3000 }],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": ":249 — Graphite double scale.",
+      "inputs": [{ "item": "gt6:dust_ti_o2", "count": 2 }, { "item": "gt6:dust_graphite", "count": 2 }],
+      "fluidInputs": [{ "fluid": "gt6:chlorine", "amount": 8000 }, { "fluid": "gt6:calcite_molten", "amount": 2000 }],
+      "fluidOutputs": [{ "fluid": "gt6:titaniumtetrachloride", "amount": 10000 }, { "fluid": "gt6:carbondioxide", "amount": 6000 }],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": ":250-251 — the Graphite ilmenite pair.",
+      "inputs": [{ "item": "gt6:dust_ilmenite", "count": 5 }, { "item": "gt6:dust_graphite", "count": 3 }],
+      "fluidInputs": [{ "fluid": "gt6:chlorine", "amount": 7000 }, { "fluid": "gt6:calcite_molten", "amount": 1000 }],
+      "fluidOutputs": [{ "fluid": "gt6:titaniumtetrachloride", "amount": 5000 }, { "fluid": "gt6:carbonmonoxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_fe_cl3", "count": 4 }],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": ":251 — Graphite ilmenite double scale.",
+      "inputs": [{ "item": "gt6:dust_ilmenite", "count": 10 }, { "item": "gt6:dust_graphite", "count": 6 }],
+      "fluidInputs": [{ "fluid": "gt6:chlorine", "amount": 14000 }, { "fluid": "gt6:calcite_molten", "amount": 2000 }],
+      "fluidOutputs": [{ "fluid": "gt6:titaniumtetrachloride", "amount": 10000 }, { "fluid": "gt6:carbonmonoxide", "amount": 12000 }],
+      "outputs": [{ "item": "gt6:dust_fe_cl3", "count": 8 }],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": ":252-253 — the CoalCoke pair. DECLARED FOLD: the upstream half-unit dust masses (CoalCoke U2 / TiO2 U2) round up to the whole-item counts the port item model expresses (U2 -> 1, 3*U2 -> 2) — the port carries no fractional-mass items (the GT6RecipesDrying whole-count convention).",
+      "inputs": [{ "item": "gt6:dust_ti_o2", "count": 1 }, { "item": "gt6:dust_coal_coke", "count": 1 }],
+      "fluidInputs": [{ "fluid": "gt6:chlorine", "amount": 4000 }, { "fluid": "gt6:calcite_molten", "amount": 1000 }],
+      "fluidOutputs": [{ "fluid": "gt6:titaniumtetrachloride", "amount": 5000 }, { "fluid": "gt6:carbondioxide", "amount": 3000 }],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": ":253 — CoalCoke: TiO2 U2 -> 1, Coke U -> 1.",
+      "inputs": [{ "item": "gt6:dust_ti_o2", "count": 2 }, { "item": "gt6:dust_coal_coke", "count": 1 }],
+      "fluidInputs": [{ "fluid": "gt6:chlorine", "amount": 8000 }, { "fluid": "gt6:calcite_molten", "amount": 2000 }],
+      "fluidOutputs": [{ "fluid": "gt6:titaniumtetrachloride", "amount": 10000 }, { "fluid": "gt6:carbondioxide", "amount": 6000 }],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": ":254 — CoalCoke ilmenite: Ilm 5U + Coke 3*U2 -> 2.",
+      "inputs": [{ "item": "gt6:dust_ilmenite", "count": 5 }, { "item": "gt6:dust_coal_coke", "count": 2 }],
+      "fluidInputs": [{ "fluid": "gt6:chlorine", "amount": 7000 }, { "fluid": "gt6:calcite_molten", "amount": 1000 }],
+      "fluidOutputs": [{ "fluid": "gt6:titaniumtetrachloride", "amount": 5000 }, { "fluid": "gt6:carbonmonoxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_fe_cl3", "count": 4 }],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": ":255 — CoalCoke ilmenite: Ilm 10U + Coke 3U.",
+      "inputs": [{ "item": "gt6:dust_ilmenite", "count": 10 }, { "item": "gt6:dust_coal_coke", "count": 3 }],
+      "fluidInputs": [{ "fluid": "gt6:chlorine", "amount": 14000 }, { "fluid": "gt6:calcite_molten", "amount": 2000 }],
+      "fluidOutputs": [{ "fluid": "gt6:titaniumtetrachloride", "amount": 10000 }, { "fluid": "gt6:carbonmonoxide", "amount": 12000 }],
+      "outputs": [{ "item": "gt6:dust_fe_cl3", "count": 8 }],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": ":256-257 — the PetCoke pair (same half-unit fold as the CoalCoke pair).",
+      "inputs": [{ "item": "gt6:dust_ti_o2", "count": 1 }, { "item": "gt6:dust_pet_coke", "count": 1 }],
+      "fluidInputs": [{ "fluid": "gt6:chlorine", "amount": 4000 }, { "fluid": "gt6:calcite_molten", "amount": 1000 }],
+      "fluidOutputs": [{ "fluid": "gt6:titaniumtetrachloride", "amount": 5000 }, { "fluid": "gt6:carbondioxide", "amount": 3000 }],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": ":257 — PetCoke: TiO2 U2 -> 1, Coke U -> 1.",
+      "inputs": [{ "item": "gt6:dust_ti_o2", "count": 2 }, { "item": "gt6:dust_pet_coke", "count": 1 }],
+      "fluidInputs": [{ "fluid": "gt6:chlorine", "amount": 8000 }, { "fluid": "gt6:calcite_molten", "amount": 2000 }],
+      "fluidOutputs": [{ "fluid": "gt6:titaniumtetrachloride", "amount": 10000 }, { "fluid": "gt6:carbondioxide", "amount": 6000 }],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": ":258 — PetCoke ilmenite: Ilm 5U + Coke 3*U2 -> 2.",
+      "inputs": [{ "item": "gt6:dust_ilmenite", "count": 5 }, { "item": "gt6:dust_pet_coke", "count": 2 }],
+      "fluidInputs": [{ "fluid": "gt6:chlorine", "amount": 7000 }, { "fluid": "gt6:calcite_molten", "amount": 1000 }],
+      "fluidOutputs": [{ "fluid": "gt6:titaniumtetrachloride", "amount": 5000 }, { "fluid": "gt6:carbonmonoxide", "amount": 6000 }],
+      "outputs": [{ "item": "gt6:dust_fe_cl3", "count": 4 }],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": ":259 — PetCoke ilmenite: Ilm 10U + Coke 3U.",
+      "inputs": [{ "item": "gt6:dust_ilmenite", "count": 10 }, { "item": "gt6:dust_pet_coke", "count": 3 }],
+      "fluidInputs": [{ "fluid": "gt6:chlorine", "amount": 14000 }, { "fluid": "gt6:calcite_molten", "amount": 2000 }],
+      "fluidOutputs": [{ "fluid": "gt6:titaniumtetrachloride", "amount": 10000 }, { "fluid": "gt6:carbonmonoxide", "amount": 12000 }],
+      "outputs": [{ "item": "gt6:dust_fe_cl3", "count": 8 }],
+      "duration": 256,
+      "eut": 16
+    }
+  ]
+}

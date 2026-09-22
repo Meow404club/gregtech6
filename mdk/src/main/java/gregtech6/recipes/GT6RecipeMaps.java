@@ -384,6 +384,26 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap MIXER;
 
 	/**
+	 * RM.java:76 — the Burner Mixer map (task p34-machines-burner-plantalyzer): the MIXER
+	 * constants row two lines up — items 6/1/0, fluids 6/2/0, MIN 2, AMP 1 — "gt.recipe.burnmixer",
+	 * "Burner Mixer", progress 0/1, GUI machines/burnmixer (the upstream NBT_TEXTURE word,
+	 * lowercased per the Shredder-line convention). Consumer = the Burner Mixer family
+	 * 20521-20524 (RU + NBT_NEEDS_IGNITION, task p32-ignition-gate's single-block fuel).
+	 */
+	public static volatile RecipeMap BURN_MIXER;
+
+	/**
+	 * RM.java:109 — the Plantalyzer map (task p34-machines-burner-plantalyzer): items 2/2/0,
+	 * fluids 1/0/0, MIN 1, AMP 1 — "gt.recipe.plantalyzer", "Plantalyzer", progress 0/1,
+	 * GUI machines/plantalyzer. DECLARED-empty and staying that way: the upstream rows are
+	 * the two {@code addFakeRecipe} scans of GT6_Main.java:321 (IL.FR_Tree_Sapling /
+	 * IL.IC2_Crop_Seeds) plus the {@code RecipeMapPlantalyzer.findRecipe} dynamic arm —
+	 * Forestry/IC2 mod-compat identities, the P10 compat cut. The base-map form is the
+	 * declared fold (the subclass exists upstream ONLY to carry that dynamic arm).
+	 */
+	public static volatile RecipeMap PLANTALYZER;
+
+	/**
 	 * RM.java:83 — the Sifting map (task p26-w1-sifter-compressor-wiremill), transcribed
 	 * parameter-for-parameter over the 15-arg port ctor: "gt.recipe.sifter", "Sifter", NEI
 	 * name null → the internal name, progress bar direction 2 / amount 1 (the RM.java:83
@@ -1008,6 +1028,27 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 6, 2, 0,
 				/*MIN=*/ 2,
 				/*AMP=*/ 1);
+		// RM.java:76 — the Burner Mixer map (task p34-machines-burner-plantalyzer): the
+		// MIXER constants row verbatim — items 6/1/0, fluids 6/2/0, MIN 2, AMP 1
+		BURN_MIXER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.burnmixer", "Burner Mixer", null,
+				0, 1,
+				"gt6:textures/gui/machines/burnmixer",
+				/*IN-OUT-MIN-ITEM=*/ 6, 1, 0,
+				/*IN-OUT-MIN-FLUID=*/ 6, 2, 0,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
+		// RM.java:109 — the Plantalyzer map (task p34-machines-burner-plantalyzer): items
+		// 2/2/0, fluids 1/0/0, MIN 1, AMP 1; DECLARED-empty (the field doc — the upstream
+		// rows are Forestry/IC2 compat, the P10 cut; the base-map form is the declared fold)
+		PLANTALYZER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.plantalyzer", "Plantalyzer", null,
+				0, 1,
+				"gt6:textures/gui/machines/plantalyzer",
+				/*IN-OUT-MIN-ITEM=*/ 2, 2, 0,
+				/*IN-OUT-MIN-FLUID=*/ 1, 0, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
 		// the RM.java:83/:87/:111 W1 trio (task p26-w1-sifter-compressor-wiremill), upstream
 		// declaration order — Sifting carries progress direction 2 (the one non-0 direction
 		// in the RM.java:60-115 block), Compressor/Wiremill the plain 0/1 row
@@ -1620,6 +1661,8 @@ public class GT6RecipeMaps {
 		DRYING = null;
 		CANNER = null;
 		MIXER = null;
+		BURN_MIXER = null;
+		PLANTALYZER = null;
 		SIFTING = null;
 		COMPRESSOR = null;
 		WIREMILL = null;

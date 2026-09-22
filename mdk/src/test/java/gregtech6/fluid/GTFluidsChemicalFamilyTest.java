@@ -48,13 +48,15 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 			// task p32-qu-scanner-replicator — the :194 molten-redstone replicator carrier
 			"redstone_molten",
 			// task p34-machines-bumblelyzer-crucible — the crystallisation molten quintet (the :683-706 row carriers)
-			"silicon_molten", "germanium_molten", "redstonealloy_molten", "nikolinealloy_molten", "alumina_molten");
+			"silicon_molten", "germanium_molten", "redstonealloy_molten", "nikolinealloy_molten", "alumina_molten",
+			// task p34-machines-burner-plantalyzer — the four Burner Mixer row carriers
+			"tritiatedwater", "titaniumtetrachloride", "sodiumcarbonate_molten", "calcite_molten"); (feat(recipes): RM.BURN_MIXER/RM.PLANTALYZER 两图+burnmixer 33 行灌装+四流体载体)
 
 	@Test
 	public void tableCarriesTheChemicalRowsInDeclarationOrder() {
 		assertEquals(IDS, GTFluids.CHEMICAL_SPECS.stream().map(GTFluids.ChemicalFluidSpec::name).toList());
-		assertEquals(44, GTFluids.CHEMICAL_SPECS.size());
-		assertEquals(44, GTFluids.CHEMICALS.size(), "the live registrations walk the same table");
+		assertEquals(48, GTFluids.CHEMICAL_SPECS.size());
+		assertEquals(48, GTFluids.CHEMICALS.size(), "the live registrations walk the same table"); (feat(recipes): RM.BURN_MIXER/RM.PLANTALYZER 两图+burnmixer 33 行灌装+四流体载体)
 	}
 
 	/** Acceptance ①: the per-fluid declared census, one block per sub-family. */
