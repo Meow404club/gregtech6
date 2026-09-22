@@ -392,10 +392,23 @@ public final class GTMachineCommand {
 			.then(Commands.argument("count", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 64))
 				.executes(context -> input(context.getSource(), aFeed,
 						com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"), null))
+				// task p34-machines-bumblelyzer-crucible — the item override arm: the
+				// multi-input rows' SECOND leg (the scan recipe's paper tiny) needs a
+				// non-default feed; the BE carries no vanilla Container face, so the
+				// /item replace write-point is structurally unavailable here
+				.then(Commands.argument("item", com.mojang.brigadier.arguments.StringArgumentType.string())
+					.executes(context -> itemInput(context.getSource(),
+							com.mojang.brigadier.arguments.StringArgumentType.getString(context, "item"),
+							com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"), null))
+					.then(Commands.argument("pos", BlockPosArgument.blockPos())
+						.executes(context -> itemInput(context.getSource(),
+								com.mojang.brigadier.arguments.StringArgumentType.getString(context, "item"),
+								com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"),
+								BlockPosArgument.getLoadedBlockPos(context, "pos"))))))
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(context -> input(context.getSource(), aFeed,
 							com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"),
-							BlockPosArgument.getLoadedBlockPos(context, "pos"))))));
+							BlockPosArgument.getLoadedBlockPos(context, "pos")))));
 		tMachine.then(Commands.literal("run")
 			.then(Commands.argument("ticks", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1, 20000))
 				.executes(context -> run(context.getSource(),
@@ -931,6 +944,22 @@ public final class GTMachineCommand {
 		source.sendSuccess(() -> Component.literal("GT6 " + tMachine.getTileEntityName() + " input: " + (tFeed.getCount() - tLeftover.getCount()) + "x "
 				+ tFeed.getItem() + " into slot " + TileEntityBasicMachine.SLOT_INPUT), false);
 		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The item-override arm (task p34-machines-bumblelyzer-crucible): pushes the named
+	 * {@code <namespace>:<path>} (or bare path → minecraft) item into the input slot —
+	 * the multi-input rows' second leg face. Unknown ids fail the command.
+	 */
+	private static int itemInput(CommandSourceStack source, String aItemId, int count, BlockPos pos) {
+		net.minecraft.resources.ResourceLocation tId = new net.minecraft.resources.ResourceLocation(
+				aItemId.contains(":") ? aItemId : "minecraft:" + aItemId);
+		Item tItem = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(tId);
+		if (tItem == null || tItem == net.minecraft.world.item.Items.AIR) {
+			source.sendFailure(Component.literal("Unknown item id: " + aItemId));
+			return 0;
+		}
+		return input(source, () -> tItem, count, pos);
 	}
 
 	/** Drives the dispatcher and samples the three ContainerData states; asserts the acceptance trio + an output. */
