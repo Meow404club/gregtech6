@@ -94,10 +94,8 @@ CHAIN = Chain(
 
         # ------------------------------------------------------------------
         phase("C: the lane — the screwdriver relay flips the filter plate"),
-        Step("gt6cover mode %s north" % F(FILTER), expect="toolDamage=1000",
-             label="the screwdriver relay: the filter whitelist flips to blacklist, damage 1000 (upstream :62-65)"),
-        Step("gt6cover mode %s north" % F(FILTER), expect="visual=1",
-             label="the relay report reads the flipped visual lane 1 (the second pin: the flip landed)"),
+        Step("gt6cover mode %s north" % F(FILTER), expect="toolDamage=1000, visual=1",
+             label="the screwdriver relay: whitelist flips to blacklist (the report reads the POST-relay lane 1), damage 1000 (upstream :62-65)"),
         Step("gt6cover mode %s north" % F(FILTER), expect="visual=0",
              label="and back — the whitelist/blacklist cycle is symmetric (upstream :63)"),
         Step("gt6cover check %s" % F(FILTER), expect="block/filterfluid/normal",
