@@ -33,6 +33,8 @@ import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GTWireSpecs;
 import gregtech6.registry.GTWires;
 import gregtech6.covers.GT6Covers;
+import gregtech6.jade.GT6FluidProvider;
+import gregtech6.jade.GT6MachineProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.data.LanguageProvider;
@@ -131,6 +133,8 @@ public class GT6EnUs extends LanguageProvider {
         addExtruderMolds(); // task p26-w1-press-extruder-molds — table-tail append
         addSensors(); // task p26-sensors-core — table-tail append
         addCrucibleJade(); // task p28-crucible-jade-face — table-tail append
+        addMachineJade(); // task p34-hygiene-lang — table-tail append
+        addFluidJade(); // task p34-hygiene-lang — table-tail append
         addPocketTools(); // task p29-w5-t7-pocket-eight — table-tail append
         addArmor(); // task p29-w5-t8-armor-24 — table-tail append
         addTreeBlocks(); // task p30-w6-t1-trees-nine — table-tail append
@@ -1743,6 +1747,37 @@ public class GT6EnUs extends LanguageProvider {
         add("gt6.jade.crucible.total", "Content: %s U");
         add("gt6.jade.crucible.empty", "Empty");
         add("gt6.jade.crucible.more", "+%s more");
+    }
+
+    /**
+     * The machine Jade face keys (task p34-hygiene-lang, 7 keys — the v1 literal band of
+     * GT6MachineProvider retired): the progress line in its two unit faces (seconds over
+     * {@code %.1f}-preformatted slots / ticks over longs — the GTCEu WorkableBlockProvider
+     * :72-77 split), the energy line (amount + the p27 short-code slot), the input band
+     * (min/in/max), the two multiblock-formed states and the error tail. Values are the
+     * literal faces they replace, verbatim down to the spacing. Consumed by
+     * GT6MachineProvider (the lang constants live there); zh faces ride the reference
+     * table's hand layer via GT6ZhCn.addMachineJadeUnits.
+     */
+    private void addMachineJade() {
+        add(GT6MachineProvider.LANG_PROGRESS_SECONDS, "Progress: %s / %s s");
+        add(GT6MachineProvider.LANG_PROGRESS_TICKS, "Progress: %s / %s t");
+        add(GT6MachineProvider.LANG_ENERGY, "Energy: %s (%s)");
+        add(GT6MachineProvider.LANG_INPUT, "Input: %s / %s / %s (min/in/max)");
+        add(GT6MachineProvider.LANG_STRUCTURE_FORMED, "Multiblock: formed");
+        add(GT6MachineProvider.LANG_STRUCTURE_INCOMPLETE, "Multiblock: incomplete");
+        add(GT6MachineProvider.LANG_ERROR, "Error: %s");
+    }
+
+    /**
+     * The fluid-group Jade title keys (task p34-hygiene-lang, 2 keys — the
+     * GT6FluidProvider decorator's literal titles retired): the tank group headers over
+     * the sync ids ("Fluid In"/"Fluid Out") kept verbatim. Consumed by
+     * GT6FluidProvider.groupTitle; zh faces ride the reference table's hand layer.
+     */
+    private void addFluidJade() {
+        add(GT6FluidProvider.LANG_GROUP_IN, GT6FluidProvider.GROUP_IN);
+        add(GT6FluidProvider.LANG_GROUP_OUT, GT6FluidProvider.GROUP_OUT);
     }
     /**
      * Pocket multitool family keys (task p29-w5-t7-pocket-eight): the eight display names

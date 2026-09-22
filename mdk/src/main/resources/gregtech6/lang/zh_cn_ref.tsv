@@ -736,6 +736,15 @@ direct	gt6.jade.crucible.empty	空	hand
 direct	gt6.jade.crucible.more	+%s 种	hand
 direct	gt6.jade.crucible.temperature	温度: %s K / %s K	hand
 direct	gt6.jade.crucible.total	内容物: %s U	hand
+direct	gt6.jade.fluid.group.in	流体输入	hand
+direct	gt6.jade.fluid.group.out	流体输出	hand
+direct	gt6.jade.machine.energy	能量: %s (%s)	hand
+direct	gt6.jade.machine.error	错误: %s	hand
+direct	gt6.jade.machine.input	输入: %s / %s / %s (最小/当前/最大)	hand
+direct	gt6.jade.machine.multiblock.formed	多方块: 已成形	hand
+direct	gt6.jade.machine.multiblock.incomplete	多方块: 未成形	hand
+direct	gt6.jade.machine.progress.seconds	进度: %s / %s 秒	hand
+direct	gt6.jade.machine.progress.ticks	进度: %s / %s t	hand
 direct	gt6.jei.info.multiblock_coke_oven	焦炉是一个 3x3x3 的立方体：将焦炉控制器放在其中一面的中央并朝外，保持立方体中心格为空，其余 25 格全部放满焦炉砖。点燃控制器即可启动——它自行积攒热量，结构下方一层的储罐会收集杂酚油。	hand
 direct	gt6.material.breeze	微风	hand
 direct	gt6.material.carminite	胭脂石	hand

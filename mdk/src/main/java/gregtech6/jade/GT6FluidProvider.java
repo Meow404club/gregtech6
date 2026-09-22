@@ -75,6 +75,13 @@ public final class GT6FluidProvider implements IServerExtensionProvider<TileEnti
 	public static final String GROUP_IN = "Fluid In";
 	public static final String GROUP_OUT = "Fluid Out";
 
+	/**
+	 * 组标题键（task p34-hygiene-lang——decorator 的 literal 标题退役）：id→键在
+	 * {@link #groupTitle} 一点收敛，值面 = GT6EnUs/GT6ZhCn datagen 行 + tsv 直写带双落。
+	 */
+	public static final String LANG_GROUP_IN = "gt6.jade.fluid.group.in";
+	public static final String LANG_GROUP_OUT = "gt6.jade.fluid.group.out";
+
 	/** overlay 载体量 = 一桶（GTCEu GTFluidStorageProvider.java:96 同字面 1000）。 */
 	private static final long CARRIER_MILLIBUCKETS = 1000;
 
@@ -91,9 +98,22 @@ public final class GT6FluidProvider implements IServerExtensionProvider<TileEnti
 	 */
 	private static final BiConsumer<ViewGroup<CompoundTag>, ClientViewGroup<FluidView>> GROUP_DECORATOR = (aGroup, aClientGroup) -> {
 		if (aGroup.id != null) {
-			aClientGroup.title = Component.literal(aGroup.id);
+			aClientGroup.title = groupTitle(aGroup.id);
 		}
 	};
+
+	/**
+	 * 组标题（纯函数离线面，task p34-hygiene-lang）：已知组 id 走 {@code gt6.jade.fluid.group.*}
+	 * translatable（各 locale 自解）；未知 id 回退为原串键面（translatable 缺键渲染键名本身，
+	 * vanilla 语义——零 literal，groupsOfTarget 只产两已知 id，此分支纯防御）。
+	 */
+	public static Component groupTitle(String aGroupId) {
+		return Component.translatable(switch (aGroupId) {
+			case GROUP_IN -> LANG_GROUP_IN;
+			case GROUP_OUT -> LANG_GROUP_OUT;
+			default -> aGroupId;
+		});
+	}
 
 	private GT6FluidProvider() {
 	}

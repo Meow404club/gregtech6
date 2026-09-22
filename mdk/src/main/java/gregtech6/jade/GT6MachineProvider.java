@@ -6,6 +6,7 @@ import java.util.Map;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 
 import snownee.jade.api.BlockAccessor;
@@ -38,7 +39,9 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
  * 出而暂不闸色）、能量行（mEnergy+输入带 mInputMin/mInput/mInputMax :226，能量类型短码随
  * KEY_ENERGY_TYPE 传真类型——p27-machine-energy-display-fix 起不再是 "RU/KU" 并列字面量）、
  * 错误行（ERROR_MESSAGE 非空才显示）、多方块成形态（mStructureOkay 文本行，
- * TileEntityBase10MultiBlockBase.java:72）。lang 键入池——v1 全 Component.literal。
+ * TileEntityBase10MultiBlockBase.java:72）。lang 键入池（task p34-hygiene-lang）——全部行
+ * translatable（{@code gt6.jade.machine.*}，en/zh 双面 = datagen 行 + tsv 直写带双落），
+ * 零裸 literal（GT6JadeTooltipKeyPinTest 钉住）。
  *
  * <p>与 arch 卡"零分叉"预期的两处偏离（编译实证，见方法内注）：
  * ① 进度条盒形真分叉——1.20.1 BoxStyle.java:12 public static final DEFAULT 字段 vs 1.21.1
@@ -66,6 +69,25 @@ public final class GT6MachineProvider implements IBlockComponentProvider, IServe
 	public static final String KEY_INPUT_MAX = "GT6InputMax";
 	public static final String KEY_STRUCTURE_OKAY = "GT6StructureOkay";
 	public static final String KEY_ERROR = "GT6Error";
+
+	/**
+	 * Tooltip 行键（task p34-hygiene-lang——v1 的 literal 带退役）：值面 = GT6EnUs
+	 * {@code addMachineJade()} 行 + zh_cn_ref.tsv 直写带（py HAND 层）双落，zh 消费走
+	 * GT6ZhCn {@code addMachineJadeUnits()}。槽位语义见各 LANG_* 常量注。
+	 */
+	public static final String LANG_PROGRESS_SECONDS = "gt6.jade.machine.progress.seconds";
+	/** 进度秒面行：槽 = 当前进度秒 / 最大进度秒（{@code %.1f} 预格式化串）。 */
+	public static final String LANG_PROGRESS_TICKS = "gt6.jade.machine.progress.ticks";
+	/** 进度 tick 面（&lt;20t）：槽 = 当前进度 / 最大进度（long 直落）。 */
+	public static final String LANG_ENERGY = "gt6.jade.machine.energy";
+	/** 能量行：槽 = 载体量（long）+ 能量类型短码（{@link #energyTypeShortCode} 面，缺键 "?"）。 */
+	public static final String LANG_INPUT = "gt6.jade.machine.input";
+	/** 输入带行：槽 = min / in / max 三 long（KEY_INPUT_MIN/INPUT/INPUT_MAX 同序）。 */
+	public static final String LANG_STRUCTURE_FORMED = "gt6.jade.machine.multiblock.formed";
+	public static final String LANG_STRUCTURE_INCOMPLETE = "gt6.jade.machine.multiblock.incomplete";
+	/** 多方块成形态两态行（GREEN/RED 着色在 {@link #structureLine}）。 */
+	public static final String LANG_ERROR = "gt6.jade.machine.error";
+	/** 错误行：槽 = 服务端 {@link TileEntityBase01Root#ERROR_MESSAGE} 原文。 */
 
 	/** 着色两值 = GTCEu WorkableBlockProvider.java:80 字面（绿 0xFF4CBB17 / 红 0xFFBB1C28）。 */
 	private static final int COLOR_OK = 0xFF4CBB17;
@@ -171,9 +193,7 @@ public final class GT6MachineProvider implements IBlockComponentProvider, IServe
 			long tProgress = aData.getLong(KEY_PROGRESS);
 			long tMaxProgress = aData.getLong(KEY_MAX_PROGRESS);
 			float tRatio = (float) Math.max(0.0, Math.min(1.0, (double) tProgress / (double) tMaxProgress));
-			Component tText = tMaxProgress >= 20
-					? Component.literal(String.format(Locale.ROOT, "Progress: %.1f / %.1f s", tProgress / 20.0, tMaxProgress / 20.0))
-					: Component.literal(String.format(Locale.ROOT, "Progress: %d / %d t", tProgress, tMaxProgress));
+			Component tText = progressLine(tProgress, tMaxProgress);
 			int tColor = aData.getBoolean(KEY_ACTIVE) && aData.getBoolean(KEY_RUNNING) ? COLOR_OK : COLOR_STALLED;
 			// helper 取法：IElementHelper.get() 静态双腿同形（IElementHelper.java:14）——1.20.1 的
 			// ITooltip.getElementHelper()（ITooltip.java:124）在 1.21.1 已删除，不能作桥。
@@ -191,22 +211,48 @@ public final class GT6MachineProvider implements IBlockComponentProvider, IServe
 		// ② 能量行 + 输入带：mEnergy 是 accepted-energy carrier（机器注册时择一），p27 起类型
 		// 短码随 KEY_ENERGY_TYPE 同步（缺键防御 "?"——旧缓存 tag 不渲染空括号）。
 		if (aData.contains(KEY_ENERGY)) {
-			aTooltip.add(Component.literal(String.format(Locale.ROOT, "Energy: %d (%s)",
-					aData.getLong(KEY_ENERGY),
-					aData.contains(KEY_ENERGY_TYPE) ? aData.getString(KEY_ENERGY_TYPE) : "?")));
-			aTooltip.add(Component.literal(String.format(Locale.ROOT, "Input: %d / %d / %d (min/in/max)",
-					aData.getLong(KEY_INPUT_MIN), aData.getLong(KEY_INPUT), aData.getLong(KEY_INPUT_MAX))));
+			aTooltip.add(energyLine(aData.getLong(KEY_ENERGY),
+					aData.contains(KEY_ENERGY_TYPE) ? aData.getString(KEY_ENERGY_TYPE) : "?"));
+			aTooltip.add(inputLine(aData.getLong(KEY_INPUT_MIN), aData.getLong(KEY_INPUT), aData.getLong(KEY_INPUT_MAX)));
 		}
 		// ③ 多方块成形态：文本行（v1 不做结构图示）。
 		if (aData.contains(KEY_STRUCTURE_OKAY)) {
-			aTooltip.add(aData.getBoolean(KEY_STRUCTURE_OKAY)
-					? Component.literal("Multiblock: formed").withStyle(ChatFormatting.GREEN)
-					: Component.literal("Multiblock: incomplete").withStyle(ChatFormatting.RED));
+			aTooltip.add(structureLine(aData.getBoolean(KEY_STRUCTURE_OKAY)));
 		}
 		// ④ 错误行：非空才显示（服务端已过滤）。
 		if (aData.contains(KEY_ERROR)) {
-			aTooltip.add(Component.literal("Error: " + aData.getString(KEY_ERROR)).withStyle(ChatFormatting.RED));
+			aTooltip.add(errorLine(aData.getString(KEY_ERROR)));
 		}
+	}
+
+	/** 进度行（纯函数离线面）：&gt;20t 折秒（{@code %.1f} 预格式化，Locale.ROOT 钉死），否则 tick。 */
+	public static Component progressLine(long aProgress, long aMaxProgress) {
+		return aMaxProgress >= 20
+				? Component.translatable(LANG_PROGRESS_SECONDS,
+						String.format(Locale.ROOT, "%.1f", aProgress / 20.0),
+						String.format(Locale.ROOT, "%.1f", aMaxProgress / 20.0))
+				: Component.translatable(LANG_PROGRESS_TICKS, aProgress, aMaxProgress);
+	}
+
+	/** 能量行：量 + 类型短码（缺键 "?" 由调用侧供给）。 */
+	public static Component energyLine(long aEnergy, String aTypeShortCode) {
+		return Component.translatable(LANG_ENERGY, aEnergy, aTypeShortCode);
+	}
+
+	/** 输入带行：min / in / max 同序三槽。 */
+	public static Component inputLine(long aInputMin, long aInput, long aInputMax) {
+		return Component.translatable(LANG_INPUT, aInputMin, aInput, aInputMax);
+	}
+
+	/** 多方块成形态行（纯函数离线面）：formed GREEN / incomplete RED。 */
+	public static Component structureLine(boolean aFormed) {
+		MutableComponent rLine = Component.translatable(aFormed ? LANG_STRUCTURE_FORMED : LANG_STRUCTURE_INCOMPLETE);
+		return rLine.withStyle(aFormed ? ChatFormatting.GREEN : ChatFormatting.RED);
+	}
+
+	/** 错误行（整行 RED）。 */
+	public static Component errorLine(String aError) {
+		return Component.translatable(LANG_ERROR, aError).withStyle(ChatFormatting.RED);
 	}
 
 	/**

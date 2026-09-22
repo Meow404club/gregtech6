@@ -14,6 +14,8 @@ import gregapi.oredict.OreDictPrefix;
 import gregtech6.fluid.GTFluids;
 import gregtech6.item.GT6Circuits;
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.jade.GT6FluidProvider;
+import gregtech6.jade.GT6MachineProvider;
 import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GT6OreBlocks;
@@ -108,6 +110,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addFoamSprayUnits();    // task p25-c-foam-pipe-spray
 		addKitchenUnits();      // task p26-kitchen-pot-bowl
 		addCrucibleJadeUnits(); // task p28-crucible-jade-face
+		addMachineJadeUnits();  // task p34-hygiene-lang — the machine/fluid jade band (hand rows, the tsv direct band)
 		addAnvilUnits();        // task p28-c-anvil
 		addPocketUnits();       // task p29-w5-t7-pocket-eight — the 8+7 pocket face (hand rows, no dump face exists)
 		addArmorUnits();        // task p29-w5-t8-armor-24
@@ -279,6 +282,27 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("gt6.jade.crucible.total");
 		addDirect("gt6.jade.crucible.empty");
 		addDirect("gt6.jade.crucible.more");
+	}
+
+	/**
+	 * The machine/fluid Jade face zh units (task p34-hygiene-lang, 9 hand rows — the
+	 * addCrucibleJadeUnits shape): the keyed machine tooltip band (progress in its two
+	 * unit faces / energy / input band / the two multiblock states / error) + the two
+	 * fluid tank-group titles. No dump face exists (upstream has zero WAILA integration),
+	 * so these ride the reference table's hand layer via {@link #addDirect} — the py rows,
+	 * this walk and the TSV regen land in the SAME commit (the noHandRowIsOrphaned pin
+	 * otherwise surfaces the gap).
+	 */
+	private void addMachineJadeUnits() {
+		addDirect(GT6MachineProvider.LANG_PROGRESS_SECONDS);
+		addDirect(GT6MachineProvider.LANG_PROGRESS_TICKS);
+		addDirect(GT6MachineProvider.LANG_ENERGY);
+		addDirect(GT6MachineProvider.LANG_INPUT);
+		addDirect(GT6MachineProvider.LANG_STRUCTURE_FORMED);
+		addDirect(GT6MachineProvider.LANG_STRUCTURE_INCOMPLETE);
+		addDirect(GT6MachineProvider.LANG_ERROR);
+		addDirect(GT6FluidProvider.LANG_GROUP_IN);
+		addDirect(GT6FluidProvider.LANG_GROUP_OUT);
 	}
 
 	/**

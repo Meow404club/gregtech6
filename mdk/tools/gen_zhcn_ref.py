@@ -848,6 +848,19 @@ HAND_TRANSLATIONS = {
     "gt6.jade.crucible.total": ("内容物: %s U", "hand"),
     "gt6.jade.crucible.empty": ("空", "hand"),
     "gt6.jade.crucible.more": ("+%s 种", "hand"),
+    # task p34-hygiene-lang: the machine/fluid Jade tooltip faces keyed (the v1 literal band
+    # retired) — the zh faces mirror the crucible family shape above (ASCII colon+space, the
+    # numbers ride the %s slots). 双落 discipline: py row + provider/datagen walk in the SAME
+    # commit, the regen reproduces the tsv rows.
+    "gt6.jade.machine.progress.seconds": ("进度: %s / %s 秒", "hand"),
+    "gt6.jade.machine.progress.ticks": ("进度: %s / %s t", "hand"),
+    "gt6.jade.machine.energy": ("能量: %s (%s)", "hand"),
+    "gt6.jade.machine.input": ("输入: %s / %s / %s (最小/当前/最大)", "hand"),
+    "gt6.jade.machine.multiblock.formed": ("多方块: 已成形", "hand"),
+    "gt6.jade.machine.multiblock.incomplete": ("多方块: 未成形", "hand"),
+    "gt6.jade.machine.error": ("错误: %s", "hand"),
+    "gt6.jade.fluid.group.in": ("流体输入", "hand"),
+    "gt6.jade.fluid.group.out": ("流体输出", "hand"),
     # task p33-bees-lv3-b-bumbliary: the 2 Bumbliary machine display names are DUMP faces
     # (gt.multitileentity.32741/32007) that the merge reconciliation landed in the TSV
     # direct band with status=auto — not hand-authored, so the status rides here verbatim
