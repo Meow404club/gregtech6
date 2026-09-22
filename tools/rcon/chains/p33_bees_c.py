@@ -17,10 +17,14 @@ Chain semantics:
     with the fillLoot output shape (slot 0 the family comb x5, slot 1 the princess
     x1, slot 2 the drones x3, the royals carrying the gt.bumble gene compound — the
     same slots/codes/genes the worldgen fill writes) is mined by the /gt6scene6 mine
-    channel AS THE SCOOP — the drop report names all three stacks in the TreeSet
-    order (drone, princess, comb) and the whole-BE dump shows the gt.bumble gene
-    NBT riding the inventory before the break. The wrong-tool negative rides the
-    same walk with the plunger: drops=[] (the SHEARS_HARVEST gate).
+    channel AS THE SCOOP — the drop report names the BOX + all three content stacks
+    (the p34-bumbliary-recipes R2 box-drop semantics: the upstream base getDrops,
+    TileEntityBase04MultiTileEntities.java:166-171, leads every break with the block
+    item) in the TreeSet order (drone, hive, princess, comb), and the whole-BE dump
+    shows the gt.bumble gene NBT riding the inventory before the break. The
+    wrong-tool negative rides the same walk with the plunger: drops=[] (the
+    SHEARS_HARVEST gate — playerDestroy is canHarvestBlock-gated, so the box and
+    the contents BOTH stay put).
 
   Note on the locate face: the feature's column pick is seed-agnostic (the sweep
   boots random-seed flat worlds), so the placed hive's exact cell is unknown to a
@@ -108,14 +112,14 @@ steps += [
 
 # --------------------------------- B: the loot walk — the scoop harvest drops the three stacks
 steps += [
-    phase("B: the loot shell — the merged fillLoot shape dumps its genes and drops all three"),
+    phase("B: the loot shell — the merged fillLoot shape dumps its genes and drops box + all three"),
     Step(f"setblock {F(HIVE)} gt6:bumble_hive", expect="Changed the block"),
     Step(merge_loot(F(HIVE))["1.20.1"], expect="Modified block data", node_cmds=merge_loot(F(HIVE))),
     # the dotted-key lesson: the whole-BE dump substring is the readback face — the
     # gene compound rides the inventory BEFORE the break (the NBT-attach live face)
     Step(f"data get block {F(HIVE)}", expect="gt.bumble"),
     Step(f"gt6scene6 mine {F(HIVE)} scoop",
-         expect="drops=[gt6:bumble_drone x3, gt6:bumble_princess x1, gt6:comb_honey x5]"),
+         expect="drops=[gt6:bumble_drone x3, gt6:bumble_hive x1, gt6:bumble_princess x1, gt6:comb_honey x5]"),
 
     phase("B-: the wrong tool breaks the hive with NO drops (the TOOL_scoop gate)"),
     Step(f"setblock {F(HIVE)} gt6:bumble_hive", expect="Changed the block"),
