@@ -69,7 +69,16 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 			"branch_cutter_leaves",
 			"sense_vegetal",
 			"scissors_plant_self",
-			"scoop_plant_self");
+			"scoop_plant_self",
+			// task p34-loot-injection — the structure-chest injections tail-append (the names are
+			// the GT6LootInjectionDatagen.injections() sequence, upstream Loader_Loot order).
+			"dungeon_inject_simple_dungeon",
+			"dungeon_inject_desert_pyramid",
+			"dungeon_inject_jungle_temple",
+			"dungeon_inject_jungle_temple_dispenser",
+			"dungeon_inject_abandoned_mineshaft",
+			"dungeon_inject_village_weaponsmith",
+			"dungeon_inject_stronghold_corridor");
 
 	/** The ctor face of the platform output (the base field is private — kept for the twin path). */
 	private final PackOutput mOutput;
@@ -137,6 +146,34 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 		add("scoop_plant_self", new GT6ToolLootModifiers.GT6ToolConvertModifier(
 				conditions(GT6Tools.SCOOP.get()),
 				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.PLANT_SELF_DROP));
+		// task p34-loot-injection — the structure-chest injections (Loader_Loot.java:410-552 tail
+		// rows, the verified category→table-id mapping). The target table id rides the modifier
+		// codec (NOT a platform LootTableIdCondition — the loader-branded condition would fork
+		// the shared JSON); conditions stay EMPTY. Order = MODIFIER_NAMES tail.
+		for (gregtech6.datagen.GT6LootInjectionDatagen.InjectionRow tRow
+				: gregtech6.datagen.GT6LootInjectionDatagen.injections()) {
+			add(tRow.name(), dungeonModifier(tRow));
+		}
+	}
+
+	/** One datagen injection row → the modifier (items resolved live, the datagen JVM). */
+	private static GT6DungeonLootModifier dungeonModifier(gregtech6.datagen.GT6LootInjectionDatagen.InjectionRow aRow) {
+		List<GT6DungeonLootModifier.Entry> tEntries = new java.util.ArrayList<>();
+		for (gregtech6.datagen.GT6LootInjectionDatagen.EntryRow tEntry : aRow.entries()) {
+			net.minecraft.world.item.Item tItem = gregtech6.datagen.GT6LootInjectionDatagen.resolveItem(tEntry.item());
+			if (tItem == net.minecraft.world.item.Items.AIR) {
+				throw new IllegalStateException("loot injection row references an unregistered item: " + tEntry.item());
+			}
+			tEntries.add(new GT6DungeonLootModifier.Entry(tItem, tEntry.weight(), tEntry.min(), tEntry.max()));
+		}
+		//? if forge {
+		net.minecraft.resources.ResourceLocation tTable = new net.minecraft.resources.ResourceLocation(aRow.table());
+		//?} else {
+		/*net.minecraft.resources.ResourceLocation tTable = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(
+				aRow.table().split(":", 2)[0], aRow.table().split(":", 2)[1]);
+		*///?}
+		return new GT6DungeonLootModifier(new LootItemCondition[0], tTable,
+				net.minecraft.util.valueproviders.UniformInt.of(aRow.rollMin(), aRow.rollMax()), tEntries);
 	}
 
 	private static LootItemCondition[] conditions(net.minecraft.world.item.Item aTool) {

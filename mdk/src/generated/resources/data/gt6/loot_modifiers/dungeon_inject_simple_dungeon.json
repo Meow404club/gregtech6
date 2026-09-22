@@ -1,0 +1,107 @@
+{
+  "type": "gt6:gt6_dungeon_inject",
+  "conditions": [],
+  "entries": [
+    {
+      "item": "gt6:ingot_steel",
+      "max": 6,
+      "min": 1,
+      "weight": 12
+    },
+    {
+      "item": "gt6:ingot_bronze",
+      "max": 6,
+      "min": 1,
+      "weight": 12
+    },
+    {
+      "item": "gt6:ingot_brass",
+      "max": 6,
+      "min": 1,
+      "weight": 12
+    },
+    {
+      "item": "gt6:ingot_damascus_steel",
+      "max": 6,
+      "min": 1,
+      "weight": 2
+    },
+    {
+      "item": "gt6:plate_steel",
+      "max": 6,
+      "min": 1,
+      "weight": 12
+    },
+    {
+      "item": "gt6:plate_bronze",
+      "max": 6,
+      "min": 1,
+      "weight": 12
+    },
+    {
+      "item": "gt6:plate_brass",
+      "max": 6,
+      "min": 1,
+      "weight": 12
+    },
+    {
+      "item": "gt6:plate_damascus_steel",
+      "max": 6,
+      "min": 1,
+      "weight": 2
+    },
+    {
+      "item": "gt6:stick_steel",
+      "max": 12,
+      "min": 2,
+      "weight": 12
+    },
+    {
+      "item": "gt6:stick_bronze",
+      "max": 12,
+      "min": 2,
+      "weight": 12
+    },
+    {
+      "item": "gt6:stick_brass",
+      "max": 12,
+      "min": 2,
+      "weight": 12
+    },
+    {
+      "item": "gt6:stick_damascus_steel",
+      "max": 12,
+      "min": 2,
+      "weight": 2
+    },
+    {
+      "item": "gt6:tool_head_arrow_steel",
+      "max": 24,
+      "min": 4,
+      "weight": 12
+    },
+    {
+      "item": "gt6:tool_head_arrow_bronze",
+      "max": 24,
+      "min": 4,
+      "weight": 12
+    },
+    {
+      "item": "gt6:tool_head_arrow_brass",
+      "max": 24,
+      "min": 4,
+      "weight": 12
+    },
+    {
+      "item": "gt6:tool_head_arrow_damascus_steel",
+      "max": 24,
+      "min": 4,
+      "weight": 2
+    }
+  ],
+  "rolls": {
+    "max_inclusive": 3,
+    "min_inclusive": 1
+  },
+  "table": "minecraft:chests/simple_dungeon"
+}

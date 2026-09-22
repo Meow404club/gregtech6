@@ -118,6 +118,20 @@ public final class GT6ToolLootModifiers {
 			SERIALIZERS.register("gt6_tree_fell", () -> GT6TreeFellModifier.CODEC);
 	*///?}
 
+	/**
+	 * The dungeon-injection serializer row — id {@code gt6:gt6_dungeon_inject} (task
+	 * p34-loot-injection): the upstream Loader_Loot structure-chest rows re-armed as one
+	 * modifier per target table (the documented consumer contract's "new modifier class + a
+	 * serializer row under SERIALIZERS" path).
+	 */
+	//? if forge {
+	public static final net.minecraftforge.registries.RegistryObject<Codec<? extends net.minecraftforge.common.loot.IGlobalLootModifier>> GT6_DUNGEON_INJECT =
+			SERIALIZERS.register("gt6_dungeon_inject", () -> GT6DungeonLootModifier.CODEC);
+	//?} else {
+	/*public static final net.neoforged.neoforge.registries.DeferredHolder<com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>, com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>> GT6_DUNGEON_INJECT =
+			SERIALIZERS.register("gt6_dungeon_inject", () -> GT6DungeonLootModifier.CODEC);
+	*///?}
+
 	/** The condition type — id {@code gt6:holds_tool} (the JSON "condition" key). */
 	//? if forge {
 	public static final net.minecraftforge.registries.RegistryObject<net.minecraft.world.level.storage.loot.predicates.LootItemConditionType> HOLDS_TOOL =

@@ -1,0 +1,35 @@
+{
+  "type": "gt6:gt6_dungeon_inject",
+  "conditions": [],
+  "entries": [
+    {
+      "item": "gt6:ingot_arsenic_copper",
+      "max": 16,
+      "min": 4,
+      "weight": 3
+    },
+    {
+      "item": "gt6:plate_arsenic_copper",
+      "max": 16,
+      "min": 4,
+      "weight": 3
+    },
+    {
+      "item": "gt6:tool_head_arrow_arsenic_copper",
+      "max": 64,
+      "min": 16,
+      "weight": 3
+    },
+    {
+      "item": "gt6:tool_head_arrow_trinium",
+      "max": 16,
+      "min": 4,
+      "weight": 1
+    }
+  ],
+  "rolls": {
+    "max_inclusive": 3,
+    "min_inclusive": 1
+  },
+  "table": "minecraft:chests/jungle_temple"
+}
