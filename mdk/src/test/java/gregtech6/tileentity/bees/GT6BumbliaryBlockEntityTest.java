@@ -1,6 +1,7 @@
 package gregtech6.tileentity.bees;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -224,6 +225,86 @@ class GT6BumbliaryBlockEntityTest {
 		tTe.setItem(0, new ItemStack(Items.DIRT, 8));
 		assertTrue(tTe.getItem(0).isEmpty(), "a foreign item never lands in a comb slot");
 		assertNull(GT6Bumbles.speciesOf(9990), "the containment guard stays honest");
+	}
+
+	// ------------------------------------- the penalty + the aggro walk (task p34-bumbliary-gui)
+
+	@Test
+	void thePenaltyStompsTheWindow() {
+		// the :289/:307 stomp — 6000 over any prior window (the acceptance ② arm)
+		GT6BumbliaryBlockEntity tTe = te();
+		tTe.mBreedingCountDown = GT6BumbliaryBlockEntity.PAIRED_WINDOW;
+		tTe.penalize(false);
+		assertEquals(6000, tTe.mBreedingCountDown, "the survival stomp overrides the 1200 pairing window");
+		assertEquals(6000, GT6BumbliaryBlockEntity.PENALTY_WINDOW, "the penalty window constant");
+	}
+
+	@Test
+	void thePenaltyIsCreativeExempt() {
+		// the :307 gate — the creative poke is free (the acceptance ② exemption arm)
+		GT6BumbliaryBlockEntity tTe = te();
+		tTe.mBreedingCountDown = 123;
+		tTe.penalize(true);
+		assertEquals(123, tTe.mBreedingCountDown, "creative leaves the window untouched");
+		tTe.penalize(false);
+		assertEquals(6000, tTe.mBreedingCountDown, "survival pays");
+	}
+
+	@Test
+	void theStingDelegateNeverFiresOnANullTarget() {
+		// the :371-373 gate — the ROYAL slot face decides; the live sting (a crowned queen
+		// hurting a target through bumbleAttack) is the RCON chain's arm (a constructible
+		// LivingEntity does not exist on the bare-JVM leg)
+		GT6BumbliaryBlockEntity tTe = te();
+		assertFalse(tTe.sting(null), "no target, no sting");
+	}
+
+	@Test
+	void theAggroWindowAndProbabilityTruthTable() {
+		// the :165 verdict — the window (mLife%300==150) and the probability (rng<aggro)
+		assertTrue(GT6BumbliaryBlockEntity.aggroTicks(150, 0, 1), "the midpoint fires");
+		assertFalse(GT6BumbliaryBlockEntity.aggroTicks(149, 0, 10000), "the tick before the midpoint");
+		assertFalse(GT6BumbliaryBlockEntity.aggroTicks(151, 0, 10000), "the tick after the midpoint");
+		assertTrue(GT6BumbliaryBlockEntity.aggroTicks(450, 0, 10000), "the next window (450%300==150)");
+		assertFalse(GT6BumbliaryBlockEntity.aggroTicks(600, 0, 10000), "the :168 produce tick is not an aggro tick (600%300==0)");
+		assertTrue(GT6BumbliaryBlockEntity.aggroTicks(150, 42, 43), "the strict edge (roll 42 < aggro 43)");
+		assertFalse(GT6BumbliaryBlockEntity.aggroTicks(150, 43, 43), "a roll equal to the aggro never fires");
+		assertFalse(GT6BumbliaryBlockEntity.aggroTicks(150, 100, 0), "a pacifist queen never aggros");
+		assertTrue(GT6BumbliaryBlockEntity.aggroTicks(12450, 500, 10000), "12450%300==150 — the gene bound rides the window");
+	}
+
+	@Test
+	void theAggroBoxIsTheMinusFourPlusFiveCube() {
+		// the :166 box(-4, -4, -4, +5, +5, +5) around the TE
+		net.minecraft.world.phys.AABB tBox = GT6BumbliaryBlockEntity.aggroBox(new BlockPos(100, 64, 100));
+		assertEquals(96.0, tBox.minX, 0.0, "min x = -4");
+		assertEquals(60.0, tBox.minY, 0.0, "min y = -4");
+		assertEquals(96.0, tBox.minZ, 0.0, "min z = -4");
+		assertEquals(105.0, tBox.maxX, 0.0, "max x = +5");
+		assertEquals(69.0, tBox.maxY, 0.0, "max y = +5");
+		assertEquals(105.0, tBox.maxZ, 0.0, "max z = +5");
+		// the selection face — entities whose box intersects the cube
+		assertTrue(tBox.intersects(99.0, 63.0, 99.0, 99.5, 63.5, 99.5), "a neighbour cell intersects");
+		assertFalse(tBox.intersects(106.0, 64.0, 100.0, 107.0, 65.0, 101.0), "x+6 is outside");
+	}
+
+	// ------------------------------------- the GUI seat tables (the widget pins ride GT6BumbliaryMUIPanelTest)
+
+	@Test
+	void theGuiSeatGeometryFollowsTheUpstreamGrids() {
+		// the primary 4x9 steps from x=8, the advanced 4x5 from x=44, both y=8+18*row
+		GT6BumbliaryBlockEntity.GuiSeat tRoyal = GT6BumbliaryBlockEntity.guiSeat(false, false, 13);
+		assertEquals(80, tRoyal.x(), "the primary ROYAL x (8 + 4*18)");
+		assertEquals(26, tRoyal.y(), "the primary ROYAL y (row 1)");
+		GT6BumbliaryBlockEntity.GuiSeat tDead = GT6BumbliaryBlockEntity.guiSeat(false, false, 35);
+		assertEquals(152, tDead.x(), "the primary last seat x");
+		assertEquals(62, tDead.y(), "the primary last seat y (row 3)");
+		GT6BumbliaryBlockEntity.GuiSeat tAdvRoyal = GT6BumbliaryBlockEntity.guiSeat(true, false, 7);
+		assertEquals(80, tAdvRoyal.x(), "the advanced ROYAL x (44 + 2*18)");
+		assertEquals(26, tAdvRoyal.y(), "the advanced ROYAL y (row 1)");
+		GT6BumbliaryBlockEntity.GuiSeat tAdvDead = GT6BumbliaryBlockEntity.guiSeat(true, false, 19);
+		assertEquals(116, tAdvDead.x(), "the advanced last seat x");
+		assertEquals(62, tAdvDead.y(), "the advanced last seat y (row 3)");
 	}
 
 	// ------------------------------------------------ the registration containment

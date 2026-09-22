@@ -810,6 +810,15 @@ SESSION_GROUPS = (
     # no fresh_boot / mutates member).
     # --group p34_sensors matches through the stem substring.
     ("p34_sensors_trivial",),
+    # p34-bumbliary-gui (task p34-bumbliary-gui): the Bumbliary GUI acceptance chain —
+    # a fresh z=376 band (z-disjoint from the p33_bees_b band z=368 and every registered
+    # band), the primary+advanced placement pair, the /gt6bumbliary use/scoop/open
+    # driver arms (the :289/:307 penalty stomp + the crowned-queen sting + the panel
+    # construct) with the :119 raisedWindow NBT proof and the in-step /data merge reset.
+    # Admission mirroring the p33_bees_b form (bbox-registered, no fresh_boot /
+    # mutates member).
+    # --group p34_bumbliary_gui matches through the chain's embedded name prefix.
+    ("p34_bumbliary_gui",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

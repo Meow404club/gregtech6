@@ -8596,3 +8596,11 @@ the batch run):
 - `gt6/textures/block/superheavyweightometer.png` `d8199fb95821db4132842b9c15d86863ac3bb437e76167145c2755a1c1249a05`
 - `gt6/textures/block/tpsmeter.png` `7571093ede617a3d1c88579d50faf419df52bc6c991337551084d8c840b0de01`
 - `gt6/textures/block/playercounter.png` `2013a9e65bb3a28603c390fe73f5f1a2d0feab28048b3410837c6fcb45ba93ed`
+Bumbliary GUI pair textures, task p34-bumbliary-gui:
+`gt6/textures/gui/machines/bumbliary.png` and
+`gt6/textures/gui/machines/bumbliaryadvanced.png` come from upstream
+`src/main/resources/assets/gregtech/textures/gui/machines/{Bumbliary,BumbliaryAdvanced}.png`
+(the ContainerClient background pair, MultiTileEntityBumbliary.java:500/:507 and
+MultiTileEntityBumbliaryAdvanced.java:469), byte-identical to upstream, sha256 verified:
+- `bumbliary.png` — `16e7d4156a0e2fd74240120b479136f0c6db8c757f68f3900df08e2ac2f3a4c3`
+- `bumbliaryadvanced.png` — `298d5d298dc2b5d46cc2865a81342276c2d66c3a12935f811d8d443451fb7f14`

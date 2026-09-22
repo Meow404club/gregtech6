@@ -12,6 +12,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -19,8 +20,16 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+
+import brachy.modularui.factory.PosGuiData;
+import brachy.modularui.screen.ModularPanel;
+import brachy.modularui.screen.UISettings;
+import brachy.modularui.value.sync.PanelSyncManager;
 
 import gregtech6.block.stone.GTStoneBlock;
+import gregtech6.gui.machines.GT6BumbliaryMUI;
+import gregtech6.gui.machines.GT6MuiMachine;
 import gregtech6.items.bees.GT6BumbleGenes;
 import gregtech6.items.bees.GT6Bumbles;
 import gregtech6.items.bees.GT6BumbleItem;
@@ -70,14 +79,17 @@ import gregtech6.worldgen.GT6HiveFeature;
  * fixed order (ponytail: the order only steers WHICH matching block wins; the boolean
  * verdict is order-independent).
  *
- * <p><b>Folded faces</b>: the GUI pair (the :389-509 containers) stays out until the MUI
- * wave — the vanilla {@link Container} view over the inventory is the insert/extract face
- * (the {@code isItemValidForSlotGUI} :357-364 rules ride the insert filter, only
- * princess/drone slots accept, and only their type faces); the aggro attack walk
- * (:165-167/:371-373) pools with the entity-damage domain (the RCON/breeding faces never
- * touch it); the click/scoop penalty (:282-315) rides the GUI wave with it.
+ * <p><b>The GUI, the penalty and the aggro walk</b> (task p34-bumbliary-gui, landing the
+ * folded faces): the :389-509 container pair is the {@code gregtech6.gui.machines.GT6BumbliaryMUI}
+ * panel factory over the {@link #guiSeat} tables (the {@code mAdvanced} flag picks the
+ * 36-slot primary / 20-slot advanced grid, the scoop flag picks the interaction flags, the
+ * borrowed machines/Bumbliary(.advanced).png backgrounds); the :282-296 top-use walk (the
+ * :289 6000 penalty window, {@link #penalize}, the creative scoop shortcut) and the
+ * :305-313 scoop arm ride the block use face, and the :165-167 aggro window runs in
+ * {@link #produceTick} through the {@link #sting} delegate (the :371-373 face, the
+ * {@code GT6BumbleItem} family damage tables).
  */
-public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implements Container {
+public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implements Container, GT6MuiMachine {
 
 	// upstream NBT keys (CS.java:1175/:1230/:1251 verbatim, the :66-85 read/write pair)
 	/** The queen life counter (upstream NBT_PROGRESS). */
@@ -112,10 +124,19 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 	public static final long PAIRED_WINDOW = 1200;
 	/** The environment re-probe cadence (:108). */
 	public static final long ENVIRONMENT_PERIOD = 1200;
+	/** The top-use/scoop penalty window (:289/:307 — a survival poke of the hive enrages it). */
+	public static final long PENALTY_WINDOW = 6000;
+	/** The :165 aggro window: the queen stings the neighbourhood every 300th tick's midpoint. */
+	public static final long AGGRO_PERIOD = 300, AGGRO_PHASE = 150;
 
 	/** The advanced flag: the 20-slot layout, the tighter produce scan (:169 {@code aDistance 1}),
 	 *  the halved product roll (:171 {@code rng(20000)}) and the soft countdown resets (:119/:270/:276). */
 	protected final boolean mAdvanced;
+
+	/** The advanced state of this variant (the panel factory's dispatch flag). */
+	public boolean advanced() {
+		return mAdvanced;
+	}
 
 	/** The live climate probes (:60-62; refreshed at placement and every 1200 ticks, not persisted — the :95-101 shape). */
 	public boolean mSky = false;
@@ -189,6 +210,52 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 		if (aSlot == slotDrone()) return tFace == GT6Bumbles.TYPE_DRONE;
 		for (int tSlot : dronesOf(mAdvanced)) if (tSlot == aSlot) return tFace == GT6Bumbles.TYPE_DRONE;
 		return false;
+	}
+
+	/** The inventory carrier (the panel factory's slot bind — the GT6StorageMUI convention). */
+	public GTItemStackHandler inventory() {
+		return mInventory;
+	}
+
+	// -------------------------------------------------------------------------
+	// the GUI seat tables (task p34-bumbliary-gui — the :396-434 primary-normal,
+	// :450-488 primary-scoop and the Advanced :397-419/:435-457 rows as one rule)
+	// -------------------------------------------------------------------------
+
+	/** One GUI seat: the slot index, the panel position and the interaction flags. */
+	public record GuiSeat(int slot, int x, int y, boolean canPut, boolean canTake) {}
+
+	/**
+	 * The GUI seat of one slot over one variant: the primary 4x9 grid steps from x=8, the
+	 * Advanced 4x5 grid from x=44, both y=8+18*row. The flags collapse the four upstream
+	 * tables onto the slot roles — the comb and dead seats are take-only (the products),
+	 * the seven satellite drone seats are inert displays, the ROYAL and main DRONE seats
+	 * take princess/drone inserts but nothing out, and the scoop GUI opens those two
+	 * seats for full access while everything else stays take-only.
+	 */
+	public static GuiSeat guiSeat(boolean aAdvanced, boolean aScoop, int aSlot) {
+		int tPerRow = aAdvanced ? 5 : 9;
+		int tRoyal = aAdvanced ? ADV_SLOT_ROYAL : SLOT_ROYAL;
+		int tDrone = aAdvanced ? ADV_SLOT_DRONE : SLOT_DRONE;
+		boolean tSpecial = aSlot == tRoyal || aSlot == tDrone;
+		boolean tSatellite = false;
+		for (int tSlot : dronesOf(aAdvanced)) if (tSlot == aSlot) tSatellite = true;
+		boolean tCanPut = false, tCanTake = true;
+		if (tSpecial) {
+			tCanPut = true; tCanTake = false; // :410/:420 and the Advanced :405/:411 — insert-only
+		} else if (tSatellite) {
+			tCanPut = false; tCanTake = false; // the inert drone ring
+		}
+		if (aScoop) {
+			tCanPut = tSpecial; // the ROYAL/DRONE seats shed every lock (:464/:474, Advanced :443/:449)
+			tCanTake = true;
+		}
+		return new GuiSeat(aSlot, (aAdvanced ? 44 : 8) + (aSlot % tPerRow) * 18, 8 + (aSlot / tPerRow) * 18, tCanPut, tCanTake);
+	}
+
+	/** The GUI seat of this variant's slot. */
+	public GuiSeat guiSeat(boolean aScoop, int aSlot) {
+		return guiSeat(mAdvanced, aScoop, aSlot);
 	}
 
 	// -------------------------------------------------------------------------
@@ -303,7 +370,7 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 		for (ItemStack tOffSpring : mOffSpring) { // :135-143
 			if (tOffSpring.isEmpty() || !(tOffSpring.getItem() instanceof GT6BumbleItem)) continue;
 			if (checkEnvironment(GT6BumbleGenes.getOrCreateGenes(tOffSpring, mRng))) {
-				if (!addToSlot(slotDrone(), tOffSpring)) addToSlots(tOffSpring, tDrones);
+				addToSlots(tOffSpring, slotDrone(), tDrones); // :136 — the preferred main seat, then the ring
 			} else {
 				ItemStack tOffDead = transform(tOffSpring, GT6Bumbles.TYPE_DEAD);
 				addToSlots(tOffDead, deadOf(mAdvanced));
@@ -331,10 +398,14 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 		}
 	}
 
-	/** The :165-186 queen work walk — the aggro attack branch (:165-167) pools with the
-	 *  entity-damage domain; the comb production branch runs the flower check. */
+	/** The :165-186 queen work walk — the aggro sting branch (:165-167) then the comb
+	 *  production branch (the flower check). */
 	private void produceTick(GT6BumbleItem aRoyalItem, ItemStack aRoyalStack) {
-		if (mLife % 1200 == 600 && mRng.nextInt(10000) < GT6BumbleGenes.getWorkForce(GT6BumbleGenes.getOrCreateGenes(aRoyalStack, mRng)) && checkWork(GT6BumbleGenes.getOrCreateGenes(aRoyalStack, mRng))) {
+		CompoundTag tRoyalTag = GT6BumbleGenes.getOrCreateGenes(aRoyalStack, mRng);
+		if (aggroTicks(mLife, mRng.nextInt(10000), GT6BumbleGenes.getAggressiveness(tRoyalTag))) { // :165
+			for (LivingEntity tEntity : getLevel().getEntitiesOfClass(LivingEntity.class, aggroBox(getBlockPos()))) sting(tEntity); // :166
+		}
+		if (mLife % 1200 == 600 && mRng.nextInt(10000) < GT6BumbleGenes.getWorkForce(tRoyalTag) && checkWork(tRoyalTag)) {
 			int tCode = GT6BumbleGenes.codeOf(aRoyalStack);
 			int tDistance = mAdvanced ? 1 : 3; // :169 (the 3x3x3 advanced / 7x7x7 primary range)
 			if (canProduce(getLevel(), getBlockPos(), GT6Bumbles.familyOf(tCode), tDistance) != null) {
@@ -345,6 +416,86 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 				}
 			}
 		}
+	}
+
+	// -------------------------------------------------------------------------
+	// the penalty, the sting and the aggro walk (task p34-bumbliary-gui)
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The :289/:307 penalty stomp: a survival poke of the hive resets the breeding window
+	 * to 6000 (the :289 top-use arm draws it unconditionally, the :307 scoop arm passes the
+	 * creative flag — the exemption lives here).
+	 */
+	public void penalize(boolean aCreative) {
+		if (!aCreative) mBreedingCountDown = PENALTY_WINDOW;
+	}
+
+	/**
+	 * The :371-373 sting delegate: a crowned queen in the ROYAL slot stings the target
+	 * through {@link GT6BumbleItem#bumbleAttack} (the family damage tables).
+	 */
+	public boolean sting(@Nullable LivingEntity aTarget) {
+		if (aTarget == null) return false;
+		ItemStack tRoyal = mInventory.getStackInSlot(slotRoyal());
+		return tRoyal.getItem() instanceof GT6BumbleItem tBee && beeFace(tRoyal) == GT6Bumbles.TYPE_QUEEN
+				&& tBee.bumbleAttack(tRoyal, aTarget);
+	}
+
+	/**
+	 * The :165 aggro verdict (the pure half the offline truth table rides): the 300-tick
+	 * window's midpoint and the probability roll against the aggressiveness gene.
+	 */
+	public static boolean aggroTicks(long aLife, long aRoll, long aAggressiveness) {
+		return aLife % AGGRO_PERIOD == AGGRO_PHASE && aRoll < aAggressiveness;
+	}
+
+	/** The :166 attack box — the {@code box(-4, -4, -4, +5, +5, +5)} TE-relative AABB. */
+	public static AABB aggroBox(BlockPos aPos) {
+		return new AABB(aPos.getX() - 4, aPos.getY() - 4, aPos.getZ() - 4,
+				aPos.getX() + 5, aPos.getY() + 5, aPos.getZ() + 5);
+	}
+
+	// -------------------------------------------------------------------------
+	// the GUI host face (task p34-bumbliary-gui — the :282-296 use walk and the
+	// :305-313 scoop walk; the panel factory is gregtech6.gui.machines.GT6BumbliaryMUI)
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The :282-296 top-face use walk (the server half; the top-face gate and the
+	 * scoop-tool dispatch live on the block): the creative poke opens the scoop panel
+	 * directly (:285-288), survival pays the penalty (:289), takes the sting (:290) and
+	 * gets the normal panel (:291).
+	 */
+	public void topUse(net.minecraft.server.level.ServerPlayer aPlayer) {
+		if (aPlayer.isCreative()) {
+			GT6BumbliaryMUI.Factory.SCOOP.open(aPlayer, this); // :286 openGUI 1
+			return;
+		}
+		penalize(false); // :289
+		sting(aPlayer); // :290
+		GT6MuiMachine.tryOpen(aPlayer, this); // :291 — openGUI 0, the normal panel
+	}
+
+	/**
+	 * The :305-313 scoop arm (the server half): the penalty with the creative exemption
+	 * (:307), the sting (:308) and the scoop panel (:309). The upstream 10000 scoop
+	 * durability charge is the tool domain's face and stays unported (the card scope).
+	 */
+	public void scoopUse(net.minecraft.server.level.ServerPlayer aPlayer) {
+		penalize(aPlayer.isCreative()); // :307
+		sting(aPlayer); // :308
+		GT6BumbliaryMUI.Factory.SCOOP.open(aPlayer, this); // :309 openGUI 1
+	}
+
+	/**
+	 * The MUI panel build (the IUIHolder.buildUI :21-44 contract) — the normal pair;
+	 * the scoop GUI opens through {@link GT6BumbliaryMUI.Factory#SCOOP} (the factory
+	 * carries the variant, no MenuType — the P26 no-new-MenuType ruling).
+	 */
+	@Override
+	public ModularPanel<?> buildUI(PosGuiData aData, PanelSyncManager aSyncManager, UISettings aSettings) {
+		return GT6BumbliaryMUI.buildPanel(this, aSyncManager, false);
 	}
 
 	/** The :214-267 pairing walk. */
@@ -394,10 +545,6 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 	// -------------------------------------------------------------------------
 
 	/** The stack is a live GT6 bee. */
-	static boolean isBee(GTItemStackHandler aInv, int aSlot) {
-		return aInv.getStackInSlot(aSlot).getItem() instanceof GT6BumbleItem;
-	}
-
 	private boolean isBee(int aSlot) {
 		return mInventory.getStackInSlot(aSlot).getItem() instanceof GT6BumbleItem;
 	}
@@ -655,21 +802,18 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 		}
 	}
 
-	/** The single-slot merge-or-store (:137-138's addStackToSlot face); empties the source on success. */
-	private boolean addToSlot(int aSlot, ItemStack aStack) {
-		if (aStack.isEmpty()) return true;
-		ItemStack tThere = mInventory.getStackInSlot(aSlot);
-		if (tThere.isEmpty()) {
-			mInventory.setStackInSlot(aSlot, aStack.copy());
-			aStack.setCount(0);
-			return true;
-		}
-		if (ItemStack.isSameItemSameTags(tThere, aStack) && tThere.getCount() < mInventory.getSlotLimit(aSlot)) {
-			tThere.grow(Math.min(aStack.getCount(), mInventory.getSlotLimit(aSlot) - tThere.getCount()));
-			aStack.setCount(0);
-			return true;
-		}
-		return false;
+	/**
+	 * The group walk with one preferred slot ahead (the :136 offspring crown-slot face —
+	 * the main DRONE seat before the ring; the addToSlot single-slot overload folded into
+	 * this prepend, the ponytail fold): a full preferred slot spills into the group instead
+	 * of vanishing.
+	 */
+	private void addToSlots(ItemStack aStack, int aPreferred, int[] aSlots) {
+		if (aStack.isEmpty()) return;
+		int[] tOrder = new int[aSlots.length + 1];
+		tOrder[0] = aPreferred;
+		System.arraycopy(aSlots, 0, tOrder, 1, aSlots.length);
+		addToSlots(aStack, tOrder);
 	}
 
 	private void shrink(int aSlot, int aCount) {
