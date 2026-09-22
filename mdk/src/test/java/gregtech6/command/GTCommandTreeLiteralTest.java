@@ -93,6 +93,9 @@ public class GTCommandTreeLiteralTest {
 		// task p29-w3-heat-smelter — the Smelter ladder + the Melter single
 		"smelter", "smelter_t2", "smelter_t3", "smelter_t4", "melter",
 		"roasting_oven", "roasting_oven_t2", "roasting_oven_t3", "roasting_oven_t4", // task p29-w4-eu-bridge — the Roasting ladder
+		// task p34-machines-bumblelyzer-crucible — the Bumblelyzer EU 5-ladder + the Crystallisation Crucible HU 4-ladder
+		"bumblelyzer", "bumblelyzer_t2", "bumblelyzer_t3", "bumblelyzer_t4", "bumblelyzer_t5",
+		"crystallisationcrucible", "crystallisationcrucible_t2", "crystallisationcrucible_t3", "crystallisationcrucible_t4",
 		"paint", "unpaint"); // task p21-paintable-storage-sync — the spray write-point arm
 
 	private static CommandSourceStack stack() {

@@ -63,7 +63,10 @@ class GT6PrefixBlockRenderDatagenTest {
         PINNED_LIVE_SETS.put("blockPlate", sets("BRICK", "COPPER", "DIAMOND", "DULL", "FIERY", "FINE", "FOOD",
                 "LAPIS", "LEAF", "LIGNITE", "MAGNETIC", "METALLIC", "POWDER", "QUARTZ", "RAD", "REDSTONE", "ROUGH",
                 "RUBBER", "RUBY", "SHINY", "SPACE", "STONE", "WOOD"));
-        PINNED_LIVE_SETS.put("blockPlateGem", sets("CUBE_SHINY", "DIAMOND", "DULL", "EMERALD", "FINE", "FLINT",
+        // the COPPER rung joined at task p34-machines-bumblelyzer-crucible — the bouleGt
+        // force-table's plateGem cascade face (Si/Ge/RedstoneAlloy/NikolineAlloy carry
+        // SET_COPPER; the Crystalline Silicon/… Alloy plates' block carrier)
+        PINNED_LIVE_SETS.put("blockPlateGem", sets("COPPER", "CUBE_SHINY", "DIAMOND", "DULL", "EMERALD", "FINE", "FLINT",
                 "GEM_HORIZONTAL", "GEM_VERTICAL", "GLASS", "HEX", "LAPIS", "LIGNITE", "METALLIC", "NETHERSTAR", "OPAL",
                 "PRISMARINE", "QUARTZ", "REDSTONE", "RUBY", "SHARDS", "SHINY"));
         PINNED_LIVE_SETS.put("blockSolid", sets("BRICK", "COPPER", "CUBE", "DIAMOND", "DULL", "FIERY", "FINE", "FOOD",
@@ -119,7 +122,7 @@ class GT6PrefixBlockRenderDatagenTest {
             tTotalModels += tLive.size();
             tUnion.addAll(tLive);
         }
-        assertEquals(175, tTotalModels, "shared (prefix x set) block models = the anti-bloat model count");
+        assertEquals(176, tTotalModels, "shared (prefix x set) block models = the anti-bloat model count");
         assertEquals(37, tUnion.size(), "distinct texture-set names across the seven prefixes");
     }
 
@@ -185,7 +188,7 @@ class GT6PrefixBlockRenderDatagenTest {
                     .filter(p -> tReferenced.contains(p.getParent().getFileName() + "/" + p.getFileName()))
                     .count();
         }
-        assertEquals(175, tCount, "one borrowed PNG per referenced (prefix x set) model");
+        assertEquals(176, tCount, "one borrowed PNG per referenced (prefix x set) model");
     }
 
     /**
