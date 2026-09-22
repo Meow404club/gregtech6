@@ -25,8 +25,11 @@ import gregapi.code.TagData;
 import gregapi.data.TD;
 import gregapi.tileentity.energy.ITileEntityEnergy;
 import gregtech6.block.wire.GTWireBlock;
+import gregtech6.covers.CoverData;
+import gregtech6.covers.ICoverableTE;
 import gregtech6.registry.GTBlockEntities;
 import gregtech6.registry.GTWireSpecs;
+import gregtech6.tileentity.machines.ITileEntitySwitchableMode;
 import gregtech6.util.UT6;
 
 /**
@@ -94,8 +97,22 @@ import gregtech6.util.UT6;
  * {@code mConnections} and the redstone family keys; {@link #mWattageLast} is TRANSIENT by
  * the same upstream body (fresh load = 0 = the wire cannot bite until power flows again —
  * the restart-safe property of the shock gate), the p7 card's NBT test pins that contract.
+ *
+ * <p>Covers + the selector dial (task p34-pool-cover-hosts): the BE implements
+ * {@link ICoverableTE} by composition (the {@link GTFluidPipeBlockEntity} twin of the same
+ * card) and {@link ITileEntitySwitchableMode} over {@link #mMode} (upstream
+ * MultiTileEntityWireRedstoneInsulated :177/:178 passthrough) — the FIRST live host of
+ * both faces, the landing the p34-covers-gameplay-10 cards declared. The torch/repeater
+ * covers drive the visual lane from {@link #mRedstone} in their tickPost arm, the four
+ * selector covers drive {@link #setStateMode}; {@link #getRedstoneOut} routes the vanilla
+ * emission bridge through the cover exits (upstream 04Covers :427-438 — the plate on the
+ * emission face answers before the wire's own emission). Admission stays the interface
+ * default: the cover-side gates ({@code AbstractCoverAttachmentTorch} carrier-class check,
+ * the selector ITileEntitySwitchableMode check) are the delivered admission policy; the
+ * upstream redstone-class narrowing folds into those gates' declared deviation
+ * (p34-covers-gameplay-10 class docs) and the host adds no narrowing of its own.
  */
-public class GTWireBlockEntity extends TileEntityBase09Connector implements ITileEntityEnergy, GTWireRedstoneNode {
+public class GTWireBlockEntity extends TileEntityBase09Connector implements ITileEntityEnergy, GTWireRedstoneNode, ICoverableTE, ITileEntitySwitchableMode {
 
 	/**
 	 * Upstream :64 — transfer bookkeeping and the wire rating defaults: 32 EU packets,
@@ -161,15 +178,47 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	 */
 	public byte mReceived = SIDE_UNDEFINED;
 
-	/**
-	 * Upstream :56 — the constant-strength source mode: updateRedstone :124 baselines the
-	 * wire at {@code mMode * MAX_RANGE - mLoss}. Upstream switches it only through
-	 * setStateMode from the CoverSelectorRedstone cover (CoverSelectorRedstone.java:42-51);
-	 * that cover is a declared pool item this phase (it depends on the unported
-	 * SwitchableMode surface), so {@code mMode} persists at its default 0 with the
-	 * field + formula carried verbatim — the semantics stay complete for the cover card.
-	 */
-	public byte mMode = 0;
+    /**
+     * Upstream :56 — the constant-strength source mode: updateRedstone :124 baselines the
+     * wire at {@code mMode * MAX_RANGE - mLoss}. Switched through {@link #setStateMode} —
+     * upstream only by the CoverSelectorRedstone cover (CoverSelectorRedstone.java:42-51),
+     * this port by the four selector covers (task p34-covers-gameplay-10) whose FIRST live
+     * host this BE now is (task p34-pool-cover-hosts, upstream :177/:178 passthrough).
+     */
+    public byte mMode = 0;
+
+    // ---------------------------------------------------------------------------
+    // covers + the selector dial (task p34-pool-cover-hosts — the composition
+    // attachment, the GTFluidPipeBlockEntity twin: the store lives here, the 06Covers
+    // behaviour comes from the ICoverableTE defaults; the base-class chain stays untouched)
+    // ---------------------------------------------------------------------------
+
+    /** Upstream 06Covers :63 mCovers — {@code null} while no face carries a cover. */
+    @Nullable
+    public CoverData mCovers = null;
+
+    @Override
+    public CoverData getCovers() {
+        return mCovers;
+    }
+
+    @Override
+    public void setCovers(@Nullable CoverData aCoverData) {
+        mCovers = aCoverData;
+    }
+
+    /** Upstream MultiTileEntityWireRedstoneInsulated :177 verbatim — the dial write, the return rides the visual mirror. */
+    @Override
+    public byte setStateMode(byte aMode) {
+        mMode = aMode;
+        return mMode;
+    }
+
+    /** Upstream :178 verbatim. */
+    @Override
+    public byte getStateMode() {
+        return mMode;
+    }
 
 	/**
 	 * Upstream :56 — the per-side vanilla input cache (byte[7] like ALL_SIDES); onTick2
@@ -335,8 +384,20 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	 * registration carries no overload machinery — nothing can burn a lossless wire, the
 	 * p10 spec-7 redstone posture).
 	 */
+	/**
+	 * The per-family tick (see {@link #tickFamilies}) wrapped in the cover tick pair —
+	 * upstream 06Covers :196/:200, the pipe-BE shape (task p34-pool-cover-hosts): the
+	 * torch family drives its visual lane from {@link #mRedstone} in tickPost, the
+	 * Tag selector re-asserts its constructor mode from tickPre.
+	 */
 	@Override
 	public void onTick(long aTimer, boolean aIsServerSide) {
+		if (hasCovers()) getCovers().tickPre(aTimer, aIsServerSide, mBlockUpdated, false);
+		tickFamilies(aTimer, aIsServerSide);
+		if (hasCovers()) getCovers().tickPost(aTimer, aIsServerSide, mBlockUpdated, false);
+	}
+
+	private void tickFamilies(long aTimer, boolean aIsServerSide) {
 		if (isRedstone()) { // upstream onTick2 :98-106, server branch
 			if (aIsServerSide) {
 				for (int i : ALL_SIDES) mVanillaSides[i] = -1; // :102 — the vanilla input cache is a per-tick cache
@@ -376,6 +437,8 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	@Override
 	public void onTickFirst(boolean aIsServerSide) {
 		super.onTickFirst(aIsServerSide);
+		// upstream 06Covers :191 — the validity sweep rides onTickFirst before the wire business
+		checkCoverValidity();
 		if (isRedstone()) updateConnectionStatus(); // :87
 	}
 
@@ -1051,15 +1114,24 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	 * costs one strength point. The emission NEVER back-feeds the remembered source side
 	 * and NEVER outputs towards redstone-wire neighbours (:162 — the wire chain is
 	 * BFS-internal).
+	 *
+	 * <p>The cover exits (task p34-pool-cover-hosts, upstream 04Covers :427-438): the
+	 * plate on the emission face answers BEFORE the wire's own emission — the query-side
+	 * convention of {@link ICoverableTE#getRedstoneOutWeak}/{@link ICoverableTE#getRedstoneOutStrong}
+	 * is exactly the aQuerySide this bridge receives, and a bare face passes the wire's
+	 * own value through unchanged (zero diff without covers).
 	 */
 	public byte getRedstoneOut(byte aQuerySide, boolean aStrong) {
 		if (!hasLevel()) return 0;
 		byte aSide = UT6.OPOS[aQuerySide]; // :142/:149 — the query direction flips to the emission face
-		if (!canEmitRedstoneToVanilla(aSide) || mRedstone <= 0) return 0;
-		BlockPos tTarget = getBlockPos().relative(Direction.from3DDataValue(aSide));
-		BlockState tState = getLevel().getBlockState(tTarget);
-		boolean tCorrection = tState.getBlock() instanceof RedStoneWireBlock || tState.isRedstoneConductor(getLevel(), tTarget); // :144
-		return emissionValue(mRedstone, tCorrection);
+		byte tOwn = 0;
+		if (canEmitRedstoneToVanilla(aSide) && mRedstone > 0) {
+			BlockPos tTarget = getBlockPos().relative(Direction.from3DDataValue(aSide));
+			BlockState tState = getLevel().getBlockState(tTarget);
+			boolean tCorrection = tState.getBlock() instanceof RedStoneWireBlock || tState.isRedstoneConductor(getLevel(), tTarget); // :144
+			tOwn = emissionValue(mRedstone, tCorrection);
+		}
+		return (byte) (aStrong ? getRedstoneOutStrong(aQuerySide, tOwn) : getRedstoneOutWeak(aQuerySide, tOwn));
 	}
 
 	/**
@@ -1153,6 +1225,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	@Override
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
+		writeCoversToNBT(aNBT); // upstream 06Covers :74 (task p34-pool-cover-hosts — BEFORE the family gate, covers ride every row)
 		if (!isRedstone()) return;
 		if (mMode != 0) aNBT.putByte(NBT_MODE, mMode); // :72
 		aNBT.putByte(NBT_MRECEIVED, mReceived); // :73
@@ -1162,6 +1235,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	@Override
 	public void load(CompoundTag aNBT) {
 		super.load(aNBT);
+		readCoversFromNBT(aNBT); // upstream 06Covers :68 (task p34-pool-cover-hosts — BEFORE the family gate)
 		if (!isRedstone()) return;
 		if (aNBT.contains(NBT_MRECEIVED, Tag.TAG_ANY_NUMERIC)) mReceived = aNBT.getByte(NBT_MRECEIVED); // :62
 		if (aNBT.contains(NBT_MREDSTONE, Tag.TAG_ANY_NUMERIC)) mRedstone = aNBT.getLong(NBT_MREDSTONE); // :63 — DEVIATION, see below
@@ -1176,6 +1250,33 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 			byte tOldState = mState;
 			mState = UT6.bind4(UT6.divup(mRedstone, GTWireSpecs.MAX_RANGE)); // :64
 			if (tOldState != mState && glowingWire()) refreshGlowLight(); // :65, the mIsGlowing gate
+			scheduleCoverRenderRefresh(); // task p34-pool-cover-hosts — both sync channels land here
 		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// the cover render face (task p34-pool-cover-hosts — the TileEntityBase08Barrel
+	// template: the per-face sprite snapshot for the CoverPlateModel, and the client
+	// render refresh on every sync landing; a bare wire keeps ModelData.EMPTY)
+	// ---------------------------------------------------------------------------
+
+	private void scheduleCoverRenderRefresh() {
+		if (hasCovers() && hasLevel() && isClientSide())
+			gregtech6.client.render.GTRenderUpdates.scheduleRenderUpdate(this);
+	}
+
+	@Override
+	public net.minecraftforge.client.model.data.ModelData getModelData() {
+		if (!hasCovers()) return super.getModelData();
+		java.util.Map<Direction, net.minecraft.resources.ResourceLocation> tSprites = new java.util.EnumMap<>(Direction.class);
+		for (byte tSide = 0; tSide < 6; tSide++) {
+			if (getCovers().mBehaviours[tSide] == null) continue;
+			net.minecraft.resources.ResourceLocation tSprite = getCovers().mBehaviours[tSide].getCoverTextureSurface(tSide, getCovers());
+			if (tSprite != null) tSprites.put(Direction.from3DDataValue(tSide), tSprite);
+		}
+		if (tSprites.isEmpty()) return super.getModelData();
+		return gregtech6.client.render.GTModelProperties.derive(super.getModelData())
+				.with(gregtech6.client.render.GTModelProperties.RENDER_SNAPSHOT, new gregtech6.covers.GTCoverRenderSnapshot(tSprites))
+				.build();
 	}
 }
