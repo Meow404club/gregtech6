@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/kilobucketometer",
+      "x": 90
+    },
+    "facing=east": {
+      "model": "gt6:block/kilobucketometer",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/kilobucketometer"
+    },
+    "facing=south": {
+      "model": "gt6:block/kilobucketometer",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/kilobucketometer",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "gt6:block/kilobucketometer",
+      "y": 270
+    }
+  }
+}

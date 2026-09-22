@@ -1691,13 +1691,14 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Sensor family keys (task p26-sensors-core): the three pioneer display names — the
-     * upstream registration rows verbatim (Loader_MultiTileEntities.java :1995 "Progress
-     * Sensor", :1986 "Fluid-O-Meter Sensor", :1997 "Electrometer Sensor"), walked from the
-     * {@link GT6Sensors#ROWS} face (the row path IS the lang key tail — the
-     * {@code SensorRow#displayKey} composition, the addSprayCans walk shape). The upstream
-     * tooltip stack (Sensor:89-97 — the NO_GUI / screwdriver / monkey-wrench lines) is the
-     * lang card's face and stays out of this card (the BE javadoc cut list).
+     * Sensor family keys (task p26-sensors-core, batch p34-sensors-trivial-14): the
+     * sensor display names — the upstream registration rows verbatim (Loader_MultiTileEntities
+     * .java :1995 "Progress Sensor", :1986 "Fluid-O-Meter Sensor", :1997 "Electrometer
+     * Sensor", then the :1979-1994 batch tail), walked from the {@link GT6Sensors#ROWS}
+     * face (the row path IS the lang key tail — the {@code SensorRow#displayKey}
+     * composition, the addSprayCans walk shape). The upstream tooltip stack (Sensor:89-97
+     * — the NO_GUI / screwdriver / monkey-wrench lines) is the lang card's face and stays
+     * out of this card (the BE javadoc cut list).
      * Table-tail append, append-only.
      */
     private void addSensors() {
@@ -1706,6 +1707,22 @@ public class GT6EnUs extends LanguageProvider {
                 case "progressmeter" -> "Progress Sensor";      // Loader :1995
                 case "fluidometer"   -> "Fluid-O-Meter Sensor"; // Loader :1986
                 case "electrometer"  -> "Electrometer Sensor";  // Loader :1997
+                // p34-sensors-trivial-14 — the upstream display strings verbatim (Loader :1979-:1994)
+                case "thermometer"            -> "Thermometer Sensor";             // :1979
+                case "luminometer"            -> "Luminometer Sensor";             // :1980
+                case "chronometer"            -> "Chronometer Sensor";             // :1981
+                case "gibblometer"            -> "Gibbl-O-Meter Sensor";           // :1982
+                case "kilogibblometer"        -> "Kilo-Gibbl-O-Meter Sensor";      // :1983
+                case "itemometer"             -> "Item-O-Meter Sensor";            // :1984
+                case "stackometer"            -> "Stack-O-Meter Sensor";           // :1985
+                case "bucketometer"           -> "Bucket-O-Meter Sensor";          // :1987
+                case "kilobucketometer"       -> "Kilo-Bucket-O-Meter Sensor";     // :1988
+                case "lightweightometer"      -> "Light Weight-O-Meter Sensor";    // :1989
+                case "mediumweightometer"     -> "Medium Weight-O-Meter Sensor";   // :1990
+                case "heavyweightometer"      -> "Heavy Weight-O-Meter Sensor";    // :1991
+                case "superheavyweightometer" -> "Super Heavy Weight-O-Meter Sensor"; // :1992
+                case "tpsmeter"               -> "TPS Sensor";                     // :1993
+                case "playercounter"          -> "Player Counter Sensor";          // :1994
                 default -> throw new IllegalArgumentException("untranslated sensor row: " + tRow.path());
             });
         }

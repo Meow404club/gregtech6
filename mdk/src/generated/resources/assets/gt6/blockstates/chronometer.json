@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/chronometer",
+      "x": 90
+    },
+    "facing=east": {
+      "model": "gt6:block/chronometer",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/chronometer"
+    },
+    "facing=south": {
+      "model": "gt6:block/chronometer",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/chronometer",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "gt6:block/chronometer",
+      "y": 270
+    }
+  }
+}

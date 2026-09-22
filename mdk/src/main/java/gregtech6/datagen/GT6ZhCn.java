@@ -491,6 +491,25 @@ public class GT6ZhCn extends LanguageProvider {
 		// (block.gt6.oven retired here — task p27-oven-heat-t-ladder moved the oven onto the
 		// composed gt6.row.oven.display face, the addRowDomainUnits walk carries the template)
 		addDirect("block.gt6.progressmeter"); // task p26-sensors-core — the MTE 31018 dump row 进度传感器
+		// task p34-sensors-trivial-14 — the sensor batch (the zh MTE dump rows tmp/gregtech.lang
+		// :13000-13017 verbatim where a dump face exists; 31023 has NO dump row — the dump
+		// itself misses it, the census-erratum anchor — hand row following the 31001 form;
+		// 31022's dump row ships the untranslated en literal, kept verbatim)
+		addDirect("block.gt6.thermometer"); // the MTE 31000 dump row 温度传感器
+		addDirect("block.gt6.luminometer"); // the MTE 31002 dump row 环境光度传感器
+		addDirect("block.gt6.chronometer"); // the MTE 31003 dump row 精确时间传感器
+		addDirect("block.gt6.gibblometer"); // the MTE 31001 dump row 锅炉压力传感器(单位: Gibbl)
+		addDirect("block.gt6.kilogibblometer"); // the MTE 31023 hand row (no dump face) — the 31001 form at the Kilo divisor
+		addDirect("block.gt6.itemometer"); // the MTE 31004 dump row 库存数量传感器
+		addDirect("block.gt6.stackometer"); // the MTE 31005 dump row 库存堆栈传感器
+		addDirect("block.gt6.bucketometer"); // the MTE 31007 dump row 流体体积传感器(单位: 桶)
+		addDirect("block.gt6.kilobucketometer"); // the MTE 31022 dump row verbatim (the en literal)
+		addDirect("block.gt6.lightweightometer"); // the MTE 31010 dump row 轻量级质量传感器
+		addDirect("block.gt6.mediumweightometer"); // the MTE 31011 dump row 中量级质量传感器
+		addDirect("block.gt6.heavyweightometer"); // the MTE 31012 dump row 重量级质量传感器
+		addDirect("block.gt6.superheavyweightometer"); // the MTE 31013 dump row 超重量级质量传感器
+		addDirect("block.gt6.tpsmeter"); // the MTE 31016 dump row TPS传感器
+		addDirect("block.gt6.playercounter"); // the MTE 31017 dump row 玩家数量传感器
 		addDirect("block.gt6.shredder");
 		addDirect("block.gt6.wire_electric_1x");
 		addDirect("block.gt6.wire_electric_2x");

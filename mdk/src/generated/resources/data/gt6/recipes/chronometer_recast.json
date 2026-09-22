@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:chronometer"
+    }
+  ],
+  "result": {
+    "item": "gt6:chronometer"
+  }
+}

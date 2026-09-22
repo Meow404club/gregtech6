@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:itemometer"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:itemometer"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/gibblometer",
+      "x": 90
+    },
+    "facing=east": {
+      "model": "gt6:block/gibblometer",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/gibblometer"
+    },
+    "facing=south": {
+      "model": "gt6:block/gibblometer",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/gibblometer",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "gt6:block/gibblometer",
+      "y": 270
+    }
+  }
+}
