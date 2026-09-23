@@ -118,14 +118,16 @@ public class GT6LongDistanceFluidPipeBlockEntity extends TileEntityBase03TicksAn
 	}
 
 	// ---------------------------------------------------------------------------
-	// the facing mirror (tick-free: the state is re-read lazily on the link work)
+	// the facing mirror (tick-free: the LOGIC reads the state through {@link #facing()}
+	// at every use — the item BE's fix, a freshly placed BE runs no load and no tick)
 	// ---------------------------------------------------------------------------
 
-	private void syncFacingFromState() {
-		if (!hasLevel()) return; // the offline fixtures have no level
-		if (getBlockState().hasProperty(GT6ElectricTransformerBlock.FACING)) {
-			mFacing = (byte) getBlockState().getValue(GT6ElectricTransformerBlock.FACING).get3DDataValue();
+	/** The live facing — the state is the authority; the byte is the offline/NBT fallback. */
+	public byte facing() {
+		if (hasLevel() && getBlockState().hasProperty(GT6ElectricTransformerBlock.FACING)) {
+			return (byte) getBlockState().getValue(GT6ElectricTransformerBlock.FACING).get3DDataValue();
 		}
+		return mFacing;
 	}
 
 	// ---------------------------------------------------------------------------
@@ -155,7 +157,6 @@ public class GT6LongDistanceFluidPipeBlockEntity extends TileEntityBase03TicksAn
 			mTarget.mSender = this;
 			return true;
 		}
-		syncFacingFromState();
 		if (mTargetPos == null || mTemperature <= 0) { // :120 — the rating re-scan arm
 			scanPipes();
 		} else if (mTarget == null || mTarget.isRemoved()) { // :122
@@ -178,7 +179,7 @@ public class GT6LongDistanceFluidPipeBlockEntity extends TileEntityBase03TicksAn
 
 	/** The FRONT block of a peer (its wire-side face — the upstream getOffset(mFacing, 1) :170). */
 	private static BlockPos frontOf(GT6LongDistanceFluidPipeBlockEntity aPipe) {
-		return aPipe.getBlockPos().relative(Direction.from3DDataValue(aPipe.mFacing));
+		return aPipe.getBlockPos().relative(Direction.from3DDataValue(aPipe.facing()));
 	}
 
 	/**
@@ -193,8 +194,7 @@ public class GT6LongDistanceFluidPipeBlockEntity extends TileEntityBase03TicksAn
 		mSender = null; // :143
 		mTemperature = 0; // :144
 		if (!hasLevel() || mOfflineScan) return;
-		syncFacingFromState();
-		BlockPos tSeed = getBlockPos().relative(Direction.from3DDataValue(mFacing).getOpposite()); // :145 — the BACK-adjacent block
+		BlockPos tSeed = getBlockPos().relative(Direction.from3DDataValue(facing()).getOpposite()); // :145 — the BACK-adjacent block
 		if (!getLevel().isLoaded(tSeed)) return; // the POC R1 guard
 		BlockState tBehind = getLevel().getBlockState(tSeed);
 		if (!(tBehind.getBlock() instanceof GT6LongDistPipeBlock tPipeBlock)) return; // :147 — no pipe face, no link
@@ -269,7 +269,7 @@ public class GT6LongDistanceFluidPipeBlockEntity extends TileEntityBase03TicksAn
 		if (!checkTarget()) return null; // the stopped/no-link gate rides the live path even under the rig
 		if (mRemoteOverride != null) return mRemoteOverride;
 		if (!hasLevel() || mTarget == null) return null;
-		Direction tBack = Direction.from3DDataValue(mTarget.mFacing).getOpposite();
+		Direction tBack = Direction.from3DDataValue(mTarget.facing()).getOpposite();
 		BlockPos tAdjacent = mTarget.getBlockPos().relative(tBack);
 		if (!getLevel().isLoaded(tAdjacent)) return null; // the POC R1 guard
 		BlockEntity tTileEntity = getLevel().getBlockEntity(tAdjacent);
@@ -391,7 +391,6 @@ public class GT6LongDistanceFluidPipeBlockEntity extends TileEntityBase03TicksAn
 			mTemperature = aNBT.getLong(NBT_THROUGHPUT);
 		}
 		if (aNBT.contains("facing", Tag.TAG_ANY_NUMERIC)) mFacing = aNBT.getByte("facing");
-		syncFacingFromState(); // the state is the authority (the tick-free mirror)
 	}
 
 	@Override
