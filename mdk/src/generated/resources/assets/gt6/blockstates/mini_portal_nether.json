@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "active=false": {
+      "model": "gt6:block/mini_portal_nether_frame"
+    },
+    "active=true": {
+      "model": "gt6:block/mini_portal_nether_portal"
+    }
+  }
+}

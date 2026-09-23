@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": {
+      "item": "minecraft:ender_eye"
+    },
+    "G": {
+      "item": "minecraft:ghast_tear"
+    },
+    "S": {
+      "item": "minecraft:end_stone"
+    }
+  },
+  "pattern": [
+    "ESE",
+    "SGS",
+    "ESE"
+  ],
+  "result": {
+    "item": "gt6:mini_portal_end"
+  },
+  "show_notification": true
+}

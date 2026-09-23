@@ -1566,6 +1566,21 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.battery_box_large_iv");
 		// task p32-magic-absorber — the Magic Field Absorber (the dump :10891 face verbatim, tail-append)
 		addDirect("block.gt6.magic_absorber");
+		// task p35-portals-mini-nether-end — the portal pair + the upstream tooltip stack
+		// (display names = the dump gt.multitileentity.32766/:13587 + :32000/:13021 verbatim;
+		// tooltip values = the dump portal tooltip lines — mini :17656-17657, nether :17661
+		// (the x8 line, the dump's shifted key), end :17644-17646, requirement :3406/:3405).
+		addDirect("block.gt6.mini_portal_nether");
+		addDirect("block.gt6.mini_portal_end");
+		addDirect("gt.tileentity.portal.mini.tooltip.1");
+		addDirect("gt.tileentity.portal.mini.tooltip.2");
+		addDirect("gt.tileentity.portal.nether.tooltip.1");
+		addDirect("gt.tileentity.portal.nether.tooltip.2");
+		addDirect("gt.tileentity.portal.end.tooltip.1");
+		addDirect("gt.tileentity.portal.end.tooltip.2");
+		addDirect("gt.tileentity.portal.end.tooltip.3");
+		addDirect("gt.lang.requirement.ignite.fire");
+		addDirect("gt.lang.requirement.chunk.loader");
     }
 
 	static Map<String, Map<String, RefRow>> loadReference() {

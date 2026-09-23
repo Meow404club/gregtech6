@@ -8696,3 +8696,13 @@ the whole reboot-switch ladder shares it (`CoverControllerAutoTimer` class doc);
 the `statusdisplay` indicator overlay sprites (`1_off..4_on`, both styles) are NOT
 borrowed — the CoverControllerDisplay lamp composition is the declared deviation
 (the plate shows the style base, the live states ride the visual lane).
+## owned (generated, not borrowed)
+
+- `gt6/textures/block/mini_portal_end.png` — the Miniature End Portal's active
+  face (task p35-portals-mini-nether-end). NOT a borrow: vanilla ships no
+  end-portal block texture (the vanilla end-portal effect is a tile renderer,
+  not a texture), so the card generates a 16x16 near-black starfield (10
+  seeded purple/blue star pixels over an (8,4,16) base — the upstream
+  DYE_Black-tinted portal-texture intent, MiniPortalEnd.java:128). The frame
+  face and the whole Nether portal ride vanilla textures referenced in place
+  (obsidian / end_stone / nether_portal — zero borrowed files).

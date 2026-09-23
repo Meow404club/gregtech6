@@ -135,6 +135,7 @@ public class GT6EnUs extends LanguageProvider {
         addFoodCans(); // task p25-food-can-row0 — table-tail append
         addExtruderMolds(); // task p26-w1-press-extruder-molds — table-tail append
         addSensors(); // task p26-sensors-core — table-tail append
+        addPortals(); // task p35-portals-mini-nether-end — table-tail append
         addCrucibleJade(); // task p28-crucible-jade-face — table-tail append
         addMachineJade(); // task p34-hygiene-lang — table-tail append
         addFluidJade(); // task p34-hygiene-lang — table-tail append
@@ -1817,6 +1818,31 @@ public class GT6EnUs extends LanguageProvider {
                 default -> throw new IllegalArgumentException("untranslated sensor row: " + tRow.path());
             });
         }
+    }
+
+    /**
+     * Portal family keys (task p35-portals-mini-nether-end, 12 keys): the two display
+     * names — the upstream registration rows verbatim (Loader_MultiTileEntities.java:2003
+     * "Miniature Nether Portal" / :2004 "Miniature End Portal") — plus the upstream
+     * tooltip stack (MultiTileEntityMiniPortal.java:86-89 the shared function pair,
+     * MiniPortalNether.java:50-52 the x8/margin/ignite trio, MiniPortalEnd.java:50-53 the
+     * x128/margin/ender-eye trio, LH.java:491/:497 the requirement lines). Consumed by
+     * the GT6PortalItem tooltip face (the addToolTips port) and emitted for the zh
+     * reference join (GT6ZhCn addDirect, the authentic dump values).
+     * Table-tail append, append-only.
+     */
+    private void addPortals() {
+        add("block.gt6.mini_portal_nether", "Miniature Nether Portal"); // Loader :2003
+        add("block.gt6.mini_portal_end", "Miniature End Portal");       // Loader :2004
+        add("gt.tileentity.portal.mini.tooltip.1", "Teleports Items, Fluids, Redstone, Comparator Signals, GT Energy and more!"); // MiniPortal :87
+        add("gt.tileentity.portal.mini.tooltip.2", "Always teleports things to the closest active Portal in Range!");             // MiniPortal :88
+        add("gt.tileentity.portal.nether.tooltip.1", "Only works between the Nether and the Overworld with a x8 Distance Factor!"); // Nether :50
+        add("gt.tileentity.portal.nether.tooltip.2", "Margin of Error to still work: 128 Meters.");                                 // Nether :51
+        add("gt.tileentity.portal.end.tooltip.1", "Only works between the End and the Overworld with a x128 Distance Factor!");     // End :50
+        add("gt.tileentity.portal.end.tooltip.2", "Margin of Error to still work: 512 Meters.");                                    // End :51
+        add("gt.tileentity.portal.end.tooltip.3", "Requires Ender Eye for activation");                                             // End :52
+        add("gt.lang.requirement.ignite.fire", "Requires ignition by Flint and Tinder or similar!");       // LH.java:491
+        add("gt.lang.requirement.chunk.loader", "Needs to be in a loaded Chunk to work properly!");        // LH.java:497
     }
 
     /**
