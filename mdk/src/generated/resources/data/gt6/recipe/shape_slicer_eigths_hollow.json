@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "gt6:plate_tiny_stainless_steel"
+    },
+    "O": {
+      "item": "gt6:shape_slicer_empty"
+    },
+    "R": {
+      "item": "gt6:ring_stainless_steel"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "B B",
+    "sRf",
+    "BOB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:shape_slicer_eigths_hollow"
+  }
+}

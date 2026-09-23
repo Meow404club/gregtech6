@@ -402,6 +402,20 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("item/shape_slicer/grid"));
         withExistingParent("shape_slicer_split", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/shape_slicer/split"));
+        // the slicer census completion (task p36-recipes-obtainability, ruling B) — the
+        // frame + five remaining blade forms over the same composed placeholder convention
+        withExistingParent("shape_slicer_empty", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/shape_slicer/empty"));
+        withExistingParent("shape_slicer_flat", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/shape_slicer/flat"));
+        withExistingParent("shape_slicer_eigths", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/shape_slicer/eigths"));
+        withExistingParent("shape_slicer_eigths_hollow", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/shape_slicer/eigths_hollow"));
+        withExistingParent("shape_slicer_quarters", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/shape_slicer/quarters"));
+        withExistingParent("shape_slicer_quarters_hollow", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/shape_slicer/quarters_hollow"));
         // the p9 redstone-emitter cover item (task p9-redstone-cover-emitter) — the item
         // shows the tier-0 plate art (the offline-composed keypad panel; the sprites live
         // in textures/block/, auto-stitched by the vanilla atlas directory source)

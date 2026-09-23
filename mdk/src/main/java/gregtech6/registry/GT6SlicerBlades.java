@@ -25,9 +25,14 @@ import gregtech6.GT6Mod;
  * {@code @EventBusSubscriber(MOD)} DeferredRegister attached from the construct event (the
  * GT6ExtruderMolds shape verbatim; GT6Mod.java / GTModBusListener.java stay untouched).
  *
- * <p>The subset — 2 items of the upstream 8-blade census (MultiItemTechnological.java
- * :362-372, everything else POOLED: the Empty frame + the Flat blade with the CUT fur row,
- * the Eigths/Quarters blades with the pooled melon/food faces):
+ * <p>The subset — 2 RM-row0 items of the upstream 8-blade census (MultiItemTechnological.java
+ * :362-372; the pooled melon/food faces stay pooled, the never pool): the Empty frame +
+ * the Flat blade with the CUT fur row, the Eigths/Quarters blades with the pooled melon/food
+ * faces. Task p36-recipes-obtainability (ruling B, the obtainability domain = items +
+ * recipes inseparable) completes the census: the frame and the five remaining blade forms
+ * register — same plain-item pattern — because the eight :364+:374-380 crafting rows need
+ * all eight outputs and the frame as the shared 'O' ingredient. The full census walks in
+ * {@link #ALL}; {@link #BLADES} stays the RM row0 pair (the {@link #sBladeTest} face):
  * <ul>
  * <li><b>the split blade</b> — upstream {@code IL.Shape_Slicer_Split} meta 10905 "Slicer
  *     Blades (Split)" (MultiItemTechnological.java:370); the shaping tool of the four
@@ -73,8 +78,46 @@ public final class GT6SlicerBlades {
 	public static final RegistryObject<Item> SHAPE_SLICER_SPLIT = ITEMS.register("shape_slicer_split",
 			() -> new Item(new Item.Properties()));
 
+	/**
+	 * The blade frame — id {@code gt6:shape_slicer_empty} (upstream meta 10900 "Slicer Blade
+	 * Frame", MultiItemTechnological.java:362). NOT a blade: it is the CRAFTING INGREDIENT of
+	 * every blade row (:374-380 'O' column), consumed — it never rides {@link #BLADES}.
+	 */
+	public static final RegistryObject<Item> SHAPE_SLICER_EMPTY = ITEMS.register("shape_slicer_empty",
+			() -> new Item(new Item.Properties()));
+
+	/** The flat blade — id {@code gt6:shape_slicer_flat} (upstream meta 10901, MultiItemTechnological.java:366). */
+	public static final RegistryObject<Item> SHAPE_SLICER_FLAT = ITEMS.register("shape_slicer_flat",
+			() -> new Item(new Item.Properties()));
+
+	/** The eigths blade — id {@code gt6:shape_slicer_eigths} (upstream meta 10903, :368 — the upstream spelling verbatim). */
+	public static final RegistryObject<Item> SHAPE_SLICER_EIGHTS = ITEMS.register("shape_slicer_eigths",
+			() -> new Item(new Item.Properties()));
+
+	/** The hollow-eigths blade — id {@code gt6:shape_slicer_eigths_hollow} (upstream meta 10904, :369). */
+	public static final RegistryObject<Item> SHAPE_SLICER_EIGHTS_HOLLOW = ITEMS.register("shape_slicer_eigths_hollow",
+			() -> new Item(new Item.Properties()));
+
+	/** The quarters blade — id {@code gt6:shape_slicer_quarters} (upstream meta 10906, :371). */
+	public static final RegistryObject<Item> SHAPE_SLICER_QUARTERS = ITEMS.register("shape_slicer_quarters",
+			() -> new Item(new Item.Properties()));
+
+	/** The hollow-quarters blade — id {@code gt6:shape_slicer_quarters_hollow} (upstream meta 10907, :372). */
+	public static final RegistryObject<Item> SHAPE_SLICER_QUARTERS_HOLLOW = ITEMS.register("shape_slicer_quarters_hollow",
+			() -> new Item(new Item.Properties()));
+
 	/** The row0 blade set in upstream meta order (:367 grid before :370 split). */
 	public static final List<RegistryObject<Item>> BLADES = List.of(SHAPE_SLICER_GRID, SHAPE_SLICER_SPLIT);
+
+	/**
+	 * The full EIGHT-item census in upstream meta order (:362 frame, :366-:372 the seven
+	 * blades) — the crafting-row and lang walk; the RM row0 subset {@link #BLADES} stays
+	 * the {@link #sBladeTest} face (the six p36 blades carry no RM rows — the never pool
+	 * holds, task p36-recipes-obtainability ruling B).
+	 */
+	public static final List<RegistryObject<Item>> ALL = List.of(SHAPE_SLICER_EMPTY, SHAPE_SLICER_FLAT,
+			SHAPE_SLICER_GRID, SHAPE_SLICER_EIGHTS, SHAPE_SLICER_EIGHTS_HOLLOW, SHAPE_SLICER_SPLIT,
+			SHAPE_SLICER_QUARTERS, SHAPE_SLICER_QUARTERS_HOLLOW);
 
 	/**
 	 * The blade-identity seam (production default = item identity over the two registered

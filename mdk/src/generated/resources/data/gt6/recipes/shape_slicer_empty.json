@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "R": {
+      "item": "gt6:stick_stainless_steel"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    " R ",
+    "RhR",
+    " R "
+  ],
+  "result": {
+    "item": "gt6:shape_slicer_empty"
+  },
+  "show_notification": true
+}

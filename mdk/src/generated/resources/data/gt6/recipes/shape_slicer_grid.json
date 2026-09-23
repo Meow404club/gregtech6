@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "gt6:plate_tiny_stainless_steel"
+    },
+    "O": {
+      "item": "gt6:shape_slicer_empty"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    " Bf",
+    "BOB",
+    " Bs"
+  ],
+  "result": {
+    "item": "gt6:shape_slicer_grid"
+  },
+  "show_notification": true
+}
