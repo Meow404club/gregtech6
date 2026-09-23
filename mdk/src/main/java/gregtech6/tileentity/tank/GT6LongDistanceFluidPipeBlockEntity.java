@@ -122,6 +122,7 @@ public class GT6LongDistanceFluidPipeBlockEntity extends TileEntityBase03TicksAn
 	// ---------------------------------------------------------------------------
 
 	private void syncFacingFromState() {
+		if (!hasLevel()) return; // the offline fixtures have no level
 		if (getBlockState().hasProperty(GT6ElectricTransformerBlock.FACING)) {
 			mFacing = (byte) getBlockState().getValue(GT6ElectricTransformerBlock.FACING).get3DDataValue();
 		}
@@ -134,7 +135,11 @@ public class GT6LongDistanceFluidPipeBlockEntity extends TileEntityBase03TicksAn
 	/** The fluid's K temperature — the attributes read (the CoverDrain getFluidType dual-leg form), 300 K default (FL.DEF_ENV_TEMP). */
 	static long temperatureOf(@Nullable FluidStack aFluid) {
 		if (aFluid == null || aFluid.isEmpty()) return 300;
-		return aFluid.getFluid().getFluidType().getTemperature();
+		try {
+			return aFluid.getFluid().getFluidType().getTemperature();
+		} catch (NullPointerException tUnbound) {
+			return 300; // the offline doubles cannot bind the vanilla fluid-type RegistryObjects (the CoverDrain form)
+		}
 	}
 
 	// ---------------------------------------------------------------------------
@@ -242,6 +247,11 @@ public class GT6LongDistanceFluidPipeBlockEntity extends TileEntityBase03TicksAn
 		mRemoteOverride = aRemote;
 	}
 
+	/** The package-private test entry over the window (the Root itemHandlerCapability seam form — ForgeCapabilities cannot class-init offline). */
+	IFluidHandler window() {
+		return mWindow;
+	}
+
 	/** The offline target injection (the level-less delegate rig). */
 	void setTargetOverride(@Nullable GT6LongDistanceFluidPipeBlockEntity aTarget) {
 		mTargetOverride = aTarget;
@@ -256,8 +266,9 @@ public class GT6LongDistanceFluidPipeBlockEntity extends TileEntityBase03TicksAn
 	 */
 	@Nullable
 	IFluidHandler remoteTank() {
+		if (!checkTarget()) return null; // the stopped/no-link gate rides the live path even under the rig
 		if (mRemoteOverride != null) return mRemoteOverride;
-		if (!checkTarget() || !hasLevel() || mTarget == null) return null;
+		if (!hasLevel() || mTarget == null) return null;
 		Direction tBack = Direction.from3DDataValue(mTarget.mFacing).getOpposite();
 		BlockPos tAdjacent = mTarget.getBlockPos().relative(tBack);
 		if (!getLevel().isLoaded(tAdjacent)) return null; // the POC R1 guard

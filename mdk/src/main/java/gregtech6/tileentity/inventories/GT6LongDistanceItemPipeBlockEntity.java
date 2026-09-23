@@ -125,6 +125,7 @@ public class GT6LongDistanceItemPipeBlockEntity extends TileEntityBase03TicksAnd
 	// ---------------------------------------------------------------------------
 
 	private void syncFacingFromState() {
+		if (!hasLevel()) return; // the offline fixtures have no level
 		if (getBlockState().hasProperty(GT6ElectricTransformerBlock.FACING)) {
 			mFacing = (byte) getBlockState().getValue(GT6ElectricTransformerBlock.FACING).get3DDataValue();
 		}
@@ -234,6 +235,11 @@ public class GT6LongDistanceItemPipeBlockEntity extends TileEntityBase03TicksAnd
 		mRemoteOverride = aRemote;
 	}
 
+	/** The package-private test entry over the window (the Root itemHandlerCapability seam form — ForgeCapabilities cannot class-init offline). */
+	IItemHandler window() {
+		return mWindow;
+	}
+
 	/** The offline target injection (the level-less delegate rig). */
 	void setTargetOverride(@Nullable GT6LongDistanceItemPipeBlockEntity aTarget) {
 		mTargetOverride = aTarget;
@@ -248,8 +254,9 @@ public class GT6LongDistanceItemPipeBlockEntity extends TileEntityBase03TicksAnd
 	 */
 	@Nullable
 	IItemHandler remoteInventory() {
+		if (!checkTarget()) return null; // the stopped/no-link gate rides the live path even under the rig
 		if (mRemoteOverride != null) return mRemoteOverride;
-		if (!checkTarget() || !hasLevel() || mTarget == null) return null;
+		if (!hasLevel() || mTarget == null) return null;
 		Direction tBack = Direction.from3DDataValue(mTarget.mFacing).getOpposite();
 		BlockPos tAdjacent = mTarget.getBlockPos().relative(tBack);
 		if (!getLevel().isLoaded(tAdjacent)) return null; // the POC R1 guard
