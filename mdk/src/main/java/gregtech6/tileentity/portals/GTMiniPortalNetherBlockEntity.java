@@ -53,9 +53,11 @@ public class GTMiniPortalNetherBlockEntity extends GTMiniPortalBlockEntity {
 		Level tLevel = getLevel();
 		if (tLevel == null || tLevel.isClientSide()) return; // upstream :69 isServerSide guard
 		if (tLevel.dimension() == Level.OVERWORLD) {
-			mTarget = nearestPortal(sListNetherSide, getBlockPos(), 8, 128 * 128);
+			mTarget = nearestPortal(sListNetherSide, getBlockPos(), 8,
+				128 * 128, true);
 		} else if (tLevel.dimension() == Level.NETHER) {
-			mTarget = nearestPortal(sListWorldSide, getBlockPos(), 8, 128 * 128);
+			mTarget = nearestPortal(sListWorldSide, getBlockPos(), 8,
+				128 * 128, false);
 		}
 	}
 

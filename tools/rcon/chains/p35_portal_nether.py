@@ -64,7 +64,7 @@ steps = [
     Step(f"setblock {F(RSRC)} minecraft:redstone_block", expect="Changed the block"),
 
     phase("B: the nether rig — forceload (the user chunkload duty) + portal + sinks"),
-    Step(NETH + "forceload add 48 32 63 47", expect="marked for loading", sleep=1.0),
+    Step(NETH + "forceload add 48 32 63 47", expect="to be force loaded", sleep=1.0),
     Step(NETH + f"setblock {B} gt6:mini_portal_nether", expect="Changed the block"),
     Step(NETH + f"setblock {CHEST} minecraft:chest", expect="Changed the block"),
     Step(NETH + f"setblock {LAMP} minecraft:redstone_lamp", expect="Changed the block"),

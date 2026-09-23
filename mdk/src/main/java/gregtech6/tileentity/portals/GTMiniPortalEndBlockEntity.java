@@ -50,9 +50,11 @@ public class GTMiniPortalEndBlockEntity extends GTMiniPortalBlockEntity {
 		Level tLevel = getLevel();
 		if (tLevel == null || tLevel.isClientSide()) return;
 		if (tLevel.dimension() == Level.OVERWORLD) {
-			mTarget = nearestPortal(sListEndSide, getBlockPos(), 128, 512 * 512);
+			mTarget = nearestPortal(sListEndSide, getBlockPos(), 128,
+				512 * 512, true);
 		} else if (tLevel.dimension() == Level.END) {
-			mTarget = nearestPortal(sListWorldSide, getBlockPos(), 128, 512 * 512);
+			mTarget = nearestPortal(sListWorldSide, getBlockPos(), 128,
+				512 * 512, false);
 		}
 	}
 

@@ -108,22 +108,27 @@ public abstract class GTMiniPortalBlockEntity extends TileEntityBase03TicksAndSy
 	// ---------------------------------------------------------------------------
 
 	/**
-	 * The pairing kernel (upstream Nether.java:71-80 / End.java:67-76 — the two mirrored
-	 * dimension branches fold into one formula: the upstream overworld and nether branch
-	 * compute the IDENTICAL expression {@code selfX - candidateX*factor}, :73 vs :85).
-	 * Nearest candidate by distance² under the factor arithmetic, skipping dead entries
+	 * The pairing kernel (upstream Nether.java:71-80 / End.java:67-76): the OW coordinate
+	 * is always the un-multiplied operand — from the overworld side the factor hits the
+	 * candidate (:73 {@code xCoord - tTarget.xCoord*8}), from the other side it hits SELF
+	 * (:85 {@code tTarget.xCoord - xCoord*8}) — hence {@code aSelfIsPrimary}. Nearest
+	 * candidate by distance² under the factor arithmetic, skipping dead entries
 	 * ({@code !isRemoved()} ↔ upstream {@code !isDead()}), the Y-proximity tie-break on an
 	 * equal distance (:78/:86); anything beyond the tolerance square never wins.
 	 * Static and level-free — the offline pairing tests drive it directly.
 	 */
 	@Nullable
-	static GTMiniPortalBlockEntity nearestPortal(List<GTMiniPortalBlockEntity> aCandidates, BlockPos aSelf, long aFactor, long aToleranceSq) {
+	static GTMiniPortalBlockEntity nearestPortal(List<GTMiniPortalBlockEntity> aCandidates, BlockPos aSelf, long aFactor, long aToleranceSq, boolean aSelfIsPrimary) {
 		GTMiniPortalBlockEntity tBest = null;
 		long tShortestDistance = aToleranceSq;
 		for (GTMiniPortalBlockEntity tTarget : aCandidates) {
 			if (tTarget == null || tTarget.isRemoved()) continue;
-			long tXDifference = aSelf.getX() - tTarget.getBlockPos().getX() * aFactor;
-			long tZDifference = aSelf.getZ() - tTarget.getBlockPos().getZ() * aFactor;
+			long tXDifference = aSelfIsPrimary
+					? aSelf.getX() - tTarget.getBlockPos().getX() * aFactor
+					: tTarget.getBlockPos().getX() - aSelf.getX() * aFactor;
+			long tZDifference = aSelfIsPrimary
+					? aSelf.getZ() - tTarget.getBlockPos().getZ() * aFactor
+					: tTarget.getBlockPos().getZ() - aSelf.getZ() * aFactor;
 			long tTempDist = tXDifference * tXDifference + tZDifference * tZDifference;
 			if (tTempDist < tShortestDistance) {
 				tShortestDistance = tTempDist;

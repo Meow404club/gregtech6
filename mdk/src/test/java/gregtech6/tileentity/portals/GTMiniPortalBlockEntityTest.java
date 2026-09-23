@@ -71,7 +71,7 @@ public class GTMiniPortalBlockEntityTest {
 		// the RCON-chain geometry: OW (448,65,350) ↔ Nether (56,·,44) — dx=448-448=0, dz=350-352=-2
 		GTMiniPortalBlockEntity tNetherSide = nether(56, 65, 44);
 		List<GTMiniPortalBlockEntity> tList = List.of(tNetherSide);
-		assertEquals(tNetherSide, GTMiniPortalBlockEntity.nearestPortal(tList, new BlockPos(448, 65, 350), 8, 128 * 128),
+		assertEquals(tNetherSide, GTMiniPortalBlockEntity.nearestPortal(tList, new BlockPos(448, 65, 350), 8, 128 * 128, true),
 				"the ×8 coordinate arithmetic pairs the mirrored sites (Nether.java:73)");
 	}
 
@@ -81,11 +81,11 @@ public class GTMiniPortalBlockEntityTest {
 		// exactly ON the tolerance: dist² == 128² with no prior best wins through the
 		// upstream tie-break arm (Nether.java:78 `mTarget == null` disjunct)
 		GTMiniPortalBlockEntity tOnBoundary = nether(40, 65, 44); // dx = 448-320 = 128, dz = 0 → 16384
-		assertEquals(tOnBoundary, GTMiniPortalBlockEntity.nearestPortal(List.of(tOnBoundary), new BlockPos(448, 65, 352), 8, 128 * 128),
+		assertEquals(tOnBoundary, GTMiniPortalBlockEntity.nearestPortal(List.of(tOnBoundary), new BlockPos(448, 65, 352), 8, 128 * 128, true),
 				"the boundary candidate is the upstream null-arm acceptance");
 		// one rod beyond: dx = 136 → 18496 > 16384 → rejected
 		GTMiniPortalBlockEntity tBeyond = nether(39, 65, 44);
-		assertNull(GTMiniPortalBlockEntity.nearestPortal(List.of(tBeyond), new BlockPos(448, 65, 352), 8, 128 * 128),
+		assertNull(GTMiniPortalBlockEntity.nearestPortal(List.of(tBeyond), new BlockPos(448, 65, 352), 8, 128 * 128, true),
 				"beyond the 128 m margin nothing pairs (Nether.java:71 initial bound)");
 	}
 
@@ -93,16 +93,27 @@ public class GTMiniPortalBlockEntityTest {
 	public void endPairingUsesTheX128Factor() {
 		// OW (512,65,384) ↔ End (4,·,3): dx=512-512=0, dz=384-384=0
 		GTMiniPortalBlockEntity tEndSide = end(4, 65, 3);
-		assertEquals(tEndSide, GTMiniPortalBlockEntity.nearestPortal(List.of(tEndSide), new BlockPos(512, 65, 384), 128, 512 * 512),
+		assertEquals(tEndSide, GTMiniPortalBlockEntity.nearestPortal(List.of(tEndSide), new BlockPos(512, 65, 384), 128, 512 * 512, true),
 				"the ×128 coordinate arithmetic pairs the mirrored sites (End.java:69)");
 		// exactly ON the tolerance: End (0,·,3) → dx=512 → 262144 == 512² → the null-arm acceptance
 		GTMiniPortalBlockEntity tOnBoundary = end(0, 65, 3);
-		assertEquals(tOnBoundary, GTMiniPortalBlockEntity.nearestPortal(List.of(tOnBoundary), new BlockPos(512, 65, 384), 128, 512 * 512),
+		assertEquals(tOnBoundary, GTMiniPortalBlockEntity.nearestPortal(List.of(tOnBoundary), new BlockPos(512, 65, 384), 128, 512 * 512, true),
 				"the 512 m boundary is the acceptance edge (End.java:67 initial bound)");
 		// one End block further: dx=640 → 409600 > 512² → rejected
 		GTMiniPortalBlockEntity tBeyond = end(-1, 65, 3);
-		assertNull(GTMiniPortalBlockEntity.nearestPortal(List.of(tBeyond), new BlockPos(512, 65, 384), 128, 512 * 512),
+		assertNull(GTMiniPortalBlockEntity.nearestPortal(List.of(tBeyond), new BlockPos(512, 65, 384), 128, 512 * 512, true),
 				"beyond the 512 m margin nothing pairs");
+	}
+
+	@Test
+	public void netherMirrorDirectionCarriesTheFactorOnSelf() {
+		// the Nether branch (Nether.java:85): the factor hits SELF, the OW coord is raw —
+		// self (56,65,44), candidate (448,65,352): dx = 448-448 = 0, dz = 352-352 = 0
+		GTMiniPortalBlockEntity tOwSide = nether(448, 65, 352);
+		assertEquals(tOwSide, GTMiniPortalBlockEntity.nearestPortal(List.of(tOwSide), new BlockPos(56, 65, 44), 8, 128 * 128, false),
+				"the mirrored arm pairs the same geometry (the RCON expect-13 lesson)");
+		GTMiniPortalBlockEntity tWrong = nether(448, 65, 350); // dz = 350 - 44*8 = -2 → dist² = 4, still within
+		assertEquals(tWrong, GTMiniPortalBlockEntity.nearestPortal(List.of(tWrong), new BlockPos(56, 65, 44), 8, 128 * 128, false));
 	}
 
 	@Test
@@ -113,7 +124,7 @@ public class GTMiniPortalBlockEntityTest {
 		List<GTMiniPortalBlockEntity> tList = new ArrayList<>();
 		tList.add(tFarY);
 		tList.add(tNearY);
-		assertEquals(tNearY, GTMiniPortalBlockEntity.nearestPortal(tList, new BlockPos(128, 65, 0), 8, 128 * 128),
+		assertEquals(tNearY, GTMiniPortalBlockEntity.nearestPortal(tList, new BlockPos(128, 65, 0), 8, 128 * 128, true),
 				"the equal-distance tie-break is Y proximity (Nether.java:78)");
 	}
 
@@ -121,7 +132,7 @@ public class GTMiniPortalBlockEntityTest {
 	public void removedCandidatesNeverPair() {
 		GTMiniPortalBlockEntity tDead = nether(56, 65, 44);
 		tDead.setRemoved(); // isRemoved() ↔ upstream isDead (the POC R3 mapping)
-		assertNull(GTMiniPortalBlockEntity.nearestPortal(List.of(tDead), new BlockPos(448, 65, 350), 8, 128 * 128),
+		assertNull(GTMiniPortalBlockEntity.nearestPortal(List.of(tDead), new BlockPos(448, 65, 350), 8, 128 * 128, true),
 				"the dead-entry skip (upstream `!tTarget.isDead()`, Nether.java:72)");
 	}
 
