@@ -4,6 +4,7 @@ import java.util.List;
 
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.registry.GT6BookText;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -612,6 +613,14 @@ public final class GT6ItemModels extends ItemModelProvider {
         withExistingParentUnchecked("bumbliary_advanced", "block/bumbliary_adv");
         // the R2 hive BlockItem (task p34-bumbliary-recipes) — the same BlockItem form
         withExistingParentUnchecked("bumble_hive", "block/bumble_hive");
+        // the written-book family (task p35-books-written) — 15 models sharing the vanilla
+        // written_book item model as the parent (zero shipped assets: the upstream
+        // ItemsGT.BOOKS carriers render as plain books, MultiItemBooks.java carries no
+        // per-book icon face), walked over the generated rows so the model ids cannot
+        // drift from the GT6Books registry paths
+        for (GT6BookText.BookText tRow : GT6BookText.BOOKS) {
+            withExistingParent(tRow.path(), mcLoc("item/written_book"));
+        }
     }
 
     /** The unchecked parent reference (the GT6BlockStates turbine form) — cross-provider block models generated later. */

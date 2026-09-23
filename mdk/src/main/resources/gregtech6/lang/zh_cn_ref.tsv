@@ -1894,6 +1894,21 @@ direct	item.gt6.knife	小刀	hand
 direct	item.gt6.lubricant_bucket	润滑油桶	hand
 direct	item.gt6.lubricant_bucket.tooltip	仅限工业用途！	hand
 direct	item.gt6.magnifying_glass	放大镜	hand
+direct	item.gt6.manual_enchantments	附魔的恼人世界	hand
+direct	item.gt6.manual_extenders	扩展器与过滤器	hand
+direct	item.gt6.manual_hunting_blaze	烈焰人与恶魂狩猎指南	hand
+direct	item.gt6.manual_hunting_creeper	苦力怕狩猎指南	hand
+direct	item.gt6.manual_hunting_end	末地狩猎指南	hand
+direct	item.gt6.manual_hunting_skeleton	骷髅狩猎指南	hand
+direct	item.gt6.manual_hunting_spider	蜘蛛狩猎指南	hand
+direct	item.gt6.manual_hunting_witch	女巫狩猎指南	hand
+direct	item.gt6.manual_hunting_zombie	僵尸狩猎指南	hand
+direct	item.gt6.manual_printer	扫描仪与打印机手册	hand
+direct	item.gt6.manual_random	GregTech 六代技巧与窍门	hand
+direct	item.gt6.manual_reactors	裂变反应堆手册	hand
+direct	item.gt6.manual_smeltery	冶炼坩埚手册	hand
+direct	item.gt6.manual_steam	蒸汽手册	hand
+direct	item.gt6.manual_tools	工具索引	hand
 direct	item.gt6.mining_drill_hv	采矿钻头 (HV)	hand
 direct	item.gt6.mining_drill_lv	采矿钻头 (LV)	hand
 direct	item.gt6.mining_drill_mv	采矿钻头 (MV)	hand

@@ -2284,6 +2284,25 @@ LEGACY_ITEM_BACKFILL = {
     'item.gt6.usb_stick_3.tooltip': '储存数据',
     'item.gt6.usb_stick_4': 'USB 4.0',
     'item.gt6.usb_stick_4.tooltip': '储存数据',
+    # ---- the 15 written-book display names (task p35-books-written): hand rows over the
+    # upstream title columns (Loader_Books.java, the single-source extractor face) — the
+    # dump carries zero book-title faces (its 743 written.book.* rows are the English
+    # page defaults the LanguageHandler.langfile fallback wrote back)
+    'item.gt6.manual_enchantments': '附魔的恼人世界',
+    'item.gt6.manual_extenders': '扩展器与过滤器',
+    'item.gt6.manual_hunting_blaze': '烈焰人与恶魂狩猎指南',
+    'item.gt6.manual_hunting_creeper': '苦力怕狩猎指南',
+    'item.gt6.manual_hunting_end': '末地狩猎指南',
+    'item.gt6.manual_hunting_skeleton': '骷髅狩猎指南',
+    'item.gt6.manual_hunting_spider': '蜘蛛狩猎指南',
+    'item.gt6.manual_hunting_witch': '女巫狩猎指南',
+    'item.gt6.manual_hunting_zombie': '僵尸狩猎指南',
+    'item.gt6.manual_printer': '扫描仪与打印机手册',
+    'item.gt6.manual_random': 'GregTech 六代技巧与窍门',
+    'item.gt6.manual_reactors': '裂变反应堆手册',
+    'item.gt6.manual_smeltery': '冶炼坩埚手册',
+    'item.gt6.manual_steam': '蒸汽手册',
+    'item.gt6.manual_tools': '工具索引',
 }
 
 # ---- the block-band drift: the tree families, surface plants, placeables and the
