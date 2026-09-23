@@ -849,6 +849,20 @@ SESSION_GROUPS = (
         # mounts (vent/drain/fluid filter) + the live selector placement-gate
         # negative + the screwdriver whitelist/blacklist flip.
         "p34_covers_g2",
+        # p35-covers-display-scale-6 — the display/scale cover family live
+        # chains, six fresh columns x600..645 z304..308 (x-disjoint from the
+        # covers-g2 band x560..584 and every registered band): the auto switch
+        # idle-hold/release/mount + input-release transitions, the reboot timer
+        # mid-cycle hold + the removal release, the status display 488 lane +
+        # the in-vivo style-bit round trip, the energy display both gauge ends
+        # (0 at the drained buffer, 10 at the 2x64-booked rig) and the two
+        # scales (the live progress value lane, the full-scale 15).
+        "cover6_controller_auto",
+        "cover6_auto_timer",
+        "cover6_controller_display",
+        "cover6_display_energy",
+        "cover6_scale_progress",
+        "cover6_scale_energy",
     ),
     # p34-machines-bumblelyzer-crucible (task p34-machines-bumblelyzer-crucible): the
     # Bumblelyzer scan arm + the Crystallisation Crucible :683 boule row live chain —
