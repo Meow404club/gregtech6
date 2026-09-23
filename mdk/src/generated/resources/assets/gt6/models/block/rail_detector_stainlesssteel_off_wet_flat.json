@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/rail_flat",
+  "textures": {
+    "rail": "gt6:block/rail_detector_stainlesssteel"
+  }
+}

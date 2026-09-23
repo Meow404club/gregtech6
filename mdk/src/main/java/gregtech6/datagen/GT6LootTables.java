@@ -95,6 +95,7 @@ public final class GT6LootTables extends LootTableProvider {
         //? if neoforge {
         /*
         super(output, Set.of(), List.of(
+                new SubProviderEntry(GT6RailBlockLoot::new, LootContextParamSets.BLOCK), // task p35-rails-31-blocks — the 31 rail rows self-drop
                 new SubProviderEntry(GT6BlockLoot::new, LootContextParamSets.BLOCK),
                 new SubProviderEntry(GT6WireBlockLoot::new, LootContextParamSets.BLOCK), // task p9-wire-family-w1 ⑥
                 new SubProviderEntry(GT6AxleBlockLoot::new, LootContextParamSets.BLOCK), // task p12-axle-family
@@ -150,6 +151,7 @@ public final class GT6LootTables extends LootTableProvider {
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
+                new SubProviderEntry(GT6RailBlockLoot::new, LootContextParamSets.BLOCK), // task p35-rails-31-blocks — the 31 rail rows self-drop
                 new SubProviderEntry(GT6BlockLoot::new, LootContextParamSets.BLOCK),
                 new SubProviderEntry(GT6WireBlockLoot::new, LootContextParamSets.BLOCK), // task p9-wire-family-w1 ⑥
                 new SubProviderEntry(GT6AxleBlockLoot::new, LootContextParamSets.BLOCK), // task p12-axle-family
@@ -2641,6 +2643,43 @@ public final class GT6LootTables extends LootTableProvider {
             return LootTable.lootTable().setParamSet(LootContextParamSets.CHEST)
                     .setRandomSequence(tableId(aRow.name()))
                     .withPool(tPool);
+        }
+    }
+    /**
+     * The rail family block list (task p35-rails-31-blocks): the Road Stripe + the 30
+     * material rows. The upstream rails carry the MTE-default self-drop (the vanilla rail
+     * drop form, BlockBaseRail.java:110-114 damageDropped 0 / self item); the 1.20.1/21.1
+     * equivalent is exactly {@code dropSelf} like the wire/axle families.
+     */
+    public static List<Block> railLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        rBlocks.add(gregtech6.registry.GT6Rails.ROAD_BLOCK.get());
+        for (RegistryObject<Block> tRail : gregtech6.registry.GT6Rails.BLOCKS_BY_PATH.values()) rBlocks.add(tRail.get());
+        return rBlocks;
+    }
+
+    /** The rail family self-drop provider (task p35-rails-31-blocks). */
+    public static final class GT6RailBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6RailBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6RailBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return railLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : railLootBlocks()) dropSelf(tBlock);
         }
     }
 }

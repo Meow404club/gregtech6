@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "R": {
+      "item": "gt6:rail_gt_tungstensteel"
+    },
+    "S": {
+      "item": "gt6:stick_wood_treated"
+    }
+  },
+  "pattern": [
+    "RSR",
+    "RSR",
+    "RSR"
+  ],
+  "result": {
+    "count": 4,
+    "id": "gt6:rail_tungstensteel"
+  }
+}

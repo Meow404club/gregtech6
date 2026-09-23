@@ -8,7 +8,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BaseRailBlock;
+import net.minecraft.world.level.block.RailBlock;
+import net.minecraft.world.level.block.PoweredRailBlock;
 import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
@@ -54,6 +60,7 @@ import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6FoamBlocks;
 import gregtech6.registry.GT6Sensors;
 import gregtech6.registry.GT6Kinetics;
+import gregtech6.registry.GT6Rails; // p35 tail-append
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.registry.GTWireSpecs;
 import gregtech6.registry.GTWires;
@@ -218,6 +225,101 @@ public final class GT6BlockStates extends BlockStateProvider {
         addHive(); // task p32-bees-lv2 — the bumble hive (the tinted body + the six-overlay two-layer form)
         addBumbliary(); // task p33-bees-lv3-b-bumbliary — the Bumbliary pair (the hive two-layer grammar over the facing cube)
         addPlaceables(); // task p32-placeables — the Greg o'Lantern (the carved-front cube)
+        addRails(); // task p35-rails-31-blocks — the 31-rail family (the vanilla rail grammar)
+    }
+
+    /**
+     * The rail family (task p35-rails-31-blocks, 31 blocks): the vanilla rail grammar over
+     * the 61 borrowed upstream PNGs (tmp/gt6-1.7.10 assets gregtech/textures/blocks/
+     * iconsets RAIL_* family, byte-identical copies). Model shapes:
+     * <ul>
+     * <li>normal rail x10 — the 10-shape blockstate (the vanilla rail.json variant table,
+     *     client-extra.jar assets/minecraft/blockstates/rail.json: flat, flat y90, the four
+     *     raised_ne/sw ascends, the four rail_corner quadrants) over 4 models per material
+     *     (flat/raised_ne/raised_sw carry the STRAIGHT texture — the upstream meta&lt;6 arm,
+     *     BlockBaseRail.java:119 — and the corner the TURNED texture);</li>
+     * <li>booster x10 / detector x10 — the STRAIGHT-only shape property (6 shapes: the two
+     *     flats + the four ascends), a POWERED arm each (the active texture row);</li>
+     * <li>road stripe — the straight-only 2-flat-shapes blockstate over one model (the
+     *     RAIL_ROAD_STRIPE texture; the reflector-toggle arm is cut, the GT6RoadRailBlock
+     *     javadoc ruling).</li>
+     * </ul>
+     * Every partial state covers BOTH WATERLOGGED arms (the VariantBlockStateBuilder
+     * completeness check demands the full property cross-product; waterlogging renders the
+     * same model). Item models parent the material's flat model (the vanilla rail item form).
+     */
+    private void addRails() {
+        for (int tIndex = 0; tIndex < GT6Rails.ROWS.size(); tIndex++) {
+            GT6Rails.RailRow tRow = GT6Rails.ROWS.get(tIndex);
+            String tSlug = GT6Rails.SLUGS[tIndex % GT6Rails.SLUGS.length]; // the material slug (ROWS = kinds x materials ascending)
+            if (tRow.kind() == GT6Rails.RailKind.NORMAL) {
+                ModelFile tFlat = railModel("rail_" + tSlug + "_flat", "block/rail_flat", "rail_straight_" + tSlug);
+                ModelFile tRaisedNe = railModel("rail_" + tSlug + "_raised_ne", "block/template_rail_raised_ne", "rail_straight_" + tSlug);
+                ModelFile tRaisedSw = railModel("rail_" + tSlug + "_raised_sw", "block/template_rail_raised_sw", "rail_straight_" + tSlug);
+                ModelFile tCorner = railModel("rail_" + tSlug + "_corner", "block/rail_corner", "rail_turned_" + tSlug);
+                for (boolean tWet : new boolean[] {false, true}) {
+                    getVariantBuilder(GT6Rails.BLOCKS_BY_PATH.get(tRow.path()).get())
+                            .partialState().with(RailBlock.SHAPE, RailShape.NORTH_SOUTH).with(BaseRailBlock.WATERLOGGED, tWet).addModels(new ConfiguredModel(tFlat))
+                            .partialState().with(RailBlock.SHAPE, RailShape.EAST_WEST).with(BaseRailBlock.WATERLOGGED, tWet).addModels(new ConfiguredModel(tFlat, 0, 90, false))
+                            .partialState().with(RailBlock.SHAPE, RailShape.ASCENDING_EAST).with(BaseRailBlock.WATERLOGGED, tWet).addModels(new ConfiguredModel(tRaisedNe, 0, 90, false))
+                            .partialState().with(RailBlock.SHAPE, RailShape.ASCENDING_WEST).with(BaseRailBlock.WATERLOGGED, tWet).addModels(new ConfiguredModel(tRaisedSw, 0, 90, false))
+                            .partialState().with(RailBlock.SHAPE, RailShape.ASCENDING_NORTH).with(BaseRailBlock.WATERLOGGED, tWet).addModels(new ConfiguredModel(tRaisedNe))
+                            .partialState().with(RailBlock.SHAPE, RailShape.ASCENDING_SOUTH).with(BaseRailBlock.WATERLOGGED, tWet).addModels(new ConfiguredModel(tRaisedSw))
+                            .partialState().with(RailBlock.SHAPE, RailShape.SOUTH_EAST).with(BaseRailBlock.WATERLOGGED, tWet).addModels(new ConfiguredModel(tCorner))
+                            .partialState().with(RailBlock.SHAPE, RailShape.SOUTH_WEST).with(BaseRailBlock.WATERLOGGED, tWet).addModels(new ConfiguredModel(tCorner, 0, 90, false))
+                            .partialState().with(RailBlock.SHAPE, RailShape.NORTH_WEST).with(BaseRailBlock.WATERLOGGED, tWet).addModels(new ConfiguredModel(tCorner, 0, 180, false))
+                            .partialState().with(RailBlock.SHAPE, RailShape.NORTH_EAST).with(BaseRailBlock.WATERLOGGED, tWet).addModels(new ConfiguredModel(tCorner, 0, 270, false));
+                }
+                itemModels().withExistingParent(tRow.path(), modLoc("block/rail_" + tSlug + "_flat"));
+            } else {
+                boolean tBooster = tRow.kind() == GT6Rails.RailKind.BOOSTER;
+                String tBand = tBooster ? "rail_booster_" : "rail_detector_";
+                String tTex = tBooster ? "rail_booster_" : "rail_detector_";
+                for (boolean tWet : new boolean[] {false, true}) {
+                    for (boolean tOn : new boolean[] {false, true}) {
+                        String tArm = tBand + tSlug + (tOn ? "_powered" : "_off") + (tWet ? "_wet" : "");
+                        String tTexture = tTex + (tOn ? "active_" : "") + tSlug; // the RAIL_BOOSTER_ACTIVE_<mat> iconset order
+                        ModelFile tFlat = railModel(tArm + "_flat", "block/rail_flat", tTexture);
+                        ModelFile tRaisedNe = railModel(tArm + "_raised_ne", "block/template_rail_raised_ne", tTexture);
+                        ModelFile tRaisedSw = railModel(tArm + "_raised_sw", "block/template_rail_raised_sw", tTexture);
+                        getVariantBuilder(GT6Rails.BLOCKS_BY_PATH.get(tRow.path()).get())
+                                .partialState().with(PoweredRailBlock.POWERED, tOn).with(BaseRailBlock.WATERLOGGED, tWet).with(PoweredRailBlock.SHAPE, RailShape.NORTH_SOUTH).addModels(new ConfiguredModel(tFlat))
+                                .partialState().with(PoweredRailBlock.POWERED, tOn).with(BaseRailBlock.WATERLOGGED, tWet).with(PoweredRailBlock.SHAPE, RailShape.EAST_WEST).addModels(new ConfiguredModel(tFlat, 0, 90, false))
+                                .partialState().with(PoweredRailBlock.POWERED, tOn).with(BaseRailBlock.WATERLOGGED, tWet).with(PoweredRailBlock.SHAPE, RailShape.ASCENDING_EAST).addModels(new ConfiguredModel(tRaisedNe, 0, 90, false))
+                                .partialState().with(PoweredRailBlock.POWERED, tOn).with(BaseRailBlock.WATERLOGGED, tWet).with(PoweredRailBlock.SHAPE, RailShape.ASCENDING_WEST).addModels(new ConfiguredModel(tRaisedSw, 0, 90, false))
+                                .partialState().with(PoweredRailBlock.POWERED, tOn).with(BaseRailBlock.WATERLOGGED, tWet).with(PoweredRailBlock.SHAPE, RailShape.ASCENDING_NORTH).addModels(new ConfiguredModel(tRaisedNe))
+                                .partialState().with(PoweredRailBlock.POWERED, tOn).with(BaseRailBlock.WATERLOGGED, tWet).with(PoweredRailBlock.SHAPE, RailShape.ASCENDING_SOUTH).addModels(new ConfiguredModel(tRaisedSw));
+                    }
+                }
+                itemModels().withExistingParent(tRow.path(), modLoc("block/" + tBand + tSlug + "_off_flat"));
+            }
+        }
+        // the road stripe — the SAME 6-shape straight table as the booster/detector lanes
+        // (RAIL_SHAPE_STRAIGHT carries the four ascends) over both POWERED arms (the false
+        // arm is unreachable: the updateState no-op welds true — but the completeness check
+        // still demands the cross-product)
+        for (boolean tWet : new boolean[] {false, true}) {
+            for (boolean tOn : new boolean[] {false, true}) {
+                String tArm = "rail_road_" + (tOn ? "on" : "off") + (tWet ? "_wet" : "");
+                ModelFile tFlat = railModel(tArm + "_flat", "block/rail_flat", "rail_road_stripe");
+                ModelFile tRaisedNe = railModel(tArm + "_raised_ne", "block/template_rail_raised_ne", "rail_road_stripe");
+                ModelFile tRaisedSw = railModel(tArm + "_raised_sw", "block/template_rail_raised_sw", "rail_road_stripe");
+                getVariantBuilder(GT6Rails.ROAD_BLOCK.get())
+                        .partialState().with(PoweredRailBlock.POWERED, tOn).with(BaseRailBlock.WATERLOGGED, tWet).with(PoweredRailBlock.SHAPE, RailShape.NORTH_SOUTH).addModels(new ConfiguredModel(tFlat))
+                        .partialState().with(PoweredRailBlock.POWERED, tOn).with(BaseRailBlock.WATERLOGGED, tWet).with(PoweredRailBlock.SHAPE, RailShape.EAST_WEST).addModels(new ConfiguredModel(tFlat, 0, 90, false))
+                        .partialState().with(PoweredRailBlock.POWERED, tOn).with(BaseRailBlock.WATERLOGGED, tWet).with(PoweredRailBlock.SHAPE, RailShape.ASCENDING_EAST).addModels(new ConfiguredModel(tRaisedNe, 0, 90, false))
+                        .partialState().with(PoweredRailBlock.POWERED, tOn).with(BaseRailBlock.WATERLOGGED, tWet).with(PoweredRailBlock.SHAPE, RailShape.ASCENDING_WEST).addModels(new ConfiguredModel(tRaisedSw, 0, 90, false))
+                        .partialState().with(PoweredRailBlock.POWERED, tOn).with(BaseRailBlock.WATERLOGGED, tWet).with(PoweredRailBlock.SHAPE, RailShape.ASCENDING_NORTH).addModels(new ConfiguredModel(tRaisedNe))
+                        .partialState().with(PoweredRailBlock.POWERED, tOn).with(BaseRailBlock.WATERLOGGED, tWet).with(PoweredRailBlock.SHAPE, RailShape.ASCENDING_SOUTH).addModels(new ConfiguredModel(tRaisedSw));
+            }
+        }
+        itemModels().withExistingParent(GT6Rails.ROAD_PATH, modLoc("block/rail_road_off_flat")); // the dry idle arm model
+        LOGGER.info("GT6 rail family: {} material blockstates + the road stripe", GT6Rails.ROWS.size());
+    }
+
+    /** One rail model: the vanilla template parent + the rail texture override (the texture id is block/-prefixed). */
+    private ModelFile railModel(String aName, String aParent, String aTextureBand) {
+        return models().withExistingParent(aName, mcLoc(aParent)).texture("rail", modLoc("block/" + aTextureBand));
     }
 
     /**

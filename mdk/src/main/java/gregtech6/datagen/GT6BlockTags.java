@@ -97,8 +97,27 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		addShovelBand();
 		addTreeBand(); // task p30-w6-t1-trees-nine — the decisions.p25-leaves-logs-tags-deferred unlock
 		addSurfacePlantBand(); // task p30-w6-t2-surface-blocks — the fallen logs (logs/axe) + the soil pair (shovel)
+		addRailsBand(); // task p35-rails-31-blocks — the 31 rails join #minecraft:rails
 		// the takeover seam: later cards tail-append their own add*Band() here
 		// (p24-tags-prefix-materials: rolling batches).
+	}
+
+	/**
+	 * The rails band (task p35-rails-31-blocks): all 31 rail blocks join
+	 * {@code #minecraft:rails} — LOAD-BEARING for function, not just mining: the minecart
+	 * engine gates on the tag ({@code BaseRailBlock.isRail} and
+	 * {@code AbstractMinecart.getMaxSpeedWithRail}'s {@code state.is(BlockTags.RAILS)}
+	 * on both legs), so an untagged rail block would never carry a cart. The mining face
+	 * rides the vanilla nesting — {@code mineable/pickaxe} already contains
+	 * {@code #minecraft:rails} (vanilla 1.20.1 pickaxe.json:326) — so no separate pickaxe
+	 * row belongs to this band.
+	 */
+	private void addRailsBand() {
+		var tRails = tag(BlockTags.RAILS);
+		tRails.add(gregtech6.registry.GT6Rails.ROAD_BLOCK.get());
+		for (var tEntry : gregtech6.registry.GT6Rails.BLOCKS_BY_PATH.entrySet()) {
+			tRails.add(tEntry.getValue().get());
+		}
 	}
 
 	/**
