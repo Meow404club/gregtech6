@@ -953,7 +953,15 @@ private static final int ZH_KEY_FLOOR = 3824; // +20 (task p35-energy-tail-machi
 			GT6Anvils.class,
 			GT6Attachments.class, GT6Boilers.class, GT6BurningBoxes.class, GT6Crucibles.class,
 			GT6ElectricDynamos.class, // task p28-c-ulv-dynamo-row — the W1 leftover: the dynamo classes join the gate
-			GT6ElectricTransformers.class, GT6FeBatteries.class, GT6FeConverters.class, GT6FluxDynamos.class,
+			GT6ElectricTransformers.class,
+			// task p35-energy-tail-machines — the three energy-tail families join the gate
+			// (the 8 higher transformer rows + the 5 LD endpoints + the 16 LD wire metas +
+			// the 20 crystal chargers, all atomic keys both faces; the census 204 -> 253,
+			// the chargers/LD/wire classes are NEW walks — the GT6ElectricTransformers rows
+			// ride the same class walk as the p28 row)
+			gregtech6.registry.GT6CrystalChargers.class, gregtech6.registry.GT6LongDistWires.class,
+			gregtech6.registry.GT6LongDistanceTransformers.class,
+			GT6FeBatteries.class, GT6FeConverters.class, GT6FluxDynamos.class,
 			GT6FoamBlocks.class, GT6Hoppers.class, GT6Kinetics.class, GT6Kitchen.class, GT6Lasers.class,
 			// task p32-logistics-lv2 — the logistics domain carrier joins the gate (review seam:
 			// the single logistics_wire block, the atomic key, both provider faces)
@@ -1187,8 +1195,8 @@ private static final int ZH_KEY_FLOOR = 3824; // +20 (task p35-energy-tail-machi
 			+ " wall carriers over the metal-wall template; the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (1089 + 5 = 1094); the 4 Roasting row carriers joined at task p29-w4-eu-bridge (1094 + 4 = 1098); the 4 surface deco carriers joined at task p30-w6-rocks-sticks (1098 + 4 = 1102); the 31 vein-indicator rock carriers joined at task p30-w6-t3-large-veins (1102 + 31 = 1133, the spec ⑤ compensation set)"
 			+ " (+4 task p32-qu-scanner-replicator: the QU machine row carriers, 1138 + 4 = 1142, the molecular_scanner/replicator tier-word composed rungs the moment they registered) (+9 task p34-machines-bumblelyzer-crucible: the Bumblelyzer 5-ladder + the Crystallisation Crucible 4-ladder row carriers, 1142 + 9 = 1151)"
 			+ " (+9 task p34-machines-burner-plantalyzer: the Burner Mixer 4-ladder + the Plantalyzer 5-ladder row carriers, 1151 + 9 = 1160)");
-		assertEquals(204, tChecked,  "the checked block census: every DeferredRegister block NOT"
-			+ " (the p34-machines-bumblelyzer-crucible nine row carriers ride the composed-name exemption below, the pin HOLDS at 204)"
+		assertEquals(253, tChecked,  "the checked block census: every DeferredRegister block NOT"
+			+ " (the p34-machines-bumblelyzer-crucible nine row carriers ride the composed-name exemption below, the pin HOLDS at 253)"
 			+ " twelve turbine/dynamo controllers joined at task p29-w3-turbine-dynamo (122 + 12;"
 			+ " the eleven dynamo rows joined at task p28-c-ulv-dynamo-row (90 + 11; the anvil pair"
 			+ " and the transformer joined at 323c4ae4/1e07061d; the 28 p29-w3 part blocks"
@@ -1208,7 +1216,7 @@ private static final int ZH_KEY_FLOOR = 3824; // +20 (task p35-energy-tail-machi
 			+ " ; the 4 QU machine rungs joined as EXEMPT composed row carriers at task p32-qu-scanner-replicator (the checked pin HOLDS at 188 — the molecular_scanner/replicator rungs rode the composed-name exemption the moment they registered, the exempt pin carries the +4; rebase reconciliation over the merged 188 state)"
 			+ " ; the Juicer joined at task p33-food-machines-kitchen (188 + 1 = 189 — GT6Kitchen 4 -> 5 checked, the atomic block.gt6.juicer key, the dump gt.multitileentity.32722 face 榨汁机 both locales)"
 			+ " ; the 15 sensor-batch rows joined at task p34-sensors-trivial-14 (189 + 15 = 204 — GT6Sensors 3 -> 18 checked, the census-erratum batch over the upstream anchor Loader_MultiTileEntities.java:1979-1999, atomic keys both locales: the en rows verbatim + the zh dump rows gt.multitileentity.31000-31017)"
-			+ " — per-class checked: " + tWalkedByClass);
+			+ "; the energy-tail families joined at task p35-energy-tail-machines (204 + 49 = 253 — GT6ElectricTransformers 1 -> 9 checked (the :882-:889 rows over the same class walk), GT6LongDistanceTransformers 5 + GT6LongDistWires 16 + GT6CrystalChargers 20 checked are the NEW walks: all atomic keys both faces, the LD wire cube-all keeps the vanilla descriptionId and still carries the keys) — per-class checked: " + tWalkedByClass);
 		assertTrue(tMissing.isEmpty(),
 			"every registered block's vanilla descriptionId key must exist on BOTH lang faces"
 			+ " (Jade resolves block.gt6.<path>; a missing key hovers the raw key): " + tMissing);
