@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:electric_transformer_t5"
+    },
+    "W": {
+      "item": "gt6:cable_annealed_copper_gt04"
+    }
+  },
+  "pattern": [
+    "WMW",
+    "M  ",
+    "WMW"
+  ],
+  "result": {
+    "item": "gt6:longdist_transformer_t5"
+  },
+  "show_notification": true
+}

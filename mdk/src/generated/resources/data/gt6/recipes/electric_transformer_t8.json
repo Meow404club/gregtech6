@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "tag": "forge:double_plates/iron"
+    },
+    "M": {
+      "item": "gt6:casing_small_osmium_elemental"
+    },
+    "W": {
+      "tag": "forge:fine_wires/annealed_copper"
+    },
+    "X": {
+      "tag": "forge:fine_wires/annealed_copper"
+    }
+  },
+  "pattern": [
+    "WIW",
+    "XM ",
+    "WIW"
+  ],
+  "result": {
+    "item": "gt6:electric_transformer_t8"
+  },
+  "show_notification": true
+}

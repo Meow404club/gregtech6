@@ -1486,7 +1486,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			String tPath = tRow.path();
 			rRows.add(new BridgeCraftRow(ShapedRecipeBuilder
 					.shaped(RecipeCategory.MISC, gregtech6.registry.GT6LongDistanceTransformers.ITEMS_BY_PATH.get(tPath).get())
-					.pattern("WMW").pattern("M ").pattern("WMW")
+					.pattern("WMW").pattern("M  ").pattern("WMW")
 					.define('W', tCable)
 					.define('M', tTransformer)
 					.unlockedBy("has_transformer", has(tTransformer)),
