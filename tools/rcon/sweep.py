@@ -927,6 +927,19 @@ SESSION_GROUPS = (
     # race is tick-count-locked, wall-clock independent). --group p35_rails matches
     # through the chains' embedded name prefix.
     ("p35_rails_ride", "p35_rails_booster", "p35_rails_detector"),
+    # p35-portals-mini-nether-end (task p35-portals-mini-nether-end): the two
+    # miniature-portal live chains — the nether chain z=358 band (x446..451,
+    # z-disjoint from the p34_machines_bp band z=350) + the end chain z=384 band
+    # (x509..514, disjoint from the p34_machines_bc z=384 band in x — the bc band
+    # is x-remote), one group: together they prove the cross-dimension triple
+    # (item/fluid/redstone) on the Nether pair and the x128/512m pairing + the
+    # Ender-Eye activation on the End pair. The nether/end rig bands live outside
+    # the overworld bbox census — each chain tears its other-dimension band down
+    # explicitly (the chain-local execute-in steps, docstring ⑥).
+    # --group p35_portals matches through both chains' embedded name suffix
+    # (select_groups keys on member stems + slug/name substrings — the members
+    # are the two file stems, the group key rides the chain names).
+    ("p35_portal_nether", "p35_portal_end"),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

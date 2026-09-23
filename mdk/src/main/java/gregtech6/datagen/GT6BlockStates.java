@@ -27,6 +27,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTOvenBlock;
 import gregtech6.block.multiblock.GTMultiBlockPartBlock;
 import gregtech6.registry.GT6BeeHives;
+import gregtech6.registry.GT6Portals; // p35 tail-append
 import gregtech6.tileentity.bees.GT6BumbliaryBlock;
 import gregtech6.registry.GT6ElectricTransformers;
 import gregtech6.registry.GT6Lasers;
@@ -226,6 +227,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBumbliary(); // task p33-bees-lv3-b-bumbliary — the Bumbliary pair (the hive two-layer grammar over the facing cube)
         addPlaceables(); // task p32-placeables — the Greg o'Lantern (the carved-front cube)
         addRails(); // task p35-rails-31-blocks — the 31-rail family (the vanilla rail grammar)
+        addPortals(); // task p35-portals-mini-nether-end — the two miniature portals (the ACTIVE cube swap)
     }
 
     /**
@@ -320,6 +322,39 @@ public final class GT6BlockStates extends BlockStateProvider {
     /** One rail model: the vanilla template parent + the rail texture override (the texture id is block/-prefixed). */
     private ModelFile railModel(String aName, String aParent, String aTextureBand) {
         return models().withExistingParent(aName, mcLoc(aParent)).texture("rail", modLoc("block/" + aTextureBand));
+    }
+
+    /**
+     * Task p35-portals-mini-nether-end — the two miniature portals ({@link GT6Portals}).
+     * ONE blockstate per portal over TWO cube_all models driven by the ACTIVE property
+     * (the upstream 13-pass frame render collapsed to a frame/portal cube swap — declared
+     * cosmetic deviation): inactive = the frame material face (obsidian / end_stone, the
+     * vanilla textures referenced in place — zero borrowed art), active = the portal face
+     * (the animated vanilla nether_portal / the owned near-black mini_portal_end.png —
+     * vanilla ships no end-portal block texture, the special end-portal effect is a tile
+     * renderer, not a texture). No item-model orientation (the portals are facing-free).
+     */
+    private void addPortals() {
+        portalSwap(GT6Portals.PORTAL_NETHER.get(), "mini_portal_nether", "block/obsidian", "block/nether_portal");
+        portalSwap(GT6Portals.PORTAL_END.get(), "mini_portal_end", "block/end_stone", "gt6:block/mini_portal_end");
+        // the BlockItem models parent the FRAME face (the sensors walk shape)
+        itemModels().withExistingParent("mini_portal_nether", modLoc("block/mini_portal_nether_frame"));
+        itemModels().withExistingParent("mini_portal_end", modLoc("block/mini_portal_end_frame"));
+        LOGGER.info("GT6 portals: 2 blockstates x ACTIVE frame/portal swap");
+    }
+
+    /** One portal's ACTIVE swap: false = the frame cube, true = the portal cube. */
+    private void portalSwap(Block aBlock, String aName, String aFrameTexture, String aPortalTexture) {
+        ModelFile tFrame = models().cubeAll(aName + "_frame",
+                aFrameTexture.startsWith("gt6:") ? modLoc(aFrameTexture.substring(4)) : mcLoc(aFrameTexture));
+        ModelFile tPortal = models().cubeAll(aName + "_portal",
+                aPortalTexture.startsWith("gt6:") ? modLoc(aPortalTexture.substring(4)) : mcLoc(aPortalTexture));
+        getVariantBuilder(aBlock).partialState()
+                .with(gregtech6.block.portals.GTMiniPortalBlock.ACTIVE, false)
+                .addModels(new ConfiguredModel(tFrame));
+        getVariantBuilder(aBlock).partialState()
+                .with(gregtech6.block.portals.GTMiniPortalBlock.ACTIVE, true)
+                .addModels(new ConfiguredModel(tPortal));
     }
 
     /**

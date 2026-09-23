@@ -142,6 +142,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6LongDistanceBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
                 new SubProviderEntry(GT6CrystalChargerBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
+                new SubProviderEntry(GT6PortalBlockLoot::new, LootContextParamSets.BLOCK), // task p35-portals-mini-nether-end — the portal pair self-drops
                 new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
                 new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task p32-placeables — the lantern + sandwich self-drops
@@ -198,6 +199,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6LongDistanceBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
                 new SubProviderEntry(GT6CrystalChargerBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
+                new SubProviderEntry(GT6PortalBlockLoot::new, LootContextParamSets.BLOCK), // task p35-portals-mini-nether-end — the portal pair self-drops
                 new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
                 new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task p32-placeables — the lantern + sandwich self-drops
@@ -1447,6 +1449,36 @@ public final class GT6LootTables extends LootTableProvider {
      */
     public static List<Block> dynamoUlvLootBlocks() {
         return List.of(gregtech6.registry.GT6ElectricDynamos.ELECTRIC_DYNAMO_ULV.get());
+    }
+
+    /** The portal self-drop pair (task p35-portals-mini-nether-end; the dynamo-ULV plain dropSelf form). */
+    public static List<Block> portalLootBlocks() {
+        return List.of(gregtech6.registry.GT6Portals.PORTAL_NETHER.get(), gregtech6.registry.GT6Portals.PORTAL_END.get());
+    }
+
+    /** The portal self-drop provider (task p35-portals-mini-nether-end). */
+    public static final class GT6PortalBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6PortalBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6PortalBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return portalLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : portalLootBlocks()) dropSelf(tBlock);
+        }
     }
 
     /** The Electric Dynamo T0 self-drop provider (task p28-c-ulv-dynamo-row). */

@@ -144,6 +144,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 
 	/** The Progress Sensor crafting row (task p26-sensors-core, Loader_MultiTileEntities.java:1995) — the result-path convention. */
 	public static final ResourceLocation PROGRESSMETER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "progressmeter");
+	/** The Miniature Nether Portal crafting row (task p35-portals-mini-nether-end, Loader :2003) — the result-path convention. */
+	public static final ResourceLocation MINI_PORTAL_NETHER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "mini_portal_nether");
+	/** The Miniature End Portal crafting row (task p35-portals-mini-nether-end, Loader :2004). */
+	public static final ResourceLocation MINI_PORTAL_END_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "mini_portal_end");
 	/** The Fluid-O-Meter Sensor crafting row (task p26-sensors-core, Loader :1986). */
 	public static final ResourceLocation FLUIDOMETER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "fluidometer");
 	/**
@@ -242,6 +246,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			hopperRecipeBuilder(tRow).save(aConsumer, hopperRecipeId(tRow));
 		}
 		progressmeterBuilder().save(aConsumer, PROGRESSMETER_ID);
+		miniPortalNetherBuilder().save(aConsumer, MINI_PORTAL_NETHER_ID); // task p35-portals-mini-nether-end
+		miniPortalEndBuilder().save(aConsumer, MINI_PORTAL_END_ID); // task p35-portals-mini-nether-end
 		fluidometerBuilder().save(aConsumer, FLUIDOMETER_ID);
 		feConverterBuilder().save(aConsumer, FE_CONVERTER_ID);
 		waterWheelBuilder().save(aConsumer, WATER_WHEEL_ID);
@@ -376,6 +382,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			hopperRecipeBuilder(tRow).save(aOutput, hopperRecipeId(tRow));
 		}
 		progressmeterBuilder().save(aOutput, PROGRESSMETER_ID);
+		miniPortalNetherBuilder().save(aOutput, MINI_PORTAL_NETHER_ID); // task p35-portals-mini-nether-end
+		miniPortalEndBuilder().save(aOutput, MINI_PORTAL_END_ID); // task p35-portals-mini-nether-end
 		fluidometerBuilder().save(aOutput, FLUIDOMETER_ID);
 		feConverterBuilder().save(aOutput, FE_CONVERTER_ID);
 		waterWheelBuilder().save(aOutput, WATER_WHEEL_ID); // task p30-pool-waterwheel-neo-recipes — the forge branch row (this file :195), the 21.1 face was born without it
@@ -1354,6 +1362,45 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('C', Items.COMPARATOR)
 				.define('X', tSmallGears)
 				.unlockedBy("has_fine_wire", has(tFineWires));
+	}
+
+	/**
+	 * The Miniature Nether Portal crafting row (task p35-portals-mini-nether-end) — the
+	 * upstream "SSS"/"SsS"/"SSS" SHAPE (Loader_MultiTileEntities.java:2003) with the GT6
+	 * dead-cell 's' folded to a vanilla space — the 8-S ring is the vanilla furnace pattern.
+	 * DECLARED DEVIATION on the key: upstream 'S' = {@code OP.stickLong.dat(MT.Obsidian)},
+	 * but this port generates no Obsidian long rods — the material lacks the STICKS
+	 * item-generator tag (MT.java:2395) and the GTMaterialItems.forceItemGeneration table
+	 * is a FROZEN seam — so 'S' folds to the vanilla obsidian block (the vanilla-carrier
+	 * form; 8 rods ≈ 1 block of stock, the count shape is preserved: 8 S cells).
+	 * Result 1x {@code gt6:mini_portal_nether}.
+	 */
+	private ShapedRecipeBuilder miniPortalNetherBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Portals.PORTAL_NETHER.get())
+				.pattern("SSS")
+				.pattern("S S")
+				.pattern("SSS")
+				.define('S', net.minecraft.world.item.Items.OBSIDIAN)
+				.unlockedBy("has_obsidian", has(net.minecraft.world.item.Items.OBSIDIAN));
+	}
+
+	/**
+	 * The Miniature End Portal crafting row (task p35-portals-mini-nether-end) — the
+	 * upstream "ESE"/"SGS"/"ESE" row VERBATIM (Loader :2004): 'S' = Endstone long rods
+	 * → vanilla end_stone (the same no-rods fold as the Nether row above), 'E' =
+	 * {@code OP.gem.dat(MT.EnderEye)} → vanilla {@code minecraft:ender_eye}, 'G' =
+	 * {@code Items.ghast_tear} → vanilla {@code minecraft:ghast_tear}. Result 1x
+	 * {@code gt6:mini_portal_end}.
+	 */
+	private ShapedRecipeBuilder miniPortalEndBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Portals.PORTAL_END.get())
+				.pattern("ESE")
+				.pattern("SGS")
+				.pattern("ESE")
+				.define('S', net.minecraft.world.item.Items.END_STONE)
+				.define('E', net.minecraft.world.item.Items.ENDER_EYE)
+				.define('G', net.minecraft.world.item.Items.GHAST_TEAR)
+				.unlockedBy("has_ender_eye", has(net.minecraft.world.item.Items.ENDER_EYE));
 	}
 
 	/**
