@@ -1701,14 +1701,14 @@ direct	item.gt6.comp_laser_gas_empty	空的气体-激光镭射器	hand
 direct	item.gt6.comp_laser_gas_empty.tooltip	用于电力激光器	hand
 direct	item.gt6.cover_auto_redstone_machine_switch	自动红石机器开关	hand
 direct	item.gt6.cover_auto_switch	自动开关	hand
-direct	item.gt6.cover_auto_timer_1m	自动重启开关 (1分钟)	hand
-direct	item.gt6.cover_auto_timer_5m	自动重启开关 (5分钟)	hand
 direct	item.gt6.cover_auto_timer_10m	自动重启开关 (10分钟)	hand
+direct	item.gt6.cover_auto_timer_1m	自动重启开关 (1分钟)	hand
 direct	item.gt6.cover_auto_timer_20m	自动重启开关 (20分钟)	hand
 direct	item.gt6.cover_auto_timer_30m	自动重启开关 (30分钟)	hand
+direct	item.gt6.cover_auto_timer_5m	自动重启开关 (5分钟)	hand
 direct	item.gt6.cover_controller	面板控制器	hand
-direct	item.gt6.cover_energy_display	能量显示面板	hand
 direct	item.gt6.cover_drain	排液口	hand
+direct	item.gt6.cover_energy_display	能量显示面板	hand
 direct	item.gt6.cover_fluid_filter	液体过滤器	hand
 direct	item.gt6.cover_item_filter	物品过滤器	hand
 direct	item.gt6.cover_item_retriever	物品回收器面板	hand
@@ -1920,6 +1920,8 @@ direct	item.gt6.screwdriver_lv	螺丝刀 (LV)	hand
 direct	item.gt6.sense	镰刀	hand
 direct	item.gt6.shape_extruder_plate	模具 (板)	hand
 direct	item.gt6.shape_extruder_rod	模具 (杆)	hand
+direct	item.gt6.shape_slicer_grid	切片器刀片 (栅格式)	hand
+direct	item.gt6.shape_slicer_split	切片器刀片 (分割)	hand
 direct	item.gt6.shovel	锹	hand
 direct	item.gt6.soft_hammer	软锤	hand
 direct	item.gt6.spade	铲	hand

@@ -940,6 +940,18 @@ SESSION_GROUPS = (
     # (select_groups keys on member stems + slug/name substrings — the members
     # are the two file stems, the group key rides the chain names).
     ("p35_portal_nether", "p35_portal_end"),
+    # p35-slicer-row-domain (task p35-slicer-row-domain): the Slicer vanilla-face live
+    # chain — a fresh z=448 band (z-disjoint from the p35 boule bands z=416/424 and
+    # every registered band), the :638 helmet row LIVE (leather_helmet + the split
+    # blade -> leather 1, EUt 16 x 16 t, the TIER_INPUTS[0] window), the never-consumed
+    # blade crown pinned post-completion (the stack-size-0 marker port live). Admission
+    # mirroring the p26_w1_sifter form (bbox-registered, no fakesource, no mutates —
+    # the grid inject rig).
+    # --group p35_slicer_rows matches through the chain's embedded name prefix.
+    # Cluster member = the chain FILE stem (select_groups load_chain contract,
+    # the p34_machines_bc multi-stem form) — the group key itself resolves via
+    # Chain.name "p35-slicer-leather p35_slicer_rows".
+    ("p35_slicer_leather",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

@@ -134,6 +134,7 @@ public class GT6EnUs extends LanguageProvider {
         addFoamSprays(); // task p25-c-foam-pipe-spray — table-tail append
         addFoodCans(); // task p25-food-can-row0 — table-tail append
         addExtruderMolds(); // task p26-w1-press-extruder-molds — table-tail append
+        addSlicerBlades(); // task p35-slicer-row-domain — table-tail append
         addSensors(); // task p26-sensors-core — table-tail append
         addPortals(); // task p35-portals-mini-nether-end — table-tail append
         addCrucibleJade(); // task p28-crucible-jade-face — table-tail append
@@ -1733,6 +1734,27 @@ public class GT6EnUs extends LanguageProvider {
                 add("item.gt6." + tPath, "Extruder Shape (Rod)");
             } else {
                 throw new IllegalStateException("extruder mold id drifted: " + tPath);
+            }
+        }
+    }
+
+    /**
+     * Slicer-blade family keys (task p35-slicer-row-domain): the vanilla-face MINIMAL
+     * subset's display names, walked over the {@link gregtech6.registry.GT6SlicerBlades}
+     * registry constants so the lang face cannot drift from the registered ids (the
+     * addExtruderMolds form). Values are the upstream registration-row wordings verbatim:
+     * "Slicer Blades (Grid)" (MultiItemTechnological.java:367) and "Slicer Blades (Split)"
+     * (:370). Table-tail append, append-only.
+     */
+    private void addSlicerBlades() {
+        for (RegistryObject<Item> tBlade : gregtech6.registry.GT6SlicerBlades.BLADES) {
+            String tPath = tBlade.getId().getPath();
+            if (tPath.equals("shape_slicer_grid")) {
+                add("item.gt6." + tPath, "Slicer Blades (Grid)");
+            } else if (tPath.equals("shape_slicer_split")) {
+                add("item.gt6." + tPath, "Slicer Blades (Split)");
+            } else {
+                throw new IllegalStateException("slicer blade id drifted: " + tPath);
             }
         }
     }

@@ -856,6 +856,12 @@ HAND_TRANSLATIONS = {
     "gt6.row.machine.extruder_low_heat": ("低温压模器", "hand"),
     "item.gt6.shape_extruder_plate": ("模具 (板)", "hand"),
     "item.gt6.shape_extruder_rod": ("模具 (杆)", "hand"),
+    # task p35-slicer-row-domain: the slicer-blade row0 pair — the dump faces verbatim
+    # (gt.multiitem.technological.10902 切片器刀片 (栅格式) tmp/gregtech.lang:10349, :10905
+    # 切片器刀片 (分割) :10355; the blade is a blade in the dump regardless of the machine
+    # word — the shape_extruder note above).
+    "item.gt6.shape_slicer_grid": ("切片器刀片 (栅格式)", "hand"),
+    "item.gt6.shape_slicer_split": ("切片器刀片 (分割)", "hand"),
     # ---- crucible Jade face (task p28-crucible-jade-face, 4 keys — the final key set after
     # the TFRU 33c22beb ruling): no dump face (upstream 1.7.10 has zero WAILA integration,
     # research.p28-r-crucible-jade-face), so these are pure hand rows. The total line's

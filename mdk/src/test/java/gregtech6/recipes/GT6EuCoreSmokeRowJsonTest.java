@@ -76,30 +76,30 @@ class GT6EuCoreSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		}
 	}
 
-	/** The five files pour under their map keys — the whitelist carried them since card ①. */
+	/** The four files pour under their map keys - the whitelist carried them since card 1. The slicer file retired with task p35-slicer-row-domain (the production rows replaced the smoke debt). */
 	@Test
-	void theFiveSmokeRowsPourThroughTheLoaderSeam() throws Exception {
+	void theFourSmokeRowsPourThroughTheLoaderSeam() throws Exception {
 		Map<ResourceLocation, JsonElement> tData = new HashMap<>();
 		tData.put(new ResourceLocation("gt6", "electrolyzer"), resource("electrolyzer.json"));
 		tData.put(new ResourceLocation("gt6", "injector"), resource("injector.json"));
 		tData.put(new ResourceLocation("gt6", "printer"), resource("printer.json"));
 		tData.put(new ResourceLocation("gt6", "scannervisuals"), resource("scannervisuals.json"));
-		tData.put(new ResourceLocation("gt6", "slicer"), resource("slicer.json"));
 		GT6RecipeMapJsonLoader.pour(tData);
 
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("electrolyzer"), "one electrolyzer smoke row");
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("injector"), "one injector smoke row");
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("printer"), "one printer smoke row");
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("scannervisuals"), "one scannervisuals smoke row");
-		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("slicer"), "one slicer smoke row");
 
-		// the rows are LIVE in the maps (the findRecipe stock grew by one each — the maps
-		// were the DECLARED-EMPTY card-① state, the consumer card pours the first content)
+		// the rows are LIVE in the maps (the findRecipe stock grew by one each - the maps
+		// were the DECLARED-EMPTY card-1 state, the consumer card pours the first content)
 		assertEquals(1, GT6RecipeMaps.ELECTROLYZER.mRecipeList.size(), "the ELECTROLYZER map held ONLY the smoke row");
 		assertEquals(1, GT6RecipeMaps.INJECTOR.mRecipeList.size());
 		assertEquals(1, GT6RecipeMaps.PRINTER.mRecipeList.size());
 		assertEquals(1, GT6RecipeMaps.SCANNER_VISUALS.mRecipeList.size());
-		assertEquals(1, GT6RecipeMaps.SLICER.mRecipeList.size());
+		// the SLICER smoke face retired with task p35-slicer-row-domain: the map is a
+		// production map now (the Java pourer), the smoke seam file is gone
+		assertEquals(0, GT6RecipeMapJsonLoader.pouredCount("slicer"), "no slicer smoke row anymore");
 	}
 
 	/** A repeated pour REPLACES the same-file subset — the idempotence face of the seam. */

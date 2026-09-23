@@ -99,11 +99,16 @@ public class Recipe {
 	 * third disjunct is the p32-qu-scanner-replicator face: a data-bearing USB stick is the
 	 * replicator's never-consumed data medium (the upstream {@code ST.amount(0, aUSB)}
 	 * zero-consume input, RecipeMapReplicator.java:94/:108) — only the dynamic replication
-	 * rows carry such an input, so the claim stays narrow.
+	 * rows carry such an input, so the claim stays narrow. The fourth disjunct is the
+	 * p35-slicer-row-domain face: a slicer blade is the Slicer rows' never-consumed shaping
+	 * tool (the upstream {@code IL.Shape_Slicer_*.get(0)} stack-size-0 marker over
+	 * Loader_Recipes_Vanilla.java:638-642 / Loader_Recipes_Other.java:420) — only the
+	 * RM.Slicer rows carry such an input, so the claim stays narrow.
 	 */
 	public static java.util.function.Predicate<ItemStack> sNotConsumable =
 			aStack -> gregtech6.item.GT6Circuits.isSelector(aStack) || gregtech6.registry.GT6ExtruderMolds.isMold(aStack)
-					|| gregtech6.items.GT6UsbSticks.readData(aStack) != null; // task p32-qu-scanner-replicator — the replicator's ST.amount(0, aUSB) data-medium face (RecipeMapReplicator.java:94/:108)
+					|| gregtech6.items.GT6UsbSticks.readData(aStack) != null // task p32-qu-scanner-replicator — the replicator's ST.amount(0, aUSB) data-medium face (RecipeMapReplicator.java:94/:108)
+					|| gregtech6.registry.GT6SlicerBlades.isBlade(aStack); // task p35-slicer-row-domain — the Slicer rows' size-0 blade face (Loader_Recipes_Vanilla.java:638)
 
 	/**
 	 * The tag-membership seam of the material-tag fallback (task

@@ -393,6 +393,14 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("item/shape_extruder/plate"));
         withExistingParent("shape_extruder_rod", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/shape_extruder/rod"));
+        // the slicer-blade row0 subset (task p35-slicer-row-domain) — 2 item/generated models
+        // over the composed placeholder icons (the blade-grid/blade-split 16x16 stdlib
+        // generator, the shape_extruder band convention; the upstream multiitem icons are
+        // meta-atlas tiles with no standalone sprite file to borrow)
+        withExistingParent("shape_slicer_grid", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/shape_slicer/grid"));
+        withExistingParent("shape_slicer_split", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/shape_slicer/split"));
         // the p9 redstone-emitter cover item (task p9-redstone-cover-emitter) — the item
         // shows the tier-0 plate art (the offline-composed keypad panel; the sprites live
         // in textures/block/, auto-stitched by the vanilla atlas directory source)
