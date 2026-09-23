@@ -476,5 +476,155 @@ class TestMaterialToolDialectNormalizer(unittest.TestCase):
             self.assertIn("RESULT: OK", out)
 
 
+def _circuit_program_json(leg: str) -> bytes:
+    """gt6:circuit_program 双腿实测形（census 样本 recipes/integrated_circuit_reset.json，
+    2026-09-23 工作树双腿新鲜树，HEAD 1fb0327b1；双腿值形差四处：tag 命名空间 /
+    result 键名 / category+show_notification 两默认键有无）。
+
+    forge(1.20.1 CircuitProgramRow.serializeRecipeData，GT6CraftingRecipes.java:1926/
+    :1945-1949)：category "misc" + result {"count":1,"item":X} + show_notification:true
+    恒写；neoforge(1.21.1 GT6CircuitProgramRecipe.Serializer.CODEC:247/:249/:250)：
+    optionalFieldOf 默认省略 + STRICT_CODEC {"count":1,"id":X}。
+    """
+    tag_ns = "forge:" if leg == "forge" else "c:"
+    result_key = "item" if leg == "forge" else "id"
+    o: dict = {
+        "type": "gt6:circuit_program",
+        "configuration": 0,
+        "key": {
+            "P": {"item": "gt6:integrated_circuit"},
+        },
+        "pattern": ["P"],
+        "result": {"count": 1, result_key: "gt6:integrated_circuit"},
+    }
+    if leg == "forge":
+        o["category"] = "misc"
+        o["show_notification"] = True
+        # 重排为 canonical 树序（type 先+字母序，DataProvider.KEY_COMPARATOR）——
+        # 字节对照必须骑真实落盘序，category/configuration 中位插入是本方言的坑
+        o = {k: o[k] for k in ["type", "category", "configuration", "key",
+                               "pattern", "result", "show_notification"] if k in o}
+    return _gson(o)
+
+
+def _circuit_advancement_json(leg: str) -> bytes:
+    """电路配方 advancement 双腿实测形（census 样本
+    advancements/recipes/misc/integrated_circuit_reset.json，2026-09-23）：
+    forge 面多首键 parent（GT6CraftingRecipes.java:1907）+尾键 sends_telemetry_event
+    （1.20.1 恒写）+criteria items 数组形；neo 面 parent 缺（:1972-1977 无 .parent 行）
+    +telemetry 字段删除+items 裸串形（其余由既有归一器覆盖，此处一并钉全）。"""
+    items = ["gt6:integrated_circuit"] if leg == "forge" else "gt6:integrated_circuit"
+    o: dict = {
+        "criteria": {
+            "has_circuit": {
+                "conditions": {"items": [{"items": items}]},
+                "trigger": "minecraft:inventory_changed",
+            },
+            "has_the_recipe": {
+                "conditions": {"recipe": "gt6:integrated_circuit_reset"},
+                "trigger": "minecraft:recipe_unlocked",
+            },
+        },
+        "requirements": [["has_circuit", "has_the_recipe"]],
+        "rewards": {"recipes": ["gt6:integrated_circuit_reset"]},
+    }
+    if leg == "forge":
+        # canonical 树序（parent 先+余键字母序，DataProvider.KEY_COMPARATOR）
+        return _gson({"parent": "minecraft:recipes/root", **o,
+                      "sends_telemetry_event": False})
+    return _gson(o)
+
+
+class TestCircuitProgramDialectNormalizer(unittest.TestCase):
+    """p35-datagen-circuit-declared：recipes 带 gt6:circuit_program 方言归一
+    （p33 电路带 52 文件 standing red 的 recipes 面；census 残差全带单一形）。"""
+
+    def test_circuit_program_full_dialect_normalizes(self):
+        rel = PurePosixPath("data/gt6/recipes/integrated_circuit_reset.json")
+        out = mod.try_value_normalize(rel, _circuit_program_json("forge"),
+                                      _circuit_program_json("neoforge"))
+        self.assertIsNotNone(out)
+        normalized, applied = out
+        self.assertIn("circuit_program", applied)
+        self.assertEqual(normalized, _circuit_program_json("forge"))
+
+    def test_circuit_program_keeps_count1_and_order_guard(self):
+        # 注册序守卫：circuit_program 在 _norm_recipe_result 之前消费 {"id":X}，
+        # count==1 保留（forge 面 :1947 恒写）；vanilla 形仍走 count==1 不落盘路径
+        rel = PurePosixPath("data/gt6/recipes/integrated_circuit.json")
+        # c 骑 canonical 树序（type 先+字母序）；n 骑 node 落盘序（默认键缺席）
+        c = _gson({"type": "gt6:circuit_program", "category": "misc",
+                   "configuration": 0,
+                   "result": {"count": 1, "item": "gt6:integrated_circuit"},
+                   "show_notification": True})
+        n = _gson({"type": "gt6:circuit_program", "configuration": 0,
+                   "result": {"count": 1, "id": "gt6:integrated_circuit"}})
+        out = mod.try_value_normalize(rel, c, n)
+        self.assertIsNotNone(out)
+        self.assertEqual(out[0], c)  # count==1 在归一后仍在（非 vanilla 丢形）
+        self.assertIn('"count": 1', out[0].decode())
+
+    def test_circuit_program_drift_stays_fail_visible(self):
+        # 归一不是吞差：result 真漂移 → 归一后字节仍不等（main 走原样 FAIL）
+        rel = PurePosixPath("data/gt6/recipes/integrated_circuit_reset.json")
+        n = json.loads(_circuit_program_json("neoforge"))
+        n["result"]["id"] = "gt6:other_item"
+        out = mod.try_value_normalize(rel, _circuit_program_json("forge"), _gson(n))
+        self.assertIsNotNone(out)  # 变换施用了（形命中）
+        self.assertNotEqual(out[0], _circuit_program_json("forge"))  # 但差仍显形
+
+    def test_circuit_advancement_parent_normalizes_from_canon(self):
+        rel = PurePosixPath("data/gt6/advancements/recipes/misc/"
+                            "integrated_circuit_reset.json")
+        out = mod.try_value_normalize(rel, _circuit_advancement_json("forge"),
+                                      _circuit_advancement_json("neoforge"))
+        self.assertIsNotNone(out)
+        normalized, applied = out
+        self.assertIn("parent", applied)
+        self.assertEqual(normalized, _circuit_advancement_json("forge"))
+
+    def test_advancement_parent_without_canon_reference_stays_fail_visible(self):
+        # 双侧都无 parent（canonical 参照也不带）→ 变换绝不施用（不硬编码值）：
+        # telemetry 键双侧自带（钉住既有归一器零施用）→ 无变换可施用 → None
+        rel = PurePosixPath("data/gt6/advancements/recipes/misc/x.json")
+        c = _gson({"criteria": {"a": {"trigger": "minecraft:tick"}},
+                   "rewards": {"recipes": ["gt6:x"]},
+                   "sends_telemetry_event": False})
+        n = _gson({"criteria": {"a": {"trigger": "minecraft:tick"}},
+                   "rewards": {"recipes": ["gt6:x"]},
+                   "sends_telemetry_event": False})
+        self.assertIsNotNone(mod._registered_band(rel))
+        self.assertIsNone(mod.try_value_normalize(rel, c, n))
+
+    def test_circuit_band_end_to_end_green(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            canon, node = root / "canonical", root / "node"
+            recipe_dir = "data/gt6/recipes/integrated_circuit"
+            adv_dir = "data/gt6/advancements/recipes/misc/integrated_circuit"
+            for base in (canon, node):
+                leg = "forge" if base is canon else "neoforge"
+                (base / recipe_dir).mkdir(parents=True)
+                (base / (recipe_dir + "/config_1.json")).write_bytes(
+                    _circuit_program_json(leg))
+                (base / adv_dir).mkdir(parents=True)
+                (base / (adv_dir + "_reset.json")).write_bytes(
+                    _circuit_advancement_json(leg))
+            argv = sys.argv
+            buf = io.StringIO()
+            try:
+                sys.argv = ["datagen_tree_check.py", "--canonical", str(canon),
+                            "--node-output", str(node)]
+                with contextlib.redirect_stdout(buf):
+                    rc = mod.main()
+            finally:
+                sys.argv = argv
+            out = buf.getvalue()
+            self.assertEqual(rc, 0, msg=out)
+            self.assertIn("circuit_program-dialect", out)
+            self.assertIn("parent(gt6-fork-1.20.1-face)", out)
+            self.assertIn("RESULT: OK", out)
+
+
 if __name__ == "__main__":
     unittest.main()
