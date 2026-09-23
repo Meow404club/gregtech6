@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:boule_gt_redstone_alloy"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "s ",
+    " X"
+  ],
+  "result": {
+    "count": 3,
+    "item": "gt6:plate_gem_redstone_alloy"
+  },
+  "show_notification": true
+}

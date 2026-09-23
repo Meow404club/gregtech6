@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:gem_moonstone"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "s ",
+    " X"
+  ],
+  "result": {
+    "count": 8,
+    "id": "gt6:plate_gem_tiny_moonstone"
+  }
+}

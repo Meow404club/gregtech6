@@ -368,6 +368,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (GT6Rails.RailRow tRailRow : GT6Rails.ROWS) {
 			railRecipeBuilder(tRailRow).save(aConsumer, railRecipeId(tRailRow));
 		}
+		// task p36-craftfrom-plategem — the CraftFrom hand-craft family (Loader_OreProcessing.java:171-178)
+		for (CraftFromRow tRow : craftFromDatagenRows()) {
+			craftFromBuilder(tRow).save(aConsumer, tRow.aId());
+		}
 	}
 	//?} else {
 	/*@Override
@@ -514,6 +518,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task p35-rails-31-blocks — the 30 rail rows (the :107-140 no-RC fallback band)
 		for (GT6Rails.RailRow tRailRow : GT6Rails.ROWS) {
 			railRecipeBuilder(tRailRow).save(aOutput, railRecipeId(tRailRow));
+		}
+		// task p36-craftfrom-plategem — the CraftFrom hand-craft family (Loader_OreProcessing.java:171-178)
+		for (CraftFromRow tRow : craftFromDatagenRows()) {
+			craftFromBuilder(tRow).save(aOutput, tRow.aId());
 		}
 	}
 	*///?}
@@ -3532,6 +3540,109 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 *///?}
+
+	// -----------------------------------------------------------------------
+	// The CraftFrom band (task p36-craftfrom-plategem) — the upstream plateGem/plateGemTiny
+	// hand-craft family (Loader_OreProcessing.java:171-178): every row is the same 2x2
+	// frame "s "/" X" — 's' = the saw tool letter (the spray-can band translation),
+	// 'X' = the same-material input. The upstream IOreDictListenerEvent dispatch rides
+	// the OUTPUT prefix (:512-556) — no 1.20.1 face, so the digLadder band translation
+	// applies: the registrationOrder walk replaces the listener trigger, the
+	// And(ANTIMATTER.NOT, COATED.NOT) row condition folds to the material filter (the
+	// digLadderMaterials :2861-2862 form), the upstream ConfigsGT.RECIPES per-material
+	// config gate (:548, default T) is dropped, and the never-null dat() descriptor
+	// (upstream OreDictPrefix.java:555-557 — rows upstream could silently lack their
+	// input item) closes on the ITEM TRUTH: a material rows only when BOTH prefixes'
+	// items exist (the declared semantic-equivalence deviation).
+	// -----------------------------------------------------------------------
+
+	/** One upstream row form: the id key + the output prefix + count + the input prefix (Loader_OreProcessing.java:171-178, the amounts verbatim). Package-private for the pin test. */
+	record CraftFromForm(String aKey, gregapi.oredict.OreDictPrefix aOutput, int aCount, gregapi.oredict.OreDictPrefix aInput) {}
+
+	/**
+	 * The eight row forms of the upstream family (Loader_OreProcessing.java:171-178): :178
+	 * the boule cut (1 boule + saw → 3 plateGem), :171 the plate split (plateGem + saw → 8
+	 * plateGemTiny), :172-177 the six gem tiers (chipped/flawed/regular → plateGemTiny
+	 * 2/4/8, flawless/exquisite/legendary → plateGem 1/3/7). A method, not a field — the
+	 * OP fields live only after OP.init (the class-load-order guard). The keys are the
+	 * upstream category names lowercased (the ResourceLocation path charset — vanilla
+	 * rejects uppercase).
+	 *
+	 * <p>THE UNIVERSE IS THE ITEM TRUTH (coordinator ruling A on the declared口径
+	 * conflict): the plateGem/plateGemTiny faces measure 205 materials (the whole
+	 * GEMS∧PLATES walk — the research card's "11" misread the ForceTest quartet pins as
+	 * the full set; the p8 census "PlateGem 203" agrees) and the gem-tier faces 109
+	 * (regular gem 201). The forms table carries the FULL upstream set — the
+	 * registrationOrder intersection walk does the scoping, no human-made subsets.
+	 */
+	static List<CraftFromForm> craftFromForms() {
+		return List.of(
+				new CraftFromForm("boule2plate_gem", gregapi.data.OP.plateGem, 3, gregapi.data.OP.bouleGt),
+				new CraftFromForm("plate2plate_tiny", gregapi.data.OP.plateGemTiny, 8, gregapi.data.OP.plateGem),
+				new CraftFromForm("gem2plate_gem/chipped", gregapi.data.OP.plateGemTiny, 2, gregapi.data.OP.gemChipped),
+				new CraftFromForm("gem2plate_gem/flawed", gregapi.data.OP.plateGemTiny, 4, gregapi.data.OP.gemFlawed),
+				new CraftFromForm("gem2plate_gem/regular", gregapi.data.OP.plateGemTiny, 8, gregapi.data.OP.gem),
+				new CraftFromForm("gem2plate_gem/flawless", gregapi.data.OP.plateGem, 1, gregapi.data.OP.gemFlawless),
+				new CraftFromForm("gem2plate_gem/exquisite", gregapi.data.OP.plateGem, 3, gregapi.data.OP.gemExquisite),
+				new CraftFromForm("gem2plate_gem/legendary", gregapi.data.OP.plateGem, 7, gregapi.data.OP.gemLegendary));
+	}
+
+	/** The material face of one band row (the test-visible walk unit). */
+	record CraftFromMaterialRow(CraftFromForm aForm, gregapi.oredict.OreDictMaterial aMaterial) {}
+
+	/**
+	 * The material face of the band: per form, the materials whose INPUT and OUTPUT items
+	 * both exist (the registrationOrder intersection, in registration order) minus the
+	 * COATED/ANTIMATTER condition rows.
+	 */
+	static List<CraftFromMaterialRow> craftFromMaterialRows() {
+		List<CraftFromMaterialRow> rRows = new ArrayList<>();
+		for (CraftFromForm tForm : craftFromForms()) {
+			java.util.Set<OreDictMaterial> tInputs = new java.util.HashSet<>();
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				if (tPair.prefix() == tForm.aInput()) tInputs.add(tPair.material());
+			}
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				OreDictMaterial tMaterial = tPair.material();
+				if (tPair.prefix() != tForm.aOutput() || !tInputs.contains(tMaterial)) continue; // the item-truth intersection
+				if (tMaterial.contains(gregapi.data.TD.Compounds.COATED)) continue; // COATED.NOT
+				if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT
+				rRows.add(new CraftFromMaterialRow(tForm, tMaterial));
+			}
+		}
+		return rRows;
+	}
+
+	/** The row id — the digLadderRowId form: the form key + the material leaf. Package-private for the pin test. */
+	static ResourceLocation craftFromRowId(String aKey, String aSnake) {
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, aKey + "/" + aSnake);
+	}
+
+	/** The datagen row: the id + the output item + count + the input item. */
+	private record CraftFromRow(ResourceLocation aId, net.minecraft.world.item.Item aResult, int aCount, net.minecraft.world.item.Item aInput) {}
+
+	/** The datagen face: the material walk resolved onto the live items (the silent-skip guard rides itemOrNull). */
+	private List<CraftFromRow> craftFromDatagenRows() {
+		List<CraftFromRow> rRows = new ArrayList<>();
+		for (CraftFromMaterialRow tMaterialRow : craftFromMaterialRows()) {
+			String tSnake = GTMaterialItems.snakeCase(tMaterialRow.aMaterial().mNameInternal);
+			net.minecraft.world.item.Item tResult = itemOrNull(tMaterialRow.aForm().aOutput(), tMaterialRow.aMaterial());
+			net.minecraft.world.item.Item tInput = itemOrNull(tMaterialRow.aForm().aInput(), tMaterialRow.aMaterial());
+			if (tResult == null || tInput == null) continue; // the item-truth guard (belt and braces over the walk)
+			rRows.add(new CraftFromRow(craftFromRowId(tMaterialRow.aForm().aKey(), tSnake), tResult, tMaterialRow.aForm().aCount(), tInput));
+		}
+		return rRows;
+	}
+
+	/** One row's builder — the shared 2x2 frame, 's' = the saw tag (the spray-can band translation), 'X' = the input item. */
+	private ShapedRecipeBuilder craftFromBuilder(CraftFromRow aRow) {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, aRow.aResult(), aRow.aCount())
+				.pattern("s ")
+				.pattern(" X")
+				.define('s', GT6ItemTags.TOOLS_SAW)
+				.define('X', aRow.aInput())
+				.unlockedBy("has_input", has(aRow.aInput()));
+	}
 
 }
 

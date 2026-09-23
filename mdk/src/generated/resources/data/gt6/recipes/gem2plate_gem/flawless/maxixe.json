@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:gem_flawless_maxixe"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "s ",
+    " X"
+  ],
+  "result": {
+    "item": "gt6:plate_gem_maxixe"
+  },
+  "show_notification": true
+}

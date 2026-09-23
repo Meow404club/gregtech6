@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:gem_flawless_golden_amber"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "s ",
+    " X"
+  ],
+  "result": {
+    "item": "gt6:plate_gem_golden_amber"
+  },
+  "show_notification": true
+}

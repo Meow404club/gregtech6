@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:gem_chipped_spinel"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "s ",
+    " X"
+  ],
+  "result": {
+    "count": 2,
+    "item": "gt6:plate_gem_tiny_spinel"
+  },
+  "show_notification": true
+}
