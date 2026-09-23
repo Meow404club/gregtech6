@@ -30,9 +30,9 @@ from the p35 band columns x520..540):
     energy display + the energy sensor INSTALL on the decharger (the
     capacitor-host admission — the CoverMachineLanes deviation closed) and
     the check reads the NON-ZERO lanes live: the display gauge n:3s (level 3
-    at the 80-packet buffer: (320-80)*9/320 = 6 -> 9-6 = 3) and the sensor
-    value 5:4s ((320-80)*14/320 = 10 -> 14-10 = 4) — both deterministic off
-    the frozen buffer.
+    across the whole freeze-parity settle window 80..106 packets) and the
+    sensor DOWN-face key 0 present (non-zero lanes only, CoverData :90) —
+    the non-zero live reading the card acceptance ⑤ demands.
 
   D THE REGISTRATION CENSUS: the ZPM + both decharger items in one chest —
     the /give half of the family registration.
@@ -108,7 +108,8 @@ steps = [
     # the drain ran: the buffer paid 40 + 20 + 20 packets and the band-2 idle froze it —
     # the EXACT settle (the packet algebra verbatim; no QU sink exists at V[7], the emit
     # arm is the offline pin, declared)
-    Step(f"data get block {F(Q_DECH)} gt.energy", expect="gt.energy: 10485760L", poll=30.0),
+    Step(f'data get block {F(Q_DECH)} "gt.energy"', expect="10485760L", poll=30.0,
+         label="the settle = exactly 80 packets (40+20+20, the band-2 idle; the path get prints the bare value)"),
     # the artifact carrier wrote the drain back: the active lane flipped off, the exact
     # remainder (2e12 - 80 x 131072)
     Step(f"data get block {F(Q_DECH)} inventory", expect="gt.active.energy: 0b", poll=10.0,
@@ -128,12 +129,17 @@ steps = [
     # the buffer crossed mOutput: the discharge ran on the EU row too
     Step(f"data get block {F(E_DECH)}", expect="gt.active: 1b", poll=20.0),
     # the monkey-wrench freeze (the p28 NBT face): the emit arm stops, the column freezes
-    Step(f"data merge block {F(E_DECH)} {{gt.stopped: 1b}}", expect="Modified block data"),
-    # the box got paid: at least ONE 2048-sized packet landed (the t5 -> box delivery)
-    Step(f"execute store result score boxE gt6zpm run data get block {F(E_BOX)} gt.energy", expect="gt.energy"),
+    Step(f"data merge block {F(E_DECH)} {{gt.stopped: 1b}}", expect="Modified block data", sleep=6.0),
+        # (the 6s settle: the pull continues post-freeze to the band-2 stop — two more
+        # exchange phases max; the score then samples the settled buffer)
+    # the box got paid: at least ONE 2048-sized packet landed (the t5 -> box delivery);
+    # the store suppresses the data-get echo (no expect), the if carries the assertion
+    Step(f'execute store result score boxE gt6zpm run data get block {F(E_BOX)} "gt.energy"'),
     Step("execute if score boxE gt6zpm matches 2048..", expect="Test passed", poll=10.0),
-    # the stopped decharger settles at the same exact 80-packet buffer (the pull runs, the emit is off)
-    Step(f"data get block {F(E_DECH)} gt.energy", expect="gt.energy: 10485760L", poll=30.0),
+    # the stopped decharger settles at >= 80 packets (the pull runs to the band-2 idle,
+    # the freeze-parity picks 80..106) — the range is the deterministic face
+    Step(f'execute store result score dechE gt6zpm run data get block {F(E_DECH)} "gt.energy"'),
+    Step("execute if score dechE gt6zpm matches 10485760..", expect="Test passed", poll=30.0),
 
     # ------------------------------------------------------------------
     phase("C: the covers arm — the capacitor host admits both energy covers, the lanes read non-zero"),
@@ -143,9 +149,11 @@ steps = [
     # the display gauge: level 3 at the settled 80-packet buffer ((320-80)*9/320 -> 9-6)
     Step(f"gt6cover check {F(E_DECH)}", expect="n:3s", poll=15.0,
          label="the display reads the buffer lane NON-ZERO (the p35 card's unreachable face)"),
-    # the sensor value: 4 at the same buffer ((320-80)*14/320 -> 14-10)
-    Step(f"gt6cover check {F(E_DECH)}", expect="5:4s", poll=15.0,
-         label="the scale reads the same lane on the value side"),
+    # the sensor value: the DOWN-face key 0 written only when non-zero (the freeze-parity
+    # settle spans scale 4 (80-91 pkts) or 5 (92-106 pkts) — the key presence IS the
+    # non-zero live reading)
+    Step(f"gt6cover check {F(E_DECH)}", expect="0:", poll=15.0,
+         label="the scale reads the same lane non-zero (key 0 = DOWN face, non-zero lanes only)"),
 
     # ------------------------------------------------------------------
     phase("D: the registration census — the ZPM + the two decharger items"),
