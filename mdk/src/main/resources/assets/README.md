@@ -8662,3 +8662,37 @@ upstream GregTech 6 assets are CC0 (see the Public Domain Dedication block above
 - `block/crystallisationcrucible_overlay_{front,back,left,right,top,bottom}.png` — upstream `crystallisationcrucible/overlay/`
 - `block/crystallisationcrucible_overlay_running_{front,back,left,right,top,bottom}.png` — upstream `crystallisationcrucible/overlay_running/`
 - `block/crystallisationcrucible_overlay_active_{front,back,left,right,top,bottom}.png` — upstream `crystallisationcrucible/overlay_active/` (front: 16x160 strip → FRAME 0)
+
+Copied on 2026-09-22. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
+
+Display/scale cover family textures, task p35-covers-display-scale-6: the PNGs
+under `gt6/textures/block/{auto_switch,auto_timer_switch,energy_display,
+energy_redstone,progress_redstone,status_display}/` come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/covers/`.
+
+Byte-identical borrows, sha256 verified:
+
+- `auto_switch/circuit.png`            `cfcac4c474506318d20d4b5b17eb4d89079301f534911018ff4cc46f115926c3` (upstream `autoswitch/`)
+- `auto_timer_switch/circuit.png`      `85291f1199c52ce4b5e0ed4b6f8bdb94b122e60960d1cd2d1e5069199d2de559` (upstream `autotimerswitch/6000/`)
+- `energy_redstone/circuit.png`        `8e281fde79aafbecf29b2a70b4f37046fbdcd2aeb1a6567ca2ace05d3f6b0086` (upstream `energyredstone/`)
+- `progress_redstone/circuit.png`      `c920850ee52e694dbe82cdfc64e6404af00f15f1e82b9dd66d51fcd3eb460259` (upstream `progressredstone/`)
+- `status_display/bottom/base.png`     `2a1e4c8c5b49f4535283e0f8b4db25a3eabafee9c4f1c4d7e5f48f3e03d05ba9` (upstream `statusdisplay/bottom/`)
+- `status_display/top/base.png`        `7b623fb350d327009db1edd187eb122f6066579076356253816ac41057841fda` (upstream `statusdisplay/top/`)
+
+Path mapping (declared, the P10/P11 precedent): upstream cover paths are
+lowercased/underscored to the 1.20.1 `ResourceLocation` charset, landing under
+`textures/block/` — the vanilla block atlas `directory("block")` source
+auto-stitches the sprite ids with zero extra atlas wiring.
+
+Pre-composited plates: `energy_display/0..10.png` are `energydisplay/underlay.png`
+alpha-composited with `energydisplay/<level>.png` at borrow time (the
+CoverSelectorTag underlay+digit precedent — the CoverDisplayEnergy upstream
+BlockTextureMulti two-layer pick :48 folds into one sprite per level; the plate
+renderer paints a single sprite).
+
+Declared folds: the `autotimerswitch` art ships upstream ONLY as the 6000 face —
+the whole reboot-switch ladder shares it (`CoverControllerAutoTimer` class doc);
+the `statusdisplay` indicator overlay sprites (`1_off..4_on`, both styles) are NOT
+borrowed — the CoverControllerDisplay lamp composition is the declared deviation
+(the plate shows the style base, the live states ride the visual lane).

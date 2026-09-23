@@ -470,6 +470,27 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent("cover_robot_arm_" + i, mcLoc("item/generated"))
                 .texture("layer0", modLoc("block/robotarm/out"));
         }
+        // the p35 display/scale cover family (task p35-covers-display-scale-6) — the five
+        // singletons show their plate art (the status display the bottom style base, the
+        // energy display the empty gauge level 0) and the five reboot-switch ladder items
+        // share the timer circuit art (the byte-identical upstream borrows living in
+        // textures/block/{status_display,energy_display,auto_switch,auto_timer_switch}/ —
+        // assets/README.md attribution; the sensors reuse the existing redstone-sensor
+        // sprites borrowed this card)
+        withExistingParent("cover_machine_display", mcLoc("item/generated"))
+            .texture("layer0", modLoc("block/status_display/bottom/base"));
+        withExistingParent("cover_auto_switch", mcLoc("item/generated"))
+            .texture("layer0", modLoc("block/auto_switch/circuit"));
+        withExistingParent("cover_energy_display", mcLoc("item/generated"))
+            .texture("layer0", modLoc("block/energy_display/0"));
+        withExistingParent("cover_scale_energy", mcLoc("item/generated"))
+            .texture("layer0", modLoc("block/energy_redstone/circuit"));
+        withExistingParent("cover_scale_progress", mcLoc("item/generated"))
+            .texture("layer0", modLoc("block/progress_redstone/circuit"));
+        for (int i = 0; i < gregtech6.covers.GT6Covers.AUTO_TIMER_IDS.length; i++) {
+            withExistingParent(gregtech6.covers.GT6Covers.AUTO_TIMER_IDS[i], mcLoc("item/generated"))
+                .texture("layer0", modLoc("block/auto_timer_switch/circuit"));
+        }
         // the Integrated Circuit item (task p16-distillery-family ①) — item/generated over
         // the byte-identical upstream icon borrow (gt.integrated_circuit/0.png, config 0 —
         // the 256-icon damage ladder is the declared single-model cut, assets/README.md
