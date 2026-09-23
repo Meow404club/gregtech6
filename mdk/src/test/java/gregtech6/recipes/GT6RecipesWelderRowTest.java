@@ -202,15 +202,43 @@ public class GT6RecipesWelderRowTest {
 
 	@Test
 	void theMaterialNamesMatchTheLoaderColumns() {
-		assertEquals("Pb", GT6RecipesWelder.materialNameOf("machine_wall_lead"));
+		// p36 fix — the registered registry keys (mNameInternal), NOT the MT FIELD short
+		// forms: OreDictMaterial.get resolves the former, MT.NULL on the latter
+		assertEquals("Lead", GT6RecipesWelder.materialNameOf("machine_wall_lead"));
 		assertEquals("Steel", GT6RecipesWelder.materialNameOf("machine_wall_steel"), "ANY.Steel's canonical name");
-		assertEquals("W", GT6RecipesWelder.materialNameOf("dense_wall_tungsten"));
-		assertEquals("Ta4HfC5", GT6RecipesWelder.materialNameOf("machine_wall_tantalum_hafnium_carbide"));
+		assertEquals("Tungsten", GT6RecipesWelder.materialNameOf("dense_wall_tungsten"));
+		assertEquals("TantalumHafniumCarbide", GT6RecipesWelder.materialNameOf("machine_wall_tantalum_hafnium_carbide"));
 		assertEquals("SteelGalvanized", GT6RecipesWelder.materialNameOf("dense_wall_galvanized_steel"));
 		// p35 — the dedicated crucible-wall twins ride the rung shell materials (:1270-1277)
 		assertEquals("Steel", GT6RecipesWelder.materialNameOf("crucible_steel_wall"));
 		assertEquals("StainlessSteel", GT6RecipesWelder.materialNameOf("crucible_stainless_steel_wall"));
 		assertEquals("TungstenSteel", GT6RecipesWelder.materialNameOf("crucible_tungstensteel_wall"));
-		assertEquals("Ta4HfC5", GT6RecipesWelder.materialNameOf("crucible_tantalum_hafnium_carbide_wall"));
+		assertEquals("TantalumHafniumCarbide", GT6RecipesWelder.materialNameOf("crucible_tantalum_hafnium_carbide_wall"));
+	}
+
+	/**
+	 * The p36 resolution pin (the GT6CrucibleLadderCensusTest bootstrap shape): with the
+	 * material registry booted, EVERY table row's name resolves to a REAL material (not
+	 * MT.NULL) — the live pour face. The pre-p36 switch carried five MT FIELD short forms
+	 * (Pb/Ti/W/Ta4HfC5/Ad) that silently dropped 14 rows through MT.NULL.
+	 */
+	@Test
+	void everyRowMaterialResolvesInTheBootedRegistry() {
+		gregapi.oredict.MaterialRegistry.INSTANCE.open();
+		try {
+			gregapi.data.MT.init();
+		} catch (Throwable aIgnored) {
+			// the best-effort offline boot (the census-test form)
+		}
+		try {
+			for (WelderWallRow tRow : GT6RecipesWelder.table()) {
+				gregapi.oredict.OreDictMaterial tMat = GT6RecipesWelder.sMaterialResolver.apply(GT6RecipesWelder.materialNameOf(tRow.wallPath()));
+				assertNotNull(tMat, tRow.wallPath());
+				assertTrue(tMat != gregapi.data.MT.NULL,
+						tRow.wallPath() + " resolved to MT.NULL — the " + GT6RecipesWelder.materialNameOf(tRow.wallPath()) + " name does not resolve");
+			}
+		} finally {
+			gregapi.oredict.MaterialRegistry.INSTANCE.close();
+		}
 	}
 }

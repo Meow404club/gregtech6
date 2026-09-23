@@ -285,6 +285,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (PartFamilyRecipeRow tRow : crucibleWallRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
+		// task p36-recipes-obtainability — the 11 shared machine-wall rows
+		for (PartFamilyRecipeRow tRow : machineWallRecipeBuilders()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 		for (GT6Batteries.BatteryRow tRow : GT6Batteries.ROWS) {
 			if (tRow.family().startsWith("energium")) continue; // the crystals carry NO rows (upstream :1079-:1092, the declared cut)
 			batteryRecipeBuilder(tRow).save(aConsumer, batteryRecipeId(tRow));
@@ -423,6 +427,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		// task p35-crucible-wall-obtainability — the 8 dedicated crucible-wall rows
 		for (PartFamilyRecipeRow tRow : crucibleWallRecipeBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
+		// task p36-recipes-obtainability — the 11 shared machine-wall rows
+		for (PartFamilyRecipeRow tRow : machineWallRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 		for (GT6Batteries.BatteryRow tRow : GT6Batteries.ROWS) {
@@ -1025,6 +1033,38 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			if (tPlate == null) continue; // the CR.ONLY_IF_HAS_RESULT face
 			String tIdPath = "crucible_wall/" + tRow.wallPath(); // the precomputed arg — the stonecutter ctor swap rewrites simple-arg calls only
 			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tWall)
+					.pattern("wPP")
+					.pattern("hPP")
+					.define('w', GT6ItemTags.TOOLS_WRENCH)
+					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+					.define('P', tPlate)
+					.unlockedBy("has_plate", has(tPlate)),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tIdPath)));
+		}
+		return rRows;
+	}
+
+	/**
+	 * The shared machine-WALL crafting rows (task p36-recipes-obtainability) — the SAME
+	 * {@code "wPP","hPP"} four-plate grid as the dedicated crucible band above, replayed
+	 * over the ELEVEN {@link gregtech6.registry.GTMultiBlocks#METAL_WALL_ROWS} blocks
+	 * (Loader_MultiTileEntities.java:1143-1153, {@code 'P' = OP.plate.dat(aMat)}). The
+	 * WELDER face of the same rows already pours in {@code GT6RecipesWelder} — this band
+	 * closes the crafting half, the crucible-wall card's sister gap. The row material
+	 * resolves through {@link gregtech6.recipes.GT6RecipesWelder#materialNameOf} (the
+	 * registry-key switch the welder rows ride); a wall whose plate item is unregistered
+	 * skips its row (the CR.ONLY_IF_HAS_RESULT face — all eleven resolve today).
+	 */
+	private java.util.List<PartFamilyRecipeRow> machineWallRecipeBuilders() {
+		java.util.List<PartFamilyRecipeRow> rRows = new java.util.ArrayList<>();
+		for (gregtech6.registry.GTMultiBlocks.PartRow tRow : gregtech6.registry.GTMultiBlocks.METAL_WALL_ROWS) {
+			gregtech6.block.multiblock.GTMultiBlockPartBlock tBlock = gregtech6.registry.GTMultiBlocks.anyPartBlock(tRow.path());
+			gregapi.oredict.OreDictMaterial tMat = gregapi.oredict.OreDictMaterial.get(gregtech6.recipes.GT6RecipesWelder.materialNameOf(tRow.path()));
+			if (tBlock == null || tMat == null) continue; // the unregistered silent skip
+			Item tPlate = itemOrNull(gregapi.data.OP.plate, tMat);
+			if (tPlate == null) continue; // the CR.ONLY_IF_HAS_RESULT face (SteelGalvanized)
+			String tIdPath = "machine_wall/" + tRow.path(); // the precomputed arg — the stonecutter ctor swap rewrites simple-arg calls only
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tBlock.asItem())
 					.pattern("wPP")
 					.pattern("hPP")
 					.define('w', GT6ItemTags.TOOLS_WRENCH)

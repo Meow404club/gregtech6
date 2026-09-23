@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_bronze"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "wPP",
+    "hPP"
+  ],
+  "result": {
+    "item": "gt6:machine_wall_bronze"
+  },
+  "show_notification": true
+}

@@ -54,9 +54,12 @@ import gregtech6.registry.GTMultiBlocks;
  * smoke subset (the JSON loader replaces only ITS OWN subset per reload — the
  * identity-tracked remove-then-add contract, GT6RecipeMapJsonLoader doc).
  *
- * <p>Deviations (declared): the Galvanized Steel rows (:1147/:1158) SKIP at resolve time
- * — SteelGalvanized carries no port plate/plateDense item rows (the GTMaterialItems
- * registration gate), the upstream {@code FL.exists} drop form, 28 of 30 rows pour.
+ * <p>Deviations (declared): NONE on the pour face — every one of the thirty plate/dense
+ * items is registered (incl. {@code plate[_dense]_steel_galvanized}), so all thirty rows
+ * pour. (The earlier "Galvanized skips, 28 of 30" note was WRONG twice over — the plate
+ * items always existed, and the five MT FIELD short-form names in the material switch
+ * silently dropped their rows; both corrected by task p36-recipes-obtainability, see
+ * {@link #materialNameOf}.)
  *
  * <p>task p35-crucible-wall-obtainability — the 8 DEDICATED crucible-wall rows append
  * ({@code dense=false}, the wall EUt/duration): the dedicated {@code crucible_*_wall}
@@ -163,30 +166,39 @@ public final class GT6RecipesWelder {
 		return tTable;
 	}
 
-	/** The row material's MT internal name — a pure switch over the eleven wall materials (the Loader aMat columns verbatim). */
+	/**
+	 * The row material's registry key ({@code mNameInternal}, the form
+	 * {@link #sMaterialResolver} = {@code OreDictMaterial.get} resolves) — a pure switch
+	 * over the eleven wall materials + the eight crucible twins. Task p36-recipes-
+	 * obtainability FIX: five entries rode the MT FIELD short forms (Pb/Ti/W/Ta4HfC5/Ad),
+	 * which are NOT the registered names (Lead/Titanium/Tungsten/TantalumHafniumCarbide/
+	 * Adamantium — MT.java:1127/:1003/:1109/:2482/:1671, the :120-121 sanitize strips
+	 * spaces) — {@code get} returned
+	 * MT.NULL and the row silently skipped, killing 14 live pour rows. The long forms
+	 * resolve for all thirty rows (the GT6RecipesWelderRowTest resolution pin).
+	 */
 	public static String materialNameOf(String aPath) {
 		return switch (aPath) {
-			case "machine_wall_lead", "dense_wall_lead" -> "Pb";
+			case "machine_wall_lead", "dense_wall_lead" -> "Lead";
 			case "machine_wall_bronze", "dense_wall_bronze" -> "Bronze";
 			case "machine_wall_steel", "dense_wall_steel" -> "Steel";
 			case "machine_wall_galvanized_steel", "dense_wall_galvanized_steel" -> "SteelGalvanized";
 			case "machine_wall_stainless_steel", "dense_wall_stainless_steel" -> "StainlessSteel";
 			case "machine_wall_invar", "dense_wall_invar" -> "Invar";
-			case "machine_wall_titanium", "dense_wall_titanium" -> "Ti";
+			case "machine_wall_titanium", "dense_wall_titanium" -> "Titanium";
 			case "machine_wall_tungstensteel", "dense_wall_tungstensteel" -> "TungstenSteel";
-			case "machine_wall_tungsten", "dense_wall_tungsten" -> "W";
-			case "machine_wall_tantalum_hafnium_carbide", "dense_wall_tantalum_hafnium_carbide" -> "Ta4HfC5";
-			case "machine_wall_adamantium", "dense_wall_adamantium" -> "Ad";
-			// p35 — the dedicated crucible-wall rows (the Loader aMat columns of :1270-1277,
-			// the same material the rung's shell rides)
+			case "machine_wall_tungsten", "dense_wall_tungsten" -> "Tungsten";
+			case "machine_wall_tantalum_hafnium_carbide", "dense_wall_tantalum_hafnium_carbide" -> "TantalumHafniumCarbide";
+			case "machine_wall_adamantium", "dense_wall_adamantium" -> "Adamantium";
+			// p35 — the dedicated crucible-wall rows (the same shell materials, :1270-1277)
 			case "crucible_steel_wall" -> "Steel";
 			case "crucible_stainless_steel_wall" -> "StainlessSteel";
 			case "crucible_invar_wall" -> "Invar";
-			case "crucible_titanium_wall" -> "Ti";
+			case "crucible_titanium_wall" -> "Titanium";
 			case "crucible_tungstensteel_wall" -> "TungstenSteel";
-			case "crucible_tungsten_wall" -> "W";
-			case "crucible_tantalum_hafnium_carbide_wall" -> "Ta4HfC5";
-			case "crucible_adamantium_wall" -> "Ad";
+			case "crucible_tungsten_wall" -> "Tungsten";
+			case "crucible_tantalum_hafnium_carbide_wall" -> "TantalumHafniumCarbide";
+			case "crucible_adamantium_wall" -> "Adamantium";
 			default -> throw new IllegalArgumentException("unknown wall row " + aPath);
 		};
 	}
