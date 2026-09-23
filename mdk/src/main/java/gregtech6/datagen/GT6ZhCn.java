@@ -129,6 +129,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addUsbStickUnits();     // task p32-usb-data — the 4 stick names + the 4 tooltips (hand rows, the tsv direct band; the dump USB face)
 		addPlaceablesUnits();   // task p32-placeables — the 8 deco/placed-pile names (the lantern + the sandwich + the six placed piles; hand rows, the tsv direct band)
 		addLaserGasUnits();     // task p32-qu-laser-domain — the 2 gas emitter names + the 2 tooltips (hand rows, the dump :10379/:10395 faces)
+		addRailsUnits();        // task p35-rails-31-blocks — the 31 rail names (the dump gt.block.rail.* faces verbatim, the tsv direct band)
 	}
 
 	/**
@@ -1480,6 +1481,20 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.placed_plate");
 		addDirect("block.gt6.placed_gem_plate");
 		addDirect("block.gt6.placed_scrap");
+	}
+
+	/**
+	 * The rail family zh faces (task p35-rails-31-blocks, 31 keys): the Road Stripe + the
+	 * 30 material rows — the upstream dump {@code gt.block.rail.*} rows verbatim
+	 * (tmp/gregtech.lang:2708-2734, e.g. {@code 道路条纹 / 铝轨道 / 铝加速轨道 / 铝探测轨道}),
+	 * appended to the tsv direct band and read back per registry path (the
+	 * addPlaceablesUnits shape).
+	 */
+	private void addRailsUnits() {
+		addDirect("block.gt6." + gregtech6.registry.GT6Rails.ROAD_PATH);
+		for (gregtech6.registry.GT6Rails.RailRow tRow : gregtech6.registry.GT6Rails.ROWS) {
+			addDirect(tRow.displayKey());
+		}
 	}
 
 	/**

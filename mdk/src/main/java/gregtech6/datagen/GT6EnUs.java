@@ -23,6 +23,7 @@ import gregtech6.registry.GT6ExtruderMolds;
 import gregtech6.registry.GT6FoodCans;
 import gregtech6.registry.GT6FoamSprays;
 import gregtech6.registry.GT6Kinetics;
+import gregtech6.registry.GT6Rails;
 import gregtech6.registry.GT6Sensors;
 import gregtech6.registry.GT6SprayCans;
 import gregtech6.registry.GT6Tools;
@@ -155,6 +156,22 @@ public class GT6EnUs extends LanguageProvider {
         // wanted + the one creative-tab title itemGroup.gt6.ore_vanillastone
         // (GT6OreBlocks.TAB_TITLE_KEY, "Stone Ores" — the PrefixBlockItem.java:62-67 gate).
         addOreTabTitle(); // task p30-ore-3-datagen — the ore-1 note's card-③ face (the one new key)
+        addRails(); // task p35-rails-31-blocks — table-tail append
+    }
+
+    /**
+     * The rail family keys (task p35-rails-31-blocks, 31 keys): the Road Stripe + the 30
+     * material rows' display names — the upstream registration strings verbatim
+     * (Loader_Rails.java:39 "Road Stripe", :41-50 the {@code <Material> Track} ladder,
+     * :52-61 the {@code <Material> Booster Track} ladder, :63-72 the {@code <Material>
+     * Detector Track} ladder), walked from the {@link GT6Rails} faces (the row path IS the
+     * lang key tail — the addSensors walk shape). Table-tail append, append-only.
+     */
+    private void addRails() {
+        for (GT6Rails.RailRow tRow : GT6Rails.ROWS) {
+            add(tRow.displayKey(), tRow.display());
+        }
+        add("block.gt6." + GT6Rails.ROAD_PATH, "Road Stripe"); // Loader :39
     }
 
     /**
