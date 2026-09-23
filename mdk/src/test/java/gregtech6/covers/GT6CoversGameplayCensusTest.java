@@ -44,7 +44,10 @@ public class GT6CoversGameplayCensusTest {
 			"cover_selector_tag_0", "cover_selector_tag_1", "cover_selector_tag_2", "cover_selector_tag_3",
 			"cover_selector_tag_4", "cover_selector_tag_5", "cover_selector_tag_6", "cover_selector_tag_7",
 			"cover_selector_tag_8", "cover_selector_tag_9", "cover_selector_tag_10", "cover_selector_tag_11",
-			"cover_selector_tag_12", "cover_selector_tag_13", "cover_selector_tag_14", "cover_selector_tag_15");
+			"cover_selector_tag_12", "cover_selector_tag_13", "cover_selector_tag_14", "cover_selector_tag_15",
+			// task p35-covers-display-scale-6 — the 5 display/scale singletons + the 5 reboot-switch ladder
+			"cover_machine_display", "cover_auto_switch", "cover_energy_display", "cover_scale_energy", "cover_scale_progress",
+			"cover_auto_timer_1m", "cover_auto_timer_5m", "cover_auto_timer_10m", "cover_auto_timer_20m", "cover_auto_timer_30m");
 
 	@Test
 	public void registrationArmCarriesTheExactCensusSet() {
@@ -54,7 +57,7 @@ public class GT6CoversGameplayCensusTest {
 		Set<String> tExpectedSorted = new TreeSet<>(EXPECTED);
 		assertEquals(tExpectedSorted, tActual,
 				"the cover registry arm drifted — the census is exact (acceptance ①)");
-		assertEquals(69, tActual.size(), "69 cover items: 53 landed (10 singletons + 14 logistics + 2x10 ladders + 9 this card) + 16 tag ladder");
+		assertEquals(79, tActual.size(), "79 cover items: 69 landed (10 singletons + 14 logistics + 2x10 ladders + 9 gameplay + 5 this card) + 16 tag ladder + 5 timers");
 	}
 
 }

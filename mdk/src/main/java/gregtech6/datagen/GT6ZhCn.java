@@ -1373,6 +1373,18 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.cover_selector_redstone");
 		addDirect("item.gt6.cover_selector_manual");
 		addDirect("item.gt6.cover_selector_button_panel");
+		// task p35-covers-display-scale-6 — the display/scale covers (zh faces: the dump
+		// gt.multiitem.technological 1002/1003/1004/1009-1013/1014/1018 name column verbatim)
+		addDirect("item.gt6.cover_machine_display");
+		addDirect("item.gt6.cover_auto_switch");
+		addDirect("item.gt6.cover_energy_display");
+		addDirect("item.gt6.cover_scale_energy");
+		addDirect("item.gt6.cover_scale_progress");
+		addDirect("item.gt6.cover_auto_timer_1m");
+		addDirect("item.gt6.cover_auto_timer_5m");
+		addDirect("item.gt6.cover_auto_timer_10m");
+		addDirect("item.gt6.cover_auto_timer_20m");
+		addDirect("item.gt6.cover_auto_timer_30m");
 		addDirect("item.gt6.integrated_circuit");
 		addDirect(GT6Circuits.TOOLTIP_KEY);
 		// task p29-w4-hot-lube ④ — the Lubricant Bucket + the "Industrial Use ONLY!"

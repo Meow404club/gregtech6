@@ -18,9 +18,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.covers.covers.CoverConveyor;
+import gregtech6.covers.covers.CoverControllerAuto;
 import gregtech6.covers.covers.CoverControllerAutoRedstone;
+import gregtech6.covers.covers.CoverControllerAutoTimer;
 import gregtech6.covers.covers.CoverControllerCovers;
+import gregtech6.covers.covers.CoverControllerDisplay;
 import gregtech6.covers.covers.CoverControllerRedstone;
+import gregtech6.covers.covers.CoverDisplayEnergy;
 import gregtech6.covers.covers.CoverDrain;
 import gregtech6.covers.covers.CoverFilterFluid;
 import gregtech6.covers.covers.CoverFilterItem;
@@ -33,6 +37,8 @@ import gregtech6.covers.covers.CoverRedstoneRepeater;
 import gregtech6.covers.covers.CoverRedstoneTorch;
 import gregtech6.covers.covers.CoverRetrieverItem;
 import gregtech6.covers.covers.CoverRobotArm;
+import gregtech6.covers.covers.CoverScaleEnergy;
+import gregtech6.covers.covers.CoverScaleProgress;
 import gregtech6.covers.covers.CoverSelectorButtonPanel;
 import gregtech6.covers.covers.CoverSelectorManual;
 import gregtech6.covers.covers.CoverSelectorRedstone;
@@ -238,6 +244,25 @@ public final class GT6Covers {
 			() -> new Item(new Item.Properties()));
 
 	/**
+	 * The p35 display/scale cover family (task p35-covers-display-scale-6; upstream
+	 * MultiItemTechnological.java:61/:63/:73/:77 metas 1002/1004/1014/1018) — the five
+	 * singletons of the display/scale face: the machine status display, the energy
+	 * display, the energy sensor and the progress sensor. The auto switch (meta 1003)
+	 * and the reboot-switch ladder (:68-72 metas 1009-1013) ride the same family below.
+	 * Same card-local ITEMS DeferredRegister as the rest of the cover family.
+	 */
+	public static final RegistryObject<Item> COVER_MACHINE_DISPLAY = ITEMS.register("cover_machine_display",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_AUTO_SWITCH = ITEMS.register("cover_auto_switch",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_ENERGY_DISPLAY = ITEMS.register("cover_energy_display",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_SCALE_ENERGY = ITEMS.register("cover_scale_energy",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> COVER_SCALE_PROGRESS = ITEMS.register("cover_scale_progress",
+			() -> new Item(new Item.Properties()));
+
+	/**
 	 * The p11 auto redstone machine switch — the "lets it finish" controller (task
 	 * p11-cover-controllers; upstream MultiItemTechnological.java:65 meta 1006,
 	 * "Auto Redstone Machine Switch"). Holds a mid-process machine ON through a
@@ -343,6 +368,24 @@ public final class GT6Covers {
 		}
 	}
 
+	/**
+	 * The p35 five auto reboot switch ladder items — one item per duration, upstream
+	 * MultiItemTechnological.java:68-72 metas 1009-1013 ("Auto Reboot Switch (1 min)" ..
+	 * "(30 mins)", each carrying a {@link CoverControllerAutoTimer} with the
+	 * 1200..36000 tick cycle). The duration word rides the per-item lang key (the zh
+	 * faces are not literal-arg composable across locales — the conveyor template form
+	 * needs locale-neutral args).
+	 */
+	public static final String[] AUTO_TIMER_IDS = {"cover_auto_timer_1m", "cover_auto_timer_5m", "cover_auto_timer_10m", "cover_auto_timer_20m", "cover_auto_timer_30m"};
+
+	/** The p35 auto reboot switch ladder — the five duration items, in {@link #AUTO_TIMER_IDS} order. */
+	public static final List<RegistryObject<Item>> COVER_AUTO_TIMERS = new ArrayList<>();
+	static {
+		for (String tId : AUTO_TIMER_IDS) {
+			COVER_AUTO_TIMERS.add(ITEMS.register(tId, () -> new Item(new Item.Properties())));
+		}
+	}
+
 	private static boolean sInitialized = false;
 
 	private GT6Covers() {
@@ -407,6 +450,15 @@ public final class GT6Covers {
 			aEvent.accept(new ItemStack(COVER_SELECTOR_REDSTONE.get()));
 			aEvent.accept(new ItemStack(COVER_SELECTOR_MANUAL.get()));
 			aEvent.accept(new ItemStack(COVER_SELECTOR_BUTTON_PANEL.get()));
+			// task p35-covers-display-scale-6 — the display/scale family joins the machines
+			// tab (the p34 gameplay-family precedent; upstream the MultiItemTechnological
+			// items ride the GT tab list)
+			aEvent.accept(new ItemStack(COVER_MACHINE_DISPLAY.get()));
+			aEvent.accept(new ItemStack(COVER_AUTO_SWITCH.get()));
+			aEvent.accept(new ItemStack(COVER_ENERGY_DISPLAY.get()));
+			aEvent.accept(new ItemStack(COVER_SCALE_ENERGY.get()));
+			aEvent.accept(new ItemStack(COVER_SCALE_PROGRESS.get()));
+			for (int i = 0; i < COVER_AUTO_TIMERS.size(); i++) aEvent.accept(new ItemStack(COVER_AUTO_TIMERS.get(i).get()));
 		}
 	}
 
@@ -458,6 +510,18 @@ public final class GT6Covers {
 		CoverRegistry.put(COVER_SELECTOR_REDSTONE.get(), new CoverSelectorRedstone()); // p34 — the signal-driven dial
 		CoverRegistry.put(COVER_SELECTOR_MANUAL.get(), new CoverSelectorManual()); // p34 — the arrow/bit plate GUI
 		CoverRegistry.put(COVER_SELECTOR_BUTTON_PANEL.get(), new CoverSelectorButtonPanel()); // p34 — the 4x4 button grid
+		// p35 — the display/scale family (upstream MultiItemTechnological :61/:63/:73/:77
+		// + the :68-72 reboot-switch ladder): the status display + the auto switch + the
+		// energy display + the two sensors + the five timer durations
+		CoverRegistry.put(COVER_MACHINE_DISPLAY.get(), new CoverControllerDisplay()); // p35 — the status display + switch face
+		CoverRegistry.put(COVER_AUTO_SWITCH.get(), new CoverControllerAuto()); // p35 — the runs-when-needed switch
+		CoverRegistry.put(COVER_ENERGY_DISPLAY.get(), new CoverDisplayEnergy()); // p35 — the 11-step energy gauge
+		CoverRegistry.put(COVER_SCALE_ENERGY.get(), new CoverScaleEnergy()); // p35 — the energy redstone sensor
+		CoverRegistry.put(COVER_SCALE_PROGRESS.get(), new CoverScaleProgress()); // p35 — the progress redstone sensor
+		for (int i = 0; i < COVER_AUTO_TIMERS.size(); i++) {
+			// p35 — the five reboot durations (1200..36000 tick cycles)
+			CoverRegistry.put(COVER_AUTO_TIMERS.get(i).get(), new CoverControllerAutoTimer(CoverControllerAutoTimer.TIMER_TIMES[i]));
+		}
 		for (int i = 0; i < CoverConveyor.TIMING_TIERS.length; i++) {
 			// p11 — the ten timing tiers of the two item-transport covers (512>>i tick periods)
 			CoverRegistry.put(COVER_CONVEYORS.get(i).get(), new CoverConveyor(CoverConveyor.TIMING_TIERS[i]));
