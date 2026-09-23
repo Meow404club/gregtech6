@@ -334,7 +334,15 @@ public final class GTMachineCommand {
 		.then(machine("plantalyzer_t2", GTMachines.PLANTALYZER_BLOCKS_BY_PATH.get("plantalyzer_t2"), () -> net.minecraft.world.item.Items.OAK_SAPLING))
 		.then(machine("plantalyzer_t3", GTMachines.PLANTALYZER_BLOCKS_BY_PATH.get("plantalyzer_t3"), () -> net.minecraft.world.item.Items.OAK_SAPLING))
 		.then(machine("plantalyzer_t4", GTMachines.PLANTALYZER_BLOCKS_BY_PATH.get("plantalyzer_t4"), () -> net.minecraft.world.item.Items.OAK_SAPLING))
-		.then(machine("plantalyzer_t5", GTMachines.PLANTALYZER_BLOCKS_BY_PATH.get("plantalyzer_t5"), () -> net.minecraft.world.item.Items.OAK_SAPLING));
+		.then(machine("plantalyzer_t5", GTMachines.PLANTALYZER_BLOCKS_BY_PATH.get("plantalyzer_t5"), () -> net.minecraft.world.item.Items.OAK_SAPLING))
+		// task p35-slicer-row-domain: the Slicer ladder - the input feed is the leather
+		// helmet (the Loader_Recipes_Vanilla.java:638 row0 primary input; the blade second
+		// leg rides the `input item` override arm, the p34 bumblelyzer multi-input form)
+		.then(machine("slicer", GTMachines.SLICER_BLOCKS_BY_PATH.get("slicer"), () -> net.minecraft.world.item.Items.LEATHER_HELMET))
+		.then(machine("slicer_t2", GTMachines.SLICER_BLOCKS_BY_PATH.get("slicer_t2"), () -> net.minecraft.world.item.Items.LEATHER_HELMET))
+		.then(machine("slicer_t3", GTMachines.SLICER_BLOCKS_BY_PATH.get("slicer_t3"), () -> net.minecraft.world.item.Items.LEATHER_HELMET))
+		.then(machine("slicer_t4", GTMachines.SLICER_BLOCKS_BY_PATH.get("slicer_t4"), () -> net.minecraft.world.item.Items.LEATHER_HELMET))
+		.then(machine("slicer_t5", GTMachines.SLICER_BLOCKS_BY_PATH.get("slicer_t5"), () -> net.minecraft.world.item.Items.LEATHER_HELMET));
 		event.getDispatcher().register(tMachine);
 		event.getDispatcher().register(bridgeArm());
 		LOGGER.info("Registered GT6 bridge acceptance command /gt6bridge (heater|engine|motor x stat|reset, the EU->HU/KU/RU converter live face)");
