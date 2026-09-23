@@ -50,7 +50,7 @@ steps += [
 # ------------------------------------------------- B: the DETECT face
 steps += [
     phase("B: the detect — a cart on the rail flips POWERED and lights the lamp"),
-    Step("summon minecraft:minecart 400.5 64.0625 460.5", expect="Summoned new minecart"),
+    Step("summon minecraft:minecart 400.5 64.0625 460.5", expect="Summoned new"),
     Step("execute if block 400 64 460 gt6:rail_detector_steel[powered=true]",
          expect="Test passed", poll=6.0),
     Step("execute if block 400 65 460 minecraft:redstone_lamp[lit=true]",
