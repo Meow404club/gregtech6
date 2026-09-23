@@ -948,7 +948,10 @@ SESSION_GROUPS = (
     # mirroring the p26_w1_sifter form (bbox-registered, no fakesource, no mutates —
     # the grid inject rig).
     # --group p35_slicer_rows matches through the chain's embedded name prefix.
-    ("p35_slicer_rows",),
+    # Cluster member = the chain FILE stem (select_groups load_chain contract,
+    # the p34_machines_bc multi-stem form) — the group key itself resolves via
+    # Chain.name "p35-slicer-leather p35_slicer_rows".
+    ("p35_slicer_leather",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
