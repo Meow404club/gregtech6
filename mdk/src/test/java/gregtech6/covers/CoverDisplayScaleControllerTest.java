@@ -245,20 +245,24 @@ public class CoverDisplayScaleControllerTest extends GTCoverTestBase {
 		assertTrue(installOn(tOven, new CoverControllerDisplay()), "install accepted");
 		CoverControllerDisplay tDisplay = (CoverControllerDisplay) tOven.getCovers().mBehaviours[FACE];
 		CoverData tData = tOven.getCovers();
-		// style 0 (bottom art): the UPPER half (y >= 0.25) is the switch
-		assertTrue(tDisplay.onCoverClickedRight(FACE, tData, null, FACE, 0.8F, 0.5F, 0.5F), ":78 — the upper-half click toggles");
+		// style 0 (bottom art): the TOP QUARTER strip (y >= PX_N[4]=0.75) is the switch —
+		// side 1 (UP) maps (aHitX, aHitZ) to the art coords (the :1737 row)
+		assertTrue(tDisplay.onCoverClickedRight(FACE, tData, null, FACE, 0.8F, 0.9F, 0.9F), ":78 — the strip click (y >= 0.75) toggles");
 		assertFalse(tOven.getStateOnOff(), "the toggle stopped the machine");
-		assertTrue(tDisplay.onCoverClickedRight(FACE, tData, null, FACE, 0.8F, 0.5F, 0.5F), "the second click toggles back");
+		assertTrue(tDisplay.onCoverClickedRight(FACE, tData, null, FACE, 0.8F, 0.9F, 0.9F), "the second click toggles back");
 		assertTrue(tOven.getStateOnOff(), "the machine runs again");
-		// the LOWER half of the bottom art is NOT the switch
+		// BELOW the strip the bottom art is NOT the switch — y 0.5 is the readout half,
+		// upstream :78 (y >= PX_N[4]) does not answer it
+		assertFalse(tDisplay.onCoverClickedRight(FACE, tData, null, FACE, 0.8F, 0.5F, 0.5F), ":78 — y 0.5 < 0.75 falls through");
 		assertFalse(tDisplay.onCoverClickedRight(FACE, tData, null, FACE, 0.8F, 0.1F, 0.1F), ":78 — y < 0.25 falls through");
 		// the left side is NOT the switch either
 		assertFalse(tDisplay.onCoverClickedRight(FACE, tData, null, FACE, 0.3F, 0.9F, 0.9F), ":78 — x < 0.625 falls through");
-		// style 1 (top art): the LOWER half (y <= 0.25) is the switch
+		// style 1 (top art): the BOTTOM QUARTER strip (y <= PX_P[4]=0.25) is the switch
 		tData.mVisuals[FACE] = (short) ((tData.mVisuals[FACE] & 1023) | (1 << 10));
-		assertTrue(tDisplay.onCoverClickedRight(FACE, tData, null, FACE, 0.8F, 0.1F, 0.1F), ":79 — the lower-half click toggles on style 1");
+		assertTrue(tDisplay.onCoverClickedRight(FACE, tData, null, FACE, 0.8F, 0.1F, 0.1F), ":79 — the strip click (y <= 0.25) toggles on style 1");
 		assertFalse(tOven.getStateOnOff(), "the style-1 toggle stopped the machine");
-		assertFalse(tDisplay.onCoverClickedRight(FACE, tData, null, FACE, 0.8F, 0.9F, 0.9F), ":79 — the upper half falls through on style 1");
+		assertFalse(tDisplay.onCoverClickedRight(FACE, tData, null, FACE, 0.8F, 0.9F, 0.9F), ":79 — y 0.9 > 0.25 falls through on style 1");
+		assertFalse(tDisplay.onCoverClickedRight(FACE, tData, null, FACE, 0.8F, 0.5F, 0.5F), ":79 — y 0.5 > 0.25 falls through on style 1");
 		// a click on a DIFFERENT side never toggles
 		tData.mVisuals[FACE] = 0;
 		assertFalse(tDisplay.onCoverClickedRight(FACE, tData, null, (byte) 0, 0.8F, 0.5F, 0.5F), ":75 — aSide != aSideClicked falls through");

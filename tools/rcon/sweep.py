@@ -852,11 +852,14 @@ SESSION_GROUPS = (
         # p35-covers-display-scale-6 — the display/scale cover family live
         # chains, six fresh columns x600..645 z304..308 (x-disjoint from the
         # covers-g2 band x560..584 and every registered band): the auto switch
-        # idle-hold/release/mount + input-release transitions, the reboot timer
-        # mid-cycle hold + the removal release, the status display 488 lane +
-        # the in-vivo style-bit round trip, the energy display both gauge ends
-        # (0 at the drained buffer, 10 at the 2x64-booked rig) and the two
-        # scales (the live progress value lane, the full-scale 15).
+        # idle-hold/release/mount + the rig-driven input-release transition
+        # (the doActive :798 per-tick probe needs the booked energy), the
+        # reboot timer mid-cycle hold + the removal release, the status display
+        # 488 lane + the in-vivo style-bit round trip, the energy display the
+        # live zero gauge (the grid-fed buffer is structurally 0 at tickPost —
+        # the doInject mInputMax cap vs the unconditional :791 drain — the
+        # nonzero faces are the offline formula pins) and the two scales (the
+        # live progress value lane; the energy scale the same drained zero).
         "cover6_controller_auto",
         "cover6_auto_timer",
         "cover6_controller_display",

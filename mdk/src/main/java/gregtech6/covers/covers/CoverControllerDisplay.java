@@ -22,11 +22,11 @@ import gregtech6.tileentity.machines.ITileEntitySwitchableOnOff;
  * (CoverMachineLanes) carries all four capabilities, so the markers set unconditionally
  * and the lamps ride the lane reads.
  *
- * <p>The click arm (:74-83): on the covered face, the switch half of the plate toggles
- * the machine — the bottom art (style 0) switches on its upper half
- * ({@code x >= PX_N[6]=0.625 && y >= PX_P[4]=0.25}), the top art (style 1) on its lower
- * half ({@code y <= 0.25}); the face-coords mapping is the UT.Code.getFacingCoordsClicked
- * port (UT.java:1734-1744 verbatim).
+ * <p>The click arm (:74-83): on the covered face, the switch strip of the plate toggles
+ * the machine — the bottom art (style 0) switches on its top quarter strip
+ * ({@code x >= PX_N[6]=0.625 && y >= PX_N[4]=0.75}), the top art (style 1) on its bottom
+ * quarter strip ({@code y <= PX_P[4]=0.25}); the face-coords mapping is the
+ * UT.Code.getFacingCoordsClicked port (UT.java:1734-1744 verbatim).
  *
  * <p>The chisel arm (:47-53): cycles the art style — the style bits
  * ({@code (visuals >>> 10) + 1} mod 2) in the visual lane, 100 tool damage.
@@ -52,10 +52,13 @@ public class CoverControllerDisplay extends AbstractCoverAttachmentController {
 	/** The CS.B lane literals used by :63-67 (B[0]..B[9] == {@code 1 << n}). */
 	private static final short B0 = 1, B1 = 2, B2 = 4, B3 = 8, B5 = 32, B6 = 64, B7 = 128, B8 = 256, LOW_BITS = 1023;
 
-	/** Upstream PX_N[6] — the switch half's left edge (0.625). */
+	/** Upstream PX_N[6] — the switch strip's left edge (0.625). */
 	private static final float PX_N_6 = 0.625F;
 
-	/** Upstream PX_P[4] — the switch half's centre row (0.25). */
+	/** Upstream PX_N[4] — the bottom art's switch strip lower edge (0.75, the :78 upper quarter strip). */
+	private static final float PX_N_4 = 0.75F;
+
+	/** Upstream PX_P[4] — the top art's switch strip upper edge (0.25, the :79 lower quarter strip). */
 	private static final float PX_P_4 = 0.25F;
 
 	/**
@@ -102,8 +105,8 @@ public class CoverControllerDisplay extends AbstractCoverAttachmentController {
 	}
 
 	/**
-	 * Upstream :74-83 — the switch half of the plate toggles the machine (server side);
-	 * the active half depends on the art style. The :76 coords mapping is the
+	 * Upstream :74-83 — the switch strip of the plate toggles the machine (server side);
+	 * the active strip depends on the art style. The :76 coords mapping is the
 	 * getFacingCoordsClicked port.
 	 */
 	@Override
@@ -111,7 +114,7 @@ public class CoverControllerDisplay extends AbstractCoverAttachmentController {
 		if (aCoverSide == aSideClicked && aData.mTileEntity instanceof ITileEntitySwitchableOnOff tTE) {
 			float[] tCoords = facingCoordsClicked(aSideClicked, aHitX, aHitY, aHitZ);
 			switch ((short) ((aData.mVisuals[aCoverSide] >>> 10) % 2)) {
-				case 0: if (tCoords[0] >= PX_N_6 && tCoords[1] >= PX_P_4) {if (aData.mTileEntity.isServerSideTE()) tTE.setStateOnOff(!tTE.getStateOnOff()); return true;} break;
+				case 0: if (tCoords[0] >= PX_N_6 && tCoords[1] >= PX_N_4) {if (aData.mTileEntity.isServerSideTE()) tTE.setStateOnOff(!tTE.getStateOnOff()); return true;} break;
 				case 1: if (tCoords[0] >= PX_N_6 && tCoords[1] <= PX_P_4) {if (aData.mTileEntity.isServerSideTE()) tTE.setStateOnOff(!tTE.getStateOnOff()); return true;} break;
 			}
 		}
