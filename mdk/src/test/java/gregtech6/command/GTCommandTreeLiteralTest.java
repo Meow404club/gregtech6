@@ -98,7 +98,8 @@ public class GTCommandTreeLiteralTest {
 		"crystallisationcrucible", "crystallisationcrucible_t2", "crystallisationcrucible_t3", "crystallisationcrucible_t4",
 		"paint", "unpaint", // task p21-paintable-storage-sync — the spray write-point arm
 		"burner_mixer", "burner_mixer_t2", "burner_mixer_t3", "burner_mixer_t4",
-		"plantalyzer", "plantalyzer_t2", "plantalyzer_t3", "plantalyzer_t4", "plantalyzer_t5"); // task p34-machines-burner-plantalyzer — the two machine families (+9 literals; the ignite arm rides EVERY family literal)
+		"plantalyzer", "plantalyzer_t2", "plantalyzer_t3", "plantalyzer_t4", "plantalyzer_t5", // task p34-machines-burner-plantalyzer — the two machine families (+9 literals; the ignite arm rides EVERY family literal)
+		"slicer", "slicer_t2", "slicer_t3", "slicer_t4", "slicer_t5"); // task p35-slicer-row-domain — the Slicer EU 5-ladder (+5 literals, the leather-helmet feed)
 
 	private static CommandSourceStack stack() {
 		// permission level 2 satisfies both commands' requires(...) gate; level/server are
