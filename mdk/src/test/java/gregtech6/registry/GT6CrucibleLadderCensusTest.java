@@ -149,4 +149,41 @@ class GT6CrucibleLadderCensusTest {
 		assertNotNull(GT6Distillation.TOWER_BLOCKS_BY_PATH.get("distillation_tower"));
 		assertNotNull(GT6Distillation.TOWER_BLOCKS_BY_PATH.get("cryo_distillation_tower"));
 	}
+
+	/**
+	 * The census flag flip (task p35-crucible-wall-obtainability — the p34 verify found the
+	 * eight dedicated wall blocks creative-only, the no-op-with-proof leftover): EVERY tier
+	 * is now OBTAINABLE, pinned per rung on both acquisition faces —
+	 * <ul>
+	 * <li>the WELDER row (RM domain, Loader :1143-1153 {@code addRecipe2(F, 16, 256,
+	 *     plate×4, ST.tag(10), wall)}) covers the wall path;</li>
+	 * <li>the CRAFTING row JSON ships (datapack domain, the :1143-1153 {@code "wPP","hPP"}
+	 *     four-plate row — wrench + hammer + FOUR plates per the shape) with the wall as
+	 *     its result.</li>
+	 * </ul>
+	 * The JSON reads off the classpath (src/generated/resources is a test resource dir, the
+	 * GT6DualDirectoryFacesTest form); a missing face fails the census, not just the build.
+	 */
+	@Test
+	public void theEightWallBlocksAreObtainable() throws Exception {
+		java.util.Set<String> tWelderWalls = new java.util.HashSet<>();
+		for (gregtech6.recipes.GT6RecipesWelder.WelderWallRow tWRow : gregtech6.recipes.GT6RecipesWelder.table()) {
+			tWelderWalls.add(tWRow.wallPath());
+		}
+		for (GT6Crucibles.CrucibleRow tRow : GT6Crucibles.CRUCIBLE_ROWS) {
+			String tWall = tRow.wallPath();
+			assertTrue(tWelderWalls.contains(tWall), "the welder acquisition row exists: " + tWall);
+			String tJson = resourceOrNull("data/gt6/recipes/crucible_wall/" + tWall + ".json");
+			assertNotNull(tJson, "the crafting JSON ships: " + tWall);
+			assertTrue(tJson.contains("wPP") && tJson.contains("hPP"), tWall + " the :1143-1153 wrench/hammer four-plate pattern");
+			assertTrue(tJson.contains("\"gt6:" + tWall + "\""), tWall + " the row result is the wall itself");
+		}
+	}
+
+	/** The null-reading classpath face (the GT6DualDirectoryFacesTest form). */
+	private static String resourceOrNull(String aPath) throws java.io.IOException {
+		try (java.io.InputStream tStream = GT6CrucibleLadderCensusTest.class.getClassLoader().getResourceAsStream(aPath)) {
+			return tStream == null ? null : new String(tStream.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+		}
+	}
 }
