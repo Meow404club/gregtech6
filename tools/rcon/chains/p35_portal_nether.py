@@ -84,7 +84,8 @@ steps = [
          poll=120.0),  # the hopper pushes through the portal capability within ~8t batches
 
     phase("E: the FLUID leg — pipe -> A's EAST face -> the barrel west of B"),
-    Step(f"gt6pipe place {F(PIPE)} 5", expect="connections"),  # the connect to A must report non-zero connections
+    Step(f"gt6pipe place {F(PIPE)} 5", expect="connections 16"),  # WEST bit — the connect answered through the relay (the nether barrel's getTanks)
+    Step(f"gt6pipe toggle {F(PIPE)} 2", expect="connections 20"),  # the north air mouth (SBIT 2|16) — the inject inlet
     Step(f"gt6pipe inject {F(PIPE)} 2 1000", expect="GT6 pipe inject"),
     Step(NETH + f"gt6tank show {BARREL}",
          expect="minecraft:water",
