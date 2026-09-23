@@ -33,7 +33,10 @@ public class GT6BoosterRailBlock extends PoweredRailBlock {
 	private final float mSpeed;
 
 	public GT6BoosterRailBlock(float aSpeed, Properties aProperties) {
-		super(aProperties, false); // false = NOT an activator rail (the vanilla Powered Rail form)
+		// TRUE = the powered (booster) rail class — the vanilla Blocks.java bytecode registers
+		// POWERED_RAIL with (props, true) and ACTIVATOR_RAIL with the one-arg ctor; FALSE
+		// classifies the block as an activator rail (no boost, no brake — the RCON race stall)
+		super(aProperties, true);
 		mSpeed = aSpeed;
 	}
 

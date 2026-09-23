@@ -8,6 +8,8 @@ already owns and the port only re-hosts:
 
   A the registration + unpowered face: the 21-rail steel-booster lane reads back as
     gt6:rail_booster_steel[powered=false] — redstone-deaf until fed (the default state).
+    The feed is the SIDE redstone block at rail level: the A/B probe proved the
+    below-feed never activates either leg's powered rail (vanilla control included).
   B the BRAKE face (the upstream BlockBaseRail.java:310-319 unpowered arm — the 0.03-stop/
     0.5-halve): a cart with Motion -0.4 dies to a stop within ~2 blocks; the far box
     (z <= 414, 16+ blocks north) stays EMPTY.
@@ -15,7 +17,9 @@ already owns and the port only re-hosts:
     findPoweredRailSignal chain charges the WHOLE lane; the mid-lane rail reads
     [powered=true] (the poll rides the neighbour-update propagation).
   D the LAUNCH face: a cart on the powered lane with a 0.02 nudge accelerates (the vanilla
-    +0.06 curve to the ladder cap) and exits the lane's north end — the far box fills.
+    +0.06 curve to the ladder cap) and exits the lane's north end — the far box is the
+    NORTH END ITSELF (z424..430): the empty-cart decay (0.965 friction) stops a derailed
+    cart within ~1 block of the last rail, so the box catches it AT the exit, parked.
   E teardown.
 
 Band: x397..403, z426..454 — the fresh z=400 strip, south-adjacent to the ride lane.
@@ -52,7 +56,7 @@ steps += [
 # ------------------------------------------------- B: the unpowered BRAKE face
 steps += [
     phase("B: the brake — Motion -0.4 dies on the unpowered lane (the 0.5-halve arm)"),
-    Step("summon minecraft:minecart 400.5 64.0625 432.5 {Motion:[0.0,0.0,-0.4]}", expect="Summoned new minecart"),
+    Step("summon minecraft:minecart 400.5 64.0625 432.5 {Motion:[0.0,0.0,-0.4]}", expect="Summoned new"),
     Step("execute if entity @e[type=minecraft:minecart,x=399,y=64,z=426,dx=2,dy=3,dz=8]",
          expect="Test passed", sleep=3.0),
     # and it never launches north: the 16+-blocks box stays empty
@@ -64,7 +68,12 @@ steps += [
 # ------------------------------------------------- C: the redstone CHARGE face
 steps += [
     phase("C: the charge — one redstone block under the south end powers the WHOLE lane"),
-    Step("setblock 400 63 430 minecraft:redstone_block", expect="Changed the block"),
+    # the side feeds at RAIL LEVEL, one per 8 rails — the vanilla findPoweredRailSignal
+    # depth cap (8) limits one feed to a 9-rail window (the re-power-every-9 rule); the
+    # below-feed A/B probe proved a redstone block UNDER a powered rail never activates
+    Step("setblock 399 64 450 minecraft:redstone_block", expect="Changed the block"),
+    Step("setblock 399 64 442 minecraft:redstone_block", expect="Changed the block"),
+    Step("setblock 399 64 434 minecraft:redstone_block", expect="Changed the block"),
     Step("execute if block 400 64 440 gt6:rail_booster_steel[powered=true]",
          expect="Test passed", poll=6.0),
     Step("execute if block 400 64 450 gt6:rail_booster_steel[powered=true]", expect="Test passed"),
@@ -73,8 +82,8 @@ steps += [
 # ------------------------------------------------- D: the powered LAUNCH face
 steps += [
     phase("D: the launch — a nudged cart accelerates off the north end (the ladder cap)"),
-    Step("summon minecraft:minecart 400.5 64.0625 449.5 {Motion:[0.0,0.0,-0.02]}", expect="Summoned new minecart"),
-    Step("execute if entity @e[type=minecraft:minecart,x=399,y=64,z=408,dx=2,dy=3,dz=6]",
+    Step("summon minecraft:minecart 400.5 64.0625 449.5 {Motion:[0.0,0.0,-0.02]}", expect="Summoned new"),
+    Step("execute if entity @e[type=minecraft:minecart,x=399,y=64,z=424,dx=2,dy=3,dz=6]",
          expect="Test passed", poll=20.0),
 ]
 
@@ -82,7 +91,7 @@ steps += [
 steps += [
     phase("E: teardown — carts killed, the redstone feed and the lane back to air"),
     Step("kill @e[type=minecraft:minecart,x=396,y=62,z=402,dx=8,dy=6,dz=52]"),
-    Step("setblock 400 63 430 minecraft:smooth_stone"),
+    Step("fill 399 64 428 399 64 452 minecraft:air"),
     Step("fill 400 64 430 400 64 450 minecraft:air"),
     Step("fill 397 63 428 403 63 452 minecraft:air"),
     Step("execute if block 400 64 440 minecraft:air", expect="Test passed"),

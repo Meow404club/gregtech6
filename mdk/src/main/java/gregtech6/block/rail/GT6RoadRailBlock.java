@@ -32,7 +32,10 @@ import gregtech6.registry.GT6Rails;
 public class GT6RoadRailBlock extends PoweredRailBlock {
 
 	public GT6RoadRailBlock(Properties aProperties) {
-		super(aProperties, false); // false = NOT an activator rail
+		// TRUE = the powered (booster) rail class — the vanilla Blocks.java bytecode registers
+		// POWERED_RAIL with (props, true) and ACTIVATOR_RAIL with the one-arg ctor; FALSE
+		// classifies the block as an activator rail (no boost, no brake — the RCON race stall)
+		super(aProperties, true);
 		// the super ctor calls the virtual registerDefaultState() -> the override below ran
 	}
 
