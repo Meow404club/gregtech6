@@ -35,6 +35,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 import gregtech6.item.GT6Circuits;
+import gregtech6.registry.GT6Crucibles;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMultiBlocks;
 
@@ -55,7 +56,14 @@ import gregtech6.registry.GTMultiBlocks;
  *
  * <p>Deviations (declared): the Galvanized Steel rows (:1147/:1158) SKIP at resolve time
  * — SteelGalvanized carries no port plate/plateDense item rows (the GTMaterialItems
- * registration gate), the upstream {@code FL.exists} drop form, 20 of 22 rows pour.
+ * registration gate), the upstream {@code FL.exists} drop form, 28 of 30 rows pour.
+ *
+ * <p>task p35-crucible-wall-obtainability — the 8 DEDICATED crucible-wall rows append
+ * ({@code dense=false}, the wall EUt/duration): the dedicated {@code crucible_*_wall}
+ * blocks are the port-side twins of the metalwall items :1143-1153 recipes (the
+ * GTCrucibleWallBlock deviation — the controllers reference the dedicated blocks, the
+ * shared {@code machine_wall_*} rows do NOT cover them), so the same 4-plate +
+ * {@code ST.tag(10)} row replays per tier.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6RecipesWelder {
@@ -97,6 +105,12 @@ public final class GT6RecipesWelder {
 
 	/** The production resolver: the registered part block's item (the paths coincide — the registration loops). */
 	private static net.minecraft.world.item.Item defaultOutputResolver(String aWallPath) {
+		if (aWallPath.startsWith("crucible_")) {
+			// the dedicated crucible-wall items (p35): the 7 ladder walls + the single-rung steel wall
+			net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tHandle = GT6Crucibles.CRUCIBLE_WALL_ITEMS_BY_PATH.get(aWallPath);
+			if (tHandle == null && "crucible_steel_wall".equals(aWallPath)) tHandle = GT6Crucibles.CRUCIBLE_STEEL_WALL_ITEM;
+			return tHandle == null ? null : tHandle.get();
+		}
 		gregtech6.block.multiblock.GTMultiBlockPartBlock tBlock = GTMultiBlocks.anyPartBlock(aWallPath);
 		return tBlock == null ? null : tBlock.asItem();
 	}
@@ -121,7 +135,7 @@ public final class GT6RecipesWelder {
 	public record WelderWallRow(String note, String wallPath, gregapi.oredict.OreDictPrefix platePrefix,
 			String materialName, boolean dense) {}
 
-	/** The 11 metal-wall rows (:1143-1153) + the 11 dense-wall rows (:1155-1165), the registration order. */
+	/** The 11 metal-wall rows (:1143-1153) + the 11 dense-wall rows (:1155-1165) + the 8 dedicated crucible-wall rows (p35), the registration order. */
 	private static volatile List<WelderWallRow> sTable = null;
 
 	/** The row table (lazy — the class-load at MOD CONSTRUCTION precedes the material tables). */
@@ -136,6 +150,13 @@ public final class GT6RecipesWelder {
 			for (GTMultiBlocks.MultiblockPartRow tRow : GTMultiBlocks.WALL_ROWS) {
 				tTable.add(new WelderWallRow(":1155-1165 " + tRow.path(), tRow.path(),
 						gregapi.data.OP.plateDense, materialNameOf(tRow.path()), true));
+			}
+			// p35 — the dedicated crucible walls are NOT covered by the machine-wall rows above
+			// (the controller NBT_DESIGN column references the dedicated GTCrucibleWallBlocks),
+			// so each tier replays the same :1143-1153 row onto its own block.
+			for (GT6Crucibles.CrucibleRow tRow : GT6Crucibles.CRUCIBLE_ROWS) {
+				tTable.add(new WelderWallRow(":1143-1153 dedicated " + tRow.wallPath(), tRow.wallPath(),
+						gregapi.data.OP.plate, materialNameOf(tRow.wallPath()), false));
 			}
 			sTable = tTable;
 		}
@@ -156,6 +177,16 @@ public final class GT6RecipesWelder {
 			case "machine_wall_tungsten", "dense_wall_tungsten" -> "W";
 			case "machine_wall_tantalum_hafnium_carbide", "dense_wall_tantalum_hafnium_carbide" -> "Ta4HfC5";
 			case "machine_wall_adamantium", "dense_wall_adamantium" -> "Ad";
+			// p35 — the dedicated crucible-wall rows (the Loader aMat columns of :1270-1277,
+			// the same material the rung's shell rides)
+			case "crucible_steel_wall" -> "Steel";
+			case "crucible_stainless_steel_wall" -> "StainlessSteel";
+			case "crucible_invar_wall" -> "Invar";
+			case "crucible_titanium_wall" -> "Ti";
+			case "crucible_tungstensteel_wall" -> "TungstenSteel";
+			case "crucible_tungsten_wall" -> "W";
+			case "crucible_tantalum_hafnium_carbide_wall" -> "Ta4HfC5";
+			case "crucible_adamantium_wall" -> "Ad";
 			default -> throw new IllegalArgumentException("unknown wall row " + aPath);
 		};
 	}
