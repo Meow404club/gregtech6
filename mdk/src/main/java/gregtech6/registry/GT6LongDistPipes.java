@@ -55,13 +55,21 @@ public final class GT6LongDistPipes {
 	/** One pipe row = one upstream meta: the registry-path seat + the temperature rating. */
 	public record PipeRow(int meta, long temperatureK) {}
 
-	/** The 16 metas — the Loader_Blocks.java:179 row, the melting points read live off the material table (the MT.*.mMeltingPoint registration form). */
+	/**
+	 * The 16 metas — the Loader_Blocks.java:179 temperature row as LITERALS (the
+	 * GT6LongDistWires tier-byte form): meta 0 = -1 (item), then the upstream computed
+	 * SS/W/Ad/Draconium melting points {1943, 3695, 5425, 4500} (the zh dump
+	 * gt.block.longdistpipe.01.1-4 faces verbatim; the material table populates after
+	 * mod construct, so the eager MT.*.mMeltingPoint read is not available at class-init
+	 * — the values are pinned against the MT table by the offline test), then the 11
+	 * dead 0 rows.
+	 */
 	public static final List<PipeRow> ROWS = List.of(
 			new PipeRow(0, -1),
-			new PipeRow(1, gregapi.data.MT.StainlessSteel.mMeltingPoint),
-			new PipeRow(2, gregapi.data.MT.W.mMeltingPoint),
-			new PipeRow(3, gregapi.data.MT.Ad.mMeltingPoint),
-			new PipeRow(4, gregapi.data.MT.Draconium.mMeltingPoint),
+			new PipeRow(1, 1943),
+			new PipeRow(2, 3695),
+			new PipeRow(3, 5425),
+			new PipeRow(4, 4500),
 			new PipeRow(5, 0), new PipeRow(6, 0), new PipeRow(7, 0), new PipeRow(8, 0),
 			new PipeRow(9, 0), new PipeRow(10, 0), new PipeRow(11, 0), new PipeRow(12, 0),
 			new PipeRow(13, 0), new PipeRow(14, 0), new PipeRow(15, 0));

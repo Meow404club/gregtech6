@@ -222,6 +222,24 @@ direct	block.gt6.lightning_rod	避雷针	hand
 direct	block.gt6.lightweightometer	轻量级质量传感器	hand
 direct	block.gt6.locker_bronze	青铜储物柜	hand
 direct	block.gt6.locker_steel	钢储物柜	hand
+direct	block.gt6.long_dist_pipe_0	远距瞬达物品管道	hand
+direct	block.gt6.long_dist_pipe_1	远距零阻流体管道 (1943 K)	hand
+direct	block.gt6.long_dist_pipe_2	远距零阻流体管道 (3695 K)	hand
+direct	block.gt6.long_dist_pipe_3	远距零阻流体管道 (5425 K)	hand
+direct	block.gt6.long_dist_pipe_4	远距零阻流体管道 (4500 K)	hand
+direct	block.gt6.long_dist_pipe_5	远距零阻流体管道 (0 K)	hand
+direct	block.gt6.long_dist_pipe_6	远距零阻流体管道 (0 K)	hand
+direct	block.gt6.long_dist_pipe_7	远距零阻流体管道 (0 K)	hand
+direct	block.gt6.long_dist_pipe_8	远距零阻流体管道 (0 K)	hand
+direct	block.gt6.long_dist_pipe_9	远距零阻流体管道 (0 K)	hand
+direct	block.gt6.long_dist_pipe_10	远距零阻流体管道 (0 K)	hand
+direct	block.gt6.long_dist_pipe_11	远距零阻流体管道 (0 K)	hand
+direct	block.gt6.long_dist_pipe_12	远距零阻流体管道 (0 K)	hand
+direct	block.gt6.long_dist_pipe_13	远距零阻流体管道 (0 K)	hand
+direct	block.gt6.long_dist_pipe_14	远距零阻流体管道 (0 K)	hand
+direct	block.gt6.long_dist_pipe_15	远距零阻流体管道 (0 K)	hand
+direct	block.gt6.longdist_item_pipe	远距传输用物品管道	hand
+direct	block.gt6.longdist_fluid_pipe	远距传输用流体管道	hand
 direct	block.gt6.logistics_core	物流核心	hand
 direct	block.gt6.logistics_wire	物流线缆	hand
 direct	block.gt6.long_dist_wire_0	远距输电用高压电缆 (EV)	hand

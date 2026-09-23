@@ -141,6 +141,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
                 new SubProviderEntry(GT6LongDistanceBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
                 new SubProviderEntry(GT6CrystalChargerBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
+                new SubProviderEntry(GT6LongDistancePipeBlockLoot::new, LootContextParamSets.BLOCK), // task p35-long-distance-pipes
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
                 new SubProviderEntry(GT6PortalBlockLoot::new, LootContextParamSets.BLOCK), // task p35-portals-mini-nether-end — the portal pair self-drops
                 new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
@@ -198,6 +199,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
                 new SubProviderEntry(GT6LongDistanceBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
                 new SubProviderEntry(GT6CrystalChargerBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
+                new SubProviderEntry(GT6LongDistancePipeBlockLoot::new, LootContextParamSets.BLOCK), // task p35-long-distance-pipes
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
                 new SubProviderEntry(GT6PortalBlockLoot::new, LootContextParamSets.BLOCK), // task p35-portals-mini-nether-end — the portal pair self-drops
                 new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
@@ -1398,6 +1400,40 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : electricTransformerLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /** The LD pipe block list (task p35-long-distance-pipes): the 16 wire metas + the two endpoints, self-drop (the transformer storage shape). */
+    public static List<Block> longDistancePipeLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (int tMeta = 0; tMeta < 16; tMeta++) rBlocks.add(gregtech6.registry.GT6LongDistPipes.wireBlockOf(tMeta));
+        rBlocks.add(gregtech6.registry.GT6LongDistPipes.ITEM_PIPE_BLOCK.get());
+        rBlocks.add(gregtech6.registry.GT6LongDistPipes.FLUID_PIPE_BLOCK.get());
+        return rBlocks;
+    }
+
+    /** The LD pipe self-drop provider (task p35-long-distance-pipes, the transformer shape verbatim). */
+    public static final class GT6LongDistancePipeBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6LongDistancePipeBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6LongDistancePipeBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return longDistancePipeLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : longDistancePipeLootBlocks()) dropSelf(tBlock);
         }
     }
 

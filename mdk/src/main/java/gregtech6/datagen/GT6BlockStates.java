@@ -199,6 +199,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addElectricTransformer(); // task p28-c-ulv-lv-transformer
         addLDEnergyFamilies(); // task p35-energy-tail-machines
         addWaterWheel(); // task p28-c-water-wheel
+        addLongDistancePipes(); // task p35-long-distance-pipes — the 16 wire metas + the two endpoints
         addElectricDynamoUlv(); // task p28-c-ulv-dynamo-row — the Electric Dynamo T0 row
         addBatteryBoxes(); // task p29-w4-battery-storage — the 12-box storage face
         addCrystalChargers(); // task p35-energy-tail-machines — the 20-row LU charge face
@@ -1978,6 +1979,35 @@ public final class GT6BlockStates extends BlockStateProvider {
      * assets/README.md carries the source + product sha256 attribution). The active
      * overlay (MultiTileEntityTransformerElectric :50-57) is the render pool defer.
      */
+    /**
+     * Task p35-long-distance-pipes — the Long Distance pipes: the 16 wire metas ride the
+     * cube-all shape over the shared item-pipe texture (the dedicated upstream
+     * LONG_DIST_PIPES_01 iconset is the render pool — the energy-tail wire posture), the
+     * two endpoints share the p28 electric-transformer orientable model (the facing-cube
+     * posture is the same; the per-endpoint visual is not a column of the registration).
+     */
+    private void addLongDistancePipes() {
+        ModelFile tEndpointModel = models().getExistingFile(modLoc("block/electric_transformer"));
+        for (Block tEndpoint : new Block[] {gregtech6.registry.GT6LongDistPipes.ITEM_PIPE_BLOCK.get(),
+                gregtech6.registry.GT6LongDistPipes.FLUID_PIPE_BLOCK.get()}) {
+            String tPath = tEndpoint.getDescriptionId().replace("block.gt6.", "");
+            getVariantBuilder(tEndpoint).forAllStates(aState -> {
+                Direction tFacing = aState.getValue(GT6ElectricTransformerBlock.FACING);
+                return ConfiguredModel.builder()
+                        .modelFile(tEndpointModel)
+                        .rotationY((int) (tFacing.toYRot() + 180) % 360)
+                        .build();
+            });
+            itemModels().withExistingParent(tPath, modLoc("block/electric_transformer"));
+        }
+        for (int tMeta = 0; tMeta < 16; tMeta++) {
+            Block tWire = gregtech6.registry.GT6LongDistPipes.wireBlockOf(tMeta);
+            String tPath = gregtech6.registry.GT6LongDistPipes.pathOf(tMeta);
+            simpleBlock(tWire, models().cubeAll(tPath, modLoc("block/item_pipe")));
+            itemModels().withExistingParent(tPath, modLoc("block/" + tPath));
+        }
+    }
+
     private void addElectricTransformer() {
         // task p35 — the full :881-:889 ladder shares ONE model: upstream registers all
         // nine rows over the SAME icon set (machines/transformers/transformer_electric/*,
