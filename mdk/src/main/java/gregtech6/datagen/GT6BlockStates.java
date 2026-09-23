@@ -189,6 +189,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addHoppers(); // task p26-storage-hopper-family
         addGearBoxTransformer(); // task p12-gearbox-transformer
         addElectricTransformer(); // task p28-c-ulv-lv-transformer
+        addLDEnergyFamilies(); // task p35-energy-tail-machines
         addWaterWheel(); // task p28-c-water-wheel
         addElectricDynamoUlv(); // task p28-c-ulv-dynamo-row — the Electric Dynamo T0 row
         addBatteryBoxes(); // task p29-w4-battery-storage — the 12-box storage face
@@ -1842,6 +1843,37 @@ public final class GT6BlockStates extends BlockStateProvider {
                         .build();
             });
             itemModels().withExistingParent(tRow.path(), modLoc("block/electric_transformer"));
+        }
+    }
+
+    /**
+     * Task p35-energy-tail-machines — the Long Distance families. The five LD
+     * transformer endpoints share the p28 electric-transformer orientable model (the
+     * facing-cube posture is the same; the dedicated upstream iconset
+     * longdistancetransformer_electric is the render pool), the 16 LD wire metas ride
+     * the addWire cube-all shape over the shared wire_electric texture (the dedicated
+     * LONG_DIST_WIRES_01 iconset is the render pool — the blockstate form is the
+     * property-less wildcard variant like the 620 wire family).
+     */
+    private void addLDEnergyFamilies() {
+        ModelFile tLDModel = models().getExistingFile(modLoc("block/electric_transformer"));
+        for (gregtech6.registry.GT6LongDistanceTransformers.LDRow tRow : gregtech6.registry.GT6LongDistanceTransformers.ROWS) {
+            Block tTrans = gregtech6.registry.GT6LongDistanceTransformers.BLOCKS_BY_PATH.get(tRow.path()).get();
+            getVariantBuilder(tTrans).forAllStates(aState -> {
+                Direction tFacing = aState.getValue(GT6ElectricTransformerBlock.FACING);
+                return ConfiguredModel.builder()
+                        .modelFile(tLDModel)
+                        .rotationY((int) (tFacing.toYRot() + 180) % 360)
+                        .build();
+            });
+            itemModels().withExistingParent(tRow.path(), modLoc("block/electric_transformer"));
+        }
+        for (gregtech6.registry.GT6LongDistWires.WireRow tRow : gregtech6.registry.GT6LongDistWires.ROWS) {
+            String tPath = gregtech6.registry.GT6LongDistWires.pathOf(tRow.meta());
+            Block tWire = gregtech6.registry.GT6LongDistWires.BLOCKS_BY_META.get(tRow.meta()).get();
+            var tModel = models().cubeAll(tPath, modLoc("block/wire_electric"));
+            getVariantBuilder(tWire).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
+            itemModels().withExistingParent(tPath, modLoc("block/" + tPath));
         }
     }
 

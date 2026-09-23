@@ -138,6 +138,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-anvil — the stone anvil pair
                 new SubProviderEntry(GT6EuBridgeBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting ladder
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
+                new SubProviderEntry(GT6LongDistanceBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
                 new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
@@ -191,6 +192,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-anvil — the stone anvil pair
                 new SubProviderEntry(GT6EuBridgeBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting ladder
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
+                new SubProviderEntry(GT6LongDistanceBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
                 new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
@@ -1239,6 +1241,43 @@ public final class GT6LootTables extends LootTableProvider {
             rBlocks.add(gregtech6.registry.GT6ElectricTransformers.BLOCKS_BY_PATH.get(tRow.path()).get());
         }
         return rBlocks;
+    }
+
+    /** The Long Distance block list (task p35-energy-tail-machines): the 5 LD transformer endpoints + the 16 LD wire metas, self-drop (the MTE Drops default / the wire family shape). */
+    public static List<Block> longDistanceLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.registry.GT6LongDistanceTransformers.LDRow tRow : gregtech6.registry.GT6LongDistanceTransformers.ROWS) {
+            rBlocks.add(gregtech6.registry.GT6LongDistanceTransformers.BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        for (gregtech6.registry.GT6LongDistWires.WireRow tRow : gregtech6.registry.GT6LongDistWires.ROWS) {
+            rBlocks.add(gregtech6.registry.GT6LongDistWires.BLOCKS_BY_META.get(tRow.meta()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The Long Distance self-drop provider (task p35-energy-tail-machines, the transformer shape verbatim). */
+    public static final class GT6LongDistanceBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6LongDistanceBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6LongDistanceBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return longDistanceLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : longDistanceLootBlocks()) dropSelf(tBlock);
+        }
     }
 
     /** The electric-transformer self-drop provider (task p28-c-ulv-lv-transformer, the FE-converter shape verbatim). */

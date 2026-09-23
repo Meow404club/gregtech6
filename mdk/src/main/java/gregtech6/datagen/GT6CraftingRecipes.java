@@ -247,6 +247,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (BridgeCraftRow tRow : transformerCraftingRows()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
+		for (BridgeCraftRow tRow : ldTransformerCraftingRows()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
+		for (BridgeCraftRow tRow : ldWireCraftingRows()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 		for (BridgeCraftRow tRow : euBridgeCraftingRows()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
@@ -369,6 +375,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		feConverterBuilder().save(aOutput, FE_CONVERTER_ID);
 		waterWheelBuilder().save(aOutput, WATER_WHEEL_ID); // task p30-pool-waterwheel-neo-recipes — the forge branch row (this file :195), the 21.1 face was born without it
 		for (BridgeCraftRow tRow : transformerCraftingRows()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
+		for (BridgeCraftRow tRow : ldTransformerCraftingRows()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
+		for (BridgeCraftRow tRow : ldWireCraftingRows()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 		for (BridgeCraftRow tRow : euBridgeCraftingRows()) {
@@ -1443,6 +1455,69 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('M', tM)
 					.unlockedBy("has_circuit", has(GT6ItemTags.gt6("circuit" + tRow.tier())));
 			rRows.add(new BatteryBoxRecipeRow(tBuilder, tRow));
+		}
+		return rRows;
+	}
+
+	// -------------------------------------------------------------------------
+	// task p35-energy-tail-machines — the Long Distance families (the :909-:913
+	// transformer strings and the Loader_Blocks.java:162-177 wire strings). Declared
+	// folds: the LD 'M' column = the SAME-tier electric transformer item (the p35
+	// ladder); the unbound 'x' dead cell folds to a space; the wire rows guard every
+	// column with itemOrNull — an absent plateCurved/Rubber plate skips the row (the
+	// plunger CR.ONLY_IF_HAS_RESULT face).
+	// -------------------------------------------------------------------------
+
+	/** The cable item of an exact registry path (the wireItem general form — here the exact-token walk for cable_annealed_copper_gt04). */
+	private Item wireItemByPath(String aPath) {
+		java.util.List<GTWireSpecs.Variant> tVariants = GTWireSpecs.variants();
+		for (int i = 0; i < tVariants.size(); i++) {
+			if (GTWireSpecs.registryName(tVariants.get(i)).equals(aPath)) return gregtech6.registry.GTWires.FAMILY_ITEMS.get(i).get();
+		}
+		throw new IllegalStateException("gt6 longdist: no wire item for " + aPath);
+	}
+
+	/** The LD transformer rows: "WMW","M ","WMW" over the tier transformer + the annealed-copper 4x cable (:909-:913). */
+	private java.util.List<BridgeCraftRow> ldTransformerCraftingRows() {
+		java.util.List<BridgeCraftRow> rRows = new java.util.ArrayList<>();
+		Item tCable = wireItemByPath("cable_annealed_copper_gt04"); // the 'W' column, cableGt04(AnnealedCopper) verbatim
+		for (gregtech6.registry.GT6LongDistanceTransformers.LDRow tRow : gregtech6.registry.GT6LongDistanceTransformers.ROWS) {
+			Item tTransformer = gregtech6.registry.GT6ElectricTransformers.itemOfTier(tRow.tier()); // the 'M' column (getItem(10044+i))
+			String tPath = tRow.path();
+			rRows.add(new BridgeCraftRow(ShapedRecipeBuilder
+					.shaped(RecipeCategory.MISC, gregtech6.registry.GT6LongDistanceTransformers.ITEMS_BY_PATH.get(tPath).get())
+					.pattern("WMW").pattern("M ").pattern("WMW")
+					.define('W', tCable)
+					.define('M', tTransformer)
+					.unlockedBy("has_transformer", has(tTransformer)),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+		}
+		return rRows;
+	}
+
+	/** The LD wire material tokens, meta order (Loader_Blocks.java:162-177 'W' column: Sn Pb Cu Ag Au Electrum BlueAlloy ElectrotineAlloy Steel Al W TungstenSteel Os Pt Nq Graphene) = the GTWireSpecs tokens. */
+	private static final String[] LD_WIRE_TOKENS = {"tin", "lead", "copper", "silver", "gold", "electrum", "blue_alloy",
+			"electrotine_alloy", "steel", "aluminium", "tungsten", "tungstensteel", "osmium_elemental", "platinum", "naquadah", "graphene"};
+
+	/** The 16 LD wire rows: "RSR","PWP","RSR" — R = plate(Rubber), P = plateCurved(Cu), S = plateCurved(Al), W = wireGt16 of the row material. */
+	private java.util.List<BridgeCraftRow> ldWireCraftingRows() {
+		java.util.List<BridgeCraftRow> rRows = new java.util.ArrayList<>();
+		Item tRubberPlate = itemOrNull(gregapi.data.OP.plate, gregapi.data.MT.Rubber);
+		Item tCuCurved = itemOrNull(gregapi.data.OP.plateCurved, gregapi.data.MT.Cu);
+		Item tAlCurved = itemOrNull(gregapi.data.OP.plateCurved, gregapi.data.MT.Al);
+		if (tRubberPlate == null || tCuCurved == null || tAlCurved == null) return rRows; // the declared skip: the column carriers are absent
+		for (gregtech6.registry.GT6LongDistWires.WireRow tRow : gregtech6.registry.GT6LongDistWires.ROWS) {
+			Item tWire16 = wireItemByPath("wire_" + LD_WIRE_TOKENS[tRow.meta()] + "_gt16"); // the 'W' column, wireGt16.dat(mat)
+			String tPath = gregtech6.registry.GT6LongDistWires.pathOf(tRow.meta());
+			rRows.add(new BridgeCraftRow(ShapedRecipeBuilder
+					.shaped(RecipeCategory.MISC, gregtech6.registry.GT6LongDistWires.ITEMS_BY_META.get(tRow.meta()).get())
+					.pattern("RSR").pattern("PWP").pattern("RSR")
+					.define('R', tRubberPlate)
+					.define('P', tCuCurved)
+					.define('S', tAlCurved)
+					.define('W', tWire16)
+					.unlockedBy("has_wire", has(tWire16)),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
 		}
 		return rRows;
 	}

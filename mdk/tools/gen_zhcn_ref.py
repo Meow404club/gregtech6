@@ -1229,6 +1229,27 @@ BLOCK_BACKFILL = {
     "block.gt6.electric_transformer_t7": "变压器 (LuV-ZPM)",  # task p35 — hand (:887)
     "block.gt6.electric_transformer_t8": "变压器 (ZPM-UV)",  # task p35 — hand (:888)
     "block.gt6.electric_transformer_t9": "变压器 (UV-PUV1)",  # task p35 — hand (:889, VN[8]-VN[9])
+    "block.gt6.longdist_transformer_t5": "远距离变压器终端 (EV)",  # task p35 — dump gt.multitileentity.10064 verbatim
+    "block.gt6.longdist_transformer_t6": "远距离变压器终端 (IV)",  # task p35 — dump :10065
+    "block.gt6.longdist_transformer_t7": "远距离变压器终端 (LuV)",  # task p35 — dump :10066
+    "block.gt6.longdist_transformer_t8": "远距离变压器终端 (ZPM)",  # task p35 — dump :10067
+    "block.gt6.longdist_transformer_t9": "远距离变压器终端 (UV)",  # task p35 — dump :10068
+    "block.gt6.long_dist_wire_0": "远距输电用高压电缆 (EV)",  # task p35 — dump gt.block.longdistwire.01.0 verbatim
+    "block.gt6.long_dist_wire_1": "远距输电用高压电缆 (EV)",  # task p35 — dump gt.block.longdistwire.01.1 verbatim
+    "block.gt6.long_dist_wire_2": "远距输电用高压电缆 (IV)",  # task p35 — dump gt.block.longdistwire.01.2 verbatim
+    "block.gt6.long_dist_wire_3": "远距输电用高压电缆 (LuV)",  # task p35 — dump gt.block.longdistwire.01.3 verbatim
+    "block.gt6.long_dist_wire_4": "远距输电用高压电缆 (LuV)",  # task p35 — dump gt.block.longdistwire.01.4 verbatim
+    "block.gt6.long_dist_wire_5": "远距输电用高压电缆 (LuV)",  # task p35 — dump gt.block.longdistwire.01.5 verbatim
+    "block.gt6.long_dist_wire_6": "远距输电用高压电缆 (LuV)",  # task p35 — dump gt.block.longdistwire.01.6 verbatim
+    "block.gt6.long_dist_wire_7": "远距输电用高压电缆 (LuV)",  # task p35 — dump gt.block.longdistwire.01.7 verbatim
+    "block.gt6.long_dist_wire_8": "远距输电用高压电缆 (ZPM)",  # task p35 — dump gt.block.longdistwire.01.8 verbatim
+    "block.gt6.long_dist_wire_9": "远距输电用高压电缆 (ZPM)",  # task p35 — dump gt.block.longdistwire.01.9 verbatim
+    "block.gt6.long_dist_wire_10": "远距输电用高压电缆 (ZPM)",  # task p35 — dump gt.block.longdistwire.01.10 verbatim
+    "block.gt6.long_dist_wire_11": "远距输电用高压电缆 (ZPM)",  # task p35 — dump gt.block.longdistwire.01.11 verbatim
+    "block.gt6.long_dist_wire_12": "远距输电用高压电缆 (UV)",  # task p35 — dump gt.block.longdistwire.01.12 verbatim
+    "block.gt6.long_dist_wire_13": "远距输电用高压电缆 (UV)",  # task p35 — dump gt.block.longdistwire.01.13 verbatim
+    "block.gt6.long_dist_wire_14": "远距输电用高压电缆 (UV)",  # task p35 — dump gt.block.longdistwire.01.14 verbatim
+    "block.gt6.long_dist_wire_15": "远距输电用高压电缆 (UV)",  # task p35 — dump gt.block.longdistwire.01.15 verbatim
     "block.gt6.water_wheel": "水车",           # task p28-c-water-wheel — hand (no dump face: the kTFRU rows are out-of-face by the ADR §1.1 filter; the standard zh machine word)
     "block.gt6.crusher": "破碎机",                   # = the TSV gt6.row.machine.crusher unit verbatim
     # task p28-c-ulv-dynamo-row — the dynamo family name face (the W1 classes' deferred
