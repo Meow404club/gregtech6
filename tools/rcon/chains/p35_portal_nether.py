@@ -10,8 +10,9 @@ responsibility, the upstream tooltip-only semantics — no forced loading API).
                hopper (448,66,358) facing=down, pushes into A's UP face
                  -> delegate = B.relative(OPOS[UP]=DOWN) -> the chest UNDER B
                redstone_block (448,65,357) north of A
-                 -> A's NORTH face reads 15 -> B.mRedstone[SOUTH] -> B emits on
-                    OPOS[SOUTH]=NORTH -> the lamp NORTH of B lights
+                 -> A's NORTH face reads 15 -> B.mRedstone[OPOS[NORTH]=SOUTH]
+                    -> mRedstone[s] answers queries with d=s, so the receiver
+                    sits on the OPOS mirror: the lamp SOUTH of B lights
                fluid pipe (449,65,358) east of A
                  -> A's EAST face -> delegate = B.relative(OPOS[EAST]=WEST)
                     -> the wood barrel WEST of B
@@ -53,7 +54,7 @@ PIPE = gt6world.Site(449, 65, 358)    # the fluid pusher east of A
 NETH = "execute in minecraft:the_nether run "
 B = "56 65 44"                        # the nether portal
 CHEST = "56 64 44"                    # the item sink under B
-LAMP = "56 65 43"                     # the relay lamp north of B
+LAMP = "56 65 45"                     # the relay lamp south of B (the OPOS mirror of the source face)
 BARREL = "55 65 44"                   # the fluid sink west of B
 
 steps = [
@@ -91,7 +92,7 @@ steps = [
          expect="minecraft:water",
          poll=120.0),  # the pipe distribute round pushes through the portal capability
 
-    phase("F: the REDSTONE leg — the source on A's NORTH face lights the lamp north of B"),
+    phase("F: the REDSTONE leg — the source on A's NORTH face lights the lamp on B's OPOS mirror (south)"),
     Step(NETH + f"execute if block {LAMP} minecraft:redstone_lamp[lit=true]",
          expect="Test passed",
          poll=60.0),

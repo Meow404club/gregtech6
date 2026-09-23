@@ -12,7 +12,8 @@ west of B — the same-face emission the OPOS double-flip yields).
                hopper (512,66,384) facing=down (the UP-face item push)
                redstone_block (511,65,384) west of A (the WEST-face read)
     END        B=(4,65,3) the portal
-               chest (4,64,3) under B | lamp (3,65,3) west of B
+               chest (4,64,3) under B | lamp (5,65,3) east of B
+               (the OPOS mirror: source WEST of A -> receiver EAST of B)
 
   The end band teardown is explicit (`execute in` fill + forceload remove all).
 
@@ -42,7 +43,7 @@ RSRC = gt6world.Site(511, 65, 384)
 END = "execute in minecraft:the_end run "
 B = "4 65 3"
 CHEST = "4 64 3"
-LAMP = "3 65 3"
+LAMP = "5 65 3"
 
 steps = [
     phase("A: the overworld rig — portal + hopper + the redstone source west"),
@@ -52,7 +53,7 @@ steps = [
     Step(f"setblock {F(RSRC)} minecraft:redstone_block", expect="Changed the block"),
 
     phase("B: the end rig — forceload + portal + sinks"),
-    Step(END + "forceload add 0 0 15 15", expect="marked for loading", sleep=1.0),
+    Step(END + "forceload add 0 0 15 15", expect="to be force loaded", sleep=1.0),
     Step(END + f"setblock {B} gt6:mini_portal_end", expect="Changed the block"),
     Step(END + f"setblock {CHEST} minecraft:chest", expect="Changed the block"),
     Step(END + f"setblock {LAMP} minecraft:redstone_lamp", expect="Changed the block"),
@@ -74,7 +75,7 @@ steps = [
          expect="cobblestone",
          poll=120.0),
 
-    phase("F: the REDSTONE leg — the WEST-face source lights the lamp west of B"),
+    phase("F: the REDSTONE leg — the WEST-face source lights the lamp on B's OPOS mirror (east)"),
     Step(END + f"execute if block {LAMP} minecraft:redstone_lamp[lit=true]",
          expect="Test passed",
          poll=60.0),
