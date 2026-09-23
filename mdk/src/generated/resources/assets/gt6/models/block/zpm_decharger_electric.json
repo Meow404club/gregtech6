@@ -1,6 +1,11 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube",
   "textures": {
-    "all": "gt6:block/battery_box"
+    "down": "gt6:block/zpm_decharger_side",
+    "east": "gt6:block/zpm_decharger_side",
+    "north": "gt6:block/zpm_decharger_front",
+    "south": "gt6:block/zpm_decharger_back",
+    "up": "gt6:block/zpm_decharger_side",
+    "west": "gt6:block/zpm_decharger_side"
   }
 }

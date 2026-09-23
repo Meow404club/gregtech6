@@ -1,7 +1,19 @@
 {
   "variants": {
-    "": {
+    "facing=east": {
+      "model": "gt6:block/zpm_decharger_quantum",
+      "y": 90
+    },
+    "facing=north": {
       "model": "gt6:block/zpm_decharger_quantum"
+    },
+    "facing=south": {
+      "model": "gt6:block/zpm_decharger_quantum",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gt6:block/zpm_decharger_quantum",
+      "y": 270
     }
   }
 }

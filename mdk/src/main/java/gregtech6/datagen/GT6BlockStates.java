@@ -1953,17 +1953,33 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p36-energy-zpm-dechargers — the two ZPM Decharger rows: the battery-box cube-all
-     * STAND-IN (the charger posture: the FACING property is a functional IO face, FRONT =
-     * the emit side) over the SHARED box texture — zero new PNGs, the dedicated upstream
-     * zpm_electricity/zpm_quantum overlay art is the render pool (the
-     * p36-render-texture-bake card retires this stand-in).
+     * Task p36-energy-zpm-dechargers — the two ZPM Decharger rows over the REAL baked art
+     * (review-fix: the rebase binding the p36-render-texture-bake contract paths — the
+     * battery-box stand-in yields): the src-over zpm_electricity/zpm_quantum composites
+     * (assets/README.md attribution), front on the FACING face, back on the opposite
+     * (upstream getTexture2, MultiTileEntityZPMDechargerEU.java:39-44 — index 0 = front
+     * on mFacing, index 1 = back on OPOS, index 2 = side elsewhere; the ZPM_TOP active
+     * decal stays unborrowed, the port carries no ACTIVE property), the FACING four-way
+     * rotationY (the addCrystalChargers form).
      */
     private void addZpmDechargers() {
         for (gregtech6.registry.GT6ZpmDechargers.DechargerRow tRow : gregtech6.registry.GT6ZpmDechargers.ROWS) {
             net.minecraft.world.level.block.Block tBlock = gregtech6.registry.GT6ZpmDechargers.BLOCKS_BY_PATH.get(tRow.path()).get();
-            simpleBlock(tBlock, models().cubeAll(tRow.path(), modLoc("block/battery_box")));
-            itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
+            String tTexBase = tRow.path().equals("zpm_decharger_electric") ? "zpm_decharger" : tRow.path(); // the render-card PNG names: the electric family drops the infix, the quantum family keeps it
+            ModelFile tModel = models().cube(tRow.path(),
+                    modLoc("block/" + tTexBase + "_side"), modLoc("block/" + tTexBase + "_side"),   // bottom/top
+                    modLoc("block/" + tTexBase + "_front"), modLoc("block/" + tTexBase + "_back"),  // north(front)/south(back)
+                    modLoc("block/" + tTexBase + "_side"), modLoc("block/" + tTexBase + "_side"));  // west/east
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tY = switch (aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FACING)) {
+                    case SOUTH -> 180;
+                    case WEST -> 270;
+                    case EAST -> 90;
+                    default -> 0; // NORTH
+                };
+                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            });
+            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
         }
     }
 
