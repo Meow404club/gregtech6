@@ -688,6 +688,19 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.cover_selector_redstone", "Redstone Selector");
         add("item.gt6.cover_selector_manual", "Manual Selector");
         add("item.gt6.cover_selector_button_panel", "Button Panel Selector");
+        // task p35-covers-display-scale-6 — the display/scale covers (upstream
+        // MultiItemTechnological.java:61/:63/:73/:77 display names verbatim + the
+        // :68-72 reboot-switch ladder)
+        add("item.gt6.cover_machine_display", "Machine Status Display Cover");
+        add("item.gt6.cover_auto_switch", "Automatic Machine Switch");
+        add("item.gt6.cover_energy_display", "Energy Display Cover");
+        add("item.gt6.cover_scale_energy", "Energy Sensor");
+        add("item.gt6.cover_scale_progress", "Progress Sensor");
+        add("item.gt6.cover_auto_timer_1m", "Auto Reboot Switch (1 min)");
+        add("item.gt6.cover_auto_timer_5m", "Auto Reboot Switch (5 mins)");
+        add("item.gt6.cover_auto_timer_10m", "Auto Reboot Switch (10 mins)");
+        add("item.gt6.cover_auto_timer_20m", "Auto Reboot Switch (20 mins)");
+        add("item.gt6.cover_auto_timer_30m", "Auto Reboot Switch (30 mins)");
     }
 
     /**

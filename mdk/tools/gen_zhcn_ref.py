@@ -2125,6 +2125,18 @@ LEGACY_ITEM_BACKFILL = {
     'item.gt6.cover_selector_redstone': '红石选择面板',
     'item.gt6.cover_selector_manual': '手动选择面板',
     'item.gt6.cover_selector_button_panel': '按钮覆盖板选择器',
+    # ---- the display/scale covers (task p35-covers-display-scale-6): the dump
+    # gt.multiitem.technological 1002/1003/1004/1009-1013/1014/1018 name column verbatim
+    'item.gt6.cover_machine_display': '状态显示覆盖板',
+    'item.gt6.cover_auto_switch': '自动开关',
+    'item.gt6.cover_energy_display': '能量显示面板',
+    'item.gt6.cover_scale_energy': '能量传感器',
+    'item.gt6.cover_scale_progress': '进度传感器',
+    'item.gt6.cover_auto_timer_1m': '自动重启开关 (1分钟)',
+    'item.gt6.cover_auto_timer_5m': '自动重启开关 (5分钟)',
+    'item.gt6.cover_auto_timer_10m': '自动重启开关 (10分钟)',
+    'item.gt6.cover_auto_timer_20m': '自动重启开关 (20分钟)',
+    'item.gt6.cover_auto_timer_30m': '自动重启开关 (30分钟)',
     # ---- the gas-laser items (task p32-qu-laser-domain)
     'item.gt6.comp_laser_gas_co2': '二氧化碳激光镭射器',
     'item.gt6.comp_laser_gas_co2.tooltip': '用途: 强力材料加工',

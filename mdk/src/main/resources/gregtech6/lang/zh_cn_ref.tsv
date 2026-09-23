@@ -1640,7 +1640,14 @@ direct	item.gt6.comp_laser_gas_co2.tooltip	用途: 强力材料加工	hand
 direct	item.gt6.comp_laser_gas_empty	空的气体-激光镭射器	hand
 direct	item.gt6.comp_laser_gas_empty.tooltip	用于电力激光器	hand
 direct	item.gt6.cover_auto_redstone_machine_switch	自动红石机器开关	hand
+direct	item.gt6.cover_auto_switch	自动开关	hand
+direct	item.gt6.cover_auto_timer_1m	自动重启开关 (1分钟)	hand
+direct	item.gt6.cover_auto_timer_5m	自动重启开关 (5分钟)	hand
+direct	item.gt6.cover_auto_timer_10m	自动重启开关 (10分钟)	hand
+direct	item.gt6.cover_auto_timer_20m	自动重启开关 (20分钟)	hand
+direct	item.gt6.cover_auto_timer_30m	自动重启开关 (30分钟)	hand
 direct	item.gt6.cover_controller	面板控制器	hand
+direct	item.gt6.cover_energy_display	能量显示面板	hand
 direct	item.gt6.cover_drain	排液口	hand
 direct	item.gt6.cover_fluid_filter	液体过滤器	hand
 direct	item.gt6.cover_item_filter	物品过滤器	hand
@@ -1659,6 +1666,7 @@ direct	item.gt6.cover_logistics_generic_storage	通用物流存储总线	hand
 direct	item.gt6.cover_logistics_item_export	过滤物流导出总线 (物品)	hand
 direct	item.gt6.cover_logistics_item_import	过滤物流导入总线 (物品)	hand
 direct	item.gt6.cover_logistics_item_storage	过滤物流存储总线 (物品)	hand
+direct	item.gt6.cover_machine_display	状态显示覆盖板	hand
 direct	item.gt6.cover_pressure_valve	释压安全阀	hand
 direct	item.gt6.cover_redstone_conductor_in	红石导线面板（接收）	hand
 direct	item.gt6.cover_redstone_conductor_out	红石导线面板（发出）	hand
@@ -1666,6 +1674,8 @@ direct	item.gt6.cover_redstone_emitter	红石发射器	hand
 direct	item.gt6.cover_redstone_machine_switch	红石机器开关	hand
 direct	item.gt6.cover_redstone_repeater	红石中继器面板	hand
 direct	item.gt6.cover_redstone_torch	红石火把面板	hand
+direct	item.gt6.cover_scale_energy	能量传感器	hand
+direct	item.gt6.cover_scale_progress	进度传感器	hand
 direct	item.gt6.cover_selector_button_panel	按钮覆盖板选择器	hand
 direct	item.gt6.cover_selector_manual	手动选择面板	hand
 direct	item.gt6.cover_selector_redstone	红石选择面板	hand
