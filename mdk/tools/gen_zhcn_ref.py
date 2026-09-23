@@ -1317,6 +1317,42 @@ BLOCK_BACKFILL = {
     "block.gt6.wire_electric_2x": "2×导线",  # (en "1x/2x Electric Wire"; the × convention kept)
     "block.gt6.wood_fluid_pipe_medium": "木制流体管道",  # dump 26xxx ...流体管道 word set
     "block.gt6.wood_fluid_pipe_small": "小型木制流体管道",
+
+    # ---- the 31 rail block display names (task p35-rails-31-blocks, review-seat backfill 2026-09-23) ----
+    # the dump gt.block.rail.* faces tmp/gregtech.lang:2708-2734 verbatim; the rails card
+    # landed the tsv direct rows without this py hand layer, so gen_zhcn_ref.py --check
+    # failed and any regen silently dropped them.
+    "block.gt6.rail_adamantium": "艾德曼合金轨道",
+    "block.gt6.rail_aluminium": "铝轨道",
+    "block.gt6.rail_booster_adamantium": "艾德曼合金加速轨道",
+    "block.gt6.rail_booster_aluminium": "铝加速轨道",
+    "block.gt6.rail_booster_bronze": "青铜加速轨道",
+    "block.gt6.rail_booster_magnalium": "镁铝合金加速轨道",
+    "block.gt6.rail_booster_stainlesssteel": "不锈钢加速轨道",
+    "block.gt6.rail_booster_steel": "钢加速轨道",
+    "block.gt6.rail_booster_titanium": "钛加速轨道",
+    "block.gt6.rail_booster_tungsten": "钨加速轨道",
+    "block.gt6.rail_booster_tungstencarbide": "碳化钨加速轨道",
+    "block.gt6.rail_booster_tungstensteel": "钨钢加速轨道",
+    "block.gt6.rail_bronze": "青铜轨道",
+    "block.gt6.rail_detector_adamantium": "艾德曼合金探测轨道",
+    "block.gt6.rail_detector_aluminium": "铝探测轨道",
+    "block.gt6.rail_detector_bronze": "青铜探测轨道",
+    "block.gt6.rail_detector_magnalium": "镁铝合金探测轨道",
+    "block.gt6.rail_detector_stainlesssteel": "不锈钢探测轨道",
+    "block.gt6.rail_detector_steel": "钢探测轨道",
+    "block.gt6.rail_detector_titanium": "钛探测轨道",
+    "block.gt6.rail_detector_tungsten": "钨探测轨道",
+    "block.gt6.rail_detector_tungstencarbide": "碳化钨探测轨道",
+    "block.gt6.rail_detector_tungstensteel": "钨钢探测轨道",
+    "block.gt6.rail_magnalium": "镁铝合金轨道",
+    "block.gt6.rail_road": "道路条纹",  # task p35-rails-31-blocks — the dump gt.block.rail.* face (review-seat backfill: the card landed the tsv rows without this py layer; the regen was dropping them)
+    "block.gt6.rail_stainlesssteel": "不锈钢轨道",
+    "block.gt6.rail_steel": "钢轨道",
+    "block.gt6.rail_titanium": "钛轨道",
+    "block.gt6.rail_tungsten": "钨轨道",
+    "block.gt6.rail_tungstencarbide": "碳化钨轨道",
+    "block.gt6.rail_tungstensteel": "钨钢轨道",
 }
 
 # ---- fluid.gt6.* (21): hand translations with dump anchors (蒸馏水/柴油/幻露 per the
