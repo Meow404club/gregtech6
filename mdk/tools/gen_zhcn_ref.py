@@ -217,6 +217,19 @@ HAND_TRANSLATIONS = {
     "item.gt6.cover_controller": ("面板控制器", "hand"),
     "item.gt6.integrated_circuit": ("选择器标签", "hand"),
     "item.gt6.integrated_circuit.configuration": ("配置：%s", "hand"),
+    # ---- the miniature portal face (task p35-portals-mini-nether-end) — hand zh,
+    # upstream MultiTileEntityMiniPortal tooltips + the chunk-loader requirement :97.
+    "block.gt6.mini_portal_nether": ("微型下界传送门", "hand"),
+    "block.gt6.mini_portal_end": ("微型末影传送门", "hand"),
+    "gt.lang.requirement.chunk.loader": ("需要区块载入才能正常工作!", "hand"),
+    "gt.lang.requirement.ignite.fire": ("需要打火石之类的东西点火", "hand"),
+    "gt.tileentity.portal.mini.tooltip.1": ("传送物品、流体、红石、比较器信号、GT能量, 以及更多!", "hand"),
+    "gt.tileentity.portal.mini.tooltip.2": ("总是将物品传送到最近的被激活的传送门。", "hand"),
+    "gt.tileentity.portal.nether.tooltip.1": ("仅在主世界和下界之间工作, 并且在下界的坐标差为在主世界的八分之一!", "hand"),
+    "gt.tileentity.portal.nether.tooltip.2": ("实际可工作区域与计算值的可容错区间: 128m", "hand"),
+    "gt.tileentity.portal.end.tooltip.1": ("仅在主世界和末地之间工作, 并且在末地的坐标差为在主世界的一百二十八分之一!", "hand"),
+    "gt.tileentity.portal.end.tooltip.2": ("实际可工作区域与计算值的可容错区间: 512m", "hand"),
+    "gt.tileentity.portal.end.tooltip.3": ("用末影之眼启动该传送门", "hand"),
     # ---- B1 wire-domain composed-display units (task p20-i18n-compose-wires) ----
     # The wire family composes at runtime over gt6.wire.display[.plain] + the form units;
     # the material slot rides the gt6.material.* small units (zero new material debt).
@@ -1785,6 +1798,10 @@ FOOD_FLUID_BACKFILL = {
     'fluid.gt6.adamantium_molten': '熔融艾德曼合金',
     'fluid.gt6.alcopops': '波普甜酒',
     'fluid.gt6.alumina_molten': '熔融氧化铝',
+<<<<<<< HEAD
+=======
+    'fluid.gt6.calcite_molten': '熔融方解石',
+>>>>>>> 22f936364 (fix(i18n): portal 11 行回填 py 手排层+main carryover 10 行——tsv 恢复 regen 字节忠实)
     'fluid.gt6.ambrosia': '琼浆',
     'fluid.gt6.ancientdebris_molten': '熔融远古残骸',
     'fluid.gt6.applesmoothie': '苹果冰沙',
