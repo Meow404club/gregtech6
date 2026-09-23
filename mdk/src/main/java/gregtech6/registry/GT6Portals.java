@@ -1,6 +1,5 @@
 package gregtech6.registry;
 
-import java.util.List;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
@@ -132,11 +131,6 @@ public final class GT6Portals {
 	public static final RegistryObject<BlockEntityType<GTMiniPortalEndBlockEntity>> PORTAL_END_BE =
 			BLOCK_ENTITY_TYPES.register("mini_portal_end", () -> BlockEntityType.Builder.of(
 					GTMiniPortalEndBlockEntity::new, PORTAL_END.get()).build(null));
-
-	/** The registration row paths (the datagen walk face). */
-	public static List<String> rowPaths() {
-		return List.of("mini_portal_nether", "mini_portal_end");
-	}
 
 	/**
 	 * FMLConstructModEvent = the first mod-bus lifecycle stage (the GT6Sensors form):
