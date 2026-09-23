@@ -839,6 +839,8 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 		BlockEntity tDelegate = aPortal.delegateAdjacent((byte) aSide.get3DDataValue());
 		if (tDelegate == null || !tDelegate.hasLevel()) return null;
 		return tDelegate.getLevel().getCapability(aCapability, tDelegate.getBlockPos(), aSide); // the access face = the incoming face
+	}
+
 	// -- the long distance pipelines (p35-long-distance-pipes; TAIL-APPENDED ROW, the
 	// shared serial file: append-only discipline) --
 	// The two endpoint BETs join as one item face + one fluid face (the window families:
