@@ -1,6 +1,11 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube",
   "textures": {
-    "all": "gt6:block/battery_box_large"
+    "down": "gt6:block/crystal_charger_large_side",
+    "east": "gt6:block/crystal_charger_large_side",
+    "north": "gt6:block/crystal_charger_large_front",
+    "south": "gt6:block/crystal_charger_large_side",
+    "up": "gt6:block/crystal_charger_large_side",
+    "west": "gt6:block/crystal_charger_large_side"
   }
 }

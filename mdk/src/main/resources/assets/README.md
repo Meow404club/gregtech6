@@ -8705,6 +8705,53 @@ the whole reboot-switch ladder shares it (`CoverControllerAutoTimer` class doc);
 the `statusdisplay` indicator overlay sprites (`1_off..4_on`, both styles) are NOT
 borrowed — the CoverControllerDisplay lamp composition is the declared deviation
 (the plate shows the style base, the live states ride the visual lane).
+
+## Render pool stand-in retirement (task p36-render-texture-bake)
+
+Eighteen block textures under `gt6/textures/block/` land the three stand-ins
+self-declared in GT6BlockStates.java (the p35 crystal-charger battery-box cube, the
+p35 LD-wire wire_electric cube, the p35 LD-transformer electric-transformer model
+share) plus the ZPM Decharger art ahead of its consumer card
+(p36-energy-zpm-dechargers binds `block/zpm_decharger{,_quantum}_{front,back,side}`
+on its rebase). The composites are the battery-box/transformer bake treatment:
+src-over(colored, overlay) via `mdk/tools/bake_render_pool_textures.py` (idempotent,
+deterministic bytes). The overlay_active/overlay_blinking/overlay_unloaded trios and
+the ZPM_TOP active-top decal stay UNBORROWED — the port energy blocks carry no
+ACTIVE property (the standing static-face posture; they land with whatever card adds
+the property). Sources: machines/energystorages/crystal_laser{,_large} (the
+MultiTileEntityCrystalCharger.java:39-51 iconsets), blocks/iconsets/LONG_DIST_WIRE_*
+(the five distinct sprites of the LONG_DIST_WIRES_01 meta table, Textures.java:638-655
+over Loader_Blocks.java:160), machines/transformers/longdistancetransformer_electric
+(MultiTileEntityLongDistanceTransformer.java:302-322 — front = INPUT face, back =
+OUTPUT face), machines/energystorages/zpm_electricity|zpm_quantum
+(MultiTileEntityZPMDechargerEU.java:47-63 / QU.java:47-54). License: upstream GregTech
+6 assets are CC0 (see the Public Domain Dedication block above).
+
+Baked composites (derived; the colored casing layer is one byte-identical grayscale
+across every family here, only the overlays differ):
+
+- `block/crystal_charger_front.png` — `7d9e6d2d06eb51240f66667051bc3082adc3ddb8eb814e072d12d7e60708effa` (src-over `crystal_laser/colored/front + overlay/front`; byte-identical to the large-front composite — the two families share the front art)
+- `block/crystal_charger_side.png` — `700ab3cc98ef1146b9638af23d0d84c81ccc31507b1184163b6219ee55fcb786` (src-over `crystal_laser/colored/side + overlay/side`)
+- `block/crystal_charger_large_front.png` — `7d9e6d2d06eb51240f66667051bc3082adc3ddb8eb814e072d12d7e60708effa` (src-over `crystal_laser_large/colored/front + overlay/front`)
+- `block/crystal_charger_large_side.png` — `91a0687c6be7ba2f683fb679122c7dba6eca01334c898129724516e737248e67` (src-over `crystal_laser_large/colored/side + overlay/side`)
+- `block/long_distance_transformer_front.png` — `97f5c41837e8c9f94bbaec4873d3d7f0529f1146974569d90d7fffecadc06503` (src-over `longdistancetransformer_electric/colored/front + overlay/front`)
+- `block/long_distance_transformer_back.png` — `88177900197bd182593d1d9d21ea3e7888f7ec3f52d816a03a97923cd57c516f` (src-over `.../colored/back + overlay/back`)
+- `block/long_distance_transformer_side.png` — `b5f21ab6ca30f0d98327859d946c599182ef88fca8707933ff0cdff850658433` (src-over `.../colored/side + overlay/side`)
+- `block/zpm_decharger_front.png` — `a982cea2f5d79df29801e1b21349e617488c324ea79a64b35712658bb60a4c9f` (src-over `zpm_electricity/colored/front + overlay/front`)
+- `block/zpm_decharger_back.png` — `f9b323b0b87a687865b32b0908316fe11958210c822d4ded4ece0da99acbf2bc` (src-over `zpm_electricity/colored/back + overlay/back`; byte-identical to the quantum-back composite — the two families share the back overlay)
+- `block/zpm_decharger_side.png` — `27dac6bf9e5d2cfeafb11dd83d89bf8317ed3b05ae3dc35caa7fdf3f3b718fec` (src-over `zpm_electricity/colored/side + overlay/side`; byte-identical to the quantum-side composite)
+- `block/zpm_decharger_quantum_front.png` — `3d4a5b55a3300f6949bfa9a564615304fc3795c1eb99a52874becaf494150c4c` (src-over `zpm_quantum/colored/front + overlay/front`)
+- `block/zpm_decharger_quantum_back.png` — `f9b323b0b87a687865b32b0908316fe11958210c822d4ded4ece0da99acbf2bc` (src-over `zpm_quantum/colored/back + overlay/back`)
+- `block/zpm_decharger_quantum_side.png` — `27dac6bf9e5d2cfeafb11dd83d89bf8317ed3b05ae3dc35caa7fdf3f3b718fec` (src-over `zpm_quantum/colored/side + overlay/side`)
+
+Byte copies:
+
+- `block/long_dist_wire_ev.png` — `2127f4db5a5862f969fba65e8ee1f0e4401e5d9e6f6a6b9b1cefb060a3d1dd18` (upstream `blocks/iconsets/LONG_DIST_WIRE_EV.png`)
+- `block/long_dist_wire_iv.png` — `3ec70820b019c7e0baa1425e79a7a37280cf94c22b1d96a46b4640d7a5675f6e` (upstream `blocks/iconsets/LONG_DIST_WIRE_IV.png`)
+- `block/long_dist_wire_luv.png` — `f0cda63127eb12c65c9f0c9dec08374f9ed4a4395bd67dee49fd3fc6edd92037` (upstream `blocks/iconsets/LONG_DIST_WIRE_LuV.png`)
+- `block/long_dist_wire_zpm.png` — `8ff978fa6328e9b293cb46a9a09e1b3055e97c3dc86040953b36301939826a49` (upstream `blocks/iconsets/LONG_DIST_WIRE_ZPM.png`)
+- `block/long_dist_wire_uv.png` — `9105d68018de154d8b59950e8fea1c73b28d3d1fc6b1de80422d05618d5eee80` (upstream `blocks/iconsets/LONG_DIST_WIRE_UV.png`)
+
 ## owned (generated, not borrowed)
 
 - `gt6/textures/block/mini_portal_end.png` — the Miniature End Portal's active

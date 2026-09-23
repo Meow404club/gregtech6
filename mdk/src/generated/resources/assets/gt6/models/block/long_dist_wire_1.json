@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "gt6:block/wire_electric"
+    "all": "gt6:block/long_dist_wire_ev"
   }
 }

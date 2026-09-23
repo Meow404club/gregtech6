@@ -1921,16 +1921,33 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /**
      * Task p35-energy-tail-machines — the Crystal Chargers: the 20-row LU family rides
-     * the battery-box cube-all form over the SAME textures (the dedicated upstream
-     * crystal_laser iconset is the render pool; the small/large slot split keeps the
-     * two box textures).
+     * one baked-art model per size (task p36-render-texture-bake retired the battery-box
+     * stand-in): the src-over colored+overlay composites of the upstream crystal_laser{,_large}
+     * iconsets (the bake_render_pool_textures.py products, assets/README.md attribution)
+     * with the laser FRONT art on the FACING face and the shared side art on the other
+     * five (upstream getTexture2, MultiTileEntityCrystalCharger.java:33-36 — index 0 =
+     * front only on mFacing, index 1 = side everywhere else). The overlay_active/
+     * overlay_blinking trios stay unborrowed — the port blocks carry no ACTIVE property
+     * (the static-face posture, the GT6BatteryBoxBlock doc).
      */
     private void addCrystalChargers() {
         for (gregtech6.registry.GT6CrystalChargers.ChargerRow tRow : gregtech6.registry.GT6CrystalChargers.ROWS) {
             net.minecraft.world.level.block.Block tBlock = gregtech6.registry.GT6CrystalChargers.BLOCKS_BY_PATH.get(tRow.path()).get();
-            simpleBlock(tBlock, models().cubeAll(tRow.path(),
-                    modLoc(tRow.slots() == 16 ? "block/battery_box_large" : "block/battery_box")));
-            itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
+            String tTex = tRow.slots() == 16 ? "block/crystal_charger_large_" : "block/crystal_charger_";
+            ModelFile tModel = models().cube(tRow.path(),
+                    modLoc(tTex + "side"), modLoc(tTex + "side"),          // bottom/top
+                    modLoc(tTex + "front"), modLoc(tTex + "side"),         // north(front)/south
+                    modLoc(tTex + "side"), modLoc(tTex + "side"));         // west/east
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tY = switch (aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FACING)) {
+                    case SOUTH -> 180;
+                    case WEST -> 270;
+                    case EAST -> 90;
+                    default -> 0; // NORTH
+                };
+                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            });
+            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
         }
     }
 
@@ -2030,16 +2047,23 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p35-energy-tail-machines — the Long Distance families. The five LD
-     * transformer endpoints share the p28 electric-transformer orientable model (the
-     * facing-cube posture is the same; the dedicated upstream iconset
-     * longdistancetransformer_electric is the render pool), the 16 LD wire metas ride
-     * the addWire cube-all shape over the shared wire_electric texture (the dedicated
-     * LONG_DIST_WIRES_01 iconset is the render pool — the blockstate form is the
-     * property-less wildcard variant like the 620 wire family).
+     * Task p35-energy-tail-machines — the Long Distance families, their dedicated
+     * upstream art landed by task p36-render-texture-bake (the stand-in clearance): the
+     * five LD transformer endpoints ride the INPUT/OUTPUT facing-cube model over the
+     * baked longdistancetransformer_electric composites (front = the INPUT face, back =
+     * the OUTPUT face — MultiTileEntityLongDistanceTransformer.java:284-285/:295-299,
+     * index 0/1/2; the overlay_active/blinking/unloaded trios stay unborrowed — the
+     * port blocks carry no ACTIVE property), and the 16 LD wire metas ride the
+     * property-less cube-all shape over their TIER sprite — the five distinct
+     * LONG_DIST_WIRES_01 iconset art (Textures.java:638-655: metas 0-1=EV, 2=IV,
+     * 3-7=LuV, 8-11=ZPM, 12-15=UV; the same split as the tier-byte table of
+     * Loader_Blocks.java:160).
      */
     private void addLDEnergyFamilies() {
-        ModelFile tLDModel = models().getExistingFile(modLoc("block/electric_transformer"));
+        ModelFile tLDModel = models().cube("long_distance_transformer",
+                modLoc("block/long_distance_transformer_side"), modLoc("block/long_distance_transformer_side"), // bottom/top
+                modLoc("block/long_distance_transformer_front"), modLoc("block/long_distance_transformer_back"), // north(input)/south(output)
+                modLoc("block/long_distance_transformer_side"), modLoc("block/long_distance_transformer_side")); // west/east
         for (gregtech6.registry.GT6LongDistanceTransformers.LDRow tRow : gregtech6.registry.GT6LongDistanceTransformers.ROWS) {
             Block tTrans = gregtech6.registry.GT6LongDistanceTransformers.BLOCKS_BY_PATH.get(tRow.path()).get();
             getVariantBuilder(tTrans).forAllStates(aState -> {
@@ -2049,15 +2073,27 @@ public final class GT6BlockStates extends BlockStateProvider {
                         .rotationY((int) (tFacing.toYRot() + 180) % 360)
                         .build();
             });
-            itemModels().withExistingParent(tRow.path(), modLoc("block/electric_transformer"));
+            itemModels().withExistingParent(tRow.path(), tLDModel.getLocation());
         }
         for (gregtech6.registry.GT6LongDistWires.WireRow tRow : gregtech6.registry.GT6LongDistWires.ROWS) {
             String tPath = gregtech6.registry.GT6LongDistWires.pathOf(tRow.meta());
             Block tWire = gregtech6.registry.GT6LongDistWires.BLOCKS_BY_META.get(tRow.meta()).get();
-            var tModel = models().cubeAll(tPath, modLoc("block/wire_electric"));
+            var tModel = models().cubeAll(tPath, modLoc("block/long_dist_wire_" + wireArtOf(tRow.tier())));
             getVariantBuilder(tWire).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
             itemModels().withExistingParent(tPath, modLoc("block/" + tPath));
         }
+    }
+
+    /** The tier byte -> LONG_DIST_WIRES_01 sprite token (Textures.java:638-655; VN[4..8] = EV/IV/LuV/ZPM/UV). */
+    private static String wireArtOf(int aTier) {
+        return switch (aTier) {
+            case 4 -> "ev";
+            case 5 -> "iv";
+            case 6 -> "luv";
+            case 7 -> "zpm";
+            case 8 -> "uv";
+            default -> throw new IllegalArgumentException("unknown LD wire tier byte: " + aTier);
+        };
     }
 
     /**
