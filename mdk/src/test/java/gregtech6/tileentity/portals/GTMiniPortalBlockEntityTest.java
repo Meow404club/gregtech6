@@ -215,6 +215,7 @@ public class GTMiniPortalBlockEntityTest {
 		CompoundTag tTag = tPortal.getUpdateTag(); // = saveWithoutMetadata → the chunk-data channel
 		assertTrue(tTag.contains(GTMiniPortalBlockEntity.NBT_ACTIVE), "the chunk-data channel carries gt.active (upstream :79)");
 		assertTrue(tTag.getBoolean(GTMiniPortalBlockEntity.NBT_ACTIVE));
+		tPortal.setLevel(new gregtech6.recipes.GTRecipesOfflineTestBase.MinimalLevel(null)); // the packet face reads level.registryAccess() (21.1 ClientboundBlockEntityDataPacket.create:31 — the GTWireGlowLightTest.WireLevel fixture form)
 		assertNotNull(tPortal.getUpdatePacket(), "the block-update channel is armed (ClientboundBlockEntityDataPacket)");
 		GTMiniPortalNetherBlockEntity tMirror = nether(0, 64, 0);
 		tMirror.load(tTag); // the client landing (both channels converge on load)
