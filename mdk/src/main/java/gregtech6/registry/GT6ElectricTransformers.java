@@ -53,16 +53,33 @@ public final class GT6ElectricTransformers {
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, "gt6");
 
 	/** One transformer row — the upstream-parity columns of one Loader :881-889 aRegistry.add line. */
-	public record TransformerRow(String path, int metaId, String voltagePair) {}
+	public record TransformerRow(String path, int metaId, int tier, String voltagePair, String wireToken) {}
 
-	/** The row, upstream :881 (the ULV-LV pair; the metaId rides as the parity column, the dynamo form). */
+	/**
+	 * The nine rows, the full upstream declared ladder (task p35-energy-tail-machines —
+	 * the :881-:889 line order, meta ids 10040-10048 as the parity column): every row
+	 * NBT_INPUT V[i+1] / NBT_OUTPUT V[i] / NBT_MULTIPLIER 4 / WASTE F, wires Cu on the
+	 * :881-:883 rows and AnnealedCopper on the :884-:889 rows (the upstream wireGt01/04
+	 * dat(MT.AnnealedCopper) switch at :884). The tier is the row's ladder index i (the
+	 * V-pair seat; the path suffix _t(i+1) for i≥1, the bridgePath convention).
+	 */
 	public static final java.util.List<TransformerRow> ROWS = java.util.List.of(
-			new TransformerRow("electric_transformer", 10040, "ULV-LV"));
+			new TransformerRow("electric_transformer"   , 10040, 0, "ULV-LV", "copper"),
+			new TransformerRow("electric_transformer_t2", 10041, 1, "LV-MV" , "copper"),
+			new TransformerRow("electric_transformer_t3", 10042, 2, "MV-HV" , "copper"),
+			new TransformerRow("electric_transformer_t4", 10043, 3, "HV-EV" , "annealed_copper"),
+			new TransformerRow("electric_transformer_t5", 10044, 4, "EV-IV" , "annealed_copper"),
+			new TransformerRow("electric_transformer_t6", 10045, 5, "IV-LuV", "annealed_copper"),
+			new TransformerRow("electric_transformer_t7", 10046, 6, "LuV-ZPM", "annealed_copper"),
+			new TransformerRow("electric_transformer_t8", 10047, 7, "ZPM-UV", "annealed_copper"),
+			new TransformerRow("electric_transformer_t9", 10048, 8, "UV-PUV1", "annealed_copper"));
 
 	// ---------------------------------------------------------------------------
 	// the recipe MATERIAL LOCK (decisions.p28-ulv-tier-rulings transformer_ruling — the
 	// conditional entry: the carriers are the LV-era materials; the offline pin is
-	// GT6ElectricTransformerBlockEntityTest#recipeMaterialLockIsLvEra)
+	// GT6ElectricTransformerBlockEntityTest#recipeMaterialLockIsLvEra. Row 0 only — the
+	// :882-:889 rows craft over their VERBATIM Electric_T[i] casings, the CASING_LADDER
+	// column, where the lock's SteelGalvanized IS the upstream material from tier 1 up.)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -77,36 +94,70 @@ public final class GT6ElectricTransformers {
 	/** Lazy like every MT/OP field read (the GTWireSpecs:35 ruling — this class loads before {@code initMaterials()}). */
 	public static final java.util.function.Supplier<gregapi.oredict.OreDictPrefix> CASING_LOCK_PREFIX = () -> gregapi.data.OP.casingSmall;
 
-	/** The wire column fold: wireGt01/wireGt04 (ANY.Cu) → the copper fine-wire tag (no 1x/4x wire item rows in the port; the count differential folds into the cells). */
+	/** The wire column fold: wireGt01/wireGt04 (ANY.Cu) → the copper fine-wire tag (no 1x/4x wire item rows in the port; the count differential folds into the cells). Row 0 carrier; the higher rows compose "fine_wires/" + row.wireToken(). */
 	public static final String WIRE_TAG_PATH = "fine_wires/copper";
 
-	/** The plate column, the :881 'I' key verbatim: plateDouble(ANY.Iron) → the iron double-plate tag. */
+	/** The plate column, the :881 'I' key verbatim: plateDouble(ANY.Iron) → the iron double-plate tag. EVERY row. */
 	public static final String PLATE_TAG_PATH = "double_plates/iron";
 
-	/** The crafting shape — the :881 "WIW","XMx","WIW" with the upstream unbound 'm' dead cell folded to a space (CR has no 'm' tool letter). */
+	/** The crafting shape — the :881-:889 "WIW","XMx","WIW" with the upstream unbound 'm' dead cell folded to a space (CR has no 'm' tool letter). EVERY row. */
 	public static final String[] RECIPE_PATTERN = {"WIW", "XM ", "WIW"};
 
-	public static final RegistryObject<Block> ELECTRIC_TRANSFORMER = BLOCKS.register("electric_transformer",
-			() -> transformer());
+	/**
+	 * The Electric_T[0..8] casing ladder of the :881-:889 rows (upstream MT.java:3691
+	 * members [0..8] = TinAlloy / SteelGalvanized / Al / StainlessSteel / Cr / Ti / Ir /
+	 * Os / Trinitanium) — the row's aMat column, lazy suppliers (the GTWireSpecs:35
+	 * ruling). The dynamos carry their own [0..5] copy (GT6ElectricDynamos
+	 * ELECTRIC_T_LADDER — the per-family local copy precedent); the [6..8] members are
+	 * this card's extension.
+	 */
+	public static final java.util.List<java.util.function.Supplier<gregapi.oredict.OreDictMaterial>> CASING_LADDER = java.util.List.of(
+			() -> gregapi.data.MT.TinAlloy, () -> gregapi.data.MT.SteelGalvanized, () -> gregapi.data.MT.Al,
+			() -> gregapi.data.MT.StainlessSteel, () -> gregapi.data.MT.Cr, () -> gregapi.data.MT.Ti,
+			() -> gregapi.data.MT.Ir, () -> gregapi.data.MT.Os, () -> gregapi.data.MT.Trinitanium);
 
-	/** The row block: hardness/resistance 4.0/4.0 (the NBT_HARDNESS/RESISTANCE columns), metal sounds, the family BET supplier. */
-	private static GT6ElectricTransformerBlock transformer() {
-		return new GT6ElectricTransformerBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
-				.strength(4.0F, 4.0F).sound(SoundType.METAL), () -> ELECTRIC_TRANSFORMER_BE.get());
+	// the block/item registrations — one per row, the GT6Batteries map form (static-init
+	// walk over ROWS; the BET supplier reads the map at registry time)
+	/** The row blocks by registry path (the datagen/loot walk seat). */
+	public static final java.util.Map<String, RegistryObject<Block>> BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+	/** The row items by registry path (the recipe result seat). */
+	public static final java.util.Map<String, RegistryObject<Item>> ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (TransformerRow tRow : ROWS) {
+			BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(), () -> transformer(tRow.tier())));
+			ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new BlockItem(
+					BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties().stacksTo(16))));
+		}
 	}
 
-	/** The tier item — a plain BlockItem, stack 16 (the upstream stack column; the name face is the datagen lang). */
-	public static final RegistryObject<Item> ELECTRIC_TRANSFORMER_ITEM = ITEMS.register("electric_transformer",
-			() -> new BlockItem(ELECTRIC_TRANSFORMER.get(), new Item.Properties().stacksTo(16)));
+	// the row-0 anchors (the p28 consumers — the recipe host, the blockstates/loot walks,
+	// the tests — keep compiling against the named constants; the row-0 pair of the maps)
+	/** The :881 row block (the BLOCKS_BY_PATH row-0 entry). */
+	public static final RegistryObject<Block> ELECTRIC_TRANSFORMER = BLOCKS_BY_PATH.get("electric_transformer");
+	/** The :881 row item (the ITEMS_BY_PATH row-0 entry). */
+	public static final RegistryObject<Item> ELECTRIC_TRANSFORMER_ITEM = ITEMS_BY_PATH.get("electric_transformer");
+
+	/** The row block: hardness/resistance 4.0/4.0 (the NBT_HARDNESS/RESISTANCE columns), metal sounds, the family BET supplier. */
+	private static GT6ElectricTransformerBlock transformer(int aTier) {
+		return new GT6ElectricTransformerBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+				.strength(4.0F, 4.0F).sound(SoundType.METAL), () -> ELECTRIC_TRANSFORMER_BE.get(), aTier);
+	}
 
 	/**
-	 * The BET — the one BE class over the one ladder block (the p8 family-BET Builder.of
-	 * shape). Registers AFTER the BLOCKS (vanilla registry order).
+	 * The BET — the one BE class over the nine ladder blocks (the p8 family-BET
+	 * Builder.of shape; the BE resolves its V-pair off the block's tier column).
+	 * Registers AFTER the BLOCKS (vanilla registry order).
 	 */
 	public static final RegistryObject<BlockEntityType<GT6ElectricTransformerBlockEntity>> ELECTRIC_TRANSFORMER_BE =
 			BLOCK_ENTITY_TYPES.register("electric_transformer", () -> BlockEntityType.Builder.of(
 					GT6ElectricTransformerBlockEntity::new,
-					ELECTRIC_TRANSFORMER.get()).build(null));
+					ROWS.stream().map(aRow -> BLOCKS_BY_PATH.get(aRow.path()).get()).toArray(Block[]::new)).build(null));
+
+	/** The row item of a ladder tier (the upstream getItem(10040+tier) face — the large-BatteryBox 'M' column and the recipe hosts). */
+	public static Item itemOfTier(int aTier) {
+		return ITEMS_BY_PATH.get(ROWS.get(aTier).path()).get();
+	}
 
 	private GT6ElectricTransformers() {}
 
@@ -128,7 +179,8 @@ public final class GT6ElectricTransformers {
 	@SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
 		aEvent.enqueueWork(() -> {
-			gregtech6.GT6Mod.LOGGER.info("GT6 electric transformer registered: 1 row ULV-LV, x4/div4 EU packet math (id 10040, the p28 transformer card)");
+			gregtech6.GT6Mod.LOGGER.info("GT6 electric transformer registered: " + ROWS.size()
+					+ " rows ULV-LV..UV-UVm, x4/div4 EU packet math per row (ids 10040-10048, the p28+p35 transformer cards)");
 		});
 	}
 }

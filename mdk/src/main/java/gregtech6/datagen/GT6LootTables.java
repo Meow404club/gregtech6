@@ -1232,9 +1232,13 @@ public final class GT6LootTables extends LootTableProvider {
         }
     }
 
-    /** The electric-transformer block list (task p28-c-ulv-lv-transformer): the MTE default self-drop (the :881 row, canDrop(0) == T — the Base10 :161 form), the 1.20.1 equivalent = dropSelf. */
+    /** The electric-transformer block list (tasks p28 + p35): the MTE default self-drop (canDrop(0) == T — the Base10 :161 form) over the full :881-:889 ladder, the 1.20.1 equivalent = dropSelf. */
     public static List<Block> electricTransformerLootBlocks() {
-        return List.of(gregtech6.registry.GT6ElectricTransformers.ELECTRIC_TRANSFORMER.get());
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.registry.GT6ElectricTransformers.TransformerRow tRow : gregtech6.registry.GT6ElectricTransformers.ROWS) {
+            rBlocks.add(gregtech6.registry.GT6ElectricTransformers.BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
     }
 
     /** The electric-transformer self-drop provider (task p28-c-ulv-lv-transformer, the FE-converter shape verbatim). */

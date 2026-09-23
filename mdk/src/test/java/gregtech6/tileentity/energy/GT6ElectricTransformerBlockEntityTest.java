@@ -398,6 +398,55 @@ public class GT6ElectricTransformerBlockEntityTest extends GTOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
+	// 9-bis. the p35 ladder pins (the :882-:889 declared subset — 梯数按上游声明口径)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * THE LADDER PIN (task p35-energy-tail-machines): the upstream declared subset is
+	 * NINE rows (:881-:889, meta ids 10040-10048, pairs V[i+1]→V[i]); the p31
+	 * single-tier ruling is the hand-tool domain and does NOT apply (对照申报) — the
+	 * machine ladder pins at the full declared count.
+	 */
+	@Test
+	public void ladderPinsTheUpstreamDeclaredSubset() {
+		assertEquals(9, GT6ElectricTransformers.ROWS.size(), "the :881-:889 declared row count");
+		for (int i = 0; i < 9; i++) {
+			GT6ElectricTransformers.TransformerRow tRow = GT6ElectricTransformers.ROWS.get(i);
+			assertEquals(10040 + i, tRow.metaId(), "row " + i + ": the upstream meta id");
+			assertEquals(i, tRow.tier(), "row " + i + ": the ladder index");
+			assertEquals(GTWireSpecs.VN[i] + "-" + GTWireSpecs.VN[i + 1], tRow.voltagePair(), "row " + i + ": the VN pair");
+		}
+		// the tier-pair arithmetic per row: NBT_INPUT V[i+1], NBT_OUTPUT V[i], multiplier 4
+		for (int i = 0; i < 9; i++) {
+			GT6ElectricTransformerBlockEntity tTrans = new GT6ElectricTransformerBlockEntity(sType, POS, Blocks.STONE.defaultBlockState(), i);
+			assertEquals(GTWireSpecs.V[i + 1], tTrans.vHigh, "row " + i + ": NBT_INPUT = V[i+1]");
+			assertEquals(GTWireSpecs.V[i], tTrans.vLow, "row " + i + ": NBT_OUTPUT = V[i]");
+			assertEquals(4, tTrans.multiplier, "row " + i + ": NBT_MULTIPLIER = 4");
+		}
+		// the casing ladder (upstream MT.java:3691 members [0..8], the existence assertion)
+		assertEquals(9, GT6ElectricTransformers.CASING_LADDER.size());
+		assertEquals(gregapi.data.MT.Trinitanium, GT6ElectricTransformers.CASING_LADDER.get(8).get(), "Electric_T[8] = Trinitanium");
+		assertEquals(gregapi.data.MT.Os, GT6ElectricTransformers.CASING_LADDER.get(7).get(), "Electric_T[7] = Os");
+		assertEquals(gregapi.data.MT.Ir, GT6ElectricTransformers.CASING_LADDER.get(6).get(), "Electric_T[6] = Ir");
+	}
+
+	/** The higher-tier conservation anchor: the HV-EV row (tier 3, NBT_INPUT V[4]=2048 → NBT_OUTPUT V[3]=512) — one 2048 EU packet in, FOUR 512 EU packets out. */
+	@Test
+	public void hvEvRowStepDownConservesTierPackets() {
+		GT6ElectricTransformerBlockEntity tTrans = new GT6ElectricTransformerBlockEntity(sType, POS, Blocks.STONE.defaultBlockState(), 3);
+		EuSink tSink = wire(tTrans);
+
+		assertEquals(1, tTrans.doEnergyInjection(TD.Energy.EU, FRONT, 2048, 1, true), "one 2048 EU packet accepted (band 1024..4096)");
+		assertEquals(2048, tTrans.mStorage);
+		tTrans.onTick(11, true);
+
+		assertEquals(1, tSink.packets.size());
+		assertEquals(512, tSink.packets.get(0)[0], "the packet SIZE is V[3] = 512");
+		assertEquals(4, tSink.packets.get(0)[1], "the packet COUNT is the row multiplier 4");
+		assertEquals(0, tTrans.mStorage, "2048 in = 4 x 512 out — conservation on the higher rung");
+	}
+
+	// ---------------------------------------------------------------------------
 	// 9. the row + recipe MATERIAL-LOCK pins (decisions.p28-ulv-tier-rulings)
 	// ---------------------------------------------------------------------------
 
@@ -406,7 +455,7 @@ public class GT6ElectricTransformerBlockEntityTest extends GTOfflineTestBase {
 		assertEquals(32, GT6ElectricTransformerBlockEntity.VOLTAGE_HIGH, "NBT_INPUT = V[1]");
 		assertEquals(8, GT6ElectricTransformerBlockEntity.VOLTAGE_LOW, "NBT_OUTPUT = V[0]");
 		assertEquals(4, GT6ElectricTransformerBlockEntity.MULTIPLIER, "NBT_MULTIPLIER = V[1]/V[0]");
-		assertEquals(64, GT6ElectricTransformerBlockEntity.CAPACITY, "the capacitor = NBT_INPUT*2");
+		assertEquals(64, transformer().cap, "the capacitor = NBT_INPUT*2 (the row-0 instance pair)");
 		assertFalse(GT6ElectricTransformerBlockEntity.WASTE_ENERGY, "NBT_WASTE_ENERGY = F (Loader :881)");
 		assertEquals(10040, GT6ElectricTransformers.ROWS.get(0).metaId(), "the upstream meta id (the parity column)");
 		assertEquals("electric_transformer", GT6ElectricTransformers.ROWS.get(0).path(), "the BET path");

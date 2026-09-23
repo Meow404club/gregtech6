@@ -463,6 +463,16 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.electric_dynamo_ulv");
 		addDirect("block.gt6.electrometer"); // task p26-sensors-core — the MTE 31015 dump row 电力传感器
 		addDirect("block.gt6.electric_transformer"); // task p28-c-ulv-lv-transformer — hand row (no dump face in the port snapshot; the :881 registration wording + the standard zh machine word)
+		// task p35-energy-tail-machines — the :882-:889 ladder (hand rows over the same
+		// word 变压器 + the VN pair kept latin, the :881 hand-row convention)
+		addDirect("block.gt6.electric_transformer_t2");
+		addDirect("block.gt6.electric_transformer_t3");
+		addDirect("block.gt6.electric_transformer_t4");
+		addDirect("block.gt6.electric_transformer_t5");
+		addDirect("block.gt6.electric_transformer_t6");
+		addDirect("block.gt6.electric_transformer_t7");
+		addDirect("block.gt6.electric_transformer_t8");
+		addDirect("block.gt6.electric_transformer_t9");
 		// task p29-w4-eu-bridge — the three EU-bridge families (the dump faces verbatim,
 		// gt.multitileentity.10001-10005 电力加热器 / 10011-10015 电动引擎 / 10021-10025
 		// 电动机) + the Roasting template (gt.multitileentity.20171-20174 焙烧炉, the

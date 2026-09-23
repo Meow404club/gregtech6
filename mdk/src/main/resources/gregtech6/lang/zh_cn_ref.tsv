@@ -136,6 +136,14 @@ direct	block.gt6.electric_motor_t3	电动机 (HV)	hand
 direct	block.gt6.electric_motor_t4	电动机 (EV)	hand
 direct	block.gt6.electric_motor_t5	电动机 (IV)	hand
 direct	block.gt6.electric_transformer	变压器 (ULV-LV)	hand
+direct	block.gt6.electric_transformer_t2	变压器 (LV-MV)	hand
+direct	block.gt6.electric_transformer_t3	变压器 (MV-HV)	hand
+direct	block.gt6.electric_transformer_t4	变压器 (HV-EV)	hand
+direct	block.gt6.electric_transformer_t5	变压器 (EV-IV)	hand
+direct	block.gt6.electric_transformer_t6	变压器 (IV-LuV)	hand
+direct	block.gt6.electric_transformer_t7	变压器 (LuV-ZPM)	hand
+direct	block.gt6.electric_transformer_t8	变压器 (ZPM-UV)	hand
+direct	block.gt6.electric_transformer_t9	变压器 (UV-PUV1)	hand
 direct	block.gt6.electrolyzer_part	电解器部件	hand
 direct	block.gt6.electrometer	静电计传感器	hand
 direct	block.gt6.energy_source	测试能源	hand

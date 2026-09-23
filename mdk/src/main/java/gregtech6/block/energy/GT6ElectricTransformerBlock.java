@@ -46,11 +46,26 @@ public class GT6ElectricTransformerBlock extends GTEntityBlock {
 	/** The family BET (the GT6ElectricTransformers registry object supplier). */
 	private final Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> mTickerType;
 
+	/** The row's ladder index i (the V[i+1]→V[i] pair seat; the :881 row = 0, task p35). */
+	private final int mTier;
+
 	public GT6ElectricTransformerBlock(Properties aProperties,
 			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType) {
+		this(aProperties, aTickerType, 0);
+	}
+
+	/** The tiered constructor (task p35 — the :882-:889 ladder rows; the BatteryBox tier-column form). */
+	public GT6ElectricTransformerBlock(Properties aProperties,
+			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType, int aTier) {
 		super(aProperties);
 		mTickerType = aTickerType;
+		mTier = aTier;
 		registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+	}
+
+	/** The row's ladder index (the BE resolveTier seat; the STONE fallback in the BE answers 0). */
+	public int tier() {
+		return mTier;
 	}
 
 	//? if neoforge {

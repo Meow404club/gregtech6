@@ -730,12 +730,15 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The Electric Transformer display key (task p28-c-ulv-lv-transformer): the :881
-     * registration wording "Transformer (ULV-LV)" verbatim — the atomic key (the
-     * fe_converter shape; a single block, no row template to compose).
+     * The Electric Transformer display keys (tasks p28 + p35): the :881-:889
+     * registration wording "Transformer ("+VN[i]+"-"+VN[i+1]+")" verbatim — the atomic
+     * keys (the fe_converter shape; the ladder shares the wording, the VN pair is the
+     * only column that moves).
      */
     private void addElectricTransformer() {
-        add("block.gt6.electric_transformer", "Transformer (ULV-LV)");
+        for (gregtech6.registry.GT6ElectricTransformers.TransformerRow tRow : gregtech6.registry.GT6ElectricTransformers.ROWS) {
+            add("block.gt6." + tRow.path(), "Transformer (" + tRow.voltagePair() + ")");
+        }
     }
 
     /**

@@ -1825,18 +1825,24 @@ public final class GT6BlockStates extends BlockStateProvider {
      * overlay (MultiTileEntityTransformerElectric :50-57) is the render pool defer.
      */
     private void addElectricTransformer() {
-        Block tTrans = GT6ElectricTransformers.ELECTRIC_TRANSFORMER.get();
+        // task p35 — the full :881-:889 ladder shares ONE model: upstream registers all
+        // nine rows over the SAME icon set (machines/transformers/transformer_electric/*,
+        // the per-tier visual is not a column of the registration), so the port shares
+        // the p28 baked model verbatim.
         ModelFile tModel = models().orientable("electric_transformer",
                 modLoc("block/electric_transformer_side"), modLoc("block/electric_transformer_front"), modLoc("block/electric_transformer_side"));
-        getVariantBuilder(tTrans).forAllStates(aState -> {
-            // the vanilla horizontal-facing rotation map (the addGearBoxTransformer form)
-            Direction tFacing = aState.getValue(GT6ElectricTransformerBlock.FACING);
-            return ConfiguredModel.builder()
-                    .modelFile(tModel)
-                    .rotationY((int) (tFacing.toYRot() + 180) % 360)
-                    .build();
-        });
-        itemModels().withExistingParent("electric_transformer", modLoc("block/electric_transformer"));
+        for (GT6ElectricTransformers.TransformerRow tRow : GT6ElectricTransformers.ROWS) {
+            Block tTrans = GT6ElectricTransformers.BLOCKS_BY_PATH.get(tRow.path()).get();
+            getVariantBuilder(tTrans).forAllStates(aState -> {
+                // the vanilla horizontal-facing rotation map (the addGearBoxTransformer form)
+                Direction tFacing = aState.getValue(GT6ElectricTransformerBlock.FACING);
+                return ConfiguredModel.builder()
+                        .modelFile(tModel)
+                        .rotationY((int) (tFacing.toYRot() + 180) % 360)
+                        .build();
+            });
+            itemModels().withExistingParent(tRow.path(), modLoc("block/electric_transformer"));
+        }
     }
 
     /**

@@ -244,7 +244,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		fluidometerBuilder().save(aConsumer, FLUIDOMETER_ID);
 		feConverterBuilder().save(aConsumer, FE_CONVERTER_ID);
 		waterWheelBuilder().save(aConsumer, WATER_WHEEL_ID);
-		transformerBuilder().save(aConsumer, ELECTRIC_TRANSFORMER_ID);
+		for (BridgeCraftRow tRow : transformerCraftingRows()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 		for (BridgeCraftRow tRow : euBridgeCraftingRows()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
@@ -366,7 +368,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		fluidometerBuilder().save(aOutput, FLUIDOMETER_ID);
 		feConverterBuilder().save(aOutput, FE_CONVERTER_ID);
 		waterWheelBuilder().save(aOutput, WATER_WHEEL_ID); // task p30-pool-waterwheel-neo-recipes — the forge branch row (this file :195), the 21.1 face was born without it
-		transformerBuilder().save(aOutput, ELECTRIC_TRANSFORMER_ID);
+		for (BridgeCraftRow tRow : transformerCraftingRows()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
 		for (BridgeCraftRow tRow : euBridgeCraftingRows()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
@@ -1422,10 +1426,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (GT6Batteries.BoxRow tRow : GT6Batteries.BOX_ROWS) {
 			int tSize = tRow.slots() == 16 ? 4 : 1; // the CABLES_01 vs CABLES_04 column (wire sizes ride the same ladder)
 			Item tM; // the 'M' column: casingMachine(Electric_T[i]) folds to casingSmall (the transformer fold);
-					// the LARGE rows carry the TIER TRANSFORMER item (getItem(10040+i)) — only 10040 exists
+					// the LARGE rows carry the TIER TRANSFORMER item (getItem(10040+i)) — the p35
+					// transformer ladder landed, the declared cut closes (the extension-seat ruling)
 			if (tRow.slots() == 16) {
-				if (tRow.tier() != 0) continue; // the declared cut: large tiers 1..5 ride the transformer-ladder pool
-				tM = GT6ElectricTransformers.ELECTRIC_TRANSFORMER_ITEM.get();
+				tM = gregtech6.registry.GT6ElectricTransformers.itemOfTier(tRow.tier());
 			} else {
 				tM = GTMaterialItems.get(gregapi.data.OP.casingSmall,
 						gregtech6.registry.GT6ElectricDynamos.ELECTRIC_T_LADDER.get(tRow.tier()).get()).get();
@@ -1443,18 +1447,38 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		return rRows;
 	}
 
-	private ShapedRecipeBuilder transformerBuilder() {
-		TagKey<Item> tFineWires = GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY, MT.Copper);
+	private java.util.List<BridgeCraftRow> transformerCraftingRows() {
+		java.util.List<BridgeCraftRow> rRows = new java.util.ArrayList<>();
 		TagKey<Item> tDoublePlates = GT6ItemTags.materialTag(GT6ItemTags.DOUBLE_PLATES_FAMILY, MT.Iron);
-		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GT6ElectricTransformers.ELECTRIC_TRANSFORMER_ITEM.get())
-				.pattern(GT6ElectricTransformers.RECIPE_PATTERN[0])
-				.pattern(GT6ElectricTransformers.RECIPE_PATTERN[1])
-				.pattern(GT6ElectricTransformers.RECIPE_PATTERN[2])
-				.define('W', tFineWires)
-				.define('X', tFineWires)
-				.define('I', tDoublePlates)
-				.define('M', GTMaterialItems.get(gregapi.data.OP.casingSmall, gregapi.data.MT.SteelGalvanized).get())
-				.unlockedBy("has_fine_wire", has(tFineWires));
+		for (GT6ElectricTransformers.TransformerRow tRow : GT6ElectricTransformers.ROWS) {
+			// the casing column: row 0 keeps the LV-era LOCK (the p28 declared deviation,
+			// SteelGalvanized); rows 1-8 use the VERBATIM Electric_T[i] member (the
+			// CASING_LADDER column — SteelGalvanized coincides with the lock from tier 1 up).
+			// casingMachine folds to casingSmall everywhere (the static-storage fold);
+			// an absent casing item skips the row (the plunger CR.ONLY_IF_HAS_RESULT face).
+			net.minecraft.world.item.Item tCasing = tRow.tier() == 0
+					? itemOrNull(GT6ElectricTransformers.CASING_LOCK_PREFIX.get(), GT6ElectricTransformers.CASING_LOCK_MATERIAL.get())
+					: itemOrNull(gregapi.data.OP.casingSmall, GT6ElectricTransformers.CASING_LADDER.get(tRow.tier()).get());
+			if (tCasing == null) continue; // the declared skip: no casingSmall item row for the tier material
+			// the wire columns: rows :881-:883 carry wireGt01/04(ANY.Cu), rows :884-:889
+			// switch to MT.AnnealedCopper (the upstream :884 dat() switch) — both fold to
+			// the fine_wires tag (no 1x/4x wire item rows in the port).
+			TagKey<Item> tFineWires = GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY,
+					"annealed_copper".equals(tRow.wireToken()) ? MT.AnnealedCopper : MT.Copper);
+			String tPath = tRow.path();
+			rRows.add(new BridgeCraftRow(ShapedRecipeBuilder
+					.shaped(RecipeCategory.MISC, GT6ElectricTransformers.ITEMS_BY_PATH.get(tPath).get())
+					.pattern(GT6ElectricTransformers.RECIPE_PATTERN[0])
+					.pattern(GT6ElectricTransformers.RECIPE_PATTERN[1])
+					.pattern(GT6ElectricTransformers.RECIPE_PATTERN[2])
+					.define('W', tFineWires)
+					.define('X', tFineWires)
+					.define('I', tDoublePlates)
+					.define('M', tCasing)
+					.unlockedBy("has_fine_wire", has(tFineWires)),
+					tRow.tier() == 0 ? ELECTRIC_TRANSFORMER_ID : new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+		}
+		return rRows;
 	}
 
 	// -------------------------------------------------------------------------
