@@ -107,10 +107,10 @@ import gregtech6.util.UT6;
  * selector covers drive {@link #setStateMode}; {@link #getRedstoneOut} routes the vanilla
  * emission bridge through the cover exits (upstream 04Covers :427-438 — the plate on the
  * emission face answers before the wire's own emission). Admission stays the interface
- * default: the cover-side gates ({@code AbstractCoverAttachmentTorch} carrier-class check,
- * the selector ITileEntitySwitchableMode check) are the delivered admission policy; the
- * upstream redstone-class narrowing folds into those gates' declared deviation
- * (p34-covers-gameplay-10 class docs) and the host adds no narrowing of its own.
+ * default: the cover-side gates ({@code AbstractCoverAttachmentTorch} redstone-FAMILY
+ * check — since p35 the torch gate narrows to {@link #isRedstone()} rows, the selector
+ * ITileEntitySwitchableMode check) are the delivered admission policy and the host adds
+ * no narrowing of its own.
  */
 public class GTWireBlockEntity extends TileEntityBase09Connector implements ITileEntityEnergy, GTWireRedstoneNode, ICoverableTE, ITileEntitySwitchableMode {
 

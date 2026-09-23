@@ -92,6 +92,29 @@ public class CoverHostMountTest extends GTCoverTestBase {
         return tWire;
     }
 
+    /**
+     * The redstone-family wire carrier — the offline seam for the family flag: the
+     * production flag resolves from the GTWireBlock blockstate, which the vanilla-BRICKS
+     * fixture cannot carry; the torch gate reads the public {@code isRedstone()} exit,
+     * so the probe pins the family directly (the p35 cover-side narrowing).
+     */
+    static class RedstoneFamilyWire extends GTWireBlockEntity {
+        RedstoneFamilyWire() {
+            super(sWireType, HOST_POS, Blocks.BRICKS.defaultBlockState());
+        }
+        @Override
+        public boolean isRedstone() {
+            return true;
+        }
+    }
+
+    /** The redstone-family wire carrier on the quiet stub level (the torch's legal host). */
+    static GTWireBlockEntity redstoneWire() {
+        GTWireBlockEntity tWire = new RedstoneFamilyWire();
+        tWire.setLevel(new QuietLevel());
+        return tWire;
+    }
+
     // ------------------------------------------------------------------
     // the pipe host (upstream CoverPressureValve :44/:49-64)
     // ------------------------------------------------------------------
@@ -128,16 +151,18 @@ public class CoverHostMountTest extends GTCoverTestBase {
 
     // ------------------------------------------------------------------
     // the wire host — the torch (upstream AbstractCoverAttachmentTorch + the
-    // 04Covers :427-438 emission override the host now routes)
+    // 04Covers :427-438 emission override the host now routes). The torch gate is the
+    // REDSTONE family of the carrier (p35 narrowing — upstream keys the insulated
+    // redstone wire class), so the torch tests run on the redstone-family carrier.
     // ------------------------------------------------------------------
 
     @Test
     public void torchMountsOnTheRealWireAndDrivesTheEmissionExit() {
         CoverRedstoneTorch tTorch = new CoverRedstoneTorch();
         CoverRegistry.put(Items.BRICK, tTorch);
-        GTWireBlockEntity tWire = wire();
+        GTWireBlockEntity tWire = redstoneWire();
         assertFalse(tTorch.interceptCoverPlacement((byte) 1, new CoverData(tWire), null),
-                "the REAL wire carrier admits the torch (the carrier-class gate)");
+                "the REAL redstone-family wire carrier admits the torch (the family gate)");
         assertTrue(tWire.setCoverItem((byte) 1, new ItemStack(Items.BRICK), null, false, true));
         // the dead wire: the torch art flips ON and the HOST exit answers the full 15
         tWire.getCovers().tickPost(10, true, false, false);
@@ -155,11 +180,25 @@ public class CoverHostMountTest extends GTCoverTestBase {
     public void torchFaceSelectivityOnTheRealWire() {
         CoverRedstoneTorch tTorch = new CoverRedstoneTorch();
         CoverRegistry.put(Items.BRICK, tTorch);
-        GTWireBlockEntity tWire = wire();
+        GTWireBlockEntity tWire = redstoneWire();
         assertTrue(tWire.setCoverItem((byte) 1, new ItemStack(Items.BRICK), null, false, true));
         tWire.getCovers().tickPost(10, true, false, false); // the dead wire: art ON
         assertEquals(15, tWire.getRedstoneOut((byte) 0, true), "the covered face answers the exit (query DOWN -> emission face UP)");
         assertEquals(0, tWire.getRedstoneOut((byte) 1, true), "a query on another face hits the bare face — the torch does not leak (the bare-face pass-through)");
+    }
+
+    @Test
+    public void torchRefusesTheNonRedstoneFamilyRows() {
+        CoverRedstoneTorch tTorch = new CoverRedstoneTorch();
+        CoverRegistry.put(Items.BRICK, tTorch);
+        // the BRICKS fixture wire resolves to the ELECTRIC family — the p35 narrowing:
+        // the cover-side gate refuses it exactly as the upstream electric wire classes did
+        GTWireBlockEntity tWire = wire();
+        assertTrue(tTorch.interceptCoverPlacement((byte) 1, new CoverData(tWire), null),
+                "the electric-family wire row REFUSES the torch (the cover-side narrowing)");
+        assertFalse(tWire.setCoverItem((byte) 1, new ItemStack(Items.BRICK), null, false, true),
+                "the real dispatch refuses the mount");
+        assertFalse(tWire.hasCovers(), "the refused mount left no store behind");
     }
 
     @Test
