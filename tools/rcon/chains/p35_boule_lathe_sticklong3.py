@@ -67,9 +67,11 @@ steps = [
          expect="Replaced", sleep=4.0),
     # the loader-neutral input-slot pin: bare item on the forge leg, gt6:-qualified on neo
     Step(f"gt6machine lathe check {F(LA1)}", expect="boule_gt_siliconx1"),
-    # the :379 row: duration = getCosts(mult 64) = 9U x 64 x (1+q) at 16 EUt — the 64/t
-    # injector's cheap overclock rides it far under the 4000-tick window (the rm_backfill
-    # overshoot form: the row stalls honestly once the single boule is consumed)
+    # the lathe is RU (GTMachines LATHE_BE TD.Energy.RU) — NOT an ALL_ALTERNATING member,
+    # so the wrap fires on every completed tick and the rm_backfill 4000-tick overshoot
+    # window carries the whole row (the :379 clock: getCosts(mult 64) x 16 EUt, the Si
+    # q=0 duration 576 t = a 9216-unit max; 64/tick x 4000 >> it, the row stalls honestly
+    # once the single boule is consumed)
     Step(f"gt6machine lathe inject 4000 64 {F(LA1)}", expect="inject ticks=4000 size=64"),
     Step(f"gt6machine lathe check {F(LA1)}", expect="out[0]=3x"),
     Step(f"gt6machine lathe check {F(LA1)}", expect="stick_long_silicon"),
@@ -84,7 +86,7 @@ CHAIN = Chain(
     slug="p35boulelathe",
     sites=gt6world.declare_sites(CC2, LA1),
     preferred_ports=(26712, 26722),      # this card's pinned rcon/query pair (after the crusher arm 26692/26702)
-    response_timeout=60.0,               # the 4000-tick inject loop runs server-side
+    response_timeout=60.0,               # the inject loops run server-side
     mutates=("fakesource",),             # exclusive wave — never shares a boot wave
     steps=steps,
 )
