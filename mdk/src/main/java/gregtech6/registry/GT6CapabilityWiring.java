@@ -29,6 +29,12 @@ import gregtech6.tileentity.inventories.GT6QueueHopperBlockEntity; // p26 tail-a
 import gregtech6.tileentity.energy.GT6BatteryBoxBlockEntity; // p29-w4 tail-append
 import gregtech6.tileentity.multiblocks.GTGasTurbineBlockEntity; // p29-w3 tail-append
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
+import net.minecraft.core.Direction; // p35 tail-append
+import net.neoforged.neoforge.capabilities.BlockCapability; // p35 tail-append
+import gregtech6.tileentity.portals.GTMiniPortalBlockEntity; // p35 tail-append
+import gregtech6.tileentity.portals.GTMiniPortalEndBlockEntity; // p35 tail-append
+import gregtech6.tileentity.portals.GTMiniPortalNetherBlockEntity; // p35 tail-append
+import gregtech6.registry.GT6Portals; // p35 tail-append
 import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
 import gregtech6.tileentity.machines.TileEntityOven;
 import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
@@ -107,6 +113,7 @@ public final class GT6CapabilityWiring {
 		registerGasTurbine(aEvent); // task p29-w3-turbine-dynamo (tail-append; shared serial file)
 		registerDistillationFaces(aEvent); // task p29-w3-distill-crucible (tail-append; shared serial file)
 		registerBatteryBoxFamily(aEvent); // task p29-w4-battery-storage (tail-append; shared serial file)
+		registerPortalRelays(aEvent); // task p35-portals-mini-nether-end (tail-append; shared serial file)
 	}
 
 	// -- the machines seam: registerBlockEntity(cap, beType, (be, side) -> be.getCapability(cap, side)) --
@@ -795,6 +802,39 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 		BlockEntityType<GT6BatteryBoxBlockEntity> tLarge = GT6Batteries.BATTERY_BOX_LARGE_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tLarge,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+	}
+
+	// -- the portal pair (task p35-portals-mini-nether-end; TAIL-APPENDED ROW, the
+	// shared serial file: append-only discipline) --
+	// The RELAY row (the MultiBlockPartBlockEntity part-relay form): the portal BE has no
+	// own handler — the provider resolves the portal's cross-dimension delegate
+	// (delegateAdjacent, the isLoaded-guarded OPOS adjacency) and answers through the LEVEL
+	// query on the delegate side (delegateAdjacentSide). Item + fluid faces, both BETs.
+	// Without these rows every external hopper push (the VanillaInventoryCodeHooks
+	// insertHook level query) and every pipe distribute push is capability-blind on this
+	// node while the 1.20.1 BE override hides the gap — the ADR-P15-4 census discipline.
+	// The side may be null (the no-side query) — the relay answers null there (upstream
+	// the 1.7.10 delegators were always sided, the null-side face is not a ported surface).
+
+	private static void registerPortalRelays(RegisterCapabilitiesEvent aEvent) {
+		BlockEntityType<GTMiniPortalNetherBlockEntity> tNether = GT6Portals.PORTAL_NETHER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tNether,
+				(aBe, aSide) -> relayPortal(GTMiniPortalBlockEntity.class.cast(aBe), aSide, Capabilities.ItemHandler.BLOCK));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tNether,
+				(aBe, aSide) -> relayPortal(GTMiniPortalBlockEntity.class.cast(aBe), aSide, Capabilities.FluidHandler.BLOCK));
+		BlockEntityType<GTMiniPortalEndBlockEntity> tEnd = GT6Portals.PORTAL_END_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tEnd,
+				(aBe, aSide) -> relayPortal(GTMiniPortalBlockEntity.class.cast(aBe), aSide, Capabilities.ItemHandler.BLOCK));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tEnd,
+				(aBe, aSide) -> relayPortal(GTMiniPortalBlockEntity.class.cast(aBe), aSide, Capabilities.FluidHandler.BLOCK));
+	}
+
+	private static <T> T relayPortal(GTMiniPortalBlockEntity aPortal, Direction aSide, BlockCapability<T, Direction> aCapability) {
+		if (aSide == null) return null;
+		BlockEntity tDelegate = aPortal.delegateAdjacent((byte) aSide.get3DDataValue());
+		if (tDelegate == null || !tDelegate.hasLevel()) return null;
+		return tDelegate.getLevel().getCapability(aCapability, tDelegate.getBlockPos(),
+				Direction.from3DDataValue(aPortal.delegateAdjacentSide((byte) aSide.get3DDataValue())));
 	}
 
 }
