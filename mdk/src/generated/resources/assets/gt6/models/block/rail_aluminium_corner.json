@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/rail_corner",
+  "textures": {
+    "rail": "gt6:block/rail_turned_aluminium"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "D": {
+      "item": "minecraft:redstone"
+    },
+    "G": {
+      "item": "gt6:rail_gt_platinum"
+    },
+    "R": {
+      "item": "gt6:rail_gt_tungstensteel"
+    },
+    "S": {
+      "item": "gt6:stick_wood_treated"
+    }
+  },
+  "pattern": [
+    "RSR",
+    "GDG",
+    "RSR"
+  ],
+  "result": {
+    "count": 4,
+    "item": "gt6:rail_booster_tungstensteel"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/template_rail_raised_sw",
+  "textures": {
+    "rail": "gt6:block/rail_detector_active_tungstensteel"
+  }
+}

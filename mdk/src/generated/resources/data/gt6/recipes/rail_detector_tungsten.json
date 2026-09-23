@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "D": {
+      "item": "minecraft:redstone"
+    },
+    "P": {
+      "item": "minecraft:stone_pressure_plate"
+    },
+    "R": {
+      "item": "gt6:rail_gt_tungsten"
+    },
+    "S": {
+      "item": "gt6:stick_wood_treated"
+    }
+  },
+  "pattern": [
+    "RSR",
+    "RPR",
+    "RDR"
+  ],
+  "result": {
+    "count": 4,
+    "item": "gt6:rail_detector_tungsten"
+  },
+  "show_notification": true
+}

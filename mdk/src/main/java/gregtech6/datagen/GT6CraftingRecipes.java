@@ -46,6 +46,7 @@ import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6SprayCans;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GT6StaticStorages;
+import gregtech6.registry.GT6Rails;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTGrassBlocks;
 import gregtech6.registry.GT6Sensors;
@@ -345,6 +346,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task p34-bumbliary-recipes — the Bumbliary pair rows (the :2222/:2223 line-tail varargs)
 		bumbliaryBuilder().save(aConsumer, BUMBLIARY_ID);
 		advancedBumbliaryBuilder().save(aConsumer, BUMBLIARY_ADVANCED_ID);
+		// task p35-rails-31-blocks — the 30 rail rows (the :107-140 no-RC fallback band)
+		for (GT6Rails.RailRow tRailRow : GT6Rails.ROWS) {
+			railRecipeBuilder(tRailRow).save(aConsumer, railRecipeId(tRailRow));
+		}
 	}
 	//?} else {
 	/*@Override
@@ -474,6 +479,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task p34-bumbliary-recipes — the Bumbliary pair rows (the :2222/:2223 line-tail varargs)
 		bumbliaryBuilder().save(aOutput, BUMBLIARY_ID);
 		advancedBumbliaryBuilder().save(aOutput, BUMBLIARY_ADVANCED_ID);
+		// task p35-rails-31-blocks — the 30 rail rows (the :107-140 no-RC fallback band)
+		for (GT6Rails.RailRow tRailRow : GT6Rails.ROWS) {
+			railRecipeBuilder(tRailRow).save(aOutput, railRecipeId(tRailRow));
+		}
 	}
 	*///?}
 
@@ -508,6 +517,65 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * Tool letters key on the gt6 tool tags (the p24/p25 tag rulings), material items
 	 * resolve through GTMaterialItems (the hopper plateCurved shape).
 	 */
+	/**
+	 * The rail rows (task p35-rails-31-blocks) — the upstream :107-140 no-RC fallback band,
+	 * walked over the {@link GT6Rails#ROWS} table: 10 normals ("RSR"/"RSR"/"RSR", railGt +
+	 * treated-wood stick, 4 out), 10 boosters ("RSR"/"GDG"/"RSR", the gold-family railGt
+	 * column + redstone) and 10 detectors ("RSR"/"RPR"/"RDR", redstone + the stone
+	 * pressure plate). The upstream :74-106 RC branch is CUT (IL.RC_Bed_Wood absent from
+	 * the port universe — the card ruling) and the vanilla-replacement band (:141-156,
+	 * the DEL_OTHER_SHAPED_RECIPES overrides) stays out — coexistence, the card
+	 * investigation declaration.
+	 */
+	/** The recipe id — the result path (the vanilla naming convention, the grassRecipeId form). */
+	private static ResourceLocation railRecipeId(GT6Rails.RailRow aRow) {
+		String tPath = aRow.path(); // a local so the two-arg RL ctor args stay bare identifiers (the swap-table regex note)
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
+
+	/** One rail row's builder — the :108-139 column pairs over the shared "R"/"S" frame. */
+	private ShapedRecipeBuilder railRecipeBuilder(GT6Rails.RailRow aRow) {
+		ShapedRecipeBuilder rBuilder = ShapedRecipeBuilder.shaped(net.minecraft.data.recipes.RecipeCategory.TRANSPORTATION,
+				gregtech6.registry.GT6Rails.ITEMS_BY_PATH.get(aRow.path()).get(), 4)
+				.pattern("RSR")
+				.pattern(middleRow(aRow))
+				.pattern(bottomRow(aRow))
+				.define('R', GTMaterialItems.get(gregapi.data.OP.railGt, aRow.material()).get())
+				.define('S', GTMaterialItems.get(gregapi.data.OP.stick, gregapi.data.MT.WoodTreated).get())
+				.unlockedBy("has_rail", has(GTMaterialItems.get(gregapi.data.OP.railGt, aRow.material()).get()));
+		if (aRow.kind() == GT6Rails.RailKind.BOOSTER) {
+			rBuilder.define('D', net.minecraft.world.item.Items.REDSTONE);
+			rBuilder.define('G', GTMaterialItems.get(gregapi.data.OP.railGt, boosterGoldColumn(aRow.material())).get());
+		} else if (aRow.kind() == GT6Rails.RailKind.DETECTOR) {
+			rBuilder.define('D', net.minecraft.world.item.Items.REDSTONE);
+			rBuilder.define('P', net.minecraft.world.item.Items.STONE_PRESSURE_PLATE);
+		}
+		return rBuilder;
+	}
+
+	/** The middle pattern row: boosters "GDG", detectors "RPR", normals "RSR" (the :119/:130 frame columns). */
+	private static String middleRow(GT6Rails.RailRow aRow) {
+		return switch (aRow.kind()) {
+			case BOOSTER -> "GDG";
+			case DETECTOR -> "RPR";
+			case NORMAL -> "RSR";
+		};
+	}
+
+	/** The bottom pattern row: the detector's "RDR" arm (:130, the redstone sits bottom-middle), the others "RSR". */
+	private static String bottomRow(GT6Rails.RailRow aRow) {
+		return aRow.kind() == GT6Rails.RailKind.DETECTOR ? "RDR" : "RSR";
+	}
+
+	/** The booster 'G' rail material column (the :119-128 rows read line by line). */
+	private static gregapi.oredict.OreDictMaterial boosterGoldColumn(gregapi.oredict.OreDictMaterial aMaterial) {
+		if (aMaterial == gregapi.data.MT.Steel || aMaterial == gregapi.data.MT.StainlessSteel) return gregapi.data.MT.Au;
+		if (aMaterial == gregapi.data.MT.TungstenSteel || aMaterial == gregapi.data.MT.TungstenCarbide) return gregapi.data.MT.Pt;
+		if (aMaterial == gregapi.data.MT.Titanium || aMaterial == gregapi.data.MT.W) return gregapi.data.MT.Electrum;
+		if (aMaterial == gregapi.data.MT.Adamantium) return gregapi.data.MT.Os;
+		return gregapi.data.MT.Ag; // Al / Magnalium / Bronze
+	}
+
 	private ShapedRecipeBuilder staticStorageRecipeBuilder(gregtech6.registry.GT6StaticStorages.StaticRow aRow) {
 		ShapedRecipeBuilder rBuilder = switch (aRow.kind()) {
 			case LOCKER -> ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, resultOf(aRow))
