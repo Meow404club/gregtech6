@@ -41,6 +41,8 @@ import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
 import gregtech6.tileentity.multiblocks.GT6HeatExchangerBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
+import gregtech6.tileentity.inventories.GT6LongDistanceItemPipeBlockEntity; // p35 tail-append
+import gregtech6.tileentity.tank.GT6LongDistanceFluidPipeBlockEntity; // p35 tail-append
 import gregtech6.tileentity.tank.BarrelFluidHandler;
 import gregtech6.tileentity.tank.GTBarrelBlockEntity;
 import gregtech6.tileentity.tank.GTBarrelItemFluidHandler;
@@ -114,6 +116,7 @@ public final class GT6CapabilityWiring {
 		registerDistillationFaces(aEvent); // task p29-w3-distill-crucible (tail-append; shared serial file)
 		registerBatteryBoxFamily(aEvent); // task p29-w4-battery-storage (tail-append; shared serial file)
 		registerPortalRelays(aEvent); // task p35-portals-mini-nether-end (tail-append; shared serial file)
+		registerLongDistancePipeFaces(aEvent); // task p35-long-distance-pipes (tail-append; shared serial file)
 	}
 
 	// -- the machines seam: registerBlockEntity(cap, beType, (be, side) -> be.getCapability(cap, side)) --
@@ -836,6 +839,22 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 		BlockEntity tDelegate = aPortal.delegateAdjacent((byte) aSide.get3DDataValue());
 		if (tDelegate == null || !tDelegate.hasLevel()) return null;
 		return tDelegate.getLevel().getCapability(aCapability, tDelegate.getBlockPos(), aSide); // the access face = the incoming face
+	// -- the long distance pipelines (p35-long-distance-pipes; TAIL-APPENDED ROW, the
+	// shared serial file: append-only discipline) --
+	// The two endpoint BETs join as one item face + one fluid face (the window families:
+	// the forge getCapability serves the delegating IItemHandler/IFluidHandler — the
+	// fill-only window on the fluid BE — and this row is the 21.1 registration only).
+	// Without these rows every external hopper push / fluid push on the LD endpoints is
+	// capability-blind on this node while the 1.20.1 BE override hides the gap — the
+	// ADR-P15-4 census discipline, mechanized by GT6CapabilityWiringSeamTest.
+
+	private static void registerLongDistancePipeFaces(RegisterCapabilitiesEvent aEvent) {
+		BlockEntityType<GT6LongDistanceItemPipeBlockEntity> tItem = GT6LongDistPipes.LONGDIST_ITEM_PIPE_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tItem,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		BlockEntityType<GT6LongDistanceFluidPipeBlockEntity> tFluid = GT6LongDistPipes.LONGDIST_FLUID_PIPE_BE.get();
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tFluid,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 	}
 
 }
