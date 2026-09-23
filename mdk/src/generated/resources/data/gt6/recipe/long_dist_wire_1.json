@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_curved_copper"
+    },
+    "R": {
+      "item": "gt6:plate_rubber"
+    },
+    "S": {
+      "item": "gt6:plate_curved_aluminium"
+    },
+    "W": {
+      "item": "gt6:wire_lead_gt16"
+    }
+  },
+  "pattern": [
+    "RSR",
+    "PWP",
+    "RSR"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:long_dist_wire_1"
+  }
+}

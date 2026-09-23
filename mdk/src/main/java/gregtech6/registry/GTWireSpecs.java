@@ -49,6 +49,16 @@ public final class GTWireSpecs {
 	/** The short tier names, verbatim from CS.java:154. */
 	public static final String[] VN = {"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "PUV1", "PUV2", "PUV3", "PUV4", "PUV5", "XV", "XV"};
 
+	/**
+	 * The max-voltage tier table, verbatim from CS.java:151 (= V*2 per tier). Unused until
+	 * task p35-energy-tail-machines: the Long Distance Wire throughput reads VMAX[tier]
+	 * (upstream BlockLongDistWire tooltip + scanWires — {@code VMAX[mTiers[aMetaData]]}).
+	 */
+	public static final long[] VMAX = {
+			16, 64, 256, 1024, 4096, 16384, 65536, 262144,
+			1048576, 4194304, 16777216, 67108864, 268435456, 1073741824, 4294967296L, 17179869184L
+	};
+
 	/** The bare-wire shapes :72-87 — index i (0-based) = wireGt0(i+1): the PX_P diameter index. */
 	public static final int[] WIRE_DIAMETERS = {2, 3, 4, 6, 7, 7, 8, 8, 9, 10, 11, 12, 13, 14, 15, 16};
 

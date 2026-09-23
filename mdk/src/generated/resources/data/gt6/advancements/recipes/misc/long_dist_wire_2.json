@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:long_dist_wire_2"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_wire": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "gt6:wire_copper_gt16"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_wire",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:long_dist_wire_2"
+    ]
+  },
+  "sends_telemetry_event": false
+}

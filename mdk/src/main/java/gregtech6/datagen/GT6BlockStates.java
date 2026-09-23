@@ -189,9 +189,11 @@ public final class GT6BlockStates extends BlockStateProvider {
         addHoppers(); // task p26-storage-hopper-family
         addGearBoxTransformer(); // task p12-gearbox-transformer
         addElectricTransformer(); // task p28-c-ulv-lv-transformer
+        addLDEnergyFamilies(); // task p35-energy-tail-machines
         addWaterWheel(); // task p28-c-water-wheel
         addElectricDynamoUlv(); // task p28-c-ulv-dynamo-row — the Electric Dynamo T0 row
         addBatteryBoxes(); // task p29-w4-battery-storage — the 12-box storage face
+        addCrystalChargers(); // task p35-energy-tail-machines — the 20-row LU charge face
         addLargeBoiler(); // task p13-large-boiler
         addLightningRod(); // task p24-lightning-rod
         addParts(); // task p29-w3-nbtdesign-parts — the part-family expansion (per-design variants)
@@ -1779,6 +1781,21 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
     }
 
+    /**
+     * Task p35-energy-tail-machines — the Crystal Chargers: the 20-row LU family rides
+     * the battery-box cube-all form over the SAME textures (the dedicated upstream
+     * crystal_laser iconset is the render pool; the small/large slot split keeps the
+     * two box textures).
+     */
+    private void addCrystalChargers() {
+        for (gregtech6.registry.GT6CrystalChargers.ChargerRow tRow : gregtech6.registry.GT6CrystalChargers.ROWS) {
+            net.minecraft.world.level.block.Block tBlock = gregtech6.registry.GT6CrystalChargers.BLOCKS_BY_PATH.get(tRow.path()).get();
+            simpleBlock(tBlock, models().cubeAll(tRow.path(),
+                    modLoc(tRow.slots() == 16 ? "block/battery_box_large" : "block/battery_box")));
+            itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
+        }
+    }
+
     private void addElectricDynamoUlv() {
         Block tBlock = GT6ElectricDynamos.ELECTRIC_DYNAMO_ULV.get();
         simpleBlock(tBlock, models().cubeAll("electric_dynamo_ulv", modLoc("block/energy_source")));
@@ -1825,18 +1842,55 @@ public final class GT6BlockStates extends BlockStateProvider {
      * overlay (MultiTileEntityTransformerElectric :50-57) is the render pool defer.
      */
     private void addElectricTransformer() {
-        Block tTrans = GT6ElectricTransformers.ELECTRIC_TRANSFORMER.get();
+        // task p35 — the full :881-:889 ladder shares ONE model: upstream registers all
+        // nine rows over the SAME icon set (machines/transformers/transformer_electric/*,
+        // the per-tier visual is not a column of the registration), so the port shares
+        // the p28 baked model verbatim.
         ModelFile tModel = models().orientable("electric_transformer",
                 modLoc("block/electric_transformer_side"), modLoc("block/electric_transformer_front"), modLoc("block/electric_transformer_side"));
-        getVariantBuilder(tTrans).forAllStates(aState -> {
-            // the vanilla horizontal-facing rotation map (the addGearBoxTransformer form)
-            Direction tFacing = aState.getValue(GT6ElectricTransformerBlock.FACING);
-            return ConfiguredModel.builder()
-                    .modelFile(tModel)
-                    .rotationY((int) (tFacing.toYRot() + 180) % 360)
-                    .build();
-        });
-        itemModels().withExistingParent("electric_transformer", modLoc("block/electric_transformer"));
+        for (GT6ElectricTransformers.TransformerRow tRow : GT6ElectricTransformers.ROWS) {
+            Block tTrans = GT6ElectricTransformers.BLOCKS_BY_PATH.get(tRow.path()).get();
+            getVariantBuilder(tTrans).forAllStates(aState -> {
+                // the vanilla horizontal-facing rotation map (the addGearBoxTransformer form)
+                Direction tFacing = aState.getValue(GT6ElectricTransformerBlock.FACING);
+                return ConfiguredModel.builder()
+                        .modelFile(tModel)
+                        .rotationY((int) (tFacing.toYRot() + 180) % 360)
+                        .build();
+            });
+            itemModels().withExistingParent(tRow.path(), modLoc("block/electric_transformer"));
+        }
+    }
+
+    /**
+     * Task p35-energy-tail-machines — the Long Distance families. The five LD
+     * transformer endpoints share the p28 electric-transformer orientable model (the
+     * facing-cube posture is the same; the dedicated upstream iconset
+     * longdistancetransformer_electric is the render pool), the 16 LD wire metas ride
+     * the addWire cube-all shape over the shared wire_electric texture (the dedicated
+     * LONG_DIST_WIRES_01 iconset is the render pool — the blockstate form is the
+     * property-less wildcard variant like the 620 wire family).
+     */
+    private void addLDEnergyFamilies() {
+        ModelFile tLDModel = models().getExistingFile(modLoc("block/electric_transformer"));
+        for (gregtech6.registry.GT6LongDistanceTransformers.LDRow tRow : gregtech6.registry.GT6LongDistanceTransformers.ROWS) {
+            Block tTrans = gregtech6.registry.GT6LongDistanceTransformers.BLOCKS_BY_PATH.get(tRow.path()).get();
+            getVariantBuilder(tTrans).forAllStates(aState -> {
+                Direction tFacing = aState.getValue(GT6ElectricTransformerBlock.FACING);
+                return ConfiguredModel.builder()
+                        .modelFile(tLDModel)
+                        .rotationY((int) (tFacing.toYRot() + 180) % 360)
+                        .build();
+            });
+            itemModels().withExistingParent(tRow.path(), modLoc("block/electric_transformer"));
+        }
+        for (gregtech6.registry.GT6LongDistWires.WireRow tRow : gregtech6.registry.GT6LongDistWires.ROWS) {
+            String tPath = gregtech6.registry.GT6LongDistWires.pathOf(tRow.meta());
+            Block tWire = gregtech6.registry.GT6LongDistWires.BLOCKS_BY_META.get(tRow.meta()).get();
+            var tModel = models().cubeAll(tPath, modLoc("block/wire_electric"));
+            getVariantBuilder(tWire).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
+            itemModels().withExistingParent(tPath, modLoc("block/" + tPath));
+        }
     }
 
     /**

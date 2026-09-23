@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "tag": "c:double_plates/iron"
+    },
+    "M": {
+      "item": "gt6:casing_small_titanium"
+    },
+    "W": {
+      "tag": "c:fine_wires/annealed_copper"
+    },
+    "X": {
+      "tag": "c:fine_wires/annealed_copper"
+    }
+  },
+  "pattern": [
+    "WIW",
+    "XM ",
+    "WIW"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:electric_transformer_t6"
+  }
+}

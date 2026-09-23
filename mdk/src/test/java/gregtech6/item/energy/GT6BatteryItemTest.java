@@ -35,78 +35,14 @@ public class GT6BatteryItemTest extends GTOfflineTestBase {
 	@BeforeAll
 	static void warmUpAndBuild() {
 		gregtech6.tileentity.energy.GTEnergySourceBlockEntity.resolveEnergyType("TU"); // the TD CME warm-up
-		sLeadAcidUl = registerFixture("fixture_battery_ulv", () -> new GT6BatteryItem(new Item.Properties(), 8, 16000, TD.Energy.EU));
-		sLeadAcidLv = registerFixture("fixture_battery_lv", () -> new GT6BatteryItem(new Item.Properties(), 32, 64000, TD.Energy.EU));
-		sEnergiumRed = registerFixture("fixture_battery_lu", () -> new GT6BatteryItem(new Item.Properties(), 8, 3200000, TD.Energy.LU));
+		sLeadAcidUl = registerItemFixture("fixture_battery_ulv", () -> new GT6BatteryItem(new Item.Properties(), 8, 16000, TD.Energy.EU));
+		sLeadAcidLv = registerItemFixture("fixture_battery_lv", () -> new GT6BatteryItem(new Item.Properties(), 32, 64000, TD.Energy.EU));
+		sEnergiumRed = registerItemFixture("fixture_battery_lu", () -> new GT6BatteryItem(new Item.Properties(), 8, 3200000, TD.Energy.LU));
 	}
 
 	// ---------------------------------------------------------------------------
 	// acceptance ② — the NBT face
 	// ---------------------------------------------------------------------------
-
-	/**
-	 * The offline item fixture seat. The forge wrapper latches the vanilla-registry write
-	 * window; on this JVM the latch fields may be unreachable (module access), in which
-	 * case the carrier-dependent tests ASSUME-SKIP — the 1.20.1 leg is the gate for the
-	 * carrier semantics, the 21.1 leg records the telemetry.
-	 */
-	static final sun.misc.Unsafe UNSAFE;
-	static final long LOCKED_OFFSET;
-	static final long FROZEN_OFFSET;
-	static final boolean ARMED;
-	static {
-		sun.misc.Unsafe tUnsafe = null;
-		long tLocked = 0, tFrozen = 0;
-		boolean tArmed = true;
-		try {
-			java.lang.reflect.Field tUnsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
-			tUnsafeField.setAccessible(true);
-			tUnsafe = (sun.misc.Unsafe) tUnsafeField.get(null);
-			Class<?> tClass = net.minecraft.core.registries.BuiltInRegistries.ITEM.getClass();
-			tLocked = tUnsafe.objectFieldOffset(findField(tClass, "locked"));
-			tFrozen = tUnsafe.objectFieldOffset(findField(tClass, "frozen"));
-		} catch (Throwable ignored) {
-			tArmed = false; // the telemetry leg: carrier tests assume-skip
-		}
-		UNSAFE = tUnsafe;
-		LOCKED_OFFSET = tLocked;
-		FROZEN_OFFSET = tFrozen;
-		ARMED = tArmed;
-	}
-
-	/** The latch fields live on wrapper superclasses — walk up (getDeclaredField sees one class only). */
-	private static java.lang.reflect.Field findField(Class<?> aClass, String aName) throws NoSuchFieldException {
-		for (Class<?> tWalk = aClass; tWalk != null; tWalk = tWalk.getSuperclass()) {
-			try {
-				return tWalk.getDeclaredField(aName);
-			} catch (NoSuchFieldException ignored) {
-				// keep walking
-			}
-		}
-		throw new NoSuchFieldException(aName + " (walked " + aClass + " up)");
-	}
-
-	static void unlockItemRegistry() {
-		UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, LOCKED_OFFSET, false);
-		UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, FROZEN_OFFSET, false);
-	}
-
-	static void lockItemRegistry() {
-		UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, FROZEN_OFFSET, true);
-		UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, LOCKED_OFFSET, true);
-	}
-
-	/** The ItemStack ctor needs a registry DELEGATE (ForgeRegistry.getDelegateOrThrow — the "No delegate" failure), so the fixtures register under fixture keys with the latch momentarily open. */
-	static GT6BatteryItem registerFixture(String aKey, java.util.function.Supplier<GT6BatteryItem> aItem) {
-		org.junit.jupiter.api.Assumptions.assumeTrue(ARMED, "the offline registry latch is unreachable on this JVM");
-		unlockItemRegistry();
-		try {
-			return net.minecraft.core.Registry.register(net.minecraft.core.registries.BuiltInRegistries.ITEM,
-					new net.minecraft.resources.ResourceLocation("gt6", aKey), aItem.get());
-		} finally {
-			lockItemRegistry();
-		}
-	}
 
 	@Test
 	public void nbtRoundTripCarriesTheCharge() {

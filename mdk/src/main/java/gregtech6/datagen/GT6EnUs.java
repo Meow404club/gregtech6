@@ -114,6 +114,8 @@ public class GT6EnUs extends LanguageProvider {
         addFeBattery(); // task p26-eu-bridge-outbound — tail-append
         addFeConverter(); // task p28-b-fe-converter-machine — tail-append
         addElectricTransformer(); // task p28-c-ulv-lv-transformer
+        addLDEnergyFamilies(); // task p35-energy-tail-machines
+        addCrystalChargers(); // task p35-energy-tail-machines
         addEuBridgeFamilies(); // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting template
         addLaserFamilies(); // task p32-qu-laser-domain — the CO2 Laser + Laser Absorber families + the gas emitters
         addMagicAbsorber(); // task p32-magic-absorber — the Magic Field Absorber name
@@ -730,12 +732,42 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The Electric Transformer display key (task p28-c-ulv-lv-transformer): the :881
-     * registration wording "Transformer (ULV-LV)" verbatim — the atomic key (the
-     * fe_converter shape; a single block, no row template to compose).
+     * The Electric Transformer display keys (tasks p28 + p35): the :881-:889
+     * registration wording "Transformer ("+VN[i]+"-"+VN[i+1]+")" verbatim — the atomic
+     * keys (the fe_converter shape; the ladder shares the wording, the VN pair is the
+     * only column that moves).
      */
     private void addElectricTransformer() {
-        add("block.gt6.electric_transformer", "Transformer (ULV-LV)");
+        for (gregtech6.registry.GT6ElectricTransformers.TransformerRow tRow : gregtech6.registry.GT6ElectricTransformers.ROWS) {
+            add("block.gt6." + tRow.path(), "Transformer (" + tRow.voltagePair() + ")");
+        }
+    }
+
+    /**
+     * The Long Distance family display keys (task p35-energy-tail-machines): the
+     * :909-:913 "Long Distance Transformer Endpoint ("+VN[i]+")" wording and the
+     * BlockLongDistWire :44 "Long Distance Electric Wire ("+VN[tier]+")" wording,
+     * verbatim — the atomic keys.
+     */
+    /**
+     * The Crystal Charger display keys (task p35-energy-tail-machines): the :970-:971
+     * registration wording "Crystal Charger (T"+i+")" / "Large Crystal Charger (T"+i+")"
+     * verbatim — the atomic keys.
+     */
+    private void addCrystalChargers() {
+        for (gregtech6.registry.GT6CrystalChargers.ChargerRow tRow : gregtech6.registry.GT6CrystalChargers.ROWS) {
+            add("block.gt6." + tRow.path(), (tRow.slots() == 16 ? "Large Crystal Charger (" : "Crystal Charger (") + tRow.tierWord() + ")");
+        }
+    }
+
+    private void addLDEnergyFamilies() {
+        for (gregtech6.registry.GT6LongDistanceTransformers.LDRow tRow : gregtech6.registry.GT6LongDistanceTransformers.ROWS) {
+            add("block.gt6." + tRow.path(), "Long Distance Transformer Endpoint (" + tRow.voltageWord() + ")");
+        }
+        for (gregtech6.registry.GT6LongDistWires.WireRow tRow : gregtech6.registry.GT6LongDistWires.ROWS) {
+            add("block.gt6." + gregtech6.registry.GT6LongDistWires.pathOf(tRow.meta()),
+                    "Long Distance Electric Wire (" + gregtech6.registry.GTWireSpecs.VN[tRow.tier()] + ")");
+        }
     }
 
     /**

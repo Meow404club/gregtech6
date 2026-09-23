@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.Bootstrap;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -42,6 +43,74 @@ public abstract class GTOfflineTestBase {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
 		unfreezeBlockEntityTypeRegistry();
+	}
+
+	// -------------------------------------------------------------------------
+	// the item-fixture seat (task p35 — lifted verbatim from GT6BatteryItemTest, the
+	// forge wrapper latches the vanilla ITEM registry write window; on this JVM the
+	// latch fields may be unreachable (module access), in which case the fixture
+	// consumers ASSUME-SKIP)
+	// -------------------------------------------------------------------------
+
+	/** The lazy latch holder — the class-init MUST stay lazy: touching BuiltInRegistries before the @BeforeAll Bootstrap fails the registry class. */
+	private static final class ItemLatch {
+		static final sun.misc.Unsafe UNSAFE;
+		static final long LOCKED_OFFSET;
+		static final long FROZEN_OFFSET;
+		static final boolean ARMED;
+		static {
+			sun.misc.Unsafe tUnsafe = null;
+			long tLocked = 0, tFrozen = 0;
+			boolean tArmed = true;
+			try {
+				java.lang.reflect.Field tUnsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+				tUnsafeField.setAccessible(true);
+				tUnsafe = (sun.misc.Unsafe) tUnsafeField.get(null);
+				Class<?> tClass = net.minecraft.core.registries.BuiltInRegistries.ITEM.getClass();
+				tLocked = tUnsafe.objectFieldOffset(findNestedField(tClass, "locked"));
+				tFrozen = tUnsafe.objectFieldOffset(findNestedField(tClass, "frozen"));
+			} catch (Throwable ignored) {
+				tArmed = false; // the telemetry leg
+			}
+			UNSAFE = tUnsafe;
+			LOCKED_OFFSET = tLocked;
+			FROZEN_OFFSET = tFrozen;
+			ARMED = tArmed;
+		}
+	}
+
+	/** The latch fields live on wrapper superclasses — walk up (getDeclaredField sees one class only). */
+	private static java.lang.reflect.Field findNestedField(Class<?> aClass, String aName) throws NoSuchFieldException {
+		for (Class<?> tWalk = aClass; tWalk != null; tWalk = tWalk.getSuperclass()) {
+			try {
+				return tWalk.getDeclaredField(aName);
+			} catch (NoSuchFieldException ignored) {
+				// keep walking
+			}
+		}
+		throw new NoSuchFieldException(aName + " (walked " + aClass + " up)");
+	}
+
+	static void unlockItemRegistry() {
+		ItemLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, ItemLatch.LOCKED_OFFSET, false);
+		ItemLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, ItemLatch.FROZEN_OFFSET, false);
+	}
+
+	static void lockItemRegistry() {
+		ItemLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, ItemLatch.FROZEN_OFFSET, true);
+		ItemLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, ItemLatch.LOCKED_OFFSET, true);
+	}
+
+	/** The ItemStack ctor needs a registry DELEGATE (ForgeRegistry.getDelegateOrThrow), so the fixtures register under fixture keys with the latch momentarily open. */
+	protected static <T extends Item> T registerItemFixture(String aKey, java.util.function.Supplier<T> aItem) {
+		org.junit.jupiter.api.Assumptions.assumeTrue(ItemLatch.ARMED, "the offline registry latch is unreachable on this JVM");
+		unlockItemRegistry();
+		try {
+			return net.minecraft.core.Registry.register(net.minecraft.core.registries.BuiltInRegistries.ITEM,
+					new net.minecraft.resources.ResourceLocation("gt6", aKey), aItem.get());
+		} finally {
+			lockItemRegistry();
+		}
 	}
 
 	/**

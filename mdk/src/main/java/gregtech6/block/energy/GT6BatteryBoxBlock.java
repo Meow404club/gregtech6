@@ -17,6 +17,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
+import gregapi.code.TagData;
+
 import gregtech6.block.GTEntityBlock;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
@@ -50,13 +52,33 @@ public class GT6BatteryBoxBlock extends GTEntityBlock {
 	/** The family BET (the GT6ElectricTransformers registry object supplier). */
 	private final Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> mTickerType;
 
+	/** The energy domain of the box (task p35: EU = the battery boxes, LU = the Crystal Chargers — the NBT_ENERGY_ACCEPTED/EMITTED columns). */
+	private final Supplier<TagData> mEnergyType;
+
 	public GT6BatteryBoxBlock(Properties aProperties, int aTier, int aSlots,
 			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType) {
+		this(aProperties, aTier, aSlots, aTickerType, () -> gregapi.data.TD.Energy.EU);
+	}
+
+	/** The typed constructor (task p35 — the Crystal Charger LU family). */
+	public GT6BatteryBoxBlock(Properties aProperties, int aTier, int aSlots,
+			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType, Supplier<TagData> aEnergyType) {
 		super(aProperties);
 		mTier = aTier;
 		mSlots = aSlots;
 		mTickerType = aTickerType;
+		mEnergyType = aEnergyType;
 		registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+	}
+
+	/** The box's energy domain (the BE resolveEnergyType seat; lazy like every MT/TD read). */
+	public Supplier<TagData> energyType() {
+		return mEnergyType;
+	}
+
+	/** The block's own family BET supplier (the BE resolveBet seat — the charger blocks resolve THEIR BET, not the battery-box one). */
+	public Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> betSupplier() {
+		return mTickerType;
 	}
 
 	/** The family slot count (the BE reads it off its block state — the NBT_INV_SIZE column). */

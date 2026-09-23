@@ -112,7 +112,7 @@ public class GT6BatteryBoxBlockEntity extends TileEntityBase03TicksAndSync imple
 	public long mBatteryCount = -1, mChargeableCount = -1, mReceivablePower = 0;
 	/** The explosion-prevention strikes (the :140-148 ladder, the transformer form). */
 	public int mExplosionPrevention = 0;
-	/** The energy domain (the NBT_ENERGY_ACCEPTED column — EU only on every port row). */
+	/** The energy domain (the NBT_ENERGY_ACCEPTED column — EU on the battery boxes, LU on the Crystal Chargers, task p35). */
 	public TagData mEnergyType = TD.Energy.EU;
 	/** The BE runtime facing mirror (the FRONT = output face; the state is the authority). */
 	public byte mFacing = 2; // NORTH
@@ -143,6 +143,7 @@ public class GT6BatteryBoxBlockEntity extends TileEntityBase03TicksAndSync imple
 		super(true, aResolved, aPos, aState);
 		mSlots = aSlots;
 		mInput = mOutput = gregtech6.registry.GTWireSpecs.V[aTier]; // the NBT_INPUT/NBT_OUTPUT columns, V[tier] both directions
+		mEnergyType = resolveEnergyType(aState); // task p35 — the block's domain column (EU boxes / LU chargers)
 		setInventory(new GTItemStackHandler(aSlots) {
 			@Override
 			public boolean isItemValid(int aSlot, ItemStack aStack) {
@@ -168,15 +169,26 @@ public class GT6BatteryBoxBlockEntity extends TileEntityBase03TicksAndSync imple
 		return aState.getBlock() instanceof GT6BatteryBoxBlock tBox ? tBox.tier() : 1;
 	}
 
-	/** The BET resolution — small/large off the block's slot family (runtime: both registered; offline: the explicit type). */
+	/** The energy domain off the block (task p35; EU = the STONE/offline fallback). */
+	static TagData resolveEnergyType(BlockState aState) {
+		return aState.getBlock() instanceof GT6BatteryBoxBlock tBox ? tBox.energyType().get() : TD.Energy.EU;
+	}
+
+	/**
+	 * The BET resolution — the block's OWN family supplier (task p35 fix: the charger
+	 * blocks ride the charger BETs; the battery boxes theirs — the old slot-count
+	 * fallback resolved EVERY GT6BatteryBoxBlock to the battery-box BET and the
+	 * invalid-block-entity guard killed the charger BEs on placement). Offline: the
+	 * explicit type; STONE: the battery-box BET (the pre-p35 fallback).
+	 */
 	static BlockEntityType<? extends TileEntityBase03TicksAndSync> resolveBet(@Nullable BlockEntityType<?> aType, BlockState aState) {
 		if (aType != null) {
 			@SuppressWarnings("unchecked")
 			BlockEntityType<? extends TileEntityBase03TicksAndSync> tTyped = (BlockEntityType<? extends TileEntityBase03TicksAndSync>) aType;
 			return tTyped;
 		}
-		return aState.getBlock() instanceof GT6BatteryBoxBlock tBox && tBox.slots() == 16
-				? GT6Batteries.BATTERY_BOX_LARGE_BE.get() : GT6Batteries.BATTERY_BOX_BE.get();
+		if (aState.getBlock() instanceof GT6BatteryBoxBlock tBox) return tBox.betSupplier().get();
+		return GT6Batteries.BATTERY_BOX_BE.get();
 	}
 
 	@Override

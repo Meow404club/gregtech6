@@ -76,35 +76,53 @@ public class GT6ElectricTransformerBlockEntity extends TileEntityBase03TicksAndS
 	public static final String NBT_CAPACITOR = "gt.capacitor";
 	public static final String NBT_STOPPED = "gt.stopped";
 
-	/** The row's high side = NBT_INPUT = V[1] (Loader :881; CS.java:148 V table via GTWireSpecs). */
+	/** The row's high side = NBT_INPUT = V[1] (Loader :881; CS.java:148 V table via GTWireSpecs). Row 0 anchor — the p35 ladder rows carry their own instance pair ({@link #vHigh}). */
 	public static final long VOLTAGE_HIGH = GTWireSpecs.V[1];
 
-	/** The row's low side = NBT_OUTPUT = V[0] (Loader :881). */
+	/** The row's low side = NBT_OUTPUT = V[0] (Loader :881). Row 0 anchor. */
 	public static final long VOLTAGE_LOW = GTWireSpecs.V[0];
 
-	/** NBT_MULTIPLIER = V[1]/V[0] = 4 (Loader :881) — the step-down packet count. */
+	/** NBT_MULTIPLIER = V[1]/V[0] = 4 (Loader :881) — the step-down packet count. Row 0 anchor. */
 	public static final long MULTIPLIER = VOLTAGE_HIGH / VOLTAGE_LOW;
 
-	/** NBT_WASTE_ENERGY = F (Loader :881-889) — the transformer stores, never vents. */
+	/** NBT_WASTE_ENERGY = F (Loader :881-889) — the transformer stores, never vents. EVERY row. */
 	public static final boolean WASTE_ENERGY = false;
 
-	/** The shared capacitor = NBT_INPUT × 2 = 64 (Base10 :75) — both modes, one bucket. */
-	public static final long CAPACITY = VOLTAGE_HIGH * 2;
+	// ---------------------------------------------------------------------------
+	// the per-row pair (task p35-energy-tail-machines — the :881-:889 declared ladder,
+	// every row NBT_INPUT V[i+1] / NBT_OUTPUT V[i] / NBT_MULTIPLIER 4 / WASTE F; the
+	// tier rides the block like the BatteryBox family, the STONE/offline fallback = 0)
+	// ---------------------------------------------------------------------------
 
-	/** The input band max — 64 in BOTH modes (Base10 :76 {@code inRec*2}; Base11 :56 {@code max(inRec, outMax*mult) = max(32, 64)}). */
-	public static final long INPUT_MAX = VOLTAGE_HIGH * 2;
+	/** The row's ladder index i: the pair V[i+1]→V[i], 0..8 (the :881-:889 line order). */
+	public final int mTier;
 
-	/** The step-down input min (Base10 :76: {@code tInput > 16}, {@code takesAnyLowerSize() = F}). */
-	public static final long INPUT_MIN_DOWN = VOLTAGE_HIGH / 2;
+	/** NBT_INPUT of the row = V[i+1] (the high side). */
+	public final long vHigh;
+
+	/** NBT_OUTPUT of the row = V[i] (the low side). */
+	public final long vLow;
+
+	/** NBT_MULTIPLIER = V[i+1]/V[i] = 4 — every :881-:889 row steps exactly one tier pair. */
+	public final long multiplier;
+
+	/** The shared capacitor = NBT_INPUT × 2 (Base10 :75) — both modes, one bucket. */
+	public final long cap;
+
+	/** The input band max — inRec*2, BOTH modes (Base10 :76; Base11 :56 {@code max(inRec, outMax*mult)}). */
+	public final long inputMax;
+
+	/** The step-down input min (Base10 :76: {@code tInput > inRec/2}, {@code takesAnyLowerSize() = F}). */
+	public final long inputMinDown;
 
 	/** The step-down output min (Base10 :77). */
-	public static final long OUTPUT_MIN_DOWN = VOLTAGE_LOW / 2;
+	public final long outputMinDown;
 
 	/** The step-up input min (Base11 :56: {@code mEnergyOUT.mMin = 4 <= 8 → 1}). */
-	public static final long INPUT_MIN_UP = 1;
+	public final long inputMinUp = 1;
 
-	/** The step-up output min (Base11 :57: {@code mEnergyIN.mRec * 3 / 4} = 24). */
-	public static final long OUTPUT_MIN_UP = VOLTAGE_HIGH * 3 / 4;
+	/** The step-up output min (Base11 :57: {@code mEnergyIN.mRec * 3 / 4}). */
+	public final long outputMinUp;
 
 	/** The capacitor energy in EU (upstream mStorage.mEnergy — shared by both converters). */
 	public long mStorage = 0;
@@ -135,9 +153,28 @@ public class GT6ElectricTransformerBlockEntity extends TileEntityBase03TicksAndS
 		this(null, aPos, aState);
 	}
 
-	/** Full constructor — also the offline (test) entry point (the dual-constructor precedent). */
+	/** Full constructor — also the offline (test) entry point (the dual-constructor precedent). The tier resolves off the block state (STONE = row 0). */
 	public GT6ElectricTransformerBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
+		this(aType, aPos, aState, resolveTier(aState));
+	}
+
+	/** The explicit-tier constructor (the offline ladder fixture). */
+	public GT6ElectricTransformerBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState, int aTier) {
 		super(true, aType != null ? aType : GT6ElectricTransformers.ELECTRIC_TRANSFORMER_BE.get(), aPos, aState);
+		mTier = aTier;
+		vHigh = GTWireSpecs.V[aTier + 1]; // the row NBT_INPUT (Loader :881-:889, V[i+1])
+		vLow = GTWireSpecs.V[aTier];      // the row NBT_OUTPUT
+		multiplier = vHigh / vLow;        // the row NBT_MULTIPLIER = 4, every ladder row
+		cap = vHigh * 2;                  // the Base10 :75 capacitor
+		inputMax = vHigh * 2;             // Base10 :76 / Base11 :56
+		inputMinDown = vHigh / 2;         // Base10 :76
+		outputMinDown = vLow / 2;         // Base10 :77
+		outputMinUp = vHigh * 3 / 4;      // Base11 :57
+	}
+
+	/** The tier ladder index off the block (the BatteryBox resolveTier form; STONE/offline fallback = 0). */
+	static int resolveTier(BlockState aState) {
+		return aState.getBlock() instanceof GT6ElectricTransformerBlock tBlock ? tBlock.tier() : 0;
 	}
 
 	@Override
@@ -170,27 +207,26 @@ public class GT6ElectricTransformerBlockEntity extends TileEntityBase03TicksAndS
 	 * packet count split on {@link #mReversed}.
 	 */
 	void doConversion() {
-		long tOutRec = mReversed ? VOLTAGE_HIGH : VOLTAGE_LOW; // 32 : 8 (Base11 :57 rec / Base10 :77 rec)
-		long tOutMin = mReversed ? OUTPUT_MIN_UP : OUTPUT_MIN_DOWN; // 24 : 4 (Base11 :57 / Base10 :77)
-		long tPackets = mReversed ? 1 : MULTIPLIER; // the :85 amount argument (mMultiplier per mode)
-		long tOutput = UT.Code.units(mStorage, VOLTAGE_HIGH, tOutRec, false); // :62 — the UT.Code.units floor direction
+		long tOutRec = mReversed ? vHigh : vLow; // 32 : 8 on row 0 (Base11 :57 rec / Base10 :77 rec)
+		long tOutMin = mReversed ? outputMinUp : outputMinDown; // 24 : 4 on row 0 (Base11 :57 / Base10 :77)
+		long tPackets = mReversed ? 1 : multiplier; // the :85 amount argument (mMultiplier per mode)
+		long tOutput = UT.Code.units(mStorage, vHigh, tOutRec, false); // :62 — the UT.Code.units floor direction
 		mCanEmitEnergy = tOutput >= tOutMin; // :64
 		mActive = false; // :66
 		if (mCanEmitEnergy) {
-			// the :68-77 leg is unreachable: storage ≤ CAPACITY 64 = both modes' outMax
+			// the :68-77 leg is unreachable: storage ≤ cap = both modes' outMax
 			// (equality at the full capacitor) — declared in the class doc
 			long tUsed = emitConverted(tOutput, tPackets); // :85 (size ±tOutput, amount tPackets)
 			if (tUsed > 0) { // :82/:88 — waste=F: the :87 deduction RUNS (the dynamo's skip is waste=T only)
 				mActive = true;
 				// :87 verbatim: units(packetsAccepted × tOutput, outRec×mult, inRec, T) —
-				// for this row outRec×mult == inRec == 32 in both modes, so the charge is
+				// for every row outRec×mult == inRec (the :881-:889 shape), so the charge is
 				// exactly the EU that left (conservation); kept in the general units() form
-				// so a future ladder row with a different ratio inherits the upstream math
-				mStorage -= UT.Code.units(tUsed * tOutput, tOutRec * tPackets, VOLTAGE_HIGH, true);
+				mStorage -= UT.Code.units(tUsed * tOutput, tOutRec * tPackets, vHigh, true);
 				if (mStorage < 0) mStorage = 0;
 			}
 		}
-		// NO :92 tail — NBT_WASTE_ENERGY = F (Loader :881): the capacitor persists idle
+		// NO :92 tail — NBT_WASTE_ENERGY = F (Loader :881-889): the capacitor persists idle
 	}
 
 	/**
@@ -214,7 +250,7 @@ public class GT6ElectricTransformerBlockEntity extends TileEntityBase03TicksAndS
 		if (aSize == 0 || !isEnergyAcceptingFrom(aEnergyType, aSide, false)) return 0;
 		if (aDoInject) mNegativeInput = (aSize < 0); // :131
 		long tAbs = Math.abs(aSize);
-		if (tAbs > INPUT_MAX) { // the Stats oversize leg :57-61 (mMax = 64 BOTH modes) — consumes ALL
+		if (tAbs > inputMax) { // the Stats oversize leg :57-61 (mMax = inRec*2 BOTH modes) — consumes ALL
 			if (aDoInject) overload(tAbs, aEnergyType); // Base10:133-136
 			return aAmount;
 		}
@@ -235,9 +271,9 @@ public class GT6ElectricTransformerBlockEntity extends TileEntityBase03TicksAndS
 		}
 	}
 
-	/** The capacitor capacity = NBT_INPUT × 2 = 64 (Base10 :75). */
+	/** The capacitor capacity = NBT_INPUT × 2 (Base10 :75). */
 	public long capacity() {
-		return CAPACITY;
+		return cap;
 	}
 
 	// ---------------------------------------------------------------------------
@@ -296,32 +332,32 @@ public class GT6ElectricTransformerBlockEntity extends TileEntityBase03TicksAndS
 
 	@Override
 	public long getEnergySizeInputMin(TagData aEnergyType, byte aSide) {
-		return aEnergyType == TD.Energy.EU ? (mReversed ? INPUT_MIN_UP : INPUT_MIN_DOWN) : 0;
+		return aEnergyType == TD.Energy.EU ? (mReversed ? inputMinUp : inputMinDown) : 0;
 	}
 
 	@Override
 	public long getEnergySizeInputRecommended(TagData aEnergyType, byte aSide) {
-		return aEnergyType == TD.Energy.EU ? VOLTAGE_HIGH : 0; // rec = inRec = 32 in BOTH modes
+		return aEnergyType == TD.Energy.EU ? vHigh : 0; // rec = inRec, both modes
 	}
 
 	@Override
 	public long getEnergySizeInputMax(TagData aEnergyType, byte aSide) {
-		return aEnergyType == TD.Energy.EU ? INPUT_MAX : 0;
+		return aEnergyType == TD.Energy.EU ? inputMax : 0;
 	}
 
 	@Override
 	public long getEnergySizeOutputMin(TagData aEnergyType, byte aSide) {
-		return aEnergyType == TD.Energy.EU ? (mReversed ? OUTPUT_MIN_UP : OUTPUT_MIN_DOWN) : 0;
+		return aEnergyType == TD.Energy.EU ? (mReversed ? outputMinUp : outputMinDown) : 0;
 	}
 
 	@Override
 	public long getEnergySizeOutputRecommended(TagData aEnergyType, byte aSide) {
-		return aEnergyType == TD.Energy.EU ? (mReversed ? VOLTAGE_HIGH : VOLTAGE_LOW) : 0;
+		return aEnergyType == TD.Energy.EU ? (mReversed ? vHigh : vLow) : 0;
 	}
 
 	@Override
 	public long getEnergySizeOutputMax(TagData aEnergyType, byte aSide) {
-		return aEnergyType == TD.Energy.EU ? (mReversed ? VOLTAGE_HIGH * 2 : VOLTAGE_LOW * 2) : 0;
+		return aEnergyType == TD.Energy.EU ? (mReversed ? vHigh * 2 : vLow * 2) : 0;
 	}
 
 	@Override
