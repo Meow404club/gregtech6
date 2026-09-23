@@ -936,8 +936,10 @@ SESSION_GROUPS = (
     # Ender-Eye activation on the End pair. The nether/end rig bands live outside
     # the overworld bbox census — each chain tears its other-dimension band down
     # explicitly (the chain-local execute-in steps, docstring ⑥).
-    # --group p35_portals matches through both chains' embedded name prefix.
-    ("p35_portals",),
+    # --group p35_portals matches through both chains' embedded name suffix
+    # (select_groups keys on member stems + slug/name substrings — the members
+    # are the two file stems, the group key rides the chain names).
+    ("p35_portal_nether", "p35_portal_end"),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
