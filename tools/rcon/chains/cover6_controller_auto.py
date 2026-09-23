@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """cover6_controller_auto — the Automatic Machine Switch live chain (p35-covers-display-scale-6).
 
-Band column x=602 z=306 (the p34_covers_g2 band sits x560..584 z300..312; the
-electric-tool column is z=240). One grid-fed oven on a stone floor:
+Band column x=602 z=306 (the p34_covers_g2 band sits x560..560+24 z300..312; the
+electric-tool column is z=240). One grid-fed oven + an HU rig adjacent east (the
+p13 geometry):
 
   the auto switch OWNS the oven's ON/OFF latch by the running lane
   (CoverControllerAuto :44 — possible || active; the cover tick poll + the
@@ -14,10 +15,13 @@ electric-tool column is z=240). One grid-fed oven on a stone floor:
   B the DISMANTLE (:36-39) releases the machine to ON — stopped=false.
   C the RE-MOUNT (:46-49) re-derives the answer from the still-idle lanes —
     stopped=true again (the mount arm is the load arm's twin).
-  D the INPUT lands (8 cobblestone): the onTickFirst recipe probe sets
-    mCouldUseRecipe (:739) -> possible=true -> the poll RELEASES the machine —
-    stopped=false (the furnace map, the grid-fed regime: released but idle, the
-    energy gate stays shut).
+  D the INPUT lands (8 cobblestone) WITH THE RIG ON: the doWork gate passes
+    (booked 32 >= mInputMin 16), so doActive's :798 probe runs EVERY tick
+    (the !mRunning arm), sets mCouldUseRecipe (:739) -> possible=true -> the
+    poll RELEASES the machine — stopped=false (aApplyRecipe=!mStopped stays
+    false while stopped: the probe consumes nothing, the machine sits released
+    but idle). Without energy the probe only fires at the aTimer % 1200 == 5
+    cadence (doInactive :895), which is the 60s race this rig arm removes.
 
 Arms: the placement gate admits (the oven is machine-form + switchable), the
 install asserts the covers NBT, the four state transitions ride /gt6oven check
@@ -38,6 +42,7 @@ from framework import Chain, Step, phase
 F = gt6world.fmt
 
 A = gt6world.Site(602, 65, 306)
+RIG = gt6world.Site(603, 65, 306)
 
 OVEN = (602, 65, 306)
 STONE = "minecraft:stone"
@@ -46,14 +51,14 @@ STONE = "minecraft:stone"
 CHAIN = Chain(
     name="cover6-controller-auto",
     slug="cover6auto",
-    sites=gt6world.declare_sites(A),
+    sites=gt6world.declare_sites(A, RIG),
     preferred_ports=(25924, 25929),
     steps=[
         # ------------------------------------------------------------------
         phase("A: the site — the floor and the oven"),
-        Step("fill %d %d %d %d %d %d air" % (600, 60, 304, 604, 70, 308), expect="filled"),
-        Step("forceload add 600 304 604 308"),
-        Step("fill 600 64 304 604 64 308 " + STONE, expect="filled", label="the support floor"),
+        Step("fill %d %d %d %d %d %d air" % (600, 60, 304, 605, 70, 308), expect="filled"),
+        Step("forceload add 600 304 605 308"),
+        Step("fill 600 64 304 605 64 308 " + STONE, expect="filled", label="the support floor"),
         Step("gt6oven place %s" % F(OVEN), expect="placed"),
 
         # ------------------------------------------------------------------
@@ -73,13 +78,19 @@ CHAIN = Chain(
              label=":46-49 — the mount re-derives OFF from the idle lanes"),
 
         # ------------------------------------------------------------------
-        phase("D: the input — the possible lane releases the machine"),
+        phase("D: the input + the rig — the possible lane releases the machine"),
+        Step("gt6energy place %s" % F(RIG), expect="GT6 energy source placed"),
+        Step("gt6energy type %s HU" % F(RIG), expect="type ENERGY.HEAT"),
+        Step("gt6energy volt %s 32" % F(RIG), expect="voltage 32"),
+        Step("gt6energy amp %s 1" % F(RIG), expect="amperage 1"),
+        Step("gt6energy mode %s on" % F(RIG), expect="emitting true", sleep=2.0),
         Step("gt6oven input 8 %s" % F(OVEN), expect="cobblestone"),
         Step("gt6oven check %s" % F(OVEN), expect="stopped=false", poll=15.0,
-             label=":1023 — mCouldUseRecipe makes possible=true, the poll runs the machine"),
+             label=":1023 — the per-tick doActive probe sets mCouldUseRecipe, the poll releases the machine"),
 
         # ------------------------------------------------------------------
         phase("E: teardown — the store dissolves"),
+        Step("gt6energy mode %s off" % F(RIG), expect="emitting false"),
         Step("gt6cover dismantle %s up" % F(OVEN), expect="OK"),
         Step("gt6cover check %s" % F(OVEN), expect="store=null",
              label="the all-empty store dissolves to null (06Covers :313-317)"),
