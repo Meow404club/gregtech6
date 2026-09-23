@@ -118,6 +118,7 @@ public class GT6EnUs extends LanguageProvider {
         addElectricTransformer(); // task p28-c-ulv-lv-transformer
         addLDEnergyFamilies(); // task p35-energy-tail-machines
         addCrystalChargers(); // task p35-energy-tail-machines
+        addLongDistancePipes(); // task p35-long-distance-pipes — the 16 wire metas + the two endpoints
         addEuBridgeFamilies(); // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting template
         addLaserFamilies(); // task p32-qu-laser-domain — the CO2 Laser + Laser Absorber families + the gas emitters
         addMagicAbsorber(); // task p32-magic-absorber — the Magic Field Absorber name
@@ -789,6 +790,23 @@ public class GT6EnUs extends LanguageProvider {
             add("block.gt6." + gregtech6.registry.GT6LongDistWires.pathOf(tRow.meta()),
                     "Long Distance Electric Wire (" + gregtech6.registry.GTWireSpecs.VN[tRow.tier()] + ")");
         }
+    }
+
+    /**
+     * The Long Distance pipe display keys (task p35-long-distance-pipes): the
+     * BlockLongDistPipe :38-39 wording "Long Distance Item Pipeline" / "Long Distance
+     * Fluid Pipeline ("+temp+" K)" verbatim over the 16 wire metas (the temperature
+     * column is the row's data), and the :906-:907 "Long Distance Item/Fluid Pipeline
+     * Endpoint" wording — the atomic keys.
+     */
+    private void addLongDistancePipes() {
+        for (gregtech6.registry.GT6LongDistPipes.PipeRow tRow : gregtech6.registry.GT6LongDistPipes.ROWS) {
+            add("block.gt6." + gregtech6.registry.GT6LongDistPipes.pathOf(tRow.meta()),
+                    tRow.temperatureK() < 0 ? "Long Distance Item Pipeline"
+                            : "Long Distance Fluid Pipeline (" + tRow.temperatureK() + " K)");
+        }
+        add("block.gt6.longdist_item_pipe", "Long Distance Item Pipeline Endpoint");
+        add("block.gt6.longdist_fluid_pipe", "Long Distance Fluid Pipeline Endpoint");
     }
 
     /**

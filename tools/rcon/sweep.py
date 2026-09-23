@@ -952,6 +952,15 @@ SESSION_GROUPS = (
     # the p34_machines_bc multi-stem form) — the group key itself resolves via
     # Chain.name "p35-slicer-leather p35_slicer_rows".
     ("p35_slicer_leather",),
+    # p35-long-distance-pipes (task p35-long-distance-pipes): the LD pipeline two-chain
+    # group — a fresh band x559..642 (x/z-disjoint from every registered band: the
+    # energy-tail band sits z420..432 x520..540, the ignition band z452..478, the
+    # covers-hosts band z554..574), the item chain on z=500 and the fluid chain on
+    # z=502..506; both lines cross FOUR chunk borders (x=576/592/608/624) — the
+    # cross-chunk delegation is the acceptance face. The rigs are band-local
+    # setblocks/fills (the p35_energy_tail admission form, no fresh_boot / mutates
+    # member). --group p35_pipes_ld matches through the chains' embedded name prefix.
+    ("p35_pipes_ld_item", "p35_pipes_ld_fluid"),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"

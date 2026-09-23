@@ -1353,6 +1353,29 @@ BLOCK_BACKFILL = {
     "block.gt6.rail_tungsten": "钨轨道",
     "block.gt6.rail_tungstencarbide": "碳化钨轨道",
     "block.gt6.rail_tungstensteel": "钨钢轨道",
+
+    # ---- the 16 LD pipe block display names (task p35-long-distance-pipes, review-seat backfill 2026-09-23) ----
+    # the dump gt.block.longdistpipe.01.0-4 faces verbatim + the dead 0 K metas 5..15 hand-composed
+    # (the card landed the tsv direct rows without this py hand layer - same class as the rails
+    # debt: gen_zhcn_ref.py --check fails and any regen drops the rows)
+    "block.gt6.long_dist_pipe_0": "远距瞬达物品管道",
+    "block.gt6.long_dist_pipe_1": "远距零阻流体管道 (1943 K)",
+    "block.gt6.long_dist_pipe_2": "远距零阻流体管道 (3695 K)",
+    "block.gt6.long_dist_pipe_3": "远距零阻流体管道 (5425 K)",
+    "block.gt6.long_dist_pipe_4": "远距零阻流体管道 (4500 K)",
+    "block.gt6.long_dist_pipe_5": "远距零阻流体管道 (0 K)",
+    "block.gt6.long_dist_pipe_6": "远距零阻流体管道 (0 K)",
+    "block.gt6.long_dist_pipe_7": "远距零阻流体管道 (0 K)",
+    "block.gt6.long_dist_pipe_8": "远距零阻流体管道 (0 K)",
+    "block.gt6.long_dist_pipe_9": "远距零阻流体管道 (0 K)",
+    "block.gt6.long_dist_pipe_10": "远距零阻流体管道 (0 K)",
+    "block.gt6.long_dist_pipe_11": "远距零阻流体管道 (0 K)",
+    "block.gt6.long_dist_pipe_12": "远距零阻流体管道 (0 K)",
+    "block.gt6.long_dist_pipe_13": "远距零阻流体管道 (0 K)",
+    "block.gt6.long_dist_pipe_14": "远距零阻流体管道 (0 K)",
+    "block.gt6.long_dist_pipe_15": "远距零阻流体管道 (0 K)",
+    "block.gt6.longdist_item_pipe": "远距传输用物品管道",
+    "block.gt6.longdist_fluid_pipe": "远距传输用流体管道",
 }
 
 # ---- fluid.gt6.* (21): hand translations with dump anchors (蒸馏水/柴油/幻露 per the
@@ -2301,6 +2324,10 @@ LEGACY_ITEM_BACKFILL = {
     'item.gt6.manual_random': 'GregTech 六代技巧与窍门',
     'item.gt6.manual_reactors': '裂变反应堆手册',
     'item.gt6.manual_smeltery': '冶炼坩埚手册',
+
+    # ---- the 2 LD pipe endpoint display names (task p35-long-distance-pipes, review-seat backfill 2026-09-23) ----
+    # the dump gt.multitileentity.10060/10061 rows verbatim (the tsv direct rows landed without the py layer)
+
     'item.gt6.manual_steam': '蒸汽手册',
     'item.gt6.manual_tools': '工具索引',
 }

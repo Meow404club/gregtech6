@@ -132,6 +132,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addLaserGasUnits();     // task p32-qu-laser-domain — the 2 gas emitter names + the 2 tooltips (hand rows, the dump :10379/:10395 faces)
 		addRailsUnits();        // task p35-rails-31-blocks — the 31 rail names (the dump gt.block.rail.* faces verbatim, the tsv direct band)
 		addBookUnits();         // task p35-books-written — the 15 written-book display names (hand rows, the tsv direct band; the dump carries zero book-title faces)
+		addLongDistancePipes(); // task p35-long-distance-pipes — the 16 wire metas + the two endpoints (hand rows, the dump faces)
 	}
 
 	/**
@@ -1489,6 +1490,18 @@ public class GT6ZhCn extends LanguageProvider {
 	}
 
 	/** The placeables band (task p32-placeables) — the deco TE names over the tsv direct rows. */
+	private void addLongDistancePipes() {
+		// task p35-long-distance-pipes — the BlockLongDistPipe faces verbatim (the dump
+		// gt.block.longdistpipe.01.0-4 rows 远距瞬达物品管道/远距零阻流体管道 (K); metas 5..15
+		// carry no dump faces — the hand rows compose the same pattern over the 0 K dead
+		// rating) + the endpoint MTE names (the dump gt.multitileentity.10060/10061 rows
+		// 远距传输用物品/流体管道)
+		addDirect("block.gt6.long_dist_pipe_0");
+		for (int tMeta = 1; tMeta < 16; tMeta++) addDirect("block.gt6.long_dist_pipe_" + tMeta);
+		addDirect("block.gt6.longdist_item_pipe");
+		addDirect("block.gt6.longdist_fluid_pipe");
+	}
+
 	private void addPlaceablesUnits() {
 		addDirect("block.gt6.greg_o_lantern");
 		addDirect("block.gt6.sandwich");
