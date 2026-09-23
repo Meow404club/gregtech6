@@ -81,9 +81,20 @@ public final class GT6Rails {
 		NORMAL, BOOSTER, DETECTOR
 	}
 
-	/** One loader line: the block-carrier projection of the :39-72 columns. */
-	public record RailRow(String path, String display, OreDictMaterial material, RailKind kind,
+	/**
+	 * One loader line: the block-carrier projection of the :39-72 columns. The material is
+	 * carried as the LADDER INDEX (0..9) and resolved at CALL time — the class loads from
+	 * the FML automatic-subscriber scan (the GT6Sensors shape) BEFORE the gregapi material
+	 * registry initialises, so an eager {@code MT.*} read in the clinit NPEs (the
+	 * GTMaterialItems late-binding precedent).
+	 */
+	public record RailRow(String path, String display, int materialIndex, RailKind kind,
 			float speed, float resistance) {
+
+		/** The row material — resolved at call time, never in the clinit. */
+		public OreDictMaterial material() {
+			return materials().get(materialIndex);
+		}
 
 		/** The composed display key ({@code block.gt6.<path>}, the vanilla BlockItem naming). */
 		public String displayKey() {
@@ -91,10 +102,16 @@ public final class GT6Rails {
 		}
 	}
 
-	/** The 10 rail materials, the loader line order Al..Ad (Loader_Rails.java:41-50). */
-	public static final List<OreDictMaterial> MATERIALS = List.of(
-			MT.Al, MT.Bronze, MT.Magnalium, MT.Steel, MT.StainlessSteel,
-			MT.W, MT.Ti, MT.TungstenSteel, MT.TungstenCarbide, MT.Ad);
+	/**
+	 * The 10 rail materials, the loader line order Al..Ad (Loader_Rails.java:41-50) — a
+	 * METHOD: every read happens after the material registry initialisation (the clinit
+	 * wall above).
+	 */
+	public static List<OreDictMaterial> materials() {
+		return List.of(
+				MT.Al, MT.Bronze, MT.Magnalium, MT.Steel, MT.StainlessSteel,
+				MT.W, MT.Ti, MT.TungstenSteel, MT.TungstenCarbide, MT.Ad);
+	}
 
 	/** The {@code aSpeed} ladder, same index space (Loader_Rails.java:41-50). */
 	public static final float[] SPEEDS = {0.20F, 0.30F, 0.60F, 0.60F, 0.80F, 1.00F, 1.20F, 1.40F, 1.60F, 4.00F};
@@ -116,12 +133,12 @@ public final class GT6Rails {
 	private static List<RailRow> buildRows() {
 		List<RailRow> rRows = new ArrayList<>();
 		for (RailKind tKind : RailKind.values()) {
-			for (int i = 0; i < MATERIALS.size(); i++) {
+			for (int i = 0; i < SLUGS.length; i++) {
 				String tPrefix = tKind == RailKind.NORMAL ? "rail_" : "rail_" + tKind.name().toLowerCase() + "_";
 				String tDisplay = tKind == RailKind.NORMAL
 						? DISPLAY_WORDS[i] + " Track"
 						: DISPLAY_WORDS[i] + " " + tKind.name().charAt(0) + tKind.name().substring(1).toLowerCase() + " Track";
-				rRows.add(new RailRow(tPrefix + SLUGS[i], tDisplay, MATERIALS.get(i), tKind, SPEEDS[i], RESISTANCES[i]));
+				rRows.add(new RailRow(tPrefix + SLUGS[i], tDisplay, i, tKind, SPEEDS[i], RESISTANCES[i]));
 			}
 		}
 		return rRows;
