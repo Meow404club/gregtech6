@@ -85,6 +85,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 			"gregtech6.recipes.GT6RecipesBees", // task p34-machines-bumblelyzer-crucible — the pour also fills the GT6RecipeMapBumblelyzer display stock (the sFakeRecipes list, outside mRecipeList)
 			"gregtech6.recipes.GT6RecipesMassfab",
 			"gregtech6.recipes.GT6RecipesFusion",
+			"gregtech6.recipes.GT6RecipesSlicer", // task p35-slicer-row-domain - the vanilla leather/paper pour joins the ledger
 			"gregtech6.recipes.maps.GT6RecipeMapBumblelyzer", // task p34-machines-bumblelyzer-crucible — the display-stock reset hook joins the ledger
 	};
 
@@ -150,7 +151,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("FREEZER", 0);
 		SNAPSHOT.put("POLARIZER", 0);
 		SNAPSHOT.put("LIGHTNING", 0);
-		SNAPSHOT.put("SLICER", 0);
+		SNAPSHOT.put("SLICER", 5); // task p35-slicer-row-domain - the vanilla-face rows land (the leather quartet + the paper row); the declared smoke-JSON debt is retired with the card
 		SNAPSHOT.put("LASER_ENGRAVER", 0);
 		SNAPSHOT.put("WELDER", 22);
 		SNAPSHOT.put("ELECTROLYZER", 0);
@@ -216,6 +217,9 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		capture(() -> GT6RecipesFusion.sCircuitResolver, aV -> GT6RecipesFusion.sCircuitResolver = aV);
 		capture(() -> GT6RecipesFusion.sFluidResolver, aV -> GT6RecipesFusion.sFluidResolver = aV);
 		capture(() -> GT6RecipesFusion.sMaterialItemResolver, aV -> GT6RecipesFusion.sMaterialItemResolver = aV);
+		capture(() -> GT6RecipesSlicer.sSplitBladeResolver, aV -> GT6RecipesSlicer.sSplitBladeResolver = aV);
+		capture(() -> GT6RecipesSlicer.sGridBladeResolver, aV -> GT6RecipesSlicer.sGridBladeResolver = aV);
+		capture(() -> GT6RecipesSlicer.sTinyPaperResolver, aV -> GT6RecipesSlicer.sTinyPaperResolver = aV);
 		capture(() -> GT6RecipesCanner.sDyeFluidResolver, aV -> GT6RecipesCanner.sDyeFluidResolver = aV);
 		capture(() -> GT6RecipesCanner.sChlorineResolver, aV -> GT6RecipesCanner.sChlorineResolver = aV);
 		capture(() -> GT6RecipesCanner.sEmptyCanResolver, aV -> GT6RecipesCanner.sEmptyCanResolver = aV);
@@ -314,6 +318,12 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sCarbonDioxideResolver = () -> Fluids.FLOWING_LAVA;
 		GT6RecipesCanner.sLaserGasEmptyResolver = () -> new ItemStack(Items.PAPER);
 		GT6RecipesCanner.sLaserGasCo2Resolver = () -> new ItemStack(Items.CLAY_BALL);
+		// the Slicer fixture face: the two blades + the tiny-paper output ride distinct
+		// vanilla stand-ins (the row mechanics only compare identities; the vanilla
+		// armor/paper inputs need no fixture)
+		GT6RecipesSlicer.sSplitBladeResolver = () -> new ItemStack(Items.BRICK);
+		GT6RecipesSlicer.sGridBladeResolver = () -> new ItemStack(Items.CLAY_BALL);
+		GT6RecipesSlicer.sTinyPaperResolver = () -> new ItemStack(Items.PAPER);
 		GT6RecipeMaps.reset();
 		GT6RecipeMaps.init();
 	}
@@ -349,6 +359,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		GT6RecipesBees.load();
 		GT6RecipesMassfab.load();
 		GT6RecipesFusion.load();
+		GT6RecipesSlicer.load();
 	}
 
 	/** The census and the hook ledger must move together (the guard test pins the same ledger against ITS array). */
