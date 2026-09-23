@@ -1798,10 +1798,6 @@ FOOD_FLUID_BACKFILL = {
     'fluid.gt6.adamantium_molten': '熔融艾德曼合金',
     'fluid.gt6.alcopops': '波普甜酒',
     'fluid.gt6.alumina_molten': '熔融氧化铝',
-<<<<<<< HEAD
-=======
-    'fluid.gt6.calcite_molten': '熔融方解石',
->>>>>>> 22f936364 (fix(i18n): portal 11 行回填 py 手排层+main carryover 10 行——tsv 恢复 regen 字节忠实)
     'fluid.gt6.ambrosia': '琼浆',
     'fluid.gt6.ancientdebris_molten': '熔融远古残骸',
     'fluid.gt6.applesmoothie': '苹果冰沙',
