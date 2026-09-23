@@ -914,6 +914,7 @@ direct	gt6.row.laminator.display	过胶机 (%s)	hand
 direct	gt6.row.large_boiler.display	%s锅炉气压计核心	hand
 direct	gt6.row.lightningprocessor.display	闪电处理器 (%s)	hand
 direct	gt6.row.machine.bumblelyzer	膜翅目昆虫分析仪 (%s)	hand
+direct	gt6.row.machine.burner_mixer	燃烧反应室 (%s)	hand
 direct	gt6.row.machine.buzzsaw	圆锯 (%s)	hand
 direct	gt6.row.machine.catalytic_cracker	催化裂解器 (%s)	hand
 direct	gt6.row.machine.centrifuge	离心机 (%s)	hand
@@ -937,6 +938,7 @@ direct	gt6.row.machine.magnetic_separator	磁选机 (%s)	hand
 direct	gt6.row.machine.massfab	物质制造机 (%s)	hand
 direct	gt6.row.machine.mixer	搅拌机 (%s)	hand
 direct	gt6.row.machine.molecular_scanner	分子扫描仪 (%s)	hand
+direct	gt6.row.machine.plantalyzer	植物分析仪 (%s)	hand
 direct	gt6.row.machine.polarizer	电磁偏振器 (%s)	hand
 direct	gt6.row.machine.press	压力成型机	hand
 direct	gt6.row.machine.press.display	压力成型机 (%s)	hand
@@ -954,8 +956,6 @@ direct	gt6.row.machine.sluice	洗矿厂 (%s)	hand
 direct	gt6.row.machine.smelter	液化炉 (%s)	hand
 direct	gt6.row.machine.squeezer	榨汁机 (%s)	hand
 direct	gt6.row.machine.steam_cracker	蒸汽裂解器 (%s)	hand
-direct	gt6.row.machine.burner_mixer	燃烧反应室 (%s)	hand
-direct	gt6.row.machine.plantalyzer	植物分析仪 (%s)	hand
 direct	gt6.row.machine.wiremill	线材机 (%s)	hand
 direct	gt6.row.mat.adamantium	艾德曼合金	hand
 direct	gt6.row.mat.aluminium	铝	hand
