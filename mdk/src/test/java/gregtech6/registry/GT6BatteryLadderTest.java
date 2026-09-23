@@ -1,6 +1,7 @@
 package gregtech6.registry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import gregapi.data.TD;
+import net.minecraft.world.item.ItemStack;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
@@ -169,5 +171,71 @@ public class GT6BatteryLadderTest extends GTOfflineTestBase {
 		assertEquals(new LinkedHashSet<>(java.util.List.of("battery_box", "battery_box_large")), tLive,
 				"the battery BET census drifted — declare the new family's ItemHandler rows in "
 						+ "GT6CapabilityWiring.registerBatteryBoxFamily in the same change");
+	}
+
+	// ---------------------------------------------------------------------------
+	// the ZPM row (task p36-energy-zpm-dechargers — the Loader :1103 single-item face)
+	// ---------------------------------------------------------------------------
+
+	/** The ZPM fixture item (the row-driven band; registered through the offline fixture seam). */
+	private static gregtech6.item.energy.GT6ZpmItem sZpm;
+
+	/** The fixture builder (the charger-test @BeforeAll shape; run once per class). */
+	@BeforeAll
+	static void buildZpmFixture() {
+		sZpm = registerItemFixture("fixture_zpm_item", () -> new gregtech6.item.energy.GT6ZpmItem(
+				new net.minecraft.world.item.Item.Properties(),
+				GT6Batteries.ZPM.sizeRec(), GT6Batteries.ZPM.capacity(), GT6Batteries.ZPM.sizeMin()));
+	}
+
+	@Test
+	public void theZpmRowPinsTheLoader1103Literals() {
+		// the LadderTest form — every column typed out, never derived
+		GT6Batteries.ZpmRow tRow = GT6Batteries.ZPM;
+		assertEquals("zpm", tRow.path(), "the registry path");
+		assertEquals(14999, tRow.metaId(), "the :1103 meta parity column");
+		assertEquals(131072L, tRow.sizeRec(), "the NBT_INPUT column, V[7]");
+		assertEquals(1L, tRow.sizeMin(), "the NBT_INPUT_MIN column — the band floor opens to 1");
+		assertEquals(262144L, tRow.sizeMax(), "the NBT_INPUT_MAX column, VMAX[7]");
+		assertEquals(2_000_000_000_000L, tRow.capacity(), "the NBT_CAPACITY literal (the card-① density lesson: typed, never V×mult)");
+		// the ZPM does NOT join the 37-item ladder (the single QU artifact row beside it)
+		assertEquals(37, GT6Batteries.ROWS.size(), "the ladder stays 37");
+	}
+
+	@Test
+	public void theZpmItemIsDischargeOnlyInTheExplicitBand() {
+		ItemStack tStack = new ItemStack(sZpm);
+		// the :80 pin — NO charge, any size, any caller shape
+		assertFalse(sZpm.canEnergyInjection(TD.Energy.QU, tStack, 131072L), ":80 — the packet-size request refuses");
+		assertFalse(sZpm.canEnergyInjection(TD.Energy.QU, tStack, 1L), ":80 — the band-floor request refuses");
+		assertFalse(sZpm.canEnergyInjection(null, tStack, 131072L), ":80 — even the type-blind caller refuses");
+		assertEquals(0, sZpm.doEnergyInjection(TD.Energy.QU, tStack, 131072L, 40, true), ":79 — injection drains 0");
+		assertEquals(0, gregtech6.item.energy.GT6BatteryItem.readStoredRaw(tStack), "the empty carrier stayed empty");
+		// the discharge face lives: the :166-:174 extraction over the [1..262144] band
+		sZpm.setEnergyStored(TD.Energy.QU, tStack, 2_000_000_000_000L); // full
+		assertTrue(sZpm.canEnergyExtraction(TD.Energy.QU, tStack, 131072L), "the V[7]-sized extraction admits");
+		assertTrue(sZpm.canEnergyExtraction(TD.Energy.QU, tStack, 1L), "the NBT_INPUT_MIN=1 floor admits");
+		assertFalse(sZpm.canEnergyExtraction(TD.Energy.QU, tStack, 262145L), "above VMAX[7] refuses");
+		assertEquals(1, sZpm.doEnergyExtraction(TD.Energy.QU, tStack, 131072L, 1, true), "one packet leaves");
+		assertEquals(2_000_000_000_000L - 131072L, gregtech6.item.energy.GT6BatteryItem.readStoredRaw(tStack), "the charge paid the packet");
+	}
+
+	@Test
+	public void theZpmDualFormCarriers() {
+		// the creative pair — the :111-:117 getSubItems verbatim (empty + FULL)
+		ItemStack[] tPair = gregtech6.item.energy.GT6ZpmItem.creativeStacks(sZpm);
+		assertEquals(2, tPair.length, "the empty + full pair");
+		assertEquals(0, gregtech6.item.energy.GT6BatteryItem.readStored(sZpm, tPair[0]), "the empty twin");
+		assertEquals(2_000_000_000_000L, gregtech6.item.energy.GT6BatteryItem.readStored(sZpm, tPair[1]), "the full twin (the dungeon 2/3 active lane)");
+		// the bar shows ONLY strictly between the extremes (the charged/inert display face)
+		ItemStack tMid = new ItemStack(sZpm);
+		sZpm.setEnergyStored(TD.Energy.QU, tMid, 1_000_000_000_000L);
+		assertFalse(sZpm.isBarVisible(tPair[0]), "empty = inert (no bar)");
+		assertFalse(sZpm.isBarVisible(tPair[1]), "full = the artifact extreme (no bar)");
+		assertTrue(sZpm.isBarVisible(tMid), "mid = the active form (the bar)");
+		// the :1296 makeString — the capacity renders "2_000_000_000_000" (the :107/:50 tooltip face)
+		assertEquals("2_000_000_000_000", gregtech6.item.energy.GT6ZpmItem.makeString(2_000_000_000_000L), "the underscore form");
+		assertEquals("131_072", gregtech6.item.energy.GT6ZpmItem.makeString(131072L), "the packet form (6 digits takes the underscores)");
+		assertEquals("0", gregtech6.item.energy.GT6ZpmItem.makeString(0L), "the empty form");
 	}
 }
