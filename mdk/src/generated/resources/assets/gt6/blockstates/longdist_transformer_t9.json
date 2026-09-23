@@ -1,18 +1,18 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gt6:block/electric_transformer",
+      "model": "gt6:block/long_distance_transformer",
       "y": 90
     },
     "facing=north": {
-      "model": "gt6:block/electric_transformer"
+      "model": "gt6:block/long_distance_transformer"
     },
     "facing=south": {
-      "model": "gt6:block/electric_transformer",
+      "model": "gt6:block/long_distance_transformer",
       "y": 180
     },
     "facing=west": {
-      "model": "gt6:block/electric_transformer",
+      "model": "gt6:block/long_distance_transformer",
       "y": 270
     }
   }
