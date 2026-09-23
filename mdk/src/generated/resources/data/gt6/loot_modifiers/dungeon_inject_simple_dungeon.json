@@ -97,6 +97,15 @@
       "max": 24,
       "min": 4,
       "weight": 2
+    },
+    {
+      "item": "gt6:zpm",
+      "max": 1,
+      "min": 1,
+      "tag": {
+        "gt.active.energy": 1
+      },
+      "weight": 2
     }
   ],
   "rolls": {

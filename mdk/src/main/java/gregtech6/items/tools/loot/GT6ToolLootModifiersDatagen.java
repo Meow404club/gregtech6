@@ -164,7 +164,8 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 			if (tItem == net.minecraft.world.item.Items.AIR) {
 				throw new IllegalStateException("loot injection row references an unregistered item: " + tEntry.item());
 			}
-			tEntries.add(new GT6DungeonLootModifier.Entry(tItem, tEntry.weight(), tEntry.min(), tEntry.max()));
+			// the task-p36 artifact lane rides the row's tag verbatim (null on every upstream row)
+			tEntries.add(new GT6DungeonLootModifier.Entry(tItem, tEntry.weight(), tEntry.min(), tEntry.max(), tEntry.tag()));
 		}
 		//? if forge {
 		net.minecraft.resources.ResourceLocation tTable = new net.minecraft.resources.ResourceLocation(aRow.table());

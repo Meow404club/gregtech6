@@ -63,17 +63,26 @@ public class GT6DungeonLootModifier extends LootModifier {
 	 * One upstream {@code addLoot(category, aChance, aMin, aMax, stack)} row
 	 * ({@code Loader_Loot.java:565-574}): {@code weight} = the pool weight (aChance), the
 	 * [min,max] stack range clamped to maxStackSize at roll time (the upstream :571 clamp).
+	 * The optional {@code tag} is the task-p36 artifact lane — the ZPM dungeon face spawns
+	 * the module 2/3 FULL ({@code DungeonData.zpm:306-310}, the {@code gt.active.energy}
+	 * store-as-full key), the only upstream row that ever carried NBT.
 	 */
-	public record Entry(Item item, int weight, int min, int max) {
+	public record Entry(Item item, int weight, int min, int max, net.minecraft.nbt.CompoundTag tag) {
+
+		/** The NBT-less form every Loader_Loot row takes. */
+		public Entry(Item aItem, int aWeight, int aMin, int aMax) {
+			this(aItem, aWeight, aMin, aMax, null);
+		}
 	}
 
-	/** The entry codec — {@code {"item": "gt6:ingot_steel", "weight": 12, "min": 1, "max": 6}}. */
+	/** The entry codec — {@code {"item": "gt6:ingot_steel", "weight": 12, "min": 1, "max": 6}} (+ the optional artifact tag). */
 	static final Codec<Entry> ENTRY_CODEC = RecordCodecBuilder.create(aInst -> aInst.group(
 			BuiltInRegistries.ITEM.byNameCodec().fieldOf("item").forGetter(Entry::item),
 			Codec.intRange(1, 4096).fieldOf("weight").forGetter(Entry::weight),
 			Codec.intRange(1, 64).fieldOf("min").forGetter(Entry::min),
-			Codec.intRange(1, 64).fieldOf("max").forGetter(Entry::max))
-			.apply(aInst, Entry::new));
+			Codec.intRange(1, 64).fieldOf("max").forGetter(Entry::max),
+			net.minecraft.nbt.CompoundTag.CODEC.optionalFieldOf("tag").forGetter(aEntry -> java.util.Optional.ofNullable(aEntry.tag())))
+			.apply(aInst, (aItem, aWeight, aMin, aMax, aTag) -> new Entry(aItem, aWeight, aMin, aMax, aTag.orElse(null))));
 
 	/**
 	 * The element type forks per leg — Codec (forge 1.20.1) vs MapCodec (neo 21.1), the
@@ -146,7 +155,16 @@ public class GT6DungeonLootModifier extends LootModifier {
 					int tMin = Math.min(tEntry.min(), tCap);
 					int tMax = Math.min(Math.max(tEntry.max(), tMin), tCap); // the upstream :571 clamp
 					int tCount = tMin + (tMin >= tMax ? 0 : aContext.getRandom().nextInt(tMax - tMin + 1));
-					aLoot.add(new ItemStack(tEntry.item(), tCount));
+					//? if forge {
+					ItemStack tStack = new ItemStack(tEntry.item(), tCount);
+					if (tEntry.tag() != null) tStack.setTag(tEntry.tag().copy()); // the task-p36 artifact lane (the store-as-full key)
+					aLoot.add(tStack);
+					//?} else {
+					/*ItemStack tStack = new ItemStack(tEntry.item(), tCount);
+					if (tEntry.tag() != null) tStack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+							net.minecraft.world.item.component.CustomData.of(tEntry.tag().copy()));
+					aLoot.add(tStack);
+					*///?}
 					break;
 				}
 			}

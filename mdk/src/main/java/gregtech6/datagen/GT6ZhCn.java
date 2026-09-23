@@ -517,6 +517,10 @@ public class GT6ZhCn extends LanguageProvider {
 		// task p35-energy-tail-machines — the Crystal Chargers (the dump faces verbatim:
 		// gt.multitileentity.10130-10139 晶体充能器 (T0..T9) + :10140-10149 大型晶体充能器)
 		addDirect("block.gt6.crystal_charger");
+		// task p36-energy-zpm-dechargers — the dump gt.multitileentity.14999/:11170/:11171 faces
+		addDirect("block.gt6.zpm_decharger_electric");
+		addDirect("block.gt6.zpm_decharger_quantum");
+		addDirect("item.gt6.zpm");
 		addDirect("block.gt6.crystal_charger_t2");
 		addDirect("block.gt6.crystal_charger_t3");
 		addDirect("block.gt6.crystal_charger_t4");

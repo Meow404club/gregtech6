@@ -203,6 +203,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addElectricDynamoUlv(); // task p28-c-ulv-dynamo-row — the Electric Dynamo T0 row
         addBatteryBoxes(); // task p29-w4-battery-storage — the 12-box storage face
         addCrystalChargers(); // task p35-energy-tail-machines — the 20-row LU charge face
+        addZpmDechargers(); // task p36-energy-zpm-dechargers — the two-row discharge face
         addLargeBoiler(); // task p13-large-boiler
         addLightningRod(); // task p24-lightning-rod
         addParts(); // task p29-w3-nbtdesign-parts — the part-family expansion (per-design variants)
@@ -1948,6 +1949,21 @@ public final class GT6BlockStates extends BlockStateProvider {
                 return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
             });
             itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+        }
+    }
+
+    /**
+     * Task p36-energy-zpm-dechargers — the two ZPM Decharger rows: the battery-box cube-all
+     * STAND-IN (the charger posture: the FACING property is a functional IO face, FRONT =
+     * the emit side) over the SHARED box texture — zero new PNGs, the dedicated upstream
+     * zpm_electricity/zpm_quantum overlay art is the render pool (the
+     * p36-render-texture-bake card retires this stand-in).
+     */
+    private void addZpmDechargers() {
+        for (gregtech6.registry.GT6ZpmDechargers.DechargerRow tRow : gregtech6.registry.GT6ZpmDechargers.ROWS) {
+            net.minecraft.world.level.block.Block tBlock = gregtech6.registry.GT6ZpmDechargers.BLOCKS_BY_PATH.get(tRow.path()).get();
+            simpleBlock(tBlock, models().cubeAll(tRow.path(), modLoc("block/battery_box")));
+            itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
         }
     }
 

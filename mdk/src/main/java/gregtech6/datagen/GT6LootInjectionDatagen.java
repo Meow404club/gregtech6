@@ -54,8 +54,18 @@ import gregtech6.registry.GTMaterialItems;
  */
 public final class GT6LootInjectionDatagen {
 
-	/** One upstream addLoot row: item id, weight (aChance), [min,max] stack. */
-	public record EntryRow(String item, int weight, int min, int max) {
+	/**
+	 * One upstream addLoot row: item id, weight (aChance), [min,max] stack. The optional
+	 * {@code tag} is the task-p36 artifact lane (the upstream rows never carried NBT; the
+	 * ZPM dungeon face does — {@code DungeonData.zpm:306-310} spawns the artifact 2/3 FULL
+	 * via the {@code gt.active.energy} store-as-full key).
+	 */
+	public record EntryRow(String item, int weight, int min, int max, net.minecraft.nbt.CompoundTag tag) {
+
+		/** The NBT-less form every upstream row takes. */
+		public EntryRow(String aItem, int aWeight, int aMin, int aMax) {
+			this(aItem, aWeight, aMin, aMax, null);
+		}
 	}
 
 	/** One structure injection: the GLM instance name, the target table id, the roll range, the rows. */
@@ -142,8 +152,14 @@ public final class GT6LootInjectionDatagen {
 	public static List<InjectionRow> injections() {
 		List<InjectionRow> rRows = new ArrayList<>();
 		// DUNGEON_CHEST :418-443 — the metal ladder + coins(40/20/10)/bags/bottle/books POOLED
+		// + the task-p36 artifact row: the upstream obtainment face is the GT6 DUNGEON ROOM
+		// (DungeonChunkRoomLibraryNormal.java:57/59/71 — 1/16 per shelf seat, DungeonData.zpm
+		// spawning the ZPM 2/3 FULL); the port has no GT6 dungeon carrier, so the vanilla
+		// dungeon chest carries the artifact at the always-full collapse (an empty ZPM is an
+		// unchargeable dead drop) — the declared deviation on the card face.
 		rRows.add(new InjectionRow("dungeon_inject_simple_dungeon", "minecraft:chests/simple_dungeon",
-				ROLL_MIN, ROLL_MAX, ladder(dungeonMetalLadder(12, 2))));
+				ROLL_MIN, ROLL_MAX, ladder(java.util.stream.Stream.concat(dungeonMetalLadder(12, 2),
+						java.util.stream.Stream.of(zpmArtifactRow())))));
 		// PYRAMID_DESERT_CHEST :445-450 — holy water/coins/bags POOLED, the Nq arrow head lands
 		rRows.add(new InjectionRow("dungeon_inject_desert_pyramid", "minecraft:chests/desert_pyramid",
 				ROLL_MIN, ROLL_MAX, ladder(Stream.of(mat(OP.toolHeadArrow, MT.Nq, 1, 4, 16)))));
@@ -188,6 +204,17 @@ public final class GT6LootInjectionDatagen {
 						mat(OP.toolHeadAxeDouble, MT.Steel, 12, 1, 4), mat(OP.toolHeadAxeDouble, MT.DamascusSteel, 6, 1, 4),
 						mat(OP.arrowGtWood, MT.DamascusSteel, 6, 16, 48), mat(OP.arrowGtWood, MT.SterlingSilver, 6, 8, 24)))));
 		return rRows;
+	}
+
+	/**
+	 * The ZPM artifact row — weight 2 [1,1] (the rare-roll posture) carrying the FULL tag:
+	 * the {@code gt.active.energy} store-as-full key (the DungeonData.zpm active lane;
+	 * the 2/3 dice collapse to always-full, the declared deviation above).
+	 */
+	private static EntryRow zpmArtifactRow() {
+		net.minecraft.nbt.CompoundTag tTag = new net.minecraft.nbt.CompoundTag();
+		tTag.putBoolean(gregtech6.item.energy.GT6BatteryItem.NBT_ACTIVE_ENERGY, true);
+		return new EntryRow("gt6:zpm", 2, 1, 1, tTag);
 	}
 
 	/** The non-null filter keeping the upstream row order. */
