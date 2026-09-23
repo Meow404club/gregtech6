@@ -862,6 +862,16 @@ HAND_TRANSLATIONS = {
     # word — the shape_extruder note above).
     "item.gt6.shape_slicer_grid": ("切片器刀片 (栅格式)", "hand"),
     "item.gt6.shape_slicer_split": ("切片器刀片 (分割)", "hand"),
+    # task p36-recipes-obtainability (ruling B): the census completion — the frame + five
+    # remaining blade forms, the dump faces verbatim (gt.multiitem.technological.10900
+    # 切片器刀片框架 tmp/gregtech.lang:10345, :10901 扁平式 :10347, :10903 八分之一 :10351,
+    # :10904 中空八分之一 :10353, :10906 四分之一 :10357, :10907 中空四分之一 :10359).
+    "item.gt6.shape_slicer_empty": ("切片器刀片框架", "hand"),
+    "item.gt6.shape_slicer_flat": ("切片器刀片 (扁平式)", "hand"),
+    "item.gt6.shape_slicer_eigths": ("切片器刀片 (八分之一)", "hand"),
+    "item.gt6.shape_slicer_eigths_hollow": ("切片器刀片 (中空八分之一)", "hand"),
+    "item.gt6.shape_slicer_quarters": ("切片器刀片 (四分之一)", "hand"),
+    "item.gt6.shape_slicer_quarters_hollow": ("切片器刀片 (中空四分之一)", "hand"),
     # ---- crucible Jade face (task p28-crucible-jade-face, 4 keys — the final key set after
     # the TFRU 33c22beb ruling): no dump face (upstream 1.7.10 has zero WAILA integration,
     # research.p28-r-crucible-jade-face), so these are pure hand rows. The total line's

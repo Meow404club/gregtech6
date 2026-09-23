@@ -1759,22 +1759,29 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Slicer-blade family keys (task p35-slicer-row-domain): the vanilla-face MINIMAL
-     * subset's display names, walked over the {@link gregtech6.registry.GT6SlicerBlades}
-     * registry constants so the lang face cannot drift from the registered ids (the
-     * addExtruderMolds form). Values are the upstream registration-row wordings verbatim:
-     * "Slicer Blades (Grid)" (MultiItemTechnological.java:367) and "Slicer Blades (Split)"
-     * (:370). Table-tail append, append-only.
+     * Slicer-blade family keys (task p35-slicer-row-domain; the census completion rides
+     * task p36-recipes-obtainability ruling B): the FULL eight-item census display names,
+     * walked over the {@link gregtech6.registry.GT6SlicerBlades#ALL} registry constants so
+     * the lang face cannot drift from the registered ids (the addExtruderMolds form).
+     * Values are the upstream registration-row wordings verbatim: "Slicer Blade Frame"
+     * (MultiItemTechnological.java:362), "Slicer Blades (Flat)" (:366), "Slicer Blades
+     * (Grid)" (:367), "Slicer Blades (Eigths)" (:368), "Slicer Blades (Hollow Eigths)"
+     * (:369), "Slicer Blades (Split)" (:370), "Slicer Blades (Quarters)" (:371), "Slicer
+     * Blades (Hollow Quarters)" (:372). Table-tail append, append-only.
      */
     private void addSlicerBlades() {
-        for (RegistryObject<Item> tBlade : gregtech6.registry.GT6SlicerBlades.BLADES) {
+        for (RegistryObject<Item> tBlade : gregtech6.registry.GT6SlicerBlades.ALL) {
             String tPath = tBlade.getId().getPath();
-            if (tPath.equals("shape_slicer_grid")) {
-                add("item.gt6." + tPath, "Slicer Blades (Grid)");
-            } else if (tPath.equals("shape_slicer_split")) {
-                add("item.gt6." + tPath, "Slicer Blades (Split)");
-            } else {
-                throw new IllegalStateException("slicer blade id drifted: " + tPath);
+            switch (tPath) {
+                case "shape_slicer_empty": add("item.gt6." + tPath, "Slicer Blade Frame"); break;
+                case "shape_slicer_flat": add("item.gt6." + tPath, "Slicer Blades (Flat)"); break;
+                case "shape_slicer_grid": add("item.gt6." + tPath, "Slicer Blades (Grid)"); break;
+                case "shape_slicer_eigths": add("item.gt6." + tPath, "Slicer Blades (Eigths)"); break;
+                case "shape_slicer_eigths_hollow": add("item.gt6." + tPath, "Slicer Blades (Hollow Eigths)"); break;
+                case "shape_slicer_split": add("item.gt6." + tPath, "Slicer Blades (Split)"); break;
+                case "shape_slicer_quarters": add("item.gt6." + tPath, "Slicer Blades (Quarters)"); break;
+                case "shape_slicer_quarters_hollow": add("item.gt6." + tPath, "Slicer Blades (Hollow Quarters)"); break;
+                default: throw new IllegalStateException("slicer blade id drifted: " + tPath);
             }
         }
     }

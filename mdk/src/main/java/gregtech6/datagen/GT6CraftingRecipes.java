@@ -285,6 +285,14 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (PartFamilyRecipeRow tRow : crucibleWallRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
+		// task p36-recipes-obtainability — the 11 shared machine-wall rows
+		for (PartFamilyRecipeRow tRow : machineWallRecipeBuilders()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
+		// task p36-recipes-obtainability — the 8 slicer-blade rows (frame + 7 forms, ruling B)
+		for (PartFamilyRecipeRow tRow : slicerBladeRecipeBuilders()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 		for (GT6Batteries.BatteryRow tRow : GT6Batteries.ROWS) {
 			if (tRow.family().startsWith("energium")) continue; // the crystals carry NO rows (upstream :1079-:1092, the declared cut)
 			batteryRecipeBuilder(tRow).save(aConsumer, batteryRecipeId(tRow));
@@ -423,6 +431,14 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		// task p35-crucible-wall-obtainability — the 8 dedicated crucible-wall rows
 		for (PartFamilyRecipeRow tRow : crucibleWallRecipeBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
+		// task p36-recipes-obtainability — the 11 shared machine-wall rows
+		for (PartFamilyRecipeRow tRow : machineWallRecipeBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
+		// task p36-recipes-obtainability — the 8 slicer-blade rows (frame + 7 forms, ruling B)
+		for (PartFamilyRecipeRow tRow : slicerBladeRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 		for (GT6Batteries.BatteryRow tRow : GT6Batteries.ROWS) {
@@ -1034,6 +1050,93 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					new ResourceLocation(GT6DataGenerators.MOD_ID, tIdPath)));
 		}
 		return rRows;
+	}
+
+	/**
+	 * The shared machine-WALL crafting rows (task p36-recipes-obtainability) — the SAME
+	 * {@code "wPP","hPP"} four-plate grid as the dedicated crucible band above, replayed
+	 * over the ELEVEN {@link gregtech6.registry.GTMultiBlocks#METAL_WALL_ROWS} blocks
+	 * (Loader_MultiTileEntities.java:1143-1153, {@code 'P' = OP.plate.dat(aMat)}). The
+	 * WELDER face of the same rows already pours in {@code GT6RecipesWelder} — this band
+	 * closes the crafting half, the crucible-wall card's sister gap. The row material
+	 * resolves through {@link gregtech6.recipes.GT6RecipesWelder#materialNameOf} (the
+	 * registry-key switch the welder rows ride); a wall whose plate item is unregistered
+	 * skips its row (the CR.ONLY_IF_HAS_RESULT face — all eleven resolve today).
+	 */
+	private java.util.List<PartFamilyRecipeRow> machineWallRecipeBuilders() {
+		java.util.List<PartFamilyRecipeRow> rRows = new java.util.ArrayList<>();
+		for (gregtech6.registry.GTMultiBlocks.PartRow tRow : gregtech6.registry.GTMultiBlocks.METAL_WALL_ROWS) {
+			gregtech6.block.multiblock.GTMultiBlockPartBlock tBlock = gregtech6.registry.GTMultiBlocks.anyPartBlock(tRow.path());
+			gregapi.oredict.OreDictMaterial tMat = gregapi.oredict.OreDictMaterial.get(gregtech6.recipes.GT6RecipesWelder.materialNameOf(tRow.path()));
+			if (tBlock == null || tMat == null) continue; // the unregistered silent skip
+			Item tPlate = itemOrNull(gregapi.data.OP.plate, tMat);
+			if (tPlate == null) continue; // the CR.ONLY_IF_HAS_RESULT face (SteelGalvanized)
+			String tIdPath = "machine_wall/" + tRow.path(); // the precomputed arg — the stonecutter ctor swap rewrites simple-arg calls only
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tBlock.asItem())
+					.pattern("wPP")
+					.pattern("hPP")
+					.define('w', GT6ItemTags.TOOLS_WRENCH)
+					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+					.define('P', tPlate)
+					.unlockedBy("has_plate", has(tPlate)),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tIdPath)));
+		}
+		return rRows;
+	}
+
+	/**
+	 * The slicer-blade crafting rows (task p36-recipes-obtainability, coordinator ruling B
+	 * — the obtainability domain = items + recipes inseparable) — the upstream EIGHT rows
+	 * VERBATIM (MultiItemTechnological.java:364 the frame + :374-380 the seven blade
+	 * forms): the frame row {" R ","RhR"," R "} over StainlessSteel sticks + the hard
+	 * hammer, then per blade {@code 'O' = the Shape_Slicer_Empty frame} + StainlessSteel
+	 * plateTiny {@code 'B'} + the file {@code 'f'}/saw {@code 's'} tool keys (CR.java:344/
+	 * :356 — 's' is the SAW; 'd' would be the screwdriver) with the StainlessSteel ring
+	 * {@code 'R'} on the two hollow forms. Ids ride the result-path convention; a missing
+	 * StainlessSteel item (stick/plateTiny/ring) skips the band (the CR.ONLY_IF_HAS_RESULT
+	 * face — all three resolve today).
+	 */
+	private java.util.List<PartFamilyRecipeRow> slicerBladeRecipeBuilders() {
+		java.util.List<PartFamilyRecipeRow> rRows = new java.util.ArrayList<>();
+		Item tStick = itemOrNull(gregapi.data.OP.stick, MT.StainlessSteel);
+		Item tPlateTiny = itemOrNull(gregapi.data.OP.plateTiny, MT.StainlessSteel);
+		Item tRing = itemOrNull(gregapi.data.OP.ring, MT.StainlessSteel);
+		if (tStick == null || tPlateTiny == null || tRing == null) return rRows; // the CR.ONLY_IF_HAS_RESULT face
+		Item tFrame = gregtech6.registry.GT6SlicerBlades.SHAPE_SLICER_EMPTY.get();
+		// the frame row :364 — " R ","RhR"," R "
+		rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tFrame)
+				.pattern(" R ")
+				.pattern("RhR")
+				.pattern(" R ")
+				.define('R', tStick)
+				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+				.unlockedBy("has_stick", has(tStick)),
+				new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_slicer_empty")));
+		// the seven blade rows :374-380 — 'O' frame + 'B' plateTiny + 'f' file + 's' saw
+		rRows.add(slicerBladeRow("shape_slicer_flat",              gregtech6.registry.GT6SlicerBlades.SHAPE_SLICER_FLAT.get(),           "B f", "BO ", "B s", tFrame, tPlateTiny, null));
+		rRows.add(slicerBladeRow("shape_slicer_grid",              gregtech6.registry.GT6SlicerBlades.SHAPE_SLICER_GRID.get(),           " Bf", "BOB", " Bs", tFrame, tPlateTiny, null));
+		rRows.add(slicerBladeRow("shape_slicer_eigths",            gregtech6.registry.GT6SlicerBlades.SHAPE_SLICER_EIGHTS.get(),         "B B", "s f", "BOB", tFrame, tPlateTiny, null));
+		rRows.add(slicerBladeRow("shape_slicer_eigths_hollow",     gregtech6.registry.GT6SlicerBlades.SHAPE_SLICER_EIGHTS_HOLLOW.get(),  "B B", "sRf", "BOB", tFrame, tPlateTiny, tRing));
+		rRows.add(slicerBladeRow("shape_slicer_split",             gregtech6.registry.GT6SlicerBlades.SHAPE_SLICER_SPLIT.get(),          " Of", "BBB", "  s", tFrame, tPlateTiny, null));
+		rRows.add(slicerBladeRow("shape_slicer_quarters",          gregtech6.registry.GT6SlicerBlades.SHAPE_SLICER_QUARTERS.get(),       "fB ", "B s", " O ", tFrame, tPlateTiny, null));
+		rRows.add(slicerBladeRow("shape_slicer_quarters_hollow",   gregtech6.registry.GT6SlicerBlades.SHAPE_SLICER_QUARTERS_HOLLOW.get(),"fB ", "BRs", " O ", tFrame, tPlateTiny, tRing));
+		return rRows;
+	}
+
+	/** One slicer blade row body — the shared 'O'/'B'/'f'/'s' defines + the hollow ring (null = the plain forms). */
+	private PartFamilyRecipeRow slicerBladeRow(String aPath, Item aBlade, String aL1, String aL2, String aL3,
+			Item aFrame, Item aPlateTiny, Item aRing) {
+		ShapedRecipeBuilder tBuilder = ShapedRecipeBuilder.shaped(RecipeCategory.MISC, aBlade)
+				.pattern(aL1)
+				.pattern(aL2)
+				.pattern(aL3)
+				.define('O', aFrame)
+				.define('B', aPlateTiny)
+				.define('f', GT6ItemTags.TOOLS_FILE)
+				.define('s', GT6ItemTags.TOOLS_SAW)
+				.unlockedBy("has_frame", has(aFrame));
+		if (aRing != null) tBuilder.define('R', aRing);
+		return new PartFamilyRecipeRow(tBuilder, new ResourceLocation(GT6DataGenerators.MOD_ID, aPath));
 	}
 
 	/** The crucible wall item of a wall path (the {@link gregtech6.registry.GT6Crucibles#wallBlockOf} twin — the steel rung rides the single-rung handle). */

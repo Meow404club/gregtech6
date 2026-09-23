@@ -1411,6 +1411,12 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.shape_extruder_rod"); // task p26-w1-press-extruder-molds — dump gt.multiitem.technological.10027 模具 (杆) (:10185)
 		addDirect("item.gt6.shape_slicer_grid"); // task p35-slicer-row-domain — dump gt.multiitem.technological.10902 切片器刀片 (栅格式) (:10349)
 		addDirect("item.gt6.shape_slicer_split"); // task p35-slicer-row-domain — dump gt.multiitem.technological.10905 切片器刀片 (分割) (:10355)
+		addDirect("item.gt6.shape_slicer_empty"); // task p36-recipes-obtainability — dump gt.multiitem.technological.10900 切片器刀片框架 (:10345)
+		addDirect("item.gt6.shape_slicer_flat"); // task p36-recipes-obtainability — dump gt.multiitem.technological.10901 切片器刀片 (扁平式) (:10347)
+		addDirect("item.gt6.shape_slicer_eigths"); // task p36-recipes-obtainability — dump gt.multiitem.technological.10903 切片器刀片 (八分之一) (:10351)
+		addDirect("item.gt6.shape_slicer_eigths_hollow"); // task p36-recipes-obtainability — dump gt.multiitem.technological.10904 切片器刀片 (中空八分之一) (:10353)
+		addDirect("item.gt6.shape_slicer_quarters"); // task p36-recipes-obtainability — dump gt.multiitem.technological.10906 切片器刀片 (四分之一) (:10357)
+		addDirect("item.gt6.shape_slicer_quarters_hollow"); // task p36-recipes-obtainability — dump gt.multiitem.technological.10907 切片器刀片 (中空四分之一) (:10359)
 		addDirect("item.gt6.cover_redstone_emitter");
 		addDirect("item.gt6.cover_redstone_conductor_in");
 		addDirect("item.gt6.cover_redstone_conductor_out");

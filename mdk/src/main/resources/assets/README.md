@@ -844,6 +844,19 @@ Press + Extruder family fronts, task p26-w1-press-extruder-molds:
   `7d113c19a3a1790c8871b09c34f80b79f54b2edcfcde392cc6096890af050f70` /
   `1a636c548873b02229d006ba70aa36bf00ac1d70796c0f07ce101cd8c2d65e0e`.
 
+- `gt6/textures/item/shape_slicer/{empty,flat,eigths,eigths_hollow,quarters,quarters_hollow}.png`
+  — COMPOSED placeholders (the same generator convention, 16x16 RGBA, task
+  p36-recipes-obtainability ruling B): the six census-completion icons over the same
+  steel palette (empty = the bare frame interior, flat = the solid face, eigths = the
+  2x4 cut lattice, quarters = the center cross, the two hollow forms carry the 2x2
+  see-through center hole). NOT byte-identical to upstream — declared placeholder.
+  sha256 `173c6041132dbddebd42b38f3c22a23b323e37f0f0a3cf391575cc72d8176f10` (empty) /
+  `7729948ada0cac519c8b5dff7fe45323e2074a9326a1b2f101493b2c8c5a1b4f` (flat) /
+  `086274fc8e48b3a56a4c3767d9f1dcb51a3702a47c4ea62bc53a4a56fee74cb6` (eigths) /
+  `d8a6142ebbad2e125aa7fd430a462aacd9da275e3df8e3680c6430b5effb5029` (eigths_hollow) /
+  `fe5b8fa14ececa7802846ba97746e8512b2d2c3267d08d13afeb7d42dde15149` (quarters) /
+  `ac70dabecc977563ca1ab10a6256389f46ac33ce4971793e422d84e5cc689648` (quarters_hollow).
+
 Copied on 2026-09-09. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
