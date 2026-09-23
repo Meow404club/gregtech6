@@ -281,6 +281,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (CrucibleLadderRecipeRow tRow : crucibleLadderRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
+		// task p35-crucible-wall-obtainability — the 8 dedicated crucible-wall rows
+		for (PartFamilyRecipeRow tRow : crucibleWallRecipeBuilders()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 		for (GT6Batteries.BatteryRow tRow : GT6Batteries.ROWS) {
 			if (tRow.family().startsWith("energium")) continue; // the crystals carry NO rows (upstream :1079-:1092, the declared cut)
 			batteryRecipeBuilder(tRow).save(aConsumer, batteryRecipeId(tRow));
@@ -415,6 +419,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 		for (CrucibleLadderRecipeRow tRow : crucibleLadderRecipeBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
+		// task p35-crucible-wall-obtainability — the 8 dedicated crucible-wall rows
+		for (PartFamilyRecipeRow tRow : crucibleWallRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 		for (GT6Batteries.BatteryRow tRow : GT6Batteries.ROWS) {
@@ -995,6 +1003,44 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					new ResourceLocation(GT6DataGenerators.MOD_ID, tIdPath)));
 		}
 		return rRows;
+	}
+
+	/**
+	 * The crucible WALL crafting rows (task p35-crucible-wall-obtainability) — the upstream
+	 * wall rows {@code "wPP","hPP"} (Loader_MultiTileEntities.java:1143-1153, 'w' = wrench,
+	 * 'h' = hard hammer per CR.java:344-358, 'P' = {@code OP.plate.dat(aMat)}) replayed over
+	 * the EIGHT DEDICATED crucible-wall blocks (the port-side twins of the metalwall items
+	 * the :1270-1277 controllers reference — the GTCrucibleWallBlock deviation means the
+	 * shared machine-wall rows do not cover them). FOUR plates of the tier material + the
+	 * two in-grid tools produce ONE wall block; a tier whose plate item is unregistered
+	 * skips its row (the CR.ONLY_IF_HAS_RESULT face — all eight resolve today).
+	 */
+	private java.util.List<PartFamilyRecipeRow> crucibleWallRecipeBuilders() {
+		java.util.List<PartFamilyRecipeRow> rRows = new java.util.ArrayList<>();
+		for (gregtech6.registry.GT6Crucibles.CrucibleRow tRow : gregtech6.registry.GT6Crucibles.CRUCIBLE_ROWS) {
+			Item tWall = crucibleWallItem(tRow.wallPath());
+			gregapi.oredict.OreDictMaterial tMat = tRow.material();
+			if (tWall == null || tMat == null) continue; // the unregistered silent skip
+			Item tPlate = itemOrNull(gregapi.data.OP.plate, tMat);
+			if (tPlate == null) continue; // the CR.ONLY_IF_HAS_RESULT face
+			String tIdPath = "crucible_wall/" + tRow.wallPath(); // the precomputed arg — the stonecutter ctor swap rewrites simple-arg calls only
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tWall)
+					.pattern("wPP")
+					.pattern("hPP")
+					.define('w', GT6ItemTags.TOOLS_WRENCH)
+					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+					.define('P', tPlate)
+					.unlockedBy("has_plate", has(tPlate)),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tIdPath)));
+		}
+		return rRows;
+	}
+
+	/** The crucible wall item of a wall path (the {@link gregtech6.registry.GT6Crucibles#wallBlockOf} twin — the steel rung rides the single-rung handle). */
+	private static Item crucibleWallItem(String aWallPath) {
+		var tHandle = gregtech6.registry.GT6Crucibles.CRUCIBLE_WALL_ITEMS_BY_PATH.get(aWallPath);
+		if (tHandle == null && "crucible_steel_wall".equals(aWallPath)) return gregtech6.registry.GT6Crucibles.CRUCIBLE_STEEL_WALL_ITEM.get();
+		return tHandle == null ? null : tHandle.get();
 	}
 
 	/** One staged crucible-ladder row: the shared builder + the id its save face ids from. */

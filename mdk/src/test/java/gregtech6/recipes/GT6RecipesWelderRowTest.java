@@ -25,12 +25,13 @@ import gregtech6.item.GT6Circuits;
 import gregtech6.recipes.GT6RecipesWelder.WelderWallRow;
 
 /**
- * The Welder wall rows in/out (task p29-w3-nbtdesign-parts ④ acceptance ⑤): the row
- * table census (11 wall rows :1143-1153 + 11 dense rows :1155-1165, the EUt/duration
- * columns verbatim), the REAL buildRecipe probe contract — FOUR plates plus the
- * config-10 selector circuit match, the wrong configuration / the short plate stack
- * refuse, the selector never consumed, ONE wall out — and the resolver silent-skip
- * (the FL.exists drop for the plate-less Galvanized Steel).
+ * The Welder wall rows in/out (task p29-w3-nbtdesign-parts ④ acceptance ⑤ + task
+ * p35-crucible-wall-obtainability): the row table census (11 wall rows :1143-1153 + 11
+ * dense rows :1155-1165 + the 8 DEDICATED crucible-wall rows :1143-1153 replayed onto the
+ * port-side block twins, the EUt/duration columns verbatim), the REAL buildRecipe probe
+ * contract — FOUR plates plus the config-10 selector circuit match, the wrong
+ * configuration / the short plate stack refuse, the selector never consumed, ONE wall out
+ * — and the resolver silent-skip (the FL.exists drop for the plate-less Galvanized Steel).
  */
 public class GT6RecipesWelderRowTest {
 
@@ -93,8 +94,8 @@ public class GT6RecipesWelderRowTest {
 	}
 
 	@Test
-	void theRowTableCoversAllTwentyTwoWalls() {
-		assertEquals(22, GT6RecipesWelder.table().size(), "11 metal walls + 11 dense walls");
+	void theRowTableCoversAllThirtyWalls() {
+		assertEquals(30, GT6RecipesWelder.table().size(), "11 metal walls + 11 dense walls + the 8 dedicated crucible walls (p35)");
 		long tDense = GT6RecipesWelder.table().stream().filter(WelderWallRow::dense).count();
 		assertEquals(11, tDense);
 		Set<String> tPaths = new HashSet<>();
@@ -105,6 +106,12 @@ public class GT6RecipesWelderRowTest {
 		}
 		assertTrue(tPaths.contains("machine_wall_tungstensteel"));
 		assertTrue(tPaths.contains("dense_wall_tungsten"), "18024 — the Dynamo emitter plate wall");
+		// p35 — every dedicated crucible wall carries its welder row (the obtainability half)
+		for (String tCrucibleWall : new String[] {"crucible_steel_wall", "crucible_stainless_steel_wall", "crucible_invar_wall",
+				"crucible_titanium_wall", "crucible_tungstensteel_wall", "crucible_tungsten_wall",
+				"crucible_tantalum_hafnium_carbide_wall", "crucible_adamantium_wall"}) {
+			assertTrue(tPaths.contains(tCrucibleWall), "the dedicated crucible wall row: " + tCrucibleWall);
+		}
 	}
 
 	@Test
@@ -200,5 +207,10 @@ public class GT6RecipesWelderRowTest {
 		assertEquals("W", GT6RecipesWelder.materialNameOf("dense_wall_tungsten"));
 		assertEquals("Ta4HfC5", GT6RecipesWelder.materialNameOf("machine_wall_tantalum_hafnium_carbide"));
 		assertEquals("SteelGalvanized", GT6RecipesWelder.materialNameOf("dense_wall_galvanized_steel"));
+		// p35 — the dedicated crucible-wall twins ride the rung shell materials (:1270-1277)
+		assertEquals("Steel", GT6RecipesWelder.materialNameOf("crucible_steel_wall"));
+		assertEquals("StainlessSteel", GT6RecipesWelder.materialNameOf("crucible_stainless_steel_wall"));
+		assertEquals("TungstenSteel", GT6RecipesWelder.materialNameOf("crucible_tungstensteel_wall"));
+		assertEquals("Ta4HfC5", GT6RecipesWelder.materialNameOf("crucible_tantalum_hafnium_carbide_wall"));
 	}
 }

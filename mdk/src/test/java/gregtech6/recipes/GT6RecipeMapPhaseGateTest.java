@@ -153,7 +153,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("LIGHTNING", 0);
 		SNAPSHOT.put("SLICER", 5); // task p35-slicer-row-domain - the vanilla-face rows land (the leather quartet + the paper row); the declared smoke-JSON debt is retired with the card
 		SNAPSHOT.put("LASER_ENGRAVER", 0);
-		SNAPSHOT.put("WELDER", 22);
+		SNAPSHOT.put("WELDER", 30); // +8 task p35-crucible-wall-obtainability — the dedicated crucible-wall rows replay the :1143-1153 row onto the 8 port-side block twins
 		SNAPSHOT.put("ELECTROLYZER", 0);
 		SNAPSHOT.put("PRINTER", 0);
 		SNAPSHOT.put("SCANNER_VISUALS", 0);
