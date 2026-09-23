@@ -10,6 +10,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.Bootstrap;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
@@ -17,6 +19,12 @@ import net.minecraft.world.level.material.Fluids;
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+
+import gregtech6.covers.CoverRegistry;
+import gregtech6.covers.covers.CoverPressureValve;
+import gregtech6.covers.GTCoverRenderSnapshot;
+import gregtech6.client.render.GTModelProperties;
+import gregtech6.client.render.PipeFlowSnapshot;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -98,6 +106,43 @@ public class GTFluidPipeFlowControlTest {
 		tSaved.putByte("ioMask", (byte)127); // bit6+ garbage
 		tPipe.load(tSaved);
 		assertEquals(63, tPipe.getIoMask(), "the mConnections form clamp on read");
+	}
+
+	// ---------------------------------------------------------------------------
+	// the render snapshot keys (task p35-cover-narrowing-render-snapshot — the P34
+	// leftover debt: the arrows shared the cover chain's single-valued RENDER_SNAPSHOT,
+	// so the pre-p35 else-if evicted the arrows under any cover; the split sends each
+	// consumer family to its own key and the two never invalidate each other)
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void coverAndFlowSnapshotsRideIndependentKeys() {
+		CoverPressureValve tValve = new CoverPressureValve();
+		CoverRegistry.put(Items.BRICK, tValve);
+		GTFluidPipeBlockEntity tPipe = sType.create(POS_A, Blocks.STONE.defaultBlockState());
+		assertTrue(tPipe.setCoverItem((byte) 3, new ItemStack(Items.BRICK), null, false, true));
+		assertTrue(tPipe.toggleOutput((byte) 1));
+
+		net.minecraftforge.client.model.data.ModelData tData = tPipe.getModelData();
+		assertTrue(tData.get(GTModelProperties.RENDER_SNAPSHOT) instanceof GTCoverRenderSnapshot,
+				"the cover snapshot rides the covers key");
+		assertEquals(new PipeFlowSnapshot(TileEntityBase09Connector.SBIT[1]), tData.get(GTModelProperties.FLOW_SNAPSHOT),
+				"the arrow snapshot rides its own key, the mask untouched by the cover");
+
+		// THE MUTUAL NON-INVALIDATION, cover side: removing the cover leaves the flow snapshot intact
+		assertTrue(tPipe.setCoverItem((byte) 3, ItemStack.EMPTY, null, false, true));
+		tData = tPipe.getModelData();
+		assertFalse(tData.has(GTModelProperties.RENDER_SNAPSHOT), "the dismantled cover dissolves its snapshot");
+		assertEquals(new PipeFlowSnapshot(TileEntityBase09Connector.SBIT[1]), tData.get(GTModelProperties.FLOW_SNAPSHOT),
+				"the flow snapshot survives the cover removal");
+
+		// and vice versa, flow side: clearing the arrows leaves the cover snapshot intact
+		assertTrue(tPipe.setCoverItem((byte) 3, new ItemStack(Items.BRICK), null, false, true));
+		tPipe.clearOutputs();
+		tData = tPipe.getModelData();
+		assertFalse(tData.has(GTModelProperties.FLOW_SNAPSHOT), "the cleared mask dissolves its snapshot");
+		assertTrue(tData.get(GTModelProperties.RENDER_SNAPSHOT) instanceof GTCoverRenderSnapshot,
+				"the cover snapshot survives the arrow clear");
 	}
 
 	// ---------------------------------------------------------------------------

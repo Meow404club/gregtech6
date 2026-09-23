@@ -8,6 +8,7 @@ import java.util.List;
 
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.model.data.ModelData;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -93,6 +94,39 @@ public class GTFluidPipeFlowModelTest extends GTOfflineRenderTestBase {
 		GTPipeFlowClientListener.register();
 		assertEquals(tBefore + GTPipeFlowClientListener.TARGET_MODELS.size(), GTRenderModelListener.registeredCount(),
 				"both pipe tier blockstate models registered");
+	}
+
+	@Test
+	void dispatchKeysOnTheFlowSnapshotProperty() {
+		// the p35 split: the flow model keys on the dedicated FLOW_SNAPSHOT — the cover
+		// chain's RENDER_SNAPSHOT no longer dispatches it (and no longer gets evicted by it)
+		GTFluidPipeFlowModel tModel = new GTFluidPipeFlowModel(new GTDynamicBakedModelTest.StubFallback(), aSpriteId -> null);
+		ModelData tFlowOnly = GTModelProperties.snapshot()
+				.with(GTModelProperties.FLOW_SNAPSHOT, new PipeFlowSnapshot((byte) 1)).build();
+		ModelData tCoverOnly = GTModelProperties.snapshot()
+				.with(GTModelProperties.RENDER_SNAPSHOT, new gregtech6.covers.GTCoverRenderSnapshot(java.util.Map.of())).build();
+		assertTrue(tModel.supportsDynamicQuads(tFlowOnly), "the flow snapshot alone dispatches the flow model");
+		assertFalse(tModel.supportsDynamicQuads(tCoverOnly), "a covers-only ModelData does not dispatch the flow model");
+		assertFalse(tModel.supportsDynamicQuads(ModelData.EMPTY), "a plain pipe falls back");
+	}
+
+	@Test
+	void foamWrapperDispatchesEveryInnerSnapshotFamily() {
+		// the foam model is the outer chain wrapper — its gate must admit all three keys:
+		// an arrow-only pipe (FLOW), a covered+foamed pipe (RENDER+FOAM, the pre-split shape
+		// that RENDER alone satisfied) and a foam-only pipe (FOAM)
+		GTFluidPipeFoamModel tFoam = new GTFluidPipeFoamModel(new GTDynamicBakedModelTest.StubFallback(), aSpriteId -> null);
+		ModelData tFlowOnly = GTModelProperties.snapshot()
+				.with(GTModelProperties.FLOW_SNAPSHOT, new PipeFlowSnapshot((byte) 1)).build();
+		assertTrue(tFoam.supportsDynamicQuads(tFlowOnly), "an arrow-only pipe still dispatches the composed chain");
+		ModelData tCoverFoam = GTModelProperties.snapshot()
+				.with(GTModelProperties.RENDER_SNAPSHOT, new gregtech6.covers.GTCoverRenderSnapshot(java.util.Map.of()))
+				.with(GTModelProperties.FOAM_SNAPSHOT, new PipeFoamSnapshot(false, false)).build();
+		assertTrue(tFoam.supportsDynamicQuads(tCoverFoam), "a covered+foamed pipe dispatches the composed chain");
+		ModelData tFoamOnly = GTModelProperties.snapshot()
+				.with(GTModelProperties.FOAM_SNAPSHOT, new PipeFoamSnapshot(false, false)).build();
+		assertTrue(tFoam.supportsDynamicQuads(tFoamOnly), "a foam-only pipe dispatches the composed chain");
+		assertFalse(tFoam.supportsDynamicQuads(ModelData.EMPTY), "a plain pipe falls back");
 	}
 
 	/** The SBIT values (kept literal here so the test does not need the connector BE boot). */

@@ -43,6 +43,11 @@ import net.minecraftforge.client.model.data.ModelData;
  * </ul>
  * Opaque quads: solid layer only (plus the null all-layers pass).
  *
+ * <p>Key (task p35-cover-narrowing-render-snapshot): the arrows ride the dedicated
+ * {@link GTModelProperties#FLOW_SNAPSHOT} — the generic {@code RENDER_SNAPSHOT} stayed
+ * with the cover plate chain (the single-valued-property coexistence ruling), so a
+ * covered pipe keeps its arrows and the two snapshots never invalidate each other.
+ *
  * <p>RED LINE: reads ONLY the immutable snapshot — no BlockEntity is reachable from
  * here (render-thread semantics, GTDynamicBakedModel class doc). CLIENT-ONLY class:
  * instantiated exclusively through the Dist.CLIENT {@code GTPipeFlowClientListener}.
@@ -76,13 +81,21 @@ public class GTFluidPipeFlowModel extends GTDynamicBakedModel {
 		return aSpriteId -> net.minecraft.client.Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(aSpriteId);
 	}
 
+	/** The p35 split: the flow model keys on the dedicated flow snapshot, not the cover chain's generic key. */
+	@Override
+	protected boolean supportsDynamicQuads(ModelData aModelData) {
+		return aModelData.has(GTModelProperties.FLOW_SNAPSHOT);
+	}
+
 	@Override
 	protected List<BakedQuad> getDynamicQuads(@Nullable BlockState aState, @Nullable Direction aSide,
 			RandomSource aRand, ModelData aModelData, @Nullable RenderType aRenderType) {
 		List<BakedQuad> rQuads = new ArrayList<>(getFallbackModel().getQuads(aState, aSide, aRand));
 		// opaque arrows: solid layer (+ the null all-layers pass)
 		if (aRenderType != null && !aRenderType.equals(RenderType.solid())) return rQuads;
-		if (!(aModelData.get(GTModelProperties.RENDER_SNAPSHOT) instanceof PipeFlowSnapshot tSnapshot)) return rQuads;
+		// the typed property hands the snapshot back directly — absent = null (the FoamModel form)
+		PipeFlowSnapshot tSnapshot = aModelData.get(GTModelProperties.FLOW_SNAPSHOT);
+		if (tSnapshot == null) return rQuads;
 
 		for (FlowQuad tPlan : planQuads(tSnapshot, aSide)) {
 			TextureAtlasSprite tSprite = mSpriteLookup.apply(tPlan.sprite());

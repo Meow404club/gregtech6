@@ -59,10 +59,24 @@ public final class GTModelProperties {
 	 * the foamed pipe BE carries ({@link PipeFoamSnapshot}, immutable record). Present
 	 * exactly while the pipe carries foam — fresh overlay or dried full-block swap, the
 	 * consumer ({@code GTFluidPipeFoamModel}) keys on THIS property while the flow-arrow
-	 * chain keys on {@link #RENDER_SNAPSHOT} (single-valued properties each on their own
+	 * chain keys on {@link #FLOW_SNAPSHOT} (single-valued properties each on their own
 	 * key, the :46-55 coexistence ruling — an arrowed+foamed pipe carries both at once).
 	 */
 	public static final ModelProperty<PipeFoamSnapshot> FOAM_SNAPSHOT = new ModelProperty<>(Objects::nonNull);
+
+	/**
+	 * The pipe flow-arrow snapshot property (task p35-cover-narrowing-render-snapshot, the
+	 * P34 leftover-debt split): the output-arrow mask the fluid pipe BE carries
+	 * ({@link PipeFlowSnapshot}, immutable record). The arrows used to ride the generic
+	 * {@link #RENDER_SNAPSHOT} beside the cover chain — single-valued, so a covered pipe
+	 * evicted its own arrows (the {@code else-if} fold) and the cover/flow consumers
+	 * invalidated each other. Each consumer family now keys on its own property (the
+	 * :46-55 coexistence ruling — the {@code GTOvenOverlayModel}/{@code FOAM_SNAPSHOT}
+	 * shape): the cover plate chain keeps RENDER_SNAPSHOT, the flow model keys HERE, and
+	 * a covered+arrowed pipe carries both at once (the plate is opaque and owns the face;
+	 * the foam+flow coexistence precedent, unchanged).
+	 */
+	public static final ModelProperty<PipeFlowSnapshot> FLOW_SNAPSHOT = new ModelProperty<>(Objects::nonNull);
 
 	/**
 	 * The machine paint property (task p21-paintable-storage-sync, ADR ruling 5): the

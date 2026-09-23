@@ -38,7 +38,7 @@ import net.minecraftforge.client.model.data.ModelData;
  * <p>CHAIN: registered as the outer wrapper of the flow model ({@link #chain()} — one
  * registration per per-state key, GTRenderModelListener last-wins), so an arrowed+foamed
  * pipe renders arrows AND foam; a foam-only pipe hits {@link #supportsDynamicQuads} on the
- * FOAM key (the flow model alone would fall back on its RENDER_SNAPSHOT gate). Geometry:
+ * FOAM key (the flow model alone would fall back on its FLOW_SNAPSHOT gate). Geometry:
  * full-cube quads inflated {@value #FOAM_EPSILON} past the block boundary (the GTCEu
  * StaticFaceBakery epsilon, the arrow precedent) — never culled, solid layer only.
  *
@@ -94,8 +94,11 @@ public class GTFluidPipeFoamModel extends GTDynamicBakedModel {
 
 	@Override
 	protected boolean supportsDynamicQuads(ModelData aModelData) {
-		// the flow model alone keys on RENDER_SNAPSHOT — a foam-only pipe must dispatch too
-		return aModelData.has(GTModelProperties.RENDER_SNAPSHOT) || aModelData.has(GTModelProperties.FOAM_SNAPSHOT);
+		// the p35 split: the flow model keys on FLOW_SNAPSHOT, the cover chain on
+		// RENDER_SNAPSHOT — the foam wrapper dispatches whenever any inner consumer has data
+		return aModelData.has(GTModelProperties.FLOW_SNAPSHOT)
+				|| aModelData.has(GTModelProperties.RENDER_SNAPSHOT)
+				|| aModelData.has(GTModelProperties.FOAM_SNAPSHOT);
 	}
 
 	@Override
