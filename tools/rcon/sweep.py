@@ -918,6 +918,15 @@ SESSION_GROUPS = (
     # setblocks; the gt6energy/gt6laser channels are the p32 precedent). --group
     # p35_energy_tail matches through the chains' embedded name prefix.
     ("p35_energy_tail_transformer", "p35_energy_tail_charger"),
+    # p35-rails-31-blocks (task p35-rails-31-blocks): the three rail chains — a fresh
+    # z=368..464 band on the x=400 column (the ride lanes z368..424 with the two-lane
+    # ladder race, the booster lane z426..454 with the brake/charge/launch faces, the
+    # detector rig z456..464 with the lamp signal pair; per-chain x/z-disjoint
+    # teardowns). Admission mirroring the p34 cluster form (bbox-registered, no
+    # fresh_boot / mutates member — the rigs are band-local setblocks; the two-lane
+    # race is tick-count-locked, wall-clock independent). --group p35_rails matches
+    # through the chains' embedded name prefix.
+    ("p35_rails_ride", "p35_rails_booster", "p35_rails_detector"),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
