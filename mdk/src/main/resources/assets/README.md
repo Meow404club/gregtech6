@@ -835,6 +835,15 @@ Press + Extruder family fronts, task p26-w1-press-extruder-molds:
   file to borrow, so the two row0 mold icons are hand-rolled mold-blank pixels. NOT
   byte-identical to upstream — declared placeholder.
 
+- `gt6/textures/item/shape_slicer/{grid,split}.png` — COMPOSED placeholders (the P20
+  stdlib generator convention, 16x16 RGBA, task p35-slicer-row-domain): the upstream
+  Shape_Slicer_* icons are meta-atlas tiles with no standalone sprite file to borrow, so
+  the two row0 blade icons are hand-rolled steel-frame pixels over the shape_extruder
+  palette (grid = the 3x3 cutting lattice, split = the center split line). NOT
+  byte-identical to upstream — declared placeholder. sha256
+  `7d113c19a3a1790c8871b09c34f80b79f54b2edcfcde392cc6096890af050f70` /
+  `1a636c548873b02229d006ba70aa36bf00ac1d70796c0f07ce101cd8c2d65e0e`.
+
 Copied on 2026-09-09. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 

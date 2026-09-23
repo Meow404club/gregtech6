@@ -1393,6 +1393,8 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.mode_switch.tooltip");
 		addDirect("item.gt6.shape_extruder_plate"); // task p26-w1-press-extruder-molds — dump gt.multiitem.technological.10001 模具 (板) (:10129)
 		addDirect("item.gt6.shape_extruder_rod"); // task p26-w1-press-extruder-molds — dump gt.multiitem.technological.10027 模具 (杆) (:10185)
+		addDirect("item.gt6.shape_slicer_grid"); // task p35-slicer-row-domain — dump gt.multiitem.technological.10902 切片器刀片 (栅格式) (:10349)
+		addDirect("item.gt6.shape_slicer_split"); // task p35-slicer-row-domain — dump gt.multiitem.technological.10905 切片器刀片 (分割) (:10355)
 		addDirect("item.gt6.cover_redstone_emitter");
 		addDirect("item.gt6.cover_redstone_conductor_in");
 		addDirect("item.gt6.cover_redstone_conductor_out");

@@ -3732,6 +3732,8 @@
   "item.gt6.sense": "Sense",
   "item.gt6.shape_extruder_plate": "Extruder Shape (Plate)",
   "item.gt6.shape_extruder_rod": "Extruder Shape (Rod)",
+  "item.gt6.shape_slicer_grid": "Slicer Blades (Grid)",
+  "item.gt6.shape_slicer_split": "Slicer Blades (Split)",
   "item.gt6.shovel": "Shovel",
   "item.gt6.soft_hammer": "Soft Hammer",
   "item.gt6.spade": "Spade",
