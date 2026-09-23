@@ -1728,9 +1728,14 @@ POTION_DRINK_BACKFILL = {
 # the p29-w4-f1-chemicals oils/gases, the p29-w4-hot-lube hot family, the p31-qu-*/
 # isotope molten rows, the p31-bees-lv1 honey family, the binnie/foreign-mod compat rows
 # (for_/grc_/ic2_) — all verbatim from the committed table (task p34-hygiene-lang).
+# The post-hygiene stragglers joined the same lane (task p35-hygiene-fluid-zh-hand, the
+# known_bugs.zhcn_ref_tsv_py_drift closeout): the machines-bp review trio (calcite/
+# sodiumcarbonate/titaniumtetrachloride) + the crystallisation-crucible molten carriers,
+# again verbatim from the committed table.
 FOOD_FLUID_BACKFILL = {
     'fluid.gt6.adamantium_molten': '熔融艾德曼合金',
     'fluid.gt6.alcopops': '波普甜酒',
+    'fluid.gt6.alumina_molten': '熔融氧化铝',
     'fluid.gt6.ambrosia': '琼浆',
     'fluid.gt6.ancientdebris_molten': '熔融远古残骸',
     'fluid.gt6.applesmoothie': '苹果冰沙',
@@ -1766,6 +1771,7 @@ FOOD_FLUID_BACKFILL = {
     'fluid.gt6.brandypear': '梨子白兰地',
     'fluid.gt6.brandyplum': '李子白兰地',
     'fluid.gt6.cactusfruitjuice': '仙人掌果汁',
+    'fluid.gt6.calcite_molten': '熔融方解石',
     'fluid.gt6.canevinegar': '甘蔗醋',
     'fluid.gt6.carbon13_molten': '熔融碳-13',
     'fluid.gt6.carbon_molten': '熔融碳',
@@ -1803,6 +1809,7 @@ FOOD_FLUID_BACKFILL = {
     'fluid.gt6.fishoil': '鱼油',
     'fluid.gt6.for_honey': '蜂蜜(林业)',
     'fluid.gt6.fruitsmoothie': '果汁冰沙',
+    'fluid.gt6.germanium_molten': '熔融锗',
     'fluid.gt6.glenmckenner': '格伦·麦肯纳苏格兰威士忌, 格雷窖藏35年陈酿',
     'fluid.gt6.goldencarrotjuice': '金胡萝卜汁',
     'fluid.gt6.gooseberryjuice': '鹅莓汁',
@@ -1912,6 +1919,7 @@ FOOD_FLUID_BACKFILL = {
     'fluid.gt6.mineralsoda': '含汽矿泉水',
     'fluid.gt6.mushroomsoup': '蘑菇煲',
     'fluid.gt6.neutralmatter': '中性物质',
+    'fluid.gt6.nikolinealloy_molten': '熔融蓝石合金',
     'fluid.gt6.nutella': '能多益',
     'fluid.gt6.nutoil': '坚果油',
     'fluid.gt6.onionjuice': '洋葱汁',
@@ -1938,6 +1946,7 @@ FOOD_FLUID_BACKFILL = {
     'fluid.gt6.raspberrysmoothie': '树莓冰沙',
     'fluid.gt6.redgrapesmoothie': '红葡萄冰沙',
     'fluid.gt6.redstone_molten': '熔融红石',
+    'fluid.gt6.redstonealloy_molten': '熔融红石合金',
     'fluid.gt6.ricardosanchez': '里卡多·桑切斯',
     'fluid.gt6.ricevinegar': '米醋',
     'fluid.gt6.ricewater': '米汤',
@@ -1950,10 +1959,12 @@ FOOD_FLUID_BACKFILL = {
     'fluid.gt6.seedoil': '种子油',
     'fluid.gt6.semiheavywater': '半重水',
     'fluid.gt6.short_mead': '蜂蜜酒',
+    'fluid.gt6.silicon_molten': '熔融硅',
     'fluid.gt6.slime': '史莱姆粘液',
     'fluid.gt6.slime_blue': '蓝色史莱姆',
     'fluid.gt6.soda': '苏打水',
     'fluid.gt6.sodium_molten': '熔融钠',
+    'fluid.gt6.sodiumcarbonate_molten': '熔融碳酸钠',
     'fluid.gt6.soup_mushroom': '蘑菇煲',
     'fluid.gt6.soymilk': '豆浆',
     'fluid.gt6.spiritgin': '金酒',
@@ -1970,6 +1981,7 @@ FOOD_FLUID_BACKFILL = {
     'fluid.gt6.tequila': '龙舌兰酒',
     'fluid.gt6.thoriumsalt': '熔融钍盐',
     'fluid.gt6.tin_molten': '熔融锡',
+    'fluid.gt6.titaniumtetrachloride': '四氯化钛',  # the TiCl4 acid, not a molten carrier — same tsv-only band
     'fluid.gt6.tritiatedwater': '超重水',
     'fluid.gt6.tritium': '氚',
     'fluid.gt6.tungsten_molten': '熔融钨',
@@ -2246,8 +2258,11 @@ LEGACY_BLOCK_BACKFILL = {
 }
 
 # ---- the tier-word templates + the two atomic singles (tasks p31-massfab,
-# p32-qu-scanner-replicator, p30-w6-rocks-sticks, p31-bees-lv1) — verbatim.
+# p32-qu-scanner-replicator, p30-w6-rocks-sticks, p31-bees-lv1) — verbatim; the
+# p34-machines-bp machine names (task p35-hygiene-fluid-zh-hand write-back) joined here.
 ROW_MISC_BACKFILL = {
+    'gt6.row.machine.bumblelyzer': '膜翅目昆虫分析仪 (%s)',
+    'gt6.row.machine.crystallisation_crucible': '结晶器 (%s)',
     'gt6.row.machine.massfab': '物质制造机 (%s)',
     'gt6.row.machine.molecular_scanner': '分子扫描仪 (%s)',
     'gt6.row.machine.replicator': '物质复制器 (%s)',
