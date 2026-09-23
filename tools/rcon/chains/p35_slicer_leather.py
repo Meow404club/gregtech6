@@ -16,15 +16,17 @@ RCON group p35_slicer_rows, the single slicer-leather chain per the W3 card spec
     units, inject 20 x 16 EU covers it with margin (TIER_INPUTS[0] = {16, 32, 64},
     the injected 16 rides the min seat; no overclock, 16 !< 16).
 
-    the blade crown: the post-completion probe pins shape_slicer_split STILL in slot
-    1 — the upstream stack-size-0 marker (IL.Shape_Slicer_Split.get(0)) carried by
-    Recipe.sNotConsumable's isBlade arm (the consume pass Recipe.java:375 skips the
-    shrink), live. The probe is `data get block <pos> inventory.Items[1]` (the
-    p25_tool_hammer_wrench index form, NBT_INVENTORY="inventory"
-    TileEntityBasicMachine.java:201) — the `gt6machine check` report renders ONLY
-    slot 0 (GTMachineCommand SLOT_INPUT append, :1264), so it structurally cannot
-    carry the slot-1 crown; an absent blade serializes an empty slot compound and
-    the id substring goes missing = the FAIL is the consumption signal.
+    the blade crown: the post-completion probe pins shape_slicer_split STILL in the
+    machine — the upstream stack-size-0 marker (IL.Shape_Slicer_Split.get(0)) carried
+    by Recipe.sNotConsumable's isBlade arm (the consume pass Recipe.java:375 skips the
+    shrink), live. The probe is `data get block <pos>
+    inventory.Items[{id:"gt6:shape_slicer_split"}]` — the id FILTER, not an index:
+    the ItemStackHandler Items list is COMPACTED on both legs (empty slots skipped,
+    forge-1.20.1 == neoforge-1.21.1 serializeNBT verbatim, Slot as putInt), so after
+    completion index 1 is the leather output on both. `gt6machine check` cannot
+    carry the crown either (it appends ONLY SLOT_INPUT into input=,
+    GTMachineCommand.java:1264). An eaten blade leaves the filter empty → the expect
+    misses = the FAIL is the consumption signal.
 
   BLADE OBTAINABILITY NOTE (the card-pool obligation): the blades are currently
   CREATIVE-obtainable only — the upstream crafting face (the frame + plateTiny
@@ -63,10 +65,12 @@ steps = [
          node_expects={"1.21.1": "GT6 slicer input: 1x minecraft:leather_helmet into slot 0"}),
     Step(f"gt6machine slicer input item gt6:shape_slicer_split 1 {F(SL1)}",
          expect="GT6 slicer input: 1x shape_slicer_split",
-         node_expects={"1.21.1": "GT6 slicer input: 1x minecraft:shape_slicer_split"}),
+         node_expects={"1.21.1": "GT6 slicer input: 1x gt6:shape_slicer_split"}),
     Step(f"gt6machine slicer check {F(SL1)}", expect="minIn=16 recIn=32 maxIn=64"),
-    Step(f"gt6machine slicer inject 20 16 {F(SL1)}", expect="1x leather"),
-    Step(f"data get block {F(SL1)} inventory.Items[1]", expect="shape_slicer_split"),
+    Step(f"gt6machine slicer inject 20 16 {F(SL1)}", expect="1x leather",
+         node_expects={"1.21.1": "1x minecraft:leather"}),
+    Step(f'data get block {F(SL1)} inventory.Items[{{id:"gt6:shape_slicer_split"}}]',
+         expect="shape_slicer_split"),
 
     phase("E: teardown — the explicit band restore (no global state was touched)"),
     Step("fill 406 62 446 410 68 450 air", expect="filled"),
