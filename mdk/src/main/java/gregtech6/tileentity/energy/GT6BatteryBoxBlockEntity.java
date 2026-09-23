@@ -286,10 +286,20 @@ public class GT6BatteryBoxBlockEntity extends TileEntityBase03TicksAndSync imple
 		}
 		long tOutput = mMode == 0 ? mBatteryCount : Math.min(mMode, mBatteryCount); // :143
 		if (tOutput > 0) {
-			long tEmittedPackets = ITileEntityEnergy.Util.emitEnergyToNetwork(mEnergyType, mOutput, tOutput, this, adjacency());
+			long tEmittedPackets = ITileEntityEnergy.Util.emitEnergyToNetwork(emitType(), mOutput, tOutput, this, adjacency());
 			mEmitsEnergy = tEmittedPackets > 0; // :146
 			mEnergy -= mOutput * tEmittedPackets; // :147
 		}
+	}
+
+	/**
+	 * The emit lane (the :145 read of the Base10 {@code mEnergyTypeOut} seat): every port
+	 * row folds the in/out pair into {@code mEnergyType} (the EU/EU and LU/LU rows), so the
+	 * default reads the folded field — task p36's decharger shell re-splits the lanes and
+	 * overrides (the QU-in/EU-out row).
+	 */
+	protected TagData emitType() {
+		return mEnergyType;
 	}
 
 	// ---------------------------------------------------------------------------
