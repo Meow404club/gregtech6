@@ -907,6 +907,17 @@ SESSION_GROUPS = (
     # setblocks). --group p34_cover_hosts matches through the chain's embedded
     # name prefix.
     ("p34_cover_hosts",),
+    # P35 card (p35-energy-tail-machines): the energy-tail two-chain group — a fresh
+    # z=420..432 band (x520..540, x/z-disjoint from every registered band: the p28
+    # strip sits z40..64 x519..545, the ignition band z452..478), x-disjoint columns
+    # (the transformer ladder A/B/C/D on x520..538 z420..422, the charger A/B/C on
+    # x520..532 z423..425). The ZPMDecharger chain (energy_tail_zpm) rides the
+    # energy-battery-family card (the ZPM item blocked, the approved CUT) — the chain
+    # name is RESERVED here in the ledger only. Admission mirroring the p32 form
+    # (bbox-registered, no fresh_boot / mutates member — the dials/rigs are band-local
+    # setblocks; the gt6energy/gt6laser channels are the p32 precedent). --group
+    # p35_energy_tail matches through the chains' embedded name prefix.
+    ("p35_energy_tail_transformer", "p35_energy_tail_charger"),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
