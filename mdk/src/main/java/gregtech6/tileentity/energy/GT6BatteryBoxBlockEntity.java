@@ -174,15 +174,21 @@ public class GT6BatteryBoxBlockEntity extends TileEntityBase03TicksAndSync imple
 		return aState.getBlock() instanceof GT6BatteryBoxBlock tBox ? tBox.energyType().get() : TD.Energy.EU;
 	}
 
-	/** The BET resolution — small/large off the block's slot family (runtime: both registered; offline: the explicit type). */
+	/**
+	 * The BET resolution — the block's OWN family supplier (task p35 fix: the charger
+	 * blocks ride the charger BETs; the battery boxes theirs — the old slot-count
+	 * fallback resolved EVERY GT6BatteryBoxBlock to the battery-box BET and the
+	 * invalid-block-entity guard killed the charger BEs on placement). Offline: the
+	 * explicit type; STONE: the battery-box BET (the pre-p35 fallback).
+	 */
 	static BlockEntityType<? extends TileEntityBase03TicksAndSync> resolveBet(@Nullable BlockEntityType<?> aType, BlockState aState) {
 		if (aType != null) {
 			@SuppressWarnings("unchecked")
 			BlockEntityType<? extends TileEntityBase03TicksAndSync> tTyped = (BlockEntityType<? extends TileEntityBase03TicksAndSync>) aType;
 			return tTyped;
 		}
-		return aState.getBlock() instanceof GT6BatteryBoxBlock tBox && tBox.slots() == 16
-				? GT6Batteries.BATTERY_BOX_LARGE_BE.get() : GT6Batteries.BATTERY_BOX_BE.get();
+		if (aState.getBlock() instanceof GT6BatteryBoxBlock tBox) return tBox.betSupplier().get();
+		return GT6Batteries.BATTERY_BOX_BE.get();
 	}
 
 	@Override

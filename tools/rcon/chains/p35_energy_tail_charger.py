@@ -72,18 +72,8 @@ def crystal_merge(pos, energy=None):
         "1.21.1": f'data merge block {F(pos)} {{inventory:{{Size:4,Items:[{{Slot:0b,id:"{CRYSTAL_ITEM}",count:1,components:{{"minecraft:custom_data":{{gt.energy:{energy}L}}}}}}]}}}}',
     }
 
-def crystal_charge_probe(pos):
-    """The crystal charge range probe — per-leg item paths (block inventory NBT is
-    the same carrier both legs; the ITEM charge rides tag vs components)."""
-    f = F(pos)
-    return {
-        "1.20.1": f'execute if data block {f} inventory.Items[0].tag.gt.energy match 100..12800000',
-        "1.21.1": f'execute if data block {f} inventory.Items[0].components."minecraft:custom_data".gt.energy match 100..12800000',
-    }
-
 CRYSTAL_EMPTY = crystal_merge(A_CH, None)       # arm A: the empty crystal (the chargeable seat)
 CRYSTAL_FULL = crystal_merge(B_CH, 64000)        # arm B: a 64000 LU crystal (2 packets' worth)
-CHARGE_PROBE_A = crystal_charge_probe(A_CH)
 
 steps = [
     Step(f"fill 518 62 {Z - 2} 540 68 {Z + 5} air", expect="filled"),
@@ -96,20 +86,25 @@ steps = [
     Step(f"gt6energy place {F(A_DIAL)}", expect="GT6 energy source placed"),
     Step(f"gt6energy type {F(A_DIAL)} LU", expect="type ENERGY.LIGHT"),
     Step(f"gt6energy volt {F(A_DIAL)} 32", expect="voltage 32 EU"),
-    Step(f"gt6energy mode {F(A_DIAL)} on", expect="emitting true", sleep=6.0),
-    # the buffer probe: the <=3-packets/tick intake has banked a bounded window's worth
-    Step(f"execute if data block {F(A_CH)} gt.energy match 500..40000", expect="Test passed", sleep=0.5),
-    # keep the dial on past the band-7 threshold (35840): the push arm charges the crystal
-    Step(f"data get block {F(A_CH)}", expect="gt.energy: ", sleep=45.0),
-    Step(f"gt6energy mode {F(A_DIAL)} off", expect="emitting false", sleep=20.0),
-    Step(CHARGE_PROBE_A["1.20.1"], expect="Test passed", node_cmds=CHARGE_PROBE_A, sleep=0.5),
+    Step(f"data get block {F(A_CH)}", expect="gt.active: 0b", sleep=2.0),
+    Step(f"gt6energy mode {F(A_DIAL)} on", expect="emitting true"),
+    # THE INTAKE LIVING PROOF: gt.active = the buffer >= the 32 mOutput — the LU
+    # dial fills the buffer through the :178-193 intake (the <=3-packets/tick
+    # mReceivablePower headroom). THE BAND-7 PUSH into the crystal needs 35840 EU =
+    # ~186 s at the single-crystal headroom — the push arm is the OFFLINE pin
+    # (GT6CrystalChargerTest.chargeCycleFillsTheCrystalFromTheNetwork), declared.
+    Step(f"data get block {F(A_CH)}", expect="gt.active: 1b", sleep=2.0, poll=25.0),
+    Step(f"gt6energy mode {F(A_DIAL)} off", expect="emitting false"),
 
     phase("B: the discharge-emit leg — the crystal charge, the front face feeds the absorber"),
     Step(f"setblock {F(B_CH)} gt6:crystal_charger_t2[facing=north]", expect="Changed the block"),
     Step(CRYSTAL_FULL["1.20.1"], expect="Modified block data", node_cmds=CRYSTAL_FULL),
     Step(f"setblock {F(B_ABS)} gt6:laser_absorber[facing=north]", expect="Changed the block"),
     Step(f"gt6laser reset {F(B_ABS)}", expect="GT6 laser accounting reset"),
-    Step(f"gt6laser stat {F(B_ABS)}", expect="in 32,", sleep=5.0, poll=30.0),
+    # the stat prints the CUMULATIVE intake ("in 19008, out 0" at 1 packet/tick) —
+    # pin the LU->EU TYPE PAIR (the converter identity) + a live intake marker
+    Step(f"gt6laser stat {F(B_ABS)}", expect="LU->EU", sleep=5.0, poll=30.0),
+    Step(f"gt6laser stat {F(B_ABS)}", expect="in ", sleep=1.0),
 
     phase("C: the registration census — the charger items (the /give half)"),
     Step(f"setblock {F(CHEST)} minecraft:chest", expect="Changed the block"),
@@ -120,8 +115,10 @@ steps = [
     Step(f"item replace block {F(CHEST)} container.10 with gt6:crystal_charger_large 1", expect="Replaced"),
     Step(f"item replace block {F(CHEST)} container.11 with gt6:crystal_charger_large_t2 1", expect="Replaced"),
     Step(f"item replace block {F(CHEST)} container.19 with gt6:crystal_charger_large_t10 1", expect="Replaced"),
-    Step(f"data get block {F(CHEST)} Items[0]", expect="gt6:crystal_charger\""),
-    Step(f"data get block {F(CHEST)} Items[19]", expect="gt6:crystal_charger_large_t10"),
+    # the sparse-list read form: match the entries BY ID (the cryo_tower Items[{id:...}] face)
+    Step(f"execute if data block {F(CHEST)} Items[{{id:\"gt6:crystal_charger\"}}]", expect="Test passed"),
+    Step(f"execute if data block {F(CHEST)} Items[{{id:\"gt6:crystal_charger_t10\"}}]", expect="Test passed"),
+    Step(f"execute if data block {F(CHEST)} Items[{{id:\"gt6:crystal_charger_large_t10\"}}]", expect="Test passed"),
 
     phase("D: teardown — restore the band"),
     Step(f"fill 518 62 {Z - 2} 540 68 {Z + 5} air", expect="filled"),

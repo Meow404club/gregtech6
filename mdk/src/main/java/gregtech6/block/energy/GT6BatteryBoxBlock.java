@@ -76,6 +76,11 @@ public class GT6BatteryBoxBlock extends GTEntityBlock {
 		return mEnergyType;
 	}
 
+	/** The block's own family BET supplier (the BE resolveBet seat — the charger blocks resolve THEIR BET, not the battery-box one). */
+	public Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> betSupplier() {
+		return mTickerType;
+	}
+
 	/** The family slot count (the BE reads it off its block state — the NBT_INV_SIZE column). */
 	public int slots() {
 		return mSlots;
