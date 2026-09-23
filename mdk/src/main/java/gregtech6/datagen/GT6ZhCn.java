@@ -497,6 +497,28 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.long_dist_wire_13");
 		addDirect("block.gt6.long_dist_wire_14");
 		addDirect("block.gt6.long_dist_wire_15");
+		// task p35-energy-tail-machines — the Crystal Chargers (the dump faces verbatim:
+		// gt.multitileentity.10130-10139 晶体充能器 (T0..T9) + :10140-10149 大型晶体充能器)
+		addDirect("block.gt6.crystal_charger");
+		addDirect("block.gt6.crystal_charger_t2");
+		addDirect("block.gt6.crystal_charger_t3");
+		addDirect("block.gt6.crystal_charger_t4");
+		addDirect("block.gt6.crystal_charger_t5");
+		addDirect("block.gt6.crystal_charger_t6");
+		addDirect("block.gt6.crystal_charger_t7");
+		addDirect("block.gt6.crystal_charger_t8");
+		addDirect("block.gt6.crystal_charger_t9");
+		addDirect("block.gt6.crystal_charger_t10");
+		addDirect("block.gt6.crystal_charger_large");
+		addDirect("block.gt6.crystal_charger_large_t2");
+		addDirect("block.gt6.crystal_charger_large_t3");
+		addDirect("block.gt6.crystal_charger_large_t4");
+		addDirect("block.gt6.crystal_charger_large_t5");
+		addDirect("block.gt6.crystal_charger_large_t6");
+		addDirect("block.gt6.crystal_charger_large_t7");
+		addDirect("block.gt6.crystal_charger_large_t8");
+		addDirect("block.gt6.crystal_charger_large_t9");
+		addDirect("block.gt6.crystal_charger_large_t10");
 		// task p29-w4-eu-bridge — the three EU-bridge families (the dump faces verbatim,
 		// gt.multitileentity.10001-10005 电力加热器 / 10011-10015 电动引擎 / 10021-10025
 		// 电动机) + the Roasting template (gt.multitileentity.20171-20174 焙烧炉, the

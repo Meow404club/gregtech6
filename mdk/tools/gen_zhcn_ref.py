@@ -1250,6 +1250,26 @@ BLOCK_BACKFILL = {
     "block.gt6.long_dist_wire_13": "远距输电用高压电缆 (UV)",  # task p35 — dump gt.block.longdistwire.01.13 verbatim
     "block.gt6.long_dist_wire_14": "远距输电用高压电缆 (UV)",  # task p35 — dump gt.block.longdistwire.01.14 verbatim
     "block.gt6.long_dist_wire_15": "远距输电用高压电缆 (UV)",  # task p35 — dump gt.block.longdistwire.01.15 verbatim
+    "block.gt6.crystal_charger": "晶体充能器 (T0)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_t2": "晶体充能器 (T1)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_t3": "晶体充能器 (T2)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_t4": "晶体充能器 (T3)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_t5": "晶体充能器 (T4)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_t6": "晶体充能器 (T5)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_t7": "晶体充能器 (T6)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_t8": "晶体充能器 (T7)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_t9": "晶体充能器 (T8)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_t10": "晶体充能器 (T9)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_large": "大型晶体充能器 (T0)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_large_t2": "大型晶体充能器 (T1)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_large_t3": "大型晶体充能器 (T2)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_large_t4": "大型晶体充能器 (T3)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_large_t5": "大型晶体充能器 (T4)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_large_t6": "大型晶体充能器 (T5)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_large_t7": "大型晶体充能器 (T6)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_large_t8": "大型晶体充能器 (T7)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_large_t9": "大型晶体充能器 (T8)",  # task p35 — dump gt.multitileentity faces verbatim
+    "block.gt6.crystal_charger_large_t10": "大型晶体充能器 (T9)",  # task p35 — dump gt.multitileentity faces verbatim
     "block.gt6.water_wheel": "水车",           # task p28-c-water-wheel — hand (no dump face: the kTFRU rows are out-of-face by the ADR §1.1 filter; the standard zh machine word)
     "block.gt6.crusher": "破碎机",                   # = the TSV gt6.row.machine.crusher unit verbatim
     # task p28-c-ulv-dynamo-row — the dynamo family name face (the W1 classes' deferred

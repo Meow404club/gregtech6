@@ -139,6 +139,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6EuBridgeBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting ladder
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
                 new SubProviderEntry(GT6LongDistanceBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
+                new SubProviderEntry(GT6CrystalChargerBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
                 new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
@@ -193,6 +194,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6EuBridgeBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting ladder
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
                 new SubProviderEntry(GT6LongDistanceBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
+                new SubProviderEntry(GT6CrystalChargerBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
                 new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
@@ -1241,6 +1243,40 @@ public final class GT6LootTables extends LootTableProvider {
             rBlocks.add(gregtech6.registry.GT6ElectricTransformers.BLOCKS_BY_PATH.get(tRow.path()).get());
         }
         return rBlocks;
+    }
+
+    /** The Crystal Charger block list (task p35-energy-tail-machines): the 20-row LU family, self-drop (the battery-box storage shape). */
+    public static List<Block> crystalChargerLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.registry.GT6CrystalChargers.ChargerRow tRow : gregtech6.registry.GT6CrystalChargers.ROWS) {
+            rBlocks.add(gregtech6.registry.GT6CrystalChargers.BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The Crystal Charger self-drop provider (task p35-energy-tail-machines, the transformer shape verbatim). */
+    public static final class GT6CrystalChargerBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6CrystalChargerBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6CrystalChargerBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return crystalChargerLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : crystalChargerLootBlocks()) dropSelf(tBlock);
+        }
     }
 
     /** The Long Distance block list (task p35-energy-tail-machines): the 5 LD transformer endpoints + the 16 LD wire metas, self-drop (the MTE Drops default / the wire family shape). */

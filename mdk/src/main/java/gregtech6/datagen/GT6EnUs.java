@@ -115,6 +115,7 @@ public class GT6EnUs extends LanguageProvider {
         addFeConverter(); // task p28-b-fe-converter-machine — tail-append
         addElectricTransformer(); // task p28-c-ulv-lv-transformer
         addLDEnergyFamilies(); // task p35-energy-tail-machines
+        addCrystalChargers(); // task p35-energy-tail-machines
         addEuBridgeFamilies(); // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting template
         addLaserFamilies(); // task p32-qu-laser-domain — the CO2 Laser + Laser Absorber families + the gas emitters
         addMagicAbsorber(); // task p32-magic-absorber — the Magic Field Absorber name
@@ -748,6 +749,17 @@ public class GT6EnUs extends LanguageProvider {
      * BlockLongDistWire :44 "Long Distance Electric Wire ("+VN[tier]+")" wording,
      * verbatim — the atomic keys.
      */
+    /**
+     * The Crystal Charger display keys (task p35-energy-tail-machines): the :970-:971
+     * registration wording "Crystal Charger (T"+i+")" / "Large Crystal Charger (T"+i+")"
+     * verbatim — the atomic keys.
+     */
+    private void addCrystalChargers() {
+        for (gregtech6.registry.GT6CrystalChargers.ChargerRow tRow : gregtech6.registry.GT6CrystalChargers.ROWS) {
+            add("block.gt6." + tRow.path(), (tRow.slots() == 16 ? "Large Crystal Charger (" : "Crystal Charger (") + tRow.tierWord() + ")");
+        }
+    }
+
     private void addLDEnergyFamilies() {
         for (gregtech6.registry.GT6LongDistanceTransformers.LDRow tRow : gregtech6.registry.GT6LongDistanceTransformers.ROWS) {
             add("block.gt6." + tRow.path(), "Long Distance Transformer Endpoint (" + tRow.voltageWord() + ")");

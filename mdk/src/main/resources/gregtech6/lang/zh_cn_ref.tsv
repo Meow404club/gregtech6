@@ -165,6 +165,26 @@ direct	block.gt6.long_dist_wire_12	远距输电用高压电缆 (UV)	hand
 direct	block.gt6.long_dist_wire_13	远距输电用高压电缆 (UV)	hand
 direct	block.gt6.long_dist_wire_14	远距输电用高压电缆 (UV)	hand
 direct	block.gt6.long_dist_wire_15	远距输电用高压电缆 (UV)	hand
+direct	block.gt6.crystal_charger	晶体充能器 (T0)	hand
+direct	block.gt6.crystal_charger_t2	晶体充能器 (T1)	hand
+direct	block.gt6.crystal_charger_t3	晶体充能器 (T2)	hand
+direct	block.gt6.crystal_charger_t4	晶体充能器 (T3)	hand
+direct	block.gt6.crystal_charger_t5	晶体充能器 (T4)	hand
+direct	block.gt6.crystal_charger_t6	晶体充能器 (T5)	hand
+direct	block.gt6.crystal_charger_t7	晶体充能器 (T6)	hand
+direct	block.gt6.crystal_charger_t8	晶体充能器 (T7)	hand
+direct	block.gt6.crystal_charger_t9	晶体充能器 (T8)	hand
+direct	block.gt6.crystal_charger_t10	晶体充能器 (T9)	hand
+direct	block.gt6.crystal_charger_large	大型晶体充能器 (T0)	hand
+direct	block.gt6.crystal_charger_large_t2	大型晶体充能器 (T1)	hand
+direct	block.gt6.crystal_charger_large_t3	大型晶体充能器 (T2)	hand
+direct	block.gt6.crystal_charger_large_t4	大型晶体充能器 (T3)	hand
+direct	block.gt6.crystal_charger_large_t5	大型晶体充能器 (T4)	hand
+direct	block.gt6.crystal_charger_large_t6	大型晶体充能器 (T5)	hand
+direct	block.gt6.crystal_charger_large_t7	大型晶体充能器 (T6)	hand
+direct	block.gt6.crystal_charger_large_t8	大型晶体充能器 (T7)	hand
+direct	block.gt6.crystal_charger_large_t9	大型晶体充能器 (T8)	hand
+direct	block.gt6.crystal_charger_large_t10	大型晶体充能器 (T9)	hand
 direct	block.gt6.electrolyzer_part	电解器部件	hand
 direct	block.gt6.electrometer	静电计传感器	hand
 direct	block.gt6.energy_source	测试能源	hand
