@@ -28,7 +28,9 @@ import org.slf4j.Logger;
  * <li>{@code find <pos>} — forces {@link GTMiniPortalBlockEntity#findTargetPortal()} (the
  *     100-tick rescan beat, hand-driven for the chains);</li>
  * <li>{@code check <pos>} — the upstream TOOL_magnifyingglass readout (:228-241) plus the
- *     relay state: active / target coords / the redstone+comparator emission buffers.</li>
+ *     relay state: active / target coords / the emission buffers (mRedstone+mComparator)
+ *     and the inbound relay + watchdog buffers (xRedstone/xComparator/wRedstone,
+ *     the upstream :108-135 cross-dimension relay surface).</li>
  * </ul>
  *
  * <p>Game-bus listener (default Bus.FORGE), self-contained per ADR-P3-4.
@@ -116,7 +118,10 @@ public final class GTMiniPortalCommand {
 		String tLine = "GT6 portal at " + aPos.toShortString() + " (" + tPortal.getTileEntityName() + "): active=" + tPortal.mActive
 				+ " target=" + tTarget
 				+ " redstone=" + java.util.Arrays.toString(tPortal.mRedstone)
-				+ " comparator=" + java.util.Arrays.toString(tPortal.mComparator);
+				+ " comparator=" + java.util.Arrays.toString(tPortal.mComparator)
+				+ " xRedstone=" + java.util.Arrays.toString(tPortal.xRedstone)
+				+ " xComparator=" + java.util.Arrays.toString(tPortal.xComparator)
+				+ " wRedstone=" + java.util.Arrays.toString(tPortal.wRedstone);
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		return Command.SINGLE_SUCCESS;
 	}
