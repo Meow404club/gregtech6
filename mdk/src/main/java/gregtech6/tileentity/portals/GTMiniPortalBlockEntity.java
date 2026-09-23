@@ -63,11 +63,12 @@ import gregtech6.util.UT6;
  * <li><b>Relay faces</b> (upstream :325-515): items (the ITEM_HANDLER capability forwards
  *     to the delegate's own — the upstream ISidedInventory relay + mLastSide memory is
  *     obsolete, every modern access is sided), fluids (FLUID_HANDLER forwards likewise),
- *     energy (the ITileEntityEnergy family forwards with the OPOS flip — the upstream
- *     ITileEntityDelegating face), redstone/comparator (the per-tick direct field write
- *     + 20 tick watchdog, upstream :112-181). With no target the portal passes through
- *     to its OWN neighbour (upstream {@code delegator(aSide)} :329 — a targetless portal
- *     is a plain one-block extender, no mActive gate on this path, upstream verbatim).</li>
+ *     energy (the ITileEntityEnergy family forwards on the raw incoming face — the
+ *     upstream delegator access face, the OPOS+OPOS cancel), redstone/comparator (the
+ *     per-tick direct field write + 20 tick watchdog, upstream :112-181). With no target
+ *     the relay dead-ends: upstream :329 answers {@code delegator(aSide)} — a
+ *     DelegatorTileEntity wrapping the PORTAL ITSELF whose relay handlers all reject on
+ *     {@code mTarget == null} (:354-515) — so a targetless portal forwards nothing.</li>
  * <li><b>6×byte[6] server-only state</b> (upstream :63): mRedstone/mComparator (the own
  *     emission buffers), xRedstone/xComparator (the per-tick inbound relay targets),
  *     wRedstone/wComparator (the watchdog counters) — none of it syncs. The client sees
@@ -330,32 +331,37 @@ public abstract class GTMiniPortalBlockEntity extends TileEntityBase03TicksAndSy
 	// ---------------------------------------------------------------------------
 
 	/**
-	 * The side the delegate BE is accessed through (the upstream DelegatorTileEntity
-	 * mSideOfTileEntity): the OPOS flip through the target (:330), the raw side on the
-	 * targetless pass-through (:329 — delegator(aSide) keeps aSide).
-	 */
-	public byte delegateAdjacentSide(byte aSide) {
-		return mTarget != null ? UT6.OPOS[aSide] : aSide;
-	}
-
-	/**
-	 * Upstream getDelegateTileEntity :328-331: the target's adjacent BE at the OPPOSITE
-	 * face ({@link UT6#OPOS}); no target → the portal's OWN adjacent BE ({@code delegator(aSide)},
-	 * :329 — the targetless portal is a plain pass-through extender). The unloaded-chunk
-	 * guard (POC R1) returns null instead of pulling the chunk; upstream the same call on
-	 * an unloaded chunk raised a null-form via the 1.7.10 chunk loader, so the relay degrades
-	 * to "no delegate" — the R2 semantics (lost, not buffered).
+	 * Upstream getDelegateTileEntity :328-331. The delegate BE LOCATION rides the OPOS
+	 * flip: with a target the neighbour is probed at {@code mTarget + OPOS[aSide]} (:330).
+	 * With no target the relay dead-ends — upstream answers {@code delegator(aSide)} :329,
+	 * a DelegatorTileEntity wrapping the PORTAL ITSELF whose relay handlers all reject on
+	 * {@code mTarget == null} (:354-515), so the consumer-visible net effect is "no
+	 * delegate" and null is the modern dead-end form (no own-neighbour pass-through).
+	 *
+	 * <p>The delegate ACCESS FACE is the raw incoming face {@code aSide}: upstream Root
+	 * :223 hands the portal {@code OPOS[query face]}, the portal :330 flips again through
+	 * the target, and Root :224 records the delegator side as {@code OPOS[OPOS[s]] = s} —
+	 * the two inner flips cancel, so the delegate is always accessed on the SAME face the
+	 * query arrived on (:436/:450/:460/:472 read mSideOfTileEntity /
+	 * getForgeSideOfTileEntity). The targetless arm keeps aSide too (:329 delegator(aSide)).
+	 *
+	 * <p>The unloaded-chunk guard (POC R1) returns null instead of pulling the chunk;
+	 * upstream the same call on an unloaded chunk raised a null-form via the 1.7.10 chunk
+	 * loader, so the relay degrades to "no delegate" — the R2 semantics (lost, not
+	 * buffered).
 	 */
 	@Nullable
 	public BlockEntity delegateAdjacent(byte aSide) {
 		if (aSide < 0 || aSide >= 6) return null;
-		return adjacent(mTarget != null ? mTarget : this, delegateAdjacentSide(aSide));
+		if (mTarget == null) return null; // the upstream :329 dead end — nothing to forward to
+		return adjacent(mTarget, UT6.OPOS[aSide]); // the LOCATION keeps the :330 flip
 	}
 
 	/**
 	 * The guarded adjacency probe: {@code Level.isLoaded} (Level.java:795 — the
-	 * chunkSource.hasChunk bit check, NEVER loads) before any getBlockEntity. The own-level
-	 * case is guarded too (a border chunk can be unloaded on this level as well).
+	 * chunkSource.hasChunk bit check, NEVER loads) before any getBlockEntity. The target's
+	 * level is guarded the same way whatever dimension it lives in (an unloaded chunk on
+	 * ANY level must not be pulled).
 	 */
 	@Nullable
 	private static BlockEntity adjacent(GTMiniPortalBlockEntity aPortal, byte aSide) {
@@ -373,17 +379,16 @@ public abstract class GTMiniPortalBlockEntity extends TileEntityBase03TicksAndSy
 	//? if forge {
 	/**
 	 * The item/fluid relay (upstream :350-515): every capability ask forwards to the
-	 * delegate's own capability on the delegate side (the OPOS face through the target —
-	 * the upstream mSideOfTileEntity, {@link #delegateAdjacentSide}). Fresh per call, no
-	 * caching — the delegate can vanish between ticks.
+	 * delegate's own capability on the raw incoming face (the upstream mSideOfTileEntity —
+	 * the delegateAdjacent javadoc carries the OPOS+OPOS cancel algebra). Fresh per call,
+	 * no caching — the delegate can vanish between ticks.
 	 */
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> aCapability, @Nullable Direction aSide) {
 		if (aSide != null && (aCapability == ForgeCapabilities.ITEM_HANDLER || aCapability == ForgeCapabilities.FLUID_HANDLER)) {
-			byte tQuerySide = (byte) aSide.get3DDataValue();
-			BlockEntity tDelegate = delegateAdjacent((byte) tQuerySide);
+			BlockEntity tDelegate = delegateAdjacent((byte) aSide.get3DDataValue());
 			if (tDelegate != null) {
-				return tDelegate.getCapability(aCapability, Direction.from3DDataValue(delegateAdjacentSide((byte) tQuerySide)));
+				return tDelegate.getCapability(aCapability, aSide); // the access face = the incoming face
 			}
 			return LazyOptional.empty();
 		}
@@ -399,11 +404,11 @@ public abstract class GTMiniPortalBlockEntity extends TileEntityBase03TicksAndSy
 
 	// ---------------------------------------------------------------------------
 	// energy relay (the upstream ITileEntityDelegating face — the network asks, the
-	// portal forwards on the delegate side (delegateAdjacentSide); the delegate machine
-	// answers through its own full gates, exactly the upstream network-side pull)
+	// portal forwards on the raw incoming face: the upstream delegator access face,
+	// the OPOS+OPOS cancel — see the delegateAdjacent javadoc for the algebra)
 	// ---------------------------------------------------------------------------
 
-	/** The delegate as an energy endpoint (own neighbour when targetless — the :329 pass-through). */
+	/** The delegate as an energy endpoint (null when targetless — the :329 dead end). */
 	@Nullable
 	private ITileEntityEnergy delegateEnergy(byte aSide) {
 		BlockEntity tDelegate = delegateAdjacent(aSide);
@@ -414,63 +419,63 @@ public abstract class GTMiniPortalBlockEntity extends TileEntityBase03TicksAndSy
 	public boolean isEnergyAcceptingFrom(TagData aEnergyType, byte aSide, boolean aTheoretical) {
 		if (aSide < 0 || aSide >= 6) return false;
 		ITileEntityEnergy tDelegate = delegateEnergy(aSide);
-		return tDelegate != null && tDelegate.isEnergyAcceptingFrom(aEnergyType, delegateAdjacentSide(aSide), aTheoretical);
+		return tDelegate != null && tDelegate.isEnergyAcceptingFrom(aEnergyType, aSide, aTheoretical);
 	}
 
 	@Override
 	public boolean isEnergyEmittingTo(TagData aEnergyType, byte aSide, boolean aTheoretical) {
 		if (aSide < 0 || aSide >= 6) return false;
 		ITileEntityEnergy tDelegate = delegateEnergy(aSide);
-		return tDelegate != null && tDelegate.isEnergyEmittingTo(aEnergyType, delegateAdjacentSide(aSide), aTheoretical);
+		return tDelegate != null && tDelegate.isEnergyEmittingTo(aEnergyType, aSide, aTheoretical);
 	}
 
 	@Override
 	public synchronized long doEnergyInjection(TagData aEnergyType, byte aSide, long aSize, long aAmount, boolean aDoInject) {
 		if (aSide < 0 || aSide >= 6) return 0;
 		ITileEntityEnergy tDelegate = delegateEnergy(aSide);
-		return tDelegate == null ? 0 : tDelegate.doEnergyInjection(aEnergyType, delegateAdjacentSide(aSide), aSize, aAmount, aDoInject);
+		return tDelegate == null ? 0 : tDelegate.doEnergyInjection(aEnergyType, aSide, aSize, aAmount, aDoInject);
 	}
 
 	@Override
 	public synchronized long doEnergyExtraction(TagData aEnergyType, byte aSide, long aSize, long aAmount, boolean aDoExtract) {
 		if (aSide < 0 || aSide >= 6) return 0;
 		ITileEntityEnergy tDelegate = delegateEnergy(aSide);
-		return tDelegate == null ? 0 : tDelegate.doEnergyExtraction(aEnergyType, delegateAdjacentSide(aSide), aSize, aAmount, aDoExtract);
+		return tDelegate == null ? 0 : tDelegate.doEnergyExtraction(aEnergyType, aSide, aSize, aAmount, aDoExtract);
 	}
 
 	@Override
 	public long getEnergyOffered(TagData aEnergyType, byte aSide, long aSize) {
 		if (aSide < 0 || aSide >= 6) return 0;
 		ITileEntityEnergy tDelegate = delegateEnergy(aSide);
-		return tDelegate == null ? 0 : tDelegate.getEnergyOffered(aEnergyType, delegateAdjacentSide(aSide), aSize);
+		return tDelegate == null ? 0 : tDelegate.getEnergyOffered(aEnergyType, aSide, aSize);
 	}
 
 	@Override
 	public long getEnergyDemanded(TagData aEnergyType, byte aSide, long aSize) {
 		if (aSide < 0 || aSide >= 6) return 0;
 		ITileEntityEnergy tDelegate = delegateEnergy(aSide);
-		return tDelegate == null ? 0 : tDelegate.getEnergyDemanded(aEnergyType, delegateAdjacentSide(aSide), aSize);
+		return tDelegate == null ? 0 : tDelegate.getEnergyDemanded(aEnergyType, aSide, aSize);
 	}
 
 	@Override
 	public long getEnergySizeInputRecommended(TagData aEnergyType, byte aSide) {
 		if (aSide < 0 || aSide >= 6) return 0;
 		ITileEntityEnergy tDelegate = delegateEnergy(aSide);
-		return tDelegate == null ? 0 : tDelegate.getEnergySizeInputRecommended(aEnergyType, delegateAdjacentSide(aSide));
+		return tDelegate == null ? 0 : tDelegate.getEnergySizeInputRecommended(aEnergyType, aSide);
 	}
 
 	@Override
 	public long getEnergySizeOutputRecommended(TagData aEnergyType, byte aSide) {
 		if (aSide < 0 || aSide >= 6) return 0;
 		ITileEntityEnergy tDelegate = delegateEnergy(aSide);
-		return tDelegate == null ? 0 : tDelegate.getEnergySizeOutputRecommended(aEnergyType, delegateAdjacentSide(aSide));
+		return tDelegate == null ? 0 : tDelegate.getEnergySizeOutputRecommended(aEnergyType, aSide);
 	}
 
 	@Override
 	public Collection<TagData> getEnergyTypes(byte aSide) {
 		if (aSide < 0 || aSide >= 6) return Collections.emptyList();
 		ITileEntityEnergy tDelegate = delegateEnergy(aSide);
-		return tDelegate == null ? Collections.emptyList() : tDelegate.getEnergyTypes(delegateAdjacentSide(aSide));
+		return tDelegate == null ? Collections.emptyList() : tDelegate.getEnergyTypes(aSide);
 	}
 
 	// ---------------------------------------------------------------------------

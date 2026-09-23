@@ -278,4 +278,14 @@ public class GTMiniPortalBlockEntityTest {
 		assertNull(tPortal.delegateAdjacent((byte) 9), "the invalid side folds to null");
 		assertFalse(tPortal.isEnergyAcceptingFrom(null, (byte) 2, false), "no level → no energy face");
 	}
+
+	@Test
+	public void targetlessPortalRelayDeadEnds() {
+		// upstream :329 delegator(aSide) wraps the PORTAL ITSELF whose relay handlers all
+		// reject on mTarget == null (:354-515) — no own-neighbour pass-through; the modern
+		// dead-end form answers "no delegate" (delegateAdjacent javadoc)
+		GTMiniPortalNetherBlockEntity tPortal = nether(0, 64, 0);
+		assertNull(tPortal.delegateAdjacent((byte) 2), "the targetless relay forwards nothing (upstream :329 dead end)");
+		assertFalse(tPortal.isEnergyAcceptingFrom(null, (byte) 2, false), "the targetless energy relay answers false (upstream :354-515)");
+	}
 }

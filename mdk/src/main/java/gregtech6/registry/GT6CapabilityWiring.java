@@ -809,7 +809,9 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 	// The RELAY row (the MultiBlockPartBlockEntity part-relay form): the portal BE has no
 	// own handler — the provider resolves the portal's cross-dimension delegate
 	// (delegateAdjacent, the isLoaded-guarded OPOS adjacency) and answers through the LEVEL
-	// query on the delegate side (delegateAdjacentSide). Item + fluid faces, both BETs.
+	// query on the RAW INCOMING face (the upstream delegator access face: Root :224 OPOS +
+	// MiniPortal :330 OPOS cancel — the delegateAdjacent javadoc carries the algebra).
+	// Item + fluid faces, both BETs.
 	// Without these rows every external hopper push (the VanillaInventoryCodeHooks
 	// insertHook level query) and every pipe distribute push is capability-blind on this
 	// node while the 1.20.1 BE override hides the gap — the ADR-P15-4 census discipline.
@@ -833,8 +835,7 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 		if (aSide == null) return null;
 		BlockEntity tDelegate = aPortal.delegateAdjacent((byte) aSide.get3DDataValue());
 		if (tDelegate == null || !tDelegate.hasLevel()) return null;
-		return tDelegate.getLevel().getCapability(aCapability, tDelegate.getBlockPos(),
-				Direction.from3DDataValue(aPortal.delegateAdjacentSide((byte) aSide.get3DDataValue())));
+		return tDelegate.getLevel().getCapability(aCapability, tDelegate.getBlockPos(), aSide); // the access face = the incoming face
 	}
 
 }
