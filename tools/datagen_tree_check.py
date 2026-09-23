@@ -239,6 +239,59 @@ def _norm_smelt_result_str(o: dict) -> bool:
     return True
 
 
+def _reorder_canonical(o: dict) -> None:
+    """按键序 in-place 重排为 canonical 树序：type 先、parent 次、余键字母序。
+
+    出处：1.20.1 DataProvider.FIXED_ORDER_FIELDS/KEY_COMPARATOR（tmp/vanilla-1.20.1
+    net/minecraft/data/DataProvider.java:22-27，type=0/parent=1/其余 defaultReturnValue(2)
+    +字母序；GT6BiomeModifierConditions.CANONICAL_KEY_ORDER 同构扩展）——canonical
+    全树经 1.20.1 saveStable 落盘即此序。归一补键（category/parent 等中位键）若
+    尾部追加会破坏该序致归一后字节仍不等，故施用了变换的 dict 必须按同序重排。
+    """
+    for k in ["type", "parent"] + sorted(k for k in o if k not in ("type", "parent")):
+        if k in o:
+            o[k] = o.pop(k)
+
+
+def _norm_circuit_program(o: dict) -> bool:
+    """gt6:circuit_program 方言（p35-datagen-circuit-declared：p33 电路带 52 文件
+    standing red 的清偿对象之一，recipes 面）：result 改键恒写 count（含 ==1，与
+    vanilla 的 count==1 不落盘相反）+ category/show_notification 两默认键
+    1.20.1 面恒写、1.21.1 codec 默认不落盘。
+
+    出处：1.20.1 forge 面 GT6CraftingRecipes.CircuitProgramRow.serializeRecipeData
+    （mdk/src/main/java/gregtech6/datagen/GT6CraftingRecipes.java:1926 category 恒写、
+    :1945-1948 result {"item":X,"count":1} 恒写、:1949 show_notification 恒写）；
+    1.21.1 codec 面 GT6CircuitProgramRecipe.Serializer.CODEC（mdk/src/main/java/
+    gregtech6/items/GT6CircuitProgramRecipe.java:247 category optionalFieldOf 默认
+    MISC 省略、:249 STRICT_CODEC result {"count":N,"id":X} 恒写 count、:250
+    show_notification optionalFieldOf 默认 true 省略）。census（2026-09-23，
+    work/p35-datagen-circuit-declared，HEAD 1fb0327b1 双腿新鲜树）：本带 26 文件
+    content 差全带单一形，三处补写后逐字节相等；c:/forge: tag 值差由既有
+    _norm_tag_c_to_forge 覆盖（样本：recipes/integrated_circuit_reset.json）。
+    必须注册在 _norm_recipe_result 之前：本变换消费 result 的 {"id":X} 形并保留
+    count==1（forge 面恒写），后者会把同形改写成 {"item":X} 且丢掉 count==1。
+    """
+    if o.get("type") != "gt6:circuit_program":
+        return False
+    changed = False
+    r = o.get("result")
+    if isinstance(r, dict) and "id" in r:
+        nr: dict = {"count": r.get("count", 1), "item": r["id"]}
+        r.clear()
+        r.update(nr)
+        changed = True
+    if "category" not in o:
+        o["category"] = "misc"
+        changed = True
+    if "show_notification" not in o:
+        o["show_notification"] = True
+        changed = True
+    if changed:
+        _reorder_canonical(o)
+    return changed
+
+
 def _norm_material_tool(o: dict) -> bool:
     """gt6:material_tool 方言（GT6 自定义 serializer 的双腿序列化形差）：
     result 改键恒写 count（含 ==1，与 vanilla 的 count==1 不落盘相反）+ 尾键
@@ -383,6 +436,27 @@ def _norm_telemetry(o: dict) -> bool:
     return False
 
 
+def _norm_advancement_parent(o: dict, canon: dict | None = None) -> bool:
+    """配方 advancement 首键 parent（p35-datagen-circuit-declared：52 文件 standing
+    red 的清偿对象之二，advancement 面）：GT6 双腿 fork 形差——1.20.1 面 saveCircuitProgram
+    显式 .parent(RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)（GT6CraftingRecipes.java:1907），
+    21.1 面同一 save 缝无 .parent 行（GT6CraftingRecipes.java:1972-1977）；vanilla 两侧
+    builder 均自带 parent，故此前全带零差。canonical 参照可用时（try_value_normalize
+    捆绑传入）才施用：仅当 node 缺 parent、面为配方 advancement（criteria+rewards）
+    且 canonical 自带 parent（值照抄不硬编码，表外形态原样保留 → FAIL，fail-visible
+    不放宽）。census 样本：advancements/recipes/misc/integrated_circuit_reset.json
+    （26 文件电路带，2026-09-23）。
+    """
+    if canon is None or "parent" in o or "criteria" not in o or "rewards" not in o:
+        return False
+    cp = canon.get("parent")
+    if not isinstance(cp, str):
+        return False
+    o["parent"] = cp
+    _reorder_canonical(o)
+    return True
+
+
 def _band(rel: PurePosixPath, dir_name: str) -> bool:
     """产物带判定：data/<ns>/<dir_name>/ 前缀（canonical 形相对路径）。"""
     return (len(rel.parts) >= 4 and rel.parts[0] == "data"
@@ -432,9 +506,11 @@ VALUE_NORMALIZERS: list[tuple[str, str, list[tuple[str, Callable[[dict], bool]]]
         ("items-str→array", _norm_items_wrap),
         ("requirements→criteria-order", _norm_requirements_order),
         ("sends_telemetry_event(1.20.1-only)", _norm_telemetry),
+        ("parent(gt6-fork-1.20.1-face)", _norm_advancement_parent),
     ]),
     ("data/*/recipes", "recipes", [
         ("smelt-result-obj→str", _norm_smelt_result_str),
+        ("circuit_program-dialect(1.20.1 count+category+notification)", _norm_circuit_program),
         ("material_tool-dialect(1.20.1 count+notification)", _norm_material_tool),
         ("result-id→item(+drop count==1)", _norm_recipe_result),
         ("tag-c:→forge:", _norm_tag_c_to_forge),
@@ -502,9 +578,11 @@ def try_value_normalize(rel: PurePosixPath, c_bytes: bytes, n_bytes: bytes
     canon = c_obj if isinstance(c_obj, dict) else None
 
     def _bound(fn):
-        # requirements 组序归一需要 canonical 参照（集语义，两侧容器序皆无实义）
-        if canon is not None and fn is _norm_requirements_order:
-            return lambda o: _norm_requirements_order(o, canon)
+        # canonical 参照型变换（requirements 组序 / advancement parent）由
+        # try_value_normalize 捆绑传入参照，canon 不可得时不施用（保守 FAIL）
+        if canon is not None and fn in (_norm_requirements_order,
+                                        _norm_advancement_parent):
+            return lambda o: fn(o, canon)
         return fn
 
     applied = [name for name, fn in regs if _walk_dicts(n_obj, _bound(fn))]
