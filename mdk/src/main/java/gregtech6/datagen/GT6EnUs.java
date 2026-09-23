@@ -19,6 +19,7 @@ import gregtech6.item.MaterialPrefixItem;
 import gregtech6.items.armor.GT6ArmorMaterials;
 import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.registry.GT6Attachments;
+import gregtech6.registry.GT6BookText;
 import gregtech6.registry.GT6ExtruderMolds;
 import gregtech6.registry.GT6FoodCans;
 import gregtech6.registry.GT6FoamSprays;
@@ -159,6 +160,7 @@ public class GT6EnUs extends LanguageProvider {
         // (GT6OreBlocks.TAB_TITLE_KEY, "Stone Ores" — the PrefixBlockItem.java:62-67 gate).
         addOreTabTitle(); // task p30-ore-3-datagen — the ore-1 note's card-③ face (the one new key)
         addRails(); // task p35-rails-31-blocks — table-tail append
+        addBooks(); // task p35-books-written — table-tail append
     }
 
     /**
@@ -2075,5 +2077,19 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addMagicAbsorber() {
         add("block.gt6.magic_absorber", "Magic Field Absorber");
+    }
+
+    /**
+     * The written-book display names (task p35-books-written): one {@code item.gt6.<path>}
+     * key per generated {@link GT6BookText} row, valued with the row title (the upstream
+     * createWrittenBook title column, the single-source extractor face). The 1.20.1 leg
+     * resolves these — its stacks carry no NBT, so WrittenBookItem.getName falls through
+     * to the descriptionId; the 1.21.1 leg shows the component title directly (the same
+     * upstream English face, the declared asymmetry). Table-tail append, append-only.
+     */
+    private void addBooks() {
+        for (GT6BookText.BookText tRow : GT6BookText.BOOKS) {
+            add("item.gt6." + tRow.path(), tRow.title());
+        }
     }
 }

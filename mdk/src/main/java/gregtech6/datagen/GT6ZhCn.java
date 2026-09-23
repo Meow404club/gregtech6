@@ -17,6 +17,7 @@ import gregtech6.item.MaterialPrefixItem;
 import gregtech6.jade.GT6FluidProvider;
 import gregtech6.jade.GT6MachineProvider;
 import gregtech6.jei.GT6JeiPlugin;
+import gregtech6.registry.GT6BookText;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GTMaterialBlocks;
@@ -130,6 +131,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addPlaceablesUnits();   // task p32-placeables — the 8 deco/placed-pile names (the lantern + the sandwich + the six placed piles; hand rows, the tsv direct band)
 		addLaserGasUnits();     // task p32-qu-laser-domain — the 2 gas emitter names + the 2 tooltips (hand rows, the dump :10379/:10395 faces)
 		addRailsUnits();        // task p35-rails-31-blocks — the 31 rail names (the dump gt.block.rail.* faces verbatim, the tsv direct band)
+		addBookUnits();         // task p35-books-written — the 15 written-book display names (hand rows, the tsv direct band; the dump carries zero book-title faces)
 	}
 
 	/**
@@ -159,6 +161,19 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.comp_laser_gas_empty.tooltip");
 		addDirect("item.gt6.comp_laser_gas_co2");
 		addDirect("item.gt6.comp_laser_gas_co2.tooltip");
+	}
+
+	/**
+	 * The written-book zh faces (task p35-books-written, the addUsbStickUnits shape): the
+	 * 15 display names riding the reference table's hand layer — the upstream dump
+	 * carries zero book-title rows (its 743 written.book.* rows are the English page
+	 * defaults), so the values are hand rows over the upstream title columns
+	 * (Loader_Books.java, the GT6BookText extractor face).
+	 */
+	private void addBookUnits() {
+		for (GT6BookText.BookText tRow : GT6BookText.BOOKS) {
+			addDirect("item.gt6." + tRow.path());
+		}
 	}
 
 	/**
