@@ -153,6 +153,9 @@ public class CoverFilterFluidTorchTest extends GTCoverTestBase {
 		@javax.annotation.Nullable
 		public CoverData mCovers;
 
+		/** The family seam — the production flag resolves from the wire blockstate, which the vanilla-BRICKS fixture cannot carry; the torch gate reads the public {@code isRedstone()} exit, so the probe pins the family directly (default false = electric). */
+		boolean mRedstoneFamily;
+
 		WireCoverProbe(BlockEntityType<WireCoverProbe> aType) {
 			super(aType, WIRE_POS, Blocks.BRICKS.defaultBlockState());
 			// the self-typed BET via the holder trick (the pump-test barrel form)
@@ -161,6 +164,11 @@ public class CoverFilterFluidTorchTest extends GTCoverTestBase {
 		/** Seeds a raw connection bit (SBIT[side] = 1 << side, the base :33 form) — the protected-mask test seam. */
 		void seedConnection(byte aSide) {
 			mConnections |= (byte) (1 << aSide);
+		}
+
+		@Override
+		public boolean isRedstone() {
+			return mRedstoneFamily;
 		}
 
 		@Override
@@ -180,6 +188,13 @@ public class CoverFilterFluidTorchTest extends GTCoverTestBase {
 		return sWireType.create(WIRE_POS, Blocks.BRICKS.defaultBlockState());
 	}
 
+	/** The redstone-family probe wire (the torch's legal host). */
+	static WireCoverProbe redstoneWire() {
+		WireCoverProbe tWire = wire();
+		tWire.mRedstoneFamily = true;
+		return tWire;
+	}
+
 	/** A wire store with the given torch-family cover on face 3. */
 	static CoverData torchData(GTWireBlockEntity aWire, AbstractCoverAttachmentTorch aTorch) {
 		CoverData tCovers = new CoverData((ICoverableTE) aWire);
@@ -193,8 +208,13 @@ public class CoverFilterFluidTorchTest extends GTCoverTestBase {
 		tOven.setCovers(new CoverData(tOven));
 		assertTrue(new CoverRedstoneTorch().interceptCoverPlacement((byte) 3, tOven.getCovers(), null),
 				"the torch only mounts on the wire carrier (upstream :35)");
-		assertFalse(new CoverRedstoneTorch().interceptCoverPlacement((byte) 3, torchData(wire(), new CoverRedstoneTorch()), null),
-				"the wire carrier admits the torch");
+		// the p35 narrowing: the ELECTRIC family row of the same carrier refuses too —
+		// upstream keys the insulated redstone wire CLASS, so the port's cover-side gate
+		// narrows to the redstone-family rows of the shared carrier
+		assertTrue(new CoverRedstoneTorch().interceptCoverPlacement((byte) 3, torchData(wire(), new CoverRedstoneTorch()), null),
+				"the electric-family wire row refuses the torch (the cover-side narrowing)");
+		assertFalse(new CoverRedstoneTorch().interceptCoverPlacement((byte) 3, torchData(redstoneWire(), new CoverRedstoneTorch()), null),
+				"the redstone-family wire row admits the torch");
 	}
 
 	@Test

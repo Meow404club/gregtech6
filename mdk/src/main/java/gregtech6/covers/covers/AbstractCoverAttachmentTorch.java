@@ -22,19 +22,27 @@ import gregtech6.tileentity.connectors.GTWireBlockEntity;
  * family flag folds into the carrier-class check (the declared gate deviation below).
  *
  * <p>DECLARED DEVIATION — the host gate: upstream keys the insulated wire CLASS
- * (:35); the port keys the shared carrier class — the redstone-family narrowing is
- * the wire-side business (the port keeps the two families on one carrier class, the
- * p10 note), and {@code interceptConnect} (:36) rides the pooled connector-hooks
- * group. The bounds pair (:75-76 BOXES_TORCHES) rides the cut collision surface.
- * The placement disconnect arm (:39-42) ports through the wire BE's own public
- * {@code disconnect} (the torch face must not conduct).
+ * (:35); the port keeps every wire family on the one carrier class, so the class gate
+ * becomes the carrier class AND the host's own redstone-family flag
+ * ({@link GTWireBlockEntity#isRedstone()} — the gate the wire class answers everything
+ * redstone through). The narrowing is a COVER-SIDE declaration (the P34 policy ruling:
+ * the host's {@code allowCovers} stays the zero-narrowing interface default) — an
+ * electric- or laser-family wire row refuses the torch exactly as the upstream
+ * electric wire classes did. {@code interceptConnect} (:36) rides the pooled
+ * connector-hooks group. The bounds pair (:75-76 BOXES_TORCHES) rides the cut
+ * collision surface. The placement disconnect arm (:39-42) ports through the wire BE's
+ * own public {@code disconnect} (the torch face must not conduct).
  */
 public abstract class AbstractCoverAttachmentTorch extends AbstractCoverDefault {
 
-	/** Upstream :35 — the torch family only mounts on the redstone wire carrier. */
+	/**
+	 * Upstream :35 — the torch family only mounts on the REDSTONE family of the wire
+	 * carrier (task p35-cover-narrowing-render-snapshot: the P34 carrier-class gate
+	 * narrows to the redstone-class rows; electric/laser wire rows refuse).
+	 */
 	@Override
 	public boolean interceptCoverPlacement(byte aCoverSide, CoverData aData, @Nullable Entity aPlayer) {
-		return !(aData.mTileEntity instanceof GTWireBlockEntity);
+		return !(aData.mTileEntity instanceof GTWireBlockEntity tWire && tWire.isRedstone());
 	}
 
 	/**

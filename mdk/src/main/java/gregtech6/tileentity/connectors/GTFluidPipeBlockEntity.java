@@ -787,18 +787,23 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 
 	/**
 	 * The C-grade render hook (IForgeBlockEntity.java:174): a pipe with output arrows AND/OR
-	 * C-Foam hands the render thread its immutable snapshots — the {@link
-	 * gregtech6.client.render.PipeFlowSnapshot} arrows on the flow key and the {@link
-	 * gregtech6.client.render.PipeFoamSnapshot} foam state on its own key (the
-	 * GTModelProperties single-valued-property coexistence ruling). A plain pipe keeps
-	 * {@code ModelData.EMPTY} semantics and renders through the plain blockstate model;
-	 * the paint colour rides the 03 base's PAINT supply through the same derived snapshot.
+	 * C-Foam AND/OR covers hands the render thread its immutable snapshots — the {@link
+	 * gregtech6.client.render.PipeFlowSnapshot} arrows on {@link
+	 * gregtech6.client.render.GTModelProperties#FLOW_SNAPSHOT}, the {@link
+	 * gregtech6.client.render.PipeFoamSnapshot} foam state on {@code FOAM_SNAPSHOT} and the
+	 * {@link gregtech6.covers.GTCoverRenderSnapshot} cover plate chain on {@code
+	 * RENDER_SNAPSHOT} (the GTModelProperties single-valued-property coexistence ruling —
+	 * each consumer family on its own key). A plain pipe keeps {@code ModelData.EMPTY}
+	 * semantics and renders through the plain blockstate model; the paint colour rides the
+	 * 03 base's PAINT supply through the same derived snapshot.
 	 *
-	 * <p>Covers (task p34-pool-cover-hosts): a covered pipe appends the per-face sprite
-	 * snapshot (the TileEntityBase08Barrel template) on the SAME {@code RENDER_SNAPSHOT}
-	 * key the arrows use — a covered face wins over the arrow snapshot
-	 * (ponytail: the single-key shared shape; split the key only if an arrow must
-	 * render underneath a cover plate).
+	 * <p>Covers (task p34-pool-cover-hosts; the p35-cover-narrowing-render-snapshot split):
+	 * the per-face sprite snapshot (the TileEntityBase08Barrel template) rides
+	 * {@code RENDER_SNAPSHOT} and the arrows ride {@code FLOW_SNAPSHOT} — the pre-p35
+	 * single-key {@code else-if} evicted the arrows under any cover (the P34 leftover debt:
+	 * one lossy shared key). The two keys are now independent, so mounting or dismantling a
+	 * cover never invalidates the arrow snapshot and vice versa; on a covered face the
+	 * opaque plate owns the surface (the foam+flow coexistence precedent, unchanged).
 	 */
 	@Override
 	public net.minecraftforge.client.model.data.ModelData getModelData() {
@@ -809,8 +814,9 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 				gregtech6.client.render.GTModelProperties.derive(super.getModelData());
 		if (tCoverSnapshot != null) {
 			tBuilder.with(gregtech6.client.render.GTModelProperties.RENDER_SNAPSHOT, tCoverSnapshot);
-		} else if (tMask != 0) {
-			tBuilder.with(gregtech6.client.render.GTModelProperties.RENDER_SNAPSHOT, new gregtech6.client.render.PipeFlowSnapshot(tMask));
+		}
+		if (tMask != 0) {
+			tBuilder.with(gregtech6.client.render.GTModelProperties.FLOW_SNAPSHOT, new gregtech6.client.render.PipeFlowSnapshot(tMask));
 		}
 		if (mFoam) {
 			tBuilder.with(gregtech6.client.render.GTModelProperties.FOAM_SNAPSHOT, new gregtech6.client.render.PipeFoamSnapshot(mFoamDried, mOwnable));

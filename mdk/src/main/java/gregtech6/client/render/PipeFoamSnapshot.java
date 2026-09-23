@@ -11,8 +11,9 @@ package gregtech6.client.render;
  * colour does NOT ride this snapshot — it is the PAINT property (applyFoam paints the pipe
  * the foam colour, upstream :161 mIsPainted=T + :163 mRGBa).
  *
- * <p>Own property key ({@code GTModelProperties#FOAM_SNAPSHOT}): the pipe also carries the
- * {@code RENDER_SNAPSHOT} flow arrows, and ModelProperties are single-valued — the
+ * <p>Own property key ({@code GTModelProperties#FOAM_SNAPSHOT}): the pipe may also carry
+ * the {@code FLOW_SNAPSHOT} flow arrows and the cover chain's {@code RENDER_SNAPSHOT},
+ * and ModelProperties are single-valued — the
  * GTModelProperties:46-55 coexistence ruling sends each consumer model to its own key.
  * Thread safety per the snapshot contract: booleans are immutable, the record is deeply
  * frozen by construction. Absent property = no foam (the plain pipe).
