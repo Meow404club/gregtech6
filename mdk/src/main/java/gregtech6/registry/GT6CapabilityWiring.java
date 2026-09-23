@@ -27,6 +27,7 @@ import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 import gregtech6.tileentity.inventories.GT6HopperBlockEntity; // p26 tail-append
 import gregtech6.tileentity.inventories.GT6QueueHopperBlockEntity; // p26 tail-append
 import gregtech6.tileentity.energy.GT6BatteryBoxBlockEntity; // p29-w4 tail-append
+import gregtech6.tileentity.energy.GT6ZpmDechargerBlockEntity; // p36 tail-append
 import gregtech6.tileentity.multiblocks.GTGasTurbineBlockEntity; // p29-w3 tail-append
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 import net.minecraft.core.Direction; // p35 tail-append
@@ -115,6 +116,7 @@ public final class GT6CapabilityWiring {
 		registerGasTurbine(aEvent); // task p29-w3-turbine-dynamo (tail-append; shared serial file)
 		registerDistillationFaces(aEvent); // task p29-w3-distill-crucible (tail-append; shared serial file)
 		registerBatteryBoxFamily(aEvent); // task p29-w4-battery-storage (tail-append; shared serial file)
+		registerZpmDechargers(aEvent); // task p36-energy-zpm-dechargers (tail-append; shared serial file)
 		registerPortalRelays(aEvent); // task p35-portals-mini-nether-end (tail-append; shared serial file)
 		registerLongDistancePipeFaces(aEvent); // task p35-long-distance-pipes (tail-append; shared serial file)
 	}
@@ -804,6 +806,21 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		BlockEntityType<GT6BatteryBoxBlockEntity> tLarge = GT6Batteries.BATTERY_BOX_LARGE_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tLarge,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+	}
+
+	// -- the ZPM decharger family (p36-energy-zpm-dechargers; TAIL-APPENDED ROW, the
+	// shared serial file: append-only discipline) --
+	// The decharger BET joins as an ITEM-ONLY face (the ZPM slot gate :36-:37 — the
+	// external battery/hopper push of the artifact; the energy face is GT-native, the
+	// one-way artifact→machine lane refuses network intake at the :179 guard, so NO
+	// EnergyStorage row — the battery-box-family posture). The forge leg answers through
+	// the Root getCapability override over the mInventory carrier; this row is the 21.1
+	// registration only, the ADR-P15-4 census discipline.
+
+	private static void registerZpmDechargers(RegisterCapabilitiesEvent aEvent) {
+		BlockEntityType<GT6ZpmDechargerBlockEntity> tDech = GT6ZpmDechargers.ZPM_DECHARGER_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tDech,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 	}
 

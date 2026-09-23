@@ -218,6 +218,25 @@ public final class GT6Batteries {
 	// the registrations (the GTWires static-loop shape — the row tables are the source)
 	// ---------------------------------------------------------------------------
 
+	/**
+	 * The ZPM row — the Loader :1103 single-item registration (task p36-energy-zpm-dechargers;
+	 * NOT a {@link BatteryRow}: the ladder records drive the crafting/cell/tag faces and the
+	 * ZPM carries none of them — no recipe (the dungeon artifact, TODO.md:389), no cell, no
+	 * tag). Columns: meta 14999, packet V[7]=131072, the explicit NBT_INPUT_MIN 1 /
+	 * NBT_INPUT_MAX VMAX[7]=262144 band, NBT_CAPACITY 2_000_000_000_000L, TD.Energy.QU.
+	 * The discharge-only face rides {@link gregtech6.item.energy.GT6ZpmItem} (the :79-:80
+	 * overrides), the decharger seat is {@code GT6ZpmDechargers}.
+	 */
+	public record ZpmRow(String path, int metaId, long sizeRec, long sizeMin, long sizeMax, long capacity) {}
+
+	/** The ZPM row literals — the LadderTest-form pins read this face. */
+	public static final ZpmRow ZPM = new ZpmRow("zpm", 14999, GTWireSpecs.V[7], 1L, GTWireSpecs.VMAX[7], 2_000_000_000_000L);
+
+	/** The ZPM item — stack 16 (the :1103 stack column), the :111-:117 creative pair rides the tab walk. */
+	public static final RegistryObject<Item> ZPM_ITEM = ITEMS.register(ZPM.path(),
+			() -> new gregtech6.item.energy.GT6ZpmItem(new Item.Properties().stacksTo(16),
+					ZPM.sizeRec(), ZPM.capacity(), ZPM.sizeMin()));
+
 	/** The 37 battery items, keyed by path (the datagen/test lookup seam). */
 	public static final Map<String, RegistryObject<Item>> BATTERY_ITEMS = new LinkedHashMap<>();
 	static {
@@ -296,6 +315,9 @@ public final class GT6Batteries {
 	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
 		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
 			for (BatteryRow tRow : ROWS) aEvent.accept(new ItemStack(BATTERY_ITEMS.get(tRow.path()).get()));
+			// the ZPM creative pair — the :111-:117 getSubItems verbatim (empty + FULL)
+			for (ItemStack tStack : gregtech6.item.energy.GT6ZpmItem.creativeStacks(
+					(gregtech6.item.energy.GT6ZpmItem) ZPM_ITEM.get())) aEvent.accept(tStack);
 			for (CellRow tRow : CELL_ROWS) aEvent.accept(new ItemStack(CELL_ITEMS.get(tRow.path()).get()));
 			for (CircuitRow tRow : CIRCUIT_ROWS) aEvent.accept(new ItemStack(CIRCUIT_ITEMS.get(tRow.path()).get()));
 			for (BoxRow tRow : BOX_ROWS) aEvent.accept(new ItemStack(BATTERY_BOX_ITEMS.get(tRow.path()).get()));
@@ -322,8 +344,8 @@ public final class GT6Batteries {
 	@SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
 		aEvent.enqueueWork(() -> {
-			gregtech6.GT6Mod.LOGGER.info("GT6 batteries registered: {} battery items + {} cells + {} circuit carriers + {} battery boxes (the p29-w4 storage face)",
-					BATTERY_ITEMS.size(), CELL_ITEMS.size(), CIRCUIT_ITEMS.size(), BATTERY_BOX_BLOCKS.size());
+			gregtech6.GT6Mod.LOGGER.info("GT6 batteries registered: {} battery items + the ZPM artifact ({} QU capacity) + {} cells + {} circuit carriers + {} battery boxes (the p29-w4 storage face, the p36 ZPM tail)",
+					BATTERY_ITEMS.size(), ZPM.capacity(), CELL_ITEMS.size(), CIRCUIT_ITEMS.size(), BATTERY_BOX_BLOCKS.size());
 		});
 	}
 

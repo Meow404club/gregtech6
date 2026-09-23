@@ -102,11 +102,11 @@ public class GT6LootInjectionTest {
         }
     }
 
-    /** The dungeon metal ladder (:418-433): 16 rows, the weight 12/12/12/2 arms verbatim. */
+    /** The dungeon metal ladder (:418-433) + the task-p36 ZPM artifact row: 17 entries. */
     @Test
     public void simpleDungeonCarriesTheMetalLadderVerbatim() {
         Map<String, int[]> tMap = byItem(GT6LootInjectionDatagen.injections().get(0).entries());
-        assertEquals(16, tMap.size(), "the four 4-metal ladders (ingot/plate/stick/toolHeadArrow)");
+        assertEquals(17, tMap.size(), "the four 4-metal ladders (ingot/plate/stick/toolHeadArrow) + the p36 ZPM artifact row");
         for (String tMetal : new String[] {"steel", "bronze", "brass"}) {
             assertEquals(12, tMap.get("gt6:ingot_" + tMetal)[0], ":418-420 weight");
             assertEquals(12, tMap.get("gt6:plate_" + tMetal)[0], ":422-424 weight");
@@ -118,6 +118,14 @@ public class GT6LootInjectionTest {
                     && tMap.get("gt6:tool_head_arrow_" + tMetal)[2] == 24, ":430-432 stack [4,24]");
         }
         assertEquals(2, tMap.get("gt6:ingot_damascus_steel")[0], ":421 the damascus weight-2 arm");
+        // task p36 — the ZPM artifact row: the full-NBT lane (the DungeonData.zpm active face)
+        GT6LootInjectionDatagen.EntryRow tZpm = GT6LootInjectionDatagen.injections().get(0).entries()
+                .stream().filter(aRow -> aRow.item().equals("gt6:zpm")).findFirst().orElseThrow();
+        assertEquals(2, tZpm.weight(), "the rare-roll posture");
+        assertTrue(tZpm.min() == 1 && tZpm.max() == 1, "the [1,1] artifact stack");
+        org.junit.jupiter.api.Assertions.assertNotNull(tZpm.tag(), "the full-NBT lane rides the row");
+        assertTrue(tZpm.tag().getBoolean(gregtech6.item.energy.GT6BatteryItem.NBT_ACTIVE_ENERGY),
+                "gt.active.energy = the store-as-full key (the 2/3 dungeon dice collapsed to always-full)");
     }
 
     /** The mineshaft rows (:468-482): the seven vanilla ore blocks + the six dig heads. */
@@ -252,12 +260,18 @@ public class GT6LootInjectionTest {
         assertEquals("gt6:gt6_dungeon_inject", tJson.get("type").getAsString(), "the serializer row id");
         assertEquals("minecraft:chests/simple_dungeon", tJson.get("table").getAsString(), "the in-codec target");
         JsonArray tEntries = tJson.getAsJsonArray("entries");
-        assertEquals(16, tEntries.size(), "the metal ladder");
+        assertEquals(17, tEntries.size(), "the metal ladder + the p36 ZPM artifact row");
         JsonObject tFirst = tEntries.get(0).getAsJsonObject();
         assertEquals("gt6:ingot_steel", tFirst.get("item").getAsString());
         assertEquals(12, tFirst.get("weight").getAsInt(), ":418 weight");
         assertEquals(1, tFirst.get("min").getAsInt());
         assertEquals(6, tFirst.get("max").getAsInt());
+        // task p36 — the artifact tail entry carries the full-NBT lane
+        JsonObject tZpm = tEntries.get(16).getAsJsonObject();
+        assertEquals("gt6:zpm", tZpm.get("item").getAsString(), "the artifact row rides last");
+        // the SNBT 1b byte round-trips through the JSON as the number 1 (gson int form)
+        assertEquals(1, tZpm.get("tag").getAsJsonObject().get("gt.active.energy").getAsInt(),
+            "gt.active.energy = the store-as-full key (the DungeonData.zpm active face)");
         JsonObject tRolls = tJson.getAsJsonObject("rolls");
         assertNotNull(tRolls, "the uniform roll range rides the codec");
         assertEquals(1, tRolls.get("min_inclusive").getAsInt(), "the declared [1,3] floor");

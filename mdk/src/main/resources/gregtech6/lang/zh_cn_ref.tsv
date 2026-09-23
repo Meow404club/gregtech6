@@ -366,6 +366,8 @@ direct	block.gt6.wire_laser	激光光纤导线	hand
 direct	block.gt6.wood_fluid_pipe_medium	木制流体管道	hand
 direct	block.gt6.wood_fluid_pipe_small	小型木制流体管道	hand
 direct	block.gt6.wood_wall	木壁板	hand
+direct	block.gt6.zpm_decharger_electric	零点模块放能器 (电能)	hand
+direct	block.gt6.zpm_decharger_quantum	零点模块放能器 (量子能)	hand
 direct	fluid.gt6.adamantium_molten	熔融艾德曼合金	hand
 direct	fluid.gt6.alcopops	波普甜酒	hand
 direct	fluid.gt6.alumina_molten	熔融氧化铝	hand
@@ -2029,6 +2031,7 @@ direct	item.gt6.wrench_hv	扳手 (HV)	hand
 direct	item.gt6.wrench_hv.tooltip	潜行右键切换为活动扳手	hand
 direct	item.gt6.wrench_lv	扳手 (LV)	hand
 direct	item.gt6.wrench_lv.tooltip	潜行右键切换为活动扳手	hand
+direct	item.gt6.zpm	零点模块 (ZPM)	hand
 direct	item.gt6.wrench_mv	扳手 (MV)	hand
 direct	item.gt6.wrench_mv.tooltip	潜行右键切换为活动扳手	hand
 direct	itemGroup.gt6.bee	蜜蜂	hand

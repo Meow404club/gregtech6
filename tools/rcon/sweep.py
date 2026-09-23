@@ -917,7 +917,10 @@ SESSION_GROUPS = (
     # (bbox-registered, no fresh_boot / mutates member — the dials/rigs are band-local
     # setblocks; the gt6energy/gt6laser channels are the p32 precedent). --group
     # p35_energy_tail matches through the chains' embedded name prefix.
-    ("p35_energy_tail_transformer", "p35_energy_tail_charger"),
+    # task p36-energy-zpm-dechargers: the RESERVED energy_tail_zpm seat is CLAIMED —
+    # the third chain (p35_energy_tail_zpm) rides the ZPM item + the two decharger
+    # BEs (a fresh x544..558 z420..424 column, x-disjoint from the p35 band columns).
+    ("p35_energy_tail_transformer", "p35_energy_tail_charger", "p35_energy_tail_zpm"),
     # p35-rails-31-blocks (task p35-rails-31-blocks): the three rail chains — a fresh
     # z=368..464 band on the x=400 column (the ride lanes z368..424 with the two-lane
     # ladder race, the booster lane z426..454 with the brake/charge/launch faces, the

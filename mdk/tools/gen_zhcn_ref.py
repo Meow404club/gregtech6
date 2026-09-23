@@ -559,6 +559,10 @@ HAND_TRANSLATIONS = {
     # forms, never hand-guessed)
     "gt6.row.metal_wall.display": ("%s壁板", "hand"),
     "block.gt6.wood_wall": ("木壁板", "hand"),
+    # task p36 — the dump gt.multitileentity.11170/:11171/:14999 faces verbatim
+    "block.gt6.zpm_decharger_electric": ("零点模块放能器 (电能)", "hand"),
+    "block.gt6.zpm_decharger_quantum": ("零点模块放能器 (量子能)", "hand"),
+    "item.gt6.zpm": ("零点模块 (ZPM)", "hand"),
     "block.gt6.large_copper_coil": ("大型铜线圈", "hand"),
     "block.gt6.large_nichrome_coil": ("大型镍铬合金线圈", "hand"),
     "block.gt6.large_carborundum_coil": ("大型碳化硅线圈", "hand"),

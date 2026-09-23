@@ -203,6 +203,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addElectricDynamoUlv(); // task p28-c-ulv-dynamo-row — the Electric Dynamo T0 row
         addBatteryBoxes(); // task p29-w4-battery-storage — the 12-box storage face
         addCrystalChargers(); // task p35-energy-tail-machines — the 20-row LU charge face
+        addZpmDechargers(); // task p36-energy-zpm-dechargers — the two-row discharge face
         addLargeBoiler(); // task p13-large-boiler
         addLightningRod(); // task p24-lightning-rod
         addParts(); // task p29-w3-nbtdesign-parts — the part-family expansion (per-design variants)
@@ -1938,6 +1939,37 @@ public final class GT6BlockStates extends BlockStateProvider {
                     modLoc(tTex + "side"), modLoc(tTex + "side"),          // bottom/top
                     modLoc(tTex + "front"), modLoc(tTex + "side"),         // north(front)/south
                     modLoc(tTex + "side"), modLoc(tTex + "side"));         // west/east
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tY = switch (aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FACING)) {
+                    case SOUTH -> 180;
+                    case WEST -> 270;
+                    case EAST -> 90;
+                    default -> 0; // NORTH
+                };
+                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            });
+            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+        }
+    }
+
+    /**
+     * Task p36-energy-zpm-dechargers — the two ZPM Decharger rows over the REAL baked art
+     * (review-fix: the rebase binding the p36-render-texture-bake contract paths — the
+     * battery-box stand-in yields): the src-over zpm_electricity/zpm_quantum composites
+     * (assets/README.md attribution), front on the FACING face, back on the opposite
+     * (upstream getTexture2, MultiTileEntityZPMDechargerEU.java:39-44 — index 0 = front
+     * on mFacing, index 1 = back on OPOS, index 2 = side elsewhere; the ZPM_TOP active
+     * decal stays unborrowed, the port carries no ACTIVE property), the FACING four-way
+     * rotationY (the addCrystalChargers form).
+     */
+    private void addZpmDechargers() {
+        for (gregtech6.registry.GT6ZpmDechargers.DechargerRow tRow : gregtech6.registry.GT6ZpmDechargers.ROWS) {
+            net.minecraft.world.level.block.Block tBlock = gregtech6.registry.GT6ZpmDechargers.BLOCKS_BY_PATH.get(tRow.path()).get();
+            String tTexBase = tRow.path().equals("zpm_decharger_electric") ? "zpm_decharger" : tRow.path(); // the render-card PNG names: the electric family drops the infix, the quantum family keeps it
+            ModelFile tModel = models().cube(tRow.path(),
+                    modLoc("block/" + tTexBase + "_side"), modLoc("block/" + tTexBase + "_side"),   // bottom/top
+                    modLoc("block/" + tTexBase + "_front"), modLoc("block/" + tTexBase + "_back"),  // north(front)/south(back)
+                    modLoc("block/" + tTexBase + "_side"), modLoc("block/" + tTexBase + "_side"));  // west/east
             getVariantBuilder(tBlock).forAllStates(aState -> {
                 int tY = switch (aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FACING)) {
                     case SOUTH -> 180;

@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gt6:block/zpm_decharger_quantum_side",
+    "east": "gt6:block/zpm_decharger_quantum_side",
+    "north": "gt6:block/zpm_decharger_quantum_front",
+    "south": "gt6:block/zpm_decharger_quantum_back",
+    "up": "gt6:block/zpm_decharger_quantum_side",
+    "west": "gt6:block/zpm_decharger_quantum_side"
+  }
+}

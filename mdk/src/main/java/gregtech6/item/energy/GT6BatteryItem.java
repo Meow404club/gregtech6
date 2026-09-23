@@ -86,10 +86,24 @@ public class GT6BatteryItem extends Item implements IItemEnergy {
 	 * @param aType      the energy domain (the NBT_ENERGY_ACCEPTED column, TD.Energy.EU/LU)
 	 */
 	public GT6BatteryItem(Properties aProperties, long aSizeRec, long aCapacity, TagData aType) {
+		this(aProperties, aSizeRec, aCapacity, (aSizeRec / 2 <= 8 && aSizeRec > 0) ? 1 : aSizeRec / 2, aType);
+	}
+
+	/**
+	 * The explicit-band constructor (task p36 — the ZPM row): upstream files the band as the
+	 * :62-:66 ladder — the :63-:64 DERIVED pair first, then the NBT_INPUT_MIN/NBT_INPUT_MAX
+	 * overrides win. The ZPM row carries {@code NBT_INPUT_MIN 1, NBT_INPUT_MAX VMAX[7]}
+	 * (Loader_MultiTileEntities.java:1103), so the explicit [1..262144] band is the
+	 * transcription; every family row without the overrides keeps the 4-arg derived form
+	 * above (zero drift — the derived expression moved into the delegating ctor verbatim).
+	 *
+	 * @param aSizeMin   the explicit band floor (the NBT_INPUT_MIN column)
+	 */
+	public GT6BatteryItem(Properties aProperties, long aSizeRec, long aCapacity, long aSizeMin, TagData aType) {
 		super(aProperties);
 		mSizeRec = aSizeRec;
-		mSizeMin = (aSizeRec / 2 <= 8 && aSizeRec > 0) ? 1 : aSizeRec / 2; // :63-64 verbatim (the +/:62-66 doc)
-		mSizeMax = aSizeRec * 2; // :63
+		mSizeMin = aSizeMin; // the :65 explicit column (the 4-arg ctor passes the :63-64 derived pair)
+		mSizeMax = aSizeRec * 2; // :63 — and VMAX[7] = V[7]*2 is the same product, the :66 override folds in
 		mCapacity = aCapacity;
 		mType = aType;
 	}

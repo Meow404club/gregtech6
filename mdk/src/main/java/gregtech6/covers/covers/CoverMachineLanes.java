@@ -32,7 +32,9 @@ import gregtech6.util.UT6;
  *     block). Upstream the display/scale energy covers admit the
  *     ITileEntityEnergyDataCapacitor hosts (the battery boxes); the port admits the
  *     coverable machine forms whose energy lane is the read — the declared
- *     host-mapping deviation, no ported battery box is coverable today.</li>
+ *     host-mapping deviation, no ported battery box is coverable today. Task p36 closes
+ *     the deviation for the ZPM decharger (the BatBox family IS the upstream capacitor
+ *     host): it joins the admission and its internal buffer is the read.</li>
  * </ul>
  *
  * <p>The upstream {@code canTick()} placement-gate half folds away: every ported machine
@@ -43,9 +45,10 @@ final class CoverMachineLanes {
 	private CoverMachineLanes() {
 	}
 
-	/** True when the host is one of the two coverable machine forms (the lane carrier). */
+	/** True when the host is a coverable machine form or the task-p36 capacitor host (the lane carrier). */
 	static boolean isMachineForm(ICoverableTE aHost) {
-		return aHost instanceof TileEntityOven || aHost instanceof TileEntityBasicMachine;
+		return aHost instanceof TileEntityOven || aHost instanceof TileEntityBasicMachine
+				|| aHost instanceof gregtech6.tileentity.energy.GT6ZpmDechargerBlockEntity; // p36 — the first coverable capacitor host (the upstream ITileEntityEnergyDataCapacitor admission restored)
 	}
 
 	/** Upstream :1023 — the running-possible lane (the declared subset, see the class doc). */
@@ -87,6 +90,7 @@ final class CoverMachineLanes {
 	static long energyStored(ICoverableTE aHost) {
 		if (aHost instanceof TileEntityOven tOven) return tOven.mEnergy;
 		if (aHost instanceof TileEntityBasicMachine tMachine) return tMachine.mEnergy;
+		if (aHost instanceof gregtech6.tileentity.energy.GT6ZpmDechargerBlockEntity tDech) return tDech.mEnergy; // p36 — the internal buffer
 		return 0;
 	}
 
@@ -94,6 +98,7 @@ final class CoverMachineLanes {
 	static long energyCapacity(ICoverableTE aHost) {
 		if (aHost instanceof TileEntityOven tOven) return tOven.mInputMax;
 		if (aHost instanceof TileEntityBasicMachine tMachine) return tMachine.mInputMax;
+		if (aHost instanceof gregtech6.tileentity.energy.GT6ZpmDechargerBlockEntity tDech) return tDech.capacity(); // p36 — the :216 progress-max buffer cap
 		return 0;
 	}
 

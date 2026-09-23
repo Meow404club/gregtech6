@@ -118,6 +118,7 @@ public class GT6EnUs extends LanguageProvider {
         addElectricTransformer(); // task p28-c-ulv-lv-transformer
         addLDEnergyFamilies(); // task p35-energy-tail-machines
         addCrystalChargers(); // task p35-energy-tail-machines
+        addZpmFamilies(); // task p36-energy-zpm-dechargers — the ZPM item + the two decharger rows
         addLongDistancePipes(); // task p35-long-distance-pipes — the 16 wire metas + the two endpoints
         addEuBridgeFamilies(); // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting template
         addLaserFamilies(); // task p32-qu-laser-domain — the CO2 Laser + Laser Absorber families + the gas emitters
@@ -779,6 +780,17 @@ public class GT6EnUs extends LanguageProvider {
     private void addCrystalChargers() {
         for (gregtech6.registry.GT6CrystalChargers.ChargerRow tRow : gregtech6.registry.GT6CrystalChargers.ROWS) {
             add("block.gt6." + tRow.path(), (tRow.slots() == 16 ? "Large Crystal Charger (" : "Crystal Charger (") + tRow.tierWord() + ")");
+        }
+    }
+
+    /**
+     * The ZPM faces (task p36-energy-zpm-dechargers): the :1103 item name
+     * "Zero-Point-Module (ZPM)" and the :1000-:1001 row names verbatim — the atomic keys.
+     */
+    private void addZpmFamilies() {
+        add("item.gt6." + gregtech6.registry.GT6Batteries.ZPM.path(), "Zero-Point-Module (ZPM)");
+        for (gregtech6.registry.GT6ZpmDechargers.DechargerRow tRow : gregtech6.registry.GT6ZpmDechargers.ROWS) {
+            add("block.gt6." + tRow.path(), tRow.enName());
         }
     }
 
