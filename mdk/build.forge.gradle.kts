@@ -3,6 +3,9 @@
 //   1. 节点 projectDir = mdk/versions/<node>，共享路径一律锚 parent!!.projectDir（= mdk/）；
 //   2. gregapi 挂法 L2：implementation(project(":")) 消费根项目 java-library（禁 includeBuild 自指）。
 // 证据：tmp/harvest/stonecutter-template/build.forge.gradle.kts.txt:2（legacyforge 插件）/:35-52（runs/mods）/:64-66（stonecutterGenerate 接线）。
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+import java.util.zip.ZipOutputStream
 import org.gradle.jvm.tasks.Jar
 
 plugins {
@@ -296,4 +299,68 @@ tasks.named<Jar>("jar") {
 // MDG 工件任务挂 stonecutterGenerate，保证非活动节点的处理后源先于工件产出。
 tasks.named("createMinecraftArtifacts") {
     dependsOn("stonecutterGenerate")
+}
+
+// task p37-ci-fix-forge-signature：CI forge job 确定性红（:mdk:1.20.1-forge:test，
+// SecurityException: SHA-384 digest error for IForgeBlockEntity.class）的兜底修复。
+// 根因链（主会话实证）：NFRT 管线合并改写了 forge jar 字节但 MANIFEST 保留 per-entry
+// SHA-384-Digest；runner 上的产物带 META-INF/*.SF 签名块（本地产物无）→ JarVerifier
+// 校验激活 → digest 声明与实际字节不自洽必炸（SuiteTestClassProcessor →
+// JarVerifier.processEntry）。剥掉签名块即愈：无 .SF 则 JarVerifier 不激活，
+// 陈旧 digest 无害（本地样本直证：digest 不符但无 .SF → 测试全绿）。
+// 剥签必须在 gradle 任务图内做——shell 层 zip -d 会被 Gradle 输出快照侦测，
+// 下一次调用 createMinecraftArtifacts 重执行原样覆写（2026-09-23 本地实证：篡改
+// forge jar 后重跑，task executed 且 sha256 复原 501df831…）。方案 A（workflow 拆两
+// 步）证死，取方案 B：本任务 dependsOn createMinecraftArtifacts，test 依赖本任务。
+// 纯 JDK java.util.zip 流式复制，零新依赖；签名块不存在时零写入（本地常态，
+// 不搅动 createMinecraftArtifacts 的 up-to-date 快照）。剥签前逐 jar 打一行诊断 log，
+// CI 日志可直接坐实根因（runner 上应见 N 个签名条目 → stripping）。
+tasks.register("stripForgeArtifactSignatures") {
+    dependsOn("createMinecraftArtifacts")
+    doLast {
+        val sigExts = setOf("SF", "RSA", "DSA")
+        val artifactsDir = layout.buildDirectory.dir("moddev/artifacts").get().asFile
+        artifactsDir.listFiles { f: File -> f.isFile && f.name.endsWith(".jar") }
+            ?.sortedBy { it.name }
+            ?.forEach { jarFile ->
+                val entries = ZipFile(jarFile).use { zf ->
+                    zf.entries().asSequence().toList()
+                }
+                val sigNames = entries.map { it.name }.filter {
+                    it.startsWith("META-INF/") && !it.endsWith("/") &&
+                        it.substringAfterLast('.', "").uppercase() in sigExts
+                }
+                if (sigNames.isEmpty()) {
+                    logger.lifecycle(
+                        "p37 signature strip: ${jarFile.name}: no META-INF signature blocks, untouched"
+                    )
+                    return@forEach
+                }
+                logger.lifecycle(
+                    "p37 signature strip: ${jarFile.name}: ${sigNames.size} signature entries " +
+                        "(${sigNames.joinToString()}) -> stripping"
+                )
+                val tmp = File(jarFile.parentFile, jarFile.name + ".strip-tmp")
+                ZipOutputStream(tmp.outputStream().buffered()).use { zos ->
+                    ZipFile(jarFile).use { zf ->
+                        for (e in entries) {
+                            if (e.name in sigNames) continue
+                            val copy = ZipEntry(e.name)
+                            copy.time = e.time
+                            zos.putNextEntry(copy)
+                            if (!e.isDirectory) zf.getInputStream(e).use { it.copyTo(zos) }
+                            zos.closeEntry()
+                        }
+                    }
+                }
+                // ponytail: java.io 删除+改名替代 Files.move（kts 对 java.nio 解析失败，实证
+                // 2026-09-23）；单构建单写者，无并发窗。
+                check(jarFile.delete() && tmp.renameTo(jarFile)) {
+                    "p37 signature strip: failed to replace ${jarFile.name} with stripped copy"
+                }
+            }
+    }
+}
+tasks.named("test") {
+    dependsOn("stripForgeArtifactSignatures")
 }
