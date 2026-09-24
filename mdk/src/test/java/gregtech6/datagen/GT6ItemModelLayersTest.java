@@ -7,11 +7,14 @@
  *   <li>the tool rows carry the upstream four-pass icon as layer0..3
  *       (ToolStats.java:267-287: head base / head OVERLAY / handle base / handle OVERLAY;
  *       the vanilla layer number IS the tint index, ItemModelGenerator.java:15,35-44):
- *       builder_wand + saw + file + chisel = exactly 4 layers with pinned texture paths;
+ *       builder_wand + saw + file + chisel + screwdriver = exactly 4 layers with pinned
+ *       texture paths; hammer = the soft-hammer metallic-head shape, also 4 layers;
  *       the VOID-handle iconset tools (crowbar/cutter/wrench/bending_cylinder_small,
  *       passes 2/3 draw nothing upstream) = exactly 2 layers;</li>
- *   <li>the composed singles do NOT regress: screwdriver/hammer stay exactly 1 layer
- *       (the census erratum — the offline composite is structurally complete);</li>
+ *   <li>the p38-issue6-tool-4layer-tint supersession: the former composed singles
+ *       (screwdriver/hammer, the p24/p25 census-erratum ruling) are RETIRED — both tools
+ *       now carry the upstream four-pass structure; the composed single-layer pin is
+ *       gone with the ruling it guarded;</li>
  *   <li>every material prefix model obeys the existence-gated overlay rule: layer1 is
  *       present IF AND ONLY IF {@code material_sets/<set>/<prefix>_overlay.png} exists
  *       on the static ∪ generated face (research.p27-render-three-fixes F2: the gate is
@@ -144,10 +147,11 @@ class GT6ItemModelLayersTest {
         Path itemModels = mdkRoot().resolve(GENERATED_TREE).resolve(ITEM_MODELS);
         assertTrue(Files.isDirectory(itemModels));
 
-        // saw/file/chisel: layer0/1 = the toolHead* materialicon pair (Steel = metallic),
-        // layer2/3 = the HANDLE_* iconset pair borrows (GT_Tool_Saw.java:186-188,
-        // GT_Tool_File.java:91-93, GT_Tool_Chisel.java:87-89).
-        for (String head : new String[] {"saw", "file", "chisel"}) {
+        // saw/file/chisel/screwdriver: layer0/1 = the toolHead* materialicon pair
+        // (Steel = metallic), layer2/3 = the HANDLE_* iconset pair borrows
+        // (GT_Tool_Saw.java:186-188, GT_Tool_File.java:91-93, GT_Tool_Chisel.java:87-89,
+        // GT_Tool_Screwdriver.java:115-117 — the p38-issue6 four-layer migration).
+        for (String head : new String[] {"saw", "file", "chisel", "screwdriver"}) {
             Map<String, String> textures = texturesOf(itemModels, head);
             assertEquals(4, layerKeys(textures).size(), head + " must carry exactly 4 layers");
             assertLayer(textures, 0, "gt6:item/material_sets/metallic/tool_head_" + head, head);
@@ -175,6 +179,17 @@ class GT6ItemModelLayersTest {
         assertLayer(softHammer, 1, "gt6:item/material_sets/rubber/tool_head_hammer_overlay", "soft_hammer");
         assertLayer(softHammer, 2, "gt6:item/material_sets/wood/stick", "soft_hammer");
         assertLayer(softHammer, 3, "gt6:item/material_sets/wood/stick_overlay", "soft_hammer");
+
+        // hard hammer (task p38-issue6-tool-4layer-tint, supersedes the p25 composed
+        // single): the soft-hammer row shape over the METALLIC head pair (the default
+        // primary Steel) + the wood stick pair (the secondary MT.WOODS.Spruce ride,
+        // GT_Tool_HardHammer.getIcon :123) — zero new sprites, all in-tree borrows.
+        Map<String, String> hammer = texturesOf(itemModels, "hammer");
+        assertEquals(4, layerKeys(hammer).size(), "hammer must carry exactly 4 layers");
+        assertLayer(hammer, 0, "gt6:item/material_sets/metallic/tool_head_hammer", "hammer");
+        assertLayer(hammer, 1, "gt6:item/material_sets/metallic/tool_head_hammer_overlay", "hammer");
+        assertLayer(hammer, 2, "gt6:item/material_sets/wood/stick", "hammer");
+        assertLayer(hammer, 3, "gt6:item/material_sets/wood/stick_overlay", "hammer");
     }
 
     /** The VOID-handle iconset tools: base + overlay, exactly 2 layers. */
@@ -189,16 +204,10 @@ class GT6ItemModelLayersTest {
         }
     }
 
-    /** The composed singles stay single-layer (the census erratum — no regression). */
-    @Test
-    void composedSinglesStaySingleLayer() throws IOException {
-        Path itemModels = mdkRoot().resolve(GENERATED_TREE).resolve(ITEM_MODELS);
-        for (String tool : new String[] {"screwdriver", "hammer"}) {
-            Map<String, String> textures = texturesOf(itemModels, tool);
-            assertEquals(1, layerKeys(textures).size(), tool + " must stay exactly 1 layer");
-            assertLayer(textures, 0, "gt6:item/" + tool, tool);
-        }
-    }
+    // RETIRED with the ruling it guarded (task p38-issue6-tool-4layer-tint): the former
+    // composedSinglesStaySingleLayer test ("screwdriver/hammer stay exactly 1 layer",
+    // the census erratum) is superseded by the four-layer migration — both tools are
+    // pinned in fourPassToolsCarryExactlyFourLayers above.
 
     /** The tool ids with their own model rows (pinned by the dedicated tests above). */
     private static final Set<String> TOOL_MODEL_IDS = Set.of(

@@ -103,6 +103,31 @@ public class MachineLadderTest {
 				GTWrenchItem.tintARGB(new ItemStack(Items.STICK), 0), "the identity-less arm = the steel fallback");
 	}
 
+	/**
+	 * Task p38-issue6-tool-4layer-tint: the screwdriver/hammer four-pass tint — index 0 =
+	 * the head (the primary, the Steel fallback), index 2 = the handle (the secondary,
+	 * the Spruce fallback), the overlays stay the -1 sentinel (the supersession of the
+	 * census-erratum "composed single, un-tinted" ruling; upstream GT_Tool_Screwdriver
+	 * .getRGBa :120-122 / GT_Tool_HardHammer.getRGBa :127-129 verbatim).
+	 */
+	@Test
+	public void fourPassTintFollowsPrimaryAndSecondary() {
+		ItemStack tStamped = new ItemStack(Items.STICK);
+		GT6ItemData.set(tStamped, GT6ToolStats.KEY,
+				GT6ToolStats.of(MT.Bronze, MT.WOODS.Spruce, 1.0F));
+		int tHead = 0xFF000000 | (MT.Bronze.mRGBaSolid[0] << 16) | (MT.Bronze.mRGBaSolid[1] << 8) | MT.Bronze.mRGBaSolid[2];
+		int tHandle = 0xFF000000 | (MT.WOODS.Spruce.mRGBaSolid[0] << 16) | (MT.WOODS.Spruce.mRGBaSolid[1] << 8) | MT.WOODS.Spruce.mRGBaSolid[2];
+		assertEquals(tHead, GT6ToolLadder.fourPassTintARGB(tStamped, 0), "index 0 = the head pass (the primary)");
+		assertEquals(tHandle, GT6ToolLadder.fourPassTintARGB(tStamped, 2), "index 2 = the handle pass (the secondary)");
+		assertEquals(-1, GT6ToolLadder.fourPassTintARGB(tStamped, 1), "the head OVERLAY stays un-tinted");
+		assertEquals(-1, GT6ToolLadder.fourPassTintARGB(tStamped, 3), "the handle OVERLAY stays un-tinted");
+		// the identity-less arms: head = the Steel fallback, handle = the Spruce fallback
+		ItemStack tBare = new ItemStack(Items.STICK);
+		assertEquals(0xFF000000 | (MT.Steel.mRGBaSolid[0] << 16) | (MT.Steel.mRGBaSolid[1] << 8) | MT.Steel.mRGBaSolid[2],
+				GT6ToolLadder.fourPassTintARGB(tBare, 0), "identity-less head = the steel fallback");
+		assertEquals(tHandle, GT6ToolLadder.fourPassTintARGB(tBare, 2), "identity-less handle = the spruce fallback");
+	}
+
 	/** The composed name: the identity-less stack keeps the bare key, a stamped one appends the material. */
 	@Test
 	public void nameComposesTheMaterialWord() {
