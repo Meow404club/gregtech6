@@ -3,8 +3,9 @@
  * geometry fix and the Rainbowood leaves tint wiring, asserted against the committed
  * src/generated tree (the GT6BarrelPaintRenderDatagenTest shape).
  *
- * <p>#1 ground geometry: the stick is the upstream 14x2x2 lying bar (MultiTileEntityStick
- * .java:53/:58-68, default centered-in-Z pose; the FACING blockstate still emits both
+ * <p>#1 ground geometry: the stick is the upstream 12x2x2 lying bar (MultiTileEntityStick
+ * .java:53 default bounds 2..14 x 7..9, endpoint notation, default centered-in-Z pose;
+ * the FACING blockstate still emits both
  * rotationY bar orientations), the rock the 8x3x8 fixed representative of the upstream
  * 2..8px random micro box (MultiTileEntityRock.java:58-67, tintindex 0 kept).
  *
@@ -44,7 +45,7 @@ class GT6SurfaceTreeRenderDatagenTest {
         }
     }
 
-    /** #1 stick: the 14x2x2 ground bar over the vanilla oak-log side, NO tintindex (the untinted borrow). */
+    /** #1 stick: the 12x2x2 ground bar over the vanilla oak-log side, NO tintindex (the untinted borrow). */
     @Test
     void stickModelIsTheUpstreamLyingBar() throws Exception {
         JsonObject tModel = json("assets/gt6/models/block/surface_stick.json");
@@ -58,7 +59,7 @@ class GT6SurfaceTreeRenderDatagenTest {
         assertEquals(List.of(2, 0, 7), tBox.getAsJsonArray("from").asList().stream()
                 .map(e -> e.getAsInt()).toList(), "stick from = the bar's ground pose");
         assertEquals(List.of(14, 2, 9), tBox.getAsJsonArray("to").asList().stream()
-                .map(e -> e.getAsInt()).toList(), "stick to = 14x2x2, not the old 12x2x12 slab");
+                .map(e -> e.getAsInt()).toList(), "stick to = the 2..14 endpoint bar (12px), not the old 12x2x12 slab");
         var tFaces = tBox.getAsJsonObject("faces");
         assertEquals(6, tFaces.size());
         for (String tFaceKey : FACE_KEYS) {

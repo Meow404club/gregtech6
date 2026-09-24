@@ -481,15 +481,17 @@ public final class GT6BlockStates extends BlockStateProvider {
      * cannot sample the block below, GTCEu SurfaceRockModelGenerator.java:29-51 same).
      * The rock model is ONE tinted micro box (vanilla stone texture, tintindex 0 — the
      * {@link #tintedCubeAll} grammar; the client BlockColor paints it per material), the
-     * stick model a 14x2x2 lying bar over the vanilla oak-log side (MultiTileEntityStick
+     * stick model a 12x2x2 lying bar over the vanilla oak-log side (MultiTileEntityStick
      * .java:51 Blocks.log SIDE_FRONT 0 borrow, no tint index). Textures are VANILLA
      * borrows — the upstream rocks/sticks copy Blocks.stone/Blocks.log verbatim
      * (MultiTileEntityRock.java:55), so no PNG lands.
      *
      * <p>Task p38-issue1-4 (GitHub #1, the flat-full-pelt fix): the two boxes tightened
-     * to the upstream forms. The stick: the 14x2x2 ground bar (MultiTileEntityStick.java
-     * :53/:58-68 — PX_P[2]..PX_N[2] long axis x PX_P[7]..PX_N[7] thickness, height 2, the
-     * readFromNBT2 random X-long/Z-long arm pair); the model pins the default centered-in-Z
+     * to the upstream forms. The stick: the 12x2x2 ground bar (the MultiTileEntityStick.java
+     * :53 default bounds — PX_P[2]..PX_N[2] = 2..14 long axis x PX_P[7]..PX_N[7] = 7..9
+     * thickness, height 2, the review-seat endpoint-notation correction; the :58-68
+     * readFromNBT2 random X-long/Z-long arm pair runs the 14-long variant); the model pins
+     * the default centered-in-Z
      * pose and the FACING dispatch below still emits both rotationY orientations (the
      * EAST/WEST arms = the Z-long arm), replacing the old 12x2x12 full-pelt slab. The
      * rock: the 8x3x8 fixed representative of the upstream 2..8px-wide x 1..4px-high
