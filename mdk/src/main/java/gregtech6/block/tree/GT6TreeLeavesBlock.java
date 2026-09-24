@@ -15,10 +15,12 @@ import net.minecraft.core.BlockPos;
  * .GRASS)} row (Blocks.java:7303-7316) with the two private Blocks predicates inlined:
  * {@code ocelotOrParrot} (Blocks.java:7363) and {@code never}.
  *
- * <p>Declared deviation: the rainbow face of the Rainbowood leaves (BlockTreeLeavesAB
- * .java:129-139 dynamic RAINBOW_ARRAY tint) is a client-render domain item — this port
- * uses the static rainbow-textured PNG (the GTGrassBlocks pre-coloured-PNG precedent,
- * zero tintindex), the dynamic shader face stays pooled with the render card.
+ * <p>The rainbow face of the Rainbowood leaves (BlockTreeLeavesAB.java:129-139 dynamic
+ * RAINBOW_ARRAY tint) is LIVE as of task p38-issue1-4 (GitHub #4): the model carries
+ * tintindex 0 over the pixel-true GRAYSCALE PNG and the colour rides the
+ * GT6TreeClientListener BlockColor/ItemColor registrations — the former "static
+ * rainbow-textured PNG, zero tintindex, pooled" deviation (the GTGrassBlocks
+ * pre-coloured-PNG precedent) is superseded there.
  *
  * <p>Loot (sapling/stick/fruit chances, BlockTreeLeavesAB.java:108-127) is the datagen
  * band's face (GT6LootTables addTreeBand); the hazelnut/coconut FRUIT drops defer with the

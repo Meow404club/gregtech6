@@ -479,23 +479,36 @@ public final class GT6BlockStates extends BlockStateProvider {
      * Task p30-w6-rocks-sticks — the surface deco band: FOUR blocks over TWO shared
      * models (the research winner's shared-model+tint deviation — a 1.20.1 static model
      * cannot sample the block below, GTCEu SurfaceRockModelGenerator.java:29-51 same).
-     * The rock model is ONE tinted micro slab (vanilla stone texture, tintindex 0 — the
+     * The rock model is ONE tinted micro box (vanilla stone texture, tintindex 0 — the
      * {@link #tintedCubeAll} grammar; the client BlockColor paints it per material), the
-     * stick model a thinner slab over the vanilla oak-log side (MultiTileEntityStick
+     * stick model a 12x2x2 lying bar over the vanilla oak-log side (MultiTileEntityStick
      * .java:51 Blocks.log SIDE_FRONT 0 borrow, no tint index). Textures are VANILLA
      * borrows — the upstream rocks/sticks copy Blocks.stone/Blocks.log verbatim
      * (MultiTileEntityRock.java:55), so no PNG lands.
      *
+     * <p>Task p38-issue1-4 (GitHub #1, the flat-full-pelt fix): the two boxes tightened
+     * to the upstream forms. The stick: the 12x2x2 ground bar (the MultiTileEntityStick.java
+     * :53 default bounds — PX_P[2]..PX_N[2] = 2..14 long axis x PX_P[7]..PX_N[7] = 7..9
+     * thickness, height 2, the review-seat endpoint-notation correction; the :58-68
+     * readFromNBT2 random X-long/Z-long arm pair runs the 14-long variant); the model pins
+     * the default centered-in-Z
+     * pose and the FACING dispatch below still emits both rotationY orientations (the
+     * EAST/WEST arms = the Z-long arm), replacing the old 12x2x12 full-pelt slab. The
+     * rock: the 8x3x8 fixed representative of the upstream 2..8px-wide x 1..4px-high
+     * random micro box (MultiTileEntityRock.java:58-67 — a static model cannot randomise
+     * per placement NBT, the GT6SurfaceRockBlock "random micro box" declared deviation;
+     * the p30 research-card 3px pebble height kept).
+     *
      * <p>The FACING dispatch follows the GTCEu :38-48 variant table shape, with the
      * x-rotation arms corrected to what the rotations actually express (the blockstate
-     * variant grammar has NO rotationZ, so EAST/WEST stay y-only — a floor-lying slab
+     * variant grammar has NO rotationZ, so EAST/WEST stay y-only — a floor-lying box
      * quirk GTCEu's table shares; worldgen and player placement are DOWN/UP anyway).
      * No BlockItem models: the blocks are never obtainable as items (the pickup loot is
      * the only item path).
      */
     private void addSurfaceBand() {
-        ModelFile tRockModel = microSlabModel("surface_rock", mcLoc("block/stone"), true, 3);
-        ModelFile tStickModel = microSlabModel("surface_stick", mcLoc("block/oak_log"), false, 2);
+        ModelFile tRockModel = microBoxModel("surface_rock", mcLoc("block/stone"), true, 4, 0, 4, 12, 3, 12);
+        ModelFile tStickModel = microBoxModel("surface_stick", mcLoc("block/oak_log"), false, 2, 0, 7, 14, 2, 9);
         for (var tRow : GT6SurfaceBlocks.ALL) {
             Block tBlock = tRow.get();
             getVariantBuilder(tBlock).forAllStates(aState -> {
@@ -515,14 +528,15 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
     }
 
-    /** One tinted-or-plain micro slab model: an {aHeight}/16-thick inset slab, tintindex 0 on every face when aTinted. */
-    private ModelFile microSlabModel(String aName, ResourceLocation aTexture, boolean aTinted, int aHeight) {
+    /** One tinted-or-plain micro box model: the aX1/aY1/aZ1..aX2/aY2/aZ2 ground box, tintindex 0 on every face when aTinted. */
+    private ModelFile microBoxModel(String aName, ResourceLocation aTexture, boolean aTinted,
+            int aX1, int aY1, int aZ1, int aX2, int aY2, int aZ2) {
         BlockModelBuilder tModel = models().getBuilder(aName)
                 .parent(models().getExistingFile(mcLoc("block/block")))
                 .texture("slab", aTexture)
                 .texture("particle", "#slab");
         tModel.element()
-                .from(2.0F, 0.0F, 2.0F).to(14.0F, (float) aHeight, 14.0F)
+                .from((float) aX1, (float) aY1, (float) aZ1).to((float) aX2, (float) aY2, (float) aZ2)
                 .allFaces((aDir, aFace) -> {
                     aFace.texture("#slab");
                     if (aTinted) aFace.tintindex(0);
@@ -2189,7 +2203,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * they default to the element bounds, byte-equivalent to vanilla cube_all output).
      * {@code aName} must be the full {@code block/...} model path (see addPrefixBlocks).
      */
-    private ModelFile tintedCubeAll(String aName, ResourceLocation aTexture) {
+    private BlockModelBuilder tintedCubeAll(String aName, ResourceLocation aTexture) {
         BlockModelBuilder tModel = models().getBuilder(aName)
                 .parent(models().getExistingFile(mcLoc("block/block")))
                 .texture("all", aTexture)
@@ -2488,8 +2502,11 @@ public final class GT6BlockStates extends BlockStateProvider {
      * cube_column(side/end, the vanilla log idiom), leaves a cube_all over the borrowed
      * LEAVES PNG (cutout_mipped, the vanilla leaves layer). All 36 textures are the
      * upstream iconsets PNGs byte-borrowed ({@code gt6:block/tree/*}, the
-     * assets/README.md ledger face; the grass card pre-coloured-PNG precedent) — the
-     * Rainbowood dynamic tint deviation is declared in GT6TreeLeavesBlock. The RED LINE
+     * assets/README.md ledger face; the grass card pre-coloured-PNG precedent). The
+     * Rainbowood leaves carry tintindex 0 over their grayscale PNG (task p38-issue1-4,
+     * GitHub #4): the dynamic RAINBOW tint renders through the GT6TreeClientListener
+     * BlockColor/ItemColor registrations (the upstream BlockTreeLeavesAB.java:129-139
+     * face). The RED LINE
      * question (render_type in model JSON) is the FORGE 1.20.1 + NeoForge 21.1 shared
      * model face — no client code, no ItemBlockRenderTypes call. Item models parent the
      * block models (the grass walk shape).
@@ -2517,9 +2534,19 @@ public final class GT6BlockStates extends BlockStateProvider {
                             == net.minecraft.core.Direction.Axis.Z ? 90 : 0)
                     .build());
             itemModels().withExistingParent(tSnake + "_log", modLoc("block/" + tSnake + "_log"));
-            // leaves: cube_all + cutout_mipped
-            ModelFile tLeavesModel = models().cubeAll(tSnake + "_leaves",
-                    modLoc("block/tree/leaves_" + tSnake)).renderType("cutout_mipped");
+            // leaves: cube_all + cutout_mipped. The Rainbowood row adds tintindex 0 on
+            // every face (the tintedCubeAll grammar) over its GRAYSCALE PNG — the world/
+            // inventory tint tables are the GT6TreeClientListener RAINBOW registrations
+            // (task p38-issue1-4, GitHub #4 — the upstream BlockTreeLeavesAB.java:129-139
+            // face; the other 8 kinds keep their pre-coloured PNGs untinted).
+            ModelFile tLeavesModel;
+            if (tKind == gregtech6.block.tree.GT6TreeKind.RAINBOWOOD) {
+                tLeavesModel = tintedCubeAll(tSnake + "_leaves",
+                        modLoc("block/tree/leaves_" + tSnake)).renderType("cutout_mipped");
+            } else {
+                tLeavesModel = models().cubeAll(tSnake + "_leaves",
+                        modLoc("block/tree/leaves_" + tSnake)).renderType("cutout_mipped");
+            }
             simpleBlock(gregtech6.registry.GT6TreeBlocks.LEAVES.get(i).get(), tLeavesModel);
             itemModels().withExistingParent(tSnake + "_leaves", modLoc("block/" + tSnake + "_leaves"));
         }

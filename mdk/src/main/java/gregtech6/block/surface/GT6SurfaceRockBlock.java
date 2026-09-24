@@ -60,9 +60,19 @@ public class GT6SurfaceRockBlock extends Block {
 	/** GTCEu SurfaceRockBlock.java:46 — the full 6-direction attach facing, default DOWN. */
 	public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
-	/** GTCEu SurfaceRockBlock.java:48-53 AABBs verbatim (the 3/16 pebble slab per attach face). */
-	protected static final VoxelShape SHAPE_DOWN = Block.box(2, 0, 2, 14, 3, 14);
-	protected static final VoxelShape SHAPE_UP = Block.box(2, 13, 2, 14, 16, 14);
+	/**
+	 * DOWN/UP tightened to the model's 8x3x8 micro box (task p38-issue1-4, GitHub #1 —
+	 * the MultiTileEntityRock.java:58 default envelope PX_P[4]..PX_N[4] centered, the 3px
+	 * p30 pebble height): the selection box rides the same bounds as the visual, the
+	 * upstream GetSelectedBoundingBoxFromPool face (MultiTileEntityRock.java:237 —
+	 * {@code box(mMinX, 0, mMinZ, mMaxX, mMaxY, mMaxZ)}); the GTCEu :48-53 12/16 slab
+	 * stood 2px proud per side over the shrunk visual. The four WALL shapes stay GTCEu
+	 * :48-53 verbatim (their visuals ride the y-only variant-rotation quirk,
+	 * GT6BlockStates addSurfaceBand). The stick subclass inherits DOWN/UP (its 12x2x2
+	 * bar is a closer fit than the old slab; the bar-exact shape stays a pool candidate).
+	 */
+	protected static final VoxelShape SHAPE_DOWN = Block.box(4, 0, 4, 12, 3, 12);
+	protected static final VoxelShape SHAPE_UP = Block.box(4, 13, 4, 12, 16, 12);
 	protected static final VoxelShape SHAPE_NORTH = Block.box(2, 2, 0, 14, 14, 3);
 	protected static final VoxelShape SHAPE_SOUTH = Block.box(2, 2, 13, 14, 14, 16);
 	protected static final VoxelShape SHAPE_WEST = Block.box(0, 2, 2, 3, 14, 14);
