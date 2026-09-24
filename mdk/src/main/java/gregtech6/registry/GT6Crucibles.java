@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -70,6 +72,13 @@ import gregtech6.tileentity.tools.TileEntitySmeltery;
  *     {@link CrucibleWallBlockEntity} over all eight walls; the controller BET mounts
  *     {@link TileEntityCrucibleRow}.</li>
  * </ul>
+ *
+ * <p>Creative tab (task p38-tabfix-a-multiblock): all 19 items — the 3 Smeltery rungs, the
+ * 8 crucible controllers, the Steel wall and the 7 ladder walls — join MULTIBLOCKS_TAB via
+ * {@link #onBuildTabContents} (registered-but-tab-less is invisible in BOTH the creative
+ * menu and JEI, the BurningBoxes issue-#10 form). Pool cut declared: upstream rode the
+ * per-family "Multiblock Machines" creative tab (tab id 17101, Loader :1270-1277, the
+ * walls the part rows); this port pools the family into the gt6:multiblocks tab.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6Crucibles {
@@ -470,5 +479,22 @@ public final class GT6Crucibles {
 		BLOCKS.register(tModBus);
 		ITEMS.register(tModBus);
 		BLOCK_ENTITY_TYPES.register(tModBus);
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-a-multiblock — the whole 19-item family joins the
+	 * multiblocks tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the class-level
+	 * MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what delivers this
+	 * handler). The three walk maps plus the single-rung wall item, all 19. JEI derives its
+	 * item list from the tab display items.
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMultiBlocks.MULTIBLOCKS_TAB.getId())) {
+			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) aEvent.accept(new ItemStack(tItem.get()));
+			aEvent.accept(new ItemStack(CRUCIBLE_STEEL_WALL_ITEM.get()));
+			for (RegistryObject<Item> tItem : CRUCIBLE_WALL_ITEMS_BY_PATH.values()) aEvent.accept(new ItemStack(tItem.get()));
+			for (RegistryObject<Item> tItem : CRUCIBLE_ITEMS_BY_PATH.values()) aEvent.accept(new ItemStack(tItem.get()));
+		}
 	}
 }

@@ -9,11 +9,13 @@ import javax.annotation.Nullable;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -33,9 +35,14 @@ import gregtech6.tileentity.multiblocks.GTSteamTurbineBlockEntity;
  * BET rows — {@link GTSteamTurbineBlockEntity} (4) and {@link GTGasTurbineBlockEntity} (4)
  * over the {@link gregtech6.tileentity.multiblocks.GTMultiBlockConverter} base. The
  * structure walls are the card ① Dense Walls (the NBT_DESIGN column becomes the row's
- * wallPath); no creative-tab join (the p28 dynamo precedent — the tab walk lives in the
- * GTMultiBlocks tab, a shared seam this card does not touch; the items ride commands and
- * the wand stock).
+ * wallPath).
+ *
+ * <p>Creative tab (task p38-tabfix-a-multiblock): all 8 items join MULTIBLOCKS_TAB via
+ * {@link #onBuildTabContents} — registered-but-tab-less is invisible in BOTH the creative
+ * menu and JEI (the BurningBoxes issue-#10 form, superseding the old p28 dynamo tab-less
+ * precedent). Pool cut declared: upstream rode the per-family "Multiblock Machines"
+ * creative tab (tab id 17101, Loader :1254-1267); this port pools the family into the
+ * gt6:multiblocks tab.
  *
  * <p><b>The rows</b> (Loader_MultiTileEntities.java:1254-1257 steam / :1264-1267 gas,
  * upstream line order, every id/hardness/INPUT/OUTPUT column kept):
@@ -240,5 +247,20 @@ public final class GT6Turbines {
 		BLOCKS.register(tModBus);
 		BLOCK_ENTITY_TYPES.register(tModBus);
 		ITEMS.register(tModBus);
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-a-multiblock — the whole {@link #ITEMS_BY_PATH} family
+	 * joins the multiblocks tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
+	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what delivers
+	 * this handler). JEI derives its item list from the tab display items.
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMultiBlocks.MULTIBLOCKS_TAB.getId())) {
+			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+		}
 	}
 }

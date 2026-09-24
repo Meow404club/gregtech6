@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -71,8 +72,14 @@ import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
  * → arsenic_bronze, MT.Invar → invar, ANY.Steel → steel, MT.Cr → chromium, MT.Ti →
  * titanium, MT.Netherite → netherite, ANY.W → tungsten, MT.TungstenSteel → tungstensteel,
  * MT.Ultimet → ultimet. Hardness == resistance on every row (upstream NBT_HARDNESS ==
- * NBT_RESISTANCE); the METAL sound (the machine-block convention). No creative tab (the
- * axle/diesel precedent); no GUI by census (:103 NO_GUI_FUNNEL_TO_TANK — the upstream
+ * NBT_RESISTANCE); the METAL sound (the machine-block convention).
+ *
+ * <p>Creative tab (task p38-tabfix-a-multiblock): all 26 items join MULTIBLOCKS_TAB via
+ * {@link #onBuildTabContents} — registered-but-tab-less is invisible in BOTH the creative
+ * menu and JEI (the BurningBoxes issue-#10 form, superseding the old axle/diesel tab-less
+ * precedent). Pool cut declared: upstream rode the per-family "Multiblock Machines"
+ * creative tab (tab id 17101, Loader :553-579); this port pools the family into the
+ * gt6:multiblocks tab. No GUI by census (:103 NO_GUI_FUNNEL_TO_TANK — the upstream
  * tooltip IS the contract, the funnel face is ported).
  *
  * <p>The block carrier is the SteamEngineBlock shape: FACING horizontal (the FRONT = the
@@ -364,5 +371,20 @@ public final class GT6Boilers {
 		*///?}
 		BLOCKS.register(tModBus);
 		ITEMS.register(tModBus);
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-a-multiblock — the whole {@link #ITEMS_BY_PATH} family
+	 * joins the multiblocks tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
+	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what delivers
+	 * this handler). JEI derives its item list from the tab display items.
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMultiBlocks.MULTIBLOCKS_TAB.getId())) {
+			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+		}
 	}
 }
