@@ -523,6 +523,38 @@ public final class GT6Kinetics {
 		}
 	}
 
+	/**
+	 * The three registration ladders join the machines tab (task p38-tabfix-e-kinetics-tail;
+	 * the GT6Batteries.onBuildTabContents verbatim walk form, delivered by the class-level
+	 * MOD-bus {@code @Mod.EventBusSubscriber} at the class head): the 44 axles
+	 * ({@link #AXLE_ITEMS}, 11 materials x 4 diameters), the 28 steam engines
+	 * ({@link #STEAM_ENGINE_ITEMS}) and the 8 diesel engines ({@link #DIESEL_ITEMS}) —
+	 * 80 items, enumerated whole-container so a future row joins with its family walk.
+	 * JEI 1.20.1 derives its item list from the tab display items, so registered-but-tab-less
+	 * was invisible in both the creative menu and JEI (the issue #10 lesson).
+	 *
+	 * <p>Pool-cut declaration: upstream hangs the kinetic rows on their own MTE-registry
+	 * categories (the "Misc Tool Blocks" 32720 area, Loader_MultiTileEntities.java:2106 and
+	 * the per-row anchors); this port pools the join into
+	 * {@link GTMachines#MACHINES_TAB} (the GTBarrels:257 pooling precedent).
+	 *
+	 * <p>Why a SEPARATE handler and not an arm inside a single {@code onBuildTabContents}:
+	 * the in-flight p38-tabfix-b-energy card (488849b01, merge order = b first, this branch
+	 * rebases second) adds that exact-signature walk to this class for the four single
+	 * blocks (crank/gearbox/rotation transformer/water wheel — its crop, its census pins 4).
+	 * Two same-signature handlers would collide at that rebase; two distinct walks deliver
+	 * independently and each census pins its own coverage (this one: 44 + 28 + 8 = 80, the
+	 * GT6KineticsTabCensusTest).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContentsKineticLadders(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			for (RegistryObject<Item> tItem : AXLE_ITEMS.values()) aEvent.accept(new ItemStack(tItem.get()));
+			for (RegistryObject<Item> tItem : STEAM_ENGINE_ITEMS.values()) aEvent.accept(new ItemStack(tItem.get()));
+			for (RegistryObject<Item> tItem : DIESEL_ITEMS.values()) aEvent.accept(new ItemStack(tItem.get()));
+		}
+	}
+
 	// -------------------------------------------------------------------------
 	// the water wheel (task p28-c-water-wheel) — the ULV chain's RU source
 	// -------------------------------------------------------------------------
