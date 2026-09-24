@@ -5,6 +5,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import gregtech6.block.multiblock.GTMultiBlockControllerBlock;
 import gregtech6.registry.GT6Logistics;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.state.BlockState;
+import gregtech6.covers.ICoverableTE;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 /**
  * The Logistics Core controller block (task p32-logistics-lv3, upstream meta 17997,
@@ -32,5 +37,11 @@ public class GTLogisticsCoreBlock extends GTMultiBlockControllerBlock {
 	@Override
 	protected BlockEntityType<? extends TileEntityBase03TicksAndSync> tickerType() {
 		return GT6Logistics.LOGISTICS_CORE_BE.get();
+	}
+
+	@Override
+	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
+		super.stepOn(aLevel, aPos, aState, aEntity);
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (p37-covers-crafting-asphalt)
 	}
 }

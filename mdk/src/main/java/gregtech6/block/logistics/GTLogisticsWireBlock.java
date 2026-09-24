@@ -10,6 +10,10 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import gregtech6.block.GTBlockProperties;
 import gregtech6.block.GTEntityBlock;
 import gregtech6.registry.GT6Logistics;
+import net.minecraft.world.entity.Entity;
+import gregtech6.covers.ICoverableTE;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 /**
  * The GT6 logistics wire block (task p32-logistics-lv2) — the block carrier of the
@@ -60,5 +64,11 @@ public class GTLogisticsWireBlock extends GTEntityBlock {
 	@Override
 	public RenderShape getRenderShape(BlockState aState) {
 		return RenderShape.MODEL; // BaseEntityBlock default INVISIBLE is for BER blocks
+	}
+
+	@Override
+	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
+		super.stepOn(aLevel, aPos, aState, aEntity);
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (p37-covers-crafting-asphalt)
 	}
 }

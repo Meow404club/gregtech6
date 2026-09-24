@@ -32,6 +32,8 @@ import gregtech6.block.GTEntityBlock;
 import gregtech6.fluid.GTDrinks;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.tank.TileEntityBase08Barrel;
+import net.minecraft.world.entity.Entity;
+import gregtech6.covers.ICoverableTE;
 
 /**
  * The fluid barrel block — the block side of the barrel family (task p4-fluid-barrel,
@@ -274,5 +276,11 @@ public class GTBarrelBlock extends GTEntityBlock {
 		aBarrel.mTank.drain(GTDrinks.DRINK_MB, IFluidHandler.FluidAction.EXECUTE);
 		aBarrel.setChanged();
 		return InteractionResult.CONSUME;
+	}
+
+	@Override
+	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
+		super.stepOn(aLevel, aPos, aState, aEntity);
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (p37-covers-crafting-asphalt)
 	}
 }

@@ -7,6 +7,11 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import gregapi.code.TagData;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.state.BlockState;
+import gregtech6.covers.ICoverableTE;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 /**
  * The ZPM Decharger block (task p36-energy-zpm-dechargers) — the
@@ -38,5 +43,11 @@ public class GT6ZpmDechargerBlock extends GT6BatteryBoxBlock {
 	/** The emit lane (the BE's out-lane seat, resolved once at construction). */
 	public Supplier<TagData> outEnergyType() {
 		return mOutEnergyType;
+	}
+
+	@Override
+	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
+		super.stepOn(aLevel, aPos, aState, aEntity);
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (p37-covers-crafting-asphalt)
 	}
 }
