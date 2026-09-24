@@ -236,7 +236,6 @@ public final class GT6LootInjectionDatagen {
 
 	/**
 	 * The ZPM artifact row — weight 2 [1,1] (the rare-roll posture) carrying the FULL tag:
-
 	 * the {@code gt.active.energy} store-as-full key (the DungeonData.zpm active lane;
 	 * the 2/3 dice collapse to always-full, the declared deviation above).
 	 */
