@@ -655,6 +655,9 @@ public final class GT6ItemModels extends ItemModelProvider {
         for (GT6BookText.BookText tRow : GT6BookText.BOOKS) {
             withExistingParent(tRow.path(), mcLoc("item/written_book"));
         }
+        // the Dusty Guide Book loot carrier (task p38-book-loot-first) — the same plain-book
+        // parent (upstream meta 32765 renders as a book too, MultiItemBooks.java:67)
+        withExistingParent("book_loot_guide", mcLoc("item/written_book"));
     }
 
     /** The unchecked parent reference (the GT6BlockStates turbine form) — cross-provider block models generated later. */

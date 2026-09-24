@@ -11,7 +11,7 @@
  * <li>the generated GLM JSONs pinned against the committed tree (the target table ids + the
  *     entry weights/stack ranges — ACCEPTANCE ①'s "逐参对 Loader_Loot 原锚");</li>
  * <li>the generated bag weight tables + the twin modifier index (the
- *     {@code GT6ToolLootModifiersDatagen} call-order contract, 19 entries).</li>
+ *     {@code GT6ToolLootModifiersDatagen} call-order contract, 21 entries).</li>
  * </ol>
  * The live face is the RCON p34_loot_inject chain (the /loot insert rolls through the Forge
  * {@code ForgeHooks.modifyLoot} patch); this file is the static half of the double insurance.
@@ -69,32 +69,37 @@ public class GT6LootInjectionTest {
     // ------------------------------------------------- 1: the structure injections (row face)
 
     /**
-     * The verified category → table-id mapping (ACCEPTANCE ④, both jars listed) — the seven
-     * landed rows; BONUS_CHEST/STRONGHOLD_LIBRARY/STRONGHOLD_CROSSING keep zero rows (the
-     * declared pool) and get no row at all.
+     * The verified category → table-id mapping (ACCEPTANCE ④, both jars listed) — the nine
+     * landed rows (task p38-book-loot-first re-arms the bonus chest and the stronghold
+     * library through the Guide rows); STRONGHOLD_CROSSING keeps zero rows (the declared
+     * pool) and gets no row at all.
      */
     @Test
     public void injectionTargetsAreTheVerifiedVanillaTableIds() {
         List<GT6LootInjectionDatagen.InjectionRow> tRows = GT6LootInjectionDatagen.injections();
-        assertEquals(7, tRows.size(), "seven landed structure injections (the pool categories fall out)");
+        assertEquals(9, tRows.size(), "nine landed structure injections (the pool categories fall out)");
         assertEquals(List.of(
+                "dungeon_inject_spawn_bonus_chest",
                 "dungeon_inject_simple_dungeon",
                 "dungeon_inject_desert_pyramid",
                 "dungeon_inject_jungle_temple",
                 "dungeon_inject_jungle_temple_dispenser",
                 "dungeon_inject_abandoned_mineshaft",
                 "dungeon_inject_village_weaponsmith",
+                "dungeon_inject_stronghold_library",
                 "dungeon_inject_stronghold_corridor"),
                 tRows.stream().map(GT6LootInjectionDatagen.InjectionRow::name).collect(Collectors.toList()),
                 "the upstream Loader_Loot category order");
-        assertEquals("minecraft:chests/simple_dungeon", tRows.get(0).table());
-        assertEquals("minecraft:chests/desert_pyramid", tRows.get(1).table());
-        assertEquals("minecraft:chests/jungle_temple", tRows.get(2).table(), "the 1.7.10 jungle chest table");
-        assertEquals("minecraft:chests/jungle_temple_dispenser", tRows.get(3).table());
-        assertEquals("minecraft:chests/abandoned_mineshaft", tRows.get(4).table());
-        assertEquals("minecraft:chests/village/village_weaponsmith", tRows.get(5).table(),
+        assertEquals("minecraft:chests/spawn_bonus_chest", tRows.get(0).table(), ":413 the bonus chest");
+        assertEquals("minecraft:chests/simple_dungeon", tRows.get(1).table());
+        assertEquals("minecraft:chests/desert_pyramid", tRows.get(2).table());
+        assertEquals("minecraft:chests/jungle_temple", tRows.get(3).table(), "the 1.7.10 jungle chest table");
+        assertEquals("minecraft:chests/jungle_temple_dispenser", tRows.get(4).table());
+        assertEquals("minecraft:chests/abandoned_mineshaft", tRows.get(5).table());
+        assertEquals("minecraft:chests/village/village_weaponsmith", tRows.get(6).table(),
                 "the 1.7.10 blacksmith chest IS the modern weaponsmith shop");
-        assertEquals("minecraft:chests/stronghold_corridor", tRows.get(6).table());
+        assertEquals("minecraft:chests/stronghold_library", tRows.get(7).table(), ":524 the library");
+        assertEquals("minecraft:chests/stronghold_corridor", tRows.get(8).table());
         for (GT6LootInjectionDatagen.InjectionRow tRow : tRows) {
             assertEquals(1, tRow.rollMin(), "the declared share-approximation roll floor");
             assertEquals(3, tRow.rollMax(), "the declared share-approximation roll ceiling");
@@ -102,11 +107,11 @@ public class GT6LootInjectionTest {
         }
     }
 
-    /** The dungeon metal ladder (:418-433) + the task-p36 ZPM artifact row: 17 entries. */
+    /** The dungeon metal ladder (:418-433), the Guide :442 + the task-p36 ZPM artifact row: 18 entries. */
     @Test
     public void simpleDungeonCarriesTheMetalLadderVerbatim() {
-        Map<String, int[]> tMap = byItem(GT6LootInjectionDatagen.injections().get(0).entries());
-        assertEquals(17, tMap.size(), "the four 4-metal ladders (ingot/plate/stick/toolHeadArrow) + the p36 ZPM artifact row");
+        Map<String, int[]> tMap = byItem(GT6LootInjectionDatagen.injections().get(1).entries());
+        assertEquals(18, tMap.size(), "the four 4-metal ladders (ingot/plate/stick/toolHeadArrow) + the Guide + the p36 ZPM artifact row");
         for (String tMetal : new String[] {"steel", "bronze", "brass"}) {
             assertEquals(12, tMap.get("gt6:ingot_" + tMetal)[0], ":418-420 weight");
             assertEquals(12, tMap.get("gt6:plate_" + tMetal)[0], ":422-424 weight");
@@ -118,8 +123,12 @@ public class GT6LootInjectionTest {
                     && tMap.get("gt6:tool_head_arrow_" + tMetal)[2] == 24, ":430-432 stack [4,24]");
         }
         assertEquals(2, tMap.get("gt6:ingot_damascus_steel")[0], ":421 the damascus weight-2 arm");
+        // the Guide :442 — weight 50 [2,8] verbatim (task p38)
+        assertTrue(tMap.get("gt6:book_loot_guide")[0] == 50
+                && tMap.get("gt6:book_loot_guide")[1] == 2 && tMap.get("gt6:book_loot_guide")[2] == 8,
+                ":442 the Guide row [50, 2..8]");
         // task p36 — the ZPM artifact row: the full-NBT lane (the DungeonData.zpm active face)
-        GT6LootInjectionDatagen.EntryRow tZpm = GT6LootInjectionDatagen.injections().get(0).entries()
+        GT6LootInjectionDatagen.EntryRow tZpm = GT6LootInjectionDatagen.injections().get(1).entries()
                 .stream().filter(aRow -> aRow.item().equals("gt6:zpm")).findFirst().orElseThrow();
         assertEquals(2, tZpm.weight(), "the rare-roll posture");
         assertTrue(tZpm.min() == 1 && tZpm.max() == 1, "the [1,1] artifact stack");
@@ -131,7 +140,7 @@ public class GT6LootInjectionTest {
     /** The mineshaft rows (:468-482): the seven vanilla ore blocks + the six dig heads. */
     @Test
     public void mineshaftCarriesTheOreBlocksAndDigHeads() {
-        Map<String, int[]> tMap = byItem(GT6LootInjectionDatagen.injections().get(4).entries());
+        Map<String, int[]> tMap = byItem(GT6LootInjectionDatagen.injections().get(5).entries());
         assertEquals(13, tMap.size());
         assertEquals(4, tMap.get("minecraft:coal_ore")[0], ":470");
         assertEquals(1, tMap.get("minecraft:diamond_ore")[0], ":475");
@@ -144,21 +153,54 @@ public class GT6LootInjectionTest {
     /** The village/corridor/pyramid/jungle/dispenser anchor rows. */
     @Test
     public void theRemainingTablesCarryTheirAnchors() {
-        Map<String, int[]> tVillage = byItem(GT6LootInjectionDatagen.injections().get(5).entries());
-        assertEquals(16, tVillage.size(), ":491-506 the smith ladder (the small-gear bronze/brass arms "
+        Map<String, int[]> tVillage = byItem(GT6LootInjectionDatagen.injections().get(6).entries());
+        assertEquals(17, tVillage.size(), ":491-506 the smith ladder (the small-gear bronze/brass arms "
                 + "fall to the registration universe — the gearGtSmall condition gates on the big-gear "
-                + "prefix, the modern universe has no gear_gt for them; the declared skip)");
+                + "prefix, the modern universe has no gear_gt for them; the declared skip) + the Guide :512");
         assertEquals(2, tVillage.get("gt6:gear_gt_small_steel")[0], ":494");
         assertEquals(1, tVillage.get("gt6:ingot_damascus_steel")[0], ":506");
-        Map<String, int[]> tCorridor = byItem(GT6LootInjectionDatagen.injections().get(6).entries());
+        assertTrue(tVillage.get("gt6:book_loot_guide")[0] == 40
+                && tVillage.get("gt6:book_loot_guide")[1] == 4 && tVillage.get("gt6:book_loot_guide")[2] == 8,
+                ":512 the Guide row [40, 4..8]");
+        Map<String, int[]> tCorridor = byItem(GT6LootInjectionDatagen.injections().get(8).entries());
         assertEquals(6, tCorridor.size(), ":546-551");
         assertEquals(6, tCorridor.get("gt6:arrow_gt_wood_sterling_silver")[0], ":551");
-        Map<String, int[]> tDesert = byItem(GT6LootInjectionDatagen.injections().get(1).entries());
+        Map<String, int[]> tDesert = byItem(GT6LootInjectionDatagen.injections().get(2).entries());
         assertEquals(1, tDesert.get("gt6:tool_head_arrow_naquadah")[0], ":446 the Nq arrow head");
-        Map<String, int[]> tJungle = byItem(GT6LootInjectionDatagen.injections().get(2).entries());
+        Map<String, int[]> tJungle = byItem(GT6LootInjectionDatagen.injections().get(3).entries());
         assertEquals(3, tJungle.get("gt6:ingot_arsenic_copper")[0], ":452");
-        assertEquals(30, tMap2(GT6LootInjectionDatagen.injections().get(3).entries(), "minecraft:fire_charge"),
+        assertEquals(30, tMap2(GT6LootInjectionDatagen.injections().get(4).entries(), "minecraft:fire_charge"),
                 ":463 the dispenser fire charges");
+    }
+
+    /** The four re-armed Guide rows verbatim + the MatDict cut (task p38-book-loot-first). */
+    @Test
+    public void theGuideRowsAreVerbatimAndTheMatDictStaysCut() {
+        // BONUS :413 / DUNGEON :442 / BLACKSMITH :512 / LIBRARY :524 — weight + stack verbatim
+        int[][] tGuide = {{10, 8, 16}, {50, 2, 8}, {40, 4, 8}, {40, 4, 8}};
+        int[] tIndex = {0, 1, 6, 7};
+        String[] tTable = {"spawn_bonus_chest", "simple_dungeon", "village_weaponsmith", "stronghold_library"};
+        for (int i = 0; i < 4; i++) {
+            List<GT6LootInjectionDatagen.EntryRow> tRows = GT6LootInjectionDatagen.injections().get(tIndex[i]).entries();
+            assertEquals(1, tRows.stream().filter(aRow -> aRow.item().equals("gt6:book_loot_guide")).count(),
+                    tTable[i] + " carries exactly one Guide row");
+            for (GT6LootInjectionDatagen.EntryRow tRow : tRows) {
+                if (tRow.item().equals("gt6:book_loot_guide")) {
+                    assertTrue(tRow.weight() == tGuide[i][0] && tRow.min() == tGuide[i][1]
+                            && tRow.max() == tGuide[i][2],
+                            tTable[i] + " Guide columns [" + tGuide[i][0] + ", " + tGuide[i][1] + ".." + tGuide[i][2] + "]");
+                    assertTrue(tRow.tag() == null, "the Guide rows carry no NBT");
+                }
+            }
+        }
+        // the MatDict (:443/:487/:513/:525) stays in the declared pool — zero rows anywhere
+        // (the gt.matdicts dynamic book pool is the p35 CUT class)
+        for (GT6LootInjectionDatagen.InjectionRow tRow : GT6LootInjectionDatagen.injections()) {
+            for (GT6LootInjectionDatagen.EntryRow tEntry : tRow.entries()) {
+                assertTrue(!tEntry.item().contains("matdict"),
+                        tRow.name() + " MatDict leaked past the declared pool");
+            }
+        }
     }
 
     private static int tMap2(List<GT6LootInjectionDatagen.EntryRow> aRows, String aItem) {
@@ -171,7 +213,7 @@ public class GT6LootInjectionTest {
     /** The unported item families must produce NO entry (the upstream addLoot invalid-skip face). */
     @Test
     public void theDeclaredPoolProducesZeroEntries() {
-        List<String> tPooled = List.of("bag", "bottle", "coin", "food_can", "book_loot", "paper_magic",
+        List<String> tPooled = List.of("bag", "bottle", "coin", "food_can", "book_loot_matdict", "paper_magic",
                 "dynamite", "matchbox", "lighter", "porcelain", "pill", "crate");
         for (GT6LootInjectionDatagen.InjectionRow tRow : GT6LootInjectionDatagen.injections()) {
             for (GT6LootInjectionDatagen.EntryRow tEntry : tRow.entries()) {
@@ -260,14 +302,18 @@ public class GT6LootInjectionTest {
         assertEquals("gt6:gt6_dungeon_inject", tJson.get("type").getAsString(), "the serializer row id");
         assertEquals("minecraft:chests/simple_dungeon", tJson.get("table").getAsString(), "the in-codec target");
         JsonArray tEntries = tJson.getAsJsonArray("entries");
-        assertEquals(17, tEntries.size(), "the metal ladder + the p36 ZPM artifact row");
+        assertEquals(18, tEntries.size(), "the metal ladder + the Guide :442 + the p36 ZPM artifact row");
         JsonObject tFirst = tEntries.get(0).getAsJsonObject();
         assertEquals("gt6:ingot_steel", tFirst.get("item").getAsString());
         assertEquals(12, tFirst.get("weight").getAsInt(), ":418 weight");
         assertEquals(1, tFirst.get("min").getAsInt());
         assertEquals(6, tFirst.get("max").getAsInt());
+        // task p38 — the Guide entry rides before the artifact tail
+        JsonObject tGuide = tEntries.get(16).getAsJsonObject();
+        assertEquals("gt6:book_loot_guide", tGuide.get("item").getAsString(), "the :442 Guide row");
+        assertEquals(50, tGuide.get("weight").getAsInt());
         // task p36 — the artifact tail entry carries the full-NBT lane
-        JsonObject tZpm = tEntries.get(16).getAsJsonObject();
+        JsonObject tZpm = tEntries.get(17).getAsJsonObject();
         assertEquals("gt6:zpm", tZpm.get("item").getAsString(), "the artifact row rides last");
         // the SNBT 1b byte round-trips through the JSON as the number 1 (gson int form)
         assertEquals(1, tZpm.get("tag").getAsJsonObject().get("gt.active.energy").getAsInt(),
@@ -292,7 +338,9 @@ public class GT6LootInjectionTest {
     /** The pooled categories stay OUT of the modifier set (no JSON, no index entry). */
     @Test
     public void thePooledCategoriesHaveNoModifierJson() {
-        for (String tPooled : new String[] {"bonus_chest", "stronghold_library", "stronghold_crossing"}) {
+        // task p38-book-loot-first: the bonus chest and the stronghold library now carry
+        // their Guide rows and ship modifier JSONs; the crossing crates remain the pool
+        for (String tPooled : new String[] {"stronghold_crossing"}) {
             try (InputStream tStream = GT6LootInjectionTest.class.getClassLoader()
                     .getResourceAsStream("data/gt6/loot_modifiers/dungeon_inject_" + tPooled + ".json")) {
                 assertEquals(null, tStream, "the pooled category must not ship a modifier JSON: " + tPooled);
@@ -330,13 +378,14 @@ public class GT6LootInjectionTest {
         assertEquals(1.0, tCount.get("max").getAsDouble(), "the flawless [1,1] stack ceiling");
     }
 
-    /** The twin modifier index: the 19 entries in the MODIFIER_NAMES call order. */
+    /** The twin modifier index: the 21 entries in the MODIFIER_NAMES call order. */
     @Test
-    public void theTwinIndexCarriesAllNineteenEntriesInCallOrder() throws IOException {
+    public void theTwinIndexCarriesAllTwentyOneEntriesInCallOrder() throws IOException {
         JsonArray tTwin = tree("data/neoforge/loot_modifiers/global_loot_modifiers.json").getAsJsonArray("entries");
-        assertEquals(19, tTwin.size(), "the 12 tool rows + the 7 dungeon injections");
-        assertEquals("gt6:dungeon_inject_simple_dungeon", tTwin.get(12).getAsString(), "the tail-append order");
-        assertEquals("gt6:dungeon_inject_stronghold_corridor", tTwin.get(18).getAsString());
+        assertEquals(21, tTwin.size(), "the 12 tool rows + the 9 dungeon injections");
+        assertEquals("gt6:dungeon_inject_spawn_bonus_chest", tTwin.get(12).getAsString(), "the tail-append order (task p38 head)");
+        assertEquals("gt6:dungeon_inject_stronghold_library", tTwin.get(19).getAsString(), "the :524 library row (task p38)");
+        assertEquals("gt6:dungeon_inject_stronghold_corridor", tTwin.get(20).getAsString());
         JsonArray tForge = tree("data/forge/loot_modifiers/global_loot_modifiers.json").getAsJsonArray("entries");
         assertEquals(tTwin.size(), tForge.size(), "same entry set on both indices");
     }

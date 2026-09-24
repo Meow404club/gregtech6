@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -19,6 +20,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.GT6Mod;
+import gregtech6.item.GT6LootBookItem;
 import gregtech6.item.GT6WrittenBookItem;
 
 /**
@@ -98,6 +100,31 @@ public final class GT6Books {
 	}
 
 	/**
+	 * The Dusty Guide Book (task p38-book-loot-first) — upstream MultiItemBooks.java:67
+	 * meta 32765, the sealed loot package that opens into one random manual. NOT a
+	 * {@link GT6BookText.BookText} row (no static content), so it rides outside
+	 * {@link #ITEMS_BY_PATH}; the creative-tab join is the BOOKS_TAB displayItems tail
+	 * line below (the review-merge disposition over the merged p38-tabfix-d-ruling state).
+	 */
+	public static final RegistryObject<Item> BOOK_LOOT_GUIDE =
+			ITEMS.register("book_loot_guide", () -> new GT6LootBookItem(new Item.Properties()));
+
+	/**
+	 * The {@code gt.books} loot pool — the 15 static manuals (upstream Loader_Loot.java:340-356
+	 * carries 17 books at equal weight 144 [1,1]; Manual_Elements/Manual_Alloys are the
+	 * p35-CUT dynamic rows), so a uniform pick reproduces the upstream roll.
+	 */
+	public static List<Item> manualPool() {
+		return ITEMS_BY_PATH.values().stream().map(RegistryObject::get).toList();
+	}
+
+	/** One uniform pick from the manual pool (the ChestGenHooks.getOneItem face). */
+	public static Item randomManual(RandomSource aRandom) {
+		List<Item> tPool = manualPool();
+		return tPool.get(aRandom.nextInt(tPool.size()));
+	}
+
+	/**
 	 * The books tab (task p38-tabfix-d-ruling, the user ruling — the written books get a
 	 * dedicated creative tab so players can reach them; the GTMultiBlocks.MULTIBLOCKS_TAB
 	 * self-contained registration form: own DeferredRegister + a displayItems walk over
@@ -114,6 +141,10 @@ public final class GT6Books {
 						for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
 							aOutput.accept(new ItemStack(tItem.get()));
 						}
+						// task p38-book-loot-first — the Guide carrier joins the books tab too (the
+						// review-merge disposition; it rides outside ITEMS_BY_PATH, so the map walk
+						// above does not cover it)
+						aOutput.accept(new ItemStack(BOOK_LOOT_GUIDE.get()));
 					})
 					.build());
 

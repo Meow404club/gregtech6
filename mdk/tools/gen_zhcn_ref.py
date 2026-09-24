@@ -2359,6 +2359,12 @@ LEGACY_ITEM_BACKFILL = {
 
     'item.gt6.manual_steam': '蒸汽手册',
     'item.gt6.manual_tools': '工具索引',
+    # ---- the Dusty Guide Book loot carrier (task p38-book-loot-first): name + the two
+    # tooltip columns, hand rows over the MultiItemBooks.java:67 / Behavior_Drop_Loot
+    # upstream faces (no dump face exists)
+    'item.gt6.book_loot_guide': '布满灰尘的指南书',
+    'item.gt6.book_loot_guide.tooltip': '战利品：某本随机手册',
+    'item.gt6.book_loot_guide.tooltip_loot': '右键方块以开启',
 }
 
 # ---- the block-band drift: the tree families, surface plants, placeables and the

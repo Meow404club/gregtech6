@@ -97,6 +97,12 @@
       "max": 12,
       "min": 4,
       "weight": 1
+    },
+    {
+      "item": "gt6:book_loot_guide",
+      "max": 8,
+      "min": 4,
+      "weight": 40
     }
   ],
   "rolls": {

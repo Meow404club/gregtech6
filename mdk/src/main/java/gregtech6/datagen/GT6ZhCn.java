@@ -175,6 +175,11 @@ public class GT6ZhCn extends LanguageProvider {
 		for (GT6BookText.BookText tRow : GT6BookText.BOOKS) {
 			addDirect("item.gt6." + tRow.path());
 		}
+		// the Dusty Guide Book loot carrier (task p38-book-loot-first) — name + the two
+		// tooltip columns, same hand layer (the dump carries no face for it)
+		addDirect("item.gt6.book_loot_guide");
+		addDirect("item.gt6.book_loot_guide.tooltip");
+		addDirect("item.gt6.book_loot_guide.tooltip_loot");
 	}
 
 	/**

@@ -8,6 +8,7 @@
     "gt6:jackhammer_hv_no_ores_rocks",
     "gt6:axe_tree_fell",
     "gt6:spade_harvest",
+    "gt6:dungeon_inject_stronghold_library",
     "gt6:construction_ender_chest",
     "gt6:club_rock_crush",
     "gt6:branch_cutter_leaves",
@@ -18,6 +19,7 @@
     "gt6:dungeon_inject_jungle_temple_dispenser",
     "gt6:sense_vegetal",
     "gt6:dungeon_inject_jungle_temple",
+    "gt6:dungeon_inject_spawn_bonus_chest",
     "gt6:dungeon_inject_desert_pyramid"
   ],
   "replace": false
