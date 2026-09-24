@@ -38,6 +38,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -86,8 +87,11 @@ import gregtech6.tileentity.inventories.GT6StaticStorageBaseBlockEntity;
  * <li>Wooden Bottlecrate — id 8700+i (:180), hardness 0.5, resistance 2.0.</li>
  * </ul>
  * Tool-quality columns fold (no hardness-harvest layer on the port block properties); the
- * SFX folds (click/collect/anvil place) defer with the cosmetic layer; no creative tab
- * row (the boiler/hopper precedent — a later append).
+ * SFX folds (click/collect/anvil place) defer with the cosmetic layer; the upstream
+ * creative-tab homes (Safes 2010, Storage 32751 — Loader_MultiTileEntities.java:134-135
+ * and the :138-144/:181-184 storage rows) pool into the MACHINES_TAB join (task
+ * p38-tabfix-b-energy, {@link #onBuildTabContents}; the GTBarrels:257 pooling precedent —
+ * supersedes the old "no creative tab row" append note).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6StaticStorages {
@@ -568,5 +572,25 @@ public final class GT6StaticStorages {
 		*///?}
 		BLOCKS.register(tModBus);
 		ITEMS.register(tModBus);
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
+	 * joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
+	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
+	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display
+	 * items, so registered-but-tab-less was invisible in both the creative menu and JEI.
+	 * Pool-cut declaration: upstream hangs the metal kinds on the "Safes" category (tab
+	 * 2010, Loader_MultiTileEntities.java:134-135) and the wooden kinds on "Storage" (tab
+	 * 32751, :138-144/:177-184); this port pools both joins into MACHINES_TAB (the
+	 * GTBarrels:257 pooling precedent).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+		}
 	}
 }

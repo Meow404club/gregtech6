@@ -5,10 +5,12 @@ import java.util.List;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -145,5 +147,28 @@ public final class GT6LongDistPipes {
 		aEvent.enqueueWork(() -> {
 			gregtech6.GT6Mod.LOGGER.info("GT6 long distance pipes registered: 16 metas (-1 item, 4 fluid ratings, 11 dead), 2 endpoints (ids 10060/10061, the p35 pipes card)");
 		});
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-b-energy — the 16 {@link #WIRE_ITEMS_BY_META} metas
+	 * plus the two endpoint items join the machines tab; the GT6BurningBoxes
+	 * .onBuildTabContents verbatim form, the class-level MOD-bus
+	 * {@code @Mod.EventBusSubscriber} at the class head is what delivers this handler).
+	 * JEI 1.20.1 derives its item list from the tab display items, so registered-but-
+	 * tab-less was invisible in both the creative menu and JEI. Pool-cut declaration:
+	 * upstream hangs the LD pipe metas AND the two endpoint MTEs on the "Long Distance
+	 * Transport" category (tab 10060, Loader_MultiTileEntities.java:906-907 endpoints,
+	 * the block ride :915); this port pools the join into MACHINES_TAB (the GTBarrels:257
+	 * pooling precedent).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			for (RegistryObject<Item> tItem : WIRE_ITEMS_BY_META.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+			aEvent.accept(new ItemStack(ITEM_PIPE_ITEM.get()));
+			aEvent.accept(new ItemStack(FLUID_PIPE_ITEM.get()));
+		}
 	}
 }

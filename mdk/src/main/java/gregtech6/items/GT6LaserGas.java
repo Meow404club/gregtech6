@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -31,9 +32,11 @@ import net.minecraftforge.registries.RegistryObject;
  * The other six gases (He/Ne/Ar/Kr/Xe/HeNe/CO, :387-393) stay out — no consumer rows in
  * this port (the fill-row scope is the CO2 line the task card names).
  *
- * <p>The creative-tab face is CUT (the GT6LubricantBucket/GT6UsbSticks ruling); the
- * upstream crafting row of the empty emitter (:385) is the crafting pool. KJS surface:
- * REGISTRATION face only, deferred to the KJS binding card.
+ * <p>The creative-tab face joins MACHINES_TAB (task p38-tabfix-b-energy,
+ * {@link #onBuildTabContents} — supersedes the old CUT ruling; the GTBarrels:257 pooling
+ * precedent, the upstream crafting rows ride the Technological items tab this port does
+ * not split out). The upstream crafting row of the empty emitter (:385) is the crafting
+ * pool. KJS surface: REGISTRATION face only, deferred to the KJS binding card.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6LaserGas {
@@ -57,6 +60,24 @@ public final class GT6LaserGas {
 		/*IEventBus tModBus = net.neoforged.fml.ModList.get().getModContainerById("gt6").orElseThrow().getEventBus();
 		 *///?}
 		ITEMS.register(tModBus);
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-b-energy — both emitter items join the machines tab;
+	 * the GT6BurningBoxes.onBuildTabContents verbatim form, the class-level MOD-bus
+	 * {@code @Mod.EventBusSubscriber} at the class head is what delivers this handler).
+	 * JEI 1.20.1 derives its item list from the tab display items, so registered-but-
+	 * tab-less was invisible in both the creative menu and JEI. Pool-cut declaration:
+	 * upstream hangs the rows on the Technological items tab (MultiItemTechnological
+	 * .java:384/:394) which this port does not split out; the join pools into MACHINES_TAB
+	 * (the GTBarrels:257 pooling precedent).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(gregtech6.registry.GTMachines.MACHINES_TAB.getId())) {
+			aEvent.accept(new ItemStack(COMP_LASER_GAS_EMPTY.get()));
+			aEvent.accept(new ItemStack(COMP_LASER_GAS_CO2.get()));
+		}
 	}
 
 	private GT6LaserGas() {}

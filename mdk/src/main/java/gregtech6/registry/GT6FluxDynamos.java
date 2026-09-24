@@ -3,10 +3,12 @@ package gregtech6.registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -129,5 +131,26 @@ public final class GT6FluxDynamos {
 		aEvent.enqueueWork(() -> {
 			gregtech6.GT6Mod.LOGGER.info("GT6 flux dynamos registered: 5 rows, 2.75 FE/RU (ids 11111-11115, the p28 dynamo family)");
 		});
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-b-energy — the whole five-item ladder joins the
+	 * machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the class-level
+	 * MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what delivers this
+	 * handler). JEI 1.20.1 derives its item list from the tab display items, so
+	 * registered-but-tab-less was invisible in both the creative menu and JEI. Pool-cut
+	 * declaration: upstream gives the family its own "Dynamos" category (tab 10111,
+	 * Loader_MultiTileEntities.java:953-957); this port pools the join into MACHINES_TAB
+	 * (the GTBarrels:257 pooling precedent).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			aEvent.accept(new ItemStack(FLUX_DYNAMO_ITEM.get()));
+			aEvent.accept(new ItemStack(FLUX_DYNAMO_T2_ITEM.get()));
+			aEvent.accept(new ItemStack(FLUX_DYNAMO_T3_ITEM.get()));
+			aEvent.accept(new ItemStack(FLUX_DYNAMO_T4_ITEM.get()));
+			aEvent.accept(new ItemStack(FLUX_DYNAMO_T5_ITEM.get()));
+		}
 	}
 }

@@ -8,11 +8,13 @@ import java.util.Map;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -166,5 +168,28 @@ public final class GT6Lasers {
 		aEvent.enqueueWork(() -> {
 			gregtech6.GT6Mod.LOGGER.info("GT6 laser domain registered: 5 CO2 Laser rows (10101-10105, EU->LU) + 5 Laser Absorber rows (10151-10155, LU->EU), task p32-qu-laser-domain");
 		});
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-b-energy — both item maps join the machines tab; the
+	 * GT6BurningBoxes.onBuildTabContents verbatim form, the class-level MOD-bus
+	 * {@code @Mod.EventBusSubscriber} at the class head is what delivers this handler).
+	 * JEI 1.20.1 derives its item list from the tab display items, so registered-but-
+	 * tab-less was invisible in both the creative menu and JEI. Pool-cut declaration:
+	 * upstream gives the CO2 Lasers their own "Lasers" category (tab 10071,
+	 * Loader_MultiTileEntities.java:930-934) and the absorbers their own "Laser
+	 * Absorbers" category (tab 10151, :976-980); this port pools both joins into
+	 * MACHINES_TAB (the GTBarrels:257 pooling precedent).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			for (RegistryObject<Item> tItem : CO2_LASER_ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+			for (RegistryObject<Item> tItem : LASER_ABSORBER_ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+		}
 	}
 }
