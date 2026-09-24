@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -82,8 +83,11 @@ import gregtech6.tileentity.energy.generators.GTGeneratorSolidBlockEntity;
  * burning-box row); the Brick row is the STONE-sound carrier (:519 the aStone block),
  * every metal row the METAL sound (the machine-block convention).
  *
- * <p>No creative tab (the axle/diesel precedent — the items stay /give-reachable);
- * no GUI by census (LH.NO_GUI_CLICK_TO_INVENTORY, the Solid-class doc); the row
+ * <p>Creative tab: all 97 items join MACHINES_TAB via {@link #onBuildTabContents}
+ * (issue #10 — JEI 1.20.1 derives its item list from the tab display items, so the
+ * registered-but-tab-less family was invisible in BOTH the creative menu and JEI;
+ * supersedes the old axle/diesel tab-less precedent). No GUI by census
+ * (LH.NO_GUI_CLICK_TO_INVENTORY, the Solid-class doc); the row
  * (efficiency/rate) rides the BLOCK carrier and the BE reads it off the placed state.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -502,5 +506,21 @@ public final class GT6BurningBoxes {
 		*///?}
 		BLOCKS.register(tModBus);
 		ITEMS.register(tModBus);
+	}
+
+	/**
+	 * The tab walk (issue #10 — the whole {@link #ITEMS_BY_PATH} family joins the
+	 * machines tab; the GT6Covers.onBuildTabContents verbatim form, the class-level
+	 * MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what delivers this
+	 * handler). JEI 1.20.1 derives its item list from the tab display items, so
+	 * registered-but-tab-less was invisible in both the creative menu and JEI.
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+		}
 	}
 }
