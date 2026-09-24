@@ -978,6 +978,17 @@ SESSION_GROUPS = (
     # band-local setblocks). --group p37_energy_ld matches through the chain's
     # embedded name prefix.
     ("p37_energy_ld_transformer",),
+    # P37 chains card (p37-chains-water-wheel): the water-wheel RU-source live
+    # chain — one fresh cell row x664..666 z520 (+ the fenced flow rig z521..523
+    # south of the wheel, x663..665), x/z-disjoint from every registered band:
+    # water_wheel[axis=x] -> axle -> electric_dynamo_ulv (the offline test's
+    # chain-closure link — the 8 RU packet is BELOW the 16 LV floor, the dynamo
+    # T0 window [1..16] is the wheel's only consumer), the dead-wheel control,
+    # the falling-blade live spin (transferred=8) and the opaque-bury stall +
+    # rescan recovery. Admission mirroring the p12 kinetics form (bbox-
+    # registered, no fresh_boot / mutates member — the water rig is a band-local
+    # setblock fence). --group p37_kinetics_water_wheel matches the module stem.
+    ("p37_kinetics_water_wheel",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
