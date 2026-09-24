@@ -10,16 +10,17 @@ import org.junit.jupiter.api.Test;
 
 /**
  * The registration-arm census pin (task p34-covers-gameplay-10 acceptance ①): the
- * {@link GT6Covers#ITEMS} DeferredRegister carries the EXACT expected id set — the
- * landed families verbatim (the pump/emitter/conductor/switch/shutter/filter/retriever
- * singletons + the p33 logistics 14 + the controller pair + the 2x10 conveyor/arm
- * ladders) PLUS precisely this card's 25 rows (the 9 gameplay singletons + the 16
- * tag-selector ladder): 69 items total. The pin freezes the append-only discipline: a
- * renamed, dropped or extra cover item anywhere in the family fails the census.
+ * {@link GT6Covers#ITEMS} DeferredRegister carries the EXACT expected id set — the landed
+ * families verbatim (the pump/emitter/conductor/switch/shutter/filter/retriever singletons
+ * + the p33 logistics 14 + the controller pair + the 2x10 conveyor/arm ladders + the 9
+ * gameplay singletons + the 16 tag-selector ladder + the p35 display/scale five + the five
+ * reboot timers) PLUS the p37 crafting + asphalt pair: 81 items total. The pin freezes the
+ * append-only discipline: a renamed, dropped or extra cover item anywhere in the family
+ * fails the census.
  */
 public class GT6CoversGameplayCensusTest {
 
-	/** The expected full registry arm — 44 landed rows + this card's 25. */
+	/** The expected full registry arm. */
 	private static final Set<String> EXPECTED = Set.of(
 			// the landed singleton family (p5/p9/p10/p11/p31)
 			"cover_pump", "cover_redstone_emitter", "cover_redstone_conductor_in", "cover_redstone_conductor_out",
@@ -47,7 +48,11 @@ public class GT6CoversGameplayCensusTest {
 			"cover_selector_tag_12", "cover_selector_tag_13", "cover_selector_tag_14", "cover_selector_tag_15",
 			// task p35-covers-display-scale-6 — the 5 display/scale singletons + the 5 reboot-switch ladder
 			"cover_machine_display", "cover_auto_switch", "cover_energy_display", "cover_scale_energy", "cover_scale_progress",
-			"cover_auto_timer_1m", "cover_auto_timer_5m", "cover_auto_timer_10m", "cover_auto_timer_20m", "cover_auto_timer_30m");
+			"cover_auto_timer_1m", "cover_auto_timer_5m", "cover_auto_timer_10m", "cover_auto_timer_20m", "cover_auto_timer_30m",
+			// task p37-covers-crafting-asphalt — the last two gameplay classes: the
+			// vanilla-workbench face + the walk-speed plate (the census 收满: the p35
+			// research note's remaining Crafting/Asphalt gap closes here)
+			"cover_crafting", "cover_asphalt");
 
 	@Test
 	public void registrationArmCarriesTheExactCensusSet() {
@@ -57,7 +62,7 @@ public class GT6CoversGameplayCensusTest {
 		Set<String> tExpectedSorted = new TreeSet<>(EXPECTED);
 		assertEquals(tExpectedSorted, tActual,
 				"the cover registry arm drifted — the census is exact (acceptance ①)");
-		assertEquals(79, tActual.size(), "79 cover items: 69 landed (10 singletons + 14 logistics + 2x10 ladders + 9 gameplay + 5 this card) + 16 tag ladder + 5 timers");
+		assertEquals(81, tActual.size(), "81 cover items: 79 landed (10 singletons + 14 logistics + 2x10 ladders + 9 gameplay + 5 display/scale + 5 timers) + 16 tag ladder + this card's 2");
 	}
 
 }
