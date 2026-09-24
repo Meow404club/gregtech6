@@ -148,6 +148,10 @@ BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
    阻塞会话）；≤5s 超时；stdin JSON 容错；副作用事件必须去重锁；**handler 不存在
    就整个不装 hook**；注入会话上下文必须真数据——缺失就明说，禁止打印硬编码的
    剧场表格（SessionStart 注入见 tools/context_inject.py）。
+8. **禁用 ZCode 原生工作流**（CreateWorkflow/AmendWorkflow/ResumeWorkflowRun/
+   SaveWorkflow 等 dynamic-workflows 工具族，所有角色含主会话）：调度权独占于
+   主会话组织者——原生工作流会绕过合并队列/角色边界/GPG 纪律生成不受控的
+   子代理图，污染我们的工作流。要并行就按宪法派 subagent，要编排就写进任务卡。
 8. **一切测试/编译/RCON 启动经 tools/gt6testgate.py 统一门禁**（p34，2026-09-22
    WSL 一日三崩裁定）：内存占用 >30G 排队不开新，并发槽默认 4。
 
