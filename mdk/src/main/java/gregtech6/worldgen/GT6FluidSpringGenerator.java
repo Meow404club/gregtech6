@@ -3,9 +3,11 @@ package gregtech6.worldgen;
 import java.util.Random;
 
 /**
- * The bedrock-spring deterministic core (task p31-fluid-spring) — the pure generation math
- * of {@code WorldgenFluidSpring} (the lake half of the upstream spring; the MTE/indicator
- * arms deferred per the card spec ③), isolated from the Feature adapter so the offline
+ * The bedrock-spring deterministic core (task p31-fluid-spring; the nozzle arm landed by
+ * task p38-issue5-fluid-spring-nozzle, the indicator arm stays the declared defer) — the
+ * pure generation math
+ * of {@code WorldgenFluidSpring} (the lake half + the nozzle half of the upstream spring),
+ * isolated from the Feature adapter so the offline
  * tests drive it WITHOUT class-loading vanilla {@code Feature} (the GT6BedrockOreGenerator
  * posture).
  *
@@ -87,15 +89,24 @@ public final class GT6FluidSpringGenerator {
      * The stepped dome (WorldgenFluidSpring.java:66-80): the bedrock-face gate, then the
      * shell pass (non-opaque cells at y = i+1) and the lake pass (every cell at y = i,
      * i &gt; 0) per layer, footprint inset by the layer index from each chunk wall (local
-     * x/z 0..15 — upstream aMinX+i..aMaxX-i). All writes stay inside the chunk by
-     * construction.
+     * x/z 0..15 — upstream aMinX+i..aMaxX-i), then the NOZZLE arm (:77-79, task
+     * p38-issue5-fluid-spring-nozzle): for i &gt; 2, per position, a row with a spring
+     * fluid rolls {@code nextInt(16) == 0} on the PASSED stream and a strict-bedrock
+     * floor places the nozzle at the bedrock floor (y = aBedrockY, upstream y = 0) —
+     * {@link DomeSink#nozzle}. The draws ride the same coordinate-seeded stream the
+     * caller owns (the Feature passes the SPRING_DIMENSION_SALT stream after drawSpring;
+     * the upstream shared-chunk-random draw is unreproducible, the documented port
+     * strengthening) — decision-level determinism holds, and the dome writes themselves
+     * stay draw-free. A row without a spring fluid draws NOTHING (the upstream
+     * short-circuit order: mSpringFluid != null first).
      *
      * @param aBedrockY the flat bedrock floor ({@link GT6BedrockOreGenerator#BEDROCK_Y},
      *        clamped to the world minimum by the caller)
+     * @param aNozzleRandom the coordinate-seeded stream the 1/16 nozzle draws ride
      * @return false when the chunk centre is not a bedrock face (the :67 gate)
      */
     public static boolean generateDome(GTFluidSpringConfig aRow, int aChunkMinX, int aChunkMinZ,
-            int aBedrockY, DomeSink aSink) {
+            int aBedrockY, Random aNozzleRandom, DomeSink aSink) {
         // :66-67 — the chunk centre at the bedrock floor must be bedrock (or a bedrock ore)
         if (!aSink.isBedrockFace(aChunkMinX + GATE_OFFSET, aChunkMinZ + GATE_OFFSET)) return false;
 
@@ -107,6 +118,13 @@ public final class GT6FluidSpringGenerator {
 
                 // :75 — the lake body, unconditional (i > 0 keeps the floor layer fluid-free)
                 if (i > 0) aSink.fluid(aChunkMinX + tX, aBedrockY + i, aChunkMinZ + tZ, aRow);
+
+                // :77-79 — the nozzle arm (task p38-issue5-fluid-spring-nozzle): the
+                // upstream short-circuit order verbatim (fluid first, then the draw,
+                // then the strict WD.bedrock floor read)
+                if (aRow.springFluid() != null && i > 2 && aNozzleRandom.nextInt(16) == 0
+                        && aSink.isBedrock(aChunkMinX + tX, aChunkMinZ + tZ))
+                    aSink.nozzle(aChunkMinX + tX, aBedrockY, aChunkMinZ + tZ);
             }
         }
         return true;
@@ -117,6 +135,9 @@ public final class GT6FluidSpringGenerator {
         /** The :67 gate: the chunk-center block at the bedrock floor is bedrock (or a bedrock ore). */
         boolean isBedrockFace(int aX, int aZ);
 
+        /** The :77 gate: the position's floor block is STRICTLY vanilla bedrock (WD.bedrock — the nozzle admits no bedrock-ore floor). */
+        boolean isBedrock(int aX, int aZ);
+
         /** The :73 WD.opq read — the opaque-full-cube check the shell pass seals on. */
         boolean isOpaque(int aX, int aY, int aZ);
 
@@ -125,5 +146,8 @@ public final class GT6FluidSpringGenerator {
 
         /** The lake body write (:75 — the row's resolved fluid block source state). */
         void fluid(int aX, int aY, int aZ, GTFluidSpringConfig aRow);
+
+        /** The nozzle placement (:78 — the MultiTileEntityFluidSpring port at the bedrock floor). */
+        void nozzle(int aX, int aY, int aZ);
     }
 }

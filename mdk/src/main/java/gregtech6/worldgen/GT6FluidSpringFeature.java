@@ -3,9 +3,7 @@ package gregtech6.worldgen;
 import java.util.Random;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
@@ -16,6 +14,7 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
 import gregtech6.block.ore.GTBedrockOreBlock;
+import gregtech6.registry.GTBlockEntities;
 
 /**
  * The bedrock-spring Feature (task p31-fluid-spring spec ②) — the per-chunk adapter around
@@ -47,10 +46,12 @@ import gregtech6.block.ore.GTBedrockOreBlock;
  * cells — the in-repo plain setBlock(…, 2) path (the bedrock card, RCON-verified)
  * carries the writes and only the postprocessing half of the seam is load-bearing.
  *
- * <p>Declared deferrals (the config javadoc): the infinite-spring MTE arm
- * (WorldgenFluidSpring.java:77-79, MultiTileEntityFluidSpring 32763) and the surface
- * grass-indicator arm (:82-103) ride the card spec ③ defer — the dome/lake/shell half is
- * complete. The shell block is deepslate (the sibling bedrock muffin translation; the
+ * <p>Declared deferrals: the surface grass-indicator arm (WorldgenFluidSpring.java:82-103)
+ * rides the card spec ③ defer — the dome/lake/shell half (p31) and the infinite-spring
+ * nozzle arm (:77-79, task p38-issue5-fluid-spring-nozzle: the GTBlockEntities.FLUID_SPRING
+ * block + its GTFluidSpringBlockEntity at the strict-bedrock floor, 1/16 per position at
+ * dome layers i &gt; 2) are complete. The shell block is deepslate (the sibling bedrock
+ * muffin translation; the
  * upstream OW row picks the Betweenlands deepslate-or-stone fallback, WorldgenFluidSpring
  * .java:69-70 — a compat block this port does not carry). KJS face (card declaration):
  * the 16-row table is datapack JSON (the configured-feature config); the Feature/codec
@@ -84,7 +85,7 @@ public class GT6FluidSpringFeature extends Feature<GTFluidSpringConfig.Table> {
 
         int tBedrockY = Math.max(GT6BedrockOreGenerator.BEDROCK_Y, tLevel.getMinBuildHeight());
         return GT6FluidSpringGenerator.generateDome(tRow, tWork.getMinBlockX(), tWork.getMinBlockZ(),
-                tBedrockY, levelSink(tLevel, tFluid));
+                tBedrockY, tSpringRandom, levelSink(tLevel, tFluid, tRow));
     }
 
     /**
@@ -100,21 +101,23 @@ public class GT6FluidSpringFeature extends Feature<GTFluidSpringConfig.Table> {
                 .getOrThrow(GT6Worldgen.BEDROCK_ORES_CONFIGURED).config();
     }
 
-    /** The row's resolved fluid source state, or null when the id carries no registered block (Registry.get falls back to air — the DefaultedRegistry miss face). */
+    /** The row's resolved fluid source state, or null when the id carries no registered block (the GTFluidSpringBlockEntity.sourceState miss face). */
     private static BlockState fluidState(String aBlockId) {
-        int tColon = aBlockId.indexOf(':');
-        if (tColon <= 0 || tColon == aBlockId.length() - 1) return null;
-        Block tBlock = BuiltInRegistries.BLOCK.get(
-                ResourceLocation.fromNamespaceAndPath(aBlockId.substring(0, tColon), aBlockId.substring(tColon + 1)));
-        return tBlock == Blocks.AIR ? null : tBlock.defaultBlockState();
+        return gregtech6.tileentity.misc.GTFluidSpringBlockEntity.sourceState(aBlockId);
     }
 
-    private GT6FluidSpringGenerator.DomeSink levelSink(WorldGenLevel aLevel, BlockState aFluid) {
+    private GT6FluidSpringGenerator.DomeSink levelSink(WorldGenLevel aLevel, BlockState aFluid, GTFluidSpringConfig aRow) {
         return new GT6FluidSpringGenerator.DomeSink() {
             @Override
             public boolean isBedrockFace(int aX, int aZ) {
                 Block tBlock = aLevel.getBlockState(new BlockPos(aX, GT6BedrockOreGenerator.BEDROCK_Y, aZ)).getBlock();
                 return tBlock == Blocks.BEDROCK || tBlock instanceof GTBedrockOreBlock; // :67 + the idempotent ore face
+            }
+
+            @Override
+            public boolean isBedrock(int aX, int aZ) {
+                Block tBlock = aLevel.getBlockState(new BlockPos(aX, GT6BedrockOreGenerator.BEDROCK_Y, aZ)).getBlock();
+                return tBlock == Blocks.BEDROCK; // :77 WD.bedrock — the STRICT floor face (no bedrock-ore nozzles)
             }
 
             @Override
@@ -128,10 +131,20 @@ public class GT6FluidSpringFeature extends Feature<GTFluidSpringConfig.Table> {
             }
 
             @Override
-            public void fluid(int aX, int aY, int aZ, GTFluidSpringConfig aRow) {
+            public void fluid(int aX, int aY, int aZ, GTFluidSpringConfig aDomeRow) {
                 BlockPos tPos = new BlockPos(aX, aY, aZ);
                 aLevel.setBlock(tPos, aFluid, 2); // :75 the lake body (the source state)
                 aLevel.getChunk(tPos).markPosForPostprocessing(tPos); // the FluidSproutFeature.java:127 settle seam
+            }
+
+            @Override
+            public void nozzle(int aX, int aY, int aZ) {
+                // :78 — the MultiTileEntityFluidSpring placement: the block + its "gt.spring" data
+                BlockPos tPos = new BlockPos(aX, aY, aZ);
+                aLevel.setBlock(tPos, GTBlockEntities.FLUID_SPRING.get().defaultBlockState(), 2);
+                if (aLevel.getBlockEntity(tPos) instanceof gregtech6.tileentity.misc.GTFluidSpringBlockEntity tSpring) {
+                    tSpring.setSpring(aRow.blockId(), aRow.springFluid().intValue());
+                }
             }
         };
     }
