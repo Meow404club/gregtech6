@@ -407,6 +407,17 @@ public final class GTBlockEntities {
 	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6PlayerCounterBlockEntity>> PLAYERCOUNTER_BE =
 			BLOCK_ENTITY_TYPES.register("playercounter", () -> BlockEntityType.Builder.of(
 					gregtech6.tileentity.sensors.GT6PlayerCounterBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("playercounter").get()).build(null)); // :1994
+	// p37-sensors-3 — the pool closure (the anchor's remaining rows :1996/:1998/:1999,
+	// one BET per class over its own GT6Sensors block, the CRANK_BE form)
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6GeigerCounterBlockEntity>> GEIGERCOUNTER_BE =
+			BLOCK_ENTITY_TYPES.register("geigercounter", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6GeigerCounterBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("geigercounter").get()).build(null)); // :1996
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6TachometerBlockEntity>> TACHOMETER_BE =
+			BLOCK_ENTITY_TYPES.register("tachometer", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6TachometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("tachometer").get()).build(null)); // :1998
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6LaserometerBlockEntity>> LASEROMETER_BE =
+			BLOCK_ENTITY_TYPES.register("laserometer", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.sensors.GT6LaserometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("laserometer").get()).build(null)); // :1999
 
 	// -------------------------------------------------------------------------
 	// the static storage batch (task p26-storage-static-batch) — the six family rows

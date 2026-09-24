@@ -37,21 +37,27 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * Electrometer 31015 — every live upstream column transcribed: hardness 1, resistance 16,
  * the metal sound (aUtilMetal → METAL).
  *
- * <p>CENSUS ERRATUM (task p34-sensors-trivial-14, coordinator ruling A): the upstream
- * sensors() method registers 21 rows (Loader_MultiTileEntities.java:1979-1999, read line
- * by line), not the 19 the P26/P34 census ledgers carried — the zh MTE dump tops out at
- * 31022 with no 31023 row, which is where the undercount came from. This card appends
- * the remaining 15 rows in the upstream anchor order (:1979 → :1994); the Tachometer
- * 31019 / Geiger Counter 31020 / Laser-O-Meter 31021 rows stay POOLED on their missing
- * seams (rotation — the axles cut at GtAxleBE / radiation — no domain / laser — no
- * measurement domain), never implemented outside a seam (the card mandate). The
- * CR.shapeless self-recast companions ride the ROWS walk automatically
- * (GT6CraftingRecipes.sensorRecastBuilders — one 1:1 NBT-reset recast per row, the
- * upstream per-row tails :1979-:1999); the SHAPED rows ride a recipe card (the
- * electrometer precedent — its 'X' key is a dedicated GT6 item off the port path). The
- * "Sensors" creative tab is upstream's MTE-registry category and stays out (the
- * attachments precedent — /give-reachable, the tab system is the pool card).
- */
+	 * <p>CENSUS ERRATUM (task p34-sensors-trivial-14, coordinator ruling A): the upstream
+	 * sensors() method registers 21 rows (Loader_MultiTileEntities.java:1979-1999, read line
+	 * by line), not the 19 the P26/P34 census ledgers carried — the zh MTE dump tops out at
+	 * 31022 with no 31023 row, which is where the undercount came from. The p34 batch
+	 * appended 15 rows in the upstream anchor order (:1979 → :1994), POOLING the Tachometer
+	 * 31019 / Geiger Counter 31020 / Laser-O-Meter 31021 rows on their then-missing seams.
+	 * <p>POOL RESOLVED (task p37-sensors-3, 21/21): the p34 seam notes are the stale half —
+	 * P28 built the kinetics (GTAxleBlockEntity mTransferredLast/mPower/mSpeed +
+	 * GTGearBoxBlockEntity mMaxThroughPut/mTransferredLast) and P32 revived the LU carrier
+	 * (GTWireBlockEntity mTransferredLast/isLaser), so the Tachometer and Laser-O-Meter
+	 * ported whole; the Geiger Counter's reactor target (MultiTileEntityReactorCore,
+	 * research.p37-gap-scan.s2 true-gap ①) is absent, and its declared non-reactor 0 arm
+	 * IS the upstream :49/:65 behaviour verbatim (the reactor arm waits on the reactor
+	 * card — the pre-left field face precedent). The CR.shapeless self-recast companions
+	 * ride the ROWS walk automatically
+	 * (GT6CraftingRecipes.sensorRecastBuilders — one 1:1 NBT-reset recast per row, the
+	 * upstream per-row tails :1979-:1999); the SHAPED rows ride a recipe card (the
+	 * electrometer precedent — its 'X' key is a dedicated GT6 item off the port path). The
+	 * "Sensors" creative tab is upstream's MTE-registry category and stays out (the
+	 * attachments precedent — /give-reachable, the tab system is the pool card).
+	 */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6Sensors {
 
@@ -71,9 +77,10 @@ public final class GT6Sensors {
 	}
 
 	/**
-	 * The 18 live rows: the three pioneers (upstream registration order :1995 → :1986 →
-	 * :1997) then the p34 batch of 15, in the upstream anchor order :1979 → :1994 (the
-	 * appended subsequence is the anchor's row sequence verbatim — the census 钉测
+	 * The 21 live rows: the three pioneers (upstream registration order :1995 → :1986 →
+	 * :1997), the p34 batch of 15 in the upstream anchor order :1979 → :1994, then the
+	 * p37 pool closure of 3 (the anchor's remaining rows in :1996 → :1998 → :1999 order —
+	 * the appended subsequence is the anchor's row sequence verbatim, the census 钉测
 	 * contract).
 	 */
 	public static final List<SensorRow> ROWS = List.of(
@@ -95,9 +102,11 @@ public final class GT6Sensors {
 			new SensorRow("heavyweightometer"      , 31012, () -> GTBlockEntities.HEAVYWEIGHTOMETER_BE.get()),       // :1991
 			new SensorRow("superheavyweightometer" , 31013, () -> GTBlockEntities.SUPERHEAVYWEIGHTOMETER_BE.get()),  // :1992
 			new SensorRow("tpsmeter"               , 31016, () -> GTBlockEntities.TPSMETER_BE.get()),                // :1993
-			new SensorRow("playercounter"          , 31017, () -> GTBlockEntities.PLAYERCOUNTER_BE.get()));          // :1994
-	// POOLED (never implemented outside a seam): 31019 tachometer, 31020 geigercounter,
-	// 31021 laserometer — Loader :1996/:1998/:1999.
+			new SensorRow("playercounter"          , 31017, () -> GTBlockEntities.PLAYERCOUNTER_BE.get()),           // :1994
+			// p37-sensors-3 — the pool closure, the anchor's remaining rows (:1996/:1998/:1999)
+			new SensorRow("geigercounter"          , 31020, () -> GTBlockEntities.GEIGERCOUNTER_BE.get()),           // :1996
+			new SensorRow("tachometer"             , 31019, () -> GTBlockEntities.TACHOMETER_BE.get()),              // :1998
+			new SensorRow("laserometer"            , 31021, () -> GTBlockEntities.LASEROMETER_BE.get()));            // :1999
 
 	/** The blocks/BlockItems, one pair per row (the GT6Attachments static-block form). */
 	public static final java.util.Map<String, RegistryObject<GTSensorBlock>> BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();

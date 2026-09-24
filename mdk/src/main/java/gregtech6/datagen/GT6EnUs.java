@@ -1876,6 +1876,10 @@ public class GT6EnUs extends LanguageProvider {
                 case "superheavyweightometer" -> "Super Heavy Weight-O-Meter Sensor"; // :1992
                 case "tpsmeter"               -> "TPS Sensor";                     // :1993
                 case "playercounter"          -> "Player Counter Sensor";          // :1994
+                // p37-sensors-3 — the pool closure, the upstream display strings verbatim (Loader :1996/:1998/:1999)
+                case "geigercounter"          -> "Geiger Counter Sensor";          // :1996
+                case "tachometer"             -> "Tachometer Sensor";              // :1998
+                case "laserometer"            -> "Laser-O-Meter Sensor";           // :1999
                 default -> throw new IllegalArgumentException("untranslated sensor row: " + tRow.path());
             });
         }

@@ -8658,6 +8658,18 @@ the batch run):
 - `gt6/textures/block/superheavyweightometer.png` `d8199fb95821db4132842b9c15d86863ac3bb437e76167145c2755a1c1249a05`
 - `gt6/textures/block/tpsmeter.png` `7571093ede617a3d1c88579d50faf419df52bc6c991337551084d8c840b0de01`
 - `gt6/textures/block/playercounter.png` `2013a9e65bb3a28603c390fe73f5f1a2d0feab28048b3410837c6fcb45ba93ed`
+
+Sensor block textures, batch 3 (3 rows, the pool closure), task p37-sensors-3 —
+same borrow/bake recipe as the pioneer + batch-2 rows above (upstream snapshot
+`v6.17.06-22-g3703e4030`, `src/main/resources/assets/gregtech/textures/blocks
+/machines/redstone/sensors/<name>/`): the upstream `colored/front.png` with the
+sensor's own `overlay/front.png` (box-downscaled 4x, straight-alpha) baked
+src-over into ONE 16x16 canonical PNG (PIL alpha_composite form re-verified
+against the batch-2 tpsmeter ledger hash before the batch run):
+
+- `gt6/textures/block/tachometer.png` `d04a519057b41bc531e855101ed14ac247b62d0b53566b9db19447721f4a6e6f`
+- `gt6/textures/block/geigercounter.png` `2cf5b552cd5b61124eeaac3dfaf6e42ff630a4967053f8f03c4f6706e3aad2cb`
+- `gt6/textures/block/laserometer.png` `56e118d3de4ddf627473f80a143d017d5fc7cc9b56378851da11d7cfe69f007c`
 Bumbliary GUI pair textures, task p34-bumbliary-gui:
 `gt6/textures/gui/machines/bumbliary.png` and
 `gt6/textures/gui/machines/bumbliaryadvanced.png` come from upstream
