@@ -726,6 +726,13 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.cover_auto_timer_10m", "Auto Reboot Switch (10 mins)");
         add("item.gt6.cover_auto_timer_20m", "Auto Reboot Switch (20 mins)");
         add("item.gt6.cover_auto_timer_30m", "Auto Reboot Switch (30 mins)");
+        // task p37-covers-crafting-asphalt — the last two gameplay classes: the crafting
+        // cover name is the upstream MultiItemTechnological.java:60 display verbatim; the
+        // asphalt cover rode the "Asphalt Panel" item upstream (Loader_MultiTileEntities
+        // .java:2053) — the cover item takes the hand en name (the zh face is the dump
+        // 沥青覆盖板 panel row verbatim, so the locales stay aligned)
+        add("item.gt6.cover_crafting", "Crafting Table Cover");
+        add("item.gt6.cover_asphalt", "Asphalt Cover");
     }
 
     /**

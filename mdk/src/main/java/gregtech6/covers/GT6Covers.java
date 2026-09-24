@@ -18,12 +18,14 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.covers.covers.CoverConveyor;
+import gregtech6.covers.covers.CoverAsphalt;
 import gregtech6.covers.covers.CoverControllerAuto;
 import gregtech6.covers.covers.CoverControllerAutoRedstone;
 import gregtech6.covers.covers.CoverControllerAutoTimer;
 import gregtech6.covers.covers.CoverControllerCovers;
 import gregtech6.covers.covers.CoverControllerDisplay;
 import gregtech6.covers.covers.CoverControllerRedstone;
+import gregtech6.covers.covers.CoverCrafting;
 import gregtech6.covers.covers.CoverDisplayEnergy;
 import gregtech6.covers.covers.CoverDrain;
 import gregtech6.covers.covers.CoverFilterFluid;
@@ -263,6 +265,24 @@ public final class GT6Covers {
 			() -> new Item(new Item.Properties()));
 
 	/**
+	 * The p37 crafting-table cover item — the vanilla-workbench face (task
+	 * p37-covers-crafting-asphalt; upstream MultiItemTechnological.java:60 meta 1001,
+	 * "Crafting Table Cover"). Same card-local ITEMS DeferredRegister as the rest of the
+	 * cover family.
+	 */
+	public static final RegistryObject<Item> COVER_CRAFTING = ITEMS.register("cover_crafting",
+			() -> new Item(new Item.Properties()));
+
+	/**
+	 * The p37 asphalt cover item — the walk-speed plate (task p37-covers-crafting-asphalt;
+	 * upstream the Asphalt Panel items Loader_MultiTileEntities.java:2053-2055 carried the
+	 * CoverAsphalt — the dedicated cover-item form per the family convention, the zh face
+	 * 沥青覆盖板 rides the panel row verbatim).
+	 */
+	public static final RegistryObject<Item> COVER_ASPHALT = ITEMS.register("cover_asphalt",
+			() -> new Item(new Item.Properties()));
+
+	/**
 	 * The p11 auto redstone machine switch — the "lets it finish" controller (task
 	 * p11-cover-controllers; upstream MultiItemTechnological.java:65 meta 1006,
 	 * "Auto Redstone Machine Switch"). Holds a mid-process machine ON through a
@@ -459,6 +479,11 @@ public final class GT6Covers {
 			aEvent.accept(new ItemStack(COVER_SCALE_ENERGY.get()));
 			aEvent.accept(new ItemStack(COVER_SCALE_PROGRESS.get()));
 			for (int i = 0; i < COVER_AUTO_TIMERS.size(); i++) aEvent.accept(new ItemStack(COVER_AUTO_TIMERS.get(i).get()));
+			// task p37-covers-crafting-asphalt — the crafting + asphalt pair joins the
+			// machines tab (the p34/p35 family precedents; upstream the crafting cover rides
+			// the MultiItemTechnological GT tab list, the asphalt panel the Panels list)
+			aEvent.accept(new ItemStack(COVER_CRAFTING.get()));
+			aEvent.accept(new ItemStack(COVER_ASPHALT.get()));
 		}
 	}
 
@@ -522,6 +547,9 @@ public final class GT6Covers {
 			// p35 — the five reboot durations (1200..36000 tick cycles)
 			CoverRegistry.put(COVER_AUTO_TIMERS.get(i).get(), new CoverControllerAutoTimer(CoverControllerAutoTimer.TIMER_TIMES[i]));
 		}
+		// p37 — the last two gameplay classes: the vanilla-workbench face + the walk-speed plate
+		CoverRegistry.put(COVER_CRAFTING.get(), new CoverCrafting());
+		CoverRegistry.put(COVER_ASPHALT.get(), new CoverAsphalt());
 		for (int i = 0; i < CoverConveyor.TIMING_TIERS.length; i++) {
 			// p11 — the ten timing tiers of the two item-transport covers (512>>i tick periods)
 			CoverRegistry.put(COVER_CONVEYORS.get(i).get(), new CoverConveyor(CoverConveyor.TIMING_TIERS[i]));

@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -285,6 +286,26 @@ public interface ICoverableTE {
 	default void dropCoverStack(ItemStack aStack, byte aSide) {
 		BlockPos tPos = self().getBlockPos().relative(Direction.from3DDataValue(aSide));
 		Block.popResource(self().getLevel(), tPos, aStack);
+	}
+
+	// ---------------------------------------------------------------------------
+	// walk-over dispatch (06Covers :428-429, restored with p37-covers-crafting-asphalt)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Upstream :428 verbatim shape — the vanilla {@code Block.stepOn} entry (the
+	 * 1.20.1 counterpart of the upstream {@code BlockBase.onEntityWalking},
+	 * MultiTileEntityBlock.java:306) hands the entity in; the TOP-face cover answers
+	 * through {@link ICover#onWalkOver}. The upstream {@code EntityLivingBase} gate rides
+	 * here (one place, every host block inherits the narrowing); a {@code false} cover
+	 * answer would fall through to the upstream {@code onWalkOver2} host arm :429 — no
+	 * ported host carries walk semantics, so the arm is the documented empty body.
+	 */
+	default void onCoverWalkOver(Entity aEntity) {
+		if (!(aEntity instanceof LivingEntity) || !hasCovers()) return; // the upstream EntityLivingBase + !hasCovers gates
+		byte tSide = (byte) Direction.UP.get3DDataValue(); // SIDE_UP — the GT6 side order == get3DDataValue
+		CoverData tCovers = getCovers();
+		if (tCovers.mBehaviours[tSide] != null) tCovers.mBehaviours[tSide].onWalkOver(tSide, tCovers, aEntity); // :428 (the F fall-through arm: no host onWalkOver2)
 	}
 
 	// ---------------------------------------------------------------------------

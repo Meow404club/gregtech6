@@ -25,6 +25,8 @@ import gregtech6.registry.GTFluidPipes;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 import gregtech6.util.UT6;
+import net.minecraft.world.entity.Entity;
+import gregtech6.covers.ICoverableTE;
 
 /**
  * The GT6 fluid pipe block (task p4-fluid-pipes spec ④) — the block side of the pipe
@@ -234,5 +236,11 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 			}
 		}
 		return super.triggerEvent(aState, aLevel, aPos, aId, aParam);
+	}
+
+	@Override
+	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
+		super.stepOn(aLevel, aPos, aState, aEntity);
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (p37-covers-crafting-asphalt)
 	}
 }

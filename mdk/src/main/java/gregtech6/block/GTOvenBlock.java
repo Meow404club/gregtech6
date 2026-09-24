@@ -32,6 +32,7 @@ import gregtech6.registry.GTMachines;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.machines.TileEntityOven;
 import gregtech6.util.UT6;
+import net.minecraft.world.entity.Entity;
 
 /**
  * The Oven block (task p4-machine-oven, spec 7/8) — the block-side of the first real
@@ -273,5 +274,11 @@ public class GTOvenBlock extends GTEntityBlock {
 		if (aPlacer instanceof Player tPlayer && aLevel.getBlockEntity(aPos) instanceof TileEntityOven tOven) {
 			tOven.setFacingFromPlacement(tPlayer); // upstream onPlaced :128-131
 		}
+	}
+
+	@Override
+	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
+		super.stepOn(aLevel, aPos, aState, aEntity);
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (p37-covers-crafting-asphalt)
 	}
 }

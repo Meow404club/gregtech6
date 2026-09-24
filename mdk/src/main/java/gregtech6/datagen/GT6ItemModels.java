@@ -514,6 +514,14 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent(gregtech6.covers.GT6Covers.AUTO_TIMER_IDS[i], mcLoc("item/generated"))
                 .texture("layer0", modLoc("block/auto_timer_switch/circuit"));
         }
+        // the p37 crafting + asphalt cover pair (task p37-covers-crafting-asphalt) — the
+        // items show their plate art (byte-identical upstream borrows living in
+        // textures/block/crafting/ and textures/block/asphalt.png — assets/README.md
+        // attribution); the crafting variant row keeps variant 0 (the declared fold)
+        withExistingParent("cover_crafting", mcLoc("item/generated"))
+            .texture("layer0", modLoc("block/crafting/0"));
+        withExistingParent("cover_asphalt", mcLoc("item/generated"))
+            .texture("layer0", modLoc("block/asphalt"));
         // the Integrated Circuit item (task p16-distillery-family ①) — item/generated over
         // the byte-identical upstream icon borrow (gt.integrated_circuit/0.png, config 0 —
         // the 256-icon damage ladder is the declared single-model cut, assets/README.md

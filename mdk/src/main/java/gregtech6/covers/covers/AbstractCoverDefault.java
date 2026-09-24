@@ -99,6 +99,9 @@ public abstract class AbstractCoverDefault implements ICover {
 	@Override public void onBlockUpdate(byte aCoverSide, CoverData aData) {/**/} // :75
 	@Override public void onStoppedUpdate(byte aCoverSide, CoverData aData, boolean aStopped) {/**/} // :76
 
+	/** Upstream :73 — a plain cover consumes the walk event without acting on it (the ICover doc). */
+	@Override public boolean onWalkOver(byte aCoverSide, CoverData aData, Entity aEntity) {return true;}
+
 	/**
 	 * Upstream :78 — the neighbouring block's signal read at the covered face. The
 	 * {@code getIndirectPowerLevelTo} counterpart is {@code Level.getSignal} at

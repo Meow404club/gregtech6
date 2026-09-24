@@ -36,6 +36,7 @@ import gregtech6.registry.GTWireSpecs.Row.Family;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.connectors.GTWireBlockEntity;
 import gregtech6.util.UT6;
+import gregtech6.covers.ICoverableTE;
 
 /**
  * The GT6 electric wire block (task p7-d2-cable spec ④) — the block side of the wire
@@ -553,5 +554,11 @@ public class GTWireBlock extends GTEntityBlock {
 	@Override
 	public RenderShape getRenderShape(BlockState aState) {
 		return RenderShape.MODEL; // BaseEntityBlock default INVISIBLE is for BER blocks
+	}
+
+	@Override
+	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
+		super.stepOn(aLevel, aPos, aState, aEntity);
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (p37-covers-crafting-asphalt)
 	}
 }

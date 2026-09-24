@@ -23,6 +23,8 @@ import gregtech6.registry.GTItemPipes;
 import gregtech6.registry.GTItemPipes.ItemPipeRow;
 import gregtech6.tileentity.connectors.GTItemPipeBlockEntity;
 import gregtech6.util.UT6;
+import net.minecraft.world.entity.Entity;
+import gregtech6.covers.ICoverableTE;
 
 /**
  * The GT6 item pipe block (task p26-pipe-item spec ⑤) — the block carrier of the row
@@ -127,5 +129,11 @@ public class GTItemPipeBlock extends GTEntityBlock {
 			tPipe.toggleConnection(tTargetSide); // plain = the wrench connection toggle (getFacingTool :288)
 		}
 		return InteractionResult.CONSUME;
+	}
+
+	@Override
+	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
+		super.stepOn(aLevel, aPos, aState, aEntity);
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (p37-covers-crafting-asphalt)
 	}
 }

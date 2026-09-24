@@ -138,6 +138,19 @@ public interface ICover {
 	/** Upstream :153 — the item that drops when this cover is removed. */
 	ItemStack getCoverItem(byte aCoverSide, CoverData aData);
 
+	/**
+	 * Upstream :148 — an entity walked over the face carrying this cover. RESTORED with
+	 * the asphalt cover (task p37-covers-crafting-asphalt; the P4 spec ② pool cut is
+	 * lifted — the p9-redstone-triple restoration shape). The upstream
+	 * {@code EntityLivingBase} parameter widens to {@link Entity} (the port's uniform
+	 * entity-hook form; the LivingEntity narrowing stays at the host dispatch,
+	 * {@link ICoverableTE#onCoverWalkOver}). @return true when the cover CONSUMED the walk
+	 * event (the AbstractCoverDefault default eats it, upstream AbstractCoverDefault :73 —
+	 * a {@code false} would fall through to the host's own walk semantics, the upstream
+	 * {@code onWalkOver2} arm, which no ported host carries yet).
+	 */
+	boolean onWalkOver(byte aCoverSide, CoverData aData, Entity aEntity);
+
 	/** Upstream :158. */
 	boolean isSolid(byte aCoverSide, CoverData aData);
 

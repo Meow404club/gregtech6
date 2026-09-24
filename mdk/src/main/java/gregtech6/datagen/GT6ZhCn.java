@@ -1475,6 +1475,12 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.cover_auto_timer_10m");
 		addDirect("item.gt6.cover_auto_timer_20m");
 		addDirect("item.gt6.cover_auto_timer_30m");
+		// task p37-covers-crafting-asphalt — the crafting cover (the dump
+		// gt.multiitem.technological.1001 row 工作台覆盖板, tmp/gregtech.lang:10147 verbatim)
+		// + the asphalt cover (the dump gt.multitileentity.32484 row 沥青覆盖板 :13365
+		// verbatim — the zh face the panel item carried upstream)
+		addDirect("item.gt6.cover_crafting");
+		addDirect("item.gt6.cover_asphalt");
 		addDirect("item.gt6.integrated_circuit");
 		addDirect(GT6Circuits.TOOLTIP_KEY);
 		// task p29-w4-hot-lube ④ — the Lubricant Bucket + the "Industrial Use ONLY!"

@@ -24,6 +24,8 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.portals.GTMiniPortalBlockEntity;
 import gregtech6.tileentity.portals.GTMiniPortalEndBlockEntity;
 import gregtech6.tileentity.portals.GTMiniPortalNetherBlockEntity;
+import net.minecraft.world.entity.Entity;
+import gregtech6.covers.ICoverableTE;
 
 /**
  * The miniature portal block (task p35-portals-mini-nether-end) — the GTSensorBlock
@@ -131,5 +133,11 @@ public class GTMiniPortalBlock extends GTEntityBlock {
 			return InteractionResult.CONSUME;
 		}
 		return InteractionResult.PASS;
+	}
+
+	@Override
+	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
+		super.stepOn(aLevel, aPos, aState, aEntity);
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (p37-covers-crafting-asphalt)
 	}
 }
