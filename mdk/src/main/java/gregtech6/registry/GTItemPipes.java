@@ -7,16 +7,19 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -169,14 +172,25 @@ public final class GTItemPipes {
 	/** The registered items, same keys as {@link #BLOCKS_BY_PATH}. */
 	public static final Map<String, RegistryObject<Item>> ITEMS_BY_PATH = new LinkedHashMap<>();
 
+	/**
+	 * The shared pipe properties — the ONE chain all 18 rows build from (the GTWires
+	 * .wireProperties seam form). issue #9: the pipe renders sub-cube quads over the
+	 * default FULL-CUBE shape — a true canOcclude culls neighbor faces (X-ray); the axle
+	 * pipe-block convention (GT6Kinetics.java:244).
+	 */
+	static BlockBehaviour.Properties pipeProperties() {
+		return BlockBehaviour.Properties.of()
+				.strength(2.0F, 6.0F).sound(SoundType.METAL) // the Loader :77-82 NBT pair
+				.noOcclusion().isViewBlocking(GTItemPipes::never);
+	}
+
 	static {
 		for (ItemPipeRow tRow : ROWS) {
 			// hardness/resistance = the registration NBT pair (NBT_HARDNESS 2.0/NBT_RESISTANCE
 			// 6.0, :77-82); the METAL sound is the material-family visual axis (the port's
 			// declared normalisation layer, the wood-fluid-pipe WOOD-sound precedent).
 			BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
-					() -> new GTItemPipeBlock(rowByPath(tRow.path()), BlockBehaviour.Properties.of()
-							.strength(2.0F, 6.0F).sound(SoundType.METAL))));
+					() -> new GTItemPipeBlock(rowByPath(tRow.path()), pipeProperties())));
 			// the composed-name item (the boiler GTComposedNameItem posture — the stack name
 			// delegates to the block's composed getName)
 			ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
@@ -234,6 +248,11 @@ public final class GTItemPipes {
 					.build());
 
 	private GTItemPipes() {
+	}
+
+	/** issue #9: the pipe family never blocks the view (fog) — the GTWires::never rider form. */
+	private static boolean never(BlockState aState, BlockGetter aLevel, BlockPos aPos) {
+		return false;
 	}
 
 	/** FMLConstructModEvent = the first mod-bus lifecycle stage (GTFluidPipes.onModConstruct verbatim). */

@@ -1,13 +1,16 @@
 package gregtech6.registry;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -43,15 +46,25 @@ public final class GTFluidPipes {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 	public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, "gt6");
 
+	/**
+	 * The shared pipe properties — the ONE chain both tiers build from (the GTWires
+	 * .wireProperties seam form). issue #9: the pipe renders sub-cube quads over the
+	 * default FULL-CUBE shape — a true canOcclude culls neighbor faces (X-ray); the axle
+	 * pipe-block convention (GT6Kinetics.java:244).
+	 */
+	static net.minecraft.world.level.block.state.BlockBehaviour.Properties pipeProperties() {
+		return net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+				.strength(1.0F, 2.0F).sound(SoundType.WOOD)
+				.noOcclusion().isViewBlocking(GTFluidPipes::never);
+	}
+
 	/** Wood small fluid pipe — 50 L per tank (card: aStat=50 → 50). */
 	public static final RegistryObject<GTFluidPipeBlock> WOOD_FLUID_PIPE_SMALL = BLOCKS.register("wood_fluid_pipe_small",
-			() -> new GTFluidPipeBlock(50, net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
-					.strength(1.0F, 2.0F).sound(SoundType.WOOD)));
+			() -> new GTFluidPipeBlock(50, pipeProperties()));
 
 	/** Wood medium fluid pipe — 300 L per tank (card: aStat=50 → 300; upstream medium = aStat*6). */
 	public static final RegistryObject<GTFluidPipeBlock> WOOD_FLUID_PIPE_MEDIUM = BLOCKS.register("wood_fluid_pipe_medium",
-			() -> new GTFluidPipeBlock(300, net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
-					.strength(1.0F, 2.0F).sound(SoundType.WOOD)));
+			() -> new GTFluidPipeBlock(300, pipeProperties()));
 
 	/**
 	 * Shared pipe BET: one BlockEntityType over both tiers (ADR-P3-1). Registry path
@@ -83,6 +96,11 @@ public final class GTFluidPipes {
 					.build());
 
 	private GTFluidPipes() {}
+
+	/** issue #9: the pipe family never blocks the view (fog) — the GTWires::never rider form. */
+	private static boolean never(BlockState aState, BlockGetter aLevel, BlockPos aPos) {
+		return false;
+	}
 
 	/** FMLConstructModEvent = the first mod-bus lifecycle stage (GTBlockEntities.onModConstruct doc). */
 	@SubscribeEvent

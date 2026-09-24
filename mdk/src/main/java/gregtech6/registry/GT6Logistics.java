@@ -1,12 +1,15 @@
 package gregtech6.registry;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -55,7 +58,10 @@ public final class GT6Logistics {
 	public static GTLogisticsWireBlock makeWireBlock() {
 		return new GTLogisticsWireBlock(BlockBehaviour.Properties.of()
 				.strength(1.0F, 2.0F) // the Loader:1819 NBT_HARDNESS/NBT_RESISTANCE pair
-				.sound(SoundType.METAL));
+				.sound(SoundType.METAL)
+				// issue #9: the wire renders sub-cube quads over the default FULL-CUBE shape —
+				// a true canOcclude culls neighbor faces (X-ray); the GTWires family face.
+				.noOcclusion().isViewBlocking(GT6Logistics::never));
 	}
 
 	public static final RegistryObject<Item> LOGISTICS_WIRE_ITEM = ITEMS.register(WIRE_PATH,
@@ -112,6 +118,11 @@ public final class GT6Logistics {
 	}
 
 	private GT6Logistics() {
+	}
+
+	/** issue #9: the wire never blocks the view (fog) — the GTWires::never rider form. */
+	private static boolean never(BlockState aState, BlockGetter aLevel, BlockPos aPos) {
+		return false;
 	}
 
 	/** FMLConstructModEvent = the first mod-bus lifecycle stage (GTItemPipes.onModConstruct verbatim). */
