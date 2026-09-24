@@ -184,6 +184,7 @@ direct	block.gt6.gas_turbine_magnalium	镁铝合金燃气涡轮主外壳	hand
 direct	block.gt6.gas_turbine_trinitanium	特林钛合金燃气涡轮主外壳	hand
 direct	block.gt6.gas_turbine_vibramantium	艾德曼振金燃气涡轮主外壳	hand
 direct	block.gt6.gearbox	定制木制齿轮箱	hand
+direct	block.gt6.geigercounter	盖革传感器	hand
 direct	block.gt6.gibblometer	锅炉压力传感器(单位: Gibbl)	hand
 direct	block.gt6.glowtus	荧光莲	hand
 direct	block.gt6.grass	草方块	hand
@@ -217,6 +218,7 @@ direct	block.gt6.laser_absorber_t2	激光接收器 (MV)	hand
 direct	block.gt6.laser_absorber_t3	激光接收器 (HV)	hand
 direct	block.gt6.laser_absorber_t4	激光接收器 (EV)	hand
 direct	block.gt6.laser_absorber_t5	激光接收器 (IV)	hand
+direct	block.gt6.laserometer	激光传感器	hand
 direct	block.gt6.lathe	车床	hand
 direct	block.gt6.lightning_rod	避雷针	hand
 direct	block.gt6.lightweightometer	轻量级质量传感器	hand
@@ -349,6 +351,7 @@ direct	block.gt6.steam_turbine_vibramantium	艾德曼振金蒸汽涡轮主外壳
 direct	block.gt6.stone_anvil	石头砧	hand
 direct	block.gt6.superheavyweightometer	超重量级质量传感器	hand
 direct	block.gt6.surface_stick	木棍	hand
+direct	block.gt6.tachometer	转速传感器	hand
 direct	block.gt6.test_machine	测试机器	hand
 direct	block.gt6.test_machine_idle	测试机器 (被动)	hand
 direct	block.gt6.thermometer	温度传感器	hand
@@ -2031,9 +2034,9 @@ direct	item.gt6.wrench_hv	扳手 (HV)	hand
 direct	item.gt6.wrench_hv.tooltip	潜行右键切换为活动扳手	hand
 direct	item.gt6.wrench_lv	扳手 (LV)	hand
 direct	item.gt6.wrench_lv.tooltip	潜行右键切换为活动扳手	hand
-direct	item.gt6.zpm	零点模块 (ZPM)	hand
 direct	item.gt6.wrench_mv	扳手 (MV)	hand
 direct	item.gt6.wrench_mv.tooltip	潜行右键切换为活动扳手	hand
+direct	item.gt6.zpm	零点模块 (ZPM)	hand
 direct	itemGroup.gt6.bee	蜜蜂	hand
 direct	itemGroup.gt6.billet	坯料	hand
 direct	itemGroup.gt6.chests	箱子	hand

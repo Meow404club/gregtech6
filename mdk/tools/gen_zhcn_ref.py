@@ -927,6 +927,12 @@ HAND_TRANSLATIONS = {
     "block.gt6.superheavyweightometer": ("超重量级质量传感器", "hand"),
     "block.gt6.tpsmeter": ("TPS传感器", "hand"),
     "block.gt6.playercounter": ("玩家数量传感器", "hand"),
+    # ---- task p37-sensors-3: the pool closure (dump-verbatim faces gt.multitileentity
+    # .31019-31021, tmp/gregtech.lang:13016-13018; the tsv hand rows so the ratchet
+    # walks them — the double-entry discipline) ----
+    "block.gt6.geigercounter": ("盖革传感器", "hand"),
+    "block.gt6.tachometer": ("转速传感器", "hand"),
+    "block.gt6.laserometer": ("激光传感器", "hand"),
     # ---- task p28-c-anvil: the stone anvil pair (dump-verbatim faces; the reference dump
     # keys are the meta-keyed 1.7 forms mte 32025/32095 = 石头砧/黑石砧, lifted onto the
     # direct hand layer so the parity orphan gate walks them) ----

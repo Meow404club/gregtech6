@@ -611,6 +611,11 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.superheavyweightometer"); // the MTE 31013 dump row 超重量级质量传感器
 		addDirect("block.gt6.tpsmeter"); // the MTE 31016 dump row TPS传感器
 		addDirect("block.gt6.playercounter"); // the MTE 31017 dump row 玩家数量传感器
+		// task p37-sensors-3 — the pool closure (the zh MTE dump rows tmp/gregtech.lang
+		// :13016-:13018 verbatim)
+		addDirect("block.gt6.geigercounter"); // the MTE 31020 dump row 盖革传感器
+		addDirect("block.gt6.tachometer"); // the MTE 31019 dump row 转速传感器
+		addDirect("block.gt6.laserometer"); // the MTE 31021 dump row 激光传感器
 		addDirect("block.gt6.shredder");
 		addDirect("block.gt6.wire_electric_1x");
 		addDirect("block.gt6.wire_electric_2x");
