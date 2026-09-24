@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -171,5 +172,24 @@ public final class GT6SlicerBlades {
 				GT6Mod.LOGGER.info("GT6 slicer blade registered: {}", net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(tBlade.get()));
 			}
 		});
+	}
+
+	/**
+	 * The MACHINES_TAB join (task p38-tabfix-c-misc — the census zero-tab adjudication;
+	 * the GT6BurningBoxes.onBuildTabContents verbatim form, delivered by the class-level
+	 * MOD-bus {@code @Mod.EventBusSubscriber} at the class head). Upstream the blades are
+	 * MultiItemTechnological metas riding the GT tab list; the port pools them with the
+	 * machines tab. The walk covers the FULL eight-item {@link #ALL} census — the p36
+	 * obtainability ruling: the frame and the five never-pool blades are crafting-row
+	 * outputs/the shared 'O' ingredient, not tab-less debris (the census's "3" predates
+	 * the p36 completion; the erratum is declared in the census test).
+	 */
+	@net.minecraftforge.eventbus.api.SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			for (RegistryObject<Item> tBlade : ALL) {
+				aEvent.accept(new ItemStack(tBlade.get()));
+			}
+		}
 	}
 }
