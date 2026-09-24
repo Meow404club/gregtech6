@@ -47,7 +47,7 @@ state `decisions` 账本（列表条目）与 `docs/PROJECT_STATE.md`、`docs/TO
 | 2026-09-06 | [2026-09-06-p19-porting-split.md](2026-09-06-p19-porting-split.md) | ADR-P19 移植批拆卡：5 卡 2 波（stoneblocks registry/render∥drying∥front∥chisel）+三研究卡复核裁决（否决 GTMaterialBlocks 扩展/盐流体走 SIMPLE_LIQUID_SPECS/circuit 行整面裁池随工具卡）+共享 append-only 面合并序 |
 | 2026-09-06 | [2026-09-06-p20-texture-tree-policy.md](2026-09-06-p20-texture-tree-policy.md) | ADR-P20 贴图真图/占位双树政策：真图正典位=静态树+同路径跨树共存禁止（generated srcDir 后拷遮蔽静态树实证）+gen_textures.py skip-if-real 让位（静态树即排除表）+census 纯 JUnit 禁做 datagen provider+overlay_active 烘焙泛化+机器机身键集钉定 |
 | 2026-09-06 | [2026-09-06-p20-i18n-zhcn-pipeline.md](2026-09-06-p20-i18n-zhcn-pipeline.md) | ADR-P20 i18n zh_cn 管线：GT6ZhCn datagen provider+TSV 翻译数据源注入（非 datagen 推导，zh_cn.json 不手写）+GT6LangParityTest zh⊆en 守卫+ZH_KEY_FLOOR 棘轮+tagprefix 手译在用 105 条（否决词缀推导值源）+B 波拼接改造组合域（改造前 zh 回退英文=声明工作状态） |
-| 2026-09-06 | [2026-09-06-p20-modularui-fork-ruling.md](2026-09-06-p20-modularui-fork-ruling.md) | ADR-P20 ModularUI fork 三裁决：上游=brachy84/ModularUI-Modern per-MC 分支（1.20.1@909cda2/1.21.1@c13e141 双腿收割）+落点=仓内 vendored third-party/modularui（否独立仓：fork 期 publish 税）+LGPL-3.0 义务三件套+jarJar 双腿各嵌本腿 jar（EvalEx 嵌套存活卡②实测） |
+| 2026-09-06 | [2026-09-06-p20-modularui-fork-ruling.md](2026-09-06-p20-modularui-fork-ruling.md) | ADR-P20 ModularUI fork 三裁决：上游=brachy84/ModularUI-Modern per-MC 分支（1.20.1@909cda2/1.21.1@c13e141 双腿收割）+落点=仓内 vendored third-party/modularui（否独立仓：fork 期 publish 税）+LGPL-3.0 义务三件套+jarJar 双腿各嵌本腿 jar（EvalEx 嵌套存活卡②实测）【§2 vendored 裁决已被 [2026-09-07-p23-modularui-subrepo.md](2026-09-07-p23-modularui-subrepo.md) 推翻（superseded），余两裁决仍有效】 |
 | 2026-09-07 | [2026-09-07-p21-smoke-gui-headless-ruling.md](2026-09-07-p21-smoke-gui-headless-ruling.md) | P21 smoke-gui 范围裁决：离线 headless JUnit（四维否 runClient 自动化；unit.testing=true 上游钩子+Bootstrap 双闸实证；与 jarjar_smoke 互补合成端到端；runClient 视觉池项保留） |
 | 2026-09-07 | [2026-09-07-p21-stoneblocks-16item-registry-split.md](2026-09-07-p21-stoneblocks-16item-registry-split.md) | P21 stoneblocks 16-item registry 拆分：17×1 property 形→272 per-pair Block+BlockItem（P8 先例）+272 loot 独立表（variant0=dropOther 同石 COBBL）+id 方案 variant0 保裸 snake；旧世界 property 迁移损失声明 |
 | 2026-09-07 | [2026-09-07-p21-paintable-rulings.md](2026-09-07-p21-paintable-rulings.md) | P21 机器喷漆两卡裁定：存储直存免反码（DYES_INT_INVERTED 复合恒等）+已漆通道平均混色+NBT gt.color/gt.painted 键逐字+IPaintableTE 挂 03 基类全族+写入入口=离线测+RCON 臂（喷漆罐物品留池） |
@@ -59,6 +59,12 @@ state `decisions` 账本（列表条目）与 `docs/PROJECT_STATE.md`、`docs/TO
 | 2026-09-07 | [2026-09-07-p22-stonecutter-regex-split.md](2026-09-07-p22-stonecutter-regex-split.md) | P22 stonecutter `.color(` swap 表劈分：4 参逗号形 lookahead 留表+单参删表改 //? 行内分叉（f58fb0a5）+双向编译红 fail-visible 口径+P21 空格锚归一+regex 不可分辨接收者时按实参形态劈分的维护启发 |
 | 2026-09-07 | [2026-09-07-p23-modularui-subrepo.md](2026-09-07-p23-modularui-subrepo.md) | P23 ModularUI 拆独立仓库裁决（推翻 ADR-P20 §2 裁决一 vendored 形态）：案A=git submodule 按原路径挂回+git subtree split 全史迁移 MGT6GA-repos/modularui.git；接线真零改动实证（settings include/jarJar 消费/jar check 三处全路径型）；案B/C 死点=MDG jarJar 仅对 ProjectDependency 注入 SRG 变体（LegacyForgeModDevPlugin.java:214-229）+mavenLocal 与 worktree 并行相克；运营=worktree 逐个 protocol.file.allow init·deinit 连坐共享 config·旧 build 残留挡 clone（66ba69db） |
 | 2026-09-07 | [2026-09-07-p23-barrel-paint-domain.md](2026-09-07-p23-barrel-paint-domain.md) | P23 桶漆域拆卡裁决：题面重定性（桶 08 基类随 03 族已 implements IPaintableTE——NBT 层本就能漆，真缺口=物品携漆/tint 消费/跨缝 bug）；三卡=物品携漆根键对（forge 根 tag/neo CUSTOM_DATA 信封+load 门白漆保旗裁定上游 :85）+16 块 tinted 单 element 双注册（GTMachinePaintTint/GTItemPaintTint 类文件 diff 空硬约束；两层借图+overlay decal 入池声明偏离）+掉落已漆机器显色 bug 读侧两级修（known_bugs kb-painted-item-tag-mismatch 关）；合入序 A→B（7200f5a0/44bc6d81/6e617047） |
+| 2026-09-08 | [2026-09-08-p24-tags-provider-paradigm.md](2026-09-08-p24-tags-provider-paradigm.md) | P24 tag 双向范式：TagsProvider 立项 + takeove 共写链 + 材料名归一（详见文中与 state 账本） |
+| 2026-09-08 | [2026-09-08-p24-tool-seams.md](2026-09-08-p24-tool-seams.md) | P24 工具三缝：首例 Recipe/TagsProvider + container-item 死门方法学（直调探针定责） |
+| 2026-09-08 | [2026-09-08-p24-op2-reform-modularui-first-consumer.md](2026-09-08-p24-op2-reform-modularui-first-consumer.md) | P24 OP(2) 重裁放开 + ModularUI 首消费接线门通过 |
+| 2026-09-08 | [2026-09-08-p25-tag-input-machine-fallback.md](2026-09-08-p25-tag-input-machine-fallback.md) | P25 配方输入 tag fallback：unification 语义原语化 + 方向铁律 + 谓词注入缝 |
+| 2026-09-08 | [2026-09-08-p25-kubejs-adaptation-tiers.md](2026-09-08-p25-kubejs-adaptation-tiers.md) | P25 KubeJS 适配三档路线：tier-a/b/c + SPEC 强制声明 + 1.21 腿优先 |
+| 2026-09-08 | [2026-09-08-p25-datagen-tree-value-normalizers.md](2026-09-08-p25-datagen-tree-value-normalizers.md) | P25 datagen 双树两层归一：VALUE_NORMALIZERS 值形层 + fail-visible 不放松 |
 
 ## 占位（历史 ADR，未回填，权威原文在 state `decisions` 账本与 docs/PROJECT_STATE.md）
 
@@ -79,12 +85,8 @@ state `decisions` 账本（列表条目）与 `docs/PROJECT_STATE.md`、`docs/TO
 - 渲染路线 ADR（BakedModel 快照制 / BEWLR-TESR 全仓禁令，散见于 P4/P5 卡面与
   javadoc 引用）
 
-- 2026-09-08-p24-tags-provider-paradigm（P24 tag 双向范式：TagsProvider 立项+takeover 共写链+材料名归一）
-- 2026-09-08-p24-tool-seams（P24 工具三缝：首例 Recipe/TagsProvider+container-item 死门方法学）
-- 2026-09-08-p24-op2-reform-modularui-first-consumer（P24 OP(2) 重裁放开+ModularUI 首消费接线）
-- 2026-09-08-p25-tag-input-machine-fallback（P25 配方输入 tag fallback：unification 语义原语化+方向铁律+谓词注入缝）
-- 2026-09-08-p25-kubejs-adaptation-tiers（P25 KubeJS 适配三档路线：tier-a/b/c+SPEC 强制声明+1.21 腿优先）
-- 2026-09-08-p25-datagen-tree-value-normalizers（P25 datagen 双树两层归一：VALUE_NORMALIZERS 值形层+fail-visible 不放松）
+（2026-09-24 勘误：上节 2026-09-08 六篇 P24/P25 ADR 已在盘成文，误列本占位段——已移入
+「已成文」表。P37-d s10 树面复核发现。）
 
 后续卡若需引用某条历史 ADR 的完整原文，以 `state_read("decisions")` 与
 `docs/PROJECT_STATE.md` 对应阶段段为源，按本 README 四节约定转正成文。
