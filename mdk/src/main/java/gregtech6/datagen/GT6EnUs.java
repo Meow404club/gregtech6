@@ -1416,6 +1416,9 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.integrated_circuit", "Selector Tag");
         add(gregtech6.item.GT6Circuits.TOOLTIP_KEY, "Configuration: %s");
         add("itemGroup.gt6.machines", "Machines");
+        // task p38-tabfix-d-ruling — the written-books tab (the user ruling; the zh face
+        // rides the tsv hand row 说明书)
+        add("itemGroup.gt6.books", "Books");
         // task p29-w4-hot-lube ④ — the Lubricant Bucket (the architect ruling's naming
         // candidate) + its "Industrial Use ONLY!" tooltip (the upstream :617 drink
         // description verbatim).

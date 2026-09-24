@@ -194,6 +194,9 @@ HAND_TRANSLATIONS = {
     # ---- special creative tabs (upstream MTE-registry categories + port tabs, no dump face) ----
     "itemGroup.gt6.chests": ("箱子", "hand"),
     "itemGroup.gt6.machines": ("机器", "hand"),
+    # task p38-tabfix-d-ruling: the written-books tab (the port-ruling tab, the user
+    # ruling 2026-09-24 — the manuals should be easy for players to get; no dump face)
+    "itemGroup.gt6.books": ("说明书", "hand"),
     "itemGroup.gt6.multiblocks": ("多方块", "hand"),
     "itemGroup.gt6.fluid_containers": ("流体容器", "hand"),
     "itemGroup.gt6.fluid_pipes": ("流体管道", "hand"),

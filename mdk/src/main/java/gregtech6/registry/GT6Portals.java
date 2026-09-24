@@ -4,11 +4,13 @@ package gregtech6.registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -42,6 +44,10 @@ import gregtech6.tileentity.portals.GTMiniPortalNetherBlockEntity;
  * <p>The static pair lists of the portal BEs live through a whole server session — the
  * server-bus listener clears them on ServerStarted/ServerStopped (upstream
  * onServerStart/Stop, MultiTileEntityMiniPortal.java:209-210).
+ *
+ * <p>Creative tab: both portal items join MACHINES_TAB via {@link #onBuildTabContents}
+ * (task p38-tabfix-d-ruling, the user ruling over the port-native tab-less state; the
+ * GT6BurningBoxes join form).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6Portals {
@@ -148,6 +154,19 @@ public final class GT6Portals {
 		BLOCKS.register(tModBus);
 		BLOCK_ENTITY_TYPES.register(tModBus);
 		ITEMS.register(tModBus);
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-d-ruling — the two portal items join the machines tab;
+	 * the GT6BurningBoxes.onBuildTabContents verbatim form, the class-level MOD-bus
+	 * {@code @Mod.EventBusSubscriber} at the class head is what delivers this handler).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			aEvent.accept(new ItemStack(PORTAL_NETHER_ITEM.get()));
+			aEvent.accept(new ItemStack(PORTAL_END_ITEM.get()));
+		}
 	}
 
 	/**

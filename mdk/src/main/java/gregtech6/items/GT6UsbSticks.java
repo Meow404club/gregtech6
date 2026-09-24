@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -23,6 +24,7 @@ import net.minecraftforge.registries.RegistryObject;
 import gregapi.data.TD;
 import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
+import gregtech6.registry.GTMachines;
 
 /**
  * The USB Stick data-storage family (task p32-usb-data) — the four data sticks of the
@@ -56,9 +58,9 @@ import gregapi.oredict.OreDictMaterial;
  * the QU energy line {@code (p+n)*65536} for {@code TD.Processing.UUM} materials, the
  * "(Not Replicatable)" line otherwise — plus the "Data: USB &lt;tier&gt;.0" tier line.</p>
  *
- * <p>The creative-tab face is CUT (the GT6LubricantBucket ruling: /give + the crafting
- * rows cover the live faces; the tab walk is the creative-tab card's exclusive surface).
- * The upstream crafting rows (:796-799) ride the crafting card pool.</p>
+ * <p>The creative-tab face (task p38-tabfix-d-ruling, the user ruling): all four sticks
+ * join MACHINES_TAB via {@link #onBuildTabContents} — supersedes the old CUT declaration
+ * (the /give posture); the crafting rows (:796-799) still ride the crafting card pool.</p>
  *
  * <p>KJS surface (the card's declaration): REGISTRATION face only; deferred to the KJS
  * binding card.</p>
@@ -165,6 +167,23 @@ public final class GT6UsbSticks {
 		/*IEventBus tModBus = net.neoforged.fml.ModList.get().getModContainerById("gt6").orElseThrow().getEventBus();
 		 *///?}
 		ITEMS.register(tModBus);
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-d-ruling — all four sticks join the machines tab; the
+	 * GT6BurningBoxes.onBuildTabContents verbatim form, the class-level MOD-bus
+	 * {@code @Mod.EventBusSubscriber} at the class head is what delivers this handler).
+	 * COUNT ERRATUM: the census/card said 3, the file registers 4 — the evidence window
+	 * (:83-89) truncated at USB_STICK_3, USB_STICK_4 (:92) is the row it lost.
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			aEvent.accept(new ItemStack(USB_STICK_1.get()));
+			aEvent.accept(new ItemStack(USB_STICK_2.get()));
+			aEvent.accept(new ItemStack(USB_STICK_3.get()));
+			aEvent.accept(new ItemStack(USB_STICK_4.get()));
+		}
 	}
 
 	private GT6UsbSticks() {}

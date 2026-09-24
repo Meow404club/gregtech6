@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -55,13 +58,15 @@ import gregtech6.item.GT6WrittenBookItem;
  * field), applied on BOTH legs so the converter stays single-sourced (one title, the
  * "Hunting Guide for Blazes and Ghasts" 35-char row, truncates on the forge NBT leg too).
  *
- * <p>Obtainability: /give-reachable (the GT6Sensors posture — the creative-tab system is
- * the pool card). The dungeon-loot face (the upstream "gt.books" table via the p34 loot
- * injection seam) and the Printer recipe face (GT6_Main.java:352) are successor-card
- * seams, out of this card's files scope. The 1.7.10 zh langfile page overrides (the dump
- * carries 743 written.book.* page faces, tmp/gregtech.lang) are a deferred localization
- * wave: 1.20.1 book pages are plain strings (no per-locale component resolution) — the
- * shipped content is the upstream code-face English default, uniform on both legs.
+ * <p>Obtainability: the dedicated BOOKS_TAB (task p38-tabfix-d-ruling, the user ruling —
+ * the manuals should be easy for players to get; supersedes the old "/give-reachable,
+ * the sensors posture" declaration). The dungeon-loot face (the upstream "gt.books" table
+ * via the p34 loot injection seam) and the Printer recipe face (GT6_Main.java:352) are
+ * successor-card seams, out of this card's files scope. The 1.7.10 zh langfile page
+ * overrides (the dump carries 743 written.book.* page faces, tmp/gregtech.lang) are a
+ * deferred localization wave: 1.20.1 book pages are plain strings (no per-locale
+ * component resolution) — the shipped content is the upstream code-face English default,
+ * uniform on both legs.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6Books {
@@ -91,6 +96,26 @@ public final class GT6Books {
 			*///?}
 		}
 	}
+
+	/**
+	 * The books tab (task p38-tabfix-d-ruling, the user ruling — the written books get a
+	 * dedicated creative tab so players can reach them; the GTMultiBlocks.MULTIBLOCKS_TAB
+	 * self-contained registration form: own DeferredRegister + a displayItems walk over
+	 * the item map, the icon the first registered book). Upstream has no books tab (the
+	 * family was loot-only); this tab is a port ruling, not a fidelity face.
+	 */
+	public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, "gt6");
+
+	public static final RegistryObject<CreativeModeTab> BOOKS_TAB = CREATIVE_MODE_TABS.register("books",
+			() -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
+					.title(Component.translatable("itemGroup.gt6.books"))
+					.icon(() -> new ItemStack(ITEMS_BY_PATH.get(GT6BookText.BOOKS.get(0).path()).get()))
+					.displayItems((aParameters, aOutput) -> {
+						for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
+							aOutput.accept(new ItemStack(tItem.get()));
+						}
+					})
+					.build());
 
 	/**
 	 * The single-source page converter — the upstream createWrittenBook semantics
@@ -130,6 +155,7 @@ public final class GT6Books {
 		//21.1: Mod.EventBusSubscriber.Bus died with the annotation rework (the GT6Sensors fork).
 		*///?}
 		ITEMS.register(tModBus);
+		CREATIVE_MODE_TABS.register(tModBus);
 	}
 
 	/** Registration smoke evidence (the GT6Sensors.onCommonSetup log shape). */

@@ -2041,6 +2041,7 @@ direct	item.gt6.wrench_mv.tooltip	潜行右键切换为活动扳手	hand
 direct	item.gt6.zpm	零点模块 (ZPM)	hand
 direct	itemGroup.gt6.bee	蜜蜂	hand
 direct	itemGroup.gt6.billet	坯料	hand
+direct	itemGroup.gt6.books	说明书	hand
 direct	itemGroup.gt6.chests	箱子	hand
 direct	itemGroup.gt6.electric_wires	导线	hand
 direct	itemGroup.gt6.fluid_containers	流体容器	hand
