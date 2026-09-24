@@ -2284,6 +2284,12 @@ LEGACY_ITEM_BACKFILL = {
     'item.gt6.cover_auto_timer_10m': '自动重启开关 (10分钟)',
     'item.gt6.cover_auto_timer_20m': '自动重启开关 (20分钟)',
     'item.gt6.cover_auto_timer_30m': '自动重启开关 (30分钟)',
+    # ---- the crafting + asphalt covers (task p37-covers-crafting-asphalt): the dump
+    # gt.multiitem.technological.1001 row 工作台覆盖板 (tmp/gregtech.lang:10147) verbatim
+    # + the gt.multitileentity.32484 row 沥青覆盖板 (:13365, the zh face the Asphalt Panel
+    # item carried upstream — the cover inherits the panel word)
+    'item.gt6.cover_crafting': '工作台覆盖板',
+    'item.gt6.cover_asphalt': '沥青覆盖板',
     # ---- the gas-laser items (task p32-qu-laser-domain)
     'item.gt6.comp_laser_gas_co2': '二氧化碳激光镭射器',
     'item.gt6.comp_laser_gas_co2.tooltip': '用途: 强力材料加工',

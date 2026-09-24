@@ -8731,6 +8731,22 @@ the `statusdisplay` indicator overlay sprites (`1_off..4_on`, both styles) are N
 borrowed — the CoverControllerDisplay lamp composition is the declared deviation
 (the plate shows the style base, the live states ride the visual lane).
 
+Crafting + asphalt cover pair textures, task p37-covers-crafting-asphalt: the two
+PNGs under `gt6/textures/block/` come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/`. Byte-identical borrows,
+sha256 verified:
+
+- `crafting/0.png`      `d403c86476790756560098c83ab374be268510434f88669f66b31e7cde22a59a` (upstream `machines/covers/crafting/0`)
+- `asphalt.png`         `2b51ec88d0be3a57588a04d886e5902dcbc8b9de0afa70e2ea181bdcbb6925a0` (upstream `blocks/iconsets/ASPHALT`)
+
+Path mapping (declared, the P10/P11 precedent): upstream cover paths lowercase to
+`textures/block/`, the vanilla block atlas `directory("block")` source auto-stitches.
+Declared folds: the crafting cover's upstream 6-variant texture row (`0..5`) keeps
+variant 0 (the single sprite the plate renderer paints, the p35 declared-fold
+posture); the asphalt plate rides the plain `ASPHALT` icon — the 16 dye-variant
+panel row (`Textures.BlockIcons.ASPHALT` + `DYES[i]`) collapses onto the one
+sprite (the worldgen streets face family, DYE_INDEX_Gray).
+
 ## Render pool stand-in retirement (task p36-render-texture-bake)
 
 Eighteen block textures under `gt6/textures/block/` land the three stand-ins
