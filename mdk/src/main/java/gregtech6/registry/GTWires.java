@@ -5,16 +5,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -59,15 +61,28 @@ public final class GTWires {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 	public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, "gt6");
 
+	/**
+	 * The shared wire-family properties — the ONE chain every registration point in this
+	 * file builds from (the GT6Logistics.makeWireBlock test-replay seam form). issue #9:
+	 * the wire renders sub-cube quads over the default FULL-CUBE shape — a true canOcclude
+	 * makes getOcclusionShape (=getShape, vanilla BlockBehaviour.java:240-242/911) cull the
+	 * neighbor faces against the empty space around the thin bar (X-ray to the underground).
+	 * The axle pipe-block convention (GT6Kinetics.java:244); isViewBlocking(never) is the
+	 * GT6TreeLeavesBlock.java:34-37 fog-only rider.
+	 */
+	static BlockBehaviour.Properties wireProperties() {
+		return BlockBehaviour.Properties.of()
+				.strength(1.0F, 2.0F).sound(SoundType.COPPER) // upstream NBT_HARDNESS 1.0 / NBT_RESISTANCE 2.0
+				.noOcclusion().isViewBlocking(GTWires::never);
+	}
+
 	/** 1x electric wire — 32 EU / 1 A / 1 loss per segment (upstream :64 defaults). */
 	public static final RegistryObject<GTWireBlock> WIRE_ELECTRIC_1X = BLOCKS.register("wire_electric_1x",
-			() -> new GTWireBlock(32, 1, 1, BlockBehaviour.Properties.of()
-					.strength(1.0F, 2.0F).sound(SoundType.COPPER)));
+			() -> new GTWireBlock(32, 1, 1, wireProperties()));
 
 	/** 2x electric wire — 32 EU / 2 A / 1 loss per segment (upstream :73 bandwidth doubling). */
 	public static final RegistryObject<GTWireBlock> WIRE_ELECTRIC_2X = BLOCKS.register("wire_electric_2x",
-			() -> new GTWireBlock(32, 2, 1, BlockBehaviour.Properties.of()
-					.strength(1.0F, 2.0F).sound(SoundType.COPPER)));
+			() -> new GTWireBlock(32, 2, 1, wireProperties()));
 
 	public static final RegistryObject<Item> WIRE_ELECTRIC_1X_ITEM = ITEMS.register("wire_electric_1x",
 			() -> new GTWireBlockItem(WIRE_ELECTRIC_1X.get(), new Item.Properties()));
@@ -104,8 +119,7 @@ public final class GTWires {
 			RegistryObject<GTWireBlock> tBlock = BLOCKS.register(tName,
 					() -> new GTWireBlock(tVariant.voltage(), tVariant.amperage(), tVariant.loss(),
 							tVariant.row().material().get(), tVariant.size(), tVariant.insulated(),
-							tVariant.diameter(), BlockBehaviour.Properties.of()
-									.strength(1.0F, 2.0F).sound(SoundType.COPPER))); // upstream NBT_HARDNESS 1.0 / NBT_RESISTANCE 2.0
+							tVariant.diameter(), wireProperties())); // upstream NBT_HARDNESS 1.0 / NBT_RESISTANCE 2.0
 			RegistryObject<Item> tItem = ITEMS.register(tName,
 					() -> new GTWireBlockItem(tBlock.get(), new Item.Properties().stacksTo(tVariant.maxStack())));
 			FAMILY_BLOCKS.add(tBlock);
@@ -137,8 +151,7 @@ public final class GTWires {
 			RegistryObject<GTWireBlock> tBlock = BLOCKS.register(tName,
 					() -> new GTWireBlock(0, 1, tVariant.loss(),
 							tVariant.row().material().get(), tVariant.size(), tVariant.insulated(),
-							tVariant.diameter(), GTWireSpecs.Row.Family.REDSTONE, BlockBehaviour.Properties.of()
-									.strength(1.0F, 2.0F).sound(SoundType.COPPER))); // upstream NBT_HARDNESS 1.0 / NBT_RESISTANCE 2.0 (:1893-1902)
+							tVariant.diameter(), GTWireSpecs.Row.Family.REDSTONE, wireProperties())); // upstream NBT_HARDNESS 1.0 / NBT_RESISTANCE 2.0 (:1893-1902)
 			RegistryObject<Item> tItem = ITEMS.register(tName,
 					() -> new GTWireBlockItem(tBlock.get(), new Item.Properties().stacksTo(tVariant.maxStack())));
 			REDSTONE_BLOCKS.add(tBlock);
@@ -179,8 +192,7 @@ public final class GTWires {
 			RegistryObject<GTWireBlock> tBlock = BLOCKS.register(tName,
 					() -> new GTWireBlock(0, 1, tVariant.loss(),
 							tVariant.row().material().get(), tVariant.size(), tVariant.insulated(),
-							tVariant.diameter(), GTWireSpecs.Row.Family.LASER, BlockBehaviour.Properties.of()
-									.strength(1.0F, 2.0F).sound(SoundType.COPPER))); // upstream NBT_HARDNESS 1.0 / NBT_RESISTANCE 2.0 (:1815)
+							tVariant.diameter(), GTWireSpecs.Row.Family.LASER, wireProperties())); // upstream NBT_HARDNESS 1.0 / NBT_RESISTANCE 2.0 (:1815)
 			RegistryObject<Item> tItem = ITEMS.register(tName,
 					() -> new GTWireBlockItem(tBlock.get(), new Item.Properties().stacksTo(tVariant.maxStack())));
 			LASER_BLOCKS.add(tBlock);
@@ -349,6 +361,16 @@ public final class GTWires {
 					.build());
 
 	private GTWires() {}
+
+	/**
+	 * issue #9: the wire family never blocks the view (fog) — the sub-cube bars sit inside
+	 * an entity-suffocating default (isSuffocating = blocksMotion AND collision-full-block;
+	 * the wire collision shape stays the full-cube default), so the suffocation face stays
+	 * untouched and ONLY the view-blocking fog rider flips (the GT6TreeLeavesBlock::never form).
+	 */
+	private static boolean never(BlockState aState, BlockGetter aLevel, BlockPos aPos) {
+		return false;
+	}
 
 	/** FMLConstructModEvent = the first mod-bus lifecycle stage (GTBlockEntities.onModConstruct doc). */
 	@SubscribeEvent
