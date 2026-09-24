@@ -17,6 +17,9 @@ per the tools/rcon README (no task-local tmp drivers). Per leg (forge / neoforge
            prefixes within y -64..-54, per-chunk counts + per-chunk Y-level spans.
            Vanilla lava is NOT counted (the window carries unrelated aquifer lava below
            y=-54 — the lava ROW is pinned at decision level by the parity test instead).
+           Since task p38-issue5-fluid-spring-nozzle also the gt6:fluid_spring nozzle
+           block (the read-only enhancement: a "nozzle" kind per chunk, expected inside
+           spring-hit chunks at the bedrock floor).
   analysis: 1) the six-kind presence gate: every GT kind >= 1 (cross-boot max — the
            pipeline-drift semantics of
            decisions.2026-09-18-p31-strata-lens-determinism-acceptance);
@@ -67,6 +70,7 @@ SPRING_PREFIXES = (
     "gt6:natural_gas_block", "gt6:water_geothermal_block",
 )
 ORE_PREFIXES = ("gt6:ore_bedrock_", "gt6:ore_small_bedrock_")
+NOZZLE_PREFIXES = ("gt6:fluid_spring",)  # the p38-issue5 nozzle arm (read-only analysis face)
 CHUNK_X0, CHUNK_X1 = 0, 63      # the calibrated window (the bedrock scan + the offline projection)
 CHUNK_Z0, CHUNK_Z1 = 64, 127
 Y_MIN, Y_MAX = -64, -54         # the ore band floor .. the spring shell top band
@@ -366,6 +370,8 @@ def classify(name):
         return "ore"
     if name.startswith(SPRING_PREFIXES):
         return "spring"
+    if name.startswith(NOZZLE_PREFIXES):
+        return "nozzle"
     return None
 
 
@@ -386,7 +392,7 @@ def scan_world():
             status = str(nbt.get("Status", ""))
             if not status.endswith("full"):
                 continue
-            counts = {"ore": {}, "spring": {}}
+            counts = {"ore": {}, "spring": {}, "nozzle": {}}
             ys = set()
             for section in (nbt.get("sections") or []):
                 y_sec = section.get("Y") or 0
@@ -395,7 +401,7 @@ def scan_world():
                 y_base = y_sec * 16
                 if y_base + 15 < Y_MIN or y_base > Y_MAX:
                     continue
-                for index, name in decode_positions(section, ORE_PREFIXES + SPRING_PREFIXES):
+                for index, name in decode_positions(section, ORE_PREFIXES + SPRING_PREFIXES + NOZZLE_PREFIXES):
                     y = y_base + (index >> 8)
                     if not (Y_MIN <= y <= Y_MAX):
                         continue
@@ -403,10 +409,11 @@ def scan_world():
                     counts[kind][name] = counts[kind].get(name, 0) + 1
                     if kind == "spring" and SPRING_Y_MIN <= y <= SPRING_Y_MAX:
                         ys.add(y)
-            if counts["ore"] or counts["spring"]:
+            if counts["ore"] or counts["spring"] or counts["nozzle"]:
                 key = f"{cx},{cz}"
-                per_chunk[key] = {"ore": counts["ore"], "spring": counts["spring"], "ys": sorted(ys)}
-                for kind in ("ore", "spring"):
+                per_chunk[key] = {"ore": counts["ore"], "spring": counts["spring"],
+                                  "nozzle": counts["nozzle"], "ys": sorted(ys)}
+                for kind in ("ore", "spring", "nozzle"):
                     for name, count in counts[kind].items():
                         totals[name] = totals.get(name, 0) + count
     return per_chunk, totals, scanned
@@ -417,13 +424,20 @@ def scan_world():
 def analyze(per_chunk, totals, scanned, boot):
     spring_chunks = {k: v for k, v in per_chunk.items() if v["spring"]}
     ore_chunks = {k: v for k, v in per_chunk.items() if v["ore"]}
+    nozzle_chunks = {k: v for k, v in per_chunk.items() if v["nozzle"]}
     both = [k for k in spring_chunks if k in ore_chunks]
     spans = [len(v["ys"]) for v in spring_chunks.values()]
+    # the nozzle co-location face: a nozzle outside a spring-hit chunk would mean the arm
+    # fired without its dome (impossible by construction — both ride one drawSpring claim)
+    nozzle_orphan = [k for k in nozzle_chunks if k not in spring_chunks]
     r = {
         "boot": boot,
         "chunks_scanned": scanned,
         "spring_chunks": len(spring_chunks),
         "ore_chunks": len(ore_chunks),
+        "nozzle_chunks": len(nozzle_chunks),
+        "nozzle_orphans": nozzle_orphan,
+        "nozzle_total": sum(sum(v["nozzle"].values()) for v in nozzle_chunks.values()),
         "coexist_chunks": both,
         "totals_by_id": totals,
         "kind_chunks": {p: sum(1 for v in spring_chunks.values() if p in v["spring"]) for p in SPRING_PREFIXES},
@@ -431,6 +445,7 @@ def analyze(per_chunk, totals, scanned, boot):
         "per_chunk": spring_chunks,
     }
     print(f"[boot {boot}] scanned={scanned} spring_chunks={len(spring_chunks)} ore_chunks={len(ore_chunks)} "
+          f"nozzle_chunks={len(nozzle_chunks)} nozzle_orphans={len(nozzle_orphan)} "
           f"coexist={len(both)} min_y_span={r['min_y_span']}", flush=True)
     return r
 
@@ -463,6 +478,10 @@ def main():
     gate["spring_floor_55_per_boot"] = b0["spring_chunks"] >= 55 and b1["spring_chunks"] >= 55
     gate["mutual_exclusion"] = not b0["coexist_chunks"] and not b1["coexist_chunks"]
     gate["dome_y_span_ge_3"] = b0["min_y_span"] >= 3 and b1["min_y_span"] >= 3
+    # the p38-issue5 nozzle arm: the nozzle block must EXIST in the world and only under
+    # spring domes (the co-location face)
+    gate["nozzle_ge_1_per_boot"] = b0["nozzle_chunks"] >= 1 and b1["nozzle_chunks"] >= 1
+    gate["nozzle_no_orphans"] = not b0["nozzle_orphans"] and not b1["nozzle_orphans"]
 
     union0, union1 = set(), set()
     for chunk in b0["per_chunk"].values():
