@@ -37,18 +37,21 @@ import org.junit.jupiter.api.Test;
 
 import com.mojang.serialization.JsonOps;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import gregtech6.block.GTFluidSpringBlock;
 import gregtech6.datagen.GT6WorldgenDatagen;
 import gregtech6.fluid.GTFluids;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.tileentity.misc.GTFluidSpringBlockEntity;
 import gregtech6.worldgen.GT6FluidSpringGenerator.DomeSink;
 
-class GT6FluidSpringWorldgenTest {
+class GT6FluidSpringWorldgenTest extends gregtech6.tileentity.GTOfflineTestBase {
 
     /** The card's fixed RCON probe seed — the same one live (the bedrock card's calibrated seed). */
     private static final long SEED = 6131000569321125127L;
@@ -59,9 +62,17 @@ class GT6FluidSpringWorldgenTest {
     @BeforeAll
     static void boot() {
         GTMaterialItems.initMaterials();
+        // the vanilla boot (SharedConstants + Bootstrap + the BET-registry unfreeze) rides
+        // the GTOfflineTestBase superclass @BeforeAll — the synthetic BET build below needs it.
+        // The synthetic BLOCK instance additionally needs the BLOCK registry writable again
+        // (the intrusive-holder face; the GT6CFoamFamilyTest unfreeze verbatim).
         try {
-            net.minecraft.server.Bootstrap.bootStrap();
-        } catch (Throwable ignored) {
+            java.lang.reflect.Method tUnfreeze = net.minecraft.core.registries.BuiltInRegistries.BLOCK
+                    .getClass().getMethod("unfreeze");
+            tUnfreeze.setAccessible(true);
+            tUnfreeze.invoke(net.minecraft.core.registries.BuiltInRegistries.BLOCK);
+        } catch (Exception aE) {
+            throw new IllegalStateException("could not unfreeze the offline block registry", aE);
         }
     }
 
@@ -411,7 +422,20 @@ class GT6FluidSpringWorldgenTest {
     /** The NBT face ("gt.spring"/"gt.spring_amount"/"gt.active") round-trips; the amount floor (:101) holds. */
     @Test
     void springNbtRoundtripsAndTheAmountFloorHolds() {
-        GTFluidSpringBlockEntity tSpring = new GTFluidSpringBlockEntity();
+        // the offline BET face (the GT6CFoamFamilyTest form): a real block instance + a
+        // built type — the 21.1 saveAdditional validates state-vs-type (BlockEntity.java:57
+        // isValidBlockState), a NULL type NPEs there
+        GTFluidSpringBlock tBlock = new GTFluidSpringBlock(
+                net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().noLootTable());
+        // the holder-array trick (the GT6CFoamFamilyTest:86 form): the factory carries the
+        // SYNTHETIC type (the (BlockPos, BlockState) convenience ctor would resolve the
+        // registry-backed BET, absent offline)
+        @SuppressWarnings("unchecked")
+        BlockEntityType<GTFluidSpringBlockEntity>[] tHolder =
+                (BlockEntityType<GTFluidSpringBlockEntity>[]) new BlockEntityType<?>[1];
+        tHolder[0] = BlockEntityType.Builder.of(
+                (aPos, aState) -> new GTFluidSpringBlockEntity(tHolder[0], aPos, aState), tBlock).build(null);
+        GTFluidSpringBlockEntity tSpring = tHolder[0].create(BlockPos.ZERO, tBlock.defaultBlockState());
         tSpring.setSpring("gt6:liquid_medium_oil_block", 6000);
         assertEquals("gt6:liquid_medium_oil_block", tSpring.getSpringBlockId());
         assertEquals(6000, tSpring.getSpringAmount());
