@@ -1,0 +1,88 @@
+# GT6 现代复兴计划 CI（task p37-release-ci，规格=state:tasks.p37-release-plan ci_design 段）。
+# 用户裁定「一个版本一个 worker」：双腿各占独立 runner 完全并行，每 job 恰好一次 gradle
+# 调用（lesson id327 双腿禁同调用铁律）；任务表达式=stonecutter 节点直接寻址
+# （settings.gradle.kts:33-43 内联块，全库零 precompute）。
+# 零 secrets：submodule 公开仓（.gitmodules https URL），fork PR 只读 token 天然可跑。
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+# 同 ref 重跑取消旧 run（仅 PR 抢占；tag/main push 不互踩——ref 各异）。
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  # forge 腿：JDK 17（gradle.properties:25 矩阵注释）。root :test 不受 stonecutter 管辖，
+  # 与单腿同调用合法（id327 原文，ci_design gradle_commands 定案）。
+  build-forge-1-20-1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      # 缓存唯一入口=setup-gradle（默认缓存 ~/.gradle/caches+wrapper+build cache；
+      # 官方文档警告勿叠加 setup-java cache: gradle，故 setup-java 不带 cache 项）。
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build forge 1.20.1
+        run: ./gradlew :test :mdk:1.20.1-forge:build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gt6-1.20.1-forge
+          path: mdk/versions/1.20.1-forge/build/libs/gt6-1.20.1-forge-*.jar
+          if-no-files-found: error
+
+  # neoforge 腿：JDK 21（gradle.properties:26 矩阵注释）。
+  # ponytail: 本 job 只显式装 21——neo 腿连带编译 root gregapi（toolchain 17，build.gradle:6-8），
+  # 依赖 ubuntu-latest /usr/lib/jvm 预装 temurin 17 被 Gradle 自动探测；settings 无 foojay 供给。
+  # 若 runner 镜像砍掉预装 17：setup-java 多版本 + gradle -Porg.gradle.java.installations.fromEnv。
+  build-neoforge-1-21-1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build neoforge 1.21.1
+        run: ./gradlew :mdk:1.21.1-neoforge:build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gt6-1.21.1-neoforge
+          path: mdk/versions/1.21.1-neoforge/build/libs/gt6-1.21.1-neoforge-*.jar
+          if-no-files-found: error
+
+  # 发布 job（ci_design.release_ruling 建议案内嵌落定）：tag v* push 触发，needs 双腿，
+  # 下载双 artifact 后附到 GitHub Release。首版 tag v0.1.0 由主会话打，本 workflow 只接事件。
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build-forge-1-20-1, build-neoforge-1-21-1]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: gt6-1.20.1-forge
+          path: dist
+      - uses: actions/download-artifact@v4
+        with:
+          name: gt6-1.21.1-neoforge
+          path: dist
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/gt6-*.jar
