@@ -36,6 +36,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -76,7 +77,10 @@ import gregtech6.tileentity.inventories.GT6QueueHopperBlockEntity;
  * the recipes "PwP"/"XCX"/" Xh" (hopper) and "PCP"/"XCX"/"wXh" (queue) over plate +
  * plateCurved + OD.craftingChest with the wrench/hammer tool letters (:145-146).
  *
- * <p>No creative tab (the boiler precedent — a tab row is a later append). The placement
+ * <p>Creative tab: the upstream "Hoppers" MTE-registry category (tab 8010, the
+ * metalset() hopper pair Loader_MultiTileEntities.java:145-146) pools into the
+ * MACHINES_TAB join (task p38-tabfix-b-energy, {@link #onBuildTabContents}; the
+ * GTBarrels:257 pooling precedent — supersedes the old later-append note). The placement
  * face is the INVERSE clicked face (09FacingSingle.onPlaced :73 with
  * useInversePlacementRotation = T :257/:239 → OPOS[clickedFace], all six faces valid) —
  * the blockstate FACING property carries it.
@@ -372,5 +376,24 @@ public final class GT6Hoppers {
 		*///?}
 		BLOCKS.register(tModBus);
 		ITEMS.register(tModBus);
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
+	 * joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
+	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
+	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display
+	 * items, so registered-but-tab-less was invisible in both the creative menu and JEI.
+	 * Pool-cut declaration: upstream gives the family its own "Hoppers" category (tab
+	 * 8010, Loader_MultiTileEntities.java:145-146); this port pools the join into
+	 * MACHINES_TAB (the GTBarrels:257 pooling precedent).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+		}
 	}
 }

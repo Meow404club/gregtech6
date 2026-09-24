@@ -3,10 +3,12 @@ package gregtech6.registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -38,9 +40,9 @@ import gregtech6.tileentity.energy.GT6ElectricTransformerBlockEntity;
  * LV power. Zero behavior deviation — the :881 row's packet math (×4/÷4) ports
  * verbatim (the BE class doc).
  *
- * <p>The display-name face and the creative tab join are DECLARED DEFERRED to the W2
- * render card (the GT6ElectricDynamos posture; the lang atomic key
- * {@code block.gt6.electric_transformer} is composed in the datagen lang face).
+ * <p>The display-name face rides the datagen lang face (the atomic key
+ * {@code block.gt6.electric_transformer}); the creative tab join landed in task
+ * p38-tabfix-b-energy ({@link #onBuildTabContents} — the W2 deferral discharged).
  * KJS surface: none (the registration face is deferred — the KJS binding pool
  * declaration); recipe = the datapack domain (the crafting JSON), behavior = no
  * KubeJS face.
@@ -182,5 +184,24 @@ public final class GT6ElectricTransformers {
 			gregtech6.GT6Mod.LOGGER.info("GT6 electric transformer registered: " + ROWS.size()
 					+ " rows ULV-LV..UV-UVm, x4/div4 EU packet math per row (ids 10040-10048, the p28+p35 transformer cards)");
 		});
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
+	 * joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
+	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
+	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display
+	 * items, so registered-but-tab-less was invisible in both the creative menu and JEI.
+	 * Pool-cut declaration: upstream gives the family its own "Transformers" category
+	 * (tab 10041, Loader_MultiTileEntities.java:881-889); this port pools the join into
+	 * MACHINES_TAB (the GTBarrels:257 pooling precedent).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+		}
 	}
 }

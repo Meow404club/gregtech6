@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -58,8 +59,11 @@ import gregtech6.block.energy.GTTransformerRotationBlock;
  *
  * <p>Block constants from the upstream registration row (Loader_MultiTileEntities.java
  * :2106): hardness 1.0F / resistance 6.0F, the metal tool material →
- * {@link SoundType#METAL}. No creative tab (the tab system is the per-family pool card;
- * the item stays /give-reachable).
+ * {@link SoundType#METAL}. Creative tab: the crank (upstream "Misc Tool Blocks", tab
+ * 32720, :2106), its gearbox/rotation-transformer siblings and the water wheel join
+ * MACHINES_TAB (task p38-tabfix-b-energy, {@link #onBuildTabContents}; the GTBarrels:257
+ * pooling precedent — supersedes the old /give-reachable note). The axle/steam-engine/
+ * diesel ladders stay out of this card's join — the p38 tail card owns them.
  *
  * <p><b>The axle family</b> (task p12-axle-family spec ③): 11 materials x 4 diameters =
  * 44 blocks/items over the ONE shared {@link GTBlockEntities#AXLE_BE} (the ADR-P3-1
@@ -558,5 +562,27 @@ public final class GT6Kinetics {
 		*///?}
 		BLOCKS.register(tModBus);
 		ITEMS.register(tModBus);
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-b-energy — the four single-block kinetic items join
+	 * the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
+	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
+	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display
+	 * items, so registered-but-tab-less was invisible in both the creative menu and JEI.
+	 * Pool-cut declaration: upstream hangs the crank on its "Misc Tool Blocks" category
+	 * (tab 32720, Loader_MultiTileEntities.java:2106); this port pools the join into
+	 * MACHINES_TAB (the GTBarrels:257 pooling precedent). The axle/steam-engine/diesel
+	 * item ladders registered in this class stay OUT of this walk (the p38 tail card owns
+	 * them) — the census test pins this four-item coverage.
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			aEvent.accept(new ItemStack(CRANK_ITEM.get()));
+			aEvent.accept(new ItemStack(GEARBOX_ITEM.get()));
+			aEvent.accept(new ItemStack(TRANSFORMER_ROTATION_ITEM.get()));
+			aEvent.accept(new ItemStack(WATER_WHEEL_ITEM.get()));
+		}
 	}
 }

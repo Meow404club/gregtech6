@@ -7,11 +7,13 @@ import java.util.Map;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -45,9 +47,11 @@ import gregtech6.tileentity.energy.GT6ZpmDechargerBlockEntity;
  * <p>The crafting rows (:1000-:1001 recipe strings: circuits[6] + the tier-6 crystal
  * processors + FIELD_GENERATORS[6] + casingMachineDense) are DEFERRED to the crafting
  * pool — the component items have no port item rows (the p35 charger posture verbatim);
- * obtainment rides the creative inventory, the ZPM itself rides the dungeon injection
- * (GT6LootInjectionDatagen). KJS surface: none (registration face deferred — the KJS
- * binding pool).
+ * obtainment rides the creative inventory through the MACHINES_TAB join (task
+ * p38-tabfix-b-energy, {@link #onBuildTabContents} — the dechargers had registered with
+ * zero tab membership, so the "creative inventory" sentence was unreachable until the
+ * join landed; the ZPM itself rides the dungeon injection, GT6LootInjectionDatagen).
+ * KJS surface: none (registration face deferred — the KJS binding pool).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6ZpmDechargers {
@@ -115,5 +119,24 @@ public final class GT6ZpmDechargers {
 			gregtech6.GT6Mod.LOGGER.info("GT6 ZPM dechargers registered: " + ROWS.size()
 					+ " rows (quantum QU->QU / electric QU->EU), V[7] packets over the BatBox transcription (ids 11170-11171, the p36 energy tail card)");
 		});
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
+	 * joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
+	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
+	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display
+	 * items, so registered-but-tab-less was invisible in both the creative menu and JEI.
+	 * Pool-cut declaration: upstream gives the family its own "ZPM" category (tab 14999,
+	 * Loader_MultiTileEntities.java:1000-1001); this port pools the join into
+	 * MACHINES_TAB (the GTBarrels:257 pooling precedent).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+		}
 	}
 }

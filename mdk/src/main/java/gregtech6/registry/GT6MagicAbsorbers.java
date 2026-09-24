@@ -6,11 +6,13 @@ import java.util.Map;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -36,9 +38,10 @@ import gregtech6.tileentity.energy.generators.GT6MagicAbsorberBlockEntity;
  * <p>The crafting row "GOG"/"LBL"/"CMC" of :1005 (casingMachine Pd + Circuit_Magic +
  * wireFine Au + plate Obsidian + gem Lapis + Blocks.beacon) is the CRAFTING POOL (the
  * usb-data posture — the machine stays RCON/test-obtainable until the pool card lands).
- * The creative tab "魔法能量" (itemGroup.gt.multitileentity.10180, the dump :17973) has
- * no port tab — the tab join is the pool. KJS surface: REGISTRATION face only, deferred
- * to the KJS binding card.
+ * The upstream "Magical Energy Production" tab (itemGroup.gt.multitileentity.10180, the
+ * dump :17973) is pooled into the MACHINES_TAB join (task p38-tabfix-b-energy,
+ * {@link #onBuildTabContents}; the GTBarrels:257 pooling precedent). KJS surface:
+ * REGISTRATION face only, deferred to the KJS binding card.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6MagicAbsorbers {
@@ -90,5 +93,24 @@ public final class GT6MagicAbsorbers {
 		aEvent.enqueueWork(() -> {
 			gregtech6.GT6Mod.LOGGER.info("GT6 magic absorber registered: Magic Field Absorber (10180, trophy-top -> QU 64 / TU 1 out the facing face), task p32-magic-absorber");
 		});
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #MAGIC_ABSORBER_ITEMS_BY_PATH}
+	 * family joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form,
+	 * the class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
+	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display items,
+	 * so registered-but-tab-less was invisible in both the creative menu and JEI.
+	 * Pool-cut declaration: upstream gives the machine its own "Magical Energy Production"
+	 * category (tab 10180, Loader_MultiTileEntities.java:1005); this port pools the join
+	 * into MACHINES_TAB (the GTBarrels:257 pooling precedent).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			for (RegistryObject<Item> tItem : MAGIC_ABSORBER_ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+		}
 	}
 }

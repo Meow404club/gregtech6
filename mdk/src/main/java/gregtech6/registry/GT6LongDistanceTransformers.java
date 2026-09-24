@@ -3,10 +3,12 @@ package gregtech6.registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -103,5 +105,24 @@ public final class GT6LongDistanceTransformers {
 			gregtech6.GT6Mod.LOGGER.info("GT6 long distance transformers registered: " + ROWS.size()
 					+ " rows EV..UV, single-hop wire-line delegation (ids 10064-10068, the p35 energy tail card)");
 		});
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
+	 * joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
+	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
+	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display
+	 * items, so registered-but-tab-less was invisible in both the creative menu and JEI.
+	 * Pool-cut declaration: upstream hangs the family on the "Long Distance Transport"
+	 * category (tab 10060, Loader_MultiTileEntities.java:906-916); this port pools the
+	 * join into MACHINES_TAB (the GTBarrels:257 pooling precedent).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+		}
 	}
 }

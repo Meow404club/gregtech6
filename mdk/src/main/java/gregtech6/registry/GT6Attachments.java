@@ -7,11 +7,13 @@ import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -50,9 +52,10 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  *
  * <p>Registration-NBT trims (declared): the row ids (32728-32732/32080 taps,
  * 32723-32727/32081 funnels), the stack size (64) and the crafting recipes ride the
- * recipe-system cards; the "Misc Tool Blocks" creative tab is upstream's MTE-registry
- * category and stays out (the crank precedent — the items are /give-reachable; the tab
- * system is the pool card).
+ * recipe-system cards; the upstream "Misc Tool Blocks" MTE-registry category (tab 32720)
+ * is pooled into the MACHINES_TAB join (task p38-tabfix-b-energy,
+ * {@link #onBuildTabContents}; the GTBarrels:257 pooling precedent — supersedes the old
+ * stay-out sentence).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6Attachments {
@@ -164,5 +167,24 @@ public final class GT6Attachments {
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
 		aEvent.enqueueWork(() -> GT6Mod.LOGGER.info("GT6 attachments registered: {} tap + {} funnel rows ({} / {} blocks valid)",
 				ROWS.size() / 2, ROWS.size() / 2, tapBlockArray().length, funnelBlockArray().length));
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
+	 * joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
+	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
+	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display
+	 * items, so registered-but-tab-less was invisible in both the creative menu and JEI.
+	 * Pool-cut declaration: upstream hangs the family on its "Misc Tool Blocks" category
+	 * (tab 32720, Loader_MultiTileEntities.java:2108-2120); this port pools the join into
+	 * MACHINES_TAB (the GTBarrels:257 pooling precedent).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+		}
 	}
 }

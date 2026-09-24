@@ -6,11 +6,13 @@ import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -55,8 +57,9 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 	 * (GT6CraftingRecipes.sensorRecastBuilders — one 1:1 NBT-reset recast per row, the
 	 * upstream per-row tails :1979-:1999); the SHAPED rows ride a recipe card (the
 	 * electrometer precedent — its 'X' key is a dedicated GT6 item off the port path). The
-	 * "Sensors" creative tab is upstream's MTE-registry category and stays out (the
-	 * attachments precedent — /give-reachable, the tab system is the pool card).
+	 * upstream "Sensors" MTE-registry category is pooled into the MACHINES_TAB join (task
+	 * p38-tabfix-b-energy, {@link #onBuildTabContents}; the GTBarrels:257 pooling
+	 * precedent — supersedes the old stay-out sentence).
 	 */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6Sensors {
@@ -143,5 +146,24 @@ public final class GT6Sensors {
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
 		aEvent.enqueueWork(() -> GT6Mod.LOGGER.info("GT6 sensors registered: {} sensor rows ({} / {} blocks valid)",
 				ROWS.size(), BLOCKS_BY_PATH.size(), ITEMS_BY_PATH.size()));
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
+	 * joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
+	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
+	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display
+	 * items, so registered-but-tab-less was invisible in both the creative menu and JEI.
+	 * Pool-cut declaration: upstream gives the family its own "Sensors" category
+	 * (Loader_MultiTileEntities.java:1979-1999); this port pools the join into
+	 * MACHINES_TAB (the GTBarrels:257 pooling precedent).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+		}
 	}
 }

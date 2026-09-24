@@ -3,11 +3,13 @@ package gregtech6.registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -31,7 +33,10 @@ import gregtech6.tileentity.energy.GT6FeSourceBlockEntity;
  * <p>This battery is a PLAIN platform {@code EnergyStorage} reference implementation
  * (capacity = maxReceive, maxExtract = 0 — a pure sink) behind a simple-cube block, the
  * measurement endpoint of the W3 flux-dynamo RCON chain (task p28-c-flux-dynamo-rcon).
- * The RCON chain drives it headless (/gt6febattery place|stat|reset); no creative tab.
+ * The RCON chain drives it headless (/gt6febattery place|stat|reset); the two items also
+ * join MACHINES_TAB (task p38-tabfix-b-energy, {@link #onBuildTabContents} — supersedes
+ * the old no-creative-tab fixture note; port-native family, no upstream category to
+ * preserve).
  *
  * <p>The texture is borrowed from the energy_source rig placeholder (the same
  * placeholder-borrow posture as the p8 source rig, assets/README.md attribution row).
@@ -60,8 +65,9 @@ public final class GT6FeBatteries {
 	// the FE source fixture (task p28-b-fe-converter-machine — TAIL-APPENDED, the
 	// fixture domain): the EXTRACTABLE twin of the sink battery above. The converter's
 	// pull face (EnergyBridge.extractFe over the adapted extractEnergy) needs a source
-	// that canExtract — the sink's maxExtract=0 keeps it a pure sink. Not on any
-	// creative tab (the fixture rule, /gt6fesource drives it).
+	// that canExtract — the sink's maxExtract=0 keeps it a pure sink. Creative tab:
+	// rides the same MACHINES_TAB join as the sink (the p38-tabfix-b-energy pool-cut;
+	// /gt6fesource still drives it headless).
 	// -------------------------------------------------------------------------
 
 	/** The FE source fixture block (the p28 inbound pull-face acceptance source). */
@@ -69,7 +75,7 @@ public final class GT6FeBatteries {
 			() -> new GT6FeSourceBlock(BlockBehaviour.Properties.of()
 					.strength(1.0F, 2.0F).sound(SoundType.COPPER)));
 
-	/** The fixture item — registered for /give parity with the sink battery, NO creative tab. */
+	/** The fixture item — registered for /give parity with the sink battery (tab join: the shared {@link #onBuildTabContents} walk). */
 	public static final RegistryObject<Item> FE_SOURCE_ITEM = ITEMS.register("fe_source",
 			() -> new BlockItem(FE_SOURCE.get(), new Item.Properties()));
 
@@ -93,5 +99,23 @@ public final class GT6FeBatteries {
 		BLOCKS.register(tModBus);
 		ITEMS.register(tModBus);
 		BLOCK_ENTITY_TYPES.register(tModBus);
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-b-energy — both fixture items join the machines tab;
+	 * the GT6BurningBoxes.onBuildTabContents verbatim form, the class-level MOD-bus
+	 * {@code @Mod.EventBusSubscriber} at the class head is what delivers this handler).
+	 * JEI 1.20.1 derives its item list from the tab display items, so registered-but-
+	 * tab-less was invisible in both the creative menu and JEI. Pool-cut declaration:
+	 * port-native family (the p28 FE bridge), no upstream category to preserve — the
+	 * MACHINES_TAB is the nearest live category (the GT6Circuits.INTEGRATED_CIRCUIT
+	 * precedent, GTMachines displayItems).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			aEvent.accept(new ItemStack(FE_BATTERY_ITEM.get()));
+			aEvent.accept(new ItemStack(FE_SOURCE_ITEM.get()));
+		}
 	}
 }
