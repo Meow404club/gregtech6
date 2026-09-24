@@ -433,10 +433,12 @@ public final class GT6Covers {
 	/**
 	 * The tab walk (task p33-logistics-covers-12 — the lv2/lv3 遗留账: the logistics
 	 * wire item, the core item and the 14 logistics covers join the machines tab; the
-	 * GT6Placeables.onBuildTabContents verbatim form). The EARLIER cover family stays
-	 * tab-less — its items are cover-placed tool faces, the upstream tab walk never
-	 * listed them (MultiItemTechnological items ride the GT tab list upstream, the port
-	 * keeps the narrower declared scope of the landed cards).
+	 * GT6Placeables.onBuildTabContents verbatim form). The EARLIER cover family joined
+	 * too (task p38-tabfix-d-ruling, the user ruling — supersedes this walk's old
+	 * "stays tab-less" declaration): the cover-placed tool faces ride the machines tab
+	 * exactly like upstream, where every MultiItemTechnological item is on the GT tab
+	 * list. COUNT ERRATUM: the census said 3, the disk registers 30 tab-less cover
+	 * items — the census evidence window (:115-132) truncated at the conductor-in row.
 	 */
 	@net.minecraftforge.eventbus.api.SubscribeEvent
 	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
@@ -484,6 +486,23 @@ public final class GT6Covers {
 			// the MultiItemTechnological GT tab list, the asphalt panel the Panels list)
 			aEvent.accept(new ItemStack(COVER_CRAFTING.get()));
 			aEvent.accept(new ItemStack(COVER_ASPHALT.get()));
+			// task p38-tabfix-d-ruling — the earlier cover family joins the machines tab (the
+			// user ruling superseding the declared tab-less scope; upstream every
+			// MultiItemTechnological item rides the GT tab list). 10 single covers + the 10
+			// conveyors + the 10 robot arms = 30 items (the census "3" truncated its evidence
+			// window at the conductor-in row).
+			aEvent.accept(new ItemStack(COVER_PUMP.get()));
+			aEvent.accept(new ItemStack(COVER_REDSTONE_EMITTER.get()));
+			aEvent.accept(new ItemStack(COVER_REDSTONE_CONDUCTOR_IN.get()));
+			aEvent.accept(new ItemStack(COVER_REDSTONE_CONDUCTOR_OUT.get()));
+			aEvent.accept(new ItemStack(COVER_REDSTONE_MACHINE_SWITCH.get()));
+			aEvent.accept(new ItemStack(COVER_SHUTTER.get()));
+			aEvent.accept(new ItemStack(COVER_ITEM_FILTER.get()));
+			aEvent.accept(new ItemStack(COVER_ITEM_RETRIEVER.get()));
+			aEvent.accept(new ItemStack(COVER_AUTO_REDSTONE_MACHINE_SWITCH.get()));
+			aEvent.accept(new ItemStack(COVER_CONTROLLER.get()));
+			for (int i = 0; i < COVER_CONVEYORS.size(); i++) aEvent.accept(new ItemStack(COVER_CONVEYORS.get(i).get()));
+			for (int i = 0; i < COVER_ROBOT_ARMS.size(); i++) aEvent.accept(new ItemStack(COVER_ROBOT_ARMS.get(i).get()));
 		}
 	}
 

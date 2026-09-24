@@ -1276,6 +1276,7 @@ public class GT6ZhCn extends LanguageProvider {
 		// the en walk uses so the faces cannot drift
 		addDirect("itemGroup.gt6.chests");
 		addDirect("itemGroup.gt6.machines");
+		addDirect("itemGroup.gt6.books"); // task p38-tabfix-d-ruling — the written-books tab 说明书 (the tsv hand row; the port-ruling tab, no dump face)
 		addDirect("itemGroup.gt6.multiblocks");
 		addDirect("itemGroup.gt6.fluid_containers");
 		addDirect("itemGroup.gt6.fluid_pipes");

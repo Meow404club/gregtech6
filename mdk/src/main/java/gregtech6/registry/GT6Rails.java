@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.Block;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -56,10 +58,13 @@ import gregtech6.block.rail.GT6RoadRailBlock;
  * 1.7.10 Forge stack did — Adamantium's 4.00F manifests as 1.2 on vanilla carts, a
  * platform constant, not a port deviation.
  *
- * <p>No creative tab (the sensors precedent — /give-reachable, the tab system is the pool
- * card); no harvest-level layer (the repo has none — the GTCrowbarItem javadoc ruling);
- * the crowbar mining arm reaches the family through the vanilla rails block tag
- * ({@code mineable/pickaxe} nests {@code #minecraft:rails} on both legs).
+ * <p>Creative tab: all 31 items join MACHINES_TAB via {@link #onBuildTabContents}
+ * (task p38-tabfix-d-ruling, the user ruling — supersedes the old "no creative tab, the
+ * sensors precedent" declaration; the census found no upstream tab mount in Loader_Rails,
+ * the ruling assigns the machines tab, the GT6BurningBoxes join form). No harvest-level
+ * layer (the repo has none — the GTCrowbarItem javadoc ruling); the crowbar mining arm
+ * reaches the family through the vanilla rails block tag ({@code mineable/pickaxe} nests
+ * {@code #minecraft:rails} on both legs).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6Rails {
@@ -198,6 +203,22 @@ public final class GT6Rails {
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
 		aEvent.enqueueWork(() -> GT6Mod.LOGGER.info("GT6 rails registered: {} material rows + the road stripe ({} / {} blocks valid)",
 				ROWS.size(), BLOCKS_BY_PATH.size(), ITEMS_BY_PATH.size()));
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-d-ruling — the whole 31-item family joins the machines
+	 * tab: the road stripe + the {@link #ITEMS_BY_PATH} walk; the GT6BurningBoxes
+	 * .onBuildTabContents verbatim form, the class-level MOD-bus
+	 * {@code @Mod.EventBusSubscriber} at the class head is what delivers this handler).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			aEvent.accept(new ItemStack(ROAD_ITEM.get()));
+			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+		}
 	}
 
 	// ------------------------------------------------- the speed ladder (the BlockBaseRail.java:278-289 direct translation)
