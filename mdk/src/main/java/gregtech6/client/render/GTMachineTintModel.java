@@ -24,7 +24,6 @@ import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import gregtech6.block.GTBasicMachineBlock;
 import gregtech6.registry.GTMachines;
 
 /**
@@ -91,9 +90,12 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// the tint source IS the ModelData the chunk build hands in: PAINT while painted
 		// (the 03 base getModelData), the row material while unpainted, -1 for the
 		// material-less registrations — and every paint change re-enters here through the
-		// block-update rebuild (the GTRenderUpdates pair), so the retint follows live
+		// block-update rebuild (the GTRenderUpdates pair), so the retint follows live.
+		// The part-family blocks (task p38-issue8-multipart-tint) carry NO paint BE — their
+		// ModelData is always empty, so the material fallback IS the upstream mRGBa, fixed
+		// per block.
 		return tintQuads(getFallbackModel().getQuads(aState, aSide, aRand),
-				GTMachinePaintTint.tintARGB(aModelData, GTBasicMachineBlock.materialOf(mBlock), 0),
+				GTMachinePaintTint.tintARGB(aModelData, GTMachinePaintTint.tintMaterialOf(mBlock), 0),
 				mTintedQuads);
 	}
 
@@ -157,21 +159,28 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 	/**
 	 * The baked-model replacement (the ModifyBakingResult hook, the
 	 * {@link GTRenderModelListener} shape read directly off the event map): every
-	 * paintable-array state swaps in this wrapper over its freshly baked model. Blocks
-	 * that already carry a dynamic model (the oven ladder's
-	 * {@code GTOvenOverlayModel} chain) are skipped — they keep their own render route.
+	 * paintable-array state swaps in this wrapper over its freshly baked model — the
+	 * machine domain ({@code GTMachines.paintableBlockArray}) and, since task
+	 * p38-issue8-multipart-tint, the part family
+	 * ({@code GTMultiBlocks.partPaintableBlockArray}). Blocks that already carry a dynamic
+	 * model (the oven ladder's {@code GTOvenOverlayModel} chain) are skipped — they keep
+	 * their own render route.
 	 */
 	@SubscribeEvent
 	public static void onModifyBakingResult(ModelEvent.ModifyBakingResult aEvent) {
-		for (Block tBlock : GTMachines.paintableBlockArray()) {
-			for (BlockState tState : tBlock.getStateDefinition().getPossibleStates()) {
-				var tKey = BlockModelShaper.stateToModelLocation(tState);
-				BakedModel tBaked = aEvent.getModels().get(tKey);
-				// the dynamic-model guard is order-safe against GTRenderModelListener's own
-				// hook: whichever runs first, the dynamic model ends up the map value
-				if (tBaked != null && !(tBaked instanceof GTDynamicBakedModel)) {
-					aEvent.getModels().put(tKey, new GTMachineTintModel(tBaked, tBlock));
-				}
+		for (Block tBlock : GTMachines.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		for (Block tBlock : gregtech6.registry.GTMultiBlocks.partPaintableBlockArray()) wrapStates(tBlock, aEvent);
+	}
+
+	/** One block's state walk (the shared swap body; the dynamic-model guard is order-safe against GTRenderModelListener's own hook). */
+	private static void wrapStates(Block tBlock, ModelEvent.ModifyBakingResult aEvent) {
+		for (BlockState tState : tBlock.getStateDefinition().getPossibleStates()) {
+			var tKey = BlockModelShaper.stateToModelLocation(tState);
+			BakedModel tBaked = aEvent.getModels().get(tKey);
+			// the dynamic-model guard is order-safe against GTRenderModelListener's own
+			// hook: whichever runs first, the dynamic model ends up the map value
+			if (tBaked != null && !(tBaked instanceof GTDynamicBakedModel)) {
+				aEvent.getModels().put(tKey, new GTMachineTintModel(tBaked, tBlock));
 			}
 		}
 	}
