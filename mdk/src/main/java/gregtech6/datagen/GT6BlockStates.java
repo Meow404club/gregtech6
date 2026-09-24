@@ -3172,11 +3172,12 @@ public final class GT6BlockStates extends BlockStateProvider {
      * The interior fluid-surface pass (the mDisplay renderer, pot/juicer pass 5) is the
      * declared pool cut — the static model is the EMPTY vessel, the cavity floor being
      * the base slab's up face. Textures: the borrowed upstream grayscale colored/ tile
-     * sets (assets/README.md, the kitchen section) with tintindex 0 on every face; NO
-     * BlockColor is registered, so the family renders un-tinted grayscale today — the
-     * wrench-row precedent (the declared deviation, the family runtime-tint pool: upstream
-     * tints these same tiles with the row material's mRGBa, WoodTreated/StainlessSteel/
-     * Ceramic).
+     * sets (assets/README.md, the kitchen section) with tintindex 0 on every face; since
+     * task p38-c3-kitchen-tint-shape the reservation is WIRED — the baked
+     * GTMachineTintModel world half and the GTItemPaintTint inventory half resolve the row
+     * material's mRGBa (WoodTreated/StainlessSteel/Ceramic, the GT6Kitchen
+     * .paintableBlockArray census) over these faces, the upstream getTexture2 multiply
+     * (MultiTileEntityBathingPot.java:375-379).
      */
     private void addKitchen() {
         addKitchenBlock(GT6Kitchen.BATHING_POT_WOOD.get(), "bathing_pot_wood", "bathing_pot_wood", false);
