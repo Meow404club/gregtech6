@@ -2,11 +2,14 @@ package gregtech6.registry;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -123,6 +126,23 @@ public final class GT6FoamBlocks {
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
 		aEvent.enqueueWork(() -> GT6Mod.LOGGER.info("GT6 cfoam blocks registered: cfoam_fresh/cfoam + slabs + owned BE {}",
 				ForgeRegistries.BLOCKS.getKey(CFOAM_OWNED.get())));
+	}
+
+	/**
+	 * The vanilla BUILDING_BLOCKS join (task p38-tabfix-c-misc — the GTGrassBlocks
+	 * .onBuildTabContents form; the census adjudicates the C-Foam family decorative, the
+	 * GTGrassBlocks/GT6TreeBlocks decorative-block precedent — the upstream tab mount was
+	 * not traced (BlocksGT.CFoam unverified), so the pool cut IS the census ruling).
+	 * Exactly the two DRIED BlockItems: the fresh blocks are spray-only intermediates
+	 * (empty loot) and the owned carrier has no BlockItem (upstream showInCreative
+	 * false, MultiTileEntityCFoam.java:152).
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
+			aEvent.accept(new ItemStack(CFOAM_ITEM.get()));
+			aEvent.accept(new ItemStack(CFOAM_SLAB_ITEM.get()));
+		}
 	}
 
 	/** The dye index as the GT6 colour name segment ({@link GTSprayCanItem#DYE_IDS} order) — the stat/stat-line face. */

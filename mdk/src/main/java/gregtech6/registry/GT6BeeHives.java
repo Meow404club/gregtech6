@@ -92,7 +92,8 @@ public final class GT6BeeHives {
 					.strength(5.0F, 5.0F)
 					.sound(SoundType.WOOD), false));
 
-	/** The Bumbliary BlockItem — the obtainable-machine face. */
+	/** The Bumbliary BlockItem — the obtainable-machine face. Creative tab: the gt6:bee
+	 *  tab (task p38-tabfix-c-misc — the GT6BeeCombs display walk). */
 	public static final RegistryObject<Item> BUMBLIARY_ITEM =
 			ITEMS.register("bumbliary", () -> new BlockItem(BUMBLIARY.get(), new Item.Properties()));
 
@@ -104,7 +105,8 @@ public final class GT6BeeHives {
 					.strength(6.0F, 6.0F)
 					.sound(SoundType.WOOD), true));
 
-	/** The Advanced BlockItem. */
+	/** The Advanced BlockItem. Creative tab: the gt6:bee tab (task p38-tabfix-c-misc —
+	 *  the GT6BeeCombs display walk). */
 	public static final RegistryObject<Item> BUMBLIARY_ADVANCED_ITEM =
 			ITEMS.register("bumbliary_advanced", () -> new BlockItem(BUMBLIARY_ADVANCED.get(), new Item.Properties()));
 
