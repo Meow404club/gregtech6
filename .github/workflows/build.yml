@@ -3,6 +3,9 @@
 # 调用（lesson id327 双腿禁同调用铁律）；任务表达式=stonecutter 节点直接寻址
 # （settings.gradle.kts:33-43 内联块，全库零 precompute）。
 # 零 secrets：submodule 公开仓（.gitmodules https URL），fork PR 只读 token 天然可跑。
+# 默认最小权限（S37-2 审查席建议采纳）：全 workflow 只读 token，release job 局部提权。
+permissions:
+  contents: read
 name: build
 
 on:
@@ -41,6 +44,19 @@ jobs:
           name: gt6-1.20.1-forge
           path: mdk/versions/1.20.1-forge/build/libs/gt6-1.20.1-forge-*.jar
           if-no-files-found: error
+      # 失败时兜底传测试报告（run 35989334095：mdk:test 红但 report 未上传，名单拿不到）。
+      # if-no-files-found: ignore——编译期失败时无 report，不该二次报错。
+      - name: Upload forge test report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: forge-test-report
+          path: |
+            mdk/versions/1.20.1-forge/build/reports/tests/
+            mdk/versions/1.20.1-forge/build/test-results/
+            build/reports/tests/
+            build/test-results/
+          if-no-files-found: ignore
 
   # neoforge 腿：JDK 21（gradle.properties:26 矩阵注释）。
   # ponytail: 本 job 只显式装 21——neo 腿连带编译 root gregapi（toolchain 17，build.gradle:6-8），
@@ -65,6 +81,17 @@ jobs:
           name: gt6-1.21.1-neoforge
           path: mdk/versions/1.21.1-neoforge/build/libs/gt6-1.21.1-neoforge-*.jar
           if-no-files-found: error
+      - name: Upload neoforge test report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neo-test-report
+          path: |
+            mdk/versions/1.21.1-neoforge/build/reports/tests/
+            mdk/versions/1.21.1-neoforge/build/test-results/
+            build/reports/tests/
+            build/test-results/
+          if-no-files-found: ignore
 
   # 发布 job（ci_design.release_ruling 建议案内嵌落定）：tag v* push 触发，needs 双腿，
   # 下载双 artifact 后附到 GitHub Release。首版 tag v0.1.0 由主会话打，本 workflow 只接事件。
