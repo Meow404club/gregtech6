@@ -31,7 +31,9 @@ import net.minecraftforge.client.model.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.ModelData;
 
 import gregapi.oredict.OreDictMaterial;
+import gregapi.oredict.OreDictPrefix;
 import gregtech6.block.ore.GTOreBlock;
+import gregtech6.client.render.GTMachineTintModel;
 import gregtech6.client.wire.GTWireBakedModel;
 import gregtech6.client.wire.GTWireTextures;
 import gregtech6.registry.GT6OreBlocks;
@@ -61,19 +63,30 @@ import gregtech6.registry.GT6OreBlocks;
  * PNGs themselves are card ②'s borrow face: until that card lands, the overlay layer
  * renders the missingno checkerboard — the declared ADR ④ intermediate state.
  *
- * <p>Tint (spec ④): tint index 0 on the OVERLAY quads only, resolved at render time by the
- * ore BlockColor/ItemColor registered in {@link GTOreClientListener} — the base stone stays
- * untinted exactly like upstream (the {@code mTexture} half of the BlockTextureMulti has no
- * colour argument; tinting the stone too would double-dye the ore). Offline-testable:
- * {@link #buildParams()} and the sprite derivations are registry-free.
+ * <p>Tint (task p38-issue2-ore-baked-tint, the p32 machine-domain migration applied to the
+ * ore domain): the material colour rides {@link Params#tintARGB()} — {@code
+ * fRGBa[prefix.mState]} (PrefixBlock.java:279-282), the exact value the retired runtime
+ * {@code BlockColor} resolved — and is BAKED into the overlay quads' vertex colours (the
+ * {@link GTMachineTintModel#retintVertices} product). The p32 live evidence applies here
+ * verbatim: the runtime {@code BlockColor} route rendered achromatic in a live client, so
+ * the colour rides the model where no chunk builder can drop it. The retinted overlay quads
+ * carry {@code tintIndex -1}, so no runtime lookup can multiply a second time; the base
+ * stone stays untinted exactly like upstream (the {@code mTexture} half of the
+ * BlockTextureMulti has no colour argument; tinting the stone too would double-dye the
+ * ore). Offline-testable: {@link #buildParams()} and the sprite derivations are
+ * registry-free.
  */
 public class GTOreBakedModel implements IDynamicBakedModel {
 
 	/** The z-fight epsilon of the overlay layer (shared constant with the wire insulation twins). */
 	public static final double EPSILON = GTWireBakedModel.INSULATION_EPSILON;
 
-	/** The immutable per-block render identity: the copied stone base + the SET ore overlay. */
-	public record Params(ResourceLocation baseSprite, ResourceLocation overlaySprite) {}
+	/**
+	 * The immutable per-block render identity: the copied stone base + the SET ore overlay
+	 * + the material's ore colour ({@code fRGBa[prefix.mState]}, PrefixBlock.java:279-282)
+	 * baked into the overlay vertices.
+	 */
+	public record Params(ResourceLocation baseSprite, ResourceLocation overlaySprite, int tintARGB) {}
 
 	private static final FaceBakery BAKERY = new FaceBakery();
 
@@ -175,9 +188,21 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 		}
 		if (tOverlay != null) { // atlas gap: skip the layer instead of rendering garbage (the wire form)
 			double[] tShell = {0 - EPSILON, 0 - EPSILON, 0 - EPSILON, 1 + EPSILON, 1 + EPSILON, 1 + EPSILON};
-			for (Direction tFace : Direction.values()) rQuads.add(bakeQuad(tFace, tShell, tOverlay, 0, null));
+			int tTint = mParams.tintARGB();
+			for (Direction tFace : Direction.values()) {
+				// the p32 form: tintIndex -1 (no runtime lookup can double-dye), the colour
+				// multiplied into the vertex data at bake time
+				BakedQuad tQuad = bakeQuad(tFace, tShell, tOverlay, -1, null);
+				rQuads.add(tTint == -1 ? tQuad : retinted(tQuad, tTint));
+			}
 		}
 		return rQuads;
+	}
+
+	/** The bake-time material tint: the colour multiplied into the vertex data (the {@link GTMachineTintModel#retintVertices} product). */
+	private static BakedQuad retinted(BakedQuad aQuad, int aTint) {
+		return new BakedQuad(GTMachineTintModel.retintVertices(aQuad.getVertices(), aTint),
+				aQuad.getTintIndex(), aQuad.getDirection(), aQuad.getSprite(), aQuad.isShade());
 	}
 
 	/** The CoverPlateModel/wire recipe over FaceBakery (model space 0..16, box-bounds UVs). */
@@ -246,7 +271,23 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 	/** The params of one registration key (the per-path dispatch fuel, mirror of the wire PARAMS table). */
 	public static Params paramsOf(GT6OreBlocks.OreKey aKey) {
 		return new Params(baseSpriteOf(aKey.family(), aKey.kind()),
-				overlaySpriteOf(setOf(aKey.material()), aKey.kind()));
+				overlaySpriteOf(setOf(aKey.material()), aKey.kind()),
+				tintARGBOf(aKey.material(), aKey.family().prefix(aKey.kind())));
+	}
+
+	/**
+	 * The material's ore colour as opaque ARGB: {@code fRGBa[prefix.mState]} (PrefixBlock.java:279-282
+	 * {@code getRenderColor}, the UT.Code.getRGBInt encoding — the same value the retired
+	 * runtime BlockColor and the {@link GTOreClientListener#oreTintARGB} pure seam resolve).
+	 */
+	public static int tintARGBOf(OreDictMaterial aMaterial, OreDictPrefix aPrefix) {
+		short[] tRGBa = aMaterial.fRGBa[aPrefix.mState];
+		return 0xFF000000 | (bind8(tRGBa[0]) << 16) | (bind8(tRGBa[1]) << 8) | bind8(tRGBa[2]);
+	}
+
+	/** Upstream UT.Code.bind8 semantics: clamp to 0-255. */
+	private static int bind8(long aValue) {
+		return (int) Math.max(0, Math.min(255, aValue));
 	}
 
 	/** The path -> params table over the whole registration walk (offline-safe, test-driven). */
