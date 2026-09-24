@@ -31,6 +31,7 @@ import gregtech6.registry.GT6Portals; // p35 tail-append
 import gregtech6.tileentity.bees.GT6BumbliaryBlock;
 import gregtech6.registry.GT6ElectricTransformers;
 import gregtech6.registry.GT6Lasers;
+import gregtech6.registry.GT6Kitchen; // p38-issue7 tail-append
 import gregtech6.registry.GT6MagicAbsorbers; // p32 tail-append
 import gregtech6.block.foam.GT6CFoamOwnedBlock;
 import gregtech6.block.energy.GT6ElectricTransformerBlock;
@@ -230,6 +231,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addPlaceables(); // task p32-placeables — the Greg o'Lantern (the carved-front cube)
         addRails(); // task p35-rails-31-blocks — the 31-rail family (the vanilla rail grammar)
         addPortals(); // task p35-portals-mini-nether-end — the two miniature portals (the ACTIVE cube swap)
+        addKitchen(); // task p38-issue7-kitchen-models — the four kitchen blocks (the upstream hollow-tub element forms)
     }
 
     /**
@@ -3141,5 +3143,127 @@ public final class GT6BlockStates extends BlockStateProvider {
                 })
                 .end();
         simpleBlock(aBlock, tModel);
+    }
+
+    /**
+     * Task p38-issue7-kitchen-models — the kitchen family (GT6Kitchen.java:89-113), the
+     * four manual kitchen blocks that rendered as the magenta-black missing-model
+     * checkerboard (the datagen face had zero kitchen coverage; the GT6Kitchen.java:58-59
+     * plain-cube placeholder declaration never landed). This is the real upstream form
+     * instead, the render geometry replicated as vanilla element models:
+     * <ul>
+     * <li>the pot pair + the bowl: the hollow tub — 2px-thick walls 8px tall over a 2px
+     *     base slab (MultiTileEntityBathingPot.setBlockBounds2 :345-356; the
+     *     MultiTileEntityMixingBowl boxes :368-373 are the same shape); the walls tile as
+     *     four non-overlapping panels, so the only coplanar faces left are
+     *     opposite-facing pairs (backface culling keeps them from fighting);</li>
+     * <li>the juicer: the low tub — 2px walls 4px tall over a 1px base (setBlockBounds2
+     *     :228-237) plus the central 4x7x4 pestle column (pass 6, the middle
+     *     textures).</li>
+     * </ul>
+     * The interior fluid-surface pass (the mDisplay renderer, pot/juicer pass 5) is the
+     * declared pool cut — the static model is the EMPTY vessel, the cavity floor being
+     * the base slab's up face. Textures: the borrowed upstream grayscale colored/ tile
+     * sets (assets/README.md, the kitchen section) with tintindex 0 on every face; NO
+     * BlockColor is registered, so the family renders un-tinted grayscale today — the
+     * wrench-row precedent (the declared deviation, the family runtime-tint pool: upstream
+     * tints these same tiles with the row material's mRGBa, WoodTreated/StainlessSteel/
+     * Ceramic).
+     */
+    private void addKitchen() {
+        addKitchenBlock(GT6Kitchen.BATHING_POT_WOOD.get(), "bathing_pot_wood", "bathing_pot_wood", false);
+        addKitchenBlock(GT6Kitchen.BATHING_POT_STEEL.get(), "bathing_pot_steel", "bathing_pot", false);
+        addKitchenBlock(GT6Kitchen.MIXING_BOWL.get(), "mixing_bowl", "mixing_bowl", false);
+        addKitchenBlock(GT6Kitchen.JUICER.get(), "juicer", "juicer", true);
+    }
+
+    /** One kitchen block: its element model + the property-free single-state blockstate + the BlockItem parent (the addAnvils form). */
+    private void addKitchenBlock(Block aBlock, String aName, String aFamily, boolean aJuicer) {
+        ModelFile tModel = aJuicer ? kitchenJuicerModel(aName, aFamily) : kitchenTubModel(aName, aFamily);
+        simpleBlock(aBlock, tModel);
+        itemModels().withExistingParent(aName, tModel.getLocation());
+    }
+
+    /** The kitchen texture band (block/tools/&lt;family&gt;/&lt;face&gt;.png, the borrowed upstream colored/ tiles). */
+    private BlockModelBuilder kitchenTextures(BlockModelBuilder aModel, String aFamily, boolean aJuicer) {
+        aModel.texture("sides", modLoc("block/tools/" + aFamily + "/sides"))
+                .texture("insides", modLoc("block/tools/" + aFamily + "/insides"))
+                .texture("top", modLoc("block/tools/" + aFamily + "/top"))
+                .texture("bottom", modLoc("block/tools/" + aFamily + "/bottom"))
+                .texture("particle", "#sides");
+        if (aJuicer) aModel.texture("middleside", modLoc("block/tools/" + aFamily + "/middleside"))
+                .texture("middletop", modLoc("block/tools/" + aFamily + "/middletop"));
+        return aModel;
+    }
+
+    /** The panel face texture: up "top", down "bottom", the cavity side "insides", everything else (outer + end-caps) "sides". */
+    private String kitchenPanelTexture(Direction aDir, Direction aOutward) {
+        if (aDir == Direction.UP) return "#top";
+        if (aDir == Direction.DOWN) return "#bottom";
+        return aDir.getOpposite() == aOutward ? "#insides" : "#sides";
+    }
+
+    /** The hollow-tub model (pot pair + bowl): 2px walls y 2..8 + the 2px base slab (its up face is the cavity floor). */
+    private ModelFile kitchenTubModel(String aName, String aFamily) {
+        BlockModelBuilder tModel = kitchenTextures(models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/block"))), aFamily, false);
+        tModel.element().from(0.0F, 0.0F, 0.0F).to(16.0F, 2.0F, 16.0F)
+                .allFaces((aDir, aFace) -> {
+                    aFace.texture(aDir == Direction.UP ? "#top"
+                            : aDir == Direction.DOWN ? "#bottom" : "#sides");
+                    aFace.tintindex(0);
+                }).end();
+        kitchenTubWall(tModel, 0.0F, 0.0F, 16.0F, 2.0F, Direction.NORTH);
+        kitchenTubWall(tModel, 0.0F, 14.0F, 16.0F, 16.0F, Direction.SOUTH);
+        kitchenTubWall(tModel, 0.0F, 2.0F, 2.0F, 14.0F, Direction.WEST);
+        kitchenTubWall(tModel, 14.0F, 2.0F, 16.0F, 14.0F, Direction.EAST);
+        return tModel;
+    }
+
+    /** One tub wall panel: (aMinX, aMinZ)-(aMaxX, aMaxZ) footprint, y 2..8 (the down face lands opposite-facing on the base slab). */
+    private void kitchenTubWall(BlockModelBuilder aModel, float aMinX, float aMinZ, float aMaxX, float aMaxZ, Direction aOutward) {
+        aModel.element().from(aMinX, 2.0F, aMinZ).to(aMaxX, 8.0F, aMaxZ)
+                .allFaces((aDir, aFace) -> {
+                    aFace.texture(kitchenPanelTexture(aDir, aOutward));
+                    aFace.tintindex(0);
+                }).end();
+    }
+
+    /**
+     * The juicer model (MultiTileEntityJuicer.java:228-237): the low tub — 2px walls y
+     * 0..4 over a 1px base (footprint inset 2..14) — plus the central 4x7x4 pestle column
+     * (pass 6). The walls carry NO down face (coplanar same-facing with the base slab's
+     * own), and the base slab carries side faces only as down/up (its side ring is tiled
+     * by the walls' own outer faces).
+     */
+    private ModelFile kitchenJuicerModel(String aName, String aFamily) {
+        BlockModelBuilder tModel = kitchenTextures(models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/block"))), aFamily, true);
+        tModel.element().from(2.0F, 0.0F, 2.0F).to(14.0F, 1.0F, 14.0F)
+                .face(Direction.DOWN).texture("#bottom").tintindex(0).end()
+                .face(Direction.UP).texture("#top").tintindex(0).end()
+                .end();
+        kitchenJuicerWall(tModel, 2.0F, 2.0F, 14.0F, 4.0F, Direction.NORTH);
+        kitchenJuicerWall(tModel, 2.0F, 12.0F, 14.0F, 14.0F, Direction.SOUTH);
+        kitchenJuicerWall(tModel, 2.0F, 4.0F, 4.0F, 12.0F, Direction.WEST);
+        kitchenJuicerWall(tModel, 12.0F, 4.0F, 14.0F, 12.0F, Direction.EAST);
+        tModel.element().from(6.0F, 0.0F, 6.0F).to(10.0F, 7.0F, 10.0F)
+                .face(Direction.UP).texture("#middletop").tintindex(0).end()
+                .face(Direction.NORTH).texture("#middleside").tintindex(0).end()
+                .face(Direction.SOUTH).texture("#middleside").tintindex(0).end()
+                .face(Direction.WEST).texture("#middleside").tintindex(0).end()
+                .face(Direction.EAST).texture("#middleside").tintindex(0).end()
+                .end();
+        return tModel;
+    }
+
+    /** One juicer wall panel: (aMinX, aMinZ)-(aMaxX, aMaxZ) footprint, y 0..4, the down face omitted (the base slab owns the y=0 plane). */
+    private void kitchenJuicerWall(BlockModelBuilder aModel, float aMinX, float aMinZ, float aMaxX, float aMaxZ, Direction aOutward) {
+        BlockModelBuilder.ElementBuilder tElement = aModel.element().from(aMinX, 0.0F, aMinZ).to(aMaxX, 4.0F, aMaxZ);
+        for (Direction tDir : Direction.values()) {
+            if (tDir == Direction.DOWN) continue;
+            tElement.face(tDir).texture(kitchenPanelTexture(tDir, aOutward)).tintindex(0).end();
+        }
+        tElement.end();
     }
 }

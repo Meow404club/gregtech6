@@ -8781,6 +8781,38 @@ Byte copies:
 - `block/long_dist_wire_zpm.png` — `8ff978fa6328e9b293cb46a9a09e1b3055e97c3dc86040953b36301939826a49` (upstream `blocks/iconsets/LONG_DIST_WIRE_ZPM.png`)
 - `block/long_dist_wire_uv.png` — `9105d68018de154d8b59950e8fea1c73b28d3d1fc6b1de80422d05618d5eee80` (upstream `blocks/iconsets/LONG_DIST_WIRE_UV.png`)
 
+## Kitchen tool block textures (task p38-issue7-kitchen-models)
+
+The kitchen family's hollow-tub element models (`GT6BlockStates.addKitchen`) borrow the
+upstream grayscale `colored/` tile sets — the mRGBa tint-me variants of
+`textures/blocks/machines/tools/<family>/colored/*`, byte-identical copies, filenames
+unchanged (the `overlay/` detail passes and the pot/bowl Table faces `tablebottom`/
+`tableside` stay unborrowed — the overlay layer and the Table rows are the pool cuts).
+Upstream tints these tiles at runtime with the row material's colour (mRGBa:
+WoodTreated / StainlessSteel / Ceramic); the port shows the grayscale tiles un-tinted
+(tintindex 0 reserved on every model face, no BlockColor registered) — declared
+deviation, the family runtime-tint pool. Three of the four families ship byte-identical
+tiles upstream (only `bathing_pot_wood` differs), which is why the digests repeat:
+
+- `block/tools/bathing_pot_wood/sides.png` — `0fb1440b5a5ebce82ea7cb15dd9d6a6b7a1c184bf92b1aa0aa0c9fed74201607` (upstream `blocks/machines/tools/bathing_pot_wood/colored/sides.png`)
+- `block/tools/bathing_pot_wood/insides.png` — `904c928817e06e344e8f517f463af9a3f93654ce889d657d926457f10bc2980b` (upstream `blocks/machines/tools/bathing_pot_wood/colored/insides.png`)
+- `block/tools/bathing_pot_wood/top.png` — `be4dbb03c7036fdf7ebd0229ca7ed28ee428daaa410995730047a3ee1b9d8dba` (upstream `blocks/machines/tools/bathing_pot_wood/colored/top.png`)
+- `block/tools/bathing_pot_wood/bottom.png` — `8289841b503320b79a818ead17021e2e3e3bf8c9946af30eb13104d919b4c929` (upstream `blocks/machines/tools/bathing_pot_wood/colored/bottom.png`)
+- `block/tools/bathing_pot/sides.png` — `1944346bd9064a4960f5e28a1393a23aeeb88c219ddd14526e72676e8c1ea334` (upstream `blocks/machines/tools/bathing_pot/colored/sides.png`; byte-identical to the mixing_bowl + juicer side tiles)
+- `block/tools/bathing_pot/insides.png` — `e6ce4f96c5fbf7f4fe3088e72899827608d9b46f5d0948873e5089c864197251` (upstream `blocks/machines/tools/bathing_pot/colored/insides.png`; byte-identical to the mixing_bowl + juicer inside tiles)
+- `block/tools/bathing_pot/top.png` — `59880aac68573de2af64d3b5c661ec11b00226d1ea783d0619c6a8ca97c95b60` (upstream `blocks/machines/tools/bathing_pot/colored/top.png`; byte-identical to the mixing_bowl + juicer top tiles)
+- `block/tools/bathing_pot/bottom.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/bathing_pot/colored/bottom.png`; byte-identical to the mixing_bowl bottom and the juicer bottom/middleside/middletop tiles)
+- `block/tools/mixing_bowl/sides.png` — `1944346bd9064a4960f5e28a1393a23aeeb88c219ddd14526e72676e8c1ea334` (upstream `blocks/machines/tools/mixing_bowl/colored/sides.png`; byte-identical to the bathing_pot side tile)
+- `block/tools/mixing_bowl/insides.png` — `e6ce4f96c5fbf7f4fe3088e72899827608d9b46f5d0948873e5089c864197251` (upstream `blocks/machines/tools/mixing_bowl/colored/insides.png`; byte-identical to the bathing_pot inside tile)
+- `block/tools/mixing_bowl/top.png` — `59880aac68573de2af64d3b5c661ec11b00226d1ea783d0619c6a8ca97c95b60` (upstream `blocks/machines/tools/mixing_bowl/colored/top.png`; byte-identical to the bathing_pot top tile)
+- `block/tools/mixing_bowl/bottom.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/mixing_bowl/colored/bottom.png`; byte-identical to the bathing_pot bottom tile)
+- `block/tools/juicer/sides.png` — `1944346bd9064a4960f5e28a1393a23aeeb88c219ddd14526e72676e8c1ea334` (upstream `blocks/machines/tools/juicer/colored/sides.png`; byte-identical to the bathing_pot side tile)
+- `block/tools/juicer/insides.png` — `e6ce4f96c5fbf7f4fe3088e72899827608d9b46f5d0948873e5089c864197251` (upstream `blocks/machines/tools/juicer/colored/insides.png`; byte-identical to the bathing_pot inside tile)
+- `block/tools/juicer/top.png` — `59880aac68573de2af64d3b5c661ec11b00226d1ea783d0619c6a8ca97c95b60` (upstream `blocks/machines/tools/juicer/colored/top.png`; byte-identical to the bathing_pot top tile)
+- `block/tools/juicer/bottom.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/juicer/colored/bottom.png`; byte-identical to the bathing_pot bottom tile)
+- `block/tools/juicer/middleside.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/juicer/colored/middleside.png`; the same uniform tile as the bottom — upstream ships it un-detailed, the mRGBa tint carries the face)
+- `block/tools/juicer/middletop.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/juicer/colored/middletop.png`; the same uniform tile as the bottom)
+
 ## owned (generated, not borrowed)
 
 - `gt6/textures/block/mini_portal_end.png` — the Miniature End Portal's active
