@@ -989,6 +989,20 @@ SESSION_GROUPS = (
     # registered, no fresh_boot / mutates member — the water rig is a band-local
     # setblock fence). --group p37_kinetics_water_wheel matches the module stem.
     ("p37_kinetics_water_wheel",),
+
+    # P37 pool card (p37-chains-coke-oven-run): the coke-oven LIVE RUN chain — a
+    # fresh z=600 band (x500..506, x/z-disjoint from every registered band; the
+    # roster tops out at z=564 x696..724): the p16 form-arm semantics
+    # (place/form 64/check) followed by the run closure the p16 chains stop
+    # short of — input oak_log -> ignite -> the 4200-tick dispatcher drive ->
+    # the two-sided output assertion (gem_charcoal in the output slot,
+    # 250mB gt6:creosote in the output tank) — plus the s4-6 laser-gas census
+    # chest (the two GT6LaserGas registrations read back, the p32_qu_usb
+    # give-chest form; pure census). Admission mirroring the p16 cluster form
+    # (bbox-registered, no fresh_boot / mutates member — the TU self-generation
+    # drives the run, no rig needed). --group p37_coke_oven_run matches the
+    # chain's embedded name prefix.
+    ("p37_coke_oven_run",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
