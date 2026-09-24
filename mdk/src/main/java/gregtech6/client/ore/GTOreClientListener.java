@@ -6,10 +6,7 @@ import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.item.ItemColor;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
 import net.minecraftforge.api.distmarker.Dist;
@@ -42,13 +39,16 @@ import gregtech6.registry.GT6OreBlocks;
  * path, so the inventory form renders the same dual-sprite model (the item display
  * transforms ride the shared placeholder ancestry through the static-property delegates).
  *
- * <p>③ TINT (the spec ④ fRGBa face): the ore BlockColor over the ore block universe and the
- * EXISTING {@code GTMaterialPrefixBlockItem.tintColor()} ItemColor over the ore items (the
- * ore items ARE GTMaterialPrefixBlockItems — the same colour seam the 3773 storage items
- * use, registered here over the ore subset because GTClientHandlers' roster predates the
- * ore universe). Index 0 only, world half reads {@code material.fRGBa[prefix.mState]}
- * (PrefixBlock.java:279-282), item half reads mRGBa (PrefixBlockItem.java:103) — both
- * already ported; this listener only registers them over the ore walk.
+ * <p>③ TINT (the spec ④ fRGBa face): the WORLD half retired (task p38-issue2-ore-baked-tint)
+ * — the colour is baked into the overlay quads' vertex data by {@link GTOreBakedModel} from
+ * {@code Params.tintARGB()} at {@code tintARGBOf}, the p32 machine-domain ruling (the
+ * runtime {@code BlockColor} route rendered achromatic in the live client; the baked-vertex
+ * route cannot be dropped by any chunk builder). {@link #oreTintARGB} stays as the
+ * unregistered pure seam the tests drive (the {@code GTMachinePaintTint.blockColor}
+ * reference form). The ITEM half stays: the ore items ARE GTMaterialPrefixBlockItems — the
+ * same colour seam the 3773 storage items use, registered here over the ore subset because
+ * GTClientHandlers' roster predates the ore universe (inert on the baked quads — none
+ * carries tintIndex 0 any more — but harmless, and the seam survives for them).
  */
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = GTRenderModelListener.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -109,31 +109,15 @@ public final class GTOreClientListener {
 		//? }
 	}
 
-	/** The world-side tint half: index 0 over an ore block = {@code fRGBa[prefix.mState]} (PrefixBlock.java:279-282). */
-	public static BlockColor oreBlockColor() {
-		return (aState, aLevel, aPos, aTintIndex) -> oreTintARGB(aState, aTintIndex);
-	}
-
-	/** The pure seam the tests drive: the opaque ARGB for one tint index over one ore state. */
+	/**
+	 * The pure seam the tests drive (unregistered since p38-issue2-ore-baked-tint — the
+	 * world route retired, the colour now baked into the overlay vertices): index 0 over an
+	 * ore block = {@code fRGBa[prefix.mState]} (PrefixBlock.java:279-282), delegating to the
+	 * single encode {@link GTOreBakedModel#tintARGBOf}.
+	 */
 	public static int oreTintARGB(@Nullable BlockState aState, int aTintIndex) {
 		if (aTintIndex != 0 || aState == null || !(aState.getBlock() instanceof GTOreBlock tBlock)) return -1;
-		return fRGBaARGB(tBlock.material.fRGBa[tBlock.prefix.mState]);
-	}
-
-	/** UT.Code.getRGBInt over the fRGBa triple (the GTMaterialPrefixBlock.tintARGB encoding). */
-	private static int fRGBaARGB(short[] aRGBa) {
-		return 0xFF000000 | (bind8(aRGBa[0]) << 16) | (bind8(aRGBa[1]) << 8) | bind8(aRGBa[2]);
-	}
-
-	/** Upstream UT.Code.bind8 semantics: clamp to 0-255. */
-	private static int bind8(long aValue) {
-		return (int) Math.max(0, Math.min(255, aValue));
-	}
-
-	@SubscribeEvent
-	public static void onRegisterBlockColors(RegisterColorHandlersEvent.Block aEvent) {
-		aEvent.getBlockColors().register(oreBlockColor(),
-				GT6OreBlocks.blocks().values().stream().map(h -> h.get()).toArray(net.minecraft.world.level.block.Block[]::new));
+		return GTOreBakedModel.tintARGBOf(tBlock.material, tBlock.prefix);
 	}
 
 	@SubscribeEvent
