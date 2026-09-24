@@ -24,6 +24,11 @@ public class GTHeatTransmitterBlock extends GTMultiBlockPartBlock {
 		super(aProperties);
 	}
 
+	/** The tinted form (task p38-issue8-multipart-tint): the row's Invar column rides along (the partPaintableBlockArray walk). */
+	public GTHeatTransmitterBlock(Properties aProperties, @Nullable java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
+		super(aProperties, 0, null, aMaterial);
+	}
+
 	@Override
 	@Nullable
 	public BlockEntity newBlockEntity(BlockPos aPos, BlockState aState) {

@@ -118,6 +118,10 @@ public class GTMultiBlockPartBlock extends BaseEntityBlock {
 		this.mRow = aRow;
 		this.mMaxDesign = sPendingMaxDesign;
 		this.mComposedName = null;
+		// the row-carrier form derives the tint material from the row's NBT_MATERIAL column
+		// (task p38-issue8-multipart-tint; the lazy Supplier dereferences after MT.init —
+		// the GTBarrels MetalDrumRow form)
+		this.mMaterial = aRow == null ? null : aRow.material();
 		// IntegerProperty demands min < max (IntegerProperty.java:19) — a DESIGNS-0 row has
 		// no variant axis, so the property is ABSENT there (the datagen walk and the BE sync
 		// branch on null)
@@ -137,6 +141,18 @@ public class GTMultiBlockPartBlock extends BaseEntityBlock {
 	}
 
 	/**
+	 * The material-carrier form (task p38-issue8-multipart-tint): the ROW-LESS part blocks
+	 * carry their upstream {@code NBT_MATERIAL} column directly (the lazy Supplier — the
+	 * GTBarrels MetalDrumRow form; the composed-name overload keeps delegating with a null
+	 * material for the callers that predate the tint wiring).
+	 */
+	public GTMultiBlockPartBlock(Properties aProperties, int aMaxDesign, @Nullable net.minecraft.network.chat.Component aComposedName,
+			@Nullable java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
+		this(aProperties, aMaxDesign, aComposedName);
+		this.mMaterial = aMaterial;
+	}
+
+	/**
 	 * The DESIGN render dimension — {@code 0..maxDesign()} inclusive, one shared instance
 	 * per range; NULL on the DESIGNS-0 rows (a single-value IntegerProperty cannot exist).
 	 */
@@ -149,6 +165,15 @@ public class GTMultiBlockPartBlock extends BaseEntityBlock {
 	/** The carried part row (task p13-large-boiler record; null = the rows without a composed name — the coke-oven bricks). */
 	@Nullable
 	private final gregtech6.registry.GTMultiBlocks.MultiblockPartRow mRow;
+
+	/**
+	 * The block's upstream {@code NBT_MATERIAL} column (task p38-issue8-multipart-tint —
+	 * the tint colour source): the row-carrier form derives it from the row, the row-less
+	 * tinted forms take the Supplier directly. Null = the material-less rows (the coke
+	 * bricks, the Lightning Rod part borrows) — the white no-tint identity.
+	 */
+	@Nullable
+	private java.util.function.Supplier<gregapi.oredict.OreDictMaterial> mMaterial;
 
 	/** The precomposed display name (the metal-wall template form); null = the mRow/vanilla-key resolution. */
 	@Nullable
@@ -169,6 +194,29 @@ public class GTMultiBlockPartBlock extends BaseEntityBlock {
 	/** The design index carried by a state of THIS block (the BE sync + the datagen walk); 0 on the property-less rows. */
 	public int designOf(BlockState aState) {
 		return DESIGN == null ? 0 : aState.getValue(DESIGN);
+	}
+
+	/**
+	 * The block's upstream {@code NBT_MATERIAL} (the tint colour source), resolved lazily
+	 * through the Supplier (MT.init runs after class-load — the GTBarrels MetalDrumRow
+	 * form); null = the material-less rows (the white no-tint identity, upstream
+	 * UNCOLORED CS.java:327).
+	 */
+	@Nullable
+	public gregapi.oredict.OreDictMaterial material() {
+		return mMaterial == null ? null : mMaterial.get();
+	}
+
+	/**
+	 * The part-domain material dispatch (task p38-issue8-multipart-tint, the
+	 * {@code GTBasicMachineBlock.materialOf} mirror shape): only the part-family block
+	 * carriers resolve a material — every other block (machines, barrels, vanilla states)
+	 * is null here, the domain gate the shared tint consumers layer over the machine
+	 * dispatch.
+	 */
+	@Nullable
+	public static gregapi.oredict.OreDictMaterial materialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
+		return aBlock instanceof GTMultiBlockPartBlock tPart ? tPart.material() : null;
 	}
 
 	/**

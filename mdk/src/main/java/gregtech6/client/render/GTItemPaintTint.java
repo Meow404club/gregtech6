@@ -3,7 +3,6 @@ package gregtech6.client.render;
 import javax.annotation.Nullable;
 
 import gregapi.oredict.OreDictMaterial;
-import gregtech6.block.GTBasicMachineBlock;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -70,8 +69,11 @@ public final class GTItemPaintTint {
     public static ItemColor itemColor() {
         return (@Nullable ItemStack aStack, int aTintIndex) -> {
             if (aTintIndex != 0 || aStack == null) return -1;
+            // the combined dispatch (task p38-issue8-multipart-tint): the part-family wall
+            // stacks resolve their row material here — the unpainted creative-tab face the
+            // issue names
             OreDictMaterial tMaterial = aStack.getItem() instanceof BlockItem tItem
-                    ? GTBasicMachineBlock.materialOf(tItem.getBlock()) : null;
+                    ? GTMachinePaintTint.tintMaterialOf(tItem.getBlock()) : null;
             //? if forge {
             CompoundTag tTag = aStack.getTag();
             //?} else {

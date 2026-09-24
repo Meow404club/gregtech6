@@ -23,6 +23,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import gregapi.data.MT;
+
 import gregtech6.block.GTComposedNameItem;
 import gregtech6.block.multiblock.GTCokeOvenBlock;
 import gregtech6.block.multiblock.GTHeatTransmitterBlock;
@@ -175,8 +177,15 @@ public final class GTMultiBlocks {
 	// (same material, the declared erratum on the task card).
 	// ===========================================================================
 
-	/** One Dense Wall / Heat Transmitter part row — the Loader part-id columns ({@code matDisplay} is the row material word, verbatim). */
-	public record MultiblockPartRow(String path, String matDisplay, int metaId, float hardness) {}
+	/**
+	 * One Dense Wall / Heat Transmitter part row — the Loader part-id columns
+	 * ({@code matDisplay} is the row material word, verbatim; {@code material} is the row's
+	 * upstream {@code NBT_MATERIAL} — the lazy Supplier form, the class-load runs before
+	 * MT.init, the GT6Tanks TankValveRow ruling — feeding the part tint, task
+	 * p38-issue8-multipart-tint).
+	 */
+	public record MultiblockPartRow(String path, String matDisplay, int metaId, float hardness,
+			java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material) {}
 
 	/**
 	 * One Large Boiler variant row — the block-carrier projection of one :1248-1252 line
@@ -208,22 +217,28 @@ public final class GTMultiBlocks {
 				net.minecraft.network.chat.Component.translatable(boilerMatUnitKeyOf(aRow)));
 	}
 
-	/** The five Dense Wall rows (:1159-1165, the registration order) + the six Dense additions (:1155-1165, task p29-w3-nbtdesign-parts ③ — appended, the p13 EDIT-ruling append-only shape; 11 = the full metalwalldense family, DESIGNS 7). */
+	/**
+	 * The five Dense Wall rows (:1159-1165, the registration order) + the six Dense
+	 * additions (:1155-1165, task p29-w3-nbtdesign-parts ③ — appended, the p13 EDIT-ruling
+	 * append-only shape; 11 = the full metalwalldense family, DESIGNS 7). The material
+	 * column is the upstream {@code aMat} of each line verbatim (task p38-issue8 — the
+	 * tint source; ANY.Steel→MT.Steel / ANY.W→MT.W, the GT6Crucibles CrucibleRow mapping).
+	 */
 	public static final java.util.List<MultiblockPartRow> WALL_ROWS = java.util.List.of(
-			new MultiblockPartRow("dense_wall_stainless_steel", "Stainless Steel", 18022,   6.0F),
-			new MultiblockPartRow("dense_wall_invar"          , "Invar"          , 18027,   6.0F),
-			new MultiblockPartRow("dense_wall_titanium"       , "Titanium"       , 18026,   9.0F),
-			new MultiblockPartRow("dense_wall_tungstensteel"  , "Tungstensteel"  , 18023,  12.5F),
-			new MultiblockPartRow("dense_wall_adamantium"     , "Adamantium"     , 18025, 100.0F),
-			new MultiblockPartRow("dense_wall_lead"           , "Lead"           , 18031,   6.0F),
-			new MultiblockPartRow("dense_wall_bronze"         , "Bronze"         , 18030,   6.0F),
-			new MultiblockPartRow("dense_wall_steel"          , "Steel"          , 18029,   6.0F),
-			new MultiblockPartRow("dense_wall_galvanized_steel", "Galvanized Steel", 18028,  6.0F),
-			new MultiblockPartRow("dense_wall_tungsten"       , "Tungsten"       , 18024,  10.0F),
-			new MultiblockPartRow("dense_wall_tantalum_hafnium_carbide", "Ta4HfC5", 18032, 12.5F));
+			new MultiblockPartRow("dense_wall_stainless_steel", "Stainless Steel", 18022,   6.0F, () -> MT.StainlessSteel),
+			new MultiblockPartRow("dense_wall_invar"          , "Invar"          , 18027,   6.0F, () -> MT.Invar),
+			new MultiblockPartRow("dense_wall_titanium"       , "Titanium"       , 18026,   9.0F, () -> MT.Ti),
+			new MultiblockPartRow("dense_wall_tungstensteel"  , "Tungstensteel"  , 18023,  12.5F, () -> MT.TungstenSteel),
+			new MultiblockPartRow("dense_wall_adamantium"     , "Adamantium"     , 18025, 100.0F, () -> MT.Ad),
+			new MultiblockPartRow("dense_wall_lead"           , "Lead"           , 18031,   6.0F, () -> MT.Pb),
+			new MultiblockPartRow("dense_wall_bronze"         , "Bronze"         , 18030,   6.0F, () -> MT.Bronze),
+			new MultiblockPartRow("dense_wall_steel"          , "Steel"          , 18029,   6.0F, () -> MT.Steel),
+			new MultiblockPartRow("dense_wall_galvanized_steel", "Galvanized Steel", 18028,  6.0F, () -> MT.SteelGalvanized),
+			new MultiblockPartRow("dense_wall_tungsten"       , "Tungsten"       , 18024,  10.0F, () -> MT.W),
+			new MultiblockPartRow("dense_wall_tantalum_hafnium_carbide", "Ta4HfC5", 18032, 12.5F, () -> MT.Ta4HfC5));
 
-	/** The Heat Transmitter row (:1176) — the ATOMIC form (a bare noun, nothing to compose; the wire_laser/bricks precedent). */
-	public static final MultiblockPartRow TRANSMITTER_ROW = new MultiblockPartRow("heat_transmitter", "Heat Transmitter", 18101, 10.0F);
+	/** The Heat Transmitter row (:1176) — the ATOMIC form (a bare noun, nothing to compose; the wire_laser/bricks precedent); upstream aMat = MT.Invar. */
+	public static final MultiblockPartRow TRANSMITTER_ROW = new MultiblockPartRow("heat_transmitter", "Heat Transmitter", 18101, 10.0F, () -> MT.Invar);
 
 	/** The five Large Boiler rows (:1248-1252, the upstream line order — raw NBT_OUTPUT_SU 4096/4096/8192/16384/131072). */
 	public static final java.util.List<LargeBoilerRow> LARGE_BOILER_ROWS = java.util.List.of(
@@ -256,9 +271,9 @@ public final class GTMultiBlocks {
 	/** The boiler variant items, same keys (the tab walk + the wand-less placement). */
 	public static final java.util.Map<String, RegistryObject<Item>> LARGE_BOILER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
 
-	/** The Heat Transmitter block (the 18101 part, the ONLY_ENERGY_IN base layer). */
+	/** The Heat Transmitter block (the 18101 part, the ONLY_ENERGY_IN base layer; the row's Invar column rides along for the tint, task p38-issue8). */
 	public static final RegistryObject<GTHeatTransmitterBlock> HEAT_TRANSMITTER = BLOCKS.register(TRANSMITTER_ROW.path(),
-			() -> new GTHeatTransmitterBlock(partProperties(TRANSMITTER_ROW.hardness())));
+			() -> new GTHeatTransmitterBlock(partProperties(TRANSMITTER_ROW.hardness()), TRANSMITTER_ROW.material()));
 
 	static {
 		// the five Dense Wall part blocks + items (the shared part BET mounts them — the
@@ -344,11 +359,11 @@ public final class GTMultiBlocks {
 	// shape).
 	// ===========================================================================
 
-	/** The three Lightning Rod part rows (Loader :1151/:1168/:1179, the registration order). */
+	/** The three Lightning Rod part rows (Loader :1151/:1168/:1179, the registration order; the material columns are the upstream aMat verbatim, task p38-issue8). */
 	public static final java.util.List<MultiblockPartRow> LIGHTNING_ROD_PART_ROWS = java.util.List.of(
-			new MultiblockPartRow("machine_wall_tungsten", "Tungsten Wall", 18004, 10.0F),
-			new MultiblockPartRow("niobium_titanium_coil", "Large Niobium-Titanium Coil", 18041, 6.0F),
-			new MultiblockPartRow("lightning_rod", "Lightning Rod", 18104, 8.0F));
+			new MultiblockPartRow("machine_wall_tungsten", "Tungsten Wall", 18004, 10.0F, () -> MT.W),
+			new MultiblockPartRow("niobium_titanium_coil", "Large Niobium-Titanium Coil", 18041, 6.0F, () -> MT.NiobiumTitanium),
+			new MultiblockPartRow("lightning_rod", "Lightning Rod", 18104, 8.0F, () -> MT.SteelGalvanized));
 
 	/** The three Lightning Rod part blocks by path (the BET valid list + the BE part resolution + datagen). */
 	public static final java.util.Map<String, RegistryObject<GTMultiBlockPartBlock>> LIGHTNING_ROD_PART_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
@@ -554,9 +569,12 @@ public final class GTMultiBlocks {
 	 * for the metal-wall family (the composed template slot) and the ATOMIC display name
 	 * for everything else; {@code designs} is the row's NBT_DESIGNS; {@code textureFamily}
 	 * is the NBT_TEXTURE column (the upstream multiblockparts/&lt;family&gt;/&lt;design&gt;/
-	 * {colored,overlay}/{bottom,top,side} texture source for the datagen walk).
+	 * {colored,overlay}/{bottom,top,side} texture source for the datagen walk);
+	 * {@code material} is the row's upstream {@code NBT_MATERIAL} (the lazy Supplier — the
+	 * MultiblockPartRow form — feeding the part tint, task p38-issue8-multipart-tint).
 	 */
-	public record PartRow(String path, String display, int metaId, float hardness, int designs, String textureFamily) {
+	public record PartRow(String path, String display, int metaId, float hardness, int designs, String textureFamily,
+			java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material) {
 
 		/** The composed metal-wall template ("{@code %s Wall}"). */
 		public static final String METAL_WALL_DISPLAY_KEY = "gt6.row.metal_wall.display";
@@ -572,27 +590,27 @@ public final class GTMultiBlocks {
 		}
 	}
 
-	/** The eleven Metal Wall rows (:1143-1153, the registration order — texture "metalwall", NBT_DESIGNS 7). */
+	/** The eleven Metal Wall rows (:1143-1153, the registration order — texture "metalwall", NBT_DESIGNS 7; material = the upstream aMat verbatim, task p38-issue8). */
 	public static final java.util.List<PartRow> METAL_WALL_ROWS = java.util.List.of(
-			new PartRow("machine_wall_lead"                    , "Lead"                     , 18011,   6.0F, 7, "metalwall"),
-			new PartRow("machine_wall_bronze"                  , "Bronze"                   , 18010,   6.0F, 7, "metalwall"),
-			new PartRow("machine_wall_steel"                   , "Steel"                    , 18009,   6.0F, 7, "metalwall"),
-			new PartRow("machine_wall_galvanized_steel"        , "Galvanized Steel"         , 18008,   6.0F, 7, "metalwall"),
-			new PartRow("machine_wall_stainless_steel"         , "Stainless Steel"          , 18002,   6.0F, 7, "metalwall"),
-			new PartRow("machine_wall_invar"                   , "Invar"                    , 18007,   6.0F, 7, "metalwall"),
-			new PartRow("machine_wall_titanium"                , "Titanium"                 , 18006,   9.0F, 7, "metalwall"),
-			new PartRow("machine_wall_tungstensteel"           , "Tungstensteel"            , 18003,  12.5F, 7, "metalwall"),
-			new PartRow("machine_wall_tungsten"                , "Tungsten"                 , 18004,  10.0F, 7, "metalwall"), // REUSED — the Lightning Rod family's block
-			new PartRow("machine_wall_tantalum_hafnium_carbide", "Tantalum Hafnium Carbide" , 18012,  12.5F, 7, "metalwall"),
-			new PartRow("machine_wall_adamantium"              , "Adamantium"               , 18005, 100.0F, 7, "metalwall"));
+			new PartRow("machine_wall_lead"                    , "Lead"                     , 18011,   6.0F, 7, "metalwall", () -> MT.Pb),
+			new PartRow("machine_wall_bronze"                  , "Bronze"                   , 18010,   6.0F, 7, "metalwall", () -> MT.Bronze),
+			new PartRow("machine_wall_steel"                   , "Steel"                    , 18009,   6.0F, 7, "metalwall", () -> MT.Steel),
+			new PartRow("machine_wall_galvanized_steel"        , "Galvanized Steel"         , 18008,   6.0F, 7, "metalwall", () -> MT.SteelGalvanized),
+			new PartRow("machine_wall_stainless_steel"         , "Stainless Steel"          , 18002,   6.0F, 7, "metalwall", () -> MT.StainlessSteel),
+			new PartRow("machine_wall_invar"                   , "Invar"                    , 18007,   6.0F, 7, "metalwall", () -> MT.Invar),
+			new PartRow("machine_wall_titanium"                , "Titanium"                 , 18006,   9.0F, 7, "metalwall", () -> MT.Ti),
+			new PartRow("machine_wall_tungstensteel"           , "Tungstensteel"            , 18003,  12.5F, 7, "metalwall", () -> MT.TungstenSteel),
+			new PartRow("machine_wall_tungsten"                , "Tungsten"                 , 18004,  10.0F, 7, "metalwall", () -> MT.W), // REUSED — the Lightning Rod family's block
+			new PartRow("machine_wall_tantalum_hafnium_carbide", "Tantalum Hafnium Carbide" , 18012,  12.5F, 7, "metalwall", () -> MT.Ta4HfC5),
+			new PartRow("machine_wall_adamantium"              , "Adamantium"               , 18005, 100.0F, 7, "metalwall", () -> MT.Ad));
 
-	/** The five new Coil rows (:1167-1172 minus the registered 18041; texture "coil", NBT_DESIGNS 1 — designs 0/1). */
+	/** The five new Coil rows (:1167-1172 minus the registered 18041; texture "coil", NBT_DESIGNS 1 — designs 0/1; material = the upstream aMat verbatim, task p38-issue8). */
 	public static final java.util.List<PartRow> COIL_ROWS = java.util.List.of(
-			new PartRow("large_copper_coil"     , "Large Copper Coil"     , 18040, 6.0F, 1, "coil"),
-			new PartRow("large_nichrome_coil"   , "Large Nichrome Coil"   , 18042, 6.0F, 1, "coil"),
-			new PartRow("large_carborundum_coil", "Large Carborundum Coil", 18043, 6.0F, 1, "coil"),
-			new PartRow("large_osmium_coil"     , "Large Osmium Coil"     , 18044, 6.0F, 1, "coil"),
-			new PartRow("large_iridium_coil"    , "Large Iridium Coil"    , 18045, 6.0F, 1, "coil"));
+			new PartRow("large_copper_coil"     , "Large Copper Coil"     , 18040, 6.0F, 1, "coil", () -> MT.AnnealedCopper),
+			new PartRow("large_nichrome_coil"   , "Large Nichrome Coil"   , 18042, 6.0F, 1, "coil", () -> MT.Nichrome),
+			new PartRow("large_carborundum_coil", "Large Carborundum Coil", 18043, 6.0F, 1, "coil", () -> MT.SiC),
+			new PartRow("large_osmium_coil"     , "Large Osmium Coil"     , 18044, 6.0F, 1, "coil", () -> MT.Os),
+			new PartRow("large_iridium_coil"    , "Large Iridium Coil"    , 18045, 6.0F, 1, "coil", () -> MT.Ir));
 
 	/**
 	 * The seven Part rows (:1174-1182 minus the registered transmitter/rod; per-row
@@ -604,27 +622,27 @@ public final class GTMultiBlocks {
 	 * coupling), this row is the standalone part block only.
 	 */
 	public static final java.util.List<PartRow> PART_ROWS = java.util.List.of(
-			new PartRow("centrifuge_part"     , "Centrifuge Part"          , 18100, 12.5F, 8, "centrifugeparts"),
-			new PartRow("electrolyzer_part"   , "Electrolyzer Part"        , 18105, 12.5F, 7, "electrolyzerparts"),
-			new PartRow("distill_part"        , "Distillation Tower Part"  , 18102,  6.0F, 1, "distillationtowerparts"),
-			new PartRow("bedrock_drill_head"  , "Bedrock Mining Drill Head", 18103, 12.5F, 0, "bedrockdrill"),
-			new PartRow("sluice_part"         , "Sluice Part"              , 18106,  9.0F, 7, "sluiceparts"),
-			new PartRow("crusher_wheels"      , "Crusher Wheels"           , 18107,  9.0F, 3, "crusherwheels"),
-			new PartRow("shredder_blades"     , "Shredder Blades"          , 18108,  9.0F, 3, "shredderblades"));
+			new PartRow("centrifuge_part"     , "Centrifuge Part"          , 18100, 12.5F, 8, "centrifugeparts", () -> MT.TungstenSteel),
+			new PartRow("electrolyzer_part"   , "Electrolyzer Part"        , 18105, 12.5F, 7, "electrolyzerparts", () -> MT.StainlessSteel),
+			new PartRow("distill_part"        , "Distillation Tower Part"  , 18102,  6.0F, 1, "distillationtowerparts", () -> MT.StainlessSteel),
+			new PartRow("bedrock_drill_head"  , "Bedrock Mining Drill Head", 18103, 12.5F, 0, "bedrockdrill", () -> MT.TungstenSteel),
+			new PartRow("sluice_part"         , "Sluice Part"              , 18106,  9.0F, 7, "sluiceparts", () -> MT.Ti),
+			new PartRow("crusher_wheels"      , "Crusher Wheels"           , 18107,  9.0F, 3, "crusherwheels", () -> MT.TungstenSteel),
+			new PartRow("shredder_blades"     , "Shredder Blades"          , 18108,  9.0F, 3, "shredderblades", () -> MT.TungstenSteel));
 
-	/** The Ventilation Unit row (:1184 — NBT_DESIGNS 0). */
-	public static final PartRow VENTILATION_ROW = new PartRow("ventilation_unit", "Ventilation Unit", 18299, 6.0F, 0, "ventilationunit");
+	/** The Ventilation Unit row (:1184 — NBT_DESIGNS 0; upstream aMat MT.SteelGalvanized). */
+	public static final PartRow VENTILATION_ROW = new PartRow("ventilation_unit", "Ventilation Unit", 18299, 6.0F, 0, "ventilationunit", () -> MT.SteelGalvanized);
 
-	/** The five Quadcore Processor Unit rows (:1185-1189 — NBT_DESIGNS 0). */
+	/** The five Quadcore Processor Unit rows (:1185-1189 — NBT_DESIGNS 0; upstream aMat MT.SteelGalvanized each). */
 	public static final java.util.List<PartRow> PROCESSOR_UNIT_ROWS = java.util.List.of(
-			new PartRow("processor_unit_versatile" , "Versatile Quadcore Processor Unit" , 18200, 6.0F, 0, "processorversatile"),
-			new PartRow("processor_unit_logic"     , "Logic Quadcore Processor Unit"     , 18201, 6.0F, 0, "processorlogic"),
-			new PartRow("processor_unit_control"   , "Control Quadcore Processor Unit"   , 18202, 6.0F, 0, "processorcontrol"),
-			new PartRow("processor_unit_storage"   , "Storage Quadcore Processor Unit"   , 18203, 6.0F, 0, "processorstorage"),
-			new PartRow("processor_unit_conversion", "Conversion Quadcore Processor Unit", 18204, 6.0F, 0, "processorconversion"));
+			new PartRow("processor_unit_versatile" , "Versatile Quadcore Processor Unit" , 18200, 6.0F, 0, "processorversatile", () -> MT.SteelGalvanized),
+			new PartRow("processor_unit_logic"     , "Logic Quadcore Processor Unit"     , 18201, 6.0F, 0, "processorlogic", () -> MT.SteelGalvanized),
+			new PartRow("processor_unit_control"   , "Control Quadcore Processor Unit"   , 18202, 6.0F, 0, "processorcontrol", () -> MT.SteelGalvanized),
+			new PartRow("processor_unit_storage"   , "Storage Quadcore Processor Unit"   , 18203, 6.0F, 0, "processorstorage", () -> MT.SteelGalvanized),
+			new PartRow("processor_unit_conversion", "Conversion Quadcore Processor Unit", 18204, 6.0F, 0, "processorconversion", () -> MT.SteelGalvanized));
 
-	/** The Wood Wall row (:1139 — texture "woodwall", NBT_DESIGNS 0, NBT_FLAMMABILITY 150; the Tank wood-wall precursor). */
-	public static final PartRow WOOD_WALL_ROW = new PartRow("wood_wall", "Wood Wall", 18001, 5.0F, 0, "woodwall");
+	/** The Wood Wall row (:1139 — texture "woodwall", NBT_DESIGNS 0, NBT_FLAMMABILITY 150, upstream aMat MT.WoodTreated; the Tank wood-wall precursor). */
+	public static final PartRow WOOD_WALL_ROW = new PartRow("wood_wall", "Wood Wall", 18001, 5.0F, 0, "woodwall", () -> MT.WoodTreated);
 
 	/** Every new-form row in registration order (the tab walk + the census + the datagen walk). */
 	public static final java.util.List<PartRow> NEW_PART_ROWS;
@@ -642,7 +660,12 @@ public final class GTMultiBlocks {
 	/** The Wood Wall — the NBT_FLAMMABILITY 150 face (upstream TileEntityBase07Paintable :107-108 feeds BOTH the fire spread speed and the flammability). */
 	public static final class WoodWallPartBlock extends GTMultiBlockPartBlock {
 		public WoodWallPartBlock(Properties aProperties) {
-			super(aProperties, WOOD_WALL_ROW.designs(), null);
+			this(aProperties, null);
+		}
+
+		/** The tinted form (task p38-issue8): the row's WoodTreated column rides along. */
+		public WoodWallPartBlock(Properties aProperties, @Nullable java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
+			super(aProperties, WOOD_WALL_ROW.designs(), null, aMaterial);
 		}
 
 		@Override
@@ -681,15 +704,16 @@ public final class GTMultiBlocks {
 		for (PartRow tRow : METAL_WALL_ROWS) {
 			if (LIGHTNING_ROD_PART_BLOCKS_BY_PATH.containsKey(tRow.path())) continue;
 			NEW_PART_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
-					() -> new GTMultiBlockPartBlock(partProperties(tRow.hardness()), tRow.designs(), metalWallDisplayOf(tRow))));
+					() -> new GTMultiBlockPartBlock(partProperties(tRow.hardness()), tRow.designs(), metalWallDisplayOf(tRow), tRow.material())));
 			NEW_PART_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
 					() -> new GTComposedNameItem(NEW_PART_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
 		}
 		// the wood wall rides the WOOD sound (upstream aWooden block column) and the
-		// flammability subclass; DESIGNS 0 → no property
+		// flammability subclass; DESIGNS 0 → no property; the row's WoodTreated column rides
+		// along for the tint (task p38-issue8)
 		NEW_PART_BLOCKS_BY_PATH.put(WOOD_WALL_ROW.path(), BLOCKS.register(WOOD_WALL_ROW.path(),
 				() -> new WoodWallPartBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
-						.strength(WOOD_WALL_ROW.hardness(), WOOD_WALL_ROW.hardness()).sound(SoundType.WOOD))));
+						.strength(WOOD_WALL_ROW.hardness(), WOOD_WALL_ROW.hardness()).sound(SoundType.WOOD), WOOD_WALL_ROW.material())));
 		NEW_PART_ITEMS_BY_PATH.put(WOOD_WALL_ROW.path(), ITEMS.register(WOOD_WALL_ROW.path(),
 				() -> new GTComposedNameItem(NEW_PART_BLOCKS_BY_PATH.get(WOOD_WALL_ROW.path()).get(), new Item.Properties())));
 		// the coils + parts + ventilation + processor units (the ATOMIC rows)
@@ -699,10 +723,10 @@ public final class GTMultiBlocks {
 		for (PartRow tRow : PROCESSOR_UNIT_ROWS) registerAtomicPart(tRow);
 	}
 
-	/** One ATOMIC-row registration pair (the name resolves through the vanilla {@code block.gt6.<path>} key). */
+	/** One ATOMIC-row registration pair (the name resolves through the vanilla {@code block.gt6.<path>} key; the row's material column rides along for the tint, task p38-issue8). */
 	private static void registerAtomicPart(PartRow aRow) {
 		NEW_PART_BLOCKS_BY_PATH.put(aRow.path(), BLOCKS.register(aRow.path(),
-				() -> new GTMultiBlockPartBlock(partProperties(aRow.hardness()), aRow.designs(), null)));
+				() -> new GTMultiBlockPartBlock(partProperties(aRow.hardness()), aRow.designs(), null, aRow.material())));
 		NEW_PART_ITEMS_BY_PATH.put(aRow.path(), ITEMS.register(aRow.path(),
 				() -> new GTComposedNameItem(NEW_PART_BLOCKS_BY_PATH.get(aRow.path()).get(), new Item.Properties())));
 	}
@@ -714,5 +738,26 @@ public final class GTMultiBlocks {
 		if (tHandle == null) tHandle = WALL_BLOCKS_BY_PATH.get(aPath);
 		if (tHandle == null) tHandle = LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get(aPath);
 		return tHandle == null ? null : tHandle.get();
+	}
+
+	/**
+	 * The part-family paint-tint walker (task p38-issue8-multipart-tint): the 41 part
+	 * blocks whose datagen models carry tintindex 0 on the body cube — the 11 Dense Walls,
+	 * the 29 new-form part blocks (10 Metal Walls + Wood Wall + 5 Coils + 7 Parts +
+	 * Ventilation + 5 Processor Units) and the Heat Transmitter. The machine
+	 * {@code GTMachines.paintableBlockArray} census convention, feeding BOTH consumption
+	 * halves: the baked world tint ({@code GTMachineTintModel}, the p32 route) and the
+	 * inventory {@code ItemColor} (GTClientHandlers). NOT in the walk: the coke-oven
+	 * bricks (the upstream Ceramic tint is unwired — the declared deviation, the model's
+	 * tintindex stays the white identity) and the three Lightning Rod part borrows (their
+	 * cube_all models carry no tintindex — the untinted deviation). Client-side call time
+	 * only.
+	 */
+	public static net.minecraft.world.level.block.Block[] partPaintableBlockArray() {
+		java.util.List<net.minecraft.world.level.block.Block> rBlocks = new java.util.ArrayList<>(41);
+		for (RegistryObject<GTMultiBlockPartBlock> tHandle : WALL_BLOCKS_BY_PATH.values()) rBlocks.add(tHandle.get());
+		for (RegistryObject<GTMultiBlockPartBlock> tHandle : NEW_PART_BLOCKS_BY_PATH.values()) rBlocks.add(tHandle.get());
+		rBlocks.add(HEAT_TRANSMITTER.get());
+		return rBlocks.toArray(new net.minecraft.world.level.block.Block[0]);
 	}
 }

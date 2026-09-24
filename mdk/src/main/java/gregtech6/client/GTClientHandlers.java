@@ -28,6 +28,7 @@ import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTBarrels;
+import gregtech6.registry.GTMultiBlocks;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTWires;
 
@@ -56,6 +57,7 @@ public final class GTClientHandlers {
         modBus.addListener(GTClientHandlers::onRegisterWireBlockColors); // task p16-clienthandlers-2111: wire tints, world half (p9-wire-family-w2 semantics)
         modBus.addListener(GTClientHandlers::onRegisterWireItemColors); // task p16-clienthandlers-2111: wire tints, inventory half
         modBus.addListener(GTClientHandlers::onRegisterMachinePaintItemColors); // task p22-painted-item-domain: machine paint tint, inventory half
+        modBus.addListener(GTClientHandlers::onRegisterPartPaintItemColors); // task p38-issue8-multipart-tint: part-family paint tint, inventory half
         modBus.addListener(GTClientHandlers::onRegisterBarrelPaintBlockColors); // task p23-barrel-paint-render: barrel paint tint, world half
         modBus.addListener(GTClientHandlers::onRegisterBarrelPaintItemColors); // task p23-barrel-paint-render: barrel paint tint, inventory half
         modBus.addListener(GTClientHandlers::onRegisterToolIdentityItemColors); // task p31-identity-seam: the crowbar material identity tint, inventory half
@@ -132,6 +134,20 @@ public final class GTClientHandlers {
     private static void onRegisterMachinePaintItemColors(RegisterColorHandlersEvent.Item event) {
         List<Item> tPaintItems = new ArrayList<>();
         for (Block tBlock : GTMachines.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+        event.getItemColors().register(GTItemPaintTint.itemColor(), tPaintItems.toArray(Item[]::new));
+    }
+
+    /**
+     * Task p38-issue8-multipart-tint: the PART paint tint, the INVENTORY half over the
+     * part-family blocks ({@code GTMultiBlocks.partPaintableBlockArray()}) — the same
+     * {@link GTItemPaintTint} lambda (the unpainted arms resolve the row NBT_MATERIAL
+     * through the combined {@code GTMachinePaintTint.tintMaterialOf} dispatch), so the
+     * creative-tab wall stacks render their material colour. The WORLD half rides
+     * {@code GTMachineTintModel} (the p32 bake ruling — no BlockColor registration here).
+     */
+    private static void onRegisterPartPaintItemColors(RegisterColorHandlersEvent.Item event) {
+        List<Item> tPaintItems = new ArrayList<>();
+        for (Block tBlock : GTMultiBlocks.partPaintableBlockArray()) tPaintItems.add(tBlock.asItem());
         event.getItemColors().register(GTItemPaintTint.itemColor(), tPaintItems.toArray(Item[]::new));
     }
 

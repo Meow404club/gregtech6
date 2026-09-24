@@ -2716,10 +2716,14 @@ public final class GT6BlockStates extends BlockStateProvider {
      * {@code mTextures = new IIconContainer[bind8(NBT_DESIGNS)+1][6]}
      * (MultiTileEntityMultiBlockPart.java:138-146), the 1.20.1 form is the
      * {@code design} blockstate variant per model. Each model is the two-layer part
-     * shape: the body cube over the BORROWED upstream colored textures (untinted — the
-     * crank/lightning-rod grayscale deviation, the material tint rides the render pool)
-     * plus six 0.01-offset overlay decals (the familyMachineModel decal form, the
-     * upstream colored/overlay two-texture pair). The borrowed texture path is
+     * shape: the body cube over the BORROWED upstream colored textures with tintindex 0
+     * on the body (the material tint, task p38-issue8-multipart-tint — the row
+     * NBT_MATERIAL bakes in through GTMachineTintModel/ItemColor, the machine-domain
+     * route; the crank grayscale deviation is retired for this family, the lightning-rod
+     * part borrows keep their untinted cube_all) plus six 0.01-offset overlay decals (the
+     * familyMachineModel decal form, the upstream colored/overlay two-texture pair — the
+     * overlay layer stays UNCOLOURED, the BlockTextureMulti outer pass). The borrowed
+     * texture path is
      * {@code block/parts/<family>/<design>/{colored,overlay}/{bottom,top,side}} — the
      * upstream {@code machines/multiblockparts/<family>/<design>/...} files verbatim
      * (assets/README.md attribution). DESIGNS-0 rows emit the property-less singleton.
@@ -2962,10 +2966,14 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_bottom", modLoc(tBase + "/overlay/bottom"))
                 .texture("overlay_top", modLoc(tBase + "/overlay/top"))
                 .texture("overlay_side", modLoc(tBase + "/overlay/side"));
-        // element 0 — the body cube (the colored layer, no tint: the crank grayscale deviation)
+        // element 0 — the body cube (the colored layer; tintindex 0 = the material tint,
+        // task p38-issue8-multipart-tint: the shared grayscale wall textures multiply the
+        // row's NBT_MATERIAL — the upstream getTexture2 BlockTextureDefault(colored, mRGBa)
+        // form, MultiTileEntityMultiBlockPart.java:234-236; the bake/ItemColor consumers
+        // ride GTMachineTintModel/GTItemPaintTint, the machine-domain route)
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
-                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).cullface(aDir))
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
                 .end();
         // elements 1-6 — the overlay decals (the familyMachineModel 0.01-offset form)
         tModel.element() // north

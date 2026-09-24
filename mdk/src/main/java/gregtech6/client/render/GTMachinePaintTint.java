@@ -89,17 +89,30 @@ public final class GTMachinePaintTint {
 	}
 
 	/**
+	 * The combined tint-material dispatch (task p38-issue8-multipart-tint): the part-family
+	 * carriers first (their material rides the block itself through
+	 * {@code GTMultiBlockPartBlock.materialOf}), then the machine-domain gate. The domains
+	 * are disjoint so the order is observational; every tint consumer (the baked
+	 * {@code GTMachineTintModel}, the {@code ItemColor} inventory half, this reference
+	 * world half) funnels here, keeping tintARGB the single colour decision site.
+	 */
+	static OreDictMaterial tintMaterialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
+		OreDictMaterial tPart = gregtech6.block.multiblock.GTMultiBlockPartBlock.materialOf(aBlock);
+		return tPart != null ? tPart : GTBasicMachineBlock.materialOf(aBlock);
+	}
+
+	/**
 	 * The world-side half: registered over {@code GTMachines.paintableBlockArray()} and the
 	 * barrel array (GTClientHandlers). The registration scope is unchanged — the material
-	 * resolution rides the {@link GTBasicMachineBlock#materialOf} gate on the state's block,
-	 * so only the NBT_MATERIAL carriers tint while unpainted. A null level/pos or a missing
+	 * resolution rides the combined {@link #tintMaterialOf} gate on the state's block, so
+	 * only the NBT_MATERIAL carriers tint while unpainted. A null level/pos or a missing
 	 * BE is the no-tint sentinel — which IS full-alpha white (see the class doc identity).
 	 */
 	public static BlockColor blockColor() {
 		return (BlockState aState, @Nullable BlockAndTintGetter aLevel, @Nullable BlockPos aPos, int aTintIndex) -> {
 			if (aTintIndex != 0 || aLevel == null || aPos == null) return -1;
 			BlockEntity tBE = aLevel.getBlockEntity(aPos);
-			OreDictMaterial tMaterial = aState == null ? null : GTBasicMachineBlock.materialOf(aState.getBlock());
+			OreDictMaterial tMaterial = aState == null ? null : tintMaterialOf(aState.getBlock());
 			return tBE == null ? -1 : tintARGB(tBE.getModelData(), tMaterial, aTintIndex);
 		};
 	}
