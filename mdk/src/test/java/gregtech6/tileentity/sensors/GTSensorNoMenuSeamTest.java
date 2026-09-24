@@ -59,6 +59,11 @@ public class GTSensorNoMenuSeamTest {
 			, GT6SuperHeavyWeightometerBlockEntity.class
 			, GT6TpsmeterBlockEntity.class
 			, GT6PlayerCounterBlockEntity.class
+			// the p37-sensors-3 pool closure — the 3 appended rows join the audit
+			// (the batch convention this census guard documents)
+			, GT6GeigerCounterBlockEntity.class
+			, GT6TachometerBlockEntity.class
+			, GT6LaserometerBlockEntity.class
 			, gregtech6.block.sensors.GTSensorBlock.class
 			, GTSensorCommand.class
 			, gregtech6.registry.GT6Sensors.class

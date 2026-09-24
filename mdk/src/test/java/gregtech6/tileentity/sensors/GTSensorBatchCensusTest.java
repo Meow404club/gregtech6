@@ -9,22 +9,30 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6Sensors;
 import gregtech6.tileentity.GTOfflineTestBase;
+import gregtech6.tileentity.connectors.GTWireBlockEntity;
+import gregtech6.tileentity.energy.GTAxleBlockEntity;
+import gregtech6.tileentity.energy.GTGearBoxBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * The sensor batch census (task p34-sensors-trivial-14, ACCEPTANCE ①) — the ROWS 钉测:
- * 18 live rows (3 pioneers + the 15-row batch), ids AND order pinned to the upstream
- * anchor (Loader_MultiTileEntities.java:1979-1999 read line by line — the CENSUS
- * ERRATUM: the upstream sensors() method registers 21 rows, not the 19 the P26/P34
- * census ledgers carried; the appended subsequence here IS the anchor's row sequence).
- * The three pooled rows (tachometer 31019 / geigercounter 31020 / laserometer 31021)
- * are pinned ABSENT — the 缺缝留池 declaration as an executable assertion. The batch
- * arithmetic pins ride the pure statics and fresh BE instances over a shared fixture
- * type (the {@link GT6ChronometerBlockEntity#minutesOfDay} day-cycle points, the
+ * The sensor batch census (task p34-sensors-trivial-14 ACCEPTANCE ①, pool closure task
+ * p37-sensors-3) — the ROWS 钉测: 21 live rows (3 pioneers + the 15-row batch + the
+ * 3-row pool closure), ids AND order pinned to the upstream anchor
+ * (Loader_MultiTileEntities.java:1979-1999 read line by line — the CENSUS ERRATUM: the
+ * upstream sensors() method registers 21 rows, not the 19 the P26/P34 census ledgers
+ * carried; the appended subsequences ARE the anchor's row sequence). The three former
+ * pooled rows (tachometer 31019 / geigercounter 31020 / laserometer 31021) joined LIVE
+ * (task p37-sensors-3): the p34 缺缝 notes went stale — P28 built the kinetics carriers
+ * and P32 revived the LU carrier; the geiger's reactor arm stays declared (the s2
+ * true-gap pool) with its non-reactor 0 read pinned as the upstream-faithful behaviour.
+ * The batch arithmetic pins ride the pure statics and fresh BE instances over a shared
+ * fixture type (the {@link GT6ChronometerBlockEntity#minutesOfDay} day-cycle points, the
  * constant max faces, the Gibbl divisors) — no Level needed.
  */
 public class GTSensorBatchCensusTest extends GTOfflineTestBase {
@@ -33,6 +41,25 @@ public class GTSensorBatchCensusTest extends GTOfflineTestBase {
 
 	/** One throwaway fixture BET serves every instance assertion (the ctor only stores it). */
 	static BlockEntityType<?> sFixtureType;
+
+	/**
+	 * The laser-carrier fixture: the sensor's read face is the {@code isLaser()} gate
+	 * (the port's stand-in for the upstream {@code instanceof MultiTileEntityWireLaser}
+	 * :42/:48), so the offline pin overrides that gate directly — constructing real
+	 * {@code GTWireBlock}s is impossible past the offline boot (the frozen-registry
+	 * intrusive-holder write, the GTOfflineTestBase javadoc rule); the family latch
+	 * behind the gate is the wire family's own pin (GTWireContactDamageTest).
+	 */
+	static final class LaserWireFixture extends GTWireBlockEntity {
+		LaserWireFixture(BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
+			super(aType, aPos, aState);
+		}
+
+		@Override
+		public boolean isLaser() {
+			return true;
+		}
+	}
 
 	@BeforeAll
 	static void buildFixture() {
@@ -62,6 +89,10 @@ public class GTSensorBatchCensusTest extends GTOfflineTestBase {
 			{"superheavyweightometer", "31013"}, // :1992
 			{"tpsmeter", "31016"},               // :1993
 			{"playercounter", "31017"},          // :1994
+			// the p37 pool closure = the anchor's remaining rows in :1996 → :1998 → :1999 order
+			{"geigercounter", "31020"},          // :1996
+			{"tachometer", "31019"},             // :1998
+			{"laserometer", "31021"},            // :1999
 	};
 
 	@Test
@@ -75,15 +106,77 @@ public class GTSensorBatchCensusTest extends GTOfflineTestBase {
 		}
 	}
 
+	/**
+	 * The pool closure (task p37-sensors-3): the three former pooled rows joined the walk —
+	 * registered, order-pinned by {@link #rowsCensusPinsTheUpstreamAnchor}, and the block
+	 * carrier map walks ROWS one-to-one (the static-block form).
+	 */
 	@Test
-	public void pooledRowsStayAbsent() {
-		for (String tPooled : new String[] {"tachometer", "geigercounter", "laserometer"}) {
-			assertTrue(GT6Sensors.BLOCKS_BY_PATH.keySet().stream().noneMatch(tPooled::equals)
-					&& GT6Sensors.ROWS.stream().noneMatch(aRow -> tPooled.equals(aRow.path())),
-					"the pooled row '" + tPooled + "' stays unregistered (缺缝留池, never implemented outside a seam)");
+	public void poolRowsJoinedLive() {
+		for (String tJoined : new String[] {"tachometer", "geigercounter", "laserometer"}) {
+			assertTrue(GT6Sensors.BLOCKS_BY_PATH.containsKey(tJoined),
+					"the former pooled row '" + tJoined + "' is registered (the 21/21 closure)");
 		}
-		// the block carrier map walks ROWS one-to-one (the static-block form)
 		assertEquals(GT6Sensors.ROWS.size(), GT6Sensors.BLOCKS_BY_PATH.size(), "the block carrier map walks ROWS");
+	}
+
+	/**
+	 * The Tachometer read faces (upstream MultiTileEntityTachometer.java:42-53): the axle
+	 * answers its {@code mTransferredLast} against the {@code mPower * mSpeed} rating, the
+	 * gearbox its {@code mTransferredLast} against {@code mMaxThroughPut * 16}, everything
+	 * else 0 — over the live P28 carriers.
+	 */
+	@Test
+	public void tachometerReadsTheRuCarriers() {
+		GT6TachometerBlockEntity tMeter = new GT6TachometerBlockEntity(sFixtureType, PROBE_POS, Blocks.BRICKS.defaultBlockState());
+		GTAxleBlockEntity tAxle = new GTAxleBlockEntity(sFixtureType, PROBE_POS, Blocks.BRICKS.defaultBlockState()); // the fixture state keeps the :56 defaults mSpeed=32/mPower=1
+		tAxle.mTransferredLast = 5000;
+		assertEquals(5000, tMeter.getCurrentValue(tAxle));  // upstream :43
+		assertEquals(32, tMeter.getCurrentMax(tAxle));      // upstream :50 — 1 * 32, the fixture defaults
+		tAxle.mPower = 8; tAxle.mSpeed = 64;
+		assertEquals(512, tMeter.getCurrentMax(tAxle));     // upstream :50 — the product rating
+		GTGearBoxBlockEntity tBox = new GTGearBoxBlockEntity(sFixtureType, PROBE_POS, Blocks.BRICKS.defaultBlockState());
+		tBox.mTransferredLast = 250;
+		assertEquals(250, tMeter.getCurrentValue(tBox));    // upstream :44
+		assertEquals(GT6Kinetics.GEARBOX_MAX_THROUGHPUT * 16, tMeter.getCurrentMax(tBox)); // upstream :51
+		assertEquals(0, tMeter.getCurrentValue(null));      // upstream :45
+		assertEquals(0, tMeter.getCurrentMax(null));        // upstream :52
+	}
+
+	/**
+	 * The Geiger Counter non-reactor arm (upstream MultiTileEntityGeigerCounter.java
+	 * :45-66): every neighbour that is not the reactor core reads 0/0 (:49/:65 verbatim)
+	 * — with the reactor system unported (the s2 true-gap pool) that is EVERY neighbour,
+	 * the declared 100%-faithful posture; the reactor arm cites this test as the seam.
+	 */
+	@Test
+	public void geigerCounterAnswersZeroOffTheReactorSeam() {
+		GT6GeigerCounterBlockEntity tMeter = new GT6GeigerCounterBlockEntity(sFixtureType, PROBE_POS, Blocks.BRICKS.defaultBlockState());
+		assertEquals(0, tMeter.getCurrentValue(null));
+		assertEquals(0, tMeter.getCurrentMax(null));
+		assertEquals(0, tMeter.getCurrentValue(new GTAxleBlockEntity(sFixtureType, PROBE_POS, Blocks.BRICKS.defaultBlockState())));
+		assertEquals(0, tMeter.getCurrentMax(new GTAxleBlockEntity(sFixtureType, PROBE_POS, Blocks.BRICKS.defaultBlockState())));
+	}
+
+	/**
+	 * The Laser-O-Meter read faces (upstream MultiTileEntityLaserometer.java:40-50): the
+	 * laser-family wire answers its {@code mTransferredLast} against the constant 65535
+	 * ceiling (:48), a non-laser wire and any other neighbour 0 — over the live P32 LU
+	 * carrier.
+	 */
+	@Test
+	public void laserometerReadsTheLuCarrier() {
+		GT6LaserometerBlockEntity tMeter = new GT6LaserometerBlockEntity(sFixtureType, PROBE_POS, Blocks.BRICKS.defaultBlockState());
+		LaserWireFixture tLaser = new LaserWireFixture(sFixtureType, PROBE_POS, Blocks.BRICKS.defaultBlockState());
+		tLaser.mTransferredLast = 1234;
+		assertEquals(1234, tMeter.getCurrentValue(tLaser)); // upstream :42
+		assertEquals(65535, tMeter.getCurrentMax(tLaser));  // upstream :48 verbatim
+		// the non-laser wire: a bare GTWireBlockEntity over the fixture state — mLaserFamily false
+		GTWireBlockEntity tElectric = new GTWireBlockEntity(sFixtureType, PROBE_POS, Blocks.BRICKS.defaultBlockState());
+		assertEquals(0, tMeter.getCurrentValue(tElectric)); // upstream :43 — the non-laser wire family
+		assertEquals(0, tMeter.getCurrentMax(tElectric));   // upstream :49
+		assertEquals(0, tMeter.getCurrentValue(null));
+		assertEquals(0, tMeter.getCurrentMax(null));
 	}
 
 	@Test
