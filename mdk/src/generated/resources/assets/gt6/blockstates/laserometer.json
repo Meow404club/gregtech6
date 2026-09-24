@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/laserometer",
+      "x": 90
+    },
+    "facing=east": {
+      "model": "gt6:block/laserometer",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/laserometer"
+    },
+    "facing=south": {
+      "model": "gt6:block/laserometer",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/laserometer",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "gt6:block/laserometer",
+      "y": 270
+    }
+  }
+}
