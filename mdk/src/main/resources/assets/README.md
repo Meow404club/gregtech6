@@ -72,27 +72,18 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   SET_EMERALD) — hence the EMERALD set borrow. Upstream tints it with the tool
   material colour (getRGBa :56-58); the port shows the grayscale head un-tinted at
   the single tier — declared deviation, the family runtime-tint pool.
-- `gt6/textures/item/screwdriver.png` — screwdriver item texture, task
-  p24-screwdriver-item. NOT a byte-identical borrow: the card ruling composes the
-  upstream four icon layers into ONE flat 16x16 RGBA (the card "single flat texture,
-  head+handle in one" ruling; the two-layer runtime tint stays the pool cut). Sources
-  (sha256 verified at compose time, composited in the upstream render-pass order —
-  ToolStats.getIcon :268-273, pass 0/1 = head base/overlay then pass 2/3 = handle
-  base/overlay, later passes over earlier, alpha-over):
-  1. `textures/items/materialicons/METALLIC/toolHeadScrewdriver.png`
-     (`4dbe6513b63bc6442307d632b288985b0be2d6be3799d4573d0c7b820a32634a`)
-  2. `textures/items/materialicons/METALLIC/toolHeadScrewdriver_OVERLAY.png`
-     (`6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`)
-  3. `textures/items/iconsets/HANDLE_SCREWDRIVER.png`
-     (`fef0d79fe8722697dae9175426db103b29478be033ed06a186f65fddc6e5bd2e` — the shared
-     handle sprite, byte-identical to the HANDLE_CHISEL/HANDLE_FILE borrows above)
-  4. `textures/items/iconsets/HANDLE_SCREWDRIVER_OVERLAY.png`
-     (`6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510` — the same
-     overlay bytes as the METALLIC head overlay).
-  Same single-steel-tier story as the family: upstream tints both layers with the tool
-  material colour (GT_Tool_Screwdriver.getIcon :115-117 + getRGBa, the material pool);
-  the port shows the grayscale composite un-tinted — declared deviation, same
-  runtime-tint pool.
+- `gt6/textures/item/screwdriver.png` / `screwdriver_overlay.png` — screwdriver handle
+  textures (upstream `textures/items/iconsets/HANDLE_SCREWDRIVER.png` +
+  `_OVERLAY.png`, task p38-issue6-tool-4layer-tint; base sha256
+  `fef0d79fe8722697dae9175426db103b29478be033ed06a186f65fddc6e5bd2e` — the shared
+  handle sprite, byte-identical to the HANDLE_CHISEL/HANDLE_FILE borrows above; overlay
+  sha256 `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510` — the same
+  overlay bytes as the METALLIC head overlay). Byte-identical borrows, filenames
+  lowercased on borrow. SUPERSEDES the p24-screwdriver-item composed-single ruling
+  (GitHub issue #6): the offline composite is retired for the four-layer model — the
+  head half rides the in-tree toolHeadScrewdriver metallic-set pair, the handle tint =
+  the secondary with the Spruce fallback (GT_Tool_Screwdriver.getIcon :115-117 +
+  getRGBa :120-122, GT6ToolLadder.fourPassTintARGB).
 - `gt6/textures/item/sword.png` / `sword_overlay.png` — sword handle textures (upstream
   `textures/items/iconsets/HANDLE_SWORD.png` + `_OVERLAY.png`, task p29-w5-t2-blade-six;
   base sha256 `f678c93377fcd7799c37429c06182f18e20563125f285bbfe437e3956dfb74e5`).
@@ -118,18 +109,15 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   stick handle — GT_Tool_Wrench.getIcon, the material pool); the port shows the
   grayscale silhouette un-tinted at the single steel tier — declared deviation, the
   family runtime-tint pool.
-- `gt6/textures/item/hammer.png` — hard-hammer item texture, task
-  p25-tool-hammer-wrench. NOT a byte-identical borrow: composed from the upstream
-  layers in the render-pass order (head OVER handle, alpha-over; the screwdriver
-  composition ruling), sources sha256 verified at compose time:
-  1. `textures/items/materialicons/WOOD/stick.png` (the handle base — the secondary
-     material MT.WOODS.Spruce rides the WOOD set, GT_Tool_HardHammer.getIcon :123
-     handle half)
-  2. `textures/items/materialicons/METALLIC/toolHeadHammer.png` (the head layer —
-     the primary material defaults MT.Steel, the same :123 head half)
-  Same single-steel-tier story as the family: upstream tints both layers with the tool
-  material colours (getRGBa :127-129, the material pool); the port shows the grayscale
-  composite un-tinted — declared deviation, same runtime-tint pool.
+- `gt6/textures/item/hammer.png` — RETIRED (task p38-issue6-tool-4layer-tint
+  SUPERSEDES the p25-tool-hammer-wrench composition ruling, GitHub issue #6): the
+  offline-composed flat icon is gone — the hard hammer rides the four-layer model over
+  in-tree sprites only (the toolHeadHammer metallic-set pair for the head + the WOOD-set
+  stick pair for the handle, the secondary MT.WOODS.Spruce ride,
+  GT_Tool_HardHammer.getIcon :123; the tint = getRGBa :127-129 via
+  GT6ToolLadder.fourPassTintARGB). Zero new texture files; the old compose sources
+  (stick.png + METALLIC/toolHeadHammer.png, sha256 verified at compose time) both live
+  in-tree under material_sets.
 - `gt6/textures/item/bending_cylinder_small.png` — small bending cylinder item texture
   (upstream `textures/items/iconsets/BENDING_CYLINDER_SMALL.png`, task
   p25-food-can-row0; sha256

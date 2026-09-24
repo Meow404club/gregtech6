@@ -223,6 +223,22 @@ public final class GT6ToolLadder {
 	}
 
 	/**
+	 * The head+handle four-pass tint (task p38-issue6-tool-4layer-tint): the screwdriver
+	 * and hard hammer — tint index 0 = the head pass (the PRIMARY, the Steel fallback
+	 * verbatim, GT_Tool_Screwdriver.getRGBa :120-122), tint index 2 = the handle pass
+	 * (the SECONDARY, the Spruce fallback, the same row / GT_Tool_HardHammer.getRGBa
+	 * :127-129), every other index = the {@code -1} sentinel (the two OVERLAY passes stay
+	 * un-tinted). The {@link #bladeTintARGB} dispatch without the head-VOID arm — the
+	 * former census-erratum "composed single, un-tinted" ruling is superseded by the
+	 * four-layer model migration (GT6ItemModels).
+	 */
+	public static int fourPassTintARGB(ItemStack aStack, int aTintIndex) {
+		if (aTintIndex == 0) return packARGB(materialOf(aStack));
+		if (aTintIndex == 2) return packARGB(secondaryOf(aStack, MT.WOODS.Spruce));
+		return -1;
+	}
+
+	/**
 	 * The composed display name — "Pickaxe (Bronze)" over the {@code gt6.material.*}
 	 * lang family (no per-material lang rows to mint; the fill rides the existing
 	 * {@code MaterialPrefixItem.materialFill} seam). A stack with NO identity keeps

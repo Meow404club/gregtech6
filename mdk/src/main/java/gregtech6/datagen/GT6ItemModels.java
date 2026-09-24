@@ -140,21 +140,33 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer1", modLoc("item/material_sets/emerald/tool_head_builderwand_overlay"))
             .texture("layer2", modLoc("item/material_sets/wood/stick"))
             .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
-        // the formal screwdriver item (task p24-screwdriver-item): handheld parent = the
-        // vanilla tool shape, texture = the single composed flat icon — the upstream
-        // four-layer render (head base/overlay + handle base/overlay,
-        // ToolStats.getIcon pass order) flattened offline untinted (assets/README.md
-        // attribution, the composition ruling). Deliberately NOT migrated to layers
-        // (the census erratum keeps the composed singles — the offline composite is
-        // structurally complete; only the un-tinted deviation remains).
+        // the formal screwdriver item (task p24-screwdriver-item, four-layer migration
+        // task p38-issue6-tool-4layer-tint SUPERSEDES the composition ruling): the chisel
+        // row shape — head = the toolHeadScrewdriver materialicon pair (the default
+        // primary Steel = metallic set, in-repo), handle = the HANDLE_SCREWDRIVER iconset
+        // pair borrow (item/screwdriver.png + screwdriver_overlay.png, assets/README.md
+        // attribution — the composed single is retired). Upstream render:
+        // GT_Tool_Screwdriver.getIcon :115-117 (head = the material's texture-set icon,
+        // handle = the iconset pair), tint = getRGBa :120-122 (head primary with the
+        // Steel fallback, handle secondary with the Spruce fallback).
         withExistingParent("screwdriver", mcLoc("item/handheld"))
-            .texture("layer0", modLoc("item/screwdriver"));
-        // the formal hard hammer item (task p25-tool-hammer-wrench): the screwdriver
-        // composition ruling applies — the offline-composed flat icon stays single-layer
-        // (upstream head OVER handle alpha-over, GT_Tool_HardHammer.getIcon :123 —
-        // assets/README.md attribution).
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_screwdriver"))
+            .texture("layer1", modLoc("item/material_sets/metallic/tool_head_screwdriver_overlay"))
+            .texture("layer2", modLoc("item/screwdriver"))
+            .texture("layer3", modLoc("item/screwdriver_overlay"));
+        // the formal hard hammer item (task p25-tool-hammer-wrench, four-layer migration
+        // task p38-issue6-tool-4layer-tint SUPERSEDES the composition ruling): the
+        // soft-hammer row shape — head = the toolHeadHammer materialicon pair (the
+        // default primary Steel = metallic set, in-repo), handle = the wood stick pair
+        // (the secondary MT.WOODS.Spruce rides SET_WOOD's stick icon,
+        // GT_Tool_HardHammer.getIcon :123 handle half — zero new sprites, the composed
+        // single is retired). Tint = getRGBa :127-129 (head primary Steel fallback,
+        // handle secondary Spruce fallback).
         withExistingParent("hammer", mcLoc("item/handheld"))
-            .texture("layer0", modLoc("item/hammer"));
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_hammer"))
+            .texture("layer1", modLoc("item/material_sets/metallic/tool_head_hammer_overlay"))
+            .texture("layer2", modLoc("item/material_sets/wood/stick"))
+            .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
         // the formal wrench item (task p25-tool-hammer-wrench): handheld parent = the
         // vanilla tool shape; layer0 = the byte-identical WRENCH.png iconset borrow +
         // layer1 = the WRENCH_OVERLAY.png pass borrow (transparent upstream, borrowed for
