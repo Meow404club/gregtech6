@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.RegistryObject;
@@ -52,11 +53,15 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
  *
  * <p>GT6HeatExchangers is a NEW self-contained registry class (the wave-plan
  * structural-conflict ruling: GTMachines.java belongs to this card's machine rows, this
- * file to the HEX — zero shared-file edits beyond the parallel-card appends). NO creative
- * tab join (the GT6Boilers no-tab precedent; the machine is reachable through crafting
- * live and through the /gt6heatexchanger place arm in the acceptance chains). The KJS
- * face of the card is declared on the BE class doc: registration + datapack smoke rows,
- * no KubeJS surface.
+ * file to the HEX — zero shared-file edits beyond the parallel-card appends).
+ *
+ * <p>Creative tab (task p38-tabfix-a-multiblock): the single item joins MULTIBLOCKS_TAB
+ * via the {@link ModBusListener#onBuildTabContents} handler — registered-but-tab-less is
+ * invisible in BOTH the creative menu and JEI (the BurningBoxes issue-#10 form,
+ * superseding the old GT6Boilers no-tab precedent). Pool cut declared: upstream rode the
+ * per-family "Multiblock Machines" creative tab (tab id 17101, Loader :1245); this port
+ * pools the family into the gt6:multiblocks tab. The KJS face of the card is declared on
+ * the BE class doc: registration + datapack smoke rows, no KubeJS surface.
  *
  * <p>The block carrier is the BoilerTankBlock shape minus the facing (the HEX structure
  * is facing-independent, the controller is the centre cell of both layers —
@@ -195,6 +200,19 @@ public final class GT6HeatExchangers {
 			BLOCKS_REG.register(tModBus);
 			BLOCK_ENTITY_TYPES.register(tModBus);
 			ITEMS.register(tModBus);
+		}
+
+		/**
+		 * The tab walk (task p38-tabfix-a-multiblock — the single HEX item joins the
+		 * multiblocks tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the MOD-bus
+		 * {@code @Mod.EventBusSubscriber} on this nested listener is what delivers it). JEI
+		 * derives its item list from the tab display items.
+		 */
+		@SubscribeEvent
+		public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+			if (aEvent.getTabKey().location().equals(GTMultiBlocks.MULTIBLOCKS_TAB.getId())) {
+				aEvent.accept(new ItemStack(HEAT_EXCHANGER_ITEM.get()));
+			}
 		}
 	}
 

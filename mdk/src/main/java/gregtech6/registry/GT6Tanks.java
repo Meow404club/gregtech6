@@ -12,10 +12,12 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -59,11 +61,13 @@ import gregtech6.tileentity.multiblocks.GTTankValveBlockEntity;
  * would capture null. The BE resolves the supplier at RUNTIME (tick time, melting point
  * reads) and guards the null generation with the class-default melting point.
  *
- * <p><b>The creative tab</b>: NOT joined this card (the GTMultiBlocks.MULTIBLOCKS_TAB
- * displayItems walk is the card-①-owned seam; the dynamo-card "no tab join" precedent) —
- * the valves are reachable through /give and the crafting rows; the tab line is a
- * one-line append on a later shared-layer touch.
- */
+	 * <p><b>The creative tab</b> (task p38-tabfix-a-multiblock, superseding the "NOT joined
+	 * this card" ruling): all 25 valve items join MULTIBLOCKS_TAB via
+	 * {@link #onBuildTabContents} — registered-but-tab-less is invisible in BOTH the creative
+	 * menu and JEI (the BurningBoxes issue-#10 form). Pool cut declared: upstream rode the
+	 * per-family "Multiblock Machines" creative tab (tab id 17101, Loader :1195-1222); this
+	 * port pools the family into the gt6:multiblocks tab.
+	 */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6Tanks {
 
@@ -265,5 +269,20 @@ public final class GT6Tanks {
 		BLOCKS.register(tModBus);
 		BLOCK_ENTITY_TYPES.register(tModBus);
 		ITEMS.register(tModBus);
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-a-multiblock — the whole {@link #ITEMS_BY_PATH} valve
+	 * family joins the multiblocks tab; the GT6BurningBoxes.onBuildTabContents verbatim
+	 * form, the class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is
+	 * what delivers this handler). JEI derives its item list from the tab display items.
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMultiBlocks.MULTIBLOCKS_TAB.getId())) {
+			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+		}
 	}
 }

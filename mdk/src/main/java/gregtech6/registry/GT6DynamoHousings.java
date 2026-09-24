@@ -9,11 +9,13 @@ import javax.annotation.Nullable;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -34,7 +36,13 @@ import gregtech6.tileentity.multiblocks.GTLargeDynamoBlockEntity;
  * EU out at the far plate at exactly 75% (Loader_MultiTileEntities.java:1259-1262:
  * 4096→3072 / 8192→6144 / 16384→12288 / 131072→98304), WASTE_ENERGY = T; the structure
  * walls are the card ① Dense Walls, the middle segment the 18 Large Copper Coils (18040).
- * No creative-tab join (the p28 dynamo precedent).
+ *
+ * <p>Creative tab (task p38-tabfix-a-multiblock): all 4 items join MULTIBLOCKS_TAB via
+ * {@link #onBuildTabContents} — registered-but-tab-less is invisible in BOTH the creative
+ * menu and JEI (the BurningBoxes issue-#10 form, superseding the old p28 dynamo tab-less
+ * precedent). Pool cut declared: upstream rode the per-family "Multiblock Machines"
+ * creative tab (tab id 17101, Loader :1259-1262); this port pools the family into the
+ * gt6:multiblocks tab.
  *
  * <p>The display names are the upstream name column verbatim, ATOMIC
  * ("X Dynamo Main Housing"); the blocks resolve the vanilla {@code block.gt6.<path>} keys.
@@ -155,5 +163,20 @@ public final class GT6DynamoHousings {
 		BLOCKS.register(tModBus);
 		BLOCK_ENTITY_TYPES.register(tModBus);
 		ITEMS.register(tModBus);
+	}
+
+	/**
+	 * The tab walk (task p38-tabfix-a-multiblock — the whole {@link #ITEMS_BY_PATH} family
+	 * joins the multiblocks tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
+	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what delivers
+	 * this handler). JEI derives its item list from the tab display items.
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMultiBlocks.MULTIBLOCKS_TAB.getId())) {
+			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+		}
 	}
 }
