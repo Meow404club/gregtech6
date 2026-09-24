@@ -1707,6 +1707,9 @@ direct	item.gt6.battery_nicd_mv	镍镉电池 (MV)	hand
 direct	item.gt6.battery_nicd_ulv	镍镉电池 (ULV)	hand
 direct	item.gt6.bending_cylinder	弯曲绕筒	hand
 direct	item.gt6.bending_cylinder_small	小型弯曲绕筒	hand
+direct	item.gt6.book_loot_guide	布满灰尘的指南书	hand
+direct	item.gt6.book_loot_guide.tooltip	战利品：某本随机手册	hand
+direct	item.gt6.book_loot_guide.tooltip_loot	右键方块以开启	hand
 direct	item.gt6.branch_cutter	修枝剪	hand
 direct	item.gt6.builder_wand	建筑之杖	hand
 direct	item.gt6.butchery_knife	屠宰刀	hand

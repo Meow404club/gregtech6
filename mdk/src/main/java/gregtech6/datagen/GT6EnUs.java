@@ -2142,5 +2142,11 @@ public class GT6EnUs extends LanguageProvider {
         for (GT6BookText.BookText tRow : GT6BookText.BOOKS) {
             add("item.gt6." + tRow.path(), tRow.title());
         }
+        // the Dusty Guide Book loot carrier (task p38-book-loot-first) — the upstream
+        // MultiItemBooks.java:67 name + the two tooltip columns (:67 description +
+        // Behavior_Drop_Loot.java:31 behavior line)
+        add("item.gt6.book_loot_guide", "Dusty Guide Book");
+        add("item.gt6.book_loot_guide.tooltip", "Loot: Some random Manual or so");
+        add("item.gt6.book_loot_guide.tooltip_loot", "Rightclick this on a Block to loot");
     }
 }
