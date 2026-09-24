@@ -44,8 +44,9 @@ import gregtech6.fluid.FluidTankGT;
  * (BlockBaseFluid/River/Ocean/Swamp, :113-145), the generic {@code IFluidBlock} drain
  * and the OpenBlocks XP drain all key on fluids/entities this port does not register
  * (the census fluid gaps); the slab/stairs rain-geometry special cases (:76-80) fold
- * into the sky-access check. {@code onWalkOver} has no hook on the ported ICover
- * surface at all.
+ * into the sky-access check. The {@code onWalkOver} hook exists since the asphalt
+ * restoration (task p37-covers-crafting-asphalt) but the drain's walk arms stay cut with
+ * the fluid zoo they key on.
  */
 public class CoverDrain extends AbstractCoverDefault {
 

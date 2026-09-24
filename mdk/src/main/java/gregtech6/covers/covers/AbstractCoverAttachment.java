@@ -16,8 +16,9 @@ import gregtech6.covers.CoverData;
  * <p>Two declared deviations (the P11 controller-card rulings, now hoisted here because
  * this card finally ports the attachment family the P11 card inlined):
  * <ul>
- * <li>the {@code onWalkOver} arm (:41) is cut — the ported ICover surface has no
- *     walk-over hook;</li>
+ * <li>the {@code onWalkOver} arm (:41) does not answer — the hook exists since the asphalt
+ *     cover restoration (task p37-covers-crafting-asphalt), the attachment default passes
+ *     the AbstractCoverDefault consume-true through and the arm stays unimplemented;</li>
  * <li>the {@code onToolClick} host relay (:42, {@code aTileEntity.onToolClick2(...)})
  *     has no ported host face — non-answered tool ids return 0 (the CoverControllerAuto
  *     Redstone precedent).</li>
