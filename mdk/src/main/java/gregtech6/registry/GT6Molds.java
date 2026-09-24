@@ -9,12 +9,14 @@ import javax.annotation.Nullable;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -363,5 +365,34 @@ public final class GT6Molds {
 		BLOCKS.register(tModBus);
 		ITEMS.register(tModBus);
 		BLOCK_ENTITY_TYPES.register(tModBus);
+	}
+
+	/**
+	 * The MACHINES_TAB join (task p38-tabfix-c-misc — the census zero-tab adjudication;
+	 * the GT6BurningBoxes.onBuildTabContents verbatim form, delivered by the class-level
+	 * MOD-bus {@code @Mod.EventBusSubscriber} at the class head). JEI 1.20.1 derives its
+	 * item list from the tab display items, so registered-but-tab-less was invisible in
+	 * BOTH the creative menu and JEI.
+	 *
+	 * <p><b>Pool cut (the census ruling, task p38-tab-census)</b>: upstream the molds ride
+	 * the per-family MTE tab "Molds" (1072, Loader_MultiTileEntities.java:347-352/:391-420)
+	 * and the faucets the "Crucibles Faucets" tab (1722, :300/:305) — this port pools both
+	 * finished families into MACHINES_TAB. The RAW clay items stay OUT ({@link
+	 * #RAW_ITEMS_BY_PATH} 31 + {@link #FAUCET_CERAMIC_RAW} 1 = 32): upstream they are the
+	 * craft-only furnace-hardening intermediates (MultiItemRandomTools.java:127+), never a
+	 * tab member — so the census's "34 finished / 32 raw" spans BOTH maps of this file
+	 * (32 molds + 2 faucets vs 31 mold raws + 1 faucet raw), the raw split riding the
+	 * finished/raw axis, not a family axis.
+	 */
+	@SubscribeEvent
+	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+			for (RegistryObject<Item> tItem : FAUCET_ITEMS_BY_PATH.values()) {
+				aEvent.accept(new ItemStack(tItem.get()));
+			}
+		}
 	}
 }
