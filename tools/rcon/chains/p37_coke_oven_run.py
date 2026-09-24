@@ -85,8 +85,10 @@ steps += [
     # the item side: the output slot holds the charcoal gem (loader-neutral id)
     Step(f"gt6multiblock check {M}", expect="gem_charcoal"),
     # the fluid side: no barrel below -> the creosote stays in the output tank,
-    # the fluid-capability stat face reports it (the machineReport tank shape)
-    Step(f"gt6multiblock fluid stat {M}", expect="250mB gt6:creosote"),
+    # the fluid-capability stat face reports it (the machineReport tank shape;
+    # the fluid subtree grammar is `fluid <pos> stat` — pos BEFORE the literal,
+    # GTMultiBlockCommand.java:211-214)
+    Step(f"gt6multiblock fluid {M} stat", expect="250mB gt6:creosote"),
 ]
 
 # ------------------------------------------------- C: the s4-6 laser-gas census arm
