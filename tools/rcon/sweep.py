@@ -1003,6 +1003,21 @@ SESSION_GROUPS = (
     # drives the run, no rig needed). --group p37_coke_oven_run matches the
     # chain's embedded name prefix.
     ("p37_coke_oven_run",),
+
+    # p37-chains-anvil (task p37-chains-anvil, the P37-d s4-2 gap): the anvil
+    # live-smoke chain — a fresh x756..768 z96..104 band (x/z-disjoint from every
+    # registered band: the loot shelf x705..769 sits z308..317, cover-hosts
+    # x696..724 z554..574, sensors x680 z125..143, the x=700 loot band z200..218),
+    # the stone/blackstone pair on two columns (A: placement + the row-carrier
+    # /data read gt.durability 10000 vs 100000 — the only live row-distinguishing
+    # data; B: the dropSelf loot tables rolled into chests — the 到账 face). The
+    # strike/craft arm stays offline-pinned (GT6AnvilBlockEntityTest): the BE's
+    # only live driver is the player right-click (GTAnvilBlock.use), no /gt6
+    # command reaches the anvil BE and no item capability is exposed — the
+    # coordinator ruling on the card's deviation note. Admission mirroring the
+    # p34_cover_hosts form (bbox-registered, no fresh_boot / mutates member).
+    # --group p37_anvil matches through the chain's file stem.
+    ("p37_anvil_run",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
