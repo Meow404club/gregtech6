@@ -964,6 +964,20 @@ SESSION_GROUPS = (
     # setblocks/fills (the p35_energy_tail admission form, no fresh_boot / mutates
     # member). --group p35_pipes_ld matches through the chains' embedded name prefix.
     ("p35_pipes_ld_item", "p35_pipes_ld_fluid"),
+    # p37-chains-ld-transformer (task p37-chains-ld-transformer): the Long Distance
+    # transformer + LD electric wire live chain — the s4-3 true gap (the p35
+    # electric_transformer census is the NAME-NEAR family, not this one). A fresh
+    # band x563..575 z453..464 (x/z-disjoint from every registered band: the
+    # ignition pair x438..514 z452..478, the energy-tail band x520..558 z420..432,
+    # the LD pipes z500..506, the covers band z300..312), three z-columns: the t5
+    # loss line x563 (1024 refused dark / 1088 lands at exactly the target output
+    # min — the max(64, dist/8) loss pinned from both sides, 8 wires -> mDistance 8),
+    # the t6 burn line x569 (8192 over VMAX[4]=4096 consumes the blob), the no-link
+    # negative x575, plus the 5+16 item census. Admission mirroring the p35 form
+    # (bbox-registered, no fresh_boot / mutates member — the dials/rigs are
+    # band-local setblocks). --group p37_energy_ld matches through the chain's
+    # embedded name prefix.
+    ("p37_energy_ld_transformer",),
 )
 
 PROBE_MODULE = "p15_keepfilter_reboot_probe"
