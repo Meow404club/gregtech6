@@ -1623,6 +1623,8 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.battery_box_large_iv");
 		// task p32-magic-absorber — the Magic Field Absorber (the dump :10891 face verbatim, tail-append)
 		addDirect("block.gt6.magic_absorber");
+		// task p38-issue5-fluid-spring-nozzle — the Fluid Spring nozzle (the dump mte 32763 液体泉 face)
+		addDirect("block.gt6.fluid_spring");
 		// task p35-portals-mini-nether-end — the portal pair + the upstream tooltip stack
 		// (display names = the dump gt.multitileentity.32766/:13587 + :32000/:13021 verbatim;
 		// tooltip values = the dump portal tooltip lines — mini :17656-17657, nether :17661

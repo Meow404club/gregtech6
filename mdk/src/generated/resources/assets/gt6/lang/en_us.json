@@ -158,6 +158,7 @@
   "block.gt6.fe_battery": "FE Test Battery",
   "block.gt6.fe_converter": "FE Converter (ULV)",
   "block.gt6.fe_source": "FE Test Source",
+  "block.gt6.fluid_spring": "Fluid Spring",
   "block.gt6.fluidometer": "Fluid-O-Meter Sensor",
   "block.gt6.flux_dynamo": "Flux Dynamo (Lead)",
   "block.gt6.flux_dynamo_t2": "Flux Dynamo (Invar)",

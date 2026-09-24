@@ -1,6 +1,8 @@
 package gregtech6.block;
 
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 import gregtech6.registry.GTBlockEntities;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
@@ -38,5 +40,10 @@ public class GTFluidSpringBlock extends GTEntityBlock {
 	@Override
 	protected BlockEntityType<? extends TileEntityBase03TicksAndSync> tickerType() {
 		return GTBlockEntities.FLUID_SPRING_BE.get();
+	}
+
+	@Override
+	public RenderShape getRenderShape(BlockState aState) {
+		return RenderShape.MODEL; // BaseEntityBlock.java:19-21 default is INVISIBLE (BER assumption) — the nozzle is a static cube
 	}
 }

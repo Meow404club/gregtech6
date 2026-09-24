@@ -123,6 +123,7 @@ public class GT6EnUs extends LanguageProvider {
         addEuBridgeFamilies(); // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting template
         addLaserFamilies(); // task p32-qu-laser-domain — the CO2 Laser + Laser Absorber families + the gas emitters
         addMagicAbsorber(); // task p32-magic-absorber — the Magic Field Absorber name
+        addFluidSpring(); // task p38-issue5-fluid-spring-nozzle — the Fluid Spring nozzle name
         addPlaceables(); // task p32-placeables — the lantern + sandwich + the six placed piles
         addDynamoFamily(); // task p28-c-ulv-dynamo-row — the W1 family's deferred name face + the T0 row
         addBatteryFamily(); // task p29-w4-battery-storage — the 37+5+7+12 storage face
@@ -2128,6 +2129,14 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addMagicAbsorber() {
         add("block.gt6.magic_absorber", "Magic Field Absorber");
+    }
+
+    /**
+     * Task p38-issue5-fluid-spring-nozzle — the Fluid Spring nozzle name face: the
+     * Loader_MultiTileEntities.java:2026 display column "Fluid Spring" verbatim.
+     */
+    private void addFluidSpring() {
+        add("block.gt6.fluid_spring", "Fluid Spring");
     }
 
     /**
