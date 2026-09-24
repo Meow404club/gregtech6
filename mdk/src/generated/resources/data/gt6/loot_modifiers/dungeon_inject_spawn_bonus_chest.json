@@ -1,0 +1,17 @@
+{
+  "type": "gt6:gt6_dungeon_inject",
+  "conditions": [],
+  "entries": [
+    {
+      "item": "gt6:book_loot_guide",
+      "max": 16,
+      "min": 8,
+      "weight": 10
+    }
+  ],
+  "rolls": {
+    "max_inclusive": 3,
+    "min_inclusive": 1
+  },
+  "table": "minecraft:chests/spawn_bonus_chest"
+}

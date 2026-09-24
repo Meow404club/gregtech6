@@ -1,0 +1,17 @@
+{
+  "type": "gt6:gt6_dungeon_inject",
+  "conditions": [],
+  "entries": [
+    {
+      "item": "gt6:book_loot_guide",
+      "max": 8,
+      "min": 4,
+      "weight": 40
+    }
+  ],
+  "rolls": {
+    "max_inclusive": 3,
+    "min_inclusive": 1
+  },
+  "table": "minecraft:chests/stronghold_library"
+}

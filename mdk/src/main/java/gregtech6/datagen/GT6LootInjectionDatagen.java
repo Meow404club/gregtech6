@@ -38,7 +38,12 @@ import gregtech6.registry.GTMaterialItems;
  *     range is the {@code setMin(8)/setMax(24)} column ({@code :82-83/:107-108/:130-131});</li>
  * <li><b>the declared POOL</b> — rows whose item has no modern registration are NOT emitted
  *     (the upstream {@code addLoot :566-569} invalid-skip face, minus the stderr noise): the
- *     loot bags {@code IL.Bag_Loot_*}, the loot books {@code IL.Book_Loot_Guide/MatDict},
+ *     loot bags {@code IL.Bag_Loot_*}, the loot book {@code IL.Book_Loot_MatDict} (task
+ *     p38-book-loot-first ruling: the Guide 32765 is registered and its four rows re-armed,
+ *     but the MatDict 32766 stays cut — its {@code gt.matdicts} pool is the per-material
+ *     DYNAMIC book generator {@code UT.java:769-880}, the p35 dynamic-book CUT class; a
+ *     registered MatDict with no pool is a dead item, so the four MatDict rows
+ *     {@code :443/:487/:513/:525} ride the same declared cut),
  *     the bottles {@code IL.Bottle_*}, the cans {@code IL.Food_Can_Undefined_6/Bread_6/Chum_4},
  *     {@code IL.Dynamite/Tool_MatchBox_Full/Tool_Lighter_* /Porcelain_Cup/Pill_Cure_All},
  *     the research papers {@code IL.Paper_Magic_Research_*}, the coins
@@ -47,9 +52,10 @@ import gregtech6.registry.GTMaterialItems;
  *     trim ruling: 换箱面不移植, 注入面移植). Registration-universe fallout (the
  *     resolver's skip face): the {@code gearGtSmall} bronze/brass rows (:499/:504 — the
  *     {@code gearGtSmall} condition gates on the big-gear prefix and the modern universe
- *     registers no {@code gear_gt_*} for them). Category-level fallout: {@code BONUS_CHEST},
- *     {@code STRONGHOLD_LIBRARY} and {@code STRONGHOLD_CROSSING} (the crate rows are
- *     block-family, unported) keep ZERO rows and get no modifier JSON.
+ *     registers no {@code gear_gt_*} for them). Category-level fallout:
+ *     {@code STRONGHOLD_CROSSING} (the crate rows are block-family, unported) keeps ZERO
+ *     rows and gets no modifier JSON — {@code BONUS_CHEST} and {@code STRONGHOLD_LIBRARY}
+ *     carried only book/paper rows before task p38 and now land their Guide rows.</li>
  * </ul>
  */
 public final class GT6LootInjectionDatagen {
@@ -151,15 +157,21 @@ public final class GT6LootInjectionDatagen {
 	 */
 	public static List<InjectionRow> injections() {
 		List<InjectionRow> rRows = new ArrayList<>();
-		// DUNGEON_CHEST :418-443 — the metal ladder + coins(40/20/10)/bags/bottle/books POOLED
-		// + the task-p36 artifact row: the upstream obtainment face is the GT6 DUNGEON ROOM
-		// (DungeonChunkRoomLibraryNormal.java:57/59/71 — 1/16 per shelf seat, DungeonData.zpm
-		// spawning the ZPM 2/3 FULL); the port has no GT6 dungeon carrier, so the vanilla
-		// dungeon chest carries the artifact at the always-full collapse (an empty ZPM is an
-		// unchargeable dead drop) — the declared deviation on the card face.
+		// BONUS_CHEST :413 — the Guide row (the bottles :410-412 stay pooled); task p38 re-arms
+		// the book face, so the bonus chest gets its modifier JSON (chests/spawn_bonus_chest,
+		// the mapping verified against both jars)
+		rRows.add(new InjectionRow("dungeon_inject_spawn_bonus_chest", "minecraft:chests/spawn_bonus_chest",
+				ROLL_MIN, ROLL_MAX, ladder(Stream.of(guideRow(10, 8, 16)))));
+		// DUNGEON_CHEST :418-443 — the metal ladder + coins(40/20/10)/bags/bottle POOLED + the
+		// Guide :442 + the task-p36 artifact row: the upstream obtainment face is the GT6
+		// DUNGEON ROOM (DungeonChunkRoomLibraryNormal.java:57/59/71 — 1/16 per shelf seat,
+		// DungeonData.zpm spawning the ZPM 2/3 FULL); the port has no GT6 dungeon carrier, so
+		// the vanilla dungeon chest carries the artifact at the always-full collapse (an empty
+		// ZPM is an unchargeable dead drop) — the declared deviation on the card face.
+		// (the MatDict :443 stays pooled — the class javadoc ruling)
 		rRows.add(new InjectionRow("dungeon_inject_simple_dungeon", "minecraft:chests/simple_dungeon",
 				ROLL_MIN, ROLL_MAX, ladder(java.util.stream.Stream.concat(dungeonMetalLadder(12, 2),
-						java.util.stream.Stream.of(zpmArtifactRow())))));
+						java.util.stream.Stream.of(guideRow(50, 2, 8), zpmArtifactRow())))));
 		// PYRAMID_DESERT_CHEST :445-450 — holy water/coins/bags POOLED, the Nq arrow head lands
 		rRows.add(new InjectionRow("dungeon_inject_desert_pyramid", "minecraft:chests/desert_pyramid",
 				ROLL_MIN, ROLL_MAX, ladder(Stream.of(mat(OP.toolHeadArrow, MT.Nq, 1, 4, 16)))));
@@ -174,7 +186,7 @@ public final class GT6LootInjectionDatagen {
 						van("fire_charge", 30, 2, 8),
 						mat(OP.arrowGtWood, MT.DamascusSteel, 20, 8, 16), mat(OP.arrowGtWood, MT.Ke, 1, 8, 16)))));
 		// MINESHAFT_CORRIDOR :468-487 — the ore-block rows :470-476 + the dig heads :477-482;
-		// bottles/matchbox/coins/bags/books POOLED
+		// bottles/matchbox/coins/bags POOLED, the MatDict :487 stays pooled (the class javadoc)
 		rRows.add(new InjectionRow("dungeon_inject_abandoned_mineshaft", "minecraft:chests/abandoned_mineshaft",
 				ROLL_MIN, ROLL_MAX, ladder(Stream.of(
 						van("coal_ore", 4, 16, 64), van("iron_ore", 4, 16, 64), van("gold_ore", 2, 8, 32),
@@ -184,7 +196,8 @@ public final class GT6LootInjectionDatagen {
 						mat(OP.toolHeadShovel, MT.DamascusSteel, 1, 1, 4),
 						mat(OP.toolHeadPickaxe, MT.ArsenicBronze, 5, 1, 4), mat(OP.toolHeadRawPickaxe, MT.Steel, 3, 1, 4),
 						mat(OP.toolHeadPickaxe, MT.DamascusSteel, 1, 1, 4)))));
-		// VILLAGE_BLACKSMITH :489-513 — the smith ladder :491-506; bottles/coins/bags/books POOLED
+		// VILLAGE_BLACKSMITH :489-513 — the smith ladder :491-506 + the Guide :512; bottles/
+		// coins/bags POOLED, the MatDict :513 stays pooled (the class javadoc)
 		rRows.add(new InjectionRow("dungeon_inject_village_weaponsmith", "minecraft:chests/village/village_weaponsmith",
 				ROLL_MIN, ROLL_MAX, ladder(Stream.of(
 						mat(OP.ingot, MT.Steel, 2, 4, 12), mat(OP.plate, MT.Steel, 2, 4, 12),
@@ -196,7 +209,13 @@ public final class GT6LootInjectionDatagen {
 						mat(OP.ingot, MT.Brass, 2, 4, 12), mat(OP.plate, MT.Brass, 2, 4, 12),
 						mat(OP.stick, MT.Brass, 2, 8, 24), mat(OP.gearGtSmall, MT.Brass, 2, 4, 12),
 						mat(OP.toolHeadArrow, MT.Brass, 2, 16, 48),
-						mat(OP.ingot, MT.DamascusSteel, 1, 4, 12)))));
+						mat(OP.ingot, MT.DamascusSteel, 1, 4, 12),
+						guideRow(40, 4, 8)))));
+		// STRONGHOLD_LIBRARY :515-525 — the Guide :524; the research papers :515-523 stay
+		// pooled, the MatDict :525 stays pooled (the class javadoc) — task p38 gives the
+		// library its modifier JSON (chests/stronghold_library, both jars verified)
+		rRows.add(new InjectionRow("dungeon_inject_stronghold_library", "minecraft:chests/stronghold_library",
+				ROLL_MIN, ROLL_MAX, ladder(Stream.of(guideRow(40, 4, 8)))));
 		// STRONGHOLD_CORRIDOR :546-552 — the weapon heads + the arrows; coins POOLED
 		rRows.add(new InjectionRow("dungeon_inject_stronghold_corridor", "minecraft:chests/stronghold_corridor",
 				ROLL_MIN, ROLL_MAX, ladder(Stream.of(
@@ -207,7 +226,17 @@ public final class GT6LootInjectionDatagen {
 	}
 
 	/**
+	 * The Dusty Guide Book row (task p38-book-loot-first) — the registered
+	 * {@code gt6:book_loot_guide} carrier (MultiItemBooks.java:67 meta 32765); the
+	 * weight/stack columns ride verbatim per table (:413/:442/:512/:524).
+	 */
+	private static EntryRow guideRow(int aWeight, int aMin, int aMax) {
+		return new EntryRow("gt6:book_loot_guide", aWeight, aMin, aMax);
+	}
+
+	/**
 	 * The ZPM artifact row — weight 2 [1,1] (the rare-roll posture) carrying the FULL tag:
+
 	 * the {@code gt.active.energy} store-as-full key (the DungeonData.zpm active lane;
 	 * the 2/3 dice collapse to always-full, the declared deviation above).
 	 */
