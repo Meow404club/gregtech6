@@ -77,7 +77,11 @@ public class CoverCraftingAsphaltTest extends GTCoverTestBase {
 		@Override public boolean isInWater() { return mInWater; }
 		@Override public boolean isShiftKeyDown() { return mShift; }
 		@Override public void setShiftKeyDown(boolean aShift) { mShift = aShift; }
+//? if forge {
 		@Override protected void defineSynchedData() {/**/}
+//?} else {
+		/*@Override protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder aBuilder) {}
+*///?}
 		@Override public void readAdditionalSaveData(CompoundTag aTag) {/**/}
 		@Override public void addAdditionalSaveData(CompoundTag aTag) {/**/}
 		@Override public Iterable<ItemStack> getArmorSlots() { return java.util.List.of(); }
@@ -195,7 +199,11 @@ public class CoverCraftingAsphaltTest extends GTCoverTestBase {
 		ItemEntityDouble(net.minecraft.world.level.Level aLevel) {
 			super(EntityType.ITEM, aLevel);
 		}
+//? if forge {
 		@Override protected void defineSynchedData() {/**/}
+//?} else {
+		/*@Override protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder aBuilder) {}
+*///?}
 		@Override protected void readAdditionalSaveData(CompoundTag aTag) {/**/}
 		@Override protected void addAdditionalSaveData(CompoundTag aTag) {/**/}
 	}
