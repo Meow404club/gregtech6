@@ -1103,50 +1103,54 @@ public final class GT6WorldgenDatagen {
     );
 
     // ------------------------------------------------------------------
-    // The bedrock-spring band (task p31-fluid-spring) — the 16-row table,
+    // The bedrock-spring band (task p31-fluid-spring; the springFluid column
+    // returned by task p38-issue5-fluid-spring-nozzle) — the 16-row table,
     // Loader_Worldgen.java:782-797 row-for-row. Column order (WorldgenFluidSpring
-    // .java:50): name / block / probability / overworld; the indicatorType column
-    // (:782-788 literals 2/2/2/2/1/3/1) and the springFluid column (the MTE arm's
-    // fluid stack) are the declared spec ③ deferrals — the GTFluidSpringConfig
-    // javadoc. The block ids are single-sourced: the six GT rows over
-    // GTFluids.springBlockId (the fluid id + _block; natural_gas its existing p5
-    // block face), the two lava rows the bare minecraft:lava. The rows roll
-    // FIRST-HIT-WINS in table order (the WorldgenFluidSpring.java:64 claim blocks
-    // every later spring row — at most one spring per chunk).
+    // .java:50): name / block / probability / overworld / springFluid; the
+    // indicatorType column (:782-788 literals 2/2/2/2/1/3/1) stays the declared
+    // spec ③ deferral. springFluid = the upstream mSpringFluid amount (the nozzle
+    // arm's 1/amount divisor; null = upstream NF) at the loader values verbatim —
+    // the upstream tInfiniteOil/tInfiniteGas=false config gates do not exist in
+    // this port, the infinite springs ARE the issue #5 fix. The block ids are
+    // single-sourced: the six GT rows over GTFluids.springBlockId (the fluid id +
+    // _block; natural_gas its existing p5 block face), the two lava rows the bare
+    // minecraft:lava. The rows roll FIRST-HIT-WINS in table order (the
+    // WorldgenFluidSpring.java:64 claim blocks every later spring row — at most one
+    // spring per chunk).
     // ------------------------------------------------------------------
 
-    /** The row helper: an overworld spring row (the GT fluid id through {@code springBlockId} — the single-source face). */
-    private static GTFluidSpringConfig spring(String aName, String aFluidName, int aProbability) {
-        return new GTFluidSpringConfig(aName, gregtech6.fluid.GTFluids.springBlockId(aFluidName), aProbability, true);
+    /** The row helper: an overworld spring row (the GT fluid id through {@code springBlockId} — the single-source face) + the nozzle amount. */
+    private static GTFluidSpringConfig spring(String aName, String aFluidName, int aProbability, int aSpringAmount) {
+        return new GTFluidSpringConfig(aName, gregtech6.fluid.GTFluids.springBlockId(aFluidName), aProbability, true, aSpringAmount);
     }
 
     /** The row helper for the offworld rows (:789-797 — never drawn overworld, kept for the table census). */
-    private static GTFluidSpringConfig springOffworld(String aName, String aBlockId, int aProbability) {
-        return new GTFluidSpringConfig(aName, aBlockId, aProbability, false);
+    private static GTFluidSpringConfig springOffworld(String aName, String aBlockId, int aProbability, int aSpringAmount) {
+        return new GTFluidSpringConfig(aName, aBlockId, aProbability, false, aSpringAmount);
     }
 
     /** The lava-row helper (:788/:797 — the vanilla block face, no GT fluid id to single-source). */
-    private static GTFluidSpringConfig springLava(String aName, int aProbability, boolean aOverworld) {
-        return new GTFluidSpringConfig(aName, "minecraft:lava", aProbability, aOverworld);
+    private static GTFluidSpringConfig springLava(String aName, int aProbability, boolean aOverworld, int aSpringAmount) {
+        return new GTFluidSpringConfig(aName, "minecraft:lava", aProbability, aOverworld, aSpringAmount);
     }
 
     /** The ONE 16-row bedrock-spring table — the card spec ② "上游行表→Feature 形". */
     public static final List<GTFluidSpringConfig> FLUID_SPRING_TABLE = List.of(
-        spring       ("overworld.fluid.oil.extraheavy", "liquid_extra_heavy_oil", 400), // :782
-        spring       ("overworld.fluid.oil.heavy"     , "liquid_heavy_oil"     , 400), // :783
-        spring       ("overworld.fluid.oil.medium"    , "liquid_medium_oil"    , 400), // :784
-        spring       ("overworld.fluid.oil.light"     , "liquid_light_oil"     , 400), // :785
-        spring       ("overworld.fluid.gas.natural"   , "natural_gas"          , 200), // :786
-        spring       ("overworld.fluid.water"         , "water_geothermal"     , 100), // :787
-        springLava   ("overworld.fluid.lava"          , 200, true),                     // :788 — the OW lava dome, the vanilla block face
-        springOffworld("atum.fluid.oil.extraheavy"    , "gt6:liquid_extra_heavy_oil_block", 200), // :789
-        springOffworld("atum.fluid.oil.heavy"         , "gt6:liquid_heavy_oil_block"     , 200), // :790
-        springOffworld("atum.fluid.oil.medium"        , "gt6:liquid_medium_oil_block"    , 200), // :791
-        springOffworld("atum.fluid.oil.light"         , "gt6:liquid_light_oil_block"     , 200), // :792
-        springOffworld("erebus.fluid.gas.natural"     , "gt6:natural_gas_block"          , 200), // :793
-        springOffworld("betweenlands.fluid.gas.natural", "gt6:natural_gas_block"         , 200), // :794
-        springOffworld("twilight.fluid.gas.natural"   , "gt6:natural_gas_block"          , 200), // :795
-        springOffworld("twilight.fluid.water"         , "gt6:water_geothermal_block"     , 100), // :796
-        springLava   ("nether.fluid.lava"             , 100, false)                    // :797
+        spring       ("overworld.fluid.oil.extraheavy", "liquid_extra_heavy_oil", 400, 6000), // :782
+        spring       ("overworld.fluid.oil.heavy"     , "liquid_heavy_oil"     , 400, 6000), // :783
+        spring       ("overworld.fluid.oil.medium"    , "liquid_medium_oil"    , 400, 6000), // :784
+        spring       ("overworld.fluid.oil.light"     , "liquid_light_oil"     , 400, 6000), // :785
+        spring       ("overworld.fluid.gas.natural"   , "natural_gas"          , 200, 3000), // :786
+        spring       ("overworld.fluid.water"         , "water_geothermal"     , 100,  500), // :787
+        springLava   ("overworld.fluid.lava"          , 200, true,              1000), // :788 — the OW lava dome, the vanilla block face
+        springOffworld("atum.fluid.oil.extraheavy"    , "gt6:liquid_extra_heavy_oil_block", 200, 2000), // :789
+        springOffworld("atum.fluid.oil.heavy"         , "gt6:liquid_heavy_oil_block"     , 200, 2000), // :790
+        springOffworld("atum.fluid.oil.medium"        , "gt6:liquid_medium_oil_block"    , 200, 2000), // :791
+        springOffworld("atum.fluid.oil.light"         , "gt6:liquid_light_oil_block"     , 200, 2000), // :792
+        springOffworld("erebus.fluid.gas.natural"     , "gt6:natural_gas_block"          , 200, 1000), // :793
+        springOffworld("betweenlands.fluid.gas.natural", "gt6:natural_gas_block"         , 200, 1000), // :794
+        springOffworld("twilight.fluid.gas.natural"   , "gt6:natural_gas_block"          , 200, 1000), // :795
+        springOffworld("twilight.fluid.water"         , "gt6:water_geothermal_block"     , 100,  250), // :796
+        springLava   ("nether.fluid.lava"             , 100, false,               500)  // :797
     );
 }

@@ -158,6 +158,7 @@
   "block.gt6.fe_battery": "FE 测试电池",
   "block.gt6.fe_converter": "FE 转换机",
   "block.gt6.fe_source": "FE 测试源",
+  "block.gt6.fluid_spring": "液体泉",
   "block.gt6.fluidometer": "流体体积传感器(单位: 升)",
   "block.gt6.flux_dynamo": "红石通量发电机 (铅)",
   "block.gt6.flux_dynamo_t2": "红石通量发电机 (殷钢)",

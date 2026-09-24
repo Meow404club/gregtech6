@@ -8,23 +8,30 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 
 /**
- * One bedrock-spring row (task p31-fluid-spring spec ②) — the {@code WorldgenFluidSpring}
- * ctor read face verbatim (WorldgenFluidSpring.java:50: aName, aDefault, aBlock, aMeta,
- * aProbability, [aIndicatorType,] aSpringFluid), minus the two columns the declared
- * deferrals cut:
+ * One bedrock-spring row (task p31-fluid-spring spec ②, the springFluid column returned by
+ * task p38-issue5-fluid-spring-nozzle) — the {@code WorldgenFluidSpring} ctor read face
+ * verbatim (WorldgenFluidSpring.java:50: aName, aDefault, aBlock, aMeta, aProbability,
+ * [aIndicatorType,] aSpringFluid), minus the two columns the deferrals cut:
  * <ul>
  * <li><b>mMeta</b> — the 1.7.10 fluid-block meta (bind4(15)) is the legacy per-block
  *     fluid selector; the modern port carries one block per fluid (the fluid id + the
  *     {@code _block} suffix, GTFluids.springBlockId), the column is dead.</li>
- * <li><b>mIndicatorType + mSpringFluid</b> — the surface grass-indicator arm
- *     (WorldgenFluidSpring.java:82-103) and the infinite-spring MTE arm (:77-79, the
- *     MultiTileEntityFluidSpring placement) ride the deferred MTE/indicator card
- *     (card spec ③ "可选 defer（声明即可）"), exactly the sibling bedrock card's
- *     indicator-arm posture; the columns return with that card. The 1/16-per-position
- *     MTE draws were the ONLY shape randomness of the upstream spring (the dome passes
- *     draw nothing) — cut with the arm, the dome is fully deterministic from the world
- *     reads (the declared strengthening, decisions-level determinism).</li>
+ * <li><b>mIndicatorType</b> — the surface grass-indicator arm (WorldgenFluidSpring
+ *     .java:82-103) rides the deferred indicator card (card spec ③ "可选 defer（声明
+ *     即可）"), exactly the sibling bedrock card's indicator-arm posture.</li>
  * </ul>
+ *
+ * <p><b>The springFluid column</b> (task p38-issue5-fluid-spring-nozzle): the upstream
+ * mSpringFluid FluidStack, the nozzle arm's identity — the port carries the AMOUNT only
+ * (one block per fluid makes the fluid identity the row's blockId; the nozzle BE sprays
+ * the row's block), null = upstream NF (no nozzle arm, the tInfiniteOil=false face).
+ * The port ships the rows at their loader amounts verbatim (Loader_Worldgen.java:782-797:
+ * 6000 oils / 3000 gas / 500 geothermal / 1000 lava OW; 2000/1000/250/500 offworld) —
+ * the upstream tInfiniteOil/tInfiniteGas=false config gates do not exist in this port,
+ * the infinite springs ARE the issue #5 fix. The 1/16-per-position nozzle draws return
+ * the ONLY shape randomness of the upstream spring (the dome passes draw nothing) — they
+ * ride the caller's coordinate-seeded stream (GT6FluidSpringGenerator.generateDome), so
+ * the decision-level determinism holds: same seed + same world = same nozzles.
  *
  * <p>The probability is the 1/P per-chunk roll (WorldgenFluidSpring.java:62
  * {@code aRandom.nextInt(mProbability) != 0 -> return F}): the OW band rolls
@@ -44,14 +51,17 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
  * ST.invalid-to-water arm (:54) becomes a loud refusal, the ids are single-sourced from
  * the datagen table over GTFluids.SPRING_BLOCK_IDS and pinned by the parity test).
  */
-public record GTFluidSpringConfig(String name, String blockId, int probability, boolean overworld)
-        implements FeatureConfiguration {
+public record GTFluidSpringConfig(String name, String blockId, int probability, boolean overworld,
+        Integer springFluid) implements FeatureConfiguration {
 
     public static final Codec<GTFluidSpringConfig> CODEC = RecordCodecBuilder.create(aFields -> aFields.group(
             Codec.STRING.fieldOf("name").forGetter(GTFluidSpringConfig::name),
             Codec.STRING.fieldOf("block").forGetter(GTFluidSpringConfig::blockId),
             Codec.intRange(1, Integer.MAX_VALUE).fieldOf("probability").forGetter(GTFluidSpringConfig::probability),
-            Codec.BOOL.fieldOf("overworld").forGetter(GTFluidSpringConfig::overworld))
+            Codec.BOOL.fieldOf("overworld").forGetter(GTFluidSpringConfig::overworld),
+            Codec.INT.optionalFieldOf("springFluid")
+                    .xmap(aOpt -> aOpt.orElse(null), java.util.Optional::ofNullable)
+                    .forGetter(GTFluidSpringConfig::springFluid))
             .apply(aFields, GTFluidSpringConfig::new));
 
     /**

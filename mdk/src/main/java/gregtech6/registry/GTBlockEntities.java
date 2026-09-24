@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
 
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -20,6 +21,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.block.GTExampleChestBlock;
+import gregtech6.block.GTFluidSpringBlock;
 import gregtech6.block.TestMachineBlock;
 import gregtech6.tileentity.TestMachineBlockEntity;
 import gregtech6.tileentity.connectors.GTWireBlockEntity;
@@ -32,6 +34,7 @@ import gregtech6.tileentity.energy.GT6WaterWheelBlockEntity;
 import gregtech6.tileentity.energy.GTGearBoxBlockEntity;
 import gregtech6.tileentity.energy.GTTransformerRotationBlockEntity;
 import gregtech6.tileentity.example.GTExampleChestBlockEntity;
+import gregtech6.tileentity.misc.GTFluidSpringBlockEntity;
 
 /**
  * Block + BlockEntityType registration, card-owned (ADR-P3-4): the deferred registers
@@ -309,6 +312,33 @@ public final class GTBlockEntities {
 					gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity::new, GT6Boilers.blockArray()).build(null));
 
 		// -------------------------------------------------------------------------
+	// the bedrock fluid-spring nozzle (task p38-issue5-fluid-spring-nozzle)
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The fluid-spring nozzle block (the upstream MultiTileEntityFluidSpring 32763 carrier,
+	 * WorldgenFluidSpring.java:77-79): worldgen-only — no BlockItem, no loot
+	 * ({@code noLootTable} = the upstream Drops_None face, getBlockHardness -1), bedrock-
+	 * grade blast resistance (upstream getExplosionResistance2 = the vanilla bedrock
+	 * value), the vanilla bedrock {@code strength(-1, 3600000)} property face. The
+	 * blockstate/model face is the GT6OreBlockStates fluid-spring band (datagen only).
+	 */
+	public static final RegistryObject<Block> FLUID_SPRING = BLOCKS.register("fluid_spring",
+			() -> new GTFluidSpringBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.STONE)
+					.strength(-1.0F, 3600000.0F) // unmineable + the upstream bedrock blast face
+					.sound(SoundType.STONE)
+					.noLootTable()));
+
+	/**
+	 * The fluid-spring nozzle BET (the CRANK_BE single-mount shape). Registry path
+	 * "fluid_spring" mirrors GTFluidSpringBlockEntity#getTileEntityName like every row.
+	 */
+	public static final RegistryObject<BlockEntityType<GTFluidSpringBlockEntity>> FLUID_SPRING_BE =
+			BLOCK_ENTITY_TYPES.register("fluid_spring", () -> BlockEntityType.Builder.of(
+					GTFluidSpringBlockEntity::new, FLUID_SPRING.get()).build(null));
+
+	// -------------------------------------------------------------------------
 	// the storage hoppers (task p26-storage-hopper-family) — the two family rows
 	// -------------------------------------------------------------------------
 
