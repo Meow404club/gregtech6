@@ -109,6 +109,11 @@ public final class GT6BeeCombs {
 							aOutput.accept(new ItemStack(tRow.get()));
 						}
 						aOutput.accept(new ItemStack(GT6BeeHives.HIVE_ITEM.get())); // task p34-bumbliary-recipes — the R2 carryable hive rides the bee tab
+						// task p38-tabfix-c-misc — the Bumbliary pair joins the bee home (the census
+						// zero-tab adjudication: the bee domain's machines pool with the bee tab,
+						// the p34 hive-row precedent above)
+						aOutput.accept(new ItemStack(GT6BeeHives.BUMBLIARY_ITEM.get()));
+						aOutput.accept(new ItemStack(GT6BeeHives.BUMBLIARY_ADVANCED_ITEM.get()));
 					})
 					.build());
 
