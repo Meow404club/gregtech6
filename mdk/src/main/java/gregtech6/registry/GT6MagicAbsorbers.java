@@ -32,8 +32,8 @@ import gregtech6.tileentity.energy.generators.GT6MagicAbsorberBlockEntity;
  * Loader_MultiTileEntities.java:1005 row "Magic Field Absorber", "Magical Energy
  * Production", ids 10180-10180, NBT_HARDNESS 4.0F == NBT_RESISTANCE 4.0F, stack 16, the
  * aMachine visual, NBT_MATERIAL MT.Pd (the Pd columns are registration config, never
- * persisted — the massfab reading; the port block carries no material tint face yet, the
- * W2 render pool).
+ * persisted — the massfab reading; the tint face rides the block's material column since
+ * task p38-c2-controller-tint, the paint spray seat stays the W2 render pool).
  *
  * <p>The crafting row "GOG"/"LBL"/"CMC" of :1005 (casingMachine Pd + Circuit_Magic +
  * wireFine Au + plate Obsidian + gem Lapis + Blocks.beacon) is the CRAFTING POOL (the
@@ -55,21 +55,40 @@ public final class GT6MagicAbsorbers {
 	/** The registered absorber item, same key. */
 	public static final Map<String, RegistryObject<Item>> MAGIC_ABSORBER_ITEMS_BY_PATH = new LinkedHashMap<>();
 
+	/** The :1005 row's NBT_MATERIAL column (task p38-c2-controller-tint — the census-facing single source). */
+	public static final java.util.function.Supplier<gregapi.oredict.OreDictMaterial> MAGIC_ABSORBER_MATERIAL = () -> gregapi.data.MT.Pd;
+
 	static {
-		// the :1005 columns: hardness/resistance 4.0 (the NBT_HARDNESS/RESISTANCE pair), stack 16
+		// the :1005 columns: hardness/resistance 4.0 (the NBT_HARDNESS/RESISTANCE pair),
+		// stack 16, NBT_MATERIAL MT.Pd (the tint colour source — task p38-c2-controller-tint,
+		// the class-doc massfab reading now wired)
 		MAGIC_ABSORBER_BLOCKS_BY_PATH.put("magic_absorber", BLOCKS.register("magic_absorber",
 				() -> new GT6MagicAbsorberBlock(BlockBehaviour.Properties.of()
-						.strength(4.0F, 4.0F).sound(SoundType.METAL), () -> GT6MagicAbsorbers.MAGIC_ABSORBER_BE.get())));
+						.strength(4.0F, 4.0F).sound(SoundType.METAL), () -> GT6MagicAbsorbers.MAGIC_ABSORBER_BE.get(),
+						MAGIC_ABSORBER_MATERIAL)));
 		MAGIC_ABSORBER_ITEMS_BY_PATH.put("magic_absorber", ITEMS.register("magic_absorber",
 				() -> new BlockItem(MAGIC_ABSORBER_BLOCKS_BY_PATH.get("magic_absorber").get(),
 						new Item.Properties().stacksTo(16))));
 	}
 
-	/** The BET — one BE class over the one block (the energy-source rig's single-type form). */
+	/**
+	 * The BET — one BE class over the one block (the energy-source rig's single-type form).
+	 */
 	public static final RegistryObject<BlockEntityType<GT6MagicAbsorberBlockEntity>> MAGIC_ABSORBER_BE =
 			BLOCK_ENTITY_TYPES.register("magic_absorber", () -> BlockEntityType.Builder.of(
 					(aPos, aState) -> new GT6MagicAbsorberBlockEntity(GT6MagicAbsorbers.MAGIC_ABSORBER_BE.get(), aPos, aState),
 					MAGIC_ABSORBER_BLOCKS_BY_PATH.get("magic_absorber").get()).build(null));
+
+	/**
+	 * The absorber paint-tint walker (task p38-c2-controller-tint): the one block whose
+	 * datagen model carries tintindex 0 on the body cube (the {@code paintableBlockArray}
+	 * census convention), feeding BOTH consumption halves: the baked world tint
+	 * ({@code GTMachineTintModel}, the p32 route) and the inventory {@code ItemColor}.
+	 * Client-side call time only.
+	 */
+	public static Block[] paintableBlockArray() {
+		return new Block[] {MAGIC_ABSORBER_BLOCKS_BY_PATH.get("magic_absorber").get()};
+	}
 
 	private GT6MagicAbsorbers() {}
 

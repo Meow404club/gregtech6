@@ -1312,10 +1312,27 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBridgeFamily(gregtech6.registry.GT6QuantumEnergizers.QUANTUM_ENERGIZER_BLOCKS_BY_PATH, "quantum_energizer", "quantum_energizer");
     }
 
-    /** One bridge family: the orientable cube + the five rung blockstates + the item parents (the transformer form). */
+    /**
+     * One bridge family: the orientable cube + the five rung blockstates + the item parents
+     * (the transformer form). Task p38-c2-controller-tint: the re-declared body element
+     * carries {@code tintindex 0} on every face (the machineModel grammar — the child's
+     * elements replace the parent's, the partModel precedent) — the grayscale colored
+     * front/side pairs multiply the row's NBT_MATERIAL (the upstream
+     * {@code BlockTextureMulti(BlockTextureDefault(colored, mRGBa), overlay)} form:
+     * heater :56-59 / engine :244-249 / motor :39-42 / laser :46-49 / absorber :41-44 —
+     * the census ruling: the gray plate IS the tint seat, not a colour declaration); the
+     * bake/ItemColor consumers ride GTMachineTintModel/GTItemPaintTint. The quantum
+     * energizer rides this same builder with NO material column and NO registration —
+     * the tintindex stays the white identity there (its amber art is pre-tinted, the
+     * card exemption).
+     */
     private void addBridgeFamily(java.util.Map<String, RegistryObject<Block>> aBlocks, String aFamily, String aTexture) {
-        ModelFile tModel = models().orientable(aTexture,
+        BlockModelBuilder tModel = models().orientable(aTexture,
                 modLoc("block/" + aTexture + "_side"), modLoc("block/" + aTexture + "_front"), modLoc("block/" + aTexture + "_side"));
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture(aDir == Direction.NORTH ? "#front" : "#side").tintindex(0).cullface(aDir))
+                .end();
         for (RegistryObject<Block> tHandle : aBlocks.values()) {
             getVariantBuilder(tHandle.get()).forAllStates(aState -> {
                 // the vanilla horizontal-facing rotation map (the transformer verbatim form)
@@ -1351,6 +1368,16 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("south", modLoc("block/magic_absorber_base"))
                 .texture("west", modLoc("block/magic_absorber_base"))
                 .texture("east", modLoc("block/magic_absorber_base"));
+        // the re-declared body element (tintindex 0 = the material tint, task
+        // p38-c2-controller-tint — the child's elements replace the cube_directional
+        // parent's): the grayscale base PNG multiplies the row's NBT_MATERIAL MT.Pd (the
+        // upstream MultiTileEntityMagicFieldAbsorber.getTexture2 :133-136
+        // BlockTextureMulti(BlockTextureDefault(colored, mRGBa), overlay) form); the
+        // bake/ItemColor consumers ride GTMachineTintModel/GTItemPaintTint
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
+                .end();
         getVariantBuilder(GT6MagicAbsorbers.MAGIC_ABSORBER_BLOCKS_BY_PATH.get("magic_absorber").get()).forAllStates(aState -> {
             Direction tFacing = aState.getValue(gregtech6.block.energy.GT6MagicAbsorberBlock.FACING);
             int tX = tFacing == Direction.DOWN ? 90 : tFacing == Direction.UP ? 270 : 0;
@@ -3038,10 +3065,15 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_top", modLoc(tBase + "/overlay/top"))
                 .texture("overlay_side", modLoc(tBase + "/overlay/side"))
                 .texture("overlay_front", modLoc(tBase + "/overlay_front/side"));
-        // element 0 — the body cube
+        // element 0 — the body cube (tintindex 0 = the material tint, task
+        // p38-c2-controller-tint: the grayscale turbine_mains colored groups multiply the
+        // row's NBT_MATERIAL — the upstream TileEntityBase10MultiBlockBase.getTexture2
+        // :193 BlockTextureMulti(BlockTextureDefault(colored, mRGBa), overlay) form; the
+        // bake/ItemColor consumers ride GTMachineTintModel/GTItemPaintTint, the
+        // machine-domain route)
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
-                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).cullface(aDir))
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
                 .end();
         // elements 1-6 — the overlay decals (the partModel 0.01-offset form; the front decal
         // rides the overlay_front group)

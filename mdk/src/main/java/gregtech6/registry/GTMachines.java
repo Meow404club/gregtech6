@@ -4687,8 +4687,21 @@ public final class GTMachines {
 	// the EU input IS negative-allowed, Base10:121).
 	// ---------------------------------------------------------------------------
 
-	/** One EU-bridge ladder row — the upstream-parity columns of one Loader aRegistry.add line (:817-821/:833-837/:849-853). */
-	public record BridgeRow(String path, int metaId, int tier, String voltageWord, TagData outType) {}
+	/** One EU-bridge ladder row — the upstream-parity columns of one Loader aRegistry.add line (:817-821/:833-837/:849-853); {@code material} the row's NBT_MATERIAL aMat (task p38-c2-controller-tint). */
+	public record BridgeRow(String path, int metaId, int tier, String voltageWord, TagData outType,
+			java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material) {}
+
+	/**
+	 * The Electric_T[1..5] rung material by ladder index (upstream MT.java:3691 members —
+	 * SteelGalvanized/Al/StainlessSteel/Cr/Ti; the bridge AND laser families' ladder face,
+	 * Loader :817-821/:833-837/:849-853/:930-934/:976-980 all carry the same aMat set).
+	 * Package-visible: {@code GT6Lasers} rides the same ladder (single source).
+	 */
+	public static gregapi.oredict.OreDictMaterial electricTierMat(int aRung) {
+		gregapi.oredict.OreDictMaterial[] tMats = {gregapi.data.MT.SteelGalvanized, gregapi.data.MT.Al,
+				gregapi.data.MT.StainlessSteel, gregapi.data.MT.Cr, gregapi.data.MT.Ti};
+		return tMats[aRung];
+	}
 
 	/** The shared NBT_INPUT ladder of all three families (EU in, the Loader rows verbatim). */
 	public static final long[] BRIDGE_INPUTS = {32, 128, 512, 2048, 8192};
@@ -4708,13 +4721,13 @@ public final class GTMachines {
 
 	static {
 		java.util.List<BridgeRow> tRows = new java.util.ArrayList<>();
-		for (int i = 0; i < 5; i++) tRows.add(new BridgeRow(bridgePath("electric_heater", i), 10001 + i, i, BRIDGE_VOLTAGE_WORDS.get(i), TD.Energy.HU));
+		for (int i = 0; i < 5; i++) { final int tRung = i; tRows.add(new BridgeRow(bridgePath("electric_heater", i), 10001 + i, i, BRIDGE_VOLTAGE_WORDS.get(i), TD.Energy.HU, () -> electricTierMat(tRung))); }
 		ELECTRIC_HEATER_ROWS = java.util.List.copyOf(tRows);
 		tRows = new java.util.ArrayList<>();
-		for (int i = 0; i < 5; i++) tRows.add(new BridgeRow(bridgePath("electric_engine", i), 10011 + i, i, BRIDGE_VOLTAGE_WORDS.get(i), TD.Energy.KU));
+		for (int i = 0; i < 5; i++) { final int tRung = i; tRows.add(new BridgeRow(bridgePath("electric_engine", i), 10011 + i, i, BRIDGE_VOLTAGE_WORDS.get(i), TD.Energy.KU, () -> electricTierMat(tRung))); }
 		ELECTRIC_ENGINE_ROWS = java.util.List.copyOf(tRows);
 		tRows = new java.util.ArrayList<>();
-		for (int i = 0; i < 5; i++) tRows.add(new BridgeRow(bridgePath("electric_motor", i), 10021 + i, i, BRIDGE_VOLTAGE_WORDS.get(i), TD.Energy.RU));
+		for (int i = 0; i < 5; i++) { final int tRung = i; tRows.add(new BridgeRow(bridgePath("electric_motor", i), 10021 + i, i, BRIDGE_VOLTAGE_WORDS.get(i), TD.Energy.RU, () -> electricTierMat(tRung))); }
 		ELECTRIC_MOTOR_ROWS = java.util.List.copyOf(tRows);
 	}
 
@@ -4754,7 +4767,7 @@ public final class GTMachines {
 		for (BridgeRow tRow : aRows) {
 			aBlocks.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GT6DynamoBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
-							.strength(4.0F, 4.0F).sound(SoundType.METAL), tRow.tier(), () -> aBe.get().get())));
+							.strength(4.0F, 4.0F).sound(SoundType.METAL), tRow.tier(), () -> aBe.get().get(), tRow.material())));
 			aItems.put(tRow.path(), ITEMS.register(tRow.path(),
 					() -> new BlockItem(aBlocks.get(tRow.path()).get(), new Item.Properties().stacksTo(16))));
 		}
@@ -4782,6 +4795,22 @@ public final class GTMachines {
 	private static Block[] bridgeBlockArray(java.util.List<BridgeRow> aRows, java.util.Map<String, RegistryObject<Block>> aBlocks) {
 		Block[] rBlocks = new Block[aRows.size()];
 		for (int i = 0; i < rBlocks.length; i++) rBlocks[i] = aBlocks.get(aRows.get(i).path()).get();
+		return rBlocks;
+	}
+
+	/**
+	 * The EU-bridge paint-tint walker (task p38-c2-controller-tint): the 15 ladder blocks
+	 * (Heater + Engine + Motor, :817-821/:833-837/:849-853) whose datagen models carry
+	 * tintindex 0 on the body cube (the {@code paintableBlockArray} census convention),
+	 * feeding BOTH consumption halves: the baked world tint ({@code GTMachineTintModel},
+	 * the p32 route) and the inventory {@code ItemColor}. Client-side call time only.
+	 */
+	public static Block[] bridgePaintableBlockArray() {
+		Block[] rBlocks = new Block[ELECTRIC_HEATER_ROWS.size() + ELECTRIC_ENGINE_ROWS.size() + ELECTRIC_MOTOR_ROWS.size()];
+		int i = 0;
+		for (BridgeRow tRow : ELECTRIC_HEATER_ROWS) rBlocks[i++] = ELECTRIC_HEATER_BLOCKS_BY_PATH.get(tRow.path()).get();
+		for (BridgeRow tRow : ELECTRIC_ENGINE_ROWS) rBlocks[i++] = ELECTRIC_ENGINE_BLOCKS_BY_PATH.get(tRow.path()).get();
+		for (BridgeRow tRow : ELECTRIC_MOTOR_ROWS) rBlocks[i++] = ELECTRIC_MOTOR_BLOCKS_BY_PATH.get(tRow.path()).get();
 		return rBlocks;
 	}
 

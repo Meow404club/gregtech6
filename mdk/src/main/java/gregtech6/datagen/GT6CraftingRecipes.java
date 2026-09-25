@@ -1897,10 +1897,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		return rRows;
 	}
 
-	/** The Electric_T[1..5] rung material by ladder index (upstream MT.java:3691 members, the dynamo family's ladder face). */
+	/** The Electric_T[1..5] rung material by ladder index (upstream MT.java:3691 members, the dynamo family's ladder face) — the single source lives in {@code GTMachines.electricTierMat} (task p38-c2-controller-tint: the bridge/laser tint rows ride the same ladder). */
 	private static gregapi.oredict.OreDictMaterial bridgeMat(int aTier) {
-		gregapi.oredict.OreDictMaterial[] tMats = {gregapi.data.MT.SteelGalvanized, gregapi.data.MT.Al, gregapi.data.MT.StainlessSteel, gregapi.data.MT.Cr, gregapi.data.MT.Ti};
-		return tMats[aTier];
+		return gregtech6.registry.GTMachines.electricTierMat(aTier);
 	}
 
 	private ShapedRecipeBuilder waterWheelBuilder() {

@@ -61,8 +61,9 @@ public final class GT6Lasers {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, "gt6");
 
-	/** One ladder row — the upstream-parity columns of one Loader aRegistry.add line. */
-	public record LaserRow(String path, int metaId, int tier, String voltageWord) {}
+	/** One ladder row — the upstream-parity columns of one Loader aRegistry.add line; {@code material} the row's NBT_MATERIAL aMat (task p38-c2-controller-tint, the Electric_T ladder via {@code GTMachines.electricTierMat}). */
+	public record LaserRow(String path, int metaId, int tier, String voltageWord,
+			java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material) {}
 
 	/** The shared NBT_INPUT / NBT_OUTPUT ladder of both families (Loader :930-934/:976-980 verbatim). */
 	public static final long[] LASER_INPUTS = {32, 128, 512, 2048, 8192};
@@ -88,18 +89,18 @@ public final class GT6Lasers {
 
 	static {
 		List<LaserRow> tRows = new ArrayList<>();
-		tRows.add(new LaserRow("co2_laser", 10101, 0, "LV"));
-		tRows.add(new LaserRow("co2_laser_t2", 10102, 1, "MV"));
-		tRows.add(new LaserRow("co2_laser_t3", 10103, 2, "HV"));
-		tRows.add(new LaserRow("co2_laser_t4", 10104, 3, "EV"));
-		tRows.add(new LaserRow("co2_laser_t5", 10105, 4, "IV"));
+		tRows.add(new LaserRow("co2_laser", 10101, 0, "LV", () -> GTMachines.electricTierMat(0)));
+		tRows.add(new LaserRow("co2_laser_t2", 10102, 1, "MV", () -> GTMachines.electricTierMat(1)));
+		tRows.add(new LaserRow("co2_laser_t3", 10103, 2, "HV", () -> GTMachines.electricTierMat(2)));
+		tRows.add(new LaserRow("co2_laser_t4", 10104, 3, "EV", () -> GTMachines.electricTierMat(3)));
+		tRows.add(new LaserRow("co2_laser_t5", 10105, 4, "IV", () -> GTMachines.electricTierMat(4)));
 		CO2_LASER_ROWS = List.copyOf(tRows);
 		tRows = new ArrayList<>();
-		tRows.add(new LaserRow("laser_absorber", 10151, 0, "LV"));
-		tRows.add(new LaserRow("laser_absorber_t2", 10152, 1, "MV"));
-		tRows.add(new LaserRow("laser_absorber_t3", 10153, 2, "HV"));
-		tRows.add(new LaserRow("laser_absorber_t4", 10154, 3, "EV"));
-		tRows.add(new LaserRow("laser_absorber_t5", 10155, 4, "IV"));
+		tRows.add(new LaserRow("laser_absorber", 10151, 0, "LV", () -> GTMachines.electricTierMat(0)));
+		tRows.add(new LaserRow("laser_absorber_t2", 10152, 1, "MV", () -> GTMachines.electricTierMat(1)));
+		tRows.add(new LaserRow("laser_absorber_t3", 10153, 2, "HV", () -> GTMachines.electricTierMat(2)));
+		tRows.add(new LaserRow("laser_absorber_t4", 10154, 3, "EV", () -> GTMachines.electricTierMat(3)));
+		tRows.add(new LaserRow("laser_absorber_t5", 10155, 4, "IV", () -> GTMachines.electricTierMat(4)));
 		LASER_ABSORBER_ROWS = List.copyOf(tRows);
 	}
 
@@ -119,7 +120,7 @@ public final class GT6Lasers {
 		for (LaserRow tRow : aRows) {
 			aBlocks.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GT6DynamoBlock(BlockBehaviour.Properties.of()
-							.strength(4.0F, 4.0F).sound(SoundType.METAL), tRow.tier(), () -> aBe.get().get())));
+							.strength(4.0F, 4.0F).sound(SoundType.METAL), tRow.tier(), () -> aBe.get().get(), tRow.material())));
 			aItems.put(tRow.path(), ITEMS.register(tRow.path(),
 					() -> new BlockItem(aBlocks.get(tRow.path()).get(), new Item.Properties().stacksTo(16))));
 		}
@@ -143,6 +144,23 @@ public final class GT6Lasers {
 	private static Block[] laserBlockArray(List<LaserRow> aRows, Map<String, RegistryObject<Block>> aBlocks) {
 		Block[] rBlocks = new Block[aRows.size()];
 		for (int i = 0; i < rBlocks.length; i++) rBlocks[i] = aBlocks.get(aRows.get(i).path()).get();
+		return rBlocks;
+	}
+
+	/**
+	 * The laser-domain paint-tint walker (task p38-c2-controller-tint): the 10 ladder
+	 * blocks (CO2 Laser :930-934 + Laser Absorber :976-980) whose datagen models carry
+	 * tintindex 0 on the body cube (the {@code paintableBlockArray} census convention),
+	 * feeding BOTH consumption halves: the baked world tint ({@code GTMachineTintModel},
+	 * the p32 route) and the inventory {@code ItemColor}. Client-side call time only.
+	 * NOT in the walk: the quantum energizer (the derived pre-tinted amber art — the
+	 * card exemption).
+	 */
+	public static Block[] paintableBlockArray() {
+		Block[] rBlocks = new Block[CO2_LASER_ROWS.size() + LASER_ABSORBER_ROWS.size()];
+		int i = 0;
+		for (LaserRow tRow : CO2_LASER_ROWS) rBlocks[i++] = CO2_LASER_BLOCKS_BY_PATH.get(tRow.path()).get();
+		for (LaserRow tRow : LASER_ABSORBER_ROWS) rBlocks[i++] = LASER_ABSORBER_BLOCKS_BY_PATH.get(tRow.path()).get();
 		return rBlocks;
 	}
 

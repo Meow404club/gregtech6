@@ -29,11 +29,47 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
  */
 public abstract class GTMultiBlockControllerBlock extends GTEntityBlock {
 
+	/**
+	 * The block's upstream {@code NBT_MATERIAL} column (task p38-c2-controller-tint — the
+	 * tint colour source, the {@link GTMultiBlockPartBlock} lazy-Supplier form): the mains
+	 * families hand their row material up through the new ctor. Null = the material-less
+	 * controllers (coke oven, boiler mains, ...) — the white no-tint identity.
+	 */
+	@Nullable
+	private final java.util.function.Supplier<gregapi.oredict.OreDictMaterial> mMaterial;
+
 	protected GTMultiBlockControllerBlock(Properties aProperties) {
+		this(aProperties, null);
+	}
+
+	/** The material-carrier form (task p38-c2-controller-tint): the row feeds the tint colour source. */
+	protected GTMultiBlockControllerBlock(Properties aProperties,
+			@Nullable java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
 		super(aProperties);
+		mMaterial = aMaterial;
 		registerDefaultState(this.stateDefinition.any()
 				.setValue(TileEntityBase10MultiBlockBase.FACING, Direction.NORTH)
 				.setValue(TileEntityBase10MultiBlockBase.FORMED, false));
+	}
+
+	/**
+	 * The block's upstream {@code NBT_MATERIAL}, resolved lazily through the Supplier
+	 * (MT.init runs after class-load — the GTBarrels MetalDrumRow form); null = the
+	 * material-less controllers (the white identity, upstream UNCOLORED CS.java:327).
+	 */
+	@Nullable
+	public gregapi.oredict.OreDictMaterial material() {
+		return mMaterial == null ? null : mMaterial.get();
+	}
+
+	/**
+	 * The controller-domain material dispatch (task p38-c2-controller-tint, the
+	 * {@code GTMultiBlockPartBlock.materialOf} mirror shape): only the carrier blocks
+	 * resolve a material — every other block is null here.
+	 */
+	@Nullable
+	public static gregapi.oredict.OreDictMaterial materialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
+		return aBlock instanceof GTMultiBlockControllerBlock tController ? tController.material() : null;
 	}
 
 	@Override

@@ -1,5 +1,51 @@
 {
   "parent": "minecraft:block/orientable",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#side",
+          "tintindex": 0
+        },
+        "east": {
+          "cullface": "east",
+          "texture": "#side",
+          "tintindex": 0
+        },
+        "north": {
+          "cullface": "north",
+          "texture": "#front",
+          "tintindex": 0
+        },
+        "south": {
+          "cullface": "south",
+          "texture": "#side",
+          "tintindex": 0
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#side",
+          "tintindex": 0
+        },
+        "west": {
+          "cullface": "west",
+          "texture": "#side",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ]
+    }
+  ],
   "textures": {
     "front": "gt6:block/bridge_engine_front",
     "side": "gt6:block/bridge_engine_side",

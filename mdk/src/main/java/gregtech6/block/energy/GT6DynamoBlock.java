@@ -57,12 +57,50 @@ public class GT6DynamoBlock extends GTEntityBlock {
 	/** The family BET (the GT6FluxDynamos/GT6ElectricDynamos registry object supplier). */
 	private final Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> mTickerType;
 
+	/**
+	 * The block's upstream {@code NBT_MATERIAL} column (task p38-c2-controller-tint — the
+	 * tint colour source, the lazy-Supplier GTBarrels form): the EU-bridge and laser
+	 * families hand their Electric_T rung material in. Null = the material-less
+	 * registrations (the Flux/Electric dynamos, the quantum energizer) — the white
+	 * no-tint identity.
+	 */
+	@Nullable
+	private final Supplier<gregapi.oredict.OreDictMaterial> mMaterial;
+
 	public GT6DynamoBlock(Properties aProperties, int aTier,
 			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType) {
+		this(aProperties, aTier, aTickerType, null);
+	}
+
+	/** The material-carrier form (task p38-c2-controller-tint): the row feeds the tint colour source. */
+	public GT6DynamoBlock(Properties aProperties, int aTier,
+			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType,
+			@Nullable Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
 		super(aProperties);
 		mTier = aTier;
 		mTickerType = aTickerType;
+		mMaterial = aMaterial;
 		registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+	}
+
+	/**
+	 * The block's upstream {@code NBT_MATERIAL}, resolved lazily through the Supplier;
+	 * null = the material-less registrations (the white identity, upstream UNCOLORED
+	 * CS.java:327).
+	 */
+	@Nullable
+	public gregapi.oredict.OreDictMaterial material() {
+		return mMaterial == null ? null : mMaterial.get();
+	}
+
+	/**
+	 * The dynamo-carrier material dispatch (task p38-c2-controller-tint, the
+	 * {@code GTMultiBlockPartBlock.materialOf} mirror shape): only the carrier blocks
+	 * resolve a material — every other block is null here.
+	 */
+	@Nullable
+	public static gregapi.oredict.OreDictMaterial materialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
+		return aBlock instanceof GT6DynamoBlock tDynamo ? tDynamo.material() : null;
 	}
 
 	/**

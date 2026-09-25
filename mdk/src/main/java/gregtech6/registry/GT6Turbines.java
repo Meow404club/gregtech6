@@ -83,27 +83,27 @@ public final class GT6Turbines {
 	/** The part-block path this family resolves defensively (the row 1 Dense SS Wall, unreachable in production). */
 	public static final String DEFAULT_WALL_PATH = "dense_wall_stainless_steel";
 
-	/** One steam-turbine registration row — the block-carrier projection of one :1254-1257 line ({@code input} is the raw NBT_INPUT × STEAM_PER_EU, {@code wallPath} the NBT_DESIGN Dense Wall, hardness == resistance). */
+	/** One steam-turbine registration row — the block-carrier projection of one :1254-1257 line ({@code input} is the raw NBT_INPUT × STEAM_PER_EU, {@code wallPath} the NBT_DESIGN Dense Wall, hardness == resistance; {@code material} the row's NBT_MATERIAL aMat — task p38-c2-controller-tint). */
 	public record SteamTurbineRow(String path, String display, int metaId, long input, long output,
-			float hardness, String wallPath) {}
+			float hardness, String wallPath, java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material) {}
 
-	/** One gas-turbine registration row — the :1264-1267 projection (LIMIT_CONSUMPTION T / WASTE F / FM.Gas are the family constants, not row columns). */
+	/** One gas-turbine registration row — the :1264-1267 projection (LIMIT_CONSUMPTION T / WASTE F / FM.Gas are the family constants, not row columns; {@code material} the row's NBT_MATERIAL aMat). */
 	public record GasTurbineRow(String path, String display, int metaId, long input, long output,
-			float hardness, String wallPath) {}
+			float hardness, String wallPath, java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material) {}
 
-	/** The four steam rows (:1254-1257, the upstream line order — raw NBT_INPUT 6144..196608 ×STEAM_PER_EU). */
+	/** The four steam rows (:1254-1257, the upstream line order — raw NBT_INPUT 6144..196608 ×STEAM_PER_EU; the aMat column verbatim StainlessSteel/Ti/TungstenSteel/Ad). */
 	public static final List<SteamTurbineRow> STEAM_ROWS = List.of(
-			new SteamTurbineRow("steam_turbine_magnalium"   , "Magnalium Steam Turbine Main Housing"   , 17211,   6144 * STEAM_PER_EU,   4096,   6.0F, "dense_wall_stainless_steel"),
-			new SteamTurbineRow("steam_turbine_trinitanium" , "Trinitanium Steam Turbine Main Housing" , 17212,  12288 * STEAM_PER_EU,   8192,   9.0F, "dense_wall_titanium"),
-			new SteamTurbineRow("steam_turbine_graphene"    , "Graphene Steam Turbine Main Housing"    , 17213,  24576 * STEAM_PER_EU,  16384,  12.5F, "dense_wall_tungstensteel"),
-			new SteamTurbineRow("steam_turbine_vibramantium", "Vibramantium Steam Turbine Main Housing", 17214, 196608 * STEAM_PER_EU, 131072, 100.0F, "dense_wall_adamantium"));
+			new SteamTurbineRow("steam_turbine_magnalium"   , "Magnalium Steam Turbine Main Housing"   , 17211,   6144 * STEAM_PER_EU,   4096,   6.0F, "dense_wall_stainless_steel", () -> gregapi.data.MT.StainlessSteel),
+			new SteamTurbineRow("steam_turbine_trinitanium" , "Trinitanium Steam Turbine Main Housing" , 17212,  12288 * STEAM_PER_EU,   8192,   9.0F, "dense_wall_titanium"       , () -> gregapi.data.MT.Ti),
+			new SteamTurbineRow("steam_turbine_graphene"    , "Graphene Steam Turbine Main Housing"    , 17213,  24576 * STEAM_PER_EU,  16384,  12.5F, "dense_wall_tungstensteel"  , () -> gregapi.data.MT.TungstenSteel),
+			new SteamTurbineRow("steam_turbine_vibramantium", "Vibramantium Steam Turbine Main Housing", 17214, 196608 * STEAM_PER_EU, 131072, 100.0F, "dense_wall_adamantium"     , () -> gregapi.data.MT.Ad));
 
-	/** The four gas rows (:1264-1267, raw NBT_INPUT 6144..196608 HU). */
+	/** The four gas rows (:1264-1267, raw NBT_INPUT 6144..196608 HU; the aMat column verbatim — the display words are NOT the housing materials). */
 	public static final List<GasTurbineRow> GAS_ROWS = List.of(
-			new GasTurbineRow("gas_turbine_magnalium"   , "Magnalium Gas Turbine Main Housing"   , 17231,   6144,   4096,   6.0F, "dense_wall_stainless_steel"),
-			new GasTurbineRow("gas_turbine_trinitanium" , "Trinitanium Gas Turbine Main Housing" , 17232,  12288,   8192,   9.0F, "dense_wall_titanium"),
-			new GasTurbineRow("gas_turbine_graphene"    , "Graphene Gas Turbine Main Housing"    , 17233,  24576,  16384,  12.5F, "dense_wall_tungstensteel"),
-			new GasTurbineRow("gas_turbine_vibramantium", "Vibramantium Gas Turbine Main Housing", 17234, 196608, 131072, 100.0F, "dense_wall_adamantium"));
+			new GasTurbineRow("gas_turbine_magnalium"   , "Magnalium Gas Turbine Main Housing"   , 17231,   6144,   4096,   6.0F, "dense_wall_stainless_steel", () -> gregapi.data.MT.StainlessSteel),
+			new GasTurbineRow("gas_turbine_trinitanium" , "Trinitanium Gas Turbine Main Housing" , 17232,  12288,   8192,   9.0F, "dense_wall_titanium"       , () -> gregapi.data.MT.Ti),
+			new GasTurbineRow("gas_turbine_graphene"    , "Graphene Gas Turbine Main Housing"    , 17233,  24576,  16384,  12.5F, "dense_wall_tungstensteel"  , () -> gregapi.data.MT.TungstenSteel),
+			new GasTurbineRow("gas_turbine_vibramantium", "Vibramantium Gas Turbine Main Housing", 17234, 196608, 131072, 100.0F, "dense_wall_adamantium"     , () -> gregapi.data.MT.Ad));
 
 	/** The registered turbine blocks by path (the BET valid lists + the datagen/loot walkers + the chains). */
 	public static final Map<String, RegistryObject<Block>> BLOCKS_BY_PATH = new LinkedHashMap<>();
@@ -113,10 +113,10 @@ public final class GT6Turbines {
 
 	static {
 		for (SteamTurbineRow tRow : STEAM_ROWS) {
-			registerController(tRow.path(), () -> new SteamTurbineBlock(tRow, props(tRow.hardness())));
+			registerController(tRow.path(), () -> new SteamTurbineBlock(tRow, props(tRow.hardness()), tRow.material()));
 		}
 		for (GasTurbineRow tRow : GAS_ROWS) {
-			registerController(tRow.path(), () -> new GasTurbineBlock(tRow, props(tRow.hardness())));
+			registerController(tRow.path(), () -> new GasTurbineBlock(tRow, props(tRow.hardness()), tRow.material()));
 		}
 	}
 
@@ -139,6 +139,21 @@ public final class GT6Turbines {
 	/** The gas-variant block array. */
 	private static Block[] gasBlockArray() {
 		return GAS_ROWS.stream().map(r -> BLOCKS_BY_PATH.get(r.path()).get()).toArray(Block[]::new);
+	}
+
+	/**
+	 * The turbine-main paint-tint walker (task p38-c2-controller-tint): the 8 controller
+	 * blocks whose datagen models carry tintindex 0 on the body cube (the
+	 * {@code GTMachines.paintableBlockArray} census convention), feeding BOTH consumption
+	 * halves: the baked world tint ({@code GTMachineTintModel}, the p32 route) and the
+	 * inventory {@code ItemColor}. Client-side call time only.
+	 */
+	public static Block[] paintableBlockArray() {
+		Block[] rBlocks = new Block[STEAM_ROWS.size() + GAS_ROWS.size()];
+		int i = 0;
+		for (SteamTurbineRow tRow : STEAM_ROWS) rBlocks[i++] = BLOCKS_BY_PATH.get(tRow.path()).get();
+		for (GasTurbineRow tRow : GAS_ROWS) rBlocks[i++] = BLOCKS_BY_PATH.get(tRow.path()).get();
+		return rBlocks;
 	}
 
 	/** The Steam Turbine BET: one controller class over the four variant blocks (the Large Boiler one-BET-many-blocks form). */
@@ -167,8 +182,9 @@ public final class GT6Turbines {
 
 		private final SteamTurbineRow mRow;
 
-		public SteamTurbineBlock(SteamTurbineRow aRow, Properties aProperties) {
-			super(aProperties);
+		public SteamTurbineBlock(SteamTurbineRow aRow, Properties aProperties,
+				java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
+			super(aProperties, aMaterial);
 			mRow = aRow;
 		}
 		//? if neoforge {
@@ -177,7 +193,7 @@ public final class GT6Turbines {
 		// form (the BoilerTankBlock precedent; world save/load never runs through it).
 		@Override
 		protected com.mojang.serialization.MapCodec<? extends SteamTurbineBlock> codec() {
-			return simpleCodec(aProperties -> new SteamTurbineBlock(STEAM_ROWS.get(0), aProperties));
+			return simpleCodec(aProperties -> new SteamTurbineBlock(STEAM_ROWS.get(0), aProperties, STEAM_ROWS.get(0).material()));
 		}
 		*///?}
 
@@ -203,15 +219,16 @@ public final class GT6Turbines {
 
 		private final GasTurbineRow mRow;
 
-		public GasTurbineBlock(GasTurbineRow aRow, Properties aProperties) {
-			super(aProperties);
+		public GasTurbineBlock(GasTurbineRow aRow, Properties aProperties,
+				java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
+			super(aProperties, aMaterial);
 			mRow = aRow;
 		}
 		//? if neoforge {
 		/*
 		@Override
 		protected com.mojang.serialization.MapCodec<? extends GasTurbineBlock> codec() {
-			return simpleCodec(aProperties -> new GasTurbineBlock(GAS_ROWS.get(0), aProperties));
+			return simpleCodec(aProperties -> new GasTurbineBlock(GAS_ROWS.get(0), aProperties, GAS_ROWS.get(0).material()));
 		}
 		*///?}
 
