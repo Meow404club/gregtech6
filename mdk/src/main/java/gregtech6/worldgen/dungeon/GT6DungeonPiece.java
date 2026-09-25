@@ -80,17 +80,16 @@ import gregtech6.tileentity.inventories.GT6StaticStorageBaseBlockEntity;
  *     mod-专属 never pool, unported by ruling).</li>
  * <li>{@link Kind#CORRIDOR3} — {@code DungeonChunkCorridor3} (:34, the
  *     dungeon-rooms-batch card): the 3-way corridor plus ONE alcove on its free side —
- *     the loot nook (roll 0), the breakable cobble wall with the safe (rolls 1-2; the
- *     upstream case-1 key gate folds — keys defer with the dungeon-keys card), or the
- *     plain crossing (roll 3). The coin piles and drink cups omit (no shell face); the
- *     safe rides the ported MECHANICAL safe with the loot marker.</li>
+ *     the loot nook (roll 0), the breakable cobble wall with the KEY-LOCKED safe (roll 2
+ *     always; roll 1 only when key #3 exists — the upstream :58/:99 gate), or the plain
+ *     crossing (roll 3). The coin piles and drink cups omit (no shell face).</li>
  * <li>{@link Kind#CORRIDOR4} — {@code DungeonChunkCorridor4} (:30): the 4-way crossing
  *     hall, 12×12×7 over the {4,7,8,11} deco lattice with the four arm stubs.</li>
  * <li>{@link Kind#BARRACKS} — {@code DungeonChunkBarracks} (:38): the four corner
  *     quarters over the slab partition walls (carpets, iron doors, beds, crafting
- *     tables) + the shelf/safe loot pairs. The upstream key-locked safes 3010 ride the
- *     ported MECHANICAL safe with the loot marker (keys defer, the hint cobble walls
- *     with them); the shelf-front loot marker stays unset (the ported bookshelf BE ships
+ *     tables) + the shelf/safe loot pairs with the key face (the key-locked safes, the
+ *     quarter-key shelf hides, the hint cobble walls). The shelf-front loot marker stays
+ *     unset (the ported bookshelf BE ships
  *     the seam but the storage card shipped no trigger); the drink cups, hexorium
  *     monoliths, Sky Stone rock pile and coin piles omit; the metal bookshelves 7110
  *     fold to the wooden row family.</li>
@@ -171,15 +170,23 @@ public class GT6DungeonPiece extends StructurePiece {
      */
     private final long[] mKeyIds;
     /**
-     * The key index this piece hides (upstream DungeonChunkRoomWorkshop.java:119-123:
-     * {@code next(keys * 2) < keys → hide key[tKeyIndex]}); -1 = this piece hides none.
-     * MIGRATION NOTE (task dungeon-keys, the declared deviation): upstream hides keys in
-     * the Workshop/Library/Barracks rooms (:119-123/:124-127/:113-116) — all batch-card
-     * domain; until those land, the storage dead-end chests are the only containers, so
-     * the hiding rides here. The rooms-batch card moves the hide draw to the real rooms
-     * (drop this field's consumer, keep mKeyIds).
+     * The key index this piece carries from the dungeon's Workshop draw (upstream
+     * DungeonChunkRoomWorkshop.java:119-123, {@code next(keys * 2) < keys → hide
+     * key[tKeyIndex]}): the WORKSHOP hides key[draw] in its manual cabinet; the
+     * CORRIDOR3 reads it for the :58/:99 breakable-wall gate (key #3 exists → the safe
+     * locks to key #3, else the side's quarter key); -1 on every other kind. The
+     * dungeon-keys STORAGE proxy consumer is GONE — the keys hide in the real rooms
+     * (the upstream positions; the Library rows stay the library card's seam).
      */
     private final int mKeyIndex;
+    /**
+     * The BARRACKS quarter shelf slots (upstream :115/:126/:137/:148, the {@code
+     * next(28)} draws): slot[q] for quarter q ∈ {0,1,3,4} = hide key[quarter] at that
+     * shelf slot; -1 = the Workshop already hid that key (the shared mGeneratedKeys
+     * guard). Slot >= 14 = the shelf back face → the hint cobble wall (:118 etc.).
+     * Null on every other kind.
+     */
+    private final int[] mKeySlots;
     /**
      * The FARM_MOBS diagonal build-over mask (bit0 NW, 1 NE, 2 SW, 3 SE — layout i = the
      * x axis, j = the z axis): the bit is set when the diagonal cell AND both adjacent
@@ -190,23 +197,15 @@ public class GT6DungeonPiece extends StructurePiece {
 
     /** The worldgen ctor (non-key kinds). */
     public GT6DungeonPiece(Kind aKind, BoundingBox aBox, byte aDoors, String aPrimary, String aSecondary, int aColor, int aShaftTop) {
-        this(aKind, aBox, aDoors, aPrimary, aSecondary, aColor, aShaftTop, (byte) 0);
+        this(aKind, aBox, aDoors, aPrimary, aSecondary, aColor, aShaftTop, null, -1, null, (byte) 0);
     }
 
-    /** The worldgen ctor with the dungeon key roll (the STORAGE dead-ends). */
-    public GT6DungeonPiece(Kind aKind, BoundingBox aBox, byte aDoors, String aPrimary, String aSecondary, int aColor, int aShaftTop, long[] aKeyIds, int aKeyIndex) {
-        this(aKind, aBox, aDoors, aPrimary, aSecondary, aColor, aShaftTop, aKeyIds, aKeyIndex, (byte) 0);
-    }
-
-    /** The worldgen ctor with the FARM_MOBS diagonal spill mask. */
+    /**
+     * The full worldgen ctor: the key roll (keyIds + the Workshop draw — WORKSHOP hides
+     * it, CORRIDOR3 reads it) + the barracks quarter slots + the FARM_MOBS spill mask.
+     */
     public GT6DungeonPiece(Kind aKind, BoundingBox aBox, byte aDoors, String aPrimary, String aSecondary,
-            int aColor, int aShaftTop, byte aFree) {
-        this(aKind, aBox, aDoors, aPrimary, aSecondary, aColor, aShaftTop, null, -1, aFree);
-    }
-
-    /** The full worldgen ctor (the key roll + the spill mask). */
-    public GT6DungeonPiece(Kind aKind, BoundingBox aBox, byte aDoors, String aPrimary, String aSecondary,
-            int aColor, int aShaftTop, long[] aKeyIds, int aKeyIndex, byte aFree) {
+            int aColor, int aShaftTop, long[] aKeyIds, int aKeyIndex, int[] aKeySlots, byte aFree) {
         super(GT6Structures.DUNGEON_PIECE_TYPE.get(), 0, aBox);
         mKind = aKind;
         mDoors = aDoors;
@@ -216,6 +215,7 @@ public class GT6DungeonPiece extends StructurePiece {
         mShaftTop = aShaftTop;
         mKeyIds = aKeyIds;
         mKeyIndex = aKeyIndex;
+        mKeySlots = aKeySlots;
         mFree = aFree;
     }
 
@@ -230,6 +230,7 @@ public class GT6DungeonPiece extends StructurePiece {
         mShaftTop = aTag.getInt("gtShaftTop");
         mKeyIds = aTag.contains("gtKeys") ? aTag.getLongArray("gtKeys") : null;
         mKeyIndex = aTag.contains("gtKeys") ? aTag.getInt("gtKeyIndex") : -1;
+        mKeySlots = aTag.contains("gtKeySlots") ? aTag.getIntArray("gtKeySlots") : null;
         mFree = aTag.getByte("gtFree");
     }
 
@@ -264,6 +265,9 @@ public class GT6DungeonPiece extends StructurePiece {
         if (mKeyIds != null) {
             aTag.putLongArray("gtKeys", mKeyIds);
             aTag.putInt("gtKeyIndex", mKeyIndex);
+        }
+        if (mKeySlots != null) {
+            aTag.putIntArray("gtKeySlots", mKeySlots);
         }
         aTag.putByte("gtFree", mFree);
     }
@@ -1056,14 +1060,15 @@ public class GT6DungeonPiece extends StructurePiece {
 
     /**
      * The 3-way corridor's one alcove (upstream {@code DungeonChunkCorridor3} :34-205):
-     * the FIRST free side (E,W,S,N order) draws the nook (roll 0), the breakable wall
-     * with the safe (rolls 1-2 — the upstream case-1 key gate folds: the keys defer with
-     * the dungeon-keys card, so case 1 always falls through to case 2), or the default
-     * crossing (roll 3).
+     * the FIRST free side (E,W,S,N order — the upstream x+1/x-1/z+1/z-1 gate order)
+     * draws the nook (roll 0), the breakable wall with the safe (roll 2 always; roll 1
+     * ONLY when key #3 exists — the upstream :58/:99/:140/:181 fall-through gate), or
+     * the default crossing (roll 3).
      *
      * <p>Declared MTE folds: the coin piles and the drink cup are omitted (no shell
-     * face), the safe is the ported MECHANICAL safe with the loot marker (the upstream
-     * key-locked 3010 needs the key mechanism).
+     * face); the safe is the ported KEY-LOCKED safe (the upstream 3010) with the lock
+     * id from the dungeon's key state (:69/:109/:151/:191) — openable either way, since
+     * the fallback quarter key is always hidden by the Barracks.
      */
     private void buildCorridor3Alcove(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom) {
         Direction tSide = null;
@@ -1075,8 +1080,9 @@ public class GT6DungeonPiece extends StructurePiece {
         }
         if (tSide == null) return;
         int tRoll = aRandom.nextInt(4);
+        boolean tKey2 = mKeyIndex == 2 && mKeyIds != null; // the Workshop hid key #3
         if (tRoll == 0) buildLootNook(aLevel, aClip, aRandom, tSide);
-        else if (tRoll <= 2) buildBreakableWall(aLevel, aClip, aRandom, tSide);
+        else if (tRoll <= 2 && (tRoll == 2 || tKey2)) buildBreakableWall(aLevel, aClip, aRandom, tSide, tKey2);
     }
 
     /** The upstream case 0 — the crafting station + loot chest sealed behind a wall (EAST shape :43-55). */
@@ -1100,8 +1106,12 @@ public class GT6DungeonPiece extends StructurePiece {
                 aSide.getOpposite(), "chests/stronghold_corridor");
     }
 
-    /** The upstream case 2 — the cobble shell with the safe pocket (EAST shape :61-73). */
-    private void buildBreakableWall(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom, Direction aSide) {
+    /**
+     * The upstream case 2 — the cobble shell with the safe pocket (EAST shape :61-73).
+     * The safe is KEY-LOCKED (upstream 3010, :69/:109/:151/:191): key #3 when the
+     * Workshop hid it, else the side's quarter key (EAST→0, WEST→1, SOUTH→3, NORTH→4).
+     */
+    private void buildBreakableWall(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom, Direction aSide, boolean aKey2) {
         boolean tPositive = aSide == Direction.EAST || aSide == Direction.SOUTH;
         int tOutermost = tPositive ? 13 : 2, tMid = tPositive ? 12 : 3, tInner = tPositive ? 11 : 4;
         int tPartial = tPositive ? 10 : 5, tPocket = tPositive ? 11 : 4, tNest = tPositive ? 12 : 3;
@@ -1122,10 +1132,22 @@ public class GT6DungeonPiece extends StructurePiece {
             sideSet(aLevel, aClip, aSide, tNest, tY, tV, Blocks.CAVE_AIR.defaultBlockState());
         }
         int tVSafe = tPositive ? 8 : 7;
-        Block tSafe = GT6StaticStorages.blockByPath("safe_mechanical_steel");
+        int tKeyIndex = GT6DungeonStructure.corridor3LockKeyIndex(mKeyIndex,
+                switch (aSide) {
+                    case EAST -> 0;
+                    case WEST -> 1;
+                    case SOUTH -> 3;
+                    default -> 4;
+                });
+        Block tSafe = GT6StaticStorages.blockByPath("safe_keylocked_steel");
         if (tSafe != null) {
             placeStorage(aLevel, aClip, sideLX(aSide, tNest, tVSafe), 1, sideLZ(aSide, tNest, tVSafe),
-                    tSafe, aSide.getOpposite(), tBE -> seedSafe(tBE, "minecraft:chests/stronghold_corridor"));
+                    tSafe, aSide.getOpposite(), tBE -> {
+                        if (tBE instanceof gregtech6.tileentity.inventories.GT6SafeKeyLockedBlockEntity tLock && mKeyIds != null) {
+                            tLock.mID = mKeyIds[tKeyIndex];
+                        }
+                        seedSafe(tBE, "minecraft:chests/stronghold_corridor");
+                    });
         }
     }
 
@@ -1134,14 +1156,14 @@ public class GT6DungeonPiece extends StructurePiece {
     /**
      * The barracks interior (upstream {@code DungeonChunkBarracks} :43-159): corner
      * carpets, the slab partition walls with the four iron-door quarters, beds/crafting
-     * tables, and the shelf+safe loot pairs.
+     * tables, and the shelf+safe loot pairs with the KEY face (the key-locked safes +
+     * the quarter-key shelf hides + the hint cobble walls, :108-154).
      *
-     * <p>Declared folds: the upstream key-locked safes 3010 → the ported MECHANICAL safe
-     * with the loot marker (the keys defer with the dungeon-keys card, the hint cobble
-     * walls with them); the shelf-front loot marker stays unset (the ported bookshelf BE
+     * <p>Declared folds: the shelf-front loot marker stays unset (the ported bookshelf BE
      * has the seam but the storage card shipped no trigger); the drink cups, the hexorium
      * monoliths and the Sky Stone rock pile are omitted (no shell face); the metal
-     * bookshelves 7110 fold to the wooden row family.
+     * bookshelves 7110 fold to the wooden row family; the key ITEM rolls per placement
+     * (the lock reads the NBT id, the cosmetic item face only).
      */
     private void buildBarracks(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom) {
         // the corner carpets (:43-45), the dye-inversed color (the 15-meta inverse).
@@ -1198,19 +1220,49 @@ public class GT6DungeonPiece extends StructurePiece {
             set(aLevel, aClip, tX, 1, 11, Blocks.CRAFTING_TABLE.defaultBlockState());
         }
 
-        // the shelf + safe loot pairs (:120-154), the safe loot a uniform draw (:108).
-        String tLoot = BARRACKS_SAFE_LOOTS[aRandom.nextInt(BARRACKS_SAFE_LOOTS.length)];
+        // the shelf + safe loot pairs (:108-154): each quarter's safe is KEY-LOCKED to
+        // the quarter's key id (:120/:131/:142/:153, the unconditional NBT_KEY) with its
+        // OWN loot draw (the per-call UT.Code.select); the shelf hides the quarter key
+        // UNLESS the Workshop already hid it (mKeySlots[q] == -1, the shared
+        // mGeneratedKeys guard); slot >= 14 = the shelf back face → the hint cobble wall
+        // behind the shelf (:118/:129/:140/:151).
         Block tShelf = GT6StaticStorages.blockByPath("bookshelf_oak");
-        Block tSafe = GT6StaticStorages.blockByPath("safe_mechanical_steel");
-        for (int[] tPair : new int[][] {{4, 1, 0}, {4, 14, 1}, {11, 1, 0}, {11, 14, 1}}) {
-            Direction tFacing = tPair[2] == 0 ? Direction.SOUTH : Direction.NORTH;
-            int tShelfX = tPair[0] == 4 ? 3 : 12;
+        Block tSafe = GT6StaticStorages.blockByPath("safe_keylocked_steel");
+        int[][] tQuarters = {{4, 1, 0}, {4, 14, 1}, {11, 1, 0}, {11, 14, 1}};
+        for (int tQ = 0; tQ < tQuarters.length; tQ++) {
+            int tSafeX = tQuarters[tQ][0], tZ = tQuarters[tQ][1];
+            Direction tFacing = tQuarters[tQ][2] == 0 ? Direction.SOUTH : Direction.NORTH;
+            int tShelfX = tSafeX == 4 ? 3 : 12;
+            int tQuarterKey = GT6DungeonStructure.BARRACKS_QUARTER_KEYS[tQ];
+            int tKeySlot = mKeySlots != null ? mKeySlots[tQ] : -1;
             if (tSafe != null) {
-                placeStorage(aLevel, aClip, tPair[0], 1, tPair[1], tSafe, tFacing, tBE -> seedSafe(tBE, tLoot));
+                String tLoot = BARRACKS_SAFE_LOOTS[aRandom.nextInt(BARRACKS_SAFE_LOOTS.length)];
+                placeStorage(aLevel, aClip, tSafeX, 1, tZ, tSafe, tFacing, tBE -> {
+                    if (tBE instanceof gregtech6.tileentity.inventories.GT6SafeKeyLockedBlockEntity tLock && mKeyIds != null) {
+                        tLock.mID = mKeyIds[tQuarterKey];
+                    }
+                    seedSafe(tBE, tLoot);
+                });
             }
             if (tShelf != null) {
-                placeStorage(aLevel, aClip, tShelfX, 1, tPair[1], tShelf, tFacing, tBE -> {
+                placeStorage(aLevel, aClip, tShelfX, 1, tZ, tShelf, tFacing, tBE -> {
+                    if (tBE instanceof GT6StaticStorageBaseBlockEntity tStorage && tKeySlot >= 0 && mKeyIds != null) {
+                        // the quarter key stack (upstream :116 — the mKeyStacks[i] member
+                        // with its :173 item draw; the item rolls here per placement, the
+                        // lock reads the NBT id, not the item face)
+                        tStorage.getInventory().setStackInSlot(tKeySlot, gregtech6.items.GT6Keys.dungeonStack(
+                                gregtech6.items.GT6Keys.KEYS.get(aRandom.nextInt(gregtech6.items.GT6Keys.KEYS.size())).get(),
+                                tQuarterKey, mKeyIds[tQuarterKey]));
+                    }
                 });
+                if (tKeySlot >= gregtech6.tileentity.inventories.GT6BookShelfBlockEntity.INVENTORY_SIZE / 2) {
+                    // the "something behind the Shelf" hint (upstream :118 etc.) — the
+                    // back face slot → the cobble column behind the shelf.
+                    int tHintZ = tZ == 1 ? 0 : 15;
+                    for (int tY = 1; tY <= 3; tY++) {
+                        set(aLevel, aClip, tShelfX, tY, tHintZ, face(StoneVariant.COBBL, tY, true));
+                    }
+                }
             }
         }
     }
@@ -1268,8 +1320,9 @@ public class GT6DungeonPiece extends StructurePiece {
      * SHELLS (smooth stone) for the gas cylinder 32055, the mortar 32735, the measuring
      * pot 32738, the mass storages 6011, the crucible 1102+t, the tool rack 32034+t, the
      * molds 1070/1020+t, the taps 32730, the drums 32716/32714/32734, the funnel 32725,
-     * the mixing bowl 32705, the bathing pot 32707; OMITS (no shell face): the coins, the
-     * key stash (the keys defer).
+     * the mixing bowl 32705, the bathing pot 32707; OMITS (no shell face): the coins.
+     * The KEY STASH rides the manual cabinet (:119-123 verbatim — the piece's Workshop
+     * draw; the duct-tape rows and the two CUT manuals leave slots 6..9 empty).
      */
     private void buildWorkshop(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom) {
         // the west bench column (:51-60).
@@ -1321,6 +1374,17 @@ public class GT6DungeonPiece extends StructurePiece {
                     for (String tPath : WORKSHOP_MANUALS) {
                         var tItem = gregtech6.registry.GT6Books.ITEMS_BY_PATH.get(tPath);
                         if (tItem != null) tStorage.getInventory().setStackInSlot(tSlot++, new ItemStack(tItem.get()));
+                    }
+                    // the key stash (:119-123): the piece carries the dungeon's Workshop
+                    // draw; a passing draw marks key[draw] generated and hides it at the
+                    // cabinet slot 10+next(18) ∈ [10,27] (the upstream :122 "s" slot draw
+                    // — rows 10..27 of the 28-slot cabinet). The two CUT manuals and the
+                    // duct-tape rows (:118) leave 6..9 empty; the key range is untouched.
+                    if (mKeyIndex >= 0 && mKeyIds != null) {
+                        tStorage.getInventory().setStackInSlot(10 + aRandom.nextInt(18),
+                                gregtech6.items.GT6Keys.dungeonStack(
+                                        gregtech6.items.GT6Keys.KEYS.get(aRandom.nextInt(gregtech6.items.GT6Keys.KEYS.size())).get(),
+                                        mKeyIndex, mKeyIds[mKeyIndex]));
                     }
                 }
             });
@@ -1867,30 +1931,15 @@ public class GT6DungeonPiece extends StructurePiece {
 
     /**
      * The loot chests in the four corner nooks (upstream :272-336 crate stacks — the
-     * MTE face defers, the chests carry the DUNGEON_CHEST 对位 table). A key-hiding
-     * piece drops its key into the first chest it creates (the Workshop :122 slot draw:
-     * a random slot of the container) — the stack rides ON TOP of the loot-table fill
-     * (vanilla LootTable.fill only fills EMPTY slots, so the pre-placed key survives).
+     * MTE face defers, the chests carry the DUNGEON_CHEST 对位 table). The dungeon-keys
+     * STORAGE proxy hide is GONE — the keys hide in the real rooms now (the Workshop
+     * cabinet :119-123 + the Barracks shelves :113-152, the upstream positions).
      */
     private void buildChests(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom) {
         int[][] tCorners = {{2, 2}, {2, 13}, {13, 2}, {13, 13}};
-        boolean tKeyPending = mKeyIndex >= 0 && mKeyIds != null;
         for (int[] tCorner : tCorners) {
             if (aRandom.nextInt(2) == 0) {
                 createDungeonChest(aLevel, aClip, aRandom, wx(tCorner[0]), wy(1), wz(tCorner[1]));
-                if (tKeyPending) {
-                    tKeyPending = false;
-                    if (aLevel.getBlockEntity(new BlockPos(wx(tCorner[0]), wy(1), wz(tCorner[1]))) instanceof net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity tChest) {
-                        // the key's MATERIAL draw — cosmetic (the lock reads the NBT id),
-                        // upstream drew it per stack in WorldgenDungeonGT.java:173; here it
-                        // rides the piece's chunk-seeded random (decision-level deterministic).
-                        // The slot draw = the Workshop :122 "s" random-slot face.
-                        tChest.setItem(aRandom.nextInt(tChest.getContainerSize()),
-                                gregtech6.items.GT6Keys.dungeonStack(
-                                        gregtech6.items.GT6Keys.KEYS.get(aRandom.nextInt(gregtech6.items.GT6Keys.KEYS.size())).get(),
-                                        mKeyIndex, mKeyIds[mKeyIndex]));
-                    }
-                }
             }
         }
     }

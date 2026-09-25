@@ -122,19 +122,16 @@ public class GT6DungeonStructure extends Structure {
         // their meaning; the p31 decision-level determinism precedent).
         long[] tKeyIds = keyIds(aContext.chunkPos());
 
-        // the per-dead-end hide draws (task dungeon-keys; the Workshop :119-123 face):
-        // ONE derived stream consumed SEQUENTIALLY across the dungeon's dead-ends, so
-        // each dead-end takes its own draw — a per-piece reseed here would make every
-        // storage room of one dungeon draw the SAME index (all five locks racing for
-        // one findable key). The upstream next(keys*2) is dual-purpose (:119-120): the
-        // value first gates at 50% (>= keys → hide nothing, ported as -1) and a passing
-        // value IS the key index (naturally < keys — the tKeyIndex < keys clamp).
-        int tDeadEnds = 0;
-        for (int i = 1; i < tSide - 1; i++) for (int j = 1; j < tSide - 1; j++) {
-            if (tLayout[i][j] == GT6DungeonLayout.ROOM_ID && GT6DungeonLayout.connectionCount(tLayout, i, j) == 1) tDeadEnds++;
-        }
-        int[] tHideDraws = hideDraws(aContext.chunkPos(), tDeadEnds);
-        int tHideCursor = 0;
+        // the per-dungeon key plan (task dungeon-rooms-batch — the key-domain migration
+        // from dungeon-keys, the rooms are the upstream hide positions): the Workshop
+        // draws its OWN hide index off a derived stream (the Workshop :119-123 face
+        // verbatim — next(keys*2) gates at 50%, a passing value IS the index); the
+        // Barracks quarters {0,1,3,4} fill every key the Workshop did NOT hide (the
+        // :113-152 shared mGeneratedKeys state, the slot = next(28) shelf draw); the
+        // Corridor3 lock reads the same state (:58/:69 — the key-#3 conditional). Pure
+        // functions of the origin chunk, ZERO draws off the structure stream.
+        int tWorkshopHide = workshopHideDraw(aContext.chunkPos());
+        int[] tBarracksSlots = barracksHideSlots(aContext.chunkPos(), tWorkshopHide);
 
         for (int i = 1; i < tSide - 1; i++) for (int j = 1; j < tSide - 1; j++) {
             byte tCell = tLayout[i][j];
@@ -148,31 +145,33 @@ public class GT6DungeonStructure extends Structure {
                         tDoors, tPrimary, tSecondary, tColor, 0));
                 case GT6DungeonLayout.BARRACKS ->
                     // the barracks room (DungeonChunkBarracks — the corner quarters + the
-                    // shelf/safe loot pairs, the dungeon-rooms-batch port).
+                    // shelf/safe loot pairs, the dungeon-rooms-batch port). The piece
+                    // carries the key roll: the quarter shelf/safe pairs key off it.
                     aBuilder.addPiece(new GT6DungeonPiece(
                             GT6DungeonPiece.Kind.BARRACKS, box(tX, tZ, GT6DungeonLayout.DUNGEON_Y + 8),
-                            tDoors, tPrimary, tSecondary, tColor, 0));
+                            tDoors, tPrimary, tSecondary, tColor, 0, tKeyIds, -1, tBarracksSlots, (byte) 0));
                 case GT6DungeonLayout.CORRIDOR -> {
                     // the upstream :289-291 corridor split: 4-way = the crossing hall,
-                    // 3-way = the alcove corridor, else the plain arm corridor.
+                    // 3-way = the alcove corridor, else the plain arm corridor. The
+                    // alcove's breakable-wall roll reads the key state (:58/:99).
                     GT6DungeonPiece.Kind tKind = corridorKind(GT6DungeonLayout.connectionCount(tLayout, i, j));
                     aBuilder.addPiece(new GT6DungeonPiece(
                             tKind, box(tX, tZ, GT6DungeonLayout.DUNGEON_Y + 8),
-                            tDoors, tPrimary, tSecondary, tColor, 0));
+                            tDoors, tPrimary, tSecondary, tColor, 0,
+                            tKind == GT6DungeonPiece.Kind.CORRIDOR3 ? tKeyIds : null,
+                            tKind == GT6DungeonPiece.Kind.CORRIDOR3 ? tWorkshopHide : -1,
+                            null, (byte) 0));
                 }
                 case GT6DungeonLayout.ROOM_ID -> {
                     if (GT6DungeonLayout.connectionCount(tLayout, i, j) == 1) {
                         // the DEAD_END pool draw — this card's pool is exactly the storage
                         // vault (Vault shell + piston doors + loot chests); the five portal
-                        // rooms are the mod-专属 never pool (unported by ruling). This
-                        // dead-end takes its OWN draw off the shared hide table (the
-                        // Workshop :119-120 gate+index face); the keys spread across the
-                        // dungeon's storage dead-ends until the rooms-batch card moves the
-                        // hiding.
+                        // rooms are the mod-专属 never pool (unported by ruling). The
+                        // dungeon-keys STORAGE proxy hide is GONE here — the keys hide in
+                        // the real rooms now (the upstream positions).
                         aBuilder.addPiece(new GT6DungeonPiece(
                                 GT6DungeonPiece.Kind.STORAGE, box(tX, tZ, GT6DungeonLayout.DUNGEON_Y + 8),
-                                tDoors, tPrimary, tSecondary, tColor, 0, tKeyIds,
-                                tHideDraws[tHideCursor++]));
+                                tDoors, tPrimary, tSecondary, tColor, 0));
                     } else {
                         // the ROOMS pool draw — draw-without-replacement IS the upstream
                         // TAG dedup (:48/:37/:48 the per-room tags); the exhausted pool
@@ -184,10 +183,14 @@ public class GT6DungeonStructure extends Structure {
                         // neighbors (upstream :41-71) — the mask + the extended piece box.
                         byte tFree = tRoom == GT6DungeonPiece.Kind.FARM_MOBS
                                 ? mobsDiagMask(tLayout, i, j) : 0;
+                        // the Workshop takes the hide draw (the :119-123 face); every
+                        // other pool room is key-less.
+                        boolean tWorkshop = tRoom == GT6DungeonPiece.Kind.WORKSHOP;
                         aBuilder.addPiece(new GT6DungeonPiece(
                                 tRoom, tRoom == GT6DungeonPiece.Kind.FARM_MOBS
                                         ? mobBox(tX, tZ, tFree) : box(tX, tZ, GT6DungeonLayout.DUNGEON_Y + 8),
-                                tDoors, tPrimary, tSecondary, tColor, 0, tFree));
+                                tDoors, tPrimary, tSecondary, tColor, 0,
+                                tWorkshop ? tKeyIds : null, tWorkshop ? tWorkshopHide : -1, null, tFree));
                     }
                 }
                 default -> {
@@ -270,24 +273,53 @@ public class GT6DungeonStructure extends Structure {
     }
 
     /**
-     * The per-dead-end hide draws (task dungeon-keys; the Workshop :119-123 face,
-     * {@code tKeyIndex = next(keys * 2); if (tKeyIndex < keys) hide(key[tKeyIndex])}):
-     * ONE derived stream consumed sequentially — the k-th dead-end of the dungeon gets
-     * draw k, so a multi-dead-end dungeon spreads its hiding instead of every room
-     * redrawing the same value. The upstream next(keys*2) is dual-purpose (:119-120):
-     * the value first gates the hide at 50% (upstream: not taken; port: {@code -1} =
-     * hide nothing) and a PASSING value IS the key index (naturally {@code < keys},
-     * the {@code tKeyStacks[tKeyIndex]} clamp — never an index into the five-id array
-     * unchecked). Pure function of the origin chunk (the offline audit face).
+     * The WORKSHOP hide draw (task dungeon-rooms-batch; the Workshop :119-123 face
+     * verbatim, {@code tKeyIndex = next(keys * 2); if (tKeyIndex < keys)
+     * mGeneratedKeys[tKeyIndex] = T; hide key[tKeyIndex] in the manual cabinet}): the
+     * upstream next(keys*2) is dual-purpose — the value first gates the hide at 50%
+     * (upstream: not taken; port: {@code -1} = hide nothing) and a PASSING value IS the
+     * key index (naturally {@code < keys}, never an index into the five-id array
+     * unchecked). This is the dungeon's ONLY 50%-gate drawer — the Barracks quarters
+     * fill the rest via the shared mGeneratedKeys state (:113-152), and the Corridor3
+     * lock reads it (:58/:69). Pure function of the origin chunk (the offline audit
+     * face; the stream seed continues the dungeon-keys hide stream).
      */
-    public static int[] hideDraws(ChunkPos aOrigin, int aDeadEndCount) {
+    public static int workshopHideDraw(ChunkPos aOrigin) {
         RandomSource tHideRandom = RandomSource.create(aOrigin.toLong() * 0x9E3779B97F4A7C15L + 0x6B65795FL);
-        int[] rDraws = new int[aDeadEndCount];
-        for (int i = 0; i < aDeadEndCount; i++) {
-            int tKeyIndex = tHideRandom.nextInt(gregtech6.items.GT6Keys.KEYS_PER_DUNGEON * 2);
-            rDraws[i] = tKeyIndex < gregtech6.items.GT6Keys.KEYS_PER_DUNGEON ? tKeyIndex : -1;
+        int tKeyIndex = tHideRandom.nextInt(gregtech6.items.GT6Keys.KEYS_PER_DUNGEON * 2);
+        return tKeyIndex < gregtech6.items.GT6Keys.KEYS_PER_DUNGEON ? tKeyIndex : -1;
+    }
+
+    /** The barracks quarter key indices, quarter order (upstream :113-152 build order). */
+    public static final int[] BARRACKS_QUARTER_KEYS = {0, 1, 3, 4};
+
+    /**
+     * The barracks quarter shelf slots (upstream :113-152): each quarter whose key the
+     * Workshop did NOT already hide ({@code !mGeneratedKeys[i]} → {@code mGeneratedKeys[i]
+     * = T}) draws {@code next(28)} for its shelf slot; a skipped quarter ports as
+     * {@code -1} (no hide — the Workshop stack is the dungeon's copy of that key). The
+     * draws ride their own derived stream in quarter order, skipping the Workshop round
+     * exactly like the upstream guard skips the draw. Pure function of the origin chunk.
+     */
+    public static int[] barracksHideSlots(ChunkPos aOrigin, int aWorkshopHide) {
+        RandomSource tSlotRandom = RandomSource.create(aOrigin.toLong() * 0x9E3779B97F4A7C15L + 0x6B65795FL + 1);
+        int[] rSlots = new int[] {-1, -1, -1, -1};
+        for (int tQ = 0; tQ < rSlots.length; tQ++) {
+            if (BARRACKS_QUARTER_KEYS[tQ] == aWorkshopHide) continue;
+            rSlots[tQ] = tSlotRandom.nextInt(gregtech6.tileentity.inventories.GT6BookShelfBlockEntity.INVENTORY_SIZE);
         }
-        return rDraws;
+        return rSlots;
+    }
+
+    /**
+     * The Corridor3 safe lock key index (upstream :69/:109/:151/:191 — {@code
+     * mGeneratedKeys[2] ? mKeyIDs[2] : mKeyIDs[<side fallback>]}): the Workshop-hid
+     * key #3 takes over the lock, else the side's own quarter key (EAST→0, WEST→1,
+     * SOUTH→3, NORTH→4 — the fallbacks key the safe to a key the Barracks always
+     * hides, so every Corridor3 safe is openable).
+     */
+    public static int corridor3LockKeyIndex(int aWorkshopHide, int aSideFallback) {
+        return aWorkshopHide == 2 ? 2 : aSideFallback;
     }
 
     /**

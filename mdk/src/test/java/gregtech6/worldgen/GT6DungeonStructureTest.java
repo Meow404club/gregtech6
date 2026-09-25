@@ -390,80 +390,98 @@ class GT6DungeonStructureTest {
     }
 
     /**
-     * The hide-draw gate (the Workshop :119-120 clamp — the AIOOBE red item): every
-     * draw is either -1 (the >= keys branch, hide nothing) or a passing value that IS
-     * the key index, naturally {@code < keys} — never a raw next(keys*2) value fed to
-     * the five-id array unchecked.
+     * The Workshop hide-draw gate (the Workshop :119-120 clamp — the AIOOBE red item):
+     * every draw is either -1 (the >= keys branch, hide nothing) or a passing value that
+     * IS the key index, naturally {@code < keys} — never a raw next(keys*2) value fed to
+     * the five-id array unchecked. It is the dungeon's ONLY 50%-gate drawer.
      */
     @Test
-    void hideDrawsAreGatedToTheFiveIdsOrNone() {
+    void workshopHideDrawIsGatedToTheFiveIdsOrNone() {
+        boolean tSawNone = false, tSawHide = false;
+        java.util.Set<Integer> tSeen = new HashSet<>();
         for (long tSeed = 0; tSeed < 200; tSeed++) {
             ChunkPos tOrigin = new ChunkPos((int) tSeed * 13 - 900, (int) tSeed * 5 + 1);
-            for (int tCount = 0; tCount <= 8; tCount++) {
-                int[] tDraws = GT6DungeonStructure.hideDraws(tOrigin, tCount);
-                assertEquals(tCount, tDraws.length);
-                for (int tDraw : tDraws) {
-                    assertTrue(tDraw == -1 || (tDraw >= 0 && tDraw < gregtech6.items.GT6Keys.KEYS_PER_DUNGEON),
-                            "hide draw " + tDraw + " escapes {-1} ∪ [0," + gregtech6.items.GT6Keys.KEYS_PER_DUNGEON
-                                    + ") (seed " + tSeed + ") — the mKeyIds[mKeyIndex] clamp is broken");
-                }
+            int tDraw = GT6DungeonStructure.workshopHideDraw(tOrigin);
+            assertTrue(tDraw == -1 || (tDraw >= 0 && tDraw < gregtech6.items.GT6Keys.KEYS_PER_DUNGEON),
+                    "workshop draw " + tDraw + " escapes {-1} ∪ [0," + gregtech6.items.GT6Keys.KEYS_PER_DUNGEON
+                            + ") (seed " + tSeed + ") — the mKeyIds[mKeyIndex] clamp is broken");
+            if (tDraw < 0) tSawNone = true;
+            else {
+                tSawHide = true;
+                tSeen.add(tDraw);
             }
+            assertEquals(tDraw, GT6DungeonStructure.workshopHideDraw(tOrigin),
+                    "the draw is a pure function of the origin chunk (seed " + tSeed + ")");
         }
+        assertTrue(tSawNone && tSawHide, "both the hide and the skip branch must occur");
+        // 200 dungeons x 1/2 gate x 1/5 spread — every key index gets its share of draws.
+        assertEquals(Set.of(0, 1, 2, 3, 4), tSeen, "every key index must be drawable across the sweep");
     }
 
     /**
-     * The 50%-per-draw gate is live (the red item: upstream hides in ~half the draws,
-     * not all): over a wide sweep both branches occur, and the hide rate stays inside
-     * a generous sanity band around 50%.
+     * The 50% gate is live (the Workshop hides in ~half the dungeons): the hide rate
+     * stays inside a generous sanity band around 1/2.
      */
     @Test
-    void hideDrawsKeepTheUpstreamHalfRate() {
-        int tHides = 0, tTotal = 0;
-        boolean tSawNone = false, tSawHide = false;
+    void workshopHideDrawKeepsTheUpstreamHalfRate() {
+        int tHides = 0;
         for (long tSeed = 0; tSeed < 300; tSeed++) {
-            int[] tDraws = GT6DungeonStructure.hideDraws(new ChunkPos((int) tSeed * 17, (int) tSeed * 3 - 40), 4);
-            for (int tDraw : tDraws) {
-                tTotal++;
-                if (tDraw < 0) {
-                    tSawNone = true;
-                } else {
-                    tSawHide = true;
-                    tHides++;
-                }
-            }
+            if (GT6DungeonStructure.workshopHideDraw(new ChunkPos((int) tSeed * 17, (int) tSeed * 3 - 40)) >= 0) tHides++;
         }
-        assertTrue(tSawNone && tSawHide, "both the hide and the skip branch must occur");
-        double tRate = (double) tHides / tTotal;
+        double tRate = (double) tHides / 300;
         assertTrue(tRate > 0.35 && tRate < 0.65, "the hide rate " + tRate + " drifts from the upstream 1/2");
     }
 
     /**
-     * The sequential-stream spread (the red item: a per-piece reseed made every
-     * dead-end of one dungeon redraw the SAME index): within one origin the draws
-     * diverge, and across the sweep every key index receives hides (no key is
-     * unfarmable just because the dungeon has several dead-ends).
+     * The Barracks quarter slots (the :113-152 face): one slot per quarter whose key the
+     * Workshop did NOT hide (the shared mGeneratedKeys guard), every slot in
+     * [0, 28), pure per origin. The Workshop-hidden quarter is ALWAYS the -1 — exactly
+     * one copy of each key per dungeon.
      */
     @Test
-    void hideDrawsSpreadAcrossDeadEndsAndKeys() {
-        boolean tSawDivergence = false;
-        java.util.Set<Integer> tHiddenIndexes = new HashSet<>();
+    void barracksHideSlotsSkipTheWorkshopKeyAndStayInTheShelf() {
+        boolean tSawAllFour = true;
         for (long tSeed = 0; tSeed < 200; tSeed++) {
-            int[] tDraws = GT6DungeonStructure.hideDraws(new ChunkPos((int) tSeed * 7 + 11, (int) tSeed * 11 - 77), 4);
-            Set<Integer> tDistinct = new HashSet<>();
-            for (int tDraw : tDraws) if (tDraw >= 0) tDistinct.add(tDraw);
-            if (tDistinct.size() >= 2) tSawDivergence = true;
-            tHiddenIndexes.addAll(tDistinct);
+            ChunkPos tOrigin = new ChunkPos((int) tSeed * 7 + 11, (int) tSeed * 11 - 77);
+            int tWorkshop = GT6DungeonStructure.workshopHideDraw(tOrigin);
+            int[] tSlots = GT6DungeonStructure.barracksHideSlots(tOrigin, tWorkshop);
+            assertEquals(4, tSlots.length);
+            int tHides = 0;
+            for (int tQ = 0; tQ < 4; tQ++) {
+                if (GT6DungeonStructure.BARRACKS_QUARTER_KEYS[tQ] == tWorkshop) {
+                    assertEquals(-1, tSlots[tQ], "the Workshop-hidden key must not hide again (seed " + tSeed + " q" + tQ + ")");
+                } else {
+                    assertTrue(tSlots[tQ] >= 0 && tSlots[tQ] < 28,
+                            "shelf slot " + tSlots[tQ] + " escapes the 28-slot cabinet (seed " + tSeed + " q" + tQ + ")");
+                    tHides++;
+                }
+            }
+            // the workshop draw of -1 or 2 leaves all four quarters hiding; a draw of
+            // 0/1/3/4 leaves three.
+            assertEquals(tWorkshop >= 0 && tWorkshop != 2 ? 3 : 4, tHides,
+                    "the quarter-hide count contradicts the shared-state guard (seed " + tSeed + ")");
+            assertArrayEquals(tSlots, GT6DungeonStructure.barracksHideSlots(tOrigin, tWorkshop),
+                    "the slots are a pure function of (origin, workshop draw)");
+            if (tHides != 4) tSawAllFour = false;
         }
-        assertTrue(tSawDivergence, "a multi-dead-end dungeon must take DIFFERENT draws per dead-end");
-        // 200 dungeons x 4 dead-ends x 1/2 gate x 1/5 spread ≈ 80 hides per index —
-        // a fully missing index would mean the spread collapsed.
-        assertEquals(Set.of(0, 1, 2, 3, 4), tHiddenIndexes, "every key index must receive hides across the sweep");
+        assertFalse(tSawAllFour, "the sweep must exercise the skip face (a workshop draw of 0/1/3/4)");
     }
 
-    /** The hide table is a pure function of the origin chunk (the audit face). */
+    /**
+     * The Corridor3 lock selection (:69/:109/:151/:191): key #3 takes the lock when the
+     * Workshop hid it; every other case keys to the side's quarter key — which the
+     * Barracks always hides, so the safe is openable either way.
+     */
     @Test
-    void hideDrawsAreDeterministicPerOrigin() {
-        ChunkPos tOrigin = new ChunkPos(4242, -4242);
-        assertArrayEquals(GT6DungeonStructure.hideDraws(tOrigin, 6), GT6DungeonStructure.hideDraws(tOrigin, 6));
+    void corridor3LockFollowsTheKey3Conditional() {
+        for (int tFallback : new int[] {0, 1, 3, 4}) {
+            assertEquals(2, GT6DungeonStructure.corridor3LockKeyIndex(2, tFallback),
+                    "key #3 exists → it takes the lock (fallback " + tFallback + ")");
+            for (int tDraw = -1; tDraw <= 4; tDraw++) {
+                if (tDraw == 2) continue;
+                assertEquals(tFallback, GT6DungeonStructure.corridor3LockKeyIndex(tDraw, tFallback),
+                        "no key #3 → the side fallback (" + tFallback + ", draw " + tDraw + ")");
+            }
+        }
     }
 }
