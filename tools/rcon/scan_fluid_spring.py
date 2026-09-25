@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""scan_fluid_spring — the p31-fluid-spring card's natural-generation gate driver.
+"""scan_fluid_spring — the fluid-spring card's natural-generation gate driver.
 
 The scan_bedrock_ore.py form (the sibling card's separate normal+seed world scan), committed
 per the tools/rcon README (no task-local tmp drivers). Per leg (forge / neoforge):
@@ -17,7 +17,7 @@ per the tools/rcon README (no task-local tmp drivers). Per leg (forge / neoforge
            prefixes within y -64..-54, per-chunk counts + per-chunk Y-level spans.
            Vanilla lava is NOT counted (the window carries unrelated aquifer lava below
            y=-54 — the lava ROW is pinned at decision level by the parity test instead).
-           Since task p38-issue5-fluid-spring-nozzle also the gt6:fluid_spring nozzle
+           Since task issue5-fluid-spring-nozzle also the gt6:fluid_spring nozzle
            block (the read-only enhancement: a "nozzle" kind per chunk, expected inside
            spring-hit chunks at the bedrock floor). The vanilla-lava spring chunks carry
            nozzles too but ZERO countable spring blocks (vanilla lava is the declared
@@ -25,7 +25,7 @@ per the tools/rcon README (no task-local tmp drivers). Per leg (forge / neoforge
            below (the lava row share of the OW roll mass is (1/200)/0.03 ~= 16.7%).
   analysis: 1) the six-kind presence gate: every GT kind >= 1 (cross-boot max — the
            pipeline-drift semantics of
-           decisions.2026-09-18-p31-strata-lens-determinism-acceptance);
+           decisions.2026-09-18-strata-lens-determinism-acceptance);
             2) the spring-chunk floor: >= 55 hit chunks per boot (of the ~124 GT
            spring decisions — the bedrock card's 15/27 ≈ 55% survival face);
             3) THE MUTUAL EXCLUSION: zero chunks carrying BOTH a bedrock-ore hit and a
@@ -39,7 +39,7 @@ per the tools/rcon README (no task-local tmp drivers). Per leg (forge / neoforge
            feature-list interplay, decisions do not — the offline replay pins the
            decisions exactly).
 
-Artifacts: /tmp/p31springscan_<leg>_boot<N>.log/.pid, /tmp/p31springscan_<leg>_verdict.json
+Artifacts: /tmp/springscan_<leg>_boot<N>.log/.pid, /tmp/springscan_<leg>_verdict.json
 
 Usage:
   python3 tools/rcon/scan_fluid_spring.py <worktree> <forge|neo>
@@ -73,7 +73,7 @@ SPRING_PREFIXES = (
     "gt6:natural_gas_block", "gt6:water_geothermal_block",
 )
 ORE_PREFIXES = ("gt6:ore_bedrock_", "gt6:ore_small_bedrock_")
-NOZZLE_PREFIXES = ("gt6:fluid_spring",)  # the p38-issue5 nozzle arm (read-only analysis face)
+NOZZLE_PREFIXES = ("gt6:fluid_spring",)  # the issue5 nozzle arm (read-only analysis face)
 CHUNK_X0, CHUNK_X1 = 0, 63      # the calibrated window (the bedrock scan + the offline projection)
 CHUNK_Z0, CHUNK_Z1 = 64, 127
 Y_MIN, Y_MAX = -64, -54         # the ore band floor .. the spring shell top band
@@ -115,8 +115,8 @@ def provision():
 def boot_and_load(box_count):
     global boot_index
     boot_index += 1
-    log = Path(f"/tmp/p31springscan_{LEG}_boot{boot_index}.log")
-    pid = Path(f"/tmp/p31springscan_{LEG}_boot{boot_index}.pid")
+    log = Path(f"/tmp/springscan_{LEG}_boot{boot_index}.log")
+    pid = Path(f"/tmp/springscan_{LEG}_boot{boot_index}.pid")
     gt6server.start_server(str(WORKTREE), log, pid, gt6server.gradle_task(NODE[LEG]))
     try:
         deadline = time.time() + 1200
@@ -481,7 +481,7 @@ def main():
     gate["spring_floor_55_per_boot"] = b0["spring_chunks"] >= 55 and b1["spring_chunks"] >= 55
     gate["mutual_exclusion"] = not b0["coexist_chunks"] and not b1["coexist_chunks"]
     gate["dome_y_span_ge_3"] = b0["min_y_span"] >= 3 and b1["min_y_span"] >= 3
-    # the p38-issue5 nozzle arm: the nozzle block must EXIST in the world; the co-location
+    # the issue5 nozzle arm: the nozzle block must EXIST in the world; the co-location
     # face rides the DECLARED vanilla-lava tolerance — lava decisions (~16.7% of the OW
     # roll mass) + rare disturbed GT domes surface as orphans (chunks with nozzles but no
     # countable spring blocks); the measured face is ~0.196 (the forge leg, both boots
@@ -508,7 +508,7 @@ def main():
 
     verdict = {"leg": LEG, "seed": SEED, "region": f"x {CHUNK_X0}..{CHUNK_X1}, z {CHUNK_Z0}..{CHUNK_Z1}",
                "boots": results, "gates": gate}
-    out = Path(f"/tmp/p31springscan_{LEG}_verdict.json")
+    out = Path(f"/tmp/springscan_{LEG}_verdict.json")
     out.write_text(json.dumps(verdict, indent=2, sort_keys=True))
     print("verdict:", json.dumps(gate, sort_keys=True), flush=True)
     print("verdict file:", out, flush=True)

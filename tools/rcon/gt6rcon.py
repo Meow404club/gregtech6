@@ -220,7 +220,7 @@ def next_quiet_window(current, frames, reset=DEFAULT_QUIET_WINDOW,
     never RAISE a window that was configured below the floor. Any second frame
     (or third...): reset to the full window — a truncated multi-frame body
     would forge FAIL verdicts, so the reset is deliberately wasteful (card
-    p18-rcon-sweep-quietwin: better safe than aggressive). Silence (zero
+    rcon-sweep-quietwin: better safe than aggressive). Silence (zero
     frames): no evidence about lateness, keep the window unchanged.
     """
     if frames >= 2:

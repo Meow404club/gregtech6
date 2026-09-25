@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""scan_strata_lens — the p31-strata-lens card's natural-generation gate driver.
+"""scan_strata_lens — the strata-lens card's natural-generation gate driver.
 
-The p30t3_vein_scan form (the p30-w6-t3 card's separate normal+seed world scan),
+The vein_scan form (the t3 card's separate normal+seed world scan),
 committed per the tools/rcon README (no task-local tmp drivers). Per leg
 (forge / neoforge):
 
@@ -24,7 +24,7 @@ committed per the tools/rcon README (no task-local tmp drivers). Per leg
            regenerate probe); vanilla iron/coal counts ride along as the drift
            attribution control.
 
-Artifacts: /tmp/p31scan_<leg>_boot<N>.log/.pid, /tmp/p31scan_<leg>_verdict.json
+Artifacts: /tmp/scan_<leg>_boot<N>.log/.pid, /tmp/scan_<leg>_verdict.json
 
 Usage:
   python3 tools/rcon/scan_strata_lens.py <worktree> <forge|neo> [--region 48]
@@ -88,8 +88,8 @@ def provision():
 
 def boot_and_load(box_count):
     boot = globals()["boot_index"]
-    log = Path(f"/tmp/p31scan_{LEG}_boot{boot}.log")
-    pid = Path(f"/tmp/p31scan_{LEG}_boot{boot}.pid")
+    log = Path(f"/tmp/scan_{LEG}_boot{boot}.log")
+    pid = Path(f"/tmp/scan_{LEG}_boot{boot}.pid")
     gt6server.start_server(str(WORKTREE), log, pid, gt6server.gradle_task(NODE[LEG]))
     try:
         deadline = time.time() + 1200
@@ -221,7 +221,7 @@ def boot_and_load(box_count):
 
 
 # ------------------------------------------------------------------ anvil scan
-# (the p30t3_vein_scan minimal reader — verified against that card's live scans)
+# (the vein_scan minimal reader — verified against that card's live scans)
 
 def read_region(path):
     """Yield (cx, cz, nbt) for every chunk in an .mca file."""
@@ -578,7 +578,7 @@ def run_boot(index, chunk_lo, chunk_hi):
     boot_and_load(box_count)
     # wait for the gradle wrapper + server JVM to fully exit — region files must be
     # quiescent before the offline scan, or partial saves poison the census
-    pid_file = Path(f"/tmp/p31scan_{LEG}_boot{index}.pid")
+    pid_file = Path(f"/tmp/scan_{LEG}_boot{index}.pid")
     try:
         pid = int(pid_file.read_text().strip())
     except Exception:
@@ -613,7 +613,7 @@ def main():
     chunk_lo, chunk_hi = CHUNK_LO, CHUNK_HI
     box_count = args.region * args.region
 
-    print(f"== p31-strata-lens natural scan, leg={LEG}, worktree={WORKTREE}, seed={SEED}, "
+    print(f"== strata-lens natural scan, leg={LEG}, worktree={WORKTREE}, seed={SEED}, "
           f"region={args.region}x{args.region} chunks ({chunk_lo}..{chunk_hi}) ==")
 
     # ------------------------------------------------------------------
@@ -744,7 +744,7 @@ def main():
                   diff_attribution=diff_detail[:8],
                   pipeline_artifacts=len(pipeline_artifacts),
                   vanilla_equal=vanilla_equal)
-    Path(f"/tmp/p31scan_{LEG}_verdict.json").write_text(json.dumps(result, indent=1))
+    Path(f"/tmp/scan_{LEG}_verdict.json").write_text(json.dumps(result, indent=1))
     ok = each_stone_hit and not real_seams and clusters_deterministic and bands
     print("VERDICT:", "GREEN" if ok else "RED", flush=True)
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""scan_nether_end — the p31-nether-lens-end-yield card's natural-generation gate driver.
+"""scan_nether_end — the nether-lens-end-yield card's natural-generation gate driver.
 
 The scan_strata_lens form, re-aimed at THE OTHER DIMENSIONS (per leg forge / neo):
 
@@ -32,7 +32,7 @@ The scan_strata_lens form, re-aimed at THE OTHER DIMENSIONS (per leg forge / neo
            (decision-level determinism, the strata-lens acceptance semantics);
            vanilla-agreeing per-chunk equality rides along as attribution.
 
-Artifacts: /tmp/p31nethscan_<leg>_boot<N>.log/.pid, /tmp/p31nethscan_<leg>_verdict.json
+Artifacts: /tmp/nethscan_<leg>_boot<N>.log/.pid, /tmp/nethscan_<leg>_verdict.json
 
 Usage:
   python3 tools/rcon/scan_nether_end.py <worktree> <forge|neo> [--nether-region 40] [--end-region 24]
@@ -95,8 +95,8 @@ def provision():
 
 def boot_and_load(nether_boxes, end_boxes):
     boot = globals()["boot_index"]
-    log = Path(f"/tmp/p31nethscan_{LEG}_boot{boot}.log")
-    pid = Path(f"/tmp/p31nethscan_{LEG}_boot{boot}.pid")
+    log = Path(f"/tmp/nethscan_{LEG}_boot{boot}.log")
+    pid = Path(f"/tmp/nethscan_{LEG}_boot{boot}.pid")
     gt6server.start_server(str(WORKTREE), log, pid, gt6server.gradle_task(NODE[LEG]))
     try:
         deadline = time.time() + 1200
@@ -439,7 +439,7 @@ def run_boot(index, nether_boxes, end_boxes):
     globals()["boot_index"] = index
     provision()
     boot_and_load(nether_boxes, end_boxes)
-    pid_file = Path(f"/tmp/p31nethscan_{LEG}_boot{index}.pid")
+    pid_file = Path(f"/tmp/nethscan_{LEG}_boot{index}.pid")
     try:
         pid = int(pid_file.read_text().strip())
     except Exception:
@@ -490,7 +490,7 @@ def main():
     end_wanted = {"gt6:ore_endstone_platinum", "gt6:ore_endstone_cassiterite",
                   "gt6:ore_endstone_naquadah", "gt6:ore_endstone_trinium"}
 
-    print(f"== p31-nether natural scan, leg={LEG}, worktree={WORKTREE}, seed={SEED}, "
+    print(f"== nether natural scan, leg={LEG}, worktree={WORKTREE}, seed={SEED}, "
           f"nether={args.nether_region}x{args.nether_region} ({n_lo}..{n_hi}), "
           f"end={args.end_region}x{args.end_region} ({e_lo}..{e_hi}) ==")
 
@@ -565,7 +565,7 @@ def main():
                   end_ok=end_ok,
                   nether_cluster_deterministic=nether_deterministic,
                   end_deterministic=end_deterministic)
-    Path(f"/tmp/p31nethscan_{LEG}_verdict.json").write_text(json.dumps(result, indent=1))
+    Path(f"/tmp/nethscan_{LEG}_verdict.json").write_text(json.dumps(result, indent=1))
     ok = each_stone_hit and forms_live and end_ok and nether_deterministic and end_deterministic
     print("VERDICT:", "GREEN" if ok else "RED", flush=True)
 

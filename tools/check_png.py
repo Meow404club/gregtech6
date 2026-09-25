@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """check_png.py -- PNG inflate-vs-IHDR 数据量校验（防复发门禁，不进 CI）。
 
-背景（p15-cokeoven-png-fix，根因见 state tmp.rcon.atlas-runtime）：p4 时代 inline
+背景（cokeoven-png-fix，根因见 state tmp.rcon.atlas-runtime）：p4 时代 inline
 占位生成脚本把扫描线 stride 写成每行 1 像素，产出的 PNG 容器自洽（chunk/CRC 全过）
 但 IDAT inflate 仅 80B，而 IHDR 声明的 16x16 RGBA 需 1040B，运行期 stb_image
 数据不足报 Corrupt PNG（SpriteLoader ERROR + 紫黑棋盘）。此类坏文件静态资源

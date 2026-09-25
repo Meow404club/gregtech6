@@ -7,7 +7,7 @@ suite is a ~1s dry run usable in any worktree:
   python3 tools/rcon/selftest.py        # exit 0 = all checks green
 
 Covered (one section per P16-closeout framework defect, card
-p17-rcon-framework-fixes):
+rcon-framework-fixes):
 
   1 chain.node write-back — GT6_SESSION=off run() through a faked boot with
     --node 1.21.1-neoforge: the chain must come out stamped AND the captured
@@ -20,10 +20,10 @@ p17-rcon-framework-fixes):
   3 session port policy — a declared chain pins the boot triple (identical
     to its per-chain run() triple); defaults/disagreements fall back to the
     SESSION_PORTS node segments (--dual separation, ADR-P15-4).
-  4 sweep registry — the eight p16 chains are registered as one cluster.
+  4 sweep registry — the eight P16 chains are registered as one cluster.
   5 boot-ownership gates — ports-free trips on a real LISTEN socket; the
     pid-file gate accepts only THIS boot's pid.
-  6 sweep result worktree isolation (P18, card p18-rcon-sweep-quietwin) —
+  6 sweep result worktree isolation (P18, card rcon-sweep-quietwin) —
     result_path names carry this worktree's tag by default and diverge under
     a foreign tag (the --dual reader's other-side lookup).
   7 adaptive quiet window (P18, same card) — the pure convergence logic:
@@ -33,7 +33,7 @@ p17-rcon-framework-fixes):
     the top-level "exit" key the --dual reader consumes, the _failed
     aggregation matches main()'s non-dual exit code, and the session model's
     framework-computed exit survives the setdefault untouched.
-  9 wait_done monotonic window (P19, card p19-rcon-waitdone-8kb) — the old
+  9 wait_done monotonic window (P19, card rcon-waitdone-8kb) — the old
     last-8-KiB tail poll faked a boot timeout once >8 KiB scrolled past the
     `Done (` marker, and the dead-pid diagnostic lost the crash ERROR line to
     the same window. Real temp-file logs pin the old-code failure shapes (the
@@ -75,15 +75,15 @@ REAL_WAIT_DONE = gt6server.wait_done
 # would otherwise swallow for every later section.
 REAL_STOP_SERVER = gt6server.stop_server
 # And the real port pick: section 15 exercises the genuine segment stagger
-# (p34-pool-port-stagger), not the section-1 `pick_ports = lambda` stand-in.
+# (pool-port-stagger), not the section-1 `pick_ports = lambda` stand-in.
 REAL_PICK_PORTS = gt6server.pick_ports
 # Section 8 also swaps assert_ports_free and never restores; section 15's
 # backstop check needs the genuine P17 gate.
 REAL_ASSERT_PORTS_FREE = gt6server.assert_ports_free
 
-P16_STEMS = ("p16_pattern_checker", "p16_aqua_fluids", "p16_side_io",
-             "p16_machine_fluid_gui", "p16_drying_rows", "p16_form_scaffold",
-             "p16_chisel", "p16_distillery")
+P16_STEMS = ("pattern_checker", "aqua_fluids", "side_io",
+             "machine_fluid_gui", "drying_rows", "form_scaffold",
+             "chisel_decalcify", "distillery")
 
 FAILURES = []
 
@@ -185,11 +185,11 @@ def check_1_chain_node_writeback():
 
 def check_2_session_slug():
     print("\n--- 2: session artifact identity")
-    a = framework.Chain(name="a", slug="p16dryrows",
+    a = framework.Chain(name="a", slug="dryrows",
                         preferred_ports=(25775, 25785))
-    b = framework.Chain(name="b", slug="p16af")
+    b = framework.Chain(name="b", slug="af")
     slug = framework.session_slug([a, b], "1.20.1-forge")
-    check("2a roster in slug", "p16af+p16dryrows" in slug, slug)
+    check("2a roster in slug", "af+dryrows" in slug, slug)
     check("2b node suffix in slug", slug.startswith("session_1201-forge_"), slug)
     check("2c worktree tag in slug",
           slug.endswith("-" + framework.worktree_tag()), slug)
@@ -234,11 +234,11 @@ def check_3_session_ports():
 
 
 def check_4_sweep_registry():
-    print("\n--- 4: sweep registry carries the p16 cluster")
+    print("\n--- 4: sweep registry carries the P16 cluster")
     import sweep
     stems = sweep.ordered_stems()
     missing = [stem for stem in P16_STEMS if stem not in stems]
-    check("4a all eight p16 stems registered", not missing, f"missing={missing}")
+    check("4a all eight P16 stems registered", not missing, f"missing={missing}")
     clusters = [group for group in sweep.SESSION_GROUPS
                 if set(P16_STEMS) <= set(group)]
     check("4b the eight form exactly one cluster", len(clusters) == 1
@@ -331,7 +331,7 @@ def check_8_perboot_exit_aggregate():
 
     run_dual consumed mine_json["exit"], but run_perboot's result carries only
     per-chain exits — a perboot --dual leg KeyError'd at the very end of a
-    full sweep (tmp.p18.pool: sweep-run-dual-perboot-exit-keyerror). The fix
+    full sweep (tmp.P18.pool: sweep-run-dual-perboot-exit-keyerror). The fix
     aggregates the exit in run_and_record via setdefault, so the session
     model's framework-computed exit (framework.run_session_recorded) stays
     untouched and perboot records gain the same _failed semantics main() uses
@@ -343,11 +343,11 @@ def check_8_perboot_exit_aggregate():
     real_sleep = _install_fakes()
     gt6server.assert_ports_free = lambda *a, **k: True
     ok_roster = [framework.Chain(
-        name="selftest-ok", slug="p18sok",
+        name="selftest-ok", slug="sok",
         sites=gt6world.declare_sites(gt6world.Site(0, 64, 0)),
         steps=[framework.Step("say hi", expect="ok")])]
     bad_roster = ok_roster + [framework.Chain(
-        name="selftest-bad", slug="p18sbad",
+        name="selftest-bad", slug="sbad",
         sites=gt6world.declare_sites(gt6world.Site(0, 64, 0)),
         steps=[framework.Step("say boom", expect="NOPE")])]
     real_select, real_load_chain, real_path = \
@@ -489,7 +489,7 @@ def check_9_waitdone_monotonic_window():
 
 
 def check_10_node_expects_fork():
-    """The node_expects per-node expect fork (the p23 p16pchk rendering drift).
+    """The node_expects per-node expect fork (the P23 pchk rendering drift).
 
     The 21.1 oven report namespaces the item names the 1.20.1 leg renders
     plain, so the spanning terminal expect is per-leg (Step.node_expects).
@@ -500,7 +500,7 @@ def check_10_node_expects_fork():
     of input=cobblestonex8 and hits at zero seconds) stays out by construction:
     both full lines name the input field.
     """
-    print("\n--- 10: node_expects per-node expect fork (p23 p16pchk rendering drift)")
+    print("\n--- 10: node_expects per-node expect fork (P23 pchk rendering drift)")
     forge_line = "input=airx0 output=stonex8"
     neo_line = "input=minecraft:airx0 output=minecraft:stonex8"
     step = framework.Step("gt6oven check 400 64 400", expect=forge_line,
@@ -562,7 +562,7 @@ def _ownership_fixture(scratch, name, owner, legacy=False):
 
 
 def check_11_stop_ownership():
-    """The P30 stop-ownership gate (ops.p30-rcon-chain-repair: a foreign
+    """The P30 stop-ownership gate (ops.rcon-chain-repair: a foreign
     session's cleanup RCON-stopped a live server through the shared default
     password — stop had no owner check). start_server stamps
     caller_identity() into the slot record; stop_server resolves the record
@@ -621,7 +621,7 @@ def check_11_stop_ownership():
 
         # the incident vector: foreign identity refused BEFORE any RCON/pid
         # action and without releasing the boot's slot
-        foreign = "pid=999999 /tmp/foreign-session-p30"
+        foreign = "pid=999999 /tmp/foreign-session-P30"
         pid_file, slot = _ownership_fixture(scratch, "own_deny", foreign)
         stops_before = sum(1 for c in FakeClient.commands if c == "stop")
         try:
@@ -700,7 +700,7 @@ def check_11_stop_ownership():
 
 
 def check_12_sweep_session_lock():
-    """The sweep session lock (P32, card p32-ops-sweep-lock) — the sweep-side
+    """The sweep session lock (P32, card ops-sweep-lock) — the sweep-side
     guard of the P31 serialization protocol (S31-1/S31-2 parallel reviews each
     started a sweep; two concurrent same-node sweep sessions poisoned the
     shared session state — "并发 sweep session.lock 毒化"). Serverless: the
@@ -805,7 +805,7 @@ class _CannedClient:
 
 
 def check_13_structured_judge():
-    """The structured step judge (p32-ops-judge-literal, the p31 pool
+    """The structured step judge (ops-judge-literal, the P31 pool
     rcon_judge_literal_blindspot).
 
     The raw "FAILED" scan used to override the expect: an expected-rejection
@@ -816,13 +816,13 @@ def check_13_structured_judge():
     whatever the body spells); the literal scan only decides expect-less
     steps (the server-side RCON contract, GTMultiBlockCommand.java:1046);
     allow_failed keeps its ALLOWED semantics. ① pins the constructed cases,
-    ② the allow_failed regression, ③ replays real recorded p31_fusion
-    forge-leg bodies (the post-p32-ignition-gate re-recording: the
-    /tmp/p34n_sweep_forge2.log transcript, session f33386e8, frozen
+    ② the allow_failed regression, ③ replays real recorded fusion
+    forge-leg bodies (the post-ignition-gate re-recording: the
+    /tmp/n_sweep_forge2.log transcript, session f33386e8, frozen
     here) through the REAL chain steps — the sweep recorded 1498/1498 PASS,
     the replay excerpt must judge the same.
     """
-    print("\n--- 13: structured step judge (p32, judge-literal blindspot)")
+    print("\n--- 13: structured step judge (P32, judge-literal blindspot)")
 
     def judge(step, body):
         expect = framework.step_expect(step, "1.20.1-forge")
@@ -892,10 +892,10 @@ def check_13_structured_judge():
                 red[1].cmd: "STAT FAILED: no machine at 400, 64, 400"}),
               red, node="1.20.1-forge") == 2)
 
-    # ③ recorded p31_fusion replay excerpt (forge leg; re-recorded post
-    # p32-ignition-gate from /tmp/p34n_sweep_forge2.log, session f33386e8):
+    # ③ recorded fusion replay excerpt (forge leg; re-recorded post
+    # ignition-gate from /tmp/n_sweep_forge2.log, session f33386e8):
     # real Step objects of the chain, real recorded bodies, the recorded verdicts
-    import p31_fusion
+    import fusion
     recorded = [
         ("fill 438 58 452 462 74 478 air", "No blocks were filled"),
         ("setblock 448 63 462 gt6:machine_wall_galvanized_steel",
@@ -920,20 +920,20 @@ def check_13_structured_judge():
     ]
 
     def _chain_step(cmd):
-        matches = [s for s in p31_fusion.steps
+        matches = [s for s in fusion.steps
                    if framework.step_cmd(s, "1.20.1-forge") == cmd]
         return matches[0] if matches else None
 
     excerpt = [(_chain_step(cmd), cmd, body) for cmd, body in recorded]
-    check("13m every recorded excerpt cmd resolves to a real p31_fusion step",
+    check("13m every recorded excerpt cmd resolves to a real fusion step",
           all(step is not None for step, _, _ in excerpt),
           str([cmd for step, cmd, _ in excerpt if step is None]))
     ledger = []
     failure = framework.run_steps(
         _CannedClient({cmd: body for _, cmd, body in excerpt}),
         [step for step, _, _ in excerpt], ledger, node="1.20.1-forge")
-    check("13n recorded p31_fusion bodies replay all-PASS, exit 0 "
-          "(the post-p32 re-recording's ledger: 1498/1498 PASS, GREEN)",
+    check("13n recorded fusion bodies replay all-PASS, exit 0 "
+          "(the post-P32 re-recording's ledger: 1498/1498 PASS, GREEN)",
           failure == 0 and len(ledger) == len(recorded)
           and all(v["verdict"] == "PASS" for v in ledger))
 
@@ -1011,7 +1011,7 @@ class _TickServer:
 
 
 def check_14_tick_primitive():
-    """The deterministic tick window (P32, card p32-ops-neo-tick-primitive).
+    """The deterministic tick window (P32, card ops-neo-tick-primitive).
 
     Mock face of the neo /tick primitive (1.20.3+; forge 1.20.1 has no
     TickCommand at all): ① the happy window — freeze proved by two equal
@@ -1172,7 +1172,7 @@ class _FakeStepClient:
 
 
 def check_15_port_segment_stagger():
-    """The fallback-segment stagger hooks (p34-pool-port-stagger).
+    """The fallback-segment stagger hooks (pool-port-stagger).
 
     Two parallel sessions booting the default 256xx segment at once used to
     race into BootOwnershipError and the loser idled until the winner's
@@ -1184,7 +1184,7 @@ def check_15_port_segment_stagger():
     assert_ports_free (never double-boot, P17 semantics kept). listening_ports
     is faked (no dependence on this box's live listeners) and restored.
     """
-    print("\n--- 15: port segment stagger (p34, offset + occupied flip)")
+    print("\n--- 15: port segment stagger (P34, offset + occupied flip)")
     triple = framework.SESSION_PORTS["1.20.1"]      # (25662, 25672, 25652)
     stride, span = gt6server.RCON_SEGMENT_STRIDE, gt6server.RCON_SEGMENT_SPAN
     real_listen = gt6server.listening_ports

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""scan_bedrock_ore — the p31-bedrock-ore-worldgen card's natural-generation gate driver.
+"""scan_bedrock_ore — the bedrock-ore-worldgen card's natural-generation gate driver.
 
-The scan_strata_lens.py form (the p31-strata-lens card's separate normal+seed world scan),
+The scan_strata_lens.py form (the strata-lens card's separate normal+seed world scan),
 committed per the tools/rcon README (no task-local tmp drivers). Per leg (forge / neoforge):
 
   boot #1: fresh world (world dirs deleted), level-type normal, the card seed
@@ -15,7 +15,7 @@ committed per the tools/rcon README (no task-local tmp drivers). Per leg (forge 
   analysis: 1) the acceptance gate: coal >= 1 AND graphite >= 1 across the two boots
            (the offline decision set carries exactly one of each; block-survival drift
            may eat one in a single boot, so the gate is cross-boot — the pipeline-drift
-           semantics of decisions.2026-09-18-p31-strata-lens-determinism-acceptance);
+           semantics of decisions.2026-09-18-strata-lens-determinism-acceptance);
             2) the vein-count floor: >= 15 hit chunks per boot (of the 27 decisions);
             3) boot #2: DELETE the world again, same seed, same scan — the DECISION-level
            determinism face: the material-set union must be identical boot-to-boot, the
@@ -23,7 +23,7 @@ committed per the tools/rcon README (no task-local tmp drivers). Per leg (forge 
            >= 80% (block positions drift with the feature-list interplay, decisions do
            not — the offline replay pins the decisions exactly).
 
-Artifacts: /tmp/p31bedrockscan_<leg>_boot<N>.log/.pid, /tmp/p31bedrockscan_<leg>_verdict.json
+Artifacts: /tmp/bedrockscan_<leg>_boot<N>.log/.pid, /tmp/bedrockscan_<leg>_verdict.json
 
 Usage:
   python3 tools/rcon/scan_bedrock_ore.py <worktree> <forge|neo>
@@ -92,8 +92,8 @@ def provision():
 def boot_and_load(box_count):
     global boot_index
     boot_index += 1
-    log = Path(f"/tmp/p31bedrockscan_{LEG}_boot{boot_index}.log")
-    pid = Path(f"/tmp/p31bedrockscan_{LEG}_boot{boot_index}.pid")
+    log = Path(f"/tmp/bedrockscan_{LEG}_boot{boot_index}.log")
+    pid = Path(f"/tmp/bedrockscan_{LEG}_boot{boot_index}.pid")
     gt6server.start_server(str(WORKTREE), log, pid, gt6server.gradle_task(NODE[LEG]))
     try:
         deadline = time.time() + 1200
@@ -455,7 +455,7 @@ def main():
 
     verdict = {"leg": LEG, "seed": SEED, "region": f"x {CHUNK_X0}..{CHUNK_X1}, z {CHUNK_Z0}..{CHUNK_Z1}",
                "boots": results, "gates": gate}
-    out = Path(f"/tmp/p31bedrockscan_{LEG}_verdict.json")
+    out = Path(f"/tmp/bedrockscan_{LEG}_verdict.json")
     out.write_text(json.dumps(verdict, indent=2, sort_keys=True))
     print("verdict:", json.dumps(gate, sort_keys=True), flush=True)
     print("verdict file:", out, flush=True)

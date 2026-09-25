@@ -3,13 +3,13 @@
 """test_datagen_tree_check.py — datagen_tree_check 的 stdlib unittest 单测。
 
 零第三方依赖（python3 tools/test_datagen_tree_check.py 直跑）。覆盖：
-  * p30 双目录终态：biome_modifier 带 forge/↔forge/、neoforge/↔neoforge/ 同品牌
-    直接对账（p27 brand_normalize 折叠退役）——normalize 恒等 / _fold 双品牌同侧
+  * P30 双目录终态：biome_modifier 带 forge/↔forge/、neoforge/↔neoforge/ 同品牌
+    直接对账（P27 brand_normalize 折叠退役）——normalize 恒等 / _fold 双品牌同侧
     不撞键 / 值形归一器对该带退役（字节差原样 FAIL）/ main() 端到端 17+17 双腿面
     绿形 + 单面树 34 形 FAIL 回归钉。
-  * p27 起的陈旧守卫 STALE 判定与逃生阀。
+  * P27 起的陈旧守卫 STALE 判定与逃生阀。
 
-证据基线：p30 before 实测（work/p30-ops-biome-modifier-dual-dir，base 树）——canonical
+证据基线：P30 before 实测（work/ops-biome-modifier-dual-dir，base 树）——canonical
 仅 data/gt6/forge/biome_modifier/ 17 文件 vs 节点仅 data/gt6/neoforge/biome_modifier/
 17 文件 → 34 条目录形 FAIL（only-canonical 17 + only-node 17），即本卡清偿对象；
 双目录并载后（GT6DualDirectoryFaces.mirrorBiomeModifiers）同品牌逐字节相等 → 0。
@@ -51,7 +51,7 @@ def _biome_json(brand_prefix: str) -> bytes:
 
 
 class TestNormalizeDualDir(unittest.TestCase):
-    """层 1：双目录终态下品牌段恒等（p27 折叠退役），SEGMENT_MAP 层照旧。"""
+    """层 1：双目录终态下品牌段恒等（P27 折叠退役），SEGMENT_MAP 层照旧。"""
 
     def test_biome_brand_paths_are_identity_both_brands(self):
         for brand in ("forge", "neoforge"):
@@ -83,7 +83,7 @@ class TestFoldDualDir(unittest.TestCase):
     """_fold：双品牌同侧共存 = 两个独立对账键（终态形），无碰撞概念。"""
 
     def test_dual_brand_same_side_folds_to_two_keys(self):
-        # p27 时代此形硬 ERROR（by design 逼 revisit）；p30 终态即本形，守卫退役
+        # P27 时代此形硬 ERROR（by design 逼 revisit）；P30 终态即本形，守卫退役
         files = {
             PurePosixPath("data/gt6/forge/biome_modifier/a.json"): Path("/c/a.json"),
             PurePosixPath("data/gt6/neoforge/biome_modifier/a.json"): Path("/c2/a.json"),
@@ -117,7 +117,7 @@ class TestBiomeBandUnregistered(unittest.TestCase):
             self.assertIsNone(mod._registered_band(rel), msg=brand)
 
     def test_brand_type_diff_stays_fail_visible(self):
-        # p27 时代 type 差由 _norm_add_features_brand 归一；终态两侧同品牌同形，
+        # P27 时代 type 差由 _norm_add_features_brand 归一；终态两侧同品牌同形，
         # 归一器已删——残余 type 差 = 真实漂移，必须 FAIL 而非吞掉
         rel = PurePosixPath("data/gt6/neoforge/biome_modifier/x.json")
         c = _biome_json("neoforge")
@@ -178,7 +178,7 @@ class TestMainEndToEndDualDir(unittest.TestCase):
             self.assertNotIn("NORMALIZED [add-features", out)  # 归一器已退役
 
     def test_single_face_base_shape_still_fails(self):
-        # 回归钉（本卡清偿对象）：canonical 仅 forge/ + node 仅 neoforge/（p26-p29
+        # 回归钉（本卡清偿对象）：canonical 仅 forge/ + node 仅 neoforge/（P26-P29
         # 结构债本体）→ 34 形（此处 1+1 缩比）目录形 FAIL，绝不许再被折叠吞绿
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
@@ -217,7 +217,7 @@ class TestMainEndToEndDualDir(unittest.TestCase):
 
 
 class TestStaleGuardMarkers(unittest.TestCase):
-    """陈旧守卫的时戳标记面（p27-ops）。"""
+    """陈旧守卫的时戳标记面（ops）。"""
 
     def test_parse_cache_ledger_header(self):
         # 实测样本形（main 节点输出 .cache/<sha1> 首行，纳秒精度）
@@ -344,7 +344,7 @@ class TestStaleGuardEndToEnd(unittest.TestCase):
 
 
 class TestUniformIntValueNormalizer(unittest.TestCase):
-    """p30-w6-small-ore-datagen：placed_feature 带的 uniform IntProvider 包裹形归一
+    """small-ore-datagen：placed_feature 带的 uniform IntProvider 包裹形归一
     （DFU dispatch 双腿形差，node 1.21.1 内联 → canonical 1.20.1 "value" 嵌套）。"""
 
     def test_placed_feature_band_registered(self):
@@ -409,7 +409,7 @@ def _material_tool_json(leg: str) -> bytes:
 
 
 class TestMaterialToolDialectNormalizer(unittest.TestCase):
-    """p32-ops-treecheck-normalizer：recipes 带 gt6:material_tool 方言归一
+    """ops-treecheck-normalizer：recipes 带 gt6:material_tool 方言归一
     （5685 文件 standing red 的清偿对象；census 残差全带单一形）。"""
 
     def test_material_tool_full_dialect_normalizes(self):
@@ -536,8 +536,8 @@ def _circuit_advancement_json(leg: str) -> bytes:
 
 
 class TestCircuitProgramDialectNormalizer(unittest.TestCase):
-    """p35-datagen-circuit-declared：recipes 带 gt6:circuit_program 方言归一
-    （p33 电路带 52 文件 standing red 的 recipes 面；census 残差全带单一形）。"""
+    """datagen-circuit-declared：recipes 带 gt6:circuit_program 方言归一
+    （P33 电路带 52 文件 standing red 的 recipes 面；census 残差全带单一形）。"""
 
     def test_circuit_program_full_dialect_normalizes(self):
         rel = PurePosixPath("data/gt6/recipes/integrated_circuit_reset.json")
