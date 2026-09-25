@@ -1559,7 +1559,10 @@ public class GT6DungeonPiece extends StructurePiece {
                     set(aLevel, aClip, tX, 2, tZ, (aRandom.nextBoolean() ? Blocks.MELON : Blocks.PUMPKIN).defaultBlockState());
                 }
             } else {
-                set(aLevel, aClip, tX, 1, tZ, Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE, 15));
+                // moisture 7 = the vanilla MAX (the property is 0..7 — 15 is the upstream
+                // GT fertilized-face read, and setting 15 on the vanilla block CRASHES the
+                // chunk decoration task, the LeverBlock.FACING crash class)
+                set(aLevel, aClip, tX, 1, tZ, Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE, 7));
                 set(aLevel, aClip, tX, 2, tZ, cropStack(aRandom));
             }
         }
