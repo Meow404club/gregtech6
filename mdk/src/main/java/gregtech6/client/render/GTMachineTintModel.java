@@ -189,6 +189,12 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// walls (the dedicated GTCrucibleWallBlock part carriers)
 		for (Block tBlock : gregtech6.registry.GT6Tanks.paintableBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GT6Crucibles.paintableWallBlockArray()) wrapStates(tBlock, aEvent);
+		// issue #11 — the burning boxes join the baked-tint domain: every row carries
+		// NBT_MATERIAL upstream (Loader :519-548/:619-704), the body cube is the
+		// tintindex-0 seat, the colour comes off GTBasicMachineBlock.materialOf like
+		// every other machine domain (the lit decals carry NO tintindex, so the
+		// burning glow passes through untinted — the P22 decal contract)
+		for (Block tBlock : gregtech6.registry.GT6BurningBoxes.paintableBlockArray()) wrapStates(tBlock, aEvent);
 	}
 
 	/**
@@ -244,6 +250,22 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (Block tBlock : gregtech6.registry.GT6Tanks.paintableBlockArray()) tItems.add(tBlock.asItem());
 		for (Block tBlock : gregtech6.registry.GT6Crucibles.paintableWallBlockArray()) tItems.add(tBlock.asItem());
 		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tItems.toArray(net.minecraft.world.item.Item[]::new));
+	}
+
+	/**
+	 * The burning-box paint tint, the INVENTORY half (issue #11 texture half): the 97
+	 * BlockItems ride the shared {@link GTItemPaintTint} lambda through the combined
+	 * {@code GTMachinePaintTint.tintMaterialOf} dispatch (which resolves the row
+	 * material via the common {@code GTBasicMachineBlock.materialOf} gate, task p27) —
+	 * the creative-tab face the world half cannot colour (a BlockItem is NOT coloured
+	 * by any baked world tint, ItemColors.java:25-93). The per-domain-listener
+	 * registration is the {@link #onRegisterControllerPaintItemColors} shape.
+	 */
+	@SubscribeEvent
+	public static void onRegisterBurningBoxPaintItemColors(net.minecraftforge.client.event.RegisterColorHandlersEvent.Item aEvent) {
+		java.util.List<Item> tPaintItems = new ArrayList<>();
+		for (Block tBlock : gregtech6.registry.GT6BurningBoxes.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tPaintItems.toArray(Item[]::new));
 	}
 
 	/** One block's state walk (the shared swap body; the dynamic-model guard is order-safe against GTRenderModelListener's own hook). */

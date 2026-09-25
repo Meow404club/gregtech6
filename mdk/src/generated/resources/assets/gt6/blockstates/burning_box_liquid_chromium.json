@@ -1,18 +1,33 @@
 {
   "variants": {
-    "facing=east": {
+    "facing=east,lit=false": {
       "model": "gt6:block/burning_box_liquid",
       "y": 90
     },
-    "facing=north": {
+    "facing=east,lit=true": {
+      "model": "gt6:block/burning_box_liquid_lit",
+      "y": 90
+    },
+    "facing=north,lit=false": {
       "model": "gt6:block/burning_box_liquid"
     },
-    "facing=south": {
+    "facing=north,lit=true": {
+      "model": "gt6:block/burning_box_liquid_lit"
+    },
+    "facing=south,lit=false": {
       "model": "gt6:block/burning_box_liquid",
       "y": 180
     },
-    "facing=west": {
+    "facing=south,lit=true": {
+      "model": "gt6:block/burning_box_liquid_lit",
+      "y": 180
+    },
+    "facing=west,lit=false": {
       "model": "gt6:block/burning_box_liquid",
+      "y": 270
+    },
+    "facing=west,lit=true": {
+      "model": "gt6:block/burning_box_liquid_lit",
       "y": 270
     }
   }

@@ -10,13 +10,17 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -27,6 +31,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
@@ -362,6 +367,21 @@ public final class GT6BurningBoxes {
 		return rBlocks;
 	}
 
+	/**
+	 * All 97 blocks, registration order (the paintable-array convention —
+	 * {@code GTMachineTintModel.onModifyBakingResult} walks it to bake the per-row
+	 * material tint into the vertex colours, issue #11 texture half). Every burning-box
+	 * row carries NBT_MATERIAL upstream (Loader :519-548/:619-704), so the whole family
+	 * is the paintable domain; the paint/unpainted fallback split is the common
+	 * {@code GTBasicMachineBlock.materialOf} dispatch the p27 card landed.
+	 */
+	public static Block[] paintableBlockArray() {
+		Block[] rBlocks = new Block[BLOCKS_BY_PATH.size()];
+		int i = 0;
+		for (RegistryObject<BurningBoxBlock> tHandle : BLOCKS_BY_PATH.values()) rBlocks[i++] = tHandle.get();
+		return rBlocks;
+	}
+
 	/** The Brick row joins the SOLID family BET (the same BE class, upstream :518-548 one section). */
 	private static List<BurningBoxRow> withBrick(List<BurningBoxRow> aSolidRows) {
 		List<BurningBoxRow> rRows = new ArrayList<>(1 + aSolidRows.size());
@@ -394,12 +414,47 @@ public final class GT6BurningBoxes {
 		/** Facing property (horizontal — the FRONT = the fuel/ignite face). */
 		public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
+		/**
+		 * The burning visual (issue #11 behavior half — the vanilla CampfireBlock LIT
+		 * convention for the TE-driven flame bit): the world half of the upstream
+		 * {@code mBurning} visual sync (MultiTileEntityGeneratorSolid.java:239-254
+		 * onTickCheck/getVisualData). The BE compares-and-sets this on every
+		 * {@code mBurning} flip ({@code GTGeneratorSolidBlockEntity#applyVisualState}),
+		 * so the lit variant (the {@code _lit} models over the {@code overlay_active}
+		 * decals) is client-visible with no extra packet surface.
+		 */
+		public static final BooleanProperty LIT = BlockStateProperties.LIT;
+
+		/** The front-face arm a held stack takes (the pure dispatch the offline tests drive). */
+		public enum FrontArm {
+			/** A flint-like (vanilla FLINT_AND_STEEL or gt6:flint_and_tinder) — the ignite strike. */
+			IGNITE,
+			/** The front transfer click (Solid/FluidBed families only, the onBlockActivated3 face). */
+			TRANSFER,
+			/** Everything else on the Liquid/Gas fronts — no reaction (the pre-issue11 shape). */
+			NONE
+		}
+
+		/**
+		 * The pure front-arm dispatch (issue #11: the flint strike takes the FRONT face on
+		 * EVERY family — the upstream TOOL_igniter gate {@code aSide == mFacing} covers
+		 * Solid←Brick/Metal (MultiTileEntityGeneratorSolid.java:226), Liquid←Gas (:180) and
+		 * FluidBed (:202) alike — while the transfer click stays the Solid/FluidBed-only
+		 * onBlockActivated3 face, :216). {@code aFlintLike} is the item identity check
+		 * (vanilla flint and steel OR the gt6 flint and tinder), split out so the offline
+		 * tests drive all three arms without registry-backed items.
+		 */
+		public static FrontArm frontArmOf(Family aFamily, boolean aFlintLike) {
+			if (aFlintLike) return FrontArm.IGNITE;
+			return aFamily == Family.SOLID || aFamily == Family.FLUIDBED ? FrontArm.TRANSFER : FrontArm.NONE;
+		}
+
 		private final BurningBoxRow mRow;
 
 		public BurningBoxBlock(BurningBoxRow aRow, Properties aProperties) {
 			super(aProperties);
 			mRow = aRow;
-			registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+			registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, Boolean.FALSE));
 		}
 		//? if neoforge {
 		/*
@@ -441,7 +496,7 @@ public final class GT6BurningBoxes {
 
 		@Override
 		protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> aBuilder) {
-			aBuilder.add(FACING);
+			aBuilder.add(FACING, LIT);
 		}
 
 		@Override
@@ -476,16 +531,30 @@ public final class GT6BurningBoxes {
 		//in order and MAIN_HAND is the canonical first entry.
 		InteractionHand aHand = InteractionHand.MAIN_HAND;
 		*///?}
-			// the onBlockActivated3 :181 front gate — only the FRONT face reacts, and only
-			// the Solid/FluidBed families have a click face (the Liquid/GAS families move
-			// fluids through the tanks)
-			if (mRow.family() != Family.SOLID && mRow.family() != Family.FLUIDBED) return InteractionResult.PASS;
+			// the onBlockActivated3 :181 front gate — every arm lives on the FRONT face
 			if (aHit.getDirection() != aState.getValue(FACING)) return InteractionResult.PASS;
-			if (aLevel.getBlockEntity(aPos) instanceof GTGeneratorSolidBlockEntity tBox) {
+			if (!(aLevel.getBlockEntity(aPos) instanceof GTGeneratorSolidBlockEntity tBox)) return InteractionResult.PASS;
+			// issue #11 — the flint strike runs FIRST on every family (the upstream
+			// GT_Proxy.java:269-287 intercept + TOOL_igniter convergence re-levelled onto
+			// block.use: the 1.20.1 interaction order runs block.use before item.useOn —
+			// ServerPlayerGameMode.useItemOn:315-319 consumes the click here, so the
+			// vanilla useOn fire arm was never reachable on the box). The dispatch is the
+			// pure {@link #frontArmOf}; the strike body lives on the BE (testable).
+			switch (frontArmOf(mRow.family(), aPlayer.getItemInHand(aHand).is(Items.FLINT_AND_STEEL)
+					|| aPlayer.getItemInHand(aHand).is(GT6Tools.FLINT_AND_TINDER.get()))) {
+			case IGNITE -> {
+				if (!aLevel.isClientSide) tBox.igniteWithFlint(aPlayer, aHand);
+				return InteractionResult.sidedSuccess(aLevel.isClientSide);
+			}
+			case TRANSFER -> {
+				// the onBlockActivated3 :180-217 front transfer (the LH.NO_GUI contract)
 				if (!aLevel.isClientSide) tBox.useOnFront(aPlayer, aHand);
 				return InteractionResult.sidedSuccess(aLevel.isClientSide);
 			}
-			return InteractionResult.PASS;
+			default -> {
+				return InteractionResult.PASS; // NONE — the Liquid/Gas non-flint fronts stay inert
+			}
+			}
 		}
 
 

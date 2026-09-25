@@ -2382,28 +2382,42 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /**
      * Task p13-burning-box-family — the 97 burning-box rows (Loader_MultiTileEntities.java
-     * :517-704): ONE shared oriented cube model per FAMILY over the four grayscale
-     * family textures (gt6:block/burning_box_{solid,liquid,gas,fluidbed}, generated
-     * placeholders — the upstream colored/overlay iconsets have no borrowable source in
-     * this repo, the assets/README.md note), front = the FACING (the fuel/ignite face),
-     * rotated per FACING exactly like the steam-engine ladder (addSteamEngines). The
-     * Brick row shares the SOLID model (the same BE family, the stone-sound carrier).
-     * The 97 BlockItem models parent their family model (the crank per-row form). The
-     * per-material mRGBa tint and the burning overlay_active family are the render
-     * pool card (the steam-engine ruling repeated).
+     * :517-704). Task issue11-burningbox UPGRADED the target (the former "the upstream
+     * colored/overlay iconsets have no borrowable source in this repo" claim here was
+     * proven false — all five burning_* groups exist in the snapshot): per GROUP one
+     * two-state model pair over the upstream burning_{solid,liquid,gas,fluidbed,brick}
+     * texture groups. Model grammar (the {@link #familyMachineModel} shape): the body
+     * cube re-declared with {@code tintindex 0} on every face (the p21 machine tint
+     * seat — the upstream colored × mRGBa, MultiTileEntityGeneratorMetal.java:38,
+     * baked into the vertex colours by GTMachineTintModel since p32; the row material
+     * resolves through the common GTBasicMachineBlock.materialOf dispatch) plus six
+     * 0.01 face decals with NO tintindex carrying the borrowed overlay/overlay_active
+     * art (the p22 UNCOLOURED second layer). The body texture is ONE grayscale PNG —
+     * every colored face of every group hashes identical (assets/README.md) — while
+     * the family identity lives entirely in the per-group decals, exactly the p20
+     * probe's record. The FACING-front cube rotation is the steam-engine y-mapping
+     * (below), and the FACING_ROTATIONS[north] art binding west→right / east→left is
+     * the familyMachineModel table verbatim. The lit state picks the {@code _lit}
+     * model — the overlay_active decals, the upstream mBurning texture switch — driven
+     * by the LIT blockstate property the BE applies on every mBurning flip (issue #11
+     * behavior half; the vanilla CampfireBlock LIT convention). The Brick row takes
+     * its own burning_brick group (the p13 "Brick shares the SOLID model" ruling
+     * closed). The 97 BlockItem models parent their group's UNLIT model (the creative
+     * icon never burns).
      */
     private void addBurningBoxes() {
-        java.util.Map<gregtech6.registry.GT6BurningBoxes.Family, ModelFile> tModels = new java.util.EnumMap<>(gregtech6.registry.GT6BurningBoxes.Family.class);
-        for (gregtech6.registry.GT6BurningBoxes.Family tFamily : gregtech6.registry.GT6BurningBoxes.Family.values()) {
-            String tTex = "block/burning_box_" + tFamily.name().toLowerCase(java.util.Locale.ROOT);
-            tModels.put(tFamily, models().cube("burning_box_" + tFamily.name().toLowerCase(java.util.Locale.ROOT),
-                    modLoc(tTex), modLoc(tTex),          // bottom/top
-                    modLoc(tTex), modLoc(tTex),          // north(front)/south(back) — one face, FACING drives the front semantics
-                    modLoc(tTex), modLoc(tTex)));        // west/east
+        java.util.Map<String, ModelFile> tUnlit = new java.util.HashMap<>(), tLit = new java.util.HashMap<>();
+        for (String tGroup : new String[] {"solid", "liquid", "gas", "fluidbed", "brick"}) {
+            tUnlit.put(tGroup, burningBoxModel("burning_box_" + tGroup, tGroup, false));
+            tLit.put(tGroup, burningBoxModel("burning_box_" + tGroup + "_lit", tGroup, true));
         }
         for (gregtech6.registry.GT6BurningBoxes.BurningBoxRow tRow : gregtech6.registry.GT6BurningBoxes.allRows()) {
             Block tBlock = gregtech6.registry.GT6BurningBoxes.BLOCKS_BY_PATH.get(tRow.path()).get();
-            ModelFile tModel = tModels.get(tRow.family());
+            // the Brick row is Family.SOLID behaviourally (the same BE class) but wears
+            // its own upstream texture group — the one row keyed off the path
+            String tGroup = tRow.path().equals(gregtech6.registry.GT6BurningBoxes.BRICK_ROW.path()) ? "brick"
+                    : tRow.family().name().toLowerCase(java.util.Locale.ROOT);
+            ModelFile tOff = tUnlit.get(tGroup), tOn = tLit.get(tGroup);
             getVariantBuilder(tBlock).forAllStates(aState -> {
                 int tY = switch (aState.getValue(gregtech6.registry.GT6BurningBoxes.BurningBoxBlock.FACING)) {
                     case SOUTH -> 180;
@@ -2411,10 +2425,69 @@ public final class GT6BlockStates extends BlockStateProvider {
                     case EAST -> 90;
                     default -> 0; // NORTH
                 };
-                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+                return ConfiguredModel.builder()
+                        .modelFile(aState.getValue(gregtech6.registry.GT6BurningBoxes.BurningBoxBlock.LIT) ? tOn : tOff)
+                        .rotationY(tY).build();
             });
-            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+            itemModels().withExistingParent(tRow.path(), tOff.getLocation());
         }
+    }
+
+    /**
+     * One burning-box model (the {@link #familyMachineModel} geometry with a shared
+     * body texture): the tinted body cube (every face {@code tintindex 0}, bound to
+     * the ONE grayscale body PNG — upstream all colored sets hash identical, see
+     * {@link #addBurningBoxes}) plus the six 0.01 face decals (single face, NO
+     * tintindex, cullface synced — the p22 pairing) over the group's
+     * {@code overlay[_active]} art. The {@code aLit} arm binds the {@code _active}
+     * decal set (the burning glow).
+     */
+    private ModelFile burningBoxModel(String aName, String aGroup, boolean aLit) {
+        String tSuffix = aLit ? "_active" : "";
+        ResourceLocation tBody = modLoc("block/burning_box_solid");
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", tBody).texture("up", tBody)
+                .texture("north", tBody).texture("south", tBody)
+                .texture("west", tBody).texture("east", tBody)
+                .texture("overlay_front", modLoc("block/burning_box_" + aGroup + "_overlay_front" + tSuffix))
+                .texture("overlay_back", modLoc("block/burning_box_" + aGroup + "_overlay_back" + tSuffix))
+                .texture("overlay_left", modLoc("block/burning_box_" + aGroup + "_overlay_left" + tSuffix))
+                .texture("overlay_right", modLoc("block/burning_box_" + aGroup + "_overlay_right" + tSuffix))
+                .texture("overlay_top", modLoc("block/burning_box_" + aGroup + "_overlay_top" + tSuffix))
+                .texture("overlay_bottom", modLoc("block/burning_box_" + aGroup + "_overlay_bottom" + tSuffix));
+        // element 0 — the tinted body cube (the p21 shape, the mRGBa material seat)
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
+                .end();
+        // elements 1-6 — the burning decals: thin plate per face, 0.01 out, single face,
+        // no tintindex (the UNCOLOURED second layer), cullface synced (the p22 pairing).
+        tModel.element() // front (north)
+                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+                .face(Direction.NORTH).texture("#overlay_front").cullface(Direction.NORTH)
+                .end();
+        tModel.element() // back (south)
+                .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.01F)
+                .face(Direction.SOUTH).texture("#overlay_back").cullface(Direction.SOUTH)
+                .end();
+        tModel.element() // left art (east face — FACING_ROTATIONS[north][east]=2=left)
+                .from(16.0F, 0.0F, 0.0F).to(16.01F, 16.0F, 16.0F)
+                .face(Direction.EAST).texture("#overlay_left").cullface(Direction.EAST)
+                .end();
+        tModel.element() // right art (west face — FACING_ROTATIONS[north][west]=4=right)
+                .from(-0.01F, 0.0F, 0.0F).to(0.0F, 16.0F, 16.0F)
+                .face(Direction.WEST).texture("#overlay_right").cullface(Direction.WEST)
+                .end();
+        tModel.element() // bottom (down)
+                .from(0.0F, -0.01F, 0.0F).to(16.0F, 0.0F, 16.0F)
+                .face(Direction.DOWN).texture("#overlay_bottom").cullface(Direction.DOWN)
+                .end();
+        tModel.element() // top (up)
+                .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.01F, 16.0F)
+                .face(Direction.UP).texture("#overlay_top").cullface(Direction.UP)
+                .end();
+        return tModel;
     }
 
     /**

@@ -1,18 +1,33 @@
 {
   "variants": {
-    "facing=east": {
-      "model": "gt6:block/burning_box_solid",
+    "facing=east,lit=false": {
+      "model": "gt6:block/burning_box_brick",
       "y": 90
     },
-    "facing=north": {
-      "model": "gt6:block/burning_box_solid"
+    "facing=east,lit=true": {
+      "model": "gt6:block/burning_box_brick_lit",
+      "y": 90
     },
-    "facing=south": {
-      "model": "gt6:block/burning_box_solid",
+    "facing=north,lit=false": {
+      "model": "gt6:block/burning_box_brick"
+    },
+    "facing=north,lit=true": {
+      "model": "gt6:block/burning_box_brick_lit"
+    },
+    "facing=south,lit=false": {
+      "model": "gt6:block/burning_box_brick",
       "y": 180
     },
-    "facing=west": {
-      "model": "gt6:block/burning_box_solid",
+    "facing=south,lit=true": {
+      "model": "gt6:block/burning_box_brick_lit",
+      "y": 180
+    },
+    "facing=west,lit=false": {
+      "model": "gt6:block/burning_box_brick",
+      "y": 270
+    },
+    "facing=west,lit=true": {
+      "model": "gt6:block/burning_box_brick_lit",
       "y": 270
     }
   }

@@ -162,6 +162,7 @@ public class GTGeneratorLiquidBlockEntity extends GTGeneratorSolidBlockEntity im
 		if (mEnergy < 0) mEnergy = 0; // :164
 		// :166 — the auto-re-ignite window decay
 		if (mCooldown > 0) mCooldown--;
+		applyVisualState(); // issue #11 — the LIT blockstate follows every mBurning flip within the tick
 	}
 
 	/** The mLastRecipe fast path (upstream :72 field, the :135 search argument). */
