@@ -4086,8 +4086,8 @@ public final class GTMachines {
 	// smoke row — the BATH/LOOM maps themselves are the P26/W1 in-catalog constants,
 	// reused not rebuilt; the loom.json row is the W1 in-catalog row). NO KubeJS surface.
 	// The live NO_CONSTANT_POWER resume arm (the card-①遗留 obligation, double-recorded on
-	// the p29_w2_energy_types chain doc and the GT6EnergyDynamicsTest doc) rides the
-	// p29_w2_coagulator chain: a real TU machine RETAINS its mid-flight progress across a
+	// the energy_types chain doc and the GT6EnergyDynamicsTest doc) rides the
+	// coagulator chain: a real TU machine RETAINS its mid-flight progress across a
 	// command-idle power gap, the constant-power shredder arm resets (the card-① live
 	// half's machine-side completion).
 	// ---------------------------------------------------------------------------

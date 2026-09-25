@@ -38,7 +38,7 @@ import gregtech6.registry.GTMachines;
  * (Loader_MultiTileEntities.java :1608-1612 Bumblelyzer / :1437-1440 CrystallisationCrucible)
  * — the meta ladders, the masks, the parallel and energy columns, the texture tokens, the RM
  * map wiring, and the RM.java constants rows (:107 / :73). The registration half (9 blocks +
- * 9 items + 2 family BETs) resolves on the live server (the sweep p34_machines_bc group).
+ * 9 items + 2 family BETs) resolves on the live server (the sweep machines_bc group).
  */
 public class GT6P34MachineRowsTest extends TileEntityBasicMachineOfflineTestBase {
 

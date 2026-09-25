@@ -96,7 +96,7 @@ public class DigLadderTest {
 	 * tags) binds only with the datapack — offline every block answers requiredLevel 0,
 	 * so the tag-arm denials (copper gated on iron ore, bronze on obsidian,
 	 * tungstensteel passing the diamond tier) are pinned LIVE by the RCON material
-	 * chain (p31_tool_ladder_dig_materials, the speed=0.0 arms). Here the formula half:
+	 * chain (tool_ladder_dig_materials, the speed=0.0 arms). Here the formula half:
 	 */
 	@Test
 	public void miningLevelIsBaseQualityPlusMaterialQuality() {

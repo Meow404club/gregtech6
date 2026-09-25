@@ -17,7 +17,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
  * families), the KEPT_FILLS reverse-census closure (the 10 potion.-prefixed rows over
  * the existing b1/p31 ids the b2 walk missed) and the b1 lemonade carrier correction
  * (:603 the 275 K literal). The live drink behaviour is the RCON chain evidence (the
- * p33_food_tail sweep group); offline asserts the declaration tables, the corrections
+ * food_tail sweep group); offline asserts the declaration tables, the corrections
  * and the seam constants.
  */
 public class GTFoodTailTest extends GTOfflineTestBase {

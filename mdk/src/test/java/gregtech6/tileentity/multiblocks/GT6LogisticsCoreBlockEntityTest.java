@@ -43,7 +43,7 @@ import gregtech6.tileentity.multiblocks.GT6LogisticsCoreBlockEntity.LogisticsDat
  * the CPU pool arithmetic, the cheapskate wall substitute, the wrong-part rejection),
  * the :437-444 BFS (cubic radius, tier registration), the :451-500 routing order
  * (defrag Filtered-before-Semi), the EU accounting (:525/:565) and the :680-687 energy
- * window. The live RCON chain (p32_logistics_core) carries the wire-mediated BFS and
+ * window. The live RCON chain (logistics_core) carries the wire-mediated BFS and
  * the tank endpoints; these tables pin the decision functions.
  *
  * <p>Fixture posture: the seven structure roles bind to vanilla stand-ins (walls BRICKS,

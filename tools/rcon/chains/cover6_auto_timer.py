@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""cover6_auto_timer — the Auto Reboot Switch live chain (p35-covers-display-scale-6).
+"""cover6_auto_timer — the Auto Reboot Switch live chain (covers-display-scale-6).
 
 Band column x=610 z=306. One grid-fed oven, the 1-minute ladder item
 (cover_auto_timer_1m, the 1200-tick cycle, CoverControllerAutoTimer):

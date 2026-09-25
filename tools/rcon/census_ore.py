@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""census_ore — the p30 ore close-out card's census boot driver (task p30-ore-5-census).
+"""census_ore — the P30 ore close-out card's census boot driver (task ore-5-census).
 
 The roster boots flat (gt6server.PROVISIONED_KEYS); this card's acceptance mandates the
-p30 worldgen card form instead: a NORMAL world at the fixed seed 6131000569321125127,
+P30 worldgen card form instead: a NORMAL world at the fixed seed 6131000569321125127,
 world dirs deleted before the boot. The framework's per-chain runner has no knob for
 that, so this driver owns the boot — everything else is the stock framework semantics:
 
@@ -36,9 +36,9 @@ import gt6server
 import gt6world
 import framework
 
-CHAIN_STEM = "p29_w6_ore_census"
+CHAIN_STEM = "ore_census"
 DEFAULT_SEED = "6131000569321125127"
-# the fixed worldgen form of the p30 worldgen cards (normal + the pinned seed)
+# the fixed worldgen form of the P30 worldgen cards (normal + the pinned seed)
 LEVEL_TYPE_NORMAL = "minecraft\\:normal"
 
 

@@ -17,7 +17,7 @@ gt6rcon.py     客户端层：帧协议/断言判定（judge_output），CLI 与
 起服→两遍跑（第二遍=幂等证明，清场由 gt6world 自动 bbox）→按 PID 停服。
 旧 tmp 链是历史工件，不迁移不删除；要迁移见文末「从旧链迁移」。
 
-## 门禁用法（p34 起，一切重活统一入口）
+## 门禁用法（P34 起，一切重活统一入口）
 
 **一切测试/编译/RCON 启动经 `tools/gt6testgate.py` 统一门禁**（铁律 #8）——
 内存占用 >30G 排队不开新（env `GT6_GATE_MEM_LIMIT_MIB` 调阈），并发槽默认 4
@@ -25,8 +25,8 @@ gt6rcon.py     客户端层：帧协议/断言判定（judge_output），CLI 与
 
 ```bash
 # wrapper 用法：子进程 stdout/stderr 透传不截留，退出码透传
-python3 tools/gt6testgate.py --tag sweep-p32 -- \
-    python3 tools/rcon/sweep.py --mode session --group p32_placeables --node 1.20.1-forge
+python3 tools/gt6testgate.py --tag sweep-placeables -- \
+    python3 tools/rcon/sweep.py --mode session --group placeables --node 1.20.1-forge
 
 # gradle 同理
 python3 tools/gt6testgate.py --tag cleanTest -- ./gradlew :mdk:cleanTest
@@ -167,13 +167,13 @@ OPOS[face]=face^1（GTFluidPipeBlockEntity.java:325）。
 
 前置：起服+RCON 通；木小管容量 1000 L（GTFluidPipeBlockEntity.java:85）。
 
-ownable 面（p24-pipe-owner）：`ownable <pos> <0|1> [ownerUuid]` 是泡沫 applyFoam 的
+ownable 面（pipe-owner）：`ownable <pos> <0|1> [ownerUuid]` 是泡沫 applyFoam 的
 替身（上游 10ConnectorRendered:159-166 唯一活体写点，泡沫族睡 P10 池）——控制台 OP
 强制写点，无 allowInteraction 门；`ownable 0` 双字段复位（removeFoam 形）。stat 增
 `ownable/owner` 两字段。锁管语义：默认 ownable=false 零保护（活体等价上游普通管，
 既有链零回归）；上锁后 console（null=非 owner）toggle 被拒（06Covers:141 对位 +
 09Connector:75 邻居门，同门覆 connect/disconnect 两臂），贴靠锁管 place 得
-connections 0（上游 :86 return T 对位）。活链 = `chains/p24_pipe_owner.py`。
+connections 0（上游 :86 return T 对位）。活链 = `chains/pipe_owner.py`。
 
 ```bash
 R() { python3 tools/rcon/gt6rcon.py --password <pw> "$@"; }
@@ -263,7 +263,7 @@ R "gt6multiblock check 50 64 50"  --expect 1:block_formed=true    # 恢复成型
 （FACING north → 结构核在南侧一格：controller (50,64,50) 的核为 (50,64,51)，壳=核 ±1
 立方 26 格，其中一格是 controller 本体。）
 
-### ACT /gt6act（place|fill|selector|clear|compute|craft|sort|mode|stat；p24-act-machine）
+### ACT /gt6act（place|fill|selector|clear|compute|craft|sort|mode|stat；act-machine）
 
 ```bash
 R "gt6act place 412 64 20" --expect 1:"advanced_crafting_table placed"
@@ -274,11 +274,11 @@ R "gt6act craft once 412 64 20" --expect 1:"crafted=true, hold=[4x"             
 R "gt6act mode belt16 on 412 64 20" --expect 1:"mode belt16=true"                   # mBlocked16 开关臂
 ```
 
-链：`chains/p24_act.py`（slug p24act，端口对 26109/26119；selector payload 双腿
+链：`chains/act.py`（slug act，端口对 26109/26119；selector payload 双腿
 node_cmds 分叉=1.20.1 `{Damage:5}` NBT vs 21.1 `[minecraft:custom_data={Damage:5}]`
 组件信封，GT6Circuits 载体裁定）。
 
-### 工具 give 冒烟 /item replace + /data get（p25-tool-hammer-wrench）
+### 工具 give 冒烟 /item replace + /data get（tool-hammer-wrench）
 
 ```bash
 R "item replace block 416 64 124 container.0 with gt6:hammer 1" --expect 1:"Replaced"   # 注册行活体（未注册 id 此处即红）
@@ -288,15 +288,15 @@ R "item replace block 416 64 124 container.2 with gt6:hammer{Damage:22} 1" --exp
 R "data get block 416 64 124 Items[2]" --expect 1:"Damage: 22"
 ```
 
-链：`chains/p25_tool_hammer_wrench.py`（slug p25toolhammerwrench，端口对
-26108/26118；RCON 无玩家——give 臂按 p24_act 先例走 chest `item replace`+`data get`
+链：`chains/tool_hammer_wrench.py`（slug toolhammerwrench，端口对
+26108/26118；RCON 无玩家——give 臂按 act 先例走 chest `item replace`+`data get`
 探针，/recipe give 不可 headless 寻址，配方装载证据=runServer 零 ERROR 行+入库
 JSON 形检；耐久 payload 双腿 node_cmds 分叉=1.20.1 `{Damage:22}` NBT vs 21.1
 `[minecraft:damage=22]` 组件信封（GT6Circuits 载体裁定同源），data get 渲染漂移
 双腿 node_expects 分叉=1.20.1 `Damage: 22`/`Count: 1b` vs 21.1
 `"minecraft:damage": 22`/`count: 1`）。
 
-### 食品罐 row0 Canner 冒烟 /gt6machine + /data merge（p25-food-can-row0）
+### 食品罐 row0 Canner 冒烟 /gt6machine + /data merge（food-can-row0）
 
 ```bash
 R "setblock 420 65 125 gt6:canner" --expect 1:"GT6 canner placed"                       # T1 落机（place 臂实锚）
@@ -304,13 +304,13 @@ R "data merge block 420 65 125 {inventory:{Size:4,Items:[{Slot:0b,id:\"minecraft
 R "gt6machine canner inject 40 16 420 65 125" --expect 1:"outputs=[1x food_can_rotten_small; ]"  # foodValue 4 → tier 1
 ```
 
-链：`chains/p25_food_can.py`（slug p25foodcan，端口对 26110/26120；三单元
-rotten_flesh/spider_eye/cookie x6 全走 p24_canner_refill 的 inventory data-merge
+链：`chains/food_can.py`（slug foodcan，端口对 26110/26120；三单元
+rotten_flesh/spider_eye/cookie x6 全走 canner_refill 的 inventory data-merge
 双物品输入形——1.20.1 `Count:1b/6b` NBT vs 21.1 `count:1/6` 键形分叉；输出 expect
 双腿 node_expects 分叉=1.20.1 裸 path `food_can_rotten_small` vs 21.1 前缀
 `gt6:food_can_rotten_small`（Step.node_expects，非裸名单 token）；cookie 行 6×
 Count 吃满 MultiItemFood.java:600 的注册计数，DEFAULT 分档 12/12=1 → tier 5 超大
-罐=Cookie Tin；p24 canner 链回归随跑 [0,0]）。
+罐=Cookie Tin；P24 canner 链回归随跑 [0,0]）。
 
 ## ⑤ 三层框架用法（新卡 RCON 链的正典姿势）
 
@@ -343,12 +343,12 @@ session pid 互踩实证）在 boot 时炸，而不是收尾时把句柄指向�
 **stop 归属门（P30，`StopOwnershipError`）**：boot 时 `start_server` 把调用方身份
 （pid + worktree token，`GT6_RCON_OWNER` 可覆盖）作为 owner 行原子写进 RCON 槽记录；
 `stop_server` 经 `<pid_file>.slot` 标记反查记录，调用方既非 boot 进程又非同 worktree
-会话即拒绝（报明双方归属，任何 RCON/pid 动作与槽释放都不发生）——ops.p30-rcon-chain-repair
+会话即拒绝（报明双方归属，任何 RCON/pid 动作与槽释放都不发生）——ops.rcon-chain-repair
 事故（共享箱他者 cleanup 同默认口令 RCON stop 掉活跑中的 neo 腿）由此结构性不可能。
 人工清场走 `--force`（CLI 同名旗标，打印警告；CLI 拒绝退出码 3）。框架链与重启 probe
 同进程自停天然放行；2h 陈旧槽回收、槽满排队、纯 no-op 不设门，语义零回归。
 
-**端口段错开钩（p34-pool-port-stagger）**：一个会话 boot 占一个端口"段"
+**端口段错开钩（pool-port-stagger）**：一个会话 boot 占一个端口"段"
 （game=rcon-10 .. query=rcon+10，即 SESSION_PORTS 三元组的跨度）。并行会话
 （多 worktree 同时跑 sweep）撞默认段时，`BootOwnershipError` 会正确拒启，但输家
 只能干等赢家收场——两个错开钩让选择更聪明（`pick_ports` 一处生效，所有权/信号量
@@ -396,7 +396,7 @@ teardown 断言：`store_null_command(pos)` + `STORE_NULL_EXPECT="store=null"`�
 side_io 的 21.1 腿 merge 误用 forge `{FluidName,Amount}` 形）。`Step.node_expects`
 （P23）是它在**断言形态 drift** 上的孪生：报文渲染带版本差时（21.1
 ItemStack.toString 给物品名带命名空间，1.20.1 plain），单一 spanning expect 无法
-双腿逐字节精确——按 `node_key` 各腿钉各自整行（p16pchk s17 正典例）；裸名单 token
+双腿逐字节精确——按 `node_key` 各腿钉各自整行（pchk s17 正典例）；裸名单 token
 expect 在 input 字段同名值前禁止（`stonex8` ⊂ `cobblestonex8`，零秒假绿）。
 节点决定两件事：
 gradle 任务 `:mdk:<node>:runServer`（裸
@@ -409,7 +409,7 @@ GT6CapabilityWiring 逐 BET 注册——缺一即该方块 capability-blind（1.
 getCapability 覆写形态看不到这类缺口，链上才会现形）。
 
 每卡一条模块：sites + lifecycle 配置 + steps。试点样板见
-`chains/p11_cover_shutter_filter.py`（p11shutterfilter_atom.sh 的逐步迁移）：
+`chains/cover_shutter_filter.py`（shutterfilter_atom.sh 的逐步迁移）：
 
 ```python
 from framework import Chain, Step, main, phase
@@ -438,7 +438,7 @@ if __name__ == "__main__":
 一条命令跑全程（起服→两遍→停服→退出码）：
 
 ```bash
-python3 -u tools/rcon/chains/p11_cover_shutter_filter.py
+python3 -u tools/rcon/chains/cover_shutter_filter.py
 ```
 
 判定语义与 CLI 同源：steps 经 `gt6rcon.judge_output`（run_chain 的同一判定器）——
@@ -459,7 +459,7 @@ python3 -u tools/rcon/chains/p11_cover_shutter_filter.py
    `sites`——bbox 联合自动覆盖，新摆的件记得注册。
 6. `gt6cover check <pos>` store=null 收尾 → `store_null_command(pos)` 步。
 
-## ⑥ 会话执行模型与全集 sweep（p15-rcon-session-perf）
+## ⑥ 会话执行模型与全集 sweep（rcon-session-perf）
 
 boot 是全集 wall 的第一大头（52-59s/次）。两条正典路径，`GT6_SESSION` 一键切换：
 
@@ -481,8 +481,8 @@ boot 是全集 wall 的第一大头（52-59s/次）。两条正典路径，`GT6_
 python3 tools/rcon/sweep.py --plan                    # 看坐标簇分组
 python3 tools/rcon/sweep.py --mode session            # 会话模型全集
 python3 tools/rcon/sweep.py --mode perboot            # 基线模型全集
-python3 tools/rcon/sweep.py --only p14loop,p13bb      # 收窄到指定链
-python3 tools/rcon/sweep.py --group p24_dye           # 收窄到指定簇（整带入选）
+python3 tools/rcon/sweep.py --only loop,bb      # 收窄到指定链
+python3 tools/rcon/sweep.py --group dye           # 收窄到指定簇（整带入选）
 python3 tools/rcon/sweep.py --diff old.json new.json  # 逐 step verdict diff
 python3 tools/rcon/sweep.py --break-lock --node 1.20.1-forge  # 清崩溃残留锁（活锁拒绝，exit 3）
 python3 tools/rcon/sweep.py --mode session --dual ../MGT6GA-trees/<另一节点wt> \
@@ -510,10 +510,10 @@ sweep 不再互踩全局 /tmp 账本。`--dual` 对侧回读按**对侧** worktr
 spawn 日志同样按对侧 tag 命名）。旧裸名 JSON 无活代码读者；`--diff` 走显式路径，
 任意两份历史账本（含旧名）仍可比。
 
-**sweep 会话锁（P32，卡 p32-ops-sweep-lock）**：P31 双会话事故（S31-1/S31-2
-并行审查各自起 sweep，同一节点两 sweep 会话互踩——phase_anchors.p31 已知缺陷
+**sweep 会话锁（P32，卡 ops-sweep-lock）**：P31 双会话事故（S31-1/S31-2
+并行审查各自起 sweep，同一节点两 sweep 会话互踩——phase_anchors.P31 已知缺陷
 「并发 sweep session.lock 毒化」）的 sweep 侧机制化。人的纪律是串行化协议
-（phase_anchors.p31 治理沉淀），机器只负责把撞车变成显式失败。每**节点**一把锁
+（phase_anchors.P31 治理沉淀），机器只负责把撞车变成显式失败。每**节点**一把锁
 （碰撞域=节点：SESSION_PORTS 段与 gradle 项目锁都是按节点打架的），
 `/tmp/gt6_rs_sweep_<节点后缀>.lock`，O_EXCL 原子创建，记录 pid + session id
 （worktree tag-pid）+ node + mode + started + worktree：
@@ -536,28 +536,28 @@ session 的 rcon 端口连接（链自己的 `preferred_ports` 是 per-boot 语�
 分歧（常态：每链各钉一对是为了并行 per-chain boot 不打架）→ 回退 SESSION_PORTS
 节点段（1.20.1=256xx、1.21.1=25752/25762/25772，--dual 双腿靠它错开）。
 
-**全集簇（`--plan` 可视）**：p11/p12 带 → p13/p12 带 → p14 带 → p14 锅炉 →
-**p16 簇（P17 注册：pattern_checker / aqua_fluids / side_io / machine_fluid_gui /
+**全集簇（`--plan` 可视）**：P11/P12 带 → P13/P12 带 → P14 带 → P14 锅炉 →
+**P16 簇（P17 注册：pattern_checker / aqua_fluids / side_io / machine_fluid_gui /
 drying_rows / form_scaffold / chisel / distillery 八链，站点两两不相交）** →
-**p24/p25 两带（P26 注册，见下节）** →
-p15_runtime_smoke（fresh_boot 单例）。注册序 = perboot 顺序 + --plan 文档；
+**P24/P25 两带（P26 注册，见下节）** →
+runtime_smoke（fresh_boot 单例）。注册序 = perboot 顺序 + --plan 文档；
 session 跑法把全集摊平成一池（`run_session_recorded`）。（P27 起全集扩至
 18 簇 62 链，逐簇清单见下文「名册补录 III」；`--plan` 打印实测 bbox。）
 
-**名册扩容：p24/p25 九链入册（P26 wave1，卡 p26-rcon-sweep-roster）**。名册自
-27 链（p11-p16）扩到 **36 链 8 簇**，既有 27 链配置逐字节零改动。九条新链按
-**bbox 坐标带准入**（沿用 p16 簇形态）分两簇：
+**名册扩容：P24/P25 九链入册（P26 wave1，卡 rcon-sweep-roster）**。名册自
+27 链（P11-P16）扩到 **36 链 8 簇**，既有 27 链配置逐字节零改动。九条新链按
+**bbox 坐标带准入**（沿用 P16 簇形态）分两簇：
 
-- **z=20 带（x384..414，六链）**：`p24_dye_chemical_fluids` → `p24_pipe_owner` →
-  `p25_tag_input_machine_fallback` → `p25_cfoam_spray` → `p24_canner_refill` →
-  `p24_act`（带序 = bbox min-x 升序；相邻成员 bbox 交叠，一带之内前链残留面对
+- **z=20 带（x384..414，六链）**：`dye_chemical_fluids` → `pipe_owner` →
+  `tag_input_machine_fallback` → `cfoam_spray` → `canner_refill` →
+  `act`（带序 = bbox min-x 升序；相邻成员 bbox 交叠，一带之内前链残留面对
   后链的边界清场）。
-- **z=124 带（x390..426，三链）**：`p24_grass_block` → `p25_tool_hammer_wrench` →
-  `p25_food_can`。grass 与后两者 x 向分离（389..397 vs 414+）；hammer 与
+- **z=124 带（x390..426，三链）**：`grass_block` → `tool_hammer_wrench` →
+  `food_can`。grass 与后两者 x 向分离（389..397 vs 414+）；hammer 与
   food_can 仅在 MARGIN 边界 x=418 相触——同簇（清场带局部化），并发波下
   `plan_waves` 的 bbox-disjoint 准入自动不许二者同波。
 
-准入规则（与 p16 簇同构）：链必须已注册 sites（bbox 清场结构性强制）；九链均无
+准入规则（与 P16 簇同构）：链必须已注册 sites（bbox 清场结构性强制）；九链均无
 `fresh_boot`/`mutates` 声明，可入共享 session；各链 `preferred_ports`（26106..26110
 对）是 per-boot 语义，共享 boot 编址走 `framework.session_ports` 节点段回退；
 资源占用形态与既有带一致（单带 ≤6 链、一次 session 一 boot、默认串行，
@@ -566,20 +566,20 @@ session 跑法把全集摊平成一池（`run_session_recorded`）。（P27 起�
 **单簇冒烟/增量复验入口 `--group`（P26）**：`--group <逗号键>` 按「成员 stem /
 slug / 链名子串」匹配簇，**命中簇整带入选**（准入单位是坐标带不是单链；
 `--only` 再在带内收窄）。缺席 = 全名册，行为逐字节不变。例：
-`--group p24_dye`（z=20 带六链）、`--group p25foodcan`（z=124 带三链）、
-`--group p24`（两新簇共九链）。冒烟实绩（2026-09-08，本卡）：z=124 带
-`--group p24_grass_block` forge 腿（1.20.1-forge）session 一 boot 143.4s 三链
+`--group dye`（z=20 带六链）、`--group foodcan`（z=124 带三链）、
+`--group dye,foodcan`（两新簇共九链）。冒烟实绩（2026-09-08，本卡）：z=124 带
+`--group grass_block` forge 腿（1.20.1-forge）session 一 boot 143.4s 三链
 **exit=0 failures none**（grass/hammer/foodcan pass_failures 全 [0,0]，boot 69s）；
 runner 日志 `/tmp/gt6_rs_sweep_p26smoke_z124_forge.log`，boot 日志
-`/tmp/gt6_rs_session_1201-forge_p24grassblock+p25foodcan-72d4029d-b416fe1f.log`，
+`/tmp/gt6_rs_session_1201-forge_p24grassblock+foodcan-72d4029d-b416fe1f.log`，
 账本 `/tmp/gt6_rs_sweep_session_c1_1201-forge_b416fe1f.json`。
 
 **偏离注记（复验时如实记账，不算失败）**：九链双腿复验（2026-09-08，P25 收官
-证书）唯一红 = **p25cfoam 21.1 腿 [3,3]**，属**已裁定的显式声明偏离**（P25 卡
-p25-c-foam-pipe-spray 审查裁定入档），后续 sweep 复验该腿仍会出现此红并照账本
+证书）唯一红 = **cfoam 21.1 腿 [3,3]**，属**已裁定的显式声明偏离**（P25 卡
+c-foam-pipe-spray 审查裁定入档），后续 sweep 复验该腿仍会出现此红并照账本
 记录——判定口径以裁定为准，不作为名册/链体缺陷重开。36 链全集 sweep 留阶段
 收官门禁由主会话执行（本卡只做单簇冒烟，不跑全量）。
-**[2026-09-13 已闭环]** 该偏离由 p28-neo-loot-copy-custom-data 收口：根因 =
+**[2026-09-13 已闭环]** 该偏离由 neo-loot-copy-custom-data 收口：根因 =
 GT6DualDirectoryFaces 单数 loot_table 镜像带逐字节搬 1.20.1 正典输出，51 张表
 （2 木流体管 + 49 漆机器梯）带 `minecraft:copy_nbt` 在 1.21.1 未注册（已改名
 `copy_custom_data`，LootItemFunctions.java:49）→ boot LootDataType 解析死 → 拆管/
@@ -588,11 +588,11 @@ E 臂 data get 路径双腿分叉（forge=`Item.tag.BlockEntityTag` /
 neo=`Item.components."minecraft:custom_data".BlockEntityTag`）且收尾 kill 探针
 双腿转正；复验该腿应为 **[0,0]**，再红按真回归重开。
 
-**名册扩容 II：p26 W1 三链入册（卡 p26-w1-sifter-compressor-wiremill）**。名册
+**名册扩容 II：P26 W1 三链入册（卡 sifter-compressor-wiremill）**。名册
 36 链 8 簇 → **39 链 9 簇**。新簇 **z=172 带（x383..411，三链）**：
-`p26_w1_sifter`（x384..391，Sifter 梯 T1-T4）→ `p26_w1_compressor`（x394..401）
-→ `p26_w1_wiremill`（x404..411）——三族各自带内 x 向分离、teardown fill 各自
-带局部化；准入与 p16 簇同构（sites bbox 已注册、无 `fresh_boot`/`mutates`
+`sifter`（x384..391，Sifter 梯 T1-T4）→ `compressor`（x394..401）
+→ `wiremill`（x404..411）——三族各自带内 x 向分离、teardown fill 各自
+带局部化；准入与 P16 簇同构（sites bbox 已注册、无 `fresh_boot`/`mutates`
 成员——inject 电网 rig 不碰 fakesource 全局态，一 boot 伺候全簇）；
 `preferred_ports` 26150..26152 对为 per-boot 语义，共享 boot 走
 `framework.session_ports`。链形：place → input → inject（KU 脉冲
@@ -600,71 +600,71 @@ neo=`Item.components."minecraft:custom_data".BlockEntityTag`）且收尾 kill �
 menu-null GUI 条款活体）→ teardown；`run` 对 menu-less 载体按设计拒绝
 （GTMachineCommand「use inject+check instead」）。
 
-**名册补录 III：直跑链全量对账入册（卡 p27-rcon-roster-backfill）**。扩容 II
+**名册补录 III：直跑链全量对账入册（卡 rcon-roster-backfill）**。扩容 II
 之后名册又经两笔未及 README 的卡内扩容（cfoam_blocks 入 z=20 带 x452..458、
 W1 card B 的 press/extruder 簇），实况 42 链 10 簇；本卡对账 `chains/` 全目录
 后一次补齐，现为 **62 链 18 簇**——双向对账（名册→文件在、文件→名册在册）
 零差集。补录三块，准入与既有簇同构（sites bbox 已注册、无 fresh_boot 成员，
 per-boot 端口钉让位 session_ports）：
 
-- **P19-P23 历史遗漏七链**（名册首次冻结时止步 p16，这七条卡链一直靠
-  `--only` 手工点名跑）：**z=20 西段行回填带**（x357..381 三链）`p19_drying` +
-  `p26_rm_backfill`（同址 x=360 列，bbox 交叠→带清场互覆）+ `p21_drying_food`
+- **P19-P23 历史遗漏七链**（名册首次冻结时止步 P16，这七条卡链一直靠
+  `--only` 手工点名跑）：**z=20 西段行回填带**（x357..381 三链）`drying` +
+  `rm_backfill`（同址 x=360 列，bbox 交叠→带清场互覆）+ `drying_food`
   （桶列远伸 z=59，带内 x 向分离）；**z=124 西段石材/涂料带**（x369..397 五链）
-  `p19_chisel` → `p21_stoneblocks_split` → `p21_paintable` → `p23_barrel_paint`
-  → `p21_chisel_drops`（min-x 序；drops 与 barrel_paint 带擦 grass 带东缘
+  `chisel_recipes` → `stoneblocks_split` → `paintable` → `barrel_paint`
+  → `chisel_drops`（min-x 序；drops 与 barrel_paint 带擦 grass 带东缘
   x389..397——跨带交叠由 `plan_waves` 拒同波 + 逐链站点清场兜底，结构性把关）。
-- **P26 直跑链十一链**：`p26_cfoam_refill`（x410..416，与 act 带尾交叠）与
-  `p26_kitchen_pot`（x418..426）入 z=20 主带带尾（act 之后，min-x 序保持）；
-  **坩埚带**（z121..140 三链，坩埚卡 A/B/C）`p26_crucible_multiblock` |
-  `p26_mold_faucet`（z132..140 带内 z 向分离）| `p26_crucible_row0`（与
+- **P26 直跑链十一链**：`cfoam_refill`（x410..416，与 act 带尾交叠）与
+  `kitchen_pot`（x418..426）入 z=20 主带带尾（act 之后，min-x 序保持）；
+  **坩埚带**（z121..140 三链，坩埚卡 A/B/C）`crucible_multiblock` |
+  `mold_faucet`（z132..140 带内 z 向分离）| `crucible_row0`（与
   multiblock 东缘交叠，带清场互覆；multiblock 西缘擦 food_can x426..427）；
-  **传感器带** `p26_sensors_core`（x432..436 z125..137）——名册唯一 session
+  **传感器带** `sensors_core`（x432..436 z125..137）——名册唯一 session
   mutates 成员（fakesource），plan_waves 独占波 + plan_groups 拆组
-  （p16_side_io 先例）；**静态仓储带**（z218..232 两链）`p26_hopper_family` |
-  `p26_static_storage`（z 向分离）；**MUI 行分派带** `p26_mui_row_dispatch`
-  （x477..531 z97..103，与 p16_distillery z 同带 x 离散）。
-- **P27 直跑链两链**：`p27_builder_wand_form_fix`（坩埚锚定成型回归，x456..464
-  自成带，双腿 GREEN 审查席实证）；`p27_vanilla_tag_dual_tree`（/gt6tags 双树
-  活体，slug p27tags——驻 spawn 邻区（原与 EU 出向桥链成簇，该链已随
-  EU->FE 出向桥砍除，task p28-cut-eu-fe-bridge）；p11/p12
+  （side_io 先例）；**静态仓储带**（z218..232 两链）`hopper_family` |
+  `static_storage`（z 向分离）；**MUI 行分派带** `mui_row_dispatch`
+  （x477..531 z97..103，与 distillery z 同带 x 离散）。
+- **P27 直跑链两链**：`builder_wand_form_fix`（坩埚锚定成型回归，x456..464
+  自成带，双腿 GREEN 审查席实证）；`vanilla_tag_dual_tree`（/gt6tags 双树
+  活体，slug tags——驻 spawn 邻区（原与 EU 出向桥链成簇，该链已随
+  EU->FE 出向桥砍除，task cut-eu-fe-bridge）；P11/P12
   带本就驻 spawn 邻区 x-2..60，跨簇交叠同上把关）。
 
-验证引用（创建/末次修正提交）：p26 十链见各自任务卡交卡证书（原十一链，
-eu_bridge 37de6542 已随 p28-cut-eu-fe-bridge 砍除）——
-cfoam_refill 21523df8（双腿 [0,0] /tmp/p26c-rcon-*.log）、crucible_row0
-6d9cb493（双腿幂等两遍 /tmp/p26_rcon_*5.log）、crucible_multiblock b986c975、
+验证引用（创建/末次修正提交）：P26 十链见各自任务卡交卡证书（原十一链，
+eu_bridge 37de6542 已随 cut-eu-fe-bridge 砍除）——
+cfoam_refill 21523df8（双腿 [0,0] /tmp/c-rcon-*.log）、crucible_row0
+6d9cb493（双腿幂等两遍 /tmp/rcon_*5.log）、crucible_multiblock b986c975、
 mold_faucet cafd4dc5、kitchen_pot d4753ea2（[0,0] 双腿零 ERROR）、
 mui_row_dispatch b5b254cf、rm_backfill a9b88479（双腿 [0,0]
-/tmp/p26rm-rcon-*.log）、sensors_core 902d04a6、hopper_family 4538efb8、
-static_storage 1b8d2022（双腿 [0,0] /tmp/p26stat_rcon-*.log）；历史七链
-p19_chisel 9fe6b166 / p19_drying 4beeb6b6 / p21_chisel_drops 14ade19d /
-p21_drying_food 74462118 / p21_paintable a4e154c7 / p21_stoneblocks_split
-9fe6b166 / p23_barrel_paint 14c34c4c；p27 两链 87716091 与 74b6e262。
+/tmp/rm-rcon-*.log）、sensors_core 902d04a6、hopper_family 4538efb8、
+static_storage 1b8d2022（双腿 [0,0] /tmp/stat_rcon-*.log）；历史七链
+chisel_recipes 9fe6b166 / drying 4beeb6b6 / chisel_drops 14ade19d /
+drying_food 74462118 / paintable a4e154c7 / stoneblocks_split
+9fe6b166 / barrel_paint 14c34c4c；P27 两链 87716091 与 74b6e262。
 
-**无链清单（诚实对账，不发明）**：worldgen 卡（p26-worldgen-pipeline-skeleton）
+**无链清单（诚实对账，不发明）**：worldgen 卡（worldgen-pipeline-skeleton）
 的活体验收是 runServer forceload 冒烟（17/17 石种，/tmp/gt6_rs_p26wgen_*.log）
-非声明式入库链；「p26staticstoragefix」并非独立链——p26-storage-static-batch
-卡的 RCON 活跑修正（9f4f7234..17d92253）全部折进 p26_static_storage.py 主链
-本体；p27_tags 无独立文件（tag 骨架的 RCON 面由 p27tags 的 /gt6tags dump
-承载）。不入册的 probe 形态两件：`p15_keepfilter_reboot_probe`（PROBE_MODULE，
-`--probe` 入口）与 `p19_nbt_rebind_reboot_probe`（自带 main 的两 boot verdict
+非声明式入库链；「staticstoragefix」并非独立链——storage-static-batch
+卡的 RCON 活跑修正（9f4f7234..17d92253）全部折进 static_storage.py 主链
+本体；tags 无独立文件（tag 骨架的 RCON 面由 tags 的 /gt6tags dump
+承载）。不入册的 probe 形态两件：`keepfilter_reboot_probe`（PROBE_MODULE，
+`--probe` 入口）与 `nbt_rebind_reboot_probe`（自带 main 的两 boot verdict
 脚本，非声明式 CHAIN，`load_chain` 不兼容——保持手工点名形态）。
 
-**P27 红链现代化清账（卡 p27-red-chains-modernize）**：P26 收官证书「2 红=链
-过时非回归」的两链已重钉转绿——`p15_runtime_smoke` 的 M 臂改 inject 数据面
+**P27 红链现代化清账（卡 red-chains-modernize）**：P26 收官证书「2 红=链
+过时非回归」的两链已重钉转绿——`runtime_smoke` 的 M 臂改 inject 数据面
 （run 对 menu-less 载体拒绝=P26 批 A 设计行为，改断言之；fakesource 全局开关
-退役，mutates=()）、`p25_tag_input_machine_fallback` 的 D 臂由负臂翻
+退役，mutates=()）、`tag_input_machine_fallback` 的 D 臂由负臂翻
 RECYCLABLE 环行正臂（P26 行回填新行的匹配序演进）；两链双腿 [0,0]
-（/tmp/p27_p15_rcon_{forge,neo}.log、/tmp/p27_p25_rcon_{forge,neo}*.log），
+（/tmp/rcon_{forge,neo}.log、/tmp/rcon_{forge,neo}*.log），
 簇带归属零改动。
 
-**P27 朝向臂注记**：coke oven facing 回归臂落在既有 `p16_pattern_checker` 链
-（7e6c2edb，phase C），不另立链——p16 簇成员与带区间不变。
+**P27 朝向臂注记**：coke oven facing 回归臂落在既有 `pattern_checker` 链
+（7e6c2edb，phase C），不另立链——P16 簇成员与带区间不变。
 
 **框架自检（无服干跑，~1s）**：`python3 tools/rcon/selftest.py`——以假 boot 面
 验证框架行为：chain.node 回写与 21.1 `{id,amount}` 键形分叉、session artifact
-名册化、session 端口策略、p16 簇注册、boot 归属门、sweep 结果 JSON worktree 隔离
+名册化、session 端口策略、P16 簇注册、boot 归属门、sweep 结果 JSON worktree 隔离
 （P18）、quiet_window 自适应收敛纯逻辑（P18）、perboot 结果的顶层 exit 聚合键
 （P18：`--dual` 读侧 `mine_json["exit"]` 曾对 perboot 形状 KeyError——run_perboot
 只有链级 exit，run_and_record 出口以 `setdefault` 补 `_failed` 聚合键，session 模型
@@ -694,32 +694,32 @@ P32 tick 原语 +11 检；段耗时 ~6s 来自 check_14 的真时序 mock）。
 - 并发组的逐 step verdict 必须与 per-chain-boot 基线 diff 一致；不一致的组
   用 `--concurrency 1` 重跑该组降级串行并记录。
 
-### 管道 /gt6pipe 泡沫三子命令（p25-c-foam-pipe-spray，README tail-append）
+### 管道 /gt6pipe 泡沫三子命令（c-foam-pipe-spray，README tail-append）
 
 `spray <pos> <owned> [dye] [ownerUuid]` / `dry <pos>` / `removefoam <pos> [ownerUuid]`
 （spec ⑧）走与物品 useOn 相同的受门 BE 面：applyFoam（上游
 TileEntityBase10ConnectorRendered:159-166——湿/干拒+allowInteraction 门，喷=同染管）、
 dryFoam（:169-174 无门不对称）、removeFoam（:177-183 干+门+四字段复位）。stat 行增
-`foam/dried/foamOwned` 三字段（p24 既有 expect 串均为子串，零回归）。注册行
+`foam/dried/foamOwned` 三字段（P24 既有 expect 串均为子串，零回归）。注册行
 `(accept|stat|place|toggle|output|clear|inject|ownable|spray|dry|removefoam)`。
 回流面（spec ⑦）：管 loot 表（GT6PipeBlockLoot）携带函数五键入 BlockEntityTag——
 1.20.1 正典带 = `copy_nbt`（item tag 面），1.21.1 单数镜像带 = `copy_custom_data`
-（`minecraft:custom_data` 组件面，p28-neo-loot-copy-custom-data 适配器重写，.BlockEntityTag
-相对路径原样落组件内）。拆管掉落物断言双腿分叉（Step.node_cmds，p24_act 组件信封
+（`minecraft:custom_data` 组件面，neo-loot-copy-custom-data 适配器重写，.BlockEntityTag
+相对路径原样落组件内）。拆管掉落物断言双腿分叉（Step.node_cmds，act 组件信封
 先例）：forge `data get entity … Item.tag.BlockEntityTag` / neo
 `data get entity … Item.components."minecraft:custom_data".BlockEntityTag`，断言
 gt.foamed/gt.foamdried/gt.ownable 三键在物；收尾 kill 探针双腿转正（无
 allow_failed——'No entity was found' 即拆管零掉落回归）；
 gt.owner 不入物（再置由 onPlaced 记新放置者，离线腿
 GTPipeFoamTest.foamNbtRoundTripsAndOwnerDoesNotRideItems 钉死）。活链 =
-`chains/p25_cfoam_spray.py`（place→spray owned→stat→dry→锁 toggle 拒→removefoam
+`chains/cfoam_spray.py`（place→spray owned→stat→dry→锁 toggle 拒→removefoam
 非 owner 拒→owner ok→spray+dry→拆管→掉落物 NBT 断言；双腿 [0,0]；日志路径
-/tmp/gt6_rs_p25cfoamspray.*，节点名后缀随 --node）。
+/tmp/gt6_rs_cfoamspray.*，节点名后缀随 --node）。
 
-### ULV 波收口链 /gt6machine + /gt6oven + /gt6engine + /gt6fe* + /data（p28-c-ulv-chain，README tail-append）
+### ULV 波收口链 /gt6machine + /gt6oven + /gt6engine + /gt6fe* + /data（c-ulv-chain，README tail-append）
 
-四臂一链 `chains/p28_ulv_chain.py`（slug p28ulv，端口对 26170/26180；新簇
-`p28_ulv_chain`，z=40/48/56/64 四站带 x519..545，站带两两 margin 离散可并发）。
+四臂一链 `chains/ulv_chain.py`（slug ulv，端口对 26170/26180；新簇
+`ulv_chain`，z=40/48/56/64 四站带 x519..545，站带两两 margin 离散可并发）。
 零新命令臂——全部读数走既有命令面 + 原版 /data get|merge NBT 探针：
 
 - **A 正链**（z=40）：`gt6:diesel_engine_bronze[facing=east]` 注油 16 RU/t →
@@ -756,14 +756,14 @@ GTPipeFoamTest.foamNbtRoundTripsAndOwnerDoesNotRideItems 钉死）。活链 =
 
 链级 [0,0]：负臂预期红全部转成显式断言步（无 allow_failed 逃逸）。
 
-### FE 入向转换四相链 /gt6feconverter + /gt6fesource + /gt6machine + /data（p28_fe_inbound 重写，README tail-append）
+### FE 入向转换四相链 /gt6feconverter + /gt6fesource + /gt6machine + /data（fe_inbound 重写，README tail-append）
 
-四相一链 `chains/p28_fe_inbound.py`（slug p28fein，端口对 26166/26176；与
-p28_ulv_chain、p28_builder_wand_oneclick 同簇——P28 能量生态簇，新鲜带
+四相一链 `chains/fe_inbound.py`（slug fein，端口对 26166/26176；与
+ulv_chain、builder_wand_oneclick 同簇——P28 能量生态簇，新鲜带
 x548..555 z28..56，四站 z=30/38/46/54 两两 margin 离散）。**重写缘由**：
-p28-cut-eu-fe-bridge 砍掉 EU→fe_battery 出向桥后，本链 A/B/C 三相的收电
+cut-eu-fe-bridge 砍掉 EU→fe_battery 出向桥后，本链 A/B/C 三相的收电
 对账终点语义消亡（双腿 RED [6,6]，红步集 {5,6,10,16,17,21} 全为死记账臂，
-server ERROR 0=结构性非回归）；ULV 机器梯（p28-c-ulv-machine-ladder）合入
+server ERROR 0=结构性非回归）；ULV 机器梯（c-ulv-machine-ladder）合入
 后 8EU 包有了合法消费者——wiremill_ulv 窗 min4/rec8/max16，`EnergyGate
 .gateInjection :49`（|8|≥min 4，doInject 真入账；烤箱 min16 的 :50 吞包臂
 是 W3 的负对照）。fe_battery 记账臂全删（夹具留世界、不入链）。四相：
@@ -784,7 +784,7 @@ server ERROR 0=结构性非回归）；ULV 机器梯（p28-c-ulv-machine-ladder�
   **裸 converter（隔 1 空气、零消费者）`buffer 512 FE` 原位不动**
   ——显式负臂：证明上面的排水是消费不是泄漏，链内断言无 allow_failed。
 - **B pull + floor 尾差**（z=38）：fe_source 设 130 FE（4 整包 + 2 FE 零
-  头），converter 每 tick 拉 1 包（root EnergyBridge.extractFe，p28-a 缝），
+  头），converter 每 tick 拉 1 包（root EnergyBridge.extractFe，a 缝），
   排空后源保 `stored 2 FE`（敌意零头永不离开源）+ converter 自身电容
   `buffer 128 FE`（整包量化收据——本相刻意无消费者，发射臂找不到邻接，
   包滞留电容=死 battery 臂 128 FE 断言的语义镜像）。
@@ -801,17 +801,17 @@ server ERROR 0=结构性非回归）；ULV 机器梯（p28-c-ulv-machine-ladder�
   `STAT FAILED` 判 allow_failed=方块已消失（absence 的诚实证明形，非负臂
   逃逸）。
 
-### 方块随手成型一键链 /gt6multiblock（p28_builder_wand_oneclick，README tail-append）
+### 方块随手成型一键链 /gt6multiblock（builder_wand_oneclick，README tail-append）
 
-`chains/p28_builder_wand_oneclick.py`（slug p28wandclick，端口对
+`chains/builder_wand_oneclick.py`（slug wandclick，端口对
 26170/26180；站点带 x296..314 z95..105，与全名册零相交）。用户裁定
 2026-09-12：builder wand **一键成型整个多方块**（对上游 1.7.10 九击语义的
-声明偏离，ADR 2026-09-12-p28-builder-wand-oneclick）——考据
-（research.p28-r-builder-wand-second-root）实锤 P28 前「wand 只建半座多方
+声明偏离，ADR 2026-09-12-builder-wand-oneclick）——考据
+（research.r-builder-wand-second-root）实锤 P28 前「wand 只建半座多方
 块」的报告不是移植 bug：玩家进料（useOn→真实点击坐标）被上游 ±1 Chebyshev
 点击窗卡住（ITileEntityMultiBlockController.java:145-146 == 上游 :51），
 单击只脚手架了锚点邻域（坩埚 24 墙中的 16），而 RCON form 臂喂的是
-checker.form aClickedAt=null 一发全成——p27 链的绿灯盖住的是 form 臂，从
+checker.form aClickedAt=null 一发全成——P27 链的绿灯盖住的是 form 臂，从
 未盖住玩家进料。本链的 `wandclick` 臂（GTMultiBlockCommand，本卡新增）就
 是玩家进料覆盖：从被点格解析脚手架目标（GT6BuilderWandItem.scaffoldTarget
 = useOn 的原样解析）再驱动生产派发：
@@ -825,10 +825,10 @@ checker.form aClickedAt=null 一发全成——p27 链的绿灯盖住的是 form
   全成 + `linked_parts=24/24`。
 - **C 拆除**：显式 fill 归还（声明站点清理是结构兜底）。
 
-### 床岩矿活链 + 自然生成扫描 /place + 区块级注册活证（p31-bedrock-ore-worldgen，README tail-append）
+### 床岩矿活链 + 自然生成扫描 /place + 区块级注册活证（bedrock-ore-worldgen，README tail-append）
 
-`chains/p31_bedrock_ore.py`（slug p31_bedrock_ore，端口对 26211/26221；
-新簇 `p31_bedrock`；新鲜带 chunk (4,6) x64..79 z96..111 y-64..62=32512≤cap，
+`chains/bedrock_ore.py`（slug bedrock_ore，端口对 26211/26221；
+新簇 `bedrock`；新鲜带 chunk (4,6) x64..79 z96..111 y-64..62=32512≤cap，
 staging x288..319 同 z/y——与全名册零相交，strata z=64 带保持清净）：
 
 **勘正（compile 后 PlaceCommand.java:243-244 源证）**：`/place feature` 在
@@ -850,16 +850,16 @@ staging x288..319 同 z/y——与全名册零相交，strata z=64 带保持清�
   coal=1/graphite=1；y-64..-54 离线 .mca 扫描；coal/graphite 各≥1
   跨 boot 门+决策级确定性门=材质并集全等/总数 ±30%/逐 chunk 命中集
   一致率 ≥80%——块位漂移按管线级漂移声明处理，
-  decisions.2026-09-18-p31-strata-lens-determinism-acceptance 语义）。
+  decisions.2026-09-18-strata-lens-determinism-acceptance 语义）。
 - **C 拆除**：竞技场+staging+探针显式 fill 归还。
 
-`--group p31_bedrock` 匹配链内嵌名前缀。
+`--group bedrock` 匹配链内嵌名前缀。
 
-### tick 原语：neo 确定性 N-tick 窗口 + forge 方言门（p32-ops-neo-tick-primitive，README tail-append）
+### tick 原语：neo 确定性 N-tick 窗口 + forge 方言门（ops-neo-tick-primitive，README tail-append）
 
 `Step(cmd, expect=..., tick_step=N)`——neo 腿（node_key `1.21.1`）把「等世界走
 N tick 再断言」从 poll 轮询换成**确定性窗口**（known_bugs pool_neo_tick_primitive；
-治三类实踩 flake：poll 窗饿死假红 p19/p21、gravel 重力竞态、长配方墙钟读数）：
+治三类实踩 flake：poll 窗饿死假红 P19/P21、gravel 重力竞态、长配方墙钟读数）：
 
 1. `/tick freeze`，**行为自证**：隔 `FREEZE_GAP=0.3s` 两次 `time query gametime`
    读数相等=世界确已静止；不等=该步红且**不发** `/tick step`；

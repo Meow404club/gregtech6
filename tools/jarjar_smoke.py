@@ -106,7 +106,7 @@ def check(name, condition, detail=""):
 
 def default_jar(leg):
     """Canonical distribution jar gt6-<leg>-<mod_version>.jar first (task
-    p23-jar-naming, base.archivesName = <mod_id>-<node>); bare *.jar fallback
+    jar-naming, base.archivesName = <mod_id>-<node>); bare *.jar fallback
     only serves pre-rename worktrees (a stale pre-rename jar would sort first
     and shadow the renamed artifact). Same policy as jar_content_check.py."""
     libs = REPO / "mdk" / "versions" / leg / "build" / "libs"
@@ -270,7 +270,7 @@ def main():
     ap.add_argument("--leg", choices=sorted(LEGS), required=True)
     ap.add_argument("--jar", type=Path, default=None)
     ap.add_argument("--workroot", type=Path,
-                    default=Path("/tmp/gt6-p20-jarjar-smoke"))
+                    default=Path("/tmp/gt6-jarjar-smoke"))
     ap.add_argument("--timeout", type=float, default=420.0)
     ap.add_argument("--keep", action="store_true",
                     help="leave the server running (debug)")

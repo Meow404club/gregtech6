@@ -33,7 +33,7 @@ import gregtech6.registry.GTMachines;
  * T5 = "IV", NOT "EV", the S9 ruling).
  *
  * <p>The registration half (25 blocks + 25 items + 5 family BETs) only resolves on a
- * live server (the runServer/RCON gate — the sweep p29_w2_eu_core group).
+ * live server (the runServer/RCON gate — the sweep eu_core group).
  */
 public class GT6EuCoreFamiliesRowTest extends TileEntityBasicMachineOfflineTestBase {
 

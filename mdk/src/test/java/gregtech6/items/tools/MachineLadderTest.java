@@ -31,7 +31,7 @@ import gregapi.oredict.OreDictMaterial;
  * TungstenSteel = qual(3, 10.0, 5120, 4).
  *
  * <p>The LIVE per-material registration/attribute face is the RCON chain
- * p31_tool_ladder_machine_stats (the id686 lesson: cleanTest green never proves a
+ * tool_ladder_machine_stats (the id686 lesson: cleanTest green never proves a
  * registration alive).
  */
 public class MachineLadderTest {

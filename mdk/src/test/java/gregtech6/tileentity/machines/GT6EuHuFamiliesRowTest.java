@@ -34,7 +34,7 @@ import gregtech6.registry.GTMachines;
  * the T5-stays-pooled deviation (the Canner T5 ledger).
  *
  * <p>The registration half (25 blocks + 25 items + 7 family BETs) only resolves on a
- * live server (the runServer/RCON gate — the sweep p29_w1_eu_hu group).
+ * live server (the runServer/RCON gate — the sweep eu_hu group).
  */
 public class GT6EuHuFamiliesRowTest extends TileEntityBasicMachineOfflineTestBase {
 

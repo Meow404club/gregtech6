@@ -20,7 +20,7 @@ card is baked in here as module behaviour:
   ownership: start_server stamps the caller identity into the slot record and
   stop_server refuses a foreign caller (same default password made any
   session's cleanup able to RCON-stop another session's live server,
-  ops.p30-rcon-chain-repair); ``--force`` is the manual-cleanup escape.
+  ops.rcon-chain-repair); ``--force`` is the manual-cleanup escape.
 - artifacts: ``/tmp/gt6_rs_<slug>.log`` + ``/tmp/gt6_rs_<slug>.pid`` — the
   convention every phase-era segment already used, now defined once here.
 
@@ -37,9 +37,9 @@ from pathlib import Path
 
 import gt6rcon
 
-# p34-ops-test-gate: server boots share the test wrapper's memory cap. __file__-
+# ops-test-gate: server boots share the test wrapper's memory cap. __file__-
 # relative (never cwd — /tmp live-run scripts once hijacked sys.path to a stale
-# main-checkout copy, p30 lesson).
+# main-checkout copy, P30 lesson).
 _TOOLS_DIR = str(Path(__file__).resolve().parents[1])
 if _TOOLS_DIR not in sys.path:
     sys.path.insert(0, _TOOLS_DIR)
@@ -94,7 +94,7 @@ def acquire_rcon_slot(poll=15.0, log=print, owner=None):
     the slot path; pair with :func:`release_rcon_slot` (stop_server does this
     via the ``<pid_file>.slot`` marker start_server leaves behind).
     """
-    # memory gate layered ON TOP of the slot semaphore (p34-ops-test-gate):
+    # memory gate layered ON TOP of the slot semaphore (ops-test-gate):
     # waiting for memory must not hold a slot. Semaphore semantics unchanged.
     gt6testgate.wait_memory(tag=f"rcon-boot:{owner or os.getpid()}", log=log)
     RCON_SLOT_DIR.mkdir(exist_ok=True)
@@ -133,7 +133,7 @@ def release_rcon_slot(slot, log=print):
 
 
 # --- stop ownership (P30) ----------------------------------------------------
-# ops.p30-rcon-chain-repair: a foreign session's cleanup RCON-stopped another
+# ops.rcon-chain-repair: a foreign session's cleanup RCON-stopped another
 # session's live neo-leg server through the same default password — stop had
 # no owner check (gt6server.py's old :542). The seam: start_server stamps
 # caller_identity() into the slot record; stop_server resolves the record via
@@ -311,7 +311,7 @@ def listening_ports():
     return ports
 
 
-# p34-pool-port-stagger: a session boot occupies a port "segment" — the
+# pool-port-stagger: a session boot occupies a port "segment" — the
 # session triple spans game=rcon-10 .. query=rcon+10 (the framework
 # SESSION_PORTS convention). Two stagger hooks keep parallel sessions off
 # each other's segment: GT6_RCON_SEGMENT_OFFSET shifts every preferred start
@@ -503,7 +503,7 @@ class BootOwnershipError(RuntimeError):
     """A boot-ownership gate failed: the framework refuses to boot onto (or
     record a handle for) a foreign server — fail fast instead of connecting
     blind (P16 closeout: the session model once attached to a stale-behavior
-    server, tasks.p16-pattern-checker; these gates mechanize the manual boot
+    server, tasks.pattern-checker; these gates mechanize the manual boot
     ownership review that closeout ran by hand)."""
 
 

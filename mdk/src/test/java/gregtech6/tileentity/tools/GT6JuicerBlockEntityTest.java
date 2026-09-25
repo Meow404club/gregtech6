@@ -27,7 +27,7 @@ import gregtech6.recipes.GT6RecipeMaps;
  * GT6KitchenBlockEntityTest shape over the third kitchen-family member: the tank arrays
  * ride the JUICER map (0 input / 1 output fluids, RM.java:102 the 1/3/1 item 0/1/0
  * fluid shape), the recipe map is RM.Juicer, and the manual top-face round is driven
- * end-to-end offline with a fixture row (the LIVE leg is the p33_food_machines RCON
+ * end-to-end offline with a fixture row (the LIVE leg is the food_machines RCON
  * chain — the honey-comb row against the juicer.json universe).
  */
 class GT6JuicerBlockEntityTest extends gregtech6.tileentity.GTOfflineTestBase {

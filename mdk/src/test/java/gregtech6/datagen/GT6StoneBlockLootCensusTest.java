@@ -5,7 +5,7 @@
  *
  * <p>Pins, all offline-safe (the decision statics are registry-free; no table is BUILT
  * here — the generated-JSON side is pinned by GT6StoneBlocksRenderDatagenTest against the
- * committed src/generated tree, and the live face by the p21_chisel_drops.py RCON chain):
+ * committed src/generated tree, and the live face by the chisel_drops.py RCON chain):
  * <ul>
  * <li>the 170/102 yardstick: 10 non-identity mappings x 17 stones = the rewritten
  *     dispatch tables, 6 identity mappings x 17 stones = the pass-through tables

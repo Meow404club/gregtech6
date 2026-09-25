@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""cover6_controller_auto — the Automatic Machine Switch live chain (p35-covers-display-scale-6).
+"""cover6_controller_auto — the Automatic Machine Switch live chain (covers-display-scale-6).
 
-Band column x=602 z=306 (the p34_covers_g2 band sits x560..560+24 z300..312; the
+Band column x=602 z=306 (the covers_g2 band sits x560..560+24 z300..312; the
 electric-tool column is z=240). One grid-fed oven + an HU rig adjacent east (the
-p13 geometry):
+P13 geometry):
 
   the auto switch OWNS the oven's ON/OFF latch by the running lane
   (CoverControllerAuto :44 — possible || active; the cover tick poll + the

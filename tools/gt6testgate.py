@@ -15,7 +15,7 @@ go through THIS wrapper, and every spawn passes two machine-wide gates:
   (/tmp/gt6_rcon_slots): stale slots (crashed agent) reaped by 2 h mtime age.
 
 The gt6server boot path calls :func:`wait_memory` on top of its own slot
-semaphore (p34-ops-test-gate), so server boots obey the same memory cap; the
+semaphore (ops-test-gate), so server boots obey the same memory cap; the
 slot semaphore semantics there are unchanged.
 
 Usage:

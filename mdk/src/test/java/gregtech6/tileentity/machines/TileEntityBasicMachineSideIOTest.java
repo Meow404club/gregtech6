@@ -47,7 +47,7 @@ import gregtech6.recipes.RecipeMap;
  * <p>The neighbor adjacency runs through the {@code getFluidInputTarget}/
  * {@code getFluidOutputTarget} seams (the upstream :966-980 overridable targets), so the
  * offline tests override them instead of stubbing the world — the same seams the live
- * p16_side_io RCON chain exercises through real neighbors.
+ * side_io RCON chain exercises through real neighbors.
  */
 public class TileEntityBasicMachineSideIOTest extends TileEntityBasicMachineOfflineTestBase {
 

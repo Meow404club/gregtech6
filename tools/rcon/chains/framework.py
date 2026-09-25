@@ -22,7 +22,7 @@ Two execution models, routed by GT6_SESSION (default on):
      (:mdk:<node>:runServer);
   4. per pass: gt6world forceload + bbox cleanup (the declared sites, structurally
      complete), then the chain's steps judged via the structured judge_step
-     (p32: the expect is the assertion; gt6rcon.judge_output stays the CLI
+     (P32: the expect is the assertion; gt6rcon.judge_output stays the CLI
      layer's judge);
   5. gt6server.stop_server — RCON stop, then precise pid kills; daemons untouched.
 
@@ -82,7 +82,7 @@ def session_enabled():
 
 # A fresh boot starts at time 0, clear sky, vanilla gamerules. A session that
 # reuses one boot across chains restores exactly that baseline at every chain
-# boundary. doFireTick=true matters structurally: the p13 burning-box fire-
+# boundary. doFireTick=true matters structurally: the P13 burning-box fire-
 # spread arm needs it on, exactly as on a fresh boot.
 SESSION_RESET_COMMANDS = (
     "time set day",
@@ -271,7 +271,7 @@ class Step:
                  NBT keys vs the forge FluidName/Amount shape — the override
                  swaps the key shape and ONLY the key shape: the judged expect,
                  the verified target and the step order stay byte-identical
-                 (task p15-dual-gate-closure, the p12fic key-shape ruling).
+                 (task dual-gate-closure, the fic key-shape ruling).
     node_expects — per-node expect overrides keyed by node_key(node); the twin
                  of node_cmds for ASSERTION-shape drift. Where a REPORT's
                  rendering is loader-versioned — the 21.1 ItemStack.toString
@@ -283,7 +283,7 @@ class Step:
                  same write-back step_cmd reads), so a sweep-level --node
                  override forks exactly like a per-chain boot.
     tick_step   — the deterministic tick advance (P32, card
-                 p32-ops-neo-tick-primitive; neo-leg only). On the TICK_NODE
+                 ops-neo-tick-primitive; neo-leg only). On the TICK_NODE
                  leg the window runs: freeze → prove stillness (two gametime
                  reads) → /tick step N → settle until gametime is exactly
                  g0+N → run and judge THIS step's cmd+expect ONCE inside the
@@ -383,7 +383,7 @@ class Chain:
 POLL_INTERVAL = 1.0      # seconds between poll resends (server ticks pace the state)
 
 # ---------------------------------------------------------------------------
-# the deterministic tick window (P32, card p32-ops-neo-tick-primitive) —
+# the deterministic tick window (P32, card ops-neo-tick-primitive) —
 # every semantic below is source-proven against the vanilla 1.21.1 tree:
 #   - /tick exists there only: TickCommand.java:21-56 (literal "tick",
 #     requires permission 3; query/rate/step/sprint/freeze/unfreeze). The
@@ -497,10 +497,10 @@ def _tick_window(client, step, cmd, expect, index):
 
 
 def _step_judgement(step, body, expect):
-    """The structured judge (p32-ops-judge-literal): (verdict, failure_count).
+    """The structured judge (ops-judge-literal): (verdict, failure_count).
 
     The expect is THE assertion — a hit is a PASS even when the body spells
-    FAILED elsewhere. The p31 pool rcon_judge_literal_blindspot: the raw
+    FAILED elsewhere. The P31 pool rcon_judge_literal_blindspot: the raw
     "FAILED" scan used to override the expect, so an expected-rejection line
     ("FUEL FAILED", "STAT FAILED", "FAILED, connections N" — pinned via
     expect) counted as a failure, and every such chain had to pin

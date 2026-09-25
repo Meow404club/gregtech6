@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""datagen_tree_check.py — datagen 双树一致性断言（ADR-P17-1 门禁步 5，p25 两层归一）。
+"""datagen_tree_check.py — datagen 双树一致性断言（ADR-P17-1 门禁步 5，P25 两层归一）。
 
 断言「正典 tracked 树」与「1.21.1-neoforge 节点本地 runData 输出」在按
 loot_table(单数, 1.21.x) ↔ loot_tables(复数, 1.20.1) 目录名映射后 byte 级
@@ -8,22 +8,22 @@ loot_table(单数, 1.21.x) ↔ loot_tables(复数, 1.20.1) 目录名映射后 by
 mdk/versions/1.21.1-neoforge/build/datagen-output（验证产物非入库面），
 两树的等价性不再能由 git porcelain 推断，必须显式断言。
 
-规则（两层归一，p25-datagen-tree-check-unify 定案）：
+规则（两层归一，datagen-tree-check-unify 定案）：
   * 双侧各递归收集文件；目录名 `.cache`（HashCache 账本，非产物）整枝剪除；
     输出根 `version.json`（1.21.x FileCache 版本头，运行时戳记，非产物）排除。
   * 层 1 路径归一化：目录段（不含文件名）经 SEGMENT_MAP 映射——node 侧单数
     `loot_table` → canonical 侧复数 `loot_tables`（24w21a 数据包目录单数化改名，
     仅目录段参与映射，避免误伤同名文件名）。canonical 侧恒等映射（形态钉 1.20.1 形）。
-  * 层 1 补充（p27 品牌段带 → p30 双目录终态 revisit）：biome_modifier 产物带坐深一层
-    （data/<ns>/<brand>/biome_modifier/）。p27 时代 node 侧单目录（neoforge/）经
-    brand_normalize 折到 canonical forge/ 形对账；p26 方案 a 双目录终态落地后（task
-    p30-ops-biome-modifier-dual-dir：正典单生产者并载 forge/ 与 neoforge/ 两面，type 键
+  * 层 1 补充（P27 品牌段带 → P30 双目录终态 revisit）：biome_modifier 产物带坐深一层
+    （data/<ns>/<brand>/biome_modifier/）。P27 时代 node 侧单目录（neoforge/）经
+    brand_normalize 折到 canonical forge/ 形对账；P26 方案 a 双目录终态落地后（task
+    ops-biome-modifier-dual-dir：正典单生产者并载 forge/ 与 neoforge/ 两面，type 键
     各按本腿品牌——GT6DualDirectoryFaces.mirrorBiomeModifiers），两侧同形，品牌折叠
     结构性退役：forge/↔forge/、neoforge/↔neoforge/ 同路径直接字节对账，零归一器参与
     （该带任何字节差照旧 FAIL，值形归一器一并退役）。折叠若保留会把同侧自己的
-    neoforge/ 副本折到 forge/ 键上撞键（p27 _fold 守卫按 by design 硬 ERROR 逼出的
+    neoforge/ 副本折到 forge/ 键上撞键（P27 _fold 守卫按 by design 硬 ERROR 逼出的
     本卡 revisit）；SEGMENT_MAP 也不收 forge/neoforge 段——映射表只辖「两侧形态不同」
-    的段，双目录终态下两段双侧同形，恒等条目只是噪声（decisions.p26 文本写于 p27
+    的段，双目录终态下两段双侧同形，恒等条目只是噪声（decisions.P26 文本写于 P27
     作用域带之前，其对账语义由本终态实现，goal 相同：双目录 FAIL=0）。
   * 层 2 值形归一化（VALUE_NORMALIZERS）：字节不等且命中已注册产物带的文件，
     双侧解析 JSON → node 侧施用该带注册的值形变换（方向恒 node→canonical，
@@ -32,12 +32,12 @@ mdk/versions/1.21.1-neoforge/build/datagen-output（验证产物非入库面）�
     → 再做字节比对。归一成立 ≠ 静默放过：NORMALIZED 计数与文件清单必须打印；
     未命中带、解析失败、变换后仍不等 → 一律原样 FAIL（保留 first-diff offset）。
     变换必须保守：只对 census 实测钉死的形态施用，不适用形态原样保留，
-    匹配发生在路径归一之后。品牌段作用域值形带（p27）已在 p30 双目录终态随路径折叠
+    匹配发生在路径归一之后。品牌段作用域值形带（P27）已在 P30 双目录终态随路径折叠
     一并退役——两侧同品牌同形后无品牌差可归一。
   * 归一化后做三查：仅 canonical 有 / 仅 node 有 / 双侧都有但字节不同。
     双侧文件计数（原始与归一化后）必须相等，否则非零退出。
-  * 陈旧守卫（p27-ops，防复发，先于对账）：节点输出 = 非入库验证产物，可能落后于
-    正典树（research.p27-lang-legs-delta 实录：陈旧快照比出 66 键 4.4KB en_us 假
+  * 陈旧守卫（ops，防复发，先于对账）：节点输出 = 非入库验证产物，可能落后于
+    正典树（research.lang-legs-delta 实录：陈旧快照比出 66 键 4.4KB en_us 假
     分叉）。开跑先比时戳——节点生成时戳（优先 .cache 账本头
     「// <version>\t<ISO>\t<provider>」，退化产物 mtime）vs git HEAD 正典树最近
     写入（git log -1 -- <canonical>）。快照更早 → STALE FAIL（对账基线不可信，
@@ -50,7 +50,7 @@ mdk/versions/1.21.1-neoforge/build/datagen-output（验证产物非入库面）�
   python3 tools/datagen_tree_check.py [--canonical DIR] [--node-output DIR] \
       [--max-list N] [--allow-stale]
 
-正例（p25 两层归一后，exit 0）：
+正例（P25 两层归一后，exit 0）：
   $ python3 tools/datagen_tree_check.py
   CANONICAL : mdk/src/generated/resources (77573 files)
   NODE      : mdk/versions/1.21.1-neoforge/build/datagen-output (77573 files)
@@ -91,15 +91,15 @@ from typing import Callable
 # 1.21.x 数据包目录单数化（snapshot 24w21a）：node(1.21.1) 侧目录段 → canonical(1.20.1) 侧目录段。
 # 映射对两侧对称施用（canon_norm 与 node_norm 都过 normalize），故仅两侧「形态不同」的段
 # 需要入表；同段同名（如 assets 的 models/item 双侧同形）入表也只是对称重写、不影响等价性。
-# p24-tool-system 起三带新增（首例 tags/recipe datagen 入双树）：
+# tool-system 起三带新增（首例 tags/recipe datagen 入双树）：
 #   recipe → recipes   data/*/recipe(s)（1.21 单数化）
 #   item       → items         data/*/tags/item(s)（1.21 单数化；assets models/item 双侧
 #                              同名段对称重写，无影响）
-#   advancement→ advancements data/*/advancement(s)（1.21 单数化；p24 空罐配方的解锁
+#   advancement→ advancements data/*/advancement(s)（1.21 单数化；P24 空罐配方的解锁
 #                              advancement 首次把该带带进双树）
 #   c          → forge         NeoForge 生态 tag 命名空间 data/c ↔ data/forge（#c:tools
 #                              ↔ #forge:tools 是同一逻辑产物的双腿形态）
-# p24-tags-provider-skeleton 一带新增：block → blocks  data/*/tags/block(s)（1.21 单数化；
+# tags-provider-skeleton 一带新增：block → blocks  data/*/tags/block(s)（1.21 单数化；
 #                              mineable/pickaxe|axe 首次把 block tag 带带进双树；对称施用，
 #                              textures/block 等双侧同名段不受影响）
 SEGMENT_MAP = {
@@ -111,35 +111,35 @@ SEGMENT_MAP = {
     "block": "blocks",
 }
 
-# biome_modifier 产物带（p27 品牌段折叠 → p30 双目录终态退役）：带坐得比普通带深一层
+# biome_modifier 产物带（P27 品牌段折叠 → P30 双目录终态退役）：带坐得比普通带深一层
 # ——data/<ns>/<brand>/biome_modifier/（目录段[2]=加载器品牌、段[3]=带名）。forge 腿产
 # data/gt6/forge/biome_modifier/（注册键 forge:biome_modifier，ForgeRegistries.java:195；
 # GTCEu 1.20.1 生成树 data/gtceu/forge/biome_modifier/ 为量产实证）、21.1 节点产
 # data/gt6/neoforge/biome_modifier/（注册键 neoforge:biome_modifier，NeoForgeRegistries
 # .java:61-66；目录跟随注册键命名空间，1.21 Registries.elementsDirPath=
-# CommonHooks.prefixNamespace, Registries.java:251-253）。p30 起方案 a 双目录并载
+# CommonHooks.prefixNamespace, Registries.java:251-253）。P30 起方案 a 双目录并载
 # （GT6DualDirectoryFaces.mirrorBiomeModifiers：正典单生产者同轮发射双腿面，type 键各按
-# 本腿品牌），两侧同形——p27 的 brand_normalize/BRAND_SEGMENT_MAP 折叠与
-# _norm_add_features_brand 值形归一随之退役（折叠保留会同侧撞键，p27 _fold 守卫
+# 本腿品牌），两侧同形——P27 的 brand_normalize/BRAND_SEGMENT_MAP 折叠与
+# _norm_add_features_brand 值形归一随之退役（折叠保留会同侧撞键，P27 _fold 守卫
 # by design 硬 ERROR 逼出的 revisit）；本带不经任何映射/归一，直接同路径字节对账。
 # 摘要行用 BIOME_BAND_DIR 统计双腿面文件数（仅展示，不参与折叠）。
 BIOME_BAND_DIR = "biome_modifier"
 BIOME_BRANDS = ("forge", "neoforge")
 
-# ── 层 2：值形归一器（VALUE_NORMALIZERS，p25-datagen-tree-check-unify 新增）────
+# ── 层 2：值形归一器（VALUE_NORMALIZERS，datagen-tree-check-unify 新增）────
 # 注册纪律（沿 SEGMENT_MAP 注释证据纪律）：每条变换必须带 ①版本差异出处（vanilla
 # 反编译/census 实测）②census 实测样本文件名。方向恒 node(1.21)→canonical(1.20.1)，
 # 正典树永不改写。变换必须保守：只对实测钉死的形态施用，形态不符原样返回 False，
 # 由字节比对兜底 FAIL——绝不静默吞差，绝不放宽为全局语义比较。
 #
-# 序列化契约：双腿 datagen 同为 Gson setIndent("  ")，实测（2026-09-08 p25 census，
+# 序列化契约：双腿 datagen 同为 Gson setIndent("  ")，实测（2026-09-08 P25 census，
 # canonical 全部 77573 个 JSON 往返）与 json.dumps(obj, indent=2, ensure_ascii=False)
 # 字节级一致、无尾换行——归一后按此格式重序列化即可与 canonical 逐字节比对。
 #
 # census 基线（2026-09-08 双腿新鲜树，HEAD 38365b89）：content 差 228 文件，
 # 分类=170 items-arr-vs-str + 26 copy_nbt↔copy_custom_data + 12 配方 advancement
 # 三合一 + 6 enchant predicate 重构 + 13 配方 result/tag 形 + 1 spray_can_empty
-# advancement tag 形 + 1 spray_can_empty 配方（对账 tasks.p25-datagen-tree-check-unify）。
+# advancement tag 形 + 1 spray_can_empty 配方（对账 tasks.datagen-tree-check-unify）。
 
 
 def _norm_copy_custom_data(o: dict) -> bool:
@@ -224,7 +224,7 @@ def _norm_smelt_result_str(o: dict) -> bool:
     item id 字符串（Recipes: gt6:mold 双腿实测）；1.21.x 单物品 Result codec
     恒写 {"count":N,"id":X} 对象（与 crafting 的 object 形不同键形，故
     _norm_recipe_result 覆盖不到）。census 样本：recipes/smelt_mold_ceramic_sense.json
-    （本卡 p26 熔炼硬化带 32 文件）。count!=1 形态未注册——原样保留 → 字节比对
+    （本卡 P26 熔炼硬化带 32 文件）。count!=1 形态未注册——原样保留 → 字节比对
     FAIL（fail-visible）。必须注册在 _norm_recipe_result 之前：本变换消费
     {"id":X} 原形，后者会把同形改写成 {"item":X}。
     """
@@ -254,7 +254,7 @@ def _reorder_canonical(o: dict) -> None:
 
 
 def _norm_circuit_program(o: dict) -> bool:
-    """gt6:circuit_program 方言（p35-datagen-circuit-declared：p33 电路带 52 文件
+    """gt6:circuit_program 方言（datagen-circuit-declared：P33 电路带 52 文件
     standing red 的清偿对象之一，recipes 面）：result 改键恒写 count（含 ==1，与
     vanilla 的 count==1 不落盘相反）+ category/show_notification 两默认键
     1.20.1 面恒写、1.21.1 codec 默认不落盘。
@@ -266,7 +266,7 @@ def _norm_circuit_program(o: dict) -> bool:
     gregtech6/items/GT6CircuitProgramRecipe.java:247 category optionalFieldOf 默认
     MISC 省略、:249 STRICT_CODEC result {"count":N,"id":X} 恒写 count、:250
     show_notification optionalFieldOf 默认 true 省略）。census（2026-09-23，
-    work/p35-datagen-circuit-declared，HEAD 1fb0327b1 双腿新鲜树）：本带 26 文件
+    work/datagen-circuit-declared，HEAD 1fb0327b1 双腿新鲜树）：本带 26 文件
     content 差全带单一形，三处补写后逐字节相等；c:/forge: tag 值差由既有
     _norm_tag_c_to_forge 覆盖（样本：recipes/integrated_circuit_reset.json）。
     必须注册在 _norm_recipe_result 之前：本变换消费 result 的 {"id":X} 形并保留
@@ -304,7 +304,7 @@ def _norm_material_tool(o: dict) -> bool:
     （mdk/src/main/java/gregtech6/items/tools/GT6MaterialToolRecipe.java:252
     `ItemStack.STRICT_CODEC.fieldOf("result")` → 1.21 单物品 {"count":N,"id":X}
     恒写 count、:255 `optionalFieldOf("show_notification", true)` 默认值不落盘）。
-    census（2026-09-19，work/p32-ops-treecheck-normalizer，HEAD 2a4521b8d 双腿新鲜
+    census（2026-09-19，work/ops-treecheck-normalizer，HEAD 2a4521b8d 双腿新鲜
     树）：recipes 带 content 差 5961 文件 = 276 既有变换可归一 + 5685 全部本形
     （样本：recipes/axe/abyssalnite.json，count:1 保留 + show_notification 补写
     后逐字节相等；形差全带单一，零键序/零空容器残差）。必须注册在
@@ -350,7 +350,7 @@ def _norm_tag_c_to_forge(o: dict) -> bool:
     """配方内 tag 引用命名空间：1.21 "c:…" → 1.20.1 "forge:…"（值层，非路径层）。
 
     出处：SEGMENT_MAP 的 c→forge 只映射目录段；JSON 字符串值内的命名空间前缀
-    是值形差（NeoForge 生态 common tag vs Forge tag 的双腿形态，p24-tags 决策）。
+    是值形差（NeoForge 生态 common tag vs Forge tag 的双腿形态，tags 决策）。
     census 样本：recipes/grass.json ingredients[8].tag "c:dyes/green"→
     "forge:dyes/green"（6 文件草族染料配方）。
     """
@@ -364,7 +364,7 @@ def _norm_tag_c_to_forge(o: dict) -> bool:
 def _norm_requirements_order(o: dict, canon: dict | None = None) -> bool:
     """配方 advancement requirements 组序归一：requirements 是组内 AND 的集语义，
     组序骑各侧 criteria 容器的迭代序（1.20.1 Strategy 序 / 1.21.x HashMap 序——
-    p29-w5-t3 实录：soft_hammer 解锁键哈希序与 grass 带 13 文件相反，node 侧
+    t3 实录：soft_hammer 解锁键哈希序与 grass 带 13 文件相反，node 侧
     「按自身 criteria 序排序」归一退化为恒等 → 误 FAIL）。
 
     canonical 参照可用时（try_value_normalize 捆绑传入）：node 组直接采纳
@@ -437,7 +437,7 @@ def _norm_telemetry(o: dict) -> bool:
 
 
 def _norm_advancement_parent(o: dict, canon: dict | None = None) -> bool:
-    """配方 advancement 首键 parent（p35-datagen-circuit-declared：52 文件 standing
+    """配方 advancement 首键 parent（datagen-circuit-declared：52 文件 standing
     red 的清偿对象之二，advancement 面）：GT6 双腿 fork 形差——1.20.1 面 saveCircuitProgram
     显式 .parent(RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)（GT6CraftingRecipes.java:1907），
     21.1 面同一 save 缝无 .parent 行（GT6CraftingRecipes.java:1972-1977）；vanilla 两侧
@@ -471,7 +471,7 @@ def _norm_uniform_int_value(o: dict) -> bool:
     出处：DFU dispatch 序列化双腿形差——1.20.1（DFU 6，forge datagen 实测）IntProvider
     dispatch 产 "value" 嵌套，1.21.1（DFU 8，neoforge datagen 实测）同 dispatch 内联；
     两腿 UniformInt 字段名同为 min_inclusive/max_inclusive（UniformInt.java
-    1.20.1:13-14 / 1.21.1:14-15）。census 实测（2026-09-17，p30-w6-small-ore-datagen）：
+    1.20.1:13-14 / 1.21.1:14-15）。census 实测（2026-09-17，small-ore-datagen）：
     worldgen/placed_feature/ore_small_overworld/tin.json（ore band 全量 91 文件，
     canonical 600B vs node 567B，first diff @165="value" 键位）。
     """
@@ -519,7 +519,7 @@ VALUE_NORMALIZERS: list[tuple[str, str, list[tuple[str, Callable[[dict], bool]]]
 ]
 
 # 坐深一层的特判带（worldgen/placed_feature——_band 只辖 parts[2]，placed_feature 在
-# parts[3]，与 biome_modifier 双目录带同属深带族）：p30-w6-small-ore-datagen 注册。
+# parts[3]，与 biome_modifier 双目录带同属深带族）：small-ore-datagen 注册。
 # 归一器自限形态（恰 {type,max_inclusive,min_inclusive} 且 type=minecraft:uniform），
 # 零施用原样返回 → 字节比对兜底 FAIL（fail-visible 不放宽）。
 DEEP_VALUE_NORMALIZERS: list[tuple[str, Callable[[PurePosixPath], bool], list[tuple[str, Callable[[dict], bool]]]]] = [
@@ -546,7 +546,7 @@ def _walk_dicts(obj: object, fn: Callable[[dict], bool]) -> bool:
 def _registered_band(rel: PurePosixPath) -> list[tuple[str, Callable[[dict], bool]]] | None:
     """返回 rel（canonical 形路径）命中的已注册带的变换表；未注册带返回 None。
 
-    biome_modifier 双目录带（data/<ns>/<brand>/biome_modifier/）自 p30 终态起不在
+    biome_modifier 双目录带（data/<ns>/<brand>/biome_modifier/）自 P30 终态起不在
     注册表内：两侧同形零值形差，该带任何字节差走原样 FAIL（fail-visible）。
     """
     if rel.suffix != ".json":
@@ -600,8 +600,8 @@ ROOT_VERSION_FILE = "version.json"  # 1.21.x FileCache 输出根版本头（运�
 DEFAULT_MAX_LIST = 100
 
 
-# ── 陈旧守卫（p27-ops-treecheck-stale-guard，防复发）────────────────────────────
-# 节点输出 = 非入库验证产物（ADR-P17-1），可能落后于正典树：research.p27-lang-legs-delta
+# ── 陈旧守卫（ops-treecheck-stale-guard，防复发）────────────────────────────
+# 节点输出 = 非入库验证产物（ADR-P17-1），可能落后于正典树：research.lang-legs-delta
 # 实录——main checkout 的节点快照停在 16925b38 之前，与再生后的正典树比出 66 键 4.4KB
 # en_us「假分叉」。守卫判据：节点快照生成时戳 < git HEAD 正典树最近写入 → 对账基线不可信。
 # 裁定 FAIL（fail-visible 纪律：陈旧基线上的「绿」不可信，宁红勿哑），--allow-stale 显式
@@ -692,7 +692,7 @@ def canonical_head_epoch(canonical_root: Path) -> tuple[int, str] | None:
     except (OSError, ValueError, subprocess.SubprocessError):
         return None
 
-# ── 声明偏离表（forge-gated 仅 canonical 面，p26-crucible-physics-smeltery 引入）──────
+# ── 声明偏离表（forge-gated 仅 canonical 面，crucible-physics-smeltery 引入）──────
 # 出处：b8a58a0a——crafting provider（RecipeProvider/FinishedRecipe 流）骑 1.20.1-forge
 # stonecutter 块：21.1 删除 FinishedRecipe，RecipeOutput 流是卡 B 的 21.1 datagen 面；
 # 故下列 canonical 产物在 21.1 节点结构性无输出（非漂移）。逐路径显式白名单、
@@ -702,7 +702,7 @@ FORGE_GATED_ONLY_CANONICAL = frozenset({
     "data/gt6/recipes/smeltery_stone.json",
     "data/gt6/advancements/recipes/misc/mold_stone.json",
     "data/gt6/advancements/recipes/misc/smeltery_stone.json",
-    # task p29-w2-eu-core-5tier 交卡门禁补录（2026-09-14，非本卡面——p28-c-water-wheel
+    # task eu-core-5tier 交卡门禁补录（2026-09-14，非本卡面——c-water-wheel
     # 遗留缺口由本卡新鲜 neo 节点快照首次显形：GT6CraftingRecipes.buildRecipes 的
     # neoforge 分支漏了 waterWheelBuilder()（forge 分支 ：192 有），canonical 树的
     # data/gt6/recipes/water_wheel.json(+advancement) 由 forge 腿独产，与 mold_stone
@@ -710,7 +710,7 @@ FORGE_GATED_ONLY_CANONICAL = frozenset({
     # 归后续水车轮微卡。
     "data/gt6/recipes/water_wheel.json",
     "data/gt6/advancements/recipes/misc/water_wheel.json",
-    # task p29-w5-t1-dig-six 交卡补录（2026-09-16，非漂移）：forge 命名空间的 GLM 索引
+    # task dig-six 交卡补录（2026-09-16，非漂移）：forge 命名空间的 GLM 索引
     # data/forge/loot_modifiers/global_loot_modifiers.json 由 forge 腿
     # GlobalLootModifierProvider 独产（21.1 同名 provider 写 data/neoforge/...——平台
     # 索引命名空间之差，LootModifierManager folder 常量双腿同为 loot_modifiers）。本卡
@@ -720,7 +720,7 @@ FORGE_GATED_ONLY_CANONICAL = frozenset({
     "data/forge/loot_modifiers/global_loot_modifiers.json",
 })
 
-# ── 声明偏离带（canonical 前瞻孪生树，p27-vanilla-tag-dual-tree 引入）──────────────
+# ── 声明偏离带（canonical 前瞻孪生树，vanilla-tag-dual-tree 引入）──────────────
 # 出处：3b7ada6c / f9dff2fb——forge 腿 runData 在正典树新产 data/c/tags/items/**（26 个
 # 原版交集面 c: 孪生，与 forge: 孪生同成员）。该带必须在对账配对前从 canonical 集剔出：
 # SEGMENT_MAP 的 c→forge 对两侧对称施用，canonical 的 data/c 文件若留在配对集会被归一
@@ -756,7 +756,7 @@ def collect_files(root: Path) -> dict[PurePosixPath, Path]:
 def normalize(rel: PurePosixPath) -> PurePosixPath:
     """目录段映射归一化（文件名段永不参与）。
 
-    p30 终态：品牌折叠（p27 brand_normalize）已随双目录并载退役——biome_modifier
+    P30 终态：品牌折叠（P27 brand_normalize）已随双目录并载退役——biome_modifier
     带 forge/ 与 neoforge/ 两侧同形，各按同品牌路径直接对账，不再折键。
     """
     mapped = [SEGMENT_MAP.get(seg, seg) for seg in rel.parts[:-1]]
@@ -767,7 +767,7 @@ def normalize(rel: PurePosixPath) -> PurePosixPath:
 def _fold(files: dict[PurePosixPath, Path]) -> dict[PurePosixPath, Path]:
     """归一化折叠（SEGMENT_MAP 层，既有同键阴影维持后写覆盖现行为）。
 
-    p27 的品牌折叠碰撞守卫随 brand_normalize 一并退役：双目录终态下 forge/ 与
+    P27 的品牌折叠碰撞守卫随 brand_normalize 一并退役：双目录终态下 forge/ 与
     neoforge/ 是各自独立的对账键（GT6DualDirectoryFaces 双腿面同轮发射），不存在
     折叠多解。
     """
@@ -792,7 +792,7 @@ def main() -> int:
     repo_root = Path(__file__).resolve().parent.parent
     parser = argparse.ArgumentParser(
         description="datagen 双树一致性断言（canonical vs 1.21.1 节点本地输出，"
-                    "路径段映射+已注册值形归一后 byte 级比对，ADR-P17-1 门禁步 5 + p25 两层归一）",
+                    "路径段映射+已注册值形归一后 byte 级比对，ADR-P17-1 门禁步 5 + P25 两层归一）",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="正例: python3 tools/datagen_tree_check.py            # exit 0\n"
                "负例: 对 node 输出任一文件追加一字节后再跑 → exit 1 并定位该文件\n"
@@ -817,7 +817,7 @@ def main() -> int:
     canon = collect_files(canonical_root)
     node = collect_files(node_root)
 
-    # ── 陈旧守卫（p27-ops）：对账前先验基线新鲜度，fail-visible ──────────────
+    # ── 陈旧守卫（ops）：对账前先验基线新鲜度，fail-visible ──────────────
     gen = node_gen_epoch(node_root, node)
     head = canonical_head_epoch(canonical_root)
     if gen is None or head is None:
@@ -828,7 +828,7 @@ def main() -> int:
         msg = (f"node snapshot [{gen[1]}] generated {gen[0]:.0f} is OLDER than the "
                f"canonical tree's last HEAD write [{head[1]}] at {head[0]} "
                f"(by {head[0] - gen[0]:.0f}s) — the reconciliation baseline is "
-               "untrustworthy (research.p27-lang-legs-delta: stale node snapshot "
+               "untrustworthy (research.lang-legs-delta: stale node snapshot "
                "manufactured the phantom 4.4KB en_us lang delta)")
         if args.allow_stale:
             print(f"STALE-WARN (allowed by --allow-stale): {msg}")
@@ -842,7 +842,7 @@ def main() -> int:
         print(f"STALE-CHECK OK (node {gen[1]} at {gen[0]:.0f} >= canonical HEAD "
               f"write [{head[1]}] at {head[0]})")
 
-    # the p27 forward-twin band: paired OUT of the canonical comparison set before
+    # the P27 forward-twin band: paired OUT of the canonical comparison set before
     # normalize — see FORWARD_TWIN_PREFIX (the symmetric c→forge mapping would fold
     # these onto the forge twins' keys, silently overwriting dict entries)
     forward_twin = sorted(rel for rel in canon if str(rel).startswith(FORWARD_TWIN_PREFIX))
@@ -897,12 +897,12 @@ def main() -> int:
     for rel in gated:
         print(f"DECLARED [forge-gated, b8a58a0a] {rel}")
 
-    # the p27 forward-twin band: already paired out of `canon` pre-normalize (see
+    # the P27 forward-twin band: already paired out of `canon` pre-normalize (see
     # FORWARD_TWIN_PREFIX) — printed with its own counter, never silent
     for rel in forward_twin[:args.max_list]:
-        print(f"DECLARED [p27 forward-twin] {rel}")
+        print(f"DECLARED [P27 forward-twin] {rel}")
     if len(forward_twin) > args.max_list:
-        print(f"DECLARED [p27 forward-twin] ... and {len(forward_twin) - args.max_list} more")
+        print(f"DECLARED [P27 forward-twin] ... and {len(forward_twin) - args.max_list} more")
 
     fail = bool(only_canon or only_node or diff_content)
     if fail:
@@ -920,7 +920,7 @@ def main() -> int:
               f"path(s) differ (content:{len(diff_content)}, "
               f"only-canonical:{len(only_canon)}, only-node:{len(only_node)}, "
               f"forge-gated declared:{len(gated)}, "
-              f"p27 forward-twin declared:{len(forward_twin)}, "
+              f"P27 forward-twin declared:{len(forward_twin)}, "
               f"normalized:{len(normalized)} accepted)")
         return 1
 
@@ -928,7 +928,7 @@ def main() -> int:
           f"{len(normalized)} value-shape normalized after path mapping + "
           f"registered value normalizers (normalized:{len(normalized)}, "
           f"forge-gated declared:{len(gated)}, "
-          f"p27 forward-twin declared:{len(forward_twin)})")
+          f"P27 forward-twin declared:{len(forward_twin)})")
     return 0
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""cover6_display_energy — the Energy Display Cover live chain (p35-covers-display-scale-6).
+"""cover6_display_energy — the Energy Display Cover live chain (covers-display-scale-6).
 
-Band column x=626 z=306. One grid-fed oven + an HU rig adjacent east (the p13
+Band column x=626 z=306. One grid-fed oven + an HU rig adjacent east (the P13
 geometry — the rig's west face feeds the oven):
 
   A the LIVE READING: the cover reads the machine's energy buffer lane every

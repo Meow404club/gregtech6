@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""cover6_scale_energy — the Energy Sensor live chain (p35-covers-display-scale-6).
+"""cover6_scale_energy — the Energy Sensor live chain (covers-display-scale-6).
 
 Band column x=642 z=306. One grid-fed oven + an HU rig adjacent east (the
 cover6_display_energy geometry, the SCALE sibling):

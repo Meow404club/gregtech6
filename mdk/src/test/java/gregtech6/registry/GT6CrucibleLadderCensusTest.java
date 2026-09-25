@@ -21,7 +21,7 @@ import gregapi.util.CruciblePhysics;
 
 /**
  * The crucible 8-material ladder census (task p29-w3-distill-crucible ③ — ACCEPTANCE ③,
- * the OFFLINE half; the live half is the p29_w3_crucible_ladder RCON chain):
+ * the OFFLINE half; the live half is the crucible_ladder RCON chain):
  * <ul>
  * <li>the eight rungs (the Loader :1270-1277 meta set 17302..17312 complete with the Steel
  *     17309 the P26 card landed) and the ACIDPROOF column — T on StainlessSteel/Tungsten/
@@ -89,7 +89,7 @@ class GT6CrucibleLadderCensusTest {
 	@Test
 	public void everyRungCarriesItsOwnWallPath() {
 		// the NBT_DESIGN column as the row's wallPath — eight DISTINCT identities (the Block
-		// resolution itself is the live p29_w3_crucible_ladder arm: the frozen registry keeps
+		// resolution itself is the live crucible_ladder arm: the frozen registry keeps
 		// the DeferredRegister handles offline-unbound)
 		java.util.Set<String> tPaths = new java.util.HashSet<>();
 		for (GT6Crucibles.CrucibleRow tRow : GT6Crucibles.CRUCIBLE_ROWS) {

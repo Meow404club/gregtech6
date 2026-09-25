@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""cover6_controller_display — the Machine Status Display live chain (p35-covers-display-scale-6).
+"""cover6_controller_display — the Machine Status Display live chain (covers-display-scale-6).
 
 Band column x=618 z=306. One grid-fed oven, the status display cover
 (CoverControllerDisplay):
@@ -10,7 +10,7 @@ Band column x=618 z=306. One grid-fed oven, the status display cover
     covers NBT visual lane reads 488 after the first tickPost.
   B the STYLE CYCLE (:47-53, the chisel arm): the /data modify channel writes
     the style bits (1024s = style 1) through the REAL save/load machinery (the
-    p11 filter-seed precedent — the BE reloads through
+    P11 filter-seed precedent — the BE reloads through
     TileEntityOven.load/readCoversFromNBT), the tickPost rebuild keeps the style
     bits (only the low 10 bits are rebuilt), and the snapshot art follows the
     top base.

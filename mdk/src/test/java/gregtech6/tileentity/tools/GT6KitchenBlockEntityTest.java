@@ -34,7 +34,7 @@ import gregtech6.recipes.GT6RecipeMaps;
  * admission's hot/heavier half, the TapFillable face) and the ACTIVATION CHAIN processed
  * round driven end-to-end offline (isServerSide() is true with no level —
  * TileEntityBase01Root.java:188 — so the top-face manual round runs against an injected
- * fixture row; the LIVE server leg is the p26_kitchen_pot.py RCON chain).
+ * fixture row; the LIVE server leg is the kitchen_pot.py RCON chain).
  */
 class GT6KitchenBlockEntityTest extends gregtech6.tileentity.GTOfflineTestBase {
 
@@ -118,7 +118,7 @@ class GT6KitchenBlockEntityTest extends gregtech6.tileentity.GTOfflineTestBase {
 	 * The :302 admission's containing-tank short circuit (:250 — {@code contains} wins
 	 * BEFORE the doors). The full door half (the -100 K hot door, the density door) reads
 	 * the FluidType carrier — a Forge mod-bus registration the offline JVM cannot bind —
-	 * so the door faces ride the LIVE server: the p26_kitchen_pot.py RCON chain injects
+	 * so the door faces ride the LIVE server: the kitchen_pot.py RCON chain injects
 	 * water through the capability face (admission passed live) and the door predicates
 	 * are the verbatim port of :302-307.
 	 */

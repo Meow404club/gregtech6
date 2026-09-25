@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""cover6_scale_progress — the Progress Sensor live chain (p35-covers-display-scale-6).
+"""cover6_scale_progress — the Progress Sensor live chain (covers-display-scale-6).
 
 Band column x=634 z=306. One grid-fed oven + an HU rig adjacent east:
 
   A the IDLE scale: no input, no energy — progress 0/max 0 reads value 0 (:42),
     the value lane stays out of the covers NBT, the sensor circuit art rides the
     snapshot.
-  B the RUNNING scale: input 8 cobblestone + the rig at volt 32 amp 1 (the p13
+  B the RUNNING scale: input 8 cobblestone + the rig at volt 32 amp 1 (the P13
     fed-regime geometry) -> the machine actively runs, mProgress grows per tick,
     the :42 scale maps it to a nonzero 1..15 reading — the covers NBT VALUE lane
     (the side-UP key "1") carries it, and the machine-side readback shows
