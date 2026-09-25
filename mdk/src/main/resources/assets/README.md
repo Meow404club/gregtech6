@@ -3202,6 +3202,106 @@ but is NOT borrowed: the repo Brick row shares the SOLID model per the p13 rulin
 so there is no brick key to fill. The `overlay`/`overlay_active` groups are NOT
 borrowed (the p8 single-pass ruling).
 
+The above section is SUPERSEDED by task issue11-burningbox (GitHub issue #11,
+the white-box half): the grayscale body is now the tint seat (baked vertex
+colour, the p32 route) and the overlay/overlay_active passes are borrowed for
+real. The `liquid`/`gas`/`fluidbed` placeholder copies are retired (the shared
+grayscale bytes stay shipped as `burning_box_solid.png` below, so the digest
+still grounds); the Brick row takes its own upstream `burning_brick` group and
+the "Brick shares the SOLID model" p13 ruling is closed. Upstream path mapping,
+mechanical: `burning_box_<group>_overlay_<face>[_active].png` ←
+`machines/generators/burning_<group>/overlay[_active]/<face>.png` with
+`<group>` ∈ {solid, liquid, gas, fluidbed, brick} and `<face>` ∈
+{front, back, left, right, top, bottom}; every row byte-identical to upstream,
+sha256 verified (rows generated from the shipped bytes, not hand-transcribed):
+
+- `burning_box_solid.png` `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
+  — the ONE body texture for all five groups (upstream probe: all 6 faces of
+  all 5 `colored/` sets hash to this one digest; the family differentiation is
+  the overlay passes + the per-row material tint, exactly as p20 recorded)
+
+The sixty overlay sprites:
+
+- `burning_box_brick_overlay_back.png` `64bb2b9d3eac7a9d2d99c91138172210a02ec026e05dfc2237901540ec12b2ee`
+- `burning_box_brick_overlay_back_active.png` `9cb35c36a9341c3a9f1c147b04093c46dd35910a62e7354af6fa45e934dcb415`
+- `burning_box_brick_overlay_bottom.png` `fb026fe33ee18607c32d3b0217a4aeff5bc9c33d6dd26389cc9392fc7fa81bc5`
+- `burning_box_brick_overlay_bottom_active.png` `323286795816e11f7ed246231919463ce7344861930814d26e0bf207d6b80170`
+- `burning_box_brick_overlay_front.png` `2c35ccc4d4da9d713b67d1a4a3b9e930f3f5a7749fc39ddf2ebb77a3c7946ac8`
+- `burning_box_brick_overlay_front_active.png` `9b34c0d7e6a2fbb9ee79d56a360103b20ab6f162e0316ecf4a41dd39c002d95e`
+- `burning_box_brick_overlay_left.png` `6b6d3ce23d2dd4c8a4d5e5efe489bc7f4f8bb65caa9bada14b2cae5a5f40ea39`
+- `burning_box_brick_overlay_left_active.png` `7da52e57dbd35fe662c46f26e57689794594ba2594877163708f367f9c2ae63b`
+- `burning_box_brick_overlay_right.png` `12a9bb5d2a7119c685961b8ec8f351d9812db256bbecfca87802c6e21b1f7cf7`
+- `burning_box_brick_overlay_right_active.png` `81e0e7b38f528a30c057f836b751fe498b4a0d3bb0d0135994b1c306fbc00a8b`
+- `burning_box_brick_overlay_top.png` `7322a1ad47fdc71e4e62fe3e9d364cad7bca02dadb2f70613bc0db9ce777c44a`
+- `burning_box_brick_overlay_top_active.png` `953aae92bc227b576726b2bd747d1c3a4a67acba9d63c6e5ae8ee285aba54a98`
+- `burning_box_fluidbed_overlay_back.png` `434ce0ef50b8063c864b0fc24e5cd9aea714e19f46088f1b184fa44406e36eed`
+- `burning_box_fluidbed_overlay_back_active.png` `434ce0ef50b8063c864b0fc24e5cd9aea714e19f46088f1b184fa44406e36eed`
+- `burning_box_fluidbed_overlay_bottom.png` `c31b3126efbd3713871016a191d3c7f1f19613e0bfd215e02627b627dbe871fe`
+- `burning_box_fluidbed_overlay_bottom_active.png` `c31b3126efbd3713871016a191d3c7f1f19613e0bfd215e02627b627dbe871fe`
+- `burning_box_fluidbed_overlay_front.png` `1a4561d2918c58ee0e9d43eaedc44e6caeff9841404e18a2c6f007164027f5f6`
+- `burning_box_fluidbed_overlay_front_active.png` `e8cca8c63095d2915d42d87f4bb43ef512a0d289bd6f184a07f30d92fcdb4b4a`
+- `burning_box_fluidbed_overlay_left.png` `92e9fdd5b720064549689c9cd71e266e81c80ac7e9893909d4c7d3cb4ea8aa33`
+- `burning_box_fluidbed_overlay_left_active.png` `524d08f1f6e0734d75625f03cd3f95dbbc7ad22a2a0f1cbb9deffdfa96ccaf59`
+- `burning_box_fluidbed_overlay_right.png` `5fed48cacc86d24191b440b3c7bfb25a7295b3db1b28e8ca5008be3d96b7fd02`
+- `burning_box_fluidbed_overlay_right_active.png` `4ea3a2c4e299c221d3b7187e1c5428dbd1913e3c5dccc1d4a94219962e12b340`
+- `burning_box_fluidbed_overlay_top.png` `1d116dec67f49dc22a130120f186fbbf7e9f963f4212629ea46a963a6f2feacb`
+- `burning_box_fluidbed_overlay_top_active.png` `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a`
+- `burning_box_gas_overlay_back.png` `434ce0ef50b8063c864b0fc24e5cd9aea714e19f46088f1b184fa44406e36eed`
+- `burning_box_gas_overlay_back_active.png` `434ce0ef50b8063c864b0fc24e5cd9aea714e19f46088f1b184fa44406e36eed`
+- `burning_box_gas_overlay_bottom.png` `c31b3126efbd3713871016a191d3c7f1f19613e0bfd215e02627b627dbe871fe`
+- `burning_box_gas_overlay_bottom_active.png` `c31b3126efbd3713871016a191d3c7f1f19613e0bfd215e02627b627dbe871fe`
+- `burning_box_gas_overlay_front.png` `98ae239e76efe334d56ed66f9a893d3c35de6f893d51080e6d3ec7d692f10b9d`
+- `burning_box_gas_overlay_front_active.png` `733fcf93adf9d969fe003e571dad7e770cad219748487ea865bbf4f952f58703`
+- `burning_box_gas_overlay_left.png` `92e9fdd5b720064549689c9cd71e266e81c80ac7e9893909d4c7d3cb4ea8aa33`
+- `burning_box_gas_overlay_left_active.png` `524d08f1f6e0734d75625f03cd3f95dbbc7ad22a2a0f1cbb9deffdfa96ccaf59`
+- `burning_box_gas_overlay_right.png` `5fed48cacc86d24191b440b3c7bfb25a7295b3db1b28e8ca5008be3d96b7fd02`
+- `burning_box_gas_overlay_right_active.png` `4ea3a2c4e299c221d3b7187e1c5428dbd1913e3c5dccc1d4a94219962e12b340`
+- `burning_box_gas_overlay_top.png` `1d116dec67f49dc22a130120f186fbbf7e9f963f4212629ea46a963a6f2feacb`
+- `burning_box_gas_overlay_top_active.png` `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a`
+- `burning_box_liquid_overlay_back.png` `434ce0ef50b8063c864b0fc24e5cd9aea714e19f46088f1b184fa44406e36eed`
+- `burning_box_liquid_overlay_back_active.png` `434ce0ef50b8063c864b0fc24e5cd9aea714e19f46088f1b184fa44406e36eed`
+- `burning_box_liquid_overlay_bottom.png` `c31b3126efbd3713871016a191d3c7f1f19613e0bfd215e02627b627dbe871fe`
+- `burning_box_liquid_overlay_bottom_active.png` `c31b3126efbd3713871016a191d3c7f1f19613e0bfd215e02627b627dbe871fe`
+- `burning_box_liquid_overlay_front.png` `f377baae1d12f7bff22c0cc3142b53412938a16b47e077c3133d59e61e9cf783`
+- `burning_box_liquid_overlay_front_active.png` `30f813c086f9350c544fe7c3270456925b4d3c0541641e8367564316d73a236d`
+- `burning_box_liquid_overlay_left.png` `92e9fdd5b720064549689c9cd71e266e81c80ac7e9893909d4c7d3cb4ea8aa33`
+- `burning_box_liquid_overlay_left_active.png` `524d08f1f6e0734d75625f03cd3f95dbbc7ad22a2a0f1cbb9deffdfa96ccaf59`
+- `burning_box_liquid_overlay_right.png` `5fed48cacc86d24191b440b3c7bfb25a7295b3db1b28e8ca5008be3d96b7fd02`
+- `burning_box_liquid_overlay_right_active.png` `4ea3a2c4e299c221d3b7187e1c5428dbd1913e3c5dccc1d4a94219962e12b340`
+- `burning_box_liquid_overlay_top.png` `1d116dec67f49dc22a130120f186fbbf7e9f963f4212629ea46a963a6f2feacb`
+- `burning_box_liquid_overlay_top_active.png` `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a`
+- `burning_box_solid_overlay_back.png` `434ce0ef50b8063c864b0fc24e5cd9aea714e19f46088f1b184fa44406e36eed`
+- `burning_box_solid_overlay_back_active.png` `434ce0ef50b8063c864b0fc24e5cd9aea714e19f46088f1b184fa44406e36eed`
+- `burning_box_solid_overlay_bottom.png` `c31b3126efbd3713871016a191d3c7f1f19613e0bfd215e02627b627dbe871fe`
+- `burning_box_solid_overlay_bottom_active.png` `c31b3126efbd3713871016a191d3c7f1f19613e0bfd215e02627b627dbe871fe`
+- `burning_box_solid_overlay_front.png` `c503d69f90dbce00014b947af89b5f2f868c4b88cc1677e764be87718c9f4377`
+- `burning_box_solid_overlay_front_active.png` `6ac6386f9046cec50c546b87abd0756501c3ee9faa297adc60ee1b8390062951`
+- `burning_box_solid_overlay_left.png` `92e9fdd5b720064549689c9cd71e266e81c80ac7e9893909d4c7d3cb4ea8aa33`
+- `burning_box_solid_overlay_left_active.png` `524d08f1f6e0734d75625f03cd3f95dbbc7ad22a2a0f1cbb9deffdfa96ccaf59`
+- `burning_box_solid_overlay_right.png` `5fed48cacc86d24191b440b3c7bfb25a7295b3db1b28e8ca5008be3d96b7fd02`
+- `burning_box_solid_overlay_right_active.png` `4ea3a2c4e299c221d3b7187e1c5428dbd1913e3c5dccc1d4a94219962e12b340`
+- `burning_box_solid_overlay_top.png` `1d116dec67f49dc22a130120f186fbbf7e9f963f4212629ea46a963a6f2feacb`
+- `burning_box_solid_overlay_top_active.png` `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a`
+
+Animation metadata, copied verbatim next to their sprites (deliberately NOT
+sha-ledgered — the census grounds PNG bytes only): the six
+`*.png.mcmeta` files are the upstream `overlay_active/front.png.mcmeta` ×5
+(each a 16×64 four-frame strip, `{"animation":{"frametime":2}}`; the gas one is
+its own file with a distinct digest) plus `burning_box_brick_overlay_top_active
+.png.mcmeta` — the Brick top strip is animated too, the only non-front animated
+face in the snapshot. Upstream byte-identity record worth keeping: on the four
+metal families the NON-front faces hash identical between `overlay` and
+`overlay_active` (only the front carries the burning glow), while the Brick
+group ships six distinct active faces — the per-face borrow keeps both shapes
+verbatim. mcmeta files present (provenance only):
+
+- `burning_box_brick_overlay_front_active.png.mcmeta`
+- `burning_box_brick_overlay_top_active.png.mcmeta`
+- `burning_box_fluidbed_overlay_front_active.png.mcmeta`
+- `burning_box_gas_overlay_front_active.png.mcmeta`
+- `burning_box_liquid_overlay_front_active.png.mcmeta`
+- `burning_box_solid_overlay_front_active.png.mcmeta`
+
 Fluid pipe block texture — DECLARED GAP, task p20-borrow-tank-barrel-pipe:
 `gt6/textures/block/fluid_pipe_wood.png` KEEPS its generated placeholder. The
 upstream wood fluid pipes render through the material icon system, not a dedicated
