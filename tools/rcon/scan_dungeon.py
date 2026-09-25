@@ -204,13 +204,17 @@ def boot_and_load(boxes):
     def rc_strict(command):
         # fatal on persistent emptiness: a swallowed forceload add poisons the whole
         # boot (the boot#1 lesson — the empty replies were the lever-crash symptom,
-        # and continuing would only burn the quiescence wait on an empty region)
-        for attempt in (0, 1, 2):
+        # and continuing would only burn the quiescence wait on an empty region).
+        # Six rounds with 12 s gaps: an 8-box forceload queues >1100 chunks of
+        # generation at once and the main thread can out-busy the default 30 s RCON
+        # read for minutes (the 1.21.1 leg, seed 6131000569321125127 box 8 — the
+        # command IS queued on the server executor, it just answers late).
+        for attempt in (0, 1, 2, 3, 4, 5):
             reply = rc(command)
             if reply.strip():
                 return reply
-            print("empty reply, retry", attempt, command[:40])
-            time.sleep(2)
+            print("empty reply, retry", attempt, command[:40], flush=True)
+            time.sleep(12)
         raise RuntimeError(f"forceload command never acknowledged: {command}")
 
     def region_bytes():
@@ -219,7 +223,9 @@ def boot_and_load(boxes):
     try:
         for x0, z0, x1, z1 in boxes:
             print("forceload add:", rc_strict(f"forceload add {x0} {z0} {x1} {z1}")[:60], flush=True)
-            time.sleep(0.5)
+            # 15 s pacing between boxes keeps the forced-gen queue shallow enough for
+            # the next RCON command to reach the main thread inside the retry window.
+            time.sleep(15)
         last_bytes, stable_bytes = -1, 0
         gen_start = time.time()
         gen_deadline = gen_start + 2400
