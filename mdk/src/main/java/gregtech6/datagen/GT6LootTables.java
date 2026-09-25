@@ -149,7 +149,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task p32-placeables — the lantern + sandwich self-drops
                 new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task p33-bees-lv3-b-bumbliary — the Bumbliary pair self-drops
                 new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task p30-ore-4-loot — the 3922 ore tables
-                new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST)), // task p34-loot-injection — the gt.flawless/gems/misc bag tables
+                new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST), // task p34-loot-injection — the gt.flawless/gems/misc bag tables
+                new SubProviderEntry(GT6DungeonChestLoot::new, LootContextParamSets.CHEST)), // task p38-dungeon-framework — the gt6:chests/dungeon_chest carrier
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
@@ -207,7 +208,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task p32-placeables — the lantern + sandwich self-drops
                 new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task p33-bees-lv3-b-bumbliary — the Bumbliary pair self-drops
                 new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task p30-ore-4-loot — the 3922 ore tables
-                new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST))); // task p34-loot-injection — the gt.flawless/gems/misc bag tables
+                new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST), // task p34-loot-injection — the gt.flawless/gems/misc bag tables
+                new SubProviderEntry(GT6DungeonChestLoot::new, LootContextParamSets.CHEST))); // task p38-dungeon-framework — the gt6:chests/dungeon_chest carrier
         //?}
     }
 
@@ -2710,6 +2712,64 @@ public final class GT6LootTables extends LootTableProvider {
             // the vanilla chest-table conventions: the CHEST param set + the table-id sequence
             return LootTable.lootTable().setParamSet(LootContextParamSets.CHEST)
                     .setRandomSequence(tableId(aRow.name()))
+                    .withPool(tPool);
+        }
+    }
+
+    /**
+     * The {@code gt6:chests/dungeon_chest} carrier table (task p38-dungeon-framework) —
+     * the GT6 dungeon structure's loot chests bind here (GT6DungeonPiece.createDungeonChest,
+     * the MineshaftPieces.java:270-282 createChest face), so the DUNGEON_CHEST category
+     * rows get a NATIVE, pack-editable table instead of only the vanilla-table injection.
+     * Content = {@link GT6LootInjectionDatagen#dungeonChestEntries()} verbatim (the metal
+     * ladder + the Guide row; the ZPM artifact row stays on the vanilla injection, see
+     * the accessor javadoc). One pool rolling the shared ROLL_MIN..ROLL_MAX — the same
+     * share-approximation the injection modifier documents.
+     */
+    public static final class GT6DungeonChestLoot implements net.minecraft.data.loot.LootTableSubProvider {
+
+        /** The table id — the two-arg ctor is forge-only (the 21.1 removal). */
+        public static ResourceLocation tableId() {
+            //? if forge {
+            return new ResourceLocation("gt6", "chests/dungeon_chest");
+            //?} else {
+            /*return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "chests/dungeon_chest");
+            *///?}
+        }
+
+        //? if neoforge {
+        /*
+        public GT6DungeonChestLoot(HolderLookup.Provider registries) {
+        }
+        *///?} else {
+        public GT6DungeonChestLoot() {
+        }
+        //?}
+
+        @Override
+        //? if forge {
+        public void generate(java.util.function.BiConsumer<ResourceLocation, LootTable.Builder> aOutput) {
+            aOutput.accept(tableId(), table());
+        }
+        //?} else {
+        /*public void generate(java.util.function.BiConsumer<net.minecraft.resources.ResourceKey<LootTable>, LootTable.Builder> aOutput) {
+            aOutput.accept(net.minecraft.resources.ResourceKey.create(Registries.LOOT_TABLE, tableId()), table());
+        }
+        *///?}
+
+        /** The 1..3-roll pool over the DUNGEON_CHEST category rows (the injection face). */
+        private static LootTable.Builder table() {
+            LootPool.Builder tPool = LootPool.lootPool()
+                    .setRolls(UniformGenerator.between(GT6LootInjectionDatagen.ROLL_MIN, GT6LootInjectionDatagen.ROLL_MAX));
+            for (GT6LootInjectionDatagen.EntryRow tEntry : GT6LootInjectionDatagen.dungeonChestEntries()) {
+                Item tItem = GT6LootInjectionDatagen.resolveItem(tEntry.item());
+                if (tItem == Items.AIR) throw new IllegalStateException(
+                        "dungeon chest row references an unregistered item: " + tEntry.item());
+                tPool.add(LootItem.lootTableItem(tItem).setWeight(tEntry.weight())
+                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(tEntry.min(), tEntry.max()))));
+            }
+            return LootTable.lootTable().setParamSet(LootContextParamSets.CHEST)
+                    .setRandomSequence(tableId())
                     .withPool(tPool);
         }
     }

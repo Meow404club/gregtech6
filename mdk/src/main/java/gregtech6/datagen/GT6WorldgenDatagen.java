@@ -31,6 +31,11 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureSet;
+import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
+import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
+import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
@@ -164,7 +169,11 @@ public final class GT6WorldgenDatagen {
     public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
             .add(Registries.CONFIGURED_FEATURE, GT6WorldgenDatagen::bootstrapConfigured)
             .add(Registries.PLACED_FEATURE, GT6WorldgenDatagen::bootstrapPlaced)
-            .add(biomeModifierRegistryKey(), GT6WorldgenDatagen::bootstrapBiomeModifiers);
+            .add(biomeModifierRegistryKey(), GT6WorldgenDatagen::bootstrapBiomeModifiers)
+            // task p38-dungeon-framework: the shelter dungeon rides the same provider —
+            // the structure + its random_spread structure_set (the 11-chunk grid JSON).
+            .add(Registries.STRUCTURE, GT6WorldgenDatagen::bootstrapStructure)
+            .add(Registries.STRUCTURE_SET, GT6WorldgenDatagen::bootstrapStructureSet);
 
     /**
      * The three builder bands as a key table, BUILDER order — the acceptance ctx-key audit
@@ -175,7 +184,27 @@ public final class GT6WorldgenDatagen {
      * textually bound to.
      */
     public static final List<ResourceKey<? extends Registry<?>>> BUILDER_KEYS = List.of(
-            Registries.CONFIGURED_FEATURE, Registries.PLACED_FEATURE, biomeModifierRegistryKey());
+            Registries.CONFIGURED_FEATURE, Registries.PLACED_FEATURE, biomeModifierRegistryKey(),
+            Registries.STRUCTURE, Registries.STRUCTURE_SET);
+
+    // --------------------------------------------------------------- the dungeon band
+
+    /** The structure key — {@code gt6:dungeon} (the JSON at data/gt6/worldgen/structure/dungeon.json). */
+    public static final ResourceKey<Structure> DUNGEON_STRUCTURE =
+            ResourceKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath("gt6", "dungeon"));
+
+    /** The structure-set key — {@code gt6:dungeon} (data/gt6/worldgen/structure_set/dungeon.json). */
+    public static final ResourceKey<StructureSet> DUNGEON_STRUCTURE_SET =
+            ResourceKey.create(Registries.STRUCTURE_SET, ResourceLocation.fromNamespaceAndPath("gt6", "dungeon"));
+
+    /**
+     * The placement constants (task p38-dungeon-framework): spacing 11 = the upstream
+     * chunk-grid period {@code maxSize + 4} (WorldgenDungeonGT.java:144), separation 5
+     * keeps the candidate at least mid-cell (the upstream FIXED offset 5 becomes the
+     * salt-uniform offset in {@code [0, spacing - separation]} — the documented
+     * distribution-equivalent deviation), the salt is arbitrary (vanilla salts are too).
+     */
+    public static final int DUNGEON_SPACING = 11, DUNGEON_SEPARATION = 5, DUNGEON_SALT = 371266954;
 
     private GT6WorldgenDatagen() {
     }
@@ -1122,6 +1151,41 @@ public final class GT6WorldgenDatagen {
     /** The row helper: an overworld spring row (the GT fluid id through {@code springBlockId} — the single-source face) + the nozzle amount. */
     private static GTFluidSpringConfig spring(String aName, String aFluidName, int aProbability, int aSpringAmount) {
         return new GTFluidSpringConfig(aName, gregtech6.fluid.GTFluids.springBlockId(aFluidName), aProbability, true, aSpringAmount);
+    }
+
+    /**
+     * The shelter-dungeon structure (task p38-dungeon-framework, the upstream
+     * Loader_Worldgen.java:652 registration row): overworld-only biomes (the
+     * {@code #minecraft:is_overworld} tag — the structure JSON biome gate the vanilla
+     * findValidGenerationPoint applies at the Y20 stub), no spawn overrides, the
+     * {@code underground_structures} step (the vanilla dungeon-family step; the upstream
+     * rides the 1.7.10 per-chunk worldgen hook), no terrain adaptation (the pieces build
+     * their own shell and the entrance shaft opens its own cap).
+     */
+    public static void bootstrapStructure(
+        //? if forge {
+        BootstapContext<Structure> ctx
+        //?} else {
+        /*BootstrapContext<Structure> ctx
+        *///?}
+    ) {
+        HolderGetter<Biome> tBiomes = ctx.lookup(Registries.BIOME);
+        ctx.register(DUNGEON_STRUCTURE, new gregtech6.worldgen.dungeon.GT6DungeonStructure(
+                new Structure.StructureSettings(tBiomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                        java.util.Map.of(), GenerationStep.Decoration.UNDERGROUND_STRUCTURES, TerrainAdjustment.NONE)));
+    }
+
+    /** The dungeon structure-set — the random_spread face of the upstream 11-chunk grid (the constant javadoc). */
+    public static void bootstrapStructureSet(
+        //? if forge {
+        BootstapContext<StructureSet> ctx
+        //?} else {
+        /*BootstrapContext<StructureSet> ctx
+        *///?}
+    ) {
+        ctx.register(DUNGEON_STRUCTURE_SET, new StructureSet(
+                ctx.lookup(Registries.STRUCTURE).getOrThrow(DUNGEON_STRUCTURE),
+                new RandomSpreadStructurePlacement(DUNGEON_SPACING, DUNGEON_SEPARATION, RandomSpreadType.LINEAR, DUNGEON_SALT)));
     }
 
     /** The row helper for the offworld rows (:789-797 — never drawn overworld, kept for the table census). */
