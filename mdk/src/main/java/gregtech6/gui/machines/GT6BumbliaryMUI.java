@@ -64,10 +64,10 @@ import gregtech6.tileentity.bees.GT6BumbliaryBlockEntity;
  * through the plain {@link GT6MuiMachine#tryOpen} chain (the BE's buildUI delegates here
  * with {@code scoop=false}).
  *
- * <p>The headless gate is the mui-a finding: {@code PanelSyncManager.getPlayer()}
- * dereferences the absent container menu offline, so the player face (bind + widget) is
- * gated on {@code getContainer() == null} (the GT6StorageMUI :52 form); at runtime both
- * sides always have one.
+ * <p>The player-inventory widget is added UNCONDITIONALLY (issue #3: the old mui-a headless
+ * gate on {@code getContainer() == null} was always-true at runtime — the fork's
+ * GuiManager.open runs createPanel before menu.construct; the widget binds by sync key and
+ * the sync face rides the ModularSyncManager.construct auto-bind, the GT6StorageMUI form).
  */
 public final class GT6BumbliaryMUI {
 
@@ -99,10 +99,9 @@ public final class GT6BumbliaryMUI {
 	 */
 	public static ModularPanel<?> buildPanel(GT6BumbliaryBlockEntity aBumbliary, PanelSyncManager aSyncManager, boolean aScoop) {
 		aSyncManager.registerSlotGroup(GROUP_SLOTS, aBumbliary.advanced() ? 5 : 9);
-		boolean tHeadless = aSyncManager.getContainer() == null;
-		if (!tHeadless) {
-			aSyncManager.bindPlayerInventory(aSyncManager.getPlayer());
-		}
+		// the player-inventory SYNC face rides the fork auto-bind (ModularSyncManager.construct
+		// :68-70 — it runs after the panel builds, when the menu exists; an explicit
+		// bindPlayerInventory here would NPE on the null menu, the issue #3 gate removal)
 
 		ModularPanel<?> tPanel = ModularPanel.defaultPanel(aScoop ? PANEL_NAME_SCOOP : PANEL_NAME, 176, 166)
 				// the (mod, path) overload exists on the forge leg only — the ResourceLocation face is the leg-generic one
@@ -121,10 +120,9 @@ public final class GT6BumbliaryMUI {
 					.name("slot_" + tSeat.slot()));
 		}
 
-		if (!tHeadless) {
-			// the player inventory at the standard 176x166 machine-panel offset 84
-			tPanel.child(SlotGroupWidget.playerInventory((aIndex, aSlot) -> aSlot).pos(7, 84));
-		}
+		// the player inventory at the standard 176x166 machine-panel offset 84 —
+		// UNCONDITIONAL (the sync handlers resolve by key at construct, no container needed)
+		tPanel.child(SlotGroupWidget.playerInventory((aIndex, aSlot) -> aSlot).pos(7, 84));
 		return tPanel;
 	}
 

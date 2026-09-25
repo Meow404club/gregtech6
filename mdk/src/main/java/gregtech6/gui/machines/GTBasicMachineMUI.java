@@ -65,9 +65,11 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  * default banks) renders zero seats — the pre-p34 panel byte-identical.
  *
  * <p>NOT in this card: the vanilla MenuType deregistration (card 3, done), BE/Block wiring
- * (card 2, done). The player-inventory bind is skipped when the sync manager has no
- * container menu — the offline panel-build fixture (headless tests, GT6MenuInputSlotExpansionTest
- * shape); at runtime both sides always have one, so the branch never fires in game.
+ * (card 2, done). The player-inventory widget is added UNCONDITIONALLY (issue #3: the old
+ * {@code getContainer() == null} gate was always-true at runtime — the fork's GuiManager.open
+ * runs createPanel before menu.construct, so getContainer() is still null while the panel
+ * builds; the widget binds by sync key and needs no container, SlotGroupWidget.playerInventory
+ * + the ModularSyncManager.construct auto-bind, GTCEu Modern MachineUIPanel.java:76-82 shape).
  */
 public final class GTBasicMachineMUI {
 
@@ -112,13 +114,9 @@ public final class GTBasicMachineMUI {
 
 		aSyncManager.registerSlotGroup(GROUP_INPUTS, Math.max(1, tInputs));
 		aSyncManager.registerSlotGroup(GROUP_OUTPUTS, 3);
-		// the headless fixture (offline panel-build tests) has no container menu — getPlayer()
-		// would NPE on the missing menu, so the player face (bind + widget) is gated on it; at
-		// runtime the container always exists on both sides, the branch never fires in game
-		boolean tHeadless = aSyncManager.getContainer() == null;
-		if (!tHeadless) {
-			aSyncManager.bindPlayerInventory(aSyncManager.getPlayer()); // ACT :77
-		}
+		// the player-inventory SYNC face rides the fork auto-bind (ModularSyncManager.construct
+		// :68-70 — it runs after the panel builds, when the menu exists; an explicit
+		// bindPlayerInventory here would NPE on the null menu)
 
 		DoubleSyncValue tProgress = new DoubleSyncValue(() -> progressRatio(aHost));
 		aSyncManager.syncValue(SYNC_PROGRESS, tProgress);
@@ -169,10 +167,9 @@ public final class GTBasicMachineMUI {
 				.size(PROGRESS_SIZE, PROGRESS_SIZE));
 
 		// the player inventory at the standard 176x166 machine-panel offset 84
-		// (bindPlayerInventory(84) semantics: the 3x9 block at (7,84), the hotbar at (7,142))
-		if (!tHeadless) {
-			tPanel.child(SlotGroupWidget.playerInventory((aIndex, aSlot) -> aSlot).pos(7, 84));
-		}
+		// (bindPlayerInventory(84) semantics: the 3x9 block at (7,84), the hotbar at (7,142));
+		// UNCONDITIONAL — the sync handlers resolve by key at construct, no container needed
+		tPanel.child(SlotGroupWidget.playerInventory((aIndex, aSlot) -> aSlot).pos(7, 84));
 		return tPanel;
 	}
 

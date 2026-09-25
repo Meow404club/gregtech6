@@ -95,13 +95,9 @@ public final class GTDistillationTowerMUI {
 
 		aSyncManager.registerSlotGroup(GROUP_INPUTS, Math.max(1, tInputs));
 		aSyncManager.registerSlotGroup(GROUP_OUTPUTS, 3);
-		// the headless fixture (offline panel-build tests) has no container menu — getPlayer()
-		// would NPE on the missing menu, so the player face is gated on it (the
-		// GTBasicMachineMUI :82-88 form); at runtime both sides always have one
-		boolean tHeadless = aSyncManager.getContainer() == null;
-		if (!tHeadless) {
-			aSyncManager.bindPlayerInventory(aSyncManager.getPlayer());
-		}
+		// the player-inventory SYNC face rides the fork auto-bind (ModularSyncManager.construct
+		// :68-70 — it runs after the panel builds, when the menu exists; an explicit
+		// bindPlayerInventory here would NPE on the null menu, the issue #3 gate removal)
 
 		// the progress — the family three-state ratio over the Host face the tower already is
 		DoubleSyncValue tProgress = new DoubleSyncValue(() -> GTBasicMachineMUI.progressRatio(aTower));
@@ -140,10 +136,9 @@ public final class GTDistillationTowerMUI {
 				.pos(PROGRESS_X, PROGRESS_Y)
 				.size(PROGRESS_W, PROGRESS_H));
 
-		// the player inventory at the standard 176x166 machine-panel offset 84
-		if (!tHeadless) {
-			tPanel.child(SlotGroupWidget.playerInventory((aIndex, aSlot) -> aSlot).pos(7, 84));
-		}
+		// the player inventory at the standard 176x166 machine-panel offset 84 —
+		// UNCONDITIONAL (the sync handlers resolve by key at construct, no container needed)
+		tPanel.child(SlotGroupWidget.playerInventory((aIndex, aSlot) -> aSlot).pos(7, 84));
 		return tPanel;
 	}
 

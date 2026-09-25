@@ -31,7 +31,7 @@ import com.mojang.logging.LogUtils;
  * upstream gregapi/data/RM.java:103.
  *
  * <p>{@code FURNACE} mirrors RM.Furnace: RecipeMapFurnace("mc.recipe.furnace",
- * "Furnace", NEI name "smelting", progress 0/1, GUI machines/Oven, item slots
+ * "Furnace", NEI name "smelting", progress 0/1, GUI machines/oven, item slots
  * 1/1/1, fluid slots 1/1/0, minimal inputs 0, power 1). The GUI path uses the
  * gt6 namespace instead of the upstream assets/gregtech one.
  *
@@ -901,7 +901,7 @@ public class GT6RecipeMaps {
 		FURNACE = new RecipeMapFurnace(new HashSet<>(),
 				"mc.recipe.furnace", "Furnace", "smelting",
 				0, 1,
-				"gt6:textures/gui/machines/Oven",
+				"gt6:textures/gui/machines/oven",
 				/*IN-OUT-MIN-ITEM=*/ 1, 1, 1,
 				/*IN-OUT-MIN-FLUID=*/ 1, 1, 0,
 				/*MIN=*/ 0,

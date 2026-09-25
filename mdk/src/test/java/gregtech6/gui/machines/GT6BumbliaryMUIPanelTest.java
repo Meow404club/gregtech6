@@ -3,6 +3,7 @@ package gregtech6.gui.machines;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -15,7 +16,6 @@ import brachy.modularui.drawable.UITexture;
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.value.sync.ModularSyncManager;
 import brachy.modularui.value.sync.PanelSyncManager;
-import brachy.modularui.widgets.SlotGroupWidget;
 import brachy.modularui.widgets.slot.ItemSlot;
 import brachy.modularui.widgets.slot.ModularSlot;
 
@@ -143,8 +143,10 @@ class GT6BumbliaryMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 		GT6BumbliaryBlockEntity tBumbliary = bumbliary(false);
 		ModularPanel<?> tPanel = GT6BumbliaryMUI.buildPanel(tBumbliary, headlessSyncManager(), false);
 
+		// the primary 4x9 grid + the 36 player-inventory seats (issue #3: the widget rides
+		// the tree unconditionally — the always-true headless gate is gone)
 		long tSeats = allWidgets(tPanel).stream().filter(w -> w instanceof ItemSlot).count();
-		assertEquals(36, tSeats, "the primary 4x9 grid");
+		assertEquals(72, tSeats, "the primary 4x9 grid + the 36 player seats (issue #3)");
 		assertEquals(GT6BumbliaryMUI.PANEL_NAME, tPanel.getName(), "the normal panel name");
 
 		// the geometry — the grid steps from (8,8) by 18
@@ -206,8 +208,9 @@ class GT6BumbliaryMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 		GT6BumbliaryBlockEntity tBumbliary = bumbliary(true);
 		ModularPanel<?> tPanel = GT6BumbliaryMUI.buildPanel(tBumbliary, headlessSyncManager(), false);
 
+		// the advanced 4x5 grid + the 36 player-inventory seats (issue #3)
 		long tSeats = allWidgets(tPanel).stream().filter(w -> w instanceof ItemSlot).count();
-		assertEquals(20, tSeats, "the advanced 4x5 grid");
+		assertEquals(56, tSeats, "the advanced 4x5 grid + the 36 player seats (issue #3)");
 		assertPos(tPanel, "slot_0", 44, 8, "the advanced grid steps from x=44 (:397)");
 		assertPos(tPanel, "slot_4", 116, 8, "the advanced row tail");
 		assertPos(tPanel, "slot_7", 80, 26, "the advanced ROYAL seat (:405)");
@@ -256,14 +259,15 @@ class GT6BumbliaryMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the player inventory bind — the runtime half (headless skips it)
+	// the player inventory widget — UNCONDITIONAL since issue #3 (the old headless
+	// gate was always-true in game: createPanel runs before menu.construct)
 	// ---------------------------------------------------------------------------
 
 	@Test
-	public void theHeadlessBuildSkipsThePlayerInventoryBind() {
+	public void thePlayerInventoryWidgetIsAlwaysAdded() throws Exception {
 		GT6BumbliaryBlockEntity tBumbliary = bumbliary(false);
 		ModularPanel<?> tPanel = GT6BumbliaryMUI.buildPanel(tBumbliary, headlessSyncManager(), false);
-		long tPlayerSeats = allWidgets(tPanel).stream().filter(w -> w instanceof SlotGroupWidget).count();
-		assertEquals(0, tPlayerSeats, "no player-inventory group builds headless (the mui-a getPlayer gate)");
+		assertNotNull(named(tPanel, "player_inventory"), "the player-inventory group widget rides the tree (issue #3)");
+		assertPos(tPanel, "player_inventory", 7, 84, "the player inventory widget");
 	}
 }
