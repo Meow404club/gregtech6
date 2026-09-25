@@ -1230,10 +1230,17 @@ public class GT6DungeonPiece extends StructurePiece {
 
     // ---------------------------------------------------------------- workshop
 
-    /** The workshop drawer materials (upstream sMetals :44) and metal list of the ingot piles. */
-    private static final OreDictMaterial[] WORKSHOP_METALS = {
-            MT.DamascusSteel, MT.DamascusSteel, MT.DamascusSteel, MT.BlackSteel, MT.RedSteel, MT.BlueSteel,
-            MT.VanadiumSteel, MT.Steel, MT.Fe, MT.Brass, MT.Bronze, MT.BismuthBronze, MT.BlackBronze};
+    /**
+     * The workshop drawer/ingot materials (upstream sMetals :44) — a METHOD body, not a
+     * static initializer: the registry classes load before MT.init() (the
+     * GT6RegistryStaticInitGuardTest ruling, the Supplier form of GTMachines.java:87);
+     * worldgen runs long after init, so the per-call read is the lazy face.
+     */
+    private static OreDictMaterial[] workshopMetals() {
+        return new OreDictMaterial[] {
+                MT.DamascusSteel, MT.DamascusSteel, MT.DamascusSteel, MT.BlackSteel, MT.RedSteel, MT.BlueSteel,
+                MT.VanadiumSteel, MT.Steel, MT.Fe, MT.Brass, MT.Bronze, MT.BismuthBronze, MT.BlackBronze};
+    }
 
     /**
      * The manual cabinet contents — the upstream 8-book row (:118) minus the two CUT
@@ -1395,7 +1402,8 @@ public class GT6DungeonPiece extends StructurePiece {
 
     /** The ingot/plate pile (upstream {@code ingots_or_plates} :259) → the material block, smooth fallback. */
     private void ingotOrPlate(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom, int aLX, int aLY, int aLZ) {
-        OreDictMaterial tMat = WORKSHOP_METALS[aRandom.nextInt(WORKSHOP_METALS.length)];
+        OreDictMaterial[] tMetals = workshopMetals();
+        OreDictMaterial tMat = tMetals[aRandom.nextInt(tMetals.length)];
         Block tIngot = materialBlock(OP.blockIngot, tMat), tPlate = materialBlock(OP.blockPlate, tMat);
         Block tUse = tIngot != null && tPlate != null ? (aRandom.nextBoolean() ? tPlate : tIngot)
                 : tIngot != null ? tIngot : tPlate;
@@ -1739,11 +1747,16 @@ public class GT6DungeonPiece extends StructurePiece {
 
     // ---------------------------------------------------------------- mining bedrock
 
-    /** The bedrock-vein material roster (upstream :39 verbatim). */
-    private static final OreDictMaterial[] MINING_MATERIALS = {
-            MT.Redstone, MT.S, MT.Fe2O3, MT.MnO2, MT.Apatite,
-            MT.OREMATS.Molybdenite, MT.OREMATS.Bauxite, MT.OREMATS.Sphalerite,
-            MT.OREMATS.Tetrahedrite, MT.OREMATS.Cassiterite, MT.OREMATS.Garnierite, MT.OREMATS.Galena};
+    /**
+     * The mining-room material roster (upstream :39 verbatim) — method-body lazy, the
+     * {@link #workshopMetals()} static-init-guard form.
+     */
+    private static OreDictMaterial[] miningMaterials() {
+        return new OreDictMaterial[] {
+                MT.Redstone, MT.S, MT.Fe2O3, MT.MnO2, MT.Apatite,
+                MT.OREMATS.Molybdenite, MT.OREMATS.Bauxite, MT.OREMATS.Sphalerite,
+                MT.OREMATS.Tetrahedrite, MT.OREMATS.Cassiterite, MT.OREMATS.Garnierite, MT.OREMATS.Galena};
+    }
 
     /**
      * The mining pit (upstream {@code DungeonChunkRoomMiningBedrock} :44-135): the
@@ -1762,7 +1775,8 @@ public class GT6DungeonPiece extends StructurePiece {
      * vanilla TNT; the raw-ore piles {@code BlocksGT.blockRaw} → the material blockRaw.
      */
     private void buildMiningBedrock(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom) {
-        OreDictMaterial tMat = MINING_MATERIALS[aRandom.nextInt(MINING_MATERIALS.length)];
+        OreDictMaterial[] tMats = miningMaterials();
+        OreDictMaterial tMat = tMats[aRandom.nextInt(tMats.length)];
 
         // the shaft (:44-68): LOCAL y -15..-1 = world 5..19; the border stays brick and
         // the four wall ladders sit only on the CONNECTED sides (the doorAt gates).
