@@ -163,15 +163,12 @@ public final class GT6LootInjectionDatagen {
 		rRows.add(new InjectionRow("dungeon_inject_spawn_bonus_chest", "minecraft:chests/spawn_bonus_chest",
 				ROLL_MIN, ROLL_MAX, ladder(Stream.of(guideRow(10, 8, 16)))));
 		// DUNGEON_CHEST :418-443 — the metal ladder + coins(40/20/10)/bags/bottle POOLED + the
-		// Guide :442 + the task-p36 artifact row: the upstream obtainment face is the GT6
-		// DUNGEON ROOM (DungeonChunkRoomLibraryNormal.java:57/59/71 — 1/16 per shelf seat,
-		// DungeonData.zpm spawning the ZPM 2/3 FULL); the port has no GT6 dungeon carrier, so
-		// the vanilla dungeon chest carries the artifact at the always-full collapse (an empty
-		// ZPM is an unchargeable dead drop) — the declared deviation on the card face.
+		// Guide :442. The ZPM artifact row LEFT this vanilla face (task dungeon-library-zpm):
+		// the port HAS the GT6 dungeon now, so the artifact rides the dungeon loot face — the
+		// gt6:chests/dungeon_chest injection at the tail of this method.
 		// (the MatDict :443 stays pooled — the class javadoc ruling)
 		rRows.add(new InjectionRow("dungeon_inject_simple_dungeon", "minecraft:chests/simple_dungeon",
-				ROLL_MIN, ROLL_MAX, ladder(java.util.stream.Stream.concat(dungeonChestEntries().stream(),
-						java.util.stream.Stream.of(zpmArtifactRow())))));
+				ROLL_MIN, ROLL_MAX, ladder(dungeonChestEntries().stream())));
 		// PYRAMID_DESERT_CHEST :445-450 — holy water/coins/bags POOLED, the Nq arrow head lands
 		rRows.add(new InjectionRow("dungeon_inject_desert_pyramid", "minecraft:chests/desert_pyramid",
 				ROLL_MIN, ROLL_MAX, ladder(Stream.of(mat(OP.toolHeadArrow, MT.Nq, 1, 4, 16)))));
@@ -222,18 +219,31 @@ public final class GT6LootInjectionDatagen {
 						mat(OP.toolHeadSword, MT.Steel, 12, 1, 4), mat(OP.toolHeadSword, MT.DamascusSteel, 6, 1, 4),
 						mat(OP.toolHeadAxeDouble, MT.Steel, 12, 1, 4), mat(OP.toolHeadAxeDouble, MT.DamascusSteel, 6, 1, 4),
 						mat(OP.arrowGtWood, MT.DamascusSteel, 6, 16, 48), mat(OP.arrowGtWood, MT.SterlingSilver, 6, 8, 24)))));
+		// the GT6 dungeon loot face (task dungeon-library-zpm) — the ZPM artifact row's NEW
+		// carrier: the upstream obtainment IS the GT6 dungeon Library room
+		// (DungeonChunkRoomLibraryNormal.java:57/59/71/:85/:87/:99/:101 — 1/16 per trophy
+		// seat, DungeonData.zpm :306-311 spawning 2/3 FULL), and the port has the dungeon
+		// since p38-dungeon-framework, so the artifact leaves the vanilla simple_dungeon
+		// stopgap and rides the GT6 dungeon's own chests (gt6:chests/dungeon_chest — the
+		// table the Library + storage chests bind). The rows mirror the carrier rows + the
+		// artifact (a single-row ladder would fire 1..3 guaranteed ZPMs per chest — the
+		// dilution IS the rarity); the tag lane stays on the GT6DungeonLootModifier codec,
+		// keeping the plain loot-table JSON off the set_nbt seam (the framework ruling);
+		// the 2/3 dice stay collapsed to always-full (the p34 declared deviation).
+		rRows.add(new InjectionRow("dungeon_inject_gt6_dungeon_chest", "gt6:chests/dungeon_chest",
+				ROLL_MIN, ROLL_MAX, ladder(java.util.stream.Stream.concat(dungeonChestEntries().stream(),
+						java.util.stream.Stream.of(zpmArtifactRow())))));
 		return rRows;
 	}
 
 	/**
 	 * The DUNGEON_CHEST category rows (Loader_Loot.java:418-443 对位) — ONE source for
-	 * two carriers: the vanilla {@code chests/simple_dungeon} injection (above) and the
+	 * the carriers: the vanilla {@code chests/simple_dungeon} injection (above) and the
 	 * {@code gt6:chests/dungeon_chest} carrier table the GT6 dungeon structure's chests
-	 * bind (task p38-dungeon-framework). The ZPM artifact row (:442 face, task p36) is
-	 * NOT here — it rides only the vanilla injection (the p34 ruling: the GT6 dungeon's
-	 * own ZPM face lives in the Library room, the deferred batch card, so the artifact
-	 * keeps its p34 carrier until then; and the plain-tag row keeps this table off the
-	 * set_nbt/set_custom_data dual-leg seam).
+	 * bind (task p38-dungeon-framework), whose injection modifier now carries the
+	 * artifact row too (task dungeon-library-zpm — the rows mirror + the ZPM tail). The
+	 * plain-tag artifact row stays OUT of the table JSON itself (keeps this table off
+	 * the set_nbt/set_custom_data dual-leg seam, the framework ruling).
 	 */
 	public static List<EntryRow> dungeonChestEntries() {
 		return ladder(java.util.stream.Stream.concat(dungeonMetalLadder(12, 2),
@@ -252,7 +262,9 @@ public final class GT6LootInjectionDatagen {
 	/**
 	 * The ZPM artifact row — weight 2 [1,1] (the rare-roll posture) carrying the FULL tag:
 	 * the {@code gt.active.energy} store-as-full key (the DungeonData.zpm active lane;
-	 * the 2/3 dice collapse to always-full, the declared deviation above).
+	 * the upstream 2/3 dice stay collapsed to always-full, the p34 declared deviation —
+	 * the uncharged ZPM has no recharge face in this port). Carrier: the GT6 dungeon
+	 * loot face since task dungeon-library-zpm (was the vanilla simple_dungeon stopgap).
 	 */
 	private static EntryRow zpmArtifactRow() {
 		net.minecraft.nbt.CompoundTag tTag = new net.minecraft.nbt.CompoundTag();

@@ -72,7 +72,9 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 			"scoop_plant_self",
 			// task p34-loot-injection — the structure-chest injections tail-append (the names are
 			// the GT6LootInjectionDatagen.injections() sequence, upstream Loader_Loot order;
-			// task p38-book-loot-first adds the bonus-chest head and the stronghold-library row)
+			// task p38-book-loot-first adds the bonus-chest head and the stronghold-library row;
+			// task dungeon-library-zpm appends the GT6 dungeon carrier face — the ZPM artifact
+			// row's new home, the tail of the injections() sequence)
 			"dungeon_inject_spawn_bonus_chest",
 			"dungeon_inject_simple_dungeon",
 			"dungeon_inject_desert_pyramid",
@@ -81,7 +83,8 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 			"dungeon_inject_abandoned_mineshaft",
 			"dungeon_inject_village_weaponsmith",
 			"dungeon_inject_stronghold_library",
-			"dungeon_inject_stronghold_corridor");
+			"dungeon_inject_stronghold_corridor",
+			"dungeon_inject_gt6_dungeon_chest");
 
 	/** The ctor face of the platform output (the base field is private — kept for the twin path). */
 	private final PackOutput mOutput;

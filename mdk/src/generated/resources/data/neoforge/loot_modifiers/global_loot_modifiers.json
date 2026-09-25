@@ -20,7 +20,8 @@
     "gt6:dungeon_inject_abandoned_mineshaft",
     "gt6:dungeon_inject_village_weaponsmith",
     "gt6:dungeon_inject_stronghold_library",
-    "gt6:dungeon_inject_stronghold_corridor"
+    "gt6:dungeon_inject_stronghold_corridor",
+    "gt6:dungeon_inject_gt6_dungeon_chest"
   ],
   "replace": false
 }
