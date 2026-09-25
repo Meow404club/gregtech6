@@ -50,14 +50,15 @@ import gregtech6.registry.GTStoneBlocks;
  * </ul>
  *
  * <p>Room dispatch (upstream :258-294): dead-end ROOM cells draw the DEAD_END pool —
- * this card ships ONLY the storage vault ({@code DungeonChunkRoomStorage}, which IS the
- * upstream {@code DungeonChunkRoomVault} shell + the piston-door + the loot chest); the
- * five portal rooms are the mod-专属 never pool (unported by ruling). Non-dead-end ROOM
- * cells draw the ROOMS pool — empty in this card (Workshop/MiningBedrock/Library/Farm are
- * the MTE-gated batch cards), so every such room takes the upstream
- * {@code ROOM_EMPTY} fallback face. The BARRACKS important room (:163 lines) is likewise
- * deferred and takes the empty-room face for now. Corridor3/4 variants (:200/:120) defer
- * with the corridor base covering every connection count.
+ * exactly the storage vault ({@code DungeonChunkRoomStorage}, which IS the upstream
+ * {@code DungeonChunkRoomVault} shell + the piston-door + the loot chest); the five
+ * portal rooms are the mod-专属 never pool (unported by ruling). The BARRACKS important
+ * room (:163 lines, the dungeon-rooms-batch card) is the barracks quarters. The
+ * corridor cells split by connection count (:289-291): 4-way = the crossing hall,
+ * 3-way = the alcove corridor, else the plain arm. Non-dead-end ROOM cells draw the
+ * ROOMS pool draw-without-replacement (the upstream TAG dedup) — the pool grows with
+ * the room-batch cards (Workshop first, Library its own card), the empty pool falls
+ * back to the upstream {@code ROOM_EMPTY} face.
  *
  * <p>KJS face: the structure/structure_set JSONs are datapack-native; the codec +
  * StructureType/PieceType registration rows are the registry face (declared out of KJS
@@ -143,16 +144,19 @@ public class GT6DungeonStructure extends Structure {
                         GT6DungeonPiece.Kind.ENTRANCE, box(tX, tZ, entranceTop(aContext, tX, tZ) + 2),
                         tDoors, tPrimary, tSecondary, tColor, 0));
                 case GT6DungeonLayout.BARRACKS ->
-                    // the barracks room defers (the 163-line bed/crafting interior, MTE-gated);
-                    // the cell takes the upstream ROOM_EMPTY fallback face for now.
+                    // the barracks room (DungeonChunkBarracks — the corner quarters + the
+                    // shelf/safe loot pairs, the dungeon-rooms-batch port).
                     aBuilder.addPiece(new GT6DungeonPiece(
-                            GT6DungeonPiece.Kind.ROOM_EMPTY, box(tX, tZ, GT6DungeonLayout.DUNGEON_Y + 8),
+                            GT6DungeonPiece.Kind.BARRACKS, box(tX, tZ, GT6DungeonLayout.DUNGEON_Y + 8),
                             tDoors, tPrimary, tSecondary, tColor, 0));
-                case GT6DungeonLayout.CORRIDOR ->
-                    // Corridor3/4 defer; the corridor base covers every connection count.
+                case GT6DungeonLayout.CORRIDOR -> {
+                    // the upstream :289-291 corridor split: 4-way = the crossing hall,
+                    // 3-way = the alcove corridor, else the plain arm corridor.
+                    GT6DungeonPiece.Kind tKind = corridorKind(GT6DungeonLayout.connectionCount(tLayout, i, j));
                     aBuilder.addPiece(new GT6DungeonPiece(
-                            GT6DungeonPiece.Kind.CORRIDOR, box(tX, tZ, GT6DungeonLayout.DUNGEON_Y + 8),
+                            tKind, box(tX, tZ, GT6DungeonLayout.DUNGEON_Y + 8),
                             tDoors, tPrimary, tSecondary, tColor, 0));
+                }
                 case GT6DungeonLayout.ROOM_ID -> {
                     if (GT6DungeonLayout.connectionCount(tLayout, i, j) == 1) {
                         // the DEAD_END pool draw — this card's pool is exactly the storage
@@ -178,6 +182,16 @@ public class GT6DungeonStructure extends Structure {
                 }
             }
         }
+    }
+
+    /**
+     * The corridor-kind split (upstream :289-291, {@code tConnectionCount == 4 →
+     * CORRIDOR4, == 3 → CORRIDOR3, else CORRIDOR}).
+     */
+    public static GT6DungeonPiece.Kind corridorKind(int aConnectionCount) {
+        return aConnectionCount >= 4 ? GT6DungeonPiece.Kind.CORRIDOR4
+                : aConnectionCount == 3 ? GT6DungeonPiece.Kind.CORRIDOR3
+                : GT6DungeonPiece.Kind.CORRIDOR;
     }
 
     /** The piece box: shell y0..7 at DUNGEON_Y (20..27) + the y8 lamp band (28) + the pillar foundation down to y2 — or, for the entrance, up to the aligned surface cap (+2 for the top ring). */

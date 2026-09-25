@@ -1,5 +1,7 @@
 package gregtech6.worldgen.dungeon;
 
+import java.util.function.Consumer;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -7,11 +9,18 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.LeverBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.level.block.RedstoneLampBlock;
 import net.minecraft.world.level.block.SlabBlock;
@@ -24,8 +33,10 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 import net.minecraft.world.level.material.FluidState;
 
 import gregtech6.block.stone.StoneVariant;
+import gregtech6.registry.GT6StaticStorages;
 import gregtech6.registry.GT6Structures;
 import gregtech6.registry.GTStoneBlocks;
+import gregtech6.tileentity.inventories.GT6SafeBlockEntity;
 
 /**
  * The shelter-dungeon PIECE (task p38-dungeon-framework) — one class over the shipped
@@ -35,7 +46,7 @@ import gregtech6.registry.GTStoneBlocks;
  * <li>{@link Kind#ROOM_EMPTY} — {@code DungeonChunkRoomEmpty} (:204): the 16×16×8 shell,
  *     open boundary doorways on connected sides;</li>
  * <li>{@link Kind#CORRIDOR} — {@code DungeonChunkCorridor} (:190): the 6-wide arm piece,
- *     connection-count agnostic (the Corridor3/4 loot variants defer);</li>
+ *     connection-count agnostic;</li>
  * <li>{@link Kind#ENTRANCE} — {@code DungeonChunkEntrance} (:338): the shell + the
  *     surface shaft with the two spiral slab staircases;</li>
  * <li>{@link Kind#STORAGE} — {@code DungeonChunkRoomStorage} (:215) over
@@ -44,6 +55,22 @@ import gregtech6.registry.GTStoneBlocks;
  *     class IS the shell+door base Storage extends, so one kind carries both ports; the
  *     DEAD_END pool this card ships is exactly this room (the five portal rooms are the
  *     mod-专属 never pool, unported by ruling).</li>
+ * <li>{@link Kind#CORRIDOR3} — {@code DungeonChunkCorridor3} (:34, the
+ *     dungeon-rooms-batch card): the 3-way corridor plus ONE alcove on its free side —
+ *     the loot nook (roll 0), the breakable cobble wall with the safe (rolls 1-2; the
+ *     upstream case-1 key gate folds — keys defer with the dungeon-keys card), or the
+ *     plain crossing (roll 3). The coin piles and drink cups omit (no shell face); the
+ *     safe rides the ported MECHANICAL safe with the loot marker.</li>
+ * <li>{@link Kind#CORRIDOR4} — {@code DungeonChunkCorridor4} (:30): the 4-way crossing
+ *     hall, 12×12×7 over the {4,7,8,11} deco lattice with the four arm stubs.</li>
+ * <li>{@link Kind#BARRACKS} — {@code DungeonChunkBarracks} (:38): the four corner
+ *     quarters over the slab partition walls (carpets, iron doors, beds, crafting
+ *     tables) + the shelf/safe loot pairs. The upstream key-locked safes 3010 ride the
+ *     ported MECHANICAL safe with the loot marker (keys defer, the hint cobble walls
+ *     with them); the shelf-front loot marker stays unset (the ported bookshelf BE ships
+ *     the seam but the storage card shipped no trigger); the drink cups, hexorium
+ *     monoliths, Sky Stone rock pile and coin piles omit; the metal bookshelves 7110
+ *     fold to the wooden row family.</li>
  * </ul>
  *
  * <p>Every block goes through world coordinates with the chunk-clip {@code BoundingBox}
@@ -56,10 +83,11 @@ import gregtech6.registry.GTStoneBlocks;
  * randomBricks (meta 3..5) → BRICK/CRACK/MBRIK; glassglow → glowstone; lamp → a LIT
  * redstone lamp (the 1.7.10 lit_redstone_lamp face) over a redstone-brick; colored →
  * vanilla concrete of the dungeon accent color; the stair slabs → stone brick slabs
- * (the upstream GT slabs). The MTE faces defer with the room-batch cards: the corridor
- * shelves 32110 + coins + cups + safes (Corridor3's loot nooks), the storage crate/tank
- * stacks (replaced by the chests), the Hand Crank MTE 32111 (replaced by the airlock
- * lever) — declared boundaries, this javadoc is the record.
+ * (the upstream GT slabs). The room-batch card (dungeon-rooms-batch) replaces the
+ * framework-card deferral: the loot faces ride vanilla chests bound to the p34-injected
+ * vanilla tables + the ported storage BEs (safe/bookshelf) — the remaining MTE faces
+ * (crucibles/molds/tanks/pipes/spikes/tool racks/ingot piles/coins/cups) are empty-shell
+ * placeholders or omissions, declared per room in the room javadocs and the card report.
  *
  * <p>The piston airlock (upstream {@code DungeonChunkDoorPiston}, :348) is rebuilt as an
  * explicitly-correct 1.20.1 circuit at the upstream anchor coordinates: 4 sticky pistons
@@ -72,9 +100,20 @@ import gregtech6.registry.GTStoneBlocks;
  */
 public class GT6DungeonPiece extends StructurePiece {
 
-    /** The shipped room kinds (the upstream IDungeonChunk classes, see the class javadoc). */
+    /**
+     * The shipped room kinds (the upstream IDungeonChunk classes, see the class javadoc).
+     * The room-batch card (dungeon-rooms-batch) appends the corridor/barracks special
+     * cells and the ROOMS-pool entries; the pool itself lives on
+     * {@link GT6DungeonStructure}.
+     */
     public enum Kind {
-        ROOM_EMPTY, CORRIDOR, ENTRANCE, STORAGE;
+        ROOM_EMPTY, CORRIDOR, ENTRANCE, STORAGE,
+        /** {@code DungeonChunkCorridor3} — the 3-way corridor with one loot nook / breakable wall. */
+        CORRIDOR3,
+        /** {@code DungeonChunkCorridor4} — the 4-way crossing hall (:30-103). */
+        CORRIDOR4,
+        /** {@code DungeonChunkBarracks} (:38-162) — the four corner quarters. */
+        BARRACKS;
 
         static Kind of(String aName) {
             return valueOf(aName);
@@ -176,6 +215,15 @@ public class GT6DungeonPiece extends StructurePiece {
         switch (mKind) {
             case ENTRANCE -> buildEntrance(aLevel, aClip, aRandom);
             case CORRIDOR -> buildCorridor(aLevel, aClip, aRandom);
+            case CORRIDOR3 -> {
+                buildCorridor(aLevel, aClip, aRandom);
+                buildCorridor3Alcove(aLevel, aClip, aRandom);
+            }
+            case CORRIDOR4 -> buildCorridor4(aLevel, aClip, aRandom);
+            case BARRACKS -> {
+                buildRoomShell(aLevel, aClip, aRandom);
+                buildBarracks(aLevel, aClip, aRandom);
+            }
             case STORAGE -> {
                 buildRoomShell(aLevel, aClip, aRandom);
                 for (Direction tSide : Direction.Plane.HORIZONTAL) if (doorAt(tSide)) {
@@ -797,6 +845,308 @@ public class GT6DungeonPiece extends StructurePiece {
             }
         }
     }
+
+    // ---------------------------------------------------------------- room batch: shared helpers
+
+    /**
+     * The vanilla chest of a loot nook, bound to a vanilla loot-table path (the p34
+     * {@code ChestGenHooks → vanilla table} mapping face — GT6 loot rides the p34
+     * injections on those tables). The FACING is the front.
+     */
+    private void createVanillaChest(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom,
+            int aLX, int aLY, int aLZ, Direction aFacing, String aVanillaPath) {
+        BlockPos tPos = new BlockPos(wx(aLX), wy(aLY), wz(aLZ));
+        if (!aClip.isInside(tPos)) return;
+        //? if forge {
+        this.createChest(aLevel, aClip, aRandom, tPos,
+                new net.minecraft.resources.ResourceLocation("minecraft", aVanillaPath),
+                Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, aFacing));
+        //?} else {
+        /*this.createChest(aLevel, aClip, aRandom, tPos,
+                net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE,
+                        net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", aVanillaPath)),
+                Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, aFacing));
+        //21.1: createChest takes ResourceKey<LootTable> (StructurePiece.java:446-451, the 1.20.5 loot-key move).
+        *///?}
+    }
+
+    /**
+     * A GT6 static-storage block facing {@code aFacing} (the front), the BE handed to the
+     * seeder (inventory fill / the dungeon-loot marker) — the worldgen counterpart of the
+     * block carrier's {@code getStateForPlacement} + {@code setPlacedBy} pair.
+     */
+    private void placeStorage(WorldGenLevel aLevel, BoundingBox aClip, int aLX, int aLY, int aLZ,
+            Block aBlock, Direction aFacing, Consumer<BlockEntity> aSeed) {
+        BlockPos tPos = new BlockPos(wx(aLX), wy(aLY), wz(aLZ));
+        if (!aClip.isInside(tPos) || !(aBlock instanceof GT6StaticStorages.GT6StorageBlock)) return;
+        aLevel.setBlock(tPos, aBlock.defaultBlockState()
+                .setValue(GT6StaticStorages.GT6StorageBlock.FACING, aFacing), 2);
+        BlockEntity tBE = aLevel.getBlockEntity(tPos);
+        if (tBE != null) aSeed.accept(tBE);
+    }
+
+    /** The safe loot marker — the full loot-table id the BE resolves on first open. */
+    private void seedSafe(net.minecraft.world.level.block.entity.BlockEntity aBE, String aLootTableId) {
+        if (aBE instanceof GT6SafeBlockEntity tSafe) {
+            tSafe.mDungeonLootName = aLootTableId;
+        }
+    }
+
+    /** The dye-meta block rows (white = meta 0 — the {@link #CONCRETES} order). */
+    private static final Block[] CARPETS = {
+            Blocks.WHITE_CARPET, Blocks.ORANGE_CARPET, Blocks.MAGENTA_CARPET, Blocks.LIGHT_BLUE_CARPET,
+            Blocks.YELLOW_CARPET, Blocks.LIME_CARPET, Blocks.PINK_CARPET, Blocks.GRAY_CARPET,
+            Blocks.LIGHT_GRAY_CARPET, Blocks.CYAN_CARPET, Blocks.PURPLE_CARPET, Blocks.BLUE_CARPET,
+            Blocks.BROWN_CARPET, Blocks.GREEN_CARPET, Blocks.RED_CARPET, Blocks.BLACK_CARPET};
+
+    /**
+     * The dungeon-loot categories the barracks safes draw (upstream :108 tLoots, the
+     * p34 {@code ChestGenHooks → vanilla table} mapping verbatim; DUNGEON_CHEST rides
+     * the gt6 carrier). Full ids — the safe marker face.
+     */
+    static final String[] BARRACKS_SAFE_LOOTS = {
+            "minecraft:chests/stronghold_library", "minecraft:chests/stronghold_corridor",
+            "minecraft:chests/stronghold_crossing", "minecraft:chests/desert_pyramid",
+            "minecraft:chests/jungle_temple", "minecraft:chests/village/village_weaponsmith",
+            "minecraft:chests/abandoned_mineshaft", "gt6:chests/dungeon_chest",
+            "minecraft:chests/spawn_bonus_chest"};
+
+    // ---------------------------------------------------------------- corridor 3/4
+
+    /**
+     * The 4-way crossing hall (upstream {@code DungeonChunkCorridor4} :30-103): the
+     * pillar gate, the 12×12×7 hall over the {4,7,8,11} deco lattice, and the four
+     * 3-block arm stubs to the chunk edges.
+     */
+    private void buildCorridor4(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom) {
+        boolean tX = doorAt(Direction.EAST) || doorAt(Direction.WEST);
+        boolean tZ = doorAt(Direction.SOUTH) || doorAt(Direction.NORTH);
+        if (tX && tZ) pillar(aLevel, aClip); // :30-32 — the same both-axes gate as the base corridor
+
+        for (int tXc = 2; tXc <= 13; tXc++) for (int tZc = 2; tZc <= 13; tZc++) for (int tY = 0; tY <= 6; tY++) {
+            if (tXc == 2 || tXc == 13 || tZc == 2 || tZc == 13 || tY == 0 || tY == 6) {
+                if ((tXc == 4 || tXc == 7 || tXc == 8 || tXc == 11) && (tZc == 4 || tZc == 7 || tZc == 8 || tZc == 11)) {
+                    if (tY == 0) {
+                        chiseled(aLevel, aClip, tXc, tY, tZc);
+                    } else if (tY == 6) {
+                        lamp(aLevel, aClip, tXc, tY, tZc);
+                    } else {
+                        bricks(aLevel, aClip, tXc, tY, tZc);
+                    }
+                } else {
+                    if (tY == 0) {
+                        tiles(aLevel, aClip, tXc, tY, tZc);
+                    } else if (tY == 6) {
+                        smalltiles(aLevel, aClip, tXc, tY, tZc);
+                    } else {
+                        bricks(aLevel, aClip, tXc, tY, tZc);
+                    }
+                }
+            } else {
+                air(aLevel, aClip, tXc, tY, tZc);
+            }
+        }
+
+        // the four arm stubs (:58-101) — one parametric walk over the connected sides.
+        for (Direction tSide : Direction.Plane.HORIZONTAL) {
+            for (int tD = 13; tD <= 15; tD++) for (int tV = 5; tV <= 10; tV++) for (int tY = 0; tY <= 4; tY++) {
+                int tLX = switch (tSide) {
+                    case EAST -> tD;
+                    case WEST -> 15 - tD;
+                    case SOUTH -> tV;
+                    default -> tV;
+                };
+                int tLZ = switch (tSide) {
+                    case EAST, WEST -> tV;
+                    case SOUTH -> tD;
+                    default -> 15 - tD;
+                };
+                if (tY == 0) {
+                    set(aLevel, aClip, tLX, tY, tLZ, face(StoneVariant.TILES, tY, true));
+                } else if (tY == 4) {
+                    set(aLevel, aClip, tLX, tY, tLZ, face(StoneVariant.STILE, tY, true));
+                } else if (tV == 5 || tV == 10) {
+                    set(aLevel, aClip, tLX, tY, tLZ, face(StoneVariant.BRICK, tY, true));
+                } else {
+                    air(aLevel, aClip, tLX, tY, tLZ);
+                }
+            }
+        }
+    }
+
+    /**
+     * The 3-way corridor's one alcove (upstream {@code DungeonChunkCorridor3} :34-205):
+     * the FIRST free side (E,W,S,N order) draws the nook (roll 0), the breakable wall
+     * with the safe (rolls 1-2 — the upstream case-1 key gate folds: the keys defer with
+     * the dungeon-keys card, so case 1 always falls through to case 2), or the default
+     * crossing (roll 3).
+     *
+     * <p>Declared MTE folds: the coin piles and the drink cup are omitted (no shell
+     * face), the safe is the ported MECHANICAL safe with the loot marker (the upstream
+     * key-locked 3010 needs the key mechanism).
+     */
+    private void buildCorridor3Alcove(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom) {
+        Direction tSide = null;
+        for (Direction tCandidate : new Direction[] {Direction.EAST, Direction.WEST, Direction.SOUTH, Direction.NORTH}) {
+            if (!doorAt(tCandidate)) {
+                tSide = tCandidate;
+                break;
+            }
+        }
+        if (tSide == null) return;
+        int tRoll = aRandom.nextInt(4);
+        if (tRoll == 0) buildLootNook(aLevel, aClip, aRandom, tSide);
+        else if (tRoll <= 2) buildBreakableWall(aLevel, aClip, aRandom, tSide);
+    }
+
+    /** The upstream case 0 — the crafting station + loot chest sealed behind a wall (EAST shape :43-55). */
+    private void buildLootNook(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom, Direction aSide) {
+        boolean tPositive = aSide == Direction.EAST || aSide == Direction.SOUTH;
+        int tSeal = tPositive ? 11 : 4;  // the sealing wall depth (u)
+        int tOpen = tPositive ? 10 : 5;  // the opened furniture row depth
+        for (int tY = 0; tY <= 4; tY++) for (int tV = 5; tV <= 10; tV++) {
+            sideSet(aLevel, aClip, aSide, tSeal, tY, tV, face(StoneVariant.SMOTH, tY, true));
+        }
+        for (int tY = 1; tY <= 3; tY++) for (int tV = 6; tV <= 9; tV++) {
+            sideSet(aLevel, aClip, aSide, tOpen, tY, tV, Blocks.CAVE_AIR.defaultBlockState());
+        }
+        sideSet(aLevel, aClip, aSide, tOpen, 1, 6, face(StoneVariant.SMOTH, 1, true));
+        sideSet(aLevel, aClip, aSide, tOpen, 1, 9, face(StoneVariant.SMOTH, 1, true));
+        // (A, B) swap with the side — the upstream E/W/S/N hand-mirrors.
+        boolean tTableFirst = tPositive;
+        int tVTable = tTableFirst ? 7 : 8, tVChest = tTableFirst ? 8 : 7;
+        sideSet(aLevel, aClip, aSide, tOpen, 1, tVTable, Blocks.CRAFTING_TABLE.defaultBlockState());
+        createVanillaChest(aLevel, aClip, aRandom, sideLX(aSide, tOpen, tVChest), 1, sideLZ(aSide, tOpen, tVChest),
+                aSide.getOpposite(), "chests/stronghold_corridor");
+    }
+
+    /** The upstream case 2 — the cobble shell with the safe pocket (EAST shape :61-73). */
+    private void buildBreakableWall(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom, Direction aSide) {
+        boolean tPositive = aSide == Direction.EAST || aSide == Direction.SOUTH;
+        int tOutermost = tPositive ? 13 : 2, tMid = tPositive ? 12 : 3, tInner = tPositive ? 11 : 4;
+        int tPartial = tPositive ? 10 : 5, tPocket = tPositive ? 11 : 4, tNest = tPositive ? 12 : 3;
+        for (int tDepth : new int[] {tOutermost, tMid, tInner}) {
+            for (int tY = 0; tY <= 4; tY++) for (int tV = 5; tV <= 10; tV++) {
+                sideSet(aLevel, aClip, aSide, tDepth, tY, tV,
+                        face(aRandom.nextInt(2) == 0 ? StoneVariant.COBBL : StoneVariant.MCOBL, tY, true));
+            }
+        }
+        for (int tY = 1; tY <= 3; tY++) for (int tV = 6; tV <= 9; tV++) {
+            sideSet(aLevel, aClip, aSide, tPartial, tY, tV,
+                    face(aRandom.nextInt(2) == 0 ? StoneVariant.COBBL : StoneVariant.MCOBL, tY, true));
+        }
+        for (int tY = 1; tY <= 3; tY++) for (int tV = 6; tV <= 9; tV++) {
+            sideSet(aLevel, aClip, aSide, tPocket, tY, tV, Blocks.CAVE_AIR.defaultBlockState());
+        }
+        for (int tY = 1; tY <= 2; tY++) for (int tV = 7; tV <= 8; tV++) {
+            sideSet(aLevel, aClip, aSide, tNest, tY, tV, Blocks.CAVE_AIR.defaultBlockState());
+        }
+        int tVSafe = tPositive ? 8 : 7;
+        Block tSafe = GT6StaticStorages.blockByPath("safe_mechanical_steel");
+        if (tSafe != null) {
+            placeStorage(aLevel, aClip, sideLX(aSide, tNest, tVSafe), 1, sideLZ(aSide, tNest, tVSafe),
+                    tSafe, aSide.getOpposite(), tBE -> seedSafe(tBE, "minecraft:chests/stronghold_corridor"));
+        }
+    }
+
+    // ---------------------------------------------------------------- barracks
+
+    /**
+     * The barracks interior (upstream {@code DungeonChunkBarracks} :43-159): corner
+     * carpets, the slab partition walls with the four iron-door quarters, beds/crafting
+     * tables, and the shelf+safe loot pairs.
+     *
+     * <p>Declared folds: the upstream key-locked safes 3010 → the ported MECHANICAL safe
+     * with the loot marker (the keys defer with the dungeon-keys card, the hint cobble
+     * walls with them); the shelf-front loot marker stays unset (the ported bookshelf BE
+     * has the seam but the storage card shipped no trigger); the drink cups, the hexorium
+     * monoliths and the Sky Stone rock pile are omitted (no shell face); the metal
+     * bookshelves 7110 fold to the wooden row family.
+     */
+    private void buildBarracks(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom) {
+        // the corner carpets (:43-45), the dye-inversed color (the 15-meta inverse).
+        BlockState tCarpet = CARPETS[(15 - mColor) & 15].defaultBlockState();
+        for (int tX = 1; tX <= 14; tX++) for (int tZ = 1; tZ <= 14; tZ++) {
+            if ((tX <= 4 || tX >= 11) && (tZ <= 4 || tZ >= 11)) {
+                set(aLevel, aClip, tX, 1, tZ, tCarpet);
+            }
+        }
+
+        // the slab partition walls (:46-52): four segments per axis, y1..6; the 12 corner
+        // anchors (:54-65).
+        BlockState tSlab = Blocks.STONE_BRICK_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM);
+        for (int tY = 1; tY <= 6; tY++) {
+            for (int tCoord = 1; tCoord <= 14; tCoord++) {
+                if (tCoord <= 3 || tCoord >= 12) {
+                    set(aLevel, aClip, tCoord, tY, 5, tSlab);
+                    set(aLevel, aClip, tCoord, tY, 10, tSlab);
+                    set(aLevel, aClip, 5, tY, tCoord, tSlab);
+                    set(aLevel, aClip, 10, tY, tCoord, tSlab);
+                }
+            }
+            for (int[] tAnchor : BARRACKS_CORNER_ANCHORS) {
+                smooth(aLevel, aClip, tAnchor[0], tY, tAnchor[1]);
+            }
+        }
+
+        // the four iron-door quarters (:68-75) + the buttons and plates (:76-83).
+        for (int[] tDoor : new int[][] {{3, 5, 0}, {12, 5, 0}, {3, 10, 1}, {12, 10, 1}}) {
+            Direction tFacing = tDoor[2] == 0 ? Direction.NORTH : Direction.SOUTH;
+            set(aLevel, aClip, tDoor[0], 1, tDoor[1], Blocks.IRON_DOOR.defaultBlockState()
+                    .setValue(DoorBlock.HALF, DoubleBlockHalf.LOWER)
+                    .setValue(DoorBlock.FACING, tFacing));
+            set(aLevel, aClip, tDoor[0], 2, tDoor[1], Blocks.IRON_DOOR.defaultBlockState()
+                    .setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER)
+                    .setValue(DoorBlock.FACING, tFacing));
+        }
+        for (int[] tButton : new int[][] {{4, 6, 0}, {11, 6, 0}, {4, 9, 1}, {11, 9, 1}}) {
+            set(aLevel, aClip, tButton[0], 2, tButton[1], Blocks.STONE_BUTTON.defaultBlockState()
+                    .setValue(ButtonBlock.FACE, AttachFace.WALL)
+                    .setValue(ButtonBlock.FACING,
+                            tButton[2] == 0 ? Direction.NORTH : Direction.SOUTH));
+        }
+        for (int[] tPlate : new int[][] {{3, 4}, {12, 4}, {3, 11}, {12, 11}}) {
+            set(aLevel, aClip, tPlate[0], 1, tPlate[1], Blocks.STONE_PRESSURE_PLATE.defaultBlockState());
+        }
+
+        // the beds (:84-91) and crafting tables (:92-95).
+        BlockState tBed = Blocks.RED_BED.defaultBlockState();
+        for (int tX : new int[] {1, 14}) {
+            setBedPair(aLevel, aClip, tX, 2, Direction.NORTH, tBed);  // head at z1, foot at z2
+            setBedPair(aLevel, aClip, tX, 13, Direction.SOUTH, tBed); // foot at z13, head at z14
+            set(aLevel, aClip, tX, 1, 4, Blocks.CRAFTING_TABLE.defaultBlockState());
+            set(aLevel, aClip, tX, 1, 11, Blocks.CRAFTING_TABLE.defaultBlockState());
+        }
+
+        // the shelf + safe loot pairs (:120-154), the safe loot a uniform draw (:108).
+        String tLoot = BARRACKS_SAFE_LOOTS[aRandom.nextInt(BARRACKS_SAFE_LOOTS.length)];
+        Block tShelf = GT6StaticStorages.blockByPath("bookshelf_oak");
+        Block tSafe = GT6StaticStorages.blockByPath("safe_mechanical_steel");
+        for (int[] tPair : new int[][] {{4, 1, 0}, {4, 14, 1}, {11, 1, 0}, {11, 14, 1}}) {
+            Direction tFacing = tPair[2] == 0 ? Direction.SOUTH : Direction.NORTH;
+            int tShelfX = tPair[0] == 4 ? 3 : 12;
+            if (tSafe != null) {
+                placeStorage(aLevel, aClip, tPair[0], 1, tPair[1], tSafe, tFacing, tBE -> seedSafe(tBE, tLoot));
+            }
+            if (tShelf != null) {
+                placeStorage(aLevel, aClip, tShelfX, 1, tPair[1], tShelf, tFacing, tBE -> {
+                });
+            }
+        }
+    }
+
+    /** One vanilla bed pair: the FOOT at {@code (aX, 1, aZ)}, the HEAD one block along {@code aFacing}. */
+    private void setBedPair(WorldGenLevel aLevel, BoundingBox aClip, int aX, int aZ, Direction aFacing, BlockState aBed) {
+        set(aLevel, aClip, aX, 1, aZ, aBed.setValue(BedBlock.FACING, aFacing)
+                .setValue(BedBlock.PART, BedPart.FOOT));
+        set(aLevel, aClip, aX + aFacing.getStepX(), 1, aZ + aFacing.getStepZ(),
+                aBed.setValue(BedBlock.FACING, aFacing).setValue(BedBlock.PART, BedPart.HEAD));
+    }
+
+    /** The 12 partition-wall corner anchors (upstream :54-65), as (x, z) rows. */
+    private static final int[][] BARRACKS_CORNER_ANCHORS = {
+            {4, 5}, {5, 4}, {5, 5}, {4, 10}, {5, 10}, {5, 11},
+            {10, 4}, {10, 5}, {11, 5}, {10, 10}, {10, 11}, {11, 10}};
 
     // ---------------------------------------------------------------- loot chests
 
