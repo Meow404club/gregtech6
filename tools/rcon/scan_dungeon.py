@@ -20,7 +20,8 @@ Per leg (forge / neoforge):
            quiescence (region-file byte stability); graceful stop.
   scan:    per-chunk NBT (Status-full only) — 1) the structure start
            structures.starts["gt6:dungeon"] with its Children piece list (kind/BB
-           audit: exactly one ENTRANCE, >= 1 STORAGE dead-end, corridors, all boxes
+           audit: exactly one ENTRANCE, >= 1 STORAGE dead-end, the per-kind census
+           including the rooms-batch kinds, all boxes
            at the Y2 foundation floor); 2) the block palette probes inside the piece
            boxes (gt6 stone walls in the y20..27 shell band, the airlock sticky
            pistons + lever, the loot chest, and the entrance shaft's gt6 blocks
@@ -524,7 +525,11 @@ def main():
         c = report["checks"]
         c[f"{key}:one-entrance"] = entrances == 1
         c[f"{key}:has-storage"] = storages >= 1
-        c[f"{key}:has-corridor"] = corridors >= 1
+        # NO has-corridor hard gate (the rooms-batch fix): upstream rooms connect
+        # room-to-room when adjacent (WorldgenDungeonGT :200-248 only prunes corridor
+        # cells), so a compact dungeon legitimately ships ZERO corridor cells — the
+        # -216,214 dungeon of seed 6131000569321125127 is the live evidence. The census
+        # line + room_kinds carry the corridor-kind counts as the evidence face.
         # the dungeon-rooms-batch evidence: the barracks important room exists in EVERY
         # dungeon; the pool rooms / corridor 3-4 variants are the seed's draws (per-dungeon
         # conditional checks below, the counts are the report's evidence face).
@@ -543,7 +548,7 @@ def main():
             c[f"{key}:corridor3"] = kinds.count("CORRIDOR3") >= 1
         if kinds.count("CORRIDOR4"):
             c[f"{key}:corridor4"] = kinds.count("CORRIDOR4") >= 1
-        ok = ok and entrances == 1 and storages >= 1 and corridors >= 1 and kinds.count("BARRACKS") >= 1
+        ok = ok and entrances == 1 and storages >= 1 and kinds.count("BARRACKS") >= 1
         # the entrance shaft: the ENTRANCE piece box must climb well above the shell
         for p in start["pieces"]:
             if p["kind"] == "ENTRANCE" and len(p["bb"]) == 6:
