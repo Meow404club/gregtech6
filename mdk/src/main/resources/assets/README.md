@@ -160,6 +160,46 @@ Machine GUI backgrounds borrowed from **GregTech 6**
     Tin output; the other five Cookies tiers stay pooled)
   All 16x16 RGBA, CC0 1.0 per the upstream README block.
 
+- `gt6/textures/item/clay_bowl.png` — byte-identical borrow of upstream
+  `textures/items/gt.multiitem.randomtools/995.png` (meta 995 = the "Clay Bowl" raw item,
+  MultiItemRandomTools.java:119, the same randomtools multiitem the spray/food-can bands
+  borrow from; task p38-c1-dynamo-bowl-models — the registered port item had zero item
+  model, the hand-held magenta case):
+  `cf5aacdfa8a463be57722161a1962219912928f5e41ec6c9500fce66162ca9bd`.
+  16x16 RGBA, CC0 1.0 per the upstream README block.
+
+- `gt6/textures/item/faucet_ceramic_raw.png` — byte-identical borrow of upstream
+  `textures/items/gt.multiitem.randomtools/992.png` (meta 992 = the "Clay Faucet" raw
+  item, MultiItemRandomTools.java:117; task p38-c1-dynamo-bowl-models C5-guard append —
+  the mold model segment covered only the finished pairs):
+  `1a6c9713213e2a0f64c73d116721dbe5d26006eead78397dcbc86fe201a4d091`.
+  16x16 RGBA, CC0 1.0 per the upstream README block.
+
+- `gt6/textures/item/zpm.png` — byte-identical borrow of upstream
+  `textures/blocks/iconsets/ZPM_SIDES.png` (task p38-c1-dynamo-bowl-models C5-guard
+  append; GT6Batteries.ZPM_ITEM). Declared deviation: upstream meta 14999 is a BLOCK item
+  (Loader :1103 — the item face is the isometric block render, no standalone item sprite
+  exists); the flat ZPM casing art is the nearest upstream sprite:
+  `3c93adc1d072d8446778c621f7de35e2eb2371420c69a54bf73d8659b5b7e916`.
+  16x16 RGBA, CC0 1.0 per the upstream README block.
+
+- `gt6/textures/item/branch_cutter.png` + `branch_cutter_overlay.png` — byte-identical
+  borrows of upstream `textures/items/iconsets/GRAFTER{,_OVERLAY}.png` renamed to the
+  registered item id (GT_Tool_BranchCutter.getIcon :126-127 renders the GRAFTER icon head
+  with a VOID handle; task p38-c1-dynamo-bowl-models C5-guard append):
+  `branch_cutter.png`          `3637bb94c22cc4162b2f50359635a3698af8d2a32fbe771aa2238aa8cab27567`
+  `branch_cutter_overlay.png`  `85429942b0e37d8ad3bc854666c978ff93352a695096f57f136540ae31c8d1d9`
+  16x16 RGBA, CC0 1.0 per the upstream README block.
+
+- `gt6/textures/item/hand_drill.png` + `hand_drill_overlay.png` — byte-identical borrows
+  of upstream `textures/items/iconsets/HAND_DRILL{,_OVERLAY}.png` (GT_Tool_HandDrill
+  .getIcon :63-64 renders the HAND_DRILL icon head with a VOID handle; the electric drill
+  band's tip/handle art is a different sprite; task p38-c1-dynamo-bowl-models C5-guard
+  append):
+  `hand_drill.png`          `a856f481060a41855851b4955e48913f3ef2c02f2c80608549aa010846775e8d`
+  `hand_drill_overlay.png`  `e8a5d757f0bf4ac82d33157de9a984da1f1f3c328a4f0a7189207e4316061e00`
+  16x16 RGBA, CC0 1.0 per the upstream README block.
+
 Material prefix BLOCK textures, task p8-prefixblock-render: the 175 grayscale
 base icons under `gt6/textures/block/materialicons/<set>/<prefix>.png` come from
 upstream `src/main/resources/assets/gregtech/textures/blocks/materialicons/<SET>/<Prefix>.png`
@@ -8073,6 +8113,45 @@ Baked products (the landed files):
 Baked on 2026-09-13 (bake_distillery_fronts.py src_over/encode_png functions verbatim,
 inline pass). Upstream license: **CC0 1.0 Universal Public Domain Dedication** (same
 upstream `README.md` block as above).
+
+Electric + Flux Dynamo ladder face textures, task p38-c1-dynamo-bowl-models: the 6 PNGs
+under `gt6/textures/block/{electric,flux}_dynamo_{front,back,side}.png` are BAKED
+composites of the upstream dynamo iconsets
+`textures/blocks/machines/dynamos/{electric_rotation,flux_rotation}/` — colored/front
+(or /side, one byte-identical grayscale base `db9560d3...` as every machine family) or
+colored/back src-over the matching overlay/ face, the p19 distillery-front canonical
+treatment (the p28 electric-transformer bake repeated; the model is the addZpmDechargers
+facing cube — FRONT = the OUTPUT mFacing, BACK = the INPUT OPOS, MultiTileEntityDynamoFlux
+getTexture2 index 0/1/2). The `overlay_active/` trios stay unborrowed (the port block has
+no ACTIVE property, the W2 render card); the runtime mRGBa tint is not baked (the render
+pool). The two families share the colored/back plate AND the overlay/back sprite
+byte-identically upstream, so the two `_back.png` products are byte-identical to each
+other; the electric front product is byte-identical to `electric_transformer_side.png`
+above (the upstream overlay sprites are shared art — determinism cross-check, same
+inputs through the same idiom).
+
+Source layers (borrowed bytes, NOT landed as files; per family identical plate set):
+- colored/front.png `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- colored/side.png  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (identical base)
+- colored/back.png  `b94934858d010e0381fd5056dbc0ec00e964cad00c152944b2e6e0918991f977`
+- electric overlay/front `48b6811ef825b2be50dcbda29ef5e2a3f707708a499a2d3796561ddb29770185`
+- electric overlay/back  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`
+- electric overlay/side  `6569a89537bc53d51e88c51edc435b8b8cf66d1bc2a040cec6b36d2c0074b736`
+- flux overlay/front     `ea63a03b226d86607f2fcf091d36d3118b2c88d5f6f43227319639eb3abc469b`
+- flux overlay/back      `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb` (shared)
+- flux overlay/side      `4a690d5ec4647aafe3277730b26883197f198a5077e62c82c63772f9912d0b8f`
+
+Baked products (the landed files):
+- electric_dynamo_front.png `a982cea2f5d79df29801e1b21349e617488c324ea79a64b35712658bb60a4c9f`
+- electric_dynamo_back.png  `4689f9bffd45478f572ef76733203c92c71c60d434ae4c1ffcfb5473f2ac22c5`
+- electric_dynamo_side.png  `6fad8fa60bff86c0022b163a27f70607a9a94031eba66e1ae21f76d5c57dc7f1`
+- flux_dynamo_front.png     `ddca70198af41dacd371ba33246d1510c6aaca16c94034046a6a20e99f3fa131`
+- flux_dynamo_back.png      `4689f9bffd45478f572ef76733203c92c71c60d434ae4c1ffcfb5473f2ac22c5` (shared art)
+- flux_dynamo_side.png      `0c4c9365e755cf4289327fdee8a4ecbdd96b3406f56c52096a1e804c9335d34a`
+
+Baked on 2026-09-24 (bake_machine_fronts.py decode_png/src_over/encode_png imported
+verbatim, inline pass). Upstream license: **CC0 1.0 Universal Public Domain Dedication**
+(same upstream `README.md` block as above).
 - `gt6/textures/block/parts/<family>/<design>/{colored,overlay}/{bottom,top,side}.png` —
   the multiblock part-family design textures (372 files, task p29-w3-nbtdesign-parts;
   upstream `textures/blocks/machines/multiblockparts/<family>/<design>/...` verbatim,

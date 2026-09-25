@@ -658,6 +658,51 @@ public final class GT6ItemModels extends ItemModelProvider {
         // the Dusty Guide Book loot carrier (task p38-book-loot-first) — the same plain-book
         // parent (upstream meta 32765 renders as a book too, MultiItemBooks.java:67)
         withExistingParent("book_loot_guide", mcLoc("item/written_book"));
+        // the Clay Bowl raw item (task p38-c1-dynamo-bowl-models) — item/generated over the
+        // byte-identical upstream icon borrow (gt.multiitem.randomtools/995.png, meta 995 =
+        // the "Clay Bowl" row, MultiItemRandomTools.java:119 — assets/README.md attribution;
+        // the registered item had zero model rows, the hand-held magenta case)
+        withExistingParent("clay_bowl", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/clay_bowl"));
+        // the Clay Faucet raw item (task p38-c1 append, the C5-guard catch) — the clay_bowl
+        // row shape; layer0 = the byte-identical gt.multiitem.randomtools/992.png borrow
+        // (meta 992 = "Clay Faucet", MultiItemRandomTools.java:117 — assets/README.md
+        // attribution; the mold model segment covered only the finished pairs).
+        withExistingParent("faucet_ceramic_raw", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/faucet_ceramic_raw"));
+        // the ZPM item (task p38-c1 append, the C5-guard catch; GT6Batteries.ZPM_ITEM) —
+        // item/generated over the byte-identical ZPM_SIDES.png iconset borrow. Declared
+        // deviation: upstream 14999 is a BLOCK item (the isometric block render is the
+        // item face, no standalone sprite exists) — the flat casing art is the nearest
+        // upstream sprite (assets/README.md attribution).
+        withExistingParent("zpm", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/zpm"));
+        // the p29-w5-t4 un-laddered tool quartet (task p38-c1 append, the C5-guard catch) —
+        // behaviour landed without model rows. Plow + Sense: the axe/hoe four-layer row —
+        // head = the toolHead{Plow,Sense} metallic-set pair (the default primary Steel,
+        // GT_Tool_Plow.getIcon :78-80 / GT_Tool_Sense :94-96), handle = the wood stick pair
+        // (the secondary Spruce, the hammer-row borrow shape; zero new PNGs). Branch
+        // Cutter: the wrench two-layer row — head = the GRAFTER iconset pair borrow
+        // (GT_Tool_BranchCutter.getIcon :126-127, VOID handle). Hand Drill: the same
+        // two-layer row — the HAND_DRILL iconset pair borrow (GT_Tool_HandDrill.getIcon
+        // :63-64, VOID handle; the electric drill band's tip/handle art is a DIFFERENT
+        // sprite). All un-tinted at the single steel tier (the family declared deviation).
+        withExistingParent("plow", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_plow"))
+            .texture("layer1", modLoc("item/material_sets/metallic/tool_head_plow_overlay"))
+            .texture("layer2", modLoc("item/material_sets/wood/stick"))
+            .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
+        withExistingParent("sense", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/material_sets/metallic/tool_head_sense"))
+            .texture("layer1", modLoc("item/material_sets/metallic/tool_head_sense_overlay"))
+            .texture("layer2", modLoc("item/material_sets/wood/stick"))
+            .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
+        withExistingParent("branch_cutter", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/branch_cutter"))
+            .texture("layer1", modLoc("item/branch_cutter_overlay"));
+        withExistingParent("hand_drill", mcLoc("item/handheld"))
+            .texture("layer0", modLoc("item/hand_drill"))
+            .texture("layer1", modLoc("item/hand_drill_overlay"));
     }
 
     /** The unchecked parent reference (the GT6BlockStates turbine form) — cross-provider block models generated later. */
