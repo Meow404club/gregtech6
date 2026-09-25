@@ -59,8 +59,8 @@ public class TileEntitySmelteryOfflineTest {
 	@BeforeAll
 	static void boot() {
 		ProbeBoot.boot();
-		DUST_IRON = ProbeBoot.probePrefix("p26crucbe_probe_dust_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.dust, MT.Iron));
-		INGOT_IRON = ProbeBoot.probePrefix("p26crucbe_probe_ingot_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.ingot, MT.Iron));
+		DUST_IRON = ProbeBoot.probePrefix("smeltery_probe_dust_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.dust, MT.Iron));
+		INGOT_IRON = ProbeBoot.probePrefix("smeltery_probe_ingot_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.ingot, MT.Iron));
 		// the synthetic BlockEntityType needs its registry writable too (1.21.1: the
 		// intrusive-holder creation validates the write — MappedRegistry.createIntrusiveHolder)
 		ProbeBoot.openOffline(BuiltInRegistries.BLOCK_ENTITY_TYPE);

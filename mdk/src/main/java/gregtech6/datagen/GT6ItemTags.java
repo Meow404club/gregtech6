@@ -476,7 +476,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	 * its runtime table from (Loader_Tools.java:68-112 join semantics) — the tag face and
 	 * the API face cannot drift (the ArmorSetTest pins the id-level parity). The tags are
 	 * the datapack half of the SPEC's "tag+static table" translation; the RCON surrogate
-	 * reads them through /gt6tags dump (the p27_vanilla_tag_dual_tree command).
+	 * reads them through /gt6tags dump.
 	 */
 	private void addArmorTags(HolderLookup.Provider aProvider) {
 		for (GT6HazardSets.Hazard tHazard : GT6HazardSets.Hazard.values()) {

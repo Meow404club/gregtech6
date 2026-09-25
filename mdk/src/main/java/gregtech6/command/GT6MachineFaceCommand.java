@@ -34,7 +34,7 @@ import gregtech6.registry.GT6Tools;
  * {@code /gt6machineface} — the machine-face-four acceptance command (task
  * p29-w5-t3-machine-face-four; card-local in command/, the GT6ChiselCommand shape). RCON
  * sessions have no player, so each arm drives the item's own {@code useOn} dispatch through
- * a fake player holding a REAL registered stack (the p19_chisel "same-source convention":
+ * a fake player holding a REAL registered stack (the chisel-command "same-source convention":
  * the exact UseOnContext the click delivers):
  *
  * <ul>

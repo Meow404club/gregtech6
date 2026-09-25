@@ -428,7 +428,7 @@ class GT6TagsDatagenTest {
      * any band change is a conscious constant update.
      */
     @Test
-    void p25ToolFacesAreTheExactMembers() throws Exception {
+    void toolFacesAreTheExactMembers() throws Exception {
         assertEquals(List.of("gt6:hammer"), tagValues("gt6/tags/items/tools/hard_hammer.json"));
         assertEquals(List.of("gt6:wrench"), tagValues("gt6/tags/items/tools/wrench.json"));
         assertEquals(List.of("gt6:bending_cylinder_small"), tagValues("gt6/tags/items/tools/bending_cylinder_small.json"));

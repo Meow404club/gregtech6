@@ -164,7 +164,7 @@ class GT6RecipeMapHashIndexTest extends GTRecipesOfflineTestBase {
 	@Test
 	void syntheticMapStrictEquivalenceAndRouting() {
 		Recipe.sTagTest = membershipStub();
-		RecipeMap tMap = new RecipeMap(new LinkedHashSet<>(), "gt.recipe.p32idx.strict", "P32Idx Strict", null, 0, 1, "gt6:textures/gui/p32idx", 2, 2, 0, 2, 2, 0, 0, 1);
+		RecipeMap tMap = new RecipeMap(new LinkedHashSet<>(), "gt.recipe.hashindex.strict", "HashIndex Strict", null, 0, 1, "gt6:textures/gui/hashindex", 2, 2, 0, 2, 2, 0, 0, 1);
 		Recipe tSand = tMap.addRecipe(new Recipe(true, new ItemStack[] {new ItemStack(Items.SAND, 4)}, new ItemStack[] {new ItemStack(Items.GLASS)}, null, null, 32, 16, 0));
 		Recipe tIngot = tMap.addRecipe(new Recipe(true, new ItemStack[] {new ItemStack(INGOT_IRON, 2)}, new ItemStack[] {new ItemStack(Items.IRON_NUGGET)}, null, null, 32, 16, 0));
 		Recipe tPlate = tMap.addRecipe(new Recipe(true, new ItemStack[] {new ItemStack(PLATE_IRON, 1)}, new ItemStack[] {new ItemStack(Items.IRON_NUGGET)}, null, null, 64, 16, 0));
@@ -326,7 +326,7 @@ class GT6RecipeMapHashIndexTest extends GTRecipesOfflineTestBase {
 			tItems.add(tItem);
 		}
 		assertTrue(tItems.size() >= 256, "the vanilla universe must spare enough distinct items, saw " + tItems.size());
-		RecipeMap tMap = new RecipeMap(new LinkedHashSet<>(), "gt.recipe.p32idx.bench", "P32Idx Bench", null, 0, 1, "gt6:textures/gui/p32idx", 1, 1, 0, 0, 0, 0, 0, 1);
+		RecipeMap tMap = new RecipeMap(new LinkedHashSet<>(), "gt.recipe.hashindex.bench", "HashIndex Bench", null, 0, 1, "gt6:textures/gui/hashindex", 1, 1, 0, 0, 0, 0, 0, 1);
 		for (Item tItem : tItems) {
 			tMap.addRecipe(new Recipe(true, new ItemStack[] {new ItemStack(tItem, 4)}, new ItemStack[] {new ItemStack(Items.GLASS)}, null, null, 32, 16, 0));
 		}
@@ -354,7 +354,7 @@ class GT6RecipeMapHashIndexTest extends GTRecipesOfflineTestBase {
 	// ------------------------------------------------------------------
 
 	private static RecipeMap strictMap() {
-		return new RecipeMap(new LinkedHashSet<>(), "gt.recipe.p32idx.buf", "P32Idx Buf", null, 0, 1, "gt6:textures/gui/p32idx", 2, 2, 0, 2, 2, 0, 0, 1);
+		return new RecipeMap(new LinkedHashSet<>(), "gt.recipe.hashindex.buf", "HashIndex Buf", null, 0, 1, "gt6:textures/gui/hashindex", 2, 2, 0, 2, 2, 0, 0, 1);
 	}
 
 	private static Recipe strictSandRow(RecipeMap aMap) {
@@ -430,8 +430,8 @@ class GT6RecipeMapHashIndexTest extends GTRecipesOfflineTestBase {
 	@BeforeAll
 	static void bootAndBuildProbes() {
 		GTMaterialItems.initMaterials(); // the offline material universe (the ShCL convention)
-		INGOT_IRON = probeItem("p32idx_probe_ingot_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.ingot, MT.Iron));
-		PLATE_IRON = probeItem("p32idx_probe_plate_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.plate, MT.Iron));
+		INGOT_IRON = probeItem("hashindex_probe_ingot_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.ingot, MT.Iron));
+		PLATE_IRON = probeItem("hashindex_probe_plate_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.plate, MT.Iron));
 		// capture the resolver seams BEFORE the first @BeforeEach arms them (the phase-gate
 		// capture/restore discipline — the census fixtures must not leak into sibling classes)
 		capture(() -> GT6RecipesEngineFuels.sFluidResolver, aV -> GT6RecipesEngineFuels.sFluidResolver = aV);

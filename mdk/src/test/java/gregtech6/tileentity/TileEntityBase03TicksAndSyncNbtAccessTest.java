@@ -102,7 +102,7 @@ public class TileEntityBase03TicksAndSyncNbtAccessTest extends GTOfflineTestBase
 		// (validateWrite only guards its own frozen flag — a fresh registry is writable,
 		// exactly how WorldLoader's WORLDGEN layer builds them)
 		MappedRegistry<Enchantment> tRegistry = new MappedRegistry<>(Registries.ENCHANTMENT, Lifecycle.stable());
-		Enchantment tEnchantment = new Enchantment(Component.literal("p19 test enchantment"),
+		Enchantment tEnchantment = new Enchantment(Component.literal("test enchantment"),
 				new Enchantment.EnchantmentDefinition(
 						HolderSet.direct(BuiltInRegistries.ITEM.wrapAsHolder(Items.DIAMOND_SWORD)),
 						Optional.empty(), 10, 5,
@@ -187,7 +187,7 @@ public class TileEntityBase03TicksAndSyncNbtAccessTest extends GTOfflineTestBase
 				.anyMatch(aKey -> Registries.ENCHANTMENT.equals(aKey)),
 				"listRegistries forwards: no enchantment registry before the rebind");
 
-		HolderLookup.Provider tComposite = buildComposite("gt6:p19_lifecycle_enchant");
+		HolderLookup.Provider tComposite = buildComposite("gt6:test_lifecycle_enchant");
 		HolderLookup.Provider tPrevious = TileEntityBase03TicksAndSync.nbtAccessDelegate();
 		TileEntityBase03TicksAndSync.bindNbtAccess(tComposite);
 		try {
@@ -211,7 +211,7 @@ public class TileEntityBase03TicksAndSyncNbtAccessTest extends GTOfflineTestBase
 	@Test
 	public void frozenFallbackViewDegradesEnchantedStacks() {
 		HolderLookup.Provider tPrevious = TileEntityBase03TicksAndSync.nbtAccessDelegate();
-		HolderLookup.Provider tComposite = buildComposite("gt6:p19_frozen_enchant");
+		HolderLookup.Provider tComposite = buildComposite("gt6:test_frozen_enchant");
 		TileEntityBase03TicksAndSync.bindNbtAccess(tComposite);
 		// build the enchanted stack under the composite view, then judge the fallback faces
 		ItemStack tSword = new ItemStack(Items.DIAMOND_SWORD);
@@ -229,7 +229,7 @@ public class TileEntityBase03TicksAndSyncNbtAccessTest extends GTOfflineTestBase
 			tTag.putString("id", "minecraft:diamond_sword");
 			tTag.putInt("count", 1);
 			CompoundTag tEnchantments = new CompoundTag();
-			tEnchantments.putInt("gt6:p19_frozen_enchant", 5);
+			tEnchantments.putInt("gt6:test_frozen_enchant", 5);
 			CompoundTag tComponents = new CompoundTag();
 			tComponents.put("minecraft:enchantments", tEnchantments);
 			tTag.put("components", tComponents);
@@ -253,7 +253,7 @@ public class TileEntityBase03TicksAndSyncNbtAccessTest extends GTOfflineTestBase
 	@Test
 	public void reboundViewRoundTripsEnchantedStacks() {
 		HolderLookup.Provider tPrevious = TileEntityBase03TicksAndSync.nbtAccessDelegate();
-		HolderLookup.Provider tComposite = buildComposite("gt6:p19_rebound_enchant");
+		HolderLookup.Provider tComposite = buildComposite("gt6:test_rebound_enchant");
 		TileEntityBase03TicksAndSync.bindNbtAccess(tComposite);
 		try {
 			// the ItemStack save/parse face
@@ -296,7 +296,7 @@ public class TileEntityBase03TicksAndSyncNbtAccessTest extends GTOfflineTestBase
 		CompoundTag tFrozen = tChest.saveWithoutMetadata(TileEntityBase03TicksAndSync.nbtAccessDelegate());
 
 		HolderLookup.Provider tPrevious = TileEntityBase03TicksAndSync.nbtAccessDelegate();
-		HolderLookup.Provider tComposite = buildComposite("gt6:p19_plain_enchant");
+		HolderLookup.Provider tComposite = buildComposite("gt6:test_plain_enchant");
 		TileEntityBase03TicksAndSync.bindNbtAccess(tComposite);
 		try {
 			CompoundTag tRebound = tChest.saveWithoutMetadata(TileEntityBase03TicksAndSync.NBT_ACCESS);
