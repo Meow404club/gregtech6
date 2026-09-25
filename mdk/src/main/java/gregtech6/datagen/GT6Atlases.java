@@ -110,5 +110,10 @@ public final class GT6Atlases extends SpriteSourceProvider {
                  *///?}
             }
         }
+        // task p38-spring-texture-tint — the borrowed FLUID_SPRING dither: emitted by the
+        // GTFluidSpringBakedModel quads as the spring overlay shell with NO model JSON
+        // (the ore-overlay precedent — the atlas source IS the consumer-side stitching;
+        // the vanilla water_still/lava_still bases resolve through vanilla's own sources).
+        atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.client.render.GTFluidSpringBakedModel.OVERLAY_SPRITE, Optional.empty()));
     }
 }
