@@ -74,11 +74,11 @@ public final class GT6QuantumEnergizers {
 
 	static {
 		List<GT6Lasers.LaserRow> tRows = new ArrayList<>();
-		tRows.add(new GT6Lasers.LaserRow("quantum_energizer", 10121, 0, "T1"));
-		tRows.add(new GT6Lasers.LaserRow("quantum_energizer_t2", 10122, 1, "T2"));
-		tRows.add(new GT6Lasers.LaserRow("quantum_energizer_t3", 10123, 2, "T3"));
-		tRows.add(new GT6Lasers.LaserRow("quantum_energizer_t4", 10124, 3, "T4"));
-		tRows.add(new GT6Lasers.LaserRow("quantum_energizer_t5", 10125, 4, "T5"));
+		tRows.add(new GT6Lasers.LaserRow("quantum_energizer", 10121, 0, "T1", null));
+		tRows.add(new GT6Lasers.LaserRow("quantum_energizer_t2", 10122, 1, "T2", null));
+		tRows.add(new GT6Lasers.LaserRow("quantum_energizer_t3", 10123, 2, "T3", null));
+		tRows.add(new GT6Lasers.LaserRow("quantum_energizer_t4", 10124, 3, "T4", null));
+		tRows.add(new GT6Lasers.LaserRow("quantum_energizer_t5", 10125, 4, "T5", null));
 		QUANTUM_ENERGIZER_ROWS = List.copyOf(tRows);
 	}
 
@@ -98,7 +98,7 @@ public final class GT6QuantumEnergizers {
 		for (GT6Lasers.LaserRow tRow : aRows) {
 			aBlocks.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GT6DynamoBlock(BlockBehaviour.Properties.of()
-							.strength(16.0F, 16.0F).sound(SoundType.METAL), tRow.tier(), () -> aBe.get().get())));
+							.strength(16.0F, 16.0F).sound(SoundType.METAL), tRow.tier(), () -> aBe.get().get(), tRow.material())));
 			aItems.put(tRow.path(), ITEMS.register(tRow.path(),
 					() -> new BlockItem(aBlocks.get(tRow.path()).get(), new Item.Properties().stacksTo(16))));
 		}

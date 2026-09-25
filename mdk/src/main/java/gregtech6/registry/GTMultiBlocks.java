@@ -74,9 +74,17 @@ public final class GTMultiBlocks {
 	public static final RegistryObject<GTCokeOvenBlock> COKE_OVEN = BLOCKS.register("multiblock_coke_oven",
 			() -> new GTCokeOvenBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(3.5F, 6.0F).sound(SoundType.STONE)));
 
-	/** The coke oven bricks part block (the 26-cell structure body, upstream MTE id 18000). */
+	/**
+	 * The coke oven bricks part block (the 26-cell structure body, upstream MTE id 18000
+	 * "Fire Bricks") — the material-carrier ctor form: the :1138 row's NBT_MATERIAL
+	 * MT.Ceramic is the tint colour source (task p38-c2-controller-tint, the #8 declared
+	 * deviation retired). The census-facing constant keeps the row colour single-source.
+	 */
+	public static final java.util.function.Supplier<gregapi.oredict.OreDictMaterial> COKE_BRICKS_MATERIAL = () -> gregapi.data.MT.Ceramic;
+
 	public static final RegistryObject<GTMultiBlockPartBlock> COKE_OVEN_BRICKS = BLOCKS.register("multiblock_coke_oven_bricks",
-			() -> new GTMultiBlockPartBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(3.5F, 6.0F).sound(SoundType.STONE)));
+			() -> new GTMultiBlockPartBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(3.5F, 6.0F).sound(SoundType.STONE),
+					0, null, COKE_BRICKS_MATERIAL));
 
 	/**
 	 * The Coke Oven BET: one class, its one block (ADR-P3-1 degenerate shape; future oven
@@ -741,23 +749,24 @@ public final class GTMultiBlocks {
 	}
 
 	/**
-	 * The part-family paint-tint walker (task p38-issue8-multipart-tint): the 41 part
+	 * The part-family paint-tint walker (task p38-issue8-multipart-tint): the 42 part
 	 * blocks whose datagen models carry tintindex 0 on the body cube — the 11 Dense Walls,
 	 * the 29 new-form part blocks (10 Metal Walls + Wood Wall + 5 Coils + 7 Parts +
-	 * Ventilation + 5 Processor Units) and the Heat Transmitter. The machine
-	 * {@code GTMachines.paintableBlockArray} census convention, feeding BOTH consumption
-	 * halves: the baked world tint ({@code GTMachineTintModel}, the p32 route) and the
-	 * inventory {@code ItemColor} (GTClientHandlers). NOT in the walk: the coke-oven
-	 * bricks (the upstream Ceramic tint is unwired — the declared deviation, the model's
-	 * tintindex stays the white identity) and the three Lightning Rod part borrows (their
+	 * Ventilation + 5 Processor Units), the Heat Transmitter and, since task
+	 * p38-c2-controller-tint, the coke-oven bricks (the upstream Ceramic tint wired — the
+	 * #8 declared deviation retired). The machine {@code GTMachines.paintableBlockArray}
+	 * census convention, feeding BOTH consumption halves: the baked world tint
+	 * ({@code GTMachineTintModel}, the p32 route) and the inventory {@code ItemColor}
+	 * (GTClientHandlers). NOT in the walk: the three Lightning Rod part borrows (their
 	 * cube_all models carry no tintindex — the untinted deviation). Client-side call time
 	 * only.
 	 */
 	public static net.minecraft.world.level.block.Block[] partPaintableBlockArray() {
-		java.util.List<net.minecraft.world.level.block.Block> rBlocks = new java.util.ArrayList<>(41);
+		java.util.List<net.minecraft.world.level.block.Block> rBlocks = new java.util.ArrayList<>(42);
 		for (RegistryObject<GTMultiBlockPartBlock> tHandle : WALL_BLOCKS_BY_PATH.values()) rBlocks.add(tHandle.get());
 		for (RegistryObject<GTMultiBlockPartBlock> tHandle : NEW_PART_BLOCKS_BY_PATH.values()) rBlocks.add(tHandle.get());
 		rBlocks.add(HEAT_TRANSMITTER.get());
+		rBlocks.add(COKE_OVEN_BRICKS.get());
 		return rBlocks.toArray(new net.minecraft.world.level.block.Block[0]);
 	}
 }

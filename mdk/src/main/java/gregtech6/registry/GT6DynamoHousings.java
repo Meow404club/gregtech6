@@ -61,16 +61,16 @@ public final class GT6DynamoHousings {
 	/** The part-block path this family resolves defensively (the row 1 Dense SS Wall, unreachable in production). */
 	public static final String DEFAULT_WALL_PATH = "dense_wall_stainless_steel";
 
-	/** One dynamo registration row — the block-carrier projection of one :1259-1262 line (the 75% ratio lives in the input/output pair). */
+	/** One dynamo registration row — the block-carrier projection of one :1259-1262 line (the 75% ratio lives in the input/output pair; {@code material} the row's NBT_MATERIAL aMat — task p38-c2-controller-tint). */
 	public record DynamoRow(String path, String display, int metaId, long input, long output,
-			float hardness, String wallPath) {}
+			float hardness, String wallPath, java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material) {}
 
-	/** The four dynamo rows (:1259-1262, the upstream line order, hardness == resistance). */
+	/** The four dynamo rows (:1259-1262, the upstream line order, hardness == resistance; the aMat column verbatim StainlessSteel/Ti/TungstenSteel/Ad). */
 	public static final List<DynamoRow> DYNAMO_ROWS = List.of(
-			new DynamoRow("large_dynamo_stainless_steel", "Stainless Steel Dynamo Main Housing", 17221,   4096,   3072,   6.0F, "dense_wall_stainless_steel"),
-			new DynamoRow("large_dynamo_titanium"       , "Titanium Dynamo Main Housing"       , 17222,   8192,   6144,   9.0F, "dense_wall_titanium"),
-			new DynamoRow("large_dynamo_tungstensteel"  , "Tungstensteel Dynamo Main Housing"  , 17223,  16384,  12288,  12.5F, "dense_wall_tungstensteel"),
-			new DynamoRow("large_dynamo_adamantium"     , "Adamantium Dynamo Main Housing"     , 17224, 131072,  98304, 100.0F, "dense_wall_adamantium"));
+			new DynamoRow("large_dynamo_stainless_steel", "Stainless Steel Dynamo Main Housing", 17221,   4096,   3072,   6.0F, "dense_wall_stainless_steel", () -> gregapi.data.MT.StainlessSteel),
+			new DynamoRow("large_dynamo_titanium"       , "Titanium Dynamo Main Housing"       , 17222,   8192,   6144,   9.0F, "dense_wall_titanium"       , () -> gregapi.data.MT.Ti),
+			new DynamoRow("large_dynamo_tungstensteel"  , "Tungstensteel Dynamo Main Housing"  , 17223,  16384,  12288,  12.5F, "dense_wall_tungstensteel"  , () -> gregapi.data.MT.TungstenSteel),
+			new DynamoRow("large_dynamo_adamantium"     , "Adamantium Dynamo Main Housing"     , 17224, 131072,  98304, 100.0F, "dense_wall_adamantium"     , () -> gregapi.data.MT.Ad));
 
 	/** The registered dynamo blocks by path (the BET valid list + the datagen/loot walkers + the chains). */
 	public static final Map<String, RegistryObject<Block>> BLOCKS_BY_PATH = new LinkedHashMap<>();
@@ -80,7 +80,7 @@ public final class GT6DynamoHousings {
 
 	static {
 		for (DynamoRow tRow : DYNAMO_ROWS) {
-			registerController(tRow.path(), () -> new DynamoBlock(tRow, props(tRow.hardness())));
+			registerController(tRow.path(), () -> new DynamoBlock(tRow, props(tRow.hardness()), tRow.material()));
 		}
 	}
 
@@ -100,6 +100,17 @@ public final class GT6DynamoHousings {
 		return DYNAMO_ROWS.stream().map(r -> BLOCKS_BY_PATH.get(r.path()).get()).toArray(Block[]::new);
 	}
 
+	/**
+	 * The dynamo-main paint-tint walker (task p38-c2-controller-tint): the 4 controller
+	 * blocks whose datagen models carry tintindex 0 on the body cube (the
+	 * {@code GTMachines.paintableBlockArray} census convention), feeding BOTH consumption
+	 * halves: the baked world tint ({@code GTMachineTintModel}, the p32 route) and the
+	 * inventory {@code ItemColor}. Client-side call time only.
+	 */
+	public static Block[] paintableBlockArray() {
+		return DYNAMO_ROWS.stream().map(r -> (Block) BLOCKS_BY_PATH.get(r.path()).get()).toArray(Block[]::new);
+	}
+
 	/** The Large Dynamo BET: one controller class over the four variant blocks. */
 	public static final RegistryObject<BlockEntityType<GTLargeDynamoBlockEntity>> DYNAMO_BE =
 			BLOCK_ENTITY_TYPES.register("multiblock_large_dynamo", () -> BlockEntityType.Builder.of(
@@ -117,8 +128,9 @@ public final class GT6DynamoHousings {
 
 		private final DynamoRow mRow;
 
-		public DynamoBlock(DynamoRow aRow, Properties aProperties) {
-			super(aProperties);
+		public DynamoBlock(DynamoRow aRow, Properties aProperties,
+				java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
+			super(aProperties, aMaterial);
 			mRow = aRow;
 		}
 		//? if neoforge {
@@ -127,7 +139,7 @@ public final class GT6DynamoHousings {
 		// form (the BoilerTankBlock precedent; world save/load never runs through it).
 		@Override
 		protected com.mojang.serialization.MapCodec<? extends DynamoBlock> codec() {
-			return simpleCodec(aProperties -> new DynamoBlock(DYNAMO_ROWS.get(0), aProperties));
+			return simpleCodec(aProperties -> new DynamoBlock(DYNAMO_ROWS.get(0), aProperties, DYNAMO_ROWS.get(0).material()));
 		}
 		*///?}
 

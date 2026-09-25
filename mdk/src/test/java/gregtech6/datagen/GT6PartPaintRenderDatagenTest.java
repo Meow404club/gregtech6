@@ -11,8 +11,9 @@
  * new-form Metal Walls (metalwall, METAL_WALL_ROWS minus the Tungsten Wall — that block
  * stays the Lightning Rod family's registration and keeps its UNtinted cube_all borrow,
  * the declared deviation pinned by machineWallTungstenKeepsTheUntintedBorrow) x designs
- * 0..7. The partPaintableBlockArray walk (41 blocks: walls + coils + parts + ventilation
- * + processor units + wood wall + transmitter) rides the same partModel helper, so the
+ * 0..7. The partPaintableBlockArray walk (42 blocks: walls + coils + parts + ventilation
+ * + processor units + wood wall + transmitter + the coke-oven bricks, whose Ceramic tint
+ * task p38-c2-controller-tint wired) rides the same partModel helper, so the
  * body/decal split asserted here covers them; the material columns of those rows are
  * pinned non-null (the upstream aMat verbatim mapping, ANY.Steel→MT.Steel / ANY.W→MT.W,
  * the GT6Crucibles CrucibleRow precedent).

@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -162,18 +163,25 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 	 * {@link GTRenderModelListener} shape read directly off the event map): every
 	 * paintable-array state swaps in this wrapper over its freshly baked model — the
 	 * machine domain ({@code GTMachines.paintableBlockArray}), the part family
-	 * ({@code GTMultiBlocks.partPaintableBlockArray}) and, since task
-	 * p38-c3-kitchen-tint-shape, the kitchen family
+	 * ({@code GTMultiBlocks.partPaintableBlockArray}), since task
+	 * p38-c3-kitchen-tint-shape the kitchen family
 	 * ({@code GT6Kitchen.paintableBlockArray} — the tintindex-0 faces resolve the carrier
-	 * material, the #7 reservation closing). Blocks that already carry a dynamic
-	 * model (the oven ladder's {@code GTOvenOverlayModel} chain) are skipped — they keep
-	 * their own render route.
+	 * material, the #7 reservation closing) and, since task
+	 * p38-c2-controller-tint, the controller/energy domain (the 12 multiblock mains, the
+	 * 15 EU-bridge rungs, the 10 laser rungs, the magic absorber). Blocks that already
+	 * carry a dynamic model (the oven ladder's {@code GTOvenOverlayModel} chain) are
+	 * skipped — they keep their own render route.
 	 */
 	@SubscribeEvent
 	public static void onModifyBakingResult(ModelEvent.ModifyBakingResult aEvent) {
 		for (Block tBlock : GTMachines.paintableBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GTMultiBlocks.partPaintableBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GT6Kitchen.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		for (Block tBlock : gregtech6.registry.GT6Turbines.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		for (Block tBlock : gregtech6.registry.GT6DynamoHousings.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		for (Block tBlock : GTMachines.bridgePaintableBlockArray()) wrapStates(tBlock, aEvent);
+		for (Block tBlock : gregtech6.registry.GT6Lasers.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		for (Block tBlock : gregtech6.registry.GT6MagicAbsorbers.paintableBlockArray()) wrapStates(tBlock, aEvent);
 	}
 
 	/**
@@ -191,6 +199,28 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		java.util.List<net.minecraft.world.item.Item> tItems = new java.util.ArrayList<>();
 		for (Block tBlock : gregtech6.registry.GT6Kitchen.paintableBlockArray()) tItems.add(tBlock.asItem());
 		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tItems.toArray(net.minecraft.world.item.Item[]::new));
+	}
+
+	/**
+	 * The controller/energy-domain paint tint, the INVENTORY half (task
+	 * p38-c2-controller-tint): the 38 new-domain blocks' BlockItems ride the shared
+	 * {@link GTItemPaintTint} lambda through the combined
+	 * {@code GTMachinePaintTint.tintMaterialOf} dispatch — the creative-tab face (a
+	 * BlockItem is NOT coloured by any baked world tint, ItemColors.java:25-93). The
+	 * per-domain-listener registration is the {@code GT6TreeClientListener} shape (this
+	 * class IS the domain's client seam; GTClientHandlers keeps the machine/part/barrel
+	 * faces it already owns). The coke-oven bricks join the existing part registration
+	 * automatically through {@code partPaintableBlockArray}.
+	 */
+	@SubscribeEvent
+	public static void onRegisterControllerPaintItemColors(net.minecraftforge.client.event.RegisterColorHandlersEvent.Item aEvent) {
+		java.util.List<Item> tPaintItems = new ArrayList<>();
+		for (Block tBlock : gregtech6.registry.GT6Turbines.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		for (Block tBlock : gregtech6.registry.GT6DynamoHousings.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		for (Block tBlock : GTMachines.bridgePaintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		for (Block tBlock : gregtech6.registry.GT6Lasers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		for (Block tBlock : gregtech6.registry.GT6MagicAbsorbers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tPaintItems.toArray(Item[]::new));
 	}
 
 	/** One block's state walk (the shared swap body; the dynamic-model guard is order-safe against GTRenderModelListener's own hook). */
