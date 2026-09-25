@@ -8813,6 +8813,28 @@ tiles upstream (only `bathing_pot_wood` differs), which is why the digests repea
 - `block/tools/juicer/middleside.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/juicer/colored/middleside.png`; the same uniform tile as the bottom — upstream ships it un-detailed, the mRGBa tint carries the face)
 - `block/tools/juicer/middletop.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/juicer/colored/middletop.png`; the same uniform tile as the bottom)
 
+## Fluid spring block texture (task p38-spring-texture-tint)
+
+The bedrock fluid-spring nozzle (GTFluidSpringBlock) borrow. Upstream renders the spring
+as a two-layer stack on every visible face
+(MultiTileEntityFluidSpring.java:150 `getTexture` = `BlockTextureMulti(BlockTextureFluid
+.get(mFluid), BlockTextureDefault.get(Textures.BlockIcons.FLUID_SPRING))`): the FLUID
+half = the fluid's own still icon multiplied by the fluid block's render colour
+(BlockTextureFluid.java:52-53 `mRGBa = getRGBaArray(tBlock.getRenderColor(0))`), and the
+grayscale FLUID_SPRING dither sits ON TOP un-tinted — the PNG is a 16x16 RGBA mask
+(140 opaque gray pixels over 116 transparent holes), so the tinted fluid body shows
+through the holes. The port maps the same stack: the GTFluidSpringBakedModel emits the
+fluid still texture x the spring fluid's tint (the CHEMICAL_SPECS/AQUA_SPECS tint the
+fluid registrations carry — the per-fluid colour the nozzle BE's springFluid column
+selects) as the solid-layer base, and this dither as the epsilon-inflated cutout overlay
+(the GTOreBakedModel base+overlay composition, the tint baked into the base vertices —
+the p32 vertex-colour route).
+
+- `block/fluid_spring.png` — `fedf3d54241bd047bcd8e81a87d6271a92df2c7b7799c98c96e20431066458b2`
+  (upstream `blocks/iconsets/FLUID_SPRING.png`). Byte-identical borrow, filename
+  lowercased on borrow; the dither carries NO tint in either edition (upstream :150 —
+  the BlockTextureDefault half is white; the fluid colour lives on the layer beneath).
+
 ## owned (generated, not borrowed)
 
 - `gt6/textures/block/mini_portal_end.png` — the Miniature End Portal's active
