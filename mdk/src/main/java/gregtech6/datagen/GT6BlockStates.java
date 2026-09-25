@@ -202,6 +202,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addWaterWheel(); // task p28-c-water-wheel
         addLongDistancePipes(); // task p35-long-distance-pipes — the 16 wire metas + the two endpoints
         addElectricDynamoUlv(); // task p28-c-ulv-dynamo-row — the Electric Dynamo T0 row
+        addDynamoLadders(); // task p38-c1-dynamo-bowl-models — the Electric/Flux T1-T5 ladder rows
         addBatteryBoxes(); // task p29-w4-battery-storage — the 12-box storage face
         addCrystalChargers(); // task p35-energy-tail-machines — the 20-row LU charge face
         addZpmDechargers(); // task p36-energy-zpm-dechargers — the two-row discharge face
@@ -2030,6 +2031,55 @@ public final class GT6BlockStates extends BlockStateProvider {
         Block tBlock = GT6ElectricDynamos.ELECTRIC_DYNAMO_ULV.get();
         simpleBlock(tBlock, models().cubeAll("electric_dynamo_ulv", modLoc("block/energy_source")));
         itemModels().withExistingParent("electric_dynamo_ulv", modLoc("block/electric_dynamo_ulv"));
+    }
+
+    /**
+     * Task p38-c1-dynamo-bowl-models — the Electric (T1-T5) and Flux (T1-T5) dynamo ladder
+     * rows: the ten registered {@code GT6DynamoBlock}s had ZERO generated assets (placed
+     * they fell to the missing-model checkerboard; the census probe). Each family's ladder
+     * shares ONE facing-cube model over the BAKED colored+overlay composites (the p28
+     * electric-transformer posture — the per-tier visual is not a column of the upstream
+     * registration, Loader :946-950/:953-957 all ride one icon set). The FRONT face = the
+     * OUTPUT {@code mFacing}, the BACK = the INPUT {@code OPOS}, the four side faces the
+     * plain side art (MultiTileEntityDynamoFlux/Electric getTexture2 index 0/1/2); the
+     * {@code overlay_active/} trio stays unborrowed (no ACTIVE property on the port block —
+     * the W2 render card). The bake is the canonical flat look (the p19 src-over treatment;
+     * assets/README.md carries source + product sha256), the runtime mRGBa tint the render
+     * pool. The T0 ULV row keeps its placeholder above.
+     */
+    private void addDynamoLadders() {
+        addDynamoFamily("electric_dynamo", List.of(
+                Map.entry("electric_dynamo", (Block) GT6ElectricDynamos.ELECTRIC_DYNAMO.get()),
+                Map.entry("electric_dynamo_t2", (Block) GT6ElectricDynamos.ELECTRIC_DYNAMO_T2.get()),
+                Map.entry("electric_dynamo_t3", (Block) GT6ElectricDynamos.ELECTRIC_DYNAMO_T3.get()),
+                Map.entry("electric_dynamo_t4", (Block) GT6ElectricDynamos.ELECTRIC_DYNAMO_T4.get()),
+                Map.entry("electric_dynamo_t5", (Block) GT6ElectricDynamos.ELECTRIC_DYNAMO_T5.get())));
+        addDynamoFamily("flux_dynamo", List.of(
+                Map.entry("flux_dynamo", (Block) gregtech6.registry.GT6FluxDynamos.FLUX_DYNAMO.get()),
+                Map.entry("flux_dynamo_t2", (Block) gregtech6.registry.GT6FluxDynamos.FLUX_DYNAMO_T2.get()),
+                Map.entry("flux_dynamo_t3", (Block) gregtech6.registry.GT6FluxDynamos.FLUX_DYNAMO_T3.get()),
+                Map.entry("flux_dynamo_t4", (Block) gregtech6.registry.GT6FluxDynamos.FLUX_DYNAMO_T4.get()),
+                Map.entry("flux_dynamo_t5", (Block) gregtech6.registry.GT6FluxDynamos.FLUX_DYNAMO_T5.get())));
+    }
+
+    /** One ladder walk — the shared facing cube (the addZpmDechargers rotation form) + the row BlockItem parents. */
+    private void addDynamoFamily(String aFamily, List<Map.Entry<String, Block>> aRows) {
+        ModelFile tModel = models().cube(aFamily,
+                modLoc("block/" + aFamily + "_side"), modLoc("block/" + aFamily + "_side"),   // bottom/top
+                modLoc("block/" + aFamily + "_front"), modLoc("block/" + aFamily + "_back"),  // north(front/output)/south(back/input)
+                modLoc("block/" + aFamily + "_side"), modLoc("block/" + aFamily + "_side"));  // west/east
+        for (Map.Entry<String, Block> tRow : aRows) {
+            getVariantBuilder(tRow.getValue()).forAllStates(aState -> {
+                int tY = switch (aState.getValue(gregtech6.block.energy.GT6DynamoBlock.FACING)) {
+                    case SOUTH -> 180;
+                    case WEST -> 270;
+                    case EAST -> 90;
+                    default -> 0; // NORTH
+                };
+                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            });
+            itemModels().withExistingParent(tRow.getKey(), tModel.getLocation());
+        }
     }
 
     /**

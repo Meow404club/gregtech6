@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gt6:block/flux_dynamo",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/flux_dynamo"
+    },
+    "facing=south": {
+      "model": "gt6:block/flux_dynamo",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gt6:block/flux_dynamo",
+      "y": 270
+    }
+  }
+}

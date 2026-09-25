@@ -216,6 +216,11 @@ class GT6ItemModelLayersTest {
         // task p31-dig-ladder — the dig band's restored 4-layer rows (head pair + stick pair):
         "pickaxe", "pickaxe_gem", "pickaxe_construction", "shovel", "spade", "universal_spade", "hoe",
         "soft_hammer", // task p29-w5-t3-machine-face-four — the 4-layer rubber-head pin
+        // task p38-c1-dynamo-bowl-models — the p29-w5-t4 un-laddered quartet's restored
+        // rows (plow/sense = the 4-layer head-pair + stick-pair row; branch_cutter /
+        // hand_drill = the 2-layer iconset pair — their own pins live in
+        // GT6DynamoBowlRenderDatagenTest.caughtItemModelsPinParentsAndLayers)
+        "plow", "sense", "branch_cutter", "hand_drill",
         // task p29-w5-t6-electric-nineteen — the electric rows whose layer0 rides the
         // material_sets head sprite: their layer1 is the POWER-UNIT/HANDLE pass (the
         // upstream getIcon(true) pass), NOT the base's _overlay sibling — the deliberate
