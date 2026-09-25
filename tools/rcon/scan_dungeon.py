@@ -381,6 +381,7 @@ def scan_world(boxes_area):
     dungeon band probes). full_status-only (the p31 lesson: Status=='minecraft:full'
     is the only pipeline-complete marker)."""
     starts, blocks = {}, {}
+    global WANTED_PROBES
     region_dir = RUN_DIR / "world" / "region"
     for path in sorted(glob.glob(str(region_dir / "r.*.*.mca"))):
         for cx, cz, nbt in read_region(Path(path)):
@@ -400,7 +401,12 @@ def scan_world(boxes_area):
             if not blocks or True:
                 y_lo, y_hi = 2, 160  # the full dungeon band (shell 20..28, shaft to surface)
                 wanted = {"minecraft:sticky_piston", "minecraft:lever", "minecraft:chest",
-                          "minecraft:redstone_wire"}
+                          "minecraft:redstone_wire",
+                          # the dungeon-rooms-batch room probes
+                          "minecraft:farmland", "minecraft:ladder", "minecraft:iron_bars",
+                          "minecraft:tnt", "minecraft:red_bed", "minecraft:iron_door",
+                          "minecraft:grindstone", "minecraft:anvil", "minecraft:carpet",
+                          "minecraft:sugar_cane", "minecraft:cactus", "minecraft:water"}
                 for section in (nbt.get("sections") or []):
                     y_base = (section.get("Y") or 0) * 16
                     if y_base + 16 < y_lo or y_base > y_hi:
@@ -410,6 +416,7 @@ def scan_world(boxes_area):
                         z = cz * 16 + ((index >> 4) & 15)
                         x = cx * 16 + (index & 15)
                         blocks[(x, y, z)] = name
+                    WANTED_PROBES = wanted
                     for index, name in decode_positions(section, None, prefix="gt6:"):
                         y = y_base + (index >> 8)
                         if not (y_lo <= y <= y_hi):
@@ -418,6 +425,9 @@ def scan_world(boxes_area):
                         x = cx * 16 + (index & 15)
                         blocks[(x, y, z)] = name
     return starts, blocks
+
+
+WANTED_PROBES = None  # set by scan_world to the wanted-name set (the counting face)
 
 
 def verify_seed():
@@ -496,19 +506,44 @@ def main():
     ok = len(starts) >= 1
     gt6_walls = 0
     pistons = levers = chests = wires = 0
+    room_kinds = {}
     for key, start in starts.items():
         kinds = [p["kind"] for p in start["pieces"]]
         entrances = kinds.count("ENTRANCE")
         storages = kinds.count("STORAGE")
         corridors = kinds.count("CORRIDOR")
         rooms = kinds.count("ROOM_EMPTY")
+        for k in kinds:
+            room_kinds[k] = room_kinds.get(k, 0) + 1
         print(f"dungeon@{key}: pieces={len(kinds)} entrance={entrances} storage={storages} "
-              f"corridor={corridors} room={rooms}", flush=True)
+              f"corridor={corridors} room={rooms} barracks={kinds.count('BARRACKS')} "
+              f"corridor3={kinds.count('CORRIDOR3')} corridor4={kinds.count('CORRIDOR4')} "
+              f"workshop={kinds.count('WORKSHOP')} mining={kinds.count('MINING_BEDROCK')} "
+              f"farm_crop={kinds.count('FARM_CROP')} farm_mobs={kinds.count('FARM_MOBS')} "
+              f"farm_fish={kinds.count('FARM_FISH')}", flush=True)
         c = report["checks"]
         c[f"{key}:one-entrance"] = entrances == 1
         c[f"{key}:has-storage"] = storages >= 1
         c[f"{key}:has-corridor"] = corridors >= 1
-        ok = ok and entrances == 1 and storages >= 1 and corridors >= 1
+        # the dungeon-rooms-batch evidence: the barracks important room exists in EVERY
+        # dungeon; the pool rooms / corridor 3-4 variants are the seed's draws (per-dungeon
+        # conditional checks below, the counts are the report's evidence face).
+        c[f"{key}:has-barracks"] = kinds.count("BARRACKS") >= 1
+        if kinds.count("FARM_CROP"):
+            c[f"{key}:farm-crop"] = kinds.count("FARM_CROP") >= 1
+        if kinds.count("FARM_MOBS"):
+            c[f"{key}:farm-mobs"] = kinds.count("FARM_MOBS") >= 1
+        if kinds.count("FARM_FISH"):
+            c[f"{key}:farm-fish"] = kinds.count("FARM_FISH") >= 1
+        if kinds.count("WORKSHOP"):
+            c[f"{key}:workshop"] = kinds.count("WORKSHOP") >= 1
+        if kinds.count("MINING_BEDROCK"):
+            c[f"{key}:mining-bedrock"] = kinds.count("MINING_BEDROCK") >= 1
+        if kinds.count("CORRIDOR3"):
+            c[f"{key}:corridor3"] = kinds.count("CORRIDOR3") >= 1
+        if kinds.count("CORRIDOR4"):
+            c[f"{key}:corridor4"] = kinds.count("CORRIDOR4") >= 1
+        ok = ok and entrances == 1 and storages >= 1 and corridors >= 1 and kinds.count("BARRACKS") >= 1
         # the entrance shaft: the ENTRANCE piece box must climb well above the shell
         for p in start["pieces"]:
             if p["kind"] == "ENTRANCE" and len(p["bb"]) == 6:
@@ -528,6 +563,8 @@ def main():
         c[f"{key}:shell-walls"] = len(band) >= 500
         ok = ok and len(band) >= 500
 
+    report["room_kinds"] = room_kinds
+    probes = {}
     for (x, y, z), n in blocks.items():
         if n == "minecraft:sticky_piston":
             pistons += 1
@@ -537,10 +574,13 @@ def main():
             chests += 1
         elif n == "minecraft:redstone_wire":
             wires += 1
+        if n in WANTED_PROBES:
+            probes[n] = probes.get(n, 0) + 1
     print(f"airlock probes: sticky_pistons={pistons} levers={levers} chests={chests} "
           f"redstone_wire={wires} shell-band-gt6-total={gt6_walls}", flush=True)
+    print(f"room-block probes: {probes}", flush=True)
     report["probes"] = dict(pistons=pistons, levers=levers, chests=chests, wires=wires,
-                            shell_band_gt6=gt6_walls)
+                            shell_band_gt6=gt6_walls, room_blocks=probes)
     report["checks"]["airlock-pistons>=4"] = pistons >= 4
     report["checks"]["airlock-lever>=1"] = levers >= 1
     report["checks"]["redstone-wire>=2"] = wires >= 2
