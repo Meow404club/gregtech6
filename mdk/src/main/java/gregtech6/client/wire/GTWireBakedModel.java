@@ -188,6 +188,11 @@ public class GTWireBakedModel implements IDynamicBakedModel {
 			ModelData aModelData, @Nullable RenderType aRenderType) {
 		// two chunk layers: material quads on solid, insulation overlays on cutout; the
 		// null pass (item render, breaking overlays) receives everything
+		// issue #2 same-type evaluation: UNLIKE GTOreBakedModel/GTFluidSpringBakedModel this
+		// dispatch does NOT partition the quad sets per RenderType — every wire/insulation/
+		// fiber texture is OPAQUE, so a quad landing on the alpha-less solid shader is
+		// visually correct there and the split would be churn without a render delta.
+		// Revisit only if a transparent wire texture is ever borrowed.
 		if (aRenderType != null && !aRenderType.equals(RenderType.solid()) && !aRenderType.equals(RenderType.cutout())) {
 			return List.of();
 		}
