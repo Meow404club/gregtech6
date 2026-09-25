@@ -89,16 +89,20 @@ public final class GTMachinePaintTint {
 	}
 
 	/**
-	 * The combined tint-material dispatch (task p38-issue8-multipart-tint): the part-family
-	 * carriers first (their material rides the block itself through
-	 * {@code GTMultiBlockPartBlock.materialOf}), then the machine-domain gate. The domains
+	 * The combined tint-material dispatch (task p38-issue8-multipart-tint; the kitchen
+	 * family joined in task p38-c3-kitchen-tint-shape): the part-family carriers first
+	 * (their material rides the block itself through
+	 * {@code GTMultiBlockPartBlock.materialOf}), then the kitchen carriers
+	 * ({@code GTKitchenBlock.materialOf}), then the machine-domain gate. The domains
 	 * are disjoint so the order is observational; every tint consumer (the baked
 	 * {@code GTMachineTintModel}, the {@code ItemColor} inventory half, this reference
 	 * world half) funnels here, keeping tintARGB the single colour decision site.
 	 */
 	static OreDictMaterial tintMaterialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
 		OreDictMaterial tPart = gregtech6.block.multiblock.GTMultiBlockPartBlock.materialOf(aBlock);
-		return tPart != null ? tPart : GTBasicMachineBlock.materialOf(aBlock);
+		if (tPart != null) return tPart;
+		OreDictMaterial tKitchen = gregtech6.block.tools.GTKitchenBlock.materialOf(aBlock);
+		return tKitchen != null ? tKitchen : GTBasicMachineBlock.materialOf(aBlock);
 	}
 
 	/**

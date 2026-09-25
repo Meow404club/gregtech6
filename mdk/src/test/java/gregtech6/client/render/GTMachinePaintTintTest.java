@@ -15,6 +15,7 @@
 package gregtech6.client.render;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -104,6 +105,33 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 		assertEquals(-1, GTMachinePaintTint.tintARGB(ModelData.EMPTY, null, 1));
 		assertEquals(-1, GTMachinePaintTint.tintARGB(ModelData.EMPTY, gregapi.data.MT.Cu, 1),
 				"the row material never leaks onto an overlay index");
+	}
+
+	/**
+	 * Task p38-c3-kitchen-tint-shape: the kitchen carriers ride the combined dispatch —
+	 * the tintindex-0 faces resolve the carrier material (the #7 reservation closing), the
+	 * value math being the already-pinned fRGBaSolid derivation. The census blocks replay
+	 * the registration payloads (the material column is what this pins).
+	 */
+	@Test
+	void kitchenFamilyRidesTheCombinedDispatch() {
+		assertSame(gregapi.data.MT.WoodTreated, GTMachinePaintTint.tintMaterialOf(kitchenBlock(gregapi.data.MT.WoodTreated)),
+				"the wood pot tints the WoodTreated carrier colour");
+		assertSame(gregapi.data.MT.StainlessSteel, GTMachinePaintTint.tintMaterialOf(kitchenBlock(gregapi.data.MT.StainlessSteel)),
+				"the steel pot tints the StainlessSteel row colour");
+		assertSame(gregapi.data.MT.Ceramic, GTMachinePaintTint.tintMaterialOf(kitchenBlock(gregapi.data.MT.Ceramic)),
+				"the bowl/juicer tint the Ceramic row colour");
+		// and the resolved material colours through the single decision site
+		assertEquals(GTMachinePaintTint.tintARGB(null, gregapi.data.MT.StainlessSteel, 0),
+				GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(kitchenBlock(gregapi.data.MT.StainlessSteel)), 0),
+				"the steel pot's tint value is the fRGBaSolid derivation");
+	}
+
+	/** A kitchen carrier for the dispatch pin (properties irrelevant to the material gate). */
+	private static gregtech6.block.tools.GTKitchenBlock kitchenBlock(gregapi.oredict.OreDictMaterial aMaterial) {
+		return new gregtech6.block.tools.GTKitchenBlock(8000, () -> aMaterial,
+				gregtech6.block.tools.GTKitchenBlock.SHAPE_TUB, () -> null,
+				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
 	}
 
 	/** The BlockColor lambda's guard arms (null level/pos and a non-zero index return no tint). */

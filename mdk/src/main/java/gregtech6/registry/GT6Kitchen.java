@@ -54,9 +54,14 @@ import gregtech6.tileentity.tools.GT6MixingBowlBlockEntity;
  * the upstream ANY.Wood default 1000 passes) — the class-doc deviation on the row below.
  *
  * <p>GUI: none — the upstream tooltip is {@code LH.NO_GUI_CLICK_TO_INTERACT} and the
- * wave4 GUI ruling binds menu-less carriers (zero new MenuType). Rendering: no
- * blockstate variants beyond the default (the mDisplay fluid-tint renderer is the pool
- * cut — the model is the plain cube placeholder like the barrel family rows).
+ * wave4 GUI ruling binds menu-less carriers (zero new MenuType). Rendering: the #7
+ * element-model wave drew the sub-cube hollow tubs (the mDisplay fluid surface stays the
+ * pool cut); task p38-c3-kitchen-tint-shape closed the render double-gap — the
+ * {@link #kitchenProperties} seam rides {@code .noOcclusion().isViewBlocking(never)} (the
+ * #9 wire seam form: the sub-cube quads over a canOcclude block culled neighbour faces),
+ * the carriers mount the upstream collision-pool shapes, and the tintindex-0 faces resolve
+ * the row material colour through {@link #paintableBlockArray()} (the #8 census convention,
+ * feeding the baked world tint and the inventory ItemColor).
  *
  * <p>Task p27-lang-fix — the CREATIVE-TAB RETIREMENT: the standalone "kitchen" tab
  * ({@code gt6:kitchen}, the former "Misc Tool Blocks" category face) is retired per the
@@ -74,6 +79,31 @@ public final class GT6Kitchen {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 
 	/**
+	 * The shared kitchen-family properties seam (task p38-c3-kitchen-tint-shape, the
+	 * {@code GTWires.wireProperties} per-file seam form): the ONE chain every registration
+	 * point builds from. The sub-cube element models over a true {@code canOcclude} make
+	 * the occlusion culling treat the vessel cell as a full cube — neighbour faces get
+	 * culled against the empty cavity (the #9 X-ray) and the selection box rides the
+	 * full-cube default (the #1 oversize) — so the chain carries
+	 * {@code .noOcclusion().isViewBlocking(never)}; {@code isViewBlocking} is the
+	 * GT6TreeLeavesBlock fog-only rider.
+	 *
+	 * @param aSound the upstream aUtil column (WOOD pot / METAL steel pot / STONE bowl+juicer)
+	 * @param aResistance the upstream NBT_RESISTANCE column (5.0 / 6.0 / 5.0; hardness is 1.0 on every row)
+	 */
+	static BlockBehaviour.Properties kitchenProperties(SoundType aSound, float aResistance) {
+		return BlockBehaviour.Properties.of()
+				.strength(1.0F, aResistance).sound(aSound) // upstream NBT_HARDNESS 1.0 / NBT_RESISTANCE
+				.noOcclusion().isViewBlocking(GT6Kitchen::never);
+	}
+
+	/** The fog-only rider (the GTWires seam body): the sub-cube vessel never blocks the view. */
+	private static boolean never(net.minecraft.world.level.block.state.BlockState aState,
+			net.minecraft.world.level.BlockGetter aLevel, net.minecraft.core.BlockPos aPos) {
+		return false;
+	}
+
+	/**
 	 * The wood pot — RM.Bath, 4000 L (upstream :2173; flammability 100 recorded on the
 	 * carrier javadoc). DECLARED CARRIER DEVIATION: the upstream row's NBT_MATERIAL is
 	 * {@code ANY.Wood}, whose UPSTREAM default mMeltingPoint is the plain-material 1000 —
@@ -87,18 +117,18 @@ public final class GT6Kitchen {
 	 * planks upstream, this is the melt-door equivalence, not a recipe/material claim).
 	 */
 	public static final RegistryObject<GTKitchenBlock> BATHING_POT_WOOD = BLOCKS.register("bathing_pot_wood",
-			() -> new GTKitchenBlock(4000, () -> MT.WoodTreated, () -> GT6Kitchen.BATHING_POT_BE.get(),
-					BlockBehaviour.Properties.of().strength(1.0F, 5.0F).sound(SoundType.WOOD)));
+			() -> new GTKitchenBlock(4000, () -> MT.WoodTreated, GTKitchenBlock.SHAPE_TUB,
+					() -> GT6Kitchen.BATHING_POT_BE.get(), kitchenProperties(SoundType.WOOD, 5.0F)));
 
 	/** The steel pot — MT.StainlessSteel, RM.Bath, 8000 L (upstream :2175). */
 	public static final RegistryObject<GTKitchenBlock> BATHING_POT_STEEL = BLOCKS.register("bathing_pot_steel",
-			() -> new GTKitchenBlock(8000, () -> MT.StainlessSteel, () -> GT6Kitchen.BATHING_POT_BE.get(),
-					BlockBehaviour.Properties.of().strength(1.0F, 6.0F).sound(SoundType.METAL)));
+			() -> new GTKitchenBlock(8000, () -> MT.StainlessSteel, GTKitchenBlock.SHAPE_TUB,
+					() -> GT6Kitchen.BATHING_POT_BE.get(), kitchenProperties(SoundType.METAL, 6.0F)));
 
 	/** The ceramic bowl — MT.Ceramic, RM.Mixer, 8000 L (upstream :2177). */
 	public static final RegistryObject<GTKitchenBlock> MIXING_BOWL = BLOCKS.register("mixing_bowl",
-			() -> new GTKitchenBlock(8000, () -> MT.Ceramic, () -> GT6Kitchen.MIXING_BOWL_BE.get(),
-					BlockBehaviour.Properties.of().strength(1.0F, 5.0F).sound(SoundType.STONE)));
+			() -> new GTKitchenBlock(8000, () -> MT.Ceramic, GTKitchenBlock.SHAPE_TUB,
+					() -> GT6Kitchen.MIXING_BOWL_BE.get(), kitchenProperties(SoundType.STONE, 5.0F)));
 
 	/**
 	 * The Juicer — MT.Ceramic, RM.Juicer (upstream Loader_MultiTileEntities.java:2184,
@@ -109,8 +139,8 @@ public final class GT6Kitchen {
 	 * the pot/bowl 4000/8000).
 	 */
 	public static final RegistryObject<GTKitchenBlock> JUICER = BLOCKS.register("juicer",
-			() -> new GTKitchenBlock(1000000, () -> MT.Ceramic, () -> GT6Kitchen.JUICER_BE.get(),
-					BlockBehaviour.Properties.of().strength(1.0F, 5.0F).sound(SoundType.STONE)));
+			() -> new GTKitchenBlock(1000000, () -> MT.Ceramic, GTKitchenBlock.SHAPE_JUICER,
+					() -> GT6Kitchen.JUICER_BE.get(), kitchenProperties(SoundType.STONE, 5.0F)));
 
 	/**
 	 * The pot BET — the shared-BET multi-mount (ADR-P3-1): one BE class over the wood +
@@ -208,5 +238,18 @@ public final class GT6Kitchen {
 	/** The material accessor seam (the offline tests pin the melt-door read through it). */
 	public static long meltingPointOf(Supplier<OreDictMaterial> aMaterial) {
 		return aMaterial.get().mMeltingPoint;
+	}
+
+	/**
+	 * The kitchen-family paint-tint walker (task p38-c3-kitchen-tint-shape, the
+	 * {@code GTMultiBlocks.partPaintableBlockArray} census convention): the four blocks
+	 * whose datagen models carry tintindex 0 on every face (the #7 reservation). Feeding
+	 * BOTH consumption halves — the baked world tint ({@code GTMachineTintModel}, the p32
+	 * route) and the inventory {@code ItemColor} — the row materials render through the
+	 * {@code GTKitchenBlock.materialOf} dispatch (WoodTreated / StainlessSteel /
+	 * Ceramic / Ceramic, the carrier rows). Client-side call time only.
+	 */
+	public static Block[] paintableBlockArray() {
+		return new Block[] { BATHING_POT_WOOD.get(), BATHING_POT_STEEL.get(), MIXING_BOWL.get(), JUICER.get() };
 	}
 }

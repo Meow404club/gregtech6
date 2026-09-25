@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.model.IQuadTransformer;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -160,9 +161,11 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 	 * The baked-model replacement (the ModifyBakingResult hook, the
 	 * {@link GTRenderModelListener} shape read directly off the event map): every
 	 * paintable-array state swaps in this wrapper over its freshly baked model — the
-	 * machine domain ({@code GTMachines.paintableBlockArray}) and, since task
-	 * p38-issue8-multipart-tint, the part family
-	 * ({@code GTMultiBlocks.partPaintableBlockArray}). Blocks that already carry a dynamic
+	 * machine domain ({@code GTMachines.paintableBlockArray}), the part family
+	 * ({@code GTMultiBlocks.partPaintableBlockArray}) and, since task
+	 * p38-c3-kitchen-tint-shape, the kitchen family
+	 * ({@code GT6Kitchen.paintableBlockArray} — the tintindex-0 faces resolve the carrier
+	 * material, the #7 reservation closing). Blocks that already carry a dynamic
 	 * model (the oven ladder's {@code GTOvenOverlayModel} chain) are skipped — they keep
 	 * their own render route.
 	 */
@@ -170,6 +173,24 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 	public static void onModifyBakingResult(ModelEvent.ModifyBakingResult aEvent) {
 		for (Block tBlock : GTMachines.paintableBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GTMultiBlocks.partPaintableBlockArray()) wrapStates(tBlock, aEvent);
+		for (Block tBlock : gregtech6.registry.GT6Kitchen.paintableBlockArray()) wrapStates(tBlock, aEvent);
+	}
+
+	/**
+	 * The kitchen paint tint, the INVENTORY half (task p38-c3-kitchen-tint-shape): the
+	 * family's BlockItems registered over the shared {@link GTItemPaintTint} lambda — the
+	 * unpainted stacks resolve the carrier material through the combined
+	 * {@code GTMachinePaintTint.tintMaterialOf} dispatch (the #8 part-registration mirror
+	 * shape). It lives on this subscriber rather than GTClientHandlers because the kitchen
+	 * card's FILES_SCOPE draws the client seam at client/render/; explicit registration is
+	 * still mandatory — a BlockColor does NOT colour its BlockItem and vanilla
+	 * {@code ItemColors.createDefault} has no BlockItem delegation (ItemColors.java:25-93).
+	 */
+	@SubscribeEvent
+	public static void onRegisterKitchenPaintItemColors(RegisterColorHandlersEvent.Item aEvent) {
+		java.util.List<net.minecraft.world.item.Item> tItems = new java.util.ArrayList<>();
+		for (Block tBlock : gregtech6.registry.GT6Kitchen.paintableBlockArray()) tItems.add(tBlock.asItem());
+		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tItems.toArray(net.minecraft.world.item.Item[]::new));
 	}
 
 	/** One block's state walk (the shared swap body; the dynamic-model guard is order-safe against GTRenderModelListener's own hook). */
