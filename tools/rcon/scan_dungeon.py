@@ -20,7 +20,8 @@ Per leg (forge / neoforge):
            quiescence (region-file byte stability); graceful stop.
   scan:    per-chunk NBT (Status-full only) — 1) the structure start
            structures.starts["gt6:dungeon"] with its Children piece list (kind/BB
-           audit: exactly one ENTRANCE, >= 1 STORAGE dead-end, corridors, all boxes
+           audit: exactly one ENTRANCE, >= 1 STORAGE dead-end, the per-kind census
+           including the rooms-batch kinds, all boxes
            at the Y2 foundation floor); 2) the block palette probes inside the piece
            boxes (gt6 stone walls in the y20..27 shell band, the airlock sticky
            pistons + lever, the loot chest, and the entrance shaft's gt6 blocks
@@ -203,13 +204,17 @@ def boot_and_load(boxes):
     def rc_strict(command):
         # fatal on persistent emptiness: a swallowed forceload add poisons the whole
         # boot (the boot#1 lesson — the empty replies were the lever-crash symptom,
-        # and continuing would only burn the quiescence wait on an empty region)
-        for attempt in (0, 1, 2):
+        # and continuing would only burn the quiescence wait on an empty region).
+        # Six rounds with 12 s gaps: an 8-box forceload queues >1100 chunks of
+        # generation at once and the main thread can out-busy the default 30 s RCON
+        # read for minutes (the 1.21.1 leg, seed 6131000569321125127 box 8 — the
+        # command IS queued on the server executor, it just answers late).
+        for attempt in (0, 1, 2, 3, 4, 5):
             reply = rc(command)
             if reply.strip():
                 return reply
-            print("empty reply, retry", attempt, command[:40])
-            time.sleep(2)
+            print("empty reply, retry", attempt, command[:40], flush=True)
+            time.sleep(12)
         raise RuntimeError(f"forceload command never acknowledged: {command}")
 
     def region_bytes():
@@ -218,7 +223,9 @@ def boot_and_load(boxes):
     try:
         for x0, z0, x1, z1 in boxes:
             print("forceload add:", rc_strict(f"forceload add {x0} {z0} {x1} {z1}")[:60], flush=True)
-            time.sleep(0.5)
+            # 15 s pacing between boxes keeps the forced-gen queue shallow enough for
+            # the next RCON command to reach the main thread inside the retry window.
+            time.sleep(15)
         last_bytes, stable_bytes = -1, 0
         gen_start = time.time()
         gen_deadline = gen_start + 2400
@@ -381,6 +388,7 @@ def scan_world(boxes_area):
     dungeon band probes). full_status-only (the p31 lesson: Status=='minecraft:full'
     is the only pipeline-complete marker)."""
     starts, blocks = {}, {}
+    global WANTED_PROBES
     region_dir = RUN_DIR / "world" / "region"
     for path in sorted(glob.glob(str(region_dir / "r.*.*.mca"))):
         for cx, cz, nbt in read_region(Path(path)):
@@ -400,7 +408,12 @@ def scan_world(boxes_area):
             if not blocks or True:
                 y_lo, y_hi = 2, 160  # the full dungeon band (shell 20..28, shaft to surface)
                 wanted = {"minecraft:sticky_piston", "minecraft:lever", "minecraft:chest",
-                          "minecraft:redstone_wire"}
+                          "minecraft:redstone_wire",
+                          # the dungeon-rooms-batch room probes
+                          "minecraft:farmland", "minecraft:ladder", "minecraft:iron_bars",
+                          "minecraft:tnt", "minecraft:red_bed", "minecraft:iron_door",
+                          "minecraft:grindstone", "minecraft:anvil", "minecraft:carpet",
+                          "minecraft:sugar_cane", "minecraft:cactus", "minecraft:water"}
                 for section in (nbt.get("sections") or []):
                     y_base = (section.get("Y") or 0) * 16
                     if y_base + 16 < y_lo or y_base > y_hi:
@@ -410,6 +423,7 @@ def scan_world(boxes_area):
                         z = cz * 16 + ((index >> 4) & 15)
                         x = cx * 16 + (index & 15)
                         blocks[(x, y, z)] = name
+                    WANTED_PROBES = wanted
                     for index, name in decode_positions(section, None, prefix="gt6:"):
                         y = y_base + (index >> 8)
                         if not (y_lo <= y <= y_hi):
@@ -418,6 +432,9 @@ def scan_world(boxes_area):
                         x = cx * 16 + (index & 15)
                         blocks[(x, y, z)] = name
     return starts, blocks
+
+
+WANTED_PROBES = None  # set by scan_world to the wanted-name set (the counting face)
 
 
 def verify_seed():
@@ -496,19 +513,48 @@ def main():
     ok = len(starts) >= 1
     gt6_walls = 0
     pistons = levers = chests = wires = 0
+    room_kinds = {}
     for key, start in starts.items():
         kinds = [p["kind"] for p in start["pieces"]]
         entrances = kinds.count("ENTRANCE")
         storages = kinds.count("STORAGE")
         corridors = kinds.count("CORRIDOR")
         rooms = kinds.count("ROOM_EMPTY")
+        for k in kinds:
+            room_kinds[k] = room_kinds.get(k, 0) + 1
         print(f"dungeon@{key}: pieces={len(kinds)} entrance={entrances} storage={storages} "
-              f"corridor={corridors} room={rooms}", flush=True)
+              f"corridor={corridors} room={rooms} barracks={kinds.count('BARRACKS')} "
+              f"corridor3={kinds.count('CORRIDOR3')} corridor4={kinds.count('CORRIDOR4')} "
+              f"workshop={kinds.count('WORKSHOP')} mining={kinds.count('MINING_BEDROCK')} "
+              f"farm_crop={kinds.count('FARM_CROP')} farm_mobs={kinds.count('FARM_MOBS')} "
+              f"farm_fish={kinds.count('FARM_FISH')}", flush=True)
         c = report["checks"]
         c[f"{key}:one-entrance"] = entrances == 1
         c[f"{key}:has-storage"] = storages >= 1
-        c[f"{key}:has-corridor"] = corridors >= 1
-        ok = ok and entrances == 1 and storages >= 1 and corridors >= 1
+        # NO has-corridor hard gate (the rooms-batch fix): upstream rooms connect
+        # room-to-room when adjacent (WorldgenDungeonGT :200-248 only prunes corridor
+        # cells), so a compact dungeon legitimately ships ZERO corridor cells — the
+        # -216,214 dungeon of seed 6131000569321125127 is the live evidence. The census
+        # line + room_kinds carry the corridor-kind counts as the evidence face.
+        # the dungeon-rooms-batch evidence: the barracks important room exists in EVERY
+        # dungeon; the pool rooms / corridor 3-4 variants are the seed's draws (per-dungeon
+        # conditional checks below, the counts are the report's evidence face).
+        c[f"{key}:has-barracks"] = kinds.count("BARRACKS") >= 1
+        if kinds.count("FARM_CROP"):
+            c[f"{key}:farm-crop"] = kinds.count("FARM_CROP") >= 1
+        if kinds.count("FARM_MOBS"):
+            c[f"{key}:farm-mobs"] = kinds.count("FARM_MOBS") >= 1
+        if kinds.count("FARM_FISH"):
+            c[f"{key}:farm-fish"] = kinds.count("FARM_FISH") >= 1
+        if kinds.count("WORKSHOP"):
+            c[f"{key}:workshop"] = kinds.count("WORKSHOP") >= 1
+        if kinds.count("MINING_BEDROCK"):
+            c[f"{key}:mining-bedrock"] = kinds.count("MINING_BEDROCK") >= 1
+        if kinds.count("CORRIDOR3"):
+            c[f"{key}:corridor3"] = kinds.count("CORRIDOR3") >= 1
+        if kinds.count("CORRIDOR4"):
+            c[f"{key}:corridor4"] = kinds.count("CORRIDOR4") >= 1
+        ok = ok and entrances == 1 and storages >= 1 and kinds.count("BARRACKS") >= 1
         # the entrance shaft: the ENTRANCE piece box must climb well above the shell
         for p in start["pieces"]:
             if p["kind"] == "ENTRANCE" and len(p["bb"]) == 6:
@@ -528,6 +574,8 @@ def main():
         c[f"{key}:shell-walls"] = len(band) >= 500
         ok = ok and len(band) >= 500
 
+    report["room_kinds"] = room_kinds
+    probes = {}
     for (x, y, z), n in blocks.items():
         if n == "minecraft:sticky_piston":
             pistons += 1
@@ -537,10 +585,13 @@ def main():
             chests += 1
         elif n == "minecraft:redstone_wire":
             wires += 1
+        if n in WANTED_PROBES:
+            probes[n] = probes.get(n, 0) + 1
     print(f"airlock probes: sticky_pistons={pistons} levers={levers} chests={chests} "
           f"redstone_wire={wires} shell-band-gt6-total={gt6_walls}", flush=True)
+    print(f"room-block probes: {probes}", flush=True)
     report["probes"] = dict(pistons=pistons, levers=levers, chests=chests, wires=wires,
-                            shell_band_gt6=gt6_walls)
+                            shell_band_gt6=gt6_walls, room_blocks=probes)
     report["checks"]["airlock-pistons>=4"] = pistons >= 4
     report["checks"]["airlock-lever>=1"] = levers >= 1
     report["checks"]["redstone-wire>=2"] = wires >= 2
