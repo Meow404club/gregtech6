@@ -588,20 +588,27 @@ public final class GT6BlockStates extends BlockStateProvider {
      */
     /**
      * Task p26-crucible-multiblock — the LARGE crucible family (the wall "Steel Wall"
-     * + the "Large Steel Crucible" controller): placeholder cube models over the boiler
-     * wall texture (the machine-wall placeholder convention — no crucible PNG exists;
-     * the formed/unformed and the molten-content faces are the declared render defer,
-     * the controller blockstate still carries the full 8 FACING×FORMED state coverage).
+     * + the "Large Steel Crucible" controller): the WALLS over the borrowed metalwall part
+     * textures with the material tint (task issue8-residual — the upstream :1145 "Steel
+     * Wall" row is NBT_TEXTURE "metalwall" + NBT_MATERIAL Steel, so the dedicated
+     * {@code GTCrucibleWallBlock} blocks ride the {@code tintedCube} tinted-body form over
+     * the already-borrowed parts/metalwall/0 colored family, the tank_metal borrow; the
+     * former large_boiler flat-gray placeholder tinted into a flat plate), while the
+     * CONTROLLERS keep the boiler-wall placeholder cube (the formed/unformed and the
+     * molten-content faces are the declared render defer, the controller blockstate still
+     * carries the full 8 FACING×FORMED state coverage).
      */
     private void addLargeCrucible() {
         Block tWall = gregtech6.registry.GT6Crucibles.CRUCIBLE_STEEL_WALL.get();
-        simpleBlock(tWall, models().cubeAll("crucible_steel_wall", modLoc("block/large_boiler/wall")));
+        simpleBlock(tWall, tintedCube("crucible_steel_wall",
+                "block/parts/metalwall/0/colored/bottom", "block/parts/metalwall/0/colored/top", "block/parts/metalwall/0/colored/side"));
         itemModels().withExistingParent("crucible_steel_wall", modLoc("block/crucible_steel_wall"));
-        // task p29-w3-distill-crucible ③ — the seven ladder walls (the same machine-wall
-        // placeholder; the composed names ride the metal-wall template, zero new keys)
+        // task p29-w3-distill-crucible ③ — the seven ladder walls (the same metalwall
+        // borrow; the composed names ride the metal-wall template, zero new keys)
         for (var tHandle : gregtech6.registry.GT6Crucibles.CRUCIBLE_WALL_BLOCKS_BY_PATH.values()) {
             Block tLadderWall = tHandle.get();
-            simpleBlock(tLadderWall, models().cubeAll(tHandle.getId().getPath(), modLoc("block/large_boiler/wall")));
+            simpleBlock(tLadderWall, tintedCube(tHandle.getId().getPath(),
+                    "block/parts/metalwall/0/colored/bottom", "block/parts/metalwall/0/colored/top", "block/parts/metalwall/0/colored/side"));
             itemModels().withExistingParent(tHandle.getId().getPath(), modLoc("block/" + tHandle.getId().getPath()));
         }
         for (gregtech6.registry.GT6Crucibles.CrucibleRow tRow : gregtech6.registry.GT6Crucibles.CRUCIBLE_ROWS) {
@@ -2467,22 +2474,47 @@ public final class GT6BlockStates extends BlockStateProvider {
      */
     /**
      * Task p29-w3-tank-valves — the Tank Main Valve family (Loader_MultiTileEntities.java
-     * :1195-1222): the 25 variant controllers over ONE shared cube_all model per material
+     * :1195-1222): the 25 variant controllers over ONE shared cube model per material
      * family — the wood valve over the borrowed woodwall part texture, the 24 metal valves
      * over the borrowed metalwall part texture (the port has no multiblockmains "tankwood"/
      * "tankmetal" group in this snapshot — the large-boiler borrow ruling; the formed-look
-     * visual is the p9 pool). The FACING + FORMED variants map to the same model like every
+     * visual is the p9 pool). Task issue8-residual: the re-declared body element carries
+     * {@code tintindex 0} on every face (the {@code tintedCube} grammar) — the grayscale
+     * colored textures multiply the row's NBT_MATERIAL (every :1195-1222 row carries the
+     * column, the upstream {@code getTexture2} colored×mRGBa form; the bake/ItemColor
+     * consumers ride GTMachineTintModel/GTItemPaintTint through the controller gate). The
+     * FACING + FORMED variants map to the same model like every
      * controller; the 25 BlockItem models parent their block models.
      */
     private void addTanks() {
-        ModelFile tWood = models().cubeAll("tank_wood", modLoc("block/parts/woodwall/0/colored/side"));
-        ModelFile tMetal = models().cubeAll("tank_metal", modLoc("block/parts/metalwall/0/colored/side"));
+        ModelFile tWood = tintedCube("tank_wood", "block/parts/woodwall/0/colored/bottom", "block/parts/woodwall/0/colored/top", "block/parts/woodwall/0/colored/side");
+        ModelFile tMetal = tintedCube("tank_metal", "block/parts/metalwall/0/colored/bottom", "block/parts/metalwall/0/colored/top", "block/parts/metalwall/0/colored/side");
         for (var tRow : gregtech6.registry.GT6Tanks.ROWS) {
             Block tBlock = gregtech6.registry.GT6Tanks.BLOCKS_BY_PATH.get(tRow.path()).get();
             ModelFile tModel = tRow.flammable() ? tWood : tMetal; // the wood valve is the flammable row
             getVariantBuilder(tBlock).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
             itemModels().withExistingParent(tRow.path(), tModel.getLocation());
         }
+    }
+
+    /**
+     * One tinted full-cube model (task issue8-residual; the partModel body form without
+     * the decal overlays — the addBridgeFamily re-declared-element grammar): the borrowed
+     * grayscale colored faces on the six texture keys, the single body cube element carries
+     * {@code tintindex 0} so the GTMachineTintModel bake multiplies the carrier's
+     * NBT_MATERIAL (the vanilla cube parent's own elements are replaced by the child's).
+     */
+    private ModelFile tintedCube(String aName, String aBottom, String aTop, String aSide) {
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc(aBottom)).texture("up", modLoc(aTop))
+                .texture("north", modLoc(aSide)).texture("south", modLoc(aSide))
+                .texture("west", modLoc(aSide)).texture("east", modLoc(aSide));
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
+                .end();
+        return tModel;
     }
 
     private void addLightningRod() {

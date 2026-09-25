@@ -26,14 +26,26 @@ public class GTCrucibleWallBlock extends GTMultiBlockPartBlock {
 	}
 
 	/**
+	 * The material-carrier form (task issue8-residual): the wall's upstream {@code
+	 * NBT_MATERIAL} (the Loader :1145 "Steel Wall" column) rides the parent's 4-arg
+	 * row-less tint ctor — the lazy Supplier is the GTBarrels form (MT.init runs after
+	 * class-load). Null = the material-less identity (the coke-bricks posture).
+	 */
+	public GTCrucibleWallBlock(Properties aProperties, @Nullable java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
+		super(aProperties, 0, null, aMaterial);
+	}
+
+	/**
 	 * The composed-name ctor (task p29-w3-distill-crucible ③ — the 8-material ladder): the
 	 * "{@code <mat> Wall}" template over the EXISTING gt6.row.mat unit words (the card ①
 	 * metal-wall composition — zero new lang unit keys; the composed carrier is the
-	 * GTMultiBlockPartBlock :134 form, DESIGNS 0 → no DESIGN property).
+	 * GTMultiBlockPartBlock :134 form, DESIGNS 0 → no DESIGN property). The ladder rung's
+	 * upstream NBT_MATERIAL rides the same tint ctor (task issue8-residual).
 	 */
-	public GTCrucibleWallBlock(Properties aProperties, String aTemplateKey, String aUnitKey) {
+	public GTCrucibleWallBlock(Properties aProperties, String aTemplateKey, String aUnitKey,
+			@Nullable java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
 		super(aProperties, 0, net.minecraft.network.chat.Component.translatable(aTemplateKey,
-				net.minecraft.network.chat.Component.translatable(aUnitKey)));
+				net.minecraft.network.chat.Component.translatable(aUnitKey)), aMaterial);
 	}
 
 	@Override

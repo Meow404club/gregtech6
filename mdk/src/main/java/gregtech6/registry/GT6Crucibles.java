@@ -328,7 +328,8 @@ public final class GT6Crucibles {
 
 	/** The wall block (the single-rung wall ladder rides one handle; the ladder grows into a map). */
 	public static final RegistryObject<GTCrucibleWallBlock> CRUCIBLE_STEEL_WALL =
-			BLOCKS.register(STEEL_WALL_ROW.path(), () -> new GTCrucibleWallBlock(partProperties(STEEL_WALL_ROW.hardness())));
+			BLOCKS.register(STEEL_WALL_ROW.path(), () -> new GTCrucibleWallBlock(partProperties(STEEL_WALL_ROW.hardness()),
+					STEEL_WALL_ROW.materialSupplier));
 
 	/** The wall item. */
 	public static final RegistryObject<Item> CRUCIBLE_STEEL_WALL_ITEM =
@@ -353,7 +354,8 @@ public final class GT6Crucibles {
 			String tWallPath = tRow.wallPath();
 			String tSlug = tWallPath.substring("crucible_".length(), tWallPath.length() - "_wall".length());
 			CRUCIBLE_WALL_BLOCKS_BY_PATH.put(tWallPath, BLOCKS.register(tWallPath, () -> new GTCrucibleWallBlock(partProperties(tRow.hardness()),
-					gregtech6.registry.GTMultiBlocks.PartRow.METAL_WALL_DISPLAY_KEY, "gt6.row.mat." + tSlug)));
+					gregtech6.registry.GTMultiBlocks.PartRow.METAL_WALL_DISPLAY_KEY, "gt6.row.mat." + tSlug,
+					tRow.materialSupplier)));
 			CRUCIBLE_WALL_ITEMS_BY_PATH.put(tWallPath, ITEMS.register(tWallPath, () -> new GTComposedNameItem(
 					GT6Crucibles.CRUCIBLE_WALL_BLOCKS_BY_PATH.get(tWallPath).get(), new Item.Properties())));
 		}
@@ -390,6 +392,21 @@ public final class GT6Crucibles {
 		int i = 1;
 		for (RegistryObject<GTCrucibleWallBlock> tHandle : CRUCIBLE_WALL_BLOCKS_BY_PATH.values()) rBlocks[i++] = tHandle.get();
 		return rBlocks;
+	}
+
+	/**
+	 * The crucible-wall paint-tint walker (task issue8-residual, the
+	 * {@code GT6Kitchen.paintableBlockArray} census convention): the eight wall blocks whose
+	 * datagen models carry tintindex 0 on every face. Feeding BOTH consumption halves — the
+	 * baked world tint ({@code GTMachineTintModel}, the p32 route) and the inventory
+	 * {@code ItemColor} — the row materials render through the combined
+	 * {@code GTMachinePaintTint.tintMaterialOf} part gate (the dedicated wall blocks are
+	 * {@link GTCrucibleWallBlock} part carriers, not the shared GTMultiBlocks walls). The
+	 * CONTROLLERS stay out — their placeholder cubes are the declared render defer. Client
+	 * call time only.
+	 */
+	public static Block[] paintableWallBlockArray() {
+		return crucibleWallBlockArray();
 	}
 
 	/**

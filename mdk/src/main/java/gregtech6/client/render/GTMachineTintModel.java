@@ -168,7 +168,9 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 	 * ({@code GT6Kitchen.paintableBlockArray} — the tintindex-0 faces resolve the carrier
 	 * material, the #7 reservation closing) and, since task
 	 * p38-c2-controller-tint, the controller/energy domain (the 12 multiblock mains, the
-	 * 15 EU-bridge rungs, the 10 laser rungs, the magic absorber). Blocks that already
+	 * 15 EU-bridge rungs, the 10 laser rungs, the magic absorber); since task
+	 * issue8-residual the #8 stragglers (the 25 tank valve controllers, the 8 dedicated
+	 * crucible walls). Blocks that already
 	 * carry a dynamic model (the oven ladder's {@code GTOvenOverlayModel} chain) are
 	 * skipped — they keep their own render route.
 	 */
@@ -182,6 +184,11 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (Block tBlock : GTMachines.bridgePaintableBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GT6Lasers.paintableBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GT6MagicAbsorbers.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		// task issue8-residual — the #8 stragglers: the 25 tank valve controllers (the row
+		// material rides the controller gate through GTTankValveBlock) and the 8 crucible
+		// walls (the dedicated GTCrucibleWallBlock part carriers)
+		for (Block tBlock : gregtech6.registry.GT6Tanks.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		for (Block tBlock : gregtech6.registry.GT6Crucibles.paintableWallBlockArray()) wrapStates(tBlock, aEvent);
 	}
 
 	/**
@@ -221,6 +228,22 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (Block tBlock : gregtech6.registry.GT6Lasers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		for (Block tBlock : gregtech6.registry.GT6MagicAbsorbers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tPaintItems.toArray(Item[]::new));
+	}
+
+	/**
+	 * The tank-valve + crucible-wall paint tint, the INVENTORY half (task issue8-residual):
+	 * the #8 stragglers' BlockItems ride the shared {@link GTItemPaintTint} lambda through
+	 * the combined {@code GTMachinePaintTint.tintMaterialOf} dispatch — the creative-tab
+	 * face (a BlockItem is NOT coloured by any baked world tint, ItemColors.java:25-93).
+	 * The registration mirrors {@link #onRegisterKitchenPaintItemColors} (this class is the
+	 * shared client tint seam; GTClientHandlers keeps the faces it already owns).
+	 */
+	@SubscribeEvent
+	public static void onRegisterValveWallPaintItemColors(RegisterColorHandlersEvent.Item aEvent) {
+		java.util.List<net.minecraft.world.item.Item> tItems = new java.util.ArrayList<>();
+		for (Block tBlock : gregtech6.registry.GT6Tanks.paintableBlockArray()) tItems.add(tBlock.asItem());
+		for (Block tBlock : gregtech6.registry.GT6Crucibles.paintableWallBlockArray()) tItems.add(tBlock.asItem());
+		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tItems.toArray(net.minecraft.world.item.Item[]::new));
 	}
 
 	/** One block's state walk (the shared swap body; the dynamic-model guard is order-safe against GTRenderModelListener's own hook). */

@@ -194,6 +194,98 @@ class GT6PartPaintRenderDatagenTest {
         for (var tRow : GTMultiBlocks.LIGHTNING_ROD_PART_ROWS) assertNotNull(rowMaterial(tRow.material()), tRow.path());
     }
 
+    // ------------------------------------------------------------------
+    // task issue8-residual — the #8 stragglers: the 25 tank valve controllers
+    // (addTanks, the two shared tintedCube models) and the 8 crucible walls
+    // (addLargeCrucible, the dedicated GTCrucibleWallBlock over the metalwall borrow)
+    // ------------------------------------------------------------------
+
+    /**
+     * The two shared valve models re-declare the body cube (one element, six tinted faces)
+     * over the borrowed woodwall/metalwall colored textures; a wood-row and a metal-row
+     * blockstate both map their FACING×FORMED variants onto the family model.
+     */
+    @Test
+    public void tankValvesCarryTintedBodyModels() throws Exception {
+        assertTintedCubeModel("tank_wood", "parts/woodwall/0/colored");
+        assertTintedCubeModel("tank_metal", "parts/metalwall/0/colored");
+        // the wood valve is the flammable row (tank_wood), every metal valve the tank_metal model
+        assertAllVariantsMapToModel("tank_wood", "block/tank_wood");
+        assertAllVariantsMapToModel("tank_small_tungstensteel", "block/tank_metal");
+    }
+
+    /** The 25 valve rows carry the upstream NBT_MATERIAL column (Loader :1195-1222 verbatim; ANY.W→MT.W). */
+    @Test
+    public void tankValveRowsCarryTheUpstreamMaterials() {
+        var tRows = gregtech6.registry.GT6Tanks.ROWS;
+        assertEquals(25, tRows.size(), "the tank valve census stays 25 (the p29-w3-tank-valves family)");
+        for (var tRow : tRows) assertNotNull(rowMaterial(tRow.material()), tRow.path());
+        assertSame(gregapi.data.MT.WoodTreated    , valveMaterial(tRows, "tank_wood"));
+        assertSame(gregapi.data.MT.StainlessSteel , valveMaterial(tRows, "tank_small_stainless_steel"));
+        assertSame(gregapi.data.MT.Invar          , valveMaterial(tRows, "tank_small_invar"));
+        assertSame(gregapi.data.MT.Ti             , valveMaterial(tRows, "tank_small_titanium"));
+        assertSame(gregapi.data.MT.TungstenSteel  , valveMaterial(tRows, "tank_small_tungstensteel"));
+        assertSame(gregapi.data.MT.W              , valveMaterial(tRows, "tank_small_tungsten"));
+        assertSame(gregapi.data.MT.Ad             , valveMaterial(tRows, "tank_small_adamantium"));
+        assertSame(gregapi.data.MT.StainlessSteel , valveMaterial(tRows, "tank_large_dense_stainless_steel"));
+        assertSame(gregapi.data.MT.Ad             , valveMaterial(tRows, "tank_large_dense_adamantium"));
+    }
+
+    /** The 8 crucible wall models re-declare the tinted body over the metalwall design-0 borrow (the :1145 "Steel Wall" texture family). */
+    @Test
+    public void crucibleWallsCarryTintedBodyModels() throws Exception {
+        assertTintedCubeModel("crucible_steel_wall", "parts/metalwall/0/colored");
+        for (var tHandle : gregtech6.registry.GT6Crucibles.CRUCIBLE_WALL_BLOCKS_BY_PATH.values()) {
+            assertTintedCubeModel(tHandle.getId().getPath(), "parts/metalwall/0/colored");
+        }
+    }
+
+    /** The 8 crucible wall rows carry the upstream NBT_MATERIAL column (Loader :1145/:1270-1277 verbatim; ANY.W→MT.W). */
+    @Test
+    public void crucibleWallRowsCarryTheUpstreamMaterials() {
+        // the ROW tables, not the RegistryObjects (the offline test never runs the mod-bus
+        // registration — the GT6Tanks ROWS reading shape)
+        assertSame(gregapi.data.MT.Steel          , gregtech6.registry.GT6Crucibles.STEEL_WALL_ROW.material());
+        assertSame(gregapi.data.MT.StainlessSteel , gregtech6.registry.GT6Crucibles.STAINLESS_STEEL_ROW.material());
+        assertSame(gregapi.data.MT.Invar          , gregtech6.registry.GT6Crucibles.INVAR_ROW.material());
+        assertSame(gregapi.data.MT.Ti             , gregtech6.registry.GT6Crucibles.TITANIUM_ROW.material());
+        assertSame(gregapi.data.MT.TungstenSteel  , gregtech6.registry.GT6Crucibles.TUNGSTENSTEEL_ROW.material());
+        assertSame(gregapi.data.MT.W              , gregtech6.registry.GT6Crucibles.TUNGSTEN_ROW.material());
+        assertSame(gregapi.data.MT.Ta4HfC5        , gregtech6.registry.GT6Crucibles.TANTALUM_HAFNIUM_CARBIDE_ROW.material());
+        assertSame(gregapi.data.MT.Ad             , gregtech6.registry.GT6Crucibles.ADAMANTIUM_ROW.material());
+    }
+
+    /** One tintedCube model: one body element, all six faces tintindex 0, the textures on the borrowed family. */
+    private static void assertTintedCubeModel(String aPath, String aTextureBase) throws Exception {
+        JsonObject tModel = json("assets/gt6/models/block/" + aPath + ".json");
+        assertEquals(1, tModel.getAsJsonArray("elements").size(), aPath + " keeps the single tinted body cube");
+        JsonObject tBody = tModel.getAsJsonArray("elements").get(0).getAsJsonObject();
+        assertEquals(FACE_KEYS.size(), tBody.getAsJsonObject("faces").entrySet().size(), aPath + " covers all six faces");
+        for (Map.Entry<String, JsonElement> tFace : tBody.getAsJsonObject("faces").entrySet()) {
+            assertTrue(FACE_KEYS.contains(tFace.getKey()), aPath + " body face key " + tFace.getKey());
+            assertEquals(0, tFace.getValue().getAsJsonObject().get("tintindex").getAsInt(),
+                    aPath + " body face " + tFace.getKey() + " carries tintindex 0 (the material tint)");
+        }
+        JsonObject tTextures = tModel.getAsJsonObject("textures");
+        assertEquals("gt6:block/" + aTextureBase + "/side", tTextures.get("north").getAsString(),
+                aPath + " rides the borrowed grayscale colored family " + aTextureBase);
+    }
+
+    /** One FACING×FORMED blockstate: every variant maps onto the family model. */
+    private static void assertAllVariantsMapToModel(String aPath, String aModel) throws Exception {
+        JsonObject tVariants = json("assets/gt6/blockstates/" + aPath + ".json").getAsJsonObject("variants");
+        assertEquals(8, tVariants.size(), aPath + " emits the 4 FACING x 2 FORMED variants");
+        for (Map.Entry<String, JsonElement> tVariant : tVariants.entrySet()) {
+            assertEquals("gt6:" + aModel, tVariant.getValue().getAsJsonObject().get("model").getAsString(),
+                    aPath + " variant " + tVariant.getKey());
+        }
+    }
+
+    private static gregapi.oredict.OreDictMaterial valveMaterial(java.util.List<gregtech6.registry.GT6Tanks.TankValveRow> aRows, String aPath) {
+        for (var tRow : aRows) if (tRow.path().equals(aPath)) return rowMaterial(tRow.material());
+        return null;
+    }
+
     private static gregapi.oredict.OreDictMaterial rowMaterial(
             java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
         return aMaterial.get();
