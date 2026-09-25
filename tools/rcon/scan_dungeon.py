@@ -201,13 +201,16 @@ def boot_and_load(boxes):
         return ""
 
     def rc_strict(command):
+        # fatal on persistent emptiness: a swallowed forceload add poisons the whole
+        # boot (the boot#1 lesson — the empty replies were the lever-crash symptom,
+        # and continuing would only burn the quiescence wait on an empty region)
         for attempt in (0, 1, 2):
             reply = rc(command)
             if reply.strip():
                 return reply
             print("empty reply, retry", attempt, command[:40])
             time.sleep(2)
-        return ""
+        raise RuntimeError(f"forceload command never acknowledged: {command}")
 
     def region_bytes():
         return sum(p.stat().st_size for p in RUN_DIR.glob("world/region/*.mca"))

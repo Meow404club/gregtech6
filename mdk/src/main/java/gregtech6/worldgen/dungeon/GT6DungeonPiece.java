@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.LeverBlock;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.level.block.RedstoneLampBlock;
 import net.minecraft.world.level.block.SlabBlock;
@@ -435,8 +436,12 @@ public class GT6DungeonPiece extends StructurePiece {
         BlockState tPistonMinus = Blocks.STICKY_PISTON.defaultBlockState()
                 .setValue(PistonBaseBlock.FACING, tMinus).setValue(PistonBaseBlock.EXTENDED, Boolean.TRUE);
         BlockState tDust = Blocks.REDSTONE_WIRE.defaultBlockState();
+        // floor lever: LeverBlock.FACING is HORIZONTAL-only (LeverBlock.java:52 — a
+        // Direction.UP write throws and takes the whole chunk-decoration task down, the
+        // live scan boot#1 evidence); the attach face is the FACE property.
         BlockState tLever = Blocks.LEVER.defaultBlockState()
-                .setValue(LeverBlock.FACING, Direction.UP).setValue(LeverBlock.POWERED, Boolean.TRUE);
+                .setValue(LeverBlock.FACING, Direction.NORTH).setValue(LeverBlock.FACE, AttachFace.FLOOR)
+                .setValue(LeverBlock.POWERED, Boolean.TRUE);
 
         // the narrowing rows: depth tWall (beside the pistons) and depth tInner, y1..2.
         for (int tY = 1; tY <= 2; tY++) for (int tV = 5; tV <= 10; tV++) {
