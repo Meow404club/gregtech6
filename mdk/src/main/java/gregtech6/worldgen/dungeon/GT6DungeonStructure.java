@@ -104,6 +104,9 @@ public class GT6DungeonStructure extends Structure {
         String tSecondary = GTStoneBlocks.STONES.get(tRandom.nextInt(GTStoneBlocks.STONES.size())).snake();
         int tColor = tRandom.nextInt(16);
 
+        // the mutable ROOMS pool for this one dungeon (the draw removes its picks).
+        java.util.List<GT6DungeonPiece.Kind> tRoomPool = new java.util.ArrayList<>(ROOMS_POOL);
+
         // :175-176 — the candidate chunk carries the grid center.
         int tBaseX = (aContext.chunkPos().x - tSide / 2) * 16;
         int tBaseZ = (aContext.chunkPos().z - tSide / 2) * 16;
@@ -171,10 +174,14 @@ public class GT6DungeonStructure extends Structure {
                                 tDoors, tPrimary, tSecondary, tColor, 0, tKeyIds,
                                 tHideDraws[tHideCursor++]));
                     } else {
-                        // the ROOMS pool draw — the pool ships empty this card, so the
-                        // upstream ROOM_EMPTY fallback face takes the room.
+                        // the ROOMS pool draw — draw-without-replacement IS the upstream
+                        // TAG dedup (:48/:37/:48 the per-room tags); the exhausted pool
+                        // falls back to the upstream ROOM_EMPTY face (:268/:285).
+                        GT6DungeonPiece.Kind tRoom = tRoomPool.isEmpty()
+                                ? GT6DungeonPiece.Kind.ROOM_EMPTY
+                                : tRoomPool.remove(tRandom.nextInt(tRoomPool.size()));
                         aBuilder.addPiece(new GT6DungeonPiece(
-                                GT6DungeonPiece.Kind.ROOM_EMPTY, box(tX, tZ, GT6DungeonLayout.DUNGEON_Y + 8),
+                                tRoom, box(tX, tZ, GT6DungeonLayout.DUNGEON_Y + 8),
                                 tDoors, tPrimary, tSecondary, tColor, 0));
                     }
                 }
@@ -193,6 +200,16 @@ public class GT6DungeonStructure extends Structure {
                 : aConnectionCount == 3 ? GT6DungeonPiece.Kind.CORRIDOR3
                 : GT6DungeonPiece.Kind.CORRIDOR;
     }
+
+    /**
+     * The ROOMS pool (upstream {@code WorldgenDungeonGT.ROOMS} :85-94): the workshop +
+     * the mining bedrock room land with the dungeon-rooms-batch card; the three Library
+     * rows are the parallel dungeon-library card's seam (the two mod Libraries are the
+     * never pool) and append to this list there; the draw order IS the upstream list
+     * order. One room per dungeon at most — the upstream per-room TAG dedup.
+     */
+    public static final java.util.List<GT6DungeonPiece.Kind> ROOMS_POOL = java.util.List.of(
+            GT6DungeonPiece.Kind.WORKSHOP);
 
     /** The piece box: shell y0..7 at DUNGEON_Y (20..27) + the y8 lamp band (28) + the pillar foundation down to y2 — or, for the entrance, up to the aligned surface cap (+2 for the top ring). */
     private static BoundingBox box(int aX, int aZ, int aTopY) {

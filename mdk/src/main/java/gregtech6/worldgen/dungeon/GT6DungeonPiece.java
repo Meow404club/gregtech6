@@ -2,20 +2,31 @@ package gregtech6.worldgen.dungeon;
 
 import java.util.function.Consumer;
 
+import gregapi.data.MT;
+import gregapi.data.OP;
+import gregapi.oredict.OreDictMaterial;
+import gregapi.oredict.OreDictPrefix;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.CauldronBlock;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.FallingBlock;
+import net.minecraft.world.level.block.GrindstoneBlock;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.LeverBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.AttachFace;
@@ -33,10 +44,13 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 import net.minecraft.world.level.material.FluidState;
 
 import gregtech6.block.stone.StoneVariant;
+import gregtech6.registry.GT6Books;
 import gregtech6.registry.GT6StaticStorages;
 import gregtech6.registry.GT6Structures;
+import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTStoneBlocks;
 import gregtech6.tileentity.inventories.GT6SafeBlockEntity;
+import gregtech6.tileentity.inventories.GT6StaticStorageBaseBlockEntity;
 
 /**
  * The shelter-dungeon PIECE (task p38-dungeon-framework) — one class over the shipped
@@ -113,7 +127,9 @@ public class GT6DungeonPiece extends StructurePiece {
         /** {@code DungeonChunkCorridor4} — the 4-way crossing hall (:30-103). */
         CORRIDOR4,
         /** {@code DungeonChunkBarracks} (:38-162) — the four corner quarters. */
-        BARRACKS;
+        BARRACKS,
+        /** {@code DungeonChunkRoomWorkshop} (:43-208) — the smithy + the manual cabinet. */
+        WORKSHOP;
 
         static Kind of(String aName) {
             return valueOf(aName);
@@ -223,6 +239,10 @@ public class GT6DungeonPiece extends StructurePiece {
             case BARRACKS -> {
                 buildRoomShell(aLevel, aClip, aRandom);
                 buildBarracks(aLevel, aClip, aRandom);
+            }
+            case WORKSHOP -> {
+                buildRoomShell(aLevel, aClip, aRandom);
+                buildWorkshop(aLevel, aClip, aRandom);
             }
             case STORAGE -> {
                 buildRoomShell(aLevel, aClip, aRandom);
@@ -1147,6 +1167,214 @@ public class GT6DungeonPiece extends StructurePiece {
     private static final int[][] BARRACKS_CORNER_ANCHORS = {
             {4, 5}, {5, 4}, {5, 5}, {4, 10}, {5, 10}, {5, 11},
             {10, 4}, {10, 5}, {11, 5}, {10, 10}, {10, 11}, {11, 10}};
+
+    // ---------------------------------------------------------------- workshop
+
+    /** The workshop drawer materials (upstream sMetals :44) and metal list of the ingot piles. */
+    private static final OreDictMaterial[] WORKSHOP_METALS = {
+            MT.DamascusSteel, MT.DamascusSteel, MT.DamascusSteel, MT.BlackSteel, MT.RedSteel, MT.BlueSteel,
+            MT.VanadiumSteel, MT.Steel, MT.Fe, MT.Brass, MT.Bronze, MT.BismuthBronze, MT.BlackBronze};
+
+    /**
+     * The manual cabinet contents — the upstream 8-book row (:118) minus the two CUT
+     * dynamic manuals (Manual_Elements/Manual_Alloys generate their pages from the
+     * material registry, the p35-books ruling), so the port fills the 6 shipped rows.
+     */
+    private static final String[] WORKSHOP_MANUALS = {
+            "manual_smeltery", "manual_random", "manual_extenders", "manual_steam", "manual_tools", "manual_printer"};
+
+    /**
+     * The workshop interior (upstream {@code DungeonChunkRoomWorkshop} :51-206): the
+     * smithy wall (chests, anvil, grindstone, ingot piles), the drawer + safe column,
+     * the manual cabinet, and the drinks wall.
+     *
+     * <p>The dedup face (upstream TAG_WORKSHOP :48) IS the dispatch pool draw
+     * (draw-without-replacement) — see {@link GT6DungeonStructure}.
+     *
+     * <p>Declared MTE folds (the ~30-ID dependency gate): chest MTE 11 → the vanilla
+     * chest on the p34-mapped tables; the mechanical safe 2010 → the ported safe BE +
+     * marker; the drawer 4011 → the ported drawer BE + the 4×8 material fill; the ACT
+     * 5011 → the ported {@code gt6:advanced_crafting_table}; the bookshelf 7111 → the
+     * ported bookshelf + the 6 shipped manuals; the bottle shelf 8762 → the ported
+     * bottlecrate + glass bottles (the GT fluid bottles omit); ingot/plate piles
+     * 32084/32085 → the material blockIngot/blockPlate (smooth shell fallback); EMPTY
+     * SHELLS (smooth stone) for the gas cylinder 32055, the mortar 32735, the measuring
+     * pot 32738, the mass storages 6011, the crucible 1102+t, the tool rack 32034+t, the
+     * molds 1070/1020+t, the taps 32730, the drums 32716/32714/32734, the funnel 32725,
+     * the mixing bowl 32705, the bathing pot 32707; OMITS (no shell face): the coins, the
+     * key stash (the keys defer).
+     */
+    private void buildWorkshop(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom) {
+        // the west bench column (:51-60).
+        smooth(aLevel, aClip, 5, 1, 1); // the propane gas cylinder → shell
+        createVanillaChest(aLevel, aClip, aRandom, 3, 1, 1, Direction.SOUTH, "chests/abandoned_mineshaft");
+        createVanillaChest(aLevel, aClip, aRandom, 2, 1, 1, Direction.SOUTH, "chests/stronghold_crossing");
+        set(aLevel, aClip, 1, 1, 1, Blocks.CRAFTING_TABLE.defaultBlockState());
+        smooth(aLevel, aClip, 1, 2, 1); // the mortar → shell
+        createGtChest(aLevel, aClip, aRandom, 1, 1, 2, Direction.EAST, DUNGEON_CHEST_TABLE);
+
+        // the drawer + safe column (:63-99).
+        Block tDrawer = GT6StaticStorages.blockByPath("drawer_steel");
+        if (tDrawer != null) {
+            placeStorage(aLevel, aClip, 1, 1, 3, tDrawer, Direction.EAST, tBE -> {
+                if (tBE instanceof GT6StaticStorageBaseBlockEntity tStorage) {
+                    int tSlot = 0;
+                    for (OreDictMaterial tMat : new OreDictMaterial[] {MT.StainlessSteel, MT.Bronze, MT.Invar, MT.Brass}) {
+                        // the upstream per-prefix counts (:65-96): stick/ingot/plate
+                        // 32+33, curved/screw 16+49, ring/small-gear 8+25, gear 1+4.
+                        tSlot = fillDrawer(tStorage, tSlot, aRandom, tMat, 32 + aRandom.nextInt(33), OP.stick);
+                        tSlot = fillDrawer(tStorage, tSlot, aRandom, tMat, 32 + aRandom.nextInt(33), OP.ingot);
+                        tSlot = fillDrawer(tStorage, tSlot, aRandom, tMat, 32 + aRandom.nextInt(33), OP.plate);
+                        tSlot = fillDrawer(tStorage, tSlot, aRandom, tMat, 16 + aRandom.nextInt(49), OP.plateCurved);
+                        tSlot = fillDrawer(tStorage, tSlot, aRandom, tMat, 16 + aRandom.nextInt(49), OP.screw);
+                        tSlot = fillDrawer(tStorage, tSlot, aRandom, tMat, 8 + aRandom.nextInt(25), OP.ring);
+                        tSlot = fillDrawer(tStorage, tSlot, aRandom, tMat, 1 + aRandom.nextInt(4), OP.gearGt);
+                        tSlot = fillDrawer(tStorage, tSlot, aRandom, tMat, 8 + aRandom.nextInt(25), OP.gearGtSmall);
+                    }
+                }
+            });
+        }
+        Block tSafe = GT6StaticStorages.blockByPath("safe_mechanical_steel");
+        if (tSafe != null) {
+            placeStorage(aLevel, aClip, 1, 2, 3, tSafe, Direction.EAST,
+                    tBE -> seedSafe(tBE, "minecraft:chests/jungle_temple"));
+        }
+
+        // the ACT + the manual cabinet row (:112-124).
+        set(aLevel, aClip, 1, 1, 4, gregtech6.registry.GTMachines.ADVANCED_CRAFTING_TABLE.get().defaultBlockState()
+                .setValue(gregtech6.block.GTAdvancedCraftingTableBlock.FACING, Direction.EAST));
+        smooth(aLevel, aClip, 1, 2, 4); // the measuring pot → shell
+        smooth(aLevel, aClip, 4, 1, 1); // the primary mass storage → shell
+        smooth(aLevel, aClip, 4, 2, 1); // the secondary mass storage → shell
+        Block tShelf = GT6StaticStorages.blockByPath("bookshelf_oak");
+        if (tShelf != null) {
+            placeStorage(aLevel, aClip, 4, 3, 1, tShelf, Direction.SOUTH, tBE -> {
+                if (tBE instanceof GT6StaticStorageBaseBlockEntity tStorage) {
+                    int tSlot = 0;
+                    for (String tPath : WORKSHOP_MANUALS) {
+                        var tItem = gregtech6.registry.GT6Books.ITEMS_BY_PATH.get(tPath);
+                        if (tItem != null) tStorage.getInventory().setStackInSlot(tSlot++, new ItemStack(tItem.get()));
+                    }
+                }
+            });
+        }
+
+        // the smithy wall (:132-145).
+        createVanillaChest(aLevel, aClip, aRandom, 14, 1, 1, Direction.WEST, "chests/village/village_weaponsmith");
+        smooth(aLevel, aClip, 14, 1, 2);
+        smooth(aLevel, aClip, 14, 1, 3); // the crucible → shell
+        smooth(aLevel, aClip, 14, 1, 4);
+        ingotOrPlate(aLevel, aClip, aRandom, 14, 1, 5);
+        ingotOrPlate(aLevel, aClip, aRandom, 10, 1, 1);
+        set(aLevel, aClip, 11, 1, 1, Blocks.ANVIL.defaultBlockState()
+                .setValue(AnvilBlock.FACING, Direction.from2DDataValue(aRandom.nextInt(4))));
+        set(aLevel, aClip, 12, 1, 1, Blocks.GRINDSTONE.defaultBlockState()
+                .setValue(GrindstoneBlock.FACING, Direction.SOUTH).setValue(GrindstoneBlock.FACE, AttachFace.FLOOR));
+        smooth(aLevel, aClip, 11, 1, 4); // the tool rack (with the hammer) → shell
+        ingotOrPlate(aLevel, aClip, aRandom, 11, 1, 5);
+        smooth(aLevel, aClip, 14, 2, 2); // the mold → shell
+        smooth(aLevel, aClip, 14, 2, 3); // the mold holder → shell
+        smooth(aLevel, aClip, 14, 2, 4); // the mold → shell
+
+        // the brew corner (:149-170).
+        Block tCrate = GT6StaticStorages.blockByPath("bottlecrate_oak");
+        if (tCrate != null) {
+            placeStorage(aLevel, aClip, 11, 1, 14, tCrate, Direction.from2DDataValue(aRandom.nextInt(4)), tBE -> {
+                if (tBE instanceof GT6StaticStorageBaseBlockEntity tStorage) {
+                    // the mercury/glue/lube/ink bottle rows omit (the GT fluid bottles are
+                    // unported); the glass-bottle fill carries the crate face.
+                    for (int i = 0, n = 1 + aRandom.nextInt(8); i < n; i++) {
+                        tStorage.getInventory().setStackInSlot(i, new ItemStack(Items.GLASS_BOTTLE));
+                    }
+                }
+            });
+        }
+        smooth(aLevel, aClip, 13, 1, 14); // the mixing bowl → shell
+        smooth(aLevel, aClip, 14, 1, 14);
+        set(aLevel, aClip, 14, 1, 13, Blocks.WATER_CAULDRON.defaultBlockState()
+                .setValue(LayeredCauldronBlock.LEVEL, 1 + aRandom.nextInt(3)));
+        smooth(aLevel, aClip, 14, 1, 11); // the bathing pot → shell
+        smooth(aLevel, aClip, 13, 2, 14); // the tap → shell
+        smooth(aLevel, aClip, 14, 2, 14); // the water drum → shell
+        smooth(aLevel, aClip, 14, 2, 13); // the tap → shell
+        smooth(aLevel, aClip, 14, 3, 14); // the funnel → shell
+
+        // the drinks wall (:174-205) — the barrel/cylinder columns → shells, one random
+        // bottle crate break.
+        for (int i = 0; i < 2; i++) for (int j = 0; j < 2; j++) {
+            if (aRandom.nextInt(3) < 2) {
+                for (int tY = 1; tY <= 3; tY++) {
+                    if (tCrate != null && aRandom.nextInt(3) == 0) {
+                        placeStorage(aLevel, aClip, 1 + i, tY, 12 + j, tCrate,
+                                Direction.from2DDataValue(aRandom.nextInt(4)), tBE -> {
+                                    if (tBE instanceof GT6StaticStorageBaseBlockEntity tStorage) {
+                                        for (int b = 0, n = 1 + aRandom.nextInt(8); b < n; b++) {
+                                            tStorage.getInventory().setStackInSlot(b, new ItemStack(Items.GLASS_BOTTLE));
+                                        }
+                                    }
+                                });
+                        break;
+                    }
+                    smooth(aLevel, aClip, 1 + i, tY, 12 + j); // the drink barrel → shell
+                    if (aRandom.nextInt(3) == 0) break;
+                }
+            } else if (aRandom.nextInt(3) < 2) {
+                smooth(aLevel, aClip, 1 + i, 1, 12 + j); // the gas cylinder → shell
+            }
+        }
+    }
+
+    /** One drawer fill row — the first {@code aCount} of the prefix, skipped when unregistered. */
+    private int fillDrawer(GT6StaticStorageBaseBlockEntity aStorage, int aSlot, RandomSource aRandom,
+            OreDictMaterial aMaterial, int aCount, OreDictPrefix aPrefix) {
+        var tHandle = GTMaterialItems.get(aPrefix, aMaterial);
+        if (tHandle == null || aSlot >= aStorage.getInventory().getSlots()) return aSlot;
+        aStorage.getInventory().setStackInSlot(aSlot, new ItemStack(tHandle.get(), aCount));
+        return aSlot + 1;
+    }
+
+    /** The ingot/plate pile (upstream {@code ingots_or_plates} :259) → the material block, smooth fallback. */
+    private void ingotOrPlate(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom, int aLX, int aLY, int aLZ) {
+        OreDictMaterial tMat = WORKSHOP_METALS[aRandom.nextInt(WORKSHOP_METALS.length)];
+        Block tIngot = materialBlock(OP.blockIngot, tMat), tPlate = materialBlock(OP.blockPlate, tMat);
+        Block tUse = tIngot != null && tPlate != null ? (aRandom.nextBoolean() ? tPlate : tIngot)
+                : tIngot != null ? tIngot : tPlate;
+        if (tUse != null) set(aLevel, aClip, aLX, aLY, aLZ, tUse.defaultBlockState());
+        else smooth(aLevel, aClip, aLX, aLY, aLZ);
+    }
+
+    /** The registered gt6 material block of a (prefix, material) pair — null when unregistered. */
+    private Block materialBlock(OreDictPrefix aPrefix, OreDictMaterial aMaterial) {
+        String tPath = GTMaterialItems.itemIdOf(aPrefix, aMaterial);
+        //? if forge {
+        Block tBlock = net.minecraftforge.registries.ForgeRegistries.BLOCKS.getValue(
+                new net.minecraft.resources.ResourceLocation("gt6", tPath));
+        //?} else {
+        /*Block tBlock = net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tPath));
+        *///?}
+        return tBlock == null || tBlock == Blocks.AIR ? null : tBlock;
+    }
+
+    /**
+     * The gt6-carrier loot chest at a LOCAL position with a facing — the workshop's
+     * DUNGEON_CHEST row (:60, the {@code createDungeonChest} face with a direction).
+     */
+    private void createGtChest(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom,
+            int aLX, int aLY, int aLZ, Direction aFacing, String aTablePath) {
+        BlockPos tPos = new BlockPos(wx(aLX), wy(aLY), wz(aLZ));
+        if (!aClip.isInside(tPos)) return;
+        //? if forge {
+        this.createChest(aLevel, aClip, aRandom, tPos,
+                new net.minecraft.resources.ResourceLocation("gt6", aTablePath),
+                Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, aFacing));
+        //?} else {
+        /*this.createChest(aLevel, aClip, aRandom, tPos,
+                net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE,
+                        net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", aTablePath)),
+                Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, aFacing));
+        *///?}
+    }
 
     // ---------------------------------------------------------------- loot chests
 
