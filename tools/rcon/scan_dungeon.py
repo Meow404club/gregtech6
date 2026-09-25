@@ -21,7 +21,8 @@ Per leg (forge / neoforge):
   scan:    per-chunk NBT (Status-full only) — 1) the structure start
            structures.starts["gt6:dungeon"] with its Children piece list (kind/BB
            audit: exactly one ENTRANCE, >= 1 STORAGE dead-end, the per-kind census
-           including the rooms-batch kinds, all boxes
+           including the rooms-batch kinds, at most one LIBRARY (the once-per-dungeon
+           pool guard, dungeon-library-zpm), all boxes
            at the Y2 foundation floor); 2) the block palette probes inside the piece
            boxes (gt6 stone walls in the y20..27 shell band, the airlock sticky
            pistons + lever, the loot chest, and the entrance shaft's gt6 blocks
@@ -407,13 +408,18 @@ def scan_world(boxes_area):
                                             pieces=pieces)
             if not blocks or True:
                 y_lo, y_hi = 2, 160  # the full dungeon band (shell 20..28, shaft to surface)
+                # dungeon-library-zpm: the bookshelf wall band + the enchanting table are
+                # the Library-room signatures (96 bookshelves + 1 enchanting per library).
                 wanted = {"minecraft:sticky_piston", "minecraft:lever", "minecraft:chest",
                           "minecraft:redstone_wire",
                           # the dungeon-rooms-batch room probes
                           "minecraft:farmland", "minecraft:ladder", "minecraft:iron_bars",
                           "minecraft:tnt", "minecraft:red_bed", "minecraft:iron_door",
                           "minecraft:grindstone", "minecraft:anvil", "minecraft:carpet",
-                          "minecraft:sugar_cane", "minecraft:cactus", "minecraft:water"}
+                          "minecraft:sugar_cane", "minecraft:cactus", "minecraft:water",
+                          # dungeon-library-zpm: the bookshelf wall band + the enchanting
+                          # table are the Library-room signatures (96 + 1 per library).
+                          "minecraft:bookshelf", "minecraft:enchanting_table"}
                 for section in (nbt.get("sections") or []):
                     y_base = (section.get("Y") or 0) * 16
                     if y_base + 16 < y_lo or y_base > y_hi:
@@ -514,6 +520,8 @@ def main():
     gt6_walls = 0
     pistons = levers = chests = wires = 0
     room_kinds = {}
+    bookshelves = enchanting = 0
+    total_corridors = 0
     for key, start in starts.items():
         kinds = [p["kind"] for p in start["pieces"]]
         entrances = kinds.count("ENTRANCE")
@@ -522,10 +530,12 @@ def main():
         rooms = kinds.count("ROOM_EMPTY")
         for k in kinds:
             room_kinds[k] = room_kinds.get(k, 0) + 1
+        libraries = kinds.count("LIBRARY")
         print(f"dungeon@{key}: pieces={len(kinds)} entrance={entrances} storage={storages} "
               f"corridor={corridors} room={rooms} barracks={kinds.count('BARRACKS')} "
               f"corridor3={kinds.count('CORRIDOR3')} corridor4={kinds.count('CORRIDOR4')} "
               f"workshop={kinds.count('WORKSHOP')} mining={kinds.count('MINING_BEDROCK')} "
+              f"library={libraries} "
               f"farm_crop={kinds.count('FARM_CROP')} farm_mobs={kinds.count('FARM_MOBS')} "
               f"farm_fish={kinds.count('FARM_FISH')}", flush=True)
         c = report["checks"]
@@ -554,7 +564,10 @@ def main():
             c[f"{key}:corridor3"] = kinds.count("CORRIDOR3") >= 1
         if kinds.count("CORRIDOR4"):
             c[f"{key}:corridor4"] = kinds.count("CORRIDOR4") >= 1
-        ok = ok and entrances == 1 and storages >= 1 and kinds.count("BARRACKS") >= 1
+        # dungeon-library-zpm: the once-per-dungeon pool guard (TAG_LIBRARY_NORMAL 对位)
+        c[f"{key}:library<=1"] = libraries <= 1
+        ok = ok and entrances == 1 and storages >= 1 and kinds.count("BARRACKS") >= 1 and libraries <= 1
+        total_corridors += corridors
         # the entrance shaft: the ENTRANCE piece box must climb well above the shell
         for p in start["pieces"]:
             if p["kind"] == "ENTRANCE" and len(p["bb"]) == 6:
@@ -585,18 +598,33 @@ def main():
             chests += 1
         elif n == "minecraft:redstone_wire":
             wires += 1
+        elif n == "minecraft:bookshelf":
+            bookshelves += 1
+        elif n == "minecraft:enchanting_table":
+            enchanting += 1
         if n in WANTED_PROBES:
             probes[n] = probes.get(n, 0) + 1
     print(f"airlock probes: sticky_pistons={pistons} levers={levers} chests={chests} "
           f"redstone_wire={wires} shell-band-gt6-total={gt6_walls}", flush=True)
     print(f"room-block probes: {probes}", flush=True)
     report["probes"] = dict(pistons=pistons, levers=levers, chests=chests, wires=wires,
-                            shell_band_gt6=gt6_walls, room_blocks=probes)
+                            shell_band_gt6=gt6_walls, room_blocks=probes,
+                            bookshelves=bookshelves, enchanting=enchanting)
     report["checks"]["airlock-pistons>=4"] = pistons >= 4
     report["checks"]["airlock-lever>=1"] = levers >= 1
     report["checks"]["redstone-wire>=2"] = wires >= 2
     report["checks"]["loot-chest>=1"] = chests >= 1
-    ok = ok and pistons >= 4 and levers >= 1 and wires >= 2 and chests >= 1
+    report["checks"]["corridor-pieces>=1-across-dungeons"] = total_corridors >= 1
+    ok = ok and pistons >= 4 and levers >= 1 and wires >= 2 and chests >= 1 and total_corridors >= 1
+
+    # dungeon-library-zpm: the Library-room generation evidence (the acceptance scan
+    # counts). The pool draw is deterministic per layout (no dice on the single
+    # candidate), so across the scanned dungeons at least one library must have landed;
+    # its signatures: the 96-seat bookshelf band (floor 48 = half, loot-roll free) and
+    # exactly-one enchanting table per library (the :164-193 nook rotation).
+    report["checks"]["library-generated>=1"] = bookshelves >= 48 and enchanting >= 1
+    print(f"library probes: bookshelves={bookshelves} enchanting_tables={enchanting}", flush=True)
+    ok = ok and bookshelves >= 48 and enchanting >= 1
 
     report["verdict"] = "GREEN" if ok else "RED"
     Path(f"/tmp/p38dungeonscan_{LEG}_verdict.json").write_text(json.dumps(report, indent=1))
