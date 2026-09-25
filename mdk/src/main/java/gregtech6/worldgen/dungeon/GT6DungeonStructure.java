@@ -118,6 +118,20 @@ public class GT6DungeonStructure extends Structure {
         // their meaning; the p31 decision-level determinism precedent).
         long[] tKeyIds = keyIds(aContext.chunkPos());
 
+        // the per-dead-end hide draws (task dungeon-keys; the Workshop :119-123 face):
+        // ONE derived stream consumed SEQUENTIALLY across the dungeon's dead-ends, so
+        // each dead-end takes its own draw — a per-piece reseed here would make every
+        // storage room of one dungeon draw the SAME index (all five locks racing for
+        // one findable key). The upstream next(keys*2) is dual-purpose (:119-120): the
+        // value first gates at 50% (>= keys → hide nothing, ported as -1) and a passing
+        // value IS the key index (naturally < keys — the tKeyIndex < keys clamp).
+        int tDeadEnds = 0;
+        for (int i = 1; i < tSide - 1; i++) for (int j = 1; j < tSide - 1; j++) {
+            if (tLayout[i][j] == GT6DungeonLayout.ROOM_ID && GT6DungeonLayout.connectionCount(tLayout, i, j) == 1) tDeadEnds++;
+        }
+        int[] tHideDraws = hideDraws(aContext.chunkPos(), tDeadEnds);
+        int tHideCursor = 0;
+
         for (int i = 1; i < tSide - 1; i++) for (int j = 1; j < tSide - 1; j++) {
             byte tCell = tLayout[i][j];
             if (tCell == 0) continue;
@@ -143,17 +157,15 @@ public class GT6DungeonStructure extends Structure {
                     if (GT6DungeonLayout.connectionCount(tLayout, i, j) == 1) {
                         // the DEAD_END pool draw — this card's pool is exactly the storage
                         // vault (Vault shell + piston doors + loot chests); the five portal
-                        // rooms are the mod-专属 never pool (unported by ruling). The key
-                        // hide draw rides the shared dungeon roll (the Workshop :119
-                        // next(keys*2) face; the keys spread across the dungeon's storage
-                        // dead-ends until the rooms-batch card moves the hiding).
+                        // rooms are the mod-专属 never pool (unported by ruling). This
+                        // dead-end takes its OWN draw off the shared hide table (the
+                        // Workshop :119-120 gate+index face); the keys spread across the
+                        // dungeon's storage dead-ends until the rooms-batch card moves the
+                        // hiding.
                         aBuilder.addPiece(new GT6DungeonPiece(
                                 GT6DungeonPiece.Kind.STORAGE, box(tX, tZ, GT6DungeonLayout.DUNGEON_Y + 8),
                                 tDoors, tPrimary, tSecondary, tColor, 0, tKeyIds,
-                                // the hide draw: the Workshop :119 next(keys*2) face — a
-                                // second derived stream so the id roll stays pure.
-                                RandomSource.create(aContext.chunkPos().toLong() + 0x6B65795FL)
-                                        .nextInt(gregtech6.items.GT6Keys.KEYS_PER_DUNGEON * 2)));
+                                tHideDraws[tHideCursor++]));
                     } else {
                         // the ROOMS pool draw — the pool ships empty this card, so the
                         // upstream ROOM_EMPTY fallback face takes the room.
@@ -187,6 +199,27 @@ public class GT6DungeonStructure extends Structure {
         rIds[0] = 1 + Math.max(tKeyRandom.nextInt(1000000), aOrigin.toLong());
         for (int i = 1; i < rIds.length; i++) rIds[i] = rIds[i - 1] - 1;
         return rIds;
+    }
+
+    /**
+     * The per-dead-end hide draws (task dungeon-keys; the Workshop :119-123 face,
+     * {@code tKeyIndex = next(keys * 2); if (tKeyIndex < keys) hide(key[tKeyIndex])}):
+     * ONE derived stream consumed sequentially — the k-th dead-end of the dungeon gets
+     * draw k, so a multi-dead-end dungeon spreads its hiding instead of every room
+     * redrawing the same value. The upstream next(keys*2) is dual-purpose (:119-120):
+     * the value first gates the hide at 50% (upstream: not taken; port: {@code -1} =
+     * hide nothing) and a PASSING value IS the key index (naturally {@code < keys},
+     * the {@code tKeyStacks[tKeyIndex]} clamp — never an index into the five-id array
+     * unchecked). Pure function of the origin chunk (the offline audit face).
+     */
+    public static int[] hideDraws(ChunkPos aOrigin, int aDeadEndCount) {
+        RandomSource tHideRandom = RandomSource.create(aOrigin.toLong() * 0x9E3779B97F4A7C15L + 0x6B65795FL);
+        int[] rDraws = new int[aDeadEndCount];
+        for (int i = 0; i < aDeadEndCount; i++) {
+            int tKeyIndex = tHideRandom.nextInt(gregtech6.items.GT6Keys.KEYS_PER_DUNGEON * 2);
+            rDraws[i] = tKeyIndex < gregtech6.items.GT6Keys.KEYS_PER_DUNGEON ? tKeyIndex : -1;
+        }
+        return rDraws;
     }
 
     /**

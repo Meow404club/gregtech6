@@ -278,4 +278,82 @@ class GT6DungeonStructureTest {
         assertEquals(5, gregtech6.items.GT6Keys.KEYS_PER_DUNGEON, "the :161 boolean[5] face");
         assertEquals(10, gregtech6.items.GT6Keys.KEYS.size(), "the IL.KEYS draw table (IL.java:516)");
     }
+
+    /**
+     * The hide-draw gate (the Workshop :119-120 clamp — the AIOOBE red item): every
+     * draw is either -1 (the >= keys branch, hide nothing) or a passing value that IS
+     * the key index, naturally {@code < keys} — never a raw next(keys*2) value fed to
+     * the five-id array unchecked.
+     */
+    @Test
+    void hideDrawsAreGatedToTheFiveIdsOrNone() {
+        for (long tSeed = 0; tSeed < 200; tSeed++) {
+            ChunkPos tOrigin = new ChunkPos((int) tSeed * 13 - 900, (int) tSeed * 5 + 1);
+            for (int tCount = 0; tCount <= 8; tCount++) {
+                int[] tDraws = GT6DungeonStructure.hideDraws(tOrigin, tCount);
+                assertEquals(tCount, tDraws.length);
+                for (int tDraw : tDraws) {
+                    assertTrue(tDraw == -1 || (tDraw >= 0 && tDraw < gregtech6.items.GT6Keys.KEYS_PER_DUNGEON),
+                            "hide draw " + tDraw + " escapes {-1} ∪ [0," + gregtech6.items.GT6Keys.KEYS_PER_DUNGEON
+                                    + ") (seed " + tSeed + ") — the mKeyIds[mKeyIndex] clamp is broken");
+                }
+            }
+        }
+    }
+
+    /**
+     * The 50%-per-draw gate is live (the red item: upstream hides in ~half the draws,
+     * not all): over a wide sweep both branches occur, and the hide rate stays inside
+     * a generous sanity band around 50%.
+     */
+    @Test
+    void hideDrawsKeepTheUpstreamHalfRate() {
+        int tHides = 0, tTotal = 0;
+        boolean tSawNone = false, tSawHide = false;
+        for (long tSeed = 0; tSeed < 300; tSeed++) {
+            int[] tDraws = GT6DungeonStructure.hideDraws(new ChunkPos((int) tSeed * 17, (int) tSeed * 3 - 40), 4);
+            for (int tDraw : tDraws) {
+                tTotal++;
+                if (tDraw < 0) {
+                    tSawNone = true;
+                } else {
+                    tSawHide = true;
+                    tHides++;
+                }
+            }
+        }
+        assertTrue(tSawNone && tSawHide, "both the hide and the skip branch must occur");
+        double tRate = (double) tHides / tTotal;
+        assertTrue(tRate > 0.35 && tRate < 0.65, "the hide rate " + tRate + " drifts from the upstream 1/2");
+    }
+
+    /**
+     * The sequential-stream spread (the red item: a per-piece reseed made every
+     * dead-end of one dungeon redraw the SAME index): within one origin the draws
+     * diverge, and across the sweep every key index receives hides (no key is
+     * unfarmable just because the dungeon has several dead-ends).
+     */
+    @Test
+    void hideDrawsSpreadAcrossDeadEndsAndKeys() {
+        boolean tSawDivergence = false;
+        java.util.Set<Integer> tHiddenIndexes = new HashSet<>();
+        for (long tSeed = 0; tSeed < 200; tSeed++) {
+            int[] tDraws = GT6DungeonStructure.hideDraws(new ChunkPos((int) tSeed * 7 + 11, (int) tSeed * 11 - 77), 4);
+            Set<Integer> tDistinct = new HashSet<>();
+            for (int tDraw : tDraws) if (tDraw >= 0) tDistinct.add(tDraw);
+            if (tDistinct.size() >= 2) tSawDivergence = true;
+            tHiddenIndexes.addAll(tDistinct);
+        }
+        assertTrue(tSawDivergence, "a multi-dead-end dungeon must take DIFFERENT draws per dead-end");
+        // 200 dungeons x 4 dead-ends x 1/2 gate x 1/5 spread ≈ 80 hides per index —
+        // a fully missing index would mean the spread collapsed.
+        assertEquals(Set.of(0, 1, 2, 3, 4), tHiddenIndexes, "every key index must receive hides across the sweep");
+    }
+
+    /** The hide table is a pure function of the origin chunk (the audit face). */
+    @Test
+    void hideDrawsAreDeterministicPerOrigin() {
+        ChunkPos tOrigin = new ChunkPos(4242, -4242);
+        assertArrayEquals(GT6DungeonStructure.hideDraws(tOrigin, 6), GT6DungeonStructure.hideDraws(tOrigin, 6));
+    }
 }
