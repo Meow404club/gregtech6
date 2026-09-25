@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ChunkPos;
@@ -22,7 +23,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.CauldronBlock;
+import net.minecraft.world.level.block.BeetrootBlock;
 import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.CocoaBlock;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.DoublePlantBlock;
+import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.StemBlock;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.GrindstoneBlock;
@@ -45,6 +52,7 @@ import net.minecraft.world.level.material.FluidState;
 
 import gregtech6.block.stone.StoneVariant;
 import gregtech6.registry.GT6Books;
+import gregtech6.registry.GT6Hoppers;
 import gregtech6.registry.GT6StaticStorages;
 import gregtech6.registry.GT6Structures;
 import gregtech6.registry.GTMaterialItems;
@@ -129,7 +137,13 @@ public class GT6DungeonPiece extends StructurePiece {
         /** {@code DungeonChunkBarracks} (:38-162) — the four corner quarters. */
         BARRACKS,
         /** {@code DungeonChunkRoomWorkshop} (:43-208) — the smithy + the manual cabinet. */
-        WORKSHOP;
+        WORKSHOP,
+        /** {@code DungeonChunkRoomFarmCrop} (:35-230) — the irrigated crop quarters. */
+        FARM_CROP,
+        /** {@code DungeonChunkRoomFarmMobs} (:34-205) — the mob-drop tower, spilling over free neighbors. */
+        FARM_MOBS,
+        /** {@code DungeonChunkRoomFarmFish} (:38-83) — the fish pond. */
+        FARM_FISH;
 
         static Kind of(String aName) {
             return valueOf(aName);
@@ -163,14 +177,33 @@ public class GT6DungeonPiece extends StructurePiece {
      * (drop this field's consumer, keep mKeyIds).
      */
     private final int mKeyIndex;
+    /**
+     * The FARM_MOBS diagonal build-over mask (bit0 NW, 1 NE, 2 SW, 3 SE — layout i = the
+     * x axis, j = the z axis): the bit is set when the diagonal cell AND both adjacent
+     * ortho cells are rock-or-corridor (upstream :41-56), licensing the platform spill
+     * into the neighboring chunks. Zero for every other kind.
+     */
+    private final byte mFree;
 
     /** The worldgen ctor (non-key kinds). */
     public GT6DungeonPiece(Kind aKind, BoundingBox aBox, byte aDoors, String aPrimary, String aSecondary, int aColor, int aShaftTop) {
-        this(aKind, aBox, aDoors, aPrimary, aSecondary, aColor, aShaftTop, null, -1);
+        this(aKind, aBox, aDoors, aPrimary, aSecondary, aColor, aShaftTop, (byte) 0);
     }
 
     /** The worldgen ctor with the dungeon key roll (the STORAGE dead-ends). */
     public GT6DungeonPiece(Kind aKind, BoundingBox aBox, byte aDoors, String aPrimary, String aSecondary, int aColor, int aShaftTop, long[] aKeyIds, int aKeyIndex) {
+        this(aKind, aBox, aDoors, aPrimary, aSecondary, aColor, aShaftTop, aKeyIds, aKeyIndex, (byte) 0);
+    }
+
+    /** The worldgen ctor with the FARM_MOBS diagonal spill mask. */
+    public GT6DungeonPiece(Kind aKind, BoundingBox aBox, byte aDoors, String aPrimary, String aSecondary,
+            int aColor, int aShaftTop, byte aFree) {
+        this(aKind, aBox, aDoors, aPrimary, aSecondary, aColor, aShaftTop, null, -1, aFree);
+    }
+
+    /** The full worldgen ctor (the key roll + the spill mask). */
+    public GT6DungeonPiece(Kind aKind, BoundingBox aBox, byte aDoors, String aPrimary, String aSecondary,
+            int aColor, int aShaftTop, long[] aKeyIds, int aKeyIndex, byte aFree) {
         super(GT6Structures.DUNGEON_PIECE_TYPE.get(), 0, aBox);
         mKind = aKind;
         mDoors = aDoors;
@@ -180,6 +213,7 @@ public class GT6DungeonPiece extends StructurePiece {
         mShaftTop = aShaftTop;
         mKeyIds = aKeyIds;
         mKeyIndex = aKeyIndex;
+        mFree = aFree;
     }
 
     /** The chunk-NBT load ctor. */
@@ -193,6 +227,12 @@ public class GT6DungeonPiece extends StructurePiece {
         mShaftTop = aTag.getInt("gtShaftTop");
         mKeyIds = aTag.contains("gtKeys") ? aTag.getLongArray("gtKeys") : null;
         mKeyIndex = aTag.contains("gtKeys") ? aTag.getInt("gtKeyIndex") : -1;
+        mFree = aTag.getByte("gtFree");
+    }
+
+    /** One {@link #mFree} diagonal bit (0 NW, 1 NE, 2 SW, 3 SE). */
+    private boolean freeDiag(int aBit) {
+        return (mFree & (1 << aBit)) != 0;
     }
 
     /** The door bitfield for a layout cell. */
@@ -222,6 +262,7 @@ public class GT6DungeonPiece extends StructurePiece {
             aTag.putLongArray("gtKeys", mKeyIds);
             aTag.putInt("gtKeyIndex", mKeyIndex);
         }
+        aTag.putByte("gtFree", mFree);
     }
 
     @Override
@@ -243,6 +284,18 @@ public class GT6DungeonPiece extends StructurePiece {
             case WORKSHOP -> {
                 buildRoomShell(aLevel, aClip, aRandom);
                 buildWorkshop(aLevel, aClip, aRandom);
+            }
+            case FARM_CROP -> {
+                buildRoomShell(aLevel, aClip, aRandom);
+                buildFarmCrop(aLevel, aClip, aRandom);
+            }
+            case FARM_MOBS -> {
+                buildRoomShell(aLevel, aClip, aRandom);
+                buildFarmMobs(aLevel, aClip, aRandom);
+            }
+            case FARM_FISH -> {
+                buildRoomShell(aLevel, aClip, aRandom);
+                buildFarmFish(aLevel, aClip, aRandom);
             }
             case STORAGE -> {
                 buildRoomShell(aLevel, aClip, aRandom);
@@ -1374,6 +1427,307 @@ public class GT6DungeonPiece extends StructurePiece {
                         net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", aTablePath)),
                 Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, aFacing));
         *///?}
+    }
+
+    // ---------------------------------------------------------------- farms
+
+    /** The farm crop roster — the vanilla rows of the upstream list (:59-124); the ~50
+     * Pam/HaC rows are the mod-专属 never pool. Ages roll per placement. */
+    private static final Block[] FARM_CROPS = {Blocks.CARROTS, Blocks.POTATOES, Blocks.WHEAT, Blocks.BEETROOTS};
+
+    /** The vanilla flower roster (the upstream GT flower rolls fold). */
+    private static final Block[] FARM_FLOWERS = {
+            Blocks.DANDELION, Blocks.POPPY, Blocks.BLUE_ORCHID, Blocks.ALLIUM,
+            Blocks.AZURE_BLUET, Blocks.OXEYE_DAISY, Blocks.CORNFLOWER, Blocks.LILY_OF_THE_VALLEY};
+
+    /** The vanilla sapling roster (the upstream GT Saplings_AB/CD rolls fold). */
+    private static final Block[] FARM_SAPLINGS = {
+            Blocks.OAK_SAPLING, Blocks.SPRUCE_SAPLING, Blocks.BIRCH_SAPLING,
+            Blocks.JUNGLE_SAPLING, Blocks.ACACIA_SAPLING, Blocks.DARK_OAK_SAPLING};
+
+    /**
+     * The crop farm interior (upstream {@code DungeonChunkRoomFarmCrop} :41-226): the
+     * slab ring walls at y1/5/6, the four irrigated corner plots, the four planter
+     * columns, and the log-and-cocoa gardens on the free sides.
+     *
+     * <p>Declared folds: the Glowtus MTE omits (unported); the plant-pot MTE 32065 → the
+     * smooth shell; the GT saplings/flowers → the vanilla rosters; the Pam crop rows →
+     * the vanilla four; the melon/pumpkin quadrant rolls stems vs ripe fruit.
+     */
+    private void buildFarmCrop(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom) {
+        // the ring walls (:41-56): the corner-square borders on both axes, y1/5/6.
+        BlockState tSlab = Blocks.STONE_BRICK_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM);
+        for (int tCoord = 1; tCoord <= 14; tCoord++) if (tCoord <= 4 || tCoord >= 11) {
+            for (int tY : new int[] {1, 5, 6}) {
+                set(aLevel, aClip, tCoord, tY, 5, tSlab);
+                set(aLevel, aClip, tCoord, tY, 10, tSlab);
+                set(aLevel, aClip, 5, tY, tCoord, tSlab);
+                set(aLevel, aClip, 10, tY, tCoord, tSlab);
+            }
+        }
+
+        // the corner plots (:126-144).
+        for (int tX = 1; tX <= 14; tX++) for (int tZ = 1; tZ <= 14; tZ++) {
+            if (!((tX <= 4 || tX >= 11) && (tZ <= 4 || tZ >= 11))) continue;
+            lamp(aLevel, aClip, tX, 5, tZ);
+            if (tX >= 4 && tX <= 11 && tZ >= 4 && tZ <= 11) {
+                set(aLevel, aClip, tX, 1, tZ, Blocks.WATER.defaultBlockState());
+            } else if (tX >= 8 && tZ >= 8) {
+                if (aRandom.nextBoolean()) {
+                    set(aLevel, aClip, tX, 2, tZ, (aRandom.nextBoolean() ? Blocks.MELON_STEM : Blocks.PUMPKIN_STEM)
+                            .defaultBlockState().setValue(StemBlock.AGE, aRandom.nextInt(8)));
+                } else {
+                    set(aLevel, aClip, tX, 2, tZ, (aRandom.nextBoolean() ? Blocks.MELON : Blocks.PUMPKIN).defaultBlockState());
+                }
+            } else {
+                set(aLevel, aClip, tX, 1, tZ, Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE, 15));
+                set(aLevel, aClip, tX, 2, tZ, cropStack(aRandom));
+            }
+        }
+
+        // the four planter columns (:146-149): the pot MTE → shell + the reed/cactus columns.
+        planterColumn(aLevel, aClip, 5, 5, true);
+        planterColumn(aLevel, aClip, 5, 10, false);
+        planterColumn(aLevel, aClip, 10, 5, false);
+        planterColumn(aLevel, aClip, 10, 10, true);
+
+        // the side gardens on the FREE sides (:152-226, the mRoomLayout[+1]==0 gate).
+        for (Direction tSide : Direction.Plane.HORIZONTAL) if (!doorAt(tSide)) {
+            buildCropGarden(aLevel, aClip, aRandom, tSide);
+        }
+    }
+
+    /** One random crop with a random age (the beetroot's 4-step ladder folded per block). */
+    private BlockState cropStack(RandomSource aRandom) {
+        Block tCrop = FARM_CROPS[aRandom.nextInt(FARM_CROPS.length)];
+        if (tCrop == Blocks.BEETROOTS) return tCrop.defaultBlockState().setValue(BeetrootBlock.AGE, aRandom.nextInt(4));
+        return tCrop.defaultBlockState().setValue(CropBlock.AGE, aRandom.nextInt(8));
+    }
+
+    /** One planter column (:146-149): the shell + three sugar cane / cactus blocks. */
+    private void planterColumn(WorldGenLevel aLevel, BoundingBox aClip, int aX, int aZ, boolean aReeds) {
+        Block tPlant = aReeds ? Blocks.SUGAR_CANE : Blocks.CACTUS;
+        smooth(aLevel, aClip, aX, 1, aZ);
+        for (int tY = 2; tY <= 4; tY++) set(aLevel, aClip, aX, tY, aZ, tPlant.defaultBlockState());
+    }
+
+    /**
+     * One side garden (the EAST shape :152-169, parametric): the slab bookends, the
+     * jungle-log row with cocoa, the sapling planters, and the flower row with the one
+     * double plant.
+     */
+    private void buildCropGarden(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom, Direction aSide) {
+        boolean tPositive = aSide == Direction.EAST || aSide == Direction.SOUTH;
+        int tWall = tPositive ? 14 : 1, tGarden = tPositive ? 13 : 2;
+        for (int tV = 6; tV <= 9; tV++) {
+            // the slab bookends at v5/v10, the log row, the cocoa row.
+            if (tV == 6) {
+                sideSet(aLevel, aClip, aSide, tWall, 3, 5, Blocks.STONE_BRICK_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM));
+                sideSet(aLevel, aClip, aSide, tWall, 3, 10, Blocks.STONE_BRICK_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM));
+            }
+            sideSet(aLevel, aClip, aSide, tWall, 3, tV, Blocks.JUNGLE_LOG.defaultBlockState());
+            sideSet(aLevel, aClip, aSide, tGarden, 3, tV, Blocks.COCOA.defaultBlockState()
+                    .setValue(CocoaBlock.FACING, aSide.getOpposite()).setValue(CocoaBlock.AGE, aRandom.nextInt(3)));
+            // the planter + sapling (:160-163).
+            sideSet(aLevel, aClip, aSide, tWall, 1, tV, face(StoneVariant.SMOTH, 1, true));
+            sideSet(aLevel, aClip, aSide, tWall, 2, tV, FARM_SAPLINGS[aRandom.nextInt(FARM_SAPLINGS.length)].defaultBlockState());
+            // the planter + flower row (:165-168).
+            sideSet(aLevel, aClip, aSide, tWall, 4, tV, face(StoneVariant.SMOTH, 4, true));
+            sideSet(aLevel, aClip, aSide, tWall, 5, tV, FARM_FLOWERS[aRandom.nextInt(FARM_FLOWERS.length)].defaultBlockState());
+        }
+        // the double plant (:166/:204/:224) — lilac/sunflower/rose bush/peony by side.
+        int tVDouble = tPositive ? 7 : 8;
+        Block tDouble = switch (aSide) {
+            case EAST -> Blocks.LILAC;
+            case WEST -> Blocks.SUNFLOWER;
+            case SOUTH -> Blocks.ROSE_BUSH;
+            default -> Blocks.PEONY;
+        };
+        sideSet(aLevel, aClip, aSide, tWall, 5, tVDouble, tDouble.defaultBlockState()
+                .setValue(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER));
+        sideSet(aLevel, aClip, aSide, tWall, 6, tVDouble, tDouble.defaultBlockState()
+                .setValue(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER));
+    }
+
+    /**
+     * The fish pond (upstream {@code DungeonChunkRoomFarmFish} :44-80): the accent-brick
+     * pond dug below the floor, the water fill, and the four bonus-crystal loot crates.
+     * The HaC fish trap omits (mod-专属 never); the Glowtus omits.
+     */
+    private void buildFarmFish(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom) {
+        for (int tX = 3; tX <= 12; tX++) for (int tZ = 3; tZ <= 12; tZ++) {
+            if (tX == 3 || tX == 12 || tZ == 3 || tZ == 12) {
+                colored(aLevel, aClip, tX, 0, tZ);
+                colored(aLevel, aClip, tX, -1, tZ);
+                bricks(aLevel, aClip, tX, -2, tZ);
+            } else {
+                bricks(aLevel, aClip, tX, -3, tZ);
+                colored(aLevel, aClip, tX, -2, tZ);
+                set(aLevel, aClip, tX, 0, tZ, Blocks.WATER.defaultBlockState());
+                set(aLevel, aClip, tX, -1, tZ, Blocks.WATER.defaultBlockState());
+            }
+        }
+        // the bonus crates (:77-80), the facing toward the room center.
+        if (aRandom.nextBoolean()) createVanillaChest(aLevel, aClip, aRandom, 1, 1, 1, Direction.SOUTH, "chests/spawn_bonus_chest");
+        if (aRandom.nextBoolean()) createVanillaChest(aLevel, aClip, aRandom, 14, 1, 1, Direction.WEST, "chests/spawn_bonus_chest");
+        if (aRandom.nextBoolean()) createVanillaChest(aLevel, aClip, aRandom, 1, 1, 14, Direction.EAST, "chests/spawn_bonus_chest");
+        if (aRandom.nextBoolean()) createVanillaChest(aLevel, aClip, aRandom, 14, 1, 14, Direction.NORTH, "chests/spawn_bonus_chest");
+    }
+
+    /** The upstream platform boolean row (:149) — index 0..15, rows/cols 1..14. */
+    private static final boolean[] MOB_PLATFORM_MASK = {
+            false, true, true, false, false, false, true, true, true, true, false, false, false, true, true, false};
+
+    /**
+     * The mob-drop tower interior (upstream {@code DungeonChunkRoomFarmMobs} :59-123):
+     * the central pillar, the spill platforms (licensed by {@link #mFree}), the lamp
+     * replacements, and the drop-collection center.
+     *
+     * <p>Declared folds: the Omni-Spikes omit (unported — the kill face of the farm is
+     * the successor MTE card's seam); the item pipes 25377 → smooth shells; the mass
+     * storages 6009 → the ported drawer BE carrying the vanilla mob-drop rows; the
+     * hoppers 8010 → the ported gt6 hopper; the GT wood arrow → the vanilla arrow.
+     */
+    private void buildFarmMobs(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom) {
+        // the solid pillar (:59-60).
+        for (int tY = 1; tY <= 6; tY++) for (int tX = 6; tX <= 9; tX++) for (int tZ = 6; tZ <= 9; tZ++) {
+            bricks(aLevel, aClip, tX, tY, tZ);
+        }
+        for (int tY = 7; tY <= 8; tY++) for (int tX = 5; tX <= 10; tX++) for (int tZ = 5; tZ <= 10; tZ++) {
+            smalltiles(aLevel, aClip, tX, tY, tZ);
+        }
+
+        // the platforms (:63-71) — the in-chunk build plus the licensed spills.
+        buildMobPlatforms(aLevel, aClip, 0, 0);
+        if (freeDiag(0) || freeDiag(2)) buildMobPlatforms(aLevel, aClip, -16, 0);
+        if (freeDiag(1) || freeDiag(3)) buildMobPlatforms(aLevel, aClip, 16, 0);
+        if (freeDiag(0) || freeDiag(1)) buildMobPlatforms(aLevel, aClip, 0, -16);
+        if (freeDiag(2) || freeDiag(3)) buildMobPlatforms(aLevel, aClip, 0, 16);
+        if (freeDiag(0)) buildMobPlatforms(aLevel, aClip, -16, -16);
+        if (freeDiag(1)) buildMobPlatforms(aLevel, aClip, 16, -16);
+        if (freeDiag(2)) buildMobPlatforms(aLevel, aClip, -16, 16);
+        if (freeDiag(3)) buildMobPlatforms(aLevel, aClip, 16, 16);
+
+        // the lamp replacements (:74-85).
+        for (int[] tLamp : new int[][] {{3, 3}, {3, 6}, {3, 9}, {3, 12}, {6, 3}, {9, 3}, {6, 12}, {9, 12},
+                {12, 3}, {12, 6}, {12, 9}, {12, 12}}) {
+            lamp(aLevel, aClip, tLamp[0], 6, tLamp[1]);
+        }
+
+        // the drop-collection center (:88-123): the down-pipes → shells, the mass
+        // storages → drawer BEs with the mob drops, the restrictor seats stay stone.
+        smooth(aLevel, aClip, 8, 6, 8);
+        smooth(aLevel, aClip, 8, 5, 8);
+        smooth(aLevel, aClip, 8, 4, 8);
+        Block tDrawer = GT6StaticStorages.blockByPath("drawer_bronze");
+        for (int[] tCell : new int[][] {
+                {6, 3, 7, 0}, {6, 3, 8, 1}, {7, 3, 6, 2}, {7, 3, 9, 3}, {8, 3, 6, 4}, {8, 3, 9, 5},
+                {9, 3, 7, 6}, {9, 3, 8, 7},
+                {6, 2, 8, 8}, {7, 2, 9, 9}, {8, 2, 6, 10}, {8, 2, 9, 11}, {9, 2, 7, 12}, {9, 2, 8, 13}}) {
+            int tX = tCell[0], tY = tCell[1], tZ = tCell[2];
+            if (tDrawer != null) {
+                Item tDrop = MOB_DROPS[tCell[3]];
+                placeStorage(aLevel, aClip, tX, tY, tZ, tDrawer, Direction.from2DDataValue((tX + tZ) & 3), tBE -> {
+                    if (tBE instanceof GT6StaticStorageBaseBlockEntity tStorage) {
+                        tStorage.getInventory().setStackInSlot(0, new ItemStack(tDrop, 1 + aRandom.nextInt(8)));
+                    }
+                });
+            } else {
+                smooth(aLevel, aClip, tX, tY, tZ);
+            }
+        }
+        // the empty drawer + the restrictor pipe seats (:108-123).
+        Block tEmptyDrawer = GT6StaticStorages.blockByPath("drawer_bronze");
+        if (tEmptyDrawer != null) {
+            placeStorage(aLevel, aClip, 7, 2, 6, tEmptyDrawer, Direction.WEST, tBE -> {
+            });
+        } else {
+            smooth(aLevel, aClip, 7, 2, 6);
+        }
+        for (int[] tSeat : new int[][] {{6, 2, 7}, {7, 3, 7}, {7, 3, 8}, {7, 2, 7}, {7, 2, 8}, {8, 3, 7}, {8, 3, 8},
+                {8, 2, 7}, {8, 2, 8}}) {
+            smooth(aLevel, aClip, tSeat[0], tSeat[1], tSeat[2]); // the item pipes → shells
+        }
+        for (int[] tAnchor : new int[][] {{6, 3, 6}, {6, 3, 9}, {9, 3, 6}, {9, 3, 9},
+                {6, 2, 6}, {6, 2, 9}, {9, 2, 6}, {9, 2, 9}}) {
+            chiseled(aLevel, aClip, tAnchor[0], tAnchor[1], tAnchor[2]);
+        }
+        smooth(aLevel, aClip, 6, 2, 7); // the restrictor keep-out (the upstream :109 comment)
+    }
+
+    /** The vanilla mob-drop roster of the collection drawers (:92-122, the GT rows fold). */
+    private static final Item[] MOB_DROPS = {
+            Items.GLASS_BOTTLE, Items.SLIME_BALL, Items.STRING, Items.REDSTONE,
+            Items.SPIDER_EYE, Items.GLOWSTONE_DUST, Items.BONE, Items.STICK,
+            Items.FEATHER, Items.GUNPOWDER, Items.ROTTEN_FLESH, Items.SUGAR,
+            Items.ARROW, Items.ARROW};
+
+    /**
+     * One spill platform (upstream {@code makePlatForms} :128-203) at the LOCAL offset:
+     * the roof, the water floor, the hollow walls, the mossy spawn platforms, the hopper
+     * pit (the spikes → shells), and the corner water feeds.
+     */
+    private void buildMobPlatforms(WorldGenLevel aLevel, BoundingBox aClip, int aOX, int aOZ) {
+        for (int tX = aOX; tX <= aOX + 15; tX++) for (int tZ = aOZ; tZ <= aOZ + 15; tZ++) {
+            // the roof, two blocks thick (:131-133).
+            tiles(aLevel, aClip, tX, 43, tZ);
+            smalltiles(aLevel, aClip, tX, 42, tZ);
+            // the water floor (:134-136).
+            smalltiles(aLevel, aClip, tX, 8, tZ);
+            tiles(aLevel, aClip, tX, 7, tZ);
+            tiles(aLevel, aClip, tX, 6, tZ);
+            // the hollow walls (:137-146).
+            for (int tY = 9; tY < 42; tY++) {
+                if (tX == aOX || tX == aOX + 15 || tZ == aOZ || tZ == aOZ + 15) {
+                    bricks(aLevel, aClip, tX, tY, tZ);
+                } else {
+                    air(aLevel, aClip, tX, tY, tZ);
+                }
+            }
+        }
+
+        // the mossy spawn platforms (:149-152).
+        for (int tY = 12; tY < 42; tY++) if (tY % 3 == 0) {
+            for (int i = 1; i <= 14; i++) for (int j = 1; j <= 14; j++) {
+                if (MOB_PLATFORM_MASK[i] || MOB_PLATFORM_MASK[j]) {
+                    set(aLevel, aClip, aOX + i, tY, aOZ + j, face(StoneVariant.MCOBL, tY, true));
+                }
+            }
+        }
+
+        // the spike pit → shells (:154-159).
+        for (int tX = aOX + 7; tX <= aOX + 8; tX++) for (int tZ = aOZ + 7; tZ <= aOZ + 8; tZ++) {
+            smooth(aLevel, aClip, tX, 9, tZ);
+        }
+
+        // the hoppers (:161-165) → the ported gt6 hoppers with the upstream out-faces.
+        Block tHopper = GT6Hoppers.BLOCKS_BY_PATH.get("hopper_steel").get();
+        set(aLevel, aClip, aOX + 7, 8, aOZ + 7, tHopper.defaultBlockState().setValue(GT6Hoppers.GT6HopperBlock.FACING, Direction.EAST));
+        set(aLevel, aClip, aOX + 7, 8, aOZ + 8, tHopper.defaultBlockState().setValue(GT6Hoppers.GT6HopperBlock.FACING, Direction.EAST));
+        set(aLevel, aClip, aOX + 8, 8, aOZ + 7, tHopper.defaultBlockState().setValue(GT6Hoppers.GT6HopperBlock.FACING, Direction.SOUTH));
+        set(aLevel, aClip, aOX + 8, 8, aOZ + 8, tHopper.defaultBlockState().setValue(GT6Hoppers.GT6HopperBlock.FACING, Direction.DOWN));
+
+        // the item-pipe rows → shells (:167-179).
+        set(aLevel, aClip, aOX + 7, 7, aOZ + 7, face(StoneVariant.CHISL, 7, true));
+        set(aLevel, aClip, aOX + 7, 7, aOZ + 8, face(StoneVariant.CHISL, 7, true));
+        set(aLevel, aClip, aOX + 8, 7, aOZ + 7, face(StoneVariant.CHISL, 7, true));
+        smooth(aLevel, aClip, aOX + 8, 7, aOZ + 8);
+        if (aOX > 0) for (int tX = aOX - 7; tX <= aOX + 7; tX++) smooth(aLevel, aClip, tX, 7, aOZ + 8);
+        if (aOX < 0) for (int tX = aOX + 9; tX <= aOX + 23; tX++) smooth(aLevel, aClip, tX, 7, aOZ + 8);
+        if (aOZ > 0) for (int tZ = aOZ - 7; tZ <= aOZ + 7; tZ++) smooth(aLevel, aClip, aOX + 8, 7, tZ);
+        if (aOZ < 0) for (int tZ = aOZ + 9; tZ <= aOZ + 23; tZ++) smooth(aLevel, aClip, aOX + 8, 7, tZ);
+
+        // the mossy spill pads + the corner water feeds (:182-201).
+        int[][] tPads = {{1, 1}, {2, 1}, {3, 1}, {4, 1}, {1, 2}, {2, 2}, {3, 2}, {1, 3}, {2, 3}, {1, 4},
+                {14, 1}, {13, 1}, {12, 1}, {11, 1}, {14, 2}, {13, 2}, {12, 2}, {14, 3}, {13, 3}, {14, 4},
+                {1, 14}, {2, 14}, {3, 14}, {4, 14}, {1, 13}, {2, 13}, {3, 13}, {1, 12}, {2, 12}, {1, 11},
+                {14, 14}, {13, 14}, {12, 14}, {11, 14}, {14, 13}, {13, 13}, {12, 13}, {14, 12}, {13, 12}, {14, 11}};
+        for (int[] tPad : tPads) {
+            set(aLevel, aClip, aOX + tPad[0], 9, aOZ + tPad[1], face(StoneVariant.MCOBL, 9, true));
+        }
+        for (int[] tCorner : new int[][] {{1, 1}, {1, 14}, {14, 1}, {14, 14}}) {
+            set(aLevel, aClip, aOX + tCorner[0], 10, aOZ + tCorner[1], Blocks.WATER.defaultBlockState());
+        }
     }
 
     // ---------------------------------------------------------------- loot chests

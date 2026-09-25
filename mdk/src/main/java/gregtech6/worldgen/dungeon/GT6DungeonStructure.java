@@ -180,9 +180,14 @@ public class GT6DungeonStructure extends Structure {
                         GT6DungeonPiece.Kind tRoom = tRoomPool.isEmpty()
                                 ? GT6DungeonPiece.Kind.ROOM_EMPTY
                                 : tRoomPool.remove(tRandom.nextInt(tRoomPool.size()));
+                        // the mob-drop tower spills its platforms over the free diagonal
+                        // neighbors (upstream :41-71) — the mask + the extended piece box.
+                        byte tFree = tRoom == GT6DungeonPiece.Kind.FARM_MOBS
+                                ? mobsDiagMask(tLayout, i, j) : 0;
                         aBuilder.addPiece(new GT6DungeonPiece(
-                                tRoom, box(tX, tZ, GT6DungeonLayout.DUNGEON_Y + 8),
-                                tDoors, tPrimary, tSecondary, tColor, 0));
+                                tRoom, tRoom == GT6DungeonPiece.Kind.FARM_MOBS
+                                        ? mobBox(tX, tZ, tFree) : box(tX, tZ, GT6DungeonLayout.DUNGEON_Y + 8),
+                                tDoors, tPrimary, tSecondary, tColor, 0, tFree));
                     }
                 }
                 default -> {
@@ -202,6 +207,34 @@ public class GT6DungeonStructure extends Structure {
     }
 
     /**
+     * The FARM_MOBS diagonal build-over mask (bit0 NW, 1 NE, 2 SW, 3 SE — layout i = the
+     * x axis, j = the z axis): the bit is set when the diagonal cell AND both adjacent
+     * ortho cells are rock-or-corridor (upstream {@code DungeonChunkRoomFarmMobs} :41-56,
+     * the {@code == 0 || == -128} gates verbatim).
+     */
+    public static byte mobsDiagMask(byte[][] aLayout, int aI, int aJ) {
+        return (byte) ((freeOrCorridor(aLayout, aI - 1, aJ - 1) && freeOrCorridor(aLayout, aI - 1, aJ) && freeOrCorridor(aLayout, aI, aJ - 1) ? 1 : 0)
+                | (freeOrCorridor(aLayout, aI + 1, aJ - 1) && freeOrCorridor(aLayout, aI + 1, aJ) && freeOrCorridor(aLayout, aI, aJ - 1) ? 2 : 0)
+                | (freeOrCorridor(aLayout, aI - 1, aJ + 1) && freeOrCorridor(aLayout, aI - 1, aJ) && freeOrCorridor(aLayout, aI, aJ + 1) ? 4 : 0)
+                | (freeOrCorridor(aLayout, aI + 1, aJ + 1) && freeOrCorridor(aLayout, aI + 1, aJ) && freeOrCorridor(aLayout, aI, aJ + 1) ? 8 : 0));
+    }
+
+    /** The build-over cell test: solid rock or a corridor cell (the upstream :42 gate). */
+    private static boolean freeOrCorridor(byte[][] aLayout, int aI, int aJ) {
+        byte tCell = aLayout[aI][aJ];
+        return tCell == 0 || tCell == GT6DungeonLayout.CORRIDOR;
+    }
+
+    /** The mob-tower piece box: the base shell box extended over the licensed spills and up to the roof (LOCAL 44). */
+    private static BoundingBox mobBox(int aX, int aZ, int aFree) {
+        int tMinX = aX - (((aFree & 1) | (aFree & 4)) != 0 ? 16 : 0);
+        int tMaxX = aX + 15 + (((aFree & 2) | (aFree & 8)) != 0 ? 16 : 0);
+        int tMinZ = aZ - (((aFree & 1) | (aFree & 2)) != 0 ? 16 : 0);
+        int tMaxZ = aZ + 15 + (((aFree & 4) | (aFree & 8)) != 0 ? 16 : 0);
+        return new BoundingBox(tMinX, GT6DungeonLayout.DUNGEON_Y - 18, tMinZ, tMaxX, GT6DungeonLayout.DUNGEON_Y + 44, tMaxZ);
+    }
+
+    /**
      * The ROOMS pool (upstream {@code WorldgenDungeonGT.ROOMS} :85-94): the workshop +
      * the mining bedrock room land with the dungeon-rooms-batch card; the three Library
      * rows are the parallel dungeon-library card's seam (the two mod Libraries are the
@@ -209,7 +242,10 @@ public class GT6DungeonStructure extends Structure {
      * order. One room per dungeon at most — the upstream per-room TAG dedup.
      */
     public static final java.util.List<GT6DungeonPiece.Kind> ROOMS_POOL = java.util.List.of(
-            GT6DungeonPiece.Kind.WORKSHOP);
+            GT6DungeonPiece.Kind.WORKSHOP,
+            GT6DungeonPiece.Kind.FARM_MOBS,
+            GT6DungeonPiece.Kind.FARM_CROP,
+            GT6DungeonPiece.Kind.FARM_FISH);
 
     /** The piece box: shell y0..7 at DUNGEON_Y (20..27) + the y8 lamp band (28) + the pillar foundation down to y2 — or, for the entrance, up to the aligned surface cap (+2 for the top ring). */
     private static BoundingBox box(int aX, int aZ, int aTopY) {
