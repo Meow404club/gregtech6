@@ -2351,6 +2351,11 @@ LEGACY_ITEM_BACKFILL = {
     'item.gt6.key_silver': '银钥匙',
     'item.gt6.key_tin': '锡钥匙',
     'item.gt6.key.tooltip': '可以打开特定的锁',
+    # ---- the fluid-spring block face (task dungeon-keys restoration): the p38-issue5
+    # card entered this row into the committed TSV directly and the faithful rerun
+    # washed it out (the W2 lesson, third recurrence) — re-entered at the SOURCE so
+    # the regen and the --check ratchet stay in agreement.
+    'block.gt6.fluid_spring': '液体泉',
     # ---- the 15 written-book display names (task p35-books-written): hand rows over the
     # upstream title columns (Loader_Books.java, the single-source extractor face) — the
     # dump carries zero book-title faces (its 743 written.book.* rows are the English

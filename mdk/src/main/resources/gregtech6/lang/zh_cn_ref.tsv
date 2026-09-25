@@ -171,6 +171,7 @@ direct	block.gt6.example_chest	GT 示例箱子	hand
 direct	block.gt6.fe_battery	FE 测试电池	hand
 direct	block.gt6.fe_converter	FE 转换机	hand
 direct	block.gt6.fe_source	FE 测试源	hand
+direct	block.gt6.fluid_spring	液体泉	hand
 direct	block.gt6.fluidometer	流体体积传感器(单位: 升)	hand
 direct	block.gt6.flux_dynamo	红石通量发电机 (铅)	hand
 direct	block.gt6.flux_dynamo_t2	红石通量发电机 (殷钢)	hand

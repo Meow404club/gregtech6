@@ -304,7 +304,7 @@ public class GT6AssetCoverageGuardTest {
 			GT6Turbines.class, GT6ZpmDechargers.class, GTEnergySources.class, GTBarrels.class, GTBlockEntities.class,
 			GTMachines.class, GTMultiBlocks.class, GTWires.class, GTFluidPipes.class,
 			GTItemPipes.class, GT6Covers.class, GT6Circuits.class, GT6LubricantBucket.class,
-			GT6LaserGas.class, GT6UsbSticks.class, GT6Bumbles.class);
+			GT6LaserGas.class, GT6UsbSticks.class, GT6Bumbles.class, gregtech6.items.GT6Keys.class);
 
 	/** Channel 1 + channel 2 block ids ("ns:path"). */
 	private static Set<String> blockUniverse() throws Exception {
