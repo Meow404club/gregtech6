@@ -125,18 +125,20 @@ public final class GT6OreBlockStates extends BlockStateProvider {
 
         // ------------------------------------------------------------------
         // The fluid-spring nozzle band (task p38-issue5-fluid-spring-nozzle): the ONE
-        // worldgen-only carrier over one shared water-texture cube — the vanilla stand-in
-        // face (the upstream render is the per-instance fluid texture + the FLUID_SPRING
-        // overlay; that texture is not in this repo — the water-still stand-in is the
-        // declared debt, the spring is found by the fluid it emits). No item models (NO
-        // BlockItem is the band's whole point), no tint, no loot (noLootTable block).
+        // worldgen-only carrier over one shared water-texture cube — the BASE-carrier
+        // JSON of the ore-shared-placeholder composition (task p38-spring-texture-tint
+        // cleared the stand-in debt: the baked GTFluidSpringBakedModel emits the per-BE
+        // fluid still x tint base + the borrowed FLUID_SPRING dither overlay at render
+        // time; this JSON keeps the atlas stitching, the pre-wrap fallback face and the
+        // particle ancestry, exactly the ore placeholder's three duties). No item models
+        // (NO BlockItem is the band's whole point), no loot (noLootTable block).
         // 1 blockstate + 1 shared model.
         // ------------------------------------------------------------------
         Block tSpring = GTBlockEntities.FLUID_SPRING.get();
         ModelFile tSpringModel = tintedCubeAll("fluid_spring",
                 ResourceLocation.fromNamespaceAndPath("minecraft", "block/water_still"));
         simpleBlock(tSpring, tSpringModel);
-        LOGGER.info("GT6 fluid-spring nozzle: 1 blockstate over the 1 shared water-cube model (no item models — no BlockItem)");
+        LOGGER.info("GT6 fluid-spring nozzle: 1 blockstate over the 1 shared base-carrier model (the baked per-fluid skin rides GTFluidSpringBakedModel; no item models — no BlockItem)");
     }
 
     /**

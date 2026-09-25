@@ -327,6 +327,10 @@
     {
       "type": "minecraft:single",
       "resource": "gt6:block/logistics/display/cpu_conversion/10"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/fluid_spring"
     }
   ]
 }

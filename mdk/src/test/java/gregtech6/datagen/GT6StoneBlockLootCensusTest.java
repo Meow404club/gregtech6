@@ -71,6 +71,8 @@ class GT6StoneBlockLootCensusTest {
         // the GTStoneBlocksRegistrationTest recipe: the material system before any MT/OP
         // dereference, bootstrap for the vanilla classes the provider chain class-loads
         GTMaterialItems.initMaterials();
+        // the GTOfflineRenderTestBase recipe: the version detect must precede bootStrap — a bare-JVM first boot poisons DataFixers for every later suite in this JVM (the run-order lottery)
+        net.minecraft.SharedConstants.tryDetectVersion();
         try {
             net.minecraft.server.Bootstrap.bootStrap();
         } catch (Throwable ignored) {

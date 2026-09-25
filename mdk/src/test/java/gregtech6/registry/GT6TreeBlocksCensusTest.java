@@ -31,6 +31,8 @@ class GT6TreeBlocksCensusTest {
     static void boot() {
         // the vanilla bootstrap bracket for the ResourceKey/registry-key classes
         // (the GT6WorldgenDatagenTest posture; offline throwables ignored)
+        // the GTOfflineRenderTestBase recipe: the version detect must precede bootStrap — a bare-JVM first boot poisons DataFixers for every later suite in this JVM (the run-order lottery)
+        net.minecraft.SharedConstants.tryDetectVersion();
         try {
             net.minecraft.server.Bootstrap.bootStrap();
         } catch (Throwable ignored) {
