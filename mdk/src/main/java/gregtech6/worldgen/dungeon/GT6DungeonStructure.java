@@ -56,9 +56,9 @@ import gregtech6.registry.GTStoneBlocks;
  * room (:163 lines, the dungeon-rooms-batch card) is the barracks quarters. The
  * corridor cells split by connection count (:289-291): 4-way = the crossing hall,
  * 3-way = the alcove corridor, else the plain arm. Non-dead-end ROOM cells draw the
- * ROOMS pool draw-without-replacement (the upstream TAG dedup) — the pool grows with
- * the room-batch cards (Workshop first, Library its own card), the empty pool falls
- * back to the upstream {@code ROOM_EMPTY} face.
+ * ROOMS pool draw-without-replacement (the upstream TAG dedup) — the pool grew with
+ * the room-batch cards and the Library row (task dungeon-library-zpm, the upstream
+ * :87 seam), the exhausted pool falls back to the upstream {@code ROOM_EMPTY} face.
  *
  * <p>KJS face: the structure/structure_set JSONs are datapack-native; the codec +
  * StructureType/PieceType registration rows are the registry face (declared out of KJS
@@ -239,14 +239,19 @@ public class GT6DungeonStructure extends Structure {
 
     /**
      * The ROOMS pool (upstream {@code WorldgenDungeonGT.ROOMS} :85-94): the workshop +
-     * the mining bedrock room land with the dungeon-rooms-batch card; the three Library
-     * rows are the parallel dungeon-library card's seam (the two mod Libraries are the
-     * never pool) and append to this list there; the draw order IS the upstream list
-     * order. One room per dungeon at most — the upstream per-room TAG dedup.
+     * the mining bedrock room landed with the dungeon-rooms-batch card; the Library row
+     * (task dungeon-library-zpm) fills the upstream :87-89 seam — one
+     * {@link GT6DungeonPiece.Kind#LIBRARY} piece ({@code DungeonChunkRoomLibrary} +
+     * {@code DungeonChunkRoomLibraryNormal}, the Normal variant IS the base room + the
+     * display rows, its {@code super.generate} :39; the Thaumcraft/Mystcraft variants
+     * are the mod-专属 never pool, unported by ruling); the farm rows close the list.
+     * The draw-without-replacement IS the upstream per-room TAG dedup — one room per
+     * dungeon at most; the draw order IS the upstream list order.
      */
     public static final java.util.List<GT6DungeonPiece.Kind> ROOMS_POOL = java.util.List.of(
             GT6DungeonPiece.Kind.WORKSHOP,
             GT6DungeonPiece.Kind.MINING_BEDROCK,
+            GT6DungeonPiece.Kind.LIBRARY,
             GT6DungeonPiece.Kind.FARM_MOBS,
             GT6DungeonPiece.Kind.FARM_CROP,
             GT6DungeonPiece.Kind.FARM_FISH);
