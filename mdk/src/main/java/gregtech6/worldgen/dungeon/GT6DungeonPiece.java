@@ -91,9 +91,31 @@ public class GT6DungeonPiece extends StructurePiece {
     private final int mColor;
     /** The entrance-only aligned surface cap (WORLD Y). */
     private final int mShaftTop;
+    /**
+     * The per-dungeon key ids (WorldgenDungeonGT.java:169-171 — five descending ids,
+     * the first {@code 1 + max(draw, unique-tag)}); null on non-key pieces. Shared by
+     * every piece of one dungeon so a key hidden in one room opens a lock placed by
+     * another (the upstream DungeonData mKeyStacks pass-by-reference face).
+     */
+    private final long[] mKeyIds;
+    /**
+     * The key index this piece hides (upstream DungeonChunkRoomWorkshop.java:119-123:
+     * {@code next(keys * 2) < keys → hide key[tKeyIndex]}); -1 = this piece hides none.
+     * MIGRATION NOTE (task dungeon-keys, the declared deviation): upstream hides keys in
+     * the Workshop/Library/Barracks rooms (:119-123/:124-127/:113-116) — all batch-card
+     * domain; until those land, the storage dead-end chests are the only containers, so
+     * the hiding rides here. The rooms-batch card moves the hide draw to the real rooms
+     * (drop this field's consumer, keep mKeyIds).
+     */
+    private final int mKeyIndex;
 
-    /** The worldgen ctor. */
+    /** The worldgen ctor (non-key kinds). */
     public GT6DungeonPiece(Kind aKind, BoundingBox aBox, byte aDoors, String aPrimary, String aSecondary, int aColor, int aShaftTop) {
+        this(aKind, aBox, aDoors, aPrimary, aSecondary, aColor, aShaftTop, null, -1);
+    }
+
+    /** The worldgen ctor with the dungeon key roll (the STORAGE dead-ends). */
+    public GT6DungeonPiece(Kind aKind, BoundingBox aBox, byte aDoors, String aPrimary, String aSecondary, int aColor, int aShaftTop, long[] aKeyIds, int aKeyIndex) {
         super(GT6Structures.DUNGEON_PIECE_TYPE.get(), 0, aBox);
         mKind = aKind;
         mDoors = aDoors;
@@ -101,6 +123,8 @@ public class GT6DungeonPiece extends StructurePiece {
         mSecondaryStone = aSecondary;
         mColor = aColor;
         mShaftTop = aShaftTop;
+        mKeyIds = aKeyIds;
+        mKeyIndex = aKeyIndex;
     }
 
     /** The chunk-NBT load ctor. */
@@ -112,6 +136,8 @@ public class GT6DungeonPiece extends StructurePiece {
         mSecondaryStone = aTag.getString("gtSecondary");
         mColor = aTag.getInt("gtColor");
         mShaftTop = aTag.getInt("gtShaftTop");
+        mKeyIds = aTag.contains("gtKeys") ? aTag.getLongArray("gtKeys") : null;
+        mKeyIndex = aTag.contains("gtKeys") ? aTag.getInt("gtKeyIndex") : -1;
     }
 
     /** The door bitfield for a layout cell. */
@@ -137,6 +163,10 @@ public class GT6DungeonPiece extends StructurePiece {
         aTag.putString("gtSecondary", mSecondaryStone);
         aTag.putInt("gtColor", mColor);
         aTag.putInt("gtShaftTop", mShaftTop);
+        if (mKeyIds != null) {
+            aTag.putLongArray("gtKeys", mKeyIds);
+            aTag.putInt("gtKeyIndex", mKeyIndex);
+        }
     }
 
     @Override
@@ -772,13 +802,30 @@ public class GT6DungeonPiece extends StructurePiece {
 
     /**
      * The loot chests in the four corner nooks (upstream :272-336 crate stacks — the
-     * MTE face defers, the chests carry the DUNGEON_CHEST 对位 table).
+     * MTE face defers, the chests carry the DUNGEON_CHEST 对位 table). A key-hiding
+     * piece drops its key into the first chest it creates (the Workshop :122 slot draw:
+     * a random slot of the container) — the stack rides ON TOP of the loot-table fill
+     * (vanilla LootTable.fill only fills EMPTY slots, so the pre-placed key survives).
      */
     private void buildChests(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom) {
         int[][] tCorners = {{2, 2}, {2, 13}, {13, 2}, {13, 13}};
+        boolean tKeyPending = mKeyIndex >= 0 && mKeyIds != null;
         for (int[] tCorner : tCorners) {
             if (aRandom.nextInt(2) == 0) {
                 createDungeonChest(aLevel, aClip, aRandom, wx(tCorner[0]), wy(1), wz(tCorner[1]));
+                if (tKeyPending) {
+                    tKeyPending = false;
+                    if (aLevel.getBlockEntity(new BlockPos(wx(tCorner[0]), wy(1), wz(tCorner[1]))) instanceof net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity tChest) {
+                        // the key's MATERIAL draw — cosmetic (the lock reads the NBT id),
+                        // upstream drew it per stack in WorldgenDungeonGT.java:173; here it
+                        // rides the piece's chunk-seeded random (decision-level deterministic).
+                        // The slot draw = the Workshop :122 "s" random-slot face.
+                        tChest.setItem(aRandom.nextInt(tChest.getContainerSize()),
+                                gregtech6.items.GT6Keys.dungeonStack(
+                                        gregtech6.items.GT6Keys.KEYS.get(aRandom.nextInt(gregtech6.items.GT6Keys.KEYS.size())).get(),
+                                        mKeyIndex, mKeyIds[mKeyIndex]));
+                    }
+                }
             }
         }
     }

@@ -107,6 +107,17 @@ public class GT6DungeonStructure extends Structure {
         int tBaseX = (aContext.chunkPos().x - tSide / 2) * 16;
         int tBaseZ = (aContext.chunkPos().z - tSide / 2) * 16;
 
+        // the per-dungeon key roll (task dungeon-keys; WorldgenDungeonGT.java:169-173):
+        // five ids, the first = 1 + max(draw, unique tag), the rest DESCENDING. The
+        // upstream unique tag was System.nanoTime() (:170 — the anti-collision face);
+        // the port tags the dungeon's ORIGIN CHUNK (ChunkPos.asLong — unique per dungeon
+        // by construction, so cross-dungeon collisions stay impossible) and keeps the
+        // draw seed-deterministic. The roll rides a DERIVED random seeded from that
+        // chunk tag — ZERO draws off the structure stream, so the layout/stones/color
+        // draws above stay bit-identical (the p38-dungeon-framework scan pins keep
+        // their meaning; the p31 decision-level determinism precedent).
+        long[] tKeyIds = keyIds(aContext.chunkPos());
+
         for (int i = 1; i < tSide - 1; i++) for (int j = 1; j < tSide - 1; j++) {
             byte tCell = tLayout[i][j];
             if (tCell == 0) continue;
@@ -132,10 +143,17 @@ public class GT6DungeonStructure extends Structure {
                     if (GT6DungeonLayout.connectionCount(tLayout, i, j) == 1) {
                         // the DEAD_END pool draw — this card's pool is exactly the storage
                         // vault (Vault shell + piston doors + loot chests); the five portal
-                        // rooms are the mod-专属 never pool (unported by ruling).
+                        // rooms are the mod-专属 never pool (unported by ruling). The key
+                        // hide draw rides the shared dungeon roll (the Workshop :119
+                        // next(keys*2) face; the keys spread across the dungeon's storage
+                        // dead-ends until the rooms-batch card moves the hiding).
                         aBuilder.addPiece(new GT6DungeonPiece(
                                 GT6DungeonPiece.Kind.STORAGE, box(tX, tZ, GT6DungeonLayout.DUNGEON_Y + 8),
-                                tDoors, tPrimary, tSecondary, tColor, 0));
+                                tDoors, tPrimary, tSecondary, tColor, 0, tKeyIds,
+                                // the hide draw: the Workshop :119 next(keys*2) face — a
+                                // second derived stream so the id roll stays pure.
+                                RandomSource.create(aContext.chunkPos().toLong() + 0x6B65795FL)
+                                        .nextInt(gregtech6.items.GT6Keys.KEYS_PER_DUNGEON * 2)));
                     } else {
                         // the ROOMS pool draw — the pool ships empty this card, so the
                         // upstream ROOM_EMPTY fallback face takes the room.
@@ -153,6 +171,22 @@ public class GT6DungeonStructure extends Structure {
     /** The piece box: shell y0..7 at DUNGEON_Y (20..27) + the y8 lamp band (28) + the pillar foundation down to y2 — or, for the entrance, up to the aligned surface cap (+2 for the top ring). */
     private static BoundingBox box(int aX, int aZ, int aTopY) {
         return new BoundingBox(aX, GT6DungeonLayout.DUNGEON_Y - 18, aZ, aX + 15, aTopY, aZ + 15);
+    }
+
+    /**
+     * The per-dungeon key roll (task dungeon-keys; WorldgenDungeonGT.java:169-173):
+     * {@link gregtech6.items.GT6Keys#KEYS_PER_DUNGEON} ids, the first =
+     * {@code 1 + max(draw, origin-chunk tag)}, the rest DESCENDING (upstream
+     * {@code tKeyIDs[i] = tKeyIDs[i-1] - 1}, :171). The derived random (seeded from the
+     * chunk tag itself) keeps the structure stream untouched and the roll deterministic
+     * per dungeon position — the offline audit face.
+     */
+    public static long[] keyIds(ChunkPos aOrigin) {
+        RandomSource tKeyRandom = RandomSource.create(aOrigin.toLong() * 0x9E3779B97F4A7C15L);
+        long[] rIds = new long[gregtech6.items.GT6Keys.KEYS_PER_DUNGEON];
+        rIds[0] = 1 + Math.max(tKeyRandom.nextInt(1000000), aOrigin.toLong());
+        for (int i = 1; i < rIds.length; i++) rIds[i] = rIds[i - 1] - 1;
+        return rIds;
     }
 
     /**

@@ -25,6 +25,7 @@
  */
 package gregtech6.worldgen;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,6 +42,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 
 import gregtech6.datagen.GT6LootInjectionDatagen;
@@ -49,6 +51,7 @@ import gregtech6.datagen.GT6WorldgenDatagen;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.worldgen.dungeon.GT6DungeonLayout;
 import gregtech6.worldgen.dungeon.GT6DungeonPiece;
+import gregtech6.worldgen.dungeon.GT6DungeonStructure;
 
 class GT6DungeonStructureTest {
 
@@ -238,5 +241,41 @@ class GT6DungeonStructureTest {
                 "the datagen-side full id — same table, both faces");
         assertEquals(Registries.STRUCTURE_SET.location().toString(), "minecraft:worldgen/structure_set",
                 "the StructureSet key registry (the datagen band rides the vanilla set registry)");
+    }
+
+    // ---------------------------------------------------------------- dungeon keys (task dungeon-keys)
+
+    /**
+     * The per-dungeon key roll (WorldgenDungeonGT.java:169-171 transcription): five ids,
+     * descending, first {@code 1 + max(draw, chunk tag)} — positive, strictly decreasing,
+     * deterministic per origin chunk and distinct across dungeons (the nanoTime :170
+     * anti-collision face carried by the unique chunk tag).
+     */
+    @Test
+    void dungeonKeyRollIsDeterministicDescendingAndCollisionFree() {
+        for (long tSeed = 0; tSeed < 50; tSeed++) {
+            ChunkPos tOrigin = new ChunkPos((int) tSeed * 11 - 500, (int) tSeed * 7 + 3);
+            long[] tIds = GT6DungeonStructure.keyIds(tOrigin);
+            assertEquals(5, tIds.length, "five keys per dungeon (:161)");
+            assertTrue(tIds[0] > tOrigin.toLong(), "the first id exceeds the chunk tag (the max() floor, seed " + tSeed + ")");
+            for (int i = 1; i < tIds.length; i++) {
+                assertEquals(tIds[i - 1] - 1, tIds[i], "the descending chain (:171, seed " + tSeed + ")");
+            }
+            long[] tAgain = GT6DungeonStructure.keyIds(tOrigin);
+            assertArrayEquals(tIds, tAgain, "the roll is a pure function of the origin chunk (seed " + tSeed + ")");
+        }
+        // two dungeons never share an id set (the collision faces are disjoint)
+        long[] tA = GT6DungeonStructure.keyIds(new ChunkPos(1234, -987));
+        long[] tB = GT6DungeonStructure.keyIds(new ChunkPos(-987, 1234));
+        Set<Long> tSetA = new HashSet<>();
+        for (long tId : tA) tSetA.add(tId);
+        for (long tId : tB) assertFalse(tSetA.contains(tId), "cross-dungeon id collision");
+    }
+
+    /** The key pool constant faces (WorldgenDungeonGT.java:161/173 anchors, the IL.KEYS draw). */
+    @Test
+    void dungeonKeyConstantsArePinned() {
+        assertEquals(5, gregtech6.items.GT6Keys.KEYS_PER_DUNGEON, "the :161 boolean[5] face");
+        assertEquals(10, gregtech6.items.GT6Keys.KEYS.size(), "the IL.KEYS draw table (IL.java:516)");
     }
 }
