@@ -11,7 +11,7 @@
  * <li>the generated GLM JSONs pinned against the committed tree (the target table ids + the
  *     entry weights/stack ranges — ACCEPTANCE ①'s "逐参对 Loader_Loot 原锚");</li>
  * <li>the generated bag weight tables + the twin modifier index (the
- *     {@code GT6ToolLootModifiersDatagen} call-order contract, 21 entries).</li>
+ *     {@code GT6ToolLootModifiersDatagen} call-order contract, 22 entries).</li>
  * </ol>
  * The live face is the RCON loot_inject chain (the /loot insert rolls through the Forge
  * {@code ForgeHooks.modifyLoot} patch); this file is the static half of the double insurance.
@@ -417,7 +417,7 @@ public class GT6LootInjectionTest {
 
     /** The twin modifier index: the 22 entries in the MODIFIER_NAMES call order. */
     @Test
-    public void theTwinIndexCarriesAllTwentyOneEntriesInCallOrder() throws IOException {
+    public void theTwinIndexCarriesAllTwentyTwoEntriesInCallOrder() throws IOException {
         JsonArray tTwin = tree("data/neoforge/loot_modifiers/global_loot_modifiers.json").getAsJsonArray("entries");
         assertEquals(22, tTwin.size(), "the 12 tool rows + the 10 dungeon injections");
         assertEquals("gt6:dungeon_inject_spawn_bonus_chest", tTwin.get(12).getAsString(), "the tail-append order (task p38 head)");
