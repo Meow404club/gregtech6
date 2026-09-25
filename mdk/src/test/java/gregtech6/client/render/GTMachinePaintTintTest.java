@@ -15,6 +15,7 @@
 package gregtech6.client.render;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -144,6 +145,41 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 		return new gregtech6.block.tools.GTKitchenBlock(8000, () -> aMaterial,
 				gregtech6.block.tools.GTKitchenBlock.SHAPE_TUB, () -> null,
 				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+	}
+
+	/**
+	 * Task issue8-residual: the #8 stragglers ride the combined dispatch — the tank valve
+	 * controller through the controller gate (the row's NBT_MATERIAL rides the
+	 * {@code GTMultiBlockControllerBlock} carrier), the crucible wall through the part gate
+	 * (the dedicated {@code GTCrucibleWallBlock} material-carrier ctor), and the
+	 * material-less wall stays the null gate (the white identity).
+	 */
+	@Test
+	void tankValveAndCrucibleWallRideTheCombinedDispatch() {
+		unfreezeBlockRegistry();
+		gregtech6.registry.GT6Tanks.TankValveRow tRow = gregtech6.registry.GT6Tanks.ROWS.stream()
+				.filter(r -> r.path().equals("tank_small_tungstensteel")).findFirst().orElseThrow();
+		assertSame(gregapi.data.MT.TungstenSteel, GTMachinePaintTint.tintMaterialOf(
+						new gregtech6.block.multiblock.GTTankValveBlock(tRow, net.minecraft.world.level.block.state.BlockBehaviour.Properties.of())),
+				"the tungstensteel valve tints the row material through the controller gate");
+		assertSame(gregapi.data.MT.Steel, GTMachinePaintTint.tintMaterialOf(
+						new gregtech6.block.multiblock.GTCrucibleWallBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of(), () -> gregapi.data.MT.Steel)),
+				"the steel crucible wall tints the carried material through the part gate");
+		assertNull(GTMachinePaintTint.tintMaterialOf(
+						new gregtech6.block.multiblock.GTCrucibleWallBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of())),
+				"the material-less wall keeps the null gate (the white identity)");
+	}
+
+	/** The registry write window for direct block construction (the kitchenBlock helper shape). */
+	private static void unfreezeBlockRegistry() {
+		try {
+			java.lang.reflect.Method tUnfreeze = net.minecraft.core.registries.BuiltInRegistries.BLOCK
+					.getClass().getMethod("unfreeze");
+			tUnfreeze.setAccessible(true);
+			tUnfreeze.invoke(net.minecraft.core.registries.BuiltInRegistries.BLOCK);
+		} catch (Exception aE) {
+			throw new IllegalStateException("could not unfreeze the offline block registry", aE);
+		}
 	}
 
 	/** The BlockColor lambda's guard arms (null level/pos and a non-zero index return no tint). */

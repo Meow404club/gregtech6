@@ -37,7 +37,10 @@ public class GTTankValveBlock extends GTMultiBlockControllerBlock {
 	private final GT6Tanks.TankValveRow mRow;
 
 	public GTTankValveBlock(GT6Tanks.TankValveRow aRow, Properties aProperties) {
-		super(aProperties);
+		// the row's NBT_MATERIAL rides up to the tint seat (task issue8-residual — the
+		// upstream Loader :1195-1222 rows all carry NBT_MATERIAL; the lazy Supplier is the
+		// GTBarrels form, the controller base dereferences after MT.init)
+		super(aProperties, aRow.material());
 		mRow = aRow;
 	}
 	//? if neoforge {

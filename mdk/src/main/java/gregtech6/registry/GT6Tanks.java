@@ -200,6 +200,20 @@ public final class GT6Tanks {
 		return GT6Tanks.BLOCKS_BY_PATH.values().stream().map(RegistryObject::get).toArray(Block[]::new);
 	}
 
+	/**
+	 * The tank-valve paint-tint walker (task issue8-residual, the
+	 * {@code GT6Kitchen.paintableBlockArray} census convention): the 25 valve controllers
+	 * whose datagen models carry tintindex 0 on every face (the borrowed grayscale
+	 * woodwall/metalwall colored textures multiply the row's NBT_MATERIAL — the upstream
+	 * {@code getTexture2} colored×mRGBa form). Feeding BOTH consumption halves — the baked
+	 * world tint ({@code GTMachineTintModel}, the p32 route) and the inventory
+	 * {@code ItemColor} — the row materials resolve through the combined
+	 * {@code GTMachinePaintTint.tintMaterialOf} controller gate. Client call time only.
+	 */
+	public static Block[] paintableBlockArray() {
+		return valveBlockArray();
+	}
+
 	/** The row lookup by block — null for a foreign block (the offline fixtures). */
 	@Nullable
 	public static TankValveRow rowOf(Block aBlock) {
