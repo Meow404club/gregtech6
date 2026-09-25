@@ -34,6 +34,7 @@ import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.GrindstoneBlock;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
+import net.minecraft.world.level.block.LadderBlock;
 import net.minecraft.world.level.block.LeverBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.AttachFace;
@@ -138,6 +139,8 @@ public class GT6DungeonPiece extends StructurePiece {
         BARRACKS,
         /** {@code DungeonChunkRoomWorkshop} (:43-208) — the smithy + the manual cabinet. */
         WORKSHOP,
+        /** {@code DungeonChunkRoomMiningBedrock} (:34-139) — the pit down to the bedrock vein. */
+        MINING_BEDROCK,
         /** {@code DungeonChunkRoomFarmCrop} (:35-230) — the irrigated crop quarters. */
         FARM_CROP,
         /** {@code DungeonChunkRoomFarmMobs} (:34-205) — the mob-drop tower, spilling over free neighbors. */
@@ -284,6 +287,10 @@ public class GT6DungeonPiece extends StructurePiece {
             case WORKSHOP -> {
                 buildRoomShell(aLevel, aClip, aRandom);
                 buildWorkshop(aLevel, aClip, aRandom);
+            }
+            case MINING_BEDROCK -> {
+                buildRoomShell(aLevel, aClip, aRandom);
+                buildMiningBedrock(aLevel, aClip, aRandom);
             }
             case FARM_CROP -> {
                 buildRoomShell(aLevel, aClip, aRandom);
@@ -1727,6 +1734,118 @@ public class GT6DungeonPiece extends StructurePiece {
         }
         for (int[] tCorner : new int[][] {{1, 1}, {1, 14}, {14, 1}, {14, 14}}) {
             set(aLevel, aClip, aOX + tCorner[0], 10, aOZ + tCorner[1], Blocks.WATER.defaultBlockState());
+        }
+    }
+
+    // ---------------------------------------------------------------- mining bedrock
+
+    /** The bedrock-vein material roster (upstream :39 verbatim). */
+    private static final OreDictMaterial[] MINING_MATERIALS = {
+            MT.Redstone, MT.S, MT.Fe2O3, MT.MnO2, MT.Apatite,
+            MT.OREMATS.Molybdenite, MT.OREMATS.Bauxite, MT.OREMATS.Sphalerite,
+            MT.OREMATS.Tetrahedrite, MT.OREMATS.Cassiterite, MT.OREMATS.Garnierite, MT.OREMATS.Galena};
+
+    /**
+     * The mining pit (upstream {@code DungeonChunkRoomMiningBedrock} :44-135): the
+     * 16x16 shaft dug 15 blocks below the floor, the ladders and bars, the pit bottom
+     * with the dynamite charges, and the raw-ore piles of the rolled vein material.
+     *
+     * <p>Declared deviation — the forced vein carve (upstream :40 {@code
+     * WorldgenOresBedrock.generateVein}) folds: the p31 bedrock-ore Feature already rolls
+     * veins per chunk independently (this chunk included), and the forcing call needs the
+     * package-private {@code GT6BedrockOreGenerator.BedrockSink}, outside this card's
+     * files scope. The raw-ore piles carry the mining face; the upstream vein-failure
+     * re-draw (return F -> another room) folds with the piece-architecture dispatch.
+     *
+     * <p>Declared MTE folds: the scaffolds 8408/8410 → the vanilla ladder; the bars
+     * Bars_Brass/Steel → the vanilla iron bars; the dynamites 32104/32713/32712 → the
+     * vanilla TNT; the raw-ore piles {@code BlocksGT.blockRaw} → the material blockRaw.
+     */
+    private void buildMiningBedrock(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom) {
+        OreDictMaterial tMat = MINING_MATERIALS[aRandom.nextInt(MINING_MATERIALS.length)];
+
+        // the shaft (:44-68): LOCAL y -15..-1 = world 5..19; the border stays brick and
+        // the four wall ladders sit only on the CONNECTED sides (the doorAt gates).
+        for (int tY = -15; tY < 0; tY++) for (int tX = 0; tX <= 15; tX++) for (int tZ = 0; tZ <= 15; tZ++) {
+            boolean tBorder = tX == 0 || tX == 15 || tZ == 0 || tZ == 15;
+            BlockState tLadder = null;
+            if (tZ == 7 && tX == 2 && doorAt(Direction.WEST)) tLadder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.EAST);
+            else if (tZ == 7 && tX == 13 && doorAt(Direction.EAST)) tLadder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.WEST);
+            else if (tX == 7 && tZ == 2 && doorAt(Direction.NORTH)) tLadder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.SOUTH);
+            else if (tX == 7 && tZ == 13 && doorAt(Direction.SOUTH)) tLadder = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.NORTH);
+            if (tBorder) {
+                bricks(aLevel, aClip, tX, tY, tZ);
+            } else if (tLadder != null) {
+                set(aLevel, aClip, tX, tY, tZ, tLadder);
+            } else if (tY == -1 && (tX == 2 || tX == 13 || tZ == 2 || tZ == 13)) {
+                bricks(aLevel, aClip, tX, tY, tZ);
+            } else {
+                air(aLevel, aClip, tX, tY, tZ);
+            }
+        }
+
+        // the floor ring (:70-94): the bars fence + the ladder tops + the corner lamps.
+        for (int tX = 2; tX <= 13; tX++) for (int tZ = 2; tZ <= 13; tZ++) {
+            boolean tCorner = (tX == 2 || tX == 13) && (tZ == 2 || tZ == 13);
+            if (tX == 2 || tX == 13 || tZ == 2 || tZ == 13) {
+                if (tCorner) {
+                    set(aLevel, aClip, tX, -1, tZ, face(StoneVariant.RSTBR, -1, true));
+                    set(aLevel, aClip, tX, 0, tZ, Blocks.REDSTONE_LAMP.defaultBlockState().setValue(RedstoneLampBlock.LIT, Boolean.TRUE));
+                } else {
+                    set(aLevel, aClip, tX, 1, tZ, Blocks.IRON_BARS.defaultBlockState());
+                    Direction tFace = tX == 2 ? Direction.EAST : tX == 13 ? Direction.WEST
+                            : tZ == 2 ? Direction.SOUTH : Direction.NORTH;
+                    set(aLevel, aClip, tX, 0, tZ, Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, tFace));
+                }
+            } else {
+                air(aLevel, aClip, tX, 0, tZ);
+            }
+        }
+
+        // the crossing walkways over the pit (:96-110), only between OPPOSITE doors.
+        if (doorAt(Direction.EAST) && doorAt(Direction.WEST)) {
+            air(aLevel, aClip, 2, 1, 8);
+            air(aLevel, aClip, 13, 1, 8);
+            for (int tX = 3; tX <= 12; tX++) {
+                set(aLevel, aClip, tX, 0, 8, Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.EAST));
+                set(aLevel, aClip, tX, 1, 8, Blocks.IRON_BARS.defaultBlockState());
+            }
+        } else if (doorAt(Direction.SOUTH) && doorAt(Direction.NORTH)) {
+            air(aLevel, aClip, 8, 1, 2);
+            air(aLevel, aClip, 8, 1, 13);
+            for (int tZ = 3; tZ <= 12; tZ++) {
+                set(aLevel, aClip, 8, 0, tZ, Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.NORTH));
+                set(aLevel, aClip, 8, 1, tZ, Blocks.IRON_BARS.defaultBlockState());
+            }
+        }
+
+        // the pit bottom (:112-125): the widened openings + the dynamite charges.
+        for (int tX = 5; tX <= 10; tX++) for (int tZ = 5; tZ <= 10; tZ++) {
+            if ((tX != 5 && tX != 10) || (tZ != 5 && tZ != 10)) air(aLevel, aClip, tX, -16, tZ);
+        }
+        for (int tX = 6; tX <= 9; tX++) for (int tZ = 6; tZ <= 9; tZ++) air(aLevel, aClip, tX, -17, tZ);
+        set(aLevel, aClip, 6, -17, 6, Blocks.TNT.defaultBlockState());
+        set(aLevel, aClip, 6, -17, 9, Blocks.TNT.defaultBlockState());
+        set(aLevel, aClip, 9, -17, 6, Blocks.TNT.defaultBlockState());
+        set(aLevel, aClip, 9, -17, 9, Blocks.TNT.defaultBlockState());
+
+        // the raw-ore piles (:127-135): the four corner quadrants, the 3/4-2/3-1/2 stack.
+        Block tRaw = materialBlock(OP.blockRaw, tMat);
+        int[] tStart = {1, 11}, tEnd = {4, 14};
+        for (int a = 0; a < 2; a++) for (int b = 0; b < 2; b++) {
+            for (int i = tStart[a]; i <= tEnd[a]; i++) for (int j = tStart[b]; j <= tEnd[b]; j++) {
+                if (aRandom.nextInt(4) >= 3) continue;
+                if (tRaw != null) set(aLevel, aClip, i, -15, j, tRaw.defaultBlockState());
+                else smooth(aLevel, aClip, i, -15, j);
+                if (aRandom.nextInt(3) >= 2) {
+                    if (tRaw != null) set(aLevel, aClip, i, -14, j, tRaw.defaultBlockState());
+                    else smooth(aLevel, aClip, i, -14, j);
+                    if (aRandom.nextBoolean()) {
+                        if (tRaw != null) set(aLevel, aClip, i, -13, j, tRaw.defaultBlockState());
+                        else smooth(aLevel, aClip, i, -13, j);
+                    }
+                }
+            }
         }
     }
 

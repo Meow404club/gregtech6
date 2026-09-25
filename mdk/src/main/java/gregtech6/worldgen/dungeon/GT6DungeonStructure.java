@@ -243,6 +243,7 @@ public class GT6DungeonStructure extends Structure {
      */
     public static final java.util.List<GT6DungeonPiece.Kind> ROOMS_POOL = java.util.List.of(
             GT6DungeonPiece.Kind.WORKSHOP,
+            GT6DungeonPiece.Kind.MINING_BEDROCK,
             GT6DungeonPiece.Kind.FARM_MOBS,
             GT6DungeonPiece.Kind.FARM_CROP,
             GT6DungeonPiece.Kind.FARM_FISH);
