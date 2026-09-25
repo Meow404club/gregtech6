@@ -31,17 +31,18 @@
  * <li>{@code GTFluids.BLOCKS} — every entry is a {@code LiquidBlock}; fluid-rendered
  *     blocks have no blockstate JSON by design (the fluid client renders them); the
  *     spring-lake worldgen bodies ride the same face.</li>
- * <li>{@link #KNOWN_GAP_BLOCK_ASSETS} / {@link #KNOWN_GAP_ITEM_ASSETS} — the live gaps
- *     the census booked (the C1 card fixes them: the dynamo datagen segments + the
- *     clay_bowl item model). They are subtracted from the existence walks AND pinned
- *     still-missing by {@link #declaredKnownGapsAreStillMissing()}, so the waiver cannot
- *     outlive the gap: the moment C1 lands the asset, that pin goes red and forces the
- *     list to shrink in the same change. No silent waivers.</li>
- * <li>{@link #GUARD_CAUGHT_UNBOOKED_ITEM_ASSETS} — six further missing item models this
- *     guard itself caught on its first walk (zpm, faucet_ceramic_raw, plow,
- *     branch_cutter, sense, hand_drill), beyond the census list and not yet booked on a
- *     fix card; the coordinator was notified. Same still-missing pin — the entry dies the
- *     moment its model lands.</li>
+ * <li>{@link #KNOWN_GAP_BLOCK_ASSETS} / {@link #KNOWN_GAP_ITEM_ASSETS} — the booking
+ *     point for live gaps: an entry is added only with a booked fix card, subtracted from
+ *     the existence walks AND pinned still-missing by
+ *     {@link #declaredKnownGapsAreStillMissing()}, so the waiver cannot outlive the gap:
+ *     the moment the fix card lands the asset, that pin goes red and forces the list to
+ *     shrink in the same change. No silent waivers. Currently EMPTY — the C1 card
+ *     (p38-c1-dynamo-bowl-models) landed the dynamo blockstates/models and the clay_bowl
+ *     item model, healing the census bookings.</li>
+ * <li>{@link #GUARD_CAUGHT_UNBOOKED_ITEM_ASSETS} — the booking point for models this
+ *     guard's own walks catch beyond the census list. The six first-walk catches (zpm,
+ *     faucet_ceramic_raw, plow, branch_cutter, sense, hand_drill) were healed by the C1
+ *     append. Same still-missing pin — the entry dies the moment its model lands.</li>
  * </ul>
  *
  * <p>The container-class list is hand-maintained like the CreativeTabJoinCensusTest
@@ -169,45 +170,32 @@ public class GT6AssetCoverageGuardTest {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The known blockstate gaps the p38 census booked, waiting on the C1 fix card (the
-	 * dynamo datagen segments). Each entry is asserted STILL MISSING by
-	 * {@link #declaredKnownGapsAreStillMissing()} — when C1 lands the asset the pin goes
-	 * red and the entry must be deleted in the same change.
+	 * The known blockstate gaps. Each entry is asserted STILL MISSING by
+	 * {@link #declaredKnownGapsAreStillMissing()} — when the fix card lands the asset the
+	 * pin goes red and the entry must be deleted in the same change. Currently EMPTY:
+	 * the C1 card (p38-c1-dynamo-bowl-models) landed the ten dynamo blockstates the census
+	 * booked and the entries were retired at that merge. Book new gaps back into this
+	 * set, never waive silently.
 	 */
-	private static final Set<String> KNOWN_GAP_BLOCK_ASSETS = Set.of(
-			// GT6ElectricDynamos ROWS T1..T5 — addElectricDynamoUlv covers only the ULV row
-			"gt6:electric_dynamo", "gt6:electric_dynamo_t2", "gt6:electric_dynamo_t3",
-			"gt6:electric_dynamo_t4", "gt6:electric_dynamo_t5",
-			// GT6FluxDynamos ROWS T1..T5 — zero blockstate segments
-			"gt6:flux_dynamo", "gt6:flux_dynamo_t2", "gt6:flux_dynamo_t3",
-			"gt6:flux_dynamo_t4", "gt6:flux_dynamo_t5");
+	private static final Set<String> KNOWN_GAP_BLOCK_ASSETS = Set.of();
 
 	/**
-	 * The known item-model gaps BOOKED on the C1 fix card (the dynamo BlockItems share the
-	 * block rows above; the clay_bowl item is the census P1 third entry). Same still-missing
-	 * pin as the blockstate list.
+	 * The known item-model gaps. Same still-missing pin as the blockstate list. Currently
+	 * EMPTY: the C1 card landed the ten dynamo BlockItem models and the clay_bowl item
+	 * model (the census P1 third entry), retiring every entry at that merge.
 	 */
-	private static final Set<String> KNOWN_GAP_ITEM_ASSETS = Set.of(
-			"gt6:clay_bowl",
-			"gt6:electric_dynamo", "gt6:electric_dynamo_t2", "gt6:electric_dynamo_t3",
-			"gt6:electric_dynamo_t4", "gt6:electric_dynamo_t5",
-			"gt6:flux_dynamo", "gt6:flux_dynamo_t2", "gt6:flux_dynamo_t3",
-			"gt6:flux_dynamo_t4", "gt6:flux_dynamo_t5");
+	private static final Set<String> KNOWN_GAP_ITEM_ASSETS = Set.of();
 
 	/**
 	 * The gaps THIS GUARD caught on its first walk (2026-09-24, forge leg) — BEYOND the
 	 * census list, each a plain registered Item with zero generated model (held = magenta):
-	 * the ZPM battery row (GT6Batteries.ZPM_ITEM, the model walk skips the special row),
-	 * the raw ceramic faucet (GT6Molds.FAUCET_CERAMIC_RAW, the mold model section covers
-	 * only the finished pair), and the four field tools (GT6Tools PLOW/BRANCH_CUTTER/SENSE/
-	 * HAND_DRILL, the p29-w5-t4 wave landed behaviour without model segments). NO fix card
-	 * booked yet — the coordinator was notified at guard-landing time; a C1-follow-up
-	 * (or C1 absorption) must delete each entry in the change that lands its model. The
-	 * still-missing pin below keeps every entry traceable either way.
+	 * the ZPM battery row (GT6Batteries.ZPM_ITEM), the raw ceramic faucet
+	 * (GT6Molds.FAUCET_CERAMIC_RAW), and the four field tools (GT6Tools PLOW/BRANCH_CUTTER/
+	 * SENSE/HAND_DRILL). All six were fixed by the C1 append (p38-c1-dynamo-bowl-models)
+	 * and the entries retired at that merge — the set stays as the booking point for the
+	 * next unbooked catch.
 	 */
-	private static final Set<String> GUARD_CAUGHT_UNBOOKED_ITEM_ASSETS = Set.of(
-			"gt6:zpm", "gt6:faucet_ceramic_raw",
-			"gt6:plow", "gt6:branch_cutter", "gt6:sense", "gt6:hand_drill");
+	private static final Set<String> GUARD_CAUGHT_UNBOOKED_ITEM_ASSETS = Set.of();
 
 	// -------------------------------------------------------------------------
 	// the tests
