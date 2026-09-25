@@ -57,6 +57,8 @@ class GT6StrataLensTest {
         // the material system before GTStoneBlocks.STONES dereferences its suppliers; the
         // vanilla bootstrap bracket for the codec/JsonOps classes (offline throwables ignored)
         GTMaterialItems.initMaterials();
+        // the GTOfflineRenderTestBase recipe: the version detect must precede bootStrap — a bare-JVM first boot poisons DataFixers for every later suite in this JVM (the run-order lottery)
+        net.minecraft.SharedConstants.tryDetectVersion();
         try {
             net.minecraft.server.Bootstrap.bootStrap();
         } catch (Throwable ignored) {

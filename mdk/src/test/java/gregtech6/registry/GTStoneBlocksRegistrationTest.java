@@ -84,6 +84,8 @@ class GTStoneBlocksRegistrationTest {
         // the composed-name face builds Component.translatable contents (task
         // p20-i18n-compose-rows), which initializes vanilla registry classes — bootstrap
         // first, the GT6LangParityTest.boot posture (offline-expected throwables ignored)
+        // the GTOfflineRenderTestBase recipe: the version detect must precede bootStrap — a bare-JVM first boot poisons DataFixers for every later suite in this JVM (the run-order lottery)
+        net.minecraft.SharedConstants.tryDetectVersion();
         try {
             net.minecraft.server.Bootstrap.bootStrap();
         } catch (Throwable ignored) {

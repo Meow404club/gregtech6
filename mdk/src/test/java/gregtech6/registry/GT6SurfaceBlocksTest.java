@@ -34,6 +34,8 @@ class GT6SurfaceBlocksTest {
         // the vanilla bootstrap bracket for the ForgeRegistries/ResourceKey classes the
         // GT6SurfaceBlocks clinit touches (the GT6WorldgenDatagenTest posture, offline throwables ignored)
         GTMaterialItems.initMaterials();
+        // the GTOfflineRenderTestBase recipe: the version detect must precede bootStrap — a bare-JVM first boot poisons DataFixers for every later suite in this JVM (the run-order lottery)
+        net.minecraft.SharedConstants.tryDetectVersion();
         try {
             net.minecraft.server.Bootstrap.bootStrap();
         } catch (Throwable ignored) {

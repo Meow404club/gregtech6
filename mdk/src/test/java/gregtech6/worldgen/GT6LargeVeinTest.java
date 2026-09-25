@@ -65,6 +65,8 @@ class GT6LargeVeinTest {
         // the material system before MT dereferences; the vanilla bootstrap bracket for the
         // codec/JsonOps classes (the GT6WorldgenDatagenTest posture, offline throwables ignored)
         GTMaterialItems.initMaterials();
+        // the GTOfflineRenderTestBase recipe: the version detect must precede bootStrap — a bare-JVM first boot poisons DataFixers for every later suite in this JVM (the run-order lottery)
+        net.minecraft.SharedConstants.tryDetectVersion();
         try {
             net.minecraft.server.Bootstrap.bootStrap();
         } catch (Throwable ignored) {

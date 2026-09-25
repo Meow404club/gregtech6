@@ -78,6 +78,8 @@ class GT6OreBlocksRegistrationTest {
     @BeforeAll
     static void initMaterialSystem() {
         GTMaterialItems.initMaterials(); // MT/OP must exist before any field dereference
+        // the GTOfflineRenderTestBase recipe: the version detect must precede bootStrap — a bare-JVM first boot poisons DataFixers for every later suite in this JVM (the run-order lottery)
+        net.minecraft.SharedConstants.tryDetectVersion();
         try {
             net.minecraft.server.Bootstrap.bootStrap();
         } catch (Throwable ignored) {
