@@ -106,7 +106,7 @@ public class GT6MoldMaskTest extends GTOfflineTestBase {
 		BlockEntityType<TileEntityMold>[] tTypes = (BlockEntityType<TileEntityMold>[]) new BlockEntityType<?>[1];
 		tTypes[0] = BlockEntityType.Builder.of((aPos, aState) -> new TileEntityMold(tTypes[0], aPos, aState), Blocks.STONE).build(null);
 		sMoldType = tTypes[0];
-		PLATE_GEM_GLASS = probe("p26mold_probe_plategem_glass", () -> new MaterialPrefixItem(new Item.Properties(), OP.plateGem, MT.Glass));
+		PLATE_GEM_GLASS = probe("mold_probe_plategem_glass", () -> new MaterialPrefixItem(new Item.Properties(), OP.plateGem, MT.Glass));
 		GT6RecipeMapCrucible.sMatResolver = r -> {
 			if (r.prefix() == OP.plateGem && r.material() == MT.Glass) {
 				return r.count() < 1 ? null : new ItemStack(PLATE_GEM_GLASS, (int)Math.min(64, r.count()));

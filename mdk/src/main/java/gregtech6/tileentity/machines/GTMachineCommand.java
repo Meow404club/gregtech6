@@ -273,9 +273,9 @@ public final class GTMachineCommand {
 		.then(machine("steamcracker_t3", GTMachines.STEAM_CRACKER_BLOCKS_BY_PATH.get("steamcracker_t3"), () -> net.minecraft.world.item.Items.COAL))
 		.then(machine("steamcracker_t4", GTMachines.STEAM_CRACKER_BLOCKS_BY_PATH.get("steamcracker_t4"), () -> net.minecraft.world.item.Items.COAL))
 		// task p33-cracker-machines spec ②: the catalytic feed flips to the TRUE row's item
-		// input gt6:dust_platinum (Loader_Recipes_Chem.java:373-376 — the p29 leftover input
-		// gap; the W2 charcoal literal found no live row, the p29_w2_catalytic_cracker merge
-		// workaround retires with the literal). Steam keeps its fluid-only row (no item).
+		// input gt6:dust_platinum (Loader_Recipes_Chem.java:373-376 — the leftover input
+		// gap from the first cracker pass; the W2 charcoal literal found no live row and its
+		// merge workaround retires with the literal). Steam keeps its fluid-only row (no item).
 		.then(machine("catalyticcracker", GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get("catalyticcracker"), GTMachineCommand::firstPlatinumDust))
 		.then(machine("catalyticcracker_t2", GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get("catalyticcracker_t2"), GTMachineCommand::firstPlatinumDust))
 		.then(machine("catalyticcracker_t3", GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get("catalyticcracker_t3"), GTMachineCommand::firstPlatinumDust))
@@ -667,7 +667,7 @@ public final class GTMachineCommand {
 	 * first poured row of the SHARED RM.Mixer map (the firstPouredWiremillStick shape) —
 	 * a C-Foam rock dust of the GT6RecipesMixer pour. Both the kinetic Mixer and the
 	 * Electric Mixer literals share it (ONE map); the chains fill the full multi-input
-	 * set through the inventory data merge (the p26_w1_press two-slot merge shape).
+	 * set through the inventory data merge (the established two-slot merge shape).
 	 */
 	private static net.minecraft.world.item.Item firstPouredMixerInput() {
 		for (gregtech6.recipes.Recipe tRecipe : gregtech6.recipes.GT6RecipeMaps.MIXER.mRecipeList) {

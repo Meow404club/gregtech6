@@ -64,13 +64,13 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 	@BeforeAll
 	static void boot() {
 		GTMaterialItemsBoot.boot(); // the shared offline material universe + registry probes
-		DUST_IRON = GTMaterialItemsBoot.probePrefix("p26cruc_probe_dust_iron", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, MT.Iron));
-		INGOT_IRON = GTMaterialItemsBoot.probePrefix("p26cruc_probe_ingot_iron", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, MT.Iron));
-		DUST_AU = GTMaterialItemsBoot.probePrefix("p26cruc_probe_dust_au", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, MT.Au));
-		DUST_AG = GTMaterialItemsBoot.probePrefix("p26cruc_probe_dust_ag", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, MT.Ag));
-		INGOT_AU = GTMaterialItemsBoot.probePrefix("p26cruc_probe_ingot_au", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, MT.Au));
-		INGOT_AG = GTMaterialItemsBoot.probePrefix("p26cruc_probe_ingot_ag", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, MT.Ag));
-		INGOT_ELECTRUM = GTMaterialItemsBoot.probePrefix("p26cruc_probe_ingot_electrum", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, MT.Electrum));
+		DUST_IRON = GTMaterialItemsBoot.probePrefix("crucible_probe_dust_iron", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, MT.Iron));
+		INGOT_IRON = GTMaterialItemsBoot.probePrefix("crucible_probe_ingot_iron", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, MT.Iron));
+		DUST_AU = GTMaterialItemsBoot.probePrefix("crucible_probe_dust_au", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, MT.Au));
+		DUST_AG = GTMaterialItemsBoot.probePrefix("crucible_probe_dust_ag", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, MT.Ag));
+		INGOT_AU = GTMaterialItemsBoot.probePrefix("crucible_probe_ingot_au", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, MT.Au));
+		INGOT_AG = GTMaterialItemsBoot.probePrefix("crucible_probe_ingot_ag", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, MT.Ag));
+		INGOT_ELECTRUM = GTMaterialItemsBoot.probePrefix("crucible_probe_ingot_electrum", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, MT.Electrum));
 		GT6RecipeMaps.init();
 		// the mat() seam rides the probe items (the intrusive-holder lesson: the live
 		// GTMaterialItems index is empty offline); restored in @AfterAll

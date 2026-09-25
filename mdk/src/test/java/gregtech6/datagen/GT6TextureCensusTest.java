@@ -65,18 +65,18 @@ class GT6TextureCensusTest {
     private static final int PINNED_COMBO_TOTAL = 2785;
 
     /**
-     * The P31 machine-wave borrowed families (task p32-hygiene-lang-assets), static-tree
+     * The machine-wave borrowed families (task p32-hygiene-lang-assets), static-tree
      * texture path prefixes under {@link #TEXTURES_PREFIX}: the three controller colored
      * faces (fusion/implosion/graagg, the attribution backfill) plus the massfab small+
      * large families and the retriever cover pair (already ledgered by their own cards).
      */
-    private static final List<String> P31_BORROWED_FAMILY_PREFIXES = List.of(
+    private static final List<String> BORROWED_FAMILY_PREFIXES = List.of(
         "block/fusionreactor_colored_", "block/implosioncompressor_colored_",
         "block/vondagraagg_colored_", "block/massfab_colored_", "block/massfab_overlay_",
         "block/largemassfab_colored_", "block/retrieveritem/");
 
     /** The wave pin: 50 borrowed controller/cover PNGs + 20 port-generated comb icons. */
-    private static final int PINNED_P31_WAVE_TOTAL = 70;
+    private static final int PINNED_WAVE_TOTAL = 70;
 
     /**
      * The pinned distinct iconset count over the same table (walked 2026-09-06: 40 sets
@@ -271,7 +271,7 @@ class GT6TextureCensusTest {
      * AND land its README section in the same PR.
      */
     @Test
-    void p31NewTextureWaveCarriesFullAttribution() throws Exception {
+    void newTextureWaveCarriesFullAttribution() throws Exception {
         String readme = Files.readString(mdkRoot().resolve(STATIC_TREE).resolve("assets/README.md"),
             StandardCharsets.UTF_8);
         List<String> borrowed = new ArrayList<>();
@@ -280,12 +280,12 @@ class GT6TextureCensusTest {
             String sub = rel.substring(TEXTURES_PREFIX.length() + 1);
             if (sub.startsWith("item/comb/")) {
                 combs.add(rel);
-            } else if (P31_BORROWED_FAMILY_PREFIXES.stream().anyMatch(sub::startsWith)) {
+            } else if (BORROWED_FAMILY_PREFIXES.stream().anyMatch(sub::startsWith)) {
                 borrowed.add(rel);
             }
         }
-        assertEquals(PINNED_P31_WAVE_TOTAL, borrowed.size() + combs.size(),
-            "the P31 texture wave drifted (families added/removed) — extend the pins and the README section together");
+        assertEquals(PINNED_WAVE_TOTAL, borrowed.size() + combs.size(),
+            "the borrowed texture wave drifted (families added/removed) — extend the pins and the README section together");
         MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
         List<String> violations = new ArrayList<>();
         for (String rel : borrowed) {

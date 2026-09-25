@@ -76,7 +76,7 @@ public class TileEntityBasicMachineFluidFaceTest extends TileEntityBasicMachineO
 		// the RecipeMap 15-param form (RecipeMap.java:73): 1 item-in slot (the findRecipe
 		// non-empty aInputs contract, RecipeMap.java:138), 1 in/1 out fluid, both minimal 1
 		sFluidMap = new RecipeMap(new HashSet<>(),
-				"gt.recipe.test.p14fluidface", "P14 Fluid Face", null,
+				"gt.recipe.test.basicmachine_fluidface", "BasicMachine Fluid Face", null,
 				0, 1,
 				"gt6:textures/gui/machines/shredder",
 				/*IN-OUT-MIN-ITEM=*/ 1, 0, 0,
