@@ -9,7 +9,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -92,7 +95,9 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * damage (:258 {@code applyHeatDamage min(10, mRate/10)}) and the ×16 burning hardness
  * (:281) — all pool-card content, none observable without entities/tools; the client
  * burning particles (:173, the AV pool); the cover/tool/shovel faces (:177/:220-236,
- * the cover and tool pools); {@code ITileEntityRunningActively} (:277-279 — the state
+ * MINUS the TOOL_igniter one — since issue #11 the igniter face lives at
+ * {@link #igniteWithFlint}/{@link #igniteNow}, the block.use-level convergence of the
+ * upstream GT_Proxy.java:269-287 intercept; extinguisher/plunger/shovel stay pooled); {@code ITileEntityRunningActively} (:277-279 — the state
  * surfaces ride {@code /gt6burner stat}); and the 0.875-height collision box (:259 —
  * the single-cube port block shape is the family-wide declared deviation, the
  * crank/axle precedent). NO GUI by census — the upstream tooltip
@@ -195,6 +200,73 @@ public abstract class GTGeneratorSolidBlockEntity extends TileEntityBase03TicksA
 			if (rng(200) == 0 && frontIsFlaming()) mBurning = true;
 		}
 		if (mEnergy < 0) mEnergy = 0; // :171
+		applyVisualState(); // issue #11 — the LIT blockstate follows every mBurning flip within the tick
+	}
+
+	// ---------------------------------------------------------------------------
+	// the fast ignite (issue #11 — the GT_Proxy.java:269-287 intercept + the
+	// :226/:180 TOOL_igniter bodies, re-levelled onto block.use)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The pure strike roll (the offline seam): the upstream proxy chance gate
+	 * (GT_Proxy.java:270 {@code RNGSUS.nextInt(100) >= mFlintChance} inverted, the
+	 * {@code FlintAndSteelChance = 30} default — the value the
+	 * {@link gregtech6.items.tools.GTFlintAndTinderItem#IGNITE_CHANCE_PERCENT}
+	 * constant carries). A roll strictly under the chance percent ignites.
+	 */
+	public static boolean igniteRoll(int aRoll) {
+		return aRoll < gregtech6.items.tools.GTFlintAndTinderItem.IGNITE_CHANCE_PERCENT;
+	}
+
+	/**
+	 * The :226/:180 ignite body — {@code mBurning = T} plus the auto-re-ignite window
+	 * on the Liquid-family boxes ({@code mCooldown = 100}, MultiTileEntityGeneratorLiquid
+	 * .java:180; the Gas class inherits it there exactly like upstream), then the LIT
+	 * sync. The {@code /gt6burner ignite} arm drives the same pair — this method is the
+	 * one body both faces consume.
+	 */
+	public void igniteNow() {
+		mBurning = true; // Solid :226 / FluidBed :202 (the Liquid/Gas classes inherit)
+		if (this instanceof GTGeneratorLiquidBlockEntity tLiquid) tLiquid.mCooldown = 100; // Liquid :180
+		applyVisualState();
+	}
+
+	/**
+	 * The flint strike the FRONT-face use branch drives (the upstream GT_Proxy
+	 * :269-287 intercept + TOOL_igniter convergence, re-levelled onto block.use): the
+	 * roll decides, the held flint pays one point of durability EITHER way (the
+	 * :272/:280 damage — vanilla {@code hurtAndBreak} self-skips creative), a hit
+	 * plays the ignite sound and lights the box, a miss just burns the durability
+	 * (the :270-274 fail arm — silent, click consumed). Server-side by construction
+	 * (the use branch gates the call).
+	 */
+	public void igniteWithFlint(Player aPlayer, InteractionHand aHand) {
+		ItemStack tHeld = aPlayer.getItemInHand(aHand);
+		boolean tHit = igniteRoll(rng(100));
+		tHeld.hurtAndBreak(1, aPlayer, aBreaker -> aBreaker.broadcastBreakEvent(
+				aHand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND));
+		if (tHit) {
+			if (hasLevel()) getLevel().playSound(null, getBlockPos(), SoundEvents.FLINTANDSTEEL_USE,
+					SoundSource.BLOCKS, 1.0F, getLevel().getRandom().nextFloat() * 0.4F + 0.8F);
+			igniteNow();
+		}
+	}
+
+	/**
+	 * The visual state sync (the TileEntityOven.applyVisualState form — the upstream
+	 * onTickCheck :239-243 {@code mBurning != oBurning} client face): compare-and-set
+	 * the {@link gregtech6.registry.GT6BurningBoxes.BurningBoxBlock#LIT} bit with flag
+	 * 3 — a same-block state change keeps the BE (LevelChunk.setBlockState), and the
+	 * client reads the lit variant (the overlay_active decals) straight off the
+	 * blockstate, no BE packet surface involved.
+	 */
+	public void applyVisualState() {
+		if (!hasLevel() || isClientSide()) return;
+		BlockState tState = getLevel().getBlockState(getBlockPos());
+		if (!(tState.getBlock() instanceof gregtech6.registry.GT6BurningBoxes.BurningBoxBlock)) return;
+		BlockState tNew = tState.setValue(gregtech6.registry.GT6BurningBoxes.BurningBoxBlock.LIT, mBurning);
+		if (tNew != tState) getLevel().setBlock(getBlockPos(), tNew, 3);
 	}
 
 	/** The :113 output-slot arm — the folded {@code mOutput1 == null} check: slot 1 has room for the container item. */
