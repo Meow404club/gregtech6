@@ -2336,6 +2336,26 @@ LEGACY_ITEM_BACKFILL = {
     'item.gt6.usb_stick_3.tooltip': '储存数据',
     'item.gt6.usb_stick_4': 'USB 4.0',
     'item.gt6.usb_stick_4.tooltip': '储存数据',
+    # ---- the 10 key display names + the behavior tooltip (task dungeon-keys): the dump
+    # gt.multiitem.randomtools.30000-30009 faces verbatim (tmp/gregtech.lang:9866-9884
+    # 铁钥匙/金钥匙/铜钥匙/锡钥匙/青铜钥匙/黄铜钥匙/银钥匙/铂钥匙/铅钥匙/塑料钥匙) + the
+    # Behavior_Key behaviour row gt.behaviour.key (:1010 可以打开特定的锁)
+    'item.gt6.key_brass': '黄铜钥匙',
+    'item.gt6.key_bronze': '青铜钥匙',
+    'item.gt6.key_copper': '铜钥匙',
+    'item.gt6.key_gold': '金钥匙',
+    'item.gt6.key_iron': '铁钥匙',
+    'item.gt6.key_lead': '铅钥匙',
+    'item.gt6.key_plastic': '塑料钥匙',
+    'item.gt6.key_platinum': '铂钥匙',
+    'item.gt6.key_silver': '银钥匙',
+    'item.gt6.key_tin': '锡钥匙',
+    'item.gt6.key.tooltip': '可以打开特定的锁',
+    # ---- the fluid-spring block face (task dungeon-keys restoration): the p38-issue5
+    # card entered this row into the committed TSV directly and the faithful rerun
+    # washed it out (the W2 lesson, third recurrence) — re-entered at the SOURCE so
+    # the regen and the --check ratchet stay in agreement.
+    'block.gt6.fluid_spring': '液体泉',
     # ---- the 15 written-book display names (task p35-books-written): hand rows over the
     # upstream title columns (Loader_Books.java, the single-source extractor face) — the
     # dump carries zero book-title faces (its 743 written.book.* rows are the English

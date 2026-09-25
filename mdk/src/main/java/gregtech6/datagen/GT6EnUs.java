@@ -148,6 +148,7 @@ public class GT6EnUs extends LanguageProvider {
         addArmor(); // task p29-w5-t8-armor-24 — table-tail append
         addTreeBlocks(); // task p30-w6-t1-trees-nine — table-tail append
         addUsbSticks(); // task p32-usb-data — table-tail append
+        addKeys(); // task dungeon-keys — the key family display + behavior lines
         addSurfaceBand(); // task p30-w6-rocks-sticks — table-tail append
         addSurfacePlants(); // task p30-w6-t2-surface-blocks — table-tail append
         add("block.gt6.bumble_hive", "Bumble Hive"); // task p32-bees-lv2 — the MTE 32755 display name (Loader_MultiTileEntities.java:2041)
@@ -2073,6 +2074,28 @@ public class GT6EnUs extends LanguageProvider {
             add("item.gt6.usb_stick_" + tTier, "USB " + tTier + ".0 Stick");
             add("item.gt6.usb_stick_" + tTier + ".tooltip", "Stores Data");
         }
+    }
+
+    /**
+     * The Key family keys (task dungeon-keys, 11 rows): the 10 display names are the
+     * MultiItemRandomTools.java:589-598 registration literals verbatim ("Iron Key" ..
+     * "Platinum Key"), the shared behavior key is the Behavior_Key "Can open certain
+     * regular Locks" line (Behavior_Key.java:66 — the dump row gt.behaviour.key). The
+     * "Key ID: ..." tooltip line stays a RUNTIME literal (the Behavior_Key.java:72
+     * hardcoded-en face — the GT6UsbSticks dynamic-face note).
+     */
+    private void addKeys() {
+        add("item.gt6.key_brass", "Brass Key");
+        add("item.gt6.key_bronze", "Bronze Key");
+        add("item.gt6.key_copper", "Copper Key");
+        add("item.gt6.key_gold", "Gold Key");
+        add("item.gt6.key_iron", "Iron Key");
+        add("item.gt6.key_lead", "Lead Key");
+        add("item.gt6.key_plastic", "Plastic Key");
+        add("item.gt6.key_platinum", "Platinum Key");
+        add("item.gt6.key_silver", "Silver Key");
+        add("item.gt6.key_tin", "Tin Key");
+        add(gregtech6.items.GT6Keys.TOOLTIP_KEY, "Can open certain regular Locks");
     }
 
     /**

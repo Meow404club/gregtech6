@@ -128,6 +128,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addBeeUnits();          // task p31-bees-lv1 — the 20 comb names + the Bees tab + the 11 honey/bee-row fluids (hand rows, the tsv direct band; the dump carries no comb faces)
 		addBumbleUnits();       // task p33-bees-lv3-a-items — the 80 species names + the 8 face formats (the dump gt.multiitem.bumblebee.* faces verbatim, the tsv direct band)
 		addUsbStickUnits();     // task p32-usb-data — the 4 stick names + the 4 tooltips (hand rows, the tsv direct band; the dump USB face)
+		addKeyUnits();          // task dungeon-keys — the 10 key names + the behavior tooltip (hand rows, the dump 铁钥匙..塑料钥匙 faces)
 		addPlaceablesUnits();   // task p32-placeables — the 8 deco/placed-pile names (the lantern + the sandwich + the six placed piles; hand rows, the tsv direct band)
 		addLaserGasUnits();     // task p32-qu-laser-domain — the 2 gas emitter names + the 2 tooltips (hand rows, the dump :10379/:10395 faces)
 		addRailsUnits();        // task p35-rails-31-blocks — the 31 rail names (the dump gt.block.rail.* faces verbatim, the tsv direct band)
@@ -148,6 +149,28 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect("item.gt6.usb_stick_" + tTier);
 			addDirect("item.gt6.usb_stick_" + tTier + ".tooltip");
 		}
+	}
+
+	/**
+	 * The Key family zh faces (task dungeon-keys, the addUsbStickUnits shape): the 10
+	 * display names + the shared behavior tooltip, riding the reference table's hand
+	 * layer — the values are the DUMP faces verbatim (tmp/gregtech.lang:9866-9884:
+	 * 铁钥匙/金钥匙/铜钥匙/锡钥匙/青铜钥匙/黄铜钥匙/银钥匙/铂钥匙/铅钥匙/塑料钥匙; the tooltip
+	 * row gt.behaviour.key :1010 可以打开特定的锁). The "Key ID: ..." line stays a RUNTIME
+	 * literal (the Behavior_Key.java:72 hardcoded-en face — the addUsbStickUnits note).
+	 */
+	private void addKeyUnits() {
+		addDirect("item.gt6.key_brass");
+		addDirect("item.gt6.key_bronze");
+		addDirect("item.gt6.key_copper");
+		addDirect("item.gt6.key_gold");
+		addDirect("item.gt6.key_iron");
+		addDirect("item.gt6.key_lead");
+		addDirect("item.gt6.key_plastic");
+		addDirect("item.gt6.key_platinum");
+		addDirect("item.gt6.key_silver");
+		addDirect("item.gt6.key_tin");
+		addDirect(gregtech6.items.GT6Keys.TOOLTIP_KEY);
 	}
 
 	/**

@@ -8914,6 +8914,39 @@ the p32 vertex-colour route).
   lowercased on borrow; the dither carries NO tint in either edition (upstream :150 —
   the BlockTextureDefault half is white; the fluid colour lives on the layer beneath).
 
+## key item family (task dungeon-keys)
+
+- `gt6/textures/item/key_<material>.png` — the ten key item sprites, byte-identical
+  upstream borrows (`textures/items/gt.multiitem.randomtools/30000.png` .. `30009.png`,
+  the meta atlas tiles of the MultiItemRandomTools.java:589-598 "Iron Key".."Platinum
+  Key" rows; sha256 per file below; task dungeon-keys). Upstream already ships the
+  sprites pre-tinted per material (the randomtools meta atlas carries the finished
+  colours — gold f0f5b8da-family rows read COLORED, not grayscale-tool rows), so the
+  borrow needs no tint bake and no runtime ItemColor. The sprite-to-item mapping:
+  key_iron=30000, key_gold=30001, key_copper=30002, key_tin=30003, key_bronze=30004,
+  key_brass=30005, key_silver=30006, key_platinum=30007, key_lead=30008,
+  key_plastic=30009 (the registration id order).
+- `gt6/textures/item/key_brass.png` — `5d319262349a172d26a3dcc5b11a29cbc1d92939765083406a58e6ea788be1c8`
+  (upstream `gt.multiitem.randomtools/30005.png`). Byte-identical borrow.
+- `gt6/textures/item/key_bronze.png` — `2e216da074b675582e8fcf06ae44d51b0fe6ed5d18896648b48b6b0a5712811c`
+  (upstream `gt.multiitem.randomtools/30004.png`). Byte-identical borrow.
+- `gt6/textures/item/key_copper.png` — `de02af8365a8c480fef170aacba8000d96e7bc5ee6b1fd59370f3bc9f95878b8`
+  (upstream `gt.multiitem.randomtools/30002.png`). Byte-identical borrow.
+- `gt6/textures/item/key_gold.png` — `17d9af12930f50bd7407be5042a191750bfc9a6c897bd1763460832cd11381a3`
+  (upstream `gt.multiitem.randomtools/30001.png`). Byte-identical borrow.
+- `gt6/textures/item/key_iron.png` — `e621ac823925233ad3327127523a4f0472ea8d6fd829799073af9f6fe03f1a95`
+  (upstream `gt.multiitem.randomtools/30000.png`). Byte-identical borrow.
+- `gt6/textures/item/key_lead.png` — `f72ca94e472bf9c0964d52fa7a694a07b037259248f99851e30a957d7601e1b6`
+  (upstream `gt.multiitem.randomtools/30008.png`). Byte-identical borrow.
+- `gt6/textures/item/key_plastic.png` — `f3cbe05e2f0952bc46d5495356395aa667c6e5dcc433ed5f40a89dff525282c6`
+  (upstream `gt.multiitem.randomtools/30009.png`). Byte-identical borrow.
+- `gt6/textures/item/key_platinum.png` — `a11cc28a351c25fd66635ae87d856c881b8f94e88f50fdbcab65a33350e0e20f`
+  (upstream `gt.multiitem.randomtools/30007.png`). Byte-identical borrow.
+- `gt6/textures/item/key_silver.png` — `d4915cd5fba79577ce162f7f05d16ac0dd7246f187ffb9a29d615511a0d63f24`
+  (upstream `gt.multiitem.randomtools/30006.png`). Byte-identical borrow.
+- `gt6/textures/item/key_tin.png` — `df3e3a75ca2b6c03c9a6f25d6aa88b1a78a57c3bcd01f59ba05b3c821ef53f40`
+  (upstream `gt.multiitem.randomtools/30003.png`). Byte-identical borrow.
+
 ## owned (generated, not borrowed)
 
 - `gt6/textures/block/mini_portal_end.png` — the Miniature End Portal's active

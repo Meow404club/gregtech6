@@ -171,6 +171,7 @@ direct	block.gt6.example_chest	GT 示例箱子	hand
 direct	block.gt6.fe_battery	FE 测试电池	hand
 direct	block.gt6.fe_converter	FE 转换机	hand
 direct	block.gt6.fe_source	FE 测试源	hand
+direct	block.gt6.fluid_spring	液体泉	hand
 direct	block.gt6.fluidometer	流体体积传感器(单位: 升)	hand
 direct	block.gt6.flux_dynamo	红石通量发电机 (铅)	hand
 direct	block.gt6.flux_dynamo_t2	红石通量发电机 (殷钢)	hand
@@ -1918,6 +1919,17 @@ direct	item.gt6.jackhammer_hv_no_ores	电镐 (HV, 无矿石模式)	hand
 direct	item.gt6.jackhammer_hv_no_ores.tooltip	不会破坏矿石方块，层矿除外	hand
 direct	item.gt6.jackhammer_hv_normal	电镐 (HV, 普通模式)	hand
 direct	item.gt6.jackhammer_hv_normal.tooltip	将岩石击碎成碎块	hand
+direct	item.gt6.key.tooltip	可以打开特定的锁	hand
+direct	item.gt6.key_brass	黄铜钥匙	hand
+direct	item.gt6.key_bronze	青铜钥匙	hand
+direct	item.gt6.key_copper	铜钥匙	hand
+direct	item.gt6.key_gold	金钥匙	hand
+direct	item.gt6.key_iron	铁钥匙	hand
+direct	item.gt6.key_lead	铅钥匙	hand
+direct	item.gt6.key_plastic	塑料钥匙	hand
+direct	item.gt6.key_platinum	铂钥匙	hand
+direct	item.gt6.key_silver	银钥匙	hand
+direct	item.gt6.key_tin	锡钥匙	hand
 direct	item.gt6.knife	小刀	hand
 direct	item.gt6.lubricant_bucket	润滑油桶	hand
 direct	item.gt6.lubricant_bucket.tooltip	仅限工业用途！	hand
@@ -7482,7 +7494,6 @@ mte	32760	开孔的彩虹树原木	auto
 mte	32761	开孔的枫树原木	auto
 mte	32762	橡胶产出口	auto
 mte	32763	液体泉	auto
-direct	block.gt6.fluid_spring	液体泉	hand
 mte	32764	赞助者证书	auto
 mte	32765	脚手架建筑泡沫方块	auto
 mte	32766	微型下界传送门	auto
