@@ -101,6 +101,18 @@ public class GTOreBakedModelTintTest {
 	public void paramsTintAgreesWithTheBlockColourSeam() {
 		// the small form pins the OP.oreSmall prefix leg (fRGBa[oreSmall.mState]); any axis material agrees
 		OreKey tKey = new OreKey(GT6OreBlocks.TAB_FAMILY, FormKind.SMALL, GT6OreBlocks.materialAxis().get(0));
+		// Block.<init> creates its intrusive holder past the bootstrap freeze — carry our own
+		// write window (the GT6CFoamFamilyTest.buildFamilyFixtures shape, no re-freeze): the
+		// class previously rode an earlier-alphabetical class's open window, which fork
+		// partitioning (maxParallelForks, task maint-ci-perf) can't guarantee.
+		try {
+			java.lang.reflect.Method tUnfreeze = net.minecraft.core.registries.BuiltInRegistries.BLOCK
+					.getClass().getMethod("unfreeze");
+			tUnfreeze.setAccessible(true);
+			tUnfreeze.invoke(net.minecraft.core.registries.BuiltInRegistries.BLOCK);
+		} catch (Exception aE) {
+			throw new IllegalStateException("could not unfreeze the offline block registry", aE);
+		}
 		GTOreBakedModel.Params tParams = GTOreBakedModel.paramsOf(tKey);
 		GTOreBlock tBlock = new GTOreBlock(tKey.family(), tKey.kind(), tKey.family().form(tKey.kind()),
 				tKey.family().prefix(tKey.kind()), tKey.material());

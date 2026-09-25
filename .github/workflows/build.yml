@@ -38,7 +38,9 @@ jobs:
       # 官方文档警告勿叠加 setup-java cache: gradle，故 setup-java 不带 cache 项）。
       - uses: gradle/actions/setup-gradle@v4
       - name: Build forge 1.20.1
-        run: ./gradlew :test :mdk:1.20.1-forge:build
+        run: |
+          nproc
+          ./gradlew :test :mdk:1.20.1-forge:build
       - uses: actions/upload-artifact@v4
         with:
           name: gt6-1.20.1-forge
@@ -75,7 +77,9 @@ jobs:
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
       - name: Build neoforge 1.21.1
-        run: ./gradlew :mdk:1.21.1-neoforge:build
+        run: |
+          nproc
+          ./gradlew :mdk:1.21.1-neoforge:build
       - uses: actions/upload-artifact@v4
         with:
           name: gt6-1.21.1-neoforge
