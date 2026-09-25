@@ -103,11 +103,20 @@
       "max": 8,
       "min": 2,
       "weight": 50
+    },
+    {
+      "item": "gt6:zpm",
+      "max": 1,
+      "min": 1,
+      "tag": {
+        "gt.active.energy": 1
+      },
+      "weight": 2
     }
   ],
   "rolls": {
     "max_inclusive": 3,
     "min_inclusive": 1
   },
-  "table": "minecraft:chests/simple_dungeon"
+  "table": "gt6:chests/dungeon_chest"
 }

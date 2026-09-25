@@ -11,7 +11,7 @@
  * <li>the generated GLM JSONs pinned against the committed tree (the target table ids + the
  *     entry weights/stack ranges — ACCEPTANCE ①'s "逐参对 Loader_Loot 原锚");</li>
  * <li>the generated bag weight tables + the twin modifier index (the
- *     {@code GT6ToolLootModifiersDatagen} call-order contract, 21 entries).</li>
+ *     {@code GT6ToolLootModifiersDatagen} call-order contract, 22 entries).</li>
  * </ol>
  * The live face is the RCON loot_inject chain (the /loot insert rolls through the Forge
  * {@code ForgeHooks.modifyLoot} patch); this file is the static half of the double insurance.
@@ -77,7 +77,7 @@ public class GT6LootInjectionTest {
     @Test
     public void injectionTargetsAreTheVerifiedVanillaTableIds() {
         List<GT6LootInjectionDatagen.InjectionRow> tRows = GT6LootInjectionDatagen.injections();
-        assertEquals(9, tRows.size(), "nine landed structure injections (the pool categories fall out)");
+        assertEquals(10, tRows.size(), "ten landed structure injections (the pool categories fall out)");
         assertEquals(List.of(
                 "dungeon_inject_spawn_bonus_chest",
                 "dungeon_inject_simple_dungeon",
@@ -87,9 +87,10 @@ public class GT6LootInjectionTest {
                 "dungeon_inject_abandoned_mineshaft",
                 "dungeon_inject_village_weaponsmith",
                 "dungeon_inject_stronghold_library",
-                "dungeon_inject_stronghold_corridor"),
+                "dungeon_inject_stronghold_corridor",
+                "dungeon_inject_gt6_dungeon_chest"),
                 tRows.stream().map(GT6LootInjectionDatagen.InjectionRow::name).collect(Collectors.toList()),
-                "the upstream Loader_Loot category order");
+                "the upstream Loader_Loot category order + the GT6 dungeon carrier tail (dungeon-library-zpm)");
         assertEquals("minecraft:chests/spawn_bonus_chest", tRows.get(0).table(), ":413 the bonus chest");
         assertEquals("minecraft:chests/simple_dungeon", tRows.get(1).table());
         assertEquals("minecraft:chests/desert_pyramid", tRows.get(2).table());
@@ -100,6 +101,8 @@ public class GT6LootInjectionTest {
                 "the 1.7.10 blacksmith chest IS the modern weaponsmith shop");
         assertEquals("minecraft:chests/stronghold_library", tRows.get(7).table(), ":524 the library");
         assertEquals("minecraft:chests/stronghold_corridor", tRows.get(8).table());
+        assertEquals("gt6:chests/dungeon_chest", tRows.get(9).table(),
+                "the ZPM artifact row's migrated home — the GT6 dungeon loot face (dungeon-library-zpm)");
         for (GT6LootInjectionDatagen.InjectionRow tRow : tRows) {
             assertEquals(1, tRow.rollMin(), "the declared share-approximation roll floor");
             assertEquals(3, tRow.rollMax(), "the declared share-approximation roll ceiling");
@@ -107,11 +110,11 @@ public class GT6LootInjectionTest {
         }
     }
 
-    /** The dungeon metal ladder (:418-433), the Guide :442 + the task-p36 ZPM artifact row: 18 entries. */
+    /** The dungeon metal ladder (:418-433) + the Guide :442: 17 entries — the ZPM row LEFT this face. */
     @Test
     public void simpleDungeonCarriesTheMetalLadderVerbatim() {
         Map<String, int[]> tMap = byItem(GT6LootInjectionDatagen.injections().get(1).entries());
-        assertEquals(18, tMap.size(), "the four 4-metal ladders (ingot/plate/stick/toolHeadArrow) + the Guide + the p36 ZPM artifact row");
+        assertEquals(17, tMap.size(), "the four 4-metal ladders (ingot/plate/stick/toolHeadArrow) + the Guide");
         for (String tMetal : new String[] {"steel", "bronze", "brass"}) {
             assertEquals(12, tMap.get("gt6:ingot_" + tMetal)[0], ":418-420 weight");
             assertEquals(12, tMap.get("gt6:plate_" + tMetal)[0], ":422-424 weight");
@@ -127,14 +130,32 @@ public class GT6LootInjectionTest {
         assertTrue(tMap.get("gt6:book_loot_guide")[0] == 50
                 && tMap.get("gt6:book_loot_guide")[1] == 2 && tMap.get("gt6:book_loot_guide")[2] == 8,
                 ":442 the Guide row [50, 2..8]");
-        // task p36 — the ZPM artifact row: the full-NBT lane (the DungeonData.zpm active face)
-        GT6LootInjectionDatagen.EntryRow tZpm = GT6LootInjectionDatagen.injections().get(1).entries()
-                .stream().filter(aRow -> aRow.item().equals("gt6:zpm")).findFirst().orElseThrow();
-        assertEquals(2, tZpm.weight(), "the rare-roll posture");
+        // task dungeon-library-zpm — the vanilla face carries NO artifact row any more
+        assertEquals(0, GT6LootInjectionDatagen.injections().get(1).entries().stream()
+                        .filter(aRow -> aRow.item().equals("gt6:zpm")).count(),
+                "the ZPM artifact row migrated off the vanilla stopgap face");
+    }
+
+    /**
+     * The migrated ZPM artifact face (task dungeon-library-zpm): the GT6 dungeon carrier
+     * injection mirrors the carrier rows + the artifact tail (the dilution IS the rarity
+     * — a single-row ladder would fire 1..3 guaranteed ZPMs per chest), the row keeps
+     * the p36 rare-roll posture + the full-NBT lane.
+     */
+    @Test
+    public void theGt6DungeonFaceCarriesTheMigratedZpmArtifact() {
+        GT6LootInjectionDatagen.InjectionRow tRow = GT6LootInjectionDatagen.injections().get(9);
+        assertEquals("dungeon_inject_gt6_dungeon_chest", tRow.name());
+        assertEquals("gt6:chests/dungeon_chest", tRow.table(), "the GT6 dungeon loot face");
+        assertEquals(GT6LootInjectionDatagen.dungeonChestEntries().size() + 1, tRow.entries().size(),
+                "the carrier rows + the artifact tail");
+        GT6LootInjectionDatagen.EntryRow tZpm = tRow.entries().get(tRow.entries().size() - 1);
+        assertEquals("gt6:zpm", tZpm.item(), "the artifact row rides last");
+        assertEquals(2, tZpm.weight(), "the rare-roll posture (DungeonChunkRoomLibraryNormal 1/16 对位)");
         assertTrue(tZpm.min() == 1 && tZpm.max() == 1, "the [1,1] artifact stack");
         org.junit.jupiter.api.Assertions.assertNotNull(tZpm.tag(), "the full-NBT lane rides the row");
         assertTrue(tZpm.tag().getBoolean(gregtech6.item.energy.GT6BatteryItem.NBT_ACTIVE_ENERGY),
-                "gt.active.energy = the store-as-full key (the 2/3 dungeon dice collapsed to always-full)");
+                "gt.active.energy = the store-as-full key (the 2/3 dungeon dice stay collapsed to always-full)");
     }
 
     /** The mineshaft rows (:468-482): the seven vanilla ore blocks + the six dig heads. */
@@ -302,26 +323,42 @@ public class GT6LootInjectionTest {
         assertEquals("gt6:gt6_dungeon_inject", tJson.get("type").getAsString(), "the serializer row id");
         assertEquals("minecraft:chests/simple_dungeon", tJson.get("table").getAsString(), "the in-codec target");
         JsonArray tEntries = tJson.getAsJsonArray("entries");
-        assertEquals(18, tEntries.size(), "the metal ladder + the Guide :442 + the p36 ZPM artifact row");
+        assertEquals(17, tEntries.size(), "the metal ladder + the Guide :442 (the artifact row left, task dungeon-library-zpm)");
         JsonObject tFirst = tEntries.get(0).getAsJsonObject();
         assertEquals("gt6:ingot_steel", tFirst.get("item").getAsString());
         assertEquals(12, tFirst.get("weight").getAsInt(), ":418 weight");
         assertEquals(1, tFirst.get("min").getAsInt());
         assertEquals(6, tFirst.get("max").getAsInt());
-        // task p38 — the Guide entry rides before the artifact tail
+        // the Guide rides the tail of the ladder
         JsonObject tGuide = tEntries.get(16).getAsJsonObject();
         assertEquals("gt6:book_loot_guide", tGuide.get("item").getAsString(), "the :442 Guide row");
         assertEquals(50, tGuide.get("weight").getAsInt());
-        // task p36 — the artifact tail entry carries the full-NBT lane
-        JsonObject tZpm = tEntries.get(17).getAsJsonObject();
-        assertEquals("gt6:zpm", tZpm.get("item").getAsString(), "the artifact row rides last");
-        // the SNBT 1b byte round-trips through the JSON as the number 1 (gson int form)
-        assertEquals(1, tZpm.get("tag").getAsJsonObject().get("gt.active.energy").getAsInt(),
-            "gt.active.energy = the store-as-full key (the DungeonData.zpm active face)");
         JsonObject tRolls = tJson.getAsJsonObject("rolls");
         assertNotNull(tRolls, "the uniform roll range rides the codec");
         assertEquals(1, tRolls.get("min_inclusive").getAsInt(), "the declared [1,3] floor");
         assertEquals(3, tRolls.get("max_inclusive").getAsInt(), "the declared [1,3] ceiling");
+    }
+
+    /**
+     * The migrated artifact face's generated JSON (task dungeon-library-zpm): the GT6
+     * dungeon carrier target + the artifact tail entry with the full-NBT lane.
+     */
+    @Test
+    public void generatedGt6DungeonFaceJsonCarriesTheMigratedArtifact() throws IOException {
+        JsonObject tJson = tree("data/gt6/loot_modifiers/dungeon_inject_gt6_dungeon_chest.json");
+        assertEquals("gt6:gt6_dungeon_inject", tJson.get("type").getAsString(), "the serializer row id");
+        assertEquals("gt6:chests/dungeon_chest", tJson.get("table").getAsString(),
+                "the migrated home — the GT6 dungeon loot face");
+        JsonArray tEntries = tJson.getAsJsonArray("entries");
+        assertEquals(GT6LootInjectionDatagen.dungeonChestEntries().size() + 1, tEntries.size(),
+                "the carrier rows + the artifact tail (the dilution IS the rarity)");
+        // the artifact tail entry carries the full-NBT lane
+        JsonObject tZpm = tEntries.get(tEntries.size() - 1).getAsJsonObject();
+        assertEquals("gt6:zpm", tZpm.get("item").getAsString(), "the artifact row rides last");
+        assertEquals(2, tZpm.get("weight").getAsInt(), "the rare-roll posture");
+        // the SNBT 1b byte round-trips through the JSON as the number 1 (gson int form)
+        assertEquals(1, tZpm.get("tag").getAsJsonObject().get("gt.active.energy").getAsInt(),
+            "gt.active.energy = the store-as-full key (the DungeonData.zpm active face)");
     }
 
     /** Every landed injection has a generated modifier JSON with its table id. */
@@ -378,14 +415,16 @@ public class GT6LootInjectionTest {
         assertEquals(1.0, tCount.get("max").getAsDouble(), "the flawless [1,1] stack ceiling");
     }
 
-    /** The twin modifier index: the 21 entries in the MODIFIER_NAMES call order. */
+    /** The twin modifier index: the 22 entries in the MODIFIER_NAMES call order. */
     @Test
-    public void theTwinIndexCarriesAllTwentyOneEntriesInCallOrder() throws IOException {
+    public void theTwinIndexCarriesAllTwentyTwoEntriesInCallOrder() throws IOException {
         JsonArray tTwin = tree("data/neoforge/loot_modifiers/global_loot_modifiers.json").getAsJsonArray("entries");
-        assertEquals(21, tTwin.size(), "the 12 tool rows + the 9 dungeon injections");
+        assertEquals(22, tTwin.size(), "the 12 tool rows + the 10 dungeon injections");
         assertEquals("gt6:dungeon_inject_spawn_bonus_chest", tTwin.get(12).getAsString(), "the tail-append order (task p38 head)");
         assertEquals("gt6:dungeon_inject_stronghold_library", tTwin.get(19).getAsString(), "the :524 library row (task p38)");
         assertEquals("gt6:dungeon_inject_stronghold_corridor", tTwin.get(20).getAsString());
+        assertEquals("gt6:dungeon_inject_gt6_dungeon_chest", tTwin.get(21).getAsString(),
+                "the migrated artifact face rides the tail (task dungeon-library-zpm)");
         JsonArray tForge = tree("data/forge/loot_modifiers/global_loot_modifiers.json").getAsJsonArray("entries");
         assertEquals(tTwin.size(), tForge.size(), "same entry set on both indices");
     }

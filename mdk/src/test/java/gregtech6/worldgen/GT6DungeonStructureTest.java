@@ -44,6 +44,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 
 import gregtech6.datagen.GT6LootInjectionDatagen;
@@ -221,28 +223,29 @@ class GT6DungeonStructureTest {
      */
     @Test
     void roomKindVocabularyIsPinned() {
-        assertEquals(12, GT6DungeonPiece.Kind.values().length,
-                "the framework 4 + Corridor3/Corridor4/Barracks/Workshop + MiningBedrock + the 3 farms");
+        assertEquals(13, GT6DungeonPiece.Kind.values().length,
+                "the framework 4 + Corridor3/Corridor4/Barracks/Workshop + MiningBedrock + Library + the 3 farms");
         for (GT6DungeonPiece.Kind tKind : GT6DungeonPiece.Kind.values()) {
             assertEquals(tKind, GT6DungeonPiece.Kind.valueOf(tKind.name()), "the NBT round trip: " + tKind);
         }
     }
 
     /**
-     * The ROOMS pool: exactly the five upstream ported rooms in the upstream list order
-     * (Workshop :85, MiningBedrock :86, the Library rows :87-89 = the parallel library
-     * card's seam, FarmMobs :90, FarmCrop :91, FarmFish :92); immutable (the dispatch
-     * copies per dungeon).
+     * The ROOMS pool: exactly the six upstream ported rooms in the upstream list order
+     * (Workshop :85, MiningBedrock :86, Library :87-89 = the dungeon-library-zpm row,
+     * FarmMobs :90, FarmCrop :91, FarmFish :92); immutable (the dispatch copies per
+     * dungeon).
      */
     @Test
     void roomsPoolIsPinned() {
         assertEquals(List.of(
                 GT6DungeonPiece.Kind.WORKSHOP,
                 GT6DungeonPiece.Kind.MINING_BEDROCK,
+                GT6DungeonPiece.Kind.LIBRARY,
                 GT6DungeonPiece.Kind.FARM_MOBS,
                 GT6DungeonPiece.Kind.FARM_CROP,
                 GT6DungeonPiece.Kind.FARM_FISH), GT6DungeonStructure.ROOMS_POOL,
-                "the pool = the upstream ROOMS rows minus the Library seam, order verbatim");
+                "the pool = the upstream ROOMS rows with the Library seam filled, order verbatim");
         assertThrows(UnsupportedOperationException.class, () -> GT6DungeonStructure.ROOMS_POOL.add(null),
                 "the pool is immutable — the dispatch works on a copy");
     }
@@ -319,24 +322,31 @@ class GT6DungeonStructureTest {
     // ---------------------------------------------------------------- loot carrier
 
     /**
-     * The dungeon-chest carrier rows: the DUNGEON_CHEST category minus the ZPM artifact
-     * (the boundary — see the accessor javadoc). 16 metal-ladder rows + the Guide row.
+     * The dungeon-chest carrier rows: the DUNGEON_CHEST category (the boundary — see the
+     * accessor javadoc). 16 metal-ladder rows + the Guide row; the ZPM artifact rides
+     * the migrated GT6 dungeon face (task dungeon-library-zpm), not the table JSON.
      */
     @Test
     void dungeonChestRowsArePinned() {
         List<GT6LootInjectionDatagen.EntryRow> tRows = GT6LootInjectionDatagen.dungeonChestEntries();
-        assertEquals(17, tRows.size(), "16 ladder rows + the Guide row (:418-442, the artifact cut)");
+        assertEquals(17, tRows.size(), "16 ladder rows + the Guide row (:418-442)");
         assertEquals("gt6:book_loot_guide", tRows.get(tRows.size() - 1).item(), "the Guide row is the tail (:442)");
         assertEquals(50, tRows.get(tRows.size() - 1).weight(), "the Guide weight 50 (:442)");
         assertEquals(2, tRows.get(tRows.size() - 1).min(), "the Guide stack floor 2 (:442)");
         assertEquals(8, tRows.get(tRows.size() - 1).max(), "the Guide stack cap 8 (:442)");
         assertTrue(tRows.stream().noneMatch(aRow -> aRow.item().equals("gt6:zpm")),
-                "the ZPM artifact stays on the vanilla injection (the p34/p38 boundary)");
-        // the vanilla injection still carries the artifact (the p34 face untouched)
+                "the table rows stay artifact-free — the tag lane keeps the table JSON off the set_nbt seam");
+        // the artifact migrated: OFF the vanilla stopgap, ON the GT6 dungeon face
+        // (dungeon-library-zpm — the DungeonChunkRoomLibraryNormal obtainment restored)
         GT6LootInjectionDatagen.InjectionRow tVanilla = GT6LootInjectionDatagen.injections().stream()
                 .filter(aRow -> aRow.name().equals("dungeon_inject_simple_dungeon")).findFirst().orElseThrow();
-        assertTrue(tVanilla.entries().stream().anyMatch(aRow -> aRow.item().equals("gt6:zpm")),
-                "the vanilla simple_dungeon injection keeps the ZPM artifact");
+        assertTrue(tVanilla.entries().stream().noneMatch(aRow -> aRow.item().equals("gt6:zpm")),
+                "the vanilla simple_dungeon injection lost the ZPM artifact");
+        GT6LootInjectionDatagen.InjectionRow tCarrier = GT6LootInjectionDatagen.injections().stream()
+                .filter(aRow -> aRow.name().equals("dungeon_inject_gt6_dungeon_chest")).findFirst().orElseThrow();
+        assertEquals("gt6:chests/dungeon_chest", tCarrier.table(), "the artifact face = the GT6 dungeon carrier");
+        assertTrue(tCarrier.entries().stream().anyMatch(aRow -> aRow.item().equals("gt6:zpm")),
+                "the GT6 dungeon chests carry the ZPM artifact");
         assertEquals(GT6LootInjectionDatagen.ROLL_MIN, 1, "the shared roll floor");
         assertEquals(GT6LootInjectionDatagen.ROLL_MAX, 3, "the shared roll cap");
     }
@@ -483,5 +493,44 @@ class GT6DungeonStructureTest {
                         "no key #3 → the side fallback (" + tFallback + ", draw " + tDraw + ")");
             }
         }
+    }
+
+    // ---------------------------------------------------------------- library (task dungeon-library-zpm)
+
+    /**
+     * The ROOMS pool (upstream :85-94, the Library row at the :87-89 seam): the
+     * draw-without-replacement IS the once-per-dungeon TAG_LIBRARY_NORMAL guard
+     * (:39-40) — the Library rides the union pool EXACTLY once, so one Library piece
+     * at most per dungeon and every later draw falls to the ROOM_EMPTY fallback
+     * (:273). The piece-NBT serialization constant exists.
+     */
+    @Test
+    void roomPoolDrawLandsTheLibraryOncePerDungeon() {
+        assertEquals(1, java.util.Collections.frequency(GT6DungeonStructure.ROOMS_POOL, GT6DungeonPiece.Kind.LIBRARY),
+                "the Library rides the union pool exactly once (the once-per-dungeon TAG guard)");
+        assertEquals(GT6DungeonPiece.Kind.LIBRARY, GT6DungeonPiece.Kind.valueOf("LIBRARY"),
+                "the piece-NBT serialization constant (Kind.of delegates to valueOf)");
+    }
+
+    /**
+     * The Library vocabulary (the offline structure spot check — the live block probes
+     * ride the RCON scan): the 1.7.10 plank meta order, the shelf-run seat arithmetic
+     * (6 seats × 4 walls × 4 levels = the 96-bookshelf wall band), the display-row
+     * trophy seats and the furniture seat count.
+     */
+    @Test
+    void libraryVocabularyIsPinned() {
+        Block[] tPlanks = GT6DungeonPiece.LIBRARY_PLANKS;
+        assertEquals(6, tPlanks.length, "the 1.7.10 plank meta 0..5 (Library :42 next(6))");
+        assertEquals(Blocks.OAK_PLANKS, tPlanks[0], "meta 0 = oak");
+        assertEquals(Blocks.DARK_OAK_PLANKS, tPlanks[5], "meta 5 = dark oak");
+        assertEquals(Blocks.SPRUCE_SLAB, GT6DungeonPiece.LIBRARY_SLABS[1], "the slab row mirrors the meta order");
+        assertEquals(6, GT6DungeonPiece.LIBRARY_SHELF_RUN.length, "the per-wall seat run (:130-156)");
+        assertEquals(96, GT6DungeonPiece.LIBRARY_SHELF_RUN.length * 4 * 4,
+                "6 seats x 4 walls x 4 shelf levels = the 96-bookshelf band");
+        assertArrayEquals(new int[] {6, 9}, GT6DungeonPiece.LIBRARY_DISPLAY_SEATS,
+                "the Normal display-row trophy seats (LibraryNormal :57/:59 — the ZPM seats)");
+        assertEquals(4, GT6DungeonPiece.LIBRARY_NOOK_SEATS.length,
+                "the four furniture seats (:164-193, the next(4) rotation)");
     }
 }

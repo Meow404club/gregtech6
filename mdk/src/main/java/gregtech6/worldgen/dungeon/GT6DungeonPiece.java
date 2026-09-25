@@ -93,6 +93,13 @@ import gregtech6.tileentity.inventories.GT6StaticStorageBaseBlockEntity;
  *     the seam but the storage card shipped no trigger); the drink cups, hexorium
  *     monoliths, Sky Stone rock pile and coin piles omit; the metal bookshelves 7110
  *     fold to the wooden row family.</li>
+ * <li>{@link Kind#LIBRARY} — {@code DungeonChunkRoomLibrary} (:197) +
+ *     {@code DungeonChunkRoomLibraryNormal} (:106), task dungeon-library-zpm: the
+ *     reading room (carpet, plank ceiling, bookshelf wall band, the four reading
+ *     tables) plus the Normal variant's per-solid-wall display row (the TAG_LIBRARY_
+ *     NORMAL once-per-dungeon room — the upstream Normal class IS the base room + the
+ *     display rows, its super.generate :39). The Thaumcraft/Mystcraft variants are the
+ *     mod-专属 never pool (unported by ruling).</li>
  * </ul>
  *
  * <p>Every block goes through world coordinates with the chunk-clip {@code BoundingBox}
@@ -110,6 +117,18 @@ import gregtech6.tileentity.inventories.GT6StaticStorageBaseBlockEntity;
  * vanilla tables + the ported storage BEs (safe/bookshelf) — the remaining MTE faces
  * (crucibles/molds/tanks/pipes/spikes/tool racks/ingot piles/coins/cups) are empty-shell
  * placeholders or omissions, declared per room in the room javadocs and the card report.
+ *
+ * <p>Library deviations (task dungeon-library-zpm, the same record): the GT shelf MTE
+ * (7000+tPlank / 7839, the per-seat 9-category ChestGenHooks loot roll,
+ * {@code DungeonData.shelf :293-304} + the key-NBT shelf :122-128) ports as the vanilla
+ * bookshelf — the loot face collapses onto the four reading-table chests bound to the
+ * GT6 dungeon carrier table (the storage-room chest precedent), and the key shelf
+ * defers with the keys card; the potion-cup MTE 32739 and coin-pile MTE 32700 seats
+ * take declared air (the Hexorium display block resolves null in this universe, so the
+ * upstream cup branch always took the cup); the ZPM trophy seat ({@code zpm :306-311},
+ * 1/16 per seat 2/3 FULL) migrated to the dungeon loot face (the
+ * {@code dungeon_inject_gt6_dungeon_chest} row — no ZPM block exists to seat), so the
+ * trophy seats take the vanilla flower-pot shell of the upstream pot face.
  *
  * <p>The piston airlock (upstream {@code DungeonChunkDoorPiston}, :348) is rebuilt as an
  * explicitly-correct 1.20.1 circuit at the upstream anchor coordinates: 4 sticky pistons
@@ -140,6 +159,8 @@ public class GT6DungeonPiece extends StructurePiece {
         WORKSHOP,
         /** {@code DungeonChunkRoomMiningBedrock} (:34-139) — the pit down to the bedrock vein. */
         MINING_BEDROCK,
+        /** {@code DungeonChunkRoomLibrary} + {@code DungeonChunkRoomLibraryNormal} — the reading room + display rows. */
+        LIBRARY,
         /** {@code DungeonChunkRoomFarmCrop} (:35-230) — the irrigated crop quarters. */
         FARM_CROP,
         /** {@code DungeonChunkRoomFarmMobs} (:34-205) — the mob-drop tower, spilling over free neighbors. */
@@ -315,6 +336,10 @@ public class GT6DungeonPiece extends StructurePiece {
                 }
                 buildChests(aLevel, aClip, aRandom);
             }
+            case LIBRARY -> {
+                buildRoomShell(aLevel, aClip, aRandom);
+                buildLibrary(aLevel, aClip, aRandom);
+            }
             default -> buildRoomShell(aLevel, aClip, aRandom);
         }
     }
@@ -414,6 +439,31 @@ public class GT6DungeonPiece extends StructurePiece {
     private void colored(WorldGenLevel aLevel, BoundingBox aClip, int aLX, int aLY, int aLZ) {
         set(aLevel, aClip, aLX, aLY, aLZ, CONCRETES[mColor & 15].defaultBlockState());
     }
+
+    /**
+     * The Library wood vocabulary (task dungeon-library-zpm) — the 1.7.10 plank meta
+     * order (0 oak .. 5 dark oak) mapped onto the modern rows; the slab of the same
+     * meta carries both halves (the 1.7.10 top-slab meta {@code tPlank + 8} = the TOP
+     * slab state). Public final for the offline vocabulary pins.
+     */
+    public static final Block[] LIBRARY_PLANKS = {
+            Blocks.OAK_PLANKS, Blocks.SPRUCE_PLANKS, Blocks.BIRCH_PLANKS,
+            Blocks.JUNGLE_PLANKS, Blocks.ACACIA_PLANKS, Blocks.DARK_OAK_PLANKS};
+    public static final Block[] LIBRARY_SLABS = {
+            Blocks.OAK_SLAB, Blocks.SPRUCE_SLAB, Blocks.BIRCH_SLAB,
+            Blocks.JUNGLE_SLAB, Blocks.ACACIA_SLAB, Blocks.DARK_OAK_SLAB};
+
+
+    /**
+     * The shelf-run seats along one wall (upstream :130-156): the two 3-wide runs leave
+     * the doorway zone v5..10 open; 6 seats × 4 walls × the 4 shelf levels = the 96
+     * bookshelves of the wall band.
+     */
+    public static final int[] LIBRARY_SHELF_RUN = {2, 3, 4, 11, 12, 13};
+    /** The Normal-variant display-row trophy seats (upstream :57/:59 — the ZPM seats). */
+    public static final int[] LIBRARY_DISPLAY_SEATS = {6, 9};
+    /** The four furniture seats of the reading nooks (upstream :164-193). */
+    public static final int[][] LIBRARY_NOOK_SEATS = {{3, 3}, {3, 12}, {12, 3}, {12, 12}};
 
     private void glowstone(WorldGenLevel aLevel, BoundingBox aClip, int aLX, int aLY, int aLZ) {
         set(aLevel, aClip, aLX, aLY, aLZ, Blocks.GLOWSTONE.defaultBlockState());
@@ -1927,6 +1977,124 @@ public class GT6DungeonPiece extends StructurePiece {
                     }
                 }
             }
+        }
+    }
+
+    // ---------------------------------------------------------------- library
+
+    /**
+     * The Library room (task dungeon-library-zpm) — {@code DungeonChunkRoomLibrary}
+     * (:46-193) + the Normal variant's display rows ({@code DungeonChunkRoomLibraryNormal}
+     * :48-103), the interior over the shared room shell.
+     *
+     * <p>Verbatim faces: the 12×12 carpet at y1 in the INVERSED accent color
+     * ({@code mColorInversed = bind4(15 - aColor)}, DungeonData :84); the plank ceiling
+     * y7 + the bottom slab y8; the boundary rim y6 planks over the top-slab y5; the
+     * interior slab y6 broken by the lamp lattice (the {@code lamp(x,6,z,+1)} face); the
+     * four reading tables (the plank core + top-slab wings at y3); the corner pillars
+     * y1..5; the wall band — planks at y3, the bookshelf seats y1/2/4/5; the four
+     * furniture nooks in one of four rotations ({@code next(4)}, the cup always riding
+     * the crafting-table seat); the display row per SOLID side (the {@code !doorAt}
+     * mapping of the upstream {@code mRoomLayout[..] == 0} face) — the bottom-slab run
+     * y1 v5..10 with the two bookshelf seats, the flower pots at the y2 trophy seats.
+     *
+     * <p>Deviations live on the class javadoc (the shelf/cup/coin MTE faces, the key
+     * shelf, the ZPM seat → the loot-face migration). The room's loot chests — four
+     * seats over the reading-table cores, the storage-room {@code nextInt(2)} roll —
+     * close the method.
+     */
+    private void buildLibrary(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom) {
+        int tPlank = aRandom.nextInt(6);
+        BlockState tPlanks = LIBRARY_PLANKS[tPlank].defaultBlockState();
+        BlockState tSlabTop = LIBRARY_SLABS[tPlank].defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP);
+        BlockState tSlabBottom = LIBRARY_SLABS[tPlank].defaultBlockState().setValue(SlabBlock.TYPE, SlabType.BOTTOM);
+        BlockState tShelf = Blocks.BOOKSHELF.defaultBlockState();
+
+        // the reading carpet (:46-48) — the inversed accent color.
+        for (int tX = 2; tX <= 13; tX++) for (int tZ = 2; tZ <= 13; tZ++) {
+            set(aLevel, aClip, tX, 1, tZ, CARPETS[(15 - mColor) & 15].defaultBlockState());
+        }
+
+        // the ceiling, the rim and the lamp lattice (:50-61).
+        for (int tX = 1; tX <= 14; tX++) for (int tZ = 1; tZ <= 14; tZ++) {
+            set(aLevel, aClip, tX, 7, tZ, tPlanks);
+            set(aLevel, aClip, tX, 8, tZ, tSlabBottom);
+            if (tX == 1 || tX == 14 || tZ == 1 || tZ == 14) {
+                set(aLevel, aClip, tX, 6, tZ, tPlanks);
+                set(aLevel, aClip, tX, 5, tZ, tSlabTop);
+            } else if ((tX == 3 || tX == 6 || tX == 9 || tX == 12) && (tZ == 3 || tZ == 6 || tZ == 9 || tZ == 12)) {
+                lamp(aLevel, aClip, tX, 6, tZ);
+            } else {
+                set(aLevel, aClip, tX, 6, tZ, tSlabTop);
+            }
+        }
+
+        // the four reading tables (:63-85): plank core at the wall corner + the 4 wings.
+        int[][] tTables = {{2, 2, 2, 3, 2, 4, 3, 2, 4, 2}, {13, 2, 13, 3, 13, 4, 12, 2, 11, 2},
+                {2, 13, 2, 12, 2, 11, 3, 13, 4, 13}, {13, 13, 13, 12, 13, 11, 12, 13, 11, 13}};
+        for (int[] tTable : tTables) {
+            set(aLevel, aClip, tTable[0], 3, tTable[1], tPlanks);
+            for (int tW = 2; tW < 10; tW += 2) {
+                set(aLevel, aClip, tTable[tW], 3, tTable[tW + 1], tSlabTop);
+            }
+        }
+
+        // the corner pillars (:87-91) and the wall band (:93-157): planks at y3, the
+        // bookshelf seats at y1/2/4/5 (the GT shelf MTE face — the class-javadoc shell).
+        for (int tY = 1; tY <= 5; tY++) {
+            set(aLevel, aClip, 1, tY, 1, tPlanks);
+            set(aLevel, aClip, 14, tY, 1, tPlanks);
+            set(aLevel, aClip, 1, tY, 14, tPlanks);
+            set(aLevel, aClip, 14, tY, 14, tPlanks);
+            BlockState tBand = tY == 3 ? tPlanks : tShelf;
+            for (int tV : LIBRARY_SHELF_RUN) {
+                set(aLevel, aClip, tV, tY, 1, tBand);
+                set(aLevel, aClip, 14, tY, tV, tBand);
+                set(aLevel, aClip, tV, tY, 14, tBand);
+                set(aLevel, aClip, 1, tY, tV, tBand);
+            }
+        }
+
+        // the four furniture nooks (:164-193): one rotation over the four seats, the
+        // cup riding the crafting-table seat (the cup MTE face = the declared air).
+        Block[] tFurniture = {Blocks.ENCHANTING_TABLE, Blocks.CRAFTING_TABLE, Blocks.JUKEBOX, Blocks.ENDER_CHEST};
+        int tRoll = aRandom.nextInt(4);
+        for (int tI = 0; tI < 4; tI++) {
+            int[] tSeat = LIBRARY_NOOK_SEATS[(tI + tRoll) & 3];
+            set(aLevel, aClip, tSeat[0], 1, tSeat[1], tFurniture[tI].defaultBlockState());
+        }
+
+        // the Normal-variant display row per solid side (LibraryNormal :48-103 — the
+        // upstream mRoomLayout[..] == 0 face).
+        for (Direction tSide : Direction.Plane.HORIZONTAL) if (!doorAt(tSide)) {
+            buildLibraryDisplayRow(aLevel, aClip, tSide, tSlabBottom);
+        }
+
+        // the loot face: four chests over the reading-table cores (the storage-room
+        // nextInt(2) roll), bound to the GT6 dungeon carrier — the migrated ZPM row
+        // rides the same table (dungeon_inject_gt6_dungeon_chest).
+        int[][] tChestSeats = {{2, 2}, {13, 2}, {2, 13}, {13, 13}};
+        for (int[] tSeat : tChestSeats) {
+            if (aRandom.nextInt(2) == 0) {
+                createDungeonChest(aLevel, aClip, aRandom, wx(tSeat[0]), wy(4), wz(tSeat[1]));
+            }
+        }
+    }
+
+    /**
+     * One display row against a solid side (LibraryNormal :48-103, mirrored): the
+     * bottom-slab run v5..10 at y1 with the two bookshelf seats, the flower pots at the
+     * y2 trophy seats. The coin seats (v5/v10, the 1-in-4 roll), the potion cup
+     * (v7+rand(2)) and the ZPM roll take their declared shells (air / pot / the loot
+     * face) — the class javadoc record.
+     */
+    private void buildLibraryDisplayRow(WorldGenLevel aLevel, BoundingBox aClip, Direction aSide, BlockState aSlab) {
+        for (int tV = 5; tV <= 10; tV++) {
+            sideSet(aLevel, aClip, aSide, 14, 1, tV,
+                    tV == 6 || tV == 9 ? Blocks.BOOKSHELF.defaultBlockState() : aSlab);
+        }
+        for (int tV : LIBRARY_DISPLAY_SEATS) {
+            sideSet(aLevel, aClip, aSide, 14, 2, tV, Blocks.FLOWER_POT.defaultBlockState());
         }
     }
 
