@@ -40,8 +40,9 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
 /**
  * The offline panel-factory gate (task p26-mui-a-panel-factory): {@link GTBasicMachineMUI}
  * builds the machine panel from a bare Host fake with no player, no screen and no registry
- * beyond the offline bootstrap (the GT6MenuInputSlotExpansionTest shape — the panel-build
- * face skips the player-inventory bind on the null-player fixture).
+ * beyond the offline bootstrap (the GT6MenuInputSlotExpansionTest shape — since issue #3 the
+ * player-inventory widget rides the tree unconditionally, it binds by sync key with no
+ * container/player needed at build).
  *
  * <p>Pinned faces:
  * <ul>
@@ -140,7 +141,7 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 		@Override public FluidTankGT[] getFluidOutputTanks() { return mOutTanks; }
 	}
 
-	/** A fresh headless sync manager (no player → the panel builds without the inventory bind). */
+	/** A fresh headless sync manager (the widget binds by sync key — no container/player needed at build). */
 	private static PanelSyncManager headlessSyncManager() {
 		return new PanelSyncManager(new ModularSyncManager(false), true);
 	}
@@ -178,6 +179,9 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 	}
 
 	private static void collectSeats(IWidget aWidget, List<ItemSlot> aSink) {
+		// the player-inventory group subtree is NOT content (issue #3: the widget is now
+		// unconditional, its 36 seats ride their own "player_inventory" group name)
+		if ("player_inventory".equals(aWidget.getName())) return;
 		if (aWidget instanceof ItemSlot tSlot) {
 			aSink.add(tSlot);
 			return; // ItemSlot is a leaf
@@ -270,6 +274,9 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 		}
 		// the sync value seam is registered (card 2's open chain rides the same key)
 		assertNotNull(tSync.findSyncHandlerNullable(GTBasicMachineMUI.SYNC_PROGRESS), "the progress sync value");
+		// the player-inventory widget rides the tree UNCONDITIONALLY (issue #3: the old
+		// always-true headless gate skipped it in game)
+		assertNotNull(named(tPanel, "player_inventory"), "the player inventory widget");
 	}
 
 	@Test
@@ -399,7 +406,7 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 		assertNotNull(tSync.findSyncHandlerNullable(GTBasicMachineMUI.SYNC_FLUID_IN + 0), "the named input key");
 		assertNotNull(tSync.findSyncHandlerNullable(GTBasicMachineMUI.SYNC_FLUID_OUT + 2), "the named output key");
 		// and the item content seats are untouched (1 in + 1 out on the Drying item shape)
-		assertEquals(2, allWidgets(tPanel).stream().filter(w -> w instanceof ItemSlot).count(),
+		assertEquals(2, itemSeats(tPanel).size(),
 				"the Drying item shape rides the shared panel unchanged");
 	}
 
@@ -413,21 +420,23 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 		PanelSyncManager tSync = headlessSyncManager();
 		ModularPanel<?> tPanel = GTBasicMachineMUI.buildPanel(tHost, tSync);
 
-		// the tree: the panel itself + 13 item seats + the progress widget — nothing else.
+		// the tree: the panel itself + 13 content item seats + the progress widget + the
+		// player-inventory group (1 group widget + its 36 seats, issue #3 unconditional).
 		// The p34 face: the Host banks are the interface DEFAULT (empty) here, so zero fluid
 		// seats render — the pre-p34 panel byte-identical (the zero-bank regression).
 		List<IWidget> tAll = allWidgets(tPanel);
-		long tItemSeats = tAll.stream().filter(w -> w instanceof ItemSlot).count();
+		long tItemSeats = itemSeats(tPanel).size();
 		long tProgress = tAll.stream().filter(w -> w instanceof brachy.modularui.widgets.ProgressWidget).count();
 		assertEquals(13, tItemSeats, "exactly the content seats");
 		assertEquals(1, tProgress, "exactly the progress bar");
-		assertEquals(15, tAll.size(), "panel + seats + progress only — no fluid widget, no player group on the headless fixture");
+		assertEquals(52, tAll.size(), "panel + seats + progress + the player group (1+36, issue #3)");
 
-		// the slot groups are exactly the two content groups
+		// the slot groups are exactly the two content groups — the player GROUP only
+		// registers at construct (the fork auto-bind), not at build
 		Set<String> tGroupNames = new java.util.HashSet<>();
 		tSync.getSlotGroups().forEach(g -> tGroupNames.add(g.getName()));
 		assertEquals(Set.of(GTBasicMachineMUI.GROUP_INPUTS, GTBasicMachineMUI.GROUP_OUTPUTS), tGroupNames,
-				"no fluid group, no player group (the headless fixture)");
+				"no fluid group; the player group rides the construct-time auto-bind");
 
 		// no widget is named after a fluid seat, and no bm_fluid sync key exists
 		assertTrue(tAll.stream().map(IWidget::getName).filter(java.util.Objects::nonNull)

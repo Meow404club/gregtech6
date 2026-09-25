@@ -11,7 +11,7 @@ import gregtech6.gui.GTGuiScreen;
  * Oven screen — the client half replacing upstream getGUIClient2/ContainerClientBasicMachine
  * (MultiTileEntityBasicMachine.java:1007), statically mounted via MenuScreens.register
  * (GTClientOvenListener). Panel = the standard 176x166 machine GUI the upstream mGUITexture
- * machines/Oven.png family uses (Example_Mod.java:165), with the slot cells at the
+ * machines/oven.png family uses (Example_Mod.java:165), with the slot cells at the
  * ContainerCommonBasicMachine coordinates the menu binds.
  *
  * <p>Progress bar (spec 6): the three-state ContainerData value drives a flat fill between
@@ -22,7 +22,7 @@ import gregtech6.gui.GTGuiScreen;
 public class GTOvenScreen extends GTGuiScreen<GTOvenMenu> {
 
 	public static final ResourceLocation BACKGROUND =
-		ResourceLocation.fromNamespaceAndPath(GTOvenMenus.MOD_ID, "textures/gui/machines/Oven.png");
+		ResourceLocation.fromNamespaceAndPath(GTOvenMenus.MOD_ID, "textures/gui/machines/oven.png");
 
 	/** Bar geometry in panel coordinates: the 36px gap between the input slot (right edge 71) and the output slot (107). */
 	private static final int BAR_X = 73, BAR_Y = 30, BAR_WIDTH = 32, BAR_HEIGHT = 4;

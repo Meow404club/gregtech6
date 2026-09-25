@@ -92,7 +92,7 @@ public class TileEntityOvenRecipeTest extends GTMachinesOfflineTestBase {
 		// :633-636 — mNeedsEmptyOutput blocks even a matching occupied output slot; the vanilla
 		// FURNACE bridge has no recipe stock, so a plain RecipeMap carries the recipe.
 		RecipeMap tMap = new RecipeMap(new java.util.HashSet<>(), "gt6.test.needsempty", "NeedsEmpty", "needsempty",
-				0, 1, "gt6:textures/gui/machines/Oven", 1, 1, 1, 0, 0, 0, 0, 1);
+				0, 1, "gt6:textures/gui/machines/oven", 1, 1, 1, 0, 0, 0, 0, 1);
 		tMap.addRecipe(new Recipe(true, new ItemStack[] {new ItemStack(Items.SAND)}, new ItemStack[] {new ItemStack(Items.GLASS)}, null, null, 16, 16, 0).setNeedEmptyOut());
 		tOven.mRecipes = tMap;
 		assertEquals(TileEntityOven.FOUND_RECIPE_BUT_DID_NOT_MEET_REQUIREMENTS,

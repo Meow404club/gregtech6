@@ -74,7 +74,11 @@ public final class GTActMenu {
 		GTItemStackHandler tInv = aTable.getInventory();
 		aSyncManager.registerSlotGroup("act_belt16", 4); // the STORAGE_SLOT_PRIO shift-transfer face
 		aSyncManager.registerSlotGroup("act_tools", 5);
-		aSyncManager.bindPlayerInventory(aSyncManager.getPlayer());
+		// the player-inventory SYNC face rides the fork auto-bind (ModularSyncManager.construct
+		// :68-70) — the explicit bindPlayerInventory(getPlayer()) here dereferenced the null
+		// menu (getPlayer() → menu.getPlayer(), ModularSyncManager.java:167-169) and NPEd on
+		// every open (issue #3 reverse mine); the panel carries no player widget by design
+		// (the 176x210 layout, the sync face only)
 		// the display half of the output seat — the stack syncs server→client
 		aSyncManager.syncValue("act_output", GenericSyncValue.forItem(() -> tInv.getStackInSlot(31), null));
 

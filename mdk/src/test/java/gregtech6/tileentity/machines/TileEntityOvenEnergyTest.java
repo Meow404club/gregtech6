@@ -56,7 +56,7 @@ public class TileEntityOvenEnergyTest extends GTMachinesOfflineTestBase {
 		MachineLevel tLevel = smeltingLevel();
 		TileEntityOven tOven = makeOven(tLevel);
 		RecipeMap tShortMap = new RecipeMap(new HashSet<>(), "gt6.test.short", "Short Test", "shorttest",
-				0, 1, "gt6:textures/gui/machines/Oven",
+				0, 1, "gt6:textures/gui/machines/oven",
 				1, 1, 1, 0, 0, 0, 0, 1);
 		tShortMap.addRecipe(new Recipe(true, new ItemStack[] {new ItemStack(Items.SAND)}, new ItemStack[] {new ItemStack(Items.GLASS)}, null, null, 15, 16, 0));
 		tOven.mRecipes = tShortMap;
@@ -119,7 +119,7 @@ public class TileEntityOvenEnergyTest extends GTMachinesOfflineTestBase {
 		MachineLevel tLevel = smeltingLevel();
 		TileEntityOven tOven = makeOven(tLevel);
 		RecipeMap tCheapMap = new RecipeMap(new HashSet<>(), "gt6.test.oc", "OC Test", "octest",
-				0, 1, "gt6:textures/gui/machines/Oven",
+				0, 1, "gt6:textures/gui/machines/oven",
 				1, 1, 1, 0, 0, 0, 0, 1);
 		tCheapMap.addRecipe(new Recipe(true, new ItemStack[] {new ItemStack(Items.SAND)}, new ItemStack[] {new ItemStack(Items.GLASS)}, null, null, 16, 4, 0));
 		tOven.mRecipes = tCheapMap;

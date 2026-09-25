@@ -66,7 +66,7 @@ class GT6LargeMachineSemanticsTest extends GTMultiBlocksOfflineTestBase {
 		if (sMap == null) {
 			sRecipes = new java.util.HashSet<>();
 			sMap = new RecipeMap(sRecipes, "gt6.test.large", "Large Test", null,
-					0, 1, "gt6:textures/gui/machines/Oven", 1, 9, 1, 0, 1, 0, 1, 1);
+					0, 1, "gt6:textures/gui/machines/oven", 1, 9, 1, 0, 1, 0, 1, 1);
 		}
 		sRecipes.clear(); // a fresh row set per test
 		return sMap;
@@ -229,7 +229,7 @@ class GT6LargeMachineSemanticsTest extends GTMultiBlocksOfflineTestBase {
 		if (sFluidMap == null) {
 			sFluidRecipes = new java.util.HashSet<>();
 			sFluidMap = new RecipeMap(sFluidRecipes, "gt6.test.large.fluid", "Large Fluid Test", null,
-					0, 1, "gt6:textures/gui/machines/Oven", 1, 9, 0, 1, 1, 0, 1, 1);
+					0, 1, "gt6:textures/gui/machines/oven", 1, 9, 0, 1, 1, 0, 1, 1);
 		}
 		sFluidRecipes.clear();
 		return sFluidMap;

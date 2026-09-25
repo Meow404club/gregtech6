@@ -44,7 +44,7 @@ class GTMultiBlockMachineSemanticsTest extends GTMultiBlocksOfflineTestBase {
 	static void buildMap() {
 		sRecipes = new java.util.HashSet<>();
 		sMap = new RecipeMap(sRecipes, "gt6.test.semantics", "Semantics Test", null,
-				0, 1, "gt6:textures/gui/machines/Oven", 1, 9, 1, 0, 1, 0, 1, 1);
+				0, 1, "gt6:textures/gui/machines/oven", 1, 9, 1, 0, 1, 0, 1, 1);
 	}
 
 	/** The standalone map for these tests (1 input slot, 9 outputs, power 1) — ONE instance: map names register globally. */

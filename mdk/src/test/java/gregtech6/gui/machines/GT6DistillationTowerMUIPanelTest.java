@@ -3,6 +3,7 @@ package gregtech6.gui.machines;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -175,9 +176,13 @@ class GT6DistillationTowerMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 		long tItemSeats = tAll.stream().filter(w -> w instanceof ItemSlot).count();
 		long tFluidSeats = tAll.stream().filter(w -> w instanceof FluidDisplayWidget).count();
 		long tProgress = tAll.stream().filter(w -> w instanceof ProgressWidget).count();
-		assertEquals(4, tItemSeats, "1 input + 3 outputs (the case1/:55 + case3/:168 rows)");
+		// 4 content + the 36 player-inventory seats (issue #3: the widget rides the tree
+		// unconditionally — the always-true headless gate is gone)
+		assertEquals(40, tItemSeats, "1 input + 3 outputs (the case1/:55 + case3/:168 rows) + the 36 player seats");
 		assertEquals(10, tFluidSeats, "the input tank + the NINE-tank output bank (:267/:268)");
 		assertEquals(1, tProgress, "exactly the progress bar");
+		assertNotNull(tAll.stream().filter(w -> "player_inventory".equals(w.getName())).findFirst().orElse(null),
+				"the player inventory widget (issue #3)");
 
 		// the geometry — the mapping table verbatim
 		assertPos(tPanel, "input_0", 53, 7, "input");

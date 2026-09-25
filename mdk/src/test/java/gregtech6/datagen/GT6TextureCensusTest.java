@@ -16,7 +16,10 @@
  *       generated tree silently shadows a static-tree real texture, build.forge.gradle.kts:158
  *       / build.neoforge.gradle.kts:194 append AFTER the default srcDir);</li>
  *   <li>every {@code gt6:} texture reference of every generated item model resolves to a
- *       PNG on the static ∪ generated face.</li>
+ *       PNG on the static ∪ generated face;</li>
+ *   <li>every RecipeMap {@code mGUIPath} is ResourceLocation-legal and grounded to a
+ *       shipped PNG (pin g, task issue3-gui-bg — the in-JVM enumeration is a read of the
+ *       recipe registry, still no filesystem write).</li>
  * </ul>
  *
  * <p>Upstream grounding is carried by assets/README.md's sha256 table, NOT by any
@@ -49,6 +52,9 @@ import org.junit.jupiter.api.Test;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import gregtech6.recipes.GT6RecipeMaps;
+import gregtech6.recipes.RecipeMap;
 
 class GT6TextureCensusTest {
 
@@ -413,5 +419,59 @@ class GT6TextureCensusTest {
     private static String toResourcePath(String rel) {
         String under = rel.substring(TEXTURES_PREFIX.length() + 1, rel.length() - ".png".length());
         return "gt6:" + under;
+    }
+
+    /**
+     * Pin g (task issue3-gui-bg): every {@link RecipeMap} {@code mGUIPath} is (a) legal per
+     * the vanilla 1.20.1 ResourceLocation character whitelist (path {@code [a-z0-9/._-]},
+     * ResourceLocation.java:213-232 — an uppercase char throws at construction, the
+     * "machines/Oven" class-load mine) and (b) grounded to a PNG on the static tree, except
+     * the two declared exemptions below. Enumerated from {@code RecipeMap.RECIPE_MAPS} after
+     * {@link GT6RecipeMaps#init()} so a newly declared map cannot skip the census (the same
+     * non-vacuous face as pin a). The init/reset pair is the GT6BasicMachineMUIPanelTest
+     * form; RecipeMap construction is plain-Java (every maps/ subclass ctor is a
+     * pass-through), no vanilla bootstrap needed.
+     */
+    @Test
+    void everyRecipeMapGuiPathIsLowercaseLegalAndGroundedOnDisk() throws IOException {
+        // the display-only map (nothing opens it, GT6RecipeMaps registration comment) and the
+        // chisel (upstream ships no Chisel.png either — the tool applies recipes by
+        // right-click, no GUI; assets/README.md issue3-gui-bg section)
+        Set<String> exemptFiles = Set.of("bedrockorelist", "chisel");
+        GT6RecipeMaps.init();
+        try {
+            java.util.regex.Pattern legalNamespace = java.util.regex.Pattern.compile("[a-z0-9_.-]+");
+            java.util.regex.Pattern legalPath = java.util.regex.Pattern.compile("[a-z0-9/._-]+");
+            List<String> violations = new ArrayList<>();
+            Set<String> grounded = textureRels(mdkRoot().resolve(STATIC_TREE));
+            int checked = 0;
+            for (RecipeMap tMap : RecipeMap.RECIPE_MAPS.values()) {
+                checked++;
+                String tGui = tMap.mGUIPath; // the full "gt6:textures/gui/machines/<word>.png"
+                int tColon = tGui.indexOf(':');
+                if (tColon < 0) {
+                    violations.add(tGui + " — not a namespaced path (" + tMap.mNameInternal + ")");
+                    continue;
+                }
+                String tNamespace = tGui.substring(0, tColon);
+                String tPath = tGui.substring(tColon + 1);
+                if (!legalNamespace.matcher(tNamespace).matches() || !legalPath.matcher(tPath).matches()) {
+                    violations.add(tGui + " — ResourceLocation-illegal character (" + tMap.mNameInternal + ")");
+                    continue;
+                }
+                String word = tPath.substring(tPath.lastIndexOf('/') + 1, tPath.length() - ".png".length());
+                if (exemptFiles.contains(word)) {
+                    continue;
+                }
+                String rel = "assets/" + tNamespace + "/" + tPath;
+                if (!grounded.contains(rel)) {
+                    violations.add(tGui + " — no PNG on the static tree (" + rel + ")");
+                }
+            }
+            assertTrue(checked >= 60, "only " + checked + " maps enumerated — init() broke, the pin must never pass vacuously");
+            assertTrue(violations.isEmpty(), sample("RecipeMap mGUIPath violation", violations));
+        } finally {
+            GT6RecipeMaps.reset();
+        }
     }
 }

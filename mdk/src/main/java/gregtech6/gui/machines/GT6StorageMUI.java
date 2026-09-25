@@ -16,10 +16,10 @@ import gregtech6.tileentity.inventories.GT6SafeBlockEntity;
  * open through {@link GT6MuiMachine#tryOpen} with ZERO new MenuType; the panels build on
  * SERVER and CLIENT inside the BEs' {@code buildUI} (IUIHolder.java:21-44 contract).
  *
- * <p>The headless gate is the mui-a finding (a): {@code PanelSyncManager.getPlayer()}
- * dereferences the absent container menu when no container exists — the offline panel
- * fixtures run headless, at runtime both sides always have one (the branch never fires in
- * game), so the player face (bind + widget) is gated on {@code getContainer() == null}.
+ * <p>The player-inventory widget is added UNCONDITIONALLY (issue #3: the old
+ * {@code getContainer() == null} headless gate was always-true at runtime — the fork's
+ * GuiManager.open runs createPanel before menu.construct; the widget binds by sync key and
+ * needs no container, the sync face rides the ModularSyncManager.construct auto-bind).
  */
 public final class GT6StorageMUI {
 
@@ -49,20 +49,16 @@ public final class GT6StorageMUI {
 		aSyncManager.registerSlotGroup(GROUP_Q1, 9);
 		aSyncManager.registerSlotGroup(GROUP_Q2, 9);
 		aSyncManager.registerSlotGroup(GROUP_Q3, 9);
-		boolean tHeadless = aSyncManager.getContainer() == null;
-		if (!tHeadless) {
-			aSyncManager.bindPlayerInventory(aSyncManager.getPlayer());
-		}
+		// the player-inventory SYNC face rides the fork auto-bind (ModularSyncManager.construct
+		// :68-70 — an explicit bindPlayerInventory here would NPE on the null menu, issue #3)
 		ModularPanel<?> tPanel = ModularPanel.defaultPanel(DRAWER_PANEL, DRAWER_WIDTH, DRAWER_HEIGHT);
 		tPanel.child(quadrantGrid(aDrawer, 0, GROUP_Q0).pos(8, 8));
 		tPanel.child(quadrantGrid(aDrawer, 1, GROUP_Q1).pos(QUAD_RIGHT_X, 8));
 		tPanel.child(quadrantGrid(aDrawer, 2, GROUP_Q2).pos(8, QUAD_BOTTOM_Y));
 		tPanel.child(quadrantGrid(aDrawer, 3, GROUP_Q3).pos(QUAD_RIGHT_X, QUAD_BOTTOM_Y));
-		if (!tHeadless) {
-			// the player inventory, centered under the quadrant field (the GTBasicMachineMUI
-			// playerInventory-widget face — 3x9 block + hotbar)
-			tPanel.child(SlotGroupWidget.playerInventory((aIndex, aSlot) -> aSlot).pos(97, 166));
-		}
+		// the player inventory, centered under the quadrant field (the GTBasicMachineMUI
+		// playerInventory-widget face — 3x9 block + hotbar); UNCONDITIONAL (issue #3)
+		tPanel.child(SlotGroupWidget.playerInventory((aIndex, aSlot) -> aSlot).pos(97, 166));
 		return tPanel;
 	}
 
@@ -83,19 +79,15 @@ public final class GT6StorageMUI {
 	 */
 	public static ModularPanel<?> safePanel(GT6SafeBlockEntity aSafe, PanelSyncManager aSyncManager) {
 		aSyncManager.registerSlotGroup(GROUP_SAFE, 5);
-		boolean tHeadless = aSyncManager.getContainer() == null;
-		if (!tHeadless) {
-			aSyncManager.bindPlayerInventory(aSyncManager.getPlayer());
-		}
+		// the player-inventory SYNC face rides the fork auto-bind (issue #3, see drawerPanel)
 		ModularPanel<?> tPanel = ModularPanel.defaultPanel(SAFE_PANEL, 176, 166);
 		tPanel.child(SlotGroupWidget.builder()
 				.row("IIIII").row("IIIII").row("IIIII")
 				.key('I', i -> new ItemSlot().slot(new ModularSlot(aSafe.getInventory(), i)))
 				.slotGroup(GROUP_SAFE)
 				.build().pos(43, 8));
-		if (!tHeadless) {
-			tPanel.child(SlotGroupWidget.playerInventory((aIndex, aSlot) -> aSlot).pos(7, 84));
-		}
+		// UNCONDITIONAL — the sync handlers resolve by key at construct, no container needed
+		tPanel.child(SlotGroupWidget.playerInventory((aIndex, aSlot) -> aSlot).pos(7, 84));
 		return tPanel;
 	}
 }
