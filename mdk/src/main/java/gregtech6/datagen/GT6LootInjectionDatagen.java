@@ -170,8 +170,8 @@ public final class GT6LootInjectionDatagen {
 		// ZPM is an unchargeable dead drop) — the declared deviation on the card face.
 		// (the MatDict :443 stays pooled — the class javadoc ruling)
 		rRows.add(new InjectionRow("dungeon_inject_simple_dungeon", "minecraft:chests/simple_dungeon",
-				ROLL_MIN, ROLL_MAX, ladder(java.util.stream.Stream.concat(dungeonMetalLadder(12, 2),
-						java.util.stream.Stream.of(guideRow(50, 2, 8), zpmArtifactRow())))));
+				ROLL_MIN, ROLL_MAX, ladder(java.util.stream.Stream.concat(dungeonChestEntries().stream(),
+						java.util.stream.Stream.of(zpmArtifactRow())))));
 		// PYRAMID_DESERT_CHEST :445-450 — holy water/coins/bags POOLED, the Nq arrow head lands
 		rRows.add(new InjectionRow("dungeon_inject_desert_pyramid", "minecraft:chests/desert_pyramid",
 				ROLL_MIN, ROLL_MAX, ladder(Stream.of(mat(OP.toolHeadArrow, MT.Nq, 1, 4, 16)))));
@@ -223,6 +223,21 @@ public final class GT6LootInjectionDatagen {
 						mat(OP.toolHeadAxeDouble, MT.Steel, 12, 1, 4), mat(OP.toolHeadAxeDouble, MT.DamascusSteel, 6, 1, 4),
 						mat(OP.arrowGtWood, MT.DamascusSteel, 6, 16, 48), mat(OP.arrowGtWood, MT.SterlingSilver, 6, 8, 24)))));
 		return rRows;
+	}
+
+	/**
+	 * The DUNGEON_CHEST category rows (Loader_Loot.java:418-443 对位) — ONE source for
+	 * two carriers: the vanilla {@code chests/simple_dungeon} injection (above) and the
+	 * {@code gt6:chests/dungeon_chest} carrier table the GT6 dungeon structure's chests
+	 * bind (task p38-dungeon-framework). The ZPM artifact row (:442 face, task p36) is
+	 * NOT here — it rides only the vanilla injection (the p34 ruling: the GT6 dungeon's
+	 * own ZPM face lives in the Library room, the deferred batch card, so the artifact
+	 * keeps its p34 carrier until then; and the plain-tag row keeps this table off the
+	 * set_nbt/set_custom_data dual-leg seam).
+	 */
+	public static List<EntryRow> dungeonChestEntries() {
+		return ladder(java.util.stream.Stream.concat(dungeonMetalLadder(12, 2),
+				java.util.stream.Stream.of(guideRow(50, 2, 8))));
 	}
 
 	/**

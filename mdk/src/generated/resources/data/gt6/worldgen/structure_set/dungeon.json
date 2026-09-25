@@ -1,0 +1,14 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 371266954,
+    "separation": 5,
+    "spacing": 11
+  },
+  "structures": [
+    {
+      "structure": "gt6:dungeon",
+      "weight": 1
+    }
+  ]
+}

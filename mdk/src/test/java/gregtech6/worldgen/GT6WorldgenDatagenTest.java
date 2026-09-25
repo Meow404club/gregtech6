@@ -154,8 +154,12 @@ class GT6WorldgenDatagenTest {
         Set<String> tExpected = Set.of(
                 "minecraft:worldgen/configured_feature",
                 "minecraft:worldgen/placed_feature",
-                GT6WorldgenDatagen.biomeModifierRegistryKey().location().toString());
-        assertEquals(tExpected, tKeys, "exactly configured/placed/biome_modifier, no other band");
+                GT6WorldgenDatagen.biomeModifierRegistryKey().location().toString(),
+                // task p38-dungeon-framework: the shelter dungeon rides the same provider
+                "minecraft:worldgen/structure",
+                "minecraft:worldgen/structure_set");
+        assertEquals(tExpected, tKeys,
+                "exactly configured/placed/biome_modifier/structure/structure_set, no other band");
         //? if neoforge {
         /*assertEquals(GT6WorldgenDatagen.BUILDER_KEYS, GT6WorldgenDatagen.BUILDER.getEntryKeys(),
                 "1.21.1 builder introspection must equal the BUILDER_KEYS mirror");
