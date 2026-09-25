@@ -27,6 +27,7 @@ package gregtech6.worldgen;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -50,6 +51,7 @@ import gregtech6.datagen.GT6LootTables;
 import gregtech6.datagen.GT6WorldgenDatagen;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.worldgen.dungeon.GT6DungeonLayout;
+import gregtech6.worldgen.dungeon.GT6DungeonStructure;
 import gregtech6.worldgen.dungeon.GT6DungeonPiece;
 import gregtech6.worldgen.dungeon.GT6DungeonStructure;
 
@@ -59,8 +61,12 @@ class GT6DungeonStructureTest {
     static void boot() {
         // the material system for the loot-row resolver faces (GT6LootInjectionTest posture);
         // vanilla bootstrap bracket for the ResourceKey/Registries/Direction classes (the
-        // GT6WorldgenDatagenTest posture — offline throwables ignored).
+        // GT6WorldgenDatagenTest posture — offline throwables ignored). The version detect
+        // MUST precede bootStrap (the GTBlockPropertyIdentityTest/GTOreOverlay211SeamTest
+        // form — a bare-JVM first boot throws at Util.doFetchChoiceType and leaves the
+        // Blocks/Items classes half-initialized for every later face in this JVM).
         GTMaterialItems.initMaterials();
+        net.minecraft.SharedConstants.tryDetectVersion();
         try {
             net.minecraft.server.Bootstrap.bootStrap();
         } catch (Throwable ignored) {
@@ -204,6 +210,110 @@ class GT6DungeonStructureTest {
         }
         assertTrue(tSide0 > 0, "the sweep ran");
         assertTrue(tSawAnyDeadEnd, "at least one dead-end room across the seed sweep");
+    }
+
+    // ---------------------------------------------------------------- room batch (dungeon-rooms-batch)
+
+    /**
+     * The room-kind vocabulary: 9 kinds = the framework's four + the batch card's five
+     * pool rooms (upstream ROOMS :85-94 minus the Library rows) and the two special-cell
+     * rooms; every name survives the NBT round trip ({@code Kind.of}).
+     */
+    @Test
+    void roomKindVocabularyIsPinned() {
+        assertEquals(12, GT6DungeonPiece.Kind.values().length,
+                "the framework 4 + Corridor3/Corridor4/Barracks/Workshop + MiningBedrock + the 3 farms");
+        for (GT6DungeonPiece.Kind tKind : GT6DungeonPiece.Kind.values()) {
+            assertEquals(tKind, GT6DungeonPiece.Kind.valueOf(tKind.name()), "the NBT round trip: " + tKind);
+        }
+    }
+
+    /**
+     * The ROOMS pool: exactly the five upstream ported rooms in the upstream list order
+     * (Workshop :85, MiningBedrock :86, the Library rows :87-89 = the parallel library
+     * card's seam, FarmMobs :90, FarmCrop :91, FarmFish :92); immutable (the dispatch
+     * copies per dungeon).
+     */
+    @Test
+    void roomsPoolIsPinned() {
+        assertEquals(List.of(
+                GT6DungeonPiece.Kind.WORKSHOP,
+                GT6DungeonPiece.Kind.MINING_BEDROCK,
+                GT6DungeonPiece.Kind.FARM_MOBS,
+                GT6DungeonPiece.Kind.FARM_CROP,
+                GT6DungeonPiece.Kind.FARM_FISH), GT6DungeonStructure.ROOMS_POOL,
+                "the pool = the upstream ROOMS rows minus the Library seam, order verbatim");
+        assertThrows(UnsupportedOperationException.class, () -> GT6DungeonStructure.ROOMS_POOL.add(null),
+                "the pool is immutable — the dispatch works on a copy");
+    }
+
+    /** The corridor split (upstream :289-291): 4-way crossing, 3-way alcove, else the plain arm. */
+    @Test
+    void corridorKindMappingIsPinned() {
+        assertEquals(GT6DungeonPiece.Kind.CORRIDOR4, GT6DungeonStructure.corridorKind(4));
+        assertEquals(GT6DungeonPiece.Kind.CORRIDOR3, GT6DungeonStructure.corridorKind(3));
+        assertEquals(GT6DungeonPiece.Kind.CORRIDOR, GT6DungeonStructure.corridorKind(2));
+        assertEquals(GT6DungeonPiece.Kind.CORRIDOR, GT6DungeonStructure.corridorKind(1));
+        assertEquals(GT6DungeonPiece.Kind.CORRIDOR, GT6DungeonStructure.corridorKind(0));
+    }
+
+    /**
+     * The mob-tower spill mask (upstream FarmMobs :41-56): the diagonal is licensed only
+     * when the diagonal AND both orthos are 0-or-CORRIDOR. Synthetic 3x3 layouts pin all
+     * four quadrants; the live-layout sweep then asserts no mask bit ever licenses a
+     * room-occupied neighbor.
+     */
+    @Test
+    void mobsDiagMaskIsPinned() {
+        byte[][] t = new byte[3][3];
+        byte tRoom = 1, tRock = 0, tCorr = GT6DungeonLayout.CORRIDOR;
+        // the empty grid licenses NW
+        assertEquals(0b0001, GT6DungeonStructure.mobsDiagMask(t, 1, 1) & 0b0001, "all rock -> NW licensed");
+        // a room diagonal kills the bit
+        t[0][0] = tRoom;
+        assertEquals(0b0000, GT6DungeonStructure.mobsDiagMask(t, 1, 1) & 0b0001, "room at the diagonal -> NW dead");
+        // a corridor diagonal is fine (the == -128 arm)
+        t[0][0] = tCorr;
+        assertEquals(0b0001, GT6DungeonStructure.mobsDiagMask(t, 1, 1) & 0b0001, "corridor at the diagonal -> NW licensed");
+        // a room ortho kills the bit
+        t[0][0] = tRock;
+        t[1][0] = tRoom; // the north ortho
+        assertEquals(0b0000, GT6DungeonStructure.mobsDiagMask(t, 1, 1) & 0b0001, "room at the ortho -> NW dead");
+        t[1][0] = tRock;
+        // live layouts: every licensed diagonal is 0-or-corridor and so are the orthos
+        for (long tSeed = 0; tSeed < 100; tSeed++) {
+            byte[][] tLayout = GT6DungeonLayout.generate(RandomSource.create(tSeed));
+            int tSide = tLayout.length;
+            for (int i = 1; i < tSide - 1; i++) for (int j = 1; j < tSide - 1; j++) {
+                if (tLayout[i][j] != GT6DungeonLayout.ROOM_ID) continue;
+                int tMask = GT6DungeonStructure.mobsDiagMask(tLayout, i, j);
+                int[][] tQuads = {{i - 1, j - 1}, {i + 1, j - 1}, {i - 1, j + 1}, {i + 1, j + 1}};
+                int[][] tOrthoPairs = {{i - 1, j, i, j - 1}, {i + 1, j, i, j - 1}, {i - 1, j, i, j + 1}, {i + 1, j, i, j + 1}};
+                for (int tBit = 0; tBit < 4; tBit++) {
+                    if ((tMask & (1 << tBit)) == 0) continue;
+                    int tD = tLayout[tQuads[tBit][0]][tQuads[tBit][1]];
+                    assertTrue(tD == 0 || tD == GT6DungeonLayout.CORRIDOR,
+                            "licensed diagonal must be rock/corridor (seed " + tSeed + " bit " + tBit + ")");
+                    int tO1 = tLayout[tOrthoPairs[tBit][0]][tOrthoPairs[tBit][1]];
+                    int tO2 = tLayout[tOrthoPairs[tBit][2]][tOrthoPairs[tBit][3]];
+                    assertTrue(tO1 == 0 || tO1 == GT6DungeonLayout.CORRIDOR, "the first ortho must be free");
+                    assertTrue(tO2 == 0 || tO2 == GT6DungeonLayout.CORRIDOR, "the second ortho must be free");
+                }
+            }
+        }
+    }
+
+    /** The barracks safe-loot table ids: the p34 ChestGenHooks mapping rows verbatim. */
+    @Test
+    void barracksSafeLootsArePinned() {
+        assertEquals(9, GT6DungeonPiece.BARRACKS_SAFE_LOOTS.length, "the upstream tLoots row (:108)");
+        List<String> tWanted = List.of(
+                "minecraft:chests/stronghold_library", "minecraft:chests/stronghold_corridor",
+                "minecraft:chests/stronghold_crossing", "minecraft:chests/desert_pyramid",
+                "minecraft:chests/jungle_temple", "minecraft:chests/village/village_weaponsmith",
+                "minecraft:chests/abandoned_mineshaft", "gt6:chests/dungeon_chest",
+                "minecraft:chests/spawn_bonus_chest");
+        assertEquals(tWanted, List.of(GT6DungeonPiece.BARRACKS_SAFE_LOOTS), "the p34 mapping verbatim");
     }
 
     // ---------------------------------------------------------------- loot carrier

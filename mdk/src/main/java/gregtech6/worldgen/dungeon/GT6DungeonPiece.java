@@ -984,7 +984,7 @@ public class GT6DungeonPiece extends StructurePiece {
      * p34 {@code ChestGenHooks → vanilla table} mapping verbatim; DUNGEON_CHEST rides
      * the gt6 carrier). Full ids — the safe marker face.
      */
-    static final String[] BARRACKS_SAFE_LOOTS = {
+    public static final String[] BARRACKS_SAFE_LOOTS = {
             "minecraft:chests/stronghold_library", "minecraft:chests/stronghold_corridor",
             "minecraft:chests/stronghold_crossing", "minecraft:chests/desert_pyramid",
             "minecraft:chests/jungle_temple", "minecraft:chests/village/village_weaponsmith",
