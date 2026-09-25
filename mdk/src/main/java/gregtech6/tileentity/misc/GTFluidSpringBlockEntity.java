@@ -1,5 +1,7 @@
 package gregtech6.tileentity.misc;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -44,10 +46,16 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  *     -> source there; full source above -> convert one horizontal neighbor per spray.
  *     The decisions are the static {@link #shouldSprayAbove}/{@link #shouldSpreadTo} (the
  *     offline test face).</li>
- * <li><b>skin faces not ported</b>: the per-fluid render pass + FLUID_SPRING overlay
- *     texture (the blockstate model is a static cube — the texture is declared debt), the
- *     LIGHT_OPACITY_MAX light face, the client short-sync (nothing client-visible varies:
- *     the model is static).</li>
+ * <li><b>the skin</b> (task p38-spring-texture-tint, upstream :150
+ *     {@code getTexture = BlockTextureMulti(BlockTextureFluid(mFluid), FLUID_SPRING)}):
+ *     the per-fluid render face rides {@link #getModelData()} — the spring block id under
+ *     {@code GTModelProperties.SPRING_FLUID}, and {@code GTFluidSpringBakedModel} resolves
+ *     the fluid still x tint base + the FLUID_SPRING dither overlay off it (the tint
+ *     baked into the vertices, the p32 route). The id reaches the client BE through the
+ *     two vanilla sync channels for free ({@code getUpdateTag} = {@code
+ *     saveWithoutMetadata()} carries {@link #NBT_SPRING}; the client {@code load} arm
+ *     refreshes the model data dirty-gated, the paint arm's shape).</li>
+ * <li><b>skin faces still not ported</b>: the LIGHT_OPACITY_MAX light face.</li>
  * </ul>
  *
  * <p>KJS face (card declaration): registry face, tier-c binding defer — same treatment as
@@ -197,8 +205,18 @@ public class GTFluidSpringBlockEntity extends TileEntityBase03TicksAndSync {
 		aNBT.putBoolean(NBT_ACTIVE, mActive);
 	}
 
+	/**
+	 * The vanilla two-channel convergence (both the chunk-data and the block-update
+	 * channel land here), plus the client refresh arm (task p38-spring-texture-tint, the
+	 * paint arm's dirty-gated shape — TileEntityBase03TicksAndSync.load): the spring id
+	 * reaching the client BE refreshes the ModelDataManager, so the first chunk build
+	 * after the load reads the tinting snapshot. Server-side loads (worldgen placement,
+	 * chunk migrations) are the no-op arm — {@code requestModelDataUpdate} is
+	 * client-only and self-guarding.
+	 */
 	@Override
 	public void load(CompoundTag aNBT) {
+		String tWasSpring = mSpringBlockId;
 		super.load(aNBT);
 		mSpringBlockId = aNBT.contains(NBT_SPRING, Tag.TAG_STRING) ? aNBT.getString(NBT_SPRING) : null;
 		if (aNBT.contains(NBT_SPRING_AMOUNT, Tag.TAG_ANY_NUMERIC)) {
@@ -207,5 +225,37 @@ public class GTFluidSpringBlockEntity extends TileEntityBase03TicksAndSync {
 		if (aNBT.contains(NBT_ACTIVE, Tag.TAG_ANY_NUMERIC)) {
 			mActive = aNBT.getBoolean(NBT_ACTIVE);
 		}
+		if (hasLevel() && isClientSide() && !java.util.Objects.equals(mSpringBlockId, tWasSpring)) {
+			requestModelDataUpdate();
+		}
+	}
+
+	/**
+	 * The {@link GTModelProperties#SPRING_FLUID} supply (the paint arm's
+	 * {@code getModelData} PAINT shape, task p38-spring-texture-tint): the BE carries the
+	 * spring block id whenever a spring is set — the model resolves the per-fluid tint +
+	 * still sprite off it (resolve-once, client-side; this common-side method stays free
+	 * of client classes). No spring = the super default (absent property = the fallback
+	 * JSON face). The assembly is the pure {@link #springModelData} seam (both legs); the
+	 * bare offline BE rides the forge leg only — the 1.21.1 BlockEntity ctor validates its
+	 * state against the type, so that face cannot exist there at all.
+	 */
+	@Override
+	public net.minecraftforge.client.model.data.ModelData getModelData() {
+		if (mSpringBlockId == null) return super.getModelData();
+		return springModelData(super.getModelData(), mSpringBlockId);
+	}
+
+	/**
+	 * The pure ModelData assembly (the offline seam both legs drive): the spring block id
+	 * under {@link GTModelProperties#SPRING_FLUID} exactly while an id is set, the parent
+	 * snapshot unchanged otherwise (absent property = the fallback JSON face).
+	 */
+	public static net.minecraftforge.client.model.data.ModelData springModelData(
+			net.minecraftforge.client.model.data.ModelData aParent, @Nullable String aSpringBlockId) {
+		if (aSpringBlockId == null) return aParent;
+		return gregtech6.client.render.GTModelProperties.derive(aParent)
+				.with(gregtech6.client.render.GTModelProperties.SPRING_FLUID, aSpringBlockId)
+				.build();
 	}
 }

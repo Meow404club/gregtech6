@@ -91,6 +91,18 @@ public final class GTModelProperties {
 	 */
 	public static final ModelProperty<Integer> PAINT = new ModelProperty<>(Objects::nonNull);
 
+	/**
+	 * The fluid-spring identity property (task p38-spring-texture-tint): the spring block
+	 * id string the nozzle BE carries ({@code gt6:liquid_medium_oil_block} /
+	 * {@code minecraft:lava} — an immutable {@link String}, the ModelData iron law above
+	 * applies trivially). Present exactly while the BE carries a spring ({@code
+	 * gregtech6.tileentity.misc.GTFluidSpringBlockEntity#getModelData}); the consumer
+	 * ({@code GTFluidSpringBakedModel}) resolves the per-fluid tint + still sprite OFF
+	 * this id — the paint arm's resolve-once shape, so the common-side BE never touches
+	 * client classes. Single-valued like its siblings.
+	 */
+	public static final ModelProperty<String> SPRING_FLUID = new ModelProperty<>(Objects::nonNull);
+
 	private GTModelProperties() {
 	}
 
