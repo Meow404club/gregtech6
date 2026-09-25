@@ -129,6 +129,18 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 
 	/** A kitchen carrier for the dispatch pin (properties irrelevant to the material gate). */
 	private static gregtech6.block.tools.GTKitchenBlock kitchenBlock(gregapi.oredict.OreDictMaterial aMaterial) {
+		// Block.<init> creates its intrusive holder past the bootstrap freeze — carry our own
+		// write window (the GTWireBlockUseLockTest.block()/GT6CFoamFamilyTest shape, no
+		// re-freeze): the class previously rode an earlier-alphabetical class's open window,
+		// which fork partitioning (maxParallelForks, task maint-ci-perf) can't guarantee.
+		try {
+			java.lang.reflect.Method tUnfreeze = net.minecraft.core.registries.BuiltInRegistries.BLOCK
+					.getClass().getMethod("unfreeze");
+			tUnfreeze.setAccessible(true);
+			tUnfreeze.invoke(net.minecraft.core.registries.BuiltInRegistries.BLOCK);
+		} catch (Exception aE) {
+			throw new IllegalStateException("could not unfreeze the offline block registry", aE);
+		}
 		return new gregtech6.block.tools.GTKitchenBlock(8000, () -> aMaterial,
 				gregtech6.block.tools.GTKitchenBlock.SHAPE_TUB, () -> null,
 				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());

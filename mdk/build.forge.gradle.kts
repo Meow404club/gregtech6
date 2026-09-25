@@ -276,8 +276,18 @@ tasks.withType(Test::class).configureEach {
         events("passed", "skipped", "failed")
         exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
     }
-    // 材料系统全量 init 属内存敏感（MT 1273 材料 + 全量物品枚举），与根项目测试同量级
-    maxHeapSize = "2g"
+    // 材料系统全量 init 属内存敏感（MT 1273 材料 + 全量物品枚举），与根项目测试同量级；
+    // 1536m = CI 内存账让步（cap 6 并行的前提，降堆后双腿全量复测无 OOM）
+    maxHeapSize = "1536m"
+    // JVM 级并行：每 fork 独立 JVM，fork 内测试仍串行，类内语义零变化。
+    // 核数×2：test fork 大头是类加载/静态 init 这类不满核计算，CI 4 vCPU → 6 fork 已让核饱和
+    // （availableProcessors 运行时自适应；超订填缝收益 8→6 损失很小）。
+    // cap 6 内存账（实测版）：单 fork RSS≈2.3GB@2g 堆（含 metaspace/native）→ 堆降 1536m 后
+    // 估 ~1.9GB/fork，6×1.9+daemon ~1.5 ≈ 12.9GB ≤ 16GB runner 可用 ~13.5GB（OS+agent 占
+    // ~1.5-2GB）；8×2.3=18.4GB、7×2.3=16.1GB、6×2.3=15.3GB@2g 堆均超可用——确定性 OOM。
+    // ②本地 12 核裸公式=24 forks 超物理内存+gt6testgate 30G 闸，cap 6 同护本地。
+    // 402 个测试文件已扫描：零 ServerSocket/零文件写（2026-09-25 主会话 grep 实证），fork 间无文件域冲突。
+    maxParallelForks = minOf(Runtime.getRuntime().availableProcessors() * 2, 6)
 }
 
 // task p8-prefixblock-render 声明偏离（FILES_SCOPE 一行例外，验收门禁所迫）：

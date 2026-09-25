@@ -35,8 +35,12 @@ public class MaterialGraphTest {
 
 	@BeforeAll
 	public static void initMT() {
-		// Other test classes may leave the shared registry closed; MT.init()'s re-init path needs it open.
-		MaterialRegistry.INSTANCE.open();
+		// Self-carried state window (the MTInitResetIdempotencyTest.bootstrap shape): reset()
+		// wipes ALLOYS back to unwired and re-opens the registry before MT.init(), so the
+		// pre-wiring assertions below no longer ride another class's interleaved reset — fork
+		// partitioning (maxParallelForks, task maint-ci-perf) can't guarantee that rider
+		// (MT.init()'s idempotency guard at MT.java:2711 does not clear ALLOYS).
+		MaterialRegistry.INSTANCE.reset();
 		MT.init();
 	}
 
