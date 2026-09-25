@@ -244,8 +244,13 @@ public abstract class GTGeneratorSolidBlockEntity extends TileEntityBase03TicksA
 	public void igniteWithFlint(Player aPlayer, InteractionHand aHand) {
 		ItemStack tHeld = aPlayer.getItemInHand(aHand);
 		boolean tHit = igniteRoll(rng(100));
+		//? if forge {
 		tHeld.hurtAndBreak(1, aPlayer, aBreaker -> aBreaker.broadcastBreakEvent(
 				aHand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND));
+		//?} else {
+		/*tHeld.hurtAndBreak(1, aPlayer, aHand == InteractionHand.MAIN_HAND
+				? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND); // 21.1: hurtAndBreak takes the slot, the break event rides inside (the GTCokeOvenBlock:78 fork)
+		*///?}
 		if (tHit) {
 			if (hasLevel()) getLevel().playSound(null, getBlockPos(), SoundEvents.FLINTANDSTEEL_USE,
 					SoundSource.BLOCKS, 1.0F, getLevel().getRandom().nextFloat() * 0.4F + 0.8F);
