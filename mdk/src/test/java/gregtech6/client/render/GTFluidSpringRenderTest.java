@@ -35,6 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.util.HexFormat;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -227,13 +228,23 @@ public class GTFluidSpringRenderTest extends GTOfflineRenderTestBase {
 		RandomSource tRand = RandomSource.create();
 
 		assertEquals(12, tModel.getQuads(null, null, tRand, tData, null).size(),
-				"six base + six overlay quads over the six faces");
+				"six base + six overlay quads over the six faces (the null pass = all, IForgeBakedModel)");
 		assertEquals(2, tModel.getQuads(null, Direction.UP, tRand, tData, null).size(),
 				"one base + one overlay per culled face");
-		assertEquals(2, tModel.getQuads(null, Direction.NORTH, tRand, tData, RenderType.solid()).size(),
-				"the solid pass receives the face pair too (the GTWireBakedModel dispatch form)");
 		assertEquals(0, tModel.getQuads(null, null, tRand, tData, RenderType.translucent()).size(),
 				"no translucent emission — the spring is a solid+cutout stack");
+
+		// the issue #2 same-type partition: the tinted fluid body rides solid ALONE, the
+		// dither shell cutout ALONE — on the alpha-less solid shader the shell's 116
+		// transparent holes would paint opaque gray over the fluid body
+		List<BakedQuad> tSolid = tModel.getQuads(null, Direction.NORTH, tRand, tData, RenderType.solid());
+		assertEquals(1, tSolid.size(), "the solid pass receives the fluid body alone");
+		assertEquals(MEDIUM_OIL_TINT, tSolid.get(0).getVertices()[COLOR_SLOT], "the solid quad is the tinted base");
+
+		List<BakedQuad> tCutout = tModel.getQuads(null, Direction.NORTH, tRand, tData, RenderType.cutout());
+		assertEquals(1, tCutout.size(), "the cutout pass receives the dither shell alone");
+		assertEquals(WHITE, tCutout.get(0).getVertices()[COLOR_SLOT],
+				"the FLUID_SPRING dither is UNTINTED — upstream's BlockTextureDefault half is white; the fluid colour lives on the layer beneath");
 
 		var tPair = tModel.getQuads(null, Direction.NORTH, tRand, tData, null);
 		BakedQuad tBase = tPair.get(0);
@@ -243,7 +254,7 @@ public class GTFluidSpringRenderTest extends GTOfflineRenderTestBase {
 		BakedQuad tOverlay = tPair.get(1);
 		assertEquals(-1, tOverlay.getTintIndex(), "the dither shell drops the tint index too");
 		assertEquals(WHITE, tOverlay.getVertices()[COLOR_SLOT],
-				"the FLUID_SPRING dither is UNTINTED — upstream's BlockTextureDefault half is white; the fluid colour lives on the layer beneath");
+				"the dither passes white on the null pass too");
 	}
 
 	/** The white identity face: the lava row's -1 sentinel bakes the raw quad (no retint pass). */

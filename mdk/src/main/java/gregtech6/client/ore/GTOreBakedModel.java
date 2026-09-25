@@ -103,18 +103,31 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 	 */
 	private final Function<Material, TextureAtlasSprite> mSpriteLookup;
 	/**
-	 * The 12 quads (6 base + 6 overlay), baked LAZILY at first {@link #getQuads} — task
-	 * p33-fix-forge-ore-invisible. Eager constructor baking was the forge-leg whole-ore
-	 * invisibility root cause: ModifyBakingResult fires BEFORE the sprite upload
-	 * (ModelManager.java.patch — onModifyBakingResult precedes the dispatch/registry set)
-	 * and its javadoc forbids touching ModelManager (ModelEvent.java:40-43), so the static
-	 * atlas lookup resolved against the EMPTY atlas and baked 0 quads (baked models still
-	 * had collision/tooltip/outline). The GTWireBakedModel mBakedCache lazy form is the
+	 * The quads split by chunk layer (issue #2 partition): {@code base} = the 6 host-stone
+	 * cube quads (solid pass), {@code overlay} = the 6 epsilon-speckle-shell quads (cutout
+	 * pass), {@code all} = the combined null-pass view (item render, breaking overlays —
+	 * IForgeBakedModel.getQuads javadoc: "A null RenderType … models should return all
+	 * their quads"). WHY the split is load-bearing: the ore overlay PNGs are transparent-
+	 * bottom grayscale speckles, and the SOLID RenderType's shader has NO alpha discard
+	 * (vanilla RenderType.java:26-38, rendertype_solid vs the CUTOUT :52-64 shader that
+	 * does) — an overlay quad leaking into the solid pass renders its whole epsilon face
+	 * as an opaque ore-coloured plate that depth-wins over the base, dyeing the entire
+	 * stone surface (GitHub issue #2).
+	 *
+	 * <p>Baked LAZILY at first {@link #getQuads} — task p33-fix-forge-ore-invisible. Eager
+	 * constructor baking was the forge-leg whole-ore invisibility root cause:
+	 * ModifyBakingResult fires BEFORE the sprite upload (ModelManager.java.patch —
+	 * onModifyBakingResult precedes the dispatch/registry set) and its javadoc forbids
+	 * touching ModelManager (ModelEvent.java:40-43), so the static atlas lookup resolved
+	 * against the EMPTY atlas and baked 0 quads (baked models still had
+	 * collision/tooltip/outline). The GTWireBakedModel mBakedCache lazy form is the
 	 * in-repo precedent — all five sibling dynamic families resolve at render time and
 	 * were never affected. Double-checked-locking volatile: getQuads runs concurrently on
 	 * the chunk-build worker pool; resolution is idempotent and the result immutable.
 	 */
-	private volatile List<BakedQuad> mQuads;
+	private record Layers(List<BakedQuad> base, List<BakedQuad> overlay, List<BakedQuad> all) {}
+
+	private volatile Layers mQuads;
 
 	public GTOreBakedModel(BakedModel aFallbackModel, Params aParams) {
 		this(aFallbackModel, aParams, defaultSpriteLookup());
@@ -148,12 +161,16 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 	@Override
 	public List<BakedQuad> getQuads(@Nullable BlockState aState, @Nullable Direction aSide, RandomSource aRand,
 			ModelData aModelData, @Nullable RenderType aRenderType) {
-		// two chunk layers: base on solid, overlay on cutout; the null pass (item render,
-		// breaking overlays) receives everything — the GTWireBakedModel dispatch form
-		if (aRenderType != null && !aRenderType.equals(RenderType.solid()) && !aRenderType.equals(RenderType.cutout())) {
-			return List.of();
-		}
-		List<BakedQuad> tQuads = quads();
+		// the issue #2 partition: solid = the base cube alone, cutout = the overlay shell
+		// alone (the shell's transparent-bottom PNG is alpha-discarded on cutout but would
+		// paint an opaque ore plate on the alpha-less solid shader); the null pass (item
+		// render, breaking overlays — IForgeBakedModel: return all their quads) gets both
+		Layers tLayers = quads();
+		List<BakedQuad> tQuads;
+		if (aRenderType == null) tQuads = tLayers.all();
+		else if (aRenderType.equals(RenderType.solid())) tQuads = tLayers.base();
+		else if (aRenderType.equals(RenderType.cutout())) tQuads = tLayers.overlay();
+		else return List.of();
 		if (aSide == null) return tQuads;
 		List<BakedQuad> rOut = new ArrayList<>(2);
 		for (BakedQuad tQuad : tQuads) if (tQuad.getDirection() == aSide) rOut.add(tQuad);
@@ -161,15 +178,15 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 	}
 
 	/** The lazy first-render bake (the double-checked-lock form of the field doc). */
-	private List<BakedQuad> quads() {
-		List<BakedQuad> tQuads = mQuads;
-		if (tQuads == null) {
+	private Layers quads() {
+		Layers tLayers = mQuads;
+		if (tLayers == null) {
 			synchronized (this) {
-				tQuads = mQuads;
-				if (tQuads == null) mQuads = tQuads = bakeQuads();
+				tLayers = mQuads;
+				if (tLayers == null) mQuads = tLayers = bakeQuads();
 			}
 		}
-		return tQuads;
+		return tLayers;
 	}
 
 	@Override
@@ -177,14 +194,14 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 		return ChunkRenderTypeSet.of(RenderType.solid(), RenderType.cutout());
 	}
 
-	/** The full 0..1 cube and its epsilon-inflated overlay twin (the planShapesFiber twin form). */
-	private List<BakedQuad> bakeQuads() {
+	/** The full 0..1 cube (solid set) and its epsilon-inflated overlay twin (cutout set). */
+	private Layers bakeQuads() {
 		TextureAtlasSprite tBase = mSpriteLookup.apply(materialOf(mParams.baseSprite()));
 		TextureAtlasSprite tOverlay = mSpriteLookup.apply(materialOf(mParams.overlaySprite()));
-		List<BakedQuad> rQuads = new ArrayList<>(12);
+		List<BakedQuad> rBase = new ArrayList<>(6), rOverlay = new ArrayList<>(6);
 		if (tBase != null) {
 			double[] tCore = {0, 0, 0, 1, 1, 1};
-			for (Direction tFace : Direction.values()) rQuads.add(bakeQuad(tFace, tCore, tBase, -1, tFace));
+			for (Direction tFace : Direction.values()) rBase.add(bakeQuad(tFace, tCore, tBase, -1, tFace));
 		}
 		if (tOverlay != null) { // atlas gap: skip the layer instead of rendering garbage (the wire form)
 			double[] tShell = {0 - EPSILON, 0 - EPSILON, 0 - EPSILON, 1 + EPSILON, 1 + EPSILON, 1 + EPSILON};
@@ -193,10 +210,13 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 				// the p32 form: tintIndex -1 (no runtime lookup can double-dye), the colour
 				// multiplied into the vertex data at bake time
 				BakedQuad tQuad = bakeQuad(tFace, tShell, tOverlay, -1, null);
-				rQuads.add(tTint == -1 ? tQuad : retinted(tQuad, tTint));
+				rOverlay.add(tTint == -1 ? tQuad : retinted(tQuad, tTint));
 			}
 		}
-		return rQuads;
+		List<BakedQuad> rAll = new ArrayList<>(rBase.size() + rOverlay.size());
+		rAll.addAll(rBase);
+		rAll.addAll(rOverlay);
+		return new Layers(List.copyOf(rBase), List.copyOf(rOverlay), List.copyOf(rAll));
 	}
 
 	/** The bake-time material tint: the colour multiplied into the vertex data (the {@link GTMachineTintModel#retintVertices} product). */

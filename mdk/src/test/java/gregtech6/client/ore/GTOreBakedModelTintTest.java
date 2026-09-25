@@ -21,6 +21,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -94,6 +95,61 @@ public class GTOreBakedModelTintTest {
 				new ResourceLocation("gt6", "block/materialicons/chalcopyrite/ore_small"), -1));
 		List<BakedQuad> tPair = northPair(tModel);
 		assertEquals(WHITE, tPair.get(1).getVertices()[COLOR_SLOT], "the -1 sentinel bakes the white identity");
+	}
+
+	/**
+	 * The issue #2 RenderType partition: solid = exactly the base set (white vertices),
+	 * cutout = exactly the overlay set (tinted vertices), null = both, any other chunk
+	 * layer = nothing. Before the fix both chunk passes received all 12 quads and the
+	 * overlay's transparent-to-white PNG painted an opaque ore plate on the alpha-less
+	 * solid shader (RenderType.java:26-38 vs the :52-64 cutout discard), dyeing the whole
+	 * stone surface.
+	 */
+	@Test
+	public void getQuadsPartitionsByRenderType() {
+		GTOreBakedModel tModel = tintedModel(new GTOreBakedModel.Params(
+				new ResourceLocation("gt6", "block/stones/granite/stone"),
+				new ResourceLocation("gt6", "block/materialicons/chalcopyrite/ore_small"), TINT));
+		RandomSource tRand = RandomSource.create();
+
+		List<BakedQuad> tSolid = tModel.getQuads(null, null, tRand, ModelData.EMPTY, RenderType.solid());
+		assertEquals(6, tSolid.size(), "solid = exactly the 6 base-cube quads");
+		for (BakedQuad tQuad : tSolid) {
+			assertEquals(WHITE, tQuad.getVertices()[COLOR_SLOT], "every solid quad is an untinted base quad");
+		}
+
+		List<BakedQuad> tCutout = tModel.getQuads(null, null, tRand, ModelData.EMPTY, RenderType.cutout());
+		assertEquals(6, tCutout.size(), "cutout = exactly the 6 overlay-shell quads");
+		for (BakedQuad tQuad : tCutout) {
+			assertEquals(TINT, tQuad.getVertices()[COLOR_SLOT], "every cutout quad is the tinted overlay");
+			assertEquals(-1, tQuad.getTintIndex(), "the overlay keeps the no-runtime-lookup index");
+		}
+
+		List<BakedQuad> tNull = tModel.getQuads(null, null, tRand, ModelData.EMPTY, null);
+		assertEquals(12, tNull.size(), "the null pass (item render, breaking overlays) = all quads");
+		assertEquals(6, countWhite(tNull), "the null pass carries the 6 white base quads");
+		assertEquals(6, countTinted(tNull), "the null pass carries the 6 tinted overlay quads");
+
+		assertEquals(List.of(), tModel.getQuads(null, null, tRand, ModelData.EMPTY, RenderType.translucent()),
+				"no other chunk layer receives anything");
+
+		// per-side filtering rides the partitioned sets too
+		assertEquals(1, tModel.getQuads(null, Direction.NORTH, tRand, ModelData.EMPTY, RenderType.solid()).size(),
+				"solid north = the one base quad");
+		assertEquals(1, tModel.getQuads(null, Direction.NORTH, tRand, ModelData.EMPTY, RenderType.cutout()).size(),
+				"cutout north = the one overlay quad");
+	}
+
+	private static int countWhite(List<BakedQuad> aQuads) {
+		int rCount = 0;
+		for (BakedQuad tQuad : aQuads) if (tQuad.getVertices()[COLOR_SLOT] == WHITE) rCount++;
+		return rCount;
+	}
+
+	private static int countTinted(List<BakedQuad> aQuads) {
+		int rCount = 0;
+		for (BakedQuad tQuad : aQuads) if (tQuad.getVertices()[COLOR_SLOT] == TINT) rCount++;
+		return rCount;
 	}
 
 	/** The Params tint is the block colour seam's own value (no drift between the bake and the retired route's encoding). */

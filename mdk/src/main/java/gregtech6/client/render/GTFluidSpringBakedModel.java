@@ -76,9 +76,12 @@ import gregtech6.registry.GTBlockEntities;
  * <p>Quad emission + cache shape: the {@link GTOreBakedModel} lazy-bake form, keyed by the
  * immutable skin record instead of the static per-block params (one model instance serves
  * every spring position; the chunk build may hit it from any worker thread — concurrent
- * map, immutable values). Both chunk passes receive the full list (solid + cutout, the
- * GTWireBakedModel dispatch form); the no-skin miss falls back to the blockstate JSON
- * (the water-cube base carrier).
+ * map, immutable values). The chunk passes are PARTITIONED like the ore model (issue #2
+ * same-type fix): solid receives the tinted fluid body, cutout the dither shell (its
+ * 116 transparent holes are alpha-discarded on cutout but would paint an opaque gray
+ * plate over the fluid on the alpha-less solid shader), the null pass (item render,
+ * breaking overlays — IForgeBakedModel: return all their quads) both; the no-skin miss
+ * falls back to the blockstate JSON (the water-cube base carrier).
  *
  * <p>CLIENT-ONLY ({@code @OnlyIn(Dist.CLIENT)} — the {@link GTMachineTintModel}
  * annotation-registration shape; the skin seam is driven offline by the tests).
@@ -120,8 +123,11 @@ public final class GTFluidSpringBakedModel extends GTDynamicBakedModel {
 	/** The sprite resolver — the GTOreBakedModel seam shape (tests: the unit-sprite stub). */
 	private final Function<Material, TextureAtlasSprite> mSpriteLookup;
 
-	/** The per-skin baked quad lists (6 base + 6 overlay), baked lazily at first getQuads. */
-	private final Map<SpringSkin, List<BakedQuad>> mQuadsBySkin = new ConcurrentHashMap<>();
+	/** The per-skin baked quad lists split by chunk layer (the {@link gregtech6.client.ore.GTOreBakedModel} Layers form: fluid body / dither shell / the combined null-pass view). */
+	private record Layers(List<BakedQuad> base, List<BakedQuad> overlay, List<BakedQuad> all) {}
+
+	/** The per-skin baked layers (6 base + 6 overlay), baked lazily at first getQuads. */
+	private final Map<SpringSkin, Layers> mQuadsBySkin = new ConcurrentHashMap<>();
 
 	public GTFluidSpringBakedModel(BakedModel aFallbackModel, Function<Material, TextureAtlasSprite> aSpriteLookup) {
 		super(aFallbackModel);
@@ -172,14 +178,18 @@ public final class GTFluidSpringBakedModel extends GTDynamicBakedModel {
 	@Override
 	protected List<BakedQuad> getDynamicQuads(@Nullable BlockState aState, @Nullable Direction aSide,
 			RandomSource aRand, ModelData aModelData, @Nullable RenderType aRenderType) {
-		// both chunk passes receive the full list (the GTWireBakedModel dispatch form);
-		// the null pass (breaking overlays) too
+		// the issue #2 same-type partition: solid = the tinted fluid body, cutout = the
+		// dither shell (the solid shader has no alpha discard, so the shell's transparent
+		// holes would paint opaque gray over the fluid there); the null pass (breaking
+		// overlays — IForgeBakedModel: return all their quads) gets both
 		if (aRenderType != null && !aRenderType.equals(RenderType.solid()) && !aRenderType.equals(RenderType.cutout())) {
 			return List.of();
 		}
 		String tId = aModelData.get(GTModelProperties.SPRING_FLUID);
 		if (tId == null) return List.of();
-		List<BakedQuad> tQuads = quadsOf(skinOf(tId));
+		Layers tLayers = quadsOf(skinOf(tId));
+		List<BakedQuad> tQuads = aRenderType == null ? tLayers.all()
+				: aRenderType.equals(RenderType.solid()) ? tLayers.base() : tLayers.overlay();
 		if (aSide == null) return tQuads;
 		List<BakedQuad> rOut = new ArrayList<>(2);
 		for (BakedQuad tQuad : tQuads) if (tQuad.getDirection() == aSide) rOut.add(tQuad);
@@ -208,20 +218,20 @@ public final class GTFluidSpringBakedModel extends GTDynamicBakedModel {
 	}
 
 	/** The lazy per-skin bake (the GTOreBakedModel double-checked form, keyed by the immutable skin). */
-	private List<BakedQuad> quadsOf(@Nullable SpringSkin aSkin) {
+	private Layers quadsOf(@Nullable SpringSkin aSkin) {
 		SpringSkin tKey = aSkin == null ? OVERLAY_ONLY : aSkin;
-		List<BakedQuad> tQuads = mQuadsBySkin.get(tKey);
-		if (tQuads == null) {
+		Layers tLayers = mQuadsBySkin.get(tKey);
+		if (tLayers == null) {
 			synchronized (this) {
-				tQuads = mQuadsBySkin.computeIfAbsent(tKey, this::bakeQuads);
+				tLayers = mQuadsBySkin.computeIfAbsent(tKey, this::bakeQuads);
 			}
 		}
-		return tQuads;
+		return tLayers;
 	}
 
-	/** The full 0..1 fluid cube (culled, tinted) + its epsilon-inflated dither twin (unculled, untinted). */
-	private List<BakedQuad> bakeQuads(SpringSkin aSkin) {
-		List<BakedQuad> rQuads = new ArrayList<>(12);
+	/** The full 0..1 fluid cube (solid set, culled, tinted) + its epsilon-inflated dither twin (cutout set, unculled, untinted). */
+	private Layers bakeQuads(SpringSkin aSkin) {
+		List<BakedQuad> rBase = new ArrayList<>(6), rOverlay = new ArrayList<>(6);
 		if (aSkin.stillSprite() != null) { // the atlas-gap skip rides the wire form (never render garbage)
 			TextureAtlasSprite tBase = mSpriteLookup.apply(materialOf(aSkin.stillSprite()));
 			if (tBase != null) {
@@ -230,16 +240,19 @@ public final class GTFluidSpringBakedModel extends GTDynamicBakedModel {
 					// the p32 form: tintIndex -1 (no runtime lookup can double-dye), the colour
 					// multiplied into the vertex data at bake time; the -1 identity = the raw quad
 					BakedQuad tQuad = bakeQuad(tFace, tCore, tBase, -1, tFace);
-					rQuads.add(aSkin.tintARGB() == -1 ? tQuad : retinted(tQuad, aSkin.tintARGB()));
+					rBase.add(aSkin.tintARGB() == -1 ? tQuad : retinted(tQuad, aSkin.tintARGB()));
 				}
 			}
 		}
 		TextureAtlasSprite tOverlay = mSpriteLookup.apply(materialOf(OVERLAY_SPRITE));
 		if (tOverlay != null) { // the transparent holes are the tinted fluid body showing through
 			double[] tShell = {0 - EPSILON, 0 - EPSILON, 0 - EPSILON, 1 + EPSILON, 1 + EPSILON, 1 + EPSILON};
-			for (Direction tFace : Direction.values()) rQuads.add(bakeQuad(tFace, tShell, tOverlay, -1, null));
+			for (Direction tFace : Direction.values()) rOverlay.add(bakeQuad(tFace, tShell, tOverlay, -1, null));
 		}
-		return rQuads;
+		List<BakedQuad> rAll = new ArrayList<>(rBase.size() + rOverlay.size());
+		rAll.addAll(rBase);
+		rAll.addAll(rOverlay);
+		return new Layers(List.copyOf(rBase), List.copyOf(rOverlay), List.copyOf(rAll));
 	}
 
 	// ---------------------------------------------------------------------------
