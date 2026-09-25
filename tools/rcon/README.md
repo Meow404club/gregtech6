@@ -714,7 +714,7 @@ gt.owner 不入物（再置由 onPlaced 记新放置者，离线腿
 GTPipeFoamTest.foamNbtRoundTripsAndOwnerDoesNotRideItems 钉死）。活链 =
 `chains/cfoam_spray.py`（place→spray owned→stat→dry→锁 toggle 拒→removefoam
 非 owner 拒→owner ok→spray+dry→拆管→掉落物 NBT 断言；双腿 [0,0]；日志路径
-/tmp/gt6_rs_p25cfoamspray.*，节点名后缀随 --node）。
+/tmp/gt6_rs_cfoamspray.*，节点名后缀随 --node）。
 
 ### ULV 波收口链 /gt6machine + /gt6oven + /gt6engine + /gt6fe* + /data（c-ulv-chain，README tail-append）
 

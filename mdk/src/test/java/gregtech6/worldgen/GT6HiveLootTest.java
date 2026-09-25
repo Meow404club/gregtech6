@@ -38,7 +38,7 @@ import gregtech6.tileentity.bees.GT6BumbleHiveBlockEntity;
  * <p>Offline-safe: the vanilla-BRICKS BET fixture (the GT6BumbleHiveBlockEntityTest
  * posture) for the {@link #combCountIsTheUnitsFold} pin; the item-walking reconciliation
  * runs on the FML-booted leg and skips the bare-JVM leg via the registry latch (the
- * GT6BumblesTest form — the RCON chain p33_bees_c carries the live face).
+ * GT6BumblesTest form — the RCON chain bees_c carries the live face).
  */
 class GT6HiveLootTest {
 
@@ -97,7 +97,7 @@ class GT6HiveLootTest {
 		// the latch state pin: the item-walking reconciliation runs where the registry
 		// resolves (the 21.1 FML-booted JVM, the GTOfflineTestBase javadoc) and skips the
 		// 1.20.1 offline JVM (the frozen registry — the GT6BumblesTest form); the live
-		// 1.20.1 face is the RCON chain p33_bees_c. If a leg's path flips silently this
+		// 1.20.1 face is the RCON chain bees_c. If a leg's path flips silently this
 		// pin REDs instead of the reconciliation becoming a silent no-op.
 		//? if forge {
 		assertFalse(beeItemsLive(), "the 1.20.1 offline leg does not resolve the mod items");

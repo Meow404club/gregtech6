@@ -62,7 +62,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * <h2>Cropped with declaration</h2>
  * The monkey-wrench/magnifying-glass tool interaction (Base11 :75-94) — the port has
  * no GT tool-click channel on this block; the mode flip is the NBT face
- * ({@code gt.reversed}, the /data merge RCON path — the W3 p28_ulv_chain arm drives
+ * ({@code gt.reversed}, the /data merge RCON path — the W3 ulv_chain arm drives
  * it) via {@link #toggleReversed()} with the :81 storage-clear kept verbatim. The
  * adjacency ON/OFF toggle channel (ITileEntityAdjacentOnOff, the dynamo's identical
  * crop) and the paint half are the pool. mStopped keeps its :151 acceptance formula

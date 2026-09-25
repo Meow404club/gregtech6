@@ -670,7 +670,7 @@ def check_11_stop_ownership():
         # refusal exits 3 with the message; --force exits 0 — and the rcon
         # port is pre-picked free so the forced fallback never aims at a
         # foreign listener (the incident shape, never re-enacted).
-        cli_slug = "selftest_p30own_gate"
+        cli_slug = "selftest_own_gate"
         cli_pid = gt6server.artifact_paths(cli_slug)[1]
         cli_file, cli_slot = _ownership_fixture(
             Path("/tmp"), f"gt6_rs_{cli_slug}", foreign)

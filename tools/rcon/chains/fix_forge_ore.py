@@ -16,7 +16,7 @@ code): after the chain, per node,
   python3 tools/rcon/chains/ore_overlay.py --world-copy --node 1.20.1-forge
   python3 tools/rcon/chains/ore_overlay.py --client   --node 1.20.1-forge
 (the client arm rides the base module — the world name and shot file stay
-shot_p33_ore_overlay.png in the node run dir; the 1.20.1-forge frame is THE fix
+shot_ore_overlay.png in the node run dir; the 1.20.1-forge frame is THE fix
 proof, the 1.21.1-neoforge frame the render zero-regression proof).
 """
 

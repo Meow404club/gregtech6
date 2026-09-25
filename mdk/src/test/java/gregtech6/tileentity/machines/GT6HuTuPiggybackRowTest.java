@@ -35,8 +35,8 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  * Bath P26 in-catalog map reuse.
  *
  * <p>The registration half (16 blocks + 16 items + 7 family BETs) only resolves on a live
- * server (the runServer/RCON gate — the sweep p29_w2_hu_tu group; the NO_CONSTANT_POWER
- * LIVE resume arm is the p29_w2_coagulator chain's, the card-① 遗留 obligation).
+ * server (the runServer/RCON gate — the sweep hu_tu group; the NO_CONSTANT_POWER
+ * LIVE resume arm is the coagulator chain's, the card-① 遗留 obligation).
  */
 public class GT6HuTuPiggybackRowTest extends TileEntityBasicMachineOfflineTestBase {
 
@@ -265,7 +265,7 @@ public class GT6HuTuPiggybackRowTest extends TileEntityBasicMachineOfflineTestBa
 
 	// ------------------------------------------------------------------
 	// the NO_CONSTANT_POWER retention, machine-row form (the card-① 遗留
-	// obligation's offline twin of the p29_w2_coagulator live arm)
+	// obligation's offline twin of the coagulator live arm)
 	// ------------------------------------------------------------------
 
 	@Test
@@ -408,7 +408,7 @@ public class GT6HuTuPiggybackRowTest extends TileEntityBasicMachineOfflineTestBa
 		// RecipeMapBath subclass arm is the pooled decisions.p29-w2-split-rulings cut
 		assertSame(RecipeMap.class, GT6RecipeMaps.BATH.getClass(), "the base-RecipeMap form (the card-A BATH shape)");
 		// the smoke-row shape drives the machine row (the "仅灌行" face; the LIVE p26
-		// kitchen row walk is the p29_w2_bath chain's arm)
+		// kitchen row walk is the bath chain's arm)
 		TileEntityBasicMachine.ENERGY_FAKE_SOURCE = false;
 		GT6RecipeMaps.BATH.addRecipe(new Recipe(true,
 				new ItemStack[] {new ItemStack(Items.WHITE_WOOL, 1)},

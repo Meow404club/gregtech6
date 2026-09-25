@@ -32,7 +32,7 @@ from framework import Chain, Step, main, phase
 
 CHAIN = Chain(
     name="engine-fuel-fluids",
-    slug="eff",                       # /tmp/gt6_rs_p12eff.* artifacts
+    slug="eff",                       # /tmp/gt6_rs_eff.* artifacts
     # the framework's region() refuses an empty site list — one benign anchor keeps the
     # standard forceload + bbox-cleanup pass structure; NO step touches it
     sites=gt6world.declare_sites(gt6world.Site(0, 64, 0)),

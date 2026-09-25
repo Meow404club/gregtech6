@@ -281,13 +281,13 @@ def cmd_client(node: str, wait_seconds: float = 45.0) -> int:
     env = dict(os.environ)
     env.setdefault("LIBGL_ALWAYS_SOFTWARE", "1")   # same GL for both nodes (llvmpipe)
     proc = subprocess.Popen(cmd, cwd=str(REPO), env=env,
-                            stdout=open(run / "client_p33.log", "w"),
+                            stdout=open(run / "client_ore_overlay.log", "w"),
                             stderr=subprocess.STDOUT)
     try:
         # centre the pointer on the 640x360 window region BEFORE the game grabs it
         subprocess.run(["xdotool", "mousemove", "--sync", "320", "180"],
                        env=xenv, check=False)
-        log_path = run / "client_p33.log"
+        log_path = run / "client_ore_overlay.log"
         markers = ("Starting integrated minecraft server version", "Preparing spawn area")
         joined = False
         deadline = time.time() + 900.0
@@ -317,7 +317,7 @@ def cmd_client(node: str, wait_seconds: float = 45.0) -> int:
         else:
             raise SystemExit("F2 produced no screenshot; see the client log")
         src = shot_dir / new[-1]
-        dest = run / "shot_p33_ore_overlay.png"
+        dest = run / "shot_ore_overlay.png"
         shutil.copyfile(src, dest)
         print(f"[client:{node}] screenshot: {src} -> {dest}")
         return 0

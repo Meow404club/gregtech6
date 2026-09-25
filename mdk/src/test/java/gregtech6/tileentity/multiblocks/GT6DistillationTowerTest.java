@@ -32,7 +32,7 @@ import gregtech6.registry.GT6Distillation.TileEntityDistillationTower;
 
 /**
  * The distillation tower offline acceptance (task p29-w3-distill-crucible ①② — the
- * OFFLINE half; the live half is the p29_w3_distillation_tower / p29_w3_cryo_tower RCON
+ * OFFLINE half; the live half is the distillation_tower / cryo_tower RCON
  * chains):
  * <ul>
  * <li><b>ACCEPTANCE ①</b> — the declared pattern per facing: 9 transmitter cells at y-1

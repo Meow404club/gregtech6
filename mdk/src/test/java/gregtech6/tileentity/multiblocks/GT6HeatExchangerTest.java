@@ -41,7 +41,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
  * tank's stop-refuel gate; ⑤ the buffer floor reset.
  *
  * <p>The live half (the boiler-as-receiver stack, the 18101 proxy through the relay) is
- * the p29_w3_heat_exchanger RCON chain's.
+ * the heat_exchanger RCON chain's.
  */
 public class GT6HeatExchangerTest extends GTMultiBlocksOfflineTestBase {
 

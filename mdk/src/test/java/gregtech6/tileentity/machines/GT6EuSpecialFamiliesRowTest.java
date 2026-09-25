@@ -45,7 +45,7 @@ import gregtech6.registry.GTMachines;
  * MultiTileEntityBasicMachineElectric, NBT_ENERGY_ACCEPTED EU); only
  * NBT_USE_OUTPUT_TANK is this machine's porting point. The registration half
  * (14 blocks + 3 family BETs) only resolves on a live server (the runServer/RCON
- * gate, group p29_w2_eu_special).
+ * gate, group eu_special).
  */
 public class GT6EuSpecialFamiliesRowTest extends TileEntityBasicMachineOfflineTestBase {
 

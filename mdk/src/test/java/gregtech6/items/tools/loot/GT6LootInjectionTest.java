@@ -13,7 +13,7 @@
  * <li>the generated bag weight tables + the twin modifier index (the
  *     {@code GT6ToolLootModifiersDatagen} call-order contract, 21 entries).</li>
  * </ol>
- * The live face is the RCON p34_loot_inject chain (the /loot insert rolls through the Forge
+ * The live face is the RCON loot_inject chain (the /loot insert rolls through the Forge
  * {@code ForgeHooks.modifyLoot} patch); this file is the static half of the double insurance.
  */
 package gregtech6.items.tools.loot;

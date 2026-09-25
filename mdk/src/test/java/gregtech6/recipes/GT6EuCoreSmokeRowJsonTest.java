@@ -29,7 +29,7 @@ import net.minecraft.world.level.material.Fluids;
  * {@code printer}, {@code scannervisuals}, {@code slicer} — pour through the PUBLIC
  * {@link GT6RecipeMapJsonLoader#pour} seam into their DECLARED-EMPTY card-① maps (the
  * card's datapack domain; the live drive of the same rows is the RCON chains' face, the
- * sweep p29_w2_eu_core group).
+ * sweep eu_core group).
  */
 class GT6EuCoreSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 

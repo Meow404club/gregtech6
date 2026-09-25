@@ -262,7 +262,7 @@ public class GT6UsbDataTest extends GTOfflineTestBase {
 	/**
 	 * ① The generated-tree census: the four item models + the four tier tags + the en/zh
 	 * lang keys must be committed — the offline half of the FML-registration proof (the
-	 * live half is the RCON p32_qu_usb give chain).
+	 * live half is the RCON qu_usb give chain).
 	 */
 	@Test
 	public void theGeneratedTreeCarriesTheRegistrationFace() throws Exception {

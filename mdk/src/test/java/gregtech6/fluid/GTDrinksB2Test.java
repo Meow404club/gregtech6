@@ -17,7 +17,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
  * FOOD_B2_SPECS table reconciliation (94 potion rows + 9 residual FOOD-flag drink fluids)
  * and the GTDrinks map reconciliation (the DrinksGT.REGISTER mirror — every REGISTER key
  * resolves to a gt6 fluid path registered on one of the six tables or the chemical family).
- * The live drink behaviour is the RCON chain evidence (the p33_food_drink sweep group);
+ * The live drink behaviour is the RCON chain evidence (the food_drink sweep group);
  * offline asserts the declaration tables, the map closure and the seam constants.
  */
 public class GTDrinksB2Test extends GTOfflineTestBase {

@@ -34,7 +34,7 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  * 半程×N 对拍 pairs).
  *
  * <p>The registration half (5 blocks + 5 items + 2 family BETs) only resolves on a live
- * server (the RCON gate — the sweep p29_w3_heat_smelter group).
+ * server (the RCON gate — the sweep heat_smelter group).
  */
 public class GT6HeatSmelterRowTest extends TileEntityBasicMachineOfflineTestBase {
 
