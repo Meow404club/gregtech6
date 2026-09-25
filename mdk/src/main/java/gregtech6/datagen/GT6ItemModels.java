@@ -554,6 +554,14 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent("usb_stick_" + tTier, mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/usb_stick_" + tTier));
         }
+        // the key family (task dungeon-keys) — 10 item/generated models over the
+        // byte-identical upstream icon borrows (gt.multiitem.randomtools metas 30000-30009,
+        // assets/README.md attribution), walked over the GT6Keys pool so the model ids
+        // cannot drift from the registry rows (the usb-stick band convention)
+        for (net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tKey : gregtech6.items.GT6Keys.KEYS) {
+            withExistingParent(tKey.getId().getPath(), mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/" + tKey.getId().getPath()));
+        }
         // the gas laser emitter pair (task p32-qu-laser-domain) — 2 item/generated models
         // over the byte-identical upstream icon borrows (gt.multiitem.technological metas
         // 11000/11008, assets/README.md attribution)

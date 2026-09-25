@@ -352,9 +352,18 @@ public final class GT6StaticStorages {
 					return InteractionResult.CONSUME;
 				}
 				case SAFE_MECHANICAL, SAFE_KEYLOCKED -> {
+					if (tFace != tFront) return InteractionResult.PASS;
+					// the key arm (upstream Behavior_Key.onItemUseFirst :44-63 — the
+					// 1.7.10 onItemUseFirst ran BEFORE the block arm, so a key in hand
+					// intercepts the open arm verbatim): a keyed stack toggles, a blank
+					// one claims/clones — the GT6Keys face over the KeyLocked latch.
+					if (tStorage instanceof GT6SafeKeyLockedBlockEntity tKeySafe
+							&& tHand.getItem() instanceof gregtech6.items.GT6Keys.GT6KeyItem) {
+						if (tServer) gregtech6.items.GT6Keys.useOnKeyLocked(tKeySafe, tHand);
+						return InteractionResult.CONSUME;
+					}
 					// the open arm (upstream onBlockActivated3 :80-87): loot generates on the
 					// first open, the GUI gates on the latch (the KeyLocked mOpened)
-					if (tFace != tFront) return InteractionResult.PASS;
 					if (tServer && tStorage instanceof GT6SafeBlockEntity tSafe) {
 						tSafe.tryGenerateDungeonLoot();
 						if (tSafe.isOpen() && aPlayer instanceof net.minecraft.server.level.ServerPlayer tServerPlayer) {

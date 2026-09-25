@@ -73,6 +73,16 @@ public class GT6SafeKeyLockedBlockEntity extends GT6SafeBlockEntity {
 		return mOpened;
 	}
 
+	/** Upstream {@code getKeyID :99-101} — the claimed id (the blank-key claim/clone read leg). */
+	public long getKeyID() {
+		return mID;
+	}
+
+	/** Upstream {@code canCloneKey :94-96} — a blank key clones the id only while open and claimed. */
+	public boolean canCloneKey() {
+		return mOpened && mID != 0;
+	}
+
 	/**
 	 * Upstream {@code useKey :83-95} port: flip the latch on a matching key id, claim on
 	 * the first key while unclaimed; false when no key matches. The flip plays the
