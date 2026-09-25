@@ -8957,3 +8957,85 @@ the p32 vertex-colour route).
   DYE_Black-tinted portal-texture intent, MiniPortalEnd.java:128). The frame
   face and the whole Nether portal ride vanilla textures referenced in place
   (obsidian / end_stone / nether_portal — zero borrowed files).
+
+## machine GUI backgrounds, full mGUIPath borrow (task issue3-gui-bg)
+
+The p7/p8/p14-era cards borrowed GUI backgrounds per-machine as the machines
+landed; GitHub issue #3 showed every not-yet-landed RecipeMap still renders its
+menu over the magenta missing-texture checkerboard. This card closes the gap by
+borrowing the whole remaining declared set (the full mGUIPath census of
+GT6RecipeMaps + RecipeMapFurnaceFuel, 72 unique declared names) from upstream
+`src/main/resources/assets/gregtech/textures/gui/machines/`, filenames
+lowercased (the 1.20.1 ResourceLocation path whitelist `[a-z0-9/._-]`,
+ResourceLocation.java:213-232). sha256 per file:
+
+- `gui/machines/alloying.png` (upstream `Alloying.png`) `c6b622aef7a5eb17fb0a85c0e87ce71a2d704d733628fbd0f1284eb0fcc1193f`
+- `gui/machines/anvil.png` (upstream `Anvil.png`) `956b6ad91c911704bdbcf0be763c57227509cfa642626689d125517b6b5983d1`
+- `gui/machines/anvilbend.png` (upstream `AnvilBendingBig.png`) `f61a5531d2074f6bb9aa2f294a04ef2c62940eddeeb1b44a629b5b747befa0a5`
+- `gui/machines/autoclave.png` (upstream `Autoclave.png`) `09dd3d80316de3c8a5c85032f6c3dfefe248de1d1f8ea40ba20e2c9c66d8b4ac`
+- `gui/machines/bath.png` (upstream `Bath.png`) `f81dabada3de9046ad85c2c997051203652319bc28704cdc11ff5436de1739a6`
+- `gui/machines/boxinator.png` (upstream `Boxinator.png`) `dcead2ae9c885da2d934ec501dd0a0cff300255a7b9007492eefd14dfb9399cb`
+- `gui/machines/bumblelyzer.png` (upstream `Bumblelyzer.png`) `77eb6ee6a044e2bb4f1a958a74b57ffc4c03ac263b616ee9cf8f18f1711e653c`
+- `gui/machines/burnmixer.png` (upstream `BurnMixer.png`) `c70deffca6c6e812b815d614d8d3b0483ff6ecd5707bfbf53b7bbd66cbbf172f`
+- `gui/machines/catalyticcracking.png` (upstream `CatalyticCracking.png`) `b0cc231c910c57052b9058c8c0df2ab1b91dce9c98740664da9ae7e97df833e1`
+- `gui/machines/centrifuge.png` (upstream `Centrifuge.png`) `104fd98ea2d76f259eab38998e39d46c2dce0ae4c685314aa49f3ab30961617c`
+- `gui/machines/clustermill.png` (upstream `ClusterMill.png`) `15c500b35c5b76db089ac158da0f0c9effaa989def02905c79569ee45e39fc42`
+- `gui/machines/coagulator.png` (upstream `Coagulator.png`) `f05c85a63449dd9bd57c978fb8f074dd7c2ea7962417ac2c13b9a3b065cede16`
+- `gui/machines/crafting.png` (upstream `Crafting.png`) `718968efce7e06bbe0dbe0a5a9ffce6db136d252d3f0be0d7a6ed8b647cca2a4`
+- `gui/machines/cryomixer.png` (upstream `CryoMixer.png`) `f6b3116eb1925cfa9dabb319315a797a59c80234745110d5d072fd800261b490`
+- `gui/machines/crystallisationcrucible.png` (upstream `CrystallisationCrucible.png`) `f94a1d3e65f464968286af9c05c24ca8adf35ec5b1ded0975f17e30e20adc591`
+- `gui/machines/cutter.png` (upstream `Cutter.png`) `f90ebade96fb60d7f4d6e60168b0981994d5780747ffd4a9d1366d6e1c8fe5a6`
+- `gui/machines/default.png` (upstream `Default.png`) `50af4a5789ec4118fdcdfd63160fb3a78dce74973e80badfb21bf9bc0ee98bc4`
+- `gui/machines/distillery.png` (upstream `Distillery.png`) `1412861bc17aa9e19402b7537f820fef23b7ae4ede4f5957baeef28018ddb28a`
+- `gui/machines/electrolyzer.png` (upstream `Electrolyzer.png`) `058ef07776893f93ad837f50b774574672b6486605795b1311aa5a39a85c5fcb`
+- `gui/machines/extruder.png` (upstream `Extruder.png`) `3169462f2621497c856a555bfc3716a166965fc43c8b96cfb85890bd4b5b06a3`
+- `gui/machines/fermenter.png` (upstream `Fermenter.png`) `9959c715b564d26136da5c26feacde3a444cdf644a6f6c1eb8aa4669459ee3c4`
+- `gui/machines/freezer.png` (upstream `Freezer.png`) `f51164d395b425ef0c6e066487549b5c6bd79eab158499c9d5b62a7af480bb63`
+- `gui/machines/fusion.png` (upstream `Fusion.png`) `078858c1d95145e27ab20cee9d54191fd7327a3339553381ba0ae968ef0c0c4d`
+- `gui/machines/generifier.png` (upstream `Generifier.png`) `22085fc66cb281e008a749c55055c76ab5ab325138a648cf7c90c78605221fee`
+- `gui/machines/implosioncompressor.png` (upstream `ImplosionCompressor.png`) `1ef427719ff18a7698ca5e02b423e56015d65e40c12724cb86952b6d5c3d7795`
+- `gui/machines/injector.png` (upstream `Injector.png`) `1d99ab54896c5712893c06e4c5f9a377d64aed9189f4c5210a7d487e0c583f5a`
+- `gui/machines/juicer.png` (upstream `Juicer.png`) `f340ecef34439a62219f370d66ef2cb5b798de9aee0bc2e22c47780faa8c450a`
+- `gui/machines/laminator.png` (upstream `Laminator.png`) `e464b44900206fcc99f0ef38fda4ec65de09904e2610be581a03c2f6c884376f`
+- `gui/machines/laserengraver.png` (upstream `LaserEngraver.png`) `e2fbedb150d76de023cc343c38a161b2cb8943e34901e9f70dea60fe814273d1`
+- `gui/machines/lightning.png` (upstream `Lightning.png`) `4b001aa3dfb95aa17c609b148624e5ea4b43fafcd6c68fd53454b95b0ccff938`
+- `gui/machines/loom.png` (upstream `Loom.png`) `d1ad0f55d82b48f959361e65f8ad246c7490b011d24800e72de3f9c4eb3f9c86`
+- `gui/machines/magneticseparator.png` (upstream `MagneticSeparator.png`) `cd640cf28262bf110b749c27f3b000c0ebbf2387c16ea58703075e6098fc42b8`
+- `gui/machines/massfab.png` (upstream `Massfab.png`) `5a961b84cbff37785c8f719efb0e3768c075e86cd2c1b648a8838ce600fcbed7`
+- `gui/machines/melter.png` (upstream `Melter.png`) `58068703f6c62888e155d07a125861a59e291c07491061be6a2a968eca42d65f`
+- `gui/machines/mixer.png` (upstream `Mixer.png`) `f72deac1c6f9bf1106bb656158eaefb7fcd76b24932a204396aabbbfede929c5`
+- `gui/machines/plantalyzer.png` (upstream `Plantalyzer.png`) `8e0b18ec7b4647bdc989bf6d37d4e7afe316fedad179726d7316a986106cd69b`
+- `gui/machines/polarizer.png` (upstream `Polarizer.png`) `d5240e0f1205e7d304ed55020380c97b7b458e72fe590c8610ad92ca993b0c15`
+- `gui/machines/press.png` (upstream `Press.png`) `0ec3f6a645325229656394150943ec6fa58354a4d882dea6a7b80ad50d8116b5`
+- `gui/machines/pressurewasher.png` (upstream `PressureWasher.png`) `765c871687348e5020dce9c658363d72fbfa363ea0c8091d21f72ab17d85fdfd`
+- `gui/machines/printer.png` (upstream `Printer.png`) `77be7a8803686930f5df77ca9430582b5f02d2350090f0e8f430cc28df821e8d`
+- `gui/machines/replicator.png` (upstream `Replicator.png`) `61bb46c97e62b7565d9cc078c6a813a433348c27cfc48bd1c8f8a473d7107839`
+- `gui/machines/roaster.png` (upstream `Roaster.png`) `936663c89d06e6a6937ee06a0ae7d395b78342292c42949b12d532bd95e2fea6`
+- `gui/machines/rollbender.png` (upstream `RollBender.png`) `61d8d548e614f700c4b3c6feb6893c91d7333d9d30a200b31788b9d36cc348a3`
+- `gui/machines/rollformer.png` (upstream `RollFormer.png`) `0b123ccfa61225d0c344b245796a284c0ea4ac0c977c19807fc5b13fadd3647d`
+- `gui/machines/rollingmill.png` (upstream `RollingMill.png`) `bfafc88f43c769ca96f84bb7883148bc45b436a82ab5354c3ea490875f757599`
+- `gui/machines/scannermolecular.png` (upstream `ScannerMolecular.png`) `2ca7178b4d1fede2aac66a8b9a0bea739a62fe64bbc9d75ad77b9d1ca99f5cf1`
+- `gui/machines/scannervisuals.png` (upstream `ScannerVisuals.png`) `d653d73c631fa3e7113dc6d258a22e276b5330b859896ea1ad61054ddd7d0800`
+- `gui/machines/sharpener.png` (upstream `Sharpener.png`) `d8a94252645e05e64e136fd738c8d808d7ea93c375345a193cec45e47e29120d`
+- `gui/machines/slicer.png` (upstream `Slicer.png`) `9bc2c1c6bbb22bd97274665d004e565d8869aaf83a4e3cbb116c1c520f254552`
+- `gui/machines/sluice.png` (upstream `Sluice.png`) `c8cb4721f994287c47bedf674cef2e4c0205daf70ebd7031f6291242e72defc2`
+- `gui/machines/smelter.png` (upstream `Smelter.png`) `58068703f6c62888e155d07a125861a59e291c07491061be6a2a968eca42d65f`
+- `gui/machines/squeezer.png` (upstream `Squeezer.png`) `ef148ec2eaee334ff6fade4d33c3118e6a6a38d1011aa29c3e920dda4dc09641`
+- `gui/machines/steamcracking.png` (upstream `SteamCracking.png`) `25e8c27babd0f72e5d835c809dcf18704648549af05cdf377a7ad2f08c1b8457`
+- `gui/machines/unboxinator.png` (upstream `Unboxinator.png`) `9909c16a97f71df4e446ae7f12f012669bc522b4b07ef984e05188261bb9cb5c`
+- `gui/machines/welder.png` (upstream `Welder.png`) `c062f2005cf55b778c04c92db216d014be19e6cc3bb7898437599a6177c820dc`
+- `gui/machines/oven.png` — NOT a fresh borrow: the existing ported `Oven.png`
+  (p27-machine-tint lineage, overlay strip already cropped, ported bytes differ
+  from upstream `Oven.png` by intent) renamed lowercase alongside the
+  GT6RecipeMaps/GTOvenScreen string fix; sha256 of the ported bytes
+  `8818c1310b5cce490ffb14d66cf0a73c67dd85715e8b161a2fcf44c4958b579c`.
+- `gui/machines/bedrockorelist.png` — exempt, deliberately not ported (the
+  GT6RecipeMaps registration comment: display-only map, nothing opens it).
+- `gui/machines/chisel.png` — exempt, deliberately not ported: upstream itself
+  ships no `Chisel.png` (RM.java:138 declares the path, the file never existed —
+  the chisel applies recipes by right-click, no GUI opens). Declared at
+  GT6RecipeMaps CHISEL for the census ride-along.
+- `gui/machines/anvilbend.png` — upstream `AnvilBendingBig.png`: the port folds
+  the Small/Big bend row sets into ONE map (GT6RecipesAnvil "two-maps-in-three
+  fold"), Big rows pour first; the two upstream files differ only in a 6-pixel
+  band (rows 41-46).
