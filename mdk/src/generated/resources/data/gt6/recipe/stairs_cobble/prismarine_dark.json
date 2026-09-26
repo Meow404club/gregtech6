@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "X": {
+      "item": "gt6:prismarine_dark_cobble"
+    }
+  },
+  "pattern": [
+    " X",
+    "XX"
+  ],
+  "result": {
+    "count": 4,
+    "id": "minecraft:cobblestone_stairs"
+  }
+}
