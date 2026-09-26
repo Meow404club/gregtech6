@@ -8,11 +8,12 @@
  * semantics, mRGBa registration-derived from NBT_MATERIAL, ClassContainer.java:51).
  *
  * <p>Coverage: the 11 Dense Walls (metalwalldense, WALL_ROWS) x designs 0..7 and the 10
- * new-form Metal Walls (metalwall, METAL_WALL_ROWS minus the Tungsten Wall — that block
- * stays the Lightning Rod family's registration and keeps its UNtinted cube_all borrow,
- * the declared deviation pinned by machineWallTungstenKeepsTheUntintedBorrow) x designs
- * 0..7. The partPaintableBlockArray walk (42 blocks: walls + coils + parts + ventilation
- * + processor units + wood wall + transmitter + the coke-oven bricks, whose Ceramic tint
+ * new-form Metal Walls (metalwall, METAL_WALL_ROWS) x designs 0..7 — since task
+ * r3-world-tint-render-type (the C5 clean-up) machine_wall_tungsten joins the tinted
+ * family through its own single-variant pin below (the Lightning Rod registration keeps
+ * the DESIGN property absent). The partPaintableBlockArray walk (43 blocks: walls +
+ * coils + parts + ventilation + processor units + wood wall + the tungsten wall +
+ * transmitter + the coke-oven bricks, whose Ceramic tint
  * task p38-c2-controller-tint wired) rides the same partModel helper, so the
  * body/decal split asserted here covers them; the material columns of those rows are
  * pinned non-null (the upstream aMat verbatim mapping, ANY.Steel→MT.Steel / ANY.W→MT.W,
@@ -133,16 +134,25 @@ class GT6PartPaintRenderDatagenTest {
     }
 
     @Test
-    public void machineWallTungstenKeepsTheUntintedBorrow() throws Exception {
-        // the reuse ruling: machine_wall_tungsten is the Lightning Rod family's block — its
-        // model stays the untinted cube_all borrow (the declared deviation; wiring it would
-        // need the DESIGN property, i.e. a registration change, out of the card's scope).
-        // cubeAll emits the PARENT form (no inline elements — the tinted partModel shape
-        // above is the negative control).
+    public void machineWallTungstenJoinsTheTintedFamily() throws Exception {
+        // task r3-world-tint-render-type (the C5 clean-up) retired the old declared
+        // deviation (the untinted cube_all borrow): the block IS the :1151 machine-wall
+        // row, and its model is the metalwall design-0 two-layer partModel — the same
+        // body/decal split as the sibling walls, over art bytes identical to the former
+        // borrow (lightningrod/wall == parts/metalwall/0/colored/side, sha 37dab1b9).
+        // The single-variant Lightning Rod registration keeps the DESIGN property absent
+        // (design 0 = the sibling walls' default state, the remaining declared gap).
         JsonObject tModel = json("assets/gt6/models/block/machine_wall_tungsten.json");
-        assertTrue(!tModel.has("elements") || tModel.getAsJsonArray("elements").isEmpty(),
-                "the cube_all borrow carries no inline elements (nothing to tint at the model level)");
-        assertEquals("minecraft:block/cube_all", tModel.get("parent").getAsString(), "the borrowed cube_all parent");
+        assertEquals(7, tModel.getAsJsonArray("elements").size(),
+                "the two-layer shape (body + 6 decals) — the sibling-wall form");
+        JsonObject tBody = tModel.getAsJsonArray("elements").get(0).getAsJsonObject();
+        for (Map.Entry<String, JsonElement> tFace : tBody.getAsJsonObject("faces").entrySet()) {
+            assertEquals(0, tFace.getValue().getAsJsonObject().get("tintindex").getAsInt(),
+                    "the body face " + tFace.getKey() + " carries tintindex 0");
+        }
+        assertEquals("gt6:block/parts/metalwall/0/colored/side",
+                tModel.getAsJsonObject("textures").get("north").getAsString(),
+                "the design-0 metalwall art (the former borrow's identical bytes)");
     }
 
     // ------------------------------------------------------------------
