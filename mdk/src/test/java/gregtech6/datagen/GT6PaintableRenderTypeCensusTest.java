@@ -24,6 +24,12 @@
  *     (addBridgeFamily, model name = the texture token);</li>
  * <li>the magic absorber; the tank valves (tank_wood/tank_metal) and the crucible
  *     walls (tintedCube); the boiler tank (tintedCube, the C5 wiring).</li>
+ * <li>the bee trio — bumble_hive/bumbliary/bumbliary_adv (the addHive/
+ *     bumbliaryModel two-layer grammar; since the r3-beehive-tint return-fix —
+ *     the trio entered the {@code GTMachineTintModel} walk with the C4 card but
+ *     this census did not know them, so the SOLID-layer white-plating regression
+ *     shipped; the structural lesson: the universe must mirror the walk, not the
+ *     last card's families).</li>
  * </ul>
  *
  * <p>EXEMPT (the declared deviation): the kitchen quartet — the #7 models carry
@@ -128,6 +134,12 @@ class GT6PaintableRenderTypeCensusTest {
         for (String tPath : gregtech6.registry.GT6Crucibles.CRUCIBLE_WALL_BLOCKS_BY_PATH.keySet()) {
             rModels.add(tPath); // the eight dedicated crucible walls (tintedCube)
         }
+        // the bee trio (task r3-beehive-tint): the addHive/bumbliaryModel two-layer
+        // shells over the tintindex-0 body — model names are bands, not registry paths
+        // (bumbliary_adv vs the bumbliary_advanced block), hence the pinned literals
+        rModels.add("bumble_hive");
+        rModels.add("bumbliary");
+        rModels.add("bumbliary_adv");
         return rModels;
     }
 

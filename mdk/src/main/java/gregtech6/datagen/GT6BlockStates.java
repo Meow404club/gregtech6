@@ -385,7 +385,12 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("particle", modLoc("block/bumblehive_colored_side"))
                 .texture("overlay_side", modLoc("block/bumblehive_overlay_side"))
                 .texture("overlay_top", modLoc("block/bumblehive_overlay_top"))
-                .texture("overlay_bottom", modLoc("block/bumblehive_overlay_bottom"));
+                .texture("overlay_bottom", modLoc("block/bumblehive_overlay_bottom"))
+                // issue #15 (task r3-beehive-tint): the six 0.01 overlay decals are
+                // transparent-texel shells — cutout discards them so the tintindex-0
+                // family body shows through (the C7' fix shape; SOLID plates them
+                // opaque-white over the tint — the review-seat live-verdict root cause).
+                .renderType("cutout");
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
                 .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
@@ -443,7 +448,11 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("particle", modLoc("block/" + tBand + "_colored_sides"))
                 .texture("overlay_side", modLoc("block/" + tBand + "_overlay_sides"))
                 .texture("overlay_top", modLoc("block/" + tBand + "_overlay_top"))
-                .texture("overlay_bottom", modLoc("block/" + tBand + "_overlay_bottom"));
+                .texture("overlay_bottom", modLoc("block/" + tBand + "_overlay_bottom"))
+                // issue #15 (task r3-beehive-tint): the same six-shell cutout form as
+                // addHive above (the C7' fix shape) — the material tint on the
+                // tintindex-0 body must survive the overlay shells.
+                .renderType("cutout");
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
                 .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
