@@ -6,6 +6,33 @@
     "targets": [
       {
         "state": {
+          "Name": "gt6:ore_small_granite_redstone"
+        },
+        "target": {
+          "block": "minecraft:granite",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_diorite_redstone"
+        },
+        "target": {
+          "block": "minecraft:diorite",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_andesite_redstone"
+        },
+        "target": {
+          "block": "minecraft:andesite",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
           "Name": "gt6:ore_small_stone_redstone"
         },
         "target": {
