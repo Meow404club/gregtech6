@@ -274,6 +274,27 @@ public class MTTableFidelityTest {
 		assertTrue(ANY.SiO2.mToThis.contains(MT.STONES.Quartzite));
 		// upstream ANY.java:96 Glowstone group carries MT.Glowstone's output chain
 		assertSame(MT.Glowstone, ANY.Glowstone.mTargetPulver.mMaterial);
+		// upstream ANY.java:141 Wood: stealLooks(MT.WOODS.Spruce).steal(MT.Wood) — looks from the
+		// family wood, stats from MT.Wood (debt-anywood-flip un-inverted the port's swapped wiring;
+		// the inverted wiring had looks=MT.Wood 100,50,0 / stats=Spruce 3.0/24)
+		assertEquals(102, ANY.Wood.fRGBaSolid[0]);
+		assertEquals(79, ANY.Wood.fRGBaSolid[1]);
+		assertEquals(47, ANY.Wood.fRGBaSolid[2]);
+		assertEquals(MT.WOODS.Spruce.fRGBaSolid[0], ANY.Wood.fRGBaSolid[0]);
+		assertEquals(MT.WOODS.Spruce.fRGBaSolid[1], ANY.Wood.fRGBaSolid[1]);
+		assertEquals(MT.WOODS.Spruce.fRGBaSolid[2], ANY.Wood.fRGBaSolid[2]);
+		assertEquals(MT.Wood.mToolSpeed, ANY.Wood.mToolSpeed, 0.0F);
+		assertEquals(MT.Wood.mToolDurability, ANY.Wood.mToolDurability);
+		assertEquals(2.0F, ANY.Wood.mToolSpeed, 0.0F);
+		assertEquals(16, ANY.Wood.mToolDurability);
+		// upstream ANY.java:136-140/:145 the rest of the Wood segment: same stats source, per-line looks
+		for (OreDictMaterial tWood : new OreDictMaterial[] {ANY.WoodDefault, ANY.WoodNormal, ANY.WoodUntreated, ANY.WoodPlastic}) {
+			assertEquals(MT.WOODS.Spruce.fRGBaSolid[0], tWood.fRGBaSolid[0]);
+			assertEquals(MT.WOODS.Spruce.fRGBaSolid[2], tWood.fRGBaSolid[2]);
+			assertEquals(MT.Wood.mToolDurability, tWood.mToolDurability);
+		}
+		assertEquals(MT.Greatwood.fRGBaSolid[0], ANY.WoodMagical.fRGBaSolid[0]); // upstream :138 looks=Greatwood
+		assertEquals(MT.WoodTreated.fRGBaSolid[0], ANY.WoodTreated.fRGBaSolid[0]); // upstream :139 looks=WoodTreated
 	}
 
 	@Test
