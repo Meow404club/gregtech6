@@ -317,6 +317,9 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 		if (aBlock instanceof GTBasicMachineBlock tMachine) return tMachine.material();
 		if (aBlock instanceof GTOvenBlock tOven) return tOven.material();
 		if (aBlock instanceof gregtech6.registry.GT6BurningBoxes.BurningBoxBlock tBox) return tBox.material();
+		// task r3-world-tint-render-type (the C5 boiler clean-up) — the 43f48149b
+		// burning-box gate form over the boiler rows' NBT_MATERIAL column
+		if (aBlock instanceof gregtech6.registry.GT6Boilers.BoilerTankBlock tBoiler) return tBoiler.material();
 		return null;
 	}
 
