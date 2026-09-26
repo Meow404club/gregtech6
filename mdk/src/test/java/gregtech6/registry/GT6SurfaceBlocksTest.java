@@ -24,6 +24,8 @@ import org.junit.jupiter.api.Test;
 
 import gregapi.data.MT;
 import gregapi.data.OP;
+import gregtech6.block.surface.GT6SurfaceRockBlock;
+import gregtech6.block.surface.GT6SurfaceStickBlock;
 import gregtech6.worldgen.GT6Worldgen;
 
 class GT6SurfaceBlocksTest {
@@ -104,6 +106,58 @@ class GT6SurfaceBlocksTest {
         // the block-instance faces (the indicatorRock identity lookup + the default-rock
         // fallback for a null/unregistered pick) need the live RegisterEvent — the RCON
         // live face covers them (offline DeferredRegister handles resolve only post-registration)
+    }
+
+    /**
+     * Task r3-stick-shape-random (GitHub #12): the stick selection shape is the bar-exact
+     * table (the MultiTileEntityStick.java:53 default pose carried through the FACING
+     * dispatch rotations — upstream :176 rides the per-instance visual box), NOT the
+     * inherited 8x3x8/12x12x3 pebble; the collision side stays empty (the upstream :177
+     * null — noCollission). The rock DOWN box stays the 8x3x8 envelope every render
+     * variant must fit inside (GT6SurfaceTreeRenderDatagenTest rockVariants...).
+     */
+    @Test
+    void stickSelectionShapeIsBarExact() {
+        // offline Block construction needs the block registry temporarily unfrozen (the
+        // GTWireContactDamageTest.block / UseLockTest form)
+        try {
+            java.lang.reflect.Method tUnfreeze = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getClass().getMethod("unfreeze");
+            tUnfreeze.setAccessible(true);
+            tUnfreeze.invoke(net.minecraft.core.registries.BuiltInRegistries.BLOCK);
+        } catch (Exception aE) {
+            throw new IllegalStateException("could not unfreeze the offline block registry", aE);
+        }
+        GT6SurfaceStickBlock tStick = new GT6SurfaceStickBlock(
+                net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().noCollission()); // the surfaceProperties collision face (GT6SurfaceBlocks:220)
+        java.util.Map<net.minecraft.core.Direction, double[]> tExpected = java.util.Map.of(
+                // pixel bounds / 16 — VoxelShape#toAabbs speaks the normalised 0..1 space
+                net.minecraft.core.Direction.DOWN, new double[] {2, 0, 7, 14, 2, 9},
+                net.minecraft.core.Direction.UP, new double[] {2, 14, 7, 14, 16, 9},
+                net.minecraft.core.Direction.NORTH, new double[] {2, 7, 14, 14, 9, 16},
+                net.minecraft.core.Direction.SOUTH, new double[] {2, 7, 0, 14, 9, 2},
+                net.minecraft.core.Direction.WEST, new double[] {7, 0, 2, 9, 2, 14},
+                net.minecraft.core.Direction.EAST, new double[] {7, 0, 2, 9, 2, 14});
+        for (var tEntry : tExpected.entrySet()) {
+            net.minecraft.world.level.block.state.BlockState tState =
+                    tStick.defaultBlockState().setValue(GT6SurfaceRockBlock.FACING, tEntry.getKey());
+            var tBoxes = tStick.getShape(tState, null, null, null).toAabbs();
+            assertEquals(1, tBoxes.size(), tEntry.getKey() + ": one bar box");
+            double[] tE = tEntry.getValue();
+            net.minecraft.world.phys.AABB tBox = tBoxes.get(0);
+            assertEquals(tE[0] / 16, tBox.minX, 1e-9, tEntry.getKey() + " minX");
+            assertEquals(tE[1] / 16, tBox.minY, 1e-9, tEntry.getKey() + " minY");
+            assertEquals(tE[2] / 16, tBox.minZ, 1e-9, tEntry.getKey() + " minZ");
+            assertEquals(tE[3] / 16, tBox.maxX, 1e-9, tEntry.getKey() + " maxX");
+            assertEquals(tE[4] / 16, tBox.maxY, 1e-9, tEntry.getKey() + " maxY");
+            assertEquals(tE[5] / 16, tBox.maxZ, 1e-9, tEntry.getKey() + " maxZ");
+        }
+        assertTrue(tStick.getCollisionShape(tStick.defaultBlockState(), null, null, null).isEmpty(),
+                "stick collision stays empty — MultiTileEntityStick.java:177 collision null");
+        // the rock envelope pin: the 8x3x8 DOWN selection box every render variant fits inside
+        GT6SurfaceRockBlock tRock = new GT6SurfaceRockBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of(), null);
+        var tRockBox = tRock.getShape(tRock.defaultBlockState(), null, null, null).toAabbs().get(0);
+        assertEquals(new net.minecraft.world.phys.AABB(4 / 16.0, 0, 4 / 16.0, 12 / 16.0, 3 / 16.0, 12 / 16.0), tRockBox,
+                "rock DOWN selection stays the 8x3x8 envelope (p38-issue1-4 pin)");
     }
 
     /** The WorldgenOnSurface binds, transcribed into the constant table. */
