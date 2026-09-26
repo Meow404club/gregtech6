@@ -8,6 +8,10 @@
  * with its own {@code -1} (upstream: the BlockTextureMulti mTexture half has no colour
  * argument), and the Params tint agrees byte-for-byte with the block colour seam the
  * retired route used ({@code GTOreClientListener.oreTintARGB}).
+ * <p>ISSUE #14: the baked COLOR slot int is ABGR ({@code A<<24|B<<16|G<<8|R} — vanilla
+ * putBulkData reads bytes 12/13/14 = R/G/B, QuadTransformers.toABGR the ecosystem's
+ * converter); the product pins assert the channel layout, not the raw ARGB tint (the old
+ * pin was the swapped convention itself).
  * Offline: a {@code UnitTextureAtlasSprite} stub stands in for the atlas (the
  * GTOreBakedModelLazyBakeTest form — real sprites need a live stitch).
  */
@@ -15,6 +19,7 @@ package gregtech6.client.ore;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -46,6 +51,8 @@ public class GTOreBakedModelTintTest {
 	private static final int WHITE = 0xFFFFFFFF;
 	/** An arbitrary opaque ore colour (the chalcopyrite-style amber); the product math is value-independent. */
 	private static final int TINT = 0xFFA07828;
+	/** The same tint as the COLOR SLOT stores it: ABGR, the R/B halves of {@link #TINT} swapped. */
+	private static final int TINT_ABGR = (TINT & 0xFF00FF00) | ((TINT >> 16) & 0x000000FF) | ((TINT << 16) & 0x00FF0000);
 
 	@BeforeAll
 	static void boot() {
@@ -84,7 +91,10 @@ public class GTOreBakedModelTintTest {
 		BakedQuad tOverlay = tPair.get(1);
 		assertEquals(-1, tOverlay.getTintIndex(), "the overlay drops tintIndex 0 (no runtime double-dye)");
 		assertNotEquals(WHITE, tOverlay.getVertices()[COLOR_SLOT], "the overlay vertices left the white identity");
-		assertEquals(TINT, tOverlay.getVertices()[COLOR_SLOT], "white x tint = the tint itself");
+		assertEquals(TINT_ABGR, tOverlay.getVertices()[COLOR_SLOT], "white x tint = the tint, stored ABGR in the slot");
+		// the #14 hue pin: a warm ore colour keeps R > B in the slot layout (copper no longer blue)
+		int tSlot = tOverlay.getVertices()[COLOR_SLOT];
+		assertTrue((tSlot & 255) > ((tSlot >> 16) & 255), "the tinted overlay is warm: slot R (bits 7-0) > slot B (bits 23-16)");
 	}
 
 	/** The no-tint identity (the -1 sentinel) bakes the raw quad, no retint pass. */
@@ -121,7 +131,7 @@ public class GTOreBakedModelTintTest {
 		List<BakedQuad> tCutout = tModel.getQuads(null, null, tRand, ModelData.EMPTY, RenderType.cutout());
 		assertEquals(6, tCutout.size(), "cutout = exactly the 6 overlay-shell quads");
 		for (BakedQuad tQuad : tCutout) {
-			assertEquals(TINT, tQuad.getVertices()[COLOR_SLOT], "every cutout quad is the tinted overlay");
+			assertEquals(TINT_ABGR, tQuad.getVertices()[COLOR_SLOT], "every cutout quad is the tinted overlay");
 			assertEquals(-1, tQuad.getTintIndex(), "the overlay keeps the no-runtime-lookup index");
 		}
 
@@ -148,7 +158,7 @@ public class GTOreBakedModelTintTest {
 
 	private static int countTinted(List<BakedQuad> aQuads) {
 		int rCount = 0;
-		for (BakedQuad tQuad : aQuads) if (tQuad.getVertices()[COLOR_SLOT] == TINT) rCount++;
+		for (BakedQuad tQuad : aQuads) if (tQuad.getVertices()[COLOR_SLOT] == TINT_ABGR) rCount++;
 		return rCount;
 	}
 

@@ -125,9 +125,10 @@ class GTMachineTintModelTest extends GTOfflineRenderTestBase {
 		assertNotEquals(tBody, tRetinted, "the body quad is a retinted copy");
 		assertEquals(-1, tRetinted.getTintIndex(), "the retinted copy drops the tint index (no double tint)");
 		int tColour = tRetinted.getVertices()[COLOR_SLOT];
-		assertEquals(tTint & 255, tColour & 255, "blue channel");
+		// the slot stores ABGR (issue #14): the tint's R lands at bits 7-0, B at 23-16
+		assertEquals((tTint >> 16) & 255, tColour & 255, "red channel (ABGR slot 0)");
 		assertEquals((tTint >> 8) & 255, (tColour >> 8) & 255, "green channel");
-		assertEquals((tTint >> 16) & 255, (tColour >> 16) & 255, "red channel");
+		assertEquals(tTint & 255, (tColour >> 16) & 255, "blue channel (ABGR slot 2)");
 		assertSame(tDecal, tOut.get(1), "the untinted decal passes through as the shared instance");
 	}
 
@@ -149,11 +150,12 @@ class GTMachineTintModelTest extends GTOfflineRenderTestBase {
 		int tUnpaintedColour = tUnpaintedVertices[COLOR_SLOT];
 		int tPaintedColour = tPaintedVertices[COLOR_SLOT];
 		assertNotEquals(tUnpaintedColour, tPaintedColour, "the vertex data colour follows the ModelData");
-		// the unpainted arm = the bronze row colour, the painted arm = pure red
-		assertEquals((tUnpainted >> 16) & 255, (tUnpaintedColour >> 16) & 255, "unpainted R (bronze)");
-		assertEquals(255, (tPaintedColour >> 16) & 255, "painted R (red)");
+		// the unpainted arm = the bronze row colour, the painted arm = pure red; the slot
+		// is ABGR (issue #14): R at bits 7-0, G at 15-8, B at 23-16
+		assertEquals((tUnpainted >> 16) & 255, tUnpaintedColour & 255, "unpainted R (bronze)");
+		assertEquals(255, tPaintedColour & 255, "painted R (red)");
 		assertEquals(0, (tPaintedColour >> 8) & 255, "painted G (red)");
-		assertEquals(0, tPaintedColour & 255, "painted B (red)");
+		assertEquals(0, (tPaintedColour >> 16) & 255, "painted B (red)");
 	}
 
 	/** The -1 identity returns the input list instance (the P23 barrel byte-identity). */
