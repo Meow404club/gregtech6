@@ -6,6 +6,9 @@
 // W5 段（task p15-jei-dual-wiring）：JEI 1.21.1 三件接线（见 dependencies JEI 注释段）；
 // datagen 产物默认共享（下文 srcDir）。
 import org.gradle.jvm.tasks.Jar
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.StandardCopyOption
 
 plugins {
     id("net.neoforged.moddev")
@@ -309,7 +312,92 @@ val neoforgeTagFaces = tasks.register("neoforgeTagFaces", Copy::class) {
 // 死的复数带 v1 照挂不 exclude（zip64 已开，死重另卡声明，research.p28 build_change_list knob）。
 sourceSets["main"].resources.srcDir(neoforgeTagFaces)
 
+// FML junit 并发竞争根治（task r3-ci-fml-config-race）：maxParallelForks 并发下每个 executor 的
+// FML 引导（ModDirTransformerDiscoveror.candidates → FMLConfig.load）都是「读 fml.toml → 无条件
+// 重写」（loader-4.0.44 FMLConfig.loadFrom 字节码 :191 两路均 saveConfig，WritingMode.REPLACE=
+// Files.newOutputStream truncate 写、非原子；本地该文件 mtime 随每次 test 运行刷新=重写实证，同
+// 目录 neoforge-common.toml mtime 恒定=其余 config 一次性写、唯 fml.toml per-run 重写）。并发
+// executor 的解析与彼此的重写交叠 → nightconfig 撕裂读（旧前缀+新后缀拼接腐坏视图）→
+// ParsingException: Invalid bare key '#Disables' 启动即炸（CI run 36241829942；本地冷模拟「预置
+// 完整文件后 6 fork 首跑」同型复现，executor 110 parseTableName 栈——预置方案已证伪，残窗高概率
+// 而非 µs 级可忽略）。
+// 无旋钮可绕：MDG setupTestTask 所有 fork 共享 workingDir=build/minecraft-junit
+// （ModDevRunWorkflow.java:480 afterEvaluate setWorkingDir），Gradle Test 无 per-fork workingDir，
+// FMLPaths FMLCONFIG 硬编码 GAMEDIR/config/fml.toml，nightconfig 3.8.3 无原子写旋钮（只读文件
+// 会让 saveConfig 抛异常杀 executor，亦不可行）。
+// 根治形：fml.toml → /dev/null 符号链接。FML 读=永远空=代码默认值；FML 写=truncate+write 全部落
+// /dev/null 消失 → 盘上状态零变化，撕裂读物理不可能。代价=每 executor 一条 "Configuration file
+// ... is not correct. Correcting" warn（空解析触发 correct，纯噪音）。
+// 语义声明（照准 2026-09-25）：fml.toml 盘上内容=FML 4.0.44 写出的纯默认值（run/config 正本与
+// 本节点模板字节同一，无任何自定义项）→ 写入丢弃=零语义损失。逃生门：未来若需自定义 junit FML
+// 配置（改 maxThreads/versionCheck 等），必须先移除本符号链接或调整本任务——对 fml.toml 的任何
+// 手工编辑都会被静默丢弃，不会有报错提示。
+// 回退形（符号链接不可用，异构 FS）：原子预写完整文件——写入源优先 ① 节点 run/config/fml.toml
+// 拷贝；② 下方内嵌模板（FML 4.0.44 nightconfig 默认产物逐字拷贝；jar 内无可提取模板——
+// neoforge-21.1.249 universal/userdev + loader-4.0.44 三 jar 零 fml.toml/defaultconfigs 资源，
+// 默认值由 FMLConfig 代码生成）。回退只消除冷启动 exists-flip 宽窗口，不消除重写-解析残窗。
+// 两形均 tmp+ATOMIC_MOVE 同目录原子换入；刻意不声明 outputs/inputs → 每次 test 前强制重建
+// （~1ms），自愈任何残留（含被杀运行留下的半写文件/旧实文件）。
+// ponytail: 残余理论面——同目录其余 config（neoforge-common.toml/jade）为一次性写（mtime 恒定
+// 实证），无 per-run 重写即无撕裂面；若未来 FML 版本引入更多 per-run 重写 config，同形扩展。
+val fmlJunitConfigTemplate = """#Disables File Watcher. Used to automatically update config if its file has been modified.
+disableConfigWatcher = false
+#Should we control the window. Disabling this disables new GL features and can be bad for mods that rely on them.
+earlyWindowControl = true
+#Max threads for early initialization parallelism,  -1 is based on processor count
+maxThreads = -1
+#Enable NeoForge global version checking
+versionCheck = true
+#Default config path for servers
+defaultConfigPath = "defaultconfigs"
+#Disables Optimized DFU client-side - already disabled on servers
+disableOptimizedDFU = true
+#Early window provider
+earlyWindowProvider = "fmlearlywindow"
+#Early window width
+earlyWindowWidth = 854
+#Early window height
+earlyWindowHeight = 480
+#Early window framebuffer scale
+earlyWindowFBScale = 1
+#Early window starts maximized
+earlyWindowMaximized = false
+#Skip specific GL versions, may help with buggy graphics card drivers
+earlyWindowSkipGLVersions = []
+#Squir?
+earlyWindowSquir = false
+#Define dependency overrides below
+#Dependency overrides can be used to forcibly remove a dependency constraint from a mod or to force a mod to load AFTER another mod
+#Using dependency overrides can cause issues. Use at your own risk.
+#Example dependency override for the mod with the id 'targetMod': dependency constraints (incompatibility clauses or restrictive version ranges) against mod 'dep1' are removed, and the mod will now load after the mod 'dep2'
+#dependencyOverrides.targetMod = ["-dep1", "+dep2"]
+dependencyOverrides = {}
+"""
+
+val prepareFmlJunitConfig = tasks.register("prepareFmlJunitConfig") {
+    val target = layout.buildDirectory.file("minecraft-junit/config/fml.toml")
+    val runConfig = file("run/config/fml.toml") // 配置期解析（config-cache 安全形）
+    doLast {
+        val targetFile = target.get().asFile
+        targetFile.parentFile.mkdirs()
+        val tmp = targetFile.resolveSibling("fml.toml.tmp")
+        Files.deleteIfExists(tmp.toPath())
+        try {
+            Files.createSymbolicLink(tmp.toPath(), Path.of("/dev/null"))
+        } catch (e: Exception) {
+            // 符号链接不可用（异构 FS/权限）→ 回退原子预写完整文件（见上方回退形注释）
+            if (runConfig.exists()) tmp.writeBytes(runConfig.readBytes()) else tmp.writeText(fmlJunitConfigTemplate)
+        }
+        Files.move(
+            tmp.toPath(), targetFile.toPath(),
+            StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE,
+        )
+    }
+}
+
 tasks.withType(Test::class).configureEach {
+    // executor 启动前先根治共享 fml.toml 竞争面（/dev/null 符号链接，见 prepareFmlJunitConfig 注释段）
+    dependsOn(prepareFmlJunitConfig)
     useJUnitPlatform()
     testLogging {
         events("passed", "skipped", "failed")
@@ -325,7 +413,8 @@ tasks.withType(Test::class).configureEach {
     // 估 ~1.9GB/fork，6×1.9+daemon ~1.5 ≈ 12.9GB ≤ 16GB runner 可用 ~13.5GB（OS+agent 占
     // ~1.5-2GB）；8×2.3=18.4GB、7×2.3=16.1GB、6×2.3=15.3GB@2g 堆均超可用——确定性 OOM。
     // ②本地 12 核裸公式=24 forks 超物理内存+gt6testgate 30G 闸，cap 6 同护本地。
-    // 402 个测试文件已扫描：零 ServerSocket/零文件写（2026-09-25 主会话 grep 实证），fork 间无文件域冲突。
+    // 402 个测试文件已扫描：零 ServerSocket/零文件写（2026-09-25 主会话 grep 实证），fork 间无文件域冲突
+    // ——唯一例外是 FML 基建自身 per-run 重写 fml.toml，由下方 prepareFmlJunitConfig 根治（r3 复盘修订）。
     maxParallelForks = minOf(Runtime.getRuntime().availableProcessors() * 2, 6)
 }
 
