@@ -1,0 +1,1144 @@
+{
+  "comment": "task p37-rm-six-maps \u2014 the RM.Hammer row stock (RM.java:137, the p36 census open_faces[0] close): the static rows of RM.smash (Loader_Recipes_Vanilla.java:545-554, the Hammer leg 16 EUt/16 t \u2014 the Crusher legs ride GT6RecipesShCL's own census face) + the brick/nether-brick families (:556-559/:565-569) + the OreDict stone listeners (:81/:91/:95; :87 folds onto :565 \u2014 the modern identity of stoneNetherBrick IS the nether bricks block). W-meta wildcards expand to their 1.20.1 identities (the juicer seed-fold convention): sandstone metas 0/1/2, the sixteen dye-order colours for stained glass/panes/terracotta, hardened_clay -> terracotta, double-stone-slab metas 4/6 -> the bricks/nether_bricks blocks (duplicate rows folded, noted per row). STAY POOLED: the RecipeMapHammer.getRecipeFor ore->crushed synthesis (RecipeMapHammer.java:87-116) and the Gneiss/PetrifiedWood special (Loader_OreProcessing.java:323, materials absent from the port universe).",
+  "recipes": [
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:545 \u2014 cobblestone -> gravel (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:gravel",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:546 \u2014 sandstone W-meta fan, 1.20.1 identity sandstone (meta 0) -> sand (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:sandstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:sand",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:546 \u2014 sandstone W-meta fan, 1.20.1 identity chiseled_sandstone (meta 1) -> sand (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:chiseled_sandstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:sand",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:546 \u2014 sandstone W-meta fan, 1.20.1 identity smooth_sandstone (meta 2) -> sand (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:smooth_sandstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:sand",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:547 \u2014 ice -> 1 Ice dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:ice",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ice",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:548 \u2014 packed ice -> 2 Ice dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:packed_ice",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ice",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:549 \u2014 hardened clay -> 2 Clay dust (1.20.1 identity terracotta; Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_clay",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:550 \u2014 stained hardened clay W-meta fan, 1.20.1 identity white_terracotta -> 2 Clay dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:white_terracotta",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_clay",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:550 \u2014 stained hardened clay W-meta fan, 1.20.1 identity orange_terracotta -> 2 Clay dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:orange_terracotta",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_clay",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:550 \u2014 stained hardened clay W-meta fan, 1.20.1 identity magenta_terracotta -> 2 Clay dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:magenta_terracotta",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_clay",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:550 \u2014 stained hardened clay W-meta fan, 1.20.1 identity light_blue_terracotta -> 2 Clay dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:light_blue_terracotta",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_clay",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:550 \u2014 stained hardened clay W-meta fan, 1.20.1 identity yellow_terracotta -> 2 Clay dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:yellow_terracotta",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_clay",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:550 \u2014 stained hardened clay W-meta fan, 1.20.1 identity lime_terracotta -> 2 Clay dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:lime_terracotta",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_clay",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:550 \u2014 stained hardened clay W-meta fan, 1.20.1 identity pink_terracotta -> 2 Clay dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:pink_terracotta",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_clay",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:550 \u2014 stained hardened clay W-meta fan, 1.20.1 identity gray_terracotta -> 2 Clay dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:gray_terracotta",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_clay",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:550 \u2014 stained hardened clay W-meta fan, 1.20.1 identity light_gray_terracotta -> 2 Clay dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:light_gray_terracotta",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_clay",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:550 \u2014 stained hardened clay W-meta fan, 1.20.1 identity cyan_terracotta -> 2 Clay dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:cyan_terracotta",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_clay",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:550 \u2014 stained hardened clay W-meta fan, 1.20.1 identity purple_terracotta -> 2 Clay dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:purple_terracotta",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_clay",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:550 \u2014 stained hardened clay W-meta fan, 1.20.1 identity blue_terracotta -> 2 Clay dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:blue_terracotta",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_clay",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:550 \u2014 stained hardened clay W-meta fan, 1.20.1 identity brown_terracotta -> 2 Clay dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:brown_terracotta",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_clay",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:550 \u2014 stained hardened clay W-meta fan, 1.20.1 identity green_terracotta -> 2 Clay dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:green_terracotta",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_clay",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:550 \u2014 stained hardened clay W-meta fan, 1.20.1 identity red_terracotta -> 2 Clay dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:red_terracotta",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_clay",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:550 \u2014 stained hardened clay W-meta fan, 1.20.1 identity black_terracotta -> 2 Clay dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:black_terracotta",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_clay",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:551 \u2014 glass -> 9 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:552 \u2014 stained glass W-meta fan, 1.20.1 identity white_glass -> 9 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:white_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:552 \u2014 stained glass W-meta fan, 1.20.1 identity orange_glass -> 9 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:orange_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:552 \u2014 stained glass W-meta fan, 1.20.1 identity magenta_glass -> 9 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:magenta_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:552 \u2014 stained glass W-meta fan, 1.20.1 identity light_blue_glass -> 9 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:light_blue_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:552 \u2014 stained glass W-meta fan, 1.20.1 identity yellow_glass -> 9 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:yellow_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:552 \u2014 stained glass W-meta fan, 1.20.1 identity lime_glass -> 9 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:lime_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:552 \u2014 stained glass W-meta fan, 1.20.1 identity pink_glass -> 9 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:pink_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:552 \u2014 stained glass W-meta fan, 1.20.1 identity gray_glass -> 9 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:gray_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:552 \u2014 stained glass W-meta fan, 1.20.1 identity light_gray_glass -> 9 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:light_gray_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:552 \u2014 stained glass W-meta fan, 1.20.1 identity cyan_glass -> 9 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:cyan_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:552 \u2014 stained glass W-meta fan, 1.20.1 identity purple_glass -> 9 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:purple_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:552 \u2014 stained glass W-meta fan, 1.20.1 identity blue_glass -> 9 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:blue_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:552 \u2014 stained glass W-meta fan, 1.20.1 identity brown_glass -> 9 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:brown_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:552 \u2014 stained glass W-meta fan, 1.20.1 identity green_glass -> 9 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:green_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:552 \u2014 stained glass W-meta fan, 1.20.1 identity red_glass -> 9 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:red_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:552 \u2014 stained glass W-meta fan, 1.20.1 identity black_glass -> 9 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:black_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:553 \u2014 glass pane -> 1 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:554 \u2014 stained glass pane W-meta fan, 1.20.1 identity white_glass_pane -> 1 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:white_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:554 \u2014 stained glass pane W-meta fan, 1.20.1 identity orange_glass_pane -> 1 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:orange_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:554 \u2014 stained glass pane W-meta fan, 1.20.1 identity magenta_glass_pane -> 1 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:magenta_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:554 \u2014 stained glass pane W-meta fan, 1.20.1 identity light_blue_glass_pane -> 1 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:light_blue_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:554 \u2014 stained glass pane W-meta fan, 1.20.1 identity yellow_glass_pane -> 1 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:yellow_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:554 \u2014 stained glass pane W-meta fan, 1.20.1 identity lime_glass_pane -> 1 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:lime_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:554 \u2014 stained glass pane W-meta fan, 1.20.1 identity pink_glass_pane -> 1 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:pink_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:554 \u2014 stained glass pane W-meta fan, 1.20.1 identity gray_glass_pane -> 1 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:gray_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:554 \u2014 stained glass pane W-meta fan, 1.20.1 identity light_gray_glass_pane -> 1 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:light_gray_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:554 \u2014 stained glass pane W-meta fan, 1.20.1 identity cyan_glass_pane -> 1 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:cyan_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:554 \u2014 stained glass pane W-meta fan, 1.20.1 identity purple_glass_pane -> 1 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:purple_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:554 \u2014 stained glass pane W-meta fan, 1.20.1 identity blue_glass_pane -> 1 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:blue_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:554 \u2014 stained glass pane W-meta fan, 1.20.1 identity brown_glass_pane -> 1 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:brown_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:554 \u2014 stained glass pane W-meta fan, 1.20.1 identity green_glass_pane -> 1 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:green_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:554 \u2014 stained glass pane W-meta fan, 1.20.1 identity red_glass_pane -> 1 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:red_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.smash Loader_Recipes_Vanilla.java:554 \u2014 stained glass pane W-meta fan, 1.20.1 identity black_glass_pane -> 1 Glass dust (Hammer side 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:black_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:556 \u2014 bricks -> 3 brick items (16 EUt, 16 t). :557 double_stone_slab(4) folds onto this row (the 1.20.1 identity of the brick double slab IS the bricks block)",
+      "inputs": [
+        {
+          "item": "minecraft:bricks",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brick",
+          "count": 3
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:558 \u2014 brick stairs -> 2 brick items (16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:brick_stairs",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brick",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:559 \u2014 stone_slab meta 4 -> 1 brick item (1.20.1 identity brick_slab; 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:brick_slab",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brick",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:565 \u2014 nether brick block -> 3 nether brick items (16 EUt, 16 t). :566 double_stone_slab(6) folds onto this row; the OreDict :87 stoneNetherBrick listener row is the same modern identity (one row carries both sources)",
+      "inputs": [
+        {
+          "item": "minecraft:nether_bricks",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:nether_brick",
+          "count": 3
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:567 \u2014 nether brick stairs -> 2 nether brick items (16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:nether_brick_stairs",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:nether_brick",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:568 \u2014 nether brick fence -> 2 nether brick items (16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:nether_brick_fence",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:nether_brick",
+          "count": 2
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:569 \u2014 stone_slab meta 6 -> 1 nether brick item (1.20.1 identity nether_brick_slab; 16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:nether_brick_slab",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:nether_brick",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:81 \u2014 the blockSolid Obsidian listener (RC/HBM crushed variants absent -> the OP.dust(MT.Obsidian, 8) fallback leg): obsidian -> 8 Obsidian dust (16 EUt, 64 t)",
+      "inputs": [
+        {
+          "item": "minecraft:obsidian",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_obsidian",
+          "count": 8
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:91 \u2014 the stoneNetherrack listener: netherrack -> 4 Netherrack rock (16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:netherrack",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rock_gt_netherrack",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:95 \u2014 the stoneEndstone listener: end stone -> 4 Endstone rock (16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:end_stone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rock_gt_endstone",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    }
+  ]
+}
