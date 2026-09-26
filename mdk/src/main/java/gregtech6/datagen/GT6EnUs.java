@@ -1653,15 +1653,52 @@ public class GT6EnUs extends LanguageProvider {
 
     /** Table a: one "%s"-template per prefix, all of OP.VALUES (post-OP.init()). */
     private void addPrefixTemplates() {
+        addPrefixTemplates(OreDictPrefix.VALUES);
+    }
+
+    /**
+     * Replay seam over an arbitrary prefix list (task p37-polish-compressed-warn): the real
+     * walk ({@link OreDictPrefix#VALUES}) hits exactly one snake_case collision — the declared
+     * first-wins pair — while the mute guard test feeds a synthetic UNdeclared duplicate to
+     * prove that path still WARNs.
+     */
+    void addPrefixTemplates(List<OreDictPrefix> aPrefixes) {
         Set<String> tSeen = new HashSet<>();
-        for (OreDictPrefix tPrefix : OreDictPrefix.VALUES) {
+        for (OreDictPrefix tPrefix : aPrefixes) {
             String tKey = "gt6.tagprefix." + MaterialPrefixItem.snakeCase(tPrefix.mNameInternal);
             if (!tSeen.add(tKey)) { // snake_case collisions are unlikely but must not pass silently
-                GT6Mod.LOGGER.warn("GT6 datagen: duplicate prefix template key {} for {}", tKey, tPrefix.mNameInternal);
+                logTemplateCollision(tKey, tPrefix.mNameInternal);
                 continue;
             }
             add(tKey, templateOf(tPrefix));
         }
+    }
+
+    /**
+     * A snake_case duplicate in the prefix-template walk: the DECLARED first-wins pair
+     * (id collision policy javadoc in GTMaterialItems; declaration pin
+     * GTMaterialItemsRegistrationTest.firstWinsIdCollisionRule) logs at debug — declared
+     * noise, invisible at the INFO+ console/latest.log faces — while every UNdeclared
+     * collision still WARNs. Package-visible seam: the mute test overrides it to record
+     * collisions instead of parsing log output. First-wins semantics (the loser's
+     * {@code add()} stays skipped) are untouched.
+     */
+    void logTemplateCollision(String aKey, String aLoserName) {
+        if (isDeclaredTemplateCollision(aLoserName)) {
+            GT6Mod.LOGGER.debug("GT6 datagen: duplicate prefix template key {} for {} (declared first-wins pair, muted)", aKey, aLoserName);
+        } else {
+            GT6Mod.LOGGER.warn("GT6 datagen: duplicate prefix template key {} for {}", aKey, aLoserName);
+        }
+    }
+
+    /**
+     * The only snake_case collision pair in all of OP (census, GTMaterialItems item-universe
+     * javadoc): OP.compressed and its identical-name alias "Compressed" both snake to
+     * "compressed". Both members listed so the mute is iteration-order independent — the
+     * loser of this key is necessarily the other member of the pair.
+     */
+    static boolean isDeclaredTemplateCollision(String aPrefixName) {
+        return "compressed".equals(aPrefixName) || "Compressed".equals(aPrefixName);
     }
 
     /** mMaterialPre + "%s" + mMaterialPost; nulls normalised (upstream composition is plain concat). */
