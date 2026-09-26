@@ -151,7 +151,9 @@ class GT6SurfaceBlocksTest {
             assertEquals(tE[4] / 16, tBox.maxY, 1e-9, tEntry.getKey() + " maxY");
             assertEquals(tE[5] / 16, tBox.maxZ, 1e-9, tEntry.getKey() + " maxZ");
         }
-        assertTrue(tStick.getCollisionShape(tStick.defaultBlockState(), null, null, null).isEmpty(),
+        // BlockState.getCollisionShape (the public BlockStateBase face; the BlockBehaviour
+        // 4-arg form went protected on 21.1) — noCollission short-circuits to empty
+        assertTrue(tStick.defaultBlockState().getCollisionShape(null, null).isEmpty(),
                 "stick collision stays empty — MultiTileEntityStick.java:177 collision null");
         // the rock envelope pin: the 8x3x8 DOWN selection box every render variant fits inside
         GT6SurfaceRockBlock tRock = new GT6SurfaceRockBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of(), null);
