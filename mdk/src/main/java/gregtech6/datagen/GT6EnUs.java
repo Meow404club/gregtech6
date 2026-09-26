@@ -153,6 +153,7 @@ public class GT6EnUs extends LanguageProvider {
         addArmor(); // task p29-w5-t8-armor-24 — table-tail append
         addTreeBlocks(); // task p30-w6-t1-trees-nine — table-tail append
         addUsbSticks(); // task p32-usb-data — table-tail append
+        addUsbPeripherals(); // task p37-usb-peripherals — the 8 peripheral rows + the exempted He emitter
         addKeys(); // task dungeon-keys — the key family display + behavior lines
         addSurfaceBand(); // task p30-w6-rocks-sticks — table-tail append
         addSurfacePlants(); // task p30-w6-t2-surface-blocks — table-tail append
@@ -2146,6 +2147,28 @@ public class GT6EnUs extends LanguageProvider {
             add("item.gt6.usb_stick_" + tTier, "USB " + tTier + ".0 Stick");
             add("item.gt6.usb_stick_" + tTier + ".tooltip", "Stores Data");
         }
+    }
+
+    /**
+     * The USB peripheral family keys (task p37-usb-peripherals, 18 rows): the 8 display
+     * names + 8 tooltips are the MultiItemTechnological.java:803-806 (cables, "USB N.0
+     * Cable" / "Replaces USB Sticks when connected to USB Ports") and :814-817 (HDDs,
+     * "USB N.0 HDD" / "Stores up to 16 Files at once") registration literals verbatim,
+     * plus the exempted Helium Laser Emitter pair (:387, "Helium Laser Emitter" /
+     * "Purpose: Weak Optical Appliances"). The drive data-state lines ("Perfectly
+     * Formatted", "Uncleanly Formatted", "Data Slot i is Empty", the short material
+     * face) stay RUNTIME literals — the Behavior_DataStorage16 hardcoded-en posture
+     * (the addUsbSticks dynamic-face note).
+     */
+    private void addUsbPeripherals() {
+        for (byte tTier = 1; tTier <= 4; tTier++) {
+            add("item.gt6.usb_cable_" + tTier, "USB " + tTier + ".0 Cable");
+            add("item.gt6.usb_cable_" + tTier + ".tooltip", "Replaces USB Sticks when connected to USB Ports");
+            add("item.gt6.usb_drive_" + tTier, "USB " + tTier + ".0 HDD");
+            add("item.gt6.usb_drive_" + tTier + ".tooltip", "Stores up to 16 Files at once");
+        }
+        add("item.gt6.comp_laser_gas_he", "Helium Laser Emitter");
+        add("item.gt6.comp_laser_gas_he.tooltip", "Purpose: Weak Optical Appliances");
     }
 
     /**

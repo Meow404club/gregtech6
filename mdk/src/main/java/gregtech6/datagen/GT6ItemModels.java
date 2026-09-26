@@ -554,6 +554,16 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent("usb_stick_" + tTier, mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/usb_stick_" + tTier));
         }
+        // the USB peripheral families (task p37-usb-peripherals) — 8 item/generated models
+        // over the byte-identical upstream icon borrows (gt.multiitem.technological metas
+        // 32011-32014 the cables / 32021-32024 the HDDs, assets/README.md attribution),
+        // the same tier-loop convention as the sticks
+        for (int tTier = 1; tTier <= 4; tTier++) {
+            withExistingParent("usb_cable_" + tTier, mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/usb_cable_" + tTier));
+            withExistingParent("usb_drive_" + tTier, mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/usb_drive_" + tTier));
+        }
         // the key family (task dungeon-keys) — 10 item/generated models over the
         // byte-identical upstream icon borrows (gt.multiitem.randomtools metas 30000-30009,
         // assets/README.md attribution), walked over the GT6Keys pool so the model ids
@@ -569,6 +579,10 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("item/comp_laser_gas_empty"));
         withExistingParent("comp_laser_gas_co2", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/comp_laser_gas_co2"));
+        // task p37-usb-peripherals — the Helium Laser Emitter icon (the coordinator's
+        // single-item exemption; upstream meta 11001, assets/README.md attribution)
+        withExistingParent("comp_laser_gas_he", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/comp_laser_gas_he"));
         // the spray-can family (task p22-spraycan-items) — 18 item/generated models over the
         // byte-identical upstream icon borrows (gt.multiitem.randomtools metas
         // 1000+2i/1096/999, assets/README.md attribution): one model per colour + the remover

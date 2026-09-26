@@ -114,6 +114,24 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	public static final TagKey<Item> USB_STICK_4 = gt6("usb_stick_4");
 
 	/**
+	 * The USB Cable / USB HDD tier tags (task p37-usb-peripherals) — the
+	 * {@code OD_USB_CABLES}/{@code OD_USB_DRIVES} array translation (CS.java:162/:164, the
+	 * per-tier oredict names {@code gt:usbcable1..4}/{@code gt:usbdrive1..4}): the same
+	 * {@code usb_stick_N} snake convention, one tag per tier over the
+	 * {@link gregtech6.items.GT6UsbSticks} peripheral rows — the upstream consumers
+	 * (Loader_MultiTileEntities.java:1075 the Tool_Scanner 'C' column,
+	 * TileEntityBase08DataSwitch) key the arrays, never the bare items.
+	 */
+	public static final TagKey<Item> USB_CABLE_1 = gt6("usb_cable_1");
+	public static final TagKey<Item> USB_CABLE_2 = gt6("usb_cable_2");
+	public static final TagKey<Item> USB_CABLE_3 = gt6("usb_cable_3");
+	public static final TagKey<Item> USB_CABLE_4 = gt6("usb_cable_4");
+	public static final TagKey<Item> USB_DRIVE_1 = gt6("usb_drive_1");
+	public static final TagKey<Item> USB_DRIVE_2 = gt6("usb_drive_2");
+	public static final TagKey<Item> USB_DRIVE_3 = gt6("usb_drive_3");
+	public static final TagKey<Item> USB_DRIVE_4 = gt6("usb_drive_4");
+
+	/**
 	 * The craftingToolWirecutter oredient translation — #gt6:tools/wire_cutter (task
 	 * p29-w3-nbtdesign-parts ③ — the coil crafting rows' 'x' letter, CR.java:359
 	 * {@code case 'x': OreDictToolNames.wirecutter}; the TOOLS_WRENCH snake shape).
@@ -631,6 +649,16 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		tag(USB_STICK_2).add(item(gregtech6.items.GT6UsbSticks.USB_STICK_2.getId()));
 		tag(USB_STICK_3).add(item(gregtech6.items.GT6UsbSticks.USB_STICK_3.getId()));
 		tag(USB_STICK_4).add(item(gregtech6.items.GT6UsbSticks.USB_STICK_4.getId()));
+		// task p37-usb-peripherals — the 8 peripheral tier tags (one member each, the
+		// OD_USB_CABLES/OD_USB_DRIVES per-tier oredict face, the stick-band convention)
+		tag(USB_CABLE_1).add(item(gregtech6.items.GT6UsbSticks.USB_CABLE_1.getId()));
+		tag(USB_CABLE_2).add(item(gregtech6.items.GT6UsbSticks.USB_CABLE_2.getId()));
+		tag(USB_CABLE_3).add(item(gregtech6.items.GT6UsbSticks.USB_CABLE_3.getId()));
+		tag(USB_CABLE_4).add(item(gregtech6.items.GT6UsbSticks.USB_CABLE_4.getId()));
+		tag(USB_DRIVE_1).add(item(gregtech6.items.GT6UsbSticks.USB_DRIVE_1.getId()));
+		tag(USB_DRIVE_2).add(item(gregtech6.items.GT6UsbSticks.USB_DRIVE_2.getId()));
+		tag(USB_DRIVE_3).add(item(gregtech6.items.GT6UsbSticks.USB_DRIVE_3.getId()));
+		tag(USB_DRIVE_4).add(item(gregtech6.items.GT6UsbSticks.USB_DRIVE_4.getId()));
 		// task p26-w1-press-extruder-molds — the mold-family membership face (the row0 pair,
 		// upstream meta 10001/:212; the not-consumable predicate's read side). The entry
 		// handle rides the SIMPLE-NAME import (the stonecutter rewrite touches imports, not
