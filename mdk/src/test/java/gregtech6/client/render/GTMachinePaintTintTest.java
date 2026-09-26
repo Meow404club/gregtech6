@@ -185,10 +185,12 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 
 	/**
 	 * Task r3-beehive-tint (issue #15): the Bumbliary pair rides the combined dispatch —
-	 * the row NBT_MATERIAL of the upstream pair (ANY.Wood :2222 — the MT.Wood looks
-	 * representative, fRGBaSolid 100,50,0; MT.StainlessSteel :2223, 200,200,220), the
-	 * material-less hive block staying the null gate (its worldgen family colour rides the
-	 * BE PAINT model data, not a material).
+	 * the row NBT_MATERIAL of the upstream pair (ANY.Wood :2222; MT.StainlessSteel :2223,
+	 * 200,200,220), the material-less hive block staying the null gate (its worldgen family
+	 * colour rides the BE PAINT model data, not a material). The seam resolves MT.Wood
+	 * DIRECTLY (the row's stats source; pre debt-anywood-flip it coincided with ANY.Wood's
+	 * then-inverted looks 100,50,0 — upstream ANY.Wood looks is now Spruce 102,79,47, so
+	 * the port body colour carries a recorded G+29/B+47 deviation vs the upstream alias).
 	 */
 	@Test
 	void bumbliaryPairRidesTheCombinedDispatch() {
@@ -198,14 +200,14 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 		gregtech6.tileentity.bees.GT6BumbliaryBlock tAdvanced = new gregtech6.tileentity.bees.GT6BumbliaryBlock(
 				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of(), true);
 		assertSame(gregapi.data.MT.Wood, GTMachinePaintTint.tintMaterialOf(tPrimary),
-				"the Bumbliary resolves the ANY.Wood row (the MT.Wood looks representative, :2222)");
+				"the Bumbliary resolves the MT.Wood representative of the ANY.Wood row, :2222");
 		assertSame(gregapi.data.MT.StainlessSteel, GTMachinePaintTint.tintMaterialOf(tAdvanced),
 				"the Advanced Bumbliary resolves the StainlessSteel row (:2223)");
 		assertNull(GTMachinePaintTint.tintMaterialOf(
 				new gregtech6.tileentity.bees.GT6BumbleHiveBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of())),
 				"the hive block stays material-less (the family colour rides PAINT, not a material)");
-		// the pinned values — the upstream NBT_COLOR derivation over fRGBaSolid
-		// (ANY.Wood steals MT.Wood looks 100,50,0 = 0x643200; StainlessSteel 200,200,220 = 0xC8C8DC)
+		// the pinned values — the MT.Wood-direct seam derivation over fRGBaSolid
+		// (MT.Wood 100,50,0 = 0x643200; StainlessSteel 200,200,220 = 0xC8C8DC)
 		assertEquals(0xFF643200, GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tPrimary), 0),
 				"the Bumbliary body tints wood-brown 100,50,0");
 		assertEquals(0xFFC8C8DC, GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tAdvanced), 0),

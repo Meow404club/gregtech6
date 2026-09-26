@@ -51,9 +51,11 @@ public class GT6BumbliaryBlock extends GTEntityBlock {
 	/**
 	 * The row material (issue #15, task r3-beehive-tint): the NBT_MATERIAL column the
 	 * upstream pair registers — {@code ANY.Wood} on the primary (:2222) and
-	 * {@code MT.StainlessSteel} on the advanced (:2223). The ANY alias steals MT.Wood's
-	 * looks (ANY.java:221 stealLooks — fRGBaSolid 100,50,0), so {@code MT.Wood} is the
-	 * colour-faithful representative (the GT6ManualKitchenBlockEntity precedent). The
+	 * {@code MT.StainlessSteel} on the advanced (:2223). The seam resolves {@code MT.Wood}
+	 * DIRECTLY (the row's stats source, the GT6ManualKitchenBlockEntity precedent; pre
+	 * debt-anywood-flip the alias's inverted wiring coincided with MT.Wood looks 100,50,0 —
+	 * upstream ANY.Wood looks is Spruce 102,79,47, so the body colour carries a recorded
+	 * G+29/B+47 deviation vs the upstream alias, the GTMachinePaintTintTest note). The
 	 * paint tint's unpainted fallback reads it through {@link #materialOf} — the block-side
 	 * mirror of the upstream NBT_MATERIAL → NBT_COLOR derivation
 	 * (MultiTileEntityClassContainer.java:51), the GTBasicMachineBlock.material() shape.
