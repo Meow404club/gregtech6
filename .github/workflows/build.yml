@@ -3,6 +3,11 @@
 # 调用（lesson id327 双腿禁同调用铁律）；任务表达式=stonecutter 节点直接寻址
 # （settings.gradle.kts:33-43 内联块，全库零 precompute）。
 # 零 secrets：submodule 公开仓（.gitmodules https URL），fork PR 只读 token 天然可跑。
+# dev prerelease 裁定（task ci-dev-prerelease）：main push（非 tag）发滚动 dev prerelease——
+# 先删远端 dev tag 再以 target_commitish 重建，tag 恒指本次 commit（该参数仅新建 tag 时生效）；
+# prerelease 不抢 latest（softprops README 实证 "Drafts and prereleases cannot be set as latest"）；
+# concurrency 组对 main push 为互斥排队（cancel-in-progress 仅 PR 真），滚动更新无竞态。
+# softprops v2→v3：v2.6.2 为 v2 终版停止维护（Node 20 runtime 弃用），v3 inputs 兼容。
 # 默认最小权限（S37-2 审查席建议采纳）：全 workflow 只读 token，release job 局部提权。
 permissions:
   contents: read
@@ -97,10 +102,11 @@ jobs:
             build/test-results/
           if-no-files-found: ignore
 
-  # 发布 job（ci_design.release_ruling 建议案内嵌落定）：tag v* push 触发，needs 双腿，
-  # 下载双 artifact 后附到 GitHub Release。首版 tag v0.1.0 由主会话打，本 workflow 只接事件。
+  # 发布 job（ci_design.release_ruling 建议案内嵌落定）：tag v* push 发正式 Release；
+  # main push 发滚动 dev prerelease（语义见顶部裁定）。needs 双腿，下载双 artifact 后附到
+  # Release。首版 tag v0.1.0 由主会话打，本 workflow 只接事件。
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main'
     needs: [build-forge-1-20-1, build-neoforge-1-21-1]
     runs-on: ubuntu-latest
     permissions:
@@ -114,6 +120,30 @@ jobs:
         with:
           name: gt6-1.21.1-neoforge
           path: dist
-      - uses: softprops/action-gh-release@v2
+      # dev 滚动更新前置：删远端旧 dev tag，保证 softprops 走 target_commitish 新建 tag、
+      # tag 恒指本次 commit；|| true 容错首次运行 tag 不存在（API 422）。
+      - name: Delete previous dev tag
+        if: github.ref == 'refs/heads/main'
+        run: gh api -X DELETE "repos/${{ github.repository }}/git/refs/tags/dev" || true
+        env:
+          GH_TOKEN: ${{ github.token }}
+      # 正式 release：仅 tag 触发，行为与 p37-release-ci 现状一致。
+      - uses: softprops/action-gh-release@v3
+        if: startsWith(github.ref, 'refs/tags/v')
         with:
           files: dist/gt6-*.jar
+      # 滚动 dev prerelease：tag_name=dev 恒定，同名 jar 靠 overwrite_files（默认 true）覆盖，
+      # 靠 name/body 的 sha 辨识版本。
+      - name: Publish dev prerelease
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: dev
+          target_commitish: ${{ github.sha }}
+          name: Development build (${{ github.sha }})
+          prerelease: true
+          body: |
+            滚动 dev 构建：每次 main push 由 CI 更新，构建自 commit ${{ github.sha }}。
+            正式版见 [latest release](https://github.com/${{ github.repository }}/releases/latest)。
+          files: dist/gt6-*.jar
+          fail_on_unmatched_files: true
