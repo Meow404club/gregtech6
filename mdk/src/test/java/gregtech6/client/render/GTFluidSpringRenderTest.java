@@ -236,6 +236,13 @@ public class GTFluidSpringRenderTest extends GTOfflineRenderTestBase {
 				"one base + one overlay per culled face");
 		assertEquals(0, tModel.getQuads(null, null, tRand, tData, RenderType.translucent()).size(),
 				"no translucent emission — the spring is a solid+cutout stack");
+		// the #16 cull sync (the GTOreBakedModel ruling): the null-SIDE chunk pass (the
+		// unconditional one, ModelBlockRenderer.java:81-85/:106-110) receives nothing —
+		// the quads flow through the per-direction, neighbour-culled passes only
+		assertEquals(0, tModel.getQuads(null, null, tRand, tData, RenderType.solid()).size(),
+				"the null-side solid pass is empty (cullface-synced)");
+		assertEquals(0, tModel.getQuads(null, null, tRand, tData, RenderType.cutout()).size(),
+				"the null-side cutout pass is empty (no uncullfaced dither hairlines)");
 
 		// the issue #2 same-type partition: the tinted fluid body rides solid ALONE, the
 		// dither shell cutout ALONE — on the alpha-less solid shader the shell's 116

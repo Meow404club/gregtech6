@@ -50,10 +50,10 @@ import gregtech6.registry.GTBlockEntities;
  *     rides the model);</li>
  * <li>the <b>FLUID_SPRING dither overlay</b> (the borrowed
  *     {@code gt6:block/fluid_spring}, the assets/README.md ledger row): un-tinted in both
- *     editions (the BlockTextureDefault half is white), the epsilon-inflated cutout shell
- *     WITHOUT cull — the PNG's transparent holes are what the tinted fluid body shows
- *     through (the GTOreBakedModel base+overlay composition,
- *     {@link gregtech6.client.wire.GTWireBakedModel#INSULATION_EPSILON}).</li>
+ *     editions (the BlockTextureDefault half is white), FULLY COPLANAR with the fluid
+ *     base ({@code ε=0}, cullface-synced — the #16 seam fix, the GTOreBakedModel base+
+ *     overlay composition) — the PNG's transparent holes are what the tinted fluid body
+ *     shows through.</li>
  * </ul>
  *
  * <p>WHY per-{@link ModelData}: all sixteen spring rows share the ONE blockstate
@@ -89,9 +89,6 @@ import gregtech6.registry.GTBlockEntities;
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = GTRenderModelListener.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTFluidSpringBakedModel extends GTDynamicBakedModel {
-
-	/** The z-fight epsilon of the overlay shell (the shared wire/ore constant). */
-	public static final double EPSILON = gregtech6.client.wire.GTWireBakedModel.INSULATION_EPSILON;
 
 	/** The borrowed FLUID_SPRING dither (the overlay layer, stitched via the GT6Atlases source — referenced by NO model JSON). */
 	public static final ResourceLocation OVERLAY_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/fluid_spring");
@@ -190,7 +187,13 @@ public final class GTFluidSpringBakedModel extends GTDynamicBakedModel {
 		Layers tLayers = quadsOf(skinOf(tId));
 		List<BakedQuad> tQuads = aRenderType == null ? tLayers.all()
 				: aRenderType.equals(RenderType.solid()) ? tLayers.base() : tLayers.overlay();
-		if (aSide == null) return tQuads;
+		if (aSide == null) {
+			// the #16 cull sync (the GTOreBakedModel ruling): the chunk builder's null-SIDE
+			// pass renders unconditionally (ModelBlockRenderer.java:81-85/:106-110) — the
+			// cullface-synced quads flow through the per-direction passes only; the null
+			// RenderTYPE pass (items, breaking overlays) still carries everything
+			return aRenderType == null ? tQuads : List.of();
+		}
 		List<BakedQuad> rOut = new ArrayList<>(2);
 		for (BakedQuad tQuad : tQuads) if (tQuad.getDirection() == aSide) rOut.add(tQuad);
 		return rOut;
@@ -229,25 +232,27 @@ public final class GTFluidSpringBakedModel extends GTDynamicBakedModel {
 		return tLayers;
 	}
 
-	/** The full 0..1 fluid cube (solid set, culled, tinted) + its epsilon-inflated dither twin (cutout set, unculled, untinted). */
+	/** The full 0..1 fluid cube (solid set, culled, tinted) + its COPLANAR dither twin (cutout set, the #16 fix). */
 	private Layers bakeQuads(SpringSkin aSkin) {
 		List<BakedQuad> rBase = new ArrayList<>(6), rOverlay = new ArrayList<>(6);
+		// the shared full 0..1 cube — base and overlay bake the SAME box (#16: coplanar,
+		// the grass-block precedent; the UVs ride the same 0..16 box bounds)
+		double[] tCube = {0, 0, 0, 1, 1, 1};
 		if (aSkin.stillSprite() != null) { // the atlas-gap skip rides the wire form (never render garbage)
 			TextureAtlasSprite tBase = mSpriteLookup.apply(materialOf(aSkin.stillSprite()));
 			if (tBase != null) {
-				double[] tCore = {0, 0, 0, 1, 1, 1};
 				for (Direction tFace : Direction.values()) {
 					// the p32 form: tintIndex -1 (no runtime lookup can double-dye), the colour
 					// multiplied into the vertex data at bake time; the -1 identity = the raw quad
-					BakedQuad tQuad = bakeQuad(tFace, tCore, tBase, -1, tFace);
+					BakedQuad tQuad = bakeQuad(tFace, tCube, tBase, -1, tFace);
 					rBase.add(aSkin.tintARGB() == -1 ? tQuad : retinted(tQuad, aSkin.tintARGB()));
 				}
 			}
 		}
 		TextureAtlasSprite tOverlay = mSpriteLookup.apply(materialOf(OVERLAY_SPRITE));
 		if (tOverlay != null) { // the transparent holes are the tinted fluid body showing through
-			double[] tShell = {0 - EPSILON, 0 - EPSILON, 0 - EPSILON, 1 + EPSILON, 1 + EPSILON, 1 + EPSILON};
-			for (Direction tFace : Direction.values()) rOverlay.add(bakeQuad(tFace, tShell, tOverlay, -1, null));
+			// cull synced with the base face (the dispatch routes it through the per-direction pass)
+			for (Direction tFace : Direction.values()) rOverlay.add(bakeQuad(tFace, tCube, tOverlay, -1, tFace));
 		}
 		List<BakedQuad> rAll = new ArrayList<>(rBase.size() + rOverlay.size());
 		rAll.addAll(rBase);

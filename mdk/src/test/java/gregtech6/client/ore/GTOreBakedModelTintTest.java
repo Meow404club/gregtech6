@@ -122,17 +122,27 @@ public class GTOreBakedModelTintTest {
 				new ResourceLocation("gt6", "block/materialicons/chalcopyrite/ore_small"), TINT));
 		RandomSource tRand = RandomSource.create();
 
-		List<BakedQuad> tSolid = tModel.getQuads(null, null, tRand, ModelData.EMPTY, RenderType.solid());
-		assertEquals(6, tSolid.size(), "solid = exactly the 6 base-cube quads");
-		for (BakedQuad tQuad : tSolid) {
-			assertEquals(WHITE, tQuad.getVertices()[COLOR_SLOT], "every solid quad is an untinted base quad");
-		}
+		// the #16 cull sync: the null-SIDE chunk pass (the unconditional one,
+		// ModelBlockRenderer.java:81-85/:106-110) receives NOTHING — every quad is
+		// cullface-synced and flows through the six per-direction passes instead
+		assertEquals(List.of(), tModel.getQuads(null, null, tRand, ModelData.EMPTY, RenderType.solid()),
+				"the null-side solid pass is empty (the JSON-equivalent uncullfaced list)");
+		assertEquals(List.of(), tModel.getQuads(null, null, tRand, ModelData.EMPTY, RenderType.cutout()),
+				"the null-side cutout pass is empty (no uncullfaced shell hairlines)");
 
-		List<BakedQuad> tCutout = tModel.getQuads(null, null, tRand, ModelData.EMPTY, RenderType.cutout());
-		assertEquals(6, tCutout.size(), "cutout = exactly the 6 overlay-shell quads");
-		for (BakedQuad tQuad : tCutout) {
-			assertEquals(TINT_ABGR, tQuad.getVertices()[COLOR_SLOT], "every cutout quad is the tinted overlay");
-			assertEquals(-1, tQuad.getTintIndex(), "the overlay keeps the no-runtime-lookup index");
+		// per-direction: solid = exactly the one white base cube quad, cutout exactly the
+		// one tinted overlay quad (the issue #2 partition, cull-synced per face)
+		for (Direction tFace : Direction.values()) {
+			List<BakedQuad> tSolid = tModel.getQuads(null, tFace, tRand, ModelData.EMPTY, RenderType.solid());
+			assertEquals(1, tSolid.size(), "solid " + tFace + " = exactly the one base-cube quad");
+			assertEquals(WHITE, tSolid.get(0).getVertices()[COLOR_SLOT],
+					"the solid " + tFace + " quad is the untinted base");
+
+			List<BakedQuad> tCutout = tModel.getQuads(null, tFace, tRand, ModelData.EMPTY, RenderType.cutout());
+			assertEquals(1, tCutout.size(), "cutout " + tFace + " = exactly the one overlay quad");
+			assertEquals(TINT_ABGR, tCutout.get(0).getVertices()[COLOR_SLOT],
+					"the cutout " + tFace + " quad is the tinted overlay");
+			assertEquals(-1, tCutout.get(0).getTintIndex(), "the overlay keeps the no-runtime-lookup index");
 		}
 
 		List<BakedQuad> tNull = tModel.getQuads(null, null, tRand, ModelData.EMPTY, null);
@@ -148,6 +158,37 @@ public class GTOreBakedModelTintTest {
 				"solid north = the one base quad");
 		assertEquals(1, tModel.getQuads(null, Direction.NORTH, tRand, ModelData.EMPTY, RenderType.cutout()).size(),
 				"cutout north = the one overlay quad");
+	}
+
+	/**
+	 * The #16 seam pins: base and overlay bake the SAME full 0..1 cube — every vertex
+	 * coordinate of both layers sits exactly on the unit grid (FaceBakery emits block
+	 * units: the 0..16 model box divided by 16; ε=0: the old ±0.002 shell overhang is
+	 * gone) and the overlay's position slots are byte-identical to the base's (fully
+	 * coplanar — same float coordinates, same depth bits, the grass-block/GTCEu composite
+	 * precedent). The UVs ride the same box expression, so the unit grid IS the UV 0..16
+	 * pin too.
+	 */
+	@Test
+	public void theSeamFixBakesCoplanarZeroEpsilonShells() {
+		GTOreBakedModel tModel = tintedModel(new GTOreBakedModel.Params(
+				new ResourceLocation("gt6", "block/stones/granite/stone"),
+				new ResourceLocation("gt6", "block/materialicons/chalcopyrite/ore_small"), TINT));
+		RandomSource tRand = RandomSource.create();
+		for (Direction tFace : Direction.values()) {
+			List<BakedQuad> tPair = tModel.getQuads(null, tFace, tRand, ModelData.EMPTY, null);
+			assertEquals(2, tPair.size(), "one base + one overlay quad on " + tFace);
+			BakedQuad tBase = tPair.get(0), tOverlay = tPair.get(1);
+			for (int v = 0; v < 4; v++) {
+				for (int tAxis = 0; tAxis < 3; tAxis++) {
+					float tCoord = Float.intBitsToFloat(tBase.getVertices()[v * 8 + tAxis]);
+					assertTrue(tCoord == 0.0f || tCoord == 1.0f,
+							tFace + " base vertex " + v + " axis " + tAxis + " on the 0/1 grid: " + tCoord);
+					assertEquals(tBase.getVertices()[v * 8 + tAxis], tOverlay.getVertices()[v * 8 + tAxis],
+							tFace + " vertex " + v + " axis " + tAxis + " coplanar (overlay == base position bits)");
+				}
+			}
+		}
 	}
 
 	private static int countWhite(List<BakedQuad> aQuads) {
