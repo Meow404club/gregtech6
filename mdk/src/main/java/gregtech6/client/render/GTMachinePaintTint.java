@@ -91,14 +91,16 @@ public final class GTMachinePaintTint {
 	/**
 	 * The combined tint-material dispatch (task p38-issue8-multipart-tint; the kitchen
 	 * family joined in task p38-c3-kitchen-tint-shape, the controller/energy domains in
-	 * task p38-c2-controller-tint): the part-family carriers first (their material rides
-	 * the block itself through {@code GTMultiBlockPartBlock.materialOf}), then the kitchen
-	 * carriers ({@code GTKitchenBlock.materialOf}), then the machine-domain gate, then the
+	 * task p38-c2-controller-tint, the bee family in task r3-beehive-tint): the
+	 * part-family carriers first (their material rides the block itself through
+	 * {@code GTMultiBlockPartBlock.materialOf}), then the kitchen carriers
+	 * ({@code GTKitchenBlock.materialOf}), then the machine-domain gate, then the
 	 * controller/energy-domain gates (the multiblock mains, the EU-bridge + laser
-	 * GT6DynamoBlock carriers, the magic absorber). The domains are disjoint so the order
-	 * is observational; every tint consumer (the baked
-	 * {@code GTMachineTintModel}, the {@code ItemColor} inventory half, this reference
-	 * world half) funnels here, keeping tintARGB the single colour decision site.
+	 * GT6DynamoBlock carriers, the magic absorber), then the Bumbliary pair
+	 * ({@code GT6BumbliaryBlock.materialOf}, the ANY.Wood / StainlessSteel rows :2222-2223).
+	 * The domains are disjoint so the order is observational; every tint consumer (the
+	 * baked {@code GTMachineTintModel}, the {@code ItemColor} inventory half, this
+	 * reference world half) funnels here, keeping tintARGB the single colour decision site.
 	 */
 	static OreDictMaterial tintMaterialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
 		OreDictMaterial tMaterial = gregtech6.block.multiblock.GTMultiBlockPartBlock.materialOf(aBlock);
@@ -111,7 +113,9 @@ public final class GTMachinePaintTint {
 		if (tMaterial != null) return tMaterial;
 		tMaterial = gregtech6.block.energy.GT6DynamoBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
-		return gregtech6.block.energy.GT6MagicAbsorberBlock.materialOf(aBlock);
+		tMaterial = gregtech6.block.energy.GT6MagicAbsorberBlock.materialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
+		return gregtech6.tileentity.bees.GT6BumbliaryBlock.materialOf(aBlock);
 	}
 
 	/**

@@ -183,6 +183,42 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 		}
 	}
 
+	/**
+	 * Task r3-beehive-tint (issue #15): the Bumbliary pair rides the combined dispatch —
+	 * the row NBT_MATERIAL of the upstream pair (ANY.Wood :2222 — the MT.Wood looks
+	 * representative, fRGBaSolid 100,50,0; MT.StainlessSteel :2223, 200,200,220), the
+	 * material-less hive block staying the null gate (its worldgen family colour rides the
+	 * BE PAINT model data, not a material).
+	 */
+	@Test
+	void bumbliaryPairRidesTheCombinedDispatch() {
+		unfreezeBlockRegistry();
+		gregtech6.tileentity.bees.GT6BumbliaryBlock tPrimary = new gregtech6.tileentity.bees.GT6BumbliaryBlock(
+				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of(), false);
+		gregtech6.tileentity.bees.GT6BumbliaryBlock tAdvanced = new gregtech6.tileentity.bees.GT6BumbliaryBlock(
+				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of(), true);
+		assertSame(gregapi.data.MT.Wood, GTMachinePaintTint.tintMaterialOf(tPrimary),
+				"the Bumbliary resolves the ANY.Wood row (the MT.Wood looks representative, :2222)");
+		assertSame(gregapi.data.MT.StainlessSteel, GTMachinePaintTint.tintMaterialOf(tAdvanced),
+				"the Advanced Bumbliary resolves the StainlessSteel row (:2223)");
+		assertNull(GTMachinePaintTint.tintMaterialOf(
+				new gregtech6.tileentity.bees.GT6BumbleHiveBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of())),
+				"the hive block stays material-less (the family colour rides PAINT, not a material)");
+		// the pinned values — the upstream NBT_COLOR derivation over fRGBaSolid
+		// (ANY.Wood steals MT.Wood looks 100,50,0 = 0x643200; StainlessSteel 200,200,220 = 0xC8C8DC)
+		assertEquals(0xFF643200, GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tPrimary), 0),
+				"the Bumbliary body tints wood-brown 100,50,0");
+		assertEquals(0xFFC8C8DC, GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tAdvanced), 0),
+				"the Advanced Bumbliary body tints steel-gray 200,200,220");
+		// the encoding derivation — both rows ride fRGBaSolid exactly (the Cu/Steel pin shape)
+		for (gregapi.oredict.OreDictMaterial tMat : java.util.List.of(gregapi.data.MT.Wood, gregapi.data.MT.StainlessSteel)) {
+			int tColor = GTMachinePaintTint.tintARGB(null, tMat, 0);
+			assertEquals(tMat.fRGBaSolid[0], (tColor >> 16) & 255, tMat.mNameInternal + " R");
+			assertEquals(tMat.fRGBaSolid[1], (tColor >> 8) & 255, tMat.mNameInternal + " G");
+			assertEquals(tMat.fRGBaSolid[2], tColor & 255, tMat.mNameInternal + " B");
+		}
+	}
+
 	/** The BlockColor lambda's guard arms (null level/pos and a non-zero index return no tint). */
 	@Test
 	void blockColorLambdaGuardArms() {

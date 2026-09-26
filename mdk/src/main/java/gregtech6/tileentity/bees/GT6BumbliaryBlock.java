@@ -16,6 +16,9 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
+import gregapi.data.MT;
+import gregapi.oredict.OreDictMaterial;
+
 import gregtech6.block.GTEntityBlock;
 import gregtech6.registry.GT6BeeHives;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
@@ -43,6 +46,31 @@ public class GT6BumbliaryBlock extends GTEntityBlock {
 		super(aProperties);
 		mAdvanced = aAdvanced;
 		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
+	}
+
+	/**
+	 * The row material (issue #15, task r3-beehive-tint): the NBT_MATERIAL column the
+	 * upstream pair registers — {@code ANY.Wood} on the primary (:2222) and
+	 * {@code MT.StainlessSteel} on the advanced (:2223). The ANY alias steals MT.Wood's
+	 * looks (ANY.java:221 stealLooks — fRGBaSolid 100,50,0), so {@code MT.Wood} is the
+	 * colour-faithful representative (the GT6ManualKitchenBlockEntity precedent). The
+	 * paint tint's unpainted fallback reads it through {@link #materialOf} — the block-side
+	 * mirror of the upstream NBT_MATERIAL → NBT_COLOR derivation
+	 * (MultiTileEntityClassContainer.java:51), the GTBasicMachineBlock.material() shape.
+	 */
+	public OreDictMaterial material() {
+		return mAdvanced ? MT.StainlessSteel : MT.Wood;
+	}
+
+	/**
+	 * The bee-family material dispatch (issue #15; the GTKitchenBlock.materialOf mirror
+	 * shape): the Bumbliary pair resolves its row material, everything else — the material
+	 * -less hive block included (the worldgen family colour rides the BE PAINT model data
+	 * instead) — is null → the white identity of the paint tint.
+	 */
+	@Nullable
+	public static OreDictMaterial materialOf(@Nullable Block aBlock) {
+		return aBlock instanceof GT6BumbliaryBlock tBumbliary ? tBumbliary.material() : null;
 	}
 
 	//? if neoforge {
