@@ -105,6 +105,38 @@ public class GT6MaterialToolRecipe implements net.minecraft.world.item.crafting.
 		return mDelegate.getResultItem(aRegistryAccess);
 	}
 
+	/**
+	 * The recipe-viewer display face (task r3-jei-tool-output-tint, GitHub #6 round 3): JEI
+	 * renders the crafting category's output slot from {@link #getResultItem}, which stays
+	 * bare BY CONTRACT (the vanilla shaped JSON carries no result tag, ShapedRecipe.java:274)
+	 * — so every material row would show the identity-less Steel fallback. This accessor
+	 * hands the display layer a COPY stamped with this row's identity, the same stamp
+	 * {@link #assemble} applies to real crafts. {@code RegistryAccess.EMPTY} is safe here:
+	 * vanilla {@code ShapedRecipe.getResultItem} ignores the parameter and returns its
+	 * result field (vanilla 1.20.1 ShapedRecipe.java:72-74) — {@code assemble} leans on the
+	 * same face via {@code getResultItem(...).copy()}.
+	 */
+	public ItemStack stampedDisplayResult() {
+		ItemStack tResult = mDelegate.getResultItem(RegistryAccess.EMPTY).copy();
+		GT6ToolLadder.stampIdentity(tResult, mMaterial, 1.0F);
+		return tResult;
+	}
+
+	/**
+	 * The delegate pattern's width — the recipe-viewer layout seam: JEI's Forge
+	 * RecipeHelper reads dimensions only off an {@code IShapedRecipe} (RecipeHelper.java:30-43),
+	 * which this wrapper deliberately does not implement, so the JEI extension consumes
+	 * them through this accessor instead.
+	 */
+	public int recipeWidth() {
+		return mDelegate.getWidth();
+	}
+
+	/** The layout seam's height half — see {@link #recipeWidth()}. */
+	public int recipeHeight() {
+		return mDelegate.getHeight();
+	}
+
 	@Override
 	public NonNullList<ItemStack> getRemainingItems(CraftingContainer aContainer) {
 		return mDelegate.getRemainingItems(aContainer);
@@ -227,6 +259,17 @@ public class GT6MaterialToolRecipe implements net.minecraft.world.item.crafting.
 	@Override
 	public ItemStack assemble(CraftingInput aInput, HolderLookup.Provider aProvider) {
 		ItemStack tResult = super.assemble(aInput, aProvider);
+		GT6ToolLadder.stampIdentity(tResult, mMaterial, 1.0F);
+		return tResult;
+	}
+
+	// The recipe-viewer display face (task r3-jei-tool-output-tint): a COPY of the bare
+	// result stamped with this row's identity — the display twin of assemble(). The JSON
+	// result stays bare BY CONTRACT (:50-53); JEI's 19.x default dispatch reads the shaped
+	// width/height straight off the ShapedRecipe superclass, so no layout accessor is
+	// needed on this leg.
+	public ItemStack stampedDisplayResult() {
+		ItemStack tResult = mResult.copy();
 		GT6ToolLadder.stampIdentity(tResult, mMaterial, 1.0F);
 		return tResult;
 	}
