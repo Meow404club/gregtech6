@@ -178,4 +178,47 @@ class GTMachineTintModelTest extends GTOfflineRenderTestBase {
 		assertEquals(255, (tFirst.get(0).getVertices()[COLOR_SLOT] >> 8) & 255, "the copy is green-tinted");
 		assertTrue(tCache.containsKey(0xFF00FF00), "the cache holds the tint table");
 	}
+
+	/**
+	 * Issue #15 (task r3-beehive-tint): the hive's worldgen family colour rides the BE
+	 * PAINT model data through the BAKED wrapper — the exact chain the registered
+	 * {@code getDynamicQuads} runs since the runtime BlockColor registration was removed
+	 * (tintARGB over the PAINT snapshot, null hive material → tintQuads → the ABGR vertex
+	 * product). Three representative kinds pinned channel-by-channel off their
+	 * {@code HiveKind.color} table constants.
+	 */
+	@Test
+	void hiveWorldgenFamilyColoursBakeIntoTheBodyVertices() {
+		for (gregtech6.worldgen.GT6HiveFeature.HiveKind tKind : java.util.List.of(
+				gregtech6.worldgen.GT6HiveFeature.HiveKind.JUNGLE,
+				gregtech6.worldgen.GT6HiveFeature.HiveKind.MAGICAL,
+				gregtech6.worldgen.GT6HiveFeature.HiveKind.NETHER_BIOME)) {
+			// the worldgen paint face: PAINT carries the family colour, the hive resolves
+			// NO material (the GT6BumbliaryBlock gate returns null on the hive block)
+			int tTint = GTMachinePaintTint.tintARGB(
+					GTModelProperties.derive(ModelData.EMPTY).with(GTModelProperties.PAINT, tKind.color).build(), null, 0);
+			BakedQuad tBody = bodyQuad();
+			BakedQuad tDecal = decalQuad();
+			List<BakedQuad> tOut = GTMachineTintModel.tintQuads(List.of(tBody, tDecal), tTint,
+					new ConcurrentHashMap<>());
+			int tColour = tOut.get(0).getVertices()[COLOR_SLOT];
+			// the slot is ABGR (issue #14): the tint's R at bits 7-0, G at 15-8, B at 23-16
+			assertEquals((tTint >> 16) & 255, tColour & 255, tKind + " R (ABGR slot 0)");
+			assertEquals((tTint >> 8) & 255, (tColour >> 8) & 255, tKind + " G");
+			assertEquals(tTint & 255, (tColour >> 16) & 255, tKind + " B (ABGR slot 2)");
+			assertEquals(-1, tOut.get(0).getTintIndex(), tKind + " retinted copy drops the tint index");
+			assertSame(tDecal, tOut.get(1), tKind + " the untinted hive overlay decal passes through");
+		}
+		// explicit literals off the HiveKind table: JUNGLE 0x00FF00 (G 255, R/B 0),
+		// NETHER_BIOME 0xAA0000 (R 170) — the channel positions of the pinned products
+		int tJungle = GTMachinePaintTint.tintARGB(
+				GTModelProperties.derive(ModelData.EMPTY).with(GTModelProperties.PAINT,
+						gregtech6.worldgen.GT6HiveFeature.HiveKind.JUNGLE.color).build(), null, 0);
+		int tJungleColour = GTMachineTintModel.tintQuads(List.of(bodyQuad()), tJungle,
+				new ConcurrentHashMap<>()).get(0).getVertices()[COLOR_SLOT];
+		assertEquals(0xFF00FF00, tJungle, "the jungle family tint is opaque 0x00FF00");
+		assertEquals(255, (tJungleColour >> 8) & 255, "jungle G at the slot's G position");
+		assertEquals(0, tJungleColour & 255, "jungle R zero");
+		assertEquals(0, (tJungleColour >> 16) & 255, "jungle B zero");
+	}
 }

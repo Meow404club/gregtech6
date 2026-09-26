@@ -183,7 +183,9 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 	 * p38-c2-controller-tint, the controller/energy domain (the 12 multiblock mains, the
 	 * 15 EU-bridge rungs, the 10 laser rungs, the magic absorber); since task
 	 * issue8-residual the #8 stragglers (the 25 tank valve controllers, the 8 dedicated
-	 * crucible walls). Blocks that already
+	 * crucible walls); since task r3-beehive-tint (issue #15) the bee family (the hive
+	 * + the Bumbliary pair — the family colour rides the PAINT model data, the pair's
+	 * row material the {@code GT6BumbliaryBlock} carrier). Blocks that already
 	 * carry a dynamic model (the oven ladder's {@code GTOvenOverlayModel} chain) are
 	 * skipped — they keep their own render route.
 	 */
@@ -212,6 +214,13 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// tanks join (every upstream row carries NBT_MATERIAL, Loader :553-579; the
 		// shared model's body cube is the tintindex-0 seat since this card)
 		for (Block tBlock : gregtech6.registry.GT6Boilers.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		// issue #15 (task r3-beehive-tint) — the bee family joins the baked-tint domain:
+		// the hive's 15 worldgen family colours ride the BE PAINT model data (the worldgen
+		// paints at placement) and the Bumbliary pair's row material rides the
+		// GT6BumbliaryBlock.materialOf carrier — the runtime BlockColor registration the
+		// family carried since p32 is GONE (the achromatic-in-live-client route this card
+		// migrates away, the p32 bake ruling).
+		for (Block tBlock : gregtech6.registry.GT6BeeHives.paintableBlockArray()) wrapStates(tBlock, aEvent);
 	}
 
 	/**

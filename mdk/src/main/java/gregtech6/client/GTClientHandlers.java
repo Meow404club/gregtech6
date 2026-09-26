@@ -27,6 +27,7 @@ import gregtech6.items.tools.GTSwordItem;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMachines;
+import gregtech6.registry.GT6BeeHives;
 import gregtech6.registry.GTBarrels;
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.registry.GT6Tools;
@@ -60,6 +61,7 @@ public final class GTClientHandlers {
         modBus.addListener(GTClientHandlers::onRegisterPartPaintItemColors); // task p38-issue8-multipart-tint: part-family paint tint, inventory half
         modBus.addListener(GTClientHandlers::onRegisterBarrelPaintBlockColors); // task p23-barrel-paint-render: barrel paint tint, world half
         modBus.addListener(GTClientHandlers::onRegisterBarrelPaintItemColors); // task p23-barrel-paint-render: barrel paint tint, inventory half
+        modBus.addListener(GTClientHandlers::onRegisterBeePaintItemColors); // task r3-beehive-tint: the Bumbliary pair paint tint, inventory half
         modBus.addListener(GTClientHandlers::onRegisterToolIdentityItemColors); // task p31-identity-seam: the crowbar material identity tint, inventory half
     }
 
@@ -178,6 +180,22 @@ public final class GTClientHandlers {
         List<Item> tBarrelPaintItems = new ArrayList<>();
         for (Block tBlock : GTBarrels.paintableBlockArray()) tBarrelPaintItems.add(tBlock.asItem());
         event.getItemColors().register(GTItemPaintTint.itemColor(), tBarrelPaintItems.toArray(Item[]::new));
+    }
+
+    /**
+     * Task r3-beehive-tint (issue #15): the BUMBLIARY pair paint tint, the INVENTORY half —
+     * the two BlockItems ride the shared {@link GTItemPaintTint} lambda, the unpainted arms
+     * resolving the row NBT_MATERIAL ({@code ANY.Wood} / {@code MT.StainlessSteel},
+     * Loader :2222-2223) through the combined {@link GTMachinePaintTint} dispatch — the
+     * creative-tab faces render wood-brown / steel-gray instead of white (the explicit
+     * registration is mandatory: a BlockColor does NOT colour its BlockItem,
+     * ItemColors.java:25-93). The WORLD half rides {@code GTMachineTintModel} (the p32
+     * bake ruling). The HIVE BlockItem is deliberately NOT registered: the upstream 32755
+     * item row carries no NBT_COLOR (the :2041 null NBT — white is the faithful icon).
+     */
+    private static void onRegisterBeePaintItemColors(RegisterColorHandlersEvent.Item event) {
+        event.getItemColors().register(GTItemPaintTint.itemColor(),
+                GT6BeeHives.BUMBLIARY_ITEM.get(), GT6BeeHives.BUMBLIARY_ADVANCED_ITEM.get());
     }
 
     /**
