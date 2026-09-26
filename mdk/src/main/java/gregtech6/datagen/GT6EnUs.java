@@ -1,12 +1,15 @@
 package gregtech6.datagen;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
+import gregapi.data.MT;
 import gregapi.data.OP;
 import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
@@ -27,6 +30,7 @@ import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6Rails;
 import gregtech6.registry.GT6Sensors;
 import gregtech6.registry.GT6SprayCans;
+import gregtech6.registry.GT6SurfaceBlocks;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
@@ -39,6 +43,7 @@ import gregtech6.jade.GT6FluidProvider;
 import gregtech6.jade.GT6MachineProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -194,6 +199,36 @@ public class GT6EnUs extends LanguageProvider {
     private void addSurfaceBand() {
         add("gt6.surface.rock", "%s Surface Rock");
         add("block.gt6.surface_stick", "Stick");
+        // task r3-surface-rock-lang — GitHub #13: the 34 bare descriptionId keys. getName
+        // composes the template, but consumers that resolve the RAW key (Jade's block
+        // name, F3+H advanced tooltips) hover it bare when neither locale carries it.
+        // Values = the exact string the composed face renders (mNameLocal over the
+        // "%s Surface Rock" template — the upstream rockGt word order,
+        // LanguageHandler.java:237 "Moon Surface Rock"), so both faces agree verbatim.
+        surfaceRockDescriptionIds().forEach((tKey, tMaterial) -> add(tKey, tMaterial.mNameLocal + " Surface Rock"));
+    }
+
+    /**
+     * The 34 surface-rock descriptionId keys with their (alias-merged) materials,
+     * registration order — task r3-surface-rock-lang, the seam GT6ZhCn shares for its
+     * zh composition (the materialWalkEmittedKeys posture: one implementation, both
+     * providers). The three first-batch rocks pair with their literal MT constants, the
+     * 31 vein-indicator rows ride {@link GT6SurfaceBlocks#INDICATOR_MATERIALS} — the
+     * parallel lists the registration itself keeps 1:1.
+     */
+    static Map<String, OreDictMaterial> surfaceRockDescriptionIds() {
+        List<RegistryObject<Block>> tRocks = new ArrayList<>(List.of(
+                GT6SurfaceBlocks.SURFACE_ROCK_STONE, GT6SurfaceBlocks.SURFACE_ROCK_FLINT, GT6SurfaceBlocks.SURFACE_ROCK_METEORITE));
+        tRocks.addAll(GT6SurfaceBlocks.INDICATOR_ROCKS);
+        List<Supplier<OreDictMaterial>> tMaterials = new ArrayList<>(List.of(
+                () -> MT.Stone, () -> MT.Flint, () -> MT.MeteoricIron)); // suppliers: the GT6OreBlocks.java:114-117 class-load lesson, mirrored
+        tMaterials.addAll(GT6SurfaceBlocks.INDICATOR_MATERIALS);
+        Map<String, OreDictMaterial> rPairs = new LinkedHashMap<>();
+        for (int i = 0; i < tRocks.size(); i++) {
+            OreDictMaterial tMaterial = MaterialRegistry.INSTANCE.get(tMaterials.get(i).get()); // alias merge, same as materialWalkEmittedKeys
+            rPairs.put("block.gt6." + tRocks.get(i).getId().getPath(), tMaterial);
+        }
+        return Collections.unmodifiableMap(rPairs);
     }
 
     /**

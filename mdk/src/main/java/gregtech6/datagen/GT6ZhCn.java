@@ -233,6 +233,16 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addSurfaceUnits() {
 		addDirect("gt6.surface.rock");
 		addDirect("block.gt6.surface_stick");
+		// task r3-surface-rock-lang — GitHub #13: the 34 bare descriptionId keys (the Jade/
+		// F3+H raw-key face). zh composes <材质名>地表岩 from the SAME reference "material"
+		// family row addMaterialNames joins — the value IS the gt6.material.<snake> word, so
+		// the concrete key renders exactly what the "%s地表岩" template composes (the
+		// addFromFamily row reused; absent/review rows skip and the parity registry-coverage
+		// gate lights the omission up — no second fallback code path here).
+		GT6EnUs.surfaceRockDescriptionIds().forEach((tKey, tMaterial) -> {
+			RefRow tRow = reference.get("material") == null ? null : reference.get("material").get(tMaterial.mNameInternal);
+			if (tRow != null && !tRow.skipped()) add(tKey, tRow.value() + "地表岩");
+		});
 	}
 
 	/**
