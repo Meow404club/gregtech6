@@ -945,7 +945,8 @@ public class GT6RecipeMaps {
 	 * RM.java:137 — the Hammer map (task p37-rm-six-maps): items 1/1/1, fluids 0/0/0,
 	 * MIN 0, AMP 1, progress 6/3 (the one non-0/1 progress pair). The static rows
 	 * (RM.smash :545-554 + Loader_Recipes_Vanilla.java:556-569 + the OreDict listener
-	 * quartet :81/:87/:91/:95) pour via the tier-b JSON seam (key "hammer",
+	 * trio :81/:91/:95 — the :87 stoneNetherBrick listener's vanilla face duplicates the
+	 * :565 row) pour via the tier-b JSON seam (key "hammer",
 	 * {@code data/gt6/recipe_maps/hammer.json}); upstream the field is a
 	 * {@code RecipeMapHammer} subclass whose {@code getRecipeFor} synthesizes ore→crushed
 	 * rows at lookup time (RecipeMapHammer.java:87-116) — that dynamic arm plus the

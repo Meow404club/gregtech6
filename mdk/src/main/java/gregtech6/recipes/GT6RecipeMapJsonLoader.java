@@ -89,7 +89,7 @@ import com.mojang.logging.LogUtils;
  * {@code findRecipe} answers with the first scan hit (an undefined-order face, the
  * documented v1 limitation — row deletion needs the tier-c script tier).
  *
- * <p><b>MAP KEYS</b> = the 13 pourable maps ({@link #POURABLE}, the census minus the
+ * <p><b>MAP KEYS</b> = the 21 pourable maps ({@link #POURABLE}, the census minus the
  * furnace pair; MIXER joined at the p26-c-foam-fluid-refill review ruling, BATH joins
  * with its own map declaration — task p26-kitchen-pot-bowl). A file named
  * {@code furnace.json} or {@code furnace_fuel.json} is REJECTED with an ERROR log and

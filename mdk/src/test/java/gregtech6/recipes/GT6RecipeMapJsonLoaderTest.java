@@ -319,12 +319,15 @@ class GT6RecipeMapJsonLoaderTest extends GTRecipesOfflineTestBase {
 		}
 	}
 
-	/** The map-key resolution table covers exactly the pourable keys — 13 since the ROASTING append (and nothing else). */
+	/** The map-key resolution table covers exactly the pourable keys — 21 since the p37 five-map append (and nothing else). */
 	@Test
 	void mapForResolvesExactlyThePourableKeys() {
 		for (String tKey : new String[] {"coke_oven", "shredder", "crusher", "lathe", "chisel", "engine_fuels",
 				"fluidbed", "burn", "distillery", "drying", "canner", "mixer", "bath", "roasting",
-				"burnmixer", "plantalyzer"}) {
+				"burnmixer", "plantalyzer",
+				// the p37 five (task p37-rm-six-maps): mortar/hammer carry row stocks, the
+				// other three are the declared-empty key-only faces
+				"microwave", "cooker", "toolhead", "mortar", "hammer"}) {
 			assertNotNull(GT6RecipeMapJsonLoader.mapFor(tKey), tKey + " resolves");
 			assertFalse(tKey.equals("furnace") || tKey.equals("furnace_fuel"), "the forbidden pair stays outside the table");
 		}
