@@ -6,6 +6,33 @@
     "targets": [
       {
         "state": {
+          "Name": "gt6:ore_small_granite_lead"
+        },
+        "target": {
+          "block": "minecraft:granite",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_diorite_lead"
+        },
+        "target": {
+          "block": "minecraft:diorite",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_andesite_lead"
+        },
+        "target": {
+          "block": "minecraft:andesite",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
           "Name": "gt6:ore_small_stone_lead"
         },
         "target": {

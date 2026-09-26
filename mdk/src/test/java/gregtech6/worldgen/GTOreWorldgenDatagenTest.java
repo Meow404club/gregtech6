@@ -11,7 +11,8 @@
  * <li>WorldgenOresSmall.java:61 — the per-chunk count; the declared constant deviation
  *     pins max(1, amount/2) veins per chunk (the range lower bound; see the
  *     GTOreWorldgen.veinCount deviation note for the cross-leg dispatch evidence).</li>
- * <li>WD.java:765-780 — setSmallOre host face: stone/deepslate tags + 17 GT stones +
+ * <li>WD.java:765-780 — setSmallOre host face: vanilla granite/diorite/andesite rows
+ *     (the modern-complement fix, ahead of the tag) + stone/deepslate tags + 17 GT stones +
  *     gravel/sand (overworld), netherrack (nether), endstone (end); redsand/mud are
  *     NOT upstream small-ore hosts.</li>
  * <li>GT6OreBlocks.java:328-332 — the ancientdebris PLACEMENT-time gate (vanilla
@@ -235,25 +236,38 @@ class GTOreWorldgenDatagenTest {
                 "end bands fit the 256-tall end as-is — overworld/end rows never clamp");
     }
 
-    /** The WD.setSmallOre host face: 21 overworld targets / 1 nether / 1 end, rule order pinned. */
+    /** The WD.setSmallOre host face: 24 overworld targets / 1 nether / 1 end, rule order pinned. */
     @Test
     void hostTargetFacesArePinned() {
         assertEquals(26, GT6OreBlocks.FAMILIES.size(), "precondition: the ore-1 26-family layout");
         assertEquals(9, GTOreWorldgen.GT_STONE_FAMILY_START, "5 three-form + 4 two-form vanilla anchors precede the 17 GT stones");
         OreDictMaterial tCopper = GTOreWorldgen.resolve(rowOf("ore.small.copper"));
         List<String> tOverworld = GTOreWorldgen.hostPaths(tCopper, GTOreWorldgen.Dim.OVERWORLD);
-        assertEquals(21, tOverworld.size(), "the overworld target count (acceptance 21/1/1)");
-        assertEquals("ore_small_stone_copper", tOverworld.get(0), "[0] = the stone tag target");
-        assertEquals("ore_small_deepslate_copper", tOverworld.get(1), "[1] = the deepslate tag target (the y<0 split rides the host tag)");
-        assertEquals("ore_small_blackgranite_copper", tOverworld.get(2), "[2] = the first GT stone (FAMILIES order)");
-        assertEquals("ore_small_shale_copper", tOverworld.get(18), "[18] = the last GT stone");
-        assertEquals("ore_small_gravel_copper", tOverworld.get(19), "[19] = the gravel fallback (WD.java:774)");
-        assertEquals("ore_small_sand_copper", tOverworld.get(20), "[20] = the sand fallback (WD.java:775)");
+        assertEquals(24, tOverworld.size(), "the overworld target count (acceptance 24/1/1)");
+        // the vanilla three-stone rows precede the tag: #stone_ore_replaceables contains
+        // stone/granite/diorite/andesite (vanilla 1.20.1 tags/blocks/stone_ore_replaceables.json:3-6),
+        // so a tag-first order would flatten the vanilla rocks onto the stone base — the
+        // modern-complement fix (research.issues-r3-ore appendix B)
+        assertEquals("ore_small_granite_copper", tOverworld.get(0), "[0] = vanilla granite → the GT granite family");
+        assertEquals("ore_small_diorite_copper", tOverworld.get(1), "[1] = vanilla diorite → the GT diorite family");
+        assertEquals("ore_small_andesite_copper", tOverworld.get(2), "[2] = vanilla andesite → the GT andesite family");
+        assertEquals("ore_small_stone_copper", tOverworld.get(3), "[3] = the stone tag target");
+        assertEquals("ore_small_deepslate_copper", tOverworld.get(4), "[4] = the deepslate tag target (the y<0 split rides the host tag)");
+        assertEquals("ore_small_blackgranite_copper", tOverworld.get(5), "[5] = the first GT stone (FAMILIES order)");
+        assertEquals("ore_small_shale_copper", tOverworld.get(21), "[21] = the last GT stone");
+        assertEquals("ore_small_gravel_copper", tOverworld.get(22), "[22] = the gravel fallback (WD.java:774)");
+        assertEquals("ore_small_sand_copper", tOverworld.get(23), "[23] = the sand fallback (WD.java:775)");
+        // the GT same-name families the vanilla rows bind to exist and are distinct blocks
+        // from the vanilla anchors (minecraft:granite vs gt6:granite — the family walk's
+        // [10]/[11]/[12] entries are the GT blob anchors, the same ore blocks these rows emit)
+        assertEquals("ore_small_granite_copper", tOverworld.get(10), "[10] = the GT granite blob anchor row");
+        assertEquals("ore_small_diorite_copper", tOverworld.get(11), "[11] = the GT diorite blob anchor row");
+        assertEquals("ore_small_andesite_copper", tOverworld.get(12), "[12] = the GT andesite blob anchor row");
         assertEquals(List.of("ore_small_netherrack_copper"),
                 GTOreWorldgen.hostPaths(tCopper, GTOreWorldgen.Dim.NETHER), "the nether host face");
         assertEquals(List.of("ore_small_endstone_copper"),
                 GTOreWorldgen.hostPaths(tCopper, GTOreWorldgen.Dim.END), "the end host face");
-        // every placement row's material yields the 21/1/1 face and stays inside the
+        // every placement row's material yields the 24/1/1 face and stays inside the
         // registered ore_small universe (zero new blocks — the axis membership is the
         // offline face of block existence)
         Set<OreDictMaterial> tAxis = new HashSet<>(GT6OreBlocks.materialAxis());
@@ -263,7 +277,7 @@ class GTOreWorldgenDatagenTest {
                     tRow.name() + " resolves into the registered material axis");
             for (GTOreWorldgen.Dim tDim : GTOreWorldgen.Dim.values()) {
                 if (!tRow.dims().contains(tDim)) continue;
-                int tExpected = tDim == GTOreWorldgen.Dim.OVERWORLD ? 21 : 1;
+                int tExpected = tDim == GTOreWorldgen.Dim.OVERWORLD ? 24 : 1;
                 assertEquals(tExpected, GTOreWorldgen.hostPaths(tMaterial, tDim).size(),
                         tRow.name() + "/" + tDim + " target count");
             }
