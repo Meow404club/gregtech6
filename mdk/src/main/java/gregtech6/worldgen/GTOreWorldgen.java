@@ -277,21 +277,28 @@ public final class GTOreWorldgen {
      * (WD.java:765-780; the paths are the GT6OreBlocks.path small-ore universe, zero new
      * blocks). The datagen binds the RuleTest by position:
      * <ol>
-     * <li>overworld [0] = TagMatchTest(#stone_ore_replaceables) → ore_small_stone_&lt;m&gt;</li>
-     * <li>overworld [1] = TagMatchTest(#deepslate_ore_replaceables) → ore_small_deepslate_&lt;m&gt;</li>
-     * <li>overworld [2..18] = BlockMatchTest(GT stone STONE variant, FAMILIES order)
+     * <li>overworld [0..2] = BlockMatchTest(vanilla granite/diorite/andesite)
+     *     → ore_small_granite/diorite/andesite_&lt;m&gt; (the GT same-name families — the
+     *     modern-complement rows, ahead of the tag so the tag does not flatten the vanilla
+     *     three-stones onto the stone base; see oreTargets)</li>
+     * <li>overworld [3] = TagMatchTest(#stone_ore_replaceables) → ore_small_stone_&lt;m&gt;</li>
+     * <li>overworld [4] = TagMatchTest(#deepslate_ore_replaceables) → ore_small_deepslate_&lt;m&gt;</li>
+     * <li>overworld [5..21] = BlockMatchTest(GT stone STONE variant, FAMILIES order)
      *     → ore_small_&lt;snake&gt;_&lt;m&gt;</li>
-     * <li>overworld [19]/[20] = BlockMatchTest(gravel/sand) → ore_small_gravel/sand_&lt;m&gt;
+     * <li>overworld [22]/[23] = BlockMatchTest(gravel/sand) → ore_small_gravel/sand_&lt;m&gt;
      *     (the :774-775 fallbacks; redsand/mud are NOT upstream small-ore hosts)</li>
      * <li>nether = TagMatchTest(#base_stone_nether) → ore_small_netherrack_&lt;m&gt;</li>
      * <li>end = BlockMatchTest(end_stone) → ore_small_endstone_&lt;m&gt;</li>
      * </ol>
-     * Overworld = 21 targets, nether/end = 1 (the acceptance target counts 21/1/1).
+     * Overworld = 24 targets, nether/end = 1 (the acceptance target counts 24/1/1).
      */
     public static List<String> hostPaths(OreDictMaterial aMaterial, Dim aDim) {
         if (aDim == Dim.NETHER) return List.of(GT6OreBlocks.path(new GT6OreBlocks.OreKey(oreFamily("netherrack"), GT6OreBlocks.FormKind.SMALL, aMaterial)));
         if (aDim == Dim.END) return List.of(GT6OreBlocks.path(new GT6OreBlocks.OreKey(oreFamily("endstone"), GT6OreBlocks.FormKind.SMALL, aMaterial)));
-        List<String> rPaths = new ArrayList<>(21);
+        List<String> rPaths = new ArrayList<>(24);
+        rPaths.add(GT6OreBlocks.path(new GT6OreBlocks.OreKey(oreFamily("granite"), GT6OreBlocks.FormKind.SMALL, aMaterial)));
+        rPaths.add(GT6OreBlocks.path(new GT6OreBlocks.OreKey(oreFamily("diorite"), GT6OreBlocks.FormKind.SMALL, aMaterial)));
+        rPaths.add(GT6OreBlocks.path(new GT6OreBlocks.OreKey(oreFamily("andesite"), GT6OreBlocks.FormKind.SMALL, aMaterial)));
         rPaths.add(GT6OreBlocks.path(new GT6OreBlocks.OreKey(oreFamily("stone"), GT6OreBlocks.FormKind.SMALL, aMaterial)));
         rPaths.add(GT6OreBlocks.path(new GT6OreBlocks.OreKey(oreFamily("deepslate"), GT6OreBlocks.FormKind.SMALL, aMaterial)));
         for (int i = GT_STONE_FAMILY_START; i < GT6OreBlocks.FAMILIES.size(); i++) {

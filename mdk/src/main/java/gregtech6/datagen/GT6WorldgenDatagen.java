@@ -674,7 +674,12 @@ public final class GT6WorldgenDatagen {
 
     /**
      * The WD.setSmallOre host face per dimension (WD.java:765-780), in
-     * {@link GTOreWorldgen#hostPaths} rule order — the stone/deepslate tags first (the
+     * {@link GTOreWorldgen#hostPaths} rule order — the 3 vanilla granite/diorite/andesite
+     * block rows FIRST (they sit inside #stone_ore_replaceables, the tag JSON's 4 entries,
+     * vanilla 1.20.1 tags/blocks/stone_ore_replaceables.json:3-6 — a tag-first order would
+     * flatten them onto the stone base; the modern-complement fix, research.issues-r3-ore
+     * appendix B: upstream 1.7.10 has no vanilla three-stones, the GT same-name families
+     * only ever fired inside GT blobs there), then the stone/deepslate tags (the
      * vanilla OreFeatures.java:49-60 dual-target canon carries the y<0 deepslate split
      * on the HOST tag, no per-y feature pairs), the 17 GT stone blob anchors, the
      * gravel/sand fallbacks; nether the base_stone_nether tag; end end_stone.
@@ -686,7 +691,10 @@ public final class GT6WorldgenDatagen {
         if (aDim == GTOreWorldgen.Dim.END) {
             return List.of(OreConfiguration.target(new BlockMatchTest(Blocks.END_STONE), smallState("endstone", aMaterial)));
         }
-        List<OreConfiguration.TargetBlockState> rTargets = new ArrayList<>(21);
+        List<OreConfiguration.TargetBlockState> rTargets = new ArrayList<>(24);
+        rTargets.add(OreConfiguration.target(new BlockMatchTest(Blocks.GRANITE), smallState("granite", aMaterial)));
+        rTargets.add(OreConfiguration.target(new BlockMatchTest(Blocks.DIORITE), smallState("diorite", aMaterial)));
+        rTargets.add(OreConfiguration.target(new BlockMatchTest(Blocks.ANDESITE), smallState("andesite", aMaterial)));
         rTargets.add(OreConfiguration.target(new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES), smallState("stone", aMaterial)));
         rTargets.add(OreConfiguration.target(new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES), smallState("deepslate", aMaterial)));
         for (int i = GTOreWorldgen.GT_STONE_FAMILY_START; i < GT6OreBlocks.FAMILIES.size(); i++) {
