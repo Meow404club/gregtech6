@@ -22,6 +22,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.model.IQuadTransformer;
+import net.minecraftforge.client.model.QuadTransformers;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -136,14 +137,26 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 
 	/**
 	 * The pure recolour the tests drive (and {@link #retint} consumes): per-channel
-	 * {@code (colour * tint + 127) / 255} over every vertex of the baked vertex data.
+	 * {@code (colour * tint + 255) >> 8} over every vertex of the baked vertex data.
+	 *
+	 * <p>ENCODING (issue #14 fix, the single point): the baked COLOR slot int stores its
+	 * channels {@code A<<24|B<<16|G<<8|R} — byte order R,G,B,A, the layout vanilla's
+	 * putBulkData consumes (VertexConsumer.java:90-92 reads bytes 12/13/14 = R/G/B) and
+	 * Forge's own {@link QuadTransformers#toABGR} defines for {@code applyingColor} — while
+	 * the tint arrives ARGB (the BlockColors ecosystem encoding every colour seam here
+	 * resolves). Multiplying an ARGB tint in by byte position swapped R and B, so every
+	 * warm colour rendered cool (copper blue, gold cyan; the R==B rows like tungsten
+	 * 50,50,50 hid it — the #8 burning-box side observation). The tint is converted ONCE
+	 * here, so every consumer domain (machines, kitchen, controllers, ores, the fluid
+	 * spring) inherits the fix through the shared product.
 	 */
 	public static int[] retintVertices(int[] aVertices, int aTint) {
+		int tTintABGR = QuadTransformers.toABGR(aTint);
 		int[] rVertices = new int[aVertices.length];
 		for (int v = 0; v * IQuadTransformer.STRIDE < aVertices.length; v++) {
 			int tBase = v * IQuadTransformer.STRIDE;
 			System.arraycopy(aVertices, tBase, rVertices, tBase, IQuadTransformer.STRIDE);
-			rVertices[tBase + IQuadTransformer.COLOR] = mulColor(aVertices[tBase + IQuadTransformer.COLOR], aTint);
+			rVertices[tBase + IQuadTransformer.COLOR] = mulColor(aVertices[tBase + IQuadTransformer.COLOR], tTintABGR);
 		}
 		return rVertices;
 	}

@@ -29,11 +29,12 @@ import gregtech6.client.ore.GTOreBakedModel.Params;
 
 public class GTOreBakedModelLazyBakeTest {
 
-	/** Counting null stub — every apply is one sprite lookup (2 per bake: base + overlay). */
+	/** Counting null stub — every apply is one sprite lookup (3 per bake: base + pass-0 overlay + pass-1 outline). */
 	private static GTOreBakedModel countedModel(AtomicInteger aLookups) {
 		return new GTOreBakedModel(null,
 				new Params(new ResourceLocation("gt6", "block/stones/granite/stone"),
-						new ResourceLocation("gt6", "block/ore_copper"), 0xFFA07828),
+						new ResourceLocation("gt6", "block/ore_copper"),
+						new ResourceLocation("gt6", "block/ore_copper_overlay"), 0xFFA07828),
 				aMaterial -> {
 					aLookups.incrementAndGet();
 					return null;
@@ -48,15 +49,15 @@ public class GTOreBakedModelLazyBakeTest {
 		assertEquals(0, tLookups.get(), "the constructor must not touch the sprite lookup");
 	}
 
-	/** First getQuads bakes once (2 lookups); every later query is cache-identity stable. */
+	/** First getQuads bakes once (3 lookups); every later query is cache-identity stable. */
 	@Test
 	public void firstGetQuadsResolvesOnceThenCaches() {
 		AtomicInteger tLookups = new AtomicInteger();
 		GTOreBakedModel tModel = countedModel(tLookups);
 		List<BakedQuad> tFirst = tModel.getQuads(null, null, RandomSource.create(), ModelData.EMPTY, null);
-		assertEquals(2, tLookups.get(), "exactly the base + overlay lookups, once");
+		assertEquals(3, tLookups.get(), "exactly the base + overlay + outline lookups, once");
 		List<BakedQuad> tSecond = tModel.getQuads(null, null, RandomSource.create(), ModelData.EMPTY, null);
-		assertEquals(2, tLookups.get(), "no re-resolution on later queries");
+		assertEquals(3, tLookups.get(), "no re-resolution on later queries");
 		assertSame(tFirst, tSecond, "the lazy bake result is cached by identity");
 	}
 
@@ -67,9 +68,9 @@ public class GTOreBakedModelLazyBakeTest {
 		GTOreBakedModel tModel = countedModel(tLookups);
 		List<BakedQuad> tUp = tModel.getQuads(null, net.minecraft.core.Direction.UP,
 				RandomSource.create(), ModelData.EMPTY, null);
-		assertEquals(2, tLookups.get(), "the side query triggers the one lazy bake");
+		assertEquals(3, tLookups.get(), "the side query triggers the one lazy bake");
 		tModel.getQuads(null, null, RandomSource.create(), ModelData.EMPTY, null);
-		assertEquals(2, tLookups.get(), "the null pass reuses the cache, no re-resolution");
+		assertEquals(3, tLookups.get(), "the null pass reuses the cache, no re-resolution");
 		assertEquals(0, tUp.size(), "null-sprite atlas gap bakes no quad (the wire form)");
 	}
 }

@@ -17,6 +17,7 @@ package gregtech6.client.render;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -193,9 +194,15 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 
 	/**
 	 * Task p32-render-embeddium-tint: the tint BAKED into the baked-quad vertex data —
-	 * per-channel {@code (colour * tint + 127) / 255} over the COLOR slot (stride 8, slot
+	 * per-channel {@code (colour * tint + 255) >> 8} over the COLOR slot (stride 8, slot
 	 * 3) of all four vertices, every other slot byte-identical. The retinted copies carry
 	 * tintIndex -1 (set by the wrapper), so the runtime BlockColor can never double-multiply.
+	 *
+	 * <p>ISSUE #14 pin: the COLOR slot int stores its channels ABGR ({@code A<<24|B<<16|G<<8|R}
+	 * — vanilla putBulkData reads bytes 12/13/14 = R/G/B, QuadTransformers.toABGR is the
+	 * ecosystem's own converter), while the TINT is ARGB. The old pin asserted the raw ARGB
+	 * int — the swapped convention itself, structurally unable to see the bug; these assert
+	 * the byte-order-correct product, channel by channel off the slot layout.
 	 */
 	@Test
 	void retintVerticesMultiplyTheBakedColours() {
@@ -210,19 +217,22 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 		assertEquals(456, tOut[31], "slot 31 untouched");
 		for (int v = 0; v < 4; v++) {
 			int tColour = tOut[v * 8 + 3];
-			// (255 * 210 + 127) >> 8 = 210-ish per the +127 rounding: R=210, G=130, B=60, A=255
-			assertEquals(210, (tColour >> 16) & 255, "vertex " + v + " R");
+			// the tint ARGB 0xFFD2823C = A255 R210 G130 B60; the slot is ABGR, so
+			// R lives at bits 7-0, G at 15-8, B at 23-16: R=210, G=130, B=60, A=255
+			assertEquals(210, tColour & 255, "vertex " + v + " R (ABGR slot 0)");
 			assertEquals(130, (tColour >> 8) & 255, "vertex " + v + " G");
-			assertEquals(60, tColour & 255, "vertex " + v + " B");
+			assertEquals(60, (tColour >> 16) & 255, "vertex " + v + " B (ABGR slot 2)");
 			assertEquals(255, (tColour >> 24) & 255, "vertex " + v + " A");
+			// the warm pin: a warm tint keeps R > B in the slot layout (copper stays copper)
+			assertTrue((tColour & 255) > ((tColour >> 16) & 255), "vertex " + v + " R > B (the #14 hue pin)");
 		}
-		// a mid-gray texture pixel half-tints: (128 * 210 + 127) >> 8 = 105
+		// a mid-gray texture pixel half-tints: (128 * 210 + 255) >> 8 = 105-ish per channel
 		int[] tMid = new int[32];
 		java.util.Arrays.fill(tMid, 0xFF808080);
 		int[] tMidOut = GTMachineTintModel.retintVertices(tMid, 0xFFD2823C);
 		int tMidColour = tMidOut[3];
-		assertEquals(105, (tMidColour >> 16) & 255, "mid-gray R (128 -> 105)");
+		assertEquals(105, tMidColour & 255, "mid-gray R (128 -> 105)");
 		assertEquals(65, (tMidColour >> 8) & 255, "mid-gray G (128 -> 65)");
-		assertEquals(30, tMidColour & 255, "mid-gray B (128 -> 30)");
+		assertEquals(30, (tMidColour >> 16) & 255, "mid-gray B (128 -> 30)");
 	}
 }

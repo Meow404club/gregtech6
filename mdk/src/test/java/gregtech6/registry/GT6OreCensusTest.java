@@ -59,8 +59,8 @@ class GT6OreCensusTest {
     /** Ledger 4 — the ore-2 texture batch: 15 SETs x {ore, ore_small, + the two overlays}. */
     private static final int PINNED_SETS = 15;
     private static final int PINNED_TEXTURES = PINNED_SETS * 4;
-    /** The atlas seam: every distinct overlay sprite stitched (15 SETs x normal+small). */
-    private static final int PINNED_ATLAS_SOURCES = PINNED_SETS * 2;
+    /** The atlas seam: every distinct overlay sprite stitched — 15 SETs x {ore, ore_small} pass-0 + the two pass-1 outline forms (r3-ore-tint-abgr-seam). */
+    private static final int PINNED_ATLAS_SOURCES = PINNED_SETS * 4;
     /** The tab content face: every axis material is visible today (53 = M, the mHidden filter empty). */
     private static final int PINNED_TAB_ITEMS = 53;
 
@@ -202,7 +202,7 @@ class GT6OreCensusTest {
         String tBody = Files.readString(tAtlas);
         List<net.minecraft.resources.ResourceLocation> tSprites = GTOreBakedModel.overlaySprites();
         assertEquals(PINNED_ATLAS_SOURCES, tSprites.size(),
-                "ledger 2/4 seam: 15 SETs x {ore, ore_small} distinct overlay sprites");
+                "ledger 2/4 seam: 15 SETs x {ore, ore_small, ore_overlay, ore_small_overlay} distinct overlay sprites");
         for (net.minecraft.resources.ResourceLocation tSprite : tSprites) {
             assertTrue(tBody.contains("\"" + tSprite + "\""),
                     "the atlas stitches " + tSprite);
@@ -224,7 +224,7 @@ class GT6OreCensusTest {
             GTOreBakedModel.Params tParams = GTOreBakedModel.paramsOf(tKey);
             for (net.minecraft.resources.ResourceLocation tSprite
                     : new net.minecraft.resources.ResourceLocation[] {
-                            tParams.baseSprite(), tParams.overlaySprite()}) {
+                            tParams.baseSprite(), tParams.overlaySprite(), tParams.outlineSprite()}) {
                 if (tSprite.getNamespace().equals("gt6")) {
                     // the sprite path already carries its block/ or item/ prefix
                     assertTrue(Files.isRegularFile(tTextures.resolve(tSprite.getPath() + ".png")),

@@ -65,6 +65,9 @@ public class GTFluidSpringRenderTest extends GTOfflineRenderTestBase {
 
 	/** The spec-table tints the three-plus colour pins assert (GTFluids CHEMICAL_SPECS/AQUA_SPECS rows verbatim). */
 	private static final int MEDIUM_OIL_TINT = 0xFF322814; // liquid_medium_oil, GTFluids.java:2153
+	/** The same tint as the baked COLOR SLOT stores it: ABGR, R/B halves swapped (issue #14). */
+	private static final int MEDIUM_OIL_TINT_ABGR =
+			(MEDIUM_OIL_TINT & 0xFF00FF00) | ((MEDIUM_OIL_TINT >> 16) & 0x000000FF) | ((MEDIUM_OIL_TINT << 16) & 0x00FF0000);
 	private static final int EXTRA_HEAVY_OIL_TINT = 0xFF1E140A; // liquid_extra_heavy_oil, :2151
 	private static final int GEOTHERMAL_TINT = 0xFF3EC8B4; // water_geothermal, the AQUA_SPECS row
 	private static final int NATURAL_GAS_TINT = 0x66FFF2B0; // the p5 NATURAL_GAS_TYPE inline tint
@@ -233,13 +236,20 @@ public class GTFluidSpringRenderTest extends GTOfflineRenderTestBase {
 				"one base + one overlay per culled face");
 		assertEquals(0, tModel.getQuads(null, null, tRand, tData, RenderType.translucent()).size(),
 				"no translucent emission — the spring is a solid+cutout stack");
+		// the #16 cull sync (the GTOreBakedModel ruling): the null-SIDE chunk pass (the
+		// unconditional one, ModelBlockRenderer.java:81-85/:106-110) receives nothing —
+		// the quads flow through the per-direction, neighbour-culled passes only
+		assertEquals(0, tModel.getQuads(null, null, tRand, tData, RenderType.solid()).size(),
+				"the null-side solid pass is empty (cullface-synced)");
+		assertEquals(0, tModel.getQuads(null, null, tRand, tData, RenderType.cutout()).size(),
+				"the null-side cutout pass is empty (no uncullfaced dither hairlines)");
 
 		// the issue #2 same-type partition: the tinted fluid body rides solid ALONE, the
 		// dither shell cutout ALONE — on the alpha-less solid shader the shell's 116
 		// transparent holes would paint opaque gray over the fluid body
 		List<BakedQuad> tSolid = tModel.getQuads(null, Direction.NORTH, tRand, tData, RenderType.solid());
 		assertEquals(1, tSolid.size(), "the solid pass receives the fluid body alone");
-		assertEquals(MEDIUM_OIL_TINT, tSolid.get(0).getVertices()[COLOR_SLOT], "the solid quad is the tinted base");
+		assertEquals(MEDIUM_OIL_TINT_ABGR, tSolid.get(0).getVertices()[COLOR_SLOT], "the solid quad is the tinted base (ABGR slot)");
 
 		List<BakedQuad> tCutout = tModel.getQuads(null, Direction.NORTH, tRand, tData, RenderType.cutout());
 		assertEquals(1, tCutout.size(), "the cutout pass receives the dither shell alone");
@@ -249,7 +259,7 @@ public class GTFluidSpringRenderTest extends GTOfflineRenderTestBase {
 		var tPair = tModel.getQuads(null, Direction.NORTH, tRand, tData, null);
 		BakedQuad tBase = tPair.get(0);
 		assertEquals(-1, tBase.getTintIndex(), "the base drops tintIndex 0 (no runtime lookup can double-dye)");
-		assertEquals(MEDIUM_OIL_TINT, tBase.getVertices()[COLOR_SLOT], "white x tint = the tint itself (baked vertices)");
+		assertEquals(MEDIUM_OIL_TINT_ABGR, tBase.getVertices()[COLOR_SLOT], "white x tint = the tint, stored ABGR in the slot (issue #14)");
 
 		BakedQuad tOverlay = tPair.get(1);
 		assertEquals(-1, tOverlay.getTintIndex(), "the dither shell drops the tint index too");
