@@ -1364,7 +1364,11 @@ public final class GT6BlockStates extends BlockStateProvider {
      */
     private void addBridgeFamily(java.util.Map<String, RegistryObject<Block>> aBlocks, String aFamily, String aTexture) {
         BlockModelBuilder tModel = models().orientable(aTexture,
-                modLoc("block/" + aTexture + "_side"), modLoc("block/" + aTexture + "_front"), modLoc("block/" + aTexture + "_side"));
+                modLoc("block/" + aTexture + "_side"), modLoc("block/" + aTexture + "_front"), modLoc("block/" + aTexture + "_side"))
+                // issue #8 (task r3-world-tint-render-type): uniform cutout over the paintable
+                // family (the census convention — an opaque-texture body renders identically on
+                // cutout, and the family stays shell-safe if decals join later)
+                .renderType("cutout");
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
                 .allFaces((aDir, aFace) -> aFace.texture(aDir == Direction.NORTH ? "#front" : "#side").tintindex(0).cullface(aDir))
@@ -1403,7 +1407,10 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("north", modLoc("block/magic_absorber_base"))
                 .texture("south", modLoc("block/magic_absorber_base"))
                 .texture("west", modLoc("block/magic_absorber_base"))
-                .texture("east", modLoc("block/magic_absorber_base"));
+                .texture("east", modLoc("block/magic_absorber_base"))
+                // issue #8 (task r3-world-tint-render-type): uniform cutout over the
+                // paintable family (the census convention)
+                .renderType("cutout");
         // the re-declared body element (tintindex 0 = the material tint, task
         // p38-c2-controller-tint — the child's elements replace the cube_directional
         // parent's): the grayscale base PNG multiplies the row's NBT_MATERIAL MT.Pd (the
@@ -1505,7 +1512,13 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("south", modLoc("block/oven_side"))
                 .texture("west", modLoc("block/oven_side"))
                 .texture("east", modLoc("block/oven_side"))
-                .texture("overlay", modLoc("block/" + aOverlayTexture));
+                .texture("overlay", modLoc("block/" + aOverlayTexture))
+                // issue #8 (task r3-world-tint-render-type): the 0.01 front decal is a
+                // transparent-texel overlay shell — the default SOLID chunk layer has no
+                // alpha discard, so the shell's transparent texels paint their RGB residue
+                // as an opaque plate over the tintindex-0 body. cutout discards them (the
+                // tree-sapling precedent :2732; the D2 leg6 live verification).
+                .renderType("cutout");
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
                 .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
@@ -1572,7 +1585,11 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_left", modLoc("block/" + aTextureBase + "_overlay_left" + aStateSuffix))
                 .texture("overlay_right", modLoc("block/" + aTextureBase + "_overlay_right" + aStateSuffix))
                 .texture("overlay_top", modLoc("block/" + aTextureBase + "_overlay_top" + aStateSuffix))
-                .texture("overlay_bottom", modLoc("block/" + aTextureBase + "_overlay_bottom" + aStateSuffix));
+                .texture("overlay_bottom", modLoc("block/" + aTextureBase + "_overlay_bottom" + aStateSuffix))
+                // issue #8 (task r3-world-tint-render-type): the six 0.01 state decals are
+                // transparent-texel overlay shells — cutout discards their transparent
+                // texels so the tintindex-0 body shows through (the D2 leg6 fix shape).
+                .renderType("cutout");
         // element 0 — the tinted body cube (p21/p22 shape, only the texture bindings changed).
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
@@ -2483,7 +2500,11 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_left", modLoc("block/burning_box_" + aGroup + "_overlay_left" + tSuffix))
                 .texture("overlay_right", modLoc("block/burning_box_" + aGroup + "_overlay_right" + tSuffix))
                 .texture("overlay_top", modLoc("block/burning_box_" + aGroup + "_overlay_top" + tSuffix))
-                .texture("overlay_bottom", modLoc("block/burning_box_" + aGroup + "_overlay_bottom" + tSuffix));
+                .texture("overlay_bottom", modLoc("block/burning_box_" + aGroup + "_overlay_bottom" + tSuffix))
+                // issue #8 (task r3-world-tint-render-type): the six burning decals are
+                // transparent-texel overlay shells — cutout discards them off the body
+                // (the D2 leg6 fix shape).
+                .renderType("cutout");
         // element 0 — the tinted body cube (the p21 shape, the mRGBa material seat)
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
@@ -2610,7 +2631,10 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .parent(models().getExistingFile(mcLoc("block/cube")))
                 .texture("down", modLoc(aBottom)).texture("up", modLoc(aTop))
                 .texture("north", modLoc(aSide)).texture("south", modLoc(aSide))
-                .texture("west", modLoc(aSide)).texture("east", modLoc(aSide));
+                .texture("west", modLoc(aSide)).texture("east", modLoc(aSide))
+                // issue #8 (task r3-world-tint-render-type): uniform cutout over the
+                // paintable families (the census convention — tanks, crucible walls)
+                .renderType("cutout");
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
                 .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
@@ -3175,7 +3199,11 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("east", modLoc(tBase + "/colored/side"))
                 .texture("overlay_bottom", modLoc(tBase + "/overlay/bottom"))
                 .texture("overlay_top", modLoc(tBase + "/overlay/top"))
-                .texture("overlay_side", modLoc(tBase + "/overlay/side"));
+                .texture("overlay_side", modLoc(tBase + "/overlay/side"))
+                // issue #8 (task r3-world-tint-render-type): the six 0.01 wall decals are
+                // transparent-texel overlay shells — cutout discards them off the body
+                // (the D2 leg6 fix shape).
+                .renderType("cutout");
         // element 0 — the body cube (the colored layer; tintindex 0 = the material tint,
         // task p38-issue8-multipart-tint: the shared grayscale wall textures multiply the
         // row's NBT_MATERIAL — the upstream getTexture2 BlockTextureDefault(colored, mRGBa)
@@ -3247,7 +3275,11 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_bottom", modLoc(tBase + "/overlay/bottom"))
                 .texture("overlay_top", modLoc(tBase + "/overlay/top"))
                 .texture("overlay_side", modLoc(tBase + "/overlay/side"))
-                .texture("overlay_front", modLoc(tBase + "/overlay_front/side"));
+                .texture("overlay_front", modLoc(tBase + "/overlay_front/side"))
+                // issue #8 (task r3-world-tint-render-type): the six 0.01 controller decals
+                // are transparent-texel overlay shells — cutout discards them off the body
+                // (the D2 leg6 fix shape).
+                .renderType("cutout");
         // element 0 — the body cube (tintindex 0 = the material tint, task
         // p38-c2-controller-tint: the grayscale turbine_mains colored groups multiply the
         // row's NBT_MATERIAL — the upstream TileEntityBase10MultiBlockBase.getTexture2
