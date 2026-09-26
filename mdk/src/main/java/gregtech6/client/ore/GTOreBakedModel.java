@@ -45,12 +45,16 @@ import gregtech6.registry.GT6OreBlocks;
  * mPrefix))} — {@code mTexture} is the stone base, the overlay carries the colour; the
  * {@code getRenderColor :279-282} fRGBa encoding already lives in the port as the
  * GTMaterialPrefixBlock/GTMaterialPrefixBlockItem tint seams). Every visible face renders
- * as TWO stacked quads: the base stone sprite untinted WITH cullface (the copied-icon
- * semantics — vanilla cobblestone next door culls identically) and the overlay sprite
- * FULLY COPLANAR with the base ({@code ε=0}, the same 0..1 box, so the same float
- * coordinates and the same depth bits) on the cutout layer, cullface-synced with the
- * base (issue #16 — see the class-tail seam note; the SET grayscale PNGs carry alpha,
- * the cutout alpha-discard shows the stone through the speckle gaps).
+ * as THREE stacked quads: the base stone sprite untinted WITH cullface (the copied-icon
+ * semantics — vanilla cobblestone next door culls identically), the pass-0 coloured
+ * overlay sprite FULLY COPLANAR with the base ({@code ε=0}, the same 0..1 box, so the
+ * same float coordinates and the same depth bits) on the cutout layer, cullface-synced
+ * with the base (issue #16 — see the class-tail seam note; the SET grayscale PNGs carry
+ * alpha, the cutout alpha-discard shows the stone through the speckle gaps), and the
+ * pass-1 OUTLINE twin after it (upstream TextureSet.java:134-184 TextureSetIconBlock:
+ * {@code getIcon(1) = <name>_OVERLAY}, uncoloured — the black border detail layer the
+ * two-pass block icon draws OVER the colour; same cube, same cull, never tinted, the
+ * later cutout submission wins the coplanar depth tie).
  *
  * <p>THE #16 SEAM NOTE (why coplanar beats the old epsilon shell): the previous
  * {@code ε=0.002}-inflated, uncullfaced overlay shell leaked THREE dark-grid mechanisms
@@ -96,10 +100,12 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 
 	/**
 	 * The immutable per-block render identity: the copied stone base + the SET ore overlay
-	 * + the material's ore colour ({@code fRGBa[prefix.mState]}, PrefixBlock.java:279-282)
-	 * baked into the overlay vertices.
+	 * + the SET's pass-1 outline overlay + the material's ore colour
+	 * ({@code fRGBa[prefix.mState]}, PrefixBlock.java:279-282) baked into the overlay
+	 * vertices.
 	 */
-	public record Params(ResourceLocation baseSprite, ResourceLocation overlaySprite, int tintARGB) {}
+	public record Params(ResourceLocation baseSprite, ResourceLocation overlaySprite,
+			ResourceLocation outlineSprite, int tintARGB) {}
 
 	private static final FaceBakery BAKERY = new FaceBakery();
 
@@ -117,8 +123,9 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 	private final Function<Material, TextureAtlasSprite> mSpriteLookup;
 	/**
 	 * The quads split by chunk layer (issue #2 partition): {@code base} = the 6 host-stone
-	 * cube quads (solid pass), {@code overlay} = the 6 speckle-shell quads (cutout pass,
-	 * coplanar with the base — the #16 seam fix), {@code all} = the combined null-pass
+	 * cube quads (solid pass), {@code overlay} = the 12 speckle-shell quads (cutout pass:
+	 * the 6 tinted pass-0 coloured + the 6 white pass-1 outline, coplanar with the base —
+	 * the #16 seam fix), {@code all} = the combined null-pass
 	 * view (item render, breaking overlays —
 	 * IForgeBakedModel.getQuads javadoc: "A null RenderType … models should return all
 	 * their quads"). WHY the split is load-bearing: the ore overlay PNGs are transparent-
@@ -216,15 +223,17 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 		return ChunkRenderTypeSet.of(RenderType.solid(), RenderType.cutout());
 	}
 
-	/** The full 0..1 cube (solid set) and its COPLANAR overlay twin (cutout set, the #16 fix). */
+	/** The full 0..1 cube (solid set) and its COPLANAR overlay twins (cutout set: the coloured pass-0 shell + the pass-1 outline shell, the #16 fix). */
 	private Layers bakeQuads() {
 		TextureAtlasSprite tBase = mSpriteLookup.apply(materialOf(mParams.baseSprite()));
 		TextureAtlasSprite tOverlay = mSpriteLookup.apply(materialOf(mParams.overlaySprite()));
-		List<BakedQuad> rBase = new ArrayList<>(6), rOverlay = new ArrayList<>(6);
-		// the shared full 0..1 cube — base and overlay bake the SAME box, so the same float
-		// coordinates and the same depth bits (ε=0: the #16 coplanar ruling, grass-block
-		// precedent; an inset shell would LOSE the depth fight to the base and vanish, an
-		// outset shell re-created the seam) — and the UVs ride the same 0..16 box bounds
+		TextureAtlasSprite tOutline = mSpriteLookup.apply(materialOf(mParams.outlineSprite()));
+		List<BakedQuad> rBase = new ArrayList<>(6), rOverlay = new ArrayList<>(12);
+		// the shared full 0..1 cube — base and both overlay passes bake the SAME box, so
+		// the same float coordinates and the same depth bits (ε=0: the #16 coplanar
+		// ruling, grass-block precedent; an inset shell would LOSE the depth fight to the
+		// base and vanish, an outset shell re-created the seam) — and the UVs ride the
+		// same 0..16 box bounds
 		double[] tCube = {0, 0, 0, 1, 1, 1};
 		if (tBase != null) {
 			for (Direction tFace : Direction.values()) rBase.add(bakeQuad(tFace, tCube, tBase, -1, tFace));
@@ -238,6 +247,15 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 				BakedQuad tQuad = bakeQuad(tFace, tCube, tOverlay, -1, tFace);
 				rOverlay.add(tTint == -1 ? tQuad : retinted(tQuad, tTint));
 			}
+		}
+		if (tOutline != null) {
+			// pass 1: the SET's black-outline shell (upstream TextureSet.java:134-184
+			// TextureSetIconBlock — getIcon(0) = the coloured pass, getIcon(1) =
+			// <name>_OVERLAY uncoloured, isUsingColorModulation only pass 0; drawn OVER
+			// the colour), the SAME coplanar cube and cull sync, tintIndex -1, NEVER
+			// tinted; appended AFTER the coloured shell so the later submission wins the
+			// coplanar depth tie in the same cutout buffer = the outline draws on top
+			for (Direction tFace : Direction.values()) rOverlay.add(bakeQuad(tFace, tCube, tOutline, -1, tFace));
 		}
 		List<BakedQuad> rAll = new ArrayList<>(rBase.size() + rOverlay.size());
 		rAll.addAll(rBase);
@@ -309,6 +327,17 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 				+ (aKind == GT6OreBlocks.FormKind.SMALL ? "/ore_small" : "/ore"));
 	}
 
+	/**
+	 * The SET's pass-1 outline sprite — upstream {@code <name>_OVERLAY} (TextureSet.java:167
+	 * {@code registerIcon(mMod+":materialicons/"+mName+"_OVERLAY")}, the uncoloured pass-1
+	 * half of the two-pass block icon), snaked into the port's directory form; small rides
+	 * {@code ore_small_overlay}.
+	 */
+	public static ResourceLocation outlineSpriteOf(String aSetSnake, GT6OreBlocks.FormKind aKind) {
+		return ResourceLocation.fromNamespaceAndPath("gt6", "block/materialicons/" + aSetSnake
+				+ (aKind == GT6OreBlocks.FormKind.SMALL ? "/ore_small_overlay" : "/ore_overlay"));
+	}
+
 	/** The material's block texture-set name (the GTWireTextures single source, the addPrefixBlocks expression). */
 	public static String setOf(OreDictMaterial aMaterial) {
 		return GTWireTextures.blockSetOf(aMaterial);
@@ -318,6 +347,7 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 	public static Params paramsOf(GT6OreBlocks.OreKey aKey) {
 		return new Params(baseSpriteOf(aKey.family(), aKey.kind()),
 				overlaySpriteOf(setOf(aKey.material()), aKey.kind()),
+				outlineSpriteOf(setOf(aKey.material()), aKey.kind()),
 				tintARGBOf(aKey.material(), aKey.family().prefix(aKey.kind())));
 	}
 
@@ -347,8 +377,9 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 
 	/**
 	 * Every overlay sprite the baked models can look up, ordered distinct — the atlas-source
-	 * list GT6Atlases consumes (the consumer-side stitching wiring; missing until card ②
-	 * lands the PNGs, the declared intermediate state).
+	 * list GT6Atlases consumes (the consumer-side stitching wiring): per distinct SET the
+	 * {ore, ore_small} pass-0 pair plus the {ore_overlay, ore_small_overlay} pass-1 pair
+	 * (the black-outline shell, the TextureSet two-pass completion).
 	 */
 	public static List<ResourceLocation> overlaySprites() {
 		List<ResourceLocation> rList = new ArrayList<>();
@@ -358,6 +389,8 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 			if (tSeen.add(tSet)) {
 				rList.add(overlaySpriteOf(tSet, GT6OreBlocks.FormKind.NORMAL));
 				rList.add(overlaySpriteOf(tSet, GT6OreBlocks.FormKind.SMALL));
+				rList.add(outlineSpriteOf(tSet, GT6OreBlocks.FormKind.NORMAL));
+				rList.add(outlineSpriteOf(tSet, GT6OreBlocks.FormKind.SMALL));
 			}
 		}
 		return rList;

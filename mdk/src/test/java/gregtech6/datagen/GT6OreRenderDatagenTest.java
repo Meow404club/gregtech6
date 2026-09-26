@@ -100,7 +100,7 @@ class GT6OreRenderDatagenTest {
 		assertEquals(PINNED_BASE_MODELS, tBases.size(), "the pinned shared-placeholder census");
 	}
 
-	/** The overlay form split (ore vs ore_small) and the atlas-source coverage (no unstitchable lookup). */
+	/** The overlay form split (ore vs ore_small vs the pass-1 outline twins) and the atlas-source coverage (no unstitchable lookup). */
 	@Test
 	void overlaySpritesSplitByFormAndJoinTheAtlasSources() {
 		List<OreDictMaterial> tAxis = GT6OreBlocks.materialAxis();
@@ -111,15 +111,24 @@ class GT6OreRenderDatagenTest {
 			GTOreBakedModel.overlaySpriteOf(tSet, FormKind.BROKEN).toString());
 		assertEquals("gt6:block/materialicons/" + tSet + "/ore_small",
 			GTOreBakedModel.overlaySpriteOf(tSet, FormKind.SMALL).toString());
+		// the pass-1 outline twins (upstream TextureSet.java:167 <name>_OVERLAY, snaked)
+		assertEquals("gt6:block/materialicons/" + tSet + "/ore_overlay",
+			GTOreBakedModel.outlineSpriteOf(tSet, FormKind.NORMAL).toString());
+		assertEquals("gt6:block/materialicons/" + tSet + "/ore_overlay",
+			GTOreBakedModel.outlineSpriteOf(tSet, FormKind.BROKEN).toString());
+		assertEquals("gt6:block/materialicons/" + tSet + "/ore_small_overlay",
+			GTOreBakedModel.outlineSpriteOf(tSet, FormKind.SMALL).toString());
 		// every overlay the params table can look up has an atlas source (the GT6Atlases walk)
 		Set<String> tSources = new HashSet<>();
 		for (ResourceLocation tSprite : GTOreBakedModel.overlaySprites()) tSources.add(tSprite.toString());
 		for (var tEntry : GTOreBakedModel.buildParams().entrySet()) {
 			assertTrue(tSources.contains(tEntry.getValue().overlaySprite().toString()),
 				"atlas source missing for " + tEntry.getKey());
+			assertTrue(tSources.contains(tEntry.getValue().outlineSprite().toString()),
+				"atlas source missing for the outline of " + tEntry.getKey());
 		}
-		assertEquals(0, tSources.size() % 2, "the (ore, ore_small) pairs per distinct SET — the census is even");
-		assertTrue(tSources.size() >= 2, "at least one SET pair is sourced");
+		assertEquals(0, tSources.size() % 4, "the (ore, ore_small, ore_overlay, ore_small_overlay) quadruples per distinct SET");
+		assertTrue(tSources.size() >= 4, "at least one SET quadruple is sourced");
 	}
 
 	/** The shared model path derivation (the extendWithFolder pin: explicit block/ segment). */
