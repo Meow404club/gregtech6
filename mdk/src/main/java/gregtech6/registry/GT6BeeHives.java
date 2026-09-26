@@ -8,7 +8,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -17,7 +16,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import gregtech6.client.render.GTMachinePaintTint;
 import gregtech6.tileentity.bees.GT6BumbleHiveBlock;
 import gregtech6.tileentity.bees.GT6BumbleHiveBlockEntity;
 import gregtech6.tileentity.bees.GT6BumbliaryBlock;
@@ -45,11 +43,12 @@ import gregtech6.tileentity.bees.GT6BumbliaryBlockEntity;
  * lit-pumpkin pair, MultiTileEntityBumbleHive.java:80-82 = vanilla jack_o_lantern
  * {@code strength(1.0F)}), wood sound (the aHive MTE block, :111), orange map colour
  * (the hive-body tint), noLootTable (the contents are the loot — the block's
- * playerDestroy walk). The tint registration is the hive row of the machine-paint face
- * (task p21-paintable-tint-render): the same {@link GTMachinePaintTint} lambda resolves
- * the BE's PAINT model data — worldgen paints the family colour at placement and the
- * spray cans recolour it; the unpainted fallback resolves white (the material-less
- * identity, byte-identical no-tint).
+ * playerDestroy walk). The world tint is the baked {@code GTMachineTintModel} domain
+ * since task r3-beehive-tint ({@link #paintableBlockArray} — the former runtime
+ * BlockColor registration retired with the p32 bake ruling): the same colour source
+ * resolves the BE's PAINT model data — worldgen paints the family colour at placement
+ * and the spray cans recolour it; the unpainted fallback resolves white (the
+ * material-less identity, byte-identical no-tint).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6BeeHives {
@@ -146,20 +145,19 @@ public final class GT6BeeHives {
 	}
 
 	/**
-	 * The world-half paint tint over the hive block — the GTMachinePaintTint lambda reads
-	 * the BE's PAINT model data (the material fallback resolves null on the hive = the
-	 * white identity). Item half not needed: the BlockItem's inventory model bakes the
-	 * unpainted-white face (the paint data lives on the BE, an item stack carries none —
-	 * the same face the Bumbliary BlockItems ride). CLIENT-ONLY nested
-	 * subscriber (the dist guard keeps the server classload clean).
+	 * The bee-family paintable array (task r3-beehive-tint, issue #15): the three blocks
+	 * join the {@code GTMachineTintModel} baked-tint domain (the GT6Kitchen
+	 * .paintableBlockArray convention) — the hive's worldgen family colour rides the BE
+	 * PAINT model data, the Bumbliary pair's row material rides the
+	 * {@code GT6BumbliaryBlock.materialOf} carrier. This REPLACES the runtime
+	 * {@code BlockColor} registration the family carried since p32 (the former nested
+	 * ClientTint class): that route renders achromatic in the live client on both chunk
+	 * builders (the p32 evidence, the known_bugs embeddium_tint_no_shader record — the
+	 * Sodium-ecosystem user build of issue #15's screenshot would hit it on every wild
+	 * hive), so the 15-family world colour now bakes into the quads' vertex colours like
+	 * every other GT6 paintable domain.
 	 */
-	@Mod.EventBusSubscriber(modid = "gt6", value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
-	private static final class ClientTint {
-		@SubscribeEvent
-		public static void onRegisterBlockColors(net.minecraftforge.client.event.RegisterColorHandlersEvent.Block aEvent) {
-			aEvent.getBlockColors().register(GTMachinePaintTint.blockColor(), HIVE.get());
-			aEvent.getBlockColors().register(GTMachinePaintTint.blockColor(), BUMBLIARY.get());
-			aEvent.getBlockColors().register(GTMachinePaintTint.blockColor(), BUMBLIARY_ADVANCED.get());
-		}
+	public static Block[] paintableBlockArray() {
+		return new Block[] { HIVE.get(), BUMBLIARY.get(), BUMBLIARY_ADVANCED.get() };
 	}
 }
