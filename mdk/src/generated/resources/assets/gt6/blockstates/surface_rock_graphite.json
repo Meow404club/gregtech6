@@ -1,27 +1,97 @@
 {
   "variants": {
-    "facing=down": {
-      "model": "gt6:block/surface_rock"
-    },
-    "facing=east": {
-      "model": "gt6:block/surface_rock",
-      "y": 90
-    },
-    "facing=north": {
-      "model": "gt6:block/surface_rock",
-      "x": 270
-    },
-    "facing=south": {
-      "model": "gt6:block/surface_rock",
-      "x": 90
-    },
-    "facing=up": {
-      "model": "gt6:block/surface_rock",
-      "x": 180
-    },
-    "facing=west": {
-      "model": "gt6:block/surface_rock",
-      "y": 270
-    }
+    "facing=down": [
+      {
+        "model": "gt6:block/surface_rock",
+        "weight": 3
+      },
+      {
+        "model": "gt6:block/surface_rock_a",
+        "weight": 2
+      },
+      {
+        "model": "gt6:block/surface_rock_b"
+      }
+    ],
+    "facing=east": [
+      {
+        "model": "gt6:block/surface_rock",
+        "weight": 3,
+        "y": 90
+      },
+      {
+        "model": "gt6:block/surface_rock_a",
+        "weight": 2,
+        "y": 90
+      },
+      {
+        "model": "gt6:block/surface_rock_b",
+        "y": 90
+      }
+    ],
+    "facing=north": [
+      {
+        "model": "gt6:block/surface_rock",
+        "weight": 3,
+        "x": 270
+      },
+      {
+        "model": "gt6:block/surface_rock_a",
+        "weight": 2,
+        "x": 270
+      },
+      {
+        "model": "gt6:block/surface_rock_b",
+        "x": 270
+      }
+    ],
+    "facing=south": [
+      {
+        "model": "gt6:block/surface_rock",
+        "weight": 3,
+        "x": 90
+      },
+      {
+        "model": "gt6:block/surface_rock_a",
+        "weight": 2,
+        "x": 90
+      },
+      {
+        "model": "gt6:block/surface_rock_b",
+        "x": 90
+      }
+    ],
+    "facing=up": [
+      {
+        "model": "gt6:block/surface_rock",
+        "weight": 3,
+        "x": 180
+      },
+      {
+        "model": "gt6:block/surface_rock_a",
+        "weight": 2,
+        "x": 180
+      },
+      {
+        "model": "gt6:block/surface_rock_b",
+        "x": 180
+      }
+    ],
+    "facing=west": [
+      {
+        "model": "gt6:block/surface_rock",
+        "weight": 3,
+        "y": 270
+      },
+      {
+        "model": "gt6:block/surface_rock_a",
+        "weight": 2,
+        "y": 270
+      },
+      {
+        "model": "gt6:block/surface_rock_b",
+        "y": 270
+      }
+    ]
   }
 }

@@ -508,13 +508,37 @@ public final class GT6BlockStates extends BlockStateProvider {
      * quirk GTCEu's table shares; worldgen and player placement are DOWN/UP anyway).
      * No BlockItem models: the blocks are never obtainable as items (the pickup loot is
      * the only item path).
+     *
+     * <p>Task r3-stick-shape-random (GitHub #12, the "不能千篇一律" face): every state now
+     * carries a WEIGHTED variant list — the vanilla position-seeded random chain
+     * (BlockRenderDispatcher.java:53-57 getSeed -> WeightedBakedModel.java:29-33) picks
+     * per block position, same-position stable, zero new BlockState properties. The
+     * stick: the two rotationY arms (the upstream :58-68 50/50 X-long/Z-long readFromNBT2
+     * pair) x three displacement tiers — the perpendicular 0..14px slide downsampled to
+     * centered/±2px (the slide models land outside the bar-exact selection box by at
+     * most 2px; the envelope union would be the old full pelt again). The rock: three
+     * size tiers of the upstream 2..8px-wide x 1..4px-high random micro box (8x3x8 w3 /
+     * 6x2x6 w2 / 4x1x4 w1, every tier inside the 8x3x8 selection envelope — the
+     * GTCEu-shared "random micro box" declared deviation narrows to a bounded variant
+     * band). Stick weights stay 1 (uniform, the upstream uniform slide); the rock pins
+     * the representative form heaviest.
      */
     private void addSurfaceBand() {
-        ModelFile tRockModel = microBoxModel("surface_rock", mcLoc("block/stone"), true, 4, 0, 4, 12, 3, 12);
-        ModelFile tStickModel = microBoxModel("surface_stick", mcLoc("block/oak_log"), false, 2, 0, 7, 14, 2, 9);
+        ModelFile[] tRockModels = {
+                microBoxModel("surface_rock", mcLoc("block/stone"), true, 4, 0, 4, 12, 3, 12),
+                microBoxModel("surface_rock_a", mcLoc("block/stone"), true, 5, 0, 5, 11, 2, 11),
+                microBoxModel("surface_rock_b", mcLoc("block/stone"), true, 6, 0, 6, 10, 1, 10),
+        };
+        int[] tRockWeights = {3, 2, 1};
+        ModelFile[] tStickModels = {
+                microBoxModel("surface_stick", mcLoc("block/oak_log"), false, 2, 0, 7, 14, 2, 9),
+                microBoxModel("surface_stick_a", mcLoc("block/oak_log"), false, 2, 0, 5, 14, 2, 7),
+                microBoxModel("surface_stick_b", mcLoc("block/oak_log"), false, 2, 0, 9, 14, 2, 11),
+        };
         for (var tRow : GT6SurfaceBlocks.ALL) {
-            Block tBlock = tRow.get();
-            getVariantBuilder(tBlock).forAllStates(aState -> {
+            boolean tIsStick = tRow.get() == GT6SurfaceBlocks.SURFACE_STICK.get();
+            ModelFile[] tModels = tIsStick ? tStickModels : tRockModels;
+            getVariantBuilder(tRow.get()).forAllStates(aState -> {
                 int tX = 0, tY = 0;
                 switch (aState.getValue(gregtech6.block.surface.GT6SurfaceRockBlock.FACING)) {
                     case UP -> tX = 180;
@@ -524,9 +548,13 @@ public final class GT6BlockStates extends BlockStateProvider {
                     case EAST -> tY = 90;
                     default -> {} // DOWN: the floor form, no rotation
                 }
-                return ConfiguredModel.builder().modelFile(
-                        tBlock == GT6SurfaceBlocks.SURFACE_STICK.get() ? tStickModel : tRockModel)
-                        .rotationX(tX).rotationY(tY).build();
+                java.util.List<ConfiguredModel> tVariants = new java.util.ArrayList<>();
+                for (int i = 0; i < tModels.length; i++) {
+                    tVariants.add(new ConfiguredModel(tModels[i], tX, tY, false, tIsStick ? 1 : tRockWeights[i]));
+                    if (tIsStick) // the rotationY arm twin (the 50/50 X/Z pair; (tY+90)%360 keeps WEST at 0)
+                        tVariants.add(new ConfiguredModel(tModels[i], tX, (tY + 90) % 360, false, 1));
+                }
+                return tVariants.toArray(new ConfiguredModel[0]);
             });
         }
     }
