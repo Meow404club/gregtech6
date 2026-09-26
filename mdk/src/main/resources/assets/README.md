@@ -4871,15 +4871,19 @@ The bottom face borrows NOTHING (the models reference the vanilla
 `IconContainerCopied(Blocks.dirt, 0, SIDE_BOTTOM)` semantics, BlockGrass.java:102-104).
 The PNGs are pre-coloured (zero biome tint, zero tintindex). Copied on 2026-09-07.
 
-Lightning Rod family block textures, task p24-lightning-rod: the four faces
+Lightning Rod family block textures, task p24-lightning-rod: the three faces
 borrowed from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/`, snapshot
 `v6.17.06-22-g3703e4030`, copied on 2026-09-08:
 
-- `gt6/textures/block/lightningrod/wall.png` — the Tungsten Wall part (upstream
-  `multiblockparts/metalwall/0/colored/side.png`, the Loader :1151 texture key
-  "metalwall"; sha256
-  `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`)
+(RETIRED — task r3-world-tint-render-type, the C5 clean-up:
+`gt6/textures/block/lightningrod/wall.png` — the Tungsten Wall part (upstream
+`multiblockparts/metalwall/0/colored/side.png`, the Loader :1151 texture key
+"metalwall"; sha256
+`37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`) — the
+block takes the metalwall design-0 two-layer model whose `parts/metalwall/0`
+borrow is byte-identical, and joins the paint walk with the ANY.W tint; the
+borrowed copy was byte-redundant and is deleted.)
 - `gt6/textures/block/lightningrod/coil.png` — the Large Niobium-Titanium Coil part
   (upstream `multiblockparts/coil/0/colored/side.png`, the :1168 texture key "coil";
   sha256
@@ -4897,8 +4901,9 @@ borrowed from upstream
   `08391c4ebde4d220ec35774751a496475ac02b1b117b0e22f19bffa316acac39`).
 
 The "colored" groups are grayscale tint-carriers (the ANY.W tungsten tint is the gray
-itself); the port shows them un-tinted — the same declared deviation as the crank
-(task p12-engine-crank) and the tool family.
+itself); the coil/rod stay un-tinted (the same declared deviation as the crank
+(task p12-engine-crank) and the tool family) while the tungsten wall tints since
+task r3-world-tint-render-type.
 
 C-Foam spray item textures, task p25-c-foam-pipe-spray: the 32 16x16 icons under
 `gt6/textures/item/spray/` (`foam_<dye>.png` / `foam_owned_<dye>.png`) come from the same

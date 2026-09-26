@@ -2367,13 +2367,19 @@ public final class GT6BlockStates extends BlockStateProvider {
      * barometer 5-bit visual is the synced BE payload — the per-state gauge rendering is
      * the render pool, the burning-box ruling repeated). Both ladders share the model (the
      * SAME block class upstream, :552 aClass). The 26 BlockItem models parent it.
+     *
+     * <p>Task r3-world-tint-render-type (the C5 clean-up): the body element is re-declared
+     * with {@code tintindex 0} on every face (the {@code tintedCube} grammar) — every
+     * upstream row carries NBT_MATERIAL (Loader :553-579, the {@code aMat} column), so the
+     * grayscale boiler_steam set multiplies the row material through the
+     * {@code GTMachineTintModel} bake + the {@code GTItemPaintTint} inventory half (the
+     * 43f48149b burning-box form). The uniform cutout declaration joins the paintable
+     * census (opaque textures render identically on cutout).
      */
     private void addBoilers() {
         String tTex = "block/boiler_steam/";
-        ModelFile tModel = models().cube("steam_boiler_tank",
-                modLoc(tTex + "bottom"), modLoc(tTex + "top"),          // bottom/top
-                modLoc(tTex + "front"), modLoc(tTex + "side"),          // north(front = the barometer face)/south
-                modLoc(tTex + "side"), modLoc(tTex + "side"));          // west/east
+        ModelFile tModel = tintedCube("steam_boiler_tank",
+                tTex + "bottom", tTex + "top", tTex + "side", tTex + "front");
         for (gregtech6.registry.GT6Boilers.BoilerRow tRow : gregtech6.registry.GT6Boilers.allRows()) {
             Block tBlock = gregtech6.registry.GT6Boilers.BLOCKS_BY_PATH.get(tRow.path()).get();
             getVariantBuilder(tBlock).forAllStates(aState -> {
@@ -2627,13 +2633,23 @@ public final class GT6BlockStates extends BlockStateProvider {
      * NBT_MATERIAL (the vanilla cube parent's own elements are replaced by the child's).
      */
     private ModelFile tintedCube(String aName, String aBottom, String aTop, String aSide) {
+        return tintedCube(aName, aBottom, aTop, aSide, aSide);
+    }
+
+    /**
+     * The front-bearing overload (task r3-world-tint-render-type, the C5 boiler clean-up):
+     * the north face carries {@code aFront} (the boiler's barometer face) while the other
+     * four sides share {@code aSide} — the blockstate y-rotation moves the front with the
+     * FACING, so north IS the model-space front.
+     */
+    private ModelFile tintedCube(String aName, String aBottom, String aTop, String aSide, String aFront) {
         BlockModelBuilder tModel = models().getBuilder(aName)
                 .parent(models().getExistingFile(mcLoc("block/cube")))
                 .texture("down", modLoc(aBottom)).texture("up", modLoc(aTop))
-                .texture("north", modLoc(aSide)).texture("south", modLoc(aSide))
+                .texture("north", modLoc(aFront)).texture("south", modLoc(aSide))
                 .texture("west", modLoc(aSide)).texture("east", modLoc(aSide))
                 // issue #8 (task r3-world-tint-render-type): uniform cutout over the
-                // paintable families (the census convention — tanks, crucible walls)
+                // paintable families (the census convention — tanks, crucible walls, boilers)
                 .renderType("cutout");
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
@@ -2647,7 +2663,16 @@ public final class GT6BlockStates extends BlockStateProvider {
         Block tController = gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD.get();
         getVariantBuilder(tController).forAllStates(aState -> ConfiguredModel.builder().modelFile(tMain).build());
         itemModels().withExistingParent("multiblock_lightning_rod", tMain.getLocation());
-        addLightningRodPart("machine_wall_tungsten", "block/lightningrod/wall");
+        // the Tungsten Wall (task r3-world-tint-render-type, the C5 clean-up): the row
+        // IS the :1151 machine_wall row (texture "metalwall", NBT_DESIGNS 7, ANY.W) —
+        // it takes the metal-wall two-layer form over the design-0 art (the former
+        // cube_all borrow lightningrod/wall was the design-0 colored/side bytes, so the
+        // body art is unchanged; the 0.01 wall decals + the material tint join). The
+        // single-variant Lightning Rod registration keeps its DESIGNS-0 state space
+        // (design 0 = the sibling walls' default state).
+        Block tWall = gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get("machine_wall_tungsten").get();
+        simpleBlock(tWall, partModel("machine_wall_tungsten", "metalwall", 0));
+        itemModels().withExistingParent("machine_wall_tungsten", modLoc("block/machine_wall_tungsten"));
         addLightningRodPart("niobium_titanium_coil", "block/lightningrod/coil");
         addLightningRodPart("lightning_rod", "block/lightningrod/rod");
     }

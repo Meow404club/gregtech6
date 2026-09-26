@@ -208,6 +208,10 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// every other machine domain (the lit decals carry NO tintindex, so the
 		// burning glow passes through untinted — the P22 decal contract)
 		for (Block tBlock : gregtech6.registry.GT6BurningBoxes.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		// task r3-world-tint-render-type — the C5 boiler clean-up: the 26 steam boiler
+		// tanks join (every upstream row carries NBT_MATERIAL, Loader :553-579; the
+		// shared model's body cube is the tintindex-0 seat since this card)
+		for (Block tBlock : gregtech6.registry.GT6Boilers.paintableBlockArray()) wrapStates(tBlock, aEvent);
 	}
 
 	/**
@@ -278,6 +282,20 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 	public static void onRegisterBurningBoxPaintItemColors(net.minecraftforge.client.event.RegisterColorHandlersEvent.Item aEvent) {
 		java.util.List<Item> tPaintItems = new ArrayList<>();
 		for (Block tBlock : gregtech6.registry.GT6BurningBoxes.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tPaintItems.toArray(Item[]::new));
+	}
+
+	/**
+	 * The boiler paint tint, the INVENTORY half (task r3-world-tint-render-type, the C5
+	 * clean-up): the 26 boiler BlockItems ride the shared {@link GTItemPaintTint} lambda
+	 * through the combined {@code GTMachinePaintTint.tintMaterialOf} dispatch (the row
+	 * material resolves through the common {@code GTBasicMachineBlock.materialOf} gate —
+	 * the burning-box form, 43f48149b).
+	 */
+	@SubscribeEvent
+	public static void onRegisterBoilerPaintItemColors(net.minecraftforge.client.event.RegisterColorHandlersEvent.Item aEvent) {
+		java.util.List<Item> tPaintItems = new ArrayList<>();
+		for (Block tBlock : gregtech6.registry.GT6Boilers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tPaintItems.toArray(Item[]::new));
 	}
 
