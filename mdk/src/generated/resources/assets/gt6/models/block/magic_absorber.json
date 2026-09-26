@@ -46,6 +46,7 @@
       ]
     }
   ],
+  "render_type": "minecraft:cutout",
   "textures": {
     "down": "gt6:block/magic_absorber_base",
     "east": "gt6:block/magic_absorber_base",

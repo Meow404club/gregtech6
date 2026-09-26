@@ -46,6 +46,7 @@
       ]
     }
   ],
+  "render_type": "minecraft:cutout",
   "textures": {
     "front": "gt6:block/bridge_motor_front",
     "side": "gt6:block/bridge_motor_side",

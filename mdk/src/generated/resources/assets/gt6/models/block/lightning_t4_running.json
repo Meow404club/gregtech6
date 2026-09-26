@@ -154,6 +154,7 @@
       ]
     }
   ],
+  "render_type": "minecraft:cutout",
   "textures": {
     "down": "gt6:block/lightning_colored_bottom",
     "east": "gt6:block/lightning_colored_left",
