@@ -228,7 +228,15 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// its 33 Loader_Recipes_Chem rows (Loader_Recipes_Chem.java:220-259); plantalyzer
 			// ships the key only — DECLARED-empty, the upstream rows are the Forestry/IC2
 			// compat scans of GT6_Main.java:321 (the P10 cut)
-			"burnmixer", "plantalyzer");
+			"burnmixer", "plantalyzer",
+			// the P37 five (task p37-rm-six-maps): hammer pours its static stock (RM.smash
+			// Loader_Recipes_Vanilla.java:545-554 + :556-569 + the OreDict listener trio
+			// :81/:91/:95) and mortar its (:674-684 + :705-706); microwave/cooker/toolhead
+			// ship the keys only — DECLARED-empty, the honest no-op form (upstream zero
+			// static rows: the Microwave subclass synthesizes at lookup time, Cooking never
+			// had a row or a consumer, ToolHeads' per-material listener walk diverges from
+			// the port's steel-convergence tool fold — the W5 ruling d)
+			"microwave", "cooker", "toolhead", "mortar", "hammer");
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
 
@@ -647,6 +655,14 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// the P34 machine pair (task p34-machines-burner-plantalyzer)
 			case "burnmixer" -> GT6RecipeMaps.BURN_MIXER;
 			case "plantalyzer" -> GT6RecipeMaps.PLANTALYZER;
+			// the P37 five (task p37-rm-six-maps — the key/field pairs are the field-name
+			// snake case; MORTAR/HAMMER carry their static stocks, the other three stay
+			// rowless, see the POURABLE note)
+			case "microwave" -> GT6RecipeMaps.MICROWAVE;
+			case "cooker" -> GT6RecipeMaps.COOKING;
+			case "toolhead" -> GT6RecipeMaps.TOOL_HEADS;
+			case "mortar" -> GT6RecipeMaps.MORTAR;
+			case "hammer" -> GT6RecipeMaps.HAMMER;
 		default -> null;
 		};
 	}

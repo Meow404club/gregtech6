@@ -196,8 +196,8 @@ public class GT6RecipeMaps {
  * of task p26-kitchen-pot-bowl + the ROLLING_MILL append of task
  * p28-c-ulv-machine-ladder + the anvil pair of task p28-c-anvil + the twelve-map
  * P29 W1 block of task p29-w1-rm-maps-scaffold + the SLUICE batch-C tail-append
- * + the nineteen-map P29 W2 block of task p29-w2-energy-types-5tier + the QU trio of
- * task p31-qu-a-foundation) + RecipeMap.RECIPE_MAPS
+	 * + the nineteen-map P29 W2 block of task p29-w2-energy-types-5tier + the QU trio of
+	 * task p31-qu-a-foundation + the P37 five-map append of task p37-rm-six-maps) + RecipeMap.RECIPE_MAPS
 	 * + every registered loader pour-flag — the flags must retire WITH the maps, or the
 	 * "maps cleared × pour-flag set" poison state becomes representable and the loaders'
 	 * load() silently early-returns (ADR-P18 staticinit poison fix, case A: generation-wise
@@ -894,6 +894,66 @@ public class GT6RecipeMaps {
 	 * boundary), so the key is whitelist-only and empty on purpose.
 	 */
 	public static volatile gregtech6.recipes.maps.GT6RecipeMapBumblelyzer BUMBLELYZER;
+
+	/**
+	 * RM.java:104 — the Microwave map (task p37-rm-six-maps): items 1/1/1, fluids 1/1/0,
+	 * MIN 0, AMP 1, the FURNACE column shape over the same machines/Oven GUI. Upstream the
+	 * field is a {@code RecipeMapMicrowave} subclass whose {@code findRecipe} override
+	 * (RecipeMapMicrowave.java:50-104) synthesizes vanilla-smelting rows at lookup time plus
+	 * the book→Manual_Microwave special (32 EU / 4 ticks) — ZERO static row stock and ZERO
+	 * findRecipe consumers upstream (the p33 food-boundary census: no single-block microwave
+	 * exists in Loader_MultiTileEntities). The subclass arm stays POOLED (the
+	 * RecipeMapShredder/Chisel judged form — documented deviation); the map ships
+	 * DECLARED-empty, the JSON key "microwave" is the tier-b datapack face.
+	 */
+	public static volatile RecipeMap MICROWAVE;
+
+	/**
+	 * RM.java:105 — the Cooker map (task p37-rm-six-maps): items 9/1/1, fluids 3/1/1,
+	 * MIN 2, AMP 1. Upstream ZERO rows and ZERO consumers — the only reference is the
+	 * deprecated {@code RecipeMap.sCookingRecipes} alias (Recipe.java:652); nothing ever
+	 * pours into it (the no-op honest form — no rows are invented). DECLARED-empty, the
+	 * JSON key "cooker" is the tier-b datapack face.
+	 */
+	public static volatile RecipeMap COOKING;
+
+	/**
+	 * RM.java:125 — the "Craft Head on Handle" display map (task p37-rm-six-maps): items
+	 * 4/1/0, fluids 0/0/0, MIN 0, AMP 0 (the one zero-power map). Upstream rows are
+	 * synthesized by the {@code AdvancedCraftingTool} oredict listener (AdvancedCraftingTool.java:70-79):
+	 * every registered tool head × its handle materials → the finished tool, a per-material
+	 * NEI display walk. The port's tool domain judged the head+handle face to the
+	 * steel-convergence vanilla-crafting fold (the W5 ruling d / the t1 mapping,
+	 * GT6CraftingRecipes softHammerBuilder form), so a per-material row stock would display
+	 * crafts the port cannot make — DECLARED-empty with that deviation documented (the
+	 * bumblelyzer whitelist-only form), the JSON key "toolhead" is the tier-b datapack face.
+	 */
+	public static volatile RecipeMap TOOL_HEADS;
+
+	/**
+	 * RM.java:133 — the Mortar map (task p37-rm-six-maps): items 1/2/1, fluids 0/0/0,
+	 * MIN 0, AMP 1. The static rows (Loader_Recipes_Vanilla.java:674-684 + the :705-706
+	 * blaze-stick pair) pour via the tier-b JSON seam (key "mortar",
+	 * {@code data/gt6/recipe_maps/mortar.json}); the {@code RecipeMapHandlerPrefix} lazy
+	 * per-material rows (Loader_Recipes_Handlers.java:79-105+) are the not-ported handler
+	 * layer (the P8 ruling — handler→注册期展开 belongs to a material-walk card, declared
+	 * pooled). No port findRecipe consumer yet (the CHISEL judged form).
+	 */
+	public static volatile RecipeMap MORTAR;
+
+	/**
+	 * RM.java:137 — the Hammer map (task p37-rm-six-maps): items 1/1/1, fluids 0/0/0,
+	 * MIN 0, AMP 1, progress 6/3 (the one non-0/1 progress pair). The static rows
+	 * (RM.smash :545-554 + Loader_Recipes_Vanilla.java:556-569 + the OreDict listener
+	 * quartet :81/:87/:91/:95) pour via the tier-b JSON seam (key "hammer",
+	 * {@code data/gt6/recipe_maps/hammer.json}); upstream the field is a
+	 * {@code RecipeMapHammer} subclass whose {@code getRecipeFor} synthesizes ore→crushed
+	 * rows at lookup time (RecipeMapHammer.java:87-116) — that dynamic arm plus the
+	 * Gneiss/PetrifiedWood special (:323, materials absent from the port universe) stay
+	 * POOLED (the RecipeMapShredder judged form). No port findRecipe consumer yet (the
+	 * GTHammerItem mining face is item-local, not map-driven).
+	 */
+	public static volatile RecipeMap HAMMER;
 
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
@@ -1638,6 +1698,56 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 0, 0,
 				/*MIN=*/ 2,
 				/*AMP=*/ 1);
+		// the P37 five-map append (task p37-rm-six-maps, the p36-census open_faces[0] close) —
+		// upstream RM.java declaration order (Microwave :104 < Cooking :105 < ToolHeads :125
+		// < Mortar :133 < Hammer :137); Microwave/Cooking/ToolHeads DECLARED-empty (the
+		// no-op honest form — see the field docs), Mortar/Hammer rows ride the JSON seam
+		// RM.java:104 — the FURNACE column shape over the same Oven GUI (items 1/1/1,
+		// fluids 1/1/0, MIN 0, AMP 1, NEI name "smelting")
+		MICROWAVE = new RecipeMap(new HashSet<>(),
+				"gt.recipe.microwave", "Microwave", "smelting",
+				0, 1,
+				"gt6:textures/gui/machines/oven",
+				/*IN-OUT-MIN-ITEM=*/ 1, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 1, 1, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:105 — items 9/1/1, fluids 3/1/1, MIN 2, AMP 1
+		COOKING = new RecipeMap(new HashSet<>(),
+				"gt.recipe.cooker", "Cooker", null,
+				0, 1,
+				"gt6:textures/gui/machines/cooker",
+				/*IN-OUT-MIN-ITEM=*/ 9, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 3, 1, 1,
+				/*MIN=*/ 2,
+				/*AMP=*/ 1);
+		// RM.java:125 — items 4/1/0, fluids 0/0/0, MIN 0, AMP 0 (the one zero-power map)
+		TOOL_HEADS = new RecipeMap(new HashSet<>(),
+				"gt.recipe.toolhead", "Craft Head on Handle", null,
+				0, 1,
+				"gt6:textures/gui/machines/crafting2by2",
+				/*IN-OUT-MIN-ITEM=*/ 4, 1, 0,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 0);
+		// RM.java:133 — items 1/2/1, fluids 0/0/0, MIN 0, AMP 1
+		MORTAR = new RecipeMap(new HashSet<>(),
+				"gt.recipe.mortar", "Mortar", null,
+				0, 1,
+				"gt6:textures/gui/machines/mortar",
+				/*IN-OUT-MIN-ITEM=*/ 1, 2, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:137 — items 1/1/1, fluids 0/0/0, MIN 0, AMP 1, progress 6/3
+		HAMMER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.hammer", "Hammer", null,
+				6, 3,
+				"gt6:textures/gui/machines/hammer",
+				/*IN-OUT-MIN-ITEM=*/ 1, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -1722,6 +1832,11 @@ public class GT6RecipeMaps {
 		FUSION = null;
 		CRYSTALLISATION_CRUCIBLE = null;
 		BUMBLELYZER = null;
+		MICROWAVE = null;
+		COOKING = null;
+		TOOL_HEADS = null;
+		MORTAR = null;
+		HAMMER = null;
 		RecipeMap.reset();
 		sPhase = Phase.OPEN; // the phase joins the generation — a fresh generation always registers (task p32-rm-phase-gate)
 		for (Runnable tHook : sGenerationResetHooks) {
