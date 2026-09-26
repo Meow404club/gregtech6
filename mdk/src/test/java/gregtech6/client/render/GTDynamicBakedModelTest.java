@@ -39,6 +39,9 @@ public class GTDynamicBakedModelTest extends GTOfflineRenderTestBase {
 	/** Distinct sentinel instances — identity, not equality, is what the assertions pin down. */
 	private static final List<net.minecraft.client.renderer.block.model.BakedQuad> DYNAMIC_QUADS = List.of();
 	private static final List<net.minecraft.client.renderer.block.model.BakedQuad> FALLBACK_QUADS = List.of();
+	/** The fallback's declared chunk-layer set — identity pins the forward (issue #8). */
+	private static final net.minecraftforge.client.ChunkRenderTypeSet STUB_LAYERS =
+			net.minecraftforge.client.ChunkRenderTypeSet.of(RenderType.cutout());
 
 	static class StubFallback implements BakedModel {
 		@Override public List<net.minecraft.client.renderer.block.model.BakedQuad> getQuads(BlockState aState, Direction aSide, RandomSource aRand) {
@@ -51,6 +54,10 @@ public class GTDynamicBakedModelTest extends GTOfflineRenderTestBase {
 		@Override public TextureAtlasSprite getParticleIcon() { return null; }
 		@Override public ItemTransforms getTransforms() { return ItemTransforms.NO_TRANSFORMS; }
 		@Override public net.minecraft.client.renderer.block.model.ItemOverrides getOverrides() { return net.minecraft.client.renderer.block.model.ItemOverrides.EMPTY; }
+		/** The layer set the forward pins (identity, not equality). */
+		@Override public net.minecraftforge.client.ChunkRenderTypeSet getRenderTypes(BlockState aState, RandomSource aRand, ModelData aData) {
+			return STUB_LAYERS;
+		}
 	}
 
 	static class TestDynamicModel extends GTDynamicBakedModel {
@@ -137,5 +144,19 @@ public class GTDynamicBakedModelTest extends GTOfflineRenderTestBase {
 	@Test
 	public void fallbackModelIsRequired() {
 		assertThrows(NullPointerException.class, () -> new TestDynamicModel(null));
+	}
+
+	/**
+	 * Issue #8 (task r3-world-tint-render-type): the chunk-layer query forwards to the
+	 * fallback model. Without the forward the IForgeBakedModel default resolves the layer
+	 * from the ItemBlockRenderTypes block table (solid), burying the fallback JSON's
+	 * {@code render_type} — the D2 leg4/leg5 pair (JSON-only = no effect, JSON + forward =
+	 * the cutout layer takes the quads). Identity pins the forward itself.
+	 */
+	@Test
+	public void renderTypesForwardToTheFallback() {
+		TestDynamicModel tModel = new TestDynamicModel(new StubFallback());
+		assertSame(STUB_LAYERS, tModel.getRenderTypes(STONE, RandomSource.create(), ModelData.EMPTY),
+				"the chunk-layer query forwards to the fallback model's declared set");
 	}
 }

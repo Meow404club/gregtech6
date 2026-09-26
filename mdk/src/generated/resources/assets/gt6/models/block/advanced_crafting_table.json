@@ -64,6 +64,7 @@
       ]
     }
   ],
+  "render_type": "minecraft:cutout",
   "textures": {
     "down": "gt6:block/oven_bottom",
     "east": "gt6:block/oven_side",

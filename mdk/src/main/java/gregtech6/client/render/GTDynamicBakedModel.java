@@ -15,6 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 
+import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.model.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.ModelData;
 
@@ -98,6 +99,24 @@ public abstract class GTDynamicBakedModel implements IDynamicBakedModel {
 	// BakedModel face: delegate the static properties to the fallback model, so a
 	// bare subclass only implements getDynamicQuads.
 	// ---------------------------------------------------------------------------
+
+	/**
+	 * Issue #8 (task r3-world-tint-render-type): forward the chunk-layer query to the
+	 * fallback model. The IForgeBakedModel default (IForgeBakedModel.java:85) resolves
+	 * the layer from the {@code ItemBlockRenderTypes} block table — solid — which BURIES
+	 * whatever {@code render_type} the fallback's model JSON declares: the D2 leg4/leg5
+	 * pair proved a JSON-only declaration does nothing until the wrapper forwards (leg6:
+	 * JSON cutout + this forward → the chunk bake picked cutout and the tint under the
+	 * decal shell showed). {@code SimpleBakedModel} keeps the semantics two-valued: a
+	 * JSON {@code render_type} comes back as its {@code blockRenderTypes}, no
+	 * declaration falls to the very same interface default (SimpleBakedModel.java:113-116)
+	 * — so models without a declaration render on exactly the layer they did before this
+	 * override.
+	 */
+	@Override
+	public ChunkRenderTypeSet getRenderTypes(@Nullable BlockState aState, RandomSource aRand, ModelData aData) {
+		return mFallbackModel.getRenderTypes(aState, aRand, aData);
+	}
 
 	@Override
 	public boolean useAmbientOcclusion() {

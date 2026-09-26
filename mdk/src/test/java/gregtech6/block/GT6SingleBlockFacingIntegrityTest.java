@@ -348,7 +348,8 @@ public class GT6SingleBlockFacingIntegrityTest extends GTOfflineTestBase {
 				"test.steam", "wrought_iron", "Wrought Iron", false, (short)100, 10000, 32, 6.0F, 8.0F, false),
 				BlockBehaviour.Properties.of());
 		GT6Boilers.BoilerTankBlock tBoilerBlock = new GT6Boilers.BoilerTankBlock(new GT6Boilers.BoilerRow(
-				"test.boiler", 0, 320, new GT6Boilers.BoilerMaterial("steel", "Steel", 6.0F), false),
+				"test.boiler", 0, 320, new GT6Boilers.BoilerMaterial("steel", "Steel", 6.0F,
+						() -> gregapi.data.MT.Steel), false), // the r3-world-tint-render-type material column
 				BlockBehaviour.Properties.of());
 		GT6BurningBoxes.BurningBoxBlock tBurningBlock = new GT6BurningBoxes.BurningBoxBlock(
 				GT6BurningBoxes.SOLID_ROWS.get(0), BlockBehaviour.Properties.of());

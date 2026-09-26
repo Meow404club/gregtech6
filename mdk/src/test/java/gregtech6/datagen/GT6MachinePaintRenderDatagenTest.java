@@ -63,8 +63,12 @@ import com.google.gson.JsonParser;
 
 class GT6MachinePaintRenderDatagenTest {
 
-    /** The 192 machine-domain bases (the paintableBlockArray census). */
-    private static final List<String> MACHINE_BASES = List.of(
+    /**
+     * The 192 machine-domain bases (the paintableBlockArray census). Package-visible
+     * since task r3-world-tint-render-type — the render_type census
+     * (GT6PaintableRenderTypeCensusTest) reuses the list instead of duplicating it.
+     */
+    static final List<String> MACHINE_BASES = List.of(
             "oven", "oven_t2", "oven_t3", "oven_t4", // task p27-oven-heat-t-ladder
             "shredder", "shredder_t2", "shredder_t3", "shredder_t4",
             "crusher", "crusher_t2", "crusher_t3", "crusher_t4",

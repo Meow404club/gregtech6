@@ -95,24 +95,33 @@ public final class GT6Boilers {
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "gt6");
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 
-	/** One Loader material — slug + display name + the NBT_HARDNESS (== NBT_RESISTANCE) pair. */
-	public record BoilerMaterial(String slug, String display, float hardness) {}
+	/**
+	 * One Loader material — slug + display name + the NBT_HARDNESS (== NBT_RESISTANCE) pair
+	 * + the material itself (task r3-world-tint-render-type, the C5 clean-up: every
+	 * upstream boiler row carries NBT_MATERIAL, Loader :553-579 — the row's
+	 * {@code aMat} is the render colour source exactly like the burning boxes). The lazy
+	 * Supplier per the GTBarrels MetalDrumRow convention (the registry class loads before
+	 * {@code MT.init()}, a direct {@code MT.X} field read in a row initializer would
+	 * resolve null).
+	 */
+	public record BoilerMaterial(String slug, String display, float hardness,
+			java.util.function.Supplier<gregapi.oredict.OreDictMaterial> mat) {}
 
-	/** The 13 boiler materials, the Loader :553-579 material column (Ultimet is boiler-only, :565/:579). */
+	/** The 13 boiler materials, the Loader :553-579 material column (Ultimet is boiler-only, :565/:579; ANY.Steel/ANY.W are the upstream verbatim forms). */
 	public static final BoilerMaterial
-			MAT_LEAD        = new BoilerMaterial("lead"        , "Lead"          ,  4.0F),
-			MAT_BISMUTH     = new BoilerMaterial("bismuth"     , "Bismuth"       ,  4.0F),
-			MAT_BRONZE      = new BoilerMaterial("bronze"      , "Bronze"        ,  7.0F),
-			MAT_ARSENIC_COPPER  = new BoilerMaterial("arsenic_copper", "Arsenic Copper", 7.0F),
-			MAT_ARSENIC_BRONZE  = new BoilerMaterial("arsenic_bronze", "Arsenic Bronze", 7.0F),
-			MAT_INVAR       = new BoilerMaterial("invar"       , "Invar"         ,  4.0F),
-			MAT_STEEL       = new BoilerMaterial("steel"       , "Steel"         ,  6.0F),
-			MAT_CHROMIUM    = new BoilerMaterial("chromium"    , "Chromium"      ,  4.0F),
-			MAT_TITANIUM    = new BoilerMaterial("titanium"    , "Titanium"      ,  9.0F),
-			MAT_NETHERITE   = new BoilerMaterial("netherite"   , "Netherite"     ,  9.0F),
-			MAT_TUNGSTEN    = new BoilerMaterial("tungsten"    , "Tungsten"      , 10.0F),
-			MAT_TUNGSTENSTEEL = new BoilerMaterial("tungstensteel", "Tungstensteel", 12.5F),
-			MAT_ULTIMET     = new BoilerMaterial("ultimet"     , "Ultimet"       , 12.5F);
+			MAT_LEAD        = new BoilerMaterial("lead"        , "Lead"          ,  4.0F, () -> gregapi.data.MT.Pb),
+			MAT_BISMUTH     = new BoilerMaterial("bismuth"     , "Bismuth"       ,  4.0F, () -> gregapi.data.MT.Bi),
+			MAT_BRONZE      = new BoilerMaterial("bronze"      , "Bronze"        ,  7.0F, () -> gregapi.data.MT.Bronze),
+			MAT_ARSENIC_COPPER  = new BoilerMaterial("arsenic_copper", "Arsenic Copper", 7.0F, () -> gregapi.data.MT.ArsenicCopper),
+			MAT_ARSENIC_BRONZE  = new BoilerMaterial("arsenic_bronze", "Arsenic Bronze", 7.0F, () -> gregapi.data.MT.ArsenicBronze),
+			MAT_INVAR       = new BoilerMaterial("invar"       , "Invar"         ,  4.0F, () -> gregapi.data.MT.Invar),
+			MAT_STEEL       = new BoilerMaterial("steel"       , "Steel"         ,  6.0F, () -> gregapi.data.ANY.Steel),
+			MAT_CHROMIUM    = new BoilerMaterial("chromium"    , "Chromium"      ,  4.0F, () -> gregapi.data.MT.Cr),
+			MAT_TITANIUM    = new BoilerMaterial("titanium"    , "Titanium"      ,  9.0F, () -> gregapi.data.MT.Ti),
+			MAT_NETHERITE   = new BoilerMaterial("netherite"   , "Netherite"     ,  9.0F, () -> gregapi.data.MT.Netherite),
+			MAT_TUNGSTEN    = new BoilerMaterial("tungsten"    , "Tungsten"      , 10.0F, () -> gregapi.data.ANY.W),
+			MAT_TUNGSTENSTEEL = new BoilerMaterial("tungstensteel", "Tungstensteel", 12.5F, () -> gregapi.data.MT.TungstenSteel),
+			MAT_ULTIMET     = new BoilerMaterial("ultimet"     , "Ultimet"       , 12.5F, () -> gregapi.data.MT.Ultimet);
 
 	/** The composed Steam Boiler Tank display template "{@code Steam Boiler Tank (%s)}" — one material slot (task p20-i18n-compose-rows). */
 	public static final String DISPLAY_KEY = "gt6.row.boiler.display";
@@ -234,6 +243,18 @@ public final class GT6Boilers {
 		return tHandle == null ? null : tHandle.get();
 	}
 
+	/**
+	 * The boiler-family paint-tint walker (task r3-world-tint-render-type, the C5
+	 * clean-up): all 26 boiler tank blocks — every upstream row carries NBT_MATERIAL
+	 * (Loader :553-579) and the shared datagen model carries tintindex 0 since this
+	 * card, so the family joins the baked world tint + the inventory ItemColor halves.
+	 * The {@code GTMachines.paintableBlockArray} census convention (the burning-box
+	 * 43f48149b form). Client-side call time only.
+	 */
+	public static Block[] paintableBlockArray() {
+		return blockArray();
+	}
+
 	// -------------------------------------------------------------------------
 	// the block carrier — the SteamEngineBlock shape + the two removal faces
 	// -------------------------------------------------------------------------
@@ -273,6 +294,17 @@ public final class GT6Boilers {
 		/** The registration row (the GTBarrelBlock.capacityL carrier read). */
 		public BoilerRow row() {
 			return mRow;
+		}
+
+		/**
+		 * The row material (task r3-world-tint-render-type, the C5 clean-up) — the
+		 * NBT_MATERIAL every upstream boiler row carries (Loader :553-579); the colour
+		 * source the common {@code GTBasicMachineBlock.materialOf} dispatch hands the paint
+		 * tint (the 43f48149b burning-box form). The lazy supplier resolves against
+		 * {@code MT.init()} at call time.
+		 */
+		public gregapi.oredict.OreDictMaterial material() {
+			return mRow.material().mat().get();
 		}
 
 		/** The composed boiler name (task p20-i18n-compose-rows): the {@link GT6Boilers#displayOf} carrier. */

@@ -46,6 +46,7 @@
       ]
     }
   ],
+  "render_type": "minecraft:cutout",
   "textures": {
     "front": "gt6:block/laser_absorber_front",
     "side": "gt6:block/laser_absorber_side",

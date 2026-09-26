@@ -46,6 +46,7 @@
       ]
     }
   ],
+  "render_type": "minecraft:cutout",
   "textures": {
     "down": "gt6:block/parts/metalwall/0/colored/bottom",
     "east": "gt6:block/parts/metalwall/0/colored/side",
