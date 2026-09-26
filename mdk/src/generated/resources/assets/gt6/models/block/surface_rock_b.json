@@ -1,0 +1,47 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#slab",
+          "tintindex": 0
+        },
+        "east": {
+          "texture": "#slab",
+          "tintindex": 0
+        },
+        "north": {
+          "texture": "#slab",
+          "tintindex": 0
+        },
+        "south": {
+          "texture": "#slab",
+          "tintindex": 0
+        },
+        "up": {
+          "texture": "#slab",
+          "tintindex": 0
+        },
+        "west": {
+          "texture": "#slab",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        6,
+        0,
+        6
+      ],
+      "to": [
+        10,
+        1,
+        10
+      ]
+    }
+  ],
+  "textures": {
+    "particle": "#slab",
+    "slab": "minecraft:block/stone"
+  }
+}

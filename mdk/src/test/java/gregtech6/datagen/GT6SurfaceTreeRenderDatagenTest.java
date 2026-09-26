@@ -69,19 +69,95 @@ class GT6SurfaceTreeRenderDatagenTest {
         }
     }
 
-    /** #1 stick blockstate: all six FACINGS, the two rotationY bar orientations among them. */
+    /**
+     * #12 stick blockstate (r3-stick-shape-random): all six FACINGS, each a weighted
+     * SIX-variant list — the two rotationY arms x the three displacement tiers, the
+     * position-seeded random pick (WeightedBakedModel chain) that kills the
+     * "千篇一律" single pose. First entry of every facing = the unrotated default arm.
+     */
     @Test
-    void stickBlockstateKeepsBothBarOrientations() throws Exception {
+    void stickBlockstateIsTheWeightedVariantBand() throws Exception {
         JsonObject tState = json("assets/gt6/blockstates/surface_stick.json");
         var tVariants = tState.getAsJsonObject("variants");
         assertEquals(6, tVariants.size(), "the full FACING table");
-        assertEquals("gt6:block/surface_stick", tVariants.getAsJsonObject("facing=down").get("model").getAsString());
-        assertFalse(tVariants.getAsJsonObject("facing=down").has("y"), "down: the floor form");
-        assertEquals(90, tVariants.getAsJsonObject("facing=east").get("y").getAsInt(),
-                "east: the Z-long bar arm, rotationY variant 1");
-        assertEquals(270, tVariants.getAsJsonObject("facing=west").get("y").getAsInt(),
-                "west: the Z-long bar arm, rotationY variant 2");
-        assertEquals(180, tVariants.getAsJsonObject("facing=up").get("x").getAsInt(), "up: ceiling form");
+        List<String> tTierModels = List.of("gt6:block/surface_stick", "gt6:block/surface_stick_a", "gt6:block/surface_stick_b");
+        for (String tFacing : List.of("down", "up", "north", "south", "west", "east")) {
+            var tList = tVariants.getAsJsonArray("facing=" + tFacing);
+            assertEquals(6, tList.size(), tFacing + ": 2 arms x 3 slide tiers");
+            assertEquals(tTierModels.get(0), tList.get(0).getAsJsonObject().get("model").getAsString(),
+                    tFacing + ": first variant = the default centered bar");
+            for (int i = 0; i < tList.size(); i++) {
+                JsonObject tEntry = tList.get(i).getAsJsonObject();
+                assertEquals(tTierModels.get(i / 2), tEntry.get("model").getAsString(),
+                        tFacing + " variant " + i + ": tier model");
+                assertTrue(!tEntry.has("weight") || tEntry.get("weight").getAsInt() >= 1,
+                        tFacing + " variant " + i + ": weight absent (=1 default) or >= 1");
+            }
+        }
+        // the default arm carries the facing rotation; the twin = +90 (mod 360: WEST lands at 0)
+        JsonObject tDownDefault = tVariants.getAsJsonArray("facing=down").get(0).getAsJsonObject();
+        assertFalse(tDownDefault.has("y") || tDownDefault.has("x") || tDownDefault.has("weight"),
+                "down default arm: model only, the floor form at default weight");
+        int tY = tVariants.getAsJsonArray("facing=east").get(0).getAsJsonObject().get("y").getAsInt();
+        assertEquals(90, tY, "east default arm keeps the facing rotationY");
+        assertEquals(180, tVariants.getAsJsonArray("facing=east").get(1).getAsJsonObject().get("y").getAsInt(),
+                "east twin arm = facing + 90");
+        assertFalse(tVariants.getAsJsonArray("facing=west").get(1).getAsJsonObject().has("y"),
+                "west twin arm = (270+90)%360 = 0, the omitted JSON default");
+        assertEquals(180, tVariants.getAsJsonArray("facing=up").get(0).getAsJsonObject().get("x").getAsInt(),
+                "up: ceiling form rotation carried");
+    }
+
+    /**
+     * #12 stick slide tiers: the three bar models are the same 12x2x2 bar slid across Z
+     * (centered 7..9 / -2px 5..7 / +2px 9..11 — the upstream readFromNBT2 0..14px
+     * perpendicular slide downsampled), untinted oak-log borrow kept.
+     */
+    @Test
+    void stickSlideTierModelsAreTheSameBarSlid() throws Exception {
+        List<Integer> tSlideFrom = List.of(7, 5, 9);
+        List<String> tTierFiles = List.of("surface_stick", "surface_stick_a", "surface_stick_b");
+        for (int i = 0; i < tTierFiles.size(); i++) {
+            JsonObject tModel = json("assets/gt6/models/block/" + tTierFiles.get(i) + ".json");
+            assertEquals("minecraft:block/oak_log", tModel.getAsJsonObject("textures").get("slab").getAsString(),
+                    tTierFiles.get(i) + ": the vanilla oak borrow");
+            JsonObject tBox = tModel.getAsJsonArray("elements").get(0).getAsJsonObject();
+            assertEquals(List.of(2, 0, tSlideFrom.get(i)), tBox.getAsJsonArray("from").asList().stream()
+                    .map(e -> e.getAsInt()).toList(), tTierFiles.get(i) + " from");
+            assertEquals(List.of(14, 2, tSlideFrom.get(i) + 2), tBox.getAsJsonArray("to").asList().stream()
+                    .map(e -> e.getAsInt()).toList(), tTierFiles.get(i) + " to = same bar, slid");
+            assertFalse(tModel.toString().contains("tintindex"), tTierFiles.get(i) + ": untinted");
+        }
+    }
+
+    /**
+     * #12 rock variant band (the same weighted mechanism, the R2 suggestion): three size
+     * tiers of the upstream 2..8px-wide x 1..4px-high random micro box, weights 3/2/1
+     * (weight 1 omitted = the JSON default), every tier box inside the 8x3x8 selection
+     * envelope 4..12 x 0..3 x 4..12 pinned in GT6SurfaceBlocksTest.
+     */
+    @Test
+    void rockBlockstateIsTheSizedVariantBand() throws Exception {
+        JsonObject tState = json("assets/gt6/blockstates/surface_rock_stone.json");
+        var tList = tState.getAsJsonObject("variants").getAsJsonArray("facing=down");
+        assertEquals(3, tList.size(), "three size tiers");
+        assertEquals("gt6:block/surface_rock", tList.get(0).getAsJsonObject().get("model").getAsString());
+        assertEquals(3, tList.get(0).getAsJsonObject().get("weight").getAsInt(), "the representative tier heaviest");
+        assertEquals("gt6:block/surface_rock_a", tList.get(1).getAsJsonObject().get("model").getAsString());
+        assertEquals(2, tList.get(1).getAsJsonObject().get("weight").getAsInt());
+        assertEquals("gt6:block/surface_rock_b", tList.get(2).getAsJsonObject().get("model").getAsString());
+        assertFalse(tList.get(2).getAsJsonObject().has("weight"), "weight 1 = the omitted JSON default");
+        List<Integer> tEnvMin = List.of(4, 0, 4), tEnvMax = List.of(12, 3, 12);
+        for (String tTier : List.of("surface_rock", "surface_rock_a", "surface_rock_b")) {
+            JsonObject tBox = json("assets/gt6/models/block/" + tTier + ".json")
+                    .getAsJsonArray("elements").get(0).getAsJsonObject();
+            var tFrom = tBox.getAsJsonArray("from").asList().stream().map(e -> e.getAsInt()).toList();
+            var tTo = tBox.getAsJsonArray("to").asList().stream().map(e -> e.getAsInt()).toList();
+            for (int a = 0; a < 3; a++) {
+                assertTrue(tFrom.get(a) >= tEnvMin.get(a) && tTo.get(a) <= tEnvMax.get(a),
+                        tTier + " axis " + a + ": the tier box sits inside the 8x3x8 selection envelope");
+            }
+        }
     }
 
     /** #1 rock: the 8x3x8 fixed representative box, tintindex 0 on every face, vanilla stone. */

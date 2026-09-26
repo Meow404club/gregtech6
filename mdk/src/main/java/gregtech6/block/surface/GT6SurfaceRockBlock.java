@@ -68,8 +68,8 @@ public class GT6SurfaceRockBlock extends Block {
 	 * {@code box(mMinX, 0, mMinZ, mMaxX, mMaxY, mMaxZ)}); the GTCEu :48-53 12/16 slab
 	 * stood 2px proud per side over the shrunk visual. The four WALL shapes stay GTCEu
 	 * :48-53 verbatim (their visuals ride the y-only variant-rotation quirk,
-	 * GT6BlockStates addSurfaceBand). The stick subclass inherits DOWN/UP (its 12x2x2
-	 * bar is a closer fit than the old slab; the bar-exact shape stays a pool candidate).
+	 * GT6BlockStates addSurfaceBand). The stick subclass overrides with its own bar-exact
+	 * table (task r3-stick-shape-random, GitHub #12 — the p38 pool candidate landed).
 	 */
 	protected static final VoxelShape SHAPE_DOWN = Block.box(4, 0, 4, 12, 3, 12);
 	protected static final VoxelShape SHAPE_UP = Block.box(4, 13, 4, 12, 16, 12);

@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#slab"
+        },
+        "east": {
+          "texture": "#slab"
+        },
+        "north": {
+          "texture": "#slab"
+        },
+        "south": {
+          "texture": "#slab"
+        },
+        "up": {
+          "texture": "#slab"
+        },
+        "west": {
+          "texture": "#slab"
+        }
+      },
+      "from": [
+        2,
+        0,
+        5
+      ],
+      "to": [
+        14,
+        2,
+        7
+      ]
+    }
+  ],
+  "textures": {
+    "particle": "#slab",
+    "slab": "minecraft:block/oak_log"
+  }
+}
