@@ -43,6 +43,16 @@ mdk/versions/1.21.1-neoforge/build/datagen-output（验证产物非入库面）�
     写入（git log -1 -- <canonical>）。快照更早 → STALE FAIL（对账基线不可信，
     宁红勿哑）；--allow-stale 显式逃生（降级 WARN 继续，日志留痕）；git/标记不可得
     → 打印 STALE-CHECK SKIPPED 继续（可见，不静默）。
+  * 腿方言审计（ops-rundata-leg-canonical，known_bugs.rundata_leg_dialect_rewrite
+    约定正典化）：共享树单数带（data/*/loot_table|recipe|advancement、data/*/tags/
+    item|block 等 1.21.1 形单数目录）= neo 腿产物；交叉腿（forge）runData 会用
+    1.20.1 方言成批回写这些带（P31 p31-retriever/p31-implosion 两案 + P32
+    treecheck/biome/usb-data 三卡五证，1563 文件 loot_table 单数带案）。该带被
+    _fold 同键阴影，byte-identical 主判定对其不可见——开跑先打印「方言族清单+
+    归属腿」审计行，再对 git 工作树做污染分类：单数带文件被跟踪修改 (M) ∧ 现字节
+    == 复数孪生现字节 ∧ 孪生未改 = 腿方言覆盖签名（FAIL，remedy=git restore 非本卡
+    生成物）；其余单数带变更 = DRIFT（仅报告——卡内自有变更与 mirror 分叉不可机判，
+    人审裁决）。主判定（复数带 vs node 折叠对账）零改动，只加分类报告。
   * 任何未归一差异 → exit 1 并打印差异文件清单；全等 → exit 0 并打印摘要
     （byte 相等数 / normalized 数 / loot 带数）。
 
@@ -54,11 +64,26 @@ mdk/versions/1.21.1-neoforge/build/datagen-output（验证产物非入库面）�
   $ python3 tools/datagen_tree_check.py
   CANONICAL : mdk/src/generated/resources (77573 files)
   NODE      : mdk/versions/1.21.1-neoforge/build/datagen-output (77573 files)
+  leg-dialect: convention 单数带 = neo 腿产物；交叉腿(forge) runData 回写 = 污染 ...
+  leg-dialect band: data/*/loot_table (→loot_tables)  canonical 9385 files = NEO-leg band ...
+  LEG-REWRITE AUDIT vs HEAD: clean — 0 个单数带变更
   loot band : canonical 4885 (data/*/loot_tables)  node 4885 (data/*/loot_table)
   NORMALIZED [copy-custom-data→copy-nbt] data/gt6/loot_tables/blocks/advanced_crafting_table.json
   ...（normalized 清单逐文件打印，计数进摘要，绝不静默）
   RESULT: OK — 75345 files byte-identical + 228 value-shape normalized after
           path mapping + registered value normalizers (normalized:228)
+
+负例 3（腿方言污染：交叉腿 forge runData 后忘了 git restore——loot_table 单数带
+被 1.20.1 方言覆盖，主判定因 _fold 阴影对此全盲，由 LEG-REWRITE 审计捕获并计入
+最终 RESULT；主对账照常跑完，差异全景一次给全）：
+  $ cp mdk/src/generated/resources/data/gt6/loot_tables/blocks/<表>.json \
+        mdk/src/generated/resources/data/gt6/loot_table/blocks/<表>.json
+  $ python3 tools/datagen_tree_check.py
+  LEG-DIALECT OVERWRITE [loot_table→loot_tables] data/gt6/loot_table/blocks/<表>.json
+       现字节 == 复数孪生 ... (forge 形覆盖 neo 带，P31/P32 污染签名)
+       remedy: git restore --source=HEAD -- <该文件>
+  RESULT: FAIL — N path(s) differ (..., leg-dialect overwrite:N, ...)
+  remedy: 腿方言覆盖签名 = 交叉腿 runData 污染未 restore——按约定...
 
 负例 1（未注册带：对 node 输出任一文件注入一字节 → 非零退出且定位到该文件）：
   $ printf 'X' >> mdk/versions/1.21.1-neoforge/build/datagen-output/ \
@@ -788,6 +813,169 @@ def brand_band_count(files: dict[PurePosixPath, Path], brand: str,
                and rel.parts[3] == dir_name)
 
 
+# ── 腿方言族审计（ops-rundata-leg-canonical，known_bugs.rundata_leg_dialect_rewrite）──
+# 约定正典化（挂账 convention 字段的工具层固化）：共享树（canonical tracked 树）
+# 的单数带 = neo 腿产物；交叉腿（forge）runData 会成批用 1.20.1 方言回写这些带
+# = 污染，处置 = git restore 非本卡生成物。证据：P31 p31-retriever / p31-implosion
+# 两案 + P32 treecheck / biome / usb-data 三卡 1563 文件 loot_table 单数带 forge
+# 冷 runData 回写（p33 已在 loot face 适配器根治该带来源；本节守护全部单数带并把
+# 约定固化为可读输出）。byte-identical 主判定零改动：单数带被 _fold 同键阴影本就
+# 不入对账集，本节只加「方言族清单+归属腿」审计行与工作树污染分类——分类报告，
+# 不吞差、不放行，签名命中照旧 FAIL（fail-visible）。
+
+# canonical 树中携带腿方言的单数段：data/<ns>/<band>/ 顶层带 + data/<ns>/tags/
+# <band>/ 深带。assets 的 models/item 等非 data 路径双侧对称重写、无阴影，不入表；
+# c 段（命名空间方言）是 P27 forward-twin 已声明带，不经此审计；tags/block 形
+# 尚未入树（tags/ 现辖 item/items/worldgen），入树时追加即可。
+_TOP_BAND_SINGULAR = ("loot_table", "recipe", "advancement")
+_TAGS_BAND_SINGULAR = ("item", "block")
+
+
+def _leg_dialect_remap(rel: PurePosixPath) -> tuple[str, str] | None:
+    """rel 是 canonical 树的单数方言带文件 → (带路径形段, 复数段)；否则 None。
+
+    顶层带 data/<ns>/<band>/ → ("loot_table", "loot_tables")；tags 深带
+    data/<ns>/tags/<band>/ → ("tags/item", "tags/items")（真实树含跨命名空间族：
+    gt6+minecraft 的 tags/item 93 文件、minecraft 的 tags/block 10 文件）。
+    """
+    parts = rel.parts
+    if len(parts) < 4 or parts[0] != "data" or parts[1] == "c":
+        return None  # 非 data 树 / c 命名空间（P27 forward-twin 已声明带）
+    if parts[2] in _TOP_BAND_SINGULAR:
+        return parts[2], SEGMENT_MAP[parts[2]]
+    if len(parts) >= 5 and parts[2] == "tags" and parts[3] in _TAGS_BAND_SINGULAR:
+        return f"tags/{parts[3]}", f"tags/{SEGMENT_MAP[parts[3]]}"
+    return None
+
+
+def leg_dialect_audit(canon: dict[PurePosixPath, Path]) -> None:
+    """打印「方言族清单+归属腿」审计行（约定正典的可读形态）。
+
+    同时暴露 _fold 阴影规模：单数带文件若与复数孪生同在 canonical，折叠后同键、
+    后写（复数）覆盖——这些文件不进 byte-identical 对账集，其守门员是
+    audit_leg_rewrites 的工作树污染检测，如实写进审计行。
+    """
+    fams: dict[tuple[str, str], list[int]] = {}
+    for rel in canon:
+        fam = _leg_dialect_remap(rel)
+        if fam is None:
+            continue
+        stats = fams.setdefault(fam, [0, 0])
+        stats[0] += 1
+        if normalize(rel) in canon:
+            stats[1] += 1
+    if not fams:
+        return
+    print("leg-dialect: convention 单数带 = neo 腿产物；交叉腿(forge) runData 回写"
+          " = 污染 → git restore 非本卡生成物 (known_bugs.rundata_leg_dialect_rewrite,"
+          " P31×2+P32×3 五证)")
+    for (seg, plural), (files, shadowed) in sorted(fams.items()):
+        note = ("（fold 阴影：byte-identical 主判定不可见，"
+                "由 LEG-REWRITE 工作树污染检测守护）" if shadowed else "")
+        print(f"leg-dialect band: data/*/{seg} (→{plural})  canonical {files} files"
+              f" = NEO-leg band, 复数孪生同在 {shadowed}{note}")
+
+
+def _git_status_changes(canonical_root: Path) -> dict[str, str] | None:
+    """canonical 子树 vs HEAD 的 git 工作树变更（porcelain，canonical 相对路径→状态）。
+
+    git 不可得 / canonical 不在仓库内 → None（调用方打印 SKIPPED，可见不哑）。
+    porcelain 路径恒仓库根相对（实测，非 cwd 相对），剥 canonical 前缀后返回。
+    """
+    try:
+        top = subprocess.run(["git", "-C", str(canonical_root),
+                              "rev-parse", "--show-toplevel"],
+                             capture_output=True, text=True, timeout=30)
+        if top.returncode != 0:
+            return None
+        toplevel = Path(top.stdout.strip())
+        rel = canonical_root.resolve().relative_to(toplevel.resolve()).as_posix()
+        st = subprocess.run(["git", "-C", str(toplevel), "status", "--porcelain",
+                             "--", rel],
+                            capture_output=True, text=True, timeout=60)
+        if st.returncode != 0:
+            return None
+    except (OSError, ValueError, subprocess.SubprocessError):
+        return None
+    prefix = rel + "/"
+    changes: dict[str, str] = {}
+    for line in st.stdout.splitlines():
+        if len(line) < 4:
+            continue
+        state, path = line[:2].strip(), line[3:]
+        if "->" in path:  # rename 条目取新路径
+            path = path.split("->", 1)[1].strip()
+        if path.startswith('"'):
+            continue  # ponytail: 非 ASCII 引号形不展开——方言带文件名恒 ASCII，出现即人审
+        if not path.startswith(prefix):
+            continue
+        changes[path[len(prefix):]] = state
+    return changes
+
+
+def audit_leg_rewrites(canonical_root: Path, canon: dict[PurePosixPath, Path],
+                       max_list: int) -> list[str]:
+    """工作树污染分类：交叉腿 runData 后「哪些回写属腿方言预期 vs 真漂移」。
+
+    污染签名（P31/P32 五证形态，pre-p33 裸拷贝）：单数带文件被跟踪修改 (M) ∧
+    现字节 == 复数孪生现字节 ∧ 孪生未改——forge 形字节覆盖 neo 带。签名命中打印
+    LEG-DIALECT OVERWRITE（remedy=git restore）并计入返回清单（调用方 FAIL）；
+    其余单数带变更打印 LEG-DIALECT DRIFT（仅报告：卡内自有变更——合法卡改单数带
+    时孪生通常同步在改——与 mirror 分叉不可机判，人审裁决）。非方言带变更（本腿
+    自有带/非方言面）只计数不入分类。主对账（复数带 vs node 折叠）对此全盲
+    （_fold 阴影），本函数是单数带的唯一守门员。git 不可得 → SKIPPED 行（可见）。
+    """
+    changes = _git_status_changes(canonical_root)
+    if changes is None:
+        print("LEG-REWRITE AUDIT SKIPPED (git status 不可得——工作树污染检测"
+              "不可用，可见退场不哑)")
+        return []
+    band_changes = {p: s for p, s in changes.items()
+                    if _leg_dialect_remap(PurePosixPath(p))}
+    others = len(changes) - len(band_changes)
+    overwrites: list[tuple[str, str]] = []
+    drifts: list[tuple[str, str]] = []
+    for path, state in sorted(band_changes.items()):
+        rel = PurePosixPath(path)
+        seg, plural = _leg_dialect_remap(rel)  # band_changes 已过滤，恒非 None
+        label = f"{seg}→{plural}"
+        try:
+            cur = (canonical_root / rel).read_bytes()
+        except OSError:
+            drifts.append((f"{path} ({state}, 内容不可读——删除/改名形)", label))
+            continue
+        twin = normalize(rel)
+        twin_entry = canon.get(twin)
+        twin_bytes = twin_entry.read_bytes() if twin_entry is not None else None
+        twin_state = changes.get(twin.as_posix())
+        if ("M" in state and twin_bytes == cur
+                and not (twin_state and "M" in twin_state)):
+            overwrites.append((path, label))
+        else:
+            drifts.append((f"{path} ({state})", label))
+    tail = (f" + {others} 个非方言带变更（本腿自有带/非方言面，不属腿方言审计域）"
+            if others else "")
+    if not band_changes:
+        print(f"LEG-REWRITE AUDIT vs HEAD: clean — 0 个单数带变更{tail}")
+    else:
+        print(f"LEG-REWRITE AUDIT vs HEAD: {len(band_changes)} 个单数带变更{tail}"
+              " — 分类如下")
+    for path, label in overwrites[:max_list]:
+        print(f"LEG-DIALECT OVERWRITE [{label}] {path}")
+        print(f"     现字节 == 复数孪生 {normalize(PurePosixPath(path)).as_posix()}"
+              f"（forge 形覆盖 neo 带，P31/P32 污染签名）")
+        print(f"     remedy: git restore --source=HEAD -- {canonical_root / path}")
+    if len(overwrites) > max_list:
+        print(f"LEG-DIALECT OVERWRITE ... and {len(overwrites) - max_list} more")
+    for path, label in drifts[:max_list]:
+        print(f"LEG-DIALECT DRIFT [{label}] {path}")
+        print("     非污染签名（孪生同改/形不匹配/新增删除）——卡内自有变更 or"
+              " mirror 分叉，人审裁决（本腿 runData 产物属本卡则保留，否则 restore）")
+    if len(drifts) > max_list:
+        print(f"LEG-DIALECT DRIFT ... and {len(drifts) - max_list} more")
+    return [p for p, _ in overwrites]
+
+
 def main() -> int:
     repo_root = Path(__file__).resolve().parent.parent
     parser = argparse.ArgumentParser(
@@ -797,7 +985,9 @@ def main() -> int:
         epilog="正例: python3 tools/datagen_tree_check.py            # exit 0\n"
                "负例: 对 node 输出任一文件追加一字节后再跑 → exit 1 并定位该文件\n"
                "     （已注册带内未注册形差同样 FAIL——归一绝不静默吞差，详见模块 docstring）\n"
-               "     节点快照早于正典树 HEAD 最近写入 → STALE FAIL（--allow-stale 显式逃生）",
+               "     节点快照早于正典树 HEAD 最近写入 → STALE FAIL（--allow-stale 显式逃生）\n"
+               "     单数带（neo 腿产物）被交叉腿 runData 以 forge 形覆盖 → LEG-DIALECT\n"
+               "     OVERWRITE FAIL（约定：单数带=neo 腿；git restore 非本卡生成物）",
     )
     parser.add_argument("--canonical", type=Path, default=None,
                         help=f"正典树根（默认 {repo_root / 'mdk/src/generated/resources'}）")
@@ -816,6 +1006,12 @@ def main() -> int:
 
     canon = collect_files(canonical_root)
     node = collect_files(node_root)
+
+    # ── 腿方言族审计 + 工作树污染分类（ops-rundata-leg-canonical）：先于陈旧守卫
+    # 打印（污染检测只看 canonical 工作树 vs HEAD，与 node 快照新鲜度无关）；
+    # 签名命中的 FAIL 计入最终 RESULT——主对账照常跑完，差异全景一次给全。
+    leg_dialect_audit(canon)
+    leg_overwrites = audit_leg_rewrites(canonical_root, canon, args.max_list)
 
     # ── 陈旧守卫（ops）：对账前先验基线新鲜度，fail-visible ──────────────
     gen = node_gen_epoch(node_root, node)
@@ -904,7 +1100,7 @@ def main() -> int:
     if len(forward_twin) > args.max_list:
         print(f"DECLARED [P27 forward-twin] ... and {len(forward_twin) - args.max_list} more")
 
-    fail = bool(only_canon or only_node or diff_content)
+    fail = bool(only_canon or only_node or diff_content or leg_overwrites)
     if fail:
         def emit(kind: str, lines: list[str]) -> None:
             for line in lines[:args.max_list]:
@@ -916,12 +1112,18 @@ def main() -> int:
         emit("content", [
             f"{rel}  canonical {cb} bytes / node {nb} bytes / first diff at offset {off}"
             for rel, cb, nb, off in diff_content])
-        print(f"RESULT: FAIL — {len(only_canon) + len(only_node) + len(diff_content)} "
+        print(f"RESULT: FAIL — "
+              f"{len(only_canon) + len(only_node) + len(diff_content) + len(leg_overwrites)} "
               f"path(s) differ (content:{len(diff_content)}, "
               f"only-canonical:{len(only_canon)}, only-node:{len(only_node)}, "
+              f"leg-dialect overwrite:{len(leg_overwrites)}, "
               f"forge-gated declared:{len(gated)}, "
               f"P27 forward-twin declared:{len(forward_twin)}, "
               f"normalized:{len(normalized)} accepted)")
+        if leg_overwrites:
+            print("  remedy: 腿方言覆盖签名 = 交叉腿 runData 污染未 restore——按约定"
+                  "（单数带=neo 腿产物）git restore 非本卡生成物后重跑"
+                  "（known_bugs.rundata_leg_dialect_rewrite）")
         return 1
 
     print(f"RESULT: OK — {len(common) - len(normalized)} files byte-identical + "
