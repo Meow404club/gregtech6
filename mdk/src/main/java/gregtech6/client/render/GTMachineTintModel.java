@@ -199,6 +199,13 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (Block tBlock : GTMachines.bridgePaintableBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GT6Lasers.paintableBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GT6MagicAbsorbers.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		// issue #18 (task r4-18-converter-tex-facing) — the converter family joins the
+		// baked-tint domain: the nine electric transformer rows (the Electric_T[0..8]
+		// casing ladder) and the ten dynamo rows (electric [0..5] / flux [1..5]) — the
+		// tintindex-0 gray colored body is the seat, the overlay decals untinted
+		for (Block tBlock : gregtech6.registry.GT6ElectricTransformers.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		for (Block tBlock : gregtech6.registry.GT6ElectricDynamos.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		for (Block tBlock : gregtech6.registry.GT6FluxDynamos.paintableBlockArray()) wrapStates(tBlock, aEvent);
 		// task issue8-residual — the #8 stragglers: the 25 tank valve controllers (the row
 		// material rides the controller gate through GTTankValveBlock) and the 8 crucible
 		// walls (the dedicated GTCrucibleWallBlock part carriers)
@@ -259,6 +266,11 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (Block tBlock : GTMachines.bridgePaintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		for (Block tBlock : gregtech6.registry.GT6Lasers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		for (Block tBlock : gregtech6.registry.GT6MagicAbsorbers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		// issue #18 (task r4-18-converter-tex-facing) — the converter family's 19
+		// BlockItems (the nine transformer + ten dynamo rows) join the same lambda
+		for (Block tBlock : gregtech6.registry.GT6ElectricTransformers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		for (Block tBlock : gregtech6.registry.GT6ElectricDynamos.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		for (Block tBlock : gregtech6.registry.GT6FluxDynamos.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tPaintItems.toArray(Item[]::new));
 	}
 

@@ -113,6 +113,8 @@ public final class GTMachinePaintTint {
 		if (tMaterial != null) return tMaterial;
 		tMaterial = gregtech6.block.energy.GT6DynamoBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
+		tMaterial = gregtech6.block.energy.GT6ElectricTransformerBlock.materialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
 		tMaterial = gregtech6.block.energy.GT6MagicAbsorberBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
 		return gregtech6.tileentity.bees.GT6BumbliaryBlock.materialOf(aBlock);

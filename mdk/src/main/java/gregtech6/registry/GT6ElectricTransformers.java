@@ -140,10 +140,15 @@ public final class GT6ElectricTransformers {
 	/** The :881 row item (the ITEMS_BY_PATH row-0 entry). */
 	public static final RegistryObject<Item> ELECTRIC_TRANSFORMER_ITEM = ITEMS_BY_PATH.get("electric_transformer");
 
-	/** The row block: hardness/resistance 4.0/4.0 (the NBT_HARDNESS/RESISTANCE columns), metal sounds, the family BET supplier. */
+	/**
+	 * The row block: hardness/resistance 4.0/4.0 (the NBT_HARDNESS/RESISTANCE columns),
+	 * metal sounds, the family BET supplier — and the row's Electric_T[i] casing material
+	 * (issue #18: the NBT_MATERIAL tint column, CASING_LADDER.get(i)).
+	 */
 	private static GT6ElectricTransformerBlock transformer(int aTier) {
 		return new GT6ElectricTransformerBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
-				.strength(4.0F, 4.0F).sound(SoundType.METAL), () -> ELECTRIC_TRANSFORMER_BE.get(), aTier);
+				.strength(4.0F, 4.0F).sound(SoundType.METAL), () -> ELECTRIC_TRANSFORMER_BE.get(), aTier,
+				CASING_LADDER.get(aTier));
 	}
 
 	/**
@@ -155,6 +160,14 @@ public final class GT6ElectricTransformers {
 			BLOCK_ENTITY_TYPES.register("electric_transformer", () -> BlockEntityType.Builder.of(
 					GT6ElectricTransformerBlockEntity::new,
 					ROWS.stream().map(aRow -> BLOCKS_BY_PATH.get(aRow.path()).get()).toArray(Block[]::new)).build(null));
+
+	/**
+	 * The tint-walk array (issue #18 — the GT6MagicAbsorbers.paintableBlockArray form):
+	 * all nine row blocks, every row carries its NBT_MATERIAL casing column.
+	 */
+	public static net.minecraft.world.level.block.Block[] paintableBlockArray() {
+		return ROWS.stream().map(aRow -> BLOCKS_BY_PATH.get(aRow.path()).get()).toArray(net.minecraft.world.level.block.Block[]::new);
+	}
 
 	/** The row item of a ladder tier (the upstream getItem(10040+tier) face — the large-BatteryBox 'M' column and the recipe hosts). */
 	public static Item itemOfTier(int aTier) {

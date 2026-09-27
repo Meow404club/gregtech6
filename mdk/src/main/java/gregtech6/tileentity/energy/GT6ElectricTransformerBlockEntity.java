@@ -187,12 +187,29 @@ public class GT6ElectricTransformerBlockEntity extends TileEntityBase03TicksAndS
 		if (!aIsServerSide) return; // the Base10 :110 client branch is the sound pool
 		syncFacingFromState();
 		if (!mStopped) doConversion();
+		syncActiveToState();
 	}
 
 	/** The /setblock RCON path: the state is the authority (the dynamo syncFacingFromState form). */
 	void syncFacingFromState() {
 		if (getBlockState().hasProperty(GT6ElectricTransformerBlock.FACING)) {
 			mFacing = (byte) getBlockState().getValue(GT6ElectricTransformerBlock.FACING).get3DDataValue();
+		}
+	}
+
+	/**
+	 * The activity visual write (issue #18 — the upstream getTexture2
+	 * sOverlays[mActivity.mState] layer, the TileEntityBasicMachine.applyVisualState
+	 * form): the {@code mActive} flag lands on the blockstate's ACTIVE property, the
+	 * overlay_active model layer reads it. Same-block state writes keep the BE; the
+	 * flip-only guard keeps this off the per-tick hot path. The offline STONE-state
+	 * fixtures carry no ACTIVE property (the hasProperty guard).
+	 */
+	void syncActiveToState() {
+		BlockState tState = getBlockState();
+		if (tState.hasProperty(GT6ElectricTransformerBlock.ACTIVE)
+				&& tState.getValue(GT6ElectricTransformerBlock.ACTIVE) != mActive && hasLevel()) {
+			getLevel().setBlock(getBlockPos(), tState.setValue(GT6ElectricTransformerBlock.ACTIVE, mActive), 3);
 		}
 	}
 

@@ -80,10 +80,21 @@ public final class GT6FluxDynamos {
 	public static final RegistryObject<Block> FLUX_DYNAMO_T5 = BLOCKS.register("flux_dynamo_t5",
 			() -> dynamo(4));
 
-	/** The row block: hardness/resistance 4.0/4.0 (NBT_HARDNESS column), metal sounds, the family BET supplier. */
+	/**
+	 * The row block: hardness/resistance 4.0/4.0 (NBT_HARDNESS column), metal sounds, the
+	 * family BET supplier — and the row's FLUX_T[i+1] material (issue #18: the
+	 * NBT_MATERIAL tint column, FLUX_T_LADDER.get(i); the tier param is the 0-based T1..T5).
+	 */
 	private static GT6DynamoBlock dynamo(int aTier) {
 		return new GT6DynamoBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
-				.strength(4.0F, 4.0F).sound(SoundType.METAL), aTier, () -> FLUX_DYNAMO_BE.get());
+				.strength(4.0F, 4.0F).sound(SoundType.METAL), aTier, () -> FLUX_DYNAMO_BE.get(),
+				FLUX_T_LADDER.get(aTier));
+	}
+
+	/** The tint-walk array (issue #18 — the GT6MagicAbsorbers.paintableBlockArray form): the five row blocks, all material-carriers. */
+	public static net.minecraft.world.level.block.Block[] paintableBlockArray() {
+		return new net.minecraft.world.level.block.Block[] {FLUX_DYNAMO.get(), FLUX_DYNAMO_T2.get(),
+				FLUX_DYNAMO_T3.get(), FLUX_DYNAMO_T4.get(), FLUX_DYNAMO_T5.get()};
 	}
 
 	/** The tier items — plain BlockItems, stack 16 (the upstream stack column; the name face is W2). */
