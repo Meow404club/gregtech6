@@ -1,4 +1,5 @@
 ---
+# 运行模型可改：删掉此行=跟随会话默认；也可换成任意可用模型 id
 model: "account:bigmodel-individual-coding-plan/GLM-5.3-Flash"
 name: "gt6-review-merge"
 description: "GT6 复兴计划审查合并官：审查 work/* 分支（GPG 核验、架构红线、语义正确性、编译），解决与 main 的冲突，裁决合入或打回。main 的唯一写入口。派发时机：coder 返回 commit hash 后。"
