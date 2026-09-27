@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:stick_mauftrium"
+    },
+    "Y": {
+      "item": "gt6:plate_mauftrium"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "XYX",
+    "YwY",
+    "XYX"
+  ],
+  "result": {
+    "item": "gt6:gear_gt_mauftrium"
+  },
+  "show_notification": true
+}

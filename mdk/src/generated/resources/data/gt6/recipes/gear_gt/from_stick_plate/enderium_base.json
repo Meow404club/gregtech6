@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:stick_enderium_base"
+    },
+    "Y": {
+      "item": "gt6:plate_enderium_base"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "XYX",
+    "YwY",
+    "XYX"
+  ],
+  "result": {
+    "item": "gt6:gear_gt_enderium_base"
+  },
+  "show_notification": true
+}

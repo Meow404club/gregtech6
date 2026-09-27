@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:dust_tiny_onyx_red"
+    },
+    {
+      "item": "gt6:chemtube_empty"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:chemtube_onyx_red"
+  }
+}

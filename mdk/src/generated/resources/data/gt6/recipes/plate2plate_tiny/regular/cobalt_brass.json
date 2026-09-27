@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_cobalt_brass"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "s ",
+    " P"
+  ],
+  "result": {
+    "count": 8,
+    "item": "gt6:plate_tiny_cobalt_brass"
+  },
+  "show_notification": true
+}

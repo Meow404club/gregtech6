@@ -1,0 +1,59 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:gem_flawed_dioptase"
+    },
+    {
+      "item": "gt6:gem_flawed_dioptase"
+    },
+    [
+      {
+        "item": "gt6:tool_head_raw_pickaxe_iron"
+      },
+      {
+        "item": "gt6:tool_head_raw_pickaxe_enori"
+      },
+      {
+        "item": "gt6:tool_head_raw_pickaxe_steel"
+      },
+      {
+        "item": "gt6:tool_head_raw_pickaxe_pig_iron"
+      },
+      {
+        "item": "gt6:tool_head_raw_pickaxe_wrought_iron"
+      },
+      {
+        "item": "gt6:tool_head_raw_pickaxe_iron_compressed"
+      },
+      {
+        "item": "gt6:tool_head_raw_pickaxe_meteoric_iron"
+      },
+      {
+        "item": "gt6:tool_head_raw_pickaxe_meteoric_steel"
+      },
+      {
+        "item": "gt6:tool_head_raw_pickaxe_knightmetal"
+      },
+      {
+        "item": "gt6:tool_head_raw_pickaxe_meteorite"
+      },
+      {
+        "item": "gt6:tool_head_raw_pickaxe_cast_iron"
+      }
+    ],
+    {
+      "tag": "gt6:tools/file"
+    },
+    {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    {
+      "tag": "gt6:tools/saw"
+    }
+  ],
+  "result": {
+    "item": "gt6:tool_head_pickaxe_gem_dioptase"
+  }
+}

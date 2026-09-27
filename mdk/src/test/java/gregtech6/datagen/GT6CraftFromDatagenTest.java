@@ -35,6 +35,17 @@
  * intersection under that verbatim tail, and the stone companion carrier (the
  * block-path OP.stone face, keyed on the family STONE-variant block item) rides
  * the declared carrier deviation.
+ *
+ * <p>task p37-craftfrom-residual extension (the panel closeout — the 28 residual
+ * statements in five shaped bands + the shapeless panel): the :149 gear twin rides
+ * the SAME universe as the :148 rockGt row (the equality pin), :150 folds
+ * +SMITHABLE, the casingMachine/cableGt/plank faces pour ZERO (no
+ * MaterialPrefixItems — the fine-wire :169 seam), the small-parts/minecartWheels
+ * universes ride the multi-face item-truth intersection under the verbatim
+ * ANTIMATTER-only/COATED tails, the shapeless panel rides the per-material slot
+ * substitution law (the :480-510 .dat(m) face) with the fixed MT.Empty slots, the
+ * ANY-group multi-item slots and the tool-tag slots, and the :186 meltmin(293)
+ * face (CS.java:135 C+20).
  */
 package gregtech6.datagen;
 
@@ -502,5 +513,351 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
         assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.gearGt, material("Marble")), tRow.getAsJsonObject("result").get("item").getAsString(), "the result item");
         int tCount = tRow.getAsJsonObject("result").has("count") ? tRow.getAsJsonObject("result").get("count").getAsInt() : 1;
         assertEquals(1, tCount, "the result count (the vanilla count=1 key omission)");
+    }
+
+    // ------------------------------------------------------------------
+    // task p37-craftfrom-residual — the 28 residual statements (the panel
+    // closeout): five shaped bands + the shapeless panel
+    // ------------------------------------------------------------------
+
+    private static Set<String> gearMaterialsOf(String aFormKey) {
+        Set<String> rNames = new HashSet<>();
+        for (GT6CraftingRecipes.GearGtCraftFromMaterialRow tRow : GT6CraftingRecipes.gearGtCraftFromMaterialRows()) {
+            if (tRow.aForm().aKey().equals(aFormKey)) rNames.add(tRow.aMaterial().mNameInternal);
+        }
+        return rNames;
+    }
+
+    /** Row-count pin (the measured item truth): the :149 twin == the :148 rockGt universe, :150 the smith face, :151 zero (no plank items). */
+    @Test
+    public void theGearRowCountIsTheMeasuredItemTruth() {
+        Set<String> tRockGtMaterials = rockGtMaterials();
+        assertEquals(tRockGtMaterials, gearMaterialsOf("gear_gt/from_stick_stone"),
+                "the :149 twin universe == the :148 rockGt universe (same gearGt/stone family faces + the verbatim five-condition tail)");
+        assertEquals(206, gearMaterialsOf("gear_gt/from_stick_plate").size(), "the :150 smith face (gearGt ∩ stick ∩ plate + SMITHABLE)");
+        assertEquals(0, gearMaterialsOf("gear_gt_small/from_plank").size(),
+                "the :151 rows pour zero — no plank MaterialPrefixItems (the plank domain; rows unlock with that item family)");
+    }
+
+    /** Universe SET pin: :150 == the conditioned gearGt ∩ stick ∩ plate faces under +SMITHABLE. */
+    @Test
+    public void theGearPlateUniverseIsTheSmithFace() {
+        Set<String> tExpected = new HashSet<>(conditionedFace(OP.gearGt));
+        tExpected.retainAll(conditionedFace(OP.stick));
+        tExpected.retainAll(conditionedFace(OP.plate));
+        tExpected.removeIf(tName -> !material(tName).contains(gregapi.data.TD.Processing.SMITHABLE)); // SMITHABLE — the positive smith face
+        assertEquals(tExpected, gearMaterialsOf("gear_gt/from_stick_plate"), "the :150 universe == the three-face smith intersection");
+    }
+
+    /** Form pin: the three gear-face grids verbatim ({"XYX","YfY","XYX"} / {"XYX","YwY","XYX"} / {"X "," s"}), counts 1. */
+    @Test
+    public void theGearFormsCarryTheUpstreamGrids() {
+        assertEquals(3, GT6CraftingRecipes.gearGtCraftFromForms().size(), "the :149-151 three statements");
+        for (GT6CraftingRecipes.GearGtCraftFromForm tForm : GT6CraftingRecipes.gearGtCraftFromForms()) {
+            assertEquals(1, tForm.aCount(), "the output amount (all three rows count 1): " + tForm.aKey());
+            assertArrayEquals(switch (tForm.aKey()) {
+                case "gear_gt/from_stick_stone" -> new String[] {"XYX", "YfY", "XYX"};
+                case "gear_gt/from_stick_plate" -> new String[] {"XYX", "YwY", "XYX"};
+                default -> new String[] {"X ", " s"};
+            }, tForm.aRows(), "the grid verbatim: " + tForm.aKey());
+        }
+    }
+
+    /** Identity face: the :150 plated-gear row for Iron — 4x stick + 4x plate around the wrench. */
+    @Test
+    public void theIronPlatedGearRowCarriesTheUpstreamGrid() throws Exception {
+        JsonObject tRow = generated("gear_gt/from_stick_plate/iron");
+        assertArrayEquals(new String[] {"XYX", "YwY", "XYX"}, new String[] {
+                tRow.getAsJsonArray("pattern").get(0).getAsString(),
+                tRow.getAsJsonArray("pattern").get(1).getAsString(),
+                tRow.getAsJsonArray("pattern").get(2).getAsString()}, "the :150 grid verbatim");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.stick, material("Iron")), tRow.getAsJsonObject("key").get("X").getAsJsonObject().get("item").getAsString(),
+                "'X' = the stick item (the corners)");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.plate, material("Iron")), tRow.getAsJsonObject("key").get("Y").getAsJsonObject().get("item").getAsString(),
+                "'Y' = the plate item (the edges)");
+        assertTrue(tRow.getAsJsonObject("key").get("w").getAsJsonObject().get("tag").getAsString().endsWith("tools/wrench"),
+                "'w' = the wrench tool tag (upstream CR.java:358)");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.gearGt, material("Iron")), tRow.getAsJsonObject("result").get("item").getAsString(), "the result item");
+    }
+
+    private static Set<String> toolHeadMaterialsOf(String aFormKey) {
+        Set<String> rNames = new HashSet<>();
+        for (GT6CraftingRecipes.ToolHeadCraftFromMaterialRow tRow : GT6CraftingRecipes.toolHeadCraftFromMaterialRows()) {
+            if (tRow.aForm().aKey().equals(aFormKey)) rNames.add(tRow.aMaterial().mNameInternal);
+        }
+        return rNames;
+    }
+
+    /** Row-count + universe SET pins: the rotor/buzzSaw faces (the measured item truth + the live multi-face intersections). */
+    @Test
+    public void theToolHeadUniversesAreTheLiveMultiFaces() {
+        // the rotor: rotor ∩ plateCurved ∩ plate ∩ screw under And(ANTIMATTER.NOT, COATED.NOT, SMITHABLE)
+        Set<String> tRotor = new HashSet<>(conditionedFace(OP.rotor));
+        tRotor.retainAll(conditionedFace(OP.plateCurved));
+        tRotor.retainAll(conditionedFace(OP.plate));
+        tRotor.retainAll(conditionedFace(OP.screw));
+        tRotor.removeIf(tName -> !material(tName).contains(gregapi.data.TD.Processing.SMITHABLE)); // SMITHABLE
+        assertEquals(tRotor, toolHeadMaterialsOf("rotor"), "the :145 universe == the four-face smith intersection");
+        assertEquals(206, toolHeadMaterialsOf("rotor").size(), "the measured rotor face");
+        // the buzzsaw blades: plate and plateGem bodies
+        Set<String> tSawPlate = new HashSet<>(conditionedFace(OP.toolHeadBuzzSaw));
+        tSawPlate.retainAll(conditionedFace(OP.plate));
+        assertEquals(tSawPlate, toolHeadMaterialsOf("tool_head_buzz_saw/plate"), "the :146 universe == the buzzSaw ∩ plate faces");
+        Set<String> tSawGem = new HashSet<>(conditionedFace(OP.toolHeadBuzzSaw));
+        tSawGem.retainAll(conditionedFace(OP.plateGem));
+        assertEquals(tSawGem, toolHeadMaterialsOf("tool_head_buzz_saw/gem"), "the :147 universe == the buzzSaw ∩ plateGem faces");
+    }
+
+    /** Form pin: the :145-147 grids verbatim. */
+    @Test
+    public void theToolHeadFormsCarryTheUpstreamGrids() {
+        assertEquals(3, GT6CraftingRecipes.toolHeadCraftFromForms().size(), "the :145-147 three statements");
+        for (GT6CraftingRecipes.ToolHeadCraftFromForm tForm : GT6CraftingRecipes.toolHeadCraftFromForms()) {
+            assertEquals(1, tForm.aCount(), "the output amount: " + tForm.aKey());
+            assertArrayEquals(switch (tForm.aKey()) {
+                case "rotor" -> new String[] {"YhY", "TXf", "YdY"};
+                case "tool_head_buzz_saw/plate" -> new String[] {"wPh", "P P", "fPx"};
+                default -> new String[] {"wCh", "C C", "fCx"};
+            }, tForm.aRows(), "the grid verbatim: " + tForm.aKey());
+        }
+    }
+
+    /** Identity face: the :145 rotor row for Iron — curved-plate edges, screw+plate body, hammer/file/screwdriver tools. */
+    @Test
+    public void theIronRotorRowCarriesTheUpstreamGrid() throws Exception {
+        JsonObject tRow = generated("rotor/iron");
+        assertArrayEquals(new String[] {"YhY", "TXf", "YdY"}, new String[] {
+                tRow.getAsJsonArray("pattern").get(0).getAsString(),
+                tRow.getAsJsonArray("pattern").get(1).getAsString(),
+                tRow.getAsJsonArray("pattern").get(2).getAsString()}, "the :145 grid verbatim");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.plateCurved, material("Iron")), tRow.getAsJsonObject("key").get("Y").getAsJsonObject().get("item").getAsString(),
+                "'Y' = the curved plate (the edges)");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.screw, material("Iron")), tRow.getAsJsonObject("key").get("T").getAsJsonObject().get("item").getAsString(),
+                "'T' = the screw (the fixed letter)");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.plate, material("Iron")), tRow.getAsJsonObject("key").get("X").getAsJsonObject().get("item").getAsString(),
+                "'X' = the plate (the null-SpecialPrefix default :535)");
+        assertTrue(tRow.getAsJsonObject("key").get("h").getAsJsonObject().get("tag").getAsString().endsWith("tools/hard_hammer"),
+                "'h' = the HARD hammer tag (craftingToolHardHammer, the p25 ruling)");
+        assertTrue(tRow.getAsJsonObject("key").get("d").getAsJsonObject().get("tag").getAsString().endsWith("tools/screwdriver"),
+                "'d' = the screwdriver tag (upstream CR.java:342)");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.rotor, material("Iron")), tRow.getAsJsonObject("result").get("item").getAsString(), "the result item");
+    }
+
+    /** Row-count pin: the casingMachine forms pour ZERO today (no MaterialPrefixItems — the MTE-block domain, the fine-wire :169 seam). */
+    @Test
+    public void theCasingFormsPourZero() {
+        assertEquals(4, GT6CraftingRecipes.casingCraftFromForms().size(), "the :152-155 four statements");
+        assertEquals(0, GT6CraftingRecipes.casingCraftFromMaterialRows().size(),
+                "the :152-155 rows pour zero — no casingMachine MaterialPrefixItems (rows unlock with that item family)");
+        for (GT6CraftingRecipes.CasingCraftFromForm tForm : GT6CraftingRecipes.casingCraftFromForms()) {
+            assertArrayEquals(new String[] {"YXX", "XwX", "XXY"}, tForm.aRows(), "the :152-155 grid verbatim: " + tForm.aKey());
+        }
+    }
+
+    private static Set<String> smallPartMaterialsOf(String aFormKey) {
+        Set<String> rNames = new HashSet<>();
+        for (GT6CraftingRecipes.SmallPartCraftFromMaterialRow tRow : GT6CraftingRecipes.smallPartCraftFromMaterialRows()) {
+            if (tRow.aForm().aKey().equals(aFormKey)) rNames.add(tRow.aMaterial().mNameInternal);
+        }
+        return rNames;
+    }
+
+    /** Row-count pin (the measured item truth): the five small-parts faces. */
+    @Test
+    public void theSmallPartRowCountIsTheMeasuredItemTruth() {
+        assertEquals(730, smallPartMaterialsOf("stick2bolt").size(), "the :164 bolt face (bolt ∩ stick, minus Wood)");
+        assertEquals(731, smallPartMaterialsOf("bolt2screw").size(), "the :165 screw face (screw ∩ bolt)");
+        assertEquals(132, smallPartMaterialsOf("gem2ring").size(), "the :166 ring face (ring ∩ gem)");
+        assertEquals(339, smallPartMaterialsOf("chunk2round").size(), "the :167 round face (round ∩ chunkGt)");
+        assertEquals(558, smallPartMaterialsOf("plate2plate_tiny/regular").size(), "the :170 plateTiny face (plateTiny ∩ plate, minus Paper/Wood)");
+        assertFalse(smallPartMaterialsOf("stick2bolt").contains("Wood"), "the MT.Wood.NOT exclusion rides the bolt face");
+        assertFalse(smallPartMaterialsOf("plate2plate_tiny/regular").contains("Paper"), "the MT.Paper.NOT exclusion rides the plateTiny face");
+        assertFalse(smallPartMaterialsOf("plate2plate_tiny/regular").contains("Wood"), "the MT.Wood.NOT exclusion rides the plateTiny face");
+    }
+
+    /** Universe SET pin: every small-parts form == the conditioned output ∩ input faces minus the verbatim exclusions. */
+    @Test
+    public void theSmallPartUniversesAreTheLivePrefixFaces() {
+        for (GT6CraftingRecipes.SmallPartCraftFromForm tForm : GT6CraftingRecipes.smallPartCraftFromForms()) {
+            Set<String> tExpected = new HashSet<>(conditionedFace(tForm.aOutput()));
+            tExpected.retainAll(conditionedFace(tForm.aInput()));
+            if (tForm.aNoWood()) tExpected.remove("Wood"); // MT.Wood.NOT
+            if (tForm.aNoPaper()) tExpected.remove("Paper"); // MT.Paper.NOT
+            assertEquals(tExpected, smallPartMaterialsOf(tForm.aKey()),
+                    "the universe == the conditioned " + tForm.aOutput().mNameInternal + " ∩ " + tForm.aInput().mNameInternal + " faces: " + tForm.aKey());
+        }
+    }
+
+    /** Amount + grid pins: the :164-167/:170 amounts and frames verbatim. */
+    @Test
+    public void theSmallPartFormsCarryTheUpstreamGrids() {
+        assertEquals(5, GT6CraftingRecipes.smallPartCraftFromForms().size(), "the five statements");
+        for (GT6CraftingRecipes.SmallPartCraftFromForm tForm : GT6CraftingRecipes.smallPartCraftFromForms()) {
+            assertEquals(switch (tForm.aKey()) {
+                case "stick2bolt" -> 2; // :164
+                case "bolt2screw" -> 1; // :165
+                case "gem2ring" -> 1; // :166
+                case "chunk2round" -> 1; // :167
+                default -> 8; // :170
+            }, tForm.aCount(), "the output amount: " + tForm.aKey());
+            assertArrayEquals(switch (tForm.aKey()) {
+                case "stick2bolt" -> new String[] {"s ", " S"};
+                case "bolt2screw" -> new String[] {"fX", "X "};
+                case "gem2ring", "chunk2round" -> new String[] {"f ", " X"};
+                default -> new String[] {"s ", " P"};
+            }, tForm.aRows(), "the grid verbatim: " + tForm.aKey());
+        }
+    }
+
+    /** Identity face: the :164 bolt row for Iron — 'S' = the FIXED stick letter, saw top row, count 2. */
+    @Test
+    public void theIronBoltRowCarriesTheUpstreamGrid() throws Exception {
+        JsonObject tRow = generated("stick2bolt/iron");
+        assertEquals("s ", tRow.getAsJsonArray("pattern").get(0).getAsString(), "the :164 saw row");
+        assertEquals(" S", tRow.getAsJsonArray("pattern").get(1).getAsString(), "the :164 stick row ('S' = the fixed letter, :520-533)");
+        assertTrue(tRow.getAsJsonObject("key").get("S").getAsJsonObject().get("item").getAsString().equals("gt6:" + GTMaterialItems.itemIdOf(OP.stick, material("Iron"))),
+                "'S' = the stick item (the fixed letter)");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.bolt, material("Iron")), tRow.getAsJsonObject("result").get("item").getAsString(), "the result item");
+        assertEquals(2, tRow.getAsJsonObject("result").get("count").getAsInt(), "the :164 output amount");
+    }
+
+    /** Row-count pin: the minecartWheels face (the measured item truth, ANTIMATTER.NOT only — no COATED leg upstream). */
+    @Test
+    public void theMinecartWheelsRowCountIsTheMeasuredItemTruth() {
+        Set<String> tExpected = new HashSet<>();
+        Set<String> tWheels = new HashSet<>(), tRing = new HashSet<>(), tStick = new HashSet<>();
+        for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+            if (tPair.prefix() == OP.minecartWheels) tWheels.add(tPair.material().mNameInternal);
+            if (tPair.prefix() == OP.ring) tRing.add(tPair.material().mNameInternal);
+            if (tPair.prefix() == OP.stick) tStick.add(tPair.material().mNameInternal);
+        }
+        tExpected.addAll(tWheels);
+        tExpected.retainAll(tRing);
+        tExpected.retainAll(tStick);
+        tExpected.removeIf(tName -> material(tName).contains(gregapi.data.TD.Atomic.ANTIMATTER)); // ANTIMATTER.NOT — the ONLY leg
+        assertEquals(1, GT6CraftingRecipes.minecartWheelsCraftFromForms().size(), "the :179 single statement");
+        assertArrayEquals(new String[] {" h ", "XSX", " w "}, GT6CraftingRecipes.minecartWheelsCraftFromForms().get(0).aRows(), "the :179 grid verbatim");
+        assertEquals(209, GT6CraftingRecipes.minecartWheelsCraftFromMaterialRows().size(), "the measured wheels face (wheels ∩ ring ∩ stick)");
+        assertEquals(tExpected, materialsOfMinecart(), "the universe == the bare three-face intersection minus ANTIMATTER");
+    }
+
+    private static Set<String> materialsOfMinecart() {
+        Set<String> rNames = new HashSet<>();
+        for (GT6CraftingRecipes.MinecartWheelsCraftFromMaterialRow tRow : GT6CraftingRecipes.minecartWheelsCraftFromMaterialRows()) {
+            rNames.add(tRow.aMaterial().mNameInternal);
+        }
+        return rNames;
+    }
+
+    /** Row-count pin: the shapeless panel (the measured item truth; the cable faces pour ZERO — the wire/cable block domain). */
+    @Test
+    public void theShapelessRowCountIsTheMeasuredItemTruth() {
+        assertEquals(12, GT6CraftingRecipes.shapelessCraftFromForms().size(), "the :181-192 twelve statements");
+        assertEquals(539, shapelessMaterialsOf("arrows_wooden").size(), "the :181 wooden arrow face");
+        assertEquals(539, shapelessMaterialsOf("arrows_plastic").size(), "the :182 light arrow face");
+        assertEquals(0, shapelessMaterialsOf("cable_gt01/from_wire_gt01").size(),
+                "the :183 rows pour zero — no cableGt01/wireGt01 MaterialPrefixItems (the block domain; rows unlock with that item family)");
+        assertEquals(0, shapelessMaterialsOf("cable_gt02/from_wire_gt02").size(),
+                "the :184 rows pour zero — the same seam");
+        assertEquals(1096, shapelessMaterialsOf("chemtube/from_dust_tiny").size(), "the :185 glass-tube face (unconditional)");
+        assertEquals(1068, shapelessMaterialsOf("dust_tiny/from_chemtube").size(), "the :186 melt face (meltmin 293)");
+        assertEquals(309, shapelessMaterialsOf("tool_head_raw_universal_spade/from_shovel").size(), "the :187 face");
+        assertEquals(309, shapelessMaterialsOf("tool_head_raw_universal_spade/from_spade").size(), "the :188 face");
+        assertEquals(309, shapelessMaterialsOf("tool_head_construction_pickaxe/from_raw_pickaxe").size(), "the :189 face");
+        assertEquals(95, shapelessMaterialsOf("tool_head_pickaxe_gem/from_raw_any_iron").size(), "the :190 face");
+        assertEquals(95, shapelessMaterialsOf("tool_head_pickaxe_gem/from_any_iron").size(), "the :191 face");
+        assertEquals(0, shapelessMaterialsOf("tool_head_pickaxe_gem/retip").size(), "the :192 face (the fixed-slot seam)");
+    }
+
+    private static Set<String> shapelessMaterialsOf(String aFormKey) {
+        Set<String> rNames = new HashSet<>();
+        for (GT6CraftingRecipes.ShapelessCraftFromMaterialRow tRow : GT6CraftingRecipes.shapelessCraftFromMaterialRows()) {
+            if (tRow.aForm().aKey().equals(aFormKey)) rNames.add(tRow.aMaterial().mNameInternal);
+        }
+        return rNames;
+    }
+
+    /** Universe SET pins: the :186 meltmin face and the :190 gem-flawed face against the live intersections. */
+    @Test
+    public void theShapelessUniversesAreTheLivePrefixFaces() {
+        // :186 — chemtube ∩ dustTiny under meltmin(DEF_ENV_TEMP = 293): NO COATED/ANTIMATTER legs upstream,
+        // so the expectation rides the BARE registrationOrder faces (the conditionedFace helper would strip
+        // the ANTIMATTER materials the upstream condition keeps)
+        Set<String> tMelt = new HashSet<>();
+        Set<String> tChemtube = new HashSet<>(), tDustTiny = new HashSet<>();
+        for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+            if (tPair.prefix() == OP.chemtube) tChemtube.add(tPair.material().mNameInternal);
+            if (tPair.prefix() == OP.dustTiny) tDustTiny.add(tPair.material().mNameInternal);
+        }
+        tMelt.addAll(tChemtube);
+        tMelt.retainAll(tDustTiny);
+        tMelt.removeIf(tName -> material(tName).mMeltingPoint < 293); // meltmin(DEF_ENV_TEMP), CS.java:135
+        assertEquals(tMelt, shapelessMaterialsOf("dust_tiny/from_chemtube"), "the :186 universe == the bare meltmin face");
+        // :187 — rawUniversalSpade ∩ toolHeadShovel under And(ANTIMATTER.NOT, COATED.NOT)
+        Set<String> tSpade = new HashSet<>(conditionedFace(OP.toolHeadRawUniversalSpade));
+        tSpade.retainAll(conditionedFace(OP.toolHeadShovel));
+        assertEquals(tSpade, shapelessMaterialsOf("tool_head_raw_universal_spade/from_shovel"), "the :187 universe == the spade-shovel faces");
+        // :192 — the retip face pours ZERO: the fixed MT.Empty head slot does not exist
+        // (toolHeadPickaxeGem generates for gemFlawed-tool materials only — MT.Empty carries none,
+        // so the upstream :192 row is the never-null dat() seam itself; the form stays, the rows
+        // unlock with that item, the fine-wire :169 law)
+        assertFalse(GT6CraftingRecipes.itemPairExists(OP.toolHeadPickaxeGem, gregapi.data.MT.Empty), "the :192 fixed MT.Empty retip head item does not exist (the seam)");
+        assertEquals(0, shapelessMaterialsOf("tool_head_pickaxe_gem/retip").size(), "the :192 rows pour zero — the fixed-slot seam");
+        assertTrue(GT6CraftingRecipes.itemPairExists(OP.arrowGtWood, gregapi.data.MT.Empty), "the :181 fixed MT.Empty shaft item exists");
+    }
+
+    /** Amount + condition pins: the :181-192 amounts (all 1) and the condition kinds upstream verbatim. */
+    @Test
+    public void theShapelessFormsCarryTheUpstreamConditions() {
+        for (GT6CraftingRecipes.ShapelessCraftFromForm tForm : GT6CraftingRecipes.shapelessCraftFromForms()) {
+            assertEquals(1, tForm.aCount(), "the output amount (every shapeless statement outputs 1): " + tForm.aKey());
+            assertEquals(switch (tForm.aKey()) {
+                case "tool_head_raw_universal_spade/from_shovel", "tool_head_raw_universal_spade/from_spade",
+                        "tool_head_construction_pickaxe/from_raw_pickaxe" -> GT6CraftingRecipes.COND_COATED_ANTIMATTER; // :187-189
+                case "chemtube/from_dust_tiny" -> GT6CraftingRecipes.COND_TRUE; // :185
+                case "dust_tiny/from_chemtube" -> GT6CraftingRecipes.COND_MELT_MIN_ENV; // :186
+                default -> GT6CraftingRecipes.COND_ANTIMATTER; // :181-184/:190-192
+            }, tForm.aCondition(), "the condition kind: " + tForm.aKey());
+        }
+    }
+
+    /** Identity face: the :181 wooden-arrow row for Iron — head + the MT.Empty shaft, the SHAPELESS type. */
+    @Test
+    public void theIronWoodenArrowRowCarriesTheUpstreamShape() throws Exception {
+        JsonObject tRow = generated("arrows_wooden/iron");
+        assertEquals("minecraft:crafting_shapeless", tRow.get("type").getAsString(), "the shapeless type");
+        assertEquals(2, tRow.getAsJsonArray("ingredients").size(), "the :181 two slots (head + shaft)");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.toolHeadArrow, material("Iron")),
+                tRow.getAsJsonArray("ingredients").get(0).getAsJsonObject().get("item").getAsString(),
+                "the bare toolHeadArrow slot (the :501-502 .dat(m) substitution)");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.arrowGtWood, gregapi.data.MT.Empty),
+                tRow.getAsJsonArray("ingredients").get(1).getAsJsonObject().get("item").getAsString(),
+                "the fixed arrowGtWood.dat(MT.Empty) shaft slot");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.arrowGtWood, material("Iron")), tRow.getAsJsonObject("result").get("item").getAsString(), "the result item");
+    }
+
+    /** Identity face: the :190 gem-tipped row — 2x flawed gem + the any-iron raw head (the multi-item group ingredient) + 3 tool tags. */
+    @Test
+    public void theAmethystPickaxeGemRowCarriesTheUpstreamShape() throws Exception {
+        String tFormKey = "tool_head_pickaxe_gem/from_raw_any_iron";
+        assertTrue(shapelessMaterialsOf(tFormKey).contains("Amethyst"), "the representative material rides the :190 face");
+        JsonObject tRow = generated(tFormKey + "/amethyst");
+        assertEquals("minecraft:crafting_shapeless", tRow.get("type").getAsString(), "the shapeless type");
+        assertEquals(6, tRow.getAsJsonArray("ingredients").size(), "the :190 six slots (2x gem + 1x any-iron head + 3x tools)");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.gemFlawed, material("Amethyst")),
+                tRow.getAsJsonArray("ingredients").get(0).getAsJsonObject().get("item").getAsString(), "the first flawed-gem slot");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.gemFlawed, material("Amethyst")),
+                tRow.getAsJsonArray("ingredients").get(1).getAsJsonObject().get("item").getAsString(), "the second flawed-gem slot (the doubled :190 slot)");
+        // the vanilla serialization of a multi-item Ingredient is a JSON ARRAY of {"item":...} entries
+        assertTrue(tRow.getAsJsonArray("ingredients").get(2).isJsonArray(), "the any-iron head rides the multi-item group ingredient (the vanilla ingredient array form)");
+        boolean tHeadFound = false;
+        for (var tItem : tRow.getAsJsonArray("ingredients").get(2).getAsJsonArray()) {
+            if (tItem.getAsJsonObject().get("item").getAsString().equals("gt6:" + GTMaterialItems.itemIdOf(OP.toolHeadRawPickaxe, material("Iron")))) tHeadFound = true;
+        }
+        assertTrue(tHeadFound, "the group covers the iron raw pickaxe head (the ANY.Iron members)");
+        assertTrue(tRow.getAsJsonArray("ingredients").get(3).getAsJsonObject().get("tag").getAsString().endsWith("tools/file"), "the file slot");
+        assertTrue(tRow.getAsJsonArray("ingredients").get(4).getAsJsonObject().get("tag").getAsString().endsWith("tools/hard_hammer"), "the hammer slot");
+        assertTrue(tRow.getAsJsonArray("ingredients").get(5).getAsJsonObject().get("tag").getAsString().endsWith("tools/saw"), "the saw slot");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.toolHeadPickaxeGem, material("Amethyst")), tRow.getAsJsonObject("result").get("item").getAsString(), "the result item");
     }
 }

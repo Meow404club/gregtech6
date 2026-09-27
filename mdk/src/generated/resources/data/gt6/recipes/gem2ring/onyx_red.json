@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:gem_onyx_red"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "f ",
+    " X"
+  ],
+  "result": {
+    "item": "gt6:ring_onyx_red"
+  },
+  "show_notification": true
+}

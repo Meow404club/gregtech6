@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "gt6:stick_titanium_gold"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "s ",
+    " S"
+  ],
+  "result": {
+    "count": 2,
+    "item": "gt6:bolt_titanium_gold"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "gt6:stick_cd_in_ag_alloy"
+    },
+    "X": {
+      "item": "gt6:ring_cd_in_ag_alloy"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    " h ",
+    "XSX",
+    " w "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:minecart_wheels_cd_in_ag_alloy"
+  }
+}

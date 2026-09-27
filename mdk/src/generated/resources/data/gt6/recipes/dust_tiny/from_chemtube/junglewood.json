@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:chemtube_junglewood"
+    }
+  ],
+  "result": {
+    "item": "gt6:dust_tiny_junglewood"
+  }
+}

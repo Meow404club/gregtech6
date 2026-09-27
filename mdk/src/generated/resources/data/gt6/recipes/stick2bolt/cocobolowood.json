@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "gt6:stick_cocobolowood"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "s ",
+    " S"
+  ],
+  "result": {
+    "count": 2,
+    "item": "gt6:bolt_cocobolowood"
+  },
+  "show_notification": true
+}

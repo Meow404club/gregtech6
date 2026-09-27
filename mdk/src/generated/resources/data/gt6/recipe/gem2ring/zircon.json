@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:gem_zircon"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "f ",
+    " X"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:ring_zircon"
+  }
+}

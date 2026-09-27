@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:dust_tiny_hslaspring_steel"
+    },
+    {
+      "item": "gt6:chemtube_empty"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:chemtube_hslaspring_steel"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:tool_head_shovel_red_aventurine"
+    },
+    {
+      "tag": "gt6:tools/file"
+    },
+    {
+      "tag": "gt6:tools/saw"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_raw_universal_spade_red_aventurine"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:gem_quartz_black"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "f ",
+    " X"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:ring_quartz_black"
+  }
+}

@@ -398,6 +398,26 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (RockGtCraftFromRow tRow : rockGtCraftFromDatagenRows()) {
 			rockGtCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
 		}
+		// task p37-craftfrom-residual — the 28 residual CraftFrom statements (the panel closeout:
+		// the gear/rotor-buzzSaw/casing/small-parts/minecartWheels shaped bands + the shapeless panel)
+		for (GearGtCraftFromRow tRow : gearGtCraftFromDatagenRows()) {
+			gearGtCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
+		}
+		for (ToolHeadCraftFromRow tRow : toolHeadCraftFromDatagenRows()) {
+			toolHeadCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
+		}
+		for (CasingCraftFromRow tRow : casingCraftFromDatagenRows()) {
+			casingCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
+		}
+		for (SmallPartCraftFromRow tRow : smallPartCraftFromDatagenRows()) {
+			smallPartCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
+		}
+		for (MinecartWheelsCraftFromRow tRow : minecartWheelsCraftFromDatagenRows()) {
+			minecartWheelsCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
+		}
+		for (ShapelessCraftFromRow tRow : shapelessCraftFromDatagenRows()) {
+			shapelessCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
+		}
 		// task debt-stairs-wall-vanilla-recipes — the upstream BlockStones vanilla-degradation rows
 		for (PartFamilyRecipeRow tRow : stairsFromRocksBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
@@ -599,6 +619,26 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task p37-craftfrom-rockgt — the rockGt CraftFrom batch (Loader_OreProcessing.java:148)
 		for (RockGtCraftFromRow tRow : rockGtCraftFromDatagenRows()) {
 			rockGtCraftFromBuilder(tRow).save(aOutput, tRow.aId());
+		}
+		// task p37-craftfrom-residual — the 28 residual CraftFrom statements (the panel closeout:
+		// the gear/rotor-buzzSaw/casing/small-parts/minecartWheels shaped bands + the shapeless panel)
+		for (GearGtCraftFromRow tRow : gearGtCraftFromDatagenRows()) {
+			gearGtCraftFromBuilder(tRow).save(aOutput, tRow.aId());
+		}
+		for (ToolHeadCraftFromRow tRow : toolHeadCraftFromDatagenRows()) {
+			toolHeadCraftFromBuilder(tRow).save(aOutput, tRow.aId());
+		}
+		for (CasingCraftFromRow tRow : casingCraftFromDatagenRows()) {
+			casingCraftFromBuilder(tRow).save(aOutput, tRow.aId());
+		}
+		for (SmallPartCraftFromRow tRow : smallPartCraftFromDatagenRows()) {
+			smallPartCraftFromBuilder(tRow).save(aOutput, tRow.aId());
+		}
+		for (MinecartWheelsCraftFromRow tRow : minecartWheelsCraftFromDatagenRows()) {
+			minecartWheelsCraftFromBuilder(tRow).save(aOutput, tRow.aId());
+		}
+		for (ShapelessCraftFromRow tRow : shapelessCraftFromDatagenRows()) {
+			shapelessCraftFromBuilder(tRow).save(aOutput, tRow.aId());
 		}
 		// task debt-stairs-wall-vanilla-recipes — the upstream BlockStones vanilla-degradation rows
 		for (PartFamilyRecipeRow tRow : stairsFromRocksBuilders()) {
@@ -4471,6 +4511,597 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('Y', aRow.aCompanion())
 				.define('f', GT6ItemTags.TOOLS_FILE)
 				.unlockedBy("has_input", has(aRow.aInput()));
+	}
+
+	// -----------------------------------------------------------------------
+	// The residual CraftFrom bands (task p37-craftfrom-residual — the 47-
+	// statement panel closeout: the 28 statements the plategem/stick/fine-wire/
+	// rockGt batches did not land). Five shaped bands + one shapeless band,
+	// each an independent band per the census law, all riding the digLadder
+	// band translation (the registrationOrder walk replaces the :512-556
+	// listener trigger, the condition rows fold to material filters, the
+	// ConfigsGT.RECIPES per-material config gate drops, the item-truth
+	// intersection closes the never-null dat() seam on the live items —
+	// extended to EVERY material-dependent input face of the row). Shared
+	// leaf helpers below (itemTruth/gridHas/...) sit beside craftFromRowId —
+	// walk utilities, not band infrastructure.
+	//
+	// Tool letters = the upstream CR.java:342-359 oredict keys: 'd'
+	// screwdriver, 'f' file, 'h' the HARD hammer (craftingToolHardHammer,
+	// the p25-tool-hammer-wrench ruling), 's' saw, 'w' wrench, 'x' wire
+	// cutter. The fixed uppercase vocabulary rides the :520-533 key table:
+	// S = stick, P = plate, C = plateGem, T = screw (X/Y = the special
+	// prefixes, null defaulting to plate :535-537).
+	//
+	// THE ZERO-ROW FORMS POUR ZERO HONESTLY (the fine-wire :169 precedent):
+	// casingMachine+Double/Quadruple/Dense, cableGt01/02 and plank carry no
+	// MaterialPrefixItems (upstream Loader_Items.java:57-171 never built a
+	// PrefixItem for them — the MTE-block/plank domains), so their forms
+	// stay in the tables and the rows unlock with those item families.
+	// NULL-CATEGORY KEY LAW: snake(output) + a "/from_<distinguisher>" leaf
+	// where the output face alone is ambiguous (the P36 leaf law; the
+	// rockGt card's <in>2<out> glue stays untouched on its own form).
+	// -----------------------------------------------------------------------
+
+	/** The item-truth intersection of the given prefix faces — every listed face must carry the material's item (the registrationOrder walk). */
+	static java.util.Set<OreDictMaterial> itemTruth(java.util.List<gregapi.oredict.OreDictPrefix> aFaces) {
+		java.util.Set<OreDictMaterial> rFaces = null;
+		for (gregapi.oredict.OreDictPrefix tFace : aFaces) {
+			java.util.Set<OreDictMaterial> tFaceSet = new java.util.HashSet<>();
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				if (tPair.prefix() == tFace) tFaceSet.add(tPair.material());
+			}
+			if (rFaces == null) rFaces = tFaceSet; else rFaces.retainAll(tFaceSet);
+		}
+		return rFaces == null ? new java.util.HashSet<>() : rFaces;
+	}
+
+	/** Whether the item flood carries the exact prefix x material pair (the fixed-face guard, e.g. the MT.Empty arrow shaft). */
+	static boolean itemPairExists(gregapi.oredict.OreDictPrefix aPrefix, OreDictMaterial aMaterial) {
+		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+			if (tPair.prefix() == aPrefix && tPair.material() == aMaterial) return true;
+		}
+		return false;
+	}
+
+	/** Whether the item flood carries the prefix for ANY member of the ANY alias group (membership = group.mToThis, the MT.java:4162 face). */
+	static boolean anyGroupFaceExists(gregapi.oredict.OreDictPrefix aPrefix, OreDictMaterial aGroup) {
+		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+			if (tPair.prefix() == aPrefix && aGroup.mToThis.contains(tPair.material())) return true;
+		}
+		return false;
+	}
+
+	/** Whether the grid uses the letter (the shape-driven define law, the stick band's 'f' arm generalized). */
+	private static boolean gridHas(String[] aRows, char aLetter) {
+		for (String tRow : aRows) if (tRow.indexOf(aLetter) >= 0) return true;
+		return false;
+	}
+
+	/** The tool letters of a grid to their tags — CR.java:342-359 ('h' = the HARD hammer, the p25 ruling). */
+	private static void defineTools(ShapedRecipeBuilder aBuilder, String[] aRows) {
+		for (String tRow : aRows) for (int i = 0; i < tRow.length(); i++) {
+			char tChar = tRow.charAt(i);
+			TagKey<Item> tTag = switch (tChar) {
+				case 'd' -> GT6ItemTags.TOOLS_SCREWDRIVER;
+				case 'f' -> GT6ItemTags.TOOLS_FILE;
+				case 'h' -> GT6ItemTags.TOOLS_HARD_HAMMER;
+				case 's' -> GT6ItemTags.TOOLS_SAW;
+				case 'w' -> GT6ItemTags.TOOLS_WRENCH;
+				case 'x' -> GT6ItemTags.TOOLS_WIRE_CUTTER;
+				default -> null;
+			};
+			if (tTag != null) aBuilder.define(tChar, tTag);
+		}
+	}
+
+	/** Puts the resolved defines onto the builder (tool tags and items share the map). */
+	@SuppressWarnings("unchecked")
+	private void applyDefines(ShapedRecipeBuilder aBuilder, java.util.Map<Character, Object> aDefines) {
+		for (java.util.Map.Entry<Character, Object> tEntry : aDefines.entrySet()) {
+			if (tEntry.getValue() instanceof TagKey) aBuilder.define(tEntry.getKey(), (TagKey<Item>)tEntry.getValue());
+			else aBuilder.define(tEntry.getKey(), (Item)tEntry.getValue());
+		}
+	}
+
+	/** The fixed-vocabulary defines of a grid for a material: X = the primary input (null input = the :535 plate default, the rotor's X), S/P/C/T = the :520-533 fixed letters; tool letters ride defineTools separately. */
+	private java.util.Map<Character, Object> craftFromDefines(OreDictMaterial aMaterial, gregapi.oredict.OreDictPrefix aInput, String[] aRows) {
+		java.util.Map<Character, Object> rDefines = new java.util.LinkedHashMap<>();
+		gregapi.oredict.OreDictPrefix tXFace = aInput != null ? aInput : gregapi.data.OP.plate; // the null-SpecialPrefix plate default :535
+		for (String tRow : aRows) for (int i = 0; i < tRow.length(); i++) {
+			char tChar = tRow.charAt(i);
+			if (rDefines.containsKey(tChar)) continue;
+			switch (tChar) {
+				case 'X' -> rDefines.put(tChar, itemOrNull(tXFace, aMaterial));
+				case 'S' -> rDefines.put(tChar, itemOrNull(gregapi.data.OP.stick, aMaterial));
+				case 'P' -> rDefines.put(tChar, itemOrNull(gregapi.data.OP.plate, aMaterial));
+				case 'C' -> rDefines.put(tChar, itemOrNull(gregapi.data.OP.plateGem, aMaterial));
+				case 'T' -> rDefines.put(tChar, itemOrNull(gregapi.data.OP.screw, aMaterial));
+				default -> {}
+			}
+		}
+		return rDefines;
+	}
+
+	// -- Residual band 1: the gear face (:149-151) — :149 is the :148 rockGt
+	// row's stick twin (the same grid and the same five-condition tail, the
+	// family STONE-variant block item carrier), :150 the +SMITHABLE plated
+	// twin (wrench center), :151 the plank cut to gearGtSmall (+MT.Wood.NOT;
+	// the plank face carries no items — 0 rows, the form stays).
+
+	/** One gear-face row form (Loader_OreProcessing.java:149-151, the grids and amounts verbatim). Package-private for the pin test. */
+	record GearGtCraftFromForm(String aKey, gregapi.oredict.OreDictPrefix aOutput, int aCount,
+			gregapi.oredict.OreDictPrefix aInput, gregapi.oredict.OreDictPrefix aCompanion,
+			boolean aSmithable, boolean aStoneFace, boolean aNoWood, String[] aRows) {}
+
+	/** The three row forms of the gear face (null upstream categories — the composed keys, the null-category key law). */
+	static List<GearGtCraftFromForm> gearGtCraftFromForms() {
+		return List.of(
+				new GearGtCraftFromForm("gear_gt/from_stick_stone", gregapi.data.OP.gearGt, 1, gregapi.data.OP.stick, gregapi.data.OP.stone, false, true, false, new String[] {"XYX", "YfY", "XYX"}),
+				new GearGtCraftFromForm("gear_gt/from_stick_plate", gregapi.data.OP.gearGt, 1, gregapi.data.OP.stick, gregapi.data.OP.plate, true, false, false, new String[] {"XYX", "YwY", "XYX"}),
+				new GearGtCraftFromForm("gear_gt_small/from_plank", gregapi.data.OP.gearGtSmall, 1, gregapi.data.OP.plank, null, false, false, true, new String[] {"X ", " s"}));
+	}
+
+	/** The material face of one gear-face row (the test-visible walk unit). */
+	record GearGtCraftFromMaterialRow(GearGtCraftFromForm aForm, gregapi.oredict.OreDictMaterial aMaterial) {}
+
+	/** The material face of the gear band: the three-face intersection under the per-form condition tails (:149-151 verbatim); the stone face rides the family (OP.stone is block-path, outside the item walk — the rockGt seam). */
+	static List<GearGtCraftFromMaterialRow> gearGtCraftFromMaterialRows() {
+		List<GearGtCraftFromMaterialRow> rRows = new ArrayList<>();
+		for (GearGtCraftFromForm tForm : gearGtCraftFromForms()) {
+			List<gregapi.oredict.OreDictPrefix> tFaces = new ArrayList<>();
+			tFaces.add(tForm.aInput());
+			if (tForm.aCompanion() != null && !tForm.aStoneFace()) tFaces.add(tForm.aCompanion()); // the plate third face; the stone face is block-path
+			java.util.Set<OreDictMaterial> tInputs = itemTruth(tFaces);
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				OreDictMaterial tMaterial = tPair.material();
+				if (tPair.prefix() != tForm.aOutput() || !tInputs.contains(tMaterial)) continue; // the item-truth intersection
+				if (tMaterial.contains(gregapi.data.TD.Compounds.COATED)) continue; // COATED.NOT
+				if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT
+				if (tForm.aStoneFace()) {
+					if (stoneFamilyOrNull(tMaterial) == null) continue; // the stone companion (block-path, the GTStoneBlocks family face)
+					if (!tMaterial.contains(gregapi.data.TD.Properties.STONE)) continue; // STONE — the positive rock face
+					if (tMaterial == gregapi.data.MT.Stone) continue; // MT.Stone.NOT
+					if (tMaterial == gregapi.data.MT.Bedrock) continue; // MT.Bedrock.NOT
+				}
+				if (tForm.aSmithable() && !tMaterial.contains(gregapi.data.TD.Processing.SMITHABLE)) continue; // SMITHABLE — the positive smith face
+				if (tForm.aNoWood() && tMaterial == gregapi.data.MT.Wood) continue; // MT.Wood.NOT
+				rRows.add(new GearGtCraftFromMaterialRow(tForm, tMaterial));
+			}
+		}
+		return rRows;
+	}
+
+	/** The datagen row: the id + the output item + count + the input item + the companion item + the pattern rows. */
+	private record GearGtCraftFromRow(ResourceLocation aId, Item aResult, int aCount, Item aInput, Item aCompanion, String[] aRows) {}
+
+	/** The datagen face: the material walk resolved onto the live items (the companion rides the family STONE block item on the stone face). */
+	private List<GearGtCraftFromRow> gearGtCraftFromDatagenRows() {
+		List<GearGtCraftFromRow> rRows = new ArrayList<>();
+		for (GearGtCraftFromMaterialRow tMaterialRow : gearGtCraftFromMaterialRows()) {
+			GearGtCraftFromForm tForm = tMaterialRow.aForm();
+			String tSnake = GTMaterialItems.snakeCase(tMaterialRow.aMaterial().mNameInternal);
+			Item tResult = itemOrNull(tForm.aOutput(), tMaterialRow.aMaterial());
+			Item tInput = itemOrNull(tForm.aInput(), tMaterialRow.aMaterial());
+			Item tCompanion = null;
+			if (tForm.aStoneFace()) {
+				gregtech6.registry.GTStoneBlocks.StoneSpec tStoneFamily = stoneFamilyOrNull(tMaterialRow.aMaterial());
+				if (tStoneFamily != null) tCompanion = gregtech6.registry.GTStoneBlocks.item(tStoneFamily.snake(), gregtech6.block.stone.StoneVariant.STONE).get();
+			} else if (tForm.aCompanion() != null) {
+				tCompanion = itemOrNull(tForm.aCompanion(), tMaterialRow.aMaterial());
+			}
+			if (tResult == null || tInput == null || tCompanion == null) continue; // the item-truth guard (belt and braces over the walk)
+			rRows.add(new GearGtCraftFromRow(craftFromRowId(tForm.aKey(), tSnake), tResult, tForm.aCount(), tInput, tCompanion, tForm.aRows()));
+		}
+		return rRows;
+	}
+
+	/** One row's builder — 'X' = the stick/plank input, 'Y' = the plate/stone companion, the shape-driven tool defines. */
+	private ShapedRecipeBuilder gearGtCraftFromBuilder(GearGtCraftFromRow aRow) {
+		ShapedRecipeBuilder rBuilder = ShapedRecipeBuilder.shaped(RecipeCategory.MISC, aRow.aResult(), aRow.aCount());
+		for (String tPattern : aRow.aRows()) rBuilder.pattern(tPattern); // the 3x3 gear grids and the 2x2 plank cut
+		rBuilder.define('X', aRow.aInput())
+				.unlockedBy("has_input", has(aRow.aInput()));
+		if (gridHas(aRow.aRows(), 'Y')) rBuilder.define('Y', aRow.aCompanion());
+		defineTools(rBuilder, aRow.aRows());
+		return rBuilder;
+	}
+
+	// -- Residual band 2: the rotor/buzzSaw faces (:145-147). :145 the rotor
+	// ("YhY","TXf","YdY" — 4x curved plate, 1 plate, 1 screw, hammer+file+
+	// screwdriver, +SMITHABLE); :146/:147 the buzzsaw blades off plate and
+	// plateGem ("wPh","P P","fPx" / "wCh","C C","fCx" — wrench+hammer+file+
+	// wire cutter). X rides the null-SpecialPrefix plate default :535.
+
+	/** One rotor/buzzSaw row form (Loader_OreProcessing.java:145-147, the grids and amounts verbatim). Package-private for the pin test. */
+	record ToolHeadCraftFromForm(String aKey, gregapi.oredict.OreDictPrefix aOutput, int aCount, boolean aSmithable, String[] aRows) {}
+
+	/** The three row forms (the :145 category snake + the buzzSaw pair with the body-face leaf). */
+	static List<ToolHeadCraftFromForm> toolHeadCraftFromForms() {
+		return List.of(
+				new ToolHeadCraftFromForm("rotor", gregapi.data.OP.rotor, 1, true, new String[] {"YhY", "TXf", "YdY"}),
+				new ToolHeadCraftFromForm("tool_head_buzz_saw/plate", gregapi.data.OP.toolHeadBuzzSaw, 1, false, new String[] {"wPh", "P P", "fPx"}),
+				new ToolHeadCraftFromForm("tool_head_buzz_saw/gem", gregapi.data.OP.toolHeadBuzzSaw, 1, false, new String[] {"wCh", "C C", "fCx"}));
+	}
+
+	/** The material face of one rotor/buzzSaw row (the test-visible walk unit). */
+	record ToolHeadCraftFromMaterialRow(ToolHeadCraftFromForm aForm, gregapi.oredict.OreDictMaterial aMaterial) {}
+
+	/** The material face: the output ∩ the row's material-letter faces (Y = the curved plate, X/P = the plate, C = the plateGem, T = the screw) under the condition tails. */
+	static List<ToolHeadCraftFromMaterialRow> toolHeadCraftFromMaterialRows() {
+		List<ToolHeadCraftFromMaterialRow> rRows = new ArrayList<>();
+		for (ToolHeadCraftFromForm tForm : toolHeadCraftFromForms()) {
+			List<gregapi.oredict.OreDictPrefix> tFaces = new ArrayList<>();
+			if (gridHas(tForm.aRows(), 'Y')) tFaces.add(gregapi.data.OP.plateCurved);
+			tFaces.add(gridHas(tForm.aRows(), 'C') ? gregapi.data.OP.plateGem : gregapi.data.OP.plate);
+			if (gridHas(tForm.aRows(), 'T')) tFaces.add(gregapi.data.OP.screw);
+			java.util.Set<OreDictMaterial> tInputs = itemTruth(tFaces);
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				OreDictMaterial tMaterial = tPair.material();
+				if (tPair.prefix() != tForm.aOutput() || !tInputs.contains(tMaterial)) continue; // the item-truth intersection
+				if (tMaterial.contains(gregapi.data.TD.Compounds.COATED)) continue; // COATED.NOT
+				if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT
+				if (tForm.aSmithable() && !tMaterial.contains(gregapi.data.TD.Processing.SMITHABLE)) continue; // SMITHABLE
+				rRows.add(new ToolHeadCraftFromMaterialRow(tForm, tMaterial));
+			}
+		}
+		return rRows;
+	}
+
+	/** The datagen row: the id + the output item + count + the input item + the resolved defines + the pattern rows. */
+	private record ToolHeadCraftFromRow(ResourceLocation aId, Item aResult, int aCount, Item aInput, java.util.Map<Character, Object> aDefines, String[] aRows) {}
+
+	/** The datagen face: the material walk resolved onto the live items. */
+	private List<ToolHeadCraftFromRow> toolHeadCraftFromDatagenRows() {
+		List<ToolHeadCraftFromRow> rRows = new ArrayList<>();
+		for (ToolHeadCraftFromMaterialRow tMaterialRow : toolHeadCraftFromMaterialRows()) {
+			ToolHeadCraftFromForm tForm = tMaterialRow.aForm();
+			OreDictMaterial tMaterial = tMaterialRow.aMaterial();
+			String tSnake = GTMaterialItems.snakeCase(tMaterial.mNameInternal);
+			Item tResult = itemOrNull(tForm.aOutput(), tMaterial);
+			Item tInput = gridHas(tForm.aRows(), 'Y') ? itemOrNull(gregapi.data.OP.plateCurved, tMaterial)
+					: itemOrNull(gridHas(tForm.aRows(), 'C') ? gregapi.data.OP.plateGem : gregapi.data.OP.plate, tMaterial);
+			if (tResult == null || tInput == null) continue; // the item-truth guard
+			java.util.Map<Character, Object> tDefines = craftFromDefines(tMaterial, null, tForm.aRows());
+			if (gridHas(tForm.aRows(), 'Y')) tDefines.put('Y', tInput); // the curved-plate edges (the unlock face too)
+			rRows.add(new ToolHeadCraftFromRow(craftFromRowId(tForm.aKey(), tSnake), tResult, tForm.aCount(), tInput, tDefines, tForm.aRows()));
+		}
+		return rRows;
+	}
+
+	/** One row's builder — the fixed vocabulary defines + the shape-driven tool defines. */
+	private ShapedRecipeBuilder toolHeadCraftFromBuilder(ToolHeadCraftFromRow aRow) {
+		ShapedRecipeBuilder rBuilder = ShapedRecipeBuilder.shaped(RecipeCategory.MISC, aRow.aResult(), aRow.aCount())
+				.pattern(aRow.aRows()[0])
+				.pattern(aRow.aRows()[1])
+				.pattern(aRow.aRows()[2])
+				.unlockedBy("has_input", has(aRow.aInput()));
+		applyDefines(rBuilder, aRow.aDefines());
+		defineTools(rBuilder, aRow.aRows());
+		return rBuilder;
+	}
+
+	// -- Residual band 3: the casingMachine faces (:152-155) — 7x plate-tier
+	// ("YXX","XwX","XXY", Y = the stickLong pair) + wrench, count 1,
+	// ANTIMATTER.NOT ONLY (no COATED leg). THE FORMS POUR ZERO TODAY: the
+	// casingMachine family carries no MaterialPrefixItems (the MTE-block
+	// domain, Loader_Items.java:57-171) — the fine-wire :169 seam, the rows
+	// unlock with that item family.
+
+	/** One casing row form (Loader_OreProcessing.java:152-155, the grids and amounts verbatim). Package-private for the pin test. */
+	record CasingCraftFromForm(String aKey, gregapi.oredict.OreDictPrefix aOutput, int aCount, gregapi.oredict.OreDictPrefix aInput, gregapi.oredict.OreDictPrefix aCompanion, String[] aRows) {}
+
+	/** The four row forms (null upstream categories — the output-prefix snake keys). */
+	static List<CasingCraftFromForm> casingCraftFromForms() {
+		return List.of(
+				new CasingCraftFromForm("casing_machine", gregapi.data.OP.casingMachine, 1, gregapi.data.OP.plate, gregapi.data.OP.stickLong, new String[] {"YXX", "XwX", "XXY"}),
+				new CasingCraftFromForm("casing_machine_double", gregapi.data.OP.casingMachineDouble, 1, gregapi.data.OP.plateDouble, gregapi.data.OP.stickLong, new String[] {"YXX", "XwX", "XXY"}),
+				new CasingCraftFromForm("casing_machine_quadruple", gregapi.data.OP.casingMachineQuadruple, 1, gregapi.data.OP.plateQuadruple, gregapi.data.OP.stickLong, new String[] {"YXX", "XwX", "XXY"}),
+				new CasingCraftFromForm("casing_machine_dense", gregapi.data.OP.casingMachineDense, 1, gregapi.data.OP.plateDense, gregapi.data.OP.stickLong, new String[] {"YXX", "XwX", "XXY"}));
+	}
+
+	/** The material face of one casing row (the test-visible walk unit). */
+	record CasingCraftFromMaterialRow(CasingCraftFromForm aForm, gregapi.oredict.OreDictMaterial aMaterial) {}
+
+	/** The material face: the three-face intersection under ANTIMATTER.NOT only — zero today (no casing items), the walk stays honest. */
+	static List<CasingCraftFromMaterialRow> casingCraftFromMaterialRows() {
+		List<CasingCraftFromMaterialRow> rRows = new ArrayList<>();
+		for (CasingCraftFromForm tForm : casingCraftFromForms()) {
+			java.util.Set<OreDictMaterial> tInputs = itemTruth(List.of(tForm.aInput(), tForm.aCompanion()));
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				OreDictMaterial tMaterial = tPair.material();
+				if (tPair.prefix() != tForm.aOutput() || !tInputs.contains(tMaterial)) continue; // the item-truth intersection
+				if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT — the ONLY upstream condition leg
+				rRows.add(new CasingCraftFromMaterialRow(tForm, tMaterial));
+			}
+		}
+		return rRows;
+	}
+
+	/** The datagen row: the id + the output item + count + the input item + the companion item + the pattern rows. */
+	private record CasingCraftFromRow(ResourceLocation aId, Item aResult, int aCount, Item aInput, Item aCompanion, String[] aRows) {}
+
+	/** The datagen face: the material walk resolved onto the live items. */
+	private List<CasingCraftFromRow> casingCraftFromDatagenRows() {
+		List<CasingCraftFromRow> rRows = new ArrayList<>();
+		for (CasingCraftFromMaterialRow tMaterialRow : casingCraftFromMaterialRows()) {
+			CasingCraftFromForm tForm = tMaterialRow.aForm();
+			String tSnake = GTMaterialItems.snakeCase(tMaterialRow.aMaterial().mNameInternal);
+			Item tResult = itemOrNull(tForm.aOutput(), tMaterialRow.aMaterial());
+			Item tInput = itemOrNull(tForm.aInput(), tMaterialRow.aMaterial());
+			Item tCompanion = itemOrNull(tForm.aCompanion(), tMaterialRow.aMaterial());
+			if (tResult == null || tInput == null || tCompanion == null) continue; // the item-truth guard
+			rRows.add(new CasingCraftFromRow(craftFromRowId(tForm.aKey(), tSnake), tResult, tForm.aCount(), tInput, tCompanion, tForm.aRows()));
+		}
+		return rRows;
+	}
+
+	/** One row's builder — 'X' = the plate tier, 'Y' = the stickLong pair, the wrench center. */
+	private ShapedRecipeBuilder casingCraftFromBuilder(CasingCraftFromRow aRow) {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, aRow.aResult(), aRow.aCount())
+				.pattern(aRow.aRows()[0])
+				.pattern(aRow.aRows()[1])
+				.pattern(aRow.aRows()[2])
+				.define('X', aRow.aInput())
+				.define('Y', aRow.aCompanion())
+				.define('w', GT6ItemTags.TOOLS_WRENCH)
+				.unlockedBy("has_input", has(aRow.aInput()));
+	}
+
+	// -- Residual band 4: the small-parts faces (:164-167, :170) — bolt (saw
+	// + stick → 2, +MT.Wood.NOT), screw (file + bolt), ring (file + gem),
+	// round (file + chunkGt), plateTiny (saw + plate → 8, +MT.Paper.NOT
+	// +MT.Wood.NOT). The fixed letters carry the input where the row uses
+	// them ('S' = stick :164, 'P' = plate :170), 'X' = the special prefix.
+
+	/** One small-parts row form (Loader_OreProcessing.java:164-167/:170, the grids and amounts verbatim). Package-private for the pin test. */
+	record SmallPartCraftFromForm(String aKey, gregapi.oredict.OreDictPrefix aOutput, int aCount, gregapi.oredict.OreDictPrefix aInput, boolean aNoWood, boolean aNoPaper, String[] aRows) {}
+
+	/** The five row forms (the category snakes verbatim; :170 gets the leaf — its upstream category collides with the P36 form's). */
+	static List<SmallPartCraftFromForm> smallPartCraftFromForms() {
+		return List.of(
+				new SmallPartCraftFromForm("stick2bolt", gregapi.data.OP.bolt, 2, gregapi.data.OP.stick, true, false, new String[] {"s ", " S"}),
+				new SmallPartCraftFromForm("bolt2screw", gregapi.data.OP.screw, 1, gregapi.data.OP.bolt, false, false, new String[] {"fX", "X "}),
+				new SmallPartCraftFromForm("gem2ring", gregapi.data.OP.ring, 1, gregapi.data.OP.gem, false, false, new String[] {"f ", " X"}),
+				new SmallPartCraftFromForm("chunk2round", gregapi.data.OP.round, 1, gregapi.data.OP.chunkGt, false, false, new String[] {"f ", " X"}),
+				new SmallPartCraftFromForm("plate2plate_tiny/regular", gregapi.data.OP.plateTiny, 8, gregapi.data.OP.plate, true, true, new String[] {"s ", " P"}));
+	}
+
+	/** The material face of one small-parts row (the test-visible walk unit). */
+	record SmallPartCraftFromMaterialRow(SmallPartCraftFromForm aForm, gregapi.oredict.OreDictMaterial aMaterial) {}
+
+	/** The material face: the two-face intersection minus COATED/ANTIMATTER and the per-form Wood/Paper identity exclusions (registration order). */
+	static List<SmallPartCraftFromMaterialRow> smallPartCraftFromMaterialRows() {
+		List<SmallPartCraftFromMaterialRow> rRows = new ArrayList<>();
+		for (SmallPartCraftFromForm tForm : smallPartCraftFromForms()) {
+			java.util.Set<OreDictMaterial> tInputs = itemTruth(List.of(tForm.aOutput(), tForm.aInput()));
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				OreDictMaterial tMaterial = tPair.material();
+				if (tPair.prefix() != tForm.aOutput() || !tInputs.contains(tMaterial)) continue; // the item-truth intersection
+				if (tMaterial.contains(gregapi.data.TD.Compounds.COATED)) continue; // COATED.NOT
+				if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT
+				if (tForm.aNoWood() && tMaterial == gregapi.data.MT.Wood) continue; // MT.Wood.NOT
+				if (tForm.aNoPaper() && tMaterial == gregapi.data.MT.Paper) continue; // MT.Paper.NOT
+				rRows.add(new SmallPartCraftFromMaterialRow(tForm, tMaterial));
+			}
+		}
+		return rRows;
+	}
+
+	/** The datagen row: the id + the output item + count + the input item + the resolved defines + the pattern rows. */
+	private record SmallPartCraftFromRow(ResourceLocation aId, Item aResult, int aCount, Item aInput, java.util.Map<Character, Object> aDefines, String[] aRows) {}
+
+	/** The datagen face: the material walk resolved onto the live items. */
+	private List<SmallPartCraftFromRow> smallPartCraftFromDatagenRows() {
+		List<SmallPartCraftFromRow> rRows = new ArrayList<>();
+		for (SmallPartCraftFromMaterialRow tMaterialRow : smallPartCraftFromMaterialRows()) {
+			SmallPartCraftFromForm tForm = tMaterialRow.aForm();
+			String tSnake = GTMaterialItems.snakeCase(tMaterialRow.aMaterial().mNameInternal);
+			Item tResult = itemOrNull(tForm.aOutput(), tMaterialRow.aMaterial());
+			Item tInput = itemOrNull(tForm.aInput(), tMaterialRow.aMaterial());
+			if (tResult == null || tInput == null) continue; // the item-truth guard
+			rRows.add(new SmallPartCraftFromRow(craftFromRowId(tForm.aKey(), tSnake), tResult, tForm.aCount(), tInput,
+					craftFromDefines(tMaterialRow.aMaterial(), tForm.aInput(), tForm.aRows()), tForm.aRows()));
+		}
+		return rRows;
+	}
+
+	/** One row's builder — the fixed vocabulary defines + the shape-driven tool defines (saw/file). */
+	private ShapedRecipeBuilder smallPartCraftFromBuilder(SmallPartCraftFromRow aRow) {
+		ShapedRecipeBuilder rBuilder = ShapedRecipeBuilder.shaped(RecipeCategory.MISC, aRow.aResult(), aRow.aCount())
+				.pattern(aRow.aRows()[0])
+				.pattern(aRow.aRows()[1])
+				.unlockedBy("has_input", has(aRow.aInput()));
+		applyDefines(rBuilder, aRow.aDefines());
+		defineTools(rBuilder, aRow.aRows());
+		return rBuilder;
+	}
+
+	// -- Residual band 5: the minecartWheels face (:179) — 2x ring (X) +
+	// 1x stick (S) around the hammer/wrench cross, ANTIMATTER.NOT ONLY (no
+	// COATED leg, like the casing band).
+
+	/** One minecartWheels row form (Loader_OreProcessing.java:179, the grid and amount verbatim). Package-private for the pin test. */
+	record MinecartWheelsCraftFromForm(String aKey, gregapi.oredict.OreDictPrefix aOutput, int aCount, gregapi.oredict.OreDictPrefix aInput, gregapi.oredict.OreDictPrefix aStickFace, String[] aRows) {}
+
+	/** The single row form. */
+	static List<MinecartWheelsCraftFromForm> minecartWheelsCraftFromForms() {
+		return List.of(new MinecartWheelsCraftFromForm("minecart_wheels", gregapi.data.OP.minecartWheels, 1, gregapi.data.OP.ring, gregapi.data.OP.stick, new String[] {" h ", "XSX", " w "}));
+	}
+
+	/** The material face of the minecartWheels row (the test-visible walk unit). */
+	record MinecartWheelsCraftFromMaterialRow(MinecartWheelsCraftFromForm aForm, gregapi.oredict.OreDictMaterial aMaterial) {}
+
+	/** The material face: the three-face intersection (wheels ∩ ring ∩ stick) under ANTIMATTER.NOT only. */
+	static List<MinecartWheelsCraftFromMaterialRow> minecartWheelsCraftFromMaterialRows() {
+		List<MinecartWheelsCraftFromMaterialRow> rRows = new ArrayList<>();
+		for (MinecartWheelsCraftFromForm tForm : minecartWheelsCraftFromForms()) {
+			java.util.Set<OreDictMaterial> tInputs = itemTruth(List.of(tForm.aInput(), tForm.aStickFace()));
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				OreDictMaterial tMaterial = tPair.material();
+				if (tPair.prefix() != tForm.aOutput() || !tInputs.contains(tMaterial)) continue; // the item-truth intersection
+				if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT — the ONLY upstream condition leg
+				rRows.add(new MinecartWheelsCraftFromMaterialRow(tForm, tMaterial));
+			}
+		}
+		return rRows;
+	}
+
+	/** The datagen row: the id + the output item + count + the input item + the resolved defines + the pattern rows. */
+	private record MinecartWheelsCraftFromRow(ResourceLocation aId, Item aResult, int aCount, Item aInput, java.util.Map<Character, Object> aDefines, String[] aRows) {}
+
+	/** The datagen face: the material walk resolved onto the live items. */
+	private List<MinecartWheelsCraftFromRow> minecartWheelsCraftFromDatagenRows() {
+		List<MinecartWheelsCraftFromRow> rRows = new ArrayList<>();
+		for (MinecartWheelsCraftFromMaterialRow tMaterialRow : minecartWheelsCraftFromMaterialRows()) {
+			MinecartWheelsCraftFromForm tForm = tMaterialRow.aForm();
+			String tSnake = GTMaterialItems.snakeCase(tMaterialRow.aMaterial().mNameInternal);
+			Item tResult = itemOrNull(tForm.aOutput(), tMaterialRow.aMaterial());
+			Item tInput = itemOrNull(tForm.aInput(), tMaterialRow.aMaterial());
+			if (tResult == null || tInput == null) continue; // the item-truth guard
+			rRows.add(new MinecartWheelsCraftFromRow(craftFromRowId(tForm.aKey(), tSnake), tResult, tForm.aCount(), tInput,
+					craftFromDefines(tMaterialRow.aMaterial(), tForm.aInput(), tForm.aRows()), tForm.aRows()));
+		}
+		return rRows;
+	}
+
+	/** One row's builder — 'X' = the ring, 'S' = the stick, the hammer/wrench cross. */
+	private ShapedRecipeBuilder minecartWheelsCraftFromBuilder(MinecartWheelsCraftFromRow aRow) {
+		ShapedRecipeBuilder rBuilder = ShapedRecipeBuilder.shaped(RecipeCategory.MISC, aRow.aResult(), aRow.aCount())
+				.pattern(aRow.aRows()[0])
+				.pattern(aRow.aRows()[1])
+				.pattern(aRow.aRows()[2])
+				.unlockedBy("has_input", has(aRow.aInput()));
+		applyDefines(rBuilder, aRow.aDefines());
+		defineTools(rBuilder, aRow.aRows());
+		return rBuilder;
+	}
+
+	// -- Residual band 6: the SHAPELESS panel (:181-192, 12 statements).
+	// The upstream OreProcessing_Shapeless (:480-510) substitutes every BARE
+	// OreDictPrefix slot with .dat(m) (:501-502) — pre-resolved slots
+	// (prefix.dat(fixed material), prefix.dat(ANY group)) pass through
+	// verbatim. Per form: ONE per-material slot (the walk input face) plus
+	// fixed/group/tool slots. The ingredient ORDER normalizes to
+	// per-material/fixed/group/tools (the vanilla shapeless match is a
+	// multiset — order is semantically dead). Condition kinds upstream
+	// verbatim (see the COND_ constants). :183/:184 pour zero (the
+	// wire/cable block domain, the fine-wire :169 seam).
+
+	/** The condition kinds of the shapeless panel, upstream verbatim. */
+	static final int COND_COATED_ANTIMATTER = 0; // new And(ANTIMATTER.NOT, COATED.NOT) — :187-189
+	static final int COND_ANTIMATTER = 1;        // ANTIMATTER.NOT — :181-184/:190-192
+	static final int COND_TRUE = 2;              // ICondition.TRUE — :185
+	static final int COND_MELT_MIN_ENV = 3;      // meltmin(DEF_ENV_TEMP) — :186 (C+20 = 293, CS.java:135)
+
+	/** One shapeless row form (Loader_OreProcessing.java:181-192, the amounts and conditions verbatim). Package-private for the pin test. */
+	record ShapelessCraftFromForm(String aKey, gregapi.oredict.OreDictPrefix aOutput, int aCount, int aCondition,
+			gregapi.oredict.OreDictPrefix aPerMaterial, int aPerMaterialRepeat,
+			gregapi.oredict.OreDictPrefix aFixedPrefix, gregapi.oredict.OreDictMaterial aFixedMaterial,
+			gregapi.oredict.OreDictPrefix aGroupPrefix, gregapi.oredict.OreDictMaterial aGroup, String[] aTools) {}
+
+	/** The twelve row forms (the :181/:182 category snakes; the null-category forms compose the keys). */
+	static List<ShapelessCraftFromForm> shapelessCraftFromForms() {
+		return List.of(
+				new ShapelessCraftFromForm("arrows_wooden", gregapi.data.OP.arrowGtWood, 1, COND_ANTIMATTER, gregapi.data.OP.toolHeadArrow, 1, gregapi.data.OP.arrowGtWood, gregapi.data.MT.Empty, null, null, new String[0]),
+				new ShapelessCraftFromForm("arrows_plastic", gregapi.data.OP.arrowGtPlastic, 1, COND_ANTIMATTER, gregapi.data.OP.toolHeadArrow, 1, gregapi.data.OP.arrowGtPlastic, gregapi.data.MT.Empty, null, null, new String[0]),
+				new ShapelessCraftFromForm("cable_gt01/from_wire_gt01", gregapi.data.OP.cableGt01, 1, COND_ANTIMATTER, gregapi.data.OP.wireGt01, 1, null, null, gregapi.data.OP.plate, gregapi.data.ANY.Rubber, new String[0]),
+				new ShapelessCraftFromForm("cable_gt02/from_wire_gt02", gregapi.data.OP.cableGt02, 1, COND_ANTIMATTER, gregapi.data.OP.wireGt02, 1, null, null, gregapi.data.OP.plate, gregapi.data.ANY.Rubber, new String[0]),
+				new ShapelessCraftFromForm("chemtube/from_dust_tiny", gregapi.data.OP.chemtube, 1, COND_TRUE, gregapi.data.OP.dustTiny, 1, gregapi.data.OP.chemtube, gregapi.data.MT.Empty, null, null, new String[0]),
+				new ShapelessCraftFromForm("dust_tiny/from_chemtube", gregapi.data.OP.dustTiny, 1, COND_MELT_MIN_ENV, gregapi.data.OP.chemtube, 1, null, null, null, null, new String[0]),
+				new ShapelessCraftFromForm("tool_head_raw_universal_spade/from_shovel", gregapi.data.OP.toolHeadRawUniversalSpade, 1, COND_COATED_ANTIMATTER, gregapi.data.OP.toolHeadShovel, 1, null, null, null, null, new String[] {"file", "saw"}),
+				new ShapelessCraftFromForm("tool_head_raw_universal_spade/from_spade", gregapi.data.OP.toolHeadRawUniversalSpade, 1, COND_COATED_ANTIMATTER, gregapi.data.OP.toolHeadSpade, 1, null, null, null, null, new String[] {"file", "saw"}),
+				new ShapelessCraftFromForm("tool_head_construction_pickaxe/from_raw_pickaxe", gregapi.data.OP.toolHeadConstructionPickaxe, 1, COND_COATED_ANTIMATTER, gregapi.data.OP.toolHeadRawPickaxe, 1, null, null, null, null, new String[] {"file", "hammer"}),
+				new ShapelessCraftFromForm("tool_head_pickaxe_gem/from_raw_any_iron", gregapi.data.OP.toolHeadPickaxeGem, 1, COND_ANTIMATTER, gregapi.data.OP.gemFlawed, 2, null, null, gregapi.data.OP.toolHeadRawPickaxe, gregapi.data.ANY.Iron, new String[] {"file", "hammer", "saw"}),
+				new ShapelessCraftFromForm("tool_head_pickaxe_gem/from_any_iron", gregapi.data.OP.toolHeadPickaxeGem, 1, COND_ANTIMATTER, gregapi.data.OP.gemFlawed, 2, null, null, gregapi.data.OP.toolHeadPickaxe, gregapi.data.ANY.Iron, new String[] {"file", "hammer", "saw"}),
+				new ShapelessCraftFromForm("tool_head_pickaxe_gem/retip", gregapi.data.OP.toolHeadPickaxeGem, 1, COND_ANTIMATTER, gregapi.data.OP.gemFlawed, 2, gregapi.data.OP.toolHeadPickaxeGem, gregapi.data.MT.Empty, null, null, new String[] {"file", "hammer", "saw"}));
+	}
+
+	/** The material face of one shapeless row (the test-visible walk unit). */
+	record ShapelessCraftFromMaterialRow(ShapelessCraftFromForm aForm, gregapi.oredict.OreDictMaterial aMaterial) {}
+
+	/** The material face: output ∩ the per-material slot, minus the per-form condition kind, gated on the fixed/group slot item truth (once per form) — registration order. */
+	static List<ShapelessCraftFromMaterialRow> shapelessCraftFromMaterialRows() {
+		List<ShapelessCraftFromMaterialRow> rRows = new ArrayList<>();
+		for (ShapelessCraftFromForm tForm : shapelessCraftFromForms()) {
+			boolean tFixedOk = tForm.aFixedPrefix() == null || itemPairExists(tForm.aFixedPrefix(), tForm.aFixedMaterial());
+			boolean tGroupOk = tForm.aGroup() == null || anyGroupFaceExists(tForm.aGroupPrefix(), tForm.aGroup());
+			java.util.Set<OreDictMaterial> tInputs = itemTruth(List.of(tForm.aOutput(), tForm.aPerMaterial()));
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				OreDictMaterial tMaterial = tPair.material();
+				if (tPair.prefix() != tForm.aOutput() || !tInputs.contains(tMaterial)) continue; // the item-truth intersection
+				switch (tForm.aCondition()) {
+					case COND_COATED_ANTIMATTER -> {
+						if (tMaterial.contains(gregapi.data.TD.Compounds.COATED)) continue; // COATED.NOT
+						if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT
+					}
+					case COND_ANTIMATTER -> {
+						if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT
+					}
+					case COND_TRUE -> {} // the :185 unconditional face
+					default -> {
+						if (tMaterial.mMeltingPoint < 293) continue; // meltmin(DEF_ENV_TEMP), CS.java:135 C+20
+					}
+				}
+				if (!tFixedOk || !tGroupOk) continue; // the fixed/group slot item truth (form-global)
+				rRows.add(new ShapelessCraftFromMaterialRow(tForm, tMaterial));
+			}
+		}
+		return rRows;
+	}
+
+	/** The datagen row: the id + the output item + count + the primary input + the resolved ingredients (the normalized order). */
+	private record ShapelessCraftFromRow(ResourceLocation aId, Item aResult, int aCount, Item aPrimary, java.util.List<net.minecraft.world.item.crafting.Ingredient> aIngredients) {}
+
+	/** The datagen face: the material walk resolved onto the live items and tags. */
+	private List<ShapelessCraftFromRow> shapelessCraftFromDatagenRows() {
+		List<ShapelessCraftFromRow> rRows = new ArrayList<>();
+		for (ShapelessCraftFromMaterialRow tMaterialRow : shapelessCraftFromMaterialRows()) {
+			ShapelessCraftFromForm tForm = tMaterialRow.aForm();
+			String tSnake = GTMaterialItems.snakeCase(tMaterialRow.aMaterial().mNameInternal);
+			Item tResult = itemOrNull(tForm.aOutput(), tMaterialRow.aMaterial());
+			Item tPrimary = itemOrNull(tForm.aPerMaterial(), tMaterialRow.aMaterial());
+			if (tResult == null || tPrimary == null) continue; // the item-truth guard
+			java.util.List<net.minecraft.world.item.crafting.Ingredient> tIngredients = new ArrayList<>();
+			for (int i = 0; i < tForm.aPerMaterialRepeat(); i++) tIngredients.add(net.minecraft.world.item.crafting.Ingredient.of(tPrimary));
+			if (tForm.aFixedPrefix() != null) {
+				Item tFixed = itemOrNull(tForm.aFixedPrefix(), tForm.aFixedMaterial());
+				if (tFixed == null) continue; // the fixed-slot guard
+				tIngredients.add(net.minecraft.world.item.crafting.Ingredient.of(tFixed));
+			}
+			if (tForm.aGroup() != null) {
+				java.util.List<Item> tGroupItems = new ArrayList<>();
+				for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+					if (tPair.prefix() == tForm.aGroupPrefix() && tForm.aGroup().mToThis.contains(tPair.material())) {
+						Item tItem = itemOrNull(tPair.prefix(), tPair.material());
+						if (tItem != null) tGroupItems.add(tItem);
+					}
+				}
+				if (tGroupItems.isEmpty()) continue; // the group-slot guard
+				tIngredients.add(net.minecraft.world.item.crafting.Ingredient.of(tGroupItems.toArray(new Item[0])));
+			}
+			for (String tTool : tForm.aTools()) tIngredients.add(net.minecraft.world.item.crafting.Ingredient.of(shapelessToolTag(tTool)));
+			rRows.add(new ShapelessCraftFromRow(craftFromRowId(tForm.aKey(), tSnake), tResult, tForm.aCount(), tPrimary, tIngredients));
+		}
+		return rRows;
+	}
+
+	/** The shapeless tool names to their tags — the OreDictToolNames slots of :187-192 ('hammer' = the HARD hammer, the p25 ruling). */
+	private static TagKey<Item> shapelessToolTag(String aName) {
+		return switch (aName) {
+			case "file" -> GT6ItemTags.TOOLS_FILE;
+			case "hammer" -> GT6ItemTags.TOOLS_HARD_HAMMER;
+			case "saw" -> GT6ItemTags.TOOLS_SAW;
+			default -> throw new IllegalArgumentException("unknown shapeless tool: " + aName);
+		};
+	}
+
+	/** One row's builder — the shapeless requires chain over the resolved ingredients. */
+	private ShapelessRecipeBuilder shapelessCraftFromBuilder(ShapelessCraftFromRow aRow) {
+		ShapelessRecipeBuilder rBuilder = ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, aRow.aResult(), aRow.aCount())
+				.unlockedBy("has_input", has(aRow.aPrimary()));
+		for (net.minecraft.world.item.crafting.Ingredient tIngredient : aRow.aIngredients()) rBuilder.requires(tIngredient);
+		return rBuilder;
 	}
 
 	// -----------------------------------------------------------------------

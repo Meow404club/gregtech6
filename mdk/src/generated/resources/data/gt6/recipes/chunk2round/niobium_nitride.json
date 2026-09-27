@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:chunk_gt_niobium_nitride"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "f ",
+    " X"
+  ],
+  "result": {
+    "item": "gt6:round_niobium_nitride"
+  },
+  "show_notification": true
+}

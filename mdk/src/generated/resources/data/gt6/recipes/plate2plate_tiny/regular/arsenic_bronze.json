@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_arsenic_bronze"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "s ",
+    " P"
+  ],
+  "result": {
+    "count": 8,
+    "item": "gt6:plate_tiny_arsenic_bronze"
+  },
+  "show_notification": true
+}

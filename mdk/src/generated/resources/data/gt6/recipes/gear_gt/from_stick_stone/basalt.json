@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:stick_basalt"
+    },
+    "Y": {
+      "item": "gt6:basalt"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "XYX",
+    "YfY",
+    "XYX"
+  ],
+  "result": {
+    "item": "gt6:gear_gt_basalt"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:chemtube_construction_foam"
+    }
+  ],
+  "result": {
+    "item": "gt6:dust_tiny_construction_foam"
+  }
+}

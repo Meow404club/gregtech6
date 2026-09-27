@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_osmium_elemental"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "s ",
+    " P"
+  ],
+  "result": {
+    "count": 8,
+    "item": "gt6:plate_tiny_osmium_elemental"
+  },
+  "show_notification": true
+}

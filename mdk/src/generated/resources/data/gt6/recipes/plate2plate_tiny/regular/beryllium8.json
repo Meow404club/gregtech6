@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_beryllium8"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "s ",
+    " P"
+  ],
+  "result": {
+    "count": 8,
+    "item": "gt6:plate_tiny_beryllium8"
+  },
+  "show_notification": true
+}
