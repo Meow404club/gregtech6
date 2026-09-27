@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_peridot"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "wCh",
+    "C C",
+    "fCx"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_buzz_saw_peridot"
+  }
+}

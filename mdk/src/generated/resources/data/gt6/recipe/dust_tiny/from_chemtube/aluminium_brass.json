@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:chemtube_aluminium_brass"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:dust_tiny_aluminium_brass"
+  }
+}

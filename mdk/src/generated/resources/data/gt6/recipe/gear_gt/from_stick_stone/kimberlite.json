@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:stick_kimberlite"
+    },
+    "Y": {
+      "item": "gt6:kimberlite"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "XYX",
+    "YfY",
+    "XYX"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:gear_gt_kimberlite"
+  }
+}

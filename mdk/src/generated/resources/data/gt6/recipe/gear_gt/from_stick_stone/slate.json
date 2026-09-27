@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:stick_slate"
+    },
+    "Y": {
+      "item": "gt6:slate"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "XYX",
+    "YfY",
+    "XYX"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:gear_gt_slate"
+  }
+}

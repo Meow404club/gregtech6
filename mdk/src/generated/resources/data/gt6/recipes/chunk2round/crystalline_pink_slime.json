@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:chunk_gt_crystalline_pink_slime"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "f ",
+    " X"
+  ],
+  "result": {
+    "item": "gt6:round_crystalline_pink_slime"
+  },
+  "show_notification": true
+}

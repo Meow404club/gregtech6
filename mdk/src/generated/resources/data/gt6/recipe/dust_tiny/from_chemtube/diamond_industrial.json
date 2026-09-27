@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:chemtube_diamond_industrial"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:dust_tiny_diamond_industrial"
+  }
+}

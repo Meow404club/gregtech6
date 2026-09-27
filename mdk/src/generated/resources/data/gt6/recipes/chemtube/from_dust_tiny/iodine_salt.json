@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:dust_tiny_iodine_salt"
+    },
+    {
+      "item": "gt6:chemtube_empty"
+    }
+  ],
+  "result": {
+    "item": "gt6:chemtube_iodine_salt"
+  }
+}

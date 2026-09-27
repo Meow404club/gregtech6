@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_rutherfordium"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "s ",
+    " P"
+  ],
+  "result": {
+    "count": 8,
+    "id": "gt6:plate_tiny_rutherfordium"
+  }
+}

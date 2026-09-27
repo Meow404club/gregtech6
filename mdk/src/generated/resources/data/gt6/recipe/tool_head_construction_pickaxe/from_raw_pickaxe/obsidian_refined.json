@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:tool_head_raw_pickaxe_obsidian_refined"
+    },
+    {
+      "tag": "gt6:tools/file"
+    },
+    {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_construction_pickaxe_obsidian_refined"
+  }
+}

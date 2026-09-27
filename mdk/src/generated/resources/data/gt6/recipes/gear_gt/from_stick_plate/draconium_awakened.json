@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:stick_draconium_awakened"
+    },
+    "Y": {
+      "item": "gt6:plate_draconium_awakened"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "XYX",
+    "YwY",
+    "XYX"
+  ],
+  "result": {
+    "item": "gt6:gear_gt_draconium_awakened"
+  },
+  "show_notification": true
+}

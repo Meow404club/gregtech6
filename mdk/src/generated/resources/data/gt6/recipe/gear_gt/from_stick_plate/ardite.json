@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:stick_ardite"
+    },
+    "Y": {
+      "item": "gt6:plate_ardite"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "XYX",
+    "YwY",
+    "XYX"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:gear_gt_ardite"
+  }
+}

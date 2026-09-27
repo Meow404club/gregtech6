@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:stick_tin_alloy"
+    },
+    "Y": {
+      "item": "gt6:plate_tin_alloy"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "XYX",
+    "YwY",
+    "XYX"
+  ],
+  "result": {
+    "item": "gt6:gear_gt_tin_alloy"
+  },
+  "show_notification": true
+}

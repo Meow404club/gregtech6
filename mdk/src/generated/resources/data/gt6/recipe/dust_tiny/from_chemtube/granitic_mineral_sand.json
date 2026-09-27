@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:chemtube_granitic_mineral_sand"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:dust_tiny_granitic_mineral_sand"
+  }
+}

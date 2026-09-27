@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:bolt_beryllium"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "fX",
+    "X "
+  ],
+  "result": {
+    "item": "gt6:screw_beryllium"
+  },
+  "show_notification": true
+}

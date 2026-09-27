@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:bolt_ipe"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "fX",
+    "X "
+  ],
+  "result": {
+    "item": "gt6:screw_ipe"
+  },
+  "show_notification": true
+}

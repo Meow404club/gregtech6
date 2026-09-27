@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:chemtube_peanut_wood"
+    }
+  ],
+  "result": {
+    "item": "gt6:dust_tiny_peanut_wood"
+  }
+}

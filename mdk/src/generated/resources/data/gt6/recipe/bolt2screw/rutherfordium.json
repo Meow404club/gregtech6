@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:bolt_rutherfordium"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "fX",
+    "X "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:screw_rutherfordium"
+  }
+}

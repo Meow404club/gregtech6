@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:chemtube_titanium_gold"
+    }
+  ],
+  "result": {
+    "item": "gt6:dust_tiny_titanium_gold"
+  }
+}
