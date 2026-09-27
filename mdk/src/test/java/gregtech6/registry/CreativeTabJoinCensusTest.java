@@ -32,7 +32,10 @@ import gregtech6.items.GT6LaserGas;
  * the census evidence windows (:117-:121 / :88-:92) stopped at the T2 row while the
  * ladders continue to T5. GT6Kinetics likewise holds a fourth single-block item the
  * census lost: the water wheel (:545). The tests pin the code truth: 170 items across
- * the 18 files (17 card slots; the dynamo slot is two files). Coverage = what the
+ * the 18 files (17 card slots; the dynamo slot is two files) — 171 since the
+ * p37-usb-peripherals He exemption (the :387 single item, the follow-up pin by the
+ * review seat: the card's gate group did not carry this census, the post-merge full
+ * sweep caught it). Coverage = what the
  * family's {@code onBuildTabContents} walk accepts: map-walk families are counted by
  * their item map size, single-{@link RegistryObject} families by their
  * {@code RegistryObject<Item>} field count (reflective — a newly added field breaks the
@@ -177,19 +180,21 @@ public class CreativeTabJoinCensusTest {
 		assertEquals(2, itemFields(GT6FeBatteries.class).size());
 	}
 
-	/** The laser gas emitters: empty + CO2 = 2 (MultiItemTechnological :384/:394). */
+	/** The laser gas emitters: empty + He + CO2 = 3 (:384/:387/:394 — the He single-item exemption joined the
+	 * family in p37-usb-peripherals; this census pin followed up by the review seat, see the class doc). */
 	@Test
-	public void laserGasJoinsTwo() {
-		assertEquals(2, itemFields(GT6LaserGas.class).size());
+	public void laserGasJoinsThree() {
+		assertEquals(3, itemFields(GT6LaserGas.class).size());
 	}
 
 	// ---------------------------------------------------------------------------
 	// the census total + the join-handler presence
 	// ---------------------------------------------------------------------------
 
-	/** The 170-item total (the card's 164 + the 6-item erratum: 3+2 dynamo rows, 1 water wheel — see the class doc). */
+	/** The 171-item total (the card's 164 + the 6-item erratum + the He exemption: 3+2 dynamo rows, 1 water wheel,
+	 * 1 helium emitter — see the class doc). */
 	@Test
-	public void theBatchTotalIsOneSeventy() {
+	public void theBatchTotalIsOneSeventyOne() {
 		int tTotal = GT6ElectricTransformers.ITEMS_BY_PATH.size()
 				+ GT6LongDistanceTransformers.ITEMS_BY_PATH.size()
 				+ GT6LongDistWires.ITEMS_BY_META.size()
@@ -208,7 +213,7 @@ public class CreativeTabJoinCensusTest {
 				+ itemFields(GT6Kinetics.class).size()
 				+ itemFields(GT6FeBatteries.class).size()
 				+ itemFields(GT6LaserGas.class).size();
-		assertEquals(170, tTotal, "the p38-tabfix-b-energy batch — 164 card + 6 erratum");
+		assertEquals(171, tTotal, "the p38-tabfix-b-energy batch — 164 card + 6 erratum + 1 He exemption (p37-usb-peripherals)");
 	}
 
 	/**
