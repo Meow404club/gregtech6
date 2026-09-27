@@ -77,12 +77,12 @@ import gregtech6.recipes.RecipeMap;
  * with "ore" — ore/oreRaw/orePoor/dense/stone variants), visited-on-prefix, so cycles
  * (compressor/extruder inverse pairs like plate↔ingot) terminate.
  *
- * <p><b>Honest-gap note</b>: the upstream maceration listener family
- * (Loader_OreProcessing.java:123-133) also wires crushedPurified/crushedCentrifuged → dust;
- * this port HAS those terminal legs (Shredder :139-143) but NO row produces the purified
- * prefixes yet — the producers ride the upstream DUST_ORE ore-block pool
- * (GT6RecipesSifter.java:134, the SKIPPED_UPSTREAM DUST_ORE entry). The tree derives only what the maps actually contain;
- * when the pooled producers land, the edges appear here with zero changes.
+	 * <p><b>Purified producers LANDED</b> (task debt-ore-purified-edge): the upstream :351
+	 * DUST_ORE sifting walk (GT6RecipesSifter.load(), the oreGravel/sand/redsand/mud
+	 * ore-block rows) produces the on-axis materials' crushedPurified, so those edges appear
+	 * here as ordinary chain edges with zero builder changes; Fe and the other MT setCrushing
+	 * redirecters sit OFF the walk's material axis — their crushedPurified is honestly absent
+	 * (only the terminal ShCL legs exist for them).
  *
  * <p><b>Card scope</b>: pure data, zero JEI/EMI/UI dependency (display is card B; the
  * workstation hook is card C). No KubeJS face — internal model only.
