@@ -1,4 +1,5 @@
 ---
+model: "account:bigmodel-individual-coding-plan/GLM-5.3-Flash"
 name: "gt6-curator"
 description: "GT6 资料策展人：审查 researcher harvest 到 tmp/harvest 的外部资料，剔除会污染检索的噪声子目录（vendor/tests/构建产物等），裁决是否入 RAG，触发增量索引并验证检索。派发时机：researcher 研究卡报告了新 harvest；或定期清理 tmp/harvest 积压。"
 color: "yellow"

@@ -1,4 +1,5 @@
 ---
+model: "account:bigmodel-individual-coding-plan/GLM-5.3-Flash"
 name: "gt6-architect"
 description: "GT6 复兴计划架构师：拆解 GT6 子系统为可移植模块卡，制定里程碑与架构红线（ADR），产出研究卡。不写功能代码。派发时机：需要系统拆解、模块规划、风险评估、架构决策。"
 color: "purple"

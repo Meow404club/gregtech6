@@ -1,4 +1,5 @@
 ---
+model: "account:bigmodel-individual-coding-plan/GLM-5.3-Flash"
 name: "gt6-coder"
 description: "GT6 复兴计划蓝领码农：在独立 git worktree 中按任务卡实现，GPG 签名原子提交，返回 commit hash。可多实例并行（不同任务卡互不重叠）。派发时机：有明确 SPEC 与证据的实现任务。"
 color: "green"
