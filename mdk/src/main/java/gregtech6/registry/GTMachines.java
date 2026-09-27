@@ -5210,10 +5210,10 @@ public final class GTMachines {
 	// NBT_PARALLEL_DURATION key (→ F — the :770-771 speedup arm), masks — energy SBIT_B,
 	// item in SBIT_U|SBIT_L auto LEFT, item out SBIT_R|SBIT_D auto RIGHT, tank in
 	// SBIT_U|SBIT_D auto TOP, NO NBT_TANK_SIDE_OUT key → the 127 field default with no
-	// auto face. The controller crafting rows "WXW","ZMP","CYC" are CUT — the same
-	// absent-component ruling as the molecular scanner (the CABLES_01/EMITTERS/SENSORS
-	// columns and IL.Processor_Crystal_Diamond are absent port identities, the scanner
-	// note above); the machines stay reachable via the machines creative tab.
+	// auto face. The controller crafting rows "WXW","ZMP","CYC" are CUT — the
+	// molecular-scanner T3 row was restored by task debt-scanner-t3-usb-stick (the
+	// F/X/Y HV columns exist since debt-emitter-sensor-generators), but this band's
+	// own restore stays pooled; the machines stay reachable via the machines creative tab.
 	//
 	// The GUI clause: menu = the SHARED gt6:canner carrier on BOTH families (the generic
 	// GTBasicMachineMenu — slot shape and fluid banks read the live RecipeMap/Host, so the
