@@ -2238,6 +2238,19 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.quantum_energizer_t5", "Quantum Energizer (T5)");
         add("item.gt6.comp_laser_gas_empty", "Empty Gas Laser Emitter");
         add("item.gt6.comp_laser_gas_empty.tooltip", "For Electric Lasers");
+        // task debt-laser-gas-family — the :388-393 name/tooltip columns verbatim
+        add("item.gt6.comp_laser_gas_ne", "Neon Laser Emitter");
+        add("item.gt6.comp_laser_gas_ne.tooltip", "Purpose: Weak Optical Appliances");
+        add("item.gt6.comp_laser_gas_ar", "Argon Laser Emitter");
+        add("item.gt6.comp_laser_gas_ar.tooltip", "Purpose: Strong Optical Appliances");
+        add("item.gt6.comp_laser_gas_kr", "Krypton Laser Emitter");
+        add("item.gt6.comp_laser_gas_kr.tooltip", "Purpose: Science");
+        add("item.gt6.comp_laser_gas_xe", "Xenon Laser Emitter");
+        add("item.gt6.comp_laser_gas_xe.tooltip", "Purpose: Science");
+        add("item.gt6.comp_laser_gas_hene", "Helium-Neon Laser Emitter");
+        add("item.gt6.comp_laser_gas_hene.tooltip", "Purpose: Weak Optical Appliances");
+        add("item.gt6.comp_laser_gas_co", "Carbon Monoxide Laser Emitter");
+        add("item.gt6.comp_laser_gas_co.tooltip", "Purpose: Weak Material Processing");
         add("item.gt6.comp_laser_gas_co2", "Carbon Dioxide Laser Emitter");
         add("item.gt6.comp_laser_gas_co2.tooltip", "Purpose: Strong Material Processing");
     }

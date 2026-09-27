@@ -68,6 +68,18 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	/** The recording dye resolver — captures the indices the pour walks (the four-way pin's row leg). */
 	private static final List<Integer> sResolvedIndices = new ArrayList<>();
 
+	/** The laser gas family walk order — the :396-403 upstream row order (helium → carbondioxide). */
+	private static final String[] FAMILY_GASES = {
+			"helium", "neon", "argon", "krypton", "xenon", "heliumneon", "carbonmonoxide", "carbondioxide"};
+
+	/** The offline emitter universe: one distinct existing item per family gas (the synthetic-universe convention). */
+	private static final net.minecraft.world.item.Item[] SYNTHETIC_EMITTERS = {
+			Items.REDSTONE, Items.GUNPOWDER, Items.BONE_MEAL, Items.CLAY_BALL,
+			Items.FLINT, Items.SLIME_BALL, Items.EGG, Items.GLOWSTONE_DUST};
+
+	/** The recording gas resolver — captures the family walk (the row-order pin's leg). */
+	private static final List<String> sResolvedGases = new ArrayList<>();
+
 	@BeforeEach
 	void armSeams() {
 		GT6RecipeMaps.init();
@@ -91,12 +103,21 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sCfoamOwnedFluidResolver = aIndex -> Fluids.FLOWING_WATER;
 		GT6RecipesCanner.sFoamSprayResolver = aIndex -> new ItemStack(SYNTHETIC_FOAM[aIndex], 1);
 		GT6RecipesCanner.sFoamSprayOwnedResolver = aIndex -> new ItemStack(SYNTHETIC_FOAM_OWNED[aIndex], 1);
-		// p32: the CO2 gas shares the FLOWING_LAVA identity with the dyed C-Foam rows, but the
-		// laser gas row is the ONLY row whose item leg is LEATHER — the findRecipe lookups
-		// match both legs and cannot collide
-		GT6RecipesCanner.sCarbonDioxideResolver = () -> Fluids.FLOWING_LAVA;
+		// p32 + debt-laser-gas-family: the fixtures mirror the LIVE posture — the CO2 fluid
+		// shares the FLOWING_LAVA identity with the dyed C-Foam rows (the laser rows are the
+		// only rows whose item leg is LEATHER), heliumneon has NO fluid (null) and helium
+		// has NO emitter on this base (EMPTY — the usb-branch item), so both rows skip
+		sResolvedGases.clear();
+		GT6RecipesCanner.sLaserGasFluidResolver = aGas -> {
+			sResolvedGases.add(aGas);
+			if ("carbondioxide".equals(aGas)) return Fluids.FLOWING_LAVA; // a DISTINCT fixture fluid — the :403 row resolves alone
+			if ("heliumneon".equals(aGas)) return null; // no gt6:heliumneon fluid — the pooled blend leg
+			return Fluids.FLOWING_WATER;
+		};
 		GT6RecipesCanner.sLaserGasEmptyResolver = () -> new ItemStack(Items.LEATHER, 1);
-		GT6RecipesCanner.sLaserGasCo2Resolver = () -> new ItemStack(Items.GLOWSTONE_DUST, 1);
+		GT6RecipesCanner.sLaserGasEmitterResolver = aGas -> "helium".equals(aGas)
+				? ItemStack.EMPTY // the pre-merge posture — gt6:comp_laser_gas_he rides the usb branch
+				: new ItemStack(SYNTHETIC_EMITTERS[java.util.Arrays.asList(FAMILY_GASES).indexOf(aGas)], 1);
 		GT6RecipesCanner.resetForTest();
 	}
 
@@ -116,14 +137,9 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sCfoamOwnedFluidResolver = aIndex -> gregtech6.fluid.GTFluids.cfoam(aIndex, true).source.get();
 		GT6RecipesCanner.sFoamSprayResolver = aIndex -> new ItemStack(gregtech6.registry.GT6FoamSprays.FOAM_SPRAYS.get(aIndex).get());
 		GT6RecipesCanner.sFoamSprayOwnedResolver = aIndex -> new ItemStack(gregtech6.registry.GT6FoamSprays.FOAM_SPRAYS_OWNED.get(aIndex).get());
-		GT6RecipesCanner.sCarbonDioxideResolver = () -> {
-			for (gregtech6.fluid.GTFluids.ChemicalFluid tChemical : gregtech6.fluid.GTFluids.CHEMICALS) {
-				if (tChemical.spec.name().equals("carbondioxide")) return tChemical.source.get();
-			}
-			return null;
-		};
+		GT6RecipesCanner.sLaserGasFluidResolver = GT6RecipesCanner::liveLaserGas;
 		GT6RecipesCanner.sLaserGasEmptyResolver = () -> new ItemStack(gregtech6.items.GT6LaserGas.COMP_LASER_GAS_EMPTY.get());
-		GT6RecipesCanner.sLaserGasCo2Resolver = () -> new ItemStack(gregtech6.items.GT6LaserGas.COMP_LASER_GAS_CO2.get());
+		GT6RecipesCanner.sLaserGasEmitterResolver = GT6RecipesCanner::liveLaserEmitter;
 		GT6RecipeMaps.reset();
 	}
 
@@ -132,10 +148,10 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	// ---------------------------------------------------------------------------
 
 	@Test
-	void pourLandFiftyThreeRows() {
+	void pourLandFiftyEightRows() {
 		GT6RecipesCanner.load();
-		assertEquals(53, GT6RecipeMaps.CANNER.mRecipeList.size(),
-				"16 colour refills + the chlorine remover + the 3 food-can rows (p25-food-can-row0) + the 32 C-Foam refills (p26, :254/:262) + the CO2 laser gas fill row (p32, :403)");
+		assertEquals(58, GT6RecipeMaps.CANNER.mRecipeList.size(),
+				"16 colour refills + the chlorine remover + the 3 food-can rows (p25-food-can-row0) + the 32 C-Foam refills (p26, :254/:262) + the 6 pouring laser gas fill rows (p32 :403 + debt-laser-gas-family :396-403 — helium skips on the absent usb-branch item, heliumneon on the absent blend fluid)");
 		assertEquals(16, sResolvedIndices.size(), "the dye resolver saw exactly the 16 walk indices (the chlorine row rides its own seam)");
 		assertEquals(16, sResolvedIndices.stream().distinct().count(), "each dye index resolved exactly once");
 	}
@@ -144,7 +160,7 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	void pourIsIdempotentPerGeneration() {
 		GT6RecipesCanner.load();
 		GT6RecipesCanner.load();
-		assertEquals(53, GT6RecipeMaps.CANNER.mRecipeList.size(), "the second load() is a no-op (the generation flag)");
+		assertEquals(58, GT6RecipeMaps.CANNER.mRecipeList.size(), "the second load() is a no-op (the generation flag)");
 	}
 
 	/** The row shape verbatim (MultiItemRandomTools.java:246 — EUt 16, duration 256, 2304 mB, zero fluid output). */
@@ -214,7 +230,7 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the p32-qu-laser-domain fill row (MultiItemTechnological.java:403)
+	// the laser gas fill family (p32-qu-laser-domain :403 + debt-laser-gas-family :396-403)
 	// ---------------------------------------------------------------------------
 
 	/** The gas laser emitter row verbatim (:403 — EUt 16, duration 128, one unit of CO2 = 144 mB, empty in / CO2 emitter out). */
@@ -225,12 +241,52 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 				new FluidStack[] {new FluidStack(Fluids.FLOWING_LAVA, 144)}, new ItemStack(Items.LEATHER, 1));
 		assertNotNull(tRow, "the laser gas row resolves for (empty emitter, 144 mB CO2)");
 		assertTrue(tRow.mCanBeBuffered, "addRecipe1(T, ...) — buffered");
-		assertEquals(16, tRow.mEUt, "EUt 16 (:403)");
-		assertEquals(128, tRow.mDuration, "duration 128 (:403) — NOT the 256 of the spray refills");
-		assertEquals(144, tRow.mFluidInputs[0].getAmount(), "MT.CO2.gas(U, T) = one unit = L = 144 mB (the R4 ruling)");
+		assertEquals(16, tRow.mEUt, "EUt 16 (:396-403)");
+		assertEquals(128, tRow.mDuration, "duration 128 (:396-403) — NOT the 256 of the spray refills");
+		assertEquals(144, tRow.mFluidInputs[0].getAmount(), "MT.<gas>.gas(U, T) = one unit = L = 144 mB (the R4 ruling)");
 		assertEquals(1, tRow.mInputs[0].getCount(), "one empty gas laser emitter");
 		assertSame(Items.GLOWSTONE_DUST, tRow.mOutputs[0].getItem(), "the CO2 emitter output (the fixture identity)");
 		assertEquals(0, tRow.mFluidOutputs.length, "NF — no fluid output");
+	}
+
+	/** The family walk covers the eight :396-403 gases exactly once, in the upstream row order. */
+	@Test
+	void familyWalkIsTheUpstreamRowOrder() {
+		GT6RecipesCanner.load();
+		assertEquals(List.of(FAMILY_GASES), sResolvedGases, "the pour walks helium → carbondioxide, the :396-403 row order, each gas exactly once");
+	}
+
+	/**
+	 * The per-gas dispatch: {@code laserGasRecipe(gas)} outputs THAT gas's emitter (the
+	 * :396-403 item column). The two live-skip legs pin as null rows — heliumneon (no
+	 * fluid) and helium (no emitter on this base) — and the helium dispatch arm shows the
+	 * row shape is complete the moment its item leg resolves.
+	 */
+	@Test
+	void familyDispatchPinsGasToEmitter() {
+		assertNull(GT6RecipesCanner.laserGasRecipe("helium"), "helium — the emitter leg is EMPTY on this base (the usb-branch item)");
+		assertNull(GT6RecipesCanner.laserGasRecipe("heliumneon"), "heliumneon — the fluid leg is null (no gt6:heliumneon, the pooled blend)");
+		for (int i = 0; i < FAMILY_GASES.length; i++) {
+			if (i == 0 || i == 5) continue; // the two live-skip gases — pinned above
+			Recipe tRow = GT6RecipesCanner.laserGasRecipe(FAMILY_GASES[i]);
+			assertNotNull(tRow, FAMILY_GASES[i] + ": the row resolves over the fixture seams");
+			assertSame(SYNTHETIC_EMITTERS[i], tRow.mOutputs[0].getItem(), FAMILY_GASES[i] + " → its emitter (the :396-403 item column)");
+		}
+		// the post-merge arm: resolve the helium emitter → the :396 row is a plain family row
+		GT6RecipesCanner.sLaserGasEmitterResolver = aGas -> new ItemStack(
+				SYNTHETIC_EMITTERS[java.util.Arrays.asList(FAMILY_GASES).indexOf(aGas)], 1);
+		Recipe tHeRow = GT6RecipesCanner.laserGasRecipe("helium");
+		assertNotNull(tHeRow, "helium with a resolved emitter leg — the row pours");
+		assertSame(SYNTHETIC_EMITTERS[0], tHeRow.mOutputs[0].getItem(), "helium → the He emitter (the self-healing :396 row)");
+	}
+
+	/** The self-healing helium posture end-to-end: once the item leg resolves the pour lands 59 rows. */
+	@Test
+	void heliumRowPoursOnceTheItemLands() {
+		GT6RecipesCanner.sLaserGasEmitterResolver = aGas -> new ItemStack(
+				SYNTHETIC_EMITTERS[java.util.Arrays.asList(FAMILY_GASES).indexOf(aGas)], 1);
+		GT6RecipesCanner.load();
+		assertEquals(59, GT6RecipeMaps.CANNER.mRecipeList.size(), "the post-usb-merge posture — 58 + the helium :396 row");
 	}
 
 	/** A row with an unregistered leg skips silently (the upstream FL.exists drop). */
@@ -238,7 +294,7 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	void unresolvableLegSkipsSilently() {
 		GT6RecipesCanner.sRemoverResolver = () -> null; // the remover leg fails to resolve
 		GT6RecipesCanner.load();
-		assertEquals(52, GT6RecipeMaps.CANNER.mRecipeList.size(), "the chlorine row drops, the 16 refills + 3 food rows + 32 foam rows + the laser gas row pour");
+		assertEquals(57, GT6RecipeMaps.CANNER.mRecipeList.size(), "the chlorine row drops, the 16 refills + 3 food rows + 32 foam rows + the 6 pouring laser gas rows pour");
 	}
 
 	// ---------------------------------------------------------------------------

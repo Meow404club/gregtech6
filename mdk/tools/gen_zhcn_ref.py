@@ -2293,13 +2293,29 @@ LEGACY_ITEM_BACKFILL = {
     # item carried upstream — the cover inherits the panel word)
     'item.gt6.cover_crafting': '工作台覆盖板',
     'item.gt6.cover_asphalt': '沥青覆盖板',
-    # ---- the gas-laser items (task p32-qu-laser-domain)
+    # ---- the gas-laser items (task p32-qu-laser-domain; family closure debt-laser-gas-family —
+    # + the six :388-393 rows, values = the dump faces verbatim tmp/gregtech.lang:10383-:10394)
     'item.gt6.comp_laser_gas_co2': '二氧化碳激光镭射器',
     'item.gt6.comp_laser_gas_co2.tooltip': '用途: 强力材料加工',
     'item.gt6.comp_laser_gas_empty': '空的气体-激光镭射器',
     'item.gt6.comp_laser_gas_empty.tooltip': '用于电力激光器',
+<<<<<<< HEAD
     'item.gt6.comp_laser_gas_he': '氦激光镭射器',
     'item.gt6.comp_laser_gas_he.tooltip': '用途: 弱光电器',
+=======
+    'item.gt6.comp_laser_gas_ne': '氖激光镭射器',
+    'item.gt6.comp_laser_gas_ne.tooltip': '用途: 弱光电器',
+    'item.gt6.comp_laser_gas_ar': '氩激光镭射器',
+    'item.gt6.comp_laser_gas_ar.tooltip': '用途: 强光电器',
+    'item.gt6.comp_laser_gas_kr': '氪激光镭射器',
+    'item.gt6.comp_laser_gas_kr.tooltip': '用途: 科研用具',
+    'item.gt6.comp_laser_gas_xe': '氙激光镭射器',
+    'item.gt6.comp_laser_gas_xe.tooltip': '用途: 科研用具',
+    'item.gt6.comp_laser_gas_hene': '氦氖混合气体激光镭射器',
+    'item.gt6.comp_laser_gas_hene.tooltip': '用途: 弱光电器',
+    'item.gt6.comp_laser_gas_co': '一氧化碳激光镭射器',
+    'item.gt6.comp_laser_gas_co.tooltip': '用途: 低级材料加工',
+>>>>>>> d5c5919d7 (feat(items): 激光气体发射器族闭合——六件余件+八行 Canner fill 家族)
     # ---- the dig/blade/field/scene tool faces + the usb stick family (tasks p29-w5-t1..t7, p30-pool era)
     'item.gt6.axe': '斧',
     'item.gt6.axe.tooltip': '伐木更快, 砍倒整棵树',
