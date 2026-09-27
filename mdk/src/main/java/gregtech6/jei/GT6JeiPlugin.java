@@ -3,6 +3,7 @@ package gregtech6.jei;
 import java.util.ArrayList;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -98,6 +99,7 @@ public class GT6JeiPlugin implements IModPlugin {
 		registration.addIngredientInfo(GTMultiBlocks.COKE_OVEN_ITEM.get(),
 				GT6RecipeViewerText.cokeOvenInfo());
 		registerRecipeMapCategoriesRows(registration);
+		registerOreGenInfoRows(registration);
 	}
 
 	/**
@@ -118,11 +120,37 @@ public class GT6JeiPlugin implements IModPlugin {
 		}
 	}
 
+	/**
+	 * Face 3 (task debt-ore-gen-display) — the ore-generation distribution page: ONE
+	 * {@link GT6OreGenInfoJeiCategory}, one row per {@code OreDistributionInfo.Entry} (the
+	 * data card's 118 material aggregates). The rows carry the invisible variant mounting
+	 * (the category's setRecipe), so U on any ore block item reaches the page. The EMI
+	 * plugin registers the same entries natively — the JEMI red line stays balanced.
+	 */
+	private static void registerOreGenInfoRows(IRecipeRegistration registration) {
+		GT6OreGenInfoJeiCategory tCategory = new GT6OreGenInfoJeiCategory();
+		registration.addRecipes(tCategory.getRecipeType(),
+				new ArrayList<>(gregtech6.worldgen.OreDistributionInfo.entries()));
+	}
+
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registration) {
 		for (RecipeMap tMap : GT6RecipeMapViewerMeta.visibleMaps()) {
 			registration.addRecipeCategories(new GT6RecipeMapJeiCategory(tMap));
 		}
+		registration.addRecipeCategories(new GT6OreGenInfoJeiCategory());
+	}
+
+	/**
+	 * The ore page's catalyst: the surface-rock's collected rockGt pebble — the port's
+	 * stand-in for GTCEu's prospector catalysts (GTOreVeinInfoCategory.java:55-59). JEI
+	 * also uses it as the category icon (the category draws none).
+	 */
+	@Override
+	public void registerRecipeCatalysts(mezz.jei.api.registration.IRecipeCatalystRegistration registration) {
+		GT6OreGenInfoJeiCategory tCategory = new GT6OreGenInfoJeiCategory();
+		ItemStack tCatalyst = gregtech6.worldgen.GT6OreGenInfoLayout.catalystStack();
+		if (!tCatalyst.isEmpty()) registration.addRecipeCatalysts(tCategory.getRecipeType(), tCatalyst);
 	}
 
 	/**

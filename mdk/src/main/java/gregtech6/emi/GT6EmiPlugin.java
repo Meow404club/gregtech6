@@ -55,11 +55,13 @@ import gregtech6.registry.GTMultiBlocks;
  *     (stamped output slot)</td>
  *     <td>the {@link GT6MaterialToolEmiRecipe} replacement rows (stamped output slot,
  *     see that class)</td></tr>
+ * <tr><td>registerCategories/registerRecipes + registerRecipeCatalysts: the generic RM
+ *     categories (batch1) and the ore-generation distribution page (debt-ore-gen-display,
+ *     the {@link GT6OreGenInfoEmiRecipe} rows with the invisible variant mounting)</td>
+ *     <td>{@link GT6RecipeMapEmiCategory}/{@link GT6RecipeMapEmiRecipe} and
+ *     {@link GT6OreGenInfoEmiCategory} — each JEI face shipped with its twin in the same
+ *     card</td></tr>
  * </table>
- * The gt6 JEI plugin has exactly these two faces (the r-emi-native census), so the twin
- * set is complete. Tier-c faces (RM recipe categories, multiblock/ByProduct info pages)
- * are ruled to later waves — they exist on neither side yet, so the red line stays
- * balanced.
  *
  * <p>Wiring: EMI stays compile-only on both legs (forge modCompileOnly / neoforge
  * compileOnly, version pinned 1.1.24, maven = terraformers) — zero run-classpath and
@@ -78,6 +80,7 @@ public class GT6EmiPlugin implements EmiPlugin {
 		registerCokeOvenInfo(registry);
 		registerMaterialToolRows(registry);
 		registerRecipeMapCategories(registry);
+		registerOreGenInfo(registry);
 	}
 
 	/**
@@ -150,6 +153,18 @@ public class GT6EmiPlugin implements EmiPlugin {
 				registry.addRecipe(new GT6RecipeMapEmiRecipe(tMap, tRows.get(i), tCategory, i));
 			}
 		}
+	}
+
+	/**
+	 * Face 4 (task debt-ore-gen-display) — the ore-generation distribution page, the native
+	 * twin of GT6JeiPlugin's registerOreGenInfoRows/registerRecipeCatalysts: one
+	 * {@link GT6OreGenInfoEmiCategory}, one {@link GT6OreGenInfoEmiRecipe} per data-layer
+	 * entry (the invisible variant mounting rides getOutputs), the rockGt pebble
+	 * workstation. THE JEMI RED LINE's arm count moves to four — both sides ship the face
+	 * in the same card, the gt6 namespace stays balanced.
+	 */
+	private static void registerOreGenInfo(EmiRegistry registry) {
+		GT6OreGenInfoEmiCategory.register(registry);
 	}
 
 	/**
