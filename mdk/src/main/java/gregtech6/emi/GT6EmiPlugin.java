@@ -76,6 +76,7 @@ public class GT6EmiPlugin implements EmiPlugin {
 	public void register(EmiRegistry registry) {
 		registerCokeOvenInfo(registry);
 		registerMaterialToolRows(registry);
+		registerRecipeMapCategories(registry);
 	}
 
 	/**
@@ -124,6 +125,45 @@ public class GT6EmiPlugin implements EmiPlugin {
 			// id) or they would be invalidated alongside the wrappers they replace.
 			registry.removeRecipes(materialToolInvalidator(tMaterialToolIds));
 		}
+	}
+
+	/**
+	 * Face 3 (task debt-jei-emi-batch1) — the generic RM recipe categories, the native
+	 * twin of GT6JeiPlugin's registerCategories/registerRecipes loop over the same
+	 * visible-map set (the shared {@link gregtech6.jei.GT6RecipeMapViewerMeta} canary
+	 * switch): one {@link GT6RecipeMapEmiCategory} per map (the memoize factory, the
+	 * GTCEu GTEMIPlugin.java:47-51 loop shape) and one {@link GT6RecipeMapEmiRecipe} per
+	 * row, id'd by the map-sorted index (rows carry no registry id — that class's doc).
+	 * The rows ride the map's live list, so registration after the datapack pour sees
+	 * every static-loader and JSON row. THE JEMI RED LINE's new arm: this face and its
+	 * JEI twin ship in the same card, so the gt6 namespace stays balanced on both sides.
+	 */
+	private static void registerRecipeMapCategories(EmiRegistry registry) {
+		for (gregtech6.recipes.RecipeMap tMap : gregtech6.jei.GT6RecipeMapViewerMeta.visibleMaps()) {
+			GT6RecipeMapEmiCategory tCategory = GT6RecipeMapEmiCategory.CATEGORIES.apply(tMap);
+			registry.addCategory(tCategory);
+			List<gregtech6.recipes.Recipe> tRows = new java.util.ArrayList<>(tMap.mRecipeList);
+			tRows.sort(ROW_ORDER);
+			for (int i = 0; i < tRows.size(); i++) {
+				registry.addRecipe(new GT6RecipeMapEmiRecipe(tMap, tRows.get(i), tCategory, i));
+			}
+		}
+	}
+
+	/**
+	 * The deterministic row order behind the EMI ids: the simplified NEI sortRecipes key
+	 * (NEI_RecipeMap.java:477-513 EUt-first — fluid/input-count and oredict material keys
+	 * collapse into the first-input string), the GT6RecipeMapEmiRecipe doc's contract.
+	 */
+	static final java.util.Comparator<gregtech6.recipes.Recipe> ROW_ORDER =
+			java.util.Comparator.comparingLong((gregtech6.recipes.Recipe r) -> r.mEUt)
+					.thenComparingLong(r -> r.mDuration)
+					.thenComparing(r -> firstStackString(r.mInputs))
+					.thenComparing(r -> firstStackString(r.mOutputs));
+
+	private static String firstStackString(net.minecraft.world.item.ItemStack[] aStacks) {
+		for (net.minecraft.world.item.ItemStack tStack : aStacks) if (tStack != null && !tStack.isEmpty()) return tStack.toString();
+		return "";
 	}
 
 	/**

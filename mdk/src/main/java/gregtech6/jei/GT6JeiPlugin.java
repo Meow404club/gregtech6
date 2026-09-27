@@ -1,13 +1,17 @@
 package gregtech6.jei;
 
+import java.util.ArrayList;
+
 import net.minecraft.resources.ResourceLocation;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 
 import gregtech6.items.tools.GT6MaterialToolRecipe;
+import gregtech6.recipes.RecipeMap;
 import gregtech6.registry.GTMultiBlocks;
 
 /**
@@ -80,6 +84,32 @@ public class GT6JeiPlugin implements IModPlugin {
 	public void registerRecipes(IRecipeRegistration registration) {
 		registration.addIngredientInfo(GTMultiBlocks.COKE_OVEN_ITEM.get(),
 				GT6RecipeViewerText.cokeOvenInfo());
+		registerRecipeMapCategoriesRows(registration);
+	}
+
+	/**
+	 * The generic RM category rows (task debt-jei-emi-batch1): every map the shared
+	 * {@link GT6RecipeMapViewerMeta} canary switch exposes gets its
+	 * {@link GT6RecipeMapJeiCategory} rows — the modern counterpart of the upstream
+	 * one-NEI_RecipeMap-per-map registration (NEI_GT_API_Config.java:62). The rows are
+	 * the map's live list (registration runs client-side after the server datapack pour,
+	 * so the canary maps' static loaders and the JSON smoke rows are already in). The
+	 * EMI plugin registers the same maps natively in the same card — the JEMI red line
+	 * (GT6EmiPlugin class doc) stays balanced: every gt6 uid namespace face this plugin
+	 * adds has its native EMI twin.
+	 */
+	private static void registerRecipeMapCategoriesRows(IRecipeRegistration registration) {
+		for (RecipeMap tMap : GT6RecipeMapViewerMeta.visibleMaps()) {
+			GT6RecipeMapJeiCategory tCategory = new GT6RecipeMapJeiCategory(tMap);
+			registration.addRecipes(tCategory.getRecipeType(), new ArrayList<>(tMap.mRecipeList));
+		}
+	}
+
+	@Override
+	public void registerCategories(IRecipeCategoryRegistration registration) {
+		for (RecipeMap tMap : GT6RecipeMapViewerMeta.visibleMaps()) {
+			registration.addRecipeCategories(new GT6RecipeMapJeiCategory(tMap));
+		}
 	}
 
 	/**
