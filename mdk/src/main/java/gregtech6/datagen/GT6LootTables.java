@@ -124,6 +124,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6LargeMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-large-12 — the twelve large machines
                 new SubProviderEntry(GT6ImplosionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-implosion — the Implosion Compressor controller
                 new SubProviderEntry(GT6GraaggBlockLoot::new, LootContextParamSets.BLOCK), // task p31-graagg — the Von da Graagg controller
+                new SubProviderEntry(GT6BedrockDrillBlockLoot::new, LootContextParamSets.BLOCK), // task p37-bedrock-drill — the Bedrock Mining Drill controller
                 new SubProviderEntry(GT6MassfabBlockLoot::new, LootContextParamSets.BLOCK), // task p31-massfab — the Large Matter Fabricator controller
                 new SubProviderEntry(GT6FusionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-fusion — the Fusion Reactor controller
                 new SubProviderEntry(GT6LogisticsCoreBlockLoot::new, LootContextParamSets.BLOCK), // task p32-logistics-lv3 — the Logistics Core controller
@@ -183,6 +184,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6LargeMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-large-12 — the twelve large machines
                 new SubProviderEntry(GT6ImplosionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-implosion — the Implosion Compressor controller
                 new SubProviderEntry(GT6GraaggBlockLoot::new, LootContextParamSets.BLOCK), // task p31-graagg — the Von da Graagg controller
+                new SubProviderEntry(GT6BedrockDrillBlockLoot::new, LootContextParamSets.BLOCK), // task p37-bedrock-drill — the Bedrock Mining Drill controller
                 new SubProviderEntry(GT6MassfabBlockLoot::new, LootContextParamSets.BLOCK), // task p31-massfab — the Large Matter Fabricator controller
                 new SubProviderEntry(GT6FusionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-fusion — the Fusion Reactor controller
                 new SubProviderEntry(GT6LogisticsCoreBlockLoot::new, LootContextParamSets.BLOCK), // task p32-logistics-lv3 — the Logistics Core controller
@@ -2454,6 +2456,36 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : graaggLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /** The Bedrock Mining Drill self-drop list (task p37-bedrock-drill — the graaggLootBlocks singleton form). */
+    public static List<Block> bedrockDrillLootBlocks() {
+        return List.of(gregtech6.registry.GTMultiBlocks.BEDROCK_DRILL.get());
+    }
+
+    /** The Bedrock Mining Drill self-drop provider (task p37-bedrock-drill; the graagg provider shape). */
+    public static final class GT6BedrockDrillBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6BedrockDrillBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6BedrockDrillBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return bedrockDrillLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : bedrockDrillLootBlocks()) dropSelf(tBlock);
         }
     }
 

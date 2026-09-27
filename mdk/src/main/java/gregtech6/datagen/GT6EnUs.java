@@ -1573,6 +1573,7 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.fusion_reactor", "Fusion Reactor"); // task p31-fusion — the Loader :1242 name column
         add("block.gt6.logistics_core", "Logistics Core"); // task p32-logistics-lv3 — the Loader :1281 name column
         add("block.gt6.nuclear_reactor_core_2x2", "Nuclear Reactor Core (2x2)"); // task debt-reactor-b-2x2-be — the Loader :738 name column verbatim
+        add("block.gt6.bedrock_drill", "Bedrock Mining Drill Controller"); // task p37-bedrock-drill — the Loader :1283 name column verbatim
     }
 
     /**
