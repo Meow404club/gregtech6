@@ -45,11 +45,13 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
  *     ore(oreRaw)→crushed via {@code gt.recipe.crusher} (GT6RecipesOreChain :153) and
  *     crushed→dust via {@code gt.recipe.shredder} (GT6RecipesShCL :138, the port of the
  *     upstream maceration family Loader_OreProcessing.java:123-133); the purified leg's
- *     TERMINAL edge crushedPurified→dust (ShCL :139 = upstream :130) is present, while the
- *     purified PRODUCER rows are honestly asserted ABSENT — they ride the upstream DUST_ORE
- *     ore-block pool (GT6RecipesSifter.java:134, the SKIPPED_UPSTREAM DUST_ORE entry), so crushedPurified is not reachable; when
- *     the pooled producers land, the edge appears with zero changes here (coordinator
- *     ruling 2026-09-26, pool item ore-purified-edge-gap).</li>
+ *     TERMINAL edge crushedPurified→dust (ShCL :139 = upstream :130) is present. The
+ *     purified PRODUCER rows have LANDED (task debt-ore-purified-edge, the
+ *     Loader_OreProcessing.java:351 DUST_ORE sifting walk) — for the on-axis materials the
+ *     producer edge is now asserted positively (the Cu spot check); Fe itself is OFF the
+ *     walk's material axis (the twelve MT setCrushing sources are all off-axis), so its
+ *     crushedPurified stays honestly unreachable (coordinator ruling 2026-09-26, pool item
+ *     ore-purified-edge-gap, closed by the landing).</li>
  * <li><b>Spot checks</b>: Copper (same spine) and Coal (the byproduct face: Coke Oven rows
  *     consume Coal-material legs into CoalCoke — the byproduct edge card B displays).</li>
  * <li><b>Index guards (acceptance ②)</b>: structural, never wall-clock (the
@@ -328,15 +330,17 @@ class MaterialTreeBuilderTest extends GTRecipesOfflineTestBase {
 		assertTrue(tIron.contains(new MaterialTreeBuilder.ChainEdge(OP.crushedCentrifuged, OP.dust, "gt.recipe.shredder")),
 				"the centrifuged terminal leg crushedCentrifuged -> dust (upstream :132) exists as an edge");
 
-		// the honest gap: no row PRODUCES the purified prefixes yet (the upstream DUST_ORE
-		// ore-block pool, GT6RecipesSifter javadoc) — so they sit outside the ore-reachable
-		// tree; when the pooled producers land, this assertion flips WITH zero builder changes
+		// the pooled producer rows have LANDED (task debt-ore-purified-edge, the :351 DUST_ORE
+		// sifting walk) — but Fe is OFF the walk's material axis (the twelve MT
+		// setCrushing(:2884-2895) sources are all off-axis), so no sifter row carries a Fe
+		// material leg: crushedPurified stays outside Fe's ore-reachable tree, and the
+		// on-axis positive face is pinned in copperAndCoalSpotChecks below
 		Set<OreDictPrefix> tReachable = tTree.reachableFromOre(MT.Fe);
 		assertTrue(tReachable.contains(OP.oreRaw) && tReachable.contains(OP.crushed) && tReachable.contains(OP.dust),
 				"ore -> crushed -> dust is one connected walk, got: " + tReachable);
 		assertFalse(tReachable.contains(OP.crushedPurified),
-				"crushedPurified is NOT reachable — the producer rows are pooled (ore-purified-edge-gap); "
-				+ "only the terminal leg exists today");
+				"crushedPurified is NOT reachable for the OFF-axis Fe — the sifter producer rows exist "
+				+ "only for the 53 on-axis materials (debt-ore-purified-edge); only the terminal leg exists for Fe");
 
 		// the anvil companion spine (GT6RecipesAnvil :166 oreRaw -> crushed + crushedTiny)
 		assertTrue(tIron.contains(new MaterialTreeBuilder.ChainEdge(OP.oreRaw, OP.crushedTiny, "gt.recipe.anvil")),
@@ -357,6 +361,13 @@ class MaterialTreeBuilderTest extends GTRecipesOfflineTestBase {
 				"Cu ore -> crushed (Crusher :153)");
 		assertTrue(tCopper.contains(new MaterialTreeBuilder.ChainEdge(OP.crushed, OP.dust, "gt.recipe.shredder")),
 				"Cu crushed -> dust (Shredder :138)");
+		// the LANDED producer face (task debt-ore-purified-edge): Cu is ON the sifter walk's
+		// material axis, so the DUST_ORE ore-block rows produce its crushedPurified —
+		// the on-axis half of the old honest-gap flip (Fe keeps the negative form above)
+		assertTrue(tCopper.contains(new MaterialTreeBuilder.ChainEdge(OP.oreGravel, OP.crushedPurified, "gt.recipe.sifter")),
+				"Cu oreGravel -> crushedPurified via the landed :351 sifting row, got: " + tCopper);
+		assertTrue(tTree.reachableFromOre(MT.Cu).contains(OP.crushedPurified),
+				"Cu's ore walk now reaches crushedPurified (the landed producer rows)");
 		assertTrue(tTree.reachableFromOre(MT.Cu).contains(OP.dust), "Cu's ore walk reaches dust");
 
 		// Coal: the byproduct face — the Coke Oven consumes Coal-material legs into CoalCoke

@@ -42,11 +42,13 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
  *
  * <p><b>The honest split</b> (ruling 2026-09-26-debt-material-tree): the declared face keeps
  * every upstream relation even where no recipe row produces it yet — the byproduct OUTPUT rows
- * (Sifter tiny dusts, the Loader_OreProcessing.java:331-333 tiers) ride the pooled DUST_ORE
- * ore-block cards, so over today's pour the sampled intersections are EMPTY and the
- * declared-only differences are the FULL lists. That is the point: 差集不消灭. When the pooled
- * cards land, these intersection assertions flip red on purpose — the expected-signal pattern
- * (the material-tree-a crushedPurified precedent).
+ * (Sifter tiny dusts, the Loader_OreProcessing.java:331-333 tiers) LANDED with task
+ * debt-ore-purified-edge, so over today's pour the on-axis materials' intersections cover the
+ * three tiny-tier faces exactly (the first three declared byproducts), while the 4th+
+ * byproducts stay declared-only (差集不消灭). Off-axis materials (Pitchblende is not on the
+ * sifter walk's WORLDGEN_ORES axis) keep the EMPTY intersection. That was the expected-signal
+ * pattern (the material-tree-a crushedPurified precedent) — the signal has now fired and the
+ * cross-table asserts the landed shape.
  *
  * <p><b>The derived leg here</b> is the Crusher ore-chain census (GT6RecipesOreChain.load()
  * with one identity-carrying probe item per referenced (prefix, material) pair — the
@@ -59,27 +61,33 @@ class OreByproductInfoTest extends GTRecipesOfflineTestBase {
 	private static final Map<PrefixMaterial, Item> PREFIX_ITEMS = new HashMap<>();
 	private static int sNextProbeId = 0;
 	private static BiFunction<OreDictPrefix, OreDictMaterial, Item> sDefaultResolver;
+	private static BiFunction<OreDictPrefix, OreDictMaterial, Item> sSifterDefaultResolver;
 
 	@BeforeAll
 	static void bootUniverseAndOpenRegistry() {
 		GTMaterialItems.initMaterials(); // the offline material universe (the ShCL convention)
 		sDefaultResolver = GT6RecipesOreChain.sMaterialItemResolver;
+		sSifterDefaultResolver = GT6RecipesSifter.sMaterialItemResolver;
 		openOfflineItemRegistry(); // the three-lock walk, ONCE for the whole class
 	}
 
 	@BeforeEach
 	void pourCrusherCensus() {
 		GT6RecipesOreChain.sMaterialItemResolver = OreByproductInfoTest::prefixItem;
+		GT6RecipesSifter.sMaterialItemResolver = OreByproductInfoTest::prefixItem; // the landed :351 walk (debt-ore-purified-edge)
 		// self-grounding (ADR-P18): this test's pour must be THIS resolver's generation
 		GT6RecipeMaps.reset();
 		GT6RecipesOreChain.load();
+		GT6RecipesSifter.load();
 	}
 
 	@AfterEach
 	void restoreResolvers() {
 		GT6RecipesOreChain.sMaterialItemResolver = sDefaultResolver;
+		GT6RecipesSifter.sMaterialItemResolver = sSifterDefaultResolver;
 		GT6RecipeMaps.reset();
 		GT6RecipesOreChain.resetForTest();
+		GT6RecipesSifter.resetForTest();
 	}
 
 	// ------------------------------------------------------------------
@@ -147,10 +155,14 @@ class OreByproductInfoTest extends GTRecipesOfflineTestBase {
 	// ------------------------------------------------------------------
 
 	/**
-	 * The acceptance cross-table: for the four pinned materials the derived intersection is
-	 * EMPTY today (the byproduct OUTPUT rows ride the pooled DUST_ORE cards) and the
-	 * declared-only difference is the FULL declared list — upstream semantics preserved, never
-	 * trimmed to what the maps happen to contain. Expected-signal: flips when pooled cards land.
+	 * The acceptance cross-table (post-landing shape, task debt-ore-purified-edge): for the
+	 * ON-AXIS pinned materials the derived face covers exactly the three tiny-tier faces
+	 * (the :331-333 first-three byproducts of the landed sifting rows) while the 4th+
+	 * byproducts stay declared-only — the difference shrinks but is never destroyed
+	 * (差集不消灭). The OFF-axis material (Pitchblende is not on the sifter walk's
+	 * WORLDGEN_ORES axis) keeps the EMPTY intersection. The declared full list stays pinned
+	 * verbatim in every case — upstream semantics preserved, never trimmed to what the maps
+	 * happen to contain.
 	 */
 	@Test
 	void declaredVsDerivedCrossTable() {
@@ -166,10 +178,25 @@ class OreByproductInfoTest extends GTRecipesOfflineTestBase {
 		for (Map.Entry<OreDictMaterial, List<OreDictMaterial>> tRow : tDeclared.entrySet()) {
 			OreDictMaterial tMaterial = tRow.getKey();
 			Set<OreDictMaterial> tDerivedOf = tDerived.getOrDefault(tMaterial, Set.of());
-			Set<OreDictMaterial> tIntersection = new LinkedHashSet<>(tRow.getValue());
-			tIntersection.retainAll(tDerivedOf);
-			assertTrue(tIntersection.isEmpty(), tMaterial.mNameInternal + ": no poured row outputs a declared byproduct of it yet (pooled DUST_ORE cards pending — expected signal)");
-			assertEquals(tRow.getValue(), OreByproductInfo.of(tMaterial).byproducts(), tMaterial.mNameInternal + ": the declared-only difference stays the FULL list (差集不消灭)");
+			if (tMaterial == MT.OREMATS.Pitchblende) {
+				// OFF-axis: no sifting row carries a Pitchblende material leg — the empty
+				// intersection survives the landing unchanged
+				Set<OreDictMaterial> tIntersection = new LinkedHashSet<>(tRow.getValue());
+				tIntersection.retainAll(tDerivedOf);
+				assertTrue(tIntersection.isEmpty(), tMaterial.mNameInternal + " is off the sifter axis — no poured row outputs its byproducts");
+			} else {
+				// ON-axis: the landed :351 rows output the first-three tiny dusts — the
+				// derived face covers exactly that head of the declared list...
+				List<OreDictMaterial> tTinyHead = tRow.getValue().subList(0, 3);
+				assertTrue(tDerivedOf.containsAll(tTinyHead),
+						tMaterial.mNameInternal + ": the landed sifting rows output the first-three tiny faces, got: " + tDerivedOf);
+				// ...while the 4th+ byproducts have no tiny slot — declared-only forever (差集不消灭)
+				for (OreDictMaterial tTail : tRow.getValue().subList(3, tRow.getValue().size())) {
+					assertFalse(tDerivedOf.contains(tTail),
+							tMaterial.mNameInternal + ": the 4th+ byproduct " + tTail.mNameInternal + " stays declared-only (no tiny slot)");
+				}
+			}
+			assertEquals(tRow.getValue(), OreByproductInfo.of(tMaterial).byproducts(), tMaterial.mNameInternal + ": the declared face stays the FULL list (差集不消灭)");
 		}
 	}
 
