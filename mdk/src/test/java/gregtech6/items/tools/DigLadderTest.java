@@ -48,6 +48,23 @@ public class DigLadderTest {
 		}
 		// the full material flood — MT class-load only registers NULL (the GT6ItemDataTest boot shape)
 		MT.init();
+		//? if forge {
+		// the serializer face the materialToolSerializerParsesAndStamps JSON parse consumes
+		// (the isolation card): CraftingHelper's dispatch map starts empty and only
+		// ForgeMod.registerRecipeSerializers under a live FML RegisterEvent fills it — a
+		// bare single-class run threw "Unknown ingredient type" at CraftingHelper.getIngredient:146.
+		// duplicate-safe probe, not a boolean flag: another test class' @BeforeAll may
+		// have registered it first in a full-suite JVM, and register throws on duplicates.
+		if (net.minecraftforge.common.crafting.CraftingHelper.getID(
+				net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE) == null) {
+			net.minecraftforge.common.crafting.CraftingHelper.register(
+					new net.minecraft.resources.ResourceLocation("minecraft", "item"),
+					net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE);
+		}
+		//?} else {
+		/*// 21.1: CraftingHelper/VanillaIngredientSerializer are gone — vanilla ingredients
+		//ride the vanilla Codec face, no serializer registration to fake.
+		*///?}
 	}
 
 	private static ItemStack stamped(OreDictMaterial aMaterial, float aMultiplier) {
