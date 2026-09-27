@@ -98,6 +98,23 @@ public final class ReactorRodNbt {
 		 *///?}
 	}
 
+	/**
+	 * The fresh-rod burn-budget write (task debt-reactor-c-rods): the NBT_MAXDURABILITY
+	 * the upstream registration bakes into the item template (LME:746-762/:782-785), which
+	 * the 1.7.10 Canner output therefore carries and the durability() read falls back to
+	 * (Nuclear.java:49). The port's recipe pours write it on the fuel/breeder outputs.
+	 */
+	public static void setMaxDurability(ItemStack aStack, long aMaxDurability) {
+		if (aStack.isEmpty()) return;
+		//? if forge {
+		tagForWrite(aStack).putLong(NBT_MAXDURABILITY, aMaxDurability);
+		//?} else {
+		/*CompoundTag tTag = tag(aStack);
+		tTag.putLong(NBT_MAXDURABILITY, aMaxDurability);
+		pack(aStack, tTag);
+		 *///?}
+	}
+
 	// ---------------------------------------------------------------------------
 	// the fuel moderation flags (Nuclear:44 — mModerated / oModerated booleans)
 	// ---------------------------------------------------------------------------
