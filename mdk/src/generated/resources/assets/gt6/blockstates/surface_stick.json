@@ -12,14 +12,21 @@
         "model": "gt6:block/surface_stick_a"
       },
       {
-        "model": "gt6:block/surface_stick_a",
+        "model": "gt6:block/surface_stick_b",
         "y": 90
       },
       {
-        "model": "gt6:block/surface_stick_b"
+        "model": "gt6:block/surface_stick_t22"
       },
       {
-        "model": "gt6:block/surface_stick_b",
+        "model": "gt6:block/surface_stick_t22",
+        "y": 90
+      },
+      {
+        "model": "gt6:block/surface_stick_t45"
+      },
+      {
+        "model": "gt6:block/surface_stick_t45",
         "y": 90
       }
     ],
@@ -37,15 +44,23 @@
         "y": 90
       },
       {
-        "model": "gt6:block/surface_stick_a",
+        "model": "gt6:block/surface_stick_b",
         "y": 180
       },
       {
-        "model": "gt6:block/surface_stick_b",
+        "model": "gt6:block/surface_stick_t22",
         "y": 90
       },
       {
-        "model": "gt6:block/surface_stick_b",
+        "model": "gt6:block/surface_stick_t22",
+        "y": 180
+      },
+      {
+        "model": "gt6:block/surface_stick_t45",
+        "y": 90
+      },
+      {
+        "model": "gt6:block/surface_stick_t45",
         "y": 180
       }
     ],
@@ -64,16 +79,25 @@
         "x": 270
       },
       {
-        "model": "gt6:block/surface_stick_a",
+        "model": "gt6:block/surface_stick_b",
         "x": 270,
         "y": 90
       },
       {
-        "model": "gt6:block/surface_stick_b",
+        "model": "gt6:block/surface_stick_t22",
         "x": 270
       },
       {
-        "model": "gt6:block/surface_stick_b",
+        "model": "gt6:block/surface_stick_t22",
+        "x": 270,
+        "y": 90
+      },
+      {
+        "model": "gt6:block/surface_stick_t45",
+        "x": 270
+      },
+      {
+        "model": "gt6:block/surface_stick_t45",
         "x": 270,
         "y": 90
       }
@@ -93,16 +117,25 @@
         "x": 90
       },
       {
-        "model": "gt6:block/surface_stick_a",
+        "model": "gt6:block/surface_stick_b",
         "x": 90,
         "y": 90
       },
       {
-        "model": "gt6:block/surface_stick_b",
+        "model": "gt6:block/surface_stick_t22",
         "x": 90
       },
       {
-        "model": "gt6:block/surface_stick_b",
+        "model": "gt6:block/surface_stick_t22",
+        "x": 90,
+        "y": 90
+      },
+      {
+        "model": "gt6:block/surface_stick_t45",
+        "x": 90
+      },
+      {
+        "model": "gt6:block/surface_stick_t45",
         "x": 90,
         "y": 90
       }
@@ -122,16 +155,25 @@
         "x": 180
       },
       {
-        "model": "gt6:block/surface_stick_a",
+        "model": "gt6:block/surface_stick_b",
         "x": 180,
         "y": 90
       },
       {
-        "model": "gt6:block/surface_stick_b",
+        "model": "gt6:block/surface_stick_t22",
         "x": 180
       },
       {
-        "model": "gt6:block/surface_stick_b",
+        "model": "gt6:block/surface_stick_t22",
+        "x": 180,
+        "y": 90
+      },
+      {
+        "model": "gt6:block/surface_stick_t45",
+        "x": 180
+      },
+      {
+        "model": "gt6:block/surface_stick_t45",
         "x": 180,
         "y": 90
       }
@@ -149,14 +191,21 @@
         "y": 270
       },
       {
-        "model": "gt6:block/surface_stick_a"
+        "model": "gt6:block/surface_stick_b"
       },
       {
-        "model": "gt6:block/surface_stick_b",
+        "model": "gt6:block/surface_stick_t22",
         "y": 270
       },
       {
-        "model": "gt6:block/surface_stick_b"
+        "model": "gt6:block/surface_stick_t22"
+      },
+      {
+        "model": "gt6:block/surface_stick_t45",
+        "y": 270
+      },
+      {
+        "model": "gt6:block/surface_stick_t45"
       }
     ]
   }

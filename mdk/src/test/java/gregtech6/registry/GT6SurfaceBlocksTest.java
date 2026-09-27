@@ -26,6 +26,7 @@ import gregapi.data.MT;
 import gregapi.data.OP;
 import gregtech6.block.surface.GT6SurfaceRockBlock;
 import gregtech6.block.surface.GT6SurfaceStickBlock;
+import gregtech6.block.surface.GT6SurfaceVariants;
 import gregtech6.worldgen.GT6Worldgen;
 
 class GT6SurfaceBlocksTest {
@@ -109,12 +110,17 @@ class GT6SurfaceBlocksTest {
     }
 
     /**
-     * Task r3-stick-shape-random (GitHub #12): the stick selection shape is the bar-exact
-     * table (the MultiTileEntityStick.java:53 default pose carried through the FACING
-     * dispatch rotations — upstream :176 rides the per-instance visual box), NOT the
-     * inherited 8x3x8/12x12x3 pebble; the collision side stays empty (the upstream :177
-     * null — noCollission). The rock DOWN box stays the 8x3x8 envelope every render
-     * variant must fit inside (GT6SurfaceTreeRenderDatagenTest rockVariants...).
+     * Task debt-issue12-shape-follow-tilt (GitHub #12 residual): the selection box
+     * FOLLOWS the render variant. The null-pos call (offline tests, shape caches)
+     * falls back to the default centered bar through the six-facings — the C2 pins
+     * carried NORTH/SOUTH TRANSPOSED against the emitted dispatch (the old test passed
+     * tautologically against its own table; the vanilla end_rod anchor —
+     * "facing=north" = x:90 tips the up-model to -Z — settles the maps, pinned per
+     * facing in GT6SurfaceVariantsTest); a LIVE position replays the renderer's
+     * position-seeded draw and shows that variant's box (the same-position wireframe
+     * == the same-position model). Collision stays empty (the upstream :177 null —
+     * noCollission). The rock null-pos stays the representative 8x3x8 tier (the
+     * p38-issue1-4 pin) and follows its tier live.
      */
     @Test
     void stickSelectionShapeIsBarExact() {
@@ -129,12 +135,13 @@ class GT6SurfaceBlocksTest {
         }
         GT6SurfaceStickBlock tStick = new GT6SurfaceStickBlock(
                 net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().noCollission()); // the surfaceProperties collision face (GT6SurfaceBlocks:220)
+        // the null-pos fallback = the default centered bar (raw 2,0,7,14,2,9 through the
+        // dispatch rotations) — pixel bounds / 16, VoxelShape#toAabbs speaks 0..1
         java.util.Map<net.minecraft.core.Direction, double[]> tExpected = java.util.Map.of(
-                // pixel bounds / 16 — VoxelShape#toAabbs speaks the normalised 0..1 space
                 net.minecraft.core.Direction.DOWN, new double[] {2, 0, 7, 14, 2, 9},
                 net.minecraft.core.Direction.UP, new double[] {2, 14, 7, 14, 16, 9},
-                net.minecraft.core.Direction.NORTH, new double[] {2, 7, 14, 14, 9, 16},
-                net.minecraft.core.Direction.SOUTH, new double[] {2, 7, 0, 14, 9, 2},
+                net.minecraft.core.Direction.NORTH, new double[] {2, 7, 0, 14, 9, 2},
+                net.minecraft.core.Direction.SOUTH, new double[] {2, 7, 14, 14, 9, 16},
                 net.minecraft.core.Direction.WEST, new double[] {7, 0, 2, 9, 2, 14},
                 net.minecraft.core.Direction.EAST, new double[] {7, 0, 2, 9, 2, 14});
         for (var tEntry : tExpected.entrySet()) {
@@ -151,15 +158,43 @@ class GT6SurfaceBlocksTest {
             assertEquals(tE[4] / 16, tBox.maxY, 1e-9, tEntry.getKey() + " maxY");
             assertEquals(tE[5] / 16, tBox.maxZ, 1e-9, tEntry.getKey() + " maxZ");
         }
+        // the live follow: the hand-copied renderer draw (the independent java.util.Random
+        // transcription, GT6SurfaceVariantsTest.handDraw's twin) picks the variant, the
+        // block's getShape at that position IS that variant's box
+        GT6SurfaceVariants.Stick[] tTable = GT6SurfaceVariants.Stick.values();
+        GT6SurfaceVariants.Rock[] tRockTable = GT6SurfaceVariants.Rock.values();
+        GT6SurfaceRockBlock tRock = new GT6SurfaceRockBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of(), null);
+        for (int tX = -2; tX <= 2; tX++) for (int tZ = -2; tZ <= 2; tZ++) {
+            net.minecraft.core.BlockPos tPos = new net.minecraft.core.BlockPos(tX, 0, tZ);
+            net.minecraft.world.level.block.state.BlockState tState =
+                    tStick.defaultBlockState().setValue(GT6SurfaceRockBlock.FACING, net.minecraft.core.Direction.DOWN);
+            java.util.Random tRandom = new java.util.Random(); // the LCG family, not Xoroshiro
+            tRandom.setSeed(tState.getSeed(tPos));
+            int tDraw = Math.abs((int) tRandom.nextLong()) % 8; // total stick weight = 8 uniform
+            GT6SurfaceVariants.Stick tVariant = net.minecraft.util.random.WeightedRandom
+                    .getWeightedItem(java.util.List.of(tTable), tDraw).orElse(tTable[0]);
+            net.minecraft.world.phys.AABB tVariantBox =
+                    GT6SurfaceVariants.shapeOf(tVariant, net.minecraft.core.Direction.DOWN).toAabbs().get(0);
+            assertEquals(tVariantBox, tStick.getShape(tState, null, tPos, null).toAabbs().get(0),
+                    "live stick shape at " + tPos + " is the drawn variant " + tVariant);
+            // the rock tier follows the same chain (weights 3/2/1 -> total 6)
+            tRandom = new java.util.Random();
+            tRandom.setSeed(tRock.defaultBlockState().getSeed(tPos));
+            tDraw = Math.abs((int) tRandom.nextLong()) % 6;
+            GT6SurfaceVariants.Rock tTier = net.minecraft.util.random.WeightedRandom
+                    .getWeightedItem(java.util.List.of(tRockTable), tDraw).orElse(tRockTable[0]);
+            assertEquals(GT6SurfaceVariants.shapeOf(tTier, net.minecraft.core.Direction.DOWN).toAabbs().get(0),
+                    tRock.getShape(tRock.defaultBlockState(), null, tPos, null).toAabbs().get(0),
+                    "live rock shape at " + tPos + " is the drawn tier " + tTier);
+        }
         // BlockState.getCollisionShape (the public BlockStateBase face; the BlockBehaviour
         // 4-arg form went protected on 21.1) — noCollission short-circuits to empty
         assertTrue(tStick.defaultBlockState().getCollisionShape(null, null).isEmpty(),
                 "stick collision stays empty — MultiTileEntityStick.java:177 collision null");
-        // the rock envelope pin: the 8x3x8 DOWN selection box every render variant fits inside
-        GT6SurfaceRockBlock tRock = new GT6SurfaceRockBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of(), null);
+        // the rock null-pos pin: the representative 8x3x8 tier (p38-issue1-4 pin kept)
         var tRockBox = tRock.getShape(tRock.defaultBlockState(), null, null, null).toAabbs().get(0);
         assertEquals(new net.minecraft.world.phys.AABB(4 / 16.0, 0, 4 / 16.0, 12 / 16.0, 3 / 16.0, 12 / 16.0), tRockBox,
-                "rock DOWN selection stays the 8x3x8 envelope (p38-issue1-4 pin)");
+                "rock null-pos selection falls back to the 8x3x8 representative tier");
     }
 
     /** The WorldgenOnSurface binds, transcribed into the constant table. */

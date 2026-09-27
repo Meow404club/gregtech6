@@ -1,0 +1,50 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#slab"
+        },
+        "east": {
+          "texture": "#slab"
+        },
+        "north": {
+          "texture": "#slab"
+        },
+        "south": {
+          "texture": "#slab"
+        },
+        "up": {
+          "texture": "#slab"
+        },
+        "west": {
+          "texture": "#slab"
+        }
+      },
+      "from": [
+        2,
+        0,
+        7
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          8,
+          1,
+          8
+        ]
+      },
+      "to": [
+        14,
+        2,
+        9
+      ]
+    }
+  ],
+  "textures": {
+    "particle": "#slab",
+    "slab": "minecraft:block/oak_log"
+  }
+}

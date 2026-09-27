@@ -70,42 +70,81 @@ class GT6SurfaceTreeRenderDatagenTest {
     }
 
     /**
-     * #12 stick blockstate (r3-stick-shape-random): all six FACINGS, each a weighted
-     * SIX-variant list — the two rotationY arms x the three displacement tiers, the
-     * position-seeded random pick (WeightedBakedModel chain) that kills the
-     * "千篇一律" single pose. First entry of every facing = the unrotated default arm.
+     * #12 stick blockstate (r3-stick-shape-random + debt-issue12-shape-follow-tilt): all
+     * six FACINGS, each a weighted EIGHT-variant list — the shared-table order
+     * (GT6SurfaceVariants.Stick declaration order == JSON array order == the
+     * WeightedRandom scan order the selection box replays): centered arms x2, one slide
+     * tier per arm, the two tilt models on both arms. First entry of every facing =
+     * the unrotated default arm.
      */
     @Test
     void stickBlockstateIsTheWeightedVariantBand() throws Exception {
         JsonObject tState = json("assets/gt6/blockstates/surface_stick.json");
         var tVariants = tState.getAsJsonObject("variants");
         assertEquals(6, tVariants.size(), "the full FACING table");
-        List<String> tTierModels = List.of("gt6:block/surface_stick", "gt6:block/surface_stick_a", "gt6:block/surface_stick_b");
+        // the pool pinned in emission order (GT6SurfaceVariants.Stick): model id + arm y
+        List<String> tPoolModels = List.of("gt6:block/surface_stick", "gt6:block/surface_stick",
+                "gt6:block/surface_stick_a", "gt6:block/surface_stick_b",
+                "gt6:block/surface_stick_t22", "gt6:block/surface_stick_t22",
+                "gt6:block/surface_stick_t45", "gt6:block/surface_stick_t45");
+        List<Integer> tPoolArms = List.of(0, 90, 0, 90, 0, 90, 0, 90);
         for (String tFacing : List.of("down", "up", "north", "south", "west", "east")) {
             var tList = tVariants.getAsJsonArray("facing=" + tFacing);
-            assertEquals(6, tList.size(), tFacing + ": 2 arms x 3 slide tiers");
-            assertEquals(tTierModels.get(0), tList.get(0).getAsJsonObject().get("model").getAsString(),
-                    tFacing + ": first variant = the default centered bar");
+            assertEquals(8, tList.size(), tFacing + ": 2 centered arms + 2 slide + 2x2 tilt");
             for (int i = 0; i < tList.size(); i++) {
                 JsonObject tEntry = tList.get(i).getAsJsonObject();
-                assertEquals(tTierModels.get(i / 2), tEntry.get("model").getAsString(),
-                        tFacing + " variant " + i + ": tier model");
-                assertTrue(!tEntry.has("weight") || tEntry.get("weight").getAsInt() >= 1,
-                        tFacing + " variant " + i + ": weight absent (=1 default) or >= 1");
+                assertEquals(tPoolModels.get(i), tEntry.get("model").getAsString(),
+                        tFacing + " variant " + i + ": pool model order");
+                assertFalse(tEntry.has("weight"), tFacing + " variant " + i + ": uniform band, weight 1 omitted");
             }
         }
-        // the default arm carries the facing rotation; the twin = +90 (mod 360: WEST lands at 0)
-        JsonObject tDownDefault = tVariants.getAsJsonArray("facing=down").get(0).getAsJsonObject();
-        assertFalse(tDownDefault.has("y") || tDownDefault.has("x") || tDownDefault.has("weight"),
-                "down default arm: model only, the floor form at default weight");
-        int tY = tVariants.getAsJsonArray("facing=east").get(0).getAsJsonObject().get("y").getAsInt();
-        assertEquals(90, tY, "east default arm keeps the facing rotationY");
+        // the arm composition: down = no facing rotation, so y alternates 0(omitted)/90
+        var tDown = tVariants.getAsJsonArray("facing=down");
+        for (int i = 0; i < 8; i++) {
+            boolean tHasY = tDown.get(i).getAsJsonObject().has("y");
+            assertEquals(tPoolArms.get(i) != 0, tHasY, "down variant " + i + ": arm " + tPoolArms.get(i));
+            if (tHasY) assertEquals(tPoolArms.get(i), tDown.get(i).getAsJsonObject().get("y").getAsInt(),
+                    "down variant " + i + ": arm y");
+        }
+        assertFalse(tDown.get(0).getAsJsonObject().has("x"), "down default arm: the floor form, no x");
+        // east = facing y 90; the arms stack: 90 / (90+90)%360=180
+        assertEquals(90, tVariants.getAsJsonArray("facing=east").get(0).getAsJsonObject().get("y").getAsInt(),
+                "east default arm keeps the facing rotationY");
         assertEquals(180, tVariants.getAsJsonArray("facing=east").get(1).getAsJsonObject().get("y").getAsInt(),
                 "east twin arm = facing + 90");
         assertFalse(tVariants.getAsJsonArray("facing=west").get(1).getAsJsonObject().has("y"),
                 "west twin arm = (270+90)%360 = 0, the omitted JSON default");
         assertEquals(180, tVariants.getAsJsonArray("facing=up").get(0).getAsJsonObject().get("x").getAsInt(),
                 "up: ceiling form rotation carried");
+    }
+
+    /**
+     * #12 tilt models (debt-issue12-shape-follow-tilt): the default bar with an ELEMENT
+     * rotation about its own centre — origin [8,1,8], axis y, angle 22.5/45 (the only
+     * angles the grammar validates, BlockElement.java:100), untinted oak borrow kept.
+     */
+    @Test
+    void stickTiltModelsAreTheRotatedBars() throws Exception {
+        for (String tPair : List.of("surface_stick_t22:22.5", "surface_stick_t45:45.0")) {
+            String tName = tPair.substring(0, tPair.indexOf(':'));
+            JsonObject tModel = json("assets/gt6/models/block/" + tName + ".json");
+            assertEquals("minecraft:block/oak_log", tModel.getAsJsonObject("textures").get("slab").getAsString(),
+                    tName + ": the vanilla oak borrow");
+            JsonObject tBox = tModel.getAsJsonArray("elements").get(0).getAsJsonObject();
+            assertEquals(List.of(2, 0, 7), tBox.getAsJsonArray("from").asList().stream()
+                    .map(e -> e.getAsInt()).toList(), tName + " from = the default centered bar");
+            assertEquals(List.of(14, 2, 9), tBox.getAsJsonArray("to").asList().stream()
+                    .map(e -> e.getAsInt()).toList(), tName + " to = the default centered bar");
+            JsonObject tRotation = tBox.getAsJsonObject("rotation");
+            assertEquals("y", tRotation.get("axis").getAsString(), tName + ": the local-Y tilt axis");
+            assertEquals(Double.parseDouble(tPair.substring(tPair.indexOf(':') + 1)),
+                    tRotation.get("angle").getAsDouble(), 1e-6, tName + ": tilt angle");
+            assertEquals(3, tRotation.getAsJsonArray("origin").size(), tName + ": the bar-centre origin");
+            assertEquals(8.0, tRotation.getAsJsonArray("origin").get(0).getAsDouble(), 1e-6, tName + " origin x");
+            assertEquals(1.0, tRotation.getAsJsonArray("origin").get(1).getAsDouble(), 1e-6, tName + " origin y");
+            assertEquals(8.0, tRotation.getAsJsonArray("origin").get(2).getAsDouble(), 1e-6, tName + " origin z");
+            assertFalse(tModel.toString().contains("tintindex"), tName + ": untinted");
+        }
     }
 
     /**
@@ -133,8 +172,9 @@ class GT6SurfaceTreeRenderDatagenTest {
     /**
      * #12 rock variant band (the same weighted mechanism, the R2 suggestion): three size
      * tiers of the upstream 2..8px-wide x 1..4px-high random micro box, weights 3/2/1
-     * (weight 1 omitted = the JSON default), every tier box inside the 8x3x8 selection
-     * envelope 4..12 x 0..3 x 4..12 pinned in GT6SurfaceBlocksTest.
+     * (weight 1 omitted = the JSON default), every tier box inside the 8x3x8 envelope
+     * 4..12 x 0..3 x 4..12 — the null-pos fallback shape (debt-issue12-shape-follow-tilt:
+     * a live position's selection box follows its tier exactly now).
      */
     @Test
     void rockBlockstateIsTheSizedVariantBand() throws Exception {
