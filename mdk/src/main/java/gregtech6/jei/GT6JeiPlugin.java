@@ -75,6 +75,19 @@ public class GT6JeiPlugin implements IModPlugin {
 	/** Stable plugin uid — one constant instance, the offline test pins it against drift. */
 	public static final ResourceLocation PLUGIN_UID = new ResourceLocation("gt6", PLUGIN_UID_PATH);
 
+	/** The live runtime, stashed by {@link #onRuntimeAvailable} for the jump face below. */
+	private static mezz.jei.api.runtime.IJeiRuntime sRuntime;
+
+	@Override
+	public void onRuntimeAvailable(mezz.jei.api.runtime.IJeiRuntime aRuntime) {
+		sRuntime = aRuntime;
+	}
+
+	@Override
+	public void onRuntimeUnavailable() {
+		sRuntime = null;
+	}
+
 	@Override
 	public ResourceLocation getPluginUid() {
 		return PLUGIN_UID;
@@ -131,5 +144,30 @@ public class GT6JeiPlugin implements IModPlugin {
 		/*// 19.x: a stateless singleton receives the recipe in each call (since 16.0.0).
 		registration.getCraftingCategory().addExtension(GT6MaterialToolRecipe.class, GT6MaterialToolJeiExtension.INSTANCE);
 		*///?}
+	}
+
+	/**
+	 * The machine-GUI progress-bar jump face (task debt-jei-emi-batch4): opens this map's
+	 * category page in the JEI recipes gui — the modern counterpart of upstream
+	 * GT_RectHandler's {@code GuiCraftingRecipe/GuiUsageRecipe.openRecipeGui(mNEI)}
+	 * (NEI_RecipeMap.java:399-426). Upstream registered the SAME handler instance as
+	 * crafting AND usage handler (NEI_RecipeMap.java:75-76 {@code API.registerRecipeHandler}
+	 * + {@code registerUsageHandler}), so the left/right click arms opened the identical
+	 * page — this port keeps that single-destination behaviour, no use/recipe split.
+	 * <p>
+	 * {@code IRecipesGui.showTypes(List)} exists verbatim on both pinned generations
+	 * (15.x CommonApi IRecipesGui.java:48, 19.x Common IRecipesGui.java:49), and
+	 * {@code RecipeType.equals} is uid+class (RecipeType.java), so the type rebuilt through
+	 * {@link GT6RecipeMapJeiCategory#recipeTypeOf} — the same formula the registration used
+	 * — resolves to the registered category. Never call unguarded: the class loads JEI API,
+	 * so only the ModList-gated {@link gregtech6.gui.GTViewerJump} router may reach it.
+	 *
+	 * @return false (no-op) when the runtime is not available — the router then falls
+	 *         through to the EMI leg.
+	 */
+	public static boolean openRecipeMapPage(RecipeMap aMap) {
+		if (aMap == null || sRuntime == null) return false;
+		sRuntime.getRecipesGui().showTypes(java.util.List.of(GT6RecipeMapJeiCategory.recipeTypeOf(aMap)));
+		return true;
 	}
 }

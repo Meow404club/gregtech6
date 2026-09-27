@@ -46,10 +46,21 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 
 	public GT6RecipeMapJeiCategory(RecipeMap aMap) {
 		mMap = aMap;
+		mRecipeType = recipeTypeOf(aMap);
+	}
+
+	/**
+	 * The per-map {@link RecipeType} formula — ONE construction shared by the registration
+	 * (the ctor above) and the runtime jump face ({@link GT6JeiPlugin#openRecipeMapPage},
+	 * task debt-jei-emi-batch4). {@code RecipeType.equals} compares uid + recipe class
+	 * (RecipeType.java 15.x, identical in 19.x), so the type rebuilt at click time resolves
+	 * to the registered category without stashing instances.
+	 */
+	public static RecipeType<Recipe> recipeTypeOf(RecipeMap aMap) {
 		//? if forge {
-		mRecipeType = new RecipeType<>(new ResourceLocation("gt6", "recipe_map/" + aMap.mNameInternal), Recipe.class);
+		return new RecipeType<>(new ResourceLocation("gt6", "recipe_map/" + aMap.mNameInternal), Recipe.class);
 		//?} else {
-		/*mRecipeType = new RecipeType<>(ResourceLocation.fromNamespaceAndPath("gt6", "recipe_map/" + aMap.mNameInternal), Recipe.class);
+		/*return new RecipeType<>(ResourceLocation.fromNamespaceAndPath("gt6", "recipe_map/" + aMap.mNameInternal), Recipe.class);
 		 *///?}
 	}
 
