@@ -8195,68 +8195,88 @@ borrowed=0 in-place=255 declared=0 errors=0.
 Copied on 2026-09-12. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Electric Transformer family block textures, task p28-c-ulv-lv-transformer: the 2 PNGs
-under `gt6/textures/block/electric_transformer_{front,side}.png` are BAKED composites of
-the upstream transformer_electric iconset — `colored/front.png` (or `/side.png`, the
-colored trio is one byte-identical grayscale base) src-over `overlay/front.png` (or
-`/side.png`), the p19 distillery-front canonical treatment (colored+overlay bake into a
-single-layer opaque PNG; the upstream runtime mRGBa tint and the two-layer stack are the
-render pool card — the p12 rotation-transformer posture repeated). The upstream
-`overlay_active/` trio stays unborrowed (the port model has no active-state visuals;
-the W2 render card owns it).
+Converter family block textures (the two-layer tinted grammar), task r4-18-converter-tex-facing
+(GitHub #18): the 27 PNGs under `gt6/textures/block/{electric_transformer,electric_dynamo,
+flux_dynamo}_{colored,overlay,overlay_active}_{front,back,side}.png` are the upstream
+iconsets borrowed VERBATIM (bytes unmodified):
+- `textures/blocks/machines/transformers/transformer_electric/` (the transformer trio),
+- `textures/blocks/machines/dynamos/electric_rotation/` (the electric dynamo trio),
+- `textures/blocks/machines/dynamos/flux_rotation/` (the flux dynamo trio),
 
-Source layers (borrowed bytes, NOT landed as files):
-- colored/front.png `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- colored/side.png  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (identical base)
-- overlay/front.png `5c728ec16e0f33fd41d656f32d8f697d9622e324666e909d37ed0af386530594`
-- overlay/side.png  `48b6811ef825b2be50dcbda29ef5e2a3f707708a499a2d3796561ddb29770185`
+each `colored/` grayscale plate is the tintindex-0 tint seat (the runtime mRGBa multiply —
+GTMachineTintModel/GTMachinePaintTint; upstream MultiTileEntityTransformerElectric :35-39
+and MultiTileEntityDynamoElectric/Flux getTexture2: BlockTextureMulti(colored x mRGBa,
+overlay)), the `overlay/` trio is the untinted decal shell and `overlay_active/` the
+ACTIVE-state shell (both carried as six 0.01-plate decal elements, the addHive grammar).
+The upstream `transformer_electric/overlay_blinking/` trio (animated) stays UNBORROWED —
+the port collapsed the upstream TE_Behavior_Active_Trinary to a boolean, so there is no
+blinking state to drive it (declared defer; the trinary port is the pool).
 
-Baked products (the landed files):
-- electric_transformer_front.png `97f5c41837e8c9f94bbaec4873d3d7f0529f1146974569d90d7fffecadc06503`
-- electric_transformer_side.png  `a982cea2f5d79df29801e1b21349e617488c324ea79a64b35712658bb60a4c9f`
+This supersedes the retired p28/p38-c1 BAKED composites (the src-over
+`electric_transformer_{front,side}.png`, `{electric,flux}_dynamo_{front,back,side}.png`
+products and their ledger rows are GONE — the bake dropped the per-tier mRGBa and was the
+#18 all-tiers-same-gray root cause). Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
 
-Baked on 2026-09-13 (bake_distillery_fronts.py src_over/encode_png functions verbatim,
-inline pass). Upstream license: **CC0 1.0 Universal Public Domain Dedication** (same
-upstream `README.md` block as above).
+Source files (borrowed bytes; per-family sha256):
+- electric_transformer colored/front|side|back `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (one byte-identical grayscale base)
+- electric_transformer overlay/front `5c728ec16e0f33fd41d656f32d8f697d9622e324666e909d37ed0af386530594`
+- electric_transformer overlay/back `d6eda0dda3878355b762c6b60356a5b1eb6746079822a282963c1285921e71a3`
+- electric_transformer overlay/side `48b6811ef825b2be50dcbda29ef5e2a3f707708a499a2d3796561ddb29770185`
+- electric_transformer overlay_active/front `375ebaca9f18d34e3edd037d0dd484c4602674a404edbef3b083921ef2e8e6cd`
+- electric_transformer overlay_active/back `eb0b3a8c6bae86e319d153af758c8094695dd63ed2d2991ca72920dab1d76428`
+- electric_transformer overlay_active/side `c3325fa4e7a6d1e479212c6406fc28f4a78c227e8ffbe9d1f051e2ea36acbd56`
+- electric_dynamo colored/front|side `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (the shared machine base)
+- electric_dynamo colored/back `b94934858d010e0381fd5056dbc0ec00e964cad00c152944b2e6e0918991f977`
+- electric_dynamo overlay/front `48b6811ef825b2be50dcbda29ef5e2a3f707708a499a2d3796561ddb29770185`
+- electric_dynamo overlay/back `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`
+- electric_dynamo overlay/side `6569a89537bc53d51e88c51edc435b8b8cf66d1bc2a040cec6b36d2c0074b736`
+- electric_dynamo overlay_active/front `c3325fa4e7a6d1e479212c6406fc28f4a78c227e8ffbe9d1f051e2ea36acbd56`
+- electric_dynamo overlay_active/back `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb` (shared art)
+- electric_dynamo overlay_active/side `6569a89537bc53d51e88c51edc435b8b8cf66d1bc2a040cec6b36d2c0074b736` (shared art)
+- flux_dynamo colored/front|side `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (the shared machine base)
+- flux_dynamo colored/back `b94934858d010e0381fd5056dbc0ec00e964cad00c152944b2e6e0918991f977`
+- flux_dynamo overlay/front `ea63a03b226d86607f2fcf091d36d3118b2c88d5f6f43227319639eb3abc469b`
+- flux_dynamo overlay/back `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb` (shared)
+- flux_dynamo overlay/side `4a690d5ec4647aafe3277730b26883197f198a5077e62c82c63772f9912d0b8f`
+- flux_dynamo overlay_active/front `924f1db7ac9163f972c97388986eef35e01672eb41ab5ecc3200d092bb477032`
+- flux_dynamo overlay_active/back `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb` (shared)
+- flux_dynamo overlay_active/side `31ccc7d6d08c1a978af3c6fe288b2e9a0a2282ab7d5d0a687661743e7561d770`
 
-Electric + Flux Dynamo ladder face textures, task p38-c1-dynamo-bowl-models: the 6 PNGs
-under `gt6/textures/block/{electric,flux}_dynamo_{front,back,side}.png` are BAKED
-composites of the upstream dynamo iconsets
-`textures/blocks/machines/dynamos/{electric_rotation,flux_rotation}/` — colored/front
-(or /side, one byte-identical grayscale base `db9560d3...` as every machine family) or
-colored/back src-over the matching overlay/ face, the p19 distillery-front canonical
-treatment (the p28 electric-transformer bake repeated; the model is the addZpmDechargers
-facing cube — FRONT = the OUTPUT mFacing, BACK = the INPUT OPOS, MultiTileEntityDynamoFlux
-getTexture2 index 0/1/2). The `overlay_active/` trios stay unborrowed (the port block has
-no ACTIVE property, the W2 render card); the runtime mRGBa tint is not baked (the render
-pool). The two families share the colored/back plate AND the overlay/back sprite
-byte-identically upstream, so the two `_back.png` products are byte-identical to each
-other; the electric front product is byte-identical to `electric_transformer_side.png`
-above (the upstream overlay sprites are shared art — determinism cross-check, same
-inputs through the same idiom).
+Landed files (27):
+- electric_transformer_colored_front.png
+- electric_transformer_colored_back.png
+- electric_transformer_colored_side.png
+- electric_transformer_overlay_front.png
+- electric_transformer_overlay_back.png
+- electric_transformer_overlay_side.png
+- electric_transformer_overlay_active_front.png
+- electric_transformer_overlay_active_back.png
+- electric_transformer_overlay_active_side.png
+- electric_dynamo_colored_front.png
+- electric_dynamo_colored_back.png
+- electric_dynamo_colored_side.png
+- electric_dynamo_overlay_front.png
+- electric_dynamo_overlay_back.png
+- electric_dynamo_overlay_side.png
+- electric_dynamo_overlay_active_front.png
+- electric_dynamo_overlay_active_back.png
+- electric_dynamo_overlay_active_side.png
+- flux_dynamo_colored_front.png
+- flux_dynamo_colored_back.png
+- flux_dynamo_colored_side.png
+- flux_dynamo_overlay_front.png
+- flux_dynamo_overlay_back.png
+- flux_dynamo_overlay_side.png
+- flux_dynamo_overlay_active_front.png
+- flux_dynamo_overlay_active_back.png
+- flux_dynamo_overlay_active_side.png
 
-Source layers (borrowed bytes, NOT landed as files; per family identical plate set):
-- colored/front.png `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- colored/side.png  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (identical base)
-- colored/back.png  `b94934858d010e0381fd5056dbc0ec00e964cad00c152944b2e6e0918991f977`
-- electric overlay/front `48b6811ef825b2be50dcbda29ef5e2a3f707708a499a2d3796561ddb29770185`
-- electric overlay/back  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`
-- electric overlay/side  `6569a89537bc53d51e88c51edc435b8b8cf66d1bc2a040cec6b36d2c0074b736`
-- flux overlay/front     `ea63a03b226d86607f2fcf091d36d3118b2c88d5f6f43227319639eb3abc469b`
-- flux overlay/back      `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb` (shared)
-- flux overlay/side      `4a690d5ec4647aafe3277730b26883197f198a5077e62c82c63772f9912d0b8f`
-
-Baked products (the landed files):
-- electric_dynamo_front.png `a982cea2f5d79df29801e1b21349e617488c324ea79a64b35712658bb60a4c9f`
-- electric_dynamo_back.png  `4689f9bffd45478f572ef76733203c92c71c60d434ae4c1ffcfb5473f2ac22c5`
-- electric_dynamo_side.png  `6fad8fa60bff86c0022b163a27f70607a9a94031eba66e1ae21f76d5c57dc7f1`
-- flux_dynamo_front.png     `ddca70198af41dacd371ba33246d1510c6aaca16c94034046a6a20e99f3fa131`
-- flux_dynamo_back.png      `4689f9bffd45478f572ef76733203c92c71c60d434ae4c1ffcfb5473f2ac22c5` (shared art)
-- flux_dynamo_side.png      `0c4c9365e755cf4289327fdee8a4ecbdd96b3406f56c52096a1e804c9335d34a`
-
-Baked on 2026-09-24 (bake_machine_fronts.py decode_png/src_over/encode_png imported
-verbatim, inline pass). Upstream license: **CC0 1.0 Universal Public Domain Dedication**
-(same upstream `README.md` block as above).
+Borrowed on 2026-09-27 (cp verbatim, no bake). The `electric_dynamo_ulv` placeholder
+cube_all over `energy_source.png` (task p28-c-ulv-dynamo-row) stays: the upstream
+Electric_T[0] slot carries NO machine (MT.java:3691, the T0 ULV row is the port
+extension) — PLACEHOLDER, NO UPSTREAM COUNTERPART (the render pool upgrades it if the
+T0 art ever exists upstream).
 - `gt6/textures/block/parts/<family>/<design>/{colored,overlay}/{bottom,top,side}.png` —
   the multiblock part-family design textures (372 files, task p29-w3-nbtdesign-parts;
   upstream `textures/blocks/machines/multiblockparts/<family>/<design>/...` verbatim,
