@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -336,14 +337,14 @@ public final class GT6RecipesReactorRods {
 	/** The live rod leg ({@link GT6ReactorRods#BY_ID}) — null when the id has no item. */
 	@Nullable
 	static ItemStack liveRod(int aId) {
-		net.minecraftforge.registries.RegistryObject<Item> tHandle = GT6ReactorRods.BY_ID.get(aId);
+		RegistryObject<Item> tHandle = GT6ReactorRods.BY_ID.get(aId);
 		return tHandle == null ? null : new ItemStack(tHandle.get());
 	}
 
 	/** The live material leg ({@link GT6MaterialItems#get}) — null when the pair has no item. */
 	@Nullable
 	static ItemStack liveMaterial(OreDictPrefix aPrefix, OreDictMaterial aMaterial) {
-		net.minecraftforge.registries.RegistryObject<Item> tHandle = GTMaterialItems.get(aPrefix, aMaterial);
+		RegistryObject<Item> tHandle = GTMaterialItems.get(aPrefix, aMaterial);
 		return tHandle == null ? null : new ItemStack(tHandle.get());
 	}
 
