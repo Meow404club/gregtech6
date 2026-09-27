@@ -66,6 +66,12 @@ public abstract class GTRecipesOfflineTestBase {
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
+		// the p15-m4-test-infra remedy (the GTMultiBlocksOfflineTestBase form, verbatim): on
+		// the 1.21.1 leg the bootstrap freeze lands MID-SUITE (class-order lottery —
+		// whichever fixture-BET class first runs its @BeforeAll after the freeze dies at
+		// BlockEntityType's intrusive-holder init, "Registry is already frozen"). Reopen the
+		// write window so the fixture BETs stay constructible regardless of scheduling.
+		gregtech6.tileentity.GTOfflineTestBase.unfreezeBlockEntityTypeRegistry();
 		// ForgeMod.registerRecipeSerializers never runs offline, so the vanilla item
 		// ingredient serializer is missing from CraftingHelper's dispatch map. The getID
 		// probe (the isolation card, replacing the boolean flag) keeps this idempotent
