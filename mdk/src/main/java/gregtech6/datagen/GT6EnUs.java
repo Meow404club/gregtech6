@@ -41,6 +41,7 @@ import gregtech6.registry.GTWires;
 import gregtech6.covers.GT6Covers;
 import gregtech6.jade.GT6FluidProvider;
 import gregtech6.jade.GT6MachineProvider;
+import gregtech6.worldgen.GT6OreGenInfoLayout;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -597,6 +598,10 @@ public class GT6EnUs extends LanguageProvider {
             + "outward, leave the center cell of the cube empty, and fill the remaining 25 cells "
             + "with Coke Oven Bricks. Ignite the controller to start it - it makes its own heat, "
             + "and a tank on the layer below the structure collects the Creosote.");
+        // task debt-oregen-title-i18n — the ore-gen distribution page title (the
+        // GT6OreGenInfoLayout.TITLE_KEY consumer): hand row, no dump face — the page is
+        // a modern enhancement, upstream 1.7.10 has no NEI distribution face
+        add(GT6OreGenInfoLayout.TITLE_KEY, "Ore Generation Distribution");
     }
 
     /**

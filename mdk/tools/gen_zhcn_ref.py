@@ -2540,6 +2540,10 @@ LEGACY_ITEM_BACKFILL = {
     'item.gt6.book_loot_guide': '布满灰尘的指南书',
     'item.gt6.book_loot_guide.tooltip': '战利品：某本随机手册',
     'item.gt6.book_loot_guide.tooltip_loot': '右键方块以开启',
+    # ---- the ore-gen distribution page title (task debt-oregen-title-i18n): hand row —
+    # no dump face exists (the page is a modern enhancement, upstream 1.7.10 has no NEI
+    # distribution face); the GT6ZhCn addMiscUnits walk emits the key
+    'gt6.jei.info.ore_gen_info': '矿石生成分布',
 }
 
 # ---- the block-band drift: the tree families, surface plants, placeables and the

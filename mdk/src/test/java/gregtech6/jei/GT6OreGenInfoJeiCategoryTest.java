@@ -42,7 +42,12 @@ public class GT6OreGenInfoJeiCategoryTest {
 		assertEquals(GT6OreGenInfoLayout.WIDTH, tCategory.getWidth());
 		assertEquals(GT6OreGenInfoLayout.categoryHeight(), tCategory.getHeight(),
 				"the category height is the shared worst-entry value, not a local constant");
-		assertEquals(GT6OreGenInfoLayout.TITLE_TEXT, tCategory.getTitle().getString());
+		// the title rides the translatable seam (task debt-oregen-title-i18n): the key face
+		// is pinned, the en/zh values live in the generated lang faces (GT6LangParityTest)
+		assertTrue(tCategory.getTitle().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents,
+				"the page title must be translatable, not a literal");
+		assertEquals(GT6OreGenInfoLayout.TITLE_KEY,
+				((net.minecraft.network.chat.contents.TranslatableContents) tCategory.getTitle().getContents()).getKey());
 	}
 
 	/**

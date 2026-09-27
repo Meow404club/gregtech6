@@ -41,7 +41,12 @@ public class GT6OreGenInfoEmiCategoryTest {
 	public void categoryIdMirrorsTheJeiUid() {
 		assertEquals("gt6:ore_gen_info", GT6OreGenInfoEmiCategory.CATEGORY.getId().toString(),
 				"the EMI category id must mirror the JEI uid one-to-one (the JEMI skip key)");
-		assertEquals(GT6OreGenInfoLayout.TITLE_TEXT, GT6OreGenInfoEmiCategory.CATEGORY.getName().getString());
+		// the title rides the translatable seam (task debt-oregen-title-i18n): the key face
+		// is pinned, the en/zh values live in the generated lang faces (GT6LangParityTest)
+		assertTrue(GT6OreGenInfoEmiCategory.CATEGORY.getName().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents,
+				"the page title must be translatable, not a literal");
+		assertEquals(GT6OreGenInfoLayout.TITLE_KEY,
+				((net.minecraft.network.chat.contents.TranslatableContents) GT6OreGenInfoEmiCategory.CATEGORY.getName().getContents()).getKey());
 	}
 
 	@Test
