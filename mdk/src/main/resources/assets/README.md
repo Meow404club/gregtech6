@@ -9196,3 +9196,17 @@ ResourceLocation.java:213-232). sha256 per file:
   face1, face2, side2),
   `33fe99c466efd19f6e4dcb14349690b60f49c2626f4b435799f1a0b0bfbc9aa1` (side1),
   `a9582e2de34a2e51aeb4031ab456db5791a27c42f32aa60886554ef9b4e6f467` (top).
+Bedrock Mining Drill controller faces, task p37-bedrock-drill: the 6 controller
+PNGs `gt6/textures/block/bedrockdrill_colored_{face}.png` (face ∈
+bottom/top/front/back/left/right) come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/multiblockmains/bedrockdrill/colored/{side,top,bottom}.png`
+(the NBT_TEXTURE "bedrockdrill" name form of Loader_MultiTileEntities.java:1283)
+byte-identical to upstream, sha256 verified per file (upstream ships one uniform
+tile per machine — colored == colored_front, all six digests equal):
+
+- `bedrockdrill_colored_bottom.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `bedrockdrill_colored_top.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `bedrockdrill_colored_front.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `bedrockdrill_colored_back.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `bedrockdrill_colored_left.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `bedrockdrill_colored_right.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`

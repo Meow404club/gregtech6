@@ -216,6 +216,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addLargeMachines(); // task p29-w3-large-12 — the twelve large-machine controllers
         addImplosionCompressor(); // task p31-implosion — the Implosion Compressor controller
         addVonDaGraagg(); // task p31-graagg — the Von da Graagg controller
+        addBedrockDrill(); // task p37-bedrock-drill — the Bedrock Mining Drill controller
         addLargeMassfab(); // task p31-massfab — the Large Matter Fabricator controller
         addFusionReactor(); // task p31-fusion — the Fusion Reactor controller
         addLogisticsCore(); // task p32-logistics-lv3 — the Logistics Core controller
@@ -3256,6 +3257,36 @@ public final class GT6BlockStates extends BlockStateProvider {
             return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
         });
         itemModels().withExistingParent("von_da_graagg", modLoc("block/von_da_graagg"));
+    }
+
+    /**
+     * Task p37-bedrock-drill — the Bedrock Mining Drill controller: the addVonDaGraagg form
+     * over the upstream NBT_TEXTURE "bedrockdrill" family (Loader :1283). The upstream
+     * multiblockmains family carries ONE uniform tile (colored == colored_front, all six
+     * digests equal) so all six faces borrow the same PNG (the graagg precedent); the
+     * 4 FACING x FORMED states share the one oriented model.
+     */
+    private void addBedrockDrill() {
+        Block tBlock = gregtech6.registry.GTMultiBlocks.BEDROCK_DRILL.get();
+        String tFamily = "bedrockdrill";
+        ModelFile tModel = models().cube("bedrock_drill",
+                modLoc("block/" + tFamily + "_colored_bottom"),
+                modLoc("block/" + tFamily + "_colored_top"),
+                modLoc("block/" + tFamily + "_colored_front"),
+                modLoc("block/" + tFamily + "_colored_back"),
+                modLoc("block/" + tFamily + "_colored_left"),
+                modLoc("block/" + tFamily + "_colored_right"));
+        getVariantBuilder(tBlock).forAllStates(aState -> {
+            int tY;
+            switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
+                case SOUTH -> tY = 180;
+                case WEST -> tY = 270;
+                case EAST -> tY = 90;
+                default -> tY = 0; // NORTH
+            }
+            return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+        });
+        itemModels().withExistingParent("bedrock_drill", modLoc("block/bedrock_drill"));
     }
 
     private ModelFile partModel(String aName, String aFamily, int aDesign) {
