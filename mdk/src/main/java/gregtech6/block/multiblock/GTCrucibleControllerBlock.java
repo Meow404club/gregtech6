@@ -16,8 +16,10 @@ import gregtech6.tileentity.multiblocks.TileEntityCrucible;
  * becomes the row the controller BE reads its wall block and shell material from (the
  * BoilerTankBlock row-carrier form).
  *
- * <p>NO use override: the crucible has NO GUI (the explicit defer, SPEC ⑥ — MUI 批 A
- * merged first), a right-click does nothing.
+ * <p>NO GUI (the upstream census) — the right-click face IS the interaction (issue #20
+ * sub-task B): the {@code use} override routes the TOP-face click into
+ * {@link TileEntityCrucible#useTop} (the GT6Crucibles.CrucibleBlock.use carrier form,
+ * upstream onBlockActivated3 :460-544); every other face and an unformed structure PASS.
  */
 public class GTCrucibleControllerBlock extends GTMultiBlockControllerBlock {
 
@@ -47,6 +49,30 @@ public class GTCrucibleControllerBlock extends GTMultiBlockControllerBlock {
 	@Override
 	protected BlockEntityType<? extends TileEntityBase03TicksAndSync> tickerType() {
 		return GT6Crucibles.MULTIBLOCK_CRUCIBLE_BE.get();
+	}
+
+	/**
+	 * The :460-544 click carrier (the GT6Crucibles.CrucibleBlock.use dual-leg form): only
+	 * the top face reacts, the BE answers the structure gate (an unformed crucible
+	 * PASSes), the arms run server-side and the click consumes sided.
+	 */
+	@Override
+	//? if forge {
+	public net.minecraft.world.InteractionResult use(net.minecraft.world.level.block.state.BlockState aState, net.minecraft.world.level.Level aLevel, net.minecraft.core.BlockPos aPos, net.minecraft.world.entity.player.Player aPlayer, net.minecraft.world.InteractionHand aHand, net.minecraft.world.phys.BlockHitResult aHit) {
+	//?} else {
+	/*public net.minecraft.world.InteractionResult useWithoutItem(net.minecraft.world.level.block.state.BlockState aState, net.minecraft.world.level.Level aLevel, net.minecraft.core.BlockPos aPos, net.minecraft.world.entity.player.Player aPlayer, net.minecraft.world.phys.BlockHitResult aHit) {
+	//21.1: BlockBehaviour.use folded into useWithoutItem (javap 21.1.249) — the
+	//InteractionHand param dropped from the signature; the game loop drives the hands
+	//in order and MAIN_HAND is the canonical first entry.
+	net.minecraft.world.InteractionHand aHand = net.minecraft.world.InteractionHand.MAIN_HAND;
+	*///?}
+		// the :462 SIDES_TOP gate — only the top opening reacts (the NO_GUI contract)
+		if (aHit.getDirection() != net.minecraft.core.Direction.UP) return net.minecraft.world.InteractionResult.PASS;
+		if (aLevel.getBlockEntity(aPos) instanceof TileEntityCrucible tCrucible) {
+			if (!tCrucible.useTop(aPlayer, aHand)) return net.minecraft.world.InteractionResult.PASS; // :461 the structure gate
+			return net.minecraft.world.InteractionResult.sidedSuccess(aLevel.isClientSide);
+		}
+		return net.minecraft.world.InteractionResult.PASS;
 	}
 
 	/**
