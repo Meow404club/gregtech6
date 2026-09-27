@@ -59,15 +59,29 @@ public final class GT6Portals {
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, "gt6");
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 
+	/**
+	 * The shared portal block properties — the package-private seam is the offline pin's
+	 * single source of truth (GT6PortalFrameDatagenTest asserts the noOcclusion through
+	 * THIS factory, so dropping it here fails the test). noOcclusion is the hollow
+	 * 12-beam frame's see-through premise (issue #23 / task r4-23a-portal-frame): with
+	 * the default canOcclude the neighbours cull their faces against this block and the
+	 * cage center turns into an x-ray hole (BlockBehaviour.java:582-588 isSolidRender);
+	 * upstream marks the same surface semantics (MultiTileEntityMiniPortal.java:264-265
+	 * isSurfaceSolid=F / isSurfaceOpaque=mActive; the vanilla end_portal_frame row is
+	 * the block-property precedent).
+	 */
+	static BlockBehaviour.Properties portalProperties(float aHardness) {
+		return BlockBehaviour.Properties.of()
+				.strength(aHardness, 16.0F).sound(SoundType.STONE).noOcclusion();
+	}
+
 	/** Upstream :2003 — "Miniature Nether Portal", 32766, 3/16, aStone. */
 	public static final RegistryObject<Block> PORTAL_NETHER = BLOCKS.register("mini_portal_nether",
-			() -> new GTMiniPortalBlock(GT6Portals::netherType, BlockBehaviour.Properties.of()
-					.strength(3.0F, 16.0F).sound(SoundType.STONE)));
+			() -> new GTMiniPortalBlock(GT6Portals::netherType, portalProperties(3.0F)));
 
 	/** Upstream :2004 — "Miniature End Portal", 32000, 1/16, aStone. */
 	public static final RegistryObject<Block> PORTAL_END = BLOCKS.register("mini_portal_end",
-			() -> new GTMiniPortalBlock(GT6Portals::endType, BlockBehaviour.Properties.of()
-					.strength(1.0F, 16.0F).sound(SoundType.STONE)));
+			() -> new GTMiniPortalBlock(GT6Portals::endType, portalProperties(1.0F)));
 
 	/** The ticker-type resolvers — static METHODS break the block↔BET field forward-reference cycle (the solidBurningBoxFactory shape). */
 	static net.minecraft.world.level.block.entity.BlockEntityType<? extends gregtech6.tileentity.TileEntityBase03TicksAndSync> netherType() {
