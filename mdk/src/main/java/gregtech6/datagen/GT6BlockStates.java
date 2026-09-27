@@ -2944,13 +2944,14 @@ public final class GT6BlockStates extends BlockStateProvider {
                     modLoc("block/tree/log_side_" + tWood), modLoc("block/tree/log_top_" + tWood));
             net.minecraft.world.level.block.RotatedPillarBlock tLog =
                     (net.minecraft.world.level.block.RotatedPillarBlock) GT6SurfaceBlocks.FALLEN_LOGS.get(i).get();
-            getVariantBuilder(tLog).forAllStates(tState -> ConfiguredModel.builder()
-                    .modelFile(tLogModel)
-                    .rotationX(tState.getValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS)
-                            == net.minecraft.core.Direction.Axis.X ? 90 : 0)
-                    .rotationY(tState.getValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS)
-                            == net.minecraft.core.Direction.Axis.Z ? 90 : 0)
-                    .build());
+            getVariantBuilder(tLog).forAllStates(tState ->
+                    switch (tState.getValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS)) {
+                // the vanilla axisBlock rotation map (the addAxles band form; x-only-90
+                // tips a Y-column onto Z and y-only-90 spins it in place — GitHub #26)
+                case X -> new ConfiguredModel[] {new ConfiguredModel(tLogModel, 90, 90, false)};
+                case Y -> new ConfiguredModel[] {new ConfiguredModel(tLogModel)};
+                case Z -> new ConfiguredModel[] {new ConfiguredModel(tLogModel, 90, 180, false)};
+            });
             itemModels().withExistingParent(tPath, modLoc("block/" + tPath));
         }
         LOGGER.info("GT6 surface plants: 8 blockstate bands (1 plate + 3 cubes + 4 axis columns), 8 models");
