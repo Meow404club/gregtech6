@@ -2303,10 +2303,8 @@ LEGACY_ITEM_BACKFILL = {
     'item.gt6.comp_laser_gas_co2.tooltip': '用途: 强力材料加工',
     'item.gt6.comp_laser_gas_empty': '空的气体-激光镭射器',
     'item.gt6.comp_laser_gas_empty.tooltip': '用于电力激光器',
-<<<<<<< HEAD
     'item.gt6.comp_laser_gas_he': '氦激光镭射器',
     'item.gt6.comp_laser_gas_he.tooltip': '用途: 弱光电器',
-=======
     'item.gt6.comp_laser_gas_ne': '氖激光镭射器',
     'item.gt6.comp_laser_gas_ne.tooltip': '用途: 弱光电器',
     'item.gt6.comp_laser_gas_ar': '氩激光镭射器',
@@ -2319,7 +2317,6 @@ LEGACY_ITEM_BACKFILL = {
     'item.gt6.comp_laser_gas_hene.tooltip': '用途: 弱光电器',
     'item.gt6.comp_laser_gas_co': '一氧化碳激光镭射器',
     'item.gt6.comp_laser_gas_co.tooltip': '用途: 低级材料加工',
->>>>>>> d5c5919d7 (feat(items): 激光气体发射器族闭合——六件余件+八行 Canner fill 家族)
     # ---- the dig/blade/field/scene tool faces + the usb stick family (tasks p29-w5-t1..t7, p30-pool era)
     'item.gt6.axe': '斧',
     'item.gt6.axe.tooltip': '伐木更快, 砍倒整棵树',
