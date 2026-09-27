@@ -65,9 +65,22 @@ public class GT6KineticRecipesPourTest extends GTRecipesOfflineTestBase {
 	void sifterPoursTheGrassRow0() {
 		GT6RecipesSifter.load();
 		assertNotNull(GT6RecipeMaps.SIFTING);
-		assertEquals(1, GT6RecipeMaps.SIFTING.mRecipeList.size(), "the row0 pour — every other upstream arm is the declared pool");
-		Recipe tRow = GT6RecipeMaps.SIFTING.mRecipeList.iterator().next();
-		assertEquals(Items.GRASS_BLOCK, tRow.mInputs[0].getItem(), "the :224 grass-block input");
+		// the offline DEFAULT resolver drops the whole :351 DUST_ORE walk on FORGE (no
+		// ore-block registry offline — GT6OreBlocks.items() is empty until RegisterEvent);
+		// the NEOFORGE leg runs under the MDG unitTest runtime with LIVE registries, where
+		// the real ore blocks resolve and the full walk pours (the per-leg pin, the
+		// COMPRESSOR-SNAPSHOT convention) — the walk's own pour test is
+		// GT6SifterDustOreRowsTest with probe resolvers
+		//? if forge {
+		assertEquals(1, GT6RecipeMaps.SIFTING.mRecipeList.size(), "the row0 pour — the offline default resolvers drop the DUST_ORE walk's 212 rows");
+		//?} else {
+		/*assertEquals(213, GT6RecipeMaps.SIFTING.mRecipeList.size(), "the row0 pour + the live-registry DUST_ORE walk (1 + 4 families x the 53-material axis)");
+		*///?}
+		Recipe tRow = null; // the walk rows pour AFTER row0, but do not rely on the order — select by identity
+		for (Recipe tCandidate : GT6RecipeMaps.SIFTING.mRecipeList) {
+			if (tCandidate.mInputs[0].getItem() == Items.GRASS_BLOCK) {tRow = tCandidate; break;}
+		}
+		assertNotNull(tRow, "the :224 grass row is in the pour");
 		assertEquals(5, tRow.mOutputs.length, "coarse dirt + three vanilla seeds + the beetroot identity");
 		assertEquals(Items.COARSE_DIRT, tRow.mOutputs[0].getItem(), "the 1.7.10 dirt meta-1 identity");
 		assertEquals(Items.BEETROOT_SEEDS, tRow.mOutputs[4].getItem(), "the EtFu beet-seed identity");
