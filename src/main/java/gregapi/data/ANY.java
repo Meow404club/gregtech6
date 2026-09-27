@@ -175,7 +175,7 @@ public class ANY {
 	protected static void init() {
 		MT.stealLooks(MT.steal(Glowstone, MT.Glowstone), MT.Glowstone).setLocal("Glowstone").setAllToTheOutputOf(MT.Glowstone).put(CRYSTAL, GLOWING, LIGHTING);
 		MT.stealLooks(MT.steal(Diamond, MT.Diamond), MT.Diamond).setLocal("Diamond").setAllToTheOutputOf(MT.Diamond).put(CRYSTAL, VALUABLE).addReRegistrationToThis(MT.Diamantine);
-		MT.stealLooks(MT.steal(Sapphire, MT.BlueSapphire), MT.Sapphire).setLocal("Sapphire").setAllToTheOutputOf(MT.Sapphire).put(CRYSTAL, VALUABLE);
+		MT.steal(MT.stealLooks(Sapphire, MT.BlueSapphire), MT.Sapphire).setLocal("Sapphire").setAllToTheOutputOf(MT.Sapphire).put(CRYSTAL, VALUABLE); // upstream :98
 		MT.stealLooks(MT.steal(Emerald, MT.Emerald), MT.Emerald).setLocal("Emerald").setAllToTheOutputOf(MT.Emerald).put(CRYSTAL, VALUABLE).addReRegistrationToThis(MT.Emeradic);
 		MT.stealLooks(MT.steal(Amethyst, MT.Amethyst), MT.Amethyst).setLocal("Amethyst").setAllToTheOutputOf(MT.Amethyst).put(CRYSTAL, VALUABLE).addReRegistrationToThis(MT.Amethyst, MT.EnderAmethyst);
 		MT.stealLooks(MT.steal(Garnet, MT.Spessartine), MT.Spessartine).setLocal("Garnet").put(CRYSTAL, VALUABLE);
@@ -193,7 +193,7 @@ public class ANY {
 		MT.stealLooks(MT.steal(Wax, MT.Wax), MT.Wax).setLocal("Wax").setAllToTheOutputOf(MT.Wax).put();
 		MT.stealLooks(MT.steal(Stone, MT.Stone), MT.Stone).setLocal("Stone").setAllToTheOutputOf(MT.Stone).put(STONE, BRITTLE, UNRECYCLABLE);
 		MT.stealLooks(MT.steal(Calcite, MT.CaCO3), MT.CaCO3).setLocal("Calcite").setAllToTheOutputOf(MT.CaCO3).put(STONE, BRITTLE, UNRECYCLABLE).addReRegistrationToThis(MT.CaCO3, MT.STONES.Marble, MT.Chalk, MT.STONES.Limestone, MT.Dolomite);
-		MT.stealLooks(MT.steal(Clay, MT.ClayBrown), MT.Clay).setLocal("Clay").setAllToTheOutputOf(MT.Clay).put(MORTAR).addReRegistrationToThis(MT.Clay);
+		MT.steal(MT.stealLooks(Clay, MT.ClayBrown), MT.Clay).setLocal("Clay").setAllToTheOutputOf(MT.Clay).put(MORTAR).addReRegistrationToThis(MT.Clay); // upstream :116
 		MT.stealLooks(MT.steal(Salt, MT.NaCl), MT.NaCl).setLocal("Salt").setAllToTheOutputOf(MT.NaCl).put(BRITTLE).addReRegistrationToThis(MT.NaCl, MT.KCl, MT.LiCl, MT.MgCl2, MT.CaCl2);
 		MT.stealLooks(MT.steal(Fe, MT.Fe), MT.Fe).setLocal("Iron").setAllToTheOutputOf(MT.Fe).put(SMITHABLE, MELTING).addReRegistrationToThis(MT.Fe, MT.WroughtIron, MT.IronCast, MT.IronCompressed, MT.PigIron, MT.MeteoricIron, MT.Meteorite, MT.Enori);
 		MT.stealLooks(MT.steal(Iron, MT.Fe), MT.Fe).setLocal("Iron").setAllToTheOutputOf(MT.Fe).put(SMITHABLE, MELTING).addReRegistrationToThis(MT.Fe, MT.WroughtIron, MT.IronCast, MT.IronCompressed, MT.PigIron, MT.MeteoricIron, MT.Meteorite, MT.Enori, MT.Steel, MT.Knightmetal, MT.MeteoricSteel);
@@ -212,7 +212,7 @@ public class ANY {
 		MT.stealLooks(MT.steal(Sand, MT.Sand), MT.Sand).setLocal("Sand").setAllToTheOutputOf(MT.Sand).put(BRITTLE, MELTING).addReRegistrationToThis(MT.Sand, MT.RedSand);
 		MT.stealLooks(MT.steal(W, MT.W), MT.W).setLocal("Tungsten").setAllToTheOutputOf(MT.W).put(SMITHABLE, MELTING, UNBURNABLE).addReRegistrationToThis(MT.W, MT.TungstenSintered);
 		MT.steal(MT.stealLooks(ThaumCrystal, MT.InfusedBalance), MT.InfusedDull).setLocal("Any Thaumic Crystal").put(DONT_SHOW_THIS_COMPONENT); // upstream :134
-		MT.stealLooks(Hexorium, MT.HexoriumWhite).setLocal("Hexorium").put(DONT_SHOW_THIS_COMPONENT); // upstream :135
+		MT.steal(MT.stealLooks(Hexorium, MT.HexoriumWhite), MT.HexoriumWhite).setLocal("Hexorium").put(DONT_SHOW_THIS_COMPONENT); // upstream :135
 		MT.steal(MT.stealLooks(WoodDefault, MT.WOODS.Spruce), MT.Wood).setLocal("Normal Wood").setAllToTheOutputOf(MT.Wood).put(WOOD, FLAMMABLE).addReRegistrationToThis(MT.Wood, MT.Peanutwood).setFurnaceBurnTime(MT.TICKS_PER_SMELT/2); // upstream :136
 		MT.steal(MT.stealLooks(WoodNormal, MT.WOODS.Spruce), MT.Wood).setLocal("Normal Wood").setAllToTheOutputOf(MT.Wood).put(WOOD, FLAMMABLE).addReRegistrationToThis(WoodDefault.mToThis.toArray(MT.ZL_MT)).addReRegistrationToThis(MT.WoodRubber, MT.Weedwood, MT.Skyroot, MT.Bamboo).setFurnaceBurnTime(MT.TICKS_PER_SMELT/2); // upstream :137
 		MT.steal(MT.stealLooks(WoodMagical, MT.Greatwood), MT.Wood).setLocal("Magical Wood").setAllToTheOutputOf(MT.Wood).put(WOOD, FLAMMABLE, MAGICAL).addReRegistrationToThis(MT.Greatwood, MT.Silverwood, MT.Livingwood, MT.Dreamwood, MT.Shimmerwood, MT.WOODS.Magic, MT.WOODS.Tainted, MT.WOODS.Witchwood, MT.WOODS.Rainbowood).setFurnaceBurnTime(MT.TICKS_PER_SMELT*2L); // upstream :138
