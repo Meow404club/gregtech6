@@ -2,14 +2,16 @@
   "variants": {
     "axis=x": {
       "model": "gt6:block/cinnamon_log",
-      "x": 90
+      "x": 90,
+      "y": 90
     },
     "axis=y": {
       "model": "gt6:block/cinnamon_log"
     },
     "axis=z": {
       "model": "gt6:block/cinnamon_log",
-      "y": 90
+      "x": 90,
+      "y": 180
     }
   }
 }

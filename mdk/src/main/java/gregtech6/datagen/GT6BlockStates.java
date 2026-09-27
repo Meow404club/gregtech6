@@ -2973,13 +2973,15 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
                     modLoc("block/tree/log_side_" + tSnake), modLoc("block/tree/log_top_" + tSnake));
             net.minecraft.world.level.block.RotatedPillarBlock tLog =
                     (net.minecraft.world.level.block.RotatedPillarBlock) gregtech6.registry.GT6TreeBlocks.LOGS.get(i).get();
-            getVariantBuilder(tLog).forAllStates(tState -> ConfiguredModel.builder()
-                    .modelFile(tLogModel)
-                    .rotationX(tState.getValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS)
-                            == net.minecraft.core.Direction.Axis.X ? 90 : 0)
-                    .rotationY(tState.getValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS)
-                            == net.minecraft.core.Direction.Axis.Z ? 90 : 0)
-                    .build());
+            getVariantBuilder(tLog).forAllStates(tState ->
+                    switch (tState.getValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS)) {
+                // the vanilla axisBlock rotation map (the addAxles/addSurfacePlants form;
+                // x-only-90 tips a Y-column onto Z and y-only-90 spins it in place —
+                // GitHub #26, the r4-26 fallen-log fix applied to the standing rows)
+                case X -> new ConfiguredModel[] {new ConfiguredModel(tLogModel, 90, 90, false)};
+                case Y -> new ConfiguredModel[] {new ConfiguredModel(tLogModel)};
+                case Z -> new ConfiguredModel[] {new ConfiguredModel(tLogModel, 90, 180, false)};
+            });
             itemModels().withExistingParent(tSnake + "_log", modLoc("block/" + tSnake + "_log"));
             // leaves: cube_all + cutout_mipped. The Rainbowood row adds tintindex 0 on
             // every face (the tintedCubeAll grammar) over its GRAYSCALE PNG — the world/
