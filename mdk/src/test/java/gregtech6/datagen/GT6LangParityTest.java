@@ -47,6 +47,7 @@ import net.minecraft.server.Bootstrap;
 
 import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
+import gregtech6.block.stone.GTStoneSlabBlock;
 import gregtech6.block.stone.StoneVariant;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GT6Anvils;
@@ -494,6 +495,7 @@ private static final int ZH_KEY_FLOOR = 3973; // +34 (task r3-surface-rock-lang,
 	public void stoneAndRowsTemplatesExistWithTheirSlotsOnBothSides() {
 		Map<String, Integer> tSlots = new java.util.LinkedHashMap<>();
 		for (StoneVariant tVariant : StoneVariant.VALUES) tSlots.put(tVariant.key(), 1);
+		tSlots.put(GTStoneSlabBlock.SLAB_NAME_KEY, 1); // task debt-slab-gap — the ONE slab template over the composed variant name
 		tSlots.put("gt6.row.axle.display", 2);
 		tSlots.put("gt6.row.steam_engine.display", 1);
 		tSlots.put("gt6.row.steam_engine.display.strong", 1);

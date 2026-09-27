@@ -1754,6 +1754,10 @@ public class GT6EnUs extends LanguageProvider {
         for (StoneVariant tVariant : StoneVariant.VALUES) {
             add(tVariant.key(), STONE_VARIANT_TEMPLATES[tVariant.meta()]);
         }
+        // task debt-slab-gap — the ONE slab template over the composed variant name (the
+        // GTStoneSlabBlock.getName compose; upstream wording = the dump's
+        // gt.stone.<stone>.slab.0.<meta> family, 花岗岩半砖 / 花岗岩圆石半砖)
+        add(gregtech6.block.stone.GTStoneSlabBlock.SLAB_NAME_KEY, "%s Slab");
     }
 
     /** The 16 variant templates, meta order — the old compose() ladder with the stone name as the {@code %s} slot. */

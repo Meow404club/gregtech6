@@ -147,6 +147,7 @@ import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.registry.GTStoneBlocks;
+import gregtech6.registry.GTStoneSlabBlocks;
 import gregtech6.registry.GTWires;
 import gregtech6.registry.GTItemPipes;
 
@@ -405,6 +406,12 @@ public class GT6AssetCoverageGuardTest {
 			String tPath = "gt6:" + GTStoneBlocks.path(tKey.stone().snake(), tKey.variant());
 			if (aBlocks != null) aBlocks.add(tPath);
 			if (aItems != null) aItems.add(tPath);
+		}
+		// the stone-slab universe (task debt-slab-gap — the same 272 pairs, _slab suffixed)
+		for (GTStoneBlocks.VariantKey tKey : GTStoneBlocks.registrationOrder()) {
+			String tSlabPath = "gt6:" + GTStoneSlabBlocks.slabPath(tKey.stone().snake(), tKey.variant());
+			if (aBlocks != null) aBlocks.add(tSlabPath);
+			if (aItems != null) aItems.add(tSlabPath);
 		}
 	}
 
