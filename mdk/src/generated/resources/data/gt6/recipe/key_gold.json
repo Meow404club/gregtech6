@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "c:plates/gold"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "fPx"
+  ],
+  "result": {
+    "count": 3,
+    "id": "gt6:key_gold"
+  }
+}
