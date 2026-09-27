@@ -486,9 +486,9 @@ class GT6RecipeMapHashIndexTest extends GTRecipesOfflineTestBase {
 		capture(() -> GT6RecipesCanner.sCfoamOwnedFluidResolver, aV -> GT6RecipesCanner.sCfoamOwnedFluidResolver = aV);
 		capture(() -> GT6RecipesCanner.sFoamSprayResolver, aV -> GT6RecipesCanner.sFoamSprayResolver = aV);
 		capture(() -> GT6RecipesCanner.sFoamSprayOwnedResolver, aV -> GT6RecipesCanner.sFoamSprayOwnedResolver = aV);
-		capture(() -> GT6RecipesCanner.sCarbonDioxideResolver, aV -> GT6RecipesCanner.sCarbonDioxideResolver = aV);
+		capture(() -> GT6RecipesCanner.sLaserGasFluidResolver, aV -> GT6RecipesCanner.sLaserGasFluidResolver = aV);
 		capture(() -> GT6RecipesCanner.sLaserGasEmptyResolver, aV -> GT6RecipesCanner.sLaserGasEmptyResolver = aV);
-		capture(() -> GT6RecipesCanner.sLaserGasCo2Resolver, aV -> GT6RecipesCanner.sLaserGasCo2Resolver = aV);
+		capture(() -> GT6RecipesCanner.sLaserGasEmitterResolver, aV -> GT6RecipesCanner.sLaserGasEmitterResolver = aV);
 	}
 
 	/** The captured loader seams, restored after each test so sibling classes see defaults (the phase-gate convention). */
@@ -564,9 +564,11 @@ class GT6RecipeMapHashIndexTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sCfoamOwnedFluidResolver = aIndex -> Fluids.FLOWING_WATER;
 		GT6RecipesCanner.sFoamSprayResolver = aIndex -> new ItemStack(Items.CLAY_BALL);
 		GT6RecipesCanner.sFoamSprayOwnedResolver = aIndex -> new ItemStack(Items.CLAY_BALL);
-		GT6RecipesCanner.sCarbonDioxideResolver = () -> Fluids.FLOWING_LAVA;
+		// debt-laser-gas-family: the live posture — heliumneon has no fluid, helium has no
+		// emitter on this base (the usb-branch item), the other six gases pour
+		GT6RecipesCanner.sLaserGasFluidResolver = aGas -> "heliumneon".equals(aGas) ? null : Fluids.FLOWING_LAVA;
 		GT6RecipesCanner.sLaserGasEmptyResolver = () -> new ItemStack(Items.PAPER);
-		GT6RecipesCanner.sLaserGasCo2Resolver = () -> new ItemStack(Items.CLAY_BALL);
+		GT6RecipesCanner.sLaserGasEmitterResolver = aGas -> "helium".equals(aGas) ? ItemStack.EMPTY : new ItemStack(Items.CLAY_BALL);
 		GT6RecipeMaps.reset();
 		GT6RecipeMaps.init();
 	}

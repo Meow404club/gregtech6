@@ -20,11 +20,14 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 /**
- * The Gas Laser Emitter components (task p32-qu-laser-domain) — the two rows the CO2
- * laser chain needs, upstream MultiItemTechnological.java:384/:394:
+ * The Gas Laser Emitter components (task p32-qu-laser-domain, family closure task
+ * debt-laser-gas-family) — upstream MultiItemTechnological.java:384-394:
  * <ul>
  * <li>{@code gt6:comp_laser_gas_empty} — the :384 row (id 11000, "Empty Gas Laser
  *     Emitter", tooltip "For Electric Lasers"), the Canner fill row's input item.</li>
+ * <li>{@code gt6:comp_laser_gas_ne/ar/kr/xe/hene/co} — the :388-393 rows (ids
+ *     11002-11007, this card's family closure; the HeNe fill leg stays pooled — no
+ *     {@code gt6:heliumneon} fluid in the port).</li>
  * <li>{@code gt6:comp_laser_gas_co2} — the :394 row (id 11008, "Carbon Dioxide Laser
  *     Emitter", tooltip "Purpose: Strong Material Processing"), the crafting component of
  *     every Electric CO2 Laser rung (the 'L' key, :930-934).</li>
@@ -34,8 +37,11 @@ import net.minecraftforge.registries.RegistryObject;
  *     (MultiItemTechnological.java:819-822) is its direct consumer — the consumption
  *     chain the ruling names; the He line's own laser-machine faces stay pooled.</li>
  * </ul>
- * The other six gases (Ne/Ar/Kr/Xe/HeNe/CO, :388-393) stay out — no consumer rows in
- * this port (the fill-row scope is the CO2 line + the exempted He line).
+ * The family is CLOSED (task debt-laser-gas-family, the rebase-merged shape): every
+ * gas row of :384-394 is in — the :387 He row landed first with p37-usb-peripherals
+ * (the single-item exemption, its consumer the USB HDD 'L' column :819-822), the
+ * :388-393 six landed with the family closure card. The HeNe Canner fill leg stays
+ * pooled (no {@code gt6:heliumneon} port fluid).
  *
  * <p>The creative-tab face joins MACHINES_TAB (task p38-tabfix-b-energy,
  * {@link #onBuildTabContents} — supersedes the old CUT ruling; the GTBarrels:257 pooling
@@ -52,12 +58,30 @@ public final class GT6LaserGas {
 	/** The :384 row (id 11000) — "Empty Gas Laser Emitter". */
 	public static final RegistryObject<Item> COMP_LASER_GAS_EMPTY = ITEMS.register("comp_laser_gas_empty",
 			() -> new GT6LaserGasItem(new Item.Properties(), "item.gt6.comp_laser_gas_empty.tooltip"));
+	/** The :387 row (id 11001) — "Helium Laser Emitter" (task p37-usb-peripherals, the coordinator's single-item exemption; the rebase moved it to the upstream id order). */
+	public static final RegistryObject<Item> COMP_LASER_GAS_HE = ITEMS.register("comp_laser_gas_he",
+			() -> new GT6LaserGasItem(new Item.Properties(), "item.gt6.comp_laser_gas_he.tooltip"));
+	/** The :388 row (id 11002) — "Neon Laser Emitter". */
+	public static final RegistryObject<Item> COMP_LASER_GAS_NE = ITEMS.register("comp_laser_gas_ne",
+			() -> new GT6LaserGasItem(new Item.Properties(), "item.gt6.comp_laser_gas_ne.tooltip"));
+	/** The :389 row (id 11003) — "Argon Laser Emitter". */
+	public static final RegistryObject<Item> COMP_LASER_GAS_AR = ITEMS.register("comp_laser_gas_ar",
+			() -> new GT6LaserGasItem(new Item.Properties(), "item.gt6.comp_laser_gas_ar.tooltip"));
+	/** The :390 row (id 11004) — "Krypton Laser Emitter". */
+	public static final RegistryObject<Item> COMP_LASER_GAS_KR = ITEMS.register("comp_laser_gas_kr",
+			() -> new GT6LaserGasItem(new Item.Properties(), "item.gt6.comp_laser_gas_kr.tooltip"));
+	/** The :391 row (id 11005) — "Xenon Laser Emitter". */
+	public static final RegistryObject<Item> COMP_LASER_GAS_XE = ITEMS.register("comp_laser_gas_xe",
+			() -> new GT6LaserGasItem(new Item.Properties(), "item.gt6.comp_laser_gas_xe.tooltip"));
+	/** The :392 row (id 11006) — "Helium-Neon Laser Emitter". */
+	public static final RegistryObject<Item> COMP_LASER_GAS_HENE = ITEMS.register("comp_laser_gas_hene",
+			() -> new GT6LaserGasItem(new Item.Properties(), "item.gt6.comp_laser_gas_hene.tooltip"));
+	/** The :393 row (id 11007) — "Carbon Monoxide Laser Emitter". */
+	public static final RegistryObject<Item> COMP_LASER_GAS_CO = ITEMS.register("comp_laser_gas_co",
+			() -> new GT6LaserGasItem(new Item.Properties(), "item.gt6.comp_laser_gas_co.tooltip"));
 	/** The :394 row (id 11008) — "Carbon Dioxide Laser Emitter". */
 	public static final RegistryObject<Item> COMP_LASER_GAS_CO2 = ITEMS.register("comp_laser_gas_co2",
 			() -> new GT6LaserGasItem(new Item.Properties(), "item.gt6.comp_laser_gas_co2.tooltip"));
-	/** The :387 row (id 11001) — "Helium Laser Emitter" (task p37-usb-peripherals, the coordinator's single-item exemption). */
-	public static final RegistryObject<Item> COMP_LASER_GAS_HE = ITEMS.register("comp_laser_gas_he",
-			() -> new GT6LaserGasItem(new Item.Properties(), "item.gt6.comp_laser_gas_he.tooltip"));
 
 	/** FMLConstructModEvent = the first mod-bus lifecycle stage (the GT6UsbSticks shape). */
 	@SubscribeEvent
@@ -71,7 +95,7 @@ public final class GT6LaserGas {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — both emitter items join the machines tab;
+	 * The tab walk (task p38-tabfix-b-energy — every emitter item joins the machines tab;
 	 * the GT6BurningBoxes.onBuildTabContents verbatim form, the class-level MOD-bus
 	 * {@code @Mod.EventBusSubscriber} at the class head is what delivers this handler).
 	 * JEI 1.20.1 derives its item list from the tab display items, so registered-but-
@@ -84,14 +108,20 @@ public final class GT6LaserGas {
 	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
 		if (aEvent.getTabKey().location().equals(gregtech6.registry.GTMachines.MACHINES_TAB.getId())) {
 			aEvent.accept(new ItemStack(COMP_LASER_GAS_EMPTY.get()));
-			aEvent.accept(new ItemStack(COMP_LASER_GAS_CO2.get()));
 			aEvent.accept(new ItemStack(COMP_LASER_GAS_HE.get()));
+			aEvent.accept(new ItemStack(COMP_LASER_GAS_NE.get()));
+			aEvent.accept(new ItemStack(COMP_LASER_GAS_AR.get()));
+			aEvent.accept(new ItemStack(COMP_LASER_GAS_KR.get()));
+			aEvent.accept(new ItemStack(COMP_LASER_GAS_XE.get()));
+			aEvent.accept(new ItemStack(COMP_LASER_GAS_HENE.get()));
+			aEvent.accept(new ItemStack(COMP_LASER_GAS_CO.get()));
+			aEvent.accept(new ItemStack(COMP_LASER_GAS_CO2.get()));
 		}
 	}
 
 	private GT6LaserGas() {}
 
-	/** The emitter item: the static purpose line (the :384/:394 tooltip column). */
+	/** The emitter item: the static purpose line (the :384-394 tooltip column). */
 	public static final class GT6LaserGasItem extends Item {
 
 		/** The tooltip key of this emitter (the upstream description column, lang-carried). */

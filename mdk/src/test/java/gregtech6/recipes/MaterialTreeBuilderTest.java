@@ -189,9 +189,9 @@ class MaterialTreeBuilderTest extends GTRecipesOfflineTestBase {
 		capture(() -> GT6RecipesCanner.sCfoamOwnedFluidResolver, aV -> GT6RecipesCanner.sCfoamOwnedFluidResolver = aV);
 		capture(() -> GT6RecipesCanner.sFoamSprayResolver, aV -> GT6RecipesCanner.sFoamSprayResolver = aV);
 		capture(() -> GT6RecipesCanner.sFoamSprayOwnedResolver, aV -> GT6RecipesCanner.sFoamSprayOwnedResolver = aV);
-		capture(() -> GT6RecipesCanner.sCarbonDioxideResolver, aV -> GT6RecipesCanner.sCarbonDioxideResolver = aV);
+		capture(() -> GT6RecipesCanner.sLaserGasFluidResolver, aV -> GT6RecipesCanner.sLaserGasFluidResolver = aV);
 		capture(() -> GT6RecipesCanner.sLaserGasEmptyResolver, aV -> GT6RecipesCanner.sLaserGasEmptyResolver = aV);
-		capture(() -> GT6RecipesCanner.sLaserGasCo2Resolver, aV -> GT6RecipesCanner.sLaserGasCo2Resolver = aV);
+		capture(() -> GT6RecipesCanner.sLaserGasEmitterResolver, aV -> GT6RecipesCanner.sLaserGasEmitterResolver = aV);
 		capture(() -> GT6RecipesSlicer.sSplitBladeResolver, aV -> GT6RecipesSlicer.sSplitBladeResolver = aV);
 		capture(() -> GT6RecipesSlicer.sGridBladeResolver, aV -> GT6RecipesSlicer.sGridBladeResolver = aV);
 		capture(() -> GT6RecipesSlicer.sTinyPaperResolver, aV -> GT6RecipesSlicer.sTinyPaperResolver = aV);
@@ -251,9 +251,9 @@ class MaterialTreeBuilderTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sCfoamOwnedFluidResolver = aIndex -> Fluids.FLOWING_WATER;
 		GT6RecipesCanner.sFoamSprayResolver = aIndex -> new net.minecraft.world.item.ItemStack(Items.CLAY_BALL);
 		GT6RecipesCanner.sFoamSprayOwnedResolver = aIndex -> new net.minecraft.world.item.ItemStack(Items.CLAY_BALL);
-		GT6RecipesCanner.sCarbonDioxideResolver = () -> Fluids.FLOWING_LAVA;
+		GT6RecipesCanner.sLaserGasFluidResolver = aGas -> "heliumneon".equals(aGas) ? null : Fluids.FLOWING_LAVA; // the family seam (debt-laser-gas-family rebase follow-up)
 		GT6RecipesCanner.sLaserGasEmptyResolver = () -> new net.minecraft.world.item.ItemStack(Items.PAPER);
-		GT6RecipesCanner.sLaserGasCo2Resolver = () -> new net.minecraft.world.item.ItemStack(Items.CLAY_BALL);
+		GT6RecipesCanner.sLaserGasEmitterResolver = aGas -> "helium".equals(aGas) ? net.minecraft.world.item.ItemStack.EMPTY : new net.minecraft.world.item.ItemStack(Items.CLAY_BALL);
 		// the Slicer fixture face (the phase-gate census): the two blades + the tiny-paper output
 		GT6RecipesSlicer.sSplitBladeResolver = () -> new net.minecraft.world.item.ItemStack(Items.BRICK);
 		GT6RecipesSlicer.sGridBladeResolver = () -> new net.minecraft.world.item.ItemStack(Items.CLAY_BALL);

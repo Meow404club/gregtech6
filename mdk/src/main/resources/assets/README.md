@@ -8685,6 +8685,22 @@ Domain Dedication block above).
 - `block/laser_absorber_front.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `laserabsorbers/electric_laser/colored/front.png`)
 - `block/laser_absorber_side.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `laserabsorbers/electric_laser/colored/side.png`)
 
+## Laser gas emitter family textures (task debt-laser-gas-family)
+
+The six remaining gas laser emitter item icons under `gt6/textures/item/` come from
+upstream `src/main/resources/assets/gregtech/textures/items/gt.multiitem.technological/`
+(item ids 11002-11007, the MultiItemTechnological.java:388-393 rows — the family
+closure over the p32 Empty/CO2 pair and the usb-card He exemption 11001),
+byte-identical to upstream, sha256 verified per file. License: upstream GregTech 6
+assets are CC0 (see the Public Domain Dedication block above).
+
+- `item/comp_laser_gas_ne.png` — `269e68334d55a1a026b5335b809e7c6e3634b8a5b47181fa25cd5ab328bb8076` (upstream `11002.png`)
+- `item/comp_laser_gas_ar.png` — `742986cef1e6628713d4400b3295adc13ba7ad8f02ed399cd1163738a14d3449` (upstream `11003.png`)
+- `item/comp_laser_gas_kr.png` — `5f82c554a2e231859455f60e9d7cc09cd4a62892ae88779d76e7e0f4fc17005c` (upstream `11004.png`)
+- `item/comp_laser_gas_xe.png` — `800af1978caf6f0901bad6a05a40ec79e059b74a6336c39bad2b399a2c002fe9` (upstream `11005.png`)
+- `item/comp_laser_gas_hene.png` — `4e88371cc64a2efbd05c2d97730c4444fb8c220162d8ea315686bd0a11acf928` (upstream `11006.png`)
+- `item/comp_laser_gas_co.png` — `87ee050835d91c29e6d920c576c46c85e8fe994bcb5fc27752b71ae4544226a3` (upstream `11007.png`)
+
 ## Magic absorber texture (task p32-magic-absorber)
 
 The absorber block face under `gt6/textures/block/` comes from upstream

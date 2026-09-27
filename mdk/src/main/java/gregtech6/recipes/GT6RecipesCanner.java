@@ -26,10 +26,12 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
@@ -148,34 +150,44 @@ public final class GT6RecipesCanner {
 	/** The full Advanced spray seam: dye index i → the {@code gt6:foam_spray_owned_<DYE_IDS[i]>} can (upstream IL.SPRAY_CAN_FOAM_OWNED[i] :259, GT6FoamSprays.FOAM_SPRAYS_OWNED), fixtures injected offline. */
 	public static IntFunction<ItemStack> sFoamSprayOwnedResolver = aIndex -> new ItemStack(GT6FoamSprays.FOAM_SPRAYS_OWNED.get(aIndex).get());
 
-	// task p32-qu-laser-domain — the gas laser emitter fill row (MultiItemTechnological.java:403)
+	// task p32-qu-laser-domain + debt-laser-gas-family — the gas laser emitter fill family
+	// (MultiItemTechnological.java:396-403, the eight upstream Canner rows)
 
-	/** The EUt column of the laser-gas fill row (:403, the addRecipe1 second argument). */
+	/** The EUt column of every laser-gas fill row (:396-403, the addRecipe1 second argument). */
 	public static final long LASER_GAS_EUT = 16;
 
-	/** The duration column of the laser-gas fill row (:403, the addRecipe1 third argument). */
+	/** The duration column of every laser-gas fill row (:396-403, the addRecipe1 third argument). */
 	public static final long LASER_GAS_DURATION = 128;
 
 	/**
-	 * The fill row fluid amount: {@code MT.CO2.gas(U, T)} = ONE unit of material gas. The
+	 * The fill row fluid amount: {@code MT.<gas>.gas(U, T)} = ONE unit of material gas. The
 	 * port convention (the f1-chemicals gas closure, the p29 mixer rows' CO2 864 = 6×144):
 	 * one unit = {@code L} = 144 mB (the R4 mB 1:1 ruling, CS.java:129).
 	 */
 	public static final int LASER_GAS_MB = 144;
 
-	/** The empty emitter seam ({@code gt6:comp_laser_gas_empty}, upstream IL.Comp_Laser_Gas_Empty :384), fixtures injected offline. */
+	/** The family walk: the eight gas fluid names, in the :396-403 upstream row order (helium → carbondioxide). */
+	public static final List<String> LASER_GAS_FLUIDS = List.of(
+			"helium", "neon", "argon", "krypton", "xenon", "heliumneon", "carbonmonoxide", "carbondioxide");
+
+	/** The empty emitter seam ({@code gt6:comp_laser_gas_empty}, upstream IL.Comp_Laser_Gas_Empty :384 — the shared input leg), fixtures injected offline. */
 	public static Supplier<ItemStack> sLaserGasEmptyResolver = () -> new ItemStack(gregtech6.items.GT6LaserGas.COMP_LASER_GAS_EMPTY.get());
 
-	/** The CO2 emitter seam ({@code gt6:comp_laser_gas_co2}, upstream IL.Comp_Laser_Gas_CO2 :394), fixtures injected offline. */
-	public static Supplier<ItemStack> sLaserGasCo2Resolver = () -> new ItemStack(gregtech6.items.GT6LaserGas.COMP_LASER_GAS_CO2.get());
+	/**
+	 * The gas seam: fluid name → the {@code gt6:} CHEMICALS source fluid (the upstream
+	 * {@code MT.<gas>.gas(U, T)} legs of :396-403; {@code heliumneon} has no port fluid,
+	 * the row stays pooled until a blend-fluid card), fixtures injected offline.
+	 */
+	public static Function<String, Fluid> sLaserGasFluidResolver = GT6RecipesCanner::liveLaserGas;
 
-	/** The CO2 gas seam ({@code gt6:carbondioxide}, the upstream MT.CO2.gas(U, T) of :403 — the f1-chemicals gas closure row), fixtures injected offline. */
-	public static Supplier<Fluid> sCarbonDioxideResolver = () -> {
-		for (GTFluids.ChemicalFluid tChemical : GTFluids.CHEMICALS) {
-			if (tChemical.spec.name().equals("carbondioxide")) return tChemical.source.get();
-		}
-		return null;
-	};
+	/**
+	 * The emitter seam: fluid name → the filled emitter stack (the :396-403 item output
+	 * column), fixtures injected offline. The helium leg resolves through the item
+	 * REGISTRY — {@code gt6:comp_laser_gas_he} rides the p37-usb-peripherals branch (not
+	 * compiled on this base), so the leg is EMPTY until that merge lands and the :396 row
+	 * skips silently (the upstream FL.exists drop posture, self-healing at the merge).
+	 */
+	public static Function<String, ItemStack> sLaserGasEmitterResolver = GT6RecipesCanner::liveLaserEmitter;
 
 	/** Poured flag — one generation, one pour (upstream loaders run once per JVM). */
 	private static boolean sLoaded = false;
@@ -190,11 +202,13 @@ public final class GT6RecipesCanner {
 	}
 
 	/**
-	 * Pours the 53 rows into {@link GT6RecipeMaps#CANNER}: the 17 refill rows (the 16
+	 * Pours the 58 rows into {@link GT6RecipeMaps#CANNER}: the 17 refill rows (the 16
 	 * colour refills + the chlorine remover, p24), the 3 food-can rows of task
 	 * p25-food-can-row0 (rotten_flesh/spider_eye/cookie), the 32 C-Foam refills of task
-	 * p26-c-foam-fluid-refill (the :254 dyed + the :262 owned ladders) and the CO2 laser
-	 * gas fill row of task p32-qu-laser-domain (MultiItemTechnological.java:403).
+	 * p26-c-foam-fluid-refill (the :254 dyed + the :262 owned ladders) and the laser gas
+	 * fill family (p32-qu-laser-domain + debt-laser-gas-family, MultiItemTechnological
+	 * .java:396-403 — 6 of 8 rows pour on this base; the helium item leg rides the usb
+	 * branch and the heliumneon fluid stays pooled, both skipping silently).
 	 * Idempotent; an unresolvable row skips with a count (the upstream FL.exists drops).
 	 */
 	public static synchronized void load() {
@@ -247,34 +261,70 @@ public final class GT6RecipesCanner {
 			tPoured++;
 		}
 
-		// the p32-qu-laser-domain fill row — MultiItemTechnological.java:403: empty emitter +
-		// 1 unit of CO2 gas (144 mB) → the Carbon Dioxide Laser Emitter
-		Recipe tLaserGas = laserGasRecipe();
-		if (tLaserGas == null) tSkipped++;
-		else {tMap.addRecipe(tLaserGas); tPoured++;}
+		// the laser gas fill family — MultiItemTechnological.java:396-403: empty emitter +
+		// 1 unit of gas (144 mB) → the filled emitter, one row per family gas; the helium
+		// (usb-branch item) and heliumneon (no port fluid) legs skip silently on this base
+		for (String tGas : LASER_GAS_FLUIDS) {
+			Recipe tRow = laserGasRecipe(tGas);
+			if (tRow == null) {tSkipped++; continue;} // the absent-fluid/item silent skip
+			tMap.addRecipe(tRow);
+			tPoured++;
+		}
 		sLoaded = true;
 		LOGGER.info("GT6 Canner poured: {} loaded, {} skipped (unregistered dye/chlorine/can ids, = upstream FL.exists drops)", tPoured, tSkipped);
 	}
 
 	/**
-	 * The MultiItemTechnological.java:403 row — buffered T, EUt 16, duration 128, the empty
-	 * gas laser emitter in, {@code MT.CO2.gas(U, T)} = 144 mB of {@code gt6:carbondioxide}
-	 * in, the CO2 emitter out. Null when any leg fails to resolve (the silent skip).
+	 * The MultiItemTechnological.java:396-403 row for ONE family gas — buffered T, EUt 16,
+	 * duration 128, the empty gas laser emitter in, {@code MT.<gas>.gas(U, T)} = 144 mB of
+	 * the gas fluid in, the filled emitter out. Null when any leg fails to resolve (the
+	 * silent skip: the heliumneon fluid and the pre-merge helium item).
 	 */
 	@Nullable
-	static Recipe laserGasRecipe() {
-		Fluid tCo2 = sCarbonDioxideResolver.get();
-		if (tCo2 == null) return null;
+	static Recipe laserGasRecipe(String aGas) {
+		Fluid tGas = sLaserGasFluidResolver.apply(aGas);
+		if (tGas == null) return null;
 		ItemStack tEmpty = sLaserGasEmptyResolver.get();
 		if (tEmpty == null || tEmpty.isEmpty()) return null;
-		ItemStack tCo2Emitter = sLaserGasCo2Resolver.get();
-		if (tCo2Emitter == null || tCo2Emitter.isEmpty()) return null;
-		// upstream :403 — RM.Canner.addRecipe1(T, 16, 128, IL.Comp_Laser_Gas_Empty.get(1), MT.CO2.gas(U, T), NF, IL.Comp_Laser_Gas_CO2.get(1))
+		ItemStack tEmitter = sLaserGasEmitterResolver.apply(aGas);
+		if (tEmitter == null || tEmitter.isEmpty()) return null;
+		// upstream :396-403 — RM.Canner.addRecipe1(T, 16, 128, IL.Comp_Laser_Gas_Empty.get(1), MT.<gas>.gas(U, T), NF, IL.Comp_Laser_Gas_<X>.get(1))
 		return new Recipe(true,
-				new ItemStack[] {tEmpty}, new ItemStack[] {tCo2Emitter},
-				new FluidStack[] {new FluidStack(tCo2, LASER_GAS_MB)},
+				new ItemStack[] {tEmpty}, new ItemStack[] {tEmitter},
+				new FluidStack[] {new FluidStack(tGas, LASER_GAS_MB)},
 				null,
 				LASER_GAS_DURATION, LASER_GAS_EUT, 0);
+	}
+
+	/** The live gas leg: the {@link GTFluids#CHEMICALS} source fluid of the name, null when absent (the sCarbonDioxideResolver walk, family-shaped). */
+	static Fluid liveLaserGas(String aGas) {
+		for (GTFluids.ChemicalFluid tChemical : GTFluids.CHEMICALS) {
+			if (tChemical.spec.name().equals(aGas)) return tChemical.source.get();
+		}
+		return null;
+	}
+
+	/**
+	 * The live emitter leg: the fluid name → the {@code gt6:comp_laser_gas_<x>} item. The
+	 * helium row is the REGISTRY-LOOKUP exception (the usb-branch item, see the seam javadoc);
+	 * the seven other gases close over this repo's RegistryObjects (the direct switch — no
+	 * RegistryObject local, the stonecutter swap table never touches this method).
+	 */
+	static ItemStack liveLaserEmitter(String aGas) {
+		if ("helium".equals(aGas)) {
+			Item tHe = ForgeRegistries.ITEMS.getValue(new net.minecraft.resources.ResourceLocation("gt6", "comp_laser_gas_he"));
+			return tHe == null || tHe == Items.AIR ? ItemStack.EMPTY : new ItemStack(tHe);
+		}
+		return switch (aGas) {
+			case "neon" -> new ItemStack(gregtech6.items.GT6LaserGas.COMP_LASER_GAS_NE.get());
+			case "argon" -> new ItemStack(gregtech6.items.GT6LaserGas.COMP_LASER_GAS_AR.get());
+			case "krypton" -> new ItemStack(gregtech6.items.GT6LaserGas.COMP_LASER_GAS_KR.get());
+			case "xenon" -> new ItemStack(gregtech6.items.GT6LaserGas.COMP_LASER_GAS_XE.get());
+			case "heliumneon" -> new ItemStack(gregtech6.items.GT6LaserGas.COMP_LASER_GAS_HENE.get());
+			case "carbonmonoxide" -> new ItemStack(gregtech6.items.GT6LaserGas.COMP_LASER_GAS_CO.get());
+			case "carbondioxide" -> new ItemStack(gregtech6.items.GT6LaserGas.COMP_LASER_GAS_CO2.get());
+			default -> ItemStack.EMPTY;
+		};
 	}
 
 	/**

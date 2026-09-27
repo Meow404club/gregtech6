@@ -572,17 +572,14 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent(tKey.getId().getPath(), mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/" + tKey.getId().getPath()));
         }
-        // the gas laser emitter pair (task p32-qu-laser-domain) — 2 item/generated models
-        // over the byte-identical upstream icon borrows (gt.multiitem.technological metas
-        // 11000/11008, assets/README.md attribution)
-        withExistingParent("comp_laser_gas_empty", mcLoc("item/generated"))
-            .texture("layer0", modLoc("item/comp_laser_gas_empty"));
-        withExistingParent("comp_laser_gas_co2", mcLoc("item/generated"))
-            .texture("layer0", modLoc("item/comp_laser_gas_co2"));
-        // task p37-usb-peripherals — the Helium Laser Emitter icon (the coordinator's
-        // single-item exemption; upstream meta 11001, assets/README.md attribution)
-        withExistingParent("comp_laser_gas_he", mcLoc("item/generated"))
-            .texture("layer0", modLoc("item/comp_laser_gas_he"));
+		// the gas laser emitter family (task p32-qu-laser-domain + the debt-laser-gas-family
+		// closure + the p37-usb-peripherals He exemption merged in by the review-seat
+		// rebase) — item/generated models over the byte-identical upstream icon borrows
+		// (gt.multiitem.technological metas 11000-11008, assets/README.md attribution)
+		for (String tEmitter : new String[] {"empty", "he", "ne", "ar", "kr", "xe", "hene", "co", "co2"}) {
+			withExistingParent("comp_laser_gas_" + tEmitter, mcLoc("item/generated"))
+				.texture("layer0", modLoc("item/comp_laser_gas_" + tEmitter));
+		}
         // the spray-can family (task p22-spraycan-items) — 18 item/generated models over the
         // byte-identical upstream icon borrows (gt.multiitem.randomtools metas
         // 1000+2i/1096/999, assets/README.md attribution): one model per colour + the remover

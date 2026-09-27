@@ -195,15 +195,28 @@ public class GT6ZhCn extends LanguageProvider {
 	}
 
 	/**
-	 * The gas laser emitter zh faces (task p32-qu-laser-domain, the addUsbStickUnits
-	 * shape): the 2 display names + the 2 tooltip keys, riding the reference table's hand
-	 * layer — the values are the DUMP faces verbatim (tmp/gregtech.lang :10379/:10395:
-	 * 空的气体-激光镭射器 / 二氧化碳激光镭射器, the tooltips are the :384/:394 description
-	 * columns' hand rows, no dump faces).
+	 * The gas laser emitter zh faces (task p32-qu-laser-domain, family closure task
+	 * debt-laser-gas-family, the addUsbStickUnits shape): the display names + the tooltip
+	 * keys, riding the reference table's hand layer — the six family rows' values are the
+	 * DUMP faces verbatim (tmp/gregtech.lang :10383-:10394, e.g. 氖激光镭射器 /
+	 * 氦氖混合气体激光镭射器 :10391 / 用途: 低级材料加工 :10394); the p32 empty/co2 pair
+	 * keeps its era hand values (:10379/:10395 names verbatim, the two tooltips hand).
 	 */
 	private void addLaserGasUnits() {
 		addDirect("item.gt6.comp_laser_gas_empty");
 		addDirect("item.gt6.comp_laser_gas_empty.tooltip");
+		addDirect("item.gt6.comp_laser_gas_ne");
+		addDirect("item.gt6.comp_laser_gas_ne.tooltip");
+		addDirect("item.gt6.comp_laser_gas_ar");
+		addDirect("item.gt6.comp_laser_gas_ar.tooltip");
+		addDirect("item.gt6.comp_laser_gas_kr");
+		addDirect("item.gt6.comp_laser_gas_kr.tooltip");
+		addDirect("item.gt6.comp_laser_gas_xe");
+		addDirect("item.gt6.comp_laser_gas_xe.tooltip");
+		addDirect("item.gt6.comp_laser_gas_hene");
+		addDirect("item.gt6.comp_laser_gas_hene.tooltip");
+		addDirect("item.gt6.comp_laser_gas_co");
+		addDirect("item.gt6.comp_laser_gas_co.tooltip");
 		addDirect("item.gt6.comp_laser_gas_co2");
 		addDirect("item.gt6.comp_laser_gas_co2.tooltip");
 	}
