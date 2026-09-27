@@ -43,6 +43,8 @@ import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
 import gregtech6.tileentity.multiblocks.GT6HeatExchangerBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 import gregtech6.tileentity.inventories.GT6LongDistanceItemPipeBlockEntity; // p35 tail-append
+import gregtech6.tileentity.energy.reactors.GT6ReactorCore2x2BlockEntity; // debt-reactor-b tail-append
+import gregtech6.registry.GT6Reactors; // debt-reactor-b tail-append
 import gregtech6.tileentity.tank.GT6LongDistanceFluidPipeBlockEntity; // p35 tail-append
 import gregtech6.tileentity.tank.BarrelFluidHandler;
 import gregtech6.tileentity.tank.GTBarrelBlockEntity;
@@ -119,6 +121,7 @@ public final class GT6CapabilityWiring {
 		registerZpmDechargers(aEvent); // task p36-energy-zpm-dechargers (tail-append; shared serial file)
 		registerPortalRelays(aEvent); // task p35-portals-mini-nether-end (tail-append; shared serial file)
 		registerLongDistancePipeFaces(aEvent); // task p35-long-distance-pipes (tail-append; shared serial file)
+		registerReactorCoreFaces(aEvent); // task debt-reactor-b-2x2-be (tail-append; shared serial file)
 	}
 
 	// -- the machines seam: registerBlockEntity(cap, beType, (be, side) -> be.getCapability(cap, side)) --
@@ -873,6 +876,19 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		BlockEntityType<GT6LongDistanceFluidPipeBlockEntity> tFluid = GT6LongDistPipes.LONGDIST_FLUID_PIPE_BE.get();
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tFluid,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+	}
+
+	// -- the 2x2 reactor core (task debt-reactor-b-2x2-be; TAIL-APPENDED ROW, the
+	// shared serial file: append-only discipline) --
+	// Item face = the TOP/BOTTOM-only rod slots (Core:414), the stopped/mode-gated
+	// insert/extract pair (Core:415-416); fluid face = the 11-whitelist fill + hot
+	// drain door (Core:255-278). Both route through the BE's 21.1 getCapability member.
+	private static void registerReactorCoreFaces(RegisterCapabilitiesEvent aEvent) {
+		BlockEntityType<GT6ReactorCore2x2BlockEntity> tCore = GT6Reactors.REACTOR_CORE_2X2_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tCore,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCore,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 	}
 
