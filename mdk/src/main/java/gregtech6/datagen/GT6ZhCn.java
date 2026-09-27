@@ -777,6 +777,8 @@ public class GT6ZhCn extends LanguageProvider {
 		// S:fluid.nitrogen=氮 :658, S:fluid.oxygen=氧 :668, S:fluid.fluorine=氟 :301,
 		// S:fluid.helium=氦 :328, S:fluid.neon=氖 :651, S:fluid.argon=氩 :54,
 		// S:fluid.krypton=氪 :381, S:fluid.xenon=氙 :920, S:fluid.radon=氡 :828,
+		// S:fluid.heliumneon=氦氖混合气体 :330 (task debt-hene-fluid — the blend row the
+		// p29 batch left pooled),
 		// S:fluid.liquidoxygen=液氧 :392, S:fluid.heliumplasma=氦离子 :331,
 		// S:fluid.nitrogenplasma=氮离子 :661; the isotope batch (p31-qu-b-materials)
 		// S:fluid.deuterium=氘 :213, S:fluid.tritium=氚 :898, S:fluid.helium3=氦-3 :329,
