@@ -400,6 +400,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			slabFromRocksBuilder(tStone).save(aConsumer, slabFromRocksId(tStone));
 			slabFromCobbleBuilder(tStone).save(aConsumer, slabFromCobbleId(tStone));
 		}
+
+		// task debt-emitter-sensor-generators — the 20 live self-crafting rows of the three
+		// technological component families (the pour map in the band javadoc below)
+		compactComponentRows(aConsumer);
 	}
 	//?} else {
 	/*@Override
@@ -578,6 +582,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			slabFromRocksBuilder(tStone).save(aOutput, slabFromRocksId(tStone));
 			slabFromCobbleBuilder(tStone).save(aOutput, slabFromCobbleId(tStone));
 		}
+
+		// task debt-emitter-sensor-generators — the 20 live self-crafting rows of the three
+		// technological component families (the pour map in the band javadoc below)
+		compactComponentRows(aOutput);
 	}
 	*///?}
 
@@ -3262,6 +3270,146 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		String tPath = aForm + "/" + aSnake;
 		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
 	}
+
+	// -------------------------------------------------------------------------
+	// task debt-emitter-sensor-generators — the three technological component families'
+	// self-crafting rows, MultiItemTechnological.java:425-434 (FIELD_GENERATORS
+	// "WPW","CGC","WPW"), :436-445 (EMITTERS "SPC","WQP","CWS") and :447-456 (SENSORS
+	// "P Q","PS ","CPP"), grids and keys VERBATIM over the column ladders:
+	//   - the 'C' circuit column = OD_CIRCUITS[i] → the #gt6:circuit<i> TAG (the battery
+	//     'X' precedent, CS.java:166);
+	//   - the plate columns ride Electric_T[i] (MT.java:3691 = TinAlloy/SteelGalvanized/
+	//     Al/StainlessSteel/Cr/Ti/Ir/Os/Trinitanium/Trinaquadalloy) — plateDouble on the
+	//     generators, plateCurved on emitters/sensors;
+	//   - the gem columns = OP.gem.dat(...) → #forge:gems/<snake> tags (the crusher 'D'
+	 //    precedent): FG EnderPearl×2/EnderEye×2/NetherStar×6, EM+SN SiO2×3/Emerald/
+	//     EnderPearl/EnderEye/NetherStar×4 (ANY.SiO2 → quartz);
+	//   - the wire columns ride the MT.DATA.WIRES_01/WIRES_04/CABLES_01 material ladders
+	//     (MT.java:3595/:3613/:3631 = Pb/Sn/Cu/Au/Al/Pt then Graphene) and the generator
+	//     'W' Osmium wire gauges (fine/01/02/04/06/08/10/12/14/16 — :425-434) over the
+	//     GTWires item paths (the wireItemByPath walk); CABLES_01 folds Graphene to the
+	//     bare wireGt01 (upstream mixes cableGt01 metals with wireGt01 Graphene, :3638).
+	// POUR MAP (the live-row set, the laser-gas upstream-FL.exists posture): the port
+	// carries circuit tags 0-6 ONLY (no #gt6:circuit7..9), so every family's rungs
+	// 7-9 (ZPM/UV/PUV1) are CUT — pooled until the circuit ladder grows; the
+	// FIELD_GENERATORS ULV rung is CUT — OP.wireFine carries no port item/tag face at
+	// all (the coil 'W' fold note). Live: FIELD_GENERATORS 1-6, EMITTERS 0-6,
+	// SENSORS 0-6 = 20 rows.
+	// -------------------------------------------------------------------------
+
+	/** The WIRES_01/WIRES_04 material ladder as GTWireSpecs tokens (MT.java:3595/:3613, index = tier). */
+	private static final String[] COMPONENT_WIRE_TOKENS = {"lead", "tin", "copper", "gold", "aluminium", "platinum", "graphene", "graphene", "graphene", "graphene"};
+
+	/** The FIELD_GENERATORS gem column per tier (:425-434 — EnderPearl×2/EnderEye×2/NetherStar×6). */
+	private static final String[] FIELD_GENERATOR_GEMS = {"ender_pearl", "ender_pearl", "ender_eye", "ender_eye", "nether_star", "nether_star", "nether_star", "nether_star", "nether_star", "nether_star"};
+
+	/** The EMITTERS/SENSORS gem column per tier (:436-456 — SiO2×3/Emerald/EnderPearl/EnderEye/NetherStar×4). */
+	private static final String[] EMITTER_SENSOR_GEMS = {"quartz", "quartz", "quartz", "emerald", "ender_pearl", "ender_eye", "nether_star", "nether_star", "nether_star", "nether_star"};
+
+	/** The Electric_T[i] ladder (MT.java:3691, index = tier). */
+	private static gregapi.oredict.OreDictMaterial[] componentElectricT() {
+		return new gregapi.oredict.OreDictMaterial[]{gregapi.data.MT.TinAlloy, gregapi.data.MT.SteelGalvanized,
+				gregapi.data.MT.Al, gregapi.data.MT.StainlessSteel, gregapi.data.MT.Cr, gregapi.data.MT.Ti,
+				gregapi.data.MT.Ir, gregapi.data.MT.Os, gregapi.data.MT.Trinitanium, gregapi.data.MT.Trinaquadalloy};
+	}
+
+	/** The FIELD_GENERATORS 'W' Osmium wire gauges per tier (:425-434; index 0 = the unported fine wire). */
+	private static final int[] FIELD_GENERATOR_OS_GAUGES = {1, 2, 4, 6, 8, 10, 12, 14, 16};
+
+	/** The wire item path of (form, token, gauge) — the GTWireSpecs.registryName composition, zero-padded. */
+	private static String componentWirePath(boolean aInsulated, String aToken, int aGauge) {
+		return (aInsulated ? "cable_" : "wire_") + aToken + "_gt" + (aGauge < 10 ? "0" : "") + aGauge;
+	}
+
+//? if forge {
+	private void compactComponentRows(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
+		gregapi.oredict.OreDictMaterial[] tElectricT = componentElectricT();
+		for (int i = 1; i <= 6; i++) { // FIELD_GENERATORS :425-434, live rungs 1-6 (see the band doc)
+			Item tWire = wireItemByPath(componentWirePath(false, "osmium_elemental", FIELD_GENERATOR_OS_GAUGES[i - 1]));
+			Item tPlate = itemOrNull(gregapi.data.OP.plateDouble, tElectricT[i]);
+			Item tResult = gregtech6.items.GT6Emitters.ITEMS_BY_PATH.get(gregtech6.items.GT6Emitters.FAMILY_FIELD_GENERATORS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]).get();
+			TagKey<Item> tGem = GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, FIELD_GENERATOR_GEMS[i]);
+			TagKey<Item> tCircuit = GT6ItemTags.gt6("circuit" + i);
+			if (tPlate == null) continue; // the silent-skip guard (the laser-gas FL.exists posture)
+			ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tResult)
+					.pattern("WPW").pattern("CGC").pattern("WPW")
+					.define('W', tWire).define('P', tPlate).define('C', tCircuit).define('G', tGem)
+					.unlockedBy("has_circuit" + i, has(tCircuit))
+					.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/" + gregtech6.items.GT6Emitters.FAMILY_FIELD_GENERATORS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]));
+		}
+		for (int i = 0; i <= 6; i++) { // EMITTERS :436-445, live rungs 0-6
+			Item tWire04 = wireItemByPath(componentWirePath(false, COMPONENT_WIRE_TOKENS[i], 4));
+			Item tCable01 = wireItemByPath(i <= 5 ? componentWirePath(true, COMPONENT_WIRE_TOKENS[i], 1) : componentWirePath(false, "graphene", 1)); // CABLES_01 Graphene fold (:3638)
+			Item tPlate = itemOrNull(gregapi.data.OP.plateCurved, tElectricT[i]);
+			Item tResult = gregtech6.items.GT6Emitters.ITEMS_BY_PATH.get(gregtech6.items.GT6Emitters.FAMILY_EMITTERS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]).get();
+			TagKey<Item> tGem = GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, EMITTER_SENSOR_GEMS[i]);
+			TagKey<Item> tCircuit = GT6ItemTags.gt6("circuit" + i);
+			if (tPlate == null) continue; // the silent-skip guard
+			ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tResult)
+					.pattern("SPC").pattern("WQP").pattern("CWS")
+					.define('S', tWire04).define('P', tPlate).define('C', tCircuit).define('Q', tGem).define('W', tCable01)
+					.unlockedBy("has_circuit" + i, has(tCircuit))
+					.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/" + gregtech6.items.GT6Emitters.FAMILY_EMITTERS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]));
+		}
+		for (int i = 0; i <= 6; i++) { // SENSORS :447-456, live rungs 0-6
+			Item tWire01 = wireItemByPath(componentWirePath(false, COMPONENT_WIRE_TOKENS[i], 1));
+			Item tPlate = itemOrNull(gregapi.data.OP.plateCurved, tElectricT[i]);
+			Item tResult = gregtech6.items.GT6Emitters.ITEMS_BY_PATH.get(gregtech6.items.GT6Emitters.FAMILY_SENSORS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]).get();
+			TagKey<Item> tGem = GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, EMITTER_SENSOR_GEMS[i]);
+			TagKey<Item> tCircuit = GT6ItemTags.gt6("circuit" + i);
+			if (tPlate == null) continue; // the silent-skip guard
+			ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tResult)
+					.pattern("P Q").pattern("PS ").pattern("CPP")
+					.define('Q', tGem).define('S', tWire01).define('P', tPlate).define('C', tCircuit)
+					.unlockedBy("has_circuit" + i, has(tCircuit))
+					.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/" + gregtech6.items.GT6Emitters.FAMILY_SENSORS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]));
+		}
+	}
+	//?} else {
+	/*private void compactComponentRows(net.minecraft.data.recipes.RecipeOutput aOutput) {
+		gregapi.oredict.OreDictMaterial[] tElectricT = componentElectricT();
+		for (int i = 1; i <= 6; i++) { // FIELD_GENERATORS :425-434, live rungs 1-6 (see the band doc)
+			Item tWire = wireItemByPath(componentWirePath(false, "osmium_elemental", FIELD_GENERATOR_OS_GAUGES[i - 1]));
+			Item tPlate = itemOrNull(gregapi.data.OP.plateDouble, tElectricT[i]);
+			Item tResult = gregtech6.items.GT6Emitters.ITEMS_BY_PATH.get(gregtech6.items.GT6Emitters.FAMILY_FIELD_GENERATORS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]).get();
+			TagKey<Item> tGem = GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, FIELD_GENERATOR_GEMS[i]);
+			TagKey<Item> tCircuit = GT6ItemTags.gt6("circuit" + i);
+			if (tPlate == null) continue; // the silent-skip guard (the laser-gas FL.exists posture)
+			ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tResult)
+					.pattern("WPW").pattern("CGC").pattern("WPW")
+					.define('W', tWire).define('P', tPlate).define('C', tCircuit).define('G', tGem)
+					.unlockedBy("has_circuit" + i, has(tCircuit))
+					.save(aOutput, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/" + gregtech6.items.GT6Emitters.FAMILY_FIELD_GENERATORS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]));
+		}
+		for (int i = 0; i <= 6; i++) { // EMITTERS :436-445, live rungs 0-6
+			Item tWire04 = wireItemByPath(componentWirePath(false, COMPONENT_WIRE_TOKENS[i], 4));
+			Item tCable01 = wireItemByPath(i <= 5 ? componentWirePath(true, COMPONENT_WIRE_TOKENS[i], 1) : componentWirePath(false, "graphene", 1)); // CABLES_01 Graphene fold (:3638)
+			Item tPlate = itemOrNull(gregapi.data.OP.plateCurved, tElectricT[i]);
+			Item tResult = gregtech6.items.GT6Emitters.ITEMS_BY_PATH.get(gregtech6.items.GT6Emitters.FAMILY_EMITTERS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]).get();
+			TagKey<Item> tGem = GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, EMITTER_SENSOR_GEMS[i]);
+			TagKey<Item> tCircuit = GT6ItemTags.gt6("circuit" + i);
+			if (tPlate == null) continue; // the silent-skip guard
+			ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tResult)
+					.pattern("SPC").pattern("WQP").pattern("CWS")
+					.define('S', tWire04).define('P', tPlate).define('C', tCircuit).define('Q', tGem).define('W', tCable01)
+					.unlockedBy("has_circuit" + i, has(tCircuit))
+					.save(aOutput, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/" + gregtech6.items.GT6Emitters.FAMILY_EMITTERS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]));
+		}
+		for (int i = 0; i <= 6; i++) { // SENSORS :447-456, live rungs 0-6
+			Item tWire01 = wireItemByPath(componentWirePath(false, COMPONENT_WIRE_TOKENS[i], 1));
+			Item tPlate = itemOrNull(gregapi.data.OP.plateCurved, tElectricT[i]);
+			Item tResult = gregtech6.items.GT6Emitters.ITEMS_BY_PATH.get(gregtech6.items.GT6Emitters.FAMILY_SENSORS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]).get();
+			TagKey<Item> tGem = GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, EMITTER_SENSOR_GEMS[i]);
+			TagKey<Item> tCircuit = GT6ItemTags.gt6("circuit" + i);
+			if (tPlate == null) continue; // the silent-skip guard
+			ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tResult)
+					.pattern("P Q").pattern("PS ").pattern("CPP")
+					.define('Q', tGem).define('S', tWire01).define('P', tPlate).define('C', tCircuit)
+					.unlockedBy("has_circuit" + i, has(tCircuit))
+					.save(aOutput, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/" + gregtech6.items.GT6Emitters.FAMILY_SENSORS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]));
+		}
+	}
+	*///?}
 
 //? if forge {
 	private void digLadderRows(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {

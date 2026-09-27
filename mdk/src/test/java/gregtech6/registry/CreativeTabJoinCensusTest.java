@@ -219,7 +219,6 @@ public class CreativeTabJoinCensusTest {
 				+ itemFields(GT6FluxDynamos.class).size()
 				+ itemFields(GT6Kinetics.class).size()
 				+ itemFields(GT6FeBatteries.class).size()
-				+ itemFields(GT6LaserGas.class).size();
 				+ itemFields(GT6LaserGas.class).size()
 				+ GT6Emitters.ITEMS_BY_PATH.size();
 		assertEquals(207, tTotal, "177 (p38 batch 171+usb-He+laser-gas six) + the 30 technological components (task debt-emitter-sensor-generators)");
