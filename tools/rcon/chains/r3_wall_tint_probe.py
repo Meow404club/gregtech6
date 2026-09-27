@@ -495,19 +495,21 @@ def _verdict_one(png):
 
 _VERDICT_TEXT = {
     "c": "VERDICT: c  TINT CORRECT (warm yellow-white Invar body) — the dye chain "
-         "is fully alive end to end; issue #8 = H1 (stale user build). Answer the "
-         "issue: update the build, re-verify.",
+         "is fully alive end to end on the world-baked route; this is the post-C7 "
+         "fixed baseline (cutout declarations + the getRenderTypes forward) — "
+         "issue #8 stays closed, nothing to answer.",
     "b": "VERDICT: b  R/B SWAPPED (pale cyan Invar body) — the dye chain IS alive "
          "with the r3-ore-tint-abgr-seam byte-order bug (ARGB tint multiplied into "
-         "ABGR vertex bytes); consistent with the C1 fix in flight. Answer the "
-         "issue: fix landing, re-verify after C1.",
-    "a": "VERDICT: a  NO TINT (neutral dryer body, leaves green) — H2 confirmed: "
-         "the world-baked vertex-tint route is dead on a live renderer. Open the "
-         "world-half fix card (root cause needs a live getQuads probe).",
+         "ABGR vertex bytes); C1 has landed, so this state means a REGRESSION of "
+         "the toABGR seam — bisect against the C1 fix.",
+    "a": "VERDICT: a  NO TINT (neutral dryer body, leaves green) — the world-baked "
+         "vertex-tint route is occluded on a live renderer; against the post-C7 "
+         "baseline this means the fix REGRESSED — bisect the C7 cutout "
+         "declarations / getRenderTypes forward.",
     "?": "VERDICT: ?  INCONCLUSIVE — the oak-leaves green is absent, so this box's "
          "vertex-colour channel is NOT proven alive; an all-gray dryer here would "
-         "be the known headless-llvmpipe colour loss, NOT evidence for H2. Do not "
-         "open the world-half fix card off this frame.",
+         "be the known headless-llvmpipe colour loss, NOT evidence of a tint "
+         "regression. Do not judge the chain off this frame.",
     "!": "VERDICT: !  AIM MISS — no verdict from this frame.",
     "x": "VERDICT: x  MIXED — inspect manually.",
 }
