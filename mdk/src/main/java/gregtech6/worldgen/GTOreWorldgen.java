@@ -57,9 +57,11 @@ import gregtech6.registry.GTMaterialItems;
  * hosts), nether rows the base_stone_nether tag, end rows end_stone (the
  * OreFeatures.java:49-60 dual-target canon; the y-domain split rides the HOST tags,
  * no per-y feature pairs — the research ruling). Placed chain = Count + InSquare +
- * HeightRange uniform + BiomeFilter with count = UniformInt[max(1, amount/2), amount]
- * (the :61 {@code max(1, mAmount/2 + nextInt(1+mAmount)/2)} value range, mean ~0.75
- * amount) and the upstream [minY, maxY] band — nether rows clamp maxY at 127 (the
+ * HeightRange uniform + BiomeFilter with count = the {@link #veinCount} CONSTANT
+ * max(1, amount/2) (the declared cross-leg deviation — density-exact at the mean
+ * ~0.75 amount of the upstream :61 {@code max(1, mAmount/2 + nextInt(1+mAmount)/2)}
+ * UniformInt range, see the method javadoc) and the upstream [minY, maxY] band —
+ * nether rows clamp maxY at 127 (the
  * 1.7.10 nether is 128 tall; a higher band would be dead attempts, distribution
  * unchanged), overworld/end bands fit the modern heights as-is (max 250 < 256/319).
  */
