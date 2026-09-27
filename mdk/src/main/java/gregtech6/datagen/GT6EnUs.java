@@ -172,6 +172,26 @@ public class GT6EnUs extends LanguageProvider {
         addOreTabTitle(); // task p30-ore-3-datagen — the ore-1 note's card-③ face (the one new key)
         addRails(); // task p35-rails-31-blocks — table-tail append
         addBooks(); // task p35-books-written — table-tail append
+        addTechnologicalComponents(); // task debt-emitter-sensor-generators — table-tail append
+    }
+
+    /**
+     * The three technological component families (task debt-emitter-sensor-generators,
+     * 30 rows): the display names are the MultiItemTechnological.java:54-56 registration
+     * literals verbatim — {@code "Compact Force Field Emitter ("+VN[i]+")"} /
+     * {@code "Compact Signal Emitter ("+VN[i]+")"} / {@code "Compact Sensor ("+VN[i]+")"}
+     * over {@code VN[0..9]} (== GTWireSpecs.VN[0..9]); the upstream tooltip column is the
+     * EMPTY string on every row (no {@code .tooltip} keys ported). Walked over the
+     * GT6Emitters pool so the keys cannot drift from the registry rows.
+     */
+    private void addTechnologicalComponents() {
+        java.util.Map<String, String> tFamilyWords = java.util.Map.of(
+                gregtech6.items.GT6Emitters.FAMILY_FIELD_GENERATORS, "Compact Force Field Emitter",
+                gregtech6.items.GT6Emitters.FAMILY_EMITTERS, "Compact Signal Emitter",
+                gregtech6.items.GT6Emitters.FAMILY_SENSORS, "Compact Sensor");
+        for (gregtech6.items.GT6Emitters.ComponentRow tRow : gregtech6.items.GT6Emitters.ROWS) {
+            add("item.gt6." + tRow.path(), tFamilyWords.get(tRow.family()) + " (" + gregtech6.registry.GTWireSpecs.VN[tRow.tier()] + ")");
+        }
     }
 
     /**

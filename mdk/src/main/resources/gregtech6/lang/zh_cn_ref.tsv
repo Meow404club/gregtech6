@@ -1865,6 +1865,16 @@ direct	item.gt6.energium_red_lv	红色能量水晶 (T1)	hand
 direct	item.gt6.energium_red_mv	红色能量水晶 (T2)	hand
 direct	item.gt6.energium_red_ulv	红色能量水晶 (T0)	hand
 direct	item.gt6.faucet_ceramic_raw	粘土浇铸口	hand
+direct	item.gt6.field_generator_ev	力场发生器 (EV)	hand
+direct	item.gt6.field_generator_hv	力场发生器 (HV)	hand
+direct	item.gt6.field_generator_iv	力场发生器 (IV)	hand
+direct	item.gt6.field_generator_luv	力场发生器 (LuV)	hand
+direct	item.gt6.field_generator_lv	力场发生器 (LV)	hand
+direct	item.gt6.field_generator_mv	力场发生器 (MV)	hand
+direct	item.gt6.field_generator_puv1	力场发生器 (PUV1)	hand
+direct	item.gt6.field_generator_ulv	力场发生器 (ULV)	hand
+direct	item.gt6.field_generator_uv	力场发生器 (UV)	hand
+direct	item.gt6.field_generator_zpm	力场发生器 (ZPM)	hand
 direct	item.gt6.file	锉刀	hand
 direct	item.gt6.flint_and_tinder	打火石	hand
 direct	item.gt6.foam_spray_black	建筑泡沫喷罐 (黑色)	hand
@@ -2053,6 +2063,16 @@ direct	item.gt6.scoop	捕虫网	hand
 direct	item.gt6.screwdriver	螺丝刀	hand
 direct	item.gt6.screwdriver_lv	螺丝刀 (LV)	hand
 direct	item.gt6.sense	镰刀	hand
+direct	item.gt6.sensor_ev	传感器 (EV)	hand
+direct	item.gt6.sensor_hv	传感器 (HV)	hand
+direct	item.gt6.sensor_iv	传感器 (IV)	hand
+direct	item.gt6.sensor_luv	传感器 (LuV)	hand
+direct	item.gt6.sensor_lv	传感器 (LV)	hand
+direct	item.gt6.sensor_mv	传感器 (MV)	hand
+direct	item.gt6.sensor_puv1	传感器 (PUV1)	hand
+direct	item.gt6.sensor_ulv	传感器 (ULV)	hand
+direct	item.gt6.sensor_uv	传感器 (UV)	hand
+direct	item.gt6.sensor_zpm	传感器 (ZPM)	hand
 direct	item.gt6.shape_extruder_plate	模具 (板)	hand
 direct	item.gt6.shape_extruder_rod	模具 (杆)	hand
 direct	item.gt6.shape_slicer_eigths	切片器刀片 (八分之一)	hand
@@ -2064,6 +2084,16 @@ direct	item.gt6.shape_slicer_quarters	切片器刀片 (四分之一)	hand
 direct	item.gt6.shape_slicer_quarters_hollow	切片器刀片 (中空四分之一)	hand
 direct	item.gt6.shape_slicer_split	切片器刀片 (分割)	hand
 direct	item.gt6.shovel	锹	hand
+direct	item.gt6.signal_emitter_ev	信号发射器 (EV)	hand
+direct	item.gt6.signal_emitter_hv	信号发射器 (HV)	hand
+direct	item.gt6.signal_emitter_iv	信号发射器 (IV)	hand
+direct	item.gt6.signal_emitter_luv	信号发射器 (LuV)	hand
+direct	item.gt6.signal_emitter_lv	信号发射器 (LV)	hand
+direct	item.gt6.signal_emitter_mv	信号发射器 (MV)	hand
+direct	item.gt6.signal_emitter_puv1	信号发射器 (PUV1)	hand
+direct	item.gt6.signal_emitter_ulv	信号发射器 (ULV)	hand
+direct	item.gt6.signal_emitter_uv	信号发射器 (UV)	hand
+direct	item.gt6.signal_emitter_zpm	信号发射器 (ZPM)	hand
 direct	item.gt6.soft_hammer	软锤	hand
 direct	item.gt6.spade	铲	hand
 direct	item.gt6.spray_can_empty	空喷罐	hand

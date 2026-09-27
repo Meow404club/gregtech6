@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "gt6:circuit5"
+    },
+    "P": {
+      "item": "gt6:plate_curved_titanium"
+    },
+    "Q": {
+      "tag": "forge:gems/ender_eye"
+    },
+    "S": {
+      "item": "gt6:wire_platinum_gt04"
+    },
+    "W": {
+      "item": "gt6:cable_platinum_gt01"
+    }
+  },
+  "pattern": [
+    "SPC",
+    "WQP",
+    "CWS"
+  ],
+  "result": {
+    "item": "gt6:signal_emitter_iv"
+  },
+  "show_notification": true
+}

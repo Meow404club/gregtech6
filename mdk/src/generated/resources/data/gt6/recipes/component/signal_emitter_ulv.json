@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "gt6:circuit0"
+    },
+    "P": {
+      "item": "gt6:plate_curved_tin_alloy"
+    },
+    "Q": {
+      "tag": "forge:gems/quartz"
+    },
+    "S": {
+      "item": "gt6:wire_lead_gt04"
+    },
+    "W": {
+      "item": "gt6:cable_lead_gt01"
+    }
+  },
+  "pattern": [
+    "SPC",
+    "WQP",
+    "CWS"
+  ],
+  "result": {
+    "item": "gt6:signal_emitter_ulv"
+  },
+  "show_notification": true
+}

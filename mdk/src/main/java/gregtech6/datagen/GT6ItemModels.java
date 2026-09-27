@@ -580,6 +580,16 @@ public final class GT6ItemModels extends ItemModelProvider {
 			withExistingParent("comp_laser_gas_" + tEmitter, mcLoc("item/generated"))
 				.texture("layer0", modLoc("item/comp_laser_gas_" + tEmitter));
 		}
+
+        // the three technological component families (task debt-emitter-sensor-generators)
+        // — 30 item/generated models over the byte-identical upstream icon borrows
+        // (gt.multiitem.technological metas 12100-12109/12120-12129/12140-12149,
+        // assets/README.md attribution), walked over the GT6Emitters pool so the model
+        // ids cannot drift from the registry rows (the usb-stick band convention)
+        for (net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tItem : gregtech6.items.GT6Emitters.ITEMS_BY_PATH.values()) {
+            withExistingParent(tItem.getId().getPath(), mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/" + tItem.getId().getPath()));
+        }
         // the spray-can family (task p22-spraycan-items) — 18 item/generated models over the
         // byte-identical upstream icon borrows (gt.multiitem.randomtools metas
         // 1000+2i/1096/999, assets/README.md attribution): one model per colour + the remover

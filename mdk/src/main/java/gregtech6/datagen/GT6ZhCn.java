@@ -135,6 +135,21 @@ public class GT6ZhCn extends LanguageProvider {
 		addRailsUnits();        // task p35-rails-31-blocks — the 31 rail names (the dump gt.block.rail.* faces verbatim, the tsv direct band)
 		addBookUnits();         // task p35-books-written — the 15 written-book display names (hand rows, the tsv direct band; the dump carries zero book-title faces)
 		addLongDistancePipes(); // task p35-long-distance-pipes — the 16 wire metas + the two endpoints (hand rows, the dump faces)
+		addTechnologicalComponents(); // task debt-emitter-sensor-generators — the 30 component names (dump faces verbatim)
+	}
+
+	/**
+	 * The three technological component families zh faces (task debt-emitter-sensor-
+	 * generators, the addUsbStickUnits shape): the 30 display names riding the reference
+	 * table's hand layer — the values are the DUMP faces verbatim (tmp/gregtech.lang
+	 * :10497-10515 力场发生器 (ULV..PUV1) / :10517-10535 信号发射器 (ULV..PUV1) /
+	 * :10537-10555 传感器 (ULV..PUV1), the {@code gt.multiitem.technological.121*} rows).
+	 * The upstream tooltip column is EMPTY on all 30 rows — no {@code .tooltip} zh keys.
+	 */
+	private void addTechnologicalComponents() {
+		for (gregtech6.items.GT6Emitters.ComponentRow tRow : gregtech6.items.GT6Emitters.ROWS) {
+			addDirect("item.gt6." + tRow.path());
+		}
 	}
 
 	/**
