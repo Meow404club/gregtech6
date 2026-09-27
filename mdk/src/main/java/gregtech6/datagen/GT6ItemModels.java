@@ -590,6 +590,18 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent(tItem.getId().getPath(), mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/" + tItem.getId().getPath()));
         }
+		// the 46 reactor rod items (task debt-reactor-c-rods, Loader_MultiTileEntities
+		// .java:741-790) — flat item/generated two-layer stacks over the two reactor_rods
+		// byte borrows shared by the whole family (assets/README.md attribution): upstream
+		// has NO 2D rod icons (block MTEs, inventory form = the 3D block) and differentiates
+		// the rods only by the material tint (RodBase.java:69-70) — the un-tinted shared
+		// icon is the declared deviation, the tint rides the render-pool card. The walk is
+		// over GT6ReactorRods.ROWS so the model ids cannot drift from the registry rows.
+		for (gregtech6.items.GT6ReactorRods.RodRow tRod : gregtech6.items.GT6ReactorRods.ROWS) {
+			withExistingParent(tRod.path(), mcLoc("item/generated"))
+				.texture("layer0", modLoc("item/reactor_rod_colored_sides"))
+				.texture("layer1", modLoc("item/reactor_rod_overlay_sides"));
+		}
         // the spray-can family (task p22-spraycan-items) — 18 item/generated models over the
         // byte-identical upstream icon borrows (gt.multiitem.randomtools metas
         // 1000+2i/1096/999, assets/README.md attribution): one model per colour + the remover

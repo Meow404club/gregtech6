@@ -1613,7 +1613,53 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.logistics_core", "Logistics Core"); // task p32-logistics-lv3 — the Loader :1281 name column
         add("block.gt6.nuclear_reactor_core_2x2", "Nuclear Reactor Core (2x2)"); // task debt-reactor-b-2x2-be — the Loader :738 name column verbatim
         add("block.gt6.bedrock_drill", "Bedrock Mining Drill Controller"); // task p37-bedrock-drill — the Loader :1283 name column verbatim
+        // task debt-reactor-c-rods — the 46 rod names (the Loader :741-790 name column
+        // verbatim, carried by the ROWS table itself) + the 28 shared tooltip lines (the
+        // upstream addToolTips text minus the colour codes; the numeric lines carry %s
+        // args composed from the FuelRodSpec/BreederRodSpec at hover time)
+        for (gregtech6.items.GT6ReactorRods.RodRow tRod : gregtech6.items.GT6ReactorRods.ROWS) {
+            add("item.gt6." + tRod.path(), tRod.name());
+        }
+        REACTOR_ROD_TOOLTIPS.forEach(this::add);
     }
+
+    /**
+     * The shared tooltip lines of the reactor rod family (task debt-reactor-c-rods) —
+     * RodBase:51-52 + the seven kind classes' addToolTips text verbatim minus the colour
+     * codes. Keyed by the full lang key; the zh faces ride the reference table's hand
+     * layer (the GT6ZhCn.addReactorRodUnits note).
+     */
+    private static final java.util.Map<String, String> REACTOR_ROD_TOOLTIPS = java.util.Map.ofEntries(
+            java.util.Map.entry("item.gt6.reactor_rod.used_in_core", "Used in Nuclear Reactor Core"),
+            java.util.Map.entry("item.gt6.reactor_rod.empty", "Empty Reactor Rod, transparent to Neutrons."),
+            java.util.Map.entry("item.gt6.reactor_rod.absorber", "Absorbs Neutrons and emits twice the Heat per Neutron to Coolant"),
+            java.util.Map.entry("item.gt6.reactor_rod.reflector", "Reflects Neutrons back to their Source, boosting the Reaction"),
+            java.util.Map.entry("item.gt6.reactor_rod.moderator.1", "Reflects neutrons back times the number of fuel rods touching when active"),
+            java.util.Map.entry("item.gt6.reactor_rod.moderator.2", "Touching Fuel Rods become moderated and moderate touching Fuel Rods"),
+            java.util.Map.entry("item.gt6.reactor_rod.moderator.3", "Moderated Fuel Rods can't be used for Breeding and only last a quarter as long"),
+            java.util.Map.entry("item.gt6.reactor_rod.fuel.concept.1", "The Emission describes how many Neutrons are emitted to adjacent Rods"),
+            java.util.Map.entry("item.gt6.reactor_rod.fuel.concept.2", "The Self describes how many Neutrons naturally onto this Rod"),
+            java.util.Map.entry("item.gt6.reactor_rod.fuel.concept.3", "The Maximum describes how many Neutrons can be on this Rod while lasting the advertised duration"),
+            java.util.Map.entry("item.gt6.reactor_rod.fuel.concept.4", "A greater Factor means the Rod emits more extra Neutrons for the amount of Neutrons on it"),
+            java.util.Map.entry("item.gt6.reactor_rod.fuel.emission", "Emission: %s Neutrons/t"),
+            java.util.Map.entry("item.gt6.reactor_rod.fuel.self", "Self: %s Neutrons/t"),
+            java.util.Map.entry("item.gt6.reactor_rod.fuel.maximum", "Maximum: %s Neutrons/t"),
+            java.util.Map.entry("item.gt6.reactor_rod.fuel.factor", "Factor: 1/%s"),
+            java.util.Map.entry("item.gt6.reactor_rod.fuel.critical", "This Fuel is Critical"),
+            java.util.Map.entry("item.gt6.reactor_rod.depleted.1", "This Rod is Depleted and will not output or accept any Neutrons"),
+            java.util.Map.entry("item.gt6.reactor_rod.depleted.2", "Can be centrifuged to get valuable materials"),
+            java.util.Map.entry("item.gt6.reactor_rod.product.1", "Emits half the Heat per Neutron on this Rod"),
+            java.util.Map.entry("item.gt6.reactor_rod.product.2", "Can be centrifuged to get valuable materials"),
+            java.util.Map.entry("item.gt6.reactor_rod.product.breeds", "Breed from %s"),
+            java.util.Map.entry("item.gt6.reactor_rod.breeder.1", "Absorbs Neutrons to breed into an Enriched Rod"),
+            java.util.Map.entry("item.gt6.reactor_rod.breeder.2", "Emits half the Heat per Neutron on this Rod"),
+            java.util.Map.entry("item.gt6.reactor_rod.breeder.3", "Can't breed with Neutrons from Moderated Fuel Rods"),
+            java.util.Map.entry("item.gt6.reactor_rod.breeder.4", "The Loss value gets subtracted from Neutrons entering this Rod"),
+            java.util.Map.entry("item.gt6.reactor_rod.breeder.5", "This applies to each side where Neutrons enter, not to the total of all sides"),
+            java.util.Map.entry("item.gt6.reactor_rod.breeder.6", "Remaining Neutrons on this Rod get added to the breeding process"),
+            java.util.Map.entry("item.gt6.reactor_rod.breeder.into", "Turns into: %s"),
+            java.util.Map.entry("item.gt6.reactor_rod.breeder.needed", "Needed: %s Neutrons"),
+            java.util.Map.entry("item.gt6.reactor_rod.breeder.loss", "Loss: %s Neutrons"));
 
     /**
      * Example machine keys (task p3-example-machine): the chest block display name and the

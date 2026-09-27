@@ -1708,6 +1708,8 @@ direct	gt6.wire.display.plain	%s%s	hand
 direct	gt6.wire.form.cable	线缆	hand
 direct	gt6.wire.form.wire	导线	hand
 direct	gt6.wire.form.wirelamp	灯导线	hand
+direct	item.gt6.americium_241_fuel_rod	镅-241燃料棒	hand
+direct	item.gt6.americium_245_fuel_rod	镅-245燃料棒	hand
 direct	item.gt6.axe	斧	hand
 direct	item.gt6.axe.tooltip	伐木更快, 砍倒整棵树	hand
 direct	item.gt6.axe_double	双面斧	hand
@@ -1744,6 +1746,7 @@ direct	item.gt6.battery_nicd_mv	镍镉电池 (MV)	hand
 direct	item.gt6.battery_nicd_ulv	镍镉电池 (ULV)	hand
 direct	item.gt6.bending_cylinder	弯曲绕筒	hand
 direct	item.gt6.bending_cylinder_small	小型弯曲绕筒	hand
+direct	item.gt6.blutonium_fuel_rod	蓝钚燃料棒	hand
 direct	item.gt6.book_loot_guide	布满灰尘的指南书	hand
 direct	item.gt6.book_loot_guide.tooltip	战利品：某本随机手册	hand
 direct	item.gt6.book_loot_guide.tooltip_loot	右键方块以开启	hand
@@ -1769,6 +1772,7 @@ direct	item.gt6.circuit_primitive	原始电路	hand
 direct	item.gt6.circuit_ultimate	终极电子电路	hand
 direct	item.gt6.club	木棒	hand
 direct	item.gt6.club.tooltip	钝重的原始武器兼碎石器	hand
+direct	item.gt6.cobalt_60_fuel_rod	钴-60燃料棒	hand
 direct	item.gt6.comb_aero	天空蜜脾	hand
 direct	item.gt6.comb_amnesic	遗忘蜜脾	hand
 direct	item.gt6.comb_clay	粘土蜜脾	hand
@@ -1853,6 +1857,25 @@ direct	item.gt6.cover_shutter	挡板面板	hand
 direct	item.gt6.cover_vent	通风口	hand
 direct	item.gt6.crowbar	撬棍	hand
 direct	item.gt6.cutter	线缆剪	hand
+direct	item.gt6.cyanite_fuel_rod	蓝晶石燃料棒	hand
+direct	item.gt6.depleted_americium_241_fuel_rod	枯竭镅-241燃料棒	hand
+direct	item.gt6.depleted_americium_245_fuel_rod	枯竭镅-245燃料棒	hand
+direct	item.gt6.depleted_blutonium_fuel_rod	枯竭蓝钚燃料棒	hand
+direct	item.gt6.depleted_cobalt_60_fuel_rod	枯竭钴-60燃料棒	hand
+direct	item.gt6.depleted_cyanite_fuel_rod	枯竭蓝晶石燃料棒	hand
+direct	item.gt6.depleted_enriched_naquadah_fuel_rod	枯竭浓缩硅岩金属燃料棒	hand
+direct	item.gt6.depleted_ludicrite_fuel_rod	枯竭滑稽燃料棒	hand
+direct	item.gt6.depleted_naquadria_fuel_rod	枯竭硅岩金属化合物燃料棒	hand
+direct	item.gt6.depleted_plutonium_239_fuel_rod	枯竭钚-239燃料棒	hand
+direct	item.gt6.depleted_plutonium_241_fuel_rod	枯竭钚-241燃料棒	hand
+direct	item.gt6.depleted_plutonium_243_fuel_rod	枯竭钚-243燃料棒	hand
+direct	item.gt6.depleted_plutonium_244_fuel_rod	枯竭钚-244燃料棒	hand
+direct	item.gt6.depleted_thorium_232_fuel_rod	枯竭钍-232燃料棒	hand
+direct	item.gt6.depleted_uranium_233_fuel_rod	枯竭铀-233燃料棒	hand
+direct	item.gt6.depleted_uranium_235_fuel_rod	枯竭铀-235燃料棒	hand
+direct	item.gt6.depleted_uranium_238_fuel_rod	枯竭铀-238燃料棒	hand
+direct	item.gt6.depleted_yellorium_fuel_rod	枯竭黄铀燃料棒	hand
+direct	item.gt6.empty_reactor_rod	空燃料棒	hand
 direct	item.gt6.energium_cyan_ev	青色能量水晶 (T4)	hand
 direct	item.gt6.energium_cyan_hv	青色能量水晶 (T3)	hand
 direct	item.gt6.energium_cyan_iv	青色能量水晶 (T5)	hand
@@ -1865,6 +1888,8 @@ direct	item.gt6.energium_red_iv	红色能量水晶 (T5)	hand
 direct	item.gt6.energium_red_lv	红色能量水晶 (T1)	hand
 direct	item.gt6.energium_red_mv	红色能量水晶 (T2)	hand
 direct	item.gt6.energium_red_ulv	红色能量水晶 (T0)	hand
+direct	item.gt6.enriched_naquadah_enriched_rod	浓缩硅岩金属浓缩燃料棒	hand
+direct	item.gt6.enriched_naquadah_fuel_rod	浓缩硅岩金属燃料棒	hand
 direct	item.gt6.faucet_ceramic_raw	粘土浇铸口	hand
 direct	item.gt6.field_generator_ev	力场发生器 (EV)	hand
 direct	item.gt6.field_generator_hv	力场发生器 (HV)	hand
@@ -1991,8 +2016,10 @@ direct	item.gt6.key_platinum	铂钥匙	hand
 direct	item.gt6.key_silver	银钥匙	hand
 direct	item.gt6.key_tin	锡钥匙	hand
 direct	item.gt6.knife	小刀	hand
+direct	item.gt6.lithium_breeder_rod	锂增殖棒	hand
 direct	item.gt6.lubricant_bucket	润滑油桶	hand
 direct	item.gt6.lubricant_bucket.tooltip	仅限工业用途！	hand
+direct	item.gt6.ludicrite_fuel_rod	滑稽燃料棒	hand
 direct	item.gt6.magnifying_glass	放大镜	hand
 direct	item.gt6.manual_enchantments	附魔的恼人世界	hand
 direct	item.gt6.manual_extenders	扩展器与过滤器	hand
@@ -2051,12 +2078,52 @@ direct	item.gt6.monkey_wrench_lv	活动扳手 (LV)	hand
 direct	item.gt6.monkey_wrench_lv.tooltip	潜行右键切换为扳手	hand
 direct	item.gt6.monkey_wrench_mv	活动扳手 (MV)	hand
 direct	item.gt6.monkey_wrench_mv.tooltip	潜行右键切换为扳手	hand
+direct	item.gt6.naquadah_breeder_rod	硅岩金属增殖棒	hand
+direct	item.gt6.naquadria_fuel_rod	硅岩金属化合物燃料棒	hand
+direct	item.gt6.neutron_absorber_rod	中子吸收棒	hand
+direct	item.gt6.neutron_moderator_rod	中子减速棒	hand
+direct	item.gt6.neutron_reflector_rod	中子反射棒	hand
 direct	item.gt6.pickaxe	镐	hand
 direct	item.gt6.pickaxe_construction	建筑镐	hand
 direct	item.gt6.pickaxe_gem	镶尖镐	hand
 direct	item.gt6.pincers	钳子	hand
 direct	item.gt6.plow	犁	hand
 direct	item.gt6.plunger	搋子	hand
+direct	item.gt6.plutonium_239_enriched_rod	钚-239浓缩燃料棒	hand
+direct	item.gt6.plutonium_239_fuel_rod	钚-239燃料棒	hand
+direct	item.gt6.plutonium_241_fuel_rod	钚-241燃料棒	hand
+direct	item.gt6.plutonium_243_fuel_rod	钚-243燃料棒	hand
+direct	item.gt6.plutonium_244_fuel_rod	钚-244燃料棒	hand
+direct	item.gt6.reactor_rod.absorber	吸收中子并将每中子两倍的热量传给冷却剂	hand
+direct	item.gt6.reactor_rod.breeder.1	吸收中子以增殖为浓缩棒	hand
+direct	item.gt6.reactor_rod.breeder.2	每中子产生的热量减半	hand
+direct	item.gt6.reactor_rod.breeder.3	无法从被慢化的燃料棒的中子增殖	hand
+direct	item.gt6.reactor_rod.breeder.4	「损耗」值会从进入该棒的中子中扣除	hand
+direct	item.gt6.reactor_rod.breeder.5	这适用于中子进入的每一侧，而非所有侧的总和	hand
+direct	item.gt6.reactor_rod.breeder.6	该棒上剩余的中子会被计入增殖过程	hand
+direct	item.gt6.reactor_rod.breeder.into	转化为: %s	hand
+direct	item.gt6.reactor_rod.breeder.loss	损耗: %s 中子	hand
+direct	item.gt6.reactor_rod.breeder.needed	需要: %s 中子	hand
+direct	item.gt6.reactor_rod.depleted.1	该棒已枯竭，不再输出或接受任何中子	hand
+direct	item.gt6.reactor_rod.depleted.2	可离心提取有价值的材料	hand
+direct	item.gt6.reactor_rod.empty	空燃料棒，对中子透明。	hand
+direct	item.gt6.reactor_rod.fuel.concept.1	「发射」描述该棒向相邻棒发射多少中子	hand
+direct	item.gt6.reactor_rod.fuel.concept.2	「自激发」描述该棒自然产生多少中子	hand
+direct	item.gt6.reactor_rod.fuel.concept.3	「最大值」描述该棒在标称寿命内能承载多少中子	hand
+direct	item.gt6.reactor_rod.fuel.concept.4	「系数」越大，该棒按其承载中子数额外发射的中子越多	hand
+direct	item.gt6.reactor_rod.fuel.critical	该燃料已达到临界！	hand
+direct	item.gt6.reactor_rod.fuel.emission	发射: %s 中子/t	hand
+direct	item.gt6.reactor_rod.fuel.factor	系数: 1/%s	hand
+direct	item.gt6.reactor_rod.fuel.maximum	最大值: %s 中子/t	hand
+direct	item.gt6.reactor_rod.fuel.self	自激发: %s 中子/t	hand
+direct	item.gt6.reactor_rod.moderator.1	激活时将中子按接触的燃料棒数量反射回去	hand
+direct	item.gt6.reactor_rod.moderator.2	接触的燃料棒会被慢化并慢化与其接触的燃料棒	hand
+direct	item.gt6.reactor_rod.moderator.3	被慢化的燃料棒无法用于增殖且寿命只有四分之一	hand
+direct	item.gt6.reactor_rod.product.1	每中子产生的热量减半	hand
+direct	item.gt6.reactor_rod.product.2	可离心提取有价值的材料	hand
+direct	item.gt6.reactor_rod.product.breeds	由 %s 培育而来	hand
+direct	item.gt6.reactor_rod.reflector	将中子反射回其源头，增强反应	hand
+direct	item.gt6.reactor_rod.used_in_core	用于核反应堆核心	hand
 direct	item.gt6.rolling_pin	擀面杖	hand
 direct	item.gt6.saw	锯	hand
 direct	item.gt6.scissors	剪刀	hand
@@ -2116,8 +2183,16 @@ direct	item.gt6.spray_paint_remover	除漆喷剂	hand
 direct	item.gt6.spray_paint_white	喷漆（白）	hand
 direct	item.gt6.spray_paint_yellow	喷漆（黄）	hand
 direct	item.gt6.sword	剑	hand
+direct	item.gt6.thorium_232_breeder_rod	钍-232增殖棒	hand
+direct	item.gt6.thorium_232_fuel_rod	钍-232燃料棒	hand
 direct	item.gt6.trimmer_lv	修剪器 (LV)	hand
+direct	item.gt6.tritium_enriched_rod	氚浓缩燃料棒	hand
 direct	item.gt6.universal_spade	万用铲	hand
+direct	item.gt6.uranium_233_enriched_rod	铀-233浓缩燃料棒	hand
+direct	item.gt6.uranium_233_fuel_rod	铀-233燃料棒	hand
+direct	item.gt6.uranium_235_fuel_rod	铀-235燃料棒	hand
+direct	item.gt6.uranium_238_breeder_rod	铀-238增殖棒	hand
+direct	item.gt6.uranium_238_fuel_rod	铀-238燃料棒	hand
 direct	item.gt6.usb_cable_1	USB 1.0 数据线	hand
 direct	item.gt6.usb_cable_1.tooltip	与USB接口连接时自动替换USB	hand
 direct	item.gt6.usb_cable_2	USB 2.0 数据线	hand
@@ -2149,6 +2224,7 @@ direct	item.gt6.wrench_lv	扳手 (LV)	hand
 direct	item.gt6.wrench_lv.tooltip	潜行右键切换为活动扳手	hand
 direct	item.gt6.wrench_mv	扳手 (MV)	hand
 direct	item.gt6.wrench_mv.tooltip	潜行右键切换为活动扳手	hand
+direct	item.gt6.yellorium_fuel_rod	黄铀燃料棒	hand
 direct	item.gt6.zpm	零点模块 (ZPM)	hand
 direct	itemGroup.gt6.bee	蜜蜂	hand
 direct	itemGroup.gt6.billet	坯料	hand

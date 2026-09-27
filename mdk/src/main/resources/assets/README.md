@@ -9249,3 +9249,16 @@ ULV/LV/MV/HV/EV/IV/LuV/ZPM/UV/PUV1 = VN[0..9].
 - `gt6/textures/item/sensor_zpm.png` (upstream `12147.png`) `e9048ae829d00bfb4b05fc6b4b571f31506677629fa8cebfcdfb4900a7782b62`
 - `gt6/textures/item/sensor_uv.png` (upstream `12148.png`) `da0607bf872fa710cd06a88a083637f8f6b07b424ccdb9029bdc8f2c114fd588`
 - `gt6/textures/item/sensor_puv1.png` (upstream `12149.png`) `ccd9e4f180c1ef006f680aad7554fa8c18df9307c5d3125a6fa7366e5cc630a4`
+
+- `item/reactor_rod_colored_sides.png` + `item/reactor_rod_overlay_sides.png` —
+  the 46 reactor rod item icons (task debt-reactor-c-rods), upstream
+  `textures/blocks/machines/generators/reactor_rods/{colored,overlay}/sides.png`
+  (byte-identical borrows, sha256 `45d55bcb7fbf2d1e267891199984988f6deb5c47a3fd24b22a23b5b033079943`
+  / `1e9cc26b6eb53d41ba2b20db4a588e3101b04a7f3ab0800e47cca1ad4bca3270`).
+  Upstream has NO 2D item icons for the rods at all — they are block-placed MTEs
+  whose inventory form renders the 3D block, and the 46 rods differentiate ONLY by
+  the material tint (mRGBa over the grayscale coloreds + the Pb-tinted overlay,
+  RodBase.java:69-70). The port models are flat `item/generated` two-layer stacks
+  (layer0 = the colored borrow, layer1 = the overlay borrow) rendered un-tinted —
+  declared deviation, the tint and the 11-pass in-core render stack ride the
+  render-pool card (Core2x2.java:320-390).
