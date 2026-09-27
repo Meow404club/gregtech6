@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:foil_vibranium_steel"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "Xx"
+  ],
+  "result": {
+    "item": "gt6:wire_fine_vibranium_steel"
+  },
+  "show_notification": true
+}
