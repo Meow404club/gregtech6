@@ -132,6 +132,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addKeyUnits();          // task dungeon-keys — the 10 key names + the behavior tooltip (hand rows, the dump 铁钥匙..塑料钥匙 faces)
 		addPlaceablesUnits();   // task p32-placeables — the 8 deco/placed-pile names (the lantern + the sandwich + the six placed piles; hand rows, the tsv direct band)
 		addLaserGasUnits();     // task p32-qu-laser-domain — the 2 gas emitter names + the 2 tooltips (hand rows, the dump :10379/:10395 faces)
+		addReactorRodUnits();   // task debt-reactor-c-rods — the 46 rod names + the 28 tooltip lines (names = the dump mte 9201-9441 faces verbatim; tooltips = the hand layer, zero dump rows)
 		addRailsUnits();        // task p35-rails-31-blocks — the 31 rail names (the dump gt.block.rail.* faces verbatim, the tsv direct band)
 		addBookUnits();         // task p35-books-written — the 15 written-book display names (hand rows, the tsv direct band; the dump carries zero book-title faces)
 		addLongDistancePipes(); // task p35-long-distance-pipes — the 16 wire metas + the two endpoints (hand rows, the dump faces)
@@ -185,6 +186,24 @@ public class GT6ZhCn extends LanguageProvider {
 		}
 		addDirect("item.gt6.comp_laser_gas_he");
 		addDirect("item.gt6.comp_laser_gas_he.tooltip");
+	}
+
+	/**
+	 * The reactor-rod zh faces (task debt-reactor-c-rods, the addLaserGasUnits shape): the
+	 * 46 display names riding the reference table's hand layer — the values are the DUMP
+	 * faces verbatim (tmp/gregtech.lang:15061-15102, the gt.multitileentity.9201-9441 rows:
+	 * 空燃料棒/中子吸收棒/中子反射棒/中子减速棒 + the 17 X燃料棒 + the 17 枯竭X燃料棒 + the 4
+	 * 增殖棒 + the 4 浓缩燃料棒) — plus the 28 shared tooltip lines (the upstream addToolTips
+	 * are hardcoded-en with zero dump rows; the hand-translation layer, the laser-gas
+	 * tooltip posture).
+	 */
+	private void addReactorRodUnits() {
+		for (gregtech6.items.GT6ReactorRods.RodRow tRod : gregtech6.items.GT6ReactorRods.ROWS) {
+			addDirect("item.gt6." + tRod.path());
+		}
+		for (String tKey : gregtech6.items.GT6ReactorRods.TOOLTIP_KEYS) {
+			addDirect(gregtech6.items.GT6ReactorRods.TOOLTIP_PREFIX + tKey);
+		}
 	}
 
 	/**
