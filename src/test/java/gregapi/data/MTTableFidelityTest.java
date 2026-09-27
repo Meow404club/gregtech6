@@ -295,6 +295,37 @@ public class MTTableFidelityTest {
 		}
 		assertEquals(MT.Greatwood.fRGBaSolid[0], ANY.WoodMagical.fRGBaSolid[0]); // upstream :138 looks=Greatwood
 		assertEquals(MT.WoodTreated.fRGBaSolid[0], ANY.WoodTreated.fRGBaSolid[0]); // upstream :139 looks=WoodTreated
+		// upstream ANY.java:98 Sapphire: stealLooks(MT.BlueSapphire).steal(MT.Sapphire) — looks from the
+		// blue family gem, stats from MT.Sapphire (debt-sapphire-clay-flip un-inverted the port's swapped
+		// wiring; the inverted wiring had looks=MT.Sapphire 120,120,160)
+		assertEquals(100, ANY.Sapphire.fRGBaSolid[0]);
+		assertEquals(100, ANY.Sapphire.fRGBaSolid[1]);
+		assertEquals(200, ANY.Sapphire.fRGBaSolid[2]);
+		assertEquals(MT.BlueSapphire.fRGBaSolid[0], ANY.Sapphire.fRGBaSolid[0]);
+		assertEquals(MT.BlueSapphire.fRGBaSolid[1], ANY.Sapphire.fRGBaSolid[1]);
+		assertEquals(MT.BlueSapphire.fRGBaSolid[2], ANY.Sapphire.fRGBaSolid[2]);
+		assertEquals(MT.Sapphire.mToolSpeed, ANY.Sapphire.mToolSpeed, 0.0F);
+		assertEquals(MT.Sapphire.mToolDurability, ANY.Sapphire.mToolDurability);
+		assertEquals(7.0F, ANY.Sapphire.mToolSpeed, 0.0F); // sapphire factory qual(3, 7.0, 512, 3)
+		assertEquals(512, ANY.Sapphire.mToolDurability);
+		// upstream ANY.java:116 Clay: stealLooks(MT.ClayBrown).steal(MT.Clay) — looks from the brown
+		// clay, stats from MT.Clay (same un-inversion; the inverted wiring had looks=MT.Clay 200,200,220)
+		assertEquals(230, ANY.Clay.fRGBaSolid[0]);
+		assertEquals(140, ANY.Clay.fRGBaSolid[1]);
+		assertEquals(75, ANY.Clay.fRGBaSolid[2]);
+		assertEquals(MT.ClayBrown.fRGBaSolid[0], ANY.Clay.fRGBaSolid[0]);
+		assertEquals(MT.ClayBrown.fRGBaSolid[1], ANY.Clay.fRGBaSolid[1]);
+		assertEquals(MT.ClayBrown.fRGBaSolid[2], ANY.Clay.fRGBaSolid[2]);
+		assertEquals(MT.Clay.mToolSpeed, ANY.Clay.mToolSpeed, 0.0F); // dust chain carries no qual: speed stays the 1.0 default
+		assertEquals(1, ANY.Clay.mToolDurability); // qual()'s Math.max(1, durability) floors the copied 0 (OreDictMaterial :771)
+		// upstream ANY.java:135 Hexorium: stealLooks(MT.HexoriumWhite).steal(MT.HexoriumWhite) — the
+		// stats steal was missing entirely in the port (colour unchanged either way; the hexorium
+		// factory qual(2, 5.0, 384, 2) is the discriminator against the missing-steal regression)
+		assertEquals(MT.HexoriumWhite.fRGBaSolid[0], ANY.Hexorium.fRGBaSolid[0]);
+		assertEquals(MT.HexoriumWhite.mToolSpeed, ANY.Hexorium.mToolSpeed, 0.0F);
+		assertEquals(MT.HexoriumWhite.mToolDurability, ANY.Hexorium.mToolDurability);
+		assertEquals(5.0F, ANY.Hexorium.mToolSpeed, 0.0F);
+		assertEquals(384, ANY.Hexorium.mToolDurability);
 	}
 
 	@Test
