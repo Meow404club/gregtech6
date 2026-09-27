@@ -1101,6 +1101,7 @@ public class GT6ZhCn extends LanguageProvider {
 		// (the Loader :1241/:1542-1546 name columns; zh hand words 大型物质制造机/物质制造机)
 		addDirect("block.gt6.large_massfab");
 		addDirect("block.gt6.logistics_core"); // task p32-logistics-lv3 — the dump mte multiblock.logisticscore row 物流核心 (zh_cn_ref.tsv :8146)
+		add("block.gt6.nuclear_reactor_core_2x2", "反应堆核心"); // task debt-reactor-b-2x2-be — the dump mte 9200 row (zh_cn_ref.tsv :8972)
 		addDirect("block.gt6.fusion_reactor"); // task p31-fusion — the Loader :1242 name column (zh: the dump :11253 row)
 		addDirect(gregtech6.registry.GTMachines.MACHINE_MASSFAB_UNIT_KEY);
 		addDirect(gregtech6.registry.GTMachines.MACHINE_MOLECULAR_SCANNER_UNIT_KEY); // task p32-qu-scanner-replicator — the dump :11662 name column (分子扫描仪)

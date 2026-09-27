@@ -13,12 +13,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
  * maximums over the filled slots (:53-66, slot 0 plus 1-3 on the 2x2 core). The reactor
  * system (MultiTileEntityReactorCore 1x1/2x2) is NOT ported — research.p37-gap-scan.s2
  * true-gap ① (the reactor rows never registered here, the census does not carry them;
- * the Fusion Reactor is a different domain with no neutron bookkeeping). DECLARED ARM
- * (the p31-bedrock-ore "drill field face pre-left" precedent, coordinator-approved for
- * this card): the non-reactor answer is the upstream :49/:65 literal 0 — with no reactor
- * core in the port every neighbour is a non-reactor neighbour, so the 0/0 read is 100%
- * upstream-faithful, zero deviation. The reactor arm lights up when the reactor card
- * lands (its study card cites this class as the consumer seam).
+ * the Fusion Reactor is a different domain with no neutron bookkeeping). The reactor
+ * ARM landed with task debt-reactor-b-2x2-be: the 2x2 core BE ({@code
+ * GT6ReactorCore2x2BlockEntity}) answers both reads below (the p31-bedrock-ore
+ * "pre-left field face" declaration paid off); the 1x1 core stays deferred (the
+ * upstream default config OFF ruling), so the 2x2 instanceof is the full reactor face.
  */
 public class GT6GeigerCounterBlockEntity extends GTSensorBlockEntity {
 
@@ -37,16 +36,24 @@ public class GT6GeigerCounterBlockEntity extends GTSensorBlockEntity {
 		return "geigercounter";
 	}
 
-	// DECLARED: the reactor arms (upstream :45-50/:52-66) stay on the s2 true-gap pool —
-	// the reactor card extends these two reads with the oNeutronCounts/rod-maximum sums.
+	// REACTOR ARM LIVE (task debt-reactor-b-2x2-be): the 2x2 core BE landed, so the two
+	// upstream reads (:45-50/:52-66) are wired below against it. The 1x1 core stays
+	// deferred (the upstream default config OFF ruling), so only the 2x2 instanceof
+	// answers — every other neighbour keeps the upstream :49/:65 literal 0.
 
 	@Override
 	public long getCurrentValue(@Nullable BlockEntity aTarget) {
-		return 0; // upstream :49 — every non-reactor neighbour, the only kind this port has
+		if (aTarget instanceof gregtech6.tileentity.energy.reactors.GT6ReactorCore2x2BlockEntity tCore) {
+			return tCore.neutronSum(); // upstream :46-48 — UT.Code.sum(oNeutronCounts)
+		}
+		return 0; // upstream :49 — every non-reactor neighbour
 	}
 
 	@Override
 	public long getCurrentMax(@Nullable BlockEntity aTarget) {
+		if (aTarget instanceof gregtech6.tileentity.energy.reactors.GT6ReactorCore2x2BlockEntity tCore) {
+			return tCore.neutronMaximumSum(); // upstream :53-66 — the per-slot neutron-maximum sum (0 on non-fuel rods, Base:90)
+		}
 		return 0; // upstream :65
 	}
 }

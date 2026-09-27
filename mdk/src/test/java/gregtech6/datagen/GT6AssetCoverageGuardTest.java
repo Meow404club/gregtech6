@@ -125,6 +125,7 @@ import gregtech6.registry.GT6NetherOres;
 import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GT6Placeables;
 import gregtech6.registry.GT6Portals;
+import gregtech6.registry.GT6Reactors; // task debt-reactor-b-2x2-be
 import gregtech6.registry.GT6QuantumEnergizers;
 import gregtech6.registry.GT6Rails;
 import gregtech6.registry.GT6Sensors;
@@ -299,6 +300,7 @@ public class GT6AssetCoverageGuardTest {
 			GT6Lasers.class, GT6Logistics.class, GT6LongDistanceTransformers.class,
 			GT6LongDistPipes.class, GT6LongDistWires.class, GT6MagicAbsorbers.class, GT6Molds.class,
 			GT6Placeables.class, GT6Portals.class, GT6QuantumEnergizers.class, GT6Rails.class,
+			GT6Reactors.class, // task debt-reactor-b-2x2-be — the 2x2 core row
 			GT6Sensors.class, GT6SlicerBlades.class, GT6SprayCans.class, GT6StaticStorages.class,
 			GT6SurfaceBlocks.class, GT6Tanks.class, GT6Tools.class, GT6TreeBlocks.class,
 			GT6Turbines.class, GT6ZpmDechargers.class, GTEnergySources.class, GTBarrels.class, GTBlockEntities.class,
