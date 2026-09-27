@@ -225,13 +225,23 @@ public class GT6EmiPlugin implements EmiPlugin {
 	 * switch — the hideOreProcessingDiagrams precedent). One category (the singleton) +
 	 * one recipe per ore-universe material. THE JEMI RED LINE's arm: this face and its JEI
 	 * twin ship in the same card, so the gt6 namespace stays balanced on both sides.
+	 *
+	 * <p>Workstation arm (task debt-material-tree-c): the machines displayed on the tree's
+	 * edges ride {@code addWorkstation} on the SAME builder sweep — clicking a
+	 * Shredder/Sifter/Anvil/Crusher opens the category, the GTCEu registerWorkstation
+	 * shape on the EMI leg (GTRecipeEMICategory's machines).
 	 */
 	private static void registerMaterialTree(EmiRegistry registry) {
 		if (!gregtech6.recipes.tree.MaterialTreeDisplay.SHOWN) return;
+		gregtech6.recipes.tree.MaterialTreeBuilder tTree = gregtech6.recipes.tree.MaterialTreeBuilder.build();
 		registry.addCategory(GT6MaterialTreeEmiCategory.INSTANCE);
-		for (gregtech6.recipes.tree.MaterialTreeDisplay tDisplay
-				: gregtech6.recipes.tree.MaterialTreeDisplay.buildAll(gregtech6.recipes.tree.MaterialTreeBuilder.build())) {
+		java.util.List<gregtech6.recipes.tree.MaterialTreeDisplay> tDisplays =
+				gregtech6.recipes.tree.MaterialTreeDisplay.buildAll(tTree);
+		for (gregtech6.recipes.tree.MaterialTreeDisplay tDisplay : tDisplays) {
 			registry.addRecipe(new GT6MaterialTreeEmiRecipe(tDisplay));
+		}
+		for (net.minecraft.world.item.ItemStack tStack : gregtech6.recipes.tree.MaterialTreeWorkstations.workstationStacks(tDisplays)) {
+			registry.addWorkstation(GT6MaterialTreeEmiCategory.INSTANCE, EmiStack.of(tStack));
 		}
 	}
 }
