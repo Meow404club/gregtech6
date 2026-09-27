@@ -13,6 +13,7 @@ import net.minecraft.world.item.crafting.Recipe;
 /*import net.minecraft.world.item.crafting.RecipeHolder;
 *///?}
 
+import dev.emi.emi.api.EmiApi;
 import dev.emi.emi.api.EmiEntrypoint;
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
@@ -177,5 +178,23 @@ public class GT6EmiPlugin implements EmiPlugin {
 	static Predicate<EmiRecipe> materialToolInvalidator(Set<ResourceLocation> aMaterialToolIds) {
 		return aRecipe -> !(aRecipe instanceof GT6MaterialToolEmiRecipe)
 				&& aMaterialToolIds.contains(aRecipe.getId());
+	}
+
+	/**
+	 * The machine-GUI progress-bar jump face (task debt-jei-emi-batch4), the native EMI
+	 * twin of {@link gregtech6.jei.GT6JeiPlugin#openRecipeMapPage}: opens this map's
+	 * category page via {@code EmiApi.displayRecipeCategory} (emi 1.1.24 xplat
+	 * EmiApi.java:123 — builds the page from the registered category's live recipe list).
+	 * Upstream opened the SAME handler page for both click arms (NEI_RecipeMap.java:75-76
+	 * dual registration), so there is no use/recipe split to mirror. The category instance
+	 * comes from the same {@link GT6RecipeMapEmiCategory#CATEGORIES} memoize the
+	 * registration used, so it is the registered instance by construction. Never call
+	 * unguarded: the class loads EMI API — only the ModList-gated
+	 * {@link gregtech6.gui.GTViewerJump} router may reach it.
+	 */
+	public static boolean openRecipeMapPage(gregtech6.recipes.RecipeMap aMap) {
+		if (aMap == null) return false;
+		EmiApi.displayRecipeCategory(GT6RecipeMapEmiCategory.CATEGORIES.apply(aMap));
+		return true;
 	}
 }

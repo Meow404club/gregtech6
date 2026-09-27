@@ -120,6 +120,12 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 		 * Default-empty, same reasoning as {@link #getFluidInputTanks()}.
 		 */
 		default FluidTankGT[] getFluidOutputTanks() { return new FluidTankGT[0]; }
+		/**
+		 * The RecipeMap this machine serves (upstream public final mRecipes) — the viewer-jump
+		 * face (task debt-jei-emi-batch4) needs the map to open its category page. Default
+		 * null keeps the older fakes compiling; the jump click is a no-op on a null map.
+		 */
+		default gregtech6.recipes.RecipeMap getRecipeMap() { return null; }
 	}
 
 	/** The machine bound as the menu's backing container (upstream mTileEntity, ContainerCommon.java:42). */
@@ -262,6 +268,7 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 			@Override public long getProgress() { return aMachine.mProgress; }
 			@Override public long getMaxProgress() { return aMachine.mMaxProgress; }
 			@Override public String getGuiTexture() { return aMachine.mRecipes.mGUIPath; }
+			@Override public gregtech6.recipes.RecipeMap getRecipeMap() { return aMachine.mRecipes; }
 			@Override public FluidTankGT[] getFluidInputTanks() { return aMachine.mTanksInput; }
 			@Override public FluidTankGT[] getFluidOutputTanks() { return aMachine.mTanksOutput; }
 		};

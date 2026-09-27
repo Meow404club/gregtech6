@@ -28,6 +28,15 @@ import gregtech6.gui.GTGuiScreen;
  * both maps this screen serves carry direction 0 / amount 1 (COKE_OVEN GT6RecipeMaps.java:348,
  * DRYING :427; GT6RecipeMapsTest:58/:166) — the SIFTING direction-2 map goes through the MUI
  * panel (GTClientMachineListener registers only cokeoven + dryer here).
+ *
+ * <p>Progress-bar jump (debt-jei-emi-batch4): clicking the arrow rect opens the served
+ * RecipeMap's category page in the installed recipe viewer (JEI first, EMI fallback) — the
+ * modern counterpart of upstream NEI_RecipeMap.GT_RectHandler (:399-426), whose rect
+ * (65,13,36,18) covered the upstream panel's progress arrow and whose hover label
+ * "Recipes" (:420) rides again verbatim. Upstream registered the same NEI handler as
+ * crafting AND usage (:75-76), so its left/right arms opened the identical page; this port
+ * keeps the single destination. The rect tracks the port arrow (the {@code ARROW_*} cell
+ * above), not the upstream coordinates — the arrow moved with the modern 176x166 panel.
  */
 public class GTBasicMachineScreen extends GTGuiScreen<GTBasicMachineMenu> {
 
@@ -77,5 +86,49 @@ public class GTBasicMachineScreen extends GTGuiScreen<GTBasicMachineMenu> {
 				guiGraphics.blit(this.backgroundTexture, x + ARROW_X, y + ARROW_Y, ARROW_U, ARROW_V, tFill, ARROW_HEIGHT);
 			}
 		}
+	}
+
+	/**
+	 * The jump rect probe, in GUI-relative coordinates — the {@code ARROW_*} cell itself,
+	 * no margin (the static face the offline test pins; the click face
+	 * {@link #onArrowClick} and the tooltip share it).
+	 */
+	static boolean arrowContains(double aRelX, double aRelY) {
+		return aRelX >= ARROW_X && aRelX < ARROW_X + ARROW_WIDTH && aRelY >= ARROW_Y && aRelY < ARROW_Y + ARROW_HEIGHT;
+	}
+
+	private boolean onArrowClick(double aMouseX, double aMouseY) {
+		return arrowContains(aMouseX - this.leftPos, aMouseY - this.topPos);
+	}
+
+	/**
+	 * The GT_RectHandler click arm (NEI_RecipeMap.java:401-407): any button over the arrow
+	 * opens the map's viewer page (both upstream arms landed on the same handler, :75-76);
+	 * no viewer or no map → the vanilla click handling continues untouched.
+	 */
+	@Override
+	public boolean mouseClicked(double aMouseX, double aMouseY, int aButton) {
+		if (onArrowClick(aMouseX, aMouseY)
+				&& gregtech6.gui.GTViewerJump.openRecipeMapPage(this.menu.tileEntity.getRecipeMap())) {
+			return true;
+		}
+		return super.mouseClicked(aMouseX, aMouseY, aButton);
+	}
+
+	/**
+	 * The GT_RectHandler tooltip arm (:419-422): the "Recipes" hover label over the rect —
+	 * upstream showed it only while the current tooltip was empty, which is the no-slot
+	 * case here too (the arrow area carries no slot). No viewer installed → no label (the
+	 * upstream label implied the NEI plugin was present; same contract).
+	 */
+	@Override
+	protected void renderTooltip(GuiGraphics aGuiGraphics, int aMouseX, int aMouseY) {
+		if (onArrowClick(aMouseX, aMouseY) && gregtech6.gui.GTViewerJump.canJumpToViewer()) {
+			aGuiGraphics.renderComponentTooltip(this.font,
+					java.util.List.of(Component.literal(gregtech6.gui.GTViewerJump.RECT_TOOLTIP_TEXT)),
+					aMouseX, aMouseY);
+			return;
+		}
+		super.renderTooltip(aGuiGraphics, aMouseX, aMouseY);
 	}
 }

@@ -911,6 +911,12 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		return recipes().mGUIPath;
 	}
 
+	/** The viewer-jump face (debt-jei-emi-batch4): the served RecipeMap, the {@link #recipes()} lazy arm. */
+	@Override
+	public gregtech6.recipes.RecipeMap getRecipeMap() {
+		return recipes();
+	}
+
 	@Override
 	public AbstractContainerMenu createMenu(int aContainerId, Inventory aPlayerInventory, Player aPlayer) {
 		return new GTBasicMachineMenu(getMenuType(), aContainerId, aPlayerInventory, this);
