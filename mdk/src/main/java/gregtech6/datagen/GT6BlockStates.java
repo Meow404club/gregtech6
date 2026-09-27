@@ -42,6 +42,7 @@ import gregtech6.block.material.GTMaterialPrefixBlock;
 import gregtech6.block.sensors.GTSensorBlock;
 import gregtech6.block.stone.GTStoneBlock;
 import gregtech6.block.stone.StoneVariant;
+import gregtech6.block.surface.GT6SurfaceVariants;
 import gregtech6.registry.GT6SurfaceBlocks;
 import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.registry.GTBarrels;
@@ -522,65 +523,80 @@ public final class GT6BlockStates extends BlockStateProvider {
      * carries a WEIGHTED variant list — the vanilla position-seeded random chain
      * (BlockRenderDispatcher.java:53-57 getSeed -> WeightedBakedModel.java:29-33) picks
      * per block position, same-position stable, zero new BlockState properties. The
-     * stick: the two rotationY arms (the upstream :58-68 50/50 X-long/Z-long readFromNBT2
-     * pair) x three displacement tiers — the perpendicular 0..14px slide downsampled to
-     * centered/±2px (the slide models land outside the bar-exact selection box by at
-     * most 2px; the envelope union would be the old full pelt again). The rock: three
-     * size tiers of the upstream 2..8px-wide x 1..4px-high random micro box (8x3x8 w3 /
-     * 6x2x6 w2 / 4x1x4 w1, every tier inside the 8x3x8 selection envelope — the
-     * GTCEu-shared "random micro box" declared deviation narrows to a bounded variant
-     * band). Stick weights stay 1 (uniform, the upstream uniform slide); the rock pins
-     * the representative form heaviest.
+     * stick band: the two rotationY arms (the upstream :58-68 50/50 X-long/Z-long
+     * readFromNBT2 pair) plus slide/tilt tiers; the rock: three size tiers of the
+     * upstream 2..8px-wide x 1..4px-high random micro box, the representative form
+     * heaviest.
+     *
+     * <p>Task debt-issue12-shape-follow-tilt (GitHub #12 residual): the tables moved to
+     * {@link gregtech6.block.surface.GT6SurfaceVariants} — this loop iterates the SAME
+     * enums the block getShape picks from (declaration order == JSON array order ==
+     * the WeightedRandom scan order, so selection box == rendered variant), and the
+     * stick pool gains the two TILT models (element rotation about the bar's own
+     * centre, the only angles the JSON grammar allows — BlockElement.java:100): 8
+     * entries = centered arms x2 + one slide tier per arm + the tilt pair on both
+     * arms (slide never stacks with tilt; the pool design lives in the Stick javadoc).
      */
     private void addSurfaceBand() {
-        ModelFile[] tRockModels = {
-                microBoxModel("surface_rock", mcLoc("block/stone"), true, 4, 0, 4, 12, 3, 12),
-                microBoxModel("surface_rock_a", mcLoc("block/stone"), true, 5, 0, 5, 11, 2, 11),
-                microBoxModel("surface_rock_b", mcLoc("block/stone"), true, 6, 0, 6, 10, 1, 10),
-        };
-        int[] tRockWeights = {3, 2, 1};
-        ModelFile[] tStickModels = {
-                microBoxModel("surface_stick", mcLoc("block/oak_log"), false, 2, 0, 7, 14, 2, 9),
-                microBoxModel("surface_stick_a", mcLoc("block/oak_log"), false, 2, 0, 5, 14, 2, 7),
-                microBoxModel("surface_stick_b", mcLoc("block/oak_log"), false, 2, 0, 9, 14, 2, 11),
-        };
+        // one model per distinct id in the shared tables; the element boxes come from
+        // the enums themselves so the model and the shape box cannot drift apart
+        Map<String, ModelFile> tModels = new HashMap<>();
+        for (GT6SurfaceVariants.Rock tVariant : GT6SurfaceVariants.Rock.values())
+            tModels.put(tVariant.model(), microBoxModel(tVariant.model(), mcLoc("block/stone"), true, tVariant.box()));
+        for (GT6SurfaceVariants.Stick tVariant : List.of( // the axis-aligned tiers only — the tilt models rotate the default bar
+                GT6SurfaceVariants.Stick.CENTERED_X, GT6SurfaceVariants.Stick.SLIDE_X, GT6SurfaceVariants.Stick.SLIDE_Z))
+            tModels.put(tVariant.model(), microBoxModel(tVariant.model(), mcLoc("block/oak_log"), false, tVariant.box()));
+        tModels.put("surface_stick_t22", tiltedBarModel("surface_stick_t22", GT6SurfaceVariants.Stick.CENTERED_X.box(), 22.5F));
+        tModels.put("surface_stick_t45", tiltedBarModel("surface_stick_t45", GT6SurfaceVariants.Stick.CENTERED_X.box(), 45.0F));
         for (var tRow : GT6SurfaceBlocks.ALL) {
             boolean tIsStick = tRow.get() == GT6SurfaceBlocks.SURFACE_STICK.get();
-            ModelFile[] tModels = tIsStick ? tStickModels : tRockModels;
+            GT6SurfaceVariants.Variant[] tTable = tIsStick ? GT6SurfaceVariants.Stick.values() : GT6SurfaceVariants.Rock.values();
             getVariantBuilder(tRow.get()).forAllStates(aState -> {
-                int tX = 0, tY = 0;
-                switch (aState.getValue(gregtech6.block.surface.GT6SurfaceRockBlock.FACING)) {
-                    case UP -> tX = 180;
-                    case NORTH -> tX = 270;
-                    case SOUTH -> tX = 90;
-                    case WEST -> tY = 270; // no rotationZ in the variant grammar (see javadoc)
-                    case EAST -> tY = 90;
-                    default -> {} // DOWN: the floor form, no rotation
-                }
+                Direction tFacing = aState.getValue(gregtech6.block.surface.GT6SurfaceRockBlock.FACING);
+                int tX = GT6SurfaceVariants.xRotOf(tFacing), tY = GT6SurfaceVariants.yRotOf(tFacing);
                 java.util.List<ConfiguredModel> tVariants = new java.util.ArrayList<>();
-                for (int i = 0; i < tModels.length; i++) {
-                    tVariants.add(new ConfiguredModel(tModels[i], tX, tY, false, tIsStick ? 1 : tRockWeights[i]));
-                    if (tIsStick) // the rotationY arm twin (the 50/50 X/Z pair; (tY+90)%360 keeps WEST at 0)
-                        tVariants.add(new ConfiguredModel(tModels[i], tX, (tY + 90) % 360, false, 1));
-                }
+                for (GT6SurfaceVariants.Variant tVariant : tTable)
+                    // (tY + arm) % 360 keeps WEST + 90 at 0 — the omitted JSON default
+                    tVariants.add(new ConfiguredModel(tModels.get(tVariant.model()), tX, (tY + tVariant.armY()) % 360, false, tVariant.weight()));
                 return tVariants.toArray(new ConfiguredModel[0]);
             });
         }
     }
 
     /** One tinted-or-plain micro box model: the aX1/aY1/aZ1..aX2/aY2/aZ2 ground box, tintindex 0 on every face when aTinted. */
-    private ModelFile microBoxModel(String aName, ResourceLocation aTexture, boolean aTinted,
-            int aX1, int aY1, int aZ1, int aX2, int aY2, int aZ2) {
+    private ModelFile microBoxModel(String aName, ResourceLocation aTexture, boolean aTinted, int[] aBox) {
         BlockModelBuilder tModel = models().getBuilder(aName)
                 .parent(models().getExistingFile(mcLoc("block/block")))
                 .texture("slab", aTexture)
                 .texture("particle", "#slab");
         tModel.element()
-                .from((float) aX1, (float) aY1, (float) aZ1).to((float) aX2, (float) aY2, (float) aZ2)
+                .from((float) aBox[0], (float) aBox[1], (float) aBox[2]).to((float) aBox[3], (float) aBox[4], (float) aBox[5])
                 .allFaces((aDir, aFace) -> {
                     aFace.texture("#slab");
                     if (aTinted) aFace.tintindex(0);
                 })
+                .end();
+        return tModel;
+    }
+
+    /**
+     * The lying default bar (aBar = the raw model-space box) TILTED about its own
+     * centre by aAngle — the debt-issue12-shape-follow-tilt diagonal stick variants.
+     * Element rotation is the ONLY expression the JSON grammar offers and its angle is
+     * hard-validated to {-45,-22.5,0,22.5,45} (BlockElement.java:100, the datagen
+     * RotationBuilder :731 same check), so 15/30-degree sticks are impossible without
+     * baked geometries. The rotation rides the bar's LOCAL Y axis (origin 8,1,8), so
+     * the blockstate FACING rotations carry the tilt along naturally.
+     */
+    private ModelFile tiltedBarModel(String aName, int[] aBar, float aAngle) {
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("slab", mcLoc("block/oak_log"))
+                .texture("particle", "#slab");
+        tModel.element()
+                .from((float) aBar[0], (float) aBar[1], (float) aBar[2]).to((float) aBar[3], (float) aBar[4], (float) aBar[5])
+                .rotation().origin(8.0F, 1.0F, 8.0F).axis(Direction.Axis.Y).angle(aAngle).end()
+                .allFaces((aDir, aFace) -> aFace.texture("#slab"))
                 .end();
         return tModel;
     }

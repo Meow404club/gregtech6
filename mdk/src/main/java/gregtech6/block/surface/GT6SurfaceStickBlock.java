@@ -3,7 +3,6 @@ package gregtech6.block.surface;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
@@ -28,39 +27,37 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class GT6SurfaceStickBlock extends GT6SurfaceRockBlock {
 
 	/**
-	 * Task r3-stick-shape-random (GitHub #12) — the bar-exact selection shapes, replacing
-	 * the inherited rock pebble boxes: upstream GetSelectedBoundingBoxFromPool rides the
-	 * per-instance visual box (MultiTileEntityStick.java:176), so the wireframe must be the
-	 * lying 12x2x2 bar of the pinned default pose (the :53 bounds 2..14 x 7..9), not the
-	 * 8x3x8 pebble the stick used to inherit. Each facing is the default bar carried
-	 * through the same rotation the blockstate FACING dispatch applies; the render-side
-	 * weighted slide/rotation variants (GT6BlockStates addSurfaceBand) overhang these
-	 * bounds by at most 2px — the envelope union would be the old full pelt again, so the
-	 * exact default pose wins (upstream slides 0..14px per instance, far wider). The
-	 * collision side stays empty ({@code noCollission()}, the upstream :177 null).
+	 * Task debt-issue12-shape-follow-tilt (GitHub #12 residual): the selection box now
+	 * FOLLOWS the render variant — {@link GT6SurfaceVariants#pick} replays the
+	 * renderer's position-seeded draw (the chain pinned in that class's javadoc) over
+	 * the stick table, and the variant's raw box rides the same FACING x-rotation +
+	 * arm y-rotation the blockstate dispatch emits (upstream
+	 * GetSelectedBoundingBoxFromPool rides the per-instance visual box,
+	 * MultiTileEntityStick.java:176). The exact boxes: the two centered arms and the
+	 * two slide tiers are bar-EXACT (the r3-stick-shape-random bar-exact face kept);
+	 * the four tilt variants carry the declared ENVELOPE deviation — a ±22.5/45
+	 * tilted bar's quads are not axis-aligned and VoxelShape cannot express them, so
+	 * the wireframe is the conservative axis-aligned box over the tilted bar
+	 * (overhang ~1.5px per side, GT6SurfaceVariants.Stick javadoc). A null-pos call
+	 * falls back to the default centered bar; the C2-era six-facing pins move WITH this
+	 * card — the old table carried NORTH/SOUTH transposed against the emitted dispatch
+	 * (the wireframe sat on the wrong side of the block for the wall facings; the pin
+	 * test passed tautologically against the same wrong table — see
+	 * GT6SurfaceVariants.rotate for the vanilla end_rod anchor that settles it).
+	 * Collision stays empty ({@code noCollission()}, the upstream :177 null).
 	 */
-	private static final VoxelShape BAR_SHAPE_DOWN = Block.box(2, 0, 7, 14, 2, 9);
-	private static final VoxelShape BAR_SHAPE_UP = Block.box(2, 14, 7, 14, 16, 9);
-	private static final VoxelShape BAR_SHAPE_NORTH = Block.box(2, 7, 14, 14, 9, 16);
-	private static final VoxelShape BAR_SHAPE_SOUTH = Block.box(2, 7, 0, 14, 9, 2);
-	private static final VoxelShape BAR_SHAPE_WEST = Block.box(7, 0, 2, 9, 2, 14);
-	private static final VoxelShape BAR_SHAPE_EAST = Block.box(7, 0, 2, 9, 2, 14);
+	@Override
+	public VoxelShape getShape(BlockState aState, BlockGetter aLevel, BlockPos aPos, CollisionContext aContext) {
+		GT6SurfaceVariants.Stick tVariant = aPos == null ? GT6SurfaceVariants.Stick.CENTERED_X
+				: GT6SurfaceVariants.pick(TABLE, aState, aPos);
+		return GT6SurfaceVariants.shapeOf(tVariant, aState.getValue(FACING));
+	}
+
+	/** The cached variant table ({@link Enum#values} clones per call; getShape is a raytrace-hot path). */
+	private static final GT6SurfaceVariants.Stick[] TABLE = GT6SurfaceVariants.Stick.values();
 
 	public GT6SurfaceStickBlock(Properties aProperties) {
 		super(aProperties.sound(SoundType.WOOD).mapColor(MapColor.WOOD), null);
-	}
-
-	/** The bar-exact override (see the shape javadoc above); the rock table stays in the superclass. */
-	@Override
-	public VoxelShape getShape(BlockState aState, BlockGetter aLevel, BlockPos aPos, CollisionContext aContext) {
-		return switch (aState.getValue(FACING)) {
-			case DOWN -> BAR_SHAPE_DOWN;
-			case UP -> BAR_SHAPE_UP;
-			case NORTH -> BAR_SHAPE_NORTH;
-			case SOUTH -> BAR_SHAPE_SOUTH;
-			case WEST -> BAR_SHAPE_WEST;
-			case EAST -> BAR_SHAPE_EAST;
-		};
 	}
 
 	/** MultiTileEntityStick.java:190-191 verbatim — the IForgeBlock 4-arg faces (the GTTankValveBlock form, both legs). */

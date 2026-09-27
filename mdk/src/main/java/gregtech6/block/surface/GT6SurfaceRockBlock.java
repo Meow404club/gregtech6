@@ -61,22 +61,31 @@ public class GT6SurfaceRockBlock extends Block {
 	public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
 	/**
-	 * DOWN/UP tightened to the model's 8x3x8 micro box (task p38-issue1-4, GitHub #1 —
-	 * the MultiTileEntityRock.java:58 default envelope PX_P[4]..PX_N[4] centered, the 3px
-	 * p30 pebble height): the selection box rides the same bounds as the visual, the
-	 * upstream GetSelectedBoundingBoxFromPool face (MultiTileEntityRock.java:237 —
-	 * {@code box(mMinX, 0, mMinZ, mMaxX, mMaxY, mMaxZ)}); the GTCEu :48-53 12/16 slab
-	 * stood 2px proud per side over the shrunk visual. The four WALL shapes stay GTCEu
-	 * :48-53 verbatim (their visuals ride the y-only variant-rotation quirk,
-	 * GT6BlockStates addSurfaceBand). The stick subclass overrides with its own bar-exact
-	 * table (task r3-stick-shape-random, GitHub #12 — the p38 pool candidate landed).
+	 * Task debt-issue12-shape-follow-tilt (GitHub #12 residual): the selection box now
+	 * FOLLOWS the render variant — {@link GT6SurfaceVariants#pick} replays the
+	 * renderer's position-seeded draw (the chain pinned in that class's javadoc) over
+	 * the shared tier table, and the tier's raw box rides the same FACING rotations
+	 * the blockstate dispatch emits, so the wireframe is the size tier actually
+	 * rendered at that position (upstream GetSelectedBoundingBoxFromPool rides the
+	 * per-instance visual box, MultiTileEntityRock.java:237). This supersedes the
+	 * p38-issue1-4 fixed boxes — DOWN/UP tighten per tier (every tier always sat
+	 * inside the old 8x3x8/13-high pins) and the four GTCEu :48-53 WALL slabs
+	 * (kept verbatim back when the visual rode the y-only quirk) tighten to the
+	 * rotated tier box, matching what the x/y blockstate rotations actually render.
+	 * A null-pos call (the offline tests, shape caches) falls back to the
+	 * representative 8x3x8 tier — the p38-issue1-4 pin. The stick subclass carries
+	 * its own table; collision stays empty (noCollission).
 	 */
-	protected static final VoxelShape SHAPE_DOWN = Block.box(4, 0, 4, 12, 3, 12);
-	protected static final VoxelShape SHAPE_UP = Block.box(4, 13, 4, 12, 16, 12);
-	protected static final VoxelShape SHAPE_NORTH = Block.box(2, 2, 0, 14, 14, 3);
-	protected static final VoxelShape SHAPE_SOUTH = Block.box(2, 2, 13, 14, 14, 16);
-	protected static final VoxelShape SHAPE_WEST = Block.box(0, 2, 2, 3, 14, 14);
-	protected static final VoxelShape SHAPE_EAST = Block.box(13, 2, 2, 16, 14, 14);
+	@Override
+	@SuppressWarnings("deprecation")
+	public VoxelShape getShape(BlockState aState, BlockGetter aLevel, BlockPos aPos, CollisionContext aContext) {
+		GT6SurfaceVariants.Rock tVariant = aPos == null ? GT6SurfaceVariants.Rock.REPRESENTATIVE
+				: GT6SurfaceVariants.pick(TABLE, aState, aPos);
+		return GT6SurfaceVariants.shapeOf(tVariant, aState.getValue(FACING));
+	}
+
+	/** The cached variant table ({@link Enum#values} clones per call; getShape is a raytrace-hot path). */
+	private static final GT6SurfaceVariants.Rock[] TABLE = GT6SurfaceVariants.Rock.values();
 
 	/** The tint material (GTCEu :55-60); null on the material-less stick subclass (no tint face). */
 	@Nullable
@@ -109,19 +118,6 @@ public class GT6SurfaceRockBlock extends Block {
 	 *///?}
 		if (aLevel.isClientSide()) return InteractionResult.SUCCESS;
 		return aLevel.destroyBlock(aPos, true, aPlayer) ? InteractionResult.SUCCESS : InteractionResult.PASS; // GTCEu :93-96
-	}
-
-	@Override
-	@SuppressWarnings("deprecation")
-	public VoxelShape getShape(BlockState aState, BlockGetter aLevel, BlockPos aPos, CollisionContext aContext) {
-		return switch (aState.getValue(FACING)) { // GTCEu :101-110
-			case DOWN -> SHAPE_DOWN;
-			case UP -> SHAPE_UP;
-			case NORTH -> SHAPE_NORTH;
-			case SOUTH -> SHAPE_SOUTH;
-			case WEST -> SHAPE_WEST;
-			case EAST -> SHAPE_EAST;
-		};
 	}
 
 	/** GTCEu :126-131 — the attach face must be sturdy (upstream :153 isSideSolid check). */
