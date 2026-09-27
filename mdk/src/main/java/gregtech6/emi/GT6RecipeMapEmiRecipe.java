@@ -109,6 +109,7 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 		for (int i = 0; i < Math.min(mRow.mInputs.length, mMap.mInputItemsCount); i++) {
 			if (mRow.mInputs[i] == null || mRow.mInputs[i].isEmpty()) continue;
 			int[] tPos = GT6RecipeMapViewerMeta.inputPos(i, mMap);
+			if (tPos == null) continue; // past the 12th drawn slot (the meta contract)
 			SlotWidget tSlot = aWidgets.add(new SlotWidget(EmiStack.of(mRow.mInputs[i]), tPos[0], tPos[1]));
 			if (GT6RecipeMapViewerMeta.notConsumable(mRow.mInputs[i]))
 				tSlot.appendTooltip(Component.literal(GT6RecipeMapViewerMeta.NOT_CONSUMED_TEXT));
@@ -116,6 +117,7 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 		for (int i = 0; i < Math.min(mRow.mOutputs.length, mMap.mOutputItemsCount); i++) {
 			if (mRow.mOutputs[i] == null || mRow.mOutputs[i].isEmpty()) continue;
 			int[] tPos = GT6RecipeMapViewerMeta.outputPos(i, mMap);
+			if (tPos == null) continue; // past the 12th drawn slot (the meta contract)
 			SlotWidget tSlot = aWidgets.add(new SlotWidget(EmiStack.of(mRow.mOutputs[i]), tPos[0], tPos[1])).large(true);
 			String tChance = GT6RecipeMapViewerMeta.chanceLine(GT6RecipeMapViewerMeta.outputChance(mRow, i), mRow.mOutputs[i].getCount());
 			if (tChance != null) tSlot.appendTooltip(Component.literal(tChance));

@@ -46,11 +46,32 @@ import gregtech6.recipes.RecipeMap;
  * surface). CHISEL and AUTOCRAFTER are excluded by the upstream mNEIAllowed=F itself
  * (RM.java:138/:63) — the faithful form, no ruling needed.
  *
- * <p><b>The batch-1 canary switch:</b> the factory registers only the six canary maps
- * (decisions.2026-09-26-debt-jei-emi-coverage ②: COKE_OVEN/SHREDDER/CRUSHER/LATHE/
- * DISTILLERY/DRYING) plus BEDROCK_ORE_LIST (upstream RM.java:153 IS a NEI display map,
- * in the acceptance face). Every other eligible map is tabled and ready — batch 2's
- * full opening is a VISIBLE set edit, no factory change.
+ * <p><b>The visibility ruling (batch 1 canary → batch 2 full opening):</b> batch 1
+ * shipped the six canaries of decisions.2026-09-26-debt-jei-emi-coverage ②
+ * (COKE_OVEN/SHREDDER/CRUSHER/LATHE/DISTILLERY/DRYING) plus BEDROCK_ORE_LIST
+ * (upstream RM.java:153 IS a NEI display map, in the acceptance face); batch 2
+ * (task debt-jei-emi-batch2) opens visibility to the WHOLE eligible set — a map is
+ * visible exactly when {@link #eligible} says so. The closure stays the exclusion
+ * table (6) plus the upstream mNEIAllowed=F rows: 80 census maps → 72 visible.
+ *
+ * <p><b>The registration-cost ruling (batch 2, the big maps this opens — MIXER's
+ * ~56000 rows, MASSFAB's ~4220):</b> structurally linear, no wall clock needed to see
+ * it. The JEI leg hands each map's rows to the viewer as ONE defensive copy
+ * (GT6JeiPlugin.registerRecipeMapCategoriesRows) — zero per-row work of ours; JEI
+ * builds its own index once. The EMI leg additionally sorts the COPY once (O(n log n),
+ * the ROW_ORDER key) and allocates one lightweight wrapper per row
+ * (gregtech6.emi.GT6RecipeMapEmiRecipe: field assigns + four bounded array scans). No
+ * widget exists at registration — slots/text are built only for the row on screen
+ * (JEI setRecipe per page render, EMI addWidgets per render). This is the GTCEu Modern
+ * shape for the same problem size, read off their source: GTRecipeJEICategory.registerRecipes
+ * is {@code List.copyOf} + addRecipes per category (:27-45), GTRecipeEMICategory.
+ * registerDisplays the same on the EMI side (:25-45), GTEMIPlugin.java:47-51 the loop —
+ * no big-map special-casing there either. The one-time cost that remains lives inside
+ * the viewers themselves (JEI's recipe index build, EMI's EmiRecipes.bake over all
+ * registered rows) — shared with every mod at viewer init, not ours to amortize.
+ * Guard: the wall-clock-free structural assertions in GT6RecipeMapEmiCategoryTest
+ * (row-independence of the map scan, copy-not-mutate, deterministic tie-heavy sort at
+ * the MIXER scale).
  */
 public final class GT6RecipeMapViewerMeta {
 
@@ -94,15 +115,13 @@ public final class GT6RecipeMapViewerMeta {
 			"gt.recipe.plantalyzer");       // compat dead surface
 
 	/**
-	 * The batch-1 visible set: the six canaries of decisions.2026-09-26-debt-jei-emi-coverage ②
-	 * + BEDROCK_ORE_LIST (RM.java:153, in the acceptance face). Batch 2's full opening
-	 * edits exactly this set.
+	 * The batch-2 visible set = the eligible set (the canary switch of batch 1 fully
+	 * open — the class doc). Kept as the plugins' named seam: GT6JeiPlugin and
+	 * gregtech6.emi.GT6EmiPlugin both iterate exactly this predicate.
 	 */
-	private static final Set<String> VISIBLE = Set.of(
-			"gt.recipe.cokeoven", "gt.recipe.shredder", "gt.recipe.crusher",
-			"gt.recipe.lathe", "gt.recipe.distillery", "gt.recipe.drying",
-			"gt.recipe.bedrockorelist");
-
+	public static boolean visibleToViewers(RecipeMap aMap) {
+		return eligible(aMap);
+	}
 	/**
 	 * The per-map special deviations from {@link MapMeta#STANDARD} — the census rows whose
 	 * upstream tail actually differs. Every census row NOT listed here is STANDARD
@@ -126,10 +145,12 @@ public final class GT6RecipeMapViewerMeta {
 	}
 
 	static {
-		// the mNEIAllowed=F rows (aShowVoltage stays T on both RM rows; FM.java:38 is F,F)
+		// the mNEIAllowed=F rows (furnacefuel's aShowVoltageAmperageInNEI is T per the
+		// FM.java:38 T,F,... row tail — batch 1 had misread it F; dead value anyway, the
+		// map is EXCLUDED and never renders)
 		deviation("gt.recipe.chisel", false, true, false, "", 1, "");       // RM.java:138
 		deviation("gt.recipe.autocrafting", false, true, false, "", 1, ""); // RM.java:63
-		deviation("mc.recipe.furnacefuel", false, false, false, "", 1, ""); // FM.java:38
+		deviation("mc.recipe.furnacefuel", false, true, false, "", 1, "");  // FM.java:38
 		// the fuel maps: combinePower=T (FM.java:40/:41/:42/:43/:45)
 		deviation("gt.recipe.fuels.fluidbed", true, true, true, "", 1, "");
 		deviation("gt.recipe.fuels.burn", true, true, true, "", 1, "");
@@ -154,11 +175,6 @@ public final class GT6RecipeMapViewerMeta {
 		return !NEI_DISALLOWED.contains(aMap.mNameInternal) && !EXCLUDED.contains(aMap.mNameInternal);
 	}
 
-	/** Batch-1 visible: eligible + in the canary/BEDROCK_ORE_LIST set. */
-	public static boolean visibleToViewers(RecipeMap aMap) {
-		return eligible(aMap) && VISIBLE.contains(aMap.mNameInternal);
-	}
-
 	/** The visible maps in deterministic (name-sorted) registration order. */
 	public static List<RecipeMap> visibleMaps() {
 		List<RecipeMap> rMaps = new ArrayList<>();
@@ -173,13 +189,15 @@ public final class GT6RecipeMapViewerMeta {
 	// Item slots: a 3-column 18px grid anchored at x17 (inputs) / x107 (outputs); the row
 	// count and the row Ys depend on the declared slot counts exactly like the upstream
 	// switch (1-3 = one row at y7-or-25 by the fluid threshold >6; 4-6 = two rows whose
-	// Ys shift by the fluid threshold >3; 7+ = the fixed 3x3 at y7/25/43 with a fourth
-	// 61-row from the 10th slot on). Fluids: the NEI :389-390 bottom rows.
+	// Ys shift by the fluid threshold >3; 7+ = the fixed 3x3 at y7/25/43, then at most a
+	// three-slot fourth 61-row whose anchoring hugs the grid's LAST column on BOTH sides,
+	// and no slot past the 12th is ever drawn — the switch has no case rendering one).
+	// Fluids: the NEI :389-390 bottom rows.
 	// -----------------------------------------------------------------------
 
 	/**
 	 * Item-input slot {x,y} (the NEI :170-275 switch). {@code null} = no slot at this
-	 * index (count 0 or past the declared count).
+	 * index (count 0, past the declared count, or past the 12th drawn slot).
 	 */
 	public static int[] inputPos(int aIndex, RecipeMap aMap) {
 		return itemPos(aIndex, aMap.mInputItemsCount, aMap.mInputFluidCount, 17, true);
@@ -206,8 +224,17 @@ public final class GT6RecipeMapViewerMeta {
 		if (aItemCount <= 6) {
 			return new int[] {aAnchorX + 18 * twoRowCol(aIndex, aItemCount, aRightAnchored), twoRowY(aIndex < 3 ? 0 : 1, aFluidCount)};
 		}
-		// 7+ → the fixed 3x3 at y7/25/43 with a fourth 61-row from the 10th slot on
-		return new int[] {aAnchorX + 18 * (aIndex % 3), 7 + 18 * (aIndex / 3)};
+		// 7+ → the fixed 3x3 at y7/25/43, then the upstream fourth 61-row: at most three
+		// slots, RIGHT-hugging on BOTH grids — upstream case 10 hangs its 10th slot on the
+		// grid's LAST column (inputs x53, NEI_RecipeMap.java:246; outputs x143, :358), case
+		// 11 fills {last-1, last} (:258-259 / :370-371), the default fills the full row.
+		// And the switch draws at most 12 slots per side (no case renders a 13th) — the
+		// batch-2 ruling pins this whole tail DEAD on the live census (no map declares
+		// 10/11/13+ item slots either side), so it exists purely as the faithful
+		// transcription the day a map outgrows the census.
+		if (aIndex >= 12) return null;
+		if (aIndex < 9) return new int[] {aAnchorX + 18 * (aIndex % 3), 7 + 18 * (aIndex / 3)};
+		return new int[] {aAnchorX + 18 * (aIndex - 9 + Math.max(0, 12 - aItemCount)), 61};
 	}
 
 	/** The 4-6-slot two-row column shapes: 4 = {1,2}|{0,1}, 5 = {0,1,2}/{1,2}|{0,1,2}/{0,1}, 6 = full. */

@@ -1,7 +1,8 @@
 /**
- * Offline guard tests for task debt-jei-emi-batch1: the shared per-map category
- * metadata table (the census pin), the NEI layout-switch translation, the drawExtras
- * cost-text arithmetic and the chance/not-consumed tooltip seams — the exact faces the
+ * Offline guard tests for tasks debt-jei-emi-batch1 + debt-jei-emi-batch2: the shared
+ * per-map category metadata table (the census pin, batch 2's full visible opening
+ * included), the NEI layout-switch translation, the drawExtras cost-text arithmetic and
+ * the chance/not-consumed tooltip seams — the exact faces the
  * JEI category (GT6RecipeMapJeiCategory) and the EMI twin (gregtech6.emi) both render
  * from, so pinning them here pins both legs' geometry at the one shared place. The JEI
  * category's own offline surface (uid/title/dims) rides the last test — RecipeType is a
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -69,13 +71,18 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 			if (GT6RecipeMapViewerMeta.visibleToViewers(tMap)) tVisible.add(tMap.mNameInternal);
 		}
 		assertEquals(72, tEligible, "80 census - 6 ruled-excluded - 3 upstream-disallowed + 1 overlap (furnacefuel is both) = 72 eligible (rm-six-maps' five maps are all upstream mNEIAllowed=T standard rows)");
-		// the batch-1 face: the six canaries of the 2026-09-26 ruling + BEDROCK_ORE_LIST (RM.java:153)
-		assertEquals(Set.of("gt.recipe.cokeoven", "gt.recipe.shredder", "gt.recipe.crusher",
-				"gt.recipe.lathe", "gt.recipe.distillery", "gt.recipe.drying", "gt.recipe.bedrockorelist"), tVisible);
+		// batch 2 full opening (task debt-jei-emi-batch2): visibility IS eligibility — the
+		// batch-1 canaries (cokeoven/shredder/crusher/lathe/distillery/drying + the
+		// RM.java:153 bedrockorelist display map) ride along automatically; the closure is
+		// exactly the exclusion table + the mNEIAllowed=F pair asserted above
+		assertEquals(tEligible, tVisible.size(), "the visible set is the whole eligible set");
+		assertTrue(tVisible.containsAll(List.of("gt.recipe.cokeoven", "gt.recipe.shredder", "gt.recipe.crusher",
+				"gt.recipe.lathe", "gt.recipe.distillery", "gt.recipe.drying", "gt.recipe.bedrockorelist")),
+				"the batch-1 canaries stay visible under the full opening");
 		// deterministic registration order (name-sorted — the factory iteration contract)
-		List<RecipeMap> tVisibleMaps = GT6RecipeMapViewerMeta.visibleMaps();
-		assertEquals(7, tVisibleMaps.size());
-		assertEquals("gt.recipe.bedrockorelist", tVisibleMaps.get(0).mNameInternal);
+		List<String> tVisibleMapNames = new ArrayList<>();
+		for (RecipeMap tMap : GT6RecipeMapViewerMeta.visibleMaps()) tVisibleMapNames.add(tMap.mNameInternal);
+		assertEquals(new ArrayList<>(tVisible), tVisibleMapNames);
 	}
 
 	// -------------------------------------------------------------------
@@ -109,6 +116,12 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 		// the mNEIAllowed=F rows read back through the same table
 		assertFalse(GT6RecipeMapViewerMeta.metaOf(GT6RecipeMaps.CHISEL).neiAllowed());
 		assertFalse(GT6RecipeMapViewerMeta.metaOf(GT6RecipeMaps.AUTOCRAFTER).neiAllowed());
+		// furnacefuel: aShowVoltageAmperageInNEI is T on the FM.java:38 row tail (T,F,...)
+		// — batch 1 had transcribed F; a dead value (the map is excluded and never renders)
+		// but the table is a transcription, so the batch-2 review correction is pinned
+		var tFurnaceFuel = GT6RecipeMapViewerMeta.metaOf(GT6RecipeMaps.FURNACE_FUEL);
+		assertFalse(tFurnaceFuel.neiAllowed());
+		assertTrue(tFurnaceFuel.showVoltageAmperage());
 	}
 
 	// -------------------------------------------------------------------
@@ -156,6 +169,63 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 		assertPos(GT6RecipeMapViewerMeta.fluidInputPos(2), 17, 63);
 		assertPos(GT6RecipeMapViewerMeta.fluidOutputPos(0), 107, 63);
 		assertPos(GT6RecipeMapViewerMeta.fluidOutputPos(1), 125, 63);
+	}
+
+	// -------------------------------------------------------------------
+	// The switch tail's dead branch (batch 2 review note): the upstream case 10/11
+	// fourth-row anchoring and the 12-slots-drawn cap, transcribed faithfully and proven
+	// dead on the live census
+	// -------------------------------------------------------------------
+
+	@Test
+	void censusProvesTheTenElevenAndOverTwelveSlotShapesStayDead() {
+		GT6RecipeMaps.init();
+		// no live map declares 10/11 item slots on either side (the case 10/11 branch is
+		// dead upstream too — the batch-1 review note) and none declares more than 12 (the
+		// cap branch). If this ever fails, the faithful tail below went LIVE and the
+		// anchoring must be re-verified against real rows, not just the synthetic pins.
+		for (RecipeMap tMap : RecipeMap.RECIPE_MAPS.values()) {
+			assertFalse(tMap.mInputItemsCount == 10 || tMap.mInputItemsCount == 11 || tMap.mInputItemsCount > 12,
+					tMap.mNameInternal + " inputs hit the dead branch");
+			assertFalse(tMap.mOutputItemsCount == 10 || tMap.mOutputItemsCount == 11 || tMap.mOutputItemsCount > 12,
+					tMap.mNameInternal + " outputs hit the dead branch");
+		}
+		// the widest live shape is the 12-slot default (Shredder outputs) — the cap boundary
+		assertEquals(12, GT6RecipeMaps.SHREDDER.mOutputItemsCount);
+	}
+
+	@Test
+	void deadBranchFourthRowAnchoringPinnedAgainstTheUpstreamCases() {
+		GT6RecipeMaps.init();
+		// synthetic maps at the dead counts (reset in @AfterEach keeps them out of the
+		// census scan); ctor counts are the raw switch keys
+		RecipeMap tTen = deadMap("gt.recipe.batch2dead10", 10, 10);
+		RecipeMap tEleven = deadMap("gt.recipe.batch2dead11", 11, 11);
+		RecipeMap tThirteen = deadMap("gt.recipe.batch2dead13", 13, 13);
+		// case 10 — the lone fourth-row slot hugs the grid's LAST column on BOTH sides
+		// (inputs x53, NEI_RecipeMap.java:246; outputs x143, :358 — NOT the row's first
+		// column the batch-1 arithmetic produced)
+		assertPos(GT6RecipeMapViewerMeta.inputPos(9, tTen), 53, 61);
+		assertPos(GT6RecipeMapViewerMeta.outputPos(9, tTen), 143, 61);
+		// case 11 — the pair fills {last-1, last} (:258-259 / :370-371)
+		assertPos(GT6RecipeMapViewerMeta.inputPos(9, tEleven), 35, 61);
+		assertPos(GT6RecipeMapViewerMeta.inputPos(10, tEleven), 53, 61);
+		assertPos(GT6RecipeMapViewerMeta.outputPos(9, tEleven), 125, 61);
+		assertPos(GT6RecipeMapViewerMeta.outputPos(10, tEleven), 143, 61);
+		// 12+ (the default cases) — full row from the FIRST column (:271-273 / :383-385),
+		// and the 13th slot is never drawn (no case renders past the 12th)
+		assertPos(GT6RecipeMapViewerMeta.inputPos(9, tThirteen), 17, 61);
+		assertPos(GT6RecipeMapViewerMeta.outputPos(11, tThirteen), 143, 61);
+		assertNull(GT6RecipeMapViewerMeta.inputPos(12, tThirteen));
+		assertNull(GT6RecipeMapViewerMeta.outputPos(12, tThirteen));
+		// the live 12-slot default (Shredder outputs) is untouched by the cap
+		assertPos(GT6RecipeMapViewerMeta.outputPos(11, GT6RecipeMaps.SHREDDER), 143, 61);
+	}
+
+	/** A census-shaped synthetic map at the given raw slot counts (the 15-arg port ctor). */
+	private static RecipeMap deadMap(String aName, int aInItems, int aOutItems) {
+		return new RecipeMap(new ArrayList<>(), aName, "Batch2 Dead Branch", null, 0, 1,
+				"gt6:textures/gui/machines/mixer", aInItems, aOutItems, 1, 0, 0, 0, 0, 1);
 	}
 
 	private static void assertPos(int[] aPos, int aX, int aY) {

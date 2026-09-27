@@ -112,6 +112,60 @@ public class GT6RecipeMapEmiCategoryTest {
 		assertEquals(5, tHolder.mOtherWidgets, "the Lathe row's five drawExtras lines");
 	}
 
+	/**
+	 * The batch-2 structural registration guard (task debt-jei-emi-batch2): the MIXER
+	 * production shape (~56000 rows) injected into the live map, then the three things
+	 * the EMI registration loop does, asserted structurally — deliberately NO wall clock
+	 * (flaky by nature, measures the runner not the code):
+	 * <ol>
+	 * <li>the map-level scan ({@code visibleMaps}) stays row-count independent — 72 maps,
+	 *     not 56000 entries;</li>
+	 * <li>the {@code ROW_ORDER} sort at the tie-heavy 56000 scale completes
+	 *     deterministically on a COPY — an inconsistent comparator would throw TimSort's
+	 *     "general contract" violation right here;</li>
+	 * <li>the live mRecipeList is untouched (registration may never reorder the cooking
+	 *     findRecipe domain) and per-row wrapping stays the one-wrapper O(1) shape with
+	 *     the index-only id.</li>
+	 * </ol>
+	 * The static analysis backing this lives on GT6RecipeMapViewerMeta's class doc (the
+	 * GTCEu Modern same-shape precedent, file:line pinned there).
+	 */
+	@Test
+	public void mixerScaleRegistrationStructureGuard() {
+		GT6RecipeMaps.init();
+		RecipeMap tMixer = GT6RecipeMaps.MIXER;
+		for (int i = 0; i < 56000; i++) {
+			// two thirds share the sort keys (the real MIXER shape is tie-heavy: thousands
+			// of rows over the same first input), one third varies the duration
+			long tDuration = i % 3 == 0 ? 100 + (i % 7) : 100;
+			tMixer.mRecipeList.add(new Recipe(true, new ItemStack[]{new ItemStack(Items.IRON_INGOT)},
+					new ItemStack[]{new ItemStack(Items.IRON_NUGGET)}, null, null, tDuration, 8, 0));
+		}
+		List<Recipe> tLive = new ArrayList<>(tMixer.mRecipeList);
+
+		// 1. the map scan is row-independent
+		assertEquals(72, gregtech6.jei.GT6RecipeMapViewerMeta.visibleMaps().size());
+
+		// 2. the registration op — defensive copy, one ROW_ORDER sort, deterministic
+		List<Recipe> tSorted = new ArrayList<>(tLive);
+		tSorted.sort(GT6EmiPlugin.ROW_ORDER);
+		List<Recipe> tSortedAgain = new ArrayList<>(tLive);
+		tSortedAgain.sort(GT6EmiPlugin.ROW_ORDER);
+		assertEquals(tSorted, tSortedAgain, "the sort is deterministic at the tie-heavy scale");
+
+		// 3a. the live list never mutates (sort happened on the copy)
+		assertEquals(tLive, new ArrayList<>(tMixer.mRecipeList), "registration never touches the live list");
+		// 3b. per-row wrap: one wrapper, index-only id, bounded slot flattening
+		GT6RecipeMapEmiRecipe tFirst = new GT6RecipeMapEmiRecipe(tMixer, tSorted.get(0),
+				GT6RecipeMapEmiCategory.CATEGORIES.apply(tMixer), 0);
+		assertEquals("gt6:recipe_map/gt.recipe.mixer/0", tFirst.getId().toString());
+		GT6RecipeMapEmiRecipe tLast = new GT6RecipeMapEmiRecipe(tMixer, tSorted.get(tSorted.size() - 1),
+				GT6RecipeMapEmiCategory.CATEGORIES.apply(tMixer), tSorted.size() - 1);
+		assertEquals("gt6:recipe_map/gt.recipe.mixer/" + (tSorted.size() - 1), tLast.getId().toString());
+		assertEquals(1, tLast.getInputs().size(), "one item input flattened (MIXER declares 6 slots, the row carries 1)");
+		assertEquals(1, tLast.getOutputs().size());
+	}
+
 	private static void assertSlot(SlotWidget aSlot, int aX, int aY) {
 		Bounds tBounds = aSlot.getBounds();
 		assertEquals(aX, tBounds.x(), "slot x — the shared NEI-switch coordinate");
