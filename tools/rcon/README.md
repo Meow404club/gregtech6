@@ -28,8 +28,12 @@ gt6rcon.py     客户端层：帧协议/断言判定（judge_output），CLI 与
 python3 tools/gt6testgate.py --tag sweep-placeables -- \
     python3 tools/rcon/sweep.py --mode session --group placeables --node 1.20.1-forge
 
-# gradle 同理
-python3 tools/gt6testgate.py --tag cleanTest -- ./gradlew :mdk:cleanTest
+# gradle 同理；全量（无 --tests 的 test/cleanTest）必须 --role review（v2 硬闸）
+python3 tools/gt6testgate.py --tag cleanTest --role review -- ./gradlew :mdk:cleanTest
+
+# coder 只许过滤模式（--tests），compile/runData/sweep 类不受限
+python3 tools/gt6testgate.py --tag card-tests -- \
+    ./gradlew :mdk:cleanTest --tests gregtech.datagen.OreDistributionInfoTest
 ```
 
 门禁两层：**内存闸**（`MemTotal-MemAvailable` 超阈即按 10s 轮询排队，放行行带
@@ -37,6 +41,15 @@ python3 tools/gt6testgate.py --tag cleanTest -- ./gradlew :mdk:cleanTest
 形同 gt6server 的 `/tmp/gt6_rcon_slots`）。gt6server 的 boot 路径
 （`acquire_rcon_slot`）已内挂同一内存闸——经 sweep/chains 起服自动继承，
 槽信号量语义不变；sweep 自身会话锁不叠加，`sweep.py` 与 `chains/*.py` 零改动。
+
+**角色硬闸（v2，2026-09-27 OOM 裁定）**：全量 test（gradle 跑无 `--tests` 的
+`test`/`cleanTest` 任务，任意 project 路径）仅 **review 角色**可执行——
+`--role review` 或 env `GT6_TESTGATE_ROLE`，默认 coder（非法值回退 coder）；
+coder 请求全量立即拒（exit 2，先于一切排队，提示改用 `--tests` 过滤）。全量
+执行期间持全局互斥锁 `/tmp/gt6_testgate_full.lock`（flock，持有者死即释放），
+同机第二个全量打印排队提示并阻塞等锁。审计事件 `full-reject`/`full-queue`/
+`full-admit` 同落 `/tmp/gt6_gate.log`。注意：仅按任务名匹配，`sh -c` 包一层
+或经 `build` 依赖链带跑 test 不拦（纪律闸非安全边界）。
 
 ```
 # 单条命令

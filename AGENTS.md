@@ -153,7 +153,11 @@ BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
    主会话组织者——原生工作流会绕过合并队列/角色边界/GPG 纪律生成不受控的
    子代理图，污染我们的工作流。要并行就按宪法派 subagent，要编排就写进任务卡。
 8. **一切测试/编译/RCON 启动经 tools/gt6testgate.py 统一门禁**（p34，2026-09-22
-   WSL 一日三崩裁定）：内存占用 >30G 排队不开新，并发槽默认 4。
+   WSL 一日三崩裁定）：内存占用 >30G 排队不开新，并发槽默认 4。**全量 test
+   （gradle 无 --tests 的 test/cleanTest）仅 `--role review` 可跑，coder 请求
+   即拒（exit 2）；全量执行期持 /tmp/gt6_testgate_full.lock 全局互斥，第二个
+   全量排队等锁**（test-gating-v2 硬闸，2026-09-27 OOM 二连裁定：全量收归
+   审查席，coder=编译全绿+--tests 过滤+受影响域抽查）。
 
 ## 六、上下文工程纪律（Anthropic 上下文工程指南的落地）
 
