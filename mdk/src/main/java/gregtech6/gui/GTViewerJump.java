@@ -40,8 +40,8 @@ public final class GTViewerJump {
 		return openRecipeMapPage(aMap, isLoaded("jei"), isLoaded("emi"));
 	}
 
-	/** The pure route arm — offline-testable decision table over the probe results. */
-	static boolean openRecipeMapPage(RecipeMap aMap, boolean aJeiLoaded, boolean aEmiLoaded) {
+	/** The pure route arm — offline-testable decision table over the probe results (public for the census test). */
+	public static boolean openRecipeMapPage(RecipeMap aMap, boolean aJeiLoaded, boolean aEmiLoaded) {
 		if (aMap == null) return false;
 		if (aJeiLoaded && GT6JeiPlugin.openRecipeMapPage(aMap)) return true;
 		return aEmiLoaded && GT6EmiPlugin.openRecipeMapPage(aMap);
@@ -51,7 +51,7 @@ public final class GTViewerJump {
 		//? if forge {
 		return net.minecraftforge.fml.ModList.get().isLoaded(aModId);
 		//?} else {
-		/*return net.neoforged.neoforge.fml.ModList.get().isLoaded(aModId);
+		/*return net.neoforged.fml.ModList.get().isLoaded(aModId);
 		 *///?}
 	}
 }

@@ -55,6 +55,18 @@ import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
  * <li>SHIFT+RIGHT = full inventory traversal ({@code craftTraverse(false)}, :604-617).</li>
  * </ul>
  * All modes gate on {@code canDoCraftingOutput} (:290) inside the BE methods.
+ *
+ * <p><b>Viewer faces (debt-jei-emi-batch4):</b> GHOST DRAG of a JEI/EMI ingredient onto a
+ * pattern seat works through the vendored MUI layer as-is — the seats are
+ * {@link PhantomItemSlot}s (MUI {@code GhostIngredientSlot}s), delivered by MUI's own JEI
+ * screen handler (JEI-only) and EMI drag-drop handler (EMI; the JEI plugin early-returns
+ * when EMI is present — the mutual-yield form, pinned by GT6GhostDragCensusTest). The
+ * upstream overlay's OTHER half — the recipe TRANSFER moving real items — is DEFERRED:
+ * upstream moved real stacks into the real 3x3 grid slots (MultiTileEntityAdvancedCraftingTable.java:716-724),
+ * this port's 3x3 is the phantom pattern grid (decisions.p24-act-ghost-form) and real-item
+ * transfer needs a client→server bulk-move channel MUI2 does not ship (its
+ * {@code JeiContainerHandler} bridge is commented out, no {@code ModularScreen} implements
+ * {@code RecipeTransferHandler}) — the act-transfer pool item re-opens when that changes.
  */
 public final class GTActMenu {
 
