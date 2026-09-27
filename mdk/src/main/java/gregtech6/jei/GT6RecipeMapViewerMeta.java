@@ -46,11 +46,15 @@ import gregtech6.recipes.RecipeMap;
  * surface). CHISEL and AUTOCRAFTER are excluded by the upstream mNEIAllowed=F itself
  * (RM.java:138/:63) — the faithful form, no ruling needed.
  *
- * <p><b>The batch-1 canary switch:</b> the factory registers only the six canary maps
- * (decisions.2026-09-26-debt-jei-emi-coverage ②: COKE_OVEN/SHREDDER/CRUSHER/LATHE/
- * DISTILLERY/DRYING) plus BEDROCK_ORE_LIST (upstream RM.java:153 IS a NEI display map,
- * in the acceptance face). Every other eligible map is tabled and ready — batch 2's
- * full opening is a VISIBLE set edit, no factory change.
+ * <p><b>The visibility ruling (batch 1 canary → batch 2 full opening):</b> batch 1
+ * shipped the six canaries of decisions.2026-09-26-debt-jei-emi-coverage ②
+ * (COKE_OVEN/SHREDDER/CRUSHER/LATHE/DISTILLERY/DRYING) plus BEDROCK_ORE_LIST
+ * (upstream RM.java:153 IS a NEI display map, in the acceptance face); batch 2
+ * (task debt-jei-emi-batch2) opens visibility to the WHOLE eligible set — a map is
+ * visible exactly when {@link #eligible} says so. The closure stays the exclusion
+ * table (6) plus the upstream mNEIAllowed=F rows: 80 census maps → 72 visible.
+ * The registration-cost ruling for the big maps this opens (MIXER's ~56000 rows,
+ * MASSFAB's ~4220) lives in the registration paragraph at the bottom of this doc.
  */
 public final class GT6RecipeMapViewerMeta {
 
@@ -94,15 +98,13 @@ public final class GT6RecipeMapViewerMeta {
 			"gt.recipe.plantalyzer");       // compat dead surface
 
 	/**
-	 * The batch-1 visible set: the six canaries of decisions.2026-09-26-debt-jei-emi-coverage ②
-	 * + BEDROCK_ORE_LIST (RM.java:153, in the acceptance face). Batch 2's full opening
-	 * edits exactly this set.
+	 * The batch-2 visible set = the eligible set (the canary switch of batch 1 fully
+	 * open — the class doc). Kept as the plugins' named seam: GT6JeiPlugin and
+	 * gregtech6.emi.GT6EmiPlugin both iterate exactly this predicate.
 	 */
-	private static final Set<String> VISIBLE = Set.of(
-			"gt.recipe.cokeoven", "gt.recipe.shredder", "gt.recipe.crusher",
-			"gt.recipe.lathe", "gt.recipe.distillery", "gt.recipe.drying",
-			"gt.recipe.bedrockorelist");
-
+	public static boolean visibleToViewers(RecipeMap aMap) {
+		return eligible(aMap);
+	}
 	/**
 	 * The per-map special deviations from {@link MapMeta#STANDARD} — the census rows whose
 	 * upstream tail actually differs. Every census row NOT listed here is STANDARD
@@ -152,11 +154,6 @@ public final class GT6RecipeMapViewerMeta {
 	/** Category-eligible: tabled census map, upstream mNEIAllowed, not ruled out. */
 	public static boolean eligible(RecipeMap aMap) {
 		return !NEI_DISALLOWED.contains(aMap.mNameInternal) && !EXCLUDED.contains(aMap.mNameInternal);
-	}
-
-	/** Batch-1 visible: eligible + in the canary/BEDROCK_ORE_LIST set. */
-	public static boolean visibleToViewers(RecipeMap aMap) {
-		return eligible(aMap) && VISIBLE.contains(aMap.mNameInternal);
 	}
 
 	/** The visible maps in deterministic (name-sorted) registration order. */

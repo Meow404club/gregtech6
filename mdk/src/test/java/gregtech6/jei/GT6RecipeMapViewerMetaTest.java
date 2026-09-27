@@ -1,7 +1,8 @@
 /**
- * Offline guard tests for task debt-jei-emi-batch1: the shared per-map category
- * metadata table (the census pin), the NEI layout-switch translation, the drawExtras
- * cost-text arithmetic and the chance/not-consumed tooltip seams — the exact faces the
+ * Offline guard tests for tasks debt-jei-emi-batch1 + debt-jei-emi-batch2: the shared
+ * per-map category metadata table (the census pin, batch 2's full visible opening
+ * included), the NEI layout-switch translation, the drawExtras cost-text arithmetic and
+ * the chance/not-consumed tooltip seams — the exact faces the
  * JEI category (GT6RecipeMapJeiCategory) and the EMI twin (gregtech6.emi) both render
  * from, so pinning them here pins both legs' geometry at the one shared place. The JEI
  * category's own offline surface (uid/title/dims) rides the last test — RecipeType is a
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -69,13 +71,18 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 			if (GT6RecipeMapViewerMeta.visibleToViewers(tMap)) tVisible.add(tMap.mNameInternal);
 		}
 		assertEquals(72, tEligible, "80 census - 6 ruled-excluded - 3 upstream-disallowed + 1 overlap (furnacefuel is both) = 72 eligible (rm-six-maps' five maps are all upstream mNEIAllowed=T standard rows)");
-		// the batch-1 face: the six canaries of the 2026-09-26 ruling + BEDROCK_ORE_LIST (RM.java:153)
-		assertEquals(Set.of("gt.recipe.cokeoven", "gt.recipe.shredder", "gt.recipe.crusher",
-				"gt.recipe.lathe", "gt.recipe.distillery", "gt.recipe.drying", "gt.recipe.bedrockorelist"), tVisible);
+		// batch 2 full opening (task debt-jei-emi-batch2): visibility IS eligibility — the
+		// batch-1 canaries (cokeoven/shredder/crusher/lathe/distillery/drying + the
+		// RM.java:153 bedrockorelist display map) ride along automatically; the closure is
+		// exactly the exclusion table + the mNEIAllowed=F pair asserted above
+		assertEquals(tEligible, tVisible.size(), "the visible set is the whole eligible set");
+		assertTrue(tVisible.containsAll(List.of("gt.recipe.cokeoven", "gt.recipe.shredder", "gt.recipe.crusher",
+				"gt.recipe.lathe", "gt.recipe.distillery", "gt.recipe.drying", "gt.recipe.bedrockorelist")),
+				"the batch-1 canaries stay visible under the full opening");
 		// deterministic registration order (name-sorted — the factory iteration contract)
-		List<RecipeMap> tVisibleMaps = GT6RecipeMapViewerMeta.visibleMaps();
-		assertEquals(7, tVisibleMaps.size());
-		assertEquals("gt.recipe.bedrockorelist", tVisibleMaps.get(0).mNameInternal);
+		List<String> tVisibleMapNames = new ArrayList<>();
+		for (RecipeMap tMap : GT6RecipeMapViewerMeta.visibleMaps()) tVisibleMapNames.add(tMap.mNameInternal);
+		assertEquals(new ArrayList<>(tVisible), tVisibleMapNames);
 	}
 
 	// -------------------------------------------------------------------
