@@ -108,11 +108,26 @@ public class FluidTankGT implements IFluidTank {
 				//FL.load_ :1035-1045 reads the same key unfiltered). The lookup is guarded twice —
 				//tryParse nulls an illegal name, Registry.get nulls an unknown one, and Fluids.EMPTY
 				//is rejected — so corrupt NBT degrades to an empty tank exactly like a codec
-				//failure, never a throw. NON-ZERO roundtrips stay lossless via the save() return
+				//failure, never a throw. (Since the leg-dialect arm below, the keepFilter form is
+				//routed here directly instead of through that failing parse.) NON-ZERO roundtrips
+				//stay lossless via the save() return
 				//tag (p15-prod-fix-fluidstack-save). Residual deltas: a 0-amount payload persists
 				//neither components nor tag (both legs' pool debt), and a fluid removed from the
 				//registry since the save still folds to an empty tank.
-				mFluid = FluidStack.parseOptional(nbtAccess(), tNBT);
+				// LEG-DIALECT READ ARM (known_bugs barrel_zerofluid_nbt_leg_dialect, task
+				//debt-barrel-nbt-dialect — a P29 tank-data-merge key-form fork variant): a payload
+				//carrying the GT6 contract keys but NO codec "id" key — this leg's OWN keepFilter
+				//write {FluidName: REAL, Amount: 0} below, and any legacy forge-leg save — must not
+				//reach the codec face: FluidStack.parse logs "Tried to load invalid fluid" on every
+				//failed parse (neo FluidStack.java:190 resultOrPartial → LOGGER.error; the codec
+				//needs "id" + POSITIVE_INT "amount", FluidStack.java:61-68, so this key form can
+				//only ever fail) — the once-per-chunk-reload warning the bug tracks. Routing the
+				//dialect form straight to EMPTY feeds the FluidName rebuild below, which reads the
+				//same contract keys the codec ignores: silent, and semantically the forge leg's
+				//load face. Payloads WITH an "id" keep the codec parse (a failure there is a real
+				//codec-form error and the warning is honest).
+				mFluid = tNBT.contains("id") || !tNBT.contains("FluidName", Tag.TAG_STRING)
+					? FluidStack.parseOptional(nbtAccess(), tNBT) : FluidStack.EMPTY;
 				if (mFluid.getFluid() == Fluids.EMPTY) {
 					net.minecraft.world.level.material.Fluid tFluid = null;
 					if (tNBT.contains("FluidName", Tag.TAG_STRING)) {
@@ -120,8 +135,18 @@ public class FluidTankGT implements IFluidTank {
 						tFluid = tName == null ? null : net.minecraft.core.registries.BuiltInRegistries.FLUID.get(tName);
 					}
 					if (tFluid != null && tFluid != Fluids.EMPTY) {
-						mFluid = new FluidStack(tFluid, 1); // the unit-amount carrier — mAmount stays the authoritative 0
-						mAmount = 0;
+						int tPayload = tNBT.getInt("Amount");
+						if (tPayload > 0) {
+							// A legacy forge-leg save at a real amount: restore it the way the
+							//forge leg's :96 arm would — identity plus amount, "LAmount" overflow
+							//included (the pre-arm codec failure silently zeroed it). The forge
+							//"Tag" payload key stays unpersisted pool debt, as on both legs.
+							mFluid = new FluidStack(tFluid, tPayload);
+							mAmount = tNBT.contains(NBT_L_AMOUNT, Tag.TAG_ANY_NUMERIC) ? tNBT.getLong(NBT_L_AMOUNT) : tPayload;
+						} else {
+							mFluid = new FluidStack(tFluid, 1); // the unit-amount carrier — mAmount stays the authoritative 0
+							mAmount = 0;
+						}
 					} else {
 						mFluid = null; // a bare key, an illegal/unknown FluidName, or a payload without one: a truly empty tank
 						mAmount = 0;

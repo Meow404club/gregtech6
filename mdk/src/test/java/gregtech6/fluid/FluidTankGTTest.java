@@ -169,6 +169,111 @@ public class FluidTankGTTest extends GTOfflineTestBase {
 		assertNull(tTank.getFluid(), "no identity is fabricated for an unknown name");
 	}
 
+	@Test
+	public void keepFilterZeroAmountPayloadSurvivesTheLegDialect() {
+		// known_bugs barrel_zerofluid_nbt_leg_dialect (a P29 tank-data-merge key-form fork
+		// variant): {FluidName, Amount: 0} is what BOTH legs' writeToNBT emit for a keepFilter
+		// tank, and what a forge-leg save carries. The 21.1 codec face cannot represent it
+		// (no "id" key; the amount field is POSITIVE_INT — neo FluidStack.java:61-68), so the
+		// dialect read arm must come from the FluidName contract keys and land the forge leg's
+		// :87-94 state verbatim: a unit-amount carrier, mAmount the authoritative 0, identity
+		// WATER. Same assertions on both legs, zero chisel.
+		CompoundTag tKeepFilter = new CompoundTag();
+		tKeepFilter.putString("FluidName", "minecraft:water");
+		tKeepFilter.putInt("Amount", 0);
+		CompoundTag tOuter = new CompoundTag();
+		tOuter.put("tank", tKeepFilter);
+
+		FluidTankGT tTank = new FluidTankGT(1000).readFromNBT(tOuter, "tank");
+		assertFalse(tTank.isEmpty(), "the kept filter identity survives the leg dialect");
+		assertEquals(0, tTank.amount(), "0 L with the identity kept is the keepFilter state");
+		assertTrue(tTank.contains(new FluidStack(Fluids.WATER, 1)), "the kept identity is WATER");
+	}
+
+	@Test
+	public void legacyForgeFormPayloadsRestoreTheirAmount() {
+		// A full-tank forge-form payload (a world written by the 1.20.1 leg, or the same keys a
+		// legacy GT6 reader names): the read must restore the amount the way the forge leg's
+		// :96 arm does — identity, "Amount", and the "LAmount" overflow. Before the dialect
+		// read arm the 21.1 leg's codec failure silently zeroed these. Zero chisel: the forge
+		// leg answers the same payload through loadFluidStackFromNBT natively.
+		CompoundTag tFull = new CompoundTag();
+		tFull.putString("FluidName", "minecraft:water");
+		tFull.putInt("Amount", 5000);
+		CompoundTag tOuter = new CompoundTag();
+		tOuter.put("tank", tFull);
+		FluidTankGT tBack = new FluidTankGT(16000).readFromNBT(tOuter, "tank");
+		assertEquals(5000, tBack.amount());
+		assertTrue(tBack.contains(new FluidStack(Fluids.WATER, 1)));
+
+		CompoundTag tOverflow = new CompoundTag();
+		tOverflow.putString("FluidName", "minecraft:lava");
+		tOverflow.putInt("Amount", Integer.MAX_VALUE);
+		tOverflow.putLong("LAmount", OVERFLOW_AMOUNT);
+		CompoundTag tOuterOverflow = new CompoundTag();
+		tOuterOverflow.put("tank", tOverflow);
+		FluidTankGT tBackOverflow = new FluidTankGT(Long.MAX_VALUE).readFromNBT(tOuterOverflow, "tank");
+		assertEquals(OVERFLOW_AMOUNT, tBackOverflow.amount(), "the overflow key wins over the int-bound Amount");
+		assertTrue(tBackOverflow.contains(new FluidStack(Fluids.LAVA, 1)));
+	}
+
+	@Test
+	public void forgeFormZeroAmountReadEmitsNoCodecLoaderError() {
+		// The "silent" half of barrel_zerofluid_nbt_leg_dialect: the 21.1 codec loader logs
+		// "Tried to load invalid fluid" on EVERY failed parse (neo FluidStack.parse:190
+		// resultOrPartial → LOGGER.error) — the once-per-chunk-reload warning the bug tracks.
+		// Capture the root logger's ERROR events across the read: the dialect arm must not
+		// reach the codec face, so no loader error may appear. On the forge leg the read never
+		// touches a codec at all, so the silence assertion holds trivially.
+		org.apache.logging.log4j.core.LoggerContext tContext = (org.apache.logging.log4j.core.LoggerContext)org.apache.logging.log4j.LogManager.getContext(false);
+		org.apache.logging.log4j.core.Logger tRoot = tContext.getRootLogger();
+		LoaderErrorCapture tCapture = new LoaderErrorCapture();
+		tCapture.start();
+		tRoot.addAppender(tCapture);
+		try {
+			CompoundTag tKeepFilter = new CompoundTag();
+			tKeepFilter.putString("FluidName", "minecraft:water");
+			tKeepFilter.putInt("Amount", 0);
+			CompoundTag tOuter = new CompoundTag();
+			tOuter.put("tank", tKeepFilter);
+			assertTrue(new FluidTankGT(1000).readFromNBT(tOuter, "tank").contains(new FluidStack(Fluids.WATER, 1)));
+			//? if neoforge {
+			/*// Positive control: the codec face itself, fed a codec-form tag with an unknown
+			//registry "id", DOES trip the loader's error line — the capture is live, and the
+			//codec failure (not the key form alone) is what the warning rode on.
+			CompoundTag tBrokenCodecForm = new CompoundTag();
+			tBrokenCodecForm.putString("id", "gt6:not_a_fluid");
+			tBrokenCodecForm.putInt("amount", 1);
+			assertTrue(FluidStack.parseOptional(gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS, tBrokenCodecForm).isEmpty(), "the control tag must fail the codec parse");
+			assertTrue(tCapture.containsLoaderError(), "the codec loader's error line must reach the root capture");
+			tCapture.lines.clear();
+			// and one more dialect read after the control, still silent:
+			assertTrue(new FluidTankGT(1000).readFromNBT(tOuter, "tank").contains(new FluidStack(Fluids.WATER, 1)));
+			*/
+			//?}
+			assertTrue(tCapture.lines.isEmpty(), "no ERROR line during the dialect read: " + tCapture.lines);
+		} finally {
+			tRoot.removeAppender(tCapture);
+			tCapture.stop();
+		}
+	}
+
+	/** Captures the ERROR lines reaching the root logger — the observable face of the codec loader's parse diagnostics. */
+	private static final class LoaderErrorCapture extends org.apache.logging.log4j.core.appender.AbstractAppender {
+		final java.util.List<String> lines = new java.util.ArrayList<>();
+		LoaderErrorCapture() {
+			super("gt6TankDialectCapture", null, null, true);
+		}
+		@Override
+		public void append(org.apache.logging.log4j.core.LogEvent aEvent) {
+			if (aEvent.getLevel() == org.apache.logging.log4j.Level.ERROR) lines.add(String.valueOf(aEvent.getMessage().getFormattedMessage()));
+		}
+		boolean containsLoaderError() {
+			for (String tLine : lines) if (tLine.contains("Tried to load invalid fluid")) return true;
+			return false;
+		}
+	}
+
 	static int bindable(long aAmount) {
 		return FluidTankGT.bindInt(aAmount);
 	}
