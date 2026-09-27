@@ -53,8 +53,25 @@ import gregtech6.recipes.RecipeMap;
  * (task debt-jei-emi-batch2) opens visibility to the WHOLE eligible set — a map is
  * visible exactly when {@link #eligible} says so. The closure stays the exclusion
  * table (6) plus the upstream mNEIAllowed=F rows: 80 census maps → 72 visible.
- * The registration-cost ruling for the big maps this opens (MIXER's ~56000 rows,
- * MASSFAB's ~4220) lives in the registration paragraph at the bottom of this doc.
+ *
+ * <p><b>The registration-cost ruling (batch 2, the big maps this opens — MIXER's
+ * ~56000 rows, MASSFAB's ~4220):</b> structurally linear, no wall clock needed to see
+ * it. The JEI leg hands each map's rows to the viewer as ONE defensive copy
+ * (GT6JeiPlugin.registerRecipeMapCategoriesRows) — zero per-row work of ours; JEI
+ * builds its own index once. The EMI leg additionally sorts the COPY once (O(n log n),
+ * the ROW_ORDER key) and allocates one lightweight wrapper per row
+ * (gregtech6.emi.GT6RecipeMapEmiRecipe: field assigns + four bounded array scans). No
+ * widget exists at registration — slots/text are built only for the row on screen
+ * (JEI setRecipe per page render, EMI addWidgets per render). This is the GTCEu Modern
+ * shape for the same problem size, read off their source: GTRecipeJEICategory.registerRecipes
+ * is {@code List.copyOf} + addRecipes per category (:27-45), GTRecipeEMICategory.
+ * registerDisplays the same on the EMI side (:25-45), GTEMIPlugin.java:47-51 the loop —
+ * no big-map special-casing there either. The one-time cost that remains lives inside
+ * the viewers themselves (JEI's recipe index build, EMI's EmiRecipes.bake over all
+ * registered rows) — shared with every mod at viewer init, not ours to amortize.
+ * Guard: the wall-clock-free structural assertions in GT6RecipeMapEmiCategoryTest
+ * (row-independence of the map scan, copy-not-mutate, deterministic tie-heavy sort at
+ * the MIXER scale).
  */
 public final class GT6RecipeMapViewerMeta {
 

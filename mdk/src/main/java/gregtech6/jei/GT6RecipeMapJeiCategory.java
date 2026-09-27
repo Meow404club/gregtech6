@@ -74,10 +74,14 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 	}
 
 	/**
-	 * No icon this card: the upstream per-map machine-item face (NEI's
-	 * mRecipeMachineList.get(0)) has no port table yet, and JEI explicitly allows null
-	 * ("JEI will try to use the first recipe catalyst"). A per-map machine-icon table is
-	 * a batch-2 nicety.
+	 * Per-map machine icon: DEFERRED by the batch-2 adjudication (task debt-jei-emi-batch2)
+	 * — there is no seam to wire. The upstream face keyed off RecipeMap.mRecipeMachineList
+	 * (NEI_RecipeMap.java:278 drew it at 152,83), which the port's folded 15-arg ctor does
+	 * not carry; the machine registries are FORWARD-keyed (machine row → RecipeMapSupplier,
+	 * and many machines share one map), so a per-map item table would be new reverse-index
+	 * infrastructure, not wiring. null keeps JEI's documented fallback ("JEI will try to
+	 * use the first recipe catalyst"). Revisit only when a machine→map reverse table lands
+	 * for other reasons.
 	 */
 	@Override
 	public mezz.jei.api.gui.drawable.IDrawable getIcon() {
