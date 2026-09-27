@@ -19,6 +19,12 @@
  * 731 stickLong split + 201 regular gem + 109x3 stick tiers), the universe pins
  * against the live conditioned prefix faces, the :156-163 amount pins, and the
  * three-grid identity faces (["sf"," X"] / ["s "," X"] / ["s ","fX"]).
+ *
+ * <p>task p37-craftfrom-foil extension (the coordinator fine-wire-batch ruling):
+ * the upstream foil-family OUTPUT face is the EMPTY set — foil is only the :168
+ * INPUT — so the batch = :168 foil2wireFine + :169 plate2wire (219 measured foil
+ * rows + 0 wire rows, the GT6RecipesWiremill seam), the single-row grid pins
+ * (["Xx"] / ["Px"]), the wire-cutter tag, and the count=1 key-omission identity.
  */
 package gregtech6.datagen;
 
@@ -321,5 +327,94 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
         assertStickGrid(generated("stick_long2stick/diamond"), "s ", " X",
                 "gt6:" + GTMaterialItems.itemIdOf(OP.stick, material("Diamond")), 2,
                 "gt6:" + GTMaterialItems.itemIdOf(OP.stickLong, material("Diamond")), false);
+    }
+
+    // ------------------------------------------------------------------
+    // task p37-craftfrom-foil — the fine-wire batch (the coordinator ruling:
+    // the upstream foil-family OUTPUT face is the EMPTY set — foil is only
+    // the :168 INPUT — so the batch = :168 foil2wireFine + :169 plate2wire,
+    // the two fine-wire/wire-domain rows of the residual pool)
+    // ------------------------------------------------------------------
+
+    private static Set<String> fineWireMaterialsOf(String aFormKey) {
+        Set<String> rNames = new HashSet<>();
+        for (GT6CraftingRecipes.FineWireCraftFromMaterialRow tRow : GT6CraftingRecipes.fineWireCraftFromMaterialRows()) {
+            if (tRow.aForm().aKey().equals(aFormKey)) rNames.add(tRow.aMaterial().mNameInternal);
+        }
+        return rNames;
+    }
+
+    /** Row-count pin (the measured item truth, the ruling-A caliber): 219 foil cuts + 0 wire rows (the wireGt01 seam) = 219. */
+    @Test
+    public void theFineWireRowCountIsTheMeasuredItemTruth() {
+        assertEquals(219, GT6CraftingRecipes.fineWireCraftFromMaterialRows().size(), "219 foil cuts + 0 plate2wire rows");
+        assertEquals(219, fineWireMaterialsOf("foil2wire_fine").size(), "the :168 foil cut (the wireFine ∩ foil faces)");
+        assertEquals(0, fineWireMaterialsOf("plate2wire").size(),
+                "the :169 rows pour zero — no wireGt01 MaterialPrefixItems (the GT6RecipesWiremill seam; rows unlock with that item family)");
+    }
+
+    /** Universe SET pin: every form's rows == the live CONDITIONED output face ∩ the input face. */
+    @Test
+    public void theFineWireUniversesAreTheLivePrefixFaces() {
+        for (GT6CraftingRecipes.FineWireCraftFromForm tForm : GT6CraftingRecipes.fineWireCraftFromForms()) {
+            Set<String> tExpected = new HashSet<>(conditionedFace(tForm.aOutput()));
+            tExpected.retainAll(conditionedFace(tForm.aInput()));
+            assertEquals(tExpected, fineWireMaterialsOf(tForm.aKey()),
+                    "the universe == the conditioned " + tForm.aOutput().mNameInternal + " ∩ " + tForm.aInput().mNameInternal + " faces");
+        }
+    }
+
+    /** Amount pin: the :168-169 output amounts verbatim (both 1). */
+    @Test
+    public void theFineWireAmountsAreTheUpstreamVerbatim() {
+        for (GT6CraftingRecipes.FineWireCraftFromMaterialRow tRow : GT6CraftingRecipes.fineWireCraftFromMaterialRows()) {
+            assertEquals(switch (tRow.aForm().aKey()) {
+                case "foil2wire_fine" -> 1; // :168
+                case "plate2wire" -> 1; // :169
+                default -> throw new IllegalArgumentException("unknown form: " + tRow.aForm().aKey());
+            }, tRow.aForm().aCount(), "the output amount: " + tRow.aForm().aKey());
+        }
+    }
+
+    /** Row-shape pin: the upstream grids verbatim — :168 {"Xx"} (foil2wireFine), :169 {"Px"} (plate2wire, P = the null-SpecialPrefix plate default :535). */
+    @Test
+    public void theFineWireFormsCarryTheUpstreamGrids() {
+        assertEquals("Xx", fineWireFormRow("foil2wire_fine"), "the :168 grid (X = foil, x = wire cutter CR.java:359)");
+        assertEquals("Px", fineWireFormRow("plate2wire"), "the :169 grid (P = plate, x = wire cutter)");
+    }
+
+    private static String fineWireFormRow(String aKey) {
+        for (GT6CraftingRecipes.FineWireCraftFromForm tForm : GT6CraftingRecipes.fineWireCraftFromForms()) {
+            if (tForm.aKey().equals(aKey)) return tForm.aRow();
+        }
+        throw new IllegalArgumentException("unknown form: " + aKey);
+    }
+
+    /** The row id — the craftFromRowId form over the gt6 namespace (the shared id law). */
+    @Test
+    public void theFineWireRowIdIsTheFormKeyPlusMaterialLeaf() {
+        assertEquals("gt6:foil2wire_fine/aluminium", GT6CraftingRecipes.craftFromRowId("foil2wire_fine", "aluminium").toString());
+        assertEquals("gt6:plate2wire/iron", GT6CraftingRecipes.craftFromRowId("plate2wire", "iron").toString());
+    }
+
+    /** The single-row grid identity: ["Xx"], 'x' = the wire-cutter tag, the input letter = the input item, count=1 rides the vanilla key omission. */
+    private static void assertFineWireGrid(JsonObject aRow, String aExpectedResultItem, String aExpectedInputItem, String aInputLetter) {
+        assertEquals(1, aRow.getAsJsonArray("pattern").size(), "the single-row frame (upstream mRecipes[i].length == 1)");
+        assertEquals(aInputLetter + "x", aRow.getAsJsonArray("pattern").get(0).getAsString(), "the cutter row");
+        assertTrue(aRow.getAsJsonObject("key").get("x").getAsJsonObject().get("tag").getAsString().endsWith("tools/wire_cutter"),
+                "'x' = the wire-cutter tool tag (upstream CR.java:359)");
+        assertEquals(aExpectedInputItem, aRow.getAsJsonObject("key").get(aInputLetter).getAsJsonObject().get("item").getAsString(),
+                "the input letter = the same-material input item");
+        assertEquals(aExpectedResultItem, aRow.getAsJsonObject("result").get("item").getAsString(), "the result item");
+        int tCount = aRow.getAsJsonObject("result").has("count") ? aRow.getAsJsonObject("result").get("count").getAsInt() : 1;
+        assertEquals(1, tCount, "the result count (the vanilla count=1 key omission)");
+    }
+
+    /** Identity face: the :168 foil-cut row for Aluminium (["Xx"], the wire-cutter arm). */
+    @Test
+    public void theAluminiumFoilCutRowCarriesTheUpstreamGrid() throws Exception {
+        assertFineWireGrid(generated("foil2wire_fine/aluminium"),
+                "gt6:" + GTMaterialItems.itemIdOf(OP.wireFine, material("Aluminium")),
+                "gt6:" + GTMaterialItems.itemIdOf(OP.foil, material("Aluminium")), "X");
     }
 }

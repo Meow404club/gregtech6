@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:foil_plutonium241"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "Xx"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:wire_fine_plutonium241"
+  }
+}

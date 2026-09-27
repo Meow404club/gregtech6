@@ -383,6 +383,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (StickCraftFromRow tRow : stickCraftFromDatagenRows()) {
 			stickCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
 		}
+		// task p37-craftfrom-foil — the fine-wire CraftFrom batch (Loader_OreProcessing.java:168-169)
+		for (FineWireCraftFromRow tRow : fineWireCraftFromDatagenRows()) {
+			fineWireCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
+		}
 		// task debt-stairs-wall-vanilla-recipes — the upstream BlockStones vanilla-degradation rows
 		for (PartFamilyRecipeRow tRow : stairsFromRocksBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
@@ -565,6 +569,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task p37-craftfrom-stick — the stick/stickLong CraftFrom family (Loader_OreProcessing.java:156-163)
 		for (StickCraftFromRow tRow : stickCraftFromDatagenRows()) {
 			stickCraftFromBuilder(tRow).save(aOutput, tRow.aId());
+		}
+		// task p37-craftfrom-foil — the fine-wire CraftFrom batch (Loader_OreProcessing.java:168-169)
+		for (FineWireCraftFromRow tRow : fineWireCraftFromDatagenRows()) {
+			fineWireCraftFromBuilder(tRow).save(aOutput, tRow.aId());
 		}
 		// task debt-stairs-wall-vanilla-recipes — the upstream BlockStones vanilla-degradation rows
 		for (PartFamilyRecipeRow tRow : stairsFromRocksBuilders()) {
@@ -4141,6 +4149,94 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.unlockedBy("has_input", has(aRow.aInput()));
 		if (aRow.aTop().indexOf('f') >= 0 || aRow.aBottom().indexOf('f') >= 0) rBuilder.define('f', GT6ItemTags.TOOLS_FILE);
 		return rBuilder;
+	}
+
+	// -----------------------------------------------------------------------
+	// The fine-wire CraftFrom band (task p37-craftfrom-foil — the coordinator
+	// fine-wire-batch ruling: the "foil family" upstream OUTPUT face is the
+	// EMPTY set — foil never appears as a CraftFrom output in
+	// Loader_OreProcessing.java, its production rides the AnvilBendSmall/
+	// ClusterMill/Extruder machine domain, Loader_Recipes_Handlers.java:213/
+	// :309-311/:768/:801 — so this batch merges the two fine-wire/wire-domain
+	// rows of the residual pool):
+	//  - :168 foil2wireFine — {"Xx"}: wire cutter + foil → wireFine 1;
+	//  - :169 plate2wire — {"Px"}: wire cutter + plate → wireGt01 1 (the X
+	//    slot rides the null-SpecialPrefix plate default, :535).
+	// The same digLadder band translation as the plateGem/stick families above
+	// (the listener walk, the And(ANTIMATTER.NOT, COATED.NOT) fold, the
+	// config-gate drop, the item-truth intersection). Tool letter 'x' = the
+	// wire-cutter tag (upstream CR.java:359). THE :169 ROWS POUR ZERO today —
+	// the wireGt01 output face lives in the GTWires block domain (one
+	// BlockItem per band block, the material rides the blockstate — no
+	// per-material MaterialPrefixItems), the GT6RecipesWiremill seam verbatim;
+	// the form stays in the table so the rows unlock with that item family.
+	// -----------------------------------------------------------------------
+
+	/** One upstream row form: the id key + the output prefix + count + the input prefix + the single pattern row (Loader_OreProcessing.java:168-169, the grid and amount verbatim). Package-private for the pin test. */
+	record FineWireCraftFromForm(String aKey, gregapi.oredict.OreDictPrefix aOutput, int aCount, gregapi.oredict.OreDictPrefix aInput, String aRow) {}
+
+	/**
+	 * The two row forms of the fine-wire batch (Loader_OreProcessing.java:168-169). A method,
+	 * not a field — the OP fields live only after OP.init. The keys are the upstream category
+	 * names snake-cased ("foil2wireFine" → foil2wire_fine, "plate2wire" already lowercase),
+	 * and the universe rides the same item-truth walk — no human subsets.
+	 */
+	static List<FineWireCraftFromForm> fineWireCraftFromForms() {
+		return List.of(
+				new FineWireCraftFromForm("foil2wire_fine", gregapi.data.OP.wireFine, 1, gregapi.data.OP.foil, "Xx"),
+				new FineWireCraftFromForm("plate2wire", gregapi.data.OP.wireGt01, 1, gregapi.data.OP.plate, "Px"));
+	}
+
+	/** The material face of one fine-wire-band row (the test-visible walk unit). */
+	record FineWireCraftFromMaterialRow(FineWireCraftFromForm aForm, gregapi.oredict.OreDictMaterial aMaterial) {}
+
+	/**
+	 * The material face of the fine-wire band: per form, the materials whose INPUT and OUTPUT
+	 * items both exist (the registrationOrder intersection, in registration order) minus the
+	 * COATED/ANTIMATTER condition rows — the stick walk verbatim.
+	 */
+	static List<FineWireCraftFromMaterialRow> fineWireCraftFromMaterialRows() {
+		List<FineWireCraftFromMaterialRow> rRows = new ArrayList<>();
+		for (FineWireCraftFromForm tForm : fineWireCraftFromForms()) {
+			java.util.Set<OreDictMaterial> tInputs = new java.util.HashSet<>();
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				if (tPair.prefix() == tForm.aInput()) tInputs.add(tPair.material());
+			}
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				OreDictMaterial tMaterial = tPair.material();
+				if (tPair.prefix() != tForm.aOutput() || !tInputs.contains(tMaterial)) continue; // the item-truth intersection
+				if (tMaterial.contains(gregapi.data.TD.Compounds.COATED)) continue; // COATED.NOT
+				if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT
+				rRows.add(new FineWireCraftFromMaterialRow(tForm, tMaterial));
+			}
+		}
+		return rRows;
+	}
+
+	/** The datagen row: the id + the output item + count + the input item + the pattern row. */
+	private record FineWireCraftFromRow(ResourceLocation aId, net.minecraft.world.item.Item aResult, int aCount, net.minecraft.world.item.Item aInput, String aRow) {}
+
+	/** The datagen face: the material walk resolved onto the live items (the silent-skip guard rides itemOrNull). */
+	private List<FineWireCraftFromRow> fineWireCraftFromDatagenRows() {
+		List<FineWireCraftFromRow> rRows = new ArrayList<>();
+		for (FineWireCraftFromMaterialRow tMaterialRow : fineWireCraftFromMaterialRows()) {
+			String tSnake = GTMaterialItems.snakeCase(tMaterialRow.aMaterial().mNameInternal);
+			net.minecraft.world.item.Item tResult = itemOrNull(tMaterialRow.aForm().aOutput(), tMaterialRow.aMaterial());
+			net.minecraft.world.item.Item tInput = itemOrNull(tMaterialRow.aForm().aInput(), tMaterialRow.aMaterial());
+			if (tResult == null || tInput == null) continue; // the item-truth guard (belt and braces over the walk)
+			rRows.add(new FineWireCraftFromRow(craftFromRowId(tMaterialRow.aForm().aKey(), tSnake), tResult, tMaterialRow.aForm().aCount(), tInput,
+					tMaterialRow.aForm().aRow()));
+		}
+		return rRows;
+	}
+
+	/** One row's builder — the single-row grid, the input letter = the row's leading char ('X'/:168, 'P'/:169), 'x' = the wire-cutter tag. */
+	private ShapedRecipeBuilder fineWireCraftFromBuilder(FineWireCraftFromRow aRow) {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, aRow.aResult(), aRow.aCount())
+				.pattern(aRow.aRow())
+				.define(aRow.aRow().charAt(0), aRow.aInput())
+				.define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
+				.unlockedBy("has_input", has(aRow.aInput()));
 	}
 
 	// -----------------------------------------------------------------------
