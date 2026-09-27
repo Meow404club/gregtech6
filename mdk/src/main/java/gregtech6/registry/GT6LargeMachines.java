@@ -14,9 +14,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -43,12 +46,15 @@ import net.minecraftforge.registries.RegistryObject;
 import gregtech6.block.GTComposedNameItem;
 import gregtech6.block.multiblock.GTMultiBlockControllerBlock;
 import gregtech6.fluid.FluidTankGT;
+import gregtech6.gui.machines.GT6MuiMachine;
+import gregtech6.gui.machines.GTBasicMachineMUI;
 import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.multiblock.GTMultiBlockStructureChecker;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMapFurnace;
 import gregtech6.recipes.RecipeMap;
+import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.multiblocks.ITileEntityMultiBlockController;
 import gregtech6.tileentity.multiblocks.MultiBlockFluidHandler;
 import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
@@ -86,9 +92,11 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
  * 5000) ride {@code units(minEnergy * duration, mEfficiency, 10000, T)} — 5000 = 2x the
  * required progress = half speed (the W1 units() ruling).
  *
- * <p><b>GUI face:</b> none — the machines run headless (the W2 rows' menu-null precedent;
- * GTMultiBlockControllerBlock has no use-face, so no MenuType is registered and the MUI
- * machine-GUI wave owns the eventual surface).
+ * <p><b>GUI face:</b> the MUI machine chain (issue r4-24a, the p33 tower template): the
+ * controller block's use arm dispatches {@link GT6MuiMachine#tryOpen} and the BE's
+ * {@code buildUI} delegates to the shared {@link GTBasicMachineMUI} panel — background =
+ * {@code recipes().mGUIPath} (the upstream MultiTileEntityBasicMachine.java:114 chain,
+ * the #3 fix-wave PNGs), zero MenuType (the P26 ruling).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6LargeMachines {
@@ -506,12 +514,14 @@ public final class GT6LargeMachines {
 	// the controller block
 	// -------------------------------------------------------------------------
 
-	/**
-	 * The large-machine controller block — the concrete
-	 * {@link GTMultiBlockControllerBlock} over the shared BET; the row rides the instance
-	 * (the BoilerTankBlock carrier read). No use-face: the machines run headless (the
-	 * menu-null precedent — the class doc).
-	 */
+/**
+ * The large-machine controller block — the concrete
+ * {@link GTMultiBlockControllerBlock} over the shared BET; the row rides the instance
+ * (the BoilerTankBlock carrier read). The use arm (issue r4-24a) opens the MUI panel
+ * through {@link GT6MuiMachine#tryOpen} — the GTDistillationTowerBlock template verbatim
+ * with the BE type swapped (no MenuType, the P26 ruling; the upstream openGUI is
+ * unconditional, so is this).
+ */
 	public static final class GTLargeMachineBlock extends GTMultiBlockControllerBlock {
 
 		private final LargeMachineRow mRow;
@@ -541,11 +551,30 @@ public final class GT6LargeMachines {
 			return Component.translatable(getDescriptionId());
 		}
 
-		@Override
-		protected BlockEntityType<? extends gregtech6.tileentity.TileEntityBase03TicksAndSync> tickerType() {
-			return LARGE_MACHINE_BE.get();
-		}
+	@Override
+	protected BlockEntityType<? extends gregtech6.tileentity.TileEntityBase03TicksAndSync> tickerType() {
+		return LARGE_MACHINE_BE.get();
 	}
+
+	@Override
+	//? if forge {
+	public InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, InteractionHand aHand, net.minecraft.world.phys.BlockHitResult aHit) {
+	//?} else {
+	/*public InteractionResult useWithoutItem(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, net.minecraft.world.phys.BlockHitResult aHit) {
+	//21.1: BlockBehaviour.use folded into useWithoutItem — the InteractionHand param dropped
+	//(the GTDistillationTowerBlock fork shape).
+	InteractionHand aHand = InteractionHand.MAIN_HAND;
+	*///?}
+		// the MUI open chain — the BE implements GT6MuiMachine, the factory's own network
+		// carries the open (the tower template, GT6Distillation.java:225-231)
+		BlockEntity tBlockEntity = aLevel.getBlockEntity(aPos);
+		if (tBlockEntity instanceof GTLargeMachineBlockEntity tMachine && aPlayer instanceof net.minecraft.server.level.ServerPlayer tServerPlayer) {
+			GT6MuiMachine.tryOpen(tServerPlayer, tMachine);
+			return InteractionResult.CONSUME; // upstream openGUI
+		}
+		return InteractionResult.CONSUME;
+	}
+}
 
 	// -------------------------------------------------------------------------
 	// the controller block entity
@@ -574,7 +603,7 @@ public final class GT6LargeMachines {
 	 *     the shared checker (the Coke Oven shape), {@code patternWalkFacing() == 0}.</li>
 	 * </ul>
 	 */
-	public static final class GTLargeMachineBlockEntity extends TileEntityBase10MultiBlockMachine {
+	public static final class GTLargeMachineBlockEntity extends TileEntityBase10MultiBlockMachine implements GT6MuiMachine {
 
 		/** The in-repo plain key of the input tank (the base's "output_tank" mirror). */
 		public static final String NBT_INPUT_TANK = "input_tank";
@@ -608,21 +637,31 @@ public final class GT6LargeMachines {
 			this(LARGE_MACHINE_BE.get(), aPos, aState, aState.getBlock() instanceof GTLargeMachineBlock tBlock ? tBlock.row() : null);
 		}
 
-		/** The test seam: offline fixtures build their own BET and inject the row (the TileEntityCokeOven precedent). */
-		public GTLargeMachineBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState, @Nullable LargeMachineRow aRow) {
-			super(aType, aPos, aState);
-			mRow = aRow;
-			if (aRow != null) {
-				applyEnergyRowSpec(aRow.energySpec());
-				mEnergyTypeAccepted = aRow.energyType();
-				mNoConstantEnergy = aRow.noConstantPower();
-				mEfficiency = aRow.efficiency();
-				// none of the twelve Loader :1229-1240 rows carries NBT_NEEDS_IGNITION — the
-				// base TRUE default is the Coke-Oven-only fold (its :1193 row wrote the key T),
-				// the large machines start on their own
-				mRequiresIgnition = false;
+	/** The test seam: offline fixtures build their own BET and inject the row (the TileEntityCokeOven precedent). */
+	public GTLargeMachineBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState, @Nullable LargeMachineRow aRow) {
+		super(aType, aPos, aState);
+		mRow = aRow;
+		if (aRow != null) {
+			applyEnergyRowSpec(aRow.energySpec());
+			mEnergyTypeAccepted = aRow.energyType();
+			mNoConstantEnergy = aRow.noConstantPower();
+			mEfficiency = aRow.efficiency();
+			// none of the twelve Loader :1229-1240 rows carries NBT_NEEDS_IGNITION — the
+			// base TRUE default is the Coke-Oven-only fold (its :1193 row wrote the key T),
+			// the large machines start on their own
+			mRequiresIgnition = false;
+			// the map-sized inventory (issue r4-24a, upstream getDefaultInventory :524-530):
+			// the base INVENTORY_SIZE 11 is the Coke-Oven 1+9 shape — the Crusher/Shredder
+			// 1+12 maps overflow it (addStackToSlot :468 wraps past index 10, and the GUI
+			// output grid binds index 11+ = a live render IndexOutOfBounds). max()-gated so
+			// every ≤11 map keeps the base handler instance byte-identical.
+			RecipeMap tMap = aRow.recipes().get();
+			if (tMap.mInputItemsCount + tMap.mOutputItemsCount > INVENTORY_SIZE) {
+				mInventory = new GTItemStackHandler(tMap.mInputItemsCount + tMap.mOutputItemsCount, this::onInventoryChanged);
+				setInventory(mInventory); // rebind the root capability LazyOptional (TileEntityBase01Root.java:430)
 			}
 		}
+	}
 
 		/** The row accessor — null on mis-registered offline fixtures (they inject the config instead). */
 		private static String aRecipeOut(Recipe aR) { return aR.mOutputs.length + "x" + (aR.mOutputs[0] == null ? "null" : aR.mOutputs[0].getCount()); }
@@ -637,16 +676,42 @@ public final class GT6LargeMachines {
 			return "multiblock_large_machine";
 		}
 
-		/** The lazy row-keyed recipe map (the base's COKE_OVEN default overridden). */
-		@Override
-		public RecipeMap recipes() {
-			RecipeMap tMap = mRecipes;
-			if (tMap == null) {
-				tMap = mRow != null ? mRow.recipes().get() : GT6RecipeMaps.COKE_OVEN;
-				mRecipes = tMap;
-			}
-			return tMap;
+	/** The lazy row-keyed recipe map (the base's COKE_OVEN default overridden). */
+	@Override
+	public RecipeMap recipes() {
+		RecipeMap tMap = mRecipes;
+		if (tMap == null) {
+			tMap = mRow != null ? mRow.recipes().get() : GT6RecipeMaps.COKE_OVEN;
+			mRecipes = tMap;
 		}
+		return tMap;
+	}
+
+	// ---------------------------------------------------------------------
+	// GUI (issue r4-24a) — the shared MUI machine panel; the BE IS the
+	// GTBasicMachineMenu.Host (the base implements it directly, the
+	// GTBasicMachineMenu.java:75 form), so the delegation passes this
+	// ---------------------------------------------------------------------
+
+	/**
+	 * The MUI panel build (the IUIHolder.buildUI :21-44 contract) — the shared
+	 * {@link GTBasicMachineMUI} factory over {@code this}: background = recipes().mGUIPath
+	 * (the upstream MultiTileEntityBasicMachine.java:114 chain), slot shape = the row map,
+	 * no per-family panel (the tower's own factory is the single-tower special case).
+	 */
+	@Override
+	public brachy.modularui.screen.ModularPanel<?> buildUI(brachy.modularui.factory.PosGuiData aData,
+			brachy.modularui.value.sync.PanelSyncManager aSyncManager, brachy.modularui.screen.UISettings aSettings) {
+		return GTBasicMachineMUI.buildPanel(this, aSyncManager);
+	}
+
+	/** The :267 display bank — the live input tank (the p34 seat face; the same array the fluid capability fills, LargeMachineFluidHandler.java:1048). */
+	@Override
+	public FluidTankGT[] getFluidInputTanks() { return mTanksInput; }
+
+	/** The :268 display bank — the live output tank (the base's default single tank). */
+	@Override
+	public FluidTankGT[] getFluidOutputTanks() { return mTanksOutput; }
 
 		// ---------------------------------------------------------------------
 		// the tick chain — the :455 TU gate restored (see the class doc)
