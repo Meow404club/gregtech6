@@ -2718,7 +2718,11 @@ public final class GT6BlockStates extends BlockStateProvider {
         // addParts() new-form walk (the anyPartBlock lookup), where it emits the full
         // design 0..7 ladder like its ten siblings; the former single-design
         // partModel(metalwall, 0) special case is retired.
-        addLightningRodPart("niobium_titanium_coil", "block/lightningrod/coil");
+        // the Niobium-Titanium Coil (task debt-coil-design): the row IS the :1168 coil
+        // row (texture "coil", NBT_DESIGNS 1 — the designs 0/1 range of all six siblings
+        // :1167-1172) — the same anyPartBlock walk carries it over the two-step design
+        // ladder; the former cube_all borrow (lightningrod/coil) simpleBlock special
+        // case is retired (the family two-layer form replaces it).
         addLightningRodPart("lightning_rod", "block/lightningrod/rod");
     }
 
@@ -3093,7 +3097,9 @@ public final class GT6BlockStates extends BlockStateProvider {
         for (var tRow : gregtech6.registry.GTMultiBlocks.NEW_PART_ROWS) {
             // anyPartBlock resolves every registration map — machine_wall_tungsten rides
             // the Lightning Rod family's registration (task debt-tungsten-wall-designs:
-            // the row now walks HERE with its full design ladder like its siblings)
+            // the row now walks HERE with its full design ladder like its siblings), and
+            // since task debt-coil-design so does niobium_titanium_coil (the :1168 row,
+            // the designs 0/1 ladder like its five coil siblings)
             Block tBlock = gregtech6.registry.GTMultiBlocks.anyPartBlock(tRow.path());
             if (tBlock == null) continue;
             if (tRow.designs() > 0) {

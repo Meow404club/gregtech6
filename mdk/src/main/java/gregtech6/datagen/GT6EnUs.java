@@ -1573,7 +1573,11 @@ public class GT6EnUs extends LanguageProvider {
         // every other new row is ATOMIC (the Loader :1138-1189 name column verbatim)
         add(gregtech6.registry.GTMultiBlocks.PartRow.METAL_WALL_DISPLAY_KEY, "%s Wall");
         for (gregtech6.registry.GTMultiBlocks.PartRow tRow : gregtech6.registry.GTMultiBlocks.NEW_PART_ROWS) {
-            if (!tRow.metalWall()) {
+            // the reused rows SKIP (the key is already added above) — niobium_titanium_coil
+            // rides the Lightning Rod family's registration (task debt-coil-design, the
+            // machine_wall_tungsten metalWall() skip shape)
+            if (!tRow.metalWall()
+                    && gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.containsKey(tRow.path())) {
                 add("block.gt6." + tRow.path(), tRow.display());
             }
         }

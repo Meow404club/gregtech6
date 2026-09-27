@@ -1245,7 +1245,11 @@ public class GT6ZhCn extends LanguageProvider {
 		// over the existing row words + the atomic names (the dump mte words, verbatim)
 		addDirect(gregtech6.registry.GTMultiBlocks.PartRow.METAL_WALL_DISPLAY_KEY);
 		for (gregtech6.registry.GTMultiBlocks.PartRow tRow : gregtech6.registry.GTMultiBlocks.NEW_PART_ROWS) {
-			if (!tRow.metalWall()) {
+			// the reused rows SKIP (the key is already addDirect'ed above) —
+			// niobium_titanium_coil rides the Lightning Rod family's registration
+			// (task debt-coil-design, the machine_wall_tungsten metalWall() skip shape)
+			if (!tRow.metalWall()
+					&& gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.containsKey(tRow.path())) {
 				addDirect("block.gt6." + tRow.path());
 			}
 		}
