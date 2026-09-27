@@ -34,7 +34,7 @@ import net.minecraftforge.registries.RegistryObject;
  *     (MultiItemTechnological.java:819-822) is its direct consumer — the consumption
  *     chain the ruling names; the He line's own laser-machine faces stay pooled.</li>
  * </ul>
- * The other five gases (Ne/Ar/Kr/Xe/HeNe/CO, :388-393) stay out — no consumer rows in
+ * The other six gases (Ne/Ar/Kr/Xe/HeNe/CO, :388-393) stay out — no consumer rows in
  * this port (the fill-row scope is the CO2 line + the exempted He line).
  *
  * <p>The creative-tab face joins MACHINES_TAB (task p38-tabfix-b-energy,
