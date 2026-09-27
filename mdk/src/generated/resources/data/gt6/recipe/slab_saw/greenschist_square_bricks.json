@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "X": {
+      "item": "gt6:greenschist_square_bricks"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "sX"
+  ],
+  "result": {
+    "count": 2,
+    "id": "gt6:greenschist_square_bricks_slab"
+  }
+}

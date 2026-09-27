@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "gt6:block/stones/prismarine_light/bricks_reinforced_slab"
+    },
+    "type=double": {
+      "model": "gt6:block/stones/prismarine_light/bricks_reinforced"
+    },
+    "type=top": {
+      "model": "gt6:block/stones/prismarine_light/bricks_reinforced_slab_top"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "gt6:block/stones/greenschist/cobble_slab"
+    },
+    "type=double": {
+      "model": "gt6:block/stones/greenschist/cobble"
+    },
+    "type=top": {
+      "model": "gt6:block/stones/greenschist/cobble_slab_top"
+    }
+  }
+}

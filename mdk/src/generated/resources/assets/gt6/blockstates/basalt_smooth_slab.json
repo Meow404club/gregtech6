@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "gt6:block/stones/basalt/smooth_slab"
+    },
+    "type=double": {
+      "model": "gt6:block/stones/basalt/smooth"
+    },
+    "type=top": {
+      "model": "gt6:block/stones/basalt/smooth_slab_top"
+    }
+  }
+}

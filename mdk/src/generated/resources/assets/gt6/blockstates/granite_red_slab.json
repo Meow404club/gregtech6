@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "gt6:block/stones/granite_red/stone_slab"
+    },
+    "type=double": {
+      "model": "gt6:block/stones/granite_red/stone"
+    },
+    "type=top": {
+      "model": "gt6:block/stones/granite_red/stone_slab_top"
+    }
+  }
+}

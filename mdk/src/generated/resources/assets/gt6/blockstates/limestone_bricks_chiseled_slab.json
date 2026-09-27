@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "gt6:block/stones/limestone/bricks_chiseled_slab"
+    },
+    "type=double": {
+      "model": "gt6:block/stones/limestone/bricks_chiseled"
+    },
+    "type=top": {
+      "model": "gt6:block/stones/limestone/bricks_chiseled_slab_top"
+    }
+  }
+}

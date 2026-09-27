@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "gt6:block/stones/prismarine_dark/cobble",
+    "side": "gt6:block/stones/prismarine_dark/cobble",
+    "top": "gt6:block/stones/prismarine_dark/cobble"
+  }
+}

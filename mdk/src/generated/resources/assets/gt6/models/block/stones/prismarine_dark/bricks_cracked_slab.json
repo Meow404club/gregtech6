@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "gt6:block/stones/prismarine_dark/bricks_cracked",
+    "side": "gt6:block/stones/prismarine_dark/bricks_cracked",
+    "top": "gt6:block/stones/prismarine_dark/bricks_cracked"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "gt6:block/stones/granite/cobble_slab"
+    },
+    "type=double": {
+      "model": "gt6:block/stones/granite/cobble"
+    },
+    "type=top": {
+      "model": "gt6:block/stones/granite/cobble_slab_top"
+    }
+  }
+}

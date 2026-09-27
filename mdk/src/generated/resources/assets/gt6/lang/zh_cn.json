@@ -2979,6 +2979,7 @@
   "gt6.spraycan.decolor": "可为物品除色",
   "gt6.spraycan.paint": "可将物品喷成%s",
   "gt6.spraycan.remaining": "剩余使用次数：%s.%s",
+  "gt6.stone.slab": "%s半砖",
   "gt6.stone.variant.bricks": "%s砖块",
   "gt6.stone.variant.bricks_chiseled": "錾制%s",
   "gt6.stone.variant.bricks_cracked": "裂纹%s砖块",

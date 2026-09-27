@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "gt6:block/stones/prismarine_light/windmill_tiles_a",
+    "side": "gt6:block/stones/prismarine_light/windmill_tiles_a",
+    "top": "gt6:block/stones/prismarine_light/windmill_tiles_a"
+  }
+}

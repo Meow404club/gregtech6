@@ -2979,6 +2979,7 @@
   "gt6.spraycan.decolor": "Can Decolor things",
   "gt6.spraycan.paint": "Can Color things in %s",
   "gt6.spraycan.remaining": "Remaining Uses: %s.%s",
+  "gt6.stone.slab": "%s Slab",
   "gt6.stone.variant.bricks": "%s Bricks",
   "gt6.stone.variant.bricks_chiseled": "Chiseled %s",
   "gt6.stone.variant.bricks_cracked": "Cracked %s Bricks",

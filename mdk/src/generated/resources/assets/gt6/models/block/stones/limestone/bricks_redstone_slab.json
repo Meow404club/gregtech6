@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "gt6:block/stones/limestone/bricks_redstone",
+    "side": "gt6:block/stones/limestone/bricks_redstone",
+    "top": "gt6:block/stones/limestone/bricks_redstone"
+  }
+}

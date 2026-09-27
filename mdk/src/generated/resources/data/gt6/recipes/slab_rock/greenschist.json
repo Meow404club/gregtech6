@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "X": {
+      "item": "gt6:rock_gt_greenschist"
+    }
+  },
+  "pattern": [
+    "  ",
+    "XX"
+  ],
+  "result": {
+    "item": "gt6:greenschist_cobble_slab"
+  },
+  "show_notification": true
+}

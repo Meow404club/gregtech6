@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "gt6:block/stones/slate/cobble_mossy",
+    "side": "gt6:block/stones/slate/cobble_mossy",
+    "top": "gt6:block/stones/slate/cobble_mossy"
+  }
+}

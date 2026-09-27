@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "gt6:block/stones/kimberlite/cobble_slab"
+    },
+    "type=double": {
+      "model": "gt6:block/stones/kimberlite/cobble"
+    },
+    "type=top": {
+      "model": "gt6:block/stones/kimberlite/cobble_slab_top"
+    }
+  }
+}

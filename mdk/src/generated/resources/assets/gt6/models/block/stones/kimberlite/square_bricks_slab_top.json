@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "gt6:block/stones/kimberlite/square_bricks",
+    "side": "gt6:block/stones/kimberlite/square_bricks",
+    "top": "gt6:block/stones/kimberlite/square_bricks"
+  }
+}
