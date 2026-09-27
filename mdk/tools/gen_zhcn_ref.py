@@ -1414,13 +1414,13 @@ FLUID_BACKFILL = {
     "fluid.gt6.diesel": "柴油",
     "fluid.gt6.distilled_water": "蒸馏水",
     "fluid.gt6.ethanol": "乙醇",
-    "fluid.gt6.fuel": "燃料",
+    "fluid.gt6.fuel": "燃油",           # task p37-fluids-naming value fix: the dump face verbatim (S:fluid.fuel=燃油 tmp/gregtech.lang:305); the en local rides the :78 "Fuel Oil" literal same card
     "fluid.gt6.hot_water": "热水",
     "fluid.gt6.jetfuel": "喷气燃料",
     "fluid.gt6.kerosine": "煤油",
     "fluid.gt6.maplesap": "枫树汁液",      # task p27-lang-fix-batch2 P2 (ledger §3): sap is the sap, not syrup
     "fluid.gt6.mnwtr": "矿泉水",           # en semantics: Mineral Water (task p27-lang-fix-batch2 P2: the community face)
-    "fluid.gt6.nitrofuel": "硝基燃料",
+    "fluid.gt6.nitrofuel": "硝基柴油",     # task p37-fluids-naming value fix: the dump face verbatim (S:fluid.nitrofuel=硝基柴油 :657); the en local rides the :76 "Nitro Fuel" literal same card
     "fluid.gt6.petrol": "汽油",
     "fluid.gt6.reedwater": "芦苇水",
     "fluid.gt6.sap": "树液",
@@ -2524,7 +2524,49 @@ ROW_MISC_BACKFILL = {
     'gt6.surface.rock': '%s地表岩',
     'itemGroup.gt6.bee': '蜜蜂',
 }
-for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL, MOLD_CRUCIBLE_GAP_BACKFILL, ARMOR_BACKFILL, BUMBLE_BACKFILL, POTION_DRINK_BACKFILL, FOOD_FLUID_BACKFILL, LEGACY_ITEM_BACKFILL, LEGACY_BLOCK_BACKFILL, ROW_MISC_BACKFILL):
+
+# ---- the naming-parity census-gap fluids (34, task p37-fluids-naming): dump faces
+# VERBATIM with line anchors — every row of the upstream Loader_Fluids.java walk the
+# census found port-absent (state research.p37-fluids-naming-census). Keys are the port
+# snake/suffix ids (GTFluids NAMING_FLUID_SPECS — "molten hsla" folds its space,
+# molten.X turns into the X_molten suffix form, "UUAmplifier" lowercases).
+NAMING_FLUID_BACKFILL = {
+    "fluid.gt6.netherair": "下界空气",              # dump S:fluid.netherair tmp/gregtech.lang:652
+    "fluid.gt6.enderair": "末地空气",               # S:fluid.enderair :281
+    "fluid.gt6.uuamplifier": "UU增殖液",            # S:fluid.uuamplifier :905
+    "fluid.gt6.ic2uumatter": "UU物质",              # S:fluid.ic2uumatter :366
+    "fluid.gt6.biomass": "生物质",                  # S:fluid.biomass :98
+    "fluid.gt6.mcguffium": "乌有岩(迷)",            # S:fluid.mcguffium :405
+    "fluid.gt6.fieryblood": "炙热的血",             # S:fluid.fieryblood :296
+    "fluid.gt6.fierytears": "炙热之泪",             # S:fluid.fierytears :297
+    "fluid.gt6.squidink": "墨水",                   # S:fluid.squidink :869
+    "fluid.gt6.indigo": "靛蓝染料",                 # S:fluid.indigo :370
+    "fluid.gt6.pyrotheum": "烈焰之炽焱",            # S:fluid.pyrotheum :827
+    "fluid.gt6.cryotheum": "极寒之凛冰",            # S:fluid.cryotheum :201
+    "fluid.gt6.petrotheum": "构造之地岩",           # S:fluid.petrotheum :679
+    "fluid.gt6.aerotheum": "和谐之空气",            # S:fluid.aerotheum :38
+    "fluid.gt6.plastic": "熔融塑料",                # S:fluid.plastic :686
+    "fluid.gt6.glass": "熔融玻璃",                  # S:fluid.glass :308
+    "fluid.gt6.molten_latex": "胶乳",               # S:fluid.molten.latex :527
+    "fluid.gt6.molten_hsla": "熔融HSLA钢",          # S:"fluid.molten hsla" :426 (quoted dump key — the space)
+    "fluid.gt6.cheese_molten": "熔融奶酪",          # S:fluid.molten.cheese :470
+    "fluid.gt6.sugar_molten": "熔融糖",             # S:fluid.molten.sugar :606
+    "fluid.gt6.rubber_molten": "熔融橡胶",          # S:fluid.molten.rubber :587
+    "fluid.gt6.wax_molten": "熔融蜡",               # S:fluid.molten.wax :637
+    "fluid.gt6.waxbee_molten": "熔融蜂蜡",          # S:fluid.molten.waxbee :639
+    "fluid.gt6.waxparaffin_molten": "熔融石蜡",     # S:fluid.molten.waxparaffin :641
+    "fluid.gt6.waxplant_molten": "熔融植物蜡",      # S:fluid.molten.waxplant :642
+    "fluid.gt6.waxrefractory_molten": "熔融耐高温蜡", # S:fluid.molten.waxrefractory :643
+    "fluid.gt6.waxmagic_molten": "熔融魔力蜂蜡",    # S:fluid.molten.waxmagic :640
+    "fluid.gt6.waxamnesic_molten": "熔融遗忘蜜蜡",  # S:fluid.molten.waxamnesic :638
+    "fluid.gt6.waxsoulful_molten": "熔融灵魂蜜蜡",  # S:fluid.molten.waxsoulful :644
+    "fluid.gt6.error": "错误流体",                  # S:fluid.error :283
+    "fluid.gt6.rainbowsap": "彩虹树汁",             # S:fluid.rainbowsap :829
+    "fluid.gt6.glue": "胶水",                       # S:fluid.glue :310
+    "fluid.gt6.mercury": "汞",                      # S:fluid.mercury :411
+    "fluid.gt6.sluicejuice": "废水",                # S:fluid.sluicejuice :858
+}
+for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL, MOLD_CRUCIBLE_GAP_BACKFILL, ARMOR_BACKFILL, BUMBLE_BACKFILL, POTION_DRINK_BACKFILL, FOOD_FLUID_BACKFILL, NAMING_FLUID_BACKFILL, LEGACY_ITEM_BACKFILL, LEGACY_BLOCK_BACKFILL, ROW_MISC_BACKFILL):
     for _key, _value in _backfill.items():
         if _key in HAND_TRANSLATIONS:
             sys.exit(f"backfill row {_key} already in the hand layer")

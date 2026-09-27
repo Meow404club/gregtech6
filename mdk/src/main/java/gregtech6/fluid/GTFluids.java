@@ -161,6 +161,23 @@ import gregtech6.registry.GTFluidPipes;
  * (the 11 Spec rows) + the comb datapack-domain rows of the same card; NO KubeJS-specific
  * seam.
  *
+ * <p><b>The naming-parity rows</b> (task p37-fluids-naming) ride the SAME
+ * {@link ChemicalFluidSpec} record and the SAME {@link #specFluid} registration body —
+ * the table-tail append AFTER the QU-matter family: the THIRTY-FOUR census-gap
+ * {@code FL.create} rows of the upstream Loader_Fluids.java walk (state
+ * research.p37-fluids-naming-census — the dimension airs, the UU pair, the theum quartet,
+ * the molten quartet, the createMolten food-material block, the error sentinel and the
+ * four drink-block leftovers; the kerosene/bioethanol/ic2biomass alias spellings stay
+ * unported per the single-name ruling). Fluid-only, no blocks, no buckets, no recipe
+ * consumer. KJS surface (the class-doc declaration the card pins): REGISTRATION face (the
+ * 34 {@link #NAMING_FLUID_SPECS} rows) + the two lang-domain faces this card owns
+ * (GT6EnUs/GT6ZhCn provider rows — the datapack-domain lang JSON the loader already
+ * reads); the upstream EXTERNAL binding rows the census also walked (mana/ender/redstone/
+ * glowstone/molten_tritanium, the 29 Tinkers-style {@code *.molten} lookups, the
+ * grccore/tropics/salt water spellings) bind fluids OTHER mods register — no such
+ * providers exist standalone, so the port declares them absent (the seam a future compat
+ * card would mount); NO KubeJS-specific seam.
+ *
  * <p>The WORLDGEN BLOCK FACE (task p31-fluid-spring): five further LiquidBlocks —
  * {@code liquid_extra_heavy_oil_block/liquid_heavy_oil_block/liquid_medium_oil_block/
  * liquid_light_oil_block/water_geothermal_block} (see {@link #SPRING_BLOCK_IDS}) — the
@@ -2627,6 +2644,8 @@ public final class GTFluids {
 		if (tFluid == null) tFluid = specSourceOrNull(aName, LUBRICANT_FLUIDS);
 		if (tFluid == null) tFluid = specSourceOrNull(aName, HONEY_FLUIDS);
 		if (tFluid == null) tFluid = specSourceOrNull(aName, BEE_ROW_FLUIDS);
+		if (tFluid == null) tFluid = specSourceOrNull(aName, QU_FLUIDS);
+		if (tFluid == null) tFluid = specSourceOrNull(aName, NAMING_FLUIDS);
 		if (tFluid == null) tFluid = aquaSourceOrNull(aName, aquaFluids());
 		if (tFluid == null) tFluid = aquaSourceOrNull(aName, simpleLiquids());
 		if (tFluid == null) tFluid = aquaSourceOrNull(aName, foodFluids());
@@ -2705,6 +2724,78 @@ public final class GTFluids {
 
 	/** The live registrations of the QU-matter family — one per spec row, in declaration order (the {@link #HOT_FLUIDS} shape). */
 	public static final List<ChemicalFluid> QU_FLUIDS = QU_FLUID_SPECS.stream().map(s -> specFluid(s, "qu fluid")).toList();
+
+	/**
+	 * The naming-parity rows (task p37-fluids-naming) — the THIRTY-FOUR further GT6-owned
+	 * {@code FL.create} rows of the upstream Loader_Fluids.java census (753 lines walked
+	 * section by section, state research.p37-fluids-naming-census) that no earlier card
+	 * carried: the two dimension airs, the UU pair, the theum quartet, the molten trio, the
+	 * createMolten food-material block, the error sentinel and the four drink-block
+	 * leftovers. Fluid-only {@link ChemicalFluidSpec} rows, the honey/bee-row append form —
+	 * no block, no bucket, no recipe consumer (the naming face this card owns). The three
+	 * upstream alias spellings kerosene(:79)/bioethanol(:103)/ic2biomass(:84) stay unported
+	 * (the kerosene single-name ruling, GTFluidsChemicalFamilyTest). Declaration order =
+	 * the upstream line order. Density = the :1128-1130 {@code (long)(1000·g)} formula over
+	 * the LIVE material table (the uumMcfg recompute chain, OreDictMaterial.java:386-410);
+	 * tints are the material RGBa where the row names one, PORT-OWNED DECLARED VALUES where
+	 * it does not (the oils precedent). The DrinkStat faces of :464/:616/:618/:619 stay the
+	 * declared p33-b2 cut (GTDrinks is outside this card's files scope).
+	 */
+	public static final List<ChemicalFluidSpec> NAMING_FLUID_SPECS = List.of(
+		// the two dimension airs (:50-51) — state-2 gases with the setDensity(0) neutral-buoyancy literal
+		new ChemicalFluidSpec("netherair" , "Nether Air" , 370,     0,  200, 0xFF9C4A4A, true ,  0), // :50 — the 370 K literal; tint declared (netherrack hue, no material row)
+		new ChemicalFluidSpec("enderair"  , "Ender Air"  , 280,     0,  200, 0xFFB4C87D, true ,  0), // :51 — the 280 K literal; tint declared (pale ender green)
+		// the UU pair (:72-73) — null displays riding the material local names, the 1-per-unit + 100 K literals
+		new ChemicalFluidSpec("uuamplifier", "UU-Amplifier", 100,  1000, 1000, 0xFFC400FF, false,  0), // :72 "UUAmplifier" — MT.UUAmplifier local (MT.java:2083, RGBa 196,0,255); the 1.0 g/cm³ default → 1000
+		new ChemicalFluidSpec("ic2uumatter", "UU-Matter"   , 100,  1000, 1000, 0xFF600080, false,  0), // :73 — MT.UUMatter local (MT.java:2084, RGBa 96,0,128); same carriers
+		// biomass (:83) — the :84 ic2biomass alias stays unported (the single-name ruling)
+		new ChemicalFluidSpec("biomass"   , "Biomass"     , 300,  1000, 1000, 0xFF00FF00, false,  0), // :83 — the null display rides the MT.Biomass local (MT.java:2053, RGBa 0,255,0); four-arg 300 K default
+		// mcguffium (:105)
+		new ChemicalFluidSpec("mcguffium" , "Mc Guffium 239", 300, 3122, 1000, 0xFFC83296, false,  0), // :105 — the 300 K literal; density = 1000·3.122 over MT.Mcg (MT.java:1689); tint the RGBa 200,50,150
+		// the fiery pair (:108-109) — the L-per-unit + 1500 K + setLuminosity(10) literals, material-null honest density
+		new ChemicalFluidSpec("fieryblood", "Fiery Blood" , 1500,  1000, 1000, 0xFFFF6414, false, 10), // :108 — tint declared (blaze orange, no material row)
+		new ChemicalFluidSpec("fierytears", "Fiery Tears" , 1500,  1000, 1000, 0xFFE89632, false, 10), // :109 — same form; tint declared
+		// the dye pair (:111-112) — the DYE_FLUIDS[0]/[4] seeds, material-null honest defaults
+		new ChemicalFluidSpec("squidink"  , "Squid Ink"   , 300,  1000, 1000, 0xFF14141E, false,  0), // :111 — tint declared (ink black-blue)
+		new ChemicalFluidSpec("indigo"    , "Indigo Dye"  , 300,  1000, 1000, 0xFF3232AA, false,  0), // :112 — tint declared (indigo)
+		// the theum quartet (:130-133) — Thermal-named but GT6-created rows, the explicit setDensity/setViscosity literals
+		new ChemicalFluidSpec("pyrotheum" , "Blazing Pyrotheum"   , 4000,  2000, 1200, 0xFFFFC83C, false, 15), // :130 — MT.Pyrotheum (MT.java:2405, RGBa 255,200,60); setLuminosity(15) literal
+		new ChemicalFluidSpec("cryotheum" , "Gelid Cryotheum"     ,   50,  4000, 3000, 0xFF64DCFF, false,  0), // :131 — MT.Cryotheum (MT.java:2408, RGBa 100,220,255)
+		new ChemicalFluidSpec("petrotheum", "Tectonic Petrotheum" ,  400,  4000, 1500, 0xFF564C52, false,  0), // :132 — MT.Petrotheum (MT.java:2403, RGBa 86,76,82)
+		new ChemicalFluidSpec("aerotheum" , "Zephyrean Aerotheum" ,  300,  -800,  100, 0xFFFAE253, true ,  0), // :133 — MT.Aerotheum (MT.java:2404, RGBa 250,226,83); state-2 gas, the setViscosity(100) literal
+		// the molten quartet (:191-192/:197/:199)
+		new ChemicalFluidSpec("plastic"    , "Molten Plastic"   ,  423,  1000, 1000, 0xFFC8C8C8, false, 0), // :191 — the 423 K literal over MT.Plastic (MT.java:2150, RGBa 200,200,200); 1.0 default g → 1000
+		new ChemicalFluidSpec("glass"      , "Molten Glass"     , 1200,  2332, 1000, 0xFFFAFAFA, false, 0), // :192 — the 1200 K literal; density = 1000·2.33246 over the uumMcfg(SiO2 1U) recompute (MT.java:1941 over :1939); tint 250,250,250
+		new ChemicalFluidSpec("molten_latex", "Latex"           ,  293,  1000, 1000, 0xFFFAFAFA, false, 0), // :197 "molten.latex" — the DEF_ENV_TEMP 293 literal (upstream CS.java:135); DISTINCT from the :198 latex row (BEE_ROW_FLUID_SPECS)
+		new ChemicalFluidSpec("molten_hsla" , "Molten HSLA Steel", 1873,  7874, 1000, 0xFFB4501E, false, 5), // :199 "molten hsla" (space → underscore) — the 1873 K + setLuminosity(5) literals; density = 1000·7.874 over the steal chain HSLA→Steel→WroughtIron→Fe (MT.java:2467/:2459/:2409/:1011); tint the setRGBaLiquid 180,80,30
+		// the createMolten food-material block (:202-212) — the chocolate_molten BEE_ROW form (temp = melting point, luminosity 0)
+		new ChemicalFluidSpec("cheese_molten"       , "Molten Cheese"        ,  320,  1000, 1000, 0xFFFFEA00, false, 0), // :202 — MT.Cheese heat(320,500) (MT.java:2183); 1.0 default g → 1000; tint 255,234,0
+		new ChemicalFluidSpec("sugar_molten"        , "Molten Sugar"         ,  459, 27221, 1000, 0xFFFAFAFA, false, 0), // :203 — MT.Sugar heat(459) (MT.java:1922); density = 1000·27.2217 over the uumMcfg(C12 H22 O11) recompute (the carbon-2.267 artifact, MT.java:392); tint 250,250,250
+		new ChemicalFluidSpec("rubber_molten"       , "Molten Rubber"        ,  410, 11335, 1000, 0xFF141414, false, 0), // :204 — MT.Rubber heat(410) (MT.java:2149); density = 1000·11.3357 over uumMcfg(C5 H8); tint 20,20,20
+		new ChemicalFluidSpec("wax_molten"          , "Molten Wax"           ,  350,  1000, 1000, 0xFFFAFAFA, false, 0), // :205 — MT.Wax heat(350) (MT.java:2116); tint 250,250,250
+		new ChemicalFluidSpec("waxbee_molten"       , "Molten Bees Wax"      ,  350,  1000, 1000, 0xFFFADC6E, false, 0), // :206 — MT.WaxBee local "Bees Wax" (MT.java:2117); tint 250,220,110
+		new ChemicalFluidSpec("waxparaffin_molten"  , "Molten Paraffin Wax"  ,  400,  1000, 1000, 0xFFD2D2FA, false, 0), // :207 — MT.WaxParaffin heat(400) (MT.java:2119); tint 210,210,250
+		new ChemicalFluidSpec("waxplant_molten"     , "Molten Plant Wax"     ,  350,  1000, 1000, 0xFFD2FAD2, false, 0), // :208 — MT.WaxPlant local "Plant Wax" (MT.java:2120); tint 210,250,210
+		new ChemicalFluidSpec("waxrefractory_molten", "Molten Refractory Wax", 2600,  1000, 1000, 0xFFFA3232, false, 0), // :209 — MT.WaxRefractory heat(2600) (MT.java:2118); tint 250,50,50
+		new ChemicalFluidSpec("waxmagic_molten"     , "Molten Magic Wax"     ,  350,  1000, 1000, 0xFFC850C8, false, 0), // :210 — MT.WaxMagic local "Magic Wax" (MT.java:2121); tint 200,80,200
+		new ChemicalFluidSpec("waxamnesic_molten"   , "Molten WaxAmnesic"    ,  350,  1000, 1000, 0xFFB446FA, false, 0), // :211 — MT.WaxAmnesic carries NO setLocal (MT.java:2122): the en face rides the internal name verbatim (the upstream oversight kept); tint 180,70,250
+		new ChemicalFluidSpec("waxsoulful_molten"   , "Molten Soulful Wax"   ,  350,  1000, 1000, 0xFF5A280A, false, 0), // :212 — MT.WaxSoulful local "Soulful Wax" (MT.java:2123); tint 90,40,10
+		// the error sentinel (:358) — the 0 K literal
+		new ChemicalFluidSpec("error"      , "Liquid Error" ,    0,  1000, 1000, 0xFFFF00FF, false, 0), // :358 — material-null honest defaults; tint declared (magenta sentinel)
+		// the drink-block leftovers (:464/:616/:618/:619) — fluid face only, the DrinkStat seam stays the declared cut
+		new ChemicalFluidSpec("rainbowsap" , "Rainbow Sap" , 300,  1000, 1000, 0xFFE678F0, false, 0), // :464 — material-null honest defaults; tint declared
+		new ChemicalFluidSpec("glue"       , "Glue"        , 300,  1000, 1000, 0xFFC8C400, false, 0), // :616 — the four-arg 300 K default over MT.Glue (MT.java:2080, RGBa 200,196,0)
+		new ChemicalFluidSpec("mercury"    , "Mercury"     , 300, 13533, 1000, 0xFFE6DCDC, false, 0), // :618 — the 300 K literal; density = 1000·13.5336 over MT.Hg (MT.java:1123); tint 230,220,220
+		new ChemicalFluidSpec("sluicejuice", "Sluice Juice", 300,  1000, 1000, 0xFF6E6450, false, 0)); // :619 — material-null honest defaults; tint declared (murky)
+
+	/** The naming-parity row lookup (the {@link #hotSpec} shape) — task p37-fluids-naming. */
+	public static ChemicalFluidSpec namingSpec(String aName) {
+		for (ChemicalFluidSpec tSpec : NAMING_FLUID_SPECS) if (tSpec.name().equals(aName)) return tSpec;
+		return null;
+	}
+
+	/** The live registrations of the naming-parity family — one per spec row, in declaration order (the {@link #HOT_FLUIDS} shape). */
+	public static final List<ChemicalFluid> NAMING_FLUIDS = NAMING_FLUID_SPECS.stream().map(s -> specFluid(s, "naming fluid")).toList();
 
 	/**
 	 * The POWER_CONDUCTING seeds of the hot family — the upstream FL.java:89-102 enum block

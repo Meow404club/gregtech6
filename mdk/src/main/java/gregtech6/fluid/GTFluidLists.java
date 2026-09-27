@@ -95,6 +95,12 @@ public final class GTFluidLists {
 		register("deuterium"      , GAS); // MT.java:381 diatomicgas
 		register("tritium"        , GAS); // MT.java:382 diatomicgas
 		register("helium3"        , GAS); // MT.java:384 noblegas
+		// the naming-parity gases (task p37-fluids-naming) — the three state-2 rows of the
+		// census batch (Loader_Fluids.java:50-51 the dimension airs, :133 aerotheum); the
+		// same FL.java:1105 auto-add rule the gaseous seeds above ride
+		register("netherair"      , GAS); // :50
+		register("enderair"       , GAS); // :51
+		register("aerotheum"      , GAS); // :133
 	}
 
 	private GTFluidLists() {}
