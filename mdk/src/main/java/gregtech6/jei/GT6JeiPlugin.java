@@ -21,7 +21,7 @@ import gregtech6.registry.GTMultiBlocks;
  * precedent (GTJEIPlugin.java:43-44: {@code @JeiPlugin} + {@code implements IModPlugin}).
  *
  * <p>Dual-node wiring (task p15-jei-dual-wiring): this single shared source compiles against
- * both pinned JEI stacks — 1.20.1 Forge (mezz.jei:jei-1.20.1-{common-api,forge-api}:15.56.0.205,
+ * both pinned JEI stacks — 1.20.1 Forge (mezz.jei:jei-1.20.1-{common-api,forge-api}:15.62.0.216,
  * modCompileOnly/modRuntimeOnly, mdk/build.forge.gradle.kts) and 1.21.1 NeoForge
  * (mezz.jei:jei-1.21.1-{common-api,neoforge-api}:19.52.0.422, plain compileOnly/runtimeOnly —
  * the moddev plugin registers no mod* remapping configurations, live configuration probe

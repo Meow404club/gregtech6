@@ -189,8 +189,9 @@ dependencies {
     // blamejared maven-metadata <latest>（2026-09-03）+ Modrinth "19.52.0.422 for NeoForge 1.21.1"
     // 双源一致；降级预案 19.51.0.418（Modrinth 最新 release 标记位）。
     // ${jeiVer} 解析自节点参数 mdk/versions/1.21.1-neoforge/gradle.properties 的同名键（节点级
-    // gradle.properties 遮蔽根值；探针实证 2026-09-04：本节点 19.52.0.422 / 1.20.1-forge 仍
-    // 15.56.0.205），故表达式与 forge 节点 property("jei_version") 完全同构。
+    // gradle.properties 遮蔽根值；探针实证 2026-09-04：本节点 19.52.0.422 / 1.20.1-forge 时为
+    // 15.56.0.205，根值 2026-09-27 bump 15.62.0.216——fix-modularui-jei-mixin-crash 对齐用户
+    // 实机版本），故表达式与 forge 节点 property("jei_version") 完全同构。
     //
     // 与 1.20.1 节点（mdk/build.forge.gradle.kts:93-95 modCompileOnly/modRuntimeOnly）的关键差异：
     // mod* 重映射配置是 legacyforge 插件专有（LEGACY.md:68-92 "Remapping Mod Dependencies"——
