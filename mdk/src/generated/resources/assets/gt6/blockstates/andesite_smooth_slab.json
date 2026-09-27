@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "gt6:block/stones/andesite/smooth_slab"
+    },
+    "type=double": {
+      "model": "gt6:block/stones/andesite/smooth"
+    },
+    "type=top": {
+      "model": "gt6:block/stones/andesite/smooth_slab_top"
+    }
+  }
+}

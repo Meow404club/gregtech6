@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "gt6:block/stones/komatiite/bricks_reinforced",
+    "side": "gt6:block/stones/komatiite/bricks_reinforced",
+    "top": "gt6:block/stones/komatiite/bricks_reinforced"
+  }
+}

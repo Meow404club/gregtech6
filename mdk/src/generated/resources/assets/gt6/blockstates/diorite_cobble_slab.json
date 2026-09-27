@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "gt6:block/stones/diorite/cobble_slab"
+    },
+    "type=double": {
+      "model": "gt6:block/stones/diorite/cobble"
+    },
+    "type=top": {
+      "model": "gt6:block/stones/diorite/cobble_slab_top"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "gt6:block/stones/marble/stone_slab"
+    },
+    "type=double": {
+      "model": "gt6:block/stones/marble/stone"
+    },
+    "type=top": {
+      "model": "gt6:block/stones/marble/stone_slab_top"
+    }
+  }
+}

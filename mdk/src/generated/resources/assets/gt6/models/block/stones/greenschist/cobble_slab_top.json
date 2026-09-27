@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "gt6:block/stones/greenschist/cobble",
+    "side": "gt6:block/stones/greenschist/cobble",
+    "top": "gt6:block/stones/greenschist/cobble"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "gt6:block/stones/marble/windmill_tiles_a_slab"
+    },
+    "type=double": {
+      "model": "gt6:block/stones/marble/windmill_tiles_a"
+    },
+    "type=top": {
+      "model": "gt6:block/stones/marble/windmill_tiles_a_slab_top"
+    }
+  }
+}

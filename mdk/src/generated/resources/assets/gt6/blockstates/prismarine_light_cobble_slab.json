@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "gt6:block/stones/prismarine_light/cobble_slab"
+    },
+    "type=double": {
+      "model": "gt6:block/stones/prismarine_light/cobble"
+    },
+    "type=top": {
+      "model": "gt6:block/stones/prismarine_light/cobble_slab_top"
+    }
+  }
+}

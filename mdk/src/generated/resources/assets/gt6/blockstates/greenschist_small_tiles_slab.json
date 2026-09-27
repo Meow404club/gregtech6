@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "gt6:block/stones/greenschist/small_tiles_slab"
+    },
+    "type=double": {
+      "model": "gt6:block/stones/greenschist/small_tiles"
+    },
+    "type=top": {
+      "model": "gt6:block/stones/greenschist/small_tiles_slab_top"
+    }
+  }
+}

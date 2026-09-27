@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "X": {
+      "item": "gt6:andesite_cobble"
+    }
+  },
+  "pattern": [
+    "  ",
+    "XX"
+  ],
+  "result": {
+    "count": 4,
+    "id": "gt6:andesite_cobble_slab"
+  }
+}

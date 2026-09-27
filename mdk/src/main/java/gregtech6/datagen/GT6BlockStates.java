@@ -223,6 +223,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addLargeCrucible(); // task p26-crucible-multiblock
         addDistillationTowers(); // task p29-w3-distill-crucible — the twin tower controllers
         addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
+        addStoneSlabs(); // task debt-slab-gap — the 272 per-pair stone slabs (the upstream mSlabs[0] face)
         addGrassBlocks(); // task p24-grass-block — the 6 per-pair GT grass variants
         addTreeBlocks(); // task p30-w6-t1-trees-nine — the 27 per-pair tree blocks
         addFoamBlocks(); // task p26-c-foam-block-family — the C-Foam pair + slabs + the owned carrier
@@ -2761,6 +2762,48 @@ public final class GT6BlockStates extends BlockStateProvider {
             itemModels().withExistingParent(GTStoneBlocks.path(tStone.stoneSnake, tStone.variant), modLoc(tModelName));
         }
         LOGGER.info("GT6 stone blocks: {} per-pair blockstates over {} models (one item model each)",
+                GTStoneBlocks.STONES.size() * StoneVariant.VALUES.length,
+                GTStoneBlocks.STONES.size() * StoneVariant.VALUES.length);
+    }
+
+    /**
+     * Task debt-slab-gap — the 272 per-pair stone SLABS ({@link gregtech6.registry.GTStoneSlabBlocks},
+     * the upstream mSlabs[0] bottom-slab face of BlockMetaType.java:74-81): the
+     * BOTTOM/TOP/DOUBLE triad per slab over the SAME borrowed PNG the paired full block
+     * renders ({@code block/stones/<stone>/<variant>}, zero new textures, no tint — the
+     * pre-coloured-PNG route). BOTTOM/TOP are own {@code minecraft:block/slab[_top]}
+     * parents; DOUBLE re-uses the full cube model the {@link #addStoneBlocks} pass
+     * registers (a second {@code cubeAll} on the same name returns the SAME cached
+     * builder — ModelProvider.getBuilder caches by name, so the run emits one file).
+     * The upstream double is the full block itself (a separate block id, the :142-153
+     * right-click merge) — the DOUBLE state pointing at the full model IS that face.
+     * Each slab's item model parents its bottom model (the vanilla slab item form).
+     * WATERLOGGED stays unspecified in the partial states (a wildcard — the foam-band
+     * {@link #tintedSlabFamily} precedent).
+     */
+    private void addStoneSlabs() {
+        for (Block tBlock : gregtech6.registry.GTStoneSlabBlocks.blockArray()) {
+            gregtech6.block.stone.GTStoneSlabBlock tSlab = (gregtech6.block.stone.GTStoneSlabBlock)tBlock;
+            String tTexture = "block/stones/" + tSlab.stoneSnake + "/" + tSlab.variant.snake;
+            ResourceLocation tTexLoc = modLoc(tTexture);
+            ModelFile tBottom = models().getBuilder(tTexture + "_slab")
+                    .parent(models().getExistingFile(mcLoc("block/slab")))
+                    .texture("bottom", tTexLoc).texture("top", tTexLoc).texture("side", tTexLoc);
+            ModelFile tTop = models().getBuilder(tTexture + "_slab_top")
+                    .parent(models().getExistingFile(mcLoc("block/slab_top")))
+                    .texture("bottom", tTexLoc).texture("top", tTexLoc).texture("side", tTexLoc);
+            ModelFile tFull = models().cubeAll(tTexture, tTexLoc); // the cached addStoneBlocks builder
+            getVariantBuilder(tSlab)
+                    .partialState().with(SlabBlock.TYPE, SlabType.BOTTOM)
+                    .setModels(ConfiguredModel.builder().modelFile(tBottom).build())
+                    .partialState().with(SlabBlock.TYPE, SlabType.TOP)
+                    .setModels(ConfiguredModel.builder().modelFile(tTop).build())
+                    .partialState().with(SlabBlock.TYPE, SlabType.DOUBLE)
+                    .setModels(ConfiguredModel.builder().modelFile(tFull).build());
+            itemModels().withExistingParent(gregtech6.registry.GTStoneSlabBlocks.slabPath(tSlab.stoneSnake, tSlab.variant),
+                    modLoc(tTexture + "_slab"));
+        }
+        LOGGER.info("GT6 stone slabs: {} per-pair blockstate triads over {} bottom/top model pairs (double re-uses the full cube)",
                 GTStoneBlocks.STONES.size() * StoneVariant.VALUES.length,
                 GTStoneBlocks.STONES.size() * StoneVariant.VALUES.length);
     }

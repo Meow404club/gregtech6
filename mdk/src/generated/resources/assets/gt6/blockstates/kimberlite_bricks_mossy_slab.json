@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "gt6:block/stones/kimberlite/bricks_mossy_slab"
+    },
+    "type=double": {
+      "model": "gt6:block/stones/kimberlite/bricks_mossy"
+    },
+    "type=top": {
+      "model": "gt6:block/stones/kimberlite/bricks_mossy_slab_top"
+    }
+  }
+}

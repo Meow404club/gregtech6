@@ -131,6 +131,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
+                new SubProviderEntry(GT6StoneSlabLoot::new, LootContextParamSets.BLOCK), // task debt-slab-gap — the 272 slab tables
                 new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task p24-grass-block
                 new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task p25-c-foam-pipe-spray
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task p26-c-foam-block-family
@@ -191,6 +192,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
+                new SubProviderEntry(GT6StoneSlabLoot::new, LootContextParamSets.BLOCK), // task debt-slab-gap — the 272 slab tables
                 new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task p24-grass-block
                 new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task p25-c-foam-pipe-spray
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task p26-c-foam-block-family
@@ -1814,6 +1816,52 @@ public final class GT6LootTables extends LootTableProvider {
                             .add(LootItem.lootTableItem(aChiselMapped)
                                     .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(GT6Tools.CHISEL.get())))
                                     .otherwise(LootItem.lootTableItem(aBaseline)))));
+        }
+    }
+
+    /**
+     * The stone-slab block list (task debt-slab-gap): the 272 per-pair
+     * GTStoneSlabBlock registrations ({@link gregtech6.registry.GTStoneSlabBlocks#blockArray()},
+     * the same stone-major/variant-major walk).
+     */
+    public static List<Block> stoneSlabLootBlocks() {
+        return gregtech6.registry.GTStoneSlabBlocks.blockArray();
+    }
+
+    /**
+     * The stone-slab loot provider (task debt-slab-gap): the VANILLA slab idiom verbatim —
+     * {@link BlockLootSubProvider#createSlabItemTable(Block)} (the vanilla
+     * stone-slab.json face: self-drop, {@code set_count 2} under the {@code type=double}
+     * block-state property, {@code explosion_decay}; 1.20.1 BlockLootSubProvider.java:163,
+     * 1.21.1 same-name per the official mappings + the NeoForge patch context touching
+     * only getKnownBlocks). Upstream parity: a slab drops exactly one slab
+     * (BlockMetaType.java:178 {@code getItemDropped} returns {@code mBlock.mSlabs[0]});
+     * the DOUBLE doubling is the vanilla semantic for the merged state the upstream
+     * expressed by making the double the FULL BLOCK (:142-153 right-click merge) — two
+     * slabs' worth of material either way. 272 tables at the vanilla default
+     * {@code gt6:blocks/<path>_slab} location.
+     */
+    public static final class GT6StoneSlabLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6StoneSlabLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6StoneSlabLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return stoneSlabLootBlocks(); // narrowed to exactly the 272 slabs this provider owns
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : stoneSlabLootBlocks()) add(tBlock, createSlabItemTable(tBlock));
         }
     }
 

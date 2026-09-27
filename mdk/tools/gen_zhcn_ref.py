@@ -338,6 +338,10 @@ HAND_TRANSLATIONS = {
     "gt6.stone.variant.windmill_tiles_a": ("%s风车纹砖块A", "hand"),
     "gt6.stone.variant.windmill_tiles_b": ("%s风车纹砖块B", "hand"),
     "gt6.stone.variant.square_bricks": ("%s方砖", "hand"),
+    # task debt-slab-gap: the ONE slab template over the composed variant name — the dump's
+    # gt.stone.<stone>.slab.0.<meta> family verbatim (:15977-15982 花岗岩半砖/花岗岩圆石半砖
+    # = the variant name + 半砖 suffix).
+    "gt6.stone.slab": ("%s半砖", "hand"),
     "gt6.row.axle.display": ("%s%s轴", "hand"),
     "gt6.row.size.small": ("小型", "hand"),
     "gt6.row.size.medium": ("中型", "hand"),

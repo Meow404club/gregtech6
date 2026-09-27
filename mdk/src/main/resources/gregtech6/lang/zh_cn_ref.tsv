@@ -1171,6 +1171,7 @@ direct	gt6.row.unboxinator.display	拆箱机 (%s)	hand
 direct	gt6.spraycan.decolor	可为物品除色	hand
 direct	gt6.spraycan.paint	可将物品喷成%s	hand
 direct	gt6.spraycan.remaining	剩余使用次数：%s.%s	hand
+direct	gt6.stone.slab	%s半砖	hand
 direct	gt6.stone.variant.bricks	%s砖块	hand
 direct	gt6.stone.variant.bricks_chiseled	錾制%s	hand
 direct	gt6.stone.variant.bricks_cracked	裂纹%s砖块	hand

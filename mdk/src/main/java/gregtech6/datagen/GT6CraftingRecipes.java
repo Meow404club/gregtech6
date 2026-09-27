@@ -390,6 +390,16 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (PartFamilyRecipeRow tRow : cobbleStairsWallBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
+		// task debt-slab-gap — the upstream mSlabs[0] conversion band (BlockMetaType.java:89/:93
+		// generic rows x272 pairs + BlockStones.java:269/:327 stone rows x17)
+		for (gregtech6.registry.GTStoneBlocks.VariantKey tKey : gregtech6.registry.GTStoneBlocks.registrationOrder()) {
+			slabToBlockBuilder(tKey).save(aConsumer, slabToBlockId(tKey));
+			slabSawBuilder(tKey).save(aConsumer, slabSawId(tKey));
+		}
+		for (gregtech6.registry.GTStoneBlocks.StoneSpec tStone : gregtech6.registry.GTStoneBlocks.STONES) {
+			slabFromRocksBuilder(tStone).save(aConsumer, slabFromRocksId(tStone));
+			slabFromCobbleBuilder(tStone).save(aConsumer, slabFromCobbleId(tStone));
+		}
 	}
 	//?} else {
 	/*@Override
@@ -559,8 +569,112 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (PartFamilyRecipeRow tRow : cobbleStairsWallBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
+		// task debt-slab-gap — the upstream mSlabs[0] conversion band (the forge-leg tail mirror)
+		for (gregtech6.registry.GTStoneBlocks.VariantKey tKey : gregtech6.registry.GTStoneBlocks.registrationOrder()) {
+			slabToBlockBuilder(tKey).save(aOutput, slabToBlockId(tKey));
+			slabSawBuilder(tKey).save(aOutput, slabSawId(tKey));
+		}
+		for (gregtech6.registry.GTStoneBlocks.StoneSpec tStone : gregtech6.registry.GTStoneBlocks.STONES) {
+			slabFromRocksBuilder(tStone).save(aOutput, slabFromRocksId(tStone));
+			slabFromCobbleBuilder(tStone).save(aOutput, slabFromCobbleId(tStone));
+		}
 	}
 	*///?}
+
+	/**
+	 * The stone-slab conversion band ids (task debt-slab-gap) — foldered, the
+	 * stairs-card naming convention: {@code slab_rock/<stone>} (BlockStones.java:269),
+	 * {@code slab_cobble/<stone>} (:327), {@code slab_to_block/<pair>} and
+	 * {@code slab_saw/<pair>} (the BlockMetaType.java:89/:93 generic rows). The paths
+	 * ride locals so the two-arg RL ctor args stay bare identifiers (the swap-table
+	 * regex note).
+	 */
+	public static ResourceLocation slabFromRocksId(gregtech6.registry.GTStoneBlocks.StoneSpec aStone) {
+		String tPath = "slab_rock/" + aStone.snake();
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
+
+	public static ResourceLocation slabFromCobbleId(gregtech6.registry.GTStoneBlocks.StoneSpec aStone) {
+		String tPath = "slab_cobble/" + aStone.snake();
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
+
+	public static ResourceLocation slabToBlockId(gregtech6.registry.GTStoneBlocks.VariantKey aKey) {
+		String tPath = "slab_to_block/" + gregtech6.registry.GTStoneBlocks.path(aKey.stone().snake(), aKey.variant());
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
+
+	public static ResourceLocation slabSawId(gregtech6.registry.GTStoneBlocks.VariantKey aKey) {
+		String tPath = "slab_saw/" + gregtech6.registry.GTStoneBlocks.path(aKey.stone().snake(), aKey.variant());
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
+
+	/**
+	 * The 2-slab-to-block row (BlockMetaType.java:89, {@code CR.shaped(this, "X","X", 'X'
+	 * = mSlabs[0])}) — one per (stone, variant) pair: two slabs stacked vertically make
+	 * the full block. The ONLY input is the pair's own slab item; the result is the pair's
+	 * own block item.
+	 */
+	private ShapedRecipeBuilder slabToBlockBuilder(gregtech6.registry.GTStoneBlocks.VariantKey aKey) {
+		Item tSlabItem = gregtech6.registry.GTStoneSlabBlocks.item(aKey.stone().snake(), aKey.variant()).get();
+		return ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS,
+						gregtech6.registry.GTStoneBlocks.item(aKey.stone().snake(), aKey.variant()).get())
+				.pattern("X")
+				.pattern("X")
+				.define('X', tSlabItem)
+				.unlockedBy("has_slab", has(tSlabItem));
+	}
+
+	/**
+	 * The block-plus-saw row (BlockMetaType.java:93, {@code CR.shaped(mSlabs[0] x2, "sX",
+	 * 'X' = this)} — the crafting-table face of the :92 sawmill row): 's' = the port saw
+	 * tool tag ({@link GT6ItemTags#TOOLS_SAW}, the spray-can row's s-key precedent), 'X'
+	 * = the pair's own block item, result TWO slabs (the 1:2 material ratio the :92/:93
+	 * pair pins both ways).
+	 */
+	private ShapedRecipeBuilder slabSawBuilder(gregtech6.registry.GTStoneBlocks.VariantKey aKey) {
+		Item tBlockItem = gregtech6.registry.GTStoneBlocks.item(aKey.stone().snake(), aKey.variant()).get();
+		return ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS,
+						gregtech6.registry.GTStoneSlabBlocks.item(aKey.stone().snake(), aKey.variant()).get(), 2)
+				.pattern("sX")
+				.define('s', GT6ItemTags.TOOLS_SAW)
+				.define('X', tBlockItem)
+				.unlockedBy("has_stone", has(tBlockItem));
+	}
+
+	/**
+	 * The rocks row (BlockStones.java:269, {@code CR.shaped(mSlabs[0] x1 COBBL, "  ","XX",
+	 * 'X' = OP.rockGt.dat(mMaterial))}) — two small rocks make ONE COBBL-variant slab
+	 * (two rocks = half a cobble block per the :261-262 4-rocks row, one slab = half a
+	 * block — the 1:2 stone economy). Unconditional over all 17 families (:268-269 sit
+	 * OUTSIDE the NePl/NeLi basalt gate). Input resolves through GTMaterialItems (the
+	 * rock_gt_<snake> items; the PrismarineLight family's rock id is rock_gt_prismarine,
+	 * the MT.java:2397 internal-name quirk).
+	 */
+	private ShapedRecipeBuilder slabFromRocksBuilder(gregtech6.registry.GTStoneBlocks.StoneSpec aStone) {
+		Item tRock = GTMaterialItems.get(gregapi.data.OP.rockGt, aStone.material().get()).get();
+		return ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS,
+						gregtech6.registry.GTStoneSlabBlocks.item(aStone.snake(), gregtech6.block.stone.StoneVariant.COBBL).get())
+				.pattern("  ")
+				.pattern("XX")
+				.define('X', tRock)
+				.unlockedBy("has_rock", has(tRock));
+	}
+
+	/**
+	 * The cobble row (BlockStones.java:327, inside the {@code mEqualBlocks[COBBL]} loop —
+	 * exactly the 17 family cobblestones, the :254 self-add): two COBBL blocks make FOUR
+	 * COBBL-variant slabs (the 1:2 expansion again — 1 block = 2 slabs, the sawmill ratio).
+	 */
+	private ShapedRecipeBuilder slabFromCobbleBuilder(gregtech6.registry.GTStoneBlocks.StoneSpec aStone) {
+		Item tCobble = gregtech6.registry.GTStoneBlocks.item(aStone.snake(), gregtech6.block.stone.StoneVariant.COBBL).get();
+		return ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS,
+						gregtech6.registry.GTStoneSlabBlocks.item(aStone.snake(), gregtech6.block.stone.StoneVariant.COBBL).get(), 4)
+				.pattern("  ")
+				.pattern("XX")
+				.define('X', tCobble)
+				.unlockedBy("has_cobble", has(tCobble));
+	}
 
 	/**
 	 * The id of one static storage row's recipe (the result-path convention, one per row —

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "X": {
+      "item": "gt6:rock_gt_granite"
+    }
+  },
+  "pattern": [
+    "  ",
+    "XX"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:granite_cobble_slab"
+  }
+}

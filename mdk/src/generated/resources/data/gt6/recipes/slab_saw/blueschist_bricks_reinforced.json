@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "X": {
+      "item": "gt6:blueschist_bricks_reinforced"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "sX"
+  ],
+  "result": {
+    "count": 2,
+    "item": "gt6:blueschist_bricks_reinforced_slab"
+  },
+  "show_notification": true
+}

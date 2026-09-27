@@ -875,6 +875,9 @@ public class GT6ZhCn extends LanguageProvider {
 		for (gregtech6.block.stone.StoneVariant tVariant : gregtech6.block.stone.StoneVariant.VALUES) {
 			addDirect(tVariant.key());
 		}
+		// task debt-slab-gap — the ONE slab template (the GTStoneSlabBlock.getName compose),
+		// dump gt.stone.granite.slab.0.0/.1 verbatim shape (:15977-15982 花岗岩半砖/花岗岩圆石半砖)
+		addDirect(gregtech6.block.stone.GTStoneSlabBlock.SLAB_NAME_KEY);
 	}
 
 	/**

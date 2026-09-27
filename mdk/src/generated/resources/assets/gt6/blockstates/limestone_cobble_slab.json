@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "gt6:block/stones/limestone/cobble_slab"
+    },
+    "type=double": {
+      "model": "gt6:block/stones/limestone/cobble"
+    },
+    "type=top": {
+      "model": "gt6:block/stones/limestone/cobble_slab_top"
+    }
+  }
+}

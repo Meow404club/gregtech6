@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "gt6:block/stones/granite_black/smooth",
+    "side": "gt6:block/stones/granite_black/smooth",
+    "top": "gt6:block/stones/granite_black/smooth"
+  }
+}

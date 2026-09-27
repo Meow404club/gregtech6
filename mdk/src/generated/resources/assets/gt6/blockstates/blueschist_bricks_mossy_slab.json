@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "gt6:block/stones/blueschist/bricks_mossy_slab"
+    },
+    "type=double": {
+      "model": "gt6:block/stones/blueschist/bricks_mossy"
+    },
+    "type=top": {
+      "model": "gt6:block/stones/blueschist/bricks_mossy_slab_top"
+    }
+  }
+}
