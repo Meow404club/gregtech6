@@ -47,7 +47,7 @@
     }
   ],
   "textures": {
-    "all": "gt6:block/stones/granite/stone",
+    "all": "minecraft:block/granite",
     "particle": "#all"
   }
 }

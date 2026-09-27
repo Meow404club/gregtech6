@@ -47,7 +47,7 @@
     }
   ],
   "textures": {
-    "all": "gt6:block/stones/diorite/stone",
+    "all": "minecraft:block/diorite",
     "particle": "#all"
   }
 }

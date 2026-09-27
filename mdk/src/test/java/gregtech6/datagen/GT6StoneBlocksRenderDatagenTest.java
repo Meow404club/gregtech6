@@ -142,9 +142,11 @@ class GT6StoneBlocksRenderDatagenTest {
     }
 
     /**
-     * The generated block models exist 1:1 with the 272 keys and reference the borrowed PNGs;
-     * the cube_all form carries NO tintindex (the dedicated color-PNG route — the addPrefixBlocks
-     * contrast pinned structurally).
+     * The generated block models exist 1:1 with the 272 keys and reference their pair's
+     * texture (the borrowed PNG, or the vanilla counterpart for the r4-ore-tex-b trio's
+     * STONE/SMOTH — the {@link GT6BlockStates#stoneTexture} seam); the cube_all form
+     * carries NO tintindex (the dedicated color-PNG route — the addPrefixBlocks contrast
+     * pinned structurally).
      */
     @Test
     void generatedBlockModelsAreUntintedDedicatedCubeAlls() throws Exception {
@@ -155,12 +157,43 @@ class GT6StoneBlocksRenderDatagenTest {
                 JsonObject tModel = JsonParser.parseString(new String(tStream.readAllBytes(), StandardCharsets.UTF_8)).getAsJsonObject();
                 assertEquals("minecraft:block/cube_all", tModel.get("parent").getAsString(),
                         tKey + ": the cube_all parent");
-                assertEquals("gt6:block/stones/" + tKey.stone().snake() + "/" + tKey.variant().snake,
+                assertEquals(GT6BlockStates.stoneTexture(tKey.stone().snake(), tKey.variant()).toString(),
                         tModel.getAsJsonObject("textures").get("all").getAsString(),
-                        tKey + ": its own dedicated borrowed PNG");
+                        tKey + ": its dedicated texture (borrowed PNG, or vanilla for the migrated trio)");
                 String tRaw = tModel.toString();
                 assertTrue(!tRaw.contains("tintindex"), tKey + ": the color-PNG route carries no tint");
             }
+        }
+    }
+
+    /**
+     * The r4-ore-tex-b migration is pinned BOTH ways: exactly the six (trio x {STONE, SMOTH})
+     * pairs point at the vanilla textures, and the whole 272-walk carries nothing else
+     * minecraft-namespaced (the misfire guard — basalt is the same-name DIFFERENT stone and
+     * every no-counterpart variant of the trio keeps its borrowed PNG).
+     */
+    @Test
+    void vanillaTextureMigrationIsExactlyTheTrioStoneAndSmooth() {
+        List<String> tVanilla = new ArrayList<>();
+        for (GTStoneBlocks.VariantKey tKey : GTStoneBlocks.registrationOrder()) {
+            boolean tMigrated = List.of("granite", "diorite", "andesite").contains(tKey.stone().snake())
+                    && (tKey.variant() == StoneVariant.STONE || tKey.variant() == StoneVariant.SMOTH);
+            String tNamespace = GT6BlockStates.stoneTexture(tKey.stone().snake(), tKey.variant()).getNamespace();
+            if (tMigrated) {
+                tVanilla.add(tKey.stone().snake() + "/" + tKey.variant().snake);
+                assertEquals("minecraft", tNamespace, tKey + ": the migrated pair rides vanilla");
+            } else {
+                assertEquals("gt6", tNamespace, tKey + ": outside the six-pair migration, stays borrowed");
+            }
+        }
+        assertEquals(List.of("andesite/smooth", "andesite/stone", "diorite/smooth", "diorite/stone",
+                "granite/smooth", "granite/stone"), tVanilla.stream().sorted().toList(),
+                "exactly the trio x {stone, smooth} six pairs migrated");
+        for (String tSnake : new String[] {"granite", "diorite", "andesite"}) {
+            assertEquals("minecraft:block/" + tSnake,
+                    GT6BlockStates.stoneTexture(tSnake, StoneVariant.STONE).toString());
+            assertEquals("minecraft:block/polished_" + tSnake,
+                    GT6BlockStates.stoneTexture(tSnake, StoneVariant.SMOTH).toString());
         }
     }
 

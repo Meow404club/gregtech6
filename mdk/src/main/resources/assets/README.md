@@ -954,6 +954,18 @@ file for both variants), borrowed 1:1 anyway to keep the one-to-one path mapping
 Copied on 2026-09-06. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
+Update 2026-09-27, task r4-ore-tex-b (user B ruling — the vanilla-named trio
+migrates to the vanilla 1.20.1 current textures, curing the "old-look ore in
+new-look vanilla stone" mismatch): the granite/diorite/andesite STONE and
+SMOOTH (= polished) variants no longer reference the borrowed PNGs — the full
+blocks, the slabs and the ore base sprites point at
+`minecraft:block/<stone>` / `minecraft:block/polished_<stone>`. The other 14
+variants of the trio have NO vanilla counterpart and keep these PNGs (`cobble`
+additionally stays consumed by the crucible/mold machine bodies). The six
+files `granite|diorite|andesite/{stone,smooth}.png` are therefore
+**orphaned-but-kept** (kept for a later cleanup card, NOT deleted); basalt is
+the same-name DIFFERENT stone and stays borrowed wholesale.
+
 - `gt.stone.` -> `gt6/textures/block/stones/granite_black/`:
   - `` `765d48c31f362adf290d8059b127d70f233972ee417a6aaac383c153876d7fd7`
   - `` `a614d26460f4ea7ea0abe3a4a0550137b60daf2889133535b8295e926fd5aab3`
