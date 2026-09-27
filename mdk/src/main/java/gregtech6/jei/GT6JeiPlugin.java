@@ -100,6 +100,7 @@ public class GT6JeiPlugin implements IModPlugin {
 				GT6RecipeViewerText.cokeOvenInfo());
 		registerRecipeMapCategoriesRows(registration);
 		registerOreGenInfoRows(registration);
+		registerMaterialTreeRows(registration);
 	}
 
 	/**
@@ -139,6 +140,9 @@ public class GT6JeiPlugin implements IModPlugin {
 			registration.addRecipeCategories(new GT6RecipeMapJeiCategory(tMap));
 		}
 		registration.addRecipeCategories(new GT6OreGenInfoJeiCategory());
+		if (gregtech6.recipes.tree.MaterialTreeDisplay.SHOWN) {
+			registration.addRecipeCategories(new GT6MaterialTreeJeiCategory());
+		}
 	}
 
 	/**
@@ -151,6 +155,21 @@ public class GT6JeiPlugin implements IModPlugin {
 		GT6OreGenInfoJeiCategory tCategory = new GT6OreGenInfoJeiCategory();
 		ItemStack tCatalyst = gregtech6.worldgen.GT6OreGenInfoLayout.catalystStack();
 		if (!tCatalyst.isEmpty()) registration.addRecipeCatalysts(tCategory.getRecipeType(), tCatalyst);
+	}
+
+	/**
+	 * The material-tree displays (task debt-material-tree-b, ruling 2026-09-26-debt-material-tree
+	 * card B): one aggregated per-material processing-tree display per ore-universe material,
+	 * derived from ONE {@code MaterialTreeBuilder.build()} sweep (the hash-index red line —
+	 * startup-only, the EMI twin runs its own). The {@code SHOWN} switch is the
+	 * hideOreProcessingDiagrams precedent (GTCEu ConfigHolder.java:221).
+	 */
+	private static void registerMaterialTreeRows(IRecipeRegistration registration) {
+		if (!gregtech6.recipes.tree.MaterialTreeDisplay.SHOWN) return;
+		GT6MaterialTreeJeiCategory tCategory = new GT6MaterialTreeJeiCategory();
+		java.util.List<gregtech6.recipes.tree.MaterialTreeDisplay> tDisplays =
+				gregtech6.recipes.tree.MaterialTreeDisplay.buildAll(gregtech6.recipes.tree.MaterialTreeBuilder.build());
+		if (!tDisplays.isEmpty()) registration.addRecipes(tCategory.getRecipeType(), tDisplays);
 	}
 
 	/**

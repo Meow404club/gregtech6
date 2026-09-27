@@ -62,6 +62,10 @@ import gregtech6.registry.GTMultiBlocks;
  *     {@link GT6OreGenInfoEmiCategory} — each JEI face shipped with its twin in the same
  *     card</td></tr>
  * </table>
+ * The gt6 JEI plugin's faces each carry their native twin here (info page = face 1,
+ * material_tool rows = face 2, RM categories = face 3, material tree = face 4), so the
+ * red line stays balanced. Tier-c faces beyond these (multiblock pages) are ruled to
+ * later waves — they exist on neither side yet.
  *
  * <p>Wiring: EMI stays compile-only on both legs (forge modCompileOnly / neoforge
  * compileOnly, version pinned 1.1.24, maven = terraformers) — zero run-classpath and
@@ -81,6 +85,7 @@ public class GT6EmiPlugin implements EmiPlugin {
 		registerMaterialToolRows(registry);
 		registerRecipeMapCategories(registry);
 		registerOreGenInfo(registry);
+		registerMaterialTree(registry);
 	}
 
 	/**
@@ -211,5 +216,22 @@ public class GT6EmiPlugin implements EmiPlugin {
 		if (aMap == null) return false;
 		EmiApi.displayRecipeCategory(GT6RecipeMapEmiCategory.CATEGORIES.apply(aMap));
 		return true;
+	}
+
+	/**
+	 * Face 4 (task debt-material-tree-b) — the per-material processing-tree displays, the
+	 * native twin of GT6JeiPlugin's registerMaterialTreeRows (same builder sweep, same
+	 * shared {@link gregtech6.recipes.tree.MaterialTreeDisplay} model, same {@code SHOWN}
+	 * switch — the hideOreProcessingDiagrams precedent). One category (the singleton) +
+	 * one recipe per ore-universe material. THE JEMI RED LINE's arm: this face and its JEI
+	 * twin ship in the same card, so the gt6 namespace stays balanced on both sides.
+	 */
+	private static void registerMaterialTree(EmiRegistry registry) {
+		if (!gregtech6.recipes.tree.MaterialTreeDisplay.SHOWN) return;
+		registry.addCategory(GT6MaterialTreeEmiCategory.INSTANCE);
+		for (gregtech6.recipes.tree.MaterialTreeDisplay tDisplay
+				: gregtech6.recipes.tree.MaterialTreeDisplay.buildAll(gregtech6.recipes.tree.MaterialTreeBuilder.build())) {
+			registry.addRecipe(new GT6MaterialTreeEmiRecipe(tDisplay));
+		}
 	}
 }
