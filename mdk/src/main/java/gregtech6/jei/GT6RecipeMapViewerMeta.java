@@ -128,10 +128,12 @@ public final class GT6RecipeMapViewerMeta {
 	}
 
 	static {
-		// the mNEIAllowed=F rows (aShowVoltage stays T on both RM rows; FM.java:38 is F,F)
+		// the mNEIAllowed=F rows (furnacefuel's aShowVoltageAmperageInNEI is T per the
+		// FM.java:38 T,F,... row tail — batch 1 had misread it F; dead value anyway, the
+		// map is EXCLUDED and never renders)
 		deviation("gt.recipe.chisel", false, true, false, "", 1, "");       // RM.java:138
 		deviation("gt.recipe.autocrafting", false, true, false, "", 1, ""); // RM.java:63
-		deviation("mc.recipe.furnacefuel", false, false, false, "", 1, ""); // FM.java:38
+		deviation("mc.recipe.furnacefuel", false, true, false, "", 1, "");  // FM.java:38
 		// the fuel maps: combinePower=T (FM.java:40/:41/:42/:43/:45)
 		deviation("gt.recipe.fuels.fluidbed", true, true, true, "", 1, "");
 		deviation("gt.recipe.fuels.burn", true, true, true, "", 1, "");

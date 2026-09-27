@@ -116,6 +116,12 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 		// the mNEIAllowed=F rows read back through the same table
 		assertFalse(GT6RecipeMapViewerMeta.metaOf(GT6RecipeMaps.CHISEL).neiAllowed());
 		assertFalse(GT6RecipeMapViewerMeta.metaOf(GT6RecipeMaps.AUTOCRAFTER).neiAllowed());
+		// furnacefuel: aShowVoltageAmperageInNEI is T on the FM.java:38 row tail (T,F,...)
+		// — batch 1 had transcribed F; a dead value (the map is excluded and never renders)
+		// but the table is a transcription, so the batch-2 review correction is pinned
+		var tFurnaceFuel = GT6RecipeMapViewerMeta.metaOf(GT6RecipeMaps.FURNACE_FUEL);
+		assertFalse(tFurnaceFuel.neiAllowed());
+		assertTrue(tFurnaceFuel.showVoltageAmperage());
 	}
 
 	// -------------------------------------------------------------------
