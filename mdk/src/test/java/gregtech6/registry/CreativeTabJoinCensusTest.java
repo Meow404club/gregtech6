@@ -15,6 +15,7 @@ import net.minecraft.SharedConstants;
 import net.minecraft.server.Bootstrap;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 
+import gregtech6.items.GT6Emitters;
 import gregtech6.items.GT6LaserGas;
 
 /**
@@ -187,6 +188,12 @@ public class CreativeTabJoinCensusTest {
 		assertEquals(9, itemFields(GT6LaserGas.class).size());
 	}
 
+	/** The three technological component families: 10+10+10 = 30 (MultiItemTechnological :54-56, task debt-emitter-sensor-generators). */
+	@Test
+	public void technologicalComponentsJoinThirty() {
+		assertEquals(30, GT6Emitters.ITEMS_BY_PATH.size());
+	}
+
 	// ---------------------------------------------------------------------------
 	// the census total + the join-handler presence
 	// ---------------------------------------------------------------------------
@@ -213,7 +220,9 @@ public class CreativeTabJoinCensusTest {
 				+ itemFields(GT6Kinetics.class).size()
 				+ itemFields(GT6FeBatteries.class).size()
 				+ itemFields(GT6LaserGas.class).size();
-		assertEquals(177, tTotal, "the p38 batch (171 after the usb-He followup) + the debt-laser-gas-family six");
+				+ itemFields(GT6LaserGas.class).size()
+				+ GT6Emitters.ITEMS_BY_PATH.size();
+		assertEquals(207, tTotal, "177 (p38 batch 171+usb-He+laser-gas six) + the 30 technological components (task debt-emitter-sensor-generators)");
 	}
 
 	/**
@@ -228,7 +237,8 @@ public class CreativeTabJoinCensusTest {
 				GT6LongDistPipes.class, GT6Lasers.class, GT6ElectricDynamos.class, GT6FluxDynamos.class,
 				GT6QuantumEnergizers.class, GT6CrystalChargers.class, GT6ZpmDechargers.class,
 				GT6MagicAbsorbers.class, GT6Sensors.class, GT6Attachments.class, GT6StaticStorages.class,
-				GT6Hoppers.class, GT6Kinetics.class, GT6FeBatteries.class, GT6LaserGas.class);
+					GT6Hoppers.class, GT6Kinetics.class, GT6FeBatteries.class, GT6LaserGas.class,
+					GT6Emitters.class);
 		for (Class<?> tFamily : tFamilies) {
 			Method tWalk = tFamily.getDeclaredMethod("onBuildTabContents", BuildCreativeModeTabContentsEvent.class);
 			assertTrue(java.lang.reflect.Modifier.isStatic(tWalk.getModifiers()), tFamily.getSimpleName() + " walk");

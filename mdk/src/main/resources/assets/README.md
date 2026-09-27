@@ -9210,3 +9210,42 @@ tile per machine — colored == colored_front, all six digests equal):
 - `bedrockdrill_colored_back.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
 - `bedrockdrill_colored_left.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
 - `bedrockdrill_colored_right.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+
+## task debt-emitter-sensor-generators — the 30 technological component textures
+
+Upstream source folder `textures/items/gt.multiitem.technological/`, tier ids
+`12100..12109` (FIELD_GENERATORS) / `12120..12129` (EMITTERS) /
+`12140..12149` (SENSORS); every file below is a byte-identical borrow
+(sha256 ours == upstream, verified at copy time), the tier ladder
+ULV/LV/MV/HV/EV/IV/LuV/ZPM/UV/PUV1 = VN[0..9].
+
+- `gt6/textures/item/field_generator_ulv.png` (upstream `12100.png`) `6a875a512c69efb34ec8c546ce648c088c0e5214994f1d902524f1b784f1ec23`
+- `gt6/textures/item/field_generator_lv.png` (upstream `12101.png`) `0f4328efb8cc25a83712efba82165783c3273edb0a85df961932216f25b02928`
+- `gt6/textures/item/field_generator_mv.png` (upstream `12102.png`) `3ee41ac419de43ea2aa378158ff78c2f396a85b159e3e177fef17169fe7d830f`
+- `gt6/textures/item/field_generator_hv.png` (upstream `12103.png`) `3a2df72ba40f75f80904cd8862ad79b08da4efec3eedf3c310159c7a52de6301`
+- `gt6/textures/item/field_generator_ev.png` (upstream `12104.png`) `44c323b44ee35a3136f88cb3cf2a2f24ca28f9f53ce44c69a7a061b9af1dc326`
+- `gt6/textures/item/field_generator_iv.png` (upstream `12105.png`) `9c292c8946755cebb16d32b9aeac59d42969f66e44a981ad9e22c26f6d24e072`
+- `gt6/textures/item/field_generator_luv.png` (upstream `12106.png`) `1a162828eeba3d01f58428b9f257744852acf5e8348553411d3757e844a58cb4`
+- `gt6/textures/item/field_generator_zpm.png` (upstream `12107.png`) `1726314ce53f3419dccbbf96a545004c14d45baf6b885f7fc092bf9b75e43df4`
+- `gt6/textures/item/field_generator_uv.png` (upstream `12108.png`) `9319d4296e34753e687ad72eb39241daf613f81621b275492a47cf8f491b09a1`
+- `gt6/textures/item/field_generator_puv1.png` (upstream `12109.png`) `1ded6074b3773c8721401008d8331983d1be01c29069255a2b15cff18a83a1a7`
+- `gt6/textures/item/signal_emitter_ulv.png` (upstream `12120.png`) `b169245926c2931bf512fba9fc20a0a21d36192c72f8c9d420ae4b492301de9b`
+- `gt6/textures/item/signal_emitter_lv.png` (upstream `12121.png`) `f6dd3710f748262c48193750753f75c6c3c371c300dd3861afe2256ed9ffc41b`
+- `gt6/textures/item/signal_emitter_mv.png` (upstream `12122.png`) `ddeccf81f06c4c38d9ae415a803573c63dc380c2b9e8a42c3be6e73b9b79a87e`
+- `gt6/textures/item/signal_emitter_hv.png` (upstream `12123.png`) `3add60d50b77715cab0a4c3560975cd6b359d84d8013ee66710bec5d40214efb`
+- `gt6/textures/item/signal_emitter_ev.png` (upstream `12124.png`) `532ec506f01a29454d1a63eb3faad382b3657170f8035b8c4c4f014f9f60718a`
+- `gt6/textures/item/signal_emitter_iv.png` (upstream `12125.png`) `fcb50ff8e763c8e4497c68c8b4858ef85dc0344923410d39e5476f5ba0c36c65`
+- `gt6/textures/item/signal_emitter_luv.png` (upstream `12126.png`) `181f11516fedd542ab4dae93abf7a216551740e6c02309614a56380dc0faa821`
+- `gt6/textures/item/signal_emitter_zpm.png` (upstream `12127.png`) `ed793b77f7f789b45f08ea1785e27a75b874fa26c93537275a71cd64397ad4f5`
+- `gt6/textures/item/signal_emitter_uv.png` (upstream `12128.png`) `0bb32268f77945d3af4bd77466b4cde1d7fcb646643e58255f52cbe7f906d79b`
+- `gt6/textures/item/signal_emitter_puv1.png` (upstream `12129.png`) `db8e98c231da81678620bbdf445dd622cff0b7618c79f644607617586d93f019`
+- `gt6/textures/item/sensor_ulv.png` (upstream `12140.png`) `60ddfe180907e5c4b392ded2b7411cdfa17b747d814cdaafb77db1c33539dd07`
+- `gt6/textures/item/sensor_lv.png` (upstream `12141.png`) `3789f00afa1e1d1d325876a92a01472256dfa8f1832299cc40ec381eb04441fe`
+- `gt6/textures/item/sensor_mv.png` (upstream `12142.png`) `514803545b2cdea62db48f17e0d1065ec454e7d8988ed2ca92f0f9bb6fa397a8`
+- `gt6/textures/item/sensor_hv.png` (upstream `12143.png`) `1a6579d46379ebd8d12e694a4d3e87f6419d12edaabad5602cc089c8f4b6c846`
+- `gt6/textures/item/sensor_ev.png` (upstream `12144.png`) `a1082948e30985184ce097fe802fe15a13d8d8a9b6182a8ae3f34affa48cf96f`
+- `gt6/textures/item/sensor_iv.png` (upstream `12145.png`) `93f7801e3006e59226c31b45547725b6f209a50e0b9730de2738f2e5e728c612`
+- `gt6/textures/item/sensor_luv.png` (upstream `12146.png`) `74595ac34960109946acd038cb5bbc912b4024260f935e6f36387a4e494fbebf`
+- `gt6/textures/item/sensor_zpm.png` (upstream `12147.png`) `e9048ae829d00bfb4b05fc6b4b571f31506677629fa8cebfcdfb4900a7782b62`
+- `gt6/textures/item/sensor_uv.png` (upstream `12148.png`) `da0607bf872fa710cd06a88a083637f8f6b07b424ccdb9029bdc8f2c114fd588`
+- `gt6/textures/item/sensor_puv1.png` (upstream `12149.png`) `ccd9e4f180c1ef006f680aad7554fa8c18df9307c5d3125a6fa7366e5cc630a4`
