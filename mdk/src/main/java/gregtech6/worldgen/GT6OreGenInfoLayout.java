@@ -69,8 +69,8 @@ public final class GT6OreGenInfoLayout {
     /** face band + 4px bottom padding. */
     private static final int FACE_BAND_OFFSET = FACE_BASE_Y + 4;
 
-    /** The page title — ponytail: literal title (batch1's literal-title precedent); a lang key needs the zh tsv hand-row pipeline, one line when that card runs. */
-    public static final String TITLE_TEXT = "Ore Generation Distribution";
+    /** The page title lang key — the {@code gt6.jei.info.*} viewer-neutral domain (GT6RecipeViewerText precedent), key mirrors the category uid one-to-one; the values live on both lang faces (task debt-oregen-title-i18n). */
+    public static final String TITLE_KEY = "gt6.jei.info.ore_gen_info";
 
     /** The vanilla dim names in {@link GTOreWorldgen.Dim} declaration order — proper nouns, unlocalized (GTCEu used icons; text is the B-lite face). */
     public static String dimName(GTOreWorldgen.Dim aDim) {
@@ -83,9 +83,9 @@ public final class GT6OreGenInfoLayout {
 
     // ------------------------------------------------------------ text rows
 
-    /** The page title component. */
+    /** The page title component — translatable so both locales render (the zh face rides the reference table's hand layer). */
     public static Component title() {
-        return Component.literal(TITLE_TEXT);
+        return Component.translatable(TITLE_KEY);
     }
 
     /** The material name line — the {@code gt6.material.<snake>} small unit, composed in BOTH locales since p23-i18n-material-fill-fix. */

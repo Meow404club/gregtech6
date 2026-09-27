@@ -23,6 +23,7 @@ import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTWires;
+import gregtech6.worldgen.GT6OreGenInfoLayout;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
 
@@ -1622,6 +1623,10 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.lubricant_bucket");
 		addDirect(gregtech6.item.GT6LubricantBucket.TOOLTIP_KEY);
 		addDirect(GT6JeiPlugin.INFO_KEY_COKE_OVEN);
+		// task debt-oregen-title-i18n — the ore-gen distribution page title (the
+		// GT6OreGenInfoLayout.TITLE_KEY consumer): hand row 矿石生成分布, no dump face —
+		// the page is a modern enhancement, upstream 1.7.10 has no NEI distribution face
+		addDirect(GT6OreGenInfoLayout.TITLE_KEY);
 		addDirect("block.gt6.example_chest");
 		// task p28-cfoam-lang-key: the TestMachine framework blocks joined the coverage gate —
 		// no getName override, so their Jade line resolves the vanilla keys; faces follow the
