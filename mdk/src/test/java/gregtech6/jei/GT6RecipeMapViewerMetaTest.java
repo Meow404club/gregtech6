@@ -50,7 +50,7 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 	@Test
 	void censusEligibleVisibleAndExcluded() {
 		GT6RecipeMaps.init();
-		assertEquals(75, RecipeMap.RECIPE_MAPS.size(), "the main-baseline census (rm-six-maps' Mortar/Hammer tail lands by rebase, the card's 80-pin is that merged shape)");
+		assertEquals(80, RecipeMap.RECIPE_MAPS.size(), "the merged-shape census (rm-six-maps' Microwave/Cooker/ToolHeads/Mortar/Hammer five maps landed by rebase — the pre-rebase branch pinned 75)");
 
 		// the ruled exclusion table (r-jei-emi-coverage id927) never enters a category
 		for (String tExcluded : List.of("mc.recipe.furnace", "mc.recipe.furnacefuel", "gt.recipe.cruciblesmelting",
@@ -68,7 +68,7 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 			if (GT6RecipeMapViewerMeta.eligible(tMap)) tEligible++;
 			if (GT6RecipeMapViewerMeta.visibleToViewers(tMap)) tVisible.add(tMap.mNameInternal);
 		}
-		assertEquals(67, tEligible, "75 census - 6 ruled-excluded - 3 upstream-disallowed + 1 overlap (furnacefuel is both) = 67 eligible");
+		assertEquals(72, tEligible, "80 census - 6 ruled-excluded - 3 upstream-disallowed + 1 overlap (furnacefuel is both) = 72 eligible (rm-six-maps' five maps are all upstream mNEIAllowed=T standard rows)");
 		// the batch-1 face: the six canaries of the 2026-09-26 ruling + BEDROCK_ORE_LIST (RM.java:153)
 		assertEquals(Set.of("gt.recipe.cokeoven", "gt.recipe.shredder", "gt.recipe.crusher",
 				"gt.recipe.lathe", "gt.recipe.distillery", "gt.recipe.drying", "gt.recipe.bedrockorelist"), tVisible);
