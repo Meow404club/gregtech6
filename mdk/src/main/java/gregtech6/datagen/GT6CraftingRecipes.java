@@ -372,6 +372,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (CraftFromRow tRow : craftFromDatagenRows()) {
 			craftFromBuilder(tRow).save(aConsumer, tRow.aId());
 		}
+		// task debt-stairs-wall-vanilla-recipes — the upstream BlockStones vanilla-degradation rows
+		for (PartFamilyRecipeRow tRow : stairsFromRocksBuilders()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
+		for (PartFamilyRecipeRow tRow : cobbleStairsWallBuilders()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 	}
 	//?} else {
 	/*@Override
@@ -522,6 +529,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task p36-craftfrom-plategem — the CraftFrom hand-craft family (Loader_OreProcessing.java:171-178)
 		for (CraftFromRow tRow : craftFromDatagenRows()) {
 			craftFromBuilder(tRow).save(aOutput, tRow.aId());
+		}
+		// task debt-stairs-wall-vanilla-recipes — the upstream BlockStones vanilla-degradation rows
+		for (PartFamilyRecipeRow tRow : stairsFromRocksBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
+		for (PartFamilyRecipeRow tRow : cobbleStairsWallBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
 		}
 	}
 	*///?}
@@ -3641,6 +3655,79 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('s', GT6ItemTags.TOOLS_SAW)
 				.define('X', aRow.aInput())
 				.unlockedBy("has_input", has(aRow.aInput()));
+	}
+
+	// -----------------------------------------------------------------------
+	// task debt-stairs-wall-vanilla-recipes — the upstream stairs/wall
+	// VANILLA-DEGRADATION rows (BlockStones.java run(), the generify philosophy
+	// as shipped): per GT stone family the decoration shapes degrade onto
+	// VANILLA outputs. Two upstream loops:
+	//
+	//  - :268, the per-material body: 3× rockGt (" X","XX") → 1 vanilla
+	//    cobblestone stairs. Input count is the pattern VERBATIM (3 X's — the
+	//    card's "2 inputs" was a misread, coder correction #2; ruling
+	//    decisions.2026-09-26-debt-stairs-walls-slab coder_corrections).
+	//  - :328/:329, the mEqualBlocks[COBBL] loop body: 3× family cobble → 4
+	//    stairs and 6× family cobble ("XXX","XXX") → 6 vanilla cobblestone
+	//    wall. That set self-adds only the family's own COBBL variant
+	//    (BlockStones.java:254; the lone external grafts Loader_Rocks.java
+	//    :203-205 target mEqualBlocks[0] and never COBBL), so it walks exactly
+	//    the 17 family cobbles.
+	//
+	// The upstream output {@code Blocks.stone_stairs} is 1.7.10 block id 67 =
+	// COBBLESTONE stairs (the MCP naming quirk) — the modern face
+	// {@code Items.COBBLESTONE_STAIRS} (Items.java:303, the 1.13 flattening
+	// rename), NOT the 1.20.1 {@code Items.STONE_STAIRS} (Items.java:650 — the
+	// 1.14 stone-textured block, absent from the upstream universe; coder
+	// correction #1). CR.DEF_MIR = the vanilla shaped auto-mirror. The upstream
+	// {@code // TODO Stairs} comments mark the never-built GT-textured stairs —
+	// the 34-block GT-material build was ruled CUT; this IS the upstream real
+	// behaviour.
+
+	/** The stairs-from-rocks rows (BlockStones.java:268) — 17× 3 rockGt → 1 vanilla cobblestone stairs. */
+	private List<PartFamilyRecipeRow> stairsFromRocksBuilders() {
+		List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		for (gregtech6.registry.GTStoneBlocks.StoneSpec tStone : gregtech6.registry.GTStoneBlocks.STONES) {
+			Item tRock = itemOrNull(gregapi.data.OP.rockGt, tStone.material().get());
+			if (tRock == null) continue; // the CR.ONLY_IF_HAS_RESULT face (all 17 resolve today; rock_gt_prismarine = MT.PrismarineLight, internal name "Prismarine")
+			String tIdPath = "stairs_rock/" + tStone.snake(); // the precomputed arg — the stonecutter ctor swap rewrites simple-arg calls only
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, Items.COBBLESTONE_STAIRS)
+					.pattern(" X")
+					.pattern("XX")
+					.define('X', tRock)
+					.unlockedBy("has_rock", has(tRock)),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tIdPath)));
+		}
+		return rRows;
+	}
+
+	/**
+	 * The mEqualBlocks[COBBL] loop rows (BlockStones.java:328-329) — per family BOTH shapes:
+	 * 3× the family's COBBL variant → 4 vanilla cobblestone stairs, then 6× → 6 vanilla
+	 * cobblestone wall (the loop-body order, family-major).
+	 */
+	private List<PartFamilyRecipeRow> cobbleStairsWallBuilders() {
+		List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		for (gregtech6.registry.GTStoneBlocks.StoneSpec tStone : gregtech6.registry.GTStoneBlocks.STONES) {
+			var tCobblHandle = gregtech6.registry.GTStoneBlocks.item(tStone.snake(), gregtech6.block.stone.StoneVariant.COBBL);
+			if (tCobblHandle == null) continue; // pre-registration defensive skip (all 272 register before datagen)
+			Item tCobbl = tCobblHandle.get();
+			String tStairsPath = "stairs_cobble/" + tStone.snake(); // the precomputed args — the stonecutter ctor swap rewrites simple-arg calls only
+			String tWallPath = "wall_cobble/" + tStone.snake();
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, Items.COBBLESTONE_STAIRS, 4)
+					.pattern(" X")
+					.pattern("XX")
+					.define('X', tCobbl)
+					.unlockedBy("has_cobble", has(tCobbl)),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tStairsPath)));
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, Items.COBBLESTONE_WALL, 6)
+					.pattern("XXX")
+					.pattern("XXX")
+					.define('X', tCobbl)
+					.unlockedBy("has_cobble", has(tCobbl)),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tWallPath)));
+		}
+		return rRows;
 	}
 
 }

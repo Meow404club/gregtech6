@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "X": {
+      "item": "gt6:rock_gt_marble"
+    }
+  },
+  "pattern": [
+    " X",
+    "XX"
+  ],
+  "result": {
+    "item": "minecraft:cobblestone_stairs"
+  },
+  "show_notification": true
+}
