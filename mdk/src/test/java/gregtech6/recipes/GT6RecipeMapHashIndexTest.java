@@ -51,8 +51,11 @@ import gregtech6.registry.GTMaterialItems;
  *     adds, the JSON reload removeAll) are covered — a bypassed add is picked up by the
  *     size-drift rebuild (the upstream :491-494 reInit shape) and a removed row is never
  *     served from a stale bucket (the membership re-check).</li>
- * <li><b>Order of magnitude (discipline ④)</b>: a nanoTime microbenchmark on a 512-row
- *     map — indexed lookups vs the linear baseline.</li>
+ * <li><b>Order of magnitude (discipline ④)</b>: a deterministic probe census on a
+ *     512-row map — a counting Recipe subclass tallies isRecipeInputEqual calls: the
+ *     indexed lookups answer in O(1) probes per query while the retired linear scan
+ *     walks the whole table (de-flaked from the wall-clock microbenchmark,
+ *     known_bugs.recipemap-hashindex-flaky).</li>
  * </ul>
  */
 class GT6RecipeMapHashIndexTest extends GTRecipesOfflineTestBase {
@@ -313,11 +316,25 @@ class GT6RecipeMapHashIndexTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ------------------------------------------------------------------
-	// discipline ④: the order-of-magnitude microbenchmark
+	// discipline ④: the order-of-magnitude guard — de-flaked as a probe census
 	// ------------------------------------------------------------------
 
+	/**
+	 * The retired wall-clock microbenchmark (task p32, {@code indexed*10 < linear} on
+	 * {@code System.nanoTime}) redded under parallel load — a 7.2x ratio on a 4/4-slot box is
+	 * a false alarm, not a regression (known_bugs.recipemap-hashindex-flaky; the
+	 * vanilla-stone-base full-leg witness). The structural census replaces it: a counting
+	 * {@link Recipe} subclass tallies every {@code isRecipeInputEqual} probe — the one
+	 * funnel all three findRecipe arms route through — and the counts are DETERMINISTIC.
+	 * With every row queried exactly once: the indexed path pays the oRecipe buffer probe
+	 * (mismatch, the rotating queries share no inputs) plus the one-row item bucket hit —
+	 * {@code 2N-1} total, O(1) per query — while the linear baseline walks the table up to
+	 * each match, {@code N(N+1)/2} total. That O(1)-vs-O(N) probe shape IS the structural
+	 * reason the old 10x wall-clock win existed, so the guardrail semantic survives the
+	 * wall clock's removal (the scannedRows() discipline — structure over stopwatch).
+	 */
 	@Test
-	void hashIndexBeatsTheLinearScanByOrdersOfMagnitude() {
+	void hashIndexProbesConstantRowsWhileTheLinearScanWalksTheTable() {
 		// 512 distinct vanilla items, one 4x row each — rotating distinct queries (no buffer hits)
 		List<Item> tItems = new ArrayList<>();
 		for (Item tItem : BuiltInRegistries.ITEM) {
@@ -325,28 +342,40 @@ class GT6RecipeMapHashIndexTest extends GTRecipesOfflineTestBase {
 			if (tItem == null || new ItemStack(tItem).isEmpty() || tItem == Items.AIR) continue;
 			tItems.add(tItem);
 		}
-		assertTrue(tItems.size() >= 256, "the vanilla universe must spare enough distinct items, saw " + tItems.size());
+		int tN = tItems.size();
+		assertTrue(tN >= 256, "the vanilla universe must spare enough distinct items, saw " + tN);
 		RecipeMap tMap = new RecipeMap(new LinkedHashSet<>(), "gt.recipe.hashindex.bench", "HashIndex Bench", null, 0, 1, "gt6:textures/gui/hashindex", 1, 1, 0, 0, 0, 0, 0, 1);
-		for (Item tItem : tItems) {
-			tMap.addRecipe(new Recipe(true, new ItemStack[] {new ItemStack(tItem, 4)}, new ItemStack[] {new ItemStack(Items.GLASS)}, null, null, 32, 16, 0));
-		}
+		for (Item tItem : tItems) tMap.addRecipe(new CountingRecipe(new ItemStack(tItem, 4)));
 		long tSize = Long.MAX_VALUE / 4096;
-		int tRounds = 300;
-		ItemStack[][] tQueries = new ItemStack[tRounds][];
-		for (int i = 0; i < tRounds; i++) tQueries[i] = new ItemStack[] {new ItemStack(tItems.get(i % tItems.size()), 4)};
 
-		// warmup both paths (JIT), then measure
-		for (ItemStack[] tQ : tQueries) linearScanBaseline(tMap, tSize, null, tQ);
-		for (ItemStack[] tQ : tQueries) tMap.findRecipe(null, tSize, ItemStack.EMPTY, null, tQ);
-		long tLinearStart = System.nanoTime();
-		for (int r = 0; r < 3; r++) for (ItemStack[] tQ : tQueries) linearScanBaseline(tMap, tSize, null, tQ);
-		long tLinear = System.nanoTime() - tLinearStart;
-		long tIndexStart = System.nanoTime();
-		for (int r = 0; r < 3; r++) for (ItemStack[] tQ : tQueries) tMap.findRecipe(null, tSize, ItemStack.EMPTY, null, tQ);
-		long tIndexed = System.nanoTime() - tIndexStart;
+		// the linear baseline: every row queried once — the walk up to each match
+		CountingRecipe.sProbes = 0;
+		for (Item tItem : tItems) linearScanBaseline(tMap, tSize, null, new ItemStack(tItem, 4));
+		long tLinearProbes = CountingRecipe.sProbes;
 
-		System.out.println("p32-perf-recipe-hash-index microbench: linear=" + tLinear / 1_000_000 + "ms indexed=" + tIndexed / 1_000_000 + "ms ratio=" + (tLinear / Math.max(1, tIndexed)) + "x");
-		assertTrue(tIndexed * 10 < tLinear, "the indexed lookup must beat the linear scan by an order of magnitude: linear=" + tLinear + "ns indexed=" + tIndexed + "ns");
+		// the indexed path: the same rotating queries through findRecipe
+		CountingRecipe.sProbes = 0;
+		for (Item tItem : tItems) tMap.findRecipe(null, tSize, ItemStack.EMPTY, null, new ItemStack(tItem, 4));
+		long tIndexedProbes = CountingRecipe.sProbes;
+
+		System.out.println("p32-perf-recipe-hash-index probe census: n=" + tN + " linear=" + tLinearProbes + " indexed=" + tIndexedProbes);
+		assertTrue(tIndexedProbes <= 4L * tN, "the indexed lookup must answer in O(1) probes per query (expected ~2n-1): indexed=" + tIndexedProbes + " over n=" + tN);
+		assertTrue(tLinearProbes >= (long) tN * (tN - 1) / 2, "the linear baseline must walk the whole table (the census's non-vacuity guard): linear=" + tLinearProbes + " over n=" + tN);
+	}
+
+	/** The probe census stub: one 4x-item row that counts every {@code isRecipeInputEqual} call it receives. */
+	private static final class CountingRecipe extends Recipe {
+		static long sProbes;
+
+		CountingRecipe(ItemStack aInput) {
+			super(true, new ItemStack[] {aInput}, new ItemStack[] {new ItemStack(Items.GLASS)}, null, null, 32, 16, 0);
+		}
+
+		@Override
+		public boolean isRecipeInputEqual(boolean aDecreaseStacksizeBySuccess, boolean aDontCheckStackSizes, FluidStack[] aFluidInputs, ItemStack... aInputs) {
+			sProbes++;
+			return super.isRecipeInputEqual(aDecreaseStacksizeBySuccess, aDontCheckStackSizes, aFluidInputs, aInputs);
+		}
 	}
 
 	// ------------------------------------------------------------------
