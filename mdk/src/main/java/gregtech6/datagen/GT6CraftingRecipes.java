@@ -311,6 +311,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (CrackerRecipeRow tRow : burnerMixerRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
+		// task p37-usb-peripherals — the 8 USB peripheral rows (the cables :808-811, the HDDs :819-822)
+		for (BridgeCraftRow tRow : usbCableRecipeRows()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
+		for (BridgeCraftRow tRow : usbDriveRecipeRows()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 		// task p29-w5-t1-dig-six — the six dig-tool steel-route rows (the wrench row shape)
 		pickaxeBuilder().save(aConsumer, PICKAXE_ID);
 		pickaxeGemBuilder().save(aConsumer, PICKAXE_GEM_ID);
@@ -468,6 +475,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 		for (CrackerRecipeRow tRow : burnerMixerRecipeBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
+		// task p37-usb-peripherals — the 8 USB peripheral rows (the cables :808-811, the HDDs :819-822)
+		for (BridgeCraftRow tRow : usbCableRecipeRows()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
+		for (BridgeCraftRow tRow : usbDriveRecipeRows()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 		// task p29-w5-t1-dig-six — the six dig-tool steel-route rows (the wrench row shape)
@@ -1321,7 +1335,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	// (the diesel result-path convention). The Plantalyzer "WXW","ZMP","CYC" rows are
 	// CUT — the absent-component ruling (the GTMachines family note: the CABLES_01/
 	// EMITTERS/SENSORS columns and IL.Processor_Crystal_Diamond are absent port
-	// identities, the molecular-scanner ruling).
+	// identities, the molecular-scanner ruling). Task p37-usb-peripherals, coordinator
+	// ruling Q1=(b): the molecular-scanner T3 controller row (:1551 "DXE","FMF","RYS")
+	// STAYS CUT the same way — the F/X/Y columns (FIELD_GENERATORS[3]/EMITTERS[3]/
+	// SENSORS[3]) remain absent port identities; the seam now explicitly awaits the
+	// EMITTERS/SENSORS/FIELD_GENERATORS component pool card before any restore.
 	// -------------------------------------------------------------------------
 
 	private java.util.List<CrackerRecipeRow> burnerMixerRecipeBuilders() {
@@ -1356,6 +1374,108 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('o', GT6ItemTags.TOOLS_BENDING_CYLINDER_SMALL)
 				.define('P', GT6ItemTags.PLATE_CURVED_TIN)
 				.unlockedBy("has_plate_curved_tin", has(GT6ItemTags.PLATE_CURVED_TIN));
+	}
+
+	// -------------------------------------------------------------------------
+	// task p37-usb-peripherals — the USB peripheral crafting rows, upstream
+	// MultiItemTechnological.java:808-811 (the four USB Cable rows, "xWd","PCP","TCT")
+	// and :819-822 (the four USB HDD rows, "PLT","dRW","TCP"). Column map (VERBATIM):
+	//   - 'x' = the wirecutter (CR.java:359), 'd' = the screwdriver (CR.java:342) —
+	//     the battery row's tool-letter convention;
+	//   - 'W' = MT.DATA.WIRES_01[3..6] = wireGt01 Au/Al/Pt/Graphene (MT.java:3595-3610);
+	//   - 'C' (cable rows) = MT.DATA.CABLES_01[3..6] — WITH the upstream quirk kept:
+	//     CABLES_01[6] carries wireGt01.dat(Graphene) (MT.java:3646), the graphene rung
+	//     has NO cable form, so T4's 'C' is the SAME wire item as its 'W';
+	//   - 'C' (HDD rows) = OD_CIRCUITS[3..6] → the #gt6:circuit3..6 TAGS (the battery
+	//     'X' column convention, NOT a deviation);
+	//   - 'W' (HDD rows) = IL.USB_Cable_1..4 — the items this card registers;
+	//   - 'L' = IL.Comp_Laser_Gas_He — the coordinator's single-item exemption
+	//     (GT6LaserGas.COMP_LASER_GAS_HE, the consumption chain this row IS);
+	//   - 'R' = OD.record → #minecraft:music_discs (the vanilla tag is the "record"
+	//     oredict's modern face — the coordinator-approved mapping);
+	//   - 'P'/'T' = OP.plate/OP.screw dat(Al/StainlessSteel/Cr/Ti) — the same tier
+	//     ladder as the USB Stick rows (:796-799).
+	// The HDD_1 row carries upstream's own TODO verbatim (the :819 tail comment
+	// "Replace record with a CD (made of aluminium foils and plastic plates in a Press)")
+	// — upstream reality, unimplemented here by the card's explicit 不做 clause.
+	// -------------------------------------------------------------------------
+
+	/** The 'W' column ladder: MT.DATA.WIRES_01[3..6] = wireGt01 Au/Al/Pt/Graphene. */
+	private static final String[] USB_WIRE_COL_PATHS = {"wire_gold_gt01", "wire_aluminium_gt01", "wire_platinum_gt01", "wire_graphene_gt01"};
+	/** The 'C' column ladder: MT.DATA.CABLES_01[3..6] — [6] is the wireGt01(Graphene) quirk (MT.java:3646). */
+	private static final String[] USB_CABLE_COL_PATHS = {"cable_gold_gt01", "cable_aluminium_gt01", "cable_platinum_gt01", "wire_graphene_gt01"};
+	/** The 'P'/'T' material ladder: the :808-811/:819-822 Al/StainlessSteel/Cr/Ti column. */
+	private static final gregapi.oredict.OreDictMaterial[] USB_PLATE_MATS = {MT.Al, MT.StainlessSteel, MT.Cr, MT.Ti};
+
+	/** The USB Cable rows (:808-811, "xWd","PCP","TCT") — one per tier, ids on the item path. */
+	private java.util.List<BridgeCraftRow> usbCableRecipeRows() {
+		java.util.List<BridgeCraftRow> rRows = new ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			Item tWire = wireItemByPath(USB_WIRE_COL_PATHS[i]);
+			Item tCable = wireItemByPath(USB_CABLE_COL_PATHS[i]);
+			Item tPlate = GTMaterialItems.get(gregapi.data.OP.plate, USB_PLATE_MATS[i]).get();
+			Item tScrew = GTMaterialItems.get(gregapi.data.OP.screw, USB_PLATE_MATS[i]).get();
+			String tPath = "usb_cable_" + (i + 1);
+			rRows.add(new BridgeCraftRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, cableItem(i + 1))
+					.pattern("xWd").pattern("PCP").pattern("TCT")
+					.define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
+					.define('W', tWire)
+					.define('P', tPlate)
+					.define('C', tCable)
+					.define('T', tScrew)
+					.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+					.unlockedBy("has_data_wire", has(tWire)),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+		}
+		return rRows;
+	}
+
+	/** The USB HDD rows (:819-822, "PLT","dRW","TCP") — one per tier, ids on the item path. */
+	private java.util.List<BridgeCraftRow> usbDriveRecipeRows() {
+		java.util.List<BridgeCraftRow> rRows = new ArrayList<>();
+		// OD.record → #minecraft:music_discs: the vanilla tag IS the "record" oredict's
+		// modern face; bound through TagKey.create because the 1.21.1 leg dropped the
+		// ItemTags.MUSIC_DISCS constant (the tag itself survives in vanilla data on both legs).
+		String tDiscPath = "music_discs";
+		TagKey<Item> tRecords = TagKey.create(net.minecraft.core.registries.Registries.ITEM, new ResourceLocation("minecraft", tDiscPath));
+		for (int i = 0; i < 4; i++) {
+			Item tPlate = GTMaterialItems.get(gregapi.data.OP.plate, USB_PLATE_MATS[i]).get();
+			Item tScrew = GTMaterialItems.get(gregapi.data.OP.screw, USB_PLATE_MATS[i]).get();
+			TagKey<Item> tCircuit = GT6ItemTags.gt6("circuit" + (i + 3)); // OD_CIRCUITS[3..6]
+			String tPath = "usb_drive_" + (i + 1);
+			rRows.add(new BridgeCraftRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, driveItem(i + 1))
+					.pattern("PLT").pattern("dRW").pattern("TCP")
+					.define('P', tPlate)
+					.define('L', gregtech6.items.GT6LaserGas.COMP_LASER_GAS_HE.get()) // the exemption item
+					.define('T', tScrew)
+					.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+					.define('R', tRecords)
+					.define('W', cableItem(i + 1))
+					.define('C', tCircuit)
+					.unlockedBy("has_circuit", has(tCircuit)),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+		}
+		return rRows;
+	}
+
+	/** The USB Cable item of a tier (1-4). */
+	private static Item cableItem(int aTier) {
+		return switch (aTier) {
+			case 1 -> gregtech6.items.GT6UsbSticks.USB_CABLE_1.get();
+			case 2 -> gregtech6.items.GT6UsbSticks.USB_CABLE_2.get();
+			case 3 -> gregtech6.items.GT6UsbSticks.USB_CABLE_3.get();
+			default -> gregtech6.items.GT6UsbSticks.USB_CABLE_4.get();
+		};
+	}
+
+	/** The USB HDD item of a tier (1-4). */
+	private static Item driveItem(int aTier) {
+		return switch (aTier) {
+			case 1 -> gregtech6.items.GT6UsbSticks.USB_DRIVE_1.get();
+			case 2 -> gregtech6.items.GT6UsbSticks.USB_DRIVE_2.get();
+			case 3 -> gregtech6.items.GT6UsbSticks.USB_DRIVE_3.get();
+			default -> gregtech6.items.GT6UsbSticks.USB_DRIVE_4.get();
+		};
 	}
 
 	/**

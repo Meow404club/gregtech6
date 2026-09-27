@@ -62,6 +62,14 @@ import gregtech6.registry.GTMachines;
  * join MACHINES_TAB via {@link #onBuildTabContents} — supersedes the old CUT declaration
  * (the /give posture); the crafting rows (:796-799) still ride the crafting card pool.</p>
  *
+ * <p>Task p37-usb-peripherals extends the family with the 8 USB peripheral rows of the
+ * same upstream registration block: USB Cable 1-4 (:803-806, ids 32011-32014, NO
+ * behavior — the static "Replaces USB Sticks when connected to USB Ports" line is the
+ * whole face) and USB HDD 1-4 (:814-817, ids 32021-32024, the
+ * {@code Behavior_DataStorage16} tooltip face — the 16-slot {@code gt.usb.drive}
+ * compound). The HDD crafting rows' 'L' column pulls the Helium Laser Emitter in under
+ * the coordinator's single-item exemption (GT6LaserGas.COMP_LASER_GAS_HE).</p>
+ *
  * <p>KJS surface (the card's declaration): REGISTRATION face only; deferred to the KJS
  * binding card.</p>
  */
@@ -72,6 +80,8 @@ public final class GT6UsbSticks {
 	public static final String NBT_USB_TIER = "gt.usb.tier";
 	/** The data-compound key (upstream CS.java:1277 NBT_USB_DATA = "gt.usb.data"). */
 	public static final String NBT_USB_DATA = "gt.usb.data";
+	/** The 16-slot drive-compound key (upstream CS.java:1278 NBT_USB_DRIVE = "gt.usb.drive", the Behavior_DataStorage16 face). */
+	public static final String NBT_USB_DRIVE = "gt.usb.drive";
 	/** The material-id short inside the data compound (upstream CS.java:1281 NBT_REPLICATOR_DATA). */
 	public static final String NBT_REPLICATOR_DATA = "gt.replicator.data";
 
@@ -94,9 +104,61 @@ public final class GT6UsbSticks {
 	public static final RegistryObject<Item> USB_STICK_4 = ITEMS.register("usb_stick_4",
 			() -> new GT6UsbStickItem(new Item.Properties(), (byte)4));
 
+	// ---------------------------------------------------------------------------
+	// task p37-usb-peripherals — the USB Cable family, upstream
+	// MultiItemTechnological.java:803-806 (item ids 32011-32014, "USB 1.0 Cable" ..
+	// "USB 4.0 Cable", tooltip "Replaces USB Sticks when connected to USB Ports",
+	// OD_USB_CABLES[1..4] = gt:usbcable1..4, CS.java:162). NO Behavior face — the
+	// cables carry data BETWEEN ports (the upstream rows attach no behavior), so the
+	// static tooltip line is the whole item face (the GT6LaserGasItem shape).
+	// ---------------------------------------------------------------------------
+
+	/** The USB 1.0 Cable — the :803 row (id 32011, OD_USB_CABLES[1]). */
+	public static final RegistryObject<Item> USB_CABLE_1 = ITEMS.register("usb_cable_1",
+			() -> new GT6LaserGas.GT6LaserGasItem(new Item.Properties(), cableTooltipKey((byte)1)));
+	/** The USB 2.0 Cable — the :804 row (id 32012, OD_USB_CABLES[2]). */
+	public static final RegistryObject<Item> USB_CABLE_2 = ITEMS.register("usb_cable_2",
+			() -> new GT6LaserGas.GT6LaserGasItem(new Item.Properties(), cableTooltipKey((byte)2)));
+	/** The USB 3.0 Cable — the :805 row (id 32013, OD_USB_CABLES[3]). */
+	public static final RegistryObject<Item> USB_CABLE_3 = ITEMS.register("usb_cable_3",
+			() -> new GT6LaserGas.GT6LaserGasItem(new Item.Properties(), cableTooltipKey((byte)3)));
+	/** The USB 4.0 Cable — the :806 row (id 32014, OD_USB_CABLES[4]). */
+	public static final RegistryObject<Item> USB_CABLE_4 = ITEMS.register("usb_cable_4",
+			() -> new GT6LaserGas.GT6LaserGasItem(new Item.Properties(), cableTooltipKey((byte)4)));
+
+	// ---------------------------------------------------------------------------
+	// task p37-usb-peripherals — the USB HDD family, upstream
+	// MultiItemTechnological.java:814-817 (item ids 32021-32024, "USB 1.0 HDD" ..
+	// "USB 4.0 HDD", tooltip "Stores up to 16 Files at once", OD_USB_DRIVES[1..4] =
+	// gt:usbdrive1..4, CS.java:164, Behavior_DataStorage16.INSTANCE).
+	// ---------------------------------------------------------------------------
+
+	/** The USB 1.0 HDD — the :814 row (id 32021, OD_USB_DRIVES[1]). */
+	public static final RegistryObject<Item> USB_DRIVE_1 = ITEMS.register("usb_drive_1",
+			() -> new GT6UsbDriveItem(new Item.Properties(), (byte)1));
+	/** The USB 2.0 HDD — the :815 row (id 32022, OD_USB_DRIVES[2]). */
+	public static final RegistryObject<Item> USB_DRIVE_2 = ITEMS.register("usb_drive_2",
+			() -> new GT6UsbDriveItem(new Item.Properties(), (byte)2));
+	/** The USB 3.0 HDD — the :816 row (id 32023, OD_USB_DRIVES[3]). */
+	public static final RegistryObject<Item> USB_DRIVE_3 = ITEMS.register("usb_drive_3",
+			() -> new GT6UsbDriveItem(new Item.Properties(), (byte)3));
+	/** The USB 4.0 HDD — the :817 row (id 32024, OD_USB_DRIVES[4]). */
+	public static final RegistryObject<Item> USB_DRIVE_4 = ITEMS.register("usb_drive_4",
+			() -> new GT6UsbDriveItem(new Item.Properties(), (byte)4));
+
 	/** The tooltip key of a stick ("Stores Data", the :791-794 description column). */
 	public static String tooltipKey(byte aTier) {
 		return "item.gt6.usb_stick_" + aTier + ".tooltip";
+	}
+
+	/** The tooltip key of a cable ("Replaces USB Sticks when connected to USB Ports", the :803-806 description column). */
+	public static String cableTooltipKey(byte aTier) {
+		return "item.gt6.usb_cable_" + aTier + ".tooltip";
+	}
+
+	/** The tooltip key of a drive ("Stores up to 16 Files at once", the :814-817 description column). */
+	public static String driveTooltipKey(byte aTier) {
+		return "item.gt6.usb_drive_" + aTier + ".tooltip";
 	}
 
 	// ---------------------------------------------------------------------------
@@ -150,6 +212,35 @@ public final class GT6UsbSticks {
 		return tData == null ? 0 : tData.getShort(NBT_REPLICATOR_DATA);
 	}
 
+	/**
+	 * The 16-slot drive compound of a HDD stack, or null when the key is absent (the
+	 * Behavior_DataStorage16.java:39-40 read leg over NBT_USB_DRIVE; the W2 consumer
+	 * cards write slots {@code gt.usb.data0..15} into this compound).
+	 */
+	@Nullable
+	public static CompoundTag readDrive(ItemStack aStack) {
+		//? if forge {
+		if (!aStack.hasTag() || !aStack.getTag().contains(NBT_USB_DRIVE, net.minecraft.nbt.Tag.TAG_COMPOUND)) return null;
+		return aStack.getTag().getCompound(NBT_USB_DRIVE);
+		//?} else {
+		/*CompoundTag tTag = aStack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+				net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+		return tTag.contains(NBT_USB_DRIVE, net.minecraft.nbt.Tag.TAG_COMPOUND) ? tTag.getCompound(NBT_USB_DRIVE) : null;
+		 *///?}
+	}
+
+	/** The drive write face: the whole 16-slot compound under NBT_USB_DRIVE (the consumer-side mirror of {@link #readDrive}). */
+	public static void writeDrive(ItemStack aStack, CompoundTag aDrive) {
+		//? if forge {
+		aStack.getOrCreateTag().put(NBT_USB_DRIVE, aDrive);
+		//?} else {
+		/*CompoundTag tTag = aStack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+				net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+		tTag.put(NBT_USB_DRIVE, aDrive);
+		aStack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(tTag));
+		 *///?}
+	}
+
 	/** The material behind the carried id, or null (the RecipeMapReplicator.java:82-83 {@code tID > 0 && UT.Code.exists} gate verbatim over the raw array). */
 	@Nullable
 	public static OreDictMaterial materialOf(ItemStack aStack) {
@@ -183,6 +274,16 @@ public final class GT6UsbSticks {
 			aEvent.accept(new ItemStack(USB_STICK_2.get()));
 			aEvent.accept(new ItemStack(USB_STICK_3.get()));
 			aEvent.accept(new ItemStack(USB_STICK_4.get()));
+			// task p37-usb-peripherals — the 8 peripheral rows join the same tab (the
+			// upstream rows all hang on the Technological items tab, the pooled join).
+			aEvent.accept(new ItemStack(USB_CABLE_1.get()));
+			aEvent.accept(new ItemStack(USB_CABLE_2.get()));
+			aEvent.accept(new ItemStack(USB_CABLE_3.get()));
+			aEvent.accept(new ItemStack(USB_CABLE_4.get()));
+			aEvent.accept(new ItemStack(USB_DRIVE_1.get()));
+			aEvent.accept(new ItemStack(USB_DRIVE_2.get()));
+			aEvent.accept(new ItemStack(USB_DRIVE_3.get()));
+			aEvent.accept(new ItemStack(USB_DRIVE_4.get()));
 		}
 	}
 
@@ -252,6 +353,97 @@ public final class GT6UsbSticks {
 				}
 			}
 			aTooltip.add(Component.literal("Data: USB " + readTier(aStack) + ".0").withStyle(ChatFormatting.DARK_GRAY));
+		}
+	}
+
+	/**
+	 * The drive item (task p37-usb-peripherals): the static "Stores up to 16 Files at
+	 * once" line + the {@code Behavior_DataStorage16} face (upstream
+	 * Behavior_DataStorage16.java:37-58, field-for-field):
+	 *
+	 * <ul>
+	 * <li>no {@code gt.usb.drive} key → "Perfectly Formatted" (the LH.Chat.CYAN line,
+	 *     :54);</li>
+	 * <li>the drive compound present but empty → "Uncleanly Formatted" (:42);</li>
+	 * <li>otherwise 16 slots, key {@code gt.usb.data}<i>i</i> (:45, the NBT_USB_DATA +
+	 *     i concatenation): an empty slot reads "Data Slot i is Empty" (DGRAY, :47), a
+	 *     filled one rides {@code UT.NBT.getDataToolTip(tUSB, aList, F)} (:49) — the
+	 *     SHORT material form (UT.java:2260: "Mat Data: name (n/p/QU)" for UUM
+	 *     materials, the "Material Data: name (Not Replicatable)" line otherwise) —
+	 *     the SAME hardcoded-en posture as the stick face.</li>
+	 * </ul>
+	 */
+	public static final class GT6UsbDriveItem extends Item {
+
+		/** The drive's tier (the OD_USB_DRIVES index, the tooltip-key face). */
+		public final byte mTier;
+
+		public GT6UsbDriveItem(Properties aProperties, byte aTier) {
+			super(aProperties);
+			mTier = aTier;
+		}
+
+		//? if forge {
+		@Override
+		public void appendHoverText(ItemStack aStack, @Nullable Level aLevel, List<Component> aTooltip, TooltipFlag aFlag) {
+			super.appendHoverText(aStack, aLevel, aTooltip, aFlag);
+			addDriveTooltipFace(aStack, aTooltip);
+		}
+		//?} else {
+		/*@Override
+		public void appendHoverText(ItemStack aStack, Item.TooltipContext aContext, List<Component> aTooltip, TooltipFlag aFlag) {
+			//21.1: the hover signature carries the Item.TooltipContext (the GT6UsbStickItem fork shape).
+			super.appendHoverText(aStack, aContext, aTooltip, aFlag);
+			addDriveTooltipFace(aStack, aTooltip);
+		}
+		*///?}
+
+		/** The Behavior_DataStorage16.java:37-58 face: the static line, then the drive format state. */
+		private static void addDriveTooltipFace(ItemStack aStack, List<Component> aTooltip) {
+			GT6UsbDriveItem tItem = aStack.getItem() instanceof GT6UsbDriveItem tDrive ? tDrive : null;
+			if (tItem != null) aTooltip.add(Component.translatable(driveTooltipKey(tItem.mTier)));
+			CompoundTag tDrive = readDrive(aStack);
+			if (tDrive == null) {
+				// the :53-55 else branch — no drive key at all.
+				aTooltip.add(Component.literal("Perfectly Formatted").withStyle(ChatFormatting.AQUA));
+				return;
+			}
+			if (tDrive.isEmpty()) {
+				// the :41-42 branch — the key exists but carries nothing.
+				aTooltip.add(Component.literal("Uncleanly Formatted").withStyle(ChatFormatting.AQUA));
+				return;
+			}
+			for (byte i = 0; i < 16; i++) {
+				CompoundTag tSlot = tDrive.getCompound(NBT_USB_DATA + i);
+				if (tSlot.isEmpty()) {
+					aTooltip.add(Component.literal("Data Slot " + i + " is Empty").withStyle(ChatFormatting.DARK_GRAY));
+				} else {
+					addShortMaterialFace(tSlot, aTooltip);
+				}
+			}
+		}
+
+		/** The UT.NBT.getDataToolTip(.., F) short material form (UT.java:2260, the NBT_REPLICATOR_DATA branch). */
+		private static void addShortMaterialFace(CompoundTag aSlot, List<Component> aTooltip) {
+			short tID = aSlot.getShort(NBT_REPLICATOR_DATA);
+			OreDictMaterial tMaterial = tID > 0 ? MaterialRegistry.INSTANCE.byID(tID) : null;
+			if (tMaterial == null) return; // the Code.exists gate (UT.java:2258) — a non-material slot renders nothing
+			if (tMaterial.contains(TD.Processing.UUM)) {
+				aTooltip.add(Component.literal("Mat Data: ").withStyle(ChatFormatting.AQUA)
+						.append(Component.literal(tMaterial.getLocal()).withStyle(ChatFormatting.WHITE))
+						.append(Component.literal(" (").withStyle(ChatFormatting.WHITE))
+						.append(Component.literal("" + tMaterial.mNeutrons).withStyle(ChatFormatting.YELLOW))
+						.append(Component.literal("/").withStyle(ChatFormatting.WHITE))
+						.append(Component.literal("" + tMaterial.mProtons).withStyle(ChatFormatting.RED))
+						.append(Component.literal("/").withStyle(ChatFormatting.WHITE))
+						.append(Component.literal((tMaterial.mNeutrons + tMaterial.mProtons) * 65536 + " "
+								+ TD.Energy.QU.getLocalisedNameShort()).withStyle(ChatFormatting.AQUA))
+						.append(Component.literal(")").withStyle(ChatFormatting.WHITE)));
+			} else {
+				aTooltip.add(Component.literal("Material Data: ").withStyle(ChatFormatting.AQUA)
+						.append(Component.literal(tMaterial.getLocal()).withStyle(ChatFormatting.WHITE))
+						.append(Component.literal(" (Not Replicatable)").withStyle(ChatFormatting.GOLD)));
+			}
 		}
 	}
 }

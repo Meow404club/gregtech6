@@ -128,6 +128,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addBeeUnits();          // task p31-bees-lv1 — the 20 comb names + the Bees tab + the 11 honey/bee-row fluids (hand rows, the tsv direct band; the dump carries no comb faces)
 		addBumbleUnits();       // task p33-bees-lv3-a-items — the 80 species names + the 8 face formats (the dump gt.multiitem.bumblebee.* faces verbatim, the tsv direct band)
 		addUsbStickUnits();     // task p32-usb-data — the 4 stick names + the 4 tooltips (hand rows, the tsv direct band; the dump USB face)
+		addUsbPeripheralUnits(); // task p37-usb-peripherals — the 8 peripheral names + tooltips + the He emitter pair (hand rows, the tsv direct band)
 		addKeyUnits();          // task dungeon-keys — the 10 key names + the behavior tooltip (hand rows, the dump 铁钥匙..塑料钥匙 faces)
 		addPlaceablesUnits();   // task p32-placeables — the 8 deco/placed-pile names (the lantern + the sandwich + the six placed piles; hand rows, the tsv direct band)
 		addLaserGasUnits();     // task p32-qu-laser-domain — the 2 gas emitter names + the 2 tooltips (hand rows, the dump :10379/:10395 faces)
@@ -149,6 +150,26 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect("item.gt6.usb_stick_" + tTier);
 			addDirect("item.gt6.usb_stick_" + tTier + ".tooltip");
 		}
+	}
+
+	/**
+	 * The USB peripheral zh faces (task p37-usb-peripherals, the addUsbStickUnits shape):
+	 * the 8 display names + 8 tooltips + the exempted He emitter pair, riding the
+	 * reference table's hand layer — the values are the DUMP faces verbatim
+	 * (tmp/gregtech.lang:10753-10768: "USB 1.0 数据线".."USB 4.0 数据线", tooltip
+	 * 与USB接口连接时自动替换USB; "USB 1.0 驱动器".."USB 4.0 驱动器", tooltip 同时存储16项文件;
+	 * :10381-10382 氦激光镭射器 / 用途: 弱光电器). The drive data-state lines stay RUNTIME
+	 * literals (the Behavior_DataStorage16 hardcoded-en face — the addUsbStickUnits note).
+	 */
+	private void addUsbPeripheralUnits() {
+		for (byte tTier = 1; tTier <= 4; tTier++) {
+			addDirect("item.gt6.usb_cable_" + tTier);
+			addDirect("item.gt6.usb_cable_" + tTier + ".tooltip");
+			addDirect("item.gt6.usb_drive_" + tTier);
+			addDirect("item.gt6.usb_drive_" + tTier + ".tooltip");
+		}
+		addDirect("item.gt6.comp_laser_gas_he");
+		addDirect("item.gt6.comp_laser_gas_he.tooltip");
 	}
 
 	/**

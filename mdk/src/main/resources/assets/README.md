@@ -8633,6 +8633,28 @@ to upstream, sha256 verified per file:
 - `usb_stick_2.png` — `4ec7896cca8accb80512d1dee55b3021cb491c15cd598e73f97a1c4dd287691b` (upstream `32002.png`)
 - `usb_stick_3.png` — `795405d6c96c7a91cc1ed70c38413bab64d7b459051461d97ca93c437302d446` (upstream `32003.png`)
 - `usb_stick_4.png` — `c08a8b8789e8e48b93e0cec5a8f49fb419c968d5fb918f52e3db48ece69180eb` (upstream `32004.png`)
+
+## USB peripheral item textures (task p37-usb-peripherals)
+
+The eight USB peripheral icons under `gt6/textures/item/usb_cable_{1..4}.png` /
+`usb_drive_{1..4}.png` (the HDDs) plus the exempted Helium Laser Emitter icon
+`comp_laser_gas_he.png` come from the same upstream directory
+`src/main/resources/assets/gregtech/textures/items/gt.multiitem.technological/`
+(item ids 32011-32014 the MultiItemTechnological.java:803-806 rows, 32021-32024 the
+:814-817 rows, 11001 the :387 row — the coordinator's single-item exemption whose
+consumption chain is the USB HDD crafting rows), byte-identical to upstream, sha256
+verified per file:
+
+- `usb_cable_1.png` — `3d6d616b3c865101619bc2c33b4eb5dd849e93f2946f70ede2e18dc138b56ac4` (upstream `32011.png`)
+- `usb_cable_2.png` — `06a01ae696c665a6f1a042e07629750f0eb6b5f77ff0248613ca70aa4d032c25` (upstream `32012.png`)
+- `usb_cable_3.png` — `da4c04d84121b4e38f3bd940e293971cb21acfb593b3bf27f184eea3f18b7f4f` (upstream `32013.png`)
+- `usb_cable_4.png` — `349f508f59a9b6e2b92f3d26781115a3ef63c2d4b614f03742e79010fdd2fbea` (upstream `32014.png`)
+- `usb_drive_1.png` — `242ceb16d4a35f80169743b70e94b0ddd8d40dec54ce87cb872e390669df5164` (upstream `32021.png`)
+- `usb_drive_2.png` — `4dc4145ea939daa58f57f69e1f36d089c5052aaab83000dc469ff6f251dc0704` (upstream `32022.png`)
+- `usb_drive_3.png` — `a1b84ccc1778aeb5134855e5fcb1cbac12dbbf8a9a33a43a7dced9c71678a4d7` (upstream `32023.png`)
+- `usb_drive_4.png` — `d147b2e1bc473fdc92d79e21c013a40665b1095608820af3b4a93537967012ac` (upstream `32024.png`)
+- `comp_laser_gas_he.png` — `096f6c689de0afd0e79a6223e9c33d20ad333f4659fe67cc3b1e7776a3660d45` (upstream `11001.png`)
+
 Bumble-hive block art borrowed from **GregTech 6**
 (task p32-bees-lv2, upstream
 `textures/blocks/nature/bumblehive/{colored,overlay}/{bottom,top,side}.png`,
