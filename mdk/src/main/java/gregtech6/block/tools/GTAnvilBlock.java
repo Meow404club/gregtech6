@@ -21,6 +21,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
+import net.minecraftforge.items.IItemHandler;
+
 //? if neoforge {
 /*import com.mojang.serialization.MapCodec;
  *///?}
@@ -133,23 +135,14 @@ public class GTAnvilBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The break drop contract (upstream canDrop :417 = T per slot) — the vanilla
-	 * HopperBlock.onRemove shape ported onto the handler inventory (the GT6HopperBlock form).
+	 * The break drop contract (upstream canDrop :417 = T per slot) — the pops ride the
+	 * {@link GTEntityBlock} fallback; this bridge hands over the anvil BE's differently
+	 * spelled {@code inventory()} accessor (the {@code getInventory()} census default
+	 * finds nothing here).
 	 */
 	@Override
-	public void onRemove(BlockState aOldState, Level aLevel, BlockPos aPos, BlockState aNewState, boolean aIsMoving) {
-		if (!aOldState.is(aNewState.getBlock())) {
-			BlockEntity tBE = aLevel.getBlockEntity(aPos);
-			if (tBE instanceof GT6AnvilBlockEntity tAnvil) {
-				for (int i = 0; i < GT6AnvilBlockEntity.SLOTS; i++) {
-					ItemStack tStack = tAnvil.inventory().getStackInSlot(i);
-					if (!tStack.isEmpty()) {
-						popResource(aLevel, aPos, tStack);
-					}
-				}
-			}
-		}
-		super.onRemove(aOldState, aLevel, aPos, aNewState, aIsMoving);
+	protected IItemHandler dropInventory(BlockEntity aTile) {
+		return aTile instanceof GT6AnvilBlockEntity tAnvil ? tAnvil.inventory() : super.dropInventory(aTile);
 	}
 
 	//? if forge {

@@ -329,23 +329,15 @@ public final class GT6Hoppers {
 		}
 
 		/**
-		 * The vanilla HopperBlock.onRemove :157-167 shape ported onto the handler inventory:
-		 * the canDrop-everything contract (upstream :250/:232) — every slot pops as a drop
-		 * when the block is replaced, then the comparator neighbour refresh.
+		 * The vanilla HopperBlock.onRemove comparator tail — the content pops moved to the
+		 * {@code GTEntityBlock} fallback (the same canDrop-everything contract, upstream
+		 * :250/:232; the hopper BE's {@code getInventory()} is exactly what the deleted
+		 * loop walked). The explosion face below still rides the air swap firing this.
 		 */
 		@Override
 		public void onRemove(BlockState aOldState, Level aLevel, BlockPos aPos, BlockState aNewState, boolean aIsMoving) {
 			if (!aOldState.is(aNewState.getBlock())) {
-				BlockEntity tBE = aLevel.getBlockEntity(aPos);
-				if (tBE instanceof GT6HopperBaseBlockEntity tHopper) {
-					for (int i = 0, l = tHopper.getInventory().getSlots(); i < l; i++) {
-						ItemStack tStack = tHopper.getInventory().getStackInSlot(i);
-						if (!tStack.isEmpty()) {
-							net.minecraft.world.level.block.Block.popResource(aLevel, aPos, tStack);
-						}
-					}
-					aLevel.updateNeighbourForOutputSignal(aPos, this);
-				}
+				aLevel.updateNeighbourForOutputSignal(aPos, this);
 			}
 			super.onRemove(aOldState, aLevel, aPos, aNewState, aIsMoving);
 		}

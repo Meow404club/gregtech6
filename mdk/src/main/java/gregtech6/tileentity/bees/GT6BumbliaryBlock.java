@@ -117,14 +117,9 @@ public class GT6BumbliaryBlock extends GTEntityBlock {
 		return net.minecraft.world.level.block.RenderShape.MODEL;
 	}
 
-	/** The contents scatter on any structural change (the vanilla container walk). */
-	@Override
-	public void onRemove(BlockState aState, Level aLevel, BlockPos aPos, BlockState aNewState, boolean aMoved) {
-		if (!aState.is(aNewState.getBlock()) && aLevel.getBlockEntity(aPos) instanceof GT6BumbliaryBlockEntity tBumbliary) {
-			net.minecraft.world.Containers.dropContents(aLevel, aPos, tBumbliary);
-		}
-		super.onRemove(aState, aLevel, aPos, aNewState, aMoved);
-	}
+	// The contents scatter moved to the GTEntityBlock fallback: the BE implements
+	// Container, so the base's vanilla Containers.dropContents face (the ChestBlock
+	// :230-241 idiom) is exactly this deleted override.
 
 	/**
 	 * The top-face use walk (task p34-bumbliary-gui — the upstream onBlockActivated3

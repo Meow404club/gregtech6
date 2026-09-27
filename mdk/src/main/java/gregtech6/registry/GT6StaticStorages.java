@@ -489,9 +489,11 @@ public final class GT6StaticStorages {
 		}
 
 		/**
-		 * The break face — every kind pops its inventory (upstream canDrop = T everywhere
-		 * but the crate); the crate drops ONE BlockItem carrying the BlockEntityTag (the
-		 * keepSlot fold, the vanilla shulker convention).
+		 * The break face — the content pops ride the {@code GTEntityBlock} fallback
+		 * (upstream canDrop = T everywhere but the crate); what stays here is what the base
+		 * cannot know: the safe's dungeon-loot re-roll (upstream breakBlock :89-92), the
+		 * crate's ONE BlockItem carrying the BlockEntityTag (the keepSlot fold, the vanilla
+		 * shulker convention) and the comparator tail.
 		 */
 		@Override
 		public void onRemove(BlockState aOldState, Level aLevel, BlockPos aPos, BlockState aNewState, boolean aIsMoving) {
@@ -514,17 +516,20 @@ public final class GT6StaticStorages {
 									tCrate.saveWithoutMetadata(gregtech6.tileentity.TileEntityBase03TicksAndSync.NBT_ACCESS)));
 					*///?}
 					Block.popResource(aLevel, aPos, tDrop);
-				} else if (tBE instanceof GT6StaticStorageBaseBlockEntity tStorage) {
-					for (int i = 0, l = tStorage.getInventory().getSlots(); i < l; i++) {
-						ItemStack tStack = tStorage.getInventory().getStackInSlot(i);
-						if (!tStack.isEmpty()) {
-							Block.popResource(aLevel, aPos, tStack);
-						}
-					}
+				} else if (tBE instanceof GT6StaticStorageBaseBlockEntity) {
 					aLevel.updateNeighbourForOutputSignal(aPos, this);
 				}
 			}
 			super.onRemove(aOldState, aLevel, aPos, aNewState, aIsMoving);
+		}
+
+		/**
+		 * The crate kind is the canDrop = F block ruling (upstream :244-245): its slots ride
+		 * the BlockEntityTag item above, so the base fallback must not ALSO pop them.
+		 */
+		@Override
+		protected boolean canDrop(int aInventorySlot) {
+			return mRow.kind() != Kind.BOTTLECRATE;
 		}
 
 		/**
