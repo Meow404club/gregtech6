@@ -76,8 +76,14 @@ import gregtech6.registry.GTMaterialItems;
 public final class MaterialTreeDisplay {
 
 	/**
-	 * The show switch (the GTCEu hideOreProcessingDiagrams precedent, ConfigHolder.java:221):
-	 * non-final so a future config card can wire it without touching the registration sites.
+	 * The show switch (the GTCEu hideOreProcessingDiagrams precedent, ConfigHolder.java:221).
+	 * Config disposition (task debt-material-tree-c, acceptance ② written off as specified):
+	 * the port carries NO mod-level config surface (zero ForgeConfigSpec in mdk main — the
+	 * only spec-shaped hits are datagen blockstate classes), so fabricating one for a single
+	 * boolean is the config infrastructure the card explicitly forbids. This non-final static
+	 * stays the single switch: both viewer plugins and all registration sites read it
+	 * directly, and a future config card assigns it during config load, before any viewer
+	 * plugin loads (JEI/EMI construct lazily on their own entries — no earlier read exists).
 	 */
 	public static boolean SHOWN = true;
 
