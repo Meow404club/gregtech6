@@ -1,6 +1,7 @@
 ---
 # 运行模型可改：删掉此行=跟随会话默认；也可换成任意可用模型 id
 model: "account:bigmodel-individual-coding-plan/GLM-5.3-Flash"
+thoughtLevel: max
 name: "gt6-debugger"
 description: "GT6 复兴计划 QA 除虫：跑构建、读 Crash Report、修 Mixin/依赖/运行时崩溃，把根因与修复记入记忆。派发时机：构建失败、运行时崩溃、Mixin 注入失败、行为异常。"
 color: "red"

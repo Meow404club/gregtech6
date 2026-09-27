@@ -1,6 +1,7 @@
 ---
 # 运行模型可改：删掉此行=跟随会话默认；也可换成任意可用模型 id
 model: "account:bigmodel-individual-coding-plan/GLM-5.3-Flash"
+thoughtLevel: max
 name: "gt6-researcher"
 description: "GT6 复兴计划研究员：通用调研角色——GT6 1.7.10 代码考古（老→新映射）、联网调研（论文/官方文档/开源项目/技术博客）、方案对比与选型，一切结论带分层证据链。派发时机：任何需要查证、调研、选型、对比评估的问题；覆盖移植考古与长期维护期的新功能调研、依赖升级、性能方案。"
 color: "cyan"
