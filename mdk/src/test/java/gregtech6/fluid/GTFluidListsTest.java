@@ -86,15 +86,19 @@ public class GTFluidListsTest {
 		// the two originals (the per-row upstream anchors live in the GTFluidLists static
 		// block; the CHEMICAL_SPECS-side invariant in GTFluidsChemicalFamilyTest); plus the
 		// p31-qu-b-materials isotope trio — the same :660 createGas walk over the
-		// GASES-flag fusion isotopes (diatomicgas/noblegas, MT.java:381/:382/:384)
+		// GASES-flag fusion isotopes (diatomicgas/noblegas, MT.java:381/:382/:384); plus
+		// the p37-fluids-naming trio — the three state-2 census rows (Loader_Fluids.java
+		// :50-51 the dimension airs, :133 aerotheum; the NAMING_SPECS-side invariant in
+		// GTFluidsNamingFamilyTest)
 		assertEquals(Set.of("steam", "natural_gas",
 				"hydrogen", "nitrogen", "oxygen", "fluorine",
 				"helium", "neon", "argon", "krypton", "xenon", "radon",
 				"methane", "carbondioxide", "carbonmonoxide",
 				"propane", "butane", "propylene", "ethylene",
 				"chlorine",
-				"deuterium", "tritium", "helium3"),
-			GTFluidLists.GAS, "GAS = steam + natural_gas + the 18 gaseous chemical seeds + the 3 fusion isotopes");
+				"deuterium", "tritium", "helium3",
+				"netherair", "enderair", "aerotheum"),
+			GTFluidLists.GAS, "GAS = steam + natural_gas + the 18 gaseous chemical seeds + the 3 fusion isotopes + the 3 naming-parity gases");
 		assertTrue(GTFluidLists.POWER_CONDUCTING.contains("steam"), "the original seed rides");
 	}
 }
