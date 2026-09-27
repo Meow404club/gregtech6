@@ -623,7 +623,7 @@ public final class GT6WorldgenDatagen {
     // ------------------------------------------------------------------
     // The small-ore band (task p30-w6-small-ore-datagen). Structure: 91
     // (row, dim) placement pairs (GTOreWorldgen.placementPairs, the upstream
-    // GEN-flag walk) x {configured = vanilla Feature.ORE size=1 over the
+    // GEN-flag walk) x {configured = vanilla Feature.ORE size=4 over the
     // WD.setSmallOre host targets, placed = Count(UniformInt)+InSquare+
     // HeightRange uniform+BiomeFilter}, then 3 biome modifiers
     // (IS_OVERWORLD/IS_NETHER/IS_END at UNDERGROUND_ORES) hanging the per-dim
@@ -666,8 +666,9 @@ public final class GT6WorldgenDatagen {
         for (GTOreWorldgen.Placement tPair : GTOreWorldgen.placementPairs()) {
             OreDictMaterial tMaterial = GTOreWorldgen.resolve(tPair.row());
             FeatureUtils.register(ctx, GTOreWorldgen.configuredKey(tPair.row(), tPair.dim()), Feature.ORE,
-                    // size=2 (GTOreWorldgen.ORE_SIZE): size=1 is mathematically inert — the walk
-                    // sphere never reaches a block center from an integer origin (live-run 0/20)
+                    // size=4 (GTOreWorldgen.ORE_SIZE): sizes 1-2 are mathematically
+                    // inert — the walk sphere never reaches a block center from an
+                    // integer origin (live census 0/20, 0/8; the b19bcfc6d 2→4 flip)
                     new OreConfiguration(oreTargets(tMaterial, tPair.dim()), GTOreWorldgen.ORE_SIZE));
         }
     }
