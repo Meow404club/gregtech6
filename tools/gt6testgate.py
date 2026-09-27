@@ -13,13 +13,23 @@ go through THIS wrapper, and every spawn passes two machine-wide gates:
 - concurrency gate: ``GT6_GATE_MAX_CONCURRENT`` test slots (default 4) as
   O_EXCL files in /tmp/gt6_gate_slots, same shape as the gt6server boot slots
   (/tmp/gt6_rcon_slots): stale slots (crashed agent) reaped by 2 h mtime age.
+- role gate (test-gating-v2, 2026-09-27 OOM ruling): a FULL test run — any
+  gradle invocation naming an unfiltered ``test``/``cleanTest`` task (no
+  ``--tests``) — is review-seat only. Roles: ``--role {coder,review}`` or env
+  ``GT6_TESTGATE_ROLE`` (default coder, fail-closed on bad values); a coder
+  asking for full is rejected immediately (exit 2 + guidance) BEFORE any
+  queueing. Filtered runs (``--tests``), compile, runData and sweeps are
+  unrestricted for both roles. While a full run executes it holds a
+  machine-wide flock on /tmp/gt6_testgate_full.lock; a second full request
+  prints a queueing notice and blocks until the lock frees (kernel releases
+  it if the holder dies, so no stale reaping is needed).
 
 The gt6server boot path calls :func:`wait_memory` on top of its own slot
 semaphore (ops-test-gate), so server boots obey the same memory cap; the
 slot semaphore semantics there are unchanged.
 
 Usage:
-    python3 tools/gt6testgate.py [--tag <name>] -- <command...>
+    python3 tools/gt6testgate.py [--tag <name>] [--role {coder,review}] -- <command...>
 
 The child's stdout/stderr pass through untouched (no capture); the wrapper
 exits with the child's exit code.
@@ -28,7 +38,9 @@ Import:  sys.path.insert(0, "tools"); import gt6testgate
 """
 
 import argparse
+import fcntl
 import os
+import re
 import subprocess
 import sys
 import time
@@ -40,6 +52,17 @@ SLOT_STALE_SECONDS = 2 * 3600   # crashed agents leak slots; age reaps them
 DEFAULT_MEM_LIMIT_MIB = 30720
 MEMINFO_PATH = Path("/proc/meminfo")
 POLL_SECONDS = 10.0
+
+ROLE_ENV = "GT6_TESTGATE_ROLE"
+ROLES = ("coder", "review")
+FULL_LOCK_PATH = Path("/tmp/gt6_testgate_full.lock")
+FULL_DENY_EXIT = 2
+# a bare test-suite task under any project path, e.g. :test / :mdk:cleanTest /
+# :mdk:1.20.1-forge:test — but NOT compileTestJava / runData / build.
+# [\w.-]* allows the leading bare ":" of gradle task paths.
+# ponytail: task-name matching only; gradle dep-graph full runs triggered via
+# build/check are NOT intercepted (discipline gate, not a security boundary).
+_TEST_TASK_RE = re.compile(r"(?:[\w.-]*:)*(?:clean)?[Tt]est")
 
 
 def mem_limit_mib():
@@ -56,6 +79,33 @@ def max_concurrent():
         return max(1, int(os.environ.get("GT6_GATE_MAX_CONCURRENT", "4")))
     except ValueError:
         return 4
+
+
+def resolve_role(cli_role=None):
+    """coder|review — CLI arg > env GT6_TESTGATE_ROLE > coder.
+
+    Unknown values fall back to coder, i.e. full runs stay denied (fail-closed).
+    """
+    role = cli_role if cli_role is not None else os.environ.get(ROLE_ENV)
+    return role if role in ROLES else ROLES[0]
+
+
+def command_mode(cmd):
+    """"full" if cmd is a gradle run of an unfiltered test suite, else "other".
+
+    full = some argv token is gradlew/gradle AND a non-flag token is a bare
+    ``test``/``cleanTest`` task (any project path) AND no ``--tests`` filter.
+    Filtered runs, compileTestJava, runData and non-gradle commands = "other"
+    (open to both roles). Wrapping gradle in ``sh -c "..."`` hides the tokens
+    and is treated as "other" — the gate is a discipline backstop.
+    """
+    if not any(Path(tok).name in ("gradlew", "gradle") for tok in cmd):
+        return "other"
+    if any(tok == "--tests" or tok.startswith("--tests=") for tok in cmd):
+        return "other"
+    if any(not tok.startswith("-") and _TEST_TASK_RE.fullmatch(tok) for tok in cmd):
+        return "full"
+    return "other"
 
 
 def mem_used_mib(path=MEMINFO_PATH):
@@ -171,24 +221,81 @@ def release_slot(slot, log=None):
             log(f"[gt6testgate] slot release failed ({exc}) — stale reaper will collect it")
 
 
+def acquire_full_lock(path=FULL_LOCK_PATH, tag="-", log_file=GATE_LOG, log=print):
+    """Machine-wide exclusive lock around full test runs (fcntl.flock).
+
+    Non-blocking attempt first; on contention print a queueing notice and block
+    on LOCK_EX. The kernel drops the lock if the holder dies, so unlike slots
+    there is nothing to reap. Returns the open lock file handle; pair with
+    :func:`release_full_lock`. /tmp namespace binds all worktrees.
+    """
+    fh = open(path, "a+")
+    try:
+        try:
+            fcntl.flock(fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError:
+            _journal("full-queue", tag, f"lock={path}", log_file)
+            if log:
+                log(f"[gt6testgate] another full test run holds {path} — "
+                    f"queueing until it finishes")
+            fcntl.flock(fh, fcntl.LOCK_EX)
+        _journal("full-admit", tag, f"lock={path}", log_file)
+        return fh
+    except BaseException:
+        fh.close()
+        raise
+
+
+def release_full_lock(fh, log=None):
+    if fh is None:
+        return
+    try:
+        fcntl.flock(fh, fcntl.LOCK_UN)
+    except OSError as exc:
+        if log:
+            log(f"[gt6testgate] full lock release failed ({exc})")
+    finally:
+        fh.close()
+
+
 def run_gated(cmd, tag=None, poll=POLL_SECONDS, slot_dir=SLOT_DIR,
-              log_file=GATE_LOG, log=print):
-    """Gated exec: memory gate, then test slot, then passthrough child.
+              log_file=GATE_LOG, log=print, role=None,
+              full_lock=FULL_LOCK_PATH):
+    """Gated exec: role gate, then (full only) global lock, then memory gate,
+    then test slot, then passthrough child.
 
     The child inherits our stdio directly (no capture, no reinterpretation);
-    the slot is released in a finally, and the child's exit code is returned.
+    the lock and slot are released in finallys, and the child's exit code is
+    returned. A full run by a non-review role is denied immediately — before
+    any queueing — returning FULL_DENY_EXIT with guidance.
     """
     if not cmd:
         raise ValueError("empty command")
     if tag is None:
         tag = Path(cmd[0]).name
-    wait_memory(poll=poll, tag=tag, log_file=log_file, log=log)
-    slot = acquire_slot(poll=poll, slot_dir=slot_dir, tag=tag,
-                        log_file=log_file, log=log)
+    mode = command_mode(cmd)
+    role = resolve_role(role)
+    if mode == "full" and role != "review":
+        _journal("full-reject", tag, f"role={role}", log_file)
+        log("[gt6testgate] FULL test run denied (role=coder) — "
+            "全量归审查席，请用 --tests 过滤模式 "
+            "(full runs are review-seat only; rerun with --tests FILTER, or "
+            "ask the review seat to replay)")
+        return FULL_DENY_EXIT
+    lock_fh = None
     try:
-        return subprocess.run(cmd).returncode
+        if mode == "full":
+            lock_fh = acquire_full_lock(full_lock, tag=tag, log_file=log_file,
+                                        log=log)
+        wait_memory(poll=poll, tag=tag, log_file=log_file, log=log)
+        slot = acquire_slot(poll=poll, slot_dir=slot_dir, tag=tag,
+                            log_file=log_file, log=log)
+        try:
+            return subprocess.run(cmd).returncode
+        finally:
+            release_slot(slot, log=log)
     finally:
-        release_slot(slot, log=log)
+        release_full_lock(lock_fh, log=log)
 
 
 def main(argv=None):
@@ -199,13 +306,17 @@ def main(argv=None):
     parser.add_argument("--tag", default=None,
                         help="journal tag for /tmp/gt6_gate.log "
                              "(default: the command's basename)")
+    parser.add_argument("--role", choices=ROLES, default=None,
+                        help="caller role; full (unfiltered test/cleanTest) "
+                             "runs are review-seat only (default: coder, or "
+                             f"env {ROLE_ENV})")
     parser.add_argument("cmd", nargs=argparse.REMAINDER, metavar="CMD...",
                         help="command to run, after --")
     args = parser.parse_args(argv)
     cmd = args.cmd[1:] if args.cmd[:1] == ["--"] else args.cmd
     if not cmd:
         parser.error("no command — usage: gt6testgate [--tag NAME] -- COMMAND...")
-    return run_gated(cmd, tag=args.tag)
+    return run_gated(cmd, tag=args.tag, role=args.role)
 
 
 if __name__ == "__main__":
