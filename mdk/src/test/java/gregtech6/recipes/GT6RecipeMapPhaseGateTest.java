@@ -430,7 +430,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 			assertEquals(SNAPSHOT.get(tEntry.getKey()), Integer.valueOf(tEntry.getValue().mRecipeList.size()),
 					tEntry.getKey() + " must be identical across the freeze");
 		}
-		assertEquals(75, RecipeMap.RECIPE_MAPS.size(), "the freeze-point registry census (the GT6RecipeMapsTest pin shape; +2 task p34-machines-bumblelyzer-crucible (the crystallisationcrucible row stock + the bumblelyzer declared-empty) +2 task p34-machines-burner-plantalyzer (the Burner Mixer constants row + the declared-empty Plantalyzer compat map)))");
+		assertEquals(80, RecipeMap.RECIPE_MAPS.size(), "the freeze-point registry census (the GT6RecipeMapsTest pin shape; +2 task p34-machines-bumblelyzer-crucible (the crystallisationcrucible row stock + the bumblelyzer declared-empty) +2 task p34-machines-burner-plantalyzer (the Burner Mixer constants row + the declared-empty Plantalyzer compat map) +5 task p37-rm-six-maps (microwave/cooker/toolhead declared-empty + mortar/hammer whose rows ride the JSON seam — JSON-seam maps stay OUT of the SNAPSHOT walk, the juicer/crystallisationcrucible precedent))");
 	}
 
 	/** The JSON reload window: a FROZEN /reload re-pour lands its rows and re-freezes; an OPEN pour owes no re-freeze. */

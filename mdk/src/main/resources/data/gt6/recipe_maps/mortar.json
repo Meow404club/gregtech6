@@ -1,0 +1,719 @@
+{
+  "comment": "task p37-rm-six-maps \u2014 the RM.Mortar row stock (RM.java:133, the p36 census open_faces[0] close): the static rows of Loader_Recipes_Vanilla.java:674-684 + :705-706, transcribed field-for-field (16 EUt everywhere; durations/ticks verbatim). The W-meta wildcard rows (:675/:677) expand to the sixteen 1.20.1 dye-order colour identities (the juicer seed-fold convention; upstream is ONE row matching any meta). :679/:685 are WiMo mod items, CUT. :705-706 are the MT.Blaze representative of the ANY.Blaze.mToThis loop (group expansion pooled). The RecipeMapHandlerPrefix lazy per-material rows (Loader_Recipes_Handlers.java:79-105+) are the not-ported handler layer (the P8 ruling), declared pooled.",
+  "recipes": [
+    {
+      "comment": "Loader_Recipes_Vanilla.java:674 \u2014 glass -> 9 Glass dust (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:675 \u2014 the stained-glass W-meta fan, 1.20.1 identity white_glass (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:white_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:675 \u2014 the stained-glass W-meta fan, 1.20.1 identity orange_glass (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:orange_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:675 \u2014 the stained-glass W-meta fan, 1.20.1 identity magenta_glass (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:magenta_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:675 \u2014 the stained-glass W-meta fan, 1.20.1 identity light_blue_glass (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:light_blue_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:675 \u2014 the stained-glass W-meta fan, 1.20.1 identity yellow_glass (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:yellow_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:675 \u2014 the stained-glass W-meta fan, 1.20.1 identity lime_glass (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:lime_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:675 \u2014 the stained-glass W-meta fan, 1.20.1 identity pink_glass (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:pink_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:675 \u2014 the stained-glass W-meta fan, 1.20.1 identity gray_glass (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:gray_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:675 \u2014 the stained-glass W-meta fan, 1.20.1 identity light_gray_glass (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:light_gray_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:675 \u2014 the stained-glass W-meta fan, 1.20.1 identity cyan_glass (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:cyan_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:675 \u2014 the stained-glass W-meta fan, 1.20.1 identity purple_glass (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:purple_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:675 \u2014 the stained-glass W-meta fan, 1.20.1 identity blue_glass (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:blue_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:675 \u2014 the stained-glass W-meta fan, 1.20.1 identity brown_glass (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:brown_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:675 \u2014 the stained-glass W-meta fan, 1.20.1 identity green_glass (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:green_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:675 \u2014 the stained-glass W-meta fan, 1.20.1 identity red_glass (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:red_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:675 \u2014 the stained-glass W-meta fan, 1.20.1 identity black_glass (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:black_glass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:676 \u2014 glass pane -> 1 Glass dust (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:677 \u2014 the stained-glass-pane W-meta fan, 1.20.1 identity white_glass_pane (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:white_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:677 \u2014 the stained-glass-pane W-meta fan, 1.20.1 identity orange_glass_pane (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:orange_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:677 \u2014 the stained-glass-pane W-meta fan, 1.20.1 identity magenta_glass_pane (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:magenta_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:677 \u2014 the stained-glass-pane W-meta fan, 1.20.1 identity light_blue_glass_pane (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:light_blue_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:677 \u2014 the stained-glass-pane W-meta fan, 1.20.1 identity yellow_glass_pane (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:yellow_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:677 \u2014 the stained-glass-pane W-meta fan, 1.20.1 identity lime_glass_pane (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:lime_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:677 \u2014 the stained-glass-pane W-meta fan, 1.20.1 identity pink_glass_pane (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:pink_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:677 \u2014 the stained-glass-pane W-meta fan, 1.20.1 identity gray_glass_pane (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:gray_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:677 \u2014 the stained-glass-pane W-meta fan, 1.20.1 identity light_gray_glass_pane (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:light_gray_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:677 \u2014 the stained-glass-pane W-meta fan, 1.20.1 identity cyan_glass_pane (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:cyan_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:677 \u2014 the stained-glass-pane W-meta fan, 1.20.1 identity purple_glass_pane (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:purple_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:677 \u2014 the stained-glass-pane W-meta fan, 1.20.1 identity blue_glass_pane (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:blue_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:677 \u2014 the stained-glass-pane W-meta fan, 1.20.1 identity brown_glass_pane (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:brown_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:677 \u2014 the stained-glass-pane W-meta fan, 1.20.1 identity green_glass_pane (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:green_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:677 \u2014 the stained-glass-pane W-meta fan, 1.20.1 identity red_glass_pane (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:red_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:677 \u2014 the stained-glass-pane W-meta fan, 1.20.1 identity black_glass_pane (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:black_glass_pane",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:678 \u2014 bone -> 2 bonemeal (IL.Dye_Bonemeal = the 1.7.10 white-dye meta, 1.20.1 identity bone_meal; 16 EUt, 32 t). :679 WiMo_Thick_Bone stays CUT (mod item)",
+      "inputs": [
+        {
+          "item": "minecraft:bone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:bone_meal",
+          "count": 2
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:680 \u2014 flint -> Flint dust (16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:flint",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_flint",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:681 \u2014 gravel -> 1 flint (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "minecraft:gravel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:flint",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:682 \u2014 coal -> Coal dust (16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:coal",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_coal",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:683 \u2014 charcoal -> Charcoal dust (16 EUt, 16 t)",
+      "inputs": [
+        {
+          "item": "minecraft:charcoal",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_charcoal",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:684 \u2014 rotten flesh -> Rotten Meat dust (16 EUt, 16 t). :685 WiMo_Infected_Meat stays CUT (mod item)",
+      "inputs": [
+        {
+          "item": "minecraft:rotten_flesh",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_meat_rotten",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:705 \u2014 the ANY.Blaze.mToThis loop, MT.Blaze representative (the group expansion is pooled, the GT6RecipesShCL :707 precedent): blaze stick -> 3 tiny Blaze dust (16 EUt, 32 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_blaze",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_blaze",
+          "count": 3
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:706 \u2014 long blaze stick -> 6 tiny Blaze dust (16 EUt, 64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_long_blaze",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_blaze",
+          "count": 6
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    }
+  ]
+}
