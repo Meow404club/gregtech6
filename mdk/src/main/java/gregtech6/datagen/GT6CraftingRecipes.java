@@ -379,6 +379,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (CraftFromRow tRow : craftFromDatagenRows()) {
 			craftFromBuilder(tRow).save(aConsumer, tRow.aId());
 		}
+		// task p37-craftfrom-stick — the stick/stickLong CraftFrom family (Loader_OreProcessing.java:156-163)
+		for (StickCraftFromRow tRow : stickCraftFromDatagenRows()) {
+			stickCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
+		}
 		// task debt-stairs-wall-vanilla-recipes — the upstream BlockStones vanilla-degradation rows
 		for (PartFamilyRecipeRow tRow : stairsFromRocksBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
@@ -543,6 +547,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task p36-craftfrom-plategem — the CraftFrom hand-craft family (Loader_OreProcessing.java:171-178)
 		for (CraftFromRow tRow : craftFromDatagenRows()) {
 			craftFromBuilder(tRow).save(aOutput, tRow.aId());
+		}
+		// task p37-craftfrom-stick — the stick/stickLong CraftFrom family (Loader_OreProcessing.java:156-163)
+		for (StickCraftFromRow tRow : stickCraftFromDatagenRows()) {
+			stickCraftFromBuilder(tRow).save(aOutput, tRow.aId());
 		}
 		// task debt-stairs-wall-vanilla-recipes — the upstream BlockStones vanilla-degradation rows
 		for (PartFamilyRecipeRow tRow : stairsFromRocksBuilders()) {
@@ -3775,6 +3783,102 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('s', GT6ItemTags.TOOLS_SAW)
 				.define('X', aRow.aInput())
 				.unlockedBy("has_input", has(aRow.aInput()));
+	}
+
+	// -----------------------------------------------------------------------
+	// The stick CraftFrom band (task p37-craftfrom-stick) — the upstream stick/
+	// stickLong hand-craft family (Loader_OreProcessing.java:156-163, the
+	// coordinator-approved family boundary: BOTH stick* output prefixes, the
+	// P36 plategem card's plateGem+plateGemTiny companion shape). Eight row
+	// forms in three grids, all And(ANTIMATTER.NOT, COATED.NOT):
+	//  - :156-158 gem2stickLong — {"sf"," X"}: saw + file + gem tier →
+	//    stickLong 1/2/4 (flawless/exquisite/legendary);
+	//  - :159 stickLong2stick — {"s "," X"}: saw + stickLong → stick 2;
+	//  - :160-163 gem2stick — {"s ","fX"}: saw + file + gem tier → stick
+	//    1/2/4/8 (regular/flawless/exquisite/legendary).
+	// The same digLadder band translation as the plateGem family above (the
+	// listener walk, the condition fold, the config-gate drop, the item-truth
+	// intersection) — an independent band, per the P36 census ruling that the
+	// CraftFrom families share no infrastructure. Tool letters 's'/'f' = the
+	// saw/file tool tags (upstream CR.java:211/:231).
+	// -----------------------------------------------------------------------
+
+	/** One upstream row form: the id key + the output prefix + count + the input prefix + the two pattern rows (Loader_OreProcessing.java:156-163, the grids and amounts verbatim). Package-private for the pin test. */
+	record StickCraftFromForm(String aKey, gregapi.oredict.OreDictPrefix aOutput, int aCount, gregapi.oredict.OreDictPrefix aInput, String aTop, String aBottom) {}
+
+	/**
+	 * The eight row forms of the stick family (Loader_OreProcessing.java:156-163): :156-158 the
+	 * gem-tier cuts to stickLong (1/2/4), :159 the stickLong split to stick (2), :160-163 the
+	 * gem-tier cuts to stick (regular gem 1, flawless 2, exquisite 4, legendary 8). A method,
+	 * not a field — the OP fields live only after OP.init. The keys are the upstream category
+	 * names snake-cased ("gem2stickLong" → gem2stick_long, the plateGem card's charset rule)
+	 * with the tier leaf, and the universe rides the same item-truth walk — no human subsets.
+	 */
+	static List<StickCraftFromForm> stickCraftFromForms() {
+		return List.of(
+				new StickCraftFromForm("gem2stick_long/flawless", gregapi.data.OP.stickLong, 1, gregapi.data.OP.gemFlawless, "sf", " X"),
+				new StickCraftFromForm("gem2stick_long/exquisite", gregapi.data.OP.stickLong, 2, gregapi.data.OP.gemExquisite, "sf", " X"),
+				new StickCraftFromForm("gem2stick_long/legendary", gregapi.data.OP.stickLong, 4, gregapi.data.OP.gemLegendary, "sf", " X"),
+				new StickCraftFromForm("stick_long2stick", gregapi.data.OP.stick, 2, gregapi.data.OP.stickLong, "s ", " X"),
+				new StickCraftFromForm("gem2stick/regular", gregapi.data.OP.stick, 1, gregapi.data.OP.gem, "s ", "fX"),
+				new StickCraftFromForm("gem2stick/flawless", gregapi.data.OP.stick, 2, gregapi.data.OP.gemFlawless, "s ", "fX"),
+				new StickCraftFromForm("gem2stick/exquisite", gregapi.data.OP.stick, 4, gregapi.data.OP.gemExquisite, "s ", "fX"),
+				new StickCraftFromForm("gem2stick/legendary", gregapi.data.OP.stick, 8, gregapi.data.OP.gemLegendary, "s ", "fX"));
+	}
+
+	/** The material face of one stick-band row (the test-visible walk unit). */
+	record StickCraftFromMaterialRow(StickCraftFromForm aForm, gregapi.oredict.OreDictMaterial aMaterial) {}
+
+	/**
+	 * The material face of the stick band: per form, the materials whose INPUT and OUTPUT
+	 * items both exist (the registrationOrder intersection, in registration order) minus the
+	 * COATED/ANTIMATTER condition rows — the plateGem walk verbatim.
+	 */
+	static List<StickCraftFromMaterialRow> stickCraftFromMaterialRows() {
+		List<StickCraftFromMaterialRow> rRows = new ArrayList<>();
+		for (StickCraftFromForm tForm : stickCraftFromForms()) {
+			java.util.Set<OreDictMaterial> tInputs = new java.util.HashSet<>();
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				if (tPair.prefix() == tForm.aInput()) tInputs.add(tPair.material());
+			}
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				OreDictMaterial tMaterial = tPair.material();
+				if (tPair.prefix() != tForm.aOutput() || !tInputs.contains(tMaterial)) continue; // the item-truth intersection
+				if (tMaterial.contains(gregapi.data.TD.Compounds.COATED)) continue; // COATED.NOT
+				if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT
+				rRows.add(new StickCraftFromMaterialRow(tForm, tMaterial));
+			}
+		}
+		return rRows;
+	}
+
+	/** The datagen row: the id + the output item + count + the input item + the pattern rows. */
+	private record StickCraftFromRow(ResourceLocation aId, net.minecraft.world.item.Item aResult, int aCount, net.minecraft.world.item.Item aInput, String aTop, String aBottom) {}
+
+	/** The datagen face: the material walk resolved onto the live items (the silent-skip guard rides itemOrNull). */
+	private List<StickCraftFromRow> stickCraftFromDatagenRows() {
+		List<StickCraftFromRow> rRows = new ArrayList<>();
+		for (StickCraftFromMaterialRow tMaterialRow : stickCraftFromMaterialRows()) {
+			String tSnake = GTMaterialItems.snakeCase(tMaterialRow.aMaterial().mNameInternal);
+			net.minecraft.world.item.Item tResult = itemOrNull(tMaterialRow.aForm().aOutput(), tMaterialRow.aMaterial());
+			net.minecraft.world.item.Item tInput = itemOrNull(tMaterialRow.aForm().aInput(), tMaterialRow.aMaterial());
+			if (tResult == null || tInput == null) continue; // the item-truth guard (belt and braces over the walk)
+			rRows.add(new StickCraftFromRow(craftFromRowId(tMaterialRow.aForm().aKey(), tSnake), tResult, tMaterialRow.aForm().aCount(), tInput,
+					tMaterialRow.aForm().aTop(), tMaterialRow.aForm().aBottom()));
+		}
+		return rRows;
+	}
+
+	/** One row's builder — the form's own two-row grid, 's' = the saw tag, 'f' = the file tag (the shape-driven defines), 'X' = the input item. */
+	private ShapedRecipeBuilder stickCraftFromBuilder(StickCraftFromRow aRow) {
+		ShapedRecipeBuilder rBuilder = ShapedRecipeBuilder.shaped(RecipeCategory.MISC, aRow.aResult(), aRow.aCount())
+				.pattern(aRow.aTop())
+				.pattern(aRow.aBottom())
+				.define('s', GT6ItemTags.TOOLS_SAW)
+				.define('X', aRow.aInput())
+				.unlockedBy("has_input", has(aRow.aInput()));
+		if (aRow.aTop().indexOf('f') >= 0 || aRow.aBottom().indexOf('f') >= 0) rBuilder.define('f', GT6ItemTags.TOOLS_FILE);
+		return rBuilder;
 	}
 
 	// -----------------------------------------------------------------------

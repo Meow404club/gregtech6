@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:gem_legendary_glowstone"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "sf",
+    " X"
+  ],
+  "result": {
+    "count": 4,
+    "id": "gt6:stick_long_glowstone"
+  }
+}
