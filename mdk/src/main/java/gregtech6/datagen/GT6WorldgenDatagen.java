@@ -624,7 +624,7 @@ public final class GT6WorldgenDatagen {
     // The small-ore band (task p30-w6-small-ore-datagen). Structure: 91
     // (row, dim) placement pairs (GTOreWorldgen.placementPairs, the upstream
     // GEN-flag walk) x {configured = vanilla Feature.ORE size=4 over the
-    // WD.setSmallOre host targets, placed = Count(UniformInt)+InSquare+
+    // WD.setSmallOre host targets, placed = Count(veinCount constant)+InSquare+
     // HeightRange uniform+BiomeFilter}, then 3 biome modifiers
     // (IS_OVERWORLD/IS_NETHER/IS_END at UNDERGROUND_ORES) hanging the per-dim
     // placed sets off the vanilla dimension tags. Zero new blocks/features —
