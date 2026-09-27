@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "gt6:block/reactor_core_2x2_face1",
+    "east": "gt6:block/reactor_core_2x2_side1",
+    "north": "gt6:block/reactor_core_2x2_side1",
+    "south": "gt6:block/reactor_core_2x2_side2",
+    "up": "gt6:block/reactor_core_2x2_top",
+    "west": "gt6:block/reactor_core_2x2_side2"
+  }
+}

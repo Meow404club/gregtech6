@@ -9166,3 +9166,17 @@ ResourceLocation.java:213-232). sha256 per file:
   the Small/Big bend row sets into ONE map (GT6RecipesAnvil "two-maps-in-three
   fold"), Big rows pour first; the two upstream files differ only in a 6-pixel
   band (rows 41-46).
+
+- `block/reactor_core_2x2_{bottom,top,side1,side2,face1,face2}.png` — the 2x2
+  Nuclear Reactor Core block faces (task debt-reactor-b-2x2-be), upstream
+  `textures/blocks/machines/generators/reactor_core_2x2/colored/<face>.png`
+  (byte-identical borrows). Upstream tints these grayscale "colored" icons with
+  the Pb material colour (the MTE mRGBa pass) and layers the overlay set over
+  them; the port renders them un-tinted with no overlay — declared deviation,
+  the tint and the facing-routed face/overlay swap ride the render-pool card
+  (with the 11-pass rod/fluid render stack, Core2x2.java:320-390). Only three
+  distinct files exist upstream (bottom/face1/face2/side2 share bytes):
+  `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332` (bottom,
+  face1, face2, side2),
+  `33fe99c466efd19f6e4dcb14349690b60f49c2626f4b435799f1a0b0bfbc9aa1` (side1),
+  `a9582e2de34a2e51aeb4031ab456db5791a27c42f32aa60886554ef9b4e6f467` (top).

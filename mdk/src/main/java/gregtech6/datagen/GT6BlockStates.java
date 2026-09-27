@@ -179,7 +179,8 @@ public final class GT6BlockStates extends BlockStateProvider {
         // rides its own single-state model OUTSIDE the paint-array census — the
         // GTAdvancedCraftingTableBlock carries no ACTIVE/RUNNING payload, and the
         // family-wide paint extension stays pooled).
-        addHeatExchanger(); // task p29-w3-heat-smelter — the Large Heat Exchanger controller (the lightning-rod one-texture cube form)
+        addHeatExchanger(); // task p29-w3-heat-smelter // task p29-w3-heat-smelter — the Large Heat Exchanger controller (the lightning-rod one-texture cube form)
+        addReactorCore(); // task debt-reactor-b-2x2-be — the 2x2 reactor core (flat cube over the borrowed faces)
         LOGGER.info("GT6 machine paint tint: {} machine models tinted (209 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addUlvLadder/addRollLadders/addProcessMachines/addEuHuFamilies/addEuSpecialFamilies/addExoticFamilies/addEuCoreMachines/addHuTuFamilies/addHeatSmelterFamilies/addAdvancedCraftingTable)", mMachineTintModels);
         addMultiBlocks();
         addBarrel();
@@ -1101,6 +1102,27 @@ public final class GT6BlockStates extends BlockStateProvider {
         Block tController = gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_BLOCK.get();
         getVariantBuilder(tController).forAllStates(aState -> ConfiguredModel.builder().modelFile(tMain).build());
         itemModels().withExistingParent("large_heat_exchanger", tMain.getLocation());
+    }
+
+    /**
+     * Task debt-reactor-b-2x2-be — the 2x2 Nuclear Reactor Core (Loader :738): a plain
+     * oriented cube over the six borrowed upstream faces (reactor_core_2x2_<face>.png,
+     * the byte-level borrows of the assets README). DECLARED static assignment: the
+     * upstream texture routing is facing-dependent (the mFacing face shows face1, the
+     * mSecondFacing face face2, Core2x2:392-395) with the Pb material tint and the
+     * 11-pass rod/fluid render stack (:320-390) — all of that rides the render-pool
+     * card, so the port pins the default-facing view (down = face1 — the default SIDE_BOTTOM
+     * facing pair routes the hot-port face onto the bottom, Core2x2:394) and the
+     * side1/side2 alternation.
+     */
+    private void addReactorCore() {
+        net.minecraft.world.level.block.Block tCore = gregtech6.registry.GT6Reactors.REACTOR_CORE_2X2_BLOCK.get();
+        ModelFile tModel = models().cube("nuclear_reactor_core_2x2",
+                modLoc("block/reactor_core_2x2_face1"), modLoc("block/reactor_core_2x2_top"),
+                modLoc("block/reactor_core_2x2_side1"), modLoc("block/reactor_core_2x2_side2"),
+                modLoc("block/reactor_core_2x2_side1"), modLoc("block/reactor_core_2x2_side2"));
+        getVariantBuilder(tCore).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
+        itemModels().withExistingParent("nuclear_reactor_core_2x2", tModel.getLocation());
     }
 
     /**
