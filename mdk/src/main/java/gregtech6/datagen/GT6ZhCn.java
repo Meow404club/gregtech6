@@ -806,6 +806,22 @@ public class GT6ZhCn extends LanguageProvider {
 		for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.QU_FLUID_SPECS) {
 			addDirect(tSpec.descriptionId());
 		}
+		// task p37-fluids-naming: the 34 census-gap display names — the dump carries every
+		// face (S:fluid.netherair=下界空气 :652, enderair=末地空气 :281, uuamplifier=UU增殖液
+		// :905, ic2uumatter=UU物质 :366, biomass=生物质 :98, mcguffium=乌有岩(迷) :405,
+		// fieryblood=炙热的血 :296, fierytears=炙热之泪 :297, squidink=墨水 :869,
+		// indigo=靛蓝染料 :370, pyrotheum=烈焰之炽焱 :827, cryotheum=极寒之凛冰 :201,
+		// petrotheum=构造之地岩 :679, aerotheum=和谐之空气 :38, plastic=熔融塑料 :686,
+		// glass=熔融玻璃 :308, molten.latex=胶乳 :527, "molten hsla"=熔融HSLA钢 :426,
+		// error=错误流体 :283, rainbowsap=彩虹树汁 :829, glue=胶水 :310, mercury=汞 :411,
+		// sluicejuice=废水 :858, molten.cheese=熔融奶酪 :470, molten.sugar=熔融糖 :606,
+		// molten.rubber=熔融橡胶 :587, the eight molten.wax* rows :637-644); the keys ride
+		// the SAME GTFluids.NAMING_FLUID_SPECS derivation the en walk and the FluidType
+		// descriptionIds use. Values are hand rows in the reference table (the py table
+		// carries the dump faces verbatim).
+		for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.NAMING_FLUID_SPECS) {
+			addDirect(tSpec.descriptionId());
+		}
 		// task p26-c-foam-fluid-refill: the base + the 32 C-Foam display names — the dump
 		// carries all 33 faces (S:fluid.ic2constructionfoam=建筑泡沫 tmp/gregtech.lang:361,
 		// S:fluid.cfoam.* :130-161); the keys ride the SAME GTFluids.cfoamName/

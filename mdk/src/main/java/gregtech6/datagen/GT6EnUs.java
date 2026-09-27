@@ -108,6 +108,7 @@ public class GT6EnUs extends LanguageProvider {
         addChemicalFluids(); // task p29-w4-f1-chemicals — table-tail append
         addHotFamilyFluids(); // task p29-w4-hot-lube — table-tail append (hot + closure + lubricant)
         addQuFluids(); // task p31-qu-a-foundation — table-tail append (the QU matter/ender trio)
+        addNamingFluids(); // task p37-fluids-naming — table-tail append (the 34 census-gap rows)
         addBeeFamily(); // task p31-bees-lv1 — table-tail append (honey + bee-row fluids + the 20 combs + the tab)
         addBumbleFamily(); // task p33-bees-lv3-a-items — table-tail append (the 80 species names + the 8 face formats)
         addCFoamBlocks(); // task p26-c-foam-block-family — table-tail append
@@ -274,8 +275,8 @@ public class GT6EnUs extends LanguageProvider {
         "diesel"          , "Diesel",
         "kerosine"        , "Kerosine",
         "petrol"          , "Petrol",
-        "fuel"            , "Fuel",
-        "nitrofuel"       , "Nitro-Fuel",
+        "fuel"            , "Fuel Oil",
+        "nitrofuel"       , "Nitro Fuel",
         "jetfuel"         , "Jet Fuel",
         "ethanol"         , "Ethanol");
 
@@ -448,6 +449,24 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addQuFluids() {
         for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.QU_FLUID_SPECS) {
+            add(tSpec.descriptionId(), tSpec.displayName());
+        }
+    }
+
+    /**
+     * Naming-parity fluid keys (task p37-fluids-naming): the eighth spec-table loop over
+     * {@link GTFluids#NAMING_FLUID_SPECS} — the addQuFluids shape, walked from the
+     * census-gap table so the lang face cannot drift from the registered fluids. Values
+     * ride the row's displayName: the upstream {@code FL.create} local strings verbatim
+     * (Loader_Fluids.java:50-51/:72-73/:83/:105/:108-112/:130-133/:191-199/:202-212/:358/
+     * :464/:616/:618/:619; the two null-display UU rows ride the MT.UUAmplifier/UUMatter
+     * local names "UU-Amplifier"/"UU-Matter", the :211 WaxAmnesic row the internal name
+     * verbatim — the upstream no-setLocal oversight kept). The zh faces ride the
+     * reference-table direct band (GT6ZhCn, the same 34 keys — the dump carries every
+     * face; the per-row dump line anchors live on the py hand table).
+     */
+    private void addNamingFluids() {
+        for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.NAMING_FLUID_SPECS) {
             add(tSpec.descriptionId(), tSpec.displayName());
         }
     }
