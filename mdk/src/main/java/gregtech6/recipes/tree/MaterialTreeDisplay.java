@@ -65,8 +65,9 @@ import gregtech6.registry.GTMaterialItems;
  * displayed node sits in the column its prefix maps to, rows stack top-down per column in
  * BFS encounter order. Prefixes with no table entry are NOT displayed (the table is also
  * the ore-chain filter: the item-tree tails like ingot/plate never leak into the diagram).
- * The layout adapts to the live maps for free: crushedPurified has a table column, but
- * until the pooled producer rows land (the ore-purified-edge-gap card) no node occupies it.
+ * The layout adapts to the live maps for free: when the pooled producer rows LANDED (task
+ * debt-ore-purified-edge, the :351 DUST_ORE sifting walk) crushedPurified simply occupied its
+ * table column — the table only positions nodes, the maps decide which exist.
  *
  * <p><b>Performance</b>: one {@link MaterialTreeBuilder#build()} sweep per viewer
  * registration (twice per client session, JEI + EMI legs — startup-only, never per open);
