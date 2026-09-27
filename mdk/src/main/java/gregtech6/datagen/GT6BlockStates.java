@@ -2672,16 +2672,12 @@ public final class GT6BlockStates extends BlockStateProvider {
         Block tController = gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD.get();
         getVariantBuilder(tController).forAllStates(aState -> ConfiguredModel.builder().modelFile(tMain).build());
         itemModels().withExistingParent("multiblock_lightning_rod", tMain.getLocation());
-        // the Tungsten Wall (task r3-world-tint-render-type, the C5 clean-up): the row
-        // IS the :1151 machine_wall row (texture "metalwall", NBT_DESIGNS 7, ANY.W) —
-        // it takes the metal-wall two-layer form over the design-0 art (the former
-        // cube_all borrow lightningrod/wall was the design-0 colored/side bytes, so the
-        // body art is unchanged; the 0.01 wall decals + the material tint join). The
-        // single-variant Lightning Rod registration keeps its DESIGNS-0 state space
-        // (design 0 = the sibling walls' default state).
-        Block tWall = gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get("machine_wall_tungsten").get();
-        simpleBlock(tWall, partModel("machine_wall_tungsten", "metalwall", 0));
-        itemModels().withExistingParent("machine_wall_tungsten", modLoc("block/machine_wall_tungsten"));
+        // the Tungsten Wall (task r3-world-tint-render-type, the C5 clean-up; task
+        // debt-tungsten-wall-designs): the row IS the :1151 machine_wall row (texture
+        // "metalwall", NBT_DESIGNS 7, ANY.W) — its blockstate/item/models moved to the
+        // addParts() new-form walk (the anyPartBlock lookup), where it emits the full
+        // design 0..7 ladder like its ten siblings; the former single-design
+        // partModel(metalwall, 0) special case is retired.
         addLightningRodPart("niobium_titanium_coil", "block/lightningrod/coil");
         addLightningRodPart("lightning_rod", "block/lightningrod/rod");
     }
@@ -3013,8 +3009,11 @@ public final class GT6BlockStates extends BlockStateProvider {
             itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path() + "_design_0"));
         }
         for (var tRow : gregtech6.registry.GTMultiBlocks.NEW_PART_ROWS) {
-            if (!gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.containsKey(tRow.path())) continue; // machine_wall_tungsten — the reused Lightning Rod registration
-            Block tBlock = gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.get(tRow.path()).get();
+            // anyPartBlock resolves every registration map — machine_wall_tungsten rides
+            // the Lightning Rod family's registration (task debt-tungsten-wall-designs:
+            // the row now walks HERE with its full design ladder like its siblings)
+            Block tBlock = gregtech6.registry.GTMultiBlocks.anyPartBlock(tRow.path());
+            if (tBlock == null) continue;
             if (tRow.designs() > 0) {
                 GTMultiBlockPartBlock tPart = (GTMultiBlockPartBlock) tBlock;
                 for (int d = 0; d <= tRow.designs(); d++) {
