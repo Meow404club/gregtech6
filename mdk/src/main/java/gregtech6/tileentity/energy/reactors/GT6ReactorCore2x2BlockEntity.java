@@ -259,6 +259,12 @@ public class GT6ReactorCore2x2BlockEntity extends TileEntityBase03TicksAndSync {
 	 * ({@link ReactorLattice2x2#IN_BLOCK_TARGETS}) and the 2 horizontal neighbouring
 	 * cores on its outward corner sides ({@link ReactorLattice2x2#OUTWARD_SIDES}, the
 	 * receiving slot through {@link ReactorLattice2x2#neighbourReceivingSlot}).
+	 *
+	 * <p>DECLARED ASYMMETRY DEVIATION (coordinator ruling 2026-09-27): upstream :96
+	 * slot-3 X-direction uses S2103 asymmetrically, suspected copy-paste; the port
+	 * keeps the geometrically symmetric form of the A-domain formula (the M2
+	 * sentinel-precedent corrective port — the slot-3/X cross-core emission lands on
+	 * S0312's geometrically correct receiving slot instead of upstream's S2103 pick).
 	 */
 	private void exchangePass() {
 		for (int tSlot = 0; tSlot < 4; tSlot++) { // :63-97 — the four sequential emitters

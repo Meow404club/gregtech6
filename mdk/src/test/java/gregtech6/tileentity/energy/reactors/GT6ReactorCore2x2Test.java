@@ -362,6 +362,13 @@ public class GT6ReactorCore2x2Test extends GTOfflineTestBase {
 		assertEquals(100 + 4 + 10 + 10, tCore.mNeutronCounts[0], "the exchange pass over IN_BLOCK_TARGETS[0]");
 	}
 
+	/**
+	 * DECLARED ASYMMETRY DEVIATION (coordinator ruling 2026-09-27): upstream :96 slot-3
+	 * X-direction uses S2103 asymmetrically, suspected copy-paste; the port keeps the
+	 * geometrically symmetric form — the pin below drives slot 0, whose both directions
+	 * agree between upstream and the formula, and the mapping contract rides the A-domain
+	 * {@code neighbourReceivingSlot} as-is.
+	 */
 	@Test
 	public void crossCoreEmissionLandsOnTheS2103ReceivingSlot() {
 		TestCore tA = core();
