@@ -34,12 +34,9 @@ import net.minecraftforge.registries.RegistryObject;
  * three families had NO port identity (the GTMultiBlocks/GT6QuantumEnergizers fusion-
  * wall CUT notes and the GTMachines.java molecular-scanner "absent port identities"
  * ruling all name them as the absent columns). With this file the items land; the
- * SCANNER T3 crafting-seam RESTORE itself is DEFERRED to a post-merge mini card —
- * the seam note is LIVE on main (GT6CraftingRecipes, the p34 burner-mixer band tail:
- * coordinator ruling Q1=(b), the :1551 "DXE","FMF","RYS" row awaits exactly this
- * card's F/X/Y = field_generator_hv/signal_emitter_hv/sensor_hv, which now EXIST);
- * the restore is a datagen-provider touch (new recipe JSON + runData 二跑 discipline),
- * not a drive-by, so it stays pooled as its own micro card.
+ * SCANNER T3 crafting-seam RESTORE landed as task debt-scanner-t3-usb-stick — the
+ * :1551 "DXE","FMF","RYS" row rides exactly these F/X/Y = field_generator_hv/
+ * signal_emitter_hv/sensor_hv columns (GT6CraftingRecipes.molecularScannerRow).
  *
  * <p><b>Upstream consumer panorama</b> (the card's archaeology, all grep-verified over
  * the upstream tree): the 30 self-crafting rows MultiItemTechnological.java:425-456

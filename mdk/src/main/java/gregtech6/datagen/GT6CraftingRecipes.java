@@ -318,6 +318,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (BridgeCraftRow tRow : usbDriveRecipeRows()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
+		// task debt-scanner-t3-usb-stick — the 4 USB Stick rows (:796-799) + the
+		// Molecular Scanner T3 controller row (:1551, the Q1=(b) seam restore)
+		for (BridgeCraftRow tRow : usbStickRecipeRows()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
+		CrackerRecipeRow tScanner = molecularScannerRow();
+		tScanner.builder().save(aConsumer, tScanner.id());
 		// task p29-w5-t1-dig-six — the six dig-tool steel-route rows (the wrench row shape)
 		pickaxeBuilder().save(aConsumer, PICKAXE_ID);
 		pickaxeGemBuilder().save(aConsumer, PICKAXE_GEM_ID);
@@ -514,6 +521,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (BridgeCraftRow tRow : usbDriveRecipeRows()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
+		// task debt-scanner-t3-usb-stick — the 4 USB Stick rows (:796-799) + the
+		// Molecular Scanner T3 controller row (:1551, the Q1=(b) seam restore)
+		for (BridgeCraftRow tRow : usbStickRecipeRows()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
+		CrackerRecipeRow tScanner = molecularScannerRow();
+		tScanner.builder().save(aOutput, tScanner.id());
 		// task p29-w5-t1-dig-six — the six dig-tool steel-route rows (the wrench row shape)
 		pickaxeBuilder().save(aOutput, PICKAXE_ID);
 		pickaxeGemBuilder().save(aOutput, PICKAXE_GEM_ID);
@@ -1490,10 +1504,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	// CUT — the absent-component ruling (the GTMachines family note: the CABLES_01/
 	// EMITTERS/SENSORS columns and IL.Processor_Crystal_Diamond are absent port
 	// identities, the molecular-scanner ruling). Task p37-usb-peripherals, coordinator
-	// ruling Q1=(b): the molecular-scanner T3 controller row (:1551 "DXE","FMF","RYS")
-	// STAYS CUT the same way — the F/X/Y columns (FIELD_GENERATORS[3]/EMITTERS[3]/
-	// SENSORS[3]) remain absent port identities; the seam now explicitly awaits the
-	// EMITTERS/SENSORS/FIELD_GENERATORS component pool card before any restore.
+	// ruling Q1=(b) SUPERSEDED by task debt-scanner-t3-usb-stick: the molecular-scanner
+	// T3 controller row (:1551 "DXE","FMF","RYS") is RESTORED (the molecularScannerRow
+	// band below) — the component pool card (debt-emitter-sensor-generators) landed the
+	// F/X/Y columns (field_generator_hv/signal_emitter_hv/sensor_hv), so the seam's
+	// await condition no longer holds.
 	// -------------------------------------------------------------------------
 
 	private java.util.List<CrackerRecipeRow> burnerMixerRecipeBuilders() {
@@ -1514,9 +1529,48 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
 					.define('w', GT6ItemTags.TOOLS_WRENCH)
 					.unlockedBy("has_invar_plate", has(gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plate, MT.Invar).get())),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, tPaths[i])));
+						new ResourceLocation(GT6DataGenerators.MOD_ID, tPaths[i])));
 		}
 		return rRows;
+	}
+
+	// -------------------------------------------------------------------------
+	// task debt-scanner-t3-usb-stick — the Molecular Scanner T3 controller row,
+	// Loader_MultiTileEntities.java:1551 VERBATIM (the ONLY active scanner rung —
+	// T1/T2/T4/T5 :1549-1550/:1552-1553 are commented out upstream; "DXE","FMF","RYS"
+	// over MT.Osmiridium). Column map:
+	//   - 'M' = casingMachine.dat(Osmiridium) → casingSmall (the cracker/transformer
+	//     fold — the prefix has no port item row);
+	//   - 'D'/'E'/'R'/'S' = IL.Processor_Crystal_Diamond/Emerald/Ruby/Sapphire → the
+	//     matching GEM TAGS (the p33-circuits-c gem-tag fold, the crystal circuits'
+	//     material carriers);
+	//   - 'F'/'X'/'Y' = IL.FIELD_GENERATORS[3]/IL.EMITTERS[3]/IL.SENSORS[3] → the HV
+	//     rungs of the three component families (VN[3] = HV, the
+	//     debt-emitter-sensor-generators items) — the F/X/Y columns the Q1=(b) seam
+	//     was awaiting; the restore closes it.
+	// Result = the machine item, id rides the block path (the machine result-path
+	// convention).
+	// -------------------------------------------------------------------------
+
+	/** One Molecular Scanner T3 row: the shared builder + the id its save face ids from (the CrackerRecipeRow shape). */
+	private CrackerRecipeRow molecularScannerRow() {
+		Item tFieldGen = gregtech6.items.GT6Emitters.ITEMS_BY_PATH.get(gregtech6.items.GT6Emitters.FAMILY_FIELD_GENERATORS + "_hv").get();
+		Item tEmitter = gregtech6.items.GT6Emitters.ITEMS_BY_PATH.get(gregtech6.items.GT6Emitters.FAMILY_EMITTERS + "_hv").get();
+		Item tSensor = gregtech6.items.GT6Emitters.ITEMS_BY_PATH.get(gregtech6.items.GT6Emitters.FAMILY_SENSORS + "_hv").get();
+		Item tCasing = GTMaterialItems.get(gregapi.data.OP.casingSmall, gregapi.data.MT.Osmiridium).get();
+		return new CrackerRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS,
+				gregtech6.registry.GTMachines.MOLECULAR_SCANNER_ITEMS_BY_PATH.get("molecular_scanner_t3").get())
+				.pattern("DXE").pattern("FMF").pattern("RYS")
+				.define('D', GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, "diamond"))
+				.define('E', GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, "emerald"))
+				.define('R', GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, "ruby"))
+				.define('S', GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, "sapphire"))
+				.define('F', tFieldGen)
+				.define('M', tCasing)
+				.define('X', tEmitter)
+				.define('Y', tSensor)
+				.unlockedBy("has_field_generator", has(tFieldGen)),
+				new ResourceLocation(GT6DataGenerators.MOD_ID, "molecular_scanner_t3"));
 	}
 
 	private ShapedRecipeBuilder foodCanEmptyBuilder() {
@@ -1629,6 +1683,55 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			case 2 -> gregtech6.items.GT6UsbSticks.USB_DRIVE_2.get();
 			case 3 -> gregtech6.items.GT6UsbSticks.USB_DRIVE_3.get();
 			default -> gregtech6.items.GT6UsbSticks.USB_DRIVE_4.get();
+		};
+	}
+
+	// -------------------------------------------------------------------------
+	// task debt-scanner-t3-usb-stick — the USB Stick crafting rows, upstream
+	// MultiItemTechnological.java:796-799 VERBATIM ("xWd","PCP","TCT" — the same grid
+	// as the cable/HDD rows above). Column map (VERBATIM):
+	//   - 'C' = OD_CIRCUITS[3..6] → the #gt6:circuit3..6 TAGS (the HDD 'C' column
+	//     convention, NOT a deviation);
+	//   - 'W' = MT.DATA.WIRES_01[3..6] = wireGt01 Au/Al/Pt/Graphene (MT.java:3595-3610)
+	//     — the shared USB_WIRE_COL_PATHS ladder;
+	//   - 'P'/'T' = OP.plate/OP.screw dat(Al/StainlessSteel/Cr/Ti) — the shared
+	//     USB_PLATE_MATS ladder (the tier column the peripheral rows already ride);
+	//   - 'x' = the wirecutter (CR.java:359), 'd' = the screwdriver (CR.java:342).
+	// The p37-usb-peripherals Q3 pool ruling closes here: the sticks carry the
+	// Behavior_DataStorage data plane since p32-usb-data, the rows complete their
+	// obtainability chain.
+	// -------------------------------------------------------------------------
+
+	/** The USB Stick rows (:796-799, "xWd","PCP","TCT") — one per tier, ids on the item path. */
+	private java.util.List<BridgeCraftRow> usbStickRecipeRows() {
+		java.util.List<BridgeCraftRow> rRows = new ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			Item tWire = wireItemByPath(USB_WIRE_COL_PATHS[i]);
+			Item tPlate = GTMaterialItems.get(gregapi.data.OP.plate, USB_PLATE_MATS[i]).get();
+			Item tScrew = GTMaterialItems.get(gregapi.data.OP.screw, USB_PLATE_MATS[i]).get();
+			TagKey<Item> tCircuit = GT6ItemTags.gt6("circuit" + (i + 3)); // OD_CIRCUITS[3..6]
+			String tPath = "usb_stick_" + (i + 1);
+			rRows.add(new BridgeCraftRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, stickItem(i + 1))
+					.pattern("xWd").pattern("PCP").pattern("TCT")
+					.define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
+					.define('W', tWire)
+					.define('P', tPlate)
+					.define('C', tCircuit)
+					.define('T', tScrew)
+					.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+					.unlockedBy("has_circuit", has(tCircuit)),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+		}
+		return rRows;
+	}
+
+	/** The USB Stick item of a tier (1-4). */
+	private static Item stickItem(int aTier) {
+		return switch (aTier) {
+			case 1 -> gregtech6.items.GT6UsbSticks.USB_STICK_1.get();
+			case 2 -> gregtech6.items.GT6UsbSticks.USB_STICK_2.get();
+			case 3 -> gregtech6.items.GT6UsbSticks.USB_STICK_3.get();
+			default -> gregtech6.items.GT6UsbSticks.USB_STICK_4.get();
 		};
 	}
 
