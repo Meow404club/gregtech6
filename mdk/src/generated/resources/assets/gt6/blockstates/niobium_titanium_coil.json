@@ -1,7 +1,10 @@
 {
   "variants": {
-    "": {
-      "model": "gt6:block/niobium_titanium_coil"
+    "design=0": {
+      "model": "gt6:block/niobium_titanium_coil_design_0"
+    },
+    "design=1": {
+      "model": "gt6:block/niobium_titanium_coil_design_1"
     }
   }
 }

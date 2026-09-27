@@ -406,17 +406,23 @@ public final class GTMultiBlocks {
 		// Task r3-world-tint-render-type (the C5 clean-up): the rows hand their upstream
 		// NBT_MATERIAL column through the row-less material-carrier constructor — the
 		// Tungsten Wall (machine_wall_tungsten, :1151 ANY.W) joins the paint walk this
-		// card; the coil/rod materials ride along dormant (their cube_all models stay
-		// untinted, the declared deviation below).
+		// card; the rod material rides along dormant (its cube_all model stays untinted,
+		// the declared deviation below).
 		// Task debt-tungsten-wall-designs (the C7' leftover ① retired): the :1151 row is a
 		// plain metal-wall registration — NBT_DESIGNS 7, the same design range 0..7 as every
 		// sibling (:1143-1153 are line-identical on the column) — so the Tungsten Wall now
-		// carries the family's DESIGN property; the coil/rod keep their single-variant
-		// registration (their design gap stays the declared pool deviation).
+		// carries the family's DESIGN property.
+		// Task debt-coil-design: the :1168 row carries NBT_DESIGNS 1 (the same design
+		// range 0..1 as all six coil siblings :1167-1172, line-identical on the column)
+		// — the declared pool deviation retires, the coil walks the two-step design
+		// ladder like the five new-form coils; the rod keeps its single-variant
+		// registration (:1179 NBT_DESIGNS 0).
 		for (MultiblockPartRow tRow : LIGHTNING_ROD_PART_ROWS) {
 			LIGHTNING_ROD_PART_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTMultiBlockPartBlock(partProperties(tRow.hardness()),
-							"machine_wall_tungsten".equals(tRow.path()) ? 7 : 0, null, tRow.material())));
+							"machine_wall_tungsten".equals(tRow.path()) ? 7
+									: "niobium_titanium_coil".equals(tRow.path()) ? 1 : 0,
+							null, tRow.material())));
 			LIGHTNING_ROD_PART_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
 					() -> new GTComposedNameItem(LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
 		}
@@ -659,9 +665,16 @@ public final class GTMultiBlocks {
 			new PartRow("machine_wall_tantalum_hafnium_carbide", "Tantalum Hafnium Carbide" , 18012,  12.5F, 7, "metalwall", () -> MT.Ta4HfC5),
 			new PartRow("machine_wall_adamantium"              , "Adamantium"               , 18005, 100.0F, 7, "metalwall", () -> MT.Ad));
 
-	/** The five new Coil rows (:1167-1172 minus the registered 18041; texture "coil", NBT_DESIGNS 1 — designs 0/1; material = the upstream aMat verbatim, task p38-issue8). */
+	/**
+	 * The six Coil rows (:1167-1172, the registration order — texture "coil", NBT_DESIGNS 1
+	 * — designs 0/1; material = the upstream aMat verbatim, task p38-issue8). The 18041 row
+	 * is REUSED — the block stays the Lightning Rod family's registration, the
+	 * machine_wall_tungsten shape (task debt-coil-design; the registration loop in
+	 * {@link #registerAtomicPart} skips it).
+	 */
 	public static final java.util.List<PartRow> COIL_ROWS = java.util.List.of(
 			new PartRow("large_copper_coil"     , "Large Copper Coil"     , 18040, 6.0F, 1, "coil", () -> MT.AnnealedCopper),
+			new PartRow("niobium_titanium_coil" , "Large Niobium-Titanium Coil", 18041, 6.0F, 1, "coil", () -> MT.NiobiumTitanium), // REUSED — the Lightning Rod family's block
 			new PartRow("large_nichrome_coil"   , "Large Nichrome Coil"   , 18042, 6.0F, 1, "coil", () -> MT.Nichrome),
 			new PartRow("large_carborundum_coil", "Large Carborundum Coil", 18043, 6.0F, 1, "coil", () -> MT.SiC),
 			new PartRow("large_osmium_coil"     , "Large Osmium Coil"     , 18044, 6.0F, 1, "coil", () -> MT.Os),
@@ -778,8 +791,15 @@ public final class GTMultiBlocks {
 		for (PartRow tRow : PROCESSOR_UNIT_ROWS) registerAtomicPart(tRow);
 	}
 
-	/** One ATOMIC-row registration pair (the name resolves through the vanilla {@code block.gt6.<path>} key; the row's material column rides along for the tint, task p38-issue8). */
+	/**
+	 * One ATOMIC-row registration pair (the name resolves through the vanilla {@code block.gt6.<path>}
+	 * key; the row's material column rides along for the tint, task p38-issue8). The reused
+	 * rows SKIP — niobium_titanium_coil stays the Lightning Rod family's registration, the
+	 * machine_wall_tungsten METAL_WALL_ROWS-loop guard shape (task debt-coil-design;
+	 * decisions.p29-w3-split-rulings).
+	 */
 	private static void registerAtomicPart(PartRow aRow) {
+		if (LIGHTNING_ROD_PART_BLOCKS_BY_PATH.containsKey(aRow.path())) return;
 		NEW_PART_BLOCKS_BY_PATH.put(aRow.path(), BLOCKS.register(aRow.path(),
 				() -> new GTMultiBlockPartBlock(partProperties(aRow.hardness()), aRow.designs(), null, aRow.material())));
 		NEW_PART_ITEMS_BY_PATH.put(aRow.path(), ITEMS.register(aRow.path(),
@@ -796,29 +816,32 @@ public final class GTMultiBlocks {
 	}
 
 	/**
-	 * The part-family paint-tint walker (task p38-issue8-multipart-tint): the 43 part
+	 * The part-family paint-tint walker (task p38-issue8-multipart-tint): the 44 part
 	 * blocks whose datagen models carry tintindex 0 on the body cube — the 11 Dense Walls,
 	 * the 29 new-form part blocks (10 Metal Walls + Wood Wall + 5 Coils + 7 Parts +
 	 * Ventilation + 5 Processor Units), the Heat Transmitter, since task
 	 * p38-c2-controller-tint the coke-oven bricks (the upstream Ceramic tint wired — the
-	 * #8 declared deviation retired) and, since task r3-world-tint-render-type (the C5
-	 * clean-up), machine_wall_tungsten (the Lightning Rod family's registration of the
+	 * #8 declared deviation retired), since task r3-world-tint-render-type (the C5
+	 * clean-up) machine_wall_tungsten (the Lightning Rod family's registration of the
 	 * :1151 row — its models are the metalwall per-design two-layer forms since task
 	 * debt-tungsten-wall-designs, over the identical bytes of the former lightningrod/
-	 * wall borrow). The machine
+	 * wall borrow) and since task debt-coil-design niobium_titanium_coil (the Lightning
+	 * Rod family's registration of the :1168 row — its models are the coil per-design
+	 * two-layer forms, the five sibling coils' family shape). The machine
 	 * {@code GTMachines.paintableBlockArray} census convention, feeding BOTH consumption
 	 * halves: the baked world tint ({@code GTMachineTintModel}, the p32 route) and the
-	 * inventory {@code ItemColor} (GTClientHandlers). NOT in the walk: the two remaining
-	 * Lightning Rod part borrows (the Niobium-Titanium coil and the rod — their cube_all
-	 * models carry no tintindex, the declared deviation). Client-side call time only.
+	 * inventory {@code ItemColor} (GTClientHandlers). NOT in the walk: the one remaining
+	 * Lightning Rod part borrow (the rod — its cube_all model carries no tintindex, the
+	 * declared deviation). Client-side call time only.
 	 */
 	public static net.minecraft.world.level.block.Block[] partPaintableBlockArray() {
-		java.util.List<net.minecraft.world.level.block.Block> rBlocks = new java.util.ArrayList<>(43);
+		java.util.List<net.minecraft.world.level.block.Block> rBlocks = new java.util.ArrayList<>(44);
 		for (RegistryObject<GTMultiBlockPartBlock> tHandle : WALL_BLOCKS_BY_PATH.values()) rBlocks.add(tHandle.get());
 		for (RegistryObject<GTMultiBlockPartBlock> tHandle : NEW_PART_BLOCKS_BY_PATH.values()) rBlocks.add(tHandle.get());
-		// the Lightning Rod family's Tungsten Wall registration (task
-		// r3-world-tint-render-type — the C5 clean-up joins it)
+		// the Lightning Rod family's reused registrations (the tungsten wall — task
+		// r3-world-tint-render-type, the C5 clean-up; the coil — task debt-coil-design)
 		rBlocks.add(LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get("machine_wall_tungsten").get());
+		rBlocks.add(LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get("niobium_titanium_coil").get());
 		rBlocks.add(HEAT_TRANSMITTER.get());
 		rBlocks.add(COKE_OVEN_BRICKS.get());
 		return rBlocks.toArray(new net.minecraft.world.level.block.Block[0]);

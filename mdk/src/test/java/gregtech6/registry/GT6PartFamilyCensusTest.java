@@ -72,14 +72,18 @@ public class GT6PartFamilyCensusTest extends gregtech6.tileentity.multiblocks.GT
 
 	@Test
 	void coilFamilyCountsSixRowsAllDesignsOne() {
-		assertEquals(5, GTMultiBlocks.COIL_ROWS.size(), "the five NEW coils (:1167-1172)");
+		// task debt-coil-design — 5→6 rows: the :1168 row (NBT_DESIGNS 1, line-identical
+		// on the column with its five siblings) normalizes into the census table; the
+		// BLOCK registration stays the Lightning Rod family's (the machine_wall_tungsten
+		// reuse shape, the registerAtomicPart guard skips it)
+		assertEquals(6, GTMultiBlocks.COIL_ROWS.size(), "the six coils (:1167-1172)");
 		assertEquals(1, GTMultiBlocks.LIGHTNING_ROD_PART_ROWS.stream().filter(r -> r.metaId() == 18041).count(),
-				"the sixth coil (niobium_titanium_coil 18041) stays in the Lightning Rod family rows");
+				"the reused coil (niobium_titanium_coil 18041) stays in the Lightning Rod family rows");
 		for (GTMultiBlocks.PartRow tRow : GTMultiBlocks.COIL_ROWS) {
 			assertEquals(1, tRow.designs(), tRow.path() + " NBT_DESIGNS 1 (coil designs 0/1)");
 			assertEquals("coil", tRow.textureFamily(), tRow.path() + " texture family");
 		}
-		assertEquals(Set.of(18040, 18042, 18043, 18044, 18045),
+		assertEquals(Set.of(18040, 18041, 18042, 18043, 18044, 18045),
 				new HashSet<>(GTMultiBlocks.COIL_ROWS.stream().map(GTMultiBlocks.PartRow::metaId).toList()),
 				"the coil meta census");
 	}

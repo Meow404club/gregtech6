@@ -10,9 +10,12 @@
  * <p>Coverage: the 11 Dense Walls (metalwalldense, WALL_ROWS) x designs 0..7 and the 11
  * new-form Metal Walls (metalwall, METAL_WALL_ROWS) x designs 0..7 — machine_wall_tungsten
  * joined the ladder in task debt-tungsten-wall-designs (the Lightning Rod registration
- * now carries the :1151 NBT_DESIGNS 7; its former single-variant pin is retired). The
- * partPaintableBlockArray walk (43 blocks: walls +
- * coils + parts + ventilation + processor units + wood wall + the tungsten wall +
+ * now carries the :1151 NBT_DESIGNS 7; its former single-variant pin is retired), and
+ * niobium_titanium_coil joined in task debt-coil-design (the :1168 NBT_DESIGNS 1; the
+ * same reuse shape). The
+ * partPaintableBlockArray walk (44 blocks: walls +
+ * coils + parts + ventilation + processor units + wood wall + the tungsten wall + the
+ * niobium-titanium coil +
  * transmitter + the coke-oven bricks, whose Ceramic tint
  * task p38-c2-controller-tint wired) rides the same partModel helper, so the
  * body/decal split asserted here covers them; the material columns of those rows are
@@ -104,11 +107,11 @@ class GT6PartPaintRenderDatagenTest {
         }
     }
 
-    /** One wall blockstate: 8 design variants over the per-design models. */
-    private static void assertDesignVariants(String aPath) throws Exception {
+    /** One part blockstate: designs+1 variants over the per-design models (the row's NBT_DESIGNS range). */
+    private static void assertDesignVariants(String aPath, int aDesigns) throws Exception {
         JsonObject tVariants = json("assets/gt6/blockstates/" + aPath + ".json").getAsJsonObject("variants");
-        assertEquals(8, tVariants.size(), aPath + " emits one variant per design 0..7");
-        for (int d = 0; d <= DESIGNS; d++) {
+        assertEquals(aDesigns + 1, tVariants.size(), aPath + " emits one variant per design 0.." + aDesigns);
+        for (int d = 0; d <= aDesigns; d++) {
             JsonObject tEntry = tVariants.getAsJsonObject("design=" + d);
             assertNotNull(tEntry, aPath + " variant design=" + d);
             assertTrue(tEntry.get("model").getAsString().endsWith("block/" + aPath + "_design_" + d),
@@ -121,7 +124,7 @@ class GT6PartPaintRenderDatagenTest {
         assertEquals(11, GTMultiBlocks.WALL_ROWS.size(), "the Dense Wall census stays 11 (issue #8's wall family)");
         for (String tPath : DENSE_WALLS) {
             for (int d = 0; d <= DESIGNS; d++) assertTintedPartModel(tPath, d);
-            assertDesignVariants(tPath);
+            assertDesignVariants(tPath, DESIGNS);
         }
     }
 
@@ -129,17 +132,29 @@ class GT6PartPaintRenderDatagenTest {
     public void metalWallsCarryTintedBodyModels() throws Exception {
         for (String tPath : METAL_WALLS) {
             for (int d = 0; d <= DESIGNS; d++) assertTintedPartModel(tPath, d);
-            assertDesignVariants(tPath);
+            assertDesignVariants(tPath, DESIGNS);
         }
     }
 
-    // machine_wall_tungsten's single-variant pin retired (task
-    // debt-tungsten-wall-designs, the C7' leftover ①): the row walks METAL_WALLS above
-    // like its ten siblings — the metalwall design-0 art is byte-identical to the
-    // former lightningrod/wall borrow (sha 37dab1b9), and the Lightning Rod
-    // registration now carries the :1151 NBT_DESIGNS 7 (the blockstate ladder pin in
-    // assertDesignVariants transitively pins that registration range: a revert to
-    // maxDesign 0 collapses the blockstate to the single-state form and goes red here).
+    /**
+     * The Niobium-Titanium Coil (task debt-coil-design): the :1168 row — NBT_DESIGNS 1,
+     * line-identical on the column with its five coil siblings (:1167-1172) — walks the
+     * two-step design ladder over the Lightning Rod family's registration (the
+     * machine_wall_tungsten reuse shape). A revert of the ternary to maxDesign 0
+     * collapses the blockstate to the single-state form and goes red on the variant
+     * count; a lost row normalization goes red on the tint/texture pins (the former
+     * cube_all borrow carried neither).
+     */
+    @Test
+    public void niobiumTitaniumCoilCarriesTheDesignLadder() throws Exception {
+        assertEquals(1, GTMultiBlocks.COIL_ROWS.stream()
+                .filter(r -> r.path().equals("niobium_titanium_coil")).findFirst().orElseThrow()
+                .designs(), "the :1168 row rides the COIL_ROWS census with NBT_DESIGNS 1");
+        assertSame(gregapi.data.MT.NiobiumTitanium, materialOf("niobium_titanium_coil"),
+                "the row column (the upstream aMat verbatim, the tint source)");
+        for (int d = 0; d <= 1; d++) assertTintedPartModel("niobium_titanium_coil", d);
+        assertDesignVariants("niobium_titanium_coil", 1);
+    }
 
     // ------------------------------------------------------------------
     // the NBT_MATERIAL columns — the upstream aMat of each Loader row verbatim
