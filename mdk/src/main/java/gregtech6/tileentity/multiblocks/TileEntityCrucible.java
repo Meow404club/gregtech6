@@ -6,17 +6,27 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import gregapi.data.CS;
 import gregapi.data.MT;
+import gregapi.data.OP;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictMaterialStack;
 import gregapi.tileentity.machines.ITileEntityCrucible;
@@ -24,8 +34,14 @@ import gregapi.tileentity.machines.ITileEntityMold;
 import gregapi.tileentity.energy.ITileEntityEnergy;
 import gregapi.tileentity.temperature.ITileEntityTemperature;
 import gregapi.util.CruciblePhysics;
+import gregapi.util.UT;
+import gregtech6.fluid.FluidBridge;
+import gregtech6.item.MaterialPrefixItem;
 import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.multiblock.GTMultiBlockStructureChecker;
+import gregtech6.recipes.maps.GT6RecipeMapCanner;
+import gregtech6.recipes.maps.GT6RecipeMapCrucible;
+import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.MaterialStackNBT;
 
 /**
@@ -48,6 +64,27 @@ import gregtech6.tileentity.MaterialStackNBT;
  * the declared pattern through the shared checker (the p16-pattern-checker seam, the
  * CokeOven production pilot) — one judgement source for the server check and the
  * ghost preview.
+ *
+ * <p><b>The item input face (issue #20 sub-task B, upstream :204-234 + :460-544)</b>:
+ * slot 0 — the base {@code mInventory} carrier wired in the constructor through
+ * {@code setInventory} (the GT6HopperBaseBlockEntity.java:136 form, so the Root
+ * ITEM_HANDLER capability answers and a hopper/pipe on any wall part resolves it through
+ * the part relay). Per formed tick: the empty slot sucks ONE item entity out of the
+ * cavity box (upstream :204 {@code WD.suck(x-0.5, y+0.125, z-0.5, 2, 3, 2)} — the whole
+ * 3x3 footprint from just above the floor to above the top opening; the port takes one
+ * item per tick, the TileEntitySmeltery.suckTopItem form, where the upstream took the
+ * whole stack), then the feed ladder melts the slot content into {@code mContent}
+ * through {@link #addMaterialStacks} (upstream :206-234 — the OM.anydata prefix
+ * branches, ported over the TileEntitySmeltery.feedStacks MaterialPrefixItem form; the
+ * upstream decremented ONE item per tick, the port melts the whole slot at once, the
+ * same declared deviation as the small Smeltery). The right-click face is
+ * {@link #useTop} (upstream onBlockActivated3 :460-544): structure-gated, top face only
+ * (the block carrier {@code GTCrucibleControllerBlock.use} routes SIDES_UP), empty hand
+ * takes the feed slot back (:469-473) or scrapes SCRAP off the cooled lightest content
+ * (:475-497), a fluid container drains the molten lightest (:499-517) or pours a molten
+ * fluid back through the bind(melting+25, boiling-1) gate (:518-538). A held SOLID is a
+ * designed no-op (:498 falls through) — the upstream cannot right-click-feed either.
+ * No GUI (the upstream census): suck/hopper + container right-click IS the interface.
  *
  * <p><b>The physics tick (upstream onServerTickPost :184-384) consumes the A-card
  * CruciblePhysics parameter face</b> — the LARGE parameter set
@@ -113,6 +150,9 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	public static final String NBT_ACIDPROOF = "acidproof";
 	public static final String NBT_MATERIALS = "materials";
 
+	/** The slot-0 feed inventory key (the smeltery "gt.inv" family spelling). */
+	public static final String NBT_INVENTORY = "gt.inv";
+
 	// ---------------------------------------------------------------------------
 	// the state (upstream :82-86)
 	// ---------------------------------------------------------------------------
@@ -146,6 +186,13 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	/** The test seam: offline fixtures build their own BET (the frozen registry keeps .get() out of reach). */
 	protected TileEntityCrucible(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
 		super(aType != null ? aType : gregtech6.registry.GT6Crucibles.MULTIBLOCK_CRUCIBLE_BE.get(), aPos, aState);
+		// the slot-0 feed inventory, wired through the base setInventory (the
+		// GT6HopperBaseBlockEntity.java:136 form) — the Root ITEM_HANDLER capability then
+		// answers and the wall-part relay carries a hopper push the last step in
+		// (issue #20: the crucible previously had NO item face at all). NEVER a fresh
+		// mInventory field here: it would shadow the base carrier and the capability
+		// would stay empty (the r4-20a TileEntitySmeltery lesson).
+		setInventory(new GTItemStackHandler(1, this::setChanged));
 		// the crucible has NO facing semantics upstream (getDefaultSide SIDE_UP :689, the
 		// structure fully symmetric around the controller cell). The shared checker's cell
 		// arithmetic ("the structure core sits BEHIND the facing", cellOffset = p - OFF)
@@ -179,6 +226,11 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 		if (aNBT.contains(NBT_ACIDPROOF, Tag.TAG_ANY_NUMERIC)) mAcidProof = aNBT.getBoolean(NBT_ACIDPROOF);
 		mContent.clear();
 		mContent.addAll(MaterialStackNBT.loadList(NBT_MATERIALS, aNBT)); // :98 OreDictMaterialStack.loadList
+		//? if forge {
+		if (aNBT.contains(NBT_INVENTORY, Tag.TAG_COMPOUND)) mInventory.deserializeNBT(aNBT.getCompound(NBT_INVENTORY));
+		//?} else {
+		/*if (aNBT.contains(NBT_INVENTORY, Tag.TAG_COMPOUND)) mInventory.deserializeNBT(NBT_ACCESS, aNBT.getCompound(NBT_INVENTORY)); // 21.1: provider-first
+		 *///?}
 		mMeltDown = CruciblePhysics.isMeltDownWarning(mTemperature, getTemperatureMax((byte)0)); // :99 re-derived, never stored
 	}
 
@@ -189,6 +241,11 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 		aNBT.putLong(NBT_TEMPERATURE + ".old", oTemperature);     // :107
 		aNBT.putLong(NBT_ENERGY, mEnergy);                        // :105
 		MaterialStackNBT.saveList(mContent, NBT_MATERIALS, aNBT); // :108 OreDictMaterialStack.saveList
+		//? if forge {
+		aNBT.put(NBT_INVENTORY, mInventory.serializeNBT());
+		//?} else {
+		/*aNBT.put(NBT_INVENTORY, mInventory.serializeNBT(NBT_ACCESS)); // 21.1: ItemStackHandler NBT takes the registries
+		 *///?}
 	}
 
 	// ---------------------------------------------------------------------------
@@ -426,11 +483,31 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	}
 
 	/**
-	 * The formed-structure physics tick, upstream :236-383 order verbatim (the feed
-	 * :204-234 and the rain :197-202 ride the slot/suck commit — no suck face yet).
+	 * The formed-structure physics tick, upstream :236-383 order verbatim — preceded by
+	 * the feed :204-234 (the cavity suck + the slot-0 melt ladder; the rain :197-202
+	 * stays the declared pool arm).
 	 */
 	private void tickPhysics() {
 		int tHashBefore = mContent.hashCode(); // :185 tHash
+
+		// :204 — the empty slot sucks one item entity out of the cavity box
+		if (mInventory.getStackInSlot(0).isEmpty()) {
+			ItemStack tSucked = suckCavityItem();
+			if (!tSucked.isEmpty()) mInventory.setStackInSlot(0, tSucked);
+		}
+
+		// :206-234 — the feed ladder melts the slot content (the structure gate rides
+		// addMaterialStacks; the trash+fizz arm :210-212 fires on unknown items)
+		ItemStack tStack = mInventory.getStackInSlot(0);
+		if (!tStack.isEmpty()) {
+			List<OreDictMaterialStack> tFeed = feedStacks(tStack);
+			if (tFeed == null) {
+				mInventory.setStackInSlot(0, ItemStack.EMPTY);
+				// SFX.MC_FIZZ :212 — no sound face ported (the same pool as the phase fizz)
+			} else if (addMaterialStacks(tFeed, envTemperature())) {
+				mInventory.setStackInSlot(0, ItemStack.EMPTY); // :216/:232 decrStackSize(0, 1) — the port melts the whole slot
+			}
+		}
 
 		// :236-294 — the alloy scan + the consumption half
 		CruciblePhysics.AlloyResult tAlloy = CruciblePhysics.alloyScan(mContent, mTemperature);
@@ -536,6 +613,239 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 			getLevel().setBlock(getBlockPos(), Blocks.AIR.defaultBlockState(), 3);
 		}
 	}
+
+	// ---------------------------------------------------------------------------
+	// the item input face (issue #20 sub-task B, upstream :204-234)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The :204 WD.suck cavity box — (x-0.5, y+0.125, z-0.5) to (x+1.5, y+3.125, z+1.5):
+	 * the whole 3x3 footprint from just above the controller floor to above the top
+	 * opening (PX_P[2] = 0.125, the 2-pixel lift). Takes ONE item per tick (the
+	 * TileEntitySmeltery.suckTopItem port form; the upstream took the whole stack — the
+	 * same declared deviation, the slot is a single-item feeder). Protected: the test
+	 * seam (the stub world has no entity list to spawn into).
+	 */
+	protected ItemStack suckCavityItem() {
+		if (!hasLevel()) return ItemStack.EMPTY;
+		BlockPos tPos = getBlockPos();
+		AABB tBox = new AABB(tPos.getX() - 0.5, tPos.getY() + 0.125, tPos.getZ() - 0.5,
+				tPos.getX() + 1.5, tPos.getY() + 3.125, tPos.getZ() + 1.5);
+		List<ItemEntity> tEntities = getLevel().getEntitiesOfClass(ItemEntity.class, tBox);
+		for (ItemEntity tEntity : tEntities) {
+			if (tEntity.isRemoved()) continue;
+			ItemStack tStack = tEntity.getItem();
+			if (tStack.isEmpty()) continue;
+			ItemStack tOne = tStack.copy();
+			tOne.setCount(1);
+			tStack.shrink(1);
+			if (tStack.isEmpty()) tEntity.discard();
+			return tOne;
+		}
+		return ItemStack.EMPTY;
+	}
+
+	/**
+	 * The :206-234 feed ladder over the TileEntitySmeltery.feedStacks form (the reviewed
+	 * port of the OM.anydata prefix branches): a MaterialPrefixItem feeds its prefix
+	 * amount per item (the :229-232 generic arm), the ore-family prefixes feed the
+	 * ore-direct projection (:217-228 — mTargetCrushing × mOreMultiplier with the
+	 * form-factor scaling), a vanilla ore rides the bridge, anything else returns null
+	 * (the :210-212 trash+fizz arm).
+	 *
+	 * <p>ponytail: the ladder + the vanilla-ore bridge are duplicated from
+	 * TileEntitySmeltery (r4-20a owns that file this round, and the card scopes forbid
+	 * touching it); extract one shared crucible-io helper when both scopes allow.
+	 */
+	@Nullable
+	public List<OreDictMaterialStack> feedStacks(ItemStack aStack) {
+		if (aStack.getItem() instanceof MaterialPrefixItem tItem) {
+			long tCount = aStack.getCount();
+			List<OreDictMaterialStack> rList = new ArrayList<>();
+			if (tItem.prefix == OP.oreRaw || tItem.prefix.contains(gregapi.data.TD.Prefix.STANDARD_ORE)) {
+				rList.add(CruciblePhysics.oreDirect(tItem.material, 1)); // :218/:226
+			} else if (tItem.prefix == OP.blockRaw) {
+				rList.add(CruciblePhysics.oreDirect(tItem.material, 9)); // :220
+			} else if (tItem.prefix.contains(gregapi.data.TD.Prefix.DENSE_ORE)) {
+				rList.add(CruciblePhysics.oreDirect(tItem.material, 2)); // :228
+			} else if (tItem.prefix.mAmount > 0) {
+				rList.add(new OreDictMaterialStack(tItem.material, tItem.prefix.mAmount * tCount)); // :230-232
+			}
+			rList.removeIf(tStack -> tStack.mAmount <= 0);
+			return rList.isEmpty() ? null : rList;
+		}
+		OreDictMaterial tVanilla = vanillaOres().get(aStack.getItem());
+		if (tVanilla != null) {
+			List<OreDictMaterialStack> rList = new ArrayList<>();
+			rList.add(CruciblePhysics.oreDirect(tVanilla, 1)); // a vanilla ore block = one standard ore
+			return rList;
+		}
+		return null;
+	}
+
+	/**
+	 * The vanilla-ore bridge for the feed ladder (the TileEntitySmeltery vanillaOres
+	 * lazy form verbatim — the eager static-map form froze pre-init nulls on the 21.1
+	 * class-init order lottery, GTWireSpecs:35).
+	 */
+	private static volatile java.util.Map<net.minecraft.world.level.ItemLike, OreDictMaterial> sVanillaOres = null;
+
+	/** The vanilla-ore bridge, built on first use (one material generation — the lazy form). */
+	private static java.util.Map<net.minecraft.world.level.ItemLike, OreDictMaterial> vanillaOres() {
+		java.util.Map<net.minecraft.world.level.ItemLike, OreDictMaterial> tTable = sVanillaOres;
+		if (tTable == null) sVanillaOres = tTable = java.util.Map.of(
+				net.minecraft.world.item.Items.IRON_ORE, MT.Fe,
+				net.minecraft.world.item.Items.DEEPSLATE_IRON_ORE, MT.Fe,
+				net.minecraft.world.item.Items.RAW_IRON, MT.Fe,
+				net.minecraft.world.item.Items.GOLD_ORE, MT.Au,
+				net.minecraft.world.item.Items.DEEPSLATE_GOLD_ORE, MT.Au,
+				net.minecraft.world.item.Items.RAW_GOLD, MT.Au,
+				net.minecraft.world.item.Items.COPPER_ORE, MT.Cu,
+				net.minecraft.world.item.Items.DEEPSLATE_COPPER_ORE, MT.Cu,
+				net.minecraft.world.item.Items.RAW_COPPER, MT.Cu);
+		return tTable;
+	}
+
+	// ---------------------------------------------------------------------------
+	// the right-click face (issue #20 sub-task B, upstream onBlockActivated3 :460-544)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The top-face click (the GTCrucibleControllerBlock.use carrier routes SIDES_UP and
+	 * this method answers the :461 structure gate — an unformed crucible refuses). Empty
+	 * hand takes the feed slot back (:469-473, the temperature damage is the entity
+	 * pool) or scrapes SCRAP from the cooled lightest content (:475-497); a fluid
+	 * container drains the molten lightest (:499-517) or pours a molten fluid back in
+	 * (:518-538). A held SOLID falls through (:498 — the upstream designed no-op: the
+	 * right-click never feeds, players throw items in or use a hopper). Server side does
+	 * the work; the client just consumes the click.
+	 *
+	 * @return false only when the structure gate refuses (the caller PASSes)
+	 */
+	public boolean useTop(Player aPlayer, InteractionHand aHand) {
+		if (!checkStructure(false)) return false; // :461 — the structure gate FIRST
+		if (!isServerSide() || aPlayer == null) return true;
+		ItemStack tHeld = aPlayer.getItemInHand(aHand);
+		OreDictMaterialStack tLightest = lightest();
+
+		// :468-473 — take the feed slot back
+		if (!mInventory.getStackInSlot(0).isEmpty()) {
+			if (tHeld.isEmpty()) {
+				aPlayer.setItemInHand(aHand, mInventory.getStackInSlot(0));
+				mInventory.setStackInSlot(0, ItemStack.EMPTY);
+			}
+			return true;
+		}
+
+		// :474-497 — scrape SCRAP from the COOLED lightest content
+		if (tHeld.isEmpty() && tLightest != null && mTemperature < tLightest.mMaterial.mMeltingPoint) {
+			ItemStack tScrap = GT6RecipeMapCrucible.matStack(OP.scrapGt, tLightest.mMaterial, 1);
+			long tScrapAmount = OP.scrapGt.mAmount;
+			if (tScrap == null || tLightest.mAmount < tScrapAmount) {
+				tLightest.mAmount = 0; // :478-482 — the remainder dusts away
+				aPlayer.causeFoodExhaustion(0.4F); // the UT.Entities.exhaust arm
+				return true;
+			}
+			tLightest.mAmount -= tScrapAmount;
+			if (!aPlayer.getInventory().add(tScrap)) aPlayer.drop(tScrap, false); // the ST.add/give form
+			aPlayer.causeFoodExhaustion(0.1F);
+			return true;
+		}
+
+		// :499-538 — the fluid-container arm (drain molten out / pour back), playerless
+		if (!tHeld.isEmpty()) {
+			ContainerArm tArm = fluidContainerArm(tHeld);
+			if (tArm != null) {
+				aPlayer.setItemInHand(aHand, tArm.heldAfter());
+				if (!aPlayer.getInventory().add(tArm.containerOut())) aPlayer.drop(tArm.containerOut(), false);
+				return true;
+			}
+		}
+		return true; // :541 — the top click is always consumed
+	}
+
+	/** The two-slot outcome of the container arm: the held stack after the shrink and the swapped-out container. */
+	public record ContainerArm(ItemStack heldAfter, ItemStack containerOut) {}
+
+	/**
+	 * The :499-517 (an empty container DRAINS the lightest molten content) + :518-538 (a
+	 * molten container POURS back through the bind(melting+25, boiling-1) gate) arm,
+	 * playerless — the TileEntitySmeltery.fluidContainerArm form over THIS crucible's
+	 * content and temperature. Shrinks {@code aHeld} on success and answers the
+	 * swapped-out container; null = the arm falls through (no handler, nothing molten,
+	 * one of the gates refused).
+	 */
+	@Nullable
+	public ContainerArm fluidContainerArm(ItemStack aHeld) {
+		IFluidHandlerItem tHandler = GT6RecipeMapCanner.sContainerResolver.apply(aHeld.copy());
+		if (tHandler == null) return null;
+		FluidStack tHeldFluid = tHandler.getFluidInTank(0);
+		if (tHeldFluid == null || tHeldFluid.isEmpty()) {
+			OreDictMaterialStack tLightest = lightest();
+			if (tLightest == null || mTemperature < tLightest.mMaterial.mMeltingPoint) return null;
+			net.minecraft.world.level.material.Fluid tMolten = FluidBridge.moltenFluidForMaterial(tLightest.mMaterial.mNameInternal);
+			if (tMolten == null) return null;
+			long tLiters = Math.min(1000, Math.max(1, UT.Code.units(tLightest.mAmount, CS.U, FluidBridge.L_PER_MOLTEN_UNIT, false)));
+			FluidStack tFill = new FluidStack(tMolten, (int)tLiters);
+			// the :504 gate — the fluid must not be hotter than the crucible unless cold
+			int tFluidTemp = tFill.getFluid().getFluidType().getTemperature();
+			if (tFluidTemp >= 320 && mTemperature < tFluidTemp) return null;
+			int tFilled = tHandler.fill(tFill, IFluidHandler.FluidAction.EXECUTE);
+			if (tFilled <= 0) return null;
+			ItemStack tContainer = tHandler.getContainer();
+			tLightest.mAmount -= UT.Code.units(tFilled, FluidBridge.L_PER_MOLTEN_UNIT, CS.U, true); // :510 back-conversion
+			aHeld.shrink(1);
+			return new ContainerArm(aHeld, tContainer);
+		}
+		// :518-538 — POUR the molten fluid back in (the bind(melting+25, boiling-1) temperature gate)
+		OreDictMaterial tFluidMaterial = materialOfFluid(tHeldFluid.getFluid());
+		if (tFluidMaterial == null) return null;
+		long tUnits = UT.Code.units(tHeldFluid.getAmount(), FluidBridge.L_PER_MOLTEN_UNIT, CS.U, false);
+		long tPourTemperature = UT.Code.bind(tFluidMaterial.mMeltingPoint + 25, tFluidMaterial.mBoilingPoint - 1, tHeldFluid.getFluid().getFluidType().getTemperature());
+		if (!addMaterialStacks(new ArrayList<>(java.util.List.of(new OreDictMaterialStack(tFluidMaterial, tUnits))), tPourTemperature)) return null;
+		// the container must leave EMPTY: drain before getContainer — the wrappers answer
+		// their internal stack verbatim (FluidBucketWrapper.getContainer → the container
+		// field), so an undrained handler would hand the FILLED container back and dupe
+		// the molten charge (upstream :520 ST.container)
+		tHandler.drain(tHeldFluid, IFluidHandler.FluidAction.EXECUTE);
+		ItemStack tEmpty = tHandler.getContainer();
+		aHeld.shrink(1);
+		return new ContainerArm(aHeld, tEmpty);
+	}
+
+	/** The :465-466 lightest-content census (the same walk feeds scrap and the bucket arm). */
+	@Nullable
+	public OreDictMaterialStack lightest() {
+		OreDictMaterialStack rLightest = null;
+		for (OreDictMaterialStack tMaterial : mContent) {
+			if (rLightest == null || tMaterial.mMaterial.mGramPerCubicCentimeter < rLightest.mMaterial.mGramPerCubicCentimeter) rLightest = tMaterial;
+		}
+		return rLightest;
+	}
+
+	/** The reverse FluidBridge walk (the upstream OreDictMaterial.FLUID_MAP face, :521). */
+	@Nullable
+	public static OreDictMaterial materialOfFluid(net.minecraft.world.level.material.Fluid aFluid) {
+		if (aFluid == null) return null;
+		for (OreDictMaterial tMaterial : gregapi.oredict.MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
+			if (tMaterial == null || tMaterial.mID < 0) continue;
+			if (FluidBridge.moltenFluidForMaterial(tMaterial.mNameInternal) == aFluid) return tMaterial;
+		}
+		return null;
+	}
+
+	//? if neoforge {
+	/*// (21.1 seam: NeoForge removed BlockEntity#getCapability — the W4 registerBlockEntity
+	// delegates to this member; no @Override. The item face = the slot-0 feed handler over
+	// the Root mInventory carrier (the GT6HopperBaseBlockEntity seam shape), so the
+	// MULTIBLOCK_CRUCIBLE_BE wiring row and every wall-part relay resolve the feed slot.
+	public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
+		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK) {
+			return (T) mInventory;
+		}
+		return null;
+	}
+	 *///?}
 
 	// ---------------------------------------------------------------------------
 	// the through-wall mold proxy (upstream :547-556, ITileEntityCrucible)

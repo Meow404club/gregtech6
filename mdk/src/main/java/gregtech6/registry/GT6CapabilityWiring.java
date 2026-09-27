@@ -40,6 +40,7 @@ import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
 import gregtech6.tileentity.machines.TileEntityOven;
 import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
+import gregtech6.registry.GT6Crucibles; // issue#20 r4-20b tail-append
 import gregtech6.tileentity.multiblocks.GT6HeatExchangerBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 import gregtech6.tileentity.inventories.GT6LongDistanceItemPipeBlockEntity; // p35 tail-append
@@ -560,6 +561,39 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 					return tTarget.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,
 							tTarget.getBlockPos(), aSide);
 				});
+		// issue#20 r4-20b — the part-family ITEM relay joins (the same resolution half as
+		// the fluid row above; the forge face is the MultiBlockPartBlockEntity.getCapability
+		// ITEM_HANDLER arm that already relays to the controller). Without it every hopper
+		// push against a wall part is capability-blind on this node while the 1.20.1 BE
+		// override hides the gap (the ADR-P15-4 census discipline). The level query lands
+		// on the controller's own registered provider.
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tPart,
+				(aBe, aSide) -> {
+					net.minecraft.world.level.block.entity.BlockEntity tTarget = aBe.relayTarget();
+					if (tTarget == null || !tTarget.hasLevel()) return null;
+					return tTarget.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,
+							tTarget.getBlockPos(), aSide);
+				});
+		// issue#20 r4-20b — the LARGE-crucible wall BET joins the SAME relay (the dedicated
+		// CrucibleWallBlockEntity family: hoppers attach to THESE blocks, not the shared
+		// part BET — a row on MULTIBLOCK_PART_BE alone would leave the crucible walls
+		// blind). Same provider shape, same resolution half.
+		BlockEntityType<gregtech6.tileentity.multiblocks.CrucibleWallBlockEntity> tCrucibleWall = GT6Crucibles.CRUCIBLE_WALL_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tCrucibleWall,
+				(aBe, aSide) -> {
+					net.minecraft.world.level.block.entity.BlockEntity tTarget = aBe.relayTarget();
+					if (tTarget == null || !tTarget.hasLevel()) return null;
+					return tTarget.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,
+							tTarget.getBlockPos(), aSide);
+				});
+		// issue#20 r4-20b — the LARGE-crucible controller item face (the slot-0 feed
+		// inventory over the Root mInventory carrier; the BE seam member answers it, the
+		// GT6HopperBaseBlockEntity :673 shape). The terminus of both relay rows above: a
+		// hopper on a wall part resolves the wall's relay row, which lands HERE, which
+		// feeds slot 0 — the upstream IMultiBlockInventory exposure.
+		BlockEntityType<GT6Crucibles.TileEntityCrucibleRow> tCrucible = GT6Crucibles.MULTIBLOCK_CRUCIBLE_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tCrucible,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		// task p29-w3-tank-valves — the Tank Main Valve fluid face (the large-boiler row
 		// shape): the forge getCapability serves the fresh wrapper-per-call TankValveFluid-
 		// Handler; without this row every wall-relayed fill and pipe draw on this node is

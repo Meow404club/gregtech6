@@ -53,6 +53,10 @@ public class GTMultiBlockCruciblePhysicsTest extends GTMultiBlocksOfflineTestBas
 		protected Block getWallBlock() {
 			return Blocks.BRICKS;
 		}
+		@Override
+		protected net.minecraft.world.item.ItemStack suckCavityItem() {
+			return net.minecraft.world.item.ItemStack.EMPTY; // the stub world has no entity getter (MinimalLevel.getEntities → null) — the suck seam is stubbed offline (issue #20)
+		}
 	}
 
 	/**
