@@ -253,7 +253,7 @@ class MaterialTreeBuilderTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sCfoamOwnedFluidResolver = aIndex -> Fluids.FLOWING_WATER;
 		GT6RecipesCanner.sFoamSprayResolver = aIndex -> new net.minecraft.world.item.ItemStack(Items.CLAY_BALL);
 		GT6RecipesCanner.sFoamSprayOwnedResolver = aIndex -> new net.minecraft.world.item.ItemStack(Items.CLAY_BALL);
-		GT6RecipesCanner.sLaserGasFluidResolver = aGas -> "heliumneon".equals(aGas) ? null : Fluids.FLOWING_LAVA; // the family seam (debt-laser-gas-family rebase follow-up)
+		GT6RecipesCanner.sLaserGasFluidResolver = aGas -> Fluids.FLOWING_LAVA; // the family seam, every gas resolves (debt-hene-fluid landed the heliumneon row)
 		GT6RecipesCanner.sLaserGasEmptyResolver = () -> new net.minecraft.world.item.ItemStack(Items.PAPER);
 		GT6RecipesCanner.sLaserGasEmitterResolver = aGas -> "helium".equals(aGas) ? net.minecraft.world.item.ItemStack.EMPTY : new net.minecraft.world.item.ItemStack(Items.CLAY_BALL);
 		// the Slicer fixture face (the phase-gate census): the two blades + the tiny-paper output

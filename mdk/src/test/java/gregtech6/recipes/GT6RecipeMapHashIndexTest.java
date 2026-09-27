@@ -593,9 +593,10 @@ class GT6RecipeMapHashIndexTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sCfoamOwnedFluidResolver = aIndex -> Fluids.FLOWING_WATER;
 		GT6RecipesCanner.sFoamSprayResolver = aIndex -> new ItemStack(Items.CLAY_BALL);
 		GT6RecipesCanner.sFoamSprayOwnedResolver = aIndex -> new ItemStack(Items.CLAY_BALL);
-		// debt-laser-gas-family: the live posture — heliumneon has no fluid, helium has no
-		// emitter on this base (the usb-branch item), the other six gases pour
-		GT6RecipesCanner.sLaserGasFluidResolver = aGas -> "heliumneon".equals(aGas) ? null : Fluids.FLOWING_LAVA;
+		// debt-laser-gas-family + debt-hene-fluid: the live posture — every family gas
+		// resolves its fluid leg (the heliumneon blend row landed), helium keeps the
+		// offline fixture skip (the emitter registry lookup yields nothing unbooted)
+		GT6RecipesCanner.sLaserGasFluidResolver = aGas -> Fluids.FLOWING_LAVA;
 		GT6RecipesCanner.sLaserGasEmptyResolver = () -> new ItemStack(Items.PAPER);
 		GT6RecipesCanner.sLaserGasEmitterResolver = aGas -> "helium".equals(aGas) ? ItemStack.EMPTY : new ItemStack(Items.CLAY_BALL);
 		GT6RecipeMaps.reset();

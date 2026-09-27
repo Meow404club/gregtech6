@@ -38,8 +38,9 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 			"propane", "butane", "propylene", "ethylene",
 			"liquid_extra_heavy_oil", "liquid_heavy_oil", "liquid_medium_oil", "liquid_light_oil", "soulsandoil",
 			"methane", "carbondioxide", "carbonmonoxide", "hydrogen",
-			"nitrogen", "oxygen", "fluorine", "helium", "neon", "argon", "krypton", "xenon", "radon",
-			"liquidoxygen",
+				"nitrogen", "oxygen", "fluorine", "helium", "neon", "argon", "krypton", "xenon", "radon",
+				"heliumneon", // task debt-hene-fluid — the :660 createGas walk blend row the p29 batch left pooled
+				"liquidoxygen",
 			"deuterium", "tritium", "helium3",
 			"lithium6_molten", "beryllium7_molten", "beryllium8_molten",
 			"boron11_molten", "carbon13_molten", "ancientdebris_molten",
@@ -57,8 +58,8 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 	@Test
 	public void tableCarriesTheChemicalRowsInDeclarationOrder() {
 		assertEquals(IDS, GTFluids.CHEMICAL_SPECS.stream().map(GTFluids.ChemicalFluidSpec::name).toList());
-		assertEquals(47, GTFluids.CHEMICAL_SPECS.size());
-		assertEquals(47, GTFluids.CHEMICALS.size(), "the live registrations walk the same table");
+		assertEquals(48, GTFluids.CHEMICAL_SPECS.size());
+		assertEquals(48, GTFluids.CHEMICALS.size(), "the live registrations walk the same table");
 	}
 
 	/** Acceptance ①: the per-fluid declared census, one block per sub-family. */
@@ -134,8 +135,9 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 			{"methane"       ,  2267}, // molecule g/cm³ = 2.267 (C) + 4×0.00008988 (H) = 2.2674 → 1000×g (:1037 uumMcfg)
 			{"carbondioxide" ,  2269}, // 2.267 + 2×0.001429 (O) = 2.2699 → 2269 (:1035 uumMcfg)
 			{"carbonmonoxide",  2268}, // 2.267 + 0.001429 = 2.2684 → 2268 (:1034 uumMcfg)
+			{"heliumneon"    ,   -92}, // 0.0001785 (He) + 0.0008999 (Ne) = 0.0010784 → −92.73 → −92 (:1024 uumMcfg, task debt-hene-fluid)
 		};
-		assertEquals(13, tFormulas.length, "the gas closure is thirteen");
+		assertEquals(14, tFormulas.length, "the gas closure is fourteen");
 		for (Object[] tRow : tFormulas) {
 			String tId = (String)tRow[0];
 			int tDensity = (Integer)tRow[1];
@@ -148,7 +150,7 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 			assertTrue(tSpec.density() < 0 || tSpec.density() > 0, tId + ": never zero — the FL sign rule carries the gravity consumers");
 		}
 		// the negative-density gases ARE lighter than air (the FL.java:775 gravity verdict face)
-		for (String tLight : List.of("hydrogen", "helium", "neon")) {
+		for (String tLight : List.of("hydrogen", "helium", "neon", "heliumneon")) {
 			assertTrue(GTFluids.chemicalSpec(tLight).density() < 0, tLight + ": lighter than air");
 		}
 		// the positive ones: the heavy noble/diatomic set AND the carbon compounds (the
@@ -157,6 +159,31 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 				"methane", "carbondioxide", "carbonmonoxide")) {
 			assertTrue(GTFluids.chemicalSpec(tHeavy).density() > 0, tHeavy + ": heavier than air");
 		}
+	}
+
+	/**
+	 * Task debt-hene-fluid — the blend row verbatim: the :1080 createGas walk over MT.HeNe
+	 * (MT.java:1024 gaschemcent, the GASES tag → the Loader_Fluids.java:660 loop), temp
+	 * 300 K over the uumMcfg-recomputed boiling 15 K (OreDictMaterial.java:482/:490 —
+	 * melting (1+24)/2 = 12, boiling (4+27)/2 = 15, plasma 1550 → min(300, 1549)), density
+	 * the :1128-1136 formula over the molecule g 0.0001785+0.0008999 = 0.0010784 → −92,
+	 * the :1105 gas carrier, the material RGBa 255,0,128 tint, the mNameLocal display face.
+	 */
+	@Test
+	public void heliumneonRowIsTheCreateGasWalkVerbatim() {
+		GTFluids.ChemicalFluidSpec tSpec = GTFluids.chemicalSpec("heliumneon");
+		assertNotNull(tSpec, "the blend row the p29 batch left pooled");
+		assertEquals("Helium-Neon", tSpec.displayName(), "the createGas mNameLocal face (the createMaterial raw local string)");
+		assertEquals(300, tSpec.temperature(), "the :1080 rule over the uumMcfg boiling 15 / plasma 1550");
+		assertEquals(-92, tSpec.density(), "the :1128-1136 −0.1/g formula over g = 0.0010784");
+		assertEquals(200, tSpec.viscosity(), "the FL.java:1105 gas viscosity");
+		assertEquals(0xFF8000FF, tSpec.tint(), "the material RGBa 255,0,128 (MT.java:1024)");
+		assertTrue(tSpec.gas(), "setGaseous (STATE_GASEOUS)");
+		assertEquals(0, tSpec.luminosity(), "unlit");
+		// the material binding seam: the port MT.HeNe internal name lowercases to the row id
+		GTMaterialItems.initMaterials();
+		assertSame(tSpec, GTFluids.specOf(gregapi.data.MT.HeNe, false), "specOf(MT.HeNe, gas) binds the blend row");
+		assertSame(gregapi.data.MT.HeNe, GTFluids.materialOf(tSpec), "materialOf round-trips");
 	}
 
 	/**

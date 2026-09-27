@@ -104,7 +104,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("GAS_FUELS", 0);
 		SNAPSHOT.put("DISTILLERY", 8);
 		SNAPSHOT.put("DRYING", 42);
-		SNAPSHOT.put("CANNER", 58); // +5: the laser gas fill family closure (task debt-laser-gas-family, MultiItemTechnological.java:396-403 — neon/argon/krypton/xenon/carbonmonoxide pour; helium [usb-branch item] and heliumneon [no port fluid] skip silently over the fixture arms, the live posture)
+		SNAPSHOT.put("CANNER", 59); // +5: the laser gas fill family closure (task debt-laser-gas-family, MultiItemTechnological.java:396-403 — neon/argon/krypton/xenon/carbonmonoxide pour; helium skips over the fixture arm) +1: task debt-hene-fluid — the heliumneon blend fluid row landed (MT.java:1024 → the Loader_Fluids.java:660 createGas walk), the :401 fill row pours; helium keeps the offline fixture skip
 		SNAPSHOT.put("MIXER", 56000);
 		SNAPSHOT.put("SIFTING", 213); // +212 task debt-ore-purified-edge — the Loader_OreProcessing.java:351 DUST_ORE arm lands: 4 port families (gravel/sand/redsand/mud, the DUST_ORE-tagged prefixes of GT6OreBlocks.FAMILIES) x the 53-material axis, every row resolving under the brick fixture
 		// the ONE version-sensitive census: the Compressor walk rides the vanilla item
@@ -315,9 +315,10 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sCfoamOwnedFluidResolver = aIndex -> Fluids.FLOWING_WATER;
 		GT6RecipesCanner.sFoamSprayResolver = aIndex -> new ItemStack(Items.CLAY_BALL);
 		GT6RecipesCanner.sFoamSprayOwnedResolver = aIndex -> new ItemStack(Items.CLAY_BALL);
-		// debt-laser-gas-family: the live posture — heliumneon has no fluid, helium has no
-		// emitter on this base (the usb-branch item), the other six gases pour
-		GT6RecipesCanner.sLaserGasFluidResolver = aGas -> "heliumneon".equals(aGas) ? null : Fluids.FLOWING_LAVA;
+		// debt-laser-gas-family + debt-hene-fluid: the live posture — every family gas
+		// resolves its fluid leg (the heliumneon blend row landed), helium keeps the
+		// offline fixture skip (the emitter registry lookup yields nothing unbooted)
+		GT6RecipesCanner.sLaserGasFluidResolver = aGas -> Fluids.FLOWING_LAVA;
 		GT6RecipesCanner.sLaserGasEmptyResolver = () -> new ItemStack(Items.PAPER);
 		GT6RecipesCanner.sLaserGasEmitterResolver = aGas -> "helium".equals(aGas) ? ItemStack.EMPTY : new ItemStack(Items.CLAY_BALL);
 		// the Slicer fixture face: the two blades + the tiny-paper output ride distinct
