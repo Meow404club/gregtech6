@@ -1244,6 +1244,7 @@ public class GT6ZhCn extends LanguageProvider {
 		// dump carries zero Graagg rows, the transliteration keeps the "Generator" face of
 		// the name column like the en row)
 		add("block.gt6.von_da_graagg", "冯·达·格拉格发电机");
+		add("block.gt6.bedrock_drill", "主基岩钻"); // task p37-bedrock-drill — the zh_cn_ref.tsv mte 17999 dump row verbatim
 		addDirect(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_STRUCTURE);
 		for (int i = 1; i <= 9; i++) {
 			addDirect(String.format(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE, i));

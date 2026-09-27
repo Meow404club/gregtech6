@@ -1200,7 +1200,7 @@ private static final int ZH_KEY_FLOOR = 3973; // +34 (task r3-surface-rock-lang,
 			+ " wall carriers over the metal-wall template; the 5 heat-smelter row carriers joined at task p29-w3-heat-smelter (1089 + 5 = 1094); the 4 Roasting row carriers joined at task p29-w4-eu-bridge (1094 + 4 = 1098); the 4 surface deco carriers joined at task p30-w6-rocks-sticks (1098 + 4 = 1102); the 31 vein-indicator rock carriers joined at task p30-w6-t3-large-veins (1102 + 31 = 1133, the spec ⑤ compensation set)"
 			+ " (+4 task p32-qu-scanner-replicator: the QU machine row carriers, 1138 + 4 = 1142, the molecular_scanner/replicator tier-word composed rungs the moment they registered) (+9 task p34-machines-bumblelyzer-crucible: the Bumblelyzer 5-ladder + the Crystallisation Crucible 4-ladder row carriers, 1142 + 9 = 1151)"
 			+ " (+9 task p34-machines-burner-plantalyzer: the Burner Mixer 4-ladder + the Plantalyzer 5-ladder row carriers, 1151 + 9 = 1160)");
-		assertEquals(294, tChecked,  "the checked block census: every DeferredRegister block NOT"
+		assertEquals(295, tChecked,  "the checked block census: every DeferredRegister block NOT"
 			+ " (task r3-surface-rock-lang: the 35 surface deco carriers joined the checked leg —"
 			+ " 259 + 35 = 294, GT6SurfaceBlocks 8 -> 43 checked: the 34 surface_rock descriptionId"
 			+ " keys (en = mNameLocal + \" Surface Rock\", the LanguageHandler.java:237 rockGt word"
@@ -1232,7 +1232,8 @@ private static final int ZH_KEY_FLOOR = 3973; // +34 (task r3-surface-rock-lang,
 			+ " ; the 15 sensor-batch rows joined at task p34-sensors-trivial-14 (189 + 15 = 204 — GT6Sensors 3 -> 18 checked, the census-erratum batch over the upstream anchor Loader_MultiTileEntities.java:1979-1999, atomic keys both locales: the en rows verbatim + the zh dump rows gt.multitileentity.31000-31017)"
 			+ "; the energy-tail families joined at task p35-energy-tail-machines (204 + 49 = 253 — GT6ElectricTransformers 1 -> 9 checked (the :882-:889 rows over the same class walk), GT6LongDistanceTransformers 5 + GT6LongDistWires 16 + GT6CrystalChargers 20 checked are the NEW walks: all atomic keys both faces, the LD wire cube-all keeps the vanilla descriptionId and still carries the keys)"
 			+ "; the 2 ZPM decharger rows joined at task p36-energy-zpm-dechargers (253 + 2 = 255 — GT6ZpmDechargers 2 checked, the atomic block.gt6.zpm_decharger_electric/zpm_decharger_quantum keys both locales, the dump gt.multitileentity.11170/:11171 faces 零点模块放能器)"
-			+ "; the 3 pool-closure sensor rows joined at task p37-sensors-3 (255 + 3 = 258 — GT6Sensors 18 -> 21 checked, the 21/21 closure over the upstream anchor Loader_MultiTileEntities.java:1979-1999, atomic keys both locales: the en rows Geiger Counter Sensor/Tachometer Sensor/Laser-O-Meter Sensor verbatim + the zh dump rows gt.multitileentity.31019-31021) — per-class checked: " + tWalkedByClass);
+			+ "; the 3 pool-closure sensor rows joined at task p37-sensors-3 (255 + 3 = 258 — GT6Sensors 18 -> 21 checked, the 21/21 closure over the upstream anchor Loader_MultiTileEntities.java:1979-1999, atomic keys both locales: the en rows Geiger Counter Sensor/Tachometer Sensor/Laser-O-Meter Sensor verbatim + the zh dump rows gt.multitileentity.31019-31021)"
+			+ "; the Bedrock Mining Drill controller joined at task p37-bedrock-drill (294 + 1 = 295 — GTMultiBlocks 32 checked, the atomic block.gt6.bedrock_drill key both locales: the en Loader :1283 name column verbatim + the zh dump mte 17999 face 主基岩钻) — per-class checked: " + tWalkedByClass);
 		assertTrue(tMissing.isEmpty(),
 			"every registered block's vanilla descriptionId key must exist on BOTH lang faces"
 			+ " (Jade resolves block.gt6.<path>; a missing key hovers the raw key): " + tMissing);

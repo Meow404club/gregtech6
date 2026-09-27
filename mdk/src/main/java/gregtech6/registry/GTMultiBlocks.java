@@ -28,6 +28,7 @@ import gregapi.data.MT;
 import gregtech6.block.GTComposedNameItem;
 import gregtech6.block.multiblock.GTCokeOvenBlock;
 import gregtech6.block.multiblock.GTHeatTransmitterBlock;
+import gregtech6.block.multiblock.GTBedrockDrillBlock;
 import gregtech6.block.multiblock.GTImplosionCompressorBlock;
 import gregtech6.block.multiblock.GTMassfabBlock;
 import gregtech6.block.multiblock.GTFusionReactorBlock;
@@ -38,6 +39,7 @@ import gregtech6.block.multiblock.GTVonDaGraaggBlock;
 import gregtech6.fluid.GTFluids;
 import gregtech6.tileentity.multiblocks.HeatTransmitterBlockEntity;
 import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
+import gregtech6.tileentity.multiblocks.TileEntityBedrockDrill;
 import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
 import gregtech6.tileentity.multiblocks.TileEntityImplosionCompressor;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
@@ -141,6 +143,8 @@ public final class GTMultiBlocks {
 						aOutput.accept(new ItemStack(GTMultiBlocks.MASSFAB_ITEM.get()));
 						// task p31-fusion — the Fusion Reactor controller
 						aOutput.accept(new ItemStack(GTMultiBlocks.FUSION_REACTOR_ITEM.get()));
+						// task p37-bedrock-drill — the Bedrock Mining Drill controller
+						aOutput.accept(new ItemStack(GTMultiBlocks.BEDROCK_DRILL_ITEM.get()));
 					})
 					.build());
 
@@ -563,6 +567,38 @@ public final class GTMultiBlocks {
 	public static final RegistryObject<BlockEntityType<TileEntityFusionReactor>> FUSION_REACTOR_BE =
 			BLOCK_ENTITY_TYPES.register("multiblock_fusion_reactor", () -> BlockEntityType.Builder.of(
 					TileEntityFusionReactor::new, FUSION_REACTOR.get()).build(null));
+
+	// ===========================================================================
+	// task p37-bedrock-drill — the Bedrock Mining Drill controller (Loader_MultiTileEntities
+	// .java:1283 re-read VERBATIM at implementation time: meta 17999, item 17101, "Bedrock
+	// Mining Drill Controller", MT.Ti, NBT_HARDNESS 9.0F == NBT_RESISTANCE 9.0F,
+	// NBT_TEXTURE "bedrockdrill", NBT_RECIPEMAP RM.BedrockOreList — display face only,
+	// NBT_ENERGY_ACCEPTED TD.Energy.RU). The controller crafting row "PYP"/"CMC"/"GIG"
+	// is CUT (the W3 absent-input pool, the implosion/graagg/massfab precedent: 'P'
+	// Processor_Crystal_Ruby, 'Y' CONVEYERS[5], 'C' OD_CIRCUITS[6] have no port item
+	// identity). The structure parts are EXISTING rows — bedrock_drill_head (18103, the
+	// p30-pool-drillhead registration) and dense_wall_titanium (18026) — zero new part
+	// blocks. The structure itself is the PROBE-SEAM machine: TileEntityBedrockDrill keeps
+	// its hand-written checkStructure2 (GTMultiBlockPattern.java:77-81, the standing
+	// clause), no declared pattern.
+	// ===========================================================================
+
+	/** The Bedrock Mining Drill controller block — the FACING+FORMED base owns the visuals. */
+	public static final RegistryObject<GTBedrockDrillBlock> BEDROCK_DRILL = BLOCKS.register("bedrock_drill",
+			() -> new GTBedrockDrillBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(9.0F, 9.0F).sound(SoundType.METAL)));
+
+	/** The Bedrock Mining Drill controller item (the plain BlockItem — the graagg twelve-row shape). */
+	public static final RegistryObject<Item> BEDROCK_DRILL_ITEM = ITEMS.register("bedrock_drill",
+			() -> new BlockItem(BEDROCK_DRILL.get(), new Item.Properties()));
+
+	/**
+	 * The Bedrock Drill BET: one controller class over its one block (the
+	 * CokeOven/LightningRod BET degenerate shape). Registry path mirrors
+	 * {@link TileEntityBedrockDrill#getTileEntityName()}.
+	 */
+	public static final RegistryObject<BlockEntityType<TileEntityBedrockDrill>> BEDROCK_DRILL_BE =
+			BLOCK_ENTITY_TYPES.register("multiblock_bedrock_drill", () -> BlockEntityType.Builder.of(
+					TileEntityBedrockDrill::new, BEDROCK_DRILL.get()).build(null));
 
 	// ===========================================================================
 	// task p29-w3-nbtdesign-parts ③ — the part-family expansion (Loader_MultiTileEntities
