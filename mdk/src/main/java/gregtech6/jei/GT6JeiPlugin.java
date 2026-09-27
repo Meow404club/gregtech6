@@ -148,13 +148,33 @@ public class GT6JeiPlugin implements IModPlugin {
 	/**
 	 * The ore page's catalyst: the surface-rock's collected rockGt pebble — the port's
 	 * stand-in for GTCEu's prospector catalysts (GTOreVeinInfoCategory.java:55-59). JEI
-	 * also uses it as the category icon (the category draws none).
+	 * also uses it as the category icon (the category draws none). Second arm (task
+	 * debt-material-tree-c): the material tree's own chain machines — clicking a
+	 * Shredder/Sifter/Anvil/Crusher opens the {@code gt6:material_tree} page, the GTCEu
+	 * registerWorkstation shape on the JEI leg.
 	 */
 	@Override
 	public void registerRecipeCatalysts(mezz.jei.api.registration.IRecipeCatalystRegistration registration) {
 		GT6OreGenInfoJeiCategory tCategory = new GT6OreGenInfoJeiCategory();
 		ItemStack tCatalyst = gregtech6.worldgen.GT6OreGenInfoLayout.catalystStack();
 		if (!tCatalyst.isEmpty()) registration.addRecipeCatalysts(tCategory.getRecipeType(), tCatalyst);
+		registerMaterialTreeCatalysts(registration);
+	}
+
+	/**
+	 * The material-tree catalysts (task debt-material-tree-c): the machines displayed on
+	 * the tree's edges ({@code MaterialTreeWorkstations.workstationStacks} over the same
+	 * displays {@link #registerMaterialTreeRows} assembles). ponytail: this re-assembles
+	 * the displays — one extra hash-read walk + builder sweep per session on the JEI leg;
+	 * share the instances via a small memo only if a profiler ever cares.
+	 */
+	private static void registerMaterialTreeCatalysts(mezz.jei.api.registration.IRecipeCatalystRegistration registration) {
+		if (!gregtech6.recipes.tree.MaterialTreeDisplay.SHOWN) return;
+		java.util.List<gregtech6.recipes.tree.MaterialTreeDisplay> tDisplays =
+				gregtech6.recipes.tree.MaterialTreeDisplay.buildAll(gregtech6.recipes.tree.MaterialTreeBuilder.build());
+		java.util.List<ItemStack> tStacks = gregtech6.recipes.tree.MaterialTreeWorkstations.workstationStacks(tDisplays);
+		if (!tStacks.isEmpty())
+			registration.addRecipeCatalysts(new GT6MaterialTreeJeiCategory().getRecipeType(), tStacks.toArray(new ItemStack[0]));
 	}
 
 	/**
