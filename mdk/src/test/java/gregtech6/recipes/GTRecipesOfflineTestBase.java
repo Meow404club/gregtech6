@@ -58,8 +58,6 @@ import org.junit.jupiter.api.BeforeAll;
  */
 public abstract class GTRecipesOfflineTestBase {
 
-	private static boolean sIngredientSerializerRegistered = false;
-
 	@org.junit.jupiter.api.BeforeAll
 	static void bootVanillaOffline() {
 		SharedConstants.tryDetectVersion();
@@ -69,11 +67,14 @@ public abstract class GTRecipesOfflineTestBase {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
 		// ForgeMod.registerRecipeSerializers never runs offline, so the vanilla item
-		// ingredient serializer is missing from CraftingHelper's dispatch map. Register
-		// it once per JVM (@BeforeAll fires per test class).
+		// ingredient serializer is missing from CraftingHelper's dispatch map. The getID
+		// probe (the isolation card, replacing the boolean flag) keeps this idempotent
+		// across test CLASSES too: another class' @BeforeAll (GT6MaterialToolJeiExtensionTest,
+		// DigLadderTest) may register it first in the same JVM, and CraftingHelper.register
+		// throws on a duplicate key OR value.
 		//? if forge {
-		if (!sIngredientSerializerRegistered) {
-			sIngredientSerializerRegistered = true;
+		if (net.minecraftforge.common.crafting.CraftingHelper.getID(
+				net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE) == null) {
 			net.minecraftforge.common.crafting.CraftingHelper.register(
 					new ResourceLocation("minecraft:item"), net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE);
 		}

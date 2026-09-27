@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import net.minecraft.world.item.ItemStack;
@@ -33,6 +34,44 @@ import gregtech6.items.tools.GT6MaterialToolRecipe;
 import gregtech6.items.tools.GT6ToolLadder;
 
 public class GT6MaterialToolJeiExtensionTest {
+
+	/**
+	 * The single-class offline boot (the isolation card): this class previously leaned on
+	 * other test classes in the same JVM to prepare the registry faces its {@code row()}
+	 * JSON parse consumes — a bare {@code --tests} run was 3/3 red at
+	 * {@code CraftingHelper.getIngredient:146}. Three faces, each with its own owner:
+	 * the vanilla bootstrap owns the {@code minecraft:stick} item registry, the material
+	 * flood owns {@code materialBySnake} (MT class-load alone registers NULL), and —
+	 * forge leg only — the {@code minecraft:item} ingredient serializer that
+	 * {@code ForgeMod.registerRecipeSerializers} only registers under a live FML
+	 * RegisterEvent (CraftingHelper's dispatch BiMap starts empty, CraftingHelper.java:51;
+	 * the default-type lookup at :144 throws at :146 without it).
+	 */
+	@BeforeAll
+	static void bootOffline() {
+		net.minecraft.SharedConstants.tryDetectVersion();
+		try {
+			net.minecraft.server.Bootstrap.bootStrap();
+		} catch (Throwable ignored) {
+			// NetworkHooks.init() failure is expected offline; registries are ready by now.
+		}
+		// the full material flood (the DigLadderTest boot shape)
+		MT.init();
+		//? if forge {
+		// duplicate-safe probe, not a boolean flag: in a full-suite JVM another test
+		// class' @BeforeAll may have registered it first (GTRecipesOfflineTestBase), and
+		// CraftingHelper.register throws on a duplicate key OR value.
+		if (net.minecraftforge.common.crafting.CraftingHelper.getID(
+				net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE) == null) {
+			net.minecraftforge.common.crafting.CraftingHelper.register(
+					new net.minecraft.resources.ResourceLocation("minecraft", "item"),
+					net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE);
+		}
+		//?} else {
+		/*// 21.1: CraftingHelper/VanillaIngredientSerializer are gone — vanilla ingredients
+		//ride the vanilla Codec face, no serializer registration to fake.
+		*///?}
+	}
 
 	/**
 	 * The output-slot face: the display stack carries the ROW's material identity (not
