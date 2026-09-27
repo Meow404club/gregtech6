@@ -87,6 +87,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 			"gregtech6.recipes.GT6RecipesFusion",
 			"gregtech6.recipes.GT6RecipesSlicer", // task p35-slicer-row-domain - the vanilla leather/paper pour joins the ledger
 			"gregtech6.recipes.maps.GT6RecipeMapBumblelyzer", // task p34-machines-bumblelyzer-crucible — the display-stock reset hook joins the ledger
+			"gregtech6.recipes.GT6RecipesReactorRods", // task debt-reactor-c-rods — the 45-row reactor-rod pour joins the ledger
 	};
 
 	/** The freeze-point snapshot: map field name → expected row count after the full census pour. Upstream registration order. */
@@ -104,7 +105,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("GAS_FUELS", 0);
 		SNAPSHOT.put("DISTILLERY", 8);
 		SNAPSHOT.put("DRYING", 42);
-		SNAPSHOT.put("CANNER", 59); // +5: the laser gas fill family closure (task debt-laser-gas-family, MultiItemTechnological.java:396-403 — neon/argon/krypton/xenon/carbonmonoxide pour; helium skips over the fixture arm) +1: task debt-hene-fluid — the heliumneon blend fluid row landed (MT.java:1024 → the Loader_Fluids.java:660 createGas walk), the :401 fill row pours; helium keeps the offline fixture skip
+		SNAPSHOT.put("CANNER", 84); // +5: the laser gas fill family closure (task debt-laser-gas-family, MultiItemTechnological.java:396-403 — neon/argon/krypton/xenon/carbonmonoxide pour; helium skips over the fixture arm) +1: task debt-hene-fluid — the heliumneon blend fluid row landed (MT.java:1024 → the Loader_Fluids.java:660 createGas walk), the :401 fill row pours; helium keeps the offline fixture skip +25: task debt-reactor-c-rods — the 24 reactor-rod fills (:742-744/:746-762/:782-785) + the :789 Tritium unpack pour
 		SNAPSHOT.put("MIXER", 56000);
 		SNAPSHOT.put("SIFTING", 213); // +212 task debt-ore-purified-edge — the Loader_OreProcessing.java:351 DUST_ORE arm lands: 4 port families (gravel/sand/redsand/mud, the DUST_ORE-tagged prefixes of GT6OreBlocks.FAMILIES) x the 53-material axis, every row resolving under the brick fixture
 		// the ONE version-sensitive census: the Compressor walk rides the vanilla item
@@ -133,7 +134,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("CLUSTER_MILL", 0);
 		SNAPSHOT.put("ROLL_BENDER", 0);
 		SNAPSHOT.put("ROLL_FORMER", 0);
-		SNAPSHOT.put("CENTRIFUGE", 20);
+		SNAPSHOT.put("CENTRIFUGE", 40); // +20 task debt-reactor-c-rods — the 17 depleted + 3 solid-enriched recycle rows (:764-780/:787-790) join the census pour
 		SNAPSHOT.put("SHARPENING", 0);
 		SNAPSHOT.put("CUTTER", 0);
 		SNAPSHOT.put("BOXINATOR", 0);
@@ -235,6 +236,9 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		capture(() -> GT6RecipesCanner.sLaserGasFluidResolver, aV -> GT6RecipesCanner.sLaserGasFluidResolver = aV);
 		capture(() -> GT6RecipesCanner.sLaserGasEmptyResolver, aV -> GT6RecipesCanner.sLaserGasEmptyResolver = aV);
 		capture(() -> GT6RecipesCanner.sLaserGasEmitterResolver, aV -> GT6RecipesCanner.sLaserGasEmitterResolver = aV);
+		capture(() -> GT6RecipesReactorRods.sRodResolver, aV -> GT6RecipesReactorRods.sRodResolver = aV);
+		capture(() -> GT6RecipesReactorRods.sMaterialResolver, aV -> GT6RecipesReactorRods.sMaterialResolver = aV);
+		capture(() -> GT6RecipesReactorRods.sTritiumResolver, aV -> GT6RecipesReactorRods.sTritiumResolver = aV);
 	}
 
 	private static <T> void capture(Supplier<T> aGetter, Consumer<T> aSetter) {
@@ -327,6 +331,11 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		GT6RecipesSlicer.sSplitBladeResolver = () -> new ItemStack(Items.BRICK);
 		GT6RecipesSlicer.sGridBladeResolver = () -> new ItemStack(Items.CLAY_BALL);
 		GT6RecipesSlicer.sTinyPaperResolver = () -> new ItemStack(Items.PAPER);
+		// the reactor-rod arms: the gate only counts rows, the identity stand-ins suffice
+		// (the material legs are all non-null prefixes, so brickStackOrNull never drops)
+		GT6RecipesReactorRods.sRodResolver = aId -> new ItemStack(Items.PAPER);
+		GT6RecipesReactorRods.sMaterialResolver = GT6RecipeMapPhaseGateTest::brickStackOrNull;
+		GT6RecipesReactorRods.sTritiumResolver = () -> Fluids.LAVA;
 		GT6RecipeMaps.reset();
 		GT6RecipeMaps.init();
 	}
@@ -363,6 +372,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		GT6RecipesMassfab.load();
 		GT6RecipesFusion.load();
 		GT6RecipesSlicer.load();
+		GT6RecipesReactorRods.load(); // task debt-reactor-c-rods — the 45-row pour (25 Canner + 20 Centrifuge) joins the census
 	}
 
 	/** The census and the hook ledger must move together (the guard test pins the same ledger against ITS array). */
