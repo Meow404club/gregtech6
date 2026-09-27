@@ -46,6 +46,7 @@ public class GTMiniPortalEndBlockEntity extends GTMiniPortalBlockEntity {
 
 	@Override
 	public void findTargetPortal() {
+		GTMiniPortalBlockEntity tPrevious = mTarget;
 		mTarget = null;
 		Level tLevel = getLevel();
 		if (tLevel == null || tLevel.isClientSide()) return;
@@ -56,6 +57,11 @@ public class GTMiniPortalEndBlockEntity extends GTMiniPortalBlockEntity {
 			mTarget = nearestPortal(sListWorldSide, getBlockPos(), 128,
 				512 * 512, false);
 		}
+		// HALF-DEVIATION (issue #23 / task r4-23a-portal-frame; upstream has NO such
+		// update — the mirror of the Nether arm): the modern relay faces cache their
+		// connection probe until a block update, so a targetless→paired transition must
+		// re-notify the neighbours (see GTMiniPortalNetherBlockEntity.findTargetPortal).
+		if (mTarget != null && tPrevious == null) causeBlockUpdate();
 	}
 
 	@Override
