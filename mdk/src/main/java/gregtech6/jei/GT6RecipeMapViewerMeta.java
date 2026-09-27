@@ -172,13 +172,15 @@ public final class GT6RecipeMapViewerMeta {
 	// Item slots: a 3-column 18px grid anchored at x17 (inputs) / x107 (outputs); the row
 	// count and the row Ys depend on the declared slot counts exactly like the upstream
 	// switch (1-3 = one row at y7-or-25 by the fluid threshold >6; 4-6 = two rows whose
-	// Ys shift by the fluid threshold >3; 7+ = the fixed 3x3 at y7/25/43 with a fourth
-	// 61-row from the 10th slot on). Fluids: the NEI :389-390 bottom rows.
+	// Ys shift by the fluid threshold >3; 7+ = the fixed 3x3 at y7/25/43, then at most a
+	// three-slot fourth 61-row whose anchoring hugs the grid's LAST column on BOTH sides,
+	// and no slot past the 12th is ever drawn — the switch has no case rendering one).
+	// Fluids: the NEI :389-390 bottom rows.
 	// -----------------------------------------------------------------------
 
 	/**
 	 * Item-input slot {x,y} (the NEI :170-275 switch). {@code null} = no slot at this
-	 * index (count 0 or past the declared count).
+	 * index (count 0, past the declared count, or past the 12th drawn slot).
 	 */
 	public static int[] inputPos(int aIndex, RecipeMap aMap) {
 		return itemPos(aIndex, aMap.mInputItemsCount, aMap.mInputFluidCount, 17, true);
@@ -205,8 +207,17 @@ public final class GT6RecipeMapViewerMeta {
 		if (aItemCount <= 6) {
 			return new int[] {aAnchorX + 18 * twoRowCol(aIndex, aItemCount, aRightAnchored), twoRowY(aIndex < 3 ? 0 : 1, aFluidCount)};
 		}
-		// 7+ → the fixed 3x3 at y7/25/43 with a fourth 61-row from the 10th slot on
-		return new int[] {aAnchorX + 18 * (aIndex % 3), 7 + 18 * (aIndex / 3)};
+		// 7+ → the fixed 3x3 at y7/25/43, then the upstream fourth 61-row: at most three
+		// slots, RIGHT-hugging on BOTH grids — upstream case 10 hangs its 10th slot on the
+		// grid's LAST column (inputs x53, NEI_RecipeMap.java:246; outputs x143, :358), case
+		// 11 fills {last-1, last} (:258-259 / :370-371), the default fills the full row.
+		// And the switch draws at most 12 slots per side (no case renders a 13th) — the
+		// batch-2 ruling pins this whole tail DEAD on the live census (no map declares
+		// 10/11/13+ item slots either side), so it exists purely as the faithful
+		// transcription the day a map outgrows the census.
+		if (aIndex >= 12) return null;
+		if (aIndex < 9) return new int[] {aAnchorX + 18 * (aIndex % 3), 7 + 18 * (aIndex / 3)};
+		return new int[] {aAnchorX + 18 * (aIndex - 9 + Math.max(0, 12 - aItemCount)), 61};
 	}
 
 	/** The 4-6-slot two-row column shapes: 4 = {1,2}|{0,1}, 5 = {0,1,2}/{1,2}|{0,1,2}/{0,1}, 6 = full. */

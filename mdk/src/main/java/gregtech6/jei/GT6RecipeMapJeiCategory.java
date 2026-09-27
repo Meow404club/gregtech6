@@ -91,6 +91,7 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 			ItemStack tStack = aRecipe.mInputs[i];
 			if (tStack == null || tStack.isEmpty()) continue;
 			int[] tPos = GT6RecipeMapViewerMeta.inputPos(i, mMap);
+			if (tPos == null) continue; // past the 12th drawn slot (the meta contract)
 			var tSlot = aBuilder.addInputSlot(tPos[0], tPos[1]).addItemStack(tStack.copy());
 			if (GT6RecipeMapViewerMeta.notConsumable(tStack)) tSlot.addRichTooltipCallback(notConsumedTooltip());
 		}
@@ -99,6 +100,7 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 			ItemStack tStack = aRecipe.mOutputs[i];
 			if (tStack == null || tStack.isEmpty()) continue;
 			int[] tPos = GT6RecipeMapViewerMeta.outputPos(i, mMap);
+			if (tPos == null) continue; // past the 12th drawn slot (the meta contract)
 			String tChance = GT6RecipeMapViewerMeta.chanceLine(GT6RecipeMapViewerMeta.outputChance(aRecipe, i), tStack.getCount());
 			var tSlot = aBuilder.addOutputSlot(tPos[0], tPos[1]).addItemStack(tStack.copy());
 			if (tChance != null) tSlot.addRichTooltipCallback(staticTooltip(tChance));

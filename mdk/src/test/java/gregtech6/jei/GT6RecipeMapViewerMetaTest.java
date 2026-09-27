@@ -171,6 +171,63 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 		assertPos(GT6RecipeMapViewerMeta.fluidOutputPos(1), 125, 63);
 	}
 
+	// -------------------------------------------------------------------
+	// The switch tail's dead branch (batch 2 review note): the upstream case 10/11
+	// fourth-row anchoring and the 12-slots-drawn cap, transcribed faithfully and proven
+	// dead on the live census
+	// -------------------------------------------------------------------
+
+	@Test
+	void censusProvesTheTenElevenAndOverTwelveSlotShapesStayDead() {
+		GT6RecipeMaps.init();
+		// no live map declares 10/11 item slots on either side (the case 10/11 branch is
+		// dead upstream too — the batch-1 review note) and none declares more than 12 (the
+		// cap branch). If this ever fails, the faithful tail below went LIVE and the
+		// anchoring must be re-verified against real rows, not just the synthetic pins.
+		for (RecipeMap tMap : RecipeMap.RECIPE_MAPS.values()) {
+			assertFalse(tMap.mInputItemsCount == 10 || tMap.mInputItemsCount == 11 || tMap.mInputItemsCount > 12,
+					tMap.mNameInternal + " inputs hit the dead branch");
+			assertFalse(tMap.mOutputItemsCount == 10 || tMap.mOutputItemsCount == 11 || tMap.mOutputItemsCount > 12,
+					tMap.mNameInternal + " outputs hit the dead branch");
+		}
+		// the widest live shape is the 12-slot default (Shredder outputs) — the cap boundary
+		assertEquals(12, GT6RecipeMaps.SHREDDER.mOutputItemsCount);
+	}
+
+	@Test
+	void deadBranchFourthRowAnchoringPinnedAgainstTheUpstreamCases() {
+		GT6RecipeMaps.init();
+		// synthetic maps at the dead counts (reset in @AfterEach keeps them out of the
+		// census scan); ctor counts are the raw switch keys
+		RecipeMap tTen = deadMap("gt.recipe.batch2dead10", 10, 10);
+		RecipeMap tEleven = deadMap("gt.recipe.batch2dead11", 11, 11);
+		RecipeMap tThirteen = deadMap("gt.recipe.batch2dead13", 13, 13);
+		// case 10 — the lone fourth-row slot hugs the grid's LAST column on BOTH sides
+		// (inputs x53, NEI_RecipeMap.java:246; outputs x143, :358 — NOT the row's first
+		// column the batch-1 arithmetic produced)
+		assertPos(GT6RecipeMapViewerMeta.inputPos(9, tTen), 53, 61);
+		assertPos(GT6RecipeMapViewerMeta.outputPos(9, tTen), 143, 61);
+		// case 11 — the pair fills {last-1, last} (:258-259 / :370-371)
+		assertPos(GT6RecipeMapViewerMeta.inputPos(9, tEleven), 35, 61);
+		assertPos(GT6RecipeMapViewerMeta.inputPos(10, tEleven), 53, 61);
+		assertPos(GT6RecipeMapViewerMeta.outputPos(9, tEleven), 125, 61);
+		assertPos(GT6RecipeMapViewerMeta.outputPos(10, tEleven), 143, 61);
+		// 12+ (the default cases) — full row from the FIRST column (:271-273 / :383-385),
+		// and the 13th slot is never drawn (no case renders past the 12th)
+		assertPos(GT6RecipeMapViewerMeta.inputPos(9, tThirteen), 17, 61);
+		assertPos(GT6RecipeMapViewerMeta.outputPos(11, tThirteen), 143, 61);
+		assertNull(GT6RecipeMapViewerMeta.inputPos(12, tThirteen));
+		assertNull(GT6RecipeMapViewerMeta.outputPos(12, tThirteen));
+		// the live 12-slot default (Shredder outputs) is untouched by the cap
+		assertPos(GT6RecipeMapViewerMeta.outputPos(11, GT6RecipeMaps.SHREDDER), 143, 61);
+	}
+
+	/** A census-shaped synthetic map at the given raw slot counts (the 15-arg port ctor). */
+	private static RecipeMap deadMap(String aName, int aInItems, int aOutItems) {
+		return new RecipeMap(new ArrayList<>(), aName, "Batch2 Dead Branch", null, 0, 1,
+				"gt6:textures/gui/machines/mixer", aInItems, aOutItems, 1, 0, 0, 0, 0, 1);
+	}
+
 	private static void assertPos(int[] aPos, int aX, int aY) {
 		assertNotNull(aPos);
 		assertEquals(aX, aPos[0]);
