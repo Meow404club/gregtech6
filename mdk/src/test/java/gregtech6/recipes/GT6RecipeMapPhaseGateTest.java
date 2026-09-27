@@ -106,7 +106,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("DRYING", 42);
 		SNAPSHOT.put("CANNER", 58); // +5: the laser gas fill family closure (task debt-laser-gas-family, MultiItemTechnological.java:396-403 — neon/argon/krypton/xenon/carbonmonoxide pour; helium [usb-branch item] and heliumneon [no port fluid] skip silently over the fixture arms, the live posture)
 		SNAPSHOT.put("MIXER", 56000);
-		SNAPSHOT.put("SIFTING", 1);
+		SNAPSHOT.put("SIFTING", 213); // +212 task debt-ore-purified-edge — the Loader_OreProcessing.java:351 DUST_ORE arm lands: 4 port families (gravel/sand/redsand/mud, the DUST_ORE-tagged prefixes of GT6OreBlocks.FAMILIES) x the 53-material axis, every row resolving under the brick fixture
 		// the ONE version-sensitive census: the Compressor walk rides the vanilla item
 		// universe, which differs 1.20.1 vs 1.21.1 by 109 compressibles — the per-leg pin
 		// (the stonecutter swap-table convention, GTRecipesOfflineTestBase shape)

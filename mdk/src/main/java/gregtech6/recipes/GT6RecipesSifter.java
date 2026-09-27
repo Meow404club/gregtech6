@@ -19,6 +19,7 @@
 
 package gregtech6.recipes;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -41,8 +42,10 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import gregapi.data.OP;
+import gregapi.data.TD;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
+import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GTMaterialItems;
 
 /**
@@ -65,10 +68,21 @@ import gregtech6.registry.GTMaterialItems;
  *       identity-mapping precedent). The trailing foreign outputs (IL.BoP_Turnip_Seeds,
  *       the MaCu bait items) are CUT — the chances array trims with them (a declared
  *       prefix-trim deviation).</li>
- *   <li><b>Loader_OreProcessing.java:351</b> — the DUST_ORE sifting template
- *       (oreSand/oreGravel/oreMud/oreRedSand/oreStrangesand, TD.Prefix.DUST_ORE members
- *       per OP.java:115-119): zero pours while the port has no ore BLOCKS — the
- *       ore-block card pool.</li>
+ *   <li><b>Loader_OreProcessing.java:351</b> — the DUST_ORE sifting template, LANDED here
+ *       (task debt-ore-purified-edge): the {@code OreProcessing_Ore} listener
+ *       (:196-197, the ORE-tagged prefixes minus bedrock/poor/small/rich/normal — the
+ *       crushed family carries {@code ORE_PROCESSING_BASED}, not ORE, so it never fires
+ *       there) pours {@code RM.Sifting.addRecipe1(T, 16, 256, {10000,10000,1500,1000,500},
+ *       oreBlock, 2x crushedPurified, 3x tiny-byproduct-dust)} for every
+ *       {@link TD.Prefix#DUST_ORE} prefix (OP.java:115-119: oreGravel/oreStrangesand/
+ *       oreRedSand/oreSand/oreMud — the SAND-family ore BLOCKS, not crushed ores; this is
+ *       the upstream's ONLY crushedPurified producer outside the PFAA compat rows). The
+ *       walk rides {@link GT6OreBlocks#FAMILIES} (the {@code contains(DUST_ORE)} gate, no
+ *       hardcoded names) x {@link GT6OreBlocks#materialAxis()} — 4 of the 5 upstream
+ *       prefixes have port families (gravel/sand/redsand/mud; oreStrangesand has none =
+ *       the declared zero-row remainder), the material axis is self-crushing for all 53
+ *       members (the twelve {@code setCrushing} redirecters of MT.java:2884-2895 are all
+ *       off-axis), so every row is a same-material ore-block → crushedPurified hop.</li>
  *   <li><b>Loader_Recipes_Handlers.java:62</b> — the pebbles→dust x3 template: zero
  *       pours, OP.pebbles is not on the port MaterialPrefixItem path.</li>
  * </ul>
@@ -131,7 +145,7 @@ public final class GT6RecipesSifter {
 	 */
 	public static final List<String> SKIPPED_UPSTREAM = List.of(
 			"Loader_Recipes_Furnace.java:71/:83/:89 — the AUDIT FINDING: all three Sifting rows sit inside the MD.RoC.owns(\"extracts\") RotaryCraft branch of the furnace walk (:60) — compat rows, CUT per the P10 ruling (the card row-source citation resolves to the pool, not the pour set)",
-			"Loader_OreProcessing.java:351 — the DUST_ORE template (oreSand/oreGravel/oreMud/oreRedSand/oreStrangesand, OP.java:115-119) pours ZERO rows while the port has no ore blocks; the crushedPurified+byproduct outputs ride the ore-block card pool (the OP.mByProducts byproduct dormancy, research.p26-r-recipe-graph-domain)",
+			"Loader_OreProcessing.java:351 oreStrangesand leg — the DUST_ORE template LANDED (task debt-ore-purified-edge, the pour walk in load()); of the five upstream DUST_ORE prefixes (OP.java:115-119) oreStrangesand alone has NO port family in GT6OreBlocks.FAMILIES — a declared zero-row remainder, not an invented family",
 			"Loader_Recipes_Handlers.java:62 — the pebbles→dust x3 template pours ZERO rows: OP.pebbles is not on the port MaterialPrefixItem path",
 			"Loader_Recipes_Ores.java:223/:225 — the BoP_Smoldering / BlocksGT.Grass inputs: foreign/GT-block identities with no port block",
 			"Loader_Recipes_Ores.java:224 trailing outputs — IL.BoP_Turnip_Seeds and the MaCu bait items: foreign-mod identities, CUT; the chances array prefix-trims to the five kept outputs (declared deviation)",
@@ -163,8 +177,88 @@ public final class GT6RecipesSifter {
 			GT6RecipeMaps.SIFTING.addRecipe(tRecipe);
 			tPoured++;
 		}
-		LOGGER.info("GT6 Sifter recipes poured: {} loaded, {} skipped (unresolvable prefix/material items, = upstream mat() null drops; the DUST_ORE/pebbles arms are the declared zero-pour pools)", tPoured, tSkipped);
+		for (GT6OreBlocks.OreFamily tFamily : dustOreFamilies()) { // Loader_OreProcessing.java:351 — the DUST_ORE template (:196-197 listener family)
+			for (OreDictMaterial tMaterial : GT6OreBlocks.materialAxis()) {
+				Recipe tRecipe = buildDustOreRecipe(planDustOre(tFamily, tMaterial));
+				if (tRecipe == null) {tSkipped++; continue;} // the input ore-block / crushedPurified mat() null drops
+				GT6RecipeMaps.SIFTING.addRecipe(tRecipe);
+				tPoured++;
+			}
+		}
+		LOGGER.info("GT6 Sifter recipes poured: {} loaded, {} skipped (unresolvable prefix/material items, = upstream mat() null drops; the RoC/pebbles/PFAA arms are the declared zero-pour pools)", tPoured, tSkipped);
 		sLoaded = true;
+	}
+
+	// ------------------------------------------------------------------
+	// the Loader_OreProcessing.java:351 DUST_ORE row family (task debt-ore-purified-edge)
+	// ------------------------------------------------------------------
+
+	/**
+	 * The pour families of the :351 template: the port ore-block families whose prefix
+	 * carries {@link TD.Prefix#DUST_ORE} (the upstream OP.java:115-119 gate, no hardcoded
+	 * names) — gravel/sand/redsand/mud; oreStrangesand has no port family (the declared
+	 * SKIPPED_UPSTREAM remainder).
+	 */
+	public static List<GT6OreBlocks.OreFamily> dustOreFamilies() {
+		List<GT6OreBlocks.OreFamily> rFamilies = new ArrayList<>();
+		for (GT6OreBlocks.OreFamily tFamily : GT6OreBlocks.FAMILIES) {
+			if (tFamily.prefix().contains(TD.Prefix.DUST_ORE)) rFamilies.add(tFamily);
+		}
+		return rFamilies;
+	}
+
+	/**
+	 * The pure row planner of the :351 arm (upstream {@code registerStandardOreRecipes}
+	 * :308-351, no item resolution). {@code outMaterial} = the {@code mTargetCrushing}
+	 * redirect of :311 — self for every axis material (the twelve MT.java:2884-2895
+	 * redirecters are all off-axis), cross-material only when a redirecter ever joins the
+	 * axis. {@code tinyMaterials} = the three :331-343 byproduct tiny tiers at the material
+	 * level: the first three of {@code outMaterial.mByProducts}, padded by repeat-last,
+	 * an empty list padding to the material itself (:341-343).
+	 */
+	public record DustOrePlan(GT6OreBlocks.OreFamily family, OreDictMaterial inMaterial, OreDictMaterial outMaterial, long multiplier, List<OreDictMaterial> tinyMaterials) {}
+
+	/** Plans one (family, material) row — the :302/:311/:314/:328-343 walk, pure material data. */
+	public static DustOrePlan planDustOre(GT6OreBlocks.OreFamily aFamily, OreDictMaterial aMaterial) {
+		OreDictMaterial tOut = aMaterial.mTargetCrushing.mMaterial; // :311
+		long tMultiplier = GT6RecipesOreChain.bindStack(tOut.mOreMultiplier * aMaterial.mOreProcessingMultiplier); // :302 x :314 (DUST_ORE prefixes are never DENSE_ORE)
+		List<OreDictMaterial> tTinies = new ArrayList<>(3);
+		for (int i = 0; i < 3; i++) {
+			OreDictMaterial tTiny = i < tOut.mByProducts.size() ? tOut.mByProducts.get(i) // :331-333
+					: tTinies.isEmpty() ? tOut : tTinies.get(tTinies.size() - 1); // :341-343 — empty → the material itself, else repeat-last
+			tTinies.add(tTiny);
+		}
+		return new DustOrePlan(aFamily, aMaterial, tOut, tMultiplier, List.copyOf(tTinies));
+	}
+
+	/**
+	 * Plan → Recipe (the :351 tail), or {@code null} when the input ore block or the
+	 * crushedPurified main output fails to resolve (the {@code mat()} → null drop, the
+	 * GT6RecipesOreChain :81 precedent). Outputs: the main output twice at 10000/10000,
+	 * the three tiny byproduct dusts at 1500/1000/500 — {@code OM.dustOrIngot(mat, U9)}
+	 * simplified to the plain {@link OP#dustTiny} tier (the OreChain :327 byproduct
+	 * simplification precedent; count = the multiplier, upstream {@code ST.amount}); an
+	 * unresolvable tiny stays a POSITIONAL null slot exactly as the upstream output array
+	 * carries it (the port Recipe ctor trims trailing nulls and aligns chances).
+	 */
+	@Nullable
+	static Recipe buildDustOreRecipe(DustOrePlan aPlan) {
+		Item tInput = sMaterialItemResolver.apply(aPlan.family().prefix(), aPlan.inMaterial());
+		if (tInput == null) return null; // upstream mat() → null
+		ItemStack tMain = resolveStack(OP.crushedPurified, aPlan.outMaterial(), aPlan.multiplier());
+		if (tMain == null) return null; // :351 mat() → null drop
+		ItemStack[] tOutputs = new ItemStack[5];
+		tOutputs[0] = tMain;
+		tOutputs[1] = tMain.copy(); // the second 10000 main output
+		for (int i = 0; i < 3; i++) tOutputs[2 + i] = resolveStack(OP.dustTiny, aPlan.tinyMaterials().get(i), aPlan.multiplier());
+		return new Recipe(true, new ItemStack[] {new ItemStack(tInput, 1)}, tOutputs, new FluidStack[0], new FluidStack[0], 256, 16, 0, new long[] {10000, 10000, 1500, 1000, 500}); // :351 — eUt 16, duration 256
+	}
+
+	/** Prefix x material x count → ItemStack, or null when the pair has no item (the upstream mat() semantics). */
+	@Nullable
+	private static ItemStack resolveStack(OreDictPrefix aPrefix, OreDictMaterial aMaterial, long aCount) {
+		Item tItem = sMaterialItemResolver.apply(aPrefix, aMaterial);
+		return tItem == null ? null : new ItemStack(tItem, (int) aCount);
 	}
 
 	/** Fixed-row → Recipe, or null when any segment fails to resolve (the upstream silent-drop semantics). */
@@ -188,11 +282,23 @@ public final class GT6RecipesSifter {
 		return tItem == null ? null : new ItemStack(tItem, aSlot.count());
 	}
 
-	/** The live item lookup (GTMaterialItems.get :287) — null when the pair has no item-path item. */
+	/**
+	 * The live item lookup — {@link GTMaterialItems#get :287} first, then the ore-BLOCK
+	 * path: the DUST_ORE inputs (oreGravel/sand/redsand/mud normal-form blocks) are block
+	 * prefixes with no item-path items, so the :351 walk resolves them through
+	 * {@link GT6OreBlocks#items()} (the NORMAL form; broken≡normal upstream for the dust
+	 * families). Null when neither carries the pair.
+	 */
 	@Nullable
 	private static Item resolveItem(OreDictPrefix aPrefix, OreDictMaterial aMaterial) {
 		RegistryObject<Item> tHandle = GTMaterialItems.get(aPrefix, aMaterial);
-		return tHandle == null ? null : tHandle.get();
+		if (tHandle != null) return tHandle.get();
+		for (GT6OreBlocks.OreFamily tFamily : GT6OreBlocks.FAMILIES) {
+			if (tFamily.prefix() != aPrefix) continue;
+			var tBlockItem = GT6OreBlocks.items().get(new GT6OreBlocks.OreKey(tFamily, GT6OreBlocks.FormKind.NORMAL, aMaterial));
+			return tBlockItem == null ? null : tBlockItem.get();
+		}
+		return null;
 	}
 
 	/** Test seam: clears the poured flag and the captured table so a fresh generation can re-pour. */
