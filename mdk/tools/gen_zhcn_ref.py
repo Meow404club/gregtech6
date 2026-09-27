@@ -637,6 +637,8 @@ HAND_TRANSLATIONS = {
     "fluid.gt6.fluorine": ("氟", "hand"),
     "fluid.gt6.helium": ("氦", "hand"),
     "fluid.gt6.helium_plasma": ("氦离子", "hand"),
+    # task debt-hene-fluid — the dump face verbatim, tmp/gregtech.lang:330
+    "fluid.gt6.heliumneon": ("氦氖混合气体", "hand"),
     "fluid.gt6.hydrogen": ("氢气", "hand"),
     "fluid.gt6.krypton": ("氪", "hand"),
     "fluid.gt6.liquid_extra_heavy_oil": ("超重油", "hand"),

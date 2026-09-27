@@ -175,17 +175,17 @@ public final class GT6RecipesCanner {
 
 	/**
 	 * The gas seam: fluid name → the {@code gt6:} CHEMICALS source fluid (the upstream
-	 * {@code MT.<gas>.gas(U, T)} legs of :396-403; {@code heliumneon} has no port fluid,
-	 * the row stays pooled until a blend-fluid card), fixtures injected offline.
+	 * {@code MT.<gas>.gas(U, T)} legs of :396-403; every family fluid is a port row since
+	 * task debt-hene-fluid landed the {@code heliumneon} blend), fixtures injected offline.
 	 */
 	public static Function<String, Fluid> sLaserGasFluidResolver = GT6RecipesCanner::liveLaserGas;
 
 	/**
 	 * The emitter seam: fluid name → the filled emitter stack (the :396-403 item output
 	 * column), fixtures injected offline. The helium leg resolves through the item
-	 * REGISTRY — {@code gt6:comp_laser_gas_he} rides the p37-usb-peripherals branch (not
-	 * compiled on this base), so the leg is EMPTY until that merge lands and the :396 row
-	 * skips silently (the upstream FL.exists drop posture, self-healing at the merge).
+	 * REGISTRY — {@code gt6:comp_laser_gas_he} landed with p37-usb-peripherals, so the row
+	 * pours in vivo; the OFFLINE fixtures arm the EMPTY skip (the lookup yields nothing on
+	 * an unbooted registry, the upstream FL.exists drop posture).
 	 */
 	public static Function<String, ItemStack> sLaserGasEmitterResolver = GT6RecipesCanner::liveLaserEmitter;
 
@@ -202,13 +202,15 @@ public final class GT6RecipesCanner {
 	}
 
 	/**
-	 * Pours the 58 rows into {@link GT6RecipeMaps#CANNER}: the 17 refill rows (the 16
+	 * Pours the 60 rows into {@link GT6RecipeMaps#CANNER}: the 17 refill rows (the 16
 	 * colour refills + the chlorine remover, p24), the 3 food-can rows of task
 	 * p25-food-can-row0 (rotten_flesh/spider_eye/cookie), the 32 C-Foam refills of task
 	 * p26-c-foam-fluid-refill (the :254 dyed + the :262 owned ladders) and the laser gas
-	 * fill family (p32-qu-laser-domain + debt-laser-gas-family, MultiItemTechnological
-	 * .java:396-403 — 6 of 8 rows pour on this base; the helium item leg rides the usb
-	 * branch and the heliumneon fluid stays pooled, both skipping silently).
+	 * fill family (p32-qu-laser-domain + debt-laser-gas-family + debt-hene-fluid,
+	 * MultiItemTechnological.java:396-403 — the FULL eight-row walk resolves in vivo: the
+	 * helium item leg self-heals through the registry lookup, the heliumneon fluid leg
+	 * landed with debt-hene-fluid; the offline test fixtures still arm the helium skip —
+	 * the registry lookup yields nothing on an unbooted registry).
 	 * Idempotent; an unresolvable row skips with a count (the upstream FL.exists drops).
 	 */
 	public static synchronized void load() {
@@ -262,8 +264,9 @@ public final class GT6RecipesCanner {
 		}
 
 		// the laser gas fill family — MultiItemTechnological.java:396-403: empty emitter +
-		// 1 unit of gas (144 mB) → the filled emitter, one row per family gas; the helium
-		// (usb-branch item) and heliumneon (no port fluid) legs skip silently on this base
+		// 1 unit of gas (144 mB) → the filled emitter, one row per family gas; all eight
+		// legs resolve in vivo since debt-hene-fluid (the offline fixtures arm the helium
+		// skip — the registry lookup yields nothing unbooted)
 		for (String tGas : LASER_GAS_FLUIDS) {
 			Recipe tRow = laserGasRecipe(tGas);
 			if (tRow == null) {tSkipped++; continue;} // the absent-fluid/item silent skip
@@ -278,7 +281,7 @@ public final class GT6RecipesCanner {
 	 * The MultiItemTechnological.java:396-403 row for ONE family gas — buffered T, EUt 16,
 	 * duration 128, the empty gas laser emitter in, {@code MT.<gas>.gas(U, T)} = 144 mB of
 	 * the gas fluid in, the filled emitter out. Null when any leg fails to resolve (the
-	 * silent skip: the heliumneon fluid and the pre-merge helium item).
+	 * silent skip: the offline-test helium arm, whose registry lookup yields nothing).
 	 */
 	@Nullable
 	static Recipe laserGasRecipe(String aGas) {

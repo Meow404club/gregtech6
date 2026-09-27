@@ -134,6 +134,20 @@ import gregtech6.registry.GTFluidPipes;
  * ships (STEAM_CRACKING/CATALYTIC_CRACKING/FM.GAS/FM.BURN) are plain data/gt6 JSON the
  * loader already reads; tier-a crafting adds nothing; there is NO KubeJS-specific seam.
  *
+ * <p>The heliumneon blend row (task debt-hene-fluid) joins {@link #CHEMICAL_SPECS} as the
+ * FOURTEENTH gas-closure row — the one the p29 batch left pooled: MT.HeNe is a
+ * {@code gaschemcent} material carrying the GASES tag (MT.java:1024, sanitized internal
+ * name "HeliumNeon"), so the upstream Loader_Fluids.java:660 tag loop created its
+ * {@code FL.createGas} fluid (FL.java:1080 — the bare {@code mNameInternal.toLowerCase()}
+ * id "heliumneon", the zh dump face {@code S:fluid.heliumneon=氦氖混合气体},
+ * tmp/gregtech.lang:330) and the Canner fill row :401 poured. The port row rides the same
+ * walk semantics: 300 K (the :1080 rule over the uumMcfg-recomputed boiling 15 K —
+ * OreDictMaterial.java:482/:490 — and plasma 1550 K), the :1128-1136 density over the
+ * molecule g/cm³ 0.0001785+0.0008999 = 0.0010784 → −92 (lighter than air), the :1105 gas
+ * carrier, the material RGBa 255,0,128 tint. It heals the Canner laser-gas family's last
+ * fluid leg (MultiItemTechnological.java:396-403 now pours its full eight-row walk in
+ * vivo). KJS surface: REGISTRATION face (the one Spec row); NO KubeJS-specific seam.
+ *
  * <p><b>The HOT family, the closure carriers and the lubricant</b> (task p29-w4-hot-lube)
  * ride the SAME {@link ChemicalFluidSpec} record and the SAME registration body — the
  * FIFTH-SPEC-SECTION append AFTER the chemical table (the merge-order seam: card ① is the
@@ -2184,6 +2198,7 @@ public final class GTFluids {
 		new ChemicalFluidSpec("krypton"         , "Krypton"          ,   300,      3,  200, 0xFF80FF80, true ,  0), // MT.Kr 128,255,128 (MT.java:425); 1000×0.003733
 		new ChemicalFluidSpec("xenon"           , "Xenon"            ,   300,      5,  200, 0xFF00FFFF, true ,  0), // MT.Xe 0,255,255 (MT.java:443); 1000×0.005887
 		new ChemicalFluidSpec("radon"           , "Radon"            ,   300,      9,  200, 0xFFFF00FF, true ,  0), // MT.Rn 255,0,255 (MT.java:476); 1000×0.00973
+		new ChemicalFluidSpec("heliumneon"      , "Helium-Neon"      ,   300,    -92,  200, 0xFF8000FF, true ,  0), // MT.HeNe (MT.java:1024, task debt-hene-fluid); molecule g 0.0001785+0.0008999 = 0.0010784 → −0.1/g = −92.73 → −92
 		// liquid oxygen (:68)
 		new ChemicalFluidSpec("liquidoxygen"    , "Liquid Oxygen"    ,    85,      1, 1000, 0xFF0064C8, false,  0), // the :1130 formula over O's 0.001429 g/cm³; tint = the O RGBa
 		// the isotope batch (task p31-qu-b-materials) — the Loader_Fluids.java:658-662
@@ -2379,6 +2394,7 @@ public final class GTFluids {
 			chemicalFluid("nitrogen"), chemicalFluid("oxygen"), chemicalFluid("fluorine"),
 			chemicalFluid("helium"), chemicalFluid("neon"), chemicalFluid("argon"),
 			chemicalFluid("krypton"), chemicalFluid("xenon"), chemicalFluid("radon"),
+			chemicalFluid("heliumneon"), // task debt-hene-fluid — the :660 createGas walk row the p29 batch left pooled
 			chemicalFluid("liquidoxygen"),
 			chemicalFluid("deuterium"), chemicalFluid("tritium"), chemicalFluid("helium3"),
 			chemicalFluid("lithium6_molten"), chemicalFluid("beryllium7_molten"), chemicalFluid("beryllium8_molten"),

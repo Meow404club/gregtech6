@@ -26,8 +26,8 @@ import net.minecraftforge.registries.RegistryObject;
  * <li>{@code gt6:comp_laser_gas_empty} — the :384 row (id 11000, "Empty Gas Laser
  *     Emitter", tooltip "For Electric Lasers"), the Canner fill row's input item.</li>
  * <li>{@code gt6:comp_laser_gas_ne/ar/kr/xe/hene/co} — the :388-393 rows (ids
- *     11002-11007, this card's family closure; the HeNe fill leg stays pooled — no
- *     {@code gt6:heliumneon} fluid in the port).</li>
+ *     11002-11007, this card's family closure; the HeNe Canner fill leg poured once
+ *     task debt-hene-fluid landed the {@code gt6:heliumneon} fluid).</li>
  * <li>{@code gt6:comp_laser_gas_co2} — the :394 row (id 11008, "Carbon Dioxide Laser
  *     Emitter", tooltip "Purpose: Strong Material Processing"), the crafting component of
  *     every Electric CO2 Laser rung (the 'L' key, :930-934).</li>
@@ -40,8 +40,8 @@ import net.minecraftforge.registries.RegistryObject;
  * The family is CLOSED (task debt-laser-gas-family, the rebase-merged shape): every
  * gas row of :384-394 is in — the :387 He row landed first with p37-usb-peripherals
  * (the single-item exemption, its consumer the USB HDD 'L' column :819-822), the
- * :388-393 six landed with the family closure card. The HeNe Canner fill leg stays
- * pooled (no {@code gt6:heliumneon} port fluid).
+ * :388-393 six landed with the family closure card. The HeNe Canner fill leg poured
+ * once task debt-hene-fluid landed the {@code gt6:heliumneon} CHEMICAL_SPECS row.
  *
  * <p>The creative-tab face joins MACHINES_TAB (task p38-tabfix-b-energy,
  * {@link #onBuildTabContents} — supersedes the old CUT ruling; the GTBarrels:257 pooling
