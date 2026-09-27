@@ -424,7 +424,8 @@ def state_search(query: str, k: int = 5, prefix: str | None = None, offset: int 
         scored.sort(reverse=True)
         out = []
         for sim, key, upd, value in scored[offset:offset + max(1, k)]:
-            preview = json.dumps(value, ensure_ascii=False)[:220]
+            # value 是 state_kv 的原始 JSON 文本——直接切片，json.dumps 会二次编码
+            preview = value[:220] if isinstance(value, str) else json.dumps(value, ensure_ascii=False)[:220]
             out.append({"key": key, "score": round(sim, 4), "updated": upd,
                         "preview": preview, "read_full": f"state_read(key='{key}')"})
         return {"query": query, "results": out,
