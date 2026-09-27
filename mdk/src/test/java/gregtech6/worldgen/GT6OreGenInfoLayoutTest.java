@@ -23,6 +23,7 @@
 package gregtech6.worldgen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -33,6 +34,11 @@ import org.junit.jupiter.api.Test;
 
 import gregapi.data.MT;
 import gregtech6.registry.GTMaterialItems;
+
+//? if neoforge {
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.ItemStack;
+//?}
 
 class GT6OreGenInfoLayoutTest {
 
@@ -122,13 +128,33 @@ class GT6OreGenInfoLayoutTest {
         assertEquals("ore_bedrock_ferberite", GT6OreGenInfoLayout.representativePath(tFerberite));
     }
 
-    /** The offline stack faces degrade to EMPTY (registries unfired) — the contract the wrappers ride. */
+    /**
+     * The stack faces ride the leg's registry state: the 1.20.1-forge offline harness
+     * never fires RegisterEvents, so every resolve degrades to EMPTY; the 1.21.1-neoforge
+     * harness DOES fire them, so the walk resolves the FULL mounting — every stack's
+     * registry id lands in the path walk (the end-to-end pin the forge leg can't run).
+     */
     @Test
-    void stackFacesDegradeToEmptyOffline() {
+    void stackFacesMatchTheLegRegistryState() {
         OreDistributionInfo.Entry tCassiterite = OreDistributionInfo.of(MT.OREMATS.Cassiterite);
+        //? if forge {
         assertTrue(GT6OreGenInfoLayout.variantStacks(tCassiterite).isEmpty(), "no registries offline");
         assertTrue(GT6OreGenInfoLayout.representative(tCassiterite).isEmpty(), "no registries offline");
         assertTrue(GT6OreGenInfoLayout.catalystStack().isEmpty(), "rockGt Stone unregistered offline");
+        //?} else {
+        /*java.util.List<ItemStack> tStacks = GT6OreGenInfoLayout.variantStacks(tCassiterite);
+        assertEquals(GT6OreGenInfoLayout.variantPaths(tCassiterite).size(), tStacks.size(),
+                "the mounting resolves in full when the registries are live");
+        for (ItemStack tStack : tStacks) {
+            assertTrue(GT6OreGenInfoLayout.variantPaths(tCassiterite)
+                    .contains(BuiltInRegistries.ITEM.getKey(tStack.getItem()).getPath()),
+                    tStack.getItem()::toString);
+        }
+        assertEquals("ore_stone_cassiterite",
+                BuiltInRegistries.ITEM.getKey(GT6OreGenInfoLayout.representative(tCassiterite).getItem()).getPath(),
+                "the representative resolves to the stone NORMAL form");
+        assertFalse(GT6OreGenInfoLayout.catalystStack().isEmpty(), "the rockGt Stone pebble is registered");
+         *///?}
     }
 
     // ---------------------------------------------------------------- geometry

@@ -54,21 +54,31 @@ public class GT6OreGenInfoEmiCategoryTest {
 		assertFalse(tFace.supportsRecipeTree(), "no tree face (the batch1 ruling)");
 		assertEquals(GT6OreGenInfoLayout.WIDTH, tFace.getDisplayWidth());
 		assertEquals(GT6OreGenInfoLayout.categoryHeight(), tFace.getDisplayHeight());
-		// offline the registered-item resolution is empty — the outputs contract's degenerate face
+		// the outputs ride the leg's registry state (see the layout test): forge offline =
+		// the EMPTY degenerate face, neoforge = the FULL 76-stack invisible mounting
+		//? if forge {
 		assertTrue(tFace.getOutputs().isEmpty(), "offline: no registries, the invisible mounting stays empty");
+		//?} else {
+		/*assertEquals(GT6OreGenInfoLayout.variantPaths(tCassiterite).size(), tFace.getOutputs().size(),
+				"the invisible mounting resolves in full when the registries are live");
+		 *///?}
 	}
 
 	/**
-	 * The text band: Cassiterite's dims row + 6 face lines = 7 text widgets, the
-	 * representative slot ABSENT offline (EMPTY stack, registries unfired — in-game the
-	 * slot rides the shared SLOT_X/SLOT_Y constants, the JEI twin draws it identically).
+	 * The text band: Cassiterite's dims row + 6 face lines = 7 text widgets; the
+	 * representative slot rides the leg's registry state (forge offline draws none — EMPTY
+	 * stack; neoforge draws one at the shared SLOT_X/SLOT_Y, the JEI twin's geometry).
 	 */
 	@Test
 	public void addWidgetsLaysDimsRowPlusFaceLines() {
 		OreDistributionInfo.Entry tCassiterite = OreDistributionInfo.of(MT.OREMATS.Cassiterite);
 		RecordingHolder tHolder = new RecordingHolder();
 		new GT6OreGenInfoEmiRecipe(tCassiterite, 0).addWidgets(tHolder);
+		//? if forge {
 		assertEquals(0, tHolder.mSlots, "offline: the representative stack is EMPTY, no slot");
+		//?} else {
+		/*assertEquals(1, tHolder.mSlots, "the representative slot draws when the registries are live");
+		 *///?}
 		assertEquals(7, tHolder.mTexts, "dims row + 6 face lines (3 small + 2 vein + 1 bedrock)");
 		// the dims row sits above the face band (21 vs 38) — the constants keep their roles
 		assertTrue(GT6OreGenInfoLayout.DIMS_Y < GT6OreGenInfoLayout.FACE_BASE_Y);
@@ -79,6 +89,11 @@ public class GT6OreGenInfoEmiCategoryTest {
 		OreDistributionInfo.Entry tFerberite = OreDistributionInfo.of(MT.OREMATS.Ferberite);
 		RecordingHolder tHolder = new RecordingHolder();
 		new GT6OreGenInfoEmiRecipe(tFerberite, 117).addWidgets(tHolder);
+		//? if forge {
+		assertEquals(0, tHolder.mSlots, "offline: no slot");
+		//?} else {
+		/*assertEquals(1, tHolder.mSlots, "the bedrock LARGE representative resolves on the live leg");
+		 *///?}
 		assertEquals(2, tHolder.mTexts, "dims row + the one bedrock line");
 	}
 
