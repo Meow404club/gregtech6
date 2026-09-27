@@ -16,9 +16,9 @@
  *     models + the advanced crafting table (the machineModel/familyMachineModel
  *     builders);</li>
  * <li>burning boxes — the five group pairs (burningBoxModel);</li>
- * <li>parts — the dense walls × 8 designs, the new-form rows (designs>0 → the design
- *     ladder, else the singleton), the heat transmitter, the coke-oven bricks and,
- *     since the C5 clean-up, machine_wall_tungsten (partModel);</li>
+ * <li>parts — the dense walls x 8 designs, the new-form rows (designs>0 → the design
+ *     ladder, else the singleton — machine_wall_tungsten walks the ladder since task
+ *     debt-tungsten-wall-designs), the heat transmitter and the coke-oven bricks;</li>
  * <li>turbines/dynamo housings — turbine_main_{steam,gas,dynamo} (addTurbineFamily);</li>
  * <li>bridges/lasers/absorber/energizer — the six orientable textures
  *     (addBridgeFamily, model name = the texture token);</li>
@@ -106,10 +106,10 @@ class GT6PaintableRenderTypeCensusTest {
         for (var tRow : gregtech6.registry.GTMultiBlocks.WALL_ROWS) {
             for (int d = 0; d <= 7; d++) rModels.add(tRow.path() + "_design_" + d);
         }
-        // the new-form rows (the registration-side machine_wall_tungsten skip mirrored:
-        // the lightning-rod registration emits the plain partModel, not the design ladder)
+        // the new-form rows (machine_wall_tungsten included — task
+        // debt-tungsten-wall-designs gave the Lightning Rod registration the :1151
+        // NBT_DESIGNS 7 range, so the row emits the design ladder like its siblings)
         for (var tRow : gregtech6.registry.GTMultiBlocks.NEW_PART_ROWS) {
-            if (tRow.path().equals("machine_wall_tungsten")) continue;
             if (tRow.designs() > 0) {
                 for (int d = 0; d <= tRow.designs(); d++) rModels.add(tRow.path() + "_design_" + d);
             } else {
@@ -118,7 +118,6 @@ class GT6PaintableRenderTypeCensusTest {
         }
         rModels.add("heat_transmitter");
         rModels.add("multiblock_coke_oven_bricks");
-        rModels.add("machine_wall_tungsten"); // the C5 clean-up (the lightning-rod registration)
         return new ArrayList<>(rModels);
     }
 

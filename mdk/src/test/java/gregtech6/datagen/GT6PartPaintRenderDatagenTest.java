@@ -7,11 +7,11 @@
  * .getTexture2 :234-236 BlockTextureMulti(BlockTextureDefault(colored, mRGBa), overlay)
  * semantics, mRGBa registration-derived from NBT_MATERIAL, ClassContainer.java:51).
  *
- * <p>Coverage: the 11 Dense Walls (metalwalldense, WALL_ROWS) x designs 0..7 and the 10
- * new-form Metal Walls (metalwall, METAL_WALL_ROWS) x designs 0..7 — since task
- * r3-world-tint-render-type (the C5 clean-up) machine_wall_tungsten joins the tinted
- * family through its own single-variant pin below (the Lightning Rod registration keeps
- * the DESIGN property absent). The partPaintableBlockArray walk (43 blocks: walls +
+ * <p>Coverage: the 11 Dense Walls (metalwalldense, WALL_ROWS) x designs 0..7 and the 11
+ * new-form Metal Walls (metalwall, METAL_WALL_ROWS) x designs 0..7 — machine_wall_tungsten
+ * joined the ladder in task debt-tungsten-wall-designs (the Lightning Rod registration
+ * now carries the :1151 NBT_DESIGNS 7; its former single-variant pin is retired). The
+ * partPaintableBlockArray walk (43 blocks: walls +
  * coils + parts + ventilation + processor units + wood wall + the tungsten wall +
  * transmitter + the coke-oven bricks, whose Ceramic tint
  * task p38-c2-controller-tint wired) rides the same partModel helper, so the
@@ -50,11 +50,11 @@ class GT6PartPaintRenderDatagenTest {
             "dense_wall_bronze", "dense_wall_steel", "dense_wall_galvanized_steel",
             "dense_wall_tungsten", "dense_wall_tantalum_hafnium_carbide");
 
-    /** The 10 new-form Metal Wall rows riding the datagen walk (the Tungsten Wall row is the Lightning Rod registration — skipped there, the reuse ruling). */
+    /** The 11 new-form Metal Wall rows riding the datagen walk (machine_wall_tungsten included — task debt-tungsten-wall-designs gave the Lightning Rod registration the :1151 NBT_DESIGNS 7, so it walks the design ladder like its siblings). */
     private static final List<String> METAL_WALLS = List.of(
             "machine_wall_lead", "machine_wall_bronze", "machine_wall_steel",
             "machine_wall_galvanized_steel", "machine_wall_stainless_steel", "machine_wall_invar",
-            "machine_wall_titanium", "machine_wall_tungstensteel",
+            "machine_wall_titanium", "machine_wall_tungstensteel", "machine_wall_tungsten",
             "machine_wall_tantalum_hafnium_carbide", "machine_wall_adamantium");
 
     /** The DESIGNS-7 design range (0..N inclusive — IntegerProperty demands min&lt;max). */
@@ -133,27 +133,13 @@ class GT6PartPaintRenderDatagenTest {
         }
     }
 
-    @Test
-    public void machineWallTungstenJoinsTheTintedFamily() throws Exception {
-        // task r3-world-tint-render-type (the C5 clean-up) retired the old declared
-        // deviation (the untinted cube_all borrow): the block IS the :1151 machine-wall
-        // row, and its model is the metalwall design-0 two-layer partModel — the same
-        // body/decal split as the sibling walls, over art bytes identical to the former
-        // borrow (lightningrod/wall == parts/metalwall/0/colored/side, sha 37dab1b9).
-        // The single-variant Lightning Rod registration keeps the DESIGN property absent
-        // (design 0 = the sibling walls' default state, the remaining declared gap).
-        JsonObject tModel = json("assets/gt6/models/block/machine_wall_tungsten.json");
-        assertEquals(7, tModel.getAsJsonArray("elements").size(),
-                "the two-layer shape (body + 6 decals) — the sibling-wall form");
-        JsonObject tBody = tModel.getAsJsonArray("elements").get(0).getAsJsonObject();
-        for (Map.Entry<String, JsonElement> tFace : tBody.getAsJsonObject("faces").entrySet()) {
-            assertEquals(0, tFace.getValue().getAsJsonObject().get("tintindex").getAsInt(),
-                    "the body face " + tFace.getKey() + " carries tintindex 0");
-        }
-        assertEquals("gt6:block/parts/metalwall/0/colored/side",
-                tModel.getAsJsonObject("textures").get("north").getAsString(),
-                "the design-0 metalwall art (the former borrow's identical bytes)");
-    }
+    // machine_wall_tungsten's single-variant pin retired (task
+    // debt-tungsten-wall-designs, the C7' leftover ①): the row walks METAL_WALLS above
+    // like its ten siblings — the metalwall design-0 art is byte-identical to the
+    // former lightningrod/wall borrow (sha 37dab1b9), and the Lightning Rod
+    // registration now carries the :1151 NBT_DESIGNS 7 (the blockstate ladder pin in
+    // assertDesignVariants transitively pins that registration range: a revert to
+    // maxDesign 0 collapses the blockstate to the single-state form and goes red here).
 
     // ------------------------------------------------------------------
     // the NBT_MATERIAL columns — the upstream aMat of each Loader row verbatim
@@ -194,7 +180,7 @@ class GT6PartPaintRenderDatagenTest {
     /** The rest of the tinted part family — every row resolves a live material (the walk coverage behind partPaintableBlockArray). */
     @Test
     public void remainingPartRowsResolveLiveMaterials() {
-        assertNotNull(materialOf("machine_wall_tungsten")); // the row column exists even though the block keeps the borrow
+        assertNotNull(materialOf("machine_wall_tungsten")); // the row column (the block keeps the Lightning Rod registration)
         assertNotNull(rowMaterial(GTMultiBlocks.TRANSMITTER_ROW.material()));
         for (var tRow : GTMultiBlocks.COIL_ROWS) assertNotNull(rowMaterial(tRow.material()), tRow.path());
         for (var tRow : GTMultiBlocks.PART_ROWS) assertNotNull(rowMaterial(tRow.material()), tRow.path());

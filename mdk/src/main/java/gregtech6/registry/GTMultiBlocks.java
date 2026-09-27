@@ -404,9 +404,15 @@ public final class GTMultiBlocks {
 		// Tungsten Wall (machine_wall_tungsten, :1151 ANY.W) joins the paint walk this
 		// card; the coil/rod materials ride along dormant (their cube_all models stay
 		// untinted, the declared deviation below).
+		// Task debt-tungsten-wall-designs (the C7' leftover ① retired): the :1151 row is a
+		// plain metal-wall registration — NBT_DESIGNS 7, the same design range 0..7 as every
+		// sibling (:1143-1153 are line-identical on the column) — so the Tungsten Wall now
+		// carries the family's DESIGN property; the coil/rod keep their single-variant
+		// registration (their design gap stays the declared pool deviation).
 		for (MultiblockPartRow tRow : LIGHTNING_ROD_PART_ROWS) {
 			LIGHTNING_ROD_PART_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
-					() -> new GTMultiBlockPartBlock(partProperties(tRow.hardness()), 0, null, tRow.material())));
+					() -> new GTMultiBlockPartBlock(partProperties(tRow.hardness()),
+							"machine_wall_tungsten".equals(tRow.path()) ? 7 : 0, null, tRow.material())));
 			LIGHTNING_ROD_PART_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
 					() -> new GTComposedNameItem(LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
 		}
@@ -761,8 +767,9 @@ public final class GTMultiBlocks {
 	 * p38-c2-controller-tint the coke-oven bricks (the upstream Ceramic tint wired — the
 	 * #8 declared deviation retired) and, since task r3-world-tint-render-type (the C5
 	 * clean-up), machine_wall_tungsten (the Lightning Rod family's registration of the
-	 * :1151 row — its model is the metalwall design-0 two-layer form now, over the
-	 * identical bytes of the former lightningrod/wall borrow). The machine
+	 * :1151 row — its models are the metalwall per-design two-layer forms since task
+	 * debt-tungsten-wall-designs, over the identical bytes of the former lightningrod/
+	 * wall borrow). The machine
 	 * {@code GTMachines.paintableBlockArray} census convention, feeding BOTH consumption
 	 * halves: the baked world tint ({@code GTMachineTintModel}, the p32 route) and the
 	 * inventory {@code ItemColor} (GTClientHandlers). NOT in the walk: the two remaining

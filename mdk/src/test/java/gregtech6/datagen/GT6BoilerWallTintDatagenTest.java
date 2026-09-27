@@ -9,9 +9,10 @@
  *     shared {@code steam_boiler_tank} model seats the tint (tintindex 0 body) while
  *     keeping the barometer front face.</li>
  * <li><b>machine_wall_tungsten</b> — the :1151 metal-wall row the Lightning Rod family
- *     registers (the GTMultiBlocks:713 skip): the row material (ANY.W) now rides the
- *     row-less material-carrier constructor and the model is the metalwall design-0
- *     two-layer partModel (body tintindex 0 + the six 0.01 decals).</li>
+ *     registers (the GTMultiBlocks:713 skip): the row material (ANY.W) rides the
+ *     row-less material-carrier constructor and the models are the metalwall per-design
+ *     two-layer partModels (body tintindex 0 + the six 0.01 decals; design 0 of the
+ *     full :1151 NBT_DESIGNS 7 ladder since task debt-tungsten-wall-designs).</li>
  * </ul>
  *
  * <p>OFFLINE posture (the GTMachinesMaterialRowTest shape): the row tables and the
@@ -137,10 +138,15 @@ class GT6BoilerWallTintDatagenTest {
         assertEquals("gt6:block/boiler_steam/side", tTextures.get("south").getAsString());
     }
 
-    /** The tungsten wall model is the metalwall two-layer form (tinted body + six decals). */
+    /**
+     * The tungsten wall model is the metalwall two-layer form (tinted body + six decals)
+     * — design 0 of the full ladder since task debt-tungsten-wall-designs (the :1151
+     * NBT_DESIGNS 7 range; the per-design ladder census rides
+     * GT6PartPaintRenderDatagenTest.METAL_WALLS).
+     */
     @Test
     public void tungstenWallModelJoinsTheMetalwallFamily() throws Exception {
-        JsonObject tJson = model("machine_wall_tungsten");
+        JsonObject tJson = model("machine_wall_tungsten_design_0");
         JsonObject tTextures = tJson.getAsJsonObject("textures");
         assertEquals("gt6:block/parts/metalwall/0/colored/side", tTextures.get("north").getAsString(),
                 "the wall art is the design-0 metalwall set (the former borrow's identical bytes)");
