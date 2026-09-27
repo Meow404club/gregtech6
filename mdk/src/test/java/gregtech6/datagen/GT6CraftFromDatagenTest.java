@@ -25,10 +25,22 @@
  * INPUT — so the batch = :168 foil2wireFine + :169 plate2wire (219 measured foil
  * rows + 0 wire rows, the GT6RecipesWiremill seam), the single-row grid pins
  * (["Xx"] / ["Px"]), the wire-cutter tag, and the count=1 key-omission identity.
+ *
+ * <p>task p37-craftfrom-rockgt extension (the rockGt batch): :148 is the ONLY
+ * rockGt statement of the 47-statement panel (:149-150 output gearGt from stick —
+ * not this family, the residual closeout card owns them) — the single
+ * {"XYX","YfY","XYX"} gear row carrying the FIRST POSITIVE material condition
+ * (And(ANTIMATTER.NOT, COATED.NOT, STONE, MT.Stone.NOT, MT.Bedrock.NOT)): the
+ * universe pin rides the gearGt ∩ rockGt ∩ GTStoneBlocks-family three-face
+ * intersection under that verbatim tail, and the stone companion carrier (the
+ * block-path OP.stone face, keyed on the family STONE-variant block item) rides
+ * the declared carrier deviation.
  */
 package gregtech6.datagen;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -416,5 +428,79 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
         assertFineWireGrid(generated("foil2wire_fine/aluminium"),
                 "gt6:" + GTMaterialItems.itemIdOf(OP.wireFine, material("Aluminium")),
                 "gt6:" + GTMaterialItems.itemIdOf(OP.foil, material("Aluminium")), "X");
+    }
+
+    // ------------------------------------------------------------------
+    // task p37-craftfrom-rockgt — the rockGt batch (the :148 gear row, the
+    // ONLY rockGt statement of the 47-statement panel; :149-150 output
+    // gearGt from stick — not this family, the residual closeout card owns
+    // them)
+    // ------------------------------------------------------------------
+
+    private static Set<String> rockGtMaterials() {
+        Set<String> rNames = new HashSet<>();
+        for (GT6CraftingRecipes.RockGtCraftFromMaterialRow tRow : GT6CraftingRecipes.rockGtCraftFromMaterialRows()) {
+            rNames.add(tRow.aMaterial().mNameInternal);
+        }
+        return rNames;
+    }
+
+    /** Row-count + universe SET pin: the walk == the gearGt ∩ rockGt ∩ GTStoneBlocks-family faces under the verbatim :148 condition tail (STONE positive, Stone/Bedrock out), the measured item truth dead-written. */
+    @Test
+    public void theRockGtUniverseIsTheGearRockFamilyFace() {
+        Set<String> tExpected = new HashSet<>(conditionedFace(OP.gearGt));
+        tExpected.retainAll(conditionedFace(OP.rockGt));
+        Set<String> tFamily = new HashSet<>();
+        for (gregtech6.registry.GTStoneBlocks.StoneSpec tStone : gregtech6.registry.GTStoneBlocks.STONES) {
+            tFamily.add(tStone.material().get().mNameInternal);
+        }
+        tExpected.retainAll(tFamily);
+        tExpected.removeIf(tName -> !material(tName).contains(gregapi.data.TD.Properties.STONE)); // STONE — the positive rock face
+        tExpected.remove("Stone"); // MT.Stone.NOT (the vanilla-covered identity)
+        tExpected.remove("Bedrock"); // MT.Bedrock.NOT
+        assertEquals(tExpected, rockGtMaterials(), "the :148 universe == the three-face intersection under the verbatim condition");
+        assertEquals(17, rockGtMaterials().size(), "the measured item truth (every GTStoneBlocks family: gear+rock+stone items all exist)");
+        assertTrue(rockGtMaterials().contains("Marble"), "the representative family (the JSON identity leg)");
+        assertFalse(rockGtMaterials().contains("Stone"), "the MT.Stone.NOT exclusion rides the face");
+        assertFalse(rockGtMaterials().contains("Bedrock"), "the MT.Bedrock.NOT exclusion rides the face");
+    }
+
+    /** Form pin: the single :148 form verbatim — key, prefixes, count, the {"XYX","YfY","XYX"} grid. */
+    @Test
+    public void theRockGtFormCarriesTheUpstreamGrid() {
+        assertEquals(1, GT6CraftingRecipes.rockGtCraftFromForms().size(), "the :148 single statement");
+        GT6CraftingRecipes.RockGtCraftFromForm tForm = GT6CraftingRecipes.rockGtCraftFromForms().get(0);
+        assertEquals("rock_gt2gear_gt", tForm.aKey(), "the composed key (the null upstream category, the snake law)");
+        assertEquals(OP.gearGt, tForm.aOutput(), "the output prefix (count 1)");
+        assertEquals(1, tForm.aCount(), "the :148 output amount");
+        assertEquals(OP.rockGt, tForm.aInput(), "the X slot = rockGt (the 4 corners)");
+        assertEquals(OP.stone, tForm.aCompanion(), "the Y slot = stone (the 4 edges, OP.java:1464)");
+        assertArrayEquals(new String[] {"XYX", "YfY", "XYX"}, tForm.aRows(), "the :148 grid verbatim ('f' = the file tool center)");
+    }
+
+    /** The row id — the craftFromRowId form over the gt6 namespace (the shared id law). */
+    @Test
+    public void theRockGtRowIdIsTheFormKeyPlusMaterialLeaf() {
+        assertEquals("gt6:rock_gt2gear_gt/marble", GT6CraftingRecipes.craftFromRowId("rock_gt2gear_gt", "marble").toString());
+        assertEquals("gt6:rock_gt2gear_gt/granite_black", GT6CraftingRecipes.craftFromRowId("rock_gt2gear_gt", "granite_black").toString());
+    }
+
+    /** Identity face: the :148 gear row for Marble — 4x rock + 4x stone around the file, count=1 rides the vanilla key omission. */
+    @Test
+    public void theMarbleGearRowCarriesTheUpstreamGrid() throws Exception {
+        JsonObject tRow = generated("rock_gt2gear_gt/marble");
+        assertEquals(3, tRow.getAsJsonArray("pattern").size(), "the 3x3 frame");
+        assertEquals("XYX", tRow.getAsJsonArray("pattern").get(0).getAsString(), "the :148 top row");
+        assertEquals("YfY", tRow.getAsJsonArray("pattern").get(1).getAsString(), "the :148 middle row");
+        assertEquals("XYX", tRow.getAsJsonArray("pattern").get(2).getAsString(), "the :148 bottom row");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.rockGt, material("Marble")), tRow.getAsJsonObject("key").get("X").getAsJsonObject().get("item").getAsString(),
+                "'X' = the rockGt item (the corners)");
+        assertEquals("gt6:marble", tRow.getAsJsonObject("key").get("Y").getAsJsonObject().get("item").getAsString(),
+                "'Y' = the family STONE-variant block item (the bare-snake variant-0 path, the declared carrier deviation)");
+        assertTrue(tRow.getAsJsonObject("key").get("f").getAsJsonObject().get("tag").getAsString().endsWith("tools/file"),
+                "'f' = the file tool tag (upstream CR.java:231)");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.gearGt, material("Marble")), tRow.getAsJsonObject("result").get("item").getAsString(), "the result item");
+        int tCount = tRow.getAsJsonObject("result").has("count") ? tRow.getAsJsonObject("result").get("count").getAsInt() : 1;
+        assertEquals(1, tCount, "the result count (the vanilla count=1 key omission)");
     }
 }

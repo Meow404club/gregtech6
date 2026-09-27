@@ -387,6 +387,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (FineWireCraftFromRow tRow : fineWireCraftFromDatagenRows()) {
 			fineWireCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
 		}
+		// task p37-craftfrom-rockgt — the rockGt CraftFrom batch (Loader_OreProcessing.java:148)
+		for (RockGtCraftFromRow tRow : rockGtCraftFromDatagenRows()) {
+			rockGtCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
+		}
 		// task debt-stairs-wall-vanilla-recipes — the upstream BlockStones vanilla-degradation rows
 		for (PartFamilyRecipeRow tRow : stairsFromRocksBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
@@ -573,6 +577,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task p37-craftfrom-foil — the fine-wire CraftFrom batch (Loader_OreProcessing.java:168-169)
 		for (FineWireCraftFromRow tRow : fineWireCraftFromDatagenRows()) {
 			fineWireCraftFromBuilder(tRow).save(aOutput, tRow.aId());
+		}
+		// task p37-craftfrom-rockgt — the rockGt CraftFrom batch (Loader_OreProcessing.java:148)
+		for (RockGtCraftFromRow tRow : rockGtCraftFromDatagenRows()) {
+			rockGtCraftFromBuilder(tRow).save(aOutput, tRow.aId());
 		}
 		// task debt-stairs-wall-vanilla-recipes — the upstream BlockStones vanilla-degradation rows
 		for (PartFamilyRecipeRow tRow : stairsFromRocksBuilders()) {
@@ -4236,6 +4244,121 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.pattern(aRow.aRow())
 				.define(aRow.aRow().charAt(0), aRow.aInput())
 				.define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
+				.unlockedBy("has_input", has(aRow.aInput()));
+	}
+
+	// -----------------------------------------------------------------------
+	// The rockGt CraftFrom band (task p37-craftfrom-rockgt) — the rockGt batch
+	// of the 47-statement CraftFrom panorama (the fine-wire card's residual
+	// ledger): :148 is the ONLY rockGt statement of the shaped panel (:322/
+	// :323/:338 ride the Crusher/Hammer/ByProductList machine domain), and
+	// :149-150 output gearGt from stick — the gearGt output prefix is not this
+	// family, the residual closeout card owns them. The single form:
+	//  - :148 rock_gt2gear_gt — {"XYX","YfY","XYX"}: file + 4x rockGt (the
+	//    corners) + 4x stone (the edges) → gearGt 1 — the FIRST band with a
+	//    POSITIVE material flag: And(ANTIMATTER.NOT, COATED.NOT, STONE,
+	//    MT.Stone.NOT, MT.Bedrock.NOT) verbatim (the STONE rock face plus the
+	//    vanilla-covered Stone/Bedrock identity exclusions).
+	// The same digLadder band translation as the plateGem/stick/fine-wire
+	// families above (the listener walk, the config-gate drop — :148 carries
+	// the null category — the item-truth intersection extended to the three
+	// faces). DECLARED CARRIER DEVIATION: upstream 'Y' is the OP.stone
+	// oredict key satisfied by every GTStoneBlocks variant of the family
+	// (BlockStones OM.reg, the GTStoneBlocks.oreDictMappings face) — the port
+	// keys the row on the family's STONE-variant block item (the mappings'
+	// first face, the anvil band's explicit-carrier precedent), and the walk
+	// face stays offline-pure on the family MEMBERSHIP (the StoneSpec
+	// supplier) while the datagen face resolves the RegistryObject item.
+	// Non-family stones (MT.STONES.Blackstone, Deepslate, ...) carry no stone
+	// item yet — their rows pour zero today and unlock with that bridge. The
+	// key composes from the prefixes (rockGt→rock_gt, gearGt→gear_gt, the
+	// stick-card snake law) because :148 has the null category. Tool letter
+	// 'f' = the file tag (upstream CR.java:231).
+	// -----------------------------------------------------------------------
+
+	/** One upstream row form: the id key + the output prefix + count + the input prefix + the companion prefix + the three pattern rows (Loader_OreProcessing.java:148, the grid and amount verbatim). Package-private for the pin test. */
+	record RockGtCraftFromForm(String aKey, gregapi.oredict.OreDictPrefix aOutput, int aCount,
+			gregapi.oredict.OreDictPrefix aInput, gregapi.oredict.OreDictPrefix aCompanion, String[] aRows) {}
+
+	/**
+	 * The single row form of the rockGt batch (Loader_OreProcessing.java:148). A method, not a
+	 * field — the OP fields live only after OP.init. The X slot = rockGt (4 corners), the Y
+	 * slot = stone (4 edges), 'f' = the file tool (center).
+	 */
+	static List<RockGtCraftFromForm> rockGtCraftFromForms() {
+		return List.of(new RockGtCraftFromForm("rock_gt2gear_gt", gregapi.data.OP.gearGt, 1,
+				gregapi.data.OP.rockGt, gregapi.data.OP.stone, new String[] {"XYX", "YfY", "XYX"}));
+	}
+
+	/** The material face of one rockGt-band row (the test-visible walk unit). */
+	record RockGtCraftFromMaterialRow(RockGtCraftFromForm aForm, gregapi.oredict.OreDictMaterial aMaterial) {}
+
+	/**
+	 * The material face of the rockGt band: the materials whose gearGt AND rockGt items both
+	 * exist (the registrationOrder intersection, in registration order) AND whose stone
+	 * companion rides a GTStoneBlocks family (the stone face is block-path, outside the item
+	 * walk) — minus the COATED/ANTIMATTER rows, plus the STONE flag, minus Stone/Bedrock (the
+	 * :148 condition verbatim). The stick walk with the three-face extension.
+	 */
+	static List<RockGtCraftFromMaterialRow> rockGtCraftFromMaterialRows() {
+		List<RockGtCraftFromMaterialRow> rRows = new ArrayList<>();
+		for (RockGtCraftFromForm tForm : rockGtCraftFromForms()) {
+			java.util.Set<OreDictMaterial> tInputs = new java.util.HashSet<>();
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				if (tPair.prefix() == tForm.aInput()) tInputs.add(tPair.material());
+			}
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				OreDictMaterial tMaterial = tPair.material();
+				if (tPair.prefix() != tForm.aOutput() || !tInputs.contains(tMaterial)) continue; // the item-truth intersection
+				if (stoneFamilyOrNull(tMaterial) == null) continue; // the stone companion item truth (the GTStoneBlocks family face)
+				if (tMaterial.contains(gregapi.data.TD.Compounds.COATED)) continue; // COATED.NOT
+				if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT
+				if (!tMaterial.contains(gregapi.data.TD.Properties.STONE)) continue; // STONE — the positive rock face
+				if (tMaterial == gregapi.data.MT.Stone) continue; // MT.Stone.NOT
+				if (tMaterial == gregapi.data.MT.Bedrock) continue; // MT.Bedrock.NOT
+				rRows.add(new RockGtCraftFromMaterialRow(tForm, tMaterial));
+			}
+		}
+		return rRows;
+	}
+
+	/** The OP.stone.dat(M) family face — the GTStoneBlocks family whose material is M (offline-pure: the StoneSpec supplier), null off the 17-family universe. Package-private for the pin test. */
+	static gregtech6.registry.GTStoneBlocks.StoneSpec stoneFamilyOrNull(OreDictMaterial aMaterial) {
+		for (gregtech6.registry.GTStoneBlocks.StoneSpec tStone : gregtech6.registry.GTStoneBlocks.STONES) {
+			if (tStone.material().get() == aMaterial) return tStone;
+		}
+		return null;
+	}
+
+	/** The datagen row: the id + the output item + count + the two input items + the pattern rows. */
+	private record RockGtCraftFromRow(ResourceLocation aId, net.minecraft.world.item.Item aResult, int aCount,
+			net.minecraft.world.item.Item aInput, net.minecraft.world.item.Item aCompanion, String[] aRows) {}
+
+	/** The datagen face: the material walk resolved onto the live items (the silent-skip guard rides itemOrNull and the stone handle). */
+	private List<RockGtCraftFromRow> rockGtCraftFromDatagenRows() {
+		List<RockGtCraftFromRow> rRows = new ArrayList<>();
+		for (RockGtCraftFromMaterialRow tMaterialRow : rockGtCraftFromMaterialRows()) {
+			String tSnake = GTMaterialItems.snakeCase(tMaterialRow.aMaterial().mNameInternal);
+			net.minecraft.world.item.Item tResult = itemOrNull(tMaterialRow.aForm().aOutput(), tMaterialRow.aMaterial());
+			net.minecraft.world.item.Item tInput = itemOrNull(tMaterialRow.aForm().aInput(), tMaterialRow.aMaterial());
+			gregtech6.registry.GTStoneBlocks.StoneSpec tStoneFamily = stoneFamilyOrNull(tMaterialRow.aMaterial());
+			if (tResult == null || tInput == null || tStoneFamily == null) continue; // the item-truth guard (belt and braces over the walk)
+			rRows.add(new RockGtCraftFromRow(craftFromRowId(tMaterialRow.aForm().aKey(), tSnake), tResult, tMaterialRow.aForm().aCount(),
+					tInput, gregtech6.registry.GTStoneBlocks.item(tStoneFamily.snake(), gregtech6.block.stone.StoneVariant.STONE).get(),
+					tMaterialRow.aForm().aRows()));
+		}
+		return rRows;
+	}
+
+	/** One row's builder — the form's 3x3 grid, 'f' = the file tag, 'X' = the rockGt item, 'Y' = the stone item. */
+	private ShapedRecipeBuilder rockGtCraftFromBuilder(RockGtCraftFromRow aRow) {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, aRow.aResult(), aRow.aCount())
+				.pattern(aRow.aRows()[0])
+				.pattern(aRow.aRows()[1])
+				.pattern(aRow.aRows()[2])
+				.define('X', aRow.aInput())
+				.define('Y', aRow.aCompanion())
+				.define('f', GT6ItemTags.TOOLS_FILE)
 				.unlockedBy("has_input", has(aRow.aInput()));
 	}
 
