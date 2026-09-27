@@ -35,9 +35,9 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.RegistryObject;
 
 import gregapi.data.MT;
 import gregapi.data.OP;
@@ -334,11 +334,10 @@ public final class GT6RecipesReactorRods {
 				CENTRIFUGE_DURATION, aRow.eUt(), 0);
 	}
 
-	/** The live rod leg ({@link GT6ReactorRods#BY_ID}) — null when the id has no item. */
+	/** The live rod leg ({@link GT6ReactorRods#rodById}) — null when the id has no item. */
 	@Nullable
 	static ItemStack liveRod(int aId) {
-		RegistryObject<Item> tHandle = GT6ReactorRods.BY_ID.get(aId);
-		return tHandle == null ? null : new ItemStack(tHandle.get());
+		return GT6ReactorRods.rodById(aId).map(ItemStack::new).orElse(null);
 	}
 
 	/** The live material leg ({@link GT6MaterialItems#get}) — null when the pair has no item. */
@@ -357,8 +356,12 @@ public final class GT6RecipesReactorRods {
 		return null;
 	}
 
-	/** Test seam: clears the poured flag so a fresh generation can re-pour (the Canner form). */
-	public static void resetForTest() {sLoaded = false;}
+	/** Test seam: clears the poured flag AND the captured tables so a fresh generation can re-pour (the Compressor form — the MT/OP statics are per-generation). */
+	public static void resetForTest() {
+		sLoaded = false;
+		sFillRows = null;
+		sCentrifugeRows = null;
+	}
 
 	private GT6RecipesReactorRods() {}
 }

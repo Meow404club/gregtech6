@@ -1,7 +1,6 @@
 package gregtech6.items;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -138,15 +137,29 @@ public final class GT6ReactorRods {
 	/** The self-contained registration container (the GT6LaserGas shape, ADR-P3-4). */
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "gt6");
 
-	/** Legacy meta id → the registered item (the rodSwapTarget dispatch + the recipe legs). */
-	public static final Map<Integer, RegistryObject<Item>> BY_ID = new java.util.LinkedHashMap<>();
-	static {
-		for (RodRow tRow : ROWS) BY_ID.put(tRow.id(), ITEMS.register(tRow.path(), () -> new GT6ReactorRodItem(tRow)));
-	}
+	/** The registered items, in ROWS order (the DR face — the tab walk). */
+	public static final List<RegistryObject<Item>> RODS = ROWS.stream()
+			.<RegistryObject<Item>>map(tRow -> ITEMS.register(tRow.path(), () -> new GT6ReactorRodItem(tRow))).toList();
 
 	/** Row lookup by legacy meta id. */
 	public static java.util.Optional<RodRow> rowOf(int aId) {
 		return ROWS.stream().filter(r -> r.id() == aId).findFirst();
+	}
+
+	/**
+	 * The legacy-id dispatch (the rodSwapTarget legs + the recipe legs): the registered
+	 * item of a row, resolved through the vanilla registry by path — empty when the id
+	 * has no row or the item is absent (the AIR-defaulted registry face). The vanilla
+	 * lookup (not the RegistryObject) so the SAME code path works offline and live.
+	 */
+	public static java.util.Optional<Item> rodById(int aId) {
+		return rowOf(aId).flatMap(tRow -> {
+			// fromNamespaceAndPath, not the two-arg ctor: private in 1.21.1, and Forge 1.20.1
+			// backported the same factory (the GTOvenOverlayModel.spriteOf javap note)
+			Item tItem = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
+					net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tRow.path()));
+			return tItem == null || tItem == net.minecraft.world.item.Items.AIR ? java.util.Optional.empty() : java.util.Optional.of(tItem);
+		});
 	}
 
 	/** FMLConstructModEvent = the first mod-bus lifecycle stage (the GT6LaserGas shape). */
@@ -165,7 +178,7 @@ public final class GT6ReactorRods {
 	@SubscribeEvent
 	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
 		if (aEvent.getTabKey().location().equals(gregtech6.registry.GTMachines.MACHINES_TAB.getId())) {
-			for (RodRow tRow : ROWS) aEvent.accept(new ItemStack(BY_ID.get(tRow.id()).get()));
+			for (RegistryObject<Item> tRod : RODS) aEvent.accept(new ItemStack(tRod.get()));
 		}
 	}
 
@@ -215,8 +228,7 @@ public final class GT6ReactorRods {
 		@Override
 		@Nullable
 		public ItemStack rodSwapTarget(int aTargetId) {
-			RegistryObject<Item> tTarget = BY_ID.get(aTargetId);
-			return tTarget == null ? null : new ItemStack(tTarget.get());
+			return GT6ReactorRods.rodById(aTargetId).map(ItemStack::new).orElse(null);
 		}
 
 		/** The breeder rod id this product breeds from (the reverse of NBT_VALUE), or 0. */
