@@ -283,7 +283,7 @@ public class TileEntitySmelteryOfflineTest {
 		tCrucible.mEnergy = 5000;
 		tCrucible.mCooldown = 42;
 		tCrucible.mMeltDown = true;
-		tCrucible.mInventory.setStackInSlot(0, new ItemStack(DUST_IRON, 3));
+		tCrucible.getInventory().setStackInSlot(0, new ItemStack(DUST_IRON, 3));
 		CompoundTag tNBT = new CompoundTag();
 		tCrucible.saveAdditional(tNBT);
 
@@ -299,7 +299,7 @@ public class TileEntitySmelteryOfflineTest {
 		assertEquals(2 * CS.U, tRestored.mContent.get(0).mAmount);
 		assertSame(MT.Au, tRestored.mContent.get(1).mMaterial);
 		assertEquals(CS.U9, tRestored.mContent.get(1).mAmount);
-		assertEquals(3, tRestored.mInventory.getStackInSlot(0).getCount(), "the feed slot rides gt.inv");
+		assertEquals(3, tRestored.getInventory().getStackInSlot(0).getCount(), "the feed slot rides gt.inv");
 	}
 
 	/** the load() list replace semantics — a stale in-memory pile never merges into the loaded one. */
@@ -315,6 +315,51 @@ public class TileEntitySmelteryOfflineTest {
 		assertEquals(1, tCrucible.mContent.size(), "load() cleared the stale pile first (:93)");
 		assertSame(MT.Cu, tCrucible.mContent.get(0).mMaterial);
 	}
+
+	// -------------------------------------------------------------------------
+	// the ITEM_HANDLER capability face (issue #20 sub-task A, r4-20a-smeltery-cap)
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The root's package-private capability seam, resolved reflectively — package-private
+	 * members do not inherit across packages (JLS 6.6.1/8.2), so a tools-package receiver
+	 * can never call it directly (the TestMachineBlockEntityNBTTest posture only works for
+	 * gregtech6.tileentity receivers); the ProbeBoot reflection walk is the offline form.
+	 */
+	//? if forge {
+	@SuppressWarnings("unchecked")
+	static net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandler> itemHandlerCap(TileEntitySmeltery aCrucible) throws Exception {
+		for (Class<?> tClass = aCrucible.getClass(); tClass != null; tClass = tClass.getSuperclass()) {
+			try {
+				Method tMethod = tClass.getDeclaredMethod("itemHandlerCapability");
+				tMethod.setAccessible(true);
+				return (net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandler>)tMethod.invoke(aCrucible);
+			} catch (NoSuchMethodException ignored) {}
+		}
+		throw new NoSuchMethodException("itemHandlerCapability");
+	}
+
+	/** issue #20: the root capability is live (it stayed LazyOptional.empty() while the feed-slot field shadowed the root's mInventory). */
+	@Test
+	public void itemHandlerCapabilityIsLiveOverTheFeedSlot() throws Exception {
+		TileEntitySmeltery tCrucible = makeSmeltery();
+		net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandler> tCap = itemHandlerCap(tCrucible);
+		assertTrue(tCap.isPresent(), "the ITEM_HANDLER capability must not be empty (issue #20)");
+		net.minecraftforge.items.IItemHandler tHandler = tCap.orElseThrow(IllegalStateException::new);
+		assertEquals(1, tHandler.getSlots(), "the single feed slot (upstream :682)");
+		assertSame(tCrucible.getInventory(), tHandler, "the capability wraps the handler the tick feeds through");
+	}
+
+	/** the hopper path (VanillaInventoryCodeHooks.insertHook): insertItem through the capability handle lands in the feed slot. */
+	@Test
+	public void insertThroughCapabilityFillsTheFeedSlot() throws Exception {
+		TileEntitySmeltery tCrucible = makeSmeltery();
+		net.minecraftforge.items.IItemHandler tHandler = itemHandlerCap(tCrucible).orElseThrow(IllegalStateException::new);
+		assertTrue(tHandler.insertItem(0, new ItemStack(Items.DIAMOND, 4), false).isEmpty(), "the insert is fully accepted (the filter is open)");
+		assertEquals(4, tCrucible.getInventory().getStackInSlot(0).getCount(), "the hopper push is visible in the feed slot");
+		assertSame(Items.DIAMOND, tCrucible.getInventory().getStackInSlot(0).getItem());
+	}
+	//?}
 
 	// -------------------------------------------------------------------------
 	// the registration rows (spec ⑥)

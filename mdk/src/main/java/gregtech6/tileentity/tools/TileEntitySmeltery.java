@@ -104,9 +104,6 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 	public int mCooldown = 100;
 	public boolean mMeltDown = false, mAcidProof = false;
 
-	/** Upstream :682 — the single feed slot (top face only, :684). */
-	public final GTItemStackHandler mInventory = new GTItemStackHandler(1, this::setChanged);
-
 	/**
 	 * The vanilla-ore bridge for the feed ladder (the OM.anydata counterpart for
 	 * un-oredicted vanilla ores; declared minimal set, the oredict universe rides
@@ -143,6 +140,16 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 	 */
 	public TileEntitySmeltery(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
 		super(true, aType != null ? aType : GT6Crucibles.CRUCIBLE_BE.get(), aPos, aState);
+		// Upstream :682 — the single feed slot (top face only, :684). Routed through
+		// setInventory (the GT6HopperBaseBlockEntity.java:136 form) so the root binds
+		// mItemHandlerCap — a plain field here would shadow TileEntityBase01Root.mInventory
+		// and leave the ITEM_HANDLER capability empty (hoppers/pipes push into nothing).
+		setInventory(new GTItemStackHandler(1, this::setChanged));
+	}
+
+	/** The feed-slot handler (the GT6HopperBaseBlockEntity accessor form — the capability wraps this same instance). */
+	public GTItemStackHandler getInventory() {
+		return mInventory;
 	}
 
 	/** BET factory for BlockEntityType.Builder.of — resolves the registry type at runtime (the GTBarrelBlockEntity form: the self-reference stays out of the registry initializer). */
