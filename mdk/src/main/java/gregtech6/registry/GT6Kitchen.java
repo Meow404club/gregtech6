@@ -49,9 +49,11 @@ import gregtech6.tileentity.tools.GT6MixingBowlBlockEntity;
  *     datagen).</li>
  * </ul>
  * The wood row rides {@code MT.WoodTreated} as the melt-door representative — the
- * verbatim -100 K door reads ONLY {@code mMeltingPoint}, and the port's wood-family
- * heat传导 leaves {@code ANY.Wood} at mp 400 (water, 300 K, would trip 300 &gt;= 400-100;
- * the upstream ANY.Wood default 1000 passes) — the class-doc deviation on the row below.
+ * uniform -100 K door reads ONLY {@code mMeltingPoint}, and {@code ANY.Wood} sits at
+ * mp 400 upstream and in the port alike (upstream MT.java:1244 {@code .heat(400, 500)}
+ * stolen in by ANY.java:141; water, 300 K, would trip 300 &gt;= 400-100 — upstream's wood
+ * pot admits water through its subclass {@code > mp} door instead, BathingPotWood.java:46)
+ * — the row deviation below.
  *
  * <p>GUI: none — the upstream tooltip is {@code LH.NO_GUI_CLICK_TO_INTERACT} and the
  * wave4 GUI ruling binds menu-less carriers (zero new MenuType). Rendering: the #7
@@ -106,15 +108,19 @@ public final class GT6Kitchen {
 	/**
 	 * The wood pot — RM.Bath, 4000 L (upstream :2173; flammability 100 recorded on the
 	 * carrier javadoc). DECLARED CARRIER DEVIATION: the upstream row's NBT_MATERIAL is
-	 * {@code ANY.Wood}, whose UPSTREAM default mMeltingPoint is the plain-material 1000 —
-	 * the -100 K melt-door read passes water (300 &lt; 900). In the PORT universe the
-	 * {@code ANY.Wood} representative carries the wood() factory heat传导 (mp 400, the
-	 * MT.java:809 {@code .heat(400, 500)} family row — live-proven: the RCON fill REJECTS
-	 * water through 300 &gt;= 400-100), and EVERY {@code wood()} family member shares that
-	 * 400. {@code MT.WoodTreated} (:2084, mp 500) is the only wood-family carrier where
-	 * the verbatim door admits water (300 &lt; 500-100) — so it rides as the melt-door
-	 * representative (the door reads ONLY mMeltingPoint; the pot is built from untreated
-	 * planks upstream, this is the melt-door equivalence, not a recipe/material claim).
+	 * {@code ANY.Wood}, whose mMeltingPoint is 400 BOTH upstream and in the port (upstream
+	 * ANY.java:141 steals MT.Wood's {@code .heat(400, 500)}, upstream MT.java:1244 — the
+	 * former "plain-material 1000" claim here was wrong, corrected by debt-sapphire-clay-flip).
+	 * Upstream still fills water because the wood pot overrides the fill door
+	 * (MultiTileEntityBathingPotWood.java:46 {@code temp > mp} replacing the base :304
+	 * {@code >= mp-100} on the same {@code getFluidTankFillable2} seam) — an override the
+	 * port does not carry: the uniform base-form -100 K door (GT6ManualKitchenBlockEntity
+	 * :238) rejects water right at the ANY.Wood boundary (300 &gt;= 400-100; live-proven by
+	 * the RCON fill). {@code MT.WoodTreated} (port MT.java:2099, mp 500 — the only
+	 * wood-family member above 400) restores the upstream observable: the door admits
+	 * water (300 &lt; 500-100). The door reads ONLY mMeltingPoint; the pot is built from
+	 * untreated planks upstream, this is the melt-door equivalence, not a recipe/material
+	 * claim.
 	 */
 	public static final RegistryObject<GTKitchenBlock> BATHING_POT_WOOD = BLOCKS.register("bathing_pot_wood",
 			() -> new GTKitchenBlock(4000, () -> MT.WoodTreated, GTKitchenBlock.SHAPE_TUB,
