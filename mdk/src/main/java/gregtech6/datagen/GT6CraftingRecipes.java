@@ -412,6 +412,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task debt-emitter-sensor-generators — the 20 live self-crafting rows of the three
 		// technological component families (the pour map in the band javadoc below)
 		compactComponentRows(aConsumer);
+		// task debt-dungeon-keys-recipes — the ten dungeon-key rows (MultiItemRandomTools.java:589-598)
+		for (PartFamilyRecipeRow tRow : keyRecipeBuilders()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 	}
 	//?} else {
 	/*@Override
@@ -602,6 +606,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task debt-emitter-sensor-generators — the 20 live self-crafting rows of the three
 		// technological component families (the pour map in the band javadoc below)
 		compactComponentRows(aOutput);
+		// task debt-dungeon-keys-recipes — the ten dungeon-key rows (MultiItemRandomTools.java:589-598)
+		for (PartFamilyRecipeRow tRow : keyRecipeBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
 	}
 	*///?}
 
@@ -4433,6 +4441,58 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					new ResourceLocation(GT6DataGenerators.MOD_ID, tWallPath)));
 		}
 		return rRows;
+	}
+
+	// -----------------------------------------------------------------------
+	// The dungeon-key band (task debt-dungeon-keys-recipes — the P38
+	// dungeon-keys card's explicit defer, closed per the r-dungeon-key-trace
+	// research): the ten material keys of MultiItemRandomTools.java:589-598,
+	// each CR.shaped(IL.Key_X.get(3), CR.DEF_NCC, "fPx", 'P', OP.plate.dat(mat))
+	// — 1 plate → 3 keys, the single-row grid [file | plate | wire cutter].
+	// Tool letters: 'f' = the CR.java:200 craftingToolFile letter →
+	// #gt6:tools/file, 'x' = the CR.java:214 wirecutter letter →
+	// #gt6:tools/wire_cutter (the fine-wire band translation). The 'P' column
+	// rides the per-material plate family tag — the oredict input face's
+	// modern carrier; the three upstream multi faces (ANY.Iron/ANY.Cu/
+	// ANY.Plastic) pin to the canonical member snake (plates/iron — the
+	// GT6ElectricTransformers ANY-face convention, NOT the whole
+	// Iron-Or-Steel union). CR.DEF_NCC's NO_COLLISION_CHECK is the 1.7.10
+	// shaped face — the vanilla datagen form carries no collision flag, the
+	// natural equivalent (the research verdict). Ids on the output item path
+	// (the usb_drive_&lt;tier&gt; convention).
+	// -----------------------------------------------------------------------
+
+	/**
+	 * The ten key rows — MultiItemRandomTools.java:589-598 registration order
+	 * (iron/gold/copper/tin/bronze/brass/silver/platinum/lead/plastic, ids 30000-30009),
+	 * one {@code "fPx"} CR.shaped each onto the {@link gregtech6.items.GT6Keys} family.
+	 */
+	private java.util.List<PartFamilyRecipeRow> keyRecipeBuilders() {
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		keyRow(rRows, gregtech6.items.GT6Keys.KEY_IRON.get(), "iron");         // :589 ANY.Iron    (30000)
+		keyRow(rRows, gregtech6.items.GT6Keys.KEY_GOLD.get(), "gold");         // :590 MT.Au       (30001)
+		keyRow(rRows, gregtech6.items.GT6Keys.KEY_COPPER.get(), "copper");     // :591 ANY.Cu      (30002)
+		keyRow(rRows, gregtech6.items.GT6Keys.KEY_TIN.get(), "tin");           // :592 MT.Sn       (30003)
+		keyRow(rRows, gregtech6.items.GT6Keys.KEY_BRONZE.get(), "bronze");     // :593 MT.Bronze   (30004)
+		keyRow(rRows, gregtech6.items.GT6Keys.KEY_BRASS.get(), "brass");       // :594 MT.Brass    (30005)
+		keyRow(rRows, gregtech6.items.GT6Keys.KEY_SILVER.get(), "silver");     // :595 MT.Ag       (30006)
+		keyRow(rRows, gregtech6.items.GT6Keys.KEY_PLATINUM.get(), "platinum"); // :596 MT.Pt       (30007)
+		keyRow(rRows, gregtech6.items.GT6Keys.KEY_LEAD.get(), "lead");         // :597 MT.Pb       (30008)
+		keyRow(rRows, gregtech6.items.GT6Keys.KEY_PLASTIC.get(), "plastic");   // :598 ANY.Plastic (30009)
+		return rRows;
+	}
+
+	/** One CR.shaped(Key.get(3), CR.DEF_NCC, "fPx", 'P', OP.plate.dat(mat)) row — the id on the output item path. */
+	private void keyRow(java.util.List<PartFamilyRecipeRow> rRows, Item aKey, String aPlateSnake) {
+		TagKey<Item> tPlate = GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, aPlateSnake);
+		String tPath = "key_" + aPlateSnake; // the precomputed arg — the stonecutter two-arg-ctor shift skips parenthesized args
+		rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, aKey, 3)
+				.pattern("fPx")
+				.define('f', GT6ItemTags.TOOLS_FILE)
+				.define('P', tPlate)
+				.define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
+				.unlockedBy("has_plate", has(tPlate)),
+				new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
 	}
 
 }
