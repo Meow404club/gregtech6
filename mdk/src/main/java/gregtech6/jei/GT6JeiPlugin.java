@@ -1,6 +1,5 @@
 package gregtech6.jei;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import mezz.jei.api.IModPlugin;
@@ -62,9 +61,12 @@ public class GT6JeiPlugin implements IModPlugin {
 
 	/**
 	 * The coke oven structure info-page lang key — the single reconciliation seam between this
-	 * plugin (consumer) and the GT6EnUs datagen provider (producer).
+	 * plugin (consumer) and the GT6EnUs datagen provider (producer). Since task
+	 * debt-emi-tier-b the literal home is the viewer-neutral {@link GT6RecipeViewerText}
+	 * (shared with the EMI plugin's info page); this forwarding constant stays as the
+	 * JEI-side face the offline test pins (compile-time inlined, zero runtime indirection).
 	 */
-	public static final String INFO_KEY_COKE_OVEN = "gt6.jei.info.multiblock_coke_oven";
+	public static final String INFO_KEY_COKE_OVEN = GT6RecipeViewerText.INFO_KEY_COKE_OVEN;
 
 	/** Stable plugin uid — one constant instance, the offline test pins it against drift. */
 	public static final ResourceLocation PLUGIN_UID = new ResourceLocation("gt6", PLUGIN_UID_PATH);
@@ -77,7 +79,7 @@ public class GT6JeiPlugin implements IModPlugin {
 	@Override
 	public void registerRecipes(IRecipeRegistration registration) {
 		registration.addIngredientInfo(GTMultiBlocks.COKE_OVEN_ITEM.get(),
-				Component.translatable(INFO_KEY_COKE_OVEN));
+				GT6RecipeViewerText.cokeOvenInfo());
 	}
 
 	/**

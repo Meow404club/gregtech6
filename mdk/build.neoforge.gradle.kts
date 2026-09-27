@@ -54,6 +54,12 @@ repositories {
         name = "latvian"
         url = uri("https://maven.latvian.dev/releases")
     }
+    // EMI（task debt-emi-tier-b）：terraformers maven（dev.emi 组唯一正典渠道）；
+    // 先例 third-party/modularui/build.neoforge.gradle.kts:36。
+    maven {
+        name = "terraformers"
+        url = uri("https://maven.terraformersmc.com/releases/")
+    }
 }
 
 // 1.21.1 节点 = Java 21（本机 java-21-openjdk；ADR-P15-2：gregapi 钉 17，17 产物可被 21 工具链直接消费）
@@ -203,6 +209,16 @@ dependencies {
     compileOnly("mezz.jei:jei-${mcVer}-common-api:${jeiVer}")
     compileOnly("mezz.jei:jei-${mcVer}-neoforge-api:${jeiVer}")
     runtimeOnly("mezz.jei:jei-${mcVer}-neoforge:${jeiVer}")
+    // EMI（task debt-emi-tier-b，tier-b 裁定 decisions.2026-09-26-debt-emi）：compile-only 零传染
+    //——不进 run 类路径、不进 neoforge.mods.toml（@EmiEntrypoint 注解扫描发现）。本节点无
+    // mod* 重映射配置（NeoForge 1.20.5+ 发行即 official 映射，JEI 段同论证），plain compileOnly
+    // 即编译面；先例 third-party/modularui/build.neoforge.gradle.kts:111。版本钉 1.1.24 不浮动
+    //（铁律；与 forge 腿 emi-forge 1.1.24+1.20.1 同线）。
+    compileOnly("dev.emi:emi-neoforge:1.1.24+1.21.1")
+    // EMI guard 测试的运行面补件（task debt-emi-tier-b）：testRuntimeOnly 专属 test JVM，
+    // runs/发布 jar 零触碰——与 JEI impl runtimeOnly 的区别即零传染红线（emi 不进 run 类路径，
+    // 测试面单独补）。mojmap 构件直接可用，无需重映射（forge 腿的对照处理见其脚本注释）。
+    "testRuntimeOnly"("dev.emi:emi-neoforge:1.1.24+1.21.1")
     // Jade（WAILA 后继，task p21-jade-compat）：与本节点 JEI 段同构——NeoForge 1.20.5+ 发行 mod
     // 本就以 official（mojmap）命名运行、无重映射步，compileOnly（编译面）+ runtimeOnly（run
     // 类路径，专用服务端冒烟依赖它）。版本钉值 mdk/versions/1.21.1-neoforge/gradle.properties

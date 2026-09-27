@@ -61,6 +61,12 @@ repositories {
         name = "architectury"
         url = uri("https://maven.architectury.dev")
     }
+    // EMI（task debt-emi-tier-b）：terraformers maven（dev.emi 组唯一正典渠道，实测 302 重定向
+    // repo.sleeping.town——gradle 自动跟随）；先例 third-party/modularui/build.forge.gradle.kts:38。
+    maven {
+        name = "terraformers"
+        url = uri("https://maven.terraformersmc.com/releases/")
+    }
 }
 
 java {
@@ -166,6 +172,11 @@ dependencies {
     "modCompileOnly"("mezz.jei:jei-${mcVer}-common-api:${jeiVer}")
     "modCompileOnly"("mezz.jei:jei-${mcVer}-forge-api:${jeiVer}")
     "modRuntimeOnly"("mezz.jei:jei-${mcVer}-forge:${jeiVer}")
+    // EMI（task debt-emi-tier-b，tier-b 裁定 decisions.2026-09-26-debt-emi）：compile-only 零传染——
+    // 不进 run 类路径、不进 mods.toml（@EmiEntrypoint 注解扫描发现，同 vendored ModularUI 先例
+    // build.forge.gradle.kts:125 modCompileOnly("dev.emi:emi-forge")）。版本钉 1.1.24 不浮动
+    //（铁律；Modrinth/GTCEu/vendored modularui 三源一致，r-emi-native id925）。
+    "modCompileOnly"("dev.emi:emi-forge:1.1.24+1.20.1")
     // Jade（WAILA 后继，task p21-jade-compat）：与 JEI mod* 同机制——MDG legacyforge mod*
     // 配置自动 SRG→official 重映射且非传递（LEGACY.md:68-92），同件挂 compileOnly（编译面）
     // + runtimeOnly（run 类路径，专用服务端冒烟依赖它）。版本钉值 root gradle.properties
@@ -227,6 +238,19 @@ configurations.named("testCompileClasspath") {
 configurations.named("testRuntimeClasspath") {
     extendsFrom(configurations.named("modDevRuntimeDependencies").get())
 }
+
+// EMI guard 测试运行面的重映射喂件（task debt-emi-tier-b）：emi-forge 官方产物是 SRG 命名
+//（EmiIngredient.of 直引 Ingredient.m_43947_，javap 实证），official 映射的测试 JVM 裸用即
+// NoSuchMethodError。MDG legacyforge 的 mod* 重映射管线在 main.compileClasspath 解析产物里已给
+// 出 official 化 emi jar（实证：compileClasspath → transforms/.../emi-forge-*.jar，内含
+// Ingredient.isEmpty 官方名），此处把该解析结果按文件名过滤原样追加进 test 运行类路径——
+// 骑插件自家管线，不引内部 API，test 专属（runs/发布 jar 的类路径分毫不改，零传染红线只
+// 约束 mod 的 runtimeClasspath，test JVM 不在此列）。
+sourceSets["test"].runtimeClasspath += files().from(
+    sourceSets["main"].compileClasspath.elements.map { tElements ->
+        tElements.filter { tPath -> tPath.asFile.name.startsWith("emi-forge-") }
+    }
+)
 
 // ---- Test sourceSet 类路径补全（p3-fullprefix-creativetab：注册判定/first-wins/判据收敛断言）----
 // 测试 JVM 需要加载 gregapi（root jar，经 main 类路径）与 main 类引用的 MC 类型
