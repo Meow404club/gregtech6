@@ -13,6 +13,12 @@
  * <p>口径勘误 background: the research card's "plateGem=11 / gem tiers=7 sapphires"
  * misread the ForceTest quartet pins as the full set — the p8 census "PlateGem 203"
  * and the runData walk both give the ≈205/109 faces; this test pins THOSE.
+ *
+ * <p>task p37-craftfrom-stick extension (the same family law): the stick/stickLong
+ * rows (Loader_OreProcessing.java:156-163, 1586 rows = 109x3 stickLong tiers +
+ * 731 stickLong split + 201 regular gem + 109x3 stick tiers), the universe pins
+ * against the live conditioned prefix faces, the :156-163 amount pins, and the
+ * three-grid identity faces (["sf"," X"] / ["s "," X"] / ["s ","fX"]).
  */
 package gregtech6.datagen;
 
@@ -206,5 +212,114 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
             if (tMaterial != null && tMaterial.mID >= 0 && tMaterial.mNameInternal.equals(aName)) return tMaterial;
         }
         throw new IllegalArgumentException("no material: " + aName);
+    }
+
+    // ------------------------------------------------------------------
+    // task p37-craftfrom-stick — the stick/stickLong family
+    // (Loader_OreProcessing.java:156-163, the coordinator-approved boundary:
+    // BOTH stick* output prefixes, the plategem companion shape)
+    // ------------------------------------------------------------------
+
+    private static Set<String> stickMaterialsOf(String aFormKey) {
+        Set<String> rNames = new HashSet<>();
+        for (GT6CraftingRecipes.StickCraftFromMaterialRow tRow : GT6CraftingRecipes.stickCraftFromMaterialRows()) {
+            if (tRow.aForm().aKey().equals(aFormKey)) rNames.add(tRow.aMaterial().mNameInternal);
+        }
+        return rNames;
+    }
+
+    /** Row-count pin (the measured item truth, the ruling-A caliber): 109x3 + 731 + 201 + 109x3 = 1586. */
+    @Test
+    public void theStickRowCountIsTheMeasuredItemTruth() {
+        assertEquals(1586, GT6CraftingRecipes.stickCraftFromMaterialRows().size(),
+                "3 stickLong tiers x 109 + the stickLong split 731 + regular 201 + 3 stick tiers x 109");
+        assertEquals(109, stickMaterialsOf("gem2stick_long/flawless").size(), "the :156 tier (the flawless face)");
+        assertEquals(109, stickMaterialsOf("gem2stick_long/exquisite").size(), "the :157 tier");
+        assertEquals(109, stickMaterialsOf("gem2stick_long/legendary").size(), "the :158 tier");
+        assertEquals(731, stickMaterialsOf("stick_long2stick").size(), "the :159 split (the stick ∩ stickLong faces)");
+        assertEquals(201, stickMaterialsOf("gem2stick/regular").size(), "the :160 regular tier (the whole conditioned gem face)");
+        assertEquals(109, stickMaterialsOf("gem2stick/flawless").size(), "the :161 tier");
+        assertEquals(109, stickMaterialsOf("gem2stick/exquisite").size(), "the :162 tier");
+        assertEquals(109, stickMaterialsOf("gem2stick/legendary").size(), "the :163 tier");
+    }
+
+    /** Universe SET pin: every form's rows == the live CONDITIONED output face ∩ the input face. */
+    @Test
+    public void theStickUniversesAreTheLivePrefixFaces() {
+        for (GT6CraftingRecipes.StickCraftFromForm tForm : GT6CraftingRecipes.stickCraftFromForms()) {
+            Set<String> tExpected = new HashSet<>(conditionedFace(tForm.aOutput()));
+            tExpected.retainAll(conditionedFace(tForm.aInput()));
+            assertEquals(tExpected, stickMaterialsOf(tForm.aKey()),
+                    "the universe == the conditioned " + tForm.aOutput().mNameInternal + " ∩ " + tForm.aInput().mNameInternal + " faces");
+        }
+    }
+
+    /** Amount pin: the :156-163 output amounts verbatim, one row per form-material. */
+    @Test
+    public void theStickAmountsAreTheUpstreamVerbatim() {
+        for (GT6CraftingRecipes.StickCraftFromMaterialRow tRow : GT6CraftingRecipes.stickCraftFromMaterialRows()) {
+            assertEquals(switch (tRow.aForm().aKey()) {
+                case "gem2stick_long/flawless" -> 1; // :156
+                case "gem2stick_long/exquisite" -> 2; // :157
+                case "gem2stick_long/legendary" -> 4; // :158
+                case "stick_long2stick" -> 2; // :159
+                case "gem2stick/regular" -> 1; // :160
+                case "gem2stick/flawless" -> 2; // :161
+                case "gem2stick/exquisite" -> 4; // :162
+                case "gem2stick/legendary" -> 8; // :163
+                default -> throw new IllegalArgumentException("unknown form: " + tRow.aForm().aKey());
+            }, tRow.aForm().aCount(), "the output amount: " + tRow.aForm().aKey());
+        }
+    }
+
+    /** The row id — the craftFromRowId form over the gt6 namespace (the shared id law). */
+    @Test
+    public void theStickRowIdIsTheFormKeyPlusMaterialLeaf() {
+        assertEquals("gt6:gem2stick/regular/sapphire", GT6CraftingRecipes.craftFromRowId("gem2stick/regular", "sapphire").toString());
+        assertEquals("gt6:stick_long2stick/diamond", GT6CraftingRecipes.craftFromRowId("stick_long2stick", "diamond").toString());
+    }
+
+    private static void assertStickGrid(JsonObject aRow, String aTop, String aBottom, String aExpectedResultItem, int aExpectedCount,
+            String aExpectedInputItem, boolean aExpectFile) {
+        assertEquals(2, aRow.getAsJsonArray("pattern").size(), "the 2x2 frame");
+        assertEquals(aTop, aRow.getAsJsonArray("pattern").get(0).getAsString(), "the top row");
+        assertEquals(aBottom, aRow.getAsJsonArray("pattern").get(1).getAsString(), "the bottom row");
+        assertTrue(aRow.getAsJsonObject("key").get("s").getAsJsonObject().get("tag").getAsString().endsWith("tools/saw"),
+                "'s' = the saw tool tag");
+        if (aExpectFile) {
+            assertTrue(aRow.getAsJsonObject("key").get("f").getAsJsonObject().get("tag").getAsString().endsWith("tools/file"),
+                    "'f' = the file tool tag (upstream CR.java:231)");
+        } else {
+            assertTrue(aRow.getAsJsonObject("key").get("f") == null, "no phantom file key on the saw-only frame (the shape-driven define)");
+        }
+        assertEquals(aExpectedInputItem, aRow.getAsJsonObject("key").get("X").getAsJsonObject().get("item").getAsString(),
+                "'X' = the same-material input item");
+        assertEquals(aExpectedResultItem, aRow.getAsJsonObject("result").get("item").getAsString(), "the result item");
+        int tCount = aRow.getAsJsonObject("result").has("count") ? aRow.getAsJsonObject("result").get("count").getAsInt() : 1;
+        assertEquals(aExpectedCount, tCount, "the result count (the vanilla count=1 key omission)");
+    }
+
+    /** Identity face: the :160 regular-gem row for Sapphire (["s ","fX"], the file arm). */
+    @Test
+    public void theSapphireRegularGemStickRowCarriesTheUpstreamGrid() throws Exception {
+        assertStickGrid(generated("gem2stick/regular/sapphire"), "s ", "fX",
+                "gt6:" + GTMaterialItems.itemIdOf(OP.stick, material("Sapphire")), 1,
+                "gt6:" + GTMaterialItems.itemIdOf(OP.gem, material("Sapphire")), true);
+    }
+
+    /** Identity face: the :156 flawless tier row for Diamond (["sf"," X"], saw+file top row → stickLong). */
+    @Test
+    public void theDiamondFlawlessStickLongRowCarriesTheUpstreamGrid() throws Exception {
+        assertStickGrid(generated("gem2stick_long/flawless/diamond"), "sf", " X",
+                "gt6:" + GTMaterialItems.itemIdOf(OP.stickLong, material("Diamond")), 1,
+                "gt6:" + GTMaterialItems.itemIdOf(OP.gemFlawless, material("Diamond")), true);
+    }
+
+    /** Identity face: the :159 stickLong split for Diamond (["s "," X"], the saw-only frame). */
+    @Test
+    public void theDiamondStickLongSplitRowCarriesTheUpstreamGrid() throws Exception {
+        assertStickGrid(generated("stick_long2stick/diamond"), "s ", " X",
+                "gt6:" + GTMaterialItems.itemIdOf(OP.stick, material("Diamond")), 2,
+                "gt6:" + GTMaterialItems.itemIdOf(OP.stickLong, material("Diamond")), false);
     }
 }

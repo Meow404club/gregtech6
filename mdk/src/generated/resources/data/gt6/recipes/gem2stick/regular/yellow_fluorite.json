@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:gem_yellow_fluorite"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "s ",
+    "fX"
+  ],
+  "result": {
+    "item": "gt6:stick_yellow_fluorite"
+  },
+  "show_notification": true
+}

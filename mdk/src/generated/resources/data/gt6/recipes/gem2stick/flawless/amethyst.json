@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:gem_flawless_amethyst"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "s ",
+    "fX"
+  ],
+  "result": {
+    "count": 2,
+    "item": "gt6:stick_amethyst"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:gem_flawless_brown_aventurine"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "sf",
+    " X"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:stick_long_brown_aventurine"
+  }
+}

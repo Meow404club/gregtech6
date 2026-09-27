@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:gem_flawless_green_diamond"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "s ",
+    "fX"
+  ],
+  "result": {
+    "count": 2,
+    "id": "gt6:stick_green_diamond"
+  }
+}

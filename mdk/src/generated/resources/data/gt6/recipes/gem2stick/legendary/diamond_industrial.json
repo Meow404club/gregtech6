@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:gem_legendary_diamond_industrial"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "s ",
+    "fX"
+  ],
+  "result": {
+    "count": 8,
+    "item": "gt6:stick_diamond_industrial"
+  },
+  "show_notification": true
+}
