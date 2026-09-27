@@ -626,5 +626,182 @@ class TestCircuitProgramDialectNormalizer(unittest.TestCase):
             self.assertIn("RESULT: OK", out)
 
 
+# ── ops-rundata-leg-canonical：腿方言族审计 + 工作树污染分类 ──────────────
+
+
+def _band_loot_json(leg: str, item: str = "gt6:asp") -> bytes:
+    """方言带样例（census items 数组 vs 裸串族缩比，170 文件 loot 表同形）：
+    forge(1.20.1) predicate.items=数组；neo(1.21.1) 裸串。同卡改内容时 item 参数
+    三处同步改——数组/裸串形差由既有 _norm_items_wrap 归一（主判定照旧过）。"""
+    items = ["gt6:bronze_pickaxe"] if leg == "forge" else "gt6:bronze_pickaxe"
+    return _gson({"pools": [{"entries": [{"type": "minecraft:item", "name": item}],
+                             "conditions": [{"condition": "minecraft:match_tool",
+                                             "predicate": {"items": items}}]}]})
+
+
+class TestLegDialectAudit(unittest.TestCase):
+    """ops-rundata-leg-canonical：约定正典化「单数带=neo 腿产物」的工具层固化。
+
+    方言族清单+归属腿审计行恒打印；交叉腿 runData 污染（forge 形字节覆盖 neo 带）
+    由 LEG-REWRITE 工作树分类捕获——主判定（复数带 vs node 折叠对账）因 _fold
+    同键阴影对污染全盲，回归钉见 test_pollution_overwrite_*。
+    """
+
+    @staticmethod
+    def _git(cwd: Path, *args: str) -> None:
+        subprocess.run(["git", "-C", str(cwd), *args],
+                       check=True, capture_output=True, text=True, timeout=60)
+
+    def _run_main(self, canon: Path, node: Path) -> tuple[int, str]:
+        argv = sys.argv
+        buf = io.StringIO()
+        try:
+            sys.argv = ["datagen_tree_check.py", "--canonical", str(canon),
+                        "--node-output", str(node)]
+            with contextlib.redirect_stdout(buf):
+                rc = mod.main()
+        finally:
+            sys.argv = argv
+        return rc, buf.getvalue()
+
+    def _leg_fixture(self, root: Path) -> tuple[Path, Path, Path]:
+        """健康基线：canonical 双带（复数=forge 形、单数=neo 形）+ node 单数带，
+        真 git 仓库 + node 账本时戳 > HEAD（陈旧守卫放行）。"""
+        repo = root / "repo"
+        canon = repo / "tree"
+        node = root / "node"
+        (canon / "data/gt6/loot_tables/blocks").mkdir(parents=True)
+        (canon / "data/gt6/loot_table/blocks").mkdir(parents=True)
+        (canon / "data/gt6/loot_tables/blocks/x.json").write_bytes(
+            _band_loot_json("forge"))
+        (canon / "data/gt6/loot_table/blocks/x.json").write_bytes(
+            _band_loot_json("neo"))
+        (node / "data/gt6/loot_table/blocks").mkdir(parents=True)
+        (node / "data/gt6/loot_table/blocks/x.json").write_bytes(
+            _band_loot_json("neo"))
+        self._git(root, "init", "-q", "repo")
+        self._git(repo, "-c", "user.email=t@t", "-c", "user.name=t", "add", "-A")
+        self._git(repo, "-c", "user.email=t@t", "-c", "user.name=t",
+                  "commit", "-q", "-m", "healthy dual-band baseline")
+        (node / ".cache").mkdir()
+        stamp = time.strftime("%Y-%m-%dT%H:%M:%S",
+                              time.localtime(time.time() + 30))
+        (node / ".cache" / "led").write_text(f"// 1.21.1\t{stamp}.0\tProvider P\n")
+        return repo, canon, node
+
+    def test_remap_detects_singular_dialect_bands_only(self):
+        # 方言族=canonical 单数带：顶层带 + tags 深带
+        self.assertEqual(mod._leg_dialect_remap(
+            PurePosixPath("data/gt6/loot_table/blocks/x.json")),
+            ("loot_table", "loot_tables"))
+        self.assertEqual(mod._leg_dialect_remap(
+            PurePosixPath("data/gt6/recipe/axe/abyssalnite.json")),
+            ("recipe", "recipes"))
+        self.assertEqual(mod._leg_dialect_remap(
+            PurePosixPath("data/gt6/tags/item/tools/file.json")),
+            ("tags/item", "tags/items"))
+        self.assertEqual(mod._leg_dialect_remap(
+            PurePosixPath("data/minecraft/tags/block/mineable/axe.json")),
+            ("tags/block", "tags/blocks"))
+        # 非方言族：复数带本体 / assets 段（对称重写无阴影）/ c 命名空间（P27 声明带）
+        self.assertIsNone(mod._leg_dialect_remap(
+            PurePosixPath("data/gt6/loot_tables/blocks/x.json")))
+        self.assertIsNone(mod._leg_dialect_remap(
+            PurePosixPath("assets/gt6/models/item/asp.json")))
+        self.assertIsNone(mod._leg_dialect_remap(
+            PurePosixPath("data/c/tags/item/x.json")))
+        self.assertIsNone(mod._leg_dialect_remap(
+            PurePosixPath("data/gt6/tags/items/x.json")))
+
+    def test_audit_lines_and_git_escape_visible_without_git(self):
+        # 无 git 环境：审计行照打印，工作树分类可见退场（SKIPPED，不哑），主判定零扰动
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            canon, node = root / "canonical", root / "node"
+            (canon / "data/gt6/loot_tables/blocks").mkdir(parents=True)
+            (canon / "data/gt6/loot_table/blocks").mkdir(parents=True)
+            (canon / "data/gt6/loot_tables/blocks/x.json").write_bytes(
+                _band_loot_json("forge"))
+            (canon / "data/gt6/loot_table/blocks/x.json").write_bytes(
+                _band_loot_json("neo"))
+            (node / "data/gt6/loot_table/blocks").mkdir(parents=True)
+            (node / "data/gt6/loot_table/blocks/x.json").write_bytes(
+                _band_loot_json("neo"))
+
+            rc, out = self._run_main(canon, node)
+            self.assertEqual(rc, 0, msg=out)
+            self.assertIn("leg-dialect: convention 单数带 = neo 腿产物", out)
+            self.assertIn("leg-dialect band: data/*/loot_table (→loot_tables)"
+                          "  canonical 1 files = NEO-leg band, 复数孪生同在 1", out)
+            self.assertIn("LEG-REWRITE AUDIT SKIPPED", out)
+            # 主判定语义回归零变化：复数带 vs node 单数带照旧走 items 归一
+            self.assertIn("NORMALIZED [items-str→array] data/gt6/loot_tables/"
+                          "blocks/x.json", out)
+            self.assertIn("RESULT: OK", out)
+
+    def test_pollution_overwrite_fails_while_main_check_stays_blind(self):
+        # 本卡论题回归钉：forge 形字节覆盖 neo 带（P31/P32 裸拷贝签名）——
+        # 主判定全绿（canonical 单数带被 _fold 阴影），LEG-REWRITE 审计 FAIL 并给
+        # restore remedy
+        with tempfile.TemporaryDirectory() as td:
+            repo, canon, node = self._leg_fixture(Path(td))
+            # 交叉腿 runData 污染：单数带被复数孪生字节覆盖（pre-p33 镜像裸拷贝形）
+            (canon / "data/gt6/loot_table/blocks/x.json").write_bytes(
+                _band_loot_json("forge"))
+
+            rc, out = self._run_main(canon, node)
+            self.assertEqual(rc, 1, msg=out)
+            self.assertIn("LEG-DIALECT OVERWRITE [loot_table→loot_tables] "
+                          "data/gt6/loot_table/blocks/x.json", out)
+            self.assertIn("remedy: git restore --source=HEAD -- ", out)
+            self.assertIn("leg-dialect overwrite:1", out)
+            self.assertIn("git restore 非本卡生成物", out)
+            # 主判定对此不可见（本卡收口的洞）：无 DIFF、归一照旧成立且计入同一报告
+            self.assertNotIn("DIFF [", out)
+            self.assertIn("NORMALIZED [items-str→array]", out)
+
+    def test_legit_card_change_reports_drift_without_fail(self):
+        # 合法变更不误伤：卡自有改单数带（孪生同步在改）+ 新增方言无关文件（?? 形）
+        # → DRIFT 仅报告（人审裁决），不 FAIL；主判定照旧绿
+        with tempfile.TemporaryDirectory() as td:
+            repo, canon, node = self._leg_fixture(Path(td))
+            (canon / "data/gt6/loot_tables/blocks/x.json").write_bytes(
+                _band_loot_json("forge", "gt6:birch"))
+            (canon / "data/gt6/loot_table/blocks/x.json").write_bytes(
+                _band_loot_json("neo", "gt6:birch"))
+            (node / "data/gt6/loot_table/blocks/x.json").write_bytes(
+                _band_loot_json("neo", "gt6:birch"))
+            # 新增方言无关文件（双腿形字节相同）：单数+复数+node 三处同增（?? 形）
+            for d in ("data/gt6/loot_tables/blocks", "data/gt6/loot_table/blocks"):
+                (canon / d / "plain.json").write_bytes(_gson({"rolls": 1}))
+            (node / "data/gt6/loot_table/blocks/plain.json").write_bytes(
+                _gson({"rolls": 1}))
+
+            rc, out = self._run_main(canon, node)
+            self.assertEqual(rc, 0, msg=out)
+            self.assertIn("LEG-DIALECT DRIFT [loot_table→loot_tables] "
+                          "data/gt6/loot_table/blocks/x.json (M)", out)
+            self.assertIn("data/gt6/loot_table/blocks/plain.json (??)", out)
+            self.assertNotIn("LEG-DIALECT OVERWRITE", out)
+            self.assertIn("RESULT: OK", out)
+
+    def test_clean_worktree_audits_clean(self):
+        # 干净工作树：clean 行 + 非方言带变更只计数不入分类
+        with tempfile.TemporaryDirectory() as td:
+            repo, canon, node = self._leg_fixture(Path(td))
+            # 非方言带（复数带=forge 腿自有带）变更：只进计数尾巴，不产生 OVERWRITE/DRIFT
+            (canon / "data/gt6/loot_tables/blocks/x.json").write_bytes(
+                _band_loot_json("forge", "gt6:birch"))
+            (node / "data/gt6/loot_table/blocks/x.json").write_bytes(
+                _band_loot_json("neo", "gt6:birch"))
+
+            rc, out = self._run_main(canon, node)
+            self.assertEqual(rc, 0, msg=out)
+            self.assertIn("LEG-REWRITE AUDIT vs HEAD: clean — 0 个单数带变更"
+                          " + 1 个非方言带变更", out)
+            self.assertNotIn("LEG-DIALECT", out)
+            self.assertIn("RESULT: OK", out)
+
+
 if __name__ == "__main__":
     unittest.main()
