@@ -713,6 +713,16 @@ public final class GT6LargeMachines {
 	@Override
 	public FluidTankGT[] getFluidOutputTanks() { return mTanksOutput; }
 
+	/**
+	 * The row map's live input slot count (upstream mInputItemsCount — the case-table
+	 * selector, ContainerCommonBasicMachine.java:51). Mirrors the base getOutputSlotCount
+	 * (TileEntityBase10MultiBlockMachine.java:889); the Host default 1 was the r4-24a
+	 * leftover — MIXER/BATH 6, AUTOCLAVE/ELECTROLYZER 2 now seat their real input banks
+	 * (task r8-gui-layout-descriptor).
+	 */
+	@Override
+	public int getInputSlotCount() { return recipes().mInputItemsCount; }
+
 		// ---------------------------------------------------------------------
 		// the tick chain — the :455 TU gate restored (see the class doc)
 		// ---------------------------------------------------------------------

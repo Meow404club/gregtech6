@@ -179,11 +179,14 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 		// upstream ContainerCommonBasicMachine.addSlots — the input-switch cases :55 (case 1)
 		// and :57-60 (case 2), then N outputs, all outputs setCanPut(F). The R7 parameterisation
 		// rides the Host.getInputSlotCount() default 1: every pre-Canner family keeps the
-		// byte-identical single-input menu.
+		// byte-identical single-input menu. The >=3 arm rides the faithful
+		// GT6MachineGuiLayout case table (task r8-gui-layout-descriptor — the extrapolation
+		// WARNING below is retired for the menu path).
 		int tInputSlots = aHost.getInputSlotCount();
+		int tFluidInputs = aHost.getFluidInputTanks().length; // the y-arm input (upstream mInputFluidCount)
 		for (int i = 0; i < tInputSlots; i++) {
-			int[] tPos = inputSlotPos(i, tInputSlots);
-			addSlot(new SlotItemHandler(tInventory, TileEntityBasicMachine.SLOT_INPUT + i, tPos[0], tPos[1])); // :55/:58-59 (upstream y = mInputFluidCount>6?7:25, pinned to the 25 arm — every served map stays at mInputFluidCount ≤ 6)
+			int[] tPos = inputSlotPos(i, tInputSlots, tFluidInputs);
+			addSlot(new SlotItemHandler(tInventory, TileEntityBasicMachine.SLOT_INPUT + i, tPos[0], tPos[1])); // :55/:58-59 the 0/1/2 arms; >=3 the descriptor case table
 		}
 		int tOutputs = aHost.getOutputSlotCount();
 		for (int i = 0; i < tOutputs; i++) {
@@ -234,10 +237,10 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 	 * The upstream input-slot geometry (ContainerCommonBasicMachine.java:51-60, the
 	 * mInputItemsCount switch, y = mInputFluidCount&gt;6?7:25 pinned to the 25 arm): count 1
 	 * = the single (53,25) slot; count 2 = the (35,25)+(53,25) pair (the RM.Canner 2/2 arm).
-	 * WARNING: the count&gt;=2 arm generalizes as {@code 35 + 18*i}, which does NOT reproduce
-	 * the upstream case-3 layout (x 17/35/53 — ContainerCommonBasicMachine.java:61-65) or
-	 * beyond: a 3-input RecipeMap landing here must transcribe its own case from the
-	 * upstream switch instead of trusting this extrapolation (no such map is served today).
+	 * The count&gt;=2 arm used to extrapolate {@code 35 + 18*i} — that did NOT reproduce the
+	 * upstream case-3 layout (x 17/35/53 — ContainerCommonBasicMachine.java:61-65); the
+	 * menu path no longer rides it past count 2 (see {@link #inputSlotPos(int, int, int)}),
+	 * and this two-arg form stays the 0/1/2-arm seam the R7 pin table locks.
 	 * Static for the offline menu test (the outputGridPos/fluidDisplayPos precedent).
 	 *
 	 * @param aIndex the input slot within the input bank
@@ -246,6 +249,25 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 	public static int[] inputSlotPos(int aIndex, int aCount) {
 		if (aCount >= 2) return new int[] {35 + 18 * aIndex, 25}; // :58-59 — x 35 then x 53
 		return new int[] {53, 25}; // :55 — the single-input arm
+	}
+
+	/**
+	 * The fluid-aware input geometry — the upstream case selector needs BOTH counts
+	 * (ContainerCommonBasicMachine.java:51-156 reads mInputFluidCount for the y arms). The
+	 * &gt;=3 arm rides the faithful {@link GT6MachineGuiLayout#inputPositions} transcription,
+	 * clearing this class's own extrapolation WARNING debt (task r8-gui-layout-descriptor:
+	 * case-3 is x 17/35/53, not 35/53/71; case 4-6 ride the &gt;3 y arms, case 7+ the fixed
+	 * grids). The 0/1/2 arms stay the pinned 25-row form above BYTE-IDENTICAL — every served
+	 * map keeps its exact menu (all sit at mInputFluidCount ≤ 6, and the ≤2 shapes never
+	 * consulted the fluid count).
+	 *
+	 * @param aIndex      the input slot within the input bank
+	 * @param aCount      the input slot count of the RecipeMap shape
+	 * @param aFluidCount the input-fluid count driving the y arms (the Host tank-bank length)
+	 */
+	public static int[] inputSlotPos(int aIndex, int aCount, int aFluidCount) {
+		if (aCount >= 3) return GT6MachineGuiLayout.inputPositions(aCount, aFluidCount)[aIndex]; // :61-155 — the faithful case table
+		return inputSlotPos(aIndex, aCount); // the 0/1/2 arms byte-identical
 	}
 
 	/**
