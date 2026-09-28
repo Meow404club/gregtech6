@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_muspelheim_power"
-            ]
+            "tag": "forge:plates/muspelheim_power"
           }
         ]
       },

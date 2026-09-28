@@ -1,5 +1,5 @@
 {
-  "type": "gt6:material_tool",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
     "I": {
@@ -15,15 +15,13 @@
       "tag": "gt6:tools/hard_hammer"
     }
   },
-  "material": "plutonium239",
   "pattern": [
     "PIh",
     "P  ",
     "f  "
   ],
   "result": {
-    "count": 1,
-    "item": "gt6:axe"
+    "item": "gt6:tool_head_axe_plutonium239"
   },
   "show_notification": true
 }

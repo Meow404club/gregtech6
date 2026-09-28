@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_builderwand_tungsten_carbide"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "tungsten_carbide",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:builder_wand"
+  }
+}

@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/void_metal"
+            "tag": "forge:plates/void_metal"
           }
         ]
       },

@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_naquadah_enriched"
-            ]
+            "tag": "forge:plates/naquadah_enriched"
           }
         ]
       },

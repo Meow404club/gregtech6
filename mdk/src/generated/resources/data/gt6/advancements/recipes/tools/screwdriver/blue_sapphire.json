@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_blue_sapphire"
-            ]
+            "tag": "forge:plates/blue_sapphire"
           }
         ]
       },

@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_vinteum_purified"
-            ]
+            "tag": "forge:plates/vinteum_purified"
           }
         ]
       },

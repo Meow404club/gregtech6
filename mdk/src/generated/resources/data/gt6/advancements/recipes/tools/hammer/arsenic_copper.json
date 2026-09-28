@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/arsenic_copper"
+            "tag": "forge:plates/arsenic_copper"
           }
         ]
       },

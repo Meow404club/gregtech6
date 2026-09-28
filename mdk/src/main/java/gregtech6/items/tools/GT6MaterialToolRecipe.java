@@ -58,11 +58,13 @@ import gregapi.oredict.OreDictMaterial;
  * upstream metal rows carry no handle letter in the grid (:295-300), only the spade's
  * wooden-stick auxiliary.
  *
- * <p>The stamped budget is {@code mToolDurability * 100 * 1.0} (MultiItemTool.java:182
- * at the form multiplier 1.0) — every axis form (the six dig rows) carries the upstream
- * ×1.0 durability multiplier; the non-1.0 forms (gem pick ×0.25, double axe ×1.5) have
- * NO per-material grid rows upstream (:293-330 has no toolHeadPickaxeGem row), so the
- * serializer grows an optional multiplier field only when a future form needs one.
+ * <p>The stamped budget is {@code mToolDurability * 100 * multiplier} (MultiItemTool.java:182)
+ * — every ladder axis form carries the upstream ×1.0 durability multiplier (rows omit the
+ * field); the head+handle assembly rows (task r7-39-toolhead-assembly, the
+ * AdvancedCraftingTool :332-350 port) needed the pre-declared growth: the OPTIONAL
+ * {@code "multiplier"} JSON field (default 1.0) carries the item's own
+ * {@code durabilityMultiplier()} face (the gem pick ×0.25) so the assembled budget stays
+ * upstream-exact.
  *
  * <p>LEG-FORKED FILE (ADR-P17-1 single implementation): the 1.20.1 forge leg parses
  * the vanilla shaped JSON helpers and network-codes the vanilla fields + the material
@@ -76,17 +78,25 @@ public class GT6MaterialToolRecipe implements net.minecraft.world.item.crafting.
 
 	private final ShapedRecipe mDelegate;
 	private final OreDictMaterial mMaterial;
+	/** The form durability multiplier (the :182 budget leg) — 1.0 for every ladder row, the item's own face for the assembly rows. */
+	private final float mMultiplier;
 
+	/** The ladder-row face: every grid row carries the ×1.0 multiplier (the dig card's form). */
 	public GT6MaterialToolRecipe(ShapedRecipe aDelegate, OreDictMaterial aMaterial) {
+		this(aDelegate, aMaterial, 1.0F);
+	}
+
+	public GT6MaterialToolRecipe(ShapedRecipe aDelegate, OreDictMaterial aMaterial, float aMultiplier) {
 		mDelegate = aDelegate;
 		mMaterial = aMaterial;
+		mMultiplier = aMultiplier;
 	}
 
 	/** The assemble-time identity stamp (the upstream getToolWithStats face, MultiItemTool.java:180-192). */
 	@Override
 	public ItemStack assemble(CraftingContainer aContainer, RegistryAccess aRegistryAccess) {
 		ItemStack tResult = mDelegate.assemble(aContainer, aRegistryAccess);
-		GT6ToolLadder.stampIdentity(tResult, mMaterial, 1.0F);
+		GT6ToolLadder.stampIdentity(tResult, mMaterial, mMultiplier);
 		return tResult;
 	}
 
@@ -118,7 +128,7 @@ public class GT6MaterialToolRecipe implements net.minecraft.world.item.crafting.
 	 */
 	public ItemStack stampedDisplayResult() {
 		ItemStack tResult = mDelegate.getResultItem(RegistryAccess.EMPTY).copy();
-		GT6ToolLadder.stampIdentity(tResult, mMaterial, 1.0F);
+		GT6ToolLadder.stampIdentity(tResult, mMaterial, mMultiplier);
 		return tResult;
 	}
 
@@ -198,17 +208,19 @@ public class GT6MaterialToolRecipe implements net.minecraft.world.item.crafting.
 
 		public GT6MaterialToolRecipe fromJson(ResourceLocation aId, JsonObject aJson) {
 			ShapedRecipe tDelegate = VANILLA.fromJson(aId, aJson);
-			return new GT6MaterialToolRecipe(tDelegate, resolve(GsonHelper.getAsString(aJson, "material")));
+			return new GT6MaterialToolRecipe(tDelegate, resolve(GsonHelper.getAsString(aJson, "material")),
+					GsonHelper.getAsFloat(aJson, "multiplier", 1.0F));
 		}
 
 		public GT6MaterialToolRecipe fromNetwork(ResourceLocation aId, FriendlyByteBuf aBuffer) {
 			ShapedRecipe tDelegate = VANILLA.fromNetwork(aId, aBuffer);
-			return new GT6MaterialToolRecipe(tDelegate, resolve(aBuffer.readUtf()));
+			return new GT6MaterialToolRecipe(tDelegate, resolve(aBuffer.readUtf()), aBuffer.readFloat());
 		}
 
 		public void toNetwork(FriendlyByteBuf aBuffer, GT6MaterialToolRecipe aRecipe) {
 			VANILLA.toNetwork(aBuffer, aRecipe.mDelegate);
 			aBuffer.writeUtf(aRecipe.mMaterial.mNameInternal);
+			aBuffer.writeFloat(aRecipe.mMultiplier);
 		}
 	}
 
@@ -238,28 +250,38 @@ public class GT6MaterialToolRecipe implements net.minecraft.world.item.crafting.
 	private final OreDictMaterial mMaterial;
 	private final String mMaterialName;
 	private final ItemStack mResult;
+	// The form durability multiplier (the :182 budget leg) — 1.0 for every ladder row, the item's own face for the assembly rows.
+	private final float mMultiplier;
 
+	// The ladder-row face: every grid row carries the ×1.0 multiplier (the dig card's form).
 	public GT6MaterialToolRecipe(String aGroup, CraftingBookCategory aCategory, ShapedRecipePattern aPattern,
 			ItemStack aResult, boolean aShowNotification, String aMaterialName) {
+		this(aGroup, aCategory, aPattern, aResult, aShowNotification, aMaterialName, 1.0F);
+	}
+
+	public GT6MaterialToolRecipe(String aGroup, CraftingBookCategory aCategory, ShapedRecipePattern aPattern,
+			ItemStack aResult, boolean aShowNotification, String aMaterialName, float aMultiplier) {
 		super(aGroup, aCategory, aPattern, aResult, aShowNotification);
 		mMaterialName = aMaterialName;
 		mResult = aResult;
+		mMultiplier = aMultiplier;
 		mMaterial = resolve(aMaterialName);
 	}
 
 	private GT6MaterialToolRecipe(String aGroup, CraftingBookCategory aCategory, ShapedRecipePattern aPattern,
-			ItemStack aResult, boolean aShowNotification, OreDictMaterial aMaterial, String aMaterialName) {
+			ItemStack aResult, boolean aShowNotification, OreDictMaterial aMaterial, String aMaterialName, float aMultiplier) {
 		super(aGroup, aCategory, aPattern, aResult, aShowNotification);
 		mMaterialName = aMaterialName;
 		mResult = aResult;
 		mMaterial = aMaterial;
+		mMultiplier = aMultiplier;
 	}
 
 	// The assemble-time identity stamp (the upstream getToolWithStats face, MultiItemTool.java:180-192).
 	@Override
 	public ItemStack assemble(CraftingInput aInput, HolderLookup.Provider aProvider) {
 		ItemStack tResult = super.assemble(aInput, aProvider);
-		GT6ToolLadder.stampIdentity(tResult, mMaterial, 1.0F);
+		GT6ToolLadder.stampIdentity(tResult, mMaterial, mMultiplier);
 		return tResult;
 	}
 
@@ -270,7 +292,7 @@ public class GT6MaterialToolRecipe implements net.minecraft.world.item.crafting.
 	// needed on this leg.
 	public ItemStack stampedDisplayResult() {
 		ItemStack tResult = mResult.copy();
-		GT6ToolLadder.stampIdentity(tResult, mMaterial, 1.0F);
+		GT6ToolLadder.stampIdentity(tResult, mMaterial, mMultiplier);
 		return tResult;
 	}
 
@@ -296,7 +318,8 @@ public class GT6MaterialToolRecipe implements net.minecraft.world.item.crafting.
 				ShapedRecipePattern.MAP_CODEC.forGetter(aRecipe -> aRecipe.pattern),
 				ItemStack.STRICT_CODEC.fieldOf("result").forGetter(aRecipe -> aRecipe.mResult),
 				Codec.BOOL.optionalFieldOf("show_notification", true).forGetter(aRecipe -> aRecipe.showNotification()),
-				Codec.STRING.fieldOf("material").forGetter(aRecipe -> aRecipe.mMaterialName)
+				Codec.STRING.fieldOf("material").forGetter(aRecipe -> aRecipe.mMaterialName),
+				Codec.FLOAT.optionalFieldOf("multiplier", 1.0F).forGetter(aRecipe -> aRecipe.mMultiplier)
 			).apply(aInstance, GT6MaterialToolRecipe::new));
 
 		private static final StreamCodec<RegistryFriendlyByteBuf, GT6MaterialToolRecipe> STREAM_CODEC = StreamCodec.of(
@@ -319,8 +342,9 @@ public class GT6MaterialToolRecipe implements net.minecraft.world.item.crafting.
 			ItemStack tResult = ItemStack.STREAM_CODEC.decode(aBuffer);
 			boolean tShowNotification = aBuffer.readBoolean();
 			String tMaterialName = aBuffer.readUtf();
+			float tMultiplier = aBuffer.readFloat();
 			return new GT6MaterialToolRecipe(tGroup, tCategory, tPattern, tResult, tShowNotification,
-					resolve(tMaterialName), tMaterialName);
+					resolve(tMaterialName), tMaterialName, tMultiplier);
 		}
 
 		private static void toNetwork(RegistryFriendlyByteBuf aBuffer, GT6MaterialToolRecipe aRecipe) {
@@ -330,6 +354,7 @@ public class GT6MaterialToolRecipe implements net.minecraft.world.item.crafting.
 			ItemStack.STREAM_CODEC.encode(aBuffer, aRecipe.mResult);
 			aBuffer.writeBoolean(aRecipe.showNotification());
 			aBuffer.writeUtf(aRecipe.mMaterial.mNameInternal);
+			aBuffer.writeFloat(aRecipe.mMultiplier);
 		}
 	}
 

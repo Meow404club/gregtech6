@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_heliodor"
-            ]
+            "tag": "forge:plates/heliodor"
           }
         ]
       },

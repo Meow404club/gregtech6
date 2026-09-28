@@ -1,5 +1,5 @@
 {
-  "type": "gt6:material_tool",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
     "S": {
@@ -12,14 +12,12 @@
       "tag": "gt6:tools/hard_hammer"
     }
   },
-  "material": "bismuth_bronze",
   "pattern": [
     "hS",
     "Sf"
   ],
   "result": {
-    "count": 1,
-    "item": "gt6:screwdriver"
+    "item": "gt6:tool_head_screwdriver_bismuth_bronze"
   },
   "show_notification": true
 }

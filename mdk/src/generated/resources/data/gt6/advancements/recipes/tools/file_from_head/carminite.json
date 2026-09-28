@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_head": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "gt6:tool_head_file_carminite"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:file_from_head/carminite"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_head",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:file_from_head/carminite"
+    ]
+  },
+  "sends_telemetry_event": false
+}

@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/vibranium_steel"
+            "tag": "forge:plates/vibranium_steel"
           }
         ]
       },

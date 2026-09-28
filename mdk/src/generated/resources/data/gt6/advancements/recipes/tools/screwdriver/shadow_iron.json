@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_shadow_iron"
-            ]
+            "tag": "forge:plates/shadow_iron"
           }
         ]
       },

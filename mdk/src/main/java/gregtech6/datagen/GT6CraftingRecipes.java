@@ -371,6 +371,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		digLadderRows(aConsumer);
 		// task p31-machine-ladder — the machine family material rows (the identity-stamped walk)
 		machineLadderRows(aConsumer);
+		// task r7-39-toolhead-assembly — the 17 head+handle assembly rows (the ACT :332-350 port)
+		toolAssemblyRows(aConsumer);
 		// task p33-circuits-crafting-c — the circuits band: the 26 integrated-circuit rows
 		// (gt6:circuit_program) + the ventilation/processor-unit six (gt6 shaped)
 		circuitProgramRows(aConsumer);
@@ -599,6 +601,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task p31-dig-ladder — the per-material identity-stamped rows (the axis walk)
 		digLadderRows(aOutput);
 		machineLadderRows(aOutput);
+		toolAssemblyRows(aOutput);
 		// task p33-circuits-crafting-c — the circuits band: the 26 integrated-circuit rows
 		// (gt6:circuit_program) + the ventilation/processor-unit six (gt6 shaped)
 		circuitProgramRows(aOutput);
@@ -3391,7 +3394,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/** One ladder form: the id prefix + the upstream P/I row shape (Loader_Tools.java:294-300 verbatim). */
-	private static final String[][] DIG_LADDER_FORMS = {
+	static final String[][] DIG_LADDER_FORMS = { // package-private: the GT6ToolHeadAssemblyDatagenTest walk face
 			{"pickaxe", "PII", "f h"},
 			{"pickaxe_construction", "PIP", "f h"},
 			{"shovel", "fPh"},
@@ -3401,7 +3404,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	};
 
 	/** The upstream axis filter ∩ the port's plate+ingot item truth; Steel excluded (the anchors above own it). */
-	private static java.util.List<gregapi.oredict.OreDictMaterial> digLadderMaterials() {
+	static java.util.List<gregapi.oredict.OreDictMaterial> digLadderMaterials() { // package-private: the row-count pin walk
 		java.util.List<gregapi.oredict.OreDictMaterial> rMaterials = new ArrayList<>();
 		java.util.Set<gregapi.oredict.OreDictMaterial> tIngots = new java.util.HashSet<>();
 		for (gregtech6.registry.GTMaterialItems.PrefixMaterial tPair : gregtech6.registry.GTMaterialItems.registrationOrder()) {
@@ -3418,17 +3421,39 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		return rMaterials;
 	}
 
-	/** The result item of a dig ladder form (the GT6Tools registry face). */
-	private static net.minecraft.world.item.Item digLadderResult(String aForm) {
+	/**
+	 * The head prefix a dig form's row emits (the upstream tStack face — the LISTENING
+	 * prefix, Loader_Tools.java:451 {@code tStack = aEvent.mPrefix.mat(aEvent.mMaterial, 1)}
+	 * + the :514-516 emission): pickaxe :295, construction :294, shovel :296, spade :297,
+	 * hoe :299, axe :300 — each row's output is the TOOL HEAD, never the tool (the
+	 * r7-39 inversion fix; the tool itself rides the head+handle assembly band below and
+	 * the steel anchors).
+	 */
+	static gregapi.oredict.OreDictPrefix digLadderHeadPrefix(String aForm) { // package-private: the test prefix ledger
 		return switch (aForm) {
-			case "pickaxe" -> GT6Tools.PICKAXE.get();
-			case "pickaxe_construction" -> GT6Tools.PICKAXE_CONSTRUCTION.get();
-			case "shovel" -> GT6Tools.SHOVEL.get();
-			case "spade" -> GT6Tools.SPADE.get();
-			case "hoe" -> GT6Tools.HOE.get();
-			case "axe" -> GT6Tools.AXE.get();
+			case "pickaxe" -> gregapi.data.OP.toolHeadPickaxe; // :295
+			case "pickaxe_construction" -> gregapi.data.OP.toolHeadConstructionPickaxe; // :294
+			case "shovel" -> gregapi.data.OP.toolHeadShovel; // :296
+			case "spade" -> gregapi.data.OP.toolHeadSpade; // :297
+			case "hoe" -> gregapi.data.OP.toolHeadHoe; // :299
+			case "axe" -> gregapi.data.OP.toolHeadAxe; // :300
 			default -> throw new IllegalArgumentException("unknown dig ladder form: " + aForm);
 		};
+	}
+
+	/** The head item a dig form's row emits — null = the head item miss (no row, never an unresolvable result). */
+	static net.minecraft.world.item.Item digLadderHeadItem(String aForm, gregapi.oredict.OreDictMaterial aMaterial) {
+		return gregtech6.registry.GTMaterialItems.get(digLadderHeadPrefix(aForm), aMaterial) == null ? null
+				: gregtech6.registry.GTMaterialItems.get(digLadderHeadPrefix(aForm), aMaterial).get();
+	}
+
+	/** One assembled head-row body: the pattern/key maps → the vanilla shaped builder (the heads need NO identity stamp — the item IS the identity). */
+	private static net.minecraft.data.recipes.ShapedRecipeBuilder headRowBuilder(net.minecraft.world.item.Item aHead,
+			java.util.List<String> aPattern, java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> aKey) {
+		net.minecraft.data.recipes.ShapedRecipeBuilder rBuilder = net.minecraft.data.recipes.ShapedRecipeBuilder.shaped(net.minecraft.data.recipes.RecipeCategory.TOOLS, aHead);
+		for (String tRow : aPattern) rBuilder.pattern(tRow);
+		for (java.util.Map.Entry<Character, net.minecraft.world.item.crafting.Ingredient> tEntry : aKey.entrySet()) rBuilder.define(tEntry.getKey(), tEntry.getValue());
+		return rBuilder;
 	}
 
 	/** The row letters (the upstream OreProcessing_Tool alphabet over the P/I variant). */
@@ -3596,6 +3621,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(tMaterial.mNameInternal);
 			TagKey<Item> tPlate = GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake);
 			for (String[] tForm : DIG_LADDER_FORMS) {
+				net.minecraft.world.item.Item tHead = digLadderHeadItem(tForm[0], tMaterial);
+				if (tHead == null) continue; // the head item miss — no row (never an unresolvable result)
 				ResourceLocation tId = digLadderRowId(tForm[0], tSnake);
 				java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> tKey = new java.util.LinkedHashMap<>();
 				java.util.List<String> tPattern = new ArrayList<>();
@@ -3605,16 +3632,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						if (tChar != ' ') tKey.put(tChar, net.minecraft.world.item.crafting.Ingredient.of(digLadderIngredient(tChar, tMaterial)));
 					}
 				}
-				net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
-						.recipeAdvancement()
-						.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
-						.addCriterion("has_" + tSnake, has(tPlate))
-						.addCriterion("has_the_recipe", net.minecraft.advancements.critereon.RecipeUnlockedTrigger.unlocked(tId))
-						.rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(tId))
-						.requirements(net.minecraft.advancements.RequirementsStrategy.OR);
-				aConsumer.accept(new MaterialToolRow(tId, tId.withPrefix("recipes/tools/"),
-						net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT, tPattern, tKey,
-						digLadderResult(tForm[0]), tSnake, tAdvancement));
+				// the vanilla shaped emission (NO identity stamp — the head item IS the identity; the
+				// vanilla save() writes the same has_the_recipe-OR advancement face the rows above hand-roll)
+				headRowBuilder(tHead, tPattern, tKey).unlockedBy("has_" + tSnake, has(tPlate)).save(aConsumer, tId);
 			}
 		}
 	}
@@ -3626,9 +3646,17 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 */
 	private record MaterialToolRow(ResourceLocation aId, ResourceLocation aAdvancementId,
 			net.minecraft.world.item.crafting.CraftingBookCategory aCategory, java.util.List<String> aPattern,
-			java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> aKey, net.minecraft.world.item.Item aResult, String aMaterial,
+			java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> aKey, net.minecraft.world.item.Item aResult, String aMaterial, float aMultiplier,
 			net.minecraft.advancements.Advancement.Builder aAdvancement)
 			implements net.minecraft.data.recipes.FinishedRecipe {
+
+		/** The ladder-row face: every grid row carries the ×1.0 multiplier (the dig card's form). */
+		private MaterialToolRow(ResourceLocation aId, ResourceLocation aAdvancementId,
+				net.minecraft.world.item.crafting.CraftingBookCategory aCategory, java.util.List<String> aPattern,
+				java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> aKey, net.minecraft.world.item.Item aResult, String aMaterial,
+				net.minecraft.advancements.Advancement.Builder aAdvancement) {
+			this(aId, aAdvancementId, aCategory, aPattern, aKey, aResult, aMaterial, 1.0F, aAdvancement);
+		}
 
 		@Override
 		public void serializeRecipeData(com.google.gson.JsonObject aJson) {
@@ -3649,6 +3677,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			aJson.add("result", tResult);
 			aJson.addProperty("show_notification", true);
 			aJson.addProperty("material", aMaterial);
+			if (aMultiplier != 1.0F) aJson.addProperty("multiplier", aMultiplier); // the assembly-band non-1.0 forms (the gem pick ×0.25)
 		}
 
 		@Override
@@ -3679,6 +3708,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(tMaterial.mNameInternal);
 			TagKey<Item> tPlate = GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake);
 			for (String[] tForm : DIG_LADDER_FORMS) {
+				net.minecraft.world.item.Item tHead = digLadderHeadItem(tForm[0], tMaterial);
+				if (tHead == null) continue; // the head item miss — no row (never an unresolvable result)
 				ResourceLocation tId = digLadderRowId(tForm[0], tSnake);
 				java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> tKey = new java.util.LinkedHashMap<>();
 				java.util.List<String> tPattern = new ArrayList<>();
@@ -3688,18 +3719,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						if (tChar != ' ') tKey.put(tChar, net.minecraft.world.item.crafting.Ingredient.of(digLadderIngredient(tChar, tMaterial)));
 					}
 				}
-				net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
-						.recipeAdvancement()
-						.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
-						.addCriterion("has_" + tSnake, has(tPlate))
-						.addCriterion("has_the_recipe", net.minecraft.advancements.critereon.RecipeUnlockedTrigger.unlocked(tId))
-						.rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(tId))
-						.requirements(net.minecraft.advancements.AdvancementRequirements.Strategy.OR);
-				gregtech6.items.tools.GT6MaterialToolRecipe tRecipe = new gregtech6.items.tools.GT6MaterialToolRecipe("",
-						net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT,
-						net.minecraft.world.item.crafting.ShapedRecipePattern.of(tKey, tPattern),
-						new net.minecraft.world.item.ItemStack(digLadderResult(tForm[0])), true, tSnake);
-				aOutput.accept(tId, tRecipe, tAdvancement.build(tId.withPrefix("recipes/tools/")));
+				// the vanilla shaped emission (NO identity stamp — the head item IS the identity)
+				headRowBuilder(tHead, tPattern, tKey).unlockedBy("has_" + tSnake, has(tPlate)).save(aOutput, tId);
 			}
 		}
 	}
@@ -3734,14 +3755,31 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			new BladeLadderForm("butchery_knife_gem", 2, false, true, new String[] {"fCC", " CC", "  H"}),
 	};
 
-	/** The result item of a blade ladder form (the GT6Tools registry face). */
+	/**
+	 * The result item of a blade ladder form (the GT6Tools registry face) — the DIRECT
+	 * rows only: knife/butchery ride the upstream mToolRecipes (:322/:323, the arg-8 face)
+	 * and stay tool rows. The sword rows are NOT here — upstream :321 is an mToolHeadRecipes
+	 * row (the arg-9 face) so they emit the head ({@link #bladeLadderHeadItem}), the r7-39
+	 * inversion fix.
+	 */
 	private static net.minecraft.world.item.Item bladeLadderResult(String aForm) {
 		return switch (aForm) {
-			case "sword", "sword_gem" -> GT6Tools.SWORD.get();
 			case "knife", "knife_gem" -> GT6Tools.KNIFE.get();
 			case "butchery_knife", "butchery_knife_gem" -> GT6Tools.BUTCHERY_KNIFE.get();
-			default -> throw new IllegalArgumentException("unknown blade ladder form: " + aForm);
+			default -> null; // the sword forms ride bladeLadderHeadItem
 		};
+	}
+
+	/**
+	 * The head item of the SWORD blade rows (the upstream tStack face — Loader_Tools.java:451
+	 * listening prefix + :514-516 emission; the sword row :321 has BOTH the P and the C
+	 * variant shapes emitting the SAME {@code OP.toolHeadSword} head). Null = the tool rows
+	 * (knife/butchery) and the head item miss.
+	 */
+	private static net.minecraft.world.item.Item bladeLadderHeadItem(String aForm, gregapi.oredict.OreDictMaterial aMaterial) {
+		if (!aForm.startsWith("sword")) return null;
+		return gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.toolHeadSword, aMaterial) == null ? null
+				: gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.toolHeadSword, aMaterial).get();
 	}
 
 	/** The row letters (the upstream OreProcessing_Tool alphabet; 'C' rides the plateGem ITEM — the prefix has no platform-tag family). */
@@ -3787,6 +3825,15 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						if (tChar != ' ') tKey.put(tChar, bladeLadderIngredient(tChar, tMaterial));
 					}
 				}
+				// the r7-39 inversion fix: the sword rows are upstream HEAD rows (:321, the
+				// mToolHeadRecipes face) — vanilla shaped emission, the head item IS the identity
+				net.minecraft.world.item.Item tHead = bladeLadderHeadItem(tForm.aId(), tMaterial);
+				if (tHead != null) {
+					headRowBuilder(tHead, tPattern, tKey).unlockedBy("has_head_material", has(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake))).save(aConsumer, tId);
+					continue;
+				}
+				net.minecraft.world.item.Item tResult = bladeLadderResult(tForm.aId());
+				if (tResult == null) continue; // the sword head item miss — no row (never an unresolvable result)
 				net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
 						.recipeAdvancement()
 						.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
@@ -3796,7 +3843,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						.requirements(net.minecraft.advancements.RequirementsStrategy.OR);
 				aConsumer.accept(new MaterialToolRow(tId, tId.withPrefix("recipes/tools/"),
 						net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT, tPattern, tKey,
-						bladeLadderResult(tForm.aId()), tSnake, tAdvancement));
+						tResult, tSnake, tAdvancement));
 			}
 		}
 	}
@@ -3819,21 +3866,29 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						if (tChar != ' ') tKey.put(tChar, bladeLadderIngredient(tChar, tMaterial));
 					}
 				}
-				net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
-						.recipeAdvancement()
-						.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
-						.addCriterion("has_head_material", has(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake)))
-						.addCriterion("has_the_recipe", net.minecraft.advancements.critereon.RecipeUnlockedTrigger.unlocked(tId))
-						.rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(tId))
-						.requirements(net.minecraft.advancements.AdvancementRequirements.Strategy.OR);
-				gregtech6.items.tools.GT6MaterialToolRecipe tRecipe = new gregtech6.items.tools.GT6MaterialToolRecipe("",
-						net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT,
-						net.minecraft.world.item.crafting.ShapedRecipePattern.of(tKey, tPattern),
-						new net.minecraft.world.item.ItemStack(bladeLadderResult(tForm.aId())), true, tSnake);
-				aOutput.accept(tId, tRecipe, tAdvancement.build(tId.withPrefix("recipes/tools/")));
+					// the r7-39 inversion fix: the sword rows are upstream HEAD rows (:321) — vanilla shaped emission
+					net.minecraft.world.item.Item tHead = bladeLadderHeadItem(tForm.aId(), tMaterial);
+					if (tHead != null) {
+						headRowBuilder(tHead, tPattern, tKey).unlockedBy("has_head_material", has(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake))).save(aOutput, tId);
+						continue;
+					}
+					net.minecraft.world.item.Item tResult = bladeLadderResult(tForm.aId());
+					if (tResult == null) continue; // the sword head item miss — no row
+					net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
+							.recipeAdvancement()
+							.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
+							.addCriterion("has_head_material", has(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake)))
+							.addCriterion("has_the_recipe", net.minecraft.advancements.critereon.RecipeUnlockedTrigger.unlocked(tId))
+							.rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(tId))
+							.requirements(net.minecraft.advancements.AdvancementRequirements.Strategy.OR);
+					gregtech6.items.tools.GT6MaterialToolRecipe tRecipe = new gregtech6.items.tools.GT6MaterialToolRecipe("",
+							net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT,
+							net.minecraft.world.item.crafting.ShapedRecipePattern.of(tKey, tPattern),
+							new net.minecraft.world.item.ItemStack(tResult), true, tSnake);
+					aOutput.accept(tId, tRecipe, tAdvancement.build(tId.withPrefix("recipes/tools/")));
+				}
 			}
 		}
-	}
 	*///?}
 
 	// ------------------------------------------------------------------------
@@ -3884,21 +3939,45 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			new MachineLadderForm("pincers", 2, false, false, false, false, 0, false, new String[] {"XhX", " T ", "SdS"}), // :316
 	};
 
-	/** The result item of a machine ladder form (the GT6Tools registry face). */
+	/**
+	 * The result item of a machine ladder form (the GT6Tools registry face) — the DIRECT
+	 * rows only (the upstream mToolRecipes arg-8 face: crowbar :314 / cutter(wire) :324 /
+	 * wrench :310 / monkey wrench :311 / pincers :316). The screwdriver :306 / saw :307 /
+	 * chisel :305 / hammer :327 shapes are upstream mToolHeadRecipes rows (the arg-9 face)
+	 * — they emit the head via {@link #machineLadderHeadItem} (the r7-39 inversion fix),
+	 * and the soft hammer's :328 head shape is EMPTY (its axis ∩ the port item truth = ∅,
+	 * the softHammerBuilder steel anchor owns the tool face).
+	 */
 	private static net.minecraft.world.item.Item machineLadderResult(String aForm) {
 		return switch (aForm) {
-			case "screwdriver" -> GT6Tools.SCREWDRIVER.get();
-			case "saw" -> GT6Tools.SAW.get();
-			case "chisel" -> GT6Tools.CHISEL.get();
 			case "crowbar" -> GT6Tools.CROWBAR.get();
 			case "cutter" -> GT6Tools.CUTTER.get();
-			case "hammer" -> GT6Tools.HAMMER.get();
 			case "soft_hammer" -> GT6Tools.SOFT_HAMMER.get();
 			case "wrench" -> GT6Tools.WRENCH.get();
 			case "monkey_wrench" -> GT6Tools.MONKEY_WRENCH.get();
 			case "pincers" -> GT6Tools.PINCERS.get();
-			default -> throw new IllegalArgumentException("unknown machine ladder form: " + aForm);
+			default -> null; // the head rows ride machineLadderHeadItem
 		};
+	}
+
+	/**
+	 * The head item of the machine rows whose shapes are upstream HEAD rows (the tStack
+	 * face — Loader_Tools.java:451 listening prefix + :514-516 emission): screwdriver
+	 * {@code OP.toolHeadScrewdriver} :306, saw {@code OP.toolHeadSaw} :307, chisel
+	 * {@code OP.toolHeadChisel} :305, hammer {@code OP.toolHeadHammer} :327. Null = the
+	 * direct tool rows and the head item miss.
+	 */
+	private static net.minecraft.world.item.Item machineLadderHeadItem(String aForm, gregapi.oredict.OreDictMaterial aMaterial) {
+		gregapi.oredict.OreDictPrefix tPrefix = switch (aForm) {
+			case "screwdriver" -> gregapi.data.OP.toolHeadScrewdriver;
+			case "saw" -> gregapi.data.OP.toolHeadSaw;
+			case "chisel" -> gregapi.data.OP.toolHeadChisel;
+			case "hammer" -> gregapi.data.OP.toolHeadHammer;
+			default -> null;
+		};
+		if (tPrefix == null) return null;
+		return gregtech6.registry.GTMaterialItems.get(tPrefix, aMaterial) == null ? null
+				: gregtech6.registry.GTMaterialItems.get(tPrefix, aMaterial).get();
 	}
 
 	/**
@@ -4041,7 +4120,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			if (tMaterial == null || tMaterial.mID < 0 || !tSeen.add(tMaterial.mNameInternal)) continue;
 			String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(tMaterial.mNameInternal);
 			for (MachineLadderForm tForm : MACHINE_LADDER_FORMS) {
-				if (!tForm.aIncludeSteel() && tMaterial == gregapi.data.MT.Steel) continue; // the steel anchors own it
+				net.minecraft.world.item.Item tHead = machineLadderHeadItem(tForm.aId(), tMaterial);
+				// the steel anchors own the TOOL face only — the HEAD rows keep Steel (upstream
+				// :305-:327 verbatim; the steel hammer HEAD is the softHammerBuilder 'H' input)
+				if (tHead == null && !tForm.aIncludeSteel() && tMaterial == gregapi.data.MT.Steel) continue;
 				if (!machineLadderAxis(tMaterial, tForm)) continue;
 				java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> tKey = new java.util.LinkedHashMap<>();
 				java.util.List<String> tPattern = new java.util.ArrayList<>();
@@ -4061,6 +4143,14 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				}
 				if (!tResolvable) continue; // the item-truth miss — no row
 				ResourceLocation tId = digLadderRowId(tForm.aId(), tSnake);
+				// the r7-39 inversion fix: the :305/:306/:307/:327 rows are upstream HEAD rows —
+				// vanilla shaped emission, the head item IS the identity
+				if (tHead != null) {
+					headRowBuilder(tHead, tPattern, tKey).unlockedBy("has_head_material", has(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake))).save(aConsumer, tId);
+					continue;
+				}
+				net.minecraft.world.item.Item tResult = machineLadderResult(tForm.aId());
+				if (tResult == null) continue; // unreachable: every non-head form carries a tool face
 				Object tAnchor = machineLadderCriterion(tForm, tMaterial);
 				net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
 						.recipeAdvancement()
@@ -4071,7 +4161,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						.requirements(net.minecraft.advancements.RequirementsStrategy.OR);
 				aConsumer.accept(new MaterialToolRow(tId, tId.withPrefix("recipes/tools/"),
 						net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT, tPattern, tKey,
-						machineLadderResult(tForm.aId()), tSnake, tAdvancement));
+						tResult, tSnake, tAdvancement));
 			}
 		}
 	}
@@ -4085,7 +4175,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			if (tMaterial == null || tMaterial.mID < 0 || !tSeen.add(tMaterial.mNameInternal)) continue;
 			String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(tMaterial.mNameInternal);
 			for (MachineLadderForm tForm : MACHINE_LADDER_FORMS) {
-				if (!tForm.aIncludeSteel() && tMaterial == gregapi.data.MT.Steel) continue; // the steel anchors own it
+				net.minecraft.world.item.Item tHead = machineLadderHeadItem(tForm.aId(), tMaterial);
+				// the steel anchors own the TOOL face only — the HEAD rows keep Steel (upstream :305-:327)
+				if (tHead == null && !tForm.aIncludeSteel() && tMaterial == gregapi.data.MT.Steel) continue;
 				if (!machineLadderAxis(tMaterial, tForm)) continue;
 				java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> tKey = new java.util.LinkedHashMap<>();
 				java.util.List<String> tPattern = new java.util.ArrayList<>();
@@ -4105,6 +4197,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				}
 				if (!tResolvable) continue; // the item-truth miss — no row
 				ResourceLocation tId = digLadderRowId(tForm.aId(), tSnake);
+				// the r7-39 inversion fix: the :305/:306/:307/:327 rows are upstream HEAD rows
+				if (tHead != null) {
+					headRowBuilder(tHead, tPattern, tKey).unlockedBy("has_head_material", has(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake))).save(aOutput, tId);
+					continue;
+				}
+				net.minecraft.world.item.Item tResult = machineLadderResult(tForm.aId());
+				if (tResult == null) continue; // unreachable: every non-head form carries a tool face
 				net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
 						.recipeAdvancement()
 						.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
@@ -4115,9 +4214,172 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				gregtech6.items.tools.GT6MaterialToolRecipe tRecipe = new gregtech6.items.tools.GT6MaterialToolRecipe("",
 						net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT,
 						net.minecraft.world.item.crafting.ShapedRecipePattern.of(tKey, tPattern),
-						new net.minecraft.world.item.ItemStack(machineLadderResult(tForm.aId())), true, tSnake);
+						new net.minecraft.world.item.ItemStack(tResult), true, tSnake);
 				aOutput.accept(tId, tRecipe, tAdvancement.build(tId.withPrefix("recipes/tools/")));
 			}
+		}
+	}
+
+*///?}
+
+	// -----------------------------------------------------------------------
+	// The head+handle assembly band (task r7-39-toolhead-assembly, GitHub #39) — the
+	// upstream AdvancedCraftingTool registrations (Loader_Tools.java:332-350, 19 tools),
+	// the shapeless workbench head+stick → tool row whose matches gate is
+	// stick-material == head.mHandleMaterial (AdvancedCraftingTool.java:105). Ported as
+	// the soft_hammer precedent's stamped shaped face (softHammerBuilder :1125-1132):
+	// ONE "H"/"S" column per (form x head item) — 'H' = the tool_head_<form>_<mat> item
+	// (the head row output above is its producer), 'S' = the handle. 17 of the 19
+	// registrations land here: the soft hammer (:334) rides softHammerBuilder, the
+	// magnifying glass (:332) is the lens-prefix row whose port anchor is
+	// magnifyingGlassBuilder. THE HANDLE GATE IS THE DECLARED DEVIATION: upstream binds
+	// the stick to the head's mHandleMaterial (and its mToThis aliases, :66-83); the
+	// port relaxes to ANY wooden rod tag (Tags.Items.RODS_WOODEN) — the per-material
+	// handle universe is too strict under the modern material set (an iron head demands
+	// an iron-handle stick upstream). The result rides the gt6:material_tool stamp seam
+	// with the item's own durabilityMultiplier() (the gem pick ×0.25 — the optional
+	// serializer field the :65 javadoc pre-declared). The upstream RM.ToolHeads machine
+	// mirror (:66-83 addRecipeX) stays DEFERRED: the port has no ACT machine face
+	// consuming the map (GT6RecipeMaps.java:1726 declared-empty), and a pour JSON for a
+	// consumerless map is ceremony.
+	// -----------------------------------------------------------------------
+
+	/** One assembly form: the id, the head prefix, the :333 soft-tag gate. A method face — see {@link #assemblyForms}. */
+	record AssemblyForm(String aId, gregapi.oredict.OreDictPrefix aHead, boolean aNoSoftTag) {}
+
+	/** The 17 assembly forms — the upstream :332-350 list minus the soft hammer (:334, ported) and the magnifying glass (:332, lens prefix), in upstream order. */
+	static java.util.List<AssemblyForm> assemblyForms() {
+		return java.util.List.of(
+				new AssemblyForm("hard_hammer", gregapi.data.OP.toolHeadHammer, true), // :333
+				new AssemblyForm("sword", gregapi.data.OP.toolHeadSword, false), // :335
+				new AssemblyForm("builder_wand", gregapi.data.OP.toolHeadBuilderwand, false), // :336
+				new AssemblyForm("pickaxe_construction", gregapi.data.OP.toolHeadConstructionPickaxe, false), // :337
+				new AssemblyForm("pickaxe_gem", gregapi.data.OP.toolHeadPickaxeGem, false), // :338
+				new AssemblyForm("pickaxe", gregapi.data.OP.toolHeadPickaxe, false), // :339
+				new AssemblyForm("shovel", gregapi.data.OP.toolHeadShovel, false), // :340
+				new AssemblyForm("spade", gregapi.data.OP.toolHeadSpade, false), // :341
+				new AssemblyForm("axe", gregapi.data.OP.toolHeadAxe, false), // :342
+				new AssemblyForm("axe_double", gregapi.data.OP.toolHeadAxeDouble, false), // :343
+				new AssemblyForm("hoe", gregapi.data.OP.toolHeadHoe, false), // :344
+				new AssemblyForm("sense", gregapi.data.OP.toolHeadSense, false), // :345
+				new AssemblyForm("plow", gregapi.data.OP.toolHeadPlow, false), // :346
+				new AssemblyForm("file", gregapi.data.OP.toolHeadFile, false), // :347
+				new AssemblyForm("chisel", gregapi.data.OP.toolHeadChisel, false), // :348
+				new AssemblyForm("screwdriver", gregapi.data.OP.toolHeadScrewdriver, false), // :349
+				new AssemblyForm("saw", gregapi.data.OP.toolHeadSaw, false)); // :350
+	}
+
+	/** The material face of one assembly row (the test-visible walk unit). */
+	record AssemblyRow(AssemblyForm aForm, gregapi.oredict.OreDictMaterial aMaterial, String aSnake) {}
+
+	/**
+	 * The assembly walk face (offline-pure): per form, every registered head item (the
+	 * registrationOrder membership = the head item truth) minus the :333 soft-tag gate.
+	 * The handle gate is the declared wood-rod relaxation — no material face beyond the
+	 * head truth.
+	 */
+	static java.util.List<AssemblyRow> toolAssemblyRows() {
+		java.util.Map<gregapi.oredict.OreDictPrefix, java.util.List<OreDictMaterial>> tByHead = new java.util.HashMap<>();
+		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+			tByHead.computeIfAbsent(tPair.prefix(), tKey -> new ArrayList<>()).add(tPair.material());
+		}
+		java.util.List<AssemblyRow> rRows = new ArrayList<>();
+		for (AssemblyForm tForm : assemblyForms()) {
+			for (OreDictMaterial tMaterial : tByHead.getOrDefault(tForm.aHead(), java.util.List.of())) {
+				if (tForm.aNoSoftTag() && (tMaterial.contains(gregapi.data.TD.Properties.WOOD)
+						|| tMaterial.contains(gregapi.data.TD.Properties.BOUNCY)
+						|| tMaterial.contains(gregapi.data.TD.Properties.STRETCHY))) continue; // :333 Nor(WOOD, BOUNCY, STRETCHY)
+				rRows.add(new AssemblyRow(tForm, tMaterial, GTMaterialItems.snakeCase(tMaterial.mNameInternal)));
+			}
+		}
+		return rRows;
+	}
+
+	/** The row id — the craftFrom <output>_from_<input> convention over the material leaf. */
+	static ResourceLocation assemblyRowId(String aForm, String aSnake) {
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, aForm + "_from_head/" + aSnake);
+	}
+
+	/** The assembly's tool face (the GT6Tools registry; the switch IS the 17-form ledger). */
+	private static net.minecraft.world.item.Item assemblyToolItem(String aForm) {
+		return switch (aForm) {
+			case "hard_hammer" -> GT6Tools.HAMMER.get();
+			case "sword" -> GT6Tools.SWORD.get();
+			case "builder_wand" -> GT6Tools.BUILDER_WAND.get();
+			case "pickaxe_construction" -> GT6Tools.PICKAXE_CONSTRUCTION.get();
+			case "pickaxe_gem" -> GT6Tools.PICKAXE_GEM.get();
+			case "pickaxe" -> GT6Tools.PICKAXE.get();
+			case "shovel" -> GT6Tools.SHOVEL.get();
+			case "spade" -> GT6Tools.SPADE.get();
+			case "axe" -> GT6Tools.AXE.get();
+			case "axe_double" -> GT6Tools.AXE_DOUBLE.get();
+			case "hoe" -> GT6Tools.HOE.get();
+			case "sense" -> GT6Tools.SENSE.get();
+			case "plow" -> GT6Tools.PLOW.get();
+			case "file" -> GT6Tools.FILE.get();
+			case "chisel" -> GT6Tools.CHISEL.get();
+			case "screwdriver" -> GT6Tools.SCREWDRIVER.get();
+			case "saw" -> GT6Tools.SAW.get();
+			default -> throw new IllegalArgumentException("unknown assembly form: " + aForm);
+		};
+	}
+
+	/** The assembly's head-item face — null = the head item miss (no row, never an unresolvable ingredient). */
+	private static net.minecraft.world.item.Item assemblyHeadItem(AssemblyRow aRow) {
+		return gregtech6.registry.GTMaterialItems.get(aRow.aForm().aHead(), aRow.aMaterial()) == null ? null
+				: gregtech6.registry.GTMaterialItems.get(aRow.aForm().aHead(), aRow.aMaterial()).get();
+	}
+
+	/** The stamp multiplier: the item's own LadderTool face (the gem pick ×0.25), 1.0 otherwise. */
+	private static float assemblyMultiplier(net.minecraft.world.item.Item aTool) {
+		return aTool instanceof gregtech6.items.tools.GT6ToolLadder.LadderTool tLadder ? tLadder.durabilityMultiplier() : 1.0F;
+	}
+
+//? if forge {
+	private void toolAssemblyRows(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
+		for (AssemblyRow tRow : toolAssemblyRows()) {
+			net.minecraft.world.item.Item tTool = assemblyToolItem(tRow.aForm().aId());
+			net.minecraft.world.item.Item tHead = assemblyHeadItem(tRow);
+			if (tHead == null) continue; // the head item miss — no row (never an unresolvable ingredient)
+			ResourceLocation tId = assemblyRowId(tRow.aForm().aId(), tRow.aSnake());
+			net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
+					.recipeAdvancement()
+					.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
+					.addCriterion("has_head", has(tHead))
+					.addCriterion("has_the_recipe", net.minecraft.advancements.critereon.RecipeUnlockedTrigger.unlocked(tId))
+					.rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(tId))
+					.requirements(net.minecraft.advancements.RequirementsStrategy.OR);
+			aConsumer.accept(new MaterialToolRow(tId, tId.withPrefix("recipes/tools/"),
+					net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT,
+					java.util.List.of("H", "S"),
+					java.util.Map.of('H', net.minecraft.world.item.crafting.Ingredient.of(tHead),
+							'S', net.minecraft.world.item.crafting.Ingredient.of(Tags.Items.RODS_WOODEN)),
+					tTool, tRow.aSnake(), assemblyMultiplier(tTool), tAdvancement));
+		}
+	}
+
+//?} else {
+/*	private void toolAssemblyRows(net.minecraft.data.recipes.RecipeOutput aOutput) {
+		for (AssemblyRow tRow : toolAssemblyRows()) {
+			net.minecraft.world.item.Item tTool = assemblyToolItem(tRow.aForm().aId());
+			net.minecraft.world.item.Item tHead = assemblyHeadItem(tRow);
+			if (tHead == null) continue; // the head item miss — no row (never an unresolvable ingredient)
+			ResourceLocation tId = assemblyRowId(tRow.aForm().aId(), tRow.aSnake());
+			net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
+					.recipeAdvancement()
+					.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
+					.addCriterion("has_head", has(tHead))
+					.addCriterion("has_the_recipe", net.minecraft.advancements.critereon.RecipeUnlockedTrigger.unlocked(tId))
+					.rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(tId))
+					.requirements(net.minecraft.advancements.AdvancementRequirements.Strategy.OR);
+			gregtech6.items.tools.GT6MaterialToolRecipe tRecipe = new gregtech6.items.tools.GT6MaterialToolRecipe("",
+					net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT,
+					net.minecraft.world.item.crafting.ShapedRecipePattern.of(
+							java.util.Map.of('H', net.minecraft.world.item.crafting.Ingredient.of(tHead),
+									'S', net.minecraft.world.item.crafting.Ingredient.of(Tags.Items.RODS_WOODEN)),
+							java.util.List.of("H", "S")),
+					new net.minecraft.world.item.ItemStack(tTool), true, tRow.aSnake(), assemblyMultiplier(tTool));
+			aOutput.accept(tId, tRecipe, tAdvancement.build(tId.withPrefix("recipes/tools/")));
 		}
 	}
 

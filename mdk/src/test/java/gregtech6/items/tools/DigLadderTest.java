@@ -218,6 +218,49 @@ public class DigLadderTest {
 		tCopy.addProperty("material", aMaterial);
 		return tCopy;
 	}
+
+	/**
+	 * The assembly multiplier stamp (task r7-39-toolhead-assembly): the OPTIONAL
+	 * "multiplier" JSON field (default 1.0) carries the form budget — the gem pick's
+	 * x0.25 — into the stamped identity (MultiItemTool.java:182 mToolDurability * 100 * mult).
+	 */
+	@Test
+	public void assemblyMultiplierFieldStampsTheBudget() {
+		com.google.gson.JsonObject tJson = new com.google.gson.JsonObject();
+		tJson.addProperty("category", "equipment");
+		com.google.gson.JsonArray tPattern = new com.google.gson.JsonArray();
+		tPattern.add("H");
+		tJson.add("pattern", tPattern);
+		com.google.gson.JsonObject tKey = new com.google.gson.JsonObject();
+		com.google.gson.JsonObject tHead = new com.google.gson.JsonObject();
+		tHead.addProperty("item", "minecraft:stick"); // the offline wall: vanilla item (the H face is irrelevant to the stamp test)
+		tKey.add("H", tHead);
+		tJson.add("key", tKey);
+		com.google.gson.JsonObject tResult = new com.google.gson.JsonObject();
+		tResult.addProperty("item", "minecraft:stick"); // the mod-Item wall: the vanilla item carries the stamp face
+		tJson.add("result", tResult);
+		tJson.addProperty("material", "bronze");
+		tJson.addProperty("multiplier", 0.25);
+
+		GT6MaterialToolRecipe.Serializer tSerializer = new GT6MaterialToolRecipe.Serializer();
+		GT6MaterialToolRecipe tRecipe = tSerializer.fromJson(new net.minecraft.resources.ResourceLocation("gt6", "pickaxe_gem_from_head/bronze"), tJson);
+		net.minecraft.world.inventory.CraftingContainer tContainer = new net.minecraft.world.inventory.TransientCraftingContainer(null, 1, 1);
+		ItemStack tAssembled = tRecipe.assemble(tContainer, net.minecraft.core.RegistryAccess.EMPTY);
+		CompoundTag tRoot = tAssembled.getTag();
+		CompoundTag tToolTag = tRoot == null ? null : tRoot.getCompound("GT.ToolStats");
+		assertTrue(tToolTag != null && tToolTag.contains("j", Tag.TAG_LONG),
+				"the x0.25 assembly still stamps the identity");
+		assertEquals(MT.Bronze.mToolDurability * 25L, tToolTag.getLong("j"),
+				"j = mToolDurability * 100 * 0.25 (:182) — the form multiplier rides the stamp");
+
+		// the field is OPTIONAL: omitting it keeps the x1.0 budget (the dig-row face)
+		tJson.remove("multiplier");
+		GT6MaterialToolRecipe tBare = tSerializer.fromJson(new net.minecraft.resources.ResourceLocation("gt6", "pickaxe_from_head/bronze"), tJson);
+		ItemStack tBareAssembled = tBare.assemble(tContainer, net.minecraft.core.RegistryAccess.EMPTY);
+		assertEquals(MT.Bronze.mToolDurability * 100L,
+				tBareAssembled.getTag().getCompound("GT.ToolStats").getLong("j"),
+				"the omitted multiplier defaults to x1.0");
+	}
 	//?} else {
 	/*// The 1.21.1 stamp face: the recipe constructed directly (the codec parse face rides
 	// the datagen emit + the runData idempotence, the FML JVM pins the serializer registration).
@@ -231,6 +274,22 @@ public class DigLadderTest {
 				net.minecraft.core.RegistryAccess.fromRegistryOfRegistries(net.minecraft.core.registries.BuiltInRegistries.REGISTRY));
 		OreDictMaterial tPrimary = GT6ItemData.get(tAssembled, GT6ToolStats.KEY).primaryMaterial();
 		assertSame(MT.Bronze, tPrimary, "the assembled stack carries the row's material identity");
+	}
+
+	// The assembly multiplier stamp (task r7-39-toolhead-assembly): the x0.25 gem-pick form
+	// rides the 8-arg ctor (the codec optionalFieldOf face is exercised by the emitted JSON).
+	@Test
+	public void assemblyMultiplierFieldStampsTheBudget() {
+		java.util.Map<Character, Ingredient> tKey = java.util.Map.of('H', Ingredient.of(Items.STICK));
+		GT6MaterialToolRecipe tRecipe = new GT6MaterialToolRecipe("", net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT,
+				net.minecraft.world.item.crafting.ShapedRecipePattern.of(tKey, java.util.List.of("H")),
+				new ItemStack(Items.STICK), true, "bronze", 0.25F);
+		ItemStack tAssembled = tRecipe.assemble(net.minecraft.world.item.crafting.CraftingInput.of(1, 1, java.util.List.of(new ItemStack(Items.STICK))),
+				net.minecraft.core.RegistryAccess.fromRegistryOfRegistries(net.minecraft.core.registries.BuiltInRegistries.REGISTRY));
+		GT6ToolStats tBack = GT6ItemData.get(tAssembled, GT6ToolStats.KEY);
+		assertSame(MT.Bronze, tBack.primaryMaterial(), "the x0.25 assembly still stamps the identity");
+		assertEquals(MT.Bronze.mToolDurability * 25L, tBack.maxDamage(),
+				"j = mToolDurability * 100 * 0.25 (:182) — the form multiplier rides the stamp");
 	}
 	*///?}
 

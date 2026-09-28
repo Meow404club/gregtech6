@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_chisel_infused_order"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "infused_order",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:chisel"
+  }
+}

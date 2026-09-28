@@ -1,5 +1,5 @@
 {
-  "type": "gt6:material_tool",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
     "P": {
@@ -15,14 +15,12 @@
       "tag": "forge:rods/wooden"
     }
   },
-  "material": "titanium_aluminide",
   "pattern": [
     "fPh",
     " s "
   ],
   "result": {
-    "count": 1,
-    "item": "gt6:spade"
+    "item": "gt6:tool_head_spade_titanium_aluminide"
   },
   "show_notification": true
 }

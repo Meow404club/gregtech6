@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_sense_bedrock_hslaalloy"
+    },
+    "S": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "material": "bedrock_hslaalloy",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:sense"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_hammer_infused_earth"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "infused_earth",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:hammer"
+  }
+}

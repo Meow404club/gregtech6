@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_pulsating_iron"
-            ]
+            "tag": "forge:plates/pulsating_iron"
           }
         ]
       },

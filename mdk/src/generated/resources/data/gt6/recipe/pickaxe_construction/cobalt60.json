@@ -1,5 +1,5 @@
 {
-  "type": "gt6:material_tool",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
     "I": {
@@ -15,13 +15,12 @@
       "tag": "gt6:tools/hard_hammer"
     }
   },
-  "material": "cobalt60",
   "pattern": [
     "PIP",
     "f h"
   ],
   "result": {
     "count": 1,
-    "id": "gt6:pickaxe_construction"
+    "id": "gt6:tool_head_construction_pickaxe_cobalt60"
   }
 }

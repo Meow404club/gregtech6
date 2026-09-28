@@ -1,5 +1,5 @@
 {
-  "type": "gt6:material_tool",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
     "P": {
@@ -12,14 +12,12 @@
       "tag": "gt6:tools/hard_hammer"
     }
   },
-  "material": "muspelheim_power",
   "pattern": [
     " P ",
     "fPh"
   ],
   "result": {
-    "count": 1,
-    "item": "gt6:sword"
+    "item": "gt6:tool_head_sword_muspelheim_power"
   },
   "show_notification": true
 }

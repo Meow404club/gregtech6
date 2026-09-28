@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_draconium_awakened"
-            ]
+            "tag": "forge:plates/draconium_awakened"
           }
         ]
       },

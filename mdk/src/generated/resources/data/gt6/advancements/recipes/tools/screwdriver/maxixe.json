@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_maxixe"
-            ]
+            "tag": "forge:plates/maxixe"
           }
         ]
       },

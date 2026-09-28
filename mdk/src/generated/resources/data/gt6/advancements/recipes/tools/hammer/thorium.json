@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/thorium"
+            "tag": "forge:plates/thorium"
           }
         ]
       },

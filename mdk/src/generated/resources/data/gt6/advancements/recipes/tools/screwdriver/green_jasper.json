@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_green_jasper"
-            ]
+            "tag": "forge:plates/green_jasper"
           }
         ]
       },

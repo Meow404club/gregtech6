@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_spade_hexorium_black"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "hexorium_black",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:spade"
+  }
+}

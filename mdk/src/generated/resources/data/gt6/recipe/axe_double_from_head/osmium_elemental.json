@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_axe_double_osmium_elemental"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "osmium_elemental",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:axe_double"
+  }
+}

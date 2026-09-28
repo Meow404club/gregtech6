@@ -1,5 +1,5 @@
 {
-  "type": "gt6:material_tool",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
     "I": {
@@ -15,14 +15,12 @@
       "tag": "gt6:tools/hard_hammer"
     }
   },
-  "material": "midasium",
   "pattern": [
     "PIh",
     "f  "
   ],
   "result": {
-    "count": 1,
-    "item": "gt6:hoe"
+    "item": "gt6:tool_head_hoe_midasium"
   },
   "show_notification": true
 }

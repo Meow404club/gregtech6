@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/rubracium"
+            "tag": "forge:plates/rubracium"
           }
         ]
       },

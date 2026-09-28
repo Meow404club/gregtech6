@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_pickaxe_sunstone"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "sunstone",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:pickaxe"
+  }
+}

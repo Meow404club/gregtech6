@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_gaia_spirit"
-            ]
+            "tag": "forge:plates/gaia_spirit"
           }
         ]
       },

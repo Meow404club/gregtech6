@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/wrought_iron"
+            "tag": "forge:plates/wrought_iron"
           }
         ]
       },

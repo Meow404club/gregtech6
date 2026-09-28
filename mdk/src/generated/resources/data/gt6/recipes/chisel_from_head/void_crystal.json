@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_chisel_void_crystal"
+    },
+    "S": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "material": "void_crystal",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:chisel"
+  },
+  "show_notification": true
+}

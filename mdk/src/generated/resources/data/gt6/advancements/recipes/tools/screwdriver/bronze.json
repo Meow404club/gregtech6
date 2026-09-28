@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_bronze"
-            ]
+            "tag": "forge:plates/bronze"
           }
         ]
       },

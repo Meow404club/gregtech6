@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_construction_pickaxe_cast_iron"
+    },
+    "S": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "material": "cast_iron",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:pickaxe_construction"
+  },
+  "show_notification": true
+}

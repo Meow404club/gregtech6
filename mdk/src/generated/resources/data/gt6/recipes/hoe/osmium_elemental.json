@@ -1,5 +1,5 @@
 {
-  "type": "gt6:material_tool",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
     "I": {
@@ -15,14 +15,12 @@
       "tag": "gt6:tools/hard_hammer"
     }
   },
-  "material": "osmium_elemental",
   "pattern": [
     "PIh",
     "f  "
   ],
   "result": {
-    "count": 1,
-    "item": "gt6:hoe"
+    "item": "gt6:tool_head_hoe_osmium_elemental"
   },
   "show_notification": true
 }

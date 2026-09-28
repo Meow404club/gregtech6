@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_file_infuscolium"
+    },
+    "S": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "material": "infuscolium",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:file"
+  },
+  "show_notification": true
+}

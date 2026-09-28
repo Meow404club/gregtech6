@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/aluminium_alloy"
+            "tag": "forge:plates/aluminium_alloy"
           }
         ]
       },

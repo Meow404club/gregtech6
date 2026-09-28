@@ -197,19 +197,28 @@ public class GT6BladeLadderTest {
 
 	@Test
 	public void theGeneratedSwordRowIsTheSharedSerializerShape() throws Exception {
-		// the 1.20.1 plural band: the shared gt6:material_tool row (the S31-3 seam
-		// switch — the identity stamps at ASSEMBLE time, the JSON carries the snake)
+		// task r7-39-toolhead-assembly: the sword grid row :321 is an mToolHeadRecipes row —
+		// it emits the HEAD through the vanilla serializer (the shared material_tool face moved
+		// to the head+handle ASSEMBLY row, the soft_hammer seam)
 		JsonObject tPlural = generated("/data/gt6/recipes/sword/steel.json");
-		assertEquals("gt6:material_tool", tPlural.get("type").getAsString(), "the shared serializer");
-		assertEquals("steel", tPlural.get("material").getAsString(), "the snake primary");
+		assertEquals("minecraft:crafting_shaped", tPlural.get("type").getAsString(), "the vanilla head-row serializer");
 		JsonObject tResult = tPlural.getAsJsonObject("result");
-		assertEquals("gt6:sword", tResult.get("item").getAsString());
+		assertEquals("gt6:tool_head_sword_steel", tResult.get("item").getAsString(), "the :321 head output");
 		assertNull(tResult.get("nbt"), "the nbt carrier retired with the decorators");
-		assertTrue(tResult.get("count").getAsInt() >= 1, "the count face");
+
+		// the shared gt6:material_tool row = the sword ASSEMBLY row (the S31-3 seam
+		// switch — the identity stamps at ASSEMBLE time, the JSON carries the snake)
+		JsonObject tAssembly = generated("/data/gt6/recipes/sword_from_head/steel.json");
+		assertEquals("gt6:material_tool", tAssembly.get("type").getAsString(), "the shared serializer");
+		assertEquals("steel", tAssembly.get("material").getAsString(), "the snake primary");
+		JsonObject tAssemblyResult = tAssembly.getAsJsonObject("result");
+		assertEquals("gt6:sword", tAssemblyResult.get("item").getAsString());
+		assertNull(tAssemblyResult.get("nbt"), "the nbt carrier retired with the decorators");
+		assertTrue(tAssemblyResult.get("count").getAsInt() >= 1, "the count face");
 
 		// the 1.21.1 singular mirror band: the bare {count, id} result (the components
 		// carrier retired — the stamp rides the serializer on both legs)
-		JsonObject tSingular = generated("/data/gt6/recipe/sword/steel.json").getAsJsonObject("result");
+		JsonObject tSingular = generated("/data/gt6/recipe/sword_from_head/steel.json").getAsJsonObject("result");
 		assertEquals("gt6:sword", tSingular.get("id").getAsString());
 		assertEquals(1, tSingular.get("count").getAsInt());
 		assertNull(tSingular.get("components"), "the components carrier retired with the decorators");

@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_vulcanite"
-            ]
+            "tag": "forge:plates/vulcanite"
           }
         ]
       },

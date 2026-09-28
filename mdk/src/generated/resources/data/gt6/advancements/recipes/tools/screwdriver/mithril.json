@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_mithril"
-            ]
+            "tag": "forge:plates/mithril"
           }
         ]
       },

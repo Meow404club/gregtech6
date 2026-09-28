@@ -1,5 +1,5 @@
 {
-  "type": "gt6:material_tool",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
     "P": {
@@ -15,13 +15,12 @@
       "tag": "c:rods/wooden"
     }
   },
-  "material": "osmium_elemental",
   "pattern": [
     "fPh",
     " s "
   ],
   "result": {
     "count": 1,
-    "id": "gt6:spade"
+    "id": "gt6:tool_head_spade_osmium_elemental"
   }
 }

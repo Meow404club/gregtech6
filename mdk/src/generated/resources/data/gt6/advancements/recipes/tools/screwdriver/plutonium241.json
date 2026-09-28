@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_plutonium241"
-            ]
+            "tag": "forge:plates/plutonium241"
           }
         ]
       },

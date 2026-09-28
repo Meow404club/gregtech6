@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_saw_red_meteor"
+    },
+    "S": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "material": "red_meteor",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:saw"
+  },
+  "show_notification": true
+}

@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_aluminium_alloy"
-            ]
+            "tag": "forge:plates/aluminium_alloy"
           }
         ]
       },

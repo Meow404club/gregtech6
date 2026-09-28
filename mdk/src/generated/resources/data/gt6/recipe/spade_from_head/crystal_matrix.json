@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_spade_crystal_matrix"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "crystal_matrix",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:spade"
+  }
+}

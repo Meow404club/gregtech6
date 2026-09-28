@@ -1,5 +1,5 @@
 {
-  "type": "gt6:material_tool",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
     "P": {
@@ -15,14 +15,12 @@
       "tag": "gt6:tools/hard_hammer"
     }
   },
-  "material": "meteoric_iron",
   "pattern": [
     "hPf",
     " S "
   ],
   "result": {
-    "count": 1,
-    "item": "gt6:chisel"
+    "item": "gt6:tool_head_chisel_meteoric_iron"
   },
   "show_notification": true
 }

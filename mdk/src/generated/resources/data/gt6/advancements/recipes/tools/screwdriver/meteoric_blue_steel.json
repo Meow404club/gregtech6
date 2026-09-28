@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_meteoric_blue_steel"
-            ]
+            "tag": "forge:plates/meteoric_blue_steel"
           }
         ]
       },

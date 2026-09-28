@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/steel"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "II ",
+    "IIh",
+    "II "
+  ],
+  "result": {
+    "item": "gt6:tool_head_hammer_steel"
+  },
+  "show_notification": true
+}

@@ -1,5 +1,5 @@
 {
-  "type": "gt6:material_tool",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
     "P": {
@@ -12,12 +12,11 @@
       "tag": "gt6:tools/hard_hammer"
     }
   },
-  "material": "ceruclase",
   "pattern": [
     "fPh"
   ],
   "result": {
     "count": 1,
-    "id": "gt6:shovel"
+    "id": "gt6:tool_head_shovel_ceruclase"
   }
 }

@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_axe_steel_galvanized"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "steel_galvanized",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:axe"
+  }
+}

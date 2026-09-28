@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/tungsten_carbide"
+            "tag": "forge:plates/tungsten_carbide"
           }
         ]
       },

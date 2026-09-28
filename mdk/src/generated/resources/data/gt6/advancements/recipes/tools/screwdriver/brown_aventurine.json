@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_brown_aventurine"
-            ]
+            "tag": "forge:plates/brown_aventurine"
           }
         ]
       },
