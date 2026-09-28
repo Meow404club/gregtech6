@@ -69,11 +69,13 @@ import net.minecraft.world.level.material.Fluids;
 import java.util.ArrayList;
 import java.util.List;
 import gregapi.data.MT;
+import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.stone.StoneVariant;
 import gregtech6.block.tree.GT6TreeKind;
 import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GT6TreeBlocks;
+import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTStoneBlocks;
 import gregtech6.registry.GT6SurfaceBlocks;
 import gregtech6.worldgen.GT6FallenLogFeature;
@@ -418,6 +420,7 @@ public final class GT6WorldgenDatagen {
                 new GTFluidSpringConfig.Table(FLUID_SPRING_TABLE));
         bootstrapOreConfigured(ctx); // task p30-w6-small-ore-datagen — tail-append
         bootstrapGeodeConfigured(ctx); // task r6-33-geode — tail-append
+        bootstrapLensOreConfigured(ctx); // task r6-c3-lens-ores — tail-append
     }
 
     /**
@@ -525,6 +528,7 @@ public final class GT6WorldgenDatagen {
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
         bootstrapOrePlaced(ctx, tFeatures); // task p30-w6-small-ore-datagen — tail-append
         bootstrapGeodePlaced(ctx, tFeatures); // task r6-33-geode — tail-append
+        bootstrapLensOrePlaced(ctx, tFeatures); // task r6-c3-lens-ores — tail-append
     }
 
     /**
@@ -573,12 +577,21 @@ public final class GT6WorldgenDatagen {
         ctx.register(biomeModifierKeyOf("large_veins_deep"), addFeatures(tOverworld,
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.LARGE_VEINS_DEEP_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
-        // task p31-strata-lens — the strata-lens biome modifier: EVERY overworld biome
-        // (the research.p30-w6-vein-boundary impl note carried over: a per-biome split
-        // would carve holes into any lens crossing a biome border), at the
-        // UNDERGROUND_ORES step.
+        // task p31-strata-lens + r6-c3-lens-ores — the strata-lens biome modifier: EVERY
+        // overworld biome (the research.p30-w6-vein-boundary impl note carried over: a
+        // per-biome split would carve holes into any lens crossing a biome border), at the
+        // UNDERGROUND_ORES step. The companion-ore placed features (task r6-c3-lens-ores)
+        // ride the SAME modifier AFTER the lens feature: the appended list order is the
+        // biome feature-list order, and vanilla executes a step's features along the
+        // FeatureSorter chain edges (FeatureSorter.buildFeaturesPerStep:52-57 consecutive
+        // pairs → ChunkGenerator.applyBiomeDecoration:319) — so every companion feature
+        // scans host blocks the lens has already placed, independent of where this
+        // modifier lands among the other ore-pass modifiers.
+        List<Holder<PlacedFeature>> tLensBand = new ArrayList<>(1 + lensOreRows().size());
+        tLensBand.add(tPlaced.getOrThrow(GT6Worldgen.STRATA_LENSES_PLACED));
+        for (LensOreRow tRow : lensOreRows()) tLensBand.add(tPlaced.getOrThrow(lensOrePlacedKey(tRow)));
         ctx.register(biomeModifierKeyOf("strata_lenses"), addFeatures(tOverworld,
-                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.STRATA_LENSES_PLACED)),
+                HolderSet.direct(tLensBand),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
         // task p31-bedrock-ore-worldgen — the bedrock-ore biome modifier: EVERY overworld
         // biome (the no-biome-gate impl note carried over: upstream WorldgenOresBedrock has
@@ -945,6 +958,188 @@ public final class GT6WorldgenDatagen {
             ctx.register(ORE_BIOME_MODIFIER_KEYS.get(i), addFeatures(aBiomes.getOrThrow(tDimTags[i]),
                     HolderSet.direct(tHolders),
                     GenerationStep.Decoration.UNDERGROUND_ORES));
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // The lens companion-ore band (task r6-c3-lens-ores) — the C3 bone completion:
+    // the upstream stone-LAYER companion-ore table (Loader_Worldgen.java:61-640, the
+    // StoneLayerOres ctor rows — the card brief's "WorldgenStoneLayers.java:220-340"
+    // was the placement logic; the table itself lives here) bound to the port's
+    // 5 marker-stone lenses (the strata-lens compromise form; the per-column layer
+    // mode itself stays the KG-deferred custom-Feature card). One row per upstream
+    // StoneLayerOres line, verbatim Y band + chance denominator (CS.U48 = CS.U/48,
+    // StoneLayerOres.check:90 {@code nextInt(U) < chance} = the 1/N per layer-stone
+    // -block face). The two biome-gated gem rows (spinel MOUNTAINS / balasruby
+    // JUNGLE) ride the port's dimension-level-only convention (the small-ore band
+    // face). Host = the lens stone ONLY (the upstream layer-stone host face:
+    // BlockMatchTest on the family anchor). Execution order = the ONE strata_lenses
+    // biome modifier AFTER the lens feature (see bootstrapBiomeModifiers).
+    //
+    // The 53-material registration axis (GT6OreBlocks.WORLDGEN_ORES) is the block
+    // universe and the card rules out new ore blocks: rows outside it stay TABLE
+    // data only — the GT6VeinGenerator.valid gate face (the molybdenum precedent),
+    // 13 of 22 today. The gate is LIVE data, not a frozen list: the axis-extension
+    // card (r7-a-ore-axis-extension, B plan ruled — coordinator notice 2026-09-28)
+    // widens the axis and these rows start generating with zero edits here (the
+    // basalt row set is entirely gated today, so basalt generates no companion ore
+    // until then).
+    // ------------------------------------------------------------------
+
+    /**
+     * One upstream {@code StoneLayerOres} companion row (Loader_Worldgen ctor order
+     * material / chance / minY / maxY, plus the lens snake binding it to this port's
+     * lens stone). The material rides a supplier (the GTOreWorldgen.SmallOreRow
+     * offline posture — this class loads before OP.init).
+     *
+     * @param lens        the lens stone snake (LENS_STONE_SNAKES member, the ore family snake)
+     * @param minY/maxY  the upstream Y band, verbatim
+     * @param denominator the N of the upstream 1/N per-layer-stone-block chance (U48 → 48)
+     */
+    public record LensOreRow(String lens, int minY, int maxY, long denominator,
+            java.util.function.Supplier<OreDictMaterial> material) {
+
+        /** The inclusive Y-band width in blocks (the count-formula input). */
+        public int bandWidth() { return maxY - minY + 1; }
+    }
+
+    /** The MT.* supplier behind the row literals (the GTOreWorldgen.row form). */
+    private static LensOreRow lensOre(String aLens, int aMinY, int aMaxY, long aDenominator,
+            java.util.function.Supplier<OreDictMaterial> aMaterial) {
+        return new LensOreRow(aLens, aMinY, aMaxY, aDenominator, aMaterial);
+    }
+
+    /**
+     * The 22 upstream companion rows over the 5 lenses, upstream order
+     * (Loader_Worldgen.java line cites inline): kimberlite 3 (:225-229), basalt 4
+     * (:247-252), marble 6 (:288-295), granite_red 5 (:359-365), komatiite 4 (:217-222).
+     * The granite_red tantalite/columbite/coltan rows are the {@code !MD.HBM.mLoaded}
+     * arm (:362-364) — no HBM on this port, they are the active upstream face.
+     */
+    public static final List<LensOreRow> LENS_ORE_TABLE = List.of(
+        // -- kimberlite, :225-229 — the diamond-pipe bone ----------------------------
+        lensOre("kimberlite",  0, 12, 48, () -> MT.Diamond),
+        lensOre("kimberlite", 24, 48, 48, () -> MT.Spinel),                     // + BIOMES_MOUNTAINS (dropped, dim-level-only)
+        lensOre("kimberlite", 24, 48, 48, () -> MT.BalasRuby),                  // + BIOMES_JUNGLE (dropped, dim-level-only)
+        // -- basalt, :247-252 — ALL FOUR outside the 53-axis (table data only today) --
+        lensOre("basalt",  0, 32, 32, () -> MT.Peridot),
+        lensOre("basalt",  8, 40, 32, () -> MT.Uvarovite),
+        lensOre("basalt", 16, 48, 32, () -> MT.Grossular),
+        lensOre("basalt", 32, 64,  8, () -> MT.OREMATS.Chromite),
+        // -- marble, :288-295 — the cassiterite lens ---------------------------------
+        lensOre("marble", 20, 80, 16, () -> MT.OREMATS.Cassiterite),
+        lensOre("marble", 38, 82, 16, () -> MT.OREMATS.Stannite),
+        lensOre("marble", 38, 82, 16, () -> MT.OREMATS.Kesterite),
+        lensOre("marble", 10, 30,  8, () -> MT.OREMATS.Sphalerite),
+        lensOre("marble",  0, 20,  8, () -> MT.OREMATS.Chalcopyrite),
+        lensOre("marble",  0, 30, 12, () -> MT.Pyrite),
+        // -- granite_red, :359-365 — the !MD.HBM arm rows ship ------------------------
+        lensOre("granite_red",  0, 18, 32, () -> MT.OREMATS.Pitchblende),
+        lensOre("granite_red",  0, 16, 32, () -> MT.OREMATS.Uraninite),
+        lensOre("granite_red", 30, 40, 64, () -> MT.OREMATS.Tantalite),
+        lensOre("granite_red", 30, 40, 64, () -> MT.OREMATS.Columbite),
+        lensOre("granite_red", 20, 50, 16, () -> MT.OREMATS.Coltan),
+        // -- komatiite, :217-222 ------------------------------------------------------
+        lensOre("komatiite", 20, 50, 16, () -> MT.MgCO3),
+        lensOre("komatiite",  0, 32, 12, () -> MT.OREMATS.Cinnabar),
+        lensOre("komatiite",  0, 30,  8, () -> MT.Redstone),
+        lensOre("komatiite",  0, 30, 12, () -> MT.Pyrite));
+
+    /** The alias-resolved row material (the GTOreWorldgen.resolve walk, LensOreRow shape). */
+    public static OreDictMaterial lensOreResolve(LensOreRow aRow) {
+        OreDictMaterial tMaterial = aRow.material().get();
+        if (tMaterial == null || tMaterial.mID < 0) return null;
+        return MaterialRegistry.INSTANCE.get(tMaterial); // alias slot -> target (MaterialRegistry.java:182-185)
+    }
+
+    /** The registration-universe validity (the GT6VeinGenerator.valid face: 53-axis membership). */
+    public static boolean lensOreValid(LensOreRow aRow) {
+        OreDictMaterial tMaterial = lensOreResolve(aRow);
+        return tMaterial != null && GT6OreBlocks.materialAxis().contains(tMaterial);
+    }
+
+    /** The generated rows: LENS_ORE_TABLE minus the axis-gated rows, table order. */
+    public static List<LensOreRow> lensOreRows() {
+        return LENS_ORE_TABLE.stream().filter(GT6WorldgenDatagen::lensOreValid).toList();
+    }
+
+    /**
+     * The per-chunk Count constant: {@code max(1, round(bandWidth / (denominator × 1.5)))}.
+     * The upstream face is a 1/N chance per layer-stone block in band; the vanilla
+     * Feature.ORE proxy knows nothing of host counts, so the projection anchors on the
+     * nominal one-block-band slab (16×16 columns × 1 block) divided by N and by the
+     * size-4 walk mean 1.5 blocks per attempt (GTOreWorldgen.ORE_SIZE javadoc). The
+     * RELATIVE frequencies stay upstream (bandWidth/N — cassiterite outmasses diamond
+     * ~14:1, chromite outmasses peridot 4:1); the absolute scale is the declared
+     * lens-form compromise (the layer mode's whole-world columns do not exist under
+     * the lens form — the ponytail calibration knob, one formula to retune).
+     */
+    public static int lensOreCount(LensOreRow aRow) {
+        return Math.max(1, Math.round(aRow.bandWidth() / (aRow.denominator() * 1.5f)));
+    }
+
+    /** The configured-feature key of a row ({@code gt6:ore_lens/<lens>_<material-snake>}). */
+    public static ResourceKey<ConfiguredFeature<?, ?>> lensOreConfiguredKey(LensOreRow aRow) {
+        return ResourceKey.create(Registries.CONFIGURED_FEATURE, lensOreLocation(aRow));
+    }
+
+    /** The placed-feature key of a row (same path as its configured sibling). */
+    public static ResourceKey<PlacedFeature> lensOrePlacedKey(LensOreRow aRow) {
+        return ResourceKey.create(Registries.PLACED_FEATURE, lensOreLocation(aRow));
+    }
+
+    private static ResourceLocation lensOreLocation(LensOreRow aRow) {
+        return ResourceLocation.fromNamespaceAndPath("gt6", "ore_lens/" + aRow.lens() + "_"
+                + GTMaterialItems.snakeCase(lensOreResolve(aRow).mNameInternal));
+    }
+
+    /**
+     * The lens stone snake → the ore family snake (the GT6OreBlocks.stoneBlockSnake
+     * naming splits reversed — GTStoneBlocks "granite_red" carries the "redgranite"
+     * family; every other lens snake is identical).
+     */
+    private static String lensOreFamilySnake(String aLens) {
+        return "granite_red".equals(aLens) ? "redgranite" : aLens;
+    }
+
+    /** The lens companion configured features: vanilla Feature.ORE over the lens stone anchor ONLY. */
+    private static void bootstrapLensOreConfigured(
+        //? if forge {
+        BootstapContext<ConfiguredFeature<?, ?>> ctx
+        //?} else {
+        /*BootstrapContext<ConfiguredFeature<?, ?>> ctx
+        *///?}
+    ) {
+        for (LensOreRow tRow : lensOreRows()) {
+            String tFamily = lensOreFamilySnake(tRow.lens());
+            FeatureUtils.register(ctx, lensOreConfiguredKey(tRow), Feature.ORE,
+                    // single host target — the lens stone itself (the upstream layer-stone
+                    // host face; no vanilla-stone targets: the companion ore is the lens's
+                    // own bone, not a world-scatter)
+                    new OreConfiguration(List.of(OreConfiguration.target(
+                            new BlockMatchTest(GTOreWorldgen.oreFamily(tFamily).stoneAnchor().get()),
+                            smallState(tFamily, lensOreResolve(tRow)))), GTOreWorldgen.ORE_SIZE));
+        }
+    }
+
+    /** The lens companion placed features: Count(constant)+InSquare+HeightRange(uniform band)+BiomeFilter. */
+    private static void bootstrapLensOrePlaced(
+        //? if forge {
+        BootstapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        //?} else {
+        /*BootstrapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        *///?}
+    ) {
+        for (LensOreRow tRow : lensOreRows()) {
+            PlacementUtils.register(ctx, lensOrePlacedKey(tRow),
+                    aFeatures.getOrThrow(lensOreConfiguredKey(tRow)),
+                    CountPlacement.of(lensOreCount(tRow)),
+                    InSquarePlacement.spread(),
+                    // the upstream [minY, maxY] band verbatim (the small-ore overworld face;
+                    // every band fits the modern heights as-is)
+                    HeightRangePlacement.uniform(VerticalAnchor.absolute(tRow.minY()),
+                            VerticalAnchor.absolute(tRow.maxY())),
+                    BiomeFilter.biome());
         }
     }
 

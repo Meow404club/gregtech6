@@ -1,6 +1,17 @@
 {
   "type": "forge:add_features",
   "biomes": "#minecraft:is_overworld",
-  "features": "gt6:strata_lenses",
+  "features": [
+    "gt6:strata_lenses",
+    "gt6:ore_lens/kimberlite_diamond",
+    "gt6:ore_lens/marble_cassiterite",
+    "gt6:ore_lens/marble_sphalerite",
+    "gt6:ore_lens/marble_chalcopyrite",
+    "gt6:ore_lens/marble_pyrite",
+    "gt6:ore_lens/granite_red_coltan",
+    "gt6:ore_lens/komatiite_cinnabar",
+    "gt6:ore_lens/komatiite_redstone",
+    "gt6:ore_lens/komatiite_pyrite"
+  ],
   "step": "underground_ores"
 }
