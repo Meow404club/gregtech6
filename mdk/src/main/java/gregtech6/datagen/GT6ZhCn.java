@@ -99,6 +99,7 @@ public class GT6ZhCn extends LanguageProvider {
 	protected void addTranslations() {
 		addTabTitles();
 		addPrefixTemplates();
+		addBrokenOreTemplates(); // task r4-ore-broken-name — 破损矿石模板（22 族，值由既有 hand 行派生，零新 TSV 行）
 		addMaterialNames();
 		addMiscUnits();
 		addBatteryFamily(); // task p29-w4-battery-storage — the 37+5+7+12 storage face (hand rows, the tsv direct band)
@@ -125,6 +126,9 @@ public class GT6ZhCn extends LanguageProvider {
 		// normal/broken 同族前缀、small 走 OP.oreSmall）。剩余面归波次卡③（datagen）：
 		// 26x3 逐族模板键（可选）+ 唯一创造栏页签标题 itemGroup.gt6.ore_vanillastone
 		//（GT6OreBlocks.TAB_TITLE_KEY，"石矿"）。
+		// [r4-ore-broken-name 更新] 破损形态专属名已落地（用户 2026-09-28 逆上游裁定）：
+		// 22 个有独立破损块的族加 gt6.tagprefix.<prefix_snake>_broken（见 addBrokenOreTemplates），
+		// normal 模板键面零变化。
 		addOreTabTitle(); // task p30-ore-3-datagen — ore-1 注记的卡③面（唯一新键，dump itemgroup 家族行 矿石）
 		addBeeUnits();          // task p31-bees-lv1 — the 20 comb names + the Bees tab + the 11 honey/bee-row fluids (hand rows, the tsv direct band; the dump carries no comb faces)
 		addBumbleUnits();       // task p33-bees-lv3-a-items — the 80 species names + the 8 face formats (the dump gt.multiitem.bumblebee.* faces verbatim, the tsv direct band)
@@ -1439,6 +1443,25 @@ public class GT6ZhCn extends LanguageProvider {
 			String tKey = "gt6.tagprefix." + MaterialPrefixItem.snakeCase(tPrefix.mNameInternal);
 			if (!tSeen.add(tKey)) continue; // same snake_case-collision guard as the en walk
 			addDirect(tKey);
+		}
+	}
+
+	/**
+	 * 破损矿石模板 zh 面（task r4-ore-broken-name，用户 2026-09-28 逆上游裁定：上游 oreBroken
+	 * 与 normal 同名 PrefixBlockItem.java:108-114，移植侧区分）。en 侧 addBrokenOreTemplates 的
+	 * 镜像走查：每个有独立破损块的族（form(BROKEN)!=null）追加
+	 * {@code gt6.tagprefix.<prefix_snake>_broken}，值 =「破损的」+ 该族 normal 模板的 direct
+	 * hand 行值（破损的石头%s矿 形，GTMaterialPrefixBlockItem.getName 的 BROKEN 分支消费）。
+	 * 行缺失/review 时跳过（运行时 per-key 回落英文）。零新 TSV 行：值由既有 hand 行派生，
+	 * 新增族自动随动（GT6OreBlocks.FAMILIES 走查）。
+	 */
+	private void addBrokenOreTemplates() {
+		for (GT6OreBlocks.OreFamily tFamily : GT6OreBlocks.FAMILIES) {
+			if (tFamily.form(GT6OreBlocks.FormKind.BROKEN) == null) continue; // broken≡normal 族共用上游名，无 _broken 键
+			String tNormalKey = "gt6.tagprefix." + MaterialPrefixItem.snakeCase(tFamily.prefix().mNameInternal);
+			RefRow tRow = reference.get("direct") == null ? null : reference.get("direct").get(tNormalKey);
+			if (tRow == null || tRow.skipped()) continue; // the per-key en fallback is vanilla's built-in chain
+			add(tNormalKey + "_broken", "破损的" + tRow.value());
 		}
 	}
 

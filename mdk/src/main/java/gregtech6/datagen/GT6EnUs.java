@@ -171,6 +171,7 @@ public class GT6EnUs extends LanguageProvider {
         // wanted + the one creative-tab title itemGroup.gt6.ore_vanillastone
         // (GT6OreBlocks.TAB_TITLE_KEY, "Stone Ores" — the PrefixBlockItem.java:62-67 gate).
         addOreTabTitle(); // task p30-ore-3-datagen — the ore-1 note's card-③ face (the one new key)
+        addBrokenOreTemplates(); // task r4-ore-broken-name — the note's "per-family template keys" face, the broken-form slice (22 keys)
         addRails(); // task p35-rails-31-blocks — table-tail append
         addBooks(); // task p35-books-written — table-tail append
         addTechnologicalComponents(); // task debt-emitter-sensor-generators — table-tail append
@@ -1746,6 +1747,25 @@ public class GT6EnUs extends LanguageProvider {
         OreDictPrefix tPrefix = GT6OreBlocks.TAB_FAMILY.prefix();
         add(GT6OreBlocks.TAB_TITLE_KEY,
             tPrefix.mNameCategory == null ? tPrefix.mNameInternal : tPrefix.mNameCategory);
+    }
+
+    /**
+     * The broken-form ore templates (task r4-ore-broken-name): one extra
+     * {@code gt6.tagprefix.<prefix_snake>_broken} template per family that owns a SEPARATE
+     * broken block — the 4 broken≡normal dust families keep the single upstream name (no
+     * _broken key). This is the EXPLICIT reverse-upstream ruling (user 2026-09-28): upstream
+     * oreBroken shares the family prefix and composes the SAME display name
+     * (PrefixBlockItem.java:108-114), the port distinguishes it and
+     * GTMaterialPrefixBlockItem.getName routes the BROKEN form here. Values = "Cracked " +
+     * the family template (templateOf = mMaterialPre/%s/mMaterialPost compose), walked over
+     * GT6OreBlocks.FAMILIES so the key set cannot drift from the registered families.
+     */
+    private void addBrokenOreTemplates() {
+        for (GT6OreBlocks.OreFamily tFamily : GT6OreBlocks.FAMILIES) {
+            if (tFamily.form(GT6OreBlocks.FormKind.BROKEN) == null) continue; // broken≡normal: one name upstream, one name here
+            add("gt6.tagprefix." + MaterialPrefixItem.snakeCase(tFamily.prefix().mNameInternal) + "_broken",
+                "Cracked " + templateOf(tFamily.prefix()));
+        }
     }
 
     /** Table a: one "%s"-template per prefix, all of OP.VALUES (post-OP.init()). */
