@@ -40,6 +40,16 @@ public class ProspectorTest {
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
+		// the full material flood — MT's class-load only registers NULL, the reg0000..reg0038
+		// batches ride MT.init(), and the prefix table rides OP.init() behind the open
+		// registry (the GT6RecipeMapCrucibleTest boot shape, createPrefix's open gate).
+		// The trace-message pins read MT.Cu/MT.Fe and OP.oreSmall/oreVanillastone directly,
+		// and an isolated test JVM has no other class whose @BeforeAll could flood the
+		// tables first (the r7-fix-three-npe NPE trap).
+		gregapi.oredict.MaterialRegistry.INSTANCE.open();
+		MT.init();
+		gregapi.data.OP.init();
+		gregapi.oredict.MaterialRegistry.INSTANCE.close();
 	}
 
 	// ------------------------------------------------- the classification face
