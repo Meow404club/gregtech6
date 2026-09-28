@@ -135,9 +135,20 @@ handler 缺失等于没装）：
   full+coder 拒 exit 2（排队前即拒）、gt6server 直调的 `wait_memory` 签名
   不变（estimate 缺省 0）；旧 flag 形态（无 `run` 前缀）与 run 子命令同一
   实现。`GITHUB_ACTIONS` 置位 = 零门槛透传（CI 不是本 WSL 宿主）。
+- **共享 slice 硬顶（v3c，2026-09-29 第三轮裁定）**：run 把子命令包进
+  `systemd-run --user --scope -p Slice=gt6gate.slice -- <原命令>`，并在每次
+  run 前幂等地 `systemctl --user set-property gt6gate.slice
+  MemoryMax=28G MemorySwapMax=4G --runtime`（`--cap`/`--swap` 可调，默认
+  28/4 GiB——28G 留 2G 头寸给非门禁进程）。聚合天然有界：到顶内核只在
+  slice 组内 OOM-kill 越界 gradle，不伤 WSL 宿主。systemctl/systemd-run
+  不可用或失败 → 一行 stderr 警告回退直接 exec（可用性优先）；
+  `GT6_GATE_SLICE=0` 显式关。附带收益：开 UseContainerSupport 的 JVM 会读
+  cgroup 上限自整默认堆——本仓 gradle 显式堆配置不受影响，fork 出的无配置
+  JVM 受益。`--scope` 前台运行，stdio 与退出码透传语义不变。
 
-单测：`python3 tools/gt6testgate_test.py`（stdlib unittest，47 项，全离线
-零 gradle；hook 判定表/CI 透传含在内）。
+单测：`python3 tools/gt6testgate_test.py`（stdlib unittest，56 项，全离线
+零 gradle；hook 判定表/CI 透传/slice 包装与降级含在内；
+`GT6_GATE_SLICE_LIVE=1` 追加跑真 systemd 探针）。
 
 ## MCP 工具一览（服务器名 gt6-brain）
 

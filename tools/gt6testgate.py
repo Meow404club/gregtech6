@@ -43,9 +43,23 @@ GITHUB_ACTIONS bypasses all gates at zero cost (CI boxes are not this WSL
 host). Exit-code semantics are unchanged (child passthrough; full+coder
 still exit 2 before any queueing).
 
+Hard cap (test-gating-v3c, 2026-09-29 third ruling): the runner wraps the
+child in ``systemd-run --user --scope -p Slice=gt6gate.slice`` so every
+gated gradle shares one memory envelope — ``systemctl --user set-property
+gt6gate.slice MemoryMax=28G MemorySwapMax=4G --runtime`` (28G leaves 2G
+headroom for ungated processes; ``--cap``/``--swap`` retune, defaults 28/4).
+The aggregate is naturally bounded; on exhaustion the kernel OOM-kills
+inside the slice, never the WSL host. Bootstrap is idempotent and
+re-asserted per run; if systemctl/systemd-run are unavailable the gate
+degrades to a direct exec with one stderr warning (availability over
+enforcement). Side benefit: JVMs with UseContainerSupport read the cgroup
+cap and size their default heap accordingly (our explicit gradle heap flags
+win; forked unconfigured JVMs benefit).
+
 Usage:
     python3 tools/gt6testgate.py run [--tag <name>] [--role {coder,review}]
-                              [--class CLASS] [--dry-run] -- <command...>
+                              [--class CLASS] [--cap G] [--swap G]
+                              [--dry-run] -- <command...>
     (the flags also work without the leading ``run`` — legacy form kept)
 
 The child's stdout/stderr pass through untouched (no capture); the wrapper
@@ -59,6 +73,7 @@ import fcntl
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -88,6 +103,12 @@ COLD_ESTIMATE_MIB = {
                             # run tests) and uncategorized commands
 }
 CLASSES = tuple(COLD_ESTIMATE_MIB)
+
+# --- v3c shared-slice hard cap (test-gating-v3c, 2026-09-29) ---------------
+SLICE_NAME = "gt6gate.slice"
+SLICE_CAP_GIB = 28              # 30G box: 2G headroom for ungated processes
+SLICE_SWAP_GIB = 4
+SLICE_ENV = "GT6_GATE_SLICE"    # "0" disables the wrap entirely
 
 ROLE_ENV = "GT6_TESTGATE_ROLE"
 ROLES = ("coder", "review")
@@ -299,6 +320,41 @@ def tree_rss_mib(root_pid, proc_dir="/proc"):
     return total // (1024 * 1024)
 
 
+def slice_enabled(env=None):
+    """GT6_GATE_SLICE: "0" = off; anything else (incl. unset) = on.
+
+    "On" still degrades at pre-flight if systemctl/systemd-run fail — this
+    only controls whether the wrap is attempted.
+    """
+    return (env if env is not None else os.environ).get(SLICE_ENV) != "0"
+
+
+def slice_wrap(cmd, slice_name=SLICE_NAME):
+    """``cmd`` → systemd-run scope argv inside the shared gate slice.
+
+    --scope runs the command in-line (no service-manager round trip), so
+    stdio passthrough and exit-code forwarding are preserved.
+    """
+    return ["systemd-run", "--user", "--scope",
+            "-p", f"Slice={slice_name}", "--"] + list(cmd)
+
+
+def slice_bootstrap(cap_gib=SLICE_CAP_GIB, swap_gib=SLICE_SWAP_GIB, run=None):
+    """(Re-)assert runtime caps on the shared gate slice; True = usable.
+
+    set-property is idempotent — same values, no state change — so calling
+    before every run is cheap insurance against a rebooted/reseeded systemd
+    user instance. ``run`` is injectable for tests.
+    """
+    if run is None:
+        def run(argv):
+            return subprocess.run(argv, capture_output=True,
+                                  timeout=15).returncode
+    return run(["systemctl", "--user", "set-property", SLICE_NAME,
+                f"MemoryMax={cap_gib}G", f"MemorySwapMax={swap_gib}G",
+                "--runtime"]) == 0
+
+
 def _journal(event, tag, detail, log_file=GATE_LOG):
     """Append one timestamped gate event; best-effort, never fails the workload."""
     try:
@@ -445,9 +501,12 @@ def release_full_lock(fh, log=None):
 
 def run_gated(cmd, tag=None, poll=POLL_SECONDS, slot_dir=SLOT_DIR,
               log_file=GATE_LOG, log=print, role=None,
-              full_lock=FULL_LOCK_PATH, cls=None, ledger_path=None):
+              full_lock=FULL_LOCK_PATH, cls=None, ledger_path=None,
+              cap_gib=SLICE_CAP_GIB, swap_gib=SLICE_SWAP_GIB,
+              slice_bootstrap_fn=slice_bootstrap):
     """Gated runner: role gate → (full) global lock → predictive memory gate →
-    test slot → exec child with peak-RSS sampling → fold into ledger.
+    test slot → (v3c slice wrap) → exec child with peak-RSS sampling → fold
+    into ledger.
 
     The child inherits our stdio directly (no capture, no reinterpretation);
     lock/slot are released in finallys and the child's exit code returned.
@@ -455,8 +514,11 @@ def run_gated(cmd, tag=None, poll=POLL_SECONDS, slot_dir=SLOT_DIR,
     queueing — returning FULL_DENY_EXIT with guidance. v3: admission
     predicts ``used + estimate(class) <= limit``; after the child exits its
     sampled process-tree peak updates the ledger, so estimates track reality
-    without any caller cooperation. GITHUB_ACTIONS set → zero-gate
-    passthrough (CI runners are not this WSL host).
+    without any caller cooperation. v3c: the child runs inside the shared
+    gt6gate.slice memory envelope when systemd agrees (pre-flight bootstrap
+    + systemd-run on PATH); otherwise a one-line stderr warning and a direct
+    exec. GITHUB_ACTIONS set → zero-gate passthrough (CI runners are not
+    this WSL host).
     """
     if ledger_path is None:
         ledger_path = LEDGER_PATH
@@ -488,7 +550,22 @@ def run_gated(cmd, tag=None, poll=POLL_SECONDS, slot_dir=SLOT_DIR,
                     estimate_mib=estimate)
         slot = acquire_slot(poll=poll, slot_dir=slot_dir, tag=tag,
                             log_file=log_file, log=log)
-        proc = subprocess.Popen(cmd)
+        # v3c shared-slice hard cap. Pre-flight = the degrade gate; a runtime
+        # scope-creation failure surfaces as a plain nonzero passthrough and
+        # the next run's pre-flight (same failing environment) degrades then.
+        wrapped = False
+        if slice_enabled():
+            try:
+                usable = slice_bootstrap_fn(cap_gib, swap_gib)
+            except (OSError, subprocess.SubprocessError):
+                usable = False
+            if usable and shutil.which("systemd-run"):
+                wrapped = True
+            else:
+                print("[gt6testgate] systemd slice cap unavailable — running "
+                      "UNCAPPED (degraded; export GT6_GATE_SLICE=0 to silence)",
+                      file=sys.stderr)
+        proc = subprocess.Popen(slice_wrap(cmd) if wrapped else cmd)
         peak = 0
         try:
             while True:
@@ -569,6 +646,12 @@ def main(argv=None):
     parser.add_argument("--dry-run", action="store_true",
                         help="print used/estimate/predicted/decision and "
                              "start nothing")
+    parser.add_argument("--cap", type=int, default=SLICE_CAP_GIB,
+                        help="shared gt6gate.slice MemoryMax in GiB "
+                             "(default: 28 — 2G headroom on a 30G box)")
+    parser.add_argument("--swap", type=int, default=SLICE_SWAP_GIB,
+                        help="shared gt6gate.slice MemorySwapMax in GiB "
+                             "(default: 4)")
     parser.add_argument("cmd", nargs=argparse.REMAINDER, metavar="CMD...",
                         help="command to run, after --")
     args = parser.parse_args(argv)
@@ -580,7 +663,8 @@ def main(argv=None):
     if args.dry_run:
         dry_run(cmd, cls=args.task_class, role=args.role)
         return 0
-    return run_gated(cmd, tag=args.tag, role=args.role, cls=args.task_class)
+    return run_gated(cmd, tag=args.tag, role=args.role, cls=args.task_class,
+                     cap_gib=args.cap, swap_gib=args.swap)
 
 
 if __name__ == "__main__":

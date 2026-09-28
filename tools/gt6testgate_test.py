@@ -22,9 +22,15 @@ python3 tools/gt6testgate_test.py 直跑。全部门控语义用注入桩覆盖�
     零门槛透传；dry_run 三场景（冷启动 ADMIT/台账超限 QUEUE/full+coder
     REJECT）；`run` 子命令与旧 CLI 形态等价；防旁路 hook 判定表
     （带/不带 gate 前缀/CI/域外/坏 JSON）
+  * v3c 共享 slice 硬顶：slice_wrap/slice_bootstrap 纯函数+幂等（重复调用
+    属性不变）+--cap/--swap 透传；runner 两分支端到端（fake systemd-run
+    包装退出码透传+采样照常 / bootstrap 失败降级直接 exec+stderr 警告，
+    异常同降级）；GT6_GATE_SLICE_LIVE=1 才跑的真 systemd 探针（slow）
 """
 
+import contextlib
 import fcntl
+import io
 import json
 import os
 import subprocess
@@ -204,15 +210,21 @@ class SlotTest(unittest.TestCase):
 class RunGatedTest(unittest.TestCase):
     def setUp(self):
         # v3 预测闸按 class 估算叠加到真 /proc 占用上：钉高阈值，本类只测
-        # 退出码透传/tag 缺省，不排队真内存
+        # 退出码透传/tag 缺省，不排队真内存；v3c slice 包装钉关（不碰 systemd）
         self._mem_env = os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
         os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "999999"
+        self._slice_env = os.environ.pop(gate.SLICE_ENV, None)
+        os.environ[gate.SLICE_ENV] = "0"
 
     def tearDown(self):
         if self._mem_env is None:
             os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
         else:
             os.environ["GT6_GATE_MEM_LIMIT_MIB"] = self._mem_env
+        if self._slice_env is None:
+            os.environ.pop(gate.SLICE_ENV, None)
+        else:
+            os.environ[gate.SLICE_ENV] = self._slice_env
 
     def test_exit_code_passthrough(self):
         ledger = Path(tempfile.mkdtemp()) / "ledger.json"  # 不污染真台账
@@ -247,6 +259,8 @@ class FullGateTest(unittest.TestCase):
         self._mem_env = os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
         os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "999999"
         self._role_env = os.environ.pop(gate.ROLE_ENV, None)  # 默认 coder 确定
+        self._slice_env = os.environ.pop(gate.SLICE_ENV, None)  # 不碰 systemd
+        os.environ[gate.SLICE_ENV] = "0"
         self._stub_n = 0
 
     def tearDown(self):
@@ -257,6 +271,10 @@ class FullGateTest(unittest.TestCase):
             os.environ["GT6_GATE_MEM_LIMIT_MIB"] = self._mem_env
         if self._role_env is not None:
             os.environ[gate.ROLE_ENV] = self._role_env
+        if self._slice_env is None:
+            os.environ.pop(gate.SLICE_ENV, None)
+        else:
+            os.environ[gate.SLICE_ENV] = self._slice_env
 
     def gradlew(self, body):
         """Executable stub named exactly `gradlew` (mode detection keys on it).
@@ -607,6 +625,8 @@ class RunGatedV3Test(unittest.TestCase):
         self.ledger = self.tmp / "ledger.json"
         self._mem_env = os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
         os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "999999"
+        self._slice_env = os.environ.pop(gate.SLICE_ENV, None)
+        os.environ[gate.SLICE_ENV] = "0"
         self._ci = os.environ.pop("GITHUB_ACTIONS", None)
 
     def tearDown(self):
@@ -615,6 +635,10 @@ class RunGatedV3Test(unittest.TestCase):
             os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
         else:
             os.environ["GT6_GATE_MEM_LIMIT_MIB"] = self._mem_env
+        if self._slice_env is None:
+            os.environ.pop(gate.SLICE_ENV, None)
+        else:
+            os.environ[gate.SLICE_ENV] = self._slice_env
         if self._ci is not None:
             os.environ["GITHUB_ACTIONS"] = self._ci
 
@@ -656,6 +680,147 @@ class RunGatedV3Test(unittest.TestCase):
         self.assertEqual(rc, 5)
         self.assertFalse(self.ledger.exists())            # 不采样不落账
         self.assertFalse((self.tmp / "slots").exists())   # 不占槽
+
+
+class SliceWrapTest(unittest.TestCase):
+    """v3c 共享 slice 硬顶：命令构造纯函数 + bootstrap 幂等 + CLI 透传。"""
+
+    def test_wrap_shape(self):
+        # --scope 前台运行：stdio/退出码透传保留（实现钉：argv 无 shell）
+        self.assertEqual(
+            gate.slice_wrap(["./gradlew", ":mdk:test"]),
+            ["systemd-run", "--user", "--scope", "-p", "Slice=gt6gate.slice",
+             "--", "./gradlew", ":mdk:test"])
+
+    def test_bootstrap_idempotent_argv(self):
+        calls = []
+
+        def fake_run(argv):
+            calls.append(argv)
+            return 0
+
+        self.assertTrue(gate.slice_bootstrap(28, 4, run=fake_run))
+        self.assertTrue(gate.slice_bootstrap(28, 4, run=fake_run))
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(calls[0], calls[1])      # 重复调用属性不变
+        self.assertEqual(calls[0],
+                         ["systemctl", "--user", "set-property",
+                          "gt6gate.slice", "MemoryMax=28G",
+                          "MemorySwapMax=4G", "--runtime"])
+        # --cap/--swap 可调数值进属性
+        calls.clear()
+        gate.slice_bootstrap(30, 5, run=fake_run)
+        self.assertIn("MemoryMax=30G", calls[0])
+        self.assertIn("MemorySwapMax=5G", calls[0])
+
+    def test_bootstrap_failure_is_false(self):
+        self.assertFalse(gate.slice_bootstrap(run=lambda argv: 1))
+
+    def test_slice_enabled_env(self):
+        self.assertTrue(gate.slice_enabled({}))            # 缺省=开（自动降级兜底）
+        self.assertTrue(gate.slice_enabled({gate.SLICE_ENV: "1"}))
+        self.assertFalse(gate.slice_enabled({gate.SLICE_ENV: "0"}))
+
+    def test_cli_cap_swap_plumbed(self):
+        old, kw = gate.run_gated, {}
+
+        def fake(cmd, **k):
+            kw.update(k)
+            return 0
+
+        gate.run_gated = fake
+        try:
+            gate.main(["run", "--cap", "30", "--swap", "5", "--", "true"])
+        finally:
+            gate.run_gated = old
+        self.assertEqual((kw["cap_gib"], kw["swap_gib"]), (30, 5))
+
+
+class SliceRunTest(unittest.TestCase):
+    """v3c runner 两分支端到端：fake systemd-run 包装 / bootstrap 失败降级。"""
+
+    def setUp(self):
+        self.dir = tempfile.TemporaryDirectory()
+        self.tmp = Path(self.dir.name)
+        self._mem_env = os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
+        os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "999999"
+        os.environ[gate.SLICE_ENV] = "1"          # 本类强制走 slice 分支
+        self._ci = os.environ.pop("GITHUB_ACTIONS", None)
+
+    def tearDown(self):
+        self.dir.cleanup()
+        if self._mem_env is None:
+            os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
+        else:
+            os.environ["GT6_GATE_MEM_LIMIT_MIB"] = self._mem_env
+        if self._ci is not None:
+            os.environ["GITHUB_ACTIONS"] = self._ci
+
+    def test_wrapped_run_via_fake_systemd_run(self):
+        bin_dir = self.tmp / "bin"
+        bin_dir.mkdir()
+        stub = bin_dir / "systemd-run"
+        # 跳过全部 flag 直到 "--"（与真 systemd-run --scope 同形），透传退出码
+        stub.write_text('#!/bin/sh\n'
+                        'while [ $# -gt 0 ] && [ "$1" != "--" ]; do shift; done\n'
+                        '[ $# -gt 0 ] || exit 42\n'
+                        'shift\nexec "$@"\n')
+        stub.chmod(0o755)
+        marker = self.tmp / "ran"
+        old_path = os.environ["PATH"]
+        os.environ["PATH"] = f"{bin_dir}:{old_path}"
+        try:
+            rc = gate.run_gated(
+                ["sh", "-c", f"touch {marker}; exit 5"], poll=0.01,
+                slot_dir=self.tmp / "slots",
+                ledger_path=self.tmp / "ledger.json",
+                slice_bootstrap_fn=lambda c, s: True)
+        finally:
+            os.environ["PATH"] = old_path
+        self.assertEqual(rc, 5)                   # 退出码经 scope 透传
+        self.assertTrue(marker.exists())          # 真跑在包装层内
+        entry = gate.load_ledger(self.tmp / "ledger.json")["other"]
+        self.assertIn("last_peak", entry)         # 树采样照常（systemd-run→sh）
+
+    def test_degrades_to_direct_exec_on_bootstrap_failure(self):
+        marker = self.tmp / "ran"
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            rc = gate.run_gated(["sh", "-c", f"touch {marker}"], poll=0.01,
+                                slot_dir=self.tmp / "slots",
+                                ledger_path=self.tmp / "ledger.json",
+                                slice_bootstrap_fn=lambda c, s: False)
+        self.assertEqual(rc, 0)
+        self.assertTrue(marker.exists())          # 直接 exec，可用性优先
+        self.assertIn("UNCAPPED", err.getvalue())  # stderr 一行降级警告
+
+    def test_bootstrap_exception_degrades_too(self):
+        marker = self.tmp / "ran"
+        err = io.StringIO()
+
+        def boom(c, s):
+            raise FileNotFoundError("systemctl missing")
+
+        with contextlib.redirect_stderr(err):
+            rc = gate.run_gated(["true"], poll=0.01,
+                                slot_dir=self.tmp / "slots",
+                                ledger_path=self.tmp / "ledger.json",
+                                slice_bootstrap_fn=boom)
+        self.assertEqual(rc, 0)
+        self.assertIn("UNCAPPED", err.getvalue())
+
+
+@unittest.skipUnless(os.environ.get("GT6_GATE_SLICE_LIVE"),
+                     "live systemd probe (slow): set GT6_GATE_SLICE_LIVE=1")
+class SliceLiveTest(unittest.TestCase):
+    """可选 live 探针：真 systemd 建 100M scope（主会话 2026-09-29 已实证）。"""
+
+    def test_scope_creates_and_runs(self):
+        self.assertTrue(gate.slice_bootstrap())          # 真 systemctl 属性幂等
+        probe = subprocess.run(
+            ["systemd-run", "--user", "--scope", "-p", "MemoryMax=100M",
+             "--", "/bin/true"], capture_output=True, timeout=30)
+        self.assertEqual(probe.returncode, 0, probe.stderr.decode())
 
 
 class DryRunTest(unittest.TestCase):
