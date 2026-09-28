@@ -21,6 +21,7 @@ import gregtech6.fluid.GTFluids;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.items.armor.GT6ArmorMaterials;
 import gregtech6.jei.GT6JeiPlugin;
+import gregtech6.jei.GT6RecipeMapViewerMeta;
 import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6BookText;
 import gregtech6.registry.GT6ExtruderMolds;
@@ -141,6 +142,7 @@ public class GT6EnUs extends LanguageProvider {
         addTools();
         addCovers();
         addJeiInfo();
+        addRecipeMapViewerKeys(); // task r6-29-34a — the 72 RM titles + the 16 cost-line keys
         addStoneBlocks(); // task p19-stoneblocks-registry — table-tail append (the drying card appends after this)
         addSprayCans(); // task p22-spraycan-items — table-tail append
         addGrassBlocks(); // task p24-grass-block — table-tail append
@@ -607,6 +609,107 @@ public class GT6EnUs extends LanguageProvider {
         // GT6OreGenInfoLayout.TITLE_KEY consumer): hand row, no dump face — the page is
         // a modern enhancement, upstream 1.7.10 has no NEI distribution face
         add(GT6OreGenInfoLayout.TITLE_KEY, "Ore Generation Distribution");
+    }
+
+
+    /**
+     * The generic RM viewer faces (task r6-29-34a, GitHub #29b): the 72 visible map
+     * titles over the shared {@link GT6RecipeMapViewerMeta#titleKey} formula — the en
+     * values ARE the maps' {@code mNameLocal} faces transcribed (the lang-key
+     * reconciliation test pins every value against the live map, so transcription drift
+     * fails the gate) — plus the cost/tier/time/special label keys of the drawExtras
+     * formatter, whose en values are the upstream NEI_RecipeMap :680-717 literals
+     * verbatim. zh rides the tsv hand rows (the GT6ZhCn direct band, same commit).
+     */
+    private void addRecipeMapViewerKeys() {
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "cokeoven", "Coke Oven");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "shredder", "Shredder");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "crusher", "Crusher");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "lathe", "Lathe");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "fuels_engine", "Engine Fuels");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "fuels_fluidbed", "Fluidized Bed Fuels");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "fuels_burn", "Burnable Fuels");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "fuels_gas", "Gas Fuels");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "distillery", "Distillery");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "drying", "Dryer");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "mixer", "Mixer");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "burnmixer", "Burner Mixer");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "sifter", "Sifter");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "compressor", "Compressor");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "wiremill", "Wiremill");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "rollingmill", "Rolling Mill");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "extruder", "Extruder");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "anvil", "Anvil");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "anvil_bend", "Anvil Bending");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "bath", "Bath");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "fermenter", "Fermenter");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "loom", "Loom");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "pressurewasher", "Pressure Washer");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "squeezer", "Squeezer");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "juicer", "Juicer");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "bedrockorelist", "Bedrock Drill");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "clustermill", "Cluster Mill");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "rollbender", "Roll Bender");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "rollformer", "Roll Former");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "centrifuge", "Centrifuge");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "sharpener", "Sharpener");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "cutter", "Cutter");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "boxinator", "Boxinator");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "unboxinator", "Unboxinator");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "sluice", "Sluice");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "steamcracking", "Steam Cracking");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "catalyticcracking", "Catalytic Cracking");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "coagulator", "Coagulator");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "cryomixer", "Cryo Mixer");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "magneticseparator", "Magnetic Separator");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "injector", "Injector");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "laminator", "Laminator");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "autoclave", "Autoclave");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "freezer", "Freezer");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "polarizer", "Polarizer");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "lightning", "Lightning Processor");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "slicer", "Slicer");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "laserengraver", "Precision Laser Engraver");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "welder", "Welding Machine");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "electrolyzer", "Electrolyzer");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "printer", "Printer");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "scannervisuals", "Scanner (Visuals)");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "scannermolecular", "Molecular Scanner");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "generifier", "Generifier");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "distillationtower", "Distillation Tower");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "cryodistillationtower", "Cryo Distillation Tower");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "melter", "Melter");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "smelter", "Smelter");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "fuels_hot", "Hot Fuels");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "roaster", "Roaster");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "implosioncompressor", "Implosion Compressor");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "massfab", "Matter Fabricator");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "fusionreactor", "Fusion Reactor");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "crystallisationcrucible", "Crystallisation Crucible");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "microwave", "Microwave");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "cooker", "Cooker");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "toolhead", "Craft Head on Handle");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "mortar", "Mortar");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "hammer", "Hammer");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "press", "Press");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "canner", "Canning Machine");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "replicator", "Matter Replicator");
+        add(GT6RecipeMapViewerMeta.KEY_COSTS, "Costs: %s GU");
+        add(GT6RecipeMapViewerMeta.KEY_USAGE, "Usage: %s GU/t");
+        add(GT6RecipeMapViewerMeta.KEY_TIER, "Tier: %s GU");
+        add(GT6RecipeMapViewerMeta.KEY_TIER_UNSPECIFIED, "Tier: unspecified");
+        add(GT6RecipeMapViewerMeta.KEY_POWER, "Power: %s");
+        add(GT6RecipeMapViewerMeta.KEY_GAIN, "Gain: %s GU");
+        add(GT6RecipeMapViewerMeta.KEY_OUTPUT, "Output: %s GU/t");
+        add(GT6RecipeMapViewerMeta.KEY_CHANCE, "Chance: %s");
+        add(GT6RecipeMapViewerMeta.KEY_CHANCE_EACH, "Chance: %s each");
+        add(GT6RecipeMapViewerMeta.KEY_TIME, "Time: %s %s");
+        add(GT6RecipeMapViewerMeta.KEY_UNIT_TICKS, "ticks");
+        add(GT6RecipeMapViewerMeta.KEY_UNIT_SECS, "secs");
+        add(GT6RecipeMapViewerMeta.KEY_UNIT_MINS, "mins");
+        add(GT6RecipeMapViewerMeta.KEY_START, "Start: %s%s");
+        add(GT6RecipeMapViewerMeta.KEY_TEMPERATURE, "Temperature: %s%s");
+        add(GT6RecipeMapViewerMeta.NOT_CONSUMED_KEY, "Does not get consumed in the process");
     }
 
     /**

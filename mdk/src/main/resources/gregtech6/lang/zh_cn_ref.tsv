@@ -934,8 +934,96 @@ direct	gt6.jade.machine.multiblock.formed	多方块: 已成形	hand
 direct	gt6.jade.machine.multiblock.incomplete	多方块: 未成形	hand
 direct	gt6.jade.machine.progress.seconds	进度: %s / %s 秒	hand
 direct	gt6.jade.machine.progress.ticks	进度: %s / %s t	hand
+direct	gt6.jei.cost.chance	几率: %s	hand
+direct	gt6.jei.cost.chance_each	几率: %s（每个）	hand
+direct	gt6.jei.cost.costs	总耗: %s GU	hand
+direct	gt6.jei.cost.gain	产出: %s GU	hand
+direct	gt6.jei.cost.not_consumed	该物品不会被消耗	hand
+direct	gt6.jei.cost.output	输出: %s GU/t	hand
+direct	gt6.jei.cost.power	电流: %s	hand
+direct	gt6.jei.cost.start	启动: %s%s	hand
+direct	gt6.jei.cost.temperature	温度: %s%s	hand
+direct	gt6.jei.cost.tier	电压等级: %s GU	hand
+direct	gt6.jei.cost.tier_unspecified	电压等级: 未知	hand
+direct	gt6.jei.cost.time	时间: %s %s	hand
+direct	gt6.jei.cost.unit_mins	分	hand
+direct	gt6.jei.cost.unit_secs	秒	hand
+direct	gt6.jei.cost.unit_ticks	刻	hand
+direct	gt6.jei.cost.usage	功耗: %s GU/t	hand
 direct	gt6.jei.info.multiblock_coke_oven	焦炉是一个 3x3x3 的立方体：将焦炉控制器放在其中一面的中央并朝外，保持立方体中心格为空，其余 25 格全部放满焦炉砖。点燃控制器即可启动——它自行积攒热量，结构下方一层的储罐会收集杂酚油。	hand
 direct	gt6.jei.info.ore_gen_info	矿石生成分布	hand
+direct	gt6.jei.recipe_map.anvil	铁砧	hand
+direct	gt6.jei.recipe_map.anvil_bend	铁砧弯曲	hand
+direct	gt6.jei.recipe_map.autoclave	高压釜	hand
+direct	gt6.jei.recipe_map.bath	浸洗器	hand
+direct	gt6.jei.recipe_map.bedrockorelist	基岩钻机	hand
+direct	gt6.jei.recipe_map.boxinator	装箱机	hand
+direct	gt6.jei.recipe_map.burnmixer	燃烧反应室	hand
+direct	gt6.jei.recipe_map.canner	封罐机	hand
+direct	gt6.jei.recipe_map.catalyticcracking	催化裂解	hand
+direct	gt6.jei.recipe_map.centrifuge	离心机	hand
+direct	gt6.jei.recipe_map.clustermill	多辊式轧机	hand
+direct	gt6.jei.recipe_map.coagulator	凝结器	hand
+direct	gt6.jei.recipe_map.cokeoven	焦炉	hand
+direct	gt6.jei.recipe_map.compressor	压缩机	hand
+direct	gt6.jei.recipe_map.cooker	烹饪炉	hand
+direct	gt6.jei.recipe_map.crusher	破碎机	hand
+direct	gt6.jei.recipe_map.cryodistillationtower	低温蒸馏塔	hand
+direct	gt6.jei.recipe_map.cryomixer	低温搅拌机	hand
+direct	gt6.jei.recipe_map.crystallisationcrucible	结晶器	hand
+direct	gt6.jei.recipe_map.cutter	切割机	hand
+direct	gt6.jei.recipe_map.distillationtower	蒸馏塔	hand
+direct	gt6.jei.recipe_map.distillery	蒸馏器	hand
+direct	gt6.jei.recipe_map.drying	干燥机	hand
+direct	gt6.jei.recipe_map.electrolyzer	电解机	hand
+direct	gt6.jei.recipe_map.extruder	压模器	hand
+direct	gt6.jei.recipe_map.fermenter	发酵器	hand
+direct	gt6.jei.recipe_map.freezer	冷冻机	hand
+direct	gt6.jei.recipe_map.fuels_burn	可燃燃料	hand
+direct	gt6.jei.recipe_map.fuels_engine	引擎燃料	hand
+direct	gt6.jei.recipe_map.fuels_fluidbed	流化床燃料	hand
+direct	gt6.jei.recipe_map.fuels_gas	燃气燃料	hand
+direct	gt6.jei.recipe_map.fuels_hot	高温燃料	hand
+direct	gt6.jei.recipe_map.fusionreactor	聚变反应堆	hand
+direct	gt6.jei.recipe_map.generifier	精馏机	hand
+direct	gt6.jei.recipe_map.hammer	锤	hand
+direct	gt6.jei.recipe_map.implosioncompressor	聚爆压缩机	hand
+direct	gt6.jei.recipe_map.injector	注入机	hand
+direct	gt6.jei.recipe_map.juicer	榨汁机	hand
+direct	gt6.jei.recipe_map.laminator	层压机	hand
+direct	gt6.jei.recipe_map.laserengraver	精密激光刻蚀机	hand
+direct	gt6.jei.recipe_map.lathe	车床	hand
+direct	gt6.jei.recipe_map.lightning	雷电处理器	hand
+direct	gt6.jei.recipe_map.loom	织布机	hand
+direct	gt6.jei.recipe_map.magneticseparator	磁选机	hand
+direct	gt6.jei.recipe_map.massfab	物质制造机	hand
+direct	gt6.jei.recipe_map.melter	熔融炉	hand
+direct	gt6.jei.recipe_map.microwave	微波炉	hand
+direct	gt6.jei.recipe_map.mixer	搅拌机	hand
+direct	gt6.jei.recipe_map.mortar	研钵	hand
+direct	gt6.jei.recipe_map.polarizer	电磁偏振器	hand
+direct	gt6.jei.recipe_map.press	压力成型机	hand
+direct	gt6.jei.recipe_map.pressurewasher	水压清洗机	hand
+direct	gt6.jei.recipe_map.printer	打印机	hand
+direct	gt6.jei.recipe_map.replicator	物质复制器	hand
+direct	gt6.jei.recipe_map.roaster	焙烧炉	hand
+direct	gt6.jei.recipe_map.rollbender	辊弯机	hand
+direct	gt6.jei.recipe_map.rollformer	辊压成型机	hand
+direct	gt6.jei.recipe_map.rollingmill	辊压机	hand
+direct	gt6.jei.recipe_map.scannermolecular	分子扫描仪	hand
+direct	gt6.jei.recipe_map.scannervisuals	扫描仪（影像）	hand
+direct	gt6.jei.recipe_map.sharpener	砂轮机	hand
+direct	gt6.jei.recipe_map.shredder	粉碎机	hand
+direct	gt6.jei.recipe_map.sifter	筛选机	hand
+direct	gt6.jei.recipe_map.slicer	切片机	hand
+direct	gt6.jei.recipe_map.sluice	洗矿厂	hand
+direct	gt6.jei.recipe_map.smelter	液化炉	hand
+direct	gt6.jei.recipe_map.squeezer	压榨机	hand
+direct	gt6.jei.recipe_map.steamcracking	蒸汽裂解	hand
+direct	gt6.jei.recipe_map.toolhead	手柄工具头	hand
+direct	gt6.jei.recipe_map.unboxinator	拆箱机	hand
+direct	gt6.jei.recipe_map.welder	焊接机	hand
+direct	gt6.jei.recipe_map.wiremill	线材机	hand
 direct	gt6.material.breeze	微风	hand
 direct	gt6.material.carminite	胭脂石	hand
 direct	gt6.material.fireleaf	火叶	hand
