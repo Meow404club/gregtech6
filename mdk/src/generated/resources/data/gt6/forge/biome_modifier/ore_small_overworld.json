@@ -39,7 +39,22 @@
     "gt6:ore_small_overworld/pollucite",
     "gt6:ore_small_overworld/zeolite",
     "gt6:ore_small_overworld/sulfur",
-    "gt6:ore_small_overworld/nikolite"
+    "gt6:ore_small_overworld/nikolite",
+    "gt6:ore_small_deep/sphalerite",
+    "gt6:ore_small_deep/smithsonite",
+    "gt6:ore_small_deep/stibnite",
+    "gt6:ore_small_deep/silver",
+    "gt6:ore_small_deep/gold",
+    "gt6:ore_small_deep/pyrite",
+    "gt6:ore_small_deep/pyrolusite",
+    "gt6:ore_small_deep/garnierite",
+    "gt6:ore_small_deep/pentlandite",
+    "gt6:ore_small_deep/scheelite",
+    "gt6:ore_small_deep/diamond",
+    "gt6:ore_small_deep/redstone",
+    "gt6:ore_small_deep/redcinnabar",
+    "gt6:ore_small_deep/lapis",
+    "gt6:ore_small_deep/eudialyte"
   ],
   "step": "underground_ores"
 }
