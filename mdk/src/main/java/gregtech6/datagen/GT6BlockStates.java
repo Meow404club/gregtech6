@@ -258,7 +258,11 @@ public final class GT6BlockStates extends BlockStateProvider {
      * </ul>
      * Every partial state covers BOTH WATERLOGGED arms (the VariantBlockStateBuilder
      * completeness check demands the full property cross-product; waterlogging renders the
-     * same model). Item models parent the material's flat model (the vanilla rail item form).
+     * same model). Item models are the vanilla rail item form — {@code item/generated}
+     * over the flat arm's own texture (the vanilla item/rail.json shape). The former
+     * parent-the-flat-model form inherits the 16x1x16 {@code rail_flat} slab, which is
+     * near-invisible under the inventory's 3D item camera (GitHub #22, the blank-slot
+     * report); the world face is untouched (the block models keep the vanilla parents).
      */
     private void addRails() {
         for (int tIndex = 0; tIndex < GT6Rails.ROWS.size(); tIndex++) {
@@ -282,7 +286,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                             .partialState().with(RailBlock.SHAPE, RailShape.NORTH_WEST).with(BaseRailBlock.WATERLOGGED, tWet).addModels(new ConfiguredModel(tCorner, 0, 180, false))
                             .partialState().with(RailBlock.SHAPE, RailShape.NORTH_EAST).with(BaseRailBlock.WATERLOGGED, tWet).addModels(new ConfiguredModel(tCorner, 0, 270, false));
                 }
-                itemModels().withExistingParent(tRow.path(), modLoc("block/rail_" + tSlug + "_flat"));
+                itemModels().withExistingParent(tRow.path(), mcLoc("item/generated")).texture("layer0", modLoc("block/rail_straight_" + tSlug));
             } else {
                 boolean tBooster = tRow.kind() == GT6Rails.RailKind.BOOSTER;
                 String tBand = tBooster ? "rail_booster_" : "rail_detector_";
@@ -303,7 +307,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                                 .partialState().with(PoweredRailBlock.POWERED, tOn).with(BaseRailBlock.WATERLOGGED, tWet).with(PoweredRailBlock.SHAPE, RailShape.ASCENDING_SOUTH).addModels(new ConfiguredModel(tRaisedSw));
                     }
                 }
-                itemModels().withExistingParent(tRow.path(), modLoc("block/" + tBand + tSlug + "_off_flat"));
+                itemModels().withExistingParent(tRow.path(), mcLoc("item/generated")).texture("layer0", modLoc("block/" + tBand + tSlug));
             }
         }
         // the road stripe — the SAME 6-shape straight table as the booster/detector lanes
@@ -325,7 +329,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                         .partialState().with(PoweredRailBlock.POWERED, tOn).with(BaseRailBlock.WATERLOGGED, tWet).with(PoweredRailBlock.SHAPE, RailShape.ASCENDING_SOUTH).addModels(new ConfiguredModel(tRaisedSw));
             }
         }
-        itemModels().withExistingParent(GT6Rails.ROAD_PATH, modLoc("block/rail_road_off_flat")); // the dry idle arm model
+        itemModels().withExistingParent(GT6Rails.ROAD_PATH, mcLoc("item/generated")).texture("layer0", modLoc("block/rail_road_stripe"));
         LOGGER.info("GT6 rail family: {} material blockstates + the road stripe", GT6Rails.ROWS.size());
     }
 
