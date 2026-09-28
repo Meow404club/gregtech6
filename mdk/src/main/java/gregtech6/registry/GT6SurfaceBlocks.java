@@ -97,6 +97,15 @@ public final class GT6SurfaceBlocks {
 			new IndicatorSpec("coltan",       () -> MT.OREMATS.Coltan),       // ore.large.rocksalt bottom / manganese spread
 			new IndicatorSpec("chromite",     () -> MT.OREMATS.Chromite),             // ore.large.asbestos top (r7-a-ore-axis-extension: the stone-layer axis member)
 			new IndicatorSpec("asbestos",     () -> MT.Asbestos),             // ore.large.asbestos spread
+			new IndicatorSpec("bluesapphire", () -> MT.BlueSapphire),         // ore.large.sapphire top (r7-b-gem-pool-extension: the gem-pool axis members)
+			new IndicatorSpec("orangesapphire", () -> MT.OrangeSapphire),     // ore.large.sapphire bottom (r7-b)
+			new IndicatorSpec("yellowsapphire", () -> MT.YellowSapphire),     // ore.large.sapphire between (r7-b)
+			new IndicatorSpec("ruby",         () -> MT.Ruby),                 // ore.large.sapphire spread / sapphire2 bottom / redstone between (r7-b)
+			new IndicatorSpec("greensapphire", () -> MT.GreenSapphire),       // ore.large.sapphire2 top (r7-b)
+			new IndicatorSpec("purplesapphire", () -> MT.PurpleSapphire),     // ore.large.sapphire2 spread (r7-b)
+			new IndicatorSpec("almandine",    () -> MT.Almandine),            // ore.large.garnet top (r7-b)
+			new IndicatorSpec("pyrope",       () -> MT.Pyrope),               // ore.large.garnet bottom (r7-b)
+			new IndicatorSpec("andradite",    () -> MT.Andradite),            // ore.large.garnet between (r7-b)
 			new IndicatorSpec("uvarovite",    () -> MT.Uvarovite),            // ore.large.garnet spread (r7-a-ore-axis-extension)
 			new IndicatorSpec("pitchblende",  () -> MT.OREMATS.Pitchblende),  // ore.large.pitchblende top/bottom (r7-a-ore-axis-extension)
 			new IndicatorSpec("uraninite",    () -> MT.OREMATS.Uraninite),            // ore.large.pitchblende between/spread (r7-a-ore-axis-extension)
@@ -118,7 +127,15 @@ public final class GT6SurfaceBlocks {
 			new IndicatorSpec("cassiterite",  () -> MT.OREMATS.Cassiterite),  // ore.large.cassiterite spread
 			new IndicatorSpec("scheelite",    () -> MT.OREMATS.Scheelite),    // ore.large.tungstate top
 			new IndicatorSpec("grossular",    () -> MT.Grossular),            // ore.large.manganese top (r7-a-ore-axis-extension)
+			new IndicatorSpec("spessartine",  () -> MT.Spessartine),          // ore.large.manganese bottom (r7-b-gem-pool-extension)
 			new IndicatorSpec("pyrolusite",   () -> MT.MnO2),                 // ore.large.manganese between
+			new IndicatorSpec("aquamarine",   () -> MT.Aquamarine),           // ore.large.beryllium top (r7-b-gem-pool-extension)
+			new IndicatorSpec("maxixe",       () -> MT.Maxixe),               // ore.large.beryllium bottom (r7-b)
+			new IndicatorSpec("emerald",      () -> MT.Emerald),              // ore.large.beryllium between (r7-b)
+			new IndicatorSpec("bixbite",      () -> MT.Bixbite),              // ore.large.beryllium2 top (r7-b)
+			new IndicatorSpec("goshenite",    () -> MT.Goshenite),            // ore.large.beryllium2 bottom (r7-b)
+			new IndicatorSpec("heliodor",     () -> MT.Heliodor),             // ore.large.beryllium2 between (r7-b)
+			new IndicatorSpec("morganite",    () -> MT.Morganite),            // ore.large.beryllium2 spread (r7-b)
 			new IndicatorSpec("garnierite",   () -> MT.OREMATS.Garnierite),   // ore.large.nickel top
 			new IndicatorSpec("pentlandite",  () -> MT.OREMATS.Pentlandite),  // ore.large.nickel spread
 			new IndicatorSpec("redstone",     () -> MT.Redstone),             // ore.large.redstone top/bottom
@@ -128,7 +145,7 @@ public final class GT6SurfaceBlocks {
 			new IndicatorSpec("hematite",     () -> MT.Fe2O3),                // ore.large.iron between / copper bottom
 			new IndicatorSpec("malachite",    () -> MT.OREMATS.Malachite));   // ore.large.iron spread
 
-	/** The 40 indicator rock handles, INDICATOR_SPECS order (31 + 9 since r7-a-ore-axis-extension lit the dormant slots). */
+	/** The 57 indicator rock handles, INDICATOR_SPECS order (31 + 9 since r7-a-ore-axis-extension + 17 since r7-b-gem-pool-extension lit the dormant slots). */
 	public static final List<RegistryObject<Block>> INDICATOR_ROCKS = INDICATOR_SPECS.stream()
 			.map(tRow -> BLOCKS.<Block>register("surface_rock_" + tRow.snake(),
 					() -> new GT6SurfaceRockBlock(surfaceProperties(MapColor.COLOR_GRAY, SoundType.STONE), tRow.material().get())))
