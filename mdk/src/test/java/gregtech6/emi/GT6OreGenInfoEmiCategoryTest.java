@@ -102,11 +102,21 @@ public class GT6OreGenInfoEmiCategoryTest {
 		assertEquals(2, tHolder.mTexts, "dims row + the one bedrock line");
 	}
 
-	/** The registration walk: one recipe per entry, ids index-stable (the data layer's first-appearance order). */
+	/**
+	 * The registration walk: one recipe per entry, ids index-stable (the data layer's
+	 * first-appearance order). The count mirrors the canonical census pin
+	 * ({@code OreDistributionInfoTest.materialAxisIsPinned}, re-derived through the layout
+	 * walk in {@code GT6OreGenInfoLayoutTest}): 118 axes through r7-a, then r7-b's 61
+	 * GEN_GEMS small-ore rows joined the table — 20 of the 61 touched materials already
+	 * rode vein faces, so 41 arrived as brand-new entries (118+41=159, verified entry by
+	 * entry against the walk). This file was the one site the r7-b re-pin sweep missed —
+	 * the derivation lives in the message so the next table change greps here first.
+	 */
 	@Test
 	public void registrationWalkShapeIsOneRowPerEntry() {
 		List<OreDistributionInfo.Entry> tEntries = OreDistributionInfo.entries();
-		assertEquals(118, tEntries.size());
+		assertEquals(159, tEntries.size(),
+				"118 axes (pre-r7-b) + 41 brand-new gem-pool materials (61 GEN_GEMS small rows joined; 20 of the 61 touched materials already rode vein faces) — census canonical in OreDistributionInfoTest.materialAxisIsPinned");
 		for (int i = 0; i < tEntries.size(); i++) {
 			assertEquals("gt6:ore_gen_info/" + i,
 					new GT6OreGenInfoEmiRecipe(tEntries.get(i), i).getId().toString());
