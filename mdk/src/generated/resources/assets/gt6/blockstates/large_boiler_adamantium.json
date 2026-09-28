@@ -1,33 +1,33 @@
 {
   "variants": {
     "facing=east,formed=false": {
-      "model": "gt6:block/large_boiler_main",
+      "model": "gt6:block/large_boiler",
       "y": 90
     },
     "facing=east,formed=true": {
-      "model": "gt6:block/large_boiler_main",
+      "model": "gt6:block/large_boiler",
       "y": 90
     },
     "facing=north,formed=false": {
-      "model": "gt6:block/large_boiler_main"
+      "model": "gt6:block/large_boiler"
     },
     "facing=north,formed=true": {
-      "model": "gt6:block/large_boiler_main"
+      "model": "gt6:block/large_boiler"
     },
     "facing=south,formed=false": {
-      "model": "gt6:block/large_boiler_main",
+      "model": "gt6:block/large_boiler",
       "y": 180
     },
     "facing=south,formed=true": {
-      "model": "gt6:block/large_boiler_main",
+      "model": "gt6:block/large_boiler",
       "y": 180
     },
     "facing=west,formed=false": {
-      "model": "gt6:block/large_boiler_main",
+      "model": "gt6:block/large_boiler",
       "y": 270
     },
     "facing=west,formed=true": {
-      "model": "gt6:block/large_boiler_main",
+      "model": "gt6:block/large_boiler",
       "y": 270
     }
   }

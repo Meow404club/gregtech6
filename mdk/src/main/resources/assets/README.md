@@ -856,11 +856,15 @@ Generated on 2026-09-03 (no upstream bytes; nothing to sha256 — the placeholde
 glyph is a dark border + box outline + glowing core, deterministic generator in
 the card's tooling).
 
-- `gt6/textures/block/large_boiler/{wall,transmitter,main}.png` — generated grayscale
-  placeholders (task p13-large-boiler). Upstream ships no borrowable
-  `machines/multiblockmains/largeboiler/` or `metalwalldense` texture group in this
-  snapshot (the cokeoven census repeated); the borrow-or-declare rule keeps the
-  script-generated placeholders.
+- `gt6/textures/block/large_boiler/{wall,transmitter}.png` — generated grayscale
+  placeholders (task p13-large-boiler). The former "no borrowable
+  `machines/multiblockmains/largeboiler/` group in this snapshot" claim is SUPERSEDED by
+  task r8-tex-large-boilers (the probe found the full 4-layer/3-face group): `main.png`
+  is RETIRED — the controller wears the borrowed two-layer art (the
+  r8-tex-large-boilers borrow entry); `wall.png` stays as the large-crucible controller
+  stand-in (task p13-borrow declaration), `transmitter.png` is an orphaned leftover kept
+  on disk (the `heat_transmitter` block borrows the `heatacceptor` set since
+  p29-w3-nbtdesign-parts).
 
 Dryer GUI background texture, task p16-machine-fluid-gui: the 1 PNG
 `gt6/textures/gui/machines/dryer.png` comes from upstream
@@ -3211,31 +3215,80 @@ Dedication** (same upstream `README.md` block as above).
   - `screw.png` `94e94ed6ead3d8353caaa0c293ff3269213d677794c1b94c87f57f9dc119311d`
   - `stick.png` `ee2306110d3da12e5340607760cbefaf8d17b047a84d6202780c735dc74dc85d`
   - `stick_long.png` `44e5500af3a30267caeefa2109110687f9e051986b9d13f47542501bca923642`
-Steam Boiler Tank block textures, task p20-borrow-tank-barrel-pipe: the 3 PNGs
-under `gt6/textures/block/boiler_steam/` come from upstream
-`src/main/resources/assets/gregtech/textures/blocks/machines/tanks/boiler_steam/colored/`
-(the `MultiTileEntityLargeBoiler.java:348-350` `sColoreds` icon stack — the same
-group the 26 Steam Boiler Tank rows render through), byte-identical to upstream,
-sha256 verified:
+Steam Boiler Tank block textures, task p20-borrow-tank-barrel-pipe, RE-BORROWED by task
+r8-tex-large-boilers: the 6 PNGs under `gt6/textures/block/boiler_steam/` come from
+upstream `src/main/resources/assets/gregtech/textures/blocks/machines/tanks/boiler_steam/`
+(the `MultiTileEntityBoilerTank` icon stack — the same group the 26 Steam Boiler Tank
+rows render through), byte-identical to upstream, sha256 verified. The p20-era layout
+(`bottom/top/side.png` over the colored set, the `front.png` placeholder, "the overlay
+group is NOT borrowed") is SUPERSEDED — the port model is the two-layer grammar (the
+grayscale colored body is the tintindex-0 tint seat, the overlay plates are the untinted
+decals, the r4-18 addConverterModel form), so both layers borrow per-face:
 
-- `boiler_steam/bottom.png` `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
+- `boiler_steam/colored_bottom.png` `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
   (upstream `boiler_steam/colored/bottom.png`)
-- `boiler_steam/top.png`    `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
+- `boiler_steam/colored_top.png`    `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
   (upstream `boiler_steam/colored/top.png`)
-- `boiler_steam/side.png`   `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
+- `boiler_steam/colored_side.png`   `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
   (upstream `boiler_steam/colored/side.png`)
+- `boiler_steam/overlay_bottom.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `boiler_steam/overlay/bottom.png`)
+- `boiler_steam/overlay_top.png`    `8dd1d34cc36cd9ddccdc23f6f3be16be70d90337a290bc4a6da997f1f9c64236`
+  (upstream `boiler_steam/overlay/top.png`)
+- `boiler_steam/overlay_side.png`   `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (upstream `boiler_steam/overlay/side.png`)
 
-Upstream fact (the tap/funnel same-bytes precedent): the three colored faces are
-byte-identical to each other and to the `kinetic_steam/colored/side.png` bytes the
-p12-engine-steam entry already carries (`steam_engine_side.png` above). Declared
-gap: `boiler_steam/front.png` KEEPS its generated placeholder — upstream ships no
-`colored/front.png`; the front face renders the side sprite plus the `BI.BAROMETER`
-gauge overlay at runtime (`getTexture2`, MultiTileEntityLargeBoiler :358-361), an
-overlay pass that is NOT borrowed (the p8 single-pass ruling). The p13-era census
-note that this group had "no borrowable source" is superseded by this probe
-(the research-card id333 correction). The `overlay/{bottom,top,side}.png` group is
-NOT borrowed; the grayscale colored base renders un-tinted, the mRGBa tint and the
-barometer visual ride the render pool card.
+Upstream fact (unchanged from p20): the three colored faces are byte-identical to each
+other (and to the kinetic_steam grayscale). Upstream ships NO dedicated front art for
+this tank (`FACES_TBS = {0,1,2,2,2,2}`, CS.java:618 — the barometer face renders the
+side sprite), so the port model keeps `side` art on all four sides and the former
+generated `front.png` placeholder is RETIRED. The `BI.BAROMETER` gauge overlay is NOT
+borrowed — the 5-bit per-state visual is the render pool (the p13 ruling repeated).
+
+Large Boiler controller block textures, task r8-tex-large-boilers: the 12 PNGs under
+`gt6/textures/block/large_boiler/` come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/multiblockmains/largeboiler/`,
+byte-identical to upstream, sha256 verified. This SUPERSEDES the p13-era "no borrowable
+largeboiler group" declaration (the p9/r8-tex-r1 probes proved the group exists). The
+upstream semantics are the Base10 default `getTexture2`
+(TileEntityBase10MultiBlockBase.java:192-194): the FRONT face renders the
+`*_front/side` pair, the other five faces the plain `*/` pair, the colored layer
+multiplies the row NBT_MATERIAL (the five rows, Loader_MultiTileEntities.java:1248-1252)
+and the overlay layer stays untinted — the port model is the two-layer front-bearing
+grammar (body `colored[_front]` tintindex-0 + `overlay[_front]` 0.01 plates, the
+r4-18 addConverterModel form). The `BI.BAROMETER` gauge (`front += BAROMETER_SCALE`,
+MultiTileEntityLargeBoiler.java:358-361) is NOT borrowed — the dynamic 5-bit readout is
+the render pool (the p13 ruling; also the boiler_steam entry above). Path mapping:
+`{colored,colored_front,overlay,overlay_front}/{bottom,top,side}.png` flattens to
+`large_boiler/{layer}_{face}.png` (the underscore join, the boiler_steam precedent).
+Upstream fact: all six colored-layer faces are byte-identical (37dab1b9…) and all six
+overlay+overlay_front faces are byte-identical (f1c5fa56…) — the layer/face split is
+kept verbatim anyway so the ledger stays 1:1 with the upstream group.
+
+- `large_boiler/colored_bottom.png`      `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `largeboiler/colored/bottom.png`)
+- `large_boiler/colored_top.png`         `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `largeboiler/colored/top.png`)
+- `large_boiler/colored_side.png`        `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `largeboiler/colored/side.png`)
+- `large_boiler/colored_front_bottom.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `largeboiler/colored_front/bottom.png`)
+- `large_boiler/colored_front_top.png`   `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `largeboiler/colored_front/top.png`)
+- `large_boiler/colored_front_side.png`  `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `largeboiler/colored_front/side.png`)
+- `large_boiler/overlay_bottom.png`      `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `largeboiler/overlay/bottom.png`)
+- `large_boiler/overlay_top.png`         `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `largeboiler/overlay/top.png`)
+- `large_boiler/overlay_side.png`        `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `largeboiler/overlay/side.png`)
+- `large_boiler/overlay_front_bottom.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `largeboiler/overlay_front/bottom.png`)
+- `large_boiler/overlay_front_top.png`   `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `largeboiler/overlay_front/top.png`)
+- `large_boiler/overlay_front_side.png`  `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `largeboiler/overlay_front/side.png`)
 
 Barrel family block textures, task p20-borrow-tank-barrel-pipe: the 3 PNGs
 `gt6/textures/block/barrel_{wood,plastic,metal}.png` come from upstream

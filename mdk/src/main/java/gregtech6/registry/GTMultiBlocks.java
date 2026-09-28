@@ -203,10 +203,14 @@ public final class GTMultiBlocks {
 	 * One Large Boiler variant row — the block-carrier projection of one :1248-1252 line
 	 * (the BoilerRow form): {@code outputSteamPerTick} is the raw NBT_OUTPUT_SU value (the
 	 * loader already multiplied by STEAM_PER_EU 2), {@code wallPath} is the NBT_DESIGN
-	 * Dense Wall, hardness == resistance.
+	 * Dense Wall, hardness == resistance. The lazy {@code mat} Supplier is the upstream
+	 * NBT_MATERIAL column (task r8-tex-large-boilers — the tint colour source, the
+	 * {@link MultiblockPartRow} material form; the registry class loads before
+	 * {@code MT.init()}, a direct field read would resolve null).
 	 */
 	public record LargeBoilerRow(String path, String material, int metaId,
-			long outputSteamPerTick, float hardness, String wallPath) {}
+			long outputSteamPerTick, float hardness, String wallPath,
+			java.util.function.Supplier<gregapi.oredict.OreDictMaterial> mat) {}
 
 	/** The composed Dense Wall display template "{@code Dense %s Wall}" — one material slot (task p20-i18n-compose-rows). */
 	public static final String DENSE_WALL_DISPLAY_KEY = "gt6.row.dense_wall.display";
@@ -252,18 +256,19 @@ public final class GTMultiBlocks {
 	/** The Heat Transmitter row (:1176) — the ATOMIC form (a bare noun, nothing to compose; the wire_laser/bricks precedent); upstream aMat = MT.Invar. */
 	public static final MultiblockPartRow TRANSMITTER_ROW = new MultiblockPartRow("heat_transmitter", "Heat Transmitter", 18101, 10.0F, () -> MT.Invar);
 
-	/** The five Large Boiler rows (:1248-1252, the upstream line order — raw NBT_OUTPUT_SU 4096/4096/8192/16384/131072). */
+	/** The five Large Boiler rows (:1248-1252, the upstream line order — raw NBT_OUTPUT_SU 4096/4096/8192/16384/131072; the aMat column the WALL_ROWS mapping, task r8-tex-large-boilers). */
 	public static final java.util.List<LargeBoilerRow> LARGE_BOILER_ROWS = java.util.List.of(
-			boilerRow("Stainless Steel", 17201,   4096,   6.0F, "dense_wall_stainless_steel"),
-			boilerRow("Invar"          , 17205,   4096,   6.0F, "dense_wall_invar"),
-			boilerRow("Titanium"       , 17202,   8192,   9.0F, "dense_wall_titanium"),
-			boilerRow("Tungstensteel"  , 17203,  16384,  12.5F, "dense_wall_tungstensteel"),
-			boilerRow("Adamantium"     , 17204, 131072, 100.0F, "dense_wall_adamantium"));
+			boilerRow("Stainless Steel", 17201,   4096,   6.0F, "dense_wall_stainless_steel", () -> MT.StainlessSteel),
+			boilerRow("Invar"          , 17205,   4096,   6.0F, "dense_wall_invar"           , () -> MT.Invar),
+			boilerRow("Titanium"       , 17202,   8192,   9.0F, "dense_wall_titanium"        , () -> MT.Ti),
+			boilerRow("Tungstensteel"  , 17203,  16384,  12.5F, "dense_wall_tungstensteel"   , () -> MT.TungstenSteel),
+			boilerRow("Adamantium"     , 17204, 131072, 100.0F, "dense_wall_adamantium"      , () -> MT.Ad));
 
 	/** A boiler row builder — the path is {@code large_boiler_<slug>}, the output carries the loader's *STEAM_PER_EU. */
-	private static LargeBoilerRow boilerRow(String aMaterial, int aMetaId, long aRawOutput, float aHardness, String aWallPath) {
+	private static LargeBoilerRow boilerRow(String aMaterial, int aMetaId, long aRawOutput, float aHardness, String aWallPath,
+			java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMat) {
 		return new LargeBoilerRow("large_boiler_" + aMaterial.toLowerCase(java.util.Locale.ROOT).replace(" ", "_"),
-				aMaterial, aMetaId, aRawOutput * GTFluids.STEAM_PER_EU, aHardness, aWallPath);
+				aMaterial, aMetaId, aRawOutput * GTFluids.STEAM_PER_EU, aHardness, aWallPath, aMat);
 	}
 
 	/** The part properties (hardness == resistance on every row; the METAL sound, the BoilerRow convention). */
@@ -341,6 +346,19 @@ public final class GTMultiBlocks {
 	/** The boiler-variant array for the controller BET (the same varargs shape). */
 	private static net.minecraft.world.level.block.Block[] boilerBlockArray() {
 		return GTMultiBlocks.LARGE_BOILER_BLOCKS_BY_PATH.values().stream().map(RegistryObject::get).toArray(net.minecraft.world.level.block.Block[]::new);
+	}
+
+	/**
+	 * The large-boiler paint-tint walker (task r8-tex-large-boilers — the r3 C5
+	 * boiler-tank form): the five boiler variant controllers. Every row carries
+	 * NBT_MATERIAL upstream (Loader :1248-1252) and the shared datagen model carries
+	 * tintindex 0 since this card, so the family joins the baked world tint (the
+	 * GTMachineTintModel walk) + the inventory ItemColor half; the colour resolves through
+	 * the {@link GTMultiBlockControllerBlock#materialOf} carrier (the p38-c2 gate). The
+	 * {@code GTMachines.paintableBlockArray} census convention. Client-side call time only.
+	 */
+	public static net.minecraft.world.level.block.Block[] boilerPaintableBlockArray() {
+		return boilerBlockArray();
 	}
 
 	/** The lookup for /gt6multiblock boiler place — null for an unknown variant path. */

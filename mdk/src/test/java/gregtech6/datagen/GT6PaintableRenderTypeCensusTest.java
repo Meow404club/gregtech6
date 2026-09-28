@@ -23,7 +23,8 @@
  * <li>bridges/lasers/absorber/energizer — the six orientable textures
  *     (addBridgeFamily, model name = the texture token);</li>
  * <li>the magic absorber; the tank valves (tank_wood/tank_metal) and the crucible
- *     walls (tintedCube); the boiler tank (tintedCube, the C5 wiring).</li>
+ *     walls (tintedCube); the boiler tank + the large boiler band (the two-layer
+ *     boilerModel shells, task r8-tex-large-boilers over the C5 wiring).</li>
  * <li>the bee trio — bumble_hive/bumbliary/bumbliary_adv (the addHive/
  *     bumbliaryModel two-layer grammar; since the r3-beehive-tint return-fix —
  *     the trio entered the {@code GTMachineTintModel} walk with the C4 card but
@@ -129,7 +130,7 @@ class GT6PaintableRenderTypeCensusTest {
                 "magic_absorber", // addMagicAbsorber
                 "tank_wood", "tank_metal", // addTanks (tintedCube)
                 "crucible_steel_wall", // addLargeCrucible (tintedCube)
-                "steam_boiler_tank")); // addBoilers (the C5 wiring, the tintedCube front overload)
+                "steam_boiler_tank")); // addBoilers (the C5 wiring, the two-layer boilerModel form)
         for (String tPath : gregtech6.registry.GT6Crucibles.CRUCIBLE_WALL_BLOCKS_BY_PATH.keySet()) {
             rModels.add(tPath); // the eight dedicated crucible walls (tintedCube)
         }
@@ -148,6 +149,11 @@ class GT6PaintableRenderTypeCensusTest {
         rModels.add("electric_dynamo_active");
         rModels.add("flux_dynamo");
         rModels.add("flux_dynamo_active");
+        // the boiler domains (task r8-tex-large-boilers): the steam boiler tank already
+        // rides the List.of above (since the C5 wiring, now the two-layer boilerModel
+        // form); the large boiler band model joins — the two-layer front-bearing shell
+        // the five controllers share
+        rModels.add("large_boiler");
         return rModels;
     }
 
