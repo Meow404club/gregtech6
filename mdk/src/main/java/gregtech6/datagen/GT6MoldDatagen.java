@@ -33,11 +33,17 @@ import gregtech6.registry.GT6Molds;
  * ZERO hand-written JSON:
  * <ul>
  * <li><b>blockstates</b>: the 31 ceramic mold rows (blank + 30 pre-carved shapes) and
- *     the 2 faucet rows as placeholder cubes — the mold cube (the GT6CrucibleDatagen
- *     cobble placeholder style) and the faucet cube_all (the p12 addAttachments
- *     single-model-over-all-facings form, the oriented thin plate is the render pool).</li>
+ *     the 2 faucet rows over the MATERIAL SMOOTH body cube ({@link GT6CrucibleDatagen
+ *     #bodyTexture}, task r7-40-41-mold-assets — the former flat andesite/cobble
+ *     placeholder for every row is gone; the 5x5 shape geometry is the declared
+ *     geometry-card defer) — the mold cube and the faucet cube_all (the p12
+ *     addAttachments single-model-over-all-facings form, the oriented thin plate is the
+ *     render pool).</li>
  * <li><b>item models</b>: the formed molds and faucets parent their block models; the
- *     31 raw clay items ride {@code item/generated} over the vanilla clay texture.</li>
+ *     31 raw clay items ride {@code item/generated} over their OWN borrowed upstream
+ *     icon ({@code item/<path>_raw}, the gt.multiitem.randomtools 900-929/991 borrows,
+ *     assets/README.md — task r7-40-41-mold-assets; the former shared vanilla clay
+ *     sprite made every shape look identical, GitHub #40).</li>
  * <li><b>lang</b>: the composed display keys (en_us; the zh_cn walk rides the
  *     committed-tsv pipeline, this card adds none).</li>
  * <li><b>recipes</b>: the tier-a JSON faces — the VANILLA furnace hardening
@@ -71,11 +77,6 @@ public final class GT6MoldDatagen {
 	// blockstates + models
 	// ------------------------------------------------------------------------------------
 
-	/** The mold placeholder body (the GT6CrucibleDatagen cobble placeholder style). */
-	private static final String MOLD_TEXTURE = "block/stones/andesite/cobble";
-	/** The faucet placeholder body (the andesite cobble; the oriented plate is the render pool). */
-	private static final String FAUCET_TEXTURE = "block/stones/andesite/cobble";
-
 	/** The blockstate/item-model provider. */
 		public static final class Provider extends BlockStateProvider {
 
@@ -102,25 +103,35 @@ public final class GT6MoldDatagen {
 				for (GT6Molds.MoldRow tRow : GT6Molds.CERAMIC_ROWS) {
 					registerMoldModels(tRow);
 				}
-				// the faucets: cube_all placeholder over every FACING (the p12 addAttachments form)
+				// the faucets: cube_all over every FACING (the p12 addAttachments form), the
+				// material smooth body (task r7-40-41-mold-assets — the former flat cobble
+				// placeholder is gone)
 				for (GT6Molds.FaucetRow tRow : GT6Molds.FAUCET_ROWS) {
 					Block tBlock = GT6Molds.FAUCET_BLOCKS_BY_PATH.get(tRow.path()).get();
-					simpleBlock(tBlock, models().cubeAll(tRow.path(), modLoc(FAUCET_TEXTURE)));
+					simpleBlock(tBlock, models().cubeAll(tRow.path(),
+							GT6CrucibleDatagen.loc(GT6CrucibleDatagen.bodyTexture(tRow.material().get()))));
 					itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
 				}
 			}
 
-			/** One mold row: the placeholder cube blockstate + the formed item model + the raw clay sprite. */
+			/**
+			 * One mold row: the material smooth body cube (the upstream getTextureSmooth face,
+			 * {@link GT6CrucibleDatagen#bodyTexture} — task r7-40-41-mold-assets, GitHub #41;
+			 * the 5x5 shape geometry is the declared geometry-card defer) + the formed item
+			 * model + the raw clay item as a flat generated sprite over ITS OWN borrowed
+			 * upstream icon ({@code item/<path>_raw}, the gt.multiitem.randomtools
+			 * 900-929/991 borrows — task r7-40-41-mold-assets, GitHub #40; the former shared
+			 * vanilla clay sprite made all 31 shapes look identical). The icon files are
+			 * named after the raw item ids, so the layer0 mapping needs no shape table.
+			 */
 			private void registerMoldModels(GT6Molds.MoldRow tRow) {
 				Block tBlock = GT6Molds.BLOCKS_BY_PATH.get(tRow.path()).get();
-				ModelFile tModel = models().cubeAll("block/" + tRow.path(), modLoc(MOLD_TEXTURE));
+				ModelFile tModel = models().cubeAll("block/" + tRow.path(),
+						GT6CrucibleDatagen.loc(GT6CrucibleDatagen.bodyTexture(tRow.material().get())));
 				simpleBlock(tBlock, tModel);
 				itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
-				// the paired raw clay item — a flat generated sprite over the VANILLA clay
-				// texture (the explicit minecraft: namespace; ExistingFileHelper validates
-				// layer0 against the known packs and gt6:block/clay does not exist)
 				itemModels().withExistingParent(tRow.path() + "_raw", "item/generated")
-						.texture("layer0", "minecraft:block/clay");
+						.texture("layer0", modLoc("item/" + tRow.path() + "_raw"));
 			}
 		}
 
