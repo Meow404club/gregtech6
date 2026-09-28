@@ -150,7 +150,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
                 new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task p32-placeables — the lantern + sandwich self-drops
                 new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task p33-bees-lv3-b-bumbliary — the Bumbliary pair self-drops
-                new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task p30-ore-4-loot — the 3922 ore tables
+                new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task p30-ore-4-loot — the 4884 ore tables
                 new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST), // task p34-loot-injection — the gt.flawless/gems/misc bag tables
                 new SubProviderEntry(GT6DungeonChestLoot::new, LootContextParamSets.CHEST)), // task p38-dungeon-framework — the gt6:chests/dungeon_chest carrier
             lookupProvider);
@@ -211,7 +211,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
                 new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task p32-placeables — the lantern + sandwich self-drops
                 new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task p33-bees-lv3-b-bumbliary — the Bumbliary pair self-drops
-                new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task p30-ore-4-loot — the 3922 ore tables
+                new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task p30-ore-4-loot — the 4884 ore tables
                 new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST), // task p34-loot-injection — the gt.flawless/gems/misc bag tables
                 new SubProviderEntry(GT6DungeonChestLoot::new, LootContextParamSets.CHEST))); // task p38-dungeon-framework — the gt6:chests/dungeon_chest carrier
         //?}

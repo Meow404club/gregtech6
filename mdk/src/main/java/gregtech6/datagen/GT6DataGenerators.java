@@ -70,7 +70,7 @@ public final class GT6DataGenerators {
             event.getGenerator().addProvider(true,
                 new GT6BlockStates(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
             // task p30-ore-3-datagen: the ore universe's shared-placeholder blockstates + item
-            // models (3922 + 3922 + 28 shared; the dual-sprite render face is the baked model)
+            // models (4884 + 4884 + 32 shared; the dual-sprite render face is the baked model)
             event.getGenerator().addProvider(true,
                 new GT6OreBlockStates(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
             // task p4-cover-core (W3 explicit order 3): the cover plate sprite joins the block atlas

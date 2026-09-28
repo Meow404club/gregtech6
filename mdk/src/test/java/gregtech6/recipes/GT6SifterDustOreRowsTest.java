@@ -207,12 +207,12 @@ class GT6SifterDustOreRowsTest extends GTRecipesOfflineTestBase {
 	// the pour (acceptance ①: 行数与材质循环覆盖报告)
 	// ------------------------------------------------------------------
 
-	/** 4 families x the 53-material axis + the grass row0 — the census pin. */
+	/** 4 families x the 66-material axis + the grass row0 — the census pin. */
 	@Test
 	void pourWalkCoversFourFamiliesByTheWholeAxis() {
 		GT6RecipesSifter.load();
 		int tWalk = GT6RecipesSifter.dustOreFamilies().size() * GT6OreBlocks.materialAxis().size();
-		assertEquals(212, tWalk, "4 families x the 53-material axis (GT6OreBlocksRegistrationTest's pinned axis)");
+		assertEquals(264, tWalk, "4 families x the 66-material axis (GT6OreBlocksRegistrationTest's pinned axis)");
 		assertEquals(1 + tWalk, GT6RecipeMaps.SIFTING.mRecipeList.size(), "the grass row0 + the whole DUST_ORE walk pours under the probe resolver");
 	}
 

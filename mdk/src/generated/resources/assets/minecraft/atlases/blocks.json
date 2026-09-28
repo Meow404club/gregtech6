@@ -274,6 +274,22 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/gem_vertical/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/gem_vertical/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/gem_vertical/ore_overlay"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/gem_vertical/ore_small_overlay"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "gt6:block/logistics/display/cpu_logic/0"
     },
     {

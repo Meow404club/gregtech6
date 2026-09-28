@@ -8486,14 +8486,16 @@ the CUTTER pair serves the wire-cutter form). Renamed to the snake id tails unde
 scissors/chisel + _overlay), 16x16 RGBA, sha256s of the copies match the sources.
 
 
-GT6 ore block overlay textures, task p30-ore-2-textures: the 60
+GT6 ore block overlay textures, task p30-ore-2-textures: the 64
 `gt6/textures/block/materialicons/<set>/{ore,ore_small,ore_overlay,ore_small_overlay}.png`
 files come from upstream `https://github.com/GregTech6/gregtech6` snapshot `v6.17.06-22-g3703e4030`, files
 `src/main/resources/assets/gregtech/textures/blocks/materialicons/<SET>/<Name>.png`,
 byte-identical to upstream, sha256 verified per file (manifest below). Consumers:
 the ore block atlas sources `gt6:block/materialicons/<set>/{ore,ore_small}`
-(GT6Atlases <- GTOreBakedModel.overlaySprites(), 15 SETs over the 53-material
-registration axis, task p30-ore-1-mech) — the missingno intermediate state of
+(GT6Atlases <- GTOreBakedModel.overlaySprites(), 16 SETs over the 66-material
+registration axis, task p30-ore-1-mech; the GEM_VERTICAL quartet joined with
+task r7-a-ore-axis-extension — the SET of the stone-layer companions Spinel/
+BalasRuby, borrowed byte-identical, same snapshot) — the missingno intermediate state of
 p30-ore-3-datagen closes with this wave; the `_overlay` pair is the upstream
 pass-1 extension (TextureSet.java:113-116), borrowed for pair completeness
 (the p27 posture), no modern consumer yet. Naming follows the P20/P27 rules:
@@ -8534,6 +8536,11 @@ Universal Public Domain Dedication** (same upstream `README.md` block as above).
 - `FLINT` -> `gt6/textures/block/materialicons/flint/`:
   - `ore.png` `7e409880ff4df0945dd757f094bc688a507e6dfc18145cb11ed23c5e678fdd81`
   - `ore_small.png` `66b1ff5ef23aebbf83549a4788e197c4e21c76be4fc6289cec790e932d3221e1`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `GEM_VERTICAL` -> `gt6/textures/block/materialicons/gem_vertical/`:
+  - `ore.png` `5a358784e55d023adf5da914c548dd6e71b664b0751a8d66635772a48b348789`
+  - `ore_small.png` `8c021e43df7c644075a9402b8a5bc735583f6f17e3ec2f0f5e566699f5feb305`
   - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
   - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
 - `LAPIS` -> `gt6/textures/block/materialicons/lapis/`:

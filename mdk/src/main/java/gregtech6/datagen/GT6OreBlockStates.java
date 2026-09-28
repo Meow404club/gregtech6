@@ -20,7 +20,7 @@ import gregtech6.registry.GTBlockEntities;
 /**
  * The ore universe blockstate + item-model provider (task p30-ore-3-datagen spec ①/②).
  * The composition-model shape of {@code GT6BlockStates.addPrefixBlocks} (GT6BlockStates
- * .java:1550-1568, the 175-models/3773-blocks precedent) applied to the 3922-block ore
+ * .java:1550-1568, the 175-models/3773-blocks precedent) applied to the 4884-block ore
  * universe ({@code GT6OreBlocks.registrationOrder()}, 26 families x 74 form-rows x M=53):
  *
  * <ul>
@@ -29,13 +29,13 @@ import gregtech6.registry.GTBlockEntities;
  *     + the 17 GT stones = 28 models — NOT a model per pair (the explicit red line) and
  *     not even a model per (base,SET): the dual-sprite ore look is the CUSTOM BAKED MODEL's
  *     face ({@code GTOreClientListener} bake dispatch), the JSON stays a graceful cube;</li>
- * <li>one blockstate JSON per block (3922) — a single variant onto the shared model;</li>
- * <li>one item model JSON per block (3922), {@code withExistingParent} onto the shared
+ * <li>one blockstate JSON per block (4884) — a single variant onto the shared model;</li>
+ * <li>one item model JSON per block (4884), {@code withExistingParent} onto the shared
  *     block model — same provider, same pass, so the parent resolves in the
  *     ExistingFileHelper (the BlockStateProvider.java:103-104 flush order precedent).</li>
  * </ul>
  *
- * <p>Total generated JSON = 3922 blockstates + 3922 item models + 28 shared models = 7872
+ * <p>Total generated JSON = 4884 blockstates + 4884 item models + 32 shared models = 9800
  * (the composition-strategy expectation pinned by GT6OreRenderDatagenTest; the per-pair
  * alternative would be ~11.8k with zero shared visual identity). The placeholder cube
  * carries tintindex 0 on all faces (the tintedCubeAll idiom) so a pre-wrap render is

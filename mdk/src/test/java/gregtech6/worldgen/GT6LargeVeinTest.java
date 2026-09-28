@@ -50,15 +50,18 @@ class GT6LargeVeinTest {
         "ore.large.copper", "ore.large.adamantium", "ore.large.naquadah", "ore.large.trinium", "ore.large.dolamide",
         "ore.large.moonmars", "ore.large.cheese", "ore.large.desh", "ore.large.syrmorite", "ore.large.octine");
 
-    /** The rows drawable overworld under the registered-universe gate (the mInvalid gate: >= 1 valid slot). */
+    /** The rows drawable overworld under the registered-universe gate (the mInvalid gate: >= 1 valid slot).
+     *  garnet/pitchblende/peridot revived with r7-a-ore-axis-extension (the stone-layer companions
+     *  Uvarovite / Pitchblende+Uraninite / MgCO3+Peridot landed in the axis). */
     private static final List<String> DRAWABLE = List.of(
         "ore.large.lignite", "ore.large.coal", "ore.large.lapis", "ore.large.iodinesalt", "ore.large.rocksalt",
-        "ore.large.asbestos", "ore.large.diamond", "ore.large.galena", "ore.large.gold", "ore.large.platinum",
-        "ore.large.cassiterite", "ore.large.tungstate", "ore.large.manganese", "ore.large.nickel", "ore.large.redstone",
-        "ore.large.tetrahedrite", "ore.large.iron", "ore.large.copper");
+        "ore.large.asbestos", "ore.large.garnet", "ore.large.pitchblende", "ore.large.diamond", "ore.large.galena",
+        "ore.large.peridot", "ore.large.gold", "ore.large.platinum", "ore.large.cassiterite", "ore.large.tungstate",
+        "ore.large.manganese", "ore.large.nickel", "ore.large.redstone", "ore.large.tetrahedrite", "ore.large.iron",
+        "ore.large.copper");
 
-    /** The valid slots' weights, DRAWABLE order — the draw mass the GT6WorldGenerator.java:93 sum produces. */
-    private static final int DRAWABLE_WEIGHT_SUM = 1110;
+    /** The valid slots' weights, DRAWABLE order — the draw mass the GT6WorldGenerator.java:93 sum produces (1110 + 60 garnet + 40 pitchblende + 60 peridot since r7-a). */
+    private static final int DRAWABLE_WEIGHT_SUM = 1270;
 
     @BeforeAll
     static void boot() {
@@ -107,7 +110,7 @@ class GT6LargeVeinTest {
         assertFalse(tOctine.overworld(), "octine is Betweenlands-only");
     }
 
-    /** The draw gate + the indicator universe: 18 drawable rows, 1110 total weight, the 31 distinct valid slots. */
+    /** The draw gate + the indicator universe: 21 drawable rows, 1270 total weight, the 40 distinct valid slots (r7-a lit chromite/uvarovite/pitchblende/uraninite/magnesium_carbonate/peridot/grossular/stannite/kesterite). */
     @Test
     void drawableRowsAndIndicatorUniverseMatch() {
         List<GTVeinConfig> tTable = GT6WorldgenDatagen.LARGE_VEIN_TABLE;
@@ -132,7 +135,7 @@ class GT6LargeVeinTest {
         }
         assertEquals(DRAWABLE, tDrawableNames, "the draw list = overworld rows with >= 1 axis-valid slot (the mInvalid gate)");
         assertEquals(DRAWABLE_WEIGHT_SUM, tWeightSum, "the tMaxWeight mass of the drawable rows");
-        assertEquals(31, tValidSlotNames.size(), "31 distinct valid slots across the OVERWORLD rows (the indicator universe)");
+        assertEquals(40, tValidSlotNames.size(), "40 distinct valid slots across the OVERWORLD rows (the indicator universe)");
         assertEquals(tValidSlotNames, GT6SurfaceBlocks.INDICATOR_MATERIALS.stream().map(tSupply -> tSupply.get().mNameInternal).toList(),
                 "the spec ⑤ indicator rock set = the table's distinct valid slots, first-encounter order");
     }

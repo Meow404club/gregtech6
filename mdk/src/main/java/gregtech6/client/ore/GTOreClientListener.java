@@ -143,7 +143,7 @@ public final class GTOreClientListener {
 		return PARAMS.get(aRegistryPath);
 	}
 
-	/** The table size — 3922 ore paths (smoke assertion). */
+	/** The table size — 4884 ore paths (smoke assertion). */
 	public static int paramsCount() {
 		return PARAMS.size();
 	}

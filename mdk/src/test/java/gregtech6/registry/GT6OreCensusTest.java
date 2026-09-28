@@ -1,9 +1,9 @@
 /**
  * The p30 ore wave close-out full-census ratchet (task p30-ore-5-census): the four
  * ledgers of the landed ore universe pinned against EACH OTHER per key, not just per
- * card — the registration walk (ledger 1, ore-1: 3922), the generated blockstates +
+ * card — the registration walk (ledger 1, ore-1: 4884), the generated blockstates +
  * item models + shared base models + atlas seam (ledger 2, ore-3), the generated loot
- * tables in BOTH directory bands (ledger 3, ore-4: 3922 x 2 = 7844), and the borrowed
+ * tables in BOTH directory bands (ledger 3, ore-4: 4884 x 2 = 9768), and the borrowed
  * materialicon ore textures (ledger 4, ore-2: 60 PNGs) — plus the creative tab content
  * face (the material axis minus the mHidden filter, the GT6OreBlocks registerCreativeTab
  * walk).
@@ -46,8 +46,8 @@ import gregtech6.registry.GT6OreBlocks.OreKey;
 
 class GT6OreCensusTest {
 
-    /** Ledger 1 — the registration walk (74 form-rows x M=53, the ore-1 pin). */
-    private static final int PINNED_BLOCKS = 3922;
+    /** Ledger 1 — the registration walk (74 form-rows x M=66, the ore-1 pin, r7-a-ore-axis-extension). */
+    private static final int PINNED_BLOCKS = 4884;
     /** Ledger 2 — the ore-3 faces: per-pair blockstates + item models, shared base models.
      *  29 since task p31-bedrock-ore-worldgen: the ONE shared bedrock cube
      *  32 since task p31-nether-lens-end-yield: the THREE nether stand-in cubes
@@ -56,13 +56,13 @@ class GT6OreCensusTest {
     private static final int PINNED_BASE_MODELS = 32;
     /** Ledger 3 — the ore-4 loot trees: one table per block, BOTH directory bands. */
     private static final int PINNED_LOOT_TOTAL = 2 * PINNED_BLOCKS;
-    /** Ledger 4 — the ore-2 texture batch: 15 SETs x {ore, ore_small, + the two overlays}. */
-    private static final int PINNED_SETS = 15;
+    /** Ledger 4 — the ore-2 texture batch: 16 SETs x {ore, ore_small, + the two overlays} (gem_vertical joined with r7-a-ore-axis-extension). */
+    private static final int PINNED_SETS = 16;
     private static final int PINNED_TEXTURES = PINNED_SETS * 4;
-    /** The atlas seam: every distinct overlay sprite stitched — 15 SETs x {ore, ore_small} pass-0 + the two pass-1 outline forms (r3-ore-tint-abgr-seam). */
+    /** The atlas seam: every distinct overlay sprite stitched — 16 SETs x {ore, ore_small} pass-0 + the two pass-1 outline forms (r3-ore-tint-abgr-seam). */
     private static final int PINNED_ATLAS_SOURCES = PINNED_SETS * 4;
-    /** The tab content face: every axis material is visible today (53 = M, the mHidden filter empty). */
-    private static final int PINNED_TAB_ITEMS = 53;
+    /** The tab content face: every axis material is visible today (66 = M, the mHidden filter empty). */
+    private static final int PINNED_TAB_ITEMS = 66;
 
     private static final Path STATIC_TREE = Path.of("src", "main", "resources");
     private static final Path GENERATED_TREE = Path.of("src", "generated", "resources");
@@ -100,7 +100,7 @@ class GT6OreCensusTest {
      * The bedrock band's blockstate/item-model paths (task p31-bedrock-ore-worldgen, 2 x
      * 45 = 90) — they share the ore_-prefixed generated directories with ledger 2, so the
      * no-orphans censuses must count them. They carry NO loot files (noLootTable = the
-     * upstream Drops_None), so the ledger-3 loot faces stay the 3922-only walks.
+     * upstream Drops_None), so the ledger-3 loot faces stay the 4884-only walks.
      */
     private static List<String> bedrockPaths() {
         List<String> rPaths = new ArrayList<>();
@@ -137,7 +137,7 @@ class GT6OreCensusTest {
     @Test
     void perKeyAllFourLedgersAgree() throws IOException {
         List<String> tPaths = walkPaths();
-        assertEquals(PINNED_BLOCKS, tPaths.size(), "ledger 1: the registration walk (74 x 53)");
+        assertEquals(PINNED_BLOCKS, tPaths.size(), "ledger 1: the registration walk (74 x 66)");
         Path tAssets = mdkRoot().resolve(GENERATED_TREE).resolve("assets").resolve("gt6");
         Path tData = mdkRoot().resolve(GENERATED_TREE).resolve("data").resolve("gt6");
         for (String tPath : tPaths) {
@@ -157,7 +157,7 @@ class GT6OreCensusTest {
     void oreFileCensusHasNoOrphans() throws IOException {
         Set<String> tWalk = new HashSet<>(walkPaths());
         tWalk.addAll(bedrockPaths()); // ledger 2's generated dirs carry the bedrock band too (p31-bedrock-ore)
-        Set<String> tLootWalk = new HashSet<>(walkPaths()); // the loot bands stay 3922-only: the bedrock band is noLootTable
+        Set<String> tLootWalk = new HashSet<>(walkPaths()); // the loot bands stay 4884-only: the bedrock band is noLootTable
         Path tAssets = mdkRoot().resolve(GENERATED_TREE).resolve("assets").resolve("gt6");
         Path tData = mdkRoot().resolve(GENERATED_TREE).resolve("data").resolve("gt6");
         assertEquals(tWalk, fileStems(tAssets.resolve("blockstates"), "ore_"),
@@ -170,7 +170,7 @@ class GT6OreCensusTest {
                 "ledger 3: the loot_table band ore census is the walk, no drift either way");
     }
 
-    /** The ledger-3 band total (3922 x 2 = 7844) and the ledger-2 shared base models (28). */
+    /** The ledger-3 band total (4884 x 2 = 9768) and the ledger-2 shared base models (28). */
     @Test
     void ledgerTotalsArePinned() throws IOException {
         Path tAssets = mdkRoot().resolve(GENERATED_TREE).resolve("assets").resolve("gt6");
@@ -203,7 +203,7 @@ class GT6OreCensusTest {
         String tBody = Files.readString(tAtlas);
         List<net.minecraft.resources.ResourceLocation> tSprites = GTOreBakedModel.overlaySprites();
         assertEquals(PINNED_ATLAS_SOURCES, tSprites.size(),
-                "ledger 2/4 seam: 15 SETs x {ore, ore_small, ore_overlay, ore_small_overlay} distinct overlay sprites");
+                "ledger 2/4 seam: 16 SETs x {ore, ore_small, ore_overlay, ore_small_overlay} distinct overlay sprites");
         for (net.minecraft.resources.ResourceLocation tSprite : tSprites) {
             assertTrue(tBody.contains("\"" + tSprite + "\""),
                     "the atlas stitches " + tSprite);
@@ -214,7 +214,7 @@ class GT6OreCensusTest {
      * Ledger 4 + the missingno kill: every gt6-namespaced sprite of every param
      * (the GT17 stone bases + every overlay) and the vanilla-anchored base sprites of
      * the walk resolve to a PNG on disk (or to the vanilla namespace for the 9 anchors);
-     * the 15 SETs carry the full four-file ore form (60 PNGs, ore-2's batch).
+     * the 16 SETs carry the full four-file ore form (64 PNGs, ore-2's batch + r7-a gem_vertical).
      */
     @Test
     void everyOreSpriteResolvesToAPng() throws IOException {
