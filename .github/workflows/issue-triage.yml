@@ -1,5 +1,6 @@
-# Issue 类型自动打标：读标题前缀 [Bug]/[Feat]/[RFC]（大小写不敏感）→ 加对应小写标签。
-# 无前缀的 issue 保持原样，不打任何标签；任何情况下都不会自动打 p1/p2/p3（优先级只能手动）。
+# Issue 类型自动打标：扫描标题中出现的全部类型记号（[Bug]/[Feat]/[RFC]，大小写不敏感、
+# 可组合，如 [Feat][RFC] → feat+rfc 双标）→ 逐一存在性防错后加对应小写标签。
+# 无记号的 issue 保持原样，不打任何标签；任何情况下都不会自动打 p 系列优先级标签（优先级只能手动）。
 # 若 GitHub Actions 额度紧张，可直接删除本文件，类型标签改手动打（每次新 issue 约消耗 1 分钟额度）。
 name: Issue 类型打标
 on:
@@ -17,26 +18,30 @@ jobs:
         with:
           script: |
             const title = context.payload.issue.title || '';
-            const m = title.match(/^\s*\[(bug|feat|rfc)\]/i);
-            if (!m) {
-              core.info('no [Bug]/[Feat]/[RFC] prefix, skipping');
+            // 扫描标题里的全部类型记号（大小写不敏感、可组合——[Feat][RFC] 即 feat+rfc）
+            const wanted = [...new Set(
+              [...title.matchAll(/\[(bug|feat|rfc)\]/gi)].map(m => m[1].toLowerCase())
+            )];
+            if (wanted.length === 0) {
+              core.info('no [Bug]/[Feat]/[RFC] token in title, skipping');
               return;
             }
-            const wanted = m[1].toLowerCase();
-            // 先列可用标签，不存在则跳过（防 addLabels 对不存在的标签报错）
+            // 逐记号做存在性防错（addLabels 对不存在的标签报错），只加仓库里真实存在的
             const repoLabels = await github.rest.issues.listLabelsForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
               per_page: 100,
             });
-            if (!repoLabels.data.some(l => l.name === wanted)) {
-              core.info(`label "${wanted}" not found in repo, skipping`);
+            const known = new Set(repoLabels.data.map(l => l.name));
+            const labels = wanted.filter(t => known.has(t));
+            if (labels.length === 0) {
+              core.info(`none of [${wanted.join(', ')}] found in repo, skipping`);
               return;
             }
             await github.rest.issues.addLabels({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.issue.number,
-              labels: [wanted],
+              labels: labels,
             });
-            core.info(`added label "${wanted}" to issue #${context.payload.issue.number}`);
+            core.info(`added labels [${labels.join(', ')}] to issue #${context.payload.issue.number}`);

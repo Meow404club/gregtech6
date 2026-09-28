@@ -3,6 +3,10 @@ description: 请求移植上游功能或新增功能（标题会自动带 [Feat]
 title: "[Feat] "
 labels: ["feat"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        若此功能尚需方案讨论，可在标题再加 `[RFC]`（如标题写成 `[Feat][RFC] 标题`），将同时打上提案标签。
   - type: textarea
     id: feature
     attributes:
