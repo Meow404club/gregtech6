@@ -90,7 +90,7 @@ class GT6RenderPoolTextureTest {
         }
     }
 
-    /** One LD wire meta: blockstate -> model -> tier sprite -> PNG, plus the item parent. */
+    /** One LD wire meta: blockstate -> model -> tier sprite -> PNG, plus the item's 2D icon form. */
     private static void assertWireMetaCovered(int aMeta) throws Exception {
         JsonObject tState = json("assets/gt6/blockstates/long_dist_wire_" + aMeta + ".json");
         JsonElement tVariant = tState.getAsJsonObject("variants").get("");
@@ -106,8 +106,13 @@ class GT6RenderPoolTextureTest {
         assertTextureOnTree(tTexture);
 
         JsonObject tItem = json("assets/gt6/models/item/long_dist_wire_" + aMeta + ".json");
-        assertEquals("gt6:block/long_dist_wire_" + aMeta, tItem.get("parent").getAsString(),
-                "meta " + aMeta + " item parents its block model");
+        // r8-tex-itemform-a band A: the BlockItem left the cubeAll-parent anti-pattern for
+        // the 2D item/generated icon over the same tier sprite (the world face is untouched).
+        assertEquals("minecraft:item/generated", tItem.get("parent").getAsString(),
+                "meta " + aMeta + " item rides the 2D icon form");
+        assertEquals("gt6:block/long_dist_wire_" + WIRE_ART.get(aMeta),
+                tItem.getAsJsonObject("textures").get("layer0").getAsString(),
+                "meta " + aMeta + " item layer0 binds its TIER sprite (the LONG_DIST_WIRES_01 table)");
     }
 
     @Test
