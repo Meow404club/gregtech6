@@ -22,19 +22,22 @@ import gregtech6.registry.GTMaterialItems;
  * {@link GT6OreBlocks#WORLDGEN_ORES} posture); the datagen band (GT6WorldgenDatagen ore
  * band) and the offline parity test both consume this class.
  *
- * <p><b>The 54-row table</b> is the upstream small-ore universe verbatim: the 53
+ * <p><b>The 115-row table</b> is the upstream small-ore universe verbatim: the 53
  * always-on {@code WorldgenOresSmall} rows (Loader_Worldgen.java:800-852) + the
- * {@code !mHidden} nikolite row (:875). Per-row fields = upstream ctor order
+ * {@code !mHidden} nikolite row (:875) + the RANDOM_SMALL_GEM_ORE pool loop (:877-878,
+ * one row per flagged material — 61 rows, task r7-b-gem-pool-extension). Per-row fields
+ * = upstream ctor order
  * (name, minY, maxY, amount, material) plus the vanilla-dimension projection of the
  * row's GEN_* flag list ({@code dims} — GEN_OVERWORLD/GEN_NETHER/GEN_END; the
  * mod-dimension flags CW2/A97/Erebus/Atum/Aether/Mars/... have no modern carrier and
- * are dropped with the dim-coverage defer). The mod-gated rows (:854-874), the
- * RANDOM_SMALL_GEM loop (:877-880) and the large-vein table (:886-925, the t3 card)
- * stay out — the ore-1 registration axis rulings.
+ * are dropped with the dim-coverage defer). The mod-gated rows (:854-874) and the
+ * large-vein table (:886-925, the t3 card) stay out — the ore-1 registration axis
+ * rulings (the pool loop joined in r7-b: the loop carries no axis filter, so all 61
+ * flagged members get rows; its GEN_GEMS domain projects to overworld only,
+ * CS.java:965).
  *
  * <p><b>Placement = one (row, dim) pair each</b> (coordinator ruling 2026-09-17, the
- * verbatim-flag translation — the task card's "63" was an architect arithmetic slip,
- * the flagged walk measures 91): overworld 38 + nether 20 + end 33. The one
+ * verbatim-flag translation): overworld 99 + nether 20 + end 33 = 152. The one
  * ancientdebris row (:852) stays in the table with its {@code NETHER} dim but is
  * placement-gated (GT6OreBlocks.java:328-332 口径: the upstream gate
  * {@code !IL.Ancient_Debris.exists()} is a PLACEMENT-time compat check and vanilla
@@ -159,7 +162,85 @@ public final class GTOreWorldgen {
         row("ore.small.cinnabar"    ,   5, 250, 16, () -> MT.OREMATS.Cinnabar       , Dim.NETHER),                          // :851
         row("ore.small.ancientdebris",  5,  90, 16, () -> MT.AncientDebris          , Dim.NETHER),                          // :852 — placement-gated
         // -- :875, the !mHidden closer --------------------------------------------------------------
-        row("ore.small.nikolite"    ,  10,  40,  4, () -> MT.Nikolite               , Dim.OVERWORLD, Dim.NETHER, Dim.END)   // :875
+        row("ore.small.nikolite"    ,  10,  40,  4, () -> MT.Nikolite               , Dim.OVERWORLD, Dim.NETHER, Dim.END),  // :875
+        // -- :877-878, the RANDOM_SMALL_GEM_ORE pool loop (task r7-b-gem-pool-extension) ------------
+        // the upstream loop walks the whole flagged pool with no axis filter and creates
+        // `WorldgenOresSmall("ore.small."+mNameInternal.toLowerCase(), T, 5, 250, 1, tGem,
+        // GEN_GEMS)` per member — 61 rows (48 factory members + 13 inline flags), all
+        // GEN_OVERWORLD-carried (GEN_GEMS = CS.java:965, the nine-domain list whose other
+        // eight carriers have no modern dimension). Row tails = the sanitized internal names
+        // (OreDictMaterial.sanitize strips spaces/apostrophes: "Red Jasper" -> "redjasper").
+        // Family-grouped below (the upstream iteration is MATERIAL_ARRAY id order — order is
+        // consumer-invisible here, the per-row feature keys are distinct either way).
+        // sapphire family, 7 (MT.java:1380-1386)
+        row("ore.small.sapphire"        ,   5, 250,  1, () -> MT.Sapphire               , Dim.OVERWORLD),                  // :877-878
+        row("ore.small.ruby"            ,   5, 250,  1, () -> MT.Ruby                   , Dim.OVERWORLD),
+        row("ore.small.bluesapphire"    ,   5, 250,  1, () -> MT.BlueSapphire           , Dim.OVERWORLD),
+        row("ore.small.greensapphire"   ,   5, 250,  1, () -> MT.GreenSapphire          , Dim.OVERWORLD),
+        row("ore.small.purplesapphire"  ,   5, 250,  1, () -> MT.PurpleSapphire         , Dim.OVERWORLD),
+        row("ore.small.yellowsapphire"  ,   5, 250,  1, () -> MT.YellowSapphire         , Dim.OVERWORLD),
+        row("ore.small.orangesapphire"  ,   5, 250,  1, () -> MT.OrangeSapphire         , Dim.OVERWORLD),
+        // emerald family, 7 (MT.java:1371-1377)
+        row("ore.small.emerald"         ,   5, 250,  1, () -> MT.Emerald                , Dim.OVERWORLD),
+        row("ore.small.aquamarine"      ,   5, 250,  1, () -> MT.Aquamarine             , Dim.OVERWORLD),
+        row("ore.small.morganite"       ,   5, 250,  1, () -> MT.Morganite              , Dim.OVERWORLD),
+        row("ore.small.heliodor"        ,   5, 250,  1, () -> MT.Heliodor               , Dim.OVERWORLD),
+        row("ore.small.goshenite"       ,   5, 250,  1, () -> MT.Goshenite              , Dim.OVERWORLD),
+        row("ore.small.bixbite"         ,   5, 250,  1, () -> MT.Bixbite                , Dim.OVERWORLD),
+        row("ore.small.maxixe"          ,   5, 250,  1, () -> MT.Maxixe                 , Dim.OVERWORLD),
+        // garnet family, 6 (MT.java:1393-1398)
+        row("ore.small.almandine"       ,   5, 250,  1, () -> MT.Almandine              , Dim.OVERWORLD),
+        row("ore.small.grossular"       ,   5, 250,  1, () -> MT.Grossular              , Dim.OVERWORLD),
+        row("ore.small.pyrope"          ,   5, 250,  1, () -> MT.Pyrope                 , Dim.OVERWORLD),
+        row("ore.small.spessartine"     ,   5, 250,  1, () -> MT.Spessartine            , Dim.OVERWORLD),
+        row("ore.small.andradite"       ,   5, 250,  1, () -> MT.Andradite              , Dim.OVERWORLD),
+        row("ore.small.uvarovite"       ,   5, 250,  1, () -> MT.Uvarovite              , Dim.OVERWORLD),
+        // jasper family, 6 (MT.java:1401-1406)
+        row("ore.small.redjasper"       ,   5, 250,  1, () -> MT.Jasper                 , Dim.OVERWORLD),
+        row("ore.small.oceanjasper"     ,   5, 250,  1, () -> MT.JasperOcean            , Dim.OVERWORLD),
+        row("ore.small.rainforestjasper",   5, 250,  1, () -> MT.JasperRainforest       , Dim.OVERWORLD),
+        row("ore.small.bluejasper"      ,   5, 250,  1, () -> MT.JasperBlue             , Dim.OVERWORLD),
+        row("ore.small.greenjasper"     ,   5, 250,  1, () -> MT.JasperGreen            , Dim.OVERWORLD),
+        row("ore.small.yellowjasper"    ,   5, 250,  1, () -> MT.JasperYellow           , Dim.OVERWORLD),
+        // tigereye family, 6 (MT.java:1409-1414)
+        row("ore.small.tigereye"        ,   5, 250,  1, () -> MT.TigerEyeYellow         , Dim.OVERWORLD),
+        row("ore.small.catseye"         ,   5, 250,  1, () -> MT.TigerEyeGreen          , Dim.OVERWORLD),
+        row("ore.small.dragoneye"       ,   5, 250,  1, () -> MT.TigerEyeRed            , Dim.OVERWORLD),
+        row("ore.small.hawkseye"        ,   5, 250,  1, () -> MT.TigerEyeBlue           , Dim.OVERWORLD),
+        row("ore.small.blackeye"        ,   5, 250,  1, () -> MT.TigerEyeBlack          , Dim.OVERWORLD),
+        row("ore.small.tigeriron"       ,   5, 250,  1, () -> MT.TigerIron              , Dim.OVERWORLD),
+        // aventurine family, 6 (MT.java:1417-1422)
+        row("ore.small.greenaventurine" ,   5, 250,  1, () -> MT.AventurineGreen        , Dim.OVERWORLD),
+        row("ore.small.brownaventurine" ,   5, 250,  1, () -> MT.AventurineBrown        , Dim.OVERWORLD),
+        row("ore.small.yellowaventurine",   5, 250,  1, () -> MT.AventurineYellow       , Dim.OVERWORLD),
+        row("ore.small.blackaventurine" ,   5, 250,  1, () -> MT.AventurineBlack        , Dim.OVERWORLD),
+        row("ore.small.blueaventurine"  ,   5, 250,  1, () -> MT.AventurineBlue         , Dim.OVERWORLD),
+        row("ore.small.redaventurine"   ,   5, 250,  1, () -> MT.AventurineRed          , Dim.OVERWORLD),
+        // fluorite family, 10 (MT.java:1109-1118; CaF2 carries the internal name "Fluorite")
+        row("ore.small.fluorite"        ,   5, 250,  1, () -> MT.CaF2                   , Dim.OVERWORLD),
+        row("ore.small.redfluorite"     ,   5, 250,  1, () -> MT.FluoriteRed            , Dim.OVERWORLD),
+        row("ore.small.pinkfluorite"    ,   5, 250,  1, () -> MT.FluoritePink           , Dim.OVERWORLD),
+        row("ore.small.bluefluorite"    ,   5, 250,  1, () -> MT.FluoriteBlue           , Dim.OVERWORLD),
+        row("ore.small.greenfluorite"   ,   5, 250,  1, () -> MT.FluoriteGreen          , Dim.OVERWORLD),
+        row("ore.small.blackfluorite"   ,   5, 250,  1, () -> MT.FluoriteBlack          , Dim.OVERWORLD),
+        row("ore.small.whitefluorite"   ,   5, 250,  1, () -> MT.FluoriteWhite          , Dim.OVERWORLD),
+        row("ore.small.yellowfluorite"  ,   5, 250,  1, () -> MT.FluoriteYellow         , Dim.OVERWORLD),
+        row("ore.small.orangefluorite"  ,   5, 250,  1, () -> MT.FluoriteOrange         , Dim.OVERWORLD),
+        row("ore.small.magentafluorite" ,   5, 250,  1, () -> MT.FluoriteMagenta        , Dim.OVERWORLD),
+        // inline flags, 13 (MT.java:1425-1443)
+        row("ore.small.spinel"          ,   5, 250,  1, () -> MT.Spinel                 , Dim.OVERWORLD),
+        row("ore.small.balasruby"       ,   5, 250,  1, () -> MT.BalasRuby              , Dim.OVERWORLD),
+        row("ore.small.topaz"           ,   5, 250,  1, () -> MT.Topaz                  , Dim.OVERWORLD),
+        row("ore.small.bluetopaz"       ,   5, 250,  1, () -> MT.BlueTopaz              , Dim.OVERWORLD),
+        row("ore.small.tanzanite"       ,   5, 250,  1, () -> MT.Tanzanite              , Dim.OVERWORLD),
+        row("ore.small.amazonite"       ,   5, 250,  1, () -> MT.Amazonite              , Dim.OVERWORLD),
+        row("ore.small.opal"            ,   5, 250,  1, () -> MT.Opal                   , Dim.OVERWORLD),
+        row("ore.small.onyxred"         ,   5, 250,  1, () -> MT.OnyxRed                , Dim.OVERWORLD),
+        row("ore.small.onyxblack"       ,   5, 250,  1, () -> MT.OnyxBlack              , Dim.OVERWORLD),
+        row("ore.small.peridot"         ,   5, 250,  1, () -> MT.Peridot                , Dim.OVERWORLD),
+        row("ore.small.amethyst"        ,   5, 250,  1, () -> MT.Amethyst               , Dim.OVERWORLD),
+        row("ore.small.dioptase"        ,   5, 250,  1, () -> MT.Dioptase               , Dim.OVERWORLD),
+        row("ore.small.jade"            ,   5, 250,  1, () -> MT.Jade                   , Dim.OVERWORLD)
     );
 
     /** The MT.* supplier behind the row literals (direct field refs, the WORLDGEN_ORES form). */
@@ -179,11 +260,11 @@ public final class GTOreWorldgen {
     public record Placement(SmallOreRow row, Dim dim) {}
 
     /**
-     * The 91 placement pairs, ROWS order × {@link Dim} order, minus the
-     * {@link #PLACEMENT_GATED} rows: overworld 38 + nether 20 + end 33.
+     * The 152 placement pairs, ROWS order × {@link Dim} order, minus the
+     * {@link #PLACEMENT_GATED} rows: overworld 99 + nether 20 + end 33.
      */
     public static List<Placement> placementPairs() {
-        List<Placement> rPairs = new ArrayList<>(91);
+        List<Placement> rPairs = new ArrayList<>(152);
         for (SmallOreRow tRow : ROWS) {
             if (PLACEMENT_GATED.contains(tRow.tail())) continue;
             for (Dim tDim : Dim.values()) {
@@ -216,11 +297,11 @@ public final class GTOreWorldgen {
         return ResourceLocation.fromNamespaceAndPath("gt6", "ore_small_" + aDim.segment + "/" + aRow.tail());
     }
 
-    /** The 91 configured keys, placementPairs() order. */
+    /** The 152 configured keys, placementPairs() order. */
     public static final List<ResourceKey<ConfiguredFeature<?, ?>>> CONFIGURED_KEYS =
             placementPairs().stream().map(tPair -> configuredKey(tPair.row(), tPair.dim())).toList();
 
-    /** The 91 placed keys, same order (placed[i] hangs off configured[i]). */
+    /** The 152 placed keys, same order (placed[i] hangs off configured[i]). */
     public static final List<ResourceKey<PlacedFeature>> PLACED_KEYS =
             placementPairs().stream().map(tPair -> placedKey(tPair.row(), tPair.dim())).toList();
 
