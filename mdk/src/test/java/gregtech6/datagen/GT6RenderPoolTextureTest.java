@@ -166,7 +166,9 @@ class GT6RenderPoolTextureTest {
                             tPath + " the " + tFace + " face carries the side art (upstream index 1)");
                 }
                 JsonObject tState = json("assets/gt6/blockstates/" + tPath + ".json");
-                assertEquals(4, tState.getAsJsonObject("variants").size(), tPath + " has the four facing variants");
+                // issue #18 (r4-18-converter-tex-facing): the charger blocks ride
+                // GT6BatteryBoxBlock whose FACING went six-way — 6 variants per state
+                assertEquals(6, tState.getAsJsonObject("variants").size(), tPath + " has the six facing variants");
                 JsonObject tItem = json("assets/gt6/models/item/" + tPath + ".json");
                 assertEquals("gt6:block/" + tPath, tItem.get("parent").getAsString(), tPath + " item parent");
                 tRows++;
