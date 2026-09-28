@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "gt6:block/stones/andesite/cobble"
+    "all": "gt6:block/materialicons/rough/block_solid"
   }
 }

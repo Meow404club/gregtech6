@@ -31,7 +31,8 @@ import gregtech6.registry.GT6Molds;
  * <ul>
  * <li><b>blockstates</b>: per crucible block NINE variants over the
  *     {@link GT6Crucibles.CrucibleBlock#LIQUID_LEVEL} int property (0..8, the
- *     mDisplayedHeight :298 census bucketed) — level 0 the cobble cube, levels 1..8 the
+ *     mDisplayedHeight :298 census bucketed) — level 0 the material smooth body cube (the
+ *     {@link #bodyTexture} face), levels 1..8 the
  *     "filled" model over the molten-indicator texture. Declared deviation: the fill
  *     HEIGHT within the cube (the upstream 6-pass setBlockBounds2 render, :596-606) is
  *     the defer pool — element-based per-level models need the render card; the
@@ -70,8 +71,40 @@ public final class GT6CrucibleDatagen {
 	// blockstates + models
 	// ------------------------------------------------------------------------------------
 
-	/** The cobble body texture (the andesite cobble of the borrowed stones universe). */
-	private static final String BODY_TEXTURE = "block/stones/andesite/cobble";
+	/**
+	 * The material smooth body texture (task r7-40-41-mold-assets, GitHub #41 — the former
+	 * flat andesite/cobble placeholder for every row). The upstream body face is the
+	 * material's {@code getTextureSmooth()} — the texture set's blockSolid icon
+	 * (OreDictMaterial.java:983-990, MultiTileEntityMold.java:439): SET_ROUGH (Ceramic),
+	 * SET_COPPER (Bronze) and SET_METALLIC (Steel) ride the borrowed grayscale
+	 * materialicons blockSolid art (assets/README.md, the p8-prefixblock-render borrow),
+	 * the vanilla SET_STONE row (Stone) has no borrowed blockSolid icon and rides the
+	 * vanilla smooth stone. Declared deviation: upstream tints the grayscale art with the
+	 * material colour at runtime (PrefixBlock.getRenderColor) — the port renders it
+	 * un-tinted; the tint rides the render pool (ponytail: un-tinted grayscale, a
+	 * tintindex-0 body + a RegisterColorHandlersEvent row lands it without model changes).
+	 * Returns the FULLY-QUALIFIED {@code ns:path} (the vanilla row carries its explicit
+	 * {@code minecraft:} — the callers parse it, they must not {@code modLoc} it again).
+	 */
+	static String bodyTexture(gregapi.oredict.OreDictMaterial aMaterial) {
+		if (aMaterial == gregapi.data.MT.Stone)   return "minecraft:block/smooth_stone";
+		if (aMaterial == gregapi.data.MT.Ceramic) return "gt6:block/materialicons/rough/block_solid";
+		if (aMaterial == gregapi.data.MT.Bronze)  return "gt6:block/materialicons/copper/block_solid";
+		if (aMaterial == gregapi.data.MT.Steel)   return "gt6:block/materialicons/metallic/block_solid";
+		throw new IllegalStateException("no smooth body texture mapped for material " + aMaterial
+				+ " — map it here before the row joins (the loud-drift rule)");
+	}
+
+	/**
+	 * A fully-qualified {@code ns:path} string into the ResourceLocation the model builder
+	 * wants — {@code fromNamespaceAndPath} is the leg-neutral form (the GTOreBakedModel
+	 * spriteOf precedent); the 1.20.1 single-arg ctor does not exist on the 21.1 leg.
+	 */
+	static ResourceLocation loc(String aQualified) {
+		int tColon = aQualified.indexOf(':');
+		return ResourceLocation.fromNamespaceAndPath(aQualified.substring(0, tColon), aQualified.substring(tColon + 1));
+	}
+
 	/** The molten-content indicator (the script-generated placeholder PNG, the p2 pipeline). */
 	private static final String CONTENT_TEXTURE = "block/smeltery_content";
 
@@ -96,30 +129,30 @@ public final class GT6CrucibleDatagen {
 		protected void registerStatesAndModels() {
 			for (GT6Crucibles.SmelteryRow tRow : GT6Crucibles.ROWS) {
 				Block tBlock = GT6Crucibles.BLOCKS_BY_PATH.get(tRow.path()).get();
-				addCrucible(tBlock, tRow.path());
+				addCrucible(tRow, tBlock);
 			}
 			for (GT6Molds.MoldRow tRow : GT6Molds.ROWS) {
 				Block tBlock = GT6Molds.BLOCKS_BY_PATH.get(tRow.path()).get();
-				addSimpleCube(tBlock, "block/" + tRow.path());
+				addSimpleCube(tBlock, "block/" + tRow.path(), tRow.material().get());
 			}
 		}
 
-		/** One crucible: 9 LIQUID_LEVEL variants + the BlockItem parent. */
-		private void addCrucible(Block aBlock, String aPath) {
-			String tEmpty = "block/" + aPath + "_empty";
-			String tFilled = "block/" + aPath + "_filled";
-			ModelFile tEmptyModel = models().cubeAll(tEmpty, modLoc(BODY_TEXTURE));
+		/** One crucible: 9 LIQUID_LEVEL variants + the BlockItem parent (the empty face = the material smooth body). */
+		private void addCrucible(GT6Crucibles.SmelteryRow aRow, Block aBlock) {
+			String tEmpty = "block/" + aRow.path() + "_empty";
+			String tFilled = "block/" + aRow.path() + "_filled";
+			ModelFile tEmptyModel = models().cubeAll(tEmpty, loc(bodyTexture(aRow.material().get())));
 			ModelFile tFilledModel = models().cubeAll(tFilled, modLoc(CONTENT_TEXTURE));
 			getVariantBuilder(aBlock).forAllStates(aState -> {
 				int tLevel = aState.getValue(GT6Crucibles.CrucibleBlock.LIQUID_LEVEL);
 				return ConfiguredModel.builder().modelFile(tLevel == 0 ? tEmptyModel : tFilledModel).build();
 			});
-			itemModels().withExistingParent(aPath, modLoc(tEmpty));
+			itemModels().withExistingParent(aRow.path(), modLoc(tEmpty));
 		}
 
-		/** One plain cube carrier (the mold blocks). */
-		private void addSimpleCube(Block aBlock, String aModelName) {
-			ModelFile tModel = models().cubeAll(aModelName, modLoc(BODY_TEXTURE));
+		/** One plain cube carrier (the stone mold; the material smooth body). */
+		private void addSimpleCube(Block aBlock, String aModelName, gregapi.oredict.OreDictMaterial aMaterial) {
+			ModelFile tModel = models().cubeAll(aModelName, loc(bodyTexture(aMaterial)));
 			simpleBlock(aBlock, tModel);
 			itemModels().withExistingParent(aModelName.substring("block/".length()), modLoc(aModelName));
 		}

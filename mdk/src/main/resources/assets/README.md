@@ -175,6 +175,85 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   `1a6c9713213e2a0f64c73d116721dbe5d26006eead78397dcbc86fe201a4d091`.
   16x16 RGBA, CC0 1.0 per the upstream README block.
 
+- the 31 raw clay mold icons `gt6/textures/item/mold_ceramic(<_shape>)_raw.png` —
+  byte-identical borrows of upstream `textures/items/gt.multiitem.randomtools/<meta>.png`
+  (the "Clay X Mold" raw item band, MultiItemRandomTools.java:80-121; task
+  r7-40-41-mold-assets, GitHub #40 — the 31 raw items all rode the vanilla clay sprite,
+  every shape looked identical). Filenames are the registered raw item ids; the shape →
+  upstream meta mapping follows the upstream item names (NOT the port's CERAMIC_ROWS
+  order, which differs from the meta sequence). All 16x16 RGBA, CC0 1.0 per the upstream
+  README block:
+
+  - `mold_ceramic_ingot_raw.png`        `900.png`
+    (`d0e0b89abaf2561c094093d4cdf1dc6e1cdb7560a39410e136c7428c2993ab19`)
+  - `mold_ceramic_chunk_raw.png`        `901.png`
+    (`f64967ea52a805ec875ee109a02764926efab01f01610ec9a4173bcbef71c79c`)
+  - `mold_ceramic_plate_raw.png`        `902.png`
+    (`e14089e0f486e7da72b3f4df781335ff6519ad028ef3a1133c30afd0126d96f4`)
+  - `mold_ceramic_tiny_plate_raw.png`   `903.png`
+    (`b0dea9350ddcedb141f4a11148569c363bf2548dfe8012bf9125e7f18bee6985`)
+  - `mold_ceramic_bolt_raw.png`         `904.png`
+    (`fcecf3675704e513ea2186895149b8cde3087173dc93201e3681c48671202562`)
+  - `mold_ceramic_rod_raw.png`          `905.png`
+    (`a33c63fc23d045f98f3c346db2757fc2736f49d1e980e67cf8745269aa3f8080`)
+  - `mold_ceramic_long_rod_raw.png`     `906.png`
+    (`4d88fc32bef55623839b2b8db547339e2027497d6263964983898b691db5726e`)
+  - `mold_ceramic_item_casing_raw.png`  `907.png`
+    (`1de9dc983efbc1e481f65434e131fc1ae44cf715db3e2fd9d432470862789747`)
+  - `mold_ceramic_ring_raw.png`         `908.png`
+    (`dbf559d4eaaef69b6303eed3984adcf345194b3cef4996131699be877e9e6937`)
+  - `mold_ceramic_gear_raw.png`         `909.png`
+    (`f4a086c6036c53a79039c778dc31efb136fd9ba1a89668d7aeffe41948d1f480`)
+  - `mold_ceramic_small_gear_raw.png`   `910.png`
+    (`6d9a18649be88f523f06898e7e17fc65dedb129ad29d0bdd5f9aeb31140707fa`)
+  - `mold_ceramic_sword_raw.png`        `911.png`
+    (`64244e220a0162e74acf62cc4439a24c8d5181473ad7f35b3410aeddd38cc02b`)
+  - `mold_ceramic_pickaxe_raw.png`      `912.png`
+    (`a807bb4a4e11227e133103cb9c43baccfb88a6fd0ced510e3e83f72495c68168`)
+  - `mold_ceramic_spade_raw.png`        `913.png`
+    (`03c905ec1093b739fd57bc475be731bb87e20d84e2d6ad86a652f3199f97dc53`)
+  - `mold_ceramic_shovel_raw.png`       `914.png`
+    (`02c248b23fc410ccd7303dc1e1d0c319c837f6273a9533ee43dfa97e83ecca31`)
+  - `mold_ceramic_universal_spade_raw.png` `915.png`
+    (`35f127d1e31232cca80d4f2017b2a58b0bfed236851b2293e711fbd4c3acc5c8`)
+  - `mold_ceramic_axe_raw.png`          `916.png`
+    (`84d1850f74b057073b1aad3653c1ed452003efd9209964ed20575b77e85da6f2`)
+  - `mold_ceramic_double_axe_raw.png`   `917.png`
+    (`e151c1baf1bd537034f1be31507395303842487a66221d2fc6a506511f2c40d0`)
+  - `mold_ceramic_saw_raw.png`          `918.png`
+    (`605373d85e0fb0299c6367a7410eb8f71683729f81585b336ef33861cb1ec716`)
+  - `mold_ceramic_hammer_raw.png`       `919.png`
+    (`2047d52fd77e03e68d64ce266de54f4f0cf794d0036230701cf023411a96ef50`)
+  - `mold_ceramic_file_raw.png`         `920.png`
+    (`a018d8c37f5f939fc450d91cc0a7c1151c364acbc7ef3d6c0bf2750dd28570dc`)
+  - `mold_ceramic_screwdriver_raw.png`  `921.png`
+    (`d5bb4a424b2dce2f7cba7a71a02989a405ef5f4a66b21f538995b4a31c11fbce`)
+  - `mold_ceramic_chisel_raw.png`       `922.png`
+    (`23f4e5fee37f32a12d011d18074ebaf8dcd31d3676720d208a26c776d0b33a7e`)
+  - `mold_ceramic_arrow_raw.png`        `923.png`
+    (`52c5695ecd1fa7a3bcf8e8fb1f69f6a0209fc61e25d8c235aebe57dc648ef854`)
+  - `mold_ceramic_hoe_raw.png`          `924.png`
+    (`e8c543db282c83f8b1a10cdf90893ab5fe3ed28eb3e95a7b8030a9df0350a62d`)
+  - `mold_ceramic_sense_raw.png`        `925.png`
+    (`e76b1fcde13f24e26e217cf089976895fe1c835bb0e7459e8f4463f8b7e2730c`)
+  - `mold_ceramic_plow_raw.png`         `926.png`
+    (`aefd005f554355080be243fd64dcf454e757dcceefee73de0d4eee190b55644b`)
+  - `mold_ceramic_builderwand_raw.png`  `927.png`
+    (`d5c8be7110de4c1ac48730fab8962ab37d0050a2a5635f1c9013e73eba962f77`)
+  - `mold_ceramic_nugget_raw.png`       `928.png`
+    (`2e9229d5eff9ad244d9f7e987b951021fd6cb3ad7c8e497809c98fb094950368`)
+  - `mold_ceramic_billet_raw.png`       `929.png`
+    (`1719ea12f5e36b5d7b0b3e17d1335ce9062dc8e15fc75ec55158051726325dce`)
+  - `mold_ceramic_raw.png` (the blank mold) `991.png`
+    (`742f060ae86074f81a83e9a37a49539377cff006ae115e0d3bde000af532d88c`)
+
+  With the `faucet_ceramic_raw.png` borrow above (`992.png`) the family counts 32 icons.
+  The formed-mold/faucet/crucible BLOCK bodies reference the material smooth art per the
+  upstream `getTextureSmooth` face (the texture set's blockSolid icon,
+  OreDictMaterial.java:983-990): `block/materialicons/rough|copper|metallic/block_solid`
+  (the task p8-prefixblock-render borrows) and vanilla `minecraft:block/smooth_stone`
+  for the Stone rows.
+
 - `gt6/textures/item/zpm.png` — byte-identical borrow of upstream
   `textures/blocks/iconsets/ZPM_SIDES.png` (task p38-c1-dynamo-bowl-models C5-guard
   append; GT6Batteries.ZPM_ITEM). Declared deviation: upstream meta 14999 is a BLOCK item
