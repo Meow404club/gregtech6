@@ -336,35 +336,85 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /**
      * Task p35-portals-mini-nether-end — the two miniature portals ({@link GT6Portals}).
-     * ONE blockstate per portal over TWO cube_all models driven by the ACTIVE property
-     * (the upstream 13-pass frame render collapsed to a frame/portal cube swap — declared
-     * cosmetic deviation): inactive = the frame material face (obsidian / end_stone, the
-     * vanilla textures referenced in place — zero borrowed art), active = the portal face
-     * (the animated vanilla nether_portal / the owned near-black mini_portal_end.png —
-     * vanilla ships no end-portal block texture, the special end-portal effect is a tile
-     * renderer, not a texture). No item-model orientation (the portals are facing-free).
+     * ONE blockstate per portal over TWO element models driven by the ACTIVE property:
+     * the faithful transcription of the upstream 13-pass render
+     * (MultiTileEntityMiniPortal.java:273-323, issue #23 / task r4-23a-portal-frame).
+     * Upstream pass 0 = the 1px-inset face cube ({@code PX_P[1]..PX_N[1]}, :283) rendered
+     * ONLY when active (:318 — the inactive arm answers the null inactive texture :323,
+     * i.e. a hollow see-through frame); passes 1-12 = the twelve 2x2px cube-edge beams
+     * (:285-296, four per axis). Frame textures: Nether = obsidian (Nether.java:133),
+     * End = the end_portal_frame TOP face (End.java:128 — the former end_stone stand-in
+     * was a mis-borrow). Portal faces: the animated vanilla nether_portal (on the
+     * translucent layer, ItemBlockRenderTypes.java:269-271) / the owned near-black
+     * mini_portal_end.png (vanilla ships no end-portal block texture, the special
+     * end-portal effect is a tile renderer, not a texture). The see-through premise is
+     * the noOcclusion block property (the GT6Portals row comment). No item-model
+     * orientation (the portals are facing-free).
      */
     private void addPortals() {
-        portalSwap(GT6Portals.PORTAL_NETHER.get(), "mini_portal_nether", "block/obsidian", "block/nether_portal");
-        portalSwap(GT6Portals.PORTAL_END.get(), "mini_portal_end", "block/end_stone", "gt6:block/mini_portal_end");
-        // the BlockItem models parent the FRAME face (the sensors walk shape)
+        portalFrame(GT6Portals.PORTAL_NETHER.get(), "mini_portal_nether", "block/obsidian", "block/nether_portal", true);
+        portalFrame(GT6Portals.PORTAL_END.get(), "mini_portal_end", "block/end_portal_frame_top", "gt6:block/mini_portal_end", false);
+        // the BlockItem models parent the FRAME cage (the sensors walk shape)
         itemModels().withExistingParent("mini_portal_nether", modLoc("block/mini_portal_nether_frame"));
         itemModels().withExistingParent("mini_portal_end", modLoc("block/mini_portal_end_frame"));
-        LOGGER.info("GT6 portals: 2 blockstates x ACTIVE frame/portal swap");
+        LOGGER.info("GT6 portals: 2 blockstates x ACTIVE 12-beam frame/inset-portal-face models");
     }
 
-    /** One portal's ACTIVE swap: false = the frame cube, true = the portal cube. */
-    private void portalSwap(Block aBlock, String aName, String aFrameTexture, String aPortalTexture) {
-        ModelFile tFrame = models().cubeAll(aName + "_frame",
-                aFrameTexture.startsWith("gt6:") ? modLoc(aFrameTexture.substring(4)) : mcLoc(aFrameTexture));
-        ModelFile tPortal = models().cubeAll(aName + "_portal",
-                aPortalTexture.startsWith("gt6:") ? modLoc(aPortalTexture.substring(4)) : mcLoc(aPortalTexture));
+    /** The twelve 2px edge beams, {fromX, fromY, fromZ, toX, toY, toZ} in px — upstream sBlockBounds[1..12] (MultiTileEntityMiniPortal.java:285-296) verbatim. */
+    private static final int[][] PORTAL_BEAMS = {
+        { 0,  0,  0, 16,  2,  2}, { 0, 14,  0, 16, 16,  2}, { 0,  0, 14, 16,  2, 16}, { 0, 14, 14, 16, 16, 16}, // the four X edges
+        { 0,  2,  0,  2, 14,  2}, {14,  2,  0, 16, 14,  2}, { 0,  2, 14,  2, 14, 16}, {14,  2, 14, 16, 14, 16}, // the four Y edges
+        { 0,  0,  2,  2,  2, 14}, {14,  0,  2, 16,  2, 14}, { 0, 14,  2,  2, 16, 14}, {14, 14,  2, 16, 16, 14}, // the four Z edges
+    };
+
+    /** True when a beam face lies ON the block hull — the only faces a cullface may legitimately hide (interior cage faces must always draw). */
+    private static boolean portalBeamOnHull(int[] aBeam, Direction aDir) {
+        return switch (aDir.getAxis()) {
+            case X -> aDir == Direction.EAST ? aBeam[3] == 16 : aBeam[0] == 0;
+            case Y -> aDir == Direction.UP ? aBeam[4] == 16 : aBeam[1] == 0;
+            case Z -> aDir == Direction.SOUTH ? aBeam[5] == 16 : aBeam[2] == 0;
+        };
+    }
+
+    /** One beam element over the frame texture (cullface on the hull faces only). */
+    private void portalBeam(BlockModelBuilder aModel, int[] aBeam) {
+        aModel.element()
+                .from(aBeam[0], aBeam[1], aBeam[2]).to(aBeam[3], aBeam[4], aBeam[5])
+                .allFaces((aDir, aFace) -> {
+                    aFace.texture("#frame");
+                    if (portalBeamOnHull(aBeam, aDir)) aFace.cullface(aDir);
+                }).end();
+    }
+
+    /**
+     * One portal's ACTIVE pair: false = the 12-beam cage ONLY (no face — the hollow
+     * upstream inactive form), true = the same cage + the 1px-inset face cube (upstream
+     * pass 0, :283). Face UVs stay omitted → the vanilla per-element crop, which is the
+     * 1.7.10 positional texture mapping.
+     */
+    private void portalFrame(Block aBlock, String aName, String aFrameTexture, String aPortalTexture, boolean aTranslucentFace) {
+        ResourceLocation tFrame = aFrameTexture.startsWith("gt6:") ? modLoc(aFrameTexture.substring(4)) : mcLoc(aFrameTexture);
+        // the block/block parent carries ONLY the display transforms — the standalone
+        // element model would strip them from the BlockItem GUI/hand rendering (the old
+        // cube_all inherited them through the cube_all → cube → block/block chain)
+        BlockModelBuilder tInactive = models().getBuilder(aName + "_frame")
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("frame", tFrame).texture("particle", tFrame);
+        for (int[] tBeam : PORTAL_BEAMS) portalBeam(tInactive, tBeam);
+        ResourceLocation tPortal = aPortalTexture.startsWith("gt6:") ? modLoc(aPortalTexture.substring(4)) : mcLoc(aPortalTexture);
+        BlockModelBuilder tActive = models().getBuilder(aName + "_portal")
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("frame", tFrame).texture("particle", tFrame).texture("portal", tPortal);
+        for (int[] tBeam : PORTAL_BEAMS) portalBeam(tActive, tBeam);
+        if (aTranslucentFace) tActive.renderType("translucent"); // the vanilla nether-portal layer (ItemBlockRenderTypes.java:271)
+        tActive.element().from(1, 1, 1).to(15, 15, 15)
+                .allFaces((aDir, aFace) -> aFace.texture("#portal")).end();
         getVariantBuilder(aBlock).partialState()
                 .with(gregtech6.block.portals.GTMiniPortalBlock.ACTIVE, false)
-                .addModels(new ConfiguredModel(tFrame));
+                .addModels(new ConfiguredModel(tInactive));
         getVariantBuilder(aBlock).partialState()
                 .with(gregtech6.block.portals.GTMiniPortalBlock.ACTIVE, true)
-                .addModels(new ConfiguredModel(tPortal));
+                .addModels(new ConfiguredModel(tActive));
     }
 
     /**

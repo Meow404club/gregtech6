@@ -205,6 +205,46 @@ public class GTMiniPortalBlockEntityTest {
 		}
 	}
 
+	// ------------------------------- the pairing notify (r4-23a HALF-DEVIATION pin)
+
+	@Test
+	public void pairingTransitionArmsTheNeighbourUpdate() {
+		// issue #23 / task r4-23a-portal-frame: a targetless→paired findTargetPortal
+		// re-notifies the neighbours (the modern relay faces are probed through the LIVE
+		// mTarget and pipes cache their connection until a block update — upstream has
+		// no such update, the declared HALF-DEVIATION on the subclass arms)
+		GTMiniPortalNetherBlockEntity tSelf = nether(0, 64, 0);
+		tSelf.setLevel(new gregtech6.recipes.GTRecipesOfflineTestBase.MinimalLevel(null)); // the OVERWORLD branch
+		GTMiniPortalNetherBlockEntity tMate = nether(0, 65, 0); // dx=dz=0 under the ×8 mirror
+		try {
+			GTMiniPortalNetherBlockEntity.sListNetherSide.add(tMate);
+			tSelf.findTargetPortal(); // null → tMate
+			assertEquals(tMate, tSelf.mTarget, "the pairing lands (Nether.java:73)");
+			assertTrue(tSelf.mDoesBlockUpdate, "the pairing transition arms the neighbour update");
+			tSelf.mDoesBlockUpdate = false;
+			tSelf.findTargetPortal(); // tMate → tMate: a rescan is NOT a transition
+			assertEquals(tMate, tSelf.mTarget, "the unchanged target re-pairs");
+			assertFalse(tSelf.mDoesBlockUpdate, "an unchanged target does not re-arm the update");
+		} finally {
+			GT6Portals.clearPairLists();
+		}
+	}
+
+	@Test
+	public void endPairingTransitionArmsTheNeighbourUpdateToo() {
+		GTMiniPortalEndBlockEntity tSelf = end(0, 64, 0);
+		tSelf.setLevel(new gregtech6.recipes.GTRecipesOfflineTestBase.MinimalLevel(null)); // the OVERWORLD branch
+		GTMiniPortalEndBlockEntity tMate = end(0, 65, 0); // dx=dz=0 under the ×128 mirror
+		try {
+			GTMiniPortalEndBlockEntity.sListEndSide.add(tMate);
+			tSelf.findTargetPortal(); // null → tMate
+			assertEquals(tMate, tSelf.mTarget, "the End pairing lands (End.java:69)");
+			assertTrue(tSelf.mDoesBlockUpdate, "the End arm carries the same pairing notify");
+		} finally {
+			GT6Portals.clearPairLists();
+		}
+	}
+
 	// --------------------------------------------------- the sync + NBT face
 
 	@Test
