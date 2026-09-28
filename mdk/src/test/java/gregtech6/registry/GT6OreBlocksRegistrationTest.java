@@ -30,6 +30,7 @@ package gregtech6.registry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -46,6 +47,7 @@ import gregapi.data.OP;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.ore.GTOreBlock;
 import gregtech6.block.ore.GTOreFallingBlock;
+import gregtech6.item.GTMaterialPrefixBlockItem;
 import gregtech6.registry.GT6OreBlocks.Form;
 import gregtech6.registry.GT6OreBlocks.FormKind;
 import gregtech6.registry.GT6OreBlocks.OreFamily;
@@ -92,6 +94,16 @@ class GT6OreBlocksRegistrationTest {
             tUnfreeze.invoke(net.minecraft.core.registries.BuiltInRegistries.BLOCK);
         } catch (Throwable aE) {
             throw new IllegalStateException("could not unfreeze the offline block registry", aE);
+        }
+        // the item ctor's intrusive-holder gate (Item.java:61) — the broken-name test
+        // (r4-ore-broken-name) constructs GTMaterialPrefixBlockItems offline; the block
+        // unfreeze above is the GTStoneBlocksRegistrationTest lesson, this is its item twin
+        try {
+            java.lang.reflect.Method tUnfreezeItems = net.minecraft.core.registries.BuiltInRegistries.ITEM.getClass().getMethod("unfreeze");
+            tUnfreezeItems.setAccessible(true);
+            tUnfreezeItems.invoke(net.minecraft.core.registries.BuiltInRegistries.ITEM);
+        } catch (Throwable aE) {
+            throw new IllegalStateException("could not unfreeze the offline item registry", aE);
         }
     }
 
@@ -353,5 +365,54 @@ class GT6OreBlocksRegistrationTest {
         assertSame(OP.oreVanillastone, GT6OreBlocks.TAB_FAMILY.prefix());
         assertEquals("itemGroup.gt6.ore_vanillastone", GT6OreBlocks.TAB_TITLE_KEY);
         assertEquals("stone", GT6OreBlocks.TAB_FAMILY.snake());
+    }
+
+    /**
+     * The broken-form name routing (task r4-ore-broken-name, the EXPLICIT reverse-upstream
+     * deviation): a BROKEN ore block item composes its display name from the extra
+     * {@code gt6.tagprefix.<prefix_snake>_broken} template, the NORMAL item keeps the shared
+     * family template — the two keys differ, so the names can never collide again (upstream
+     * PrefixBlockItem.java:108-114 gives the broken block no distinct face). The broken leg is
+     * the gravity row (GTOreFallingBlock — the isBrokenForm split must catch it, in practice
+     * every separate broken block IS a falling block). The item-level seal on top of the
+     * parity test's template-face pins (GT6LangParityTest.brokenOreTemplatesDifferFromNormalOnBothFaces).
+     */
+    @Test
+    void brokenFormItemNameRoutesToTheBrokenTemplate() {
+        OreFamily tStone = GT6OreBlocks.FAMILIES.get(0);
+        OreDictMaterial tIron = MT.Iron;
+        final GTOreFallingBlock tBrokenBlock = new GTOreFallingBlock(tStone, FormKind.BROKEN, tStone.broken(),
+                tStone.prefix(FormKind.BROKEN), tIron);
+        final GTOreBlock tNormalBlock = new GTOreBlock(tStone, FormKind.NORMAL, tStone.normal(),
+                tStone.prefix(FormKind.NORMAL), tIron);
+        // getBlock() overridden to the raw instances: forge's BlockItem.getBlock resolves a registry
+        // delegate that only exists for REGISTERED blocks, and a probe registration would drag in the
+        // full FileSawTest unfreeze dance. The override pins the production logic that matters here —
+        // the isBrokenForm kind walk — against the real block classes (the falling leg is the one every
+        // separate broken row actually uses).
+        GTMaterialPrefixBlockItem tNormal = new GTMaterialPrefixBlockItem(
+                new net.minecraft.world.item.Item.Properties(), tStone.prefix(FormKind.NORMAL), tIron, tNormalBlock) {
+            @Override
+            public net.minecraft.world.level.block.Block getBlock() { return tNormalBlock; }
+        };
+        GTMaterialPrefixBlockItem tBroken = new GTMaterialPrefixBlockItem(
+                new net.minecraft.world.item.Item.Properties(), tStone.prefix(FormKind.BROKEN), tIron, tBrokenBlock) {
+            @Override
+            public net.minecraft.world.level.block.Block getBlock() { return tBrokenBlock; }
+        };
+        assertEquals("gt6.tagprefix.ore_vanillastone", templateKeyOf(tNormal), "the normal item keeps the family template (zero change)");
+        assertEquals("gt6.tagprefix.ore_vanillastone_broken", templateKeyOf(tBroken), "the broken item routes to the _broken template");
+        // the rendered faces differ too (offline Language falls back to the raw keys — still distinct;
+        // EMPTY stack: getName(ItemStack) is stack-blind here and a probe registration would need the
+        // full FileSawTest registry-unfreeze dance for zero extra assertion power)
+        assertNotEquals(tNormal.getName(net.minecraft.world.item.ItemStack.EMPTY).getString(),
+                tBroken.getName(net.minecraft.world.item.ItemStack.EMPTY).getString(),
+                "broken and normal stack names must differ");
+    }
+
+    /** The template key a rendered stack name resolves (the TranslatableContents key face). */
+    private static String templateKeyOf(GTMaterialPrefixBlockItem aItem) {
+        return ((net.minecraft.network.chat.contents.TranslatableContents) aItem
+                .getName(net.minecraft.world.item.ItemStack.EMPTY).getContents()).getKey();
     }
 }

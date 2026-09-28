@@ -15,6 +15,9 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.block.material.GTMaterialPrefixBlock;
+import gregtech6.block.ore.GTOreBlock;
+import gregtech6.block.ore.GTOreFallingBlock;
+import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GTMaterialItems;
 
 /**
@@ -29,6 +32,14 @@ import gregtech6.registry.GTMaterialItems;
  * prefixes carry mMaterialPre/mMaterialPost exactly like the item prefixes, upstream
  * OP.java:345-351). The special-case key {@code gt6.<prefix_snake>_<material_snake>} stays
  * the hand-translation layer, preferred only when a translation exists.
+ *
+ * <p>Broken ores (task r4-ore-broken-name, the declared reverse-upstream deviation): the
+ * BROKEN form of an ore family (the {@code kind} field on GTOreBlock/GTOreFallingBlock)
+ * composes its name from the extra
+ * template {@code gt6.tagprefix.<prefix_snake>_broken} instead of the family's shared
+ * template — upstream gives the broken block no distinct name (PrefixBlockItem.java:108-114),
+ * the port does (user ruling 2026-09-28); the templates are the datagen card's face
+ * (GT6EnUs/GT6ZhCn addBrokenOreTemplates, one per family that owns a separate broken block).
  *
  * <p>Tint: {@code material.mRGBa[prefix.mState]} (upstream PrefixBlockItem.java:103
  * {@code mRGBa[mBlock.mPrefix.mState]}); the ItemColor registration itself is the render
@@ -57,8 +68,27 @@ public class GTMaterialPrefixBlockItem extends BlockItem {
     public Component getName(ItemStack stack) {
         // The %s fill only works on the returned Component (the MaterialPrefixItem/Card R3 form);
         // the slot is the shared gt6.material.<snake> translatable unit (p23-i18n-material-fill-fix).
+        // r4-ore-broken-name: the broken ore form gets its own template
+        // gt6.tagprefix.<prefix_snake>_broken — an EXPLICIT reverse-upstream enhancement
+        // (user ruling 2026-09-28): upstream oreBroken shares the family prefix and composes
+        // the SAME display name (PrefixBlockItem.java:108-114 oredict compose, no broken
+        // face), the port distinguishes it. Checked BEFORE the specialKey: the pair's
+        // gt6.<prefix>_<material> hand key names the NORMAL form (broken≡normal upstream),
+        // so letting it win here would erase the distinction the ruling asks for.
+        if (isBrokenForm()) return Component.translatable(templateKey + "_broken", MaterialPrefixItem.materialFill(material));
         if (hasTranslation(specialKey)) return Component.translatable(specialKey);
         return Component.translatable(templateKey, MaterialPrefixItem.materialFill(material));
+    }
+
+    /**
+     * The BROKEN form of an ore family — the ore block carries the kind. Single-inheritance
+     * split (GTOreFallingBlock.java:14-18 javadoc): the gravity broken rows are GTOreFallingBlock,
+     * the non-gravity ones GTOreBlock; both mirror {@code kind} (in practice every SEPARATE
+     * broken row is gravity=true, the falling leg — GTOreBlock alone would silently miss them).
+     */
+    private boolean isBrokenForm() {
+        return (getBlock() instanceof GTOreBlock tOre && tOre.kind == GT6OreBlocks.FormKind.BROKEN)
+            || (getBlock() instanceof GTOreFallingBlock tFalling && tFalling.kind == GT6OreBlocks.FormKind.BROKEN);
     }
 
     @Override
