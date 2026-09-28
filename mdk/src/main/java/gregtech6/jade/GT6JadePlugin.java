@@ -45,6 +45,9 @@ public class GT6JadePlugin implements IWailaPlugin {
 		// 坩埚族服务端腿（task p28-crucible-jade-face）：小型 Smeltery + 大型 Crucible 同一
 		// provider 同一格式，体内双 concrete instanceof 分发（GT6CrucibleProvider 类 doc）。
 		aRegistration.registerBlockDataProvider(GT6CrucibleProvider.INSTANCE, TileEntityBase01Root.class);
+		// 锅炉族服务端腿（task r5-jade-boiler）：单方块锅炉罐 + 大型锅炉同一 provider 同一
+		// 格式，体内双 concrete instanceof 分发（GT6BoilerProvider 类 doc）。
+		aRegistration.registerBlockDataProvider(GT6BoilerProvider.INSTANCE, TileEntityBase01Root.class);
 	}
 
 	@Override
@@ -57,6 +60,9 @@ public class GT6JadePlugin implements IWailaPlugin {
 		// 坩埚族客户端腿（task p28-crucible-jade-face）：GTEntityBlock 全覆盖两坩埚方块
 		// （CrucibleBlock extends GTEntityBlock；GTMultiBlockControllerBlock 同），体内键门分发。
 		aRegistration.registerBlockComponent(GT6CrucibleProvider.INSTANCE, GTEntityBlock.class);
+		// 锅炉族客户端腿（task r5-jade-boiler）：GTEntityBlock 全覆盖两锅炉方块
+		// （GT6Boilers.BoilerTankBlock / GTLargeBoilerBlock 同基类），体内键门分发。
+		aRegistration.registerBlockComponent(GT6BoilerProvider.INSTANCE, GTEntityBlock.class);
 	}
 
 }

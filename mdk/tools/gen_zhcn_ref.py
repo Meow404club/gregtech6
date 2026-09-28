@@ -908,6 +908,19 @@ HAND_TRANSLATIONS = {
     "gt6.jade.machine.error": ("错误: %s", "hand"),
     "gt6.jade.fluid.group.in": ("流体输入", "hand"),
     "gt6.jade.fluid.group.out": ("流体输出", "hand"),
+    # task r5-jade-boiler: the boiler Jade tooltip band keyed (heat/demand/output-gate two
+    # states/sneak-detail quartet) — the zh faces mirror the machine family shape above
+    # (ASCII colon+space, the numbers ride the %s slots, %% renders a literal percent).
+    # 双落 discipline: py row + provider/datagen walk in the SAME commit, the regen
+    # reproduces the tsv rows.
+    "gt6.jade.boiler.demand": ("需求: %s HU/t", "hand"),
+    "gt6.jade.boiler.gate.above": ("输出门: 已开启，从顶面输出（超 3/4 罐时双倍速率）", "hand"),
+    "gt6.jade.boiler.gate.below": ("输出门: 未达半罐 (%s / %s L)，过半后从顶面输出", "hand"),
+    "gt6.jade.boiler.heat": ("储存热量: %s / %s HU", "hand"),
+    "gt6.jade.boiler.no_water": ("警告: 缺水!!!", "hand"),
+    "gt6.jade.boiler.scale": ("水垢: %s%%", "hand"),
+    "gt6.jade.boiler.scale.clean": ("锅炉无水垢", "hand"),
+    "gt6.jade.boiler.water": ("水: %s / %s L", "hand"),
     # task p33-bees-lv3-b-bumbliary: the 2 Bumbliary machine display names are DUMP faces
     # (gt.multitileentity.32741/32007) that the merge reconciliation landed in the TSV
     # direct band with status=auto — not hand-authored, so the status rides here verbatim
