@@ -2572,26 +2572,26 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
 
     /**
      * Task p13-boiler-tank — the 26 Steam Boiler Tank rows (Loader_MultiTileEntities.java
-     * :553-579): ONE oriented cube model over the boiler_steam texture set (the grayscale
-     * placeholders — the upstream machines/tanks/boiler_steam colored+overlay iconsets and
-     * the BI.BAROMETER gauge have no borrowable source in this repo, the assets precedent;
-     * the FRONT face carries the gauge texture, FACING drives the front semantics, the
-     * barometer 5-bit visual is the synced BE payload — the per-state gauge rendering is
-     * the render pool, the burning-box ruling repeated). Both ladders share the model (the
+     * :553-579): ONE oriented cube model over the borrowed boiler_steam group, RE-BORROWED
+     * by task r8-tex-large-boilers (the former grayscale placeholder set and its "the
+     * overlay iconset has no borrowable source" claim are retired — the
+     * machines/tanks/boiler_steam overlay group ships upstream): the {@link #boilerModel}
+     * two-layer grammar — the grayscale colored body is the tintindex-0 seat (the upstream
+     * colored x mRGBa, MultiTileEntityBoilerTank :240) and the overlay plates are the
+     * untinted decals. Upstream ships NO dedicated front art (FACES_TBS={0,1,2,2,2,2},
+     * CS.java:618 — the barometer face renders the side sprite), so all four sides share
+     * the side art and the former front placeholder is retired; the FACING y-rotation
+     * stays (the FRONT drives the BE semantics, the per-state barometer visual is the
+     * render pool — the burning-box ruling repeated). Both ladders share the model (the
      * SAME block class upstream, :552 aClass). The 26 BlockItem models parent it.
      *
-     * <p>Task r3-world-tint-render-type (the C5 clean-up): the body element is re-declared
-     * with {@code tintindex 0} on every face (the {@code tintedCube} grammar) — every
-     * upstream row carries NBT_MATERIAL (Loader :553-579, the {@code aMat} column), so the
-     * grayscale boiler_steam set multiplies the row material through the
+     * <p>Task r3-world-tint-render-type (the C5 clean-up) put the body on the
      * {@code GTMachineTintModel} bake + the {@code GTItemPaintTint} inventory half (the
-     * 43f48149b burning-box form). The uniform cutout declaration joins the paintable
-     * census (opaque textures render identically on cutout).
+     * 43f48149b burning-box form) — unchanged; the uniform cutout declaration joins the
+     * paintable census (opaque textures render identically on cutout).
      */
     private void addBoilers() {
-        String tTex = "block/boiler_steam/";
-        ModelFile tModel = tintedCube("steam_boiler_tank",
-                tTex + "bottom", tTex + "top", tTex + "side", tTex + "front");
+        ModelFile tModel = boilerModel("steam_boiler_tank", "boiler_steam", false);
         for (gregtech6.registry.GT6Boilers.BoilerRow tRow : gregtech6.registry.GT6Boilers.allRows()) {
             Block tBlock = gregtech6.registry.GT6Boilers.BLOCKS_BY_PATH.get(tRow.path()).get();
             getVariantBuilder(tBlock).forAllStates(aState -> {
@@ -2759,19 +2759,21 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
 
     /**
      * Task p13-large-boiler — the Large Boiler family (Loader_MultiTileEntities.java
-     * :1159-1165/:1176/:1248-1252): the five Dense Wall part blocks + the Heat Transmitter
-     * part block as plain cube_all over the generated grayscale placeholders (upstream has
-     * no borrowable "largeboiler"/"metalwalldense" texture group in this snapshot — the
-     * W2 burning-box ruling), and the five boiler variant controllers over ONE shared
-     * oriented cube model (front = the barometer face) rotated per FACING exactly like
-     * addBoilers; the FORMED variants map to the same model (the formed-look visual is the
-     * p9 pool). The 11 BlockItem models parent their block models.
+     * :1159-1165/:1176/:1248-1252): the five boiler variant controllers over ONE shared
+     * two-layer front-bearing model, task r8-tex-large-boilers — the former single-layer
+     * grayscale cube and its "no borrowable largeboiler group" claim are retired (the
+     * probe found the full machines/multiblockmains/largeboiler group): the Base10 default
+     * {@code getTexture2} semantics (TileEntityBase10MultiBlockBase.java:192-194) — the
+     * FRONT face wears the {@code colored_front}+{@code overlay_front} pair, the other
+     * five faces the plain pair; the colored body is the tintindex-0 seat (the row
+     * NBT_MATERIAL through the {@code GTMultiBlockControllerBlock} carrier, the p38-c2
+     * form) and the overlay plates untinted. The BI.BAROMETER dynamic gauge is the render
+     * pool (the p13 ruling). The FORMED variants map to the same model (the formed-look
+     * visual is the p9 pool). The 5 BlockItem models parent their block model. The Dense
+     * Wall + transmitter parts ride addParts() (the p29-w3-nbtdesign-parts walk).
      */
     private void addLargeBoiler() {
-        ModelFile tMain = models().cube("large_boiler_main",
-                modLoc("block/large_boiler/wall"), modLoc("block/large_boiler/wall"),
-                modLoc("block/large_boiler/main"), modLoc("block/large_boiler/main"),
-                modLoc("block/large_boiler/main"), modLoc("block/large_boiler/main"));
+        ModelFile tMain = boilerModel("large_boiler", "large_boiler", true);
         for (var tRow : gregtech6.registry.GTMultiBlocks.LARGE_BOILER_ROWS) {
             Block tBlock = gregtech6.registry.GTMultiBlocks.LARGE_BOILER_BLOCKS_BY_PATH.get(tRow.path()).get();
             getVariantBuilder(tBlock).forAllStates(aState -> {
@@ -2790,6 +2792,64 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
         // transmitter rides the upstream heatacceptor borrow); addLargeBoilerPart retired
     }
 
+    /**
+     * One boiler two-layer model (task r8-tex-large-boilers; the addConverterModel grammar
+     * over the boiler groups' bottom/top/side face keys): the tinted body cube over the
+     * borrowed grayscale {@code <band>_colored_<face>} art (tintindex 0 = the material
+     * tint seat; {@code aFront} binds the north face to the {@code _colored_front_side}
+     * art — the Base10 front-face pair) plus the six 0.01-plate
+     * {@code <band>_overlay[_front]_*} decal shells (untinted, cullface synced — the P22
+     * pairing; the upstream overlay pass is NOT multiplied by mRGBa). Cutout so the
+     * shells' transparent texels discard (the C7' fix shape).
+     */
+    private ModelFile boilerModel(String aName, String aBand, boolean aFront) {
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc("block/" + aBand + "_colored_bottom"))
+                .texture("up", modLoc("block/" + aBand + "_colored_top"))
+                .texture("north", modLoc("block/" + aBand + (aFront ? "_colored_front_side" : "_colored_side")))
+                .texture("south", modLoc("block/" + aBand + "_colored_side"))
+                .texture("west", modLoc("block/" + aBand + "_colored_side"))
+                .texture("east", modLoc("block/" + aBand + "_colored_side"))
+                .texture("particle", modLoc("block/" + aBand + "_colored_side"))
+                .texture("overlay_down", modLoc("block/" + aBand + "_overlay_bottom"))
+                .texture("overlay_up", modLoc("block/" + aBand + "_overlay_top"))
+                .texture("overlay_north", modLoc("block/" + aBand + (aFront ? "_overlay_front_side" : "_overlay_side")))
+                .texture("overlay_south", modLoc("block/" + aBand + "_overlay_side"))
+                .texture("overlay_west", modLoc("block/" + aBand + "_overlay_side"))
+                .texture("overlay_east", modLoc("block/" + aBand + "_overlay_side"))
+                .renderType("cutout");
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
+                .end();
+        tModel.element() // north
+                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+                .face(Direction.NORTH).texture("#overlay_north").cullface(Direction.NORTH)
+                .end();
+        tModel.element() // south
+                .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.01F)
+                .face(Direction.SOUTH).texture("#overlay_south").cullface(Direction.SOUTH)
+                .end();
+        tModel.element() // west
+                .from(-0.01F, 0.0F, 0.0F).to(0.0F, 16.0F, 16.0F)
+                .face(Direction.WEST).texture("#overlay_west").cullface(Direction.WEST)
+                .end();
+        tModel.element() // east
+                .from(16.0F, 0.0F, 0.0F).to(16.01F, 16.0F, 16.0F)
+                .face(Direction.EAST).texture("#overlay_east").cullface(Direction.EAST)
+                .end();
+        tModel.element() // bottom (down)
+                .from(0.0F, -0.01F, 0.0F).to(16.0F, 0.0F, 16.0F)
+                .face(Direction.DOWN).texture("#overlay_down").cullface(Direction.DOWN)
+                .end();
+        tModel.element() // top (up)
+                .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.01F, 16.0F)
+                .face(Direction.UP).texture("#overlay_up").cullface(Direction.UP)
+                .end();
+        return tModel;
+    }
+
     /** One cube_all part block + its BlockItem parent (the coke-oven-bricks shape). */
     private void addLargeBoilerPart(String aPath, String aTexture) {
         Block tBlock = gregtech6.registry.GTMultiBlocks.WALL_BLOCKS_BY_PATH.get(aPath) != null
@@ -2806,7 +2866,8 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
      * P20 ruling ①), and the single controller over ONE cube model (the borrowed
      * multiblockmains lightningrod group — the colored base alpha-over the overlay_front
      * decal, composited at borrow time; all three upstream faces composite to the SAME
-     * visible pixels, so one texture serves all six faces, the large_boiler/main.png form).
+     * visible pixels, so one texture serves all six faces — the retired
+     * large_boiler/main.png placeholder rationale, kept as the composite texture).
      * The facing is structurally meaningless (the rod is vertical), so every state maps to
      * the same model with no rotation; the FORMED variants map to the same model (the
      * formed-look visual is the p9 pool). The four BlockItem models parent their block

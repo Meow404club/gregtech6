@@ -221,6 +221,11 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// tanks join (every upstream row carries NBT_MATERIAL, Loader :553-579; the
 		// shared model's body cube is the tintindex-0 seat since this card)
 		for (Block tBlock : gregtech6.registry.GT6Boilers.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		// task r8-tex-large-boilers — the five large boiler controllers join the same
+		// two-layer seat (every row carries NBT_MATERIAL, Loader :1248-1252; the body cube
+		// is the tintindex-0 seat, the front-face overlay decals untinted; the colour
+		// resolves through the GTMultiBlockControllerBlock carrier, the p38-c2 gate)
+		for (Block tBlock : gregtech6.registry.GTMultiBlocks.boilerPaintableBlockArray()) wrapStates(tBlock, aEvent);
 		// issue #15 (task r3-beehive-tint) — the bee family joins the baked-tint domain:
 		// the hive's 15 worldgen family colours ride the BE PAINT model data (the worldgen
 		// paints at placement) and the Bumbliary pair's row material rides the
@@ -271,6 +276,9 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (Block tBlock : gregtech6.registry.GT6ElectricTransformers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		for (Block tBlock : gregtech6.registry.GT6ElectricDynamos.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		for (Block tBlock : gregtech6.registry.GT6FluxDynamos.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		// task r8-tex-large-boilers — the five large boiler rows join the same controller
+		// lambda (the NBT_MATERIAL column rides the GTMultiBlockControllerBlock carrier)
+		for (Block tBlock : gregtech6.registry.GTMultiBlocks.boilerPaintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tPaintItems.toArray(Item[]::new));
 	}
 

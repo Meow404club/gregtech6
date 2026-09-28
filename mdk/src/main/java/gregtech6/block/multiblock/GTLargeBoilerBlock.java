@@ -41,7 +41,9 @@ public class GTLargeBoilerBlock extends GTMultiBlockControllerBlock {
 	private final GTMultiBlocks.LargeBoilerRow mRow;
 
 	public GTLargeBoilerBlock(GTMultiBlocks.LargeBoilerRow aRow, Properties aProperties) {
-		super(aProperties);
+		// the row's NBT_MATERIAL column is the tint colour source (task r8-tex-large-boilers,
+		// the p38-c2 material-carrier ctor — the tint rides GTMultiBlockControllerBlock.materialOf)
+		super(aProperties, aRow.mat());
 		mRow = aRow;
 	}
 	//? if neoforge {
