@@ -234,6 +234,48 @@ class GT6LargeVeinTest {
         assertEquals(40, tBack.veins().size());
     }
 
+    /**
+     * The deep-band mirror table (task r6-c2-deep-band): row-for-row shift of the selected
+     * surface twins ({@code y - 64}, the GTOreWorldgen.DEEP_SHIFT rule), wholly below y0,
+     * every other column verbatim — and a deep-table draw produces a wholly-negative slice.
+     */
+    @Test
+    void deepMirrorTableIsTheShiftedTwin() {
+        List<GTVeinConfig> tDeep = GT6WorldgenDatagen.DEEP_VEIN_TABLE;
+        assertEquals(20, tDeep.size(), "the card's 20-row deep mirror (metals + gems, upstream maxY <= 64)");
+        java.util.Map<String, GTVeinConfig> tSurface = new java.util.HashMap<>();
+        for (GTVeinConfig tVein : GT6WorldgenDatagen.LARGE_VEIN_TABLE) tSurface.put(tVein.name(), tVein);
+        for (GTVeinConfig tVein : tDeep) {
+            assertTrue(tVein.name().startsWith("ore.large.deep."), tVein.name() + " the deep key face");
+            GTVeinConfig tTwin = tSurface.get("ore.large." + tVein.name().substring("ore.large.deep.".length()));
+            assertTrue(tTwin != null, tVein.name() + " mirrors an existing surface row");
+            assertEquals(tTwin.minY() - 64, tVein.minY(), tVein.name() + " band = the twin shifted -64 (min)");
+            assertEquals(tTwin.maxY() - 64, tVein.maxY(), tVein.name() + " band = the twin shifted -64 (max)");
+            assertEquals(tTwin.weight(), tVein.weight(), tVein.name() + " the draw mass is the twin's");
+            assertEquals(tTwin.density(), tVein.density(), tVein.name() + " the density is the twin's");
+            assertEquals(tTwin.size(), tVein.size(), tVein.name() + " the size is the twin's");
+            assertEquals(tTwin.oreTop(), tVein.oreTop(), tVein.name() + " the top slot is the twin's");
+            assertEquals(tTwin.oreBottom(), tVein.oreBottom(), tVein.name() + " the bottom slot is the twin's");
+            assertEquals(tTwin.oreBetween(), tVein.oreBetween(), tVein.name() + " the between slot is the twin's");
+            assertEquals(tTwin.oreSpread(), tVein.oreSpread(), tVein.name() + " the spread slot is the twin's");
+            assertTrue(tVein.maxY() < 0, tVein.name() + " wholly below y0 (the deepslate band)");
+            assertTrue(tVein.minY() >= -63, tVein.name() + " keeps the tMinY-1 shape above the world floor");
+            assertTrue(tVein.overworld() && !tVein.end(), tVein.name() + " rides the overworld draw only");
+            assertTrue(tVein.indicator() && tVein.spawnDistance() == 0, tVein.name() + " the twin's row flags");
+        }
+        // the deep draw on the SAME deterministic core produces a wholly-negative slice
+        RecordingSink tSink = new RecordingSink();
+        Random tRandom = GT6VeinGenerator.veinRandom(6131000569321125127L, 0, 1, 1);
+        GTVeinConfig tVein = GT6VeinGenerator.drawVein(tDeep, tRandom);
+        assertTrue(tVein != null, "the deep draw selects a row");
+        GT6VeinGenerator.generateSlice(tVein, tRandom, 1 << 4, 1 << 4,
+                -1_000_000, 1_000_000, -1_000_000, 1_000_000, -64, tSink);
+        assertTrue(tSink.ores.size() > 0, "a deep origin-cell slice actually places");
+        for (Place tPlace : tSink.ores) {
+            assertTrue(tPlace.y < 0, tPlace.mat + " at " + tPlace.y + " — a deep slice placement above y0");
+        }
+    }
+
     // ---------------------------------------------------------------- the harness
 
     private record Place(int x, int y, int z, String mat) {}

@@ -315,6 +315,69 @@ class GTOreWorldgenDatagenTest {
         // size=16 6/6 mean 9.8 — per-chunk density ~1.5x upstream at size=4 (declared).
     }
 
+    /**
+     * The deep-band mirror band (task r6-c2-deep-band): the 15 selected rows grow a
+     * PLACED-only overworld mirror whose band is the upstream band shifted -64 (the
+     * GTOreWorldgen.DEEP_SHIFT rule), wholly below y0 — the modern face of the upstream
+     * mNoDeep deep-slate layer (WorldgenStoneLayers.java:77/:196).
+     */
+    @Test
+    void deepBandMirrorsArePinned() {
+        List<GTOreWorldgen.SmallOreRow> tMirrors = GTOreWorldgen.deepMirrorRows();
+        assertEquals(GTOreWorldgen.DEEP_MIRROR_TAILS.size(), tMirrors.size(),
+                "every selected tail resolves to exactly one row (no dim-only or tail-only stragglers)");
+        assertEquals(GTOreWorldgen.DEEP_PLACED_KEYS.size(), tMirrors.size(), "one deep placed key per mirror row");
+        assertEquals(tMirrors.size(), new HashSet<>(GTOreWorldgen.DEEP_PLACED_KEYS).size(),
+                "deep placed keys distinct — ore_small_deep never collides the ore_small_overworld face");
+        // the pinned band table: tail -> (minY-64, maxY-64), DEEP_MIRROR_TAILS order
+        List<String> tExpectedBands = List.of(
+            "-34 -4",   // sphalerite   :806 30-60
+            "-34 -4",   // smithsonite  :807 30-60
+            "-44 -24",  // stibnite     :808 20-40
+            "-44 -24",  // silver       :812 20-40
+            "-44 -24",  // gold         :813 20-40
+            "-44 -24",  // pyrite       :814 20-40
+            "-44 -24",  // pyrolusite   :816 20-40
+            "-44 -24",  // garnierite   :817 20-40
+            "-44 -24",  // pentlandite  :818 20-40
+            "-59 -14",  // scheelite    :819 5-50
+            "-59 -54",  // diamond      :824 5-10
+            "-59 -44",  // redstone     :827 5-20
+            "-59 -44",  // redcinnabar  :828 5-20
+            "-44 -24",  // lapis        :829 20-40
+            "-44 -24"); // eudialyte    :830 20-40
+        Set<String> tSeen = new HashSet<>();
+        int i = 0;
+        for (GTOreWorldgen.SmallOreRow tRow : tMirrors) {
+            assertTrue(tSeen.add(tRow.tail()), "duplicate mirror row: " + tRow.tail());
+            assertTrue(tRow.dims().contains(GTOreWorldgen.Dim.OVERWORLD), tRow.name() + " mirrors ride the overworld dim");
+            assertTrue(tRow.maxY() <= 64, tRow.name() + " mirrors only from the upstream lower half (maxY <= 64)");
+            assertEquals(tExpectedBands.get(i), GTOreWorldgen.deepMinY(tRow) + " " + GTOreWorldgen.deepMaxY(tRow),
+                    tRow.name() + " deep band = the upstream band shifted -64");
+            assertTrue(GTOreWorldgen.deepMaxY(tRow) < 0, tRow.name() + " deep band wholly below y0");
+            assertTrue(GTOreWorldgen.deepMinY(tRow) >= -63,
+                    tRow.name() + " keeps the OreFeature walk inside the world floor (-64)");
+            assertEquals("gt6:ore_small_deep/" + tRow.tail(),
+                    GTOreWorldgen.deepPlacedKey(tRow).location().toString(),
+                    tRow.name() + " deep placed key face");
+            i++;
+        }
+        // the selection edges: the deep gem/metal anchors in, the declared exclusions out
+        assertTrue(GTOreWorldgen.DEEP_MIRROR_TAILS.contains("diamond"), "the deep gem anchor mirrors");
+        assertTrue(GTOreWorldgen.DEEP_MIRROR_TAILS.contains("redstone"), "the vanilla-deep-semantics row mirrors");
+        assertFalse(GTOreWorldgen.DEEP_MIRROR_TAILS.contains("coal"), "fuels never mirror (the card rule)");
+        assertFalse(GTOreWorldgen.DEEP_MIRROR_TAILS.contains("copper"), "upper-half rows (60-120) never mirror");
+        assertFalse(GTOreWorldgen.DEEP_MIRROR_TAILS.contains("azurite"), "dye-class minerals never mirror");
+        assertFalse(GTOreWorldgen.DEEP_MIRROR_TAILS.contains("graphite"), "carbon/fuel-family never mirrors");
+        // the mirror is PLACED-ONLY and references the row's overworld configured feature —
+        // whose [4] target is the deepslate tag arm, so the deep band resolves the
+        // deepslate family block (the host face is SHARED with the surface pair)
+        OreDictMaterial tSilver = GTOreWorldgen.resolve(rowOf("ore.small.silver"));
+        assertEquals("ore_small_deepslate_silver",
+                GTOreWorldgen.hostPaths(tSilver, GTOreWorldgen.Dim.OVERWORLD).get(4),
+                "[4] = the deepslate tag target — the deep mirror's host arm");
+    }
+
     private static GTOreWorldgen.SmallOreRow rowOf(String aName) {
         return GTOreWorldgen.ROWS.stream().filter(tRow -> tRow.name().equals(aName)).findFirst().orElseThrow();
     }

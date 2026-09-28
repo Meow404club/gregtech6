@@ -374,6 +374,23 @@ public final class GT6Worldgen {
     public static final ResourceKey<PlacedFeature> LARGE_VEINS_PLACED = placedKeyOf("large_veins");
 
     // ------------------------------------------------------------------
+    // The deep-band mirror vein band (task r6-c2-deep-band) — the SECOND large-vein
+    // configured feature over the SHIFTED mirror table (GT6WorldgenDatagen.DEEP_VEIN_TABLE),
+    // the SAME GT6LargeVeinFeature instance under its own key (a configured feature is a
+    // (feature, config) pair — vanilla mounts one Feature instance many times). A separate
+    // TABLE is what keeps the surface draw verbatim: the weighted draw sums every drawable
+    // row of its own table, so mirror rows inside LARGE_VEIN_TABLE would dilute the
+    // surface draw. Overworld-only (the deep band is the modern face of the upstream
+    // mNoDeep deep-slate layer, WorldgenStoneLayers.java:77/:196) — the End draw never
+    // sees it, the END_YIELD modifier set stays untouched.
+    // ------------------------------------------------------------------
+
+    /** The deep-mirror configured feature (GT6LargeVeinFeature + the shifted 20-row table). */
+    public static final ResourceKey<ConfiguredFeature<?, ?>> LARGE_VEINS_DEEP_CONFIGURED = configKey("large_veins_deep");
+    /** The deep-mirror placed feature (the surface chain shape: InSquare + BiomeFilter, one attempt per chunk). */
+    public static final ResourceKey<PlacedFeature> LARGE_VEINS_DEEP_PLACED = placedKeyOf("large_veins_deep");
+
+    // ------------------------------------------------------------------
     // The bedrock-ore band (task p31-bedrock-ore-worldgen) — the single Feature over the
     // 46-row bedrock-ore table; key form = the large-vein band's path-direct shape.
     // ------------------------------------------------------------------
