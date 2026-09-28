@@ -362,11 +362,12 @@ public final class GT6OreBlocks {
      * distinct companion materials the upstream stone-layer rows place as REAL ore blocks —
      * StoneLayerOres.normal/small → {@code placeBlock(mMaterial.mID)} (StoneLayer.java:124-126,
      * {@code mOre = BlocksGT.stoneToNormalOres}) — that sit OUTSIDE {@link #WORLDGEN_ORES}.
-     * Upstream rows (WorldgenStoneLayers, the r6-c3 lens table): komatiite Peridot; kimberlite
-     * Uvarovite/Grossular; basalt Chromite; marble Spinel/BalasRuby; granite_red
-     * Pitchblende/Uraninite (HBM-gated rows register unconditionally); plus Tantalite/
-     * Columbite/MgCO3/Stannite/Kesterite. Coltan is NOT here (already in WORLDGEN_ORES :836);
-     * Columbite (9246) is a distinct material and joins the axis here.
+     * Upstream rows (the STONE_LAYER_ORES registration table, Loader_Worldgen.java:179-364):
+     * basalt Peridot/Uvarovite/Grossular/Chromite (:247-252); kimberlite Spinel/BalasRuby
+     * (:225-229); komatiite MgCO3 (:217-222); marble Stannite/Kesterite (:288-295);
+     * granite_red Pitchblende/Uraninite + Tantalite/Columbite (:358-364, the HBM-gated rows
+     * register unconditionally in the port — no HBM). Coltan is NOT here (already in
+     * WORLDGEN_ORES :836); Columbite (9246) is a distinct material and joins the axis here.
      *
      * <p>Union semantics: NOT always-on small ores — the 13 gain no WorldgenOresSmall rows
      * and {@link #WORLDGEN_ORES} keeps its small-ore-row meaning pure. They only become
@@ -377,8 +378,8 @@ public final class GT6OreBlocks {
      * <p>Suppliers again (post-OP.init resolution — the {@link OreFamily} lesson).
      */
     public static final List<Supplier<OreDictMaterial>> STONE_LAYER_ORES = List.of(
-        () -> MT.Peridot,                   () -> MT.Uvarovite,            () -> MT.Grossular,             // komatiite/kimberlite companions
-        () -> MT.OREMATS.Chromite,          () -> MT.Spinel,               () -> MT.BalasRuby,             // basalt/marble companions
+        () -> MT.Peridot,                   () -> MT.Uvarovite,            () -> MT.Grossular,             // basalt companions (:248-250)
+        () -> MT.OREMATS.Chromite,          () -> MT.Spinel,               () -> MT.BalasRuby,             // basalt :251 / kimberlite :227-228 companions
         () -> MT.OREMATS.Pitchblende,       () -> MT.OREMATS.Uraninite,                                    // granite_red companions
         () -> MT.OREMATS.Tantalite,         () -> MT.OREMATS.Columbite,    () -> MT.MgCO3,                 // Coltan-family + carbonate
         () -> MT.OREMATS.Stannite,          () -> MT.OREMATS.Kesterite                                     // the copper-tin-sulfide pair
