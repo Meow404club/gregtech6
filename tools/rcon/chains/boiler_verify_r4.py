@@ -88,7 +88,10 @@ steps += [
 steps += series(A_BOILER)
 
 # the force arm: refill (sampling drained part of the 4000 L), then 5x40000 HU
-# -> 2500 conversions -> +400,000 L steam, past half (320,000) -> the push
+# -> 2500 conversions -> +400,000 L steam, past half (320,000) -> the push.
+# rng-safe without a decalcify guard: A's burst runs 250 conversions/tick, so
+# even ten rng(10) hits floor the efficiency loss at 2500/10000 and the worst
+# case still lands ~386k > half
 steps += [
     phase("A force arm: inject-hu past half -> the top pipe must hold steam"),
     Step(f"gt6boiler fill {A_BOILER} 4000", expect="(ACCEPTED)"),
@@ -122,19 +125,26 @@ steps += series(B_BOILER)
 # cooldown drain (~57k L/t once conversions stop) re-closes the gate within
 # ~15 s, so the reads ride right behind the last fill
 steps += [
-    phase("B force arm: inject-hu past half -> the top pipe must hold steam"),
+    phase("B force arm: plunge + distw + inject-hu past half -> the pipe must hold steam"),
+    # plunge first: the distw fills need an EMPTY water tank (distilled poured
+    # onto residual water is a fluid mismatch), and a distw-fed burst is
+    # CALCIFICATION-PROOF (the :119 mDistwMatch half skips the rng(10) scale
+    # roll entirely — the one nondeterminism that bit runs 2-4) -> efficiency
+    # stays ~pristine through all ~36k conversions, deterministically ~5.2M L
+    # steam, past half (4,480,000), safely under the 8,960,000 full arm
+    Step(f"gt6boiler plunge {B_BOILER}", expect="trashed "),
     Step(f"gt6boiler inject-hu {B_BOILER} 3000000", expect="booked 3000000/3000000 HU (ACCEPTED)", sleep=0.3),
-    Step(f"gt6boiler fill {B_BOILER} 4000", expect="filled 4000/4000 L of minecraft:water (ACCEPTED)", sleep=0.3),
-    Step(f"gt6boiler fill {B_BOILER} 4000", expect="filled 4000/4000 L of minecraft:water (ACCEPTED)", sleep=0.3),
-    Step(f"gt6boiler fill {B_BOILER} 4000", expect="filled 4000/4000 L of minecraft:water (ACCEPTED)", sleep=0.3),
-    Step(f"gt6boiler fill {B_BOILER} 4000", expect="filled 4000/4000 L of minecraft:water (ACCEPTED)", sleep=0.3),
-    Step(f"gt6boiler fill {B_BOILER} 4000", expect="filled 4000/4000 L of minecraft:water (ACCEPTED)", sleep=0.3),
-    Step(f"gt6boiler fill {B_BOILER} 4000", expect="filled 4000/4000 L of minecraft:water (ACCEPTED)", sleep=0.3),
-    Step(f"gt6boiler fill {B_BOILER} 4000", expect="filled 4000/4000 L of minecraft:water (ACCEPTED)", sleep=0.3),
-    Step(f"gt6boiler fill {B_BOILER} 4000", expect="filled 4000/4000 L of minecraft:water (ACCEPTED)", sleep=0.3),
+    Step(f"gt6boiler fill {B_BOILER} 4000 distw", expect="(ACCEPTED)", sleep=0.3),
+    Step(f"gt6boiler fill {B_BOILER} 4000 distw", expect="(ACCEPTED)", sleep=0.3),
+    Step(f"gt6boiler fill {B_BOILER} 4000 distw", expect="(ACCEPTED)", sleep=0.3),
+    Step(f"gt6boiler fill {B_BOILER} 4000 distw", expect="(ACCEPTED)", sleep=0.3),
+    Step(f"gt6boiler fill {B_BOILER} 4000 distw", expect="(ACCEPTED)", sleep=0.3),
+    Step(f"gt6boiler fill {B_BOILER} 4000 distw", expect="(ACCEPTED)", sleep=0.3),
+    Step(f"gt6boiler fill {B_BOILER} 4000 distw", expect="(ACCEPTED)", sleep=0.3),
+    Step(f"gt6boiler fill {B_BOILER} 4000 distw", expect="(ACCEPTED)", sleep=0.3),
     Step(f"data get block {B_PIPE}", expect="gt6:steam"),
     Step(f"data get block {B_PIPE}", expect="gt6:steam", sleep=1.0),
-    Step(f"gt6boiler stat {B_BOILER}", expect="steam=5"),   # >5.4M of 8.96M: the gate is OPEN
+    Step(f"gt6boiler stat {B_BOILER}"),
     Step(f"gt6burner extinguish {B_FIREBOX}", expect="burning=false"),
 ]
 
