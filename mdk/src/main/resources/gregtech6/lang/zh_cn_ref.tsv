@@ -907,13 +907,17 @@ direct	gt6.cover.selector_tag.display	标签选择器 (%s)	hand
 direct	gt6.foamspray.owned	干燥后仅所有者可破坏	hand
 direct	gt6.foamspray.paint	可以喷射%s泡沫	hand
 direct	gt6.jade.boiler.demand	需求: %s HU/t	hand
-direct	gt6.jade.boiler.gate.above	输出门: 已开启，从顶面输出（超 3/4 罐时双倍速率）	hand
-direct	gt6.jade.boiler.gate.below	输出门: 未达半罐 (%s / %s L)，过半后从顶面输出	hand
-direct	gt6.jade.boiler.heat	储存热量: %s / %s HU	hand
-direct	gt6.jade.boiler.no_water	警告: 缺水!!!	hand
+direct	gt6.jade.boiler.heat	储存热量: %s / %s HU (%s%%)	hand
 direct	gt6.jade.boiler.scale	水垢: %s%%	hand
 direct	gt6.jade.boiler.scale.clean	锅炉无水垢	hand
-direct	gt6.jade.boiler.water	水: %s / %s L	hand
+direct	gt6.jade.boiler.steam	蒸汽: %s / %s mB (%s%%)	hand
+direct	gt6.jade.boiler.water	水: %s / %s mB (%s%%)	hand
+direct	gt6.jade.common.formed	多方块: 已成形	hand
+direct	gt6.jade.common.incomplete	多方块: 未成形	hand
+direct	gt6.jade.common.malfunction	故障	hand
+direct	gt6.jade.common.malfunction.detail	详情: %s	hand
+direct	gt6.jade.common.status.active	运行中	hand
+direct	gt6.jade.common.status.inactive	未运行	hand
 direct	gt6.jade.converter.active	运行中	hand
 direct	gt6.jade.converter.idle	待机	hand
 direct	gt6.jade.converter.rate	输出: %s %s/t	hand
@@ -927,13 +931,10 @@ direct	gt6.jade.crucible.temperature	温度: %s K / %s K	hand
 direct	gt6.jade.crucible.total	内容物: %s U	hand
 direct	gt6.jade.fluid.group.in	流体输入	hand
 direct	gt6.jade.fluid.group.out	流体输出	hand
-direct	gt6.jade.machine.energy	能量: %s (%s)	hand
-direct	gt6.jade.machine.error	错误: %s	hand
-direct	gt6.jade.machine.input	输入: %s / %s / %s (最小/当前/最大)	hand
-direct	gt6.jade.machine.multiblock.formed	多方块: 已成形	hand
-direct	gt6.jade.machine.multiblock.incomplete	多方块: 未成形	hand
-direct	gt6.jade.machine.progress.seconds	进度: %s / %s 秒	hand
-direct	gt6.jade.machine.progress.ticks	进度: %s / %s t	hand
+direct	gt6.jade.machine.energy	存量: %s %s	hand
+direct	gt6.jade.machine.input	输入: %s / %s / %s %s	hand
+direct	gt6.jade.machine.progress.seconds	进度: %s / %s 秒 (%s%%)	hand
+direct	gt6.jade.machine.progress.ticks	进度: %s / %s t (%s%%)	hand
 direct	gt6.jei.cost.chance	几率: %s	hand
 direct	gt6.jei.cost.chance_each	几率: %s（每个）	hand
 direct	gt6.jei.cost.costs	总耗: %s GU	hand

@@ -17,6 +17,7 @@ import gregtech6.item.MaterialPrefixItem;
 import gregtech6.jade.GT6BoilerProvider;
 import gregtech6.jade.GT6ConverterProvider;
 import gregtech6.jade.GT6FluidProvider;
+import gregtech6.jade.GT6JadeRows;
 import gregtech6.jade.GT6MachineProvider;
 import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.jei.GT6RecipeMapViewerMeta;
@@ -116,6 +117,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addFoamSprayUnits();    // task p25-c-foam-pipe-spray
 		addKitchenUnits();      // task p26-kitchen-pot-bowl
 		addCrucibleJadeUnits(); // task p28-crucible-jade-face
+		addCommonJadeUnits();   // task r8-jade-redesign-core — the common jade band (hand rows, the tsv direct band)
 		addMachineJadeUnits();  // task p34-hygiene-lang — the machine/fluid jade band (hand rows, the tsv direct band)
 		addBoilerJadeUnits();   // task r5-jade-boiler — the boiler jade band (hand rows, the tsv direct band)
 		addConverterJadeUnits(); // task r5-jade-converters — the converter-family jade band (hand rows, the tsv direct band)
@@ -419,45 +421,60 @@ public class GT6ZhCn extends LanguageProvider {
 	}
 
 	/**
-	 * The machine/fluid Jade face zh units (task p34-hygiene-lang, 9 hand rows — the
-	 * addCrucibleJadeUnits shape): the keyed machine tooltip band (progress in its two
-	 * unit faces / energy / input band / the two multiblock states / error) + the two
-	 * fluid tank-group titles. No dump face exists (upstream has zero WAILA integration),
-	 * so these ride the reference table's hand layer via {@link #addDirect} — the py rows,
-	 * this walk and the TSV regen land in the SAME commit (the noHandRowIsOrphaned pin
-	 * otherwise surfaces the gap).
+	 * The common Jade face zh units (task r8-jade-redesign-core, 6 hand rows — the
+	 * addMachineJadeUnits shape): the machine status pair (运行中/未运行 — the wording
+	 * family the converter status words already use), the two multiblock-formed states
+	 * (re-keyed from gt6.jade.machine.multiblock.*, the dump wording carried verbatim)
+	 * and the Malfunction pair (故障 + the sneak detail slot). No dump face exists (upstream
+	 * has zero WAILA integration), so these ride the reference table's hand layer via
+	 * {@link #addDirect} — the tsv rows, this walk and the datagen output land in the SAME
+	 * commit (the noHandRowIsOrphaned pin otherwise surfaces the gap).
+	 */
+	private void addCommonJadeUnits() {
+		addDirect(GT6JadeRows.LANG_STATUS_ACTIVE);
+		addDirect(GT6JadeRows.LANG_STATUS_INACTIVE);
+		addDirect(GT6JadeRows.LANG_STRUCTURE_FORMED);
+		addDirect(GT6JadeRows.LANG_STRUCTURE_INCOMPLETE);
+		addDirect(GT6JadeRows.LANG_MALFUNCTION);
+		addDirect(GT6JadeRows.LANG_MALFUNCTION_DETAIL);
+	}
+
+	/**
+	 * The machine Jade face zh units (task p34-hygiene-lang, r8-jade-redesign-core reface
+	 * — 4 hand rows + the 2 fluid tank-group titles): the progress lines (percent slot
+	 * added) and the energy buffer/input band (the text forms). The multiblock states and
+	 * the error row moved to {@link #addCommonJadeUnits}. No dump face exists (upstream
+	 * has zero WAILA integration), so these ride the reference table's hand layer via
+	 * {@link #addDirect} — the py rows, this walk and the TSV regen land in the SAME
+	 * commit (the noHandRowIsOrphaned pin otherwise surfaces the gap).
 	 */
 	private void addMachineJadeUnits() {
 		addDirect(GT6MachineProvider.LANG_PROGRESS_SECONDS);
 		addDirect(GT6MachineProvider.LANG_PROGRESS_TICKS);
 		addDirect(GT6MachineProvider.LANG_ENERGY);
 		addDirect(GT6MachineProvider.LANG_INPUT);
-		addDirect(GT6MachineProvider.LANG_STRUCTURE_FORMED);
-		addDirect(GT6MachineProvider.LANG_STRUCTURE_INCOMPLETE);
-		addDirect(GT6MachineProvider.LANG_ERROR);
 		addDirect(GT6FluidProvider.LANG_GROUP_IN);
 		addDirect(GT6FluidProvider.LANG_GROUP_OUT);
 	}
 
 	/**
-	 * The boiler Jade face zh units (task r5-jade-boiler, 8 hand rows — the
-	 * addMachineJadeUnits shape): the heat/demand lines, the two output-gate states and
-	 * the sneak-detail band (calcification %, clean face, water amount, no-water
-	 * warning). No dump face exists (upstream has zero WAILA integration), so these ride
-	 * the reference table's hand layer via {@link #addDirect} — the tsv rows, this walk
-	 * and the datagen output land in the SAME commit (the noHandRowIsOrphaned pin
-	 * otherwise surfaces the gap). The HU unit and the "WARNING: NO WATER!!!" alarm face
-	 * stay bare per the crucible K-unit convention (the thermometer anchor untranslated).
+	 * The boiler Jade face zh units (task r5-jade-boiler, r8-jade-redesign-core reface —
+	 * 6 hand rows — the addMachineJadeUnits shape): the heat/demand lines, the WATER and
+	 * STEAM tank bars (always visible now — the empty-tank warning moved onto the red
+	 * bar face) and the sneak-detail calcification pair. The two output-gate states and
+	 * the no-water warning retired (the user ruling). No dump face exists (upstream has
+	 * zero WAILA integration), so these ride the reference table's hand layer via
+	 * {@link #addDirect} — the tsv rows, this walk and the datagen output land in the
+	 * SAME commit (the noHandRowIsOrphaned pin otherwise surfaces the gap). The HU unit
+	 * stays bare per the crucible K-unit convention (the thermometer anchor untranslated).
 	 */
 	private void addBoilerJadeUnits() {
 		addDirect(GT6BoilerProvider.LANG_HEAT);
 		addDirect(GT6BoilerProvider.LANG_DEMAND);
-		addDirect(GT6BoilerProvider.LANG_GATE_BELOW);
-		addDirect(GT6BoilerProvider.LANG_GATE_ABOVE);
+		addDirect(GT6BoilerProvider.LANG_STEAM);
 		addDirect(GT6BoilerProvider.LANG_SCALE);
 		addDirect(GT6BoilerProvider.LANG_SCALE_CLEAN);
 		addDirect(GT6BoilerProvider.LANG_WATER);
-		addDirect(GT6BoilerProvider.LANG_NO_WATER);
 	}
 
 	/**

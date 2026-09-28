@@ -899,13 +899,21 @@ HAND_TRANSLATIONS = {
     # retired) — the zh faces mirror the crucible family shape above (ASCII colon+space, the
     # numbers ride the %s slots). 双落 discipline: py row + provider/datagen walk in the SAME
     # commit, the regen reproduces the tsv rows.
-    "gt6.jade.machine.progress.seconds": ("进度: %s / %s 秒", "hand"),
-    "gt6.jade.machine.progress.ticks": ("进度: %s / %s t", "hand"),
-    "gt6.jade.machine.energy": ("能量: %s (%s)", "hand"),
-    "gt6.jade.machine.input": ("输入: %s / %s / %s (最小/当前/最大)", "hand"),
-    "gt6.jade.machine.multiblock.formed": ("多方块: 已成形", "hand"),
-    "gt6.jade.machine.multiblock.incomplete": ("多方块: 未成形", "hand"),
-    "gt6.jade.machine.error": ("错误: %s", "hand"),
+    # task r8-jade-redesign-core: the common Jade band keyed (status pair / multiblock
+    # states re-keyed from gt6.jade.machine.multiblock.* / Malfunction pair) + the machine
+    # and boiler refaces (the three-slot bar template X / Y (Z%%), the Stored text form,
+    # the mB tank bars, the gate/no-water rows retired — the user ruling). 双落 discipline:
+    # py row + provider/datagen walk in the SAME commit, the regen reproduces the tsv rows.
+    "gt6.jade.common.formed": ("多方块: 已成形", "hand"),
+    "gt6.jade.common.incomplete": ("多方块: 未成形", "hand"),
+    "gt6.jade.common.malfunction": ("故障", "hand"),
+    "gt6.jade.common.malfunction.detail": ("详情: %s", "hand"),
+    "gt6.jade.common.status.active": ("运行中", "hand"),
+    "gt6.jade.common.status.inactive": ("未运行", "hand"),
+    "gt6.jade.machine.progress.seconds": ("进度: %s / %s 秒 (%s%%)", "hand"),
+    "gt6.jade.machine.progress.ticks": ("进度: %s / %s t (%s%%)", "hand"),
+    "gt6.jade.machine.energy": ("存量: %s %s", "hand"),
+    "gt6.jade.machine.input": ("输入: %s / %s / %s %s", "hand"),
     "gt6.jade.fluid.group.in": ("流体输入", "hand"),
     "gt6.jade.fluid.group.out": ("流体输出", "hand"),
     # task r5-jade-boiler: the boiler Jade tooltip band keyed (heat/demand/output-gate two
@@ -914,13 +922,11 @@ HAND_TRANSLATIONS = {
     # 双落 discipline: py row + provider/datagen walk in the SAME commit, the regen
     # reproduces the tsv rows.
     "gt6.jade.boiler.demand": ("需求: %s HU/t", "hand"),
-    "gt6.jade.boiler.gate.above": ("输出门: 已开启，从顶面输出（超 3/4 罐时双倍速率）", "hand"),
-    "gt6.jade.boiler.gate.below": ("输出门: 未达半罐 (%s / %s L)，过半后从顶面输出", "hand"),
-    "gt6.jade.boiler.heat": ("储存热量: %s / %s HU", "hand"),
-    "gt6.jade.boiler.no_water": ("警告: 缺水!!!", "hand"),
+    "gt6.jade.boiler.heat": ("储存热量: %s / %s HU (%s%%)", "hand"),
     "gt6.jade.boiler.scale": ("水垢: %s%%", "hand"),
     "gt6.jade.boiler.scale.clean": ("锅炉无水垢", "hand"),
-    "gt6.jade.boiler.water": ("水: %s / %s L", "hand"),
+    "gt6.jade.boiler.steam": ("蒸汽: %s / %s mB (%s%%)", "hand"),
+    "gt6.jade.boiler.water": ("水: %s / %s mB (%s%%)", "hand"),
     # task p33-bees-lv3-b-bumbliary: the 2 Bumbliary machine display names are DUMP faces
     # (gt.multitileentity.32741/32007) that the merge reconciliation landed in the TSV
     # direct band with status=auto — not hand-authored, so the status rides here verbatim

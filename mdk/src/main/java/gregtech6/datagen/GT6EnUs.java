@@ -43,6 +43,7 @@ import gregtech6.covers.GT6Covers;
 import gregtech6.jade.GT6BoilerProvider;
 import gregtech6.jade.GT6ConverterProvider;
 import gregtech6.jade.GT6FluidProvider;
+import gregtech6.jade.GT6JadeRows;
 import gregtech6.jade.GT6MachineProvider;
 import gregtech6.worldgen.GT6OreGenInfoLayout;
 import net.minecraft.data.PackOutput;
@@ -153,6 +154,7 @@ public class GT6EnUs extends LanguageProvider {
         addSensors(); // task p26-sensors-core — table-tail append
         addPortals(); // task p35-portals-mini-nether-end — table-tail append
         addCrucibleJade(); // task p28-crucible-jade-face — table-tail append
+        addCommonJade(); // task r8-jade-redesign-core — table-tail append
         addMachineJade(); // task p34-hygiene-lang — table-tail append
         addFluidJade(); // task p34-hygiene-lang — table-tail append
         addBoilerJade(); // task r5-jade-boiler — table-tail append
@@ -2247,23 +2249,42 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The machine Jade face keys (task p34-hygiene-lang, 7 keys — the v1 literal band of
-     * GT6MachineProvider retired): the progress line in its two unit faces (seconds over
-     * {@code %.1f}-preformatted slots / ticks over longs — the GTCEu WorkableBlockProvider
-     * :72-77 split), the energy line (amount + the p27 short-code slot), the input band
-     * (min/in/max), the two multiblock-formed states and the error tail. Values are the
-     * literal faces they replace, verbatim down to the spacing. Consumed by
-     * GT6MachineProvider (the lang constants live there); zh faces ride the reference
-     * table's hand layer via GT6ZhCn.addMachineJadeUnits.
+     * The common Jade face keys (task r8-jade-redesign-core, 6 keys — the cross-family
+     * status rows on the shared GT6JadeRows helper): the machine status pair (Active green
+     * / Inactive red — the semantics lifted OFF the progress-bar coloring), the two
+     * multiblock-formed states (re-keyed from gt6.jade.machine.multiblock.*, the wording
+     * carried verbatim) and the Malfunction pair (the constant face replacing the raw
+     * ERROR passthrough — the only ERROR_MESSAGE source is the tick exception trap,
+     * TicksAndSync.java:223/228 — plus the sneak detail carrying the truncated raw text).
+     * Consumed by GT6JadeRows; zh faces ride the reference table's hand layer via
+     * GT6ZhCn.addCommonJadeUnits.
+     */
+    private void addCommonJade() {
+        add(GT6JadeRows.LANG_STATUS_ACTIVE, "Active");
+        add(GT6JadeRows.LANG_STATUS_INACTIVE, "Inactive");
+        add(GT6JadeRows.LANG_STRUCTURE_FORMED, "Multiblock: formed");
+        add(GT6JadeRows.LANG_STRUCTURE_INCOMPLETE, "Multiblock: incomplete");
+        add(GT6JadeRows.LANG_MALFUNCTION, "Malfunction");
+        add(GT6JadeRows.LANG_MALFUNCTION_DETAIL, "Detail: %s");
+    }
+
+    /**
+     * The machine Jade face keys (task p34-hygiene-lang, r8-jade-redesign-core reface —
+     * 4 keys): the progress line in its two unit faces (seconds over {@code %.1f}-
+     * preformatted slots / ticks over longs — the GTCEu WorkableBlockProvider :72-77
+     * split) now over the UNIFORM three-slot bar text template X / Y (Z%) — the percent
+     * slot rides every bar (the Jade ProgressElement paints the text inside the bar, the
+     * percent is not a native overlay) —, the energy buffer line (the text form, no bar —
+     * no true capacity is ported, the design ruling) and the input band (min/in/max plus
+     * the p27 short-code fourth slot). The two multiblock states and the error line moved
+     * to the common band (addCommonJade). Consumed by GT6MachineProvider; zh faces ride
+     * the reference table's hand layer via GT6ZhCn.addMachineJadeUnits.
      */
     private void addMachineJade() {
-        add(GT6MachineProvider.LANG_PROGRESS_SECONDS, "Progress: %s / %s s");
-        add(GT6MachineProvider.LANG_PROGRESS_TICKS, "Progress: %s / %s t");
-        add(GT6MachineProvider.LANG_ENERGY, "Energy: %s (%s)");
-        add(GT6MachineProvider.LANG_INPUT, "Input: %s / %s / %s (min/in/max)");
-        add(GT6MachineProvider.LANG_STRUCTURE_FORMED, "Multiblock: formed");
-        add(GT6MachineProvider.LANG_STRUCTURE_INCOMPLETE, "Multiblock: incomplete");
-        add(GT6MachineProvider.LANG_ERROR, "Error: %s");
+        add(GT6MachineProvider.LANG_PROGRESS_SECONDS, "Progress: %s / %s s (%s%%)");
+        add(GT6MachineProvider.LANG_PROGRESS_TICKS, "Progress: %s / %s t (%s%%)");
+        add(GT6MachineProvider.LANG_ENERGY, "Stored: %s %s");
+        add(GT6MachineProvider.LANG_INPUT, "Input: %s / %s / %s %s");
     }
 
     /**
@@ -2278,26 +2299,25 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The boiler Jade face keys (task r5-jade-boiler, 8 keys): the heat line (stored/max
-     * HU — the upstream thermometer wording, MultiTileEntityBoilerTank.java:182), the
-     * demand line (mOutput/2 HU/t, the getEnergyDemanded value), the two output-gate
-     * states (below half = not emitting + the past-half promise; open = the compact form
-     * carrying the 3/4 double-rate note — upstream :139-142/:203-207 pure behavior, no
-     * text) and the sneak-detail band (calcification %, the clean face, water amount,
-     * the no-water warning — the upstream magnifyingglass wording :414-421 verbatim).
-     * The {@code %%} escape renders a literal percent (TranslatableContents.java:80-81).
-     * Consumed by GT6BoilerProvider (the lang constants live there); zh faces ride the
-     * reference table's hand layer via GT6ZhCn.addBoilerJadeUnits.
+     * The boiler Jade face keys (task r5-jade-boiler, r8-jade-redesign-core reface —
+     * 6 keys): the heat line (stored/max HU — the upstream thermometer wording,
+     * MultiTileEntityBoilerTank.java:182 — over the three-slot bar template), the demand
+     * line (mOutput/2 HU/t, the getEnergyDemanded value), the WATER/STEAM TANK BARS now
+     * always visible (upgraded from the sneak band — the empty water tank paints the bar
+     * red, the styling lives on the bar not the row) and the sneak-detail calcification
+     * pair (the upstream magnifyingglass wording :414-419 verbatim). The two output-gate
+     * states and the no-water warning retired (the user ruling: the half-gate lines are
+     * noise; the red empty bar IS the warning face). The {@code %%} escape renders a
+     * literal percent (TranslatableContents.java:80-81). Consumed by GT6BoilerProvider;
+     * zh faces ride the reference table's hand layer via GT6ZhCn.addBoilerJadeUnits.
      */
     private void addBoilerJade() {
-        add(GT6BoilerProvider.LANG_HEAT, "Stored Heat Units: %s / %s HU");
+        add(GT6BoilerProvider.LANG_HEAT, "Stored Heat Units: %s / %s HU (%s%%)");
         add(GT6BoilerProvider.LANG_DEMAND, "Demand: %s HU/t");
-        add(GT6BoilerProvider.LANG_GATE_BELOW, "Output gate: below half tank (%s / %s L) — steam outputs from the top once past half");
-        add(GT6BoilerProvider.LANG_GATE_ABOVE, "Output gate: open — steam outputs from the top (double rate above 3/4 tank)");
+        add(GT6BoilerProvider.LANG_STEAM, "Steam: %s / %s mB (%s%%)");
         add(GT6BoilerProvider.LANG_SCALE, "Calcification: %s%%");
         add(GT6BoilerProvider.LANG_SCALE_CLEAN, "No Calcification in this Boiler");
-        add(GT6BoilerProvider.LANG_WATER, "Water: %s / %s L");
-        add(GT6BoilerProvider.LANG_NO_WATER, "WARNING: NO WATER!!!");
+        add(GT6BoilerProvider.LANG_WATER, "Water: %s / %s mB (%s%%)");
     }
 
     /**
