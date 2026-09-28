@@ -1,26 +1,26 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gt6:block/progressmeter",
+      "model": "gt6:block/sensors/progressmeter",
       "x": 90
     },
     "facing=east": {
-      "model": "gt6:block/progressmeter",
+      "model": "gt6:block/sensors/progressmeter",
       "y": 90
     },
     "facing=north": {
-      "model": "gt6:block/progressmeter"
+      "model": "gt6:block/sensors/progressmeter"
     },
     "facing=south": {
-      "model": "gt6:block/progressmeter",
+      "model": "gt6:block/sensors/progressmeter",
       "y": 180
     },
     "facing=up": {
-      "model": "gt6:block/progressmeter",
+      "model": "gt6:block/sensors/progressmeter",
       "x": 270
     },
     "facing=west": {
-      "model": "gt6:block/progressmeter",
+      "model": "gt6:block/sensors/progressmeter",
       "y": 270
     }
   }

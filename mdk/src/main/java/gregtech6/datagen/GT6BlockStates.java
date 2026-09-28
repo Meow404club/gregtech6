@@ -3290,22 +3290,31 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
     }
 
     /**
-     * Task p26-sensors-core — the three pioneer sensor blocks ({@link GT6Sensors#ROWS},
-     * the Registration face): each one cube_all model over its OWN baked texture
-     * ({@code gt6:block/<path>}, the assets/README.md bake-ledger entries) and ONE
-     * 6-variant blockstate driving the full {@link GTSensorBlock#FACING} property — the
-     * vanilla dispenser/observer rotation map (y = 0/90/180/270 on the horizontal ring,
-     * x = 270/90 on up/down; the axle AXIS precedent for a property-driven variant
-     * blockstate without the vanilla block-type coupling). The FACING property IS the
-     * display/keypad face mirror (GTSensorBlockEntity#wrenchSetFacing writes it, the
-     * TileEntityOven.setFrontFacing shape), so the baked digit-strip face re-orients with
-     * the block exactly as the upstream thin-plate front icon did. Each BlockItem model
-     * parents its block model (the crank one-line-per-row precedent).
+     * Task r8-tex-sensors (supersedes the p26-sensors-core cube_all bake) — the 21
+     * sensor families ({@link GT6Sensors#ROWS}) ride the front-bearing two-layer faceted
+     * cube, the {@link #addConverterModel} grammar MINUS the tint seat: the body is the
+     * upstream colored layer ({@code sensors/<family>/colored_{front,back,side}}, the
+     * byte-identical borrows) and the six 0.01-plate shells the overlay layer — the
+     * upstream BlockTextureMulti(colored, overlay) stack (MultiTileEntitySensor
+     * .getTexture2 :218-228: FRONT = colored/front + overlay/front, BACK = the OPOS
+     * pair, the four flanks the side pair). NO tintindex: the rows register NBT-less
+     * (Loader_MultiTileEntities.java:1979-1999) so mRGBa is white and the colored art
+     * shows its own colours. Cutout render type by the alpha census — all 63 colored
+     * PNGs are fully opaque, all 63 overlay PNGs carry transparent texels (the overlay
+     * front is the 64x64 digit strip). The old src-over front bake painted this two-layer
+     * form over all six faces; now only the FACING face carries the front art. The FACING
+     * property IS the display face mirror (GTSensorBlockEntity#wrenchSetFacing writes
+     * it), the six-way dispenser rotation map rides unchanged; the BlockItem still
+     * parents the block model (the block IS what 1.7.10 rendered for the held sensor).
+     *
+     * <p>Declared defer: the upstream pass1-6 LIVE digit boards (the CHAR_* sprite stack,
+     * MultiTileEntitySensor :143-261) stay the render pool card (r8-pool-gauges) — the
+     * borrowed overlay/front is the static art, same ruling as the boiler barometer.
      */
     private void addSensors() {
         for (GT6Sensors.SensorRow tRow : GT6Sensors.ROWS) {
             Block tBlock = GT6Sensors.BLOCKS_BY_PATH.get(tRow.path()).get();
-            ModelFile tModel = models().cubeAll(tRow.path(), modLoc("block/" + tRow.path()));
+            ModelFile tModel = sensorModel(tRow.path());
             getVariantBuilder(tBlock).forAllStates(aState -> switch (aState.getValue(GTSensorBlock.FACING)) {
                 case NORTH -> new ConfiguredModel[] {new ConfiguredModel(tModel)};
                 case SOUTH -> new ConfiguredModel[] {new ConfiguredModel(tModel, 0, 180, false)};
@@ -3314,9 +3323,65 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
                 case UP    -> new ConfiguredModel[] {new ConfiguredModel(tModel, 270, 0, false)};
                 case DOWN  -> new ConfiguredModel[] {new ConfiguredModel(tModel, 90, 0, false)};
             });
-            itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
+            itemModels().withExistingParent(tRow.path(), modLoc("block/sensors/" + tRow.path()));
         }
-        LOGGER.info("GT6 sensors: {} pioneer blockstates x 6 FACING variants (the oriented cube)", GT6Sensors.ROWS.size());
+        LOGGER.info("GT6 sensors: {} faceted two-layer blockstates x 6 FACING variants (the oriented cube)", GT6Sensors.ROWS.size());
+    }
+
+    /**
+     * One sensor family's two-layer faceted model ({@code block/sensors/<family>}):
+     * the untinted body cube over the colored trio (front on north) + the six 0.01
+     * overlay plates (front/back/side), cullface synced — the {@link #addConverterModel}
+     * shells verbatim minus the tintindex (the r8-tex-sensors NBT=null ruling).
+     */
+    private ModelFile sensorModel(String aFamily) {
+        String tBase = "block/sensors/" + aFamily;
+        // the "block/" prefix rides INSIDE the builder path: getBuilder only prepends the
+        // folder to slash-free paths (Forge ModelProvider.extendWithFolder), and getPath
+        // writes models/<path>.json verbatim — "block/sensors/<family>" is what lands the
+        // model at models/block/sensors/<family>.json AND tracks it for the item parent.
+        BlockModelBuilder tModel = models().getBuilder(tBase)
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc(tBase + "/colored_side"))
+                .texture("up", modLoc(tBase + "/colored_side"))
+                .texture("north", modLoc(tBase + "/colored_front"))
+                .texture("south", modLoc(tBase + "/colored_back"))
+                .texture("west", modLoc(tBase + "/colored_side"))
+                .texture("east", modLoc(tBase + "/colored_side"))
+                .texture("particle", modLoc(tBase + "/colored_side"))
+                .texture("overlay_front", modLoc(tBase + "/overlay_front"))
+                .texture("overlay_back", modLoc(tBase + "/overlay_back"))
+                .texture("overlay_side", modLoc(tBase + "/overlay_side"))
+                .renderType("cutout");
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).cullface(aDir))
+                .end();
+        tModel.element() // north
+                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+                .face(Direction.NORTH).texture("#overlay_front").cullface(Direction.NORTH)
+                .end();
+        tModel.element() // south
+                .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.01F)
+                .face(Direction.SOUTH).texture("#overlay_back").cullface(Direction.SOUTH)
+                .end();
+        tModel.element() // west
+                .from(-0.01F, 0.0F, 0.0F).to(0.0F, 16.0F, 16.0F)
+                .face(Direction.WEST).texture("#overlay_side").cullface(Direction.WEST)
+                .end();
+        tModel.element() // east
+                .from(16.0F, 0.0F, 0.0F).to(16.01F, 16.0F, 16.0F)
+                .face(Direction.EAST).texture("#overlay_side").cullface(Direction.EAST)
+                .end();
+        tModel.element() // bottom
+                .from(0.0F, -0.01F, 0.0F).to(16.0F, 0.0F, 16.0F)
+                .face(Direction.DOWN).texture("#overlay_side").cullface(Direction.DOWN)
+                .end();
+        tModel.element() // top
+                .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.01F, 16.0F)
+                .face(Direction.UP).texture("#overlay_side").cullface(Direction.UP)
+                .end();
+        return tModel;
     }
     /**
      * Task p29-w3-nbtdesign-parts ③④ — the part-family expansion (Loader

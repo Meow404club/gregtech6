@@ -1,26 +1,26 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gt6:block/fluidometer",
+      "model": "gt6:block/sensors/fluidometer",
       "x": 90
     },
     "facing=east": {
-      "model": "gt6:block/fluidometer",
+      "model": "gt6:block/sensors/fluidometer",
       "y": 90
     },
     "facing=north": {
-      "model": "gt6:block/fluidometer"
+      "model": "gt6:block/sensors/fluidometer"
     },
     "facing=south": {
-      "model": "gt6:block/fluidometer",
+      "model": "gt6:block/sensors/fluidometer",
       "y": 180
     },
     "facing=up": {
-      "model": "gt6:block/fluidometer",
+      "model": "gt6:block/sensors/fluidometer",
       "x": 270
     },
     "facing=west": {
-      "model": "gt6:block/fluidometer",
+      "model": "gt6:block/sensors/fluidometer",
       "y": 270
     }
   }

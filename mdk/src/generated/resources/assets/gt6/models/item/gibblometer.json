@@ -1,3 +1,3 @@
 {
-  "parent": "gt6:block/gibblometer"
+  "parent": "gt6:block/sensors/gibblometer"
 }

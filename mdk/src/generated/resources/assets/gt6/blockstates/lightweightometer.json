@@ -1,26 +1,26 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gt6:block/lightweightometer",
+      "model": "gt6:block/sensors/lightweightometer",
       "x": 90
     },
     "facing=east": {
-      "model": "gt6:block/lightweightometer",
+      "model": "gt6:block/sensors/lightweightometer",
       "y": 90
     },
     "facing=north": {
-      "model": "gt6:block/lightweightometer"
+      "model": "gt6:block/sensors/lightweightometer"
     },
     "facing=south": {
-      "model": "gt6:block/lightweightometer",
+      "model": "gt6:block/sensors/lightweightometer",
       "y": 180
     },
     "facing=up": {
-      "model": "gt6:block/lightweightometer",
+      "model": "gt6:block/sensors/lightweightometer",
       "x": 270
     },
     "facing=west": {
-      "model": "gt6:block/lightweightometer",
+      "model": "gt6:block/sensors/lightweightometer",
       "y": 270
     }
   }

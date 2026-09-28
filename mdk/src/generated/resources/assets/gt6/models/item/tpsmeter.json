@@ -1,3 +1,3 @@
 {
-  "parent": "gt6:block/tpsmeter"
+  "parent": "gt6:block/sensors/tpsmeter"
 }

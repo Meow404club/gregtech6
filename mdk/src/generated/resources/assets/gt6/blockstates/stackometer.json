@@ -1,26 +1,26 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gt6:block/stackometer",
+      "model": "gt6:block/sensors/stackometer",
       "x": 90
     },
     "facing=east": {
-      "model": "gt6:block/stackometer",
+      "model": "gt6:block/sensors/stackometer",
       "y": 90
     },
     "facing=north": {
-      "model": "gt6:block/stackometer"
+      "model": "gt6:block/sensors/stackometer"
     },
     "facing=south": {
-      "model": "gt6:block/stackometer",
+      "model": "gt6:block/sensors/stackometer",
       "y": 180
     },
     "facing=up": {
-      "model": "gt6:block/stackometer",
+      "model": "gt6:block/sensors/stackometer",
       "x": 270
     },
     "facing=west": {
-      "model": "gt6:block/stackometer",
+      "model": "gt6:block/sensors/stackometer",
       "y": 270
     }
   }
