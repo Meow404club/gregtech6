@@ -28,7 +28,7 @@ import gregtech6.datagen.GT6WorldgenDatagen;
  *
  * <p><b>Source tables</b> (frozen constants, read-only here):
  * <ul>
- * <li>small ores — {@link GTOreWorldgen#ROWS} 54 rows / 91 (row, dim) pairs, consumed
+ * <li>small ores — {@link GTOreWorldgen#ROWS} 115 rows / 152 (row, dim) pairs, consumed
  * through {@link GTOreWorldgen#placementPairs()} which IS the generating face (the
  * placement-gated ancientdebris row and the dim-less modded-only rows drop out);</li>
  * <li>large veins — {@link GT6WorldgenDatagen#LARGE_VEIN_TABLE} 40 rows, the four
@@ -42,7 +42,8 @@ import gregtech6.datagen.GT6WorldgenDatagen;
  * never place in a vanilla dimension stay out — vein rows with neither overworld nor end
  * (the 7 offworld rows :917-925, table-census data until dim cards exist) and bedrock
  * rows with {@code overworld == false} (the 13 offworld rows :758-770). The axis is the
- * UNION of the three generating faces — 118 materials at the 2026-09-26 table state,
+ * UNION of the three generating faces — 159 materials at the 2026-09-28 table state
+ * (118 before r7-b-gem-pool-extension joined the 61 gem-pool small-ore rows),
  * pinned (with the per-table subcounts) by OreDistributionInfoTest.
  *
  * <p><b>Large veins are their own column</b> (coordinator ruling ③): {@link Entry#veins}

@@ -290,6 +290,70 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/emerald/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/emerald/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/emerald/ore_overlay"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/emerald/ore_small_overlay"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/glass/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/glass/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/glass/ore_overlay"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/glass/ore_small_overlay"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/gem_horizontal/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/gem_horizontal/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/gem_horizontal/ore_overlay"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/gem_horizontal/ore_small_overlay"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/opal/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/opal/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/opal/ore_overlay"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/opal/ore_small_overlay"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "gt6:block/logistics/display/cpu_logic/0"
     },
     {

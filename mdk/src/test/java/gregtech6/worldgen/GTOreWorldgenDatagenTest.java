@@ -1,6 +1,8 @@
 /**
- * Tests for task p30-w6-small-ore-datagen: the 54-row small-ore table + the 91
- * (row, dim) placement pairs — the acceptance's offline parity unit.
+ * Tests for task p30-w6-small-ore-datagen: the small-ore table + the (row, dim)
+ * placement pairs — the acceptance's offline parity unit. The table grew 54 → 115
+ * rows and the pairs 91 → 152 with r7-b-gem-pool-extension (the RANDOM_SMALL_GEM_ORE
+ * pool loop joined).
  *
  * <p>Compile anchors (transcribed independently here, production and test must agree
  * or a conscious decision is forced):
@@ -8,6 +10,10 @@
  * <li>Loader_Worldgen.java:800-852 + :875 — the 54 always-on WorldgenOresSmall rows,
  *     ctor order (name, minY, maxY, amount, material) + the row's GEN_* vanilla-dim
  *     projection; every row below cites its upstream line.</li>
+ * <li>Loader_Worldgen.java:877-878 + CS.java:965 — the 61 RANDOM_SMALL_GEM_ORE pool
+ *     rows (r7-b-gem-pool-extension): the loop carries no axis filter, one row per
+ *     flagged material, all (T, 5, 250, 1, GEN_GEMS); GEN_GEMS projects to OVERWORLD
+ *     only (the other eight domains have no modern carrier).</li>
  * <li>WorldgenOresSmall.java:61 — the per-chunk count; the declared constant deviation
  *     pins max(1, amount/2) veins per chunk (the range lower bound; see the
  *     GTOreWorldgen.veinCount deviation note for the cross-leg dispatch evidence).</li>
@@ -18,8 +24,9 @@
  * <li>GT6OreBlocks.java:328-332 — the ancientdebris PLACEMENT-time gate (vanilla
  *     1.20.1 ships ancient debris → the row stays in the table, generates nothing).</li>
  * <li>Coordinator ruling 2026-09-17 — the task card's "63 placement rows" was an
- *     architect arithmetic slip; the verbatim flag walk is 91 = 38 + 20 + 33 (the
- *     21-table-nether-rows − 1 gated).</li>
+ *     architect arithmetic slip; the verbatim flag walk is 91 = 38 + 20 + 33 over the
+ *     54-row table (the 21-table-nether-rows − 1 gated); 152 = 99 + 20 + 33 over the
+ *     115-row table since r7-b (the 61 gem rows are overworld-only).</li>
  * </ul>
  *
  * <p>Offline-safe by construction (the GT6WorldgenDatagenTest posture): ResourceKey
@@ -62,8 +69,10 @@ class GTOreWorldgenDatagenTest {
     }
 
     /**
-     * The 54 rows pinned line-by-line: name → {upstream line, minY, maxY, amount, dims}.
-     * Every entry transcribed from its Loader_Worldgen.java row text.
+     * The 115 rows pinned line-by-line: name → {upstream line, minY, maxY, amount, dims}.
+     * Every entry transcribed from its Loader_Worldgen.java row text; the 61 gem-pool rows
+     * (r7-b-gem-pool-extension) all cite the :877-878 loop with the loop's literal
+     * (T, 5, 250, 1, GEN_GEMS→OVERWORLD) parameters.
      */
     private static Map<String, String> UPSTREAM_ROWS = Map.ofEntries(
         Map.entry("ore.small.copper"      , "800 60 120 16 OVERWORLD END"),
@@ -119,7 +128,71 @@ class GTOreWorldgenDatagenTest {
         Map.entry("ore.small.efrine"      , "850 90 120 8 NETHER"),
         Map.entry("ore.small.cinnabar"    , "851 5 250 16 NETHER"),
         Map.entry("ore.small.ancientdebris", "852 5 90 16 NETHER"), // placement-gated
-        Map.entry("ore.small.nikolite"    , "875 10 40 4 OVERWORLD NETHER END"));
+        Map.entry("ore.small.nikolite"    , "875 10 40 4 OVERWORLD NETHER END"),
+        // -- :877-878, the RANDOM_SMALL_GEM_ORE pool loop (r7-b-gem-pool-extension) —
+        // 61 rows, all "877 5 250 1 OVERWORLD" (the loop literal; tails = the sanitized
+        // internal names). Pinned name-by-name against the upstream MT.java flag walk.
+        Map.entry("ore.small.sapphire"        , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.ruby"            , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.bluesapphire"    , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.greensapphire"   , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.purplesapphire"  , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.yellowsapphire"  , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.orangesapphire"  , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.emerald"         , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.aquamarine"      , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.morganite"       , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.heliodor"        , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.goshenite"       , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.bixbite"         , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.maxixe"          , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.almandine"       , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.grossular"       , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.pyrope"          , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.spessartine"     , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.andradite"       , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.uvarovite"       , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.redjasper"       , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.oceanjasper"     , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.rainforestjasper", "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.bluejasper"      , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.greenjasper"     , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.yellowjasper"    , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.tigereye"        , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.catseye"         , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.dragoneye"       , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.hawkseye"        , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.blackeye"        , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.tigeriron"       , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.greenaventurine" , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.brownaventurine" , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.yellowaventurine", "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.blackaventurine" , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.blueaventurine"  , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.redaventurine"   , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.fluorite"        , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.redfluorite"     , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.pinkfluorite"    , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.bluefluorite"    , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.greenfluorite"   , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.blackfluorite"   , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.whitefluorite"   , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.yellowfluorite"  , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.orangefluorite"  , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.magentafluorite" , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.spinel"          , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.balasruby"       , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.topaz"           , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.bluetopaz"       , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.tanzanite"       , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.amazonite"       , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.opal"            , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.onyxred"         , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.onyxblack"       , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.peridot"         , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.amethyst"        , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.dioptase"        , "877 5 250 1 OVERWORLD"),
+        Map.entry("ore.small.jade"            , "877 5 250 1 OVERWORLD"));
 
     private static String dimsOf(GTOreWorldgen.SmallOreRow aRow) {
         StringBuilder r = new StringBuilder();
@@ -129,10 +202,10 @@ class GTOreWorldgenDatagenTest {
         return r.isEmpty() ? "-" : r.substring(1);
     }
 
-    /** The 54-row table, pinned row-by-row against the Loader_Worldgen.java transcriptions. */
+    /** The 115-row table, pinned row-by-row against the Loader_Worldgen.java transcriptions. */
     @Test
     void rowTableIsPinned() {
-        assertEquals(54, GTOreWorldgen.ROWS.size(), "53 always-on rows (:800-852) + nikolite (:875)");
+        assertEquals(115, GTOreWorldgen.ROWS.size(), "53 always-on rows (:800-852) + nikolite (:875) + the 61 gem-pool rows (:877-878)");
         Set<String> tSeen = new HashSet<>();
         for (GTOreWorldgen.SmallOreRow tRow : GTOreWorldgen.ROWS) {
             String tUpstream = UPSTREAM_ROWS.get(tRow.name());
@@ -144,7 +217,7 @@ class GTOreWorldgenDatagenTest {
             int tMaxY = Integer.parseInt(tParts[2]);
             int tAmount = Integer.parseInt(tParts[3]);
             String tDims = tParts.length > 4 ? String.join(" ", java.util.Arrays.copyOfRange(tParts, 4, tParts.length)) : "-";
-            assertTrue(tLine >= 800 && tLine <= 875, tRow.name() + " cites the Loader_Worldgen.java row range");
+            assertTrue(tLine >= 800 && tLine <= 878, tRow.name() + " cites the Loader_Worldgen.java row range");
             assertEquals(tMinY, tRow.minY(), tRow.name() + " minY (Loader_Worldgen.java:" + tLine + ")");
             assertEquals(tMaxY, tRow.maxY(), tRow.name() + " maxY (Loader_Worldgen.java:" + tLine + ")");
             assertEquals(tAmount, tRow.amount(), tRow.name() + " amount (Loader_Worldgen.java:" + tLine + ")");
@@ -155,12 +228,12 @@ class GTOreWorldgenDatagenTest {
         assertEquals(UPSTREAM_ROWS.size(), tSeen.size(), "every transcription consumed");
     }
 
-    /** The 91 placement pairs = the verbatim GEN-flag walk: 38 overworld + 20 nether + 33 end. */
+    /** The 152 placement pairs = the verbatim GEN-flag walk: 99 overworld + 20 nether + 33 end. */
     @Test
     void placementPairsArePinned() {
         List<GTOreWorldgen.Placement> tPairs = GTOreWorldgen.placementPairs();
-        assertEquals(91, tPairs.size(), "38 OW + 20 NETHER + 33 END (the coordinator-ruled verbatim walk)");
-        assertEquals(38, tPairs.stream().filter(tPair -> tPair.dim() == GTOreWorldgen.Dim.OVERWORLD).count(), "overworld pairs");
+        assertEquals(152, tPairs.size(), "99 OW + 20 NETHER + 33 END (the coordinator-ruled verbatim walk, r7-b pool rows included)");
+        assertEquals(99, tPairs.stream().filter(tPair -> tPair.dim() == GTOreWorldgen.Dim.OVERWORLD).count(), "overworld pairs");
         assertEquals(20, tPairs.stream().filter(tPair -> tPair.dim() == GTOreWorldgen.Dim.NETHER).count(), "nether pairs (21 table rows − ancientdebris gate)");
         assertEquals(33, tPairs.stream().filter(tPair -> tPair.dim() == GTOreWorldgen.Dim.END).count(), "end pairs");
         // the gate: the ancientdebris row keeps its NETHER dim in the table but produces no pair

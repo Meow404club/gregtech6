@@ -1,0 +1,225 @@
+{
+  "type": "minecraft:ore",
+  "config": {
+    "discard_chance_on_air_exposure": 0.0,
+    "size": 4,
+    "targets": [
+      {
+        "state": {
+          "Name": "gt6:ore_small_granite_spessartine"
+        },
+        "target": {
+          "block": "minecraft:granite",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_diorite_spessartine"
+        },
+        "target": {
+          "block": "minecraft:diorite",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_andesite_spessartine"
+        },
+        "target": {
+          "block": "minecraft:andesite",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_stone_spessartine"
+        },
+        "target": {
+          "predicate_type": "minecraft:tag_match",
+          "tag": "minecraft:stone_ore_replaceables"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_deepslate_spessartine"
+        },
+        "target": {
+          "predicate_type": "minecraft:tag_match",
+          "tag": "minecraft:deepslate_ore_replaceables"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_blackgranite_spessartine"
+        },
+        "target": {
+          "block": "gt6:granite_black",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_redgranite_spessartine"
+        },
+        "target": {
+          "block": "gt6:granite_red",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_basalt_spessartine"
+        },
+        "target": {
+          "block": "gt6:basalt",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_marble_spessartine"
+        },
+        "target": {
+          "block": "gt6:marble",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_limestone_spessartine"
+        },
+        "target": {
+          "block": "gt6:limestone",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_granite_spessartine"
+        },
+        "target": {
+          "block": "gt6:granite",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_diorite_spessartine"
+        },
+        "target": {
+          "block": "gt6:diorite",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_andesite_spessartine"
+        },
+        "target": {
+          "block": "gt6:andesite",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_komatiite_spessartine"
+        },
+        "target": {
+          "block": "gt6:komatiite",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_greenschist_spessartine"
+        },
+        "target": {
+          "block": "gt6:greenschist",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_blueschist_spessartine"
+        },
+        "target": {
+          "block": "gt6:blueschist",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_kimberlite_spessartine"
+        },
+        "target": {
+          "block": "gt6:kimberlite",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_quartzite_spessartine"
+        },
+        "target": {
+          "block": "gt6:quartzite",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_lightprismarine_spessartine"
+        },
+        "target": {
+          "block": "gt6:prismarine_light",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_darkprismarine_spessartine"
+        },
+        "target": {
+          "block": "gt6:prismarine_dark",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_slate_spessartine"
+        },
+        "target": {
+          "block": "gt6:slate",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_shale_spessartine"
+        },
+        "target": {
+          "block": "gt6:shale",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_gravel_spessartine"
+        },
+        "target": {
+          "block": "minecraft:gravel",
+          "predicate_type": "minecraft:block_match"
+        }
+      },
+      {
+        "state": {
+          "Name": "gt6:ore_small_sand_spessartine"
+        },
+        "target": {
+          "block": "minecraft:sand",
+          "predicate_type": "minecraft:block_match"
+        }
+      }
+    ]
+  }
+}

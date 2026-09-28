@@ -133,7 +133,7 @@ public class GT6BedrockOreListPourTest extends GTRecipesOfflineTestBase {
             assertEquals(10000, tRow.getAsJsonArray("outputs").get(2).getAsJsonObject().get("chance").getAsInt());
         }
         assertTrue(tMismatch.length() == 0, "yield-mapping mismatches:" + tMismatch);
-        assertEquals(22, tBroken, "the 53-axis rows ride the broken stone ore (gold.a/gold.b both carry MT.Au)");
-        assertEquals(24, tDust, "the out-of-axis rows ride the dust fallback");
+        assertEquals(24, tBroken, "the axis rows ride the broken stone ore (gold.a/gold.b both carry MT.Au; uraninite/pitchblende joined with r7-a, re-poured by r7-b)");
+        assertEquals(22, tDust, "the out-of-axis rows ride the dust fallback");
     }
 }

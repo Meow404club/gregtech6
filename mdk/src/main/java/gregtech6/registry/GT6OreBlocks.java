@@ -58,14 +58,16 @@ import gregtech6.item.GTMaterialPrefixBlockItem;
  * enumeration (tasks.p30-arch-ore-registration.enumeration.block_rows_per_material).
  *
  * <p><b>Material axis M</b> (the reviewer-corrected口径, 2026-09-16, extended 2026-09-28 by
- * task r7-a-ore-axis-extension): the upstream always-on worldgen small-ore materials
+ * task r7-a-ore-axis-extension and task r7-b-gem-pool-extension): the upstream always-on
+ * worldgen small-ore materials
  * (Loader_Worldgen.java:800-852 + :875 — {@link #WORLDGEN_ORES}) UNION the stone-layer
- * companion materials ({@link #STONE_LAYER_ORES}, the r6-c3 lens preconditions), each
+ * companion materials ({@link #STONE_LAYER_ORES}, the r6-c3 lens preconditions) UNION
+ * the RANDOM_SMALL_GEM_ORE pool gap ({@link #GEM_POOL_ORES}, the r7-b second seam), each
  * passing the authoritative {@link OP#ore}
  * {@code isGeneratingItem} filter (OP.java:1098 setCondition(ORES); the same
  * per-material criterion as the GTMaterialItems.java:146 item walk), UNIFIED across
- * all 26 families and all three forms. M = 53 + 13 = 66 distinct materials; total
- * blocks = 74 x 66 = 4884, pinned by
+ * all 26 families and all three forms. M = 53 + 13 + 56 = 122 distinct materials; total
+ * blocks = 74 x 122 = 9028, pinned by
  * GT6OreBlocksRegistrationTest. (The bare isGeneratingItem walk over the whole
  * MATERIAL_ARRAY measures 618 — nine tenths of it materials no ore placement ever
  * references; that over-registration face was REJECTED in review and removed.)
@@ -386,15 +388,74 @@ public final class GT6OreBlocks {
     );
 
     /**
+     * The RANDOM_SMALL_GEM_ORE pool materials (task r7-b-gem-pool-extension): the 56 pool
+     * members that sit OUTSIDE {@link #WORLDGEN_ORES} and {@link #STONE_LAYER_ORES} — the
+     * second axis seam (the r7-a review finding made quantitative). Upstream pool census
+     * = 61 flagged materials (offline walk over MT.java, 2026-09-28): the 7 gem factories
+     * 48 members — sapphire 7 (MT.java:1380-1386, SET_GEM_VERTICAL), emerald 7 (:1371-1377,
+     * SET_EMERALD), garnet 6 (:1393-1398, SET_RUBY), jasper 6 (:1401-1406, SET_GLASS),
+     * tigereye 6 (:1409-1414, SET_GLASS), aventurine 6 (:1417-1422, SET_GLASS), fluorite
+     * 10 (:1109-1118, SET_RUBY, CaF2 = "Fluorite" internally) — plus 13 inline flags
+     * (:1425-1443). Five of the 61 are already axis members via {@link #STONE_LAYER_ORES}
+     * (Peridot/Uvarovite/Grossular/Spinel/BalasRuby), so THIS list carries exactly the
+     * 56-material gap; 61 - 5 = 56, axis M = 66 + 56 = 122, blocks 74 x 122 = 9028.
+     *
+     * <p>Union semantics: UNLIKE {@link #STONE_LAYER_ORES} these materials DO gain
+     * WorldgenOresSmall rows — the upstream pool loop (Loader_Worldgen.java:877-878)
+     * creates one {@code WorldgenOresSmall(name, T, 5, 250, 1, tGem, GEN_GEMS)} row per
+     * flagged material, ported as the 61 GEN_GEMS rows of {@code GTOreWorldgen.ROWS}
+     * (61, not 56: the loop iterates the whole pool with no axis filter, so the five
+     * stone-layer companions carry upstream small-ore rows too — coordinator ruling
+     * 2026-09-28). All rows ride GEN_OVERWORLD only (GEN_GEMS = CS.java:965 is a
+     * nine-domain list whose other eight carriers have no modern dimension).
+     *
+     * <p>Suppliers again (post-OP.init resolution — the {@link OreFamily} lesson).
+     */
+    public static final List<Supplier<OreDictMaterial>> GEM_POOL_ORES = List.of(
+        // -- sapphire family, 7 (MT.java:1380-1386; Ruby :1381) -------------------------------------
+        () -> MT.Sapphire,                  () -> MT.Ruby,                 () -> MT.BlueSapphire,          // :1380-1382
+        () -> MT.GreenSapphire,             () -> MT.PurpleSapphire,       () -> MT.YellowSapphire,        // :1383-1385
+        () -> MT.OrangeSapphire,                                                                                           // :1386
+        // -- emerald family, 7 (MT.java:1371-1377) ------------------------------------------------------------------
+        () -> MT.Emerald,                   () -> MT.Aquamarine,           () -> MT.Morganite,             // :1371-1373
+        () -> MT.Heliodor,                  () -> MT.Goshenite,            () -> MT.Bixbite,               // :1374-1376
+        () -> MT.Maxixe,                                                                                                   // :1377
+        // -- garnet family remainder, 4 (MT.java:1393-1398; Grossular/Uvarovite already axis) ------------------------
+        () -> MT.Almandine,                 () -> MT.Pyrope,               () -> MT.Spessartine,           // :1393-1396
+        () -> MT.Andradite,                                                                                                // :1397
+        // -- jasper family, 6 (MT.java:1401-1406) -------------------------------------------------------------------
+        () -> MT.Jasper,                    () -> MT.JasperOcean,          () -> MT.JasperRainforest,      // :1401-1403
+        () -> MT.JasperBlue,                () -> MT.JasperGreen,          () -> MT.JasperYellow,          // :1404-1406
+        // -- tigereye family, 6 (MT.java:1409-1414) -----------------------------------------------------------------
+        () -> MT.TigerEyeYellow,            () -> MT.TigerEyeGreen,        () -> MT.TigerEyeRed,           // :1409-1411
+        () -> MT.TigerEyeBlue,              () -> MT.TigerEyeBlack,        () -> MT.TigerIron,             // :1412-1414
+        // -- aventurine family, 6 (MT.java:1417-1422) ---------------------------------------------------------------
+        () -> MT.AventurineGreen,           () -> MT.AventurineBrown,      () -> MT.AventurineYellow,      // :1417-1419
+        () -> MT.AventurineBlack,           () -> MT.AventurineBlue,       () -> MT.AventurineRed,         // :1420-1422
+        // -- fluorite family, 10 (MT.java:1109-1118; CaF2 carries the internal name "Fluorite") ----------------------
+        () -> MT.CaF2,                      () -> MT.FluoriteRed,          () -> MT.FluoritePink,          // :1109-1111
+        () -> MT.FluoriteBlue,              () -> MT.FluoriteGreen,        () -> MT.FluoriteBlack,         // :1112-1114
+        () -> MT.FluoriteWhite,             () -> MT.FluoriteYellow,       () -> MT.FluoriteOrange,        // :1115-1117
+        () -> MT.FluoriteMagenta,                                                                                          // :1118
+        // -- inline flags, 10 (MT.java:1425-1443; Spinel/BalasRuby/Peridot already axis) -----------------------------
+        () -> MT.Topaz,                     () -> MT.BlueTopaz,            () -> MT.Tanzanite,             // :1425-1427
+        () -> MT.Amazonite,                 () -> MT.Opal,                 () -> MT.OnyxRed,               // :1429-1432
+        () -> MT.OnyxBlack,                 () -> MT.Amethyst,             () -> MT.Dioptase,              // :1433-1437
+        () -> MT.Jade                                                                                                      // :1443
+    );
+
+    /**
      * The material axis M (the reviewer-corrected口径, 2026-09-16, extended by
-     * r7-a-ore-axis-extension): the upstream always-on worldgen small-ore materials
-     * ({@link #WORLDGEN_ORES}, Loader_Worldgen.java:800-852 + :875) UNION the stone-layer
-     * companion materials ({@link #STONE_LAYER_ORES}, the r6-c3 lens preconditions), each
-     * passing the authoritative oredict filter {@link OP#ore} {@code isGeneratingItem}
-     * (OP.java:1098 setCondition(ORES) — the same per-material criterion as the
-     * GTMaterialItems.java:146 item walk, whose resolve/dedup shape this walk mirrors),
-     * unified across all families and forms. M = 53 + 13 = 66, total 74 x 66 = 4884,
-     * pinned by GT6OreBlocksRegistrationTest.
+     * r7-a-ore-axis-extension and r7-b-gem-pool-extension): the upstream always-on
+     * worldgen small-ore materials ({@link #WORLDGEN_ORES}, Loader_Worldgen.java:800-852
+     * + :875) UNION the stone-layer companion materials ({@link #STONE_LAYER_ORES}, the
+     * r6-c3 lens preconditions) UNION the RANDOM_SMALL_GEM_ORE pool gap
+     * ({@link #GEM_POOL_ORES}, the r7-b second seam), each passing the authoritative
+     * oredict filter {@link OP#ore} {@code isGeneratingItem} (OP.java:1098
+     * setCondition(ORES) — the same per-material criterion as the GTMaterialItems.java:146
+     * item walk, whose resolve/dedup shape this walk mirrors), unified across all families
+     * and forms. M = 53 + 13 + 56 = 122, total 74 x 122 = 9028, pinned by
+     * GT6OreBlocksRegistrationTest.
      */
     public static List<OreDictMaterial> materialAxis() {
         Set<OreDictMaterial> tSeen = Collections.newSetFromMap(new IdentityHashMap<>());
@@ -403,6 +464,9 @@ public final class GT6OreBlocks {
             addAxisMember(tSupply, tSeen, rAxis);
         }
         for (Supplier<OreDictMaterial> tSupply : STONE_LAYER_ORES) {
+            addAxisMember(tSupply, tSeen, rAxis);
+        }
+        for (Supplier<OreDictMaterial> tSupply : GEM_POOL_ORES) {
             addAxisMember(tSupply, tSeen, rAxis);
         }
         return rAxis;
