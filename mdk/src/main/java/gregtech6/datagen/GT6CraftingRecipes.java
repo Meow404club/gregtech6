@@ -443,6 +443,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (PartFamilyRecipeRow tRow : keyRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
+		// task r6-c4-copper-bridge — the four vanilla copper-ingot rows (the minecraft-namespace
+		// overrides, the vanilla row ids verbatim; the copper-bridge band javadoc at the tail)
+		vanillaBrushBuilder().save(aConsumer, VANILLA_BRUSH_ID);
+		vanillaCopperBlockBuilder().save(aConsumer, VANILLA_COPPER_BLOCK_ID);
+		vanillaLightningRodBuilder().save(aConsumer, VANILLA_LIGHTNING_ROD_ID);
+		vanillaSpyglassBuilder().save(aConsumer, VANILLA_SPYGLASS_ID);
 	}
 	//?} else {
 	/*@Override
@@ -664,6 +670,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (PartFamilyRecipeRow tRow : keyRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
+		// task r6-c4-copper-bridge — the four vanilla copper-ingot rows (the minecraft-namespace
+		// overrides, the vanilla row ids verbatim; the copper-bridge band javadoc at the tail)
+		vanillaBrushBuilder().save(aOutput, VANILLA_BRUSH_ID);
+		vanillaCopperBlockBuilder().save(aOutput, VANILLA_COPPER_BLOCK_ID);
+		vanillaLightningRodBuilder().save(aOutput, VANILLA_LIGHTNING_ROD_ID);
+		vanillaSpyglassBuilder().save(aOutput, VANILLA_SPYGLASS_ID);
 	}
 	*///?}
 
@@ -5227,6 +5239,94 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
 				.unlockedBy("has_plate", has(tPlate)),
 				new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+	}
+
+	// -----------------------------------------------------------------------
+	// task r6-c4-copper-bridge — the vanilla-copper recipe bridge (the C4
+	// fusion ruling: GT copper is the ONLY copper source — r6-32 suppresses the
+	// vanilla copper ore blobs; this band keeps the vanilla copper USES unbroken
+	// by re-keying the four 1.20.1 rows that consume {@code minecraft:copper_ingot}
+	// onto the platform ingot tag). The tag face needs NO new datagen:
+	// forge:ingots/copper already carries BOTH members at runtime — the Forge
+	// jar's own default (tmp/refs/forge-api/forge-1.20.1 .../ingots/copper.json
+	// = [minecraft:copper_ingot]) plus this port's datagen member
+	// gt6:ingot_copper (data/forge/tags/items/ingots/copper.json, and the 21.1
+	// c: twin via GT6ItemTags MATERIALS_NAMESPACE + the neoforgeTagFaces graft).
+	// The 1.20.1 census of the copper_ingot crafting-INPUT face is exactly these
+	// four rows (brush / copper_block / lightning_rod / spyglass — no copper
+	// armor, doors or trapdoors exist in 1.20.1; the task card's "自查确认后声明"
+	// face). Scope cuts, each self-consistent:
+	//   - the reverse rows copper_ingot.json / copper_ingot_from_waxed_copper_block
+	//     consume the VANILLA copper block item and stay vanilla — the overridden
+	//     copper_block row still outputs the vanilla block, so the oxidation/wax
+	//     chain keeps working (the GT storage block gt6:block_ingot_copper is a
+	//     different block and deliberately NOT on this face);
+	//   - the smelting/blasting rows are the OUTPUT face (vanilla copper ingot
+	//     from the suppressed vanilla ores) — untouched; the GT ore chain
+	//     already yields GT ingots (the card's 产物面 ruling).
+	// Each row reproduces the vanilla pattern/category/criterion verbatim
+	// (criterion name has_copper_ingot, the vanilla JSONs), so the generated
+	// unlock advancements land at the vanilla ids (minecraft:recipes/&lt;folder&gt;/...)
+	// and override them with the tag criteria — the unlock toast then fires on
+	// EITHER copper face. On the 1.21.1 leg the mirror (GT6DualDirectoryFaces
+	// .adaptRecipes21) re-keys the singular face to c:ingots/copper; the plural
+	// advancement face is unlock-toast-only sugar there (the repo's accepted
+	// 21.1 advancement gap), the recipes themselves ride the mirrored singular
+	// band.
+	// -----------------------------------------------------------------------
+
+	/** The copper-bridge input tag — {@code forge:ingots/copper} (1.20.1) / {@code c:ingots/copper} (21.1). */
+	private static TagKey<Item> copperIngotTag() {
+		return GT6ItemTags.materialTag(GT6ItemTags.INGOTS_FAMILY, MT.Copper);
+	}
+
+	/** The four vanilla-namespace override ids — the vanilla row ids verbatim. */
+	public static final ResourceLocation VANILLA_BRUSH_ID = new ResourceLocation("minecraft", "brush");
+	public static final ResourceLocation VANILLA_COPPER_BLOCK_ID = new ResourceLocation("minecraft", "copper_block");
+	public static final ResourceLocation VANILLA_LIGHTNING_ROD_ID = new ResourceLocation("minecraft", "lightning_rod");
+	public static final ResourceLocation VANILLA_SPYGLASS_ID = new ResourceLocation("minecraft", "spyglass");
+
+	/** The vanilla brush row (pattern/tools category verbatim) with the tag input. */
+	private ShapedRecipeBuilder vanillaBrushBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Items.BRUSH)
+				.pattern("X")
+				.pattern("#")
+				.pattern("I")
+				.define('X', Items.FEATHER)
+				.define('#', copperIngotTag())
+				.define('I', Items.STICK)
+				.unlockedBy("has_copper_ingot", has(copperIngotTag()));
+	}
+
+	/** The vanilla copper-block row (the 9-ingot cube; the OUTPUT stays the vanilla block — the oxidation chain rides it). */
+	private ShapedRecipeBuilder vanillaCopperBlockBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, Items.COPPER_BLOCK)
+				.pattern("###")
+				.pattern("###")
+				.pattern("###")
+				.define('#', copperIngotTag())
+				.unlockedBy("has_copper_ingot", has(copperIngotTag()));
+	}
+
+	/** The vanilla lightning-rod row (the 3-ingot column). */
+	private ShapedRecipeBuilder vanillaLightningRodBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Items.LIGHTNING_ROD)
+				.pattern("#")
+				.pattern("#")
+				.pattern("#")
+				.define('#', copperIngotTag())
+				.unlockedBy("has_copper_ingot", has(copperIngotTag()));
+	}
+
+	/** The vanilla spyglass row ('#' = amethyst shard, 'X' = the copper tag). */
+	private ShapedRecipeBuilder vanillaSpyglassBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Items.SPYGLASS)
+				.pattern(" # ")
+				.pattern(" X ")
+				.pattern(" X ")
+				.define('#', Items.AMETHYST_SHARD)
+				.define('X', copperIngotTag())
+				.unlockedBy("has_copper_ingot", has(copperIngotTag()));
 	}
 
 }
