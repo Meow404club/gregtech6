@@ -9594,3 +9594,67 @@ overlay/front is the static art. sha256 manifest (21 families x 6):
 - `gt6/textures/block/sensors/tpsmeter/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/tpsmeter/overlay_front.png` `4a909e8e5fb4ad511d81084f3785ed050fe856950c8d96764729b692e8ae31a6`
 - `gt6/textures/block/sensors/tpsmeter/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+
+## task r8-tex-pipe-textures — the pipe connector families' material-set dual-layer band
+
+The three pipe connector families (fluid / item / logistics wire) leave the cube_all
+single-placeholder era for the upstream material-set system: every material-icon render
+is TWO passes (pass 0 = the set art multiplied by mRGBa, pass 1 = the untinted
+`<SET>_OVERLAY` black outline, TextureSet.java:145-181); the connector side segment picks
+INDEX_BLOCK_PIPE_SIDE = the `pipeSide` art added to EVERY set (GT_API.java:158
+`addToAll`). The live pipe sets are exactly two: WOOD (the 2 fluid rows — the MT wood
+factory = SET_WOOD) and COPPER (the 18 item pipe rows — Brass/Constantan/CobaltBrass ride
+the clloymachine factory = SET_COPPER, MT.java:716/788). Every file below is a
+byte-identical borrow (sha256 ours == upstream, verified at copy time):
+
+- `gt6/textures/block/materialicons/wood/pipe_side.png` (upstream `materialicons/WOOD/pipeSide.png`) `eb13d1a4ccb05df6ca8d14214631b8b797502ee60eaef0e8c990df439c2bb10a`
+- `gt6/textures/block/materialicons/wood/pipe_side_overlay.png` (upstream `materialicons/WOOD/pipeSide_OVERLAY.png`) `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `gt6/textures/block/materialicons/copper/pipe_side.png` (upstream `materialicons/COPPER/pipeSide.png`) `93307398f8105dcf985714999867029e39d2f108db35d59290d56fb61ccef8ee`
+- `gt6/textures/block/materialicons/copper/pipe_side_overlay.png` (upstream `materialicons/COPPER/pipeSide_OVERLAY.png`) `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `gt6/textures/block/iconsets/logistics_wire.png` (upstream `iconsets/LOGISTICS_WIRE.png`) `1b383e640e9882b2cf927dde24cc0a1563c23e025224bb2846946f6a958e731e`
+- `gt6/textures/block/iconsets/logistics_wire_overlay.png` (upstream `iconsets/LOGISTICS_WIRE_OVERLAY.png`) `6a67c828c68a9fc9be55ff7ef53dc837d66413432d5c5a1cc129ffcd3c1ad046`
+- `gt6/textures/block/iconsets/pipe_restrictor.png` (upstream `iconsets/PIPE_RESTRICTOR.png`) `a4475239dde4c56f32edd83170659de295b39a9b7f01fcabf9800e86767ebbdf`
+
+Semantics per family:
+
+- **fluid pipes** — the two wood rows share `materialicons/wood/pipe_side` (+ its
+  overlay); the row material MT.Wood tints the base through the GTMachinePaintTint chain
+  (the addFluidPipes 26000 NBT_MATERIAL column, Loader :1846; upstream registers
+  NBT_COLOR = getRGBInt(fRGBaSolid), so the unpainted look is the wood colour, not white).
+- **item pipes** — the 12 plain rows share `materialicons/copper/pipe_side`; the six
+  restrictive rows render the SAME set art plus the dedicated third upstream pass — the
+  PIPE_RESTRICTOR plate (MultiTileEntityPipeItem.java:280-281 `mRenderType` 1; the
+  :76-82 registration rows carry NBT_PIPERENDER 1). Probe record: there is NO iconIndex
+  override for the restrictive variants — the base art and tint are identical to the
+  plain rows, only the restrictor band differs.
+- **logistics wire** — its own dedicated pair (`iconsets/logistics_wire` + overlay),
+  NOT the pipeSide set art: MultiTileEntityWireLogistics.java:48-49 renders
+  BlockTextureMulti(LOGISTICS_WIRE x mRGBa, LOGISTICS_WIRE_OVERLAY). The registration
+  NBT_MATERIAL is MT.NULL (Loader :1819), so the base art shows as-authored; the tint
+  carrier resolves null and the white identity passes through. Probe note: the research
+  card's "machines/logistics/ 8+8 colored/overlay" guess is DISPROVEN for the wire —
+  that folder is the (unported) logistics barrel family's art; the wire's pair lives in
+  iconsets/.
+
+Model form: the wire-family grammar (tintindex 0 body cube over the shared per-set model)
+generalized to N untinted 0.01 six-face decal bands (the addConverterModel decal shape),
+`cutout` render type (GT6PaintableRenderTypeCensusTest universe). Still ONE shared model
+per set (+ the restrictive twin) over all 64 CONNECTIONS variants per block.
+
+Retired placeholders (generated inline, no script entry — deleted outright):
+`block/fluid_pipe_wood.png`, `block/item_pipe_restrictive.png`,
+`block/logistics_wire.png`. KEPT: `block/item_pipe.png` — the 16 LD wire placeholder
+rows (addLDEnergyFamilies, GT6BlockStates) still consume it; that family's texture
+upgrade is a separate card's domain.
+
+DECLARED DEFERS (not this card):
+
+- Connection-aware geometry (the core + per-diameter arms baked model, upstream
+  TileEntityBase10ConnectorRendered.java:264-265 pipeTiny..Huge picks) = the L-level
+  render-pool card. The fallback cube shows the pipeSide art on every face; the
+  per-diameter connected-section art is NOT borrowed for it.
+- The per-set pipeTiny/Small/Medium/Large/Huge art (the connected-section picks) — not
+  borrowed; joins the geometry card.
+- Spray-paint persistence on pipe drops (the GTItemPaintTint lambda reads paint NBT if a
+  stack ever carries it; the pipe BlockItems do not write BE NBT on drop yet — a pipe
+  BEHAVIOUR gap, not a texture gap).
