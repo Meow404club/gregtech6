@@ -5122,22 +5122,11 @@ card. Upstream license CC0 (see above).
 - `block/wiremill_overlay_front_active.png` (FRAME 0 of 10) `f69cdb02d3fdc1d8a7ea11d678964b42e6d6436e6d076c08852fef06811f3b8d`
 - `block/wiremill_overlay_front_running.png` (FRAME 0 of 2) `88be632c759d7cfee9a881d6efdaca871a58351ba6407e4c2f3d4e9dc7964453`
 
-Sensor block textures borrowed from **GregTech 6**
-(https://github.com/GregTech6/gregtech6), snapshot
-`v6.17.06-22-g3703e4030`, files
-`src/main/resources/assets/gregtech/textures/blocks/machines/redstone/sensors/<name>/` —
-task p26-sensors-core. Each port texture is the upstream `colored/front.png`
-(16x16 plate) with the sensor's own `overlay/front.png` (64x64 digit-strip,
-box-downscaled 4x, straight-alpha) baked src-over into ONE 16x16 canonical PNG
-(the p19 distillery-front bake precedent); upstream renders the two layers
-separately and tints the colored layer with the material colour — the port
-renders the baked result un-tinted on all six faces of the oriented cube
-(declared deviation, the thin-plate + live-digit render stack
-(MultiTileEntitySensor.java:143-261) is the render pool):
-
-- `gt6/textures/block/progressmeter.png` `c11390a9093b09f43680ba324d18e97f0bc0925968ae921bb6a0e2b19c3e5a3f`
-- `gt6/textures/block/fluidometer.png` `521fe66700236205a9fa447283260992d2865e6cee7a8fbacbdb4d54c36f944c`
-- `gt6/textures/block/electrometer.png` `faf796a2de3d874b247ee98c585b1c881c97bf0a36f9bcd6b6797a0388725fd2`
+Sensor block textures (the p26-sensors-core bake), RETIRED by task r8-tex-sensors:
+the three src-over front bakes (`gt6/textures/block/{progressmeter,fluidometer,
+electrometer}.png`) are deleted — the family now borrows the upstream two-layer
+art verbatim (126 PNGs, the `Sensor block textures — two-layer faceted borrow,
+task r8-tex-sensors` section at the tail of this ledger).
 
 
 GT6 item OVERLAY pass textures, task p27-tool-overlay-assets: the 2785
@@ -9037,42 +9026,15 @@ by content):
 - `plantalyzer_overlay_top_active.png` — `c8b55df2525bff5559a4e54090f1a886ed18890191c1c4eac012b5e990bddcb9`
 - `plantalyzer_overlay_top_running.png` — `281b4be07d722a32965bcb7c24b0f83c082f1d70d09337afcbd83b87af5c2d0f`
 
-Sensor block textures, batch 2 (15 rows), task p34-sensors-trivial-14 — same
-borrow/bake recipe as the three pioneer rows above (upstream snapshot
-`v6.17.06-22-g3703e4030`, `src/main/resources/assets/gregtech/textures/blocks
-/machines/redstone/sensors/<name>/`): the upstream `colored/front.png` with the
-sensor's own `overlay/front.png` (box-downscaled 4x, straight-alpha) baked
-src-over into ONE 16x16 canonical PNG, pixel-identical to the pioneer bake
-(PIL alpha_composite form re-verified against the three ledger hashes before
-the batch run):
-
-- `gt6/textures/block/thermometer.png` `5c8786895888a6369aadcaa6bd098a7aea1b693663125b5e2f0146a67b318b90`
-- `gt6/textures/block/luminometer.png` `285ab4f92673149366770be6926f23f9c1e38824fc9ee93dbbaadb1736e26eed`
-- `gt6/textures/block/chronometer.png` `65c20ba26c48cb23bdf3ad98f2d3edd3dd32f345fdecefb51278e1669ccb36df`
-- `gt6/textures/block/gibblometer.png` `06b8c076747878002c91f85bf3449e662e6132ebc5ac3bdd711468d09d0d8d51`
-- `gt6/textures/block/kilogibblometer.png` `854e40cf70b82c2d64615e0d5e6cbdf071ee83371ec4f73fa8e4cc5bd8bd2ecf`
-- `gt6/textures/block/itemometer.png` `ba7c08807d668e3281371534becd66488461cdb98dc3a52baae75f3ac3cef14e`
-- `gt6/textures/block/stackometer.png` `4e5381ca39b2589b493688c38a63e1df7c18b605fba3a3eff747717656995a9c`
-- `gt6/textures/block/bucketometer.png` `ba12c22cb3593f9557a5743bdb8fbea78dded541d2e6ded976cd8048f972f1dc`
-- `gt6/textures/block/kilobucketometer.png` `71524688233e99fcb5618c4e1cfe74d7ff61f23a7b3a54dab7973f8ea2c3ec7e`
-- `gt6/textures/block/lightweightometer.png` `744408246f3e7ff58bd962a332356688f6d5f68dad3bc46be399a300c6201871`
-- `gt6/textures/block/mediumweightometer.png` `7ae51a34cac58c2828f95265a387530e6e2278615cec706c80145b8b495c7b1a`
-- `gt6/textures/block/heavyweightometer.png` `3bdd5c49cdb0c8701f9cbbc796768d84cd9df9244c00485dea72dc76a9f392e2`
-- `gt6/textures/block/superheavyweightometer.png` `d8199fb95821db4132842b9c15d86863ac3bb437e76167145c2755a1c1249a05`
-- `gt6/textures/block/tpsmeter.png` `7571093ede617a3d1c88579d50faf419df52bc6c991337551084d8c840b0de01`
-- `gt6/textures/block/playercounter.png` `2013a9e65bb3a28603c390fe73f5f1a2d0feab28048b3410837c6fcb45ba93ed`
-
-Sensor block textures, batch 3 (3 rows, the pool closure), task p37-sensors-3 —
-same borrow/bake recipe as the pioneer + batch-2 rows above (upstream snapshot
-`v6.17.06-22-g3703e4030`, `src/main/resources/assets/gregtech/textures/blocks
-/machines/redstone/sensors/<name>/`): the upstream `colored/front.png` with the
-sensor's own `overlay/front.png` (box-downscaled 4x, straight-alpha) baked
-src-over into ONE 16x16 canonical PNG (PIL alpha_composite form re-verified
-against the batch-2 tpsmeter ledger hash before the batch run):
-
-- `gt6/textures/block/tachometer.png` `d04a519057b41bc531e855101ed14ac247b62d0b53566b9db19447721f4a6e6f`
-- `gt6/textures/block/geigercounter.png` `2cf5b552cd5b61124eeaac3dfaf6e42ff630a4967053f8f03c4f6706e3aad2cb`
-- `gt6/textures/block/laserometer.png` `56e118d3de4ddf627473f80a143d017d5fc7cc9b56378851da11d7cfe69f007c`
+Sensor block textures, batches 2+3 (15+3 rows, tasks p34-sensors-trivial-14 and
+p37-sensors-3), RETIRED by task r8-tex-sensors: the fifteen src-over front bakes
+(`gt6/textures/block/{thermometer,luminometer,chronometer,gibblometer,
+kilogibblometer,itemometer,stackometer,bucketometer,kilobucketometer,
+lightweightometer,mediumweightometer,heavyweightometer,superheavyweightometer,
+tpsmeter,playercounter,tachometer,geigercounter,laserometer}.png`) are deleted —
+the whole 21-family census now borrows the upstream two-layer art verbatim (the
+`Sensor block textures — two-layer faceted borrow, task r8-tex-sensors` section
+at the tail of this ledger).
 Bumbliary GUI pair textures, task p34-bumbliary-gui:
 `gt6/textures/gui/machines/bumbliary.png` and
 `gt6/textures/gui/machines/bumbliaryadvanced.png` come from upstream
@@ -9486,3 +9448,149 @@ GT6BlockStates — NOT missing: their BlockItem models live in GT6ItemModels.jav
 (the placeables band, `withExistingParentUnchecked` over their own block models,
 the vanilla jack_o_lantern form). Their block models are faceted element models, so
 the ok3D classification holds; no action.
+
+Sensor block textures — two-layer faceted borrow, task r8-tex-sensors: the 126
+PNGs under `gt6/textures/block/sensors/<family>/{colored,overlay}_{front,back,side}.png`
+(one pair per face for all 21 sensor families) come from upstream
+`https://github.com/GregTech6/gregtech6` snapshot `v6.17.06-22-g3703e4030`, files
+`src/main/resources/assets/gregtech/textures/blocks/machines/redstone/sensors/<family>/
+{colored,overlay}/{front,back,side}.png`, byte-identical to upstream, sha256
+verified per file. This supersedes the p26/p34/p37 src-over front bakes (their
+21 flat `gt6/textures/block/<name>.png` composites are deleted — the retirement
+notes in situ above): the port models are now the addConverterModel two-layer
+grammar minus the tint seat — untinted colored body (front on north, the FACING
+face) + six 0.01 overlay plates, cutout render type. Alpha ruling recorded: all
+63 colored PNGs are fully opaque 16x16, all 63 overlay PNGs carry transparent
+texels (the overlay front is the 64x64 digit strip) — the shells need cutout,
+the body tolerates it (the opaque colored texels simply never discard). Zero
+tintindex: the rows register NBT-less (Loader_MultiTileEntities.java:1979-1999)
+so upstream mRGBa is white = the colored art displays its own colours. The
+upstream pass1-6 live digit boards (CHAR_* sprite stack, MultiTileEntitySensor
+.java:143-261) stay the r8-pool-gauges render-pool defer — the borrowed
+overlay/front is the static art. sha256 manifest (21 families x 6):
+- `gt6/textures/block/sensors/bucketometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/bucketometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/bucketometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/bucketometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/bucketometer/overlay_front.png` `4fa2cf14f0332a3c5abbfa5b1dca6f79b2c8c4fa4af2d55625b01e05094d4a87`
+- `gt6/textures/block/sensors/bucketometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/chronometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/chronometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/chronometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/chronometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/chronometer/overlay_front.png` `2a667f939ecb463d5ec0b1ba907e877a6e75f1df4d2f36299841e19e95da24e0`
+- `gt6/textures/block/sensors/chronometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/electrometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/electrometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/electrometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/electrometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/electrometer/overlay_front.png` `5c28d9a627936958bcbdcb26c4c460ba106177ebc582071163606f6a1048e238`
+- `gt6/textures/block/sensors/electrometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/fluidometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/fluidometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/fluidometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/fluidometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/fluidometer/overlay_front.png` `08a5a6dbfc5a864a9cd6aa35ff33ba1b97b44e65912d0caa500e726ac327bf7d`
+- `gt6/textures/block/sensors/fluidometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/geigercounter/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/geigercounter/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/geigercounter/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/geigercounter/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/geigercounter/overlay_front.png` `b4e405f94a97dc04557f99bb79339f0dc3be2a800ebbe6ff36c89720eeafb0d7`
+- `gt6/textures/block/sensors/geigercounter/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/gibblometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/gibblometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/gibblometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/gibblometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/gibblometer/overlay_front.png` `226a11410bc89854c503e679eb77cf3f506f42cff6f9d9913f1b1d9222bbfba1`
+- `gt6/textures/block/sensors/gibblometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/heavyweightometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/heavyweightometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/heavyweightometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/heavyweightometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/heavyweightometer/overlay_front.png` `1d415638ce9de7f4517bcc93731f0cd98605a08ffa672a8693a9468cccec1e46`
+- `gt6/textures/block/sensors/heavyweightometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/itemometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/itemometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/itemometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/itemometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/itemometer/overlay_front.png` `6c9e2f2206569dd5e80df0f04621f3820923f1d24cdee3f0e69d55f1c21c5b46`
+- `gt6/textures/block/sensors/itemometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/kilobucketometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/kilobucketometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/kilobucketometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/kilobucketometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/kilobucketometer/overlay_front.png` `cc22308f935bf9d252ed868aed407eaf77ef9f2a2955f4e9d512bc50a86517f9`
+- `gt6/textures/block/sensors/kilobucketometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/kilogibblometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/kilogibblometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/kilogibblometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/kilogibblometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/kilogibblometer/overlay_front.png` `78da3cd21c1255fe113801929e624dcf99b2756bbf695b33d56d86e769830c83`
+- `gt6/textures/block/sensors/kilogibblometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/laserometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/laserometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/laserometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/laserometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/laserometer/overlay_front.png` `53b39f401f43613bd970ad07132acfaca314e2f1712f23c409e2c937945d96d4`
+- `gt6/textures/block/sensors/laserometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/lightweightometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/lightweightometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/lightweightometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/lightweightometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/lightweightometer/overlay_front.png` `387cc3e78f7e23cacbabaa9a127ec503a30b69a390e731dd26cb62bdf940acd6`
+- `gt6/textures/block/sensors/lightweightometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/luminometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/luminometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/luminometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/luminometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/luminometer/overlay_front.png` `63da87fff8ab320775068583f0c7a29eedcb9bea10a363e9d5abdfbf54695390`
+- `gt6/textures/block/sensors/luminometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/mediumweightometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/mediumweightometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/mediumweightometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/mediumweightometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/mediumweightometer/overlay_front.png` `56f9f435a796f53d8b3deb4c022f6ada01b34414cc96f63e91e055b8bc71e58a`
+- `gt6/textures/block/sensors/mediumweightometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/playercounter/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/playercounter/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/playercounter/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/playercounter/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/playercounter/overlay_front.png` `ebbea7b9d4a75e552b67d055bb1fc8c9088b4a503120463455f463a9b686ea79`
+- `gt6/textures/block/sensors/playercounter/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/progressmeter/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/progressmeter/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/progressmeter/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/progressmeter/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/progressmeter/overlay_front.png` `f44441e5059303b75757aeaff1c5b756c35ab65a6c92618daed64e8cd3c7f9db`
+- `gt6/textures/block/sensors/progressmeter/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/stackometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/stackometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/stackometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/stackometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/stackometer/overlay_front.png` `c0dc3a46c4c04d425b0946624a2d5cb76aac38877b43050953775263591aa6e8`
+- `gt6/textures/block/sensors/stackometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/superheavyweightometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/superheavyweightometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/superheavyweightometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/superheavyweightometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/superheavyweightometer/overlay_front.png` `576dc4b38a9834385c09c6daffdee4596174c5b5bb1f07fb80348ecd9699ab62`
+- `gt6/textures/block/sensors/superheavyweightometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/tachometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/tachometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/tachometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/tachometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/tachometer/overlay_front.png` `260dd3b503864eb7076531f5e8f26c2e7fa105def47644956a644fdfbbab84d7`
+- `gt6/textures/block/sensors/tachometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/thermometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/thermometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/thermometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/thermometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/thermometer/overlay_front.png` `e1f013a1d442694429065ca406f650b838b363d97cae0e1160c0ef7b900fd3cb`
+- `gt6/textures/block/sensors/thermometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/tpsmeter/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/tpsmeter/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
+- `gt6/textures/block/sensors/tpsmeter/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/sensors/tpsmeter/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/sensors/tpsmeter/overlay_front.png` `4a909e8e5fb4ad511d81084f3785ed050fe856950c8d96764729b692e8ae31a6`
+- `gt6/textures/block/sensors/tpsmeter/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
