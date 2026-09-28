@@ -48,6 +48,9 @@ public class GT6JadePlugin implements IWailaPlugin {
 		// 锅炉族服务端腿（task r5-jade-boiler）：单方块锅炉罐 + 大型锅炉同一 provider 同一
 		// 格式，体内双 concrete instanceof 分发（GT6BoilerProvider 类 doc）。
 		aRegistration.registerBlockDataProvider(GT6BoilerProvider.INSTANCE, TileEntityBase01Root.class);
+		// 转换器/引擎族服务端腿（task r5-jade-converters）：变压器/dynamo/引擎/燃烧箱/电池箱
+		// 等 ~19 BE，体内 writeFamilyData instanceof 全族分发（GT6CrucibleProvider N 分支版）。
+		aRegistration.registerBlockDataProvider(GT6ConverterProvider.INSTANCE, TileEntityBase01Root.class);
 	}
 
 	@Override
@@ -63,6 +66,9 @@ public class GT6JadePlugin implements IWailaPlugin {
 		// 锅炉族客户端腿（task r5-jade-boiler）：GTEntityBlock 全覆盖两锅炉方块
 		// （GT6Boilers.BoilerTankBlock / GTLargeBoilerBlock 同基类），体内键门分发。
 		aRegistration.registerBlockComponent(GT6BoilerProvider.INSTANCE, GTEntityBlock.class);
+		// 转换器/引擎族客户端腿（task r5-jade-converters）：GTEntityBlock 全覆盖族内方块
+		// （电变/动力机/引擎方块均经它），体内 KEY_UNIT 键门分发（GT6CrucibleProvider 同门）。
+		aRegistration.registerBlockComponent(GT6ConverterProvider.INSTANCE, GTEntityBlock.class);
 	}
 
 }
