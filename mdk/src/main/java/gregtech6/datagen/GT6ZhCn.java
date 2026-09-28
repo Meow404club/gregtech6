@@ -19,6 +19,7 @@ import gregtech6.jade.GT6ConverterProvider;
 import gregtech6.jade.GT6FluidProvider;
 import gregtech6.jade.GT6MachineProvider;
 import gregtech6.jei.GT6JeiPlugin;
+import gregtech6.jei.GT6RecipeMapViewerMeta;
 import gregtech6.registry.GT6BookText;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GT6OreBlocks;
@@ -146,6 +147,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addBookUnits();         // task p35-books-written — the 15 written-book display names (hand rows, the tsv direct band; the dump carries zero book-title faces)
 		addLongDistancePipes(); // task p35-long-distance-pipes — the 16 wire metas + the two endpoints (hand rows, the dump faces)
 		addTechnologicalComponents(); // task debt-emitter-sensor-generators — the 30 component names (dump faces verbatim)
+		addRecipeMapViewerUnits(); // task r6-29-34a — the 72 RM titles + the 16 cost-line keys (hand rows, the tsv direct band)
 	}
 
 	/**
@@ -1711,6 +1713,106 @@ public class GT6ZhCn extends LanguageProvider {
 	}
 
 	/** Hand-row join: the key IS the final gt6 lang key (status=hand direct rows); skip absent/review rows. */
+	/**
+	 * The generic RM viewer faces zh (task r6-29-34a, GitHub #29b) — the 72 visible map
+	 * titles over the shared {@link GT6RecipeMapViewerMeta#titleKey} formula plus the 16
+	 * cost-line label keys, riding the reference table's hand layer (the tsv direct band,
+	 * regen + py hand map land in the SAME commit). The title wording reuses the existing
+	 * zh machine-name faces where one exists (粉碎机/搅拌机/辊压机/蒸馏塔/液化炉/焙烧炉…);
+	 * squeezer 压榨机 deliberately diverges from the drifted row.machine.squeezer 榨汁机
+	 * face to keep the two tabs (Squeezer/Juicer) distinct.
+	 */
+	private void addRecipeMapViewerUnits() {
+		addDirect("gt6.jei.recipe_map.cokeoven");
+		addDirect("gt6.jei.recipe_map.shredder");
+		addDirect("gt6.jei.recipe_map.crusher");
+		addDirect("gt6.jei.recipe_map.lathe");
+		addDirect("gt6.jei.recipe_map.fuels_engine");
+		addDirect("gt6.jei.recipe_map.fuels_fluidbed");
+		addDirect("gt6.jei.recipe_map.fuels_burn");
+		addDirect("gt6.jei.recipe_map.fuels_gas");
+		addDirect("gt6.jei.recipe_map.distillery");
+		addDirect("gt6.jei.recipe_map.drying");
+		addDirect("gt6.jei.recipe_map.mixer");
+		addDirect("gt6.jei.recipe_map.burnmixer");
+		addDirect("gt6.jei.recipe_map.sifter");
+		addDirect("gt6.jei.recipe_map.compressor");
+		addDirect("gt6.jei.recipe_map.wiremill");
+		addDirect("gt6.jei.recipe_map.rollingmill");
+		addDirect("gt6.jei.recipe_map.extruder");
+		addDirect("gt6.jei.recipe_map.anvil");
+		addDirect("gt6.jei.recipe_map.anvil_bend");
+		addDirect("gt6.jei.recipe_map.bath");
+		addDirect("gt6.jei.recipe_map.fermenter");
+		addDirect("gt6.jei.recipe_map.loom");
+		addDirect("gt6.jei.recipe_map.pressurewasher");
+		addDirect("gt6.jei.recipe_map.squeezer");
+		addDirect("gt6.jei.recipe_map.juicer");
+		addDirect("gt6.jei.recipe_map.bedrockorelist");
+		addDirect("gt6.jei.recipe_map.clustermill");
+		addDirect("gt6.jei.recipe_map.rollbender");
+		addDirect("gt6.jei.recipe_map.rollformer");
+		addDirect("gt6.jei.recipe_map.centrifuge");
+		addDirect("gt6.jei.recipe_map.sharpener");
+		addDirect("gt6.jei.recipe_map.cutter");
+		addDirect("gt6.jei.recipe_map.boxinator");
+		addDirect("gt6.jei.recipe_map.unboxinator");
+		addDirect("gt6.jei.recipe_map.sluice");
+		addDirect("gt6.jei.recipe_map.steamcracking");
+		addDirect("gt6.jei.recipe_map.catalyticcracking");
+		addDirect("gt6.jei.recipe_map.coagulator");
+		addDirect("gt6.jei.recipe_map.cryomixer");
+		addDirect("gt6.jei.recipe_map.magneticseparator");
+		addDirect("gt6.jei.recipe_map.injector");
+		addDirect("gt6.jei.recipe_map.laminator");
+		addDirect("gt6.jei.recipe_map.autoclave");
+		addDirect("gt6.jei.recipe_map.freezer");
+		addDirect("gt6.jei.recipe_map.polarizer");
+		addDirect("gt6.jei.recipe_map.lightning");
+		addDirect("gt6.jei.recipe_map.slicer");
+		addDirect("gt6.jei.recipe_map.laserengraver");
+		addDirect("gt6.jei.recipe_map.welder");
+		addDirect("gt6.jei.recipe_map.electrolyzer");
+		addDirect("gt6.jei.recipe_map.printer");
+		addDirect("gt6.jei.recipe_map.scannervisuals");
+		addDirect("gt6.jei.recipe_map.scannermolecular");
+		addDirect("gt6.jei.recipe_map.generifier");
+		addDirect("gt6.jei.recipe_map.distillationtower");
+		addDirect("gt6.jei.recipe_map.cryodistillationtower");
+		addDirect("gt6.jei.recipe_map.melter");
+		addDirect("gt6.jei.recipe_map.smelter");
+		addDirect("gt6.jei.recipe_map.fuels_hot");
+		addDirect("gt6.jei.recipe_map.roaster");
+		addDirect("gt6.jei.recipe_map.implosioncompressor");
+		addDirect("gt6.jei.recipe_map.massfab");
+		addDirect("gt6.jei.recipe_map.fusionreactor");
+		addDirect("gt6.jei.recipe_map.crystallisationcrucible");
+		addDirect("gt6.jei.recipe_map.microwave");
+		addDirect("gt6.jei.recipe_map.cooker");
+		addDirect("gt6.jei.recipe_map.toolhead");
+		addDirect("gt6.jei.recipe_map.mortar");
+		addDirect("gt6.jei.recipe_map.hammer");
+		addDirect("gt6.jei.recipe_map.press");
+		addDirect("gt6.jei.recipe_map.canner");
+		addDirect("gt6.jei.recipe_map.replicator");
+		addDirect("gt6.jei.cost.costs");
+		addDirect("gt6.jei.cost.usage");
+		addDirect("gt6.jei.cost.tier");
+		addDirect("gt6.jei.cost.tier_unspecified");
+		addDirect("gt6.jei.cost.power");
+		addDirect("gt6.jei.cost.gain");
+		addDirect("gt6.jei.cost.output");
+		addDirect("gt6.jei.cost.chance");
+		addDirect("gt6.jei.cost.chance_each");
+		addDirect("gt6.jei.cost.time");
+		addDirect("gt6.jei.cost.unit_ticks");
+		addDirect("gt6.jei.cost.unit_secs");
+		addDirect("gt6.jei.cost.unit_mins");
+		addDirect("gt6.jei.cost.start");
+		addDirect("gt6.jei.cost.temperature");
+		addDirect("gt6.jei.cost.not_consumed");
+	}
+
 	private void addDirect(String aKey) {
 		RefRow tRow = reference.get("direct") == null ? null : reference.get("direct").get(aKey);
 		if (tRow != null && !tRow.skipped()) add(aKey, tRow.value());

@@ -152,6 +152,9 @@ public class GT6EmiPlugin implements EmiPlugin {
 		for (gregtech6.recipes.RecipeMap tMap : gregtech6.jei.GT6RecipeMapViewerMeta.visibleMaps()) {
 			GT6RecipeMapEmiCategory tCategory = GT6RecipeMapEmiCategory.CATEGORIES.apply(tMap);
 			registry.addCategory(tCategory);
+			// task r6-29-34a — the workstation twin of the JEI leg's RM catalysts (the JEMI
+			// red line): the same machine stack the shared GT6RecipeMapIcons table hands out
+			registry.addWorkstation(tCategory, EmiStack.of(gregtech6.jei.GT6RecipeMapIcons.iconOf(tMap)));
 			List<gregtech6.recipes.Recipe> tRows = new java.util.ArrayList<>(tMap.mRecipeList);
 			tRows.sort(ROW_ORDER);
 			for (int i = 0; i < tRows.size(); i++) {

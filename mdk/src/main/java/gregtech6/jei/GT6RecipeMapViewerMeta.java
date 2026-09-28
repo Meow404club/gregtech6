@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import net.minecraft.network.chat.Component;
+
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
 
@@ -83,8 +85,26 @@ public final class GT6RecipeMapViewerMeta {
 	public static final int TEXT_X = 10;
 	/** NEI's 10px line pitch (73/83/93/103/113/123). */
 	public static final int TEXT_LINE_HEIGHT = 10;
-	/** Upstream NEI_RecipeMap.java:665 "Chance: XX.XX%" + the " each" suffix for stacks > 1. */
-	public static final String NOT_CONSUMED_TEXT = "Does not get consumed in the process";
+	/** The per-map title key domain (task r6-29-34a) — one key per visible map, both locales. */
+	public static final String TITLE_KEY_PREFIX = "gt6.jei.recipe_map.";
+	/** NEI :671's not-consumed tooltip, upstream verbatim wording — now the lang-key face. */
+	public static final String NOT_CONSUMED_KEY = "gt6.jei.cost.not_consumed";
+	/** The cost/tier/time/special line keys (task r6-29-34a) — the drawExtras label faces. */
+	public static final String KEY_COSTS = "gt6.jei.cost.costs";
+	public static final String KEY_USAGE = "gt6.jei.cost.usage";
+	public static final String KEY_TIER = "gt6.jei.cost.tier";
+	public static final String KEY_TIER_UNSPECIFIED = "gt6.jei.cost.tier_unspecified";
+	public static final String KEY_POWER = "gt6.jei.cost.power";
+	public static final String KEY_GAIN = "gt6.jei.cost.gain";
+	public static final String KEY_OUTPUT = "gt6.jei.cost.output";
+	public static final String KEY_CHANCE = "gt6.jei.cost.chance";
+	public static final String KEY_CHANCE_EACH = "gt6.jei.cost.chance_each";
+	public static final String KEY_TIME = "gt6.jei.cost.time";
+	public static final String KEY_UNIT_TICKS = "gt6.jei.cost.unit_ticks";
+	public static final String KEY_UNIT_SECS = "gt6.jei.cost.unit_secs";
+	public static final String KEY_UNIT_MINS = "gt6.jei.cost.unit_mins";
+	public static final String KEY_START = "gt6.jei.cost.start";
+	public static final String KEY_TEMPERATURE = "gt6.jei.cost.temperature";
 
 	private GT6RecipeMapViewerMeta() {}
 
@@ -184,6 +204,20 @@ public final class GT6RecipeMapViewerMeta {
 		return rMaps;
 	}
 
+	/**
+	 * The per-map category title lang key (task r6-29-34a, GitHub #29b): the internal name
+	 * minus its {@code gt.recipe.}/{@code mc.recipe.} prefix, dots folded to underscores —
+	 * {@code gt.recipe.cokeoven} → {@code gt6.jei.recipe_map.cokeoven},
+	 * {@code gt.recipe.anvil.bend} → {@code gt6.jei.recipe_map.anvil_bend}. One formula,
+	 * the datagen providers (GT6EnUs/GT6ZhCn) and both viewer legs consume it, so key
+	 * drift between producer and consumers is structurally impossible.
+	 */
+	public static String titleKey(RecipeMap aMap) {
+		String tName = aMap.mNameInternal;
+		String tTail = tName.startsWith("gt.recipe.") || tName.startsWith("mc.recipe.") ? tName.substring(10) : tName;
+		return TITLE_KEY_PREFIX + tTail.replace('.', '_');
+	}
+
 	// -----------------------------------------------------------------------
 	// The layout math — NEI_RecipeMap.CachedDefaultRecipe ctor switches, translated.
 	// Item slots: a 3-column 18px grid anchored at x17 (inputs) / x107 (outputs); the row
@@ -276,45 +310,55 @@ public final class GT6RecipeMapViewerMeta {
 	// arithmetic (UT.Code.makeString folds to plain long-to-string).
 	// -----------------------------------------------------------------------
 
-	/** The drawExtras line list, top-down (the viewers draw them at TEXT_LINE_HEIGHT pitch). */
-	public static List<String> costLines(RecipeMap aMap, Recipe aRecipe) {
-		List<String> rLines = new ArrayList<>();
+	/**
+	 * The drawExtras line list, top-down (the viewers draw them at TEXT_LINE_HEIGHT pitch).
+	 * Since task r6-29-34a the label faces are translatable components with the verbatim
+	 * upstream numbers as args — the en values are the :680-717 literals to the character.
+	 */
+	public static List<Component> costLines(RecipeMap aMap, Recipe aRecipe) {
+		List<Component> rLines = new ArrayList<>();
 		MapMeta tMeta = metaOf(aMap);
 		long tGUt = aRecipe.mEUt;
 		long tDuration = aRecipe.mDuration;
 		if (tGUt == 0) {
-			if (tMeta.showVoltageAmperage()) rLines.add("Tier: unspecified");
+			if (tMeta.showVoltageAmperage()) rLines.add(Component.translatable(KEY_TIER_UNSPECIFIED));
 		} else if (tGUt > 0) {
-			rLines.add("Costs: " + tGUt * tDuration + " GU");
+			rLines.add(Component.translatable(KEY_COSTS, tGUt * tDuration));
 			if (tMeta.showVoltageAmperage()) {
-				if (!tMeta.combinePower()) rLines.add("Usage: " + tGUt + " GU/t");
-				rLines.add("Tier: " + tGUt / aMap.mPower + " GU");
-				rLines.add("Power: " + aMap.mPower);
+				if (!tMeta.combinePower()) rLines.add(Component.translatable(KEY_USAGE, tGUt));
+				rLines.add(Component.translatable(KEY_TIER, tGUt / aMap.mPower));
+				rLines.add(Component.translatable(KEY_POWER, aMap.mPower));
 			} else if (tGUt != 1 && !tMeta.combinePower()) {
-				rLines.add("Usage: " + tGUt + " GU/t");
+				rLines.add(Component.translatable(KEY_USAGE, tGUt));
 			}
 		} else {
 			tGUt *= -1;
-			rLines.add("Gain: " + tGUt * tDuration + " GU");
+			rLines.add(Component.translatable(KEY_GAIN, tGUt * tDuration));
 			if (tMeta.showVoltageAmperage()) {
-				if (!tMeta.combinePower()) rLines.add("Output: " + tGUt + " GU/t");
-				rLines.add("Tier: " + tGUt / aMap.mPower + " GU");
-				rLines.add("Power: " + aMap.mPower);
+				if (!tMeta.combinePower()) rLines.add(Component.translatable(KEY_OUTPUT, tGUt));
+				rLines.add(Component.translatable(KEY_TIER, tGUt / aMap.mPower));
+				rLines.add(Component.translatable(KEY_POWER, aMap.mPower));
 			} else if (tGUt != 1 && !tMeta.combinePower()) {
-				rLines.add("Output: " + tGUt + " GU/t");
+				rLines.add(Component.translatable(KEY_OUTPUT, tGUt));
 			}
 		}
 		if (tDuration > 0) rLines.add(timeLine(tDuration));
 		if (!tMeta.specialValuePre().isEmpty() || !tMeta.specialValuePost().isEmpty())
-			rLines.add(tMeta.specialValuePre() + aRecipe.mSpecialValue * tMeta.specialValueMultiplier() + tMeta.specialValuePost());
+			rLines.add(Component.translatable(specialKey(tMeta.specialValuePre()),
+					aRecipe.mSpecialValue * tMeta.specialValueMultiplier(), tMeta.specialValuePost()));
 		return rLines;
 	}
 
+	/** The special-value triple's key: the FUSION "Start: " face or the crucible "Temperature: " one. */
+	private static String specialKey(String aPre) {
+		return "Start: ".equals(aPre) ? KEY_START : KEY_TEMPERATURE;
+	}
+
 	/** NEI :714: {@code <1200 ticks, <36000 secs, else mins} (the 20 tps / 1200-per-min folds). */
-	public static String timeLine(long aDuration) {
-		if (aDuration < 1200) return "Time: " + aDuration + " ticks";
-		if (aDuration < 36000) return "Time: " + aDuration / 20 + " secs";
-		return "Time: " + aDuration / 1200 + " mins";
+	public static Component timeLine(long aDuration) {
+		if (aDuration < 1200) return Component.translatable(KEY_TIME, aDuration, Component.translatable(KEY_UNIT_TICKS));
+		if (aDuration < 36000) return Component.translatable(KEY_TIME, aDuration / 20, Component.translatable(KEY_UNIT_SECS));
+		return Component.translatable(KEY_TIME, aDuration / 1200, Component.translatable(KEY_UNIT_MINS));
 	}
 
 	/**
@@ -323,10 +367,13 @@ public final class GT6RecipeMapViewerMeta {
 	 * (the {@code (tChance/100) "." padded (tChance%100) "%"} arithmetic verbatim), with
 	 * " each" when the stack is larger than one. {@code null} = no tooltip.
 	 */
-	public static String chanceLine(long aChance10000, int aStackSize) {
+	public static Component chanceLine(long aChance10000, int aStackSize) {
 		if (aChance10000 <= 0 || aChance10000 >= 10000) return null;
 		long tFraction = aChance10000 % 100;
-		return "Chance: " + aChance10000 / 100 + "." + (tFraction < 10 ? "0" : "") + tFraction + "%" + (aStackSize > 1 ? " each" : "");
+		String tPercent = aChance10000 / 100 + "." + (tFraction < 10 ? "0" : "") + tFraction + "%";
+		return aStackSize > 1
+				? Component.translatable(KEY_CHANCE_EACH, tPercent)
+				: Component.translatable(KEY_CHANCE, tPercent);
 	}
 
 	/**
