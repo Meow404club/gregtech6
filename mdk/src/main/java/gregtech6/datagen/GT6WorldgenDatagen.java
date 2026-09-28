@@ -45,7 +45,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguratio
 import net.minecraft.world.level.levelgen.feature.configurations.RandomFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.DiskConfiguration;
-import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.levelgen.GeodeBlockSettings;
 import net.minecraft.world.level.levelgen.GeodeCrackSettings;
@@ -1397,7 +1397,13 @@ public final class GT6WorldgenDatagen {
     // - Y band [-40, 24]: the modern-Y-world equivalent of the vanilla band shape
     //   (above_bottom 6 .. absolute 30), inside the GT deep-ore zone (the diamond
     //   small-ore row 5..10 and the large-vein diamond 5..20 sit inside);
-    // - LOCAL_MODIFICATIONS + #minecraft:is_overworld (the vanilla geode step/tag).
+    // - LOCAL_MODIFICATIONS + #minecraft:is_overworld (the vanilla geode step/tag);
+    // - the three vanilla uniform IntProviders (outer_wall_distance 4-6,
+    //   distribution_points 3-4, point_offset 1-2) are CONSTANT-pinned to their mid
+    //   points: the DFU6-wraps/DFU8-inlines IntProvider JSON divergence would fork the
+    //   legs byte-level (the strata-lens count CONSTANT trap, GTLensConfig band note;
+    //   the treecheck canonical-vs-node content diff, live-caught by the first
+    //   treecheck run of this band) — ConstantInt serializes {"constant",N} both legs.
     // ------------------------------------------------------------------
 
     /** One geode row: the gem material + the GT stone snakes of the middle/outer shells. */
@@ -1466,7 +1472,7 @@ public final class GT6WorldgenDatagen {
                             new GeodeLayerSettings(1.7, 2.2, 3.2, 4.2), // the vanilla layer radii verbatim
                             new GeodeCrackSettings(0.0, 2.0, 2), // no crack — the sealed-cavity face
                             0.0, 0.0, true, // placements chance 0 (the :149 guard) / alternate 0 / require flag inert
-                            UniformInt.of(4, 6), UniformInt.of(3, 4), UniformInt.of(1, 2),
+                            ConstantInt.of(5), ConstantInt.of(4), ConstantInt.of(1), // the vanilla uniform mid-points, CONSTANT-pinned
                             -16, 16, 0.05, 1)); // the vanilla offsets/noise/threshold verbatim
         }
     }

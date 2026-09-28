@@ -165,6 +165,16 @@ class GT6GeodeWorldgenTest {
             assertEquals(2.2, tLayers.get("inner_layer").getAsDouble());
             assertEquals(3.2, tLayers.get("middle_layer").getAsDouble());
             assertEquals(4.2, tLayers.get("outer_layer").getAsDouble());
+            // the cross-leg byte-identity pins: the vanilla uniform IntProviders are
+            // CONSTANT-pinned (DFU6 wraps {"value":{min,max}}, DFU8 inlines — a uniform
+            // provider forks the legs). ConstantInt serializes to the BARE INT both legs —
+            // the shape itself proves the provider is constant, not uniform.
+            assertEquals(5, tConfig.get("outer_wall_distance").getAsInt(),
+                    tRow.mat() + ": outer_wall_distance bare-int constant 5 (the vanilla 4-6 mid)");
+            assertEquals(4, tConfig.get("distribution_points").getAsInt(),
+                    tRow.mat() + ": distribution_points bare-int constant 4 (the vanilla 3-4 top)");
+            assertEquals(1, tConfig.get("point_offset").getAsInt(),
+                    tRow.mat() + ": point_offset bare-int constant 1 (the vanilla 1-2 low)");
         }
     }
 
