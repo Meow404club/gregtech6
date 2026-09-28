@@ -9,16 +9,14 @@
 GT6（1.7.10 GregTech6）→ 现代移植：1.20.1 Forge + 1.21.1 NeoForge 双节点（Stonecutter）。
 内容完成度 97-98%+，2026-09-24 发布 v0.1.0（GitHub Release，双 jar），现处**还债/维护阶段**（2026-09-26 起）。
 
-## 当前态（2026-09-28 · issue 第四轮收口）
+## 当前态（2026-09-28 · r5 波收口）
 
-- **issue 第四轮（#17-#26 + 矿石追加三项）已收口**：11 卡经三审查席全部合入，main=5153c1dbe；
-  issue #17/#18/#19/#20/#22/#23/#24/#26 已回复关闭（#17 判决=非 bug 观感死机：砖火盒档位饥饿+锅炉半满输出门，RCON 双拓扑实测铁证）；#21/#25 用户裁定撤下不动。
-- 矿石三裁定落地：granite/diorite/andesite 三族整体迁 vanilla 现行贴图（B 方案 b7cb109f2）；破损矿石加专属名（"破损的石头%s矿" 7fbd194fa）；破损矿颗粒渲染经核当前 main 链路完整（用户需用新构建复验）。
-- 阶段末全量 sweep 后台运行中（tmp 日志 /tmp/gt6_sweep_full_r4.log）；绿则 push（push 攒批策略=审查全部收口后一次推，ops.discipline.push-policy）。
-- 验证面：离线测试套件（root+mdk 双腿 cleanTest）+ RCON 组 sweep（tools/rcon/sweep.py --group <组>）；全量 sweep 只在阶段末、只 neo 腿、禁 subagent 自发。
-- 统一测试门禁：ops-testgate-hard-gate 硬闸 + 30G 内存闸（ops.discipline.test-gating-v3）。
-- 低优池（后续维护期取）：大型机器 overlay 保真 / 多输入行 GUI 布局 / 大型机器 mTanksInput 遮蔽 / 无 getInventory 家族掉落覆盖 / 锅炉 tooltip HU 读数+半满提示。
-- 基础设施注记：gt6-brain MCP 写路径偶发 30s 慢响（写超时≠写失败，读验证后再重试）；根因嫌疑=嵌入索引残留进程持锁，kill 即恢复。
+- **r5 波五卡全清**（本地 main=52ce67e59，**攒批未 push**——领先 origin 5 合并，等用户点名一次推）：Jade 锅炉热量面（热量条/需求/半满门提示/潜行水垢缺水）、Jade 转换器族状态行（≈19 BE）、CI 手动 RCON sweep 工作流（workflow_dispatch，替代退役的本地全量）、issue 模板+六标签（[Bug]/[Feat]/[RFC] 前缀 triage 自动打标、组合前缀可选 rfc、p1-p3 仅手动）、README 人类语言重写。
+- **issue 第四轮（#17-#26）已收口**：11 卡合入已推（5153c1dbe）；issue 重开待提出者测试关闭（不主动关评纪律，铁律 9）；矿石三裁定落地。
+- 工作流纪律更新：全量 sweep 退役（宪法③）；不主动关 issue/评论（铁律 9）；push 攒批（ops.discipline.push-policy）。
+- 低优池：大型机器 overlay 保真 / 多输入行 GUI / mTanksInput 遮蔽 / 无 getInventory 家族掉落 / 矿石用户侧复验（破损矿颗粒渲染+4.48M 显示疑点）。
+- backlog：issue #29-#43 十五张新报告（含 Create/TFC 兼容等 Feat），待开工。
+- 基础设施注记：gt6-brain MCP 写路径偶发 30s 慢响（写超时≠写失败，读验证后再重试；根因=嵌入索引残留进程持锁，kill 即恢复）。
 
 ## 维护期记忆入口
 
