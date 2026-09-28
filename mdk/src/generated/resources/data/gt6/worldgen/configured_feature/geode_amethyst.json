@@ -5,7 +5,7 @@
       "alternate_inner_layer_provider": {
         "type": "minecraft:simple_state_provider",
         "state": {
-          "Name": "gt6:marble"
+          "Name": "minecraft:budding_amethyst"
         }
       },
       "cannot_replace": "#minecraft:features_cannot_replace",
@@ -23,7 +23,32 @@
       },
       "inner_placements": [
         {
-          "Name": "gt6:block_gem_amethyst"
+          "Name": "minecraft:small_amethyst_bud",
+          "Properties": {
+            "facing": "up",
+            "waterlogged": "false"
+          }
+        },
+        {
+          "Name": "minecraft:medium_amethyst_bud",
+          "Properties": {
+            "facing": "up",
+            "waterlogged": "false"
+          }
+        },
+        {
+          "Name": "minecraft:large_amethyst_bud",
+          "Properties": {
+            "facing": "up",
+            "waterlogged": "false"
+          }
+        },
+        {
+          "Name": "minecraft:amethyst_cluster",
+          "Properties": {
+            "facing": "up",
+            "waterlogged": "false"
+          }
         }
       ],
       "invalid_blocks": "#minecraft:geode_invalid_blocks",
@@ -59,7 +84,7 @@
     "outer_wall_distance": 5,
     "placements_require_layer0_alternate": true,
     "point_offset": 1,
-    "use_alternate_layer0_chance": 0.0,
-    "use_potential_placements_chance": 0.0
+    "use_alternate_layer0_chance": 0.083,
+    "use_potential_placements_chance": 0.35
   }
 }
