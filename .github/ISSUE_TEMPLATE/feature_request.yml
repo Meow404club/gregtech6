@@ -1,0 +1,50 @@
+name: 功能请求
+description: 请求移植上游功能或新增功能（标题会自动带 [Feat] 前缀）
+title: "[Feat] "
+labels: ["feat"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        若此功能尚需方案讨论，可在标题再加 `[RFC]`（如标题写成 `[Feat][RFC] 标题`），将同时打上提案标签。
+  - type: textarea
+    id: feature
+    attributes:
+      label: 想要什么功能？
+      description: 请描述你希望实现的功能。
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: 为什么需要（动机）
+      description: 这个功能能解决什么问题、带来什么价值？
+  - type: dropdown
+    id: upstream
+    attributes:
+      label: 上游 GT6 1.7.10 是否有此功能
+      description: 原版 GregTech 6（Minecraft 1.7.10）中是否存在对应功能？
+      options:
+        - 有
+        - 无
+        - 不确定
+  - type: textarea
+    id: upstream-notes
+    attributes:
+      label: 上游功能说明
+      description: 可选。如上游已有此功能，请说明它在 1.7.10 中的具体表现，便于对照移植。
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 参考截图
+      description: 可选。可直接把截图粘贴（Ctrl+V）到输入框，或贴 Markdown 图片链接。
+  - type: dropdown
+    id: priority-suggestion
+    attributes:
+      label: 优先级建议（仅供参考）
+      description: 最终优先级由维护者手动打 p 标签，此处仅作参考。
+      options:
+        - p1（高）
+        - p2（中）
+        - p3（低）
+        - 不填
