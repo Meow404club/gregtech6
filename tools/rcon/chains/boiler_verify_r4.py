@@ -36,7 +36,10 @@ Verdict rules (read off the series; the chain hard-asserts only the gates):
   A healthy, B flat                          -> strong-row-specific break
 
 Run:  python3 tools/rcon/chains/boiler_verify_r4.py        (1.20.1-forge leg)
-      python3 tools/rcon/chains/boiler_verify_r4.py --node 1.21.1
+      python3 tools/rcon/chains/boiler_verify_r4.py --node 1.21.1-neoforge
+      (the FULL stonecutter node name — the bare `1.21.1` boots the nonexistent
+      `:mdk:1.21.1:runServer`, the server never comes up and RCON times out;
+      the leg-121 red in the bv4 evidence, HANDOFF-mirror.md lesson 3)
 """
 
 import sys
