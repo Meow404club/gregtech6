@@ -156,18 +156,18 @@
   ],
   "render_type": "minecraft:cutout",
   "textures": {
-    "down": "gt6:block/boiler_steam/colored_bottom",
-    "east": "gt6:block/boiler_steam/colored_side",
-    "north": "gt6:block/boiler_steam/colored_side",
-    "overlay_down": "gt6:block/boiler_steam/overlay_bottom",
-    "overlay_east": "gt6:block/boiler_steam/overlay_side",
-    "overlay_north": "gt6:block/boiler_steam/overlay_side",
-    "overlay_south": "gt6:block/boiler_steam/overlay_side",
-    "overlay_up": "gt6:block/boiler_steam/overlay_top",
-    "overlay_west": "gt6:block/boiler_steam/overlay_side",
-    "particle": "gt6:block/boiler_steam/colored_side",
-    "south": "gt6:block/boiler_steam/colored_side",
-    "up": "gt6:block/boiler_steam/colored_top",
-    "west": "gt6:block/boiler_steam/colored_side"
+    "down": "gt6:block/large_boiler/colored_bottom",
+    "east": "gt6:block/large_boiler/colored_side",
+    "north": "gt6:block/large_boiler/colored_front_side",
+    "overlay_down": "gt6:block/large_boiler/overlay_bottom",
+    "overlay_east": "gt6:block/large_boiler/overlay_side",
+    "overlay_north": "gt6:block/large_boiler/overlay_front_side",
+    "overlay_south": "gt6:block/large_boiler/overlay_side",
+    "overlay_up": "gt6:block/large_boiler/overlay_top",
+    "overlay_west": "gt6:block/large_boiler/overlay_side",
+    "particle": "gt6:block/large_boiler/colored_side",
+    "south": "gt6:block/large_boiler/colored_side",
+    "up": "gt6:block/large_boiler/colored_top",
+    "west": "gt6:block/large_boiler/colored_side"
   }
 }

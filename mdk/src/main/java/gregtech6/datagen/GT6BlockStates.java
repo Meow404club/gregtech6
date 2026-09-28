@@ -2795,29 +2795,29 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
     /**
      * One boiler two-layer model (task r8-tex-large-boilers; the addConverterModel grammar
      * over the boiler groups' bottom/top/side face keys): the tinted body cube over the
-     * borrowed grayscale {@code <band>_colored_<face>} art (tintindex 0 = the material
-     * tint seat; {@code aFront} binds the north face to the {@code _colored_front_side}
-     * art — the Base10 front-face pair) plus the six 0.01-plate
-     * {@code <band>_overlay[_front]_*} decal shells (untinted, cullface synced — the P22
-     * pairing; the upstream overlay pass is NOT multiplied by mRGBa). Cutout so the
-     * shells' transparent texels discard (the C7' fix shape).
+     * borrowed grayscale {@code block/<band>/colored_<face>} art (tintindex 0 = the
+     * material tint seat; {@code aFront} binds the north face to the
+     * {@code colored_front_side} art — the Base10 front-face pair) plus the six 0.01-plate
+     * {@code block/<band>/overlay[_front]_<face>} decal shells (untinted, cullface synced
+     * — the P22 pairing; the upstream overlay pass is NOT multiplied by mRGBa). Cutout so
+     * the shells' transparent texels discard (the C7' fix shape).
      */
     private ModelFile boilerModel(String aName, String aBand, boolean aFront) {
         BlockModelBuilder tModel = models().getBuilder(aName)
                 .parent(models().getExistingFile(mcLoc("block/cube")))
-                .texture("down", modLoc("block/" + aBand + "_colored_bottom"))
-                .texture("up", modLoc("block/" + aBand + "_colored_top"))
-                .texture("north", modLoc("block/" + aBand + (aFront ? "_colored_front_side" : "_colored_side")))
-                .texture("south", modLoc("block/" + aBand + "_colored_side"))
-                .texture("west", modLoc("block/" + aBand + "_colored_side"))
-                .texture("east", modLoc("block/" + aBand + "_colored_side"))
-                .texture("particle", modLoc("block/" + aBand + "_colored_side"))
-                .texture("overlay_down", modLoc("block/" + aBand + "_overlay_bottom"))
-                .texture("overlay_up", modLoc("block/" + aBand + "_overlay_top"))
-                .texture("overlay_north", modLoc("block/" + aBand + (aFront ? "_overlay_front_side" : "_overlay_side")))
-                .texture("overlay_south", modLoc("block/" + aBand + "_overlay_side"))
-                .texture("overlay_west", modLoc("block/" + aBand + "_overlay_side"))
-                .texture("overlay_east", modLoc("block/" + aBand + "_overlay_side"))
+                .texture("down", modLoc("block/" + aBand + "/colored_bottom"))
+                .texture("up", modLoc("block/" + aBand + "/colored_top"))
+                .texture("north", modLoc("block/" + aBand + (aFront ? "/colored_front_side" : "/colored_side")))
+                .texture("south", modLoc("block/" + aBand + "/colored_side"))
+                .texture("west", modLoc("block/" + aBand + "/colored_side"))
+                .texture("east", modLoc("block/" + aBand + "/colored_side"))
+                .texture("particle", modLoc("block/" + aBand + "/colored_side"))
+                .texture("overlay_down", modLoc("block/" + aBand + "/overlay_bottom"))
+                .texture("overlay_up", modLoc("block/" + aBand + "/overlay_top"))
+                .texture("overlay_north", modLoc("block/" + aBand + (aFront ? "/overlay_front_side" : "/overlay_side")))
+                .texture("overlay_south", modLoc("block/" + aBand + "/overlay_side"))
+                .texture("overlay_west", modLoc("block/" + aBand + "/overlay_side"))
+                .texture("overlay_east", modLoc("block/" + aBand + "/overlay_side"))
                 .renderType("cutout");
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
