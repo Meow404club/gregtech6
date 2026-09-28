@@ -108,10 +108,21 @@ import gregtech6.worldgen.GTOreWorldgen;
  * vs 1.21.1 :24-42 read back; HeightRangePlacement.uniform / RarityFilter.onAverageOnceEvery
  * same-named same-arg both legs).
  *
- * <p>Coexistence (the card ruling): append-only — the biome modifiers ADD the GT blobs on
- * top of the vanilla ore features (GT6 1.7.10 keeps vanilla ores too); removing vanilla
- * ores is a datapack option ({@code forge:removefeatures} /
- * {@code neoforge:removefeatures}), deliberately not generated.
+ * <p>Coexistence + de-vanilla (issue #32, decisions.2026-09-28-devanilla-default — the p26
+ * "deliberately not generated" ruling reversed): the biome modifiers still ADD the GT blobs
+ * on top, AND the two {@code remove_features} rows below (issue #32 vanilla-deblob) strip
+ * the vanilla blobs the user named — the full ore family (the upstream GenerateMinable
+ * seven, GT6_Main.java:112 DisableVanillaOres default-T, plus the modern extensions),
+ * the stone blobs (granite/diorite/andesite/tuff), dirt/gravel, the amethyst geode (#33's
+ * GT geode replaces it) and the lava lakes (the upstream DisableVanillaLakes precedent,
+ * GT6_Main.java:112). Per-key vanilla placed-feature names ONLY — the ADD phase runs
+ * before REMOVE (ForgeBiomeModifiers Phase :80/:84), and disk/clay/infested/magma stay
+ * (the upstream does not suppress them; disks are surface bands, not blobs). The keys
+ * were verified against BOTH legs' jars (the 1.20.1 client extract and the 1.21.1
+ * neoformruntime client jar, data/minecraft/worldgen/placed_feature/): the ONE leg delta
+ * is {@code ore_diamond_medium} (the 1.21.1 diamond split, BiomeDefaultFeatures.java:67)
+ * — the {@code //?} fork below, mirrored by the datagen_tree_check normalizer
+ * (remove-features-diamond-medium(1.21.1)).
  */
 public final class GT6WorldgenDatagen {
 
@@ -221,6 +232,100 @@ public final class GT6WorldgenDatagen {
         /*return new BiomeModifiers.AddFeaturesBiomeModifier(aBiomes, aFeatures, aStep);
         *///?}
     }
+
+    /**
+     * The remove seam — the issue-#32 twin of {@link #addFeatures}, the
+     * {@code <loader>:remove_features} JSON type. The {@code allSteps} factory (present on
+     * both legs: ForgeBiomeModifiers.java:91 / BiomeModifiers.java:89) omits the optional
+     * {@code steps} field (both codecs default it to every Decoration step:
+     * ForgeMod.java:203 / NeoForgeMod.java:245) — the named keys are removed wherever the
+     * biome carries them.
+     */
+    private static BiomeModifier removeFeatures(HolderSet<Biome> aBiomes, HolderSet<PlacedFeature> aFeatures) {
+        //? if forge {
+        return ForgeBiomeModifiers.RemoveFeaturesBiomeModifier.allSteps(aBiomes, aFeatures);
+        //?} else {
+        /*return BiomeModifiers.RemoveFeaturesBiomeModifier.allSteps(aBiomes, aFeatures);
+        *///?}
+    }
+
+    // ------------------------------------------------------------------
+    // The vanilla de-blob band (issue #32, decisions.2026-09-28-devanilla-default —
+    // the p26 "deliberately not generated" ruling reversed). TWO remove_features
+    // rows naming the vanilla placed features the user listed, per key, never per
+    // step (disks share the underground_ores step and stay). Key spellings were
+    // verified against BOTH legs' vanilla jars (data/minecraft/worldgen/placed_
+    // feature/): ore_debris_small (not ore_ancient_debris_small), the lake pair
+    // lake_lava_surface / lake_lava_underground (1.18+ ships NO lake_water — the
+    // upstream DENY has no modern target), amethyst_geode (#33's GT geode replaces
+    // it). The ONE leg delta is ore_diamond_medium — the 1.21.1 diamond split
+    // (BiomeDefaultFeatures.java:67): the 1.20.1 registry lacks the key (a
+    // getOrThrow would trip the forge datagen), and the 1.21.1 list without it
+    // would leave the split's diamonds generating. The leg delta is folded by the
+    // datagen_tree_check normalizer remove-features-diamond-medium(1.21.1).
+    // ------------------------------------------------------------------
+
+    /** The overworld de-blob biome-modifier key — the {@code gt6:vanilla_deblob_overworld} row. */
+    public static final ResourceKey<BiomeModifier> VANILLA_DEBLOB_OVERWORLD_KEY =
+            biomeModifierKeyOf("vanilla_deblob_overworld");
+
+    /** The nether de-blob biome-modifier key — the {@code gt6:vanilla_deblob_nether} row. */
+    public static final ResourceKey<BiomeModifier> VANILLA_DEBLOB_NETHER_KEY =
+            biomeModifierKeyOf("vanilla_deblob_nether");
+
+    /**
+     * The overworld suppress list — the vanilla placed-feature PATHS under the
+     * {@code minecraft} namespace, jar-listing order (the geode, the lake pair, then the
+     * ore blobs alphabetically; 29 keys on 1.20.1, 30 on 1.21.1). NOT suppressed on
+     * purpose (the card ruling): ore_infested/ore_clay/ore_magma/ore_soul_sand/
+     * ore_blackstone/ore_emerald/ore_gravel_nether (the upstream GenerateMinable set
+     * never carried them) and the disk family (surface bands, not blobs).
+     */
+    public static final List<String> VANILLA_DEBLOB_OVERWORLD = List.of(
+            "amethyst_geode",
+            "lake_lava_surface",
+            "lake_lava_underground",
+            "ore_andesite_lower",
+            "ore_andesite_upper",
+            "ore_coal_lower",
+            "ore_coal_upper",
+            "ore_copper",
+            "ore_copper_large",
+            "ore_diamond",
+            "ore_diamond_buried",
+            "ore_diamond_large",
+            //? if neoforge {
+            /*"ore_diamond_medium", // the 1.21.1 diamond split (BiomeDefaultFeatures.java:67); absent from the 1.20.1 jar
+            *///?}
+            "ore_diorite_lower",
+            "ore_diorite_upper",
+            "ore_dirt",
+            "ore_gold",
+            "ore_gold_extra",
+            "ore_gold_lower",
+            "ore_granite_lower",
+            "ore_granite_upper",
+            "ore_gravel",
+            "ore_iron_middle",
+            "ore_iron_small",
+            "ore_iron_upper",
+            "ore_lapis",
+            "ore_lapis_buried",
+            "ore_redstone",
+            "ore_redstone_lower",
+            "ore_tuff");
+
+    /**
+     * The nether suppress list — the five nether ore blobs (the quartz pair, the nether
+     * gold, the ancient debris pair; jar-listing order). ore_gravel_nether stays (the
+     * card ruling: the upstream never suppressed gravel).
+     */
+    public static final List<String> VANILLA_DEBLOB_NETHER = List.of(
+            "ore_ancient_debris_large",
+            "ore_debris_small",
+            "ore_gold_nether",
+            "ore_quartz_deltas",
+            "ore_quartz_nether");
 
     /**
      * 17 configured features: vanilla {@code Feature.ORE} with a single target
@@ -514,6 +619,39 @@ public final class GT6WorldgenDatagen {
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.LARGE_VEINS_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
         bootstrapOreBiomeModifiers(ctx, tBiomes, tPlaced); // task p30-w6-small-ore-datagen — tail-append
+        bootstrapVanillaDeblob(ctx, tBiomes, tPlaced); // issue #32 vanilla-deblob — tail-append
+    }
+
+    /**
+     * The two de-blob biome modifiers (issue #32, decisions.2026-09-28-devanilla-default):
+     * the remove_features rows over the vanilla dimension tags (#minecraft:is_overworld /
+     * #minecraft:is_nether, the small-ore band's convention). Phase REMOVE runs after ADD
+     * (ForgeBiomeModifiers Phase :80/:84), so the GT blobs added above survive; the
+     * per-key names only — a future vanilla rename makes a row member a harmless no-op,
+     * never a step-wide wipe.
+     */
+    private static void bootstrapVanillaDeblob(
+        //? if forge {
+        BootstapContext<BiomeModifier> ctx
+        //?} else {
+        /*BootstrapContext<BiomeModifier> ctx
+        *///?}
+        , HolderGetter<Biome> aBiomes, HolderGetter<PlacedFeature> aPlaced
+    ) {
+        ctx.register(VANILLA_DEBLOB_OVERWORLD_KEY, removeFeatures(aBiomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                placedSet(aPlaced, VANILLA_DEBLOB_OVERWORLD)));
+        ctx.register(VANILLA_DEBLOB_NETHER_KEY, removeFeatures(aBiomes.getOrThrow(BiomeTags.IS_NETHER),
+                placedSet(aPlaced, VANILLA_DEBLOB_NETHER)));
+    }
+
+    /** The vanilla placed-feature holder set for one suppress list (getOrThrow = the leg jar is the key validator). */
+    private static HolderSet<PlacedFeature> placedSet(HolderGetter<PlacedFeature> aPlaced, List<String> aPaths) {
+        List<Holder<PlacedFeature>> tHolders = new ArrayList<>(aPaths.size());
+        for (String tPath : aPaths) {
+            tHolders.add(aPlaced.getOrThrow(ResourceKey.create(Registries.PLACED_FEATURE,
+                    ResourceLocation.fromNamespaceAndPath("minecraft", tPath))));
+        }
+        return HolderSet.direct(tHolders);
     }
 
     // ------------------------------------------------------------------

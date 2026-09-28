@@ -311,15 +311,23 @@ public class GT6DualDirectoryFacesTest {
 		for (Path tForge : tForgeFiles) {
 			String tForgeText = Files.readString(tForge);
 			String tNeoforgeText = Files.readString(tNeoforgeRoot.resolve(tForgeRoot.relativize(tForge)));
-			assertTrue(tForgeText.contains("\"forge:add_features\""),
-					tForge.getFileName() + " the forge face carries the forge brand");
+			// issue #32 vanilla-deblob: the remove_features family joins the sweep — the
+			// face must carry its OWN row-type brand, never the foreign twin
+			assertTrue(tForgeText.contains("\"forge:add_features\"")
+							|| tForgeText.contains("\"forge:remove_features\""),
+					tForge.getFileName() + " the forge face carries a forge brand");
 			assertFalse(tForgeText.contains("neoforge:add_features"),
 					tForge.getFileName() + " the forge face carries no foreign brand");
-			assertTrue(tNeoforgeText.contains("\"neoforge:add_features\""),
-					tForge.getFileName() + " the neoforge face carries the neoforge brand");
+			assertFalse(tForgeText.contains("neoforge:remove_features"),
+					tForge.getFileName() + " the forge face carries no foreign brand");
+			assertTrue(tNeoforgeText.contains("\"neoforge:add_features\"")
+							|| tNeoforgeText.contains("\"neoforge:remove_features\""),
+					tForge.getFileName() + " the neoforge face carries a neoforge brand");
 			// the negative arm pins the QUOTED token: the bare string is a substring of
 			// the neoforge brand itself ("neoforge:add_features".contains("forge:..."))
 			assertFalse(tNeoforgeText.contains("\"forge:add_features\""),
+					tForge.getFileName() + " the neoforge face carries no foreign brand");
+			assertFalse(tNeoforgeText.contains("\"forge:remove_features\""),
 					tForge.getFileName() + " the neoforge face carries no foreign brand");
 			// task p31-nether-lens-end-yield: a conditions-carrying row (large_veins_end)
 			// also rebrands the conditions root key + the condition type strings — the
@@ -328,6 +336,7 @@ public class GT6DualDirectoryFacesTest {
 			// normalizes both directions before the equality
 			String tForgeNormalized = tForgeText
 					.replace("\"forge:add_features\"", "\"neoforge:add_features\"")
+					.replace("\"forge:remove_features\"", "\"neoforge:remove_features\"")
 					.replace("\"forge:conditions\"", "\"neoforge:conditions\"")
 					.replace("\"forge:not\"", "\"neoforge:not\"")
 					.replace("\"forge:mod_loaded\"", "\"neoforge:mod_loaded\"")
@@ -335,6 +344,82 @@ public class GT6DualDirectoryFacesTest {
 			assertEquals(tForgeNormalized, tNeoforgeText,
 					tForge.getFileName() + " the brand mirror is the brand-strings delta alone");
 		}
+	}
+
+	/**
+	 * The issue-#32 de-blob remove rows pin the jar-verified vanilla suppress lists (the
+	 * ruling lists, decisions.2026-09-28-devanilla-default): per-key features, the vanilla
+	 * dimension tag, the remove_features brand — and NOTHING else (the optional steps
+	 * field stays absent = every Decoration step, ForgeMod.java:203 / NeoForgeMod.java:245).
+	 * The committed faces are the forge leg's canonical output; the 1.21.1-only
+	 * {@code ore_diamond_medium} rides the leg-forked
+	 * {@link GT6WorldgenDatagen#VANILLA_DEBLOB_OVERWORLD} constant (pinned per leg in
+	 * GT6WorldgenDatagenTest), its node-tree delta folded by the datagen_tree_check
+	 * normalizer remove-features-diamond-medium(1.21.1).
+	 */
+	@Test
+	public void vanillaDeblobRowsPinTheRulingLists() throws Exception {
+		List<String> tOverworld = List.of(
+				"minecraft:amethyst_geode",
+				"minecraft:lake_lava_surface",
+				"minecraft:lake_lava_underground",
+				"minecraft:ore_andesite_lower",
+				"minecraft:ore_andesite_upper",
+				"minecraft:ore_coal_lower",
+				"minecraft:ore_coal_upper",
+				"minecraft:ore_copper",
+				"minecraft:ore_copper_large",
+				"minecraft:ore_diamond",
+				"minecraft:ore_diamond_buried",
+				"minecraft:ore_diamond_large",
+				"minecraft:ore_diorite_lower",
+				"minecraft:ore_diorite_upper",
+				"minecraft:ore_dirt",
+				"minecraft:ore_gold",
+				"minecraft:ore_gold_extra",
+				"minecraft:ore_gold_lower",
+				"minecraft:ore_granite_lower",
+				"minecraft:ore_granite_upper",
+				"minecraft:ore_gravel",
+				"minecraft:ore_iron_middle",
+				"minecraft:ore_iron_small",
+				"minecraft:ore_iron_upper",
+				"minecraft:ore_lapis",
+				"minecraft:ore_lapis_buried",
+				"minecraft:ore_redstone",
+				"minecraft:ore_redstone_lower",
+				"minecraft:ore_tuff");
+		List<String> tNether = List.of(
+				"minecraft:ore_ancient_debris_large",
+				"minecraft:ore_debris_small",
+				"minecraft:ore_gold_nether",
+				"minecraft:ore_quartz_deltas",
+				"minecraft:ore_quartz_nether");
+		for (String tBrand : new String[] {"forge", "neoforge"}) {
+			JsonObject tOverworldRow = JsonParser.parseString(resource(
+					"data/gt6/" + tBrand + "/biome_modifier/vanilla_deblob_overworld.json")).getAsJsonObject();
+			assertEquals(tBrand + ":remove_features", tOverworldRow.get("type").getAsString(),
+					tBrand + " overworld de-blob row type");
+			assertEquals("#minecraft:is_overworld", tOverworldRow.get("biomes").getAsString(),
+					tBrand + " overworld de-blob row biome domain");
+			assertEquals(tOverworld, toIds(tOverworldRow.getAsJsonArray("features")),
+					tBrand + " overworld de-blob suppress list, key for key");
+			JsonObject tNetherRow = JsonParser.parseString(resource(
+					"data/gt6/" + tBrand + "/biome_modifier/vanilla_deblob_nether.json")).getAsJsonObject();
+			assertEquals(tBrand + ":remove_features", tNetherRow.get("type").getAsString(),
+					tBrand + " nether de-blob row type");
+			assertEquals("#minecraft:is_nether", tNetherRow.get("biomes").getAsString(),
+					tBrand + " nether de-blob row biome domain");
+			assertEquals(tNether, toIds(tNetherRow.getAsJsonArray("features")),
+					tBrand + " nether de-blob suppress list, key for key");
+		}
+	}
+
+	/** The features array as id strings (the mirror's list form; a single-string form would fail the equality). */
+	private static List<String> toIds(com.google.gson.JsonArray aArray) {
+		List<String> tIds = new ArrayList<>(0);
+		for (JsonElement tElement : aArray) tIds.add(tElement.getAsString());
+		return tIds;
 	}
 
 	/**

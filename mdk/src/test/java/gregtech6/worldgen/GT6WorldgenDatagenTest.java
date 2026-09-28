@@ -198,4 +198,66 @@ class GT6WorldgenDatagenTest {
                     "blob id " + i + " derives from the BLOB_STONES row, no invented block id");
         }
     }
+
+    /**
+     * Issue #32 vanilla-deblob: the per-leg suppress constants pin the jar-verified
+     * vanilla placed-feature keys (both legs' data/minecraft/worldgen/placed_feature/
+     * walked, 2026-09-28). The ONE leg delta is {@code ore_diamond_medium} — the 1.21.1
+     * diamond split (BiomeDefaultFeatures.java:67); the 1.20.1 registry lacks the key, so
+     * the fork is load-bearing, not cosmetic (a shared 30-key list would trip the forge
+     * datagen getOrThrow). Key spellings pinned against the card's names: ore_debris_small
+     * (not ore_ancient_debris_small), the lake pair lake_lava_surface/lake_lava_underground
+     * (1.18+ ships no lake_water — nothing to remove).
+     */
+    @Test
+    void vanillaDeblobListsArePinned() {
+        List<String> tOverworld = List.of(
+                "amethyst_geode",
+                "lake_lava_surface",
+                "lake_lava_underground",
+                "ore_andesite_lower",
+                "ore_andesite_upper",
+                "ore_coal_lower",
+                "ore_coal_upper",
+                "ore_copper",
+                "ore_copper_large",
+                "ore_diamond",
+                "ore_diamond_buried",
+                "ore_diamond_large",
+                //? if neoforge {
+                /*"ore_diamond_medium",
+                *///?}
+                "ore_diorite_lower",
+                "ore_diorite_upper",
+                "ore_dirt",
+                "ore_gold",
+                "ore_gold_extra",
+                "ore_gold_lower",
+                "ore_granite_lower",
+                "ore_granite_upper",
+                "ore_gravel",
+                "ore_iron_middle",
+                "ore_iron_small",
+                "ore_iron_upper",
+                "ore_lapis",
+                "ore_lapis_buried",
+                "ore_redstone",
+                "ore_redstone_lower",
+                "ore_tuff");
+        assertEquals(tOverworld, GT6WorldgenDatagen.VANILLA_DEBLOB_OVERWORLD,
+                "the overworld suppress list, key for key (29 keys on 1.20.1, +ore_diamond_medium on 1.21.1)");
+        assertEquals(List.of(
+                "ore_ancient_debris_large",
+                "ore_debris_small",
+                "ore_gold_nether",
+                "ore_quartz_deltas",
+                "ore_quartz_nether"), GT6WorldgenDatagen.VANILLA_DEBLOB_NETHER,
+                "the nether suppress list, key for key (the five nether ore blobs)");
+        assertEquals("gt6:vanilla_deblob_overworld",
+                GT6WorldgenDatagen.VANILLA_DEBLOB_OVERWORLD_KEY.location().toString(),
+                "the overworld de-blob modifier id");
+        assertEquals("gt6:vanilla_deblob_nether",
+                GT6WorldgenDatagen.VANILLA_DEBLOB_NETHER_KEY.location().toString(),
+                "the nether de-blob modifier id");
+    }
 }

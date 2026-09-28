@@ -146,8 +146,10 @@ SEGMENT_MAP = {
 # （GT6DualDirectoryFaces.mirrorBiomeModifiers：正典单生产者同轮发射双腿面，type 键各按
 # 本腿品牌），两侧同形——P27 的 brand_normalize/BRAND_SEGMENT_MAP 折叠与
 # _norm_add_features_brand 值形归一随之退役（折叠保留会同侧撞键，P27 _fold 守卫
-# by design 硬 ERROR 逼出的 revisit）；本带不经任何映射/归一，直接同路径字节对账。
-# 摘要行用 BIOME_BAND_DIR 统计双腿面文件数（仅展示，不参与折叠）。
+# by design 硬 ERROR 逼出的 revisit）；本带不经段映射，直接同路径字节对账。
+# issue #32 vanilla-deblob 起唯一例外：remove_features 面的一条保守值形归一
+# （remove-features-diamond-medium(1.21.1)，证据见归一器 docstring），add_features
+# 面仍零归一原样字节对账。摘要行用 BIOME_BAND_DIR 统计双腿面文件数（仅展示，不参与折叠）。
 BIOME_BAND_DIR = "biome_modifier"
 BIOME_BRANDS = ("forge", "neoforge")
 
@@ -519,6 +521,32 @@ def _band_worldgen_placed(rel: PurePosixPath) -> bool:
             and rel.parts[2] == "worldgen" and rel.parts[3] == "placed_feature")
 
 
+def _band_biome_modifier(rel: PurePosixPath) -> bool:
+    """biome_modifier 双目录带判定（坐深一层）：data/<ns>/<brand>/biome_modifier/。"""
+    return (len(rel.parts) >= 5 and rel.parts[0] == "data"
+            and rel.parts[2] in BIOME_BRANDS and rel.parts[3] == BIOME_BAND_DIR)
+
+
+def _norm_remove_diamond_medium(o: dict) -> bool:
+    """remove_features 行 features 数组剔除 ore_diamond_medium（1.21.1 腿独有键）。
+
+    出处：双腿 vanilla jar data/minecraft/worldgen/placed_feature/ 逐键 diff（2026-09-28，
+    issue #32 vanilla-deblob）——1.20.1 client jar 无该键，1.21.1（neoformruntime
+    minecraft_1.21.1_client.jar）新增，且 1.21.1 BiomeDefaultFeatures.java:67 实际参与
+    生成。GT6WorldgenDatagen.VANILLA_DEBLOB_OVERWORLD 双腿各表（//? if neoforge fork），
+    正典树=forge 腿产物（无该键）、node 树=neo 腿产物（有该键）→ 归一方向 node→canonical
+    剔除。保守形：仅 type=<brand>:remove_features 的行、仅 features 数组剔该一键；
+    形态不符原样返回 → 字节比对兜底 FAIL（fail-visible）。
+    """
+    if o.get("type") not in ("forge:remove_features", "neoforge:remove_features"):
+        return False
+    tFeatures = o.get("features")
+    if not isinstance(tFeatures, list) or "minecraft:ore_diamond_medium" not in tFeatures:
+        return False
+    tFeatures.remove("minecraft:ore_diamond_medium")
+    return True
+
+
 VALUE_NORMALIZERS: list[tuple[str, str, list[tuple[str, Callable[[dict], bool]]]]] = [
     ("data/*/loot_tables", "loot_tables", [
         ("copy-custom-data→copy-nbt", _norm_copy_custom_data),
@@ -547,9 +575,15 @@ VALUE_NORMALIZERS: list[tuple[str, str, list[tuple[str, Callable[[dict], bool]]]
 # parts[3]，与 biome_modifier 双目录带同属深带族）：small-ore-datagen 注册。
 # 归一器自限形态（恰 {type,max_inclusive,min_inclusive} 且 type=minecraft:uniform），
 # 零施用原样返回 → 字节比对兜底 FAIL（fail-visible 不放宽）。
+# biome_modifier 带注册（issue #32 vanilla-deblob）：P30"两侧同形零值形差"契约对
+# remove_features 行失效——双腿键面唯一差异 ore_diamond_medium（证据见归一器 docstring）。
+# 变换保守：只动 remove_features 行的 features 数组、只剔该一键；add_features 行零施用。
 DEEP_VALUE_NORMALIZERS: list[tuple[str, Callable[[PurePosixPath], bool], list[tuple[str, Callable[[dict], bool]]]]] = [
     ("data/*/worldgen/placed_feature", _band_worldgen_placed, [
         ("uniform-int-value-unwrap(1.21.1)", _norm_uniform_int_value),
+    ]),
+    ("data/*/biome_modifier", _band_biome_modifier, [
+        ("remove-features-diamond-medium(1.21.1)", _norm_remove_diamond_medium),
     ]),
 ]
 
@@ -571,8 +605,10 @@ def _walk_dicts(obj: object, fn: Callable[[dict], bool]) -> bool:
 def _registered_band(rel: PurePosixPath) -> list[tuple[str, Callable[[dict], bool]]] | None:
     """返回 rel（canonical 形路径）命中的已注册带的变换表；未注册带返回 None。
 
-    biome_modifier 双目录带（data/<ns>/<brand>/biome_modifier/）自 P30 终态起不在
-    注册表内：两侧同形零值形差，该带任何字节差走原样 FAIL（fail-visible）。
+    biome_modifier 双目录带（data/<ns>/<brand>/biome_modifier/）P30 起为零值形差带
+    （同路径字节对账）；issue #32 vanilla-deblob 起 add_features 面仍保持零差、
+    remove_features 面带一条腿差（ore_diamond_medium，1.21.1 独有）→ 该带进注册表，
+    仅 remove-features-diamond-medium(1.21.1) 一条保守变换（见其 docstring 证据）。
     """
     if rel.suffix != ".json":
         return None

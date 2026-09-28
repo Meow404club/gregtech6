@@ -109,12 +109,57 @@ class TestFoldDualDir(unittest.TestCase):
 
 
 class TestBiomeBandUnregistered(unittest.TestCase):
-    """值形归一器对 biome_modifier 带退役：该带任何字节差原样 FAIL（fail-visible）。"""
+    """biome_modifier 带注册面（issue #32 后分叉）：add_features 面仍零归一（字节对账），
+    remove_features 面仅一条腿差变换（ore_diamond_medium，1.21.1 独有）。"""
 
-    def test_biome_band_is_no_longer_registered(self):
+    def test_add_features_face_stays_unnormalized(self):
+        # 注册面是带级：add_features 行同带但变换零施用（try_value_normalize 返回 None =
+        # 原样字节对账兜底），P30"add 面零归一"语义保持
         for brand in ("forge", "neoforge"):
             rel = PurePosixPath(f"data/gt6/{brand}/biome_modifier/overworld_stone_andesite.json")
-            self.assertIsNone(mod._registered_band(rel), msg=brand)
+            tAdd = {
+                "type": f"{brand}:add_features",
+                "biomes": "#minecraft:is_overworld",
+                "features": ["minecraft:ore_diamond_medium"],
+            }
+            self.assertIsNone(mod.try_value_normalize(rel, _gson(tAdd), _gson(tAdd)), msg=brand)
+
+    def test_remove_features_face_carries_the_one_normalizer(self):
+        for brand in ("forge", "neoforge"):
+            rel = PurePosixPath(f"data/gt6/{brand}/biome_modifier/vanilla_deblob_overworld.json")
+            regs = mod._registered_band(rel)
+            self.assertIsNotNone(regs, msg=brand)
+            self.assertEqual([name for name, _ in regs],
+                             ["remove-features-diamond-medium(1.21.1)"], msg=brand)
+
+    def test_remove_features_diamond_medium_folds_node_to_canonical(self):
+        # census 形（issue #32 vanilla_deblob_overworld.json，同品牌同路径对账——node 的
+        # forge 面是 neo 腿镜像回写，type 同为 forge 品牌）：node 面多 1.21.1 独有键
+        tBase = {
+            "type": "forge:remove_features",
+            "biomes": "#minecraft:is_overworld",
+            "features": ["minecraft:ore_diamond", "minecraft:ore_diamond_large",
+                         "minecraft:ore_diamond_medium"],
+        }
+        tCanon = {**tBase}
+        tCanon["features"] = [f for f in tBase["features"] if f != "minecraft:ore_diamond_medium"]
+        tOut = mod.try_value_normalize(
+            PurePosixPath("data/gt6/forge/biome_modifier/vanilla_deblob_overworld.json"),
+            _gson(tCanon), _gson(tBase))
+        self.assertIsNotNone(tOut)
+        self.assertEqual(tOut[0], _gson(tCanon))
+        self.assertEqual(tOut[1], "remove-features-diamond-medium(1.21.1)")
+
+    def test_remove_features_without_the_key_stays_fail_visible(self):
+        # 已在正典面（无 medium）的残余差不是该归一器的活——原样 FAIL 兜底
+        tRow = {
+            "type": "neoforge:remove_features",
+            "biomes": "#minecraft:is_nether",
+            "features": ["minecraft:ore_quartz_nether"],
+        }
+        self.assertIsNone(mod.try_value_normalize(
+            PurePosixPath("data/gt6/forge/biome_modifier/vanilla_deblob_nether.json"),
+            _gson({**tRow, "type": "forge:remove_features"}), _gson(tRow)))
 
     def test_brand_type_diff_stays_fail_visible(self):
         # P27 时代 type 差由 _norm_add_features_brand 归一；终态两侧同品牌同形，
