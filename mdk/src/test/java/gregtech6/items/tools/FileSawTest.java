@@ -43,6 +43,7 @@ import net.minecraftforge.common.ToolActions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import gregapi.data.MT;
 import gregtech6.datagen.GT6ItemTags;
 import gregtech6.registry.GT6Tools;
 
@@ -56,6 +57,11 @@ public class FileSawTest {
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
+		// the full material flood — MT's class-load only registers NULL, the reg0000..reg0038
+		// batches ride MT.init() (the DigLadderTest boot shape). The saw's ladder fallback
+		// reads MT.Steel at getMaxDamage time, and an isolated test JVM has no other class
+		// whose @BeforeAll could flood the table first (the r7-fix-three-npe NPE trap).
+		MT.init();
 	}
 
 	private static ResourceLocation rl(String aPath) {
