@@ -117,6 +117,16 @@ public final class GTMachinePaintTint {
 		if (tMaterial != null) return tMaterial;
 		tMaterial = gregtech6.block.energy.GT6MagicAbsorberBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
+		// task r8-tex-pipe-textures — the pipe connector carriers join: the fluid pipe
+		// family rides MT.Wood (the addFluidPipes 26000 NBT_MATERIAL row), the item pipe
+		// family its loader line's MT argument (MultiTileEntityPipeItem :76-82). The
+		// logistics wire resolves NULL on purpose — its upstream NBT_MATERIAL column is
+		// MT.NULL (Loader :1819), so the wire keeps the white identity while the models
+		// carry it in the same walk.
+		tMaterial = gregtech6.block.pipe.GTFluidPipeBlock.materialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
+		tMaterial = gregtech6.block.pipe.GTItemPipeBlock.materialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
 		return gregtech6.tileentity.bees.GT6BumbliaryBlock.materialOf(aBlock);
 	}
 

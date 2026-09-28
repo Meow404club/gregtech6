@@ -83,12 +83,17 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
  * {@code gt6:textures/block/example_chest.png} is a script-generated placeholder PNG
  * (mdk/tools/gen_gui_textures.py), not JSON — no red-line conflict.
  *
- * <p>Task p4-fluid-pipes (W1) appends the fluid pipes: a cube_all placeholder over
+ * <p>Task p4-fluid-pipes (W1) appended the fluid pipes: a cube_all placeholder over
  * {@code gt6:textures/block/fluid_pipe_wood.png} with a variant per
  * {@link gregtech6.block.pipe.GTFluidPipeBlock} CONNECTIONS mask value (0..63, the 6-bit
  * connection state — W1 renders every mask with the same model, the per-connection model
- * picking is the render pool item). The texture is an inline-script generated placeholder
- * PNG (same hand-rolled style as mdk/tools/gen_gui_textures.py), not JSON.
+ * picking is the render pool item). The texture was an inline-script generated placeholder
+ * PNG (same hand-rolled style as mdk/tools/gen_gui_textures.py), not JSON. Task
+ * r8-tex-pipe-textures UPGRADED the three pipe connector families (fluid / item /
+ * logistics wire) onto the shared per-set two-layer tinted models — see
+ * {@link #tintedPipeModel} / {@link #pipeBlockstate}; the placeholder PNG generation and
+ * the W1 model shape are retired (the LD wire placeholders keep their item_pipe.png
+ * borrow-facing texture — that family is a separate card).
  */
 public final class GT6BlockStates extends BlockStateProvider {
 
@@ -108,19 +113,48 @@ public final class GT6BlockStates extends BlockStateProvider {
     protected void registerStatesAndModels() {
         Block tChest = GTBlockEntities.EXAMPLE_CHEST.get();
         simpleBlock(tChest, models().cubeAll("example_chest", modLoc("block/example_chest")));
-        // r8-tex-itemform-a — the item is the 2D icon over the placeholder sprite (the r5
-        // rail form): the former parent-the-block-model form tiled the single texture over
-        // six inventory faces (the census item_form anti-pattern).
         itemModels().withExistingParent("example_chest", mcLoc("item/generated")).texture("layer0", modLoc("block/example_chest"));
-        addFluidPipe(GTFluidPipes.WOOD_FLUID_PIPE_SMALL.get());
-        addFluidPipe(GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.get());
-        // task p26-pipe-item — the item pipe family: one cube_all placeholder per row, the
-        // restrictive variants over their own PNG (the p20 placeholder ruling, no per-material art)
+        itemModels().withExistingParent("example_chest", modLoc("block/example_chest"));
+        // task r8-tex-pipe-textures — the three pipe connector families leave the
+        // cube_all placeholder era for the upstream material-set DUAL-LAYER tinted form.
+        // Upstream every material-icon render is two passes: pass 0 = the set art
+        // multiplied by mRGBa, pass 1 = the untinted <SET>_OVERLAY black outline
+        // (TextureSet.java:145-181 getIcon/getIconPasses). The connector side segment
+        // picks INDEX_BLOCK_PIPE_SIDE = the 'pipeSide' art added to every set
+        // (GT_API.java:158 addToAll); the live sets here are wood (the two fluid rows —
+        // the MT wood factory = SET_WOOD) and copper (the 18 item pipe rows — Brass/
+        // Constantan/CobaltBrass ride the clloymachine factory = SET_COPPER, MT.java:716).
+        // The logistics wire renders its own dedicated pair instead of the set art
+        // (MultiTileEntityWireLogistics :48-49 = iconsets/LOGISTICS_WIRE x mRGBa +
+        // LOGISTICS_WIRE_OVERLAY; the NBT_MATERIAL column is MT.NULL, Loader :1819, so
+        // the base art stays white). The restrictive item rows add the upstream third
+        // pass — the PIPE_RESTRICTOR plate (MultiTileEntityPipeItem.java:280-281
+        // mRenderType 1; the :76-82 registration rows carry NBT_PIPERENDER 1) — as the
+        // second decal band. The runtime tint is the row material's fRGBaSolid (the
+        // NBT_COLOR getRGBInt(fRGBaSolid) registration column) through the
+        // GTMachinePaintTint chain (the GTMachineTintModel bake walk, like every other
+        // NBT_MATERIAL domain). Connection-aware geometry (the core + per-diameter arms,
+        // TileEntityBase10ConnectorRendered :264-265) is the L-level render-pool card,
+        // NOT this one — the fallback shows the pipeSide art on every face of the
+        // placeholder cube (assets/README.md declaration).
+        ModelFile tWoodPipe = tintedPipeModel("block/materialicons/wood/pipe_side",
+                modLoc("block/materialicons/wood/pipe_side"), modLoc("block/materialicons/wood/pipe_side_overlay"));
+        ModelFile tCopperPipe = tintedPipeModel("block/materialicons/copper/pipe_side",
+                modLoc("block/materialicons/copper/pipe_side"), modLoc("block/materialicons/copper/pipe_side_overlay"));
+        ModelFile tCopperPipeRestrictive = tintedPipeModel("block/materialicons/copper/pipe_side_restrictive",
+                modLoc("block/materialicons/copper/pipe_side"), modLoc("block/materialicons/copper/pipe_side_overlay"),
+                modLoc("block/iconsets/pipe_restrictor"));
+        ModelFile tLogisticsWire = tintedPipeModel("block/iconsets/logistics_wire",
+                modLoc("block/iconsets/logistics_wire"), modLoc("block/iconsets/logistics_wire_overlay"));
+        pipeBlockstate(GTFluidPipes.WOOD_FLUID_PIPE_SMALL.get(), tWoodPipe);
+        pipeBlockstate(GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.get(), tWoodPipe);
+        // task p26-pipe-item — the item pipe family: one shared model per form, the six
+        // restrictive variants over the restrictor-band twin (the upstream mRenderType 1)
         for (GTItemPipes.ItemPipeRow tItemRow : GTItemPipes.ROWS) {
-            addItemPipe(GTItemPipes.BLOCKS_BY_PATH.get(tItemRow.path()).get(),
-                    tItemRow.variant().suffix.startsWith("restrictive"));
+            pipeBlockstate(GTItemPipes.BLOCKS_BY_PATH.get(tItemRow.path()).get(),
+                    tItemRow.variant().suffix.startsWith("restrictive") ? tCopperPipeRestrictive : tCopperPipe);
         }
-        addLogisticsWire(GT6Logistics.LOGISTICS_WIRE.get()); // task p32-logistics-lv2 — the single logistics connector row (the pipe placeholder form)
+        pipeBlockstate(GT6Logistics.LOGISTICS_WIRE.get(), tLogisticsWire); // task p32-logistics-lv2 — the single logistics connector row
         addWire(GTWires.WIRE_ELECTRIC_1X.get());
         addWire(GTWires.WIRE_ELECTRIC_2X.get());
         // task p10: the two wire loops SHARE one (set -> model) map — models().getBuilder
@@ -1737,40 +1771,76 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * One cube_all model per item pipe row (the blockstate name mirrors the block registry
-     * path), a variant per CONNECTIONS mask value (0..63), and the BlockItem model
-     * parenting the block model — the addFluidPipe shape over the two shared placeholders.
+     * Task r8-tex-pipe-textures — one shared two-layer tinted cube model per pipe texture
+     * set: the {@link #tintedCubeAll} body (every face tintindex 0 over {@code #all}, the
+     * mRGBa seat — the wire-family grammar) plus one 0.01 six-face decal band per overlay
+     * texture in {@code aOverlays}, each face cullface-synced with the body and carrying
+     * NO tintindex (the UNCOLOURED second layer, BlockTextureDefault.java:179-180 —
+     * FaceBuilder's default -1 omits the key, so the paint chain can never tint the
+     * outlines). The shell re-declares {@code cutout}: the overlay art is a
+     * transparent-texel plate and the default SOLID chunk layer has no alpha discard
+     * (issue #8, the r3-world-tint-render-type root-cause pair). No explicit UVs — they
+     * default to the element bounds. {@code aName} is the full {@code block/...} model
+     * path; the restrictive twin stacks the PIPE_RESTRICTOR band as the second overlay
+     * (the upstream third render pass, MultiTileEntityPipeItem.java:280).
      */
-    /**
-     * Task p32-logistics-lv2 — the logistics wire: the addItemPipe shape (one cube_all
-     * model over the blockstate-name PNG, a variant per CONNECTIONS mask value 0..63
-     * out of forAllStates, the BlockItem model parenting the block model) over its own
-     * placeholder PNG.
-     */
-    private void addLogisticsWire(Block aWire) {
-        String tName = aWire.getDescriptionId().replace("block.gt6.", "");
-        var tModel = models().cubeAll(tName, modLoc("block/logistics_wire"));
-        getVariantBuilder(aWire).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
-        itemModels().withExistingParent(tName, modLoc("block/" + tName));
+    private ModelFile tintedPipeModel(String aName, ResourceLocation aBase, ResourceLocation... aOverlays) {
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("all", aBase)
+                .texture("particle", "#all")
+                .renderType("cutout");
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#all").tintindex(0).cullface(aDir))
+                .end();
+        for (int i = 0; i < aOverlays.length; i++) {
+            String tOverlayKey = "overlay" + i;
+            tModel.texture(tOverlayKey, aOverlays[i]);
+            float tOff = 0.01F * (i + 1); // the second band floats one more step out — no coplanar z-fight with the first
+            tModel.element() // north
+                    .from(0.0F, 0.0F, -tOff).to(16.0F, 16.0F, 0.0F)
+                    .face(Direction.NORTH).texture("#" + tOverlayKey).cullface(Direction.NORTH)
+                    .end();
+            tModel.element() // south
+                    .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.0F + tOff)
+                    .face(Direction.SOUTH).texture("#" + tOverlayKey).cullface(Direction.SOUTH)
+                    .end();
+            tModel.element() // west
+                    .from(-tOff, 0.0F, 0.0F).to(0.0F, 16.0F, 16.0F)
+                    .face(Direction.WEST).texture("#" + tOverlayKey).cullface(Direction.WEST)
+                    .end();
+            tModel.element() // east
+                    .from(16.0F, 0.0F, 0.0F).to(16.0F + tOff, 16.0F, 16.0F)
+                    .face(Direction.EAST).texture("#" + tOverlayKey).cullface(Direction.EAST)
+                    .end();
+            tModel.element() // bottom
+                    .from(0.0F, -tOff, 0.0F).to(16.0F, 0.0F, 16.0F)
+                    .face(Direction.DOWN).texture("#" + tOverlayKey).cullface(Direction.DOWN)
+                    .end();
+            tModel.element() // top
+                    .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.0F + tOff, 16.0F)
+                    .face(Direction.UP).texture("#" + tOverlayKey).cullface(Direction.UP)
+                    .end();
+        }
+        return tModel;
     }
 
-    private void addItemPipe(Block aPipe, boolean aRestrictive) {
-        String tName = aPipe.getDescriptionId().replace("block.gt6.", "");
-        var tModel = models().cubeAll(tName, modLoc(aRestrictive ? "block/item_pipe_restrictive" : "block/item_pipe"));
-        getVariantBuilder(aPipe).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
-        itemModels().withExistingParent(tName, modLoc("block/" + tName));
-    }
-
     /**
-     * One cube_all model per pipe tier (the blockstate name mirrors the block registry
-     * path), a variant per CONNECTIONS mask value (0..63), and the BlockItem model
-     * parenting the block model.
+     * Task r8-tex-pipe-textures — the pipe/connector blockstate form, UNCHANGED from the
+     * W1/p26/p32 placeholder era (the three former addFluidPipe/addItemPipe/
+     * addLogisticsWire one-model builders collapsed onto it): ONE blockstate JSON per
+     * block whose variant per {@link gregtech6.block.GTBlockProperties#CONNECTIONS} mask
+     * value (0..63, out of forAllStates — the 64-variant exhaustive listing stays dead,
+     * the ADR red line) shares the per-set two-layer model, plus the BlockItem model
+     * parenting the block model. What the task changed is the model TARGET (the shared
+     * {@link #tintedPipeModel} bands) — the per-connection geometry (core + arms) is the
+     * L-level render-pool card.
      */
-    private void addFluidPipe(Block aPipe) {
+    private void pipeBlockstate(Block aPipe, ModelFile aModel) {
         String tName = aPipe.getDescriptionId().replace("block.gt6.", "");
-        var tModel = models().cubeAll(tName, modLoc("block/fluid_pipe_wood"));
-        getVariantBuilder(aPipe).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
-        itemModels().withExistingParent(tName, modLoc("block/" + tName));
+        getVariantBuilder(aPipe).forAllStates(aState -> ConfiguredModel.builder().modelFile(aModel).build());
+        itemModels().withExistingParent(tName, aModel.getLocation());
     }
 
     /**

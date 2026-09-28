@@ -102,6 +102,18 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 		return mCapacityPerTank;
 	}
 
+	/**
+	 * The family's row material — both ported tiers ride upstream MT.Wood (the
+	 * addFluidPipes 26000 row's NBT_MATERIAL column, Loader_MultiTileEntities.java:1846;
+	 * the WoodTreated/IronWood/Plastic/Rubber siblings are later line-data batches). The
+	 * r8-tex-pipe-textures tint dispatch seam (the {@code GTBasicMachineBlock.materialOf}
+	 * shape): null for any other block, so the {@code GTMachinePaintTint.tintMaterialOf}
+	 * gate keeps every foreign domain byte-identical.
+	 */
+	public static gregapi.oredict.OreDictMaterial materialOf(Block aBlock) {
+		return aBlock instanceof GTFluidPipeBlock ? gregapi.data.MT.Wood : null;
+	}
+
 	@Override
 	protected BlockEntityType<? extends TileEntityBase03TicksAndSync> tickerType() {
 		return GTFluidPipes.FLUID_PIPE_BE.get();
