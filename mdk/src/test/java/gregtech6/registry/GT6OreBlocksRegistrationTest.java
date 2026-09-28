@@ -66,16 +66,19 @@ class GT6OreBlocksRegistrationTest {
     private static final int PINNED_ROWS = 74;
     /**
      * The pinned material axis M (the reviewer-corrected口径, 2026-09-16, extended by
-     * r7-a-ore-axis-extension): the 53 distinct upstream always-on worldgen small-ore
+     * r7-a-ore-axis-extension and r7-b-gem-pool-extension): the 53 distinct upstream
+     * always-on worldgen small-ore
      * materials (Loader_Worldgen.java:800-852 — 53 rows whose redcinnabar :828 /
      * cinnabar :851 pair shares MT.OREMATS.Cinnabar — plus nikolite :875) UNION the 13
      * stone-layer companion materials (GT6OreBlocks.STONE_LAYER_ORES, the r6-c3 lens
-     * preconditions), each passing OP.ore.isGeneratingItem. The bare isGeneratingItem
+     * preconditions) UNION the 56 gem-pool gap materials (GT6OreBlocks.GEM_POOL_ORES,
+     * the RANDOM_SMALL_GEM_ORE seam — 61 pool members minus the 5 stone-layer
+     * companions), each passing OP.ore.isGeneratingItem. The bare isGeneratingItem
      * walk over the whole MATERIAL_ARRAY measures 618 and was REJECTED in review (nine
      * tenths of it materials no ore placement ever references) — the 45732-block face
      * is gone.
      */
-    private static final int PINNED_M = 66;
+    private static final int PINNED_M = 122;
     /** The pinned total block count (74 x M) — see materialAxisIsPinned. */
     private static final int PINNED_TOTAL = PINNED_ROWS * PINNED_M;
 
@@ -136,7 +139,7 @@ class GT6OreBlocksRegistrationTest {
     void materialAxisIsPinned() {
         List<OreDictMaterial> tAxis = GT6OreBlocks.materialAxis();
         assertEquals(PINNED_M, tAxis.size(),
-                "M = the 53 worldgen small-ore materials + the 13 stone-layer companions — bump PINNED_M only with an upstream row delta");
+                "M = the 53 worldgen small-ore materials + the 13 stone-layer companions + the 56 gem-pool materials — bump PINNED_M only with an upstream row delta");
         // every axis material passes the authoritative oredict filter (OP.java:1098 setCondition(ORES))
         for (OreDictMaterial tMaterial : tAxis) {
             assertTrue(OP.ore.isGeneratingItem(tMaterial), "every axis material passes the OP.ore criterion");
@@ -153,7 +156,19 @@ class GT6OreBlocksRegistrationTest {
             "AncientDebris", "Nikolite",
             // the 13 stone-layer companions (r7-a-ore-axis-extension, STONE_LAYER_ORES order)
             "Peridot", "Uvarovite", "Grossular", "Chromite", "Spinel", "BalasRuby",
-            "Pitchblende", "Uraninite", "Tantalite", "Columbite", "MagnesiumCarbonate", "Stannite", "Kesterite");
+            "Pitchblende", "Uraninite", "Tantalite", "Columbite", "MagnesiumCarbonate", "Stannite", "Kesterite",
+            // the 56 gem-pool gap materials (r7-b-gem-pool-extension, GEM_POOL_ORES order —
+            // internal names are the oredict strings space/apostrophe-stripped)
+            "Sapphire", "Ruby", "BlueSapphire", "GreenSapphire", "PurpleSapphire", "YellowSapphire", "OrangeSapphire",
+            "Emerald", "Aquamarine", "Morganite", "Heliodor", "Goshenite", "Bixbite", "Maxixe",
+            "Almandine", "Pyrope", "Spessartine", "Andradite",
+            "RedJasper", "OceanJasper", "RainforestJasper", "BlueJasper", "GreenJasper", "YellowJasper",
+            "TigerEye", "CatsEye", "DragonEye", "HawksEye", "BlackEye", "TigerIron",
+            "GreenAventurine", "BrownAventurine", "YellowAventurine", "BlackAventurine", "BlueAventurine", "RedAventurine",
+            "Fluorite", "RedFluorite", "PinkFluorite", "BlueFluorite", "GreenFluorite", "BlackFluorite",
+            "WhiteFluorite", "YellowFluorite", "OrangeFluorite", "MagentaFluorite",
+            "Topaz", "BlueTopaz", "Tanzanite", "Amazonite", "Opal", "OnyxRed", "OnyxBlack",
+            "Amethyst", "Dioptase", "Jade");
         assertEquals(tExpected, tAxis.stream().map(m -> m.mNameInternal).toList(),
                 "the axis is the pinned worldgen set + stone-layer companions in row order");
         assertEquals(PINNED_TOTAL, GT6OreBlocks.registrationOrder().size(), "74 x M total blocks");

@@ -5,13 +5,14 @@
  * decomposes the union so a miscount names its own band:
  *
  * <ul>
- * <li>small face 49 = 54 rows - 1 cinnabar duplicate (redcinnabar :828 + cinnabar :851
- * share MT.OREMATS.Cinnabar) - 3 dim-less rows (dolamide :843 / ambrosium :846 /
- * zanite :847, modded dims only) - 1 placement-gated row (ancientdebris :852);</li>
+ * <li>small face 110 = 49 at the p30 table state + the 61 gem-pool rows (r7-b; the 54
+ * rows otherwise decompose as: 54 - 1 cinnabar duplicate (redcinnabar :828 + cinnabar
+ * :851 share MT.OREMATS.Cinnabar) - 3 dim-less rows (dolamide :843 / ambrosium :846 /
+ * zanite :847, modded dims only) - 1 placement-gated row (ancientdebris :852));</li>
  * <li>bedrock face 32 = 33 overworld rows - 1 gold.a/b duplicate (both MT.Au);</li>
  * <li>vein face 98 = the distinct materials of the 33 generating rows (overworld || end;
  * the 7 offworld rows :917-925 excluded, their 14 row-unique materials among them);</li>
- * <li>union 118 = 49 + 15 bedrock-only + 54 vein-only.</li>
+ * <li>union 159 = 110 small + 12 bedrock-only + 37 vein-only (r7-b: the 61 gem rows joined, 41 materials brand-new — 20 of the 61 already carried vein/bedrock faces).</li>
  * </ul>
  *
  * <p>DISPLAY口径 (the acceptance's required note): the asserted {@code amount} values are
@@ -58,8 +59,8 @@ class OreDistributionInfoTest {
     @Test
     void materialAxisIsPinned() {
         List<OreDistributionInfo.Entry> tEntries = OreDistributionInfo.entries();
-        assertEquals(118, tEntries.size(), "49 small + 15 bedrock-only + 54 vein-only (the class javadoc decomposition)");
-        assertEquals(49, tEntries.stream().filter(e -> !e.smallOres().isEmpty()).count(), "small-ore materials");
+        assertEquals(159, tEntries.size(), "110 small + 12 bedrock-only + 37 vein-only (the class javadoc decomposition)");
+        assertEquals(110, tEntries.stream().filter(e -> !e.smallOres().isEmpty()).count(), "small-ore materials");
         assertEquals(98, tEntries.stream().filter(e -> !e.veins().isEmpty()).count(), "large-vein materials (generating rows only)");
         assertEquals(32, tEntries.stream().filter(e -> !e.bedrockOres().isEmpty()).count(), "overworld bedrock-ore materials");
 
