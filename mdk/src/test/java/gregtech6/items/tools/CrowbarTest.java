@@ -53,6 +53,10 @@ public class CrowbarTest {
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
+		// the fixture BET needs the write window open after boot froze the registry
+		// (known_bugs.crowbartest_neo_isolated_frozen_registry; the GTOfflineTestBase
+		// helper is a silent no-op where the unfreeze shape is absent, e.g. the forge leg)
+		gregtech6.tileentity.GTOfflineTestBase.unfreezeBlockEntityTypeRegistry();
 		sProbeType = BlockEntityType.Builder.of(
 				(aPos, aState) -> new TileEntityOvenCoverProbe(sProbeType, aPos, aState),
 				Blocks.BRICKS).build(null);
