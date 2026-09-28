@@ -281,20 +281,76 @@ public final class GT6Molds {
 
 
 	// ------------------------------------------------------------------------------------
-	// the block carrier (the CrucibleBlock form)
+	// the block carrier (the CrucibleBlock form) + the shape geometry (r7-mold-geometry)
 	// ------------------------------------------------------------------------------------
 
 	/**
-	 * The mold block — a plain cube carrier over the shared BET; the top-face click IS
-	 * the NO_GUI interface (the onBlockActivated3 SIDES_TOP gate, :268).
+	 * The upstream cell-grid width in px (MultiTileEntityMold.java:459-509 MOLD_BOUNDS,
+	 * render passes 18-42): the 5x5 grid spans the PX_P[2]..PX_N[2] window (2..14px,
+	 * 12px wide), so each cell is 12/5 = 2.4px. The lit cells rise 0..3px (PX_P[0]..
+	 * PX_N[13]); the floor is the full 16x16 footprint, 1px tall (MOLD_BOUNDS[1] =
+	 * PX_N[15]).
+	 */
+	public static final float CELL_PX = 12F / 5F;
+
+	/** The low edge (px) of grid line c (0..5) — PX_P[2] + c * PX_P[12]/5 (MOLD_BOUNDS[18+i] form). */
+	public static float cellLo(int c) {
+		return 2F + c * CELL_PX;
+	}
+
+	/** The high edge of cell c — PX_N[2] - (4-c) * PX_P[12]/5 (algebraically cellLo(c) + CELL_PX). */
+	public static float cellHi(int c) {
+		return cellLo(c + 1);
+	}
+
+	/**
+	 * The shape geometry of a {@code gt.mold} 25-bit mask: the 1px full-footprint floor
+	 * plus one 2.4x3x2.4px cell per lit bit. Bit i lights the cell at x-column i/5,
+	 * z-row i%5 — the getTexture2 pass-18+i order ({@code B[i] = 1<<i}, CS.java:106,
+	 * paired with MOLD_BOUNDS[18+i]'s x-then-z walk, MultiTileEntityMold.java:480-508).
+	 * Drives the block model elements (GT6MoldDatagen) AND the selection/collision
+	 * shape, so the two can never drift.
+	 */
+	public static net.minecraft.world.phys.shapes.VoxelShape shapeOf(int aShape) {
+		net.minecraft.world.phys.shapes.VoxelShape rShape = Block.box(0, 0, 0, 16, 1, 16);
+		for (int i = 0; i < 25; i++) {
+			if ((aShape & (1 << i)) != 0) {
+				rShape = net.minecraft.world.phys.shapes.Shapes.or(rShape, Block.box(
+						cellLo(i / 5), 0, cellLo(i % 5), cellHi(i / 5), 3, cellHi(i % 5)));
+			}
+		}
+		return rShape;
+	}
+
+	/**
+	 * The mold block — a bitmap-stamped carrier over the shared BET; the top-face click IS
+	 * the NO_GUI interface (the onBlockActivated3 SIDES_TOP gate, :268). Selection and
+	 * collision ride the block's pre-carved bitmap geometry ({@link #shapeOf}) — the empty
+	 * grid cells stay unselectable (this card's face over the upstream
+	 * getSelectedBoundingBoxFromPool full footprint, MultiTileEntityMold.java:560; the
+	 * card SPEC pins collision = selection).
 	 */
 	public static final class MoldBlock extends GTEntityBlock {
 
 		private final MoldRow mRow;
+		private final net.minecraft.world.phys.shapes.VoxelShape mShape;
 
 		public MoldBlock(MoldRow aRow, Properties aProperties) {
 			super(aProperties);
 			mRow = aRow;
+			mShape = shapeOf(aRow.preCarvedShape());
+		}
+
+		/** The bitmap geometry (selection = collision = the model elements). */
+		@Override
+		public net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState aState, net.minecraft.world.level.BlockGetter aLevel, net.minecraft.core.BlockPos aPos, net.minecraft.world.phys.shapes.CollisionContext aContext) {
+			return mShape;
+		}
+
+		/** Same shape as selection (the card SPEC — collision = selection). */
+		@Override
+		public net.minecraft.world.phys.shapes.VoxelShape getCollisionShape(BlockState aState, net.minecraft.world.level.BlockGetter aLevel, net.minecraft.core.BlockPos aPos, net.minecraft.world.phys.shapes.CollisionContext aContext) {
+			return mShape;
 		}
 		//? if neoforge {
 		/*

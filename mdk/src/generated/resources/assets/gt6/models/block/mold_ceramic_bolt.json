@@ -1,6 +1,110 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#body"
+        },
+        "east": {
+          "cullface": "east",
+          "texture": "#body"
+        },
+        "north": {
+          "cullface": "north",
+          "texture": "#body"
+        },
+        "south": {
+          "cullface": "south",
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "west": {
+          "cullface": "west",
+          "texture": "#body"
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        1,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "north": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        }
+      },
+      "from": [
+        4.4,
+        0,
+        6.8
+      ],
+      "to": [
+        6.8,
+        3,
+        9.200001
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "north": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        }
+      },
+      "from": [
+        6.8,
+        0,
+        6.8
+      ],
+      "to": [
+        9.200001,
+        3,
+        9.200001
+      ]
+    }
+  ],
   "textures": {
-    "all": "gt6:block/materialicons/rough/block_solid"
+    "body": "gt6:block/materialicons/rough/block_solid",
+    "particle": "gt6:block/materialicons/rough/block_solid"
   }
 }
