@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.Block;
 
 import java.util.concurrent.CompletableFuture;
 
+import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -32,11 +33,13 @@ import gregtech6.registry.GT6Molds;
  * 66 keys short).
  * ZERO hand-written JSON:
  * <ul>
- * <li><b>blockstates</b>: the 31 ceramic mold rows (blank + 30 pre-carved shapes) and
- *     the 2 faucet rows over the MATERIAL SMOOTH body cube ({@link GT6CrucibleDatagen
- *     #bodyTexture}, task r7-40-41-mold-assets — the former flat andesite/cobble
- *     placeholder for every row is gone; the 5x5 shape geometry is the declared
- *     geometry-card defer) — the mold cube and the faucet cube_all (the p12
+ * <li><b>blockstates</b>: the 31 ceramic mold rows (blank + 30 pre-carved shapes) as
+ *     the 5x5 bitmap stamp models (r7-mold-geometry: the 1px floor + one 2.4x3x2.4px
+ *     element per lit bit, the MOLD_BOUNDS pass-18+i geometry — {@link GT6Molds#shapeOf}
+ *     shares the bit order with the block's selection/collision shape) riding the MATERIAL
+ *     SMOOTH body texture ({@link GT6CrucibleDatagen#bodyTexture}, task
+ *     r7-40-41-mold-assets — the former flat andesite/cobble placeholder is gone), and
+ *     the 2 faucet rows as material smooth body cubes (the p12
  *     addAttachments single-model-over-all-facings form, the oriented thin plate is the
  *     render pool).</li>
  * <li><b>item models</b>: the formed molds and faucets parent their block models; the
@@ -115,23 +118,56 @@ public final class GT6MoldDatagen {
 			}
 
 			/**
-			 * One mold row: the material smooth body cube (the upstream getTextureSmooth face,
-			 * {@link GT6CrucibleDatagen#bodyTexture} — task r7-40-41-mold-assets, GitHub #41;
-			 * the 5x5 shape geometry is the declared geometry-card defer) + the formed item
-			 * model + the raw clay item as a flat generated sprite over ITS OWN borrowed
-			 * upstream icon ({@code item/<path>_raw}, the gt.multiitem.randomtools
-			 * 900-929/991 borrows — task r7-40-41-mold-assets, GitHub #40; the former shared
-			 * vanilla clay sprite made all 31 shapes look identical). The icon files are
-			 * named after the raw item ids, so the layer0 mapping needs no shape table.
+			 * One mold row: the 5x5 bitmap-stamp blockstate over the material smooth body
+			 * texture (the r7-mold-geometry geometry × r7-40-41-mold-assets bodyTexture
+			 * stitch — the upstream getTextureSmooth face, the former cobble placeholder is
+			 * gone) + the formed item model + the raw clay item as a flat generated sprite
+			 * over ITS OWN borrowed upstream icon ({@code item/<path>_raw}, the
+			 * gt.multiitem.randomtools 900-929/991 borrows — task r7-40-41-mold-assets,
+			 * GitHub #40; the former shared vanilla clay sprite made all 31 shapes look
+			 * identical). The icon files are named after the raw item ids, so the layer0
+			 * mapping needs no shape table.
 			 */
 			private void registerMoldModels(GT6Molds.MoldRow tRow) {
 				Block tBlock = GT6Molds.BLOCKS_BY_PATH.get(tRow.path()).get();
-				ModelFile tModel = models().cubeAll("block/" + tRow.path(),
-						GT6CrucibleDatagen.loc(GT6CrucibleDatagen.bodyTexture(tRow.material().get())));
-				simpleBlock(tBlock, tModel);
+				simpleBlock(tBlock, moldModel(tRow, tRow.preCarvedShape()));
 				itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
 				itemModels().withExistingParent(tRow.path() + "_raw", "item/generated")
 						.texture("layer0", modLoc("item/" + tRow.path() + "_raw"));
+			}
+
+			/**
+			 * The 5x5 bitmap stamp model (r7-mold-geometry): the 1px full-footprint floor
+			 * plus one 2.4x3x2.4px element per lit bit of the mask — the MOLD_BOUNDS
+			 * pass-18+i geometry (MultiTileEntityMold.java:459-509), the bit→cell order
+			 * shared with the selection shape ({@link GT6Molds#shapeOf}). The block/block
+			 * parent carries ONLY the display transforms (the portal-frame precedent — the
+			 * standalone element model would strip them from the BlockItem GUI/hand
+			 * rendering); the formed item model parents this model, so the BlockItem
+			 * inventory face IS the 3D shape for free.
+			 */
+			private ModelFile moldModel(GT6Molds.MoldRow aRow, int aShape) {
+				ResourceLocation tBody = GT6CrucibleDatagen.loc(GT6CrucibleDatagen.bodyTexture(aRow.material().get()));
+				BlockModelBuilder tModel = models().getBuilder("block/" + aRow.path())
+						.parent(models().getExistingFile(new ResourceLocation("minecraft", "block/block")))
+						.texture("particle", tBody)
+						.texture("body", tBody);
+				// the floor: cullface everywhere but UP — its top sits at y=1, not the
+				// boundary, and a cullface there would eat the plate under a solid neighbour
+				tModel.element().from(0, 0, 0).to(16, 1, 16)
+						.allFaces((aDir, aFace) -> {
+							aFace.texture("#body");
+							if (aDir != net.minecraft.core.Direction.UP) aFace.cullface(aDir);
+						}).end();
+				for (int i = 0; i < 25; i++) {
+					if ((aShape & (1 << i)) != 0) {
+						tModel.element()
+								.from(GT6Molds.cellLo(i / 5), 0, GT6Molds.cellLo(i % 5))
+								.to(GT6Molds.cellHi(i / 5), 3, GT6Molds.cellHi(i % 5))
+								.allFaces((aDir, aFace) -> aFace.texture("#body")).end();
+					}
+				}
+				return tModel;
 			}
 		}
 

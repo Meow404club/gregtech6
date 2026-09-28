@@ -128,14 +128,21 @@ public class GT6MoldAssetDatagenTest extends GTOfflineTestBase {
         assertBody("assets/gt6/models/block/smeltery_steel_empty.json", STEEL_BODY, "smeltery_steel_empty");
     }
 
-    /** The cube_all body pin: the single "all" texture key must be exactly the expected reference. */
+    /**
+     * The body pin: the model's single body texture key must be exactly the expected
+     * reference. Two carrier forms coexist (the r7-mold-geometry rebase seam): the
+     * cube_all rows (faucets, crucible empties, the stone rung) pin "all", the 31
+     * bitmap-stamped ceramic molds pin "body" — the material smooth face and the
+     * cobble-stays-dead pin are form-independent.
+     */
     private static void assertBody(String aModelPath, String aExpectedBody, String aLabel) throws Exception {
         JsonObject tModel = generatedJson(aModelPath);
         JsonObject tTextures = tModel.getAsJsonObject("textures");
-        assertTrue(tTextures.has("all"), aLabel + ": the cube_all texture key");
+        String tKey = tTextures.has("all") ? "all" : "body";
+        assertTrue(tTextures.has(tKey), aLabel + ": the body texture key (cube_all or the bitmap stamp)");
         assertFalse(aExpectedBody.endsWith("/andesite/cobble"),
                 aLabel + ": the flat cobble placeholder must stay dead (#41)");
-        assertEquals(aExpectedBody, tTextures.get("all").getAsString(),
+        assertEquals(aExpectedBody, tTextures.get(tKey).getAsString(),
                 aLabel + ": the material smooth body");
     }
 }
