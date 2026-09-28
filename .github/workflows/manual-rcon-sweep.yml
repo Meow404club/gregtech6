@@ -1,0 +1,73 @@
+# 手动全量 RCON 回归 sweep（task r5-ci-manual-sweep）。
+# 用户裁定 2026-09-28（state:decisions.2026-09-28-full-sweep-retirement）：本地/阶段末
+# 全量 sweep 退役（移植期已过），替代品即本工作流——用户偶尔手动触发一次。
+# 仅 workflow_dispatch：不接 push/PR，永不占常规 CI 资源。
+#
+# 为什么没有手工 boot/kill 步骤：tools/rcon 框架本身就是 headless/CI 模式——
+# sweep.py 经 chains/framework.py:679-708 / :896-945 走完整生命周期
+# gt6server.provision_run_dir（自动写 eula + server.properties：rcon 端口/query 端口/
+# online-mode=false，白名单默认关）→ start_server（nohup 语义 start_new_session +
+# --nogui）→ wait_done（轮询日志 "Done (" 标记，boot 超时 600s，进程死即 fail-fast）
+# → stop_server（RCON stop + 按 PID 精确清理）。sweep 结果账本 + boot 日志落
+# /tmp/gt6_rs_*，收尾统一上传为 artifact。
+#
+# 预编译步的存在理由：CI 冷缓存下全量编译可能吃掉框架 600s boot 超时的大半甚至
+# 超窗——先 :mdk:<node>:assemble 把编译图烧成 UP-TO-DATE，runServer 秒级入窗。
+#
+# 内存（GH runner 16G）：gradle.properties org.gradle.jvmargs=-Xmx2g 已封顶 daemon；
+# 服务器 JVM 默认最大堆=物理内存 1/4≈4G；框架内存闸阈值 30G（GT6_GATE_MEM_LIMIT_MIB）
+# 在 16G runner 上永不排队。python 依赖全 stdlib，无 pip 步骤。
+# JDK 映射照抄 build.yml 双腿惯例：forge=17，neoforge=21。
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+    inputs:
+      node:
+        description: 'Stonecutter 节点（决定 gradle 任务与 JDK）'
+        type: choice
+        default: 1.20.1-forge
+        options:
+          - 1.20.1-forge
+          - 1.21.1-neoforge
+      group:
+        description: 'sweep --group 簇键（逗号分隔可多个；留空=全名册）'
+        type: string
+        required: false
+        default: ''
+
+jobs:
+  rcon-sweep:
+    runs-on: ubuntu-latest
+    # 全名册 62 链 18 簇 + 多次 session boot，比一次普通 build 重得多——
+    # 上限放宽到 180 分钟防卡死（hosted runner job 上限 360）。
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.node == '1.21.1-neoforge' && 21 || 17 }}
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Warm compile (keep runServer inside the framework 600s boot timeout)
+        run: ./gradlew :mdk:${{ inputs.node }}:assemble
+      - name: Run RCON sweep
+        env:
+          NODE: ${{ inputs.node }}
+          GROUP: ${{ inputs.group }}
+        run: |
+          GROUP_ARGS=()
+          if [ -n "$GROUP" ]; then GROUP_ARGS=(--group "$GROUP"); fi
+          python3 tools/rcon/sweep.py --node "$NODE" "${GROUP_ARGS[@]}"
+      # 无论绿红都传：sweep 结果 JSON、session boot 日志、census 账本全在 /tmp/gt6_rs_*。
+      # 编译期就红时可能一个文件都没有——ignore，不二次报错（build.yml 同款纪律）。
+      - name: Upload sweep artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rcon-sweep-${{ inputs.node }}
+          path: /tmp/gt6_rs_*
+          if-no-files-found: ignore
