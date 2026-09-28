@@ -69,6 +69,10 @@ public class GT6JadePlugin implements IWailaPlugin {
 		// 转换器/引擎族客户端腿（task r5-jade-converters）：GTEntityBlock 全覆盖族内方块
 		// （电变/动力机/引擎方块均经它），体内 KEY_UNIT 键门分发（GT6CrucibleProvider 同门）。
 		aRegistration.registerBlockComponent(GT6ConverterProvider.INSTANCE, GTEntityBlock.class);
+		// 漆色图标腿（task r6-15-hive-jade-tint）：registerBlockIcon 接管显示图标（jade-1201
+		// impl WailaClientRegistration.java:142-145 / jade-1211 :132-137，与 registerBlockComponent
+		// 同一 IBlockComponentProvider 面），体内 painted 门分发（GT6PaintIconProvider 类 doc）。
+		aRegistration.registerBlockIcon(GT6PaintIconProvider.INSTANCE, GTEntityBlock.class);
 	}
 
 }
