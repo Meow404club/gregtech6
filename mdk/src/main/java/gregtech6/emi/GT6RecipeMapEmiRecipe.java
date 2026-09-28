@@ -118,7 +118,12 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 			if (mRow.mOutputs[i] == null || mRow.mOutputs[i].isEmpty()) continue;
 			int[] tPos = GT6RecipeMapViewerMeta.outputPos(i, mMap);
 			if (tPos == null) continue; // past the 12th drawn slot (the meta contract)
-			SlotWidget tSlot = aWidgets.add(new SlotWidget(EmiStack.of(mRow.mOutputs[i]), tPos[0], tPos[1])).large(true);
+			// issue #34: NO .large(true) — EMI's large form is a 26x26 box anchored at the
+			// passed coordinate (SlotWidget.getBounds output branch), which on the meta's
+			// 18px output pitch (107/125/143) overlaps each neighbour by 8px and pushes a
+			// 3rd slot to x169 past the 166-wide category. Upstream NEI drew faithful 18px
+			// slots — same as the JEI twin.
+			SlotWidget tSlot = aWidgets.add(new SlotWidget(EmiStack.of(mRow.mOutputs[i]), tPos[0], tPos[1]));
 			String tChance = GT6RecipeMapViewerMeta.chanceLine(GT6RecipeMapViewerMeta.outputChance(mRow, i), mRow.mOutputs[i].getCount());
 			if (tChance != null) tSlot.appendTooltip(Component.literal(tChance));
 		}
@@ -130,7 +135,7 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 		for (int i = 0; i < Math.min(mRow.mFluidOutputs.length, mMap.mOutputFluidCount); i++) {
 			if (mRow.mFluidOutputs[i] == null || mRow.mFluidOutputs[i].isEmpty()) continue;
 			int[] tPos = GT6RecipeMapViewerMeta.fluidOutputPos(i);
-			aWidgets.add(new SlotWidget(EmiStack.of(mRow.mFluidOutputs[i].getFluid(), mRow.mFluidOutputs[i].getAmount()), tPos[0], tPos[1])).large(true);
+			aWidgets.add(new SlotWidget(EmiStack.of(mRow.mFluidOutputs[i].getFluid(), mRow.mFluidOutputs[i].getAmount()), tPos[0], tPos[1]));
 		}
 		int tY = GT6RecipeMapViewerMeta.textBaseY(mMap);
 		for (String tLine : GT6RecipeMapViewerMeta.costLines(mMap, mRow)) {
