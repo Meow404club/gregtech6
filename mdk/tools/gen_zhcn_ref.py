@@ -681,6 +681,13 @@ HAND_TRANSLATIONS = {
     "gt6.row.slicer.display": ("切片器 (%s)", "hand"),
     "gt.grass.tooltip": ("不会传播、被吃、改变颜色, 也不需要光照", "hand"),
     "gt.grass.tooltip.spray": ("喷漆罐也可以用来给草染色！", "hand"),
+    # task r8-tooltip-infra -- the T1 boiler tooltip pilot pair (the T2 card fills the rest
+    # of the 12-row addToolTips table): values are the upstream zh dump faces VERBATIM
+    # (tmp/gregtech.lang:3412 gt.lang.requirement.water.pure / :3333
+    # gt.lang.hazard.explosion.steam — the row keys are this port's own
+    # gt6.tooltip.boiler.* vocabulary, so the faces ride the hand layer)
+    "gt6.tooltip.boiler.7": ("需要输入任何种类的水。使用蒸馏水以达到最高效率!", "hand"),
+    "gt6.tooltip.boiler.9": ("蒸汽压力过高时会爆炸!", "hand"),
     "gt6.tooltip.lightningrod.1": ("最底层是3x3的钨壁板, 中间是避雷针电力输出口", "hand"),
     "gt6.tooltip.lightningrod.2": ("第二层是3x3的大型铌钛合金线圈", "hand"),
     "gt6.tooltip.lightningrod.3": ("第三层是3x3的钨壁板", "hand"),

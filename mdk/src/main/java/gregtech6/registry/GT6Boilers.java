@@ -39,9 +39,9 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import gregtech6.block.GTComposedNameItem;
 import gregtech6.block.GTEntityBlock;
 import gregtech6.fluid.GTFluids;
+import gregtech6.item.GT6MachineBlockItem;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 
@@ -222,9 +222,10 @@ public final class GT6Boilers {
 		for (BoilerRow tRow : allRows()) {
 			BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new BoilerTankBlock(tRow, tRow.properties())));
-			// the GT6Kinetics.STEAM_ENGINE_ITEMS qualified-read forward-reference form (the P6 lambda lesson)
+			// the GT6Kinetics.STEAM_ENGINE_ITEMS qualified-read forward-reference form (the P6 lambda lesson);
+			// task r8-tooltip-infra pilot — the family carrier replays gt6.tooltip.boiler.* via GT6Tooltips
 			ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new GTComposedNameItem(GT6Boilers.BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+					() -> new GT6MachineBlockItem(GT6Boilers.BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "boiler")));
 		}
 	}
 

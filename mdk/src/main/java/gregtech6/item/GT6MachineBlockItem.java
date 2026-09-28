@@ -1,0 +1,63 @@
+package gregtech6.item;
+
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+
+import gregtech6.block.GTComposedNameItem;
+import gregtech6.tooltip.GT6Tooltips;
+
+/**
+ * The unified machine-family BlockItem carrier (task r8-tooltip-infra, design card T1):
+ * every GT6 machine block item replays its family's static tooltip table through
+ * {@link GT6Tooltips#append} — the registration sites swap their bare/composed BlockItem
+ * for this class with the family short key (the twelve-key vocabulary lives on
+ * {@link GT6Tooltips}).
+ *
+ * <p>Extends {@link GTComposedNameItem}, NOT BlockItem directly: the p20 composed-name
+ * families (the boilers here, the burning boxes/crucibles/distillation towers next) name
+ * their stacks through {@code Block#getName()} compose templates, and a bare BlockItem
+ * stack would fall back to the raw description id — the carrier keeps that delegation so
+ * the registration-site swap stays a one-line, zero-regression move (blocks with atomic
+ * keys resolve the identical string, the GTComposedNameItem javadoc stance).
+ *
+ * <p>The dual-leg hover seam is the GTLightningRodBlock.Item:71-81 shape, ONE swap: on
+ * forge the second parameter is the {@link Level} reference, on 1.21.1 it became
+ * {@code Item.TooltipContext} (vanilla 1.21.1 Item.java:292 — the same four-argument
+ * shape, a different carrier type). The super call runs first, then the family rows.
+ */
+public class GT6MachineBlockItem extends GTComposedNameItem {
+
+	private final String mFamily;
+
+	public GT6MachineBlockItem(Block aBlock, Properties aProperties, String aFamily) {
+		super(aBlock, aProperties);
+		mFamily = aFamily;
+	}
+
+	/** The family short key ({@code boiler / machine / wire / ...} — the GT6Tooltips vocabulary). */
+	public String family() {
+		return mFamily;
+	}
+
+	//? if forge {
+	@Override
+	public void appendHoverText(ItemStack aStack, @Nullable Level aLevel, List<Component> aTooltip, TooltipFlag aFlag) {
+		super.appendHoverText(aStack, aLevel, aTooltip, aFlag);
+	//?} else {
+	/*// 21.1: the Level second parameter became Item.TooltipContext (vanilla 1.21.1
+	//Item.java:292 — the same four-argument shape, a different carrier type).
+	@Override
+	public void appendHoverText(ItemStack aStack, Item.TooltipContext aContext, List<Component> aTooltip, TooltipFlag aFlag) {
+		super.appendHoverText(aStack, aContext, aTooltip, aFlag);
+	*///?}
+		GT6Tooltips.append(mFamily, aTooltip);
+	}
+}

@@ -159,6 +159,7 @@ public class GT6EnUs extends LanguageProvider {
         addFluidJade(); // task p34-hygiene-lang — table-tail append
         addBoilerJade(); // task r5-jade-boiler — table-tail append
         addConverterJade(); // task r5-jade-converters — table-tail append
+        addBoilerTooltip(); // task r8-tooltip-infra — table-tail append (the T1 pilot rows)
         addPocketTools(); // task p29-w5-t7-pocket-eight — table-tail append
         addArmor(); // task p29-w5-t8-armor-24 — table-tail append
         addTreeBlocks(); // task p30-w6-t1-trees-nine — table-tail append
@@ -2338,6 +2339,21 @@ public class GT6EnUs extends LanguageProvider {
         add(GT6ConverterProvider.LANG_STORED, "Stored: %s / %s %s");
         add(GT6ConverterProvider.LANG_STORED_BARE, "Stored: %s %s");
         add(GT6ConverterProvider.LANG_RATE, "Output: %s %s/t");
+    }
+
+    /**
+     * The boiler tooltip pilot rows (task r8-tooltip-infra, 2 keys): the T1 calibration
+     * pair at their upstream positions in the 12-row addToolTips table (the T2 card fills
+     * rows 1-6, 8, 10-12 in place) — row 7 = the pure-water requirement (ORANGE,
+     * LH.REQUIREMENT_WATER_PURE, MultiTileEntityBoilerTank.java:102) and row 9 = the steam
+     * explosion hazard (DRED, LH.HAZARD_EXPLOSION_STEAM, :104), both en VERBATIM from the
+     * gregapi/data/LH.java:495/:564 faces. Consumed by GT6Tooltips (the registry rows are
+     * these two keys); zh faces ride the reference table's hand layer via
+     * GT6ZhCn.addBoilerTooltipUnits.
+     */
+    private void addBoilerTooltip() {
+        add("gt6.tooltip.boiler.7", "Requires any Water. Use distilled Water for best efficiency!");
+        add("gt6.tooltip.boiler.9", "Explodes when Steam Pressure is too high!");
     }
     /**
      * Pocket multitool family keys (task p29-w5-t7-pocket-eight): the eight display names

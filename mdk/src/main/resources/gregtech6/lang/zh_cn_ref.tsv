@@ -1801,6 +1801,8 @@ direct	gt6.tagprefix.wire_gt14	14×%s线	hand
 direct	gt6.tagprefix.wire_gt15	15×%s线	hand
 direct	gt6.tagprefix.wire_gt16	16×%s线	hand
 direct	gt6.tagprefix.wood	%s	hand
+direct	gt6.tooltip.boiler.7	需要输入任何种类的水。使用蒸馏水以达到最高效率!	hand
+direct	gt6.tooltip.boiler.9	蒸汽压力过高时会爆炸!	hand
 direct	gt6.tooltip.lightningrod.1	最底层是3x3的钨壁板, 中间是避雷针电力输出口	hand
 direct	gt6.tooltip.lightningrod.2	第二层是3x3的大型铌钛合金线圈	hand
 direct	gt6.tooltip.lightningrod.3	第三层是3x3的钨壁板	hand
