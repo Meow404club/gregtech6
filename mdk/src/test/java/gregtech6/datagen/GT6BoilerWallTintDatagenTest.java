@@ -23,6 +23,7 @@
 package gregtech6.datagen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -121,21 +122,35 @@ class GT6BoilerWallTintDatagenTest {
         assertEquals(true, tFound, "the Lightning Rod rows must name machine_wall_tungsten");
     }
 
-    /** The boiler model seats the tint on every body face and keeps the barometer front. */
+    /**
+     * The boiler model seats the tint on every body face and ships the untinted overlay
+     * shell (task r8-tex-large-boilers — the former single-layer pin and its front
+     * placeholder art are retired: upstream ships NO front art for this tank,
+     * FACES_TBS={0,1,2,2,2,2}, so all four sides bind the side sprite).
+     */
     @Test
-    public void boilerModelSeatsTheTintAndKeepsTheBarometerFace() throws Exception {
+    public void boilerModelSeatsTheTintAndShipsTheOverlayShell() throws Exception {
         JsonObject tJson = model("steam_boiler_tank");
         JsonArray tElements = tJson.getAsJsonArray("elements");
-        assertEquals(1, tElements.size(), "the single tinted body cube (no shell — the gauge is in the front art)");
+        assertEquals(7, tElements.size(), "the tinted body cube + the six 0.01 overlay decals");
         JsonObject tBody = tElements.get(0).getAsJsonObject();
         for (Map.Entry<String, JsonElement> tFace : tBody.getAsJsonObject("faces").entrySet()) {
             assertEquals(0, tFace.getValue().getAsJsonObject().get("tintindex").getAsInt(),
                     "the " + tFace.getKey() + " face is a tint seat");
         }
         JsonObject tTextures = tJson.getAsJsonObject("textures");
-        assertEquals("gt6:block/boiler_steam/front", tTextures.get("north").getAsString(),
-                "the barometer face stays the north/front texture");
-        assertEquals("gt6:block/boiler_steam/side", tTextures.get("south").getAsString());
+        assertEquals("gt6:block/boiler_steam/colored_side", tTextures.get("north").getAsString(),
+                "all four sides bind the side sprite (no upstream front art)");
+        assertEquals("gt6:block/boiler_steam/colored_side", tTextures.get("south").getAsString());
+        assertEquals("gt6:block/boiler_steam/overlay_side", tTextures.get("overlay_north").getAsString(),
+                "the overlay shell rides the untinted decals");
+        for (int i = 1; i < 7; i++) {
+            for (Map.Entry<String, JsonElement> tFace : tElements.get(i).getAsJsonObject()
+                    .getAsJsonObject("faces").entrySet()) {
+                assertFalse(tFace.getValue().getAsJsonObject().has("tintindex"),
+                        "decal " + i + " face " + tFace.getKey() + " stays untinted");
+            }
+        }
     }
 
     /**
