@@ -52,12 +52,13 @@ class GT6SurfaceBlocksTest {
                 GT6SurfaceBlocks.ALL.stream().map(tRow -> tRow.getId().getPath()).limit(4).toList(),
                 "the first-batch surface deco blocks, rocks first (the WorldgenRocks first-batch set + the stick)");
         // +8 (task p30-w6-t2-surface-blocks): the plant quartet + the 4 fallen-log woods.
-        // +38 (task p30-w6-t3-large-veins, 31 -> 38 with r7-a-ore-axis-extension): the
-        // vein-indicator rocks, pickup-only like the first-batch rocks/sticks.
-        // 4 + 8 + 38 = 50; the ITEMS register holds the 8
+        // the vein-indicator rocks, pickup-only like the first-batch rocks/sticks
+        // (31 at p30-w6-t3-large-veins; 40 since r7-a-ore-axis-extension;
+        // 57 since r7-b-gem-pool-extension, the gem-pool axis chain).
+        // 4 + 8 + 57 = 69; the ITEMS register holds the 8
         // obtainable block items (the rocks/sticks/indicator rocks stay zero-item).
-        assertEquals(52, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
-                "the DeferredRegister holds the 4 rocks/sticks + the 8 obtainable rows + the 40 indicator rocks");
+        assertEquals(69, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
+                "the DeferredRegister holds the 4 rocks/sticks + the 8 obtainable rows + the 57 indicator rocks");
         assertEquals(8, GT6SurfaceBlocks.ITEMS.getEntries().size(),
                 "the obtainable band's block items (the rocks/sticks/indicator rocks stay zero-item)");
     }
@@ -84,7 +85,8 @@ class GT6SurfaceBlocksTest {
     }
 
     /**
-     * The 40 vein-indicator rocks (task p30-w6-t3-large-veins; 31 -> 40 with r7-a-ore-axis-extension): each literal id snake
+     * The 57 vein-indicator rocks (task p30-w6-t3-large-veins; 31 -> 40 with r7-a-ore-axis-extension;
+     * 40 -> 57 with r7-b-gem-pool-extension): each literal id snake
      * matches the material's composed path (GTMaterialItems.snakeCase over mNameInternal —
      * the literal was required because the class loads before MT.init), the rockGt loot
      * item exists in the headless enumeration, and the {@code indicatorRock} lookup
@@ -96,7 +98,7 @@ class GT6SurfaceBlocksTest {
         Set<String> tItemIds = GTMaterialItems.registrationOrder().stream()
                 .map(tPair -> GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()))
                 .collect(Collectors.toSet());
-        assertEquals(40, GT6SurfaceBlocks.INDICATOR_ROCKS.size(), "the spec \u2164 compensation set: 40 distinct valid vein slots");
+        assertEquals(57, GT6SurfaceBlocks.INDICATOR_ROCKS.size(), "the spec \u2164 compensation set: 57 distinct valid vein slots");
         for (int i = 0; i < GT6SurfaceBlocks.INDICATOR_ROCKS.size(); i++) {
             gregapi.oredict.OreDictMaterial tMaterial = GT6SurfaceBlocks.INDICATOR_MATERIALS.get(i).get();
             assertEquals("surface_rock_" + GTMaterialItems.snakeCase(tMaterial.mNameInternal),
