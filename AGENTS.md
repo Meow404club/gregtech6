@@ -160,6 +160,9 @@ BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
    即拒（exit 2）；全量执行期持 /tmp/gt6_testgate_full.lock 全局互斥，第二个
    全量排队等锁**（test-gating-v2 硬闸，2026-09-27 OOM 二连裁定：全量收归
    审查席，coder=编译全绿+--tests 过滤+受影响域抽查）。
+9. **不主动关闭 issue、不主动评论**（2026-09-28 用户裁定）：修复合入后 issue
+   保持 open，由提出者自行测试确认后关闭；修复说明走 commit message/任务板/
+   发布说明，不占用 issue 区。
 
 ## 六、上下文工程纪律（Anthropic 上下文工程指南的落地）
 
