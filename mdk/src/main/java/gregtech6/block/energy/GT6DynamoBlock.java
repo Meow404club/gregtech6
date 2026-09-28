@@ -6,8 +6,13 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -27,13 +32,18 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * Loader_MultiTileEntities.java:945-957 — NBT_HARDNESS 4.0F, NBT_RESISTANCE 4.0F, stack
  * 16, no GUI: {@code canDrop} = F, TileEntityBase10EnergyConverter :161).
  *
- * <p>Facing = the placement orientation over the GT6PlacementFacing canon (the
- * GTTransformerRotationBlock verbatim shape): the FRONT face ({@code mFacing}) is the
- * OUTPUT face (upstream isOutput {@code mFacing == aSide}, DynamoFlux :37 — the dynamo is
- * placed facing its consumer), the BACK face the only input (upstream isInput
- * {@code mFacing == OPOS[aSide]}, :36 — the driven axle sits behind). The BE mirror
- * re-syncs from the state each tick (the transformer syncFacingFromState form — the
- * {@code /setblock gt6:flux_dynamo[facing=...]} RCON path, the state is the authority).
+ * <p>Facing = the placement orientation over the GT6PlacementFacing canon (issue #18,
+ * task r4-18-converter-tex-facing): the FRONT face ({@code mFacing}) is the OUTPUT face
+ * (upstream isOutput {@code mFacing == aSide}, DynamoFlux :37 — the dynamo is placed
+ * facing its consumer), the BACK face the only input (upstream isInput
+ * {@code mFacing == OPOS[aSide]}, :36 — the driven axle sits behind). SIX-WAY now —
+ * upstream SIDES_VALID = all six (CS.java:699, Base09 :92) and Base10 does not narrow
+ * it, so placement folds the look's pitch vertical ({@code getSideForPlayerPlacing}
+ * UT.java:1755-1763) and the monkey wrench re-faces to the clicked sub-face (the
+ * {@code GT6ElectricTransformerBlock.wrenchRotate} arm, Base09 onToolClick2 :67). The BE
+ * mirror re-syncs from the state each tick (the transformer syncFacingFromState form —
+ * the {@code /setblock gt6:flux_dynamo[facing=...]} RCON path, the state is the
+ * authority); the ACTIVE property carries {@code mActive} for the overlay_active layer.
  *
  * <p>The row index ({@link #tier}) selects the family ladder column (the GTOvenBlock
  * "block identity IS the config selector" ruling): the Flux rows index
@@ -42,14 +52,18 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * RegistryObject directly; this shared class cannot name one family, so the registrations
  * hand their own in — resolved at call time, never class-load, the GTWireSpecs:35 ruling).
  *
- * <p>NO use override (no GUI — upstream has none), NO onRemove override (the
- * BaseEntityBlock kill+recreate lesson, remember id59), no ACTIVE property yet (the
- * activity visual rides the W2 render card, the trinary collapsed to the mActive flag).
+ * <p>No GUI (upstream has none), NO onRemove override (the BaseEntityBlock kill+recreate
+ * lesson, remember id59); the activity visual rides the ACTIVE property (issue #18 —
+ * the upstream trinary stays collapsed to the {@code mActive} flag, the blinking state
+ * remains the defer).
  */
 public class GT6DynamoBlock extends GTEntityBlock {
 
-	/** Facing property (horizontal — FRONT is the output face, BACK the input). */
-	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+	/** Facing property (six-way, issue #18 — FRONT is the output face, BACK the input; upstream SIDES_VALID = all six). */
+	public static final DirectionProperty FACING = BlockStateProperties.FACING;
+
+	/** The activity visual property (the overlay_active layer selector; the BE drives it off {@code mActive}). */
+	public static final net.minecraft.world.level.block.state.properties.BooleanProperty ACTIVE = gregtech6.block.GTBlockProperties.ACTIVE;
 
 	/** The row index of this block in its family ladder (0 = T1 .. 4 = T5). */
 	private final int mTier;
@@ -80,7 +94,7 @@ public class GT6DynamoBlock extends GTEntityBlock {
 		mTier = aTier;
 		mTickerType = aTickerType;
 		mMaterial = aMaterial;
-		registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+		registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE, false));
 	}
 
 	/**
@@ -126,14 +140,28 @@ public class GT6DynamoBlock extends GTEntityBlock {
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> aBuilder) {
-		aBuilder.add(FACING);
+		aBuilder.add(FACING, ACTIVE);
 	}
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
-		// the front TOWARDS the placer — you stand on the consumer side, the driven axle
-		// sits behind (the GT6PlacementFacing canon, task p28-singleblock-facing-canon)
-		return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
+		// the front TOWARDS the placer over the full look — you stand on the consumer
+		// side, the driven axle sits behind (the canon, the vertical fold per issue #18)
+		return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getNearestLookingDirection()));
+	}
+
+	@Override
+	//? if forge {
+	public InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, InteractionHand aHand, BlockHitResult aHit) {
+	//?} else {
+	/*public InteractionResult useWithoutItem(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, BlockHitResult aHit) {
+	//21.1: BlockBehaviour.use folded into useWithoutItem (the GTOvenBlock fork).
+	InteractionHand aHand = InteractionHand.MAIN_HAND;
+	*///?}
+		// the wrench arm (issue #18 — upstream Base09 onToolClick2 :67): the clicked
+		// wrench-grid sub-face becomes the FRONT (the output face); the state is the
+		// authority, the BE tick mirror follows
+		return GT6ElectricTransformerBlock.wrenchRotate(aState, aLevel, aPos, aPlayer, aHand, aHit, FACING);
 	}
 
 	@Override

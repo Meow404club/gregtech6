@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.RailBlock;
 import net.minecraft.world.level.block.PoweredRailBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.level.block.state.properties.SlabType;
@@ -1424,10 +1425,14 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .end();
         for (RegistryObject<Block> tHandle : aBlocks.values()) {
             getVariantBuilder(tHandle.get()).forAllStates(aState -> {
-                // the vanilla horizontal-facing rotation map (the transformer verbatim form)
+                // the vanilla horizontal-facing rotation map + the six-way x band (issue
+                // #18: the shared GT6DynamoBlock carrier went six-way + ACTIVE — these
+                // families carry no active art, so both ACTIVE values ride this model)
                 Direction tFacing = aState.getValue(gregtech6.block.energy.GT6DynamoBlock.FACING);
+                int tX = tFacing == Direction.DOWN ? 90 : tFacing == Direction.UP ? 270 : 0;
                 return ConfiguredModel.builder()
                         .modelFile(tModel)
+                        .rotationX(tX)
                         .rotationY((int) (tFacing.toYRot() + 180) % 360)
                         .build();
             });
@@ -2042,11 +2047,12 @@ public final class GT6BlockStates extends BlockStateProvider {
      * shape (one cube_all over the SHARED placeholder {@code block/energy_source.png}, no
      * new PNG — the p20 borrow posture) with the empty-partial wildcard variant covering
      * the FACING property (the addAttachments convention — the partialState().setModels()
-     * empty key matches all four facings, the water wheel "static facing" precedent). The
+     * empty key matches every state, the water wheel "static facing" precedent). The
      * facing is a functional IO face (FRONT out EU / BACK in RU), not a visual state in
-     * this placeholder — the W2 render card upgrades the whole dynamo family to the
-     * borrowed upstream dynamos art (the family's five LV..IV rows stay the W2 surface;
-     * this card owns ONLY the new tier per its SPEC).
+     * this placeholder — issue #18 (task r4-18-converter-tex-facing) upgraded the five
+     * LV..IV rows to the borrowed upstream dynamos art; the T0 row KEEPS the placeholder
+     * because upstream carries no T0 art at all (the Electric_T[0] slot has no machine,
+     * MT.java:3691 — PLACEHOLDER, NO UPSTREAM COUNTERPART, the README ledger row).
      */
     /**
      * Task p29-w4-battery-storage — the twelve BatteryBox rows: one cube_all per row over
@@ -2085,13 +2091,16 @@ public final class GT6BlockStates extends BlockStateProvider {
                     modLoc(tTex + "front"), modLoc(tTex + "side"),         // north(front)/south
                     modLoc(tTex + "side"), modLoc(tTex + "side"));         // west/east
             getVariantBuilder(tBlock).forAllStates(aState -> {
-                int tY = switch (aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FACING)) {
+Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FACING);
+                // the six-way map (issue #18 — these blocks extend GT6BatteryBoxBlock, whose FACING went six-way)
+                int tX = tFacing == Direction.DOWN ? 90 : tFacing == Direction.UP ? 270 : 0;
+                int tY = switch (tFacing) {
                     case SOUTH -> 180;
                     case WEST -> 270;
                     case EAST -> 90;
-                    default -> 0; // NORTH
+                    default -> 0; // NORTH and the two verticals carry the x rotation only
                 };
-                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+                return ConfiguredModel.builder().modelFile(tModel).rotationX(tX).rotationY(tY).build();
             });
             itemModels().withExistingParent(tRow.path(), tModel.getLocation());
         }
@@ -2116,13 +2125,16 @@ public final class GT6BlockStates extends BlockStateProvider {
                     modLoc("block/" + tTexBase + "_front"), modLoc("block/" + tTexBase + "_back"),  // north(front)/south(back)
                     modLoc("block/" + tTexBase + "_side"), modLoc("block/" + tTexBase + "_side"));  // west/east
             getVariantBuilder(tBlock).forAllStates(aState -> {
-                int tY = switch (aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FACING)) {
+Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FACING);
+                // the six-way map (issue #18 — these blocks extend GT6BatteryBoxBlock, whose FACING went six-way)
+                int tX = tFacing == Direction.DOWN ? 90 : tFacing == Direction.UP ? 270 : 0;
+                int tY = switch (tFacing) {
                     case SOUTH -> 180;
                     case WEST -> 270;
                     case EAST -> 90;
-                    default -> 0; // NORTH
+                    default -> 0; // NORTH and the two verticals carry the x rotation only
                 };
-                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+                return ConfiguredModel.builder().modelFile(tModel).rotationX(tX).rotationY(tY).build();
             });
             itemModels().withExistingParent(tRow.path(), tModel.getLocation());
         }
@@ -2138,15 +2150,16 @@ public final class GT6BlockStates extends BlockStateProvider {
      * Task p38-c1-dynamo-bowl-models — the Electric (T1-T5) and Flux (T1-T5) dynamo ladder
      * rows: the ten registered {@code GT6DynamoBlock}s had ZERO generated assets (placed
      * they fell to the missing-model checkerboard; the census probe). Each family's ladder
-     * shares ONE facing-cube model over the BAKED colored+overlay composites (the p28
-     * electric-transformer posture — the per-tier visual is not a column of the upstream
-     * registration, Loader :946-950/:953-957 all ride one icon set). The FRONT face = the
-     * OUTPUT {@code mFacing}, the BACK = the INPUT {@code OPOS}, the four side faces the
-     * plain side art (MultiTileEntityDynamoFlux/Electric getTexture2 index 0/1/2); the
-     * {@code overlay_active/} trio stays unborrowed (no ACTIVE property on the port block —
-     * the W2 render card). The bake is the canonical flat look (the p19 src-over treatment;
-     * assets/README.md carries source + product sha256), the runtime mRGBa tint the render
-     * pool. The T0 ULV row keeps its placeholder above.
+     * shares the ONE facing-cube model pair (issue #18, task r4-18-converter-tex-facing —
+     * the per-tier visual is not a column of the upstream registration, Loader
+     * :946-950/:953-957 all ride one icon set): the addConverterModel two-layer grammar —
+     * the tintindex-0 grayscale colored body (the runtime mRGBa multiply, the row
+     * NBT_MATERIAL through GTMachineTintModel) + the six untinted overlay decal plates,
+     * ACTIVE switching the shell to the overlay_active art (upstream getTexture2
+     * {@code mActivity.mState>0 ? sOverlaysActive : sOverlays}, DynamoElectric :44). The
+     * FRONT face = the OUTPUT {@code mFacing}, the BACK = the INPUT {@code OPOS}, the four
+     * side faces the plain side art (getTexture2 index 0/1/2). The T0 ULV row keeps its
+     * placeholder above (no upstream T0 art exists — the declared port extension).
      */
     private void addDynamoLadders() {
         addDynamoFamily("electric_dynamo", List.of(
@@ -2163,22 +2176,11 @@ public final class GT6BlockStates extends BlockStateProvider {
                 Map.entry("flux_dynamo_t5", (Block) gregtech6.registry.GT6FluxDynamos.FLUX_DYNAMO_T5.get())));
     }
 
-    /** One ladder walk — the shared facing cube (the addZpmDechargers rotation form) + the row BlockItem parents. */
+    /** One ladder walk — the shared two-layer model pair + the row BlockItem parents (the addElectricTransformer rotation form). */
     private void addDynamoFamily(String aFamily, List<Map.Entry<String, Block>> aRows) {
-        ModelFile tModel = models().cube(aFamily,
-                modLoc("block/" + aFamily + "_side"), modLoc("block/" + aFamily + "_side"),   // bottom/top
-                modLoc("block/" + aFamily + "_front"), modLoc("block/" + aFamily + "_back"),  // north(front/output)/south(back/input)
-                modLoc("block/" + aFamily + "_side"), modLoc("block/" + aFamily + "_side"));  // west/east
+        ModelFile tModel = addConverterModel(aFamily);
         for (Map.Entry<String, Block> tRow : aRows) {
-            getVariantBuilder(tRow.getValue()).forAllStates(aState -> {
-                int tY = switch (aState.getValue(gregtech6.block.energy.GT6DynamoBlock.FACING)) {
-                    case SOUTH -> 180;
-                    case WEST -> 270;
-                    case EAST -> 90;
-                    default -> 0; // NORTH
-                };
-                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
-            });
+            converterBlockstate(tRow.getValue(), tModel, gregtech6.block.energy.GT6DynamoBlock.FACING);
             itemModels().withExistingParent(tRow.getKey(), tModel.getLocation());
         }
     }
@@ -2214,13 +2216,17 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /**
      * Task p28-c-ulv-lv-transformer — the Electric Transformer ULV-LV: the p12 rotation
-     * transformer's orientable facing-cube shape verbatim (the FRONT = INPUT face — the
-     * Base11 :63 convention; ALL-BUT-FRONT = output) over the BAKED upstream textures:
-     * colored/front + overlay/front and colored/side + overlay/side composited src-over
-     * into single-layer opaque PNGs (the p19 distillery bake treatment — the upstream
-     * two-layer colored+overlay stack with the mRGBa tint is the render pool card;
-     * assets/README.md carries the source + product sha256 attribution). The active
-     * overlay (MultiTileEntityTransformerElectric :50-57) is the render pool defer.
+     * transformer's facing-cube posture (the FRONT = INPUT face — the Base11 :63
+     * convention; ALL-BUT-FRONT = output), now over the BORROWED two-layer upstream art
+     * (issue #18, task r4-18-converter-tex-facing — the p28 src-over bake is retired, it
+     * dropped the per-tier mRGBa and painted all nine rows the same gray-white): the
+     * addConverterModel tinted-body + overlay-shell grammar, the row's Electric_T[i]
+     * casing multiply through GTMachineTintModel (upstream
+     * BlockTextureMulti(colored x mRGBa, overlay[mActivity.mState]),
+     * MultiTileEntityTransformerElectric :35-39), ACTIVE switching the shell to the
+     * overlay_active art. The blinking shell (the animated :50-57 trio) stays unborrowed
+     * — the port collapsed the upstream TE_Behavior_Active_Trinary to a boolean (the
+     * README defer note).
      */
     /**
      * Task p35-long-distance-pipes — the Long Distance pipes: the 16 wire metas ride the
@@ -2236,9 +2242,11 @@ public final class GT6BlockStates extends BlockStateProvider {
             String tPath = tEndpoint.getDescriptionId().replace("block.gt6.", "");
             getVariantBuilder(tEndpoint).forAllStates(aState -> {
                 Direction tFacing = aState.getValue(GT6ElectricTransformerBlock.FACING);
+                // the six-way dispenser-form x band (issue #18 — the six-way FACING property)
+                int tX = tFacing == Direction.DOWN ? 90 : tFacing == Direction.UP ? 270 : 0;
                 return ConfiguredModel.builder()
                         .modelFile(tEndpointModel)
-                        .rotationY((int) (tFacing.toYRot() + 180) % 360)
+                        .rotationX(tX).rotationY((int) (tFacing.toYRot() + 180) % 360)
                         .build();
             });
             itemModels().withExistingParent(tPath, modLoc("block/electric_transformer"));
@@ -2251,24 +2259,109 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
     }
 
+    /**
+     * The converter two-layer model (issue #18, task r4-18-converter-tex-facing — the
+     * addHive grammar over the addBridgeFamily front/back/side texture assignment):
+     * element 0 = the tinted body cube over the borrowed grayscale
+     * {@code <band>_colored_{front,back,side}} art (tintindex 0 = the material tint
+     * seat), elements 1-6 = the six 0.01-plate {@code <band>_overlay_*} decal shells
+     * (untinted, cullface synced) — the upstream BlockTextureMulti(colored x mRGBa,
+     * overlay) stack, MultiTileEntityTransformerElectric :35-39. Cutout so the shells'
+     * transparent texels discard (the C7' fix shape).
+     */
+    private ModelFile addConverterModel(String aBand) {
+        BlockModelBuilder tModel = models().getBuilder(aBand)
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc("block/" + aBand + "_colored_side"))
+                .texture("up", modLoc("block/" + aBand + "_colored_side"))
+                .texture("north", modLoc("block/" + aBand + "_colored_front"))
+                .texture("south", modLoc("block/" + aBand + "_colored_back"))
+                .texture("west", modLoc("block/" + aBand + "_colored_side"))
+                .texture("east", modLoc("block/" + aBand + "_colored_side"))
+                .texture("particle", modLoc("block/" + aBand + "_colored_side"))
+                .texture("overlay_front", modLoc("block/" + aBand + "_overlay_front"))
+                .texture("overlay_back", modLoc("block/" + aBand + "_overlay_back"))
+                .texture("overlay_side", modLoc("block/" + aBand + "_overlay_side"))
+                .renderType("cutout");
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
+                .end();
+        tModel.element() // north
+                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+                .face(Direction.NORTH).texture("#overlay_front").cullface(Direction.NORTH)
+                .end();
+        tModel.element() // south
+                .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.01F)
+                .face(Direction.SOUTH).texture("#overlay_back").cullface(Direction.SOUTH)
+                .end();
+        tModel.element() // west
+                .from(-0.01F, 0.0F, 0.0F).to(0.0F, 16.0F, 16.0F)
+                .face(Direction.WEST).texture("#overlay_side").cullface(Direction.WEST)
+                .end();
+        tModel.element() // east
+                .from(16.0F, 0.0F, 0.0F).to(16.01F, 16.0F, 16.0F)
+                .face(Direction.EAST).texture("#overlay_side").cullface(Direction.EAST)
+                .end();
+        tModel.element() // bottom
+                .from(0.0F, -0.01F, 0.0F).to(16.0F, 0.0F, 16.0F)
+                .face(Direction.DOWN).texture("#overlay_side").cullface(Direction.DOWN)
+                .end();
+        tModel.element() // top
+                .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.01F, 16.0F)
+                .face(Direction.UP).texture("#overlay_side").cullface(Direction.UP)
+                .end();
+        return tModel;
+    }
+
+    /**
+     * The two-model convenience form: the ACTIVE model = the inactive parent with the
+     * three overlay textures swapped to the {@code _overlay_active} trio (render_type does
+     * NOT ride the parent chain — the shell re-declares cutout).
+     */
+    private ModelFile addConverterActiveModel(ModelFile aInactive) {
+        String tBand = aInactive.getLocation().getPath().replaceFirst("^block/", "");
+        return models().getBuilder(tBand + "_active")
+                .parent(aInactive)
+                .texture("overlay_front", modLoc("block/" + tBand + "_overlay_active_front"))
+                .texture("overlay_back", modLoc("block/" + tBand + "_overlay_active_back"))
+                .texture("overlay_side", modLoc("block/" + tBand + "_overlay_active_side"))
+                .renderType("cutout");
+    }
+
+    /**
+     * The converter blockstate walk (issue #18): SIX-WAY facing over the dispenser-form
+     * rotation map (the addMagicAbsorber form — north identity, down x=90, up x=270, the
+     * horizontal y band; the FACING face is the FRONT) and the ACTIVE variant switching to
+     * the overlay_active shell — 12 variants per block.
+     */
+    private void converterBlockstate(Block aBlock, ModelFile aInactive, DirectionProperty aFacing) {
+        ModelFile tActive = addConverterActiveModel(aInactive);
+        getVariantBuilder(aBlock).forAllStates(aState -> {
+            Direction tFacing = aState.getValue(aFacing);
+            int tX = tFacing == Direction.DOWN ? 90 : tFacing == Direction.UP ? 270 : 0;
+            int tY = switch (tFacing) {
+                case SOUTH -> 180;
+                case WEST -> 270;
+                case EAST -> 90;
+                default -> 0; // NORTH and the two verticals carry the x rotation only
+            };
+            return ConfiguredModel.builder()
+                    .modelFile(aState.getValue(gregtech6.block.GTBlockProperties.ACTIVE) ? tActive : aInactive)
+                    .rotationX(tX).rotationY(tY).build();
+        });
+    }
+
     private void addElectricTransformer() {
-        // task p35 — the full :881-:889 ladder shares ONE model: upstream registers all
+        // task p35 — the full :881-:889 ladder shares ONE model pair: upstream registers all
         // nine rows over the SAME icon set (machines/transformers/transformer_electric/*,
-        // the per-tier visual is not a column of the registration), so the port shares
-        // the p28 baked model verbatim.
-        ModelFile tModel = models().orientable("electric_transformer",
-                modLoc("block/electric_transformer_side"), modLoc("block/electric_transformer_front"), modLoc("block/electric_transformer_side"));
+        // the per-tier visual is not a column of the registration), so the port shares the
+        // addConverterModel two-layer form; the tint differentiates the rows at runtime.
+        ModelFile tModel = addConverterModel("electric_transformer");
         for (GT6ElectricTransformers.TransformerRow tRow : GT6ElectricTransformers.ROWS) {
             Block tTrans = GT6ElectricTransformers.BLOCKS_BY_PATH.get(tRow.path()).get();
-            getVariantBuilder(tTrans).forAllStates(aState -> {
-                // the vanilla horizontal-facing rotation map (the addGearBoxTransformer form)
-                Direction tFacing = aState.getValue(GT6ElectricTransformerBlock.FACING);
-                return ConfiguredModel.builder()
-                        .modelFile(tModel)
-                        .rotationY((int) (tFacing.toYRot() + 180) % 360)
-                        .build();
-            });
-            itemModels().withExistingParent(tRow.path(), modLoc("block/electric_transformer"));
+            converterBlockstate(tTrans, tModel, GT6ElectricTransformerBlock.FACING);
+            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
         }
     }
 
@@ -2294,9 +2387,11 @@ public final class GT6BlockStates extends BlockStateProvider {
             Block tTrans = gregtech6.registry.GT6LongDistanceTransformers.BLOCKS_BY_PATH.get(tRow.path()).get();
             getVariantBuilder(tTrans).forAllStates(aState -> {
                 Direction tFacing = aState.getValue(GT6ElectricTransformerBlock.FACING);
+                // the six-way dispenser-form x band (issue #18 — the six-way FACING property)
+                int tX = tFacing == Direction.DOWN ? 90 : tFacing == Direction.UP ? 270 : 0;
                 return ConfiguredModel.builder()
                         .modelFile(tLDModel)
-                        .rotationY((int) (tFacing.toYRot() + 180) % 360)
+                        .rotationX(tX).rotationY((int) (tFacing.toYRot() + 180) % 360)
                         .build();
             });
             itemModels().withExistingParent(tRow.path(), tLDModel.getLocation());

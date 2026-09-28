@@ -1,0 +1,9 @@
+{
+  "parent": "gt6:block/electric_dynamo",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "overlay_back": "gt6:block/electric_dynamo_overlay_active_back",
+    "overlay_front": "gt6:block/electric_dynamo_overlay_active_front",
+    "overlay_side": "gt6:block/electric_dynamo_overlay_active_side"
+  }
+}

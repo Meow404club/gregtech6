@@ -109,10 +109,21 @@ public final class GT6ElectricDynamos {
 	public static final RegistryObject<Block> ELECTRIC_DYNAMO_T5 = BLOCKS.register("electric_dynamo_t5",
 			() -> dynamo(5));
 
-	/** The row block: hardness/resistance 4.0/4.0 (NBT_HARDNESS column), metal sounds, the family BET supplier. */
+	/**
+	 * The row block: hardness/resistance 4.0/4.0 (NBT_HARDNESS column), metal sounds, the
+	 * family BET supplier — and the row's Electric_T[i] material (issue #18: the
+	 * NBT_MATERIAL tint column, ELECTRIC_T_LADDER.get(i); the T0 ULV row rides [0]).
+	 */
 	private static GT6DynamoBlock dynamo(int aTier) {
 		return new GT6DynamoBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
-				.strength(4.0F, 4.0F).sound(SoundType.METAL), aTier, () -> ELECTRIC_DYNAMO_BE.get());
+				.strength(4.0F, 4.0F).sound(SoundType.METAL), aTier, () -> ELECTRIC_DYNAMO_BE.get(),
+				ELECTRIC_T_LADDER.get(aTier));
+	}
+
+	/** The tint-walk array (issue #18 — the GT6MagicAbsorbers.paintableBlockArray form): the six row blocks, all material-carriers. */
+	public static net.minecraft.world.level.block.Block[] paintableBlockArray() {
+		return new net.minecraft.world.level.block.Block[] {ELECTRIC_DYNAMO_ULV.get(), ELECTRIC_DYNAMO.get(),
+				ELECTRIC_DYNAMO_T2.get(), ELECTRIC_DYNAMO_T3.get(), ELECTRIC_DYNAMO_T4.get(), ELECTRIC_DYNAMO_T5.get()};
 	}
 
 	/** The tier items — plain BlockItems, stack 16 (the upstream stack column; the name face is W2). */

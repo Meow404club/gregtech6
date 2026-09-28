@@ -6,8 +6,13 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -29,19 +34,22 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * :232-233): the FRONT face ({@code mFacing}) is the OUTPUT face (the emit side), ALL
  * OTHER faces are input. Row :894-:895 hardness/resistance 4.0/4.0, stack 16.
  *
- * <p>Placement = the GT6PlacementFacing canon (the transformer form: the front TOWARDS
- * the placer — you stand on the CONSUMER side, the sources plug in behind). The BE
- * mirror re-syncs from the state each tick (the state is the authority). The block
+ * <p>Placement = the GT6PlacementFacing canon (issue #18, task r4-18-converter-tex-facing:
+ * SIX-WAY now — upstream Base10EnergyBatBox rides Base09 whose SIDES_VALID = all six,
+ * CS.java:699 — the front TOWARDS the placer over the full look, the monkey wrench
+ * re-faces to the clicked sub-face). The BE mirror re-syncs from the state each tick
+ * (the state is the authority). The block
  * carries the family's slot count (4 or 16 — the NBT_INV_SIZE column) as data; the two
- * sizes share the BE class over two BETs. NO use override (the GUI is the pool —
- * upstream opens a ContainerCommonDefault; the port face is the item slot NBT + the
- * capability item handler), NO onRemove override (the BaseEntityBlock kill+recreate
- * lesson), no ACTIVE property (the W2 render card).
+ * sizes share the BE class over two BETs. The GUI is the pool (upstream opens a
+ * ContainerCommonDefault; the port face is the item slot NBT + the capability item
+ * handler); the {@code use()} override is the wrench-rotate arm ONLY, NO onRemove
+ * override (the BaseEntityBlock kill+recreate lesson), no ACTIVE property (the box has
+ * no activity layer upstream).
  */
 public class GT6BatteryBoxBlock extends GTEntityBlock {
 
-	/** Facing property (horizontal — FRONT is the output face, ALL-BUT-FRONT the input). */
-	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+	/** Facing property (six-way, issue #18 — FRONT is the output face, ALL-BUT-FRONT the input; upstream SIDES_VALID = all six). */
+	public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
 	/** The NBT_INV_SIZE column: 4 (the small box, :894) or 16 (the Large box, :895). */
 	private final int mSlots;
@@ -108,9 +116,23 @@ public class GT6BatteryBoxBlock extends GTEntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
-		// the front TOWARDS the placer — the FRONT is the OUTPUT face here (the consumer
-		// side; the GT6PlacementFacing canon)
-		return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
+		// the front TOWARDS the placer over the full look — the FRONT is the OUTPUT face
+		// here (the consumer side; the canon, the vertical fold per issue #18)
+		return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getNearestLookingDirection()));
+	}
+
+	@Override
+	//? if forge {
+	public InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, InteractionHand aHand, BlockHitResult aHit) {
+	//?} else {
+	/*public InteractionResult useWithoutItem(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, BlockHitResult aHit) {
+	//21.1: BlockBehaviour.use folded into useWithoutItem (the GTOvenBlock fork).
+	InteractionHand aHand = InteractionHand.MAIN_HAND;
+	*///?}
+		// the wrench arm (issue #18 — upstream Base09 onToolClick2 :67): the clicked
+		// wrench-grid sub-face becomes the FRONT (the emit face); the state is the
+		// authority, the BE tick mirror follows
+		return GT6ElectricTransformerBlock.wrenchRotate(aState, aLevel, aPos, aPlayer, aHand, aHit, FACING);
 	}
 
 	@Override

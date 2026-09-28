@@ -8,14 +8,17 @@
  * This census pins the fixes end to end (the {@link GT6KitchenRenderDatagenTest} family
  * method):
  * <ul>
- * <li>the 10 generated blockstates carry exactly the four HORIZONTAL_FACING variants with
- *     the output-front rotation map (NORTH→0 / SOUTH→180 / WEST→270 / EAST→90) and the
- *     shared family block model; the T0 ULV row keeps its placeholder blockstate;</li>
- * <li>the two generated block models pin the facing-cube texture map (north = the OUTPUT
- *     front face, south = the INPUT back face, the other four the side art) over face
- *     files that actually exist;</li>
+ * <li>the 10 generated blockstates carry exactly the TWELVE variants of the SIX-WAY
+ *     facing x ACTIVE property (issue #18, task r4-18-converter-tex-facing) over the
+ *     output-front rotation map (NORTH→y0 / SOUTH→y180 / WEST→y270 / EAST→y90 /
+ *     DOWN→x90 / UP→x270), active=true switching to the {@code _active} overlay shell;
+ *     the T0 ULV row keeps its placeholder blockstate;</li>
+ * <li>the two generated block models pin the addConverterModel two-layer form: the
+ *     tintindex-0 colored body (north front / south back / four sides) + the six untinted
+ *     0.01-plate overlay decals, cutout, over face files that actually exist;</li>
  * <li>the 10 generated BlockItem models parent their family block model;</li>
- * <li>the 6 baked dynamo PNGs and the seven caught-item borrowed PNGs are grounded in
+ * <li>the 18 borrowed dynamo PNGs (colored/overlay/overlay_active x front/back/side x
+ *     two families) and the seven caught-item borrowed PNGs are grounded in
  *     assets/README.md by basename AND by the actual sha256 of their bytes (the p31
  *     attribution-nail pattern);</li>
  * <li>the seven caught item models pin their parent (generated vs handheld) and their
@@ -52,14 +55,22 @@ class GT6DynamoBowlRenderDatagenTest {
             "flux_dynamo", List.of("flux_dynamo", "flux_dynamo_t2", "flux_dynamo_t3",
                     "flux_dynamo_t4", "flux_dynamo_t5"));
 
-    /** facing variant → the expected rotationY (the addZpmDechargers map; FRONT = the output face). */
+    /** facing → the expected rotationY (the output-front band; FRONT = the output face). */
     private static final Map<String, Integer> FACING_ROTATIONS = Map.of(
-            "facing=north", 0, "facing=south", 180, "facing=west", 270, "facing=east", 90);
+            "north", 0, "south", 180, "west", 270, "east", 90, "down", 0, "up", 0);
 
-    /** The six baked face files (family face → texture path under textures/block/). */
-    private static final List<String> BAKED_PNGS = List.of(
-            "electric_dynamo_front.png", "electric_dynamo_back.png", "electric_dynamo_side.png",
-            "flux_dynamo_front.png", "flux_dynamo_back.png", "flux_dynamo_side.png");
+    /** facing → the expected rotationX (the dispenser band, issue #18 — the verticals). */
+    private static final Map<String, Integer> FACING_ROTATIONS_X = Map.of(
+            "down", 90, "up", 270, "north", 0, "south", 0, "west", 0, "east", 0);
+
+    /** The 18 borrowed face files (family x layer x face), issue #18. */
+    private static final List<String> BORROWED_PNGS = List.of(
+            "electric_dynamo_colored_front.png", "electric_dynamo_colored_back.png", "electric_dynamo_colored_side.png",
+            "electric_dynamo_overlay_front.png", "electric_dynamo_overlay_back.png", "electric_dynamo_overlay_side.png",
+            "electric_dynamo_overlay_active_front.png", "electric_dynamo_overlay_active_back.png", "electric_dynamo_overlay_active_side.png",
+            "flux_dynamo_colored_front.png", "flux_dynamo_colored_back.png", "flux_dynamo_colored_side.png",
+            "flux_dynamo_overlay_front.png", "flux_dynamo_overlay_back.png", "flux_dynamo_overlay_side.png",
+            "flux_dynamo_overlay_active_front.png", "flux_dynamo_overlay_active_back.png", "flux_dynamo_overlay_active_side.png");
 
     /** The seven caught item models — id → (parent, layer texture paths in layer order). */
     private static final Map<String, Map.Entry<String, List<String>>> CAUGHT_ITEMS = Map.of(
@@ -118,7 +129,7 @@ class GT6DynamoBowlRenderDatagenTest {
         assertTrue(tReadme.contains(tHex), aBasename + " — bytes hash to " + tHex + ", not grounded in the ledger");
     }
 
-    /** The ten blockstates: exactly the four facing variants, all pointing at the family model with the rotation map. */
+    /** The ten blockstates: exactly the 12 six-way x active variants, the rotation map + the active shell swap (issue #18). */
     @Test
     void generatedBlockstatesPinTheFacingVariants() throws Exception {
         for (Map.Entry<String, List<String>> tLadder : LADDERS.entrySet()) {
@@ -126,16 +137,23 @@ class GT6DynamoBowlRenderDatagenTest {
                 JsonObject tState = generatedJson("assets/gt6/blockstates/" + tRow + ".json");
                 assertTrue(tState.has("variants"), tRow + ": the plain-variants form (no multipart)");
                 var tVariants = tState.getAsJsonObject("variants");
-                assertEquals(FACING_ROTATIONS.keySet(), tVariants.keySet(),
-                        tRow + ": exactly the four HORIZONTAL_FACING variants");
+                assertEquals(12, tVariants.size(), tRow + ": exactly the 12 facing x active variants");
                 for (String tFacing : FACING_ROTATIONS.keySet()) {
-                    JsonObject tVariant = tVariants.getAsJsonObject(tFacing);
-                    assertEquals("gt6:block/" + tLadder.getKey(), tVariant.get("model").getAsString(),
-                            tRow + " " + tFacing + ": the shared family block model");
-                    // rotationY 0 is omitted from the variant (the vanilla default), any other rotation is explicit
-                    assertEquals(FACING_ROTATIONS.get(tFacing).intValue(),
-                            tVariant.has("y") ? tVariant.get("y").getAsInt() : 0,
-                            tRow + " " + tFacing + ": the rotationY");
+                    for (boolean tActive : new boolean[] {false, true}) {
+                        String tKey = "active=" + tActive + ",facing=" + tFacing;
+                        assertTrue(tVariants.has(tKey), tRow + ": the variant key " + tKey);
+                        JsonObject tVariant = tVariants.getAsJsonObject(tKey);
+                        assertEquals("gt6:block/" + tLadder.getKey() + (tActive ? "_active" : ""),
+                                tVariant.get("model").getAsString(),
+                                tRow + " " + tKey + ": the family model (active swaps the shell)");
+                        // rotation 0 is omitted from the variant (the vanilla default), any other rotation is explicit
+                        assertEquals(FACING_ROTATIONS.get(tFacing).intValue(),
+                                tVariant.has("y") ? tVariant.get("y").getAsInt() : 0,
+                                tRow + " " + tKey + ": the rotationY");
+                        assertEquals(FACING_ROTATIONS_X.get(tFacing).intValue(),
+                                tVariant.has("x") ? tVariant.get("x").getAsInt() : 0,
+                                tRow + " " + tKey + ": the rotationX");
+                    }
                 }
             }
         }
@@ -149,26 +167,67 @@ class GT6DynamoBowlRenderDatagenTest {
                 "electric_dynamo_ulv: the placeholder single-state row remains");
     }
 
-    /** The two block models: the facing-cube texture map (north front / south back / side elsewhere) over existing files. */
+    private static final List<String> FACE_KEYS = List.of("down", "up", "north", "south", "west", "east");
+
+    /** One two-layer converter model: the tinted colored body + six untinted 0.01-plate decals, cutout (the addConverterModel grammar). */
+    private static void assertTwoLayerConverterModel(String tFamily, String tModelName, String tOverlayBand) throws Exception {
+        JsonObject tModel = generatedJson("assets/gt6/models/block/" + tModelName + ".json");
+        if (tModelName.endsWith("_active")) {
+            // the ACTIVE child form: the inactive parent with the three overlay overrides
+            assertEquals("gt6:block/" + tFamily, tModel.get("parent").getAsString(),
+                    tFamily + ": the inactive family model parent");
+            assertEquals("minecraft:cutout", tModel.get("render_type").getAsString(),
+                    tFamily + ": cutout re-declared on the active shell");
+            JsonObject tOverride = tModel.getAsJsonObject("textures");
+            assertEquals("gt6:block/" + tFamily + "_" + tOverlayBand + "_front", tOverride.get("overlay_front").getAsString());
+            assertEquals("gt6:block/" + tFamily + "_" + tOverlayBand + "_back", tOverride.get("overlay_back").getAsString());
+            assertEquals("gt6:block/" + tFamily + "_" + tOverlayBand + "_side", tOverride.get("overlay_side").getAsString());
+            assertTrue(!tModel.has("elements"), tFamily + ": the body elements stay inherited");
+            return;
+        }
+        assertEquals("minecraft:block/cube", tModel.get("parent").getAsString(),
+                tFamily + ": the vanilla cube parent");
+        assertEquals("minecraft:cutout", tModel.get("render_type").getAsString(),
+                tFamily + ": the overlay shells demand cutout");
+        JsonObject tTextures = tModel.getAsJsonObject("textures");
+        assertEquals("gt6:block/" + tFamily + "_colored_front", tTextures.get("north").getAsString(),
+                tFamily + ": the north face is the grayscale colored front (the tint seat)");
+        assertEquals("gt6:block/" + tFamily + "_colored_back", tTextures.get("south").getAsString(),
+                tFamily + ": the south face is the colored back");
+        for (String tSide : List.of("east", "west", "up", "down")) {
+            assertEquals("gt6:block/" + tFamily + "_colored_side", tTextures.get(tSide).getAsString(),
+                    tFamily + ": the " + tSide + " face is the colored side");
+        }
+        assertEquals("gt6:block/" + tFamily + "_" + tOverlayBand + "_front", tTextures.get("overlay_front").getAsString());
+        assertEquals("gt6:block/" + tFamily + "_" + tOverlayBand + "_back", tTextures.get("overlay_back").getAsString());
+        assertEquals("gt6:block/" + tFamily + "_" + tOverlayBand + "_side", tTextures.get("overlay_side").getAsString());
+        // the element split: body tintindex 0, the six decals untinted (the P22 contract)
+        var tElements = tModel.getAsJsonArray("elements");
+        assertEquals(7, tElements.size(), tFamily + ": body + 6 decals");
+        var tBodyFaces = tElements.get(0).getAsJsonObject().getAsJsonObject("faces");
+        for (String tFace : FACE_KEYS) {
+            assertTrue(tBodyFaces.get(tFace) != null, tFamily + " body face " + tFace);
+            assertEquals(0, tBodyFaces.getAsJsonObject(tFace).get("tintindex").getAsInt(),
+                    tFamily + " body face " + tFace + " carries tintindex 0 (the mRGBa seat)");
+        }
+        for (int i = 1; i < 7; i++) {
+            var tDecalFaces = tElements.get(i).getAsJsonObject().getAsJsonObject("faces");
+            for (String tFace : tDecalFaces.keySet()) {
+                assertTrue(!tDecalFaces.getAsJsonObject(tFace).has("tintindex"),
+                        tFamily + " decal " + i + " face " + tFace + " stays untinted");
+            }
+        }
+    }
+
+    /** The two block model pairs (inactive + _active): the two-layer grammar over existing files (issue #18). */
     @Test
     void blockModelsPinTheFacingCubeTextureMap() throws Exception {
         for (String tFamily : LADDERS.keySet()) {
-            JsonObject tModel = generatedJson("assets/gt6/models/block/" + tFamily + ".json");
-            assertEquals("minecraft:block/cube", tModel.get("parent").getAsString(),
-                    tFamily + ": the vanilla cube parent");
-            JsonObject tTextures = tModel.getAsJsonObject("textures");
-            assertEquals("gt6:block/" + tFamily + "_front", tTextures.get("north").getAsString(),
-                    tFamily + ": the north face is the OUTPUT front art");
-            assertEquals("gt6:block/" + tFamily + "_back", tTextures.get("south").getAsString(),
-                    tFamily + ": the south face is the INPUT back art");
-            for (String tSide : List.of("east", "west", "up", "down")) {
-                assertEquals("gt6:block/" + tFamily + "_side", tTextures.get(tSide).getAsString(),
-                        tFamily + ": the " + tSide + " face is the side art");
-            }
-            for (String tFace : List.of("front", "back", "side")) {
-                assertTrue(Files.isRegularFile(assetFile("textures/block/" + tFamily + "_" + tFace + ".png")),
-                        tFamily + "_" + tFace + ".png must exist");
-            }
+            assertTwoLayerConverterModel(tFamily, tFamily, "overlay");
+            assertTwoLayerConverterModel(tFamily, tFamily + "_active", "overlay_active");
+        }
+        for (String tPng : BORROWED_PNGS) {
+            assertTrue(Files.isRegularFile(assetFile("textures/block/" + tPng)), tPng + " must exist");
         }
     }
 
@@ -224,11 +283,11 @@ class GT6DynamoBowlRenderDatagenTest {
         assertTrue(tViolations.isEmpty(), "caught-item borrow without attribution: " + tViolations);
     }
 
-    /** The six baked dynamo PNGs are grounded in assets/README.md by basename AND actual sha256. */
+    /** The 18 borrowed dynamo PNGs are grounded in assets/README.md by basename AND actual sha256 (issue #18). */
     @Test
     void bakedDynamoPngsAreGroundedInTheAssetsLedger() throws Exception {
         List<String> tViolations = new ArrayList<>();
-        for (String tPng : BAKED_PNGS) {
+        for (String tPng : BORROWED_PNGS) {
             try {
                 assertGroundedInLedger("textures/block/" + tPng, tPng);
             } catch (AssertionError tMiss) {

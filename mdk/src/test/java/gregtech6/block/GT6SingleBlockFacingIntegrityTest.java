@@ -1,6 +1,8 @@
 package gregtech6.block;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,6 +24,9 @@ import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import gregtech6.block.energy.GT6BatteryBoxBlock;
+import gregtech6.block.energy.GT6DynamoBlock;
+import gregtech6.block.energy.GT6ElectricTransformerBlock;
 import gregtech6.block.energy.GTCrankBlock;
 import gregtech6.block.energy.GTDieselEngineBlock;
 import gregtech6.block.energy.GTTransformerRotationBlock;
@@ -117,6 +122,15 @@ public class GT6SingleBlockFacingIntegrityTest extends GTOfflineTestBase {
 
 		/** The ctor-free Player double over a stub level, viewing along {@code aView}. */
 		public static ViewPlayer lookAt(Level aLevel, Direction aView) {
+			return lookAt(aLevel, aView, 0.0F);
+		}
+
+		/**
+		 * The pitch-bearing form (issue #18): {@code xRot} feeds
+		 * {@code Direction.orderedByNearest}, so {@code getNearestLookingDirection} folds
+		 * the vertical — pitch +90 (looking down) = the DOWN view, -90 = UP.
+		 */
+		public static ViewPlayer lookAt(Level aLevel, Direction aView, float aPitchDeg) {
 			try {
 				java.lang.reflect.Field tTheUnsafe = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
 				tTheUnsafe.setAccessible(true);
@@ -124,16 +138,32 @@ public class GT6SingleBlockFacingIntegrityTest extends GTOfflineTestBase {
 				ViewPlayer tPlayer = (ViewPlayer) tUnsafe.allocateInstance(ViewPlayer.class);
 				entityField(tPlayer, "level", aLevel);
 				entityField(tPlayer, "yRot", aView.toYRot());
+				// LivingEntity.getViewYRot returns yHeadRot (the HEAD yaw) — the field the
+				// getNearestLookingDirection quantization reads; without it the double's
+				// head always faces yaw 0 (the p28 canon tests never noticed: they ride
+				// getHorizontalDirection = getDirection, which reads yRot directly)
+				entityField(tPlayer, "yHeadRot", aView.toYRot());
+				entityField(tPlayer, "xRot", aPitchDeg);
 				return tPlayer;
 			} catch (ReflectiveOperationException aE) {
 				throw new IllegalStateException("the offline Player double failed", aE);
 			}
 		}
 
+		/** The field write walking the hierarchy (yHeadRot lives on LivingEntity, level/yRot/xRot on Entity). */
 		private static void entityField(Player aPlayer, String aName, Object aValue) throws ReflectiveOperationException {
-			java.lang.reflect.Field tField = net.minecraft.world.entity.Entity.class.getDeclaredField(aName);
-			tField.setAccessible(true);
-			tField.set(aPlayer, aValue); // boxed write is fine for the non-final level / primitive yRot
+			Class<?> tOwner = Player.class;
+			while (tOwner != null) {
+				try {
+					java.lang.reflect.Field tField = tOwner.getDeclaredField(aName);
+					tField.setAccessible(true);
+					tField.set(aPlayer, aValue); // boxed write is fine for the non-final level / primitive yRot
+					return;
+				} catch (NoSuchFieldException aMissing) {
+					tOwner = tOwner.getSuperclass();
+				}
+			}
+			throw new NoSuchFieldException(aName);
 		}
 
 		@Override public boolean isSpectator() { return false; }
@@ -375,7 +405,79 @@ public class GT6SingleBlockFacingIntegrityTest extends GTOfflineTestBase {
 			// placed value is still the horizontal opposite
 			assertEquals(tExpected, new GTSensorBlock(() -> null, BlockBehaviour.Properties.of())
 					.getStateForPlacement(tCtx).getValue(GTSensorBlock.FACING), "Sensor state, view " + tView);
+			// issue #18: the converter trio — six-way properties, the horizontal views
+			// keep the exact canon (the vertical fold is the next test)
+			assertEquals(tExpected, new GT6ElectricTransformerBlock(BlockBehaviour.Properties.of(), () -> null)
+					.getStateForPlacement(tCtx).getValue(GT6ElectricTransformerBlock.FACING), "ElectricTransformer state, view " + tView);
+			assertEquals(tExpected, new GT6DynamoBlock(BlockBehaviour.Properties.of(), 0, () -> null)
+					.getStateForPlacement(tCtx).getValue(GT6DynamoBlock.FACING), "Dynamo state, view " + tView);
+			assertEquals(tExpected, new GT6BatteryBoxBlock(BlockBehaviour.Properties.of(), 0, 4, () -> null)
+					.getStateForPlacement(tCtx).getValue(GT6BatteryBoxBlock.FACING), "BatteryBox state, view " + tView);
 		}
+	}
+
+	/**
+	 * issue #18: the pitch fold — upstream {@code getSideForPlayerPlacing} (UT.java:1755)
+	 * promotes the FRONT vertical when the look is steep (SIDES_VALID = all six,
+	 * CS.java:699): looking straight DOWN the front lands UP (towards the placer's eyes),
+	 * straight UP it lands DOWN. The three converter carriers ride the full canon.
+	 */
+	@Test
+	public void converterFamilyFoldsThePitchIntoTheVertical() {
+		Level tLevel = new GTMachinesOfflineTestBase.MachineLevel(new GTRecipesOfflineTestBase.TestRecipeManager());
+		GT6ElectricTransformerBlock tTrans = new GT6ElectricTransformerBlock(BlockBehaviour.Properties.of(), () -> null);
+		GT6DynamoBlock tDynamo = new GT6DynamoBlock(BlockBehaviour.Properties.of(), 0, () -> null);
+		GT6BatteryBoxBlock tBox = new GT6BatteryBoxBlock(BlockBehaviour.Properties.of(), 0, 4, () -> null);
+		for (Direction tView : VIEWS) {
+			// looking down at the placement spot: front UP for every horizontal yaw
+			BlockPlaceContext tLookingDown = placeContext(ViewPlayer.lookAt(tLevel, tView, 90.0F));
+			assertEquals(Direction.UP, tTrans.getStateForPlacement(tLookingDown).getValue(GT6ElectricTransformerBlock.FACING), "Transformer, view " + tView + " + pitch 90");
+			assertEquals(Direction.UP, tDynamo.getStateForPlacement(tLookingDown).getValue(GT6DynamoBlock.FACING), "Dynamo, view " + tView + " + pitch 90");
+			assertEquals(Direction.UP, tBox.getStateForPlacement(tLookingDown).getValue(GT6BatteryBoxBlock.FACING), "BatteryBox, view " + tView + " + pitch 90");
+			// looking up at the underside: front DOWN
+			BlockPlaceContext tLookingUp = placeContext(ViewPlayer.lookAt(tLevel, tView, -90.0F));
+			assertEquals(Direction.DOWN, tTrans.getStateForPlacement(tLookingUp).getValue(GT6ElectricTransformerBlock.FACING), "Transformer, view " + tView + " + pitch -90");
+			assertEquals(Direction.DOWN, tDynamo.getStateForPlacement(tLookingUp).getValue(GT6DynamoBlock.FACING), "Dynamo, view " + tView + " + pitch -90");
+			assertEquals(Direction.DOWN, tBox.getStateForPlacement(tLookingUp).getValue(GT6BatteryBoxBlock.FACING), "BatteryBox, view " + tView + " + pitch -90");
+		}
+	}
+
+	/**
+	 * issue #18: the six-way property identity and the 12-state space (6 facings x 2
+	 * active) — the blockstate JSON completeness rides this property (the census test
+	 * pins the generated variants).
+	 */
+	@Test
+	public void converterFamilyCarriesTheSixWayFacingProperty() {
+		assertEquals(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, GT6ElectricTransformerBlock.FACING, "the transformer FACING is the six-way property");
+		assertEquals(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, GT6DynamoBlock.FACING, "the dynamo FACING is the six-way property");
+		assertEquals(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, GT6BatteryBoxBlock.FACING, "the battery box FACING is the six-way property");
+		GT6ElectricTransformerBlock tTrans = new GT6ElectricTransformerBlock(BlockBehaviour.Properties.of(), () -> null);
+		GT6DynamoBlock tDynamo = new GT6DynamoBlock(BlockBehaviour.Properties.of(), 0, () -> null);
+		GT6BatteryBoxBlock tBox = new GT6BatteryBoxBlock(BlockBehaviour.Properties.of(), 0, 4, () -> null);
+		assertEquals(12, tTrans.getStateDefinition().getPossibleStates().size(), "transformer: 6 facings x 2 active");
+		assertEquals(12, tDynamo.getStateDefinition().getPossibleStates().size(), "dynamo: 6 facings x 2 active");
+		assertEquals(6, tBox.getStateDefinition().getPossibleStates().size(), "battery box: 6 facings");
+		// the ACTIVE property is the shared single instance (the ADR-P16-2 identity the
+		// 1.21 state-holding lookup requires)
+		assertEquals(gregtech6.block.GTBlockProperties.ACTIVE, GT6ElectricTransformerBlock.ACTIVE, "the transformer ACTIVE is the shared instance");
+		assertEquals(gregtech6.block.GTBlockProperties.ACTIVE, GT6DynamoBlock.ACTIVE, "the dynamo ACTIVE is the shared instance");
+	}
+
+	/**
+	 * issue #18: the transformer material carrier (the tint colour source) — the
+	 * {@code materialOf} dispatch resolves the row's Electric_T[i] casing, non-carriers
+	 * stay null. (The registry-resolving rows are pinned in
+	 * GT6ConverterPaintRenderDatagenTest.)
+	 */
+	@Test
+	public void transformerMaterialCarrierDispatch() {
+		GT6ElectricTransformerBlock tCarrier = new GT6ElectricTransformerBlock(BlockBehaviour.Properties.of(), () -> null, 0,
+				() -> gregapi.data.MT.StainlessSteel);
+		assertSame(gregapi.data.MT.StainlessSteel, tCarrier.material(), "the carrier resolves its material");
+		assertSame(gregapi.data.MT.StainlessSteel, GT6ElectricTransformerBlock.materialOf(tCarrier), "the dispatch resolves the carrier");
+		assertNull(GT6ElectricTransformerBlock.materialOf(new GT6ElectricTransformerBlock(BlockBehaviour.Properties.of(), () -> null)), "a material-less transformer stays null");
+		assertNull(GT6ElectricTransformerBlock.materialOf(Blocks.STONE), "a non-carrier stays null");
 	}
 
 	/**

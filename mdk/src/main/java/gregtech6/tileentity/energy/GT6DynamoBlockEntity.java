@@ -132,12 +132,28 @@ public abstract class GT6DynamoBlockEntity extends TileEntityBase03TicksAndSync 
 		if (!aIsServerSide) return; // the :110 client branch is the minecart-sound pool
 		syncFacingFromState();
 		doConversion(aTimer);
+		syncActiveToState();
 	}
 
 	/** The /setblock RCON path: the state is the authority (the transformer syncFacingFromState form). */
 	void syncFacingFromState() {
 		if (getBlockState().hasProperty(GT6DynamoBlock.FACING)) {
 			mFacing = (byte) getBlockState().getValue(GT6DynamoBlock.FACING).get3DDataValue();
+		}
+	}
+
+	/**
+	 * The activity visual write (issue #18 — the upstream getTexture2
+	 * (mActivity.mState&gt;0 ? sOverlaysActive : sOverlays) layer, the transformer
+	 * syncActiveToState form): the {@code mActive} flag lands on the blockstate's ACTIVE
+	 * property. Flip-only, so it stays off the per-tick hot path; the offline STONE-state
+	 * fixtures carry no ACTIVE property (the hasProperty guard).
+	 */
+	void syncActiveToState() {
+		BlockState tState = getBlockState();
+		if (tState.hasProperty(GT6DynamoBlock.ACTIVE)
+				&& tState.getValue(GT6DynamoBlock.ACTIVE) != mActive && hasLevel()) {
+			getLevel().setBlock(getBlockPos(), tState.setValue(GT6DynamoBlock.ACTIVE, mActive), 3);
 		}
 	}
 

@@ -139,6 +139,15 @@ class GT6PaintableRenderTypeCensusTest {
         rModels.add("bumble_hive");
         rModels.add("bumbliary");
         rModels.add("bumbliary_adv");
+        // the converter family (issue #18, task r4-18-converter-tex-facing): the
+        // transformer + dynamo model pairs (the addConverterModel two-layer shells over
+        // the tintindex-0 body — model names are bands, not registry paths)
+        rModels.add("electric_transformer");
+        rModels.add("electric_transformer_active");
+        rModels.add("electric_dynamo");
+        rModels.add("electric_dynamo_active");
+        rModels.add("flux_dynamo");
+        rModels.add("flux_dynamo_active");
         return rModels;
     }
 
