@@ -15,6 +15,7 @@ import gregtech6.fluid.GTFluids;
 import gregtech6.item.GT6Circuits;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.jade.GT6BoilerProvider;
+import gregtech6.jade.GT6ConverterProvider;
 import gregtech6.jade.GT6FluidProvider;
 import gregtech6.jade.GT6MachineProvider;
 import gregtech6.jei.GT6JeiPlugin;
@@ -116,6 +117,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addCrucibleJadeUnits(); // task p28-crucible-jade-face
 		addMachineJadeUnits();  // task p34-hygiene-lang — the machine/fluid jade band (hand rows, the tsv direct band)
 		addBoilerJadeUnits();   // task r5-jade-boiler — the boiler jade band (hand rows, the tsv direct band)
+		addConverterJadeUnits(); // task r5-jade-converters — the converter-family jade band (hand rows, the tsv direct band)
 		addAnvilUnits();        // task p28-c-anvil
 		addPocketUnits();       // task p29-w5-t7-pocket-eight — the 8+7 pocket face (hand rows, no dump face exists)
 		addArmorUnits();        // task p29-w5-t8-armor-24
@@ -454,6 +456,25 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(GT6BoilerProvider.LANG_SCALE_CLEAN);
 		addDirect(GT6BoilerProvider.LANG_WATER);
 		addDirect(GT6BoilerProvider.LANG_NO_WATER);
+	}
+
+	/**
+	 * The converter-family Jade face zh units (task r5-jade-converters, 7 hand rows — the
+	 * addMachineJadeUnits shape): the status line + its three state words, the stored line
+	 * in its ceiling/bare faces and the rated-output line. No dump face exists (upstream
+	 * 1.7.10 has zero WAILA integration), so these ride the reference table's hand layer
+	 * via {@link #addDirect} — the TSV rows, this walk and the lang regen land in the SAME
+	 * commit (the noHandRowIsOrphaned pin otherwise surfaces the gap). The energy-unit
+	 * words (EU/KU/HU/...) stay bare symbols (the p28 thermometer-anchor ruling).
+	 */
+	private void addConverterJadeUnits() {
+		addDirect(GT6ConverterProvider.LANG_STATUS);
+		addDirect(GT6ConverterProvider.LANG_ACTIVE);
+		addDirect(GT6ConverterProvider.LANG_IDLE);
+		addDirect(GT6ConverterProvider.LANG_STOPPED);
+		addDirect(GT6ConverterProvider.LANG_STORED);
+		addDirect(GT6ConverterProvider.LANG_STORED_BARE);
+		addDirect(GT6ConverterProvider.LANG_RATE);
 	}
 
 	/**

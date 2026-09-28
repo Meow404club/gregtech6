@@ -914,6 +914,13 @@ direct	gt6.jade.boiler.no_water	警告: 缺水!!!	hand
 direct	gt6.jade.boiler.scale	水垢: %s%%	hand
 direct	gt6.jade.boiler.scale.clean	锅炉无水垢	hand
 direct	gt6.jade.boiler.water	水: %s / %s L	hand
+direct	gt6.jade.converter.active	运行中	hand
+direct	gt6.jade.converter.idle	待机	hand
+direct	gt6.jade.converter.rate	输出: %s %s/t	hand
+direct	gt6.jade.converter.status	状态: %s	hand
+direct	gt6.jade.converter.stopped	已停机	hand
+direct	gt6.jade.converter.stored	存量: %s / %s %s	hand
+direct	gt6.jade.converter.stored.bare	存量: %s %s	hand
 direct	gt6.jade.crucible.empty	空	hand
 direct	gt6.jade.crucible.more	+%s 种	hand
 direct	gt6.jade.crucible.temperature	温度: %s K / %s K	hand

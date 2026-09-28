@@ -40,6 +40,7 @@ import gregtech6.registry.GTWireSpecs;
 import gregtech6.registry.GTWires;
 import gregtech6.covers.GT6Covers;
 import gregtech6.jade.GT6BoilerProvider;
+import gregtech6.jade.GT6ConverterProvider;
 import gregtech6.jade.GT6FluidProvider;
 import gregtech6.jade.GT6MachineProvider;
 import gregtech6.worldgen.GT6OreGenInfoLayout;
@@ -153,6 +154,7 @@ public class GT6EnUs extends LanguageProvider {
         addMachineJade(); // task p34-hygiene-lang — table-tail append
         addFluidJade(); // task p34-hygiene-lang — table-tail append
         addBoilerJade(); // task r5-jade-boiler — table-tail append
+        addConverterJade(); // task r5-jade-converters — table-tail append
         addPocketTools(); // task p29-w5-t7-pocket-eight — table-tail append
         addArmor(); // task p29-w5-t8-armor-24 — table-tail append
         addTreeBlocks(); // task p30-w6-t1-trees-nine — table-tail append
@@ -2188,6 +2190,25 @@ public class GT6EnUs extends LanguageProvider {
         add(GT6BoilerProvider.LANG_NO_WATER, "WARNING: NO WATER!!!");
     }
 
+    /**
+     * The converter-family Jade face keys (task r5-jade-converters, 7 keys): the status
+     * line + its three state words (Stopped > Running > Idle), the stored line in its
+     * ceiling form and bare form (no-hard-cap families like the burning boxes), and the
+     * rated-output line (the GTCEu RecipeLogicProvider :75+ throughput-row precedent).
+     * The unit words (EU/KU/HU/...) stay bare symbols per the thermometer-anchor rule
+     * (GT6CrucibleProvider zh ruling). Consumed by GT6ConverterProvider (the lang
+     * constants live there); zh faces ride the reference table's hand layer via
+     * GT6ZhCn.addConverterJadeUnits.
+     */
+    private void addConverterJade() {
+        add(GT6ConverterProvider.LANG_STATUS, "Status: %s");
+        add(GT6ConverterProvider.LANG_ACTIVE, "Running");
+        add(GT6ConverterProvider.LANG_IDLE, "Idle");
+        add(GT6ConverterProvider.LANG_STOPPED, "Stopped");
+        add(GT6ConverterProvider.LANG_STORED, "Stored: %s / %s %s");
+        add(GT6ConverterProvider.LANG_STORED_BARE, "Stored: %s %s");
+        add(GT6ConverterProvider.LANG_RATE, "Output: %s %s/t");
+    }
     /**
      * Pocket multitool family keys (task p29-w5-t7-pocket-eight): the eight display names
      * (the upstream registration rows Loader_Tools.java:176-183 VERBATIM — "Pocket
