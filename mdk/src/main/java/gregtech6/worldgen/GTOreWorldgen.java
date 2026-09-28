@@ -64,6 +64,12 @@ import gregtech6.registry.GTMaterialItems;
  * nether rows clamp maxY at 127 (the
  * 1.7.10 nether is 128 tall; a higher band would be dead attempts, distribution
  * unchanged), overworld/end bands fit the modern heights as-is (max 250 < 256/319).
+ *
+ * <p><b>The deep-band mirror face</b> (task r6-c2-deep-band): a selected subset
+ * ({@link #DEEP_MIRROR_TAILS}) grows a SECOND, placed-only overworld placement whose band
+ * is the upstream band shifted into the modern deepslate band ({@link #DEEP_SHIFT}) — the
+ * upstream mNoDeep deep-slate protection layer semantics (WorldgenStoneLayers.java:77),
+ * filling the y&lt;0 content vacuum that the r6-32 de-vanilla option would open.
  */
 public final class GTOreWorldgen {
 
@@ -325,6 +331,78 @@ public final class GTOreWorldgen {
         }
         throw new IllegalArgumentException("not an ore family snake: " + aSnake);
     }
+
+    // ---------------------------------------------------------------- deep-band mirror face (task r6-c2-deep-band)
+
+    /**
+     * The deep-band mirror shift: a mirrored row generates a SECOND placement whose band
+     * is the upstream band translated down 64 ({@code [minY, maxY] -> [minY - 64, maxY - 64]}).
+     * The rule is the bedrock-anchored whole-column translation — the 1.7.10 column
+     * [0, 128] sits at modern [-64, +64] under the same shift — so a mirrored band keeps
+     * its exact thickness and its depth ORDER, and every mirrored band lands WHOLLY in the
+     * modern deepslate band (y &lt; 0): the modern face of the upstream mNoDeep deep-slate
+     * protection layer (WorldgenStoneLayers.java:77/:196 force DEEPSLATE below y24;
+     * Loader_Worldgen.java:61). The selection only mirrors {@code maxY <= 64} rows, so the
+     * deepest mirrored upper edge is 64 - 60 = -4 &lt; 0 (pinned by the mirror test).
+     */
+    public static final int DEEP_SHIFT = 64;
+
+    /**
+     * The deep-band mirror selection (task r6-c2-deep-band spec ①), the row TAILS that
+     * grow a {@code ore_small_deep} placement. The card rule: overworld rows whose upstream
+     * band sits in the upstream LOWER half ({@code maxY <= 64}) AND whose material family
+     * is a major METAL ORE or GEM — the depth counterparts of what a 1.7.10 player met in
+     * and below the deep slate. NOT mirrored (each exclusion declared): the upper-half
+     * rows (maxY &gt; 64: copper/tin/chalcopyrite/zinc-family/malachite/lead/galena/
+     * hematite/bismuth — their upstream semantic is the mid/surface column), the fuels
+     * (coal/graphite/amber — 1.7.10 semantics keep carbon near the surface), the
+     * dye/evaporite/industrial minerals (azurite/borax/asbestos/sulfur/niter/nikolite),
+     * the wide-span lottery rows (craponite/pollucite/zeolite) and the nether/end-only
+     * rows (the deep band is an overworld deepslate semantic). NETHER/END pairs never
+     * mirror even when the row has them (silver/gold/scheelite ride OVERWORLD only here).
+     */
+    public static final List<String> DEEP_MIRROR_TAILS = List.of(
+        "sphalerite", "smithsonite", "stibnite", "silver", "gold", "pyrite",
+        "pyrolusite", "garnierite", "pentlandite", "scheelite", "diamond", "redstone",
+        "redcinnabar", "lapis", "eudialyte");
+
+    /** The mirror predicate: the tail is selected AND the row generates an overworld pair. */
+    public static boolean hasDeepMirror(SmallOreRow aRow) {
+        return aRow.dims().contains(Dim.OVERWORLD) && DEEP_MIRROR_TAILS.contains(aRow.tail());
+    }
+
+    /** The deep-band mirror rows, ROWS order (15 of the 54). */
+    public static List<SmallOreRow> deepMirrorRows() {
+        return ROWS.stream().filter(GTOreWorldgen::hasDeepMirror).toList();
+    }
+
+    /** The mirrored band's lower anchor ({@link #DEEP_SHIFT} translation). */
+    public static int deepMinY(SmallOreRow aRow) {
+        return aRow.minY() - DEEP_SHIFT;
+    }
+
+    /** The mirrored band's upper anchor (no nether clamp — the mirror never rides NETHER). */
+    public static int deepMaxY(SmallOreRow aRow) {
+        return aRow.maxY() - DEEP_SHIFT;
+    }
+
+    /**
+     * The deep placed-feature key {@code gt6:ore_small_deep/&lt;tail&gt;}: the mirror is a
+     * PLACED-ONLY face. It references the row's OVERWORLD configured feature verbatim (the
+     * 24-target host walk, whose [4] arm is the #deepslate_ore_replaceables tag → the
+     * deepslate-family ore block — the host tag picks the deep form below y0, the same
+     * OreFeatures.java:49-60 dual-target canon), and the Y-domain split rides the PLACED
+     * band ({@link #deepMinY}/{@link #deepMaxY}). "deep" is a key directory, NOT a
+     * {@link Dim} — the pairs hang off the OVERWORLD biome modifier.
+     */
+    public static ResourceKey<PlacedFeature> deepPlacedKey(SmallOreRow aRow) {
+        return ResourceKey.create(Registries.PLACED_FEATURE,
+                ResourceLocation.fromNamespaceAndPath("gt6", "ore_small_deep/" + aRow.tail()));
+    }
+
+    /** The 15 deep placed keys, deepMirrorRows() order. */
+    public static final List<ResourceKey<PlacedFeature>> DEEP_PLACED_KEYS =
+            deepMirrorRows().stream().map(GTOreWorldgen::deepPlacedKey).toList();
 
     private GTOreWorldgen() {
     }

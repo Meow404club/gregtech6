@@ -373,6 +373,13 @@ public final class GT6WorldgenDatagen {
         // the table rides the config JSON — the card spec ② tier-a face).
         FeatureUtils.register(ctx, GT6Worldgen.LARGE_VEINS_CONFIGURED, GT6Features.LARGE_VEINS,
                 new GTVeinConfig.Table(LARGE_VEIN_TABLE));
+        // task r6-c2-deep-band — the deep-band mirror table under its OWN configured key
+        // (the SAME GT6LargeVeinFeature instance — a configured feature is a (feature,
+        // config) pair): a separate table keeps the surface draw mass verbatim (the
+        // weighted draw sums every drawable row of its own table — mirror rows inside
+        // LARGE_VEIN_TABLE would dilute the surface draw).
+        FeatureUtils.register(ctx, GT6Worldgen.LARGE_VEINS_DEEP_CONFIGURED, GT6Features.LARGE_VEINS,
+                new GTVeinConfig.Table(DEEP_VEIN_TABLE));
         // task p31-strata-lens — the ONE strata-lens configured feature: the registered
         // GT6StrataLensFeature instance over the 5-row marker-stone lens table
         // ({@link #STRATA_LENS_TABLE}; the table rides the config JSON — the same tier-a
@@ -458,6 +465,13 @@ public final class GT6WorldgenDatagen {
         // GT6WorldGenerator.java:95-105), square spread + biome filter as the form.
         PlacementUtils.register(ctx, GT6Worldgen.LARGE_VEINS_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.LARGE_VEINS_CONFIGURED),
+                InSquarePlacement.spread(), BiomeFilter.biome());
+        // task r6-c2-deep-band — the deep-mirror placed feature: the surface chain shape
+        // (InSquare + BiomeFilter; the per-chunk origin-grid scan lives in the Feature).
+        // The Y domain rides the shifted row bands (no HeightRangePlacement — the surface
+        // row's own comment face).
+        PlacementUtils.register(ctx, GT6Worldgen.LARGE_VEINS_DEEP_PLACED,
+                tFeatures.getOrThrow(GT6Worldgen.LARGE_VEINS_DEEP_CONFIGURED),
                 InSquarePlacement.spread(), BiomeFilter.biome());
         // task p31-strata-lens — the strata-lens placed feature: Count 1 CONSTANT +
         // InSquare + BiomeFilter, one attempt per chunk (the per-chunk ±3-chunk origin
@@ -551,6 +565,13 @@ public final class GT6WorldgenDatagen {
         // carve holes into any vein crossing a biome border), at the UNDERGROUND_ORES step.
         ctx.register(biomeModifierKeyOf("large_veins"), addFeatures(tOverworld,
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.LARGE_VEINS_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task r6-c2-deep-band — the deep-mirror biome modifier: EVERY overworld biome at
+        // the ore pass (the large-vein no-biome-gate note carried over). The modifier set
+        // is OVERWORLD-ONLY — the End draw (the END_YIELD modifier above) never sees the
+        // deep table, the ORE_END rows stay the only End veins.
+        ctx.register(biomeModifierKeyOf("large_veins_deep"), addFeatures(tOverworld,
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.LARGE_VEINS_DEEP_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
         // task p31-strata-lens — the strata-lens biome modifier: EVERY overworld biome
         // (the research.p30-w6-vein-boundary impl note carried over: a per-biome split
@@ -880,6 +901,21 @@ public final class GT6WorldgenDatagen {
                             VerticalAnchor.absolute(GTOreWorldgen.placedMaxY(tRow, tPair.dim()))),
                     BiomeFilter.biome());
         }
+        // task r6-c2-deep-band — the deep-band mirrors: PLACED-only (the row's OVERWORLD
+        // configured feature is reused verbatim — its [4] target is the
+        // #deepslate_ore_replaceables tag arm, so the deep band resolves the deepslate
+        // family block), the band = the upstream band shifted DEEP_SHIFT down (the
+        // GTOreWorldgen.DEEP_SHIFT rule). Same count chain — the deep twin keeps the
+        // surface twin's density.
+        for (GTOreWorldgen.SmallOreRow tRow : GTOreWorldgen.deepMirrorRows()) {
+            PlacementUtils.register(ctx, GTOreWorldgen.deepPlacedKey(tRow),
+                    aFeatures.getOrThrow(GTOreWorldgen.configuredKey(tRow, GTOreWorldgen.Dim.OVERWORLD)),
+                    CountPlacement.of(GTOreWorldgen.veinCount(tRow)),
+                    InSquarePlacement.spread(),
+                    HeightRangePlacement.uniform(VerticalAnchor.absolute(GTOreWorldgen.deepMinY(tRow)),
+                            VerticalAnchor.absolute(GTOreWorldgen.deepMaxY(tRow))),
+                    BiomeFilter.biome());
+        }
     }
 
     private static void bootstrapOreBiomeModifiers(
@@ -894,9 +930,17 @@ public final class GT6WorldgenDatagen {
         TagKey<Biome>[] tDimTags = new TagKey[] {BiomeTags.IS_OVERWORLD, BiomeTags.IS_NETHER, BiomeTags.IS_END};
         for (int i = 0; i < ORE_BIOME_MODIFIER_KEYS.size(); i++) {
             GTOreWorldgen.Dim tDim = GTOreWorldgen.Dim.values()[i];
-            List<Holder<PlacedFeature>> tHolders = new ArrayList<>(38);
+            List<Holder<PlacedFeature>> tHolders = new ArrayList<>(54);
             for (GTOreWorldgen.Placement tPair : GTOreWorldgen.placementPairs()) {
                 if (tPair.dim() == tDim) tHolders.add(aPlaced.getOrThrow(GTOreWorldgen.placedKey(tPair.row(), tPair.dim())));
+            }
+            // task r6-c2-deep-band — the deep-band mirrors ride the OVERWORLD modifier
+            // ("deep" is a key directory, not a Dim — the deepslate band is overworld
+            // content), appended after the surface pairs.
+            if (tDim == GTOreWorldgen.Dim.OVERWORLD) {
+                for (GTOreWorldgen.SmallOreRow tRow : GTOreWorldgen.deepMirrorRows()) {
+                    tHolders.add(aPlaced.getOrThrow(GTOreWorldgen.deepPlacedKey(tRow)));
+                }
             }
             ctx.register(ORE_BIOME_MODIFIER_KEYS.get(i), addFeatures(aBiomes.getOrThrow(tDimTags[i]),
                     HolderSet.direct(tHolders),
@@ -1172,6 +1216,54 @@ public final class GT6WorldgenDatagen {
         veinOffworld("ore.large.desh"      , 10,  90, 100, 3, 16, MT.OREMATS.TritaniumHexafluoride, MT.OREMATS.DuraniumHexaastatide, MT.OREMATS.DuraniumHexabromide, MT.Desh), // :923
         veinOffworld("ore.large.syrmorite" , 30,  45, 160, 2, 32, MT.Syrmorite              , MT.Syrmorite                    , MT.Syrmorite                    , MT.Syrmorite          ), // :924
         veinOffworld("ore.large.octine"    , 10,  25,  40, 1, 32, MT.Octine                 , MT.Octine                       , MT.Octine                       , MT.Octine             )  // :925
+    );
+
+    /**
+     * The ONE 20-row deep-band mirror vein table (task r6-c2-deep-band spec ①) — the
+     * selected overworld rows of {@link #LARGE_VEIN_TABLE} with the band translated
+     * {@code y - 64} (the {@link GTOreWorldgen#DEEP_SHIFT} rule: the 1.7.10 column [0, 128]
+     * rides the bedrock-anchored translation onto modern [-64, +64], so the mirrored band
+     * keeps its exact thickness and lands wholly in the modern deepslate band — the modern
+     * face of the upstream mNoDeep deep-slate protection layer, WorldgenStoneLayers.java
+     * :77/:196 y&lt;24 forces DEEPSLATE). The band-comment on each row cites the twin's
+     * upstream line + band.
+     *
+     * <p>SELECTION (the card rule, each exclusion declared): major METAL + GEM veins whose
+     * upstream band sits in the upstream LOWER half ({@code maxY <= 64}). NOT mirrored —
+     * fuels (lignite/coal :886/:887; the 1.7.10 semantics keep carbon near the surface),
+     * the evaporite/industrial rows (apatite :888, iodinesalt :891, rocksalt :892,
+     * asbestos :893), the upper-half bands (bauxite 50-90, quartz 40-80, cassiterite 40-90,
+     * tetrahedrite 70-120), the dead molybdenum row (:905 — all four slots outside the
+     * registration axis, the twin never draws) and the offworld rows (:917-925). Every
+     * mirrored row keeps its twin's weight/density/size/indicator/material slots VERBATIM
+     * (only name + band differ — "ore.large.deep.&lt;tail&gt;"), so the deep draw
+     * distribution = the surface distribution one band lower; the row-for-row shift
+     * correspondence is pinned by GT6LargeVeinTest. The rows that today fall to the
+     * registration-axis validity gate (sapphire/garnet/peridot/monazite/pitchblende/
+     * beryllium/titanium slots) stay mirrored STRUCTURALLY: they ride the same gate as
+     * their surface twins and light up together when the axis extends.
+     */
+    public static final List<GTVeinConfig> DEEP_VEIN_TABLE = List.of(
+        vein("ore.large.deep.lapis"     , -44, -14,  40, 5, 16, MT.Lazurite                     , MT.Sodalite                     , MT.Lapis                        , MT.Azurite            ), // :889 lapis 20-50
+        vein("ore.large.deep.sapphire"  , -54, -24,  30, 3, 16, MT.BlueSapphire                 , MT.OrangeSapphire               , MT.YellowSapphire               , MT.Ruby               ), // :894 sapphire 10-40
+        vein("ore.large.deep.sapphire2" , -54, -24,  30, 3, 16, MT.GreenSapphire                , MT.Ruby                         , MT.BlueSapphire                 , MT.PurpleSapphire     ), // :895 sapphire2 10-40
+        vein("ore.large.deep.garnet"    , -54, -24,  60, 3, 16, MT.Almandine                    , MT.Pyrope                       , MT.Andradite                    , MT.Uvarovite          ), // :896 garnet 10-40
+        vein("ore.large.deep.pitchblende", -54, -24, 40, 3, 16, MT.OREMATS.Pitchblende          , MT.OREMATS.Pitchblende          , MT.OREMATS.Uraninite            , MT.OREMATS.Uraninite  ), // :897 pitchblende 10-40
+        vein("ore.large.deep.monazite"  , -54, -24,  30, 3, 16, MT.OREMATS.Bastnasite           , MT.OREMATS.Bastnasite           , MT.Monazite                     , MT.Nd                 ), // :898 monazite 10-40
+        vein("ore.large.deep.diamond"   , -59, -44,  40, 2, 16, MT.Graphite                     , MT.Graphite                     , MT.Diamond                      , MT.Graphite           ), // :899 diamond 5-20
+        vein("ore.large.deep.galena"    , -34,  -4,  40, 5, 16, MT.OREMATS.Galena               , MT.OREMATS.Galena               , MT.Ag                           , MT.Pb                 ), // :900 galena 30-60
+        vein("ore.large.deep.peridot"   , -54, -24,  60, 3, 16, MT.OREMATS.Kyanite              , MT.MgCO3                        , MT.Peridot                      , MT.OREMATS.Glauconite ), // :902 peridot 10-40
+        vein("ore.large.deep.gold"      , -44, -34,   5, 3, 16, MT.Pyrite                       , MT.OREMATS.Chalcopyrite         , MT.OREMATS.Arsenopyrite         , MT.Au                 ), // :903 gold 20-30
+        vein("ore.large.deep.platinum"  , -24, -14,   5, 3, 16, MT.OREMATS.Cooperite            , MT.Pd                           , MT.OREMATS.Sperrylite           , MT.Ir                 ), // :904 platinum 40-50
+        vein("ore.large.deep.tungstate" , -44, -14,  10, 3, 16, MT.OREMATS.Scheelite            , MT.OREMATS.Russellite           , MT.OREMATS.Tungstate            , MT.OREMATS.Pinalite   ), // :907 tungstate 20-50
+        vein("ore.large.deep.manganese" , -44, -34,  20, 3, 16, MT.Grossular                    , MT.Spessartine                  , MT.MnO2                         , MT.OREMATS.Coltan     ), // :908 manganese 20-30
+        vein("ore.large.deep.beryllium" , -59, -34,  15, 3, 16, MT.Aquamarine                   , MT.Maxixe                       , MT.Emerald                      , MT.Th                 ), // :909 beryllium 5-30
+        vein("ore.large.deep.beryllium2", -59, -34,  15, 3, 16, MT.Bixbite                      , MT.Goshenite                    , MT.Heliodor                     , MT.Morganite          ), // :910 beryllium2 5-30
+        vein("ore.large.deep.titanium"  , -54, -24,  40, 3, 16, MT.TiO2                         , MT.TiO2                         , MT.Zircon                       , MT.OREMATS.Ilmenite   ), // :911 titanium 10-40
+        vein("ore.large.deep.nickel"    , -54, -24,  40, 3, 16, MT.OREMATS.Garnierite           , MT.Ni                           , MT.OREMATS.Cobaltite            , MT.OREMATS.Pentlandite), // :912 nickel 10-40
+        vein("ore.large.deep.redstone"  , -54, -24,  60, 3, 24, MT.Redstone                     , MT.Redstone                     , MT.Ruby                         , MT.OREMATS.Cinnabar   ), // :913 redstone 10-40
+        vein("ore.large.deep.iron"      , -54, -24, 120, 4, 24, MT.OREMATS.BrownLimonite        , MT.OREMATS.YellowLimonite       , MT.Fe2O3                        , MT.OREMATS.Malachite  ), // :915 iron 10-40
+        vein("ore.large.deep.copper"    , -54, -34,  80, 4, 24, MT.OREMATS.Chalcopyrite         , MT.Fe2O3                        , MT.Pyrite                       , MT.Cu                 )  // :916 copper 10-30
     );
 
     /**
