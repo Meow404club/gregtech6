@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
+import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.ui.IElement;
 import snownee.jade.api.ui.IElementHelper;
@@ -47,6 +48,15 @@ public final class GT6PaintIconProvider implements IBlockComponentProvider {
 	@Override
 	public ResourceLocation getUid() {
 		return UID;
+	}
+
+	/**
+	 * 本 provider 只挂 {@code registerBlockIcon}——Jade 不经 registerBlockComponent 调本面
+	 * （IBlockComponentProvider.getIcon javadoc 逐字），空体即契约（1201 腿 appendTooltip
+	 * 抽象，GT6CrucibleProvider 双实现形的 icon-only 版）。
+	 */
+	@Override
+	public void appendTooltip(ITooltip aTooltip, BlockAccessor aAccessor, IPluginConfig aConfig) {
 	}
 
 	@Override
