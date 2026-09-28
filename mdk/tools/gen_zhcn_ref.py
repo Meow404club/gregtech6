@@ -1111,6 +1111,13 @@ HAND_TRANSLATIONS = {
     "gt6.jei.cost.power": ("电流: %s", "hand"),
     "gt6.jei.cost.gain": ("产出: %s GU", "hand"),
     "gt6.jei.cost.output": ("输出: %s GU/t", "hand"),
+    # r7-30a (GitHub #30 phase 1): the energy-column unit faces — GU lifted into the arg
+    # slot, the colored short code component rides as the second %s.
+    "gt6.jei.cost.costs_unit": ("总耗: %s %s", "hand"),
+    "gt6.jei.cost.usage_unit": ("功耗: %s %s/t", "hand"),
+    "gt6.jei.cost.tier_unit": ("电压等级: %s %s", "hand"),
+    "gt6.jei.cost.gain_unit": ("产出: %s %s", "hand"),
+    "gt6.jei.cost.output_unit": ("输出: %s %s/t", "hand"),
     "gt6.jei.cost.chance": ("几率: %s", "hand"),
     "gt6.jei.cost.chance_each": ("几率: %s（每个）", "hand"),
     "gt6.jei.cost.time": ("时间: %s %s", "hand"),

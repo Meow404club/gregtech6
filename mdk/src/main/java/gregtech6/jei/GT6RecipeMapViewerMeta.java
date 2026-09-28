@@ -7,8 +7,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
+import gregapi.code.TagData;
+import gregapi.data.TD;
+import gregtech6.jade.GT6MachineProvider;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
 
@@ -105,6 +109,15 @@ public final class GT6RecipeMapViewerMeta {
 	public static final String KEY_UNIT_MINS = "gt6.jei.cost.unit_mins";
 	public static final String KEY_START = "gt6.jei.cost.start";
 	public static final String KEY_TEMPERATURE = "gt6.jei.cost.temperature";
+	/** The unit-suffix faces of the energy-column maps (task r7-30a, GitHub #30 phase 1):
+	 * same label wording as the GU keys with the unit lifted into the second arg, so the
+	 * colored short code rides as a styled Component (the en values are the :680-717
+	 * literals with " GU" → "%s %s"). Only maps with a pinned carrier use these. */
+	public static final String KEY_COSTS_UNIT = "gt6.jei.cost.costs_unit";
+	public static final String KEY_USAGE_UNIT = "gt6.jei.cost.usage_unit";
+	public static final String KEY_TIER_UNIT = "gt6.jei.cost.tier_unit";
+	public static final String KEY_GAIN_UNIT = "gt6.jei.cost.gain_unit";
+	public static final String KEY_OUTPUT_UNIT = "gt6.jei.cost.output_unit";
 
 	private GT6RecipeMapViewerMeta() {}
 
@@ -188,6 +201,134 @@ public final class GT6RecipeMapViewerMeta {
 	/** The per-map columns; every non-census name reads as STANDARD (the defensive default). */
 	public static MapMeta metaOf(RecipeMap aMap) {
 		return DEVIATIONS.getOrDefault(aMap.mNameInternal, MapMeta.STANDARD);
+	}
+
+	// -----------------------------------------------------------------------
+	// The per-map accepted-energy column (task r7-30a, GitHub #30 phase 1) — the
+	// upstream "Costs: n GU" face splits into the concrete carrier short code where the
+	// registration rows are unambiguous, and stays GU where they are not (GU's very
+	// semantics: Recipe.mEUt is energy-type-agnostic, upstream NEI_RecipeMap.java:688-710
+	// writes the generic unit for every map).
+	//
+	// Transcription source (the same discipline as DEVIATIONS above): the machine
+	// registration rows that carry a RecipeMap AND its accepted-energy carrier —
+	// GTMachines.java single-block families, GT6LargeMachines.java LargeMachineRow rows
+	// (upstream Loader :1229-1240), GT6Distillation.java TowerRows and the single-carrier
+	// special TileEntities. The port's p28 ULV ladder rows (SHREDDER/CRUSHER/SIFTING/
+	// WIREMILL/ROLLINGMILL on EU) are a declared port-side tier extension ("NO upstream
+	// VN[0] machine exists", GTMachines.java ULV header) and do not enter this upstream
+	// transcription. Absent name = the GU face.
+	// -----------------------------------------------------------------------
+
+	/**
+	 * The per-map carrier, keyed by the internal name (the census key). A map lands here
+	 * only when EVERY registration row carrying it agrees on one TagData; the mixed set
+	 * is the r7-30a conflict list, reported on the card and left on GU:
+	 * gt.recipe.crusher (KU small GTMachines:438-440 vs RU large GT6LargeMachines:1238),
+	 * gt.recipe.squeezer (KU :2940 vs RU :1240), gt.recipe.sifter (KU :949 vs EU
+	 * electricsifter :1689), gt.recipe.mixer (RU :1631/:1234 vs EU electricmixer :1652)
+	 * and gt.recipe.loom (RU :4280 vs EU electricloom :1673) — every pair upstream-faithful,
+	 * which is exactly why upstream printed GU.
+	 */
+	private static final Map<String, TagData> ENERGY_BY_MAP = new HashMap<>();
+
+	private static void energy(String aName, TagData aType) {
+		ENERGY_BY_MAP.put(aName, aType);
+	}
+
+	static {
+		// EU (GTMachines single-block rows, all Electric_T families)
+		energy("gt.recipe.boxinator", TD.Energy.EU);            // :1709
+		energy("gt.recipe.canner", TD.Energy.EU);               // :644
+		energy("gt.recipe.electrolyzer", TD.Energy.EU);         // :3592 (large :1230 same)
+		energy("gt.recipe.injector", TD.Energy.EU);             // :3611
+		energy("gt.recipe.lightning", TD.Energy.EU);            // :3289
+		energy("gt.recipe.printer", TD.Energy.EU);              // :3631
+		energy("gt.recipe.scannervisuals", TD.Energy.EU);       // :3650
+		energy("gt.recipe.slicer", TD.Energy.EU);               // :3669
+		energy("gt.recipe.unboxinator", TD.Energy.EU);          // :1724
+		// RU (Kinetic_T families + the large rows that agree)
+		energy("gt.recipe.burnmixer", TD.Energy.RU);            // :5256
+		energy("gt.recipe.centrifuge", TD.Energy.RU);           // :2954 (large :1229 same)
+		energy("gt.recipe.clustermill", TD.Energy.RU);          // :1363-1366
+		energy("gt.recipe.cutter", TD.Energy.RU);               // :2926 buzzsaw
+		energy("gt.recipe.lathe", TD.Energy.RU);                // :448-449
+		energy("gt.recipe.pressurewasher", TD.Energy.RU);       // :2996 debarker
+		energy("gt.recipe.rollbender", TD.Energy.RU);           // :1349-1352
+		energy("gt.recipe.rollformer", TD.Energy.RU);           // :1356-1359
+		energy("gt.recipe.rollingmill", TD.Energy.RU);          // :1342-1345
+		energy("gt.recipe.sharpener", TD.Energy.RU);            // :2982 sander
+		energy("gt.recipe.shredder", TD.Energy.RU);             // :425-426 (large :1239 same)
+		energy("gt.recipe.sluice", TD.Energy.RU);               // :2968 (large :1237 same)
+		energy("gt.recipe.wiremill", TD.Energy.RU);             // :977
+		// KU (Kinetic_T families without a disagreeing large row)
+		energy("gt.recipe.compressor", TD.Energy.KU);           // :963
+		energy("gt.recipe.press", TD.Energy.KU);                // :716
+		// HU (Heat_T families + the distillation tower row)
+		energy("gt.recipe.distillationtower", TD.Energy.HU);    // GT6Distillation:148
+		energy("gt.recipe.distillery", TD.Energy.HU);           // :2631
+		energy("gt.recipe.drying", TD.Energy.HU);               // :514
+		energy("gt.recipe.extruder", TD.Energy.HU);             // :803
+		energy("gt.recipe.fermenter", TD.Energy.HU);            // :1745 (large :1235 same)
+		energy("gt.recipe.laminator", TD.Energy.HU);            // :3318
+		energy("gt.recipe.melter", TD.Energy.HU);               // :4572
+		energy("gt.recipe.roaster", TD.Energy.HU);              // :4994
+		energy("gt.recipe.smelter", TD.Energy.HU);              // :4567
+		// CU (the cryo families + the cryo tower row)
+		energy("gt.recipe.cryodistillationtower", TD.Energy.CU); // GT6Distillation:150
+		energy("gt.recipe.cryomixer", TD.Energy.CU);            // :2210
+		energy("gt.recipe.freezer", TD.Energy.CU);              // :2195
+		energy("gt.recipe.crystallisationcrucible", TD.Energy.HU); // :5113 (a VISIBLE map — not in the exclusion table)
+		// LU (the laser families)
+		energy("gt.recipe.laserengraver", TD.Energy.LU);        // :2165
+		energy("gt.recipe.welder", TD.Energy.LU);               // :2180 laserwelder
+		// MU (the magnetic families)
+		energy("gt.recipe.magneticseparator", TD.Energy.MU);    // :2150
+		energy("gt.recipe.polarizer", TD.Energy.MU);            // :2132
+		// QU (the quantum families)
+		energy("gt.recipe.massfab", TD.Energy.QU);              // :2270 (multiblock TileEntityMassfab:121 same)
+		energy("gt.recipe.replicator", TD.Energy.QU);           // :2365
+		energy("gt.recipe.scannermolecular", TD.Energy.QU);     // :2350
+		// TU (the time-carrier families + the fusion reactor's accepted face)
+		energy("gt.recipe.autoclave", TD.Energy.TU);            // :4262 (large :1232 same)
+		energy("gt.recipe.bath", TD.Energy.TU);                 // :4243 (large :1233 same)
+		energy("gt.recipe.coagulator", TD.Energy.TU);           // :4205 (large :1231 same)
+		energy("gt.recipe.fusionreactor", TD.Energy.TU);        // TileEntityFusionReactor:142
+		energy("gt.recipe.generifier", TD.Energy.TU);           // :4224
+	}
+
+	/** The per-map accepted-energy carrier; {@code null} = the upstream GU face (mixed or carrier-less). */
+	public static TagData energyOf(RecipeMap aMap) {
+		return ENERGY_BY_MAP.get(aMap.mNameInternal);
+	}
+
+	/**
+	 * The carrier colors — the upstream TD.Energy createTagData 4th argument (TD.java:81-144)
+	 * through the LH.Chat constants (LH.java:658+, each is the same-named
+	 * EnumChatFormatting). The port's TD.java:39 strips that presentation-only parameter,
+	 * so the consumer side carries it; only the nine carriers the registration rows use.
+	 */
+	private static final Map<TagData, ChatFormatting> ENERGY_COLORS = Map.of(
+			TD.Energy.EU, ChatFormatting.BLUE,          // TD.java:81 LH.Chat.BLUE
+			TD.Energy.RU, ChatFormatting.GREEN,         // :88 GREEN
+			TD.Energy.KU, ChatFormatting.DARK_GREEN,    // :95 DGREEN
+			TD.Energy.HU, ChatFormatting.RED,           // :102 RED
+			TD.Energy.CU, ChatFormatting.AQUA,          // :109 CYAN (= AQUA, LH.java:680)
+			TD.Energy.LU, ChatFormatting.YELLOW,        // :116 YELLOW
+			TD.Energy.MU, ChatFormatting.DARK_GRAY,     // :123 DGRAY
+			TD.Energy.QU, ChatFormatting.DARK_PURPLE,   // :137 PURPLE (= DARK_PURPLE, :669)
+			TD.Energy.TU, ChatFormatting.DARK_BLUE);    // :144 DBLUE
+
+	/**
+	 * The colored short-code unit component: the short code rides the jade face's formatter
+	 * ({@link GT6MachineProvider#energyTypeShortCode}, same module, task p27) and the color
+	 * the upstream LH.Chat transcription above. Both viewers eat the style — JEI draws via
+	 * GuiGraphics.drawString (vanilla Font applies the per-run style color) and EMI's
+	 * addText goes through Text.asOrderedText (style runs preserved).
+	 */
+	public static Component energyUnit(TagData aEnergy) {
+		return Component.literal(GT6MachineProvider.energyTypeShortCode(aEnergy))
+				.withStyle(ENERGY_COLORS.getOrDefault(aEnergy, ChatFormatting.WHITE));
 	}
 
 	/** Category-eligible: tabled census map, upstream mNEIAllowed, not ruled out. */
@@ -314,32 +455,36 @@ public final class GT6RecipeMapViewerMeta {
 	 * The drawExtras line list, top-down (the viewers draw them at TEXT_LINE_HEIGHT pitch).
 	 * Since task r6-29-34a the label faces are translatable components with the verbatim
 	 * upstream numbers as args — the en values are the :680-717 literals to the character.
+	 * Since task r7-30a a map with a pinned carrier (the ENERGY_BY_MAP column) prints its
+	 * unit-suffix key with the colored short code as the second arg; carrier-less and
+	 * mixed-carrier maps keep the GU keys byte-identical.
 	 */
 	public static List<Component> costLines(RecipeMap aMap, Recipe aRecipe) {
 		List<Component> rLines = new ArrayList<>();
 		MapMeta tMeta = metaOf(aMap);
+		TagData tEnergy = energyOf(aMap);
 		long tGUt = aRecipe.mEUt;
 		long tDuration = aRecipe.mDuration;
 		if (tGUt == 0) {
 			if (tMeta.showVoltageAmperage()) rLines.add(Component.translatable(KEY_TIER_UNSPECIFIED));
 		} else if (tGUt > 0) {
-			rLines.add(Component.translatable(KEY_COSTS, tGUt * tDuration));
+			rLines.add(unitLine(KEY_COSTS, KEY_COSTS_UNIT, tGUt * tDuration, tEnergy));
 			if (tMeta.showVoltageAmperage()) {
-				if (!tMeta.combinePower()) rLines.add(Component.translatable(KEY_USAGE, tGUt));
-				rLines.add(Component.translatable(KEY_TIER, tGUt / aMap.mPower));
+				if (!tMeta.combinePower()) rLines.add(unitLine(KEY_USAGE, KEY_USAGE_UNIT, tGUt, tEnergy));
+				rLines.add(unitLine(KEY_TIER, KEY_TIER_UNIT, tGUt / aMap.mPower, tEnergy));
 				rLines.add(Component.translatable(KEY_POWER, aMap.mPower));
 			} else if (tGUt != 1 && !tMeta.combinePower()) {
-				rLines.add(Component.translatable(KEY_USAGE, tGUt));
+				rLines.add(unitLine(KEY_USAGE, KEY_USAGE_UNIT, tGUt, tEnergy));
 			}
 		} else {
 			tGUt *= -1;
-			rLines.add(Component.translatable(KEY_GAIN, tGUt * tDuration));
+			rLines.add(unitLine(KEY_GAIN, KEY_GAIN_UNIT, tGUt * tDuration, tEnergy));
 			if (tMeta.showVoltageAmperage()) {
-				if (!tMeta.combinePower()) rLines.add(Component.translatable(KEY_OUTPUT, tGUt));
-				rLines.add(Component.translatable(KEY_TIER, tGUt / aMap.mPower));
+				if (!tMeta.combinePower()) rLines.add(unitLine(KEY_OUTPUT, KEY_OUTPUT_UNIT, tGUt, tEnergy));
+				rLines.add(unitLine(KEY_TIER, KEY_TIER_UNIT, tGUt / aMap.mPower, tEnergy));
 				rLines.add(Component.translatable(KEY_POWER, aMap.mPower));
 			} else if (tGUt != 1 && !tMeta.combinePower()) {
-				rLines.add(Component.translatable(KEY_OUTPUT, tGUt));
+				rLines.add(unitLine(KEY_OUTPUT, KEY_OUTPUT_UNIT, tGUt, tEnergy));
 			}
 		}
 		if (tDuration > 0) rLines.add(timeLine(tDuration));
@@ -347,6 +492,16 @@ public final class GT6RecipeMapViewerMeta {
 			rLines.add(Component.translatable(specialKey(tMeta.specialValuePre()),
 					aRecipe.mSpecialValue * tMeta.specialValueMultiplier(), tMeta.specialValuePost()));
 		return rLines;
+	}
+
+	/**
+	 * One cost line: no carrier → the GU key, one number arg (the r6-29-34a face,
+	 * untouched); pinned carrier → the _unit key, number + colored short code.
+	 */
+	private static Component unitLine(String aGuKey, String aUnitKey, long aNumber, TagData aEnergy) {
+		return aEnergy == null
+				? Component.translatable(aGuKey, aNumber)
+				: Component.translatable(aUnitKey, aNumber, energyUnit(aEnergy));
 	}
 
 	/** The special-value triple's key: the FUSION "Start: " face or the crucible "Temperature: " one. */
