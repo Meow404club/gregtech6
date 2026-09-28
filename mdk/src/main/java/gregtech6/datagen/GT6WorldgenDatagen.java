@@ -30,6 +30,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
@@ -1670,14 +1671,29 @@ public final class GT6WorldgenDatagen {
     // CavePlacements.java:227-233 placed chain, BiomeDefaultFeatures.java:396 the
     // LOCAL_MODIFICATIONS step):
     // - filling = air and crack disabled (generate_crack_chance 0): a sealed static
-    //   cavity — the vanilla water fill would flood the GT gem shell and the crack
-    //   would breach it;
-    // - inner layer = the GT blockGem shell (no budding/cluster face — phase 1);
-    // - use_potential_placements_chance = 0.0 — the GeodeFeature.java:135-149 guard:
-    //   the $$31 placement list stays empty so the Util.getRandom(innerPlacements)
-    //   at :149 never fires. The list itself CANNOT be empty — the codec is
-    //   ExtraCodecs.nonEmptyList (GeodeBlockSettings.java:29, field-identical both
-    //   legs) — so it carries the singleton gem state, never sampled at chance 0;
+    //   cavity — the vanilla fill IS air too (CaveFeatures.java:434); the crack stays
+    //   off for the amethyst row as well (r7 card ruling: the budding ecosystem does
+    //   not need it, findability is a one-number follow-up to the vanilla 0.95 if the
+    //   field test wants it);
+    // - inner layer = the GT blockGem shell; the AMETHYST ROW carries the vanilla
+    //   budding ecosystem (task r7-amethyst-budding-json, C4 tail item): the alternate
+    //   inner layer becomes minecraft:budding_amethyst at the vanilla 0.083 chance
+    //   (CaveFeatures.java:436/:451) and inner_placements becomes the vanilla 4-level
+    //   bud/cluster set (:439-444). This trio is load-bearing together: GeodeFeature
+    //   gates the bud placement on the alternate roll (GeodeFeature.java:135
+    //   !requireLayer0Alternate || alternateRolled — require flag stays the vanilla
+    //   true :452, so chance 0.35 alone with alternate 0.0 would place NOTHING), the
+    //   buds attach to the air-cavity faces of the budding shell blocks (:146-167,
+    //   canClusterGrowAtState = air/water), and BuddingAmethystBlock.randomTick then
+    //   regrows all four levels on the budding shell — the shard supply chain (the
+    //   vanilla cluster loot face; budding_amethyst loot is empty so no GT gem
+    //   unification conflict);
+    // - use_potential_placements_chance = 0.0 on the other 3 rows — the
+    //   GeodeFeature.java:135-149 guard: the placement list stays empty so the
+    //   Util.getRandom(innerPlacements) at :149 never fires. The list itself CANNOT
+    //   be empty — the codec is ExtraCodecs.nonEmptyList (GeodeBlockSettings.java:29,
+    //   field-identical both legs) — so it carries the singleton gem state, never
+    //   sampled at chance 0;
     // - rarity 64 = ~2.7x sparser than the vanilla amethyst 24 (CavePlacements.java:229;
     //   the card text's "原版 80" misread — vanilla is RarityFilter 24, this is the
     //   "或更稀" arm);
@@ -1717,6 +1733,25 @@ public final class GT6WorldgenDatagen {
     /** The geode Y band, see the band javadoc (HeightRangePlacement uniform anchors). */
     public static final int GEODE_MIN_Y = -40, GEODE_MAX_Y = 24;
 
+    /**
+     * The amethyst row's budding-ecosystem chances, the vanilla pair verbatim: the
+     * inner-placement roll (CaveFeatures.java:450) and the alternate-inner-layer roll
+     * (:451) whose placements gate the former (GeodeFeature.java:135 — see the band
+     * javadoc). Both are plain doubles, no IntProvider JSON forking face.
+     */
+    public static final double GEODE_BUDDING_PLACEMENT_CHANCE = 0.35, GEODE_BUDDING_ALTERNATE_CHANCE = 0.083;
+
+    /**
+     * The vanilla 4-level bud/cluster inner placements (CaveFeatures.java:439-444),
+     * bare default states — GeodeFeature.java:151-154 sets the FACING per placement
+     * direction, so the serialized JSON rows carry no Properties (the default-up face).
+     */
+    private static final List<BlockState> AMETHYST_INNER_PLACEMENTS = List.of(
+            Blocks.SMALL_AMETHYST_BUD.defaultBlockState(),
+            Blocks.MEDIUM_AMETHYST_BUD.defaultBlockState(),
+            Blocks.LARGE_AMETHYST_BUD.defaultBlockState(),
+            Blocks.AMETHYST_CLUSTER.defaultBlockState());
+
     /** The 4 geode configured keys, GEODE_MATERIALS order. */
     public static final List<ResourceKey<ConfiguredFeature<?, ?>>> GEODE_CONFIGURED_KEYS =
             GEODE_MATERIALS.stream().map(tRow -> GT6Worldgen.configKey("geode_" + tRow.mat())).toList();
@@ -1745,20 +1780,27 @@ public final class GT6WorldgenDatagen {
             Block tGem = gemBlock(tRow.gem());
             Block tMiddle = GTStoneBlocks.block(tRow.middleStone(), StoneVariant.STONE).get();
             Block tOuter = GTStoneBlocks.block(tRow.outerStone(), StoneVariant.STONE).get();
+            boolean tBudding = "amethyst".equals(tRow.mat()); // the vanilla amethyst ecosystem row (r7 card)
             FeatureUtils.register(ctx, GT6Worldgen.configKey("geode_" + tRow.mat()), Feature.GEODE,
                     new GeodeConfiguration(
                             new GeodeBlockSettings(
                                     BlockStateProvider.simple(Blocks.AIR.defaultBlockState()), // sealed air cavity
                                     BlockStateProvider.simple(tGem), // the gem shell
-                                    BlockStateProvider.simple(tMiddle), // the alternate arm: codec-required field, inert at chance 0
+                                    tBudding
+                                        ? BlockStateProvider.simple(Blocks.BUDDING_AMETHYST) // the budding substrate (vanilla :436)
+                                        : BlockStateProvider.simple(tMiddle), // the alternate arm: codec-required field, inert at chance 0
                                     BlockStateProvider.simple(tMiddle),
                                     BlockStateProvider.simple(tOuter),
-                                    List.of(tGem.defaultBlockState()), // singleton: codec nonEmptyList; unsampled at chance 0
+                                    tBudding
+                                        ? AMETHYST_INNER_PLACEMENTS // the vanilla 4-level bud/cluster set (:439-444)
+                                        : List.of(tGem.defaultBlockState()), // singleton: codec nonEmptyList; unsampled at chance 0
                                     BlockTags.FEATURES_CANNOT_REPLACE,
                                     BlockTags.GEODE_INVALID_BLOCKS),
                             new GeodeLayerSettings(1.7, 2.2, 3.2, 4.2), // the vanilla layer radii verbatim
-                            new GeodeCrackSettings(0.0, 2.0, 2), // no crack — the sealed-cavity face
-                            0.0, 0.0, true, // placements chance 0 (the :149 guard) / alternate 0 / require flag inert
+                            new GeodeCrackSettings(0.0, 2.0, 2), // no crack — the sealed-cavity face (r7 ruling: keep)
+                            tBudding ? GEODE_BUDDING_PLACEMENT_CHANCE : 0.0, // 0.35 vanilla (:450) / 0 = the :149 guard
+                            tBudding ? GEODE_BUDDING_ALTERNATE_CHANCE : 0.0, // 0.083 vanilla (:451), gates the 0.35 roll
+                            true, // require layer-0 alternate — the vanilla gate form (:452)
                             ConstantInt.of(5), ConstantInt.of(4), ConstantInt.of(1), // the vanilla uniform mid-points, CONSTANT-pinned
                             -16, 16, 0.05, 1)); // the vanilla offsets/noise/threshold verbatim
         }

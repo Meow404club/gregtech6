@@ -10,10 +10,13 @@
  * <li><b>anti-crash pair</b> — the acceptance's out-of-bounds guard: the geode codec
  *     REQUIRES a non-empty {@code inner_placements} (ExtraCodecs.nonEmptyList,
  *     GeodeBlockSettings.java:29, field-identical 1.20.1/1.21.1 — an empty list would
- *     fail datapack parse), while {@code use_potential_placements_chance} must be 0.0
- *     so the GeodeFeature.java:135-149 placement list stays empty and
+ *     fail datapack parse), while the sealed rows' {@code use_potential_placements_chance}
+ *     must be 0.0 so the GeodeFeature.java:135-149 placement list stays empty and
  *     {@code Util.getRandom(innerPlacements)} at :149 never fires. Both facts are
- *     pinned against the generated JSON.</li>
+ *     pinned against the generated JSON. Task r7-amethyst-budding-json re-pins the
+ *     amethyst row to the vanilla budding ecosystem (the 4-level bud/cluster
+ *     placements at the vanilla 0.35, gated by the budding_amethyst alternate inner
+ *     layer at 0.083 — GeodeFeature.java:135 opens only on the alternate roll).</li>
  * <li><b>block-reference existence</b> — every {@code Name} in the geode JSONs must be
  *     a member of the offline-safe registration-id set (the GTMaterialBlocks
  *     registrationOrder walk + the GTStoneBlocks STONE-variant paths), guarding the
@@ -36,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -146,17 +150,50 @@ class GT6GeodeWorldgenTest {
             assertEquals("minecraft:geode", tJson.get("type").getAsString(), tRow.mat() + ": the vanilla geode feature");
             JsonObject tConfig = tJson.getAsJsonObject("config");
             JsonObject tBlocks = tConfig.getAsJsonObject("blocks");
-            // the out-of-bounds guard: chance 0.0 keeps GeodeFeature's placement list empty
-            assertEquals(0.0, tConfig.get("use_potential_placements_chance").getAsDouble(),
-                    tRow.mat() + ": use_potential_placements_chance must be 0 (the Util.getRandom guard, GeodeFeature:135-149)");
+            // the out-of-bounds guard: chance 0 keeps GeodeFeature's placement list
+            // empty; the amethyst row instead opens the budding ecosystem at the
+            // vanilla 0.35 (task r7-amethyst-budding-json)
+            boolean tBudding = "amethyst".equals(tRow.mat());
+            assertEquals(tBudding ? GT6WorldgenDatagen.GEODE_BUDDING_PLACEMENT_CHANCE : 0.0,
+                    tConfig.get("use_potential_placements_chance").getAsDouble(),
+                    tRow.mat() + ": use_potential_placements_chance (0 = the Util.getRandom guard, GeodeFeature:135-149; amethyst = the vanilla 0.35, CaveFeatures.java:450)");
             // the codec trap: inner_placements is ExtraCodecs.nonEmptyList — an EMPTY
-            // list is unparseable; the singleton is the only safe face
+            // list is unparseable. Sealed rows carry the singleton gem state (never
+            // sampled at chance 0); the amethyst row satisfies nonEmptyList with the
+            // vanilla 4-level bud/cluster set (CaveFeatures.java:439-444, order pinned;
+            // FACING is feature-set at GeodeFeature.java:151-154, so no Properties)
             JsonArray tPlacements = tBlocks.getAsJsonArray("inner_placements");
-            assertEquals(1, tPlacements.size(),
-                    tRow.mat() + ": inner_placements must be the non-empty singleton (codec nonEmptyList, GeodeBlockSettings:29)");
-            // the sealed static cavity: air filling + no crack
+            if (tBudding) {
+                assertEquals(4, tPlacements.size(), tRow.mat() + ": the vanilla 4-level bud/cluster set (nonEmptyList satisfied by 4)");
+                List<String> tNames = new ArrayList<>();
+                for (JsonElement tPlacement : tPlacements) {
+                    tNames.add(tPlacement.getAsJsonObject().get("Name").getAsString());
+                }
+                assertEquals(List.of("minecraft:small_amethyst_bud", "minecraft:medium_amethyst_bud",
+                        "minecraft:large_amethyst_bud", "minecraft:amethyst_cluster"), tNames,
+                        tRow.mat() + ": the vanilla placement set, CaveFeatures.java:439-444 order");
+            } else {
+                assertEquals(1, tPlacements.size(),
+                        tRow.mat() + ": inner_placements must be the non-empty singleton (codec nonEmptyList, GeodeBlockSettings:29)");
+            }
+            // the budding gate: placements_require_layer0_alternate stays the vanilla
+            // true (CaveFeatures.java:452), so the 0.35 roll only fires where the
+            // ALTERNATE inner layer rolled (GeodeFeature.java:135) — the amethyst row
+            // must therefore also carry the budding substrate at the vanilla 0.083
+            // (:451); without it the gate never opens and NO bud would ever place
+            assertTrue(tConfig.get("placements_require_layer0_alternate").getAsBoolean(),
+                    tRow.mat() + ": the vanilla gate form");
+            assertEquals(tBudding ? GT6WorldgenDatagen.GEODE_BUDDING_ALTERNATE_CHANCE : 0.0,
+                    tConfig.get("use_alternate_layer0_chance").getAsDouble(),
+                    tRow.mat() + ": use_alternate_layer0_chance (the GeodeFeature:135 gate opener)");
+            assertEquals(tBudding ? "minecraft:budding_amethyst" : "gt6:" + tRow.middleStone(),
+                    tBlocks.getAsJsonObject("alternate_inner_layer_provider").getAsJsonObject("state").get("Name").getAsString(),
+                    tRow.mat() + ": the alternate inner layer (inert middle stone / the vanilla budding substrate, CaveFeatures.java:436)");
+            // the sealed static cavity: air filling + no crack (the r7 ruling: the crack
+            // stays off on the budding row too — findability is a later one-number flip
+            // to the vanilla 0.95, CaveFeatures.java:449)
             assertEquals("minecraft:air", tBlocks.getAsJsonObject("filling_provider").getAsJsonObject("state").get("Name").getAsString(),
-                    tRow.mat() + ": filling = air (the sealed-cavity face)");
+                    tRow.mat() + ": filling = air (the sealed-cavity face; the vanilla fill IS air, CaveFeatures.java:434)");
             assertEquals(0.0, tConfig.getAsJsonObject("crack").get("generate_crack_chance").getAsDouble(),
                     tRow.mat() + ": crack disabled");
             // the vanilla layer radii verbatim
@@ -190,10 +227,12 @@ class GT6GeodeWorldgenTest {
                 tNames.add(tBlocks.getAsJsonObject(tKey).getAsJsonObject("state").get("Name").getAsString());
             }
             for (JsonElement tPlacement : tBlocks.getAsJsonArray("inner_placements")) {
-                tNames.add(tPlacement.getAsJsonObject().get("Name").getAsString());
+                String tName = tPlacement.getAsJsonObject().get("Name").getAsString();
+                if (tName.startsWith("minecraft:")) continue; // the vanilla faces: air never (filling), the amethyst budding family — pinned verbatim in Pin 2
+                tNames.add(tName);
             }
             for (String tName : tNames) {
-                if (tName.equals("minecraft:air")) continue; // the vanilla filling face
+                if (tName.startsWith("minecraft:")) continue; // the vanilla faces: air filling + the amethyst budding substrate (both pinned verbatim in Pin 2)
                 assertTrue(tName.startsWith("gt6:"), tRow.mat() + ": " + tName + " must be GT-namespaced");
                 assertTrue(tValid.contains(tName.substring("gt6:".length())),
                         tRow.mat() + ": " + tName + " is not a GT registration-order id (dangling block reference)");
