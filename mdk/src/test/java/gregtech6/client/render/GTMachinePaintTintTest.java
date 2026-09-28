@@ -231,6 +231,48 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 	}
 
 	/**
+	 * Task r8-tex-pipe-textures: the pipe connector carriers ride the combined dispatch —
+	 * the fluid family through the MT.Wood gate (the addFluidPipes 26000 NBT_MATERIAL row,
+	 * Loader :1846), the item family through its loader line's MT argument
+	 * (MultiTileEntityPipeItem :76-82 registers NBT_MATERIAL + NBT_COLOR =
+	 * getRGBInt(fRGBaSolid)), and the logistics wire the null gate on purpose (its
+	 * NBT_MATERIAL is MT.NULL, Loader :1819 — the white identity, not a colour).
+	 */
+	@Test
+	void pipeCarriersRideTheCombinedDispatch() {
+		unfreezeBlockRegistry();
+		assertSame(gregapi.data.MT.Wood, GTMachinePaintTint.tintMaterialOf(
+						new gregtech6.block.pipe.GTFluidPipeBlock(50, net.minecraft.world.level.block.state.BlockBehaviour.Properties.of())),
+				"both fluid tiers ride the MT.Wood row");
+		assertSame(gregapi.data.MT.Brass, GTMachinePaintTint.tintMaterialOf(
+						new gregtech6.block.pipe.GTItemPipeBlock(gregtech6.registry.GTItemPipes.ROWS.get(0),
+								net.minecraft.world.level.block.state.BlockBehaviour.Properties.of())),
+				"row 0 = the brass medium pipe");
+		assertSame(gregapi.data.MT.Constantan, GTMachinePaintTint.tintMaterialOf(
+						new gregtech6.block.pipe.GTItemPipeBlock(gregtech6.registry.GTItemPipes.ROWS.get(6),
+								net.minecraft.world.level.block.state.BlockBehaviour.Properties.of())),
+				"row 6 = the constantan medium pipe (material-major, 6 variants each)");
+		assertSame(gregapi.data.MT.CobaltBrass, GTMachinePaintTint.tintMaterialOf(
+						new gregtech6.block.pipe.GTItemPipeBlock(gregtech6.registry.GTItemPipes.ROWS.get(12),
+								net.minecraft.world.level.block.state.BlockBehaviour.Properties.of())),
+				"row 12 = the cobalt-brass medium pipe");
+		assertNull(GTMachinePaintTint.tintMaterialOf(
+						new gregtech6.block.logistics.GTLogisticsWireBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of())),
+				"the logistics wire keeps the null gate (upstream MT.NULL)");
+		// the brass-family values ride fRGBaSolid and stay pairwise distinct (the all-gray
+		// regression killer, the #18 lesson); the wood pin = the 0x643200 body
+		int tBrass = GTMachinePaintTint.tintARGB(ModelData.EMPTY, gregapi.data.MT.Brass, 0);
+		int tConstantan = GTMachinePaintTint.tintARGB(ModelData.EMPTY, gregapi.data.MT.Constantan, 0);
+		int tCobaltBrass = GTMachinePaintTint.tintARGB(ModelData.EMPTY, gregapi.data.MT.CobaltBrass, 0);
+		assertTrue(tBrass != tConstantan && tConstantan != tCobaltBrass && tBrass != tCobaltBrass,
+				"the brass family rows are pairwise distinct");
+		assertEquals(GTMachinePaintTint.tintARGB(ModelData.EMPTY, gregapi.data.MT.Wood, 0),
+				GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(
+						new gregtech6.block.pipe.GTFluidPipeBlock(300, net.minecraft.world.level.block.state.BlockBehaviour.Properties.of())), 0),
+				"the medium wood tier colours through the same seam");
+	}
+
+	/**
 	 * Task p32-render-embeddium-tint: the tint BAKED into the baked-quad vertex data —
 	 * per-channel {@code (colour * tint + 255) >> 8} over the COLOR slot (stride 8, slot
 	 * 3) of all four vertices, every other slot byte-identical. The retinted copies carry
