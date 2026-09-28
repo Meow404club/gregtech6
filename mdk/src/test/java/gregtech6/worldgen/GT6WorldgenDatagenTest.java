@@ -207,12 +207,13 @@ class GT6WorldgenDatagenTest {
      * the fork is load-bearing, not cosmetic (a shared 30-key list would trip the forge
      * datagen getOrThrow). Key spellings pinned against the card's names: ore_debris_small
      * (not ore_ancient_debris_small), the lake pair lake_lava_surface/lake_lava_underground
-     * (1.18+ ships no lake_water — nothing to remove).
+     * (1.18+ ships no lake_water — nothing to remove). {@code amethyst_geode} is
+     * deliberately ABSENT (r8-geode-revert, decisions.r8-geode-revert): the #33 GT geode
+     * band that justified its suppression is reverted, so the vanilla geode generates.
      */
     @Test
     void vanillaDeblobListsArePinned() {
         List<String> tOverworld = List.of(
-                "amethyst_geode",
                 "lake_lava_surface",
                 "lake_lava_underground",
                 "ore_andesite_lower",
