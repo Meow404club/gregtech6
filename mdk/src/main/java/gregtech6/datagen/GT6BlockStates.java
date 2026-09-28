@@ -2888,9 +2888,12 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
      * its OWN item model {@code withExistingParent} onto that block model (the id scheme is
      * {@link GTStoneBlocks#path}: variant 0 keeps the bare snake, the other 15 suffix the
      * variant segment). The model/texture keys are UNCHANGED from the P19 render card
-     * ({@code gt6:block/stones/<stone>/<variant>}, one model per dedicated borrowed PNG,
-     * assets/README.md attribution, census 17x16 = 272 files, zero gaps, NO tintindex — the
-     * colored-PNG route), so only the blockstate/item/loot faces re-key per pair.
+     * ({@code gt6:block/stones/<stone>/<variant>}, one model per pair, assets/README.md
+     * attribution, census 17x16 = 272 files, zero gaps, NO tintindex — the colored-PNG
+     * route), so only the blockstate/item/loot faces re-key per pair. The TEXTURE of a pair
+     * rides {@link #stoneTexture}: the granite/diorite/andesite trio's STONE/SMOTH variants
+     * point at the vanilla current textures (task r4-ore-tex-b), every other pair keeps its
+     * borrowed PNG.
      *
      * <p>Same provider, same pass, so the parent resolves in the ExistingFileHelper (the
      * GT6BlockStates.java:29-33 BlockStateProvider.run ordering precedent). The P19 declared
@@ -2905,8 +2908,7 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
             // "/"-bearing names (ModelProvider.extendWithFolder), so the block/ segment
             // must be explicit — the addPrefixBlocks pin, same builder mechanics here.
             String tModelName = "block/stones/" + tStone.stoneSnake + "/" + tStone.variant.snake;
-            ModelFile tModel = models().cubeAll(tModelName,
-                    modLoc("block/stones/" + tStone.stoneSnake + "/" + tStone.variant.snake));
+            ModelFile tModel = models().cubeAll(tModelName, stoneTexture(tStone.stoneSnake, tStone.variant));
             simpleBlock(tBlock, tModel); // the single default state -> the variants:{"": ...} form
             itemModels().withExistingParent(GTStoneBlocks.path(tStone.stoneSnake, tStone.variant), modLoc(tModelName));
         }
@@ -2916,10 +2918,40 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
     }
 
     /**
+     * The texture a (stone, variant) pair renders: the borrowed per-pair PNG
+     * {@code gt6:block/stones/<stone>/<variant>} — except the granite/diorite/andesite
+     * trio where vanilla 1.20.1 HAS a counterpart (task r4-ore-tex-b, the user B ruling
+     * "same look both sides"): the STONE variant points at {@code minecraft:block/<stone>}
+     * and the SMOOTH (= polished, the OP.stonePolished carrier) variant at
+     * {@code minecraft:block/polished_<stone>}. The other 14 variants (cobble, bricks,
+     * tiles, windmill, ...) have NO vanilla counterpart and keep the borrowed PNGs —
+     * {@code cobble} additionally stays consumed by the crucible/mold machine bodies
+     * (GT6CrucibleDatagen/GT6MoldDatagen BODY_TEXTURE). Static package seam so the
+     * render test pins the mapping (the GT6OreBlockStates.modelNameOf posture).
+     */
+    static ResourceLocation stoneTexture(String aStoneSnake, StoneVariant aVariant) {
+        if (VANILLA_MIGRATED_STONES.contains(aStoneSnake)) {
+            if (aVariant == StoneVariant.STONE) {
+                return ResourceLocation.fromNamespaceAndPath("minecraft", "block/" + aStoneSnake);
+            }
+            if (aVariant == StoneVariant.SMOTH) {
+                return ResourceLocation.fromNamespaceAndPath("minecraft", "block/polished_" + aStoneSnake);
+            }
+        }
+        // fromNamespaceAndPath, not modLoc (this seam is static for the offline test; the
+        // concatenated arg escapes the 21.1 swap regex — the GTOreBakedModel.baseSpriteOf form)
+        return ResourceLocation.fromNamespaceAndPath("gt6", "block/stones/" + aStoneSnake + "/" + aVariant.snake);
+    }
+
+    /** The trio with a vanilla 1.20.1 counterpart stone (task r4-ore-tex-b; basalt is the same-name DIFFERENT stone and stays borrowed). */
+    private static final List<String> VANILLA_MIGRATED_STONES = List.of("granite", "diorite", "andesite");
+
+    /**
      * Task debt-slab-gap — the 272 per-pair stone SLABS ({@link gregtech6.registry.GTStoneSlabBlocks},
      * the upstream mSlabs[0] bottom-slab face of BlockMetaType.java:74-81): the
-     * BOTTOM/TOP/DOUBLE triad per slab over the SAME borrowed PNG the paired full block
-     * renders ({@code block/stones/<stone>/<variant>}, zero new textures, no tint — the
+     * BOTTOM/TOP/DOUBLE triad per slab over the SAME texture the paired full block
+     * renders ({@code block/stones/<stone>/<variant>} via {@link #stoneTexture} — the
+     * trio STONE/SMOTH vanilla references ride along, zero new textures, no tint — the
      * pre-coloured-PNG route). BOTTOM/TOP are own {@code minecraft:block/slab[_top]}
      * parents; DOUBLE re-uses the full cube model the {@link #addStoneBlocks} pass
      * registers (a second {@code cubeAll} on the same name returns the SAME cached
@@ -2934,7 +2966,7 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
         for (Block tBlock : gregtech6.registry.GTStoneSlabBlocks.blockArray()) {
             gregtech6.block.stone.GTStoneSlabBlock tSlab = (gregtech6.block.stone.GTStoneSlabBlock)tBlock;
             String tTexture = "block/stones/" + tSlab.stoneSnake + "/" + tSlab.variant.snake;
-            ResourceLocation tTexLoc = modLoc(tTexture);
+            ResourceLocation tTexLoc = stoneTexture(tSlab.stoneSnake, tSlab.variant); // the trio STONE/SMOTH rides vanilla (r4-ore-tex-b)
             ModelFile tBottom = models().getBuilder(tTexture + "_slab")
                     .parent(models().getExistingFile(mcLoc("block/slab")))
                     .texture("bottom", tTexLoc).texture("top", tTexLoc).texture("side", tTexLoc);

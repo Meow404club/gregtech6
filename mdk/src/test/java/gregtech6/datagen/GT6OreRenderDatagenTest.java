@@ -90,6 +90,17 @@ class GT6OreRenderDatagenTest {
 			GTOreBakedModel.baseSpriteOf(GT6OreBlocks.FAMILIES.get(9), FormKind.NORMAL).toString());
 		assertEquals("gt6:block/stones/prismarine_light/stone",
 			GTOreBakedModel.baseSpriteOf(GT6OreBlocks.FAMILIES.get(22), FormKind.BROKEN).toString());
+		// task r4-ore-tex-b — the vanilla-named trio rides the vanilla current textures
+		// (FAMILIES [14]/[15]/[16]; all FormKinds share the one rock, no cobble split);
+		// basalt ([11]) is the same-name DIFFERENT stone and must stay borrowed
+		assertEquals("minecraft:block/granite",
+			GTOreBakedModel.baseSpriteOf(GT6OreBlocks.FAMILIES.get(14), FormKind.NORMAL).toString());
+		assertEquals("minecraft:block/diorite",
+			GTOreBakedModel.baseSpriteOf(GT6OreBlocks.FAMILIES.get(15), FormKind.SMALL).toString());
+		assertEquals("minecraft:block/andesite",
+			GTOreBakedModel.baseSpriteOf(GT6OreBlocks.FAMILIES.get(16), FormKind.BROKEN).toString());
+		assertEquals("gt6:block/stones/basalt/stone",
+			GTOreBakedModel.baseSpriteOf(GT6OreBlocks.FAMILIES.get(11), FormKind.NORMAL).toString());
 		// the shared-model census: 9 vanilla + 2 cobble forms + 17 GT stones
 		Set<String> tBases = new HashSet<>();
 		for (OreFamily tFamily : GT6OreBlocks.FAMILIES) {

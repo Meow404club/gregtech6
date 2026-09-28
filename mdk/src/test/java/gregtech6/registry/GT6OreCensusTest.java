@@ -183,8 +183,9 @@ class GT6OreCensusTest {
             }
         }
         assertEquals(PINNED_LOOT_TOTAL, tLoot, "ledger 3: both directory bands carry the walk");
-        // the shared base models: 11 vanilla-anchor JSONs + the 17 GT-stone models
-        // under ore/stones/ + the p31-bedrock-ore bedrock cube + the 3 p31-nether stand-ins = 32
+        // the shared base models: the vanilla-named anchors at the ore/ top level —
+        // 11 free + the r4-ore-tex-b trio (granite/diorite/andesite) — plus the remaining
+        // 14 GT-stone models under ore/stones/ + the bedrock cube + the 3 nether stand-ins = 32
         int tBase = 0;
         try (Stream<Path> tWalk = Files.walk(tAssets.resolve("models").resolve("block").resolve("ore"))) {
             tBase = (int) tWalk.filter(Files::isRegularFile)

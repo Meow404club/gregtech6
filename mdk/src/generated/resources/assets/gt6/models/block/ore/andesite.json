@@ -47,7 +47,7 @@
     }
   ],
   "textures": {
-    "all": "gt6:block/stones/andesite/stone",
+    "all": "minecraft:block/andesite",
     "particle": "#all"
   }
 }

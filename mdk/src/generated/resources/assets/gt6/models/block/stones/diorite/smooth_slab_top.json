@@ -1,8 +1,8 @@
 {
   "parent": "minecraft:block/slab_top",
   "textures": {
-    "bottom": "gt6:block/stones/diorite/smooth",
-    "side": "gt6:block/stones/diorite/smooth",
-    "top": "gt6:block/stones/diorite/smooth"
+    "bottom": "minecraft:block/polished_diorite",
+    "side": "minecraft:block/polished_diorite",
+    "top": "minecraft:block/polished_diorite"
   }
 }

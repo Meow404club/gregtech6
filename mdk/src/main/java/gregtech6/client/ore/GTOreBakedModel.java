@@ -300,9 +300,18 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 			case "sand"       -> mcBlock("sand");
 			case "redsand"    -> mcBlock("red_sand");
 			case "mud"        -> mcBlock("mud");
-			// the 17 GT stones: the GTStoneBlocks STONE-variant texture (the addStoneBlocks
-			// model/texture path shape, GT6BlockStates.java:1824 — block id ≠ texture path,
-			// the granite/prismarine splits mirror GT6OreBlocks.stoneBlockSnake)
+			// the vanilla-named GT trio rides the vanilla current textures too (task r4-ore-tex-b,
+			// the user B ruling): worldgen maps the vanilla three-stone hosts onto these families
+			// (GT6WorldgenDatagen.oreTargets), so the borrowed 1.7.10-generation PNGs read as the
+			// "old-look ore in new-look vanilla stone" mismatch — the vanilla texture IS this
+			// family's stone (MT.STONES.Granite == vanilla granite). No cobble split: the GT-stone
+			// broken form rides the same rock (GT6OreBlocks.gtStone anchor rows)
+			case "granite"    -> mcBlock("granite");
+			case "diorite"    -> mcBlock("diorite");
+			case "andesite"   -> mcBlock("andesite");
+			// the other 14 GT stones: the GTStoneBlocks STONE-variant texture (the addStoneBlocks
+			// model/texture path shape — block id ≠ texture path, the granite_black/prismarine
+			// splits mirror GT6OreBlocks.stoneBlockSnake)
 			// (fromNamespaceAndPath: the concatenated arg escapes the 21.1 swap regex — the
 			// GTWireBakedModel.spriteOf form, Forge 1.20.1 backported, both legs javap-proven)
 			default -> ResourceLocation.fromNamespaceAndPath("gt6", "block/stones/" + stoneTextureSnake(aFamily.snake()) + "/stone");

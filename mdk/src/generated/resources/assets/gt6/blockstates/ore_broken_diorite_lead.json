@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "gt6:block/ore/stones/diorite/stone"
+      "model": "gt6:block/ore/diorite"
     }
   }
 }
