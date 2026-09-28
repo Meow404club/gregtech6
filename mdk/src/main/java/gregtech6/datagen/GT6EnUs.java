@@ -701,6 +701,13 @@ public class GT6EnUs extends LanguageProvider {
         add(GT6RecipeMapViewerMeta.KEY_POWER, "Power: %s");
         add(GT6RecipeMapViewerMeta.KEY_GAIN, "Gain: %s GU");
         add(GT6RecipeMapViewerMeta.KEY_OUTPUT, "Output: %s GU/t");
+        // task r7-30a (GitHub #30 phase 1): the energy-column faces — the :680-717 literals
+        // with " GU" lifted into the second arg (the colored short code component)
+        add(GT6RecipeMapViewerMeta.KEY_COSTS_UNIT, "Costs: %s %s");
+        add(GT6RecipeMapViewerMeta.KEY_USAGE_UNIT, "Usage: %s %s/t");
+        add(GT6RecipeMapViewerMeta.KEY_TIER_UNIT, "Tier: %s %s");
+        add(GT6RecipeMapViewerMeta.KEY_GAIN_UNIT, "Gain: %s %s");
+        add(GT6RecipeMapViewerMeta.KEY_OUTPUT_UNIT, "Output: %s %s/t");
         add(GT6RecipeMapViewerMeta.KEY_CHANCE, "Chance: %s");
         add(GT6RecipeMapViewerMeta.KEY_CHANCE_EACH, "Chance: %s each");
         add(GT6RecipeMapViewerMeta.KEY_TIME, "Time: %s %s");

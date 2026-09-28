@@ -1802,6 +1802,11 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("gt6.jei.cost.power");
 		addDirect("gt6.jei.cost.gain");
 		addDirect("gt6.jei.cost.output");
+		addDirect("gt6.jei.cost.costs_unit");
+		addDirect("gt6.jei.cost.usage_unit");
+		addDirect("gt6.jei.cost.tier_unit");
+		addDirect("gt6.jei.cost.gain_unit");
+		addDirect("gt6.jei.cost.output_unit");
 		addDirect("gt6.jei.cost.chance");
 		addDirect("gt6.jei.cost.chance_each");
 		addDirect("gt6.jei.cost.time");

@@ -937,19 +937,24 @@ direct	gt6.jade.machine.progress.ticks	进度: %s / %s t	hand
 direct	gt6.jei.cost.chance	几率: %s	hand
 direct	gt6.jei.cost.chance_each	几率: %s（每个）	hand
 direct	gt6.jei.cost.costs	总耗: %s GU	hand
+direct	gt6.jei.cost.costs_unit	总耗: %s %s	hand
 direct	gt6.jei.cost.gain	产出: %s GU	hand
+direct	gt6.jei.cost.gain_unit	产出: %s %s	hand
 direct	gt6.jei.cost.not_consumed	该物品不会被消耗	hand
 direct	gt6.jei.cost.output	输出: %s GU/t	hand
+direct	gt6.jei.cost.output_unit	输出: %s %s/t	hand
 direct	gt6.jei.cost.power	电流: %s	hand
 direct	gt6.jei.cost.start	启动: %s%s	hand
 direct	gt6.jei.cost.temperature	温度: %s%s	hand
 direct	gt6.jei.cost.tier	电压等级: %s GU	hand
+direct	gt6.jei.cost.tier_unit	电压等级: %s %s	hand
 direct	gt6.jei.cost.tier_unspecified	电压等级: 未知	hand
 direct	gt6.jei.cost.time	时间: %s %s	hand
 direct	gt6.jei.cost.unit_mins	分	hand
 direct	gt6.jei.cost.unit_secs	秒	hand
 direct	gt6.jei.cost.unit_ticks	刻	hand
 direct	gt6.jei.cost.usage	功耗: %s GU/t	hand
+direct	gt6.jei.cost.usage_unit	功耗: %s %s/t	hand
 direct	gt6.jei.info.multiblock_coke_oven	焦炉是一个 3x3x3 的立方体：将焦炉控制器放在其中一面的中央并朝外，保持立方体中心格为空，其余 25 格全部放满焦炉砖。点燃控制器即可启动——它自行积攒热量，结构下方一层的储罐会收集杂酚油。	hand
 direct	gt6.jei.info.ore_gen_info	矿石生成分布	hand
 direct	gt6.jei.recipe_map.anvil	铁砧	hand
