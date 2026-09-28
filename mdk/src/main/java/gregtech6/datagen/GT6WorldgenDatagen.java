@@ -40,10 +40,16 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.WeightedPlacedFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.GeodeConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.RandomFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.DiskConfiguration;
+import net.minecraft.util.valueproviders.ConstantInt;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.level.levelgen.GeodeBlockSettings;
+import net.minecraft.world.level.levelgen.GeodeCrackSettings;
+import net.minecraft.world.level.levelgen.GeodeLayerSettings;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.feature.stateproviders.RuleBasedBlockStateProvider;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
@@ -404,6 +410,7 @@ public final class GT6WorldgenDatagen {
         FeatureUtils.register(ctx, GT6Worldgen.FLUID_SPRINGS_CONFIGURED, GT6Features.FLUID_SPRINGS,
                 new GTFluidSpringConfig.Table(FLUID_SPRING_TABLE));
         bootstrapOreConfigured(ctx); // task p30-w6-small-ore-datagen — tail-append
+        bootstrapGeodeConfigured(ctx); // task r6-33-geode — tail-append
     }
 
     /**
@@ -503,6 +510,7 @@ public final class GT6WorldgenDatagen {
                 tFeatures.getOrThrow(GT6Worldgen.NETHER_CLAY_CONFIGURED),
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
         bootstrapOrePlaced(ctx, tFeatures); // task p30-w6-small-ore-datagen — tail-append
+        bootstrapGeodePlaced(ctx, tFeatures); // task r6-33-geode — tail-append
     }
 
     /**
@@ -620,6 +628,7 @@ public final class GT6WorldgenDatagen {
                 GenerationStep.Decoration.UNDERGROUND_ORES));
         bootstrapOreBiomeModifiers(ctx, tBiomes, tPlaced); // task p30-w6-small-ore-datagen — tail-append
         bootstrapVanillaDeblob(ctx, tBiomes, tPlaced); // issue #32 vanilla-deblob — tail-append
+        bootstrapGeodeBiomeModifiers(ctx, tBiomes, tPlaced); // task r6-33-geode — tail-append
     }
 
     /**
@@ -1364,4 +1373,139 @@ public final class GT6WorldgenDatagen {
         springOffworld("twilight.fluid.water"         , "gt6:water_geothermal_block"     , 100,  250), // :796
         springLava   ("nether.fluid.lava"             , 100, false,               500)  // :797
     );
+
+    // ------------------------------------------------------------------
+    // The gem-geode band (task r6-33-geode, GitHub #33): vanilla Feature.GEODE
+    // re-used verbatim (no custom Feature — the phase-1 static-cavity ruling; the
+    // upstream 1.7.10 has no geode precedent, gt6 source zero hits = pure addition),
+    // one configured + placed + biome-modifier triple per material. The amethyst
+    // geode canon is the parameter source (CaveFeatures.java:428-455 configured,
+    // CavePlacements.java:227-233 placed chain, BiomeDefaultFeatures.java:396 the
+    // LOCAL_MODIFICATIONS step):
+    // - filling = air and crack disabled (generate_crack_chance 0): a sealed static
+    //   cavity — the vanilla water fill would flood the GT gem shell and the crack
+    //   would breach it;
+    // - inner layer = the GT blockGem shell (no budding/cluster face — phase 1);
+    // - use_potential_placements_chance = 0.0 — the GeodeFeature.java:135-149 guard:
+    //   the $$31 placement list stays empty so the Util.getRandom(innerPlacements)
+    //   at :149 never fires. The list itself CANNOT be empty — the codec is
+    //   ExtraCodecs.nonEmptyList (GeodeBlockSettings.java:29, field-identical both
+    //   legs) — so it carries the singleton gem state, never sampled at chance 0;
+    // - rarity 64 = ~2.7x sparser than the vanilla amethyst 24 (CavePlacements.java:229;
+    //   the card text's "原版 80" misread — vanilla is RarityFilter 24, this is the
+    //   "或更稀" arm);
+    // - Y band [-40, 24]: the modern-Y-world equivalent of the vanilla band shape
+    //   (above_bottom 6 .. absolute 30), inside the GT deep-ore zone (the diamond
+    //   small-ore row 5..10 and the large-vein diamond 5..20 sit inside);
+    // - LOCAL_MODIFICATIONS + #minecraft:is_overworld (the vanilla geode step/tag);
+    // - the three vanilla uniform IntProviders (outer_wall_distance 4-6,
+    //   distribution_points 3-4, point_offset 1-2) are CONSTANT-pinned to their mid
+    //   points: the DFU6-wraps/DFU8-inlines IntProvider JSON divergence would fork the
+    //   legs byte-level (the strata-lens count CONSTANT trap, GTLensConfig band note;
+    //   the treecheck canonical-vs-node content diff, live-caught by the first
+    //   treecheck run of this band) — ConstantInt serializes {"constant",N} both legs.
+    // ------------------------------------------------------------------
+
+    /** One geode row: the gem material + the GT stone snakes of the middle/outer shells. */
+    public record GeodeMaterial(String mat, OreDictMaterial gem, String middleStone, String outerStone) {}
+
+    /**
+     * The 4 gem-material rows (the card candidate table: amethyst required + diamond/
+     * emerald/nether quartz — the gem family that already has GT blockGem forms; zero
+     * new blocks, GTMaterialBlocks walk proof: block_gem_<snake> blockstates in the
+     * generated tree). Shell pairing (the card's "按地质感搭配" arm): amethyst keeps
+     * the vanilla look (calcite↔marble, smooth-basalt↔basalt); diamond rides the
+     * kimberlite-pipe face (limestone/granite_black); emerald the metamorphic face
+     * (quartzite/blueschist); quartz the vein face (slate/granite).
+     */
+    public static final List<GeodeMaterial> GEODE_MATERIALS = List.of(
+        new GeodeMaterial("amethyst"     , MT.Amethyst    , "marble"    , "basalt"       ),
+        new GeodeMaterial("diamond"      , MT.Diamond     , "limestone" , "granite_black"),
+        new GeodeMaterial("emerald"      , MT.Emerald     , "quartzite" , "blueschist"   ),
+        new GeodeMaterial("nether_quartz", MT.NetherQuartz, "slate"     , "granite"      ));
+
+    /** Per-material geode rarity: 1 attempt per 64 chunks per material (vanilla amethyst 24). */
+    public static final int GEODE_RARITY = 64;
+
+    /** The geode Y band, see the band javadoc (HeightRangePlacement uniform anchors). */
+    public static final int GEODE_MIN_Y = -40, GEODE_MAX_Y = 24;
+
+    /** The 4 geode configured keys, GEODE_MATERIALS order. */
+    public static final List<ResourceKey<ConfiguredFeature<?, ?>>> GEODE_CONFIGURED_KEYS =
+            GEODE_MATERIALS.stream().map(tRow -> GT6Worldgen.configKey("geode_" + tRow.mat())).toList();
+
+    /** The 4 geode placed keys (same paths as configured — the blob-band convention). */
+    public static final List<ResourceKey<PlacedFeature>> GEODE_PLACED_KEYS =
+            GEODE_MATERIALS.stream().map(tRow -> GT6Worldgen.placedKeyOf("geode_" + tRow.mat())).toList();
+
+    /** The 4 geode biome-modifier keys, one per material (the per-object datapack disable face). */
+    public static final List<ResourceKey<BiomeModifier>> GEODE_BIOME_MODIFIER_KEYS =
+            GEODE_MATERIALS.stream().map(tRow -> biomeModifierKeyOf("geode_" + tRow.mat())).toList();
+
+    /** The gem shell block of a row: the blockGem BlockItem's block (GTMaterialBlocks first-wins walk). */
+    private static Block gemBlock(OreDictMaterial aGem) {
+        return ((BlockItem) gregtech6.registry.GTMaterialBlocks.get(gregapi.data.OP.blockGem, aGem).get()).getBlock();
+    }
+
+    private static void bootstrapGeodeConfigured(
+        //? if forge {
+        BootstapContext<ConfiguredFeature<?, ?>> ctx
+        //?} else {
+        /*BootstrapContext<ConfiguredFeature<?, ?>> ctx
+        *///?}
+    ) {
+        for (GeodeMaterial tRow : GEODE_MATERIALS) {
+            Block tGem = gemBlock(tRow.gem());
+            Block tMiddle = GTStoneBlocks.block(tRow.middleStone(), StoneVariant.STONE).get();
+            Block tOuter = GTStoneBlocks.block(tRow.outerStone(), StoneVariant.STONE).get();
+            FeatureUtils.register(ctx, GT6Worldgen.configKey("geode_" + tRow.mat()), Feature.GEODE,
+                    new GeodeConfiguration(
+                            new GeodeBlockSettings(
+                                    BlockStateProvider.simple(Blocks.AIR.defaultBlockState()), // sealed air cavity
+                                    BlockStateProvider.simple(tGem), // the gem shell
+                                    BlockStateProvider.simple(tMiddle), // the alternate arm: codec-required field, inert at chance 0
+                                    BlockStateProvider.simple(tMiddle),
+                                    BlockStateProvider.simple(tOuter),
+                                    List.of(tGem.defaultBlockState()), // singleton: codec nonEmptyList; unsampled at chance 0
+                                    BlockTags.FEATURES_CANNOT_REPLACE,
+                                    BlockTags.GEODE_INVALID_BLOCKS),
+                            new GeodeLayerSettings(1.7, 2.2, 3.2, 4.2), // the vanilla layer radii verbatim
+                            new GeodeCrackSettings(0.0, 2.0, 2), // no crack — the sealed-cavity face
+                            0.0, 0.0, true, // placements chance 0 (the :149 guard) / alternate 0 / require flag inert
+                            ConstantInt.of(5), ConstantInt.of(4), ConstantInt.of(1), // the vanilla uniform mid-points, CONSTANT-pinned
+                            -16, 16, 0.05, 1)); // the vanilla offsets/noise/threshold verbatim
+        }
+    }
+
+    private static void bootstrapGeodePlaced(
+        //? if forge {
+        BootstapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        //?} else {
+        /*BootstrapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        *///?}
+    ) {
+        for (int i = 0; i < GEODE_PLACED_KEYS.size(); i++) {
+            PlacementUtils.register(ctx, GEODE_PLACED_KEYS.get(i),
+                    aFeatures.getOrThrow(GEODE_CONFIGURED_KEYS.get(i)),
+                    RarityFilter.onAverageOnceEvery(GEODE_RARITY),
+                    InSquarePlacement.spread(),
+                    HeightRangePlacement.uniform(VerticalAnchor.absolute(GEODE_MIN_Y),
+                            VerticalAnchor.absolute(GEODE_MAX_Y)),
+                    BiomeFilter.biome());
+        }
+    }
+
+    private static void bootstrapGeodeBiomeModifiers(
+        //? if forge {
+        BootstapContext<BiomeModifier> ctx, HolderGetter<Biome> aBiomes, HolderGetter<PlacedFeature> aPlaced
+        //?} else {
+        /*BootstrapContext<BiomeModifier> ctx, HolderGetter<Biome> aBiomes, HolderGetter<PlacedFeature> aPlaced
+        *///?}
+    ) {
+        for (int i = 0; i < GEODE_BIOME_MODIFIER_KEYS.size(); i++) {
+            ctx.register(GEODE_BIOME_MODIFIER_KEYS.get(i), addFeatures(aBiomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                    HolderSet.direct(aPlaced.getOrThrow(GEODE_PLACED_KEYS.get(i))),
+                    GenerationStep.Decoration.LOCAL_MODIFICATIONS)); // the vanilla geode step (BiomeDefaultFeatures.java:396)
+        }
+    }
 }
