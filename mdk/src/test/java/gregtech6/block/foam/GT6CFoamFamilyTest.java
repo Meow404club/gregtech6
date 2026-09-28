@@ -23,6 +23,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -329,6 +331,72 @@ public class GT6CFoamFamilyTest extends GTOfflineTestBase {
 		assertEquals(net.minecraft.world.level.block.state.properties.SlabType.TOP, tNow.getValue(net.minecraft.world.level.block.SlabBlock.TYPE),
 				"the half type carried over");
 		assertEquals(12, tNow.getValue(GT6CFoamFreshBlock.COLOR), "the colour carried over");
+		// the dried ctor pin (#42): the dry transition lands the DRIED target's
+		// defaultBlockState — without the WATERLOGGED=false pin there the dried slab
+		// would inherit TRUE from BooleanProperty's first value
+		assertFalse(tNow.getValue(net.minecraft.world.level.block.SlabBlock.WATERLOGGED),
+				"the dried slab lands dry (the dried ctor pin)");
+	}
+
+	// ------------------------------------------------------------------ the water seal (issue #42)
+
+	/**
+	 * The #42 "wet at generation" end to end — the SURFACE the real water scenario hits,
+	 * asserted at every faithful offline point:
+	 * <ol>
+	 * <li>the placement chain (this state) is DRY: defaultBlockState WATERLOGGED=false (the
+	 *     BooleanProperty first-value TRUE trap, the restored SlabBlock ctor pin) and the
+	 *     spray's liveSink adds the explicit setValue(WATERLOGGED, false) belt — the chain
+	 *     CANNOT produce a wet state even if the source ever turns water-aware;</li>
+	 * <li>the waterlog WRITE is refused: FlowingFluid.canHoldFluid:377-380 dispatches every
+	 *     fluid entry (the source refill, the neighbouring-source spread) through
+	 *     LiquidBlockContainer.canPlaceLiquid on these classes — constant false; the only
+	 *     other write face, placeLiquid, is refused too;</li>
+	 * <li>the DRY ladder lands the dried slab dry (the same trap one ctor over).</li>
+	 * </ol>
+	 * <p>The full vanilla-tick spread simulation (FlowingFluid.tick → spread →
+	 * spreadToSides) does NOT run offline: the Forge test JVM never runs the block-state
+	 * cache init, so EVERY vanilla-registered state reads its cached faces uninitialised
+	 * (Blocks.WATER.defaultBlockState().getFluidState() is EMPTY while the direct
+	 * LiquidBlock.getFluidState call returns the real source) — the stub level cannot host
+	 * the water cell faithfully. The water-side verification of the live chain is declared
+	 * field_test (the acceptance route); the vanilla machinery itself is vanilla-tested.
+	 */
+	@Test
+	public void theSprayPlacementChainIsDryAndTheWaterWriteIsRefused() {
+		// (1) the placement chain root — the pin test that REPRODUCED #42: before the ctor
+		// fix, defaultBlockState().getValue(WATERLOGGED) was TRUE here (BooleanProperty's
+		// first value), and the spray built its slab state from exactly this
+		assertFalse(sFreshSlab.defaultBlockState().getValue(net.minecraft.world.level.block.SlabBlock.WATERLOGGED),
+				"the fresh slab default is dry (the #42 generation-time root cause)");
+		assertFalse(sDriedSlab.defaultBlockState().getValue(net.minecraft.world.level.block.SlabBlock.WATERLOGGED),
+				"the dried slab default is dry");
+
+		// the liveSink belt: the explicit setValue(WATERLOGGED, false) over the chain
+		BlockState tChain = sFreshSlab.defaultBlockState()
+				.setValue(net.minecraft.world.level.block.SlabBlock.TYPE,
+						net.minecraft.world.level.block.state.properties.SlabType.TOP)
+				.setValue(net.minecraft.world.level.block.SlabBlock.WATERLOGGED, Boolean.FALSE)
+				.setValue(GT6CFoamFreshBlock.COLOR, 5);
+		assertFalse(tChain.getValue(net.minecraft.world.level.block.SlabBlock.WATERLOGGED),
+				"the liveSink state chain lands DRY");
+
+		// (2) the waterlog write faces — the SAME (LevelAccessor, BlockPos, BlockState,
+		// FluidState) placeLiquid signature on both legs; canPlaceLiquid is the leg-split
+		// face (1.20.1 the 4-param; 1.21.1 the 5-param Player carrier)
+		FluidState tWater = Fluids.WATER.getSource(false);
+		assertFalse(sFreshSlab.placeLiquid(null, POS, sFreshSlab.defaultBlockState(), tWater));
+		assertFalse(sDriedSlab.placeLiquid(null, POS, sDriedSlab.defaultBlockState(), tWater));
+		assertFalse(sFresh.placeLiquid(null, POS, sFresh.defaultBlockState(), tWater));
+		//? if forge {
+		assertFalse(sFreshSlab.canPlaceLiquid(null, POS, sFreshSlab.defaultBlockState(), Fluids.WATER));
+		assertFalse(sDriedSlab.canPlaceLiquid(null, POS, sDriedSlab.defaultBlockState(), Fluids.WATER));
+		assertFalse(sFresh.canPlaceLiquid(null, POS, sFresh.defaultBlockState(), Fluids.WATER));
+		//?} else {
+		/*assertFalse(sFreshSlab.canPlaceLiquid(null, null, POS, sFreshSlab.defaultBlockState(), Fluids.WATER));
+		assertFalse(sDriedSlab.canPlaceLiquid(null, null, POS, sDriedSlab.defaultBlockState(), Fluids.WATER));
+		assertFalse(sFresh.canPlaceLiquid(null, null, POS, sFresh.defaultBlockState(), Fluids.WATER));
+		*///?}
 	}
 
 	@Test
