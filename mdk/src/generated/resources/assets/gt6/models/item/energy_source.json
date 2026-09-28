@@ -1,3 +1,6 @@
 {
-  "parent": "gt6:block/energy_source"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "gt6:block/energy_source"
+  }
 }

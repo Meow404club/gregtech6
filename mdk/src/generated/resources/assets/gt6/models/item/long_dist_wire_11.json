@@ -1,3 +1,6 @@
 {
-  "parent": "gt6:block/long_dist_wire_11"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "gt6:block/long_dist_wire_zpm"
+  }
 }
