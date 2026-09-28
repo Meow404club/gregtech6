@@ -154,6 +154,18 @@ public class GT6DualDirectoryFaces implements DataProvider {
 	/** The AddFeaturesBiomeModifier JSON type, neoforge brand (BiomeModifiers.java:47 record). */
 	private static final String NEOFORGE_ADD_FEATURES = "neoforge:add_features";
 
+	/**
+	 * The remove_features JSON type pair (issue #32 vanilla-deblob; NOTE the spelling —
+	 * {@code remove_features}, the ForgeMod.java:196/NeoForgeMod.java:238 registry names;
+	 * the classes' javadoc examples write {@code removefeatures} and are wrong, do not copy
+	 * them). Codec-verified across the legs like the add pair: same record face
+	 * (biomes/features/steps, steps optional-defaulting to all — ForgeMod.java:203 /
+	 * NeoForgeMod.java:245), the registry-brand prefix the only delta.
+	 */
+	private static final String FORGE_REMOVE_FEATURES = "forge:remove_features";
+
+	private static final String NEOFORGE_REMOVE_FEATURES = "neoforge:remove_features";
+
 	private final PackOutput mOutput;
 
 	public GT6DualDirectoryFaces(PackOutput aOutput) {
@@ -190,12 +202,12 @@ public class GT6DualDirectoryFaces implements DataProvider {
 	 * plan a): whatever brand face a leg's providers natively produced, the OTHER brand's
 	 * face is emitted beside it as THE TYPE-KEY DELTA ALONE — the census-proven whole diff
 	 * between the legs' biome modifier JSON (2026-09-12: 17/17 pairs byte-equal after the
-	 * one {@code type} prefix swap, {@code forge:add_features} ↔ {@code neoforge:add_features};
-	 * biomes/features/step codec-identical). The walk covers BOTH brand directories and is
-	 * an INVOLUTION: a re-run re-mirrors the previous mirror back onto the native brand —
-	 * a fixed point (the swap is self-inverse and the re-serialization is deterministic
-	 * through {@link DataProvider#saveStable}), so the runData 2nd-run {@code written: 0}
-	 * gate holds.
+	 * one {@code type} prefix swap; issue #32 adds the remove_features pair to the same
+	 * single-swap property; biomes/features/step(s) codec-identical). The walk covers BOTH
+	 * brand directories and is an INVOLUTION: a re-run re-mirrors the previous mirror back
+	 * onto the native brand — a fixed point (the swap is self-inverse and the
+	 * re-serialization is deterministic through {@link DataProvider#saveStable}), so the
+	 * runData 2nd-run {@code written: 0} gate holds.
 	 *
 	 * <p>TWO-PHASE for the involution's read/write aliasing (the r3 live finding): phase 1
 	 * reads and parses EVERY source synchronously — the async saveStable writes of one
@@ -205,11 +217,12 @@ public class GT6DualDirectoryFaces implements DataProvider {
 	 * saves be scheduled.
 	 *
 	 * <p>The shape gate is fail-visible (the {@link #adaptLootFunctions21} discipline): only
-	 * the two {@code add_features} type names are codec-verified across the legs — a
-	 * {@code remove_features}/{@code conditional} row (never generated here) has no
-	 * cross-leg evidence and throws instead of emitting an unparseable JSON on the foreign
-	 * loader. A silently rebranded dead row would re-create the r2 structural-zero bug
-	 * class this face closes.
+	 * the codec-verified type names pass — the {@code add_features} pair and, since issue
+	 * #32, the {@code remove_features} pair (same record shape both legs, the brand prefix
+	 * the only delta); a {@code conditional} row (never generated here) has no cross-leg
+	 * evidence and throws instead of emitting an unparseable JSON on the foreign loader. A
+	 * silently rebranded dead row would re-create the r2 structural-zero bug class this
+	 * face closes.
 	 */
 	private void mirrorBiomeModifiers(CachedOutput aCache, Path aData, List<CompletableFuture<?>> aSaves) {
 		List<BiomeMirrorRow> tRows = new ArrayList<>(0);
@@ -256,23 +269,32 @@ public class GT6DualDirectoryFaces implements DataProvider {
 			}
 			JsonObject tObject = tJson.getAsJsonObject();
 			JsonElement tType = tObject.get("type");
-			if (tType == null || !tType.isJsonPrimitive()
-					|| (!FORGE_ADD_FEATURES.equals(tType.getAsString())
-							&& !NEOFORGE_ADD_FEATURES.equals(tType.getAsString()))) {
-				throw new IllegalArgumentException("the biome-modifier mirror only verifies the add_features "
-						+ "brands (" + FORGE_ADD_FEATURES + " / " + NEOFORGE_ADD_FEATURES + ", got " + tType
-						+ " in " + aSource + ") — extend parseBiomeModifier with the codec evidence "
+			String tSwapped = tType == null || !tType.isJsonPrimitive() ? null
+					: brandCounterpart(tType.getAsString());
+			if (tSwapped == null) {
+				throw new IllegalArgumentException("the biome-modifier mirror only verifies the add_features and "
+						+ "remove_features brands (" + FORGE_ADD_FEATURES + " / " + NEOFORGE_ADD_FEATURES + ", "
+						+ FORGE_REMOVE_FEATURES + " / " + NEOFORGE_REMOVE_FEATURES + ", got " + tType
+						+ " in " + aSource + ") — extend brandCounterpart with the codec evidence "
 						+ "before rebranding this shape");
 			}
 			// the conditions rebrand MUST run while the row's own type still names the
 			// source brand — it locates the source conditions key by that type
 			rebrandConditions(tObject, aSource);
-			tObject.addProperty("type", FORGE_ADD_FEATURES.equals(tType.getAsString())
-					? NEOFORGE_ADD_FEATURES : FORGE_ADD_FEATURES);
+			tObject.addProperty("type", tSwapped);
 			return new BiomeMirrorRow(aTarget, tObject);
 		} catch (IOException tError) {
 			throw new RuntimeException("the biome-modifier brand mirror failed reading " + aSource, tError);
 		}
+	}
+
+	/** The registry-brand swap for a verified row type — null = no cross-leg evidence, the gate fires. */
+	private static String brandCounterpart(String aType) {
+		if (FORGE_ADD_FEATURES.equals(aType)) return NEOFORGE_ADD_FEATURES;
+		if (NEOFORGE_ADD_FEATURES.equals(aType)) return FORGE_ADD_FEATURES;
+		if (FORGE_REMOVE_FEATURES.equals(aType)) return NEOFORGE_REMOVE_FEATURES;
+		if (NEOFORGE_REMOVE_FEATURES.equals(aType)) return FORGE_REMOVE_FEATURES;
+		return null;
 	}
 
 	/**
