@@ -25,6 +25,9 @@ import org.junit.jupiter.api.Test;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.material.Fluids;
+
+import net.minecraftforge.fluids.FluidStack;
 
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.Bounds;
@@ -32,6 +35,7 @@ import dev.emi.emi.api.widget.SlotWidget;
 import dev.emi.emi.api.widget.Widget;
 import dev.emi.emi.api.widget.WidgetHolder;
 
+import gregtech6.jei.GT6RecipeMapViewerMeta;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
@@ -164,6 +168,55 @@ public class GT6RecipeMapEmiCategoryTest {
 		assertEquals("gt6:recipe_map/gt.recipe.mixer/" + (tSorted.size() - 1), tLast.getId().toString());
 		assertEquals(1, tLast.getInputs().size(), "one item input flattened (MIXER declares 6 slots, the row carries 1)");
 		assertEquals(1, tLast.getOutputs().size());
+	}
+
+	/**
+	 * Issue #34 regression guard: the EMI slots are the NEI-faithful 18px form. EMI's
+	 * {@code SlotWidget.large(true)} switches getBounds() to a 26x26 box anchored at the
+	 * passed coordinate (its output branch — NOT centered), which on the meta's 18px
+	 * output pitch (107/125/143) overlapped each neighbour by 8px and pushed a 3rd
+	 * output to x169 past the 166-wide category. getBounds() is a pure field read (the
+	 * class doc), so the whole geometry pins offline. The BATH row exercises BOTH former
+	 * large sites at once: 3 item outputs AND a fluid output.
+	 */
+	@Test
+	public void outputSlotsKeepTheFaithful18pxGeometry() {
+		GT6RecipeMaps.init();
+		RecipeMap tBath = GT6RecipeMaps.BATH;
+		Recipe tRow = new Recipe(true,
+				new ItemStack[]{new ItemStack(Items.IRON_INGOT)},
+				new ItemStack[]{new ItemStack(Items.IRON_NUGGET), new ItemStack(Items.GOLD_NUGGET), new ItemStack(Items.REDSTONE)},
+				new FluidStack[]{new FluidStack(Fluids.WATER, 1000)},
+				new FluidStack[]{new FluidStack(Fluids.LAVA, 500)},
+				400, 32, 0);
+		RecordingHolder tHolder = new RecordingHolder();
+		new GT6RecipeMapEmiRecipe(tBath, tRow, GT6RecipeMapEmiCategory.CATEGORIES.apply(tBath), 0).addWidgets(tHolder);
+
+		// every slot — item in/out AND fluid in/out — is the small 18x18 form; the large
+		// 26x26 box (the old fluid-output line rode it too) is gone for good
+		for (SlotWidget tSlot : tHolder.mSlots) {
+			assertEquals(18, tSlot.getBounds().width(), "issue #34: slots stay the small 18px form (width)");
+			assertEquals(18, tSlot.getBounds().height(), "issue #34: slots stay the small 18px form (height)");
+		}
+		// the three item outputs sit at the shared-seam coordinates, 18px apart, none
+		// spilling past the 166-wide category (the old large box hit x169 at the 3rd slot)
+		int tPrevX = -1;
+		for (int i = 0; i < 3; i++) {
+			int[] tPos = GT6RecipeMapViewerMeta.outputPos(i, tBath);
+			SlotWidget tSlot = slotAt(tHolder, tPos[0], tPos[1]);
+			assertTrue(tSlot != null, "output slot " + i + " drawn at the shared coordinate " + tPos[0] + "," + tPos[1]);
+			if (i > 0) assertTrue(tSlot.getBounds().x() - tPrevX >= 18, "the 18px pitch — adjacent output slots never overlap");
+			assertTrue(tSlot.getBounds().x() + tSlot.getBounds().width() <= GT6RecipeMapViewerMeta.CATEGORY_WIDTH,
+					"output slot " + i + " stays inside the 166-wide category");
+			tPrevX = tSlot.getBounds().x();
+		}
+	}
+
+	/** The one slot drawn at the given coordinate (the holder carries a handful of slots). */
+	private static SlotWidget slotAt(RecordingHolder aHolder, int aX, int aY) {
+		for (SlotWidget tSlot : aHolder.mSlots)
+			if (tSlot.getBounds().x() == aX && tSlot.getBounds().y() == aY) return tSlot;
+		return null;
 	}
 
 	private static void assertSlot(SlotWidget aSlot, int aX, int aY) {
