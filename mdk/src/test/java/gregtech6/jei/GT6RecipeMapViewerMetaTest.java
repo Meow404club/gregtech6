@@ -10,6 +10,7 @@
  */
 package gregtech6.jei;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -243,32 +244,61 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 				new ItemStack[]{new ItemStack(Items.IRON_NUGGET)}, null, null, aDuration, aEUt, aSpecialValue);
 	}
 
+	/** The translatable contents of one cost line (the r6-29-34a key+args face). */
+	private static net.minecraft.network.chat.contents.TranslatableContents contents(net.minecraft.network.chat.Component aLine) {
+		return (net.minecraft.network.chat.contents.TranslatableContents) aLine.getContents();
+	}
+
 	@Test
 	void costLinesPositiveNegativeAndZeroEUt() {
 		GT6RecipeMaps.init();
 		// CokeOven: showVoltage=T, combinePower=F, power=1 — the full six-line face
-		assertEquals(List.of("Costs: 12800 GU", "Usage: 32 GU/t", "Tier: 32 GU", "Power: 1", "Time: 400 ticks"),
-				GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.COKE_OVEN, row(32, 400, 0)));
+		var tLines = GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.COKE_OVEN, row(32, 400, 0));
+		assertEquals("gt6.jei.cost.costs", contents(tLines.get(0)).getKey());
+		assertArrayEquals(new Object[]{12800L}, contents(tLines.get(0)).getArgs());
+		assertEquals("gt6.jei.cost.usage", contents(tLines.get(1)).getKey());
+		assertArrayEquals(new Object[]{32L}, contents(tLines.get(1)).getArgs());
+		assertEquals("gt6.jei.cost.tier", contents(tLines.get(2)).getKey());
+		assertEquals("gt6.jei.cost.power", contents(tLines.get(3)).getKey());
+		assertEquals("gt6.jei.cost.time", contents(tLines.get(4)).getKey());
 		// negative EUt = the generator face (Gain/Output, NEI :699-711)
-		assertEquals(List.of("Gain: 9600 GU", "Output: 16 GU/t", "Tier: 16 GU", "Power: 1", "Time: 600 ticks"),
-				GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.COKE_OVEN, row(-16, 600, 0)));
-		// EUt 0 + showVoltage → only the tier line (NEI :683-686)
-		assertEquals(List.of("Tier: unspecified", "Time: 300 ticks"),
-				GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.COKE_OVEN, row(0, 300, 0)));
+		var tGainLines = GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.COKE_OVEN, row(-16, 600, 0));
+		assertEquals("gt6.jei.cost.gain", contents(tGainLines.get(0)).getKey());
+		assertArrayEquals(new Object[]{9600L}, contents(tGainLines.get(0)).getArgs());
+		assertEquals("gt6.jei.cost.output", contents(tGainLines.get(1)).getKey());
+		// EUt 0 + showVoltage → only the tier-unspecified line (NEI :683-686)
+		var tZeroLines = GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.COKE_OVEN, row(0, 300, 0));
+		assertEquals("gt6.jei.cost.tier_unspecified", contents(tZeroLines.get(0)).getKey());
+		assertEquals("gt6.jei.cost.time", contents(tZeroLines.get(1)).getKey());
 		// combinePower=T drops the Usage line (the fuel-map face, NEI :690-692/:696)
-		assertEquals(List.of("Costs: 800 GU", "Tier: 8 GU", "Power: 1", "Time: 100 ticks"),
-				GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.ENGINE_FUELS, row(8, 100, 0)));
-		// the FUSION special-value triple rides the last line (mSpecialValue × multiplier)
-		assertEquals(List.of("Costs: 1600 GU", "Usage: 8 GU/t", "Tier: 8 GU", "Power: 1", "Time: 200 ticks", "Start: 131072 LU"),
-				GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.FUSION, row(8, 200, 131072)));
+		var tFuelLines = GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.ENGINE_FUELS, row(8, 100, 0));
+		assertEquals("gt6.jei.cost.costs", contents(tFuelLines.get(0)).getKey());
+		assertEquals("gt6.jei.cost.tier", contents(tFuelLines.get(1)).getKey());
+		assertEquals("gt6.jei.cost.power", contents(tFuelLines.get(2)).getKey());
+		assertEquals("gt6.jei.cost.time", contents(tFuelLines.get(3)).getKey());
+		assertEquals(4, tFuelLines.size(), "combinePower=T carries no Usage line");
+		// the FUSION special-value triple rides the last line (mSpecialValue × multiplier,
+		// the post unit folded into the second arg slot)
+		var tFusionLines = GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.FUSION, row(8, 200, 131072));
+		var tSpecial = contents(tFusionLines.get(5));
+		assertEquals("gt6.jei.cost.start", tSpecial.getKey());
+		assertArrayEquals(new Object[]{131072L, " LU"}, tSpecial.getArgs());
 	}
 
 	@Test
 	void timeLineThresholdsPinned() {
-		assertEquals("Time: 1199 ticks", GT6RecipeMapViewerMeta.timeLine(1199));
-		assertEquals("Time: 60 secs", GT6RecipeMapViewerMeta.timeLine(1200));
-		assertEquals("Time: 1799 secs", GT6RecipeMapViewerMeta.timeLine(35980));
-		assertEquals("Time: 30 mins", GT6RecipeMapViewerMeta.timeLine(36000));
+		pinTimeLine(GT6RecipeMapViewerMeta.timeLine(1199), 1199L, "gt6.jei.cost.unit_ticks");
+		pinTimeLine(GT6RecipeMapViewerMeta.timeLine(1200), 60L, "gt6.jei.cost.unit_secs");
+		pinTimeLine(GT6RecipeMapViewerMeta.timeLine(35980), 1799L, "gt6.jei.cost.unit_secs");
+		pinTimeLine(GT6RecipeMapViewerMeta.timeLine(36000), 30L, "gt6.jei.cost.unit_mins");
+	}
+
+	/** The time line = the key, the folded number and the nested unit component. */
+	private static void pinTimeLine(net.minecraft.network.chat.Component aLine, long aNumber, String aUnitKey) {
+		var tContents = contents(aLine);
+		assertEquals("gt6.jei.cost.time", tContents.getKey());
+		assertEquals(aNumber, tContents.getArgs()[0]);
+		assertEquals(aUnitKey, contents((net.minecraft.network.chat.Component) tContents.getArgs()[1]).getKey());
 	}
 
 	// -------------------------------------------------------------------
@@ -277,10 +307,15 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 
 	@Test
 	void chanceLinePinned() {
-		assertEquals("Chance: 50.00%", GT6RecipeMapViewerMeta.chanceLine(5000, 1));
-		assertEquals("Chance: 12.34%", GT6RecipeMapViewerMeta.chanceLine(1234, 1));
-		assertEquals("Chance: 50.00% each", GT6RecipeMapViewerMeta.chanceLine(5000, 3), "stackSize>1 → the ' each' suffix");
-		assertEquals("Chance: 5.00%", GT6RecipeMapViewerMeta.chanceLine(500, 1), "the <10 fraction pad");
+		var tPlain = contents(GT6RecipeMapViewerMeta.chanceLine(5000, 1));
+		assertEquals("gt6.jei.cost.chance", tPlain.getKey());
+		assertArrayEquals(new Object[]{"50.00%"}, tPlain.getArgs());
+		assertEquals("gt6.jei.cost.chance", contents(GT6RecipeMapViewerMeta.chanceLine(1234, 1)).getKey());
+		var tEach = contents(GT6RecipeMapViewerMeta.chanceLine(5000, 3));
+		assertEquals("gt6.jei.cost.chance_each", tEach.getKey(), "stackSize>1 → the ' each' suffix face");
+		assertArrayEquals(new Object[]{"50.00%"}, tEach.getArgs());
+		assertEquals("5.00%", GT6RecipeMapViewerMeta.chanceLine(500, 1).getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents t ? t.getArgs()[0] : "",
+				"the <10 fraction pad");
 		assertNull(GT6RecipeMapViewerMeta.chanceLine(10000, 1), "the folded max reads as deterministic — no tooltip");
 		assertNull(GT6RecipeMapViewerMeta.chanceLine(0, 1));
 	}
@@ -296,11 +331,6 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 		assertEquals(10000, GT6RecipeMapViewerMeta.outputChance(tRow, 9));
 	}
 
-	@Test
-	void notConsumedTextIsTheUpstreamLiteral() {
-		assertEquals("Does not get consumed in the process", GT6RecipeMapViewerMeta.NOT_CONSUMED_TEXT);
-	}
-
 	// -------------------------------------------------------------------
 	// The JEI category's offline surface (the uid/title/dims contract)
 	// -------------------------------------------------------------------
@@ -308,10 +338,15 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 	@Test
 	void jeiCategoryOfflineSurface() {
 		GT6RecipeMaps.init();
-		GT6RecipeMapJeiCategory tCategory = new GT6RecipeMapJeiCategory(GT6RecipeMaps.COKE_OVEN);
+		GT6RecipeMapJeiCategory tCategory = new GT6RecipeMapJeiCategory(GT6RecipeMaps.COKE_OVEN, null /* the icon rides the plugin, not the offline surface */);
 		assertEquals("gt6:recipe_map/gt.recipe.cokeoven", tCategory.getRecipeType().getUid().toString());
 		assertEquals(Recipe.class, tCategory.getRecipeType().getRecipeClass());
-		assertEquals("Coke Oven", tCategory.getTitle().getString());
+		// the r6-29-34a title face: translatable, keyed by the shared formula (the oregen
+		// precedent — offline getString() rides Language.loadDefault back to the bare key,
+		// so the pin is the TranslatableContents key, not a literal)
+		var tTitle = tCategory.getTitle().getContents();
+		assertTrue(tTitle instanceof net.minecraft.network.chat.contents.TranslatableContents, "getTitle is translatable, not literal");
+		assertEquals("gt6.jei.recipe_map.cokeoven", ((net.minecraft.network.chat.contents.TranslatableContents) tTitle).getKey());
 		assertEquals(GT6RecipeMapViewerMeta.CATEGORY_WIDTH, tCategory.getWidth());
 		assertEquals(GT6RecipeMapViewerMeta.CATEGORY_HEIGHT, tCategory.getHeight());
 	}

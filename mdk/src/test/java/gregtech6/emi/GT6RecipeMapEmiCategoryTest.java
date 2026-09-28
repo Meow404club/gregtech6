@@ -54,6 +54,23 @@ public class GT6RecipeMapEmiCategoryTest {
 		}
 	}
 
+	/**
+	 * The r6-29-34a icon table resolves Forge RegistryObjects, which do not exist in a
+	 * bare JVM — the sResolver fixture seam (GT6RecipeMapJsonLoader.sItemResolver
+	 * convention). Stubbed PER TEST (a @BeforeAll-set stub combined with an @AfterEach
+	 * reset wiped it mid-class — the memoize-cache test passed and its successors died),
+	 * restored once after the class so no stub leaks into the next fork class.
+	 */
+	@org.junit.jupiter.api.BeforeEach
+	void stubIconResolver() {
+		gregtech6.jei.GT6RecipeMapIcons.sResolver = tSupplier -> net.minecraft.world.item.Items.IRON_INGOT;
+	}
+
+	@org.junit.jupiter.api.AfterAll
+	static void restoreIconResolver() {
+		gregtech6.jei.GT6RecipeMapIcons.sResolver = java.util.function.Supplier::get;
+	}
+
 	@AfterEach
 	void cleanUp() {
 		GT6RecipeMaps.reset();
@@ -67,7 +84,11 @@ public class GT6RecipeMapEmiCategoryTest {
 				"one category instance per map (the Util.memoize factory contract)");
 		assertEquals("gt6:recipe_map/gt.recipe.cokeoven", tFirst.getId().toString(),
 				"the EMI category id mirrors the JEI uid one-to-one — the JEMI skip key stays aligned");
-		assertEquals("Coke Oven", tFirst.getName().getString());
+		// r6-29-34a: the name face is the shared translatable title key (the oregen
+		// precedent — the bare-JVM getString() rides the Language fallback, pin the key)
+		var tName = tFirst.getName().getContents();
+		assertTrue(tName instanceof net.minecraft.network.chat.contents.TranslatableContents, "getName is translatable, not literal");
+		assertEquals("gt6.jei.recipe_map.cokeoven", ((net.minecraft.network.chat.contents.TranslatableContents) tName).getKey());
 	}
 
 	@Test

@@ -116,8 +116,7 @@ public class GT6JeiPlugin implements IModPlugin {
 	 */
 	private static void registerRecipeMapCategoriesRows(IRecipeRegistration registration) {
 		for (RecipeMap tMap : GT6RecipeMapViewerMeta.visibleMaps()) {
-			GT6RecipeMapJeiCategory tCategory = new GT6RecipeMapJeiCategory(tMap);
-			registration.addRecipes(tCategory.getRecipeType(), new ArrayList<>(tMap.mRecipeList));
+			registration.addRecipes(GT6RecipeMapJeiCategory.recipeTypeOf(tMap), new ArrayList<>(tMap.mRecipeList));
 		}
 	}
 
@@ -137,7 +136,11 @@ public class GT6JeiPlugin implements IModPlugin {
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registration) {
 		for (RecipeMap tMap : GT6RecipeMapViewerMeta.visibleMaps()) {
-			registration.addRecipeCategories(new GT6RecipeMapJeiCategory(tMap));
+			// task r6-29-34a — the per-map machine icon (GitHub #29a), the shared
+			// GT6RecipeMapIcons table drawn through JEI's ingredient-drawable face
+			mezz.jei.api.gui.drawable.IDrawable tIcon =
+					registration.getJeiHelpers().getGuiHelper().createDrawableItemStack(GT6RecipeMapIcons.iconOf(tMap));
+			registration.addRecipeCategories(new GT6RecipeMapJeiCategory(tMap, tIcon));
 		}
 		registration.addRecipeCategories(new GT6OreGenInfoJeiCategory());
 		if (gregtech6.recipes.tree.MaterialTreeDisplay.SHOWN) {
@@ -152,9 +155,16 @@ public class GT6JeiPlugin implements IModPlugin {
 	 * debt-material-tree-c): the material tree's own chain machines — clicking a
 	 * Shredder/Sifter/Anvil/Crusher opens the {@code gt6:material_tree} page, the GTCEu
 	 * registerWorkstation shape on the JEI leg.
+	 *
+	 * <p>Third arm (task r6-29-34a): every RM category carries its map's machine item as
+	 * the catalyst — the same stack the icon table hands out — so U on a machine reaches
+	 * its recipes even before the icon face is consulted.
 	 */
 	@Override
 	public void registerRecipeCatalysts(mezz.jei.api.registration.IRecipeCatalystRegistration registration) {
+		for (RecipeMap tMap : GT6RecipeMapViewerMeta.visibleMaps()) {
+			registration.addRecipeCatalysts(GT6RecipeMapJeiCategory.recipeTypeOf(tMap), GT6RecipeMapIcons.iconOf(tMap));
+		}
 		GT6OreGenInfoJeiCategory tCategory = new GT6OreGenInfoJeiCategory();
 		ItemStack tCatalyst = gregtech6.worldgen.GT6OreGenInfoLayout.catalystStack();
 		if (!tCatalyst.isEmpty()) registration.addRecipeCatalysts(tCategory.getRecipeType(), tCatalyst);

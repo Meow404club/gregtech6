@@ -112,7 +112,7 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 			if (tPos == null) continue; // past the 12th drawn slot (the meta contract)
 			SlotWidget tSlot = aWidgets.add(new SlotWidget(EmiStack.of(mRow.mInputs[i]), tPos[0], tPos[1]));
 			if (GT6RecipeMapViewerMeta.notConsumable(mRow.mInputs[i]))
-				tSlot.appendTooltip(Component.literal(GT6RecipeMapViewerMeta.NOT_CONSUMED_TEXT));
+				tSlot.appendTooltip(Component.translatable(GT6RecipeMapViewerMeta.NOT_CONSUMED_KEY));
 		}
 		for (int i = 0; i < Math.min(mRow.mOutputs.length, mMap.mOutputItemsCount); i++) {
 			if (mRow.mOutputs[i] == null || mRow.mOutputs[i].isEmpty()) continue;
@@ -124,8 +124,8 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 			// 3rd slot to x169 past the 166-wide category. Upstream NEI drew faithful 18px
 			// slots — same as the JEI twin.
 			SlotWidget tSlot = aWidgets.add(new SlotWidget(EmiStack.of(mRow.mOutputs[i]), tPos[0], tPos[1]));
-			String tChance = GT6RecipeMapViewerMeta.chanceLine(GT6RecipeMapViewerMeta.outputChance(mRow, i), mRow.mOutputs[i].getCount());
-			if (tChance != null) tSlot.appendTooltip(Component.literal(tChance));
+			Component tChance = GT6RecipeMapViewerMeta.chanceLine(GT6RecipeMapViewerMeta.outputChance(mRow, i), mRow.mOutputs[i].getCount());
+			if (tChance != null) tSlot.appendTooltip(tChance);
 		}
 		for (int i = 0; i < Math.min(mRow.mFluidInputs.length, mMap.mInputFluidCount); i++) {
 			if (mRow.mFluidInputs[i] == null || mRow.mFluidInputs[i].isEmpty()) continue;
@@ -138,8 +138,8 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 			aWidgets.add(new SlotWidget(EmiStack.of(mRow.mFluidOutputs[i].getFluid(), mRow.mFluidOutputs[i].getAmount()), tPos[0], tPos[1]));
 		}
 		int tY = GT6RecipeMapViewerMeta.textBaseY(mMap);
-		for (String tLine : GT6RecipeMapViewerMeta.costLines(mMap, mRow)) {
-			aWidgets.addText(Component.literal(tLine), GT6RecipeMapViewerMeta.TEXT_X, tY, 0xFF000000, false);
+		for (Component tLine : GT6RecipeMapViewerMeta.costLines(mMap, mRow)) {
+			aWidgets.addText(tLine, GT6RecipeMapViewerMeta.TEXT_X, tY, 0xFF000000, false);
 			tY += GT6RecipeMapViewerMeta.TEXT_LINE_HEIGHT;
 		}
 	}

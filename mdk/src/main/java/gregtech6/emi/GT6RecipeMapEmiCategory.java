@@ -5,11 +5,11 @@ import java.util.function.Function;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Items;
 
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.stack.EmiStack;
 
+import gregtech6.jei.GT6RecipeMapIcons;
 import gregtech6.recipes.RecipeMap;
 
 /**
@@ -21,13 +21,12 @@ import gregtech6.recipes.RecipeMap;
  * {@link gregtech6.jei.GT6RecipeMapViewerMeta} seam — the same functions the JEI twin
  * renders from, the card's 双 viewer 共享 clause.
  *
- * <p>The icon is the upstream NEI fallback: NEI_RecipeMap.init() drew the lit furnace
- * whenever a map's mRecipeMachineList was empty (:82 {@code Blocks.lit_furnace}) — and
- * the batch-2 adjudication (task debt-jei-emi-batch2) rules the per-map icon table
- * DEFERRED: the port's folded 15-arg RecipeMap carries no mRecipeMachineList, and the
- * machine registries are forward-keyed (machine row → RecipeMapSupplier, many machines
- * share one map), so a per-map item table would be new reverse-index infrastructure.
- * FURNACE stays the fallback form on every category until such a table exists.
+ * <p>The icon (task r6-29-34a, GitHub #29a) is the map's representative machine item from
+ * the shared {@link GT6RecipeMapIcons} table — the batch-2 adjudication (task
+ * debt-jei-emi-batch2) ruled the table DEFERRED, this card landed it. The furnace stack
+ * survives ONLY as that table's whitelist fallback for the four DECLARED-empty maps —
+ * the upstream NEI_RecipeMap.init() lit-furnace default whenever a map's
+ * mRecipeMachineList was empty (:82 {@code Blocks.lit_furnace}), kept faithful.
  */
 public final class GT6RecipeMapEmiCategory extends EmiRecipeCategory {
 
@@ -37,7 +36,7 @@ public final class GT6RecipeMapEmiCategory extends EmiRecipeCategory {
 	public final RecipeMap mMap;
 
 	private GT6RecipeMapEmiCategory(RecipeMap aMap) {
-		super(idOf(aMap), EmiStack.of(Items.FURNACE));
+		super(idOf(aMap), EmiStack.of(GT6RecipeMapIcons.iconOf(aMap)));
 		mMap = aMap;
 	}
 
@@ -50,8 +49,13 @@ public final class GT6RecipeMapEmiCategory extends EmiRecipeCategory {
 		 *///?}
 	}
 
+	/**
+	 * The per-map category title (task r6-29-34a, GitHub #29b) — the shared
+	 * {@link gregtech6.jei.GT6RecipeMapViewerMeta#titleKey} formula, the EMI twin of the
+	 * JEI leg's translatable getTitle.
+	 */
 	@Override
 	public Component getName() {
-		return Component.literal(mMap.mNameLocal);
+		return Component.translatable(gregtech6.jei.GT6RecipeMapViewerMeta.titleKey(mMap));
 	}
 }

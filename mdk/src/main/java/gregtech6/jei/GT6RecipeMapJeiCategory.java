@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotRichTooltipCallback;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
@@ -43,10 +44,13 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 	/** {@code gt6:recipe_map/<internal>} — the JEI-side uid mirrors the EMI category id one-to-one. */
 	public final RecipeType<Recipe> mRecipeType;
 	public final RecipeMap mMap;
+	/** The per-map machine icon (task r6-29-34a) — built by the plugin from {@link GT6RecipeMapIcons}. */
+	private final IDrawable mIcon;
 
-	public GT6RecipeMapJeiCategory(RecipeMap aMap) {
+	public GT6RecipeMapJeiCategory(RecipeMap aMap, IDrawable aIcon) {
 		mMap = aMap;
 		mRecipeType = recipeTypeOf(aMap);
+		mIcon = aIcon;
 	}
 
 	/**
@@ -69,9 +73,15 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 		return mRecipeType;
 	}
 
+	/**
+	 * The per-map category title (task r6-29-34a, GitHub #29b): the shared
+	 * {@link GT6RecipeMapViewerMeta#titleKey} formula — translatable, so every locale
+	 * resolves its own face (the ctor's English {@code mNameLocal} stays the en_us value,
+	 * produced by the GT6EnUs datagen walk).
+	 */
 	@Override
 	public Component getTitle() {
-		return Component.literal(mMap.mNameLocal);
+		return Component.translatable(GT6RecipeMapViewerMeta.titleKey(mMap));
 	}
 
 	@Override
@@ -85,18 +95,14 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 	}
 
 	/**
-	 * Per-map machine icon: DEFERRED by the batch-2 adjudication (task debt-jei-emi-batch2)
-	 * — there is no seam to wire. The upstream face keyed off RecipeMap.mRecipeMachineList
-	 * (NEI_RecipeMap.java:278 drew it at 152,83), which the port's folded 15-arg ctor does
-	 * not carry; the machine registries are FORWARD-keyed (machine row → RecipeMapSupplier,
-	 * and many machines share one map), so a per-map item table would be new reverse-index
-	 * infrastructure, not wiring. null keeps JEI's documented fallback ("JEI will try to
-	 * use the first recipe catalyst"). Revisit only when a machine→map reverse table lands
-	 * for other reasons.
+	 * Per-map machine icon (task r6-29-34a, GitHub #29a): the representative machine
+	 * BlockItem from the shared {@link GT6RecipeMapIcons} table — the plugin builds the
+	 * drawable via {@code IGuiHelper.createDrawableItemStack} and hands it to the ctor.
+	 * The batch-2 DEFER adjudication is superseded by that table.
 	 */
 	@Override
-	public mezz.jei.api.gui.drawable.IDrawable getIcon() {
-		return null;
+	public IDrawable getIcon() {
+		return mIcon;
 	}
 
 	@Override
@@ -116,7 +122,7 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 			if (tStack == null || tStack.isEmpty()) continue;
 			int[] tPos = GT6RecipeMapViewerMeta.outputPos(i, mMap);
 			if (tPos == null) continue; // past the 12th drawn slot (the meta contract)
-			String tChance = GT6RecipeMapViewerMeta.chanceLine(GT6RecipeMapViewerMeta.outputChance(aRecipe, i), tStack.getCount());
+			net.minecraft.network.chat.Component tChance = GT6RecipeMapViewerMeta.chanceLine(GT6RecipeMapViewerMeta.outputChance(aRecipe, i), tStack.getCount());
 			var tSlot = aBuilder.addOutputSlot(tPos[0], tPos[1]).addItemStack(tStack.copy());
 			if (tChance != null) tSlot.addRichTooltipCallback(staticTooltip(tChance));
 		}
@@ -145,17 +151,17 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 	public void draw(Recipe aRecipe, mezz.jei.api.gui.ingredient.IRecipeSlotsView aRecipeSlotsView,
 			net.minecraft.client.gui.GuiGraphics aGuiGraphics, double aMouseX, double aMouseY) {
 		int tY = GT6RecipeMapViewerMeta.textBaseY(mMap);
-		for (String tLine : GT6RecipeMapViewerMeta.costLines(mMap, aRecipe)) {
+		for (net.minecraft.network.chat.Component tLine : GT6RecipeMapViewerMeta.costLines(mMap, aRecipe)) {
 			aGuiGraphics.drawString(Minecraft.getInstance().font, tLine, GT6RecipeMapViewerMeta.TEXT_X, tY, 0xFF000000);
 			tY += GT6RecipeMapViewerMeta.TEXT_LINE_HEIGHT;
 		}
 	}
 
-	private static IRecipeSlotRichTooltipCallback staticTooltip(String aLine) {
-		return (aView, aTooltip) -> aTooltip.add(Component.literal(aLine));
+	private static IRecipeSlotRichTooltipCallback staticTooltip(net.minecraft.network.chat.Component aLine) {
+		return (aView, aTooltip) -> aTooltip.add(aLine);
 	}
 
 	private static IRecipeSlotRichTooltipCallback notConsumedTooltip() {
-		return staticTooltip(GT6RecipeMapViewerMeta.NOT_CONSUMED_TEXT);
+		return staticTooltip(net.minecraft.network.chat.Component.translatable(GT6RecipeMapViewerMeta.NOT_CONSUMED_KEY));
 	}
 }
