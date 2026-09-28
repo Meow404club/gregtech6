@@ -1,0 +1,177 @@
+/**
+ * Offline pin for task r8-tex-itemform-a — the item-model form census (the
+ * {@link GT6RailItemModelDatagenTest} shape over the r8-tex-r2 item_form column). The
+ * single-texture cubeAll families whose BlockItems parented the block model rendered
+ * the inventory form as one flat sprite tiled over six faces (the census "bad" form);
+ * this card moves them to the 2D {@code item/generated} icon over the family's own
+ * sprite (the r5 rail precedent). Reads the committed generated tree (no datagen run);
+ * the block models are pinned UNCHANGED in the same breath, so the item fix can never
+ * leak into the world face. The ok3D whitelist pins the families whose block models are
+ * genuinely FACETED (the vanilla furnace form) so a future sweep cannot "fix" them, and
+ * the GT6ItemModels.java fallback rows pin the census missing-hole verdict (the
+ * placeables/bumbliary items were never missing — they ride their block models).
+ */
+package gregtech6.datagen;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
+import org.junit.jupiter.api.Test;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import gregtech6.registry.GT6Batteries;
+import gregtech6.registry.GT6LongDistWires;
+import gregtech6.tileentity.GTOfflineTestBase;
+
+public class GT6ItemFormCensusTest extends GTOfflineTestBase {
+
+    private static JsonObject generatedJson(String aPath) throws Exception {
+        try (InputStream tStream = GT6ItemFormCensusTest.class.getClassLoader()
+                .getResourceAsStream(aPath)) {
+            assertNotNull(tStream, "the generated JSON must be on the classpath: " + aPath);
+            return JsonParser.parseString(new String(tStream.readAllBytes(), StandardCharsets.UTF_8))
+                    .getAsJsonObject();
+        }
+    }
+
+    private static void assert2DForm(String aId, String aLayer0) throws Exception {
+        JsonObject tModel = generatedJson("assets/gt6/models/item/" + aId + ".json");
+        assertEquals("minecraft:item/generated", tModel.get("parent").getAsString(),
+                aId + ": the 2D item/generated parent");
+        JsonObject tTextures = tModel.getAsJsonObject("textures");
+        assertEquals(1, tTextures.size(), aId + ": exactly the layer0 texture");
+        assertEquals(aLayer0, tTextures.get("layer0").getAsString(), aId + ": the family sprite");
+    }
+
+    /** The tier byte -> LONG_DIST_WIRES_01 sprite token (GT6BlockStates.wireArtOf mirror). */
+    private static String wireArtOf(int aTier) {
+        return switch (aTier) {
+            case 4 -> "ev";
+            case 5 -> "iv";
+            case 6 -> "luv";
+            case 7 -> "zpm";
+            case 8 -> "uv";
+            default -> throw new IllegalArgumentException("unknown LD wire tier byte: " + aTier);
+        };
+    }
+
+    /** The 12 battery boxes: 2D icons over their own baked composite sprite. */
+    @Test
+    void batteryBoxItemsAre2DIcons() throws Exception {
+        assertFalse(GT6Batteries.BOX_ROWS.isEmpty(), "the row walk broke — never pass vacuously");
+        for (GT6Batteries.BoxRow tRow : GT6Batteries.BOX_ROWS) {
+            assert2DForm(tRow.path(), "gt6:block/" + (tRow.slots() == 16 ? "battery_box_large" : "battery_box"));
+        }
+    }
+
+    /** The 16 LD wires: 2D icons over the row's tier sprite. */
+    @Test
+    void ldWireItemsAre2DIcons() throws Exception {
+        assertEquals(16, GT6LongDistWires.ROWS.size(), "the 16-meta walk");
+        for (GT6LongDistWires.WireRow tRow : GT6LongDistWires.ROWS) {
+            assert2DForm(GT6LongDistWires.pathOf(tRow.meta()),
+                    "gt6:block/long_dist_wire_" + wireArtOf(tRow.tier()));
+        }
+    }
+
+    /** The 16 LD pipe metas: 2D icons over the shared item_pipe placeholder sprite. */
+    @Test
+    void ldPipeItemsAre2DIcons() throws Exception {
+        for (int tMeta = 0; tMeta < 16; tMeta++) {
+            assert2DForm(gregtech6.registry.GT6LongDistPipes.pathOf(tMeta), "gt6:block/item_pipe");
+        }
+    }
+
+    /** The placeholder energy family + example chest: 2D icons over their existing placeholder sprites. */
+    @Test
+    void placeholderFamilyItemsAre2DIcons() throws Exception {
+        String[][] tRows = {
+                {"example_chest", "gt6:block/example_chest"},
+                {"energy_source", "gt6:block/energy_source"},
+                {"fe_battery", "gt6:block/energy_source"},
+                {"fe_converter", "gt6:block/energy_source"},
+                {"fe_source", "gt6:block/energy_source"},
+                {"test_machine", "gt6:block/example_chest"},
+                {"test_machine_idle", "gt6:block/example_chest"},
+                {"electric_dynamo_ulv", "gt6:block/energy_source"}};
+        for (String[] tRow : tRows) {
+            assert2DForm(tRow[0], tRow[1]);
+        }
+    }
+
+    /**
+     * The world-face guard: the touched block models stay the cube_all form over the
+     * same sprites — one archetype per family (the item fix must not leak into the
+     * blockstate/model chain).
+     */
+    @Test
+    void blockModelsKeepTheCubeAllForm() throws Exception {
+        String[][] tArchetypes = {
+                {"battery_box_lv", "gt6:block/battery_box"},
+                {"battery_box_large_lv", "gt6:block/battery_box_large"},
+                {"long_dist_wire_0", "gt6:block/long_dist_wire_ev"},
+                {"long_dist_pipe_0", "gt6:block/item_pipe"},
+                {"energy_source", "gt6:block/energy_source"}};
+        for (String[] tCase : tArchetypes) {
+            JsonObject tModel = generatedJson("assets/gt6/models/block/" + tCase[0] + ".json");
+            assertEquals("minecraft:block/cube_all", tModel.get("parent").getAsString(),
+                    tCase[0] + ": the cube_all parent (the world face is untouched)");
+            assertEquals(tCase[1], tModel.getAsJsonObject("textures").get("all").getAsString(),
+                    tCase[0] + ": the family sprite");
+        }
+    }
+
+    /**
+     * The ok3D whitelist — the census families whose BlockItems LEGITIMATELY parent a
+     * faceted block model (the vanilla furnace form; the r8-tex-census item_form ok3D
+     * column): the basic-machine family, the bridge band, the converter/dynamo two-layer
+     * band, the turbine mains, the parts design_0 walk and the large-machine controllers.
+     * These stay block-parented; only the single-texture cubeAll families went 2D.
+     */
+    @Test
+    void ok3DWhitelistKeepsTheirBlockParents() throws Exception {
+        String[][] tArchetypes = {
+                {"shredder", "gt6:block/shredder"}, // the basic-machine familyMachineModel band
+                {"electric_heater", "gt6:block/bridge_heater"}, // the bridge family
+                {"electric_transformer", "gt6:block/electric_transformer"}, // the converter band
+                {"electric_dynamo", "gt6:block/electric_dynamo"}, // the dynamo ladder
+                {"steam_turbine_graphene", "gt6:block/turbine_main_steam"}, // the turbine mains
+                {"machine_wall_tungsten", "gt6:block/machine_wall_tungsten_design_0"}, // the parts walk
+                {"large_massfab", "gt6:block/large_massfab"}}; // the large-machine controllers
+        for (String[] tCase : tArchetypes) {
+            JsonObject tModel = generatedJson("assets/gt6/models/item/" + tCase[0] + ".json");
+            assertEquals(tCase[1], tModel.get("parent").getAsString(),
+                    tCase[0] + ": the ok3D block-model parent (furnace form, not the anti-pattern)");
+        }
+    }
+
+    /**
+     * The census missing-hole verdict: the addBumbliary/addPlaceables blocks registered
+     * NO itemModels row in GT6BlockStates — but the BlockItem models live in
+     * GT6ItemModels.java (the placeables band, {@code withExistingParentUnchecked} over
+     * their block models, the vanilla jack_o_lantern form). NOT known-missing; pinned so
+     * the verdict cannot rot back into an open question.
+     */
+    @Test
+    void placeablesAndBumbliaryRideTheirBlockModels() throws Exception {
+        String[][] tRows = {
+                {"greg_o_lantern", "gt6:block/greg_o_lantern"},
+                {"sandwich", "gt6:block/sandwich"},
+                {"bumbliary", "gt6:block/bumbliary"},
+                {"bumbliary_advanced", "gt6:block/bumbliary_adv"}, // the advanced band drops the infix
+                {"bumble_hive", "gt6:block/bumble_hive"}};
+        for (String[] tRow : tRows) {
+            JsonObject tModel = generatedJson("assets/gt6/models/item/" + tRow[0] + ".json");
+            assertTrue(tModel.has("parent"), tRow[0] + ": the model exists (the fallback form)");
+            assertEquals(tRow[1], tModel.get("parent").getAsString(),
+                    tRow[0] + ": rides its block model (the GT6ItemModels placeables band)");
+        }
+    }
+}
