@@ -91,9 +91,53 @@ GPG 提交拦截钩子已注册在**用户级** `~/.zcode/cli/config.json`（hoo
 不再走 workspace 作用域 —— 用户级免信任审核，无弹卡。
 `guard-commit.sh` 自动探测作用域：仅当 cwd 所在仓库的主仓库根存在
 `.githooks/commit-msg`（选择加入标记）时生效，范围 = 主仓库根 +
-`../<仓库名>-trees/` worktree 约定目录，无需硬编码路径，也不影响其他仓库。
+worktree 约定目录（`../MGT6GA-trees/` 实际布局与 `../<仓库名>-trees/`
+通用形），无需硬编码路径，也不影响其他仓库。
 若克隆到其他机器，把同样的 hooks 段复制到该机器的用户配置即可（脚本路径
 按实际仓库位置调整）。
+
+`guard-heavy-ops.sh`（test-gating-v3 防旁路，2026-09-29）同机制：拦截未走
+`tools/gt6testgate.py` 的 gradle 调用并指路 `run` 子命令；opt-in 标记 =
+主仓库根存在 `tools/gt6testgate.py`；`GITHUB_ACTIONS` 置位零开销透传。
+**合入 main 后**在用户级 `~/.zcode/cli/config.json` 的 `hooks.events.
+PreToolUse` 数组追加一段（与 guard-commit.sh 并列；脚本不存在就先别挂——
+handler 缺失等于没装）：
+
+```json
+{"matcher": "Bash",
+ "hooks": [{"type": "process",
+            "command": "/home/brokestar/workspace/MGT6GA/gregtech6/.githooks/guard-heavy-ops.sh",
+            "timeoutMs": 10000}]}
+```
+
+## gt6testgate 门禁（test-gating-v3）
+
+一切重操作（gradle 测试/编译/runData、sweep、RCON 链）的统一门禁+runner：
+`python3 tools/gt6testgate.py run -- <原命令>`。v3（2026-09-29 WSL 崩溃裁定）
+在 v2 角色硬闸（全量仅 review、/tmp/gt6_testgate_full.lock 互斥）之上加
+**启动前预测**：
+
+- 任务分类 `--class {full-test,filtered-test,compile,rundata,rcon-boot,other}`，
+  缺省按命令形态自动推断（gradlew+裸 test=full、--tests=filtered、runData、
+  compile*/classes/jar=compile、rcon 字样=rcon-boot、其余=other）。
+- 峰值台账 `/tmp/gt6_testgate_memory_ledger.json`：门禁放行的任务在运行期
+  采样进程树峰值 RSS（/proc ppid 链 + statm，2s 周期），退出后按 class 折叠
+  `estimate=max(历史衰减, 本次)`（14 天半衰；flock+原子替换写，损坏 JSON
+  自动重建）——采样闭环不依赖任务自觉回报。无记录 class 用冷启动保守默认
+  （full-test 12G/filtered 6G/compile 4G/rundata 6G/rcon 5G/other 8G MiB，
+  常量 `COLD_ESTIMATE_MIB` 可由台账覆盖）。
+- admit 条件升级为 `(MemTotal-MemAvailable) + estimate(class) ≤ 30G`
+  （env `GT6_GATE_MEM_LIMIT_MIB`），超限排队轮询重估；排队/拒绝均输出含
+  数值的人类可读理由。
+- `--dry-run`：打印 当前占用/估算/预测/决策 四行不启动——subagent 派发前
+  自查与主会话调度参考。
+- 向后兼容：并发槽默认 4（`GT6_GATE_MAX_CONCURRENT`）、退出码=子进程透传、
+  full+coder 拒 exit 2（排队前即拒）、gt6server 直调的 `wait_memory` 签名
+  不变（estimate 缺省 0）；旧 flag 形态（无 `run` 前缀）与 run 子命令同一
+  实现。`GITHUB_ACTIONS` 置位 = 零门槛透传（CI 不是本 WSL 宿主）。
+
+单测：`python3 tools/gt6testgate_test.py`（stdlib unittest，47 项，全离线
+零 gradle；hook 判定表/CI 透传含在内）。
 
 ## MCP 工具一览（服务器名 gt6-brain）
 
