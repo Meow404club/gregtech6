@@ -65,15 +65,17 @@ class GT6OreBlocksRegistrationTest {
     /** The pinned form-row total (22 three-form + 4 two-form families). */
     private static final int PINNED_ROWS = 74;
     /**
-     * The pinned material axis M (the reviewer-corrected口径, 2026-09-16): the 53 distinct
-     * upstream always-on worldgen small-ore materials (Loader_Worldgen.java:800-852 — 53
-     * rows whose redcinnabar :828 / cinnabar :851 pair shares MT.OREMATS.Cinnabar — plus
-     * nikolite :875), each passing OP.ore.isGeneratingItem. The architect table's "M>=54"
-     * counted ROWS; the unique-material axis is 53. The bare isGeneratingItem walk over
-     * the whole MATERIAL_ARRAY measures 618 and was REJECTED in review (nine tenths of it
-     * materials no ore placement ever references) — the 45732-block face is gone.
+     * The pinned material axis M (the reviewer-corrected口径, 2026-09-16, extended by
+     * r7-a-ore-axis-extension): the 53 distinct upstream always-on worldgen small-ore
+     * materials (Loader_Worldgen.java:800-852 — 53 rows whose redcinnabar :828 /
+     * cinnabar :851 pair shares MT.OREMATS.Cinnabar — plus nikolite :875) UNION the 13
+     * stone-layer companion materials (GT6OreBlocks.STONE_LAYER_ORES, the r6-c3 lens
+     * preconditions), each passing OP.ore.isGeneratingItem. The bare isGeneratingItem
+     * walk over the whole MATERIAL_ARRAY measures 618 and was REJECTED in review (nine
+     * tenths of it materials no ore placement ever references) — the 45732-block face
+     * is gone.
      */
-    private static final int PINNED_M = 53;
+    private static final int PINNED_M = 66;
     /** The pinned total block count (74 x M) — see materialAxisIsPinned. */
     private static final int PINNED_TOTAL = PINNED_ROWS * PINNED_M;
 
@@ -134,12 +136,13 @@ class GT6OreBlocksRegistrationTest {
     void materialAxisIsPinned() {
         List<OreDictMaterial> tAxis = GT6OreBlocks.materialAxis();
         assertEquals(PINNED_M, tAxis.size(),
-                "M = the 53 distinct upstream always-on worldgen small-ore materials — bump PINNED_M only with an upstream row delta");
+                "M = the 53 worldgen small-ore materials + the 13 stone-layer companions — bump PINNED_M only with an upstream row delta");
         // every axis material passes the authoritative oredict filter (OP.java:1098 setCondition(ORES))
         for (OreDictMaterial tMaterial : tAxis) {
             assertTrue(OP.ore.isGeneratingItem(tMaterial), "every axis material passes the OP.ore criterion");
         }
-        // the axis IS the pinned upstream worldgen set, row order preserved (Loader_Worldgen.java:800-852 + :875)
+        // the axis IS the pinned upstream worldgen set + the stone-layer companions, row order preserved
+        // (Loader_Worldgen.java:800-852 + :875, then GT6OreBlocks.STONE_LAYER_ORES)
         List<String> tExpected = List.of(
             "Copper", "Chalcopyrite", "Malachite", "Tin", "Cassiterite", "Zinc", "Sphalerite", "Smithsonite",
             "Stibnite", "Bismuth", "Lead", "Galena", "Silver", "Gold", "Pyrite", "Hematite", "Pyrolusite", "Garnierite",
@@ -147,9 +150,12 @@ class GT6OreBlocksRegistrationTest {
             "Craponite", "Redstone", "Cinnabar", "Lapis", "Eudialyte", "Azurite", "Coal", "Graphite",
             "Pollucite", "Zeolite", "Coltan", "Platinum", "Iridium", "Sperrylite", "Cooperite", "Naquadah", "Trinium",
             "Dolamide", "Endium", "Sugilite", "Ambrosium", "Zanite", "Sulfur", "Niter", "Efrine",
-            "AncientDebris", "Nikolite");
+            "AncientDebris", "Nikolite",
+            // the 13 stone-layer companions (r7-a-ore-axis-extension, STONE_LAYER_ORES order)
+            "Peridot", "Uvarovite", "Grossular", "Chromite", "Spinel", "BalasRuby",
+            "Pitchblende", "Uraninite", "Tantalite", "Columbite", "MagnesiumCarbonate", "Stannite", "Kesterite");
         assertEquals(tExpected, tAxis.stream().map(m -> m.mNameInternal).toList(),
-                "the axis is the pinned always-on worldgen set in row order");
+                "the axis is the pinned worldgen set + stone-layer companions in row order");
         assertEquals(PINNED_TOTAL, GT6OreBlocks.registrationOrder().size(), "74 x M total blocks");
     }
 
