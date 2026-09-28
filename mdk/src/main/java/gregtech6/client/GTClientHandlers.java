@@ -61,7 +61,7 @@ public final class GTClientHandlers {
         modBus.addListener(GTClientHandlers::onRegisterPartPaintItemColors); // task p38-issue8-multipart-tint: part-family paint tint, inventory half
         modBus.addListener(GTClientHandlers::onRegisterBarrelPaintBlockColors); // task p23-barrel-paint-render: barrel paint tint, world half
         modBus.addListener(GTClientHandlers::onRegisterBarrelPaintItemColors); // task p23-barrel-paint-render: barrel paint tint, inventory half
-        modBus.addListener(GTClientHandlers::onRegisterBeePaintItemColors); // task r3-beehive-tint: the Bumbliary pair paint tint, inventory half
+        modBus.addListener(GTClientHandlers::onRegisterBeePaintItemColors); // task r3-beehive-tint + r6-15-hive-jade-tint: the bee trio paint tint, inventory half
         modBus.addListener(GTClientHandlers::onRegisterToolIdentityItemColors); // task p31-identity-seam: the crowbar material identity tint, inventory half
     }
 
@@ -190,12 +190,29 @@ public final class GTClientHandlers {
      * creative-tab faces render wood-brown / steel-gray instead of white (the explicit
      * registration is mandatory: a BlockColor does NOT colour its BlockItem,
      * ItemColors.java:25-93). The WORLD half rides {@code GTMachineTintModel} (the p32
-     * bake ruling). The HIVE BlockItem is deliberately NOT registered: the upstream 32755
-     * item row carries no NBT_COLOR (the :2041 null NBT — white is the faithful icon).
+     * bake ruling).
+     *
+     * <p>Task r6-15-hive-jade-tint: the HIVE BlockItem joins the same lambda — the former
+     * "deliberately NOT registered" stance read the upstream :2041 row as flat-white
+     * unconditionally, but that row only pins the UNPAINTED stack (no NBT_COLOR — white is
+     * the faithful UNPAINTED icon, and the {@code tintMaterialOf} hive arm is material-less,
+     * so the unpainted face stays byte-identical white). A paint-carrying stack (the Jade
+     * icon provider's display copy, {@code GT6PaintIconProvider#iconStack}) now tints, which
+     * is the same NBT-gated face every other paintable BlockItem here already has.
      */
     private static void onRegisterBeePaintItemColors(RegisterColorHandlersEvent.Item event) {
-        event.getItemColors().register(GTItemPaintTint.itemColor(),
-                GT6BeeHives.BUMBLIARY_ITEM.get(), GT6BeeHives.BUMBLIARY_ADVANCED_ITEM.get());
+        event.getItemColors().register(GTItemPaintTint.itemColor(), beePaintItems());
+    }
+
+    /**
+     * The bee-family item-colour registration seam (r6-15-hive-jade-tint) — the exact array
+     * the event handler registers {@link GTItemPaintTint#itemColor()} over, hoisted so the
+     * offline pin drives the real membership (the {@code GT6BeeHivesTest} neo-leg posture:
+     * the forge leg resolves no RegistryObjects offline, compilation is its proof).
+     */
+    public static Item[] beePaintItems() {
+        return new Item[] { GT6BeeHives.BUMBLIARY_ITEM.get(), GT6BeeHives.BUMBLIARY_ADVANCED_ITEM.get(),
+                GT6BeeHives.HIVE_ITEM.get() };
     }
 
     /**
