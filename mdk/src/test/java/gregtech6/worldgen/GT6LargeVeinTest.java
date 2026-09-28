@@ -113,7 +113,7 @@ class GT6LargeVeinTest {
         assertFalse(tOctine.overworld(), "octine is Betweenlands-only");
     }
 
-    /** The draw gate + the indicator universe: 25 drawable rows, 1334 total weight, the 57 distinct valid slots (r7-a lit chromite/uvarovite/pitchblende/uraninite/magnesium_carbonate/peridot/grossular/stannite/kesterite; r7-b lit the 17 gem slots — the sapphire/sapphire2/garnet/beryllium/beryllium2 rows' gems + manganese Spessartine). */
+    /** The draw gate + the indicator universe: 25 drawable rows, 1360 total weight, the 57 distinct valid slots (r7-a lit chromite/uvarovite/pitchblende/uraninite/magnesium_carbonate/peridot/grossular/stannite/kesterite; r7-b lit the 17 gem slots — the sapphire/sapphire2/garnet/beryllium/beryllium2 rows' gems + manganese Spessartine). */
     @Test
     void drawableRowsAndIndicatorUniverseMatch() {
         List<GTVeinConfig> tTable = GT6WorldgenDatagen.LARGE_VEIN_TABLE;

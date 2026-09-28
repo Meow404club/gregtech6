@@ -97,12 +97,12 @@ public final class GT6SurfaceBlocks {
 			new IndicatorSpec("coltan",       () -> MT.OREMATS.Coltan),       // ore.large.rocksalt bottom / manganese spread
 			new IndicatorSpec("chromite",     () -> MT.OREMATS.Chromite),             // ore.large.asbestos top (r7-a-ore-axis-extension: the stone-layer axis member)
 			new IndicatorSpec("asbestos",     () -> MT.Asbestos),             // ore.large.asbestos spread
-			new IndicatorSpec("bluesapphire", () -> MT.BlueSapphire),         // ore.large.sapphire top (r7-b-gem-pool-extension: the gem-pool axis members)
-			new IndicatorSpec("orangesapphire", () -> MT.OrangeSapphire),     // ore.large.sapphire bottom (r7-b)
-			new IndicatorSpec("yellowsapphire", () -> MT.YellowSapphire),     // ore.large.sapphire between (r7-b)
+			new IndicatorSpec("blue_sapphire", () -> MT.BlueSapphire),        // ore.large.sapphire top (r7-b-gem-pool-extension: the gem-pool axis members)
+			new IndicatorSpec("orange_sapphire", () -> MT.OrangeSapphire),    // ore.large.sapphire bottom (r7-b)
+			new IndicatorSpec("yellow_sapphire", () -> MT.YellowSapphire),    // ore.large.sapphire between (r7-b)
 			new IndicatorSpec("ruby",         () -> MT.Ruby),                 // ore.large.sapphire spread / sapphire2 bottom / redstone between (r7-b)
-			new IndicatorSpec("greensapphire", () -> MT.GreenSapphire),       // ore.large.sapphire2 top (r7-b)
-			new IndicatorSpec("purplesapphire", () -> MT.PurpleSapphire),     // ore.large.sapphire2 spread (r7-b)
+			new IndicatorSpec("green_sapphire", () -> MT.GreenSapphire),      // ore.large.sapphire2 top (r7-b)
+			new IndicatorSpec("purple_sapphire", () -> MT.PurpleSapphire),    // ore.large.sapphire2 spread (r7-b)
 			new IndicatorSpec("almandine",    () -> MT.Almandine),            // ore.large.garnet top (r7-b)
 			new IndicatorSpec("pyrope",       () -> MT.Pyrope),               // ore.large.garnet bottom (r7-b)
 			new IndicatorSpec("andradite",    () -> MT.Andradite),            // ore.large.garnet between (r7-b)

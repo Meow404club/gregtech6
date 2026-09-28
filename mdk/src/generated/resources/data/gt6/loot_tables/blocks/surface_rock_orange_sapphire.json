@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "gt6:rock_gt_green_sapphire"
+          "name": "gt6:rock_gt_orange_sapphire"
         }
       ],
       "functions": [
@@ -28,5 +28,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "gt6:blocks/surface_rock_greensapphire"
+  "random_sequence": "gt6:blocks/surface_rock_orange_sapphire"
 }
