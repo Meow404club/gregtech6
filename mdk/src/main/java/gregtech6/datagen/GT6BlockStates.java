@@ -108,7 +108,10 @@ public final class GT6BlockStates extends BlockStateProvider {
     protected void registerStatesAndModels() {
         Block tChest = GTBlockEntities.EXAMPLE_CHEST.get();
         simpleBlock(tChest, models().cubeAll("example_chest", modLoc("block/example_chest")));
-        itemModels().withExistingParent("example_chest", modLoc("block/example_chest"));
+        // r8-tex-itemform-a — the item is the 2D icon over the placeholder sprite (the r5
+        // rail form): the former parent-the-block-model form tiled the single texture over
+        // six inventory faces (the census item_form anti-pattern).
+        itemModels().withExistingParent("example_chest", mcLoc("item/generated")).texture("layer0", modLoc("block/example_chest"));
         addFluidPipe(GTFluidPipes.WOOD_FLUID_PIPE_SMALL.get());
         addFluidPipe(GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.get());
         // task p26-pipe-item — the item pipe family: one cube_all placeholder per row, the
@@ -1901,49 +1904,51 @@ public final class GT6BlockStates extends BlockStateProvider {
      * Task p8-d4-energy-source spec ② — the test energy source: one cube_all over
      * {@code gt6:textures/block/energy_source.png} (the borrowed upstream
      * solarpanel_electric_8eu side texture, the p7-gui-family byte-identical form) plus
-     * the BlockItem model parenting the block model. No properties, a single variant.
+     * the 2D BlockItem icon over the same sprite (r8-tex-itemform-a — the former
+     * parent-the-block-model form tiled the sprite over six inventory faces). No
+     * properties, a single variant.
      */
     private void addEnergySource() {
         Block tSource = GTEnergySources.ENERGY_SOURCE.get();
         simpleBlock(tSource, models().cubeAll("energy_source", modLoc("block/energy_source")));
-        itemModels().withExistingParent("energy_source", modLoc("block/energy_source"));
+        itemModels().withExistingParent("energy_source", mcLoc("item/generated")).texture("layer0", modLoc("block/energy_source"));
     }
 
     /**
      * Task p26-eu-bridge-outbound (TAIL-APPENDED row, the shared serial file) — the FE
      * battery fixture: the addEnergySource shape verbatim, one cube_all over the SHARED
      * placeholder {@code gt6:textures/block/energy_source.png} (no new PNG — the borrow
-     * posture the p20 testmachine rows pinned), plus the BlockItem model parenting the block
-     * model. No properties, a single variant.
+     * posture the p20 testmachine rows pinned), plus the 2D BlockItem icon over the same
+     * sprite (r8-tex-itemform-a). No properties, a single variant.
      */
     private void addFeBattery() {
         Block tBattery = GT6FeBatteries.FE_BATTERY.get();
         simpleBlock(tBattery, models().cubeAll("fe_battery", modLoc("block/energy_source")));
-        itemModels().withExistingParent("fe_battery", modLoc("block/fe_battery"));
+        itemModels().withExistingParent("fe_battery", mcLoc("item/generated")).texture("layer0", modLoc("block/energy_source"));
     }
 
     /**
      * Task p28-b-fe-converter-machine (TAIL-APPENDED row, the shared serial file) — the
      * ULV FE→EU converter: the addFeBattery shape verbatim, one cube_all over the SHARED
      * placeholder {@code gt6:textures/block/energy_source.png} (no new PNG — the borrow
-     * posture), plus the BlockItem model parenting the block model. No properties, a
-     * single variant.
+     * posture), plus the 2D BlockItem icon over the same sprite (r8-tex-itemform-a). No
+     * properties, a single variant.
      */
     private void addFeConverter() {
         Block tConverter = GT6FeConverters.FE_CONVERTER.get();
         simpleBlock(tConverter, models().cubeAll("fe_converter", modLoc("block/energy_source")));
-        itemModels().withExistingParent("fe_converter", modLoc("block/fe_converter"));
+        itemModels().withExistingParent("fe_converter", mcLoc("item/generated")).texture("layer0", modLoc("block/energy_source"));
     }
 
     /**
      * Task p28-b-fe-converter-machine (TAIL-APPENDED row, the shared serial file) — the
      * FE source fixture: the addFeBattery shape verbatim, one cube_all over the SHARED
-     * placeholder, plus the BlockItem model parenting the block model.
+     * placeholder, plus the 2D BlockItem icon over the same sprite (r8-tex-itemform-a).
      */
     private void addFeSource() {
         Block tSource = GT6FeBatteries.FE_SOURCE.get();
         simpleBlock(tSource, models().cubeAll("fe_source", modLoc("block/energy_source")));
-        itemModels().withExistingParent("fe_source", modLoc("block/fe_source"));
+        itemModels().withExistingParent("fe_source", mcLoc("item/generated")).texture("layer0", modLoc("block/energy_source"));
     }
 
     /**
@@ -1954,20 +1959,21 @@ public final class GT6BlockStates extends BlockStateProvider {
      * already zero-gap). The addEnergySource shape verbatim: one cube_all per block over the
      * SHARED placeholder {@code gt6:textures/block/example_chest.png} (no new PNG per the card
      * scope — the placeholder-to-upstream art swap stays a P20 wave item; the census pin d
-     * resolves the layer0 against the static tree), plus the item model parenting the block
-     * model. Datagen-only JSON: the dev blocks register no BlockItem (the census "dev blocks
-     * have no item" note), the item model row merely closes the model-resolution loop the way
-     * TestMachineBlock.java:21-22 expected when it deferred this datagen to the example machine
-     * card. No properties, a single variant each — the ticking/idle split is the BE ticker
-     * (TestMachineBlock.java:44-60), not a blockstate.
+     * resolves the layer0 against the static tree), plus the 2D item icon over the same
+     * sprite (r8-tex-itemform-a). Datagen-only JSON: the dev blocks register no BlockItem
+     * (the census "dev blocks have no item" note), the item model row merely closes the
+     * model-resolution loop the way TestMachineBlock.java:21-22 expected when it deferred
+     * this datagen to the example machine card. No properties, a single variant each —
+     * the ticking/idle split is the BE ticker (TestMachineBlock.java:44-60), not a
+     * blockstate.
      */
     private void addTestMachines() {
         simpleBlock(GTBlockEntities.TEST_MACHINE.get(),
                 models().cubeAll("test_machine", modLoc("block/example_chest")));
-        itemModels().withExistingParent("test_machine", modLoc("block/test_machine"));
+        itemModels().withExistingParent("test_machine", mcLoc("item/generated")).texture("layer0", modLoc("block/example_chest"));
         simpleBlock(GTBlockEntities.TEST_MACHINE_IDLE.get(),
                 models().cubeAll("test_machine_idle", modLoc("block/example_chest")));
-        itemModels().withExistingParent("test_machine_idle", modLoc("block/test_machine_idle"));
+        itemModels().withExistingParent("test_machine_idle", mcLoc("item/generated")).texture("layer0", modLoc("block/example_chest"));
     }
 
     /**
@@ -2114,14 +2120,17 @@ public final class GT6BlockStates extends BlockStateProvider {
      * bake_battery_textures.py composites; assets/README.md attribution). The FACING
      * property is a functional IO face (FRONT out EU / ALL-BUT-FRONT in — the
      * addElectricDynamoUlv placeholder convention, the per-face art is the render pool);
-     * the item models parent the block models.
+     * the item models are the 2D icons over the same baked sprite (r8-tex-itemform-a —
+     * the transitional form; the ok3D parent flips back when the block model itself is
+     * double-layered by the composite-family card).
      */
     private void addBatteryBoxes() {
         for (gregtech6.registry.GT6Batteries.BoxRow tRow : gregtech6.registry.GT6Batteries.BOX_ROWS) {
             net.minecraft.world.level.block.Block tBlock = gregtech6.registry.GT6Batteries.BATTERY_BOX_BLOCKS.get(tRow.path()).get();
             simpleBlock(tBlock, models().cubeAll(tRow.path(),
                     modLoc(tRow.slots() == 16 ? "block/battery_box_large" : "block/battery_box")));
-            itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
+            itemModels().withExistingParent(tRow.path(), mcLoc("item/generated"))
+                    .texture("layer0", modLoc(tRow.slots() == 16 ? "block/battery_box_large" : "block/battery_box"));
         }
     }
 
@@ -2197,7 +2206,7 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
     private void addElectricDynamoUlv() {
         Block tBlock = GT6ElectricDynamos.ELECTRIC_DYNAMO_ULV.get();
         simpleBlock(tBlock, models().cubeAll("electric_dynamo_ulv", modLoc("block/energy_source")));
-        itemModels().withExistingParent("electric_dynamo_ulv", modLoc("block/electric_dynamo_ulv"));
+        itemModels().withExistingParent("electric_dynamo_ulv", mcLoc("item/generated")).texture("layer0", modLoc("block/energy_source"));
     }
 
     /**
@@ -2309,7 +2318,9 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
             Block tWire = gregtech6.registry.GT6LongDistPipes.wireBlockOf(tMeta);
             String tPath = gregtech6.registry.GT6LongDistPipes.pathOf(tMeta);
             simpleBlock(tWire, models().cubeAll(tPath, modLoc("block/item_pipe")));
-            itemModels().withExistingParent(tPath, modLoc("block/" + tPath));
+            // r8-tex-itemform-a — the 2D icon over the shared placeholder sprite (the former
+            // parent-the-block-model form tiled it over six inventory faces).
+            itemModels().withExistingParent(tPath, mcLoc("item/generated")).texture("layer0", modLoc("block/item_pipe"));
         }
     }
 
@@ -2455,7 +2466,10 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
             Block tWire = gregtech6.registry.GT6LongDistWires.BLOCKS_BY_META.get(tRow.meta()).get();
             var tModel = models().cubeAll(tPath, modLoc("block/long_dist_wire_" + wireArtOf(tRow.tier())));
             getVariantBuilder(tWire).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
-            itemModels().withExistingParent(tPath, modLoc("block/" + tPath));
+            // r8-tex-itemform-a — the 2D icon over the row's own tier sprite (the former
+            // parent-the-cube-all form stretched the 1px-ish wire art into six block faces).
+            itemModels().withExistingParent(tPath, mcLoc("item/generated"))
+                    .texture("layer0", modLoc("block/long_dist_wire_" + wireArtOf(tRow.tier())));
         }
     }
 

@@ -9402,3 +9402,34 @@ ULV/LV/MV/HV/EV/IV/LuV/ZPM/UV/PUV1 = VN[0..9].
   (layer0 = the colored borrow, layer1 = the overlay borrow) rendered un-tinted —
   declared deviation, the tint and the 11-pass in-core render stack ride the
   render-pool card (Core2x2.java:320-390).
+
+## Item-model form census, band A (task r8-tex-itemform-a)
+
+Zero new PNGs this task — every layer0 below points at a sprite already in the tree.
+The item-form census (r8-tex-r2, the item_form column) found the single-texture
+cubeAll families rendering their inventory form as one flat sprite tiled over six
+faces (the BlockItem parented the block model). Band A moves the display/placeholder
+families to the 2D `item/generated` icon over their own sprite (the r5 rail
+precedent); the block models are UNCHANGED (world face untouched):
+
+- battery boxes 12 — layer0 = the row's baked composite (`block/battery_box` /
+  `block/battery_box_large`). Declared TRANSITIONAL form: when the composite-family
+  card double-layers the block model (colored+overlay split), the items flip back to
+  the ok3D block-parent form.
+- LD wires 16 — layer0 = the row's tier sprite (`block/long_dist_wire_<ev|iv|luv|zpm|uv>`).
+- LD pipe wire metas 16 — layer0 = the shared `block/item_pipe` placeholder.
+- placeholder energy family 7 (`energy_source`, `fe_battery`, `fe_converter`,
+  `fe_source`, `electric_dynamo_ulv`, `test_machine`, `test_machine_idle`) — layer0 =
+  the placeholder sprite the block model already uses (`energy_source.png` /
+  `example_chest.png`, the declared no-upstream-counterpart placeholders).
+- example chest 1 — layer0 = `block/example_chest`.
+
+Pinned by `GT6ItemFormCensusTest` (the 2D forms, the untouched cube_all world face,
+the ok3D whitelist archetypes, and the missing-hole verdict below).
+
+Missing-hole verdict (the census open question): the `addBumbliary` and
+`addPlaceables` (`greg_o_lantern`/`sandwich`) blocks emit no `itemModels()` row in
+GT6BlockStates — NOT missing: their BlockItem models live in GT6ItemModels.java
+(the placeables band, `withExistingParentUnchecked` over their own block models,
+the vanilla jack_o_lantern form). Their block models are faceted element models, so
+the ok3D classification holds; no action.

@@ -1,3 +1,6 @@
 {
-  "parent": "gt6:block/test_machine_idle"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "gt6:block/example_chest"
+  }
 }
