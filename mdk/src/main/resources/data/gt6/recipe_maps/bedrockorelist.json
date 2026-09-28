@@ -307,7 +307,7 @@
       "eut": 0
     },
     {
-      "comment": "ore.bedrock.uraninite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "comment": "ore.bedrock.uraninite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore (the material joined the ore axis with r7-a-ore-axis-extension; the stale dust face re-poured by r7-b-gem-pool-extension)",
       "inputs": [
         {
           "item": "gt6:ore_bedrock_uraninite",
@@ -316,7 +316,7 @@
       ],
       "outputs": [
         {
-          "item": "gt6:dust_uraninite",
+          "item": "gt6:ore_broken_stone_uraninite",
           "count": 1,
           "chance": 9687
         },
@@ -341,7 +341,7 @@
       "eut": 0
     },
     {
-      "comment": "ore.bedrock.pitchblende \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "comment": "ore.bedrock.pitchblende \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore (the material joined the ore axis with r7-a-ore-axis-extension; the stale dust face re-poured by r7-b-gem-pool-extension)",
       "inputs": [
         {
           "item": "gt6:ore_bedrock_pitchblende",
@@ -350,7 +350,7 @@
       ],
       "outputs": [
         {
-          "item": "gt6:dust_pitchblende",
+          "item": "gt6:ore_broken_stone_pitchblende",
           "count": 1,
           "chance": 9687
         },
