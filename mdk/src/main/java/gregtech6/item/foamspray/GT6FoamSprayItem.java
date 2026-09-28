@@ -213,7 +213,19 @@ public class GT6FoamSprayItem extends Item {
 				// bottom form (a full block here would corrupt the arm's cost semantics)
 				BlockState tSlab = GT6FoamBlocks.CFOAM_FRESH_SLAB.get().defaultBlockState()
 						.setValue(net.minecraft.world.level.block.SlabBlock.TYPE,
-								aPlacement.slabType() == null ? SlabType.BOTTOM : aPlacement.slabType());
+								aPlacement.slabType() == null ? SlabType.BOTTOM : aPlacement.slabType())
+					// the issue #42 belt at the placement site. ROOT CAUSE VERDICT (the pin test
+					// reproduced it): the wetness was AT GENERATION — this defaultBlockState
+					// chain carried WATERLOGGED=TRUE, because the slab subclasses' registerDefault
+					// State override dropped the vanilla SlabBlock ctor's WATERLOGGED=false pin
+					// (SlabBlock.java:32-33) while BooleanProperty's first value is TRUE — so
+					// every sprayed slab landed waterlogged. The pin is restored on both slab
+					// ctors; this explicit setValue is the second belt keeping the placement
+					// state dry even if the state source ever turns water-aware again. The
+					// third belt: the vanilla fluid tick would refill any slab beside water
+					// (FlowingFluid.canHoldFluid:377-380 → spreadTo:238-239 → SlabBlock
+					// .placeLiquid:100-101), now refused by the two slab classes' overrides.
+						.setValue(net.minecraft.world.level.block.SlabBlock.WATERLOGGED, Boolean.FALSE);
 				BlockPos tPos = aPlacement.pos();
 				return aLevel.getBlockState(tPos).isAir()
 						&& aLevel.setBlock(tPos, tSlab.setValue(GT6CFoamFreshBlock.COLOR, aDyeIndex & 15), 3);

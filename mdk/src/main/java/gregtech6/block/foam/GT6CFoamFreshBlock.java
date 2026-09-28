@@ -6,13 +6,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.MapColor;
 
 import gregtech6.registry.GT6FoamBlocks;
@@ -44,8 +49,22 @@ import gregtech6.registry.GT6FoamBlocks;
  * block is an intermediate state, obtainable only through the spray — the upstream meta
  * ladder has no fresh item in the creative tab either); the slab form is the sibling
  * {@link GT6CFoamFreshSlabBlock} (the spec_rulings.ruling_slab vanilla SlabBlock ruling).
+ *
+ * <p>The water seal (issue #42): upstream 1.7.10 vanilla water CANNOT wash the fresh
+ * foam away — {@code Material.sponge = new Material(clothColor)} takes the base
+ * {@code blocksMovement()}=true default (decompiled 1.7.10 Material.java:19/:110-112,
+ * the EaglerCraft workspace decomp), and the BlockDynamicLiquid flow-into gate reads
+ * exactly that (func_149813_h flowIntoBlock → func_149809_q can-flow-into →
+ * {@code !func_149807_p} = {@code !blocksMovement()}).
+ * This port's {@code noCollission()} face (the entity-passable counterpart of the
+ * upstream null collision box) leaves {@code blocksMotion()}=false, which the 1.20.1
+ * FlowingFluid.canHoldFluid:386-387 else-branch reads as "can hold water" — a fresh
+ * block beside flowing water would be spreadTo:241-245 DESTROYED and replaced with
+ * water. Implementing {@link LiquidBlockContainer} with constant false swings
+ * canHoldFluid back onto the instanceof arm (:379-380) and seals the block, the
+ * upstream semantics.
  */
-public class GT6CFoamFreshBlock extends Block implements IBlockFoamable {
+public class GT6CFoamFreshBlock extends Block implements IBlockFoamable, LiquidBlockContainer {
 
 	/** The 16-colour dye dimension (upstream the BlockColored meta; 0=Black..15=White, the GT6 DYE order). */
 	public static final IntegerProperty COLOR = IntegerProperty.create("color", 0, 15);
@@ -112,6 +131,27 @@ public class GT6CFoamFreshBlock extends Block implements IBlockFoamable {
 	public void tick(BlockState aState, ServerLevel aLevel, BlockPos aPos, RandomSource aRandom) {
 		dryFoam(aLevel, aPos, null); // the SIDE_ANY carrier (upstream :66)
 	}
+
+	// -------------------------------------------------------------------------
+	// the water seal (issue #42 — the LiquidBlockContainer refusal, the class note)
+	// -------------------------------------------------------------------------
+
+	@Override
+	public boolean placeLiquid(LevelAccessor aLevel, BlockPos aPos, BlockState aState, FluidState aFluid) {
+		return false;
+	}
+
+	//? if forge {
+	@Override
+	public boolean canPlaceLiquid(BlockGetter aLevel, BlockPos aPos, BlockState aState, Fluid aFluid) {
+		return false;
+	}
+	//?} else {
+	/*@Override
+	public boolean canPlaceLiquid(@Nullable net.minecraft.world.entity.player.Player aPlayer, BlockGetter aLevel, BlockPos aPos, BlockState aState, Fluid aFluid) {
+		return false;
+	}
+	*///?}
 
 	// -------------------------------------------------------------------------
 	// the IBlockFoamable face (upstream :105-127)
