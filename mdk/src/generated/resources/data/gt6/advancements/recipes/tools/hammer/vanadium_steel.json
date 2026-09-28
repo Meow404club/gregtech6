@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/vanadium_steel"
+            "tag": "forge:plates/vanadium_steel"
           }
         ]
       },

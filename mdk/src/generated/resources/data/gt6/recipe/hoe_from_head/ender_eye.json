@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_hoe_ender_eye"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "ender_eye",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:hoe"
+  }
+}

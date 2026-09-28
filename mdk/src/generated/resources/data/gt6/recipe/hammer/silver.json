@@ -1,5 +1,5 @@
 {
-  "type": "gt6:material_tool",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
     "I": {
@@ -9,7 +9,6 @@
       "tag": "gt6:tools/hard_hammer"
     }
   },
-  "material": "silver",
   "pattern": [
     "II ",
     "IIh",
@@ -17,6 +16,6 @@
   ],
   "result": {
     "count": 1,
-    "id": "gt6:hammer"
+    "id": "gt6:tool_head_hammer_silver"
   }
 }

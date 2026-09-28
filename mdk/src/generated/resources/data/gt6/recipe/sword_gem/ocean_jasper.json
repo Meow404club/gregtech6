@@ -1,5 +1,5 @@
 {
-  "type": "gt6:material_tool",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
     "C": {
@@ -9,13 +9,12 @@
       "tag": "gt6:tools/file"
     }
   },
-  "material": "ocean_jasper",
   "pattern": [
     " C ",
     "fC "
   ],
   "result": {
     "count": 1,
-    "id": "gt6:sword"
+    "id": "gt6:tool_head_sword_ocean_jasper"
   }
 }

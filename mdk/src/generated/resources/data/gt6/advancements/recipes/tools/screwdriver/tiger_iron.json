@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_tiger_iron"
-            ]
+            "tag": "forge:plates/tiger_iron"
           }
         ]
       },

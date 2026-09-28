@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_workers_alloy"
-            ]
+            "tag": "forge:plates/workers_alloy"
           }
         ]
       },

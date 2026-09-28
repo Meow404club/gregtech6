@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/bronze"
+            "tag": "forge:plates/bronze"
           }
         ]
       },

@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_vibranium_steel"
-            ]
+            "tag": "forge:plates/vibranium_steel"
           }
         ]
       },

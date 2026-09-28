@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_bedrock_hslaalloy"
-            ]
+            "tag": "forge:plates/bedrock_hslaalloy"
           }
         ]
       },

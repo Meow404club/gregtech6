@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_tungsten_sintered"
-            ]
+            "tag": "forge:plates/tungsten_sintered"
           }
         ]
       },

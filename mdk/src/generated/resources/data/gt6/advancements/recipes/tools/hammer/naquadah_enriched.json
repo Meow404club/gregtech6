@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/naquadah_enriched"
+            "tag": "forge:plates/naquadah_enriched"
           }
         ]
       },

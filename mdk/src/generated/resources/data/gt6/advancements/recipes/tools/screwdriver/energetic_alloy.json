@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_energetic_alloy"
-            ]
+            "tag": "forge:plates/energetic_alloy"
           }
         ]
       },

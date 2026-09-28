@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/hslasteel"
+            "tag": "forge:plates/hslasteel"
           }
         ]
       },

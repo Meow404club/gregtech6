@@ -1,5 +1,5 @@
 {
-  "type": "gt6:material_tool",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
     "S": {
@@ -12,13 +12,12 @@
       "tag": "gt6:tools/hard_hammer"
     }
   },
-  "material": "green_diamond",
   "pattern": [
     "hS",
     "Sf"
   ],
   "result": {
     "count": 1,
-    "id": "gt6:screwdriver"
+    "id": "gt6:tool_head_screwdriver_green_diamond"
   }
 }

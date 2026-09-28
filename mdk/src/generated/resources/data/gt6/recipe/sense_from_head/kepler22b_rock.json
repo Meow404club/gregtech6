@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_sense_kepler22b_rock"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "kepler22b_rock",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:sense"
+  }
+}

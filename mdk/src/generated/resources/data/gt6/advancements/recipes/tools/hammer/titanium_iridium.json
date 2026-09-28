@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/titanium_iridium"
+            "tag": "forge:plates/titanium_iridium"
           }
         ]
       },

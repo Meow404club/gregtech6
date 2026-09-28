@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_dark_matter"
-            ]
+            "tag": "forge:plates/dark_matter"
           }
         ]
       },

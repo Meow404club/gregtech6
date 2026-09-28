@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/glowstone_refined"
+            "tag": "forge:plates/glowstone_refined"
           }
         ]
       },

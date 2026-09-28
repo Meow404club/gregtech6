@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_sword_shimmerwood"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "shimmerwood",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:sword"
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "type": "gt6:material_tool",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
     "P": {
@@ -12,13 +12,11 @@
       "tag": "gt6:tools/hard_hammer"
     }
   },
-  "material": "spectre_iron",
   "pattern": [
     "fPh"
   ],
   "result": {
-    "count": 1,
-    "item": "gt6:shovel"
+    "item": "gt6:tool_head_shovel_spectre_iron"
   },
   "show_notification": true
 }

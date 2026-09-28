@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/plutonium238"
+            "tag": "forge:plates/plutonium238"
           }
         ]
       },

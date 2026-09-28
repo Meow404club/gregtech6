@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_file_bixbite"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "bixbite",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:file"
+  }
+}

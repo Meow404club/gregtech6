@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_saw_tiger_eye"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "tiger_eye",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:saw"
+  }
+}

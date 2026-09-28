@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/meteoric_iron"
+            "tag": "forge:plates/meteoric_iron"
           }
         ]
       },

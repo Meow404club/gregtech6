@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_green_diamond"
-            ]
+            "tag": "forge:plates/green_diamond"
           }
         ]
       },

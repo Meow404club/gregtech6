@@ -1,5 +1,5 @@
 {
-  "type": "gt6:material_tool",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
     "I": {
@@ -15,7 +15,6 @@
       "tag": "gt6:tools/hard_hammer"
     }
   },
-  "material": "fiery_steel",
   "pattern": [
     "PIh",
     "P  ",
@@ -23,6 +22,6 @@
   ],
   "result": {
     "count": 1,
-    "id": "gt6:axe"
+    "id": "gt6:tool_head_axe_fiery_steel"
   }
 }

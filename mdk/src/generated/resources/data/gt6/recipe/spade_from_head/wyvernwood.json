@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_spade_wyvernwood"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "wyvernwood",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:spade"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_builderwand_nether_star"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "nether_star",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:builder_wand"
+  }
+}

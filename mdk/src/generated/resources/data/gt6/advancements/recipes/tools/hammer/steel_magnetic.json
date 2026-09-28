@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/steel_magnetic"
+            "tag": "forge:plates/steel_magnetic"
           }
         ]
       },

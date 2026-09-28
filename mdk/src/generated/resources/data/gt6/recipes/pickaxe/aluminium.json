@@ -1,5 +1,5 @@
 {
-  "type": "gt6:material_tool",
+  "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
     "I": {
@@ -15,14 +15,12 @@
       "tag": "gt6:tools/hard_hammer"
     }
   },
-  "material": "aluminium",
   "pattern": [
     "PII",
     "f h"
   ],
   "result": {
-    "count": 1,
-    "item": "gt6:pickaxe"
+    "item": "gt6:tool_head_pickaxe_aluminium"
   },
   "show_notification": true
 }

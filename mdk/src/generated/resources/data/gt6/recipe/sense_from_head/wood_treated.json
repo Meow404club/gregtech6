@@ -1,0 +1,21 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_sense_wood_treated"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "wood_treated",
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:sense"
+  }
+}

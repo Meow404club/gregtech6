@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/conductive_iron"
+            "tag": "forge:plates/conductive_iron"
           }
         ]
       },

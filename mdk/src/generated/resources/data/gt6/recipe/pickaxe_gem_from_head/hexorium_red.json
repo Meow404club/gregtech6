@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:tool_head_pickaxe_gem_hexorium_red"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "hexorium_red",
+  "multiplier": 0.25,
+  "pattern": [
+    "H",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:pickaxe_gem"
+  }
+}

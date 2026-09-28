@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_tin_alloy"
-            ]
+            "tag": "forge:plates/tin_alloy"
           }
         ]
       },

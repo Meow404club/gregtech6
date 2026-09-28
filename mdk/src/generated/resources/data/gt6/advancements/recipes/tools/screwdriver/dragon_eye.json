@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_dragon_eye"
-            ]
+            "tag": "forge:plates/dragon_eye"
           }
         ]
       },

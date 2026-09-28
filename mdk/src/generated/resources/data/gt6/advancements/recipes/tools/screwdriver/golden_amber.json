@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_golden_amber"
-            ]
+            "tag": "forge:plates/golden_amber"
           }
         ]
       },

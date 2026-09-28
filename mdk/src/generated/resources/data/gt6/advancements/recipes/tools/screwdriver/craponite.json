@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "gt6:stick_craponite"
-            ]
+            "tag": "forge:plates/craponite"
           }
         ]
       },
