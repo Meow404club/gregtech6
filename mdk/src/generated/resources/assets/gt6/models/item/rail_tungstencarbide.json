@@ -1,3 +1,6 @@
 {
-  "parent": "gt6:block/rail_tungstencarbide_flat"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "gt6:block/rail_straight_tungstencarbide"
+  }
 }
