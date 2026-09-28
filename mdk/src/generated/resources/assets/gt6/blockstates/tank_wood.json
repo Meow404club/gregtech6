@@ -1,10 +1,12 @@
 {
   "variants": {
     "facing=east,formed=false": {
-      "model": "gt6:block/tank_wood"
+      "model": "gt6:block/tank_wood",
+      "y": 90
     },
     "facing=east,formed=true": {
-      "model": "gt6:block/tank_wood"
+      "model": "gt6:block/tank_wood",
+      "y": 90
     },
     "facing=north,formed=false": {
       "model": "gt6:block/tank_wood"
@@ -13,16 +15,20 @@
       "model": "gt6:block/tank_wood"
     },
     "facing=south,formed=false": {
-      "model": "gt6:block/tank_wood"
+      "model": "gt6:block/tank_wood",
+      "y": 180
     },
     "facing=south,formed=true": {
-      "model": "gt6:block/tank_wood"
+      "model": "gt6:block/tank_wood",
+      "y": 180
     },
     "facing=west,formed=false": {
-      "model": "gt6:block/tank_wood"
+      "model": "gt6:block/tank_wood",
+      "y": 270
     },
     "facing=west,formed=true": {
-      "model": "gt6:block/tank_wood"
+      "model": "gt6:block/tank_wood",
+      "y": 270
     }
   }
 }

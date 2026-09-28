@@ -9658,3 +9658,91 @@ DECLARED DEFERS (not this card):
 - Spray-paint persistence on pipe drops (the GTItemPaintTint lambda reads paint NBT if a
   stack ever carries it; the pipe BlockItems do not write BE NBT on drop yet — a pipe
   BEHAVIOUR gap, not a texture gap).
+
+Tank family block textures, task r8-tex-tank-family: the 42 PNGs under
+`gt6/textures/block/barrel_parts/` and `gt6/textures/block/tank_valves/` come from
+upstream `src/main/resources/assets/gregtech/textures/blocks/machines/`, byte-identical
+to upstream (cmp-verified at copy time), sha256 verified. This section SUPERSEDES the
+p20-borrow-tank-barrel-pipe barrel declaration above (the single-texture flattening and
+its "no overlay group" simplifications): the barrels render the upstream two-layer
+BlockTextureMulti(colored x mRGBa, overlay) stack per face
+(MultiTileEntityBarrelWood.java:44-55; Plastic:42-48; Metal(drum):39-45), and the tank
+valve controllers render the Base10 front-layer-pair form
+(TileEntityBase10MultiBlockBase.java:192-194 — front face = colored_front +
+overlay_front, remaining faces = colored + overlay).
+
+Barrel borrows (18) — upstream `machines/tanks/<family>/<layer>/<face>.png` flattens to
+`barrel_parts/<family>/<layer>_<face>.png`, family = the upstream iconset name
+(barrel = the wood row, drum = the metal row + the 12 high-tier drums, plasticcan =
+the plastic row):
+
+- `barrel_parts/barrel/colored_bottom.png`   `6ec21c5ccdc13f6f074c33ec28b681b99bb68fa74b21e5afd506a09516cffca6`
+- `barrel_parts/barrel/colored_side.png`     `24c4d75618258809715e41527b5189351ef4870e0372a07463bfd266a883e6d0` (= the retired `barrel_wood.png`)
+- `barrel_parts/barrel/colored_top.png`      `6ec21c5ccdc13f6f074c33ec28b681b99bb68fa74b21e5afd506a09516cffca6`
+- `barrel_parts/barrel/overlay_bottom.png`   `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `barrel_parts/barrel/overlay_side.png`     `1811b125f6615a5d2beb449d0da4067f865608dfd131cc276c67db4a3e50a1f1`
+- `barrel_parts/barrel/overlay_top.png`      `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `barrel_parts/drum/colored_bottom.png`     `97fb9fe4b51cd9816a6cf01bf68141d697067728b876fcab5bd46e98b48a13b0`
+- `barrel_parts/drum/colored_side.png`       `deec36f927d4d298723212a1a70c6e465465e82ed07d522fbd6b41b186a59b4a` (= the retired `barrel_metal.png`)
+- `barrel_parts/drum/colored_top.png`        `8274e44911ca6b061bf2a1e36a5754e41fe9f3c51eaac361502e30265ba58e1a`
+- `barrel_parts/drum/overlay_bottom.png`     `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `barrel_parts/drum/overlay_side.png`       `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `barrel_parts/drum/overlay_top.png`        `353a0735ea6b0ea3ce26bc3063f7439bfe4f8421710fa89008b8a6a57c6295d2`
+- `barrel_parts/plasticcan/colored_bottom.png` `c696979c208e967f0fb43e2fc1d15d70209c4854b4b61aa3608eabf03f85c754`
+- `barrel_parts/plasticcan/colored_side.png` `c696979c208e967f0fb43e2fc1d15d70209c4854b4b61aa3608eabf03f85c754` (= the retired `barrel_plastic.png`)
+- `barrel_parts/plasticcan/colored_top.png`  `4b5f48d000e54859f8271eee6ebdeadc63bf7bc9d40e08acebe6161298edc19f`
+- `barrel_parts/plasticcan/overlay_bottom.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `barrel_parts/plasticcan/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `barrel_parts/plasticcan/overlay_top.png`  `9f726ce665f1b8f9899814225917f201ce16311c7648c45d79e561e81432fae0`
+
+The three retired single-texture borrows (`barrel_wood.png`, `barrel_plastic.png`,
+`barrel_metal.png` — their content survives as the `<family>/colored_side.png` borrows
+above, sha256 unchanged) are DELETED: the per-face two-layer models replaced them.
+`barrel_logistics.png` is NOT touched (the p12 row byte-exact, sha256 re-verified
+`f348ace8e2d98ed701a060a87c4c66ec25b708449cd96611b66aa01cc9c595f1`) — the logistics
+row keeps its single-texture form this card, its two-layer borrow
+(`machines/tanks/logistics/` colored+overlay 3+3) is a declared follow-up. The barrel
+TESR/lid omission stays declared (MultiTileEntityBarrelWood.java:44-54). The remaining
+tanks families (thermos/jug/cup/cell/measuring_pot/barometer_gas_cylinder) are NOT
+ported as blocks (feature gap, not a texture gap — the r8-tex-r1 census); their
+textures stay unborrowed.
+
+Valve borrows (24) — upstream
+`machines/multiblockmains/<family>/<layer>/<face>.png` flattens to
+`tank_valves/<family>_<layer>_<face>.png`, family = tankwood (the one flammable row)
+/ tankmetal (the 24 metal rows):
+
+- `tank_valves/tankwood_colored_bottom.png`        `84fbf7592063f4e3a573e5f16380a8a1036762efa15fd8cefb5c93b4983b85ee`
+- `tank_valves/tankwood_colored_side.png`          `84fbf7592063f4e3a573e5f16380a8a1036762efa15fd8cefb5c93b4983b85ee`
+- `tank_valves/tankwood_colored_top.png`           `84fbf7592063f4e3a573e5f16380a8a1036762efa15fd8cefb5c93b4983b85ee`
+- `tank_valves/tankwood_colored_front_bottom.png`  `84fbf7592063f4e3a573e5f16380a8a1036762efa15fd8cefb5c93b4983b85ee`
+- `tank_valves/tankwood_colored_front_side.png`    `84fbf7592063f4e3a573e5f16380a8a1036762efa15fd8cefb5c93b4983b85ee`
+- `tank_valves/tankwood_colored_front_top.png`     `84fbf7592063f4e3a573e5f16380a8a1036762efa15fd8cefb5c93b4983b85ee`
+- `tank_valves/tankwood_overlay_bottom.png`        `42492b4a8a79c6a7c1c340b2a3a6628db0fecb68237aa2a02a75482517b61e0e`
+- `tank_valves/tankwood_overlay_side.png`          `c95714eaee8b875393a7f5b22ce71d9e5b6a21596d71810ada3873b96f95609c`
+- `tank_valves/tankwood_overlay_top.png`           `42492b4a8a79c6a7c1c340b2a3a6628db0fecb68237aa2a02a75482517b61e0e`
+- `tank_valves/tankwood_overlay_front_bottom.png`  `7cb53218fd3a8a9e8dfe1eb08e29990993c58e1c8ff0f0e517b65c1d264161da`
+- `tank_valves/tankwood_overlay_front_side.png`    `50d66eb5cb4a4aad162981044ddac3b28260ce8b839159f8ec771a43fca3429f`
+- `tank_valves/tankwood_overlay_front_top.png`     `84dc0ec51853d324af69084abbb34a4795c8ab265d578d4385bfc7240f3ae67f`
+- `tank_valves/tankmetal_colored_bottom.png`       `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `tank_valves/tankmetal_colored_side.png`         `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `tank_valves/tankmetal_colored_top.png`          `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `tank_valves/tankmetal_colored_front_bottom.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `tank_valves/tankmetal_colored_front_side.png`   `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `tank_valves/tankmetal_colored_front_top.png`    `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `tank_valves/tankmetal_overlay_bottom.png`       `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+- `tank_valves/tankmetal_overlay_side.png`         `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+- `tank_valves/tankmetal_overlay_top.png`          `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+- `tank_valves/tankmetal_overlay_front_bottom.png` `7cb53218fd3a8a9e8dfe1eb08e29990993c58e1c8ff0f0e517b65c1d264161da`
+- `tank_valves/tankmetal_overlay_front_side.png`   `84dc0ec51853d324af69084abbb34a4795c8ab265d578d4385bfc7240f3ae67f`
+- `tank_valves/tankmetal_overlay_front_top.png`    `84dc0ec51853d324af69084abbb34a4795c8ab265d578d4385bfc7240f3ae67f`
+
+Consumption note: the port valve FACING is horizontal-only
+(BlockStateProperties.HORIZONTAL_FACING), so the models consume the front-pair
+`_side` art only (a horizontal front face always reads the set's side sprite);
+the `colored_front_{bottom,top}` / `overlay_front_{bottom,top}` quartet per family
+is borrowed for family completeness (the upstream vertical-facing art) and sits as
+orientation reserve — the models do not reference it. The woodwall/metalwall part
+borrows the p29 valve models used before this card are released (the part textures
+stay owned by their own part blocks). The formed-look visual stays the p9 render
+pool, as declared since p29.

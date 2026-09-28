@@ -44,15 +44,128 @@
         16,
         16
       ]
+    },
+    {
+      "faces": {
+        "north": {
+          "cullface": "north",
+          "texture": "#overlay_front_side"
+        }
+      },
+      "from": [
+        0,
+        0,
+        -0.01
+      ],
+      "to": [
+        16,
+        16,
+        0
+      ]
+    },
+    {
+      "faces": {
+        "south": {
+          "cullface": "south",
+          "texture": "#overlay_side"
+        }
+      },
+      "from": [
+        0,
+        0,
+        16
+      ],
+      "to": [
+        16,
+        16,
+        16.01
+      ]
+    },
+    {
+      "faces": {
+        "west": {
+          "cullface": "west",
+          "texture": "#overlay_side"
+        }
+      },
+      "from": [
+        -0.01,
+        0,
+        0
+      ],
+      "to": [
+        0,
+        16,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "cullface": "east",
+          "texture": "#overlay_side"
+        }
+      },
+      "from": [
+        16,
+        0,
+        0
+      ],
+      "to": [
+        16.01,
+        16,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#overlay_bottom"
+        }
+      },
+      "from": [
+        0,
+        -0.01,
+        0
+      ],
+      "to": [
+        16,
+        0,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "up": {
+          "cullface": "up",
+          "texture": "#overlay_top"
+        }
+      },
+      "from": [
+        0,
+        16,
+        0
+      ],
+      "to": [
+        16,
+        16.01,
+        16
+      ]
     }
   ],
   "render_type": "minecraft:cutout",
   "textures": {
-    "down": "gt6:block/parts/woodwall/0/colored/bottom",
-    "east": "gt6:block/parts/woodwall/0/colored/side",
-    "north": "gt6:block/parts/woodwall/0/colored/side",
-    "south": "gt6:block/parts/woodwall/0/colored/side",
-    "up": "gt6:block/parts/woodwall/0/colored/top",
-    "west": "gt6:block/parts/woodwall/0/colored/side"
+    "down": "gt6:block/tank_valves/tankwood_colored_bottom",
+    "east": "gt6:block/tank_valves/tankwood_colored_side",
+    "north": "gt6:block/tank_valves/tankwood_colored_front_side",
+    "overlay_bottom": "gt6:block/tank_valves/tankwood_overlay_bottom",
+    "overlay_front_side": "gt6:block/tank_valves/tankwood_overlay_front_side",
+    "overlay_side": "gt6:block/tank_valves/tankwood_overlay_side",
+    "overlay_top": "gt6:block/tank_valves/tankwood_overlay_top",
+    "particle": "gt6:block/tank_valves/tankwood_colored_side",
+    "south": "gt6:block/tank_valves/tankwood_colored_side",
+    "up": "gt6:block/tank_valves/tankwood_colored_top",
+    "west": "gt6:block/tank_valves/tankwood_colored_side"
   }
 }
