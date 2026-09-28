@@ -906,6 +906,14 @@ direct	gt6.cover.robot_arm.display	小型机械臂 (%s)	hand
 direct	gt6.cover.selector_tag.display	标签选择器 (%s)	hand
 direct	gt6.foamspray.owned	干燥后仅所有者可破坏	hand
 direct	gt6.foamspray.paint	可以喷射%s泡沫	hand
+direct	gt6.jade.boiler.demand	需求: %s HU/t	hand
+direct	gt6.jade.boiler.gate.above	输出门: 已开启，从顶面输出（超 3/4 罐时双倍速率）	hand
+direct	gt6.jade.boiler.gate.below	输出门: 未达半罐 (%s / %s L)，过半后从顶面输出	hand
+direct	gt6.jade.boiler.heat	储存热量: %s / %s HU	hand
+direct	gt6.jade.boiler.no_water	警告: 缺水!!!	hand
+direct	gt6.jade.boiler.scale	水垢: %s%%	hand
+direct	gt6.jade.boiler.scale.clean	锅炉无水垢	hand
+direct	gt6.jade.boiler.water	水: %s / %s L	hand
 direct	gt6.jade.crucible.empty	空	hand
 direct	gt6.jade.crucible.more	+%s 种	hand
 direct	gt6.jade.crucible.temperature	温度: %s K / %s K	hand

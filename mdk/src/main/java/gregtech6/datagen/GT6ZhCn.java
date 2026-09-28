@@ -14,6 +14,7 @@ import gregapi.oredict.OreDictPrefix;
 import gregtech6.fluid.GTFluids;
 import gregtech6.item.GT6Circuits;
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.jade.GT6BoilerProvider;
 import gregtech6.jade.GT6FluidProvider;
 import gregtech6.jade.GT6MachineProvider;
 import gregtech6.jei.GT6JeiPlugin;
@@ -114,6 +115,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addKitchenUnits();      // task p26-kitchen-pot-bowl
 		addCrucibleJadeUnits(); // task p28-crucible-jade-face
 		addMachineJadeUnits();  // task p34-hygiene-lang — the machine/fluid jade band (hand rows, the tsv direct band)
+		addBoilerJadeUnits();   // task r5-jade-boiler — the boiler jade band (hand rows, the tsv direct band)
 		addAnvilUnits();        // task p28-c-anvil
 		addPocketUnits();       // task p29-w5-t7-pocket-eight — the 8+7 pocket face (hand rows, no dump face exists)
 		addArmorUnits();        // task p29-w5-t8-armor-24
@@ -431,6 +433,27 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(GT6MachineProvider.LANG_ERROR);
 		addDirect(GT6FluidProvider.LANG_GROUP_IN);
 		addDirect(GT6FluidProvider.LANG_GROUP_OUT);
+	}
+
+	/**
+	 * The boiler Jade face zh units (task r5-jade-boiler, 8 hand rows — the
+	 * addMachineJadeUnits shape): the heat/demand lines, the two output-gate states and
+	 * the sneak-detail band (calcification %, clean face, water amount, no-water
+	 * warning). No dump face exists (upstream has zero WAILA integration), so these ride
+	 * the reference table's hand layer via {@link #addDirect} — the tsv rows, this walk
+	 * and the datagen output land in the SAME commit (the noHandRowIsOrphaned pin
+	 * otherwise surfaces the gap). The HU unit and the "WARNING: NO WATER!!!" alarm face
+	 * stay bare per the crucible K-unit convention (the thermometer anchor untranslated).
+	 */
+	private void addBoilerJadeUnits() {
+		addDirect(GT6BoilerProvider.LANG_HEAT);
+		addDirect(GT6BoilerProvider.LANG_DEMAND);
+		addDirect(GT6BoilerProvider.LANG_GATE_BELOW);
+		addDirect(GT6BoilerProvider.LANG_GATE_ABOVE);
+		addDirect(GT6BoilerProvider.LANG_SCALE);
+		addDirect(GT6BoilerProvider.LANG_SCALE_CLEAN);
+		addDirect(GT6BoilerProvider.LANG_WATER);
+		addDirect(GT6BoilerProvider.LANG_NO_WATER);
 	}
 
 	/**

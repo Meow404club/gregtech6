@@ -47,6 +47,12 @@ public class GT6MachineProviderTest extends GTOfflineTestBase {
 
 	@BeforeAll
 	static void fixture() {
+		// the neo-leg FML test boot constructs the mod, so the PRODUCTION maps
+		// (GT6RecipeMaps.java:979 "gt.recipe.shredder") already sit in RecipeMap.RECIPE_MAPS
+		// when this fixture runs — a bare-JVM assumption the forge leg never exposed. Drop
+		// the generation first (the same registry this class hands back clean via @AfterAll):
+		// the fixture map registers into a clean, order- and boot-shape-independent registry.
+		gregtech6.recipes.GT6RecipeMaps.reset();
 		RecipeMap tMap = new RecipeMap(new HashSet<>(),
 				"gt.recipe.shredder", "Shredder", null,
 				0, 1,

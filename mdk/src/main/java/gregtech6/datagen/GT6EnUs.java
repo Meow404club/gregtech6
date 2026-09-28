@@ -39,6 +39,7 @@ import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GTWireSpecs;
 import gregtech6.registry.GTWires;
 import gregtech6.covers.GT6Covers;
+import gregtech6.jade.GT6BoilerProvider;
 import gregtech6.jade.GT6FluidProvider;
 import gregtech6.jade.GT6MachineProvider;
 import gregtech6.worldgen.GT6OreGenInfoLayout;
@@ -151,6 +152,7 @@ public class GT6EnUs extends LanguageProvider {
         addCrucibleJade(); // task p28-crucible-jade-face — table-tail append
         addMachineJade(); // task p34-hygiene-lang — table-tail append
         addFluidJade(); // task p34-hygiene-lang — table-tail append
+        addBoilerJade(); // task r5-jade-boiler — table-tail append
         addPocketTools(); // task p29-w5-t7-pocket-eight — table-tail append
         addArmor(); // task p29-w5-t8-armor-24 — table-tail append
         addTreeBlocks(); // task p30-w6-t1-trees-nine — table-tail append
@@ -2162,6 +2164,30 @@ public class GT6EnUs extends LanguageProvider {
         add(GT6FluidProvider.LANG_GROUP_IN, GT6FluidProvider.GROUP_IN);
         add(GT6FluidProvider.LANG_GROUP_OUT, GT6FluidProvider.GROUP_OUT);
     }
+
+    /**
+     * The boiler Jade face keys (task r5-jade-boiler, 8 keys): the heat line (stored/max
+     * HU — the upstream thermometer wording, MultiTileEntityBoilerTank.java:182), the
+     * demand line (mOutput/2 HU/t, the getEnergyDemanded value), the two output-gate
+     * states (below half = not emitting + the past-half promise; open = the compact form
+     * carrying the 3/4 double-rate note — upstream :139-142/:203-207 pure behavior, no
+     * text) and the sneak-detail band (calcification %, the clean face, water amount,
+     * the no-water warning — the upstream magnifyingglass wording :414-421 verbatim).
+     * The {@code %%} escape renders a literal percent (TranslatableContents.java:80-81).
+     * Consumed by GT6BoilerProvider (the lang constants live there); zh faces ride the
+     * reference table's hand layer via GT6ZhCn.addBoilerJadeUnits.
+     */
+    private void addBoilerJade() {
+        add(GT6BoilerProvider.LANG_HEAT, "Stored Heat Units: %s / %s HU");
+        add(GT6BoilerProvider.LANG_DEMAND, "Demand: %s HU/t");
+        add(GT6BoilerProvider.LANG_GATE_BELOW, "Output gate: below half tank (%s / %s L) — steam outputs from the top once past half");
+        add(GT6BoilerProvider.LANG_GATE_ABOVE, "Output gate: open — steam outputs from the top (double rate above 3/4 tank)");
+        add(GT6BoilerProvider.LANG_SCALE, "Calcification: %s%%");
+        add(GT6BoilerProvider.LANG_SCALE_CLEAN, "No Calcification in this Boiler");
+        add(GT6BoilerProvider.LANG_WATER, "Water: %s / %s L");
+        add(GT6BoilerProvider.LANG_NO_WATER, "WARNING: NO WATER!!!");
+    }
+
     /**
      * Pocket multitool family keys (task p29-w5-t7-pocket-eight): the eight display names
      * (the upstream registration rows Loader_Tools.java:176-183 VERBATIM — "Pocket

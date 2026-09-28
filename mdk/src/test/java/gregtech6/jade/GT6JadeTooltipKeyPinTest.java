@@ -32,7 +32,8 @@ public class GT6JadeTooltipKeyPinTest {
 	/** The keyed providers — source paths relative to the mdk root. */
 	private static final List<String> PINNED_SOURCES = List.of(
 			"src/main/java/gregtech6/jade/GT6MachineProvider.java",
-			"src/main/java/gregtech6/jade/GT6FluidProvider.java");
+			"src/main/java/gregtech6/jade/GT6FluidProvider.java",
+			"src/main/java/gregtech6/jade/GT6BoilerProvider.java");
 
 	@Test
 	public void keyedProvidersCarryZeroBareLiterals() throws IOException {
