@@ -36,8 +36,8 @@ import net.minecraft.core.registries.Registries;
 
 /**
  * Loot tables of the ore universe (task p30-ore-4-loot): one table per block of the
- * 3922-block per-pair registration walk ({@link GT6OreBlocks#blocks()}, 26 stone families
- * x 53 materials x the family's forms), at the vanilla default {@code gt6:blocks/<path>}
+ * 4884-block per-pair registration walk ({@link GT6OreBlocks#blocks()}, 26 stone families
+ * x 66 materials x the family's forms), at the vanilla default {@code gt6:blocks/<path>}
  * location — zero block code, the {@link GT6StoneBlockLoot} per-pair precedent. The
  * sub-provider rides the existing {@link GT6LootTables} provider via the single
  * tail-appended {@code SubProviderEntry} line (the shared-seam ruling).
@@ -140,7 +140,7 @@ public final class GT6OreLootTables {
         };
     }
 
-    /** The 3922 ore blocks in registration order — the getKnownBlocks narrowing face. */
+    /** The 4884 ore blocks in registration order — the getKnownBlocks narrowing face. */
     public static List<Block> oreLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();
         for (GT6OreBlocks.OreKey tKey : GT6OreBlocks.blocks().keySet()) rBlocks.add(GT6OreBlocks.blocks().get(tKey).get());
@@ -149,7 +149,7 @@ public final class GT6OreLootTables {
 
     /**
      * The ore sub-provider — the {@link GT6StoneBlockLoot} per-pair shape over the
-     * {@link GT6OreBlocks} walk, getKnownBlocks narrowed to exactly the 3922 (the
+     * {@link GT6OreBlocks} walk, getKnownBlocks narrowed to exactly the 4884 (the
      * GT6LootTables iron rule, GT6LootTables.java:43-64).
      */
     public static final class GT6OreBlockLoot extends BlockLootSubProvider {

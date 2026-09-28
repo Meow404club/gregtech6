@@ -57,14 +57,15 @@ import gregtech6.item.GTMaterialPrefixBlockItem;
  * That is <b>74 form-rows per material</b> (22x3 + 4x2), the architect's pinned
  * enumeration (tasks.p30-arch-ore-registration.enumeration.block_rows_per_material).
  *
- * <p><b>Material axis M</b> (the reviewer-corrected口径, 2026-09-16): the upstream
- * always-on worldgen small-ore materials (Loader_Worldgen.java:800-852 + :875 —
- * {@link #WORLDGEN_ORES}), each passing the authoritative {@link OP#ore}
+ * <p><b>Material axis M</b> (the reviewer-corrected口径, 2026-09-16, extended 2026-09-28 by
+ * task r7-a-ore-axis-extension): the upstream always-on worldgen small-ore materials
+ * (Loader_Worldgen.java:800-852 + :875 — {@link #WORLDGEN_ORES}) UNION the stone-layer
+ * companion materials ({@link #STONE_LAYER_ORES}, the r6-c3 lens preconditions), each
+ * passing the authoritative {@link OP#ore}
  * {@code isGeneratingItem} filter (OP.java:1098 setCondition(ORES); the same
  * per-material criterion as the GTMaterialItems.java:146 item walk), UNIFIED across
- * all 26 families and all three forms. M = 53 distinct materials (54 worldgen rows,
- * the redcinnabar/cinnabar pair sharing one material); total blocks = 74 x 53 = 3922,
- * the architect enumeration table's "~4000 magnitude", pinned by
+ * all 26 families and all three forms. M = 53 + 13 = 66 distinct materials; total
+ * blocks = 74 x 66 = 4884, pinned by
  * GT6OreBlocksRegistrationTest. (The bare isGeneratingItem walk over the whole
  * MATERIAL_ARRAY measures 618 — nine tenths of it materials no ore placement ever
  * references; that over-registration face was REJECTED in review and removed.)
@@ -318,9 +319,10 @@ public final class GT6OreBlocks {
      * was rejected): the 53 unconditional WorldgenOresSmall rows (Loader_Worldgen.java
      * :800-852 — every gate-T row; redcinnabar :828 and cinnabar :851 both carry
      * MT.OREMATS.Cinnabar, so the rows collapse to 51 distinct materials) + nikolite
-     * (:875, the !mHidden row) = <b>53 distinct materials</b> → 74 x 53 = 3922 blocks
-     * (the architect's "~4000 magnitude" band; their "M>=54" counted ROWS, not unique
-     * materials). The 21 mod-gated rows (:854-874, MD.AA/AE/ARS/HEX/TC/IHL) and the
+     * (:875, the !mHidden row) = <b>53 distinct materials</b> — the small-ore half of the
+     * axis (the stone-layer companions of {@link #STONE_LAYER_ORES} union in separately, so
+     * this list keeps its small-ore-row meaning pure). The 21 mod-gated rows (:854-874,
+     * MD.AA/AE/ARS/HEX/TC/IHL) and the
      * RANDOM_SMALL_GEM loop (:877-880, GEN_GEMS) and the large-vein materials (:886-925,
      * the t3 card's consumption) stay OUT — the mod-gated faces are the compat cards'
      * pool, upstream's own out-of-scope ruling.
@@ -355,26 +357,64 @@ public final class GT6OreBlocks {
     );
 
     /**
-     * The material axis M (the reviewer-corrected口径, 2026-09-16): the upstream
-     * always-on worldgen small-ore materials ({@link #WORLDGEN_ORES}, Loader_Worldgen
-     * .java:800-852 + :875), each passing the authoritative oredict filter
-     * {@link OP#ore} {@code isGeneratingItem} (OP.java:1098 setCondition(ORES) — the
-     * same per-material criterion as the GTMaterialItems.java:146 item walk, whose
-     * resolve/dedup shape this walk mirrors), unified across all families and forms.
-     * M = 53, total 74 x 53 = 3922, pinned by GT6OreBlocksRegistrationTest.
+     * The stone-layer companion materials (task r7-a-ore-axis-extension, the r6-c3 lens
+     * precondition, user C-tier "complete & self-consistent" ruling, plan B): the 13
+     * distinct companion materials the upstream stone-layer rows place as REAL ore blocks —
+     * StoneLayerOres.normal/small → {@code placeBlock(mMaterial.mID)} (StoneLayer.java:124-126,
+     * {@code mOre = BlocksGT.stoneToNormalOres}) — that sit OUTSIDE {@link #WORLDGEN_ORES}.
+     * Upstream rows (WorldgenStoneLayers, the r6-c3 lens table): komatiite Peridot; kimberlite
+     * Uvarovite/Grossular; basalt Chromite; marble Spinel/BalasRuby; granite_red
+     * Pitchblende/Uraninite (HBM-gated rows register unconditionally); plus Tantalite/
+     * Columbite/MgCO3/Stannite/Kesterite. Coltan is NOT here (already in WORLDGEN_ORES :836);
+     * Columbite (9246) is a distinct material and joins the axis here.
+     *
+     * <p>Union semantics: NOT always-on small ores — the 13 gain no WorldgenOresSmall rows
+     * and {@link #WORLDGEN_ORES} keeps its small-ore-row meaning pure. They only become
+     * registrable block faces (26 families x 74 form-rows each) and valid large-vein slots
+     * (GT6VeinGenerator.valid filters on this axis — the pitchblende/garnet/peridot rows
+     * revive, declared on the task card).
+     *
+     * <p>Suppliers again (post-OP.init resolution — the {@link OreFamily} lesson).
+     */
+    public static final List<Supplier<OreDictMaterial>> STONE_LAYER_ORES = List.of(
+        () -> MT.Peridot,                   () -> MT.Uvarovite,            () -> MT.Grossular,             // komatiite/kimberlite companions
+        () -> MT.OREMATS.Chromite,          () -> MT.Spinel,               () -> MT.BalasRuby,             // basalt/marble companions
+        () -> MT.OREMATS.Pitchblende,       () -> MT.OREMATS.Uraninite,                                    // granite_red companions
+        () -> MT.OREMATS.Tantalite,         () -> MT.OREMATS.Columbite,    () -> MT.MgCO3,                 // Coltan-family + carbonate
+        () -> MT.OREMATS.Stannite,          () -> MT.OREMATS.Kesterite                                     // the copper-tin-sulfide pair
+    );
+
+    /**
+     * The material axis M (the reviewer-corrected口径, 2026-09-16, extended by
+     * r7-a-ore-axis-extension): the upstream always-on worldgen small-ore materials
+     * ({@link #WORLDGEN_ORES}, Loader_Worldgen.java:800-852 + :875) UNION the stone-layer
+     * companion materials ({@link #STONE_LAYER_ORES}, the r6-c3 lens preconditions), each
+     * passing the authoritative oredict filter {@link OP#ore} {@code isGeneratingItem}
+     * (OP.java:1098 setCondition(ORES) — the same per-material criterion as the
+     * GTMaterialItems.java:146 item walk, whose resolve/dedup shape this walk mirrors),
+     * unified across all families and forms. M = 53 + 13 = 66, total 74 x 66 = 4884,
+     * pinned by GT6OreBlocksRegistrationTest.
      */
     public static List<OreDictMaterial> materialAxis() {
         Set<OreDictMaterial> tSeen = Collections.newSetFromMap(new IdentityHashMap<>());
         List<OreDictMaterial> rAxis = new ArrayList<>();
         for (Supplier<OreDictMaterial> tSupply : WORLDGEN_ORES) {
-            OreDictMaterial tMaterial = tSupply.get();
-            if (tMaterial == null || tMaterial.mID < 0) continue;
-            tMaterial = MaterialRegistry.INSTANCE.get(tMaterial); // alias slot -> target (MaterialRegistry.java:182-185)
-            if (tMaterial == null || tMaterial.mID < 0 || !tSeen.add(tMaterial)) continue;
-            if (!OP.ore.isGeneratingItem(tMaterial)) continue; // OP.java:1098 setCondition(ORES), the authoritative filter
-            rAxis.add(tMaterial);
+            addAxisMember(tSupply, tSeen, rAxis);
+        }
+        for (Supplier<OreDictMaterial> tSupply : STONE_LAYER_ORES) {
+            addAxisMember(tSupply, tSeen, rAxis);
         }
         return rAxis;
+    }
+
+    /** One axis-member resolve: null/alias/isGeneratingItem gates + identity dedup (the GTMaterialItems walk shape). */
+    private static void addAxisMember(Supplier<OreDictMaterial> aSupply, Set<OreDictMaterial> aSeen, List<OreDictMaterial> aAxis) {
+        OreDictMaterial tMaterial = aSupply.get();
+        if (tMaterial == null || tMaterial.mID < 0) return;
+        tMaterial = MaterialRegistry.INSTANCE.get(tMaterial); // alias slot -> target (MaterialRegistry.java:182-185)
+        if (tMaterial == null || tMaterial.mID < 0 || !aSeen.add(tMaterial)) return;
+        if (!OP.ore.isGeneratingItem(tMaterial)) return; // OP.java:1098 setCondition(ORES), the authoritative filter
+        aAxis.add(tMaterial);
     }
 
     /** The single definition site of the per-pair id scheme: {@code ore[_broken|_small]_<family>_<material>}. */

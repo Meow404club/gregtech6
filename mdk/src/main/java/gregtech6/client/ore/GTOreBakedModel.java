@@ -74,7 +74,7 @@ import gregtech6.registry.GT6OreBlocks;
  *
  * <p>JSON discipline (the task-card anti-bloat pin): the blockstate/model JSON face stays
  * SHARED — one placeholder cube per distinct BASE texture ({@code GT6OreBlockStates}, 28
- * models over the 3922 blocks) — and this model does the dual-sprite work at bake time, so
+ * models over the 4884 blocks) — and this model does the dual-sprite work at bake time, so
  * the wave never emits a per-pair (red line) or even per-(base,SET) model JSON. The
  * placeholder models still reference the base texture (atlas stitching + a graceful
  * pre-wrap fallback); the OVERLAY sprites are referenced from NO JSON model, so they are

@@ -95,20 +95,29 @@ public final class GT6SurfaceBlocks {
 			new IndicatorSpec("zeolite",      () -> MT.OREMATS.Zeolite),      // ore.large.iodinesalt spread
 			new IndicatorSpec("sylvite",      () -> MT.KCl),                  // ore.large.rocksalt top
 			new IndicatorSpec("coltan",       () -> MT.OREMATS.Coltan),       // ore.large.rocksalt bottom / manganese spread
+			new IndicatorSpec("chromite",     () -> MT.OREMATS.Chromite),             // ore.large.asbestos top (r7-a-ore-axis-extension: the stone-layer axis member)
 			new IndicatorSpec("asbestos",     () -> MT.Asbestos),             // ore.large.asbestos spread
+			new IndicatorSpec("uvarovite",    () -> MT.Uvarovite),            // ore.large.garnet spread (r7-a-ore-axis-extension)
+			new IndicatorSpec("pitchblende",  () -> MT.OREMATS.Pitchblende),  // ore.large.pitchblende top/bottom (r7-a-ore-axis-extension)
+			new IndicatorSpec("uraninite",    () -> MT.OREMATS.Uraninite),            // ore.large.pitchblende between/spread (r7-a-ore-axis-extension)
 			new IndicatorSpec("graphite",     () -> MT.Graphite),             // ore.large.diamond top/bottom/spread
 			new IndicatorSpec("diamond",      () -> MT.Diamond),              // ore.large.diamond between
 			new IndicatorSpec("galena",       () -> MT.OREMATS.Galena),       // ore.large.galena top/bottom
 			new IndicatorSpec("silver",      () -> MT.Ag),                   // ore.large.galena between
 			new IndicatorSpec("lead",        () -> MT.Pb),                   // ore.large.galena spread
+			new IndicatorSpec("magnesium_carbonate", () -> MT.MgCO3),        // ore.large.peridot bottom (r7-a-ore-axis-extension)
+			new IndicatorSpec("peridot",      () -> MT.Peridot),              // ore.large.peridot between (r7-a-ore-axis-extension)
 			new IndicatorSpec("pyrite",       () -> MT.Pyrite),               // ore.large.gold top / copper between
 			new IndicatorSpec("chalcopyrite", () -> MT.OREMATS.Chalcopyrite), // ore.large.gold bottom / copper top
 			new IndicatorSpec("gold",        () -> MT.Au),                   // ore.large.gold spread
 			new IndicatorSpec("cooperite",    () -> MT.OREMATS.Cooperite),    // ore.large.platinum top
 			new IndicatorSpec("sperrylite",   () -> MT.OREMATS.Sperrylite),   // ore.large.platinum between
 			new IndicatorSpec("iridium",     () -> MT.Ir),                   // ore.large.platinum spread
+			new IndicatorSpec("stannite",     () -> MT.OREMATS.Stannite),     // ore.large.cassiterite top (r7-a-ore-axis-extension)
+			new IndicatorSpec("kesterite",    () -> MT.OREMATS.Kesterite),    // ore.large.cassiterite bottom (r7-a-ore-axis-extension)
 			new IndicatorSpec("cassiterite",  () -> MT.OREMATS.Cassiterite),  // ore.large.cassiterite spread
 			new IndicatorSpec("scheelite",    () -> MT.OREMATS.Scheelite),    // ore.large.tungstate top
+			new IndicatorSpec("grossular",    () -> MT.Grossular),            // ore.large.manganese top (r7-a-ore-axis-extension)
 			new IndicatorSpec("pyrolusite",   () -> MT.MnO2),                 // ore.large.manganese between
 			new IndicatorSpec("garnierite",   () -> MT.OREMATS.Garnierite),   // ore.large.nickel top
 			new IndicatorSpec("pentlandite",  () -> MT.OREMATS.Pentlandite),  // ore.large.nickel spread
@@ -119,7 +128,7 @@ public final class GT6SurfaceBlocks {
 			new IndicatorSpec("hematite",     () -> MT.Fe2O3),                // ore.large.iron between / copper bottom
 			new IndicatorSpec("malachite",    () -> MT.OREMATS.Malachite));   // ore.large.iron spread
 
-	/** The 31 indicator rock handles, INDICATOR_SPECS order. */
+	/** The 40 indicator rock handles, INDICATOR_SPECS order (31 + 9 since r7-a-ore-axis-extension lit the dormant slots). */
 	public static final List<RegistryObject<Block>> INDICATOR_ROCKS = INDICATOR_SPECS.stream()
 			.map(tRow -> BLOCKS.<Block>register("surface_rock_" + tRow.snake(),
 					() -> new GT6SurfaceRockBlock(surfaceProperties(MapColor.COLOR_GRAY, SoundType.STONE), tRow.material().get())))
