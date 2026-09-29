@@ -105,6 +105,18 @@ public final class MaterialTreeWorkstations {
 		return rStacks;
 	}
 
+	/**
+	 * The ONE map's representative machine stack (task r8-mattree-v2-nodes, the v2 node-graph
+	 * machine-icon face): EMPTY when the map has no table row or the handle is unbound — the
+	 * degrade face (the edge renders as a plain arrow, the via-label carries the machine
+	 * names). Offline this is always EMPTY; the live client resolves (the census test pins
+	 * the table against 100% of the displayed mapNames).
+	 */
+	public static ItemStack workstationStack(String aMapName) {
+		Supplier<ItemStack> tSupplier = TABLE.get(aMapName);
+		return tSupplier == null ? ItemStack.EMPTY : tSupplier.get();
+	}
+
 	/** The one registry-dependent face: present-and-bound handle -> stack, anything else -> EMPTY. */
 	//? if forge {
 	private static ItemStack resolve(net.minecraftforge.registries.RegistryObject<Item> aHandle) {

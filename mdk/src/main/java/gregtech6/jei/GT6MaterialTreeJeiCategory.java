@@ -1,14 +1,18 @@
 package gregtech6.jei;
 
+import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotRichTooltipCallback;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 
@@ -16,14 +20,27 @@ import gregtech6.recipes.tree.MaterialTreeDisplay;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Byproduct;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Edge;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Node;
+import gregtech6.recipes.tree.MaterialTreeDisplay.Overflow;
+import gregtech6.recipes.tree.MaterialTreeLayout;
+import gregtech6.recipes.tree.MaterialTreeLayout.EdgeLayout;
+import gregtech6.recipes.tree.MaterialTreeLayout.Rect;
 
 /**
  * The material-tree category of the JEI leg (task debt-material-tree-b, ruling
- * 2026-09-26-debt-material-tree: the display card of the A/B/C split) — the modern
+ * 2026-09-26-debt-material-tree; v2 node-graph face task r8-mattree-v2-nodes) — the modern
  * counterpart of the GTCEu ore_processing_diagram category (GTJEIPlugin.java:65-66), built
  * on THIS port's dynamic derivation instead of their static hand-drawn widget: every slot
- * position comes from the shared {@link MaterialTreeDisplay} table-driven layout, the same
- * functions the EMI twin renders from.
+ * position comes from the shared {@link MaterialTreeDisplay} table-driven layout, every
+ * wire/arrow/machine-box rect from the shared {@link MaterialTreeLayout} — the SAME plans
+ * the EMI twin renders (the 双 viewer 一坐标表 clause).
+ *
+ * <p>v2 rendering: the chain edges are no longer floating "via" text (the v1 mush root
+ * cause) — each hop draws its Manhattan wire + solid arrowhead in the category background
+ * layer (under the slots) and mounts the representative machine stack as a RENDER_ONLY slot
+ * on the edge's midpoint box (a slot that shows and tooltips but never joins lookups), with
+ * the merged "via A/B" label as its rich tooltip. Degraded edges (EMPTY machine stack,
+ * offline-only) keep the v1 text at the shared label spot. Column overflow renders the
+ * explicit "+N" markers ({@link MaterialTreeDisplay#OVERFLOW_Y}) — never silently dropped.
  *
  * <p>Slot semantics (the U/R native reachability clause): the {@code ore*} column nodes
  * ride INPUT slots (U on an ore item opens its tree — the 按材质聚合 mounting), every
@@ -33,9 +50,9 @@ import gregtech6.recipes.tree.MaterialTreeDisplay.Node;
  *
  * <p>Consumed faces (JEI 15.x = 1.20.1-forge and 19.x = 1.21.1-neoforge, identical on this
  * surface — the batch-1 dual-node precedent): {@code IRecipeCategory<T>}, the
- * {@code IRecipeLayoutBuilder} slot builders with rich-tooltip callbacks, and the
- * {@code draw(...)} text leg — loader-neutral common API only. The single leg fork is the
- * usual ResourceLocation constructor (see the batch-1 category).
+ * {@code IRecipeLayoutBuilder} slot builders with rich-tooltip callbacks (RENDER_ONLY role
+ * exists on both generations), and the {@code draw(...)} text/fill leg — loader-neutral
+ * common API only. The single leg fork is the usual ResourceLocation constructor.
  */
 public class GT6MaterialTreeJeiCategory implements IRecipeCategory<MaterialTreeDisplay> {
 
@@ -86,6 +103,19 @@ public class GT6MaterialTreeJeiCategory implements IRecipeCategory<MaterialTreeD
 						.addItemStack(tNode.stack().copy());
 			}
 		}
+		// the v2 machine-icon nodes: RENDER_ONLY with NO background (setStandardSlotBackground is
+		// opt-in on both generations — the bare 16x16 machine icon face), one per machine-resolved
+		// edge, hover box one px around the shared helper's icon rect
+		List<Edge> tEdges = aDisplay.edges();
+		List<EdgeLayout> tLayouts = MaterialTreeLayout.layout(aDisplay);
+		for (int i = 0; i < tEdges.size(); i++) {
+			EdgeLayout tLayout = tLayouts.get(i);
+			if (tLayout.machine() == null) continue;
+			IRecipeSlotBuilder tSlot = aBuilder.addSlot(RecipeIngredientRole.RENDER_ONLY,
+					tLayout.machine().x() - 1, tLayout.machine().y() - 1)
+					.addItemStack(tEdges.get(i).machine().copy());
+			tSlot.addRichTooltipCallback(staticTooltip(tEdges.get(i).viaLabel()));
+		}
 		int i = 0;
 		for (Byproduct tByproduct : aDisplay.byproducts()) {
 			aBuilder.addOutputSlot(MaterialTreeDisplay.columnX(MaterialTreeDisplay.COL_BYPRODUCT), MaterialTreeDisplay.byproductY(i))
@@ -96,9 +126,10 @@ public class GT6MaterialTreeJeiCategory implements IRecipeCategory<MaterialTreeD
 	}
 
 	/**
-	 * The text leg: the material header, the byproduct column header and the machine labels
-	 *贴边 ("via Shredder") at each edge's midpoint — the 机器名标签 clause. Plain literal
-	 * ink like the batch-1 cost band (NEI's fixed 0xFF000000).
+	 * The background layer: the material header, the byproduct column header, the Manhattan
+	 * wires + solid arrowheads (plain {@code fill} — no diagonal primitive on 1.20.1), the
+	 * degraded edges' via-labels and the "+N" overflow markers. Plain literal ink like the
+	 * batch-1 cost band (NEI's fixed 0xFF000000).
 	 */
 	@Override
 	public void draw(MaterialTreeDisplay aDisplay, IRecipeSlotsView aRecipeSlotsView,
@@ -107,23 +138,21 @@ public class GT6MaterialTreeJeiCategory implements IRecipeCategory<MaterialTreeD
 		aGuiGraphics.drawString(tFont, MaterialTreeDisplay.materialName(aDisplay.material), 4, 4, 0xFF000000);
 		aGuiGraphics.drawString(tFont, MaterialTreeDisplay.BYPRODUCT_HEADER,
 				MaterialTreeDisplay.columnX(MaterialTreeDisplay.COL_BYPRODUCT), 4, 0xFF000000);
-		for (Edge tEdge : aDisplay.edges()) {
-			Node tFrom = nodeOf(aDisplay, tEdge.from()), tTo = nodeOf(aDisplay, tEdge.to());
-			if (tFrom == null || tTo == null) continue;
-			StringBuilder tLabel = new StringBuilder(MaterialTreeDisplay.VIA_PREFIX);
-			for (int m = 0; m < tEdge.mapNames().size(); m++) {
-				if (m > 0) tLabel.append('/');
-				tLabel.append(MaterialTreeDisplay.mapLabel(tEdge.mapNames().get(m)));
-			}
-			int tX = MaterialTreeDisplay.nodeX(tFrom) + 16;
-			int tY = (MaterialTreeDisplay.nodeY(tFrom) + MaterialTreeDisplay.nodeY(tTo)) / 2 - 4;
-			aGuiGraphics.drawString(tFont, tLabel.toString(), tX, tY, 0xFF555555);
+		List<Edge> tEdges = aDisplay.edges();
+		List<EdgeLayout> tLayouts = MaterialTreeLayout.layout(aDisplay);
+		for (EdgeLayout tLayout : tLayouts) {
+			for (Rect tRect : tLayout.wire()) aGuiGraphics.fill(tRect.x(), tRect.y(), tRect.x() + tRect.w(), tRect.y() + tRect.h(), MaterialTreeLayout.WIRE_INK);
+			for (Rect tRect : tLayout.arrow()) aGuiGraphics.fill(tRect.x(), tRect.y(), tRect.x() + tRect.w(), tRect.y() + tRect.h(), MaterialTreeLayout.ARROW_INK);
 		}
-	}
-
-	private static Node nodeOf(MaterialTreeDisplay aDisplay, gregapi.oredict.OreDictPrefix aPrefix) {
-		for (Node tNode : aDisplay.nodes()) if (tNode.prefix() == aPrefix) return tNode;
-		return null;
+		for (int i = 0; i < tEdges.size(); i++) {
+			EdgeLayout tLayout = tLayouts.get(i);
+			if (tLayout.machine() != null) continue; // the via-label lives on the machine slot's tooltip
+			aGuiGraphics.drawString(tFont, tEdges.get(i).viaLabel(), tLayout.labelX(), tLayout.labelY(), 0xFF555555);
+		}
+		for (Overflow tOverflow : aDisplay.overflow()) {
+			aGuiGraphics.drawString(tFont, "+" + tOverflow.hidden(),
+					MaterialTreeDisplay.columnX(tOverflow.column()), MaterialTreeDisplay.OVERFLOW_Y, 0xFF000000);
+		}
 	}
 
 	private static IRecipeSlotRichTooltipCallback staticTooltip(String aLine) {
