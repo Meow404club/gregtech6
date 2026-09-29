@@ -24,7 +24,6 @@ package gregtech6.datagen;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -68,6 +67,18 @@ class GT6MultiblockMainsTexDatagenTest {
             // NetworkHooks.init() failure is expected offline
         }
         GTMaterialItems.initMaterials();
+        // the BLOCK write window (the GT6CFoamFamilyTest recipe via
+        // GT6SingleBlockFacingIntegrityTest): the carrier-block fixtures construct
+        // post-freeze, and the Forge-patched Block ctor registers its intrusive holder
+        // — reopen the registry so `new` stays legal offline
+        try {
+            java.lang.reflect.Method tUnfreeze = net.minecraft.core.registries.BuiltInRegistries.BLOCK
+                    .getClass().getMethod("unfreeze");
+            tUnfreeze.setAccessible(true);
+            tUnfreeze.invoke(net.minecraft.core.registries.BuiltInRegistries.BLOCK);
+        } catch (Exception aE) {
+            throw new IllegalStateException("could not unfreeze the offline block registry", aE);
+        }
     }
 
     private static InputStream resource(String aPath) {
@@ -214,40 +225,52 @@ class GT6MultiblockMainsTexDatagenTest {
     public void elevenControllersCarryTheUpstreamMaterialColumn() {
         // the crucible eight through the GTCrucibleControllerBlock row carrier, the
         // logistics core + lightning rod through the GTMultiBlockControllerBlock carrier
-        // ctor, the heat exchanger through its own materialOf (the GT6DynamoBlock shape)
+        // ctor, the heat exchanger through its own materialOf (the GT6DynamoBlock shape).
+        // Offline the DeferredRegister maps are empty (the itemform-B DIESEL_BLOCKS
+        // lesson), so the carrier blocks are instantiated directly — the ctor/body wiring
+        // under test is instance-level, the registry only mounts it.
+        var tProps = net.minecraft.world.level.block.state.BlockBehaviour.Properties.of();
         List<OreDictMaterial> tExpected = expectedCrucibleMaterials();
         List<gregtech6.registry.GT6Crucibles.CrucibleRow> tRows = gregtech6.registry.GT6Crucibles.CRUCIBLE_ROWS;
         for (int i = 0; i < tRows.size(); i++) {
             assertSame(tExpected.get(i), tRows.get(i).material(),
                     "crucible row " + tRows.get(i).path() + " carries the upstream aMat");
+            assertSame(tExpected.get(i), GTMultiBlockControllerBlock.materialOf(
+                            new gregtech6.block.multiblock.GTCrucibleControllerBlock(tRows.get(i), tProps)),
+                    "crucible row " + tRows.get(i).path() + " block rides the row carrier ctor");
         }
-        assertSame(MT.SteelGalvanized, GTMultiBlockControllerBlock.materialOf(gregtech6.registry.GT6Logistics.LOGISTICS_CORE.get()),
+        assertSame(MT.SteelGalvanized, GTMultiBlockControllerBlock.materialOf(
+                        new gregtech6.block.logistics.GTLogisticsCoreBlock(tProps)),
                 "the logistics core resolves the :1281 SteelGalvanized column");
-        assertSame(MT.W, GTMultiBlockControllerBlock.materialOf(gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD.get()),
+        assertSame(MT.W, GTMultiBlockControllerBlock.materialOf(
+                        new gregtech6.block.multiblock.GTLightningRodBlock(tProps)),
                 "the lightning rod resolves the :1282 ANY.W column");
         assertSame(MT.W, gregtech6.registry.GT6HeatExchangers.HeatExchangerBlock.materialOf(
-                        gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_BLOCK.get()),
+                        new gregtech6.registry.GT6HeatExchangers.HeatExchangerBlock(tProps)),
                 "the heat exchanger resolves the :1245 ANY.W column");
     }
 
     @Test
     public void elevenControllersTintWithPairwiseDistinctColours() {
-        // the borrowed-wall untinted-placeholder era is gone: the eleven rows resolve
-        // non-white tintindex-0 colours through the tintARGB seam (the unpainted arm),
-        // pairwise distinct within the crucible eight
+        // the untinted-placeholder era is gone: the eleven rows resolve their tintindex-0
+        // colour through the tintARGB seam (the unpainted arm) as the material's own
+        // fRGBaSolid — Adamantium is genuinely white (upstream MT.java:794 element
+        // 255,255,255,255), so the pin is materialColor equality, not non-whiteness —
+        // and pairwise distinct within the crucible eight
         Set<Integer> tSeen = new HashSet<>();
+        var tProps = net.minecraft.world.level.block.state.BlockBehaviour.Properties.of();
         for (var tRow : gregtech6.registry.GT6Crucibles.CRUCIBLE_ROWS) {
             int tTint = GTMachinePaintTint.tintARGB(
                     net.minecraftforge.client.model.data.ModelData.EMPTY, tRow.material(), 0);
-            assertNotEquals(GTMachinePaintTint.UNPAINTED, tTint & 0xFFFFFF,
-                    tRow.path() + " is no longer the white identity");
+            assertEquals(gregtech6.block.GTBasicMachineBlock.materialColor(tRow.material()), tTint & 0xFFFFFF,
+                    tRow.path() + " tints with its own material colour through the seam");
             assertTrue(tSeen.add(tTint & 0xFFFFFF),
                     tRow.path() + " colour " + Integer.toHexString(tTint) + " is distinct");
         }
         List<Block> tCarriers = List.of(
-                gregtech6.registry.GT6Logistics.LOGISTICS_CORE.get(),
-                gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD.get(),
-                gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_BLOCK.get());
+                new gregtech6.block.logistics.GTLogisticsCoreBlock(tProps),
+                new gregtech6.block.multiblock.GTLightningRodBlock(tProps),
+                new gregtech6.registry.GT6HeatExchangers.HeatExchangerBlock(tProps));
         for (Block tCarrier : tCarriers) {
             OreDictMaterial tMat = tCarrier instanceof gregtech6.registry.GT6HeatExchangers.HeatExchangerBlock
                     ? gregtech6.registry.GT6HeatExchangers.HeatExchangerBlock.materialOf(tCarrier)
@@ -255,8 +278,8 @@ class GT6MultiblockMainsTexDatagenTest {
             assertNotNull(tMat, "the " + tCarrier.getClass().getSimpleName() + " carrier resolves its material");
             int tTint = GTMachinePaintTint.tintARGB(
                     net.minecraftforge.client.model.data.ModelData.EMPTY, tMat, 0);
-            assertNotEquals(GTMachinePaintTint.UNPAINTED, tTint & 0xFFFFFF,
-                    "the " + tCarrier.getClass().getSimpleName() + " tint seat is live");
+            assertEquals(gregtech6.block.GTBasicMachineBlock.materialColor(tMat), tTint & 0xFFFFFF,
+                    "the " + tCarrier.getClass().getSimpleName() + " tint seat reads its material");
         }
     }
 
