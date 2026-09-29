@@ -113,9 +113,14 @@ public final class GTMachinePaintTint {
 		if (tMaterial != null) return tMaterial;
 		tMaterial = gregtech6.block.energy.GT6DynamoBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
-		tMaterial = gregtech6.block.energy.GT6ElectricTransformerBlock.materialOf(aBlock);
-		if (tMaterial != null) return tMaterial;
-		tMaterial = gregtech6.block.energy.GT6MagicAbsorberBlock.materialOf(aBlock);
+	tMaterial = gregtech6.block.energy.GT6ElectricTransformerBlock.materialOf(aBlock);
+	if (tMaterial != null) return tMaterial;
+	// task r8-tex-composite-family — the composite-energy carriers (the battery boxes,
+	// the crystal chargers, the ZPM dechargers; the LD endpoints ride the transformer
+	// gate above)
+	tMaterial = gregtech6.block.energy.GT6BatteryBoxBlock.materialOf(aBlock);
+	if (tMaterial != null) return tMaterial;
+	tMaterial = gregtech6.block.energy.GT6MagicAbsorberBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
 		// task r8-tex-pipe-textures — the pipe connector carriers join: the fluid pipe
 		// family rides MT.Wood (the addFluidPipes 26000 NBT_MATERIAL row), the item pipe

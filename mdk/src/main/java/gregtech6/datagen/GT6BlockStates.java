@@ -2346,91 +2346,79 @@ public final class GT6BlockStates extends BlockStateProvider {
      * MT.java:3691 — PLACEHOLDER, NO UPSTREAM COUNTERPART, the README ledger row).
      */
     /**
-     * Task p29-w4-battery-storage — the twelve BatteryBox rows: one cube_all per row over
-     * the BAKED upstream energystorages side sprites (small/large, the
-     * bake_battery_textures.py composites; assets/README.md attribution). The FACING
-     * property is a functional IO face (FRONT out EU / ALL-BUT-FRONT in — the
-     * addElectricDynamoUlv placeholder convention, the per-face art is the render pool);
-     * the item models are the 2D icons over the same baked sprite (r8-tex-itemform-a —
-     * the transitional form; the ok3D parent flips back when the block model itself is
-     * double-layered by the composite-family card).
+     * Task p29-w4-battery-storage, re-formed by task r8-tex-composite-family — the twelve
+     * BatteryBox rows ride the true two-layer borrows (the p29 src-over side bake retired):
+     * the compositeEnergyModel pair per size ({@code block/battery_box{,_large}} — the
+     * tintindex-0 grayscale colored body + the six 0.01 overlay plates, cutout) with the
+     * ACTIVE variant swapping the shell to the overlay_active art (upstream getTexture2
+     * {@code sOverlays[mActiveState & 3]}, MultiTileEntityBatteryBox :31-:33 — the
+     * trinary collapsed to the boolean, the blinking third state the r4-18 defer). Front
+     * on the FACING face (the OUTPUT), side elsewhere (upstream has no back art, the
+     * two-icon table). The rows tint Electric_T[i] through the block's material column
+     * (Loader :894-:895 NBT_MATERIAL, the GTMachinePaintTint seat). The BlockItems parent
+     * the two-layer block models again (the ok3D form — the r8-tex-itemform-a transitional
+     * 2D icons retired per that card's flip-back declaration).
      */
     private void addBatteryBoxes() {
+        ModelFile tSmall = compositeEnergyModel("battery_box", false);
+        ModelFile tLarge = compositeEnergyModel("battery_box_large", false);
         for (gregtech6.registry.GT6Batteries.BoxRow tRow : gregtech6.registry.GT6Batteries.BOX_ROWS) {
             net.minecraft.world.level.block.Block tBlock = gregtech6.registry.GT6Batteries.BATTERY_BOX_BLOCKS.get(tRow.path()).get();
-            simpleBlock(tBlock, models().cubeAll(tRow.path(),
-                    modLoc(tRow.slots() == 16 ? "block/battery_box_large" : "block/battery_box")));
-            itemModels().withExistingParent(tRow.path(), mcLoc("item/generated"))
-                    .texture("layer0", modLoc(tRow.slots() == 16 ? "block/battery_box_large" : "block/battery_box"));
+            String tDir = tRow.slots() == 16 ? "battery_box_large" : "battery_box";
+            converterBlockstate(tBlock, tRow.slots() == 16 ? tLarge : tSmall,
+                    compositeEnergyActiveModel(tRow.slots() == 16 ? tLarge : tSmall, tDir, false),
+                    gregtech6.block.energy.GT6BatteryBoxBlock.FACING);
+            itemModels().withExistingParent(tRow.path(), modLoc("block/" + tDir + "/" + tDir));
         }
     }
 
     /**
-     * Task p35-energy-tail-machines — the Crystal Chargers: the 20-row LU family rides
-     * one baked-art model per size (task p36-render-texture-bake retired the battery-box
-     * stand-in): the src-over colored+overlay composites of the upstream crystal_laser{,_large}
-     * iconsets (the bake_render_pool_textures.py products, assets/README.md attribution)
-     * with the laser FRONT art on the FACING face and the shared side art on the other
-     * five (upstream getTexture2, MultiTileEntityCrystalCharger.java:33-36 — index 0 =
-     * front only on mFacing, index 1 = side everywhere else). The overlay_active/
-     * overlay_blinking trios stay unborrowed — the port blocks carry no ACTIVE property
-     * (the static-face posture, the GT6BatteryBoxBlock doc).
+     * Task p35-energy-tail-machines, re-formed by task r8-tex-composite-family — the
+     * Crystal Chargers: the 20-row LU family rides the true two-layer borrows (the p36
+     * src-over composites retired): the compositeEnergyModel pair per size
+     * ({@code block/crystal_charger{,_large}} — the upstream crystal_laser{,_large} art,
+     * MultiTileEntityCrystalCharger :39-:50) with the ACTIVE variant swapping the shell
+     * to the overlay_active trio (upstream {@code sOverlays[mActiveState & 3]}, :33-:36
+     * — the blinking third state the r4-18 defer). Front on the FACING face, side on the
+     * other five (upstream has no back art, the two-icon table). The rows tint
+     * Electric_T[i] (Loader :970-:971 NBT_MATERIAL).
      */
     private void addCrystalChargers() {
+        ModelFile tSmall = compositeEnergyModel("crystal_charger", false);
+        ModelFile tLarge = compositeEnergyModel("crystal_charger_large", false);
         for (gregtech6.registry.GT6CrystalChargers.ChargerRow tRow : gregtech6.registry.GT6CrystalChargers.ROWS) {
             net.minecraft.world.level.block.Block tBlock = gregtech6.registry.GT6CrystalChargers.BLOCKS_BY_PATH.get(tRow.path()).get();
-            String tTex = tRow.slots() == 16 ? "block/crystal_charger_large_" : "block/crystal_charger_";
-            ModelFile tModel = models().cube(tRow.path(),
-                    modLoc(tTex + "side"), modLoc(tTex + "side"),          // bottom/top
-                    modLoc(tTex + "front"), modLoc(tTex + "side"),         // north(front)/south
-                    modLoc(tTex + "side"), modLoc(tTex + "side"));         // west/east
-            getVariantBuilder(tBlock).forAllStates(aState -> {
-Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FACING);
-                // the six-way map (issue #18 — these blocks extend GT6BatteryBoxBlock, whose FACING went six-way)
-                int tX = tFacing == Direction.DOWN ? 90 : tFacing == Direction.UP ? 270 : 0;
-                int tY = switch (tFacing) {
-                    case SOUTH -> 180;
-                    case WEST -> 270;
-                    case EAST -> 90;
-                    default -> 0; // NORTH and the two verticals carry the x rotation only
-                };
-                return ConfiguredModel.builder().modelFile(tModel).rotationX(tX).rotationY(tY).build();
-            });
-            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+            String tDir = tRow.slots() == 16 ? "crystal_charger_large" : "crystal_charger";
+            converterBlockstate(tBlock, tRow.slots() == 16 ? tLarge : tSmall,
+                    compositeEnergyActiveModel(tRow.slots() == 16 ? tLarge : tSmall, tDir, false),
+                    gregtech6.block.energy.GT6BatteryBoxBlock.FACING);
+            itemModels().withExistingParent(tRow.path(), modLoc("block/" + tDir + "/" + tDir));
         }
     }
 
     /**
-     * Task p36-energy-zpm-dechargers — the two ZPM Decharger rows over the REAL baked art
-     * (review-fix: the rebase binding the p36-render-texture-bake contract paths — the
-     * battery-box stand-in yields): the src-over zpm_electricity/zpm_quantum composites
-     * (assets/README.md attribution), front on the FACING face, back on the opposite
-     * (upstream getTexture2, MultiTileEntityZPMDechargerEU.java:39-44 — index 0 = front
-     * on mFacing, index 1 = back on OPOS, index 2 = side elsewhere; the ZPM_TOP active
-     * decal stays unborrowed, the port carries no ACTIVE property), the FACING four-way
-     * rotationY (the addCrystalChargers form).
+     * Task p36-energy-zpm-dechargers, re-formed by task r8-tex-composite-family — the two
+     * ZPM Decharger rows ride the true two-layer borrows (the p36 src-over composites
+     * retired): the compositeEnergyModel pair ({@code block/zpm_decharger{,_quantum}} —
+     * the upstream zpm_electricity/zpm_quantum art) with the ACTIVE variant swapping the
+     * shell to the overlay_active trio (upstream {@code sOverlays[mActiveState & 3]},
+     * MultiTileEntityZPMDechargerEU :39-:44 — the blinking third state the r4-18 defer).
+     * Front on the FACING face, back on the opposite, side elsewhere (upstream index
+     * 0/1/2). The {@code BI.ZPM_TOP} back decal (the {@code (mActiveState & 4)}
+     * ZPM-inserted lamp, :42) stays the render-pool defer — the dynamic item-presence
+     * decal, the barometer ruling. The rows tint Osmiridium (Loader :1000-:1001
+     * NBT_MATERIAL, both rows).
      */
     private void addZpmDechargers() {
+        ModelFile tElectric = compositeEnergyModel("zpm_decharger", true);
+        ModelFile tQuantum = compositeEnergyModel("zpm_decharger_quantum", true);
         for (gregtech6.registry.GT6ZpmDechargers.DechargerRow tRow : gregtech6.registry.GT6ZpmDechargers.ROWS) {
             net.minecraft.world.level.block.Block tBlock = gregtech6.registry.GT6ZpmDechargers.BLOCKS_BY_PATH.get(tRow.path()).get();
-            String tTexBase = tRow.path().equals("zpm_decharger_electric") ? "zpm_decharger" : tRow.path(); // the render-card PNG names: the electric family drops the infix, the quantum family keeps it
-            ModelFile tModel = models().cube(tRow.path(),
-                    modLoc("block/" + tTexBase + "_side"), modLoc("block/" + tTexBase + "_side"),   // bottom/top
-                    modLoc("block/" + tTexBase + "_front"), modLoc("block/" + tTexBase + "_back"),  // north(front)/south(back)
-                    modLoc("block/" + tTexBase + "_side"), modLoc("block/" + tTexBase + "_side"));  // west/east
-            getVariantBuilder(tBlock).forAllStates(aState -> {
-Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FACING);
-                // the six-way map (issue #18 — these blocks extend GT6BatteryBoxBlock, whose FACING went six-way)
-                int tX = tFacing == Direction.DOWN ? 90 : tFacing == Direction.UP ? 270 : 0;
-                int tY = switch (tFacing) {
-                    case SOUTH -> 180;
-                    case WEST -> 270;
-                    case EAST -> 90;
-                    default -> 0; // NORTH and the two verticals carry the x rotation only
-                };
-                return ConfiguredModel.builder().modelFile(tModel).rotationX(tX).rotationY(tY).build();
-            });
-            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+            String tDir = tRow.path().equals("zpm_decharger_electric") ? "zpm_decharger" : tRow.path(); // the electric family drops the infix, the quantum family keeps it (the texture dir names)
+            ModelFile tModel = tRow.path().equals("zpm_decharger_electric") ? tElectric : tQuantum;
+            converterBlockstate(tBlock, tModel, compositeEnergyActiveModel(tModel, tDir, true),
+                    gregtech6.block.energy.GT6BatteryBoxBlock.FACING);
+            itemModels().withExistingParent(tRow.path(), modLoc("block/" + tDir + "/" + tDir));
         }
     }
 
@@ -2626,13 +2614,92 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
     }
 
     /**
+     * One composite-energy two-layer model (task r8-tex-composite-family, the
+     * sensorModel subdirectory form over the {@link #addConverterModel} grammar): the
+     * tintindex-0 body cube over the borrowed grayscale colored art ({@code block/<aFamily>/
+     * colored_front} on north, {@code colored_side} on the other five — or
+     * {@code colored_back} on south when {@code aBack}, the upstream getTexture2 face
+     * trios: battery/crystal carry front+side only, zpm/LD carry front+back+side) + the
+     * six 0.01 overlay plates, cutout. The tintindex-0 seat = the row's Electric_T[i] /
+     * Osmiridium NBT_MATERIAL multiply (Loader :894-:895/:970-:971/:1000-:1001/:909-:913,
+     * the GTMachinePaintTint dispatch).
+     */
+    private ModelFile compositeEnergyModel(String aFamily, boolean aBack) {
+        String tBase = "block/" + aFamily;
+        // the "block/..." prefix rides INSIDE the builder path (the sensorModel note:
+        // getBuilder only prepends the folder to slash-free paths)
+        BlockModelBuilder tModel = models().getBuilder(tBase + "/" + aFamily)
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc(tBase + "/colored_side"))
+                .texture("up", modLoc(tBase + "/colored_side"))
+                .texture("north", modLoc(tBase + "/colored_front"))
+                .texture("south", modLoc(tBase + (aBack ? "/colored_back" : "/colored_side")))
+                .texture("west", modLoc(tBase + "/colored_side"))
+                .texture("east", modLoc(tBase + "/colored_side"))
+                .texture("particle", modLoc(tBase + "/colored_side"))
+                .texture("overlay_front", modLoc(tBase + "/overlay_front"))
+                .texture("overlay_back", modLoc(tBase + (aBack ? "/overlay_back" : "/overlay_side")))
+                .texture("overlay_side", modLoc(tBase + "/overlay_side"))
+                .renderType("cutout");
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
+                .end();
+        tModel.element() // north
+                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+                .face(Direction.NORTH).texture("#overlay_front").cullface(Direction.NORTH)
+                .end();
+        tModel.element() // south
+                .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.01F)
+                .face(Direction.SOUTH).texture("#overlay_back").cullface(Direction.SOUTH)
+                .end();
+        tModel.element() // west
+                .from(-0.01F, 0.0F, 0.0F).to(0.0F, 16.0F, 16.0F)
+                .face(Direction.WEST).texture("#overlay_side").cullface(Direction.WEST)
+                .end();
+        tModel.element() // east
+                .from(16.0F, 0.0F, 0.0F).to(16.01F, 16.0F, 16.0F)
+                .face(Direction.EAST).texture("#overlay_side").cullface(Direction.EAST)
+                .end();
+        tModel.element() // bottom
+                .from(0.0F, -0.01F, 0.0F).to(16.0F, 0.0F, 16.0F)
+                .face(Direction.DOWN).texture("#overlay_side").cullface(Direction.DOWN)
+                .end();
+        tModel.element() // top
+                .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.01F, 16.0F)
+                .face(Direction.UP).texture("#overlay_side").cullface(Direction.UP)
+                .end();
+        return tModel;
+    }
+
+    /**
+     * The composite-energy ACTIVE shell (the {@link #addConverterActiveModel} form over
+     * the subdirectory layout): the inactive parent with the three overlay textures
+     * swapped to the {@code overlay_active} trio (render_type re-declared — it does not
+     * ride the parent chain).
+     */
+    private ModelFile compositeEnergyActiveModel(ModelFile aInactive, String aFamily, boolean aBack) {
+        String tBase = "block/" + aFamily;
+        return models().getBuilder(tBase + "/" + aFamily + "_active")
+                .parent(aInactive)
+                .texture("overlay_front", modLoc(tBase + "/overlay_active_front"))
+                .texture("overlay_back", modLoc(tBase + (aBack ? "/overlay_active_back" : "/overlay_active_side")))
+                .texture("overlay_side", modLoc(tBase + "/overlay_active_side"))
+                .renderType("cutout");
+    }
+
+    /**
      * The converter blockstate walk (issue #18): SIX-WAY facing over the dispenser-form
      * rotation map (the addMagicAbsorber form — north identity, down x=90, up x=270, the
      * horizontal y band; the FACING face is the FRONT) and the ACTIVE variant switching to
      * the overlay_active shell — 12 variants per block.
      */
     private void converterBlockstate(Block aBlock, ModelFile aInactive, DirectionProperty aFacing) {
-        ModelFile tActive = addConverterActiveModel(aInactive);
+        converterBlockstate(aBlock, aInactive, addConverterActiveModel(aInactive), aFacing);
+    }
+
+    /** The explicit-active overload (task r8-tex-composite-family — the subdirectory-texture families derive their ACTIVE shell themselves). */
+    private void converterBlockstate(Block aBlock, ModelFile aInactive, ModelFile aActive, DirectionProperty aFacing) {
         getVariantBuilder(aBlock).forAllStates(aState -> {
             Direction tFacing = aState.getValue(aFacing);
             int tX = tFacing == Direction.DOWN ? 90 : tFacing == Direction.UP ? 270 : 0;
@@ -2643,7 +2710,7 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
                 default -> 0; // NORTH and the two verticals carry the x rotation only
             };
             return ConfiguredModel.builder()
-                    .modelFile(aState.getValue(gregtech6.block.GTBlockProperties.ACTIVE) ? tActive : aInactive)
+                    .modelFile(aState.getValue(gregtech6.block.GTBlockProperties.ACTIVE) ? aActive : aInactive)
                     .rotationX(tX).rotationY(tY).build();
         });
     }
@@ -2662,35 +2729,28 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
     }
 
     /**
-     * Task p35-energy-tail-machines — the Long Distance families, their dedicated
-     * upstream art landed by task p36-render-texture-bake (the stand-in clearance): the
-     * five LD transformer endpoints ride the INPUT/OUTPUT facing-cube model over the
-     * baked longdistancetransformer_electric composites (front = the INPUT face, back =
-     * the OUTPUT face — MultiTileEntityLongDistanceTransformer.java:284-285/:295-299,
-     * index 0/1/2; the overlay_active/blinking/unloaded trios stay unborrowed — the
-     * port blocks carry no ACTIVE property), and the 16 LD wire metas ride the
-     * property-less cube-all shape over their TIER sprite — the five distinct
-     * LONG_DIST_WIRES_01 iconset art (Textures.java:638-655: metas 0-1=EV, 2=IV,
+     * Task p35-energy-tail-machines — the Long Distance families. The five LD transformer
+     * endpoints re-formed by task r8-tex-composite-family: the true two-layer borrows
+     * ({@code block/long_distance_transformer} — the upstream
+     * longdistancetransformer_electric art, MultiTileEntityLongDistanceTransformer
+     * :284-:299 — front = the INPUT face, back = the OUTPUT face) with the ACTIVE variant
+     * swapping the shell to the overlay_active trio (upstream
+     * {@code sOverlays[mActiveState & 3]}); the overlay_blinking and the LD-only
+     * overlay_unloaded trios stay unborrowed (the trinary defer / no port unloaded
+     * channel). The rows tint Electric_T[4..8] (Loader :909-:913 NBT_MATERIAL). The 16 LD
+     * wire metas ride the property-less cube-all shape over their TIER sprite — the five
+     * distinct LONG_DIST_WIRES_01 iconset art (Textures.java:638-655: metas 0-1=EV, 2=IV,
      * 3-7=LuV, 8-11=ZPM, 12-15=UV; the same split as the tier-byte table of
      * Loader_Blocks.java:160).
      */
     private void addLDEnergyFamilies() {
-        ModelFile tLDModel = models().cube("long_distance_transformer",
-                modLoc("block/long_distance_transformer_side"), modLoc("block/long_distance_transformer_side"), // bottom/top
-                modLoc("block/long_distance_transformer_front"), modLoc("block/long_distance_transformer_back"), // north(input)/south(output)
-                modLoc("block/long_distance_transformer_side"), modLoc("block/long_distance_transformer_side")); // west/east
+        ModelFile tLDModel = compositeEnergyModel("long_distance_transformer", true);
         for (gregtech6.registry.GT6LongDistanceTransformers.LDRow tRow : gregtech6.registry.GT6LongDistanceTransformers.ROWS) {
             Block tTrans = gregtech6.registry.GT6LongDistanceTransformers.BLOCKS_BY_PATH.get(tRow.path()).get();
-            getVariantBuilder(tTrans).forAllStates(aState -> {
-                Direction tFacing = aState.getValue(GT6ElectricTransformerBlock.FACING);
-                // the six-way dispenser-form x band (issue #18 — the six-way FACING property)
-                int tX = tFacing == Direction.DOWN ? 90 : tFacing == Direction.UP ? 270 : 0;
-                return ConfiguredModel.builder()
-                        .modelFile(tLDModel)
-                        .rotationX(tX).rotationY((int) (tFacing.toYRot() + 180) % 360)
-                        .build();
-            });
-            itemModels().withExistingParent(tRow.path(), tLDModel.getLocation());
+            converterBlockstate(tTrans, tLDModel,
+                    compositeEnergyActiveModel(tLDModel, "long_distance_transformer", true),
+                    GT6ElectricTransformerBlock.FACING);
+            itemModels().withExistingParent(tRow.path(), modLoc("block/long_distance_transformer/long_distance_transformer"));
         }
         for (gregtech6.registry.GT6LongDistWires.WireRow tRow : gregtech6.registry.GT6LongDistWires.ROWS) {
             String tPath = gregtech6.registry.GT6LongDistWires.pathOf(tRow.meta());

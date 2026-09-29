@@ -25,8 +25,10 @@ import net.minecraft.world.level.Level;
  * <p>The FRONT face is the OUTPUT (the emit side, the BatteryBox :232-:233 convention
  * inherited), ALL-BUT-FRONT the intake face (dead in practice on this host: the ZPM
  * never registers chargeable, so the :179 guard refuses every network packet — the
- * one-way artifact→machine lane). The per-face zpm_electricity/zpm_quantum art is the
- * render pool (p36-render-texture-bake): this card ships the battery-box stand-in cube.
+ * one-way artifact→machine lane). The per-face zpm_electricity/zpm_quantum art rides
+ * the true two-layer borrows since task r8-tex-composite-family (the render-pool
+ * stand-in retired); the row material MT.Osmiridium (Loader :1000-:1001 NBT_MATERIAL)
+ * feeds the parent's tint seat.
  */
 public class GT6ZpmDechargerBlock extends GT6BatteryBoxBlock {
 
@@ -36,7 +38,15 @@ public class GT6ZpmDechargerBlock extends GT6BatteryBoxBlock {
 	public GT6ZpmDechargerBlock(BlockBehaviour.Properties aProperties, int aTier, int aSlots,
 			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType,
 			Supplier<TagData> aInEnergyType, Supplier<TagData> aOutEnergyType) {
-		super(aProperties, aTier, aSlots, aTickerType, aInEnergyType);
+		this(aProperties, aTier, aSlots, aTickerType, aInEnergyType, aOutEnergyType, null);
+	}
+
+	/** The material-carrier form (task r8-tex-composite-family): the row feeds the tint colour source. */
+	public GT6ZpmDechargerBlock(BlockBehaviour.Properties aProperties, int aTier, int aSlots,
+			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType,
+			Supplier<TagData> aInEnergyType, Supplier<TagData> aOutEnergyType,
+			@javax.annotation.Nullable Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
+		super(aProperties, aTier, aSlots, aTickerType, aInEnergyType, aMaterial);
 		mOutEnergyType = aOutEnergyType;
 	}
 

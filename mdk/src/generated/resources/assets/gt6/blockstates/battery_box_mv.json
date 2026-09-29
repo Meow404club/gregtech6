@@ -1,7 +1,50 @@
 {
   "variants": {
-    "": {
-      "model": "gt6:block/battery_box_mv"
+    "active=false,facing=down": {
+      "model": "gt6:block/battery_box/battery_box",
+      "x": 90
+    },
+    "active=false,facing=east": {
+      "model": "gt6:block/battery_box/battery_box",
+      "y": 90
+    },
+    "active=false,facing=north": {
+      "model": "gt6:block/battery_box/battery_box"
+    },
+    "active=false,facing=south": {
+      "model": "gt6:block/battery_box/battery_box",
+      "y": 180
+    },
+    "active=false,facing=up": {
+      "model": "gt6:block/battery_box/battery_box",
+      "x": 270
+    },
+    "active=false,facing=west": {
+      "model": "gt6:block/battery_box/battery_box",
+      "y": 270
+    },
+    "active=true,facing=down": {
+      "model": "gt6:block/battery_box/battery_box_active",
+      "x": 90
+    },
+    "active=true,facing=east": {
+      "model": "gt6:block/battery_box/battery_box_active",
+      "y": 90
+    },
+    "active=true,facing=north": {
+      "model": "gt6:block/battery_box/battery_box_active"
+    },
+    "active=true,facing=south": {
+      "model": "gt6:block/battery_box/battery_box_active",
+      "y": 180
+    },
+    "active=true,facing=up": {
+      "model": "gt6:block/battery_box/battery_box_active",
+      "x": 270
+    },
+    "active=true,facing=west": {
+      "model": "gt6:block/battery_box/battery_box_active",
+      "y": 270
     }
   }
 }

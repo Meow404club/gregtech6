@@ -1,0 +1,9 @@
+{
+  "parent": "gt6:block/long_distance_transformer/long_distance_transformer",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "overlay_back": "gt6:block/long_distance_transformer/overlay_active_back",
+    "overlay_front": "gt6:block/long_distance_transformer/overlay_active_front",
+    "overlay_side": "gt6:block/long_distance_transformer/overlay_active_side"
+  }
+}

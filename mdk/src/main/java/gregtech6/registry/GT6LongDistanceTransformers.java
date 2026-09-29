@@ -70,10 +70,15 @@ public final class GT6LongDistanceTransformers {
 		}
 	}
 
-	/** The row block: the facing-cube carrier REUSED from the electric transformer family (the tier column = the row). */
+	/**
+	 * The row block: the facing-cube carrier REUSED from the electric transformer family
+	 * (the tier column = the row), the row's Electric_T[i] casing material (Loader
+	 * :909-:913 NBT_MATERIAL, the tint colour source — task r8-tex-composite-family).
+	 */
 	private static GT6ElectricTransformerBlock ldTransformer(int aTier) {
 		return new GT6ElectricTransformerBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
-				.strength(4.0F, 4.0F).sound(SoundType.METAL), () -> LONG_DISTANCE_TRANSFORMER_BE.get(), aTier);
+				.strength(4.0F, 4.0F).sound(SoundType.METAL), () -> LONG_DISTANCE_TRANSFORMER_BE.get(), aTier,
+				gregtech6.registry.GT6ElectricTransformers.CASING_LADDER.get(aTier));
 	}
 
 	/** The BET — the one BE class over the five ladder blocks (the family-BET shape). */
@@ -81,6 +86,15 @@ public final class GT6LongDistanceTransformers {
 			BLOCK_ENTITY_TYPES.register("longdist_transformer", () -> BlockEntityType.Builder.of(
 					GT6LongDistanceTransformerBlockEntity::new,
 					ROWS.stream().map(aRow -> BLOCKS_BY_PATH.get(aRow.path()).get()).toArray(Block[]::new)).build(null));
+
+	/**
+	 * The tint-walk array (task r8-tex-composite-family — the
+	 * GT6ElectricTransformers.paintableBlockArray form): the five endpoint blocks, every
+	 * row carries its NBT_MATERIAL casing column (Electric_T[4..8]).
+	 */
+	public static net.minecraft.world.level.block.Block[] paintableBlockArray() {
+		return ROWS.stream().map(aRow -> BLOCKS_BY_PATH.get(aRow.path()).get()).toArray(net.minecraft.world.level.block.Block[]::new);
+	}
 
 	private GT6LongDistanceTransformers() {}
 

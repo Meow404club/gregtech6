@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "gt6:block/battery_box_large"
-  }
+  "parent": "gt6:block/battery_box_large/battery_box_large"
 }
