@@ -2,7 +2,6 @@
   "type": "neoforge:remove_features",
   "biomes": "#minecraft:is_overworld",
   "features": [
-    "minecraft:amethyst_geode",
     "minecraft:lake_lava_surface",
     "minecraft:lake_lava_underground",
     "minecraft:ore_andesite_lower",

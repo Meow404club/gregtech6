@@ -355,12 +355,13 @@ public class GT6DualDirectoryFacesTest {
 	 * {@code ore_diamond_medium} rides the leg-forked
 	 * {@link GT6WorldgenDatagen#VANILLA_DEBLOB_OVERWORLD} constant (pinned per leg in
 	 * GT6WorldgenDatagenTest), its node-tree delta folded by the datagen_tree_check
-	 * normalizer remove-features-diamond-medium(1.21.1).
+	 * normalizer remove-features-diamond-medium(1.21.1). {@code amethyst_geode} is
+	 * deliberately ABSENT (r8-geode-revert): the #33 GT geode band that justified its
+	 * suppression is reverted, so the vanilla geode generates again.
 	 */
 	@Test
 	public void vanillaDeblobRowsPinTheRulingLists() throws Exception {
 		List<String> tOverworld = List.of(
-				"minecraft:amethyst_geode",
 				"minecraft:lake_lava_surface",
 				"minecraft:lake_lava_underground",
 				"minecraft:ore_andesite_lower",
