@@ -450,15 +450,49 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 		return new ResourceLocation("minecraft", "block/" + aPath);
 	}
 
-	/** The GTCEu StaticFaceBakery.bakeFace cubeUV switch (GTWireBakedModel.uvOf verbatim — private there). */
+	/**
+	 * The cubeUV box bounds in vanilla {@link BlockFaceUV} orientation — the six-face
+	 * correction of issue #27, each face verified against a decompiled/upstream anchor
+	 * (texture V=0 is the sprite TOP; slots are [u1, v1, u2, v2]):
+	 * <ul>
+	 * <li>SIDE V (the #27 bug): FaceInfo NORTH corner 0 = (MAX_X, MAX_Y, MIN_Z)
+	 * (FaceInfo.java:19-24 — on every side face the TOP corners are vertex indices 0/3)
+	 * and BlockFaceUV.getV feeds vertices 0/3 from {@code uvs[1]} (BlockFaceUV.java:31-38,
+	 * rotation 0; FaceBakery.fillVertex.java:142-150) — so the box MIN_Y belongs in slot 1
+	 * for the art's upright orientation. The old GTCEu StaticFaceBakery.bakeFace cubeUV
+	 * switch put MAX_Y there on all four sides: every side face read its sprite bottom-up
+	 * (the "ore sides are upside down" report).</li>
+	 * <li>DOWN V (the second trap): the 1.7.10 vanilla renderFaceYNeg computed V inverted
+	 * along Z (its body survives commented-out in the upstream copy, ITexture.java:292-293),
+	 * and upstream deliberately REPLACED it with renderFixedNegativeYFacing (doRenderYNeg,
+	 * ITexture.java:247-262/:288-364): minV — the sprite top — at renderMaxZ. The vanilla
+	 * 1.20.1 JSON default {@code BlockElement.uvsByFace} DOWN = {@code {minX, 16-maxZ,
+	 * maxX, 16-minZ}} (BlockElement.java:48-49) bakes corner-for-corner to the same texel
+	 * mapping (FaceInfo DOWN corners :7-12 + the BlockFaceUV slot walk), so both
+	 * generations agree — and the old table's {@code {minX, maxZ, maxX, minZ}} was the odd
+	 * one out, flipped in BOTH. Adopting the canonical form.</li>
+	 * <li>UP: canonical {@code {minX, minZ, maxX, maxZ}} == the old table, unchanged
+	 * (sprite top at the MIN_Z edge; the user saw the top as normal).</li>
+	 * <li>U axis: SOUTH/WEST keep the old table's slots; NORTH/EAST move to the canonical
+	 * slots (a horizontal mirror of the speckle art — imperceptible — and the exact way
+	 * every vanilla cube_all JSON renders, the GTCEu Modern ore models included). With the
+	 * full 0..1 cube every face now resolves to {@code [0,0,16,16]}: this model renders
+	 * each sprite exactly as a vanilla cube JSON would.</li>
+	 * </ul>
+	 * GTWireBakedModel.uvOf keeps the old private copy (line-art wire textures are
+	 * orientation-imperceptible; a shared fix is a separate card's call). Item form and
+	 * JEI/EMI icons ride the SAME quads (the null-RenderType pass) — correct: the 1.7.10
+	 * item render drew the block with the same face orientation as the world, so icon and
+	 * world change together, staying 1:1 with upstream.
+	 */
 	private static float[] uvOf(Direction aFace, double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
 		return switch (aFace) {
 			case UP    -> new float[] {(float) minX, (float) minZ, (float) maxX, (float) maxZ};
-			case DOWN  -> new float[] {(float) minX, (float) maxZ, (float) maxX, (float) minZ};
-			case NORTH -> new float[] {(float) maxX, (float) maxY, (float) minX, (float) minY};
-			case SOUTH -> new float[] {(float) minX, (float) maxY, (float) maxX, (float) minY};
-			case WEST  -> new float[] {(float) minZ, (float) maxY, (float) maxZ, (float) minY};
-			case EAST  -> new float[] {(float) maxZ, (float) maxY, (float) minZ, (float) minY};
+			case DOWN  -> new float[] {(float) minX, (float) (16 - maxZ), (float) maxX, (float) (16 - minZ)};
+			case NORTH -> new float[] {(float) (16 - maxX), (float) (16 - maxY), (float) (16 - minX), (float) (16 - minY)};
+			case SOUTH -> new float[] {(float) minX, (float) (16 - maxY), (float) maxX, (float) (16 - minY)};
+			case WEST  -> new float[] {(float) minZ, (float) (16 - maxY), (float) maxZ, (float) (16 - minY)};
+			case EAST  -> new float[] {(float) (16 - maxZ), (float) (16 - maxY), (float) (16 - minZ), (float) (16 - minY)};
 		};
 	}
 }
