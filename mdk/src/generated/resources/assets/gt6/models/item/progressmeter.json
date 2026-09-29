@@ -1,3 +1,3 @@
 {
-  "parent": "gt6:block/progressmeter"
+  "parent": "gt6:block/sensors/progressmeter"
 }

@@ -1,26 +1,26 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gt6:block/geigercounter",
+      "model": "gt6:block/sensors/geigercounter",
       "x": 90
     },
     "facing=east": {
-      "model": "gt6:block/geigercounter",
+      "model": "gt6:block/sensors/geigercounter",
       "y": 90
     },
     "facing=north": {
-      "model": "gt6:block/geigercounter"
+      "model": "gt6:block/sensors/geigercounter"
     },
     "facing=south": {
-      "model": "gt6:block/geigercounter",
+      "model": "gt6:block/sensors/geigercounter",
       "y": 180
     },
     "facing=up": {
-      "model": "gt6:block/geigercounter",
+      "model": "gt6:block/sensors/geigercounter",
       "x": 270
     },
     "facing=west": {
-      "model": "gt6:block/geigercounter",
+      "model": "gt6:block/sensors/geigercounter",
       "y": 270
     }
   }

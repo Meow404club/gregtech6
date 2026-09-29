@@ -1,26 +1,26 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gt6:block/electrometer",
+      "model": "gt6:block/sensors/electrometer",
       "x": 90
     },
     "facing=east": {
-      "model": "gt6:block/electrometer",
+      "model": "gt6:block/sensors/electrometer",
       "y": 90
     },
     "facing=north": {
-      "model": "gt6:block/electrometer"
+      "model": "gt6:block/sensors/electrometer"
     },
     "facing=south": {
-      "model": "gt6:block/electrometer",
+      "model": "gt6:block/sensors/electrometer",
       "y": 180
     },
     "facing=up": {
-      "model": "gt6:block/electrometer",
+      "model": "gt6:block/sensors/electrometer",
       "x": 270
     },
     "facing=west": {
-      "model": "gt6:block/electrometer",
+      "model": "gt6:block/sensors/electrometer",
       "y": 270
     }
   }
