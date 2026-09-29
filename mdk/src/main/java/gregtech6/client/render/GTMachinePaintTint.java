@@ -2,6 +2,8 @@ package gregtech6.client.render;
 
 import javax.annotation.Nullable;
 
+import gregapi.data.ANY;
+import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTBasicMachineBlock;
 import net.minecraft.client.color.block.BlockColor;
@@ -109,6 +111,13 @@ public final class GTMachinePaintTint {
 		if (tMaterial != null) return tMaterial;
 		tMaterial = GTBasicMachineBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
+		// task r8-tex-large-machines — the 17 large-controller rows: the twelve
+		// large-machine rows carry their upstream NBT_MATERIAL through the row itself
+		// (the GTLargeMachineBlock carrier — no Supplier column needed, the row IS the
+		// carrier), the five mains ride their concrete block classes; the Loader
+		// :1228-1283 column is the unpainted default (the upstream mRGBa pass)
+		tMaterial = largeControllerMaterialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
 		tMaterial = gregtech6.block.multiblock.GTMultiBlockControllerBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
 		tMaterial = gregtech6.block.energy.GT6DynamoBlock.materialOf(aBlock);
@@ -133,6 +142,40 @@ public final class GTMachinePaintTint {
 		tMaterial = gregtech6.block.pipe.GTItemPipeBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
 		return gregtech6.tileentity.bees.GT6BumbliaryBlock.materialOf(aBlock);
+	}
+
+	/**
+	 * The 17 large-controller rows' upstream NBT_MATERIAL column (task
+	 * r8-tex-large-machines; Loader_MultiTileEntities :1228-1283 verbatim): the twelve
+	 * large-machine rows resolve through the row meta id (the
+	 * {@link gregtech6.registry.GT6LargeMachines.GTLargeMachineBlock#row} carrier), the
+	 * five mains through their concrete block classes. Null = not a large controller
+	 * (the dispatch arm is observational, the gate order stays disjoint).
+	 */
+	@Nullable
+	private static OreDictMaterial largeControllerMaterialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
+		if (aBlock instanceof gregtech6.registry.GT6LargeMachines.GTLargeMachineBlock tLarge)
+			return controllerRowMaterial(tLarge.row().metaId());
+		if (aBlock instanceof gregtech6.block.multiblock.GTFusionReactorBlock) return MT.SteelGalvanized;
+		if (aBlock instanceof gregtech6.block.multiblock.GTVonDaGraaggBlock) return MT.SteelGalvanized;
+		if (aBlock instanceof gregtech6.block.multiblock.GTImplosionCompressorBlock) return MT.TungstenSteel;
+		if (aBlock instanceof gregtech6.block.multiblock.GTMassfabBlock) return MT.Pb;
+		if (aBlock instanceof gregtech6.block.multiblock.GTBedrockDrillBlock) return MT.Ti;
+		return null;
+	}
+
+	/** The meta-id → material map over the twelve large-machine rows (Loader :1229-1240 verbatim). */
+	private static OreDictMaterial controllerRowMaterial(int aMetaId) {
+		return switch (aMetaId) {
+			case 17100, 17108, 17109, 17110 -> MT.TungstenSteel;
+			case 17102, 17103, 17104, 17105, 17112, 17113 -> MT.StainlessSteel;
+			case 17106 -> MT.Invar;
+			case 17107, 17999 -> MT.Ti;
+			case 17114 -> ANY.Steel;
+			case 17198, 17996 -> MT.SteelGalvanized;
+			case 17199 -> MT.Pb;
+			default -> null;
+		};
 	}
 
 	/**

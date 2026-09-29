@@ -226,6 +226,18 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// is the tintindex-0 seat, the front-face overlay decals untinted; the colour
 		// resolves through the GTMultiBlockControllerBlock carrier, the p38-c2 gate)
 		for (Block tBlock : gregtech6.registry.GTMultiBlocks.boilerPaintableBlockArray()) wrapStates(tBlock, aEvent);
+		// task r8-tex-large-machines — the 17 large-controller domains join the same
+		// baked-tint seat: every upstream row carries NBT_MATERIAL (Loader :1228-1283),
+		// the body cube is the tintindex-0 seat (familyMachineModel trio + the two
+		// boilerModel front pairs), the colour resolves through the GTMachinePaintTint
+		// large-controller arm (the row meta id + the five mains classes)
+		for (Block tBlock : gregtech6.registry.GT6LargeMachines.blockArray()) wrapStates(tBlock, aEvent);
+		for (Block tBlock : java.util.List.of(
+				gregtech6.registry.GTMultiBlocks.IMPLOSION_COMPRESSOR.get(),
+				gregtech6.registry.GTMultiBlocks.VON_DA_GRAAGG.get(),
+				gregtech6.registry.GTMultiBlocks.MASSFAB.get(),
+				gregtech6.registry.GTMultiBlocks.FUSION_REACTOR.get(),
+				gregtech6.registry.GTMultiBlocks.BEDROCK_DRILL.get())) wrapStates(tBlock, aEvent);
 		// issue #15 (task r3-beehive-tint) — the bee family joins the baked-tint domain:
 		// the hive's 15 worldgen family colours ride the BE PAINT model data (the worldgen
 		// paints at placement) and the Bumbliary pair's row material rides the
@@ -315,6 +327,15 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (Block tBlock : gregtech6.registry.GT6CrystalChargers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		for (Block tBlock : gregtech6.registry.GT6ZpmDechargers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		for (Block tBlock : gregtech6.registry.GT6LongDistanceTransformers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		// task r8-tex-large-machines — the 17 large-controller BlockItems join the same
+		// lambda (the creative-tab face of the row-material colour, the world half above)
+		for (Block tBlock : gregtech6.registry.GT6LargeMachines.blockArray()) tPaintItems.add(tBlock.asItem());
+		for (Block tBlock : java.util.List.of(
+				gregtech6.registry.GTMultiBlocks.IMPLOSION_COMPRESSOR.get(),
+				gregtech6.registry.GTMultiBlocks.VON_DA_GRAAGG.get(),
+				gregtech6.registry.GTMultiBlocks.MASSFAB.get(),
+				gregtech6.registry.GTMultiBlocks.FUSION_REACTOR.get(),
+				gregtech6.registry.GTMultiBlocks.BEDROCK_DRILL.get())) tPaintItems.add(tBlock.asItem());
 		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tPaintItems.toArray(Item[]::new));
 	}
 
