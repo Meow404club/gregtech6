@@ -10136,6 +10136,14 @@ land as `gt6/textures/block/<family>_overlay_<face>{,_active,_running}.png`
 (face ∈ bottom/top/front/back/left/right), byte-identical, sha256 per file.
 The colored six-sets stay the P31 flat borrows already ledgered above.
 
+ACTIVE/RUNNING wiring declared DEFER: the _active/_running models ride the
+generated tree, but the blockstates stay static on the inactive model — the
+controller blocks carry FACING+FORMED only (no ACTIVE property on
+GTMultiBlockControllerBlock), and adding the property seat is a block+BE change
+outside this card's files. The upstream pick (MultiTileEntityBasicMachine :1014
+reads mActive/mRunning) wires the trio the moment a property card lands; until
+then the 8 FACING x FORMED variants all render the inactive model.
+
 - `gt6/textures/block/largecentrifuge_overlay_bottom.png` `9ebf66f9e5ff728c63db579af93feca54f0a646a48b489019d25deeadd46a021`
 - `gt6/textures/block/largecentrifuge_overlay_bottom_active.png` `9ebf66f9e5ff728c63db579af93feca54f0a646a48b489019d25deeadd46a021`
 - `gt6/textures/block/largecentrifuge_overlay_bottom_running.png` `9ebf66f9e5ff728c63db579af93feca54f0a646a48b489019d25deeadd46a021`
