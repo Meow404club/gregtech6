@@ -10025,6 +10025,16 @@ pixel copies of AE2 assets; nothing removed.
 - `gui/machines/unboxinator.png` ← amazawa `Unboxinator.png` sha256 `0dda888d5409026672f7efdbe887ff07cc2acf442a14d715ee5f369eccaaae30`
 - `gui/machines/welder.png` ← amazawa `Welder.png` sha256 `a9558b22d7648adde07e6feb12132765e25ea15ec9973404186e0a86648eb33e`
 - `gui/machines/wiremill.png` ← amazawa `Wiremill.png` sha256 `e9699da9e901cb541803fdc1b7c624310e3f55e14bfb2df186cfbaea285b1458`
+
+Two more amazawa files joined the folder with task r9-34-viewer-gui-bg (GitHub
+#34, the JEI/EMI viewer backdrop): the `NEI.png` grey backdrop plate every
+recipe-viewer page composites under the machine band, and `BedrockOreList.png`
+(the BEDROCK_ORE_LIST display map was viewer-visible but its pin-g exemption had
+left the file un-borrowed). Both took the amazawa redraws (the pack carries
+them; same style source as the 73 above), same matching rules and canvas:
+
+- `gui/machines/bedrockorelist.png` ← amazawa `BedrockOreList.png` sha256 `3722cae8d75171c1c8c75384b72a00c7979b6ff5cfc7cd3b83ce00631fa9865d`
+- `gui/machines/nei.png` ← amazawa `NEI.png` sha256 `93fda523222f02a0dbc2b405e2226a9454cbaca0e776c65b861352f8d965b4ac`
 ## Static storages + hoppers + anvils placeholder audit (task r8-tex-placeholder-audit)
 
 The r8-tex-census tierC batch-5 probe verdicts, then the borrows the probes found.

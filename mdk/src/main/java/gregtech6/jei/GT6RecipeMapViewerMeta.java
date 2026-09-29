@@ -9,6 +9,7 @@ import java.util.TreeSet;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 import gregapi.code.TagData;
 import gregapi.data.TD;
@@ -41,6 +42,20 @@ import gregtech6.recipes.RecipeMap;
  * container-ized the fluids into buckets for NEI display, :389 FL.display — the modern
  * viewers render FluidStack natively, decisions.2026-09-26-debt-jei-emi-coverage ⑤),
  * aConfigAllowed/aNeedsOutputs (NEI-config faces with no port counterpart).
+ *
+ * <p><b>The viewer backdrop (task r9-34-viewer-gui-bg, GitHub #34):</b> upstream
+ * drawBackground (:629-635) composited TWO layers under the slots — the grey
+ * {@code machines/NEI.png} backdrop plate, then the per-map machine GUI texture as a
+ * band — and folded the panel origin (5,11) into every slot coordinate on the way out
+ * (:66/:112). The viewers restore exactly that: the crop quadruples
+ * {@link #PLATE_CROP}/{@link #BAND_CROP} plus {@link #PLATE_TEXTURE} feed both legs'
+ * background draws, and the {@code viewer*Pos} exits below do the
+ * sOffset fold ONCE here (the layout switches above stay in machine-GUI coordinates,
+ * faithful to the upstream switch). The per-map→PNG mapping needs no table of its own:
+ * {@link #guiTexture} reads the live mGUIPath each GT6RecipeMaps row declares (the
+ * research card's 72-visible-map transcription lives in state
+ * research.r9-34-nei-gui-bg.q2_mapping; anvilbend folds AnvilBendingBig, the five fuel
+ * maps share default.png — all already in the rows).
  *
  * <p><b>The exclusion table</b> (r-jei-emi-coverage id927, the research-card pin): the
  * true-zero / special-surface maps never enter a category even though their upstream
@@ -89,6 +104,15 @@ public final class GT6RecipeMapViewerMeta {
 	public static final int TEXT_X = 10;
 	/** NEI's 10px line pitch (73/83/93/103/113/123). */
 	public static final int TEXT_LINE_HEIGHT = 10;
+	/**
+	 * The text-band first Y, panel system (task r9-34-viewer-gui-bg): upstream drew the
+	 * cost lines at FIXED y73..123 in panel coordinates (:680-717) — 3px under the y63
+	 * fluid row that ends at y70. The batch-1 "+10 shift on fluid maps" deviation existed
+	 * only because the viewers carried no background; with the two-layer backdrop
+	 * composited (this task) the band sits where upstream sat, which also retires the
+	 * FUSION 6-line overflow past the 140-high category.
+	 */
+	public static final int TEXT_BASE_Y = 73;
 	/** The per-map title key domain (task r6-29-34a) — one key per visible map, both locales. */
 	public static final String TITLE_KEY_PREFIX = "gt6.jei.recipe_map.";
 	/** NEI :671's not-consumed tooltip, upstream verbatim wording — now the lang-key face. */
@@ -436,14 +460,73 @@ public final class GT6RecipeMapViewerMeta {
 		return new int[] {107 + aIndex % 3 * 18, 63 - aIndex / 3 * 18};
 	}
 
+	// -----------------------------------------------------------------------
+	// The viewer backdrop geometry (task r9-34-viewer-gui-bg, GitHub #34) — the
+	// two-layer composite upstream NEI_RecipeMap.drawBackground(:629-635) drew and the
+	// port's viewers shipped without (items floated on the raw category grey, read as
+	// "misaligned" though every coordinate was faithful). Layer 1: the grey backdrop
+	// plate gt6:textures/gui/machines/nei.png. Layer 2: the per-map machine GUI texture
+	// (mGUIPath — upstream getGuiTexture :653, drawn as the (-5,-8, 0,3,176,79) band).
+	// Both layers anchor the PANEL origin at texture pixel (5,11) of the machine band /
+	// (5,16) of the plate, which is exactly the offset upstream folded into every
+	// PositionedStack (the ctor super call at :112 over :66 sOffsetX/Y=5/11) — the
+	// layout switches above stay in machine-GUI coordinates and the viewer* exits below
+	// do the fold ONCE here, so neither viewer leg ever folds twice.
+	// -----------------------------------------------------------------------
+
+	/** The panel origin inside the machine texture (NEI_RecipeMap.java:66 sOffsetX/sOffsetY). */
+	public static final int S_OFFSET_X = 5;
+	public static final int S_OFFSET_Y = 11;
 	/**
-	 * The text-band first Y. Upstream drew the cost lines at FIXED y73..123 over the GUI
-	 * art (:680-717) — colliding with the y63 fluid row whenever the map carries fluids.
-	 * The viewers carry no machine GUI texture, so the band shifts +10 (y83) on
-	 * fluid-bearing maps — the one geometry deviation, declared here.
+	 * The backdrop plate crop, {u,v,w,h} panel system (NEI_RecipeMap.java:632
+	 * {@code drawTexturedModalRect(-5,-16, 0,0,176,166)} minus the (-5,-16) anchor). Drawn
+	 * at (0,0); the category height 140 takes the plate to its bottom transparent margin
+	 * (upstream IMC handlerHeight 135 + the 5px batch-1 margin) — harmless.
 	 */
-	public static int textBaseY(RecipeMap aMap) {
-		return aMap.mInputFluidCount > 0 || aMap.mOutputFluidCount > 0 ? 83 : 73;
+	public static final int[] PLATE_CROP = {5, 16, 166, 140};
+	/** The machine-band crop, {u,v,w,h} panel system (NEI_RecipeMap.java:634 {@code (-5,-8, 0,3,176,79)}). Drawn at (0,0) OVER the plate. */
+	public static final int[] BAND_CROP = {5, 11, 166, 71};
+	/** The backdrop plate texture (NEI_RecipeMap.java:632; port assets/README.md r9-34 section, amazawa redraw). */
+	public static final ResourceLocation PLATE_TEXTURE = ResourceLocation.fromNamespaceAndPath("gt6", "textures/gui/machines/nei.png");
+
+	/**
+	 * The per-map machine GUI texture (upstream getGuiTexture :653 = mGUIPath, the
+	 * Recipe.java:124 ".png"-suffixed string — the live per-map→PNG mapping table, no
+	 * second table needed) as a texture {@link ResourceLocation}. The five fuel maps and
+	 * the like ride the shared default.png exactly as their GT6RecipeMaps rows declare.
+	 * Same parse as GTBasicMachineScreen.backgroundOf (the machine-Screen consumer of the
+	 * very same string).
+	 */
+	public static ResourceLocation guiTexture(RecipeMap aMap) {
+		String tPath = aMap.mGUIPath;
+		int tColon = tPath.indexOf(':');
+		if (tColon < 0) throw new IllegalArgumentException("RecipeMap mGUIPath is not a namespaced path: " + tPath);
+		return ResourceLocation.fromNamespaceAndPath(tPath.substring(0, tColon), tPath.substring(tColon + 1));
+	}
+
+	/** The fold: machine-GUI coordinates → panel/viewer coordinates ({@code null} passes through). */
+	private static int[] fold(int[] aPos) {
+		return aPos == null ? null : new int[] {aPos[0] - S_OFFSET_X, aPos[1] - S_OFFSET_Y};
+	}
+
+	/** {@link #inputPos} folded into panel/viewer coordinates — the only form the viewer legs consume. */
+	public static int[] viewerInputPos(int aIndex, RecipeMap aMap) {
+		return fold(inputPos(aIndex, aMap));
+	}
+
+	/** {@link #outputPos} folded into panel/viewer coordinates — the only form the viewer legs consume. */
+	public static int[] viewerOutputPos(int aIndex, RecipeMap aMap) {
+		return fold(outputPos(aIndex, aMap));
+	}
+
+	/** {@link #fluidInputPos} folded into panel/viewer coordinates — the only form the viewer legs consume. */
+	public static int[] viewerFluidInputPos(int aIndex) {
+		return fold(fluidInputPos(aIndex));
+	}
+
+	/** {@link #fluidOutputPos} folded into panel/viewer coordinates — the only form the viewer legs consume. */
+	public static int[] viewerFluidOutputPos(int aIndex) {
+		return fold(fluidOutputPos(aIndex));
 	}
 
 	// -----------------------------------------------------------------------

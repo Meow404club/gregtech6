@@ -9,8 +9,10 @@
  * amazawa source file (matched case-insensitively; anvilbend folds amazawa
  * AnvilBendingBig.png per the assets/README.md Small/Big fold row), the reskinned
  * bytes' sha256, and the canvas size, which equals the replaced upstream size
- * per-file (256x256 on all 73, verified at match time — the sizes pin keeps any
- * future reskin honest the same way).
+     * per-file (256x256 on all 73, verified at match time — the sizes pin keeps any
+     * future reskin honest the same way). Since r9-34-viewer-gui-bg the folder also
+     * carries the viewer's NEI backdrop plate (nei.png) and the bedrockorelist.png
+     * display map — both amazawa redraws, rows here like everything else.
  *
  * <p>Like pin g (GT6TextureCensusTest) this is pure read-only JUnit, no vanilla
  * bootstrap, touching only committed trees. The (176,0) 16x16 spot pin guards the
@@ -63,7 +65,8 @@ class GT6GuiReskinCensusTest {
     /**
      * One row per reskinned PNG: {target stem, amazawa source file, sha256 of the
      * reskinned bytes, width, height}. 73 rows = the full intersection of our
-     * gui/machines set with the pack's gregtech domain (anvilbend via the Big fold).
+     * gui/machines set with the pack's gregtech domain (anvilbend via the Big fold);
+     * r9-34-viewer-gui-bg added the viewer backdrop rows (nei, bedrockorelist).
      */
     private static final String[][] MANIFEST = {
         {"alloying", "Alloying.png", "c93bb15e340b98314f0053acddda047e65fee4808b4aafe095f8b0a917ed365b", "256", "256"},
@@ -71,6 +74,7 @@ class GT6GuiReskinCensusTest {
         {"anvilbend", "AnvilBendingBig.png", "41d60ba2f35458f4f083ad9f4d5b625cb97d7ddc54b21776271d449ed54cca39", "256", "256"},
         {"autoclave", "Autoclave.png", "35fa142291628237202338ac0294ad1af28b8efc71b9e79e580a6d3e07d46672", "256", "256"},
         {"bath", "Bath.png", "0bd23ee91c081dd5ac96401e09551ad17ffb0075ee767faafa11150eccdeae1d", "256", "256"},
+        {"bedrockorelist", "BedrockOreList.png", "3722cae8d75171c1c8c75384b72a00c7979b6ff5cfc7cd3b83ce00631fa9865d", "256", "256"},
         {"boxinator", "Boxinator.png", "611f06ff139214eade75ecf24a5519a4a4fdc43fdf1c6d4185b130b61f3599e2", "256", "256"},
         {"bumblelyzer", "Bumblelyzer.png", "62cee037e48102460c038dfc7a1d6b496608e0bc692caad09901387fe01afa31", "256", "256"},
         {"bumbliary", "Bumbliary.png", "d8273f498408a31a2cf1f5c3b515f38c50fde5ecf5c9ab7f5ab2317b76912ac8", "256", "256"},
@@ -115,6 +119,7 @@ class GT6GuiReskinCensusTest {
         {"melter", "Melter.png", "e06a503906d0dcc621d6ee83aab307abfd5fb41ecddbec608cf9adcbfb3b46df", "256", "256"},
         {"mixer", "Mixer.png", "9e053f82c6dd8ab0f45d7f4cb021bbb16504d9699ce15705f2bd5605e86e233e", "256", "256"},
         {"mortar", "Mortar.png", "bc40d341fcfc2862ab5e8047c0a5a4c4a4c8ca261bc2ba1b5a3031e7e97ea07d", "256", "256"},
+        {"nei", "NEI.png", "93fda523222f02a0dbc2b405e2226a9454cbaca0e776c65b861352f8d965b4ac", "256", "256"},
         {"oven", "Oven.png", "cc6f224752b815458c361911dd38456ecf3f5fdf2283cc650ed23c2dea1b099a", "256", "256"},
         {"plantalyzer", "Plantalyzer.png", "e188555f8d656ab35885673ea2c20719e1e75eeb765960a0a0295f1dfde2f801", "256", "256"},
         {"polarizer", "Polarizer.png", "c796167d91617dab6dc8dd2060eb420119a0596e3dcfa662e5c4f508530522b2", "256", "256"},
@@ -207,7 +212,7 @@ class GT6GuiReskinCensusTest {
         }
         assertEquals(pinned, onDisk,
             "gui/machines is not exactly the reskin manifest — add a row for a new file "
-                + "or restore/delete the stray PNG (73/73 fully absorbed)");
+                + "or restore/delete the stray PNG (75/75 fully absorbed)");
         assertTrue(violations.isEmpty(), "reskin manifest violations: " + violations);
         assertTrue(MANIFEST.length >= 73,
             "only " + MANIFEST.length + " manifest rows — the wave pin must never shrink silently");
@@ -255,7 +260,7 @@ class GT6GuiReskinCensusTest {
      * opaque pixel — the vanilla-Screen leg overlays the progress arrow from exactly
      * that window of the SAME PNG, so a reskin cropping it would blank every machine's
      * progress bar (spot pin from the design card open items; verified opaque on all
-     * 73 amazawa files at wave time).
+     * amazawa files at wave time, the r9-34 viewer rows included).
      */
     @Test
     void vanillaLegArrowRegionSurvivesReskin() throws IOException {

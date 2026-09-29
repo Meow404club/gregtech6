@@ -32,6 +32,7 @@ import net.minecraftforge.fluids.FluidStack;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.Bounds;
 import dev.emi.emi.api.widget.SlotWidget;
+import dev.emi.emi.api.widget.TextureWidget;
 import dev.emi.emi.api.widget.Widget;
 import dev.emi.emi.api.widget.WidgetHolder;
 
@@ -114,8 +115,10 @@ public class GT6RecipeMapEmiCategoryTest {
 
 	/**
 	 * The widget layout: the recording holder captures the slots/text; the positions are
-	 * the shared-seam coordinates — Lathe 1 in / 2 out (no fluids): in0 (53,25), out0/1
-	 * (107,25)/(125,25), and the cost text starting at the fluid-free base y73.
+	 * the shared-seam coordinates FOLDED to the panel system (task r9-34-viewer-gui-bg,
+	 * the -5,-11 sOffset fold living in the meta exits) — Lathe 1 in / 2 out (no fluids):
+	 * the NEI-GUI switch says in0 (53,25), out0/1 (107,25)/(125,25) → the viewer sees
+	 * (48,14)/(102,14)/(120,14), and the cost text starts at the panel band y73.
 	 */
 	@Test
 	public void addWidgetsLaysSlotsAtTheSharedCoordinates() {
@@ -129,12 +132,50 @@ public class GT6RecipeMapEmiCategoryTest {
 		new GT6RecipeMapEmiRecipe(tLathe, tRow, GT6RecipeMapEmiCategory.CATEGORIES.apply(tLathe), 0).addWidgets(tHolder);
 
 		assertEquals(2, tHolder.mSlots.size(), "one input slot + one output slot");
-		assertSlot(tHolder.mSlots.get(0), 53, 25);
-		assertSlot(tHolder.mSlots.get(1), 107, 25);
+		assertSlot(tHolder.mSlots.get(0), 48, 14);
+		assertSlot(tHolder.mSlots.get(1), 102, 14);
 		// the drawExtras face rides as five text widgets (Costs/Usage/Tier/Power/Time —
 		// the line CONTENT is pinned by the JEI-side test's costLines asserts, the shared
-		// seam; TextWidget.getBounds is client-bound so only the count is assertable here)
+		// seam; TextWidget.getBounds is client-bound so only the count is assertable here).
+		// The two backdrop TextureWidgets do NOT land here — the recording double sorts
+		// them into mTextures, pinned in the dedicated test below.
 		assertEquals(5, tHolder.mOtherWidgets, "the Lathe row's five drawExtras lines");
+		assertEquals(2, tHolder.mTextures.size(), "the two backdrop textures lead the stack (z order pinned below)");
+	}
+
+	/**
+	 * The backdrop composite (task r9-34-viewer-gui-bg, GitHub #34): the FIRST two widgets
+	 * added are the grey NEI plate and the per-map machine band (render order = add
+	 * order, so these must lead the z stack), cropped at exactly the upstream
+	 * drawBackground quadruples (NEI_RecipeMap.java:632/:634 folded to the panel system)
+	 * and anchored at (0,0). TextureWidget's ctor is pure field assignment — fully
+	 * assertable offline; its u/v fields are protected, so the pin reads them by
+	 * reflection (the bounds face is public).
+	 */
+	@Test
+	public void backdropTexturesLeadTheWidgetStackWithTheUpstreamCrops() throws Exception {
+		GT6RecipeMaps.init();
+		RecipeMap tLathe = GT6RecipeMaps.LATHE;
+		Recipe tRow = new Recipe(true,
+				new ItemStack[]{new ItemStack(Items.IRON_INGOT)},
+				new ItemStack[]{new ItemStack(Items.IRON_NUGGET)},
+				null, null, 400, 32, 0);
+		RecordingHolder tHolder = new RecordingHolder();
+		new GT6RecipeMapEmiRecipe(tLathe, tRow, GT6RecipeMapEmiCategory.CATEGORIES.apply(tLathe), 0).addWidgets(tHolder);
+
+		assertEquals(2, tHolder.mTextures.size(), "exactly two backdrop texture widgets");
+		var tPlate = tHolder.mTextures.get(0);
+		var tBand = tHolder.mTextures.get(1);
+		// plate: NEI.png crop (5,16,166,140) at (0,0) — the layer under everything
+		assertEquals(new Bounds(0, 0, 166, 140), tPlate.getBounds(), "the plate fills the 166x140 category");
+		assertEquals("gt6:textures/gui/machines/nei.png", textureOf(tPlate).toString());
+		assertEquals(5, uOf(tPlate));
+		assertEquals(16, vOf(tPlate));
+		// band: the per-map machine GUI (mGUIPath → lathe.png) crop (5,11,166,71) at (0,0)
+		assertEquals(new Bounds(0, 0, 166, 71), tBand.getBounds(), "the machine band rides the plate's top");
+		assertEquals("gt6:textures/gui/machines/lathe.png", textureOf(tBand).toString());
+		assertEquals(5, uOf(tBand));
+		assertEquals(11, vOf(tBand));
 	}
 
 	/**
@@ -194,11 +235,12 @@ public class GT6RecipeMapEmiCategoryTest {
 	/**
 	 * Issue #34 regression guard: the EMI slots are the NEI-faithful 18px form. EMI's
 	 * {@code SlotWidget.large(true)} switches getBounds() to a 26x26 box anchored at the
-	 * passed coordinate (its output branch — NOT centered), which on the meta's 18px
-	 * output pitch (107/125/143) overlapped each neighbour by 8px and pushed a 3rd
-	 * output to x169 past the 166-wide category. getBounds() is a pure field read (the
-	 * class doc), so the whole geometry pins offline. The BATH row exercises BOTH former
-	 * large sites at once: 3 item outputs AND a fluid output.
+	 * passed coordinate (its output branch — NOT centered), which on the 18px output
+	 * pitch overlaps each neighbour by 8px — never again. getBounds() is a pure field
+	 * read (the class doc), so the whole geometry pins offline. The BATH row exercises
+	 * BOTH former large sites at once: 3 item outputs AND a fluid output. Since
+	 * r9-34-viewer-gui-bg the lookups go through the meta's VIEWER exits (the
+	 * panel-system coordinates the slots actually draw at).
 	 */
 	@Test
 	public void outputSlotsKeepTheFaithful18pxGeometry() {
@@ -219,11 +261,12 @@ public class GT6RecipeMapEmiCategoryTest {
 			assertEquals(18, tSlot.getBounds().width(), "issue #34: slots stay the small 18px form (width)");
 			assertEquals(18, tSlot.getBounds().height(), "issue #34: slots stay the small 18px form (height)");
 		}
-		// the three item outputs sit at the shared-seam coordinates, 18px apart, none
-		// spilling past the 166-wide category (the old large box hit x169 at the 3rd slot)
+		// the three item outputs sit at the folded shared-seam coordinates (the GUI-system
+		// 107/125/143 → panel 102/120/138), 18px apart, none spilling past the 166-wide
+		// category
 		int tPrevX = -1;
 		for (int i = 0; i < 3; i++) {
-			int[] tPos = GT6RecipeMapViewerMeta.outputPos(i, tBath);
+			int[] tPos = GT6RecipeMapViewerMeta.viewerOutputPos(i, tBath);
 			SlotWidget tSlot = slotAt(tHolder, tPos[0], tPos[1]);
 			assertTrue(tSlot != null, "output slot " + i + " drawn at the shared coordinate " + tPos[0] + "," + tPos[1]);
 			if (i > 0) assertTrue(tSlot.getBounds().x() - tPrevX >= 18, "the 18px pitch — adjacent output slots never overlap");
@@ -231,6 +274,12 @@ public class GT6RecipeMapEmiCategoryTest {
 					"output slot " + i + " stays inside the 166-wide category");
 			tPrevX = tSlot.getBounds().x();
 		}
+		// the BATH fold spot (the acceptance card's抽验): a 4-6-slot map with >3 fluids
+		// puts input row 0 at GUI y16 → panel y11, and the fluid input at GUI (53,63) →
+		// panel (48,52)
+		int[] tFluid = GT6RecipeMapViewerMeta.viewerFluidInputPos(0);
+		assertTrue(slotAt(tHolder, tFluid[0], tFluid[1]) != null,
+				"the fluid input drawn at the folded " + tFluid[0] + "," + tFluid[1]);
 	}
 
 	/** The one slot drawn at the given coordinate (the holder carries a handful of slots). */
@@ -242,13 +291,36 @@ public class GT6RecipeMapEmiCategoryTest {
 
 	private static void assertSlot(SlotWidget aSlot, int aX, int aY) {
 		Bounds tBounds = aSlot.getBounds();
-		assertEquals(aX, tBounds.x(), "slot x — the shared NEI-switch coordinate");
-		assertEquals(aY, tBounds.y(), "slot y — the shared NEI-switch coordinate");
+		assertEquals(aX, tBounds.x(), "slot x — the shared NEI-switch coordinate, folded to the panel system");
+		assertEquals(aY, tBounds.y(), "slot y — the shared NEI-switch coordinate, folded to the panel system");
+	}
+
+	// the TextureWidget geometry/UV fields are protected and the test sits in another
+	// package — the pin reads them by reflection (ctor purity is what makes this legal).
+	private static net.minecraft.resources.ResourceLocation textureOf(TextureWidget aWidget) throws Exception {
+		var tField = TextureWidget.class.getDeclaredField("texture");
+		tField.setAccessible(true);
+		return (net.minecraft.resources.ResourceLocation) tField.get(aWidget);
+	}
+
+	private static int intField(TextureWidget aWidget, String aName) throws Exception {
+		var tField = TextureWidget.class.getDeclaredField(aName);
+		tField.setAccessible(true);
+		return tField.getInt(aWidget);
+	}
+
+	private static int uOf(TextureWidget aWidget) throws Exception {
+		return intField(aWidget, "u");
+	}
+
+	private static int vOf(TextureWidget aWidget) throws Exception {
+		return intField(aWidget, "v");
 	}
 
 	/** The recording double: {@code add} is the one funnel every addSlot/addText default lands in. */
 	private static final class RecordingHolder implements WidgetHolder {
 		final List<SlotWidget> mSlots = new ArrayList<>();
+		final List<TextureWidget> mTextures = new ArrayList<>();
 		int mOtherWidgets;
 
 		@Override
@@ -264,7 +336,9 @@ public class GT6RecipeMapEmiCategoryTest {
 		@Override
 		@SuppressWarnings("unchecked")
 		public <T extends Widget> T add(T aWidget) {
-			if (aWidget instanceof SlotWidget tSlot) mSlots.add(tSlot); else mOtherWidgets++;
+			if (aWidget instanceof SlotWidget tSlot) mSlots.add(tSlot);
+			else if (aWidget instanceof TextureWidget tTexture) mTextures.add(tTexture);
+			else mOtherWidgets++;
 			return aWidget;
 		}
 	}
