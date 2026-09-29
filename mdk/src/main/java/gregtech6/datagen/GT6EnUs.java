@@ -45,6 +45,7 @@ import gregtech6.jade.GT6ConverterProvider;
 import gregtech6.jade.GT6FluidProvider;
 import gregtech6.jade.GT6JadeRows;
 import gregtech6.jade.GT6MachineProvider;
+import gregtech6.jade.GT6SensorProvider;
 import gregtech6.worldgen.GT6OreGenInfoLayout;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
@@ -160,6 +161,7 @@ public class GT6EnUs extends LanguageProvider {
         addBoilerJade(); // task r5-jade-boiler — table-tail append
         addConverterJade(); // task r5-jade-converters — table-tail append
         addBoilerTooltip(); // task r8-tooltip-infra — table-tail append (the T1 pilot rows)
+        addSensorJade(); // task r8-jade-sensor-provider — table-tail append
         addPocketTools(); // task p29-w5-t7-pocket-eight — table-tail append
         addArmor(); // task p29-w5-t8-armor-24 — table-tail append
         addTreeBlocks(); // task p30-w6-t1-trees-nine — table-tail append
@@ -2354,6 +2356,33 @@ public class GT6EnUs extends LanguageProvider {
     private void addBoilerTooltip() {
         add("gt6.tooltip.boiler.7", "Requires any Water. Use distilled Water for best efficiency!");
         add("gt6.tooltip.boiler.9", "Explodes when Steam Pressure is too high!");
+    }
+
+    /**
+     * The sensor-family Jade face keys (task r8-jade-sensor-provider, 13 keys = 5 line keys
+     * + the 8 mode names): the reading line (hex mode rides the {@code 0x%04X}-formatted
+     * slot — the upstream display-strip hex face, SensorTE:262 — no separate key), the mode
+     * line (its slot is the NESTED translatable of one of the eight mode names — upstream
+     * has zero textual mode names, only the CHAR_* display-strip icons SensorTE:255-262, so
+     * the names are authored), the redstone line and the sneak pair (the sample value/max
+     * + the probe face name — the /gt6sensor read channel wording). Consumed by
+     * GT6SensorProvider; zh faces ride the reference table's hand layer via
+     * GT6ZhCn.addSensorJadeUnits.
+     */
+    private void addSensorJade() {
+        add(GT6SensorProvider.LANG_READING, "Reading: %s");
+        add(GT6SensorProvider.LANG_MODE, "Mode: %s");
+        add(GT6SensorProvider.LANG_REDSTONE, "Redstone: %s");
+        add(GT6SensorProvider.LANG_SAMPLE, "Sample: %s / %s");
+        add(GT6SensorProvider.LANG_PROBE, "Probe Face: %s");
+        add("gt6.jade.sensor.mode.display", "Value");
+        add("gt6.jade.sensor.mode.percent", "Percent");
+        add("gt6.jade.sensor.mode.greater", "Greater Than");
+        add("gt6.jade.sensor.mode.equal", "Equal To");
+        add("gt6.jade.sensor.mode.smaller", "Smaller Than");
+        add("gt6.jade.sensor.mode.scale", "Scale");
+        add("gt6.jade.sensor.mode.full", "Full");
+        add("gt6.jade.sensor.mode.not_full", "Not Full");
     }
     /**
      * Pocket multitool family keys (task p29-w5-t7-pocket-eight): the eight display names

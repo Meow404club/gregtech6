@@ -1034,6 +1034,25 @@ HAND_TRANSLATIONS = {
     "gt6.jade.converter.stopped": ("已停机", "hand"),
     "gt6.jade.converter.stored": ("存量: %s / %s %s", "hand"),
     "gt6.jade.converter.stored.bare": ("存量: %s %s", "hand"),
+    # task r8-jade-sensor-provider: the sensor-family Jade band keyed (reading/mode/redstone
+    # lines + the sneak pair + the 8 mode names — upstream has zero textual mode names, the
+    # names are authored against the GTSensorLogic mode semantics; the probe face arg rides
+    # the untranslated Direction name per the /gt6sensor read channel wording).
+    # 双落 discipline: py row + provider/datagen walk in the SAME commit, the regen
+    # reproduces the tsv rows.
+    "gt6.jade.sensor.mode": ("模式: %s", "hand"),
+    "gt6.jade.sensor.mode.display": ("数值", "hand"),
+    "gt6.jade.sensor.mode.equal": ("等于", "hand"),
+    "gt6.jade.sensor.mode.full": ("已满", "hand"),
+    "gt6.jade.sensor.mode.greater": ("大于", "hand"),
+    "gt6.jade.sensor.mode.not_full": ("未满", "hand"),
+    "gt6.jade.sensor.mode.percent": ("百分比", "hand"),
+    "gt6.jade.sensor.mode.scale": ("比例", "hand"),
+    "gt6.jade.sensor.mode.smaller": ("小于", "hand"),
+    "gt6.jade.sensor.probe": ("探测面: %s", "hand"),
+    "gt6.jade.sensor.reading": ("读数: %s", "hand"),
+    "gt6.jade.sensor.redstone": ("红石: %s", "hand"),
+    "gt6.jade.sensor.sample": ("采样: %s / %s", "hand"),
     # ---- the 72 generic RM category titles + the 16 cost-line keys (task r6-29-34a,
     # GitHub #29b) ----
     # titles: the gt6.jei.recipe_map.<snake> domain over the shared titleKey formula; the
