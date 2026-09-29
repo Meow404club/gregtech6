@@ -66,12 +66,19 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
         };
     }
 
-    /** The 12 battery boxes: 2D icons over their own baked composite sprite. */
+    /**
+     * The 12 battery boxes: FLIPPED BACK to the ok3D block-parent form by task
+     * r8-tex-composite-family (the block models are the true two-layer borrows now —
+     * the 2D transitional icons this card shipped retired per their own declaration).
+     */
     @Test
-    void batteryBoxItemsAre2DIcons() throws Exception {
+    void batteryBoxItemsParentTheTwoLayerBlockModels() throws Exception {
         assertFalse(GT6Batteries.BOX_ROWS.isEmpty(), "the row walk broke — never pass vacuously");
         for (GT6Batteries.BoxRow tRow : GT6Batteries.BOX_ROWS) {
-            assert2DForm(tRow.path(), "gt6:block/" + (tRow.slots() == 16 ? "battery_box_large" : "battery_box"));
+            JsonObject tModel = generatedJson("assets/gt6/models/item/" + tRow.path() + ".json");
+            assertEquals("gt6:block/" + (tRow.slots() == 16 ? "battery_box_large/battery_box_large" : "battery_box/battery_box"),
+                    tModel.get("parent").getAsString(),
+                    tRow.path() + ": the ok3D two-layer block-model parent");
         }
     }
 
@@ -145,12 +152,13 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
      * The world-face guard: the touched block models stay the cube_all form over the
      * same sprites — one archetype per family (the item fix must not leak into the
      * blockstate/model chain), extended with the tier-B families (r8-tex-itemform-b).
+     * The battery boxes LEFT this guard in task r8-tex-composite-family: their world
+     * face is intentionally the two-layer borrow now, pinned by
+     * GT6CompositeEnergyTexDatagenTest.
      */
     @Test
     void blockModelsKeepTheCubeAllForm() throws Exception {
         String[][] tArchetypes = {
-                {"battery_box_lv", "gt6:block/battery_box"},
-                {"battery_box_large_lv", "gt6:block/battery_box_large"},
                 {"long_dist_wire_0", "gt6:block/long_dist_wire_ev"},
                 {"long_dist_pipe_0", "gt6:block/item_pipe"},
                 {"energy_source", "gt6:block/energy_source"},
@@ -189,7 +197,8 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
                 {"electric_dynamo", "gt6:block/electric_dynamo"}, // the dynamo ladder
                 {"steam_turbine_graphene", "gt6:block/turbine_main_steam"}, // the turbine mains
                 {"machine_wall_tungsten", "gt6:block/machine_wall_tungsten_design_0"}, // the parts walk
-                {"large_massfab", "gt6:block/large_massfab"}}; // the large-machine controllers
+                {"large_massfab", "gt6:block/large_massfab"}, // the large-machine controllers
+                {"battery_box_lv", "gt6:block/battery_box/battery_box"}}; // the composite-energy band (r8-tex-composite-family flip-back)
         for (String[] tCase : tArchetypes) {
             JsonObject tModel = generatedJson("assets/gt6/models/item/" + tCase[0] + ".json");
             assertEquals(tCase[1], tModel.get("parent").getAsString(),

@@ -5,6 +5,12 @@
  * both asserted against the committed trees (the GT6MachinePaintRenderDatagenTest
  * classpath split + the GT6TextureCensusTest pin-e digest form).
  *
+ * <p>NARROWED by task r8-tex-composite-family: the LD-transformer and crystal-charger
+ * segments of the wave moved to the true two-layer borrows — their pins live in
+ * {@link GT6CompositeEnergyTexDatagenTest} now (the 13 src-over composites this class
+ * used to pin are retired). What stays here is the LD WIRE domain: the 16 wire metas
+ * (out of the composite card's scope) and their 5 tier sprites + the ledger pin.</p>
+ *
  * <p>Acceptance pins:</p>
  * <ul>
  *   <li>the 16 LD wire metas are FULLY covered: each meta's blockstate/model/item
@@ -12,17 +18,9 @@
  *       iconset art (upstream Textures.java:638-655: metas 0-1=EV, 2=IV, 3-7=LuV,
  *       8-11=ZPM, 12-15=UV; the same split as the tier-byte table Loader_Blocks.java:160,
  *       transcribed into GT6LongDistWires.ROWS) — the wire_electric stand-in is gone;</li>
- *   <li>the five LD transformer endpoints ride the dedicated INPUT/OUTPUT facing-cube
- *       model over the baked longdistancetransformer_electric composites (front =
- *       INPUT, back = OUTPUT, MultiTileEntityLongDistanceTransformer.java:295-299) —
- *       the electric-transformer model share is gone;</li>
- *   <li>the twenty crystal chargers ride the dedicated laser-front/side art per size
- *       (MultiTileEntityCrystalCharger.java:33-36: front only on mFacing) — the
- *       battery-box stand-in is gone;</li>
- *   <li>the ZPM Decharger art (the battery card's declared consumer surface) exists
- *       on the static tree, and EVERY wave PNG is ledgered in assets/README.md with
- *       its real sha256 (the name check alone can pass while the bytes drifted —
- *       the GT6TextureCensusTest pin-e lesson).</li>
+ *   <li>EVERY wire wave PNG is ledgered in assets/README.md with its real sha256
+ *       (the name check alone can pass while the bytes drifted — the
+ *       GT6TextureCensusTest pin-e lesson).</li>
  * </ul>
  *
  * <p>KJS face: none — this card's output is resources + datagen only.</p>
@@ -50,12 +48,6 @@ import com.google.gson.JsonParser;
 
 class GT6RenderPoolTextureTest {
 
-    private static final List<String> LD_TRANSFORMER_PATHS = List.of(
-            "longdist_transformer_t5", "longdist_transformer_t6", "longdist_transformer_t7",
-            "longdist_transformer_t8", "longdist_transformer_t9");
-
-    private static final int CHARGER_COUNT = 20;
-
     /** The meta -> LONG_DIST_WIRES_01 sprite token pin (Textures.java:638-655 over Loader_Blocks.java:160). */
     private static final Map<Integer, String> WIRE_ART = Map.ofEntries(
             Map.entry(0, "ev"), Map.entry(1, "ev"), Map.entry(2, "iv"),
@@ -63,13 +55,8 @@ class GT6RenderPoolTextureTest {
             Map.entry(8, "zpm"), Map.entry(9, "zpm"), Map.entry(10, "zpm"), Map.entry(11, "zpm"),
             Map.entry(12, "uv"), Map.entry(13, "uv"), Map.entry(14, "uv"), Map.entry(15, "uv"));
 
-    /** The wave's 18 PNGs (the bake_render_pool_textures.py products, static tree). */
+    /** The wire wave's 5 PNGs (the p36 bake products still on the tree — the composite 13 retired r8-tex-composite-family). */
     private static final List<String> WAVE_PNGS = List.of(
-            "crystal_charger_front.png", "crystal_charger_side.png",
-            "crystal_charger_large_front.png", "crystal_charger_large_side.png",
-            "long_distance_transformer_front.png", "long_distance_transformer_back.png", "long_distance_transformer_side.png",
-            "zpm_decharger_front.png", "zpm_decharger_back.png", "zpm_decharger_side.png",
-            "zpm_decharger_quantum_front.png", "zpm_decharger_quantum_back.png", "zpm_decharger_quantum_side.png",
             "long_dist_wire_ev.png", "long_dist_wire_iv.png", "long_dist_wire_luv.png",
             "long_dist_wire_zpm.png", "long_dist_wire_uv.png");
 
@@ -121,65 +108,6 @@ class GT6RenderPoolTextureTest {
             assertWireMetaCovered(tMeta);
         }
         assertEquals(16, WIRE_ART.size(), "the tier-art table covers every meta");
-    }
-
-    @Test
-    void ldTransformerEndpointsRideDedicatedArt() throws Exception {
-        JsonObject tModel = json("assets/gt6/models/block/long_distance_transformer.json");
-        JsonObject tTextures = tModel.getAsJsonObject("textures");
-        assertEquals("gt6:block/long_distance_transformer_front", tTextures.get("north").getAsString(),
-                "model-space north = the INPUT face (the upstream front/mFacing seat)");
-        assertEquals("gt6:block/long_distance_transformer_back", tTextures.get("south").getAsString(),
-                "model-space south = the OUTPUT face (the upstream OPOS seat)");
-        for (String tFace : new String[] {"east", "west", "up", "down"}) {
-            assertEquals("gt6:block/long_distance_transformer_side", tTextures.get(tFace).getAsString(),
-                    "the " + tFace + " face carries the side art");
-        }
-        for (String tKey : tTextures.entrySet().stream().map(Map.Entry::getKey).toList()) {
-            assertTextureOnTree(tTextures.get(tKey).getAsString());
-        }
-        for (String tPath : LD_TRANSFORMER_PATHS) {
-            JsonObject tState = json("assets/gt6/blockstates/" + tPath + ".json");
-            for (var tVariant : tState.getAsJsonObject("variants").entrySet()) {
-                assertEquals("gt6:block/long_distance_transformer", tVariant.getValue().getAsJsonObject().get("model").getAsString(),
-                        tPath + " variant " + tVariant.getKey() + " rides the dedicated model");
-            }
-            JsonObject tItem = json("assets/gt6/models/item/" + tPath + ".json");
-            assertEquals("gt6:block/long_distance_transformer", tItem.get("parent").getAsString(),
-                    tPath + " item parents the dedicated model");
-        }
-    }
-
-    @Test
-    void crystalChargersRideDedicatedLaserArt() throws Exception {
-        for (String tSize : new String[] {"", "_large"}) {
-            for (String tKind : new String[] {"front", "side"}) {
-                assertTextureOnTree("gt6:block/crystal_charger" + tSize + "_" + tKind);
-            }
-        }
-        int tRows = 0;
-        for (int tTier = 0; tTier < 10; tTier++) {
-            for (String tSize : new String[] {"", "_large"}) {
-                String tPath = "crystal_charger" + tSize + (tTier == 0 ? "" : "_t" + (tTier + 1));
-                String tTex = "block/crystal_charger" + tSize + "_";
-                JsonObject tModel = json("assets/gt6/models/block/" + tPath + ".json");
-                JsonObject tTextures = tModel.getAsJsonObject("textures");
-                assertEquals("gt6:" + tTex + "front", tTextures.get("north").getAsString(),
-                        tPath + " model-space north = the laser FRONT art");
-                for (String tFace : new String[] {"south", "east", "west", "up", "down"}) {
-                    assertEquals("gt6:" + tTex + "side", tTextures.get(tFace).getAsString(),
-                            tPath + " the " + tFace + " face carries the side art (upstream index 1)");
-                }
-                JsonObject tState = json("assets/gt6/blockstates/" + tPath + ".json");
-                // issue #18 (r4-18-converter-tex-facing): the charger blocks ride
-                // GT6BatteryBoxBlock whose FACING went six-way — 6 variants per state
-                assertEquals(6, tState.getAsJsonObject("variants").size(), tPath + " has the six facing variants");
-                JsonObject tItem = json("assets/gt6/models/item/" + tPath + ".json");
-                assertEquals("gt6:block/" + tPath, tItem.get("parent").getAsString(), tPath + " item parent");
-                tRows++;
-            }
-        }
-        assertEquals(CHARGER_COUNT, tRows, "the 20-row charger census");
     }
 
     /**

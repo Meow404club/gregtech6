@@ -457,11 +457,14 @@ public class GT6SingleBlockFacingIntegrityTest extends GTOfflineTestBase {
 		GT6BatteryBoxBlock tBox = new GT6BatteryBoxBlock(BlockBehaviour.Properties.of(), 0, 4, () -> null);
 		assertEquals(12, tTrans.getStateDefinition().getPossibleStates().size(), "transformer: 6 facings x 2 active");
 		assertEquals(12, tDynamo.getStateDefinition().getPossibleStates().size(), "dynamo: 6 facings x 2 active");
-		assertEquals(6, tBox.getStateDefinition().getPossibleStates().size(), "battery box: 6 facings");
+		// r8-tex-composite-family: the battery-box carrier gained the ACTIVE property (the
+		// overlay_active shell selector) — the state space joined the 6x2 form
+		assertEquals(12, tBox.getStateDefinition().getPossibleStates().size(), "battery box: 6 facings x 2 active");
 		// the ACTIVE property is the shared single instance (the ADR-P16-2 identity the
 		// 1.21 state-holding lookup requires)
 		assertEquals(gregtech6.block.GTBlockProperties.ACTIVE, GT6ElectricTransformerBlock.ACTIVE, "the transformer ACTIVE is the shared instance");
 		assertEquals(gregtech6.block.GTBlockProperties.ACTIVE, GT6DynamoBlock.ACTIVE, "the dynamo ACTIVE is the shared instance");
+		assertEquals(gregtech6.block.GTBlockProperties.ACTIVE, GT6BatteryBoxBlock.ACTIVE, "the battery box ACTIVE is the shared instance");
 	}
 
 	/**
