@@ -1,7 +1,6 @@
 package gregtech6.registry;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -16,6 +15,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.block.energy.GTEnergySourceBlock;
+import gregtech6.item.GT6MachineBlockItem;
 
 /**
  * Test energy source registration, card-owned (ADR-P3-4): self-contained
@@ -41,8 +41,9 @@ public final class GTEnergySources {
 			() -> new GTEnergySourceBlock(BlockBehaviour.Properties.of()
 					.strength(1.0F, 2.0F).sound(SoundType.COPPER)));
 
+	// task r8-tooltip-multiblock-generator — the generator-family carrier replays gt6.tooltip.generator.*
 	public static final RegistryObject<Item> ENERGY_SOURCE_ITEM = ITEMS.register("energy_source",
-			() -> new BlockItem(ENERGY_SOURCE.get(), new Item.Properties()));
+			() -> new GT6MachineBlockItem(ENERGY_SOURCE.get(), new Item.Properties(), "generator"));
 
 	private GTEnergySources() {}
 

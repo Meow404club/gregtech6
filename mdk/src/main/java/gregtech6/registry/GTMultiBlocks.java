@@ -26,6 +26,7 @@ import net.minecraftforge.registries.RegistryObject;
 import gregapi.data.MT;
 
 import gregtech6.block.GTComposedNameItem;
+import gregtech6.item.GT6MachineBlockItem;
 import gregtech6.block.multiblock.GTCokeOvenBlock;
 import gregtech6.block.multiblock.GTHeatTransmitterBlock;
 import gregtech6.block.multiblock.GTBedrockDrillBlock;
@@ -110,8 +111,9 @@ public final class GTMultiBlocks {
 					MultiBlockPartBlockEntity::new,
 					sharedPartBlockArray()).build(null));
 
+	/** The Coke Oven controller item (the family carrier — the gt6.tooltip.multiblock.* replay, task r8-tooltip-multiblock-generator). */
 	public static final RegistryObject<Item> COKE_OVEN_ITEM = ITEMS.register("multiblock_coke_oven",
-			() -> new BlockItem(COKE_OVEN.get(), new Item.Properties()));
+			() -> new GT6MachineBlockItem(COKE_OVEN.get(), new Item.Properties(), "multiblock"));
 
 	public static final RegistryObject<Item> COKE_OVEN_BRICKS_ITEM = ITEMS.register("multiblock_coke_oven_bricks",
 			() -> new BlockItem(COKE_OVEN_BRICKS.get(), new Item.Properties()));
@@ -476,9 +478,9 @@ public final class GTMultiBlocks {
 	public static final RegistryObject<GTImplosionCompressorBlock> IMPLOSION_COMPRESSOR = BLOCKS.register("implosion_compressor",
 			() -> new GTImplosionCompressorBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL)));
 
-	/** The Implosion Compressor controller item (the plain BlockItem — the twelve-row shape; no addToolTips replay exists this port). */
+	/** The Implosion Compressor controller item (the family carrier — the twelve-row shape; the gt6.tooltip.multiblock.* replay). */
 	public static final RegistryObject<Item> IMPLOSION_COMPRESSOR_ITEM = ITEMS.register("implosion_compressor",
-			() -> new BlockItem(IMPLOSION_COMPRESSOR.get(), new Item.Properties()));
+			() -> new GT6MachineBlockItem(IMPLOSION_COMPRESSOR.get(), new Item.Properties(), "multiblock")); // task r8-tooltip-multiblock-generator
 
 	/**
 	 * The Implosion Compressor BET: one controller class over its one block (the
@@ -509,9 +511,9 @@ public final class GTMultiBlocks {
 	public static final RegistryObject<GTVonDaGraaggBlock> VON_DA_GRAAGG = BLOCKS.register("von_da_graagg",
 			() -> new GTVonDaGraaggBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL)));
 
-	/** The Von da Graagg controller item (the plain BlockItem — the implosion twelve-row shape). */
+	/** The Von da Graagg controller item (the family carrier — the implosion twelve-row shape; the gt6.tooltip.multiblock.* replay). */
 	public static final RegistryObject<Item> VON_DA_GRAAGG_ITEM = ITEMS.register("von_da_graagg",
-			() -> new BlockItem(VON_DA_GRAAGG.get(), new Item.Properties()));
+			() -> new GT6MachineBlockItem(VON_DA_GRAAGG.get(), new Item.Properties(), "multiblock")); // task r8-tooltip-multiblock-generator
 
 	/**
 	 * The Von da Graagg BET: one controller class over its one block (the
@@ -544,9 +546,9 @@ public final class GTMultiBlocks {
 	public static final RegistryObject<GTMassfabBlock> MASSFAB = BLOCKS.register("large_massfab",
 			() -> new GTMassfabBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL)));
 
-	/** The Large Matter Fabricator controller item (the plain BlockItem — the implosion twelve-row shape). */
+	/** The Large Matter Fabricator controller item (the family carrier — the implosion twelve-row shape; the gt6.tooltip.multiblock.* replay). */
 	public static final RegistryObject<Item> MASSFAB_ITEM = ITEMS.register("large_massfab",
-			() -> new BlockItem(MASSFAB.get(), new Item.Properties()));
+			() -> new GT6MachineBlockItem(MASSFAB.get(), new Item.Properties(), "multiblock")); // task r8-tooltip-multiblock-generator
 
 	/**
 	 * The Massfab BET: one controller class over its one block (the
@@ -585,9 +587,9 @@ public final class GTMultiBlocks {
 	public static final RegistryObject<GTFusionReactorBlock> FUSION_REACTOR = BLOCKS.register("fusion_reactor",
 			() -> new GTFusionReactorBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL)));
 
-	/** The Fusion Reactor controller item (the plain BlockItem — the massfab twelve-row shape). */
+	/** The Fusion Reactor controller item (the family carrier — the massfab twelve-row shape; the gt6.tooltip.multiblock.* replay). */
 	public static final RegistryObject<Item> FUSION_REACTOR_ITEM = ITEMS.register("fusion_reactor",
-			() -> new BlockItem(FUSION_REACTOR.get(), new Item.Properties()));
+			() -> new GT6MachineBlockItem(FUSION_REACTOR.get(), new Item.Properties(), "multiblock")); // task r8-tooltip-multiblock-generator
 
 	/**
 	 * The Fusion Reactor BET: one controller class over its one block (the
@@ -617,9 +619,9 @@ public final class GTMultiBlocks {
 	public static final RegistryObject<GTBedrockDrillBlock> BEDROCK_DRILL = BLOCKS.register("bedrock_drill",
 			() -> new GTBedrockDrillBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(9.0F, 9.0F).sound(SoundType.METAL)));
 
-	/** The Bedrock Mining Drill controller item (the plain BlockItem — the graagg twelve-row shape). */
+	/** The Bedrock Mining Drill controller item (the family carrier — the graagg twelve-row shape; the gt6.tooltip.multiblock.* replay). */
 	public static final RegistryObject<Item> BEDROCK_DRILL_ITEM = ITEMS.register("bedrock_drill",
-			() -> new BlockItem(BEDROCK_DRILL.get(), new Item.Properties()));
+			() -> new GT6MachineBlockItem(BEDROCK_DRILL.get(), new Item.Properties(), "multiblock")); // task r8-tooltip-multiblock-generator
 
 	/**
 	 * The Bedrock Drill BET: one controller class over its one block (the

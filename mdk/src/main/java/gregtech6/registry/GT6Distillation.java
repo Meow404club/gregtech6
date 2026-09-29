@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 
 import gregapi.code.TagData;
 import gregapi.data.TD;
-import gregtech6.block.GTComposedNameItem;
+import gregtech6.item.GT6MachineBlockItem;
 import gregtech6.block.multiblock.GTMultiBlockControllerBlock;
 import gregtech6.fluid.FluidTankGT;
 import gregtech6.gui.machines.GT6MuiMachine;
@@ -162,8 +162,10 @@ public final class GT6Distillation {
 		for (TowerRow tRow : ROWS) {
 			TOWER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTDistillationTowerBlock(tRow, GTMultiBlocks.partProperties(6.0F))));
+			// task r8-tooltip-multiblock-generator — the family carrier (extends GTComposedNameItem,
+			// the composed tower names ride Block#getName unchanged) replays gt6.tooltip.multiblock.*
 			TOWER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new GTComposedNameItem(GT6Distillation.TOWER_BLOCKS_BY_PATH.get(tRow.path()).get(), new net.minecraft.world.item.Item.Properties())));
+					() -> new GT6MachineBlockItem(GT6Distillation.TOWER_BLOCKS_BY_PATH.get(tRow.path()).get(), new net.minecraft.world.item.Item.Properties(), "multiblock")));
 		}
 	}
 
