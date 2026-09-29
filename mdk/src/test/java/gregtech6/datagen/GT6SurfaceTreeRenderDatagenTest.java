@@ -120,6 +120,54 @@ class GT6SurfaceTreeRenderDatagenTest {
     }
 
     /**
+     * Issue #47 follow-up: the sneak-placed stick (shift+stickGt / the vanilla Items.STICK
+     * alias, the p32 dispatch) rides the SAME weighted variant band as the worldgen stick —
+     * upstream StickPlaced 32073 extends the worldgen stick (placeables/MultiTileEntityStickPlaced
+     * over placeables/MultiTileEntityStick, only getDefaultStick overridden), one look. The
+     * floor pose is the worldgen facing=down band VERBATIM (the deep-equality pin — the
+     * isomorphism the card accepts), the old full-footprint 16x16x2 oak plank model is dead.
+     */
+    @Test
+    void placedStickBlockstateRidesTheSurfaceStickBand() throws Exception {
+        JsonObject tState = json("assets/gt6/blockstates/placed_stick.json");
+        var tVariants = tState.getAsJsonObject("variants");
+        assertEquals(1, tVariants.size(), "the placed pile is stateless — the one '' key");
+        var tPlaced = tVariants.getAsJsonArray("");
+        var tWorld = json("assets/gt6/blockstates/surface_stick.json").getAsJsonObject("variants")
+                .getAsJsonArray("facing=down");
+        assertEquals(tWorld, tPlaced, "the placed stick IS the worldgen floor band, entry for entry");
+        // the band pinned directly too (the pool in emission order): 2 centered arms,
+        // one slide tier per arm, the two tilt models on both arms — uniform weights
+        List<String> tModels = List.of("gt6:block/surface_stick", "gt6:block/surface_stick",
+                "gt6:block/surface_stick_a", "gt6:block/surface_stick_b",
+                "gt6:block/surface_stick_t22", "gt6:block/surface_stick_t22",
+                "gt6:block/surface_stick_t45", "gt6:block/surface_stick_t45");
+        List<Integer> tArms = List.of(0, 90, 0, 90, 0, 90, 0, 90);
+        assertEquals(8, tPlaced.size(), "the full eight-entry stick band");
+        for (int i = 0; i < tPlaced.size(); i++) {
+            JsonObject tEntry = tPlaced.get(i).getAsJsonObject();
+            assertEquals(tModels.get(i), tEntry.get("model").getAsString(), "variant " + i + ": the shared stick model");
+            if (tArms.get(i) != 0) {
+                assertEquals(tArms.get(i), tEntry.get("y").getAsInt(), "variant " + i + ": the arm rotation");
+            } else {
+                assertFalse(tEntry.has("y"), "variant " + i + ": arm 0 = the omitted JSON default");
+            }
+            assertFalse(tEntry.has("x"), "variant " + i + ": the floor pose, no x rotation");
+            assertFalse(tEntry.has("weight"), "variant " + i + ": uniform band, weight 1 omitted");
+        }
+        // the referenced models resolve on the classpath (the offline blockstate->model walk)
+        for (String tModel : tModels.stream().distinct().toList()) {
+            assertNotNull(json("assets/gt6/models/block/" + tModel.substring("gt6:block/".length()) + ".json"),
+                    tModel + " must exist");
+        }
+        // the old full-footprint plank is retired from the generated tree
+        try (InputStream tOld = GT6SurfaceTreeRenderDatagenTest.class.getClassLoader()
+                .getResourceAsStream("assets/gt6/models/block/placed_stick.json")) {
+            assertNull(tOld, "the 16x16x2 plank model must be gone from the generated tree");
+        }
+    }
+
+    /**
      * #12 tilt models (debt-issue12-shape-follow-tilt): the default bar with an ELEMENT
      * rotation about its own centre — origin [8,1,8], axis y, angle 22.5/45 (the only
      * angles the grammar validates, BlockElement.java:100), untinted oak borrow kept.

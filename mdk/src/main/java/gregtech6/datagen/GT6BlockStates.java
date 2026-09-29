@@ -4253,7 +4253,20 @@ public final class GT6BlockStates extends BlockStateProvider {
                 java.util.Arrays.stream(gregtech6.block.surface.GT6SurfaceVariants.Rock.values())
                         .map(tVariant -> new ConfiguredModel(models().getBuilder(tVariant.model()), 0, 0, false, tVariant.weight()))
                         .toArray(ConfiguredModel[]::new));
-        placedPile(gregtech6.registry.GT6Placeables.PLACED_STICK.get(), "placed_stick", "block/oak_log", "block/oak_log", 2, false, true);
+        // issue #47 follow-up: the sneak-placed stick (shift+stickGt / vanilla stick,
+        // GT6PlaceablePlacement) rides the SAME weighted variant band as the worldgen
+        // surface stick — upstream StickPlaced 32073 EXTENDS the worldgen stick
+        // (placeables/MultiTileEntityStickPlaced over placeables/MultiTileEntityStick,
+        // only getDefaultStick overridden), so the placed form IS the surface-stick look
+        // (the random 12x2x2 lying bar, readFromNBT2 :56-70). The floor pose = the
+        // worldgen facing=down band verbatim: x 0, y = the variant arm, the shared
+        // models carry the untinted vanilla oak-log borrow (no tintindex — same as the
+        // old placedPile call's aTinted=false). The old full-footprint 16x16x2 plank is
+        // retired by the datagen stale sweep.
+        getVariantBuilder(gregtech6.registry.GT6Placeables.PLACED_STICK.get()).forAllStates(aState ->
+                java.util.Arrays.stream(gregtech6.block.surface.GT6SurfaceVariants.Stick.values())
+                        .map(tVariant -> new ConfiguredModel(models().getBuilder(tVariant.model()), 0, tVariant.armY(), false, tVariant.weight()))
+                        .toArray(ConfiguredModel[]::new));
     }
 
     /** One placed-pile model: an inset full-footprint box of aHeight/16, tinted per aTinted; aVanilla textures resolve against minecraft. */

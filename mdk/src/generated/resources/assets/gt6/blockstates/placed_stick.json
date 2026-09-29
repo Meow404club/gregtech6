@@ -1,7 +1,34 @@
 {
   "variants": {
-    "": {
-      "model": "gt6:block/placed_stick"
-    }
+    "": [
+      {
+        "model": "gt6:block/surface_stick"
+      },
+      {
+        "model": "gt6:block/surface_stick",
+        "y": 90
+      },
+      {
+        "model": "gt6:block/surface_stick_a"
+      },
+      {
+        "model": "gt6:block/surface_stick_b",
+        "y": 90
+      },
+      {
+        "model": "gt6:block/surface_stick_t22"
+      },
+      {
+        "model": "gt6:block/surface_stick_t22",
+        "y": 90
+      },
+      {
+        "model": "gt6:block/surface_stick_t45"
+      },
+      {
+        "model": "gt6:block/surface_stick_t45",
+        "y": 90
+      }
+    ]
   }
 }
