@@ -2353,18 +2353,72 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The boiler tooltip pilot rows (task r8-tooltip-infra, 2 keys): the T1 calibration
-     * pair at their upstream positions in the 12-row addToolTips table (the T2 card fills
-     * rows 1-6, 8, 10-12 in place) — row 7 = the pure-water requirement (ORANGE,
-     * LH.REQUIREMENT_WATER_PURE, MultiTileEntityBoilerTank.java:102) and row 9 = the steam
-     * explosion hazard (DRED, LH.HAZARD_EXPLOSION_STEAM, :104), both en VERBATIM from the
-     * gregapi/data/LH.java:495/:564 faces. Consumed by GT6Tooltips (the registry rows are
-     * these two keys); zh faces ride the reference table's hand layer via
-     * GT6ZhCn.addBoilerTooltipUnits.
+     * The four tooltip row-table families (task r8-tooltip-boiler-tank, 43 keys over the
+     * T1 pilot's 2): the en faces are the upstream addToolTips rows VERBATIM — the boiler
+     * table = MultiTileEntityBoilerTank.java:96-107 + the super facing row
+     * (TileEntityBase09FacingSingle.java:61/:82), the boiler_large table =
+     * MultiTileEntityLargeBoiler.java:151-165 + the :143-146 STRUCTURE keys + the
+     * multiblock base rows (TileEntityBase10MultiBlockBase.java:100-101) + the facing row,
+     * the tank table = the single static row of TileEntityBase08FluidContainer.java:100
+     * (the hardcoded-en contentcap face, so zh shows the same literal), the barrel tables =
+     * TileEntityBase08Barrel.java:92-102 with the :90/:91 carry rows DELETED (the design
+     * ruling) — the row indexes carry the upstream positions, so the gaps ARE the
+     * ported-out rows. The %1$s/%2$s/%3$s positional slots ride the per-variant constants
+     * the carrier hands at registration (TranslatableContents.java:87-88). Consumed by
+     * GT6Tooltips; zh faces ride the reference table's hand layer via
+     * GT6ZhCn.addTooltipRowUnits.
      */
     private void addBoilerTooltip() {
+        // the Steam Boiler Tank family (rows 1-13; 7/9 = the T1 pilot pair, kept verbatim)
+        add("gt6.tooltip.boiler.1", "Converts 1 L Water into 160 L Steam using 80 HU");
+        add("gt6.tooltip.boiler.2", "Efficiency: 100.00%");
+        add("gt6.tooltip.boiler.3", "Energy IN: %1$s HU/t (Any Side)");
+        add("gt6.tooltip.boiler.4", "Capacity: %3$s HU");
+        add("gt6.tooltip.boiler.5", "Energy OUT: %2$s Steam/t (Top)");
+        add("gt6.tooltip.boiler.6", "Capacity: %3$s Steam");
         add("gt6.tooltip.boiler.7", "Requires any Water. Use distilled Water for best efficiency!");
+        add("gt6.tooltip.boiler.8", "No GUI. Use Tiny Funnels to interact!");
         add("gt6.tooltip.boiler.9", "Explodes when Steam Pressure is too high!");
+        add("gt6.tooltip.boiler.10", "Melts down when stored Heat is too much!");
+        add("gt6.tooltip.boiler.11", "Use Chisel to decalcify");
+        add("gt6.tooltip.boiler.12", "Use Magnifying Glass to see Details");
+        add("gt6.tooltip.boiler.13", "Use Wrench to set Facing");
+        // the Large Boiler family (rows 1-18; 2-5 = the :143-146 LH.add structure keys)
+        add("gt6.tooltip.boiler_large.1", "Structure:");
+        add("gt6.tooltip.boiler_large.2", "3x3 Base of Heat Transmitters");
+        add("gt6.tooltip.boiler_large.3", "3x3x3 Hollow of the Block you crafted this one with");
+        add("gt6.tooltip.boiler_large.4", "Main centered on Side-Bottom of Boiler facing outwards");
+        add("gt6.tooltip.boiler_large.5", "Input only possible at Bottom Layer of Boiler");
+        add("gt6.tooltip.boiler_large.6", "Converts 1 L Water into 160 L Steam using 80 HU");
+        add("gt6.tooltip.boiler_large.7", "Efficiency: 100.00%");
+        add("gt6.tooltip.boiler_large.8", "Energy IN: %1$s HU/t (Heat Transmitters)");
+        add("gt6.tooltip.boiler_large.9", "Capacity: %3$s HU");
+        add("gt6.tooltip.boiler_large.10", "Energy OUT: %2$s Steam/t (Pipe Holes)");
+        add("gt6.tooltip.boiler_large.11", "Capacity: %3$s Steam");
+        add("gt6.tooltip.boiler_large.12", "Requires any Water. Use distilled Water for best efficiency!");
+        add("gt6.tooltip.boiler_large.13", "Explodes when Steam Pressure is too high!");
+        add("gt6.tooltip.boiler_large.14", "Melts down when stored Heat is too much!");
+        add("gt6.tooltip.boiler_large.15", "Use Chisel to decalcify");
+        add("gt6.tooltip.boiler_large.16", "Use Builder Wand to ease building");
+        add("gt6.tooltip.boiler_large.17", "Use Magnifying Glass to see Details");
+        add("gt6.tooltip.boiler_large.18", "Use Wrench to set Facing");
+        // the Fluid Container (tank) family — the one static row, dormant until a carrier exists
+        add("gt6.tooltip.tank.1", "Capacity: %s L");
+        // the Barrel family (rows 3/4/10-13; 1-2 = the Sealed/content carry rows the ruling deletes)
+        add("gt6.tooltip.barrel.3", "No GUI. Use Tiny Funnels and Taps to interact!");
+        add("gt6.tooltip.barrel.4", "All entering Power Conductor Fluids will be voided!");
+        add("gt6.tooltip.barrel.10", "Melts down when stored Heat is too much! (%s K)");
+        add("gt6.tooltip.barrel.11", "Use Monkey Wrench to toggle automatic Outputs");
+        add("gt6.tooltip.barrel.12", "Use Soft Hammer to toggle States");
+        add("gt6.tooltip.barrel.13", "Use Magnifying Glass to see Details");
+        // the gas-proof barrel family — the same rows + the :95 proof line
+        add("gt6.tooltip.barrel_gas.3", "No GUI. Use Tiny Funnels and Taps to interact!");
+        add("gt6.tooltip.barrel_gas.4", "All entering Power Conductor Fluids will be voided!");
+        add("gt6.tooltip.barrel_gas.6", "Can handle Gases");
+        add("gt6.tooltip.barrel_gas.10", "Melts down when stored Heat is too much! (%s K)");
+        add("gt6.tooltip.barrel_gas.11", "Use Monkey Wrench to toggle automatic Outputs");
+        add("gt6.tooltip.barrel_gas.12", "Use Soft Hammer to toggle States");
+        add("gt6.tooltip.barrel_gas.13", "Use Magnifying Glass to see Details");
     }
 
     /**

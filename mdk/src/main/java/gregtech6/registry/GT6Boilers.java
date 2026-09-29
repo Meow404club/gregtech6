@@ -223,9 +223,13 @@ public final class GT6Boilers {
 			BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new BoilerTankBlock(tRow, tRow.properties())));
 			// the GT6Kinetics.STEAM_ENGINE_ITEMS qualified-read forward-reference form (the P6 lambda lesson);
-			// task r8-tooltip-infra pilot — the family carrier replays gt6.tooltip.boiler.* via GT6Tooltips
+			// task r8-tooltip-infra pilot — the family carrier replays gt6.tooltip.boiler.* via GT6Tooltips;
+			// task r8-tooltip-boiler-tank — the per-row constants of the :98-:101 numeric rows ride the
+			// positional slots: [in = mOutput/STEAM_PER_EU, out = mOutput, cap = mOutput*10000] (the
+			// upstream readFromNBT :77-:78 shape — the raw loader value ×STEAM_PER_EU is mOutput)
 			ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new GT6MachineBlockItem(GT6Boilers.BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "boiler")));
+					() -> new GT6MachineBlockItem(GT6Boilers.BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "boiler",
+							tRow.outputSteamPerTick() / GTFluids.STEAM_PER_EU, tRow.outputSteamPerTick(), tRow.outputSteamPerTick() * 10000)));
 		}
 	}
 

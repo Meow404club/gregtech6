@@ -681,13 +681,68 @@ HAND_TRANSLATIONS = {
     "gt6.row.slicer.display": ("切片器 (%s)", "hand"),
     "gt.grass.tooltip": ("不会传播、被吃、改变颜色, 也不需要光照", "hand"),
     "gt.grass.tooltip.spray": ("喷漆罐也可以用来给草染色！", "hand"),
-    # task r8-tooltip-infra -- the T1 boiler tooltip pilot pair (the T2 card fills the rest
-    # of the 12-row addToolTips table): values are the upstream zh dump faces VERBATIM
-    # (tmp/gregtech.lang:3412 gt.lang.requirement.water.pure / :3333
-    # gt.lang.hazard.explosion.steam — the row keys are this port's own
-    # gt6.tooltip.boiler.* vocabulary, so the faces ride the hand layer)
+    # task r8-tooltip-infra -- the T1 boiler tooltip pilot pair; task r8-tooltip-boiler-tank
+    # -- the full four-family row tables (43 keys). Values are the upstream zh dump faces
+    # VERBATIM where the row is a single upstream constant (tmp/gregtech.lang :3412
+    # gt.lang.requirement.water.pure, :3333 gt.lang.hazard.explosion.steam, :3336
+    # gt.lang.hazard.meltdown, :3342 gt.lang.no.powerconducting.fluids, :3343/:3344
+    # gt.lang.nogui.funnel(.tap).tank, :3258 gt.lang.efficiency, :3264
+    # gt.lang.energy.capacity, :3267-3270 gt.lang.energy.convert.*, :3271-3272
+    # gt.lang.energy.input/output, :3276/:3293 gt.lang.face.any/top, :3371
+    # gt.lang.proof.gas, :3536 gt.lang.use.builder.wand.to.ease.building, :3537
+    # gt.lang.use.chisel.to.decalcify, :3544 gt.lang.use.magnifyingglass.to.detail,
+    # :3549 gt.lang.use.monkey.wrench.to.toggle.auto.outputs, :3558
+    # gt.lang.use.soft.hammer.to.toggle, :3564-3565 gt.lang.use.x.to.toggle.facing.*,
+    # :3491 gt.lang.tool.name.wrench, :17321 gt.td.long.energy.steam, :17754-17757
+    # gt.tooltip.multiblock.largeboiler.1-4) and composed the way the upstream rows
+    # concatenate them for the numeric rows (the positional slots stay untranslated);
+    # gt6.tooltip.tank.1 stays the hardcoded-en contentcap literal — upstream zh players
+    # see exactly that (FluidTankGT.contentcap has no lang face).
     "gt6.tooltip.boiler.7": ("需要输入任何种类的水。使用蒸馏水以达到最高效率!", "hand"),
     "gt6.tooltip.boiler.9": ("蒸汽压力过高时会爆炸!", "hand"),
+    "gt6.tooltip.boiler.1": ("将 1 L 水 转化为 160 L 蒸汽 消耗 80 HU", "hand"),
+    "gt6.tooltip.boiler.2": ("效率: 100.00%", "hand"),
+    "gt6.tooltip.boiler.3": ("能量输入: %1$s HU/t (任何面)", "hand"),
+    "gt6.tooltip.boiler.4": ("容量: %3$s HU", "hand"),
+    "gt6.tooltip.boiler.5": ("能量输出: %2$s 蒸汽/t (顶面)", "hand"),
+    "gt6.tooltip.boiler.6": ("容量: %3$s 蒸汽", "hand"),
+    "gt6.tooltip.boiler.8": ("没有界面，手持小型漏斗右键进行交互!", "hand"),
+    "gt6.tooltip.boiler.10": ("存储的热量过多时会熔毁!", "hand"),
+    "gt6.tooltip.boiler.11": ("使用凿子除去钙化残留物", "hand"),
+    "gt6.tooltip.boiler.12": ("使用放大镜观察细节", "hand"),
+    "gt6.tooltip.boiler.13": ("使用扳手设置朝向", "hand"),
+    "gt6.tooltip.boiler_large.1": ("结构:", "hand"),
+    "gt6.tooltip.boiler_large.2": ("3x3 热接收器底座", "hand"),
+    "gt6.tooltip.boiler_large.3": ("3x3x3 相应材料的致密壁板, 中空", "hand"),
+    "gt6.tooltip.boiler_large.4": ("大型蒸汽锅炉主方块放在结构的侧面中心, 正面朝外", "hand"),
+    "gt6.tooltip.boiler_large.5": ("只能从锅炉的底层输入", "hand"),
+    "gt6.tooltip.boiler_large.6": ("将 1 L 水 转化为 160 L 蒸汽 消耗 80 HU", "hand"),
+    "gt6.tooltip.boiler_large.7": ("效率: 100.00%", "hand"),
+    "gt6.tooltip.boiler_large.8": ("能量输入: %1$s HU/t (Heat Transmitters)", "hand"),
+    "gt6.tooltip.boiler_large.9": ("容量: %3$s HU", "hand"),
+    "gt6.tooltip.boiler_large.10": ("能量输出: %2$s 蒸汽/t (Pipe Holes)", "hand"),
+    "gt6.tooltip.boiler_large.11": ("容量: %3$s 蒸汽", "hand"),
+    "gt6.tooltip.boiler_large.12": ("需要输入任何种类的水。使用蒸馏水以达到最高效率!", "hand"),
+    "gt6.tooltip.boiler_large.13": ("蒸汽压力过高时会爆炸!", "hand"),
+    "gt6.tooltip.boiler_large.14": ("存储的热量过多时会熔毁!", "hand"),
+    "gt6.tooltip.boiler_large.15": ("使用凿子除去钙化残留物", "hand"),
+    "gt6.tooltip.boiler_large.16": ("使用建筑之杖快速搭建结构", "hand"),
+    "gt6.tooltip.boiler_large.17": ("使用放大镜观察细节", "hand"),
+    "gt6.tooltip.boiler_large.18": ("使用扳手设置朝向", "hand"),
+    "gt6.tooltip.tank.1": ("Capacity: %s L", "hand"),
+    "gt6.tooltip.barrel.3": ("没有界面，手持小型漏斗或龙头右键进行交互!", "hand"),
+    "gt6.tooltip.barrel.4": ("进入此容器的任何能量介质流体都将湮灭!", "hand"),
+    "gt6.tooltip.barrel.10": ("存储的热量过多时会熔毁! (%s K)", "hand"),
+    "gt6.tooltip.barrel.11": ("使用活动扳手调整自动输出", "hand"),
+    "gt6.tooltip.barrel.12": ("使用软锤调整状态", "hand"),
+    "gt6.tooltip.barrel.13": ("使用放大镜观察细节", "hand"),
+    "gt6.tooltip.barrel_gas.3": ("没有界面，手持小型漏斗或龙头右键进行交互!", "hand"),
+    "gt6.tooltip.barrel_gas.4": ("进入此容器的任何能量介质流体都将湮灭!", "hand"),
+    "gt6.tooltip.barrel_gas.6": ("不漏气", "hand"),
+    "gt6.tooltip.barrel_gas.10": ("存储的热量过多时会熔毁! (%s K)", "hand"),
+    "gt6.tooltip.barrel_gas.11": ("使用活动扳手调整自动输出", "hand"),
+    "gt6.tooltip.barrel_gas.12": ("使用软锤调整状态", "hand"),
+    "gt6.tooltip.barrel_gas.13": ("使用放大镜观察细节", "hand"),
     "gt6.tooltip.lightningrod.1": ("最底层是3x3的钨壁板, 中间是避雷针电力输出口", "hand"),
     "gt6.tooltip.lightningrod.2": ("第二层是3x3的大型铌钛合金线圈", "hand"),
     "gt6.tooltip.lightningrod.3": ("第三层是3x3的钨壁板", "hand"),

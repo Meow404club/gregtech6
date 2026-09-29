@@ -21,10 +21,11 @@ import net.minecraft.network.chat.Component;
  * lines ({@link #append} returns on the null row table) — that is the T2-families-are-not-
  * here-yet contract, exercised by {@link GT6TooltipsTest}.
  *
- * <p>The pilot carries the boiler family's two calibration rows at their upstream positions
+ * <p>The pilot carried the boiler family's two calibration rows at their upstream positions
  * (MultiTileEntityBoilerTank.java:95-109: row 7 = :102 REQUIREMENT_WATER_PURE, row 9 = :104
- * HAZARD_EXPLOSION_STEAM — both pure-static, one ORANGE + one DRED so the palette mapping
- * is exercised twice); the T2 card fills rows 1-6, 8, 10-12 in place.
+ * HAZARD_EXPLOSION_STEAM); task r8-tooltip-boiler-tank (T2) folded them into the full 13-row
+ * table and added the boiler_large / tank / barrel(+barrel_gas) tables — every row numbered
+ * by its upstream row index, so a gap in the numbering IS the ported-out row set.
  */
 public final class GT6Tooltips {
 
@@ -32,9 +33,86 @@ public final class GT6Tooltips {
 	public static final Map<String, List<GT6TooltipLine>> REGISTRY = new LinkedHashMap<>();
 
 	static {
+		// the Steam Boiler Tank family (both the standard and the Strong rows ride it) —
+		// MultiTileEntityBoilerTank.addToolTips :95-109 + the super chain's facing row
+		// (TileEntityBase09FacingSingle.java:61, getFacingTool = TOOL_wrench :82 = row 13);
+		// rows 3-6 carry the per-variant constants in positional slots (%1$s = Energy IN,
+		// %2$s = Energy OUT, %3$s = Capacity — the carrier hands [in, out, cap] per
+		// BoilerRow, the mOutput/STEAM_PER_EU + mOutput + mOutput*10000 shape of :98-:101)
 		register("boiler", List.of(
-				new GT6TooltipLine("gt6.tooltip.boiler.7", GT6TooltipStyle.ORANGE),  // :102 LH.REQUIREMENT_WATER_PURE
-				new GT6TooltipLine("gt6.tooltip.boiler.9", GT6TooltipStyle.DRED)));  // :104 LH.HAZARD_EXPLOSION_STEAM
+				new GT6TooltipLine("gt6.tooltip.boiler.1", GT6TooltipStyle.CYAN),    // :96 LH.CONVERTS_FROM_X.. (80 HU -> 160 L Steam, constant across all 26 rows)
+				new GT6TooltipLine("gt6.tooltip.boiler.2", GT6TooltipStyle.YELLOW),  // :97 LH.getToolTipEfficiency(10000) — pristine, the calcified state is carry state
+				new GT6TooltipLine("gt6.tooltip.boiler.3", GT6TooltipStyle.GREEN),   // :98 LH.ENERGY_INPUT (Any Side)
+				new GT6TooltipLine("gt6.tooltip.boiler.4", GT6TooltipStyle.GREEN),   // :99 LH.ENERGY_CAPACITY (HU)
+				new GT6TooltipLine("gt6.tooltip.boiler.5", GT6TooltipStyle.RED),     // :100 LH.ENERGY_OUTPUT (Top)
+				new GT6TooltipLine("gt6.tooltip.boiler.6", GT6TooltipStyle.RED),     // :101 LH.ENERGY_CAPACITY (Steam)
+				new GT6TooltipLine("gt6.tooltip.boiler.7", GT6TooltipStyle.ORANGE),  // :102 LH.REQUIREMENT_WATER_PURE (the T1 pilot row 1)
+				new GT6TooltipLine("gt6.tooltip.boiler.8", GT6TooltipStyle.ORANGE),  // :103 LH.NO_GUI_FUNNEL_TO_TANK
+				new GT6TooltipLine("gt6.tooltip.boiler.9", GT6TooltipStyle.DRED),    // :104 LH.HAZARD_EXPLOSION_STEAM (the T1 pilot row 2)
+				new GT6TooltipLine("gt6.tooltip.boiler.10", GT6TooltipStyle.DRED),   // :105 LH.HAZARD_MELTDOWN
+				new GT6TooltipLine("gt6.tooltip.boiler.11", GT6TooltipStyle.DGRAY),  // :106 LH.TOOL_TO_DECALCIFY_CHISEL
+				new GT6TooltipLine("gt6.tooltip.boiler.12", GT6TooltipStyle.DGRAY),  // :107 LH.TOOL_TO_DETAIL_MAGNIFYINGGLASS
+				new GT6TooltipLine("gt6.tooltip.boiler.13", GT6TooltipStyle.DGRAY))); // super :61 TOOL_TO_SET_FACING_PRE + Wrench (:82) + POST
+		// the Large Boiler family — MultiTileEntityLargeBoiler.addToolTips :150-167 (rows 1-15,
+		// the STRUCTURE block :151-155 over the static :143-146 LH.add keys) + the multiblock
+		// base rows (TileEntityBase10MultiBlockBase.java:100-101 = rows 16-17) + the facing
+		// row (TileEntityBase09FacingSingle.java:61 = row 18); rows 8-11 ride the same
+		// positional slots as the small boiler, the carrier hands [in, out, cap] per
+		// LargeBoilerRow (NBT_OUTPUT_SU raw 4096..131072, same mOutput*10000 capacity shape :80)
+		register("boiler_large", List.of(
+				new GT6TooltipLine("gt6.tooltip.boiler_large.1", GT6TooltipStyle.CYAN),    // :151 LH.STRUCTURE + ":"
+				new GT6TooltipLine("gt6.tooltip.boiler_large.2", GT6TooltipStyle.WHITE),   // :152 the :143 line
+				new GT6TooltipLine("gt6.tooltip.boiler_large.3", GT6TooltipStyle.WHITE),   // :153 the :144 line
+				new GT6TooltipLine("gt6.tooltip.boiler_large.4", GT6TooltipStyle.WHITE),   // :154 the :145 line
+				new GT6TooltipLine("gt6.tooltip.boiler_large.5", GT6TooltipStyle.WHITE),   // :155 the :146 line
+				new GT6TooltipLine("gt6.tooltip.boiler_large.6", GT6TooltipStyle.CYAN),    // :156 LH.CONVERTS_FROM_X..
+				new GT6TooltipLine("gt6.tooltip.boiler_large.7", GT6TooltipStyle.YELLOW),  // :157 getToolTipEfficiency (pristine)
+				new GT6TooltipLine("gt6.tooltip.boiler_large.8", GT6TooltipStyle.GREEN),   // :158 LH.ENERGY_INPUT (Heat Transmitters)
+				new GT6TooltipLine("gt6.tooltip.boiler_large.9", GT6TooltipStyle.GREEN),   // :159 LH.ENERGY_CAPACITY (HU)
+				new GT6TooltipLine("gt6.tooltip.boiler_large.10", GT6TooltipStyle.RED),    // :160 LH.ENERGY_OUTPUT (Pipe Holes)
+				new GT6TooltipLine("gt6.tooltip.boiler_large.11", GT6TooltipStyle.RED),    // :161 LH.ENERGY_CAPACITY (Steam)
+				new GT6TooltipLine("gt6.tooltip.boiler_large.12", GT6TooltipStyle.ORANGE), // :162 LH.REQUIREMENT_WATER_PURE
+				new GT6TooltipLine("gt6.tooltip.boiler_large.13", GT6TooltipStyle.DRED),   // :163 LH.HAZARD_EXPLOSION_STEAM
+				new GT6TooltipLine("gt6.tooltip.boiler_large.14", GT6TooltipStyle.DRED),   // :164 LH.HAZARD_MELTDOWN
+				new GT6TooltipLine("gt6.tooltip.boiler_large.15", GT6TooltipStyle.DGRAY),  // :165 LH.TOOL_TO_DECALCIFY_CHISEL
+				new GT6TooltipLine("gt6.tooltip.boiler_large.16", GT6TooltipStyle.DGRAY),  // 10MultiBlockBase:100 LH.TOOL_TO_BUILD_BUILDER_WAND
+				new GT6TooltipLine("gt6.tooltip.boiler_large.17", GT6TooltipStyle.DGRAY),  // 10MultiBlockBase:101 LH.TOOL_TO_DETAIL_MAGNIFYINGGLASS
+				new GT6TooltipLine("gt6.tooltip.boiler_large.18", GT6TooltipStyle.DGRAY))); // super :61 the facing row (Wrench)
+		// the Fluid Container (tank) family — TileEntityBase08FluidContainer.addToolTips
+		// :99-111, the ONE pure-static row :100 (mTank.contentcap(), the empty-tank face =
+		// "Capacity: <capacity> L"); the :101-110 rows are proof/drinkable conditionals and
+		// the capacity arg is per-tank — DORMANT until the port has a tank registration
+		// class to hand the carrier its capacity (the port has zero 08FluidContainer blocks)
+		register("tank", List.of(
+				new GT6TooltipLine("gt6.tooltip.tank.1", GT6TooltipStyle.CYAN)));
+		// the Barrel family — TileEntityBase08Barrel.addToolTips :89-103, rows numbered by the
+		// upstream row index (gaps = the ported-out rows). Rows 1-2 (:90 contentcap /
+		// :91 "Sealed (n)") are the carry-state rows the design ruling DELETES (the canonical-TE
+		// rebuild is a second-phase face — the registry must never carry them, pinned by
+		// GT6TooltipsTest). Row 5 (:94 onlySimple) is the port's pool cut (onlySimple is a
+		// constant false in the port BE base); rows 7-9 (:96-98 acid/plasma/magic proof) have
+		// no port flag data (the GTBarrels P4 quartet cut) — a row claiming a capability the
+		// port does not gate would be a lie, so they wait for the flags. The gas-proof row 6
+		// (:95) IS port-gated (GTBarrelItemFluidHandler.setGasProof) — the wood barrel is the
+		// one gas=F row, so it gets its own table and the 15 gas rows share the other.
+		// ponytail: acid/plasma/magic proof rows return when the port models the flags (GTBarrels javadoc keeps the quartet noted)
+		register("barrel", List.of(
+				new GT6TooltipLine("gt6.tooltip.barrel.3", GT6TooltipStyle.ORANGE),   // :92 LH.NO_GUI_FUNNEL_TAP_TO_TANK
+				new GT6TooltipLine("gt6.tooltip.barrel.4", GT6TooltipStyle.ORANGE),   // :93 LH.NO_POWER_CONDUCTING_FLUIDS
+				new GT6TooltipLine("gt6.tooltip.barrel.10", GT6TooltipStyle.DRED),    // :99 LH.HAZARD_MELTDOWN + " (%s K)" — the carrier hands the row's melting point
+				new GT6TooltipLine("gt6.tooltip.barrel.11", GT6TooltipStyle.DGRAY),   // :100 LH.TOOL_TO_TOGGLE_AUTO_OUTPUTS_MONKEY_WRENCH
+				new GT6TooltipLine("gt6.tooltip.barrel.12", GT6TooltipStyle.DGRAY),   // :101 LH.TOOL_TO_TOGGLE_SOFT_HAMMER
+				new GT6TooltipLine("gt6.tooltip.barrel.13", GT6TooltipStyle.DGRAY))); // :102 LH.TOOL_TO_DETAIL_MAGNIFYINGGLASS
+		// the gas-proof barrel table — the "barrel" table + row 6 (:95 LH.TOOLTIP_GASPROOF,
+		// Chat.ORANGE), everything else identical (the wood barrel is the only gas=F port row)
+		register("barrel_gas", List.of(
+				new GT6TooltipLine("gt6.tooltip.barrel_gas.3", GT6TooltipStyle.ORANGE),   // :92
+				new GT6TooltipLine("gt6.tooltip.barrel_gas.4", GT6TooltipStyle.ORANGE),   // :93
+				new GT6TooltipLine("gt6.tooltip.barrel_gas.6", GT6TooltipStyle.ORANGE),   // :95 LH.TOOLTIP_GASPROOF
+				new GT6TooltipLine("gt6.tooltip.barrel_gas.10", GT6TooltipStyle.DRED),    // :99 (%s K)
+				new GT6TooltipLine("gt6.tooltip.barrel_gas.11", GT6TooltipStyle.DGRAY),   // :100
+				new GT6TooltipLine("gt6.tooltip.barrel_gas.12", GT6TooltipStyle.DGRAY),   // :101
+				new GT6TooltipLine("gt6.tooltip.barrel_gas.13", GT6TooltipStyle.DGRAY))); // :102
 	}
 
 	/** Registers a family row table (T2-T5's entry seam; duplicate family = a datagen-order bug, fail loud). */
@@ -47,13 +125,24 @@ public final class GT6Tooltips {
 	/**
 	 * Appends the family's row table after the vanilla super chain (the caller's
 	 * {@code super.appendHoverText} tail). Zero rows for an unregistered family — the
-	 * T2-before state must not explode the twelve not-yet-tabled families.
+	 * T1-before state must not explode the families the later T cards have not tabled.
 	 */
 	public static void append(String aFamily, List<Component> aTooltip) {
+		append(aFamily, aTooltip, new Object[0]);
+	}
+
+	/**
+	 * The per-variant form (task r8-tooltip-boiler-tank): the registration site hands the
+	 * row's own constants ([in, out, cap] for the boilers, [meltingPointK] for the barrels)
+	 * and every line WITHOUT its own constant args takes them through the positional slots
+	 * (%1$s/%2$s/%3$s — TranslatableContents.java:87-88 resolves the argument index, the
+	 * vanilla 1.20.1 face). Lines with own args ignore the fallback.
+	 */
+	public static void append(String aFamily, List<Component> aTooltip, Object... aFallbackArgs) {
 		List<GT6TooltipLine> tRows = REGISTRY.get(aFamily);
 		if (tRows == null) return;
 		for (GT6TooltipLine tRow : tRows) {
-			aTooltip.add(tRow.component());
+			aTooltip.add(tRow.component(aFallbackArgs));
 		}
 	}
 
@@ -70,7 +159,12 @@ public final class GT6Tooltips {
 
 		/** The component the carrier appends — keyed translatable + the upstream color. */
 		Component component() {
-			return Component.translatable(key, args).withStyle(style);
+			return component(new Object[0]);
+		}
+
+		/** The per-variant form — a line without own constant args rides the carrier's fallback array. */
+		Component component(Object... aFallbackArgs) {
+			return Component.translatable(key, args.length > 0 ? args : aFallbackArgs).withStyle(style);
 		}
 	}
 }
