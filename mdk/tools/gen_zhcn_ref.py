@@ -1763,6 +1763,7 @@ MOLD_SHAPE_WORDS = {
 
 MOLD_CRUCIBLE_GAP_BACKFILL = {
     "gt6.row.crucible.display.smeltery_stone": "熔炼坩埚 (石头)",     # dump :10772 verbatim (MTE 1000)
+    "gt6.row.crucible.display.smeltery_ceramic": "熔炼坩埚 (陶瓷)",   # dump :10806 verbatim (MTE 1005, issue #45 C2)
     "gt6.row.crucible.display.smeltery_bronze": "熔炼坩埚 (青铜)",    # dump :10893 verbatim (MTE 1020)
     "gt6.row.crucible.display.smeltery_steel": "熔炼坩埚 (钢)",       # dump :10895 verbatim (MTE 1022)
     "gt6.row.mold.display.mold_ceramic": "陶瓷模具",                  # the formed blank (raw = dump :10102)
@@ -1772,6 +1773,7 @@ MOLD_CRUCIBLE_GAP_BACKFILL = {
     "gt6.row.faucet.mat.stone": "石头",                               # renders dump :11199 坩埚浇铸口 (石头)
     "gt6.row.faucet.mat.ceramic": "陶瓷",                             # renders dump :11224 坩埚浇铸口 (陶瓷)
     "item.gt6.faucet_ceramic_raw": "粘土浇铸口",                      # dump :10104 verbatim (Clay Faucet, 992)
+    "item.gt6.clay_crucible_raw": "粘土坩埚",                         # dump :10098 verbatim (Clay Crucible, 989, issue #45 C2)
 }
 
 # ---- task p29-w5-t8-armor-24: the 48 Hazmat armor rows — 24 display names + the 24

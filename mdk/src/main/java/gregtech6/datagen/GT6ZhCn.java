@@ -1482,6 +1482,9 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect(gregtech6.registry.GT6Molds.faucetMatUnitKeyOf(tRow));
 		}
 		addDirect("item.gt6.faucet_ceramic_raw");
+		// the raw clay crucible (issue #45 C2 — the en literal key; the dump :10098 face
+		// verbatim; the smeltery_ceramic display key rides the ROWS walk above)
+		addDirect("item.gt6.clay_crucible_raw");
 	}
 
 	/**

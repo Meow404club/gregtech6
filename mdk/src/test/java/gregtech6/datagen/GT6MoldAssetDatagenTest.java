@@ -119,11 +119,12 @@ public class GT6MoldAssetDatagenTest extends GTOfflineTestBase {
         assertBody("assets/gt6/models/block/faucet_ceramic.json", CERAMIC_BODY, "faucet_ceramic");
     }
 
-    /** The small crucible empty faces: stone/bronze/steel each their material smooth body (#41). */
+    /** The small crucible empty faces: stone/ceramic/bronze/steel each their material smooth body (#41, +C2). */
     @Test
     void crucibleEmptyBodiesAreTheMaterialSmoothReferences() throws Exception {
-        assertEquals(3, GT6Crucibles.ROWS.size(), "the crucible walk broke — never pass vacuously");
+        assertEquals(4, GT6Crucibles.ROWS.size(), "the crucible walk broke — never pass vacuously");
         assertBody("assets/gt6/models/block/smeltery_stone_empty.json", STONE_BODY, "smeltery_stone_empty");
+        assertBody("assets/gt6/models/block/smeltery_ceramic_empty.json", CERAMIC_BODY, "smeltery_ceramic_empty");
         assertBody("assets/gt6/models/block/smeltery_bronze_empty.json", BRONZE_BODY, "smeltery_bronze_empty");
         assertBody("assets/gt6/models/block/smeltery_steel_empty.json", STEEL_BODY, "smeltery_steel_empty");
     }

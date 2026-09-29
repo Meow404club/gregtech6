@@ -4,6 +4,8 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -187,8 +189,13 @@ public final class GT6CrucibleDatagen {
 		protected void addTranslations() {
 			super.addTranslations(); // the full base set — the file must stay complete
 			add("gt6.row.crucible.display.smeltery_stone", "Stone Smeltery");
+			add("gt6.row.crucible.display.smeltery_ceramic", "Ceramic Smeltery");
 			add("gt6.row.crucible.display.smeltery_bronze", "Bronze Smeltery");
 			add("gt6.row.crucible.display.smeltery_steel", "Steel Smeltery");
+			// the raw clay crucible item (issue #45 C2 — the upstream "Clay Crucible" raw,
+			// MultiItemRandomTools.java:113; the Clay→Ceramic rename rides the port family
+			// convention, the faucet raw precedent)
+			add("item.gt6.clay_crucible_raw", "Ceramic Crucible (Raw)");
 			// the stone rung this card registered (the loop over GT6Molds.ROWS degenerated when
 			// the mold card grew the 30 ceramic rows — their display keys belong to
 			// GT6MoldDatagen.Lang, which chains BELOW this provider and relabels them properly;
@@ -324,6 +331,30 @@ public final class GT6CrucibleDatagen {
 					.define('B', Items.COBBLESTONE)
 					.unlockedBy("has_cobblestone", has(Items.COBBLESTONE))
 					.save(aOutput, id("mold_stone"));
+
+			// the clay crucible chain (issue #45 C2):
+			// - the shaped raw (MultiItemRandomTools.java:125 "CkC"/"CRC"/"CCC" — the
+			//   k=knife/R=rollingpin tool marks are the port cut, the GT6MoldDatagen family
+			//   form: the tool slots drop to empty, 7 clay = the U*7 amount, :113)
+			// - the reverse shapeless (:113 — the raw un-molds back to 7 clay balls)
+			// - the furnace hardening tail (Loader_MultiTileEntities.java:256
+			//   RM.add_smelting — raw → the smeltery_ceramic item, the row's only acquisition)
+			Item tClayCrucibleRaw = GT6Crucibles.CLAY_CRUCIBLE_RAW.get();
+			ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tClayCrucibleRaw)
+					.pattern("C C")
+					.pattern("C C")
+					.pattern("CCC")
+					.define('C', Items.CLAY_BALL)
+					.unlockedBy("has_clay", has(Items.CLAY_BALL))
+					.save(aOutput, id("clay_crucible_raw"));
+			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.CLAY_BALL, 7)
+					.requires(tClayCrucibleRaw)
+					.unlockedBy("has_raw", has(tClayCrucibleRaw))
+					.save(aOutput, id("clay_crucible_raw_reclaim"));
+			Item tCeramicSmeltery = GT6Crucibles.ITEMS_BY_PATH.get("smeltery_ceramic").get();
+			SimpleCookingRecipeBuilder.smelting(net.minecraft.world.item.crafting.Ingredient.of(tClayCrucibleRaw), RecipeCategory.MISC, tCeramicSmeltery, 0.0F, 200)
+					.unlockedBy("has_raw", has(tClayCrucibleRaw))
+					.save(aOutput, id("smelt_smeltery_ceramic"));
 		}
 
 		private static ResourceLocation id(String aPath) {

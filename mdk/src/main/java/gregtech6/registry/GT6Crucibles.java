@@ -73,7 +73,7 @@ import gregtech6.tileentity.tools.TileEntitySmeltery;
  *     {@link TileEntityCrucibleRow}.</li>
  * </ul>
  *
- * <p>Creative tab (task p38-tabfix-a-multiblock): all 19 items — the 3 Smeltery rungs, the
+	 * <p>Creative tab (task p38-tabfix-a-multiblock): all 20 items — the 4 Smeltery rungs, the
  * 8 crucible controllers, the Steel wall and the 7 ladder walls — join MULTIBLOCKS_TAB via
  * {@link #onBuildTabContents} (registered-but-tab-less is invisible in BOTH the creative
  * menu and JEI, the BurningBoxes issue-#10 form). Pool cut declared: upstream rode the
@@ -102,11 +102,32 @@ public final class GT6Crucibles {
 	 */
 	public record SmelteryRow(String path, java.util.function.Supplier<OreDictMaterial> material, String display, float hardness) {}
 
-	/** The three rungs: Stone (the opening row, 6.0 hardness like the :250 NBT_HARDNESS family), Bronze (7.0), Steel (6.0). */
+	/**
+	 * The four rungs (issue #45 C2): the Loader_MultiTileEntities.java:250-292 projection —
+	 * Stone (the :251 opening row, 6.0 hardness; upstream says 5.0, the port's declared
+	 * deviation), Ceramic (:256 verbatim — ID 1005, hardness 5.0/5.0, the row is NOT hidden
+	 * and carries NO crafting pattern: the furnace-hardened {@link #CLAY_CRUCIBLE_RAW} is
+	 * its only acquisition), Bronze (7.0) and Steel (6.0). The Ceramic rung sits after the
+	 * stone family and before the metals — the upstream :251-:265 sequence restricted to
+	 * the ported rows.
+	 */
 	public static final List<SmelteryRow> ROWS = List.of(
 			new SmelteryRow("smeltery_stone", () -> MT.Stone, "Smeltery (Stone)", 6.0F),
+			new SmelteryRow("smeltery_ceramic", () -> MT.Ceramic, "Smeltery (Ceramic)", 5.0F),
 			new SmelteryRow("smeltery_bronze", () -> MT.Bronze, "Smeltery (Bronze)", 7.0F),
 			new SmelteryRow("smeltery_steel", () -> MT.Steel, "Smeltery (Steel)", 6.0F));
+
+	/**
+	 * The raw clay crucible (issue #45 C2): upstream IL.Ceramic_Crucible_Raw, meta 989
+	 * "Clay Crucible" / "Put in Furnace to harden" (MultiItemRandomTools.java:113, the
+	 * U*7 clay row). The vanilla furnace hardens it into the {@code smeltery_ceramic}
+	 * block item (the Loader :256 RM.add_smelting tail — the GT6CrucibleDatagen smelt
+	 * row); the raw item rides the same craft-only posture as the
+	 * {@link GT6Molds#RAW_ITEMS_BY_PATH} family — registered, craft-acquired, never a
+	 * creative-tab member.
+	 */
+	public static final RegistryObject<Item> CLAY_CRUCIBLE_RAW = ITEMS.register("clay_crucible_raw",
+			() -> new Item(new Item.Properties()));
 
 	/** The registered Smeltery blocks by path (the BET/datagen/command walkers iterate this). */
 	public static final Map<String, RegistryObject<CrucibleBlock>> BLOCKS_BY_PATH = new LinkedHashMap<>();
@@ -127,7 +148,7 @@ public final class GT6Crucibles {
 	}
 
 	/**
-	 * The shared Smeltery BET: one BlockEntityType over the three shell blocks (ADR-P3-1,
+	 * The shared Smeltery BET: one BlockEntityType over the four shell blocks (ADR-P3-1,
 	 * the one-TE-class-many-material-blocks counterpart). Registry path "smeltery" mirrors
 	 * {@link TileEntitySmeltery#getTileEntityName}. The blocks register before the BET
 	 * (vanilla registry order across DeferredRegisters), so the .get() calls are safe.

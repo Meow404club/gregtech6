@@ -716,6 +716,12 @@ public final class GT6ItemModels extends ItemModelProvider {
         // MultiItemRandomTools.java:118 — assets/README.md attribution).
         withExistingParent("clay_juicer", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/clay_juicer"));
+        // the Clay Crucible raw item (issue #45 C2; GT6Crucibles.CLAY_CRUCIBLE_RAW) — the
+        // clay_bowl row shape; layer0 = the byte-identical gt.multiitem.randomtools/989.png
+        // borrow (meta 989 = "Clay Crucible", MultiItemRandomTools.java:113 — assets/README.md
+        // attribution).
+        withExistingParent("clay_crucible_raw", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/clay_crucible_raw"));
         // the ZPM item (task p38-c1 append, the C5-guard catch; GT6Batteries.ZPM_ITEM) —
         // item/generated over the byte-identical ZPM_SIDES.png iconset borrow. Declared
         // deviation: upstream 14999 is a BLOCK item (the isometric block render is the

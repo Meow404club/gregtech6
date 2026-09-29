@@ -1164,6 +1164,7 @@ direct	gt6.row.burning_box.family.solid	固体	hand
 direct	gt6.row.canner.display	罐装机 (%s)	hand
 direct	gt6.row.coagulator.display	凝结器	hand
 direct	gt6.row.crucible.display.smeltery_bronze	熔炼坩埚 (青铜)	hand
+direct	gt6.row.crucible.display.smeltery_ceramic	熔炼坩埚 (陶瓷)	hand
 direct	gt6.row.crucible.display.smeltery_steel	熔炼坩埚 (钢)	hand
 direct	gt6.row.crucible.display.smeltery_stone	熔炼坩埚 (石头)	hand
 direct	gt6.row.dense_wall.display	致密%s壁板	hand
@@ -1900,6 +1901,7 @@ direct	item.gt6.circuit_good	优质电子电路	hand
 direct	item.gt6.circuit_master	主控电子电路	hand
 direct	item.gt6.circuit_primitive	原始电路	hand
 direct	item.gt6.circuit_ultimate	终极电子电路	hand
+direct	item.gt6.clay_crucible_raw	粘土坩埚	hand
 direct	item.gt6.club	木棒	hand
 direct	item.gt6.club.tooltip	钝重的原始武器兼碎石器	hand
 direct	item.gt6.cobalt_60_fuel_rod	钴-60燃料棒	hand

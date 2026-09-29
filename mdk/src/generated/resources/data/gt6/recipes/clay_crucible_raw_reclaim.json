@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:clay_crucible_raw"
+    }
+  ],
+  "result": {
+    "count": 7,
+    "item": "minecraft:clay_ball"
+  }
+}
