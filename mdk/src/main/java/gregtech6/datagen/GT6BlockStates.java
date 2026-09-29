@@ -4234,10 +4234,11 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .allFaces((aDir, aFace) -> aFace.texture("#sandwich").cullface(aDir))
                 .end();
         simpleBlock(gregtech6.registry.GT6Placeables.SANDWICH.get(), tSandwich);
-        // the six placed piles (task p32-placeables, half two): fixed silhouettes over the
-        // borrowed upstream icon pairs (assets/README.md) + the vanilla stone/log borrows;
-        // tintindex 0 on the five material-tinted faces (GT6PlaceableTint reads the BE
-        // material), the stick un-tinted (the W6 oak_log borrow form)
+        // the four placed piles (task p32-placeables, half two): fixed silhouettes over the
+        // borrowed upstream icon pairs (assets/README.md); tintindex 0 on the five
+        // material-tinted faces (GT6PlaceableTint reads the BE material). The rock and
+        // stick piles left this band for the surface-variant weighted bands (issue #47 +
+        // follow-up, the two variant builders below).
         placedPile(gregtech6.registry.GT6Placeables.PLACED_INGOT.get(), "placed_ingot", "block/placeable/ingot_sides", "block/placeable/ingot_top", 2, true, false);
         placedPile(gregtech6.registry.GT6Placeables.PLACED_PLATE.get(), "placed_plate", "block/placeable/plate_sides", "block/placeable/plate_top", 1, true, false);
         placedPile(gregtech6.registry.GT6Placeables.PLACED_GEM_PLATE.get(), "placed_gem_plate", "block/placeable/plate_gem_sides", "block/placeable/plate_gem_top", 1, true, false);
