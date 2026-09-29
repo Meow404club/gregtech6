@@ -155,11 +155,29 @@ BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
    主会话组织者——原生工作流会绕过合并队列/角色边界/GPG 纪律生成不受控的
    子代理图，污染我们的工作流。要并行就按宪法派 subagent，要编排就写进任务卡。
 8. **一切测试/编译/RCON 启动经 tools/gt6testgate.py 统一门禁**（p34，2026-09-22
-   WSL 一日三崩裁定）：内存占用 >30G 排队不开新，并发槽默认 4。**全量 test
-   （gradle 无 --tests 的 test/cleanTest）仅 `--role review` 可跑，coder 请求
-   即拒（exit 2）；全量执行期持 /tmp/gt6_testgate_full.lock 全局互斥，第二个
-   全量排队等锁**（test-gating-v2 硬闸，2026-09-27 OOM 二连裁定：全量收归
-   审查席，coder=编译全绿+--tests 过滤+受影响域抽查）。
+   WSL 一日三崩裁定；用法恒等式 `python3 tools/gt6testgate.py --role <role> -- <cmd>`，
+   一切 gradle 必经门禁——PreToolUse 钩子拦裸 gradle 进门禁；并发槽默认 4。
+   语义=test-gating v3.x（2026-09-29 三次 WSL 崩溃裁定链：v3 预测准入→v3.1
+   残留清剿→v3.2 信封内准入→v3.4 剔缓存→v3.5 外压护栏退役→v3.6 帽 22G））：
+   - **信封帽 22G 单源**（源码 `SLICE_CAP_GIB`）：准入信封（slice memory.current+
+     估算≤cap）、slice MemoryMax（systemd-run 包裹进 gt6gate.slice，MemoryMax=22G/
+     Swap 4G）、看门狗聚合帽三者同源跟随；裁定链 25G→外压护栏退役→22G。
+   - **外压护栏已退役（v3.5）**：旧 `MemTotal−cap−2G` 公式在本机结构性死锁（上限
+     ~12451MiB vs 非门禁基线 ~15G，谓词永假、五 wrapper 卡死）；裁定锚=用户
+     "cgroup 内部算好 25g（现 22g）就行，系统的不用管了"；`GT6_GATE_MEM_LIMIT_MIB`
+     =ops 显式 opt-in 恢复护栏。
+   - **有效占用剔缓存（v3.4）**：cgroup 侧=memory.current−memory.stat(file+
+     slab_reclaimable)；系统侧=MemAvailable（本身已剔可回收缓存）。
+   - **每任务 cgroup 预算表+看门狗**：TASK_CAP_MIB（full 12G/filtered 8G/compile
+     6G/rundata 8G），超自预算由脚本看门狗 TERM→KILL 并 exit 97（内核 OOM
+     rc=-9 双执行者）；run 后 scope 清扫；gradle 一律注入 `--no-daemon`。
+   - **预算旋钮**：filtered 默认 8G；FML boot 大域实测峰 8.7-12.6G，被资源杀
+     （rc=97/247/143，**非测试红**）用 `--task-cap 12/16` 重跑（多先例）。
+   - **纪律**：gradle/runData 命令显式 `cd` 进 worktree（bash cwd 重置教训）。
+   **全量 test（gradle 无 --tests 的 test/cleanTest）仅 `--role review` 可跑，
+   coder 请求即拒（exit 2）；全量执行期持 /tmp/gt6_testgate_full.lock 全局互斥，
+   第二个全量排队等锁**（test-gating-v2 硬闸延续，2026-09-27 OOM 二连裁定：
+   全量收归审查席，coder=编译全绿+--tests 过滤+受影响域抽查）。
 9. **不主动关闭 issue、不主动评论**（2026-09-28 用户裁定）：修复合入后 issue
    保持 open，由提出者自行测试确认后关闭；修复说明走 commit message/任务板/
    发布说明，不占用 issue 区。

@@ -1,4 +1,4 @@
-# 项目状态（镜像·维护期版 2026-09-28）
+# 项目状态（镜像·维护期版 2026-09-29）
 
 > 权威数据在 MCP `gt6-brain` 的 state/记忆/KG 里。本文件自 2026-09-27 起改为**维护期精简镜像**：
 > P1-P38 逐阶段详账已蒸馏归档至 [docs/archive/ARCHIVE-2026-09-27-p1-p37.md](archive/ARCHIVE-2026-09-27-p1-p37.md)
@@ -9,7 +9,25 @@
 GT6（1.7.10 GregTech6）→ 现代移植：1.20.1 Forge + 1.21.1 NeoForge 双节点（Stonecutter）。
 内容完成度 97-98%+，2026-09-24 发布 v0.1.0（GitHub Release，双 jar），现处**还债/维护阶段**（2026-09-26 起）。
 
-## 当前态（2026-09-28 · r5-r7 波收官）
+## 当前态（2026-09-29 · r8 波收官）
+
+- **r8「贴图保真+信息面现代化」波收官**（main=a17a51571，本波 37 笔 merge 九席
+  审查零打回全 approve；未闭合债镜像见 [docs/TODO.md](TODO.md)）：
+  贴图全量（R2 五批次+itemform AB+占位复核+multiblockmains+桥/动能+传感器+锅炉/储罐/管道）、
+  GUI 现代化（amazawa 换皮 73+布局描述符 B 双清 r4-24a 债+部件裁切）、
+  Jade J1-J3 重设计（B 案条式/Malfunction/水汽常态）、
+  tooltip 体系从零到全量（T1-T5 十三族+GT6MachineBlockItem 载体+ZH_KEY_FLOOR 棘轮）、
+  #45 黏土线 C1-C3、issue 四修（#27 canonical 根因=StaticFaceBakery 表被 vanilla 语义消费+
+  清扫微卡链翻案 CoverPlate；#42/#42b；#47+stick）、材料树 v2、晶洞回退。
+- **门禁 v3→v3.6**（test-gating，tools/gt6testgate.py）：v3 预测准入→v3.1 残留清剿
+  （--no-daemon+scope 清扫）→v3.2 信封内准入→v3.4 剔缓存→v3.5 外压护栏退役
+  （结构性死锁）→v3.6 信封帽 22G；宪法铁律 8 已同步 v3.x 语义。
+- **三次 WSL 崩溃全恢复**（2026-09-29）：分支幸存+续作卡模式成熟（rebase 续作/
+  交卡自评基线显式声明）。
+- 收官在途：docs 镜像（本卡）+filtered 12G 调优+curator+攒批 push+CI 双腿确认+
+  may fix 挂（#27/#42/#45/#47，push 后）+记忆蒸馏（handoff/merge 历史硬删）。
+
+## 前态（2026-09-28 · r5-r7 波收官）
 
 - **r5/r6/r7 三波 26 卡全部合入并推送**（main=d3fb2acd7，CI 全绿 36428109853）：Jade 信息面（锅炉热量+全机器状态行）、CI 手动 sweep 工作流、issue 模板+标签体系（[Bug]/[Feat]/[RFC] triage+p1-3+may fix）、README 重写、轨道空白/EMI 几何/蜂巢染色修复、**主世界 C 融合档落地**（原版团块屏蔽+GT 晶洞+budding+透镜伴生矿+矿石轴 53→122 两波扩轴+GT 铜唯一+深层地质带）、JEI/EMI 图标汉化+能源拆分、工具头组装链归位、模具资产+形状几何、泡沫防水、三 NPE 修复。
 - **#17/#31 判决非 bug**（火盒档位饥饿观感死机/负坐标普查四象限绿），判决文案在任务板。
