@@ -2,8 +2,7 @@
   "variants": {
     "active=false,facing=down": {
       "model": "gt6:block/bridge_motor",
-      "x": 90,
-      "y": 90
+      "x": 90
     },
     "active=false,facing=east": {
       "model": "gt6:block/bridge_motor",
@@ -18,8 +17,7 @@
     },
     "active=false,facing=up": {
       "model": "gt6:block/bridge_motor",
-      "x": 270,
-      "y": 90
+      "x": 270
     },
     "active=false,facing=west": {
       "model": "gt6:block/bridge_motor",
@@ -27,8 +25,7 @@
     },
     "active=true,facing=down": {
       "model": "gt6:block/bridge_motor",
-      "x": 90,
-      "y": 90
+      "x": 90
     },
     "active=true,facing=east": {
       "model": "gt6:block/bridge_motor",
@@ -43,8 +40,7 @@
     },
     "active=true,facing=up": {
       "model": "gt6:block/bridge_motor",
-      "x": 270,
-      "y": 90
+      "x": 270
     },
     "active=true,facing=west": {
       "model": "gt6:block/bridge_motor",

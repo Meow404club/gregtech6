@@ -149,6 +149,15 @@ class GT6PaintableRenderTypeCensusTest {
         rModels.add("electric_dynamo_active");
         rModels.add("flux_dynamo");
         rModels.add("flux_dynamo_active");
+        // task r8-tex-bridge-kinetic — the bridge/laser ACTIVE shells (heater + the two
+        // lasers; the art-less engine/motor pairs stay on the inactive names above) and
+        // the kinetic joiners: the steam/diesel engine shells + the rotation transformer
+        rModels.add("bridge_heater_active");
+        rModels.add("laser_electric_active");
+        rModels.add("laser_absorber_active");
+        rModels.add("steam_engine");
+        rModels.add("diesel_engine");
+        rModels.add("transformer_rotation");
         // the boiler domains (task r8-tex-large-boilers): the steam boiler tank already
         // rides the List.of above (since the C5 wiring, now the two-layer boilerModel
         // form); the large boiler band model joins — the two-layer front-bearing shell
