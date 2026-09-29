@@ -1,7 +1,17 @@
 {
   "variants": {
-    "": {
-      "model": "gt6:block/placed_rock"
-    }
+    "": [
+      {
+        "model": "gt6:block/surface_rock",
+        "weight": 3
+      },
+      {
+        "model": "gt6:block/surface_rock_a",
+        "weight": 2
+      },
+      {
+        "model": "gt6:block/surface_rock_b"
+      }
+    ]
   }
 }
