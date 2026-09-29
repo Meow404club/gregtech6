@@ -697,20 +697,25 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /**
      * Task p28-c-anvil — the two stone anvil rows (Loader_MultiTileEntities.java
-     * :2185-2186): ONE oriented cube model over the two grayscale placeholders (the
-     * upstream stonetype texture has no borrowable source in this repo — the hopper
-     * no-borrow precedent; the top face carries the working-surface texture, FACING is
-     * HORIZONTAL only — the upstream SIDES_VALID :413 — so the y-mapping is the horizontal
-     * band of the boiler form). Both rows share the model. The 2 BlockItem models parent it.
+     * :2185-2186). Task r8-tex-placeholder-audit UPGRADED the target (the probe verdict:
+     * upstream ships NO dedicated anvil PNG group — the anvil body renders the row
+     * material's SMOOTH SET TEXTURE, {@code mMaterial.getTextureSmooth(mRGBa, T)},
+     * MultiTileEntityAnvil.java:306, the material-icon system the mold/crucible body
+     * researchcard mapped): ONE cube_all per ROW over the vanilla smooth-stone family
+     * texture — stone → {@code minecraft:block/smooth_stone} (the SET_STONE ruling,
+     * GT6CrucibleDatagen.bodyTexture), blackstone → {@code minecraft:block/blackstone}
+     * (the row crafts from the vanilla BLACKSTONE item, the GT6Anvils doc — the port's
+     * faithful material face). The top face is the same art (the single smooth texture
+     * serves every body pass upstream), the FACING y-rotation stays (the upstream
+     * SIDES_VALID :413 horizontal band — visually inert on the cube, load-bearing when
+     * the anvil-silhouette geometry joins the pool). Both rows keep their own model. The
+     * 2 BlockItem models parent their row model; the {@code anvil_top/anvil_side}
+     * placeholder pair is retired.
      */
     private void addAnvils() {
-        ModelFile tModel = models().cube("gt6_anvil",
-                modLoc("block/anvil_top"), modLoc("block/anvil_top"), // bottom/top
-                modLoc("block/anvil_side"), modLoc("block/anvil_side"), // north/side rows (the FACING front is not a texture state)
-                modLoc("block/anvil_side"), modLoc("block/anvil_side"));
-        for (Block tBlock : new Block[] {
-                gregtech6.registry.GT6Anvils.STONE_ANVIL.get(),
-                gregtech6.registry.GT6Anvils.BLACKSTONE_ANVIL.get()}) {
+        for (gregtech6.registry.GT6Anvils.AnvilRow tRow : gregtech6.registry.GT6Anvils.ROWS) {
+            ModelFile tModel = models().cubeAll(tRow.path(), anvilBodyTexture(tRow.path()));
+            Block tBlock = gregtech6.registry.GT6Anvils.BLOCKS_BY_PATH.get(tRow.path()).get();
             getVariantBuilder(tBlock).forAllStates(aState -> {
                 int tY = switch (aState.getValue(gregtech6.block.tools.GTAnvilBlock.FACING)) {
                     case SOUTH -> 180;
@@ -720,9 +725,13 @@ public final class GT6BlockStates extends BlockStateProvider {
                 };
                 return ConfiguredModel.builder().modelFile(tModel).rotationX(0).rotationY(tY).build();
             });
+            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
         }
-        itemModels().withExistingParent("stone_anvil", tModel.getLocation());
-        itemModels().withExistingParent("blackstone_anvil", tModel.getLocation());
+    }
+
+    /** The smooth material face of an anvil row (the getTextureSmooth mapping). */
+    private net.minecraft.resources.ResourceLocation anvilBodyTexture(String aPath) {
+        return mcLoc("stone_anvil".equals(aPath) ? "block/smooth_stone" : "block/blackstone");
     }
 
     /**
@@ -1135,22 +1144,42 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p26-storage-static-batch — the 28 static storage rows (GT6StaticStorages.ROWS):
-     * ONE oriented cube model per KIND over the placeholder front/side PNG pair (the
-     * script-generated placeholder ruling — no upstream borrowable iconset in this repo),
-     * the FRONT face carries the kind's front texture, the FACING (horizontal) drives the
-     * 4-variant y-rotation (the ACT single-state arm; north default, south 180, west 270,
-     * east 90). All six kinds share the model within the kind (the material/plank ladder
-     * folds to the row, the same placeholder per material — the p20 placeholder ruling).
-     * The 28 BlockItem models parent the kind model.
+     * Task p26-storage-static-batch — the 28 static storage rows (GT6StaticStorages.ROWS).
+     * Task r8-tex-placeholder-audit UPGRADED four of the six kinds (the former "no upstream
+     * borrowable iconset in this repo" claim here was proven false — the probe found the
+     * dedicated groups): LOCKER over {@code machines/lockers/normal}, DRAWER over
+     * {@code machines/drawers/quad}, both safes over {@code machines/safes/{mechanical,
+     * keylocked}} — one {@link #storageModel} two-layer faceted cube per kind (the
+     * addConverterModel grammar minus the tint seat — the rows are the declared unpaint
+     * deviation, GT6StaticStorages ROWS doc, so the colored art displays its own colours;
+     * the upstream getTexture2 is the BlockTextureMulti colored×mRGBa + overlay pair,
+     * MultiTileEntityLocker.java:92-110 / DrawerQuad:124-142 / SafeMechanical:97-111).
+     * The FACING (horizontal) drives the 4-variant y-rotation (north default, south 180,
+     * west 270, east 90); the material/plank ladder folds to the kind model. The 28
+     * BlockItem models parent their kind model.
+     *
+     * <p>BOOKSHELF and BOTTLECRATE keep the grayscale front/side placeholder pairs — the
+     * probe verdict is TRUE NEGATIVE: upstream renders them from plank/material iconsets
+     * plus NBT-driven content boxes (MultiTileEntityBookShelf mShelfIcon = PlankData.
+     * PLANK_ICONS, MultiTileEntityBottleCrate :64-66 + the BOTTLECRATE_BOTTLE_* content
+     * passes :202-208) — no dedicated colored/overlay group exists to borrow, the visible
+     * content is the render pool.</p>
      */
     private void addStaticStorages() {
         for (gregtech6.registry.GT6StaticStorages.Kind tKind : gregtech6.registry.GT6StaticStorages.Kind.values()) {
-            String tTex = "block/" + kindModelName(tKind) + "_";
-            ModelFile tModel = models().cube("gt6_" + kindModelName(tKind),
-                    modLoc(tTex + "side"), modLoc(tTex + "side"),        // bottom/top
-                    modLoc(tTex + "front"), modLoc(tTex + "side"),       // north(front)/south
-                    modLoc(tTex + "side"), modLoc(tTex + "side"));       // west/east
+            ModelFile tModel;
+            if (tKind == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF
+                    || tKind == gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE) {
+                String tTex = "block/" + kindModelName(tKind) + "_";
+                tModel = models().cube("gt6_" + kindModelName(tKind),
+                        modLoc(tTex + "side"), modLoc(tTex + "side"),        // bottom/top
+                        modLoc(tTex + "front"), modLoc(tTex + "side"),       // north(front)/south
+                        modLoc(tTex + "side"), modLoc(tTex + "side"));       // west/east
+            } else {
+                tModel = storageModel("block/" + kindModelName(tKind),
+                        tKind != gregtech6.registry.GT6StaticStorages.Kind.SAFE_MECHANICAL
+                                && tKind != gregtech6.registry.GT6StaticStorages.Kind.SAFE_KEYLOCKED);
+            }
             for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
                 if (tRow.kind() != tKind) continue;
                 Block tBlock = gregtech6.registry.GT6StaticStorages.BLOCKS_BY_PATH.get(tRow.path()).get();
@@ -1169,12 +1198,77 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
     }
 
-    /** The texture/model stem of a storage kind (the PNG pair naming). */
+    /**
+     * One static-storage two-layer faceted model (task r8-tex-placeholder-audit; the
+     * {@link #sensorModel} grammar with an own top/bottom column): the borrowed grayscale
+     * {@code <base>/colored_<face>} art on the six body faces (front on north — the FACING
+     * face — and back on south, the locker/drawer quad distinct top/bottom or the safes'
+     * side art on the vertical pair per the upstream getTexture2 index mapping, SafeMechanical
+     * :100 front/back/side trio) plus the six 0.01 {@code <base>/overlay_<face>} decal
+     * plates (untinted, cullface synced, cutout — all 16 overlay PNGs carry transparent
+     * texels, all 16 colored PNGs fully opaque 16x16). NO tintindex — the unpaint deviation.
+     */
+    private ModelFile storageModel(String aBase, boolean aDistinctTopBottom) {
+        // the "block/" prefix rides INSIDE the builder path: getBuilder only prepends the
+        // folder to slash-free paths (Forge ModelProvider.extendWithFolder) — same lesson
+        // as sensorModel.
+        BlockModelBuilder tModel = models().getBuilder(aBase)
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc(aBase + (aDistinctTopBottom ? "/colored_bottom" : "/colored_side")))
+                .texture("up", modLoc(aBase + (aDistinctTopBottom ? "/colored_top" : "/colored_side")))
+                .texture("north", modLoc(aBase + "/colored_front"))
+                .texture("south", modLoc(aBase + "/colored_back"))
+                .texture("west", modLoc(aBase + "/colored_side"))
+                .texture("east", modLoc(aBase + "/colored_side"))
+                .texture("particle", modLoc(aBase + "/colored_side"))
+                .texture("overlay_down", modLoc(aBase + (aDistinctTopBottom ? "/overlay_bottom" : "/overlay_side")))
+                .texture("overlay_up", modLoc(aBase + (aDistinctTopBottom ? "/overlay_top" : "/overlay_side")))
+                .texture("overlay_north", modLoc(aBase + "/overlay_front"))
+                .texture("overlay_south", modLoc(aBase + "/overlay_back"))
+                .texture("overlay_west", modLoc(aBase + "/overlay_side"))
+                .texture("overlay_east", modLoc(aBase + "/overlay_side"))
+                .renderType("cutout");
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).cullface(aDir))
+                .end();
+        tModel.element() // north
+                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+                .face(Direction.NORTH).texture("#overlay_north").cullface(Direction.NORTH)
+                .end();
+        tModel.element() // south
+                .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.01F)
+                .face(Direction.SOUTH).texture("#overlay_south").cullface(Direction.SOUTH)
+                .end();
+        tModel.element() // west
+                .from(-0.01F, 0.0F, 0.0F).to(0.0F, 16.0F, 16.0F)
+                .face(Direction.WEST).texture("#overlay_west").cullface(Direction.WEST)
+                .end();
+        tModel.element() // east
+                .from(16.0F, 0.0F, 0.0F).to(16.01F, 16.0F, 16.0F)
+                .face(Direction.EAST).texture("#overlay_east").cullface(Direction.EAST)
+                .end();
+        tModel.element() // bottom
+                .from(0.0F, -0.01F, 0.0F).to(16.0F, 0.0F, 16.0F)
+                .face(Direction.DOWN).texture("#overlay_down").cullface(Direction.DOWN)
+                .end();
+        tModel.element() // top
+                .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.01F, 16.0F)
+                .face(Direction.UP).texture("#overlay_up").cullface(Direction.UP)
+                .end();
+        return tModel;
+    }
+
+    /**
+     * The texture/model band of a storage kind (the borrowed group directory, or the
+     * placeholder PNG stem on the two true-negative wooden kinds).
+     */
     private static String kindModelName(gregtech6.registry.GT6StaticStorages.Kind aKind) {
         return switch (aKind) {
             case LOCKER -> "locker";
             case DRAWER -> "drawer";
-            case SAFE_MECHANICAL, SAFE_KEYLOCKED -> "safe";
+            case SAFE_MECHANICAL -> "safe_mechanical";
+            case SAFE_KEYLOCKED -> "safe_keylocked";
             case BOOKSHELF -> "bookshelf";
             case BOTTLECRATE -> "bottlecrate";
         };
@@ -2745,24 +2839,23 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
 
     /**
      * Task p26-storage-hopper-family — the 4 storage-hopper rows (Loader_MultiTileEntities
-     * .java:145-146 over :191/:202, Bronze/Steel × hopper/queue): ONE oriented cube model
-     * over the two grayscale placeholders (the upstream machines/automation/hopper and
-     * queuehopper colored+overlay iconsets have no borrowable source in this repo — the
-     * boiler/burning-box assets precedent; the FRONT face carries the output-face texture,
-     * FACING drives the output semantics, the three-pass custom funnel shape of upstream
-     * :263-277 is the render pool). Both kinds share the model (the SAME shapes upstream
-     * :259-282/:241-264). The 4 BlockItem models parent it. The FACING is all-six (the
-     * vanilla Piston blockstate convention): down x=90, up x=270, the horizontals the
-     * boiler y-mapping.
+     * .java:145-146 over :191/:202, Bronze/Steel × hopper/queue). Task r8-tex-placeholder-audit
+     * UPGRADED the target (the "no borrowable source" claim was proven false — the
+     * {@code machines/automation/hopper} and {@code queuehopper} groups exist in the snapshot,
+     * MultiTileEntityHopper.java:284-293 / QueueHopper:266-275): ONE {@link #boilerModel}
+     * two-layer TBS cube per KIND over the borrowed groups — the upstream getTexture2 is the
+     * FACES_TBS trio (bottom/top/side, NO front art — the boiler-tank form, the front
+     * placeholder retired), tint seat OFF (the unpaint deviation, the static-storages
+     * ruling). The FACING drives the output semantics (the vanilla Piston 6-way blockstate
+     * convention stays); the three-pass custom funnel shape of upstream :263-277 is the
+     * render pool. The 4 BlockItem models parent their kind model.
      */
     private void addHoppers() {
-        String tTex = "block/hopper_";
-        ModelFile tModel = models().cube("gt6_hopper",
-                modLoc(tTex + "side"), modLoc(tTex + "side"),        // bottom/top
-                modLoc(tTex + "front"), modLoc(tTex + "side"),       // north(front = the output face)/south
-                modLoc(tTex + "side"), modLoc(tTex + "side"));       // west/east
+        ModelFile tHopper = boilerModel("gt6_hopper", "hopper", false, false);
+        ModelFile tQueue = boilerModel("gt6_queuehopper", "queuehopper", false, false);
         for (gregtech6.registry.GT6Hoppers.HopperRow tRow : gregtech6.registry.GT6Hoppers.ROWS) {
             Block tBlock = gregtech6.registry.GT6Hoppers.BLOCKS_BY_PATH.get(tRow.path()).get();
+            ModelFile tModel = tRow.queue() ? tQueue : tHopper;
             getVariantBuilder(tBlock).forAllStates(aState -> {
                 int tX = 0, tY = 0;
                 switch (aState.getValue(gregtech6.registry.GT6Hoppers.GT6HopperBlock.FACING)) {
@@ -2936,9 +3029,15 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
      * {@code colored_front_side} art — the Base10 front-face pair) plus the six 0.01-plate
      * {@code block/<band>/overlay[_front]_<face>} decal shells (untinted, cullface synced
      * — the P22 pairing; the upstream overlay pass is NOT multiplied by mRGBa). Cutout so
-     * the shells' transparent texels discard (the C7' fix shape).
+     * the shells' transparent texels discard (the C7' fix shape). The {@code aTint} arm
+     * (task r8-tex-placeholder-audit) drops the tint seat for the unpaint families (the
+     * hoppers — the static-storages unpaint deviation row shape).
      */
     private ModelFile boilerModel(String aName, String aBand, boolean aFront) {
+        return boilerModel(aName, aBand, aFront, true);
+    }
+
+    private ModelFile boilerModel(String aName, String aBand, boolean aFront, boolean aTint) {
         BlockModelBuilder tModel = models().getBuilder(aName)
                 .parent(models().getExistingFile(mcLoc("block/cube")))
                 .texture("down", modLoc("block/" + aBand + "/colored_bottom"))
@@ -2957,7 +3056,10 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
                 .renderType("cutout");
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
-                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
+                .allFaces((aDir, aFace) -> {
+                    aFace.texture("#" + aDir.getName()).cullface(aDir);
+                    if (aTint) aFace.tintindex(0);
+                })
                 .end();
         tModel.element() // north
                 .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
