@@ -450,10 +450,11 @@ class GT6TextureCensusTest {
      */
     @Test
     void everyRecipeMapGuiPathIsLowercaseLegalAndGroundedOnDisk() throws IOException {
-        // the display-only map (nothing opens it, GT6RecipeMaps registration comment) and the
-        // chisel (upstream ships no Chisel.png either — the tool applies recipes by
-        // right-click, no GUI; assets/README.md issue3-gui-bg section)
-        Set<String> exemptFiles = Set.of("bedrockorelist", "chisel");
+        // the chisel only (upstream ships no Chisel.png either — the tool applies recipes
+        // by right-click, no GUI; assets/README.md issue3-gui-bg section). bedrockorelist
+        // left the exemption with task r9-34-viewer-gui-bg (the amazawa BedrockOreList.png
+        // borrow — the map is viewer-visible, the file is grounded now).
+        Set<String> exemptFiles = Set.of("chisel");
         GT6RecipeMaps.init();
         try {
             java.util.regex.Pattern legalNamespace = java.util.regex.Pattern.compile("[a-z0-9_.-]+");

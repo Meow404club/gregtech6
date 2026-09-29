@@ -173,6 +173,76 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 	}
 
 	// -------------------------------------------------------------------
+	// The viewer backdrop (task r9-34-viewer-gui-bg, GitHub #34): the sOffset fold
+	// table, the two-layer crop quadruples and the retired text band — the coordinates
+	// the JEI draw()/setRecipe and the EMI addWidgets legs all consume through the
+	// viewer* exits below (the raw inputPos/outputPos/fluid*Pos stay in machine-GUI
+	// coordinates, the upstream switch transcription — pinned in the tests above).
+	// -------------------------------------------------------------------
+
+	@Test
+	void viewerFoldTablePinnedAgainstTheNeiNumbers() {
+		GT6RecipeMaps.init();
+		// the fold is exactly -(5,11) everywhere (NEI_RecipeMap.java:66/:112)
+		assertEquals(5, GT6RecipeMapViewerMeta.S_OFFSET_X);
+		assertEquals(11, GT6RecipeMapViewerMeta.S_OFFSET_Y);
+		// BATH (6 in / 1 in-fluid → the 16/34 band, 3 item outputs at row 0 y16): GUI
+		// (17,16)/(35,34)/(107,16)/(125,16)/(143,16) → panel (12,5)/(30,23)/(102,5)/
+		// (120,5)/(138,5); the fluid input GUI (53,63) → panel (48,52)
+		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(0, GT6RecipeMaps.BATH), 12, 5);
+		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(4, GT6RecipeMaps.BATH), 30, 23);
+		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(0, GT6RecipeMaps.BATH), 102, 5);
+		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(1, GT6RecipeMaps.BATH), 120, 5);
+		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(2, GT6RecipeMaps.BATH), 138, 5);
+		assertPos(GT6RecipeMapViewerMeta.viewerFluidInputPos(0), 48, 52);
+		assertPos(GT6RecipeMapViewerMeta.viewerFluidOutputPos(1), 120, 52);
+		// MIXER (6 in / 6 in-fluids → the y7 lift): the negative-row case — GUI (17,7)/
+		// (53,25) → panel (12,-4)/(48,14). y=-4 is the upstream-faithful shape (the NEI
+		// FixedPositionedStack carried the same), JEI/EMI don't clip widgets — no clamping.
+		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(0, GT6RecipeMaps.MIXER), 12, -4);
+		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(1, GT6RecipeMaps.MIXER), 30, -4);
+		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(5, GT6RecipeMaps.MIXER), 48, 14);
+		// STEAM_CRACKING (1 in / 3 out / 9 out-fluids → outputs lift to y7): the output
+		// side's negative row — GUI (53,25)/(107,7)/(143,7) → panel (48,14)/(102,-4)/(138,-4)
+		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(0, GT6RecipeMaps.STEAM_CRACKING), 48, 14);
+		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(0, GT6RecipeMaps.STEAM_CRACKING), 102, -4);
+		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(2, GT6RecipeMaps.STEAM_CRACKING), 138, -4);
+		// FUSION (2 in / 6+6 out, fluids >3 both sides): the two-row 7/25 output band
+		// folded — GUI (35,25)/(107,7)/(143,25) → panel (30,14)/(102,-4)/(138,14)
+		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(0, GT6RecipeMaps.FUSION), 30, 14);
+		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(1, GT6RecipeMaps.FUSION), 48, 14);
+		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(0, GT6RecipeMaps.FUSION), 102, -4);
+		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(5, GT6RecipeMaps.FUSION), 138, 14);
+		// the null contract passes through the fold untouched
+		assertNull(GT6RecipeMapViewerMeta.viewerOutputPos(12, GT6RecipeMaps.SHREDDER), "past the 12th drawn slot: null in, null out");
+	}
+
+	@Test
+	void backdropCropsAndTextBandPinnedToTheUpstreamDraw() {
+		// the two crop quadruples, the NEI_RecipeMap.drawBackground numbers folded to the
+		// panel system: plate (-5,-16,0,0,176,166) → (u,v,w,h)=(5,16,166,140) :632; band
+		// (-5,-8,0,3,176,79) → (5,11,166,71) :634
+		assertArrayEquals(new int[] {5, 16, 166, 140}, GT6RecipeMapViewerMeta.PLATE_CROP);
+		assertArrayEquals(new int[] {5, 11, 166, 71}, GT6RecipeMapViewerMeta.BAND_CROP);
+		assertEquals("gt6:textures/gui/machines/nei.png", GT6RecipeMapViewerMeta.PLATE_TEXTURE.toString());
+		// the retired text band: the drawExtras lines sit at the FIXED panel y73 for every
+		// map (the +10 fluid deviation died with the backdrop landing — the fluid row ends
+		// at panel y70, 3px clear)
+		GT6RecipeMaps.init();
+		for (RecipeMap tMap : List.of(GT6RecipeMaps.BATH, GT6RecipeMaps.MIXER, GT6RecipeMaps.FUSION,
+				GT6RecipeMaps.LATHE, GT6RecipeMaps.STEAM_CRACKING))
+			assertEquals(73, GT6RecipeMapViewerMeta.TEXT_BASE_Y, tMap.mNameInternal + " rides the fixed panel band");
+		// the per-map machine texture is the live mGUIPath (the mapping table needs no
+		// second copy): anvilbend folds AnvilBendingBig, the five fuel maps share default
+		assertEquals("gt6:textures/gui/machines/anvilbend.png",
+				GT6RecipeMapViewerMeta.guiTexture(GT6RecipeMaps.ANVIL_BEND).toString());
+		assertEquals("gt6:textures/gui/machines/default.png",
+				GT6RecipeMapViewerMeta.guiTexture(GT6RecipeMaps.ENGINE_FUELS).toString());
+		assertEquals("gt6:textures/gui/machines/steamcracking.png",
+				GT6RecipeMapViewerMeta.guiTexture(GT6RecipeMaps.STEAM_CRACKING).toString());
+	}
+
+	// -------------------------------------------------------------------
 	// The switch tail's dead branch (batch 2 review note): the upstream case 10/11
 	// fourth-row anchoring and the 12-slots-drawn cap, transcribed faithfully and proven
 	// dead on the live census

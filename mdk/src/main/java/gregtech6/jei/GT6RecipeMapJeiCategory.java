@@ -107,11 +107,13 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder aBuilder, Recipe aRecipe, IFocusGroup aFocuses) {
+		// all four loops consume the meta's VIEWER exits — the sOffset(-5,-11) fold to
+		// panel coordinates happened once inside GT6RecipeMapViewerMeta, never here.
 		int tInputs = Math.min(aRecipe.mInputs.length, mMap.mInputItemsCount);
 		for (int i = 0; i < tInputs; i++) {
 			ItemStack tStack = aRecipe.mInputs[i];
 			if (tStack == null || tStack.isEmpty()) continue;
-			int[] tPos = GT6RecipeMapViewerMeta.inputPos(i, mMap);
+			int[] tPos = GT6RecipeMapViewerMeta.viewerInputPos(i, mMap);
 			if (tPos == null) continue; // past the 12th drawn slot (the meta contract)
 			var tSlot = aBuilder.addInputSlot(tPos[0], tPos[1]).addItemStack(tStack.copy());
 			if (GT6RecipeMapViewerMeta.notConsumable(tStack)) tSlot.addRichTooltipCallback(notConsumedTooltip());
@@ -120,7 +122,7 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 		for (int i = 0; i < tOutputs; i++) {
 			ItemStack tStack = aRecipe.mOutputs[i];
 			if (tStack == null || tStack.isEmpty()) continue;
-			int[] tPos = GT6RecipeMapViewerMeta.outputPos(i, mMap);
+			int[] tPos = GT6RecipeMapViewerMeta.viewerOutputPos(i, mMap);
 			if (tPos == null) continue; // past the 12th drawn slot (the meta contract)
 			net.minecraft.network.chat.Component tChance = GT6RecipeMapViewerMeta.chanceLine(GT6RecipeMapViewerMeta.outputChance(aRecipe, i), tStack.getCount());
 			var tSlot = aBuilder.addOutputSlot(tPos[0], tPos[1]).addItemStack(tStack.copy());
@@ -129,28 +131,38 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 		int tFluids = Math.min(aRecipe.mFluidInputs.length, mMap.mInputFluidCount);
 		for (int i = 0; i < tFluids; i++) {
 			if (aRecipe.mFluidInputs[i] == null || aRecipe.mFluidInputs[i].isEmpty()) continue;
-			int[] tPos = GT6RecipeMapViewerMeta.fluidInputPos(i);
+			int[] tPos = GT6RecipeMapViewerMeta.viewerFluidInputPos(i);
 			aBuilder.addInputSlot(tPos[0], tPos[1])
 					.addFluidStack(aRecipe.mFluidInputs[i].getFluid(), aRecipe.mFluidInputs[i].getAmount());
 		}
 		int tFluidOuts = Math.min(aRecipe.mFluidOutputs.length, mMap.mOutputFluidCount);
 		for (int i = 0; i < tFluidOuts; i++) {
 			if (aRecipe.mFluidOutputs[i] == null || aRecipe.mFluidOutputs[i].isEmpty()) continue;
-			int[] tPos = GT6RecipeMapViewerMeta.fluidOutputPos(i);
+			int[] tPos = GT6RecipeMapViewerMeta.viewerFluidOutputPos(i);
 			aBuilder.addOutputSlot(tPos[0], tPos[1])
 					.addFluidStack(aRecipe.mFluidOutputs[i].getFluid(), aRecipe.mFluidOutputs[i].getAmount());
 		}
 	}
 
 	/**
-	 * drawExtras, the draw leg: the Costs/Usage/Tier/Power/Time/Special lines from the
-	 * shared formatter (NEI_RecipeMap.drawExtras :680-717), at the shared text band —
-	 * NEI's fixed 0xFF000000 ink and x10 kept.
+	 * The backdrop first (task r9-34-viewer-gui-bg, GitHub #34): the two-layer composite
+	 * of upstream NEI_RecipeMap.drawBackground (:629-635) — the grey {@code machines/NEI.png}
+	 * plate, then the per-map machine GUI band OVER it, both anchored so the panel origin
+	 * lands at (0,0); the slots (already folded by the meta's {@code viewer*Pos} exits)
+	 * and the cost text land on the baked-in art. The 6-int blit assumes a 256x256
+	 * texture — both the amazawa redraws and the upstream panels are 256x256 canvases
+	 * (assets/README.md reskin section).
 	 */
 	@Override
 	public void draw(Recipe aRecipe, mezz.jei.api.gui.ingredient.IRecipeSlotsView aRecipeSlotsView,
 			net.minecraft.client.gui.GuiGraphics aGuiGraphics, double aMouseX, double aMouseY) {
-		int tY = GT6RecipeMapViewerMeta.textBaseY(mMap);
+		int[] tPlate = GT6RecipeMapViewerMeta.PLATE_CROP, tBand = GT6RecipeMapViewerMeta.BAND_CROP;
+		aGuiGraphics.blit(GT6RecipeMapViewerMeta.PLATE_TEXTURE, 0, 0, tPlate[0], tPlate[1], tPlate[2], tPlate[3]);
+		aGuiGraphics.blit(GT6RecipeMapViewerMeta.guiTexture(mMap), 0, 0, tBand[0], tBand[1], tBand[2], tBand[3]);
+		// drawExtras (NEI_RecipeMap.drawExtras :680-717 verbatim arithmetic): the
+		// Costs/Usage/Tier/Power/Time/Special lines at the shared panel-system text band —
+		// NEI's fixed 0xFF000000 ink and x10 kept.
+		int tY = GT6RecipeMapViewerMeta.TEXT_BASE_Y;
 		for (net.minecraft.network.chat.Component tLine : GT6RecipeMapViewerMeta.costLines(mMap, aRecipe)) {
 			aGuiGraphics.drawString(Minecraft.getInstance().font, tLine, GT6RecipeMapViewerMeta.TEXT_X, tY, 0xFF000000);
 			tY += GT6RecipeMapViewerMeta.TEXT_LINE_HEIGHT;

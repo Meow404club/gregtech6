@@ -10,6 +10,7 @@ import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.SlotWidget;
+import dev.emi.emi.api.widget.TextureWidget;
 import dev.emi.emi.api.widget.WidgetHolder;
 
 import gregtech6.jei.GT6RecipeMapViewerMeta;
@@ -106,9 +107,20 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 
 	@Override
 	public void addWidgets(WidgetHolder aWidgets) {
+		// the two-layer backdrop FIRST (task r9-34-viewer-gui-bg, GitHub #34) — render
+		// order = add order, so these two TextureWidgets are the bottom of the z stack:
+		// the grey machines/NEI.png plate, then the per-map machine GUI band over it
+		// (upstream NEI_RecipeMap.drawBackground :629-635). The ctor
+		// (texture, x, y, width, height, u, v) defaults to a 256x256 canvas — both the
+		// amazawa redraws and the upstream panels are 256x256 (assets/README.md reskin
+		// section). The slots below land on the baked-in art via the meta's VIEWER exits
+		// (the sOffset(-5,-11) panel fold happened once inside GT6RecipeMapViewerMeta).
+		int[] tPlate = GT6RecipeMapViewerMeta.PLATE_CROP, tBand = GT6RecipeMapViewerMeta.BAND_CROP;
+		aWidgets.add(new TextureWidget(GT6RecipeMapViewerMeta.PLATE_TEXTURE, 0, 0, tPlate[2], tPlate[3], tPlate[0], tPlate[1]));
+		aWidgets.add(new TextureWidget(GT6RecipeMapViewerMeta.guiTexture(mMap), 0, 0, tBand[2], tBand[3], tBand[0], tBand[1]));
 		for (int i = 0; i < Math.min(mRow.mInputs.length, mMap.mInputItemsCount); i++) {
 			if (mRow.mInputs[i] == null || mRow.mInputs[i].isEmpty()) continue;
-			int[] tPos = GT6RecipeMapViewerMeta.inputPos(i, mMap);
+			int[] tPos = GT6RecipeMapViewerMeta.viewerInputPos(i, mMap);
 			if (tPos == null) continue; // past the 12th drawn slot (the meta contract)
 			SlotWidget tSlot = aWidgets.add(new SlotWidget(EmiStack.of(mRow.mInputs[i]), tPos[0], tPos[1]));
 			if (GT6RecipeMapViewerMeta.notConsumable(mRow.mInputs[i]))
@@ -116,28 +128,28 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 		}
 		for (int i = 0; i < Math.min(mRow.mOutputs.length, mMap.mOutputItemsCount); i++) {
 			if (mRow.mOutputs[i] == null || mRow.mOutputs[i].isEmpty()) continue;
-			int[] tPos = GT6RecipeMapViewerMeta.outputPos(i, mMap);
+			int[] tPos = GT6RecipeMapViewerMeta.viewerOutputPos(i, mMap);
 			if (tPos == null) continue; // past the 12th drawn slot (the meta contract)
 			// issue #34: NO .large(true) — EMI's large form is a 26x26 box anchored at the
-			// passed coordinate (SlotWidget.getBounds output branch), which on the meta's
-			// 18px output pitch (107/125/143) overlaps each neighbour by 8px and pushes a
-			// 3rd slot to x169 past the 166-wide category. Upstream NEI drew faithful 18px
-			// slots — same as the JEI twin.
+			// passed coordinate (SlotWidget.getBounds output branch), which on the 18px
+			// output pitch overlaps each neighbour by 8px and pushes a 3rd slot past the
+			// 166-wide category. Upstream NEI drew faithful 18px slots — same as the JEI twin.
 			SlotWidget tSlot = aWidgets.add(new SlotWidget(EmiStack.of(mRow.mOutputs[i]), tPos[0], tPos[1]));
 			Component tChance = GT6RecipeMapViewerMeta.chanceLine(GT6RecipeMapViewerMeta.outputChance(mRow, i), mRow.mOutputs[i].getCount());
 			if (tChance != null) tSlot.appendTooltip(tChance);
 		}
 		for (int i = 0; i < Math.min(mRow.mFluidInputs.length, mMap.mInputFluidCount); i++) {
 			if (mRow.mFluidInputs[i] == null || mRow.mFluidInputs[i].isEmpty()) continue;
-			int[] tPos = GT6RecipeMapViewerMeta.fluidInputPos(i);
+			int[] tPos = GT6RecipeMapViewerMeta.viewerFluidInputPos(i);
 			aWidgets.add(new SlotWidget(EmiStack.of(mRow.mFluidInputs[i].getFluid(), mRow.mFluidInputs[i].getAmount()), tPos[0], tPos[1]));
 		}
 		for (int i = 0; i < Math.min(mRow.mFluidOutputs.length, mMap.mOutputFluidCount); i++) {
 			if (mRow.mFluidOutputs[i] == null || mRow.mFluidOutputs[i].isEmpty()) continue;
-			int[] tPos = GT6RecipeMapViewerMeta.fluidOutputPos(i);
+			int[] tPos = GT6RecipeMapViewerMeta.viewerFluidOutputPos(i);
 			aWidgets.add(new SlotWidget(EmiStack.of(mRow.mFluidOutputs[i].getFluid(), mRow.mFluidOutputs[i].getAmount()), tPos[0], tPos[1]));
 		}
-		int tY = GT6RecipeMapViewerMeta.textBaseY(mMap);
+		// drawExtras (:680-717 verbatim arithmetic) at the shared panel-system text band.
+		int tY = GT6RecipeMapViewerMeta.TEXT_BASE_Y;
 		for (Component tLine : GT6RecipeMapViewerMeta.costLines(mMap, mRow)) {
 			aWidgets.addText(tLine, GT6RecipeMapViewerMeta.TEXT_X, tY, 0xFF000000, false);
 			tY += GT6RecipeMapViewerMeta.TEXT_LINE_HEIGHT;
