@@ -357,6 +357,11 @@ class GT6LargeMachineTexDatagenTest {
     @Test
     public void seventeenRowsTintWithDistinctUpstreamMaterials() throws Exception {
         List<gregapi.oredict.OreDictMaterial> tExpected = expectedMaterials();
+        // the GTOfflineTestBase.registerItemFixture telemetry face (ItemLatch is designed
+        // for exactly this: "the latch fields may be unreachable (module access)") — the
+        // armed leg carries the 17-material pin, the unarmed leg skips itself
+        org.junit.jupiter.api.Assumptions.assumeTrue(BlockLatch.ARMED,
+                "the offline registry latch is unreachable on this JVM");
         assertNotNull(sControllers, "the fixture controllers must build (the offline latch arm)");
         assertEquals(17, sControllers.size(), "the large-controller census stays 17");
         var tMethod = Class.forName("gregtech6.client.render.GTMachinePaintTint")
