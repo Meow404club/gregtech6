@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -36,13 +35,18 @@ import gregtech6.tileentity.tools.TileEntitySmeltery;
  * <p>上游零 WAILA 集成（research.p28-r-crucible-jade-face：(?i)waila 全源仅 5 处隔离注释）——
  * 本面属现代等效增强，语义锚 = 温度计 live 读数 "Temperature: NK"（MultiTileEntitySmeltery.java:512）
  * + addToolTips 熔毁暗红行（Smeltery:114 / Crucible:155 的 getTemperatureMax K 值）；内容物列表
- * 是上游没有的新信息面（live 内容物原本零文本通道）。
+ * 是上游没有的新信息面（live 内容物原本零文本通道）。task r8-jade-converter-crucible-restyle
+ * 微调（design.r8-jade-tooltip families.crucible）：温度行升 B 形钳位比例条（新键
+ * {@code gt6.jade.crucible.temperature.bar}，两槽 'Temperature: %s / %s K'），熔毁行（RED 实时）
+ * 保留为闩落才现的警报行（旧键旧行文不退役），内容物行（total+前 {@link #MAX_CONTENT_ROWS}
+ * 条目）原样。
  *
  * <p>同步契约同 {@link GT6MachineProvider}：appendServerData 写 GT6* 前缀键，appendTooltip 经
  * {@code accessor.getServerData()} 读回，tag 由双腿 Jade 网络层搬运（CompoundTag/ListTag 搬运是
  * 既有契约，GT6MachineProvider.java:31-33），只读公开字段禁改 BE（铁律）。注册在
  * {@link GT6JadePlugin} 追加两行（服务端 TileEntityBase01Root + 客户端 GTEntityBlock，体内
- * instanceof 分发）；多方块成形态行仍由 {@link GT6MachineProvider} 出（两 provider 行共存）。
+ * instanceof 分发）；多方块成形态行仍由 {@link GT6MachineProvider} 出（两 provider 行共存）；
+ * 行件与色常量归一在 {@link GT6JadeRows}。
  *
  * <p>材质显示名走本仓既有机制：服务端按 en lang 走查同款守卫梯子（别名合并 + mID ≥ 0 +
  * mNameLocal 非空——{@code GT6EnUs.materialWalkEmittedKeys} 语义的 provider 侧镜像）核销
@@ -84,6 +88,9 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 
 	/** lang 键（GT6EnUs/GT6ZhCn 双侧同发）。 */
 	public static final String LANG_TEMPERATURE = "gt6.jade.crucible.temperature";
+	/** 温度条行键（task r8-jade-converter-crucible-restyle，B 形两槽）：现值/上限 K——单位词尾置
+	 * 一次（design 'Temperature: %s / %s K'；旧键 {@link #LANG_TEMPERATURE} 保留为熔毁警报行）。 */
+	public static final String LANG_TEMPERATURE_BAR = "gt6.jade.crucible.temperature.bar";
 	public static final String LANG_TOTAL = "gt6.jade.crucible.total";
 	public static final String LANG_EMPTY = "gt6.jade.crucible.empty";
 	public static final String LANG_MORE = "gt6.jade.crucible.more";
@@ -180,9 +187,19 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 		if (!aData.contains(KEY_TEMP_MAX)) {
 			return; // 非坩埚（本 provider 挂全 GT6 BE 面，键存在即坩埚族——GT6MachineProvider 同门）
 		}
-		// 行 1：温度现值/上限（K），熔毁警告整行 RED（上游熔毁暗红行 Smeltery:114 / Crucible:155 对位）。
-		aTooltip.add(temperatureLine(aData.getLong(KEY_TEMP), aData.getLong(KEY_TEMP_MAX), aData.getBoolean(KEY_MELTDOWN)));
-		// 行 2+：内容物总量 + 前 5 条 + 截断尾行；空坩埚只有 "Empty"。
+		// 行 1：温度条（task r8-jade-converter-crucible-restyle，B 形收编）——temp/tempmax 钳位
+		// 比例（GT6JadeRows.ratio），两槽文本（单位词尾置一次），条面中性白。条本体组装
+		// live-only（IElementHelper 需客户端），离线钉 = 线契约 + 行函数 + 钳位。
+		long tTemp = aData.getLong(KEY_TEMP);
+		long tTempMax = aData.getLong(KEY_TEMP_MAX);
+		GT6JadeRows.bar(aTooltip, GT6JadeRows.ratio(tTemp, tTempMax),
+				temperatureBarLine(tTemp, tTempMax), GT6JadeRows.COLOR_NEUTRAL);
+		// 行 2：熔毁行（RED 实时，闩落才现）——原温度行的 RED 警告面逐字保留
+		// （既有键不退役：旧键旧行文原样在盘），常温坩埚零附加行。
+		if (aData.getBoolean(KEY_MELTDOWN)) {
+			aTooltip.add(temperatureLine(tTemp, tTempMax, true));
+		}
+		// 行 3+：内容物总量 + 前 5 条 + 截断尾行；空坩埚只有 "Empty"。
 		long tTotal = aData.getLong(KEY_TOTAL);
 		if (tTotal <= 0) {
 			aTooltip.add(emptyLine());
@@ -199,10 +216,16 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 		}
 	}
 
-	/** 温度行（纯函数离线面）：mMeltDown 时整行 RED，否则默认色。 */
+	/** 温度条行（纯函数离线面，两槽）：design 'Temperature: %s / %s K'——单位词尾置一次。 */
+	public static Component temperatureBarLine(long aTemp, long aTempMax) {
+		return Component.translatable(LANG_TEMPERATURE_BAR, aTemp, aTempMax);
+	}
+
+	/** 熔毁警报行（纯函数离线面）：mMeltDown 时整行 RED，否则默认色——r8 起仅闩落时上屏，
+	 * 字色常量收编 {@link GT6JadeRows#FORMAT_STALLED}。 */
 	public static Component temperatureLine(long aTemp, long aTempMax, boolean aMeltdown) {
 		MutableComponent rLine = Component.translatable(LANG_TEMPERATURE, aTemp, aTempMax);
-		return aMeltdown ? rLine.withStyle(ChatFormatting.RED) : rLine;
+		return aMeltdown ? rLine.withStyle(GT6JadeRows.FORMAT_STALLED) : rLine;
 	}
 
 	/** 总量行："Content: 4.000 U" 形（displayUnits 形移植，量串纯文本客户端算）。 */

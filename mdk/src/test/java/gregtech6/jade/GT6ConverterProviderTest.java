@@ -3,6 +3,7 @@ package gregtech6.jade;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.minecraft.ChatFormatting;
@@ -239,6 +240,35 @@ public class GT6ConverterProviderTest extends GTOfflineTestBase {
 				(net.minecraft.network.chat.contents.TranslatableContents) GT6ConverterProvider.rateLine(64, "EU").getContents();
 		assertEquals(GT6ConverterProvider.LANG_RATE, tRate.getKey());
 		assertEquals(64L, tRate.getArgs()[0]);
+	}
+
+	@Test
+	public void ceilingFamiliesFeedTheSharedBarAndTheBareFormStaysText() {
+		// the r8 B-case restyle: a capacity>0 family renders the stored row as the shared bar
+		// (GT6JadeRows.bar — the element assembly itself is live-only, IElementHelper needs a
+		// client) fed by the SAME existing three-slot key (既有键不退役, lang ruling converter.*
+		// untouched) and the shared ratio clamp; the bare form (no hard ceiling — burning box)
+		// stays the plain text row.
+		GTSteamEngineBlockEntity tEngine = new GTSteamEngineBlockEntity(sEngineType, POS, Blocks.STONE.defaultBlockState());
+		tEngine.mEnergy = 128000;
+		CompoundTag tTag = new CompoundTag();
+		GT6ConverterProvider.writeFamilyData(tTag, tEngine);
+		// the bar fill the wire feeds: 128000/640000 through the shared clamp
+		assertEquals(0.2F, GT6JadeRows.ratio(tTag.getLong(GT6ConverterProvider.KEY_STORED),
+				tTag.getLong(GT6ConverterProvider.KEY_CAPACITY)), 1e-6F);
+		// the bar text = the EXISTING keyed face (no new lang key for the bar) and the bare
+		// face stays its own key — neither retired
+		net.minecraft.network.chat.contents.TranslatableContents tStored =
+				(net.minecraft.network.chat.contents.TranslatableContents) GT6ConverterProvider
+						.storedLine(tTag.getLong(GT6ConverterProvider.KEY_STORED),
+								tTag.getLong(GT6ConverterProvider.KEY_CAPACITY), "KU").getContents();
+		assertEquals(GT6ConverterProvider.LANG_STORED, tStored.getKey());
+		assertEquals(GT6ConverterProvider.LANG_STORED_BARE,
+				((net.minecraft.network.chat.contents.TranslatableContents) GT6ConverterProvider
+						.storedBareLine(250, "HU").getContents()).getKey());
+		// the status colors ride the shared GT6JadeRows constants (the third copy consolidated)
+		assertSame(GT6JadeRows.FORMAT_OK, ChatFormatting.GREEN);
+		assertSame(GT6JadeRows.FORMAT_STALLED, ChatFormatting.RED);
 	}
 
 	@Test

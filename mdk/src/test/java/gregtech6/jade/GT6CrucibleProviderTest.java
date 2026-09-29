@@ -95,6 +95,28 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 	}
 
 	@Test
+	public void temperatureBarClampsAndTheMeltdownRowSurvives() {
+		// the r8 B-case restyle: the temperature row is the shared bar (GT6JadeRows.bar — the
+		// element assembly itself is live-only, IElementHelper needs a client) over a two-slot
+		// text (the unit word moved to the tail) fed by the shared clamp; the OLD keyed alarm
+		// row survives verbatim for the meltdown latch (既有键不退役).
+		TranslatableContents tBar = (TranslatableContents) GT6CrucibleProvider.temperatureBarLine(2000, 5000).getContents();
+		assertEquals(GT6CrucibleProvider.LANG_TEMPERATURE_BAR, tBar.getKey());
+		assertEquals(2, tBar.getArgs().length);
+		assertEquals(2000L, tBar.getArgs()[0]);
+		assertEquals(5000L, tBar.getArgs()[1]);
+		// the clamp face the bar feeds on — over-max pins at full, a zero ceiling answers 0
+		assertEquals(1.0F, GT6JadeRows.ratio(9999, 5000), 1e-6F);
+		assertEquals(0.0F, GT6JadeRows.ratio(293, 0), 1e-6F);
+		// the alarm row keeps the OLD key and wording (only shown when the latch trips — the
+		// appendTooltip gate pins the latch, the row function keeps its three-arg face)
+		TranslatableContents tAlarm = (TranslatableContents) GT6CrucibleProvider
+				.temperatureLine(2000, 5000, true).getContents();
+		assertEquals(GT6CrucibleProvider.LANG_TEMPERATURE, tAlarm.getKey());
+		assertEquals(2, tAlarm.getArgs().length);
+	}
+
+	@Test
 	public void totalAndContentLinesComposeTheTfruLabelShape() {
 		// the total row IS the TFRU LH.CONTENT label row (commit 33c22beb, first-row label form):
 		// "Content: 4.000 U" with the displayUnits string as the slot

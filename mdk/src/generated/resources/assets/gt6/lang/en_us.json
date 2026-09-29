@@ -998,6 +998,7 @@
   "gt6.jade.crucible.empty": "Empty",
   "gt6.jade.crucible.more": "+%s more",
   "gt6.jade.crucible.temperature": "Temperature: %s K / %s K",
+  "gt6.jade.crucible.temperature.bar": "Temperature: %s / %s K",
   "gt6.jade.crucible.total": "Content: %s U",
   "gt6.jade.fluid.group.in": "Fluid In",
   "gt6.jade.fluid.group.out": "Fluid Out",
