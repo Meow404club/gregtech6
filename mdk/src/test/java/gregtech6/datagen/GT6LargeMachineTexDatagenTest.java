@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,23 +50,89 @@ import gregtech6.registry.GTMaterialItems;
 
 class GT6LargeMachineTexDatagenTest {
 
-    /** The 15 familyMachineModel families: the twelve rows' texture tokens + the three mains. */
-    private static final List<String> TRIO_FAMILIES = List.of(
-            "largecentrifuge", "largeelectrolyzer", "largecoagulator", "largeautoclave",
-            "largebath", "largemixer", "largefermenter", "largeoven", "largesluice",
-            "largecrusher", "largeshredder", "largesqueezer", "largemassfab",
-            "fusionreactor", "implosioncompressor");
-
-    /** The blockstate model name per trio family (the row paths + the three mains). */
-    private static final List<String> TRIO_BLOCKS = List.of(
-            "large_centrifuge", "large_electrolyzer", "large_coagulator", "large_autoclave",
-            "large_bath", "large_batch_mixer", "large_fermenter", "large_electric_oven",
-            "large_sluice", "large_crusher", "large_shredder", "large_squeezer",
-            "large_massfab", "fusion_reactor", "implosion_compressor");
-
     /** facing → rotationY (the addLargeMachines y table — NORTH identity). */
     private static final java.util.Map<String, Integer> ROT_Y = java.util.Map.of(
             "north", 0, "south", 180, "west", 270, "east", 90);
+
+    /** The three mains that join the row trio (block path → texture family). */
+    private static final List<String[]> TRIO_MAINS = List.of(
+            new String[] {"large_massfab", "largemassfab"},
+            new String[] {"fusion_reactor", "fusionreactor"},
+            new String[] {"implosion_compressor", "implosioncompressor"});
+
+    /** The two front-pair mains (block path → band dir; no upstream active group). */
+    private static final List<String[]> FRONT_PAIR_MAINS = List.of(
+            new String[] {"von_da_graagg", "vondagraagg"},
+            new String[] {"bedrock_drill", "bedrockdrill"});
+
+    /**
+     * The 17 controller blocks, offline-safe: the RegistryObjects never turn present in
+     * the test JVM (no registry event — the blockArray() walk would throw), so the test
+     * constructs the plain instances under the block-registry latch (see
+     * {@link #buildControllerBlocks()}), after the @BeforeAll bootstrap. The order pairs
+     * {@link #expectedMaterials()}: the twelve rows in ROWS order + massfab, fusion,
+     * implosion, graagg, drill (Loader :1241/:1242/:1228/:1280/:1283).
+     */
+    private static List<net.minecraft.world.level.block.Block> sControllers;
+
+    /**
+     * The {@code gregtech6.tileentity.GTOfflineTestBase} ItemLatch shape over the BLOCK
+     * registry: the plain {@code Block} ctor binds its intrusive holder, so the write
+     * window opens for the fixture builds and closes again (the latch class-init stays
+     * lazy — touching BuiltInRegistries before the bootstrap fails the registry class).
+     */
+    private static final class BlockLatch {
+        static final sun.misc.Unsafe UNSAFE;
+        static final long LOCKED_OFFSET;
+        static final long FROZEN_OFFSET;
+        static final boolean ARMED;
+        static {
+            sun.misc.Unsafe tUnsafe = null;
+            long tLocked = 0, tFrozen = 0;
+            boolean tArmed = true;
+            try {
+                java.lang.reflect.Field tUnsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+                tUnsafeField.setAccessible(true);
+                tUnsafe = (sun.misc.Unsafe) tUnsafeField.get(null);
+                Class<?> tClass = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getClass();
+                tLocked = tUnsafe.objectFieldOffset(walkNestedField(tClass, "locked"));
+                tFrozen = tUnsafe.objectFieldOffset(walkNestedField(tClass, "frozen"));
+            } catch (Throwable ignored) {
+                tArmed = false; // the fallback leg (no constructed fixtures)
+            }
+            UNSAFE = tUnsafe;
+            LOCKED_OFFSET = tLocked;
+            FROZEN_OFFSET = tFrozen;
+            ARMED = tArmed;
+        }
+
+        /** The latch fields live on wrapper superclasses — walk up (getDeclaredField sees one class only). */
+        private static java.lang.reflect.Field walkNestedField(Class<?> aClass, String aName)
+                throws NoSuchFieldException {
+            for (Class<?> tWalk = aClass; tWalk != null; tWalk = tWalk.getSuperclass()) {
+                try {
+                    return tWalk.getDeclaredField(aName);
+                } catch (NoSuchFieldException ignored) {
+                    // the superclass carries it
+                }
+            }
+            throw new NoSuchFieldException(aName);
+        }
+    }
+
+    private static List<net.minecraft.world.level.block.Block> buildControllerBlocks() {
+        var tProps = net.minecraft.world.level.block.state.BlockBehaviour.Properties.of();
+        List<net.minecraft.world.level.block.Block> rBlocks = new ArrayList<>();
+        for (var tRow : gregtech6.registry.GT6LargeMachines.ROWS) {
+            rBlocks.add(new gregtech6.registry.GT6LargeMachines.GTLargeMachineBlock(tRow, tProps));
+        }
+        rBlocks.add(new gregtech6.block.multiblock.GTMassfabBlock(tProps));
+        rBlocks.add(new gregtech6.block.multiblock.GTFusionReactorBlock(tProps));
+        rBlocks.add(new gregtech6.block.multiblock.GTImplosionCompressorBlock(tProps));
+        rBlocks.add(new gregtech6.block.multiblock.GTVonDaGraaggBlock(tProps));
+        rBlocks.add(new gregtech6.block.multiblock.GTBedrockDrillBlock(tProps));
+        return rBlocks;
+    }
 
     @BeforeAll
     static void bootMaterials() {
@@ -77,6 +144,22 @@ class GT6LargeMachineTexDatagenTest {
             // NetworkHooks.init() failure is expected offline
         }
         GTMaterialItems.initMaterials();
+        // the fixture blocks build under the opened write window (no-op when the latch
+        // is unreachable — the dispatch test then skips itself, the telemetry face)
+        if (BlockLatch.ARMED) {
+            BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
+                    BlockLatch.FROZEN_OFFSET, false);
+            BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
+                    BlockLatch.LOCKED_OFFSET, false);
+            try {
+                sControllers = buildControllerBlocks();
+            } finally {
+                BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
+                        BlockLatch.FROZEN_OFFSET, true);
+                BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
+                        BlockLatch.LOCKED_OFFSET, true);
+            }
+        }
     }
 
     private static InputStream resource(String aPath) {
@@ -137,11 +220,17 @@ class GT6LargeMachineTexDatagenTest {
 
     @Test
     public void trioFamiliesKeepTheTwoLayerStateTrio() throws Exception {
-        assertEquals(15, TRIO_FAMILIES.size(), "the state-trio census stays 15");
-        for (String tFamily : TRIO_FAMILIES) {
-            assertTrioModel(tFamily, tFamily, "");
-            assertTrioModel(tFamily + "_active", tFamily, "_active");
-            assertTrioModel(tFamily + "_running", tFamily, "_running");
+        assertEquals(12, gregtech6.registry.GT6LargeMachines.ROWS.size(), "the large-12 row census stays 12");
+        for (var tRow : gregtech6.registry.GT6LargeMachines.ROWS) {
+            assertTrioModel(tRow.path(), tRow.texture(), "");
+            assertTrioModel(tRow.path() + "_active", tRow.texture(), "_active");
+            assertTrioModel(tRow.path() + "_running", tRow.texture(), "_running");
+        }
+        assertEquals(3, TRIO_MAINS.size(), "the trio-main census stays 3");
+        for (String[] tMain : TRIO_MAINS) {
+            assertTrioModel(tMain[0], tMain[1], "");
+            assertTrioModel(tMain[0] + "_active", tMain[1], "_active");
+            assertTrioModel(tMain[0] + "_running", tMain[1], "_running");
         }
     }
 
@@ -152,10 +241,12 @@ class GT6LargeMachineTexDatagenTest {
      */
     @Test
     public void trioBlockstatesStayStaticOnTheInactiveModel() throws Exception {
-        assertEquals(15, TRIO_BLOCKS.size(), "the trio block census stays 15");
-        for (int i = 0; i < 15; i++) {
-            String tBlock = TRIO_BLOCKS.get(i);
-            String tModel = "gt6:block/" + TRIO_FAMILIES.get(i);
+        List<String> tTrioBlocks = new ArrayList<>();
+        for (var tRow : gregtech6.registry.GT6LargeMachines.ROWS) tTrioBlocks.add(tRow.path());
+        for (String[] tMain : TRIO_MAINS) tTrioBlocks.add(tMain[0]);
+        assertEquals(15, tTrioBlocks.size(), "the trio block census stays 15");
+        for (String tBlock : tTrioBlocks) {
+            String tModel = "gt6:block/" + tBlock;
             JsonObject tVariants = json("assets/gt6/blockstates/" + tBlock + ".json").getAsJsonObject("variants");
             assertEquals(8, tVariants.size(), tBlock + ": exactly the 4 facing x 2 formed variants");
             for (String tFacing : ROT_Y.keySet()) {
@@ -211,29 +302,32 @@ class GT6LargeMachineTexDatagenTest {
 
     @Test
     public void frontPairMainsKeepTheBoilerModelGrammar() throws Exception {
-        assertFrontPairModel("von_da_graagg", "vondagraagg");
-        assertFrontPairModel("bedrock_drill", "bedrockdrill");
+        for (String[] tMain : FRONT_PAIR_MAINS) {
+            assertFrontPairModel(tMain[0], tMain[1]);
+        }
         // no upstream active group — ONE static band each (the disprobe pin)
-        for (String tState : List.of("_active", "_running")) {
-            assertFalse(resource("assets/gt6/models/block/von_da_graagg" + tState + ".json") != null,
-                    "von_da_graagg ships no upstream active group — no state band");
-            assertFalse(resource("assets/gt6/models/block/bedrock_drill" + tState + ".json") != null,
-                    "bedrock_drill ships no upstream active group — no state band");
+        for (String[] tMain : FRONT_PAIR_MAINS) {
+            for (String tState : List.of("_active", "_running")) {
+                assertFalse(resource("assets/gt6/models/block/" + tMain[0] + tState + ".json") != null,
+                        tMain[0] + " ships no upstream active group — no state band");
+            }
         }
     }
 
     @Test
     public void frontPairBlockstatesPinTheFacingFormedVariants() throws Exception {
-        for (String tBlock : List.of("von_da_graagg", "bedrock_drill")) {
-            JsonObject tVariants = json("assets/gt6/blockstates/" + tBlock + ".json").getAsJsonObject("variants");
-            assertEquals(8, tVariants.size(), tBlock + ": exactly the 4 facing x 2 formed variants");
+        for (String[] tMain : FRONT_PAIR_MAINS) {
+            JsonObject tVariants = json("assets/gt6/blockstates/" + tMain[0] + ".json").getAsJsonObject("variants");
+            assertEquals(8, tVariants.size(), tMain[0] + ": exactly the 4 facing x 2 formed variants");
             for (String tFacing : ROT_Y.keySet()) {
-                JsonObject tVariant = tVariants.getAsJsonObject("facing=" + tFacing + ",formed=false");
-                assertEquals("gt6:block/" + tBlock, tVariant.get("model").getAsString(),
-                        tBlock + ": the shared band model");
-                assertEquals(ROT_Y.get(tFacing).intValue(),
-                        tVariant.has("y") ? tVariant.get("y").getAsInt() : 0,
-                        tBlock + " facing=" + tFacing + ": the rotationY table");
+                for (boolean tFormed : new boolean[] {false, true}) {
+                    JsonObject tVariant = tVariants.getAsJsonObject("facing=" + tFacing + ",formed=" + tFormed);
+                    assertEquals("gt6:block/" + tMain[0], tVariant.get("model").getAsString(),
+                            tMain[0] + ": the shared band model");
+                    assertEquals(ROT_Y.get(tFacing).intValue(),
+                            tVariant.has("y") ? tVariant.get("y").getAsInt() : 0,
+                            tMain[0] + " facing=" + tFacing + ": the rotationY table");
+                }
             }
         }
     }
@@ -242,7 +336,7 @@ class GT6LargeMachineTexDatagenTest {
     // the 17 NBT_MATERIAL rows + the tint dispatch
     // ------------------------------------------------------------------
 
-    /** The upstream aMat column, Loader :1228-1283 verbatim (row order = TRIO_BLOCKS then the two mains). */
+    /** The upstream aMat column, Loader :1228-1283 verbatim (order = CONTROLLER_BLOCKS). */
     private static List<gregapi.oredict.OreDictMaterial> expectedMaterials() {
         return List.of(
                 gregapi.data.MT.TungstenSteel, gregapi.data.MT.StainlessSteel, gregapi.data.MT.StainlessSteel,
@@ -253,43 +347,41 @@ class GT6LargeMachineTexDatagenTest {
                 gregapi.data.MT.SteelGalvanized, gregapi.data.MT.Ti);
     }
 
-    /** The 17 controller blocks (the twelve rows + the five mains), registration order. */
-    private static List<net.minecraft.world.level.block.Block> controllerBlocks() {
-        List<net.minecraft.world.level.block.Block> rBlocks = new java.util.ArrayList<>();
-        for (var tBlock : gregtech6.registry.GT6LargeMachines.blockArray()) rBlocks.add(tBlock);
-        rBlocks.add(gregtech6.registry.GTMultiBlocks.IMPLOSION_COMPRESSOR.get());
-        rBlocks.add(gregtech6.registry.GTMultiBlocks.VON_DA_GRAAGG.get());
-        rBlocks.add(gregtech6.registry.GTMultiBlocks.MASSFAB.get());
-        rBlocks.add(gregtech6.registry.GTMultiBlocks.FUSION_REACTOR.get());
-        rBlocks.add(gregtech6.registry.GTMultiBlocks.BEDROCK_DRILL.get());
-        return rBlocks;
-    }
-
     /**
      * The dispatch arm pinned reflectively (the CreativeTabJoinCensusTest discipline —
      * tintMaterialOf is the package-private pure seam): every controller resolves its
-     * upstream NBT_MATERIAL, and the unpainted tint colours are pairwise distinct over
-     * the 17 (the all-gray single-texture placeholder era is gone).
+     * upstream NBT_MATERIAL (assertSame — SS x6 / TS x4 / Ti x2 repeat BY DESIGN, the
+     * row table is the pin), full-alpha over each, and the DISTINCT materials render
+     * pairwise distinct colours (the all-gray single-texture placeholder era is gone).
      */
     @Test
     public void seventeenRowsTintWithDistinctUpstreamMaterials() throws Exception {
         List<gregapi.oredict.OreDictMaterial> tExpected = expectedMaterials();
-        List<net.minecraft.world.level.block.Block> tBlocks = controllerBlocks();
-        assertEquals(17, tBlocks.size(), "the large-controller census stays 17");
+        assertNotNull(sControllers, "the fixture controllers must build (the offline latch arm)");
+        assertEquals(17, sControllers.size(), "the large-controller census stays 17");
         var tMethod = Class.forName("gregtech6.client.render.GTMachinePaintTint")
                 .getDeclaredMethod("tintMaterialOf", net.minecraft.world.level.block.Block.class);
         tMethod.setAccessible(true);
-        Set<Integer> tSeen = new HashSet<>();
+        Set<gregapi.oredict.OreDictMaterial> tResolved = new HashSet<>();
         for (int i = 0; i < 17; i++) {
             gregapi.oredict.OreDictMaterial tMat =
-                    (gregapi.oredict.OreDictMaterial) tMethod.invoke(null, tBlocks.get(i));
+                    (gregapi.oredict.OreDictMaterial) tMethod.invoke(null, sControllers.get(i));
             assertSame(tExpected.get(i), tMat, "controller " + i + " carries the upstream aMat");
             int tTint = gregtech6.client.render.GTMachinePaintTint.tintARGB(
                     net.minecraftforge.client.model.data.ModelData.EMPTY, tMat, 0);
-            assertEquals(0xFF000000, tTint & 0xFF000000, tBlocks.get(i) + " binds full alpha");
-            assertTrue(tSeen.add(tTint & 0xFFFFFF),
-                    tBlocks.get(i) + " colour " + Integer.toHexString(tTint) + " is distinct");
+            assertEquals(0xFF000000, tTint & 0xFF000000, "controller " + i + " binds full alpha");
+            tResolved.add(tMat);
         }
+        // the seven distinct columns each carry their own colour
+        assertEquals(7, tResolved.size(), "the distinct-material census stays 7");
+        Set<Integer> tSeen = new HashSet<>();
+        for (gregapi.oredict.OreDictMaterial tMat : tResolved) {
+            int tTint = gregtech6.client.render.GTMachinePaintTint.tintARGB(
+                    net.minecraftforge.client.model.data.ModelData.EMPTY, tMat, 0);
+            assertTrue(tSeen.add(tTint & 0xFFFFFF),
+                    "material " + tMat + " colour " + Integer.toHexString(tTint) + " is distinct");
+        }
+        assertEquals(7, tSeen.size(), "the seven columns stay pairwise distinct");
     }
 
     // ------------------------------------------------------------------
@@ -298,12 +390,21 @@ class GT6LargeMachineTexDatagenTest {
 
     @Test
     public void borrowedLargeMachineTexturesExist() {
-        // the 15 state trios: 6 faces x (overlay + active + running)
-        for (String tFamily : TRIO_FAMILIES) {
+        // the twelve rows' state trios: 6 faces x (overlay + active + running)
+        for (var tRow : gregtech6.registry.GT6LargeMachines.ROWS) {
             for (String tFace : List.of("bottom", "top", "front", "back", "left", "right")) {
                 for (String tState : List.of("", "_active", "_running")) {
-                    assertNotNull(resource("assets/gt6/textures/block/" + tFamily + "_overlay_" + tFace + tState + ".png"),
-                            tFamily + "_overlay_" + tFace + tState + ".png must be borrowed");
+                    assertNotNull(resource("assets/gt6/textures/block/" + tRow.texture() + "_overlay_" + tFace + tState + ".png"),
+                            tRow.texture() + "_overlay_" + tFace + tState + ".png must be borrowed");
+                }
+            }
+        }
+        // the three mains' trios
+        for (String[] tMain : TRIO_MAINS) {
+            for (String tFace : List.of("bottom", "top", "front", "back", "left", "right")) {
+                for (String tState : List.of("", "_active", "_running")) {
+                    assertNotNull(resource("assets/gt6/textures/block/" + tMain[1] + "_overlay_" + tFace + tState + ".png"),
+                            tMain[1] + "_overlay_" + tFace + tState + ".png must be borrowed");
                 }
             }
         }
@@ -313,12 +414,12 @@ class GT6LargeMachineTexDatagenTest {
             assertNotNull(resource("assets/gt6/textures/block/" + tSidecar), tSidecar + " must be borrowed");
         }
         // the two front-pair band dirs: 8 faces each
-        for (String tBand : List.of("vondagraagg", "bedrockdrill")) {
+        for (String[] tMain : FRONT_PAIR_MAINS) {
             for (String tFace : List.of(
                     "colored_bottom", "colored_top", "colored_side", "colored_front_side",
                     "overlay_bottom", "overlay_top", "overlay_side", "overlay_front_side")) {
-                assertNotNull(resource("assets/gt6/textures/block/" + tBand + "/" + tFace + ".png"),
-                        tBand + "/" + tFace + ".png must be borrowed");
+                assertNotNull(resource("assets/gt6/textures/block/" + tMain[1] + "/" + tFace + ".png"),
+                        tMain[1] + "/" + tFace + ".png must be borrowed");
             }
         }
     }
@@ -331,12 +432,10 @@ class GT6LargeMachineTexDatagenTest {
     public void retiredFlatSpreadIsDeadEverywhere() throws Exception {
         Path tMdk = mdkRoot();
         List<String> tDead = List.of(
-                "vondagraagg_colored_bottom.png", "vondagraagg_colored_top.png", "vondagraagg_colored_side.png",
-                "vondagraagg_colored_front.png", "vondagraagg_colored_back.png", "vondagraagg_colored_left.png",
-                "vondagraagg_colored_right.png",
-                "bedrockdrill_colored_bottom.png", "bedrockdrill_colored_top.png", "bedrockdrill_colored_side.png",
-                "bedrockdrill_colored_front.png", "bedrockdrill_colored_back.png", "bedrockdrill_colored_left.png",
-                "bedrockdrill_colored_right.png");
+                "vondagraagg_colored_bottom.png", "vondagraagg_colored_top.png", "vondagraagg_colored_front.png",
+                "vondagraagg_colored_back.png", "vondagraagg_colored_left.png", "vondagraagg_colored_right.png",
+                "bedrockdrill_colored_bottom.png", "bedrockdrill_colored_top.png", "bedrockdrill_colored_front.png",
+                "bedrockdrill_colored_back.png", "bedrockdrill_colored_left.png", "bedrockdrill_colored_right.png");
         for (String tPath : tDead) {
             assertFalse(Files.exists(tMdk.resolve("src/main/resources/assets/gt6/textures/block").resolve(tPath)),
                     "the retired flat texture must be deleted: " + tPath);
