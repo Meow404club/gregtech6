@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "tag": "forge:gems/infused_earth"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    " G ",
+    "f h",
+    " s "
+  ],
+  "result": {
+    "item": "gt6:tool_head_builderwand_infused_earth"
+  },
+  "show_notification": true
+}

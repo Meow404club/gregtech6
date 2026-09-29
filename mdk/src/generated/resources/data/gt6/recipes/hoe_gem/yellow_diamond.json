@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_yellow_diamond"
+    },
+    "G": {
+      "tag": "forge:gems/yellow_diamond"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CG ",
+    "f  "
+  ],
+  "result": {
+    "item": "gt6:tool_head_hoe_yellow_diamond"
+  },
+  "show_notification": true
+}

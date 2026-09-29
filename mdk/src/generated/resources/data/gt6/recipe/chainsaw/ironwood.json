@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "V": {
+      "item": "gt6:ring_steel"
+    },
+    "W": {
+      "item": "gt6:plate_steel"
+    },
+    "X": {
+      "item": "gt6:chain_ironwood"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "WVW",
+    "XhX",
+    "WVW"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_chainsaw_ironwood"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_maxixe"
+    },
+    "G": {
+      "tag": "forge:gems/maxixe"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CGC",
+    "f  "
+  ],
+  "result": {
+    "item": "gt6:tool_head_construction_pickaxe_maxixe"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_valonite"
+    },
+    "G": {
+      "tag": "forge:gems/valonite"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CG ",
+    "f  "
+  ],
+  "result": {
+    "item": "gt6:tool_head_hoe_valonite"
+  },
+  "show_notification": true
+}

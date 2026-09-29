@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/neodymium_magnetic"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PPP",
+    "f h"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_plow_neodymium_magnetic"
+  }
+}

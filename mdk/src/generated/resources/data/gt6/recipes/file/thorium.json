@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/thorium"
+    },
+    "k": {
+      "tag": "gt6:tools/knife"
+    }
+  },
+  "pattern": [
+    " P ",
+    " Pk"
+  ],
+  "result": {
+    "item": "gt6:tool_head_file_thorium"
+  },
+  "show_notification": true
+}

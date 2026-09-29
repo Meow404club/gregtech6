@@ -24,7 +24,9 @@
  * iron-handle stick starves most rows.
  *
  * <p>Row-count pins are the measured item-truth numbers dead-written (the craftfrom
- * ruling-A caliber): the dig walk 202 and the assembly walk 7063.
+ * ruling-A caliber): the dig walk 202, the assembly walk 7063 and the r9-39 completion
+ * walk (the 9 missing head families + the dig/chisel/saw C variants, task
+ * r9-39-toolhead-rows, pinned in {@code theCompletionWalkCarriesTheMaterialGates}).
  */
 package gregtech6.datagen;
 
@@ -227,5 +229,111 @@ public class GT6ToolHeadAssemblyDatagenTest extends GTOfflineTestBase {
 		List<String> tRewards = tAdvancement.getAsJsonObject("rewards").getAsJsonArray("recipes").asList()
 				.stream().map(JsonElement::getAsString).toList();
 		assertEquals(List.of("gt6:pickaxe/iron"), tRewards, "the recipe reward keeps the row id");
+	}
+
+	// --------------------------------------------------------------- the r9-39 completion band
+
+	/**
+	 * The spade row's lowercase 's' cell is the CR.java:211 SAW tool letter — the
+	 * decisions.r9-toolhead-s-letter reform (r7-39 had emitted the wooden-rod tag).
+	 */
+	@Test
+	public void theSpadeRowSawSlotRidesTheSawTag() throws Exception {
+		JsonObject tRow = generated("recipes/spade/iron");
+		assertTrue(key(tRow, 's').getAsJsonObject().has("tag")
+				&& "gt6:tools/saw".equals(key(tRow, 's').getAsJsonObject().get("tag").getAsString()),
+				"'s' = the saw tool tag (the tool-damage slot), never the wooden rod again");
+	}
+
+	/** The 9 completion families emit HEADS through vanilla shaped, upstream shapes verbatim (Loader_Tools :293-:310). */
+	@Test
+	public void theCompletionHeadRowsEmitHeads() throws Exception {
+		record CompletionPin(String aId, String aSnake, String aHead, List<String> aPattern, int aLine) {}
+		for (CompletionPin tPin : List.of(
+				new CompletionPin("builder_wand", "iron", "gt6:tool_head_builderwand_iron", List.of(" P ", "f h", " s "), 293),
+				new CompletionPin("axe_double", "iron", "gt6:tool_head_axe_double_iron", List.of("PIP", "P P", "f h"), 301),
+				new CompletionPin("sense", "iron", "gt6:tool_head_sense_iron", List.of("PPI", "f h"), 302),
+				new CompletionPin("plow", "iron", "gt6:tool_head_plow_iron", List.of("PPP", "PPP", "f h"), 303),
+				new CompletionPin("file", "iron", "gt6:tool_head_file_iron", List.of(" P ", " Pk"), 304),
+				new CompletionPin("chainsaw", "steel", "gt6:tool_head_chainsaw_steel", List.of("WVW", "XhX", "WVW"), 308),
+				new CompletionPin("drill", "iron", "gt6:tool_head_drill_iron", List.of("PVP", "PVP", "VhV"), 309),
+				new CompletionPin("wrench_head", "iron", "gt6:tool_head_wrench_iron", List.of("hPW", "PVP", "WPd"), 310))) {
+			JsonObject tRow = generated("recipes/" + tPin.aId() + "/" + tPin.aSnake());
+			assertEquals("minecraft:crafting_shaped", tRow.get("type").getAsString(), tPin.aId() + " type");
+			assertEquals(tPin.aHead(), tRow.getAsJsonObject("result").get("item").getAsString(),
+					tPin.aId() + ": the :" + tPin.aLine() + " head-row output");
+			assertFalse(tRow.has("material"), tPin.aId() + ": no stamp field — the head item IS the identity");
+			List<String> tPattern = tRow.getAsJsonArray("pattern").asList().stream().map(JsonElement::getAsString).toList();
+			assertEquals(tPin.aPattern(), tPattern, tPin.aId() + ": the :" + tPin.aLine() + " shape verbatim");
+		}
+	}
+
+	/** The chainsaw's fixed Steel letters + the material chain (the :308 arg-13/14 specials). */
+	@Test
+	public void theChainsawRowCarriesTheSteelSpecials() throws Exception {
+		JsonObject tRow = generated("recipes/chainsaw/steel");
+		assertEquals("gt6:plate_steel", key(tRow, 'W').getAsJsonObject().get("item").getAsString(), "'W' = plate(ANY.Steel)");
+		assertEquals("gt6:ring_steel", key(tRow, 'V').getAsJsonObject().get("item").getAsString(), "'V' = ring(ANY.Steel)");
+		assertEquals("gt6:chain_steel", key(tRow, 'X').getAsJsonObject().get("item").getAsString(), "'X' = the row material's chain");
+		JsonObject tWrench = generated("recipes/wrench_head/iron");
+		assertEquals("gt6:screw_steel", key(tWrench, 'W').getAsJsonObject().get("item").getAsString(), "wrench 'W' = screw(ANY.Steel)");
+		assertEquals("gt6:ring_steel", key(tWrench, 'V').getAsJsonObject().get("item").getAsString(), "wrench 'V' = ring(ANY.Steel)");
+		assertTrue(key(tWrench, 'd').getAsJsonObject().get("tag").getAsString().equals("gt6:tools/screwdriver"),
+				"'d' = the screwdriver tool letter (CR.java:198)");
+		JsonObject tFile = generated("recipes/file/iron");
+		assertTrue(key(tFile, 'k').getAsJsonObject().get("tag").getAsString().equals("gt6:tools/knife"),
+				"'k' = the knife tool letter (CR.java:204)");
+	}
+
+	/** The C/G second variants: the plateGem ITEM + the gems tag, the head of the SAME family. */
+	@Test
+	public void theGemVariantRowsRideThePlateGemItem() throws Exception {
+		JsonObject tPickaxe = generated("recipes/pickaxe_gem/diamond");
+		assertEquals("minecraft:crafting_shaped", tPickaxe.get("type").getAsString());
+		assertEquals("gt6:tool_head_pickaxe_diamond", tPickaxe.getAsJsonObject("result").get("item").getAsString(),
+				"the id _gem = the plateGem VARIANT of the pickaxe head row — the result is the plain pickaxe HEAD, "
+						+ "never the gem-tipped pickaxe head (tool_head_pickaxe_gem stays the craftfrom :190 face)");
+		assertEquals(List.of("CGG", "f  "), tPickaxe.getAsJsonArray("pattern").asList().stream()
+				.map(JsonElement::getAsString).toList(), "the :295 second shape verbatim");
+		assertEquals("gt6:plate_gem_diamond", key(tPickaxe, 'C').getAsJsonObject().get("item").getAsString(),
+				"'C' = the plateGem ITEM (the bladeLadderIngredient 'C' precedent)");
+		assertEquals("forge:gems/diamond", key(tPickaxe, 'G').getAsJsonObject().get("tag").getAsString(),
+				"'G' = the gems tag");
+		JsonObject tSpade = generated("recipes/spade_gem/diamond");
+		assertEquals("gt6:tool_head_spade_diamond", tSpade.getAsJsonObject("result").get("item").getAsString());
+		assertEquals("gt6:tools/saw", key(tSpade, 's').getAsJsonObject().get("tag").getAsString(),
+				"the gem-variant spade carries the same 's' reform");
+		JsonObject tPure = generated("recipes/builder_wand_pure_gem/diamond");
+		assertEquals("gt6:tool_head_builderwand_diamond", tPure.getAsJsonObject("result").get("item").getAsString(),
+				"the builderwand :293 third shape (the bare-gem 'G' variant) lands under its own id");
+	}
+
+	/**
+	 * The completion walk: the census is the measured item-truth number; the typemin(2)/
+	 * qualmax(2)/qualmin(1) gates ride the AXIS (not the item truth) — proven by the
+	 * item-true-but-gate-cut materials (TungstenSteel quality 4, Cu quality 0).
+	 */
+	@Test
+	public void theCompletionWalkCarriesTheMaterialGates() {
+		List<GT6CraftingRecipes.ToolHeadRow> tRows = GT6CraftingRecipes.toolHeadRows();
+		assertEquals(3397, tRows.size(), "the measured head-truth ∩ axis ∩ letter-truth total over the 23 forms");
+		for (GT6CraftingRecipes.ToolHeadRow tRow : tRows) {
+			assertTrue(tRow.aMaterial().mToolTypes >= Math.max(1, tRow.aForm().aTypeMin()),
+					tRow.aForm().aId() + "/" + tRow.aSnake() + ": the :426 listener gate + typemin");
+			if (tRow.aForm().aId().endsWith("_gem") || tRow.aForm().aId().equals("builder_wand_pure_gem")) {
+				assertTrue(gregapi.data.OP.plateGem.isGeneratingItem(tRow.aMaterial()),
+						tRow.aForm().aId() + "/" + tRow.aSnake() + ": the gem variants ride the plateGem truth");
+			}
+		}
+		assertTrue(gregapi.data.OP.toolHeadFile.isGeneratingItem(MT.TungstenSteel),
+				"the tungstensteel FILE head item is item-true (typemin(2), quality-agnostic)");
+		assertFalse(tRows.stream().anyMatch(tRow -> tRow.aForm().aId().equals("file")
+				&& tRow.aMaterial().mToolQuality > 2), "qualmax(2) cuts the quality-4 tungstensteel file row");
+		assertTrue(gregapi.data.OP.toolHeadWrench.isGeneratingItem(MT.Cu),
+				"the copper WRENCH head item is item-true (typemin(2))");
+		assertFalse(tRows.stream().anyMatch(tRow -> tRow.aForm().aId().equals("wrench_head")
+				&& tRow.aMaterial().mToolQuality < 1), "qualmin(1) cuts the quality-0 copper wrench-head row");
+		assertTrue(tRows.stream().anyMatch(tRow -> tRow.aForm().aId().equals("chainsaw")
+				&& tRow.aMaterial() == MT.Steel), "Steel keeps its chainsaw head row (no steel anchor owns this family)");
 	}
 }

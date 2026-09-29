@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_green_sapphire"
+    },
+    "G": {
+      "tag": "forge:gems/green_sapphire"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CGC",
+    "C C",
+    "f  "
+  ],
+  "result": {
+    "item": "gt6:tool_head_axe_double_green_sapphire"
+  },
+  "show_notification": true
+}

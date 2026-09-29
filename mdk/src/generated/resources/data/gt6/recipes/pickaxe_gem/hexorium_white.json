@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_hexorium_white"
+    },
+    "G": {
+      "tag": "forge:gems/hexorium_white"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CGG",
+    "f  "
+  ],
+  "result": {
+    "item": "gt6:tool_head_pickaxe_hexorium_white"
+  },
+  "show_notification": true
+}

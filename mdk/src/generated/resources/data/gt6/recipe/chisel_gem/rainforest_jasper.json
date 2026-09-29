@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_rainforest_jasper"
+    },
+    "S": {
+      "item": "gt6:stick_rainforest_jasper"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "Cf",
+    "S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_chisel_rainforest_jasper"
+  }
+}

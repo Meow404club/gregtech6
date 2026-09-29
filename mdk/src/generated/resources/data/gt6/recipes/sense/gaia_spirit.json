@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/gaia_spirit"
+    },
+    "P": {
+      "tag": "forge:plates/gaia_spirit"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "PPI",
+    "f h"
+  ],
+  "result": {
+    "item": "gt6:tool_head_sense_gaia_spirit"
+  },
+  "show_notification": true
+}

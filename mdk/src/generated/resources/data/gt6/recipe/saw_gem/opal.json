@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_opal"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CC",
+    "f "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_saw_opal"
+  }
+}

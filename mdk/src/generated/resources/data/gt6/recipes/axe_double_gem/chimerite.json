@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_chimerite"
+    },
+    "G": {
+      "tag": "forge:gems/chimerite"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CGC",
+    "C C",
+    "f  "
+  ],
+  "result": {
+    "item": "gt6:tool_head_axe_double_chimerite"
+  },
+  "show_notification": true
+}

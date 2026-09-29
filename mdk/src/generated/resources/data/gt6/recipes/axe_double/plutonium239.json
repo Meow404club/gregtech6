@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/plutonium239"
+    },
+    "P": {
+      "tag": "forge:plates/plutonium239"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "PIP",
+    "P P",
+    "f h"
+  ],
+  "result": {
+    "item": "gt6:tool_head_axe_double_plutonium239"
+  },
+  "show_notification": true
+}

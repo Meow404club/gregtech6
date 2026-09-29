@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/angmallen"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PPP",
+    "f h"
+  ],
+  "result": {
+    "item": "gt6:tool_head_plow_angmallen"
+  },
+  "show_notification": true
+}

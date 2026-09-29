@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/americium241"
+    },
+    "P": {
+      "tag": "c:plates/americium241"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "PPI",
+    "f h"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_sense_americium241"
+  }
+}

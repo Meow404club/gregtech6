@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_ocean_jasper"
+    },
+    "S": {
+      "item": "gt6:stick_ocean_jasper"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "Cf",
+    "S "
+  ],
+  "result": {
+    "item": "gt6:tool_head_chisel_ocean_jasper"
+  },
+  "show_notification": true
+}

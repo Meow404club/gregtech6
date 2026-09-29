@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_black_eye"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CCC",
+    "CCC",
+    "f  "
+  ],
+  "result": {
+    "item": "gt6:tool_head_plow_black_eye"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_brown_aventurine"
+    },
+    "S": {
+      "item": "gt6:stick_brown_aventurine"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "Cf",
+    "S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_chisel_brown_aventurine"
+  }
+}

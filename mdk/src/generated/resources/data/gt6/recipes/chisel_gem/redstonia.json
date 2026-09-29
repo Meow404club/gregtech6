@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_redstonia"
+    },
+    "S": {
+      "item": "gt6:stick_redstonia"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "Cf",
+    "S "
+  ],
+  "result": {
+    "item": "gt6:tool_head_chisel_redstonia"
+  },
+  "show_notification": true
+}

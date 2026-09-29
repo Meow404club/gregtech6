@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/efrine"
+    },
+    "P": {
+      "tag": "forge:plates/efrine"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "PPI",
+    "f h"
+  ],
+  "result": {
+    "item": "gt6:tool_head_sense_efrine"
+  },
+  "show_notification": true
+}

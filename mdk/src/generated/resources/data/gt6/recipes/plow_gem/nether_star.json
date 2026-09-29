@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_nether_star"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CCC",
+    "CCC",
+    "f  "
+  ],
+  "result": {
+    "item": "gt6:tool_head_plow_nether_star"
+  },
+  "show_notification": true
+}
