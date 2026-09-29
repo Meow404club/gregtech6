@@ -10649,3 +10649,105 @@ dark special stroke, tier decorations — author may draw these (offered), upstr
 GT6 crops are the fallback. Two-domain split: this domain is modern amazawa style;
 the block/item domains stay GT6-fidelity (r8 mainline) — census tests treat the two
 separately.
+
+## task r8-tex-bridge-kinetic (2026-09-29) — the bridge/kinetic two-layer wave
+
+Borrowed from **GregTech 6** (https://github.com/GregTech6/gregtech6), snapshot
+`tmp/gt6-1.7.10` (the census tree), `src/main/resources/assets/gregtech/textures/blocks/machines/`:
+the 37 PNGs below (byte-identical, sha256 verified per file) join the
+`addConverterModel` two-layer grammar of task r4-18 — grayscale `colored` body
+(tintindex 0, the mRGBa seat) + untinted `overlay` decal shell, ACTIVE switching the
+shell to `overlay_active` where the port block carries the channel. The 16 former
+single-layer sprites were RENAMED in place to the `<band>_colored_<face>` convention
+(byte-identical `git mv`, same digests as the rows they supersede):
+`bridge_{heater,engine,motor}_{front,side}` → `bridge_*_colored_*` (10),
+`steam_engine_{front,back,side}` → `steam_engine_colored_*` (3),
+`diesel_engine` → `diesel_engine_colored_front` (1),
+`transformer_rotation_{front,side}` → `transformer_rotation_colored_*` (2).
+The old flat names are dead references everywhere after the same task's model rewrite.
+
+Probe conclusions (the borrow-or-declare rule, per family):
+
+- `heaters/heat_electric` (electric_heater): colored 3 + overlay 3 + overlay_active 3,
+  NO colored_active — the ACTIVE model swaps the shell only (the r4-18
+  `addConverterActiveModel` form). All borrowed.
+- `engines/kinetic_electric` (electric_engine): colored 3 + overlay 3, NO active groups
+  on disk — static two-layer, both ACTIVE values ride the inactive model. Borrowed.
+- `motors/rotation_electric` (electric_motor): colored 3 + overlay 3, NO active
+  groups — static two-layer. Borrowed. (The `engines/kinetic_rotation` colored_active
+  quartet belongs to the flux/rotation engine family, not this port family.)
+- `lasers/laser_electric` (co2_laser): colored 3 + overlay 3 + overlay_active 3 —
+  ACTIVE wired. Borrowed.
+- `laserabsorbers/electric_laser` (laser_absorber): colored 3 + overlay 3 +
+  overlay_active 3 — ACTIVE wired. Borrowed.
+- `quantumenergizer/quantum_laser` (quantum_energizer): NOTHING borrowed — probe
+  verdict: the upstream `colored` layer is grayscale noise (the mRGBa-dependent art)
+  and BOTH `overlay` groups are alpha-0 EMPTY layers (256/256 transparent texels,
+  sampled). The port keeps its committed derived amber faces (the p32 rung-identity
+  tint, declared above) and the single-layer orientable model; the tintindex-0 seat
+  stays for a future material column.
+- `engines/kinetic_steam` (steam_engine): colored 3 + overlay 3 (the EngineSteam
+  :285-294 sOverlays stack — the earlier "overlay NOT borrowed" note above is
+  superseded by this card, the census B3 ruling). The engine `cage`/`engine`/
+  `engine_hull`/`pipe` sprites are the bespoke multi-part renderer's (the piston
+  render-pool item) and stay unborrowed. Borrowed: overlay trio only.
+- `generators/motor_liquid` (diesel_engine): colored {front,back,sides} + overlay 3 +
+  overlay_active 3 (+front .mcmeta). The port block carries no ACTIVE property, so the
+  overlay_active group stays unborrowed (declared defer, the static-face posture);
+  colored front/back/sides + overlay borrowed.
+- `transformers/transformer_rotation`: colored front/side were in-tree since p12;
+  colored/back borrowed (b419727a — the family has its own back art, NOT the universal
+  gray). The previously flagged `[ART-DUBIOUS: all-black]` overlay trio is hereby
+  PROVEN a dead layer: pixel probe shows all three files (one digest d3e79dc8) are
+  256/256 alpha-0 transparent — wiring the shell is visually inert and safe; the
+  ART-DUBIOUS concern above is resolved by this probe. The animated colored_active/
+  overlay_active groups stay unborrowed (the port GTTransformerRotationBlock carries
+  no ACTIVE property; declared defer).
+
+Path mapping: upstream `machines/<dir>/<group>/<face>` →
+`textures/block/<port_band>_<group>_<face>.png` (the r4-18 converter convention;
+`colored/sides` flattens to `_colored_side`, the diesel row).
+
+Borrowed rows (37):
+
+- `block/bridge_heater_colored_back.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `heaters/heat_electric/colored/back.png`)
+- `block/bridge_heater_overlay_front.png` — `5cfdf5978d60090e2f470106b0d45a7125cb9611aaebf239fd749dcbe902a1ba` (upstream `heaters/heat_electric/overlay/front.png`)
+- `block/bridge_heater_overlay_back.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `heaters/heat_electric/overlay/back.png`)
+- `block/bridge_heater_overlay_side.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `heaters/heat_electric/overlay/side.png`)
+- `block/bridge_heater_overlay_active_front.png` — `1255b278daa0cdc7b771188b06c87e0f27edb2b09cf5b2bdda1113204b295612` (upstream `heaters/heat_electric/overlay_active/front.png`)
+- `block/bridge_heater_overlay_active_back.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `heaters/heat_electric/overlay_active/back.png`)
+- `block/bridge_heater_overlay_active_side.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `heaters/heat_electric/overlay_active/side.png`)
+- `block/bridge_engine_colored_back.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `engines/kinetic_electric/colored/back.png`)
+- `block/bridge_engine_overlay_front.png` — `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d` (upstream `engines/kinetic_electric/overlay/front.png`)
+- `block/bridge_engine_overlay_back.png` — `17da5c91f2d07dde141f085f1c0e051a5b017f4eedd815c56be3cb70993c6452` (upstream `engines/kinetic_electric/overlay/back.png`)
+- `block/bridge_engine_overlay_side.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `engines/kinetic_electric/overlay/side.png`)
+- `block/bridge_motor_colored_back.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `motors/rotation_electric/colored/back.png`)
+- `block/bridge_motor_overlay_front.png` — `e183538e5e6f6af6b4acf6fb3960d53d07b2b0ac370e73d9e46500a929b54463` (upstream `motors/rotation_electric/overlay/front.png`)
+- `block/bridge_motor_overlay_back.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `motors/rotation_electric/overlay/back.png`)
+- `block/bridge_motor_overlay_side.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `motors/rotation_electric/overlay/side.png`)
+- `block/laser_electric_colored_back.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `lasers/laser_electric/colored/back.png`)
+- `block/laser_electric_overlay_front.png` — `dadfb10ea4e61c577aa277880767af657f3bbe19144701ac6fcbe6e97332beea` (upstream `lasers/laser_electric/overlay/front.png`)
+- `block/laser_electric_overlay_back.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `lasers/laser_electric/overlay/back.png`)
+- `block/laser_electric_overlay_side.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `lasers/laser_electric/overlay/side.png`)
+- `block/laser_electric_overlay_active_front.png` — `3662fbd21e17077f9e74d7315eb2ecc144f0ebb2e01840ed1bf16fed86e0ffee` (upstream `lasers/laser_electric/overlay_active/front.png`)
+- `block/laser_electric_overlay_active_back.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `lasers/laser_electric/overlay_active/back.png`)
+- `block/laser_electric_overlay_active_side.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `lasers/laser_electric/overlay_active/side.png`)
+- `block/laser_absorber_colored_back.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `laserabsorbers/electric_laser/colored/back.png`)
+- `block/laser_absorber_overlay_front.png` — `48b6811ef825b2be50dcbda29ef5e2a3f707708a499a2d3796561ddb29770185` (upstream `laserabsorbers/electric_laser/overlay/front.png`)
+- `block/laser_absorber_overlay_back.png` — `8782f3171417fe0bd61a410129ee779b9df26ff796e530beea7502afe01f1e06` (upstream `laserabsorbers/electric_laser/overlay/back.png`)
+- `block/laser_absorber_overlay_side.png` — `f6a0daf38a714831dd0052d1b6a6d0ba6341ced91fa0cde69bb61bceeaf9196f` (upstream `laserabsorbers/electric_laser/overlay/side.png`)
+- `block/laser_absorber_overlay_active_front.png` — `6f6ad3863270ef62a18ae3b16f486514497ea2563f16833c651ab07eab1effdc` (upstream `laserabsorbers/electric_laser/overlay_active/front.png`)
+- `block/laser_absorber_overlay_active_back.png` — `0fe48976578fe023b4ad2ec97d7839ebf3bb53825ad67c5e6ce376462c371112` (upstream `laserabsorbers/electric_laser/overlay_active/back.png`)
+- `block/laser_absorber_overlay_active_side.png` — `e25015aba9aafd3c0fedbdec933cd4836ce829f7c7146432c38f0018abaffaeb` (upstream `laserabsorbers/electric_laser/overlay_active/side.png`)
+- `block/steam_engine_overlay_front.png` — `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d` (upstream `engines/kinetic_steam/overlay/front.png`)
+- `block/steam_engine_overlay_back.png` — `8dd1d34cc36cd9ddccdc23f6f3be16be70d90337a290bc4a6da997f1f9c64236` (upstream `engines/kinetic_steam/overlay/back.png`)
+- `block/steam_engine_overlay_side.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `engines/kinetic_steam/overlay/side.png`)
+- `block/diesel_engine_colored_back.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `generators/motor_liquid/colored/back.png`)
+- `block/diesel_engine_colored_side.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `generators/motor_liquid/colored/sides.png`)
+- `block/diesel_engine_overlay_front.png` — `e183538e5e6f6af6b4acf6fb3960d53d07b2b0ac370e73d9e46500a929b54463` (upstream `generators/motor_liquid/overlay/front.png`)
+- `block/diesel_engine_overlay_back.png` — `d7d7b4e63f3ae789badc895760bacdbc5c5a61332261dbc89e46cb37f1f898a1` (upstream `generators/motor_liquid/overlay/back.png`)
+- `block/diesel_engine_overlay_side.png` — `763844cd3e9003c46357a10cbb0bd30644efabfb224d07de689a147481720a4d` (upstream `generators/motor_liquid/overlay/sides.png`)
+- `block/transformer_rotation_colored_back.png` — `b419727a8d541049e954d8c013f9b7f5c64c37a4b5e4161ec1f87cd500f37e4d` (upstream `transformers/transformer_rotation/colored/back.png`)
+
+Copied on 2026-09-29. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
