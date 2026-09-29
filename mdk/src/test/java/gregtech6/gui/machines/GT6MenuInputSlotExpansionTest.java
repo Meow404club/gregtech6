@@ -114,6 +114,22 @@ class GT6MenuInputSlotExpansionTest extends GTRecipesOfflineTestBase {
 		assertPos2(GTBasicMachineMenu.inputSlotPos(1, 2), 53, 25, ":59 the case-2 second slot");
 	}
 
+	/**
+	 * The >=3 arm rides the faithful case table (task r8-gui-layout-descriptor — the
+	 * extrapolation WARNING debt): case-3 is x 17/35/53 (upstream :62-64), NOT 35/53/71,
+	 * and the y arm wakes for >6 fluid maps — while the 0/1/2 arms stay fluid-blind.
+	 */
+	@Test
+	void threePlusInputArmsRideTheFaithfulCaseTable() {
+		// the old extrapolation returned (71,25) here — off the upstream case-3 row
+		assertPos2(GTBasicMachineMenu.inputSlotPos(0, 3, 0), 17, 25, ":62 case-3 first slot");
+		assertPos2(GTBasicMachineMenu.inputSlotPos(2, 3, 0), 53, 25, ":64 case-3 third slot");
+		assertPos2(GTBasicMachineMenu.inputSlotPos(0, 3, 7), 17, 7, ":62 the >6 y arm fires at count 3");
+		// the 0/1/2 arms stay byte-identical, fluid count or not (the R7 pin form)
+		assertPos2(GTBasicMachineMenu.inputSlotPos(0, 1, 7), 53, 25, ":55 the single arm ignores the fluid count");
+		assertPos2(GTBasicMachineMenu.inputSlotPos(1, 2, 7), 53, 25, ":59 the case-2 arm ignores the fluid count");
+	}
+
 	/** A two-input Host — the Canner map shape over a 4-slot inventory (2+2). */
 	private static final class TwoInputHost implements GTBasicMachineMenu.Host {
 		final GTItemStackHandler mInventory = new GTItemStackHandler(4);

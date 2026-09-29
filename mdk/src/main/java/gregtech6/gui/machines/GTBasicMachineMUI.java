@@ -36,11 +36,14 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  * the same parse the vanilla {@link GTBasicMachineScreen} blit rides, so the MUI panel shows
  * byte-identical backgrounds (shredder/crusher/lathe, GT6RecipeMaps.java:97/:105/:113).
  *
- * <p>Slot topology is the {@link GTBasicMachineMenu} STATIC GEOMETRY REFERENCED, never
- * copied: {@link GTBasicMachineMenu#inputSlotPos} (ContainerCommonBasicMachine.java:51-60,
- * the (53,25) single-input arm) and {@link GTBasicMachineMenu#outputGridPos}
- * (:169-270, the mOutputFluidCount==0 arms — Shredder/Crusher land on the 12 case
- * :247-269, the Lathe on the 2 case :178-181). Inputs are open {@link ModularSlot}s; the
+ * <p>Slot topology is the upstream case table consumed through the {@link
+ * GT6MachineGuiLayout} descriptor (task r8-gui-layout-descriptor — the faithful per-case
+ * transcription of ContainerCommonBasicMachine.java:51-156/:158-263, fluid arms included):
+ * {@link GT6MachineGuiLayout#inputPositions} for the input seats (the case-3+ shapes the
+ * old {@code GTBasicMachineMenu.inputSlotPos} extrapolation got wrong) and {@link
+ * GT6MachineGuiLayout#outputPositions} for the outputs (:169-270 — Shredder/Crusher land
+ * on the 12 case :247-269, the Lathe on the 2 case :178-181). The fluid arm reads the same
+ * tank-bank lengths the display seats render. Inputs are open {@link ModularSlot}s; the
  * outputs carry {@code canPut(false)} — the upstream Slot_Normal.setCanPut(F),
  * ContainerCommonBasicMachine.java:162 (items come out, nothing goes in).
  *
@@ -125,34 +128,36 @@ public final class GTBasicMachineMUI {
 				// the mGUIPath background — the same ResourceLocation parse the vanilla screen blits
 				.background(UITexture.fullImage(GTBasicMachineScreen.backgroundOf(aHost)));
 
-		// the input seat(s) — the GTBasicMachineMenu static geometry, referenced not copied
+		// the input seats — the GT6MachineGuiLayout case table, the fluid arm riding the same
+		// tank-bank length the display seats render (every 1/2-input family keeps its exact
+		// geometry: cases 0-2 have no seat-count-visible arm at ≤6 fluids)
+		FluidTankGT[] tInTanks = aHost.getFluidInputTanks();
+		FluidTankGT[] tOutTanks = aHost.getFluidOutputTanks();
+		int[][] tInPos = GT6MachineGuiLayout.inputPositions(tInputs, tInTanks.length);
 		for (int i = 0; i < tInputs; i++) {
-			int[] tPos = GTBasicMachineMenu.inputSlotPos(i, tInputs);
 			tPanel.child(new ItemSlot()
 					.slot(new ModularSlot(tInventory, TileEntityBasicMachine.SLOT_INPUT + i).slotGroup(GROUP_INPUTS))
-					.pos(tPos[0], tPos[1])
+					.pos(tInPos[i][0], tInPos[i][1])
 					.name("input_" + i));
 		}
 		// the output grid — canPut(false) = the upstream setCanPut(F), :162
+		int[][] tOutPos = GT6MachineGuiLayout.outputPositions(tOutputs, tOutTanks.length);
 		for (int i = 0; i < tOutputs; i++) {
-			int[] tPos = GTBasicMachineMenu.outputGridPos(i, tOutputs);
 			tPanel.child(new ItemSlot()
 					.slot(new ModularSlot(tInventory, TileEntityBasicMachine.SLOT_INPUT + tInputs + i).canPut(false).slotGroup(GROUP_OUTPUTS))
-					.pos(tPos[0], tPos[1])
+					.pos(tOutPos[i][0], tOutPos[i][1])
 					.name("output_" + i));
 		}
 		// the fluid display seats — the Host bank seams consumed live (the
 		// GTBasicMachineMenu.java:117/:122 default-empty faces): one read-only seat per
 		// declared tank at the upstream :267/:268 Slot_Render geometry (fluidDisplayPos);
 		// a default-bank Host renders zero seats — the pre-p34 panel byte-identical
-		FluidTankGT[] tInTanks = aHost.getFluidInputTanks();
 		for (int i = 0; i < tInTanks.length; i++) {
 			int[] tPos = GTBasicMachineMenu.fluidDisplayPos(false, i);
 			tPanel.child(fluidSeat(aSyncManager, tInTanks[i], SYNC_FLUID_IN + i)
 					.pos(tPos[0], tPos[1])
 					.name("fluid_in_" + i));
 		}
-		FluidTankGT[] tOutTanks = aHost.getFluidOutputTanks();
 		for (int i = 0; i < tOutTanks.length; i++) {
 			int[] tPos = GTBasicMachineMenu.fluidDisplayPos(true, i);
 			tPanel.child(fluidSeat(aSyncManager, tOutTanks[i], SYNC_FLUID_OUT + i)

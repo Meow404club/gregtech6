@@ -50,13 +50,16 @@ import gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase;
  *     bound) and the controller block carries the use arm under either leg's name;</li>
  * <li><b>the background</b> — recipes().mGUIPath of the ROW's map (the upstream
  *     MultiTileEntityBasicMachine.java:114 chain), not the base's COKE_OVEN fallback;</li>
- * <li><b>the seat topology</b> — 1 input + the map's mOutputItemsCount outputs
- *     canPut(false) + the 1/1 fluid banks (the :267/:268 Slot_Render face) + 1 progress
- *     bar + the 36 player seats.</li>
+ * <li><b>the seat topology</b> — the map's mInputItemsCount inputs + the map's
+ *     mOutputItemsCount outputs canPut(false) + the 1/1 fluid banks (the :267/:268
+ *     Slot_Render face) + 1 progress bar + the 36 player seats.</li>
  * </ul>
  *
  * <p>Plus the map-sized inventory: the Crusher/Shredder 1+12 shape overflows the base
- * INVENTORY_SIZE 11 — the row ctor re-sizes, every ≤11 map keeps the base handler.
+ * INVENTORY_SIZE 11 — the row ctor re-sizes, every ≤11 map keeps the base handler. And the
+ * input-truth face (task r8-gui-layout-descriptor): getInputSlotCount returns the row
+ * map's live mInputItemsCount (the Host default 1 was the r4-24a leftover), the MIXER/BATH
+ * six input seats land on the descriptor's case-6 table.
  */
 class GT6LargeMachineMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 
@@ -153,32 +156,77 @@ class GT6LargeMachineMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 			assertEquals(ResourceLocation.fromNamespaceAndPath(tGuiPath.substring(0, tColon), tGuiPath.substring(tColon + 1)),
 					tBackground.location(), tRow.path() + ": the background is the row map's mGUIPath");
 
-			// the seat topology — 1 input + the map's outputs + the 36 player seats
+			// the seat topology — the map's input truth + the map's outputs + the 36 player seats
 			List<IWidget> tAll = allWidgets(tPanel);
 			long tItemSeats = tAll.stream().filter(w -> w instanceof ItemSlot).count();
 			long tFluidSeats = tAll.stream().filter(w -> w instanceof FluidDisplayWidget).count();
 			long tProgress = tAll.stream().filter(w -> w instanceof ProgressWidget).count();
-			assertEquals(1 + tMap.mOutputItemsCount + 36, tItemSeats,
-					tRow.path() + ": 1 input + " + tMap.mOutputItemsCount + " outputs + 36 player seats");
+			assertEquals(tMap.mInputItemsCount + tMap.mOutputItemsCount + 36, tItemSeats,
+					tRow.path() + ": " + tMap.mInputItemsCount + " inputs + " + tMap.mOutputItemsCount + " outputs + 36 player seats");
 			assertEquals(2, tFluidSeats, tRow.path() + ": the 1/1 fluid banks (:267/:268)");
 			assertEquals(1, tProgress, tRow.path() + ": exactly the progress bar");
 			assertNotNull(tAll.stream().filter(w -> "player_inventory".equals(w.getName())).findFirst().orElse(null),
 					tRow.path() + ": the player inventory widget");
 
-			// the bindings — the input accepts, every output refuses (the setCanPut(F) face)
-			ModularSlot tInput = ((ItemSlot) named(tPanel, "input_0")).getSlot();
-			assertEquals(0, tInput.getSlotIndex(), tRow.path() + ": the input binds SLOT_INPUT 0");
-			assertTrue(tInput.mayPlace(new ItemStack(Blocks.BRICKS.asItem())), tRow.path() + ": the input accepts");
+			// the bindings — every input accepts, every output refuses (the setCanPut(F) face)
+			for (int i = 0; i < tMap.mInputItemsCount; i++) {
+				ModularSlot tInput = ((ItemSlot) named(tPanel, "input_" + i)).getSlot();
+				assertEquals(i, tInput.getSlotIndex(), tRow.path() + ": input " + i + " binds SLOT_INPUT " + i);
+				assertTrue(tInput.mayPlace(new ItemStack(Blocks.BRICKS.asItem())), tRow.path() + ": input " + i + " accepts");
+			}
 			for (int i = 0; i < tMap.mOutputItemsCount; i++) {
 				ModularSlot tOutput = ((ItemSlot) named(tPanel, "output_" + i)).getSlot();
-				assertEquals(1 + i, tOutput.getSlotIndex(), tRow.path() + ": output " + i + " binds after the input");
+				assertEquals(tMap.mInputItemsCount + i, tOutput.getSlotIndex(), tRow.path() + ": output " + i + " binds after the inputs");
 				assertFalse(tOutput.mayPlace(new ItemStack(Blocks.BRICKS.asItem())),
 						tRow.path() + ": output " + i + " refuses insertion");
 			}
 
-			// the map-sized inventory — the GUI binds 1 + outputs indices, they must exist
-			assertTrue(tMachine.getInventory().getSlots() >= 1 + tMap.mOutputItemsCount,
+			// the map-sized inventory — the GUI binds the full input+output index range
+			assertTrue(tMachine.getInventory().getSlots() >= tMap.mInputItemsCount + tMap.mOutputItemsCount,
 					tRow.path() + ": the inventory holds the GUI's slot range");
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// the input truth — the row map's mInputItemsCount, the MIXER/BATH case-6 table
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The widget build position — the GT6BasicMachineMUIPanelTest.posOf form (pos() lands in
+	 * the resizer's start Unit; the Area only resolves at layout, which the headless build lacks).
+	 */
+	private static int posOf(IWidget aWidget, boolean aX) throws Exception {
+		brachy.modularui.api.widget.IPositioned tPositioned = (brachy.modularui.api.widget.IPositioned) aWidget;
+		java.lang.reflect.Field tAxis = tPositioned.resizer().getClass().getDeclaredField(aX ? "x" : "y");
+		tAxis.setAccessible(true);
+		Object tSizer = tAxis.get(tPositioned.resizer());
+		java.lang.reflect.Field tStart = tSizer.getClass().getDeclaredField("start");
+		tStart.setAccessible(true);
+		Object tUnit = tStart.get(tSizer);
+		return (int) ((brachy.modularui.widget.sizer.Unit) tUnit).getValue();
+	}
+
+	/**
+	 * The six-input rows seat their inputs at the descriptor's case-6 table (upstream
+	 * ContainerCommonBasicMachine.java:80-85) — the r4-24a leftover in its end form: the
+	 * Host default 1 used to render a single (53,25) seat for the MIXER/BATH.
+	 */
+	@Test
+	public void theSixInputRowsSeatTheCase6Table() throws Exception {
+		for (String tPath : new String[] {"large_batch_mixer", "large_bath"}) {
+			GTLargeMachineBlockEntity tMachine = newMachine(GT6LargeMachines.ROWS_BY_PATH.get(tPath));
+			RecipeMap tMap = tMachine.recipes();
+			assertEquals(6, tMap.mInputItemsCount, tPath + ": the six-input row");
+			assertEquals(6, tMachine.getInputSlotCount(), tPath + ": the live input truth (the Host default 1 was the r4-24a leftover)");
+
+			ModularPanel<?> tPanel = tMachine.buildUI(null, headlessSyncManager(), null);
+			int[][] tExpected = GT6MachineGuiLayout.inputPositions(6, tMachine.getFluidInputTanks().length);
+			for (int i = 0; i < 6; i++) {
+				IWidget tSeat = named(tPanel, "input_" + i);
+				assertNotNull(tSeat, tPath + ": input_" + i + " seated");
+				assertEquals(tExpected[i][0], posOf(tSeat, true), tPath + ": input_" + i + " x == the case-6 table");
+				assertEquals(tExpected[i][1], posOf(tSeat, false), tPath + ": input_" + i + " y == the case-6 table");
+			}
 		}
 	}
 
