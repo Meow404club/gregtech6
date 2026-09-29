@@ -14,14 +14,12 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -51,29 +49,24 @@ import gregtech6.tileentity.machines.TileEntityOven;
  * GTSprayCanItem/GT6SprayCans touch — their static init resolves vanilla blocks (the
  * GT6ToolsCreativeTabTest.boot shape; the NetworkHooks failure is offline-expected).
  */
-public class GTSprayCanTest {
+public class GTSprayCanTest extends GTOfflineTestBase {
 
 	static BlockEntityType<TileEntityOven> sOvenType;
 
 	static final BlockPos POS = new BlockPos(1, 2, 3);
 
+	/**
+	 * The fixtures ride the base boot's reopened BET write window (the
+	 * GT6MachineBlockItemTest form). The class-init itself must stay Blocks-free — the
+	 * GRASS_STANDINS initializer below used to touch {@code Blocks.<clinit>} at class-load,
+	 * a test-order lottery (Not bootstrapped / already frozen before any {@code @BeforeAll}
+	 * ran) — so it assigns here, after the base boot, instead.
+	 */
 	@BeforeAll
-	static void boot() {
-		SharedConstants.tryDetectVersion();
-		try {
-			Bootstrap.bootStrap();
-		} catch (Throwable ignored) {
-			// NetworkHooks.init() failure is expected offline; registries are ready by now.
-		}
-		// clinit must stay vanilla-free: a static Block[] initializer runs BEFORE this boot
-		// (class-load order) and dies "Not bootstrapped" in a FILTERED run where no earlier
-		// class bootstrapped first — the full-suite green was ordering luck (issue #42b).
+	static void buildFixtures() {
 		GRASS_STANDINS = new Block[] {
 				Blocks.SANDSTONE, Blocks.GRAVEL, Blocks.ANDESITE,
 				Blocks.DRIPSTONE_BLOCK, Blocks.CALCITE, Blocks.TUFF};
-		// the 21.1 leg boots through FML (junit-fml) and freezes the BET registry before the
-		// first @BeforeAll — the p15-m4 seam reopens the fixture window (GTOfflineTestBase).
-		GTOfflineTestBase.unfreezeBlockEntityTypeRegistry();
 		@SuppressWarnings("unchecked")
 		BlockEntityType<TileEntityOven>[] tHolder = (BlockEntityType<TileEntityOven>[]) new BlockEntityType<?>[1];
 		tHolder[0] = BlockEntityType.Builder.of(
