@@ -79,8 +79,13 @@ public abstract class GTOfflineTestBase {
 		}
 	}
 
-	/** The latch fields live on wrapper superclasses — walk up (getDeclaredField sees one class only). */
-	private static java.lang.reflect.Field findNestedField(Class<?> aClass, String aName) throws NoSuchFieldException {
+	/**
+	 * The latch fields live on wrapper superclasses — walk up (getDeclaredField sees one
+	 * class only). Shared with the per-class latch holders (the
+	 * GT6LargeMachineTexDatagenTest.BlockLatch / GT6MachineBlockItemTest.BlockLatch shapes)
+	 * so the walker does not live in three files.
+	 */
+	public static java.lang.reflect.Field findNestedField(Class<?> aClass, String aName) throws NoSuchFieldException {
 		for (Class<?> tWalk = aClass; tWalk != null; tWalk = tWalk.getSuperclass()) {
 			try {
 				return tWalk.getDeclaredField(aName);
