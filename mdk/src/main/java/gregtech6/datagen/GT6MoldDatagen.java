@@ -33,15 +33,15 @@ import gregtech6.registry.GT6Molds;
  * 66 keys short).
  * ZERO hand-written JSON:
  * <ul>
- * <li><b>blockstates</b>: the 31 ceramic mold rows (blank + 30 pre-carved shapes) as
- *     the 5x5 bitmap stamp models (r7-mold-geometry: the 1px floor + one 2.4x3x2.4px
- *     element per lit bit, the MOLD_BOUNDS pass-18+i geometry — {@link GT6Molds#shapeOf}
- *     shares the bit order with the block's selection/collision shape) riding the MATERIAL
- *     SMOOTH body texture ({@link GT6CrucibleDatagen#bodyTexture}, task
- *     r7-40-41-mold-assets — the former flat andesite/cobble placeholder is gone), and
- *     the 2 faucet rows as material smooth body cubes (the p12
- *     addAttachments single-model-over-all-facings form, the oriented thin plate is the
- *     render pool).</li>
+ * <li><b>blockstates</b>: the 32 mold rows (stone + the 31 ceramic — blank + 30
+ *     pre-carved shapes, the one upstream MTE design 1072, Loader:347/:352/:391-420) as
+ *     the 5x5 bitmap stamp models (issue #41: the CONCAVE mold — the 1px floor + the four
+ *     2px walls + one 2.4x3x2.4px element per UNLIT bit, the lit bit = chiseled out,
+ *     MultiTileEntityMold.java:328-335/:537) riding the MATERIAL SMOOTH body texture
+ *     ({@link GT6CrucibleDatagen#bodyTexture}, task r7-40-41-mold-assets — the former
+ *     flat andesite/cobble placeholder is gone), and the 2 faucet rows as material smooth
+ *     body cubes (the p12 addAttachments single-model-over-all-facings form, the oriented
+ *     thin plate is the render pool).</li>
  * <li><b>item models</b>: the formed molds and faucets parent their block models; the
  *     31 raw clay items ride {@code item/generated} over their OWN borrowed upstream
  *     icon ({@code item/<path>_raw}, the gt.multiitem.randomtools 900-929/991 borrows,
@@ -102,10 +102,18 @@ public final class GT6MoldDatagen {
 				return "Block States: gt6:mold";
 			}
 
-			@Override
-			protected void registerStatesAndModels() {
-				// the ceramic molds: the blank + 30 shapes (the stone rung rides GT6CrucibleDatagen)
-				registerMoldModels(GT6Molds.CERAMIC_BLANK_ROW);
+				@Override
+				protected void registerStatesAndModels() {
+					// the stone rung: the SAME mold geometry (Loader:347 — stone and ceramic
+					// molds are the one MTE design 1072; the former addSimpleCube flat-cube
+					// placeholder retires here, the debt-mold-stone-visual-sync ride)
+					for (GT6Molds.MoldRow tRow : GT6Molds.ROWS) {
+						Block tBlock = GT6Molds.BLOCKS_BY_PATH.get(tRow.path()).get();
+						simpleBlock(tBlock, moldModel(tRow, tRow.preCarvedShape()));
+						itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
+					}
+					// the ceramic molds: the blank + 30 shapes
+					registerMoldModels(GT6Molds.CERAMIC_BLANK_ROW);
 				for (GT6Molds.MoldRow tRow : GT6Molds.CERAMIC_ROWS) {
 					registerMoldModels(tRow);
 				}
@@ -140,14 +148,16 @@ public final class GT6MoldDatagen {
 			}
 
 			/**
-			 * The 5x5 bitmap stamp model (r7-mold-geometry): the 1px full-footprint floor
-			 * plus one 2.4x3x2.4px element per lit bit of the mask — the MOLD_BOUNDS
-			 * pass-18+i geometry (MultiTileEntityMold.java:459-509), the bit→cell order
-			 * shared with the selection shape ({@link GT6Molds#shapeOf}). The block/block
-			 * parent carries ONLY the display transforms (the portal-frame precedent — the
-			 * standalone element model would strip them from the BlockItem GUI/hand
-			 * rendering); the formed item model parents this model, so the BlockItem
-			 * inventory face IS the 3D shape for free.
+			 * The 5x5 bitmap stamp model (r7-mold-geometry geometry, issue #41 polarity):
+			 * the MOLD is CONCAVE — a chisel strike SETS a bit (MultiTileEntityMold.java
+			 * :328-335) and the render gate :537 skips exactly the lit cells, so bit=1 =
+			 * carved out. The elements: the 1px full-footprint floor, the four 2px-thick
+			 * 4px-tall walls (MOLD_BOUNDS[2..5]), then one 2.4x3x2.4px element per UNLIT
+			 * bit standing as the 3px surface — a lit bit stays a 2px-deep recess over the
+			 * floor. The block/block parent carries ONLY the display transforms (the
+			 * portal-frame precedent — the standalone element model would strip them from
+			 * the BlockItem GUI/hand rendering); the formed item model parents this model,
+			 * so the BlockItem inventory face IS the 3D shape for free.
 			 */
 			private ModelFile moldModel(GT6Molds.MoldRow aRow, int aShape) {
 				ResourceLocation tBody = GT6CrucibleDatagen.loc(GT6CrucibleDatagen.bodyTexture(aRow.material().get()));
@@ -162,8 +172,15 @@ public final class GT6MoldDatagen {
 							aFace.texture("#body");
 							if (aDir != net.minecraft.core.Direction.UP) aFace.cullface(aDir);
 						}).end();
+				// the four walls (MOLD_BOUNDS[2..5], 2px thick, y 0..4, the outward face
+				// culled): the cavity rim the r7 version lacked
+				moldWall(tModel, 14, 0, 16, 16, net.minecraft.core.Direction.EAST);
+				moldWall(tModel, 0, 14, 16, 16, net.minecraft.core.Direction.SOUTH);
+				moldWall(tModel, 0, 0, 2, 16, net.minecraft.core.Direction.WEST);
+				moldWall(tModel, 0, 0, 16, 2, net.minecraft.core.Direction.NORTH);
+				// the unlit cells stand as the surface; the carved (lit) cells stay open
 				for (int i = 0; i < 25; i++) {
-					if ((aShape & (1 << i)) != 0) {
+					if ((aShape & (1 << i)) == 0) {
 						tModel.element()
 								.from(GT6Molds.cellLo(i / 5), 0, GT6Molds.cellLo(i % 5))
 								.to(GT6Molds.cellHi(i / 5), 3, GT6Molds.cellHi(i % 5))
@@ -171,6 +188,15 @@ public final class GT6MoldDatagen {
 					}
 				}
 				return tModel;
+			}
+
+			/** One mold wall: x aX0..aX1 / z aZ0..aZ1, 4px tall, the outward face culled. */
+			private void moldWall(BlockModelBuilder aModel, int aX0, int aZ0, int aX1, int aZ1, net.minecraft.core.Direction aOutward) {
+				aModel.element().from(aX0, 0, aZ0).to(aX1, 4, aZ1)
+						.allFaces((aDir, aFace) -> {
+							aFace.texture("#body");
+							if (aDir == aOutward) aFace.cullface(aDir);
+						}).end();
 			}
 		}
 

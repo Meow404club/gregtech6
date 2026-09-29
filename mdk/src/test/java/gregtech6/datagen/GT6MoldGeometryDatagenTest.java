@@ -1,23 +1,27 @@
 /**
- * Offline pin for task r7-mold-geometry (GitHub #40/#41 card 2) — the mold BLOCKS carry
- * the upstream shape geometry: the 5x5 {@code gt.mold} bitmap rendered as the 1px
- * full-footprint floor + one 2.4x3x2.4px cell per lit bit (the MOLD_BOUNDS render-pass
- * 18-42 geometry, MultiTileEntityMold.java:459-509), the selection/collision shapes
- * riding the same mask ({@link GT6Molds#shapeOf}), and the formed BlockItem parenting
- * the block model (the 3D inventory shape for free).
+ * Offline pin for task r7-mold-geometry (GitHub #40/#41 card 2) as amended by
+ * r9-41-mold-invert-fix (issue #41) — the mold BLOCKS carry the upstream CONCAVE shape
+ * geometry: a chisel strike SETS a bit (MultiTileEntityMold.java:328-335) and the render
+ * gate :537 skips the lit cells, so bit=1 = carved out. The committed model JSON is the
+ * 1px full-footprint floor + the four 2px walls + one 2.4x3x2.4px element per UNLIT bit
+ * (the lit bit = a 2px-deep recess over the floor = the negative/cavity form), the
+ * selection/collision shapes riding the upstream boxes (MultiTileEntityMold.java
+ * :559-560), and the formed BlockItem parenting the block model (the 3D inventory shape
+ * for free).
  *
  * <p>Three pins (the card face): (a) the 30 ceramic masks vs the Loader
  * _MultiTileEntities.java:391-420 smelting literals transcribed HERE independently —
  * the transcription is the card's lifeline, so the reference table must not import the
- * registry's own copy; (b) the committed model JSON element census = popcount + floor
- * with the per-bit coordinates on the 2..14px / 2.4px grid; (c) the selection shape
- * covers exactly the lit cells (empty grid cells unselectable), collision = selection.
+ * registry's own copy; (b) the committed model JSON element census = 5 + (25 − popcount)
+ * — plate (all 25 carved) = the bare 5-element dish, blank = 30, every cell element y
+ * 0..3 (nails the retired convex minY=1/maxY=4 forms); (c) the upstream selection box
+ * (full 16x16x3px footprint) and collision box (12x12x2px inner cavity).
  */
 package gregtech6.datagen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
@@ -116,7 +120,10 @@ public class GT6MoldGeometryDatagenTest extends GTOfflineTestBase {
 		}
 	}
 
-	/** (b) The committed model JSON: popcount elements + the floor, on the 2.4px grid. */
+	/**
+	 * (b) The committed model JSON: the 5+(25−popcount) elements — floor + 4 walls + one
+	 * element per UNLIT (carved-out) bit, on the 2.4px grid, every cell y 0..3.
+	 */
 	@Test
 	void moldModelsFollowTheBitmap() throws Exception {
 		assertFalse(rows().isEmpty(), "the row walk broke — never pass vacuously");
@@ -128,9 +135,9 @@ public class GT6MoldGeometryDatagenTest extends GTOfflineTestBase {
 			assertTrue(tModel.getAsJsonObject("textures").has("body"),
 					tRow.path() + ": the body texture key");
 			JsonArray tElements = tModel.getAsJsonArray("elements");
-			int tBits = Integer.bitCount(tMask);
-			assertEquals(tBits + 1, tElements.size(),
-					tRow.path() + ": floor + one element per lit bit");
+			int tCarved = 25 - Integer.bitCount(tMask);
+			assertEquals(tCarved + 5, tElements.size(),
+					tRow.path() + ": floor + 4 walls + one element per carved (unlit) bit");
 			// element 0 = the full-footprint 1px floor (MOLD_BOUNDS[1])
 			JsonArray tFrom = tElements.get(0).getAsJsonObject().getAsJsonArray("from");
 			JsonArray tTo = tElements.get(0).getAsJsonObject().getAsJsonArray("to");
@@ -140,24 +147,47 @@ public class GT6MoldGeometryDatagenTest extends GTOfflineTestBase {
 			assertEquals(16.0, tTo.get(0).getAsDouble(), 1e-9, tRow.path() + " floor x1");
 			assertEquals(1.0, tTo.get(1).getAsDouble(), 1e-9, tRow.path() + " floor y1 (PX_N[15])");
 			assertEquals(16.0, tTo.get(2).getAsDouble(), 1e-9, tRow.path() + " floor z1");
-			// elements 1..n = the lit cells in bit order i: cell (xcol=i/5, zrow=i%5),
-			// the MOLD_BOUNDS[18+i] walk — independent double math, 1e-3 slack for the
-			// 2.4px float print
-			int tElement = 1;
+			// elements 1..4 = the four 2px-thick 4px-tall walls (MOLD_BOUNDS[2..5]),
+			// E/S/W/N emission order
+			double[][] tWalls = {
+					{14, 0, 0, 16, 4, 16}, // east, outward cullface
+					{0, 0, 14, 16, 4, 16}, // south
+					{0, 0, 0, 2, 4, 16},   // west
+					{0, 0, 0, 16, 4, 2}};  // north
+			for (int w = 0; w < 4; w++) {
+				double[] tA = coords(tElements.get(1 + w).getAsJsonObject());
+				for (int k = 0; k < 6; k++) {
+					assertEquals(tWalls[w][k], tA[k], 1e-9, tRow.path() + " wall " + w + " coord " + k);
+				}
+			}
+			// elements 5..n = the UNLIT cells standing as the 3px surface (the lit bit =
+			// carved out), in bit order i: cell (xcol=i/5, zrow=i%5), the MOLD_BOUNDS[18+i]
+			// walk — independent double math, 1e-3 slack for the 2.4px float print
+			int tElement = 5;
 			for (int i = 0; i < 25; i++) {
-				if ((tMask & (1 << i)) == 0) continue;
-				JsonObject tCell = tElements.get(tElement).getAsJsonObject();
+				if ((tMask & (1 << i)) != 0) continue;
 				double[] tE = {gridLine(i / 5), 0.0, gridLine(i % 5), gridLine(i / 5 + 1), 3.0, gridLine(i % 5 + 1)};
-				JsonArray tCFrom = tCell.getAsJsonArray("from");
-				JsonArray tCTo = tCell.getAsJsonArray("to");
-				double[] tA = {tCFrom.get(0).getAsDouble(), tCFrom.get(1).getAsDouble(), tCFrom.get(2).getAsDouble(),
-						tCTo.get(0).getAsDouble(), tCTo.get(1).getAsDouble(), tCTo.get(2).getAsDouble()};
+				double[] tA = coords(tElements.get(tElement).getAsJsonObject());
 				for (int k = 0; k < 6; k++) {
 					assertEquals(tE[k], tA[k], 1e-3, tRow.path() + " cell bit " + i + " coord " + k);
 				}
 				tElement++;
 			}
 		}
+		// the extremes, nailed by name: the all-carved plate = the bare 5-element dish,
+		// the untouched blank = 30 (25 cells + 5)
+		assertEquals(5, generatedJson("assets/gt6/models/block/mold_ceramic_plate.json")
+				.getAsJsonArray("elements").size(), "the plate molds as the plain dish (25 carved)");
+		assertEquals(30, generatedJson("assets/gt6/models/block/mold_ceramic.json")
+				.getAsJsonArray("elements").size(), "the blank keeps all 25 surface cells");
+	}
+
+	/** The from/to sextet of one model element. */
+	private static double[] coords(JsonObject aElement) {
+		JsonArray tFrom = aElement.getAsJsonArray("from");
+		JsonArray tTo = aElement.getAsJsonArray("to");
+		return new double[] {tFrom.get(0).getAsDouble(), tFrom.get(1).getAsDouble(), tFrom.get(2).getAsDouble(),
+				tTo.get(0).getAsDouble(), tTo.get(1).getAsDouble(), tTo.get(2).getAsDouble()};
 	}
 
 	/** (b2) The blockstate face: one variant per row pointing at the bitmap model. */
@@ -169,15 +199,15 @@ public class GT6MoldGeometryDatagenTest extends GTOfflineTestBase {
 				"the ingot blockstate variant rides the bitmap model");
 	}
 
-	/** The coverage probe: does any AABB of the shape contain the px point? */
-	private static boolean covers(List<net.minecraft.world.phys.AABB> aBoxes, double aX, double aY, double aZ) {
-		net.minecraft.world.phys.Vec3 tPoint = new net.minecraft.world.phys.Vec3(aX / 16.0, aY / 16.0, aZ / 16.0);
-		return aBoxes.stream().anyMatch(tBox -> tBox.intersects(new net.minecraft.world.phys.AABB(tPoint, tPoint)));
-	}
-
-	/** (c) The selection shape covers exactly the lit cells; collision = selection. */
+	/**
+	 * (c) The upstream selection/collision pair (MultiTileEntityMold.java:559-560),
+	 * shape-independent: selection = the full 16x16x3px footprint, collision = the
+	 * 12x12x2px inner cavity. The retired r7 mask-shaped selection died with issue #41 —
+	 * after the polarity flip the cavities are the holes, and a mask-shaped selection left
+	 * the mold un-clickable in its own pit.
+	 */
 	@Test
-	void moldSelectionAndCollisionFollowTheBitmap() {
+	void moldSelectionAndCollisionAreTheUpstreamBoxes() {
 		// offline Block construction needs the block registry temporarily unfrozen (the
 		// GTWireContactDamageTest / GT6SurfaceBlocksTest form)
 		try {
@@ -188,48 +218,34 @@ public class GT6MoldGeometryDatagenTest extends GTOfflineTestBase {
 		} catch (Exception aE) {
 			throw new IllegalStateException("could not unfreeze the offline block registry", aE);
 		}
-		java.util.function.ToIntFunction<String> tMaskOf = aPath -> {
-			for (GT6Molds.MoldRow tRow : GT6Molds.CERAMIC_ROWS) {
-				if (tRow.path().equals(aPath)) return tRow.preCarvedShape();
-			}
-			return GT6Molds.CERAMIC_BLANK_ROW.preCarvedShape();
-		};
-		for (String tPath : new String[] {"mold_ceramic", "mold_ceramic_ingot", "mold_ceramic_nugget",
-				"mold_ceramic_gear", "mold_ceramic_long_rod"}) {
+		// the two mask extremes (all-carved plate, untouched blank) — every row rides the
+		// same two static boxes
+		for (String tPath : new String[] {"mold_ceramic", "mold_ceramic_plate"}) {
 			GT6Molds.MoldBlock tBlock = new GT6Molds.MoldBlock(
-					new GT6Molds.MoldRow(tPath, () -> null, 1.0F, tMaskOf.applyAsInt(tPath)),
+					new GT6Molds.MoldRow(tPath, () -> null, 1.0F, 0),
 					net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
-			int tMask = tMaskOf.applyAsInt(tPath);
-			List<net.minecraft.world.phys.AABB> tBoxes = tBlock
+			List<net.minecraft.world.phys.AABB> tSel = tBlock
 					.getShape(tBlock.defaultBlockState(), null, null, null).toAabbs();
-			// every lit cell's centre (x/z +1.2px inside, y 1.5px) is selectable
-			for (int i = 0; i < 25; i++) {
-				double tCx = gridLine(i / 5) + 1.2, tCz = gridLine(i % 5) + 1.2;
-				boolean tLit = (tMask & (1 << i)) != 0;
-				assertEquals(tLit, covers(tBoxes, tCx, 1.5, tCz),
-						tPath + " cell bit " + i + " (" + (i / 5) + "," + (i % 5) + ") selection = mask");
-				// collision = selection, cell for cell
-				List<net.minecraft.world.phys.AABB> tCollide = tBlock
-						.getCollisionShape(tBlock.defaultBlockState(), null, null, null).toAabbs();
-				assertEquals(tLit, covers(tCollide, tCx, 1.5, tCz),
-						tPath + " cell bit " + i + " collision = mask");
-			}
-			// the floor band under an empty cell stays selectable (the 1px plate)
-			assertTrue(covers(tBoxes, 8, 0.5, 8), tPath + " floor centre selectable");
-			assertSame(tBlock.getShape(tBlock.defaultBlockState(), null, null, null),
+			assertEquals(1, tSel.size(), tPath + ": selection is one full-footprint box");
+			assertBox(tSel.get(0), 0, 0, 0, 16, 3, 16, tPath + " selection (:560)");
+			List<net.minecraft.world.phys.AABB> tCol = tBlock
+					.getCollisionShape(tBlock.defaultBlockState(), null, null, null).toAabbs();
+			assertEquals(1, tCol.size(), tPath + ": collision is one inner-cavity box");
+			assertBox(tCol.get(0), 2, 0, 2, 14, 2, 14, tPath + " collision (:559)");
+			assertNotSame(tBlock.getShape(tBlock.defaultBlockState(), null, null, null),
 					tBlock.getCollisionShape(tBlock.defaultBlockState(), null, null, null),
-					tPath + ": collision IS the selection shape (the card SPEC)");
+					tPath + ": the two upstream boxes are distinct shapes");
 		}
-		// the blank: exactly the floor — no cell anywhere
-		GT6Molds.MoldBlock tBlank = new GT6Molds.MoldBlock(
-				new GT6Molds.MoldRow("mold_ceramic", () -> null, 1.0F, 0),
-				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
-		List<net.minecraft.world.phys.AABB> tBlankBoxes = tBlank
-				.getShape(tBlank.defaultBlockState(), null, null, null).toAabbs();
-		assertEquals(1, tBlankBoxes.size(), "the blank selects as the bare floor");
-		net.minecraft.world.phys.AABB tFloor = tBlankBoxes.get(0);
-		assertEquals(0.0, tFloor.minX, 1e-9, "blank floor x0");
-		assertEquals(1.0 / 16.0, tFloor.maxY, 1e-9, "blank floor 1px tall");
-		assertEquals(1.0, tFloor.maxX, 1e-9, "blank full footprint");
+	}
+
+	/** The 0..1-normalized AABB pin (VoxelShape.toAabbs space, the r3-stick precedent). */
+	private static void assertBox(net.minecraft.world.phys.AABB aBox, double aX0, double aY0, double aZ0,
+			double aX1, double aY1, double aZ1, String aLabel) {
+		assertEquals(aX0 / 16.0, aBox.minX, 1e-9, aLabel + " minX");
+		assertEquals(aY0 / 16.0, aBox.minY, 1e-9, aLabel + " minY");
+		assertEquals(aZ0 / 16.0, aBox.minZ, 1e-9, aLabel + " minZ");
+		assertEquals(aX1 / 16.0, aBox.maxX, 1e-9, aLabel + " maxX");
+		assertEquals(aY1 / 16.0, aBox.maxY, 1e-9, aLabel + " maxY");
+		assertEquals(aZ1 / 16.0, aBox.maxZ, 1e-9, aLabel + " maxZ");
 	}
 }
