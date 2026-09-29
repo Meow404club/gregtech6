@@ -117,6 +117,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addGrassUnits();        // task p24-grass-block
 		addFoamSprayUnits();    // task p25-c-foam-pipe-spray
 		addKitchenUnits();      // task p26-kitchen-pot-bowl
+		addMeasuringPotUnits(); // task r8-issue45-c3 — the pot pair (issue #45, the dump faces verbatim)
 		addCrucibleJadeUnits(); // task p28-crucible-jade-face
 		addCommonJadeUnits();   // task r8-jade-redesign-core — the common jade band (hand rows, the tsv direct band)
 		addMachineJadeUnits();  // task p34-hygiene-lang — the machine/fluid jade band (hand rows, the tsv direct band)
@@ -408,6 +409,18 @@ public class GT6ZhCn extends LanguageProvider {
 		add("block.gt6.juicer", "榨汁机"); // task p33-food-machines-kitchen — the dump gt.multitileentity.32722 face 榨汁机 verbatim (tmp/gregtech.lang:13543)
 		add("item.gt6.clay_bowl", "粘土碗");
 		add("item.gt6.clay_juicer", "粘土榨汁机"); // issue #45 C1 — the raw 994 hand face (Clay Juicer + 榨汁机 dump face)
+	}
+
+	/**
+	 * The Measuring Pot pair (task r8-issue45-c3, issue #45) — both dump faces verbatim
+	 * (the addKitchenUnits hardcoded-add form): the block rides the ceramic row id 32738
+	 * (陶瓷量杯, tmp/gregtech.lang:13559 — the mte census row, the provider-side port-key
+	 * join done by hand) and the raw item the meta-997 row (粘土量杯, tmp/gregtech.lang
+	 * :10114; the multiitem family is NOT a collected tsv band, the hand face only).
+	 */
+	private void addMeasuringPotUnits() {
+		add("block.gt6.measuring_pot", "陶瓷量杯");
+		add("item.gt6.clay_measuring_pot", "粘土量杯");
 	}
 
 	/**

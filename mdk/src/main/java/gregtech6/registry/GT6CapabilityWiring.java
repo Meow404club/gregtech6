@@ -626,6 +626,13 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tJuicer,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		// task r8-issue45-c3 — the Measuring Pot joins the fluid-container face (the fluid
+		// only face: no item slots, the single 1000 L tank answers straight; the forge leg
+		// answers from the GT6MeasuringPotBlockEntity getCapability override)
+		BlockEntityType<gregtech6.tileentity.tank.GT6MeasuringPotBlockEntity> tMeasuringPot =
+				GT6MeasuringPot.MEASURING_POT_BE.get();
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tMeasuringPot,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 	}
 
 	// -- the coke oven (p8 multiblock controller; the commands-card handoff) --

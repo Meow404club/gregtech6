@@ -789,6 +789,17 @@ FORGE_GATED_ONLY_CANONICAL = frozenset({
     # 的正典生产者面），forge 索引与 mold_stone 同构 forge-gated。runtime 双腿共用
     # canonical 树各读各的索引，零影响。
     "data/forge/loot_modifiers/global_loot_modifiers.json",
+    # task r8-issue45-c3 交卡补录（2026-09-29）：量杯配方面 GT6MeasuringPotDatagen.Recipes
+    # 与 GT6CrucibleDatagen.Recipes 同构（//? if forge 整类门控，21.1 节点结构性无输出，
+    # RecipeProvider.getName final 的 duplicate-provider 约束 + 卡 B 未来的 RecipeOutput
+    # 面）；shaped :134 / reverse :121 / smelt :2096 三行 ×2（配方+advancement），
+    # singular recipe/ 镜像由 SEGMENT_MAP 归一折入复数面对账，无需声明。runtime 不受影响。
+    "data/gt6/recipes/clay_measuring_pot.json",
+    "data/gt6/recipes/clay_measuring_pot_reverse.json",
+    "data/gt6/recipes/smelt_clay_measuring_pot.json",
+    "data/gt6/advancements/recipes/misc/clay_measuring_pot.json",
+    "data/gt6/advancements/recipes/misc/clay_measuring_pot_reverse.json",
+    "data/gt6/advancements/recipes/misc/smelt_clay_measuring_pot.json",
 })
 
 # ── 声明偏离带（canonical 前瞻孪生树，vanilla-tag-dual-tree 引入）──────────────

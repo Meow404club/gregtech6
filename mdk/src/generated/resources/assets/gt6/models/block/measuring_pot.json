@@ -1,0 +1,337 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#bottom"
+        },
+        "east": {
+          "texture": "#sides"
+        },
+        "north": {
+          "texture": "#sides"
+        },
+        "south": {
+          "texture": "#sides"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#sides"
+        }
+      },
+      "from": [
+        5,
+        0,
+        5
+      ],
+      "to": [
+        11,
+        1,
+        11
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#overlay_bottom"
+        },
+        "east": {
+          "texture": "#overlay_sides"
+        },
+        "north": {
+          "texture": "#overlay_sides"
+        },
+        "south": {
+          "texture": "#overlay_sides"
+        },
+        "up": {
+          "texture": "#overlay_top"
+        },
+        "west": {
+          "texture": "#overlay_sides"
+        }
+      },
+      "from": [
+        4.99,
+        -0.01,
+        4.99
+      ],
+      "to": [
+        11.01,
+        1.01,
+        11.01
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#bottom"
+        },
+        "east": {
+          "texture": "#insides"
+        },
+        "north": {
+          "texture": "#sides"
+        },
+        "south": {
+          "texture": "#sides"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#sides"
+        }
+      },
+      "from": [
+        4,
+        1,
+        5
+      ],
+      "to": [
+        5,
+        8,
+        11
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#overlay_bottom"
+        },
+        "east": {
+          "texture": "#overlay_insides"
+        },
+        "north": {
+          "texture": "#overlay_sides"
+        },
+        "south": {
+          "texture": "#overlay_sides"
+        },
+        "up": {
+          "texture": "#overlay_top"
+        },
+        "west": {
+          "texture": "#overlay_sides"
+        }
+      },
+      "from": [
+        3.99,
+        0.99,
+        4.99
+      ],
+      "to": [
+        5.01,
+        8.01,
+        11.01
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#bottom"
+        },
+        "east": {
+          "texture": "#sides"
+        },
+        "north": {
+          "texture": "#sides"
+        },
+        "south": {
+          "texture": "#sides"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#insides"
+        }
+      },
+      "from": [
+        11,
+        1,
+        5
+      ],
+      "to": [
+        12,
+        8,
+        11
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#overlay_bottom"
+        },
+        "east": {
+          "texture": "#overlay_sides"
+        },
+        "north": {
+          "texture": "#overlay_sides"
+        },
+        "south": {
+          "texture": "#overlay_sides"
+        },
+        "up": {
+          "texture": "#overlay_top"
+        },
+        "west": {
+          "texture": "#overlay_insides"
+        }
+      },
+      "from": [
+        10.99,
+        0.99,
+        4.99
+      ],
+      "to": [
+        12.01,
+        8.01,
+        11.01
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#bottom"
+        },
+        "east": {
+          "texture": "#sides"
+        },
+        "north": {
+          "texture": "#sides"
+        },
+        "south": {
+          "texture": "#insides"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#sides"
+        }
+      },
+      "from": [
+        5,
+        1,
+        4
+      ],
+      "to": [
+        11,
+        8,
+        5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#overlay_bottom"
+        },
+        "east": {
+          "texture": "#overlay_sides"
+        },
+        "north": {
+          "texture": "#overlay_sides"
+        },
+        "south": {
+          "texture": "#overlay_insides"
+        },
+        "up": {
+          "texture": "#overlay_top"
+        },
+        "west": {
+          "texture": "#overlay_sides"
+        }
+      },
+      "from": [
+        4.99,
+        0.99,
+        3.99
+      ],
+      "to": [
+        11.01,
+        8.01,
+        5.01
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#bottom"
+        },
+        "east": {
+          "texture": "#sides"
+        },
+        "north": {
+          "texture": "#insides"
+        },
+        "south": {
+          "texture": "#sides"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#sides"
+        }
+      },
+      "from": [
+        5,
+        1,
+        11
+      ],
+      "to": [
+        11,
+        8,
+        12
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#overlay_bottom"
+        },
+        "east": {
+          "texture": "#overlay_sides"
+        },
+        "north": {
+          "texture": "#overlay_insides"
+        },
+        "south": {
+          "texture": "#overlay_sides"
+        },
+        "up": {
+          "texture": "#overlay_top"
+        },
+        "west": {
+          "texture": "#overlay_sides"
+        }
+      },
+      "from": [
+        4.99,
+        0.99,
+        10.99
+      ],
+      "to": [
+        11.01,
+        8.01,
+        12.01
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "bottom": "gt6:block/measuring_pot_colored_bottom",
+    "insides": "gt6:block/measuring_pot_colored_insides",
+    "overlay_bottom": "gt6:block/measuring_pot_overlay_bottom",
+    "overlay_insides": "gt6:block/measuring_pot_overlay_insides",
+    "overlay_sides": "gt6:block/measuring_pot_overlay_sides",
+    "overlay_top": "gt6:block/measuring_pot_overlay_top",
+    "particle": "#sides",
+    "sides": "gt6:block/measuring_pot_colored_sides",
+    "top": "gt6:block/measuring_pot_colored_top"
+  }
+}
