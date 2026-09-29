@@ -1,18 +1,18 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gt6:block/gt6_drawer",
+      "model": "gt6:block/drawer",
       "y": 90
     },
     "facing=north": {
-      "model": "gt6:block/gt6_drawer"
+      "model": "gt6:block/drawer"
     },
     "facing=south": {
-      "model": "gt6:block/gt6_drawer",
+      "model": "gt6:block/drawer",
       "y": 180
     },
     "facing=west": {
-      "model": "gt6:block/gt6_drawer",
+      "model": "gt6:block/drawer",
       "y": 270
     }
   }

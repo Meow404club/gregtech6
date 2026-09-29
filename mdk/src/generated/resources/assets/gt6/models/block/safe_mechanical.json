@@ -150,18 +150,18 @@
   ],
   "render_type": "minecraft:cutout",
   "textures": {
-    "down": "gt6:block/hopper/colored_bottom",
-    "east": "gt6:block/hopper/colored_side",
-    "north": "gt6:block/hopper/colored_side",
-    "overlay_down": "gt6:block/hopper/overlay_bottom",
-    "overlay_east": "gt6:block/hopper/overlay_side",
-    "overlay_north": "gt6:block/hopper/overlay_side",
-    "overlay_south": "gt6:block/hopper/overlay_side",
-    "overlay_up": "gt6:block/hopper/overlay_top",
-    "overlay_west": "gt6:block/hopper/overlay_side",
-    "particle": "gt6:block/hopper/colored_side",
-    "south": "gt6:block/hopper/colored_side",
-    "up": "gt6:block/hopper/colored_top",
-    "west": "gt6:block/hopper/colored_side"
+    "down": "gt6:block/safe_mechanical/colored_side",
+    "east": "gt6:block/safe_mechanical/colored_side",
+    "north": "gt6:block/safe_mechanical/colored_front",
+    "overlay_down": "gt6:block/safe_mechanical/overlay_side",
+    "overlay_east": "gt6:block/safe_mechanical/overlay_side",
+    "overlay_north": "gt6:block/safe_mechanical/overlay_front",
+    "overlay_south": "gt6:block/safe_mechanical/overlay_back",
+    "overlay_up": "gt6:block/safe_mechanical/overlay_side",
+    "overlay_west": "gt6:block/safe_mechanical/overlay_side",
+    "particle": "gt6:block/safe_mechanical/colored_side",
+    "south": "gt6:block/safe_mechanical/colored_back",
+    "up": "gt6:block/safe_mechanical/colored_side",
+    "west": "gt6:block/safe_mechanical/colored_side"
   }
 }
