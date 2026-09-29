@@ -1310,58 +1310,125 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /**
      * Task p4-fluid-barrel (W3 provider addition, merge order multiblock→barrel→cover),
-     * extended by task p6-barrel-metal-plastic: the three-barrel family (wood/plastic/
-     * metal) over their {@code gt6:textures/block/barrel_<material>.png} (the barrel
-     * TESR/lid is a feature-layer omission, MultiTileEntityBarrelWood.java:44-54) plus
-     * the BlockItem model parenting the block model. The textures are script-generated
-     * placeholder PNGs, not JSON.
+     * extended by task p6-barrel-metal-plastic, re-textured by task r8-tex-tank-family:
+     * the barrel family over the BORROWED two-layer upstream art — the per-face
+     * {@code barrel_parts/<family>/{colored,overlay}_{bottom,top,side}.png} borrows
+     * (upstream {@code machines/tanks/<family>/}, BarrelWood.java:44-55 colored+overlay
+     * x {bottom,top,side}; Plastic:42-48 / Metal:39-45 isomorphic) in the
+     * {@link #barrelPartsModel} two-layer per-face grammar. The former
+     * {@code barrel_<material>.png} single-texture shortcut (p20) is retired with its
+     * three PNGs; the {@code barrel_logistics.png} row (task p12) is out of this card's
+     * scope and keeps the {@link #tintedCubeAll} single-PNG form (the TESR/lid
+     * omission stays declared, MultiTileEntityBarrelWood.java:44-54).
      *
      * <p>Task p7-barrel-high-tier-melt-bridge spec ④: the twelve high-tier metal drums
-     * (Loader_MultiTileEntities.java:2159-2170) share the ONE {@code barrel_metal.png} —
-     * every model JSON references the same PNG, so the model count grows with the rows
-     * and the PNG count does not.
+     * (Loader_MultiTileEntities.java:2159-2170) share the ONE {@code drum} family —
+     * every model JSON references the same barrel_parts textures, so the model count
+     * grows with the rows and the PNG count does not (upstream registers the high tiers
+     * over the same drum icon set).
      *
-     * <p>Task p23-barrel-paint-render: the former plain {@code cube_all} placeholder
-     * becomes the {@link #tintedCubeAll} single-element form (tintindex 0 on every face,
-     * the p21 machine-model grammar over the barrel's ONE-texture shortcut) — the
-     * upstream barrel renders its {@code colored/} texture multiplied by mRGBa
-     * (MultiTileEntityBarrelWood.java:42-55 {@code new BlockTextureDefault(tTex, mRGBa)};
-     * Plastic:42 / Metal:39 / Logistics:45 isomorphic), and the port's placeholder PNGs
-     * are full-grayscale (verified), so whole-barrel single-element tinting IS the
-     * colored/ layer equivalence. Unpainted barrels ride the {@code -1} white-multiply
-     * identity sentinel exactly like the machine face (P21: 0xFFFFFFFF ≡ vanilla no-tint).
-     * DECLARED DEVIATION (pool): upstream is TWO-layer — the {@code overlay/} decal
-     * texture renders UNCOLOURED on top (BlockTextureMulti); the port borrows a single
-     * texture per barrel and has no overlay decal pool yet, so v1 tints the whole
-     * barrel with no decal layer (the p22 front-overlay-split precedent for the
-     * two-layer follow-up).
+     * <p>Task p23-barrel-paint-render: the tint seat stays the body element's
+     * {@code tintindex 0} — the upstream barrel renders its {@code colored/} texture
+     * multiplied by mRGBa (MultiTileEntityBarrelWood.java:42-55
+     * {@code new BlockTextureDefault(tTex, mRGBa)}), the {@code overlay/} decal shell
+     * renders UNCOLOURED on top (BlockTextureMulti) and carries no tintindex. Unpainted
+     * barrels ride the {@code -1} white-multiply identity sentinel exactly like the
+     * machine face (P21: 0xFFFFFFFF ≡ vanilla no-tint).
      */
     private void addBarrel() {
-        addBarrel(GTBarrels.BARREL.get());
-        addBarrel(GTBarrels.BARREL_PLASTIC.get());
-        addBarrel(GTBarrels.BARREL_METAL.get());
+        addBarrel(GTBarrels.BARREL.get(), "barrel");
+        addBarrel(GTBarrels.BARREL_PLASTIC.get(), "plasticcan");
+        addBarrel(GTBarrels.BARREL_METAL.get(), "drum");
         addBarrel(GTBarrels.BARREL_LOGISTICS.get()); // task p12-barrel-keepfilter-logistics — the :2171 row, own PNG
         for (var tDrum : GTBarrels.METAL_DRUM_BLOCKS.values())
-            addBarrel(tDrum.get(), "barrel_metal");
+            addBarrel(tDrum.get(), "drum");
         // task p23-barrel-paint-render: the datagen-JVM census half — 16 barrel blocks,
         // matching the GTBarrels.paintableBlockArray() client registration census (the
         // offline JUnit half walks the generated tree and pins the same 16).
         LOGGER.info("GT6 barrel paint tint: {} barrel models tinted (4 rows + 12 high-tier drums, addBarrel)", mBarrelTintModels);
     }
 
-    /** One tinted cube_all barrel + its BlockItem parent (the p4 wood barrel shape, reused per material row). */
+    /** The p12 logistics row: one tinted cube_all over the flat barrel_logistics.png (out of the r8 two-layer borrow's scope). */
     private void addBarrel(Block aBarrel) {
-        addBarrel(aBarrel, aBarrel.getDescriptionId().replace("block.gt6.", ""));
-    }
-
-    /** The same shape over an explicit texture tail (the p7 shared-PNG drum family form). */
-    private void addBarrel(Block aBarrel, String aTexture) {
         String tName = aBarrel.getDescriptionId().replace("block.gt6.", "");
-        // the full "block/..." model path: getBuilder skips the folder prefix for
-        // "/"-bearing names (ModelProvider.extendWithFolder — the addPrefixBlocks note).
-        simpleBlock(aBarrel, tintedCubeAll("block/" + tName, modLoc("block/" + aTexture)));
+        simpleBlock(aBarrel, tintedCubeAll("block/" + tName, modLoc("block/" + tName)));
         itemModels().withExistingParent(tName, modLoc("block/" + tName));
         mBarrelTintModels++;
+    }
+
+    /** The r8 two-layer per-face barrel + its BlockItem parent (the borrowed barrel_parts family form). */
+    private void addBarrel(Block aBarrel, String aFamily) {
+        String tName = aBarrel.getDescriptionId().replace("block.gt6.", "");
+        simpleBlock(aBarrel, barrelPartsModel(tName, aFamily));
+        itemModels().withExistingParent(tName, modLoc("block/" + tName));
+        mBarrelTintModels++;
+    }
+
+    /**
+     * The two-layer per-face barrel model (task r8-tex-tank-family, the addConverterModel
+     * grammar without the front band): element 0 = the tinted body cube over the borrowed
+     * grayscale {@code barrel_parts/<family>/colored_{bottom,top,side}} art (tintindex 0
+     * = the paint/mRGBa seat, bottom/top/side each on their own face key), elements 1-6 =
+     * the six 0.01-plate {@code overlay_{bottom,top,side}} decal shells (untinted,
+     * cullface synced) — the upstream BlockTextureMulti(colored x mRGBa, overlay) stack
+     * per face, MultiTileEntityBarrelWood.java:44-55. Cutout so the shells' transparent
+     * texels discard (the C7' fix shape).
+     */
+    private ModelFile barrelPartsModel(String aName, String aFamily) {
+        String tBand = "block/barrel_parts/" + aFamily + "/";
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc(tBand + "colored_bottom")).texture("up", modLoc(tBand + "colored_top"))
+                .texture("north", modLoc(tBand + "colored_side")).texture("south", modLoc(tBand + "colored_side"))
+                .texture("west", modLoc(tBand + "colored_side")).texture("east", modLoc(tBand + "colored_side"))
+                .texture("particle", modLoc(tBand + "colored_side"))
+                .texture("overlay_bottom", modLoc(tBand + "overlay_bottom"))
+                .texture("overlay_top", modLoc(tBand + "overlay_top"))
+                .texture("overlay_side", modLoc(tBand + "overlay_side"))
+                .renderType("cutout");
+        tintedBody(tModel);
+        overlayShell(tModel, "overlay_side", "overlay_side", "overlay_side", "overlay_top", "overlay_bottom");
+        return tModel;
+    }
+
+    /** The tinted body cube element (the tintedCube element 0 form, shared by the r8 two-layer builders). */
+    private void tintedBody(BlockModelBuilder aModel) {
+        aModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
+                .end();
+    }
+
+    /**
+     * The six 0.01-plate decal shells (the addConverterModel elements 1-6 grammar): north
+     * = {@code aFront}, south = {@code aBack}, west/east = {@code aSide}, up = {@code aTop},
+     * down = {@code aBottom} — the texture KEYS, untinted and cullface-synced.
+     */
+    private void overlayShell(BlockModelBuilder aModel, String aFront, String aBack, String aSide, String aTop, String aBottom) {
+        aModel.element() // north
+                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+                .face(Direction.NORTH).texture("#" + aFront).cullface(Direction.NORTH)
+                .end();
+        aModel.element() // south
+                .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.01F)
+                .face(Direction.SOUTH).texture("#" + aBack).cullface(Direction.SOUTH)
+                .end();
+        aModel.element() // west
+                .from(-0.01F, 0.0F, 0.0F).to(0.0F, 16.0F, 16.0F)
+                .face(Direction.WEST).texture("#" + aSide).cullface(Direction.WEST)
+                .end();
+        aModel.element() // east
+                .from(16.0F, 0.0F, 0.0F).to(16.01F, 16.0F, 16.0F)
+                .face(Direction.EAST).texture("#" + aSide).cullface(Direction.EAST)
+                .end();
+        aModel.element() // bottom
+                .from(0.0F, -0.01F, 0.0F).to(16.0F, 0.0F, 16.0F)
+                .face(Direction.DOWN).texture("#" + aBottom).cullface(Direction.DOWN)
+                .end();
+        aModel.element() // top
+                .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.01F, 16.0F)
+                .face(Direction.UP).texture("#" + aTop).cullface(Direction.UP)
+                .end();
     }
 
     /**
@@ -2944,27 +3011,68 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
      */
     /**
      * Task p29-w3-tank-valves — the Tank Main Valve family (Loader_MultiTileEntities.java
-     * :1195-1222): the 25 variant controllers over ONE shared cube model per material
-     * family — the wood valve over the borrowed woodwall part texture, the 24 metal valves
-     * over the borrowed metalwall part texture (the port has no multiblockmains "tankwood"/
-     * "tankmetal" group in this snapshot — the large-boiler borrow ruling; the formed-look
-     * visual is the p9 pool). Task issue8-residual: the re-declared body element carries
-     * {@code tintindex 0} on every face (the {@code tintedCube} grammar) — the grayscale
-     * colored textures multiply the row's NBT_MATERIAL (every :1195-1222 row carries the
-     * column, the upstream {@code getTexture2} colored×mRGBa form; the bake/ItemColor
-     * consumers ride GTMachineTintModel/GTItemPaintTint through the controller gate). The
-     * FACING + FORMED variants map to the same model like every
-     * controller; the 25 BlockItem models parent their block models.
+     * :1195-1222): the 25 variant controllers over ONE shared two-layer front-bearing
+     * cube model per material family, re-textured by task r8-tex-tank-family — the
+     * borrowed {@code tank_valves/<family>_*} multiblockmains art (the wood valve over
+     * the tankwood group, the 24 metal valves over the tankmetal group) in the
+     * {@link #tankValveModel} Base10 front-layer-pair grammar: the north face carries
+     * the {@code colored_front}/{@code overlay_front} pair, the remaining faces the
+     * {@code colored}/{@code overlay} set (TileEntityBase10MultiBlockBase.java:192-194
+     * getTexture2 semantics). The FACING + FORMED variants map to the same model with
+     * the addLargeBoiler y-rotation band (model-space north = the front) — the
+     * formed-look visual stays the p9 pool. Task issue8-residual: the body element
+     * carries {@code tintindex 0} — the grayscale colored textures multiply the row's
+     * NBT_MATERIAL (every :1195-1222 row carries the column, the upstream
+     * {@code getTexture2} colored×mRGBa form; the bake/ItemColor consumers ride
+     * GTMachineTintModel/GTItemPaintTint through the controller gate), the decal shells
+     * stay untinted. The 25 BlockItem models parent their block models.
      */
     private void addTanks() {
-        ModelFile tWood = tintedCube("tank_wood", "block/parts/woodwall/0/colored/bottom", "block/parts/woodwall/0/colored/top", "block/parts/woodwall/0/colored/side");
-        ModelFile tMetal = tintedCube("tank_metal", "block/parts/metalwall/0/colored/bottom", "block/parts/metalwall/0/colored/top", "block/parts/metalwall/0/colored/side");
+        ModelFile tWood = tankValveModel("tank_wood", "tankwood");
+        ModelFile tMetal = tankValveModel("tank_metal", "tankmetal");
         for (var tRow : gregtech6.registry.GT6Tanks.ROWS) {
             Block tBlock = gregtech6.registry.GT6Tanks.BLOCKS_BY_PATH.get(tRow.path()).get();
             ModelFile tModel = tRow.flammable() ? tWood : tMetal; // the wood valve is the flammable row
-            getVariantBuilder(tBlock).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tY = switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
+                    case SOUTH -> 180;
+                    case WEST -> 270;
+                    case EAST -> 90;
+                    default -> 0; // NORTH
+                };
+                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            });
             itemModels().withExistingParent(tRow.path(), tModel.getLocation());
         }
+    }
+
+    /**
+     * The valve two-layer front-bearing model (task r8-tex-tank-family, the
+     * addConverterModel grammar over the multiblockmains per-face key set): element 0 =
+     * the tinted body cube (tintindex 0 = the material tint seat; down/up =
+     * {@code colored_bottom}/{@code colored_top}, north = the {@code colored_front_side}
+     * front art, south/west/east = {@code colored_side}), elements 1-6 = the six 0.01-plate
+     * decal shells (north = {@code overlay_front_side}, the rest the {@code overlay_*}
+     * set, untinted, cullface synced) — the upstream Base10 front-pair form,
+     * TileEntityBase10MultiBlockBase.java:192-194. Cutout so the shells' transparent
+     * texels discard (the C7' fix shape).
+     */
+    private ModelFile tankValveModel(String aName, String aFamily) {
+        String tBand = "block/tank_valves/" + aFamily + "_";
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc(tBand + "colored_bottom")).texture("up", modLoc(tBand + "colored_top"))
+                .texture("north", modLoc(tBand + "colored_front_side")).texture("south", modLoc(tBand + "colored_side"))
+                .texture("west", modLoc(tBand + "colored_side")).texture("east", modLoc(tBand + "colored_side"))
+                .texture("particle", modLoc(tBand + "colored_side"))
+                .texture("overlay_front_side", modLoc(tBand + "overlay_front_side"))
+                .texture("overlay_bottom", modLoc(tBand + "overlay_bottom"))
+                .texture("overlay_top", modLoc(tBand + "overlay_top"))
+                .texture("overlay_side", modLoc(tBand + "overlay_side"))
+                .renderType("cutout");
+        tintedBody(tModel);
+        overlayShell(tModel, "overlay_front_side", "overlay_side", "overlay_side", "overlay_top", "overlay_bottom");
+        return tModel;
     }
 
     /**

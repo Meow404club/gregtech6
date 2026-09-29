@@ -212,14 +212,14 @@ class GT6PartPaintRenderDatagenTest {
     // ------------------------------------------------------------------
 
     /**
-     * The two shared valve models re-declare the body cube (one element, six tinted faces)
-     * over the borrowed woodwall/metalwall colored textures; a wood-row and a metal-row
-     * blockstate both map their FACING×FORMED variants onto the family model.
+     * The valve family model mapping: a wood-row and a metal-row blockstate both map
+     * their FACING×FORMED variants onto the family model. (Task r8-tex-tank-family
+     * rewire: the two shared models left the woodwall/metalwall part borrows for the
+     * dedicated tank_valves two-layer front-pair art — the shape pins live in
+     * {@link GT6TankFamilyPaintRenderDatagenTest#valveModelsKeepTheFrontLayerPair}.)
      */
     @Test
     public void tankValvesCarryTintedBodyModels() throws Exception {
-        assertTintedCubeModel("tank_wood", "parts/woodwall/0/colored");
-        assertTintedCubeModel("tank_metal", "parts/metalwall/0/colored");
         // the wood valve is the flammable row (tank_wood), every metal valve the tank_metal model
         assertAllVariantsMapToModel("tank_wood", "block/tank_wood");
         assertAllVariantsMapToModel("tank_small_tungstensteel", "block/tank_metal");

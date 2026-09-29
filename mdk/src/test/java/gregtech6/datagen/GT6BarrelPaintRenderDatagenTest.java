@@ -1,19 +1,20 @@
 /*
  * Offline pinned-count tests for task p23-barrel-paint-render: the generated barrel
- * blockstate/model JSONs carry tintindex 0 on every face of the single full-cube element —
- * the generated-JSON half of the 16 census, asserted against the committed src/generated
- * tree (the GT6MachinePaintRenderDatagenTest shape: the write side is gated by runData,
- * first run written>0, second run written:0; the datagen-JVM counter half is the
- * GT6BlockStates "16 barrel models tinted" log line).
+ * blockstate/model JSONs carry the tintindex-0 paint seat — the generated-JSON half of
+ * the 16 census, asserted against the committed src/generated tree (the
+ * GT6MachinePaintRenderDatagenTest shape: the write side is gated by runData, first run
+ * written>0, second run written:0; the datagen-JVM counter half is the GT6BlockStates
+ * "16 barrel models tinted" log line).
  *
  * <p>Census ground truth: the barrel domain is wood (1) + plastic (1) + bronze metal (1)
  * + logistics (1) + the twelve high-tier metal drums (Loader_MultiTileEntities.java:2159-2170
  * ladder) = 16 blocks — the GTBarrels.paintableBlockArray() registration census, one model
  * each (barrels have no blockstate properties) = 16 block-model JSONs. Upstream canonical:
  * the barrel renders its colored/ texture multiplied by mRGBa (MultiTileEntityBarrelWood
- * .java:42-55; Plastic:42/Metal:39/Logistics:45 isomorphic) — the tintedCubeAll element
- * form IS that layer over the full-grayscale placeholder PNGs (declared deviation: the
- * upstream overlay/ UNCOLOURED decal layer stays pooled, v1 tints the whole barrel).
+ * .java:42-55; Plastic:42/Metal:39/Logistics:45 isomorphic). Task r8-tex-tank-family:
+ * the 15 borrowable rows ride the two-layer per-face barrel_parts grammar (the p23
+ * "overlay stays pooled" deviation is RETIRED — the overlay decal shells landed); the
+ * p12 logistics row keeps the tintedCubeAll single-element form (its borrow deferred).
  */
 package gregtech6.datagen;
 
@@ -72,43 +73,36 @@ class GT6BarrelPaintRenderDatagenTest {
     }
 
     /**
-     * Every barrel block model: the block/block parent, the two-texture key set (all +
-     * particle), ONE full 0..16 element whose six faces each carry #all + tintindex 0 +
-     * cullface — the tintedCubeAll form (the p21 machine grammar over the barrel's
-     * ONE-texture shortcut). The drums share barrel_metal.png; every other row its own PNG.
+     * Every barrel block model carries the tintindex-0 seat on its body faces. Task
+     * r8-tex-tank-family: the 15 borrowable rows ride the two-layer per-face
+     * barrel_parts form (body + six decal shells — the body faces tinted, the decals
+     * untinted; the drums share the drum family set, every other two-layer row its own);
+     * the p12 logistics row keeps the tintedCubeAll single-element form. The full
+     * two-layer shape pins live in {@link GT6TankFamilyPaintRenderDatagenTest}.
      */
     @Test
     void everyBarrelModelCarriesTintIndexZeroOnAllSixFaces() throws Exception {
         for (String tBase : BARREL_BASES) {
-            String tTexture = DRUM_BASES.contains(tBase) ? "barrel_metal" : tBase;
             JsonObject tModel = json("assets/gt6/models/block/" + tBase + ".json");
-            assertEquals("minecraft:block/block", tModel.get("parent").getAsString(),
-                    tBase + ": the block/block parent (display transforms + particle binding)");
-            var tTextures = tModel.getAsJsonObject("textures");
-            assertEquals("gt6:block/" + tTexture, tTextures.get("all").getAsString(),
-                    tBase + ": its (possibly shared, the p7 drum form) placeholder PNG");
-            assertEquals("#all", tTextures.get("particle").getAsString(),
-                    tBase + ": particle bound to #all");
-            assertEquals(Set.of("all", "particle"), tTextures.keySet(),
-                    tBase + ": the two-texture key set");
             var tElements = tModel.getAsJsonArray("elements");
-            assertEquals(1, tElements.size(), tBase + ": ONE element (the tintedCubeAll shortcut)");
-
-            JsonObject tCube = tElements.get(0).getAsJsonObject();
-            assertEquals(0.0, tCube.getAsJsonArray("from").get(0).getAsDouble(),
-                    tBase + ": from = the full 0..16 cube");
-            assertEquals(16.0, tCube.getAsJsonArray("to").get(0).getAsDouble(),
-                    tBase + ": to = the full 0..16 cube");
-            var tFaces = tCube.getAsJsonObject("faces");
-            assertEquals(6, tFaces.size(), tBase + ": six faces");
+            if (tBase.equals("barrel_logistics")) {
+                // the declared single-layer exemption (the p12 row, out of the r8 borrow's scope)
+                assertEquals(1, tElements.size(), tBase + ": ONE element (the tintedCubeAll shortcut)");
+            } else {
+                String tFamily = DRUM_BASES.contains(tBase) ? "drum"
+                        : "barrel_wood".equals(tBase) ? "barrel"
+                        : "barrel_metal".equals(tBase) ? "drum" : "plasticcan";
+                var tTextures = tModel.getAsJsonObject("textures");
+                String tBand = "gt6:block/barrel_parts/" + tFamily + "/";
+                assertEquals(tBand + "colored_bottom", tTextures.get("down").getAsString(), tBase + ": the bottom borrow");
+                assertEquals(tBand + "colored_top", tTextures.get("up").getAsString(), tBase + ": the top borrow");
+                assertEquals(tBand + "colored_side", tTextures.get("north").getAsString(), tBase + ": the side borrow");
+                assertEquals(7, tElements.size(), tBase + ": body + 6 decal shells (the two-layer form)");
+            }
+            var tFaces = tElements.get(0).getAsJsonObject().getAsJsonObject("faces");
             for (String tFaceKey : FACE_KEYS) {
-                JsonObject tFace = tFaces.getAsJsonObject(tFaceKey);
-                assertEquals("#all", tFace.get("texture").getAsString(),
-                        tBase + " face " + tFaceKey + ": the shared #all key");
-                assertEquals(0, tFace.get("tintindex").getAsInt(),
+                assertEquals(0, tFaces.getAsJsonObject(tFaceKey).get("tintindex").getAsInt(),
                         tBase + " face " + tFaceKey + ": tintindex 0 — the paint tint seat");
-                assertEquals(tFaceKey, tFace.get("cullface").getAsString(),
-                        tBase + " face " + tFaceKey + ": the vanilla cube cullface");
             }
         }
     }
