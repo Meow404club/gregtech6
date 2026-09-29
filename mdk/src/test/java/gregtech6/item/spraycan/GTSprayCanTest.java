@@ -18,6 +18,8 @@ import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.DyeColor;
@@ -30,6 +32,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import gregtech6.registry.GT6SprayCans;
 import gregtech6.registry.GTGrassBlocks;
+import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.machines.TileEntityOven;
 
@@ -62,6 +65,15 @@ public class GTSprayCanTest {
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
+		// clinit must stay vanilla-free: a static Block[] initializer runs BEFORE this boot
+		// (class-load order) and dies "Not bootstrapped" in a FILTERED run where no earlier
+		// class bootstrapped first — the full-suite green was ordering luck (issue #42b).
+		GRASS_STANDINS = new Block[] {
+				Blocks.SANDSTONE, Blocks.GRAVEL, Blocks.ANDESITE,
+				Blocks.DRIPSTONE_BLOCK, Blocks.CALCITE, Blocks.TUFF};
+		// the 21.1 leg boots through FML (junit-fml) and freezes the BET registry before the
+		// first @BeforeAll — the p15-m4 seam reopens the fixture window (GTOfflineTestBase).
+		GTOfflineTestBase.unfreezeBlockEntityTypeRegistry();
 		@SuppressWarnings("unchecked")
 		BlockEntityType<TileEntityOven>[] tHolder = (BlockEntityType<TileEntityOven>[]) new BlockEntityType<?>[1];
 		tHolder[0] = BlockEntityType.Builder.of(
@@ -125,6 +137,61 @@ public class GTSprayCanTest {
 		for (String tId : GTSprayCanItem.DYE_IDS) assertTrue(tIds.add(tId), "distinct id " + tId);
 		assertEquals("Black", GTSprayCanItem.DYE_NAMES[0]);
 		assertEquals("White", GTSprayCanItem.DYE_NAMES[15]);
+	}
+
+	// ---------------------------------------------------------------------------
+	// the tooltip colour slot (issue #42 — the vanilla color.minecraft.* face)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The 16 paint cans slot the VANILLA colour component (the MobBucketItem :60 convention)
+	 * into the {@code gt6.spraycan.paint} %s slot — never the bare {@code DYE_NAMES} literal,
+	 * which rode the slot untranslated (the "Can Color things in Black" face on zh clients).
+	 */
+	@Test
+	public void paintTooltipSlotsTheVanillaColourComponent() {
+		for (byte i = 0; i < 16; i++) {
+			Component tName = GTSprayCanItem.colorName(i);
+			assertTrue(tName.getContents() instanceof TranslatableContents, "the colour name is a translatable at dye " + i);
+			assertEquals("color.minecraft." + GTSprayCanItem.DYE_IDS[i],
+					((TranslatableContents)tName.getContents()).getKey(), "the vanilla colour key at dye " + i);
+
+			assertTrue(GTSprayCanItem.colorLine(i).getContents() instanceof TranslatableContents, "the line is a translatable at dye " + i);
+			TranslatableContents tLine = (TranslatableContents) GTSprayCanItem.colorLine(i).getContents();
+			assertEquals(GTSprayCanItem.PAINT_TOOLTIP_KEY, tLine.getKey(), "the paint template at dye " + i);
+			assertEquals(1, tLine.getArgs().length, "one slot at dye " + i);
+			// the slot carries the vanilla colour component (an equal key — a fresh component
+			// per colorLine call, so the pin is on the key face, not component identity)
+			assertTrue(tLine.getArgs()[0] instanceof Component, "the slot is a component at dye " + i);
+			assertEquals("color.minecraft." + GTSprayCanItem.DYE_IDS[i],
+					((TranslatableContents)((Component)tLine.getArgs()[0]).getContents()).getKey(),
+					"the vanilla colour key rides the %s slot at dye " + i);
+		}
+	}
+
+	/**
+	 * The {@link GTSprayCanItem#REMOVER} sentinel (-1) shows the upstream-faithful decolor
+	 * wording with NO colour slot (Behavior_Spray_Color_Remover.java:109 — the remover is a
+	 * separate behaviour whose tooltip never carried a colour). It must never reach the
+	 * paint slot (the {@code colorName} index would throw on -1, loud by design).
+	 */
+	@Test
+	public void removerTooltipIsTheDecolorLineWithNoColourSlot() {
+		assertTrue(GTSprayCanItem.colorLine(GTSprayCanItem.REMOVER).getContents() instanceof TranslatableContents);
+		TranslatableContents tLine = (TranslatableContents) GTSprayCanItem.colorLine(GTSprayCanItem.REMOVER).getContents();
+		assertEquals(GTSprayCanItem.DECOLOR_TOOLTIP_KEY, tLine.getKey(), "the remover routes to the decolor wording");
+		assertEquals(0, tLine.getArgs().length, "the remover carries no colour slot");
+	}
+
+	/** The zero-new-keys guarantee: the GT6 DYE_IDS are the 16 vanilla DyeColor serial names verbatim. */
+	@Test
+	public void dyeIdsAreTheVanillaDyeColorSerialNames() {
+		Set<String> tVanilla = new HashSet<>();
+		for (DyeColor tColor : DyeColor.values()) tVanilla.add(tColor.getSerializedName());
+		assertEquals(16, tVanilla.size());
+		for (String tId : GTSprayCanItem.DYE_IDS) {
+			assertTrue(tVanilla.contains(tId), tId + " must be a vanilla DyeColor serial name (the color.minecraft.<id> key exists)");
+		}
 	}
 
 	// ---------------------------------------------------------------------------
@@ -254,11 +321,11 @@ public class GTSprayCanTest {
 	 * The six variant stand-ins (the GTGrassBlocks offline seam — the mod blocks never
 	 * register here). Deliberately NOT wool/carpet/terracotta/glass members: those live in
 	 * the FAMILY_OF whitelist and would route the recolour through the WOOL arm before the
-	 * grass arm is ever consulted — these six are family-less vanilla blocks.
+	 * grass arm is ever consulted — these six are family-less vanilla blocks. Assigned in
+	 * {@link #boot()} — a clinit initializer would touch Blocks pre-bootstrap and die in a
+	 * filtered run (the class-load order lesson, see the boot note).
 	 */
-	private static final Block[] GRASS_STANDINS = {
-			Blocks.SANDSTONE, Blocks.GRAVEL, Blocks.ANDESITE,
-			Blocks.DRIPSTONE_BLOCK, Blocks.CALCITE, Blocks.TUFF};
+	private static Block[] GRASS_STANDINS;
 
 	/** The six dye indexes the grass arm answers, variant order (Behavior_Spray_Color.java:154-160). */
 	private static final byte[] GRASS_DYES = {2, 10, 0, 7, 11, 3};
