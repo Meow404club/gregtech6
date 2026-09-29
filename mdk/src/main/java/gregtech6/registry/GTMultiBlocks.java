@@ -37,6 +37,7 @@ import gregtech6.block.multiblock.GTLightningRodBlock;
 import gregtech6.block.multiblock.GTMultiBlockPartBlock;
 import gregtech6.block.multiblock.GTVonDaGraaggBlock;
 import gregtech6.fluid.GTFluids;
+import gregtech6.item.GT6MachineBlockItem;
 import gregtech6.tileentity.multiblocks.HeatTransmitterBlockEntity;
 import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityBedrockDrill;
@@ -306,12 +307,17 @@ public final class GTMultiBlocks {
 		// composed-name delegate is a no-op for it — same string through Block.getName)
 		PART_ITEMS_BY_PATH.put(TRANSMITTER_ROW.path(), ITEMS.register(TRANSMITTER_ROW.path(),
 				() -> new GTComposedNameItem(HEAT_TRANSMITTER.get(), new Item.Properties())));
-		// the five boiler variant blocks + items over ONE shared BE class (the GT6Boilers row form)
+		// the five boiler variant blocks + items over ONE shared BE class (the GT6Boilers row form);
+		// task r8-tooltip-boiler-tank — the item carries the boiler_large row table, the per-row
+		// constants of the :158-:161 numeric rows ride the positional slots ([in, out, cap], the
+		// MultiTileEntityLargeBoiler readFromNBT :79-:80 shape — mOutput = NBT_OUTPUT_SU,
+		// mCapacity = mOutput*10000)
 		for (LargeBoilerRow tRow : LARGE_BOILER_ROWS) {
 			LARGE_BOILER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTLargeBoilerBlock(tRow, partProperties(tRow.hardness()))));
 			LARGE_BOILER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new GTComposedNameItem(LARGE_BOILER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+					() -> new GT6MachineBlockItem(LARGE_BOILER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "boiler_large",
+							tRow.outputSteamPerTick() / GTFluids.STEAM_PER_EU, tRow.outputSteamPerTick(), tRow.outputSteamPerTick() * 10000)));
 		}
 	}
 

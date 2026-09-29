@@ -4,7 +4,6 @@ import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -46,12 +45,20 @@ import gregtech6.tileentity.tank.TileEntityBase08Barrel;
  *     .writeItemNBT}, the 07Paintable :89 root-key seam), and placement reads the
  *     colour back — the 16-row family (4 barrels + 12 drums) shares this static
  *     seam, so the whole family rides it automatically.</li>
+ * <li>Extends {@link GT6MachineBlockItem} since task r8-tooltip-boiler-tank: the family
+ *     replays the barrel row table (TileEntityBase08Barrel.addToolTips :89-103, the
+ *     Sealed/content carry rows deleted by the design ruling) through the registry —
+ *     {@code family = barrel_gas / barrel} by the block's gas-proof flag (the wood barrel
+ *     is the one gas=F row upstream :2136-2149), and the melt row's K value rides the
+ *     block-carried {@code meltingPointK()} (the :99 arg). The base change is
+ *     name-neutral: the barrel blocks resolve plain description ids, and
+ *     {@code GTComposedNameItem} delegates {@code Block#getName()} to exactly that.</li>
  * </ul>
  */
-public class GTBarrelBlockItem extends BlockItem {
+public class GTBarrelBlockItem extends GT6MachineBlockItem {
 
 	public GTBarrelBlockItem(GTBarrelBlock aBlock, Properties aProperties) {
-		super(aBlock, aProperties);
+		super(aBlock, aProperties, aBlock.gasProof() ? "barrel_gas" : "barrel", aBlock.meltingPointK());
 	}
 
 	//? if forge {

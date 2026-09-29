@@ -36,10 +36,19 @@ import gregtech6.tooltip.GT6Tooltips;
 public class GT6MachineBlockItem extends GTComposedNameItem {
 
 	private final String mFamily;
+	/** The row's own constants ([in, out, cap] for the boilers, [meltingPointK] for the barrels) — the fallback array of {@link GT6Tooltips#append(String, List, Object...)}. */
+	private final Object[] mLineArgs;
 
+	/** The T1 shape — an arg-less family table (every line carries its own constants). */
 	public GT6MachineBlockItem(Block aBlock, Properties aProperties, String aFamily) {
+		this(aBlock, aProperties, aFamily, new Object[0]);
+	}
+
+	/** The per-variant form (task r8-tooltip-boiler-tank): the numeric rows ride positional slots. */
+	public GT6MachineBlockItem(Block aBlock, Properties aProperties, String aFamily, Object... aLineArgs) {
 		super(aBlock, aProperties);
 		mFamily = aFamily;
+		mLineArgs = aLineArgs;
 	}
 
 	/** The family short key ({@code boiler / machine / wire / ...} — the GT6Tooltips vocabulary). */
@@ -58,6 +67,6 @@ public class GT6MachineBlockItem extends GTComposedNameItem {
 	public void appendHoverText(ItemStack aStack, Item.TooltipContext aContext, List<Component> aTooltip, TooltipFlag aFlag) {
 		super.appendHoverText(aStack, aContext, aTooltip, aFlag);
 	*///?}
-		GT6Tooltips.append(mFamily, aTooltip);
+		GT6Tooltips.append(mFamily, aTooltip, mLineArgs);
 	}
 }

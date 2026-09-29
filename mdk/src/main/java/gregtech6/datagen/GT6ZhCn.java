@@ -501,18 +501,70 @@ public class GT6ZhCn extends LanguageProvider {
 	}
 
 	/**
-	 * The boiler tooltip pilot rows zh faces (task r8-tooltip-infra, 2 hand rows — the
-	 * addBoilerJadeUnits shape): the T1 calibration pair at their upstream positions in
-	 * the boiler addToolTips table (row 7 = 纯水要求, row 9 = 蒸汽爆炸危险). The upstream
-	 * dump {@code gt.lang.requirement.water.pure} / {@code gt.lang.hazard.explosion.steam}
-	 * faces do exist for the family but the row keys are this port's own
-	 * {@code gt6.tooltip.boiler.*} vocabulary, so the values ride the reference table's
-	 * hand layer via {@link #addDirect} — the TSV rows, this walk and the lang regen land
-	 * in the SAME commit (the W2 wash-out lesson).
+	 * The four tooltip row-table families zh faces (task r8-tooltip-boiler-tank, 43 hand
+	 * rows — the addBoilerJadeUnits shape): the row keys are this port's own
+	 * {@code gt6.tooltip.*} vocabulary, so the values ride the reference table's hand layer
+	 * via {@link #addDirect}. zh = the upstream dump fragments composed the way the
+	 * upstream rows concatenate them: the single-constant rows are the tmp/gregtech.lang
+	 * faces verbatim (gt.lang.requirement.water.pure :3412, gt.lang.hazard.* :3333/:3336,
+	 * gt.lang.nogui.* :3343/:3344, gt.lang.no.powerconducting.fluids :3342,
+	 * gt.lang.use.* :3536/:3537/:3544/:3549/:3558, gt.lang.use.x.to.toggle.facing.*
+	 * :3564-3565 with the :3491 wrench face, gt.lang.proof.gas :3371, the largeboiler
+	 * structure keys :17754-17757), the numeric rows compose the energy faces
+	 * (:3267-3272/:3264/:3276/:3293 + gt.td.long.energy.steam :17321) around the positional
+	 * slots; the efficiency row composes 效率 (:3258) over the pristine 100.00; the tank
+	 * row stays the hardcoded-en contentcap literal (upstream zh shows exactly that).
 	 */
 	private void addBoilerTooltipUnits() {
+		// the Steam Boiler Tank family
+		addDirect("gt6.tooltip.boiler.1");
+		addDirect("gt6.tooltip.boiler.2");
+		addDirect("gt6.tooltip.boiler.3");
+		addDirect("gt6.tooltip.boiler.4");
+		addDirect("gt6.tooltip.boiler.5");
+		addDirect("gt6.tooltip.boiler.6");
 		addDirect("gt6.tooltip.boiler.7");
+		addDirect("gt6.tooltip.boiler.8");
 		addDirect("gt6.tooltip.boiler.9");
+		addDirect("gt6.tooltip.boiler.10");
+		addDirect("gt6.tooltip.boiler.11");
+		addDirect("gt6.tooltip.boiler.12");
+		addDirect("gt6.tooltip.boiler.13");
+		// the Large Boiler family
+		addDirect("gt6.tooltip.boiler_large.1");
+		addDirect("gt6.tooltip.boiler_large.2");
+		addDirect("gt6.tooltip.boiler_large.3");
+		addDirect("gt6.tooltip.boiler_large.4");
+		addDirect("gt6.tooltip.boiler_large.5");
+		addDirect("gt6.tooltip.boiler_large.6");
+		addDirect("gt6.tooltip.boiler_large.7");
+		addDirect("gt6.tooltip.boiler_large.8");
+		addDirect("gt6.tooltip.boiler_large.9");
+		addDirect("gt6.tooltip.boiler_large.10");
+		addDirect("gt6.tooltip.boiler_large.11");
+		addDirect("gt6.tooltip.boiler_large.12");
+		addDirect("gt6.tooltip.boiler_large.13");
+		addDirect("gt6.tooltip.boiler_large.14");
+		addDirect("gt6.tooltip.boiler_large.15");
+		addDirect("gt6.tooltip.boiler_large.16");
+		addDirect("gt6.tooltip.boiler_large.17");
+		addDirect("gt6.tooltip.boiler_large.18");
+		// the Fluid Container (tank) family — dormant row, hardcoded-en face both locales
+		addDirect("gt6.tooltip.tank.1");
+		// the Barrel family + the gas-proof variant
+		addDirect("gt6.tooltip.barrel.3");
+		addDirect("gt6.tooltip.barrel.4");
+		addDirect("gt6.tooltip.barrel.10");
+		addDirect("gt6.tooltip.barrel.11");
+		addDirect("gt6.tooltip.barrel.12");
+		addDirect("gt6.tooltip.barrel.13");
+		addDirect("gt6.tooltip.barrel_gas.3");
+		addDirect("gt6.tooltip.barrel_gas.4");
+		addDirect("gt6.tooltip.barrel_gas.6");
+		addDirect("gt6.tooltip.barrel_gas.10");
+		addDirect("gt6.tooltip.barrel_gas.11");
+		addDirect("gt6.tooltip.barrel_gas.12");
+		addDirect("gt6.tooltip.barrel_gas.13");
 	}
 
 	/**
