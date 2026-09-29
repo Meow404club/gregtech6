@@ -10,6 +10,8 @@
  * genuinely FACETED (the vanilla furnace form) so a future sweep cannot "fix" them, and
  * the GT6ItemModels.java fallback rows pin the census missing-hole verdict (the
  * placeables/bumbliary items were never missing — they ride their block models).
+ * Task r8-tex-itemform-b extends the census with the tier-B front-view families (the
+ * 28 kinematics/controller/composite rows) on the same 2D form.
  */
 package gregtech6.datagen;
 
@@ -26,7 +28,9 @@ import org.junit.jupiter.api.Test;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6Batteries;
+import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6LongDistWires;
 import gregtech6.tileentity.GTOfflineTestBase;
 
@@ -107,9 +111,40 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
     }
 
     /**
+     * The tier-B front-view families (r8-tex-itemform-b, the 28 rows): 2D icons over the
+     * family's own front/side/composite sprite — the single kinematics rows (crank, the
+     * water wheel, the gearbox), the lightning-rod controller+rod pair and the heat
+     * exchanger over their composite sprites, the 8 diesel tiers over the shared front
+     * icon, the 12 tap/funnel attachments over their family side sprite and the twin
+     * distillation tower controllers over the borrowed parts side sprite.
+     */
+    @Test
+    void frontViewFamiliesAre2DIcons() throws Exception {
+        assert2DForm("crank", "gt6:block/crank");
+        assert2DForm("water_wheel", "gt6:block/water_wheel");
+        assert2DForm("gearbox", "gt6:block/gearbox");
+        assert2DForm("multiblock_lightning_rod", "gt6:block/lightningrod/main");
+        assert2DForm("lightning_rod", "gt6:block/lightningrod/rod");
+        assert2DForm("large_heat_exchanger", "gt6:block/large_heat_exchanger/main");
+        assertEquals(8, GT6Kinetics.DIESEL_SPECS.size(), "the 8-tier walk");
+        for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) {
+            assert2DForm(GT6Kinetics.dieselName(tSpec.material()), "gt6:block/diesel_engine");
+        }
+        assertEquals(12, GT6Attachments.ROWS.size(), "the 12-attachment walk");
+        for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
+            assert2DForm(tRow.path(), "gt6:block/" + (tRow.family()
+                    == gregtech6.block.attachment.GTAttachmentSmallBlock.Family.TAP ? "tap" : "funnel"));
+        }
+        assertEquals(2, gregtech6.registry.GT6Distillation.ROWS.size(), "the twin-tower walk");
+        for (gregtech6.registry.GT6Distillation.TowerRow tRow : gregtech6.registry.GT6Distillation.ROWS) {
+            assert2DForm(tRow.path(), "gt6:block/parts/distillationtowerparts/0/colored/side");
+        }
+    }
+
+    /**
      * The world-face guard: the touched block models stay the cube_all form over the
      * same sprites — one archetype per family (the item fix must not leak into the
-     * blockstate/model chain).
+     * blockstate/model chain), extended with the tier-B families (r8-tex-itemform-b).
      */
     @Test
     void blockModelsKeepTheCubeAllForm() throws Exception {
@@ -118,7 +153,17 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
                 {"battery_box_large_lv", "gt6:block/battery_box_large"},
                 {"long_dist_wire_0", "gt6:block/long_dist_wire_ev"},
                 {"long_dist_pipe_0", "gt6:block/item_pipe"},
-                {"energy_source", "gt6:block/energy_source"}};
+                {"energy_source", "gt6:block/energy_source"},
+                {"crank", "gt6:block/crank"},
+                {"diesel_engine", "gt6:block/diesel_engine"},
+                {"tap_ceramic", "gt6:block/tap"},
+                {"funnel_ceramic", "gt6:block/funnel"},
+                {"water_wheel", "gt6:block/water_wheel"},
+                {"gearbox", "gt6:block/gearbox"},
+                {"distillation_tower", "gt6:block/parts/distillationtowerparts/0/colored/side"},
+                {"multiblock_lightning_rod", "gt6:block/lightningrod/main"},
+                {"lightning_rod", "gt6:block/lightningrod/rod"},
+                {"large_heat_exchanger", "gt6:block/large_heat_exchanger/main"}};
         for (String[] tCase : tArchetypes) {
             JsonObject tModel = generatedJson("assets/gt6/models/block/" + tCase[0] + ".json");
             assertEquals("minecraft:block/cube_all", tModel.get("parent").getAsString(),
