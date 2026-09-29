@@ -143,6 +143,64 @@ public final class GT6Tooltips {
 				new GT6TooltipLine("gt6.tooltip.generator.9", GT6TooltipStyle.DRED),     // :94 LH.HAZARD_CONTACT + " (" + FACE_TOP + ")"
 				new GT6TooltipLine("gt6.tooltip.generator.10", GT6TooltipStyle.DGRAY),   // :95 LH.TOOL_TO_REMOVE_SHOVEL
 				new GT6TooltipLine("gt6.tooltip.generator.11", GT6TooltipStyle.DGRAY))); // TileEntityBase09FacingSingle.java:61 facing row (the super chain tail)
+
+		// the electric wire family — MultiTileEntityWireElectric.addToolTips :126-132. The
+		// three stat rows (:127-129) carry the per-variant constants through the carrier's
+		// fallback array [voltage, tierName, amperage, loss] over positional slots (%1$s EU
+		// (%2$s) = the VN[UT.Code.tierMin(mVoltage)] tier word, :127; %3$s = mAmperage, :128;
+		// %4$s = makeString(mLoss), :129). Voltage/loss numerals ride the args, never the
+		// literal text. ponytail: the upstream makeString underscore face for >=10000 values
+		// is applied at the registration site, not re-derived here.
+		register("wire", List.of(
+				new GT6TooltipLine("gt6.tooltip.wire.1", GT6TooltipStyle.CYAN), // :127 WIRE_STATS_VOLTAGE + EU + VN[tier]
+				new GT6TooltipLine("gt6.tooltip.wire.2", GT6TooltipStyle.CYAN), // :128 WIRE_STATS_AMPERAGE
+				new GT6TooltipLine("gt6.tooltip.wire.3", GT6TooltipStyle.CYAN))); // :129 WIRE_STATS_LOSS + EU/m
+		// the contact-damage sibling (the T2 barrel_gas precedent: the exception family gets
+		// its own table over its own key prefix) — the SAME three stat rows + row 4 :130
+		// HAZARD_CONTACT (Chat.DRED). Upstream gates the row on mContactDamage; the port
+		// derives the flag per block (GTWireBlock.contactDamageOf — bare wires of the 28
+		// shock-flagged rows only), so the registration site picks the sibling by the flag.
+		register("wire_contact", List.of(
+				new GT6TooltipLine("gt6.tooltip.wire_contact.1", GT6TooltipStyle.CYAN), // :127
+				new GT6TooltipLine("gt6.tooltip.wire_contact.2", GT6TooltipStyle.CYAN), // :128
+				new GT6TooltipLine("gt6.tooltip.wire_contact.3", GT6TooltipStyle.CYAN), // :129
+				new GT6TooltipLine("gt6.tooltip.wire_contact.4", GT6TooltipStyle.DRED))); // :130 LH.HAZARD_CONTACT
+		// the fluid pipe family — MultiTileEntityPipeFluid.addToolTips :215-228. Rows 1-2
+		// (:216-217 bandwidth = makeString(mCapacity/2) + " L/t", capacity = makeString(mCapacity)
+		// + " L") ride the carrier fallback [capacity/2, capacity]. Cut rows (upstream positions
+		// preserved as gaps): row 3 :219 the >1-tank amount row (the port ships single-tank
+		// pipes, GTFluidPipeBlockEntity :370 one slot), row 4 :220 the meltdown temperature
+		// and rows 5-8 :221-224 the four proof flags (the port carries neither temperature nor
+		// proof data — a row claiming an unported capability would be a lie, the barrel
+		// ruling), row 9 :225 the contact-damage row (no port flag). Row 10 :226 rides.
+		register("pipe_fluid", List.of(
+				new GT6TooltipLine("gt6.tooltip.pipe_fluid.1", GT6TooltipStyle.CYAN),  // :216 PIPE_STATS_BANDWIDTH + L/t
+				new GT6TooltipLine("gt6.tooltip.pipe_fluid.2", GT6TooltipStyle.CYAN),  // :217 PIPE_STATS_CAPACITY + L
+				new GT6TooltipLine("gt6.tooltip.pipe_fluid.10", GT6TooltipStyle.DGRAY))); // :226 TOOL_TO_DETAIL_MAGNIFYINGGLASS
+		// the item pipe family — MultiTileEntityPipeItem.addToolTips :115-120. Rows 1-2
+		// (:116 stepsize = makeString(mStepSize), :117 bandwidth = makeString(getPipeCapacity())
+		// + "/s" = invsize) ride the carrier fallback [stepSize, invSize]; the :117 WHITE value
+		// segment collapses into the row's CYAN (one style per row, the T1 record shape).
+		// Rows 3-4 (:119-120) are the input/output monkey wrench rows. The :118 super tail
+		// (the fixed flammable/enchant/crowbar block) is the standing scope cut.
+		register("pipe_item", List.of(
+				new GT6TooltipLine("gt6.tooltip.pipe_item.1", GT6TooltipStyle.CYAN),  // :116 PIPE_STATS_STEPSIZE
+				new GT6TooltipLine("gt6.tooltip.pipe_item.2", GT6TooltipStyle.CYAN),  // :117 PIPE_STATS_BANDWIDTH + /s
+				new GT6TooltipLine("gt6.tooltip.pipe_item.3", GT6TooltipStyle.DGRAY), // :119 TOOL_TO_SET_INPUT_MONKEY_WRENCH
+				new GT6TooltipLine("gt6.tooltip.pipe_item.4", GT6TooltipStyle.DGRAY))); // :120 TOOL_TO_SET_OUTPUT_MONKEY_WRENCH
+		// the sensor family — MultiTileEntitySensor.addToolTips :88-97, the tool rows. Row 1
+		// (:90 getSensorDescription) is the one PER-SENSOR abstract row — the port carries no
+		// per-sensor description data, and a generic line would be a lie, so it waits (gap
+		// kept at .1). Row 7 :96 = the facing row ("Use " + gt.lang.tool.name.wrench + " to set
+		// Facing" — getFacingTool resolves to TOOL_wrench, TileEntityBase09FacingSingle:82)
+		// fused into one key over the three upstream lang fragments.
+		register("sensor", List.of(
+				new GT6TooltipLine("gt6.tooltip.sensor.2", GT6TooltipStyle.ORANGE),  // :91 NO_GUI_CLICK_TO_INTERACT
+				new GT6TooltipLine("gt6.tooltip.sensor.3", GT6TooltipStyle.DGRAY),   // :92 screwdrive.buttons
+				new GT6TooltipLine("gt6.tooltip.sensor.4", GT6TooltipStyle.DGRAY),   // :93 screwdrive.display
+				new GT6TooltipLine("gt6.tooltip.sensor.5", GT6TooltipStyle.DGRAY),   // :94 screwdrive.modes
+				new GT6TooltipLine("gt6.tooltip.sensor.6", GT6TooltipStyle.DGRAY),   // :95 TOOL_TO_SET_INPUT_MONKEY_WRENCH
+				new GT6TooltipLine("gt6.tooltip.sensor.7", GT6TooltipStyle.DGRAY))); // :96 TOOL_TO_SET_FACING_PRE + Wrench + POST
 	}
 
 	/** Registers a family row table (T2-T5's entry seam; duplicate family = a datagen-order bug, fail loud). */
@@ -163,8 +221,9 @@ public final class GT6Tooltips {
 
 	/**
 	 * The per-variant form (task r8-tooltip-boiler-tank): the registration site hands the
-	 * row's own constants ([in, out, cap] for the boilers, [meltingPointK] for the barrels)
-	 * and every line WITHOUT its own constant args takes them through the positional slots
+	 * row's own constants ([in, out, cap] for the boilers, [meltingPointK] for the barrels,
+	 * [voltage, tierName, amperage, loss] for the wires, [capacity/2, capacity] for the fluid
+	 * pipes, [stepSize, invSize] for the item pipes) and every line
 	 * (%1$s/%2$s/%3$s — TranslatableContents.java:87-88 resolves the argument index, the
 	 * vanilla 1.20.1 face). Lines with own args ignore the fallback.
 	 */
@@ -174,6 +233,28 @@ public final class GT6Tooltips {
 		for (GT6TooltipLine tRow : tRows) {
 			aTooltip.add(tRow.component(aFallbackArgs));
 		}
+	}
+
+	/**
+	 * The upstream {@code UT.Code.makeString} display face (gregapi/util/UT.java:1296-1310,
+	 * verbatim): plain digits below 10000, underscore thousands separators from 10000 up —
+	 * the formatting the upstream loss/bandwidth/stepsize rows apply to their constants
+	 * before the row leaves the addToolTips body. The registration sites format there and
+	 * hand the STRING through the carrier's fallback array (the translatable arg slot).
+	 */
+	public static String makeString(long aNumber) {
+		if (aNumber > -10000 && aNumber < 10000) return Long.toString(aNumber);
+		StringBuilder rString = new StringBuilder();
+		if (aNumber < 0) {
+			rString.append('-');
+			aNumber = -aNumber;
+		}
+		String tDigits = Long.toString(aNumber);
+		for (int i = 0; i < tDigits.length(); i++) {
+			if (i > 0 && (tDigits.length() - i) % 3 == 0) rString.append('_');
+			rString.append(tDigits.charAt(i));
+		}
+		return rString.toString();
 	}
 
 	private GT6Tooltips() {}
