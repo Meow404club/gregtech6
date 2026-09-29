@@ -55,17 +55,16 @@ public final class GT6SensorProvider implements IBlockComponentProvider, IServer
 	public static final String KEY_MAX = "GT6SensorMax";
 	public static final String KEY_PROBE = "GT6SensorProbe";
 
-	/** lang 键（GT6EnUs/GT6ZhCn 双侧同发，四落纪律）。 */
+	/** 读数行 lang 键：槽 = 十进制数（hex 模式 = {@code 0x%04X} 修饰串，双侧同发）。 */
 	public static final String LANG_READING = "gt6.jade.sensor.reading";
-	/** 读数行：槽 = 十进制数（hex 模式 = {@code 0x%04X} 修饰串）。 */
+	/** 模式行 lang 键：槽 = 8 模式名键的嵌套 translatable。 */
 	public static final String LANG_MODE = "gt6.jade.sensor.mode";
-	/** 模式行：槽 = 8 模式名键的嵌套 translatable。 */
+	/** 红石行 lang 键：槽 = 输出强度 0..15。 */
 	public static final String LANG_REDSTONE = "gt6.jade.sensor.redstone";
-	/** 红石行：槽 = 输出强度 0..15。 */
+	/** 潜行采样行 lang 键：槽 = mCurrentValue / mCurrentMax。 */
 	public static final String LANG_SAMPLE = "gt6.jade.sensor.sample";
-	/** 潜行采样行：槽 = mCurrentValue / mCurrentMax。 */
+	/** 潜行探测面行 lang 键：槽 = 面名（Direction.getName，RCON read 通道同措辞）。 */
 	public static final String LANG_PROBE = "gt6.jade.sensor.probe";
-	/** 潜行探测面行：槽 = 面名（Direction.getName，RCON read 通道同措辞）。 */
 
 	/**
 	 * 8 模式名键，索引 = {@link GTSensorLogic} 模式常量序（DISPLAY/PERCENT/GREATER/EQUAL/
