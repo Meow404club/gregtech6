@@ -8754,6 +8754,11 @@ byte-identical to upstream, sha256 verified per file:
 - `massfab_overlay_right_running.png` — `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`
 - `largemassfab_colored_right.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
 
+(RETIRED r8-tex-large-machines: the six vondagraagg flat PNGs below are DELETED — the
+band dir `gt6/textures/block/vondagraagg/` replaces them byte-for-byte; the fusion and
+implosion colored flats STAY and the new overlay state trio joins them — the new wave
+ledger is tail-appended. The rows below stay as historical digests.)
+
 Fusion reactor / Implosion Compressor / Von da Graagg controller faces, task
 p32-hygiene-lang-assets (attribution backfill for the P31 machine wave): the 18
 controller PNGs `gt6/textures/block/fusionreactor_colored_{face}.png`,
@@ -9360,6 +9365,10 @@ ResourceLocation.java:213-232). sha256 per file:
   face1, face2, side2),
   `33fe99c466efd19f6e4dcb14349690b60f49c2626f4b435799f1a0b0bfbc9aa1` (side1),
   `a9582e2de34a2e51aeb4031ab456db5791a27c42f32aa60886554ef9b4e6f467` (top).
+(RETIRED r8-tex-large-machines: the six flat PNGs below are DELETED — the band dir
+`gt6/textures/block/bedrockdrill/` replaces them byte-for-byte on the three TBS
+tiles; the rows stay as historical digests.)
+
 Bedrock Mining Drill controller faces, task p37-bedrock-drill: the 6 controller
 PNGs `gt6/textures/block/bedrockdrill_colored_{face}.png` (face ∈
 bottom/top/front/back/left/right) come from upstream
@@ -10118,3 +10127,319 @@ files):
 - `gt6/textures/block/long_distance_transformer/overlay_back.png` `730c38e957b9a9c755f654098723a8605665eb1ba51896728cb488e86bcbb227`
 - `gt6/textures/block/long_distance_transformer/overlay_front.png` `5c728ec16e0f33fd41d656f32d8f697d9622e324666e909d37ed0af386530594`
 - `gt6/textures/block/long_distance_transformer/overlay_side.png` `e050854cf05804a7dd0654039666f71f6016185e4704efc3375b80155ba91c24`
+Large machine controller two-layer wave, task r8-tex-large-machines: the 17
+controller domains swap the single-layer tintless cubes for the two-layer
+grammar. The 15 basicmachines families (the twelve large-12 rows + the massfab/
+fusion/implosion controllers) take the familyMachineModel state trio: the
+borrowed groups `basicmachines/<family>/{overlay,overlay_active,overlay_running}/<face>.png`
+land as `gt6/textures/block/<family>_overlay_<face>{,_active,_running}.png`
+(face ∈ bottom/top/front/back/left/right), byte-identical, sha256 per file.
+The colored six-sets stay the P31 flat borrows already ledgered above.
+
+- `gt6/textures/block/largecentrifuge_overlay_bottom.png` `9ebf66f9e5ff728c63db579af93feca54f0a646a48b489019d25deeadd46a021`
+- `gt6/textures/block/largecentrifuge_overlay_bottom_active.png` `9ebf66f9e5ff728c63db579af93feca54f0a646a48b489019d25deeadd46a021`
+- `gt6/textures/block/largecentrifuge_overlay_bottom_running.png` `9ebf66f9e5ff728c63db579af93feca54f0a646a48b489019d25deeadd46a021`
+- `gt6/textures/block/largecentrifuge_overlay_top.png` `74b9b1182bd42a14b99b728b36098292315f16528789cccbcb5999592b1edfd2`
+- `gt6/textures/block/largecentrifuge_overlay_top_active.png` `74b9b1182bd42a14b99b728b36098292315f16528789cccbcb5999592b1edfd2`
+- `gt6/textures/block/largecentrifuge_overlay_top_running.png` `74b9b1182bd42a14b99b728b36098292315f16528789cccbcb5999592b1edfd2`
+- `gt6/textures/block/largecentrifuge_overlay_front.png` `c63a21c0561875f408e112ff0d957df42667f25a8fad980cf538cdd6fcab87de`
+- `gt6/textures/block/largecentrifuge_overlay_front_active.png` `ab51c1d5af060a944c5ee0867d92202ac3a6329c842eaa34f2c1178e5ad591e7`
+- `gt6/textures/block/largecentrifuge_overlay_front_running.png` `a858ac5d35eef27b6ccf4d3e46bc2718218a9bb1e93c1d85d50e8859ec8c13d1`
+- `gt6/textures/block/largecentrifuge_overlay_back.png` `2c23cec93c260404295cd677011a06e8da81a089b2b844a52980cd970ee2fd3e`
+- `gt6/textures/block/largecentrifuge_overlay_back_active.png` `2c23cec93c260404295cd677011a06e8da81a089b2b844a52980cd970ee2fd3e`
+- `gt6/textures/block/largecentrifuge_overlay_back_running.png` `2c23cec93c260404295cd677011a06e8da81a089b2b844a52980cd970ee2fd3e`
+- `gt6/textures/block/largecentrifuge_overlay_left.png` `65f81ff3bdcf9eadf1946eb0bd756fbe260bf1e5a56c7c84a88d3d2c57766710`
+- `gt6/textures/block/largecentrifuge_overlay_left_active.png` `65f81ff3bdcf9eadf1946eb0bd756fbe260bf1e5a56c7c84a88d3d2c57766710`
+- `gt6/textures/block/largecentrifuge_overlay_left_running.png` `65f81ff3bdcf9eadf1946eb0bd756fbe260bf1e5a56c7c84a88d3d2c57766710`
+- `gt6/textures/block/largecentrifuge_overlay_right.png` `1d176581c0604af5b9f5984eb853a88811411cb1c95e5fb9f069b26841ed43e0`
+- `gt6/textures/block/largecentrifuge_overlay_right_active.png` `1d176581c0604af5b9f5984eb853a88811411cb1c95e5fb9f069b26841ed43e0`
+- `gt6/textures/block/largecentrifuge_overlay_right_running.png` `1d176581c0604af5b9f5984eb853a88811411cb1c95e5fb9f069b26841ed43e0`
+- `gt6/textures/block/largeelectrolyzer_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largeelectrolyzer_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largeelectrolyzer_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largeelectrolyzer_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeelectrolyzer_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeelectrolyzer_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeelectrolyzer_overlay_front.png` `9e6edcd95775d621b1a94dd84c8216058b1e55c85fa1f03e301529a139c0b705`
+- `gt6/textures/block/largeelectrolyzer_overlay_front_active.png` `6e8f480f8b78da5ddb2d4a208178b41bbe7c5b3f720f340beac328c266ea6a04`
+- `gt6/textures/block/largeelectrolyzer_overlay_front_running.png` `569787a68b04999cffff477e27f50ea394684e90d497c382355d98cfd32b2d05`
+- `gt6/textures/block/largeelectrolyzer_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeelectrolyzer_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeelectrolyzer_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeelectrolyzer_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeelectrolyzer_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeelectrolyzer_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeelectrolyzer_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeelectrolyzer_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeelectrolyzer_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecoagulator_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largecoagulator_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largecoagulator_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largecoagulator_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecoagulator_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecoagulator_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecoagulator_overlay_front.png` `c5fff58abf3bd77ce8088c4a77ee40d9308e6a80860ceee6b5869c12b017408b`
+- `gt6/textures/block/largecoagulator_overlay_front_active.png` `123ca25c9cf9e2fb4c87709cf99e041ee582c66f6dd72e70da04477066a2a4a8`
+- `gt6/textures/block/largecoagulator_overlay_front_running.png` `c5fff58abf3bd77ce8088c4a77ee40d9308e6a80860ceee6b5869c12b017408b`
+- `gt6/textures/block/largecoagulator_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecoagulator_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecoagulator_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecoagulator_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecoagulator_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecoagulator_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecoagulator_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecoagulator_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecoagulator_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeautoclave_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largeautoclave_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largeautoclave_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largeautoclave_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeautoclave_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeautoclave_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeautoclave_overlay_front.png` `ce1f88c036d82139a6be18ec23328ab7f6193dc464e808e05e26fed0348ed768`
+- `gt6/textures/block/largeautoclave_overlay_front_active.png` `118a04e8afc9f009b1e983aeb02ae9da30261ccbfcb076f9976db96bad0c8c3c`
+- `gt6/textures/block/largeautoclave_overlay_front_running.png` `ce1f88c036d82139a6be18ec23328ab7f6193dc464e808e05e26fed0348ed768`
+- `gt6/textures/block/largeautoclave_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeautoclave_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeautoclave_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeautoclave_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeautoclave_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeautoclave_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeautoclave_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeautoclave_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeautoclave_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largebath_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largebath_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largebath_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largebath_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largebath_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largebath_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largebath_overlay_front.png` `c5fff58abf3bd77ce8088c4a77ee40d9308e6a80860ceee6b5869c12b017408b`
+- `gt6/textures/block/largebath_overlay_front_active.png` `1471fda113ea746cacd3d58848cdb2b6041be7b0afcac7c9139036347c2a216e`
+- `gt6/textures/block/largebath_overlay_front_running.png` `c5fff58abf3bd77ce8088c4a77ee40d9308e6a80860ceee6b5869c12b017408b`
+- `gt6/textures/block/largebath_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largebath_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largebath_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largebath_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largebath_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largebath_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largebath_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largebath_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largebath_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemixer_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largemixer_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largemixer_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largemixer_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemixer_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemixer_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemixer_overlay_front.png` `0e52399cf5fd1ab68118072b6e3bda0a25d6864a41905d39bb7447aeac9307bb`
+- `gt6/textures/block/largemixer_overlay_front_active.png` `e7340bdfd7d29969aca693820b0752db6e89e6acbd1eab426d8e568ce90e0ad7`
+- `gt6/textures/block/largemixer_overlay_front_running.png` `ce043fc389780c68ee5a2178de77ae0fb6d269330a77ab80f26832f892b30fcc`
+- `gt6/textures/block/largemixer_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemixer_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemixer_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemixer_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemixer_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemixer_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemixer_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemixer_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemixer_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largefermenter_overlay_bottom.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largefermenter_overlay_bottom_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largefermenter_overlay_bottom_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largefermenter_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largefermenter_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largefermenter_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largefermenter_overlay_front.png` `a10c7ed6829d539aea0d2d7a5fba163b0d1564db10ad93569727794bb0714190`
+- `gt6/textures/block/largefermenter_overlay_front_active.png` `c5ad78c81ba3c132ba48dbb185390cc2b7ca3c7eb70d065250cb7174ffe0460c`
+- `gt6/textures/block/largefermenter_overlay_front_running.png` `b92a9a8a86d5609ec9db765adfed301ba472763f7814904c5f77f789cade6ae5`
+- `gt6/textures/block/largefermenter_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largefermenter_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largefermenter_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largefermenter_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largefermenter_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largefermenter_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largefermenter_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largefermenter_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largefermenter_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeoven_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largeoven_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largeoven_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largeoven_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeoven_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeoven_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeoven_overlay_front.png` `9f3fc9c743ea11a1e2e19d3cb7b05607012907b87f4c225f4bb07a2970fbef7f`
+- `gt6/textures/block/largeoven_overlay_front_active.png` `6276c48e70ec422f61c803c1b77caa692d8385e002cce6d66c9a927ebb056af7`
+- `gt6/textures/block/largeoven_overlay_front_running.png` `d41554c3bcba51aeac53e2d4840214e0138a8c130415e6eec1bb4686dadfc731`
+- `gt6/textures/block/largeoven_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeoven_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeoven_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeoven_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeoven_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeoven_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeoven_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeoven_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeoven_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesluice_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largesluice_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largesluice_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largesluice_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesluice_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesluice_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesluice_overlay_front.png` `ee5c86b3e5053ff589ca046ba4d8d6e330aefc74bab76c9579363fa9f94f1504`
+- `gt6/textures/block/largesluice_overlay_front_active.png` `cb16d7183a4757d0f6f937446743ad60bd3c43747d0f74a330f686132b6e3d35`
+- `gt6/textures/block/largesluice_overlay_front_running.png` `c1cee6569e2b461da253c20b56eaeb7db03c6d29b03ff68c909bee662fdfc8bb`
+- `gt6/textures/block/largesluice_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesluice_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesluice_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesluice_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesluice_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesluice_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesluice_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesluice_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesluice_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecrusher_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largecrusher_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largecrusher_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largecrusher_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecrusher_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecrusher_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecrusher_overlay_front.png` `444990575731ead4034705535bf29e2cbfee6924aeed8f4932c5147aef5c9f4f`
+- `gt6/textures/block/largecrusher_overlay_front_active.png` `4feabfad7efe9859c783fa962920989cd791c8aedd8f7375d80f8202c33223b9`
+- `gt6/textures/block/largecrusher_overlay_front_running.png` `ac14ab6b769f71f42f292cd0461abd061578b814a4ab60eeab3dbeade286814d`
+- `gt6/textures/block/largecrusher_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecrusher_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecrusher_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecrusher_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecrusher_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecrusher_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecrusher_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecrusher_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largecrusher_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeshredder_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largeshredder_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largeshredder_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largeshredder_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeshredder_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeshredder_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeshredder_overlay_front.png` `bd95b743ff65985a6a20128cb4088081507857537c93e8a24c67a67c507ab1fe`
+- `gt6/textures/block/largeshredder_overlay_front_active.png` `46cd0795cf2f08a0787609c03f8639e3a4e1aa0598de4cfa8405bce6aed8c9fb`
+- `gt6/textures/block/largeshredder_overlay_front_running.png` `83f404248e8dd73dd004994962971d2aa2ff0405923139b0707ece80109ff022`
+- `gt6/textures/block/largeshredder_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeshredder_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeshredder_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeshredder_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeshredder_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeshredder_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeshredder_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeshredder_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largeshredder_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesqueezer_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largesqueezer_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largesqueezer_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largesqueezer_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesqueezer_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesqueezer_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesqueezer_overlay_front.png` `fb9305309a88bf514fee35390694930f7784c865d7acc6220ffac404ce5ad5b6`
+- `gt6/textures/block/largesqueezer_overlay_front_active.png` `e3fd010a9a701fbd1cac7e67a8ef35496175728b65c87f6bd9d2bcb9fc9e4097`
+- `gt6/textures/block/largesqueezer_overlay_front_running.png` `060f8c2732d0bdfdd6539ed33f36846696aacf9be65e4c368f6131c7b359a935`
+- `gt6/textures/block/largesqueezer_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesqueezer_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesqueezer_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesqueezer_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesqueezer_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesqueezer_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesqueezer_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesqueezer_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largesqueezer_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemassfab_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largemassfab_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largemassfab_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/largemassfab_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemassfab_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemassfab_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemassfab_overlay_front.png` `1533e6e9610e98ed2ba9163b39d6370be0c97eee9808be971abd8103665d78be`
+- `gt6/textures/block/largemassfab_overlay_front_active.png` `2efd0b5fc366ddcfaf89231730e01571ccf91dfcfc0fca8b8749b8483b656c50`
+- `gt6/textures/block/largemassfab_overlay_front_running.png` `dc48b3c85dc70970c32d980a10184f918de415336e1f2886a53d891145553999`
+- `gt6/textures/block/largemassfab_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemassfab_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemassfab_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemassfab_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemassfab_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemassfab_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemassfab_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemassfab_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/largemassfab_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/fusionreactor_overlay_bottom.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/fusionreactor_overlay_bottom_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/fusionreactor_overlay_bottom_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/fusionreactor_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/fusionreactor_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/fusionreactor_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/fusionreactor_overlay_front.png` `51c05c6f5c7869e2c565ee100156a0ae7e5dcfd464cf08cffbc617c037a7ca79`
+- `gt6/textures/block/fusionreactor_overlay_front_active.png` `c14008cd5ef19bb1de5ec61b2423de71d37930902e8b5da3dc506deb37962e23`
+- `gt6/textures/block/fusionreactor_overlay_front_running.png` `82462c94dfe3cc538099c0ccf7a7b5508ae077aa38cc90b42a62cddd0b5fac47`
+- `gt6/textures/block/fusionreactor_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/fusionreactor_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/fusionreactor_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/fusionreactor_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/fusionreactor_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/fusionreactor_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/fusionreactor_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/fusionreactor_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/fusionreactor_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/implosioncompressor_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/implosioncompressor_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/implosioncompressor_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
+- `gt6/textures/block/implosioncompressor_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/implosioncompressor_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/implosioncompressor_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/implosioncompressor_overlay_front.png` `57993e8cde031481874e028700ee1ee4d697204e01275eea81e5c620c13a388b`
+- `gt6/textures/block/implosioncompressor_overlay_front_active.png` `5288c13c9f6064c9ab57b6363e320beb04d1e928439ddf5dc88f0914a860dd5d`
+- `gt6/textures/block/implosioncompressor_overlay_front_running.png` `ee9219dcaa0c102aa0efa58bca1d56fb53ccd733ccbe72f813d3959bca59e118`
+- `gt6/textures/block/implosioncompressor_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/implosioncompressor_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/implosioncompressor_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/implosioncompressor_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/implosioncompressor_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/implosioncompressor_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/implosioncompressor_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/implosioncompressor_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+- `gt6/textures/block/implosioncompressor_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
+
+Three upstream fronts animate (the .png.mcmeta sidecars verbatim):
+- `gt6/textures/block/largebath_overlay_front_active.png.mcmeta` (upstream basicmachines/largebath/overlay_active/front.png.mcmeta)
+- `gt6/textures/block/largemixer_overlay_front_active.png.mcmeta` (upstream basicmachines/largemixer/overlay_active/front.png.mcmeta)
+- `gt6/textures/block/largemixer_overlay_front_running.png.mcmeta` (upstream basicmachines/largemixer/overlay_running/front.png.mcmeta)
+
+The two front-pair mains (Von da Graagg, Bedrock Drill) take the boilerModel
+band form: `multiblockmains/<family>/{colored,overlay}/{bottom,top,side}.png` +
+`{colored_front,overlay_front}/side.png` land as
+`gt6/textures/block/<family>/{colored,overlay}_{bottom,top,side}.png` +
+`<family>/{colored_front,overlay_front}_side.png`, byte-identical, sha256 per file.
+The upstream families have NO active group (the 'bedrockdrill overlay_active'
+reading of the census card was disprobed) — one static front-pair model each.
+- `gt6/textures/block/vondagraagg/colored_bottom.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `gt6/textures/block/vondagraagg/colored_top.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `gt6/textures/block/vondagraagg/colored_side.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `gt6/textures/block/vondagraagg/colored_front_side.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `gt6/textures/block/vondagraagg/overlay_bottom.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+- `gt6/textures/block/vondagraagg/overlay_top.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+- `gt6/textures/block/vondagraagg/overlay_side.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+- `gt6/textures/block/vondagraagg/overlay_front_side.png` `94adbe03462ca420f1d9322bffe91584ff361f7e1d1f00f5567148a5377b217d`
+- `gt6/textures/block/bedrockdrill/colored_bottom.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `gt6/textures/block/bedrockdrill/colored_top.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `gt6/textures/block/bedrockdrill/colored_side.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `gt6/textures/block/bedrockdrill/colored_front_side.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+- `gt6/textures/block/bedrockdrill/overlay_bottom.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+- `gt6/textures/block/bedrockdrill/overlay_top.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+- `gt6/textures/block/bedrockdrill/overlay_side.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+- `gt6/textures/block/bedrockdrill/overlay_front_side.png` `43de1896bef12ed23f903714b6e62374cdff5d7cde869f0fc4c69d1caff306e8`
+
+RETIRED (r8-tex-large-machines): the twelve flat `vondagraagg_colored_<face>.png` /
+`bedrockdrill_colored_<face>.png` (the two six-row P31/P37 ledger sections above)
+are deleted — the band dirs above replace them byte-for-byte on the TBS faces
+(the six-face flat spread was the port-side deviation; upstream Base10 renders
+the FACES_TBS form, the four horizontals one side tile), and the old rows stay
+as historical digests. The fusion/implosion/massfab colored flats STAY (the new
+body cubes still bind them).
