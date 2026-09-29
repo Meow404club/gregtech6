@@ -368,6 +368,18 @@ borrow (1.20.1 `ResourceLocation` charset; the sprite ids are
 `gt6:block/oven_overlay_<group>_<face>`); the PNG contents are byte-identical
 to upstream (sha256 above, no rescaling or redrawing).
 
+Animation metadata (task r8-render-leftovers): the front/back active strips are
+16x128 eight-frame animations upstream and the borrow initially missed the side
+`.mcmeta` files, so vanilla sampled the whole strip as one texture (v0..16,
+all eight frames squeezed into the face). The two files
+`oven_overlay_active_front.png.mcmeta` and `oven_overlay_active_back.png.mcmeta`
+are the upstream `basicmachines/oven/overlay_active/{front,back}.png.mcmeta`
+verbatim (`{"animation":{"frametime":2}}`, both files share sha256
+`920176fe0c003f6f293aab5fc344418356377d273c414a8f5378755e25674891`; only these
+two faces are strips, the other four active faces are plain 16x16 both sides).
+Same shape as the burning_box mcmeta borrow above (provenance only, not
+PNG-census-ledgered).
+
 Scope trim (declared, census-backed): the task card's "colored6+overlay12"
 enumeration is trimmed to the 12 overlay PNGs above. The `colored/<face>`
 grayscale material group exists upstream but is unused by the landed design —
