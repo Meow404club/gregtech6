@@ -168,11 +168,12 @@ BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
      =ops 显式 opt-in 恢复护栏。
    - **有效占用剔缓存（v3.4）**：cgroup 侧=memory.current−memory.stat(file+
      slab_reclaimable)；系统侧=MemAvailable（本身已剔可回收缓存）。
-   - **每任务 cgroup 预算表+看门狗**：TASK_CAP_MIB（full 12G/filtered 8G/compile
+   - **每任务 cgroup 预算表+看门狗**：TASK_CAP_MIB（full 12G/filtered 12G/compile
      6G/rundata 8G），超自预算由脚本看门狗 TERM→KILL 并 exit 97（内核 OOM
      rc=-9 双执行者）；run 后 scope 清扫；gradle 一律注入 `--no-daemon`。
-   - **预算旋钮**：filtered 默认 8G；FML boot 大域实测峰 8.7-12.6G，被资源杀
-     （rc=97/247/143，**非测试红**）用 `--task-cap 12/16` 重跑（多先例）。
+   - **预算旋钮**：filtered 默认 12G（v3.7，与 full 同档；六样本峰 8.7-12.6G
+     实测裁定）；FML boot 大域被资源杀
+     （rc=97/247/143，**非测试红**）用 `--task-cap 16` 重跑（12.6G 离群先例）。
    - **纪律**：gradle/runData 命令显式 `cd` 进 worktree（bash cwd 重置教训）。
    **全量 test（gradle 无 --tests 的 test/cleanTest）仅 `--role review` 可跑，
    coder 请求即拒（exit 2）；全量执行期持 /tmp/gt6_testgate_full.lock 全局互斥，
