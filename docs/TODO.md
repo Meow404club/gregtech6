@@ -1,20 +1,29 @@
-# TODO（镜像·维护期版 2026-09-29）
+# TODO（镜像·维护期版 2026-09-30）
 
-> 权威数据在 MCP `gt6-brain` state（`tasks.issues-round4` 等）。
+> 权威数据在 MCP `gt6-brain` state（`tasks.r9-issue-wave` 等）。
 > P1-P38 已完成项全史见 [docs/archive/ARCHIVE-2026-09-27-p1-p37.md](archive/ARCHIVE-2026-09-27-p1-p37.md)。
 
-## issue 第四轮（#17-#26）· 已收口
+## r9 波（#34/#39/#41）· 已收官（2026-09-30）
 
-11 卡三审查席全部合入，main=5153c1dbe，issue 关闭 8 条（#17 判决解释/#18/#19/#20/#22/#23/#24/#26），
-#21/#25 用户裁定撤下。矿石追加三项：三石贴图迁 vanilla 现行（B 方案）、破损矿专属名、颗粒渲染核验无缺陷（待用户新构建复验）。
+三卡一审查席全 approve 合入+push（main=1b2e1a4cc）：#41 模具阴模还原、#39 工具头 9 族行补全
+（'s'=SAW 翻案）、#34 查看器背景两层合成（视觉取证确诊→像素级复验闭环）。
+may fix 三挂待提出者复验自关（铁律 9）。CI run 36626354007 在跑（dev prerelease 滚动更新）。
 
-## 在途（r8 收官中）
+## r9 波未闭合债（权威在 state tasks.r9-issue-wave 各卡 deferred）
 
-- docs 镜像（本卡：宪法铁律 8 v3.x 同步+PROJECT_STATE/TODO 镜像）
-- filtered 12G 调优卡（ops-testgate-v3p7-filtered12，FML boot 大域预算旋钮）
-- curator 蒸馏+攒批 push origin main+CI 双腿确认
-- may fix 修复说明挂 issue（#27/#42/#45/#47，push 后；不主动关评，铁律 9）
-- 记忆蒸馏（r8 handoff/merge 历史硬删，收官锚点先落全）
+- SHARPENING 磨床 map 空→12 个 raw 工具头死端（上游 Handlers.java:403-415 13 行 raw→成品）——机器域
+- Press 宝石镐 3 行（Handlers:247-251）随 FormingPress 动态臂——机器域
+- 电动工具 :357-360 直合成行（上游自身材质冲突）未深究
+- 直合成工具行的宝石姊妹行（wrench/monkey_wrench arg-8 C 变体+hammer G 变体）小卡待开
+- NEI.png 齿轮装饰无机器物品叠加（上游 :278 declared defer，可挂 GT6RecipeMapIcons）
+- EMI SlotWidget 槽底与烘焙槽框叠画观感（field 判刺眼另卡）
+- nojade 下配方页 draw 必崩 NCDFE（known_bugs.r934_nojade_recipe_page_draw_ncdfe，workaround=带 Jade）
+- **ops 待裁定**：FML 测试启动面峰值 12-13.5G 三撞 filtered 12G 预算墙——调预算或查根因（疑似 KJS 增重）
+
+## 前态 r8 收官清单（2026-09-29 完成）
+
+- ~~docs 镜像~~✓ ~~filtered 12G 调优~~✓（v3.7）~~curator 蒸馏~~✓ ~~攒批 push~~✓（147+2 提交）
+- ~~may fix 挂（#27/#42/#45/#47）~~✓ ~~记忆蒸馏~~✓（12 条硬删留锚点 id1116/教训 1093/1119/1121/1122）
 
 ## r8 波未闭合债（终席汇总镜像，权威在 state/known_bugs* 与各卡面）
 
