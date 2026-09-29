@@ -123,6 +123,7 @@ public class GT6EnUs extends LanguageProvider {
         addMultiBlocks();
         addBarrels();
         addKitchen(); // task p26-kitchen-pot-bowl
+        addMeasuringPot(); // task r8-issue45-c3 — the pot pair (issue #45)
         addAnvils(); // task p28-c-anvil
         addEnergySource();
         addFeBattery(); // task p26-eu-bridge-outbound — tail-append
@@ -1337,6 +1338,12 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.juicer", "Juicer"); // task p33-food-machines-kitchen — the Loader :2184 name column verbatim
         add("item.gt6.clay_bowl", "Clay Bowl");
         add("item.gt6.clay_juicer", "Clay Juicer"); // issue #45 C1 — the MultiItemRandomTools.java:118 name column verbatim
+    }
+
+    /** The Measuring Pot pair (task r8-issue45-c3, issue #45) — the Loader :2096 name column + the :121 raw row, both verbatim. */
+    private void addMeasuringPot() {
+        add("block.gt6.measuring_pot", "Ceramic Measuring Pot"); // the Loader_MultiTileEntities.java:2096 name column verbatim
+        add("item.gt6.clay_measuring_pot", "Clay Measuring Pot"); // the MultiItemRandomTools.java:121 raw row verbatim
     }
 
     /**

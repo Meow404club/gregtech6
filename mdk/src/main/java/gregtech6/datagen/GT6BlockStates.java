@@ -274,6 +274,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addRails(); // task p35-rails-31-blocks — the 31-rail family (the vanilla rail grammar)
         addPortals(); // task p35-portals-mini-nether-end — the two miniature portals (the ACTIVE cube swap)
         addKitchen(); // task p38-issue7-kitchen-models — the four kitchen blocks (the upstream hollow-tub element forms)
+        addMeasuringPot(); // task r8-issue45-c3 — the Measuring Pot (the two-layer colored+overlay sub-cube tub)
     }
 
     /**
@@ -4407,6 +4408,68 @@ public final class GT6BlockStates extends BlockStateProvider {
         for (Direction tDir : Direction.values()) {
             if (tDir == Direction.DOWN) continue;
             tElement.face(tDir).texture(kitchenPanelTexture(tDir, aOutward)).tintindex(0).end();
+        }
+        tElement.end();
+    }
+
+    /**
+     * The Measuring Pot (task r8-issue45-c3, issue #45): the upstream render-pass geometry
+     * (MultiTileEntityMeasuringPot.setBlockBounds2 :103-108 verbatim) — the base slab
+     * (5,0,5)-(11,1,11) plus the four 1px walls y 1..8 at the 4px inset ring — over the
+     * TWO-LAYER colored+overlay grammar (getTexture2 :124-134 = BlockTextureMulti(colored,
+     * overlay) per face): the body elements carry the colored band, each duplicated by a
+     * 0.01-inflated overlay shell (the addHive/addBumbliary 0.01-plate form, cutout).
+     * Face mapping rides the upstream world-side table: up=top, down=bottom, the wall's
+     * outward face=sides, the cavity face=insides, the end caps=sides. The colored band
+     * ships UN-TINTED — the r7-40-41 crucible bodyTexture declared deviation (upstream
+     * tints it with mRGBa; {@code ponytail:} a tintindex-0 + dispatch row lands it
+     * without model change when the render pool gets to it).
+     */
+    private void addMeasuringPot() {
+        Block tBlock = gregtech6.registry.GT6MeasuringPot.MEASURING_POT.get();
+        BlockModelBuilder tModel = models().getBuilder("measuring_pot")
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("sides", modLoc("block/measuring_pot_colored_sides"))
+                .texture("insides", modLoc("block/measuring_pot_colored_insides"))
+                .texture("top", modLoc("block/measuring_pot_colored_top"))
+                .texture("bottom", modLoc("block/measuring_pot_colored_bottom"))
+                .texture("overlay_sides", modLoc("block/measuring_pot_overlay_sides"))
+                .texture("overlay_insides", modLoc("block/measuring_pot_overlay_insides"))
+                .texture("overlay_top", modLoc("block/measuring_pot_overlay_top"))
+                .texture("overlay_bottom", modLoc("block/measuring_pot_overlay_bottom"))
+                .texture("particle", "#sides")
+                .renderType("cutout");
+        // the base slab — upstream pass 4 (:107); no outward face (the walls ring it)
+        potElement(tModel, 5.0F, 0.0F, 5.0F, 11.0F, 1.0F, 11.0F, null);
+        // the four 1px walls — upstream passes 0-3 (:103-106)
+        potElement(tModel,  4.0F, 1.0F,  5.0F,  5.0F, 8.0F, 11.0F, Direction.WEST);
+        potElement(tModel, 11.0F, 1.0F,  5.0F, 12.0F, 8.0F, 11.0F, Direction.EAST);
+        potElement(tModel,  5.0F, 1.0F,  4.0F, 11.0F, 8.0F,  5.0F, Direction.NORTH);
+        potElement(tModel,  5.0F, 1.0F, 11.0F, 11.0F, 8.0F, 12.0F, Direction.SOUTH);
+        simpleBlock(tBlock, tModel);
+        itemModels().withExistingParent("measuring_pot", tModel.getLocation());
+    }
+
+    /** One pot element (body box + the 0.01-inflated overlay shell): aOutward null = the base slab (every side face = sides). */
+    private void potElement(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
+            float aMaxX, float aMaxY, float aMaxZ, Direction aOutward) {
+        potBox(aModel, aMinX, aMinY, aMinZ, aMaxX, aMaxY, aMaxZ, aOutward, "");
+        potBox(aModel, aMinX - 0.01F, aMinY - 0.01F, aMinZ - 0.01F,
+                aMaxX + 0.01F, aMaxY + 0.01F, aMaxZ + 0.01F, aOutward, "overlay_");
+    }
+
+    /** One box: all six faces, the kitchen panel mapping (up/down/outward/cavity/caps) over the given band prefix, no tint. */
+    private void potBox(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
+            float aMaxX, float aMaxY, float aMaxZ, Direction aOutward, String aBand) {
+        BlockModelBuilder.ElementBuilder tElement = aModel.element().from(aMinX, aMinY, aMinZ).to(aMaxX, aMaxY, aMaxZ);
+        for (Direction tDir : Direction.values()) {
+            String tFace;
+            if (tDir == Direction.UP) tFace = "top";
+            else if (tDir == Direction.DOWN) tFace = "bottom";
+            // the cavity face (the one inward-facing side per wall, upstream :126-129); the base
+            // slab (aOutward null) and every other wall face tile sides (outer + end caps)
+            else tFace = aOutward != null && tDir == aOutward.getOpposite() ? "insides" : "sides";
+            tElement.face(tDir).texture("#" + aBand + tFace).end();
         }
         tElement.end();
     }

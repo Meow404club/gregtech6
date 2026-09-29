@@ -9859,9 +9859,25 @@ above, sha256 unchanged) are DELETED: the per-face two-layer models replaced the
 row keeps its single-texture form this card, its two-layer borrow
 (`machines/tanks/logistics/` colored+overlay 3+3) is a declared follow-up. The barrel
 TESR/lid omission stays declared (MultiTileEntityBarrelWood.java:44-54). The remaining
-tanks families (thermos/jug/cup/cell/measuring_pot/barometer_gas_cylinder) are NOT
+tanks families (thermos/jug/cup/cell/barometer_gas_cylinder) are NOT
 ported as blocks (feature gap, not a texture gap — the r8-tex-r1 census); their
-textures stay unborrowed.
+textures stay unborrowed. measuring_pot LEFT that pool in task r8-issue45-c3 — the
+block family landed with its textures (the band below); the jug/tap/funnel/basin/
+crossing ceramic raw band stays the issue-#45 defer pool.
+
+Measuring Pot borrows (9) — upstream `machines/tanks/measuring_pot/<layer>/<face>.png`
+flattens to `measuring_pot_<layer>_<face>.png` (the two-layer colored+overlay grammar,
+MultiTileEntityMeasuringPot.java:113-121), plus the raw item icon (meta 997):
+
+- `measuring_pot_colored_sides.png`   `fc743390ef90e9b33721dd2811765f49c2354fe5612d222d0da36bf9955a0a54`
+- `measuring_pot_colored_insides.png` `aa356c3c248065ae7ecd95dc990bbd027c3dffdd12a1ac53d2e43092ae365fce`
+- `measuring_pot_colored_top.png`     `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1`
+- `measuring_pot_colored_bottom.png`  `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (= the top tile)
+- `measuring_pot_overlay_sides.png`   `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (= the barrel overlay tile)
+- `measuring_pot_overlay_insides.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `measuring_pot_overlay_top.png`     `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `measuring_pot_overlay_bottom.png`  `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `item/clay_measuring_pot.png`       `9fdced840ab17174e98ad5c3efcc02e18911aa24cd79d504ef6308fbccbaf105` (upstream `gt.multiitem.randomtools/997.png`)
 
 Valve borrows (24) — upstream
 `machines/multiblockmains/<family>/<layer>/<face>.png` flattens to
