@@ -154,7 +154,11 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
      * blockstate/model chain), extended with the tier-B families (r8-tex-itemform-b).
      * The battery boxes LEFT this guard in task r8-tex-composite-family: their world
      * face is intentionally the two-layer borrow now, pinned by
-     * GT6CompositeEnergyTexDatagenTest.
+     * GT6CompositeEnergyTexDatagenTest. The lightning-rod CONTROLLER and the heat
+     * exchanger left it in task r8-tex-multiblockmains (the same departure shape —
+     * the flat bakes were placeholders, the groups' colored/colored_front splits are
+     * real two-layer art), pinned by GT6MultiblockMainsTexDatagenTest; their ITEM
+     * rows above stay 2D over the composites, which stay on disk for them.
      */
     @Test
     void blockModelsKeepTheCubeAllForm() throws Exception {
@@ -169,9 +173,7 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
                 {"water_wheel", "gt6:block/water_wheel"},
                 {"gearbox", "gt6:block/gearbox"},
                 {"distillation_tower", "gt6:block/parts/distillationtowerparts/0/colored/side"},
-                {"multiblock_lightning_rod", "gt6:block/lightningrod/main"},
-                {"lightning_rod", "gt6:block/lightningrod/rod"},
-                {"large_heat_exchanger", "gt6:block/large_heat_exchanger/main"}};
+                {"lightning_rod", "gt6:block/lightningrod/rod"}};
         for (String[] tCase : tArchetypes) {
             JsonObject tModel = generatedJson("assets/gt6/models/block/" + tCase[0] + ".json");
             assertEquals("minecraft:block/cube_all", tModel.get("parent").getAsString(),
