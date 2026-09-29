@@ -110,7 +110,7 @@ handler 缺失等于没装）：
             "timeoutMs": 10000}]}
 ```
 
-## gt6testgate 门禁（test-gating-v3 → v3.6）
+## gt6testgate 门禁（test-gating-v3 → v3.7）
 
 一切重操作（gradle 测试/编译/runData、sweep、RCON 链）的统一门禁+runner：
 `python3 tools/gt6testgate.py run -- <原命令>`。
@@ -161,7 +161,7 @@ handler 缺失等于没装）：
      cgroup.procs 非空者 → 同上杀序；活跃 scope 不碰。兜崩溃 runner 的
      尸场（实测案例：空 leader scope 里藏 2G+ daemon，杀掉释放 8G）。
 - **每任务预算+脚本看门狗（v3.3，2026-09-29 第六轮）**：scope 建型即写
-  `MemoryMax=<TASK_CAP_MIB[class]>`（full 12G/filtered 8G/compile 6G/
+  `MemoryMax=<TASK_CAP_MIB[class]>`（full 12G/filtered 12G/compile 6G/
   rundata 8G/rcon 6G/other 8G，`--task-cap G` 覆盖）。
   **内核注记（Brokestar 6.18.50 定制内核）**：scope 级 memory.max 实测
   **被执行**（300M 探针 OOM rc=137、oom_kill 计数增长，2026-09-29）；
@@ -200,6 +200,14 @@ handler 缺失等于没装）：
   （`SLICE_CAP_GIB`，准入 cap/看门狗聚合帽/slice MemoryMax 同源跟随），
   v3.1-v3.5 语义零触碰（准入谓词仍只看信封；预算表/slot 并发/清剿层
   不动）。
+- **filtered-test 预算 8G→12G（v3.7，2026-09-29）**：六次独立实测——
+  多类域 FML junit boot 过滤跑峰值 8733/9329/9521/9900/10800/12600MiB，
+  系统性越旧 8G 预算（rc=97 看门狗杀 / rc=247 信封内 memcg OOM），
+  coder/审查席被迫 `--task-cap 12` 手动升档五次以上（用户 22G 帽内
+  合法调优）。12G 与 full-test 档持平系有意为之：多类域过滤跑与全量
+  同足迹级。12.6G 离群样本仍超 12G——此类跑继续 `--task-cap 16`
+  （旋钮不废）。纯值改动；准入冷估算（filtered 6G）不动——台账喂
+  信封判据，不喂预算。
 - 向后兼容：并发槽默认 4（`GT6_GATE_MAX_CONCURRENT`）、退出码=子进程
   透传、full+coder 拒 exit 2、gt6server 直调 `wait_memory` 签名不变
   （遗留反应闸仅服务 boot 路径）；旧 flag 形态（无 `run` 前缀）与 run

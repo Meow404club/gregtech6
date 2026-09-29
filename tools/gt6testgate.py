@@ -78,6 +78,18 @@ v3.2-v3.5 semantics (envelope-only predicate, retired outside guard,
 budgets, slots, watchdog, reaping) are untouched. Earlier paragraphs keep
 their historical figures as of their own dates.
 
+Filtered budget 12G (test-gating-v3.7, 2026-09-29): the filtered-test
+per-task budget 8G → 12G after six independent multi-class FML junit-boot
+domain runs peaked at 8733 / 9329 / 9521 / 9900 / 10800 / 12600 MiB —
+systematically over the old 8G budget (watchdog rc=97 or in-envelope memcg
+rc=247), forcing manual ``--task-cap 12`` overrides on five+ occasions
+(coders and the review seat alike). 12G deliberately equals the full-test
+tier: a multi-class filtered domain run on the 21.1 FML boot leg has the
+same footprint class as a full suite. The 12.6G outlier still exceeds it —
+such runs keep using ``--task-cap 16`` (the knob stays). Value-only change:
+admission cold estimates (filtered 6G) are untouched — the ledger feeds the
+envelope predicate, not the budget.
+
 Per-task budget + script watchdog (test-gating-v3.3, 2026-09-29 sixth
 ruling): the ruling holds memory.max cannot be RELIED UPON on this host
 (Brokestar kernel, custom reclaim logic), so the script watchdog is the
@@ -92,7 +104,7 @@ max). Both layers therefore stay: each task's scope gets
 and the runner's sampling loop doubles as the watchdog — every 2 s tick it
 reads the task's own memory.current (same read feeds the ledger peak — one
 read, no /proc walk) and, past the per-task budget (TASK_CAP_MIB: full 12G
-/ filtered 8G / compile 6G / rundata 8G; ``--task-cap`` overrides), TERMs →
+/ filtered 12G / compile 6G / rundata 8G; ``--task-cap`` overrides), TERMs →
 2 s → KILLs the task's own cgroup and exits BUDGET_EXIT (97) so callers can
 distinguish "over budget" (watchdog) from an ordinary failure — a kernel
 OOM kill surfaces as the usual negative signal code instead. The tick also
@@ -203,10 +215,12 @@ UNIT_PREFIX = "gt6gate-run"     # scope units: gt6gate-run-<pid>-<ts>.scope
 # --- v3.3 per-task budget + script watchdog (2026-09-29 sixth ruling) ------
 # This kernel does not enforce memory.max; the watchdog below is the
 # enforcer. Budgets = cold estimates × ~1.3 headroom (a run may legitimately
-# touch its forecast before it is a runaway).
+# touch its forecast before it is a runaway); filtered-test is the v3.7
+# exception — 12G by measurement (see docstring), level with full-test on
+# purpose.
 TASK_CAP_MIB = {
     "full-test": 12288,
-    "filtered-test": 8192,
+    "filtered-test": 12288,  # v3.7: was 8192; six-sample peaks 8.7-12.6G
     "compile": 6144,
     "rundata": 8192,
     "rcon-boot": 6144,
