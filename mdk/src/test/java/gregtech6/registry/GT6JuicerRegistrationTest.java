@@ -54,6 +54,11 @@ public class GT6JuicerRegistrationTest {
 		} catch (Exception aE) {
 			throw new IllegalStateException("could not unfreeze the offline block registry", aE);
 		}
+		// the 21.1 leg's BET ctor takes an intrusive holder (validateWrite) — the fixture
+		// BET below dies on the frozen BLOCK_ENTITY_TYPE registry without the write window
+		// (the CrowbarTest form, GTOfflineTestBase.unfreezeBlockEntityTypeRegistry; silent
+		// no-op on legs where the shape is absent)
+		gregtech6.tileentity.GTOfflineTestBase.unfreezeBlockEntityTypeRegistry();
 	}
 
 	/** The single-path identity of the registration (the GT6Kitchen self-contained form). */
