@@ -9145,18 +9145,18 @@ metas are out of this card's scope).
 Baked composites (derived; the colored casing layer is one byte-identical grayscale
 across every family here, only the overlays differ):
 
-- `block/crystal_charger_front.png` — `7d9e6d2d06eb51240f66667051bc3082adc3ddb8eb814e072d12d7e60708effa` (src-over `crystal_laser/colored/front + overlay/front`; byte-identical to the large-front composite — the two families share the front art) [RETIRED r8-tex-composite-family]
-- `block/crystal_charger_side.png` — `700ab3cc98ef1146b9638af23d0d84c81ccc31507b1184163b6219ee55fcb786` [RETIRED r8-tex-composite-family]
-- `block/crystal_charger_large_front.png` — `7d9e6d2d06eb51240f66667051bc3082adc3ddb8eb814e072d12d7e60708effa` (src-over `crystal_laser_large/colored/front + overlay/front`) [RETIRED r8-tex-composite-family]
-- `block/crystal_charger_large_side.png` — `91a0687c6be7ba2f683fb679122c7dba6eca01334c898129724516e737248e67` (src-over `crystal_laser_large/colored/side + overlay/side`) [RETIRED r8-tex-composite-family]
-- `block/long_distance_transformer_front.png` — `97f5c41837e8c9f94bbaec4873d3d7f0529f1146974569d90d7fffecadc06503` (src-over `longdistancetransformer_electric/colored/front + overlay/front`) [RETIRED r8-tex-composite-family]
-- `block/long_distance_transformer_back.png` — `88177900197bd182593d1d9d21ea3e7888f7ec3f52d816a03a97923cd57c516f` (src-over `.../colored/back + overlay/back`) [RETIRED r8-tex-composite-family]
-- `block/long_distance_transformer_side.png` — `b5f21ab6ca30f0d98327859d946c599182ef88fca8707933ff0cdff850658433` (src-over `.../colored/side + overlay/side`) [RETIRED r8-tex-composite-family]
-- `block/zpm_decharger_front.png` — `a982cea2f5d79df29801e1b21349e617488c324ea79a64b35712658bb60a4c9f` (src-over `zpm_electricity/colored/front + overlay/front`) [RETIRED r8-tex-composite-family]
-- `block/zpm_decharger_back.png` — `f9b323b0b87a687865b32b0908316fe11958210c822d4ded4ece0da99acbf2bc` (src-over `zpm_electricity/colored/back + overlay/back`; byte-identical to the quantum-back composite — the two families share the back overlay) [RETIRED r8-tex-composite-family]
+- `block/crystal_charger_front.png` — digest retired with the file (r8-tex-composite-family) (src-over `crystal_laser/colored/front + overlay/front`; byte-identical to the large-front composite — the two families share the front art) [RETIRED r8-tex-composite-family]
+- `block/crystal_charger_side.png` — digest retired with the file (r8-tex-composite-family) [RETIRED r8-tex-composite-family]
+- `block/crystal_charger_large_front.png` — digest retired with the file (r8-tex-composite-family) (src-over `crystal_laser_large/colored/front + overlay/front`) [RETIRED r8-tex-composite-family]
+- `block/crystal_charger_large_side.png` — digest retired with the file (r8-tex-composite-family) (src-over `crystal_laser_large/colored/side + overlay/side`) [RETIRED r8-tex-composite-family]
+- `block/long_distance_transformer_front.png` — digest retired with the file (r8-tex-composite-family) (src-over `longdistancetransformer_electric/colored/front + overlay/front`) [RETIRED r8-tex-composite-family]
+- `block/long_distance_transformer_back.png` — digest retired with the file (r8-tex-composite-family) (src-over `.../colored/back + overlay/back`) [RETIRED r8-tex-composite-family]
+- `block/long_distance_transformer_side.png` — digest retired with the file (r8-tex-composite-family) (src-over `.../colored/side + overlay/side`) [RETIRED r8-tex-composite-family]
+- `block/zpm_decharger_front.png` — digest retired with the file (r8-tex-composite-family) (src-over `zpm_electricity/colored/front + overlay/front`) [RETIRED r8-tex-composite-family]
+- `block/zpm_decharger_back.png` — digest retired with the file (r8-tex-composite-family) (src-over `zpm_electricity/colored/back + overlay/back`; byte-identical to the quantum-back composite — the two families share the back overlay) [RETIRED r8-tex-composite-family]
 - `block/zpm_decharger_side.png` — `27dac6bf9e5d2cfeafb11dd83d89bf8317ed3b05ae3dc35caa7fdf3f3b718fec` (src-over `zpm_electricity/colored/side + overlay/side`; byte-identical to the quantum-side composite) [RETIRED r8-tex-composite-family]
-- `block/zpm_decharger_quantum_front.png` — `3d4a5b55a3300f6949bfa9a564615304fc3795c1eb99a52874becaf494150c4c` (src-over `zpm_quantum/colored/front + overlay/front`) [RETIRED r8-tex-composite-family]
-- `block/zpm_decharger_quantum_back.png` — `f9b323b0b87a687865b32b0908316fe11958210c822d4ded4ece0da99acbf2bc` (src-over `zpm_quantum/colored/back + overlay/back`) [RETIRED r8-tex-composite-family]
+- `block/zpm_decharger_quantum_front.png` — digest retired with the file (r8-tex-composite-family) (src-over `zpm_quantum/colored/front + overlay/front`) [RETIRED r8-tex-composite-family]
+- `block/zpm_decharger_quantum_back.png` — digest retired with the file (r8-tex-composite-family) (src-over `zpm_quantum/colored/back + overlay/back`) [RETIRED r8-tex-composite-family]
 - `block/zpm_decharger_quantum_side.png` — `27dac6bf9e5d2cfeafb11dd83d89bf8317ed3b05ae3dc35caa7fdf3f3b718fec` (src-over `zpm_quantum/colored/side + overlay/side`) [RETIRED r8-tex-composite-family]
 
 Byte copies:
