@@ -744,13 +744,13 @@ class SliceWrapTest(unittest.TestCase):
             calls.append(argv)
             return 0
 
-        self.assertTrue(gate.slice_bootstrap(25, 4, run=fake_run))
-        self.assertTrue(gate.slice_bootstrap(25, 4, run=fake_run))
+        self.assertTrue(gate.slice_bootstrap(22, 4, run=fake_run))
+        self.assertTrue(gate.slice_bootstrap(22, 4, run=fake_run))
         self.assertEqual(len(calls), 2)
         self.assertEqual(calls[0], calls[1])      # 重复调用属性不变
         self.assertEqual(calls[0],
                          ["systemctl", "--user", "set-property",
-                          "gt6gate.slice", "MemoryMax=25G",
+                          "gt6gate.slice", "MemoryMax=22G",
                           "MemorySwapMax=4G", "--runtime"])
         # --cap/--swap 可调数值进属性
         calls.clear()
@@ -1290,7 +1290,7 @@ class EnvelopeAdmissionTest(unittest.TestCase):
         with open(self.path) as fh:
             return fh.read()
 
-    def admit(self, readings, estimate=4000, cap_gib=25, poll=0.01, **kw):
+    def admit(self, readings, estimate=4000, cap_gib=22, poll=0.01, **kw):
         """readings: (slice, used) 二元组序列，每轮轮询消费一个。"""
         slices = iter([r[0] for r in readings])
         useds = iter([r[1] for r in readings])
@@ -1316,17 +1316,17 @@ class EnvelopeAdmissionTest(unittest.TestCase):
         self.assertIn("outside=15000MiB", body)
 
     def test_envelope_over_cap_queues_then_admits_on_relief(self):
-        # slice 10000 + est 20000 = 30000 > 25600 → 排队；回落后放行
+        # slice 10000 + est 20000 = 30000 > 22528 → 排队；回落后放行
         self.admit([(10000, 8000), (1000, 8000)], estimate=20000)
         body = self.journal()
         self.assertIn("gate-queue", body)
         self.assertIn("envelope slice=10000MiB est=20000MiB "
-                      "predicted=30000MiB cap=25600MiB", body)
+                      "predicted=30000MiB cap=22528MiB", body)
         self.assertIn("gate-admit", body)
 
     def test_boundary_at_cap_admits(self):
-        # 信封整好压线（slice 20000 + est 5600 == 25600）→ 不排队
-        self.admit([(20000, 8000)], estimate=5600)
+        # 信封整好压线（slice 20000 + est 2528 == 22528）→ 不排队
+        self.admit([(20000, 8000)], estimate=2528)
         self.assertNotIn("gate-queue", self.journal())
 
     def test_env_opt_in_guard_queues_high_baseline(self):
@@ -1394,7 +1394,7 @@ class WatchdogTickTest(unittest.TestCase):
             (d / "memory.current").write_text(f"{mib * 1024 * 1024}\n")
         return root
 
-    def tick(self, children, unit="me.scope", budget=8192, cap=25600):
+    def tick(self, children, unit="me.scope", budget=8192, cap=22528):
         root = self.make_tree(children) if children else tempfile.mkdtemp()
         stops = []
         try:
@@ -1416,7 +1416,7 @@ class WatchdogTickTest(unittest.TestCase):
         self.assertEqual((own, kills, stops), (100, [], []))
 
     def test_aggregate_kills_largest_sibling_first(self):
-        # 总 27100 > 25600：最大者 sibA(15000) 先杀 → 回到 12100 ≤ 帽即停
+        # 总 27100 > 22528：最大者 sibA(15000) 先杀 → 回到 12100 ≤ 帽即停
         own, kills, stops = self.tick({"me.scope": 100, "sibA.scope": 15000,
                                        "sibB.scope": 12000})
         self.assertEqual(kills, [("aggregate", "sibA.scope", 15000)])
@@ -1529,7 +1529,7 @@ class WatchdogRunTest(unittest.TestCase):
         self.assertEqual(stops[0], calls[0][0])
         self.assertEqual(stops[1], calls[0][0])
         self.assertEqual(calls[0][1], gate.TASK_CAP_MIB["other"])  # 预算来自分级表
-        self.assertEqual(calls[0][2], 25 * 1024)  # 项目帽=cap_gib*1024
+        self.assertEqual(calls[0][2], 22 * 1024)  # 项目帽=cap_gib*1024
         self.assertIn("task exceeded 9000 MiB budget (8192 MiB, class other)",
                       err)
         self.assertIn("budget-kill", journal)     # 审计流水
@@ -1545,7 +1545,7 @@ class WatchdogRunTest(unittest.TestCase):
         watchdog.fired = False
         rc, stops, err, journal = self.gated(watchdog)
         self.assertEqual(rc, gate.BUDGET_EXIT)
-        self.assertIn("aggregate over 25G cap — killed own cgroup (20000 MiB)",
+        self.assertIn("aggregate over 22G cap — killed own cgroup (20000 MiB)",
                       err)
         self.assertIn("aggregate-kill", journal)
 
@@ -1678,9 +1678,9 @@ class DryRunTest(unittest.TestCase):
         self.assertIn("slice current:  0 MiB", body)
         self.assertIn("cold default", body)
         self.assertIn("4000 MiB", body)          # 冷启动估算
-        # envelope: 0 + 4000 = 4000 ≤ cap 25600；outside 沦为信息项
+        # envelope: 0 + 4000 = 4000 ≤ cap 22528；outside 沦为信息项
         self.assertIn("envelope:       slice 0 + estimate 4000 = 4000 MiB "
-                      "(cap 25600 MiB)", body)
+                      "(cap 22528 MiB)", body)
         self.assertIn("outside:        used 8000 - slice 0 = 8000 MiB "
                       "(informational", body)
 
@@ -1691,9 +1691,9 @@ class DryRunTest(unittest.TestCase):
         self.assertEqual(word, "QUEUE")
         body = "\n".join(lines)
         self.assertIn("ledger", body)            # 来源=台账非冷启动
-        # 信封判据：slice 1000 + est 26000 = 27000 > cap 25600
+        # 信封判据：slice 1000 + est 26000 = 27000 > cap 22528
         self.assertIn("envelope slice 1000 + estimate 26000 = 27000 MiB "
-                      "> cap 25600 MiB", body)
+                      "> cap 22528 MiB", body)
 
     def test_high_baseline_admits_outside_informational(self):
         # v3.5 回归钉（旧行为=QUEUE ungated pressure）：非门禁进程吃满机器

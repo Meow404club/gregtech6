@@ -48,8 +48,8 @@ run's own slice usage as "system used" and, fed by a ledger estimate
 polluted with shared-daemon RSS (a filtered-test estimate sat at 11.6G vs a
 real 2.9G peak), starved a review run for an hour. Admission is now
 computed INSIDE the envelope: ``slice memory.current + estimate(class)
-<= cap`` (25G — the slice's own MemoryMax). An empty slice admits
-instantly. The ledger stays as
+<= cap`` (22G — the slice's own MemoryMax, see the v3.6 cap revision
+below). An empty slice admits instantly. The ledger stays as
 the estimate source (info + envelope math); v3.1's --no-daemon keeps future
 samples clean (no daemon RSS inside the sampled tree) and the 14-day
 half-life decays any historical pollution.
@@ -58,8 +58,8 @@ Outside guard retired (test-gating-v3.5, 2026-09-29 user ruling "keep the
 25G envelope honest, the system side is not our business — the embedding
 service's ~8G is fixed overhead"): the v3.2 one system-side guard
 ``used - slice_current <= MemTotal - cap - 2G`` is retired. On this host
-it was pure arithmetic deadlock: MemTotal 40099 - 25G cap - 2G headroom
-puts the ceiling at ~12451 MiB, while the fixed ungated baseline
+it was pure arithmetic deadlock: MemTotal 40099 - the then-25G cap - 2G
+headroom puts the ceiling at ~12451 MiB, while the fixed ungated baseline
 (embedding service + resident ZCode sessions + OS) sits around
 15069 MiB — the predicate was permanently false and every run queued
 forever (five wrappers stuck 2026-09-29 15:09-15:35, gate-queue
@@ -69,12 +69,21 @@ outside=20025→23396 vs limit=12452). Admission is envelope-only;
 ``GT6_GATE_MEM_LIMIT_MIB`` to a valid integer (an absolute MiB
 threshold, opt-in); unset or invalid values keep the guard disabled.
 
+Cap revision (test-gating-v3.6, 2026-09-29 user ruling after the third WSL
+crash that day, ~16:3x): ``SLICE_CAP_GIB`` 25 → 22. The host carries
+MemTotal 40099 MiB with a ~15 G ungated baseline (embedding service ~8 G +
+resident ZCode sessions + OS), so the 25 G cap + baseline ≈ 40 G ≈ taut;
+22 G + 15 G = 37 G leaves ~2.5 G of headroom. Value-only change — the
+v3.2-v3.5 semantics (envelope-only predicate, retired outside guard,
+budgets, slots, watchdog, reaping) are untouched. Earlier paragraphs keep
+their historical figures as of their own dates.
+
 Per-task budget + script watchdog (test-gating-v3.3, 2026-09-29 sixth
 ruling): the ruling holds memory.max cannot be RELIED UPON on this host
 (Brokestar kernel, custom reclaim logic), so the script watchdog is the
 first enforcer. Empirical note (same-day probe): scope-level MemoryMax IS
 enforced here — a 300M scope running a 1G malloc was kernel-OOM-killed
-(rc 137, oom_kill counter up); the SLICE level (gt6gate.slice 25G) is
+(rc 137, oom_kill counter up); the SLICE level (gt6gate.slice 22G) is
 unverified — the destructive probe is deferred to the r8 closeout when the
 slice is idle. The original non-enforcement observation is of uncertain
 origin (slice level, or pre-v3.3 scopes that never carried a per-task
@@ -87,18 +96,19 @@ read, no /proc walk) and, past the per-task budget (TASK_CAP_MIB: full 12G
 2 s → KILLs the task's own cgroup and exits BUDGET_EXIT (97) so callers can
 distinguish "over budget" (watchdog) from an ordinary failure — a kernel
 OOM kill surfaces as the usual negative signal code instead. The tick also
-sums every sub-cgroup under gt6gate.slice; past the 25G project cap it
+sums every sub-cgroup under gt6gate.slice; past the 22G project cap it
 kills the LARGEST sub-cgroups first (max reclaim per kill → fewest victims,
 fastest return under cap; fresh runs are naturally spared — they are still
 small) until back under cap. Kills are per-task cgroups: siblings keep
 running.
 
-Hard cap (test-gating-v3c, 2026-09-29 third ruling, 25G revision): the
+Hard cap (test-gating-v3c, 2026-09-29 third ruling; 22G since v3.6): the
 runner wraps the child in ``systemd-run --user --scope
 -p Slice=gt6gate.slice`` so every gated gradle shares one memory envelope —
-``systemctl --user set-property gt6gate.slice MemoryMax=25G
-MemorySwapMax=4G --runtime`` (25G leaves 5G headroom for ungated processes;
-``--cap``/``--swap`` retune, defaults 25/4).
+``systemctl --user set-property gt6gate.slice MemoryMax=22G
+MemorySwapMax=4G --runtime`` (22G + the ~15G ungated baseline ≈ 37G on
+this 40099 MiB host, ~2.5G headroom; ``--cap``/``--swap`` retune,
+defaults 22/4).
 The aggregate is naturally bounded; on exhaustion the kernel OOM-kills
 inside the slice, never the WSL host. Bootstrap is idempotent and
 re-asserted per run; if systemctl/systemd-run are unavailable the gate
@@ -175,7 +185,8 @@ CLASSES = tuple(COLD_ESTIMATE_MIB)
 
 # --- v3c shared-slice hard cap (test-gating-v3c, 2026-09-29) ---------------
 SLICE_NAME = "gt6gate.slice"
-SLICE_CAP_GIB = 25              # 30G box: 5G headroom for ungated processes
+SLICE_CAP_GIB = 22              # MemTotal 40099MiB: ~15G ungated baseline
+                                # + 22G ≈ 37G, ~2.5G headroom (v3.6, was 25)
 SLICE_SWAP_GIB = 4
 SLICE_ENV = "GT6_GATE_SLICE"    # "0" disables the wrap entirely
 
@@ -411,7 +422,7 @@ def slice_children_usage(slice_name=SLICE_NAME, cgroup_root="/sys/fs/cgroup",
 
     Each child directory of the slice is one task scope (v3.1's deterministic
     --unit names); their sum is the project aggregate the watchdog enforces
-    the 25G cap against, and the per-unit own read is the budget comparator.
+    the 22G cap against, and the per-unit own read is the budget comparator.
     v3.4: both faces read EFFECTIVE usage (memory.current minus reclaimable
     cache — the anon view) so a cache-padded cgroup neither fires the budget
     kill nor skews the aggregate; the kernel MemoryMax itself is untouched
@@ -1236,7 +1247,8 @@ def main(argv=None):
                              f"{KEEP_DAEMON_ENV}=1)")
     parser.add_argument("--cap", type=int, default=SLICE_CAP_GIB,
                         help="shared gt6gate.slice MemoryMax in GiB "
-                             "(default: 25 — 5G headroom on a 30G box)")
+                             "(default: 22 — ~2.5G headroom over the ~15G "
+                             "ungated baseline on this 40099MiB host)")
     parser.add_argument("--swap", type=int, default=SLICE_SWAP_GIB,
                         help="shared gt6gate.slice MemorySwapMax in GiB "
                              "(default: 4)")
