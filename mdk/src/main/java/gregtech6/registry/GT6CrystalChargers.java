@@ -102,10 +102,32 @@ public final class GT6CrystalChargers {
 					net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
 							.strength(4.0F, 4.0F).sound(SoundType.METAL),
 					tTier, tSlots, () -> tSlots == 16 ? CHARGER_LARGE_BE.get() : CHARGER_BE.get(),
-					() -> gregapi.data.TD.Energy.LU))); // the NBT_ENERGY_EMITTED LU column (:970-:971)
+					() -> gregapi.data.TD.Energy.LU, // the NBT_ENERGY_EMITTED LU column (:970-:971)
+					casingOf(tTier)))); // the :970-:971 NBT_MATERIAL Electric_T[i] column
 			ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new BlockItem(
 					BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties().stacksTo(16))));
 		}
+	}
+
+	/**
+	 * The Electric_T[i] casing of one charger row (upstream MT.java:3691): tiers 0..8 ride
+	 * the shared transformer CASING_LADDER (the converter card's 9-member copy), the T9
+	 * row rides Trinaquadalloy = the upstream Electric_T[9] member (the ladder stops one
+	 * short of the charger loop's :968 {@code i < 10}).
+	 */
+	private static java.util.function.Supplier<gregapi.oredict.OreDictMaterial> casingOf(int aTier) {
+		return aTier < gregtech6.registry.GT6ElectricTransformers.CASING_LADDER.size()
+				? gregtech6.registry.GT6ElectricTransformers.CASING_LADDER.get(aTier)
+				: () -> gregapi.data.MT.Trinaquadalloy;
+	}
+
+	/**
+	 * The tint-walk array (task r8-tex-composite-family — the
+	 * GT6ElectricTransformers.paintableBlockArray form): all twenty row blocks, every row
+	 * carries its NBT_MATERIAL casing column.
+	 */
+	public static net.minecraft.world.level.block.Block[] paintableBlockArray() {
+		return ROWS.stream().map(aRow -> BLOCKS_BY_PATH.get(aRow.path()).get()).toArray(net.minecraft.world.level.block.Block[]::new);
 	}
 
 	private GT6CrystalChargers() {}

@@ -242,6 +242,16 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		wrapStates(gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.get(), aEvent);
 		for (Block tBlock : gregtech6.registry.GTItemPipes.blockArray()) wrapStates(tBlock, aEvent);
 		wrapStates(gregtech6.registry.GT6Logistics.LOGISTICS_WIRE.get(), aEvent);
+		// task r8-tex-composite-family — the composite-energy families join the baked-tint
+		// domain: the 12 battery boxes + 20 crystal chargers + 2 ZPM dechargers + 5 LD
+		// transformer endpoints (every row carries NBT_MATERIAL upstream — Loader
+		// :894-:895/:970-:971/:1000-:1001/:909-:913; the two-layer body cube is the
+		// tintindex-0 seat, the overlay decals untinted; the colour resolves through the
+		// GT6BatteryBoxBlock / GT6ElectricTransformerBlock carriers)
+		for (Block tBlock : gregtech6.registry.GT6Batteries.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		for (Block tBlock : gregtech6.registry.GT6CrystalChargers.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		for (Block tBlock : gregtech6.registry.GT6ZpmDechargers.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		for (Block tBlock : gregtech6.registry.GT6LongDistanceTransformers.paintableBlockArray()) wrapStates(tBlock, aEvent);
 	}
 
 	/**
@@ -298,6 +308,13 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// without a fork (the GT6BlockTags mineable-band lambda shape)
 		gregtech6.registry.GTItemPipes.ITEMS_BY_PATH.values().forEach(tPipeItem -> tPaintItems.add(tPipeItem.get()));
 		tPaintItems.add(gregtech6.registry.GT6Logistics.LOGISTICS_WIRE_ITEM.get());
+		// task r8-tex-composite-family — the composite-energy families' 39 BlockItems (the
+		// 12 battery boxes + 20 crystal chargers + 2 ZPM dechargers + 5 LD endpoints) join
+		// the same lambda
+		for (Block tBlock : gregtech6.registry.GT6Batteries.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		for (Block tBlock : gregtech6.registry.GT6CrystalChargers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		for (Block tBlock : gregtech6.registry.GT6ZpmDechargers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		for (Block tBlock : gregtech6.registry.GT6LongDistanceTransformers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tPaintItems.toArray(Item[]::new));
 	}
 

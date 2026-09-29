@@ -1,53 +1,49 @@
 {
   "variants": {
     "active=false,facing=down": {
-      "model": "gt6:block/long_distance_transformer",
-      "x": 90,
-      "y": 90
+      "model": "gt6:block/long_distance_transformer/long_distance_transformer",
+      "x": 90
     },
     "active=false,facing=east": {
-      "model": "gt6:block/long_distance_transformer",
+      "model": "gt6:block/long_distance_transformer/long_distance_transformer",
       "y": 90
     },
     "active=false,facing=north": {
-      "model": "gt6:block/long_distance_transformer"
+      "model": "gt6:block/long_distance_transformer/long_distance_transformer"
     },
     "active=false,facing=south": {
-      "model": "gt6:block/long_distance_transformer",
+      "model": "gt6:block/long_distance_transformer/long_distance_transformer",
       "y": 180
     },
     "active=false,facing=up": {
-      "model": "gt6:block/long_distance_transformer",
-      "x": 270,
-      "y": 90
+      "model": "gt6:block/long_distance_transformer/long_distance_transformer",
+      "x": 270
     },
     "active=false,facing=west": {
-      "model": "gt6:block/long_distance_transformer",
+      "model": "gt6:block/long_distance_transformer/long_distance_transformer",
       "y": 270
     },
     "active=true,facing=down": {
-      "model": "gt6:block/long_distance_transformer",
-      "x": 90,
-      "y": 90
+      "model": "gt6:block/long_distance_transformer/long_distance_transformer_active",
+      "x": 90
     },
     "active=true,facing=east": {
-      "model": "gt6:block/long_distance_transformer",
+      "model": "gt6:block/long_distance_transformer/long_distance_transformer_active",
       "y": 90
     },
     "active=true,facing=north": {
-      "model": "gt6:block/long_distance_transformer"
+      "model": "gt6:block/long_distance_transformer/long_distance_transformer_active"
     },
     "active=true,facing=south": {
-      "model": "gt6:block/long_distance_transformer",
+      "model": "gt6:block/long_distance_transformer/long_distance_transformer_active",
       "y": 180
     },
     "active=true,facing=up": {
-      "model": "gt6:block/long_distance_transformer",
-      "x": 270,
-      "y": 90
+      "model": "gt6:block/long_distance_transformer/long_distance_transformer_active",
+      "x": 270
     },
     "active=true,facing=west": {
-      "model": "gt6:block/long_distance_transformer",
+      "model": "gt6:block/long_distance_transformer/long_distance_transformer_active",
       "y": 270
     }
   }

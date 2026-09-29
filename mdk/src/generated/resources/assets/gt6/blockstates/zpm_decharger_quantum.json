@@ -1,26 +1,49 @@
 {
   "variants": {
-    "facing=down": {
-      "model": "gt6:block/zpm_decharger_quantum",
+    "active=false,facing=down": {
+      "model": "gt6:block/zpm_decharger_quantum/zpm_decharger_quantum",
       "x": 90
     },
-    "facing=east": {
-      "model": "gt6:block/zpm_decharger_quantum",
+    "active=false,facing=east": {
+      "model": "gt6:block/zpm_decharger_quantum/zpm_decharger_quantum",
       "y": 90
     },
-    "facing=north": {
-      "model": "gt6:block/zpm_decharger_quantum"
+    "active=false,facing=north": {
+      "model": "gt6:block/zpm_decharger_quantum/zpm_decharger_quantum"
     },
-    "facing=south": {
-      "model": "gt6:block/zpm_decharger_quantum",
+    "active=false,facing=south": {
+      "model": "gt6:block/zpm_decharger_quantum/zpm_decharger_quantum",
       "y": 180
     },
-    "facing=up": {
-      "model": "gt6:block/zpm_decharger_quantum",
+    "active=false,facing=up": {
+      "model": "gt6:block/zpm_decharger_quantum/zpm_decharger_quantum",
       "x": 270
     },
-    "facing=west": {
-      "model": "gt6:block/zpm_decharger_quantum",
+    "active=false,facing=west": {
+      "model": "gt6:block/zpm_decharger_quantum/zpm_decharger_quantum",
+      "y": 270
+    },
+    "active=true,facing=down": {
+      "model": "gt6:block/zpm_decharger_quantum/zpm_decharger_quantum_active",
+      "x": 90
+    },
+    "active=true,facing=east": {
+      "model": "gt6:block/zpm_decharger_quantum/zpm_decharger_quantum_active",
+      "y": 90
+    },
+    "active=true,facing=north": {
+      "model": "gt6:block/zpm_decharger_quantum/zpm_decharger_quantum_active"
+    },
+    "active=true,facing=south": {
+      "model": "gt6:block/zpm_decharger_quantum/zpm_decharger_quantum_active",
+      "y": 180
+    },
+    "active=true,facing=up": {
+      "model": "gt6:block/zpm_decharger_quantum/zpm_decharger_quantum_active",
+      "x": 270
+    },
+    "active=true,facing=west": {
+      "model": "gt6:block/zpm_decharger_quantum/zpm_decharger_quantum_active",
       "y": 270
     }
   }

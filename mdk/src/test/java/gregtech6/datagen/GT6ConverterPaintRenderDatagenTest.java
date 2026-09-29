@@ -284,7 +284,10 @@ class GT6ConverterPaintRenderDatagenTest {
                 "zpm_decharger_quantum", "zpm_decharger_electric");
         for (String tPath : tBattery) {
             JsonObject tVariants = json("assets/gt6/blockstates/" + tPath + ".json").getAsJsonObject("variants");
-            assertEquals(6, tVariants.size(), tPath + ": the six-way variants");
+            // r8-tex-composite-family: the battery-box carrier gained the ACTIVE property —
+            // the companion blockstates joined the 12-variant form (their own texture rows
+            // are the GT6CompositeEnergyTexDatagenTest domain)
+            assertEquals(12, tVariants.size(), tPath + ": the six-way x active variants");
         }
     }
 

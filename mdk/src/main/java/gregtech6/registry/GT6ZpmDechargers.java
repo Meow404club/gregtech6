@@ -90,10 +90,20 @@ public final class GT6ZpmDechargers {
 			int tTier = tRow.tier(), tSlots = tRow.slots();
 			BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(), () -> new GT6ZpmDechargerBlock(
 					BlockBehaviour.Properties.of().strength(4.0F, 50.0F).sound(SoundType.METAL), // NBT_HARDNESS/RESISTANCE 4.0/50.0
-					tTier, tSlots, ZPM_DECHARGER_BE::get, inType(tRow), tRow.outType())));
+					tTier, tSlots, ZPM_DECHARGER_BE::get, inType(tRow), tRow.outType(),
+					() -> gregapi.data.MT.Osmiridium))); // the :1000-:1001 NBT_MATERIAL column (both rows, the tint source)
 			ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new BlockItem(
 					BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties().stacksTo(16))));
 		}
+	}
+
+	/**
+	 * The tint-walk array (task r8-tex-composite-family — the
+	 * GT6ElectricTransformers.paintableBlockArray form): both row blocks, every row
+	 * carries its NBT_MATERIAL column (Osmiridium).
+	 */
+	public static net.minecraft.world.level.block.Block[] paintableBlockArray() {
+		return ROWS.stream().map(aRow -> BLOCKS_BY_PATH.get(aRow.path()).get()).toArray(net.minecraft.world.level.block.Block[]::new);
 	}
 
 	private GT6ZpmDechargers() {}

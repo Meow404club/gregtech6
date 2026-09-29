@@ -216,12 +216,29 @@ public class GT6BatteryBoxBlockEntity extends TileEntityBase03TicksAndSync imple
 		// the :108 20-tick throttle — the item callback is deliberately slow-paced upstream
 		if (aTimer % 20 == 1) doBatteryPhase();
 		doEmit();
+		syncActiveToState();
 	}
 
 	/** The /setblock RCON path: the state is the authority (the transformer syncFacingFromState form). */
 	void syncFacingFromState() {
 		if (getBlockState().hasProperty(GT6BatteryBoxBlock.FACING)) {
 			mFacing = (byte) getBlockState().getValue(GT6BatteryBoxBlock.FACING).get3DDataValue();
+		}
+	}
+
+	/**
+	 * The activity visual write (task r8-tex-composite-family — the upstream getTexture2
+	 * {@code sOverlays[mActiveState & 3]} layer, the GT6ElectricTransformerBlockEntity
+	 * .syncActiveToState form): the {@code mActive} flag lands on the blockstate's ACTIVE
+	 * property, the overlay_active model shell reads it. Same-block state writes keep the
+	 * BE; the flip-only guard keeps this off the per-tick hot path. The offline STONE-state
+	 * fixtures carry no ACTIVE property (the hasProperty guard).
+	 */
+	void syncActiveToState() {
+		BlockState tState = getBlockState();
+		if (tState.hasProperty(GT6BatteryBoxBlock.ACTIVE)
+				&& tState.getValue(GT6BatteryBoxBlock.ACTIVE) != mActive && hasLevel()) {
+			getLevel().setBlock(getBlockPos(), tState.setValue(GT6BatteryBoxBlock.ACTIVE, mActive), 3);
 		}
 	}
 

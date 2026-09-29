@@ -300,11 +300,22 @@ public final class GT6Batteries {
 	/**
 	 * The row block: hardness/resistance 4.0/4.0 (the NBT_HARDNESS/NBT_RESISTANCE columns),
 	 * metal sounds, the family BET supplier picked by the slot count (the two-loop form of
-	 * the :893-:896 pair).
+	 * the :893-:896 pair), the row's Electric_T[i] casing material
+	 * (Loader :894-:895 NBT_MATERIAL, the tint colour source — task r8-tex-composite-family).
 	 */
 	private static GT6BatteryBoxBlock batteryBox(BoxRow aRow) {
 		return new GT6BatteryBoxBlock(BlockBehaviour.Properties.of().strength(4.0F, 4.0F).sound(SoundType.METAL),
-				aRow.tier(), aRow.slots(), () -> aRow.slots() == 4 ? BATTERY_BOX_BE.get() : BATTERY_BOX_LARGE_BE.get());
+				aRow.tier(), aRow.slots(), () -> aRow.slots() == 4 ? BATTERY_BOX_BE.get() : BATTERY_BOX_LARGE_BE.get(),
+				() -> gregapi.data.TD.Energy.EU, gregtech6.registry.GT6ElectricTransformers.CASING_LADDER.get(aRow.tier()));
+	}
+
+	/**
+	 * The tint-walk array (task r8-tex-composite-family — the
+	 * GT6ElectricTransformers.paintableBlockArray form): all twelve row blocks, every row
+	 * carries its NBT_MATERIAL casing column.
+	 */
+	public static net.minecraft.world.level.block.Block[] paintableBlockArray() {
+		return BOX_ROWS.stream().map(aRow -> BATTERY_BOX_BLOCKS.get(aRow.path()).get()).toArray(net.minecraft.world.level.block.Block[]::new);
 	}
 
 	// ---------------------------------------------------------------------------

@@ -43,13 +43,26 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * sizes share the BE class over two BETs. The GUI is the pool (upstream opens a
  * ContainerCommonDefault; the port face is the item slot NBT + the capability item
  * handler); the {@code use()} override is the wrench-rotate arm ONLY, NO onRemove
- * override (the BaseEntityBlock kill+recreate lesson), no ACTIVE property (the box has
- * no activity layer upstream).
+ * override (the BaseEntityBlock kill+recreate lesson).
+ *
+ * <p>Since task r8-tex-composite-family the block carries the ACTIVITY and MATERIAL
+ * columns of the upstream rows: the ACTIVE property drives the overlay_active texture
+ * shell (upstream {@code getTexture2 sOverlays[mActiveState & 3]} — MultiTileEntityBatteryBox
+ * :31-:33 / CrystalCharger :33-:36 / ZPMDechargerEU :39-:44, the trinary collapsed to the
+ * boolean, 0=overlay / 1=overlay_active, the blinking third state the r4-18 defer), and
+ * the material supplier feeds the tint seat (upstream {@code NBT_MATERIAL, MT.DATA.
+ * Electric_T[i]} per row — Loader_MultiTileEntities :894-:895/:970-:971, the ZPM rows
+ * MT.Osmiridium :1000-:1001 — the {@link GT6ElectricTransformerBlock} lazy-Supplier
+ * form). The former "no activity layer upstream" doc claim was a misreading — every
+ * energystorages family borrows its overlay_active trio.
  */
 public class GT6BatteryBoxBlock extends GTEntityBlock {
 
 	/** Facing property (six-way, issue #18 — FRONT is the output face, ALL-BUT-FRONT the input; upstream SIDES_VALID = all six). */
 	public static final DirectionProperty FACING = BlockStateProperties.FACING;
+
+	/** The activity visual property (the overlay layer selector; the BE drives it off {@code mActive}) — the GTBlockProperties shared singleton. */
+	public static final net.minecraft.world.level.block.state.properties.BooleanProperty ACTIVE = gregtech6.block.GTBlockProperties.ACTIVE;
 
 	/** The NBT_INV_SIZE column: 4 (the small box, :894) or 16 (the Large box, :895). */
 	private final int mSlots;
@@ -63,20 +76,57 @@ public class GT6BatteryBoxBlock extends GTEntityBlock {
 	/** The energy domain of the box (task p35: EU = the battery boxes, LU = the Crystal Chargers — the NBT_ENERGY_ACCEPTED/EMITTED columns). */
 	private final Supplier<TagData> mEnergyType;
 
+	/**
+	 * The block's upstream {@code NBT_MATERIAL} column (task r8-tex-composite-family —
+	 * the tint colour source, the {@link GT6ElectricTransformerBlock} lazy-Supplier
+	 * form): the row's Electric_T[i] casing (Loader :894-:895/:970-:971) or Osmiridium
+	 * (the ZPM rows :1000-:1001).
+	 */
+	@Nullable
+	private final Supplier<gregapi.oredict.OreDictMaterial> mMaterial;
+
 	public GT6BatteryBoxBlock(Properties aProperties, int aTier, int aSlots,
 			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType) {
-		this(aProperties, aTier, aSlots, aTickerType, () -> gregapi.data.TD.Energy.EU);
+		this(aProperties, aTier, aSlots, aTickerType, () -> gregapi.data.TD.Energy.EU, null);
 	}
 
 	/** The typed constructor (task p35 — the Crystal Charger LU family). */
 	public GT6BatteryBoxBlock(Properties aProperties, int aTier, int aSlots,
 			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType, Supplier<TagData> aEnergyType) {
+		this(aProperties, aTier, aSlots, aTickerType, aEnergyType, null);
+	}
+
+	/** The material-carrier form (task r8-tex-composite-family): the row feeds the tint colour source. */
+	public GT6BatteryBoxBlock(Properties aProperties, int aTier, int aSlots,
+			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType, Supplier<TagData> aEnergyType,
+			@Nullable Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
 		super(aProperties);
 		mTier = aTier;
 		mSlots = aSlots;
 		mTickerType = aTickerType;
 		mEnergyType = aEnergyType;
-		registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+		mMaterial = aMaterial;
+		registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE, false));
+	}
+
+	/**
+	 * The block's upstream {@code NBT_MATERIAL}, resolved lazily through the Supplier;
+	 * null = the white no-tint identity (the offline codec representative).
+	 */
+	@Nullable
+	public gregapi.oredict.OreDictMaterial material() {
+		return mMaterial == null ? null : mMaterial.get();
+	}
+
+	/**
+	 * The battery-box material dispatch (task r8-tex-composite-family, the
+	 * {@link GT6ElectricTransformerBlock#materialOf} mirror shape): the carrier blocks
+	 * (battery boxes, crystal chargers, ZPM dechargers) resolve their row material —
+	 * every other block is null here.
+	 */
+	@Nullable
+	public static gregapi.oredict.OreDictMaterial materialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
+		return aBlock instanceof GT6BatteryBoxBlock tBox ? tBox.material() : null;
 	}
 
 	/** The box's energy domain (the BE resolveEnergyType seat; lazy like every MT/TD read). */
@@ -102,7 +152,8 @@ public class GT6BatteryBoxBlock extends GTEntityBlock {
 	//? if neoforge {
 	/*
 	// 21.1 made BaseEntityBlock.codec() abstract — the GT6ElectricTransformerBlock
-	// simpleCodec representative-value form (slot count 4, the family supplier dropped).
+	// simpleCodec representative-value form (slot count 4, the family/material suppliers
+	// dropped).
 	@Override
 	protected com.mojang.serialization.MapCodec<? extends GT6BatteryBoxBlock> codec() {
 		return simpleCodec(aProperties -> new GT6BatteryBoxBlock(aProperties, 0, 4, () -> null));
@@ -111,7 +162,7 @@ public class GT6BatteryBoxBlock extends GTEntityBlock {
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> aBuilder) {
-		aBuilder.add(FACING);
+		aBuilder.add(FACING, ACTIVE);
 	}
 
 	@Override
