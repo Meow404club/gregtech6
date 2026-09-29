@@ -29,6 +29,7 @@ import net.minecraftforge.registries.RegistryObject;
 import gregtech6.block.wire.GTWireBlock;
 import gregtech6.block.wire.GTWireBlockItem;
 import gregtech6.tileentity.connectors.GTWireBlockEntity;
+import gregtech6.tooltip.GT6Tooltips;
 
 /**
  * Electric wire registration, card-owned (ADR-P3-4): self-contained
@@ -76,6 +77,19 @@ public final class GTWires {
 				.noOcclusion().isViewBlocking(GTWires::never);
 	}
 
+	/**
+	 * The tier display word of the voltage row ({@code VN[UT.Code.tierMin(mVoltage)]},
+	 * MultiTileEntityWireElectric.java:127) — the {@code UT.Code.tierMin} ladder verbatim
+	 * (gregapi/util/UT.java:1395-1401) walked over the {@link GTWireSpecs#V} table. 32 EU
+	 * resolves LV, 8 EU ULV (the highest V entry not above the voltage).
+	 */
+	private static String tierName(long aVoltage) {
+		byte i = -1;
+		aVoltage = Math.abs(aVoltage);
+		while (++i < GTWireSpecs.V.length) if (aVoltage < GTWireSpecs.V[i]) return GTWireSpecs.VN[Math.max(0, i - 1)];
+		return GTWireSpecs.VN[GTWireSpecs.V.length - 1];
+	}
+
 	/** 1x electric wire — 32 EU / 1 A / 1 loss per segment (upstream :64 defaults). */
 	public static final RegistryObject<GTWireBlock> WIRE_ELECTRIC_1X = BLOCKS.register("wire_electric_1x",
 			() -> new GTWireBlock(32, 1, 1, wireProperties()));
@@ -85,10 +99,12 @@ public final class GTWires {
 			() -> new GTWireBlock(32, 2, 1, wireProperties()));
 
 	public static final RegistryObject<Item> WIRE_ELECTRIC_1X_ITEM = ITEMS.register("wire_electric_1x",
-			() -> new GTWireBlockItem(WIRE_ELECTRIC_1X.get(), new Item.Properties()));
+			() -> new GTWireBlockItem(WIRE_ELECTRIC_1X.get(), new Item.Properties(), "wire",
+					32L, tierName(32), 1L, GT6Tooltips.makeString(1L)));
 
 	public static final RegistryObject<Item> WIRE_ELECTRIC_2X_ITEM = ITEMS.register("wire_electric_2x",
-			() -> new GTWireBlockItem(WIRE_ELECTRIC_2X.get(), new Item.Properties()));
+			() -> new GTWireBlockItem(WIRE_ELECTRIC_2X.get(), new Item.Properties(), "wire",
+					32L, tierName(32), 2L, GT6Tooltips.makeString(1L)));
 
 	// -------------------------------------------------------------------------
 	// the p9-wire-family-w1 spectrum: 620 per-(row, form, size) pairs over GTWireSpecs
@@ -121,7 +137,10 @@ public final class GTWires {
 							tVariant.row().material().get(), tVariant.size(), tVariant.insulated(),
 							tVariant.diameter(), wireProperties())); // upstream NBT_HARDNESS 1.0 / NBT_RESISTANCE 2.0
 			RegistryObject<Item> tItem = ITEMS.register(tName,
-					() -> new GTWireBlockItem(tBlock.get(), new Item.Properties().stacksTo(tVariant.maxStack())));
+					() -> new GTWireBlockItem(tBlock.get(), new Item.Properties().stacksTo(tVariant.maxStack()),
+							tBlock.get().contactDamage() ? "wire_contact" : "wire",
+							tVariant.voltage(), tierName(tVariant.voltage()), tVariant.amperage(),
+							GT6Tooltips.makeString(tVariant.loss())));
 			FAMILY_BLOCKS.add(tBlock);
 			FAMILY_ITEMS.add(tItem);
 			FAMILY_BY_NAME.put(tName, tBlock);
@@ -153,7 +172,10 @@ public final class GTWires {
 							tVariant.row().material().get(), tVariant.size(), tVariant.insulated(),
 							tVariant.diameter(), GTWireSpecs.Row.Family.REDSTONE, wireProperties())); // upstream NBT_HARDNESS 1.0 / NBT_RESISTANCE 2.0 (:1893-1902)
 			RegistryObject<Item> tItem = ITEMS.register(tName,
-					() -> new GTWireBlockItem(tBlock.get(), new Item.Properties().stacksTo(tVariant.maxStack())));
+					// the unregistered family key = the zero-row T1 contract: the upstream
+					// WireElectric stat rows must not leak onto the redstone family (voltage
+					// 0 / the EU face gated off at the BE)
+					() -> new GTWireBlockItem(tBlock.get(), new Item.Properties().stacksTo(tVariant.maxStack()), "wire_redstone"));
 			REDSTONE_BLOCKS.add(tBlock);
 			REDSTONE_ITEMS.add(tItem);
 			REDSTONE_BY_NAME.put(tName, tBlock);
@@ -194,7 +216,9 @@ public final class GTWires {
 							tVariant.row().material().get(), tVariant.size(), tVariant.insulated(),
 							tVariant.diameter(), GTWireSpecs.Row.Family.LASER, wireProperties())); // upstream NBT_HARDNESS 1.0 / NBT_RESISTANCE 2.0 (:1815)
 			RegistryObject<Item> tItem = ITEMS.register(tName,
-					() -> new GTWireBlockItem(tBlock.get(), new Item.Properties().stacksTo(tVariant.maxStack())));
+					// the unregistered family key = the zero-row T1 contract (the lossless
+					// laser wire takes its own upstream tooltip face, not the EU stat rows)
+					() -> new GTWireBlockItem(tBlock.get(), new Item.Properties().stacksTo(tVariant.maxStack()), "wire_laser"));
 			LASER_BLOCKS.add(tBlock);
 			LASER_ITEMS.add(tItem);
 			LASER_BY_NAME.put(tName, tBlock);

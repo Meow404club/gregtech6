@@ -163,6 +163,7 @@ public class GT6EnUs extends LanguageProvider {
         addBoilerTooltip(); // task r8-tooltip-infra — table-tail append (the T1 pilot rows)
         addSensorJade(); // task r8-jade-sensor-provider — table-tail append
         addFamilyTooltips(); // task r8-tooltip-multiblock-generator — table-tail append (the T4 three-family rows)
+        addWirePipeSensorTooltips(); // task r8-tooltip-wire-pipe-sensor — table-tail append (the T5 rows)
         addPocketTools(); // task p29-w5-t7-pocket-eight — table-tail append
         addArmor(); // task p29-w5-t8-armor-24 — table-tail append
         addTreeBlocks(); // task p30-w6-t1-trees-nine — table-tail append
@@ -2477,6 +2478,41 @@ public class GT6EnUs extends LanguageProvider {
         add("gt6.tooltip.generator.9", "Causes Damage when touched while active! (Top)");
         add("gt6.tooltip.generator.10", "Use Shovel to empty this");
         add("gt6.tooltip.generator.11", "Use Wrench to set Facing");
+    }
+    /**
+     * The wire/pipe/sensor tooltip rows (task r8-tooltip-wire-pipe-sensor, 20 keys): the
+     * four connector families' static addToolTips transcriptions, en VERBATIM from the
+     * upstream assemblies. The stat rows are positional-slot templates over the carrier's
+     * per-variant constants (the en line is the upstream string concatenation verbatim —
+     * "Voltage: " + mVoltage + " EU (" + VN[...] + ")", MultiTileEntityWireElectric.java:127;
+     * the loss/bandwidth/stepsize constants ride the makeString face, UT.java:1296-1310):
+     * wire = WireElectric:126-132, wire_contact = the :130 HAZARD_CONTACT sibling,
+     * pipe_fluid = PipeFluid:215-228 (rows 1-2 + the :226 magnifier row), pipe_item =
+     * PipeItem:115-120, sensor = Sensor:88-97 (the :90 per-sensor description row stays a
+     * gap — no port data). Consumed by GT6Tooltips; zh faces ride the reference table's
+     * hand layer via GT6ZhCn.addWirePipeSensorTooltipUnits.
+     */
+    private void addWirePipeSensorTooltips() {
+        add("gt6.tooltip.wire.1", "Voltage: %1$s EU (%2$s)");
+        add("gt6.tooltip.wire.2", "Amperage: %3$s");
+        add("gt6.tooltip.wire.3", "Loss: %4$s EU/m");
+        add("gt6.tooltip.wire_contact.1", "Voltage: %1$s EU (%2$s)");
+        add("gt6.tooltip.wire_contact.2", "Amperage: %3$s");
+        add("gt6.tooltip.wire_contact.3", "Loss: %4$s EU/m");
+        add("gt6.tooltip.wire_contact.4", "Causes Damage when touched while active!");
+        add("gt6.tooltip.pipe_fluid.1", "Bandwidth: %1$s L/t");
+        add("gt6.tooltip.pipe_fluid.2", "Capacity: %2$s L");
+        add("gt6.tooltip.pipe_fluid.10", "Use Magnifying Glass to see Details");
+        add("gt6.tooltip.pipe_item.1", "Stepsize: %s");
+        add("gt6.tooltip.pipe_item.2", "Bandwidth: %s/s");
+        add("gt6.tooltip.pipe_item.3", "Use Monkey Wrench to set Input Side");
+        add("gt6.tooltip.pipe_item.4", "Use Monkey Wrench to set Output Side");
+        add("gt6.tooltip.sensor.2", "No GUI. Click to interact!");
+        add("gt6.tooltip.sensor.3", "Use Screwdriver on Buttons to enable Averaging Mode.");
+        add("gt6.tooltip.sensor.4", "Use Screwdriver on Display toggle Hexadecimal Display.");
+        add("gt6.tooltip.sensor.5", "Use Screwdriver on anything else to switch Modes.");
+        add("gt6.tooltip.sensor.6", "Use Monkey Wrench to set Input Side");
+        add("gt6.tooltip.sensor.7", "Use Wrench to set Facing");
     }
     /**
      * Pocket multitool family keys (task p29-w5-t7-pocket-eight): the eight display names

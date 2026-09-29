@@ -171,10 +171,14 @@ public class GT6TooltipsTest {
 	@Test
 	public void unregisteredFamilyAppendsNothing() {
 		List<Component> tTooltip = new ArrayList<>();
+		// the zero-row contract (task r8-tooltip-wire-pipe-sensor rebase): sensor/wire/
+		// pipe_fluid/pipe_item tabled by T4/T5 — the walk-on families are the ones still
+		// waiting for their cards (machine = the T3-side remainder; wire_redstone and
+		// wire_laser = the declared-unregistered wire siblings)
 		GT6Tooltips.append("machine", tTooltip);
-		GT6Tooltips.append("sensor", tTooltip);
-		GT6Tooltips.append("wire", tTooltip);
-		assertTrue(tTooltip.isEmpty(), "an unregistered family appends ZERO lines — the T3-T5-before contract");
+		GT6Tooltips.append("wire_redstone", tTooltip);
+		GT6Tooltips.append("wire_laser", tTooltip);
+		assertTrue(tTooltip.isEmpty(), "an unregistered family appends ZERO lines — the T-before contract");
 	}
 
 	@Test

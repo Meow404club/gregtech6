@@ -36,7 +36,9 @@ import gregtech6.tooltip.GT6Tooltips;
 public class GT6MachineBlockItem extends GTComposedNameItem {
 
 	private final String mFamily;
-	/** The row's own constants ([in, out, cap] for the boilers, [meltingPointK] for the barrels) — the fallback array of {@link GT6Tooltips#append(String, List, Object...)}. */
+	/** The row's own constants ([in, out, cap] for the boilers, [meltingPointK] for the barrels,
+	 * [voltage, tierName, amperage, loss] for the wires, [capacity/2, capacity] for the fluid
+	 * pipes, [stepSize, invSize] for the item pipes) — the fallback array of {@link GT6Tooltips#append(String, List, Object...)}. */
 	private final Object[] mLineArgs;
 
 	/** The T1 shape — an arg-less family table (every line carries its own constants). */

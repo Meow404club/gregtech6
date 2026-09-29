@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -24,6 +23,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.GT6Mod;
 import gregtech6.block.sensors.GTSensorBlock;
+import gregtech6.item.GT6MachineBlockItem;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
@@ -121,7 +121,10 @@ public final class GT6Sensors {
 					() -> new GTSensorBlock(fRow.tickerType(), BlockBehaviour.Properties.of()
 							.strength(1.0F, 16.0F).sound(SoundType.METAL))));
 			ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new BlockItem(GT6Sensors.BLOCKS_BY_PATH.get(fRow.path()).get(), new Item.Properties())));
+					// the sensor family carrier (task r8-tooltip-wire-pipe-sensor): the
+					// MultiTileEntitySensor tool rows replay through GT6Tooltips — all 21
+					// sensors share the one upstream addToolTips face (Sensor:88-97)
+					() -> new GT6MachineBlockItem(GT6Sensors.BLOCKS_BY_PATH.get(fRow.path()).get(), new Item.Properties(), "sensor")));
 		}
 	}
 

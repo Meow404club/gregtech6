@@ -23,6 +23,7 @@ import net.minecraftforge.registries.RegistryObject;
 import gregtech6.block.pipe.GTFluidPipeBlock;
 import gregtech6.block.pipe.GTFluidPipeBlockItem;
 import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
+import gregtech6.tooltip.GT6Tooltips;
 
 /**
  * Fluid pipe registration, card-owned (ADR-P3-4): self-contained
@@ -75,10 +76,17 @@ public final class GTFluidPipes {
 					GTFluidPipeBlockEntity::new, WOOD_FLUID_PIPE_SMALL.get(), WOOD_FLUID_PIPE_MEDIUM.get()).build(null));
 
 	public static final RegistryObject<Item> WOOD_FLUID_PIPE_SMALL_ITEM = ITEMS.register("wood_fluid_pipe_small",
-			() -> new GTFluidPipeBlockItem(WOOD_FLUID_PIPE_SMALL.get(), new Item.Properties()));
+			// the pipe_fluid rows ride the per-tier constants [capacity/2, capacity] —
+			// MultiTileEntityPipeFluid.java:216-217 (bandwidth = makeString(mCapacity/2) L/t,
+			// capacity = makeString(mCapacity) L), formatted at the site (UT.Code.makeString)
+			() -> new GTFluidPipeBlockItem(WOOD_FLUID_PIPE_SMALL.get(), new Item.Properties(), "pipe_fluid",
+					GT6Tooltips.makeString(WOOD_FLUID_PIPE_SMALL.get().capacityPerTank() / 2),
+					GT6Tooltips.makeString(WOOD_FLUID_PIPE_SMALL.get().capacityPerTank())));
 
 	public static final RegistryObject<Item> WOOD_FLUID_PIPE_MEDIUM_ITEM = ITEMS.register("wood_fluid_pipe_medium",
-			() -> new GTFluidPipeBlockItem(WOOD_FLUID_PIPE_MEDIUM.get(), new Item.Properties()));
+			() -> new GTFluidPipeBlockItem(WOOD_FLUID_PIPE_MEDIUM.get(), new Item.Properties(), "pipe_fluid",
+					GT6Tooltips.makeString(WOOD_FLUID_PIPE_MEDIUM.get().capacityPerTank() / 2),
+					GT6Tooltips.makeString(WOOD_FLUID_PIPE_MEDIUM.get().capacityPerTank())));
 
 	/**
 	 * The "Fluid Pipes" category tab — the upstream MTE-registry category
