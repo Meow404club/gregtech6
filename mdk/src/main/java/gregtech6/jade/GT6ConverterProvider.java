@@ -1,6 +1,5 @@
 package gregtech6.jade;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -33,8 +32,13 @@ import gregtech6.tileentity.energy.generators.GTGeneratorSolidBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
- * GT6 转换器/引擎族 Jade 显示面（task r5-jade-converters）：变压器/动力机（dynamo）/能量引擎/
- * 燃烧箱/电池箱等 ~19 个 TicksAndSync BE 的 active/stopped 状态行 + 能量存量行 + 额定吞吐行。
+ * GT6 转换器/引擎族 Jade 显示面（task r5-jade-converters，r8-jade-converter-crucible-restyle
+ * restyle）：变压器/动力机（dynamo）/能量引擎/燃烧箱/电池箱等 ~19 个 TicksAndSync BE 的
+ * active/stopped 状态行 + 能量存量行 + 额定吞吐行。r8 微调（design.r8-jade-tooltip
+ * families.converter）：真上限族（capacity&gt;0）的存量行升 B 形钳位比例条（文本复用既有三槽键，
+ * lang 裁定 gt6.jade.converter.* 不动）；裸存量形（capacity=0，燃烧箱）保文本；吞吐行保留文本；
+ * 状态行字色收编 {@link GT6JadeRows#FORMAT_OK}/{@link GT6JadeRows#FORMAT_STALLED}（J1 交卡
+ * 遗留的第三份状态色复制）。
  * 上游 1.7.10 零 WAILA 面（research.r5-jade-integration：全源仅 5 处隔离注释）——本面属现代
  * 增强，行式借 {@link GT6MachineProvider}/{@link GT6CrucibleProvider} 的既有家法与 GTCEu
  * RecipeLogicProvider.java:75+ 的吞吐行先例。
@@ -199,7 +203,12 @@ public final class GT6ConverterProvider implements IBlockComponentProvider, ISer
 		long tCapacity = aData.getLong(KEY_CAPACITY);
 		String tUnit = aData.getString(KEY_UNIT);
 		if (tCapacity > 0) {
-			aTooltip.add(storedLine(tStored, tCapacity, tUnit));
+			// B 形条（task r8-jade-converter-crucible-restyle）：真上限族出钳位比例条，文本复用
+			// 既有三槽键（lang 裁定 gt6.jade.converter.* 不动——既有键不退役）；条面中性白，
+			// 状态语义已在状态行着色（GT6BoilerProvider 水/汽条同形）。条本体组装 live-only
+			// （IElementHelper 需客户端），离线钉 = 线契约 + 行函数 + GT6JadeRows.ratio。
+			GT6JadeRows.bar(aTooltip, GT6JadeRows.ratio(tStored, tCapacity),
+					storedLine(tStored, tCapacity, tUnit), GT6JadeRows.COLOR_NEUTRAL);
 		} else if (tStored > 0) {
 			aTooltip.add(storedBareLine(tStored, tUnit));
 		}
@@ -209,13 +218,14 @@ public final class GT6ConverterProvider implements IBlockComponentProvider, ISer
 		}
 	}
 
-	/** 状态行：停机（软停）RED &gt; 运行 GREEN &gt; 待机默认色。 */
+	/** 状态行：停机（软停）RED &gt; 运行 GREEN &gt; 待机默认色（字色常量收编
+	 * {@link GT6JadeRows#FORMAT_OK}/{@link GT6JadeRows#FORMAT_STALLED}——J1 遗留的第三份复制）。 */
 	public static Component statusLine(boolean aActive, boolean aStopped) {
 		if (aStopped) return Component.translatable(LANG_STATUS, Component.translatable(LANG_STOPPED))
-				.withStyle(ChatFormatting.RED);
+				.withStyle(GT6JadeRows.FORMAT_STALLED);
 		MutableComponent rLine = Component.translatable(LANG_STATUS, Component.translatable(
 				aActive ? LANG_ACTIVE : LANG_IDLE));
-		return aActive ? rLine.withStyle(ChatFormatting.GREEN) : rLine;
+		return aActive ? rLine.withStyle(GT6JadeRows.FORMAT_OK) : rLine;
 	}
 
 	/** 存量行（有上限）："Stored: 100 / 200 KU"。 */

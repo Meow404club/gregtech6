@@ -2245,17 +2245,20 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The crucible Jade face keys (task p28-crucible-jade-face, 4 keys — the final key set
-     * after the TFRU 33c22beb ruling): the temperature line (current/max K, the thermometer
-     * anchor MultiTileEntitySmeltery.java:512), the content total line (its "Content" label
-     * IS the TFRU LH.CONTENT prefix form — the total row is the label row, the item rows
-     * below are indented details), the empty state and the "+N more" truncation tail. The
-     * Formed line is NOT here — the large crucible's formed state already rides the
-     * GT6MachineProvider "Multiblock: formed/incomplete" row. Values are consumed by
-     * GT6CrucibleProvider (the lang constants live there).
+     * The crucible Jade face keys (task p28-crucible-jade-face, r8-jade-converter-crucible-
+     * restyle adds the bar face — 5 keys): the temperature bar line (current/max K over the
+     * two-slot B-case template, the thermometer anchor MultiTileEntitySmeltery.java:512 —
+     * the unit word moved to the tail) alongside the RETAINED meltdown alarm row (the old
+     * key and wording stay in service — shown only when the latch trips, 既有键不退役), the
+     * content total line (its "Content" label IS the TFRU LH.CONTENT prefix form — the total
+     * row is the label row, the item rows below are indented details), the empty state and
+     * the "+N more" truncation tail. The Formed line is NOT here — the large crucible's
+     * formed state already rides the GT6MachineProvider "Multiblock: formed/incomplete" row.
+     * Values are consumed by GT6CrucibleProvider (the lang constants live there).
      */
     private void addCrucibleJade() {
         add("gt6.jade.crucible.temperature", "Temperature: %s K / %s K");
+        add("gt6.jade.crucible.temperature.bar", "Temperature: %s / %s K");
         add("gt6.jade.crucible.total", "Content: %s U");
         add("gt6.jade.crucible.empty", "Empty");
         add("gt6.jade.crucible.more", "+%s more");

@@ -970,13 +970,16 @@ HAND_TRANSLATIONS = {
     "item.gt6.shape_slicer_eigths_hollow": ("切片器刀片 (中空八分之一)", "hand"),
     "item.gt6.shape_slicer_quarters": ("切片器刀片 (四分之一)", "hand"),
     "item.gt6.shape_slicer_quarters_hollow": ("切片器刀片 (中空四分之一)", "hand"),
-    # ---- crucible Jade face (task p28-crucible-jade-face, 4 keys — the final key set after
-    # the TFRU 33c22beb ruling): no dump face (upstream 1.7.10 has zero WAILA integration,
-    # research.p28-r-crucible-jade-face), so these are pure hand rows. The total line's
-    # 内容物 label IS the TFRU LH.CONTENT prefix form (first-row label shape); the K unit in
-    # the temperature template stays untranslated (the upstream thermometer face
-    # "Temperature: NK" MultiTileEntitySmeltery.java:512 carries it bare).
+    # ---- crucible Jade face (task p28-crucible-jade-face, 4 keys, +1 bar face in task
+    # r8-jade-converter-crucible-restyle): no dump face (upstream 1.7.10 has zero WAILA
+    # integration, research.p28-r-crucible-jade-face), so these are pure hand rows. The
+    # total line's 内容物 label IS the TFRU LH.CONTENT prefix form (first-row label shape);
+    # the K unit in the temperature templates stays untranslated (the upstream thermometer
+    # face "Temperature: NK" MultiTileEntitySmeltery.java:512 carries it bare). The .bar
+    # face is the B-case two-slot bar template (the unit word moved to the tail); the old
+    # temperature face stays in service as the meltdown alarm row (既有键不退役).
     "gt6.jade.crucible.temperature": ("温度: %s K / %s K", "hand"),
+    "gt6.jade.crucible.temperature.bar": ("温度: %s / %s K", "hand"),
     "gt6.jade.crucible.total": ("内容物: %s U", "hand"),
     "gt6.jade.crucible.empty": ("空", "hand"),
     "gt6.jade.crucible.more": ("+%s 种", "hand"),

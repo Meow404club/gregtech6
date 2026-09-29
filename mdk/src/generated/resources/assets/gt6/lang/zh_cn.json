@@ -998,6 +998,7 @@
   "gt6.jade.crucible.empty": "空",
   "gt6.jade.crucible.more": "+%s 种",
   "gt6.jade.crucible.temperature": "温度: %s K / %s K",
+  "gt6.jade.crucible.temperature.bar": "温度: %s / %s K",
   "gt6.jade.crucible.total": "内容物: %s U",
   "gt6.jade.fluid.group.in": "流体输入",
   "gt6.jade.fluid.group.out": "流体输出",

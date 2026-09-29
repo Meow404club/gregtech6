@@ -45,6 +45,12 @@ public final class GT6JadeRows {
 	/** 无语义着色 = Jade ProgressStyle 构造器默认白（jade-1201 ProgressStyle.java:32 color(0xFFFFFFFF)）。 */
 	public static final int COLOR_NEUTRAL = 0xFFFFFFFF;
 
+	/** 状态行字色（ChatFormatting 形）——Active/Running/formed 绿（GT6ConverterProvider 状态行的
+	 * 第三份复制收编本处，task r8-jade-converter-crucible-restyle——J1 交卡遗留债）。 */
+	public static final ChatFormatting FORMAT_OK = ChatFormatting.GREEN;
+	/** 状态行字色（ChatFormatting 形）——Stopped/Inactive/malfunction/熔毁红（同上收编）。 */
+	public static final ChatFormatting FORMAT_STALLED = ChatFormatting.RED;
+
 	/** 状态行两态（mActive&&mRunning 绿 Active / 否则红 Inactive）。 */
 	public static final String LANG_STATUS_ACTIVE = "gt6.jade.common.status.active";
 	public static final String LANG_STATUS_INACTIVE = "gt6.jade.common.status.inactive";
@@ -93,18 +99,18 @@ public final class GT6JadeRows {
 	/** 状态行：Active GREEN / Inactive RED（mActive&&mRunning 由调用侧合取）。 */
 	public static Component statusLine(boolean aActive) {
 		return Component.translatable(aActive ? LANG_STATUS_ACTIVE : LANG_STATUS_INACTIVE)
-				.withStyle(aActive ? ChatFormatting.GREEN : ChatFormatting.RED);
+				.withStyle(aActive ? FORMAT_OK : FORMAT_STALLED);
 	}
 
 	/** 多方块成形态行：formed GREEN / incomplete RED。 */
 	public static Component structureLine(boolean aFormed) {
 		return Component.translatable(aFormed ? LANG_STRUCTURE_FORMED : LANG_STRUCTURE_INCOMPLETE)
-				.withStyle(aFormed ? ChatFormatting.GREEN : ChatFormatting.RED);
+				.withStyle(aFormed ? FORMAT_OK : FORMAT_STALLED);
 	}
 
 	/** Malfunction 常态行（整行 RED——原文不上主面）。 */
 	public static Component malfunctionLine() {
-		return Component.translatable(LANG_MALFUNCTION).withStyle(ChatFormatting.RED);
+		return Component.translatable(LANG_MALFUNCTION).withStyle(FORMAT_STALLED);
 	}
 
 	/** Malfunction 潜行明细：原文截 {@link #MAX_DETAIL_CHARS} 字符进 %s 槽（排障价值保留不刷屏）。 */

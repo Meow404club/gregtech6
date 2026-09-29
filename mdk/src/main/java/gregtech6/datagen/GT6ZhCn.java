@@ -410,16 +410,19 @@ public class GT6ZhCn extends LanguageProvider {
 	}
 
 	/**
-	 * The crucible Jade face zh units (task p28-crucible-jade-face, 4 hand rows — the final
-	 * key set after the TFRU 33c22beb ruling): no dump face exists (upstream 1.7.10 has zero
-	 * WAILA integration), so these ride the reference table's hand layer via
-	 * {@link #addDirect} — the addDirect absent-row skip is why the TSV regen and this walk
-	 * land in the SAME commit (the noHandRowIsOrphaned pin otherwise surfaces the gap).
-	 * The total line's 内容物 label IS the TFRU LH.CONTENT prefix form; the K unit stays
-	 * bare (the thermometer anchor MultiTileEntitySmeltery.java:512 carries it untranslated).
+	 * The crucible Jade face zh units (task p28-crucible-jade-face, 4 hand rows, +1 bar face
+	 * in task r8-jade-converter-crucible-restyle — the B-case two-slot temperature bar
+	 * 温度: %s / %s K; the old face stays as the meltdown alarm row, 既有键不退役): no dump
+	 * face exists (upstream 1.7.10 has zero WAILA integration), so these ride the reference
+	 * table's hand layer via {@link #addDirect} — the addDirect absent-row skip is why the
+	 * TSV regen and this walk land in the SAME commit (the noHandRowIsOrphaned pin otherwise
+	 * surfaces the gap). The total line's 内容物 label IS the TFRU LH.CONTENT prefix form; the
+	 * K unit stays bare (the thermometer anchor MultiTileEntitySmeltery.java:512 carries it
+	 * untranslated).
 	 */
 	private void addCrucibleJadeUnits() {
 		addDirect("gt6.jade.crucible.temperature");
+		addDirect("gt6.jade.crucible.temperature.bar");
 		addDirect("gt6.jade.crucible.total");
 		addDirect("gt6.jade.crucible.empty");
 		addDirect("gt6.jade.crucible.more");
