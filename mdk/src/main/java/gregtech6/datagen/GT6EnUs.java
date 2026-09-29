@@ -2165,6 +2165,14 @@ public class GT6EnUs extends LanguageProvider {
         add(GT6FoamSprays.TAB_TITLE_KEY, "C-Foam Sprays");
         add(gregtech6.item.foamspray.GT6FoamSprayItem.FOAM_TOOLTIP_KEY, "Can place %s C-Foam");
         add(gregtech6.item.foamspray.GT6FoamSprayItem.OWNED_TOOLTIP_KEY, "C-Foam only breakable by Owner once dry");
+        // the mode-cycle prompt keys (issue #42 l10n): the upstream Behavior_Spray_Foam
+        // :193-197 literals verbatim — the prompt left the chat line for the actionbar,
+        // so the wording rides lang now (the MODE_KEYS index = the gt.mode value)
+        add("gt6.foamspray.mode.single_block", "Single Block Mode");
+        add("gt6.foamspray.mode.line", "4m Line Mode");
+        add("gt6.foamspray.mode.area", "3mx3m Area Mode");
+        add("gt6.foamspray.mode.single_slab", "Single Slab Mode");
+        add("gt6.foamspray.mode.slab_area", "3mx3m Slab Mode");
     }
 
     /**

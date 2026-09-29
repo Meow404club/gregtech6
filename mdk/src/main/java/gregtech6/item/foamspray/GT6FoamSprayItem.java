@@ -116,9 +116,14 @@ public class GT6FoamSprayItem extends Item {
 	/** The mode NBT key — the upstream NBT_MODE = "gt.mode" (CS constant; the GTWireBlockEntity.java:181 in-repo literal form). */
 	public static final String NBT_MODE = "gt.mode";
 
-	/** The mode chat names (upstream :193-197 verbatim wording). */
-	public static final String[] MODE_NAMES = {
-			"Single Block Mode", "4m Line Mode", "3mx3m Area Mode", "Single Slab Mode", "3mx3m Slab Mode"};
+	/**
+	 * The mode prompt keys — the index IS the {@code gt.mode} value; the upstream :193-197
+	 * literals ("Single Block Mode".."3mx3m Slab Mode") moved to lang (issue #42 l10n). The
+	 * owned cans cycle 0-2 only (upstream :191), so the slab keys ride 3-4.
+	 */
+	public static final String[] MODE_KEYS = {
+			"gt6.foamspray.mode.single_block", "gt6.foamspray.mode.line", "gt6.foamspray.mode.area",
+			"gt6.foamspray.mode.single_slab", "gt6.foamspray.mode.slab_area"};
 
 	/** The empty-can swap target (the shared {@code gt6:spray_can_empty}); resolved lazily. */
 	private final java.util.function.Supplier<Item> emptyCan;
@@ -290,17 +295,19 @@ public class GT6FoamSprayItem extends Item {
 	 * :190-199): a SNEAK right-click in the air advances the air-placement mode — the
 	 * owned cans cycle 0-2 only ({@code mOwned ? 3 : 5} of :191, the slab modes are not
 	 * reachable), the plain cans cycle 0-4. The write lands server-side (the vanilla
-	 * client-summons-server use pass); the chat names are the :193-197 literals. The
-	 * {@code InteractionResultHolder} carrier is the 1.20.1/1.21.1 Item.use contract
-	 * (the plain InteractionResult form is 1.21.2+ — both legs holder-carried here).
+	 * client-summons-server use pass); the prompt rides the ACTIONBAR with the mode's
+	 * translatable key (issue #42 — the :193-197 literals moved to lang, the chat line
+	 * freed). The {@code InteractionResultHolder} carrier is the 1.20.1/1.21.1 Item.use
+	 * contract (the plain InteractionResult form is 1.21.2+ — both legs holder-carried here).
 	 */
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level aLevel, Player aPlayer, InteractionHand aHand) {
 		ItemStack tStack = aPlayer.getItemInHand(aHand);
 		if (!aPlayer.isShiftKeyDown()) return InteractionResultHolder.pass(tStack); // upstream :64 the sneak gesture
 		if (aLevel.isClientSide) return InteractionResultHolder.success(tStack); // claim, the server side executes
-		setMode(tStack, (modeOf(tStack) + 1) % (owned ? 3 : 5)); // upstream :191
-		aPlayer.displayClientMessage(Component.literal(MODE_NAMES[(int)modeOf(tStack)]), false); // upstream :193-197
+		long tMode = (modeOf(tStack) + 1) % (owned ? 3 : 5); // upstream :191
+		setMode(tStack, tMode);
+		showModePrompt(aPlayer, tMode);
 		return InteractionResultHolder.consume(tStack);
 	}
 
@@ -327,6 +334,29 @@ public class GT6FoamSprayItem extends Item {
 		aStack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
 				net.minecraft.world.item.component.CustomData.of(tTag));
 		*///?}
+	}
+
+	/**
+	 * The mode-cycle prompt wire (issue #42): the ACTIONBAR carrier (the inventory-top
+	 * strip — no chat-line occupancy, the GT6StaticStorages :344 face) + the mode's
+	 * translatable key ({@link #MODE_KEYS}; the floorMod guard keeps a hand-tampered
+	 * {@code gt.mode} NBT in range). Static so the offline pin holds the exact wire
+	 * (overlay=TRUE, TranslatableContents).
+	 */
+	public static void showModePrompt(Player aPlayer, long aMode) {
+		aPlayer.displayClientMessage(
+				Component.translatable(MODE_KEYS[Math.floorMod((int)aMode, MODE_KEYS.length)]), true);
+	}
+
+	/**
+	 * The colour name of a can — the VANILLA {@code color.minecraft.<id>} translatable
+	 * (the MobBucketItem :60 convention; both legs carry the 16 keys, zh included), so the
+	 * {@link #FOAM_TOOLTIP_KEY} %s slot renders translated. This replaces the bare
+	 * {@code DYE_NAMES} literal that rode the slot untranslated (issue #42); the GT6
+	 * DYE_IDS are the 16 vanilla DyeColor serial names verbatim — zero new lang keys.
+	 */
+	public static Component colorName(int aDyeIndex) {
+		return Component.translatable("color.minecraft." + GTSprayCanItem.DYE_IDS[aDyeIndex & 15]);
 	}
 
 	/**
@@ -401,7 +431,7 @@ public class GT6FoamSprayItem extends Item {
 
 	/** The shared tooltip body: what the can places (+ the owned warning) + the remaining uses. */
 	private void tooltipLines(ItemStack aStack, List<Component> aTooltip) {
-		aTooltip.add(Component.translatable(FOAM_TOOLTIP_KEY, GTSprayCanItem.DYE_NAMES[dyeIndex]).withStyle(ChatFormatting.BLUE));
+		aTooltip.add(Component.translatable(FOAM_TOOLTIP_KEY, colorName(dyeIndex)).withStyle(ChatFormatting.BLUE)); // the vanilla colour key (issue #42)
 		if (owned) aTooltip.add(Component.translatable(OWNED_TOOLTIP_KEY).withStyle(ChatFormatting.GOLD)); // upstream :259 wording
 		long tRemaining = remainingOf(aStack, maxUses);
 		aTooltip.add(Component.translatable(GTSprayCanItem.REMAINING_TOOLTIP_KEY, tRemaining / GTSprayCanItem.HIT_COST, tRemaining % GTSprayCanItem.HIT_COST)

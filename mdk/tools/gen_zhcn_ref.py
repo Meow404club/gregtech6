@@ -1650,9 +1650,10 @@ SPRAY_BACKFILL = {
     "gt6.spraycan.remaining": "剩余使用次数：%s.%s",
 }
 
-# ---- C-Foam spray domain (35 rows: 32 items + tab + 2 tooltips) — task
-# p25-c-foam-pipe-spray. The 32 item names are the DUMP faces verbatim (metas 1100+2i
-# "建筑泡沫喷罐" / 1132+2i, tmp/gregtech.lang:9350-9431) with the owned-word evolution
+# ---- C-Foam spray domain (40 rows: 32 items + tab + 2 tooltips + 5 mode prompts) — task
+# p25-c-foam-pipe-spray + issue #42 l10n. The 32 item names are the DUMP faces verbatim
+# (metas 1100+2i "建筑泡沫喷罐" / 1132+2i, tmp/gregtech.lang:9350-9431) with the
+# owned-word evolution
 # trail: the dump's owned-spray rows read 加强建筑泡沫喷罐 — task p27-lang-fix batch
 # rule B4 unified the 16 owned items onto 高级 (then the fluid face's word); task
 # p28-cfoam-lang-key (user rulings 2026-09-12) renamed the owned-FLUID faces to
@@ -1661,8 +1662,10 @@ SPRAY_BACKFILL = {
 # 加强 and the B4 高级 interlude are both superseded; the whole owned cfoam family
 # (block + fluids + item sprays) now carries the single 强化 word root.
 # The tooltip template splits the dump's gt.behaviour.foamspray.N.tooltip rows (:992-1007)
-# at the colour word (the %s slot rides the untranslated DYE_NAMES arg, the p22
-# spraycan.paint form); the owned warning has no dump face (upstream :259 en only) — hand.
+# at the colour word (the %s slot rides the VANILLA color.minecraft.<id> arg since issue
+# #42 — no new colour keys); the owned warning has no dump face (upstream :259 en only) —
+# hand; the 5 mode prompts are hand (the upstream :193-197 literals moved to lang, the
+# prompt rides the actionbar now), the 台阶 word = the vanilla slab zh face.
 FOAM_SPRAY_BACKFILL = {
     "item.gt6.foam_spray_black": "建筑泡沫喷罐 (黑色)",            # dump S:gt.multiitem.randomtools.1100
     "item.gt6.foam_spray_black": "建筑泡沫喷罐 (黑色)",            # dump S:gt.multiitem.randomtools.1100
@@ -1700,6 +1703,11 @@ FOAM_SPRAY_BACKFILL = {
     "itemGroup.gt6.foam_sprays": "建筑泡沫喷罐",
     "gt6.foamspray.paint": "可以喷射%s泡沫",                       # dump S:gt.behaviour.foamspray.N.tooltip :992-1007 split
     "gt6.foamspray.owned": "干燥后仅所有者可破坏",                 # hand — upstream :259 en has no dump face
+    "gt6.foamspray.mode.single_block": "单体方块模式",             # hand — issue #42, the upstream :193 literal moved to lang
+    "gt6.foamspray.mode.line": "4米直线模式",                      # hand — the :194 literal
+    "gt6.foamspray.mode.area": "3x3区域模式",                      # hand — the :195 literal (the 3x3 word = the in-repo zh convention)
+    "gt6.foamspray.mode.single_slab": "单体台阶模式",              # hand — the :196 literal (台阶 = the vanilla slab zh face)
+    "gt6.foamspray.mode.slab_area": "3x3台阶模式",                 # hand — the :197 literal
 }
 
 # ---- gt6.material.* (5): the dump rows are pure ASCII (review) or absent — Breeze/

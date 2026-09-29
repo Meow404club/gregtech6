@@ -906,6 +906,11 @@ direct	gt6.cover.robot_arm.display	小型机械臂 (%s)	hand
 direct	gt6.cover.selector_tag.display	标签选择器 (%s)	hand
 direct	gt6.foamspray.owned	干燥后仅所有者可破坏	hand
 direct	gt6.foamspray.paint	可以喷射%s泡沫	hand
+direct	gt6.foamspray.mode.single_block	单体方块模式	hand
+direct	gt6.foamspray.mode.line	4米直线模式	hand
+direct	gt6.foamspray.mode.area	3x3区域模式	hand
+direct	gt6.foamspray.mode.single_slab	单体台阶模式	hand
+direct	gt6.foamspray.mode.slab_area	3x3台阶模式	hand
 direct	gt6.jade.boiler.demand	需求: %s HU/t	hand
 direct	gt6.jade.boiler.heat	储存热量: %s / %s HU (%s%%)	hand
 direct	gt6.jade.boiler.scale	水垢: %s%%	hand
