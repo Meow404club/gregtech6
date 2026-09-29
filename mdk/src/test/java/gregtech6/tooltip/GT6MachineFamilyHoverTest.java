@@ -189,4 +189,22 @@ public class GT6MachineFamilyHoverTest extends GTOfflineTestBase {
 				"the carrier replays the family table verbatim after the vanilla super chain");
 		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.AQUA), tTooltip.get(0).getStyle().getColor(), "the recipes row rides Chat.CYAN → AQUA");
 	}
+
+	@Test
+	public void theLargeMachineCarrierHoversTheMultiblockFamilyTable() {
+		// the GT6LargeMachines.java:228 swap rides T4's family word ("multiblock", the
+		// GTMultiBlocks/GT6Distillation vocabulary) — T4 HAS merged (the multiblock /
+		// converter / generator tables went in with r8-tooltip-multiblock-generator), so
+		// this pin graduated from its former "zero rows until T4" plumbing form to the
+		// replay contract: the carrier replays T4's family table verbatim (review-seat
+		// rebase update — the merge itself retired the zero-output premise; the T2
+		// "machine pre-T3 zero-output" pin's documented successor shape)
+		GT6MachineBlockItem tLarge = registerItemFixture("fixture_tooltip_multiblock_large",
+				() -> new GT6MachineBlockItem(Blocks.BRICKS, new Item.Properties(), "multiblock"));
+		List<Component> tTooltip = new ArrayList<>();
+		callHoverText(tLarge, new ItemStack(tLarge), tTooltip);
+		assertEquals(GT6Tooltips.REGISTRY.get("multiblock").size(), tTooltip.size(),
+				"the multiblock family table is T4's deliverable and T4 has merged — the carrier replays it verbatim (GT6Tooltips.append contract)");
+		assertTrue(!tTooltip.isEmpty(), "T4's merge lit the rows up (the former zero-output pin's premise)");
+	}
 }
