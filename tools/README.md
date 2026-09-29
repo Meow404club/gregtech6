@@ -110,7 +110,7 @@ handler 缺失等于没装）：
             "timeoutMs": 10000}]}
 ```
 
-## gt6testgate 门禁（test-gating-v3 → v3.5）
+## gt6testgate 门禁（test-gating-v3 → v3.6）
 
 一切重操作（gradle 测试/编译/runData、sweep、RCON 链）的统一门禁+runner：
 `python3 tools/gt6testgate.py run -- <原命令>`。
@@ -130,7 +130,7 @@ handler 缺失等于没装）：
   污染（v3.1 落地前采样吃进跨任务 daemon；当日污染台账已手动重置）——
   `--no-daemon` 落地后新样本自净，旧污染按半衰衰减。
 - **信封内准入（v3.2，取代 v3a 系统侧 30G 公式）**：
-  - 主判据=信封内：`slice memory.current + estimate(class) ≤ cap(25G)`——
+  - 主判据=信封内：`slice memory.current + estimate(class) ≤ cap(22G)`——
     防信封内多任务叠加引发组内 OOM 抖动；slice 空时任何任务即刻放行。
   - 系统侧外压护栏（`used − slice_current ≤ MemTotal − cap − 2G`）已随
     v3.5 退役，见下；`GT6_GATE_MEM_LIMIT_MIB` 语义随之反转（opt-in 恢复）。
@@ -140,8 +140,8 @@ handler 缺失等于没装）：
   - `--dry-run`：slice/estimate/envelope/outside/decision 五行，不启动。
 - **共享 slice 硬顶（v3c）**：run 包 `systemd-run --user --scope -p
   Slice=gt6gate.slice`，每 run 幂等 `systemctl --user set-property
-  gt6gate.slice MemoryMax=25G MemorySwapMax=4G --runtime`（`--cap`/`--swap`
-  可调，25G 留 5G 头寸）。systemd 缺席/失败 → 一行 stderr 警告降级直跑
+  gt6gate.slice MemoryMax=22G MemorySwapMax=4G --runtime`（`--cap`/`--swap`
+  可调；v3.6 起 22G，见下）。systemd 缺席/失败 → 一行 stderr 警告降级直跑
   （可用性优先）；`GT6_GATE_SLICE=0` 显式关。
 - **残留清剿三层（v3.1，2026-09-29 第四轮）**：
   1. `--no-daemon` 注入（根治）：检测到命令是 gradlew/gradle 即自动追加
@@ -165,13 +165,13 @@ handler 缺失等于没装）：
   rundata 8G/rcon 6G/other 8G，`--task-cap G` 覆盖）。
   **内核注记（Brokestar 6.18.50 定制内核）**：scope 级 memory.max 实测
   **被执行**（300M 探针 OOM rc=137、oom_kill 计数增长，2026-09-29）；
-  slice 级 25G 未验证（破坏性探针列入 r8 收官清单，slice 空闲时跑）；
+  slice 级 22G 未验证（破坏性探针列入 r8 收官清单，slice 空闲时跑）；
   「不强制」的原始观察来源存疑（slice 级，或 v3.3 前旧 scope 根本没写
   per-task 属性）。故执行者双层纵深：**脚本看门狗**在 2s 采样 tick 里
   ①读本 scope memory.current（同一次读数喂台账峰值，免 /proc 遍历）超
   预算 → TERM→2s→KILL 杀己组，退出码 **97（BUDGET_EXIT 专码，超限失败
   ≠普通失败；内核先杀则 -9 常规信号码透传，CI/调用方可区分）**；
-  ②聚合 slice 下全部子 cgroup 的 memory.current >25G 项目帽 → 按占用
+  ②聚合 slice 下全部子 cgroup 的 memory.current >22G 项目帽 → 按占用
   最大者优先逐杀至帽内（单次回收最大化=最少受害者最快回帽；新任务天然
   幸免——尚未膨胀；杀粒度=单任务 cgroup，兄弟无恙；若自己最大也会被
   杀并转 97）。
@@ -186,12 +186,20 @@ handler 缺失等于没装）：
   是两种视图，列内各自同模可比。
 - **外压护栏退役（v3.5，2026-09-29 用户裁定「cgroup 内部算好 25g 就行，
   系统的不用管了，嵌入服务固定开销是 8g」）**：v3.2 的系统侧护栏在本机
-  是纯算术死锁——上限 `MemTotal(40099) − 25G − 2G ≈ 12451MiB` 恒低于
+  是纯算术死锁——上限 `MemTotal(40099) − 25G − 2G ≈ 12451MiB`（时值帽
+  25G）恒低于
   固定非门禁基线 ≈15069MiB（嵌入服务 8G+常驻 ZCode 会话+OS），谓词
   永假、任何任务永不放行（当日 15:09-15:35 五个 wrapper 死等实录）。
   准入只由信封判定；`outside` 降为信息项（gate-admit 行与 `--dry-run`
   照记数字供诊断）。env `GT6_GATE_MEM_LIMIT_MIB`=<合法整数> = ops 显式
   opt-in 恢复护栏（绝对 MiB 阈值）；未设或非法值=保持退役。
+- **帽 25G→22G（v3.6，2026-09-29 用户裁定）**：当日第三次 WSL 崩溃
+  （~16:3x）后用户裁定「25G 还是太多了，改成 22G」——本机 MemTotal
+  40099MiB、非门禁基线实测 ~15G（嵌入服务 8G+多 ZCode 会话+OS），
+  25G 帽+基线≈40G≈满弦；22G+15G=37G 留 ~2.5G 余量。纯值改动
+  （`SLICE_CAP_GIB`，准入 cap/看门狗聚合帽/slice MemoryMax 同源跟随），
+  v3.1-v3.5 语义零触碰（准入谓词仍只看信封；预算表/slot 并发/清剿层
+  不动）。
 - 向后兼容：并发槽默认 4（`GT6_GATE_MAX_CONCURRENT`）、退出码=子进程
   透传、full+coder 拒 exit 2、gt6server 直调 `wait_memory` 签名不变
   （遗留反应闸仅服务 boot 路径）；旧 flag 形态（无 `run` 前缀）与 run
