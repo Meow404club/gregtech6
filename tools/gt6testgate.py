@@ -43,11 +43,12 @@ GITHUB_ACTIONS bypasses all gates at zero cost (CI boxes are not this WSL
 host). Exit-code semantics are unchanged (child passthrough; full+coder
 still exit 2 before any queueing).
 
-Hard cap (test-gating-v3c, 2026-09-29 third ruling): the runner wraps the
-child in ``systemd-run --user --scope -p Slice=gt6gate.slice`` so every
-gated gradle shares one memory envelope — ``systemctl --user set-property
-gt6gate.slice MemoryMax=28G MemorySwapMax=4G --runtime`` (28G leaves 2G
-headroom for ungated processes; ``--cap``/``--swap`` retune, defaults 28/4).
+Hard cap (test-gating-v3c, 2026-09-29 third ruling, 25G revision): the
+runner wraps the child in ``systemd-run --user --scope
+-p Slice=gt6gate.slice`` so every gated gradle shares one memory envelope —
+``systemctl --user set-property gt6gate.slice MemoryMax=25G
+MemorySwapMax=4G --runtime`` (25G leaves 5G headroom for ungated processes;
+``--cap``/``--swap`` retune, defaults 25/4).
 The aggregate is naturally bounded; on exhaustion the kernel OOM-kills
 inside the slice, never the WSL host. Bootstrap is idempotent and
 re-asserted per run; if systemctl/systemd-run are unavailable the gate
@@ -106,7 +107,7 @@ CLASSES = tuple(COLD_ESTIMATE_MIB)
 
 # --- v3c shared-slice hard cap (test-gating-v3c, 2026-09-29) ---------------
 SLICE_NAME = "gt6gate.slice"
-SLICE_CAP_GIB = 28              # 30G box: 2G headroom for ungated processes
+SLICE_CAP_GIB = 25              # 30G box: 5G headroom for ungated processes
 SLICE_SWAP_GIB = 4
 SLICE_ENV = "GT6_GATE_SLICE"    # "0" disables the wrap entirely
 
@@ -648,7 +649,7 @@ def main(argv=None):
                              "start nothing")
     parser.add_argument("--cap", type=int, default=SLICE_CAP_GIB,
                         help="shared gt6gate.slice MemoryMax in GiB "
-                             "(default: 28 — 2G headroom on a 30G box)")
+                             "(default: 25 — 5G headroom on a 30G box)")
     parser.add_argument("--swap", type=int, default=SLICE_SWAP_GIB,
                         help="shared gt6gate.slice MemorySwapMax in GiB "
                              "(default: 4)")

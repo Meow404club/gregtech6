@@ -135,11 +135,11 @@ handler 缺失等于没装）：
   full+coder 拒 exit 2（排队前即拒）、gt6server 直调的 `wait_memory` 签名
   不变（estimate 缺省 0）；旧 flag 形态（无 `run` 前缀）与 run 子命令同一
   实现。`GITHUB_ACTIONS` 置位 = 零门槛透传（CI 不是本 WSL 宿主）。
-- **共享 slice 硬顶（v3c，2026-09-29 第三轮裁定）**：run 把子命令包进
+- **共享 slice 硬顶（v3c，2026-09-29 第三轮裁定，25G 修订）**：run 把子命令包进
   `systemd-run --user --scope -p Slice=gt6gate.slice -- <原命令>`，并在每次
   run 前幂等地 `systemctl --user set-property gt6gate.slice
-  MemoryMax=28G MemorySwapMax=4G --runtime`（`--cap`/`--swap` 可调，默认
-  28/4 GiB——28G 留 2G 头寸给非门禁进程）。聚合天然有界：到顶内核只在
+  MemoryMax=25G MemorySwapMax=4G --runtime`（`--cap`/`--swap` 可调，默认
+  25/4 GiB——25G 留 5G 头寸给非门禁进程）。聚合天然有界：到顶内核只在
   slice 组内 OOM-kill 越界 gradle，不伤 WSL 宿主。systemctl/systemd-run
   不可用或失败 → 一行 stderr 警告回退直接 exec（可用性优先）；
   `GT6_GATE_SLICE=0` 显式关。附带收益：开 UseContainerSupport 的 JVM 会读

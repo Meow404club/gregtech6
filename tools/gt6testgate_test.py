@@ -699,13 +699,13 @@ class SliceWrapTest(unittest.TestCase):
             calls.append(argv)
             return 0
 
-        self.assertTrue(gate.slice_bootstrap(28, 4, run=fake_run))
-        self.assertTrue(gate.slice_bootstrap(28, 4, run=fake_run))
+        self.assertTrue(gate.slice_bootstrap(25, 4, run=fake_run))
+        self.assertTrue(gate.slice_bootstrap(25, 4, run=fake_run))
         self.assertEqual(len(calls), 2)
         self.assertEqual(calls[0], calls[1])      # 重复调用属性不变
         self.assertEqual(calls[0],
                          ["systemctl", "--user", "set-property",
-                          "gt6gate.slice", "MemoryMax=28G",
+                          "gt6gate.slice", "MemoryMax=25G",
                           "MemorySwapMax=4G", "--runtime"])
         # --cap/--swap 可调数值进属性
         calls.clear()
