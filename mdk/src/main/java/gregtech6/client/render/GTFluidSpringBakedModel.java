@@ -268,7 +268,17 @@ public final class GTFluidSpringBakedModel extends GTDynamicBakedModel {
 		return new Material(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS, aSpriteId);
 	}
 
-	/** The GTCEu StaticFaceBakery.bakeFace cubeUV switch (GTWireBakedModel.uvOf verbatim — private there). */
+	/**
+	 * The GTCEu StaticFaceBakery.bakeFace cubeUV switch (GTWireBakedModel.uvOf verbatim — private there).
+	 *
+	 * <p>KEPT VERBATIM (the r8-uvof-private-copies ruling, the GTWireBakedModel precedent):
+	 * every sprite this model bakes is orientation-free — the fluid bases are the vanilla
+	 * animated noise stills ({@code water_still}/{@code lava_still}), the FLUID_SPRING shell
+	 * is a uniform dither and the tint is flat — so the old table's side V-flip /
+	 * NORTH-EAST 180° / DOWN inversion have no visual product. The corrected canonical form
+	 * rides the directional-art consumers ({@link GTOvenOverlayModel},
+	 * {@link GTFluidPipeFlowModel}, and the issue #27 GTOreBakedModel fix).
+	 */
 	private static float[] uvOf(Direction aFace, double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
 		return switch (aFace) {
 			case UP    -> new float[] {(float) minX, (float) minZ, (float) maxX, (float) maxZ};

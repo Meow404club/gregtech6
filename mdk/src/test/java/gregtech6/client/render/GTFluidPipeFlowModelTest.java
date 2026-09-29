@@ -6,8 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraftforge.client.model.data.ModelData;
 
 import org.junit.jupiter.api.AfterEach;
@@ -18,8 +20,9 @@ import org.junit.jupiter.api.Test;
  * ① render group, the CoverPlateModelTest shape): the planner is pure geometry over the
  * immutable snapshot — the per-face emission rules (null pass + the face's own pass,
  * never culled), the 0.002 Z-fighting slab geometry, the snapshot clamp, and the client
- * registration hook. The sprite→BakedQuad baker itself is the runClient visual check
- * left to the user (the W2 BakedQuad-offline precedent).
+ * registration hook. The sprite→BakedQuad baker is pinned offline too since
+ * r8-uvof-private-copies (the #27 GTOreBakedModelSideUvTest form): the arrow is
+ * directional art, so the corrected canonical UV walk is asserted per vertex.
  */
 public class GTFluidPipeFlowModelTest extends GTOfflineRenderTestBase {
 
@@ -94,6 +97,25 @@ public class GTFluidPipeFlowModelTest extends GTOfflineRenderTestBase {
 		GTPipeFlowClientListener.register();
 		assertEquals(tBefore + GTPipeFlowClientListener.TARGET_MODELS.size(), GTRenderModelListener.registeredCount(),
 				"both pipe tier blockstate models registered");
+	}
+
+	/**
+	 * THE r8-uvof-private-copies PIN: the arrow bakes the canonical full-face UV walk on
+	 * all six faces — the sprite top (V=0, the arrow head) on the side faces' top corners
+	 * (upright, the orientation the art was drawn for). The old GTCEu cubeUV table hung
+	 * the arrow upside down on every side (plus a U mirror on NORTH/EAST).
+	 */
+	@Test
+	void arrowQuadsBakeTheCanonicalFullFaceUvWalk() {
+		GTFluidPipeFlowModel tModel = new GTFluidPipeFlowModel(new GTDynamicBakedModelTest.StubFallback(),
+				aSpriteId -> FaceBakePins.IdentitySprite.INSTANCE);
+		ModelData tData = GTModelProperties.snapshot()
+				.with(GTModelProperties.FLOW_SNAPSHOT, new PipeFlowSnapshot((byte) 63)).build();
+		for (Direction tFace : Direction.values()) {
+			List<BakedQuad> tQuads = tModel.getQuads(null, tFace, RandomSource.create(), tData, null);
+			assertEquals(1, tQuads.size(), tFace + ": the face's own pass carries exactly its arrow");
+			FaceBakePins.assertCanonicalFullFaceUv(tQuads.get(0), tFace);
+		}
 	}
 
 	@Test

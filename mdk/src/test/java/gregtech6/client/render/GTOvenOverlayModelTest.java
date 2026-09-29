@@ -9,9 +9,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.model.data.ModelData;
@@ -31,7 +33,10 @@ import gregtech6.covers.GTCoverRenderSnapshot;
  * the CS.java:528-537 FACING_ROTATIONS face table verbatim, the per-face emission and
  * sprite-id rules, the OVEN_SNAPSHOT dispatch gate (the second ModelProperty, the cover
  * chain's key untouched), and the 16 per-state ModelResourceLocation registrations. The
- * sprite→BakedQuad baker itself is the runClient visual check left to the user.
+ * sprite→BakedQuad baker is pinned offline too since r8-uvof-private-copies (the #27
+ * GTOreBakedModelSideUvTest form): the overlay PNGs are upright art (the running front's
+ * glow window sits in the sprite's bottom half), so the corrected canonical UV walk is
+ * asserted per vertex.
  */
 public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 
@@ -166,6 +171,25 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 		double[] tEast = GTOvenOverlayModel.slabOf(Direction.EAST);
 		assertEquals(1 + e, tEast[3], 1e-9, "maxX = 1 + epsilon");
 		assertEquals(1 - t, tEast[0], 1e-9, "minX = the inner plane");
+	}
+
+	/**
+	 * THE r8-uvof-private-copies PIN: the overlay bakes the canonical full-face UV walk on
+	 * all six faces — the sprite top (V=0) on the side faces' top corners (upright; the
+	 * running front's glow window keeps its bottom-of-the-door position). The old GTCEu
+	 * cubeUV table baked every side face upside down (plus a U mirror on NORTH/EAST).
+	 */
+	@Test
+	void overlayQuadsBakeTheCanonicalFullFaceUvWalk() {
+		GTOvenOverlayModel tModel = new GTOvenOverlayModel(new StubFallback(),
+				aSpriteId -> FaceBakePins.IdentitySprite.INSTANCE);
+		ModelData tData = ModelData.builder()
+				.with(GTModelProperties.OVEN_SNAPSHOT, new GTOvenRenderSnapshot(true, false)).build();
+		for (Direction tFace : Direction.values()) {
+			List<BakedQuad> tQuads = tModel.getQuads(null, tFace, RandomSource.create(), tData, null);
+			assertEquals(1, tQuads.size(), tFace + ": the overlay face rides its own culling pass");
+			FaceBakePins.assertCanonicalFullFaceUv(tQuads.get(0), tFace);
+		}
 	}
 
 	// ---------------------------------------------------------------------------
