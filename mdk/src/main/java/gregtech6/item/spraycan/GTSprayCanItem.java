@@ -11,6 +11,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -29,6 +30,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+import gregtech6.item.foamspray.GT6FoamSprayItem;
 import gregtech6.registry.GTGrassBlocks;
 import gregtech6.tileentity.IPaintableTE;
 
@@ -169,7 +171,11 @@ public class GTSprayCanItem extends Item {
 	public static final String[] DYE_IDS = {"black", "red", "green", "brown", "blue", "purple", "cyan",
 			"light_gray", "gray", "pink", "lime", "yellow", "light_blue", "magenta", "orange", "white"};
 
-	/** The tooltip template (the upstream LH :56 wording, the colour name rides the slot). */
+	/**
+	 * The tooltip template (the upstream LH :56 wording verbatim). The %s slot rides the
+	 * VANILLA {@code color.minecraft.<id>} component ({@link #colorName}, issue #42) —
+	 * never the bare {@link #DYE_NAMES} literal, which rendered untranslated off en_us.
+	 */
 	public static final String PAINT_TOOLTIP_KEY = "gt6.spraycan.paint";
 
 	/** The remover tooltip (the upstream Remover LH :109 wording verbatim). */
@@ -626,10 +632,36 @@ public class GTSprayCanItem extends Item {
 	}
 	*///?}
 
+	/**
+	 * The colour name of a can — the VANILLA {@code color.minecraft.<id>} translatable (the
+	 * MobBucketItem :60 convention; both legs carry the 16 keys, zh included), so the
+	 * {@link #PAINT_TOOLTIP_KEY} %s slot renders translated (issue #42; the bare
+	 * {@code DYE_NAMES} literal rode the slot untranslated). One line of delegation to the
+	 * {@link GT6FoamSprayItem#colorName} seam (the issue #42 merge left ONE implementation on
+	 * the foam face — this wrapper only adapts the byte signature), which {@code &15}-masks;
+	 * the {@link #REMOVER} sentinel therefore must be kept off THIS method by routing —
+	 * {@link #colorLine} does exactly that (the upstream Remover face has no colour slot,
+	 * Behavior_Spray_Color_Remover.java:109), and the pin test locks that route.
+	 */
+	public static Component colorName(byte aDyeIndex) {
+		return GT6FoamSprayItem.colorName(aDyeIndex);
+	}
+
+	/**
+	 * The colour line of a can (the upstream :174-180 head) — the remover routes to the
+	 * upstream-faithful decolor wording, a paint can to {@link #PAINT_TOOLTIP_KEY} with the
+	 * vanilla colour component in the slot. Static pure seam: the offline test pins both
+	 * routes without constructing the mod item (the mod-Item wall).
+	 */
+	public static MutableComponent colorLine(byte aDyeIndex) {
+		return aDyeIndex == REMOVER
+				? Component.translatable(DECOLOR_TOOLTIP_KEY)
+				: Component.translatable(PAINT_TOOLTIP_KEY, colorName(aDyeIndex));
+	}
+
 	/** The shared tooltip body (the upstream :174-180 face) — the two leg signatures delegate here. */
 	private void tooltipLines(ItemStack aStack, java.util.List<Component> aTooltip) {
-		if (remover()) aTooltip.add(Component.translatable(DECOLOR_TOOLTIP_KEY).withStyle(ChatFormatting.BLUE));
-		else aTooltip.add(Component.translatable(PAINT_TOOLTIP_KEY, DYE_NAMES[dyeIndex]).withStyle(ChatFormatting.BLUE));
+		aTooltip.add(colorLine(dyeIndex).withStyle(ChatFormatting.BLUE));
 		long tRemaining = remainingOf(aStack);
 		aTooltip.add(Component.translatable(REMAINING_TOOLTIP_KEY, tRemaining / HIT_COST, tRemaining % HIT_COST)
 				.withStyle(ChatFormatting.GRAY));
