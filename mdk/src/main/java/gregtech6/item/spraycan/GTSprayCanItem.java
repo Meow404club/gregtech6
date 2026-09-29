@@ -30,6 +30,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+import gregtech6.item.foamspray.GT6FoamSprayItem;
 import gregtech6.registry.GTGrassBlocks;
 import gregtech6.tileentity.IPaintableTE;
 
@@ -635,13 +636,15 @@ public class GTSprayCanItem extends Item {
 	 * The colour name of a can — the VANILLA {@code color.minecraft.<id>} translatable (the
 	 * MobBucketItem :60 convention; both legs carry the 16 keys, zh included), so the
 	 * {@link #PAINT_TOOLTIP_KEY} %s slot renders translated (issue #42; the bare
-	 * {@code DYE_NAMES} literal rode the slot untranslated). No {@code &15} mask: the
-	 * {@link #REMOVER} sentinel must never reach here — {@link #colorLine} keeps it on the
-	 * remover branch (the upstream Remover face has no colour slot,
-	 * Behavior_Spray_Color_Remover.java:109).
+	 * {@code DYE_NAMES} literal rode the slot untranslated). One line of delegation to the
+	 * {@link GT6FoamSprayItem#colorName} seam (the issue #42 merge left ONE implementation on
+	 * the foam face — this wrapper only adapts the byte signature), which {@code &15}-masks;
+	 * the {@link #REMOVER} sentinel therefore must be kept off THIS method by routing —
+	 * {@link #colorLine} does exactly that (the upstream Remover face has no colour slot,
+	 * Behavior_Spray_Color_Remover.java:109), and the pin test locks that route.
 	 */
 	public static Component colorName(byte aDyeIndex) {
-		return Component.translatable("color.minecraft." + DYE_IDS[aDyeIndex]);
+		return GT6FoamSprayItem.colorName(aDyeIndex);
 	}
 
 	/**
