@@ -1353,7 +1353,7 @@ class TaskCapTest(unittest.TestCase):
     def test_task_cap_table_covers_classes(self):
         self.assertEqual(set(gate.TASK_CAP_MIB), set(gate.CLASSES))
         self.assertEqual(gate.TASK_CAP_MIB["full-test"], 12288)
-        self.assertEqual(gate.TASK_CAP_MIB["filtered-test"], 8192)
+        self.assertEqual(gate.TASK_CAP_MIB["filtered-test"], 12288)  # v3.7
         self.assertEqual(gate.TASK_CAP_MIB["compile"], 6144)
         self.assertEqual(gate.TASK_CAP_MIB["rundata"], 8192)
 
