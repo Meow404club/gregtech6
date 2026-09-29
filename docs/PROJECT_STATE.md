@@ -1,4 +1,4 @@
-# 项目状态（镜像·维护期版 2026-09-29）
+# 项目状态（镜像·维护期版 2026-09-30）
 
 > 权威数据在 MCP `gt6-brain` 的 state/记忆/KG 里。本文件自 2026-09-27 起改为**维护期精简镜像**：
 > P1-P38 逐阶段详账已蒸馏归档至 [docs/archive/ARCHIVE-2026-09-27-p1-p37.md](archive/ARCHIVE-2026-09-27-p1-p37.md)
@@ -9,7 +9,29 @@
 GT6（1.7.10 GregTech6）→ 现代移植：1.20.1 Forge + 1.21.1 NeoForge 双节点（Stonecutter）。
 内容完成度 97-98%+，2026-09-24 发布 v0.1.0（GitHub Release，双 jar），现处**还债/维护阶段**（2026-09-26 起）。
 
-## 当前态（2026-09-29 · r8 波收官）
+## 当前态（2026-09-30 · r9 issue 三修波收官）
+
+- **r9 波（#34/#39/#41）三卡合入+push**（main=1b2e1a4cc，三笔 merge 一审查席零打回）：
+  **#41 模具凹凸反转**（36e6eef6d）：上游渲染门 :537「bit=1 不画=挖」位极性被移植读反——
+  翻转为阴模+补四壁+选择/碰撞盒上游 verbatim+mold_stone 骑行（顺手清掉 visual-sync 债）；
+  **#39 工具头占位符**（3a786a589）：9 族头行+宝石变体 3397 行（含 's'=SAW 小写字母表翻案，
+  裁决 decisions.r9-toolhead-s-letter）+材质门（typemin/qualmax/qualmin）；三项判非 bug
+  （镶尖镐基底=上游语义/三电头无消费者=上游如此/arrow 头走铸造+loot）；
+  **#34 查看器错位**（1b2e1a4cc）：根因=JEI/EMI 配方页**零背景**（r6 batch1 declared deviation
+  真身）——按上游 NEI 两层合成复刻（底板 NEI.png 裁 (5,16)+机器带裁 (5,11)）+槽位 sOffset(5,11)
+  单点折叠+textBaseY 偏差退休（顺带修 FUSION 溢出）+2 PNG amazawa 版补借。
+- **视觉取证方法论首战**（#34 确诊链）：runClient+xdotool+F2 截图+像素统计（裸灰面 61%→30%、
+  色彩数翻倍）+4x 放大目验；**视觉模型低分辨率判读两度幻觉**（紫块误报=零洋红像素证伪），
+  像素统计是硬证据。EMI dev 投放管线=FART 重映射+refmap 补丁（/tmp/emi-final4.jar，可复用）。
+- 副产物真 bug 两枚入账：nojade 下配方页 draw 必崩 NCDFE（known_bugs.r934_*，workaround=带 Jade 跑）；
+  worktree 子模组 init 坑（--force remove+protocol.file.allow）。
+- may fix 三挂（#34/#39/#41，push 后）；不主动关评（铁律 9）。
+- **ops 议题待用户裁定**：neo 腿 FML 测试启动面峰值 12-13.5G 三撞 filtered 12G 预算墙
+  （r9-39 审查 13.5G/本夜两次；--max-workers=1 或 --task-cap 16 可过闸）——调预算或查
+  FML 启动面增重根因（疑似 KJS？）。
+- CI：run 36626354007 在跑（push 后滚动 dev prerelease 自动更新，提出者可下载复验三修）。
+
+## 前态（2026-09-29 · r8 波收官）
 
 - **r8「贴图保真+信息面现代化」波收官**（main=a17a51571，本波 37 笔 merge 九席
   审查零打回全 approve；未闭合债镜像见 [docs/TODO.md](TODO.md)）：
