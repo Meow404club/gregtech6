@@ -3788,25 +3788,28 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /** One two-layer part model (body cube + six overlay decals) over the borrowed design textures. */
     /**
-     * Task p29-w3-large-12 — the twelve large-machine controllers: ONE oriented cube
-     * model per machine over the six borrowed colored faces (the basicmachines/&lt;family&gt;
-     * frame 0 byte copies, the borrow_port_overlays naming shape), the 8 FACING x FORMED
-     * states sharing the one model (the FORMED dual-model was the coke-oven enhancement;
-     * the RCON formed assertion rides the blockstate property, not the model). The
-     * overlay/active layers stay unborrowed — the ACTIVE visual is the render wave's
-     * surface (the card exclusion), the borrow-or-declare rule keeps the byte count at
-     * the six colored frames per family.
+     * Task r8-tex-large-machines — the twelve large-machine controllers go two-layer:
+     * the {@link #familyMachineModel} state trio per row over the row's upstream
+     * basicmachines texture arrays (MultiTileEntityBasicMachine.java:176-203, the
+     * mTexturesMaterial + mTexturesInactive/Active/Running trio — the large controllers
+     * extend the same BE class, so the same grammar applies; the colored six-sets are
+     * the p31-era flat borrows, the overlay state trios the r8 borrow wave, the
+     * assets/README.md ledger). The BLOCKSTATE stays static on the inactive model: the
+     * controllers carry no ACTIVE property (GTMultiBlockControllerBlock keeps FACING +
+     * FORMED, TileEntityBase10MultiBlockMachine :105 reads mActive/mRunning BE-side) and
+     * the property seat rides the shared controller base — adding it is a BE+block change
+     * outside this card's files, so the _active/_running models ride the tree with the
+     * switch declared defer (the upstream :1014 pick is ready to wire when a property
+     * card lands). The 8 FACING x FORMED states share the inactive model (the FORMED
+     * dual-model was the coke-oven enhancement; the RCON formed assertion rides the
+     * blockstate property, not the model).
      */
     private void addLargeMachines() {
         for (gregtech6.registry.GT6LargeMachines.LargeMachineRow tRow : gregtech6.registry.GT6LargeMachines.ROWS) {
             Block tBlock = gregtech6.registry.GT6LargeMachines.BLOCKS_BY_PATH.get(tRow.path()).get();
-            ModelFile tModel = models().cube(tRow.path(),
-                    modLoc("block/" + tRow.texture() + "_colored_bottom"),
-                    modLoc("block/" + tRow.texture() + "_colored_top"),
-                    modLoc("block/" + tRow.texture() + "_colored_front"),
-                    modLoc("block/" + tRow.texture() + "_colored_back"),
-                    modLoc("block/" + tRow.texture() + "_colored_left"),
-                    modLoc("block/" + tRow.texture() + "_colored_right"));
+            ModelFile tInactive = familyMachineModel(tRow.path(), tRow.texture(), "");
+            familyMachineModel(tRow.path() + "_active", tRow.texture(), "_active");
+            familyMachineModel(tRow.path() + "_running", tRow.texture(), "_running");
             getVariantBuilder(tBlock).forAllStates(aState -> {
                 int tY;
                 switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
@@ -3815,19 +3818,18 @@ public final class GT6BlockStates extends BlockStateProvider {
                     case EAST -> tY = 90;
                     default -> tY = 0; // NORTH
                 }
-                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+                return ConfiguredModel.builder().modelFile(tInactive).rotationY(tY).build();
             });
             itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
         }
     }
 
     /**
-     * Task p31-massfab — the Large Matter Fabricator controller: the addImplosionCompressor
-     * form over the upstream NBT_TEXTURE "largemassfab" family (Loader :1241, the six
-     * borrowed basicmachines/largemassfab/colored faces). The 8 FACING x FORMED states
-     * share the one oriented model (the RCON formed assertion rides the blockstate
-     * property, not the model). Overlay/active layers stay unborrowed — the ACTIVE visual
-     * is the render wave's surface.
+     * Task r8-tex-large-machines — the Large Matter Fabricator controller joins the
+     * familyMachineModel state trio over the upstream NBT_TEXTURE "largemassfab" family
+     * (Loader :1241; the colored six-set stays the p31 borrow, the overlay state trio the
+     * r8 ledger). The blockstate stays static on the inactive model (the addLargeMachines
+     * defer declaration), the 8 FACING x FORMED states share it.
      */
     /**
      * Task p32-logistics-lv3 — the Logistics Core controller (upstream meta 17997, the
@@ -3859,13 +3861,9 @@ public final class GT6BlockStates extends BlockStateProvider {
     private void addLargeMassfab() {
         Block tBlock = gregtech6.registry.GTMultiBlocks.MASSFAB.get();
         String tFamily = "largemassfab";
-        ModelFile tModel = models().cube("large_massfab",
-                modLoc("block/" + tFamily + "_colored_bottom"),
-                modLoc("block/" + tFamily + "_colored_top"),
-                modLoc("block/" + tFamily + "_colored_front"),
-                modLoc("block/" + tFamily + "_colored_back"),
-                modLoc("block/" + tFamily + "_colored_left"),
-                modLoc("block/" + tFamily + "_colored_right"));
+        ModelFile tInactive = familyMachineModel("large_massfab", tFamily, "");
+        familyMachineModel("large_massfab_active", tFamily, "_active");
+        familyMachineModel("large_massfab_running", tFamily, "_running");
         getVariantBuilder(tBlock).forAllStates(aState -> {
             int tY;
             switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
@@ -3874,29 +3872,24 @@ public final class GT6BlockStates extends BlockStateProvider {
                 case EAST -> tY = 90;
                 default -> tY = 0; // NORTH
             }
-            return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            return ConfiguredModel.builder().modelFile(tInactive).rotationY(tY).build();
         });
         itemModels().withExistingParent("large_massfab", modLoc("block/large_massfab"));
     }
 
     /**
-     * Task p31-fusion — the Fusion Reactor controller: the addLargeMassfab form over the
-     * upstream NBT_TEXTURE "fusionreactor" family (Loader :1242, the six borrowed
-     * basicmachines/fusionreactor/colored faces). The 8 FACING x FORMED states share the
-     * one oriented model (the RCON formed assertion rides the blockstate property, not
-     * the model). Overlay/active layers stay unborrowed — the ACTIVE visual is the render
-     * wave's surface.
+     * Task r8-tex-large-machines — the Fusion Reactor controller joins the
+     * familyMachineModel state trio over the upstream NBT_TEXTURE "fusionreactor" family
+     * (Loader :1242; colored six-set = the p31 borrow, overlay state trio = the r8
+     * ledger). The blockstate stays static on the inactive model (the addLargeMachines
+     * defer declaration), the 8 FACING x FORMED states share it.
      */
     private void addFusionReactor() {
         Block tBlock = gregtech6.registry.GTMultiBlocks.FUSION_REACTOR.get();
         String tFamily = "fusionreactor";
-        ModelFile tModel = models().cube("fusion_reactor",
-                modLoc("block/" + tFamily + "_colored_bottom"),
-                modLoc("block/" + tFamily + "_colored_top"),
-                modLoc("block/" + tFamily + "_colored_front"),
-                modLoc("block/" + tFamily + "_colored_back"),
-                modLoc("block/" + tFamily + "_colored_left"),
-                modLoc("block/" + tFamily + "_colored_right"));
+        ModelFile tInactive = familyMachineModel("fusion_reactor", tFamily, "");
+        familyMachineModel("fusion_reactor_active", tFamily, "_active");
+        familyMachineModel("fusion_reactor_running", tFamily, "_running");
         getVariantBuilder(tBlock).forAllStates(aState -> {
             int tY;
             switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
@@ -3905,29 +3898,24 @@ public final class GT6BlockStates extends BlockStateProvider {
                 case EAST -> tY = 90;
                 default -> tY = 0; // NORTH
             }
-            return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            return ConfiguredModel.builder().modelFile(tInactive).rotationY(tY).build();
         });
         itemModels().withExistingParent("fusion_reactor", modLoc("block/fusion_reactor"));
     }
 
     /**
-     * Task p31-implosion — the Implosion Compressor controller: ONE oriented cube model
-     * over the six borrowed colored faces (the upstream NBT_TEXTURE "implosioncompressor"
-     * family, the addLargeMachines form — the 8 FACING x FORMED states share the one
-     * model, the FORMED dual-model was the coke-oven enhancement and the RCON formed
-     * assertion rides the blockstate property, not the model). Overlay/active layers stay
-     * unborrowed — the ACTIVE visual is the render wave's surface.
+     * Task r8-tex-large-machines — the Implosion Compressor controller joins the
+     * familyMachineModel state trio over the upstream NBT_TEXTURE "implosioncompressor"
+     * family (Loader :1228; colored six-set = the p31 borrow, overlay state trio = the
+     * r8 ledger). The blockstate stays static on the inactive model (the addLargeMachines
+     * defer declaration), the 8 FACING x FORMED states share it.
      */
     private void addImplosionCompressor() {
         Block tBlock = gregtech6.registry.GTMultiBlocks.IMPLOSION_COMPRESSOR.get();
         String tFamily = "implosioncompressor";
-        ModelFile tModel = models().cube("implosion_compressor",
-                modLoc("block/" + tFamily + "_colored_bottom"),
-                modLoc("block/" + tFamily + "_colored_top"),
-                modLoc("block/" + tFamily + "_colored_front"),
-                modLoc("block/" + tFamily + "_colored_back"),
-                modLoc("block/" + tFamily + "_colored_left"),
-                modLoc("block/" + tFamily + "_colored_right"));
+        ModelFile tInactive = familyMachineModel("implosion_compressor", tFamily, "");
+        familyMachineModel("implosion_compressor_active", tFamily, "_active");
+        familyMachineModel("implosion_compressor_running", tFamily, "_running");
         getVariantBuilder(tBlock).forAllStates(aState -> {
             int tY;
             switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
@@ -3936,7 +3924,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                 case EAST -> tY = 90;
                 default -> tY = 0; // NORTH
             }
-            return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            return ConfiguredModel.builder().modelFile(tInactive).rotationY(tY).build();
         });
         itemModels().withExistingParent("implosion_compressor", modLoc("block/implosion_compressor"));
     }
@@ -3949,16 +3937,18 @@ public final class GT6BlockStates extends BlockStateProvider {
      * 8 FACING x FORMED states share the one oriented model (the RCON formed assertion
      * rides the blockstate property, not the model).
      */
+    /**
+     * Task r8-tex-large-machines — the Von da Graagg controller takes the boilerModel
+     * front-pair form (the Base10 default getTexture2, TileEntityBase10MultiBlockBase
+     * :192-194: the front face renders the colored_front+overlay_front pair, the other
+     * five the plain pair) over the band dir borrowed from upstream multiblockmains/
+     * "vondagraagg" (Loader :1280). The upstream family ships NO active group (the
+     * census card's "bedrockdrill overlay_active" reading disprobed — neither main has
+     * one), so ONE static model; the 8 FACING x FORMED states share it.
+     */
     private void addVonDaGraagg() {
         Block tBlock = gregtech6.registry.GTMultiBlocks.VON_DA_GRAAGG.get();
-        String tFamily = "vondagraagg";
-        ModelFile tModel = models().cube("von_da_graagg",
-                modLoc("block/" + tFamily + "_colored_bottom"),
-                modLoc("block/" + tFamily + "_colored_top"),
-                modLoc("block/" + tFamily + "_colored_front"),
-                modLoc("block/" + tFamily + "_colored_back"),
-                modLoc("block/" + tFamily + "_colored_left"),
-                modLoc("block/" + tFamily + "_colored_right"));
+        ModelFile tModel = boilerModel("von_da_graagg", "vondagraagg", true);
         getVariantBuilder(tBlock).forAllStates(aState -> {
             int tY;
             switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
@@ -3973,22 +3963,15 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p37-bedrock-drill — the Bedrock Mining Drill controller: the addVonDaGraagg form
-     * over the upstream NBT_TEXTURE "bedrockdrill" family (Loader :1283). The upstream
-     * multiblockmains family carries ONE uniform tile (colored == colored_front, all six
-     * digests equal) so all six faces borrow the same PNG (the graagg precedent); the
-     * 4 FACING x FORMED states share the one oriented model.
+     * Task r8-tex-large-machines — the Bedrock Mining Drill controller joins the graagg
+     * boilerModel front-pair form over the upstream "bedrockdrill" band dir (Loader
+     * :1283); the retired six-face flat spread is the band-dir TBS borrow (the README
+     * ledger). No upstream active group — ONE static model, the 4 FACING x FORMED
+     * states share it.
      */
     private void addBedrockDrill() {
         Block tBlock = gregtech6.registry.GTMultiBlocks.BEDROCK_DRILL.get();
-        String tFamily = "bedrockdrill";
-        ModelFile tModel = models().cube("bedrock_drill",
-                modLoc("block/" + tFamily + "_colored_bottom"),
-                modLoc("block/" + tFamily + "_colored_top"),
-                modLoc("block/" + tFamily + "_colored_front"),
-                modLoc("block/" + tFamily + "_colored_back"),
-                modLoc("block/" + tFamily + "_colored_left"),
-                modLoc("block/" + tFamily + "_colored_right"));
+        ModelFile tModel = boilerModel("bedrock_drill", "bedrockdrill", true);
         getVariantBuilder(tBlock).forAllStates(aState -> {
             int tY;
             switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
