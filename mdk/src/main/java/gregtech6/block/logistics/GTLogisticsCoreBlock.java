@@ -22,7 +22,11 @@ import net.minecraft.world.level.Level;
 public class GTLogisticsCoreBlock extends GTMultiBlockControllerBlock {
 
 	public GTLogisticsCoreBlock(Properties aProperties) {
-		super(aProperties);
+		// task r8-tex-multiblockmains — the :1281 NBT_MATERIAL column (MT.SteelGalvanized,
+		// the registered core material) rides the carrier ctor (the p38-c2 form), so the
+		// two-layer model's tintindex-0 body resolves the colour through the
+		// GTMultiBlockControllerBlock.materialOf gate
+		super(aProperties, () -> gregapi.data.MT.SteelGalvanized);
 	}
 	//? if neoforge {
 	/*

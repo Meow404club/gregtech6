@@ -216,7 +216,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         // rides its own single-state model OUTSIDE the paint-array census — the
         // GTAdvancedCraftingTableBlock carries no ACTIVE/RUNNING payload, and the
         // family-wide paint extension stays pooled).
-        addHeatExchanger(); // task p29-w3-heat-smelter // task p29-w3-heat-smelter — the Large Heat Exchanger controller (the lightning-rod one-texture cube form)
+        addHeatExchanger(); // task p29-w3-heat-smelter // task p29-w3-heat-smelter — the Large Heat Exchanger controller (the two-layer front-bearing form)
         addReactorCore(); // task debt-reactor-b-2x2-be — the 2x2 reactor core (flat cube over the borrowed faces)
         LOGGER.info("GT6 machine paint tint: {} machine models tinted (209 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addUlvLadder/addRollLadders/addProcessMachines/addEuHuFamilies/addEuSpecialFamilies/addExoticFamilies/addEuCoreMachines/addHuTuFamilies/addHeatSmelterFamilies/addAdvancedCraftingTable)", mMachineTintModels);
         addMultiBlocks();
@@ -750,9 +750,19 @@ public final class GT6BlockStates extends BlockStateProvider {
      * {@code GTCrucibleWallBlock} blocks ride the {@code tintedCube} tinted-body form over
      * the already-borrowed parts/metalwall/0 colored family, the tank_metal borrow; the
      * former large_boiler flat-gray placeholder tinted into a flat plate), while the
-     * CONTROLLERS keep the boiler-wall placeholder cube (the formed/unformed and the
-     * molten-content faces are the declared render defer, the controller blockstate still
-     * carries the full 8 FACING×FORMED state coverage).
+     * CONTROLLERS wear the two-layer front-bearing tinted grammar, task
+     * r8-tex-multiblockmains — the former {@code large_boiler/wall} borrow placeholder
+     * and its "no borrowable crucible face" era are retired (the probe found the full
+     * machines/multiblockmains/crucible group): the Base10 default {@code getTexture2}
+     * semantics (MultiTileEntityCrucible.java:643-650 rides the same
+     * {@code aSide==mFacing} front pair as the Base10 default,
+     * TileEntityBase10MultiBlockBase.java:192-194) — the FRONT face the
+     * {@code colored_front}+{@code overlay_front} pair, the other five faces the plain
+     * pair, the colored body the tintindex-0 seat (the row NBT_MATERIAL through the
+     * {@code GTCrucibleControllerBlock} row carrier, the p38-c2 form). The
+     * formed/unformed and the molten-content faces are the declared render defer, the
+     * controller blockstate still carries the full 8 FACING×FORMED state coverage (now
+     * with the addLargeBoiler rotationY table — the front follows FACING).
      */
     private void addLargeCrucible() {
         Block tWall = gregtech6.registry.GT6Crucibles.CRUCIBLE_STEEL_WALL.get();
@@ -767,10 +777,18 @@ public final class GT6BlockStates extends BlockStateProvider {
                     "block/parts/metalwall/0/colored/bottom", "block/parts/metalwall/0/colored/top", "block/parts/metalwall/0/colored/side"));
             itemModels().withExistingParent(tHandle.getId().getPath(), modLoc("block/" + tHandle.getId().getPath()));
         }
+        ModelFile tModel = boilerModel("large_crucible", "crucible", true);
         for (gregtech6.registry.GT6Crucibles.CrucibleRow tRow : gregtech6.registry.GT6Crucibles.CRUCIBLE_ROWS) {
             Block tBlock = gregtech6.registry.GT6Crucibles.CRUCIBLE_BLOCKS_BY_PATH.get(tRow.path()).get();
-            ModelFile tModel = models().cubeAll(tRow.path(), modLoc("block/large_boiler/wall"));
-            getVariantBuilder(tBlock).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tY = switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
+                    case SOUTH -> 180;
+                    case WEST -> 270;
+                    case EAST -> 90;
+                    default -> 0; // NORTH
+                };
+                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            });
             itemModels().withExistingParent(tRow.path(), tModel.getLocation());
         }
     }
@@ -1276,17 +1294,23 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /**
      * Task p29-w3-heat-smelter — the Large Heat Exchanger controller (Loader
-     * :1245): ONE cube_all model over the borrowed upstream multiblockmains/
-     * largeheatexchanger composite (the colored base alpha-over the overlay layer
-     * composited at borrow time — all three upstream faces composite to the SAME
-     * visible pixels, the lightningrod ruling; one texture serves all six faces),
-     * every FORMED state maps to the same model (the formed-look visual is the p9
-     * pool). No facing (the structure is facing-independent — the controller is the
-     * centre cell of both layers). The BlockItem is the 2D icon over the composite
-     * sprite (r8-tex-itemform-b).
+     * :1245): the two-layer front-bearing tinted grammar over the borrowed upstream
+     * multiblockmains/largeheatexchanger group, task r8-tex-multiblockmains — the
+     * former borrow-time-composite single-image cube and its "all faces composite to
+     * the same pixels" claim are retired (the group's colored/colored_front split is
+     * real art): the Base10 default {@code getTexture2} semantics
+     * (TileEntityBase10MultiBlockBase.java:192-194), the boiler form — the FRONT face
+     * the {@code colored_front}+{@code overlay_front} pair, the other five faces the
+     * plain pair, the colored body the tintindex-0 seat (the :1245 NBT_MATERIAL ANY.W
+     * row through the {@code HeatExchangerBlock.materialOf} carrier, the
+     * GT6DynamoBlock dispatch shape). Every FORMED state maps to the same model (the
+     * formed-look visual is the p9 pool). No facing rotation (the structure is
+     * facing-independent — the controller is the centre cell of both layers; the front
+     * pair lands on north, the default-facing view pin). The BlockItem is the 2D icon
+     * over the composite sprite (r8-tex-itemform-b).
      */
     private void addHeatExchanger() {
-        ModelFile tMain = models().cubeAll("large_heat_exchanger", modLoc("block/large_heat_exchanger/main"));
+        ModelFile tMain = boilerModel("large_heat_exchanger", "large_heat_exchanger", true);
         Block tController = gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_BLOCK.get();
         getVariantBuilder(tController).forAllStates(aState -> ConfiguredModel.builder().modelFile(tMain).build());
         itemModels().withExistingParent("large_heat_exchanger", mcLoc("item/generated")).texture("layer0", modLoc("block/large_heat_exchanger/main"));
@@ -3162,15 +3186,20 @@ public final class GT6BlockStates extends BlockStateProvider {
      * Task p24-lightning-rod — the Lightning Rod family (Loader_MultiTileEntities.java
      * :1151/:1168/:1179/:1282): the three part blocks as plain cube_all over the borrowed
      * upstream textures (the multiblockparts metalwall/coil/lightningrod colored faces, the
-     * P20 ruling ①), and the single controller over ONE cube model (the borrowed
-     * multiblockmains lightningrod group — the colored base alpha-over the overlay_front
-     * decal, composited at borrow time; all three upstream faces composite to the SAME
-     * visible pixels, so one texture serves all six faces — the retired
-     * large_boiler/main.png placeholder rationale, kept as the composite texture).
+     * P20 ruling ①), and the single controller over the two-layer front-bearing tinted
+     * grammar over the borrowed multiblockmains lightningrod group, task
+     * r8-tex-multiblockmains — the former borrow-time-composite single-image cube and
+     * its "all faces composite to the same pixels" claim are retired (the group's
+     * colored/colored_front split is real art): the Base10 default {@code getTexture2}
+     * semantics (TileEntityBase10MultiBlockBase.java:192-194), the boiler form — the
+     * FRONT face the {@code colored_front}+{@code overlay_front} pair, the other five
+     * faces the plain pair, the colored body the tintindex-0 seat (the :1282
+     * NBT_MATERIAL ANY.W row through the {@code GTLightningRodBlock} carrier ctor, the
+     * p38-c2 form).
      * The facing is structurally meaningless (the rod is vertical), so every state maps to
-     * the same model with no rotation; the FORMED variants map to the same model (the
-     * formed-look visual is the p9 pool). The controller and the rod BlockItems are 2D
-     * icons over their composite/rod sprites (r8-tex-itemform-b).
+     * the same model with no rotation (the front pair lands on north); the FORMED variants
+     * map to the same model (the formed-look visual is the p9 pool). The controller and the
+     * rod BlockItems are 2D icons over their composite/rod sprites (r8-tex-itemform-b).
      */
     /**
      * Task p29-w3-tank-valves — the Tank Main Valve family (Loader_MultiTileEntities.java
@@ -3272,7 +3301,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     private void addLightningRod() {
-        ModelFile tMain = models().cubeAll("multiblock_lightning_rod", modLoc("block/lightningrod/main"));
+        ModelFile tMain = boilerModel("multiblock_lightning_rod", "lightningrod", true);
         Block tController = gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD.get();
         getVariantBuilder(tController).forAllStates(aState -> ConfiguredModel.builder().modelFile(tMain).build());
         itemModels().withExistingParent("multiblock_lightning_rod", mcLoc("item/generated")).texture("layer0", modLoc("block/lightningrod/main"));
@@ -3833,18 +3862,23 @@ public final class GT6BlockStates extends BlockStateProvider {
      */
     /**
      * Task p32-logistics-lv3 — the Logistics Core controller (upstream meta 17997, the
-     * NBT_TEXTURE "logisticscore" family). The dedicated textures have no port face yet,
-     * so the model borrows the galvanized-steel wall family (the core's registered
-     * material — the parts-datagen borrow form); the logisticscore wave retextures later.
-     * The 8 FACING x FORMED states share the one oriented model (the massfab form).
+     * NBT_TEXTURE "logisticscore" family). Task r8-tex-multiblockmains — the former
+     * "the dedicated textures have no port face yet" galvanized-steel-wall borrow and
+     * its outdated claim are retired (the probe found the full
+     * machines/multiblockmains/logisticscore group): the two-layer front-bearing
+     * tinted grammar, the Base10 default {@code getTexture2} semantics
+     * (TileEntityBase10MultiBlockBase.java:192-194), the boiler form — the FRONT face
+     * the {@code colored_front}+{@code overlay_front} pair, the other five faces the
+     * plain pair, the colored body the tintindex-0 seat (the :1281 NBT_MATERIAL
+     * SteelGalvanized column through the {@code GTLogisticsCoreBlock} carrier ctor,
+     * the p38-c2 form). The upstream logistics content art (the
+     * {@code logistics/fluid,item,generic} buffer faces) is NOT borrowed — the
+     * NBT-dynamic content painting is the render pool. The 8 FACING x FORMED states
+     * share the one oriented model (the massfab form, the rotationY table).
      */
     private void addLogisticsCore() {
         Block tBlock = gregtech6.registry.GT6Logistics.LOGISTICS_CORE.get();
-        String tBase = "block/parts/metalwall/0/colored/";
-        ModelFile tModel = models().cube("logistics_core",
-                modLoc(tBase + "bottom"), modLoc(tBase + "top"),
-                modLoc(tBase + "side"), modLoc(tBase + "side"),
-                modLoc(tBase + "side"), modLoc(tBase + "side"));
+        ModelFile tModel = boilerModel("logistics_core", "logistics_core", true);
         getVariantBuilder(tBlock).forAllStates(aState -> {
             int tY;
             switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {

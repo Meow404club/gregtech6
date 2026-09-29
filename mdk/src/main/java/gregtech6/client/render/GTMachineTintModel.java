@@ -238,6 +238,17 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 				gregtech6.registry.GTMultiBlocks.MASSFAB.get(),
 				gregtech6.registry.GTMultiBlocks.FUSION_REACTOR.get(),
 				gregtech6.registry.GTMultiBlocks.BEDROCK_DRILL.get())) wrapStates(tBlock, aEvent);
+		// task r8-tex-multiblockmains — the four multiblockmains controller families join
+		// the same two-layer front-bearing seat (every row carries NBT_MATERIAL upstream:
+		// Loader :1270-1277 crucible eight, :1245 heat exchanger, :1281 logistics core,
+		// :1282 lightning rod; the body cube is the tintindex-0 seat, the front-pair
+		// overlay decals untinted; the colours resolve through the
+		// GTMultiBlockControllerBlock carrier, the p38-c2 gate, and the HEX through its
+		// own materialOf, the GT6DynamoBlock shape)
+		for (var tHandle : gregtech6.registry.GT6Crucibles.CRUCIBLE_BLOCKS_BY_PATH.values()) wrapStates(tHandle.get(), aEvent);
+		wrapStates(gregtech6.registry.GT6Logistics.LOGISTICS_CORE.get(), aEvent);
+		wrapStates(gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD.get(), aEvent);
+		wrapStates(gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_BLOCK.get(), aEvent);
 		// issue #15 (task r3-beehive-tint) — the bee family joins the baked-tint domain:
 		// the hive's 15 worldgen family colours ride the BE PAINT model data (the worldgen
 		// paints at placement) and the Bumbliary pair's row material rides the
@@ -310,6 +321,14 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// task r8-tex-large-boilers — the five large boiler rows join the same controller
 		// lambda (the NBT_MATERIAL column rides the GTMultiBlockControllerBlock carrier)
 		for (Block tBlock : gregtech6.registry.GTMultiBlocks.boilerPaintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		// task r8-tex-multiblockmains — the four multiblockmains controller families' 11
+		// BlockItems (the eight crucible rows + the logistics core + the lightning rod +
+		// the heat exchanger) join the same lambda (the NBT_MATERIAL columns ride the
+		// GTMultiBlockControllerBlock carrier, the HEX its own materialOf)
+		for (var tHandle : gregtech6.registry.GT6Crucibles.CRUCIBLE_BLOCKS_BY_PATH.values()) tPaintItems.add(tHandle.get().asItem());
+		tPaintItems.add(gregtech6.registry.GT6Logistics.LOGISTICS_CORE_ITEM.get());
+		tPaintItems.add(gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_ITEM.get());
+		tPaintItems.add(gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_ITEM.get());
 		// task r8-tex-pipe-textures — the three pipe connector families' 21 BlockItems
 		// (the 2 wood fluid rows, the 18 item pipe rows, the logistics wire) join the
 		// same lambda; the wire's carrier resolves NULL (upstream NBT_MATERIAL = MT.NULL)

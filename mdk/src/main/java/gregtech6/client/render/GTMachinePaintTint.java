@@ -141,6 +141,12 @@ public final class GTMachinePaintTint {
 		if (tMaterial != null) return tMaterial;
 		tMaterial = gregtech6.block.pipe.GTItemPipeBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
+		// task r8-tex-multiblockmains — the large heat exchanger joins (the :1245
+		// NBT_MATERIAL row, MT.W); the crucible controllers, the logistics core and the
+		// lightning rod resolve through the GTMultiBlockControllerBlock gate above (the
+		// p38-c2 carrier form all four now ride)
+		tMaterial = gregtech6.registry.GT6HeatExchangers.HeatExchangerBlock.materialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
 		return gregtech6.tileentity.bees.GT6BumbliaryBlock.materialOf(aBlock);
 	}
 
