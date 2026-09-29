@@ -43,7 +43,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import gregtech6.block.GTComposedNameItem;
+import gregtech6.item.GT6MachineBlockItem;
 import gregtech6.block.multiblock.GTMultiBlockControllerBlock;
 import gregtech6.fluid.FluidTankGT;
 import gregtech6.gui.machines.GT6MuiMachine;
@@ -225,7 +225,7 @@ public final class GT6LargeMachines {
 			BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTLargeMachineBlock(tRow, tRow.properties())));
 			ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new GTComposedNameItem(BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+					() -> new GT6MachineBlockItem(BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "multiblock")));
 		}
 	}
 
