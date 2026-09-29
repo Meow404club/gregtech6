@@ -135,7 +135,7 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
         assert2DForm("large_heat_exchanger", "gt6:block/large_heat_exchanger/main");
         assertEquals(8, GT6Kinetics.DIESEL_SPECS.size(), "the 8-tier walk");
         for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) {
-            assert2DForm(GT6Kinetics.dieselName(tSpec.material()), "gt6:block/diesel_engine");
+            assert2DForm(GT6Kinetics.dieselName(tSpec.material()), "gt6:block/diesel_engine_colored_front"); // r8-tex-bridge-kinetic rename, byte-identical
         }
         assertEquals(12, GT6Attachments.ROWS.size(), "the 12-attachment walk");
         for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
@@ -167,7 +167,9 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
                 {"long_dist_pipe_0", "gt6:block/item_pipe"},
                 {"energy_source", "gt6:block/energy_source"},
                 {"crank", "gt6:block/crank"},
-                {"diesel_engine", "gt6:block/diesel_engine"},
+                // ("diesel_engine" left in task r8-tex-bridge-kinetic — the world face is the
+                // two-layer borrow now, pinned by GT6BridgeKineticTexDatagenTest; the ITEM
+                // row above stays 2D over the renamed byte-identical colored_front)
                 {"tap_ceramic", "gt6:block/tap"},
                 {"funnel_ceramic", "gt6:block/funnel"},
                 {"water_wheel", "gt6:block/water_wheel"},

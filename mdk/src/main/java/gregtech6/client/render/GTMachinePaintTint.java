@@ -188,9 +188,10 @@ public final class GTMachinePaintTint {
 	 * The port row-slug → material column (the GT6Boilers slug conventions verbatim):
 	 * the steam ladders (Loader :584-612) and the diesel ladder (:721-729) share it.
 	 * Resolved at tint time (never class-load), so the raw {@code MT.X} reads are safe.
+	 * Public — the pure seam the offline pin test drives (the tintARGB symmetry).
 	 */
 	@Nullable
-	private static OreDictMaterial bySlug(String aSlug) {
+	public static OreDictMaterial bySlug(String aSlug) {
 		return switch (aSlug) {
 			case "lead" -> gregapi.data.MT.Pb;
 			case "tin_alloy" -> gregapi.data.MT.TinAlloy;
