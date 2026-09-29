@@ -133,10 +133,8 @@ public final class GT6CrucibleDatagen {
 				Block tBlock = GT6Crucibles.BLOCKS_BY_PATH.get(tRow.path()).get();
 				addCrucible(tRow, tBlock);
 			}
-			for (GT6Molds.MoldRow tRow : GT6Molds.ROWS) {
-				Block tBlock = GT6Molds.BLOCKS_BY_PATH.get(tRow.path()).get();
-				addSimpleCube(tBlock, "block/" + tRow.path(), tRow.material().get());
-			}
+			// the mold_stone row moved to GT6MoldDatagen (issue #41: stone and ceramic molds
+			// share the one concave MTE design 1072 — the flat-cube placeholder retired)
 		}
 
 		/** One crucible: 9 LIQUID_LEVEL variants + the BlockItem parent (the empty face = the material smooth body). */
@@ -150,13 +148,6 @@ public final class GT6CrucibleDatagen {
 				return ConfiguredModel.builder().modelFile(tLevel == 0 ? tEmptyModel : tFilledModel).build();
 			});
 			itemModels().withExistingParent(aRow.path(), modLoc(tEmpty));
-		}
-
-		/** One plain cube carrier (the stone mold; the material smooth body). */
-		private void addSimpleCube(Block aBlock, String aModelName, gregapi.oredict.OreDictMaterial aMaterial) {
-			ModelFile tModel = models().cubeAll(aModelName, loc(bodyTexture(aMaterial)));
-			simpleBlock(aBlock, tModel);
-			itemModels().withExistingParent(aModelName.substring("block/".length()), modLoc(aModelName));
 		}
 	}
 

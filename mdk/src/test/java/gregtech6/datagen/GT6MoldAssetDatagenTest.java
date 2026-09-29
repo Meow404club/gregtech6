@@ -132,9 +132,10 @@ public class GT6MoldAssetDatagenTest extends GTOfflineTestBase {
     /**
      * The body pin: the model's single body texture key must be exactly the expected
      * reference. Two carrier forms coexist (the r7-mold-geometry rebase seam): the
-     * cube_all rows (faucets, crucible empties, the stone rung) pin "all", the 31
-     * bitmap-stamped ceramic molds pin "body" — the material smooth face and the
-     * cobble-stays-dead pin are form-independent.
+     * cube_all rows (faucets, crucible empties) pin "all", the 32 bitmap-stamped molds
+     * (stone + ceramic, issue #41 — the stone rung retired its flat-cube placeholder and
+     * rides the same concave MTE design 1072) pin "body" — the material smooth face and
+     * the cobble-stays-dead pin are form-independent.
      */
     private static void assertBody(String aModelPath, String aExpectedBody, String aLabel) throws Exception {
         JsonObject tModel = generatedJson(aModelPath);
