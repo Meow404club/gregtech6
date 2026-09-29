@@ -193,13 +193,13 @@ public class CoverPlateModel extends GTDynamicBakedModel {
 	}
 
 	// ---------------------------------------------------------------------------
-	// baker (client-only; the GTCEu StaticFaceBakery.bakeFace recipe over FaceBakery)
+	// baker (client-only; FaceBakery over the vanilla uvsByFace UV table)
 	// ---------------------------------------------------------------------------
 
 	private BakedQuad bakePlateQuad(PlateQuad aPlan, TextureAtlasSprite aSprite) {
 		double[] tBox = aPlan.box();
-		// FaceBakery works in model space (0..16); the GTCEu bakeFace cubeUV switch maps
-		// the box extents per face — full-face UV across the slab.
+		// FaceBakery works in model space (0..16); the vanilla uvsByFace table maps the box
+		// extents per face — full-face UV across the slab.
 		Vector3f tFrom = new Vector3f((float) tBox[0] * 16, (float) tBox[1] * 16, (float) tBox[2] * 16);
 		Vector3f tTo = new Vector3f((float) tBox[3] * 16, (float) tBox[4] * 16, (float) tBox[5] * 16);
 		float[] tUv = uvOf(aPlan.quadFace(), tBox[0] * 16, tBox[1] * 16, tBox[2] * 16, tBox[3] * 16, tBox[4] * 16, tBox[5] * 16);
@@ -208,15 +208,40 @@ public class CoverPlateModel extends GTDynamicBakedModel {
 				aSprite, aPlan.quadFace(), BlockModelRotation.X0_Y0, null, true, aPlan.sprite());
 	}
 
-	/** The GTCEu StaticFaceBakery.bakeFace cubeUV switch (StaticFaceBakery.java:54-66). */
+	/**
+	 * The vanilla {@code BlockElement.uvsByFace} table (BlockElement.java:46-62) over the
+	 * slab extents in model space — the 1.7.10 cover-render intent, not the GTCEu Modern
+	 * cubeUV switch this copy used to carry. Upstream renders the cover slab through the
+	 * vanilla {@code RenderBlocks.renderFace*} routines (TileEntityBase06Covers.java:451-463
+	 * getTexture per pass/side → ITexture.java:206-286), which sample the sprite
+	 * PROPORTIONALLY to the box extents and upright (side V = 16 - y*16, sprite top at the
+	 * world top); only YNeg is GT-fixed (renderFixedNegativeYFacing, ITexture.java:288-298,
+	 * minV at renderMaxZ — the same corner form as canonical). Consequences per quad kind:
+	 * <ul>
+	 * <li>outer decal faces (16x16): the table degenerates to the canonical [0,0,16,16]
+	 *     walk (± the 0.032 epsilon slack — the same #27/r8-uvof-private-copies ruling the
+	 *     sibling models landed). The former cubeUV switch put the box maxY into the
+	 *     BlockFaceUV sprite-top slot (FaceInfo.java:19-42: side top corners = vertices
+	 *     0/3), so every non-UP outer face baked flipped — visible on the direction-
+	 *     sensitive census sprites (the redstone_emitter digits, the top-left-anchored
+	 *     redstone_switch circuit icons, the conveyor/robotarm strips; pixel-measured in
+	 *     task r8-render-leftovers), hence FIXED here — the plate/pump metal art the old
+	 *     prediction tested is near-symmetric, but it is not the whole census.</li>
+	 * <li>rim faces (16x2): V spans only the sprite's top band (16 - maxY*16 .. 16 -
+	 *     minY*16 = the 2px strip) — the 1.7.10 proportional band, not a full-sprite
+	 *     squeeze.</li>
+	 * <li>layer offsets shift the slab along its normal, leaving the tangential extents
+	 *     untouched — stacked layers stay pixel-aligned.</li>
+	 * </ul>
+	 */
 	private static float[] uvOf(Direction aFace, double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
 		return switch (aFace) {
 			case UP    -> new float[] {(float) minX, (float) minZ, (float) maxX, (float) maxZ};
-			case DOWN  -> new float[] {(float) minX, (float) maxZ, (float) maxX, (float) minZ};
-			case NORTH -> new float[] {(float) maxX, (float) maxY, (float) minX, (float) minY};
-			case SOUTH -> new float[] {(float) minX, (float) maxY, (float) maxX, (float) minY};
-			case WEST  -> new float[] {(float) minZ, (float) maxY, (float) maxZ, (float) minY};
-			case EAST  -> new float[] {(float) maxZ, (float) maxY, (float) minZ, (float) minY};
+			case DOWN  -> new float[] {(float) minX, (float) (16 - maxZ), (float) maxX, (float) (16 - minZ)};
+			case NORTH -> new float[] {(float) (16 - maxX), (float) (16 - maxY), (float) (16 - minX), (float) (16 - minY)};
+			case SOUTH -> new float[] {(float) minX, (float) (16 - maxY), (float) maxX, (float) (16 - minY)};
+			case WEST  -> new float[] {(float) minZ, (float) (16 - maxY), (float) maxZ, (float) (16 - minY)};
+			case EAST  -> new float[] {(float) (16 - maxZ), (float) (16 - maxY), (float) (16 - minZ), (float) (16 - minY)};
 		};
 	}
 }

@@ -8,25 +8,39 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.mojang.blaze3d.platform.NativeImage;
+
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.metadata.animation.FrameSize;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
+
+import net.minecraftforge.client.model.data.ModelData;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import gregtech6.covers.GTCoverRenderSnapshot;
+import gregtech6.client.render.GTModelProperties;
+import gregtech6.client.render.GTOfflineRenderTestBase;
 
 /**
  * The cover plate render-path sentinel tests (task p4-cover-core acceptance ③, offline
  * half): the planner is pure geometry over the immutable snapshot — the quad emission
  * rules, the GTCEu slab geometry (2px thickness + the 0.002 Z-fighting epsilon), the
- * snapshot freeze and the client registration hook. The sprite→BakedQuad baker itself
- * is the runClient visual check left to the user (the W2 BakedQuad-offline precedent).
+ * snapshot freeze and the client registration hook — plus the r8-render-leftovers bake
+ * pins (the IdentitySprite fixture form of the in-flight FaceBakePins, self-built here to
+ * avoid a cross-branch collision): the outer decal quads bake the canonical full-face UV
+ * walk on all six cover faces and the rims bake the 1.7.10 proportional top band.
  */
-public class CoverPlateModelTest {
+public class CoverPlateModelTest extends GTOfflineRenderTestBase {
 
 	private static final ResourceLocation SPRITE_UP = new ResourceLocation("gt6", "block/cover/test_up");
 	private static final ResourceLocation SPRITE_NORTH = new ResourceLocation("gt6", "block/cover/test_north");
+
 
 	@AfterEach
 	void clearRegistration() {
@@ -206,5 +220,145 @@ public class CoverPlateModelTest {
 				"the oven's 16 per-state models carry the dynamic plate model");
 		GTCoverClientListener.register(); // idempotent
 		assertEquals(GTCoverClientListener.TARGET_MODELS.size(), gregtech6.client.render.GTRenderModelListener.registeredCount());
+	}
+
+	// ---------------------------------------------------------------------------
+	// the r8-render-leftovers bake pins (the FaceBakePins fixture form)
+	// ---------------------------------------------------------------------------
+
+	/** The int[] vertex stride (FaceBakery.VERTEX_INT_SIZE) and UV slot offsets. */
+	private static final int STRIDE = 8, U_SLOT = 4, V_SLOT = 5;
+
+	/** The forge FaceBakery anti-bleed nudge headroom (uv*0.999 + opposite*0.001 → ≤0.016 at 0..16, plus the 0.032 epsilon slack). */
+	private static final float TOLERANCE = 0.1F;
+
+	/**
+	 * THE r8-render-leftovers PIN (outer decal face): every cover face's own pass bakes the
+	 * canonical rotation-0 full-face walk (0,0),(0,16),(16,16),(16,0) — the vanilla cube
+	 * JSON form, sprite top (V=0) on the side faces' top corners (upright). The old GTCEu
+	 * cubeUV table flipped every non-UP outer face (V mirror on DOWN/SOUTH/WEST, 180° on
+	 * NORTH/EAST) — the redstone_emitter digits and the top-left-anchored circuit icons
+	 * made that visible, hence the fix.
+	 */
+	@Test
+	void outerDecalQuadsBakeTheCanonicalFullFaceUvWalk() {
+		for (Direction tFace : Direction.values()) {
+			CoverPlateModel tModel = new CoverPlateModel(new StubFallback(), aSpriteId -> IdentitySprite.INSTANCE);
+			ModelData tData = ModelData.builder()
+					.with(GTModelProperties.RENDER_SNAPSHOT, snapshot(tFace)).build();
+			List<BakedQuad> tQuads = tModel.getQuads(null, tFace, RandomSource.create(), tData, null);
+			assertEquals(1, tQuads.size(), tFace + ": the cover's own pass carries its outer decal quad");
+			assertCanonicalFullFaceUv(tQuads.get(0), tFace);
+		}
+	}
+
+	/**
+	 * The unculled back face (null pass) and the 2px rim both carry the background plate:
+	 * the back face walks the canonical form of its own quad face; the rim samples the
+	 * 1.7.10 proportional TOP band (V ≈ 0 at the top corners, V ≈ 2 at the bottom — the
+	 * 2px strip), not a full-sprite squeeze and not the old table's upside-down bottom band.
+	 */
+	@Test
+	void backFaceAndRimBakeTheVanillaForms() {
+		CoverPlateModel tModel = new CoverPlateModel(new StubFallback(), aSpriteId -> IdentitySprite.INSTANCE);
+		ModelData tData = ModelData.builder()
+				.with(GTModelProperties.RENDER_SNAPSHOT, snapshot(Direction.UP)).build();
+
+		List<BakedQuad> tBack = tModel.getQuads(null, null, RandomSource.create(), tData, null);
+		assertEquals(1, tBack.size(), "the null pass carries the unculled back face");
+		assertCanonicalFullFaceUv(tBack.get(0), Direction.DOWN);
+
+		List<BakedQuad> tRim = tModel.getQuads(null, Direction.NORTH, RandomSource.create(), tData, null);
+		assertEquals(1, tRim.size(), "the NORTH pass carries the UP plate's rim");
+		int[] tV = tRim.get(0).getVertices();
+		for (int i = 0; i < 4; i++) {
+			float tU = Float.intBitsToFloat(tV[i * STRIDE + U_SLOT]), tVv = Float.intBitsToFloat(tV[i * STRIDE + V_SLOT]);
+			assertTrue(Math.abs(tU) < TOLERANCE || Math.abs(tU - 16) < TOLERANCE, "rim vertex " + i + " U spans the full width: " + tU);
+		}
+		assertTrue(Math.abs(Float.intBitsToFloat(tV[V_SLOT])) < TOLERANCE
+				&& Math.abs(Float.intBitsToFloat(tV[3 * STRIDE + V_SLOT])) < TOLERANCE,
+				"the rim's top corners (vertices 0/3) carry the sprite-top V=0 (the 1.7.10 proportional band)");
+		assertTrue(Math.abs(Float.intBitsToFloat(tV[STRIDE + V_SLOT]) - 2.0F) < TOLERANCE
+				&& Math.abs(Float.intBitsToFloat(tV[2 * STRIDE + V_SLOT]) - 2.0F) < TOLERANCE,
+				"the rim's bottom corners sit at V=2 (the 2px band depth 16 - minY*16)");
+	}
+
+	/**
+	 * The canonical rotation-0 full-face walk (0,0),(0,16),(16,16),(16,0) in FaceInfo vertex
+	 * order, cross-checked against the quad's own positions (side top corners carry V=0;
+	 * UP reads V=0 at MIN_Z, DOWN at MAX_Z — the renderFixedNegativeYFacing form).
+	 */
+	private static void assertCanonicalFullFaceUv(BakedQuad aQuad, Direction aFace) {
+		int[] tV = aQuad.getVertices();
+		float[][] tWalk = {{0, 0}, {0, 16}, {16, 16}, {16, 0}};
+		for (int i = 0; i < 4; i++) {
+			assertEquals(tWalk[i][0], Float.intBitsToFloat(tV[i * STRIDE + U_SLOT]), TOLERANCE, aFace + " vertex " + i + " U");
+			assertEquals(tWalk[i][1], Float.intBitsToFloat(tV[i * STRIDE + V_SLOT]), TOLERANCE, aFace + " vertex " + i + " V");
+		}
+		float tY0 = Float.intBitsToFloat(tV[1]), tY1 = Float.intBitsToFloat(tV[1 + STRIDE]),
+				tY2 = Float.intBitsToFloat(tV[2 * STRIDE + 1]), tY3 = Float.intBitsToFloat(tV[3 * STRIDE + 1]);
+		if (aFace.getAxis().isHorizontal()) {
+			assertTrue(tY0 > tY1 && tY0 > tY2 && tY3 > tY1 && tY3 > tY2, aFace + ": vertices 0/3 are the top corners");
+		} else if (aFace == Direction.UP) {
+			assertTrue(Float.intBitsToFloat(tV[2]) < Float.intBitsToFloat(tV[2 + STRIDE]),
+					aFace + ": vertex 0 sits at the MIN_Z edge (V=0 there)");
+		} else {
+			assertTrue(Float.intBitsToFloat(tV[2]) > Float.intBitsToFloat(tV[2 + STRIDE]),
+					aFace + ": vertex 0 sits at the MAX_Z edge (V=0 there, the renderFixedNegativeYFacing form)");
+		}
+	}
+
+	/** Empty baked model — the dynamic quads never touch it on a snapshot hit. */
+	public static final class StubFallback implements BakedModel {
+		@Override public List<BakedQuad> getQuads(net.minecraft.world.level.block.state.BlockState aState, Direction aSide, RandomSource aRand) { return List.of(); }
+		@Override public boolean useAmbientOcclusion() { return false; }
+		@Override public boolean isGui3d() { return false; }
+		@Override public boolean usesBlockLight() { return false; }
+		@Override public boolean isCustomRenderer() { return false; }
+		@Override public TextureAtlasSprite getParticleIcon() { return null; }
+		@Override public net.minecraft.client.renderer.block.model.ItemTransforms getTransforms() { return net.minecraft.client.renderer.block.model.ItemTransforms.NO_TRANSFORMS; }
+		@Override public net.minecraft.client.renderer.block.model.ItemOverrides getOverrides() { return net.minecraft.client.renderer.block.model.ItemOverrides.EMPTY; }
+	}
+
+	/**
+	 * The leg-uniform identity atlas stub (the FaceBakePins form, self-built to avoid the
+	 * cross-branch name collision): getU/getV return the input unchanged so the decoded
+	 * vertex floats ARE the 0..16 model-space values, and a zero uvShrinkRatio kills
+	 * FaceBakery's shrink lerp. The legs diverge in sprite coordinate conventions — forge
+	 * 1.20.1 passes 0..16 into {@code getU(double)}, 1.21.1 passes 0..1 into
+	 * {@code getU(float)} (FaceBakery divides by 16 first) — hence the per-leg overrides.
+	 */
+	static final class IdentitySprite extends TextureAtlasSprite {
+		static final IdentitySprite INSTANCE = new IdentitySprite();
+
+		private IdentitySprite() {
+			super(ResourceLocation.fromNamespaceAndPath("gt6", "unit_uv"),
+					new net.minecraft.client.renderer.texture.SpriteContents(ResourceLocation.fromNamespaceAndPath("gt6", "unit_uv"),
+							new FrameSize(1, 1),
+							new NativeImage(1, 1, false),
+							//? if forge {
+							net.minecraft.client.resources.metadata.animation.AnimationMetadataSection.EMPTY),
+							//?} else {
+							/*net.minecraft.server.packs.resources.ResourceMetadata.EMPTY),*/
+							//?}
+					1, 1, 0, 0);
+		}
+
+		//? if forge {
+		@Override
+		public float getU(double aU) { return (float) aU; }
+
+		@Override
+		public float getV(double aV) { return (float) aV; }
+		//?} else {
+		/*@Override
+		public float getU(float aU) { return aU * 16.0F; }
+
+		@Override
+		public float getV(float aV) { return aV * 16.0F; }*/
+		//?}
+
+		@Override
+		public float uvShrinkRatio() { return 0.0F; }
 	}
 }
