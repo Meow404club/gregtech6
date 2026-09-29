@@ -58,9 +58,13 @@ public class GT6MachineFamilyHoverTest extends GTOfflineTestBase {
 			org.junit.jupiter.api.Assumptions.assumeTrue(false,
 					"shared JVM registries poisoned by an earlier failed clinit (the item.* class-order lottery, pre-existing on main): " + tPoison);
 		}
-		// the maps are volatile, NULL until init() — the same lifecycle onModConstruct runs
+		// the maps are volatile, NULL until init() — the same lifecycle onModConstruct runs.
+		// On the FML-booted 21.1 leg the mod construct ALREADY walked (GT6Tooltips.register
+		// is fail-loud on duplicates) — the containsKey guard makes the seat both-legs safe.
 		gregtech6.recipes.GT6RecipeMaps.init();
-		GTMachines.registerMachineTooltipRows();
+		if (!GT6Tooltips.REGISTRY.containsKey("machine:dryer")) {
+			GTMachines.registerMachineTooltipRows();
+		}
 		assertNotNull(GTMachines.DRYER_ROWS, "the GTMachines clinit ran (the row lists are up)");
 		sDryer = registerItemFixture("fixture_tooltip_machine_dryer",
 				() -> new GT6MachineBlockItem(Blocks.BRICKS, new Item.Properties(), "machine:dryer"));
