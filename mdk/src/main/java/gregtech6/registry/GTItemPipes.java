@@ -29,10 +29,10 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import gregtech6.block.GTComposedNameItem;
 import gregtech6.block.pipe.GTItemPipeBlock;
 import gregtech6.block.pipe.GTItemPipeBlockItem;
 import gregtech6.tileentity.connectors.GTItemPipeBlockEntity;
+import gregtech6.tooltip.GT6Tooltips;
 
 /**
  * Item pipe registration, card-owned (ADR-P3-4): self-contained
@@ -209,9 +209,13 @@ public final class GTItemPipes {
 			BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTItemPipeBlock(rowByPath(tRow.path()), pipeProperties())));
 			// the composed-name item (the boiler GTComposedNameItem posture — the stack name
-			// delegates to the block's composed getName)
+			// delegates to the block's composed getName); the pipe_item rows ride the
+			// per-row constants [stepSize, invSize] — MultiTileEntityPipeItem.java:116-117
+			// (stepsize = makeString(mStepSize), bandwidth = makeString(getPipeCapacity()
+			// = invsize) + "/s"), formatted at the site (UT.Code.makeString)
 			ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new GTItemPipeBlockItem(GTItemPipes.BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+					() -> new GTItemPipeBlockItem(GTItemPipes.BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "pipe_item",
+							GT6Tooltips.makeString(tRow.stepSize()), GT6Tooltips.makeString(tRow.invSize()))));
 		}
 	}
 

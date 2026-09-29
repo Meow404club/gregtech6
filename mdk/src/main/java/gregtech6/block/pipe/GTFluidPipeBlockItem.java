@@ -1,18 +1,19 @@
 package gregtech6.block.pipe;
 
-import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import gregtech6.item.GT6MachineBlockItem;
 import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 
 /**
  * The fluid-pipe BlockItem — the onPlaced face-direction carrier (task
- * p4-pipe-flow-control spec ②, the architect ruling): {@code placeBlock} is the only
- * vanilla placement hook where the BE already exists (super placed the block) while the
+ * p4-pipe-flow-control spec ②, the architect ruling): {@code placeBlock} is the only vanilla
+ * placement hook where the BE already exists (super placed the block) while the
  * {@link BlockPlaceContext} is still in hand, so the clicked face survives to
  * {@link GTFluidPipeBlockEntity#onPlaced(byte, UUID)}. Deliberately NOT a BE.onLoad hook —
  * onLoad replays on every chunk load, which would resurrect connections the user tore
@@ -32,11 +33,18 @@ import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
  * :65-68 read must precede the :148 write). So the merge runs here, BEFORE onPlaced; the
  * later vanilla re-application is idempotent (the same keys over the same values,
  * BlockItem.updateCustomBlockEntityTag :158 merge+load).
+ *
+ * <p>Task r8-tooltip-wire-pipe-sensor moves the parent to the machine carrier
+ * {@link GT6MachineBlockItem} (the {@code pipe_fluid} family rows, the registration site
+ * hands [capacity/2, capacity]). Zero name drift: {@code GTFluidPipeBlock} has no
+ * {@code getName} compose, so the inherited {@code GTComposedNameItem.getName} resolves the
+ * vanilla {@code Block#getName()} descriptionId face — the identical string the raw
+ * {@code BlockItem} base resolved (pinned by the carrier test).
  */
-public class GTFluidPipeBlockItem extends BlockItem {
+public class GTFluidPipeBlockItem extends GT6MachineBlockItem {
 
-	public GTFluidPipeBlockItem(Block aBlock, Properties aProperties) {
-		super(aBlock, aProperties);
+	public GTFluidPipeBlockItem(Block aBlock, Item.Properties aProperties, String aFamily, Object... aLineArgs) {
+		super(aBlock, aProperties, aFamily, aLineArgs);
 	}
 
 	@Override

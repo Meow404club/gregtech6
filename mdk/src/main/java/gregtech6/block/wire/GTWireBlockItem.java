@@ -1,14 +1,13 @@
 package gregtech6.block.wire;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import gregtech6.item.GT6MachineBlockItem;
 import gregtech6.tileentity.connectors.GTWireBlockEntity;
 
 /**
@@ -19,25 +18,21 @@ import gregtech6.tileentity.connectors.GTWireBlockEntity;
  * {@link GTWireBlockEntity#onPlaced(byte)} (the upstream TileEntityBase09Connector.onPlaced
  * :82-96 support-face connect + symmetric back-connect). Deliberately NOT a BE.onLoad hook —
  * onLoad replays on every chunk load, which would resurrect connections the user tore down.
+ *
+ * <p>Task r8-tooltip-wire-pipe-sensor moves the parent to the machine carrier
+ * {@link GT6MachineBlockItem} (itself a {@code GTComposedNameItem}) so the family row tables
+ * replay off the registration-site family key: {@code wire} / the {@code wire_contact}
+ * sibling (the bare shock-flagged rows), {@code wire_redstone} / {@code wire_laser}
+ * (unregistered keys — the zero-row T1 contract — the upstream WireElectric stat rows must
+ * not leak onto the redstone/laser families). The stack name keeps the B-wave p20 posture:
+ * the inherited {@code GTComposedNameItem.getName} delegates to
+ * {@link GTWireBlock#getName()}, the same compose the retired local override made (both
+ * hooks land on the block face, the p20 arch card's "single compose point").
  */
-public class GTWireBlockItem extends BlockItem {
+public class GTWireBlockItem extends GT6MachineBlockItem {
 
-	public GTWireBlockItem(Block aBlock, Properties aProperties) {
-		super(aBlock, aProperties);
-	}
-
-	/**
-	 * The item face of the composed wire name (task p20-i18n-compose-wires): vanilla
-	 * BlockItem has NO getName override — it delegates only the descriptionId
-	 * (BlockItem.java:186-189) — so the stack display would resolve the raw per-variant
-	 * key the B-wave retired. Delegate to the block compose instead: the arch card's
-	 * "single compose point" splits across the two vanilla name hooks (Block.getName for
-	 * the block face, Item.getName(ItemStack) for the stack face), both landing on
-	 * {@link GTWireBlock#displayNameOf}.
-	 */
-	@Override
-	public Component getName(ItemStack aStack) {
-		return getBlock() instanceof GTWireBlock tWire ? tWire.getName() : super.getName(aStack);
+	public GTWireBlockItem(Block aBlock, Item.Properties aProperties, String aFamily, Object... aLineArgs) {
+		super(aBlock, aProperties, aFamily, aLineArgs);
 	}
 
 	@Override
