@@ -34,7 +34,8 @@ public class GT6JadeTooltipKeyPinTest {
 			"src/main/java/gregtech6/jade/GT6JadeRows.java",
 			"src/main/java/gregtech6/jade/GT6MachineProvider.java",
 			"src/main/java/gregtech6/jade/GT6FluidProvider.java",
-			"src/main/java/gregtech6/jade/GT6BoilerProvider.java");
+			"src/main/java/gregtech6/jade/GT6BoilerProvider.java",
+			"src/main/java/gregtech6/jade/GT6SensorProvider.java");
 
 	@Test
 	public void keyedProvidersCarryZeroBareLiterals() throws IOException {
