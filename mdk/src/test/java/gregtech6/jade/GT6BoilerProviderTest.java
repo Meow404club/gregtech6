@@ -1,10 +1,10 @@
 package gregtech6.jade;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
-import java.util.List;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -28,20 +28,22 @@ import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 
 /**
- * Offline gate for task r5-jade-boiler acceptance ②: the boiler Jade face tag contract +
- * the display-line pure functions over the SAME static seam the live
- * {@code appendServerData} reads through (the public field shape mEnergy/mCapacity/mOutput
- * /mEfficiency/mTanks — GTBoilerTankBlockEntity.java:149-161, TileEntityLargeBoiler.java
- * :170-186). Both BE arms run through real fixtures (the GTBoilerTankBlockEntityTest /
+ * Offline gate for the boiler Jade face (task r5-jade-boiler base, task r8-jade-redesign-core
+ * reface): the tag contract over the SAME static seam the live {@code appendServerData}
+ * reads through (the public field shape mEnergy/mCapacity/mOutput/mEfficiency/mTanks —
+ * GTBoilerTankBlockEntity.java:149-161, TileEntityLargeBoiler.java:170-186), plus the row
+ * pure functions. Both BE arms run through real fixtures (the GTBoilerTankBlockEntityTest /
  * LargeBoilerSemanticsTest fixture forms); the BlockAccessor wrapper itself is live-only
- * (the GT6MachineProviderTest posture), and so is the {@code showDetails()} gate — the
- * gated band itself is the pinned seam ({@link GT6BoilerProvider#detailLines}).
+ * (the GT6MachineProviderTest posture), and so is the {@code showDetails()} gate and the
+ * bar element assembly.
  *
- * <p>Six SPEC groups: the wire contract (both BE arms, 8 keys typed), the heat-bar ratio +
- * readout line, the demand line (mOutput/2), the output-gate two states (the half-boundary
- * pins the upstream strict {@code amount - capacity/2 > 0} verdict), the sneak-detail band
- * (two lines exactly — calcification %, water/warning) and the no-water RED styling. The
- * tooltip language VALUES (en/zh) are pinned by the datagen faces + runData, not here.
+ * <p>The r8 pin set: the EIGHT wire keys survive verbatim (the water/steam pair written
+ * UNCONDITIONALLY — the bars are always visible now, so even the drained boiler carries
+ * the tank faces), the three-slot bar template X / Y (Z%) on heat/water/steam, the
+ * half-gate pair and the no-water warning RETIRED (the user ruling: the red empty bar IS
+ * the warning face — the row itself stays unstyled) and the sneak band shrunk to the
+ * calcification face only. The tooltip language VALUES (en/zh) are pinned by the datagen
+ * faces + runData, not here.
  */
 public class GT6BoilerProviderTest extends GTOfflineTestBase {
 
@@ -140,26 +142,64 @@ public class GT6BoilerProviderTest extends GTOfflineTestBase {
 		assertEquals(10000L, tTag.getShort(GT6BoilerProvider.KEY_EFFICIENCY), "the 10000 clean default");
 	}
 
+	@Test
+	public void theTankKeysStayOnTheDrainedBoiler() {
+		// the r8 "always visible" ruling: the water/steam bars render for EVERY boiler, so
+		// the tag carries the tank faces even at zero content (the drained boiler still
+		// shows Water: 0 / 4000 mB (0%) on the red bar — the warning face).
+		FixtureTankBoiler tBoiler = new FixtureTankBoiler(POS, Blocks.STONE.defaultBlockState());
+		CompoundTag tTag = syncOf(tBoiler);
+		assertTrue(tTag.contains(GT6BoilerProvider.KEY_WATER));
+		assertTrue(tTag.contains(GT6BoilerProvider.KEY_WATER_MAX));
+		assertTrue(tTag.contains(GT6BoilerProvider.KEY_STEAM));
+		assertTrue(tTag.contains(GT6BoilerProvider.KEY_STEAM_MAX));
+		assertEquals(0L, tTag.getLong(GT6BoilerProvider.KEY_WATER));
+	}
+
 	// ------------------------------------------------------------------------------------
-	// group ② the heat bar (ratio + readout line)
+	// group ② the bar faces (the uniform three-slot X / Y (Z%) template)
 	// ------------------------------------------------------------------------------------
 
 	@Test
-	public void heatRatioIsTheClampedEnergyShare() {
-		assertEquals(0.5F, GT6BoilerProvider.heatRatio(320000, 640000), 1e-6F);
-		assertEquals(1.0F, GT6BoilerProvider.heatRatio(999999999, 640000), 1e-6F, "overheat clamps at full");
-		assertEquals(0.0F, GT6BoilerProvider.heatRatio(-5, 640000), 1e-6F, "negative heat never paints progress");
-		assertEquals(0.0F, GT6BoilerProvider.heatRatio(100, 0), 1e-6F, "a zero ceiling answers 0, never NaN");
+	public void ratioClampsLikeTheBarsNeed() {
+		// the shared clamp on GT6JadeRows (the heat-bar semantics generalized)
+		assertEquals(0.5F, GT6JadeRows.ratio(320000, 640000), 1e-6F);
+		assertEquals(1.0F, GT6JadeRows.ratio(999999999, 640000), 1e-6F, "overheat clamps at full");
+		assertEquals(0.0F, GT6JadeRows.ratio(-5, 640000), 1e-6F, "negative heat never paints progress");
+		assertEquals(0.0F, GT6JadeRows.ratio(100, 0), 1e-6F, "a zero ceiling answers 0, never NaN");
 	}
 
 	@Test
-	public void heatLineCarriesTheThermometerWording() {
+	public void heatLineCarriesTheThermometerWordingPlusThePercent() {
 		// the upstream thermometer readout verbatim shape (MultiTileEntityBoilerTank.java:182)
+		// + the third percent slot (the uniform bar template)
 		TranslatableContents tContents = (TranslatableContents) GT6BoilerProvider.heatLine(320000, 640000).getContents();
 		assertEquals(GT6BoilerProvider.LANG_HEAT, tContents.getKey());
-		assertEquals(2, tContents.getArgs().length);
+		assertEquals(3, tContents.getArgs().length);
 		assertEquals(320000L, tContents.getArgs()[0]);
 		assertEquals(640000L, tContents.getArgs()[1]);
+		assertEquals(50L, tContents.getArgs()[2]);
+	}
+
+	@Test
+	public void waterAndSteamLinesAreTheThreeSlotTankFaces() {
+		// the water bar (always visible — upgraded from the sneak band): the row itself is
+		// UNSTYLED even when empty (the alarm face moved onto the red bar element)
+		TranslatableContents tWater = (TranslatableContents) GT6BoilerProvider.waterLine(2000, 4000).getContents();
+		assertEquals(GT6BoilerProvider.LANG_WATER, tWater.getKey());
+		assertEquals(3, tWater.getArgs().length);
+		assertEquals(2000L, tWater.getArgs()[0]);
+		assertEquals(4000L, tWater.getArgs()[1]);
+		assertEquals(50L, tWater.getArgs()[2]);
+		Component tEmptyWater = GT6BoilerProvider.waterLine(0, 4000);
+		assertFalse(TextColor.fromLegacyFormat(ChatFormatting.RED).equals(tEmptyWater.getStyle().getColor()),
+				"the empty-tank red lives on the BAR color, the row stays plain");
+		// the steam bar
+		TranslatableContents tSteam = (TranslatableContents) GT6BoilerProvider.steamLine(160000, 640000).getContents();
+		assertEquals(GT6BoilerProvider.LANG_STEAM, tSteam.getKey());
+		assertEquals(160000L, tSteam.getArgs()[0]);
+		assertEquals(640000L, tSteam.getArgs()[1]);
+		assertEquals(25L, tSteam.getArgs()[2]);
 	}
 
 	// ------------------------------------------------------------------------------------
@@ -175,67 +215,19 @@ public class GT6BoilerProviderTest extends GTOfflineTestBase {
 	}
 
 	// ------------------------------------------------------------------------------------
-	// group ④ the output gate two states
+	// group ④ the sneak band (scale only — the water face moved to the always-on bar)
 	// ------------------------------------------------------------------------------------
 
 	@Test
-	public void gateBelowHalfExplainsTheSilence() {
-		// at the half-tank mark EXACTLY the gate stays shut — the upstream verdict is the
-		// strict tAmount = amount - capacity/2 > 0 (:139/:203)
-		Component tBelow = GT6BoilerProvider.gateLine(320000, 640000);
-		TranslatableContents tContents = (TranslatableContents) tBelow.getContents();
-		assertEquals(GT6BoilerProvider.LANG_GATE_BELOW, tContents.getKey());
-		assertEquals(2, tContents.getArgs().length);
-		assertEquals(320000L, tContents.getArgs()[0]);
-		assertEquals(640000L, tContents.getArgs()[1]);
-	}
-
-	@Test
-	public void gateAboveHalfIsTheCompactOpenFace() {
-		Component tAbove = GT6BoilerProvider.gateLine(320001, 640000);
-		TranslatableContents tContents = (TranslatableContents) tAbove.getContents();
-		assertEquals(GT6BoilerProvider.LANG_GATE_ABOVE, tContents.getKey());
-		assertEquals(0, tContents.getArgs().length, "the compact face carries no slots");
-	}
-
-	// ------------------------------------------------------------------------------------
-	// group ⑤ the sneak-detail band
-	// ------------------------------------------------------------------------------------
-
-	@Test
-	public void detailBandIsExactlyScalePlusWater() {
-		List<Component> tLines = GT6BoilerProvider.detailLines(9400, 2000, 4000);
-		assertEquals(2, tLines.size(), "sneak shows the magnifyingglass pair — never more");
-		TranslatableContents tScale = (TranslatableContents) tLines.get(0).getContents();
+	public void theSneakBandIsTheCalcificationFace() {
+		// the r8 ruling: sneak = scale ONLY (the water warning is the red empty bar now)
+		TranslatableContents tScale = (TranslatableContents) GT6BoilerProvider.scaleLine(9400).getContents();
 		assertEquals(GT6BoilerProvider.LANG_SCALE, tScale.getKey());
 		assertEquals(6, tScale.getArgs()[0], "(10000-9400)/100 — the upstream LH.percent face");
-		TranslatableContents tWater = (TranslatableContents) tLines.get(1).getContents();
-		assertEquals(GT6BoilerProvider.LANG_WATER, tWater.getKey());
-		assertEquals(2000L, tWater.getArgs()[0]);
-		assertEquals(4000L, tWater.getArgs()[1]);
-	}
-
-	@Test
-	public void cleanBoilerAnswersTheCleanFace() {
-		List<Component> tLines = GT6BoilerProvider.detailLines(10000, 2000, 4000);
-		TranslatableContents tScale = (TranslatableContents) tLines.get(0).getContents();
-		assertEquals(GT6BoilerProvider.LANG_SCALE_CLEAN, tScale.getKey());
-		assertEquals(0, tScale.getArgs().length);
-		// the 5000 floor is the deepest possible scale (the :121/:185 clamp)
-		assertEquals(50, ((TranslatableContents) GT6BoilerProvider.detailLines(5000, 0, 4000)
-				.get(0).getContents()).getArgs()[0]);
-	}
-
-	@Test
-	public void noWaterPaintsTheWarningRed() {
-		Component tWarning = GT6BoilerProvider.waterLine(0, 4000);
-		assertEquals(GT6BoilerProvider.LANG_NO_WATER, ((TranslatableContents) tWarning.getContents()).getKey());
-		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.RED), tWarning.getStyle().getColor(),
-				"the upstream WARNING: NO WATER!!! alarm face");
-		assertNotRed(GT6BoilerProvider.waterLine(1, 4000), "a wet boiler stays unstyled");
-	}
-
-	private static void assertNotRed(Component aLine, String aMessage) {
-		assertTrue(!TextColor.fromLegacyFormat(ChatFormatting.RED).equals(aLine.getStyle().getColor()), aMessage);
+		// the clean face + the 5000 floor (the deepest possible scale, the :121/:185 clamp)
+		assertEquals(GT6BoilerProvider.LANG_SCALE_CLEAN,
+				((TranslatableContents) GT6BoilerProvider.scaleLine(10000).getContents()).getKey());
+		assertEquals(0, ((TranslatableContents) GT6BoilerProvider.scaleLine(10000).getContents()).getArgs().length);
+		assertEquals(50, ((TranslatableContents) GT6BoilerProvider.scaleLine(5000).getContents()).getArgs()[0]);
 	}
 }
