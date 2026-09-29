@@ -104,7 +104,7 @@ class GT6ControllerPaintRenderDatagenTest {
         }
     }
 
-    /** One single-element orientable model: every face of the one body element tinted (the bridge/laser form). */
+    /** One single-element orientable model: every face of the one body element tinted (the quantum-energizer / magic-absorber form). */
     private static void assertTintedOrientableBody(String aPath) throws Exception {
         JsonObject tModel = json("assets/gt6/models/block/" + aPath + ".json");
         assertEquals(1, tModel.getAsJsonArray("elements").size(), aPath + " keeps the one-element body form");
@@ -199,15 +199,20 @@ class GT6ControllerPaintRenderDatagenTest {
 
     @Test
     public void bridgeAndLaserModelsCarryTintedBodies() throws Exception {
-        assertTintedOrientableBody("bridge_heater");
-        assertTintedOrientableBody("bridge_engine");
-        assertTintedOrientableBody("bridge_motor");
+        // the r8-tex-bridge-kinetic double-layer form: the five heater/engine/motor/laser
+        // families ride the addBridgeFamily aActive overload (GT6BlockStates.java:1744 —
+        // addConverterModel's tinted body cube + 6 untinted decal patches), so each model
+        // grew from the one-element body to the 7-element two-layer shape
+        assertTintedBodyWithDecals("bridge_heater");
+        assertTintedBodyWithDecals("bridge_engine");
+        assertTintedBodyWithDecals("bridge_motor");
         // the CO2 Laser rides the upstream NBT_TEXTURE name (the model id laser_electric,
         // the addLaserFamilies aTexture column)
-        assertTintedOrientableBody("laser_electric");
-        assertTintedOrientableBody("laser_absorber");
-        // the shared builder form reaches the exempt family too — the tintindex is the
-        // white identity there (no material column, no tint registration)
+        assertTintedBodyWithDecals("laser_electric");
+        assertTintedBodyWithDecals("laser_absorber");
+        // the quantum energizer stays on the single-element three-arg addBridgeFamily arm
+        // (GT6BlockStates.java:1682/:1699 — no ACTIVE channel, no overlay decal pass); the
+        // tintindex is the white identity there (no material column, no tint registration)
         assertTintedOrientableBody("quantum_energizer");
     }
 
