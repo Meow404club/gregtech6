@@ -165,6 +165,7 @@ public class GT6EnUs extends LanguageProvider {
         addSensorJade(); // task r8-jade-sensor-provider — table-tail append
         addFamilyTooltips(); // task r8-tooltip-multiblock-generator — table-tail append (the T4 three-family rows)
         addWirePipeSensorTooltips(); // task r8-tooltip-wire-pipe-sensor — table-tail append (the T5 rows)
+        addMachineTooltip(); // task r8-tooltip-basic-machine-family — the BasicMachine row table + the shared face words
         addPocketTools(); // task p29-w5-t7-pocket-eight — table-tail append
         addArmor(); // task p29-w5-t8-armor-24 — table-tail append
         addTreeBlocks(); // task p30-w6-t1-trees-nine — table-tail append
@@ -2520,6 +2521,38 @@ public class GT6EnUs extends LanguageProvider {
         add("gt6.tooltip.sensor.5", "Use Screwdriver on anything else to switch Modes.");
         add("gt6.tooltip.sensor.6", "Use Monkey Wrench to set Input Side");
         add("gt6.tooltip.sensor.7", "Use Wrench to set Facing");
+    }
+    /**
+     * The BasicMachine family row table (task r8-tooltip-basic-machine-family, 21 keys):
+     * the 14 machine slots (gt6.tooltip.machine.* — the upstream slot numbering with the
+     * 5/15 gaps, see GT6MachineRows) + the 7 shared face words (gt6.tooltip.face.* — the
+     * upstream LH.FACES/FACE_ANY, LH.java:469-478 en VERBATIM, reused by the T4/T5 row
+     * tables). en = the upstream faces verbatim; zh rides the reference table's hand
+     * layer via GT6ZhCn.addMachineTooltipUnits (all four files SAME commit — the W2
+     * wash-out lesson).
+     */
+    private void addMachineTooltip() {
+        add("gt6.tooltip.machine.1", "Recipes: %s");
+        add("gt6.tooltip.machine.2", "Can be overclocked without additional Energy Loss");
+        add("gt6.tooltip.machine.3", "Efficiency: %s%%");
+        add("gt6.tooltip.machine.4", "Energy IN: %s");
+        add("gt6.tooltip.machine.6", "Items IN: %s");
+        add("gt6.tooltip.machine.7", "Items OUT: %s");
+        add("gt6.tooltip.machine.8", "Fluids IN: %s");
+        add("gt6.tooltip.machine.9", "Fluids OUT: %s");
+        add("gt6.tooltip.machine.10", "Requires ignition by Flint and Tinder or similar!");
+        add("gt6.tooltip.machine.11", "Use Screwdriver to toggle Modes");
+        add("gt6.tooltip.machine.12", "Use Monkey Wrench to toggle automatic Inputs");
+        add("gt6.tooltip.machine.13", "Use Monkey Wrench to toggle automatic Outputs");
+        add("gt6.tooltip.machine.14", "Use Soft Hammer to Reset");
+        add("gt6.tooltip.machine.16", "Use Magnifying Glass to see Details");
+        add("gt6.tooltip.face.any", "Any Side");
+        add("gt6.tooltip.face.bottom", "Bottom");
+        add("gt6.tooltip.face.top", "Top");
+        add("gt6.tooltip.face.left", "Left");
+        add("gt6.tooltip.face.front", "Front");
+        add("gt6.tooltip.face.right", "Right");
+        add("gt6.tooltip.face.back", "Back");
     }
     /**
      * Pocket multitool family keys (task p29-w5-t7-pocket-eight): the eight display names

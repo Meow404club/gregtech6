@@ -29,6 +29,7 @@ import gregtech6.block.energy.GT6DynamoBlock;
 import gregtech6.gui.machines.GTBasicMachineMenu;
 import gregtech6.gui.machines.GTBasicMachinesMenus;
 import gregtech6.recipes.GT6RecipeMaps;
+import gregtech6.tooltip.GT6MachineRows;
 import gregtech6.recipes.RecipeMap;
 import gregtech6.tileentity.energy.GT6DynamoBlockEntity;
 import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
@@ -169,16 +170,16 @@ public final class GTMachines {
 					TileEntityOven::new, OVEN.get(), OVEN_T2.get(), OVEN_T3.get(), OVEN_T4.get()).build(null));
 
 	public static final RegistryObject<Item> OVEN_ITEM = ITEMS.register("oven",
-			() -> new gregtech6.block.GTComposedNameItem(OVEN.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(OVEN.get(), new Item.Properties(), "machine:oven"));
 
 	public static final RegistryObject<Item> OVEN_T2_ITEM = ITEMS.register("oven_t2",
-			() -> new gregtech6.block.GTComposedNameItem(OVEN_T2.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(OVEN_T2.get(), new Item.Properties(), "machine:oven_t2"));
 
 	public static final RegistryObject<Item> OVEN_T3_ITEM = ITEMS.register("oven_t3",
-			() -> new gregtech6.block.GTComposedNameItem(OVEN_T3.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(OVEN_T3.get(), new Item.Properties(), "machine:oven_t3"));
 
 	public static final RegistryObject<Item> OVEN_T4_ITEM = ITEMS.register("oven_t4",
-			() -> new gregtech6.block.GTComposedNameItem(OVEN_T4.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(OVEN_T4.get(), new Item.Properties(), "machine:oven_t4"));
 
 	/**
 	 * The Oven tab walk, in upstream row order (the GTWires/GT6Tools TAB_TABLE form): the
@@ -451,31 +452,31 @@ public final class GTMachines {
 					LATHE.get(), LATHE_T2.get(), LATHE_T3.get(), LATHE_T4.get()).build(null));
 
 	public static final RegistryObject<Item> SHREDDER_ITEM = ITEMS.register("shredder",
-			() -> new gregtech6.block.GTComposedNameItem(SHREDDER.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(SHREDDER.get(), new Item.Properties(), "machine:shredder"));
 	public static final RegistryObject<Item> SHREDDER_T2_ITEM = ITEMS.register("shredder_t2",
-			() -> new gregtech6.block.GTComposedNameItem(SHREDDER_T2.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(SHREDDER_T2.get(), new Item.Properties(), "machine:shredder_t2"));
 	public static final RegistryObject<Item> SHREDDER_T3_ITEM = ITEMS.register("shredder_t3",
-			() -> new gregtech6.block.GTComposedNameItem(SHREDDER_T3.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(SHREDDER_T3.get(), new Item.Properties(), "machine:shredder_t3"));
 	public static final RegistryObject<Item> SHREDDER_T4_ITEM = ITEMS.register("shredder_t4",
-			() -> new gregtech6.block.GTComposedNameItem(SHREDDER_T4.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(SHREDDER_T4.get(), new Item.Properties(), "machine:shredder_t4"));
 
 	public static final RegistryObject<Item> CRUSHER_ITEM = ITEMS.register("crusher",
-			() -> new gregtech6.block.GTComposedNameItem(CRUSHER.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(CRUSHER.get(), new Item.Properties(), "machine:crusher"));
 	public static final RegistryObject<Item> CRUSHER_T2_ITEM = ITEMS.register("crusher_t2",
-			() -> new gregtech6.block.GTComposedNameItem(CRUSHER_T2.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(CRUSHER_T2.get(), new Item.Properties(), "machine:crusher_t2"));
 	public static final RegistryObject<Item> CRUSHER_T3_ITEM = ITEMS.register("crusher_t3",
-			() -> new gregtech6.block.GTComposedNameItem(CRUSHER_T3.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(CRUSHER_T3.get(), new Item.Properties(), "machine:crusher_t3"));
 	public static final RegistryObject<Item> CRUSHER_T4_ITEM = ITEMS.register("crusher_t4",
-			() -> new gregtech6.block.GTComposedNameItem(CRUSHER_T4.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(CRUSHER_T4.get(), new Item.Properties(), "machine:crusher_t4"));
 
 	public static final RegistryObject<Item> LATHE_ITEM = ITEMS.register("lathe",
-			() -> new gregtech6.block.GTComposedNameItem(LATHE.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(LATHE.get(), new Item.Properties(), "machine:lathe"));
 	public static final RegistryObject<Item> LATHE_T2_ITEM = ITEMS.register("lathe_t2",
-			() -> new gregtech6.block.GTComposedNameItem(LATHE_T2.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(LATHE_T2.get(), new Item.Properties(), "machine:lathe_t2"));
 	public static final RegistryObject<Item> LATHE_T3_ITEM = ITEMS.register("lathe_t3",
-			() -> new gregtech6.block.GTComposedNameItem(LATHE_T3.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(LATHE_T3.get(), new Item.Properties(), "machine:lathe_t3"));
 	public static final RegistryObject<Item> LATHE_T4_ITEM = ITEMS.register("lathe_t4",
-			() -> new gregtech6.block.GTComposedNameItem(LATHE_T4.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(LATHE_T4.get(), new Item.Properties(), "machine:lathe_t4"));
 
 	// ---------------------------------------------------------------------------
 	// the Dryer family (task p14-dryer-family) — the four rows
@@ -533,7 +534,7 @@ public final class GTMachines {
 			DRYER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.DRYER_BE.get(), tRow)));
 			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
-			DRYER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.DRYER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			DRYER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.DRYER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -663,7 +664,7 @@ public final class GTMachines {
 			CANNER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.CANNER_BE.get(), tRow)));
 			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
-			CANNER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.CANNER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			CANNER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.CANNER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -735,7 +736,7 @@ public final class GTMachines {
 			PRESS_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.PRESS_BE.get(), tRow)));
 			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
-			PRESS_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.PRESS_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			PRESS_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.PRESS_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -822,7 +823,7 @@ public final class GTMachines {
 			EXTRUDER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.EXTRUDER_BE.get(), tRow)));
 			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
-			EXTRUDER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.EXTRUDER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			EXTRUDER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.EXTRUDER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -1008,17 +1009,17 @@ public final class GTMachines {
 			SIFTER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.SIFTER_BE.get(), tRow)));
 			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
-			SIFTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.SIFTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			SIFTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.SIFTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : COMPRESSOR_ROWS) {
 			COMPRESSOR_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.COMPRESSOR_BE.get(), tRow)));
-			COMPRESSOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.COMPRESSOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			COMPRESSOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.COMPRESSOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : WIREMILL_ROWS) {
 			WIREMILL_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.WIREMILL_BE.get(), tRow)));
-			WIREMILL_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.WIREMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			WIREMILL_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.WIREMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -1240,22 +1241,22 @@ public final class GTMachines {
 		for (GTBasicMachineBlock.MachineRow tRow : CANNER_ULV_ROWS) {
 			CANNER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.CANNER_BE.get(), tRow)));
-			CANNER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.CANNER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			CANNER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.CANNER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : SIFTER_ULV_ROWS) {
 			SIFTER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.SIFTER_BE.get(), tRow)));
-			SIFTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.SIFTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			SIFTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.SIFTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : WIREMILL_ULV_ROWS) {
 			WIREMILL_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.WIREMILL_BE.get(), tRow)));
-			WIREMILL_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.WIREMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			WIREMILL_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.WIREMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : ROLLINGMILL_ROWS) {
 			ROLLINGMILL_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ROLLINGMILL_BE.get(), tRow)));
-			ROLLINGMILL_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			ROLLINGMILL_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -1264,14 +1265,14 @@ public final class GTMachines {
 			() -> new GTBasicMachineBlock(SHREDDER_ULV_ROWS.get(0).properties(), () -> GTMachines.SHREDDER_BE.get(), SHREDDER_ULV_ROWS.get(0)));
 
 	public static final RegistryObject<Item> SHREDDER_ULV_ITEM = ITEMS.register("shredder_ulv",
-			() -> new gregtech6.block.GTComposedNameItem(GTMachines.SHREDDER_ULV.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(GTMachines.SHREDDER_ULV.get(), new Item.Properties(), "machine:shredder_ulv"));
 
 	/** The p28 ULV crusher row block (the explicit-RO form). */
 	public static final RegistryObject<Block> CRUSHER_ULV = BLOCKS.register("crusher_ulv",
 			() -> new GTBasicMachineBlock(CRUSHER_ULV_ROWS.get(0).properties(), () -> GTMachines.CRUSHER_BE.get(), CRUSHER_ULV_ROWS.get(0)));
 
 	public static final RegistryObject<Item> CRUSHER_ULV_ITEM = ITEMS.register("crusher_ulv",
-			() -> new gregtech6.block.GTComposedNameItem(GTMachines.CRUSHER_ULV.get(), new Item.Properties()));
+			() -> new gregtech6.item.GT6MachineBlockItem(GTMachines.CRUSHER_ULV.get(), new Item.Properties(), "machine:crusher_ulv"));
 
 	/** The Rolling Mill block list in registration order (the loot/datagen walkers). */
 	public static Block[] rollingmillBlockArray() {
@@ -1417,22 +1418,22 @@ public final class GTMachines {
 		for (GTBasicMachineBlock.MachineRow tRow : ROLLINGMILL_RU_ROWS) {
 			ROLLINGMILL_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ROLLINGMILL_BE.get(), tRow)));
-			ROLLINGMILL_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			ROLLINGMILL_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.ROLLINGMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : ROLL_BENDER_ROWS) {
 			ROLLBENDER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ROLLBENDER_BE.get(), tRow)));
-			ROLLBENDER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.ROLLBENDER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			ROLLBENDER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.ROLLBENDER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : ROLL_FORMER_ROWS) {
 			ROLLFORMER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ROLLFORMER_BE.get(), tRow)));
-			ROLLFORMER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			ROLLFORMER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.ROLLFORMER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : CLUSTER_MILL_ROWS) {
 			CLUSTERMILL_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.CLUSTERMILL_BE.get(), tRow)));
-			CLUSTERMILL_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			CLUSTERMILL_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -1800,37 +1801,37 @@ public final class GTMachines {
 			MIXER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.MIXER_BE.get(), tRow)));
 			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
-			MIXER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.MIXER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			MIXER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.MIXER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : ELECTRIC_MIXER_ROWS) {
 			ELECTRIC_MIXER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ELECTRIC_MIXER_BE.get(), tRow)));
-			ELECTRIC_MIXER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.ELECTRIC_MIXER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			ELECTRIC_MIXER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.ELECTRIC_MIXER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : ELECTRIC_LOOM_ROWS) {
 			ELECTRIC_LOOM_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ELECTRIC_LOOM_BE.get(), tRow)));
-			ELECTRIC_LOOM_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.ELECTRIC_LOOM_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			ELECTRIC_LOOM_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.ELECTRIC_LOOM_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : ELECTRIC_SIFTER_ROWS) {
 			ELECTRIC_SIFTER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ELECTRIC_SIFTER_BE.get(), tRow)));
-			ELECTRIC_SIFTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.ELECTRIC_SIFTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			ELECTRIC_SIFTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.ELECTRIC_SIFTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : BOXINATOR_ROWS) {
 			BOXINATOR_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.BOXINATOR_BE.get(), tRow)));
-			BOXINATOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.BOXINATOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			BOXINATOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.BOXINATOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : UNBOXINATOR_ROWS) {
 			UNBOXINATOR_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.UNBOXINATOR_BE.get(), tRow)));
-			UNBOXINATOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.UNBOXINATOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			UNBOXINATOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.UNBOXINATOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : FERMENTER_ROWS) {
 			FERMENTER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.FERMENTER_BE.get(), tRow)));
-			FERMENTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.FERMENTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			FERMENTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.FERMENTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -2454,7 +2455,7 @@ public final class GTMachines {
 		for (GTBasicMachineBlock.MachineRow tRow : aRows) {
 			aBlocks.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> aBe.get().get(), tRow)));
-			aItems.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(aBlocks.get(tRow.path()).get(), new Item.Properties())));
+			aItems.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(aBlocks.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -2650,7 +2651,7 @@ public final class GTMachines {
 			DISTILLERY_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.DISTILLERY_BE.get(), tRow)));
 			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
-			DISTILLERY_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.DISTILLERY_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			DISTILLERY_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.DISTILLERY_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -3045,32 +3046,32 @@ public final class GTMachines {
 			BUZZSAW_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.BUZZSAW_BE.get(), tRow)));
 			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
-			BUZZSAW_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.BUZZSAW_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			BUZZSAW_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.BUZZSAW_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : SQUEEZER_ROWS) {
 			SQUEEZER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.SQUEEZER_BE.get(), tRow)));
-			SQUEEZER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.SQUEEZER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			SQUEEZER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.SQUEEZER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : CENTRIFUGE_ROWS) {
 			CENTRIFUGE_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.CENTRIFUGE_BE.get(), tRow)));
-			CENTRIFUGE_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.CENTRIFUGE_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			CENTRIFUGE_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.CENTRIFUGE_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : SLUICE_ROWS) {
 			SLUICE_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.SLUICE_BE.get(), tRow)));
-			SLUICE_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.SLUICE_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			SLUICE_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.SLUICE_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : SANDING_ROWS) {
 			SANDING_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.SANDING_BE.get(), tRow)));
-			SANDING_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.SANDING_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			SANDING_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.SANDING_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : PRESSURE_WASHER_ROWS) {
 			PRESSURE_WASHER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.PRESSURE_WASHER_BE.get(), tRow)));
-			PRESSURE_WASHER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.PRESSURE_WASHER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			PRESSURE_WASHER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.PRESSURE_WASHER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -3337,7 +3338,7 @@ public final class GTMachines {
 			AUTOCRAFTER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.AUTOCRAFTER_BE.get(), tRow)));
 			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
-			AUTOCRAFTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.AUTOCRAFTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			AUTOCRAFTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.AUTOCRAFTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -3366,7 +3367,7 @@ public final class GTMachines {
 		for (GTBasicMachineBlock.MachineRow tRow : LIGHTNING_ROWS) {
 			LIGHTNING_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.LIGHTNING_BE.get(), tRow)));
-			LIGHTNING_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.LIGHTNING_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			LIGHTNING_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.LIGHTNING_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -3395,7 +3396,7 @@ public final class GTMachines {
 		for (GTBasicMachineBlock.MachineRow tRow : LAMINATOR_ROWS) {
 			LAMINATOR_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.LAMINATOR_BE.get(), tRow)));
-			LAMINATOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.LAMINATOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			LAMINATOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.LAMINATOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -3696,27 +3697,27 @@ public final class GTMachines {
 			ELECTROLYZER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ELECTROLYZER_BE.get(), tRow)));
 			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
-			ELECTROLYZER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.ELECTROLYZER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			ELECTROLYZER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.ELECTROLYZER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : INJECTOR_ROWS) {
 			INJECTOR_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.INJECTOR_BE.get(), tRow)));
-			INJECTOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.INJECTOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			INJECTOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.INJECTOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : PRINTER_ROWS) {
 			PRINTER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.PRINTER_BE.get(), tRow)));
-			PRINTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.PRINTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			PRINTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.PRINTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : SCANNER_VISUALS_ROWS) {
 			SCANNER_VISUALS_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.SCANNER_VISUALS_BE.get(), tRow)));
-			SCANNER_VISUALS_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.SCANNER_VISUALS_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			SCANNER_VISUALS_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.SCANNER_VISUALS_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : SLICER_ROWS) {
 			SLICER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.SLICER_BE.get(), tRow)));
-			SLICER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.SLICER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			SLICER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.SLICER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -4335,37 +4336,37 @@ public final class GTMachines {
 			STEAM_CRACKER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.STEAM_CRACKER_BE.get(), tRow)));
 			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
-			STEAM_CRACKER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.STEAM_CRACKER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			STEAM_CRACKER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.STEAM_CRACKER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : CATALYTIC_CRACKER_ROWS) {
 			CATALYTIC_CRACKER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.CATALYTIC_CRACKER_BE.get(), tRow)));
-			CATALYTIC_CRACKER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			CATALYTIC_CRACKER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.CATALYTIC_CRACKER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : COAGULATOR_ROWS) {
 			COAGULATOR_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.COAGULATOR_BE.get(), tRow)));
-			COAGULATOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.COAGULATOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			COAGULATOR_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.COAGULATOR_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : GENERIFIER_ROWS) {
 			GENERIFIER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.GENERIFIER_BE.get(), tRow)));
-			GENERIFIER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.GENERIFIER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			GENERIFIER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.GENERIFIER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : BATH_ROWS) {
 			BATH_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.BATH_BE.get(), tRow)));
-			BATH_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.BATH_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			BATH_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.BATH_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : AUTOCLAVE_ROWS) {
 			AUTOCLAVE_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.AUTOCLAVE_BE.get(), tRow)));
-			AUTOCLAVE_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.AUTOCLAVE_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			AUTOCLAVE_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.AUTOCLAVE_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : LOOM_ROWS) {
 			LOOM_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.LOOM_BE.get(), tRow)));
-			LOOM_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.LOOM_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			LOOM_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.LOOM_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -4589,12 +4590,12 @@ public final class GTMachines {
 			SMELTER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.SMELTER_BE.get(), tRow)));
 			// the GT6Boilers qualified-read forward-reference form (the P6 lambda lesson)
-			SMELTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.SMELTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			SMELTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.SMELTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : MELTER_ROWS) {
 			MELTER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.MELTER_BE.get(), tRow)));
-			MELTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.MELTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			MELTER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.MELTER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -5013,7 +5014,7 @@ public final class GTMachines {
 			ROASTING_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.ROASTING_BE.get(), tRow)));
 			ROASTING_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new gregtech6.block.GTComposedNameItem(GTMachines.ROASTING_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+					() -> new gregtech6.item.GT6MachineBlockItem(GTMachines.ROASTING_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -5137,12 +5138,12 @@ public final class GTMachines {
 		for (GTBasicMachineBlock.MachineRow tRow : BUMBLELYZER_ROWS) {
 			BUMBLELYZER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.BUMBLELYZER_BE.get(), tRow)));
-			BUMBLELYZER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.BUMBLELYZER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			BUMBLELYZER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.BUMBLELYZER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : CRYSTALLISATION_ROWS) {
 			CRYSTALLISATION_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.CRYSTALLISATION_BE.get(), tRow)));
-			CRYSTALLISATION_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			CRYSTALLISATION_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -5299,12 +5300,12 @@ public final class GTMachines {
 		for (GTBasicMachineBlock.MachineRow tRow : BURNER_MIXER_ROWS) {
 			BURNER_MIXER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.BURNER_MIXER_BE.get(), tRow)));
-			BURNER_MIXER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.BURNER_MIXER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			BURNER_MIXER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.BURNER_MIXER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : PLANTALYZER_ROWS) {
 			PLANTALYZER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBasicMachineBlock(tRow.properties(), () -> GTMachines.PLANTALYZER_BE.get(), tRow)));
-			PLANTALYZER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.block.GTComposedNameItem(GTMachines.PLANTALYZER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+			PLANTALYZER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(), () -> new gregtech6.item.GT6MachineBlockItem(GTMachines.PLANTALYZER_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties(), "machine:" + tRow.path())));
 		}
 	}
 
@@ -5366,6 +5367,105 @@ public final class GTMachines {
 					plantalyzerBlockArray()).build(null));
 
 
+	/**
+	 * The machine-family tooltip walk (task r8-tooltip-basic-machine-family): every
+	 * MachineRow list registers its rows under {@code machine:<path>} — one table per
+	 * item, the {@link gregtech6.tooltip.GT6MachineRows} transcription builds the rows off
+	 * the row's own config columns. Runs at mod-construct, RIGHT AFTER
+	 * {@code GT6RecipeMaps.init()} — the row specs resolve the volatile RecipeMap fields,
+	 * which are NULL until that lifecycle (GT6RecipeMaps.java:315+), so a clinit walk
+	 * would both NPE offline and crash the real boot. The Burner Mixer rides the ignition
+	 * arm (the one {@code mRequiresIgnition = true} carrier, TileEntityBurnerMixer
+	 * .java:43); the legacy trio/oven register hand-built specs of the port's live
+	 * default-127 IO config (the class-javadoc deviation note on
+	 * {@link gregtech6.tooltip.GT6MachineRows}). Duplicate paths fail loud
+	 * (GT6Tooltips.register) — a boot-time census of the row walk.
+	 */
+	public static void registerMachineTooltipRows() {
+		for (GTBasicMachineBlock.MachineRow tRow : DRYER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : CANNER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : PRESS_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : EXTRUDER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : SIFTER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : COMPRESSOR_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : WIREMILL_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : CANNER_ULV_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : SHREDDER_ULV_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : CRUSHER_ULV_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : SIFTER_ULV_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : WIREMILL_ULV_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : ROLLINGMILL_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : ROLLINGMILL_RU_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : ROLL_BENDER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : ROLL_FORMER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : CLUSTER_MILL_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : MIXER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : ELECTRIC_MIXER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : ELECTRIC_LOOM_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : ELECTRIC_SIFTER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : BOXINATOR_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : UNBOXINATOR_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : FERMENTER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : POLARIZER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : MAGNETIC_SEPARATOR_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : LASER_ENGRAVER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : LASER_WELDER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : FREEZER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : CRYO_MIXER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : MASSFAB_SMALL_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : MOLECULAR_SCANNER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : REPLICATOR_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : DISTILLERY_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : BUZZSAW_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : SQUEEZER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : CENTRIFUGE_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : SLUICE_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : SANDING_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : PRESSURE_WASHER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : AUTOCRAFTER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : LIGHTNING_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : LAMINATOR_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : ELECTROLYZER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : INJECTOR_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : PRINTER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : SCANNER_VISUALS_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : SLICER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : STEAM_CRACKER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : CATALYTIC_CRACKER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : COAGULATOR_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : GENERIFIER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : BATH_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : AUTOCLAVE_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : LOOM_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : SMELTER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : MELTER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : ROASTING_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : BUMBLELYZER_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : CRYSTALLISATION_ROWS) GT6MachineRows.register(tRow);
+		for (GTBasicMachineBlock.MachineRow tRow : BURNER_MIXER_ROWS) GT6MachineRows.register(tRow, true);
+		for (GTBasicMachineBlock.MachineRow tRow : PLANTALYZER_ROWS) GT6MachineRows.register(tRow);
+		// the legacy trio/oven — the 17 default-127 hand specs over the TIER_INPUTS ladder
+		String[] tSuffixes = {"", "_t2", "_t3", "_t4"};
+		for (int tTier = 0; tTier < TIER_INPUTS.length; tTier++) {
+			GT6MachineRows.register("machine:shredder" + tSuffixes[tTier], legacySpec(GT6RecipeMaps.SHREDDER, 1, TD.Energy.RU, tTier));
+			GT6MachineRows.register("machine:crusher" + tSuffixes[tTier], legacySpec(GT6RecipeMaps.CRUSHER, CRUSHER_PARALLEL[tTier], TD.Energy.KU, tTier));
+			GT6MachineRows.register("machine:lathe" + tSuffixes[tTier], legacySpec(GT6RecipeMaps.LATHE, 1, TD.Energy.RU, tTier));
+			GT6MachineRows.register("machine:oven" + tSuffixes[tTier], legacySpec(GT6RecipeMaps.FURNACE, 1, TD.Energy.HU, tTier));
+		}
+	}
+
+	/**
+	 * The legacy-family spec — the port's live default-127 IO config (all masks 127, no
+	 * auto-IO pool, no cheap overclock, no efficiency key), the trio/oven columns the BE
+	 * actually runs (the machine() factory: TIER_INPUTS through the :126 conversion).
+	 */
+	private static GT6MachineRows.Spec legacySpec(RecipeMap aMap, int aParallel, gregapi.code.TagData aEnergyType, int aTier) {
+		long[] tWindow = TIER_INPUTS[aTier];
+		return new GT6MachineRows.Spec(aMap, aParallel, false, false, null, aEnergyType,
+				tWindow[0], tWindow[1], tWindow[2],
+				(byte)127, (byte)127, (byte)127, (byte)127, (byte)127, (byte)-1, (byte)-1, (byte)-1, (byte)-1);
+	}
+
 	private GTMachines() {}
 
 	/**
@@ -5388,5 +5488,6 @@ public final class GTMachines {
 		ITEMS.register(tModBus);
 		CREATIVE_MODE_TABS.register(tModBus);
 		GT6RecipeMaps.init(); // W1 handoff: the FURNACE map lifecycle is this card's job (GT6RecipeMaps.java:36-37)
+		registerMachineTooltipRows(); // the volatile maps live now — the row specs resolve (r8-tooltip-basic-machine-family)
 	}
 }

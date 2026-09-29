@@ -9445,3 +9445,24 @@ mte	multiblock.tank.wooden	小型木质储罐	auto
 mte	multiblock.tank555.metal	大型储罐	auto
 mte	plantpot.tooltip.1	上面能种植任意植物!	auto
 mte	usb.switch.tooltip	使用选择面板在16个USB之间切换	auto
+direct	gt6.tooltip.machine.1	配方: %s	hand
+direct	gt6.tooltip.machine.2	在消耗额外能量时可以超频	hand
+direct	gt6.tooltip.machine.3	效率: %s%%	hand
+direct	gt6.tooltip.machine.4	能量输入: %s	hand
+direct	gt6.tooltip.machine.6	物品输入: %s	hand
+direct	gt6.tooltip.machine.7	物品输出: %s	hand
+direct	gt6.tooltip.machine.8	液体输入: %s	hand
+direct	gt6.tooltip.machine.9	液体输出: %s	hand
+direct	gt6.tooltip.machine.10	需要打火石之类的东西点火	hand
+direct	gt6.tooltip.machine.11	使用螺丝刀切换模式	hand
+direct	gt6.tooltip.machine.12	使用活动扳手调整自动输入	hand
+direct	gt6.tooltip.machine.13	使用活动扳手调整自动输出	hand
+direct	gt6.tooltip.machine.14	使用软锤来重置	hand
+direct	gt6.tooltip.machine.16	使用放大镜观察细节	hand
+direct	gt6.tooltip.face.any	任何面	hand
+direct	gt6.tooltip.face.bottom	底面	hand
+direct	gt6.tooltip.face.top	顶面	hand
+direct	gt6.tooltip.face.left	左侧面	hand
+direct	gt6.tooltip.face.front	正面	hand
+direct	gt6.tooltip.face.right	右侧面	hand
+direct	gt6.tooltip.face.back	背面	hand

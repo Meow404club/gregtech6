@@ -127,6 +127,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addSensorJadeUnits(); // task r8-jade-sensor-provider — the sensor-family jade band (hand rows, the tsv direct band)
 		addFamilyTooltipUnits(); // task r8-tooltip-multiblock-generator — the T4 three-family tooltip band (hand rows, the tsv direct band)
 		addWirePipeSensorTooltipUnits(); // task r8-tooltip-wire-pipe-sensor — the T5 connector band (hand rows, the tsv direct band)
+		addMachineTooltipUnits(); // task r8-tooltip-basic-machine-family — the machine row-table band (hand rows, the tsv direct band)
 		addAnvilUnits();        // task p28-c-anvil
 		addPocketUnits();       // task p29-w5-t7-pocket-eight — the 8+7 pocket face (hand rows, no dump face exists)
 		addArmorUnits();        // task p29-w5-t8-armor-24
@@ -668,6 +669,40 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("gt6.tooltip.sensor.5");
 		addDirect("gt6.tooltip.sensor.6");
 		addDirect("gt6.tooltip.sensor.7");
+	}
+
+	/**
+	 * The BasicMachine family row table zh faces (task r8-tooltip-basic-machine-family,
+	 * 21 keys — the 14 machine slots + the 7 shared face words). The values ride the
+	 * reference table's hand layer — the upstream zh dump faces verbatim (tmp/gregtech
+	 * .lang:3385 recipes / :3254 cheap overclocking / :3258 efficiency / :3271 energy
+	 * input / :3337-3338 item faces / :3326-3327 fluid faces / :3406 ignite / :3555
+	 * screwdriver / :3548-3549 monkey wrench / :3557 soft hammer / :3544 magnifier /
+	 * :3276-3293 the face words). TSV rows + the py hand map + this walk land in the
+	 * SAME commit (the W2 wash-out lesson).
+	 */
+	private void addMachineTooltipUnits() {
+		addDirect("gt6.tooltip.machine.1");
+		addDirect("gt6.tooltip.machine.2");
+		addDirect("gt6.tooltip.machine.3");
+		addDirect("gt6.tooltip.machine.4");
+		addDirect("gt6.tooltip.machine.6");
+		addDirect("gt6.tooltip.machine.7");
+		addDirect("gt6.tooltip.machine.8");
+		addDirect("gt6.tooltip.machine.9");
+		addDirect("gt6.tooltip.machine.10");
+		addDirect("gt6.tooltip.machine.11");
+		addDirect("gt6.tooltip.machine.12");
+		addDirect("gt6.tooltip.machine.13");
+		addDirect("gt6.tooltip.machine.14");
+		addDirect("gt6.tooltip.machine.16");
+		addDirect("gt6.tooltip.face.any");
+		addDirect("gt6.tooltip.face.bottom");
+		addDirect("gt6.tooltip.face.top");
+		addDirect("gt6.tooltip.face.left");
+		addDirect("gt6.tooltip.face.front");
+		addDirect("gt6.tooltip.face.right");
+		addDirect("gt6.tooltip.face.back");
 	}
 
 	/**
