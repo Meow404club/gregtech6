@@ -182,6 +182,13 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   `7b501eddf682cb192b6cbe7551312519c7b0c58505fba674fb5a8d7a5859e562`.
   16x16 RGBA, CC0 1.0 per the upstream README block.
 
+- `gt6/textures/item/clay_crucible_raw.png` — byte-identical borrow of upstream
+  `textures/items/gt.multiitem.randomtools/989.png` (meta 989 = the "Clay Crucible" raw
+  item, MultiItemRandomTools.java:113; issue #45 C2 — the furnace-hardened pair of the
+  new `smeltery_ceramic` rung):
+  `f51bbdfd2df6518bb8481a8b7768fe79b2e2ab88d525a8430a47e4e112c5783c`.
+  16x16 RGBA, CC0 1.0 per the upstream README block.
+
 - the 31 raw clay mold icons `gt6/textures/item/mold_ceramic(<_shape>)_raw.png` —
   byte-identical borrows of upstream `textures/items/gt.multiitem.randomtools/<meta>.png`
   (the "Clay X Mold" raw item band, MultiItemRandomTools.java:80-121; task

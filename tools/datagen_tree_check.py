@@ -763,6 +763,16 @@ FORGE_GATED_ONLY_CANONICAL = frozenset({
     "data/gt6/recipes/smeltery_stone.json",
     "data/gt6/advancements/recipes/misc/mold_stone.json",
     "data/gt6/advancements/recipes/misc/smeltery_stone.json",
+    # issue #45 C2 交卡补录（2026-09-29，与 mold_stone 同构 forge-gated）：clay crucible
+    # 链三行（7 黏土 shaped / reverse shapeless / Loader:256 smelt 尾）由 forge 腿独产的
+    # GT6CrucibleDatagen.Recipes（crucible-physics-smeltery 的 //? if forge crafting 面）
+    # 产出，21.1 节点结构性无输出。runtime 不受影响（generated 树双腿打包共用）。
+    "data/gt6/recipes/clay_crucible_raw.json",
+    "data/gt6/recipes/clay_crucible_raw_reclaim.json",
+    "data/gt6/recipes/smelt_smeltery_ceramic.json",
+    "data/gt6/advancements/recipes/misc/clay_crucible_raw.json",
+    "data/gt6/advancements/recipes/misc/clay_crucible_raw_reclaim.json",
+    "data/gt6/advancements/recipes/misc/smelt_smeltery_ceramic.json",
     # task eu-core-5tier 交卡门禁补录（2026-09-14，非本卡面——c-water-wheel
     # 遗留缺口由本卡新鲜 neo 节点快照首次显形：GT6CraftingRecipes.buildRecipes 的
     # neoforge 分支漏了 waterWheelBuilder()（forge 分支 ：192 有），canonical 树的

@@ -368,7 +368,7 @@ public class TileEntitySmelteryOfflineTest {
 	/** the row ladder exists as data and the shape helpers answer the ingot bar. */
 	@Test
 	public void registrationRowsAndShapes() {
-		assertEquals(3, GT6Crucibles.ROWS.size(), "Stone/Bronze/Steel");
+		assertEquals(4, GT6Crucibles.ROWS.size(), "Stone/Ceramic/Bronze/Steel (issue #45 C2)");
 		assertEquals(1, GT6Molds.ROWS.size(), "the stone mold rung");
 		assertSame(OP.ingot, TileEntityMold.getMoldRecipe(TileEntityMold.ingotShape(1)), "the shifted bar maps to ingot");
 		assertSame(OP.nugget, TileEntityMold.getMoldRecipe(1), "unknown non-zero shapes fall back to the nugget (:79-83)");
