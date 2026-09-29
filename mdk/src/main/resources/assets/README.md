@@ -3290,6 +3290,128 @@ kept verbatim anyway so the ledger stays 1:1 with the upstream group.
 - `large_boiler/overlay_front_side.png`  `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `largeboiler/overlay_front/side.png`)
 
+Logistics Core / Lightning Rod / Large Heat Exchanger / Large Crucible controller
+block textures, task r8-tex-multiblockmains: the 48 PNGs under
+`gt6/textures/block/{logistics_core,lightningrod,large_heat_exchanger,crucible}/`
+come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/multiblockmains/{logisticscore,lightningrod,largeheatexchanger,crucible}/`,
+byte-identical to upstream, sha256 verified. This SUPERSEDES the p13-era "the
+dedicated textures have no port face yet" logisticscore borrow declaration and the
+borrow-time-composite lightningrod/largeheatexchanger single-image form (the p9
+probe proved all four groups exist). The semantics are the Base10 default
+`getTexture2` (TileEntityBase10MultiBlockBase.java:192-194), the boiler form: the
+FRONT face renders the `*_front/side` pair, the other five faces the plain `*/`
+pair, the colored layer multiplies the row NBT_MATERIAL (Loader_MultiTileEntities.java
+:1270-1277 crucible eight, :1245 heat exchanger ANY.W, :1281 logistics core
+SteelGalvanized, :1282 lightning rod ANY.W) and the overlay layer stays untinted.
+The upstream logistics content faces (the `logistics/{fluid,item,generic}` content
+art the core paints its buffers with) are NOT borrowed — the NBT-dynamic content
+painting is the render pool. Path mapping:
+`{colored,colored_front,overlay,overlay_front}/{bottom,top,side}.png` flattens to
+`<band>/{layer}_{face}.png` (the underscore join, the large_boiler precedent).
+The two borrow-time composites are KEPT as item-form-only sprites: the
+r8-tex-itemform-b item layer0 lines pin `block/lightningrod/main` and
+`block/large_heat_exchanger/main`, so both PNGs stay on disk with zero block-model
+consumers (the transmitter.png orphan-keep precedent). The former
+`large_boiler/wall.png` (its last consumer, the crucible controller placeholder,
+dies with this task) is RETIRED.
+- `logistics_core/colored_bottom.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `logisticscore/colored/bottom.png`)
+- `logistics_core/colored_top.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `logisticscore/colored/top.png`)
+- `logistics_core/colored_side.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `logisticscore/colored/side.png`)
+- `logistics_core/colored_front_bottom.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `logisticscore/colored_front/bottom.png`)
+- `logistics_core/colored_front_top.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `logisticscore/colored_front/top.png`)
+- `logistics_core/colored_front_side.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `logisticscore/colored_front/side.png`)
+- `logistics_core/overlay_bottom.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `logisticscore/overlay/bottom.png`)
+- `logistics_core/overlay_top.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `logisticscore/overlay/top.png`)
+- `logistics_core/overlay_side.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `logisticscore/overlay/side.png`)
+- `logistics_core/overlay_front_bottom.png` `d14d69db5deab5c2ab323351fe5e9f573d1108cedca34849e8395539d9079090`
+  (upstream `logisticscore/overlay_front/bottom.png`)
+- `logistics_core/overlay_front_top.png` `be30702ab014e61ad81454c26a39473146a377d6e9110bb2f722399fb37b2db4`
+  (upstream `logisticscore/overlay_front/top.png`)
+- `logistics_core/overlay_front_side.png` `cca32b0dfa4b1b5855d029e57c53053f7bc751e6c2f3f9118e8f17f6119b5ec1`
+  (upstream `logisticscore/overlay_front/side.png`)
+- `lightningrod/colored_bottom.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `lightningrod/colored/bottom.png`)
+- `lightningrod/colored_top.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `lightningrod/colored/top.png`)
+- `lightningrod/colored_side.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `lightningrod/colored/side.png`)
+- `lightningrod/colored_front_bottom.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `lightningrod/colored_front/bottom.png`)
+- `lightningrod/colored_front_top.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `lightningrod/colored_front/top.png`)
+- `lightningrod/colored_front_side.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `lightningrod/colored_front/side.png`)
+- `lightningrod/overlay_bottom.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `lightningrod/overlay/bottom.png`)
+- `lightningrod/overlay_top.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `lightningrod/overlay/top.png`)
+- `lightningrod/overlay_side.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `lightningrod/overlay/side.png`)
+- `lightningrod/overlay_front_bottom.png` `b41df1e22f916abd110733c5f5886115fffa13012e49de1767c38b396ecc57ec`
+  (upstream `lightningrod/overlay_front/bottom.png`)
+- `lightningrod/overlay_front_top.png` `29a16b495db80d2abd4e65d1ec38b4e1220116ecfad6a46637114396b427967a`
+  (upstream `lightningrod/overlay_front/top.png`)
+- `lightningrod/overlay_front_side.png` `94adbe03462ca420f1d9322bffe91584ff361f7e1d1f00f5567148a5377b217d`
+  (upstream `lightningrod/overlay_front/side.png`)
+- `large_heat_exchanger/colored_bottom.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `largeheatexchanger/colored/bottom.png`)
+- `large_heat_exchanger/colored_top.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `largeheatexchanger/colored/top.png`)
+- `large_heat_exchanger/colored_side.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `largeheatexchanger/colored/side.png`)
+- `large_heat_exchanger/colored_front_bottom.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `largeheatexchanger/colored_front/bottom.png`)
+- `large_heat_exchanger/colored_front_top.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `largeheatexchanger/colored_front/top.png`)
+- `large_heat_exchanger/colored_front_side.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+  (upstream `largeheatexchanger/colored_front/side.png`)
+- `large_heat_exchanger/overlay_bottom.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `largeheatexchanger/overlay/bottom.png`)
+- `large_heat_exchanger/overlay_top.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `largeheatexchanger/overlay/top.png`)
+- `large_heat_exchanger/overlay_side.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `largeheatexchanger/overlay/side.png`)
+- `large_heat_exchanger/overlay_front_bottom.png` `7cb53218fd3a8a9e8dfe1eb08e29990993c58e1c8ff0f0e517b65c1d264161da`
+  (upstream `largeheatexchanger/overlay_front/bottom.png`)
+- `large_heat_exchanger/overlay_front_top.png` `84dc0ec51853d324af69084abbb34a4795c8ab265d578d4385bfc7240f3ae67f`
+  (upstream `largeheatexchanger/overlay_front/top.png`)
+- `large_heat_exchanger/overlay_front_side.png` `84dc0ec51853d324af69084abbb34a4795c8ab265d578d4385bfc7240f3ae67f`
+  (upstream `largeheatexchanger/overlay_front/side.png`)
+- `crucible/colored_bottom.png` `512528c620cd8ed0659161f7fd2ced159f526316d9e678ac3aa3c752cc9eacbb`
+  (upstream `crucible/colored/bottom.png`)
+- `crucible/colored_top.png` `512528c620cd8ed0659161f7fd2ced159f526316d9e678ac3aa3c752cc9eacbb`
+  (upstream `crucible/colored/top.png`)
+- `crucible/colored_side.png` `39be6fe649a62a4c6a714b10503b40ab305102bb6f083d6f6665105abdc6e2d0`
+  (upstream `crucible/colored/side.png`)
+- `crucible/colored_front_bottom.png` `512528c620cd8ed0659161f7fd2ced159f526316d9e678ac3aa3c752cc9eacbb`
+  (upstream `crucible/colored_front/bottom.png`)
+- `crucible/colored_front_top.png` `512528c620cd8ed0659161f7fd2ced159f526316d9e678ac3aa3c752cc9eacbb`
+  (upstream `crucible/colored_front/top.png`)
+- `crucible/colored_front_side.png` `39be6fe649a62a4c6a714b10503b40ab305102bb6f083d6f6665105abdc6e2d0`
+  (upstream `crucible/colored_front/side.png`)
+- `crucible/overlay_bottom.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `crucible/overlay/bottom.png`)
+- `crucible/overlay_top.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `crucible/overlay/top.png`)
+- `crucible/overlay_side.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `crucible/overlay/side.png`)
+- `crucible/overlay_front_bottom.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `crucible/overlay_front/bottom.png`)
+- `crucible/overlay_front_top.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `crucible/overlay_front/top.png`)
+- `crucible/overlay_front_side.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
+  (upstream `crucible/overlay_front/side.png`)
+
 Barrel family block textures, task p20-borrow-tank-barrel-pipe: the 3 PNGs
 `gt6/textures/block/barrel_{wood,plastic,metal}.png` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/tanks/`, byte-identical
