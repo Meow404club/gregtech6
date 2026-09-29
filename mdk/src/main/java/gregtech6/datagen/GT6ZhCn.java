@@ -125,6 +125,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addBoilerTooltipUnits(); // task r8-tooltip-infra — the boiler tooltip pilot band (hand rows, the tsv direct band)
 		addSensorJadeUnits(); // task r8-jade-sensor-provider — the sensor-family jade band (hand rows, the tsv direct band)
 		addFamilyTooltipUnits(); // task r8-tooltip-multiblock-generator — the T4 three-family tooltip band (hand rows, the tsv direct band)
+		addWirePipeSensorTooltipUnits(); // task r8-tooltip-wire-pipe-sensor — the T5 connector band (hand rows, the tsv direct band)
 		addAnvilUnits();        // task p28-c-anvil
 		addPocketUnits();       // task p29-w5-t7-pocket-eight — the 8+7 pocket face (hand rows, no dump face exists)
 		addArmorUnits();        // task p29-w5-t8-armor-24
@@ -619,6 +620,41 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("gt6.tooltip.generator.9");
 		addDirect("gt6.tooltip.generator.10");
 		addDirect("gt6.tooltip.generator.11");
+	}
+
+	/**
+	 * The wire/pipe/sensor tooltip rows zh faces (task r8-tooltip-wire-pipe-sensor, 20 hand
+	 * rows — the addBoilerTooltipUnits shape): the four connector families' addToolTips
+	 * transcriptions. The stat-row templates keep the upstream dump's zh label faces
+	 * (tmp/gregtech.lang:3571-3574 电压(V)/电流(A)/损耗, :3362-3366 流量/容量/阻力) over
+	 * the same positional slots as the en faces; the tool/hazard rows are the dump faces
+	 * verbatim (:3332 接触, :3345 nogui, :3544 放大镜, :3545-3546 活动扳手输入/输出, the
+	 * :17868-17870 sensor screwdriver trio). The facing row fuses the dump pre/tool/post
+	 * fragments (:3564-3565 使用/设置朝向 + :3491 扳手) into the one row key, matching the
+	 * en fusion. The row keys are this port's own {@code gt6.tooltip.*} vocabulary — the
+	 * values ride the reference table's hand layer via {@link #addDirect}.
+	 */
+	private void addWirePipeSensorTooltipUnits() {
+		addDirect("gt6.tooltip.wire.1");
+		addDirect("gt6.tooltip.wire.2");
+		addDirect("gt6.tooltip.wire.3");
+		addDirect("gt6.tooltip.wire_contact.1");
+		addDirect("gt6.tooltip.wire_contact.2");
+		addDirect("gt6.tooltip.wire_contact.3");
+		addDirect("gt6.tooltip.wire_contact.4");
+		addDirect("gt6.tooltip.pipe_fluid.1");
+		addDirect("gt6.tooltip.pipe_fluid.2");
+		addDirect("gt6.tooltip.pipe_fluid.10");
+		addDirect("gt6.tooltip.pipe_item.1");
+		addDirect("gt6.tooltip.pipe_item.2");
+		addDirect("gt6.tooltip.pipe_item.3");
+		addDirect("gt6.tooltip.pipe_item.4");
+		addDirect("gt6.tooltip.sensor.2");
+		addDirect("gt6.tooltip.sensor.3");
+		addDirect("gt6.tooltip.sensor.4");
+		addDirect("gt6.tooltip.sensor.5");
+		addDirect("gt6.tooltip.sensor.6");
+		addDirect("gt6.tooltip.sensor.7");
 	}
 
 	/**

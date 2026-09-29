@@ -766,6 +766,32 @@ HAND_TRANSLATIONS = {
     "gt6.tooltip.generator.9": ("当它在运作的时候接触会受伤! (顶面)", "hand"),
     "gt6.tooltip.generator.10": ("使用铲子清空容器", "hand"),
     "gt6.tooltip.generator.11": ("使用扳手设置朝向", "hand"),
+    # task r8-tooltip-wire-pipe-sensor -- the T5 connector band (wire/wire_contact/pipe_fluid/
+    # pipe_item/sensor): the stat-row templates keep the dump's zh label faces over the same
+    # positional slots as the en faces (tmp/gregtech.lang:3574 电压(V)/:3571 电流(A)/:3572 损耗/
+    # :3362 流量/:3363 容量/:3366 阻力), the tool/hazard rows are the dump faces VERBATIM
+    # (:3332 接触/:3345 nogui/:3544 放大镜/:3545-3546 活动扳手/:17868-17870 sensor trio), the
+    # facing row fuses the dump fragments (:3564-3565 + :3491) into the one row key
+    "gt6.tooltip.wire.1": ("电压(V): %1$s EU (%2$s)", "hand"),
+    "gt6.tooltip.wire.2": ("电流(A): %3$s", "hand"),
+    "gt6.tooltip.wire.3": ("损耗: %4$s EU/m", "hand"),
+    "gt6.tooltip.wire_contact.1": ("电压(V): %1$s EU (%2$s)", "hand"),
+    "gt6.tooltip.wire_contact.2": ("电流(A): %3$s", "hand"),
+    "gt6.tooltip.wire_contact.3": ("损耗: %4$s EU/m", "hand"),
+    "gt6.tooltip.wire_contact.4": ("当它在运作的时候接触会受伤!", "hand"),
+    "gt6.tooltip.pipe_fluid.1": ("流量: %1$s L/t", "hand"),
+    "gt6.tooltip.pipe_fluid.2": ("容量: %2$s L", "hand"),
+    "gt6.tooltip.pipe_fluid.10": ("使用放大镜观察细节", "hand"),
+    "gt6.tooltip.pipe_item.1": ("阻力: %s", "hand"),
+    "gt6.tooltip.pipe_item.2": ("流量: %s/s", "hand"),
+    "gt6.tooltip.pipe_item.3": ("使用活动扳手调整输入(探测)面", "hand"),
+    "gt6.tooltip.pipe_item.4": ("使用活动扳手调整输出面", "hand"),
+    "gt6.tooltip.sensor.2": ("没有界面，右键以放入/取出物品!", "hand"),
+    "gt6.tooltip.sensor.3": ("在按钮上使用螺丝刀启用平均模式。", "hand"),
+    "gt6.tooltip.sensor.4": ("在显示屏上使用螺丝刀开关十六进制显示。", "hand"),
+    "gt6.tooltip.sensor.5": ("在其他地方使用螺丝刀调整其他模式。", "hand"),
+    "gt6.tooltip.sensor.6": ("使用活动扳手调整输入(探测)面", "hand"),
+    "gt6.tooltip.sensor.7": ("使用扳手设置朝向", "hand"),
     "gt6.tooltip.lightningrod.1": ("最底层是3x3的钨壁板, 中间是避雷针电力输出口", "hand"),
     "gt6.tooltip.lightningrod.2": ("第二层是3x3的大型铌钛合金线圈", "hand"),
     "gt6.tooltip.lightningrod.3": ("第三层是3x3的钨壁板", "hand"),
