@@ -295,7 +295,12 @@ def mem_fields_mib(path=MEMINFO_PATH):
 
 
 def mem_used_mib(path=MEMINFO_PATH):
-    """used = MemTotal - MemAvailable in MiB (kernel reports both in kB)."""
+    """used = MemTotal - MemAvailable in MiB (kernel reports both in kB).
+
+    v3.4: MemAvailable already excludes the reclaimable page cache, so the
+    system-side outside guard needs no cache deduction of its own — the
+    v3.4 subtraction is cgroup-face only (memory.current/memory.stat).
+    """
     total, avail = mem_fields_mib(path)
     return total - avail
 
@@ -323,19 +328,78 @@ def cgroup_usage_mib(rel, cgroup_root="/sys/fs/cgroup", uid=None):
         return 0
 
 
+_RECLAIM_NOTE_DONE = False     # v3.4: the conservative-fallback stderr note fires ONCE
+
+
+def cgroup_reclaimable_mib(rel, cgroup_root="/sys/fs/cgroup", uid=None):
+    """The reclaimable cache slice of one cgroup: memory.stat ``file`` +
+    ``slab_reclaimable`` in MiB (v3.4); ``None`` on any parse failure.
+
+    cgroup v2 memory.stat reports in bytes like memory.current. Both keys are
+    optional-presence but well-formed when present; a missing/unparsable stat
+    file returns None so the caller can subtract nothing (conservative) —
+    stderr noted once per process, never per tick (the watchdog reads this
+    every SAMPLE_SECONDS; a chatty note would drown real diagnostics).
+    """
+    global _RECLAIM_NOTE_DONE
+    uid = os.getuid() if uid is None else uid
+    path = (Path(cgroup_root) / "user.slice" / f"user-{uid}.slice"
+            / f"user@{uid}.service" / rel / "memory.stat")
+    try:
+        file_mib = slab_mib = None
+        for line in path.read_text(encoding="ascii").splitlines():
+            parts = line.split()
+            if len(parts) == 2:
+                if parts[0] == "file":
+                    file_mib = int(parts[1]) // (1024 * 1024)
+                elif parts[0] == "slab_reclaimable":
+                    slab_mib = int(parts[1]) // (1024 * 1024)
+        if file_mib is None or slab_mib is None:
+            raise ValueError("memory.stat lacks file/slab_reclaimable")
+        return file_mib + slab_mib
+    except (OSError, ValueError):
+        if not _RECLAIM_NOTE_DONE:
+            _RECLAIM_NOTE_DONE = True
+            print("[gt6testgate] memory.stat unreadable — admission/watchdog "
+                  "read RAW memory.current (reclaimable cache NOT deducted; "
+                  "conservative)", file=sys.stderr)
+        return None
+
+
+def cgroup_effective_usage_mib(rel, cgroup_root="/sys/fs/cgroup", uid=None):
+    """v3.4 effective in-group usage = memory.current − reclaimable cache.
+
+    The kernel counts the task's page cache (gradle file IO) in
+    memory.current, but that cache is reclaimable under pressure — counting
+    it queues admission and fires the watchdog on a "full" cgroup that would
+    evaporate on demand (the 2026-09-29 11430-vs-104 pollution class).
+    Floor at 0 (a current smaller than its own reclaimable cache is legal).
+    """
+    cur = cgroup_usage_mib(rel, cgroup_root, uid)
+    reclaimable = cgroup_reclaimable_mib(rel, cgroup_root, uid)
+    if reclaimable is None:
+        return cur
+    return max(cur - reclaimable, 0)
+
+
 def slice_usage_mib(slice_name=SLICE_NAME, cgroup_root="/sys/fs/cgroup",
                     uid=None):
-    """Live memory.current of the gate slice (v3.2 admission input)."""
-    return cgroup_usage_mib(slice_name, cgroup_root, uid)
+    """Effective memory of the gate slice (v3.2 admission input; v3.4 =
+    memory.current minus reclaimable cache — see cgroup_effective_usage_mib)."""
+    return cgroup_effective_usage_mib(slice_name, cgroup_root, uid)
 
 
 def slice_children_usage(slice_name=SLICE_NAME, cgroup_root="/sys/fs/cgroup",
                          uid=None):
-    """[(sub-cgroup name, usage MiB)] over live gate-slice children (v3.3).
+    """[(sub-cgroup name, effective usage MiB)] over slice children (v3.3).
 
     Each child directory of the slice is one task scope (v3.1's deterministic
-    --unit names); their memory.current sum is the project aggregate the
-    watchdog enforces the 25G cap against.
+    --unit names); their sum is the project aggregate the watchdog enforces
+    the 25G cap against, and the per-unit own read is the budget comparator.
+    v3.4: both faces read EFFECTIVE usage (memory.current minus reclaimable
+    cache — the anon view) so a cache-padded cgroup neither fires the budget
+    kill nor skews the aggregate; the kernel MemoryMax itself is untouched
+    (the kernel reclaims cache before OOM, its semantics need no mirror).
     """
     uid = os.getuid() if uid is None else uid
     base = (Path(cgroup_root) / "user.slice" / f"user-{uid}.slice"
@@ -344,8 +408,9 @@ def slice_children_usage(slice_name=SLICE_NAME, cgroup_root="/sys/fs/cgroup",
         children = sorted(p for p in base.iterdir() if p.is_dir())
     except OSError:
         return []
-    return [(p.name, cgroup_usage_mib(f"{slice_name}/{p.name}",
-                                      cgroup_root, uid)) for p in children]
+    return [(p.name, cgroup_effective_usage_mib(f"{slice_name}/{p.name}",
+                                                cgroup_root, uid))
+            for p in children]
 
 
 def watchdog_tick(unit, budget_mib, cap_mib, slice_name=SLICE_NAME,
@@ -529,6 +594,13 @@ def record_observation(cls, observed_mib, path=LEDGER_PATH, now=None):
 
 def tree_rss_mib(root_pid, proc_dir="/proc"):
     """Sum RSS over the process tree rooted at root_pid, in MiB.
+
+    v3.4 ledger note: this UNWRAPPED-mode peak source is process RSS —
+    statm RSS counts anonymous + mapped file pages resident, NOT the
+    writeback/streaming page cache the cgroup's memory.current carries, so
+    the ledger's peak column mixes two views (wrapped runs feed the
+    effective/anon-ish cgroup read, unwrapped runs this RSS walk); the
+    estimate only needs cross-run comparability per mode, which holds.
 
     ponytail: ppid-chain walk + statm RSS double-counts shared pages (gradle
     daemon + workers share the JVM) and a detached daemon escapes the tree —

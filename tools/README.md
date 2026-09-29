@@ -176,13 +176,22 @@ handler 缺失等于没装）：
   最大者优先逐杀至帽内（单次回收最大化=最少受害者最快回帽；新任务天然
   幸免——尚未膨胀；杀粒度=单任务 cgroup，兄弟无恙；若自己最大也会被
   杀并转 97）。
+- **可回收缓存不计入计算（v3.4，2026-09-29 用户修订）**：cgroup
+  memory.current 把 gradle 文件 IO 的 page cache 计入（看似满、实可回收
+  ——11430-vs-104 污染类根因）。信封内读数（准入 slice 读+看门狗
+  own/聚合两维）一律改**有效占用 = memory.current − memory.stat 的
+  file − slab_reclaimable**；解析失败保守不减、stderr 只注记一次。
+  系统侧护栏本就读 `MemTotal − MemAvailable`（内核已排除可回收缓存），
+  无需调整。内核 MemoryMax 语义不动（内核先回收 cache 才 OOM）。台账
+  峰值维持进程 RSS 采样（statm 不含流式文件缓存）——与包装态有效占用
+  是两种视图，列内各自同模可比。
 - 向后兼容：并发槽默认 4（`GT6_GATE_MAX_CONCURRENT`）、退出码=子进程
   透传、full+coder 拒 exit 2、gt6server 直调 `wait_memory` 签名不变
   （遗留反应闸仅服务 boot 路径）；旧 flag 形态（无 `run` 前缀）与 run
   子命令同一实现；`GITHUB_ACTIONS` 置位=零门槛透传（CI 不是本 WSL
   宿主，不注入不看门狗）。
 
-单测：`python3 tools/gt6testgate_test.py`（stdlib unittest，106 项，全
+单测：`python3 tools/gt6testgate_test.py`（stdlib unittest，110 项，全
 离线零 gradle；`GT6_GATE_SLICE_LIVE=1` 追加 3 项真 systemd 探针：scope
 创建/残留 scope 收尸/malloc 膨胀按预算杀）。
 

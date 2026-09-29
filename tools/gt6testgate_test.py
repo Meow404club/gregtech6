@@ -1175,6 +1175,76 @@ class SliceUsageTest(unittest.TestCase):
             cgroup_root=tempfile.mkdtemp()), [])
 
 
+class EffectiveUsageTest(unittest.TestCase):
+    """v3.4 有效占用：memory.current − (memory.stat file+slab_reclaimable)；
+    解析失败保守不减（原值直读）+stderr 只注记一次；下限钳 0。"""
+
+    def setUp(self):
+        self._note = gate._RECLAIM_NOTE_DONE
+        gate._RECLAIM_NOTE_DONE = False
+        self.err = io.StringIO()
+
+    def tearDown(self):
+        gate._RECLAIM_NOTE_DONE = self._note
+
+    def make_tree(self, current_mib, stat_lines=None):
+        """单 scope 假树：memory.current 必写，memory.stat 可选。"""
+        root = tempfile.mkdtemp()
+        uid = os.getuid()
+        d = Path(root) / "user.slice" / f"user-{uid}.slice" \
+            / f"user@{uid}.service" / "gt6gate.slice" / "t.scope"
+        d.mkdir(parents=True)
+        (d / "memory.current").write_text(f"{current_mib * 1024 * 1024}\n")
+        if stat_lines is not None:
+            (d / "memory.stat").write_text(
+                "".join(f"{k} {v * 1024 * 1024}\n" for k, v in stat_lines))
+        return root
+
+    def test_effective_subtracts_file_and_slab_reclaimable(self):
+        # 1000MiB current 里 700MiB file + 100MiB slab_reclaimable 都是
+        # 可回收 page cache（gradle 文件 IO）——有效占用只有 200MiB。
+        root = self.make_tree(1000, [("anon", 200), ("file", 700),
+                                     ("slab_reclaimable", 100)])
+        with contextlib.redirect_stderr(self.err):
+            self.assertEqual(gate.cgroup_effective_usage_mib(
+                "gt6gate.slice/t.scope", cgroup_root=root), 200)
+            self.assertEqual(gate.slice_children_usage(cgroup_root=root),
+                             [("t.scope", 200)])
+        # slice 根自身也走有效占用：根目录自带 current+stat 时同式扣减。
+        root2 = self.make_tree(800, [("file", 600), ("slab_reclaimable", 50)])
+        d = Path(root2) / "user.slice" / f"user-{os.getuid()}.slice" \
+            / f"user@{os.getuid()}.service" / "gt6gate.slice"
+        (d / "memory.current").write_text(f"{800 * 1024 * 1024}\n")
+        (d / "memory.stat").write_text(
+            f"file {600 * 1024 * 1024}\nslab_reclaimable {50 * 1024 * 1024}\n")
+        with contextlib.redirect_stderr(self.err):
+            self.assertEqual(gate.slice_usage_mib(cgroup_root=root2), 150)
+        self.assertEqual(self.err.getvalue(), "")   # 正常解析不注记
+
+    def test_parse_failure_reads_raw_conservatively_and_notes_once(self):
+        root = self.make_tree(1000)                 # 无 memory.stat
+        with contextlib.redirect_stderr(self.err):
+            self.assertEqual(gate.cgroup_effective_usage_mib(
+                "gt6gate.slice/t.scope", cgroup_root=root), 1000)
+            self.assertEqual(gate.cgroup_effective_usage_mib(
+                "gt6gate.slice/t.scope", cgroup_root=root), 1000)
+        self.assertEqual(self.err.getvalue().count("memory.stat unreadable"),
+                         1, "conservative note fires exactly ONCE per process")
+
+    def test_garbage_stat_also_conservative(self):
+        root = self.make_tree(500, [("anon", "junk")])
+        with contextlib.redirect_stderr(self.err):
+            self.assertEqual(gate.cgroup_effective_usage_mib(
+                "gt6gate.slice/t.scope", cgroup_root=root), 500)
+
+    def test_floors_at_zero(self):
+        # current 小于自身可回收缓存是合法态（回收在途）——钳 0 不出负数。
+        root = self.make_tree(50, [("file", 70), ("slab_reclaimable", 30)])
+        with contextlib.redirect_stderr(self.err):
+            self.assertEqual(gate.cgroup_effective_usage_mib(
+                "gt6gate.slice/t.scope", cgroup_root=root), 0)
+
+
 class OutsideLimitTest(unittest.TestCase):
     """v3.2 外压护栏阈值：公式 MemTotal-cap-2G，env 钉值优先，坏值回公式。"""
 
