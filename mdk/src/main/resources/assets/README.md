@@ -8480,6 +8480,9 @@ SAME visible pixels, the lightningrod one-texture ruling).
   + `overlay/side.png` (the transformer bake treatment). Produced by
   `mdk/tools/bake_battery_textures.py`; the circuit-carrier items reuse the in-repo
   `item/integrated_circuit.png` (no new file, the declared placeholder).
+  RETIRED by task r8-tex-composite-family: the block models ride the true two-layer
+  borrows (`block/battery_box{,_large}/`, the tail manifest below) — these flat bakes
+  are deleted.
 Hot-lube append, task p29-w4-hot-lube (2026-09-15): the Lubricant Bucket item
 icon borrows the VANILLA `item/bucket.png` (1.20.1 client jar, 16x16,
 byte-identical, sha256 verified) — the port's declared single-item-container
@@ -9133,22 +9136,28 @@ OUTPUT face), machines/energystorages/zpm_electricity|zpm_quantum
 (MultiTileEntityZPMDechargerEU.java:47-63 / QU.java:47-54). License: upstream GregTech
 6 assets are CC0 (see the Public Domain Dedication block above).
 
+RETIRED (part) by task r8-tex-composite-family: the 13 charger/zpm/LD composites
+below are deleted — those families now ride the true two-layer borrows with the
+overlay_active shell wired (the ACTIVE property landed on the battery-box block
+carrier, the tail manifest below). The 5 long_dist_wire byte copies stay (the wire
+metas are out of this card's scope).
+
 Baked composites (derived; the colored casing layer is one byte-identical grayscale
 across every family here, only the overlays differ):
 
-- `block/crystal_charger_front.png` — `7d9e6d2d06eb51240f66667051bc3082adc3ddb8eb814e072d12d7e60708effa` (src-over `crystal_laser/colored/front + overlay/front`; byte-identical to the large-front composite — the two families share the front art)
-- `block/crystal_charger_side.png` — `700ab3cc98ef1146b9638af23d0d84c81ccc31507b1184163b6219ee55fcb786` (src-over `crystal_laser/colored/side + overlay/side`)
-- `block/crystal_charger_large_front.png` — `7d9e6d2d06eb51240f66667051bc3082adc3ddb8eb814e072d12d7e60708effa` (src-over `crystal_laser_large/colored/front + overlay/front`)
-- `block/crystal_charger_large_side.png` — `91a0687c6be7ba2f683fb679122c7dba6eca01334c898129724516e737248e67` (src-over `crystal_laser_large/colored/side + overlay/side`)
-- `block/long_distance_transformer_front.png` — `97f5c41837e8c9f94bbaec4873d3d7f0529f1146974569d90d7fffecadc06503` (src-over `longdistancetransformer_electric/colored/front + overlay/front`)
-- `block/long_distance_transformer_back.png` — `88177900197bd182593d1d9d21ea3e7888f7ec3f52d816a03a97923cd57c516f` (src-over `.../colored/back + overlay/back`)
-- `block/long_distance_transformer_side.png` — `b5f21ab6ca30f0d98327859d946c599182ef88fca8707933ff0cdff850658433` (src-over `.../colored/side + overlay/side`)
-- `block/zpm_decharger_front.png` — `a982cea2f5d79df29801e1b21349e617488c324ea79a64b35712658bb60a4c9f` (src-over `zpm_electricity/colored/front + overlay/front`)
-- `block/zpm_decharger_back.png` — `f9b323b0b87a687865b32b0908316fe11958210c822d4ded4ece0da99acbf2bc` (src-over `zpm_electricity/colored/back + overlay/back`; byte-identical to the quantum-back composite — the two families share the back overlay)
-- `block/zpm_decharger_side.png` — `27dac6bf9e5d2cfeafb11dd83d89bf8317ed3b05ae3dc35caa7fdf3f3b718fec` (src-over `zpm_electricity/colored/side + overlay/side`; byte-identical to the quantum-side composite)
-- `block/zpm_decharger_quantum_front.png` — `3d4a5b55a3300f6949bfa9a564615304fc3795c1eb99a52874becaf494150c4c` (src-over `zpm_quantum/colored/front + overlay/front`)
-- `block/zpm_decharger_quantum_back.png` — `f9b323b0b87a687865b32b0908316fe11958210c822d4ded4ece0da99acbf2bc` (src-over `zpm_quantum/colored/back + overlay/back`)
-- `block/zpm_decharger_quantum_side.png` — `27dac6bf9e5d2cfeafb11dd83d89bf8317ed3b05ae3dc35caa7fdf3f3b718fec` (src-over `zpm_quantum/colored/side + overlay/side`)
+- `block/crystal_charger_front.png` — `7d9e6d2d06eb51240f66667051bc3082adc3ddb8eb814e072d12d7e60708effa` (src-over `crystal_laser/colored/front + overlay/front`; byte-identical to the large-front composite — the two families share the front art) [RETIRED r8-tex-composite-family]
+- `block/crystal_charger_side.png` — `700ab3cc98ef1146b9638af23d0d84c81ccc31507b1184163b6219ee55fcb786` [RETIRED r8-tex-composite-family]
+- `block/crystal_charger_large_front.png` — `7d9e6d2d06eb51240f66667051bc3082adc3ddb8eb814e072d12d7e60708effa` (src-over `crystal_laser_large/colored/front + overlay/front`) [RETIRED r8-tex-composite-family]
+- `block/crystal_charger_large_side.png` — `91a0687c6be7ba2f683fb679122c7dba6eca01334c898129724516e737248e67` (src-over `crystal_laser_large/colored/side + overlay/side`) [RETIRED r8-tex-composite-family]
+- `block/long_distance_transformer_front.png` — `97f5c41837e8c9f94bbaec4873d3d7f0529f1146974569d90d7fffecadc06503` (src-over `longdistancetransformer_electric/colored/front + overlay/front`) [RETIRED r8-tex-composite-family]
+- `block/long_distance_transformer_back.png` — `88177900197bd182593d1d9d21ea3e7888f7ec3f52d816a03a97923cd57c516f` (src-over `.../colored/back + overlay/back`) [RETIRED r8-tex-composite-family]
+- `block/long_distance_transformer_side.png` — `b5f21ab6ca30f0d98327859d946c599182ef88fca8707933ff0cdff850658433` (src-over `.../colored/side + overlay/side`) [RETIRED r8-tex-composite-family]
+- `block/zpm_decharger_front.png` — `a982cea2f5d79df29801e1b21349e617488c324ea79a64b35712658bb60a4c9f` (src-over `zpm_electricity/colored/front + overlay/front`) [RETIRED r8-tex-composite-family]
+- `block/zpm_decharger_back.png` — `f9b323b0b87a687865b32b0908316fe11958210c822d4ded4ece0da99acbf2bc` (src-over `zpm_electricity/colored/back + overlay/back`; byte-identical to the quantum-back composite — the two families share the back overlay) [RETIRED r8-tex-composite-family]
+- `block/zpm_decharger_side.png` — `27dac6bf9e5d2cfeafb11dd83d89bf8317ed3b05ae3dc35caa7fdf3f3b718fec` (src-over `zpm_electricity/colored/side + overlay/side`; byte-identical to the quantum-side composite) [RETIRED r8-tex-composite-family]
+- `block/zpm_decharger_quantum_front.png` — `3d4a5b55a3300f6949bfa9a564615304fc3795c1eb99a52874becaf494150c4c` (src-over `zpm_quantum/colored/front + overlay/front`) [RETIRED r8-tex-composite-family]
+- `block/zpm_decharger_quantum_back.png` — `f9b323b0b87a687865b32b0908316fe11958210c822d4ded4ece0da99acbf2bc` (src-over `zpm_quantum/colored/back + overlay/back`) [RETIRED r8-tex-composite-family]
+- `block/zpm_decharger_quantum_side.png` — `27dac6bf9e5d2cfeafb11dd83d89bf8317ed3b05ae3dc35caa7fdf3f3b718fec` (src-over `zpm_quantum/colored/side + overlay/side`) [RETIRED r8-tex-composite-family]
 
 Byte copies:
 
@@ -9430,7 +9439,9 @@ precedent); the block models are UNCHANGED (world face untouched):
 - battery boxes 12 — layer0 = the row's baked composite (`block/battery_box` /
   `block/battery_box_large`). Declared TRANSITIONAL form: when the composite-family
   card double-layers the block model (colored+overlay split), the items flip back to
-  the ok3D block-parent form.
+  the ok3D block-parent form. FLIPPED BACK by task r8-tex-composite-family: the
+  block models are the true two-layer borrows now, the 12 BlockItems parent the
+  `block/battery_box{,_large}` two-layer models again (the ok3D form).
 - LD wires 16 — layer0 = the row's tier sprite (`block/long_dist_wire_<ev|iv|luv|zpm|uv>`).
 - LD pipe wire metas 16 — layer0 = the shared `block/item_pipe` placeholder.
 - placeholder energy family 7 (`energy_source`, `fe_battery`, `fe_converter`,
@@ -10027,3 +10038,83 @@ Declared non-goals: the sensors/barrel/fluid-pipe families (their own texture ca
 the battery box / LD wire / LD pipe / placeholder families (band A), and the
 transformer_rotation row in the same gearbox function (an orientable faceted model,
 not a single-texture cube — it stays block-parented).
+
+Composite-energy-family two-layer borrows, task r8-tex-composite-family: the 51
+PNGs under `gt6/textures/block/{battery_box,battery_box_large,crystal_charger,
+crystal_charger_large,zpm_decharger,zpm_decharger_quantum,long_distance_transformer}/
+{colored,overlay,overlay_active}_{front,back,side}.png` come from upstream
+`https://github.com/GregTech6/gregtech6` snapshot `v6.17.06-22-g3703e4030`, files
+`src/main/resources/assets/gregtech/textures/blocks/machines/energystorages/
+battery_electric[_large]|crystal_laser[_large]|zpm_electricity|zpm_quantum/ and
+machines/transformers/longdistancetransformer_electric/`, byte-identical to upstream,
+cmp-verified per file (51/51). This supersedes the p29/p36 src-over flat bakes (15
+deleted composites, the in-situ retirement notes above). The port models are the
+addConverterModel two-layer grammar (tintindex-0 colored body + six 0.01 overlay
+plates, cutout render type) + the ACTIVE blockstate variant swapping the shell to
+the overlay_active trio — the upstream getTexture2 `sOverlays[mActiveState & 3]`
+layer with the trinary collapsed to the boolean (0=overlay, 1=overlay_active;
+2=blinking UNMAPPED, the r4-18 defer stands). Face trios per upstream getTexture2:
+battery/crystal = front on the FACING face + side elsewhere (no back art, the
+:31-:33/:33-:36 two-icon tables); zpm = front/back/side (ZPMDechargerEU :39-44) —
+the `BI.ZPM_TOP` back decal (the `(mActiveState & 4)` ZPM-inserted lamp,
+ZPMDechargerEU :42) stays the render-pool defer (the dynamic item-presence decal,
+the barometer ruling); LD transformer = front/back/side (LongDistanceTransformer
+:284-299, front = INPUT, back = OUTPUT). The LD-only overlay_unloaded trio stays
+UNBORROWED (the port has no unloaded visual channel — the defer declaration). All
+51 colored layers share one sha256 (`db9560d3…`) — the shared grayscale machine
+casing, tinted per row through GTMachinePaintTint at runtime (battery + crystal =
+Electric_T tier ladder, Loader :894-:895/:970-:971; zpm = Osmiridium both rows,
+:1000-:1001; LD = Electric_T[4..8], :909-:913). License: upstream GregTech 6 assets
+are CC0 (see the Public Domain Dedication block above). sha256 manifest (7 dirs, 51
+files):
+- `gt6/textures/block/battery_box/colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/battery_box/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/battery_box/overlay_active_front.png` `eb0b3a8c6bae86e319d153af758c8094695dd63ed2d2991ca72920dab1d76428`
+- `gt6/textures/block/battery_box/overlay_active_side.png` `ef626071c326699b95b2a37a16503ee72ac29537e1ec762a8830bbae84cd1b39`
+- `gt6/textures/block/battery_box/overlay_front.png` `d6eda0dda3878355b762c6b60356a5b1eb6746079822a282963c1285921e71a3`
+- `gt6/textures/block/battery_box/overlay_side.png` `2c1f9698eadc27daed78e90d992a322413595a21015a38f10ae8d7fc5da6249e`
+- `gt6/textures/block/battery_box_large/colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/battery_box_large/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/battery_box_large/overlay_active_front.png` `375ebaca9f18d34e3edd037d0dd484c4602674a404edbef3b083921ef2e8e6cd`
+- `gt6/textures/block/battery_box_large/overlay_active_side.png` `692598e545b0f57da5cb89a2cf30ef0b7474313a879702629cfcc4f3860678dd`
+- `gt6/textures/block/battery_box_large/overlay_front.png` `5c728ec16e0f33fd41d656f32d8f697d9622e324666e909d37ed0af386530594`
+- `gt6/textures/block/battery_box_large/overlay_side.png` `a63669c16f2456ab39f379cbd2a87a366c0c7ea754169d1d682c0f13f02db126`
+- `gt6/textures/block/crystal_charger/colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/crystal_charger/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/crystal_charger/overlay_active_front.png` `3662fbd21e17077f9e74d7315eb2ecc144f0ebb2e01840ed1bf16fed86e0ffee`
+- `gt6/textures/block/crystal_charger/overlay_active_side.png` `d10032144f8c902d91248f950f4186fcbecda34420169858eeae74de18bdcf35`
+- `gt6/textures/block/crystal_charger/overlay_front.png` `dadfb10ea4e61c577aa277880767af657f3bbe19144701ac6fcbe6e97332beea`
+- `gt6/textures/block/crystal_charger/overlay_side.png` `aef1e8d84ce0ebb2a358f6f7c7de012a3fa116b6d7979222a83114a5e7917c73`
+- `gt6/textures/block/crystal_charger_large/colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/crystal_charger_large/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/crystal_charger_large/overlay_active_front.png` `3662fbd21e17077f9e74d7315eb2ecc144f0ebb2e01840ed1bf16fed86e0ffee`
+- `gt6/textures/block/crystal_charger_large/overlay_active_side.png` `a305b12b4ea1446a53ac263f1bdea34f4b3e400fc8c7fa5e848f320ee2ba591b`
+- `gt6/textures/block/crystal_charger_large/overlay_front.png` `dadfb10ea4e61c577aa277880767af657f3bbe19144701ac6fcbe6e97332beea`
+- `gt6/textures/block/crystal_charger_large/overlay_side.png` `1d38b53fbe21f9d0763dcffabc6a73d6992a327e74b3f452e92ff454f4e6d243`
+- `gt6/textures/block/zpm_decharger/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/zpm_decharger/colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/zpm_decharger/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/zpm_decharger/overlay_active_back.png` `6589278b27a2a353bac0d85a9f01f305538c8d8ab5896f322911eedb956add1e`
+- `gt6/textures/block/zpm_decharger/overlay_active_front.png` `eb0b3a8c6bae86e319d153af758c8094695dd63ed2d2991ca72920dab1d76428`
+- `gt6/textures/block/zpm_decharger/overlay_active_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/zpm_decharger/overlay_back.png` `6589278b27a2a353bac0d85a9f01f305538c8d8ab5896f322911eedb956add1e`
+- `gt6/textures/block/zpm_decharger/overlay_front.png` `d6eda0dda3878355b762c6b60356a5b1eb6746079822a282963c1285921e71a3`
+- `gt6/textures/block/zpm_decharger/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/zpm_decharger_quantum/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/zpm_decharger_quantum/colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/zpm_decharger_quantum/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/zpm_decharger_quantum/overlay_active_back.png` `6589278b27a2a353bac0d85a9f01f305538c8d8ab5896f322911eedb956add1e`
+- `gt6/textures/block/zpm_decharger_quantum/overlay_active_front.png` `8aa1e3925d65fd057270593e8f56b445ebb8287f872fe12f743c695a28aae8db`
+- `gt6/textures/block/zpm_decharger_quantum/overlay_active_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/zpm_decharger_quantum/overlay_back.png` `6589278b27a2a353bac0d85a9f01f305538c8d8ab5896f322911eedb956add1e`
+- `gt6/textures/block/zpm_decharger_quantum/overlay_front.png` `d1152f690913d11bc286fec25b44a44cf4ce38ded8c72c3da2b404f353ebdbeb`
+- `gt6/textures/block/zpm_decharger_quantum/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `gt6/textures/block/long_distance_transformer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/long_distance_transformer/colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/long_distance_transformer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `gt6/textures/block/long_distance_transformer/overlay_active_back.png` `d0e525ef0eb6f59143dabe754433f9a0b0a97423d978aa2b4717a8b4c5bf87a1`
+- `gt6/textures/block/long_distance_transformer/overlay_active_front.png` `375ebaca9f18d34e3edd037d0dd484c4602674a404edbef3b083921ef2e8e6cd`
+- `gt6/textures/block/long_distance_transformer/overlay_active_side.png` `bd4153add32cf0c39beefdec2ad098922d6584aa5cb0ff0bcf417555936467d7`
+- `gt6/textures/block/long_distance_transformer/overlay_back.png` `730c38e957b9a9c755f654098723a8605665eb1ba51896728cb488e86bcbb227`
+- `gt6/textures/block/long_distance_transformer/overlay_front.png` `5c728ec16e0f33fd41d656f32d8f697d9622e324666e909d37ed0af386530594`
+- `gt6/textures/block/long_distance_transformer/overlay_side.png` `e050854cf05804a7dd0654039666f71f6016185e4704efc3375b80155ba91c24`
