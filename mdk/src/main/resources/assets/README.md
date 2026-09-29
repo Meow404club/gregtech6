@@ -9993,3 +9993,37 @@ sha256 manifest (44 files):
   (upstream `textures/blocks/machines/automation/queuehopper/overlay/top.png`)
 - `gt6/textures/block/queuehopper/overlay_side.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `textures/blocks/machines/automation/queuehopper/overlay/side.png`)
+## Item-model form census, band B — the front-view families (task r8-tex-itemform-b)
+
+Zero new PNGs this task — every layer0 below points at a sprite already in the tree.
+Band B moves the 28 front-view rows (the census "正视图整铺类" column) to the 2D
+`item/generated` icon over the family's own front/side/composite sprite; the block
+models are UNCHANGED (world face untouched). These are the families whose block model
+is a single-texture cubeAll borrowing the machine's front or side view, so the
+inventory form tiled that one flat view over all six faces:
+
+- crank 1 — layer0 = `block/crank` (the borrowed upstream crank front icon the block
+  model already tiles).
+- diesel engines 8 — layer0 = the shared `block/diesel_engine` front icon (the
+  motor_liquid borrow).
+- tap + funnel attachments 12 — layer0 = the row's family side sprite
+  (`block/tap` / `block/funnel`, the upstream machines/tools borrows).
+- water wheel 1 — layer0 = `block/water_wheel` (the port-original wheel sprite,
+  the kTFRUAddon license ruling).
+- gearbox 1 — layer0 = `block/gearbox` (the upstream iconsets GEARBOX borrow).
+- distillation tower controllers 2 (`distillation_tower`, `cryo_distillation_tower`)
+  — layer0 = the borrowed `block/parts/distillationtowerparts/0/colored/side` sprite
+  the placeholder cubes tile.
+- lightning rod controller + rod 2 (`multiblock_lightning_rod`,
+  `lightning_rod`) — layer0 = the composite `block/lightningrod/main` / the
+  `block/lightningrod/rod` sprite.
+- large heat exchanger controller 1 — layer0 = the composite
+  `block/large_heat_exchanger/main`.
+
+Pinned by `GT6ItemFormCensusTest.frontViewFamiliesAre2DIcons` (the 28-row 2D walk)
+and the extended world-face guard archetypes.
+
+Declared non-goals: the sensors/barrel/fluid-pipe families (their own texture cards),
+the battery box / LD wire / LD pipe / placeholder families (band A), and the
+transformer_rotation row in the same gearbox function (an orientable faceted model,
+not a single-texture cube — it stays block-parented).
