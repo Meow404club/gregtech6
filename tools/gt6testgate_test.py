@@ -26,6 +26,27 @@ python3 tools/gt6testgate_test.py 直跑。全部门控语义用注入桩覆盖�
     属性不变）+--cap/--swap 透传；runner 两分支端到端（fake systemd-run
     包装退出码透传+采样照常 / bootstrap 失败降级直接 exec+stderr 警告，
     异常同降级）；GT6_GATE_SLICE_LIVE=1 才跑的真 systemd 探针（slow）
+  * v3.1 残留清剿（ops-testgate-v3p1-reap，三层）：--no-daemon 注入判定表
+    （gradlew 追加/幂等/显式 --daemon 不动/非 gradle 不动/basename 精确匹配/
+    --keep-daemon 与 env GT6_GATE_KEEP_DAEMON 逃生/run_gated 端到端注入）；
+    确定性 unit 名 gt6gate-run-<pid>-<ts>.scope+wrap 携带；杀序 TERM→宽限→
+    KILL（全清只 TERM/无视 TERM 升 KILL/KILL 后仍活返回 False/systemctl
+    缺席警告不抛）；unit_pids 读 ControlGroup→cgroup.procs（目录消失=空）；
+    reap 三态（空 leader 残留→收/活跃 MainPID≠0→跳过/空壳→跳过）+
+    --dry-run 只列+systemctl 缺席优雅；runner 接线（unit 形态/台账先写后杀/
+    杀完才释放槽/降级分支不杀）
+  * v3.2 信封内准入（取代 v3a 系统侧 30G 公式）：cgroup_usage_mib 读
+    memory.current（字节→MiB，缺席=0 即刻放行）；outside_limit 公式
+    （MemTotal-cap-2G）与 env 钉值；wait_admission 两维判定表（信封
+    slice+est≤cap × 外压 used-slice≤limit，超限排队带数字理由、边界整即
+    放行）；run_gated 接线（estimate→wait_admission）；dry_run 五行信封
+    报告迁移（ADMIT/QUEUE-envelope/QUEUE-outside/REJECT）
+  * v3.3 每任务预算+脚本看门狗（内核不强制 memory.max 的本机，脚本即
+    执行者）：TASK_CAP_MIB 分级表+--task-cap 覆盖+wrap 携带 MemoryMax；
+    watchdog_tick 判定表（自预算超→杀己/聚合超帽→最大者优先逐杀至帽内/
+    平静不杀/usage≤0 跳过/slice 目录缺席不杀）；run_gated rc 语义
+    （杀己→BUDGET_EXIT 97 专码≠普通失败/杀兄弟→自身透传继续/未包装不
+    看门狗）；GT6_GATE_SLICE_LIVE=1 追加 malloc 膨胀真杀探针（slow）
 """
 
 import contextlib
@@ -33,6 +54,7 @@ import fcntl
 import io
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -69,6 +91,15 @@ class MemUsedTest(unittest.TestCase):
         try:
             with self.assertRaises(RuntimeError):
                 gate.mem_used_mib(path)
+        finally:
+            os.unlink(path)
+
+    def test_total_reader(self):
+        with tempfile.NamedTemporaryFile("w", suffix=".meminfo", delete=False) as fh:
+            fh.write(mock_meminfo(32768, 4096))
+            path = fh.name
+        try:
+            self.assertEqual(gate.mem_total_mib(path), 32768)
         finally:
             os.unlink(path)
 
@@ -209,12 +240,15 @@ class SlotTest(unittest.TestCase):
 
 class RunGatedTest(unittest.TestCase):
     def setUp(self):
-        # v3 预测闸按 class 估算叠加到真 /proc 占用上：钉高阈值，本类只测
-        # 退出码透传/tag 缺省，不排队真内存；v3c slice 包装钉关（不碰 systemd）
+        # v3.2 准入按信封（slice+est≤cap）与外压（used-slice≤limit）判定：
+        # 外压阈值 env 钉高 + slice 读数密封 0——本类只测退出码透传/tag 缺省，
+        # 不排队真内存；v3c slice 包装钉关（不碰 systemd）
         self._mem_env = os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
         os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "999999"
         self._slice_env = os.environ.pop(gate.SLICE_ENV, None)
         os.environ[gate.SLICE_ENV] = "0"
+        self._slice_read = gate.slice_usage_mib
+        gate.slice_usage_mib = lambda *a, **k: 0
 
     def tearDown(self):
         if self._mem_env is None:
@@ -225,6 +259,7 @@ class RunGatedTest(unittest.TestCase):
             os.environ.pop(gate.SLICE_ENV, None)
         else:
             os.environ[gate.SLICE_ENV] = self._slice_env
+        gate.slice_usage_mib = self._slice_read
 
     def test_exit_code_passthrough(self):
         ledger = Path(tempfile.mkdtemp()) / "ledger.json"  # 不污染真台账
@@ -255,12 +290,15 @@ class FullGateTest(unittest.TestCase):
         self.full_lock = self.tmp / "full.lock"
         self.log_file = self.tmp / "gate.log"
         self.lines = []
-        # 内存闸钉到必过：本类只测角色/锁语义，不排队真 /proc/meminfo
+        # 内存闸钉到必过：外压阈值 env 钉高 + slice 读数密封 0（v3.2 信封
+        # 判据），本类只测角色/锁语义，不排队真 /proc/meminfo
         self._mem_env = os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
         os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "999999"
         self._role_env = os.environ.pop(gate.ROLE_ENV, None)  # 默认 coder 确定
         self._slice_env = os.environ.pop(gate.SLICE_ENV, None)  # 不碰 systemd
         os.environ[gate.SLICE_ENV] = "0"
+        self._slice_read = gate.slice_usage_mib
+        gate.slice_usage_mib = lambda *a, **k: 0
         self._stub_n = 0
 
     def tearDown(self):
@@ -275,6 +313,7 @@ class FullGateTest(unittest.TestCase):
             os.environ.pop(gate.SLICE_ENV, None)
         else:
             os.environ[gate.SLICE_ENV] = self._slice_env
+        gate.slice_usage_mib = self._slice_read
 
     def gradlew(self, body):
         """Executable stub named exactly `gradlew` (mode detection keys on it).
@@ -532,7 +571,8 @@ class LedgerTest(unittest.TestCase):
 
 
 class WaitMemoryPredictTest(unittest.TestCase):
-    """v3 预测闸：admit 条件 used+est ≤ limit，含 30G 边界整。"""
+    """v3 遗留反应闸（estimate_mib 参数）——v3.2 起仅 gt6server boot 路径
+    使用（签名不变约束）；门禁 runner 的准入由 EnvelopeAdmissionTest 覆盖。"""
 
     def setUp(self):
         fd, self.path = tempfile.mkstemp(suffix=".gate")
@@ -627,6 +667,8 @@ class RunGatedV3Test(unittest.TestCase):
         os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "999999"
         self._slice_env = os.environ.pop(gate.SLICE_ENV, None)
         os.environ[gate.SLICE_ENV] = "0"
+        self._slice_read = gate.slice_usage_mib
+        gate.slice_usage_mib = lambda *a, **k: 0
         self._ci = os.environ.pop("GITHUB_ACTIONS", None)
 
     def tearDown(self):
@@ -639,6 +681,7 @@ class RunGatedV3Test(unittest.TestCase):
             os.environ.pop(gate.SLICE_ENV, None)
         else:
             os.environ[gate.SLICE_ENV] = self._slice_env
+        gate.slice_usage_mib = self._slice_read
         if self._ci is not None:
             os.environ["GITHUB_ACTIONS"] = self._ci
 
@@ -653,22 +696,22 @@ class RunGatedV3Test(unittest.TestCase):
         self.assertLess(abs(entry["updated"] - time.time()), 60)
 
     def test_ledger_estimate_wired_into_admission(self):
-        # 接线钉：台账里 compile 的估算值原样传给 wait_memory 的 estimate_mib
-        # （排队/放行的数学本身由 WaitMemoryPredictTest 覆盖）
+        # 接线钉：台账里 compile 的估算值原样传给 wait_admission（v3.2 信封
+        # 判据用同一个 estimate；排队/放行的数学由 EnvelopeAdmissionTest 覆盖）
         gate.record_observation("compile", 26000, self.ledger)
         captured = []
 
-        def fake_wait(**kw):
-            captured.append(kw.get("estimate_mib"))
-            return 0, 0.0
+        def fake_admit(est, **kw):
+            captured.append(est)
+            return None
 
-        real_wait = gate.wait_memory
-        gate.wait_memory = fake_wait
+        real_admit = gate.wait_admission
+        gate.wait_admission = fake_admit
         try:
             rc = gate.run_gated(["true"], poll=0.01, slot_dir=self.tmp / "slots",
                                 ledger_path=self.ledger, cls="compile")
         finally:
-            gate.wait_memory = real_wait
+            gate.wait_admission = real_admit
         self.assertEqual(rc, 0)
         self.assertEqual(captured, [26000])
 
@@ -745,6 +788,8 @@ class SliceRunTest(unittest.TestCase):
         self._mem_env = os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
         os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "999999"
         os.environ[gate.SLICE_ENV] = "1"          # 本类强制走 slice 分支
+        self._slice_read = gate.slice_usage_mib
+        gate.slice_usage_mib = lambda *a, **k: 0  # 密封信封读数
         self._ci = os.environ.pop("GITHUB_ACTIONS", None)
 
     def tearDown(self):
@@ -753,6 +798,7 @@ class SliceRunTest(unittest.TestCase):
             os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
         else:
             os.environ["GT6_GATE_MEM_LIMIT_MIB"] = self._mem_env
+        gate.slice_usage_mib = self._slice_read
         if self._ci is not None:
             os.environ["GITHUB_ACTIONS"] = self._ci
 
@@ -760,8 +806,10 @@ class SliceRunTest(unittest.TestCase):
         bin_dir = self.tmp / "bin"
         bin_dir.mkdir()
         stub = bin_dir / "systemd-run"
-        # 跳过全部 flag 直到 "--"（与真 systemd-run --scope 同形），透传退出码
+        argv_file = self.tmp / "sysrun-argv"
+        # 记录收到的 flag（钉 --unit=gt6gate-run-*），跳到 "--" 后透传退出码
         stub.write_text('#!/bin/sh\n'
+                        f'printf \'%s\\n\' "$@" > {argv_file}\n'
                         'while [ $# -gt 0 ] && [ "$1" != "--" ]; do shift; done\n'
                         '[ $# -gt 0 ] || exit 42\n'
                         'shift\nexec "$@"\n')
@@ -769,30 +817,49 @@ class SliceRunTest(unittest.TestCase):
         marker = self.tmp / "ran"
         old_path = os.environ["PATH"]
         os.environ["PATH"] = f"{bin_dir}:{old_path}"
+        # v3.1 收尾杀接线：unit 形态 / 台账先写 / 槽还握着（杀完才释放）
+        stops = []
+
+        def spy_stop(unit, log=None):
+            stops.append((unit, (self.tmp / "ledger.json").exists(),
+                          list((self.tmp / "slots").iterdir())))
+
         try:
             rc = gate.run_gated(
                 ["sh", "-c", f"touch {marker}; exit 5"], poll=0.01,
                 slot_dir=self.tmp / "slots",
                 ledger_path=self.tmp / "ledger.json",
-                slice_bootstrap_fn=lambda c, s: True)
+                slice_bootstrap_fn=lambda c, s: True, stop_fn=spy_stop,
+                watchdog_fn=lambda u, b, c, **k: (0, []))
         finally:
             os.environ["PATH"] = old_path
         self.assertEqual(rc, 5)                   # 退出码经 scope 透传
         self.assertTrue(marker.exists())          # 真跑在包装层内
+        self.assertEqual(len(stops), 1)           # 恰一次收尾杀
+        unit, ledger_first, slots_held = stops[0]
+        self.assertRegex(unit, r"^gt6gate-run-\d+-\d+\.scope$")  # 可寻址全名
+        self.assertTrue(ledger_first)             # 台账写完才杀
+        self.assertTrue(slots_held)               # 杀完才释放并发槽
+        self.assertFalse(list((self.tmp / "slots").iterdir()))  # 返回前已释放
+        argv = argv_file.read_text().splitlines()
+        self.assertIn(f"--unit={unit}", argv)     # systemd-run 真收到 unit
         entry = gate.load_ledger(self.tmp / "ledger.json")["other"]
         self.assertIn("last_peak", entry)         # 树采样照常（systemd-run→sh）
 
     def test_degrades_to_direct_exec_on_bootstrap_failure(self):
         marker = self.tmp / "ran"
         err = io.StringIO()
+        stops = []
         with contextlib.redirect_stderr(err):
             rc = gate.run_gated(["sh", "-c", f"touch {marker}"], poll=0.01,
                                 slot_dir=self.tmp / "slots",
                                 ledger_path=self.tmp / "ledger.json",
-                                slice_bootstrap_fn=lambda c, s: False)
+                                slice_bootstrap_fn=lambda c, s: False,
+                                stop_fn=lambda u, log=None: stops.append(u))
         self.assertEqual(rc, 0)
         self.assertTrue(marker.exists())          # 直接 exec，可用性优先
         self.assertIn("UNCAPPED", err.getvalue())  # stderr 一行降级警告
+        self.assertEqual(stops, [])               # 未包装 → 无可收之尸
 
     def test_bootstrap_exception_degrades_too(self):
         marker = self.tmp / "ran"
@@ -810,6 +877,697 @@ class SliceRunTest(unittest.TestCase):
         self.assertIn("UNCAPPED", err.getvalue())
 
 
+class NoDaemonTest(unittest.TestCase):
+    """v3.1 根治层：--no-daemon 注入判定表。"""
+
+    def test_gradle_gets_flag_appended(self):
+        self.assertEqual(gate.inject_no_daemon(["./gradlew", ":mdk:test"]),
+                         ["./gradlew", ":mdk:test", "--no-daemon"])
+
+    def test_idempotent_when_flag_present(self):
+        cmd = ["./gradlew", ":test", "--no-daemon"]
+        self.assertEqual(gate.inject_no_daemon(cmd), cmd)
+
+    def test_explicit_daemon_wins_no_contradiction(self):
+        cmd = ["./gradlew", "--daemon", ":test"]
+        self.assertEqual(gate.inject_no_daemon(cmd), cmd)
+
+    def test_non_gradle_untouched(self):
+        for cmd in (["python3", "tools/rcon/sweep.py", "--group", "x"],
+                    ["sh", "-c", "./gradlew :test"],   # 包一层不识别（文档钉）
+                    ["true"]):
+            self.assertEqual(gate.inject_no_daemon(cmd), cmd, cmd)
+
+    def test_gradle_basename_exact_anywhere_in_argv(self):
+        self.assertEqual(gate.inject_no_daemon(["/opt/g/bin/gradle", "build"]),
+                         ["/opt/g/bin/gradle", "build", "--no-daemon"])
+        # 子串不算：gradlew.sh 不是 gradlew（basename 精确匹配）
+        self.assertEqual(gate.inject_no_daemon(["./gradlew.sh", "build"]),
+                         ["./gradlew.sh", "build"])
+
+    def test_keep_daemon_cli_escape(self):
+        cmd = ["./gradlew", ":test"]
+        self.assertEqual(gate.inject_no_daemon(cmd, keep_daemon=True), cmd)
+
+    def test_keep_daemon_env_escape(self):
+        old = os.environ.get(gate.KEEP_DAEMON_ENV)
+        cmd = ["./gradlew", ":test"]
+        try:
+            os.environ[gate.KEEP_DAEMON_ENV] = "1"
+            self.assertEqual(gate.inject_no_daemon(cmd), cmd)
+            os.environ[gate.KEEP_DAEMON_ENV] = "0"     # 显式 0 = 照常注入
+            self.assertEqual(gate.inject_no_daemon(cmd), cmd + ["--no-daemon"])
+        finally:
+            if old is None:
+                os.environ.pop(gate.KEEP_DAEMON_ENV, None)
+            else:
+                os.environ[gate.KEEP_DAEMON_ENV] = old
+
+    def test_run_gated_injects_into_child_argv(self):
+        # 端到端：名为 gradlew 的 stub 把 "$@" 落盘，验证子进程真收到旗标；
+        # keep_daemon=True 时原样透传。用 --tests 走 filtered 不触角色闸。
+        d = Path(tempfile.mkdtemp())
+        marker = d / "argv"
+        stub = d / "gradlew"
+        stub.write_text(f'#!/bin/sh\nprintf \'%s\\n\' "$@" > {marker}\n')
+        stub.chmod(0o755)
+        old = gate.LEDGER_PATH
+        gate.LEDGER_PATH = d / "ledger.json"
+        mem = os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
+        os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "999999"
+        sl = os.environ.pop(gate.SLICE_ENV, None)
+        os.environ[gate.SLICE_ENV] = "0"
+        sread = gate.slice_usage_mib
+        gate.slice_usage_mib = lambda *a, **k: 0
+        try:
+            rc = gate.run_gated([str(stub), ":mdk:test", "--tests", "F"],
+                                poll=0.01, slot_dir=d / "slots")
+            self.assertEqual(rc, 0)
+            self.assertEqual(marker.read_text().split(),
+                             [":mdk:test", "--tests", "F", "--no-daemon"])
+            rc = gate.run_gated([str(stub), ":mdk:test", "--tests", "F"],
+                                poll=0.01, slot_dir=d / "slots",
+                                keep_daemon=True)
+            self.assertEqual(rc, 0)
+            self.assertEqual(marker.read_text().split(),
+                             [":mdk:test", "--tests", "F"])
+        finally:
+            gate.LEDGER_PATH = old
+            gate.slice_usage_mib = sread
+            if mem is not None:
+                os.environ["GT6_GATE_MEM_LIMIT_MIB"] = mem
+            else:
+                os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
+            if sl is not None:
+                os.environ[gate.SLICE_ENV] = sl
+            else:
+                os.environ.pop(gate.SLICE_ENV, None)
+
+
+class UnitStopTest(unittest.TestCase):
+    """v3.1 兜底层：确定性 unit 名 + 杀序 TERM→宽限→KILL。"""
+
+    def test_unit_name_shape_and_uniqueness(self):
+        u1, u2 = gate.unit_name(), gate.unit_name()
+        self.assertRegex(u1, r"^gt6gate-run-\d+-\d+\.scope$")
+        self.assertNotEqual(u1, u2)
+
+    def test_wrap_includes_unit(self):
+        self.assertEqual(
+            gate.slice_wrap(["./gradlew", "build"], unit="gt6gate-run-1-2"),
+            ["systemd-run", "--user", "--scope", "--unit=gt6gate-run-1-2",
+             "-p", "Slice=gt6gate.slice", "--", "./gradlew", "build"])
+        # unit=None（旧形态）不携带 --unit
+        self.assertEqual(gate.slice_wrap(["c"]),
+                         ["systemd-run", "--user", "--scope",
+                          "-p", "Slice=gt6gate.slice", "--", "c"])
+
+    def setUp(self):
+        self.calls = []
+
+    def rec(self, argv):
+        self.calls.append(argv)
+        return subprocess.CompletedProcess(argv, 0, "", "")
+
+    def stop(self, pids_seq, **kw):
+        """pids_seq：每次 pids_fn 查询依序返回的组内进程快照。"""
+        pids = iter(pids_seq)
+        kw.setdefault("grace", 0.01)
+        return gate.stop_unit("u.scope", run=self.rec,
+                              pids_fn=lambda u, r: next(pids), **kw)
+
+    def test_procs_die_on_term_single_call(self):
+        # TERM 后宽限内清空：只有一记 kill 调用（SIGTERM）
+        self.assertTrue(self.stop([[], []]))
+        self.assertEqual(self.calls, [
+            ["systemctl", "--user", "kill", "--signal=SIGTERM", "u.scope"]])
+
+    def test_kill_order_term_grace_sigkill(self):
+        # 进程无视 TERM：宽限耗尽 → 升 SIGKILL（杀序钉死）。
+        # pids 快照序列=循环首轮/循环后终查/KILL 后复查（time 短路在前，
+        # grace=0.01 时循环恰跑一轮真 sleep）
+        self.assertTrue(self.stop([[7], [7], []]))
+        self.assertEqual(self.calls, [
+            ["systemctl", "--user", "kill", "--signal=SIGTERM", "u.scope"],
+            ["systemctl", "--user", "kill", "--signal=SIGKILL", "u.scope"]])
+
+    def test_kill_failure_returns_false(self):
+        # KILL 后仍有残留：如实报 False（不假装清干净）
+        self.assertFalse(self.stop([[7], [7], [7], [7]]))
+        self.assertEqual(self.calls[1],
+                         ["systemctl", "--user", "kill",
+                          "--signal=SIGKILL", "u.scope"])
+
+    def test_systemctl_failure_warns_not_raises(self):
+        lines = []
+        self.assertFalse(gate.stop_unit(
+            "u.scope", run=self.boom, pids_fn=lambda u, r: [], log=lines.append))
+        self.assertTrue(any("reap of u.scope failed" in l for l in lines))
+
+    def boom(self, argv):
+        raise FileNotFoundError("systemctl missing")
+
+
+class UnitPidsTest(unittest.TestCase):
+    """unit_pids：ControlGroup 属性 → cgroup.procs 读取；缺席=空。"""
+
+    def test_reads_control_group_procs(self):
+        calls = []
+
+        def fake_run(argv):
+            calls.append(argv)
+            return subprocess.CompletedProcess(
+                argv, 0, stdout="/user.slice/u/gt6gate.slice/u.scope\n")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            cg = Path(tmp) / "user.slice/u/gt6gate.slice/u.scope"
+            cg.mkdir(parents=True)
+            (cg / "cgroup.procs").write_text("101\n102\n")
+            self.assertEqual(gate.unit_pids("u.scope", fake_run,
+                                            cgroup_root=tmp), [101, 102])
+        self.assertEqual(calls, [["systemctl", "--user", "show", "u.scope",
+                                  "-p", "ControlGroup", "--value"]])
+
+    def test_missing_or_failed_means_empty(self):
+        # show 失败 → []；ControlGroup 空（unit 已释放）→ []
+        fail = lambda a: subprocess.CompletedProcess(a, 1, "", "err")
+        self.assertEqual(gate.unit_pids("u.scope", fail), [])
+        self.assertEqual(gate.unit_pids(
+            "u.scope", lambda a: subprocess.CompletedProcess(a, 0, "", "")), [])
+        # show 成功但 cgroup 目录已清 → []（systemd GC 完毕）
+        gone = lambda a: subprocess.CompletedProcess(a, 0, stdout="/gone/u.scope\n")
+        self.assertEqual(gate.unit_pids("u.scope", gone,
+                                        cgroup_root=tempfile.mkdtemp()), [])
+
+
+class ReapTest(unittest.TestCase):
+    """--reap 选择逻辑三态：空 leader 残留→收 / 活跃→跳过 / 空壳→跳过。"""
+
+    def fake_systemctl(self, units, slices, main_pids):
+        """list-units + show -p Slice/MainPID 分发桩（show 值按 unit 查表）。"""
+        calls = []
+
+        def run(argv):
+            calls.append(argv)
+            if "list-units" in argv:
+                body = "".join(f"{u} loaded active running -\n" for u in units)
+                return subprocess.CompletedProcess(argv, 0, body, "")
+            prop = argv[argv.index("-p") + 1]
+            unit = argv[3]
+            table = {"Slice": slices.get(unit, "other.slice"),
+                     "MainPID": main_pids.get(unit, "")}
+            return subprocess.CompletedProcess(argv, 0, f"{table[prop]}\n", "")
+
+        return run, calls
+
+    def reap(self, dry_run=False):
+        run, calls = self.fake_systemctl(
+            units=["gt6gate-run-1-1.scope", "gt6gate-run-2-2.scope",
+                   "gt6gate-run-3-3.scope", "unrelated.scope"],
+            slices={"gt6gate-run-1-1.scope": "gt6gate.slice",
+                    "gt6gate-run-2-2.scope": "gt6gate.slice",
+                    "gt6gate-run-3-3.scope": "gt6gate.slice"},
+            main_pids={"gt6gate-run-1-1.scope": "",      # leader 已退（实测空串）
+                       "gt6gate-run-2-2.scope": "4242",  # 活跃
+                       "gt6gate-run-3-3.scope": "0"})    # leader 退且无残留
+        pids = {"gt6gate-run-1-1.scope": [501, 502]}     # 唯一藏尸者
+        stopped, lines = [], []
+        got = gate.reap_scopes(run=run, pids_fn=lambda u, r: pids.get(u, []),
+                               stop_fn=lambda u, **k: stopped.append(u) or True,
+                               dry_run=dry_run, log=lines.append)
+        return got, stopped, lines
+
+    def test_dry_run_lists_without_stopping(self):
+        got, stopped, lines = self.reap(dry_run=True)
+        self.assertEqual(got, ["gt6gate-run-1-1.scope"])
+        self.assertEqual(stopped, [])                 # 只列不杀
+        self.assertTrue(any("would reap" in l for l in lines))
+
+    def test_reaps_only_leader_gone_with_leftovers(self):
+        got, stopped, lines = self.reap()
+        # 只收 1-1：2-2 活跃（MainPID≠0）不碰、3-3 空壳跳过、域外不问
+        self.assertEqual(got, ["gt6gate-run-1-1.scope"])
+        self.assertEqual(stopped, ["gt6gate-run-1-1.scope"])
+        self.assertTrue(any("reaping gt6gate-run-1-1.scope" in l
+                            for l in lines))
+
+    def test_unavailable_when_systemctl_missing(self):
+        lines = []
+        got = gate.reap_scopes(run=self.boom, log=lines.append,
+                               pids_fn=lambda u, r: [],
+                               stop_fn=lambda u, **k: True)
+        self.assertEqual(got, [])
+        self.assertTrue(any("reap unavailable" in l for l in lines))
+
+    def boom(self, argv):
+        raise FileNotFoundError("systemctl missing")
+
+    def test_main_reap_subcommand_dispatch(self):
+        old = gate.reap_scopes
+        seen = {}
+        try:
+            gate.reap_scopes = lambda **kw: seen.update(kw) or []
+            self.assertEqual(gate.main(["reap", "--dry-run"]), 0)
+            self.assertTrue(seen.get("dry_run"))
+            self.assertEqual(gate.main(["reap"]), 0)
+            self.assertFalse(seen.get("dry_run"))
+        finally:
+            gate.reap_scopes = old
+
+
+class SliceUsageTest(unittest.TestCase):
+    """v3.2/v3.3 cgroup 读数：memory.current 字节→MiB、缺席=0、子层枚举。"""
+
+    def make_tree(self, children):
+        """user@<uid>.service 下的 gate.slice 假 cgroup 树；值=MiB。"""
+        root = tempfile.mkdtemp()
+        uid = os.getuid()
+        base = Path(root) / "user.slice" / f"user-{uid}.slice" \
+            / f"user@{uid}.service" / "gt6gate.slice"
+        for name, mib in children.items():
+            d = base / name
+            d.mkdir(parents=True)
+            (d / "memory.current").write_text(f"{mib * 1024 * 1024}\n")
+        return root
+
+    def test_usage_reads_bytes_as_mib(self):
+        # ""=slice 根自身（rel 直拼 base），1536MiB 以字节落盘
+        root = self.make_tree({"": 1536})
+        self.assertEqual(gate.cgroup_usage_mib("gt6gate.slice",
+                                               cgroup_root=root), 1536)
+        self.assertEqual(gate.slice_usage_mib(cgroup_root=root), 1536)
+
+    def test_absent_reads_zero(self):
+        root = self.make_tree({})                     # slice 目录本身不在
+        self.assertEqual(gate.slice_usage_mib(cgroup_root=root), 0)
+        root2 = self.make_tree({"gt6gate.slice": 10})
+        self.assertEqual(gate.cgroup_usage_mib("gt6gate.slice/nope.scope",
+                                               cgroup_root=root2), 0)
+
+    def test_children_enumeration(self):
+        root = self.make_tree({"a.scope": 100, "b.scope": 20})
+        (Path(root) / "unrelated").mkdir()            # slice 树外的旁支
+        got = gate.slice_children_usage(cgroup_root=root)
+        self.assertEqual(sorted(got), [("a.scope", 100), ("b.scope", 20)])
+
+    def test_children_absent_slice_empty_list(self):
+        self.assertEqual(gate.slice_children_usage(
+            cgroup_root=tempfile.mkdtemp()), [])
+
+
+class EffectiveUsageTest(unittest.TestCase):
+    """v3.4 有效占用：memory.current − (memory.stat file+slab_reclaimable)；
+    解析失败保守不减（原值直读）+stderr 只注记一次；下限钳 0。"""
+
+    def setUp(self):
+        self._note = gate._RECLAIM_NOTE_DONE
+        gate._RECLAIM_NOTE_DONE = False
+        self.err = io.StringIO()
+
+    def tearDown(self):
+        gate._RECLAIM_NOTE_DONE = self._note
+
+    def make_tree(self, current_mib, stat_lines=None):
+        """单 scope 假树：memory.current 必写，memory.stat 可选。"""
+        root = tempfile.mkdtemp()
+        uid = os.getuid()
+        d = Path(root) / "user.slice" / f"user-{uid}.slice" \
+            / f"user@{uid}.service" / "gt6gate.slice" / "t.scope"
+        d.mkdir(parents=True)
+        (d / "memory.current").write_text(f"{current_mib * 1024 * 1024}\n")
+        if stat_lines is not None:
+            (d / "memory.stat").write_text(
+                "".join(f"{k} {v * 1024 * 1024}\n" for k, v in stat_lines))
+        return root
+
+    def test_effective_subtracts_file_and_slab_reclaimable(self):
+        # 1000MiB current 里 700MiB file + 100MiB slab_reclaimable 都是
+        # 可回收 page cache（gradle 文件 IO）——有效占用只有 200MiB。
+        root = self.make_tree(1000, [("anon", 200), ("file", 700),
+                                     ("slab_reclaimable", 100)])
+        with contextlib.redirect_stderr(self.err):
+            self.assertEqual(gate.cgroup_effective_usage_mib(
+                "gt6gate.slice/t.scope", cgroup_root=root), 200)
+            self.assertEqual(gate.slice_children_usage(cgroup_root=root),
+                             [("t.scope", 200)])
+        # slice 根自身也走有效占用：根目录自带 current+stat 时同式扣减。
+        root2 = self.make_tree(800, [("file", 600), ("slab_reclaimable", 50)])
+        d = Path(root2) / "user.slice" / f"user-{os.getuid()}.slice" \
+            / f"user@{os.getuid()}.service" / "gt6gate.slice"
+        (d / "memory.current").write_text(f"{800 * 1024 * 1024}\n")
+        (d / "memory.stat").write_text(
+            f"file {600 * 1024 * 1024}\nslab_reclaimable {50 * 1024 * 1024}\n")
+        with contextlib.redirect_stderr(self.err):
+            self.assertEqual(gate.slice_usage_mib(cgroup_root=root2), 150)
+        self.assertEqual(self.err.getvalue(), "")   # 正常解析不注记
+
+    def test_parse_failure_reads_raw_conservatively_and_notes_once(self):
+        root = self.make_tree(1000)                 # 无 memory.stat
+        with contextlib.redirect_stderr(self.err):
+            self.assertEqual(gate.cgroup_effective_usage_mib(
+                "gt6gate.slice/t.scope", cgroup_root=root), 1000)
+            self.assertEqual(gate.cgroup_effective_usage_mib(
+                "gt6gate.slice/t.scope", cgroup_root=root), 1000)
+        self.assertEqual(self.err.getvalue().count("memory.stat unreadable"),
+                         1, "conservative note fires exactly ONCE per process")
+
+    def test_garbage_stat_also_conservative(self):
+        root = self.make_tree(500, [("anon", "junk")])
+        with contextlib.redirect_stderr(self.err):
+            self.assertEqual(gate.cgroup_effective_usage_mib(
+                "gt6gate.slice/t.scope", cgroup_root=root), 500)
+
+    def test_floors_at_zero(self):
+        # current 小于自身可回收缓存是合法态（回收在途）——钳 0 不出负数。
+        root = self.make_tree(50, [("file", 70), ("slab_reclaimable", 30)])
+        with contextlib.redirect_stderr(self.err):
+            self.assertEqual(gate.cgroup_effective_usage_mib(
+                "gt6gate.slice/t.scope", cgroup_root=root), 0)
+
+
+class OutsideLimitTest(unittest.TestCase):
+    """v3.2 外压护栏阈值：公式 MemTotal-cap-2G，env 钉值优先，坏值回公式。"""
+
+    def setUp(self):
+        self._env = os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
+
+    def tearDown(self):
+        if self._env is None:
+            os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
+        else:
+            os.environ["GT6_GATE_MEM_LIMIT_MIB"] = self._env
+
+    def test_formula(self):
+        # 40960 - 25*1024 - 2048 = 13312
+        self.assertEqual(gate.outside_limit_mib(40960, 25), 13312)
+        self.assertEqual(gate.outside_limit_mib(30720, 25), 3072)
+
+    def test_env_pins_absolute_value(self):
+        os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "999999"
+        self.assertEqual(gate.outside_limit_mib(40960, 25), 999999)
+        os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "junk"
+        self.assertEqual(gate.outside_limit_mib(40960, 25), 13312)
+
+
+class EnvelopeAdmissionTest(unittest.TestCase):
+    """v3.2 wait_admission 两维判定表：信封（slice+est≤cap）× 外压
+    （used-slice≤limit）。读数全注入，毫秒级。"""
+
+    def setUp(self):
+        fd, self.path = tempfile.mkstemp(suffix=".gate")
+        os.close(fd)
+
+    def tearDown(self):
+        os.unlink(self.path)
+
+    def journal(self):
+        with open(self.path) as fh:
+            return fh.read()
+
+    def admit(self, readings, estimate=4000, cap_gib=25, poll=0.01, **kw):
+        """readings: (slice, used, total) 三元组序列，每轮轮询消费一个。"""
+        slices = iter([r[0] for r in readings])
+        useds = iter([r[1] for r in readings])
+        totals = iter([r[2] for r in readings])
+        return gate.wait_admission(
+            estimate, cap_gib=cap_gib, poll=poll, tag="t",
+            log_file=self.path, read_slice=lambda: next(slices),
+            read_used=lambda: next(useds), read_total=lambda: next(totals),
+            **kw)
+
+    def test_empty_slice_and_calm_outside_admits_instantly(self):
+        self.admit([(0, 8000, 40960)])
+        self.assertNotIn("gate-queue", self.journal())
+        self.assertIn("gate-admit", self.journal())
+
+    def test_envelope_over_cap_queues_then_admits_on_relief(self):
+        # slice 10000 + est 20000 = 30000 > 25600 → 排队；回落后放行
+        self.admit([(10000, 8000, 40960), (1000, 8000, 40960)], estimate=20000)
+        body = self.journal()
+        self.assertIn("gate-queue", body)
+        self.assertIn("envelope slice=10000MiB est=20000MiB "
+                      "predicted=30000MiB cap=25600MiB", body)
+        self.assertIn("gate-admit", body)
+
+    def test_outside_over_limit_queues_with_numbers(self):
+        # 信封宽裕（0+4000），外压 29500 > 13312 → 排队，理由行带 outside 数字
+        self.admit([(500, 30000, 40960), (500, 8000, 40960)])
+        body = self.journal()
+        self.assertIn("outside used=30000MiB slice=500MiB outside=29500MiB "
+                      "limit=13312MiB", body)
+        self.assertIn("gate-admit", body)
+
+    def test_boundary_at_cap_admits(self):
+        # 信封整好压线（slice 20000 + est 5600 == 25600）→ 不排队
+        self.admit([(20000, 8000, 40960)], estimate=5600)
+        self.assertNotIn("gate-queue", self.journal())
+
+    def test_slice_env_pin_honored_via_outside_limit(self):
+        old = os.environ.get("GT6_GATE_MEM_LIMIT_MIB")
+        try:
+            os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "9000"
+            # 外压 8000 ≤ env 钉的 9000 → 放行（公式阈应是 13312 会一样放；
+            # 用 11000 验证钉值生效：公式下 11000≤13312 放，钉值下排队）
+            os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "10000"
+            self.admit([(0, 11000, 40960), (0, 8000, 40960)])
+            self.assertIn("outside=11000MiB limit=10000MiB", self.journal())
+        finally:
+            if old is None:
+                os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
+            else:
+                os.environ["GT6_GATE_MEM_LIMIT_MIB"] = old
+
+
+class TaskCapTest(unittest.TestCase):
+    """v3.3 每任务预算：分级表、wrap 携带 MemoryMax、CLI 覆盖。"""
+
+    def test_task_cap_table_covers_classes(self):
+        self.assertEqual(set(gate.TASK_CAP_MIB), set(gate.CLASSES))
+        self.assertEqual(gate.TASK_CAP_MIB["full-test"], 12288)
+        self.assertEqual(gate.TASK_CAP_MIB["filtered-test"], 8192)
+        self.assertEqual(gate.TASK_CAP_MIB["compile"], 6144)
+        self.assertEqual(gate.TASK_CAP_MIB["rundata"], 8192)
+
+    def test_wrap_carries_memory_max(self):
+        argv = gate.slice_wrap(["./gradlew", "build"], unit="u.scope",
+                               memory_max_mib=8192)
+        self.assertIn("-p", argv)
+        self.assertIn("MemoryMax=8192M", argv)    # 建型即写，无 set-property 竞态
+        self.assertNotIn("MemoryMax", gate.slice_wrap(["c"]))  # 缺省不写
+
+    def test_cli_task_cap_plumbed(self):
+        old, kw = gate.run_gated, {}
+
+        def fake(cmd, **k):
+            kw.update(k)
+            return 0
+
+        gate.run_gated = fake
+        try:
+            gate.main(["run", "--task-cap", "3", "--", "true"])
+        finally:
+            gate.run_gated = old
+        self.assertEqual(kw["task_cap_gib"], 3)
+
+
+class WatchdogTickTest(unittest.TestCase):
+    """v3.3 看门狗单 tick 判定表：自预算超→杀己；聚合超帽→最大者逐杀；
+    平静/零占用/缺席不动。cgroup 树用 fixture 注入。"""
+
+    def make_tree(self, children):
+        root = tempfile.mkdtemp()
+        uid = os.getuid()
+        base = Path(root) / "user.slice" / f"user-{uid}.slice" \
+            / f"user@{uid}.service" / "gt6gate.slice"
+        for name, mib in children.items():
+            d = base / name
+            d.mkdir(parents=True)
+            (d / "memory.current").write_text(f"{mib * 1024 * 1024}\n")
+        return root
+
+    def tick(self, children, unit="me.scope", budget=8192, cap=25600):
+        root = self.make_tree(children) if children else tempfile.mkdtemp()
+        stops = []
+        try:
+            own, kills = gate.watchdog_tick(
+                unit, budget, cap, cgroup_root=root,
+                stop_fn=lambda name: stops.append(name))
+        finally:
+            shutil.rmtree(root)
+        return own, kills, stops
+
+    def test_own_over_budget_kills_self(self):
+        own, kills, stops = self.tick({"me.scope": 9000, "sib.scope": 100})
+        self.assertEqual(own, 9000)
+        self.assertEqual(kills, [("task", "me.scope", 9000)])
+        self.assertEqual(stops, ["me.scope"])
+
+    def test_quiet_under_both_limits(self):
+        own, kills, stops = self.tick({"me.scope": 100, "sib.scope": 200})
+        self.assertEqual((own, kills, stops), (100, [], []))
+
+    def test_aggregate_kills_largest_sibling_first(self):
+        # 总 27100 > 25600：最大者 sibA(15000) 先杀 → 回到 12100 ≤ 帽即停
+        own, kills, stops = self.tick({"me.scope": 100, "sibA.scope": 15000,
+                                       "sibB.scope": 12000})
+        self.assertEqual(kills, [("aggregate", "sibA.scope", 15000)])
+        self.assertEqual(stops, ["sibA.scope"])   # 兄弟各杀各的 cgroup
+
+    def test_aggregate_kills_multiple_until_under_cap(self):
+        # 帽 10000：sibA(15000)→剩 14100 仍超 → 再杀 sibB(14000)→100 ≤ 帽
+        own, kills, stops = self.tick({"me.scope": 100, "sibA.scope": 15000,
+                                       "sibB.scope": 14000}, cap=10000)
+        self.assertEqual([k[1] for k in kills], ["sibA.scope", "sibB.scope"])
+        self.assertEqual(stops, ["sibA.scope", "sibB.scope"])
+        self.assertEqual(own, 100)                # 自己活着
+
+    def test_self_largest_means_aggregate_self_kill(self):
+        # 自己是最大占用但仍在自己预算内（8000 ≤ 8192）：规则②最大者优先
+        # 命中自己 → aggregate 自杀（victim==unit → 上层转 BUDGET_EXIT）
+        own, kills, stops = self.tick({"me.scope": 8000, "sib.scope": 7000},
+                                      cap=12000)
+        self.assertEqual(kills, [("aggregate", "me.scope", 8000)])
+        self.assertEqual(stops, ["me.scope"])
+
+    def test_zero_usage_children_skipped(self):
+        own, kills, stops = self.tick({"me.scope": 100, "zomb.scope": 0,
+                                       "sib.scope": 15000}, cap=14000)
+        # 总 15100 > 14000：zomb(0) 跳过，杀 sib → 100 ≤ 帽
+        self.assertEqual(kills, [("aggregate", "sib.scope", 15000)])
+
+    def test_missing_slice_dir_kills_nothing(self):
+        own, kills, stops = self.tick(None)
+        self.assertEqual((own, kills, stops), (0, [], []))
+
+
+class WatchdogRunTest(unittest.TestCase):
+    """v3.3 run_gated rc 语义：杀己→BUDGET_EXIT 97（≠普通失败）；
+    杀兄弟→自身照常透传；未包装→不看门狗。"""
+
+    def setUp(self):
+        self.dir = tempfile.TemporaryDirectory()
+        self.tmp = Path(self.dir.name)
+        self._mem_env = os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
+        os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "999999"
+        self._slice_env = os.environ.pop(gate.SLICE_ENV, None)
+        os.environ[gate.SLICE_ENV] = "1"          # 强制包装分支
+        self._slice_read = gate.slice_usage_mib
+        gate.slice_usage_mib = lambda *a, **k: 0
+        self._sample = gate.SAMPLE_SECONDS       # 提速：看门狗节奏钉小
+        gate.SAMPLE_SECONDS = 0.05
+        self._ci = os.environ.pop("GITHUB_ACTIONS", None)
+
+    def tearDown(self):
+        self.dir.cleanup()
+        if self._mem_env is None:
+            os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
+        else:
+            os.environ["GT6_GATE_MEM_LIMIT_MIB"] = self._mem_env
+        if self._slice_env is None:
+            os.environ.pop(gate.SLICE_ENV, None)
+        else:
+            os.environ[gate.SLICE_ENV] = self._slice_env
+        gate.slice_usage_mib = self._slice_read
+        gate.SAMPLE_SECONDS = self._sample
+        if self._ci is not None:
+            os.environ["GITHUB_ACTIONS"] = self._ci
+
+    def gated(self, watchdog_fn, auto_exit=None):
+        """auto_exit=None：marker-wait 子进程（stop 触碰 marker 才退）——
+        模拟被看门狗杀；数字：立即退出该码（透传路径）。"""
+        marker = self.tmp / "die"
+        script = self.tmp / "child.sh"
+        if auto_exit is None:
+            script.write_text(f"#!/bin/sh\n"
+                              f"while [ ! -f {marker} ]; do sleep 0.02; done\n"
+                              f"exit 0\n")
+        else:
+            script.write_text(f"#!/bin/sh\nexit {auto_exit}\n")
+        script.chmod(0o755)
+        stops = []
+        err = io.StringIO()
+
+        def spy_stop(name, log=None):
+            stops.append(name)
+            marker.touch()
+
+        log_file = self.tmp / "gate.log"
+        with contextlib.redirect_stderr(err):
+            rc = gate.run_gated([str(script)], poll=0.01,
+                                slot_dir=self.tmp / "slots",
+                                ledger_path=self.tmp / "ledger.json",
+                                log_file=log_file,
+                                slice_bootstrap_fn=lambda c, s: True,
+                                stop_fn=spy_stop, watchdog_fn=watchdog_fn)
+        return rc, stops, err.getvalue(), log_file.read_text(encoding="utf-8")
+
+    def test_own_budget_kill_exits_97(self):
+        calls = []
+
+        def watchdog(unit, budget, cap, stop_fn=None, **kw):
+            calls.append((unit, budget, cap))
+            if len(calls) == 1:
+                return 100, []
+            if len(calls) == 2:
+                stop_fn(unit)                 # 与真 watchdog_tick 同形：先杀
+                return 9000, [("task", unit, 9000)]
+            return 0, []                      # 子进程死后不再补刀
+
+        rc, stops, err, journal = self.gated(watchdog)
+        self.assertEqual(rc, gate.BUDGET_EXIT)    # 专码≠普通失败
+        # stops[0]=看门狗杀己；stops[1]=子进程退出后的常规收尾杀（幂等空转）
+        self.assertEqual(len(stops), 2)
+        self.assertEqual(stops[0], calls[0][0])
+        self.assertEqual(stops[1], calls[0][0])
+        self.assertEqual(calls[0][1], gate.TASK_CAP_MIB["other"])  # 预算来自分级表
+        self.assertEqual(calls[0][2], 25 * 1024)  # 项目帽=cap_gib*1024
+        self.assertIn("task exceeded 9000 MiB budget (8192 MiB, class other)",
+                      err)
+        self.assertIn("budget-kill", journal)     # 审计流水
+
+    def test_aggregate_self_kill_exits_97(self):
+        def watchdog(unit, budget, cap, stop_fn=None, **kw):
+            if not watchdog.fired:
+                watchdog.fired = True
+                return 100, []
+            stop_fn(unit)
+            return 20000, [("aggregate", unit, 20000)]
+
+        watchdog.fired = False
+        rc, stops, err, journal = self.gated(watchdog)
+        self.assertEqual(rc, gate.BUDGET_EXIT)
+        self.assertIn("aggregate over 25G cap — killed own cgroup (20000 MiB)",
+                      err)
+        self.assertIn("aggregate-kill", journal)
+
+    def test_sibling_kill_passes_child_rc_through(self):
+        def watchdog(unit, budget, cap, stop_fn=None, **kw):
+            if not watchdog.fired:
+                watchdog.fired = True
+                stop_fn("sib.scope")
+                return 100, [("aggregate", "sib.scope", 20000)]
+            return 100, []
+
+        watchdog.fired = False
+        rc, stops, err, journal = self.gated(watchdog, auto_exit=5)
+        self.assertEqual(rc, 5)                   # 自己照常透传
+        # stops[0]=看门狗杀兄弟；stops[1]=自己的常规收尾杀
+        self.assertEqual(len(stops), 2)
+        self.assertEqual(stops[0], "sib.scope")
+        self.assertIn("killed sib.scope (largest, 20000 MiB)", err)
+        self.assertIn("aggregate-kill", journal)
+
+    def test_unwrapped_run_skips_watchdog(self):
+        os.environ[gate.SLICE_ENV] = "0"          # 降级直跑分支
+        calls = []
+        rc = gate.run_gated(["true"], poll=0.01, slot_dir=self.tmp / "slots",
+                            ledger_path=self.tmp / "ledger.json",
+                            slice_bootstrap_fn=lambda c, s: False,
+                            watchdog_fn=lambda u, b, c, **k: calls.append(1))
+        self.assertEqual(rc, 0)
+        self.assertEqual(calls, [])               # 无 cgroup 即无看门狗
+
+
 @unittest.skipUnless(os.environ.get("GT6_GATE_SLICE_LIVE"),
                      "live systemd probe (slow): set GT6_GATE_SLICE_LIVE=1")
 class SliceLiveTest(unittest.TestCase):
@@ -822,9 +1580,58 @@ class SliceLiveTest(unittest.TestCase):
              "--", "/bin/true"], capture_output=True, timeout=30)
         self.assertEqual(probe.returncode, 0, probe.stderr.decode())
 
+    def test_stop_unit_reaps_hidden_daemon(self):
+        # 复现实测案例（2026-09-29）：leader 退出、daemon 留守 scope cgroup
+        # → stop_unit TERM 后组内清空，scope 自灭
+        unit = gate.unit_name()
+        leader = subprocess.Popen(
+            ["systemd-run", "--user", "--scope", f"--unit={unit}",
+             "-p", "Slice=gt6gate.slice", "--", "sh", "-c",
+             "nohup sleep 60 >/dev/null 2>&1 & sleep 0.3; exit 0"],
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        leader.wait(timeout=30)
+        deadline = time.monotonic() + 10    # 等留守 sleep 浮现在 cgroup.procs
+        while not gate.unit_pids(unit) and time.monotonic() < deadline:
+            time.sleep(0.1)
+        leftovers = gate.unit_pids(unit)
+        self.assertTrue(leftovers, f"leftover never appeared in {unit}")
+        self.assertTrue(gate.stop_unit(unit, log=print))
+        self.assertEqual(gate.unit_pids(unit), [])   # 组已清空
+
+    def test_watchdog_kills_malloc_bloat(self):
+        # v3.3 live：真 scope 里 1G 预算跑持续膨胀脚本——必须死在预算上，
+        # 退出码区分执行者（2026-09-29 实测：本机 scope 级 memory.max 其实
+        # 被内核执行，300M 探针 OOM rc=137——故内核先到即 -9，看门狗先到
+        # 即 97；两者都算「按预算杀」）
+        old = os.environ.get("GT6_GATE_MEM_LIMIT_MIB")
+        os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "999999"  # 外压护栏不拦探针
+        bloat = ("import time;b=bytearray();"
+                 "[ (b.extend(bytearray(512*1024*1024)), time.sleep(0.4))"
+                 "  for _ in range(12)]")
+        tmp = tempfile.mkdtemp()
+        err = io.StringIO()
+        try:
+            with contextlib.redirect_stderr(err):
+                rc = gate.run_gated(
+                    [sys.executable, "-c", bloat], poll=0.01,
+                    slot_dir=Path(tmp) / "slots",
+                    ledger_path=Path(tmp) / "ledger.json",
+                    task_cap_gib=1)
+            self.assertIn(rc, (gate.BUDGET_EXIT, -9))
+            if rc == gate.BUDGET_EXIT:
+                self.assertIn("MiB budget (1024 MiB, class other)",
+                              err.getvalue())
+        finally:
+            if old is None:
+                os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
+            else:
+                os.environ["GT6_GATE_MEM_LIMIT_MIB"] = old
+            shutil.rmtree(tmp, ignore_errors=True)
+
 
 class DryRunTest(unittest.TestCase):
-    """v3 --dry-run 三场景：冷启动 ADMIT / 台账超限 QUEUE / full+coder REJECT。"""
+    """v3.2 --dry-run 四场景：冷启动 ADMIT / 信封超限 QUEUE / 外压超限
+    QUEUE / full+coder REJECT。宿主读数全注入。"""
 
     def setUp(self):
         self.dir = tempfile.TemporaryDirectory()
@@ -834,41 +1641,60 @@ class DryRunTest(unittest.TestCase):
     def tearDown(self):
         self.dir.cleanup()
 
-    def report(self, cmd, **kw):
+    def report(self, cmd, used=8000, slice_cur=0, total=40960, **kw):
         lines = []
-        word = gate.dry_run(cmd, ledger_path=self.ledger, log=lines.append, **kw)
+        word = gate.dry_run(cmd, ledger_path=self.ledger, log=lines.append,
+                            read_used=lambda: used, read_slice=lambda: slice_cur,
+                            read_total=lambda: total, **kw)
         return word, lines
 
     def test_cold_start_admits(self):
-        word, lines = self.report(["./gradlew", "compileJava"],
-                                  read_used=lambda: 8000, limit_mib=30720)
+        word, lines = self.report(["./gradlew", "compileJava"])
         self.assertEqual(word, "ADMIT")
         body = "\n".join(lines)
         self.assertIn("class=compile", body)
+        self.assertIn("slice current:  0 MiB", body)
         self.assertIn("cold default", body)
-        self.assertIn("8000 MiB", body)          # 当前占用
         self.assertIn("4000 MiB", body)          # 冷启动估算
-        self.assertIn("12000 MiB", body)         # 预测 = 8000+4000
+        # envelope: 0 + 4000 = 4000 ≤ cap 25600；outside: 8000 ≤ 13312
+        self.assertIn("envelope:       slice 0 + estimate 4000 = 4000 MiB "
+                      "(cap 25600 MiB)", body)
+        self.assertIn("outside:        used 8000 - slice 0 = 8000 MiB "
+                      "(limit 13312 MiB)", body)
 
-    def test_ledger_over_limit_queues(self):
+    def test_envelope_over_cap_queues(self):
         gate.record_observation("full-test", 26000, self.ledger)
         word, lines = self.report(["./gradlew", ":mdk:cleanTest"],
-                                  role="review", read_used=lambda: 8000,
-                                  limit_mib=30720)
+                                  role="review", used=8000, slice_cur=1000)
         self.assertEqual(word, "QUEUE")
         body = "\n".join(lines)
         self.assertIn("ledger", body)            # 来源=台账非冷启动
-        self.assertIn("26000 MiB", body)
-        self.assertIn("34000 MiB", body)         # 8000+26000 > 30720
-        self.assertIn("QUEUE", body)
+        # 信封判据：slice 1000 + est 26000 = 27000 > cap 25600
+        self.assertIn("envelope slice 1000 + estimate 26000 = 27000 MiB "
+                      "> cap 25600 MiB", body)
+
+    def test_outside_pressure_queues(self):
+        # 信封内宽裕（500+4000≪25600）但非门禁进程吃满机器：外压护栏排队
+        word, lines = self.report(["./gradlew", "compileJava"],
+                                  used=30000, slice_cur=500)
+        self.assertEqual(word, "QUEUE")
+        body = "\n".join(lines)
+        self.assertIn("outside used 30000 - slice 500 = 29500 MiB "
+                      "> limit 13312 MiB", body)
+        self.assertIn("ungated pressure", body)
 
     def test_full_coder_rejects_before_prediction(self):
-        word, lines = self.report(["./gradlew", ":mdk:cleanTest"],
-                                  read_used=lambda: 100, limit_mib=999999)
+        word, lines = self.report(["./gradlew", ":mdk:cleanTest"], used=100)
         self.assertEqual(word, "REJECT")
         body = "\n".join(lines)
         self.assertIn("exit 2", body)
         self.assertIn("review-seat", body)
+
+    def test_cap_override_moves_thresholds(self):
+        # --cap 30：信封帽与外压阈随之移动（envelope cap 30720）
+        word, lines = self.report(["./gradlew", "compileJava"], cap_gib=30)
+        self.assertEqual(word, "ADMIT")
+        self.assertIn("(cap 30720 MiB)", "\n".join(lines))
 
     def test_main_dry_run_flag_and_class_override(self):
         old = gate.LEDGER_PATH

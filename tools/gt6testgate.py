@@ -30,18 +30,54 @@ slot semaphore semantics there are unchanged.
 
 Predictive admission (test-gating-v3, 2026-09-29 WSL crash ruling): the
 reactive "used > limit" check let six coders + the review seat pile
-concurrent gradle runs past 30G *between* polls. The gate now predicts
-BEFORE spawning: ``used + estimate(task_class) <= limit``, where estimate
-comes from a machine-wide peak-RSS ledger (/tmp/gt6_testgate_memory_ledger.json;
-unknown classes fall back to conservative cold-start defaults). Every admitted
-run is itself the runner: it samples the child's process-tree peak RSS while
-the child executes and folds the observation back into the ledger (14-day
-half-life decay against staleness). ``--dry-run`` prints used / estimate /
-prediction / decision and starts nothing. A PreToolUse hook
-(.githooks/guard-heavy-ops.sh) routes bare gradle invocations here, and
-GITHUB_ACTIONS bypasses all gates at zero cost (CI boxes are not this WSL
-host). Exit-code semantics are unchanged (child passthrough; full+coder
-still exit 2 before any queueing).
+concurrent gradle runs past 30G *between* polls. The gate predicts BEFORE
+spawning using a machine-wide peak-RSS ledger
+(/tmp/gt6_testgate_memory_ledger.json; unknown classes fall back to
+conservative cold-start defaults). Every admitted run is itself the runner:
+it samples the child's process-tree peak RSS while the child executes and
+folds the observation back into the ledger (14-day half-life decay against
+staleness). ``--dry-run`` prints the full prediction and starts nothing. A
+PreToolUse hook (.githooks/guard-heavy-ops.sh) routes bare gradle
+invocations here, and GITHUB_ACTIONS bypasses all gates at zero cost (CI
+boxes are not this WSL host). Exit-code semantics are unchanged (child
+passthrough; full+coder still exit 2 before any queueing).
+
+Envelope admission (test-gating-v3.2, 2026-09-29 fifth ruling): the v3a
+formula ``system_used + estimate <= 30G`` is RETIRED. It double-counted the
+run's own slice usage as "system used" and, fed by a ledger estimate
+polluted with shared-daemon RSS (a filtered-test estimate sat at 11.6G vs a
+real 2.9G peak), starved a review run for an hour. Admission is now
+computed INSIDE the envelope: ``slice memory.current + estimate(class)
+<= cap`` (25G — the slice's own MemoryMax), with exactly one system-side
+guard against ungated processes: ``used - slice_current <=
+MemTotal - cap - 2G``. An empty slice admits instantly. The ledger stays as
+the estimate source (info + envelope math); v3.1's --no-daemon keeps future
+samples clean (no daemon RSS inside the sampled tree) and the 14-day
+half-life decays any historical pollution.
+
+Per-task budget + script watchdog (test-gating-v3.3, 2026-09-29 sixth
+ruling): the ruling holds memory.max cannot be RELIED UPON on this host
+(Brokestar kernel, custom reclaim logic), so the script watchdog is the
+first enforcer. Empirical note (same-day probe): scope-level MemoryMax IS
+enforced here — a 300M scope running a 1G malloc was kernel-OOM-killed
+(rc 137, oom_kill counter up); the SLICE level (gt6gate.slice 25G) is
+unverified — the destructive probe is deferred to the r8 closeout when the
+slice is idle. The original non-enforcement observation is of uncertain
+origin (slice level, or pre-v3.3 scopes that never carried a per-task
+max). Both layers therefore stay: each task's scope gets
+``MemoryMax=<class budget>`` at creation (kernel backstop where enforced)
+and the runner's sampling loop doubles as the watchdog — every 2 s tick it
+reads the task's own memory.current (same read feeds the ledger peak — one
+read, no /proc walk) and, past the per-task budget (TASK_CAP_MIB: full 12G
+/ filtered 8G / compile 6G / rundata 8G; ``--task-cap`` overrides), TERMs →
+2 s → KILLs the task's own cgroup and exits BUDGET_EXIT (97) so callers can
+distinguish "over budget" (watchdog) from an ordinary failure — a kernel
+OOM kill surfaces as the usual negative signal code instead. The tick also
+sums every sub-cgroup under gt6gate.slice; past the 25G project cap it
+kills the LARGEST sub-cgroups first (max reclaim per kill → fewest victims,
+fastest return under cap; fresh runs are naturally spared — they are still
+small) until back under cap. Kills are per-task cgroups: siblings keep
+running.
 
 Hard cap (test-gating-v3c, 2026-09-29 third ruling, 25G revision): the
 runner wraps the child in ``systemd-run --user --scope
@@ -57,11 +93,29 @@ enforcement). Side benefit: JVMs with UseContainerSupport read the cgroup
 cap and size their default heap accordingly (our explicit gradle heap flags
 win; forked unconfigured JVMs benefit).
 
+Residue reaping (test-gating-v3.1, 2026-09-29 fourth ruling): gradle builds
+outliving their gate run were the last leak — a leader-exited scope was
+found hiding a 2G+ daemon (killing it freed 8G). Three layers:
+(1) *root fix* — the runner injects ``--no-daemon`` into every gradle
+command (idempotent; ``--keep-daemon`` / env ``GT6_GATE_KEEP_DAEMON=1`` opt
+out) so each build owns a single-use daemon that exits with it. Nothing
+lingers to reap, and concurrent gates can no longer share one daemon across
+cgroups and kill each other's build. Cost: one JVM start per invocation.
+(2) *backstop* — the scope gets the deterministic name
+``gt6gate-run-<pid>-<ts>``; after the child exits and the ledger is written
+the gate TERMs the whole scope cgroup, polls cgroup.procs for
+``REAP_GRACE_SECONDS``, SIGKILLs any straggler, and only then frees the
+concurrency slot (reap failures warn on stderr, exit-code passthrough is
+untouched). (3) *sweeper* — ``reap [--dry-run]`` stops gate-slice scopes
+whose leader exited but whose cgroup still holds processes (the crashed-
+runner case: MainPID empty/0 + non-empty cgroup.procs).
+
 Usage:
     python3 tools/gt6testgate.py run [--tag <name>] [--role {coder,review}]
                               [--class CLASS] [--cap G] [--swap G]
-                              [--dry-run] -- <command...>
-    (the flags also work without the leading ``run`` — legacy form kept)
+                              [--keep-daemon] [--dry-run] -- <command...>
+    python3 tools/gt6testgate.py reap [--dry-run]
+    (the run flags also work without the leading ``run`` — legacy form kept)
 
 The child's stdout/stderr pass through untouched (no capture); the wrapper
 exits with the child's exit code.
@@ -111,6 +165,28 @@ SLICE_CAP_GIB = 25              # 30G box: 5G headroom for ungated processes
 SLICE_SWAP_GIB = 4
 SLICE_ENV = "GT6_GATE_SLICE"    # "0" disables the wrap entirely
 
+# --- v3.1 residue reaping (test-gating-v3.1, 2026-09-29 fourth ruling) -----
+KEEP_DAEMON_ENV = "GT6_GATE_KEEP_DAEMON"   # set (≠"0"/"") to skip injection
+REAP_GRACE_SECONDS = 2.0        # TERM → grace → KILL, our own timing
+UNIT_PREFIX = "gt6gate-run"     # scope units: gt6gate-run-<pid>-<ts>.scope
+
+# --- v3.2 envelope admission (test-gating-v3.2, 2026-09-29 fifth ruling) ---
+OUTSIDE_HEADROOM_MIB = 2048     # system guard: MemTotal - cap - 2G
+
+# --- v3.3 per-task budget + script watchdog (2026-09-29 sixth ruling) ------
+# This kernel does not enforce memory.max; the watchdog below is the
+# enforcer. Budgets = cold estimates × ~1.3 headroom (a run may legitimately
+# touch its forecast before it is a runaway).
+TASK_CAP_MIB = {
+    "full-test": 12288,
+    "filtered-test": 8192,
+    "compile": 6144,
+    "rundata": 8192,
+    "rcon-boot": 6144,
+    "other": 8192,
+}
+BUDGET_EXIT = 97                # watchdog kill ≠ ordinary failure
+
 ROLE_ENV = "GT6_TESTGATE_ROLE"
 ROLES = ("coder", "review")
 FULL_LOCK_PATH = Path("/tmp/gt6_testgate_full.lock")
@@ -148,6 +224,11 @@ def resolve_role(cli_role=None):
     return role if role in ROLES else ROLES[0]
 
 
+def _is_gradle_cmd(cmd):
+    """True if any argv token is a gradle launcher (exact basename match)."""
+    return any(Path(tok).name in ("gradlew", "gradle") for tok in cmd)
+
+
 def command_mode(cmd):
     """"full" if cmd is a gradle run of an unfiltered test suite, else "other".
 
@@ -157,7 +238,7 @@ def command_mode(cmd):
     (open to both roles). Wrapping gradle in ``sh -c "..."`` hides the tokens
     and is treated as "other" — the gate is a discipline backstop.
     """
-    if not any(Path(tok).name in ("gradlew", "gradle") for tok in cmd):
+    if not _is_gradle_cmd(cmd):
         return "other"
     if any(tok == "--tests" or tok.startswith("--tests=") for tok in cmd):
         return "other"
@@ -182,7 +263,7 @@ def classify(cmd):
     non-gradle: anything mentioning rcon (tools/rcon/sweep.py, gt6server.py
              boots) → rcon-boot; everything else → other.
     """
-    if not any(Path(tok).name in ("gradlew", "gradle") for tok in cmd):
+    if not _is_gradle_cmd(cmd):
         if any("rcon" in tok.lower() for tok in cmd):
             return "rcon-boot"
         return "other"
@@ -197,8 +278,8 @@ def classify(cmd):
     return "other"
 
 
-def mem_used_mib(path=MEMINFO_PATH):
-    """used = MemTotal - MemAvailable in MiB (kernel reports both in kB)."""
+def mem_fields_mib(path=MEMINFO_PATH):
+    """(MemTotal, MemAvailable) in MiB — kernel reports both in kB."""
     total = avail = None
     with open(path, encoding="ascii") as fh:
         for line in fh:
@@ -210,7 +291,236 @@ def mem_used_mib(path=MEMINFO_PATH):
                 break
     if total is None or avail is None:
         raise RuntimeError(f"{path} lacks MemTotal/MemAvailable")
-    return (total - avail) // 1024
+    return total // 1024, avail // 1024
+
+
+def mem_used_mib(path=MEMINFO_PATH):
+    """used = MemTotal - MemAvailable in MiB (kernel reports both in kB).
+
+    v3.4: MemAvailable already excludes the reclaimable page cache, so the
+    system-side outside guard needs no cache deduction of its own — the
+    v3.4 subtraction is cgroup-face only (memory.current/memory.stat).
+    """
+    total, avail = mem_fields_mib(path)
+    return total - avail
+
+
+def mem_total_mib(path=MEMINFO_PATH):
+    """MemTotal in MiB (the outside guard's base, v3.2)."""
+    return mem_fields_mib(path)[0]
+
+
+def cgroup_usage_mib(rel, cgroup_root="/sys/fs/cgroup", uid=None):
+    """memory.current (MiB) of a user-session cgroup ``rel``; 0 when absent.
+
+    User cgroups sit at the systemd session layout (verified live
+    2026-09-29: scopes resolve to
+    /user.slice/user-<uid>.slice/user@<uid>.service/<rel>). A missing file
+    means the cgroup is empty or gone — for admission that means "nothing
+    inside", so absence reads as 0, not error.
+    """
+    uid = os.getuid() if uid is None else uid
+    path = (Path(cgroup_root) / "user.slice" / f"user-{uid}.slice"
+            / f"user@{uid}.service" / rel / "memory.current")
+    try:
+        return int(path.read_text(encoding="ascii")) // (1024 * 1024)
+    except (OSError, ValueError):
+        return 0
+
+
+_RECLAIM_NOTE_DONE = False     # v3.4: the conservative-fallback stderr note fires ONCE
+
+
+def cgroup_reclaimable_mib(rel, cgroup_root="/sys/fs/cgroup", uid=None):
+    """The reclaimable cache slice of one cgroup: memory.stat ``file`` +
+    ``slab_reclaimable`` in MiB (v3.4); ``None`` on any parse failure.
+
+    cgroup v2 memory.stat reports in bytes like memory.current. Both keys are
+    optional-presence but well-formed when present; a missing/unparsable stat
+    file returns None so the caller can subtract nothing (conservative) —
+    stderr noted once per process, never per tick (the watchdog reads this
+    every SAMPLE_SECONDS; a chatty note would drown real diagnostics).
+    """
+    global _RECLAIM_NOTE_DONE
+    uid = os.getuid() if uid is None else uid
+    path = (Path(cgroup_root) / "user.slice" / f"user-{uid}.slice"
+            / f"user@{uid}.service" / rel / "memory.stat")
+    try:
+        file_mib = slab_mib = None
+        for line in path.read_text(encoding="ascii").splitlines():
+            parts = line.split()
+            if len(parts) == 2:
+                if parts[0] == "file":
+                    file_mib = int(parts[1]) // (1024 * 1024)
+                elif parts[0] == "slab_reclaimable":
+                    slab_mib = int(parts[1]) // (1024 * 1024)
+        if file_mib is None or slab_mib is None:
+            raise ValueError("memory.stat lacks file/slab_reclaimable")
+        return file_mib + slab_mib
+    except (OSError, ValueError):
+        if not _RECLAIM_NOTE_DONE:
+            _RECLAIM_NOTE_DONE = True
+            print("[gt6testgate] memory.stat unreadable — admission/watchdog "
+                  "read RAW memory.current (reclaimable cache NOT deducted; "
+                  "conservative)", file=sys.stderr)
+        return None
+
+
+def cgroup_effective_usage_mib(rel, cgroup_root="/sys/fs/cgroup", uid=None):
+    """v3.4 effective in-group usage = memory.current − reclaimable cache.
+
+    The kernel counts the task's page cache (gradle file IO) in
+    memory.current, but that cache is reclaimable under pressure — counting
+    it queues admission and fires the watchdog on a "full" cgroup that would
+    evaporate on demand (the 2026-09-29 11430-vs-104 pollution class).
+    Floor at 0 (a current smaller than its own reclaimable cache is legal).
+    """
+    cur = cgroup_usage_mib(rel, cgroup_root, uid)
+    reclaimable = cgroup_reclaimable_mib(rel, cgroup_root, uid)
+    if reclaimable is None:
+        return cur
+    return max(cur - reclaimable, 0)
+
+
+def slice_usage_mib(slice_name=SLICE_NAME, cgroup_root="/sys/fs/cgroup",
+                    uid=None):
+    """Effective memory of the gate slice (v3.2 admission input; v3.4 =
+    memory.current minus reclaimable cache — see cgroup_effective_usage_mib)."""
+    return cgroup_effective_usage_mib(slice_name, cgroup_root, uid)
+
+
+def slice_children_usage(slice_name=SLICE_NAME, cgroup_root="/sys/fs/cgroup",
+                         uid=None):
+    """[(sub-cgroup name, effective usage MiB)] over slice children (v3.3).
+
+    Each child directory of the slice is one task scope (v3.1's deterministic
+    --unit names); their sum is the project aggregate the watchdog enforces
+    the 25G cap against, and the per-unit own read is the budget comparator.
+    v3.4: both faces read EFFECTIVE usage (memory.current minus reclaimable
+    cache — the anon view) so a cache-padded cgroup neither fires the budget
+    kill nor skews the aggregate; the kernel MemoryMax itself is untouched
+    (the kernel reclaims cache before OOM, its semantics need no mirror).
+    """
+    uid = os.getuid() if uid is None else uid
+    base = (Path(cgroup_root) / "user.slice" / f"user-{uid}.slice"
+            / f"user@{uid}.service" / slice_name)
+    try:
+        children = sorted(p for p in base.iterdir() if p.is_dir())
+    except OSError:
+        return []
+    return [(p.name, cgroup_effective_usage_mib(f"{slice_name}/{p.name}",
+                                                cgroup_root, uid))
+            for p in children]
+
+
+def watchdog_tick(unit, budget_mib, cap_mib, slice_name=SLICE_NAME,
+                  stop_fn=None, cgroup_root="/sys/fs/cgroup", uid=None):
+    """One watchdog pass over the project slice (v3.3 core).
+
+    (1) own budget: this task's cgroup over ``budget_mib`` → kill it.
+    (2) project cap: the slice's sub-cgroup sum over ``cap_mib`` → kill
+        LARGEST donors first until back under cap. Largest-first rationale:
+        max reclaim per kill — fewest victims and fastest return under cap;
+        a fresh run is naturally spared because it has not ballooned yet.
+    Every kill is one task cgroup (TERM→grace→KILL via ``stop_fn``):
+    siblings are never touched. Returns (own_mib, kills) with kills = list
+    of (kind, victim, mib), kind "task" (budget) or "aggregate" (cap); a
+    self-kill shows victim == unit so the caller can exit BUDGET_EXIT.
+    """
+    if stop_fn is None:
+        stop_fn = stop_unit
+    children = slice_children_usage(slice_name, cgroup_root, uid)
+    own = 0
+    total = 0
+    for name, usage in children:
+        total += usage
+        if name == unit:
+            own = usage
+    kills = []
+    if own > budget_mib:
+        stop_fn(unit)
+        return own, [("task", unit, own)]
+    if total > cap_mib:
+        for name, usage in sorted(children, key=lambda c: c[1], reverse=True):
+            if total <= cap_mib or usage <= 0:
+                continue
+            stop_fn(name)
+            kills.append(("aggregate", name, usage))
+            total -= usage
+            if name == unit:
+                break
+    return own, kills
+
+
+def outside_limit_mib(total_mib, cap_gib):
+    """v3.2 external-pressure guard threshold: MemTotal - cap - 2G.
+
+    env GT6_GATE_MEM_LIMIT_MIB pins an absolute MiB value instead (test
+    hook and ops escape hatch); invalid values fall through to the formula.
+    """
+    env = os.environ.get("GT6_GATE_MEM_LIMIT_MIB")
+    if env:
+        try:
+            return int(env)
+        except ValueError:
+            pass
+    return total_mib - cap_gib * 1024 - OUTSIDE_HEADROOM_MIB
+
+
+def wait_admission(estimate_mib, cap_gib=SLICE_CAP_GIB, tag="-",
+                   log_file=GATE_LOG, log=None, poll=POLL_SECONDS,
+                   read_used=None, read_slice=None, read_total=None):
+    """v3.2 admission: the envelope is the arithmetic that matters.
+
+    envelope: slice_current + estimate ≤ cap — concurrent gated runs share
+              the slice's MemoryMax; overflowing it means in-group OOM
+              churn, so queue. Empty slice admits instantly.
+    outside:  used - slice_current ≤ MemTotal - cap - 2G — the ONE
+              system-side guard: ungated processes must not eat the machine.
+    The v3a system-side formula (used + estimate ≤ 30G) is retired: it
+    double-counted this run's own envelope usage and starved big estimates
+    (review seat blocked an hour on a polluted 11.6G figure). Readers are
+    injectable for tests. Journals gate-queue once per block and gate-admit
+    on pass.
+    """
+    if read_used is None:
+        read_used = mem_used_mib
+    if read_slice is None:
+        read_slice = slice_usage_mib
+    if read_total is None:
+        read_total = mem_total_mib
+    cap_mib = cap_gib * 1024
+    started = time.monotonic()
+    queued = False
+    while True:
+        slice_cur = read_slice()
+        total = read_total()
+        used = read_used()
+        envelope = slice_cur + estimate_mib
+        outside = used - slice_cur
+        limit = outside_limit_mib(total, cap_gib)
+        if envelope <= cap_mib and outside <= limit:
+            break
+        if envelope > cap_mib:
+            reason = (f"envelope slice={slice_cur}MiB est={estimate_mib}MiB "
+                      f"predicted={envelope}MiB cap={cap_mib}MiB")
+        else:
+            reason = (f"outside used={used}MiB slice={slice_cur}MiB "
+                      f"outside={outside}MiB limit={limit}MiB")
+        if not queued:
+            queued = True
+            _journal("gate-queue", tag, reason, log_file)
+        if log:
+            log(f"[gt6testgate] {reason} — queueing every {poll:.0f}s")
+        time.sleep(poll)
+    wait = time.monotonic() - started
+    _journal("gate-admit", tag,
+             f"slice={slice_cur}MiB est={estimate_mib}MiB "
+             f"outside={outside}MiB queued={wait:.0f}s", log_file)
+    if log and queued:
+        log(f"[gt6testgate] admission passed after {wait:.0f}s "
+            f"(slice {slice_cur} + estimate {estimate_mib} <= cap; "
+            f"outside {outside})")
 
 
 def load_ledger(path=LEDGER_PATH):
@@ -285,6 +595,13 @@ def record_observation(cls, observed_mib, path=LEDGER_PATH, now=None):
 def tree_rss_mib(root_pid, proc_dir="/proc"):
     """Sum RSS over the process tree rooted at root_pid, in MiB.
 
+    v3.4 ledger note: this UNWRAPPED-mode peak source is process RSS —
+    statm RSS counts anonymous + mapped file pages resident, NOT the
+    writeback/streaming page cache the cgroup's memory.current carries, so
+    the ledger's peak column mixes two views (wrapped runs feed the
+    effective/anon-ish cgroup read, unwrapped runs this RSS walk); the
+    estimate only needs cross-run comparability per mode, which holds.
+
     ponytail: ppid-chain walk + statm RSS double-counts shared pages (gradle
     daemon + workers share the JVM) and a detached daemon escapes the tree —
     both errors are consistent in direction, which is all an estimate needs;
@@ -330,14 +647,22 @@ def slice_enabled(env=None):
     return (env if env is not None else os.environ).get(SLICE_ENV) != "0"
 
 
-def slice_wrap(cmd, slice_name=SLICE_NAME):
+def slice_wrap(cmd, slice_name=SLICE_NAME, unit=None, memory_max_mib=None):
     """``cmd`` → systemd-run scope argv inside the shared gate slice.
 
     --scope runs the command in-line (no service-manager round trip), so
-    stdio passthrough and exit-code forwarding are preserved.
+    stdio passthrough and exit-code forwarding are preserved. ``unit`` pins
+    a deterministic scope name (v3.1) so the post-run reap can address
+    exactly this run's cgroup instead of an anonymous one. ``memory_max_mib``
+    (v3.3) writes the per-task budget onto the scope AT CREATION — no
+    set-property race; advisory on the Brokestar kernel, real elsewhere.
     """
-    return ["systemd-run", "--user", "--scope",
-            "-p", f"Slice={slice_name}", "--"] + list(cmd)
+    argv = ["systemd-run", "--user", "--scope"]
+    if unit:
+        argv.append(f"--unit={unit}")
+    if memory_max_mib:
+        argv += ["-p", f"MemoryMax={memory_max_mib}M"]
+    return argv + ["-p", f"Slice={slice_name}", "--"] + list(cmd)
 
 
 def slice_bootstrap(cap_gib=SLICE_CAP_GIB, swap_gib=SLICE_SWAP_GIB, run=None):
@@ -356,6 +681,165 @@ def slice_bootstrap(cap_gib=SLICE_CAP_GIB, swap_gib=SLICE_SWAP_GIB, run=None):
                 "--runtime"]) == 0
 
 
+# --- v3.1 residue reaping ---------------------------------------------------
+
+def inject_no_daemon(cmd, keep_daemon=False, env=None):
+    """Append ``--no-daemon`` to gradle commands; every other command as-is.
+
+    v3.1 root fix for the daemon leak: --no-daemon gives each build its own
+    single-use daemon that exits with the build, so nothing lingers in the
+    run's scope cgroup — and concurrent gates can no longer share (and
+    post-run-kill each other's) daemons across cgroups. Cost: one JVM start
+    per invocation. Idempotent; an explicit ``--daemon`` wins untouched (no
+    contradictory flags); interactive hot-daemon workflows opt out via
+    ``keep_daemon`` (CLI --keep-daemon) or env GT6_GATE_KEEP_DAEMON (any
+    non-empty value but "0"). CI passthrough never reaches this (the runner
+    returns before injecting).
+    """
+    if keep_daemon or (env if env is not None else os.environ).get(
+            KEEP_DAEMON_ENV) not in (None, "", "0"):
+        return cmd
+    if not _is_gradle_cmd(cmd):
+        return cmd
+    if any(tok in ("--no-daemon", "--daemon") for tok in cmd):
+        return cmd
+    return cmd + ["--no-daemon"]
+
+
+def unit_name():
+    """Deterministic per-run scope name — addressable for the post-run reap.
+
+    Full name WITH the .scope suffix: systemd-run uses a suffixed --unit
+    verbatim, while a bare name would come back as <name>.scope but every
+    later systemctl show would look up <name>.service (its own default
+    suffix) and miss. One spelling everywhere.
+    """
+    return f"{UNIT_PREFIX}-{os.getpid()}-{time.monotonic_ns()}.scope"
+
+
+def unit_property(unit, prop, run=None):
+    """``systemctl show -p PROP --value`` → stripped str ("" on any failure).
+
+    A leader-exited scope reports MainPID as an EMPTY value, not "0" — both
+    are leader-gone for the callers.
+    """
+    if run is None:
+        def run(argv):
+            return subprocess.run(argv, capture_output=True, text=True,
+                                  timeout=15)
+    try:
+        proc = run(["systemctl", "--user", "show", unit, "-p", prop,
+                    "--value"])
+    except (OSError, subprocess.SubprocessError):
+        return ""
+    if proc is None or proc.returncode != 0:
+        return ""
+    return (proc.stdout or "").strip()
+
+
+def unit_pids(unit, run=None, cgroup_root="/sys/fs/cgroup"):
+    """PIDs still alive in the unit's cgroup ([] = empty or released).
+
+    Reads the cgroup.procs map the ControlGroup property points at; a gone
+    directory means systemd already released the scope — same as empty.
+    """
+    cg = unit_property(unit, "ControlGroup", run)
+    if not cg:
+        return []
+    try:
+        with open(f"{cgroup_root}/{cg}/cgroup.procs", encoding="ascii") as fh:
+            return [int(x) for x in fh.read().split()]
+    except (OSError, ValueError):
+        return []
+
+
+def stop_unit(unit, grace=REAP_GRACE_SECONDS, run=None, log=None,
+              sleep=time.sleep, pids_fn=unit_pids):
+    """TERM the unit's whole cgroup → ≤grace s → SIGKILL any straggler.
+
+    v3.1 backstop: with the --no-daemon injection this is normally a no-op
+    (one show + one procs read), but a forked JVM ignoring TERM still dies
+    here before the concurrency slot is released. ``kill --signal`` instead
+    of ``stop``: stop blocks on TERM-immune processes until systemd's own
+    ~90 s timeout, which would defeat the 2 s grace; kill is the same signal
+    to the same group, async (verified live 2026-09-29, systemd 261). Once
+    the last process is gone the leader-less scope deactivates by itself.
+    Never raises — a failed reap warns and lets the child's exit code pass
+    through untouched.
+    """
+    if run is None:
+        def run(argv):
+            return subprocess.run(argv, capture_output=True, text=True,
+                                  timeout=15)
+    try:
+        run(["systemctl", "--user", "kill", "--signal=SIGTERM", unit])
+        deadline = time.monotonic() + grace
+        while time.monotonic() < deadline and pids_fn(unit, run):
+            sleep(0.05)
+        if not pids_fn(unit, run):
+            return True
+        run(["systemctl", "--user", "kill", "--signal=SIGKILL", unit])
+        return not pids_fn(unit, run)
+    except (OSError, subprocess.SubprocessError) as exc:
+        if log:
+            log(f"[gt6testgate] cgroup reap of {unit} failed ({exc}) — "
+                f"leftovers may linger; `gt6testgate reap` sweeps them later")
+        return False
+
+
+def reap_scopes(slice_name=SLICE_NAME, run=None, dry_run=False, log=print,
+                grace=REAP_GRACE_SECONDS, pids_fn=unit_pids,
+                stop_fn=stop_unit):
+    """Sweep gate-slice scopes whose leader exited but that still hold PIDs.
+
+    The field case (2026-09-29): a scope whose leader was long gone hiding a
+    2G+ daemon. Candidate = Slice matches AND MainPID 0/empty (leader gone)
+    AND cgroup.procs non-empty. Active scopes are never touched; empty
+    shells are skipped. --dry-run only lists. Returns the reaped unit names
+    (dry run: the would-be list).
+    """
+    if run is None:
+        def run(argv):
+            return subprocess.run(argv, capture_output=True, text=True,
+                                  timeout=15)
+    try:
+        listing = run(["systemctl", "--user", "list-units", "--all",
+                       "--type=scope", "--plain", "--no-legend"])
+        if listing.returncode != 0:
+            raise RuntimeError((listing.stderr or "").strip()
+                               or "list-units failed")
+        units = [line.split()[0]
+                 for line in (listing.stdout or "").splitlines() if line.strip()]
+    except (OSError, subprocess.SubprocessError) as exc:
+        log(f"[gt6testgate] reap unavailable ({exc})")
+        return []
+    reaped = []
+    for unit in units:
+        if unit_property(unit, "Slice", run) != slice_name:
+            continue
+        try:
+            main_pid = int(unit_property(unit, "MainPID", run) or 0)
+        except ValueError:
+            main_pid = 0
+        if main_pid:
+            continue
+        pids = pids_fn(unit, run)
+        if not pids:
+            continue
+        if dry_run:
+            log(f"[gt6testgate] would reap {unit} (leader gone, "
+                f"{len(pids)} process(es) left)")
+            reaped.append(unit)
+            continue
+        log(f"[gt6testgate] reaping {unit} (leader exited, "
+            f"{len(pids)} process(es) left)")
+        if stop_fn(unit, grace=grace, run=run, log=log):
+            reaped.append(unit)
+        else:
+            log(f"[gt6testgate] {unit} survived the reap — inspect manually")
+    return reaped
+
+
 def _journal(event, tag, detail, log_file=GATE_LOG):
     """Append one timestamped gate event; best-effort, never fails the workload."""
     try:
@@ -369,10 +853,10 @@ def wait_memory(read_used=None, limit_mib=None, poll=POLL_SECONDS,
                 tag="-", log_file=GATE_LOG, log=None, estimate_mib=0):
     """Block until used + estimate <= limit; journal every queue/admission.
 
-    ``read_used`` is injectable for tests (default: real /proc/meminfo).
-    ``estimate_mib`` (v3) is the class's predicted peak: admission needs
-    ``used + estimate <= limit`` so concurrent gated runs cannot stack past
-    the cap between polls. estimate 0 (gt6server boot path) = old behavior.
+    Legacy reactive gate — since v3.2 only the gt6server boot path lives
+    here (its slot semaphore stacks on top; estimate defaults 0, signature
+    unchanged). The gate runner's own admission is :func:`wait_admission`
+    (envelope arithmetic). ``read_used`` is injectable for tests.
     Returns (used_mib_at_admission, queued_seconds).
     """
     if read_used is None:
@@ -504,22 +988,29 @@ def run_gated(cmd, tag=None, poll=POLL_SECONDS, slot_dir=SLOT_DIR,
               log_file=GATE_LOG, log=print, role=None,
               full_lock=FULL_LOCK_PATH, cls=None, ledger_path=None,
               cap_gib=SLICE_CAP_GIB, swap_gib=SLICE_SWAP_GIB,
-              slice_bootstrap_fn=slice_bootstrap):
-    """Gated runner: role gate → (full) global lock → predictive memory gate →
-    test slot → (v3c slice wrap) → exec child with peak-RSS sampling → fold
-    into ledger.
+              slice_bootstrap_fn=slice_bootstrap, keep_daemon=False,
+              stop_fn=stop_unit, task_cap_gib=None, watchdog_fn=watchdog_tick):
+    """Gated runner: role gate → (full) global lock → envelope admission →
+    test slot → (slice wrap) → exec child under the v3.3 watchdog → ledger →
+    reap the scope cgroup → free the slot.
 
     The child inherits our stdio directly (no capture, no reinterpretation);
     lock/slot are released in finallys and the child's exit code returned.
     A full run by a non-review role is denied immediately — before any
-    queueing — returning FULL_DENY_EXIT with guidance. v3: admission
-    predicts ``used + estimate(class) <= limit``; after the child exits its
-    sampled process-tree peak updates the ledger, so estimates track reality
-    without any caller cooperation. v3c: the child runs inside the shared
-    gt6gate.slice memory envelope when systemd agrees (pre-flight bootstrap
-    + systemd-run on PATH); otherwise a one-line stderr warning and a direct
-    exec. GITHUB_ACTIONS set → zero-gate passthrough (CI runners are not
-    this WSL host).
+    queueing — returning FULL_DENY_EXIT with guidance. v3.2: admission is
+    envelope arithmetic (wait_admission). v3c: the child runs inside the
+    shared gt6gate.slice memory envelope when systemd agrees; otherwise a
+    one-line stderr warning and a direct exec. v3.1: gradle commands get
+    ``--no-daemon`` (root fix; keep_daemon opts out) and the named scope
+    cgroup is TERM→grace→KILL-reaped after the ledger write, before the slot
+    frees. v3.3: the scope carries a per-task MemoryMax budget at creation
+    (TASK_CAP_MIB[cls] or task_cap_gib) and the sampling loop doubles as the
+    enforcing watchdog — own budget over → kill own cgroup, exit
+    BUDGET_EXIT; project aggregate over cap → kill largest sub-cgroups
+    (siblings spared). One cgroup read per tick feeds the ledger peak and
+    both checks; without a scope the legacy /proc tree walk stays the ledger
+    source. GITHUB_ACTIONS set → zero-gate passthrough (no injection, no
+    watchdog).
     """
     if ledger_path is None:
         ledger_path = LEDGER_PATH
@@ -531,9 +1022,12 @@ def run_gated(cmd, tag=None, poll=POLL_SECONDS, slot_dir=SLOT_DIR,
         _journal("ci-passthrough", tag, "GITHUB_ACTIONS set — gates skipped",
                  log_file)
         return subprocess.run(cmd).returncode
+    # v3.1 root fix — after the CI branch so CI keeps its managed daemons.
+    cmd = inject_no_daemon(cmd, keep_daemon=keep_daemon)
     mode = command_mode(cmd)
     cls = cls or classify(cmd)
     role = resolve_role(role)
+    budget_mib = (task_cap_gib * 1024) if task_cap_gib else TASK_CAP_MIB[cls]
     if mode == "full" and role != "review":
         _journal("full-reject", tag, f"role={role}", log_file)
         log("[gt6testgate] FULL test run denied (role=coder) — "
@@ -547,14 +1041,16 @@ def run_gated(cmd, tag=None, poll=POLL_SECONDS, slot_dir=SLOT_DIR,
         if mode == "full":
             lock_fh = acquire_full_lock(full_lock, tag=tag, log_file=log_file,
                                         log=log)
-        wait_memory(poll=poll, tag=tag, log_file=log_file, log=log,
-                    estimate_mib=estimate)
+        # v3.2: envelope arithmetic (slice + estimate ≤ cap) + outside guard.
+        wait_admission(estimate, cap_gib=cap_gib, tag=tag, log_file=log_file,
+                       log=log, poll=poll)
         slot = acquire_slot(poll=poll, slot_dir=slot_dir, tag=tag,
                             log_file=log_file, log=log)
         # v3c shared-slice hard cap. Pre-flight = the degrade gate; a runtime
         # scope-creation failure surfaces as a plain nonzero passthrough and
         # the next run's pre-flight (same failing environment) degrades then.
         wrapped = False
+        unit = None
         if slice_enabled():
             try:
                 usable = slice_bootstrap_fn(cap_gib, swap_gib)
@@ -562,61 +1058,111 @@ def run_gated(cmd, tag=None, poll=POLL_SECONDS, slot_dir=SLOT_DIR,
                 usable = False
             if usable and shutil.which("systemd-run"):
                 wrapped = True
+                unit = unit_name()      # v3.1: deterministic, reap-addressable
             else:
                 print("[gt6testgate] systemd slice cap unavailable — running "
                       "UNCAPPED (degraded; export GT6_GATE_SLICE=0 to silence)",
                       file=sys.stderr)
-        proc = subprocess.Popen(slice_wrap(cmd) if wrapped else cmd)
+        proc = subprocess.Popen(
+            slice_wrap(cmd, unit=unit, memory_max_mib=budget_mib)
+            if wrapped else cmd)
         peak = 0
+        self_killed = False
         try:
             while True:
-                peak = max(peak, tree_rss_mib(proc.pid))
+                if wrapped:
+                    # v3.3 watchdog — one cgroup read feeds the ledger peak
+                    # and both limit checks (own budget, project aggregate).
+                    own, kills = watchdog_fn(unit, budget_mib,
+                                             cap_gib * 1024, stop_fn=stop_fn)
+                    peak = max(peak, own)
+                    for kind, victim, mib in kills:
+                        if kind == "task":
+                            print(f"[gt6testgate] task exceeded {mib} MiB "
+                                  f"budget ({budget_mib} MiB, class {cls}) "
+                                  f"— cgroup killed", file=sys.stderr)
+                            _journal("budget-kill", tag,
+                                     f"unit={unit} mib={mib}", log_file)
+                        elif victim == unit:
+                            print(f"[gt6testgate] aggregate over {cap_gib}G "
+                                  f"cap — killed own cgroup ({mib} MiB)",
+                                  file=sys.stderr)
+                            _journal("aggregate-kill", tag,
+                                     f"unit={unit} self mib={mib}", log_file)
+                        else:
+                            print(f"[gt6testgate] aggregate over {cap_gib}G "
+                                  f"cap — killed {victim} (largest, "
+                                  f"{mib} MiB)", file=sys.stderr)
+                            _journal("aggregate-kill", tag,
+                                     f"victim={victim} mib={mib}", log_file)
+                        if victim == unit:
+                            self_killed = True
+                else:
+                    peak = max(peak, tree_rss_mib(proc.pid))
                 if proc.poll() is not None:
                     break
                 time.sleep(SAMPLE_SECONDS)
-            return proc.returncode
+            # v3.3: a watchdog kill is not an ordinary failure — dedicated
+            # exit code so callers/CI can tell them apart.
+            return BUDGET_EXIT if self_killed else proc.returncode
         finally:
-            release_slot(slot, log=log)
+            # v3.1 kill order per ruling: ledger write → reap cgroup →
+            # release slot. Reap failures warn only (stop_unit never raises).
             stored = record_observation(cls, peak, ledger_path)
             _journal("peak-sample", tag,
                      f"class={cls} peak={peak}MiB estimate={stored}MiB",
                      log_file)
+            if wrapped:
+                stop_fn(unit, log=log)
+            release_slot(slot, log=log)
     finally:
         release_full_lock(lock_fh, log=log)
 
 
-def dry_run(cmd, cls=None, ledger_path=None, role=None,
-            limit_mib=None, log=print, read_used=None, now=None):
-    """Predict-only report: current usage / estimate / prediction / decision.
+def dry_run(cmd, cls=None, ledger_path=None, role=None, cap_gib=SLICE_CAP_GIB,
+            log=print, read_used=None, read_slice=None, read_total=None,
+            now=None):
+    """Predict-only report on v3.2 envelope arithmetic.
 
-    Starts nothing, journals nothing — for subagents to self-check before
-    dispatching and for the coordinator to schedule against. Returns the
-    decision word (ADMIT / QUEUE / REJECT).
+    slice current / estimate / envelope vs cap / outside vs guard limit /
+    decision. Starts nothing, journals nothing — for subagents to self-check
+    before dispatching and for the coordinator to schedule against. Returns
+    the decision word (ADMIT / QUEUE / REJECT).
     """
     if ledger_path is None:
         ledger_path = LEDGER_PATH
     cls = cls or classify(cmd)
     role = resolve_role(role)
-    limit = mem_limit_mib() if limit_mib is None else limit_mib
     mode = command_mode(cmd)
     ledger = load_ledger(ledger_path)
     entry = ledger.get(cls)
     estimate = estimate_for(cls, ledger, now=now)
+    slice_cur = (read_slice or slice_usage_mib)()
     used = (read_used or mem_used_mib)()
-    predicted = used + estimate
+    total = (read_total or mem_total_mib)()
+    cap_mib = cap_gib * 1024
+    envelope = slice_cur + estimate
+    outside = used - slice_cur
+    limit = outside_limit_mib(total, cap_gib)
     source = "ledger" if isinstance(entry, dict) else "cold default"
     if mode == "full" and role != "review":
         decision = f"REJECT exit {FULL_DENY_EXIT} (full test run is review-seat only)"
-    elif predicted > limit:
-        decision = (f"QUEUE (predicted {predicted} MiB > limit {limit} MiB — "
-                    f"polls until memory frees)")
+    elif envelope > cap_mib:
+        decision = (f"QUEUE (envelope slice {slice_cur} + estimate "
+                    f"{estimate:.0f} = {envelope} MiB > cap {cap_mib} MiB — "
+                    f"in-slice OOM churn risk)")
+    elif outside > limit:
+        decision = (f"QUEUE (outside used {used} - slice {slice_cur} = "
+                    f"{outside} MiB > limit {limit} MiB — ungated pressure)")
     else:
         decision = "ADMIT (would run now)"
     log(f"[gt6testgate] dry-run: class={cls} role={role} mode={mode}")
-    log(f"  current used:   {used} MiB")
+    log(f"  slice current:  {slice_cur} MiB")
     log(f"  estimate:       {estimate:.0f} MiB ({source}, class {cls})")
-    log(f"  predicted peak: used {used} + estimate {estimate:.0f} = "
-        f"{predicted} MiB (limit {limit} MiB)")
+    log(f"  envelope:       slice {slice_cur} + estimate {estimate:.0f} = "
+        f"{envelope} MiB (cap {cap_mib} MiB)")
+    log(f"  outside:        used {used} - slice {slice_cur} = {outside} MiB "
+        f"(limit {limit} MiB)")
     log(f"  decision: {decision}")
     return decision.split(" ")[0]
 
@@ -628,6 +1174,19 @@ def main(argv=None):
     # command literally named "run" keeps working.
     if argv[:1] == ["run"] and "--" in argv[1:]:
         argv = argv[1:]
+    # `reap` subcommand (v3.1): sweep leader-exited gate scopes that still
+    # hold processes. Ops command — no admission machinery involved.
+    if argv[:1] == ["reap"]:
+        rp = argparse.ArgumentParser(
+            prog="gt6testgate reap",
+            description="Sweep gt6gate.slice scopes whose leader exited but "
+                        "whose cgroup still holds processes (hidden "
+                        "daemons from crashed runners).")
+        rp.add_argument("--dry-run", action="store_true",
+                        help="list reaping candidates without stopping them")
+        rargs = rp.parse_args(argv[1:])
+        reap_scopes(dry_run=rargs.dry_run)
+        return 0
     parser = argparse.ArgumentParser(
         prog="gt6testgate",
         description="GT6 unified heavy-operation gate and runner: predictive "
@@ -647,12 +1206,20 @@ def main(argv=None):
     parser.add_argument("--dry-run", action="store_true",
                         help="print used/estimate/predicted/decision and "
                              "start nothing")
+    parser.add_argument("--keep-daemon", action="store_true",
+                        help="skip the --no-daemon injection (interactive "
+                             "hot-daemon workflows; also env "
+                             f"{KEEP_DAEMON_ENV}=1)")
     parser.add_argument("--cap", type=int, default=SLICE_CAP_GIB,
                         help="shared gt6gate.slice MemoryMax in GiB "
                              "(default: 25 — 5G headroom on a 30G box)")
     parser.add_argument("--swap", type=int, default=SLICE_SWAP_GIB,
                         help="shared gt6gate.slice MemorySwapMax in GiB "
                              "(default: 4)")
+    parser.add_argument("--task-cap", type=int, default=None, metavar="G",
+                        help="per-task memory budget in GiB, written on this "
+                             "run's scope and enforced by the watchdog "
+                             "(default: class table, e.g. full-test 12G)")
     parser.add_argument("cmd", nargs=argparse.REMAINDER, metavar="CMD...",
                         help="command to run, after --")
     args = parser.parse_args(argv)
@@ -662,10 +1229,11 @@ def main(argv=None):
                      "[--tag NAME] [--role ROLE] [--class CLASS] [--dry-run] "
                      "-- COMMAND...")
     if args.dry_run:
-        dry_run(cmd, cls=args.task_class, role=args.role)
+        dry_run(cmd, cls=args.task_class, role=args.role, cap_gib=args.cap)
         return 0
     return run_gated(cmd, tag=args.tag, role=args.role, cls=args.task_class,
-                     cap_gib=args.cap, swap_gib=args.swap)
+                     cap_gib=args.cap, swap_gib=args.swap,
+                     keep_daemon=args.keep_daemon, task_cap_gib=args.task_cap)
 
 
 if __name__ == "__main__":
