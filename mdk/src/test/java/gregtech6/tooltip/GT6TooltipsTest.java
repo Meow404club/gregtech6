@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
  * {@code Component.translatable} are all plain-object faces.
  *
  * <p>The zero-output contract (append on an unregistered family = zero lines) is the
- * T2-families-are-not-here-yet pin — the eleven not-yet-tabled families must not explode.
+ * T3-T5-families-are-not-here-yet pin — the not-yet-tabled families must not explode.
  */
 public class GT6TooltipsTest {
 
@@ -40,48 +40,126 @@ public class GT6TooltipsTest {
 	}
 
 	@Test
-	public void boilerRegistryCarriesTheTwoPilotRowsAtTheirUpstreamPositions() {
+	public void boilerRegistryPinsTheThirteenRowTable() {
 		List<GT6Tooltips.GT6TooltipLine> tRows = GT6Tooltips.REGISTRY.get("boiler");
-		assertEquals(2, tRows.size(), "the T1 pilot = exactly the two calibration rows");
-		// MultiTileEntityBoilerTank.java:95-109 order: row 7 = :102, row 9 = :104
-		assertEquals("gt6.tooltip.boiler.7", tRows.get(0).key());
-		assertEquals("gt6.tooltip.boiler.9", tRows.get(1).key());
-		assertSame(ChatFormatting.GOLD, tRows.get(0).style());     // Chat.ORANGE
-		assertSame(ChatFormatting.DARK_RED, tRows.get(1).style()); // Chat.DRED
+		// MultiTileEntityBoilerTank.addToolTips :95-109 = rows 1-12 (:96-:107) + the super
+		// facing row (TileEntityBase09FacingSingle.java:61, wrench :82) = row 13 — the row
+		// indexes ARE the upstream row positions
+		assertEquals(13, tRows.size(), "the boiler family = the 13-row upstream table");
+		for (int i = 0; i < 13; i++) {
+			assertEquals("gt6.tooltip.boiler." + (i + 1), tRows.get(i).key(), "row " + (i + 1) + " rides its upstream position");
+		}
+		// the lead colors, row by row (Chat.CYAN/YELLOW/GREEN/GREEN/RED/RED/ORANGE/ORANGE/
+		// DRED/DRED/DGRAY/DGRAY/DGRAY — the :96-:107 + :61 chat prefixes)
+		ChatFormatting[] tExpected = {
+				ChatFormatting.AQUA, ChatFormatting.YELLOW, ChatFormatting.GREEN, ChatFormatting.GREEN,
+				ChatFormatting.RED, ChatFormatting.RED, ChatFormatting.GOLD, ChatFormatting.GOLD,
+				ChatFormatting.DARK_RED, ChatFormatting.DARK_RED, ChatFormatting.DARK_GRAY,
+				ChatFormatting.DARK_GRAY, ChatFormatting.DARK_GRAY};
+		for (int i = 0; i < 13; i++) {
+			assertSame(tExpected[i], tRows.get(i).style(), "row " + (i + 1) + " lead color");
+		}
+		// the T1 pilot pair survives inside the full table, unconflicted at its positions
+		assertEquals("gt6.tooltip.boiler.7", tRows.get(6).key());
+		assertEquals("gt6.tooltip.boiler.9", tRows.get(8).key());
+	}
+
+	@Test
+	public void boilerLargeRegistryPinsTheEighteenRowTable() {
+		List<GT6Tooltips.GT6TooltipLine> tRows = GT6Tooltips.REGISTRY.get("boiler_large");
+		// MultiTileEntityLargeBoiler.addToolTips :150-167 = rows 1-15 (the STRUCTURE block
+		// :151-155 over the :143-146 keys) + TileEntityBase10MultiBlockBase.java:100-101 =
+		// rows 16-17 + the facing row :61 = row 18
+		assertEquals(18, tRows.size(), "the boiler_large family = the 18-row upstream table");
+		for (int i = 0; i < 18; i++) {
+			assertEquals("gt6.tooltip.boiler_large." + (i + 1), tRows.get(i).key(), "row " + (i + 1) + " rides its upstream position");
+		}
+		// the STRUCTURE sub-rows 2-5 = Chat.WHITE (the :152-:155 prefixes)
+		for (int i = 1; i <= 4; i++) {
+			assertSame(ChatFormatting.WHITE, tRows.get(i).style(), "structure row " + (i + 1) + " = WHITE");
+		}
+		assertSame(ChatFormatting.AQUA, tRows.get(0).style());      // :151 LH.STRUCTURE header
+		assertSame(ChatFormatting.GREEN, tRows.get(7).style());     // :158 ENERGY_INPUT
+		assertSame(ChatFormatting.RED, tRows.get(9).style());       // :160 ENERGY_OUTPUT
+		assertSame(ChatFormatting.GOLD, tRows.get(11).style());     // :162 REQUIREMENT_WATER_PURE
+		assertSame(ChatFormatting.DARK_RED, tRows.get(12).style()); // :163 HAZARD_EXPLOSION_STEAM
+		assertSame(ChatFormatting.DARK_GRAY, tRows.get(15).style()); // 10MultiBlockBase:100 builder wand
+	}
+
+	@Test
+	public void tankRegistryCarriesTheSingleStaticRow() {
+		// TileEntityBase08FluidContainer.addToolTips :99-111 — the ONE pure-static row :100
+		// (contentcap); the table is dormant until the port grows a tank registration class
+		List<GT6Tooltips.GT6TooltipLine> tRows = GT6Tooltips.REGISTRY.get("tank");
+		assertEquals(1, tRows.size());
+		assertEquals("gt6.tooltip.tank.1", tRows.get(0).key());
+		assertSame(ChatFormatting.AQUA, tRows.get(0).style()); // Chat.CYAN
+	}
+
+	@Test
+	public void barrelRegistriesDeleteTheCarryStateRows() {
+		// the design ruling: the :90 contentcap + :91 "Sealed (n)" carry rows are NOT
+		// ported (the canonical-TE rebuild is a second-phase face) — the row indexes keep
+		// the upstream positions, so keys .1/.2 must not exist in EITHER barrel table
+		List<String> tBarrelKeys = GT6Tooltips.REGISTRY.get("barrel").stream().map(GT6Tooltips.GT6TooltipLine::key).toList();
+		assertEquals(List.of("gt6.tooltip.barrel.3", "gt6.tooltip.barrel.4", "gt6.tooltip.barrel.10",
+				"gt6.tooltip.barrel.11", "gt6.tooltip.barrel.12", "gt6.tooltip.barrel.13"), tBarrelKeys);
+		List<String> tGasKeys = GT6Tooltips.REGISTRY.get("barrel_gas").stream().map(GT6Tooltips.GT6TooltipLine::key).toList();
+		assertEquals(List.of("gt6.tooltip.barrel_gas.3", "gt6.tooltip.barrel_gas.4", "gt6.tooltip.barrel_gas.6",
+				"gt6.tooltip.barrel_gas.10", "gt6.tooltip.barrel_gas.11", "gt6.tooltip.barrel_gas.12",
+				"gt6.tooltip.barrel_gas.13"), tGasKeys);
+		// the carry-state assertion: no barrel table carries rows 1-2 (Sealed/content)
+		for (String tFamily : List.of("barrel", "barrel_gas")) {
+			for (GT6Tooltips.GT6TooltipLine tRow : GT6Tooltips.REGISTRY.get(tFamily)) {
+				assertTrue(!tRow.key().endsWith(".1") && !tRow.key().endsWith(".2"),
+						tFamily + " must not carry the Sealed/content carry rows");
+			}
+		}
+		// the gas split: ONLY barrel_gas carries the :95 proof row
+		assertEquals(7, GT6Tooltips.REGISTRY.get("barrel_gas").size());
+		assertEquals(6, GT6Tooltips.REGISTRY.get("barrel").size(), "the wood barrel is the one gas=F row");
 	}
 
 	@Test
 	public void unregisteredFamilyAppendsNothing() {
 		List<Component> tTooltip = new ArrayList<>();
-		GT6Tooltips.append("tank", tTooltip);
 		GT6Tooltips.append("machine", tTooltip);
 		GT6Tooltips.append("sensor", tTooltip);
-		assertTrue(tTooltip.isEmpty(), "an unregistered family appends ZERO lines — the T2-before contract");
+		GT6Tooltips.append("wire", tTooltip);
+		assertTrue(tTooltip.isEmpty(), "an unregistered family appends ZERO lines — the T3-T5-before contract");
 	}
 
 	@Test
 	public void appendProducesKeyedTranslatablesInRegistryOrder() {
 		List<Component> tTooltip = new ArrayList<>();
 		GT6Tooltips.append("boiler", tTooltip);
-		assertEquals(2, tTooltip.size());
+		assertEquals(13, tTooltip.size());
 		TranslatableContents tRow0 = (TranslatableContents) tTooltip.get(0).getContents();
 		TranslatableContents tRow1 = (TranslatableContents) tTooltip.get(1).getContents();
-		assertEquals("gt6.tooltip.boiler.7", tRow0.getKey());
-		assertEquals("gt6.tooltip.boiler.9", tRow1.getKey());
+		assertEquals("gt6.tooltip.boiler.1", tRow0.getKey());
+		assertEquals("gt6.tooltip.boiler.2", tRow1.getKey());
 		// the components carry the upstream color (the palette rides the row, not the lang);
 		// withStyle(ChatFormatting) stores TextColor.fromLegacyFormat — the value comparison
-		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.GOLD), tTooltip.get(0).getStyle().getColor());
-		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.DARK_RED), tTooltip.get(1).getStyle().getColor());
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.AQUA), tTooltip.get(0).getStyle().getColor());
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.YELLOW), tTooltip.get(1).getStyle().getColor());
 	}
 
 	@Test
-	public void lineArgsSlotRidesTheTranslatable() {
-		GT6Tooltips.GT6TooltipLine tLine = new GT6Tooltips.GT6TooltipLine(
-				"gt6.tooltip.pilot.args", ChatFormatting.WHITE, 640);
-		TranslatableContents tContents = (TranslatableContents) tLine.component().getContents();
-		assertEquals("gt6.tooltip.pilot.args", tContents.getKey());
-		assertEquals(1, tContents.getArgs().length);
-		assertEquals(640, tContents.getArgs()[0]);
+	public void fallbackArgsRideThePositionalSlots() {
+		// the per-variant form: the carrier hands [in, out, cap] and every arg-less line
+		// takes the array through its positional slots (TranslatableContents.java:87-88)
+		List<Component> tTooltip = new ArrayList<>();
+		GT6Tooltips.append("boiler", tTooltip, 16, 32, 320000);
+		assertEquals(13, tTooltip.size());
+		TranslatableContents tRow3 = (TranslatableContents) tTooltip.get(2).getContents(); // boiler.3 = "%1$s HU/t"
+		assertEquals(3, tRow3.getArgs().length);
+		assertEquals(16, tRow3.getArgs()[0]);
+		assertEquals(320000, tRow3.getArgs()[2]);
+		// a line with OWN constant args ignores the fallback (the T1 args-slot stance)
+		GT6Tooltips.GT6TooltipLine tOwn = new GT6Tooltips.GT6TooltipLine("gt6.tooltip.pilot.args", ChatFormatting.WHITE, 640);
+		TranslatableContents tOwnContents = (TranslatableContents) tOwn.component(1, 2, 3).getContents();
+		assertEquals(1, tOwnContents.getArgs().length);
+		assertEquals(640, tOwnContents.getArgs()[0]);
 	}
 
 	@Test
@@ -95,6 +173,6 @@ public class GT6TooltipsTest {
 		}
 		assertTrue(tThrew, "a duplicate family registration must fail loud");
 		// the failed put left the original table in place (the registry rows unchanged)
-		assertEquals(2, GT6Tooltips.REGISTRY.get("boiler").size());
+		assertEquals(13, GT6Tooltips.REGISTRY.get("boiler").size());
 	}
 }
