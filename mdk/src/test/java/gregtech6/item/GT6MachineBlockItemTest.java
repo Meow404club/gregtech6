@@ -47,6 +47,7 @@ public class GT6MachineBlockItemTest extends GTOfflineTestBase {
 	static GT6MachineBlockItem sUntable;
 	static GT6MachineBlockItem sCokeOven;
 	static GT6MachineBlockItem sEnergySource;
+	static GT6MachineBlockItem sConverter;
 
 	/**
 	 * The block-construction write window (the GT6LargeMachineTexDatagenTest.BlockLatch
@@ -93,6 +94,11 @@ public class GT6MachineBlockItemTest extends GTOfflineTestBase {
 				() -> new GT6MachineBlockItem(Blocks.BRICKS, new Item.Properties(), "boiler", 16, 32, 320000));
 		sUntable = registerItemFixture("fixture_tooltip_pilot_untabled",
 				() -> new GT6MachineBlockItem(Blocks.BRICKS, new Item.Properties(), "machine"));
+		// the converter family carrier (the review rider, task r8-tooltip-multiblock-generator):
+		// the turbine/dynamo registration sites hand family="converter" — the vanilla-block
+		// fixture pins the replay without the block-registry latch
+		sConverter = registerItemFixture("fixture_tooltip_converter_rider",
+				() -> new GT6MachineBlockItem(Blocks.BRICKS, new Item.Properties(), "converter"));
 		// the real-block carriers (task r8-tooltip-multiblock-generator acceptance ①):
 		// the actual controller block classes a swap hands the carrier — the coke oven
 		// (the multiblock family) and the energy-source rig (the generator family);
@@ -164,6 +170,23 @@ public class GT6MachineBlockItemTest extends GTOfflineTestBase {
 		assertEquals(16, tRow3.getArgs()[0]);
 		assertEquals(32, tRow3.getArgs()[1]);
 		assertEquals(320000, tRow3.getArgs()[2]);
+	}
+
+	@Test
+	public void converterFamilyAppendsTheConverterBaseRows() {
+		// the review rider — the three TileEntityBase11MultiBlockConverter super-chain rows
+		// (:94 → the Base10MultiBlockBase :100-101 pair + the :61 facing row), the family
+		// the turbine/dynamo carriers replay (upstream MultiTileEntityLargeTurbine/LargeDynamo
+		// extend TileEntityBase11MultiBlockConverter)
+		List<Component> tTooltip = new ArrayList<>();
+		callHoverText(sConverter, new ItemStack(sConverter), tTooltip);
+		assertEquals(3, tTooltip.size(), "the converter family replays the three base rows");
+		TranslatableContents tRow0 = assertInstanceOf(TranslatableContents.class, tTooltip.get(0).getContents());
+		TranslatableContents tRow2 = assertInstanceOf(TranslatableContents.class, tTooltip.get(2).getContents());
+		assertEquals("gt6.tooltip.converter.4", tRow0.getKey());
+		assertEquals("gt6.tooltip.converter.6", tRow2.getKey());
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.DARK_GRAY), tTooltip.get(0).getStyle().getColor());
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.DARK_GRAY), tTooltip.get(2).getStyle().getColor());
 	}
 
 	@Test
