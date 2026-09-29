@@ -30,7 +30,9 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Set;
@@ -209,6 +211,43 @@ class GT6GuiReskinCensusTest {
         assertTrue(violations.isEmpty(), "reskin manifest violations: " + violations);
         assertTrue(MANIFEST.length >= 73,
             "only " + MANIFEST.length + " manifest rows — the wave pin must never shrink silently");
+    }
+
+    /**
+     * The README reskin section must mirror this table row-for-row (target stem,
+     * amazawa source, sha256) — this MANIFEST is the single source of truth and the
+     * README section is its human-facing copy; a copy edited without the table (or
+     * vice versa) fails here instead of quietly forking the ledger.
+     */
+    @Test
+    void readmeReskinSectionMirrorsManifest() throws IOException {
+        Path readme = mdkRoot().resolve(Path.of("src", "main", "resources", "assets", "README.md"));
+        String section = Files.readString(readme)
+            .split("## task r8-gui-reskin-amazawa", 2)[1];
+        Set<String> readmeRows = new LinkedHashSet<>();
+        java.util.regex.Matcher m = java.util.regex.Pattern
+            .compile("`gui/machines/([a-z0-9_-]+)\\.png` ← amazawa `([^`]+)` sha256 `([0-9a-f]{64})`")
+            .matcher(section);
+        while (m.find()) {
+            readmeRows.add(m.group(1) + "|" + m.group(2) + "|" + m.group(3));
+        }
+        Set<String> tableRows = new LinkedHashSet<>();
+        for (String[] row : MANIFEST) {
+            tableRows.add(row[0] + "|" + row[1] + "|" + row[2]);
+        }
+        assertEquals(tableRows, readmeRows,
+            "the README reskin manifest drifted from the pin-h table — the table is the "
+                + "single source of truth, fix the copy that is wrong (diff: "
+                + simpleDiff(tableRows, readmeRows) + ")");
+    }
+
+    private static String simpleDiff(Set<String> expected, Set<String> actual) {
+        Set<String> missing = new HashSet<>(expected);
+        missing.removeAll(actual);
+        Set<String> extra = new HashSet<>(actual);
+        extra.removeAll(expected);
+        return "readme-missing" + Arrays.toString(missing.toArray())
+            + " readme-extra" + Arrays.toString(extra.toArray());
     }
 
     /**
