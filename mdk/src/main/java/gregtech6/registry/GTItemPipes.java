@@ -72,6 +72,23 @@ public final class GTItemPipes {
 		public String unitKey() {
 			return "gt6.row.mat." + slug;
 		}
+
+		/**
+		 * The row's ore-dict material — the loader line's {@code MT.*} argument verbatim
+		 * (Loader_MultiTileEntities.java:1823-1825 Brass/Constantan/CobaltBrass). The
+		 * r8-tex-pipe-textures tint chain resolves the mRGBa seat from it
+		 * (upstream NBT_MATERIAL + NBT_COLOR = getRGBInt(fRGBaSolid), MultiTileEntityPipeItem
+		 * .java:76-82). Loud drift on an unknown slug — the table only ever grows with a
+		 * loader line in hand.
+		 */
+		public gregapi.oredict.OreDictMaterial oreDictMaterial() {
+			return switch (slug) {
+				case "brass" -> gregapi.data.MT.Brass;
+				case "constantan" -> gregapi.data.MT.Constantan;
+				case "cobalt_brass" -> gregapi.data.MT.CobaltBrass;
+				default -> throw new IllegalStateException("no ore-dict material pinned for pipe slug " + slug);
+			};
+		}
 	}
 
 	/**

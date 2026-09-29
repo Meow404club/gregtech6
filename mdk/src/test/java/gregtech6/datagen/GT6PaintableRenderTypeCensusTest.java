@@ -154,6 +154,13 @@ class GT6PaintableRenderTypeCensusTest {
         // form); the large boiler band model joins — the two-layer front-bearing shell
         // the five controllers share
         rModels.add("large_boiler");
+        // the pipe connector families (task r8-tex-pipe-textures): the four shared
+        // tintedPipeModel two-layer shells over the tintindex-0 body — model names are
+        // texture paths, not registry paths, hence the pinned literals
+        rModels.add("materialicons/wood/pipe_side");
+        rModels.add("materialicons/copper/pipe_side");
+        rModels.add("materialicons/copper/pipe_side_restrictive");
+        rModels.add("iconsets/logistics_wire");
         return rModels;
     }
 

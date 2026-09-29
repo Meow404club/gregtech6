@@ -233,6 +233,15 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// family carried since p32 is GONE (the achromatic-in-live-client route this card
 		// migrates away, the p32 bake ruling).
 		for (Block tBlock : gregtech6.registry.GT6BeeHives.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		// task r8-tex-pipe-textures — the three pipe connector families join the
+		// baked-tint domain: the 2 wood fluid rows, the 18 item pipe rows and the single
+		// logistics wire over their two-layer models (the body cube is the tintindex-0
+		// seat, the overlay bands untinted). The wire's material resolves NULL (upstream
+		// NBT_MATERIAL = MT.NULL) — the white identity passes through unchanged.
+		wrapStates(gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_SMALL.get(), aEvent);
+		wrapStates(gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.get(), aEvent);
+		for (Block tBlock : gregtech6.registry.GTItemPipes.blockArray()) wrapStates(tBlock, aEvent);
+		wrapStates(gregtech6.registry.GT6Logistics.LOGISTICS_WIRE.get(), aEvent);
 	}
 
 	/**
@@ -279,6 +288,16 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// task r8-tex-large-boilers — the five large boiler rows join the same controller
 		// lambda (the NBT_MATERIAL column rides the GTMultiBlockControllerBlock carrier)
 		for (Block tBlock : gregtech6.registry.GTMultiBlocks.boilerPaintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		// task r8-tex-pipe-textures — the three pipe connector families' 21 BlockItems
+		// (the 2 wood fluid rows, the 18 item pipe rows, the logistics wire) join the
+		// same lambda; the wire's carrier resolves NULL (upstream NBT_MATERIAL = MT.NULL)
+		// so its unpainted identity stays the white no-op.
+		tPaintItems.add(gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_SMALL_ITEM.get());
+		tPaintItems.add(gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM_ITEM.get());
+		// the entry handles compile against both legs' RegistryObject/DeferredHolder
+		// without a fork (the GT6BlockTags mineable-band lambda shape)
+		gregtech6.registry.GTItemPipes.ITEMS_BY_PATH.values().forEach(tPipeItem -> tPaintItems.add(tPipeItem.get()));
+		tPaintItems.add(gregtech6.registry.GT6Logistics.LOGISTICS_WIRE_ITEM.get());
 		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tPaintItems.toArray(Item[]::new));
 	}
 

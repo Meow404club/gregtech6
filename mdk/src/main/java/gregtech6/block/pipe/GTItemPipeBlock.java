@@ -98,6 +98,18 @@ public class GTItemPipeBlock extends GTEntityBlock {
 		return mRow.displayName();
 	}
 
+	/**
+	 * The row's ore-dict material off the carried {@link ItemPipeRow} (the loader line's
+	 * MT argument; upstream registers NBT_MATERIAL + NBT_COLOR = getRGBInt(fRGBaSolid),
+	 * MultiTileEntityPipeItem.java:76-82). The r8-tex-pipe-textures tint dispatch seam
+	 * (the {@code GTBasicMachineBlock.materialOf} shape): null for any other block, so
+	 * the {@code GTMachinePaintTint.tintMaterialOf} gate keeps every foreign domain
+	 * byte-identical.
+	 */
+	public static gregapi.oredict.OreDictMaterial materialOf(Block aBlock) {
+		return aBlock instanceof GTItemPipeBlock tPipe ? tPipe.mRow.material().oreDictMaterial() : null;
+	}
+
 	// ---------------------------------------------------------------------------
 	// the two-layer wrench interaction (the GTFluidPipeBlock.use shape)
 	// ---------------------------------------------------------------------------
