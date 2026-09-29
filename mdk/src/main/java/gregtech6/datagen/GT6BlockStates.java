@@ -114,7 +114,6 @@ public final class GT6BlockStates extends BlockStateProvider {
         Block tChest = GTBlockEntities.EXAMPLE_CHEST.get();
         simpleBlock(tChest, models().cubeAll("example_chest", modLoc("block/example_chest")));
         itemModels().withExistingParent("example_chest", mcLoc("item/generated")).texture("layer0", modLoc("block/example_chest"));
-        itemModels().withExistingParent("example_chest", modLoc("block/example_chest"));
         // task r8-tex-pipe-textures — the three pipe connector families leave the
         // cube_all placeholder era for the upstream material-set DUAL-LAYER tinted form.
         // Upstream every material-icon render is two passes: pass 0 = the set art
