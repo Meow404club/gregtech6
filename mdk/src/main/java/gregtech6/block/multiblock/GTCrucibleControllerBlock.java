@@ -26,7 +26,11 @@ public class GTCrucibleControllerBlock extends GTMultiBlockControllerBlock {
 	private final GT6Crucibles.CrucibleRow mRow;
 
 	public GTCrucibleControllerBlock(GT6Crucibles.CrucibleRow aRow, Properties aProperties) {
-		super(aProperties);
+		// task r8-tex-multiblockmains — the row's shell material rides the carrier ctor
+		// (the :1270-1277 NBT_MATERIAL columns; the GTLargeBoilerBlock form), so the
+		// two-layer controller model's tintindex-0 body resolves the row colour through
+		// the GTMultiBlockControllerBlock.materialOf gate (the p38-c2 form)
+		super(aProperties, aRow::material);
 		mRow = aRow;
 	}
 	//? if neoforge {

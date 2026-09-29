@@ -114,6 +114,18 @@ public final class GT6HeatExchangers {
 			return HEAT_EXCHANGER_ROW;
 		}
 
+		/**
+		 * The HEX-carrier material dispatch (task r8-tex-multiblockmains — the
+		 * {@code GT6DynamoBlock.materialOf} mirror shape): the single controller resolves
+		 * the :1245 NBT_MATERIAL column (ANY.W, the machine_wall_tungsten MT.W mapping) so
+		 * the two-layer model's tintindex-0 body tints; every other block is null here
+		 * (the white identity).
+		 */
+		@Nullable
+		public static gregapi.oredict.OreDictMaterial materialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
+			return aBlock instanceof HeatExchangerBlock ? gregapi.data.MT.W : null;
+		}
+
 		@Override
 		protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> aBuilder) {
 			aBuilder.add(TileEntityBase10MultiBlockBase.FORMED);

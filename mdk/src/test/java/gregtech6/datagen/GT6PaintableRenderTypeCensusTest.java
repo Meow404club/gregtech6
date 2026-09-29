@@ -154,6 +154,14 @@ class GT6PaintableRenderTypeCensusTest {
         // form); the large boiler band model joins — the two-layer front-bearing shell
         // the five controllers share
         rModels.add("large_boiler");
+        // the four multiblockmains controller families (task r8-tex-multiblockmains):
+        // the shared two-layer front-bearing boilerModel shells over the tintindex-0
+        // body — the shared large_crucible band model is not a registry path, the other
+        // three keep their registry-path model names
+        rModels.add("large_crucible");
+        rModels.add("logistics_core");
+        rModels.add("multiblock_lightning_rod");
+        rModels.add("large_heat_exchanger");
         // the pipe connector families (task r8-tex-pipe-textures): the four shared
         // tintedPipeModel two-layer shells over the tintindex-0 body — model names are
         // texture paths, not registry paths, hence the pinned literals
