@@ -121,6 +121,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addMachineJadeUnits();  // task p34-hygiene-lang — the machine/fluid jade band (hand rows, the tsv direct band)
 		addBoilerJadeUnits();   // task r5-jade-boiler — the boiler jade band (hand rows, the tsv direct band)
 		addConverterJadeUnits(); // task r5-jade-converters — the converter-family jade band (hand rows, the tsv direct band)
+		addBoilerTooltipUnits(); // task r8-tooltip-infra — the boiler tooltip pilot band (hand rows, the tsv direct band)
 		addAnvilUnits();        // task p28-c-anvil
 		addPocketUnits();       // task p29-w5-t7-pocket-eight — the 8+7 pocket face (hand rows, no dump face exists)
 		addArmorUnits();        // task p29-w5-t8-armor-24
@@ -494,6 +495,21 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(GT6ConverterProvider.LANG_STORED);
 		addDirect(GT6ConverterProvider.LANG_STORED_BARE);
 		addDirect(GT6ConverterProvider.LANG_RATE);
+	}
+
+	/**
+	 * The boiler tooltip pilot rows zh faces (task r8-tooltip-infra, 2 hand rows — the
+	 * addBoilerJadeUnits shape): the T1 calibration pair at their upstream positions in
+	 * the boiler addToolTips table (row 7 = 纯水要求, row 9 = 蒸汽爆炸危险). The upstream
+	 * dump {@code gt.lang.requirement.water.pure} / {@code gt.lang.hazard.explosion.steam}
+	 * faces do exist for the family but the row keys are this port's own
+	 * {@code gt6.tooltip.boiler.*} vocabulary, so the values ride the reference table's
+	 * hand layer via {@link #addDirect} — the TSV rows, this walk and the lang regen land
+	 * in the SAME commit (the W2 wash-out lesson).
+	 */
+	private void addBoilerTooltipUnits() {
+		addDirect("gt6.tooltip.boiler.7");
+		addDirect("gt6.tooltip.boiler.9");
 	}
 
 	/**

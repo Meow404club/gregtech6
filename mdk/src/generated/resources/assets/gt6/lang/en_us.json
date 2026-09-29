@@ -3657,6 +3657,8 @@
   "gt6.tagprefix.wire_gt15": "15x %s Wire",
   "gt6.tagprefix.wire_gt16": "16x %s Wire",
   "gt6.tagprefix.wood": "%s",
+  "gt6.tooltip.boiler.7": "Requires any Water. Use distilled Water for best efficiency!",
+  "gt6.tooltip.boiler.9": "Explodes when Steam Pressure is too high!",
   "gt6.tooltip.lightningrod.1": "Bottom: 3x3 of Tungsten Walls with Main at Center",
   "gt6.tooltip.lightningrod.2": "Then: Full 3x3 of Large Niobium-Titanium Coils",
   "gt6.tooltip.lightningrod.3": "Then: Full 3x3 of Tungsten Walls",
