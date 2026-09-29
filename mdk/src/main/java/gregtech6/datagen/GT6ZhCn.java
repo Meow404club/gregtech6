@@ -19,6 +19,7 @@ import gregtech6.jade.GT6ConverterProvider;
 import gregtech6.jade.GT6FluidProvider;
 import gregtech6.jade.GT6JadeRows;
 import gregtech6.jade.GT6MachineProvider;
+import gregtech6.jade.GT6SensorProvider;
 import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.jei.GT6RecipeMapViewerMeta;
 import gregtech6.registry.GT6BookText;
@@ -122,6 +123,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addBoilerJadeUnits();   // task r5-jade-boiler — the boiler jade band (hand rows, the tsv direct band)
 		addConverterJadeUnits(); // task r5-jade-converters — the converter-family jade band (hand rows, the tsv direct band)
 		addBoilerTooltipUnits(); // task r8-tooltip-infra — the boiler tooltip pilot band (hand rows, the tsv direct band)
+		addSensorJadeUnits(); // task r8-jade-sensor-provider — the sensor-family jade band (hand rows, the tsv direct band)
 		addAnvilUnits();        // task p28-c-anvil
 		addPocketUnits();       // task p29-w5-t7-pocket-eight — the 8+7 pocket face (hand rows, no dump face exists)
 		addArmorUnits();        // task p29-w5-t8-armor-24
@@ -510,6 +512,32 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addBoilerTooltipUnits() {
 		addDirect("gt6.tooltip.boiler.7");
 		addDirect("gt6.tooltip.boiler.9");
+	}
+
+	/**
+	 * The sensor-family Jade face zh units (task r8-jade-sensor-provider, 13 hand rows —
+	 * the addMachineJadeUnits shape): the reading/mode/redstone lines, the sneak pair (采样
+	 * + 探测面 — the face arg rides the untranslated Direction name per the /gt6sensor read
+	 * channel wording) and the eight mode names (upstream has zero textual mode names — the
+	 * names are authored against the GTSensorLogic mode semantics). No dump face exists
+	 * (upstream 1.7.10 has zero WAILA integration), so these ride the reference table's
+	 * hand layer via {@link #addDirect} — the tsv rows, this walk and the datagen output
+	 * land in the SAME commit (the noHandRowIsOrphaned pin otherwise surfaces the gap).
+	 */
+	private void addSensorJadeUnits() {
+		addDirect(GT6SensorProvider.LANG_READING);
+		addDirect(GT6SensorProvider.LANG_MODE);
+		addDirect(GT6SensorProvider.LANG_REDSTONE);
+		addDirect(GT6SensorProvider.LANG_SAMPLE);
+		addDirect(GT6SensorProvider.LANG_PROBE);
+		addDirect("gt6.jade.sensor.mode.display");
+		addDirect("gt6.jade.sensor.mode.percent");
+		addDirect("gt6.jade.sensor.mode.greater");
+		addDirect("gt6.jade.sensor.mode.equal");
+		addDirect("gt6.jade.sensor.mode.smaller");
+		addDirect("gt6.jade.sensor.mode.scale");
+		addDirect("gt6.jade.sensor.mode.full");
+		addDirect("gt6.jade.sensor.mode.not_full");
 	}
 
 	/**
