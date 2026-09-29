@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/atlarus"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    " P ",
+    "f h",
+    " s "
+  ],
+  "result": {
+    "item": "gt6:tool_head_builderwand_atlarus"
+  },
+  "show_notification": true
+}

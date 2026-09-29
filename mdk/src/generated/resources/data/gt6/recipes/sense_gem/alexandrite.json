@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_alexandrite"
+    },
+    "G": {
+      "tag": "forge:gems/alexandrite"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CCG",
+    "f  "
+  ],
+  "result": {
+    "item": "gt6:tool_head_sense_alexandrite"
+  },
+  "show_notification": true
+}

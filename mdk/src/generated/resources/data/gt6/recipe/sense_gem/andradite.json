@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_andradite"
+    },
+    "G": {
+      "tag": "c:gems/andradite"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CCG",
+    "f  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_sense_andradite"
+  }
+}

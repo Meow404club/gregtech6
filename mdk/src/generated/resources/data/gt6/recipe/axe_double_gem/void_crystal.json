@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_void_crystal"
+    },
+    "G": {
+      "tag": "c:gems/void_crystal"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CGC",
+    "C C",
+    "f  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_axe_double_void_crystal"
+  }
+}

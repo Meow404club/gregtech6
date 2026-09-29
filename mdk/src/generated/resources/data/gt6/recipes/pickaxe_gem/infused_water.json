@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_infused_water"
+    },
+    "G": {
+      "tag": "forge:gems/infused_water"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CGG",
+    "f  "
+  ],
+  "result": {
+    "item": "gt6:tool_head_pickaxe_infused_water"
+  },
+  "show_notification": true
+}

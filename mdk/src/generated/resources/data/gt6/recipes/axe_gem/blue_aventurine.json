@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_blue_aventurine"
+    },
+    "G": {
+      "tag": "forge:gems/blue_aventurine"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CG ",
+    "C  ",
+    "f  "
+  ],
+  "result": {
+    "item": "gt6:tool_head_axe_blue_aventurine"
+  },
+  "show_notification": true
+}

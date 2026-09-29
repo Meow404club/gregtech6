@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_enori"
+    },
+    "G": {
+      "tag": "forge:gems/enori"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CG ",
+    "C  ",
+    "f  "
+  ],
+  "result": {
+    "item": "gt6:tool_head_axe_enori"
+  },
+  "show_notification": true
+}

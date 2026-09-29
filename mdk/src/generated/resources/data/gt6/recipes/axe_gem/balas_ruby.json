@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_balas_ruby"
+    },
+    "G": {
+      "tag": "forge:gems/balas_ruby"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CG ",
+    "C  ",
+    "f  "
+  ],
+  "result": {
+    "item": "gt6:tool_head_axe_balas_ruby"
+  },
+  "show_notification": true
+}

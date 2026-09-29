@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_quartz_black"
+    },
+    "G": {
+      "tag": "c:gems/quartz_black"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CGG",
+    "f  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_pickaxe_quartz_black"
+  }
+}

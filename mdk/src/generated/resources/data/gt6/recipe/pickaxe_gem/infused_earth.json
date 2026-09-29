@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_infused_earth"
+    },
+    "G": {
+      "tag": "c:gems/infused_earth"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CGG",
+    "f  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_pickaxe_infused_earth"
+  }
+}

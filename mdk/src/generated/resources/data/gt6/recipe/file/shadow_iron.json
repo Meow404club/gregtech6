@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "c:plates/shadow_iron"
+    },
+    "k": {
+      "tag": "gt6:tools/knife"
+    }
+  },
+  "pattern": [
+    " P ",
+    " Pk"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_file_shadow_iron"
+  }
+}

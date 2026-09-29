@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/black_bronze"
+    },
+    "P": {
+      "tag": "forge:plates/black_bronze"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "PPI",
+    "f h"
+  ],
+  "result": {
+    "item": "gt6:tool_head_sense_black_bronze"
+  },
+  "show_notification": true
+}

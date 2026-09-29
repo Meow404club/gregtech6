@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_gravitite"
+    },
+    "G": {
+      "tag": "forge:gems/gravitite"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CG ",
+    "C  ",
+    "f  "
+  ],
+  "result": {
+    "item": "gt6:tool_head_axe_gravitite"
+  },
+  "show_notification": true
+}

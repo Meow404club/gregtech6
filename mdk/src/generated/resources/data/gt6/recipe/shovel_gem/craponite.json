@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_craponite"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "fC "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_shovel_craponite"
+  }
+}

@@ -384,6 +384,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		digLadderRows(aConsumer);
 		// task p31-machine-ladder — the machine family material rows (the identity-stamped walk)
 		machineLadderRows(aConsumer);
+		// task r9-39-toolhead-rows — the arg-9 completion band: the 9 missing head families
+		// + the dig/chisel/saw C variants (GitHub #39)
+		toolHeadRows(aConsumer);
 		// task r7-39-toolhead-assembly — the 17 head+handle assembly rows (the ACT :332-350 port)
 		toolAssemblyRows(aConsumer);
 		// task p33-circuits-crafting-c — the circuits band: the 26 integrated-circuit rows
@@ -618,6 +621,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task p31-dig-ladder — the per-material identity-stamped rows (the axis walk)
 		digLadderRows(aOutput);
 		machineLadderRows(aOutput);
+		toolHeadRows(aOutput);
 		toolAssemblyRows(aOutput);
 		// task p33-circuits-crafting-c — the circuits band: the 26 integrated-circuit rows
 		// (gt6:circuit_program) + the ventilation/processor-unit six (gt6 shaped)
@@ -3458,10 +3462,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	// the And(ANTIMATTER.NOT, MT.Wood.NOT, COATED.NOT) axis), ONE gt6:material_tool
 	// row per (dig form x plate+ingot material). The plain steel anchors above are the
 	// identity-less steel arm; every other axis material gets its own stamped row (the
-	// upstream second P-variant rows are cut: the C variant rides the plateGem ITEM and
-	// the G variant the gem — the OreProcessing_Tool letter alphabet, Loader_Tools
-	// :393-404 — the blade ladder kept C where its plateGem item truth exists; the dig
-	// family keeps the P/I rows only, the declared cut).
+	// upstream second C-variant rows ride the head-row completion band below — the
+	// r9-39-toolhead-rows card; the blade ladder kept C where its plateGem item truth
+	// exists).
+	// NOTE (r9-39-toolhead-rows): the spade row's lowercase 's' cell is the CR.java:211
+	// SAW tool letter (the decisions.r9-toolhead-s-letter ruling) — r7-39 had emitted
+	// the wooden-rod tag there; the dig walk carries the reform.
 
 	/**
 	 * M5 unification (task p31-machine-ladder): the upstream {@code MT.Wood.NOT} axis
@@ -3541,7 +3547,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		return rBuilder;
 	}
 
-	/** The row letters (the upstream OreProcessing_Tool alphabet over the P/I variant). */
+	/**
+	 * The row letters (the upstream OreProcessing_Tool alphabet over the P/I variant).
+	 * 's' = the CR.java:211 lowercase SAW tool letter — the decisions.r9-toolhead-s-letter
+	 * ruling (r7-39 had misread it as the wooden rod; the tool-damage slot is a saw tag).
+	 */
 	private static TagKey<Item> digLadderIngredient(char aKey, gregapi.oredict.OreDictMaterial aMaterial) {
 		String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(aMaterial.mNameInternal);
 		return switch (aKey) {
@@ -3549,7 +3559,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			case 'I' -> GT6ItemTags.materialTag(GT6ItemTags.INGOTS_FAMILY, tSnake);
 			case 'h' -> GT6ItemTags.TOOLS_HARD_HAMMER;
 			case 'f' -> GT6ItemTags.TOOLS_FILE;
-			case 's' -> Tags.Items.RODS_WOODEN;
+			case 's' -> GT6ItemTags.TOOLS_SAW;
 			default -> throw new IllegalArgumentException("unknown dig ladder letter: " + aKey);
 		};
 	}
@@ -4138,6 +4148,213 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		throw new IllegalArgumentException("no material-carrying letter to anchor the advancement: " + aForm.aId());
 	}
+
+	// ------------------------------------------------------------------------
+	// The head-row completion band (task r9-39-toolhead-rows, GitHub #39) — the arg-9
+	// tool-head rows r7-39 left uncrafted: the 9 families builderwand (Loader_Tools
+	// :293), axeDouble (:301), sense (:302), plow (:303), file (:304), chainsaw (:308),
+	// drill (:309), wrench head (:310), plus the C (plateGem)/G (gem) SECOND variants of
+	// the dig six (:294-300) and the machine chisel (:305)/saw (:307). ONE vanilla
+	// crafting_shaped row per (form x head-item material) through the headRowBuilder
+	// face — the head item IS the identity. The walk = the head-prefix item truth (the
+	// registrationOrder; the ported OP prefix conditions carry the typemin/BOUNCY/
+	// STRETCHY/chain gates, OP.java:1281-1298) ∩ the listener gates (the :426
+	// mToolTypes>0 + the :393-405 letter alphabet rows verbatim) ∩ the letter item
+	// truth. Letters: P = the plates tag, I = the ingots tag, G = the gems tag (all
+	// item-truth gated), C = the plateGem ITEM (the bladeLadderIngredient 'C' precedent
+	// — no tag family), S = the stick item; f/h/s/k/d = the CR.java:193-217 lowercase
+	// TOOL letters (the tool tags; 's' = TOOLS_SAW, the decisions.r9-toolhead-s-letter
+	// ruling). The chainsaw/drill/wrench fixed letters ride the per-form specials
+	// (Loader_Tools :308-:310 arg-13/14: chainsaw W=plate/V=ring Steel + X=the row
+	// material's chain, drill V=plateCurved Steel, wrench head W=screw/V=ring Steel).
+	// Row ids: the C variant is <form>_gem (the blade-ladder convention), the builderwand
+	// :293 third shape (the bare-gem 'G' variant) is builder_wand_pure_gem, and the
+	// wrench HEAD rows are wrench_head (wrench/<mat> is the machine band's :310 arg-8
+	// tool row). Steel keeps its head rows (the machine-band ruling: the p29-w5 steel
+	// anchors own the TOOL face only). DECLARED: the wood() family folds out through the
+	// letter item truth (no plate/plateGem/gem items) — the dig-band plank fold stays
+	// unported, and the builderwand :293 axis lacking the upstream MT.Wood.NOT is
+	// unobservable for the same reason (the uniform woodExcluded here).
+	// ------------------------------------------------------------------------
+
+	/** One head-row form: the id, the head prefix, the listener gates ({@code aQualMax} Integer.MAX_VALUE = no gate), the shape, the fixed-prefix specials. */
+	record ToolHeadRowForm(String aId, gregapi.oredict.OreDictPrefix aHead, int aTypeMin, int aQualMin, int aQualMax,
+			boolean aNoCoated, String[] aPattern, java.util.Map<Character, ToolHeadSpecial> aSpecials) {}
+
+	/** A fixed-prefix letter: {@code aFixed} null = the walk material, else the fixed material (the ANY.Steel fold). */
+	record ToolHeadSpecial(gregapi.oredict.OreDictPrefix aPrefix, gregapi.oredict.OreDictMaterial aFixed) {}
+
+	/** One walked head row (the test-visible census unit). */
+	record ToolHeadRow(ToolHeadRowForm aForm, gregapi.oredict.OreDictMaterial aMaterial, String aSnake) {}
+
+	/** The :293-:310 arg-9 completion table + the dig/chisel/saw C variants — upstream order, shapes verbatim. */
+	static final java.util.List<ToolHeadRowForm> TOOL_HEAD_ROW_FORMS = java.util.List.of(
+			// builderwand :293 — the And(ANTIMATTER.NOT) axis ONLY (no Wood/COATED gate upstream)
+			new ToolHeadRowForm("builder_wand", gregapi.data.OP.toolHeadBuilderwand, 0, 0, Integer.MAX_VALUE, false, new String[] {" P ", "f h", " s "}, null),
+			new ToolHeadRowForm("builder_wand_gem", gregapi.data.OP.toolHeadBuilderwand, 0, 0, Integer.MAX_VALUE, false, new String[] {" C ", "f h", " s "}, null),
+			new ToolHeadRowForm("builder_wand_pure_gem", gregapi.data.OP.toolHeadBuilderwand, 0, 0, Integer.MAX_VALUE, false, new String[] {" G ", "f h", " s "}, null),
+			// the dig six C variants (:294-300 second shapes) — the dig axis (no typemin)
+			new ToolHeadRowForm("pickaxe_construction_gem", gregapi.data.OP.toolHeadConstructionPickaxe, 0, 0, Integer.MAX_VALUE, true, new String[] {"CGC", "f  "}, null),
+			new ToolHeadRowForm("pickaxe_gem", gregapi.data.OP.toolHeadPickaxe, 0, 0, Integer.MAX_VALUE, true, new String[] {"CGG", "f  "}, null),
+			new ToolHeadRowForm("shovel_gem", gregapi.data.OP.toolHeadShovel, 0, 0, Integer.MAX_VALUE, true, new String[] {"fC "}, null),
+			new ToolHeadRowForm("spade_gem", gregapi.data.OP.toolHeadSpade, 0, 0, Integer.MAX_VALUE, true, new String[] {"fC ", " s "}, null),
+			new ToolHeadRowForm("hoe_gem", gregapi.data.OP.toolHeadHoe, 0, 0, Integer.MAX_VALUE, true, new String[] {"CG ", "f  "}, null),
+			new ToolHeadRowForm("axe_gem", gregapi.data.OP.toolHeadAxe, 0, 0, Integer.MAX_VALUE, true, new String[] {"CG ", "C  ", "f  "}, null),
+			// axeDouble :301 / sense :302 / plow :303 — the typemin(2) axis
+			new ToolHeadRowForm("axe_double", gregapi.data.OP.toolHeadAxeDouble, 2, 0, Integer.MAX_VALUE, true, new String[] {"PIP", "P P", "f h"}, null),
+			new ToolHeadRowForm("axe_double_gem", gregapi.data.OP.toolHeadAxeDouble, 2, 0, Integer.MAX_VALUE, true, new String[] {"CGC", "C C", "f  "}, null),
+			new ToolHeadRowForm("sense", gregapi.data.OP.toolHeadSense, 2, 0, Integer.MAX_VALUE, true, new String[] {"PPI", "f h"}, null),
+			new ToolHeadRowForm("sense_gem", gregapi.data.OP.toolHeadSense, 2, 0, Integer.MAX_VALUE, true, new String[] {"CCG", "f  "}, null),
+			new ToolHeadRowForm("plow", gregapi.data.OP.toolHeadPlow, 2, 0, Integer.MAX_VALUE, true, new String[] {"PPP", "PPP", "f h"}, null),
+			new ToolHeadRowForm("plow_gem", gregapi.data.OP.toolHeadPlow, 2, 0, Integer.MAX_VALUE, true, new String[] {"CCC", "CCC", "f  "}, null),
+			// file :304 — typemin(2) + qualmax(2), k = the knife tool letter (CR.java:204)
+			new ToolHeadRowForm("file", gregapi.data.OP.toolHeadFile, 2, 0, 2, true, new String[] {" P ", " Pk"}, null),
+			// the machine chisel C (:305) / saw C (:307) — the machine typemin(2) axis
+			new ToolHeadRowForm("chisel_gem", gregapi.data.OP.toolHeadChisel, 2, 0, Integer.MAX_VALUE, true, new String[] {"Cf", "S "}, null),
+			new ToolHeadRowForm("saw_gem", gregapi.data.OP.toolHeadSaw, 2, 0, Integer.MAX_VALUE, true, new String[] {"CC", "f "}, null),
+			// chainsaw :308 — W/V Steel + the material chain; NO COATED gate upstream
+			new ToolHeadRowForm("chainsaw", gregapi.data.OP.toolHeadChainsaw, 2, 0, Integer.MAX_VALUE, false, new String[] {"WVW", "XhX", "WVW"},
+					java.util.Map.of('W', new ToolHeadSpecial(gregapi.data.OP.plate, gregapi.data.MT.Steel),
+							'V', new ToolHeadSpecial(gregapi.data.OP.ring, gregapi.data.MT.Steel),
+							'X', new ToolHeadSpecial(gregapi.data.OP.chain, null))),
+			// drill :309 — V = plateCurved Steel
+			new ToolHeadRowForm("drill", gregapi.data.OP.toolHeadDrill, 2, 0, Integer.MAX_VALUE, false, new String[] {"PVP", "PVP", "VhV"},
+					java.util.Map.of('V', new ToolHeadSpecial(gregapi.data.OP.plateCurved, gregapi.data.MT.Steel))),
+			new ToolHeadRowForm("drill_gem", gregapi.data.OP.toolHeadDrill, 2, 0, Integer.MAX_VALUE, false, new String[] {"CVC", "CVC", "VhV"},
+					java.util.Map.of('V', new ToolHeadSpecial(gregapi.data.OP.plateCurved, gregapi.data.MT.Steel))),
+			// wrench head :310 — qualmin(1), NO COATED gate upstream
+			new ToolHeadRowForm("wrench_head", gregapi.data.OP.toolHeadWrench, 2, 1, Integer.MAX_VALUE, false, new String[] {"hPW", "PVP", "WPd"},
+					java.util.Map.of('W', new ToolHeadSpecial(gregapi.data.OP.screw, gregapi.data.MT.Steel),
+							'V', new ToolHeadSpecial(gregapi.data.OP.ring, gregapi.data.MT.Steel))),
+			new ToolHeadRowForm("wrench_head_gem", gregapi.data.OP.toolHeadWrench, 2, 1, Integer.MAX_VALUE, false, new String[] {"hCW", "CVC", "WCd"},
+					java.util.Map.of('W', new ToolHeadSpecial(gregapi.data.OP.screw, gregapi.data.MT.Steel),
+							'V', new ToolHeadSpecial(gregapi.data.OP.ring, gregapi.data.MT.Steel))));
+
+	/** The per-form listener gate — the upstream And() rows verbatim (OreDictMaterialCondition :67-89). */
+	private static boolean toolHeadRowAxis(gregapi.oredict.OreDictMaterial aMaterial, ToolHeadRowForm aForm) {
+		if (aMaterial.mToolTypes <= 0) return false; // the :426 listener gate
+		if (aMaterial.mToolTypes < aForm.aTypeMin()) return false; // typemin
+		if (aMaterial.mToolQuality < aForm.aQualMin()) return false; // qualmin
+		if (aMaterial.mToolQuality > aForm.aQualMax()) return false; // qualmax
+		if (aMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) return false; // ANTIMATTER.NOT (every family)
+		if (woodExcluded(aMaterial)) return false; // MT.Wood.NOT — the M5 identity form (builderwand note above)
+		if (aForm.aNoCoated() && aMaterial.contains(gregapi.data.TD.Compounds.COATED)) return false; // COATED.NOT
+		return true;
+	}
+
+	/**
+	 * The row letters — {@code null} = the item-truth miss (the row is skipped, never
+	 * emitted with an unresolvable ingredient; the machineLadderIngredient :4073 form).
+	 */
+	private static net.minecraft.world.item.crafting.Ingredient toolHeadRowIngredient(ToolHeadRowForm aForm, char aKey,
+			gregapi.oredict.OreDictMaterial aMaterial) {
+		ToolHeadSpecial tSpecial = aForm.aSpecials() != null ? aForm.aSpecials().get(aKey) : null;
+		if (tSpecial != null) {
+			gregapi.oredict.OreDictMaterial tMaterial = tSpecial.aFixed() != null ? tSpecial.aFixed() : aMaterial;
+			return gregtech6.registry.GTMaterialItems.get(tSpecial.aPrefix(), tMaterial) == null ? null
+					: net.minecraft.world.item.crafting.Ingredient.of(gregtech6.registry.GTMaterialItems.get(tSpecial.aPrefix(), tMaterial).get());
+		}
+		String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(aMaterial.mNameInternal);
+		return switch (aKey) {
+			case 'P' -> gregapi.data.OP.plate.isGeneratingItem(aMaterial) ? net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake)) : null;
+			case 'I' -> gregapi.data.OP.ingot.isGeneratingItem(aMaterial) ? net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.materialTag(GT6ItemTags.INGOTS_FAMILY, tSnake)) : null;
+			case 'G' -> gregapi.data.OP.gem.isGeneratingItem(aMaterial) ? net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, tSnake)) : null;
+			case 'C' -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plateGem, aMaterial) == null ? null
+					: net.minecraft.world.item.crafting.Ingredient.of(gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plateGem, aMaterial).get());
+			case 'S' -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.stick, aMaterial) == null ? null
+					: net.minecraft.world.item.crafting.Ingredient.of(gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.stick, aMaterial).get());
+			case 'f' -> net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_FILE);
+			case 'h' -> net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_HARD_HAMMER);
+			case 's' -> net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_SAW);
+			case 'k' -> net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_KNIFE);
+			case 'd' -> net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_SCREWDRIVER);
+			default -> throw new IllegalArgumentException("unknown tool-head row letter: " + aKey);
+		};
+	}
+
+	/**
+	 * Every material-carrying letter's ITEM TRUTH holds for the material (the row-skip
+	 * gate). OFFLINE-PURE: the predicate pass ({@code isGeneratingItem} — the
+	 * PrefixItem.java:104 registration criterion, the SAME face registerItems walks), so
+	 * the census walk reproducible in the headless test JVM; the emission resolver's
+	 * get() faces stay datagen-JVM-only (a registrationOrder pair is guaranteed a
+	 * registered item there — first-wins id-drops are folded out by enumerate()).
+	 */
+	private static boolean toolHeadRowResolvable(ToolHeadRowForm aForm, gregapi.oredict.OreDictMaterial aMaterial) {
+		for (String tPatternRow : aForm.aPattern()) {
+			for (char tChar : tPatternRow.toCharArray()) {
+				if (tChar == ' ') continue;
+				ToolHeadSpecial tSpecial = aForm.aSpecials() != null ? aForm.aSpecials().get(tChar) : null;
+				if (tSpecial != null) {
+					if (!tSpecial.aPrefix().isGeneratingItem(tSpecial.aFixed() != null ? tSpecial.aFixed() : aMaterial)) return false;
+				} else {
+					boolean tTruth = switch (tChar) {
+						case 'P' -> gregapi.data.OP.plate.isGeneratingItem(aMaterial);
+						case 'I' -> gregapi.data.OP.ingot.isGeneratingItem(aMaterial);
+						case 'G' -> gregapi.data.OP.gem.isGeneratingItem(aMaterial);
+						case 'C' -> gregapi.data.OP.plateGem.isGeneratingItem(aMaterial);
+						case 'S' -> gregapi.data.OP.stick.isGeneratingItem(aMaterial);
+						case 'f', 'h', 's', 'k', 'd' -> true; // the tool tags carry no material truth
+						default -> throw new IllegalArgumentException("unknown tool-head row letter: " + tChar);
+					};
+					if (!tTruth) return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	/** The walk face (offline-pure, the census unit): head truth ∩ the listener axis ∩ the letter item truth. */
+	static java.util.List<ToolHeadRow> toolHeadRows() {
+		java.util.List<ToolHeadRow> rRows = new ArrayList<>();
+		for (gregtech6.registry.GTMaterialItems.PrefixMaterial tPair : gregtech6.registry.GTMaterialItems.registrationOrder()) {
+			for (ToolHeadRowForm tForm : TOOL_HEAD_ROW_FORMS) {
+				if (tForm.aHead() != tPair.prefix()) continue;
+				gregapi.oredict.OreDictMaterial tMaterial = tPair.material();
+				if (!toolHeadRowAxis(tMaterial, tForm)) continue;
+				if (!toolHeadRowResolvable(tForm, tMaterial)) continue;
+				rRows.add(new ToolHeadRow(tForm, tMaterial, gregtech6.registry.GTMaterialItems.snakeCase(tMaterial.mNameInternal)));
+			}
+		}
+		return rRows;
+	}
+
+//? if forge {
+	private void toolHeadRows(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
+		for (ToolHeadRow tRow : toolHeadRows()) {
+			net.minecraft.world.item.Item tHead = gregtech6.registry.GTMaterialItems.get(tRow.aForm().aHead(), tRow.aMaterial()).get();
+			ResourceLocation tId = digLadderRowId(tRow.aForm().aId(), tRow.aSnake());
+			java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> tKey = new java.util.LinkedHashMap<>();
+			java.util.List<String> tPattern = new ArrayList<>();
+			for (String tPatternRow : tRow.aForm().aPattern()) {
+				tPattern.add(tPatternRow);
+				for (char tChar : tPatternRow.toCharArray()) {
+					if (tChar != ' ' && !tKey.containsKey(tChar)) tKey.put(tChar, toolHeadRowIngredient(tRow.aForm(), tChar, tRow.aMaterial()));
+				}
+			}
+			// the head item IS the identity — the vanilla save() writes the recipes/tools advancement face
+			headRowBuilder(tHead, tPattern, tKey).unlockedBy("has_head", has(tHead)).save(aConsumer, tId);
+		}
+	}
+
+//?} else {
+/*	private void toolHeadRows(net.minecraft.data.recipes.RecipeOutput aOutput) {
+		for (ToolHeadRow tRow : toolHeadRows()) {
+			net.minecraft.world.item.Item tHead = gregtech6.registry.GTMaterialItems.get(tRow.aForm().aHead(), tRow.aMaterial()).get();
+			ResourceLocation tId = digLadderRowId(tRow.aForm().aId(), tRow.aSnake());
+			java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> tKey = new java.util.LinkedHashMap<>();
+			java.util.List<String> tPattern = new java.util.ArrayList<>();
+			for (String tPatternRow : tRow.aForm().aPattern()) {
+				tPattern.add(tPatternRow);
+				for (char tChar : tPatternRow.toCharArray()) {
+					if (tChar != ' ' && !tKey.containsKey(tChar)) tKey.put(tChar, toolHeadRowIngredient(tRow.aForm(), tChar, tRow.aMaterial()));
+				}
+			}
+			// the head item IS the identity — the vanilla save() writes the recipes/tools advancement face
+			headRowBuilder(tHead, tPattern, tKey).unlockedBy("has_head", has(tHead)).save(aOutput, tId);
+		}
+	}
+*///?}
 
 	// ------------------------------------------------------------------
 	// task p34-bumbliary-recipes — the Bumbliary pair rows: the registration-line

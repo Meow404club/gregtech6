@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/carmot"
+    },
+    "P": {
+      "tag": "forge:plates/carmot"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "PIP",
+    "P P",
+    "f h"
+  ],
+  "result": {
+    "item": "gt6:tool_head_axe_double_carmot"
+  },
+  "show_notification": true
+}

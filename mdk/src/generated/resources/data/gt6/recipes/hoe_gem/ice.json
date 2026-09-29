@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_ice"
+    },
+    "G": {
+      "tag": "forge:gems/ice"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CG ",
+    "f  "
+  ],
+  "result": {
+    "item": "gt6:tool_head_hoe_ice"
+  },
+  "show_notification": true
+}

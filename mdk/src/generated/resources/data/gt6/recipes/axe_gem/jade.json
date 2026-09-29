@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_jade"
+    },
+    "G": {
+      "tag": "forge:gems/jade"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "CG ",
+    "C  ",
+    "f  "
+  ],
+  "result": {
+    "item": "gt6:tool_head_axe_jade"
+  },
+  "show_notification": true
+}
