@@ -110,7 +110,7 @@ handler 缺失等于没装）：
             "timeoutMs": 10000}]}
 ```
 
-## gt6testgate 门禁（test-gating-v3 → v3.3）
+## gt6testgate 门禁（test-gating-v3 → v3.5）
 
 一切重操作（gradle 测试/编译/runData、sweep、RCON 链）的统一门禁+runner：
 `python3 tools/gt6testgate.py run -- <原命令>`。
@@ -132,9 +132,8 @@ handler 缺失等于没装）：
 - **信封内准入（v3.2，取代 v3a 系统侧 30G 公式）**：
   - 主判据=信封内：`slice memory.current + estimate(class) ≤ cap(25G)`——
     防信封内多任务叠加引发组内 OOM 抖动；slice 空时任何任务即刻放行。
-  - 系统侧仅一道外压护栏：`used − slice_current ≤ MemTotal − cap − 2G`
-    （env `GT6_GATE_MEM_LIMIT_MIB` 钉绝对 MiB 值；防非门禁进程吃机器，
-    超出才排队，理由行注明 outside 数字）。
+  - 系统侧外压护栏（`used − slice_current ≤ MemTotal − cap − 2G`）已随
+    v3.5 退役，见下；`GT6_GATE_MEM_LIMIT_MIB` 语义随之反转（opt-in 恢复）。
   - 退役缘由：旧公式 `(系统已用+估算)≤30G` 把信封内自己的占用也计入
     系统已用=重复计算，叠加被污染的 11.6G filtered 估算，曾把审查席
     饿死阻塞一小时。
@@ -185,15 +184,24 @@ handler 缺失等于没装）：
   无需调整。内核 MemoryMax 语义不动（内核先回收 cache 才 OOM）。台账
   峰值维持进程 RSS 采样（statm 不含流式文件缓存）——与包装态有效占用
   是两种视图，列内各自同模可比。
+- **外压护栏退役（v3.5，2026-09-29 用户裁定「cgroup 内部算好 25g 就行，
+  系统的不用管了，嵌入服务固定开销是 8g」）**：v3.2 的系统侧护栏在本机
+  是纯算术死锁——上限 `MemTotal(40099) − 25G − 2G ≈ 12451MiB` 恒低于
+  固定非门禁基线 ≈15069MiB（嵌入服务 8G+常驻 ZCode 会话+OS），谓词
+  永假、任何任务永不放行（当日 15:09-15:35 五个 wrapper 死等实录）。
+  准入只由信封判定；`outside` 降为信息项（gate-admit 行与 `--dry-run`
+  照记数字供诊断）。env `GT6_GATE_MEM_LIMIT_MIB`=<合法整数> = ops 显式
+  opt-in 恢复护栏（绝对 MiB 阈值）；未设或非法值=保持退役。
 - 向后兼容：并发槽默认 4（`GT6_GATE_MAX_CONCURRENT`）、退出码=子进程
   透传、full+coder 拒 exit 2、gt6server 直调 `wait_memory` 签名不变
   （遗留反应闸仅服务 boot 路径）；旧 flag 形态（无 `run` 前缀）与 run
   子命令同一实现；`GITHUB_ACTIONS` 置位=零门槛透传（CI 不是本 WSL
   宿主，不注入不看门狗）。
 
-单测：`python3 tools/gt6testgate_test.py`（stdlib unittest，110 项，全
+单测：`python3 tools/gt6testgate_test.py`（stdlib unittest，111 项，全
 离线零 gradle；`GT6_GATE_SLICE_LIVE=1` 追加 3 项真 systemd 探针：scope
-创建/残留 scope 收尸/malloc 膨胀按预算杀）。
+创建/残留 scope 收尸/malloc 膨胀按预算杀；真 systemd-run 透传钉在用户
+session bus 不可达的环境自动 skip）。
 
 ## MCP 工具一览（服务器名 gt6-brain）
 
