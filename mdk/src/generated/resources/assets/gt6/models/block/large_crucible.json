@@ -156,18 +156,18 @@
   ],
   "render_type": "minecraft:cutout",
   "textures": {
-    "down": "gt6:block/logistics_core/colored_bottom",
-    "east": "gt6:block/logistics_core/colored_side",
-    "north": "gt6:block/logistics_core/colored_front_side",
-    "overlay_down": "gt6:block/logistics_core/overlay_bottom",
-    "overlay_east": "gt6:block/logistics_core/overlay_side",
-    "overlay_north": "gt6:block/logistics_core/overlay_front_side",
-    "overlay_south": "gt6:block/logistics_core/overlay_side",
-    "overlay_up": "gt6:block/logistics_core/overlay_top",
-    "overlay_west": "gt6:block/logistics_core/overlay_side",
-    "particle": "gt6:block/logistics_core/colored_side",
-    "south": "gt6:block/logistics_core/colored_side",
-    "up": "gt6:block/logistics_core/colored_top",
-    "west": "gt6:block/logistics_core/colored_side"
+    "down": "gt6:block/crucible/colored_bottom",
+    "east": "gt6:block/crucible/colored_side",
+    "north": "gt6:block/crucible/colored_front_side",
+    "overlay_down": "gt6:block/crucible/overlay_bottom",
+    "overlay_east": "gt6:block/crucible/overlay_side",
+    "overlay_north": "gt6:block/crucible/overlay_front_side",
+    "overlay_south": "gt6:block/crucible/overlay_side",
+    "overlay_up": "gt6:block/crucible/overlay_top",
+    "overlay_west": "gt6:block/crucible/overlay_side",
+    "particle": "gt6:block/crucible/colored_side",
+    "south": "gt6:block/crucible/colored_side",
+    "up": "gt6:block/crucible/colored_top",
+    "west": "gt6:block/crucible/colored_side"
   }
 }
