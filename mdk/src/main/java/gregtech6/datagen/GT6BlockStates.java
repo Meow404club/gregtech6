@@ -787,7 +787,7 @@ public final class GT6BlockStates extends BlockStateProvider {
             Block tBlock = gregtech6.registry.GT6Distillation.TOWER_BLOCKS_BY_PATH.get(tRow.path()).get();
             ModelFile tModel = models().cubeAll(tRow.path(), modLoc("block/parts/distillationtowerparts/0/colored/side"));
             getVariantBuilder(tBlock).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
-            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+            itemModels().withExistingParent(tRow.path(), mcLoc("item/generated")).texture("layer0", modLoc("block/parts/distillationtowerparts/0/colored/side"));
         }
     }
 
@@ -1282,13 +1282,14 @@ public final class GT6BlockStates extends BlockStateProvider {
      * visible pixels, the lightningrod ruling; one texture serves all six faces),
      * every FORMED state maps to the same model (the formed-look visual is the p9
      * pool). No facing (the structure is facing-independent — the controller is the
-     * centre cell of both layers). The BlockItem parents the block model.
+     * centre cell of both layers). The BlockItem is the 2D icon over the composite
+     * sprite (r8-tex-itemform-b).
      */
     private void addHeatExchanger() {
         ModelFile tMain = models().cubeAll("large_heat_exchanger", modLoc("block/large_heat_exchanger/main"));
         Block tController = gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_BLOCK.get();
         getVariantBuilder(tController).forAllStates(aState -> ConfiguredModel.builder().modelFile(tMain).build());
-        itemModels().withExistingParent("large_heat_exchanger", tMain.getLocation());
+        itemModels().withExistingParent("large_heat_exchanger", mcLoc("item/generated")).texture("layer0", modLoc("block/large_heat_exchanger/main"));
     }
 
     /**
@@ -2217,7 +2218,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     private void addCrank() {
         Block tCrank = GT6Kinetics.CRANK.get();
         simpleBlock(tCrank, models().cubeAll("crank", modLoc("block/crank")));
-        itemModels().withExistingParent("crank", modLoc("block/crank"));
+        itemModels().withExistingParent("crank", mcLoc("item/generated")).texture("layer0", modLoc("block/crank"));
     }
 
     /**
@@ -2260,7 +2261,7 @@ public final class GT6BlockStates extends BlockStateProvider {
             Block tBlock = GT6Attachments.BLOCKS_BY_PATH.get(tRow.path()).get();
             String tTexture = tRow.family() == gregtech6.block.attachment.GTAttachmentSmallBlock.Family.TAP ? "tap" : "funnel";
             simpleBlock(tBlock, models().cubeAll(tRow.path(), modLoc("block/" + tTexture)));
-            itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
+            itemModels().withExistingParent(tRow.path(), mcLoc("item/generated")).texture("layer0", modLoc("block/" + tTexture));
         }
     }
 
@@ -2306,13 +2307,13 @@ public final class GT6BlockStates extends BlockStateProvider {
      * visuals, exactly the crank ruling (the upstream front/back/sides colored +
      * overlay_active texture family, MultiTileEntityMotorLiquid.java:242-254 +
      * getTexture2 :216-221, is the render pool item; the per-material mRGBa tint is the
-     * same pool). The 8 BlockItem models parent the shared block model (the crank
-     * {@code itemModels()} form per row).
+     * same pool). The 8 BlockItem models are 2D icons over the shared front sprite
+     * (the r8-tex-itemform-b form per row).
      */
     private void addDieselEngines() {
         for (var tBlock : GT6Kinetics.DIESEL_BLOCKS.values()) {
             simpleBlock(tBlock.get(), models().cubeAll("diesel_engine", modLoc("block/diesel_engine")));
-            itemModels().withExistingParent(tBlock.getId().getPath(), modLoc("block/diesel_engine"));
+            itemModels().withExistingParent(tBlock.getId().getPath(), mcLoc("item/generated")).texture("layer0", modLoc("block/diesel_engine"));
         }
     }
 
@@ -2323,13 +2324,13 @@ public final class GT6BlockStates extends BlockStateProvider {
      * texture is drawn for the port). ONE model over every AXIS state (simpleBlock =
      * partialState().setModels() matches all states, the diesel FACING precedent) — the
      * blade spin visual is the declared defer (the GT6Kinetics.WATER_WHEEL doc; the
-     * functional ACTIVE output rides the BE). The BlockItem parents the shared block
-     * model (the crank form).
+     * functional ACTIVE output rides the BE). The BlockItem is the 2D icon over the
+     * wheel sprite (r8-tex-itemform-b).
      */
     private void addWaterWheel() {
         Block tWheel = GT6Kinetics.WATER_WHEEL.get();
         simpleBlock(tWheel, models().cubeAll("water_wheel", modLoc("block/water_wheel")));
-        itemModels().withExistingParent("water_wheel", modLoc("block/water_wheel"));
+        itemModels().withExistingParent("water_wheel", mcLoc("item/generated")).texture("layer0", modLoc("block/water_wheel"));
     }
 
     /**
@@ -2492,7 +2493,7 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
     private void addGearBoxTransformer() {
         Block tBox = GT6Kinetics.GEARBOX.get();
         simpleBlock(tBox, models().cubeAll("gearbox", modLoc("block/gearbox")));
-        itemModels().withExistingParent("gearbox", modLoc("block/gearbox"));
+        itemModels().withExistingParent("gearbox", mcLoc("item/generated")).texture("layer0", modLoc("block/gearbox"));
         Block tTrans = GT6Kinetics.TRANSFORMER_ROTATION.get();
         ModelFile tTransModel = models().orientable("transformer_rotation",
                 modLoc("block/transformer_rotation_side"), modLoc("block/transformer_rotation_front"), modLoc("block/transformer_rotation_side"));
@@ -3108,8 +3109,8 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
      * large_boiler/main.png placeholder rationale, kept as the composite texture).
      * The facing is structurally meaningless (the rod is vertical), so every state maps to
      * the same model with no rotation; the FORMED variants map to the same model (the
-     * formed-look visual is the p9 pool). The four BlockItem models parent their block
-     * models.
+     * formed-look visual is the p9 pool). The controller and the rod BlockItems are 2D
+     * icons over their composite/rod sprites (r8-tex-itemform-b).
      */
     /**
      * Task p29-w3-tank-valves — the Tank Main Valve family (Loader_MultiTileEntities.java
@@ -3214,7 +3215,7 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
         ModelFile tMain = models().cubeAll("multiblock_lightning_rod", modLoc("block/lightningrod/main"));
         Block tController = gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD.get();
         getVariantBuilder(tController).forAllStates(aState -> ConfiguredModel.builder().modelFile(tMain).build());
-        itemModels().withExistingParent("multiblock_lightning_rod", tMain.getLocation());
+        itemModels().withExistingParent("multiblock_lightning_rod", mcLoc("item/generated")).texture("layer0", modLoc("block/lightningrod/main"));
         // the Tungsten Wall (task r3-world-tint-render-type, the C5 clean-up; task
         // debt-tungsten-wall-designs): the row IS the :1151 machine_wall row (texture
         // "metalwall", NBT_DESIGNS 7, ANY.W) — its blockstate/item/models moved to the
@@ -3229,11 +3230,11 @@ Direction tFacing = aState.getValue(gregtech6.block.energy.GT6BatteryBoxBlock.FA
         addLightningRodPart("lightning_rod", "block/lightningrod/rod");
     }
 
-    /** One cube_all Lightning Rod part block + its BlockItem parent (the addLargeBoilerPart shape). */
+    /** One cube_all Lightning Rod part block + its 2D-icon BlockItem (the addLargeBoilerPart shape, r8-tex-itemform-b). */
     private void addLightningRodPart(String aPath, String aTexture) {
         Block tBlock = gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get(aPath).get();
         simpleBlock(tBlock, models().cubeAll(aPath, modLoc(aTexture)));
-        itemModels().withExistingParent(aPath, modLoc("block/" + aPath));
+        itemModels().withExistingParent(aPath, mcLoc("item/generated")).texture("layer0", modLoc(aTexture));
     }
 
     /**

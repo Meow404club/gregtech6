@@ -1,3 +1,6 @@
 {
-  "parent": "gt6:block/funnel_stainless_steel"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "gt6:block/funnel"
+  }
 }

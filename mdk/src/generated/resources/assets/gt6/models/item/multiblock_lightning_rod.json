@@ -1,3 +1,6 @@
 {
-  "parent": "gt6:block/multiblock_lightning_rod"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "gt6:block/lightningrod/main"
+  }
 }
