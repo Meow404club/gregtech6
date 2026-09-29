@@ -743,6 +743,29 @@ HAND_TRANSLATIONS = {
     "gt6.tooltip.barrel_gas.11": ("使用活动扳手调整自动输出", "hand"),
     "gt6.tooltip.barrel_gas.12": ("使用软锤调整状态", "hand"),
     "gt6.tooltip.barrel_gas.13": ("使用放大镜观察细节", "hand"),
+    # task r8-tooltip-multiblock-generator -- the T4 three-family row faces (multiblock /
+    # converter / generator): values composed from the upstream zh dump faces VERBATIM
+    # (tmp/gregtech.lang:3536 gt.lang.use.builder.wand.to.ease.building, :3544
+    # gt.lang.use.magnifyingglass.to.detail, :3565+:3491+:3564 the facing composition,
+    # :3403 gt.lang.requirement.air.front, :3405 gt.lang.requirement.empty.ashes, :3406
+    # gt.lang.requirement.ignite.fire, :3346 gt.lang.nogui.rightclick.inventory, :3334
+    # gt.lang.hazard.fire, :3332 gt.lang.hazard.contact, :3556
+    # gt.lang.use.shovel.to.empty, :3287 gt.lang.face.front / :3293 gt.lang.face.top —
+    # the parenthetical suffixes reproduce the upstream row composition " (" + face + ")")
+    "gt6.tooltip.multiblock.1": ("使用建筑之杖快速搭建结构", "hand"),
+    "gt6.tooltip.multiblock.2": ("使用放大镜观察细节", "hand"),
+    "gt6.tooltip.multiblock.3": ("使用扳手设置朝向", "hand"),
+    "gt6.tooltip.converter.4": ("使用建筑之杖快速搭建结构", "hand"),
+    "gt6.tooltip.converter.5": ("使用放大镜观察细节", "hand"),
+    "gt6.tooltip.converter.6": ("使用扳手设置朝向", "hand"),
+    "gt6.tooltip.generator.4": ("需要正面是空气才能工作", "hand"),
+    "gt6.tooltip.generator.5": ("需要清理灰烬 (正面)", "hand"),
+    "gt6.tooltip.generator.6": ("需要打火石之类的东西点火 (正面)", "hand"),
+    "gt6.tooltip.generator.7": ("没有界面，右键以放入/取出物品! (正面)", "hand"),
+    "gt6.tooltip.generator.8": ("会使得周围的方块着火! (4m)", "hand"),
+    "gt6.tooltip.generator.9": ("当它在运作的时候接触会受伤! (顶面)", "hand"),
+    "gt6.tooltip.generator.10": ("使用铲子清空容器", "hand"),
+    "gt6.tooltip.generator.11": ("使用扳手设置朝向", "hand"),
     "gt6.tooltip.lightningrod.1": ("最底层是3x3的钨壁板, 中间是避雷针电力输出口", "hand"),
     "gt6.tooltip.lightningrod.2": ("第二层是3x3的大型铌钛合金线圈", "hand"),
     "gt6.tooltip.lightningrod.3": ("第三层是3x3的钨壁板", "hand"),

@@ -162,6 +162,7 @@ public class GT6EnUs extends LanguageProvider {
         addConverterJade(); // task r5-jade-converters — table-tail append
         addBoilerTooltip(); // task r8-tooltip-infra — table-tail append (the T1 pilot rows)
         addSensorJade(); // task r8-jade-sensor-provider — table-tail append
+        addFamilyTooltips(); // task r8-tooltip-multiblock-generator — table-tail append (the T4 three-family rows)
         addPocketTools(); // task p29-w5-t7-pocket-eight — table-tail append
         addArmor(); // task p29-w5-t8-armor-24 — table-tail append
         addTreeBlocks(); // task p30-w6-t1-trees-nine — table-tail append
@@ -2446,6 +2447,33 @@ public class GT6EnUs extends LanguageProvider {
         add("gt6.jade.sensor.mode.scale", "Scale");
         add("gt6.jade.sensor.mode.full", "Full");
         add("gt6.jade.sensor.mode.not_full", "Not Full");
+    }
+    /**
+     * The multiblock / converter / generator family tooltip rows (task
+     * r8-tooltip-multiblock-generator, 14 keys): the T4 row-table faces, en VERBATIM from
+     * the gregapi/data/LH.java faces — multiblock = the Base10MultiBlockBase:100-101 tool
+     * rows + the Base09FacingSingle:61 facing row; converter = the same static tail at the
+     * Base11MultiBlockConverter:91-94 sequence positions (slots 1-3 = the per-instance
+     * energy/efficiency faces, no static face); generator = the MultiTileEntityGeneratorSolid
+     * :89-95 constant block (the composed " (Face)"/" (4m)" suffixes baked flat, the LH
+     * composition verbatim). zh faces ride the reference table's hand layer via
+     * GT6ZhCn.addFamilyTooltipUnits.
+     */
+    private void addFamilyTooltips() {
+        add("gt6.tooltip.multiblock.1", "Use Builder Wand to ease building");
+        add("gt6.tooltip.multiblock.2", "Use Magnifying Glass to see Details");
+        add("gt6.tooltip.multiblock.3", "Use Wrench to set Facing");
+        add("gt6.tooltip.converter.4", "Use Builder Wand to ease building");
+        add("gt6.tooltip.converter.5", "Use Magnifying Glass to see Details");
+        add("gt6.tooltip.converter.6", "Use Wrench to set Facing");
+        add("gt6.tooltip.generator.4", "Requires Air in front to work!");
+        add("gt6.tooltip.generator.5", "Requires Ashes to be extracted regularly! (Front)");
+        add("gt6.tooltip.generator.6", "Requires ignition by Flint and Tinder or similar! (Front)");
+        add("gt6.tooltip.generator.7", "No GUI. Click to insert/extract Items! (Front)");
+        add("gt6.tooltip.generator.8", "Can put Blocks around it on Fire! (4m)");
+        add("gt6.tooltip.generator.9", "Causes Damage when touched while active! (Top)");
+        add("gt6.tooltip.generator.10", "Use Shovel to empty this");
+        add("gt6.tooltip.generator.11", "Use Wrench to set Facing");
     }
     /**
      * Pocket multitool family keys (task p29-w5-t7-pocket-eight): the eight display names
