@@ -189,6 +189,17 @@ public final class GT6Kitchen {
 			() -> new Item(new Item.Properties()));
 
 	/**
+	 * The Clay Juicer raw item — upstream MultiItemRandomTools.java:118 ("Clay Juicer",
+	 * "Put in Furnace to harden", {@code OreDictItemData(MT.Clay, U*4)}, the 994.png
+	 * icon); the vanilla smelting JSON hardens it into {@link #JUICER_ITEM} (the :2184
+	 * {@code RM.add_smelting(IL.Juicer_Raw, IL.Juicer)} line) and the shaped
+	 * {@code "kCR","CCC"} knife+rolling-pin row is its crafting source (issue #45 C1 —
+	 * before this item the Juicer block was creative-only).
+	 */
+	public static final RegistryObject<Item> CLAY_JUICER_RAW = ITEMS.register("clay_juicer",
+			() -> new Item(new Item.Properties()));
+
+	/**
 	 * The MACHINES-TAB join (task p27-lang-fix — the kitchen-tab retirement): the user
 	 * ruling retired the standalone kitchen tab WITHOUT a renamed successor (the pot/bowl
 	 * rows are processing machines, not cookware — "no kitchen-machines tab"), so the four
@@ -207,6 +218,7 @@ public final class GT6Kitchen {
 			aEvent.accept(new ItemStack(MIXING_BOWL_ITEM.get()));
 			aEvent.accept(new ItemStack(JUICER_ITEM.get()));
 			aEvent.accept(new ItemStack(CLAY_BOWL_RAW.get()));
+			aEvent.accept(new ItemStack(CLAY_JUICER_RAW.get()));
 		}
 	}
 

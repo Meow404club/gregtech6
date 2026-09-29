@@ -13,11 +13,11 @@
     }
   },
   "pattern": [
-    "C C",
-    "kCR"
+    "kCR",
+    "CCC"
   ],
   "result": {
-    "count": 1,
-    "id": "gt6:faucet_ceramic_raw"
-  }
+    "item": "gt6:clay_juicer"
+  },
+  "show_notification": true
 }

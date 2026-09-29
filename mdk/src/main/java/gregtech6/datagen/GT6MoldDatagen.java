@@ -52,10 +52,13 @@ import gregtech6.registry.GT6Molds;
  * <li><b>recipes</b>: the tier-a JSON faces — the VANILLA furnace hardening
  *     (raw → formed, the Loader_MultiTileEntities.java:391-420 RM.add_smelting family;
  *     the declared port deviation: one recipe per shape because the vanilla smelting
- *     JSON cannot emit item NBT), the clay handcraft chain (the blank :127 — the rolling
- *     pin is not ported, the declared clay-only form — and the vanilla donation set
- *     :136-153; the GT tool-head prefix loops :175-215 are the declared defer), and the
- *     two faucet crafts (:300 stone 3-stone; :305 ceramic raw → furnace).</li>
+ *     JSON cannot emit item NBT), the clay handcraft chain (the blank :127 and the
+ *     faucet :128 rows now carry the upstream {@code k=knife}/{@code R=rollingpin}
+ *     tool marks as the {@code #gt6:tools/knife}/{@code #gt6:tools/rolling_pin} tag
+ *     defines, issue #45 C1 — the p24 tool seams take the 1-damage craft toll — and
+ *     the vanilla donation set :136-153; the GT tool-head prefix loops :175-215 are
+ *     the declared defer), and the two faucet crafts (:300 stone 3-stone; :305
+ *     ceramic raw → furnace).</li>
  * </ul>
  */
 public final class GT6MoldDatagen {
@@ -363,13 +366,18 @@ public final class GT6MoldDatagen {
 		private static java.util.List<StagedRecipe> stagedRows() {
 			java.util.List<StagedRecipe> rRows = new java.util.ArrayList<>();
 
-			// the blank raw mold (MultiItemRandomTools.java:127, the rolling pin is not
-			// ported — the declared clay-only form, 5 clay = the U*5 ceramic amount)
+			// the blank raw mold (MultiItemRandomTools.java:127 "C C","CCC","k R" VERBATIM —
+			// the third row IS the tool marks: 'k' knife + 'R' rolling pin, re-expanded in
+			// issue #45 C1 as the #gt6:tools/knife + #gt6:tools/rolling_pin tag defines
+			// (the p24 tool seams take the 1-damage craft toll); 5 clay = the U*5 mass)
 			Item tBlankRaw = GT6Molds.rawItemByPath("mold_ceramic");
 			rRows.add(shaped(id("mold_ceramic_raw"), ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tBlankRaw)
 					.pattern("C C")
 					.pattern("CCC")
+					.pattern("k R")
 					.define('C', Items.CLAY_BALL)
+					.define('k', GT6ItemTags.TOOLS_KNIFE)
+					.define('R', GT6ItemTags.TOOLS_ROLLING_PIN)
 					.unlockedBy("has_clay", has(Items.CLAY_BALL))));
 
 			// the vanilla donation set (:136-153): blank raw + the shape's exemplar → shaped raw
@@ -399,11 +407,14 @@ public final class GT6MoldDatagen {
 					.define('B', Items.STONE)
 					.unlockedBy("has_stone", has(Items.STONE))));
 
-			// the ceramic faucet raw (Loader:305 craft, "C C","kCR" minus the tool marks)
+			// the ceramic faucet raw (Loader:305 craft, "C C","kCR" — the tool marks
+			// re-expanded issue #45 C1, same tag-define face as the blank mold row)
 			rRows.add(shaped(id("faucet_ceramic_raw"), ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GT6Molds.FAUCET_CERAMIC_RAW.get())
 					.pattern("C C")
-					.pattern(" C ")
+					.pattern("kCR")
 					.define('C', Items.CLAY_BALL)
+					.define('k', GT6ItemTags.TOOLS_KNIFE)
+					.define('R', GT6ItemTags.TOOLS_ROLLING_PIN)
 					.unlockedBy("has_clay", has(Items.CLAY_BALL))));
 
 			// the vanilla furnace hardening family (:352/:391-420/:305) — raw → formed
