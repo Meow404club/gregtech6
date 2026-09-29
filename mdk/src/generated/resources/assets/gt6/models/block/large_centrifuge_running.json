@@ -156,17 +156,17 @@
   ],
   "render_type": "minecraft:cutout",
   "textures": {
-    "down": "gt6:block/largemassfab_colored_bottom",
-    "east": "gt6:block/largemassfab_colored_left",
-    "north": "gt6:block/largemassfab_colored_front",
-    "overlay_back": "gt6:block/largemassfab_overlay_back",
-    "overlay_bottom": "gt6:block/largemassfab_overlay_bottom",
-    "overlay_front": "gt6:block/largemassfab_overlay_front",
-    "overlay_left": "gt6:block/largemassfab_overlay_left",
-    "overlay_right": "gt6:block/largemassfab_overlay_right",
-    "overlay_top": "gt6:block/largemassfab_overlay_top",
-    "south": "gt6:block/largemassfab_colored_back",
-    "up": "gt6:block/largemassfab_colored_top",
-    "west": "gt6:block/largemassfab_colored_right"
+    "down": "gt6:block/largecentrifuge_colored_bottom",
+    "east": "gt6:block/largecentrifuge_colored_left",
+    "north": "gt6:block/largecentrifuge_colored_front",
+    "overlay_back": "gt6:block/largecentrifuge_overlay_back_running",
+    "overlay_bottom": "gt6:block/largecentrifuge_overlay_bottom_running",
+    "overlay_front": "gt6:block/largecentrifuge_overlay_front_running",
+    "overlay_left": "gt6:block/largecentrifuge_overlay_left_running",
+    "overlay_right": "gt6:block/largecentrifuge_overlay_right_running",
+    "overlay_top": "gt6:block/largecentrifuge_overlay_top_running",
+    "south": "gt6:block/largecentrifuge_colored_back",
+    "up": "gt6:block/largecentrifuge_colored_top",
+    "west": "gt6:block/largecentrifuge_colored_right"
   }
 }

@@ -71,18 +71,31 @@ class GT6TextureCensusTest {
     private static final int PINNED_COMBO_TOTAL = 2785;
 
     /**
-     * The machine-wave borrowed families (task p32-hygiene-lang-assets), static-tree
-     * texture path prefixes under {@link #TEXTURES_PREFIX}: the three controller colored
-     * faces (fusion/implosion/graagg, the attribution backfill) plus the massfab small+
-     * large families and the retriever cover pair (already ledgered by their own cards).
+     * The machine-wave borrowed families (task p32-hygiene-lang-assets + task
+     * r8-tex-large-machines), static-tree texture path prefixes under
+     * {@link #TEXTURES_PREFIX}: the three controller colored faces (fusion/implosion
+     * colored flats + the massfab small+large families, the attribution backfill), the
+     * retriever cover pair, and the r8 large-controller wave — the 15 flat
+     * <code>&lt;family&gt;_overlay_</code> state trios plus the two front-pair band dirs
+     * (the retired vondagraagg six-face flat prefix left the list with its twelve
+     * deleted PNGs, the band dirs replace them).
      */
     private static final List<String> BORROWED_FAMILY_PREFIXES = List.of(
         "block/fusionreactor_colored_", "block/implosioncompressor_colored_",
-        "block/vondagraagg_colored_", "block/massfab_colored_", "block/massfab_overlay_",
-        "block/largemassfab_colored_", "block/retrieveritem/");
+        "block/massfab_colored_", "block/massfab_overlay_",
+        "block/largemassfab_colored_", "block/retrieveritem/",
+        "block/largecentrifuge_overlay_", "block/largeelectrolyzer_overlay_",
+        "block/largecoagulator_overlay_", "block/largeautoclave_overlay_",
+        "block/largebath_overlay_", "block/largemixer_overlay_",
+        "block/largefermenter_overlay_", "block/largeoven_overlay_",
+        "block/largesluice_overlay_", "block/largecrusher_overlay_",
+        "block/largeshredder_overlay_", "block/largesqueezer_overlay_",
+        "block/largemassfab_overlay_", "block/fusionreactor_overlay_",
+        "block/implosioncompressor_overlay_",
+        "block/vondagraagg/", "block/bedrockdrill/");
 
-    /** The wave pin: 50 borrowed controller/cover PNGs + 20 port-generated comb icons. */
-    private static final int PINNED_WAVE_TOTAL = 70;
+    /** The wave pin: 330 borrowed controller/cover PNGs + 20 port-generated comb icons (task r8-tex-large-machines: 44 surviving prior + 270 flat overlays + 16 band faces). */
+    private static final int PINNED_WAVE_TOTAL = 350;
 
     /**
      * The pinned distinct iconset count over the same table (walked 2026-09-06: 40 sets

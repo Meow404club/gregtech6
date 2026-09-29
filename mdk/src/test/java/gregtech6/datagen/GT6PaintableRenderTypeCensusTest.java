@@ -161,6 +161,23 @@ class GT6PaintableRenderTypeCensusTest {
         rModels.add("materialicons/copper/pipe_side");
         rModels.add("materialicons/copper/pipe_side_restrictive");
         rModels.add("iconsets/logistics_wire");
+        // the 17 large-controller domains (task r8-tex-large-machines): the
+        // familyMachineModel state trios (the twelve large-12 rows + the massfab/fusion/
+        // implosion controllers — the _active/_running bands ride the tree with the
+        // blockstate switch declared defer) + the two boilerModel front pairs (no
+        // upstream active group, one static band each)
+        for (var tRow : gregtech6.registry.GT6LargeMachines.ROWS) {
+            rModels.add(tRow.path());
+            rModels.add(tRow.path() + "_active");
+            rModels.add(tRow.path() + "_running");
+        }
+        for (String tBase : new String[] {"large_massfab", "fusion_reactor", "implosion_compressor"}) {
+            rModels.add(tBase);
+            rModels.add(tBase + "_active");
+            rModels.add(tBase + "_running");
+        }
+        rModels.add("von_da_graagg");
+        rModels.add("bedrock_drill");
         return rModels;
     }
 
