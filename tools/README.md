@@ -110,45 +110,81 @@ handler 缺失等于没装）：
             "timeoutMs": 10000}]}
 ```
 
-## gt6testgate 门禁（test-gating-v3）
+## gt6testgate 门禁（test-gating-v3 → v3.3）
 
 一切重操作（gradle 测试/编译/runData、sweep、RCON 链）的统一门禁+runner：
-`python3 tools/gt6testgate.py run -- <原命令>`。v3（2026-09-29 WSL 崩溃裁定）
-在 v2 角色硬闸（全量仅 review、/tmp/gt6_testgate_full.lock 互斥）之上加
-**启动前预测**：
+`python3 tools/gt6testgate.py run -- <原命令>`。
 
-- 任务分类 `--class {full-test,filtered-test,compile,rundata,rcon-boot,other}`，
-  缺省按命令形态自动推断（gradlew+裸 test=full、--tests=filtered、runData、
-  compile*/classes/jar=compile、rcon 字样=rcon-boot、其余=other）。
-- 峰值台账 `/tmp/gt6_testgate_memory_ledger.json`：门禁放行的任务在运行期
-  采样进程树峰值 RSS（/proc ppid 链 + statm，2s 周期），退出后按 class 折叠
+- **角色硬闸（v2，2026-09-27）**：全量（无 `--tests` 的 test/cleanTest）
+  仅 review 席；coder 排队前即拒 exit 2；全量跑持
+  `/tmp/gt6_testgate_full.lock` 全局互斥，第二个排队。
+- **任务分类+峰值台账（v3，2026-09-29）**：`--class
+  {full-test,filtered-test,compile,rundata,rcon-boot,other}` 按命令形态
+  推断（gradlew+裸 test=full、--tests=filtered、runData、compile*/classes/
+  jar=compile、rcon 字样=rcon-boot、其余=other）。台账
+  `/tmp/gt6_testgate_memory_ledger.json` 按 class 折叠运行期采样峰值
   `estimate=max(历史衰减, 本次)`（14 天半衰；flock+原子替换写，损坏 JSON
-  自动重建）——采样闭环不依赖任务自觉回报。无记录 class 用冷启动保守默认
-  （full-test 12G/filtered 6G/compile 4G/rundata 6G/rcon 5G/other 8G MiB，
-  常量 `COLD_ESTIMATE_MIB` 可由台账覆盖）。
-- admit 条件升级为 `(MemTotal-MemAvailable) + estimate(class) ≤ 30G`
-  （env `GT6_GATE_MEM_LIMIT_MIB`），超限排队轮询重估；排队/拒绝均输出含
-  数值的人类可读理由。
-- `--dry-run`：打印 当前占用/估算/预测/决策 四行不启动——subagent 派发前
-  自查与主会话调度参考。
-- 向后兼容：并发槽默认 4（`GT6_GATE_MAX_CONCURRENT`）、退出码=子进程透传、
-  full+coder 拒 exit 2（排队前即拒）、gt6server 直调的 `wait_memory` 签名
-  不变（estimate 缺省 0）；旧 flag 形态（无 `run` 前缀）与 run 子命令同一
-  实现。`GITHUB_ACTIONS` 置位 = 零门槛透传（CI 不是本 WSL 宿主）。
-- **共享 slice 硬顶（v3c，2026-09-29 第三轮裁定，25G 修订）**：run 把子命令包进
-  `systemd-run --user --scope -p Slice=gt6gate.slice -- <原命令>`，并在每次
-  run 前幂等地 `systemctl --user set-property gt6gate.slice
-  MemoryMax=25G MemorySwapMax=4G --runtime`（`--cap`/`--swap` 可调，默认
-  25/4 GiB——25G 留 5G 头寸给非门禁进程）。聚合天然有界：到顶内核只在
-  slice 组内 OOM-kill 越界 gradle，不伤 WSL 宿主。systemctl/systemd-run
-  不可用或失败 → 一行 stderr 警告回退直接 exec（可用性优先）；
-  `GT6_GATE_SLICE=0` 显式关。附带收益：开 UseContainerSupport 的 JVM 会读
-  cgroup 上限自整默认堆——本仓 gradle 显式堆配置不受影响，fork 出的无配置
-  JVM 受益。`--scope` 前台运行，stdio 与退出码透传语义不变。
+  自动重建）；无记录 class 用冷默认（full 12G/filtered 6G/compile 4G/
+  rundata 6G/rcon 5G/other 8G MiB，`COLD_ESTIMATE_MIB`）。estimate 是
+  v3.2 信封判据与 dry-run 信息面的输入。⚠️ 台账历史可能被共享 daemon RSS
+  污染（v3.1 落地前采样吃进跨任务 daemon；当日污染台账已手动重置）——
+  `--no-daemon` 落地后新样本自净，旧污染按半衰衰减。
+- **信封内准入（v3.2，取代 v3a 系统侧 30G 公式）**：
+  - 主判据=信封内：`slice memory.current + estimate(class) ≤ cap(25G)`——
+    防信封内多任务叠加引发组内 OOM 抖动；slice 空时任何任务即刻放行。
+  - 系统侧仅一道外压护栏：`used − slice_current ≤ MemTotal − cap − 2G`
+    （env `GT6_GATE_MEM_LIMIT_MIB` 钉绝对 MiB 值；防非门禁进程吃机器，
+    超出才排队，理由行注明 outside 数字）。
+  - 退役缘由：旧公式 `(系统已用+估算)≤30G` 把信封内自己的占用也计入
+    系统已用=重复计算，叠加被污染的 11.6G filtered 估算，曾把审查席
+    饿死阻塞一小时。
+  - `--dry-run`：slice/estimate/envelope/outside/decision 五行，不启动。
+- **共享 slice 硬顶（v3c）**：run 包 `systemd-run --user --scope -p
+  Slice=gt6gate.slice`，每 run 幂等 `systemctl --user set-property
+  gt6gate.slice MemoryMax=25G MemorySwapMax=4G --runtime`（`--cap`/`--swap`
+  可调，25G 留 5G 头寸）。systemd 缺席/失败 → 一行 stderr 警告降级直跑
+  （可用性优先）；`GT6_GATE_SLICE=0` 显式关。
+- **残留清剿三层（v3.1，2026-09-29 第四轮）**：
+  1. `--no-daemon` 注入（根治）：检测到命令是 gradlew/gradle 即自动追加
+     （幂等；已带 `--no-daemon`/显式 `--daemon` 不动；CI 透传分支不注入）。
+     每构建单次 daemon 随构建退出——零残留，且杜绝并发任务跨 cgroup 共享
+     同一 daemon 被「误杀」。代价仅每次构建 JVM 冷启动秒级。交互热 daemon
+     逃生：`--keep-daemon` 或 env `GT6_GATE_KEEP_DAEMON=1`。
+  2. 确定性 scope+收尾杀（兜底）：scope 名 `gt6gate-run-<pid>-<ts>.scope`
+     （带后缀全名，systemd-run 原样使用；bare 名会被 show 自动补
+     `.service` 查空）。子命令退出且台账落账后：对全组
+     `kill --signal=SIGTERM` → 轮询 cgroup.procs 至多 2s → 残留
+     SIGKILL → 清完才释放并发槽。用异步 `kill` 而非 `stop`：stop 在进程
+     无视 TERM 时会阻塞到 systemd 自身 ~90s 超时，架空 2s 宽限。失败仅
+     stderr 警告，退出码透传不变。
+  3. `reap [--dry-run]`（清扫）：枚举 gt6gate.slice 下 scope（按 Slice
+     属性过滤，不看名字），命中 MainPID 为 0/空（leader 已退）且
+     cgroup.procs 非空者 → 同上杀序；活跃 scope 不碰。兜崩溃 runner 的
+     尸场（实测案例：空 leader scope 里藏 2G+ daemon，杀掉释放 8G）。
+- **每任务预算+脚本看门狗（v3.3，2026-09-29 第六轮）**：scope 建型即写
+  `MemoryMax=<TASK_CAP_MIB[class]>`（full 12G/filtered 8G/compile 6G/
+  rundata 8G/rcon 6G/other 8G，`--task-cap G` 覆盖）。
+  **内核注记（Brokestar 6.18.50 定制内核）**：scope 级 memory.max 实测
+  **被执行**（300M 探针 OOM rc=137、oom_kill 计数增长，2026-09-29）；
+  slice 级 25G 未验证（破坏性探针列入 r8 收官清单，slice 空闲时跑）；
+  「不强制」的原始观察来源存疑（slice 级，或 v3.3 前旧 scope 根本没写
+  per-task 属性）。故执行者双层纵深：**脚本看门狗**在 2s 采样 tick 里
+  ①读本 scope memory.current（同一次读数喂台账峰值，免 /proc 遍历）超
+  预算 → TERM→2s→KILL 杀己组，退出码 **97（BUDGET_EXIT 专码，超限失败
+  ≠普通失败；内核先杀则 -9 常规信号码透传，CI/调用方可区分）**；
+  ②聚合 slice 下全部子 cgroup 的 memory.current >25G 项目帽 → 按占用
+  最大者优先逐杀至帽内（单次回收最大化=最少受害者最快回帽；新任务天然
+  幸免——尚未膨胀；杀粒度=单任务 cgroup，兄弟无恙；若自己最大也会被
+  杀并转 97）。
+- 向后兼容：并发槽默认 4（`GT6_GATE_MAX_CONCURRENT`）、退出码=子进程
+  透传、full+coder 拒 exit 2、gt6server 直调 `wait_memory` 签名不变
+  （遗留反应闸仅服务 boot 路径）；旧 flag 形态（无 `run` 前缀）与 run
+  子命令同一实现；`GITHUB_ACTIONS` 置位=零门槛透传（CI 不是本 WSL
+  宿主，不注入不看门狗）。
 
-单测：`python3 tools/gt6testgate_test.py`（stdlib unittest，56 项，全离线
-零 gradle；hook 判定表/CI 透传/slice 包装与降级含在内；
-`GT6_GATE_SLICE_LIVE=1` 追加跑真 systemd 探针）。
+单测：`python3 tools/gt6testgate_test.py`（stdlib unittest，106 项，全
+离线零 gradle；`GT6_GATE_SLICE_LIVE=1` 追加 3 项真 systemd 探针：scope
+创建/残留 scope 收尸/malloc 膨胀按预算杀）。
 
 ## MCP 工具一览（服务器名 gt6-brain）
 
