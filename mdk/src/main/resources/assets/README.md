@@ -175,6 +175,13 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   `1a6c9713213e2a0f64c73d116721dbe5d26006eead78397dcbc86fe201a4d091`.
   16x16 RGBA, CC0 1.0 per the upstream README block.
 
+- `gt6/textures/item/clay_juicer.png` — byte-identical borrow of upstream
+  `textures/items/gt.multiitem.randomtools/994.png` (meta 994 = the "Clay Juicer" raw
+  item, MultiItemRandomTools.java:118; issue #45 C1 — the newly registered raw item
+  rides the same randomtools multiitem borrow family):
+  `7b501eddf682cb192b6cbe7551312519c7b0c58505fba674fb5a8d7a5859e562`.
+  16x16 RGBA, CC0 1.0 per the upstream README block.
+
 - the 31 raw clay mold icons `gt6/textures/item/mold_ceramic(<_shape>)_raw.png` —
   byte-identical borrows of upstream `textures/items/gt.multiitem.randomtools/<meta>.png`
   (the "Clay X Mold" raw item band, MultiItemRandomTools.java:80-121; task

@@ -122,6 +122,15 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation BATHING_POT_STEEL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bathing_pot_steel");
 	public static final ResourceLocation CLAY_BOWL_REVERSE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "clay_bowl_reverse");
 	public static final ResourceLocation CLAY_BOWL_SMELT_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "mixing_bowl");
+	/**
+	 * The issue #45 C1 clay-band ids: the bowl's forward shaped source (:132), the
+	 * juicer's three faces — the shaped craft (:131), the reverse :118 tail, the :2184
+	 * hardening smelt (output-path named, the CLAY_BOWL_SMELT_ID convention).
+	 */
+	public static final ResourceLocation CLAY_BOWL_FORWARD_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "clay_bowl");
+	public static final ResourceLocation CLAY_JUICER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "clay_juicer");
+	public static final ResourceLocation CLAY_JUICER_REVERSE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "clay_juicer_reverse");
+	public static final ResourceLocation CLAY_JUICER_SMELT_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "juicer");
 
 	public static final ResourceLocation STONE_ANVIL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "stone_anvil");
 	public static final ResourceLocation BLACKSTONE_ANVIL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "blackstone_anvil");
@@ -238,8 +247,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		shapeExtruderRodBuilder().save(aConsumer, SHAPE_EXTRUDER_ROD_ID);
 		largeSteelCrucibleBuilder().save(aConsumer, LARGE_STEEL_CRUCIBLE_ID);
 		bathingPotSteelBuilder().save(aConsumer, BATHING_POT_STEEL_ID);
+		clayBowlForwardBuilder().save(aConsumer, CLAY_BOWL_FORWARD_ID);
 		clayBowlReverseBuilder().save(aConsumer, CLAY_BOWL_REVERSE_ID);
 		clayBowlSmeltingBuilder().save(aConsumer, CLAY_BOWL_SMELT_ID);
+		clayJuicerBuilder().save(aConsumer, CLAY_JUICER_ID);
+		clayJuicerReverseBuilder().save(aConsumer, CLAY_JUICER_REVERSE_ID);
+		clayJuicerSmeltingBuilder().save(aConsumer, CLAY_JUICER_SMELT_ID);
 		anvilBuilder(GT6Anvils.STONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.STONE).save(aConsumer, STONE_ANVIL_ID);
 		anvilBuilder(GT6Anvils.BLACKSTONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.BLACKSTONE).save(aConsumer, BLACKSTONE_ANVIL_ID);
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
@@ -469,8 +482,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		shapeExtruderRodBuilder().save(aOutput, SHAPE_EXTRUDER_ROD_ID);
 		largeSteelCrucibleBuilder().save(aOutput, LARGE_STEEL_CRUCIBLE_ID);
 		bathingPotSteelBuilder().save(aOutput, BATHING_POT_STEEL_ID);
+		clayBowlForwardBuilder().save(aOutput, CLAY_BOWL_FORWARD_ID);
 		clayBowlReverseBuilder().save(aOutput, CLAY_BOWL_REVERSE_ID);
 		clayBowlSmeltingBuilder().save(aOutput, CLAY_BOWL_SMELT_ID);
+		clayJuicerBuilder().save(aOutput, CLAY_JUICER_ID);
+		clayJuicerReverseBuilder().save(aOutput, CLAY_JUICER_REVERSE_ID);
+		clayJuicerSmeltingBuilder().save(aOutput, CLAY_JUICER_SMELT_ID);
 		anvilBuilder(GT6Anvils.STONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.STONE).save(aOutput, STONE_ANVIL_ID);
 		anvilBuilder(GT6Anvils.BLACKSTONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.BLACKSTONE).save(aOutput, BLACKSTONE_ANVIL_ID);
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
@@ -1893,19 +1910,87 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
+	 * The Clay Bowl FORWARD shaped — the upstream :132 row VERBATIM
+	 * ({@code CR.shaped(IL.Ceramic_Bowl_Raw.get(1), CR.DEF_NCC, "k R", "C C", "CCC",
+	 * 'C', OD.itemClay, 'R', OreDictToolNames.rollingpin)}): the tool keys ride the port
+	 * tool tags — 'k' = {@code #gt6:tools/knife} (the upstream {@code OreDictToolNames
+	 * .knife} translation, the p29-w5-t2 band), 'R' = {@code #gt6:tools/rolling_pin}
+	 * (CS.java:1888, GTRollingPinItem; the p24 Recipe patch takes the 1-damage craft
+	 * toll). The "no rolling-pin tool" dormancy note of the pre-#45 port is RETIRED —
+	 * the tools pool landed p29-w5 scene-six. Issue #45 C1: this row is the raw bowl's
+	 * crafting source (it previously had none — the smelt was the only live face).
+	 */
+	private ShapedRecipeBuilder clayBowlForwardBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GT6Kitchen.CLAY_BOWL_RAW.get())
+				.pattern("k R")
+				.pattern("C C")
+				.pattern("CCC")
+				.define('C', Items.CLAY_BALL)
+				.define('k', GT6ItemTags.TOOLS_KNIFE)
+				.define('R', GT6ItemTags.TOOLS_ROLLING_PIN)
+				.unlockedBy("has_clay", has(Items.CLAY_BALL));
+	}
+
+	/**
 	 * The Clay Bowl reverse shapeless — the upstream :119 tail VERBATIM
 	 * ({@code CR.shapeless(ST.make(Items.clay_ball, 5, 0), CR.DEF_NCC, new Object[] {last()})}):
 	 * 1 raw bowl back to its 5 clay balls (the {@code OreDictItemData(MT.Clay, U*5)} mass).
-	 * Result 5x {@code minecraft:clay_ball}. The FORWARD shaped row (:132, the rolling-pin
-	 * pattern {@code "k R","C C","CCC"}) is DECLARED DORMANT — its 'R' key is
-	 * {@code OreDictToolNames.rollingpin} and the port carries no rolling-pin tool (the
-	 * tools pool), so the Raw bowl has no crafting source yet; the smelt below stays the
-	 * live half of the hardening chain.
+	 * Result 5x {@code minecraft:clay_ball}.
 	 */
 	private ShapelessRecipeBuilder clayBowlReverseBuilder() {
 		return ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.CLAY_BALL, 5)
 				.requires(GT6Kitchen.CLAY_BOWL_RAW.get())
 				.unlockedBy("has_clay_bowl_raw", has(GT6Kitchen.CLAY_BOWL_RAW.get()));
+	}
+
+	/**
+	 * The Clay Juicer FORWARD shaped — the upstream :131 row VERBATIM
+	 * ({@code CR.shaped(IL.Juicer_Raw.get(1), CR.DEF_NCC, "kCR", "CCC", ...)}), the same
+	 * knife+rolling-pin tag-define face as the bowl row (issue #45 C1 — before this row
+	 * the Juicer block was creative-only: no raw item, no crafting face at all).
+	 */
+	private ShapedRecipeBuilder clayJuicerBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GT6Kitchen.CLAY_JUICER_RAW.get())
+				.pattern("kCR")
+				.pattern("CCC")
+				.define('C', Items.CLAY_BALL)
+				.define('k', GT6ItemTags.TOOLS_KNIFE)
+				.define('R', GT6ItemTags.TOOLS_ROLLING_PIN)
+				.unlockedBy("has_clay", has(Items.CLAY_BALL));
+	}
+
+	/**
+	 * The Clay Juicer reverse shapeless — the upstream :118 tail VERBATIM
+	 * ({@code CR.shapeless(ST.make(Items.clay_ball, 4, 0), ...)}): 1 raw juicer back to
+	 * its 4 clay balls (the {@code OreDictItemData(MT.Clay, U*4)} mass).
+	 */
+	private ShapelessRecipeBuilder clayJuicerReverseBuilder() {
+		return ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.CLAY_BALL, 4)
+				.requires(GT6Kitchen.CLAY_JUICER_RAW.get())
+				.unlockedBy("has_clay_juicer", has(GT6Kitchen.CLAY_JUICER_RAW.get()));
+	}
+
+	/**
+	 * The Clay Juicer hardening smelt — the upstream :2184 registration-line tail VERBATIM
+	 * ({@code RM.add_smelting(IL.Juicer_Raw.get(1), IL.Juicer.get(1))}):
+	 * {@code gt6:clay_juicer} → {@code gt6:juicer}. The honest vanilla defaults carry the
+	 * unspecified upstream columns (xp 0, 200 ticks — the clayBowlSmeltingBuilder shape).
+	 * The factory signature is the one leg split beyond the save face: 1.20.1
+	 * {@code smelting(Ingredient, RecipeCategory, ItemLike, float, int)}, 21.1 takes the
+	 * result as an {@code ItemStack} (the neoforge-api-1211 patch :61).
+	 */
+	private SimpleCookingRecipeBuilder clayJuicerSmeltingBuilder() {
+		//? if forge {
+		return SimpleCookingRecipeBuilder.smelting(
+						net.minecraft.world.item.crafting.Ingredient.of(GT6Kitchen.CLAY_JUICER_RAW.get()),
+						RecipeCategory.MISC, GT6Kitchen.JUICER_ITEM.get(), 0.0F, 200)
+				.unlockedBy("has_clay_juicer", has(GT6Kitchen.CLAY_JUICER_RAW.get()));
+		//?} else {
+		/*return SimpleCookingRecipeBuilder.smelting(
+						net.minecraft.world.item.crafting.Ingredient.of(GT6Kitchen.CLAY_JUICER_RAW.get()),
+						RecipeCategory.MISC, new ItemStack(GT6Kitchen.JUICER_ITEM.get()), 0.0F, 200)
+				.unlockedBy("has_clay_juicer", has(GT6Kitchen.CLAY_JUICER_RAW.get()));
+		*///?}
 	}
 
 	/**

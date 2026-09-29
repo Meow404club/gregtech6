@@ -405,6 +405,7 @@ public class GT6ZhCn extends LanguageProvider {
 		add("block.gt6.mixing_bowl", "搅拌盆");
 		add("block.gt6.juicer", "榨汁机"); // task p33-food-machines-kitchen — the dump gt.multitileentity.32722 face 榨汁机 verbatim (tmp/gregtech.lang:13543)
 		add("item.gt6.clay_bowl", "粘土碗");
+		add("item.gt6.clay_juicer", "粘土榨汁机"); // issue #45 C1 — the raw 994 hand face (Clay Juicer + 榨汁机 dump face)
 	}
 
 	/**

@@ -4,11 +4,18 @@
   "key": {
     "C": {
       "item": "minecraft:clay_ball"
+    },
+    "R": {
+      "tag": "gt6:tools/rolling_pin"
+    },
+    "k": {
+      "tag": "gt6:tools/knife"
     }
   },
   "pattern": [
     "C C",
-    "CCC"
+    "CCC",
+    "k R"
   ],
   "result": {
     "item": "gt6:mold_ceramic_raw"

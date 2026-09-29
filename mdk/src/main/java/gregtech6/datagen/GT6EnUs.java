@@ -1334,6 +1334,7 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.mixing_bowl", "Mixing Bowl"); // decisions.p29-mixingbowl-ruling — the en drift corrected
         add("block.gt6.juicer", "Juicer"); // task p33-food-machines-kitchen — the Loader :2184 name column verbatim
         add("item.gt6.clay_bowl", "Clay Bowl");
+        add("item.gt6.clay_juicer", "Clay Juicer"); // issue #45 C1 — the MultiItemRandomTools.java:118 name column verbatim
     }
 
     /**
