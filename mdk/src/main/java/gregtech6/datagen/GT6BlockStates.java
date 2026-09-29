@@ -4242,7 +4242,17 @@ public final class GT6BlockStates extends BlockStateProvider {
         placedPile(gregtech6.registry.GT6Placeables.PLACED_PLATE.get(), "placed_plate", "block/placeable/plate_sides", "block/placeable/plate_top", 1, true, false);
         placedPile(gregtech6.registry.GT6Placeables.PLACED_GEM_PLATE.get(), "placed_gem_plate", "block/placeable/plate_gem_sides", "block/placeable/plate_gem_top", 1, true, false);
         placedPile(gregtech6.registry.GT6Placeables.PLACED_SCRAP.get(), "placed_scrap", "block/placeable/scrap_sides", "block/placeable/scrap_top", 1, true, false);
-        placedPile(gregtech6.registry.GT6Placeables.PLACED_ROCK.get(), "placed_rock", "block/stone", "block/stone", 3, true, true);
+        // issue #47: the sneak-placed rock pile (shift+rockGt, GT6PlaceablePlacement) rides
+        // the SAME weighted pebble band as the worldgen surface rocks — upstream RockPlaced
+        // 32074 EXTENDS the worldgen rock (placeables/MultiTileEntityRockPlaced over
+        // misc/MultiTileEntityRock), so the placed form IS the surface-rock look. The old
+        // full-footprint 16x16x3 slab was the wrong model AND the wrong face; the shared
+        // models carry vanilla stone + tintindex 0, so GT6PlaceableTint keeps the material
+        // seat (stone rockGt renders exactly like surface_rock_stone, flint falls to -1).
+        getVariantBuilder(gregtech6.registry.GT6Placeables.PLACED_ROCK.get()).forAllStates(aState ->
+                java.util.Arrays.stream(gregtech6.block.surface.GT6SurfaceVariants.Rock.values())
+                        .map(tVariant -> new ConfiguredModel(models().getBuilder(tVariant.model()), 0, 0, false, tVariant.weight()))
+                        .toArray(ConfiguredModel[]::new));
         placedPile(gregtech6.registry.GT6Placeables.PLACED_STICK.get(), "placed_stick", "block/oak_log", "block/oak_log", 2, false, true);
     }
 

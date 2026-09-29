@@ -19,6 +19,7 @@ package gregtech6.datagen;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
@@ -221,6 +222,44 @@ class GT6SurfaceTreeRenderDatagenTest {
             assertEquals("#slab", tFace.get("texture").getAsString());
             assertEquals(0, tFace.get("tintindex").getAsInt(),
                     "rock face " + tFaceKey + ": tintindex 0 — the material tint seat");
+        }
+    }
+
+    /**
+     * Issue #47: the sneak-placed rock pile (shift+rockGt, the p32 dispatch) rides the SAME
+     * weighted pebble band as the worldgen rocks — upstream RockPlaced 32074 extends the
+     * worldgen rock (placeables/MultiTileEntityRockPlaced over misc/MultiTileEntityRock),
+     * one look. The single-state blockstate maps "" to the three shared tiers 3/2/1 with
+     * NO rotations, and the old full-footprint 16x16x3 slab model is dead.
+     */
+    @Test
+    void placedRockBlockstateRidesTheSurfaceRockBand() throws Exception {
+        JsonObject tState = json("assets/gt6/blockstates/placed_rock.json");
+        var tVariants = tState.getAsJsonObject("variants");
+        assertEquals(1, tVariants.size(), "the placed pile is stateless — the one '' key");
+        var tList = tVariants.getAsJsonArray("");
+        assertEquals(3, tList.size(), "the shared three size tiers");
+        List<String> tModels = List.of("gt6:block/surface_rock", "gt6:block/surface_rock_a", "gt6:block/surface_rock_b");
+        List<Integer> tWeights = List.of(3, 2, 1);
+        for (int i = 0; i < tList.size(); i++) {
+            JsonObject tEntry = tList.get(i).getAsJsonObject();
+            assertEquals(tModels.get(i), tEntry.get("model").getAsString(), "tier " + i + ": the shared rock model");
+            if (tWeights.get(i) != 1) {
+                assertEquals(tWeights.get(i), tEntry.get("weight").getAsInt(), "tier " + i + ": the band weight");
+            } else {
+                assertFalse(tEntry.has("weight"), "tier " + i + ": weight 1 = the omitted JSON default");
+            }
+            assertFalse(tEntry.has("x") || tEntry.has("y"), "tier " + i + ": the floor pose, no rotations");
+        }
+        // the referenced models resolve on the classpath (the offline blockstate->model walk)
+        for (String tModel : tModels) {
+            assertNotNull(json("assets/gt6/models/block/" + tModel.substring("gt6:block/".length()) + ".json"),
+                    tModel + " must exist");
+        }
+        // the old full-footprint slab is retired from the generated tree
+        try (InputStream tOld = GT6SurfaceTreeRenderDatagenTest.class.getClassLoader()
+                .getResourceAsStream("assets/gt6/models/block/placed_rock.json")) {
+            assertNull(tOld, "the 16x16x3 slab model must be gone from the generated tree");
         }
     }
 
