@@ -48,12 +48,26 @@ run's own slice usage as "system used" and, fed by a ledger estimate
 polluted with shared-daemon RSS (a filtered-test estimate sat at 11.6G vs a
 real 2.9G peak), starved a review run for an hour. Admission is now
 computed INSIDE the envelope: ``slice memory.current + estimate(class)
-<= cap`` (25G — the slice's own MemoryMax), with exactly one system-side
-guard against ungated processes: ``used - slice_current <=
-MemTotal - cap - 2G``. An empty slice admits instantly. The ledger stays as
+<= cap`` (25G — the slice's own MemoryMax). An empty slice admits
+instantly. The ledger stays as
 the estimate source (info + envelope math); v3.1's --no-daemon keeps future
 samples clean (no daemon RSS inside the sampled tree) and the 14-day
 half-life decays any historical pollution.
+
+Outside guard retired (test-gating-v3.5, 2026-09-29 user ruling "keep the
+25G envelope honest, the system side is not our business — the embedding
+service's ~8G is fixed overhead"): the v3.2 one system-side guard
+``used - slice_current <= MemTotal - cap - 2G`` is retired. On this host
+it was pure arithmetic deadlock: MemTotal 40099 - 25G cap - 2G headroom
+puts the ceiling at ~12451 MiB, while the fixed ungated baseline
+(embedding service + resident ZCode sessions + OS) sits around
+15069 MiB — the predicate was permanently false and every run queued
+forever (five wrappers stuck 2026-09-29 15:09-15:35, gate-queue
+outside=20025→23396 vs limit=12452). Admission is envelope-only;
+``outside`` survives as an informational figure in journals and
+``--dry-run``. Ops can restore a guard by exporting
+``GT6_GATE_MEM_LIMIT_MIB`` to a valid integer (an absolute MiB
+threshold, opt-in); unset or invalid values keep the guard disabled.
 
 Per-task budget + script watchdog (test-gating-v3.3, 2026-09-29 sixth
 ruling): the ruling holds memory.max cannot be RELIED UPON on this host
@@ -171,7 +185,9 @@ REAP_GRACE_SECONDS = 2.0        # TERM → grace → KILL, our own timing
 UNIT_PREFIX = "gt6gate-run"     # scope units: gt6gate-run-<pid>-<ts>.scope
 
 # --- v3.2 envelope admission (test-gating-v3.2, 2026-09-29 fifth ruling) ---
-OUTSIDE_HEADROOM_MIB = 2048     # system guard: MemTotal - cap - 2G
+# v3.5 (2026-09-29 ruling): the outside guard (MemTotal - cap - 2G) is
+# RETIRED by default; env GT6_GATE_MEM_LIMIT_MIB=<MiB> opts back in —
+# see outside_limit_mib.
 
 # --- v3.3 per-task budget + script watchdog (2026-09-29 sixth ruling) ------
 # This kernel does not enforce memory.max; the watchdog below is the
@@ -452,31 +468,39 @@ def watchdog_tick(unit, budget_mib, cap_mib, slice_name=SLICE_NAME,
     return own, kills
 
 
-def outside_limit_mib(total_mib, cap_gib):
-    """v3.2 external-pressure guard threshold: MemTotal - cap - 2G.
+def outside_limit_mib():
+    """Outside-pressure guard threshold in MiB, or None = guard retired.
 
-    env GT6_GATE_MEM_LIMIT_MIB pins an absolute MiB value instead (test
-    hook and ops escape hatch); invalid values fall through to the formula.
+    v3.5 (user ruling 2026-09-29: "cgroup 内部算好 25g 就行，系统的不用管
+    了，嵌入服务固定开销是 8g"): the v3.2 formula MemTotal - cap - 2G is
+    retired — on this host it computed a ~12451 MiB ceiling against a
+    fixed ~15069 MiB ungated baseline, so the predicate was permanently
+    false and every run queued forever (pure arithmetic deadlock, five
+    wrappers stuck 2026-09-29 15:09-15:35). env GT6_GATE_MEM_LIMIT_MIB
+    set to a valid integer = explicit ops opt-in restoring the guard as
+    an absolute MiB threshold; unset or invalid values leave it disabled.
     """
-    env = os.environ.get("GT6_GATE_MEM_LIMIT_MIB")
-    if env:
-        try:
-            return int(env)
-        except ValueError:
-            pass
-    return total_mib - cap_gib * 1024 - OUTSIDE_HEADROOM_MIB
+    try:
+        return int(os.environ.get("GT6_GATE_MEM_LIMIT_MIB", ""))
+    except ValueError:
+        return None
 
 
 def wait_admission(estimate_mib, cap_gib=SLICE_CAP_GIB, tag="-",
                    log_file=GATE_LOG, log=None, poll=POLL_SECONDS,
-                   read_used=None, read_slice=None, read_total=None):
-    """v3.2 admission: the envelope is the arithmetic that matters.
+                   read_used=None, read_slice=None):
+    """v3.2 admission, envelope-only since v3.5: the envelope is the math.
 
     envelope: slice_current + estimate ≤ cap — concurrent gated runs share
               the slice's MemoryMax; overflowing it means in-group OOM
               churn, so queue. Empty slice admits instantly.
-    outside:  used - slice_current ≤ MemTotal - cap - 2G — the ONE
-              system-side guard: ungated processes must not eat the machine.
+    outside:  INFORMATIONAL since v3.5 — the blocking guard
+              (used - slice_current ≤ MemTotal - cap - 2G) was pure
+              arithmetic deadlock on this host (fixed ungated baseline
+              ~15069 MiB above the ~12451 MiB ceiling, forever false;
+              user ruling "system side is not our business"), so it only
+              survives as a journal figure on admit. Ops can restore the
+              guard via env GT6_GATE_MEM_LIMIT_MIB (see outside_limit_mib).
     The v3a system-side formula (used + estimate ≤ 30G) is retired: it
     double-counted this run's own envelope usage and starved big estimates
     (review seat blocked an hour on a polluted 11.6G figure). Readers are
@@ -487,26 +511,23 @@ def wait_admission(estimate_mib, cap_gib=SLICE_CAP_GIB, tag="-",
         read_used = mem_used_mib
     if read_slice is None:
         read_slice = slice_usage_mib
-    if read_total is None:
-        read_total = mem_total_mib
     cap_mib = cap_gib * 1024
+    limit = outside_limit_mib()
     started = time.monotonic()
     queued = False
     while True:
         slice_cur = read_slice()
-        total = read_total()
         used = read_used()
         envelope = slice_cur + estimate_mib
         outside = used - slice_cur
-        limit = outside_limit_mib(total, cap_gib)
-        if envelope <= cap_mib and outside <= limit:
+        if envelope <= cap_mib and (limit is None or outside <= limit):
             break
-        if envelope > cap_mib:
-            reason = (f"envelope slice={slice_cur}MiB est={estimate_mib}MiB "
-                      f"predicted={envelope}MiB cap={cap_mib}MiB")
-        else:
+        if limit is not None and outside > limit:
             reason = (f"outside used={used}MiB slice={slice_cur}MiB "
                       f"outside={outside}MiB limit={limit}MiB")
+        else:
+            reason = (f"envelope slice={slice_cur}MiB est={estimate_mib}MiB "
+                      f"predicted={envelope}MiB cap={cap_mib}MiB")
         if not queued:
             queued = True
             _journal("gate-queue", tag, reason, log_file)
@@ -1041,7 +1062,8 @@ def run_gated(cmd, tag=None, poll=POLL_SECONDS, slot_dir=SLOT_DIR,
         if mode == "full":
             lock_fh = acquire_full_lock(full_lock, tag=tag, log_file=log_file,
                                         log=log)
-        # v3.2: envelope arithmetic (slice + estimate ≤ cap) + outside guard.
+        # v3.2 envelope arithmetic (slice + estimate ≤ cap); the outside
+        # guard retired with v3.5 (informational only — see outside_limit_mib).
         wait_admission(estimate, cap_gib=cap_gib, tag=tag, log_file=log_file,
                        log=log, poll=poll)
         slot = acquire_slot(poll=poll, slot_dir=slot_dir, tag=tag,
@@ -1120,14 +1142,15 @@ def run_gated(cmd, tag=None, poll=POLL_SECONDS, slot_dir=SLOT_DIR,
 
 
 def dry_run(cmd, cls=None, ledger_path=None, role=None, cap_gib=SLICE_CAP_GIB,
-            log=print, read_used=None, read_slice=None, read_total=None,
-            now=None):
-    """Predict-only report on v3.2 envelope arithmetic.
+            log=print, read_used=None, read_slice=None, now=None):
+    """Predict-only report on v3.5 envelope arithmetic.
 
-    slice current / estimate / envelope vs cap / outside vs guard limit /
-    decision. Starts nothing, journals nothing — for subagents to self-check
-    before dispatching and for the coordinator to schedule against. Returns
-    the decision word (ADMIT / QUEUE / REJECT).
+    slice current / estimate / envelope vs cap / outside (informational) /
+    decision. The decision is envelope-only since v3.5 (the outside guard
+    is retired; the outside line stays as a diagnostic figure). Starts
+    nothing, journals nothing — for subagents to self-check before
+    dispatching and for the coordinator to schedule against. Returns the
+    decision word (ADMIT / QUEUE / REJECT).
     """
     if ledger_path is None:
         ledger_path = LEDGER_PATH
@@ -1139,11 +1162,10 @@ def dry_run(cmd, cls=None, ledger_path=None, role=None, cap_gib=SLICE_CAP_GIB,
     estimate = estimate_for(cls, ledger, now=now)
     slice_cur = (read_slice or slice_usage_mib)()
     used = (read_used or mem_used_mib)()
-    total = (read_total or mem_total_mib)()
     cap_mib = cap_gib * 1024
     envelope = slice_cur + estimate
     outside = used - slice_cur
-    limit = outside_limit_mib(total, cap_gib)
+    limit = outside_limit_mib()
     source = "ledger" if isinstance(entry, dict) else "cold default"
     if mode == "full" and role != "review":
         decision = f"REJECT exit {FULL_DENY_EXIT} (full test run is review-seat only)"
@@ -1151,9 +1173,6 @@ def dry_run(cmd, cls=None, ledger_path=None, role=None, cap_gib=SLICE_CAP_GIB,
         decision = (f"QUEUE (envelope slice {slice_cur} + estimate "
                     f"{estimate:.0f} = {envelope} MiB > cap {cap_mib} MiB — "
                     f"in-slice OOM churn risk)")
-    elif outside > limit:
-        decision = (f"QUEUE (outside used {used} - slice {slice_cur} = "
-                    f"{outside} MiB > limit {limit} MiB — ungated pressure)")
     else:
         decision = "ADMIT (would run now)"
     log(f"[gt6testgate] dry-run: class={cls} role={role} mode={mode}")
@@ -1161,8 +1180,13 @@ def dry_run(cmd, cls=None, ledger_path=None, role=None, cap_gib=SLICE_CAP_GIB,
     log(f"  estimate:       {estimate:.0f} MiB ({source}, class {cls})")
     log(f"  envelope:       slice {slice_cur} + estimate {estimate:.0f} = "
         f"{envelope} MiB (cap {cap_mib} MiB)")
-    log(f"  outside:        used {used} - slice {slice_cur} = {outside} MiB "
-        f"(limit {limit} MiB)")
+    if limit is None:
+        log(f"  outside:        used {used} - slice {slice_cur} = {outside} MiB "
+            f"(informational — guard retired v3.5; env "
+            f"GT6_GATE_MEM_LIMIT_MIB opts in)")
+    else:
+        log(f"  outside:        used {used} - slice {slice_cur} = {outside} MiB "
+            f"(informational; opt-in guard limit {limit} MiB)")
     log(f"  decision: {decision}")
     return decision.split(" ")[0]
 
