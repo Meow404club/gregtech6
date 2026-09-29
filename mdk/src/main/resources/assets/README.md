@@ -9841,3 +9841,155 @@ pixel copies of AE2 assets; nothing removed.
 - `gui/machines/unboxinator.png` ← amazawa `Unboxinator.png` sha256 `0dda888d5409026672f7efdbe887ff07cc2acf442a14d715ee5f369eccaaae30`
 - `gui/machines/welder.png` ← amazawa `Welder.png` sha256 `a9558b22d7648adde07e6feb12132765e25ea15ec9973404186e0a86648eb33e`
 - `gui/machines/wiremill.png` ← amazawa `Wiremill.png` sha256 `e9699da9e901cb541803fdc1b7c624310e3f55e14bfb2df186cfbaea285b1458`
+## Static storages + hoppers + anvils placeholder audit (task r8-tex-placeholder-audit)
+
+The r8-tex-census tierC batch-5 probe verdicts, then the borrows the probes found.
+Upstream snapshot `v6.17.06-22-g3703e4030`, byte-identical `cp` borrows, sha256
+verified per file.
+
+Probe verdicts (family: upstream path — hit? — disposition):
+
+- static_storages/LOCKER: `machines/lockers/normal/{colored,overlay}/` — HIT
+  (MultiTileEntityLocker.java:100-110) — borrowed, two-layer faceted cube.
+- static_storages/DRAWER: `machines/drawers/quad/{colored,overlay}/` — HIT
+  (MultiTileEntityDrawerQuad.java:132-142) — borrowed, two-layer faceted cube.
+- static_storages/SAFE_MECHANICAL: `machines/safes/mechanical/{colored,overlay}/`
+  — HIT (MultiTileEntitySafeMechanical.java:105-111; the front/back/side trio
+  serves ALL non-front/back faces including top/bottom — the getTexture2 index
+  mapping :101-103) — borrowed, no own top/bottom art.
+- static_storages/SAFE_KEYLOCKED: `machines/safes/keylocked/{colored,overlay}/`
+  — HIT — borrowed, CLOSED pair only: the `colored_open/overlay_open` twins are
+  the in-world open visual, a blockstate the port storage block does not carry
+  (the open-state property + BE wiring = function-domain card).
+- static_storages/BOOKSHELF + BOTTLECRATE: TRUE NEGATIVE — no dedicated group
+  exists; upstream renders them from plank/material iconsets plus NBT-driven
+  content boxes (MultiTileEntityBookShelf mShelfIcon = PlankData.PLANK_ICONS
+  :72-74, MultiTileEntityBottleCrate :64-66 + the BOTTLECRATE_BOTTLE_* content
+  passes :202-208) — the placeholders stay, the visible content is the render
+  pool.
+- hoppers: `machines/automation/hopper/{colored,overlay}/` +
+  `machines/automation/queuehopper/{colored,overlay}/` — HIT (MultiTileEntity
+  Hopper.java:284-293, QueueHopper:266-275). The p26-era "no borrowable source"
+  claim was FALSE (a stale negative probe) — both groups borrowed; the upstream
+  getTexture2 is the FACES_TBS trio with NO front art, so the front placeholder
+  is retired and the models are the boiler two-layer TBS form. The six overlay
+  PNGs are FULLY transparent upstream (the alpha scan: 768/768 texels < 255 per
+  file) — borrowed anyway so the pass structure stays verbatim; the visible art
+  is the colored layer.
+- anvils: NO dedicated PNG group — the body renders the row material's smooth
+  set texture (`mMaterial.getTextureSmooth(mRGBa, T)`, MultiTileEntityAnvil
+  .java:306, the material-icon system; the only `anvil` PNGs upstream are GUI
+  backgrounds) — no borrow exists; the two placeholder PNGs are retired and the
+  rows point at the vanilla smooth material faces (stone → smooth_stone, the
+  SET_STONE ruling; blackstone → blackstone, the vanilla item the row crafts
+  from). The anvil-silhouette geometry (setBlockBounds2 passes 0-5) stays the
+  render-pool defer.
+- oven body: the R2 "no ledger entry = placeholder" suspicion is CLOSED — the
+  three body PNGs re-verified byte-identical to upstream
+  `basicmachines/oven/colored/{bottom,top,left}.png` (all six upstream faces hash
+  to `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`, the
+  shared gray body) and the "Shared body byte-identical copies" section above
+  already carries the three rows. No change.
+- true negatives re-checked IN PLACE, zero changes: coke_oven controller (the
+  p9 section — upstream multiblockmains has no cokeoven group), the placeholder
+  energy family (the p28 dynamo section + the item-form band A row),
+  water_wheel (the addWaterWheel javadoc declaration — the kTFRUAddon PNG is not
+  borrowed, no README row by design).
+
+Model grammar: the four upgraded storage kinds ride the sensorModel two-layer
+faceted form minus the tint seat (the rows are the declared unpaint deviation —
+colored art displays its own colours); the hoppers ride the boilerModel form
+with the tint seat off (the new `aTint` arm); the anvils are per-row cube_all
+over vanilla textures. The ten retired placeholder PNGs (`locker_front/side`,
+`drawer_front/side`, `safe_front/side`, `hopper_front/side`, `anvil_top/side`)
+are deleted with every generated JSON reference.
+
+sha256 manifest (44 files):
+- `gt6/textures/block/locker/colored_front.png` `8f2d6b21e56e98018f117d11206faac3d77a225c455e5647eb3735be32a7fbbc`
+  (upstream `textures/blocks/machines/lockers/normal/colored/front.png`)
+- `gt6/textures/block/locker/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `textures/blocks/machines/lockers/normal/colored/back.png`)
+- `gt6/textures/block/locker/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `textures/blocks/machines/lockers/normal/colored/side.png`)
+- `gt6/textures/block/locker/colored_top.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `textures/blocks/machines/lockers/normal/colored/top.png`)
+- `gt6/textures/block/locker/colored_bottom.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `textures/blocks/machines/lockers/normal/colored/bottom.png`)
+- `gt6/textures/block/locker/overlay_front.png` `2660369d62e9c5c7364caed24d1c83cb5720cefae3d1d6aff1a26849b667e04e`
+  (upstream `textures/blocks/machines/lockers/normal/overlay/front.png`)
+- `gt6/textures/block/locker/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (upstream `textures/blocks/machines/lockers/normal/overlay/back.png`)
+- `gt6/textures/block/locker/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (upstream `textures/blocks/machines/lockers/normal/overlay/side.png`)
+- `gt6/textures/block/locker/overlay_top.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (upstream `textures/blocks/machines/lockers/normal/overlay/top.png`)
+- `gt6/textures/block/locker/overlay_bottom.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (upstream `textures/blocks/machines/lockers/normal/overlay/bottom.png`)
+- `gt6/textures/block/drawer/colored_front.png` `ac56d3e0a07b6fbdd032c04dbe05aa4bcb217a71ed1edc67a867d70f657babc8`
+  (upstream `textures/blocks/machines/drawers/quad/colored/front.png`)
+- `gt6/textures/block/drawer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `textures/blocks/machines/drawers/quad/colored/back.png`)
+- `gt6/textures/block/drawer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `textures/blocks/machines/drawers/quad/colored/side.png`)
+- `gt6/textures/block/drawer/colored_top.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `textures/blocks/machines/drawers/quad/colored/top.png`)
+- `gt6/textures/block/drawer/colored_bottom.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `textures/blocks/machines/drawers/quad/colored/bottom.png`)
+- `gt6/textures/block/drawer/overlay_front.png` `dfbc6b592662d3b15d7797ed42a48f377a3f59329c927fa660c86de4ff90326e`
+  (upstream `textures/blocks/machines/drawers/quad/overlay/front.png`)
+- `gt6/textures/block/drawer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (upstream `textures/blocks/machines/drawers/quad/overlay/back.png`)
+- `gt6/textures/block/drawer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (upstream `textures/blocks/machines/drawers/quad/overlay/side.png`)
+- `gt6/textures/block/drawer/overlay_top.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (upstream `textures/blocks/machines/drawers/quad/overlay/top.png`)
+- `gt6/textures/block/drawer/overlay_bottom.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (upstream `textures/blocks/machines/drawers/quad/overlay/bottom.png`)
+- `gt6/textures/block/safe_mechanical/colored_front.png` `d11c0ac9ace3cb73c353e6a5b1a81fde432b3741e6bb5e96f719814d81afb8a3`
+  (upstream `textures/blocks/machines/safes/mechanical/colored/front.png`)
+- `gt6/textures/block/safe_mechanical/colored_back.png` `99fa529d58845f2d92c980c558058ed646a3753603e30f23914f7a9bed8f580b`
+  (upstream `textures/blocks/machines/safes/mechanical/colored/back.png`)
+- `gt6/textures/block/safe_mechanical/colored_side.png` `99fa529d58845f2d92c980c558058ed646a3753603e30f23914f7a9bed8f580b`
+  (upstream `textures/blocks/machines/safes/mechanical/colored/side.png`)
+- `gt6/textures/block/safe_mechanical/overlay_front.png` `411353d97c020ee3e96f7c393b0c4290b3e9ff888594821c09daff886e6e2088`
+  (upstream `textures/blocks/machines/safes/mechanical/overlay/front.png`)
+- `gt6/textures/block/safe_mechanical/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (upstream `textures/blocks/machines/safes/mechanical/overlay/back.png`)
+- `gt6/textures/block/safe_mechanical/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (upstream `textures/blocks/machines/safes/mechanical/overlay/side.png`)
+- `gt6/textures/block/safe_keylocked/colored_front.png` `d11c0ac9ace3cb73c353e6a5b1a81fde432b3741e6bb5e96f719814d81afb8a3`
+  (upstream `textures/blocks/machines/safes/keylocked/colored/front.png`)
+- `gt6/textures/block/safe_keylocked/colored_back.png` `99fa529d58845f2d92c980c558058ed646a3753603e30f23914f7a9bed8f580b`
+  (upstream `textures/blocks/machines/safes/keylocked/colored/back.png`)
+- `gt6/textures/block/safe_keylocked/colored_side.png` `99fa529d58845f2d92c980c558058ed646a3753603e30f23914f7a9bed8f580b`
+  (upstream `textures/blocks/machines/safes/keylocked/colored/side.png`)
+- `gt6/textures/block/safe_keylocked/overlay_front.png` `7031c2b01051450cc9bc024930f2527d9862f05ed6ace2d5922529c001138646`
+  (upstream `textures/blocks/machines/safes/keylocked/overlay/front.png`)
+- `gt6/textures/block/safe_keylocked/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (upstream `textures/blocks/machines/safes/keylocked/overlay/back.png`)
+- `gt6/textures/block/safe_keylocked/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (upstream `textures/blocks/machines/safes/keylocked/overlay/side.png`)
+- `gt6/textures/block/hopper/colored_bottom.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `textures/blocks/machines/automation/hopper/colored/bottom.png`)
+- `gt6/textures/block/hopper/colored_top.png` `f3250ae022b5247050b6405c390fcf2994d613dceedd2e0862b1d161a3f768ba`
+  (upstream `textures/blocks/machines/automation/hopper/colored/top.png`)
+- `gt6/textures/block/hopper/colored_side.png` `1f673b0bca5989337468991aa090d1ffd2f72f9a63e3562968259585f60a17e0`
+  (upstream `textures/blocks/machines/automation/hopper/colored/side.png`)
+- `gt6/textures/block/hopper/overlay_bottom.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `textures/blocks/machines/automation/hopper/overlay/bottom.png`)
+- `gt6/textures/block/hopper/overlay_top.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `textures/blocks/machines/automation/hopper/overlay/top.png`)
+- `gt6/textures/block/hopper/overlay_side.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `textures/blocks/machines/automation/hopper/overlay/side.png`)
+- `gt6/textures/block/queuehopper/colored_bottom.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `textures/blocks/machines/automation/queuehopper/colored/bottom.png`)
+- `gt6/textures/block/queuehopper/colored_top.png` `f3250ae022b5247050b6405c390fcf2994d613dceedd2e0862b1d161a3f768ba`
+  (upstream `textures/blocks/machines/automation/queuehopper/colored/top.png`)
+- `gt6/textures/block/queuehopper/colored_side.png` `72794aa151553c5658e07b3670c7d48a335ba8c8b8125da9e714dc8efcc2c496`
+  (upstream `textures/blocks/machines/automation/queuehopper/colored/side.png`)
+- `gt6/textures/block/queuehopper/overlay_bottom.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `textures/blocks/machines/automation/queuehopper/overlay/bottom.png`)
+- `gt6/textures/block/queuehopper/overlay_top.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `textures/blocks/machines/automation/queuehopper/overlay/top.png`)
+- `gt6/textures/block/queuehopper/overlay_side.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `textures/blocks/machines/automation/queuehopper/overlay/side.png`)
