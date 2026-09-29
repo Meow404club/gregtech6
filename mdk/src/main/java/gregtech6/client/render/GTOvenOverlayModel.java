@@ -239,26 +239,25 @@ public class GTOvenOverlayModel extends GTDynamicBakedModel {
 
 	private BakedQuad bakeOverlayQuad(OverlayPlan aPlan, TextureAtlasSprite aSprite) {
 		double[] tBox = aPlan.box();
-		// FaceBakery works in model space (0..16); full-face UV across the slab.
-		Vector3f tFrom = new Vector3f((float) tBox[0] * 16, (float) tBox[1] * 16, (float) tBox[2] * 16);
-		Vector3f tTo = new Vector3f((float) tBox[3] * 16, (float) tBox[4] * 16, (float) tBox[5] * 16);
-		float[] tUv = uvOf(aPlan.quadFace(), tBox[0] * 16, tBox[1] * 16, tBox[2] * 16, tBox[3] * 16, tBox[4] * 16, tBox[5] * 16);
+		// FaceBakery works in model space (0..16). The UV is the canonical full-face form
+		// [u0,v0,u1,v1] = [0,0,16,16] (the r8-uvof-private-copies fix, the issue #27
+		// GTOreBakedModel ruling): the borrowed upstream face PNGs are UPRIGHT art (the
+		// running front's glow window sits in the sprite's bottom half), drawn for the
+		// orientation 1.7.10's renderFixed* ITexture family bakes — which the #27 ruling
+		// corner-mapped to exactly this canonical form. The old GTCEu StaticFaceBakery
+		// cubeUV table put the box maxY in the slot that BlockFaceUV reads as the
+		// sprite-top V on every side face (FaceInfo.java:19-42 — the top corners are
+		// vertices 0/3; BlockFaceUV.java:31-38 — they read uvs[1]), so every side face
+		// baked upside down (the glow window at the door's top), with an extra U mirror
+		// (180°) on NORTH/EAST. The canonical form also decouples the UV from the ±0.002
+		// inflated slab box (the #16 atlas-edge rule — TextureAtlasSprite.getU linearly
+		// extrapolates past the sprite).
 		// cullface rides the BlockElementFace (the upstream aShouldSideBeRendered gate, :1014);
 		// the bakeQuad rotation slot stays null (no element rotation)
+		Vector3f tFrom = new Vector3f((float) tBox[0] * 16, (float) tBox[1] * 16, (float) tBox[2] * 16);
+		Vector3f tTo = new Vector3f((float) tBox[3] * 16, (float) tBox[4] * 16, (float) tBox[5] * 16);
 		return BAKERY.bakeQuad(tFrom, tTo,
-				new BlockElementFace(aPlan.quadFace(), 0, aPlan.sprite().toString(), new BlockFaceUV(tUv, 0)),
+				new BlockElementFace(aPlan.quadFace(), 0, aPlan.sprite().toString(), new BlockFaceUV(new float[] {0, 0, 16, 16}, 0)),
 				aSprite, aPlan.quadFace(), BlockModelRotation.X0_Y0, null, true, aPlan.sprite());
-	}
-
-	/** The GTCEu StaticFaceBakery.bakeFace cubeUV switch (StaticFaceBakery.java:54-66). */
-	private static float[] uvOf(Direction aFace, double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
-		return switch (aFace) {
-			case UP    -> new float[] {(float) minX, (float) minZ, (float) maxX, (float) maxZ};
-			case DOWN  -> new float[] {(float) minX, (float) maxZ, (float) maxX, (float) minZ};
-			case NORTH -> new float[] {(float) maxX, (float) maxY, (float) minX, (float) minY};
-			case SOUTH -> new float[] {(float) minX, (float) maxY, (float) maxX, (float) minY};
-			case WEST  -> new float[] {(float) minZ, (float) maxY, (float) maxZ, (float) minY};
-			case EAST  -> new float[] {(float) maxZ, (float) maxY, (float) minZ, (float) minY};
-		};
 	}
 }

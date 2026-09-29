@@ -188,7 +188,17 @@ public class GTFluidPipeFoamModel extends GTDynamicBakedModel {
 				aSprite, aPlan.quadFace(), BlockModelRotation.X0_Y0, null, true, aPlan.sprite());
 	}
 
-	/** The GTCEu StaticFaceBakery.bakeFace cubeUV switch (StaticFaceBakery.java:54-66, the arrow baker's table). */
+	/**
+	 * The GTCEu StaticFaceBakery.bakeFace cubeUV switch (StaticFaceBakery.java:54-66, the arrow baker's table).
+	 *
+	 * <p>KEPT VERBATIM (the r8-uvof-private-copies ruling, the GTWireBakedModel precedent):
+	 * the four C-Foam sprites are orientation-free grayscale noise (the upstream
+	 * {@code BlockTextureDefault} full-face foam icons, TileEntityBase10ConnectorRendered
+	 * .java:261-262) and the foam's PAINT tint is flat — so the old table's side V-flip /
+	 * NORTH-EAST 180° / DOWN inversion have no visual product. The corrected canonical form
+	 * rides the directional-art consumers ({@link GTOvenOverlayModel},
+	 * {@link GTFluidPipeFlowModel}).
+	 */
 	private static float[] uvOf(Direction aFace, double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
 		return switch (aFace) {
 			case UP    -> new float[] {(float) minX, (float) minZ, (float) maxX, (float) maxZ};
