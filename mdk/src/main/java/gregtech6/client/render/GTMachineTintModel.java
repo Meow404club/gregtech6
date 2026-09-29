@@ -275,6 +275,15 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (Block tBlock : gregtech6.registry.GT6CrystalChargers.paintableBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GT6ZpmDechargers.paintableBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GT6LongDistanceTransformers.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		// task r8-tex-bridge-kinetic — the kinetic engines join the baked-tint domain:
+		// the 28 steam-engine rows (Loader :584-612 NBT_MATERIAL) and the 8 diesel rows
+		// (:721-729) over their two-layer shells (the tintindex-0 gray colored body is
+		// the seat, the overlay decals untinted), plus the single rotation transformer
+		// (the WoodTreated row, :1668 — the material resolves through the GTMachinePaintTint
+		// bySlug dispatch arm, the row records live in GT6Kinetics)
+		for (Block tBlock : gregtech6.registry.GT6Kinetics.steamEngineBlockArray()) wrapStates(tBlock, aEvent);
+		for (Block tBlock : gregtech6.registry.GT6Kinetics.dieselBlockArray()) wrapStates(tBlock, aEvent);
+		wrapStates(gregtech6.registry.GT6Kinetics.TRANSFORMER_ROTATION.get(), aEvent);
 	}
 
 	/**
@@ -335,6 +344,13 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// so its unpainted identity stays the white no-op.
 		tPaintItems.add(gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_SMALL_ITEM.get());
 		tPaintItems.add(gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM_ITEM.get());
+		// task r8-tex-bridge-kinetic — the kinetic engines' 37 BlockItems (the 28 steam
+		// rows, the 8 diesel rows, the rotation transformer) join the same lambda: the
+		// two-layer shells carry tintindex 0 on the body, and an unregistered BlockItem
+		// would render the creative-tab face untinted (the r4-18 converter-band note)
+		for (Block tBlock : gregtech6.registry.GT6Kinetics.steamEngineBlockArray()) tPaintItems.add(tBlock.asItem());
+		for (Block tBlock : gregtech6.registry.GT6Kinetics.dieselBlockArray()) tPaintItems.add(tBlock.asItem());
+		tPaintItems.add(gregtech6.registry.GT6Kinetics.TRANSFORMER_ROTATION.get().asItem());
 		// the entry handles compile against both legs' RegistryObject/DeferredHolder
 		// without a fork (the GT6BlockTags mineable-band lambda shape)
 		gregtech6.registry.GTItemPipes.ITEMS_BY_PATH.values().forEach(tPipeItem -> tPaintItems.add(tPipeItem.get()));
