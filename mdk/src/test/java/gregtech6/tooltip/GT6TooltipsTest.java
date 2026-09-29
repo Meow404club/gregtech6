@@ -121,6 +121,54 @@ public class GT6TooltipsTest {
 	}
 
 	@Test
+	public void multiblockTablePinsTheBaseChainRows() {
+		// task r8-tooltip-multiblock-generator — TileEntityBase10MultiBlockBase.java:99-103
+		// + the TileEntityBase09FacingSingle.java:61 super tail, in upstream order
+		List<GT6Tooltips.GT6TooltipLine> tRows = GT6Tooltips.REGISTRY.get("multiblock");
+		assertEquals(3, tRows.size(), "the multiblock family = the three family-constant base rows");
+		assertEquals("gt6.tooltip.multiblock.1", tRows.get(0).key()); // :100 LH.TOOL_TO_BUILD_BUILDER_WAND
+		assertEquals("gt6.tooltip.multiblock.2", tRows.get(1).key()); // :101 LH.TOOL_TO_DETAIL_MAGNIFYINGGLASS
+		assertEquals("gt6.tooltip.multiblock.3", tRows.get(2).key()); // Base09:61 the facing row
+		assertSame(ChatFormatting.DARK_GRAY, tRows.get(0).style());   // Chat.DGRAY, all three
+		assertSame(ChatFormatting.DARK_GRAY, tRows.get(1).style());
+		assertSame(ChatFormatting.DARK_GRAY, tRows.get(2).style());
+	}
+
+	@Test
+	public void converterTablePinsTheStaticTailAtBase11Positions() {
+		// TileEntityBase11MultiBlockConverter.java:91-94 sequence — slots 1-3 are the
+		// per-instance energy-in/out + efficiency faces (no static face), the family
+		// table carries the super tail at positions 4-6
+		List<GT6Tooltips.GT6TooltipLine> tRows = GT6Tooltips.REGISTRY.get("converter");
+		assertEquals(3, tRows.size());
+		assertEquals("gt6.tooltip.converter.4", tRows.get(0).key());
+		assertEquals("gt6.tooltip.converter.5", tRows.get(1).key());
+		assertEquals("gt6.tooltip.converter.6", tRows.get(2).key());
+		assertSame(ChatFormatting.DARK_GRAY, tRows.get(0).style());
+		assertSame(ChatFormatting.DARK_GRAY, tRows.get(1).style());
+		assertSame(ChatFormatting.DARK_GRAY, tRows.get(2).style());
+	}
+
+	@Test
+	public void generatorTablePinsTheConstantBlockAtSolidPositions() {
+		// MultiTileEntityGeneratorSolid.java:85-97 — slots 1-3 are the per-instance
+		// recipes/efficiency/energy-out faces; the constant block = :89-95 + the
+		// Base09 facing tail, 4 ORANGE requirements + 2 DRED hazards + 2 DGRAY tools
+		List<GT6Tooltips.GT6TooltipLine> tRows = GT6Tooltips.REGISTRY.get("generator");
+		assertEquals(8, tRows.size());
+		String[] tKeys = {"gt6.tooltip.generator.4", "gt6.tooltip.generator.5", "gt6.tooltip.generator.6",
+				"gt6.tooltip.generator.7", "gt6.tooltip.generator.8", "gt6.tooltip.generator.9",
+				"gt6.tooltip.generator.10", "gt6.tooltip.generator.11"};
+		ChatFormatting[] tStyles = {ChatFormatting.GOLD, ChatFormatting.GOLD, ChatFormatting.GOLD,
+				ChatFormatting.GOLD, ChatFormatting.DARK_RED, ChatFormatting.DARK_RED,
+				ChatFormatting.DARK_GRAY, ChatFormatting.DARK_GRAY};
+		for (int i = 0; i < tKeys.length; i++) {
+			assertEquals(tKeys[i], tRows.get(i).key(), "generator row " + i + " rides its upstream slot");
+			assertSame(tStyles[i], tRows.get(i).style(), "generator row " + i + " color");
+		}
+	}
+
+	@Test
 	public void unregisteredFamilyAppendsNothing() {
 		List<Component> tTooltip = new ArrayList<>();
 		GT6Tooltips.append("machine", tTooltip);

@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.BlockItem;
+import gregtech6.item.GT6MachineBlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -88,7 +88,7 @@ public final class GT6DynamoHousings {
 	private static void registerController(String aPath, java.util.function.Supplier<Block> aBlock) {
 		BLOCKS_BY_PATH.put(aPath, BLOCKS.register(aPath, aBlock));
 		ITEMS_BY_PATH.put(aPath, ITEMS.register(aPath,
-				() -> new BlockItem(GT6DynamoHousings.BLOCKS_BY_PATH.get(aPath).get(), new Item.Properties())));
+				() -> new GT6MachineBlockItem(GT6DynamoHousings.BLOCKS_BY_PATH.get(aPath).get(), new Item.Properties(), "converter")));
 	}
 
 	private static BlockBehaviour.Properties props(float aHardness) {

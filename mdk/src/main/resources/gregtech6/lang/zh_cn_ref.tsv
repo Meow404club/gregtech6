@@ -1865,6 +1865,20 @@ direct	gt6.tooltip.barrel_gas.10	存储的热量过多时会熔毁! (%s K)	hand
 direct	gt6.tooltip.barrel_gas.11	使用活动扳手调整自动输出	hand
 direct	gt6.tooltip.barrel_gas.12	使用软锤调整状态	hand
 direct	gt6.tooltip.barrel_gas.13	使用放大镜观察细节	hand
+direct	gt6.tooltip.multiblock.1	使用建筑之杖快速搭建结构	hand
+direct	gt6.tooltip.multiblock.2	使用放大镜观察细节	hand
+direct	gt6.tooltip.multiblock.3	使用扳手设置朝向	hand
+direct	gt6.tooltip.converter.4	使用建筑之杖快速搭建结构	hand
+direct	gt6.tooltip.converter.5	使用放大镜观察细节	hand
+direct	gt6.tooltip.converter.6	使用扳手设置朝向	hand
+direct	gt6.tooltip.generator.4	需要正面是空气才能工作	hand
+direct	gt6.tooltip.generator.5	需要清理灰烬 (正面)	hand
+direct	gt6.tooltip.generator.6	需要打火石之类的东西点火 (正面)	hand
+direct	gt6.tooltip.generator.7	没有界面，右键以放入/取出物品! (正面)	hand
+direct	gt6.tooltip.generator.8	会使得周围的方块着火! (4m)	hand
+direct	gt6.tooltip.generator.9	当它在运作的时候接触会受伤! (顶面)	hand
+direct	gt6.tooltip.generator.10	使用铲子清空容器	hand
+direct	gt6.tooltip.generator.11	使用扳手设置朝向	hand
 direct	gt6.tooltip.lightningrod.1	最底层是3x3的钨壁板, 中间是避雷针电力输出口	hand
 direct	gt6.tooltip.lightningrod.2	第二层是3x3的大型铌钛合金线圈	hand
 direct	gt6.tooltip.lightningrod.3	第三层是3x3的钨壁板	hand

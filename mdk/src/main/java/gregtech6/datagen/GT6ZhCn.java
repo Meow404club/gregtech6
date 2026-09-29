@@ -124,6 +124,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addConverterJadeUnits(); // task r5-jade-converters — the converter-family jade band (hand rows, the tsv direct band)
 		addBoilerTooltipUnits(); // task r8-tooltip-infra — the boiler tooltip pilot band (hand rows, the tsv direct band)
 		addSensorJadeUnits(); // task r8-jade-sensor-provider — the sensor-family jade band (hand rows, the tsv direct band)
+		addFamilyTooltipUnits(); // task r8-tooltip-multiblock-generator — the T4 three-family tooltip band (hand rows, the tsv direct band)
 		addAnvilUnits();        // task p28-c-anvil
 		addPocketUnits();       // task p29-w5-t7-pocket-eight — the 8+7 pocket face (hand rows, no dump face exists)
 		addArmorUnits();        // task p29-w5-t8-armor-24
@@ -591,6 +592,30 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("gt6.jade.sensor.mode.scale");
 		addDirect("gt6.jade.sensor.mode.full");
 		addDirect("gt6.jade.sensor.mode.not_full");
+	}
+
+	/**
+	 * The multiblock / converter / generator family tooltip rows zh faces (task
+	 * r8-tooltip-multiblock-generator, 14 hand rows — the addBoilerTooltipUnits shape):
+	 * the T4 row tables' upstream dump faces (composed for the parenthetical rows — the
+	 * upstream row composition " (" + face + ")" / " (4m)" reproduced flat). The TSV rows,
+	 * this walk and the lang regen land in the SAME commit (the W2 wash-out lesson).
+	 */
+	private void addFamilyTooltipUnits() {
+		addDirect("gt6.tooltip.multiblock.1");
+		addDirect("gt6.tooltip.multiblock.2");
+		addDirect("gt6.tooltip.multiblock.3");
+		addDirect("gt6.tooltip.converter.4");
+		addDirect("gt6.tooltip.converter.5");
+		addDirect("gt6.tooltip.converter.6");
+		addDirect("gt6.tooltip.generator.4");
+		addDirect("gt6.tooltip.generator.5");
+		addDirect("gt6.tooltip.generator.6");
+		addDirect("gt6.tooltip.generator.7");
+		addDirect("gt6.tooltip.generator.8");
+		addDirect("gt6.tooltip.generator.9");
+		addDirect("gt6.tooltip.generator.10");
+		addDirect("gt6.tooltip.generator.11");
 	}
 
 	/**

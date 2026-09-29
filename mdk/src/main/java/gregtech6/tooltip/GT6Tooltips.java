@@ -26,6 +26,12 @@ import net.minecraft.network.chat.Component;
  * HAZARD_EXPLOSION_STEAM); task r8-tooltip-boiler-tank (T2) folded them into the full 13-row
  * table and added the boiler_large / tank / barrel(+barrel_gas) tables — every row numbered
  * by its upstream row index, so a gap in the numbering IS the ported-out row set.
+ *
+ * <p>Task r8-tooltip-multiblock-generator tables the multiblock / converter / generator
+ * families (the T4 row tables — upstream anchors TileEntityBase10MultiBlockBase.java:99-103
+ * + TileEntityBase09FacingSingle.java:61, TileEntityBase11MultiBlockConverter.java:91-104,
+ * MultiTileEntityGeneratorSolid.java:85-97; per-instance numeric rows keep their slots
+ * empty, see the static block note).
  */
 public final class GT6Tooltips {
 
@@ -113,6 +119,30 @@ public final class GT6Tooltips {
 				new GT6TooltipLine("gt6.tooltip.barrel_gas.11", GT6TooltipStyle.DGRAY),   // :100
 				new GT6TooltipLine("gt6.tooltip.barrel_gas.12", GT6TooltipStyle.DGRAY),   // :101
 				new GT6TooltipLine("gt6.tooltip.barrel_gas.13", GT6TooltipStyle.DGRAY))); // :102
+
+		// task r8-tooltip-multiblock-generator — the T4 three-family tables (tail-append,
+		// the boiler band above stays the T1/T2 seam). Row numbers n = the upstream slot
+		// position in the family's addToolTips sequence; the per-INSTANCE numeric faces
+		// (energy rates, efficiency percent, recipes names, per-machine structure texts)
+		// keep their slots EMPTY — a static family table can only carry family-constant
+		// rows (the live numbers ride the Jade providers, design.r8-jade-tooltip).
+		register("multiblock", List.of(
+				new GT6TooltipLine("gt6.tooltip.multiblock.1", GT6TooltipStyle.DGRAY),   // TileEntityBase10MultiBlockBase.java:100 LH.TOOL_TO_BUILD_BUILDER_WAND
+				new GT6TooltipLine("gt6.tooltip.multiblock.2", GT6TooltipStyle.DGRAY),   // :101 LH.TOOL_TO_DETAIL_MAGNIFYINGGLASS
+				new GT6TooltipLine("gt6.tooltip.multiblock.3", GT6TooltipStyle.DGRAY))); // TileEntityBase09FacingSingle.java:61 LH.TOOL_TO_SET_FACING_PRE + "Wrench" + POST (getFacingTool = TOOL_wrench, :82)
+		register("converter", List.of(
+				new GT6TooltipLine("gt6.tooltip.converter.4", GT6TooltipStyle.DGRAY),    // TileEntityBase11MultiBlockConverter.java:91-94 order — slots 1-3 = the per-instance energy-in/out + efficiency faces
+				new GT6TooltipLine("gt6.tooltip.converter.5", GT6TooltipStyle.DGRAY),
+				new GT6TooltipLine("gt6.tooltip.converter.6", GT6TooltipStyle.DGRAY)));
+		register("generator", List.of(
+				new GT6TooltipLine("gt6.tooltip.generator.4", GT6TooltipStyle.ORANGE),   // MultiTileEntityGeneratorSolid.java:89 LH.REQUIREMENT_AIR_IN_FRONT
+				new GT6TooltipLine("gt6.tooltip.generator.5", GT6TooltipStyle.ORANGE),   // :90 LH.REQUIREMENT_EMPTY_ASHES + " (" + FACE_FRONT + ")"
+				new GT6TooltipLine("gt6.tooltip.generator.6", GT6TooltipStyle.ORANGE),   // :91 LH.REQUIREMENT_IGNITE_FIRE + " (" + FACE_FRONT + ")"
+				new GT6TooltipLine("gt6.tooltip.generator.7", GT6TooltipStyle.ORANGE),   // :92 LH.NO_GUI_CLICK_TO_INVENTORY + " (" + FACE_FRONT + ")"
+				new GT6TooltipLine("gt6.tooltip.generator.8", GT6TooltipStyle.DRED),     // :93 LH.HAZARD_FIRE + " (4m)" (FLAME_RANGE = 3, :54)
+				new GT6TooltipLine("gt6.tooltip.generator.9", GT6TooltipStyle.DRED),     // :94 LH.HAZARD_CONTACT + " (" + FACE_TOP + ")"
+				new GT6TooltipLine("gt6.tooltip.generator.10", GT6TooltipStyle.DGRAY),   // :95 LH.TOOL_TO_REMOVE_SHOVEL
+				new GT6TooltipLine("gt6.tooltip.generator.11", GT6TooltipStyle.DGRAY))); // TileEntityBase09FacingSingle.java:61 facing row (the super chain tail)
 	}
 
 	/** Registers a family row table (T2-T5's entry seam; duplicate family = a datagen-order bug, fail loud). */

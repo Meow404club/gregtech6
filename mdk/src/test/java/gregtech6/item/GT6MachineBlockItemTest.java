@@ -14,12 +14,16 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import gregtech6.block.GTComposedNameItem;
+import gregtech6.block.energy.GTEnergySourceBlock;
+import gregtech6.block.multiblock.GTCokeOvenBlock;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
@@ -41,6 +45,42 @@ public class GT6MachineBlockItemTest extends GTOfflineTestBase {
 	static GT6MachineBlockItem sBoiler;
 	static GT6MachineBlockItem sBoilerArgs;
 	static GT6MachineBlockItem sUntable;
+	static GT6MachineBlockItem sCokeOven;
+	static GT6MachineBlockItem sEnergySource;
+	static GT6MachineBlockItem sConverter;
+
+	/**
+	 * The block-construction write window (the GT6LargeMachineTexDatagenTest.BlockLatch
+	 * shape): real GT block classes cannot be constructed after the offline Bootstrap
+	 * froze the block registry, so the latch reopens the write window for the two fixture
+	 * blocks. Unarmed (the 1.21.1 JVM form) = the real-block tests telemetry-skip — the
+	 * known ItemLatch dual-leg asymmetry, the r8-tex-large-machines 备案 form.
+	 */
+	private static final class BlockLatch {
+		static final sun.misc.Unsafe UNSAFE;
+		static final long LOCKED_OFFSET;
+		static final long FROZEN_OFFSET;
+		static final boolean ARMED;
+		static {
+			sun.misc.Unsafe tUnsafe = null;
+			long tLocked = 0, tFrozen = 0;
+			boolean tArmed = true;
+			try {
+				java.lang.reflect.Field tUnsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+				tUnsafeField.setAccessible(true);
+				tUnsafe = (sun.misc.Unsafe) tUnsafeField.get(null);
+				Class<?> tClass = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getClass();
+				tLocked = tUnsafe.objectFieldOffset(GTOfflineTestBase.findNestedField(tClass, "locked"));
+				tFrozen = tUnsafe.objectFieldOffset(GTOfflineTestBase.findNestedField(tClass, "frozen"));
+			} catch (Throwable ignored) {
+				tArmed = false; // the fallback leg (no constructed fixtures)
+			}
+			UNSAFE = tUnsafe;
+			LOCKED_OFFSET = tLocked;
+			FROZEN_OFFSET = tFrozen;
+			ARMED = tArmed;
+		}
+	}
 
 	@BeforeAll
 	static void buildFixtures() {
@@ -54,6 +94,42 @@ public class GT6MachineBlockItemTest extends GTOfflineTestBase {
 				() -> new GT6MachineBlockItem(Blocks.BRICKS, new Item.Properties(), "boiler", 16, 32, 320000));
 		sUntable = registerItemFixture("fixture_tooltip_pilot_untabled",
 				() -> new GT6MachineBlockItem(Blocks.BRICKS, new Item.Properties(), "machine"));
+		// the converter family carrier (the review rider, task r8-tooltip-multiblock-generator):
+		// the turbine/dynamo registration sites hand family="converter" — the vanilla-block
+		// fixture pins the replay without the block-registry latch
+		sConverter = registerItemFixture("fixture_tooltip_converter_rider",
+				() -> new GT6MachineBlockItem(Blocks.BRICKS, new Item.Properties(), "converter"));
+		// the real-block carriers (task r8-tooltip-multiblock-generator acceptance ①):
+		// the actual controller block classes a swap hands the carrier — the coke oven
+		// (the multiblock family) and the energy-source rig (the generator family);
+		// constructed AND registered under the block write window (the item registration
+		// callback resolves the block's registry delegate, ForgeRegistry.getDelegateOrThrow
+		// through BlockItem.registerBlocks), then mounted into item fixtures
+		org.junit.jupiter.api.Assumptions.assumeTrue(BlockLatch.ARMED,
+				"the offline block-registry latch is unreachable on this JVM");
+		Block tCokeOven;
+		Block tEnergySource;
+		BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
+				BlockLatch.FROZEN_OFFSET, false);
+		BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
+				BlockLatch.LOCKED_OFFSET, false);
+		try {
+			tCokeOven = net.minecraft.core.Registry.register(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
+					new net.minecraft.resources.ResourceLocation("gt6", "fixture_tooltip_multiblock_coke_oven"),
+					new GTCokeOvenBlock(BlockBehaviour.Properties.of()));
+			tEnergySource = net.minecraft.core.Registry.register(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
+					new net.minecraft.resources.ResourceLocation("gt6", "fixture_tooltip_generator_rig"),
+					new GTEnergySourceBlock(BlockBehaviour.Properties.of()));
+		} finally {
+			BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
+					BlockLatch.FROZEN_OFFSET, true);
+			BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
+					BlockLatch.LOCKED_OFFSET, true);
+		}
+		sCokeOven = registerItemFixture("fixture_tooltip_multiblock_coke_oven",
+				() -> new GT6MachineBlockItem(tCokeOven, new Item.Properties(), "multiblock"));
+		sEnergySource = registerItemFixture("fixture_tooltip_generator_rig",
+				() -> new GT6MachineBlockItem(tEnergySource, new Item.Properties(), "generator"));
 	}
 
 	/** The leg-swap hover call — ONE swap, the GTLightningRodBlock.Item:71-81 shape. */
@@ -97,10 +173,62 @@ public class GT6MachineBlockItemTest extends GTOfflineTestBase {
 	}
 
 	@Test
+	public void converterFamilyAppendsTheConverterBaseRows() {
+		// the review rider — the three TileEntityBase11MultiBlockConverter super-chain rows
+		// (:94 → the Base10MultiBlockBase :100-101 pair + the :61 facing row), the family
+		// the turbine/dynamo carriers replay (upstream MultiTileEntityLargeTurbine/LargeDynamo
+		// extend TileEntityBase11MultiBlockConverter)
+		List<Component> tTooltip = new ArrayList<>();
+		callHoverText(sConverter, new ItemStack(sConverter), tTooltip);
+		assertEquals(3, tTooltip.size(), "the converter family replays the three base rows");
+		TranslatableContents tRow0 = assertInstanceOf(TranslatableContents.class, tTooltip.get(0).getContents());
+		TranslatableContents tRow2 = assertInstanceOf(TranslatableContents.class, tTooltip.get(2).getContents());
+		assertEquals("gt6.tooltip.converter.4", tRow0.getKey());
+		assertEquals("gt6.tooltip.converter.6", tRow2.getKey());
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.DARK_GRAY), tTooltip.get(0).getStyle().getColor());
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.DARK_GRAY), tTooltip.get(2).getStyle().getColor());
+	}
+
+	@Test
 	public void familyWithoutRowTableAppendsNothing() {
 		List<Component> tTooltip = new ArrayList<>();
 		callHoverText(sUntable, new ItemStack(sUntable), tTooltip);
 		assertTrue(tTooltip.isEmpty(), "an unregistered family (machine pre-T3) appends ZERO lines");
+	}
+
+	@Test
+	public void cokeOvenBlockHoverCarriesTheMultiblockBaseRows() {
+		// task r8-tooltip-multiblock-generator acceptance ① — the real controller block
+		// through the carrier: the three Base10MultiBlockBase chain rows in upstream order
+		List<Component> tTooltip = new ArrayList<>();
+		callHoverText(sCokeOven, new ItemStack(sCokeOven), tTooltip);
+		assertEquals(3, tTooltip.size(), "the multiblock family replays the three base rows");
+		TranslatableContents tRow0 = assertInstanceOf(TranslatableContents.class, tTooltip.get(0).getContents());
+		TranslatableContents tRow2 = assertInstanceOf(TranslatableContents.class, tTooltip.get(2).getContents());
+		assertEquals("gt6.tooltip.multiblock.1", tRow0.getKey());
+		assertEquals("gt6.tooltip.multiblock.3", tRow2.getKey());
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.DARK_GRAY), tTooltip.get(0).getStyle().getColor());
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.DARK_GRAY), tTooltip.get(2).getStyle().getColor());
+	}
+
+	@Test
+	public void generatorBlockHoverCarriesTheSolidConstantBlock() {
+		// acceptance ① second block — the eight MultiTileEntityGeneratorSolid constant
+		// rows: the requirements head ORANGE, the hazard pair DARK_RED (the DRED pin)
+		List<Component> tTooltip = new ArrayList<>();
+		callHoverText(sEnergySource, new ItemStack(sEnergySource), tTooltip);
+		assertEquals(8, tTooltip.size(), "the generator family replays the constant block");
+		TranslatableContents tHead = assertInstanceOf(TranslatableContents.class, tTooltip.get(0).getContents());
+		TranslatableContents tFire = assertInstanceOf(TranslatableContents.class, tTooltip.get(4).getContents());
+		TranslatableContents tContact = assertInstanceOf(TranslatableContents.class, tTooltip.get(5).getContents());
+		TranslatableContents tTail = assertInstanceOf(TranslatableContents.class, tTooltip.get(7).getContents());
+		assertEquals("gt6.tooltip.generator.4", tHead.getKey());
+		assertEquals("gt6.tooltip.generator.8", tFire.getKey());
+		assertEquals("gt6.tooltip.generator.9", tContact.getKey());
+		assertEquals("gt6.tooltip.generator.11", tTail.getKey());
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.GOLD), tTooltip.get(0).getStyle().getColor());     // Chat.ORANGE
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.DARK_RED), tTooltip.get(4).getStyle().getColor()); // Chat.DRED
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.DARK_RED), tTooltip.get(5).getStyle().getColor()); // Chat.DRED
 	}
 
 	@Test
