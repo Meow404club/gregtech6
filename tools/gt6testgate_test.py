@@ -35,12 +35,14 @@ python3 tools/gt6testgate_test.py 直跑。全部门控语义用注入桩覆盖�
     reap 三态（空 leader 残留→收/活跃 MainPID≠0→跳过/空壳→跳过）+
     --dry-run 只列+systemctl 缺席优雅；runner 接线（unit 形态/台账先写后杀/
     杀完才释放槽/降级分支不杀）
-  * v3.2 信封内准入（取代 v3a 系统侧 30G 公式）：cgroup_usage_mib 读
-    memory.current（字节→MiB，缺席=0 即刻放行）；outside_limit 公式
-    （MemTotal-cap-2G）与 env 钉值；wait_admission 两维判定表（信封
-    slice+est≤cap × 外压 used-slice≤limit，超限排队带数字理由、边界整即
-    放行）；run_gated 接线（estimate→wait_admission）；dry_run 五行信封
-    报告迁移（ADMIT/QUEUE-envelope/QUEUE-outside/REJECT）
+  * v3.2 信封内准入（取代 v3a 系统侧 30G 公式）+ v3.5 外压护栏退役：
+    cgroup_usage_mib 读 memory.current（字节→MiB，缺席=0 即刻放行）；
+    outside_limit 默认 None（护栏退役；env GT6_GATE_MEM_LIMIT_MIB 合法
+    整数=ops opt-in 绝对阈，坏值仍禁用）；wait_admission 只由信封判定
+    （高基线 used=15000 立即放行=v3.5 回归钉，gate-admit 行保留 outside
+    信息项；env opt-in 恢复排队；envelope 超帽阻塞钉不变）；run_gated
+    接线（estimate→wait_admission）；dry_run 五行报告（ADMIT/
+    QUEUE-envelope/REJECT，outside 仅诊断信息）
   * v3.3 每任务预算+脚本看门狗（内核不强制 memory.max 的本机，脚本即
     执行者）：TASK_CAP_MIB 分级表+--task-cap 覆盖+wrap 携带 MemoryMax；
     watchdog_tick 判定表（自预算超→杀己/聚合超帽→最大者优先逐杀至帽内/
@@ -1246,7 +1248,8 @@ class EffectiveUsageTest(unittest.TestCase):
 
 
 class OutsideLimitTest(unittest.TestCase):
-    """v3.2 外压护栏阈值：公式 MemTotal-cap-2G，env 钉值优先，坏值回公式。"""
+    """v3.5 外压护栏语义反转：默认退役（None）；env 合法整数=ops opt-in
+    绝对阈；坏值仍走禁用路径。（旧 v3.2 公式钉随护栏一并退役）"""
 
     def setUp(self):
         self._env = os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
@@ -1257,21 +1260,24 @@ class OutsideLimitTest(unittest.TestCase):
         else:
             os.environ["GT6_GATE_MEM_LIMIT_MIB"] = self._env
 
-    def test_formula(self):
-        # 40960 - 25*1024 - 2048 = 13312
-        self.assertEqual(gate.outside_limit_mib(40960, 25), 13312)
-        self.assertEqual(gate.outside_limit_mib(30720, 25), 3072)
+    def test_retired_by_default(self):
+        # 无 env → None（退役）。本机基线死锁（基线 15069 > 公式上限
+        # 12451）后用户裁定「系统侧不管」，护栏默认关。
+        self.assertIsNone(gate.outside_limit_mib())
 
-    def test_env_pins_absolute_value(self):
-        os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "999999"
-        self.assertEqual(gate.outside_limit_mib(40960, 25), 999999)
+    def test_env_opt_in_restores_guard_as_absolute_threshold(self):
+        os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "8000"
+        self.assertEqual(gate.outside_limit_mib(), 8000)
+
+    def test_invalid_env_stays_disabled(self):
         os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "junk"
-        self.assertEqual(gate.outside_limit_mib(40960, 25), 13312)
+        self.assertIsNone(gate.outside_limit_mib())
 
 
 class EnvelopeAdmissionTest(unittest.TestCase):
-    """v3.2 wait_admission 两维判定表：信封（slice+est≤cap）× 外压
-    （used-slice≤limit）。读数全注入，毫秒级。"""
+    """v3.2 信封判定 + v3.5 外压退役：准入只看 slice+est≤cap；outside
+    沦为信息项（gate-admit 行）；env opt-in 才恢复外压排队。读数全注入，
+    毫秒级。"""
 
     def setUp(self):
         fd, self.path = tempfile.mkstemp(suffix=".gate")
@@ -1285,52 +1291,55 @@ class EnvelopeAdmissionTest(unittest.TestCase):
             return fh.read()
 
     def admit(self, readings, estimate=4000, cap_gib=25, poll=0.01, **kw):
-        """readings: (slice, used, total) 三元组序列，每轮轮询消费一个。"""
+        """readings: (slice, used) 二元组序列，每轮轮询消费一个。"""
         slices = iter([r[0] for r in readings])
         useds = iter([r[1] for r in readings])
-        totals = iter([r[2] for r in readings])
         return gate.wait_admission(
             estimate, cap_gib=cap_gib, poll=poll, tag="t",
             log_file=self.path, read_slice=lambda: next(slices),
-            read_used=lambda: next(useds), read_total=lambda: next(totals),
+            read_used=lambda: next(useds),
             **kw)
 
-    def test_empty_slice_and_calm_outside_admits_instantly(self):
-        self.admit([(0, 8000, 40960)])
+    def test_empty_slice_admits_instantly(self):
+        self.admit([(0, 8000)])
         self.assertNotIn("gate-queue", self.journal())
         self.assertIn("gate-admit", self.journal())
 
+    def test_high_baseline_admits_without_guard(self):
+        # v3.5 回归钉（旧行为=永久 queue）：默认无 env 时高非门禁基线
+        # （嵌入服务+多会话≈15069MiB）不再阻塞——空 slice+est 6000 即刻放行。
+        self.admit([(0, 15000)], estimate=6000)
+        body = self.journal()
+        self.assertNotIn("gate-queue", body)
+        self.assertIn("gate-admit", body)
+        # outside 沦为信息项：admit 行照记数字（诊断用）
+        self.assertIn("outside=15000MiB", body)
+
     def test_envelope_over_cap_queues_then_admits_on_relief(self):
         # slice 10000 + est 20000 = 30000 > 25600 → 排队；回落后放行
-        self.admit([(10000, 8000, 40960), (1000, 8000, 40960)], estimate=20000)
+        self.admit([(10000, 8000), (1000, 8000)], estimate=20000)
         body = self.journal()
         self.assertIn("gate-queue", body)
         self.assertIn("envelope slice=10000MiB est=20000MiB "
                       "predicted=30000MiB cap=25600MiB", body)
         self.assertIn("gate-admit", body)
 
-    def test_outside_over_limit_queues_with_numbers(self):
-        # 信封宽裕（0+4000），外压 29500 > 13312 → 排队，理由行带 outside 数字
-        self.admit([(500, 30000, 40960), (500, 8000, 40960)])
-        body = self.journal()
-        self.assertIn("outside used=30000MiB slice=500MiB outside=29500MiB "
-                      "limit=13312MiB", body)
-        self.assertIn("gate-admit", body)
-
     def test_boundary_at_cap_admits(self):
         # 信封整好压线（slice 20000 + est 5600 == 25600）→ 不排队
-        self.admit([(20000, 8000, 40960)], estimate=5600)
+        self.admit([(20000, 8000)], estimate=5600)
         self.assertNotIn("gate-queue", self.journal())
 
-    def test_slice_env_pin_honored_via_outside_limit(self):
+    def test_env_opt_in_guard_queues_high_baseline(self):
+        # env 钉绝对阈：外压 15000 > env 8000 → 排队（信封本身宽裕），
+        # 理由行带 outside 数字；外压回落后放行
         old = os.environ.get("GT6_GATE_MEM_LIMIT_MIB")
         try:
-            os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "9000"
-            # 外压 8000 ≤ env 钉的 9000 → 放行（公式阈应是 13312 会一样放；
-            # 用 11000 验证钉值生效：公式下 11000≤13312 放，钉值下排队）
-            os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "10000"
-            self.admit([(0, 11000, 40960), (0, 8000, 40960)])
-            self.assertIn("outside=11000MiB limit=10000MiB", self.journal())
+            os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "8000"
+            self.admit([(0, 15000), (0, 7000)], estimate=6000)
+            body = self.journal()
+            self.assertIn("outside used=15000MiB slice=0MiB "
+                          "outside=15000MiB limit=8000MiB", body)
+            self.assertIn("gate-admit", body)
         finally:
             if old is None:
                 os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
@@ -1541,6 +1550,18 @@ class WatchdogRunTest(unittest.TestCase):
         self.assertIn("aggregate-kill", journal)
 
     def test_sibling_kill_passes_child_rc_through(self):
+        # 透传属性本身已由 unwrapped 直跑（RunGatedTest）+ fake systemd-run
+        # 端到端（SliceWrapTest）双钉；本钉增量=兄弟被杀时自身退出码经
+        # 真 systemd-run 仍透传。用户 session bus 不可达的环境（agent 沙箱
+        # 壳实测 Connection refused，main 基线即红）真 wrapper 起不来——
+        # 探针 skip，同 SliceLiveTest 先例（2026-09-29 v3.5 卡补）。
+        probe = subprocess.run(
+            ["systemd-run", "--user", "--scope", "--", "/bin/true"],
+            capture_output=True, timeout=30)
+        if probe.returncode != 0:
+            self.skipTest("user scope bus unreachable: "
+                          f"{probe.stderr.decode(errors='replace').strip()[:80]}")
+
         def watchdog(unit, budget, cap, stop_fn=None, **kw):
             if not watchdog.fired:
                 watchdog.fired = True
@@ -1630,8 +1651,9 @@ class SliceLiveTest(unittest.TestCase):
 
 
 class DryRunTest(unittest.TestCase):
-    """v3.2 --dry-run 四场景：冷启动 ADMIT / 信封超限 QUEUE / 外压超限
-    QUEUE / full+coder REJECT。宿主读数全注入。"""
+    """v3.2 --dry-run 四场景：冷启动 ADMIT / 信封超限 QUEUE / 高基线
+    ADMIT（v3.5 外压退役，outside 仅诊断行）/ full+coder REJECT。
+    宿主读数全注入。"""
 
     def setUp(self):
         self.dir = tempfile.TemporaryDirectory()
@@ -1641,11 +1663,11 @@ class DryRunTest(unittest.TestCase):
     def tearDown(self):
         self.dir.cleanup()
 
-    def report(self, cmd, used=8000, slice_cur=0, total=40960, **kw):
+    def report(self, cmd, used=8000, slice_cur=0, **kw):
         lines = []
         word = gate.dry_run(cmd, ledger_path=self.ledger, log=lines.append,
                             read_used=lambda: used, read_slice=lambda: slice_cur,
-                            read_total=lambda: total, **kw)
+                            **kw)
         return word, lines
 
     def test_cold_start_admits(self):
@@ -1656,11 +1678,11 @@ class DryRunTest(unittest.TestCase):
         self.assertIn("slice current:  0 MiB", body)
         self.assertIn("cold default", body)
         self.assertIn("4000 MiB", body)          # 冷启动估算
-        # envelope: 0 + 4000 = 4000 ≤ cap 25600；outside: 8000 ≤ 13312
+        # envelope: 0 + 4000 = 4000 ≤ cap 25600；outside 沦为信息项
         self.assertIn("envelope:       slice 0 + estimate 4000 = 4000 MiB "
                       "(cap 25600 MiB)", body)
         self.assertIn("outside:        used 8000 - slice 0 = 8000 MiB "
-                      "(limit 13312 MiB)", body)
+                      "(informational", body)
 
     def test_envelope_over_cap_queues(self):
         gate.record_observation("full-test", 26000, self.ledger)
@@ -1673,15 +1695,16 @@ class DryRunTest(unittest.TestCase):
         self.assertIn("envelope slice 1000 + estimate 26000 = 27000 MiB "
                       "> cap 25600 MiB", body)
 
-    def test_outside_pressure_queues(self):
-        # 信封内宽裕（500+4000≪25600）但非门禁进程吃满机器：外压护栏排队
+    def test_high_baseline_admits_outside_informational(self):
+        # v3.5 回归钉（旧行为=QUEUE ungated pressure）：非门禁进程吃满机器
+        # 不再阻塞准入——decision 只由 envelope 决定，outside 降为诊断行
         word, lines = self.report(["./gradlew", "compileJava"],
                                   used=30000, slice_cur=500)
-        self.assertEqual(word, "QUEUE")
+        self.assertEqual(word, "ADMIT")
         body = "\n".join(lines)
-        self.assertIn("outside used 30000 - slice 500 = 29500 MiB "
-                      "> limit 13312 MiB", body)
-        self.assertIn("ungated pressure", body)
+        self.assertIn("outside:        used 30000 - slice 500 = 29500 MiB", body)
+        self.assertIn("informational", body)
+        self.assertNotIn("ungated pressure", body)
 
     def test_full_coder_rejects_before_prediction(self):
         word, lines = self.report(["./gradlew", ":mdk:cleanTest"], used=100)
