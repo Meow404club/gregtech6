@@ -100,6 +100,8 @@ class GT6MachineGuiLayoutTest {
 		// :195-201
 		assertTable(GT6MachineGuiLayout.outputPositions(7, 0), new int[][] {
 				{107, 7}, {125, 7}, {143, 7}, {107, 25}, {125, 25}, {143, 25}, {107, 43}}, "output case 7");
+		assertTable(GT6MachineGuiLayout.outputPositions(7, 9), new int[][] {
+				{107, 7}, {125, 7}, {143, 7}, {107, 25}, {125, 25}, {143, 25}, {107, 43}}, "output case 7 is fluid-blind");
 		// :204-211
 		assertTable(GT6MachineGuiLayout.outputPositions(8, 0), new int[][] {
 				{107, 7}, {125, 7}, {143, 7}, {107, 25}, {125, 25}, {143, 25}, {107, 43}, {125, 43}}, "output case 8");
