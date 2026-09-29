@@ -2,8 +2,7 @@
   "variants": {
     "active=false,facing=down": {
       "model": "gt6:block/laser_absorber",
-      "x": 90,
-      "y": 90
+      "x": 90
     },
     "active=false,facing=east": {
       "model": "gt6:block/laser_absorber",
@@ -18,36 +17,33 @@
     },
     "active=false,facing=up": {
       "model": "gt6:block/laser_absorber",
-      "x": 270,
-      "y": 90
+      "x": 270
     },
     "active=false,facing=west": {
       "model": "gt6:block/laser_absorber",
       "y": 270
     },
     "active=true,facing=down": {
-      "model": "gt6:block/laser_absorber",
-      "x": 90,
-      "y": 90
+      "model": "gt6:block/laser_absorber_active",
+      "x": 90
     },
     "active=true,facing=east": {
-      "model": "gt6:block/laser_absorber",
+      "model": "gt6:block/laser_absorber_active",
       "y": 90
     },
     "active=true,facing=north": {
-      "model": "gt6:block/laser_absorber"
+      "model": "gt6:block/laser_absorber_active"
     },
     "active=true,facing=south": {
-      "model": "gt6:block/laser_absorber",
+      "model": "gt6:block/laser_absorber_active",
       "y": 180
     },
     "active=true,facing=up": {
-      "model": "gt6:block/laser_absorber",
-      "x": 270,
-      "y": 90
+      "model": "gt6:block/laser_absorber_active",
+      "x": 270
     },
     "active=true,facing=west": {
-      "model": "gt6:block/laser_absorber",
+      "model": "gt6:block/laser_absorber_active",
       "y": 270
     }
   }

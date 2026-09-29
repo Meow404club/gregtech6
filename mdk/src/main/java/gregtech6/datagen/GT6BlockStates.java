@@ -1642,35 +1642,42 @@ public final class GT6BlockStates extends BlockStateProvider {
     /**
      * Task p29-w4-eu-bridge — the three EU-bridge converter families (Loader
      * :815-821/:831-837/:847-853, 15 blocks). NOT paintable machines — the reused
-     * {@link gregtech6.block.energy.GT6DynamoBlock} carrier rides the transformer
-     * orientable-cube form instead of the addMachine paint walk: one orientable model
-     * per family over the borrowed upstream colored front/side pairs (heaters/heat_electric,
-     * engines/kinetic_electric, motors/rotation_electric — the assets/README.md faces),
-     * FRONT = the emission face (the dynamo-block geometry), the FACING y-rotation the
-     * addGearBoxTransformer/transformer form. The five rungs of a family share the model
-     * (the tier is not a visual state upstream, the p8 texture ruling).
+     * {@link gregtech6.block.energy.GT6DynamoBlock} carrier rides the converter
+     * two-layer form instead of the addMachine paint walk: one {@link #addConverterModel}
+     * shell pair per family over the borrowed upstream colored + overlay groups
+     * (heaters/heat_electric, engines/kinetic_electric, motors/rotation_electric — the
+     * assets/README.md faces), FRONT = the emission face (the dynamo-block geometry),
+     * the six-way FACING x band + ACTIVE variant the converterBlockstate form. Only the
+     * heater family carries upstream overlay_active art (the probe: kinetic_electric and
+     * rotation_electric ship NO active groups — both ACTIVE values ride the inactive
+     * shell there). The five rungs of a family share the models (the tier is not a
+     * visual state upstream, the p8 texture ruling).
      */
     private void addElectricBridges() {
-        addBridgeFamily(GTMachines.ELECTRIC_HEATER_BLOCKS_BY_PATH, "electric_heater", "bridge_heater");
-        addBridgeFamily(GTMachines.ELECTRIC_ENGINE_BLOCKS_BY_PATH, "electric_engine", "bridge_engine");
-        addBridgeFamily(GTMachines.ELECTRIC_MOTOR_BLOCKS_BY_PATH, "electric_motor", "bridge_motor");
+        addBridgeFamily(GTMachines.ELECTRIC_HEATER_BLOCKS_BY_PATH, "electric_heater", "bridge_heater", true);
+        addBridgeFamily(GTMachines.ELECTRIC_ENGINE_BLOCKS_BY_PATH, "electric_engine", "bridge_engine", false);
+        addBridgeFamily(GTMachines.ELECTRIC_MOTOR_BLOCKS_BY_PATH, "electric_motor", "bridge_motor", false);
     }
 
     /**
      * Task p32-qu-laser-domain — the CO2 Laser + Laser Absorber families (Loader
-     * :930-934/:976-980, 10 blocks): the SAME reused-dynamo-carrier orientable form as the
-     * bridges, over the borrowed upstream colored front/side pairs (lasers/laser_electric,
-     * laserabsorbers/electric_laser — the assets/README.md faces). FRONT = the emission
-     * face (the laser pushes LU out the front; the absorber takes the beam on the BACK and
-     * pushes EU out the front — the face geometry rides the BE, the visual is this shared
-     * orientable). The beam itself is NOT rendered (the task card: 光束 defer, visual =
-     * the static block face).
+     * :930-934/:976-980, 10 blocks): the SAME reused-dynamo-carrier converter form as the
+     * bridges, over the borrowed upstream colored + overlay groups (lasers/laser_electric,
+     * laserabsorbers/electric_laser — the assets/README.md faces), both with upstream
+     * overlay_active art on the ACTIVE channel (the GT6DynamoBlock property, the BE
+     * syncActiveToState arm). FRONT = the emission face (the laser pushes LU out the
+     * front; the absorber takes the beam on the BACK and pushes EU out the front — the
+     * face geometry rides the BE, the visual is this shared orientable). The beam itself
+     * is NOT rendered (the task card: 光束 defer, visual = the static block face).
      */
     private void addLaserFamilies() {
-        addBridgeFamily(GT6Lasers.CO2_LASER_BLOCKS_BY_PATH, "co2_laser", "laser_electric");
-        addBridgeFamily(GT6Lasers.LASER_ABSORBER_BLOCKS_BY_PATH, "laser_absorber", "laser_absorber");
-        // task p32-qu-energizer — the third laser-converter family rides its own texture
-        // base (the amber-tinted quantum_energizer pair, the assets/README.md face)
+        addBridgeFamily(GT6Lasers.CO2_LASER_BLOCKS_BY_PATH, "co2_laser", "laser_electric", true);
+        addBridgeFamily(GT6Lasers.LASER_ABSORBER_BLOCKS_BY_PATH, "laser_absorber", "laser_absorber", true);
+        // task p32-qu-energizer — the third laser-converter family keeps the plain
+        // single-layer orientable (the r8-tex-bridge-kinetic probe: the upstream
+        // quantum_laser overlay groups are alpha-0 EMPTY layers and the colored layer is
+        // mRGBa-dependent gray noise — nothing to borrow, the committed derived amber
+        // faces stay the rung identity, the assets/README.md probe verdict)
         addBridgeFamily(gregtech6.registry.GT6QuantumEnergizers.QUANTUM_ENERGIZER_BLOCKS_BY_PATH, "quantum_energizer", "quantum_energizer");
     }
 
@@ -1702,8 +1709,9 @@ public final class GT6BlockStates extends BlockStateProvider {
         for (RegistryObject<Block> tHandle : aBlocks.values()) {
             getVariantBuilder(tHandle.get()).forAllStates(aState -> {
                 // the vanilla horizontal-facing rotation map + the six-way x band (issue
-                // #18: the shared GT6DynamoBlock carrier went six-way + ACTIVE — these
-                // families carry no active art, so both ACTIVE values ride this model)
+                // #18: the shared GT6DynamoBlock carrier went six-way + ACTIVE — the
+                // single-layer families carry no decal shell, so both ACTIVE values ride
+                // this model)
                 Direction tFacing = aState.getValue(gregtech6.block.energy.GT6DynamoBlock.FACING);
                 int tX = tFacing == Direction.DOWN ? 90 : tFacing == Direction.UP ? 270 : 0;
                 return ConfiguredModel.builder()
@@ -1712,6 +1720,31 @@ public final class GT6BlockStates extends BlockStateProvider {
                         .rotationY((int) (tFacing.toYRot() + 180) % 360)
                         .build();
             });
+        }
+        itemModels().withExistingParent(aFamily, modLoc("block/" + aTexture));
+        for (String tPath : aBlocks.keySet()) {
+            if (!tPath.equals(aFamily)) itemModels().withExistingParent(tPath, modLoc("item/" + aFamily));
+        }
+    }
+
+    /**
+     * The two-layer bridge family (task r8-tex-bridge-kinetic — the census B2 ruling): the
+     * {@link #addConverterModel} grammar the r4-18 converter band already speaks, over the
+     * borrowed upstream {@code <band>_colored_*} + {@code <band>_overlay_*} groups — the
+     * tintindex-0 body is the mRGBa seat, the six 0.01 decal shells ride untinted (the
+     * upstream {@code BlockTextureMulti(colored x mRGBa, overlay)} stack, MultiTileEntity
+     * HeaterElectric :56-59 and siblings). {@code aActive} borrows the upstream
+     * {@code overlay_active} trio onto the {@link gregtech6.block.GTBlockProperties#ACTIVE}
+     * channel (the GT6DynamoBlock property, the GT6DynamoBlockEntity syncActiveToState arm
+     * — upstream {@code mActivity.mState} keys the same art, TransformerElectric :35-39);
+     * families without the art pass false and both ACTIVE values ride the inactive shell
+     * (the probe: kinetic_electric / rotation_electric ship no active groups).
+     */
+    private void addBridgeFamily(java.util.Map<String, RegistryObject<Block>> aBlocks, String aFamily, String aTexture, boolean aActive) {
+        ModelFile tModel = addConverterModel(aTexture);
+        ModelFile tActive = aActive ? addConverterActiveModel(tModel) : null;
+        for (RegistryObject<Block> tHandle : aBlocks.values()) {
+            converterBlockstate(tHandle.get(), tModel, gregtech6.block.energy.GT6DynamoBlock.FACING, tActive);
         }
         itemModels().withExistingParent(aFamily, modLoc("block/" + aTexture));
         for (String tPath : aBlocks.keySet()) {
@@ -2292,52 +2325,51 @@ public final class GT6BlockStates extends BlockStateProvider {
     /**
      * Task p12-engine-steam — the Steam Engine family (all 28 rows of
      * {@link GT6Kinetics#STEAM_ENGINES}, the no-upstream-subset ruling): ONE shared
-     * oriented cube model for the whole family — front (the KU emit face) / back (the
-     * steam face) / side over the three borrowed upstream
-     * {@code machines/engines/kinetic_steam/colored/} icons (assets/README.md sha256
-     * attribution), rotated per {@code FACING} exactly like the machine ladder
-     * ({@code addMachine}) but with NO active/running split — upstream keys the visuals
-     * on synced mState/mActive byte data (getTexture2 :263-273, the seven-pass bespoke
-     * renderer), which is the render-pool item; the port machine blocks carry no
-     * active-state blockstate property. The 26 variants are visually identical here
-     * (upstream tints the grayscale icons per material mRGBa — the crank-card un-tinted
-     * deviation, the runtime tint rides the render pool).
+     * {@link #addConverterModel} two-layer shell for the whole family — front (the KU
+     * emit face) / back (the steam face) / side over the borrowed upstream
+     * {@code machines/engines/kinetic_steam/} colored + overlay groups (task
+     * r8-tex-bridge-kinetic; the overlay trio is the :285-294 sOverlays stack the p12
+     * borrow left unborrowed — the census B3 ruling supersedes the old note). Rotated per
+     * {@code FACING} exactly like the machine ladder ({@code addMachine}) with NO
+     * active split — upstream keys the visuals on synced mState/mActive byte data
+     * (getTexture2 :263-273, the seven-pass bespoke renderer), which is the render-pool
+     * item; the port machine blocks carry no active-state blockstate property. The 26
+     * variants are visually identical up to the y rotation; the grayscale colored body
+     * is the tintindex-0 seat and the row's loader NBT_MATERIAL (Loader :584-612) is the
+     * tint — the GTMachinePaintTint steam-engine arm resolves it off
+     * {@code SteamEngineRow.matSlug}. The heat gauge ({@code sEngineColors[mState]},
+     * :56/:269) and the engine core sprites stay the render pool (the declared debt).
      */
     private void addSteamEngines() {
-        ModelFile tModel = models().cube("steam_engine",
-                modLoc("block/steam_engine_side"), modLoc("block/steam_engine_side"),   // bottom/top
-                modLoc("block/steam_engine_front"), modLoc("block/steam_engine_back"),  // north(front)/south(back)
-                modLoc("block/steam_engine_side"), modLoc("block/steam_engine_side"));  // west/east
+        ModelFile tModel = addConverterModel("steam_engine");
         for (GT6Kinetics.SteamEngineRow tRow : GT6Kinetics.STEAM_ENGINES) {
             Block tBlock = GT6Kinetics.STEAM_ENGINE_BLOCKS.get(tRow.path()).get();
-            getVariantBuilder(tBlock).forAllStates(aState -> {
-                int tY = switch (aState.getValue(GT6Kinetics.SteamEngineBlock.FACING)) {
-                    case SOUTH -> 180;
-                    case WEST -> 270;
-                    case EAST -> 90;
-                    default -> 0; // NORTH
-                };
-                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
-            });
+            converterBlockstate(tBlock, tModel, GT6Kinetics.SteamEngineBlock.FACING, null);
             itemModels().withExistingParent(tRow.path(), modLoc("block/steam_engine"));
         }
     }
 
     /**
      * Task p12-engine-diesel — the 8 diesel engine tiers (Loader_MultiTileEntities.java
-     * :721-729): ONE shared cube_all over the borrowed upstream motor_liquid front icon
-     * {@code gt6:textures/block/diesel_engine.png} (assets/README.md attribution) and ONE
-     * blockstate variant per block — the FACING property drives the EMIT side, not the
-     * visuals, exactly the crank ruling (the upstream front/back/sides colored +
-     * overlay_active texture family, MultiTileEntityMotorLiquid.java:242-254 +
-     * getTexture2 :216-221, is the render pool item; the per-material mRGBa tint is the
-     * same pool). The 8 BlockItem models are 2D icons over the shared front sprite
-     * (the r8-tex-itemform-b form per row).
+     * :721-729): ONE shared {@link #addConverterModel} two-layer shell over the borrowed
+     * upstream {@code machines/generators/motor_liquid/} colored {front,back,sides} +
+     * overlay groups (task r8-tex-bridge-kinetic — the p12 single-cube_all borrow retired;
+     * the census B3 ruling), the FACING property rotating the front exactly like the steam
+     * family (upstream MultiTileEntityMotorLiquid.java:242-254 + getTexture2 :216-221 —
+     * the front is the emit face, the back the exhaust). The upstream overlay_active
+     * group stays unborrowed — the port block carries no ACTIVE property (the static-face
+     * posture, declared defer with the steam family). The grayscale colored body is the
+     * tintindex-0 seat and the row's loader NBT_MATERIAL (:721-729) is the tint — the
+     * GTMachinePaintTint diesel arm resolves it off {@code DieselSpec.material}.
+     * The 8 BlockItem models stay 2D icons over the shared front sprite (the
+     * r8-tex-itemform-b form per row), repointed to the renamed byte-identical
+     * {@code diesel_engine_colored_front}.
      */
     private void addDieselEngines() {
+        ModelFile tModel = addConverterModel("diesel_engine");
         for (var tBlock : GT6Kinetics.DIESEL_BLOCKS.values()) {
-            simpleBlock(tBlock.get(), models().cubeAll("diesel_engine", modLoc("block/diesel_engine")));
-            itemModels().withExistingParent(tBlock.getId().getPath(), mcLoc("item/generated")).texture("layer0", modLoc("block/diesel_engine"));
+            converterBlockstate(tBlock.get(), tModel, GTDieselEngineBlock.FACING, null);
+            itemModels().withExistingParent(tBlock.getId().getPath(), mcLoc("item/generated")).texture("layer0", modLoc("block/diesel_engine_colored_front"));
         }
     }
 
@@ -2390,8 +2422,8 @@ public final class GT6BlockStates extends BlockStateProvider {
             net.minecraft.world.level.block.Block tBlock = gregtech6.registry.GT6Batteries.BATTERY_BOX_BLOCKS.get(tRow.path()).get();
             String tDir = tRow.slots() == 16 ? "battery_box_large" : "battery_box";
             converterBlockstate(tBlock, tRow.slots() == 16 ? tLarge : tSmall,
-                    compositeEnergyActiveModel(tRow.slots() == 16 ? tLarge : tSmall, tDir, false),
-                    gregtech6.block.energy.GT6BatteryBoxBlock.FACING);
+                    gregtech6.block.energy.GT6BatteryBoxBlock.FACING,
+                    compositeEnergyActiveModel(tRow.slots() == 16 ? tLarge : tSmall, tDir, false));
             itemModels().withExistingParent(tRow.path(), modLoc("block/" + tDir + "/" + tDir));
         }
     }
@@ -2414,8 +2446,8 @@ public final class GT6BlockStates extends BlockStateProvider {
             net.minecraft.world.level.block.Block tBlock = gregtech6.registry.GT6CrystalChargers.BLOCKS_BY_PATH.get(tRow.path()).get();
             String tDir = tRow.slots() == 16 ? "crystal_charger_large" : "crystal_charger";
             converterBlockstate(tBlock, tRow.slots() == 16 ? tLarge : tSmall,
-                    compositeEnergyActiveModel(tRow.slots() == 16 ? tLarge : tSmall, tDir, false),
-                    gregtech6.block.energy.GT6BatteryBoxBlock.FACING);
+                    gregtech6.block.energy.GT6BatteryBoxBlock.FACING,
+                    compositeEnergyActiveModel(tRow.slots() == 16 ? tLarge : tSmall, tDir, false));
             itemModels().withExistingParent(tRow.path(), modLoc("block/" + tDir + "/" + tDir));
         }
     }
@@ -2440,8 +2472,8 @@ public final class GT6BlockStates extends BlockStateProvider {
             net.minecraft.world.level.block.Block tBlock = gregtech6.registry.GT6ZpmDechargers.BLOCKS_BY_PATH.get(tRow.path()).get();
             String tDir = tRow.path().equals("zpm_decharger_electric") ? "zpm_decharger" : tRow.path(); // the electric family drops the infix, the quantum family keeps it (the texture dir names)
             ModelFile tModel = tRow.path().equals("zpm_decharger_electric") ? tElectric : tQuantum;
-            converterBlockstate(tBlock, tModel, compositeEnergyActiveModel(tModel, tDir, true),
-                    gregtech6.block.energy.GT6BatteryBoxBlock.FACING);
+            converterBlockstate(tBlock, tModel, gregtech6.block.energy.GT6BatteryBoxBlock.FACING,
+                    compositeEnergyActiveModel(tModel, tDir, true));
             itemModels().withExistingParent(tRow.path(), modLoc("block/" + tDir + "/" + tDir));
         }
     }
@@ -2494,29 +2526,24 @@ public final class GT6BlockStates extends BlockStateProvider {
     /**
      * Task p12-gearbox-transformer — the GearBox (one cube_all over the borrowed
      * {@code gt6:block/gearbox} texture, the upstream iconsets/GEARBOX.png; assets/README.md
-     * attribution) and the Rotation Transformer (the crank facing-cube shape: an
-     * {@code orientable} model over the borrowed transformer_rotation colored front/side
-     * textures, the FRONT = input face, BACK = output face —
-     * MultiTileEntityTransformerRotation :42-45). Both single wood-row variants (the
-     * material fan-out is the pool), no connection-mask visual layer (the per-face gear
-     * overlays are the render pool). The static placeholder texture carries no rotation
-     * animation — declared with the axle.
+     * attribution) and the Rotation Transformer (the crank facing-cube posture: the FRONT =
+     * input face, BACK = output face — MultiTileEntityTransformerRotation :42-45, now the
+     * {@link #addConverterModel} two-layer shell over the borrowed transformer_rotation
+     * colored + overlay groups, task r8-tex-bridge-kinetic; the tint seat is the
+     * WoodTreated row, Loader :1668 NBT_MATERIAL, the GTMachinePaintTint arm). The
+     * upstream overlay trio is an alpha-0 EMPTY layer (the README probe) — the shell is
+     * the upstream-faithful pass structure, visually inert. The animated colored_active/
+     * overlay_active groups stay unborrowed — the port block carries no ACTIVE property
+     * (the static-face posture); no connection-mask visual layer (the per-face gear
+     * overlays are the render pool). The static texture carries no rotation animation —
+     * declared with the axle.
      */
     private void addGearBoxTransformer() {
         Block tBox = GT6Kinetics.GEARBOX.get();
         simpleBlock(tBox, models().cubeAll("gearbox", modLoc("block/gearbox")));
         itemModels().withExistingParent("gearbox", mcLoc("item/generated")).texture("layer0", modLoc("block/gearbox"));
         Block tTrans = GT6Kinetics.TRANSFORMER_ROTATION.get();
-        ModelFile tTransModel = models().orientable("transformer_rotation",
-                modLoc("block/transformer_rotation_side"), modLoc("block/transformer_rotation_front"), modLoc("block/transformer_rotation_side"));
-        getVariantBuilder(tTrans).forAllStates(aState -> {
-            // the vanilla horizontal-facing rotation map (Direction.getFrontRotationYaw form)
-            Direction tFacing = aState.getValue(GTTransformerRotationBlock.FACING);
-            return ConfiguredModel.builder()
-                    .modelFile(tTransModel)
-                    .rotationY((int) (tFacing.toYRot() + 180) % 360)
-                    .build();
-        });
+        converterBlockstate(tTrans, addConverterModel("transformer_rotation"), GTTransformerRotationBlock.FACING, null);
         itemModels().withExistingParent("transformer_rotation", modLoc("block/transformer_rotation"));
     }
 
@@ -2719,11 +2746,16 @@ public final class GT6BlockStates extends BlockStateProvider {
      * the overlay_active shell — 12 variants per block.
      */
     private void converterBlockstate(Block aBlock, ModelFile aInactive, DirectionProperty aFacing) {
-        converterBlockstate(aBlock, aInactive, addConverterActiveModel(aInactive), aFacing);
+        converterBlockstate(aBlock, aInactive, aFacing, addConverterActiveModel(aInactive));
     }
 
-    /** The explicit-active overload (task r8-tex-composite-family — the subdirectory-texture families derive their ACTIVE shell themselves). */
-    private void converterBlockstate(Block aBlock, ModelFile aInactive, ModelFile aActive, DirectionProperty aFacing) {
+    /**
+     * The explicit-active walk (task r8-tex-bridge-kinetic): {@code aActive == null} (the
+     * families whose upstream art has no active group, or whose port carrier has no ACTIVE
+     * property) pins BOTH property values to the inactive model — the static-face posture,
+     * one model per facing.
+     */
+    private void converterBlockstate(Block aBlock, ModelFile aInactive, DirectionProperty aFacing, ModelFile aActive) {
         getVariantBuilder(aBlock).forAllStates(aState -> {
             Direction tFacing = aState.getValue(aFacing);
             int tX = tFacing == Direction.DOWN ? 90 : tFacing == Direction.UP ? 270 : 0;
@@ -2734,7 +2766,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                 default -> 0; // NORTH and the two verticals carry the x rotation only
             };
             return ConfiguredModel.builder()
-                    .modelFile(aState.getValue(gregtech6.block.GTBlockProperties.ACTIVE) ? aActive : aInactive)
+                    .modelFile(aActive != null && aState.getValue(gregtech6.block.GTBlockProperties.ACTIVE) ? aActive : aInactive)
                     .rotationX(tX).rotationY(tY).build();
         });
     }
@@ -2772,8 +2804,8 @@ public final class GT6BlockStates extends BlockStateProvider {
         for (gregtech6.registry.GT6LongDistanceTransformers.LDRow tRow : gregtech6.registry.GT6LongDistanceTransformers.ROWS) {
             Block tTrans = gregtech6.registry.GT6LongDistanceTransformers.BLOCKS_BY_PATH.get(tRow.path()).get();
             converterBlockstate(tTrans, tLDModel,
-                    compositeEnergyActiveModel(tLDModel, "long_distance_transformer", true),
-                    GT6ElectricTransformerBlock.FACING);
+                    GT6ElectricTransformerBlock.FACING,
+                    compositeEnergyActiveModel(tLDModel, "long_distance_transformer", true));
             itemModels().withExistingParent(tRow.path(), modLoc("block/long_distance_transformer/long_distance_transformer"));
         }
         for (gregtech6.registry.GT6LongDistWires.WireRow tRow : gregtech6.registry.GT6LongDistWires.ROWS) {

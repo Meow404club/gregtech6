@@ -147,7 +147,69 @@ public final class GTMachinePaintTint {
 		// p38-c2 carrier form all four now ride)
 		tMaterial = gregtech6.registry.GT6HeatExchangers.HeatExchangerBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
+		// task r8-tex-bridge-kinetic — the kinetic engines join: the 28 steam-engine rows
+		// carry their loader NBT_MATERIAL column (Loader :584-612), the 8 diesel rows
+		// theirs (:721-729), the rotation transformer the WoodTreated row (:1668). The
+		// slugs resolve through the bySlug table below (the row records live in
+		// GT6Kinetics, outside this card's file scope — the dispatch arm reads the block
+		// carriers directly).
+		tMaterial = steamEngineMaterialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
+		tMaterial = dieselEngineMaterialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
+		tMaterial = rotationTransformerMaterialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
 		return gregtech6.tileentity.bees.GT6BumbliaryBlock.materialOf(aBlock);
+	}
+
+	/** The steam-engine row material (the {@code SteamEngineRow.matSlug} column), null off-carrier. */
+	@Nullable
+	private static OreDictMaterial steamEngineMaterialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
+		return aBlock instanceof gregtech6.registry.GT6Kinetics.SteamEngineBlock tEngine ? bySlug(tEngine.row().matSlug()) : null;
+	}
+
+	/** The diesel-engine row material (the {@code DieselSpec.material} column), null off-carrier. */
+	@Nullable
+	private static OreDictMaterial dieselEngineMaterialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
+		return aBlock instanceof gregtech6.block.energy.GTDieselEngineBlock tEngine ? bySlug(tEngine.spec.material()) : null;
+	}
+
+	/**
+	 * The rotation transformer's WoodTreated row (upstream "Wooden Transformer Gearbox",
+	 * Loader :1668 — NBT_MATERIAL MT.WoodTreated; the port ships exactly that row, the
+	 * single wood-row variant).
+	 */
+	@Nullable
+	private static OreDictMaterial rotationTransformerMaterialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
+		return aBlock instanceof gregtech6.block.energy.GTTransformerRotationBlock ? gregapi.data.MT.WoodTreated : null;
+	}
+
+	/**
+	 * The port row-slug → material column (the GT6Boilers slug conventions verbatim):
+	 * the steam ladders (Loader :584-612) and the diesel ladder (:721-729) share it.
+	 * Resolved at tint time (never class-load), so the raw {@code MT.X} reads are safe.
+	 * Public — the pure seam the offline pin test drives (the tintARGB symmetry).
+	 */
+	@Nullable
+	public static OreDictMaterial bySlug(String aSlug) {
+		return switch (aSlug) {
+			case "lead" -> gregapi.data.MT.Pb;
+			case "tin_alloy" -> gregapi.data.MT.TinAlloy;
+			case "bronze" -> gregapi.data.MT.Bronze;
+			case "arsenic_copper" -> gregapi.data.MT.ArsenicCopper;
+			case "arsenic_bronze" -> gregapi.data.MT.ArsenicBronze;
+			case "brass" -> gregapi.data.MT.Brass;
+			case "invar" -> gregapi.data.MT.Invar;
+			case "iron_wood" -> gregapi.data.MT.IronWood;
+			case "steel" -> gregapi.data.ANY.Steel;
+			case "fiery_steel" -> gregapi.data.MT.FierySteel;
+			case "chromium" -> gregapi.data.MT.Cr;
+			case "titanium" -> gregapi.data.MT.Ti;
+			case "tungsten" -> gregapi.data.ANY.W;
+			case "tungstensteel" -> gregapi.data.MT.TungstenSteel;
+			case "iridium" -> gregapi.data.MT.Ir;
+			default -> null;
+		};
 	}
 
 	/**
