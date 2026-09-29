@@ -1,0 +1,139 @@
+{
+  "source_pack": "tfc-amazawa-light-gui (Modrinth, Apache-2.0, author 天沢香; see assets/README.md GUI-parts section + docs/licenses/)",
+  "sources": {
+    "Default.png": {
+      "path": "tmp/amazawa-census/v105g/assets/gregtech/textures/gui/machines/Default.png",
+      "sha256": "918c84cfe2629d97156dc3f9416c6cd67a95b384608fd14be4278087eb9043dd"
+    },
+    "Melter.png": {
+      "path": "tmp/amazawa-census/v105g/assets/gregtech/textures/gui/machines/Melter.png",
+      "sha256": "e06a503906d0dcc621d6ee83aab307abfd5fb41ecddbec608cf9adcbfb3b46df"
+    },
+    "Freezer.png": {
+      "path": "tmp/amazawa-census/v105g/assets/gregtech/textures/gui/machines/Freezer.png",
+      "sha256": "2796fd94a12ea018135b6f1e84852cfa55e32b2344d055ca3979abedaf3a0858"
+    },
+    "Distillery.png": {
+      "path": "tmp/amazawa-census/v105g/assets/gregtech/textures/gui/machines/Distillery.png",
+      "sha256": "cfb1839850b342436c2d999026e09666450dcec87f5128ec96d854c8328eeb45"
+    },
+    "Crafting2By2.png": {
+      "path": "tmp/amazawa-census/v105g/assets/gregtech/textures/gui/machines/Crafting2By2.png",
+      "sha256": "df9ab8cc4a492803bcc37665700a090d93b60c4212d57505156f2223e830965f"
+    },
+    "widgets.png": {
+      "path": "tmp/amazawa-census/v105g/assets/minecraft/textures/gui/widgets.png",
+      "sha256": "df79a44d9db494198906db71385078383ed32b6ba3c9e880820c66c5fe056aa0"
+    }
+  },
+  "parts": [
+    {
+      "name": "panel_176x166.png",
+      "source": "Default.png",
+      "x": 0,
+      "y": 0,
+      "w": 176,
+      "h": 166,
+      "sha256": "3633549b00f503040f391a45b2edbca0c610447d55c34288f0a118c3aabd1ab6"
+    },
+    {
+      "name": "slot_frame_18x18.png",
+      "source": "Default.png",
+      "x": 16,
+      "y": 62,
+      "w": 18,
+      "h": 18,
+      "sha256": "85844998cc160371a245118a20cd14062fb43f13e42b323e927dd9602433867e"
+    },
+    {
+      "name": "slot_frame_group_54x36.png",
+      "source": "Default.png",
+      "x": 16,
+      "y": 15,
+      "w": 54,
+      "h": 36,
+      "sha256": "24b6fedb48ded802f2cdf031a03d97442ad0b776e53d262c57865eee964c319c"
+    },
+    {
+      "name": "slot_frame_group_2x2_36x36.png",
+      "source": "Crafting2By2.png",
+      "x": 34,
+      "y": 15,
+      "w": 36,
+      "h": 36,
+      "sha256": "519e6b6e5db07e1a5c74e4c933297e3aab0576b8ec2cc50221a6484f7acb6b3b"
+    },
+    {
+      "name": "arrow_forward_20x18.png",
+      "source": "Default.png",
+      "x": 176,
+      "y": 0,
+      "w": 20,
+      "h": 18,
+      "sha256": "b13c90cc53b25f6d2af223d897b4d3139799ddf14572e3c10919ad3714f0ce72"
+    },
+    {
+      "name": "arrow_forward_red_20x18.png",
+      "source": "Melter.png",
+      "x": 176,
+      "y": 0,
+      "w": 20,
+      "h": 18,
+      "sha256": "e3c357bc0c900485dcc310beb6cfd45945de58902cec5e2558592c188f209db6"
+    },
+    {
+      "name": "arrow_forward_cyan_20x18.png",
+      "source": "Freezer.png",
+      "x": 176,
+      "y": 0,
+      "w": 20,
+      "h": 18,
+      "sha256": "2ffbca64b99b22e697c0604477c098364edaf7eeff97bbc72224341de8210899"
+    },
+    {
+      "name": "player_inventory_162x76.png",
+      "source": "Default.png",
+      "x": 7,
+      "y": 83,
+      "w": 162,
+      "h": 76,
+      "sha256": "5aa68a1be7cec4299fd0662041f9fe60e19b2ea1f24e6cbab19323308bcf8101"
+    },
+    {
+      "name": "slot_special_22x22.png",
+      "source": "Default.png",
+      "x": 77,
+      "y": 60,
+      "w": 22,
+      "h": 22,
+      "sha256": "865636acf1c7f6ccef75c7dec6cf16acd3d7975659cd2538d1bda491208a4c63"
+    },
+    {
+      "name": "slot_fluid_18x19.png",
+      "source": "Distillery.png",
+      "x": 106,
+      "y": 24,
+      "w": 18,
+      "h": 19,
+      "sha256": "5f3e1ff1472f37f10957b7ca435ee8a7ffdd112a2b56e35ce41d458f5ac175da"
+    },
+    {
+      "name": "button_flat_200x20.png",
+      "source": "widgets.png",
+      "x": 0,
+      "y": 66,
+      "w": 200,
+      "h": 20,
+      "sha256": "483a8aaa9c88642a243a3c747101ee970bc135a53bfed210804c2d6e15c1b0e7"
+    },
+    {
+      "name": "button_flat_hover_200x20.png",
+      "source": "widgets.png",
+      "x": 0,
+      "y": 86,
+      "w": 200,
+      "h": 20,
+      "sha256": "3815d194e4a8b19e05e46ca2267938325c97580ee1b959fda554f0718ff87e3b"
+    }
+  ]
+}

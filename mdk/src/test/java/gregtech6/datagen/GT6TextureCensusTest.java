@@ -375,7 +375,15 @@ class GT6TextureCensusTest {
         "e8b1c5126229ad9c05a2ddd03cefa6093f1767133f6181ad3ebbad48ce775bbb",
         "f075bba0be3c71dfc2a9f463b9be8ae717350e1675a4531f38a25b2e1c74358c",
         "f91ced667197de43286fee72872c960ef044defaffc1ed27acac70bb2f738e64",
-        "ffb243256575a2e80a6a18cf1aa057241959b745ee02ce50b420a03933d94a6a");
+        "ffb243256575a2e80a6a18cf1aa057241959b745ee02ce50b420a03933d94a6a",
+        // r8-gui-part-crops: the amazawa minecraft-domain widget sheet CROP SOURCE
+        // (tmp/amazawa-census snapshot, untracked; the pack's reskinned widgets.png)
+        // — only crops of it ship under gui/parts/, so its README row never grounds.
+        // The five gregtech-domain crop sources (Default/Melter/Freezer/Distillery/
+        // Crafting2By2) need NO entry: the r8-gui-reskin-amazawa card ships them
+        // byte-identical as gui/machines/<name>.png, so their rows ground there. If
+        // this row ever ships verbatim, it grounds and must leave the list.
+        "df79a44d9db494198906db71385078383ed32b6ba3c9e880820c66c5fe056aa0");
 
     /**
      * Pin f (task p38-c5-asset-coverage-guard): the FULL sha256 ledger reconciles against
