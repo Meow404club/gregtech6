@@ -10573,3 +10573,79 @@ are deleted — the band dirs above replace them byte-for-byte on the TBS faces
 the FACES_TBS form, the four horizontals one side tile), and the old rows stay
 as historical digests. The fusion/implosion/massfab colored flats STAY (the new
 body cubes still bind them).
+## GUI part crops, amazawa gregtech + minecraft domains (task r8-gui-part-crops)
+
+New small-caps texture domain `gt6:textures/gui/parts/` (12 sprites): composable GUI
+parts cropped out of the amazawa resource-pack's gregtech domain (machine skins) and
+its minecraft domain (reskinned vanilla widgets — the sanctioned generic-part
+fallback for the flat buttons). **TFC domain is NOT used** (2026-09-29 ruling:
+GT6 does not ship TFC art; a first cut had TFC-sourced parts, voided and re-cropped).
+Nothing else in this tree was touched, and no consumer code renders them yet
+(assembly is the future layout/POC card face). Single source of truth for
+paths/dimensions/9-slice borders = `GT6GuiParts` (gui/machines); the machine-pinned
+provenance chain is `mdk/tools/crop_gui_parts.py` (canonical cropper, rect table)
+-> `mdk/tools/parts_manifest.json` (per-part source + rect + sha256)
+-> `GT6GuiPartsDatagenTest` (dims + sha + constants mirror + TFC-exclusion guard +
+pixel-exact rect replay from the six committed test fixtures).
+
+Source pack: tfc-amazawa-light-gui v1.0.5g — https://modrinth.com/resourcepack/tfc-amazawa-light-gui
+License: Apache-2.0 (Modrinth license field) + author verbal attribution; author 天沢香
+("标注一下就行", "需要帮忙画也可以"). Authorization chat screenshot:
+`docs/licenses/amazawa-gui-authorization.png` (card A's file — shared ledger entry,
+dedupe at merge). Only the pack's gregtech/minecraft domains are consumed; the
+terrafirmacraft domain is untouched. Source snapshots live (untracked) in
+`tmp/amazawa-census/v105g/assets/`; their identity is pinned by sha256 in the manifest:
+
+- `tmp/amazawa-census/v105g/assets/gregtech/textures/gui/machines/Default.png` sha256 `918c84cfe2629d97156dc3f9416c6cd67a95b384608fd14be4278087eb9043dd`
+- `tmp/amazawa-census/v105g/assets/gregtech/textures/gui/machines/Melter.png` sha256 `e06a503906d0dcc621d6ee83aab307abfd5fb41ecddbec608cf9adcbfb3b46df`
+- `tmp/amazawa-census/v105g/assets/gregtech/textures/gui/machines/Freezer.png` sha256 `2796fd94a12ea018135b6f1e84852cfa55e32b2344d055ca3979abedaf3a0858`
+- `tmp/amazawa-census/v105g/assets/gregtech/textures/gui/machines/Distillery.png` sha256 `cfb1839850b342436c2d999026e09666450dcec87f5128ec96d854c8328eeb45`
+- `tmp/amazawa-census/v105g/assets/gregtech/textures/gui/machines/Crafting2By2.png` sha256 `df9ab8cc4a492803bcc37665700a090d93b60c4212d57505156f2223e830965f`
+- `tmp/amazawa-census/v105g/assets/minecraft/textures/gui/widgets.png` sha256 `df79a44d9db494198906db71385078383ed32b6ba3c9e880820c66c5fe056aa0`
+
+The same six files are committed as test fixtures
+(`mdk/src/test/resources/gregtech6/guiparts/source/`) so the test can replay every
+rect pixel-exactly; cropping used system python3 + Pillow 12.3.0 (no tools/.venv
+install needed — `tools/.venv` has no PIL/pip; `--verify` replays byte-identically
+with the producing Pillow version). Every rect was pixel-run verified against the
+source (stroke columns/rows aligned, no neighbor bleed).
+
+| part | size | source | rect (x,y,w,h) | sha256 (16) |
+|---|---|---|---|---|
+| panel_176x166.png | 176x166 | Default.png | 0,0,176,166 | `3633549b00f50304` |
+| slot_frame_18x18.png | 18x18 | Default.png | 16,62,18,18 | `85844998cc160371` |
+| slot_frame_group_54x36.png | 54x36 | Default.png | 16,15,54,36 | `24b6fedb48ded802` |
+| slot_frame_group_2x2_36x36.png | 36x36 | Crafting2By2.png | 34,15,36,36 | `519e6b6e5db07e1a` |
+| arrow_forward_20x18.png | 20x18 | Default.png | 176,0,20,18 | `b13c90cc53b25f6d` |
+| arrow_forward_red_20x18.png | 20x18 | Melter.png | 176,0,20,18 | `e3c357bc0c900485` |
+| arrow_forward_cyan_20x18.png | 20x18 | Freezer.png | 176,0,20,18 | `2ffbca64b99b22e6` |
+| player_inventory_162x76.png | 162x76 | Default.png | 7,83,162,76 | `5aa68a1be7cec429` |
+| slot_special_22x22.png | 22x22 | Default.png | 77,60,22,22 | `865636acf1c7f6cc` |
+| slot_fluid_18x19.png | 18x19 | Distillery.png | 106,24,18,19 | `5f3e1ff1472f37f1` |
+| button_flat_200x20.png | 200x20 | widgets.png | 0,66,200,20 | `483a8aaa9c88642a` |
+| button_flat_hover_200x20.png | 200x20 | widgets.png | 0,86,200,20 | `3815d194e4a8b19e` |
+
+(sha256(16) = first 16 hex of the full digest; the manifest and the test pin the
+full hex for every part — this table is the human-replay view, the manifest is the
+machine truth.)
+
+Notes: `arrow_forward` is the strip at UV (176,0) — the same geometry the vanilla-Menu
+leg blits (ContainerClientBasicMachine case 0..7, draw pos (78,24), 20x18); the red/
+cyan variants are the same strip in the Melter/Freezer skins (per-machine accent
+colors, opaque panel background). `player_inventory` includes the 4 px inter-block
+gap (plain panel color, composites seamlessly). `slot_special` is amazawa's
+dark-stroke GT special-slot look with the gear icon baked in. `slot_fluid` is the
+distillation fluid-grid cell (droplet baked; 1 px white top/left stroke + 2 px light
+right/bottom stroke = 18x19). The `button_flat*` pair is the vanilla widget sheet's
+normal/hover rows (y66/y86, vanilla Button.render geometry) in amazawa flat style —
+the pack's actual hover look, so the original hover-defer is resolved for the
+generic button.
+
+Declared defers (NOT found in the permitted domains, NOT drawn by this task):
+large fluid tank frames, thermometer/temperature scale bars, ruler/tick scales,
+generic fluid gauges (no gregtech/minecraft-domain source exists in the pack),
+reverse/vertical progress arrow variants, GT semantic slot strokes beyond the one
+dark special stroke, tier decorations — author may draw these (offered), upstream
+GT6 crops are the fallback. Two-domain split: this domain is modern amazawa style;
+the block/item domains stay GT6-fidelity (r8 mainline) — census tests treat the two
+separately.
