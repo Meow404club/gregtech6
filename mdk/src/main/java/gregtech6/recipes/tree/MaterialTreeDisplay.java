@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -100,16 +101,33 @@ public final class MaterialTreeDisplay {
 
 	public static final int COL_ORE = 0, COL_CRUSHED = 1, COL_PURIFIED = 2, COL_DUST = 3, COL_BYPRODUCT = 4;
 
-	/** x of each column's slot (18 px slots + 10 px gaps; the byproduct side column rides last). */
-	static final int[] COLUMN_X = {4, 32, 60, 88, 126};
+	/**
+	 * The v2 node-graph pitch (task r8-mattree-v2-nodes): 28 px columns crushed the v1
+	 * "via" labels against the next column's item icons — 40 px leaves a 22 px wire gap
+	 * between slots with room for the machine-icon node (the 「from –线– [机器] –箭头→ to」
+	 * three-part edge, spec clause ②).
+	 */
+	public static final int COLUMN_PITCH = 40;
+
+	/** x of each column's slot (18 px slots + 22 px wire gaps; the byproduct side column rides last). */
+	static final int[] COLUMN_X = {4, 44, 84, 124, 164};
 	/** y of the first node row (the material-name header sits above). */
 	static final int ROW_Y0 = 16;
 	/** vertical slot pitch. */
 	static final int ROW_PITCH = 20;
-	/** row cap per column — JEI category height is fixed per category (EMI could grow, parity wins). */
+	/** row cap per column — overflow is EXPLICIT since v2 (see {@link Overflow}), never silently dropped. */
 	public static final int MAX_ROWS = 5;
-	public static final int WIDTH = 152;
-	public static final int HEIGHT = ROW_Y0 + MAX_ROWS * ROW_PITCH + 4;
+	/**
+	 * The v2 canvas: 4 chain columns at pitch 40 plus the byproduct column, wide enough for
+	 * the "Byproducts" header text (164 + ~60 px + 4). The viewers both declare width/height
+	 * freely (the "fixed 178x166" JEI lore is a misreading — GT6MaterialTreeJeiCategory has
+	 * always shipped its own 152x120).
+	 */
+	public static final int WIDTH = 228;
+	/** Grid band plus the overflow-marker strip ({@link #OVERFLOW_Y}) under the last row. */
+	public static final int HEIGHT = ROW_Y0 + MAX_ROWS * ROW_PITCH + 12;
+	/** y of the per-column "+N" overflow markers (the explicit-not-silent clause). */
+	public static final int OVERFLOW_Y = ROW_Y0 + MAX_ROWS * ROW_PITCH + 2;
 
 	/**
 	 * The per-prefix column-position constant table (the 表驱动 layout, spec clause): the
@@ -148,14 +166,45 @@ public final class MaterialTreeDisplay {
 
 	// ---- the model ----------------------------------------------------
 
-	/** One displayed slot: the prefix node at its table position with its resolved stack. */
-	public record Node(OreDictPrefix prefix, int column, int row, ItemStack stack) {}
+	/**
+	 * The v2 node roles (spec clause ①): grid {@link Node}s riding the columns are
+	 * {@code ITEM}s; the machine-icon nodes that split every chain edge into
+	 * 「from –线– [机器] –箭头→ to」 are carried on {@link Edge#machine()} and positioned by
+	 * {@link MaterialTreeLayout} — the MACHINE role names the face, the edge owns the data
+	 * (keeps {@link #nodes()} the pure column census the existing pins read).
+	 */
+	public enum Role { ITEM, MACHINE }
 
-	/** One displayed chain hop: both endpoints displayed, carrying the producing maps' internal names. */
-	public record Edge(OreDictPrefix from, OreDictPrefix to, List<String> mapNames) {}
+	/** One displayed slot: the prefix node at its table position with its resolved stack. */
+	public record Node(OreDictPrefix prefix, int column, int row, ItemStack stack, Role role) {
+		/** The grid (ITEM) node form — the role-less call sites all mean {@link Role#ITEM}. */
+		public Node(OreDictPrefix aPrefix, int aColumn, int aRow, ItemStack aStack) {
+			this(aPrefix, aColumn, aRow, aStack, Role.ITEM);
+		}
+	}
+
+	/**
+	 * One displayed chain hop: both endpoints displayed, carrying the producing maps' internal
+	 * names and the v2 machine face — {@code machine} is the representative machine stack
+	 * resolved off {@link #mapNames()} through {@link MaterialTreeWorkstations#workstationStack}
+	 * (first resolvable name wins; the rest ride the machine node's tooltip), EMPTY = the
+	 * degrade face (plain arrow, via-label text, spec clause ②'s fallback).
+	 */
+	public record Edge(OreDictPrefix from, OreDictPrefix to, List<String> mapNames, ItemStack machine) {
+		/** The label for the machine tooltip / the degraded via-text ("via Shredder/Anvil"). */
+		public String viaLabel() { return MaterialTreeDisplay.viaLabel(mapNames()); }
+	}
 
 	/** One byproduct side-column slot: derived (a real row's cross-material output) or declared. */
 	public record Byproduct(ItemStack stack, boolean derived, String sourceLabel) {}
+
+	/**
+	 * The explicit overflow marker (the v2 no-silent-drop clause): {@code hidden} prefixes of
+	 * a chain column (or byproduct slots in the side column) that did not fit under
+	 * {@link #MAX_ROWS}. The viewers render "+N" at ({@link #columnX}, {@link #OVERFLOW_Y});
+	 * v1 just dropped them (MaterialTreeDisplay :234 of the old world).
+	 */
+	public record Overflow(int column, int hidden) {}
 
 	/** x of a node's slot. */
 	public static int nodeX(Node aNode) { return COLUMN_X[aNode.column()]; }
@@ -170,12 +219,14 @@ public final class MaterialTreeDisplay {
 	private final List<Node> mNodes;
 	private final List<Edge> mEdges;
 	private final List<Byproduct> mByproducts;
+	private final List<Overflow> mOverflow;
 
-	private MaterialTreeDisplay(OreDictMaterial aMaterial, List<Node> aNodes, List<Edge> aEdges, List<Byproduct> aByproducts) {
+	private MaterialTreeDisplay(OreDictMaterial aMaterial, List<Node> aNodes, List<Edge> aEdges, List<Byproduct> aByproducts, List<Overflow> aOverflow) {
 		material = aMaterial;
 		mNodes = aNodes;
 		mEdges = aEdges;
 		mByproducts = aByproducts;
+		mOverflow = aOverflow;
 	}
 
 	/** The displayed nodes (column order, then BFS row order). */
@@ -184,11 +235,23 @@ public final class MaterialTreeDisplay {
 	public List<Edge> edges() { return Collections.unmodifiableList(mEdges); }
 	/** The merged two-face byproduct column. */
 	public List<Byproduct> byproducts() { return Collections.unmodifiableList(mByproducts); }
+	/** The explicit overflow bookkeeping (empty when the whole tree fit under the row caps). */
+	public List<Overflow> overflow() { return Collections.unmodifiableList(mOverflow); }
 
 	/** The localized producing-map label ({@code gt.recipe.shredder} → "Shredder"), internal name as fallback. */
 	public static String mapLabel(String aMapName) {
 		RecipeMap tMap = RecipeMap.RECIPE_MAPS.get(aMapName);
 		return tMap == null ? aMapName : tMap.mNameLocal;
+	}
+
+	/** The merged via-label ("via Shredder/Anvil") — one source for both viewers' machine tooltips and degraded edges. */
+	public static String viaLabel(List<String> aMapNames) {
+		StringBuilder rLabel = new StringBuilder(VIA_PREFIX);
+		for (int i = 0; i < aMapNames.size(); i++) {
+			if (i > 0) rLabel.append('/');
+			rLabel.append(mapLabel(aMapNames.get(i)));
+		}
+		return rLabel.toString();
 	}
 
 	/** The material's header name, internal as fallback (mNameLocal fills late in some init orders). */
@@ -209,11 +272,16 @@ public final class MaterialTreeDisplay {
 	 * fixture pattern).
 	 */
 	public static List<MaterialTreeDisplay> buildAll(MaterialTreeBuilder aTree, BiFunction<OreDictPrefix, OreDictMaterial, Item> aItems) {
+		return buildAll(aTree, aItems, MaterialTreeWorkstations::workstationStack);
+	}
+
+	/** {@link #buildAll(MaterialTreeBuilder, BiFunction)} with the v2 machine-stack resolver seam (offline tests inject non-registry stacks). */
+	public static List<MaterialTreeDisplay> buildAll(MaterialTreeBuilder aTree, BiFunction<OreDictPrefix, OreDictMaterial, Item> aItems, Function<String, ItemStack> aMachines) {
 		List<MaterialTreeDisplay> rDisplays = new ArrayList<>();
 		Set<OreDictMaterial> tSeen = Collections.newSetFromMap(new IdentityHashMap<>());
 		for (OreDictMaterial tMaterial : GT6RecipesOreChain.expandOreMaterials()) {
 			if (!tSeen.add(tMaterial)) continue;
-			MaterialTreeDisplay tDisplay = of(aTree, tMaterial, aItems);
+			MaterialTreeDisplay tDisplay = of(aTree, tMaterial, aItems, aMachines);
 			if (tDisplay != null) rDisplays.add(tDisplay);
 		}
 		return rDisplays;
@@ -221,28 +289,40 @@ public final class MaterialTreeDisplay {
 
 	/** The one material's display, or null when nothing from its ore walk is displayable. */
 	public static MaterialTreeDisplay of(MaterialTreeBuilder aTree, OreDictMaterial aMaterial, BiFunction<OreDictPrefix, OreDictMaterial, Item> aItems) {
+		return of(aTree, aMaterial, aItems, MaterialTreeWorkstations::workstationStack);
+	}
+
+	/**
+	 * The one material's display with the v2 machine resolver seam: {@code aMachines} maps a
+	 * RecipeMap internal name to its representative machine stack (EMPTY = untabled/unbound —
+	 * the edge degrades to a plain arrow). Offline tests inject probe stacks here; production
+	 * resolves through {@link MaterialTreeWorkstations#workstationStack}.
+	 */
+	public static MaterialTreeDisplay of(MaterialTreeBuilder aTree, OreDictMaterial aMaterial, BiFunction<OreDictPrefix, OreDictMaterial, Item> aItems, Function<String, ItemStack> aMachines) {
 		Set<OreDictPrefix> tReachable = aTree.reachableFromOre(aMaterial);
 		if (tReachable.isEmpty()) return null;
 
-		// nodes: table-filtered, item-resolved, row-stacked per column (cap MAX_ROWS)
+		// nodes: table-filtered, item-resolved, row-stacked per column (cap MAX_ROWS with
+		// EXPLICIT overflow bookkeeping — the v2 no-silent-drop clause)
 		Map<Integer, Integer> tRowPerColumn = new LinkedHashMap<>();
+		int[] tHidden = new int[COL_BYPRODUCT + 1];
 		Map<OreDictPrefix, Node> tNodeByPrefix = new LinkedHashMap<>();
 		List<Node> tNodes = new ArrayList<>();
 		for (OreDictPrefix tPrefix : tReachable) {
 			int tColumn = columnOf(tPrefix);
 			if (tColumn < 0) continue; // outside the ore-chain table — the item-tree tail does not leak in
-			if (tRowPerColumn.getOrDefault(tColumn, 0) >= MAX_ROWS) continue; // ponytail: fixed-height cap, grow MAX_ROWS if a column ever overflows
+			int tRow = tRowPerColumn.getOrDefault(tColumn, 0);
+			if (tRow >= MAX_ROWS) { tHidden[tColumn]++; continue; } // explicit "+N" marker, never silent
 			Item tItem = aItems.apply(tPrefix, aMaterial);
 			if (tItem == null) continue;
-			int tRow = tRowPerColumn.getOrDefault(tColumn, 0);
 			tRowPerColumn.put(tColumn, tRow + 1);
-			Node tNode = new Node(tPrefix, tColumn, tRow, new ItemStack(tItem));
-			tNodes.add(tNode);
-			tNodeByPrefix.put(tPrefix, tNode);
+			tNodes.add(new Node(tPrefix, tColumn, tRow, new ItemStack(tItem)));
+			tNodeByPrefix.put(tPrefix, tNodes.get(tNodes.size() - 1));
 		}
 		if (tNodes.isEmpty()) return null;
 
-		// edges: only hops whose both endpoints survived the table; labels merged per (from, to)
+		// edges: only hops whose both endpoints survived the table; labels merged per (from, to);
+		// the machine face = the first mapName with a resolvable representative stack
 		Map<OreDictPrefix, Map<OreDictPrefix, Set<String>>> tEdgeMaps = new LinkedHashMap<>();
 		for (ChainEdge tChain : aTree.chainEdges(aMaterial)) {
 			if (!tNodeByPrefix.containsKey(tChain.from()) || !tNodeByPrefix.containsKey(tChain.to())) continue;
@@ -253,28 +333,39 @@ public final class MaterialTreeDisplay {
 		List<Edge> tEdges = new ArrayList<>();
 		for (Map.Entry<OreDictPrefix, Map<OreDictPrefix, Set<String>>> tFrom : tEdgeMaps.entrySet()) {
 			for (Map.Entry<OreDictPrefix, Set<String>> tTo : tFrom.getValue().entrySet()) {
-				tEdges.add(new Edge(tFrom.getKey(), tTo.getKey(), List.copyOf(tTo.getValue())));
+				List<String> tNames = List.copyOf(tTo.getValue());
+				ItemStack tMachine = ItemStack.EMPTY;
+				for (String tName : tNames) {
+					tMachine = aMachines.apply(tName);
+					if (!tMachine.isEmpty()) break;
+				}
+				tEdges.add(new Edge(tFrom.getKey(), tTo.getKey(), tNames, tMachine));
 			}
 		}
 
 		// byproducts: derived first (what the rows really emit), then the declared face
-		// (the crushing target's mByProducts) minus what the derived face already shows
+		// (the crushing target's mByProducts) minus what the derived face already shows —
+		// over MAX_ROWS the excess is COUNTED (the side column's "+N" marker), not dropped
 		List<Byproduct> tByproducts = new ArrayList<>();
 		Set<OreDictMaterial> tShown = Collections.newSetFromMap(new IdentityHashMap<>());
 		for (ByproductEdge tDerived : aTree.byproductEdges(aMaterial)) {
-			if (tByproducts.size() >= MAX_ROWS) break; // ponytail: same fixed-height cap as the chain columns
+			if (tByproducts.size() >= MAX_ROWS) { tHidden[COL_BYPRODUCT]++; continue; }
 			Item tItem = aItems.apply(tDerived.outPrefix(), tDerived.to());
 			if (tItem == null || !tShown.add(tDerived.to())) continue;
 			tByproducts.add(new Byproduct(new ItemStack(tItem), true, VIA_PREFIX + mapLabel(tDerived.mapName())));
 		}
 		for (OreDictMaterial tDeclared : GT6RecipesOreChain.crushingTarget(aMaterial).mByProducts) {
-			if (tByproducts.size() >= MAX_ROWS) break;
+			if (tByproducts.size() >= MAX_ROWS) { tHidden[COL_BYPRODUCT]++; continue; }
 			if (tDeclared == null || tDeclared.mID <= 0 || !tShown.add(tDeclared)) continue;
 			Item tItem = aItems.apply(OP.dust, tDeclared);
 			if (tItem == null) continue;
 			tByproducts.add(new Byproduct(new ItemStack(tItem), false, DECLARED_TEXT));
 		}
 
-		return new MaterialTreeDisplay(aMaterial, tNodes, tEdges, tByproducts);
+		List<Overflow> tOverflow = new ArrayList<>();
+		for (int c = 0; c <= COL_BYPRODUCT; c++)
+			if (tHidden[c] > 0) tOverflow.add(new Overflow(c, tHidden[c]));
+
+		return new MaterialTreeDisplay(aMaterial, tNodes, tEdges, tByproducts, tOverflow);
 	}
 }
