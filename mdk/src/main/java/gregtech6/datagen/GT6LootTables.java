@@ -103,6 +103,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6KineticsBlockLoot::new, LootContextParamSets.BLOCK), // task gearbox-transformer
                 new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task burning-box-family
                 new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task boiler-tank
+                new SubProviderEntry(GT6HopperBlockLoot::new, LootContextParamSets.BLOCK), // task hopper-matrix — the 120 self-drops
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task dryer-family
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task canner-machine
@@ -164,6 +165,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6KineticsBlockLoot::new, LootContextParamSets.BLOCK), // task gearbox-transformer
                 new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task burning-box-family
                 new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task boiler-tank
+                new SubProviderEntry(GT6HopperBlockLoot::new, LootContextParamSets.BLOCK), // task hopper-matrix — the 120 self-drops
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task dryer-family
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task canner-machine
@@ -594,6 +596,48 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : boilerTankLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The storage-hopper family block list (task hopper-matrix): the 120 rows — the full
+     * metalset() hopper pair over the 60-material loop (Loader_MultiTileEntities.java
+     * :145-146 over :186-245). The upstream machines carry the MTE default self-drop (the
+     * boiler/burning-box family face — only the INVENTORY contents ride the
+     * {@code breakBlock} pop, TileEntityBase05Inventories.java:151-170 returns F for the
+     * block item, the MTE registry block break drops the machine item); the 1.20.1
+     * equivalent is exactly {@code dropSelf}.
+     */
+    public static List<Block> hopperLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.registry.GT6Hoppers.HopperRow tRow : gregtech6.registry.GT6Hoppers.ROWS) {
+            rBlocks.add(gregtech6.registry.GT6Hoppers.BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The storage-hopper family self-drop provider (task hopper-matrix). */
+    public static final class GT6HopperBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6HopperBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6HopperBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return hopperLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : hopperLootBlocks()) dropSelf(tBlock);
         }
     }
 

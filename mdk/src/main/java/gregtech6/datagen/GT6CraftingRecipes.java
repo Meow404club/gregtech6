@@ -1130,7 +1130,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.pattern(aRow.queue() ? "PCP" : "PwP")
 				.pattern("XCX")
 				.pattern(aRow.queue() ? "wXh" : " Xh")
-				.define('P', gregtech6.datagen.GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, aRow.material().slug()))
+				// task hopper-matrix: the MATERIAL overload — the tag slug must be the
+				// canonical snake of mNameInternal (GT6ItemTags.addFamilyFace), not the
+				// display-snake row slug (HSLA -> plates/hslasteel, DuraniumAlloy ->
+				// plates/duranium, SteelGalvanized -> plates/steel_galvanized): the display
+				// slug would point at an empty tag. This is also the upstream-faithful face
+				// ('P' = OP.plate.dat(aMat), Loader:145-146).
+				.define('P', gregtech6.datagen.GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, aRow.material().mt()))
 				.define('X', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plateCurved, aRow.material().mt()).get())
 				.define('C', Tags.Items.CHESTS)
 				.define('w', GT6ItemTags.TOOLS_WRENCH)
