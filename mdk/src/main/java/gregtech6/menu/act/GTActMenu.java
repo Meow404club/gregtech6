@@ -175,8 +175,8 @@ public final class GTActMenu {
 				.child(new ItemDisplayWidget().syncHandler("act_output").displayAmount(true).pos(135, 64))
 				.child(craftButton(aTable, aSyncManager).pos(135, 64))
 				// the two holo-32 positions (:650-653): slotIndex 34 = flush, 35 = sort
-				.child(actionButton("F", "Flush automation bands", () -> aTable.mFlushMode = true).pos(153, 46))
-				.child(actionButton("S", "Sort grid into slots", () -> aTable.sortIntoTheInputSlots()).pos(135, 46))
+				.child(actionButton("Flush automation bands", () -> aTable.mFlushMode = true).pos(153, 46))
+				.child(actionButton("Sort grid into slots", () -> aTable.sortIntoTheInputSlots()).pos(135, 46))
 				// the player inventory at the upstream bind offset 84 (ContainerCommon
 				// :327-334; the x follows the fork playerInventory widget precedent,
 				// GT6StorageMUI.safePanel) — UNCONDITIONAL (the sync handlers resolve by
@@ -308,12 +308,20 @@ public final class GTActMenu {
 						}));
 	}
 
-	/** One holo-32 action button — the server action runs the upstream arm verbatim. */
-	private static ButtonWidget<?> actionButton(String aLabel, String aTooltip, Runnable aAction) {
+	/**
+	 * One holo-32 action button — the server action runs the upstream arm verbatim. The
+	 * tooltip rides the DYNAMIC form: the fork's every text constructor funnels through
+	 * the package-private vanilla MutableComponent ctor (the fork accesstransformer.cfg
+	 * line, applied by FML at mod-load only), so an EAGER tooltip/overlay text would
+	 * throw IllegalAccessError on any headless panel build (the offline tests); the
+	 * dynamic builder defers construction to the client hover render, identical output
+	 * for constant text. The F/S letter overlays are dropped with the same rationale —
+	 * the tooltip names the action.
+	 */
+	private static ButtonWidget<?> actionButton(String aTooltip, Runnable aAction) {
 		return new ButtonWidget<>()
 				.size(18)
-				.tooltip(aTooltipConsumer -> aTooltipConsumer.addLine(Text.str(aTooltip)))
-				.overlay(Text.str(aLabel).scale(0.7f))
+				.tooltipDynamic(aTooltipConsumer -> aTooltipConsumer.addLine(Text.str(aTooltip)))
 				.syncHandler(new InteractionSyncHandler()
 						.setOnMousePressed(aMouseData -> aAction.run()));
 	}
