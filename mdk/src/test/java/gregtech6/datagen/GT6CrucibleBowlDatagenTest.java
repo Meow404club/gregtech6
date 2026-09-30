@@ -144,8 +144,10 @@ public class GT6CrucibleBowlDatagenTest extends GTOfflineTestBase {
                 assertEquals(1, tFaces.size(), tRow.path() + " level " + tLevel + ": the :616 top-face-only gate");
                 assertEquals("#content", tFaces.getAsJsonObject("up").get("texture").getAsString(),
                         tRow.path() + " level " + tLevel + ": the molten-indicator sprite");
-                assertFalse(tModel.toString().contains("tintindex"),
-                        tRow.path() + " level " + tLevel + ": the content face stays un-tinted (the BE-data ceiling)");
+                // task crucible-large-ber: the content seat is tintindex 1 — GT6MoldTintListener
+                // answers the BE's synced displayed material through the ContentFace dispatch
+                assertEquals(1, tFaces.getAsJsonObject("up").get("tintindex").getAsInt(),
+                        tRow.path() + " level " + tLevel + ": the content seat is tintindex 1");
             }
         }
     }

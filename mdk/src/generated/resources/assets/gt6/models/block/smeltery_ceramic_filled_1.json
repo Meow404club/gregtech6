@@ -4,7 +4,8 @@
     {
       "faces": {
         "up": {
-          "texture": "#content"
+          "texture": "#content",
+          "tintindex": 1
         }
       },
       "from": [

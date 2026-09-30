@@ -153,6 +153,16 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	/** The slot-0 feed inventory key (the smeltery "gt.inv" family spelling). */
 	public static final String NBT_INVENTORY = "gt.inv";
 
+	/**
+	 * The client display census keys (task crucible-large-ber). Upstream never persists
+	 * mDisplayed* — it hand-wraps them into getClientDataPacketByteArray (:596-604); the
+	 * port rides the paint-key pattern instead (TileEntityBase03TicksAndSync :315-322):
+	 * keys in {@code saveAdditional} ride BOTH sync channels for free because
+	 * {@code getUpdateTag()} = {@code saveWithoutMetadata()}.
+	 */
+	public static final String NBT_DISPLAYED_HEIGHT = "gt.displayed_height";
+	public static final String NBT_DISPLAYED_FLUID = "gt.displayed_fluid";
+
 	// ---------------------------------------------------------------------------
 	// the state (upstream :82-86)
 	// ---------------------------------------------------------------------------
@@ -177,6 +187,15 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 
 	/** The molten content (upstream :86 mContent — the List of material stacks). */
 	public final List<OreDictMaterialStack> mContent = new ArrayList<>();
+
+	/**
+	 * The client display census (upstream :83-84 mDisplayedHeight/mDisplayedFluid, the int
+	 * form): the fill height 0..255 ({@code UT.Code.scale(tTotal, MAX_AMOUNT, 255, F)}
+	 * :349 — the BER content top is {@code 1.125 + h/150} :635) and the lightest MOLTEN
+	 * content's material id, {@code -1} = nothing molten (:350). Updated in the tick
+	 * census; a change flags {@link #updateClientData()} (:351).
+	 */
+	public int mDisplayedHeight = 0, mDisplayedFluid = -1;
 
 	/** The registry-path constructor (the BlockEntityType.Builder.of factory form, the oven precedent). */
 	public TileEntityCrucible(BlockPos aPos, BlockState aState) {
@@ -237,6 +256,10 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 		/*if (aNBT.contains(NBT_INVENTORY, Tag.TAG_COMPOUND)) mInventory.deserializeNBT(NBT_ACCESS, aNBT.getCompound(NBT_INVENTORY)); // 21.1: provider-first
 		 *///?}
 		mMeltDown = CruciblePhysics.isMeltDownWarning(mTemperature, getTemperatureMax((byte)0)); // :99 re-derived, never stored
+		// task crucible-large-ber — the client display census rehydration (the contains-guard
+		// form; absent keys keep the zero/none display default)
+		if (aNBT.contains(NBT_DISPLAYED_HEIGHT, Tag.TAG_ANY_NUMERIC)) mDisplayedHeight = aNBT.getInt(NBT_DISPLAYED_HEIGHT);
+		if (aNBT.contains(NBT_DISPLAYED_FLUID, Tag.TAG_ANY_NUMERIC)) mDisplayedFluid = aNBT.getInt(NBT_DISPLAYED_FLUID);
 	}
 
 	@Override
@@ -246,6 +269,10 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 		aNBT.putLong(NBT_TEMPERATURE + ".old", oTemperature);     // :107
 		aNBT.putLong(NBT_ENERGY, mEnergy);                        // :105
 		MaterialStackNBT.saveList(mContent, NBT_MATERIALS, aNBT); // :108 OreDictMaterialStack.saveList
+		// task crucible-large-ber — the client display census (the paint-key pattern: both
+		// sync channels ride getUpdateTag = saveWithoutMetadata)
+		aNBT.putInt(NBT_DISPLAYED_HEIGHT, mDisplayedHeight);
+		aNBT.putInt(NBT_DISPLAYED_FLUID, mDisplayedFluid);
 		//? if forge {
 		aNBT.put(NBT_INVENTORY, mInventory.serializeNBT());
 		//?} else {
@@ -523,12 +550,21 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 		CruciblePhysics.PhaseOutcome tOutcome = CruciblePhysics.phaseGates(mContent, mTemperature, oTemperature, tNewContent, mAcidProof, params());
 		if (tOutcome.fizz()) fizz(); // SFX.MC_FIZZ :303/:306/:318 — the boil-off/phase hiss
 
-		// :336-344 — the weight census (the lightest-stack display work is the render defer)
+		// :336-344 — the weight census and the lightest-stack walk (the display feeds the BER)
 		double tWeight = shellWeight() + CruciblePhysics.weight(mContent);
 		if (tWeight < 0) tWeight = 0;
+		OreDictMaterialStack tLightest = lightest();
+		long tTotal = totalContent();
 
 		// :346 — the crossing latch BEFORE the heat step (the next tick's gates read this)
 		oTemperature = mTemperature;
+
+		// :348-351 — the client display census: the fill height 0..255 + the lightest MOLTEN
+		// material id; a change flags the vanilla block-update sync (the paint-key channel)
+		int tDisplayedHeight = mDisplayedHeight, tDisplayedFluid = mDisplayedFluid;
+		mDisplayedHeight = (int)CruciblePhysics.scale(tTotal, MAX_AMOUNT, 255, false);
+		mDisplayedFluid = (tLightest == null || tLightest.mMaterial.mMeltingPoint > mTemperature ? -1 : tLightest.mMaterial.mID);
+		if (mDisplayedHeight != tDisplayedHeight || mDisplayedFluid != tDisplayedFluid) updateClientData();
 
 		// the destruction arms (:309-320) — content already cleared by the physics
 		if (tOutcome.explosionStrength() > 0) {
@@ -554,7 +590,12 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 			return;
 		}
 
-		// :380-383 — the melt-down WARNING latch
+		// :380-383 — the melt-down WARNING latch. The upstream :612-616 red-shifts the WALL
+		// colour on this flag; the port keeps that face on the BER/controller cell only —
+		// ponytail: the wall blocks' tint is BAKED (GTMachineTintModel, the p32 route; the
+		// live-BE read is the red line and the runtime BlockColor rendered achromatic), a
+		// per-wall meltdown arm would need ModelData + GTRenderUpdates plumbing on 24 walls,
+		// defer declared (crucible-large-ber).
 		boolean tWarning = CruciblePhysics.isMeltDownWarning(mTemperature, tMax);
 		if (mMeltDown != tWarning) {
 			mMeltDown = tWarning;
