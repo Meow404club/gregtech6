@@ -40,6 +40,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
 import gregtech6.block.GTAdvancedCraftingTableBlock;
 import gregtech6.item.GT6Circuits;
 import gregtech6.tileentity.GTItemStackHandler;
@@ -840,8 +843,17 @@ public class TileEntityAdvancedCraftingTable extends TileEntityBase03TicksAndSyn
 		return gregtech6.menu.act.GTActMenu.buildPanel(this, aSyncManager);
 	}
 
-	/** Client-only screen wrapper (the TestBlockEntity :100 shape). */
+	/**
+	 * Client-only screen wrapper (the TestBlockEntity :100 shape). The {@code @OnlyIn}
+	 * matters on the dedicated server: it strips this method from the server bytecode,
+	 * so a reflective walk over this class's declared methods (GTEntityBlock.dropInventory's
+	 * getMethod on break) never resolves the client-only ModularScreen parameter/return
+	 * types — without it every break threw "Attempted to load class ModularScreen for
+	 * invalid dist DEDICATED_SERVER" (known_bugs.act_chain_rcon_red step31). Same
+	 * mechanism as IUIHolder.createScreen itself (OnlyIn in the fork).
+	 */
 	@Override
+	@OnlyIn(Dist.CLIENT)
 	public brachy.modularui.screen.ModularScreen createScreen(brachy.modularui.factory.PosGuiData aData,
 			brachy.modularui.screen.ModularPanel<?> aMainPanel) {
 		return gregtech6.menu.act.GTActMenu.createScreen(aData, aMainPanel);
