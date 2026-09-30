@@ -1,7 +1,25 @@
 {
   "variants": {
-    "": {
-      "model": "gt6:block/funnel_tantalum_hafnium_carbide"
+    "facing=down": {
+      "model": "gt6:block/attachment_funnel_down"
+    },
+    "facing=east": {
+      "model": "gt6:block/attachment_funnel",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/attachment_funnel"
+    },
+    "facing=south": {
+      "model": "gt6:block/attachment_funnel",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/attachment_funnel"
+    },
+    "facing=west": {
+      "model": "gt6:block/attachment_funnel",
+      "y": 270
     }
   }
 }

@@ -1,7 +1,25 @@
 {
   "variants": {
-    "": {
-      "model": "gt6:block/tap_stainless_steel"
+    "facing=down": {
+      "model": "gt6:block/attachment_tap"
+    },
+    "facing=east": {
+      "model": "gt6:block/attachment_tap",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/attachment_tap"
+    },
+    "facing=south": {
+      "model": "gt6:block/attachment_tap",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/attachment_tap"
+    },
+    "facing=west": {
+      "model": "gt6:block/attachment_tap",
+      "y": 270
     }
   }
 }
