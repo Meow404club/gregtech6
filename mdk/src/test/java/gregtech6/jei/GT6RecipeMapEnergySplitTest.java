@@ -73,10 +73,15 @@ class GT6RecipeMapEnergySplitTest extends GTRecipesOfflineTestBase {
 			"gt.recipe.cokeoven",                        // solid-fuel burner
 			"gt.recipe.implosioncompressor",             // explosives, no energy input
 			"gt.recipe.bedrockorelist",                  // the RM.java:153 display map
-			"gt.recipe.catalyticcracking", "gt.recipe.steamcracking", // no machine registered yet
 			// the fuel maps: the emitting carrier varies per machine (boiler HU / engine RU / turbine …)
 			"gt.recipe.fuels.burn", "gt.recipe.fuels.engine", "gt.recipe.fuels.fluidbed",
 			"gt.recipe.fuels.gas", "gt.recipe.fuels.hot");
+	// NOTE (task viewer-icon-retire-gu-pin): the two cracking maps LEFT this set — both
+	// cracker machines carry HU upstream (Loader_MultiTileEntities:1570-1579, all 8 rows
+	// NBT_ENERGY_ACCEPTED TD.Energy.HU) and the port registered them (GTMachines
+	// CATALYTIC_CRACKER_ROWS/STEAM_CRACKER_ROWS + crackerRow TD.Energy.HU), so they are
+	// now pinned in the meta's ENERGY_BY_MAP. The r7-30a-era "no machine registered yet"
+	// note above is superseded.
 
 	@Test
 	void censusEveryVisibleMapClassified() {
@@ -89,7 +94,8 @@ class GT6RecipeMapEnergySplitTest extends GTRecipesOfflineTestBase {
 				tUnclassified.add(tMap.mNameInternal);
 		}
 		assertEquals(List.of(), tUnclassified, "every visible map must be pinned or declared GU");
-		assertEquals(49, tPinned, "the pinned-carrier count (72 visible - 5 mixed - 18 carrier-less)");
+		assertEquals(51, tPinned, "the pinned-carrier count (72 visible - 5 mixed - 16 carrier-less;"
+				+ " the two cracking maps joined the HU column in task viewer-icon-retire-gu-pin)");
 		// the mixed set is never pinned — the GU fallback IS the ruling
 		for (RecipeMap tMap : GT6RecipeMapViewerMeta.visibleMaps()) {
 			if (GU_MIXED.contains(tMap.mNameInternal))
@@ -114,6 +120,10 @@ class GT6RecipeMapEnergySplitTest extends GTRecipesOfflineTestBase {
 		// FURNACE map, TileEntityOven:274): the dryer family HU, GTMachines:514
 		assertEquals(TD.Energy.HU, GT6RecipeMapViewerMeta.energyOf(GT6RecipeMaps.DRYING));
 		assertEquals(TD.Energy.HU, GT6RecipeMapViewerMeta.energyOf(GT6RecipeMaps.CRYSTALLISATION_CRUCIBLE));
+		// the two crackers (task viewer-icon-retire-gu-pin): upstream :1570-1579 all-HU,
+		// the port's crackerRow carries TD.Energy.HU (GTMachines:4172) — true misses fixed
+		assertEquals(TD.Energy.HU, GT6RecipeMapViewerMeta.energyOf(GT6RecipeMaps.CATALYTIC_CRACKING));
+		assertEquals(TD.Energy.HU, GT6RecipeMapViewerMeta.energyOf(GT6RecipeMaps.STEAM_CRACKING));
 		// KU, EU, QU, CU: one carrier per family column
 		assertEquals(TD.Energy.KU, GT6RecipeMapViewerMeta.energyOf(GT6RecipeMaps.COMPRESSOR));
 		assertEquals(TD.Energy.EU, GT6RecipeMapViewerMeta.energyOf(GT6RecipeMaps.CANNER));
@@ -170,6 +180,13 @@ class GT6RecipeMapEnergySplitTest extends GTRecipesOfflineTestBase {
 				"QU", ChatFormatting.DARK_PURPLE);
 		assertUnit(contents(GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.FUSION, row(32, 20, 0)).get(0)).getArgs()[1],
 				"TU", ChatFormatting.DARK_BLUE);
+		// the two crackers print the HU unit line (task viewer-icon-retire-gu-pin; the
+		// upstream cracker rows are Heat_T, :1570-1579 — the GU one-arg face is gone)
+		var tCrack = GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.CATALYTIC_CRACKING, row(32, 64, 0));
+		assertEquals("gt6.jei.cost.costs_unit", contents(tCrack.get(0)).getKey());
+		assertUnit(contents(tCrack.get(0)).getArgs()[1], "HU", ChatFormatting.RED);
+		assertUnit(contents(GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.STEAM_CRACKING, row(32, 64, 0)).get(0)).getArgs()[1],
+				"HU", ChatFormatting.RED);
 	}
 
 	/** The second arg is the styled short-code component: text + ChatFormatting color. */
