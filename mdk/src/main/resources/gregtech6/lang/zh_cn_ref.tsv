@@ -16,21 +16,21 @@
 #
 direct	block.gt6.advanced_crafting_table	高级合成台	hand
 direct	block.gt6.barrel_adamantium	艾德曼合金储罐	hand
-direct	block.gt6.barrel_awakened_draconium	觉醒龙合金储罐	hand
-direct	block.gt6.barrel_draconium	龙合金储罐	hand
+direct	block.gt6.barrel_awakened_draconium	觉醒龙储罐	hand
+direct	block.gt6.barrel_draconium	龙储罐	hand
 direct	block.gt6.barrel_gaia_spirit	盖亚储罐	hand
-direct	block.gt6.barrel_infinity	无限储罐	hand
+direct	block.gt6.barrel_infinity	无尽储罐	hand
 direct	block.gt6.barrel_logistics	物流储罐	hand
 direct	block.gt6.barrel_metal	青铜储罐	hand
 direct	block.gt6.barrel_netherite	下界合金储罐	hand
-direct	block.gt6.barrel_plastic	塑料罐	hand
+direct	block.gt6.barrel_plastic	塑料储罐	hand
 direct	block.gt6.barrel_tantalum_hafnium_carbide	碳化钽铪储罐	hand
 direct	block.gt6.barrel_titanium	钛储罐	hand
 direct	block.gt6.barrel_tungsten	钨储罐	hand
 direct	block.gt6.barrel_tungsten_alloy	钨合金储罐	hand
 direct	block.gt6.barrel_tungstensteel	钨钢储罐	hand
 direct	block.gt6.barrel_void_metal	虚空金属储罐	hand
-direct	block.gt6.barrel_wood	木制储物桶	hand
+direct	block.gt6.barrel_wood	木制储罐	hand
 direct	block.gt6.battery_box_ev	电池箱 (EV)	hand
 direct	block.gt6.battery_box_hv	电池箱 (HV)	hand
 direct	block.gt6.battery_box_iv	电池箱 (IV)	hand
@@ -2443,7 +2443,7 @@ direct	itemGroup.gt6.billet	坯料	hand
 direct	itemGroup.gt6.books	说明书	hand
 direct	itemGroup.gt6.chests	箱子	hand
 direct	itemGroup.gt6.electric_wires	导线	hand
-direct	itemGroup.gt6.fluid_containers	流体容器	hand
+direct	itemGroup.gt6.fluid_containers	储罐	hand
 direct	itemGroup.gt6.fluid_pipes	流体管道	hand
 direct	itemGroup.gt6.foam_sprays	建筑泡沫喷罐	hand
 direct	itemGroup.gt6.food_cans	格雷科技: 罐头	hand
@@ -4860,9 +4860,9 @@ itemgroup	casingMachine	机械外壳	auto
 itemgroup	casingMachineDense	致密机械外壳	auto
 itemgroup	casingMachineDouble	坚固机械外壳	auto
 itemgroup	casingMachineQuadruple	高强度机械外壳	auto
-itemgroup	casingSmall	物品外壳	hand
+itemgroup	casingSmall	外壳	hand
 itemgroup	chain	锁链	auto
-itemgroup	chemtube	玻璃试管	hand
+itemgroup	chemtube	试管	hand
 itemgroup	chunkGt	小块矿物	auto
 itemgroup	commercialPureDust	Commercial Pure Dust	review
 itemgroup	crateGt64Dust	板条箱: 粉末	auto
@@ -4874,8 +4874,8 @@ itemgroup	crateGt64Raw	板条箱: 矿石	auto
 itemgroup	crushed	粉碎矿石	auto
 itemgroup	crushedCentrifuged	离心矿石	auto
 itemgroup	crushedCentrifugedTiny	离心小撮矿石	auto
-itemgroup	crushedPurified	洗净矿石	hand
-itemgroup	crushedPurifiedTiny	小撮洗净矿石	hand
+itemgroup	crushedPurified	纯净矿石	hand
+itemgroup	crushedPurifiedTiny	纯净小撮矿石	hand
 itemgroup	crushedTiny	粉碎小撮矿石	auto
 itemgroup	dust	矿粉	auto
 itemgroup	dustDiv72	1/72小撮粉末	hand
@@ -4987,7 +4987,7 @@ itemgroup	lens	透镜	auto
 itemgroup	link	链环	auto
 itemgroup	minecartWheels	车轮	auto
 itemgroup	nugget	粒	auto
-itemgroup	oreRaw	生矿石	hand
+itemgroup	oreRaw	粗矿石	hand
 itemgroup	oreVanillastone	矿石	auto
 itemgroup	plate	板	auto
 itemgroup	plateCurved	弯曲板	auto
