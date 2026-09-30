@@ -508,7 +508,7 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 			List<OreDictMaterialStack> tFeed = feedStacks(tStack);
 			if (tFeed == null) {
 				mInventory.setStackInSlot(0, ItemStack.EMPTY);
-				// SFX.MC_FIZZ :212 — no sound face ported (the same pool as the phase fizz)
+				fizz(); // SFX.MC_FIZZ :212 — the unknown-item trash hisses (the TileEntitySmeltery.fizz form)
 			} else if (addMaterialStacks(tFeed, envTemperature())) {
 				mInventory.setStackInSlot(0, ItemStack.EMPTY); // :216/:232 decrStackSize(0, 1) — the port melts the whole slot
 			}
@@ -521,7 +521,7 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 		// :296-334 — the evaporation/acid/phase-gate loop, world effects BE-side
 		boolean tNewContent = (tHashBefore != mContent.hashCode()); // :241
 		CruciblePhysics.PhaseOutcome tOutcome = CruciblePhysics.phaseGates(mContent, mTemperature, oTemperature, tNewContent, mAcidProof, params());
-		if (tOutcome.fizz()) { /* SFX.MC_FIZZ :303/:306/:318 — no sound face ported */ }
+		if (tOutcome.fizz()) fizz(); // SFX.MC_FIZZ :303/:306/:318 — the boil-off/phase hiss
 
 		// :336-344 — the weight census (the lightest-stack display work is the render defer)
 		double tWeight = shellWeight() + CruciblePhysics.weight(mContent);
@@ -596,20 +596,30 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	/**
 	 * Upstream :367-377 — the meltdown: the content is trashed and the 3x3x3 cavity
 	 * becomes flowing lava (the controller's own cell included, so the multiblock dies
-	 * in the flow). The gas-damage and fire-spread arms (:370-371) defer with the other
-	 * world-effect surfaces. Package-visible for the offline tests.
+	 * in the flow). The :368 hiss rides {@link #fizz()}; the gas-damage and fire-spread
+	 * arms (:370-371) defer with the other world-effect surfaces. Package-visible for
+	 * the offline tests.
 	 */
 	void meltdown(long aTemperatureMax) {
+		fizz(); // SFX.MC_FIZZ :368 — the melt-down hiss, before the trash
 		mContent.clear(); // :369 GarbageGT.trash(mContent)
 		if (hasLevel() && isServerSide()) {
 			int tX = getBlockPos().getX(), tY = getBlockPos().getY(), tZ = getBlockPos().getZ();
+			// :372-376 — flowing lava meta 1: no source, it decays away instead of a permanent pool
+			net.minecraft.world.level.block.state.BlockState tLava = Blocks.LAVA.defaultBlockState()
+					.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LEVEL, 1);
 			for (int i = -1; i < 2; i++) for (int j = -1; j < 2; j++) { // :372-376
-				getLevel().setBlock(new BlockPos(tX + i, tY    , tZ + j), Blocks.LAVA.defaultBlockState(), 3);
-				getLevel().setBlock(new BlockPos(tX + i, tY + 1, tZ + j), Blocks.LAVA.defaultBlockState(), 3);
-				getLevel().setBlock(new BlockPos(tX + i, tY + 2, tZ + j), Blocks.LAVA.defaultBlockState(), 3);
+				getLevel().setBlock(new BlockPos(tX + i, tY    , tZ + j), tLava, 3);
+				getLevel().setBlock(new BlockPos(tX + i, tY + 1, tZ + j), tLava, 3);
+				getLevel().setBlock(new BlockPos(tX + i, tY + 2, tZ + j), tLava, 3);
 			}
 		}
 		setChanged();
+	}
+
+	/** The SFX.MC_FIZZ arm (:212/:303/:306/:318/:368) — the sound-only sink (the TileEntitySmeltery.fizz form verbatim). */
+	protected void fizz() {
+		if (hasLevel()) getLevel().levelEvent(1501, getBlockPos(), 0); // the vanilla LevelEvent fire-extinguish fizz
 	}
 
 	/** Upstream :319 setToAir — the acid melt-through. */
@@ -655,12 +665,13 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	 * port of the OM.anydata prefix branches): a MaterialPrefixItem feeds its prefix
 	 * amount per item (the :229-232 generic arm), the ore-family prefixes feed the
 	 * ore-direct projection (:217-228 — mTargetCrushing × mOreMultiplier with the
-	 * form-factor scaling), a vanilla ore rides the bridge, anything else returns null
-	 * (the :210-212 trash+fizz arm).
+	 * form-factor scaling), a vanilla ore rides the bridge, the vanilla ingot/nugget
+	 * family rides {@link #vanillaIngots()}/{@link #vanillaNuggets()} at the prefix
+	 * amount; anything else returns null (the :210-212 trash+fizz arm).
 	 *
-	 * <p>ponytail: the ladder + the vanilla-ore bridge are duplicated from
-	 * TileEntitySmeltery (#20a owns that file this round, and the card scopes forbid
-	 * touching it); extract one shared crucible-io helper when both scopes allow.
+	 * <p>ponytail: the ladder + the vanilla bridges are duplicated from
+	 * TileEntitySmeltery (the r4-20b declared debt — one shared crucible-io helper when
+	 * a scope allows touching both files without a behavior card riding along).
 	 */
 	@Nullable
 	public List<OreDictMaterialStack> feedStacks(ItemStack aStack) {
@@ -683,6 +694,20 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 		if (tVanilla != null) {
 			List<OreDictMaterialStack> rList = new ArrayList<>();
 			rList.add(CruciblePhysics.oreDirect(tVanilla, 1)); // a vanilla ore block = one standard ore
+			return rList;
+		}
+		// the vanilla ingot/nugget bridge — the prefix amount per item (the :229-232 generic
+		// arm over the OM.anydata ingotIron/nugget* data; whole-stack, the declared deviation)
+		OreDictMaterial tVanillaIngot = vanillaIngots().get(aStack.getItem());
+		if (tVanillaIngot != null) {
+			List<OreDictMaterialStack> rList = new ArrayList<>();
+			rList.add(new OreDictMaterialStack(tVanillaIngot, OP.ingot.mAmount * aStack.getCount()));
+			return rList;
+		}
+		OreDictMaterial tVanillaNugget = vanillaNuggets().get(aStack.getItem());
+		if (tVanillaNugget != null) {
+			List<OreDictMaterialStack> rList = new ArrayList<>();
+			rList.add(new OreDictMaterialStack(tVanillaNugget, OP.nugget.mAmount * aStack.getCount()));
 			return rList;
 		}
 		return null;
@@ -708,6 +733,30 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 				net.minecraft.world.item.Items.COPPER_ORE, MT.Cu,
 				net.minecraft.world.item.Items.DEEPSLATE_COPPER_ORE, MT.Cu,
 				net.minecraft.world.item.Items.RAW_COPPER, MT.Cu);
+		return tTable;
+	}
+
+	/** The vanilla ingot/nugget bridge (task crucible-behavior-fixes — the TileEntitySmeltery vanillaIngots/vanillaNuggets form verbatim, same lazy-form rule). */
+	private static volatile java.util.Map<net.minecraft.world.level.ItemLike, OreDictMaterial> sVanillaIngots = null;
+
+	/** The vanilla ingot bridge, built on first use (one material generation — the lazy form). */
+	private static java.util.Map<net.minecraft.world.level.ItemLike, OreDictMaterial> vanillaIngots() {
+		java.util.Map<net.minecraft.world.level.ItemLike, OreDictMaterial> tTable = sVanillaIngots;
+		if (tTable == null) sVanillaIngots = tTable = java.util.Map.of(
+				net.minecraft.world.item.Items.IRON_INGOT, MT.Fe,
+				net.minecraft.world.item.Items.GOLD_INGOT, MT.Au,
+				net.minecraft.world.item.Items.COPPER_INGOT, MT.Cu);
+		return tTable;
+	}
+
+	private static volatile java.util.Map<net.minecraft.world.level.ItemLike, OreDictMaterial> sVanillaNuggets = null;
+
+	/** The vanilla nugget bridge (vanilla has no copper nugget — two entries). */
+	private static java.util.Map<net.minecraft.world.level.ItemLike, OreDictMaterial> vanillaNuggets() {
+		java.util.Map<net.minecraft.world.level.ItemLike, OreDictMaterial> tTable = sVanillaNuggets;
+		if (tTable == null) sVanillaNuggets = tTable = java.util.Map.of(
+				net.minecraft.world.item.Items.IRON_NUGGET, MT.Fe,
+				net.minecraft.world.item.Items.GOLD_NUGGET, MT.Au);
 		return tTable;
 	}
 

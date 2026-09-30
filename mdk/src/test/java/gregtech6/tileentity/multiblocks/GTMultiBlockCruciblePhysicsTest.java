@@ -407,10 +407,13 @@ public class GTMultiBlockCruciblePhysicsTest extends GTMultiBlocksOfflineTestBas
 		tF.crucible().onTick(1, true);
 
 		assertEquals(0, totalOf(tF.crucible().mContent), "the content is trashed (:369)");
-		// the 3x3x3 cavity is lava (the controller cell included, :372-376)
+		// the 3x3x3 cavity is lava (the controller cell included, :372-376) — FLOWING lava
+		// (meta 1): no permanent spreading source (task crucible-behavior-fixes)
 		for (int tDZ = -1; tDZ <= 1; tDZ++) for (int tDX = -1; tDX <= 1; tDX++) for (int tY = 0; tY <= 2; tY++) {
-			assertSame(Blocks.LAVA, tF.level().getBlockState(new BlockPos(100 + tDX, 64 + tY, 100 + tDZ)).getBlock(),
-					"the cavity cell (" + tDX + "," + tY + "," + tDZ + ") is lava");
+			BlockState tState = tF.level().getBlockState(new BlockPos(100 + tDX, 64 + tY, 100 + tDZ));
+			assertSame(Blocks.LAVA, tState.getBlock(), "the cavity cell (" + tDX + "," + tY + "," + tDZ + ") is lava");
+			assertEquals(1, tState.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LEVEL).intValue(),
+					"the cavity cell (" + tDX + "," + tY + "," + tDZ + ") is flowing lava, not a source (:373-375)");
 		}
 	}
 

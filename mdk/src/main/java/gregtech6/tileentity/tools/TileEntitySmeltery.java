@@ -134,6 +134,37 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 	}
 
 	/**
+	 * The vanilla ingot/nugget bridge (task crucible-behavior-fixes — the OM.anydata
+	 * counterpart for the un-oredicted vanilla ingot family: upstream registered the
+	 * ingotIron/ingotGold/ingotCopper/nugget* names, so the :229-232 generic arm fed
+	 * the prefix amount; the port's MaterialPrefixItem-only gate returned null and the
+	 * items were trashed instead of melting). Same lazy form as {@link #vanillaOres()} —
+	 * the call-time OP.ingot/OP.nugget reads keep the GTWireSpecs:35 rule.
+	 */
+	private static volatile Map<net.minecraft.world.level.ItemLike, OreDictMaterial> sVanillaIngots = null;
+
+	/** The vanilla ingot bridge, built on first use (one material generation — the lazy form). */
+	private static Map<net.minecraft.world.level.ItemLike, OreDictMaterial> vanillaIngots() {
+		Map<net.minecraft.world.level.ItemLike, OreDictMaterial> tTable = sVanillaIngots;
+		if (tTable == null) sVanillaIngots = tTable = Map.of(
+				net.minecraft.world.item.Items.IRON_INGOT, MT.Fe,
+				net.minecraft.world.item.Items.GOLD_INGOT, MT.Au,
+				net.minecraft.world.item.Items.COPPER_INGOT, MT.Cu);
+		return tTable;
+	}
+
+	private static volatile Map<net.minecraft.world.level.ItemLike, OreDictMaterial> sVanillaNuggets = null;
+
+	/** The vanilla nugget bridge (vanilla has no copper nugget — two entries). */
+	private static Map<net.minecraft.world.level.ItemLike, OreDictMaterial> vanillaNuggets() {
+		Map<net.minecraft.world.level.ItemLike, OreDictMaterial> tTable = sVanillaNuggets;
+		if (tTable == null) sVanillaNuggets = tTable = Map.of(
+				net.minecraft.world.item.Items.IRON_NUGGET, MT.Fe,
+				net.minecraft.world.item.Items.GOLD_NUGGET, MT.Au);
+		return tTable;
+	}
+
+	/**
 	 * The BET-injecting ctor (the GTGeneratorSolidBlockEntity form): the registration
 	 * lambda passes the family BET, the offline fixtures pass a synthetic type over a
 	 * vanilla block state (the intrusive-holder lesson).
@@ -248,9 +279,12 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 
 		// :315-322 — the melt-down: over the ceiling → everything trashes, the block becomes lava
 		if (mTemperature > temperatureMax()) {
+			fizz(); // :316 — the melt-down hiss, before the trash
 			GarbageTruncate();
 			spreadFire(Math.min(mTemperature / 25, 8));
-			if (hasLevel()) getLevel().setBlock(getBlockPos(), Blocks.LAVA.defaultBlockState(), Block.UPDATE_ALL);
+			// :320 — flowing lava meta 1: no source, it decays away instead of a permanent pool
+			if (hasLevel()) getLevel().setBlock(getBlockPos(), Blocks.LAVA.defaultBlockState()
+					.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LEVEL, 1), Block.UPDATE_ALL);
 			return;
 		}
 
@@ -291,8 +325,9 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 	 * The :158-183 feed ladder: a MaterialPrefixItem feeds its prefix amount per item
 	 * (the :179-183 generic arm); ore-family prefixes feed the ore-direct projection
 	 * (:167-183 — mTargetCrushing × mOreMultiplier with the form-factor scaling); a
-	 * vanilla ore rides {@link #vanillaOres()}; anything else returns null (the
-	 * :160-162 trash+fizz arm).
+	 * vanilla ore rides {@link #vanillaOres()}, the vanilla ingot/nugget family rides
+	 * {@link #vanillaIngots()}/{@link #vanillaNuggets()} at the prefix amount; anything
+	 * else returns null (the :160-162 trash+fizz arm).
 	 */
 	@Nullable
 	public List<OreDictMaterialStack> feedStacks(ItemStack aStack) {
@@ -315,6 +350,20 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 		if (tVanilla != null) {
 			List<OreDictMaterialStack> rList = new ArrayList<>();
 			rList.add(CruciblePhysics.oreDirect(tVanilla, 1)); // a vanilla ore block = one standard ore
+			return rList;
+		}
+		// the vanilla ingot/nugget bridge — the prefix amount per item (the :229-232 generic
+		// arm over the OM.anydata ingotIron/nugget* data; whole-stack, the declared deviation)
+		OreDictMaterial tVanillaIngot = vanillaIngots().get(aStack.getItem());
+		if (tVanillaIngot != null) {
+			List<OreDictMaterialStack> rList = new ArrayList<>();
+			rList.add(new OreDictMaterialStack(tVanillaIngot, OP.ingot.mAmount * aStack.getCount()));
+			return rList;
+		}
+		OreDictMaterial tVanillaNugget = vanillaNuggets().get(aStack.getItem());
+		if (tVanillaNugget != null) {
+			List<OreDictMaterialStack> rList = new ArrayList<>();
+			rList.add(new OreDictMaterialStack(tVanillaNugget, OP.nugget.mAmount * aStack.getCount()));
 			return rList;
 		}
 		return null;
