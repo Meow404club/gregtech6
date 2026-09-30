@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "tag": "c:gems/sugilite"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "GG ",
+    "GGf",
+    "GG "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_hammer_sugilite"
+  }
+}

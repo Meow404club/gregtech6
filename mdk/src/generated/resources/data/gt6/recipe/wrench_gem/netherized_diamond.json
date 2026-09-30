@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_netherized_diamond"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "netherized_diamond",
+  "pattern": [
+    "CfC",
+    " C ",
+    " C "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:wrench"
+  }
+}

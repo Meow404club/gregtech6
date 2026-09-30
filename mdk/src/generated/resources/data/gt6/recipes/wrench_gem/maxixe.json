@@ -1,0 +1,23 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_maxixe"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "maxixe",
+  "pattern": [
+    "CfC",
+    " C ",
+    " C "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:wrench"
+  },
+  "show_notification": true
+}

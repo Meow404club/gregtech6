@@ -1,0 +1,29 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_pink_diamond"
+    },
+    "T": {
+      "item": "gt6:screw_pink_diamond"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "pink_diamond",
+  "pattern": [
+    "CCd",
+    "fCT",
+    " C "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:monkey_wrench"
+  },
+  "show_notification": true
+}

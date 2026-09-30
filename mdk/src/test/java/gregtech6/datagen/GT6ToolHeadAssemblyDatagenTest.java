@@ -336,4 +336,103 @@ public class GT6ToolHeadAssemblyDatagenTest extends GTOfflineTestBase {
 		assertTrue(tRows.stream().anyMatch(tRow -> tRow.aForm().aId().equals("chainsaw")
 				&& tRow.aMaterial() == MT.Steel), "Steel keeps its chainsaw head row (no steel anchor owns this family)");
 	}
+
+	// --------------------------------------------------------------- the r10 gem sisters
+
+	/**
+	 * The machine-band gem sisters (task r10-debt-gem-sisters, the r9-39 declared
+	 * remainder): the wrench :310 / monkey wrench :311 C (plateGem) variants stay DIRECT
+	 * TOOL rows (the arg-8 face), the hammer :327 G (gem) variant is a HEAD row (the
+	 * arg-9 face) — the gem variants swap the in-grid hammer for the file (the upstream
+	 * letter choice verbatim: Loader_Tools.java "CfC"/"CCd"/"GGf").
+	 */
+	@Test
+	public void theGemSisterRowsCarryTheUpstreamShapes() throws Exception {
+		JsonObject tWrench = generated("recipes/wrench_gem/diamond");
+		assertEquals("gt6:material_tool", tWrench.get("type").getAsString(), "the :310 C variant is a DIRECT tool row (the arg-8 face)");
+		assertEquals("gt6:wrench", tWrench.getAsJsonObject("result").get("item").getAsString(),
+				"the gem variant keeps the TOOL output");
+		assertEquals(List.of("CfC", " C ", " C "), tWrench.getAsJsonArray("pattern").asList().stream()
+				.map(JsonElement::getAsString).toList(), "the :310 second shape verbatim");
+		assertEquals("gt6:plate_gem_diamond", key(tWrench, 'C').getAsJsonObject().get("item").getAsString(),
+				"'C' = the plateGem ITEM (no tag family, the blade-family precedent)");
+		assertEquals("gt6:tools/file", key(tWrench, 'f').getAsJsonObject().get("tag").getAsString(),
+				"the gem variant files, never hammers ('f' not 'h' upstream)");
+		JsonObject tMonkey = generated("recipes/monkey_wrench_gem/diamond");
+		assertEquals("gt6:material_tool", tMonkey.get("type").getAsString());
+		assertEquals("gt6:monkey_wrench", tMonkey.getAsJsonObject("result").get("item").getAsString());
+		assertEquals(List.of("CCd", "fCT", " C "), tMonkey.getAsJsonArray("pattern").asList().stream()
+				.map(JsonElement::getAsString).toList(), "the :311 second shape verbatim");
+		assertEquals("gt6:screw_diamond", key(tMonkey, 'T').getAsJsonObject().get("item").getAsString(),
+				"'T' = the row material's screw (the :463 letter resolution)");
+		assertEquals("gt6:tools/screwdriver", key(tMonkey, 'd').getAsJsonObject().get("tag").getAsString(),
+				"'d' = the screwdriver tool letter (CR.java)");
+		JsonObject tHammer = generated("recipes/hammer_gem/diamond");
+		assertEquals("minecraft:crafting_shaped", tHammer.get("type").getAsString(),
+				"the :327 G variant is a HEAD row (the arg-9 face, the r7-39 inversion face)");
+		assertEquals("gt6:tool_head_hammer_diamond", tHammer.getAsJsonObject("result").get("item").getAsString(),
+				"the head item IS the identity — never the soft-hammer shape's :328 twin");
+		assertEquals(List.of("GG ", "GGf", "GG "), tHammer.getAsJsonArray("pattern").asList().stream()
+				.map(JsonElement::getAsString).toList(), "the :327 second shape verbatim");
+		assertEquals("forge:gems/diamond", key(tHammer, 'G').getAsJsonObject().get("tag").getAsString(),
+				"'G' = the gems tag (the completion-band 'G' letter precedent)");
+	}
+
+	/**
+	 * The gem sister universes ride the SAME axis gates as their P/I siblings plus the
+	 * plateGem/gem/screw letter item truth (the offline isGeneratingItem face — the
+	 * toolHeadRowResolvable split; the emission's get() face is datagen-JVM-only). The
+	 * counts are the measured dead numbers matching the generated trees; the negative
+	 * gates prove the ghost rows constructibly zero.
+	 */
+	@Test
+	public void theGemSisterUniversesRideTheTruthGates() {
+		java.util.Map<String, Integer> tCounts = new java.util.HashMap<>();
+		java.util.Set<String> tSeen = new java.util.HashSet<>();
+		for (gregapi.oredict.OreDictMaterial tMaterial : gregapi.oredict.MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
+			if (tMaterial == null || tMaterial.mID < 0) continue;
+			tMaterial = gregapi.oredict.MaterialRegistry.INSTANCE.get(tMaterial); // the alias merge
+			if (tMaterial == null || tMaterial.mID < 0 || !tSeen.add(tMaterial.mNameInternal)) continue;
+			for (GT6CraftingRecipes.MachineLadderForm tForm : GT6CraftingRecipes.MACHINE_LADDER_FORMS) {
+				if (!tForm.aId().endsWith("_gem")) continue; // this card's three forms
+				if (!GT6CraftingRecipes.machineLadderAxis(tMaterial, tForm)) continue;
+				// the hammer_gem HEAD-row emission gate (machineLadderHeadItem get() in the datagen
+				// JVM; its offline isGeneratingItem face here — the Glass probe: gem-true but
+				// headless, the tree carries no glass row)
+				if (tForm.aId().equals("hammer_gem") && !gregapi.data.OP.toolHeadHammer.isGeneratingItem(tMaterial)) continue;
+				boolean tResolvable = true;
+				for (String tPatternRow : tForm.aPattern()) {
+					for (char tChar : tPatternRow.toCharArray()) {
+						if (tChar == ' ') continue;
+						switch (tChar) {
+							case 'C' -> tResolvable &= gregapi.data.OP.plateGem.isGeneratingItem(tMaterial);
+							case 'G' -> tResolvable &= gregapi.data.OP.gem.isGeneratingItem(tMaterial);
+							case 'T' -> tResolvable &= gregapi.data.OP.screw.isGeneratingItem(tMaterial);
+							case 'f', 'd' -> {} // the tool tags carry no material truth
+							default -> throw new IllegalArgumentException(tForm.aId() + ": unexpected letter " + tChar);
+						}
+					}
+				}
+				if (!tResolvable) continue;
+				tCounts.merge(tForm.aId(), 1, Integer::sum);
+				if (tForm.aQualMin() > 0) {
+					assertTrue(tMaterial.mToolTypes >= 2 && tMaterial.mToolQuality >= tForm.aQualMin(),
+							tForm.aId() + "/" + tMaterial.mNameInternal + ": the wrench pair's typemin(2)+qualmin(1)");
+					assertTrue(gregapi.data.OP.plateGem.isGeneratingItem(tMaterial),
+							tForm.aId() + "/" + tMaterial.mNameInternal + ": the plateGem letter truth");
+				} else {
+					assertFalse(tMaterial.contains(TD.Properties.WOOD) || tMaterial.contains(TD.Properties.BOUNCY)
+							|| tMaterial.contains(TD.Properties.STRETCHY),
+							tForm.aId() + "/" + tMaterial.mNameInternal + ": the :327 Nor(WOOD,BOUNCY,STRETCHY) gate");
+					assertTrue(gregapi.data.OP.gem.isGeneratingItem(tMaterial)
+							&& gregapi.data.OP.toolHeadHammer.isGeneratingItem(tMaterial),
+							tForm.aId() + "/" + tMaterial.mNameInternal + ": the gem + hammer-head item truth");
+				}
+			}
+		}
+		assertEquals(114, tCounts.get("wrench_gem").intValue(), "the measured plateGem ∩ wrench-axis universe");
+		assertEquals(114, tCounts.get("monkey_wrench_gem").intValue(), "every plateGem wrench material also carries the screw letter");
+		assertEquals(130, tCounts.get("hammer_gem").intValue(), "the gem universe without the typemin/qualmin cuts (the quartz family lands here, not in the wrench pair)");
+		assertTrue(tCounts.containsKey("wrench_gem") && tCounts.size() == 3, "exactly the three gem-sister forms walked");
+	}
 }
