@@ -1,0 +1,316 @@
+package gregtech6.client.render;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
+import org.joml.Vector3f;
+
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BlockElementFace;
+import net.minecraft.client.renderer.block.model.BlockFaceUV;
+import net.minecraft.client.renderer.block.model.FaceBakery;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.BlockModelRotation;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+
+import net.minecraftforge.client.model.data.ModelData;
+
+import gregtech6.block.GTBlockProperties;
+
+/**
+ * The connection-aware rod baked model (task rod-render-pool) — the non-full-block
+ * connector families (fluid pipes / item pipes / the logistics wire / the 44 axles)
+ * trade the full-cube placeholder for the upstream connector geometry: pass 0 = the
+ * core box of the row diameter, passes 1-6 = one extension arm per connected side —
+ * the {@link gregtech6.client.wire.GTWireBakedModel} plan (the ported
+ * TileEntityBase10ConnectorRendered :113-133 forms, arm length 0) with the pipe
+ * texture semantics instead of the wire's insulation ladder.
+ *
+ * <p>ADR ⑨ posture (the wire model's world-persistent visual red line): a pure state
+ * function of the BlockState — the mask lives in {@link GTBlockProperties#CONNECTIONS}
+ * (0..63, bit i = {@code Direction#get3DDataValue()} i connected, the shared GT6 side
+ * order — upstream numbers the same six axes, CS.java:516-521) or, for the axles, in
+ * {@link BlockStateProperties#AXIS} (the straight-line port-ism: both axis ends
+ * connected — upstream {@code worldObj == null} defaults to the same N-S segment,
+ * ConnectorStraight :37, {@link #ITEM_MASK}). NEVER a ModelData/BE read for geometry.
+ *
+ * <p>The dye rides {@link GTMachinePaintTint} — the pipe connector families already
+ * resolve there (the tex-pipe-textures arms), so this model multiplies
+ * {@code tintARGB(modelData, tintMaterialOf(block), 0)} into the tintindex-0 body quads
+ * at query time (the {@link GTMachineTintModel} vertex-colour route, tintIndex flipped
+ * to -1 on the retinted copies) and passes overlays/axles through untinted. The tint
+ * gate is the ModelData emptiness: world rebuilds hand the pipe BE snapshot in
+ * (non-empty → pre-tinted, the GTMachineTintModel byte-for-byte semantics), the ITEM
+ * render passes EMPTY (raw tintindex-0 quads → the registered
+ * {@link GTItemPaintTint} ItemColor tints the inventory form exactly once). The axle
+ * carries {@code block == null} — the paint-tint coverage for the axle family is the
+ * tint-coverage-batch card's declared defer, the borrowed gray sprite shows raw.
+ *
+ * <p>Texture semantics (TextureSet.java:145-181 two-pass form): the grayscale
+ * {@code materialicons/<set>/pipe_side} art carries the material colour through tint
+ * index 0; the untinted {@code pipe_side_overlay} black outline (and the restrictive
+ * rows' second {@code pipe_restrictor} decal band, the upstream third render pass
+ * MultiTileEntityPipeItem.java:280) rides as inflated twins (tint -1) one epsilon step
+ * above every base quad — the JSON {@code tintedPipeModel} band form carried into the
+ * baked model. Quads split by chunk layer exactly like the wire model (everything
+ * opaque-or-cutout; the JSON fallback already declares cutout for the pipe rows, so the
+ * forwarded getRenderTypes keeps the whole set on the layer the blockstate picked).
+ *
+ * <p>Item form (state == null) renders the upstream {@code worldObj == null} default
+ * mask {@code SBIT_S|SBIT_N = 12} (ConnectorStraight :37 — a straight N-S segment, the
+ * {@link gregtech6.client.wire.GTWireBakedModel#ITEM_MASK} anchor).
+ */
+public class GTRodBakedModel extends GTDynamicBakedModel {
+
+	/** The upstream {@code worldObj == null} straight N-S segment (ConnectorStraight :37). */
+	public static final int ITEM_MASK = 12;
+
+	/** The z-fight epsilon (the wire model's INSULATION_EPSILON value, per-band stepped). */
+	public static final double OVERLAY_EPSILON = 0.002;
+
+	/** The upstream diameter clamp floor PX_P[2] (the wire model's readFromNBT2 :64 form). */
+	public static final float MIN_DIAMETER_PX = 2.0F;
+
+	/** Which sprite a planned face carries: the tinted base art or the j-th untinted overlay band. */
+	public enum SpriteKind { BASE, OVERLAY }
+
+	/**
+	 * One planned face quad: the facing (also the per-side chunk dispatch key), the box
+	 * in 0..1 block space, the tint index (0 = material colour, -1 = none), the sprite
+	 * kind and the overlay band (0 when {@code kind == BASE}). Box copy guard (the
+	 * FlowQuad discipline).
+	 */
+	public record Shape(Direction face, double[] box, int tintIndex, SpriteKind kind, int band,
+			@Nullable Direction cull) {
+		public Shape {
+			box = box.clone();
+		}
+	}
+
+	/** The immutable per-row render identity: sprite ids + the PX_P diameter of the row. */
+	public record Params(ResourceLocation base, List<ResourceLocation> overlays, int diameterPx) {}
+
+	private static final FaceBakery BAKERY = new FaceBakery();
+
+	/** Offline geometry plan cache — key = (bands << 11) | (diameterPx << 6) | mask. */
+	private static final Map<Long, List<Shape>> SHAPE_CACHE = new ConcurrentHashMap<>();
+
+	private final Params mParams;
+	/** The tint carrier (the pipe blocks; null = the untinted axle form). */
+	@Nullable
+	private final Block mBlock;
+	/** Sprite resolver — runtime: the block atlas (Minecraft.java:2386); tests: a stub. */
+	private final Function<ResourceLocation, TextureAtlasSprite> mSpriteLookup;
+	/** Sprite-baked quad cache per mask (full lists; per-side filtering at query time). */
+	private final ConcurrentHashMap<Integer, List<BakedQuad>> mBakedCache = new ConcurrentHashMap<>();
+	/** The retinted-copy tables per tint colour (the GTMachineTintModel cache form). */
+	private final Map<Integer, Map<BakedQuad, BakedQuad>> mTintedQuads = new ConcurrentHashMap<>();
+
+	public GTRodBakedModel(BakedModel aFallbackModel, Params aParams, @Nullable Block aBlock) {
+		this(aFallbackModel, aParams, aBlock, defaultSpriteLookup());
+	}
+
+	public GTRodBakedModel(BakedModel aFallbackModel, Params aParams, @Nullable Block aBlock,
+			Function<ResourceLocation, TextureAtlasSprite> aSpriteLookup) {
+		super(aFallbackModel);
+		mParams = aParams;
+		mBlock = aBlock;
+		mSpriteLookup = aSpriteLookup;
+	}
+
+	private static Function<ResourceLocation, TextureAtlasSprite> defaultSpriteLookup() {
+		return aSpriteId -> net.minecraft.client.Minecraft.getInstance().getTextureAtlas(
+				net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS).apply(aSpriteId);
+	}
+
+	public Params params() {
+		return mParams;
+	}
+
+	// ---------------------------------------------------------------------------
+	// quad dispatch
+	// ---------------------------------------------------------------------------
+
+	/** The rod geometry is unconditional — the item form renders the N-S segment too. */
+	@Override
+	protected boolean supportsDynamicQuads(ModelData aModelData) {
+		return true;
+	}
+
+	@Override
+	public List<BakedQuad> getDynamicQuads(@Nullable BlockState aState, @Nullable Direction aSide,
+			RandomSource aRand, ModelData aModelData, @Nullable RenderType aRenderType) {
+		// the wire model's layer posture: everything rides the layers the fallback
+		// declares (cutout for the pipe rows, solid for the axles); the null pass (item
+		// render, breaking overlays) receives everything
+		if (aRenderType != null && !aRenderType.equals(RenderType.solid()) && !aRenderType.equals(RenderType.cutout())) {
+			return List.of();
+		}
+		int tMask = maskOf(aState);
+		List<BakedQuad> tAll = mBakedCache.computeIfAbsent(tMask,
+				tM -> bakeShapes(planShapes(mParams.diameterPx(), tM, mParams.overlays().size())));
+		// the tint gate: world rebuilds hand the BE snapshot in (non-empty ModelData →
+		// the GTMachineTintModel pre-tint); the item render passes EMPTY → raw
+		// tintindex-0 quads, the ItemColor half tints the inventory form exactly once
+		if (aState != null && mBlock != null && !aModelData.getProperties().isEmpty()) {
+			return GTMachineTintModel.tintQuads(tAll,
+					GTMachinePaintTint.tintARGB(aModelData, GTMachinePaintTint.tintMaterialOf(mBlock), 0), mTintedQuads);
+		}
+		return tAll;
+	}
+
+	/** The state → 6-bit mask map: CONNECTIONS verbatim, AXIS as the straight line, null = N-S. */
+	public static int maskOf(@Nullable BlockState aState) {
+		if (aState == null) return ITEM_MASK;
+		if (aState.hasProperty(GTBlockProperties.CONNECTIONS)) return aState.getValue(GTBlockProperties.CONNECTIONS);
+		if (aState.hasProperty(BlockStateProperties.AXIS)) {
+			return switch (aState.getValue(BlockStateProperties.AXIS)) {
+				case X -> (1 << Direction.WEST.get3DDataValue()) | (1 << Direction.EAST.get3DDataValue()); // 48
+				case Y -> (1 << Direction.DOWN.get3DDataValue()) | (1 << Direction.UP.get3DDataValue()); // 3
+				case Z -> (1 << Direction.NORTH.get3DDataValue()) | (1 << Direction.SOUTH.get3DDataValue()); // 12
+			};
+		}
+		return ITEM_MASK;
+	}
+
+	// ---------------------------------------------------------------------------
+	// baking
+	// ---------------------------------------------------------------------------
+
+	/** Bakes the planned shapes into atlas-sprite quads (the wire model's bakeShapes). */
+	private List<BakedQuad> bakeShapes(List<Shape> aShapes) {
+		List<BakedQuad> rQuads = new ArrayList<>(aShapes.size());
+		for (Shape tShape : aShapes) {
+			TextureAtlasSprite tSprite = mSpriteLookup.apply(spriteOf(tShape.kind(), tShape.band()));
+			if (tSprite == null) continue; // atlas gap: skip the quad instead of rendering garbage
+			rQuads.add(bakeQuad(tShape, tSprite));
+		}
+		return rQuads;
+	}
+
+	/** The sprite id for a kind/band — the borrowed grayscale PNGs (lowercased paths). */
+	public ResourceLocation spriteOf(SpriteKind aKind, int aBand) {
+		if (aKind == SpriteKind.BASE || aBand >= mParams.overlays().size()) {
+			return mParams.base();
+		}
+		return mParams.overlays().get(aBand);
+	}
+
+	/** The CoverPlateModel/wire recipe over FaceBakery (model space 0..16). */
+	private static BakedQuad bakeQuad(Shape aShape, TextureAtlasSprite aSprite) {
+		double[] tBox = aShape.box();
+		Vector3f tFrom = new Vector3f((float) tBox[0] * 16, (float) tBox[1] * 16, (float) tBox[2] * 16);
+		Vector3f tTo = new Vector3f((float) tBox[3] * 16, (float) tBox[4] * 16, (float) tBox[5] * 16);
+		float[] tUv = uvOf(aShape.face(), tBox[0] * 16, tBox[1] * 16, tBox[2] * 16, tBox[3] * 16, tBox[4] * 16, tBox[5] * 16);
+		return BAKERY.bakeQuad(tFrom, tTo,
+				new BlockElementFace(aShape.cull(), aShape.tintIndex(), aSprite.contents().name().toString(),
+						new BlockFaceUV(tUv, 0)),
+				aSprite, aShape.face(), BlockModelRotation.X0_Y0, null, true, aSprite.contents().name());
+	}
+
+	/** The GTCEu StaticFaceBakery.bakeFace cubeUV switch (the wire model's uvOf verbatim). */
+	private static float[] uvOf(Direction aFace, double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
+		return switch (aFace) {
+			case UP    -> new float[] {(float) minX, (float) minZ, (float) maxX, (float) maxZ};
+			case DOWN  -> new float[] {(float) minX, (float) maxZ, (float) maxX, (float) minZ};
+			case NORTH -> new float[] {(float) maxX, (float) maxY, (float) minX, (float) minY};
+			case SOUTH -> new float[] {(float) minX, (float) maxY, (float) maxX, (float) minY};
+			case WEST  -> new float[] {(float) minZ, (float) maxY, (float) maxZ, (float) minY};
+			case EAST  -> new float[] {(float) maxZ, (float) maxY, (float) minZ, (float) minY};
+		};
+	}
+
+	// ---------------------------------------------------------------------------
+	// planner (offline-testable: pure geometry over (diameter, mask, bands))
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The mask → box plans. {@code aMask} bit i = {@link Direction#get3DDataValue()} == i
+	 * connected. Pass 0 = the core diameter box (TileEntityBase10ConnectorRendered
+	 * :113-116); passes 1-6 = one arm per connected side (each arm spans from the core
+	 * plane flush to the block boundary with the same cross-section — the port arm length
+	 * 0, the wire model's armBox form); every base quad then gets one inflated untinted
+	 * twin per overlay band (the two-pass texture stack, TextureSet.java:145-181).
+	 */
+	public static List<Shape> planShapes(int aDiameterPx, int aMask, int aBands) {
+		long tKey = ((long) (aBands & 0x1F) << 11) | ((long) (aDiameterPx & 0x1F) << 6) | (aMask & 0x3FL);
+		return SHAPE_CACHE.computeIfAbsent(tKey, tK -> {
+			List<Shape> tBase = planBaseShapes(aDiameterPx, aMask);
+			if (aBands <= 0) return tBase;
+			// the untinted overlay twins — band j inflates by (j+1) * OVERLAY_EPSILON (the
+			// JSON tintedPipeModel's stepped offsets carried into the baked form); built
+			// into a fresh list (iterating tBase while appending would CME)
+			List<Shape> rShapes = new ArrayList<>(tBase.size() * (aBands + 1));
+			rShapes.addAll(tBase);
+			for (int tBand = 0; tBand < aBands; tBand++) {
+				double tE = OVERLAY_EPSILON * (tBand + 1);
+				for (Shape tShape : tBase) {
+					double[] tBox = tShape.box();
+					rShapes.add(new Shape(tShape.face(),
+							new double[] {tBox[0] - tE, tBox[1] - tE, tBox[2] - tE, tBox[3] + tE, tBox[4] + tE, tBox[5] + tE},
+							-1, SpriteKind.OVERLAY, tBand, tShape.cull()));
+				}
+			}
+			return rShapes;
+		});
+	}
+
+	/** The bare core + arms plan (no overlay twins). */
+	private static List<Shape> planBaseShapes(int aDiameterPx, int aMask) {
+		float tDiameter = Math.max(MIN_DIAMETER_PX / 16.0F, Math.min(1.0F, aDiameterPx / 16.0F)); // readFromNBT2 :64 clamp
+		float tHalf = (1.0F - tDiameter) / 2.0F;
+		List<Shape> rShapes = new ArrayList<>(64);
+
+		// pass 0 — the core (:113-116)
+		addBox(rShapes, new double[] {tHalf, tHalf, tHalf, 1 - tHalf, 1 - tHalf, 1 - tHalf});
+
+		// passes 1-6 — the connection arms (:120-133 boxes, tLength = 0)
+		for (int tBit = 0; tBit < 6; tBit++) {
+			if ((aMask & (1 << tBit)) == 0) continue;
+			Direction tDir = Direction.from3DDataValue(tBit);
+			double[] tArm = armBox(tDir, tHalf);
+			for (Direction tFace : Direction.values()) {
+				if (tFace == tDir.getOpposite()) continue; // :139 — the buried face renders null
+				rShapes.add(new Shape(tFace, tArm, 0, SpriteKind.BASE, 0, tFace == tDir ? tDir : null));
+			}
+		}
+		return rShapes;
+	}
+
+	/**
+	 * One arm box in 0..1 space — the :124-129 switch with tDiameter = the row diameter
+	 * and tLength = 0 (the arm spans from the core plane flush to the block boundary).
+	 * Port side order = Direction 3D data values (DOWN, UP, NORTH, SOUTH, WEST, EAST).
+	 */
+	public static double[] armBox(Direction aDir, float aHalf) {
+		return switch (aDir) {
+			case DOWN  -> new double[] {aHalf, 0, aHalf, 1 - aHalf, aHalf, 1 - aHalf}; // SIDE_Y_NEG :125
+			case UP    -> new double[] {aHalf, 1 - aHalf, aHalf, 1 - aHalf, 1, 1 - aHalf}; // SIDE_Y_POS :128
+			case NORTH -> new double[] {aHalf, aHalf, 0, 1 - aHalf, 1 - aHalf, 1 - aHalf}; // SIDE_Z_NEG :126
+			case SOUTH -> new double[] {aHalf, aHalf, 1 - aHalf, 1 - aHalf, 1 - aHalf, 1}; // SIDE_Z_POS :129
+			case WEST  -> new double[] {0, aHalf, aHalf, aHalf, 1 - aHalf, 1 - aHalf}; // SIDE_X_NEG :124
+			case EAST  -> new double[] {1 - aHalf, aHalf, aHalf, 1, 1 - aHalf, 1 - aHalf}; // SIDE_X_POS :127
+		};
+	}
+
+	/** Six faces of one box, UVs over the box bounds (the RenderHelper box mapping form). */
+	private static void addBox(List<Shape> aOut, double[] aBox) {
+		for (Direction tFace : Direction.values()) aOut.add(new Shape(tFace, aBox, 0, SpriteKind.BASE, 0, null));
+	}
+
+	// ---------------------------------------------------------------------------
+	// static BakedModel face: delegated by GTDynamicBakedModel to the fallback
+	// ---------------------------------------------------------------------------
+}
