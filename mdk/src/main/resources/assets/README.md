@@ -10914,3 +10914,36 @@ identity for the ladder card.
 
 Copied on 2026-09-30. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
+
+Oven texture re-verification + white-placeholder audit, task oven-texture-borrow
+(2026-09-30). The R-H ⑪ segment suspected the six `oven_colored_<face>.png` bodies
+were script-generated near-white placeholders. The byte census DISPROVED it: all six
+are byte-identical to upstream `basicmachines/oven/colored/<face>.png` (`cmp` clean,
+the :8353-8357 ledger rows re-verified 2026-09-30) — the upstream colored layer IS
+the generic light-gray machine plate (dominant colour 196,197,196, near-white share
+18.8%, 141 unique colours; identical bytes across all six faces and all six
+basic-machine families). The "pure-white oven" field report root cause was NOT the
+PNG: the oven ladder is skipped by the `GTMachineTintModel` wrap (its states already
+carry the `GTOvenOverlayModel` dynamic model, the `instanceof GTDynamicBakedModel`
+guard), so the tintindex-0 body had NO tint path at all — fixed in the same task by
+retinting the overlay model's solid pass through the shared
+`GTMachineTintModel.tintQuads`/`GTMachinePaintTint.tintARGB` product, and by moving
+the baked state decals to tintIndex -1 (the P22 uncoloured contract, the vanilla JSON
+default). Pins: `GT6OvenTexAuditDatagenTest` (the six ledger digests + the
+not-a-placeholder nail) and `GTOvenOverlayModelTest` (the body-tint wiring + the
+decal tintIndex).
+
+White-placeholder audit census (same task, list-only — nothing reworked): a PIL/IO
+scan of all 9665 project-owned PNGs under `assets/gt6/textures` (>95% near-white
+opaque pixels) hits 192 files, ALL documented upstream art:
+- 190 = `item/material_sets/<set>/<icon>_overlay.png` — the upstream materialicon
+  white-on-transparent tint-overlay system (borrow-item-material-sets-a/b manifests),
+  white by design, tinted at render;
+- `block/barrel_logistics.png` (README.md:758-767, upstream
+  `machines/tanks/logistics/colored/side` — genuinely white in 1.7.10 too) and
+  `block/placeable/plate_gem_top.png` (README.md:9087-9107) — both tinted in game.
+UNDOCUMENTED near-white placeholders: ZERO. The census is pinned as a test assertion
+surface (`GT6OvenTexAuditDatagenTest`: the block-domain white set must stay exactly
+the two documented borrows, the material_sets overlay count stays 190, the six oven
+bodies stay below the 95% signature) — a new white texture without a ledger row fails
+there.

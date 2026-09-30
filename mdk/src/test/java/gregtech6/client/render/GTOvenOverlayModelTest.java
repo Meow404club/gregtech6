@@ -1,13 +1,17 @@
 package gregtech6.client.render;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import gregtech6.block.GTOvenBlock;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -36,9 +40,28 @@ import gregtech6.covers.GTCoverRenderSnapshot;
  * sprite→BakedQuad baker is pinned offline too since uvof-private-copies (the #27
  * GTOreBakedModelSideUvTest form): the overlay PNGs are upright art (the running front's
  * glow window sits in the sprite's bottom half), so the corrected canonical UV walk is
- * asserted per vertex.
+ * asserted per vertex. Since oven-texture-borrow the BODY pass carries the machine
+ * paint/material tint (the {@link GTMachineTintModel#tintQuads} product over the
+ * {@link GTMachinePaintTint} colour line — the oven ladder is skipped by the
+ * GTMachineTintModel wrap, so the tint rides here) and the baked decals ride tintIndex
+ * -1 (the P22 uncoloured-decal contract, the vanilla JSON default).
  */
 public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
+
+	private static final int STRIDE = 8;
+	private static final int COLOR_SLOT = 3;
+
+	@org.junit.jupiter.api.BeforeAll
+	static void bootMaterials() throws Exception {
+		gregtech6.registry.GTMaterialItems.initMaterials();
+		// the BLOCK registry write window (the GT6SingleBlockFacingIntegrityTest recipe):
+		// the Block ctor registers its intrusive holder and NamespacedWrapper.validateWrite
+		// rejects a frozen registry — unfreeze before the offline GTOvenBlock fixtures
+		java.lang.reflect.Method tUnfreeze = net.minecraft.core.registries.BuiltInRegistries.BLOCK
+				.getClass().getMethod("unfreeze");
+		tUnfreeze.setAccessible(true);
+		tUnfreeze.invoke(net.minecraft.core.registries.BuiltInRegistries.BLOCK);
+	}
 
 	@AfterEach
 	void clearRegistration() {
@@ -189,6 +212,94 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 			List<BakedQuad> tQuads = tModel.getQuads(null, tFace, RandomSource.create(), tData, null);
 			assertEquals(1, tQuads.size(), tFace + ": the overlay face rides its own culling pass");
 			FaceBakePins.assertCanonicalFullFaceUv(tQuads.get(0), tFace);
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// the body tint (oven-texture-borrow) — the solid pass retints, the decals don't
+	// ---------------------------------------------------------------------------
+
+	/** A baked-format body quad (32 ints, white vertex colours, tintIndex 0). */
+	private static BakedQuad bodyQuad() {
+		int[] tVertices = new int[4 * STRIDE];
+		java.util.Arrays.fill(tVertices, 0xFFFFFFFF);
+		return new BakedQuad(tVertices, 0, Direction.NORTH, FaceBakePins.IdentitySprite.INSTANCE, true);
+	}
+
+	/** A baked-format decal quad (untinted, the P22 overlay form). */
+	private static BakedQuad decalQuad() {
+		int[] tVertices = new int[4 * STRIDE];
+		java.util.Arrays.fill(tVertices, 0xFF333333);
+		return new BakedQuad(tVertices, -1, Direction.NORTH, FaceBakePins.IdentitySprite.INSTANCE, true);
+	}
+
+	/** The barest fallback: returns exactly the quads the tint arms hand it. */
+	private static net.minecraft.client.resources.model.BakedModel quadsFallback(List<BakedQuad> aQuads) {
+		return new net.minecraft.client.resources.model.BakedModel() {
+			@Override public List<BakedQuad> getQuads(@org.jetbrains.annotations.Nullable net.minecraft.world.level.block.state.BlockState aState,
+					@org.jetbrains.annotations.Nullable Direction aSide, net.minecraft.util.RandomSource aRand) { return aQuads; }
+			@Override public boolean useAmbientOcclusion() { return false; }
+			@Override public boolean isGui3d() { return false; }
+			@Override public boolean usesBlockLight() { return false; }
+			@Override public boolean isCustomRenderer() { return false; }
+			@Override public net.minecraft.client.renderer.texture.TextureAtlasSprite getParticleIcon() { return null; }
+			@Override public net.minecraft.client.renderer.block.model.ItemTransforms getTransforms() { return net.minecraft.client.renderer.block.model.ItemTransforms.NO_TRANSFORMS; }
+			@Override public net.minecraft.client.renderer.block.model.ItemOverrides getOverrides() { return net.minecraft.client.renderer.block.model.ItemOverrides.EMPTY; }
+		};
+	}
+
+	/** The offline oven block fixture (the GT6SingleBlockFacingIntegrityTest :365 shape). */
+	private static GTOvenBlock ovenBlock() {
+		return new GTOvenBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+	}
+
+	private static ModelData ovenData(boolean aActive, boolean aRunning) {
+		return ModelData.builder().with(GTModelProperties.OVEN_SNAPSHOT, new GTOvenRenderSnapshot(aActive, aRunning)).build();
+	}
+
+	@Test
+	void solidPassRetintsTheBodyWithTheRowMaterial() {
+		GTOvenBlock tBlock = ovenBlock();
+		BakedQuad tBody = bodyQuad(), tDecal = decalQuad();
+		GTOvenOverlayModel tModel = new GTOvenOverlayModel(quadsFallback(List.of(tBody, tDecal)),
+				aSpriteId -> FaceBakePins.IdentitySprite.INSTANCE);
+		List<BakedQuad> tOut = tModel.getQuads(tBlock.defaultBlockState(), Direction.NORTH, RandomSource.create(),
+				ovenData(false, false), null); // the inactive oven: the unpainted body IS the field complaint
+		assertEquals(2, tOut.size(), "body + decal, the inactive state plans no overlay");
+		int tTint = GTMachinePaintTint.tintARGB(ModelData.EMPTY,
+				GTMachinePaintTint.tintMaterialOf(tBlock), 0);
+		assertNotEquals(0xFFFFFFFF, tTint, "the Heat_T row material actually colours (not the white identity)");
+		assertArrayEquals(GTMachineTintModel.retintVertices(tBody.getVertices(), tTint),
+				tOut.get(0).getVertices(), "the body quad is the tintQuads product of the seam colour");
+		assertEquals(-1, tOut.get(0).getTintIndex(), "the retinted copy rides tintIndex -1 (no second multiply)");
+		assertSame(tDecal, tOut.get(1), "the decal passes through as the shared instance (P22)");
+	}
+
+	@Test
+	void paintedSnapshotWinsOverTheRowMaterial() {
+		GTOvenBlock tBlock = ovenBlock();
+		GTOvenOverlayModel tModel = new GTOvenOverlayModel(quadsFallback(List.of(bodyQuad())),
+				aSpriteId -> FaceBakePins.IdentitySprite.INSTANCE);
+		ModelData tPainted = ModelData.builder()
+				.with(GTModelProperties.OVEN_SNAPSHOT, new GTOvenRenderSnapshot(false, false))
+				.with(GTModelProperties.PAINT, 0x00FF00)
+				.build();
+		List<BakedQuad> tOut = tModel.getQuads(tBlock.defaultBlockState(), Direction.NORTH, RandomSource.create(), tPainted, null);
+		assertEquals(1, tOut.size());
+		assertArrayEquals(GTMachineTintModel.retintVertices(bodyQuad().getVertices(), 0xFF00FF00),
+				tOut.get(0).getVertices(), "the spray-paint colour wins (upstream Paintable:85)");
+	}
+
+	@Test
+	void dynamicOverlayQuadsRideNoTintIndex() {
+		// the P22 alignment pin: the baked decals carry tintIndex -1 (the vanilla JSON
+		// default), so no tint route can ever multiply the door art
+		GTOvenOverlayModel tModel = new GTOvenOverlayModel(new StubFallback(),
+				aSpriteId -> FaceBakePins.IdentitySprite.INSTANCE);
+		for (Direction tFace : Direction.values()) {
+			List<BakedQuad> tQuads = tModel.getQuads(null, tFace, RandomSource.create(), ovenData(true, false), null);
+			assertEquals(1, tQuads.size());
+			assertEquals(-1, tQuads.get(0).getTintIndex(), tFace + ": the state decal is UNCOLOURED (upstream :179-180)");
 		}
 	}
 
