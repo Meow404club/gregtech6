@@ -6,8 +6,9 @@
  * them (the upstream getTextureSmooth(mRGBaSolid, F) colour semantics,
  * OreDictMaterial.java:980-987). The vanilla smooth-stone rows (mold_stone,
  * smeltery_stone_empty, faucet_stone) are FINISHED textures — a second multiply would
- * dirty them, so they stay un-tinted (the recorded declaration shortcut). The filled
- * molten-content cubes and the raw clay items stay un-tinted.
+ * dirty them, so they stay un-tinted (the recorded declaration shortcut). Since task
+ * crucible-large-ber the filled content boxes carry tintindex 1 — the per-BE seat the
+ * GT6MoldTintListener index-1 arm answers at runtime; the raw clay items stay un-tinted.
  *
  * <p>Reads the committed generated tree on the classpath (the
  * {@link GT6MoldAssetDatagenTest} form — no datagen run) and derives the universe from
@@ -143,11 +144,16 @@ public class GT6MoldTintDatagenTest extends GTOfflineTestBase {
 					}
 				}
 			}
-			// the per-level content boxes (task crucible-bowl-model) stay un-tinted — the
-			// content material is per-BE data the static model cannot know
+			// the per-level content boxes (task crucible-bowl-model, upgraded task
+			// crucible-large-ber): the content material is per-BE data the static model
+			// cannot know — the up face rides tintindex 1 and the GT6MoldTintListener
+			// index-1 arm answers the synced displayed material at runtime
 			for (int tLevel = 1; tLevel <= 8; tLevel++) {
-				assertNoTintAnywhere(tRow.path() + "_filled_" + tLevel,
-						generatedJson("assets/gt6/models/block/" + tRow.path() + "_filled_" + tLevel + ".json"), tRow.path());
+				JsonObject tFilled = generatedJson("assets/gt6/models/block/" + tRow.path() + "_filled_" + tLevel + ".json");
+				JsonObject tContentUp = tFilled.getAsJsonArray("elements").get(0).getAsJsonObject()
+						.getAsJsonObject("faces").getAsJsonObject("up");
+				assertEquals(1, tContentUp.get("tintindex").getAsInt(),
+						tRow.path() + "_filled_" + tLevel + ": the content seat is tintindex 1");
 			}
 		}
 	}

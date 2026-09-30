@@ -105,6 +105,28 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 	public boolean mMeltDown = false, mAcidProof = false;
 
 	/**
+	 * The lightest MOLTEN content's material id, {@code -1} = nothing molten (upstream
+	 * :82/:299 mDisplayedFluid, the int form — task crucible-large-ber). The bowl content
+	 * face's tintindex-1 seat resolves this client-side through the ContentFace molten arm;
+	 * upstream never persisted it (the :559-567 hand-packed client bytes), the port rides
+	 * the paint-key pattern: the {@code saveAdditional} key rides BOTH sync channels via
+	 * {@code getUpdateTag()} = {@code saveWithoutMetadata()}.
+	 */
+	public static final String NBT_DISPLAYED_FLUID = "gt.displayed_fluid";
+
+	public int mDisplayedFluid = -1;
+
+	/**
+	 * The client display resolution — the material behind {@link #mDisplayedFluid} (the
+	 * upstream {@code MATERIAL_ARRAY[mDisplayedFluid]} :587 face), null when nothing is
+	 * molten or the id is out of range.
+	 */
+	@Nullable
+	public OreDictMaterial displayedMaterial() {
+		return GT6Crucibles.materialById(mDisplayedFluid);
+	}
+
+	/**
 	 * The vanilla-ore bridge for the feed ladder (the OM.anydata counterpart for
 	 * un-oredicted vanilla ores; declared minimal set, the oredict universe rides
 	 * MaterialPrefixItem). Call-time MT reads (the GTWireSpecs:35 rule, pinned by
@@ -271,6 +293,15 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 		long tTotal = CruciblePhysics.total(mContent);
 		int tLevelBucket = (int)CruciblePhysics.scale(tTotal, CruciblePhysics.Params.SMALL.maxAmount(), 8, false);
 		oTemperature = mTemperature;
+
+		// :299/:547-554 — the displayed-molten census (the bowl content-face tint seat); a
+		// change flags the vanilla block-update sync (the upstream onTickCheck latch form)
+		OreDictMaterialStack tLightest = lightest();
+		int tDisplayed = (tLightest == null || tLightest.mMaterial.mMeltingPoint > mTemperature ? -1 : tLightest.mMaterial.mID);
+		if (mDisplayedFluid != tDisplayed) {
+			mDisplayedFluid = tDisplayed;
+			updateClientData();
+		}
 
 		CruciblePhysics.TickResult tHeat = CruciblePhysics.tickHeat(mTemperature, mEnergy, tEnvTemperature, tWeight, mCooldown, CruciblePhysics.Params.SMALL.kgPerEnergy());
 		mTemperature = tHeat.temperature();
@@ -665,6 +696,7 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 		/*aNBT.put("gt.inv", mInventory.serializeNBT(NBT_ACCESS)); // 21.1: ItemStackHandler NBT takes the registries
 		 *///?}
 		MaterialStackNBT.saveList(mContent, "gt.materials", aNBT); // :103 NBT_MATERIALS
+		aNBT.putInt(NBT_DISPLAYED_FLUID, mDisplayedFluid); // task crucible-large-ber — the client tint census (the paint-key channel)
 	}
 
 	@Override
@@ -684,5 +716,6 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 		mContent.clear(); // :93 loadList — list replace, not merge
 		mContent.addAll(MaterialStackNBT.loadList("gt.materials", aNBT));
 		mMeltDown = mTemperature + 100 > temperatureMax(); // :94 — recomputed on load
+		if (aNBT.contains(NBT_DISPLAYED_FLUID, Tag.TAG_ANY_NUMERIC)) mDisplayedFluid = aNBT.getInt(NBT_DISPLAYED_FLUID); // the display census rehydration
 	}
 }

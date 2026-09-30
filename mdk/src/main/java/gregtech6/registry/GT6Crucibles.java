@@ -501,6 +501,19 @@ public final class GT6Crucibles {
 		return rBlocks;
 	}
 
+	/**
+	 * The displayed-material resolution (task crucible-large-ber): the upstream
+	 * {@code OreDictMaterial.MATERIAL_ARRAY[mDisplayedFluid]} face (MultiTileEntityCrucible
+	 * .java:620, the TileEntitySmeltery.displayedMaterial and the content-tint consumers
+	 * share it), null for an out-of-range id. Both crucible BEs sync the lightest molten
+	 * material's {@code mID} (upstream :350/:299).
+	 */
+	@Nullable
+	public static OreDictMaterial materialById(int aId) {
+		OreDictMaterial[] tArray = gregapi.oredict.MaterialRegistry.INSTANCE.MATERIAL_ARRAY;
+		return aId >= 0 && aId < tArray.length ? tArray[aId] : null;
+	}
+
 	private GT6Crucibles() {}
 
 	/** FMLConstructModEvent = the first mod-bus lifecycle stage (GTBlockEntities.onModConstruct doc). */

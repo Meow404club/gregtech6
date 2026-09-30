@@ -6,7 +6,9 @@ import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.core.BlockPos;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -17,6 +19,7 @@ import net.minecraftforge.fml.common.Mod;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.registry.GT6Crucibles;
 import gregtech6.registry.GT6Molds;
+import gregtech6.tileentity.tools.TileEntitySmeltery;
 
 /**
  * The material tint of the mold/faucet/smeltery smooth bodies (task
@@ -39,8 +42,9 @@ import gregtech6.registry.GT6Molds;
  * {@link GT6Crucibles.CrucibleBlock#row}, the faucet row) — no parallel block→material
  * table. The vanilla smooth-stone rows (the finished-texture declaration shortcut of
  * {@code GT6CrucibleDatagen.bodyTinted}) answer {@code -1} = no tint, so a stray
- * tintindex on them stays inert. Untinted faces (the filled molten-content cubes, the
- * raw clay items) never reach the handler or are not registered at all.
+ * tintindex on them stays inert. Task crucible-large-ber: the small crucibles' content
+ * faces carry tintindex 1 and answer the BE's synced displayed-molten material through
+ * the ContentFace dispatch (see {@link #crucibleContentTintARGB}).
  */
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = "gt6", value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -70,7 +74,28 @@ public final class GT6MoldTintListener {
 
 	/** The shared BlockColor over the whole family (the stone rows answer -1, inert). */
 	public static BlockColor familyBlockColor() {
-		return (aState, aLevel, aPos, aTintIndex) -> blockTintARGB(aState.getBlock(), aTintIndex);
+		return (aState, aLevel, aPos, aTintIndex) -> {
+			if (aTintIndex == 1) return crucibleContentTintARGB(aLevel, aPos); // the bowl content seat (task crucible-large-ber)
+			return blockTintARGB(aState.getBlock(), aTintIndex);
+		};
+	}
+
+	/**
+	 * The bowl content-face tint (tint index 1, task crucible-large-ber): the small
+	 * crucible's synced displayed-molten material through the ContentFace MOLTEN arm — the
+	 * same colour source the large-crucible BER renders (the one dispatch, three consumers:
+	 * Jade rides crucible-jade-tankbar). Anything else (no BE, nothing molten) answers -1 =
+	 * the sprite renders as-is. The level/pos signature is the BlockColor seam (no BE on
+	 * the item half — {@link #familyItemColor} routes index 1 through
+	 * {@link #blockTintARGB}, which answers -1 there).
+	 */
+	public static int crucibleContentTintARGB(@Nullable BlockAndTintGetter aLevel, @Nullable BlockPos aPos) {
+		if (aLevel == null || aPos == null) return -1;
+		if (aLevel.getBlockEntity(aPos) instanceof TileEntitySmeltery tSmeltery) {
+			OreDictMaterial tDisplayed = tSmeltery.displayedMaterial();
+			if (tDisplayed != null) return gregtech6.datagen.GT6CrucibleDatagen.contentFace(tDisplayed, true).tintARGB();
+		}
+		return -1;
 	}
 
 	/** The inventory half — the formed BlockItems resolve the same carrier (the kitchen-card shape). */

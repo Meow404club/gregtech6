@@ -114,8 +114,10 @@ public final class GT6CrucibleDatagen {
 	 * A fully-qualified {@code ns:path} string into the ResourceLocation the model builder
 	 * wants — {@code fromNamespaceAndPath} is the leg-neutral form (the GTOreBakedModel
 	 * spriteOf precedent); the 1.20.1 single-arg ctor does not exist on the 21.1 leg.
+	 * Public since task crucible-large-ber: the BER sprite lookup shares it (the
+	 * ContentFace texture strings are its product).
 	 */
-	static ResourceLocation loc(String aQualified) {
+	public static ResourceLocation loc(String aQualified) {
 		int tColon = aQualified.indexOf(':');
 		return ResourceLocation.fromNamespaceAndPath(aQualified.substring(0, tColon), aQualified.substring(tColon + 1));
 	}
@@ -201,7 +203,11 @@ public final class GT6CrucibleDatagen {
 						.texture("content", loc(CONTENT_TEXTURE))
 						.element()
 						.from(0.0F, 2.0F, 0.0F).to(16.0F, tTop, 16.0F);
-				tElement.face(Direction.UP).texture("#content").end(); // the :616 gate — top face only
+				// the :616 gate — top face only; tintindex 1 = the content seat (task
+				// crucible-large-ber): GT6MoldTintListener answers the BE's synced displayed
+				// material through the ContentFace dispatch (the same colour the large-crucible
+				// BER renders); tintindex 0 stays the shell's material body seat
+				tElement.face(Direction.UP).texture("#content").tintindex(1).end();
 				tFilledModels[tLevel] = tElement.end();
 			}
 			getVariantBuilder(aBlock).forAllStates(aState -> {
