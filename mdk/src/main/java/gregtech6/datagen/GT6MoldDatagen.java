@@ -119,13 +119,35 @@ public final class GT6MoldDatagen {
 				}
 				// the faucets: cube_all over every FACING (the p12 addAttachments form), the
 				// material smooth body (task r7-40-41-mold-assets — the former flat cobble
-				// placeholder is gone)
+				// placeholder is gone); the grayscale-borrow rows carry tintindex 0 (task
+				// r10-debt-material-tint), the vanilla smooth-stone row stays the finished
+				// texture (a second multiply would dirty it — the recorded declaration shortcut)
 				for (GT6Molds.FaucetRow tRow : GT6Molds.FAUCET_ROWS) {
 					Block tBlock = GT6Molds.FAUCET_BLOCKS_BY_PATH.get(tRow.path()).get();
-					simpleBlock(tBlock, models().cubeAll(tRow.path(),
-							GT6CrucibleDatagen.loc(GT6CrucibleDatagen.bodyTexture(tRow.material().get()))));
+					ResourceLocation tBody = GT6CrucibleDatagen.loc(GT6CrucibleDatagen.bodyTexture(tRow.material().get()));
+					simpleBlock(tBlock, GT6CrucibleDatagen.bodyTinted(tRow.material().get())
+							? tintedCubeAll(tRow.path(), tBody)
+							: models().cubeAll(tRow.path(), tBody));
 					itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
 				}
+			}
+
+			/**
+			 * The one-element tinted cube (the GT6OreBlockStates.tintedCubeAll:161-171 idiom,
+			 * local copy — FILES_SCOPE keeps the shared providers untouched): every face
+			 * tintindex 0 so {@code GT6MoldTintListener} multiplies the material mRGBaSolid
+			 * over the grayscale borrow.
+			 */
+			private ModelFile tintedCubeAll(String aName, ResourceLocation aTexture) {
+				BlockModelBuilder tModel = models().getBuilder("block/" + aName)
+						.parent(models().getExistingFile(new ResourceLocation("minecraft", "block/block")))
+						.texture("all", aTexture)
+						.texture("particle", "#all");
+				tModel.element()
+						.from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+						.allFaces((aDir, aFace) -> aFace.texture("#all").tintindex(0).cullface(aDir))
+						.end();
+				return tModel;
 			}
 
 			/**
@@ -157,9 +179,13 @@ public final class GT6MoldDatagen {
 			 * floor. The block/block parent carries ONLY the display transforms (the
 			 * portal-frame precedent — the standalone element model would strip them from
 			 * the BlockItem GUI/hand rendering); the formed item model parents this model,
-			 * so the BlockItem inventory face IS the 3D shape for free.
+			 * so the BlockItem inventory face IS the 3D shape for free. The grayscale-borrow
+			 * body faces carry tintindex 0 (task r10-debt-material-tint — the upstream
+			 * getTextureSmooth mRGBaSolid multiply, :980-987); the vanilla smooth-stone row
+			 * stays un-tinted (a finished texture, the recorded declaration shortcut).
 			 */
 			private ModelFile moldModel(GT6Molds.MoldRow aRow, int aShape) {
+				boolean tTint = GT6CrucibleDatagen.bodyTinted(aRow.material().get());
 				ResourceLocation tBody = GT6CrucibleDatagen.loc(GT6CrucibleDatagen.bodyTexture(aRow.material().get()));
 				BlockModelBuilder tModel = models().getBuilder("block/" + aRow.path())
 						.parent(models().getExistingFile(new ResourceLocation("minecraft", "block/block")))
@@ -170,31 +196,36 @@ public final class GT6MoldDatagen {
 				tModel.element().from(0, 0, 0).to(16, 1, 16)
 						.allFaces((aDir, aFace) -> {
 							aFace.texture("#body");
+							if (tTint) aFace.tintindex(0);
 							if (aDir != net.minecraft.core.Direction.UP) aFace.cullface(aDir);
 						}).end();
 				// the four walls (MOLD_BOUNDS[2..5], 2px thick, y 0..4, the outward face
 				// culled): the cavity rim the r7 version lacked
-				moldWall(tModel, 14, 0, 16, 16, net.minecraft.core.Direction.EAST);
-				moldWall(tModel, 0, 14, 16, 16, net.minecraft.core.Direction.SOUTH);
-				moldWall(tModel, 0, 0, 2, 16, net.minecraft.core.Direction.WEST);
-				moldWall(tModel, 0, 0, 16, 2, net.minecraft.core.Direction.NORTH);
+				moldWall(tModel, 14, 0, 16, 16, net.minecraft.core.Direction.EAST, tTint);
+				moldWall(tModel, 0, 14, 16, 16, net.minecraft.core.Direction.SOUTH, tTint);
+				moldWall(tModel, 0, 0, 2, 16, net.minecraft.core.Direction.WEST, tTint);
+				moldWall(tModel, 0, 0, 16, 2, net.minecraft.core.Direction.NORTH, tTint);
 				// the unlit cells stand as the surface; the carved (lit) cells stay open
 				for (int i = 0; i < 25; i++) {
 					if ((aShape & (1 << i)) == 0) {
 						tModel.element()
 								.from(GT6Molds.cellLo(i / 5), 0, GT6Molds.cellLo(i % 5))
 								.to(GT6Molds.cellHi(i / 5), 3, GT6Molds.cellHi(i % 5))
-								.allFaces((aDir, aFace) -> aFace.texture("#body")).end();
+								.allFaces((aDir, aFace) -> {
+									aFace.texture("#body");
+									if (tTint) aFace.tintindex(0);
+								}).end();
 					}
 				}
 				return tModel;
 			}
 
 			/** One mold wall: x aX0..aX1 / z aZ0..aZ1, 4px tall, the outward face culled. */
-			private void moldWall(BlockModelBuilder aModel, int aX0, int aZ0, int aX1, int aZ1, net.minecraft.core.Direction aOutward) {
+			private void moldWall(BlockModelBuilder aModel, int aX0, int aZ0, int aX1, int aZ1, net.minecraft.core.Direction aOutward, boolean aTint) {
 				aModel.element().from(aX0, 0, aZ0).to(aX1, 4, aZ1)
 						.allFaces((aDir, aFace) -> {
 							aFace.texture("#body");
+							if (aTint) aFace.tintindex(0);
 							if (aDir == aOutward) aFace.cullface(aDir);
 						}).end();
 			}
