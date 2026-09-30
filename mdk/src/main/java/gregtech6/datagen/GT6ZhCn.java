@@ -21,6 +21,7 @@ import gregtech6.jade.GT6JadeRows;
 import gregtech6.jade.GT6MachineProvider;
 import gregtech6.jade.GT6SensorProvider;
 import gregtech6.jei.GT6JeiPlugin;
+import gregtech6.jei.GT6MultiblockPreviews;
 import gregtech6.jei.GT6RecipeMapViewerMeta;
 import gregtech6.registry.GT6BookText;
 import gregtech6.registry.GT6Tools;
@@ -1956,6 +1957,10 @@ public class GT6ZhCn extends LanguageProvider {
 		// GT6OreGenInfoLayout.TITLE_KEY consumer): hand row 矿石生成分布, no dump face —
 		// the page is a modern enhancement, upstream 1.7.10 has no NEI distribution face
 		addDirect(GT6OreGenInfoLayout.TITLE_KEY);
+		// task multiblock-preview-infra — the 3D structure preview category title (the
+		// GT6MultiblockPreviews.TITLE_KEY consumer on both viewer legs); hand row
+		// 多方块结构预览, the same modern-enhancement band as the ore-gen title above
+		addDirect(GT6MultiblockPreviews.TITLE_KEY);
 		addDirect("block.gt6.example_chest");
 		// task cfoam-lang-key: the TestMachine framework blocks joined the coverage gate —
 		// no getName override, so their Jade line resolves the vanilla keys; faces follow the

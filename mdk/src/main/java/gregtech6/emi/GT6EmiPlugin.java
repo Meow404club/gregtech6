@@ -17,13 +17,11 @@ import dev.emi.emi.api.EmiApi;
 import dev.emi.emi.api.EmiEntrypoint;
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
-import dev.emi.emi.api.recipe.EmiInfoRecipe;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.stack.EmiStack;
 
 import gregtech6.items.tools.GT6MaterialToolRecipe;
-import gregtech6.jei.GT6RecipeViewerText;
-import gregtech6.registry.GTMultiBlocks;
+import gregtech6.jei.GT6MultiblockPreviews;
 
 /**
  * The EMI integration plugin (task debt-emi-tier-b, the tier-b ruling of research
@@ -47,10 +45,12 @@ import gregtech6.registry.GTMultiBlocks;
  * JEI face must have its native EMI twin here or EMI+JEI users LOSE it:
  * <table>
  * <tr><th>JEI face (GT6JeiPlugin)</th><th>native EMI twin (this class)</th></tr>
- * <tr><td>registerRecipes: addIngredientInfo(COKE_OVEN_ITEM,
- *     Component.translatable(INFO_KEY_COKE_OVEN))</td>
- *     <td>{@link EmiInfoRecipe} on the same item + the SAME shared text seam
- *     ({@link GT6RecipeViewerText#cokeOvenInfo()})</td></tr>
+ * <tr><td>registerRecipes: the multiblock preview rows ({@link GT6MultiblockPreviewEmiCategory}
+ *     — the modern 3D structure page; before task multiblock-preview-infra this row was
+ *     {@code addIngredientInfo}/EmiInfoRecipe, the text page both legs dropped)</td>
+ *     <td>the {@link GT6MultiblockPreviewEmiCategory} rows — the SAME page through the
+ *     shared {@code GT6MultiblockPreviewWidget}, materials as inputs, the controller item
+ *     as outputs (the U anchor) + the workstation arm</td></tr>
  * <tr><td>registerVanillaCategoryExtensions: the material_tool crafting extension
  *     (stamped output slot)</td>
  *     <td>the {@link GT6MaterialToolEmiRecipe} replacement rows (stamped output slot,
@@ -62,10 +62,9 @@ import gregtech6.registry.GTMultiBlocks;
  *     {@link GT6OreGenInfoEmiCategory} — each JEI face shipped with its twin in the same
  *     card</td></tr>
  * </table>
- * The gt6 JEI plugin's faces each carry their native twin here (info page = face 1,
- * material_tool rows = face 2, RM categories = face 3, material tree = face 4), so the
- * red line stays balanced. Tier-c faces beyond these (multiblock pages) are ruled to
- * later waves — they exist on neither side yet.
+ * The gt6 JEI plugin's faces each carry their native twin here (multiblock preview = face
+ * 1, material_tool rows = face 2, RM categories = face 3, material tree = face 4), so the
+ * red line stays balanced.
  *
  * <p>Wiring: EMI stays compile-only on both legs (forge modCompileOnly / neoforge
  * compileOnly, version pinned 1.1.24, maven = terraformers) — zero run-classpath and
@@ -76,12 +75,9 @@ import gregtech6.registry.GTMultiBlocks;
 @EmiEntrypoint
 public class GT6EmiPlugin implements EmiPlugin {
 
-	/** The info-page recipe id (EmiRecipe ids index EMI's recipe lookups) — pinned literal. */
-	public static final ResourceLocation INFO_PAGE_ID_COKE_OVEN = new ResourceLocation("gt6", "info/coke_oven");
-
 	@Override
 	public void register(EmiRegistry registry) {
-		registerCokeOvenInfo(registry);
+		registerMultiblockPreviews(registry);
 		registerMaterialToolRows(registry);
 		registerRecipeMapCategories(registry);
 		registerOreGenInfo(registry);
@@ -89,16 +85,21 @@ public class GT6EmiPlugin implements EmiPlugin {
 	}
 
 	/**
-	 * Face 1 — the coke oven structure info page, the native twin of
-	 * GT6JeiPlugin.registerRecipes' addIngredientInfo: the same controller item, the same
-	 * shared lang key through the viewer-neutral text seam. EmiInfoRecipe renders under
-	 * EMI's INFO category (VanillaEmiRecipeCategories.INFO) attached to the item's page.
+	 * Face 1 (task multiblock-preview-infra) — the multiblock structure preview pages, the
+	 * native twin of GT6JeiPlugin's preview category: one {@link GT6MultiblockPreviewEmiCategory}
+	 * singleton + one wrapper per {@link GT6MultiblockPreviews} table row (first version =
+	 * the Coke Oven; data cards append rows, both legs pick them up). This replaces the
+	 * tier-b EmiInfoRecipe text page — the same controller item anchor, the structure
+	 * description now folded into the shared preview widget. The workstation arm mirrors
+	 * the JEI leg's catalyst registration (the JEMI red line).
 	 */
-	private static void registerCokeOvenInfo(EmiRegistry registry) {
-		registry.addRecipe(new EmiInfoRecipe(
-				List.of(EmiStack.of(GTMultiBlocks.COKE_OVEN_ITEM.get())),
-				List.of(GT6RecipeViewerText.cokeOvenInfo()),
-				INFO_PAGE_ID_COKE_OVEN));
+	private static void registerMultiblockPreviews(EmiRegistry registry) {
+		registry.addCategory(GT6MultiblockPreviewEmiCategory.CATEGORY);
+		for (GT6MultiblockPreviews.Entry tEntry : GT6MultiblockPreviews.entries()) {
+			registry.addRecipe(new GT6MultiblockPreviewEmiCategory.PreviewEmiRecipe(tEntry));
+			registry.addWorkstation(GT6MultiblockPreviewEmiCategory.CATEGORY,
+					EmiStack.of(new net.minecraft.world.item.ItemStack(tEntry.item().get())));
+		}
 	}
 
 	/**

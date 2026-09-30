@@ -673,6 +673,10 @@ HAND_TRANSLATIONS = {
         "——它自行积攒热量，结构下方一层的储罐会收集杂酚油。",
         "hand",
     ),
+    # task multiblock-preview-infra — the 3D structure preview category title (the
+    # GT6MultiblockPreviews.TITLE_KEY consumer on both viewer legs; the description above
+    # folds into the page itself, this is the category tab title)
+    "gt6.jei.multiblock_preview": ("多方块结构预览", "hand"),
 
     # ---- restoration batch (task p26-pipe-item takeover salvage 2026-09-09): direct
     # hand rows earlier cards authored straight into the TSV without writing back here —
