@@ -39,8 +39,15 @@ import net.minecraft.world.level.material.Fluids;
  * ANY.Steel groups and the live registration, and fails the moment the frozen snapshot
  * trails or outruns it. The juice walk pins its 37 carriers against the live GTFluids
  * spec lookups. CENSUS (file rows = seated + poured): juicer 22 (6 + 16), roasting 15
- * (5 corrected + 10), lightning 8 (1 + 7), cryomixer 62 (1 + 37 + 24), loom 27 (1 + 26),
- * unboxinator 2 (1 + 1).
+ * (5 corrected + 10), lightning 8 (1 + 7), cryomixer 62 (1 + 37 + 24), loom 35 (1 + 26
+ * + 8 recipe-data-b1 statics), unboxinator 21 (2 + 19 recipe-data-b1 halves).
+ *
+ * <p>THE recipe-data-b1 SEAM CORRECTIONS ride this class too (the seat XIII
+ * re-adjudication against the 1.7.10 sources): the Chem:217/:218 salt legs and the
+ * Chem:271 Adamantine leg were re-poured at the upstream full-dust OM.dust ladders
+ * (K2S/Na2S U*3 = dust x3 -> U*7 = dust x7; Adamantine U*7 = dust x7 -> Ad U*3 = dust
+ * x3) — they carried tiny/small mis-ladders; the loom seated :744 row corrected to the
+ * upstream 16t; and the shared files grew by the recipe-data-b1 rows (the census bump).
  *
  * <p>THE ROASTING GAS-UNIT CORRECTION rides this class too: MT.X.gas(N) = N x 1000 mB / U
  * (Loader_Fluids.java:660 -> FL.java:1080 AmountPerUnit 1000 -> FL.java:1124
@@ -52,9 +59,9 @@ import net.minecraft.world.level.material.Fluids;
  */
 public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTestBase {
 
-	/** The per-file row census (the seated rows included). */
+	/** The per-file row census (the seated rows and the recipe-data-b1 shared-file rows included). */
 	private static final Map<String, Integer> CENSUS = Map.of(
-			"juicer", 22, "roasting", 15, "lightning", 8, "cryomixer", 62, "loom", 27, "unboxinator", 2);
+			"juicer", 22, "roasting", 15, "lightning", 8, "cryomixer", 62, "loom", 35, "unboxinator", 21);
 
 	/** The frozen FRUIT_JUICE walk (FL.java:187-224, the 37 members; Juice :186 is NOT one). */
 	private static final String[] JUICES = {"kiwijuice", "juicelime", "juicelemon", "juiceorange", "persimmonjuice",
@@ -204,11 +211,14 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 			JsonObject tRow = tElement.getAsJsonObject();
 			if (!tRow.has("comment")) continue; // the seated smoke row
 			String tComment = tRow.get("comment").getAsString();
-			tShipped.add(tRow.getAsJsonArray("inputs").get(0).getAsJsonObject().get("item").getAsString()
-					+ ">" + tRow.getAsJsonArray("outputs").get(0).getAsJsonObject().get("item").getAsString());
-			if (tComment.contains(":751")) tHorse++;
-			else if (tComment.contains(":755")) tSaddle++;
-			else tChain++;
+			String tOut = tRow.getAsJsonArray("outputs").get(0).getAsJsonObject().get("item").getAsString();
+			boolean tWalk;
+			if (tComment.contains(":751")) { tHorse++; tWalk = true; }
+			else if (tComment.contains(":755")) { tSaddle++; tWalk = true; }
+			else if (tOut.startsWith("minecraft:chainmail_")) { tChain++; tWalk = true; }
+			else tWalk = false; // the recipe-data-b1 statics (:745/:746/:752/:753/:757-:760) sit outside the walk parity
+			if (tWalk) tShipped.add(tRow.getAsJsonArray("inputs").get(0).getAsJsonObject().get("item").getAsString()
+					+ ">" + tOut);
 		}
 		// the live walk: :751 over ANY.Iron (plate or the Enori plateGem arm), :755/:763-766 over ANY.Steel
 		Set<String> tExpected = new HashSet<>();
@@ -237,8 +247,7 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 		assertEquals(tLiveChain, tChain, "the shipped chain rows match the live walk");
 		Set<String> tShippedOnly = new HashSet<>(tShipped);
 		tShippedOnly.removeAll(tExpected);
-		assertTrue(tShippedOnly.isEmpty() || tShippedOnly.stream().allMatch(a -> a.startsWith("minecraft:string>")),
-				"no row outside the walks (the string->wool smoke row aside): " + tShippedOnly);
+		assertTrue(tShippedOnly.isEmpty(), "no walk row outside the live walks: " + tShippedOnly);
 	}
 
 	/** The verbatim spot checks — the juicer ice/poison/sunflower faces and the OM.dust ladder byproducts. */
@@ -309,17 +318,21 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 		assertEquals(8000, tDolamide.getAsJsonArray("outputs").get(0).getAsJsonObject().get("chance").getAsInt(),
 				"the new long[] {8000} chance");
 		assertEquals(18, tDolamide.getAsJsonArray("outputs").get(0).getAsJsonObject().get("count").getAsInt(), ":339 x18");
-		// Chem:217 — the salt leg (the OM.dust ladders: K2S U*3 -> dustTiny x3, K2SO4 U*7 -> dustSmall x7)
-		JsonObject tSalt = findRow(tRows, "gt6:dust_tiny_potassium_sulfide");
+		// Chem:217 — the salt leg (the OM.dust ladders verbatim: K2S U*3 = dust x3 -> K2SO4 U*7 = dust x7;
+		// the tiny/small mis-ladder corrected by task recipe-data-b1 against Loader_Recipes_Chem.java:217)
+		JsonObject tSalt = findRow(tRows, "gt6:dust_potassium_sulfide");
+		assertEquals(3, tSalt.getAsJsonArray("inputs").get(0).getAsJsonObject().get("count").getAsInt(), "OM.dust(K2S, U*3) = dust x3");
 		assertEquals(4000, tSalt.getAsJsonArray("fluidInputs").get(0).getAsJsonObject().get("amount").getAsInt(), "the O2 leg");
-		assertEquals("gt6:dust_small_potassium_sulfate", tSalt.getAsJsonArray("outputs").get(0).getAsJsonObject().get("item").getAsString());
+		assertEquals("gt6:dust_potassium_sulfate", tSalt.getAsJsonArray("outputs").get(0).getAsJsonObject().get("item").getAsString());
 		assertEquals(7, tSalt.getAsJsonArray("outputs").get(0).getAsJsonObject().get("count").getAsInt());
-		// Chem:271 — the Adamantine leg: O gas OUT 4000 + dustTiny Ad x3
-		JsonObject tAdamant = findRow(tRows, "gt6:dust_small_adamantine");
+		// Chem:271 — the Adamantine leg: OM.dust(U*7) = dust x7 -> O gas OUT 4000 + Ad OM.dust(U*3) = dust x3 (corrected)
+		JsonObject tAdamant = findRow(tRows, "gt6:dust_adamantine");
+		assertEquals(7, tAdamant.getAsJsonArray("inputs").get(0).getAsJsonObject().get("count").getAsInt(), "OM.dust(Adamantine, U*7) = dust x7");
 		assertEquals("gt6:oxygen", tAdamant.getAsJsonArray("fluidOutputs").get(0).getAsJsonObject().get("fluid").getAsString());
 		assertEquals(4000, tAdamant.getAsJsonArray("fluidOutputs").get(0).getAsJsonObject().get("amount").getAsInt(),
 				"MT.O.gas(U*4) = 4000 mB (the Reikygen-native 1000 mB/U face)");
-		assertEquals("gt6:dust_tiny_adamantium", tAdamant.getAsJsonArray("outputs").get(0).getAsJsonObject().get("item").getAsString());
+		assertEquals("gt6:dust_adamantium", tAdamant.getAsJsonArray("outputs").get(0).getAsJsonObject().get("item").getAsString());
+		assertEquals(3, tAdamant.getAsJsonArray("outputs").get(0).getAsJsonObject().get("count").getAsInt());
 		// Other:638 — the Certus charge
 		assertRow(findRow(tRows, "gt6:gem_certus_quartz"), "gt6:gem_charged_certus_quartz:1", 2048, 16);
 	}
@@ -563,7 +576,18 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 				"string", "white_wool", "bookshelf", "book",
 				"quartz", "glowstone_dust", "water", "prismarine_crystals",
 				// cryomixer smoke
-				"clay_ball", "snow_block", "map", "paper", "compass"}) {
+				"clay_ball", "snow_block", "map", "paper", "compass",
+				// recipe-data-b1 statics (the loom deferred statics + the unbox halves;
+				// all live vanilla ids — the whitelist guards against transcription typos)
+				"cobweb", "sugar_cane", "golden_horse_armor", "diamond_horse_armor",
+				"leather_helmet", "leather_chestplate", "leather_leggings", "leather_boots",
+				"chest_minecart", "furnace_minecart", "hopper_minecart", "tnt_minecart", "minecart",
+				"chest", "furnace", "hopper", "tnt", "stick",
+				"iron_sword", "golden_sword", "diamond_sword",
+				"iron_pickaxe", "golden_pickaxe", "diamond_pickaxe",
+				"iron_shovel", "golden_shovel", "diamond_shovel",
+				"iron_axe", "golden_axe", "diamond_axe",
+				"iron_hoe", "golden_hoe", "diamond_hoe"}) {
 			rSet.add("minecraft:" + tId);
 		}
 		return rSet;

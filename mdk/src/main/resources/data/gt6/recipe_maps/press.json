@@ -1,0 +1,1265 @@
+{
+  "comment": "task recipe-data-b1 — the RM.Press lamp/TNT walks (Loader_Recipes_Vanilla.java:776-799 verbatim). Family expansion is the PORT-universe subset of the upstream ANY groups: ANY.Glowstone = {Glowstone, Gloomstone} (the 5 planet glowstones are the GC-compat faces absent from the port material tree) and ANY.SiO2 = {SiO2, NetherQuartz, CertusQuartz, Quartzite}. The ST.tag(1) selector legs are DROPPED — the JSON v1 row schema carries no damage/NBT faces and the configured Integrated Circuit is not expressible as a plain item id (the loom.json precedent; declared deviation: the rows answer without the circuit). DECLARED B2/POOL: the dynamite/boomstick/bullet-casing rows (Loader_Recipes_Other.java:640-669), the food-mold event rows (Loader_Recipes_Food.java:146-152) and the RecipeMapHandlerPrefix generator walks (Loader_Recipes_Handlers.java:248-259) reference port-absent items or per-material rule walks, neither is a static JSON row face.",
+  "recipes": [
+    {
+      "comment": "Loader_Recipes_Vanilla.java:777 — redstone lamp, blockDust leg xGlowstone (144 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_redstone",
+          "count": 4
+        },
+        {
+          "item": "gt6:block_dust_glowstone",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:778 — redstone lamp, dust legs xGlowstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_glowstone",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:779 — redstone lamp, dust legs xGlowstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_glowstone",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:780 — redstone lamp, dust legs xGlowstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_glowstone",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:781 — redstone lamp, dust legs xGlowstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_small_glowstone",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:782 — redstone lamp, dust legs xGlowstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_small_glowstone",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:783 — redstone lamp, dust legs xGlowstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_small_glowstone",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:784 — redstone lamp, dust legs xGlowstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_tiny_glowstone",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:785 — redstone lamp, dust legs xGlowstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_tiny_glowstone",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:786 — redstone lamp, dust legs xGlowstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_tiny_glowstone",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:777 — redstone lamp, blockDust leg xGloomstone (144 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_redstone",
+          "count": 4
+        },
+        {
+          "item": "gt6:block_dust_gloomstone",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:778 — redstone lamp, dust legs xGloomstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_gloomstone",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:779 — redstone lamp, dust legs xGloomstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_gloomstone",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:780 — redstone lamp, dust legs xGloomstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_gloomstone",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:781 — redstone lamp, dust legs xGloomstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_small_gloomstone",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:782 — redstone lamp, dust legs xGloomstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_small_gloomstone",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:783 — redstone lamp, dust legs xGloomstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_small_gloomstone",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:784 — redstone lamp, dust legs xGloomstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_tiny_gloomstone",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:785 — redstone lamp, dust legs xGloomstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_tiny_gloomstone",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:786 — redstone lamp, dust legs xGloomstone (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_redstone",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_tiny_gloomstone",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:redstone_lamp",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:789 — TNT, blockDust leg xSiliconDioxide (144 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_gunpowder",
+          "count": 4
+        },
+        {
+          "item": "gt6:block_dust_silicon_dioxide",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:790 — TNT, dust legs xSiliconDioxide (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_silicon_dioxide",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:791 — TNT, dust legs xSiliconDioxide (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_gunpowder",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_silicon_dioxide",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:792 — TNT, dust legs xSiliconDioxide (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_gunpowder",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_silicon_dioxide",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:793 — TNT, dust legs xSiliconDioxide (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_small_silicon_dioxide",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:794 — TNT, dust legs xSiliconDioxide (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_gunpowder",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_small_silicon_dioxide",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:795 — TNT, dust legs xSiliconDioxide (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_gunpowder",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_small_silicon_dioxide",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:796 — TNT, dust legs xSiliconDioxide (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_tiny_silicon_dioxide",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:797 — TNT, dust legs xSiliconDioxide (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_gunpowder",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_tiny_silicon_dioxide",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:798 — TNT, dust legs xSiliconDioxide (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_gunpowder",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_tiny_silicon_dioxide",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:789 — TNT, blockDust leg xNetherQuartz (144 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_gunpowder",
+          "count": 4
+        },
+        {
+          "item": "gt6:block_dust_nether_quartz",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:790 — TNT, dust legs xNetherQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_nether_quartz",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:791 — TNT, dust legs xNetherQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_gunpowder",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_nether_quartz",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:792 — TNT, dust legs xNetherQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_gunpowder",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_nether_quartz",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:793 — TNT, dust legs xNetherQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_small_nether_quartz",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:794 — TNT, dust legs xNetherQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_gunpowder",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_small_nether_quartz",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:795 — TNT, dust legs xNetherQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_gunpowder",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_small_nether_quartz",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:796 — TNT, dust legs xNetherQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_tiny_nether_quartz",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:797 — TNT, dust legs xNetherQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_gunpowder",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_tiny_nether_quartz",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:798 — TNT, dust legs xNetherQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_gunpowder",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_tiny_nether_quartz",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:789 — TNT, blockDust leg xCertusQuartz (144 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_gunpowder",
+          "count": 4
+        },
+        {
+          "item": "gt6:block_dust_certus_quartz",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:790 — TNT, dust legs xCertusQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_certus_quartz",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:791 — TNT, dust legs xCertusQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_gunpowder",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_certus_quartz",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:792 — TNT, dust legs xCertusQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_gunpowder",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_certus_quartz",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:793 — TNT, dust legs xCertusQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_small_certus_quartz",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:794 — TNT, dust legs xCertusQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_gunpowder",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_small_certus_quartz",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:795 — TNT, dust legs xCertusQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_gunpowder",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_small_certus_quartz",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:796 — TNT, dust legs xCertusQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_tiny_certus_quartz",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:797 — TNT, dust legs xCertusQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_gunpowder",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_tiny_certus_quartz",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:798 — TNT, dust legs xCertusQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_gunpowder",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_tiny_certus_quartz",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:789 — TNT, blockDust leg xQuartzite (144 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_gunpowder",
+          "count": 4
+        },
+        {
+          "item": "gt6:block_dust_quartzite",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:790 — TNT, dust legs xQuartzite (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_quartzite",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:791 — TNT, dust legs xQuartzite (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_gunpowder",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_quartzite",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:792 — TNT, dust legs xQuartzite (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_gunpowder",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_quartzite",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:793 — TNT, dust legs xQuartzite (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_small_quartzite",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:794 — TNT, dust legs xQuartzite (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_gunpowder",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_small_quartzite",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:795 — TNT, dust legs xQuartzite (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_gunpowder",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_small_quartzite",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:796 — TNT, dust legs xQuartzite (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_tiny_quartzite",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:797 — TNT, dust legs xQuartzite (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_gunpowder",
+          "count": 16
+        },
+        {
+          "item": "gt6:dust_tiny_quartzite",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:798 — TNT, dust legs xQuartzite (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_gunpowder",
+          "count": 36
+        },
+        {
+          "item": "gt6:dust_tiny_quartzite",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:tnt",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    }
+  ]
+}

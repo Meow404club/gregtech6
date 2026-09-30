@@ -236,13 +236,19 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// static rows: the Microwave subclass synthesizes at lookup time, Cooking never
 			// had a row or a consumer, ToolHeads' per-material listener walk diverges from
 			// the port's steel-convergence tool fold — the W5 ruling d)
-				"microwave", "cooker", "toolhead", "mortar", "hammer",
+			"microwave", "cooker", "toolhead", "mortar", "hammer",
 				// task recipe-data-b2c-sawing — the second CUTTER file key: cutter.json sits at
 				// 4966700 of the 5242880-byte commit cap, so the RM.sawing scatter replay pours
 				// through its own key/file (sawing.json) into the SAME map (the tracker is keyed
 				// per file key, so the two subsets replace independently and /reload stays
 				// idempotent — the B1 press-key two-line precedent)
-				"sawing");
+				"sawing",
+				// the recipe-data-b1 press replay: the Forming Press map pours its static stock
+				// (the RM.Press lamp/TNT walks, Loader_Recipes_Vanilla.java:776-799); the
+				// crucible pair stays keyless ON PURPOSE — upstream RM.CrucibleSmelting/Alloying
+				// carry ZERO static rows (the runtime face is the on-demand material-graph arm
+				// already ported in GT6RecipeMapCrucible), so there is nothing to replay
+				"press");
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
 
@@ -672,6 +678,9 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// task recipe-data-b2c-sawing — the second cutter key (the size-split ruling, see
 			// the POURABLE note): sawing.json pours into the SAME CUTTER map
 			case "sawing" -> GT6RecipeMaps.CUTTER;
+			// task recipe-data-b1 — the Forming Press static stock (the lamp/TNT walks;
+			// the crucible pair deliberately keyless — zero upstream static rows, see POURABLE)
+			case "press" -> GT6RecipeMaps.PRESS;
 		default -> null;
 		};
 	}

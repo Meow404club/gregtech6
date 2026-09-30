@@ -1,13 +1,577 @@
 {
-  "recipes": [
+ "comment": "task recipe-data-b1 appends its 28 rows after the seated map smoke row (the :152-:154 rock packs, the :418-:421 minecart box halves, the :967-:973 brick packs, the :424-:458 typemin(1) tool box halves).",
+ "recipes": [
+  {
+   "inputs": [
     {
-      "inputs": [
-        { "item": "minecraft:paper", "count": 8 },
-        { "item": "minecraft:compass", "count": 1 }
-      ],
-      "outputs": [{ "item": "minecraft:map", "count": 1 }],
-      "duration": 16,
-      "eut": 16
+     "item": "minecraft:paper",
+     "count": 8
+    },
+    {
+     "item": "minecraft:compass",
+     "count": 1
     }
-  ]
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:map",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:152 — stone rockGt x4 pack (the ST.tag(4) selector dropped)",
+   "inputs": [
+    {
+     "item": "gt6:rock_gt_stone",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:cobblestone",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:153 — netherrack rockGt x4 pack",
+   "inputs": [
+    {
+     "item": "gt6:rock_gt_netherrack",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:netherrack",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:154 — endstone rockGt x4 pack",
+   "inputs": [
+    {
+     "item": "gt6:rock_gt_endstone",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:end_stone",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:418 — minecart + chest (boxunbox box half)",
+   "inputs": [
+    {
+     "item": "minecraft:minecart",
+     "count": 1
+    },
+    {
+     "item": "minecraft:chest",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:chest_minecart",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:419 — minecart + furnace",
+   "inputs": [
+    {
+     "item": "minecraft:minecart",
+     "count": 1
+    },
+    {
+     "item": "minecraft:furnace",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:furnace_minecart",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:420 — minecart + hopper",
+   "inputs": [
+    {
+     "item": "minecraft:minecart",
+     "count": 1
+    },
+    {
+     "item": "minecraft:hopper",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:hopper_minecart",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:421 — minecart + tnt",
+   "inputs": [
+    {
+     "item": "minecraft:minecart",
+     "count": 1
+    },
+    {
+     "item": "minecraft:tnt",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:tnt_minecart",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:967 — brick x2 -> brick slab (stone_slab meta 4 -> the 1.20.1 brick_slab identity)",
+   "inputs": [
+    {
+     "item": "minecraft:brick",
+     "count": 2
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:brick_slab",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:968 — brick x3 -> brick stairs",
+   "inputs": [
+    {
+     "item": "minecraft:brick",
+     "count": 3
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:brick_stairs",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:969 — brick x4 -> bricks",
+   "inputs": [
+    {
+     "item": "minecraft:brick",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:bricks",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:971 — nether brick x2 -> nether brick slab (stone_slab meta 6 identity)",
+   "inputs": [
+    {
+     "item": "minecraft:netherbrick",
+     "count": 2
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:nether_brick_slab",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:972 — nether brick x3 -> nether brick stairs",
+   "inputs": [
+    {
+     "item": "minecraft:netherbrick",
+     "count": 3
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:nether_brick_stairs",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:973 — nether brick x4 -> nether bricks",
+   "inputs": [
+    {
+     "item": "minecraft:netherbrick",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:nether_bricks",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:426 — iron sword + stick x1 (boxunbox box half)",
+   "inputs": [
+    {
+     "item": "minecraft:iron_sword",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_sword_iron",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:427 — golden sword + stick x1 (boxunbox box half)",
+   "inputs": [
+    {
+     "item": "minecraft:golden_sword",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_sword_gold",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:428 — diamond sword + stick x1 (boxunbox box half)",
+   "inputs": [
+    {
+     "item": "minecraft:diamond_sword",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_sword_diamond",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:433 — iron pickaxe + stick x2 (boxunbox box half)",
+   "inputs": [
+    {
+     "item": "minecraft:iron_pickaxe",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_pickaxe_iron",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:434 — golden pickaxe + stick x2 (boxunbox box half)",
+   "inputs": [
+    {
+     "item": "minecraft:golden_pickaxe",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_pickaxe_gold",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:435 — diamond pickaxe + stick x2 (boxunbox box half)",
+   "inputs": [
+    {
+     "item": "minecraft:diamond_pickaxe",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_pickaxe_diamond",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:440 — iron shovel + stick x2 (boxunbox box half)",
+   "inputs": [
+    {
+     "item": "minecraft:iron_shovel",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_shovel_iron",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:441 — golden shovel + stick x2 (boxunbox box half)",
+   "inputs": [
+    {
+     "item": "minecraft:golden_shovel",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_shovel_gold",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:442 — diamond shovel + stick x2 (boxunbox box half)",
+   "inputs": [
+    {
+     "item": "minecraft:diamond_shovel",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_shovel_diamond",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:447 — iron axe + stick x2 (boxunbox box half)",
+   "inputs": [
+    {
+     "item": "minecraft:iron_axe",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_axe_iron",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:448 — golden axe + stick x2 (boxunbox box half)",
+   "inputs": [
+    {
+     "item": "minecraft:golden_axe",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_axe_gold",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:449 — diamond axe + stick x2 (boxunbox box half)",
+   "inputs": [
+    {
+     "item": "minecraft:diamond_axe",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_axe_diamond",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:454 — iron hoe + stick x2 (boxunbox box half)",
+   "inputs": [
+    {
+     "item": "minecraft:iron_hoe",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_hoe_iron",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:455 — golden hoe + stick x2 (boxunbox box half)",
+   "inputs": [
+    {
+     "item": "minecraft:golden_hoe",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_hoe_gold",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:456 — diamond hoe + stick x2 (boxunbox box half)",
+   "inputs": [
+    {
+     "item": "minecraft:diamond_hoe",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_hoe_diamond",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  }
+ ]
 }

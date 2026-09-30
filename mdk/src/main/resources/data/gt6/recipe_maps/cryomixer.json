@@ -805,7 +805,7 @@
    "eut": 16
   },
   {
-   "comment": "Other233 small form x waters walk - NaNO3",
+   "comment": "Loader_Recipes_Other.java:233 — redstone + blizz (tiny) + NaNO3 + water x250 -> cryotheum x2 (the OM.dust ladder resolutions verbatim) (small form)",
    "inputs": [
     {
      "item": "gt6:dust_redstone",
@@ -929,7 +929,7 @@
    "eut": 16
   },
   {
-   "comment": "Other233 big form x waters walk - NaNO3",
+   "comment": "Loader_Recipes_Other.java:234 — redstone x4 + blizz x4 + NaNO3 x4 + water x1000 -> cryotheum x8 (the x4 legs verbatim) (big form)",
    "inputs": [
     {
      "item": "gt6:dust_redstone",
@@ -1053,7 +1053,7 @@
    "eut": 16
   },
   {
-   "comment": "Other235 small form x waters walk - KNO3",
+   "comment": "Loader_Recipes_Other.java:235 — redstone + blizz (tiny) + KNO3 + water x250 -> cryotheum x2 (the OM.dust ladder resolutions verbatim) (small form)",
    "inputs": [
     {
      "item": "gt6:dust_redstone",
@@ -1177,7 +1177,7 @@
    "eut": 16
   },
   {
-   "comment": "Other235 big form x waters walk - KNO3",
+   "comment": "Loader_Recipes_Other.java:236 — redstone x4 + blizz x4 + KNO3 x4 + water x1000 -> cryotheum x8 (the x4 legs verbatim) (big form)",
    "inputs": [
     {
      "item": "gt6:dust_redstone",
@@ -1301,7 +1301,7 @@
    "eut": 16
   },
   {
-   "comment": "Other237 small form x waters walk - Niter",
+   "comment": "Loader_Recipes_Other.java:237 — redstone + blizz (tiny) + Niter + water x250 -> cryotheum x2 (the OM.dust ladder resolutions verbatim) (small form)",
    "inputs": [
     {
      "item": "gt6:dust_redstone",
@@ -1425,7 +1425,7 @@
    "eut": 16
   },
   {
-   "comment": "Other237 big form x waters walk - Niter",
+   "comment": "Loader_Recipes_Other.java:238 — redstone x4 + blizz x4 + Niter x4 + water x1000 -> cryotheum x8 (the x4 legs verbatim) (big form)",
    "inputs": [
     {
      "item": "gt6:dust_redstone",

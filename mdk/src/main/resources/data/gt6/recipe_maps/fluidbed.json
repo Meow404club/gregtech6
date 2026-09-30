@@ -1,0 +1,1168 @@
+{
+  "comment": "task recipe-data-b1 — the FM.FluidBed fuel stock (Loader_Fuels.java:37-43 verbatim): the 11 burning materials x the five dust forms (blockDust/dust/dustSmall/dustTiny/dustDiv72). duration = mFurnaceBurnTime x3 x25 (EU_PER_FURNACE_TICK, CS.java:210-212) with the upstream per-form multiply/divide (Java int division); eut -1 = the fuel-map burn semantics; the fluid leg is FL.Calcite (upstream id molten.calcite, FL.java:458) = the port gt6:calcite_molten (GTFluids.java:2275) at 648/72/18/8/1 mB. Outputs resolve the upstream OM.dust(units(...)) ladder (OM.java:460-468) over setBurning (MT.java port-verbatim); PeatBituminous carries no setBurning (mTargetBurning = self x0) so its five rows are output-less burns, exactly the upstream null-output form.",
+  "recipes": [
+    {
+      "comment": "Loader_Fuels.java:38 — Charcoal blockDust leg (burn 1600t x3 x25, Calcite 648 mB)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_charcoal",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 648
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_ashes",
+          "count": 10
+        }
+      ],
+      "duration": 1080000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:39 — Charcoal dust leg (burn 1600t x3 x25, Calcite 72 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_charcoal",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 72
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_ashes",
+          "count": 9
+        }
+      ],
+      "duration": 120000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:40 — Charcoal dustSmall leg (burn 1600t x3 x25, Calcite 18 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_charcoal",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 18
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_ashes",
+          "count": 2
+        }
+      ],
+      "duration": 30000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:41 — Charcoal dustTiny leg (burn 1600t x3 x25, Calcite 8 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_charcoal",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 8
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_ashes",
+          "count": 1
+        }
+      ],
+      "duration": 13333,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:42 — Charcoal dustDiv72 leg (burn 1600t x3 x25, Calcite 1 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_charcoal",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 1
+        }
+      ],
+      "duration": 1666,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:38 — Coal blockDust leg (burn 1600t x3 x25, Calcite 648 mB)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_coal",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 648
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_dark_ashes",
+          "count": 10
+        }
+      ],
+      "duration": 1080000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:39 — Coal dust leg (burn 1600t x3 x25, Calcite 72 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_coal",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 72
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_dark_ashes",
+          "count": 9
+        }
+      ],
+      "duration": 120000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:40 — Coal dustSmall leg (burn 1600t x3 x25, Calcite 18 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_coal",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 18
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_dark_ashes",
+          "count": 2
+        }
+      ],
+      "duration": 30000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:41 — Coal dustTiny leg (burn 1600t x3 x25, Calcite 8 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_coal",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 8
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_dark_ashes",
+          "count": 1
+        }
+      ],
+      "duration": 13333,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:42 — Coal dustDiv72 leg (burn 1600t x3 x25, Calcite 1 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_coal",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 1
+        }
+      ],
+      "duration": 1666,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:38 — CoalCoke blockDust leg (burn 3200t x3 x25, Calcite 648 mB)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_coal_coke",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 648
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_dark_ashes",
+          "count": 2
+        }
+      ],
+      "duration": 2160000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:39 — CoalCoke dust leg (burn 3200t x3 x25, Calcite 72 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_coal_coke",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 72
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_dark_ashes",
+          "count": 4
+        }
+      ],
+      "duration": 240000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:40 — CoalCoke dustSmall leg (burn 3200t x3 x25, Calcite 18 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_coal_coke",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 18
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_dark_ashes",
+          "count": 1
+        }
+      ],
+      "duration": 60000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:41 — CoalCoke dustTiny leg (burn 3200t x3 x25, Calcite 8 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_coal_coke",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 8
+        }
+      ],
+      "duration": 26666,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:42 — CoalCoke dustDiv72 leg (burn 3200t x3 x25, Calcite 1 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_coal_coke",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 1
+        }
+      ],
+      "duration": 3333,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:38 — Anthracite blockDust leg (burn 4800t x3 x25, Calcite 648 mB)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_anthracite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 648
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_dark_ashes",
+          "count": 9
+        }
+      ],
+      "duration": 3240000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:39 — Anthracite dust leg (burn 4800t x3 x25, Calcite 72 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_anthracite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 72
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_dark_ashes",
+          "count": 1
+        }
+      ],
+      "duration": 360000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:40 — Anthracite dustSmall leg (burn 4800t x3 x25, Calcite 18 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_anthracite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 18
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_dark_ashes",
+          "count": 4
+        }
+      ],
+      "duration": 90000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:41 — Anthracite dustTiny leg (burn 4800t x3 x25, Calcite 8 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_anthracite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 8
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_dark_ashes",
+          "count": 2
+        }
+      ],
+      "duration": 40000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:42 — Anthracite dustDiv72 leg (burn 4800t x3 x25, Calcite 1 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_anthracite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 1
+        }
+      ],
+      "duration": 5000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:38 — Prismane blockDust leg (burn 9600t x3 x25, Calcite 648 mB)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_prismane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 648
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_dark_ashes",
+          "count": 18
+        }
+      ],
+      "duration": 6480000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:39 — Prismane dust leg (burn 9600t x3 x25, Calcite 72 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_prismane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 72
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_dark_ashes",
+          "count": 2
+        }
+      ],
+      "duration": 720000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:40 — Prismane dustSmall leg (burn 9600t x3 x25, Calcite 18 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_prismane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 18
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_dark_ashes",
+          "count": 9
+        }
+      ],
+      "duration": 180000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:41 — Prismane dustTiny leg (burn 9600t x3 x25, Calcite 8 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_prismane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 8
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_dark_ashes",
+          "count": 4
+        }
+      ],
+      "duration": 80000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:42 — Prismane dustDiv72 leg (burn 9600t x3 x25, Calcite 1 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_prismane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 1
+        }
+      ],
+      "duration": 10000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:38 — Lonsdaleite blockDust leg (burn 19200t x3 x25, Calcite 648 mB)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_lonsdaleite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 648
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_dark_ashes",
+          "count": 9
+        }
+      ],
+      "duration": 12960000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:39 — Lonsdaleite dust leg (burn 19200t x3 x25, Calcite 72 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_lonsdaleite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 72
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_dark_ashes",
+          "count": 1
+        }
+      ],
+      "duration": 1440000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:40 — Lonsdaleite dustSmall leg (burn 19200t x3 x25, Calcite 18 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_lonsdaleite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 18
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_dark_ashes",
+          "count": 1
+        }
+      ],
+      "duration": 360000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:41 — Lonsdaleite dustTiny leg (burn 19200t x3 x25, Calcite 8 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_lonsdaleite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 8
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_dark_ashes",
+          "count": 1
+        }
+      ],
+      "duration": 160000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:42 — Lonsdaleite dustDiv72 leg (burn 19200t x3 x25, Calcite 1 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_lonsdaleite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_dark_ashes",
+          "count": 1
+        }
+      ],
+      "duration": 20000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:38 — Lignite blockDust leg (burn 800t x3 x25, Calcite 648 mB)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_lignite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 648
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_dark_ashes",
+          "count": 10
+        }
+      ],
+      "duration": 540000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:39 — Lignite dust leg (burn 800t x3 x25, Calcite 72 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_lignite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 72
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_dark_ashes",
+          "count": 9
+        }
+      ],
+      "duration": 60000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:40 — Lignite dustSmall leg (burn 800t x3 x25, Calcite 18 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_lignite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 18
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_dark_ashes",
+          "count": 2
+        }
+      ],
+      "duration": 15000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:41 — Lignite dustTiny leg (burn 800t x3 x25, Calcite 8 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_lignite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 8
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_dark_ashes",
+          "count": 1
+        }
+      ],
+      "duration": 6666,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:42 — Lignite dustDiv72 leg (burn 800t x3 x25, Calcite 1 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_lignite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 1
+        }
+      ],
+      "duration": 833,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:38 — LigniteCoke blockDust leg (burn 1600t x3 x25, Calcite 648 mB)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_lignite_coke",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 648
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_dark_ashes",
+          "count": 2
+        }
+      ],
+      "duration": 1080000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:39 — LigniteCoke dust leg (burn 1600t x3 x25, Calcite 72 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_lignite_coke",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 72
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_dark_ashes",
+          "count": 4
+        }
+      ],
+      "duration": 120000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:40 — LigniteCoke dustSmall leg (burn 1600t x3 x25, Calcite 18 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_lignite_coke",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 18
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_dark_ashes",
+          "count": 1
+        }
+      ],
+      "duration": 30000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:41 — LigniteCoke dustTiny leg (burn 1600t x3 x25, Calcite 8 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_lignite_coke",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 8
+        }
+      ],
+      "duration": 13333,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:42 — LigniteCoke dustDiv72 leg (burn 1600t x3 x25, Calcite 1 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_lignite_coke",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 1
+        }
+      ],
+      "duration": 1666,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:38 — PetroleumCoke blockDust leg (burn 6400t x3 x25, Calcite 648 mB)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_petroleum_coke",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 648
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_petroleum_coke",
+          "count": 2
+        }
+      ],
+      "duration": 4320000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:39 — PetroleumCoke dust leg (burn 6400t x3 x25, Calcite 72 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_petroleum_coke",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 72
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_petroleum_coke",
+          "count": 4
+        }
+      ],
+      "duration": 480000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:40 — PetroleumCoke dustSmall leg (burn 6400t x3 x25, Calcite 18 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_petroleum_coke",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 18
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_petroleum_coke",
+          "count": 1
+        }
+      ],
+      "duration": 120000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:41 — PetroleumCoke dustTiny leg (burn 6400t x3 x25, Calcite 8 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_petroleum_coke",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 8
+        }
+      ],
+      "duration": 53333,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:42 — PetroleumCoke dustDiv72 leg (burn 6400t x3 x25, Calcite 1 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_petroleum_coke",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 1
+        }
+      ],
+      "duration": 6666,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:38 — Peat blockDust leg (burn 2000t x3 x25, Calcite 648 mB)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_peat",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 648
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_ashes",
+          "count": 9
+        }
+      ],
+      "duration": 1350000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:39 — Peat dust leg (burn 2000t x3 x25, Calcite 72 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_peat",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 72
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_ashes",
+          "count": 1
+        }
+      ],
+      "duration": 150000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:40 — Peat dustSmall leg (burn 2000t x3 x25, Calcite 18 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_peat",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 18
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_ashes",
+          "count": 4
+        }
+      ],
+      "duration": 37500,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:41 — Peat dustTiny leg (burn 2000t x3 x25, Calcite 8 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_peat",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 8
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_ashes",
+          "count": 2
+        }
+      ],
+      "duration": 16666,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:42 — Peat dustDiv72 leg (burn 2000t x3 x25, Calcite 1 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_peat",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 1
+        }
+      ],
+      "duration": 2083,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:38 — PeatBituminous blockDust leg (burn 2400t x3 x25, Calcite 648 mB)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_peat_bituminous",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 648
+        }
+      ],
+      "duration": 1620000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:39 — PeatBituminous dust leg (burn 2400t x3 x25, Calcite 72 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_peat_bituminous",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 72
+        }
+      ],
+      "duration": 180000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:40 — PeatBituminous dustSmall leg (burn 2400t x3 x25, Calcite 18 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_peat_bituminous",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 18
+        }
+      ],
+      "duration": 45000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:41 — PeatBituminous dustTiny leg (burn 2400t x3 x25, Calcite 8 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_peat_bituminous",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 8
+        }
+      ],
+      "duration": 20000,
+      "eut": -1
+    },
+    {
+      "comment": "Loader_Fuels.java:42 — PeatBituminous dustDiv72 leg (burn 2400t x3 x25, Calcite 1 mB)",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_peat_bituminous",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:calcite_molten",
+          "amount": 1
+        }
+      ],
+      "duration": 2500,
+      "eut": -1
+    }
+  ]
+}
