@@ -136,6 +136,11 @@ public class GTItemPipeBlockEntity extends TileEntityBase09Connector implements 
 	/** The inventory (invSize slots — the registration NBT_INV_SIZE axis). Non-final: the offline latch tests re-shape it. */
 	public GTItemStackHandler mInventory;
 
+	/** The break-drop face — {@link gregtech6.block.GTEntityBlock} reflects {@code getInventory} to scatter the in-flight items on break (upstream MultiTileEntityPipeItem.java:266-270 carries a real inventory, 05Inventories.breakBlock :153-171 drops it, canDrop = T). */
+	public GTItemStackHandler getInventory() {
+		return mInventory;
+	}
+
 	/** The random phase offset within {@link #TRANSFER_PERIOD} (assigned on the first server tick). */
 	private int mPhaseOffset = 0;
 	private boolean mPhaseAssigned = false;

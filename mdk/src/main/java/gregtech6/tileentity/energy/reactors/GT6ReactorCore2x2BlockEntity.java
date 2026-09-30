@@ -115,6 +115,11 @@ public class GT6ReactorCore2x2BlockEntity extends TileEntityBase03TicksAndSync {
 		@Override public int getSlotLimit(int aSlot) {return 1;} // Core:312 getInventoryStackLimit
 	};
 
+	/** The break-drop face — {@link gregtech6.block.GTEntityBlock} reflects {@code getInventory} to scatter the rod slots on break (upstream 05Inventories.breakBlock :153-171, canDrop = T). */
+	public GTItemStackHandler getInventory() {
+		return mInventory;
+	}
+
 	/** The double tanks (Core:62) — [0] cold whitelist input, [1] hot output (steam-stretched). */
 	public final FluidTankGT[] mTanks = {new FluidTankGT(TANK_CAPACITY), new SteamStretchedTank()};
 
