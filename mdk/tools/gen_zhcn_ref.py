@@ -3153,6 +3153,17 @@ LEGACY_BLOCK_BACKFILL = {
     'block.gt6.willow_sapling': '柳树树苗',
     'block.gt6.willow_log': '柳树原木',
     'block.gt6.willow_leaves': '柳树树叶',
+    # ---- the wood beams (task beam-blocks-register): the 1.7.10 zh dump faces verbatim
+    # (tmp/gregtech.lang gt.block.beam.1.0-.3 / gt.block.beam.2.0-.3; the per-orientation
+    # dump metas all repeat the four base words per block)
+    'block.gt6.oak_beam': '橡木梁',
+    'block.gt6.spruce_beam': '云杉木梁',
+    'block.gt6.birch_beam': '白桦木梁',
+    'block.gt6.jungle_beam': '丛林木梁',
+    'block.gt6.acacia_beam': '金合欢木梁',
+    'block.gt6.dark_oak_beam': '深色橡木梁',
+    'block.gt6.rubber_wood_beam': '橡胶木梁',
+    'block.gt6.wood_beam': '木梁',
     # ---- the surface plants + fallen logs (task p30-w6-t2-surface-blocks)
     'block.gt6.glowtus': '荧光莲',
     'block.gt6.berry_bush': '浆果丛',

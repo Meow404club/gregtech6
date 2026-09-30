@@ -47,6 +47,7 @@ import gregtech6.block.material.GTMaterialPrefixBlock;
 import gregtech6.block.tree.GT6TreeKind;
 import gregtech6.block.wire.GTWireBlock;
 import gregtech6.registry.GT6TreeBlocks;
+import gregtech6.registry.GT6BeamBlocks;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GT6FoamBlocks;
 import gregtech6.registry.GT6Kinetics;
@@ -151,6 +152,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task w6-rocks-sticks — the surface deco band
                 new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task placeables — the lantern + sandwich self-drops
                 new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task bees-lv3-b-bumbliary — the Bumbliary pair self-drops
+                new SubProviderEntry(GT6BeamBlockLoot::new, LootContextParamSets.BLOCK), // task beam-blocks-register — the 8 wood beams self-drop
                 new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task ore-4-loot — the 4884 ore tables
                 new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST), // task loot-injection — the gt.flawless/gems/misc bag tables
                 new SubProviderEntry(GT6DungeonChestLoot::new, LootContextParamSets.CHEST)), // task dungeon-framework — the gt6:chests/dungeon_chest carrier
@@ -213,6 +215,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task w6-rocks-sticks — the surface deco band
                 new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task placeables — the lantern + sandwich self-drops
                 new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task bees-lv3-b-bumbliary — the Bumbliary pair self-drops
+                new SubProviderEntry(GT6BeamBlockLoot::new, LootContextParamSets.BLOCK), // task beam-blocks-register — the 8 wood beams self-drop
                 new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task ore-4-loot — the 4884 ore tables
                 new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST), // task loot-injection — the gt.flawless/gems/misc bag tables
                 new SubProviderEntry(GT6DungeonChestLoot::new, LootContextParamSets.CHEST))); // task dungeon-framework — the gt6:chests/dungeon_chest carrier
@@ -392,6 +395,43 @@ public final class GT6LootTables extends LootTableProvider {
         List<Block> rBlocks = new ArrayList<>();
         for (var tAxle : GT6Kinetics.AXLE_BLOCKS.values()) rBlocks.add(tAxle.get());
         return rBlocks;
+    }
+
+    /**
+     * The wood-beam block list (task beam-blocks-register): the 8 kind rows. The upstream
+     * damageDropped collapses the orientation meta to the wood base (BlockBaseBeam.java:55
+     * {@code aMeta &amp; PILLAR_DATA}), which the one-block-per-wood AXIS form gets for free —
+     * the 1.20.1 equivalent is exactly {@code dropSelf} like the axle/tree families.
+     */
+    public static List<Block> beamLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (RegistryObject<Block> tHandle : GT6BeamBlocks.BLOCKS) rBlocks.add(tHandle.get());
+        return rBlocks;
+    }
+
+    /** The wood-beam self-drop provider (task beam-blocks-register). */
+    public static final class GT6BeamBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6BeamBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6BeamBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return beamLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : beamLootBlocks()) dropSelf(tBlock);
+        }
     }
 
     /** The axle-family self-drop provider (task axle-family — the popOff drop path). */

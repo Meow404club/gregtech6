@@ -294,6 +294,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addCells(); // task small-tank-cell — the 40 Capsule-Cell-Container rows (the one shared per-level model family)
         addCup(); // task small-tank-cup — the Porcelain Cup bowl (the 1px-wall per-level model family)
         addJug(); // task small-tank-jug — the Ceramic Jug (the rim-over-body per-level model family)
+        addBeams(); // task beam-blocks-register — the 8 wood-beam pillar blocks (the axle axis band form)
     }
 
     /**
@@ -4900,5 +4901,30 @@ public final class GT6BlockStates extends BlockStateProvider {
             return ConfiguredModel.builder().modelFile(tLevel == 0 ? tEmpty : tFilled[tLevel]).build();
         });
         itemModels().withExistingParent("ceramic_jug", tEmpty.getLocation());
+    }
+
+    /**
+     * The wood-beam family (task beam-blocks-register, 8 blocks): one {@code cube_column}
+     * model per kind over the two borrowed upstream PNGs (end = beam_top_&lt;kind&gt;, side =
+     * beam_side_&lt;kind&gt; — the BEAMS_1/BEAMS_2 icon pairs, Textures.java:260-277, indexed
+     * 2*(meta&amp;PILLAR_DATA)+(axis?0:1) at BlockBaseBeam.java:65), the axle axis band
+     * rotation map verbatim (X = x90+y90 / Y = none / Z = x90+y180 — the vanilla axisBlock
+     * idiom, the addAxles :2340-2344 form). Geometry is the full cube: upstream render id
+     * 31 (CS.java:764 PILLAR_RENDER) IS the vanilla log renderer — the beam has no reduced
+     * cross-section. The item form parents the block model (the axle band row).
+     */
+    private void addBeams() {
+        for (RegistryObject<Block> tHandle : gregtech6.registry.GT6BeamBlocks.BLOCKS) {
+            Block tBlock = tHandle.get();
+            gregtech6.block.tree.GT6BeamKind tKind = ((gregtech6.block.tree.GT6BeamBlock) tBlock).kind();
+            ModelFile tModel = models().cubeColumn(tHandle.getId().getPath(),
+                    modLoc("block/beam_side_" + tKind.snake()), modLoc("block/beam_top_" + tKind.snake()));
+            getVariantBuilder(tBlock).forAllStates(aState -> switch (aState.getValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS)) {
+                case X -> new ConfiguredModel[] {new ConfiguredModel(tModel, 90, 90, false)};
+                case Y -> new ConfiguredModel[] {new ConfiguredModel(tModel)};
+                case Z -> new ConfiguredModel[] {new ConfiguredModel(tModel, 90, 180, false)};
+            });
+            itemModels().withExistingParent(tHandle.getId().getPath(), tModel.getLocation());
+        }
     }
 }
