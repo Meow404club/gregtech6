@@ -531,6 +531,11 @@
     {
       "type": "minecraft:single",
       "resource": "gt6:block/fluid_spring"
+    },
+    {
+      "type": "minecraft:directory",
+      "prefix": "block/barometer",
+      "source": "block/barometer"
     }
   ]
 }
