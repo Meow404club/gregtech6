@@ -1,4 +1,4 @@
-# 项目状态（镜像·维护期版 2026-09-30）
+# 项目状态（镜像·维护期版 2026-09-30 · r10）
 
 > 权威数据在 MCP `gt6-brain` 的 state/记忆/KG 里。本文件自 2026-09-27 起改为**维护期精简镜像**：
 > P1-P38 逐阶段详账已蒸馏归档至 [docs/archive/ARCHIVE-2026-09-27-p1-p37.md](archive/ARCHIVE-2026-09-27-p1-p37.md)
@@ -9,7 +9,27 @@
 GT6（1.7.10 GregTech6）→ 现代移植：1.20.1 Forge + 1.21.1 NeoForge 双节点（Stonecutter）。
 内容完成度 97-98%+，2026-09-24 发布 v0.1.0（GitHub Release，双 jar），现处**还债/维护阶段**（2026-09-26 起）。
 
-## 当前态（2026-09-30 · r9 issue 三修波收官）
+## 当前态（2026-09-30 · r10 还债波收官）
+
+- **r10 还债波七卡全部合入**（main=fb479f3f1，两审查席 5+2 全 approve，用户指令「把还债的能做的先做了」）：
+  **数据丢失级两枚**：r4-24d 大机 mTanksInput 字段遮蔽（12 台大机输入罐存档即失+大 Mixer/Bath
+  多流体配方静默不可达→删遮蔽+fusion 先例重接基类，红绿法实证）与 r4-19b 六族破坏掉落缺口
+  （BatteryBox/ZpmDecharger/GeneratorSolid/ReactorCore2x2/ItemPipe/Crucible 各补公共
+  getInventory()，六探针镜像反射探测；Crucible 上游掉 slot-0 喂料熔融物 trash 不掉=零偏差核过）。
+  **玩家面**：nojade NCDFE（不装 Jade 开配方页必崩→能量短码表迁 ViewerMeta+字节面守卫）+
+  NEI 齿轮装饰位机器物品（JEI renderItem/EMI SlotWidget）。
+  **观感面**：材质 tint 返工（陶瓷模具/坩埚/水龙头按材质 mRGBaSolid 着色，stone 行 vanilla 成品图
+  不染；ItemColors/BlockColors 同源）+#17 锅炉过半满提示两脸（单罐 .14+多方块 .19 port-authored）。
+  **配方面**：宝石姊妹行（wrench/monkey C 变体+hammer G 变体直合成，上游逐字，+1074 JSON 零幽灵）。
+- **盘点收获**（research.r10-r4pool-survey）：r4-24c 已被 r8 顺带交付销卡；r4-24b（大机 active 贴图
+  三态属性接线）素材 r8 已备齐=次批待做。
+- 审查席经验沉淀：rebase 后 tree_check 必报 STALE（neo runData 同轮再生即愈）；XML 时间戳必核
+  新鲜度（逮住一次作者旧 XML 假证）；cmd|tail 掩蔽 gradle 退出码。
+- 收官在途：docs 镜像（本卡）+push+CI 确认。
+- **ops 待用户裁定（持续）**：FML 测试启动面峰值 12-13.5G 三撞 filtered 12G 预算墙（--max-workers=1/
+  --task-cap 16 可过闸；疑似 KJS 增重）。
+
+## 前态（2026-09-30 · r9 issue 三修波收官）
 
 - **r9 波（#34/#39/#41）三卡合入+push**（main=1b2e1a4cc，三笔 merge 一审查席零打回）：
   **#41 模具凹凸反转**（36e6eef6d）：上游渲染门 :537「bit=1 不画=挖」位极性被移植读反——
