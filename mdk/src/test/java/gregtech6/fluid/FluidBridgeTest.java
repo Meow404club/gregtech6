@@ -26,6 +26,25 @@ public class FluidBridgeTest extends GTOfflineTestBase {
 	}
 
 	@Test
+	public void legacyFlShorthandIdsAliasToTheirTrueRows() {
+		// task jade-molten-alias-seam: the five legacy FL shorthand rows ride the explicit
+		// alias seam — material name (sanitized lowercase internal) → the TRUE registered id.
+		assertEquals("plastic", FluidBridge.moltenIdForMaterial("plastic"),
+				"Loader_Fluids.java:191 FL.create(\"plastic\", \"Molten Plastic\", MT.Plastic...) — no molten suffix at all");
+		assertEquals("glass", FluidBridge.moltenIdForMaterial("glass"),
+				"Loader_Fluids.java:192 FL.create(\"glass\", \"Molten Glass\", MT.Glass...) — no molten suffix at all");
+		assertEquals("molten_latex", FluidBridge.moltenIdForMaterial("latex"),
+				"Loader_Fluids.java:197 FL.create(\"molten.latex\", ...) — the prefix form kept (the :198 bare latex row is the BEE family)");
+		assertEquals("molten_hsla", FluidBridge.moltenIdForMaterial("hslasteel"),
+				"Loader_Fluids.java:199 FL.create(\"molten hsla\", ...) — the space folded to an underscore; HSLA-Steel sanitizes to HSLASteel");
+		assertEquals("lithium_chloride_molten", FluidBridge.moltenIdForMaterial("lithiumchloride"),
+				"FL.java:1077 createMolten over MT.LiCl (MT.java:1121 MOLTEN grant) — the underscore-carrying id ≠ the folded convention guess");
+		// every other material keeps the specOf convention
+		assertEquals("iron_molten", FluidBridge.moltenIdForMaterial("iron"));
+		assertEquals("cobalt_molten", FluidBridge.moltenIdForMaterial("cobalt"));
+	}
+
+	@Test
 	public void nonPositiveRequestsResolveToNull() {
 		assertNull(FluidBridge.moltenStack("iron", 0), "zero units");
 		assertNull(FluidBridge.moltenStack("iron", -1), "negative units");

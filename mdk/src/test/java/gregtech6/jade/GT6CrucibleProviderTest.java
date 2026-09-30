@@ -300,32 +300,62 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 			assertFalse(tOverlay.contains(GT6CrucibleProvider.OVERLAY_TEXTURE), tMaterial.mNameInternal + " carries no face payload");
 		}
 	}
+
+	@Test
+	public void legacyAliasRowsAnswerTheirTrueFluidPayloads() {
+		// task jade-molten-alias-seam: the five legacy FL shorthand rows bridge through the
+		// explicit alias seam — the payload id is the TRUE registered id (not the
+		// <mat>_molten convention), the 144 L/unit amount like every other bridged row.
+		// Upstream anchors: Loader_Fluids.java:191/:192/:197/:199 and the FL.java:1077
+		// createMolten walk over MT.LiCl (MT.java:1121 MOLTEN grant).
+		Object[][] tRows = {
+				{MT.Plastic, "plastic"},
+				{MT.Glass  , "glass"},
+				{MT.Latex  , "molten_latex"},
+				{MT.HSLA   , "molten_hsla"},
+				{MT.LiCl   , "lithium_chloride_molten"}};
+		for (Object[] tRow : tRows) {
+			OreDictMaterial tMaterial = (OreDictMaterial)tRow[0];
+			CompoundTag tTag = new CompoundTag();
+			GT6CrucibleProvider.writeCrucibleData(tTag, tMaterial.mMeltingPoint, 99999, false, 16 * CS.U,
+					List.of(new OreDictMaterialStack(tMaterial, 4 * CS.U)));
+			assertTrue(tTag.getBoolean(GT6CrucibleProvider.KEY_MOLTEN), tMaterial.mNameInternal + " at its melting point is the <= arm");
+			CompoundTag tOverlay = tTag.getCompound(GT6CrucibleProvider.KEY_OVERLAY);
+			assertEquals("gt6:" + tRow[1], tOverlay.getString(GT6CrucibleProvider.OVERLAY_FLUID),
+					tMaterial.mNameInternal + " rides the TRUE legacy-id payload (the alias seam, not the convention guess)");
+			assertEquals(4 * CS.U * gregtech6.fluid.FluidBridge.L_PER_MOLTEN_UNIT,
+					tOverlay.getLong(GT6CrucibleProvider.OVERLAY_AMOUNT), tMaterial.mNameInternal + " 144 L/unit");
+			assertFalse(tOverlay.contains(GT6CrucibleProvider.OVERLAY_TEXTURE), tMaterial.mNameInternal + " carries no face payload");
+		}
+	}
 	*///?}
 
 	/**
-	 * The bridge coverage census (task jade-molten-bridge-full): the bridge is a LIVE
-	 * convention walk now (specOf id convention over GTFluids.chemicalSource + the iron W1
-	 * seed), so the coverage face = every registered material whose {@code <name>_molten}
-	 * row is a SOURCE_SEAM key. The seam-key face is offline-stable on both legs (no
-	 * registry binding involved). Legacy-id rows (lithium_chloride_molten's underscore,
-	 * glass/plastic FL shorthands) sit outside the convention — the ContentFace fallback
-	 * arm covers them, unchanged.
+	 * The bridge coverage census (task jade-molten-bridge-full; alias seam task
+	 * jade-molten-alias-seam): the bridge is a LIVE convention walk now (specOf id
+	 * convention over GTFluids.chemicalSource + the iron W1 seed), so the coverage face =
+	 * every registered material whose resolved fluid id (the {@code <name>_molten}
+	 * convention OR the legacy FL alias table) is a SOURCE_SEAM key. The seam-key face is
+	 * offline-stable on both legs (no registry binding involved). The five legacy-id rows
+	 * (lithium_chloride_molten's underscore, glass/plastic/molten_latex/molten_hsla FL
+	 * shorthands) ride the explicit alias seam now; unknown materials keep the ContentFace
+	 * fallback arm.
 	 */
 	@Test
 	public void moltenBridgeCensusCoversTheFullDomain() {
 		Set<String> tBridged = new TreeSet<>();
 		for (OreDictMaterial tMaterial : MaterialRegistry.INSTANCE.MATERIAL_MAP.values()) {
 			String tId = tMaterial.mNameInternal.toLowerCase(Locale.ROOT);
-			if ("iron".equals(tId) || GTFluids.chemicalSource(tId + "_molten") != null) tBridged.add(tId);
+			if ("iron".equals(tId) || GTFluids.chemicalSource(gregtech6.fluid.FluidBridge.moltenIdForMaterial(tId)) != null) tBridged.add(tId);
 		}
-		assertEquals(34, tBridged.size(), "the full molten-domain census: " + tBridged);
+		assertEquals(39, tBridged.size(), "the full molten-domain census: " + tBridged);
 		// the original 7 seed materials + the expansion spot set stay bridged
 		assertTrue(tBridged.containsAll(Arrays.asList("iron", "redstone", "silicon", "germanium",
 				"redstonealloy", "nikolinealloy", "alumina", "tungsten", "tin", "sodium", "calcite",
 				"wax", "chocolate", "enderpearl")), "seed + expansion spot set: " + tBridged);
-		// the legacy-id rows stay OUTSIDE the convention (fallback arm, zero regression)
-		assertFalse(tBridged.contains("lithiumchloride"), "lithium_chloride_molten carries the underscore — no material-name hit");
-		assertFalse(tBridged.contains("glass"), "the glass row rides the FL shorthand id, not <mat>_molten");
+		// the five legacy FL shorthand rows ride the alias seam now (task jade-molten-alias-seam)
+		assertTrue(tBridged.containsAll(Arrays.asList("glass", "plastic", "latex", "hslasteel",
+				"lithiumchloride")), "the legacy FL alias set: " + tBridged);
 	}
 
 	// ------------------------------------------------------------------------------------
