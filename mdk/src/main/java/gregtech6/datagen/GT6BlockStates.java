@@ -2365,15 +2365,16 @@ public final class GT6BlockStates extends BlockStateProvider {
      * posture, declared defer with the steam family). The grayscale colored body is the
      * tintindex-0 seat and the row's loader NBT_MATERIAL (:721-729) is the tint — the
      * GTMachinePaintTint diesel arm resolves it off {@code DieselSpec.material}.
-     * The 8 BlockItem models stay 2D icons over the shared front sprite (the
-     * tex-itemform-b form per row), repointed to the renamed byte-identical
-     * {@code diesel_engine_colored_front}.
+     * The 8 BlockItem models ride the two-layer block model (task diesel-item-3d —
+     * the tex-itemform-b 2D pins retired; the block model is genuinely faceted
+     * front/back/side, the steam-family form, so the flat inventory sprite was the
+     * anti-pattern, not the block parent).
      */
     private void addDieselEngines() {
         ModelFile tModel = addConverterModel("diesel_engine");
         for (var tBlock : GT6Kinetics.DIESEL_BLOCKS.values()) {
             converterBlockstate(tBlock.get(), tModel, GTDieselEngineBlock.FACING, null);
-            itemModels().withExistingParent(tBlock.getId().getPath(), mcLoc("item/generated")).texture("layer0", modLoc("block/diesel_engine_colored_front"));
+            itemModels().withExistingParent(tBlock.getId().getPath(), modLoc("block/diesel_engine"));
         }
     }
 

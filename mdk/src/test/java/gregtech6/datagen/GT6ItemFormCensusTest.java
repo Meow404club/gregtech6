@@ -118,12 +118,15 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
     }
 
     /**
-     * The tier-B front-view families (tex-itemform-b, the 28 rows): 2D icons over the
-     * family's own front/side/composite sprite — the single kinematics rows (crank, the
-     * water wheel, the gearbox), the lightning-rod controller+rod pair and the heat
-     * exchanger over their composite sprites, the 8 diesel tiers over the shared front
-     * icon, the 12 tap/funnel attachments over their family side sprite and the twin
-     * distillation tower controllers over the borrowed parts side sprite.
+     * The tier-B front-view families (tex-itemform-b, the 28 rows less the diesel
+     * eight): 2D icons over the family's own front/side/composite sprite — the single
+     * kinematics rows (crank, the water wheel, the gearbox), the lightning-rod
+     * controller+rod pair and the heat exchanger over their composite sprites, the
+     * 12 tap/funnel attachments over their family side sprite and the twin
+     * distillation tower controllers over the borrowed parts side sprite. The 8 diesel
+     * tiers LEFT this form in task diesel-item-3d — their block model is genuinely
+     * faceted (front/back/side, the steam-family form), so the flat sprite was the
+     * anti-pattern; they are pinned 3D below.
      */
     @Test
     void frontViewFamiliesAre2DIcons() throws Exception {
@@ -133,10 +136,6 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
         assert2DForm("multiblock_lightning_rod", "gt6:block/lightningrod/main");
         assert2DForm("lightning_rod", "gt6:block/lightningrod/rod");
         assert2DForm("large_heat_exchanger", "gt6:block/large_heat_exchanger/main");
-        assertEquals(8, GT6Kinetics.DIESEL_SPECS.size(), "the 8-tier walk");
-        for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) {
-            assert2DForm(GT6Kinetics.dieselName(tSpec.material()), "gt6:block/diesel_engine_colored_front"); // tex-bridge-kinetic rename, byte-identical
-        }
         assertEquals(12, GT6Attachments.ROWS.size(), "the 12-attachment walk");
         for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
             assert2DForm(tRow.path(), "gt6:block/" + (tRow.family()
@@ -145,6 +144,26 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
         assertEquals(2, gregtech6.registry.GT6Distillation.ROWS.size(), "the twin-tower walk");
         for (gregtech6.registry.GT6Distillation.TowerRow tRow : gregtech6.registry.GT6Distillation.ROWS) {
             assert2DForm(tRow.path(), "gt6:block/parts/distillationtowerparts/0/colored/side");
+        }
+    }
+
+    /**
+     * The 8 diesel engine items ride the two-layer block model (task diesel-item-3d —
+     * the steam-family 3D form, the {@code addSteamEngines} item row precedent): the
+     * block model is the genuinely faceted front/back/side shell, so the BlockItems
+     * parent it (the ok3D form) instead of the flat colored_front sprite. The
+     * crank/gearbox/tap+funnel rows STAY 2D above — their block models are still
+     * full-cube placeholders until the render-pool geometry card lands.
+     */
+    @Test
+    void dieselItemsRideTheBlockModels() throws Exception {
+        assertEquals(8, GT6Kinetics.DIESEL_SPECS.size(), "the 8-tier walk");
+        for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) {
+            JsonObject tModel = generatedJson("assets/gt6/models/item/" + GT6Kinetics.dieselName(tSpec.material()) + ".json");
+            assertEquals("gt6:block/diesel_engine", tModel.get("parent").getAsString(),
+                    GT6Kinetics.dieselName(tSpec.material()) + ": the two-layer block-model parent (the steam form)");
+            assertFalse(tModel.has("textures"), GT6Kinetics.dieselName(tSpec.material())
+                    + ": no local textures object (the flat-sprite pin is retired)");
         }
     }
 
@@ -169,7 +188,7 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
                 {"crank", "gt6:block/crank"},
                 // ("diesel_engine" left in task tex-bridge-kinetic — the world face is the
                 // two-layer borrow now, pinned by GT6BridgeKineticTexDatagenTest; the ITEM
-                // row above stays 2D over the renamed byte-identical colored_front)
+                // row left the 2D sprite in task diesel-item-3d, pinned 3D below)
                 {"tap_ceramic", "gt6:block/tap"},
                 {"funnel_ceramic", "gt6:block/funnel"},
                 {"water_wheel", "gt6:block/water_wheel"},
