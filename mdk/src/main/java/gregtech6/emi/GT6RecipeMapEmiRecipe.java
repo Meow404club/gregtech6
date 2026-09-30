@@ -118,6 +118,17 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 		int[] tPlate = GT6RecipeMapViewerMeta.PLATE_CROP, tBand = GT6RecipeMapViewerMeta.BAND_CROP;
 		aWidgets.add(new TextureWidget(GT6RecipeMapViewerMeta.PLATE_TEXTURE, 0, 0, tPlate[2], tPlate[3], tPlate[0], tPlate[1]));
 		aWidgets.add(new TextureWidget(GT6RecipeMapViewerMeta.guiTexture(mMap), 0, 0, tBand[2], tBand[3], tBand[0], tBand[1]));
+		// the representative machine on the plate's baked-in gear spot (task
+		// r10-debt-viewer-polish): upstream NEI_RecipeMap.java:278 drew mRecipeMachineList
+		// at GUI (152,83) as a bare item — the SlotWidget's drawBack(false) is EMI's
+		// no-frame form (bounds stay 18x18 for the hover/tooltip face; the JEI twin draws
+		// plain GuiGraphics.renderItem). null = no tabled machine (the four
+		// furnace-fallback maps) — the upstream isEmpty() guard, no furnace default.
+		net.minecraft.world.item.ItemStack tMachine = GT6RecipeMapViewerMeta.machineIcon(mMap);
+		if (tMachine != null) {
+			int[] tIconPos = GT6RecipeMapViewerMeta.machineIconPos();
+			aWidgets.add(new SlotWidget(EmiStack.of(tMachine), tIconPos[0], tIconPos[1]).drawBack(false));
+		}
 		for (int i = 0; i < Math.min(mRow.mInputs.length, mMap.mInputItemsCount); i++) {
 			if (mRow.mInputs[i] == null || mRow.mInputs[i].isEmpty()) continue;
 			int[] tPos = GT6RecipeMapViewerMeta.viewerInputPos(i, mMap);

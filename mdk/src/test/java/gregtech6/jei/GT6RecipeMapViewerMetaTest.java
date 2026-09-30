@@ -420,4 +420,67 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 		assertEquals(GT6RecipeMapViewerMeta.CATEGORY_WIDTH, tCategory.getWidth());
 		assertEquals(GT6RecipeMapViewerMeta.CATEGORY_HEIGHT, tCategory.getHeight());
 	}
+
+	// -------------------------------------------------------------------
+	// Task r10-debt-viewer-polish: the nojade decoupling + the gear-spot machine icon
+	// -------------------------------------------------------------------
+
+	/**
+	 * The known_bugs r934_nojade_recipe_page_draw_ncdfe mechanism proof: on a no-Jade
+	 * runtime the first recipe-page draw died in NoClassDefFoundError because THIS class's
+	 * bytecode referenced the Jade integration class (the old energyUnit →
+	 * GT6MachineProvider.energyTypeShortCode edge; Jade's API is compileOnly). A class can
+	 * only trigger a load through a reference in its constant pool, so the decoupling is
+	 * provable at the byte layer — the same offline-proof layer the GT6JeiPluginTest
+	 * annotation guard reads. Absent strings: any snownee Jade API AND the gregtech6.jade
+	 * integration package.
+	 */
+	@Test
+	void viewerMetaBytecodeCarriesNoJadeReference() throws Exception {
+		try (java.io.InputStream tIn = GT6RecipeMapViewerMeta.class.getResourceAsStream("GT6RecipeMapViewerMeta.class")) {
+			assertNotNull(tIn, "meta class resource not found on the test classpath");
+			String tBytes = new String(tIn.readAllBytes(), java.nio.charset.StandardCharsets.ISO_8859_1);
+			assertFalse(tBytes.contains("snownee"), "a Jade API class leaked into the viewer seam's constant pool — nojade runtimes NCDFE again");
+			assertFalse(tBytes.contains("gregtech6/jade"), "the Jade integration class is referenced from the viewer seam — nojade runtimes NCDFE again");
+		}
+	}
+
+	/**
+	 * The moved p27 short-code face: the table now lives here (the provider delegates to
+	 * it — its own pins stay green in GT6MachineProviderTest). Values verbatim, and the
+	 * unknown-carrier fallback still folds the mName prefix (null carrier folds to "").
+	 */
+	@Test
+	void energyTypeShortCodeLivesOnTheJadeFreeSeam() {
+		assertEquals("EU", GT6RecipeMapViewerMeta.energyTypeShortCode(gregapi.data.TD.Energy.EU));
+		assertEquals("RU", GT6RecipeMapViewerMeta.energyTypeShortCode(gregapi.data.TD.Energy.RU));
+		assertEquals("Steam", GT6RecipeMapViewerMeta.energyTypeShortCode(gregapi.data.TD.Energy.STEAM));
+		assertEquals("", GT6RecipeMapViewerMeta.energyTypeShortCode(null));
+	}
+
+	/**
+	 * The gear-spot machine icon (the r9-34 defer): upstream NEI_RecipeMap.java:278 drew
+	 * mRecipeMachineList at GUI (152,83) — folded through the shared (5,11) panel origin
+	 * to (147,72), the spot the NEI.png plate bakes the gear into. And the stock gate: a
+	 * tabled map resolves its machine item, a furnace-fallback whitelist map (zero
+	 * machines in the port) resolves NOTHING — the upstream isEmpty() guard, never the
+	 * lit-furnace default. The resolution rides the {@code sResolver} fixture seam (the
+	 * Forge registry does not exist in a bare JVM) — stubbed inside the test, restored in
+	 * the finally (the per-test-stub lesson of r6-29-34a).
+	 */
+	@Test
+	void machineIconPinsTheUpstreamGearSpotAndTheRealMachineGate() {
+		GT6RecipeMaps.init();
+		assertPos(GT6RecipeMapViewerMeta.machineIconPos(), 152 - GT6RecipeMapViewerMeta.S_OFFSET_X,
+				83 - GT6RecipeMapViewerMeta.S_OFFSET_Y);
+		assertNull(GT6RecipeMapViewerMeta.machineIcon(GT6RecipeMaps.MORTAR),
+				"the furnace-fallback whitelist skips the gear slot (upstream empty mRecipeMachineList)");
+		GT6RecipeMapIcons.sResolver = tSupplier -> Items.IRON_INGOT;
+		try {
+			assertNotNull(GT6RecipeMapViewerMeta.machineIcon(GT6RecipeMaps.LATHE), "a tabled map draws its machine");
+			assertFalse(GT6RecipeMapViewerMeta.machineIcon(GT6RecipeMaps.LATHE).isEmpty());
+		} finally {
+			GT6RecipeMapIcons.sResolver = java.util.function.Supplier::get;
+		}
+	}
 }

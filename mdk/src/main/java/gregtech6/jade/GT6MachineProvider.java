@@ -1,7 +1,6 @@
 package gregtech6.jade;
 
 import java.util.Locale;
-import java.util.Map;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -14,7 +13,6 @@ import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
 
 import gregapi.code.TagData;
-import gregapi.data.TD;
 import gregtech6.tileentity.TileEntityBase01Root;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
@@ -86,46 +84,14 @@ public final class GT6MachineProvider implements IBlockComponentProvider, IServe
 	/** 输入带行（四槽）：min / in / max 三 long + 能量类型短码（KEY_INPUT_MIN/INPUT/INPUT_MAX 同序）。 */
 
 	/**
-	 * 能量类型短码表（task p27-machine-energy-display-fix）：accepted-energy 载体在
-	 * {@code mEnergyTypeAccepted}（TileEntityBasicMachine.java:254，注册行 :1294-1309 择一），
-	 * 但 Jade 同步面只搬 NBT 标量，而 {@link TagData#mName} 不是显示名——移植把名字全大写折叠、
-	 * 丢弃 LH 短/长本地名（root TagData.java:68-71 createTagData 丢 aLocalShort/aLocalLong，
-	 * mName="ENERGY.RU" :88），短码按研究卡裁定落本 provider 侧映射（root 不动）。恒等查找安全：
-	 * createTagData 按名去重（TagData.java:77-81），TD.Energy 常量即单例。短码值 = 上游
-	 * aLocalShort 字面 verbatim（root TD.java:81/:88/:95/:102/:109/:116/:123/:130/:137/:144/
-	 * :151/:158/:165/:172/:175-185——被丢弃的实参仍原样在盘）。
-	 */
-	private static final Map<TagData, String> ENERGY_SHORT_CODES = Map.ofEntries(
-			Map.entry(TD.Energy.EU, "EU"),           // TD.java:81 ELECTRICITY（Canner 电机族）
-			Map.entry(TD.Energy.RU, "RU"),           // :88 KINETIC_ROTATION（Shredder/Lathe/Wiremill）
-			Map.entry(TD.Energy.KU, "KU"),           // :95 KINETIC_PUSH（Crusher/Sifter/Compressor/Press）
-			Map.entry(TD.Energy.HU, "HU"),           // :102 HEAT（Oven/Dryer/Extruder/Distillery）
-			Map.entry(TD.Energy.CU, "CU"),           // :109 CRYO
-			Map.entry(TD.Energy.LU, "LU"),           // :116 LIGHT
-			Map.entry(TD.Energy.MU, "MU"),           // :123 MAGNETIC
-			Map.entry(TD.Energy.NU, "NU"),           // :130 NEUTRON
-			Map.entry(TD.Energy.QU, "QU"),           // :137 QUANTUM
-			Map.entry(TD.Energy.TU, "TU"),           // :144 TIME（:254 字段默认）
-			Map.entry(TD.Energy.RF, "RF"),           // :151 REDSTONE_FLUX
-			Map.entry(TD.Energy.MJ, "MJ"),           // :158 MINECRAFT_JOULES
-			Map.entry(TD.Energy.STEAM, "Steam"),     // :165（上游短名是词不是字头）
-			Map.entry(TD.Energy.AU, "AU"),           // :172 AIR
-			Map.entry(TD.Energy.VIS_ORDO, "Ordo"),       // :175
-			Map.entry(TD.Energy.VIS_AER, "Aer"),         // :177
-			Map.entry(TD.Energy.VIS_AQUA, "Aqua"),       // :179
-			Map.entry(TD.Energy.VIS_TERRA, "Terra"),     // :181
-			Map.entry(TD.Energy.VIS_IGNIS, "Ignis"),     // :183
-			Map.entry(TD.Energy.VIS_PERDITIO, "Perditio")); // :185
-
-	/**
-	 * 能量载体的显示短码（{@link #ENERGY_SHORT_CODES} 查找；回退 = 折叠 mName 剥 "ENERGY."
-	 * 前缀——大写、无参数（TagData.java:69-71 折叠语义），兜住映射未及的未来载体。
+	 * 能量载体的显示短码——task r10-debt-viewer-polish 起 Delegation 到 Jade-free 的正典家
+	 * {@link GT6RecipeMapViewerMeta#energyTypeShortCode}（p27 短码表 verbatim 迁入该处；
+	 * 依赖反转：viewer 面不再反向触碰本 Jade 集成类，nojade 运行时配方页不再
+	 * NoClassDefFoundError，known_bugs r934_nojade_recipe_page_draw_ncdfe）。值面与 p27
+	 * 逐字节一致（GT6MachineProviderTest 旧钉原样在守）。
 	 */
 	public static String energyTypeShortCode(TagData aType) {
-		String tCode = aType == null ? null : ENERGY_SHORT_CODES.get(aType);
-		if (tCode != null) return tCode;
-		String tName = aType == null ? "" : aType.mName;
-		return tName.startsWith("ENERGY.") ? tName.substring("ENERGY.".length()) : tName;
+		return gregtech6.jei.GT6RecipeMapViewerMeta.energyTypeShortCode(aType);
 	}
 
 	private GT6MachineProvider() {
