@@ -17,10 +17,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -280,7 +284,8 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 	 * is a pure +4 translation — the element-to-element invariants that held pre-fix
 	 * hold post-fix, each reading off the constants it relates. The ABSOLUTE pre/post
 	 * values ride the fold-table and crop pins above (BATH 5→9, MIXER −4→0, fluid
-	 * 52→56, icon (147,72)→(147,76), text 73→77 — every diff exactly +4 in y).
+	 * 52→56, text 73→77 — every diff exactly +4 in y; the gear-spot icon row was
+	 * retired by task viewer-icon-retire-gu-pin and no longer rides the census).
 	 */
 	@Test
 	void headroomReAnchorIsAPurePlusFourTranslation() {
@@ -294,10 +299,6 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 		// band row 81 at category row − S_OFFSET_Y: 73−70 pre, 77−74 post)
 		assertEquals(3, GT6RecipeMapViewerMeta.TEXT_BASE_Y
 				- (GT6RecipeMapViewerMeta.BAND_CROP[1] + GT6RecipeMapViewerMeta.BAND_CROP[3] - 1 - GT6RecipeMapViewerMeta.S_OFFSET_Y));
-		// the gear spot still rides 1px above the text band ((147,72)/(73) pre, (147,76)/(77) post)
-		assertEquals(-1, GT6RecipeMapViewerMeta.machineIconPos()[1] - GT6RecipeMapViewerMeta.TEXT_BASE_Y);
-		assertEquals(147, GT6RecipeMapViewerMeta.machineIconPos()[0],
-				"the gear x = upstream GUI 152 folded by S_OFFSET_X only — untouched by the y re-anchor");
 		// the 18px row pitch is fold-independent (the raw switch geometry)
 		assertEquals(18, GT6RecipeMapViewerMeta.viewerInputPos(5, GT6RecipeMaps.MIXER)[1]
 				- GT6RecipeMapViewerMeta.viewerInputPos(0, GT6RecipeMaps.MIXER)[1]);
@@ -551,29 +552,45 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 	}
 
 	/**
-	 * The gear-spot machine icon (the #34 defer): upstream NEI_RecipeMap.java:278 drew
-	 * mRecipeMachineList at GUI (152,83) — folded through the re-anchored (5,7) panel
-	 * origin (task viewer-row-headroom; pre-fix (5,11) → (147,72), now (147,76)) to the
-	 * spot the NEI.png plate bakes the gear into. And the stock gate: a tabled map
-	 * resolves its machine item, a furnace-fallback whitelist map (zero machines in the
-	 * port) resolves NOTHING — the upstream isEmpty() guard, never the lit-furnace
-	 * default. The resolution rides the {@code sResolver} fixture seam (the Forge
-	 * registry does not exist in a bare JVM) — stubbed inside the test, restored in the
-	 * finally (the per-test-stub lesson of issues #29/#34a).
+	 * The retirement census (task viewer-icon-retire-gu-pin, the user ruling): the EMI
+	 * workstation list (RecipeScreen.java:203-217) and the JEI catalyst column
+	 * (RecipesGui.java:635-636 → RecipeCatalysts) both render the machine column from the
+	 * already-registered data (GT6EmiPlugin:157 / GT6JeiPlugin:164-167), so the hand-drawn
+	 * gear spot is gone for good — all three meta exits (GUI_MACHINE_ICON_POS /
+	 * machineIconPos / machineIcon) and every production consumer must stay deleted.
+	 * Source-level pin on purpose (the GT6JadeTooltipKeyPinTest posture): the consumer
+	 * deletions are exactly what a behavioral test cannot see once the exits are gone.
+	 * Comments are stripped so this retirement note and the leg notes citing the retired
+	 * names don't trip the scan.
 	 */
 	@Test
-	void machineIconPinsTheUpstreamGearSpotAndTheRealMachineGate() {
-		GT6RecipeMaps.init();
-		assertPos(GT6RecipeMapViewerMeta.machineIconPos(), 152 - GT6RecipeMapViewerMeta.S_OFFSET_X,
-				83 - GT6RecipeMapViewerMeta.S_OFFSET_Y);
-		assertNull(GT6RecipeMapViewerMeta.machineIcon(GT6RecipeMaps.MORTAR),
-				"the furnace-fallback whitelist skips the gear slot (upstream empty mRecipeMachineList)");
-		GT6RecipeMapIcons.sResolver = tSupplier -> Items.IRON_INGOT;
-		try {
-			assertNotNull(GT6RecipeMapViewerMeta.machineIcon(GT6RecipeMaps.LATHE), "a tabled map draws its machine");
-			assertFalse(GT6RecipeMapViewerMeta.machineIcon(GT6RecipeMaps.LATHE).isEmpty());
-		} finally {
-			GT6RecipeMapIcons.sResolver = java.util.function.Supplier::get;
+	void machineIconExitsAreFullyRetiredZeroResidualCensus() throws IOException {
+		Path tMdk = locateMdkRoot();
+		assertNotNull(tMdk, "mdk root not found from the test working directory");
+		try (Stream<Path> tSources = Files.walk(tMdk.resolve("src/main/java/gregtech6"))) {
+			for (Path tFile : tSources.filter(p -> p.toString().endsWith(".java")).toList()) {
+				String tCode = stripComments(Files.readString(tFile));
+				assertFalse(tCode.contains("machineIcon") || tCode.contains("MACHINE_ICON"),
+						tFile + " still references the retired gear-spot icon exits — EMI/JEI render "
+								+ "the machine column themselves; re-introducing the hand-drawn draw "
+								+ "(or any new exit) must widen this pin consciously");
+			}
 		}
+	}
+
+	/** Drops block then line comments (the GT6JadeTooltipKeyPinTest regex, verbatim). */
+	private static String stripComments(String aSource) {
+		return aSource.replaceAll("(?s)/\\*.*?\\*/", "").replaceAll("//[^\n]*", "");
+	}
+
+	/** Climb from the working directory to the mdk root (the jade pin's posture). */
+	private static Path locateMdkRoot() {
+		Path tDir = Path.of("").toAbsolutePath();
+		for (int i = 0; i < 8 && tDir != null; i++, tDir = tDir.getParent()) {
+			if (Files.isRegularFile(tDir.resolve("src/main/java/gregtech6/jei/GT6RecipeMapViewerMeta.java"))) {
+				return tDir;
+			}
+		}
+		return null;
 	}
 }

@@ -132,12 +132,11 @@ public class GT6RecipeMapEmiCategoryTest {
 		RecordingHolder tHolder = new RecordingHolder();
 		new GT6RecipeMapEmiRecipe(tLathe, tRow, GT6RecipeMapEmiCategory.CATEGORIES.apply(tLathe), 0).addWidgets(tHolder);
 
-		// r10: the gear-spot machine icon leads (add order = upstream :277-278, the machine
-		// riding the input list ahead of the outputs); then the row's two slots
-		assertEquals(3, tHolder.mSlots.size(), "the gear machine icon + one input slot + one output slot");
-		assertSlot(tHolder.mSlots.get(0), GT6RecipeMapViewerMeta.machineIconPos()[0], GT6RecipeMapViewerMeta.machineIconPos()[1]);
-		assertSlot(tHolder.mSlots.get(1), 48, 18);
-		assertSlot(tHolder.mSlots.get(2), 102, 18);
+		// the row's two slots (the gear-spot machine icon was RETIRED by task
+		// viewer-icon-retire-gu-pin — EMI renders workstations itself, RecipeScreen:203-217)
+		assertEquals(2, tHolder.mSlots.size(), "one input slot + one output slot");
+		assertSlot(tHolder.mSlots.get(0), 48, 18);
+		assertSlot(tHolder.mSlots.get(1), 102, 18);
 		// the drawExtras face rides as five text widgets (Costs/Usage/Tier/Power/Time —
 		// the line CONTENT is pinned by the JEI-side test's costLines asserts, the shared
 		// seam; TextWidget.getBounds is client-bound so only the count is assertable here).
@@ -185,60 +184,11 @@ public class GT6RecipeMapEmiCategoryTest {
 		assertEquals(7, vOf(tBand));
 	}
 
-	/**
-	 * The gear-spot machine icon (task debt-viewer-polish, the #34 defer): the THIRD
-	 * widget added — right after the two backdrop textures (render order = add order, the
-	 * z face must not bury it under the band), ahead of every recipe slot. It is the bare
-	 * item form: {@code drawBack(false)} — upstream NEI_RecipeMap.java:278 drew
-	 * mRecipeMachineList frame-less; the 18x18 bounds stay for the hover face. drawBack is
-	 * a protected field — the pin reads it by reflection (the same license as the
-	 * TextureWidget u/v pins).
-	 */
-	@Test
-	public void machineIconRidesThirdAfterTheBackdropsAsABareItem() throws Exception {
-		GT6RecipeMaps.init();
-		RecipeMap tLathe = GT6RecipeMaps.LATHE;
-		Recipe tRow = new Recipe(true,
-				new ItemStack[]{new ItemStack(Items.IRON_INGOT)},
-				new ItemStack[]{new ItemStack(Items.IRON_NUGGET)},
-				null, null, 400, 32, 0);
-		RecordingHolder tHolder = new RecordingHolder();
-		new GT6RecipeMapEmiRecipe(tLathe, tRow, GT6RecipeMapEmiCategory.CATEGORIES.apply(tLathe), 0).addWidgets(tHolder);
-
-		assertSame(tHolder.mTextures.get(0), tHolder.mAll.get(0), "the plate leads the z stack");
-		assertSame(tHolder.mTextures.get(1), tHolder.mAll.get(1), "the band is second");
-		Widget tThird = tHolder.mAll.get(2);
-		assertTrue(tThird instanceof SlotWidget, "the machine icon is a SlotWidget (the hover face), got " + tThird.getClass().getSimpleName());
-		int[] tIconPos = GT6RecipeMapViewerMeta.machineIconPos();
-		assertEquals(new Bounds(tIconPos[0], tIconPos[1], 18, 18), ((SlotWidget) tThird).getBounds(),
-				"the machine icon sits on the folded gear spot (152,83)-(5,7)=(147,76), small 18px form");
-		var tDrawBack = SlotWidget.class.getDeclaredField("drawBack");
-		tDrawBack.setAccessible(true);
-		assertFalse(tDrawBack.getBoolean(tThird), "the machine icon is frame-less (upstream bare PositionedStack form)");
-	}
-
-	/**
-	 * The furnace-fallback whitelist maps (zero machines in the port — the issues #29/#34a four)
-	 * draw NO gear-slot item: the upstream {@code !mRecipeMachineList.isEmpty()} guard,
-	 * never the lit-furnace default. MORTAR is the live visible member of that whitelist.
-	 */
-	@Test
-	public void furnaceFallbackMapsSkipTheGearSlot() {
-		GT6RecipeMaps.init();
-		RecipeMap tMortar = GT6RecipeMaps.MORTAR;
-		assertTrue(gregtech6.jei.GT6RecipeMapIcons.FURNACE_FALLBACK.contains(tMortar.mNameInternal),
-				"the probe map must be a whitelist member for this guard to bite");
-		Recipe tRow = new Recipe(true,
-				new ItemStack[]{new ItemStack(Items.IRON_INGOT)},
-				new ItemStack[]{new ItemStack(Items.IRON_NUGGET)},
-				null, null, 400, 32, 0);
-		RecordingHolder tHolder = new RecordingHolder();
-		new GT6RecipeMapEmiRecipe(tMortar, tRow, GT6RecipeMapEmiCategory.CATEGORIES.apply(tMortar), 0).addWidgets(tHolder);
-
-		int[] tIconPos = GT6RecipeMapViewerMeta.machineIconPos();
-		assertTrue(slotAt(tHolder, tIconPos[0], tIconPos[1]) == null, "no machine item on the gear spot");
-		assertEquals(2, tHolder.mSlots.size(), "only the row's own slots");
-	}
+	// The two gear-spot machine-icon tests (the bare-item z pin, the furnace-fallback
+	// skip guard) were RETIRED with the face itself by task viewer-icon-retire-gu-pin —
+	// EMI renders the workstation column itself (RecipeScreen.java:203-217), so there is
+	// no gear-spot widget left to pin. The zero-residual census lives on
+	// GT6RecipeMapViewerMetaTest.machineIconExitsAreFullyRetiredZeroResidualCensus.
 
 	/**
 	 * The batch-2 structural registration guard (task debt-jei-emi-batch2): the MIXER
