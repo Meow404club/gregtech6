@@ -255,6 +255,30 @@ public final class GTClientHandlers {
         // index 2 = the handle pass (the secondary, the Spruce fallback), the overlays
         // stay the -1 sentinel (GT6ToolLadder.fourPassTintARGB).
         event.getItemColors().register(GT6ToolLadder::fourPassTintARGB, GT6Tools.SCREWDRIVER.get(), GT6Tools.HAMMER.get());
+        // task tint-coverage-batch: the file (the 锉刀全白 root cause — its four-layer
+        // model GT6ItemModels :117-121 carries the grayscale tool_head_file + handle
+        // pairs with NO ItemColor) and the nine un-tinted single-tier families join the
+        // SAME fourPassTintARGB face. The composed two-layer forms (club/scissors/scoop/
+        // plunger/branch_cutter/hand_drill/rolling_pin/bending_cylinder pair) have a VOID
+        // handle, so their index-2 arm draws nothing and the whole grayscale sprite
+        // tints with the head pass — the upstream getRGBa modulation over the composed
+        // icon (the layer0 = the borrow, GT6ItemModels :630-633). The identity-less
+        // single tier rides the fallbacks: the Steel head / the Spruce handle.
+        event.getItemColors().register(GT6ToolLadder::fourPassTintARGB,
+                fourPassToolItems().stream().map(RegistryObject::get).toArray(Item[]::new));
+    }
+
+    /**
+     * The four-pass tool-family registration seam (task tint-coverage-batch) — the exact
+     * array the event handler registers {@link GT6ToolLadder#fourPassTintARGB} over,
+     * hoisted so the offline census pin drives the real membership (the
+     * {@link #beePaintItems()} shape; the {@code RegistryObject} list form so the offline
+     * legs pin {@code getId().getPath()} without touching the live registry).
+     */
+    public static java.util.List<RegistryObject<Item>> fourPassToolItems() {
+        return java.util.List.of(GT6Tools.FILE, GT6Tools.CLUB, GT6Tools.SCISSORS, GT6Tools.SCOOP,
+                GT6Tools.PLUNGER, GT6Tools.BRANCH_CUTTER, GT6Tools.HAND_DRILL, GT6Tools.ROLLING_PIN,
+                GT6Tools.BENDING_CYLINDER, GT6Tools.BENDING_CYLINDER_SMALL);
     }
 
     /** Translation key existence check (Language.getInstance Language.java:83, has :97). */
