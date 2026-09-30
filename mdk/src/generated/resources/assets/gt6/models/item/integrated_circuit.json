@@ -1,6 +1,158 @@
 {
   "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "gt6:item/integrated_circuit/config_24",
+      "predicate": {
+        "gt6:config": 24.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_23",
+      "predicate": {
+        "gt6:config": 23.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_22",
+      "predicate": {
+        "gt6:config": 22.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_21",
+      "predicate": {
+        "gt6:config": 21.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_20",
+      "predicate": {
+        "gt6:config": 20.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_19",
+      "predicate": {
+        "gt6:config": 19.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_18",
+      "predicate": {
+        "gt6:config": 18.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_17",
+      "predicate": {
+        "gt6:config": 17.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_16",
+      "predicate": {
+        "gt6:config": 16.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_15",
+      "predicate": {
+        "gt6:config": 15.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_14",
+      "predicate": {
+        "gt6:config": 14.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_13",
+      "predicate": {
+        "gt6:config": 13.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_12",
+      "predicate": {
+        "gt6:config": 12.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_11",
+      "predicate": {
+        "gt6:config": 11.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_10",
+      "predicate": {
+        "gt6:config": 10.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_9",
+      "predicate": {
+        "gt6:config": 9.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_8",
+      "predicate": {
+        "gt6:config": 8.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_7",
+      "predicate": {
+        "gt6:config": 7.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_6",
+      "predicate": {
+        "gt6:config": 6.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_5",
+      "predicate": {
+        "gt6:config": 5.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_4",
+      "predicate": {
+        "gt6:config": 4.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_3",
+      "predicate": {
+        "gt6:config": 3.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_2",
+      "predicate": {
+        "gt6:config": 2.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_1",
+      "predicate": {
+        "gt6:config": 1.0
+      }
+    },
+    {
+      "model": "gt6:item/integrated_circuit/config_0",
+      "predicate": {
+        "gt6:config": 0.0
+      }
+    }
+  ],
   "textures": {
-    "layer0": "gt6:item/integrated_circuit"
+    "layer0": "gt6:item/integrated_circuit/0"
   }
 }

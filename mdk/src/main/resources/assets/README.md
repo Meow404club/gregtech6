@@ -1005,17 +1005,21 @@ Dedication** (same upstream `README.md` block as above).
 
 Distillery family + Integrated Circuit textures, task distillery-family:
 
-- `gt6/textures/item/integrated_circuit.png` — the Integrated Circuit item icon
+- `gt6/textures/item/integrated_circuit/0.png` — the Integrated Circuit item icon,
+  config 0 of the upstream ladder
   (upstream `src/main/resources/assets/gregapi/textures/items/gt.integrated_circuit/0.png`,
-  config-0 icon of the 256-icon damage ladder, ItemIntegratedCircuit.java:118), 16x16,
-  byte-identical to upstream, sha256 verified:
+  ItemIntegratedCircuit.java:118), 16x16, byte-identical to upstream, sha256 verified:
 
-  - `integrated_circuit.png`   `ce72e7832572432152196b3f3a96bc0efd5ed9da41878b436e9022d0090837f2`
+  - `integrated_circuit/0.png`   `ce72e7832572432152196b3f3a96bc0efd5ed9da41878b436e9022d0090837f2`
 
-  Declared deviation: the upstream damage ladder registers 25 icons (configs 0-24) and
-  swaps them by stack damage — the research card cuts that to ONE model + the
-  "Configuration: N" tooltip; the config-0 icon is the one the creative surface and the
-  acceptance feed ever show.
+  (task distillery-family ① borrowed this single file as the flat
+  `item/integrated_circuit.png`; task circuit-config-icons moved it verbatim into the
+  `integrated_circuit/` family directory — the bytes above are the same borrow.)
+
+  Declared deviation (SUPERSEDED by task circuit-config-icons): the research card
+  cut the upstream damage ladder to ONE model + the "Configuration: N" tooltip; the
+  per-config ladder is restored now, see the circuit-config-icons section below. The
+  "Configuration: N" tooltip stays.
 
 - `gt6/textures/block/distillery_front{,_active,_running}.png` — BAKED from the
   upstream Distillery iconset
@@ -8640,8 +8644,9 @@ SAME visible pixels, the lightningrod one-texture ruling).
   sprites (task w4-battery-storage), BAKED src-over composites of upstream
   `textures/blocks/machines/energystorages/battery_electric[_large]/colored/side.png`
   + `overlay/side.png` (the transformer bake treatment). Produced by
-  `mdk/tools/bake_battery_textures.py`; the circuit-carrier items reuse the in-repo
-  `item/integrated_circuit.png` (no new file, the declared placeholder).
+  `mdk/tools/bake_battery_textures.py`; the circuit-carrier items used to reuse the
+  in-repo `item/integrated_circuit.png` (the declared placeholder — RETIRED by task
+  circuit-config-icons, they show their upstream tier art now, the section above).
   RETIRED by task tex-composite-family: the block models ride the true two-layer
   borrows (`block/battery_box{,_large}/`, the tail manifest below) — these flat bakes
   are deleted.
@@ -12321,3 +12326,72 @@ Dedication** (same upstream `README.md` block as above).
   material-prefix technical container (OP.java:229, IS_CONTAINER/SELF_REFERENCING) whose
   MT.Empty face has no own sprite anywhere in the upstream resources, so the port binds
   the vanilla glass_bottle model (the declared deviation).
+Circuit per-config ladder + carrier tier art, task circuit-config-icons (2026-09-30).
+Two icon miswires restored to the upstream form:
+
+1. The Selector Tag item (`gt6:integrated_circuit`) showed the config-0 art for every
+   configuration. Upstream registers 25 icons, configs 0-24, swapped by stack damage
+   (`getIconFromDamage` = `mIcons[meta&255]`, ItemIntegratedCircuit.java:90-118; all
+   25 distinct art files, cmp-verified). The port restores the ladder: 25 override
+   variants off the base model, matched by the client-side `gt6:config` item property
+   (GTClientHandlers.onClientSetup — the shared `GT6Circuits.configurationOf` face),
+   the override ladder descending 24-0 because ItemOverrides.resolve takes the FIRST
+   entry whose predicate value is <= the property value (ItemOverrides.java:83-99,
+   both legs). Declared deviation: damage 25-255 (the mode-prefixed payloads,
+   `getConfigurationString` :144-146) shows the config-24 art where upstream shows its
+   never-registered null icon (the `i < 25 /*TODO mIcons.length*/` cut at :118).
+
+- `gt6/textures/item/integrated_circuit/1.png` .. `24.png` — the 24 new ladder borrows
+  (config 0 lives in the distillery-family section above, same upstream source):
+  upstream `src/main/resources/assets/gregapi/textures/items/gt.integrated_circuit/`,
+  16x16, byte-identical to upstream (`cmp` clean), sha256 verified:
+
+  - `integrated_circuit/1.png`   `574c8324ee1b39ae6f313557a68429afb84f96b65331c6a38dac4105a7f3345d`
+  - `integrated_circuit/2.png`   `300b5f03cd068660c7ca12110ee09f85636357b0d79f79477354094d51c5764a`
+  - `integrated_circuit/3.png`   `852b4dfafda99cf0c3c212d52dad684a1cfb160e963babe86bbb26c7c525dd5e`
+  - `integrated_circuit/4.png`   `112c89c54455a30b62ac730f5c3f554001588ae7efe4cc56ebd3c31cde802537`
+  - `integrated_circuit/5.png`   `71c016474b196dd82bd06b3c94cd86b2162f566942c63b29fbe6a19b2ba7c268`
+  - `integrated_circuit/6.png`   `20fda0bf438d84d04e19cf2cc008c65fa3d8dc9363f6b83f63384878081ec42b`
+  - `integrated_circuit/7.png`   `0cfa533fa5ff4e30ad69a8677452c823cd24ecf66f1e7a82d9ce5b6ae20c25ab`
+  - `integrated_circuit/8.png`   `6bc8c7a76c296db48788cc848665bd8cb03314bf19cf19eb8fae25f6561f601e`
+  - `integrated_circuit/9.png`   `8bad35bb6726aa5c5bc8c38e001d847f836f7745f03eb6cea9aefbad11a47939`
+  - `integrated_circuit/10.png`  `c49747da1f6c4f6fe83934071b84bf0a8df041b01c6d2bb125e6cc27afc3a354`
+  - `integrated_circuit/11.png`  `b3075a79d2a2b0db3198343fd4cb54d1fc00f4de4e68fbc4a0fe616dd06f487d`
+  - `integrated_circuit/12.png`  `5a4845d37a16411c695b6a946bec13e82d32b3e77f2f842ecc40b48ade0f146b`
+  - `integrated_circuit/13.png`  `04a64971ad8fd228857fd11573b610f1ea8a696da7df1ca4315992f72934a45f`
+  - `integrated_circuit/14.png`  `8b49d3b8286b9e61fbf6fb01bc02d9c9b3fcea6adba1e5532efe3189d1f1d50b`
+  - `integrated_circuit/15.png`  `44c814176d7691e28a81a7b8328dc2d889c9e7b0df12597890b42d754ef09587`
+  - `integrated_circuit/16.png`  `beffb8601ee31f61e475679764d45e2a3f1838a984904a948a8344e5d097ec37`
+  - `integrated_circuit/17.png`  `79380bcdcc584b9f664f2bb98a296763a50062fb8d4fcad734e8d8f081be8ebe`
+  - `integrated_circuit/18.png`  `89bb665c5189f326a9da87556c57a9d770a0aefcc87262df266a117b75751eba`
+  - `integrated_circuit/19.png`  `303c319c4e22bba49a28f15e1877d03ba98e599d135b5f234d74c3935e61beb7`
+  - `integrated_circuit/20.png`  `ec6a0b02c57799d646c2a5a036d33f58347c499a604159b3b6f54cf77b107a23`
+  - `integrated_circuit/21.png`  `c9d1bcd3410545bbba8d9b29cce3c86348553fe933294ba0c23cb9a881d06dbf`
+  - `integrated_circuit/22.png`  `8eb4c56a2910858378ca8dc679e7101442f26205794fcd9d3455e693741cd9ac`
+  - `integrated_circuit/23.png`  `a8b7851ab969f9905b14e19387a4f80db65c0e7ebbbb631424129621a835faa2`
+  - `integrated_circuit/24.png`  `024bc31fa2864664eeac7fa306e1ea55b6970fdf691c571d3c1c0b96adf3dcad`
+
+2. The seven battery-closure circuit carriers (`gt6:circuit_primitive` ..
+   `circuit_ultimate`, GT6Batteries.CIRCUIT_ROWS) all rode the Selector Tag's icon.
+   Their upstream identity is the MultiItemTechnological tier ladder —
+   `IL.Circuit_Basic..Ultimate` = metas 30301-30306, each registered with its
+   `OD_CIRCUITS[n]` name (MultiItemTechnological.java:700-706). Declared share:
+   tier 0 has NO upstream item — `IL.Circuit_Primitive` is never `.set()` anywhere in
+   the upstream tree, and LoaderOreDictReRegistrations.java:375-383 chains each tier's
+   oredict name onto the next-lower one (`OD_CIRCUITS[1]` items also register under
+   `OD_CIRCUITS[0]`), so the T1 Basic item IS the `gt:circuit0` ground. The port's
+   `circuit_primitive` carrier therefore rides the same 30301 art as `circuit_basic`
+   (the upstream shape, not a guess). Borrowed from upstream
+   `src/main/resources/assets/gregtech/textures/items/gt.multiitem.technological/`,
+   16x16, byte-identical to upstream (`cmp` clean), sha256 verified:
+
+  - `circuit/primitive.png`  `0d5f644597f3f6d89b45a9c271edac5a18aa0054b2acb14cb3b38c352968f4a9` (upstream `30301.png`, the shared tier-0 ground)
+  - `circuit/basic.png`      `0d5f644597f3f6d89b45a9c271edac5a18aa0054b2acb14cb3b38c352968f4a9` (upstream `30301.png`)
+  - `circuit/good.png`       `0cacca0562f14152435f5e0a5c6c21ad26a8b20827541772d2b521230e1cd590` (upstream `30302.png`)
+  - `circuit/advanced.png`   `6bbd7e90beb8a6dd80be5bcaa5322c0d50525e70e618d7fdac50f9f89103eafe` (upstream `30303.png`)
+  - `circuit/elite.png`      `612fb8b0599c44b2d713bfa6982ad01ccc784e73d24c00a7d368774af062732b` (upstream `30304.png`)
+  - `circuit/master.png`     `b06850446db17761966dccf1f3d44729b201a890be515ad39ef3c7f03d2a58f3` (upstream `30305.png`)
+  - `circuit/ultimate.png`   `9e6986071e38698b7226aa7e64d0c27e70e532a2fed0cfedbedd0a1ffdbec7c9` (upstream `30306.png`)
+
+Copied on 2026-09-30. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
