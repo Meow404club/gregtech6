@@ -1,5 +1,6 @@
 package gregtech6.datagen;
 
+import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 
@@ -34,13 +35,12 @@ import gregtech6.registry.GT6Molds;
  * <ul>
  * <li><b>blockstates</b>: per crucible block NINE variants over the
  *     {@link GT6Crucibles.CrucibleBlock#LIQUID_LEVEL} int property (0..8, the
- *     mDisplayedHeight :298 census bucketed) — level 0 the material smooth body cube (the
- *     {@link #bodyTexture} face), levels 1..8 the
- *     "filled" model over the molten-indicator texture. Declared deviation: the fill
- *     HEIGHT within the cube (the upstream 6-pass setBlockBounds2 render, :596-606) is
- *     the defer pool — element-based per-level models need the render card; the
- *     property + variants face this card promised is delivered.</li>
- * <li><b>item models</b>: the BlockItems parent their block models.</li>
+ *     mDisplayedHeight :298 census bucketed) — level 0 the open-top BOWL shell (the
+ *     upstream 6-pass setBlockBounds2 render verbatim, MultiTileEntitySmeltery.java:596-606:
+ *     four 2px walls full height + the 2px floor, the {@link #bodyTexture} faces), levels
+ *     1..8 the bowl shell + the content box whose top rides the upstream h/292.571428
+ *     height formula (:603, the top-face-only gate :616, the molten-indicator texture).</li>
+ * <li><b>item models</b>: the BlockItems parent the bowl-shell block model.</li>
  * <li><b>lang</b>: the four composed display keys (the GT6Crucibles/GT6Molds getName
  *     carriers).</li>
  * <li><b>crafting</b>: the Stone Smeltery (8 cobblestone — the upstream id-1000 opening
@@ -120,8 +120,36 @@ public final class GT6CrucibleDatagen {
 		return ResourceLocation.fromNamespaceAndPath(aQualified.substring(0, tColon), aQualified.substring(tColon + 1));
 	}
 
-	/** The molten-content indicator (the script-generated placeholder PNG, the p2 pipeline). */
-	private static final String CONTENT_TEXTURE = "block/smeltery_content";
+	/**
+	 * The molten-content face (the script-generated placeholder PNG, the p2 pipeline — the
+	 * one flat-orange sprite; the per-material liquid colour rides {@link #contentFace}'s
+	 * molten arm for the consumers that can tint). Fully-qualified like {@link #bodyTexture}.
+	 */
+	private static final String CONTENT_TEXTURE = "gt6:block/smeltery_content";
+
+	/**
+	 * The content render face — the seam one level up (task crucible-bowl-model, the
+	 * 2026-09-30 colour ruling): the sprite + the opaque ARGB tint a crucible content face
+	 * renders with. The SOLID arm is the upstream crucible solid face verbatim (the
+	 * {@link #bodyTexture} blockSolid icon + the {@link #bodyTinted} mRGBaSolid tint — the
+	 * exact faces the bowl shell renders); the MOLTEN arm is the molten face (the
+	 * smeltery_content sprite + the material mRGBaLiquid — the upstream
+	 * {@code getTextureMolten} liquid colour, OreDictMaterial.java:997-998). The
+	 * jade-tankbar and the large-crucible BER cards consume THIS dispatch instead of
+	 * re-deriving sprite/colour math; {@code -1} tint = the sprite renders as-is.
+	 */
+	public record ContentFace(String texture, int tintARGB) {}
+
+	/** The dispatch itself — loud on an unmapped material ({@link #bodyTexture} rule). */
+	public static ContentFace contentFace(gregapi.oredict.OreDictMaterial aMaterial, boolean aMolten) {
+		if (aMolten) return new ContentFace(CONTENT_TEXTURE, argb(aMaterial.mRGBaLiquid));
+		return new ContentFace(bodyTexture(aMaterial), bodyTinted(aMaterial) ? argb(aMaterial.mRGBaSolid) : -1);
+	}
+
+	/** The 0xFFRRGGBB pack (the {@code GT6MoldTintListener.materialTintARGB} form). */
+	private static int argb(short[] aRGBa) {
+		return 0xFF000000 | (aRGBa[0] << 16) | (aRGBa[1] << 8) | aRGBa[2];
+	}
 
 	/** The blockstate/item-model provider. */
 	public static final class Provider extends BlockStateProvider {
@@ -150,37 +178,79 @@ public final class GT6CrucibleDatagen {
 			// share the one concave MTE design 1072 — the flat-cube placeholder retired)
 		}
 
-		/** One crucible: 9 LIQUID_LEVEL variants + the BlockItem parent (the empty face = the material smooth body, tintindex 0 on the grayscale-borrow rows — task debt-material-tint). */
+		/**
+		 * One crucible: the upstream open-top BOWL (MultiTileEntitySmeltery.java:596-619) over
+		 * the 9 LIQUID_LEVEL variants + the BlockItem parent. Level 0 = the bowl shell (the
+		 * {@link #bodyTexture} faces, tintindex 0 on the grayscale-borrow rows — task
+		 * debt-material-tint); levels 1..8 = the shell + the content box, its TOP face the
+		 * molten-indicator sprite at the upstream height (:603
+		 * {@code 0.125F + h/292.571428F} block units, the bucket L carrying the census floor
+		 * {@code h = L*255/8}; the :616 top-face-only gate).
+		 */
 		private void addCrucible(GT6Crucibles.SmelteryRow aRow, Block aBlock) {
 			String tEmpty = "block/" + aRow.path() + "_empty";
-			String tFilled = "block/" + aRow.path() + "_filled";
 			gregapi.oredict.OreDictMaterial tMaterial = aRow.material().get();
-			ModelFile tEmptyModel = GT6CrucibleDatagen.bodyTinted(tMaterial)
-					? tintedCubeAll(tEmpty, loc(bodyTexture(tMaterial)))
-					: models().cubeAll(tEmpty, loc(bodyTexture(tMaterial)));
-			ModelFile tFilledModel = models().cubeAll(tFilled, modLoc(CONTENT_TEXTURE));
+			ModelFile tEmptyModel = bowlModel(tEmpty, bodyTexture(tMaterial), bodyTinted(tMaterial));
+			ModelFile[] tFilledModels = new ModelFile[9];
+			for (int tLevel = 1; tLevel <= 8; tLevel++) {
+				// the child parents the shell — its elements APPEND (the vanilla candle idiom),
+				// so the bowl shell lives in exactly one place per row
+				float tTop = 2.0F + (tLevel * 255.0F / 8.0F) / 292.571428F * 16.0F;
+				var tElement = models().getBuilder("block/" + aRow.path() + "_filled_" + tLevel)
+						.parent(tEmptyModel)
+						.texture("content", loc(CONTENT_TEXTURE))
+						.element()
+						.from(0.0F, 2.0F, 0.0F).to(16.0F, tTop, 16.0F);
+				tElement.face(Direction.UP).texture("#content").end(); // the :616 gate — top face only
+				tFilledModels[tLevel] = tElement.end();
+			}
 			getVariantBuilder(aBlock).forAllStates(aState -> {
 				int tLevel = aState.getValue(GT6Crucibles.CrucibleBlock.LIQUID_LEVEL);
-				return ConfiguredModel.builder().modelFile(tLevel == 0 ? tEmptyModel : tFilledModel).build();
+				return ConfiguredModel.builder().modelFile(tLevel == 0 ? tEmptyModel : tFilledModels[tLevel]).build();
 			});
 			itemModels().withExistingParent(aRow.path(), modLoc(tEmpty));
 		}
 
 		/**
-		 * The one-element tinted cube (the GT6OreBlockStates.tintedCubeAll:161-171 idiom,
-		 * local copy — FILES_SCOPE keeps GT6BlockStates/GT6OreBlockStates untouched): every
-		 * face tintindex 0 so {@code GT6MoldTintListener} multiplies the material mRGBaSolid
-		 * over the grayscale borrow.
+		 * The open-top bowl shell (the upstream setBlockBounds2 passes 0-4 verbatim,
+		 * MultiTileEntitySmeltery.java:596-606 — four 2px walls full height + the 2px floor,
+		 * px units). Faces follow the getTexture2 null-gate (:610-619) so no two faces of the
+		 * shell are coplanar: the X-walls (passes 0/2) render west/east/up, the Z-walls
+		 * (passes 1/3) north/south/up, the floor (pass 4) up+down — the corners ride the
+		 * full-length wall spans, exactly upstream. The outer faces carry cullface (the
+		 * cubeAll convention), the interior/rim faces none.
 		 */
-		private ModelFile tintedCubeAll(String aName, ResourceLocation aTexture) {
+		private ModelFile bowlModel(String aName, String aBodyTexture, boolean aTinted) {
 			BlockModelBuilder tModel = models().getBuilder(aName)
 					.parent(models().getExistingFile(mcLoc("block/block")))
-					.texture("all", aTexture)
+					.texture("all", loc(aBodyTexture))
 					.texture("particle", "#all");
-			tModel.element()
-					.from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
-					.allFaces((aDir, aFace) -> aFace.texture("#all").tintindex(0).cullface(aDir))
-					.end();
+			// pass 0 — the west wall (x 0..2); pass 2 — the east wall (x 14..16)
+			for (float tX : new float[] {0.0F, 14.0F}) {
+				var tElement = tModel.element().from(tX, 0.0F, 0.0F).to(tX + 2.0F, 16.0F, 16.0F);
+				tElement.face(tX == 0.0F ? Direction.WEST : Direction.EAST)
+						.texture("#all").cullface(tX == 0.0F ? Direction.WEST : Direction.EAST).end();
+				tElement.face(tX == 0.0F ? Direction.EAST : Direction.WEST).texture("#all").end();
+				tElement.face(Direction.UP).texture("#all").end();
+				if (aTinted) tElement.faces((aDir, aFace) -> aFace.tintindex(0));
+				tElement.end();
+			}
+			// pass 1 — the north wall (z 0..2); pass 3 — the south wall (z 14..16)
+			for (float tZ : new float[] {0.0F, 14.0F}) {
+				var tElement = tModel.element().from(0.0F, 0.0F, tZ).to(16.0F, 16.0F, tZ + 2.0F);
+				tElement.face(tZ == 0.0F ? Direction.NORTH : Direction.SOUTH)
+						.texture("#all").cullface(tZ == 0.0F ? Direction.NORTH : Direction.SOUTH).end();
+				tElement.face(tZ == 0.0F ? Direction.SOUTH : Direction.NORTH).texture("#all").end();
+				tElement.face(Direction.UP).texture("#all").end();
+				if (aTinted) tElement.faces((aDir, aFace) -> aFace.tintindex(0));
+				tElement.end();
+			}
+			// pass 4 — the 2px floor (y 0..2): up + down, the :615 SIDES_VERTICAL gate
+			var tFloor = tModel.element().from(0.0F, 0.0F, 0.0F).to(16.0F, 2.0F, 16.0F);
+			tFloor.face(Direction.UP).texture("#all").end();
+			tFloor.face(Direction.DOWN).texture("#all").cullface(Direction.DOWN).end();
+			if (aTinted) tFloor.faces((aDir, aFace) -> aFace.tintindex(0));
+			tFloor.end();
 			return tModel;
 		}
 	}

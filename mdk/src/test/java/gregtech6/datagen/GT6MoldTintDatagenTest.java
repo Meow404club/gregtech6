@@ -122,21 +122,33 @@ public class GT6MoldTintDatagenTest extends GTOfflineTestBase {
 		assertNoTintAnywhere("assets/gt6/models/block/mold_stone.json", tModel, "mold_stone");
 	}
 
-	/** The three grayscale smeltery empties tint; the stone empty (cube_all) and every filled cube do not. */
+	/** The grayscale smeltery empties tint (the bowl shell, every face); the stone bowl and every filled content box do not. */
 	@Test
 	void theGrayscaleSmelteryEmptiesCarryTheTintAndStoneDoesNot() throws Exception {
 		for (GT6Crucibles.SmelteryRow tRow : GT6Crucibles.ROWS) {
 			JsonObject tModel = generatedJson("assets/gt6/models/block/" + tRow.path() + "_empty.json");
 			if (tRow.path().endsWith("_stone")) {
 				assertNoTintAnywhere(tRow.path() + "_empty", tModel, tRow.path());
-				assertEquals("minecraft:block/cube_all", tModel.get("parent").getAsString(),
-						tRow.path() + ": the stone empty keeps the plain cube_all form");
 			} else {
-				assertEquals(1, tModel.getAsJsonArray("elements").size(), tRow.path() + ": the tinted cube body");
-				assertEveryFaceTinted(tModel.getAsJsonArray("elements").get(0).getAsJsonObject(), tRow.path() + "_empty");
+				assertEquals(5, tModel.getAsJsonArray("elements").size(), tRow.path() + ": the bowl shell (4 walls + floor)");
+				// the bowl walls carry 2-3 faces each (the :610-619 null-gate) — every PRESENT
+				// face tints, no face-count floor (that floor is the mold-stamp walk's shape)
+				for (JsonElement tElement : tModel.getAsJsonArray("elements")) {
+					JsonObject tFaces = tElement.getAsJsonObject().getAsJsonObject("faces");
+					assertTrue(tFaces.size() >= 2, tRow.path() + "_empty: the element renders faces");
+					for (String tFace : FACES) {
+						if (!tFaces.has(tFace)) continue;
+						assertEquals(0, tFaces.getAsJsonObject(tFace).get("tintindex").getAsInt(),
+								tRow.path() + "_empty: the " + tFace + " face carries tintindex 0");
+					}
+				}
 			}
-			assertNoTintAnywhere(tRow.path() + "_filled",
-					generatedJson("assets/gt6/models/block/" + tRow.path() + "_filled.json"), tRow.path());
+			// the per-level content boxes (task crucible-bowl-model) stay un-tinted — the
+			// content material is per-BE data the static model cannot know
+			for (int tLevel = 1; tLevel <= 8; tLevel++) {
+				assertNoTintAnywhere(tRow.path() + "_filled_" + tLevel,
+						generatedJson("assets/gt6/models/block/" + tRow.path() + "_filled_" + tLevel + ".json"), tRow.path());
+			}
 		}
 	}
 
