@@ -5,12 +5,12 @@
  * <p>Policy pins asserted here (ADR-P20 §2):</p>
  * <ul>
  *   <li>the (iconset, prefix) COMBOS table in {@code mdk/tools/gen_textures.py} pins at
- *       2785 pairs over 40 sets (census 2026-08-30/09-06, research card
+ *       2849 pairs over 40 sets (census 2026-08-30/09-06 + the casing-machine quartet wave, research card
  *       tasks.p20-research-texture-census);</li>
  *   <li>every combo's PNG exists <em>exactly once</em> across the static tree
  *       (mdk/src/main/resources) ∪ the generated tree (mdk/src/generated/resources) —
  *       deliberately a union face, so W2 borrow waves migrating a PNG between trees
- *       keep it green (a "generated must hold 2785" pin would NOT survive that);</li>
+ *       keep it green (a "generated must hold 2849" pin would NOT survive that);</li>
  *   <li>no texture relative path lives in BOTH trees — the regression nail for
  *       ADR-P20 §1.2 (processResources DuplicatesStrategy.INCLUDE = the later-copied
  *       generated tree silently shadows a static-tree real texture, build.forge.gradle.kts:158
@@ -68,7 +68,7 @@ class GT6TextureCensusTest {
     private static final String TEXTURES_PREFIX = "assets/gt6/textures";
 
     /** The pinned (iconset, prefix) pair total — the task card's pin, from the script's COMBOS table. */
-    private static final int PINNED_COMBO_TOTAL = 2785;
+    private static final int PINNED_COMBO_TOTAL = 2849; // +64 (task casing-machine-register: the 16 reachable sets x 4 machine-casing prefixes)
 
     /**
      * The machine-wave borrowed families (task hygiene-lang-assets + task
@@ -166,11 +166,11 @@ class GT6TextureCensusTest {
     }
 
     /**
-     * Pin a: the COMBOS table holds exactly 2785 (iconset, prefix) pairs over 40 sets.
+     * Pin a: the COMBOS table holds exactly 2849 (iconset, prefix) pairs over 40 sets.
      * Parsed from gen_textures.py itself so the script stays the single source of truth.
      */
     @Test
-    void combosTablePinsThe2785PairCensus() throws IOException {
+    void combosTablePinsThePairCensus() throws IOException {
         Set<String[]> combos = combosFromScript();
         Set<String> iconsets = new HashSet<>();
         for (String[] combo : combos) {

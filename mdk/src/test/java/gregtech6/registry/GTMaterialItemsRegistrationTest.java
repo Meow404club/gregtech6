@@ -1,7 +1,9 @@
 /**
  * Tests for task fullprefix-creativetab: the full-prefix registration expansion.
  *
- * <p>Pins the upstream item-path universe (Loader_Items.java:57-171, 105 prefixes) as a name
+ * <p>Pins the upstream item-path universe (Loader_Items.java:57-171, 105 prefixes, plus the four
+ * casingMachine* block-family prefixes of task casing-machine-register — the declared item-path
+ * deviation, upstream holds them as PrefixBlock_ blocks, Loader_PrefixBlocks.java:48-51) as a name
  * spec independent of the production list, recomputes the registration set with an independent
  * walk (acceptance: independent recount), pins the phase-2 per-prefix counts as regression
  * anchors, and exercises the first-wins id collision rule on the compressed/Compressed pair.
@@ -36,8 +38,11 @@ public class GTMaterialItemsRegistrationTest {
 
     /**
      * The upstream item-path spec, transcribed from Loader_Items.java:57-171 (every OP prefix
-     * upstream constructs a PrefixItem for, in file order). Independent of the production list:
-     * if the two ever drift, this test fails and forces a conscious decision.
+     * upstream constructs a PrefixItem for, in file order) plus the four casingMachine* additions
+     * of task casing-machine-register (upstream itself holds them on the BLOCK path,
+     * Loader_PrefixBlocks.java:48-51 — the declared deviation; conditions verbatim at OP.java
+     * :1274-1277). Independent of the production list: if the two ever drift, this test fails and
+     * forces a conscious decision.
      */
     private static final List<String> UPSTREAM_ITEM_PATH = List.of(
         "dust", "dustSmall", "dustTiny", "dustDiv72", "dustImpure",
@@ -47,7 +52,9 @@ public class GTMaterialItemsRegistrationTest {
         "plateGemTiny", "plateGem", "plateTiny", "plate", "plateDouble", "plateTriple", "plateQuadruple", "plateQuintuple", "plateDense", "plateCurved",
         "scrapGt", "rockGt", "oreRaw",
         "gearGtSmall", "gearGt", "rotor", "stick", "stickLong", "springSmall", "spring",
-        "lens", "round", "bolt", "screw", "ring", "chain", "foil", "casingSmall", "wireFine", "minecartWheels", "railGt",
+        "lens", "round", "bolt", "screw", "ring", "chain", "foil", "casingSmall",
+        "casingMachine", "casingMachineDouble", "casingMachineQuadruple", "casingMachineDense",
+        "wireFine", "minecartWheels", "railGt",
         "plantGtBerry", "plantGtBlossom", "plantGtFiber", "plantGtTwig", "plantGtWart", "chemtube",
         "toolHeadRawSword", "toolHeadSword", "toolHeadRawPickaxe", "toolHeadPickaxe", "toolHeadPickaxeGem",
         "toolHeadConstructionPickaxe", "toolHeadBuilderwand", "toolHeadRawShovel", "toolHeadShovel",
@@ -69,8 +76,8 @@ public class GTMaterialItemsRegistrationTest {
         List<OreDictPrefix> tProduction = GTMaterialItems.itemPathPrefixes();
         Set<String> tProductionNames = new TreeSet<>();
         for (OreDictPrefix tPrefix : tProduction) tProductionNames.add(tPrefix.mNameInternal);
-        assertEquals(new TreeSet<>(UPSTREAM_ITEM_PATH), tProductionNames, "production item path must equal the upstream Loader_Items.java:57-171 spec");
-        assertEquals(105, tProduction.size(), "upstream constructs exactly 105 PrefixItems");
+        assertEquals(new TreeSet<>(UPSTREAM_ITEM_PATH), tProductionNames, "production item path must equal the upstream Loader_Items.java:57-171 spec + the casingMachine quartet");
+        assertEquals(109, tProduction.size(), "105 upstream PrefixItems + the four casingMachine* item-path additions");
     }
 
     @Test
