@@ -1,7 +1,9 @@
 package gregtech6.client.render;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -43,8 +45,16 @@ import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 public class GTBoilerBarometerModelTest extends GTOfflineRenderTestBase {
 
 	@BeforeAll
-	static void openTheFixtureWindow() {
-		// the two BET-building tests below need the BLOCK_ENTITY_TYPE registry writable —
+	static void openTheFixtureWindow() throws Exception {
+		gregtech6.registry.GTMaterialItems.initMaterials(); // the boiler row material() Suppliers resolve at tint time
+		// the BLOCK registry write window (the GTOvenOverlayModelTest recipe): the offline
+		// BoilerTankBlock fixture ctor registers its intrusive holder and the frozen
+		// registry rejects it — unfreeze before the fixtures
+		java.lang.reflect.Method tUnfreeze = net.minecraft.core.registries.BuiltInRegistries.BLOCK
+				.getClass().getMethod("unfreeze");
+		tUnfreeze.setAccessible(true);
+		tUnfreeze.invoke(net.minecraft.core.registries.BuiltInRegistries.BLOCK);
+		// the two BET-building tests need the BLOCK_ENTITY_TYPE registry writable —
 		// on the neo FML JVM it boots frozen (the tileentity base's established helper,
 		// the GT6BoilerProviderTest fixture posture); a no-op on the forge bare JVM
 		gregtech6.tileentity.GTOfflineTestBase.unfreezeBlockEntityTypeRegistry();
@@ -188,6 +198,96 @@ public class GTBoilerBarometerModelTest extends GTOfflineRenderTestBase {
 			assertEquals(0, (tColor >> 16) & 0xFF, "vertex " + v + " B");
 			assertEquals(255, (tColor >>> 24), "vertex " + v + " A");
 		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// the body tint (the review fix) — the fallback retints, the gauge plates don't
+	// ---------------------------------------------------------------------------
+
+	/** A baked-format body quad (32 ints, white vertex colours, tintIndex 0). */
+	private static BakedQuad bodyQuad() {
+		int[] tVertices = new int[4 * 8];
+		java.util.Arrays.fill(tVertices, 0xFFFFFFFF);
+		return new BakedQuad(tVertices, 0, Direction.NORTH, FaceBakePins.IdentitySprite.INSTANCE, true);
+	}
+
+	/** A baked-format fallback decal quad (untinted, the P22 overlay form). */
+	private static BakedQuad decalQuad() {
+		int[] tVertices = new int[4 * 8];
+		java.util.Arrays.fill(tVertices, 0xFF333333);
+		return new BakedQuad(tVertices, -1, Direction.NORTH, FaceBakePins.IdentitySprite.INSTANCE, true);
+	}
+
+	/** The barest fallback: returns exactly the quads the tint arms hand it. */
+	private static net.minecraft.client.resources.model.BakedModel quadsFallback(List<BakedQuad> aQuads) {
+		return new net.minecraft.client.resources.model.BakedModel() {
+			@Override public List<BakedQuad> getQuads(net.minecraft.world.level.block.state.BlockState aState,
+					Direction aSide, RandomSource aRand) { return aQuads; }
+			@Override public boolean useAmbientOcclusion() { return false; }
+			@Override public boolean isGui3d() { return false; }
+			@Override public boolean usesBlockLight() { return false; }
+			@Override public boolean isCustomRenderer() { return false; }
+			@Override public net.minecraft.client.renderer.texture.TextureAtlasSprite getParticleIcon() { return null; }
+			@Override public net.minecraft.client.renderer.block.model.ItemTransforms getTransforms() { return net.minecraft.client.renderer.block.model.ItemTransforms.NO_TRANSFORMS; }
+			@Override public net.minecraft.client.renderer.block.model.ItemOverrides getOverrides() { return net.minecraft.client.renderer.block.model.ItemOverrides.EMPTY; }
+		};
+	}
+
+	/** The offline boiler tank fixture — the Lead row (no registry, the oven fixture form). */
+	private static gregtech6.registry.GT6Boilers.BoilerTankBlock leadTankBlock() {
+		return new gregtech6.registry.GT6Boilers.BoilerTankBlock(
+				gregtech6.registry.GT6Boilers.BOILER_ROWS.get(0),
+				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+	}
+
+	/**
+	 * THE white-body regression pin: the GTMachineTintModel wrap skips the boiler ladder
+	 * (the dynamic model occupies the per-state seat first), so the body tint MUST ride
+	 * the model itself — the cutout pass AND the raw non-cutout branch both retint the
+	 * tintindex-0 body with the {@link GTMachinePaintTint} row colour, the decal passes
+	 * through as the shared instance, and the gauge plates ride tintIndex -1.
+	 */
+	@Test
+	void bodyPassRetintsWithTheRowMaterial() {
+		gregtech6.registry.GT6Boilers.BoilerTankBlock tBlock = leadTankBlock();
+		BakedQuad tBody = bodyQuad(), tDecal = decalQuad();
+		GTBoilerBarometerModel tModel = new GTBoilerBarometerModel(quadsFallback(List.of(tBody, tDecal)),
+				aSpriteId -> FaceBakePins.IdentitySprite.INSTANCE);
+		ModelData tData = ModelData.builder().with(GTModelProperties.BAROMETER, 0).build();
+		List<BakedQuad> tOut = tModel.getQuads(tBlock.defaultBlockState(), Direction.NORTH, RandomSource.create(),
+				tData, RenderType.cutout());
+		assertEquals(4, tOut.size(), "body + decal + dial + needle");
+		int tTint = GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tBlock), 0);
+		assertNotEquals(0xFFFFFFFF, tTint, "the Lead row material actually colours (not the white identity)");
+		assertArrayEquals(GTMachineTintModel.retintVertices(tBody.getVertices(), tTint),
+				tOut.get(0).getVertices(), "the body quad is the tintQuads product of the seam colour");
+		assertEquals(-1, tOut.get(0).getTintIndex(), "the retinted copy rides tintIndex -1 (no second multiply)");
+		assertSame(tDecal, tOut.get(1), "the fallback decal passes through as the shared instance (P22)");
+		assertEquals(-1, tOut.get(2).getTintIndex(), "the dial stays untinted");
+		assertEquals(-1, tOut.get(3).getTintIndex(), "the needle red is baked, not a tint index");
+		// the raw non-cutout branch carries the same tint (wrap-semantics parity)
+		List<BakedQuad> tSolid = tModel.getQuads(tBlock.defaultBlockState(), Direction.NORTH, RandomSource.create(),
+				tData, RenderType.solid());
+		assertEquals(2, tSolid.size());
+		assertArrayEquals(GTMachineTintModel.retintVertices(tBody.getVertices(), tTint),
+				tSolid.get(0).getVertices(), "the solid-branch fallback retints identically");
+	}
+
+	/** PAINT wins over the row material (the spray-paint snapshot co-hosted on the BE ModelData). */
+	@Test
+	void paintedSnapshotWinsOverTheRowMaterial() {
+		gregtech6.registry.GT6Boilers.BoilerTankBlock tBlock = leadTankBlock();
+		GTBoilerBarometerModel tModel = new GTBoilerBarometerModel(quadsFallback(List.of(bodyQuad())),
+				aSpriteId -> FaceBakePins.IdentitySprite.INSTANCE);
+		ModelData tPainted = ModelData.builder()
+				.with(GTModelProperties.BAROMETER, 7)
+				.with(GTModelProperties.PAINT, 0x00FF00)
+				.build();
+		List<BakedQuad> tOut = tModel.getQuads(tBlock.defaultBlockState(), Direction.NORTH, RandomSource.create(),
+				tPainted, RenderType.cutout());
+		assertEquals(3, tOut.size(), "body + dial + needle");
+		assertArrayEquals(GTMachineTintModel.retintVertices(bodyQuad().getVertices(), 0xFF00FF00),
+				tOut.get(0).getVertices(), "the spray-paint colour wins (upstream Paintable:85)");
 	}
 
 	// ---------------------------------------------------------------------------

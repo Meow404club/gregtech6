@@ -2,6 +2,8 @@ package gregtech6.client.render;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import javax.annotation.Nullable;
@@ -96,6 +98,24 @@ public class GTBoilerBarometerModel extends GTDynamicBakedModel {
 	/** Sprite resolver — runtime: the block atlas (Minecraft.java:2386); tests: a stub. */
 	private final Function<ResourceLocation, TextureAtlasSprite> mSpriteLookup;
 
+	/**
+	 * The per-instance retinted-copy table for the body pass (the {@link
+	 * GTMachineTintModel} shape: tint → (source quad → retinted copy)). The boiler ladder
+	 * is SKIPPED by the {@link GTMachineTintModel} wrap (its 31 rows' states already carry
+	 * this dynamic model — the listener registration lands first in the production hook
+	 * order, the {@code instanceof GTDynamicBakedModel} guard skips them), so the body
+	 * tint rides HERE — the fallback quads are retinted with the same
+	 * {@link GTMachinePaintTint#tintARGB} colour every other machine gets (upstream
+	 * unpainted = the row NBT_MATERIAL colour, TileEntityBase07Paintable.java:83-84; the
+	 * tank rows resolve through the {@code GTBasicMachineBlock.materialOf} C5 arm, the
+	 * large rows through the {@code GTMultiBlockControllerBlock} material-carrier gate;
+	 * painted = the PAINT snapshot, which the BEs' {@code getModelData} co-hosts on the
+	 * same ModelData as BAROMETER). Without it the tintindex-0 body cube renders the raw
+	 * grayscale plate untinted — the white-body regression this table closes (task
+	 * boiler-barometer review fix, the GTOvenOverlayModel 89061abaf template).
+	 */
+	private final Map<Integer, Map<BakedQuad, BakedQuad>> mTintedQuads = new ConcurrentHashMap<>();
+
 	private static final FaceBakery BAKERY = new FaceBakery();
 
 	public GTBoilerBarometerModel(BakedModel aFallbackModel) {
@@ -121,11 +141,16 @@ public class GTBoilerBarometerModel extends GTDynamicBakedModel {
 	protected List<BakedQuad> getDynamicQuads(@Nullable BlockState aState, @Nullable Direction aSide,
 			RandomSource aRand, ModelData aModelData, @Nullable RenderType aRenderType) {
 		// the fallback boilerModel is declared cutout — the gauge quads ride the same
-		// cutout pass, no ChunkRenderTypeSet extension (class doc)
+		// cutout pass, no ChunkRenderTypeSet extension (class doc). BOTH fallback routes
+		// carry the body tint (the GTMachineTintModel wrap that usually bakes it skips the
+		// boiler ladder — the mTintedQuads table doc): the cutout/null branch the blocks
+		// actually draw on, and the other chunk layers for wrap-semantics parity.
 		boolean tCutout = aRenderType == null || aRenderType.equals(RenderType.cutout());
-		if (!tCutout) return getFallbackModel().getQuads(aState, aSide, aRand);
+		if (!tCutout) return GTMachineTintModel.tintQuads(getFallbackModel().getQuads(aState, aSide, aRand),
+				bodyTint(aState, aModelData), mTintedQuads);
 
-		List<BakedQuad> rQuads = new ArrayList<>(getFallbackModel().getQuads(aState, aSide, aRand));
+		List<BakedQuad> rQuads = new ArrayList<>(GTMachineTintModel.tintQuads(
+				getFallbackModel().getQuads(aState, aSide, aRand), bodyTint(aState, aModelData), mTintedQuads));
 		Integer tGauge = aModelData.get(GTModelProperties.BAROMETER);
 		if (tGauge == null || aState == null) return rQuads; // defensive — supportsDynamicQuads gates this
 		for (GaugePlan tPlan : planGaugeQuads(frontOf(aState), aSide, tGauge)) {
@@ -134,6 +159,19 @@ public class GTBoilerBarometerModel extends GTDynamicBakedModel {
 			rQuads.add(bakeGaugeQuad(tPlan, tSprite));
 		}
 		return rQuads;
+	}
+
+	/**
+	 * The body-pass tint (the {@link GTMachineTintModel#getDynamicQuads} colour line over
+	 * the same dispatch): index 0 resolves PAINT-wins-else-row-material through the
+	 * combined {@link GTMachinePaintTint#tintMaterialOf} gate (the tank rows ride the
+	 * {@code GTBasicMachineBlock.materialOf} C5 arm, the large rows the
+	 * {@code GTMultiBlockControllerBlock} material-carrier gate). Reads ONLY the state +
+	 * ModelData — the render-route red line.
+	 */
+	private static int bodyTint(@Nullable BlockState aState, ModelData aModelData) {
+		return GTMachinePaintTint.tintARGB(aModelData,
+				aState == null ? null : GTMachinePaintTint.tintMaterialOf(aState.getBlock()), 0);
 	}
 
 	// ---------------------------------------------------------------------------
