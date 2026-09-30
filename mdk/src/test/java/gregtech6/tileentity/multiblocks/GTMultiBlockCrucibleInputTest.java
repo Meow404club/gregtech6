@@ -89,7 +89,11 @@ public class GTMultiBlockCrucibleInputTest extends GTMultiBlocksOfflineTestBase 
 	private record Formed(MultiBlockLevel level, TestCrucible crucible, CrucibleWallBlockEntity feedWall) {}
 
 	private static Formed formedCrucible() {
-		MultiBlockLevel tLevel = new MultiBlockLevel();
+		return formedCrucible(new MultiBlockLevel());
+	}
+
+	private static Formed formedCrucible(MultiBlockLevel aLevel) {
+		MultiBlockLevel tLevel = aLevel;
 		TestCrucible tCrucible = placeController(tLevel, sCrucibleType, new BlockPos(100, 64, 100), (byte)0);
 		java.util.Map<BlockPos, CrucibleWallBlockEntity> tWalls = new java.util.HashMap<>();
 		for (int tDZ = -1; tDZ <= 1; tDZ++) for (int tDX = -1; tDX <= 1; tDX++) {
@@ -176,6 +180,45 @@ public class GTMultiBlockCrucibleInputTest extends GTMultiBlocksOfflineTestBase 
 		tF.crucible().onTick(1, true);
 		assertTrue(tF.crucible().inv().getStackInSlot(0).isEmpty(), "the unknown item was trashed (:210-212)");
 		assertEquals(0, tF.crucible().totalContent(), "nothing entered the content");
+	}
+
+	// ------------------------------------------------------------------
+	// b') the vanilla ingot bridge + the trash fizz (task crucible-behavior-fixes)
+	// ------------------------------------------------------------------
+
+	/** the vanilla iron ingot melts into iron content instead of vanishing silently (the user-reported swallow). */
+	@Test
+	public void vanillaIngotMeltsIntoItsMaterial() {
+		Formed tF = formedCrucible();
+		tF.crucible().mTemperature = MT.Fe.mMeltingPoint;
+		tF.crucible().mEnergy = 0;
+		tF.crucible().inv().setStackInSlot(0, new ItemStack(net.minecraft.world.item.Items.IRON_INGOT, 2));
+		tF.crucible().onTick(1, true);
+		assertTrue(tF.crucible().inv().getStackInSlot(0).isEmpty(), "the vanilla ingot melts instead of vanishing");
+		assertEquals(1, tF.crucible().mContent.size());
+		assertSame(MT.Fe, tF.crucible().mContent.get(0).mMaterial, "the melt-out material = iron");
+		assertEquals(2 * CS.U, tF.crucible().totalContent(), "the prefix amount per item, whole stack");
+	}
+
+	/** :210-212 — the unknown item trashes AND hisses (the big crucible was the silent swallower). */
+	@Test
+	public void feedLadderTrashesUnknownItemsWithFizz() {
+		RecordingLevel tLevel = new RecordingLevel();
+		Formed tF = formedCrucible(tLevel);
+		tF.crucible().inv().setStackInSlot(0, new ItemStack(net.minecraft.world.item.Items.STICK, 1));
+		tF.crucible().onTick(1, true);
+		assertTrue(tF.crucible().inv().getStackInSlot(0).isEmpty(), "the unknown item was trashed (:210-212)");
+		assertEquals(0, tF.crucible().totalContent(), "nothing entered the content");
+		assertTrue(tLevel.mEvents.contains(1501), "the trash hisses (SFX.MC_FIZZ :212, the vanilla 1501 level event)");
+	}
+
+	/** The event-recording level double: the fizz face observable offline (MinimalLevel stubs the same method as a no-op). */
+	static final class RecordingLevel extends MultiBlockLevel {
+		final java.util.List<Integer> mEvents = new java.util.ArrayList<>();
+		@Override
+		public void levelEvent(@org.jetbrains.annotations.Nullable net.minecraft.world.entity.player.Player aPlayer, int aLevelEvent, BlockPos aPos, int aData) {
+			mEvents.add(aLevelEvent);
+		}
 	}
 
 	// ------------------------------------------------------------------

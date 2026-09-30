@@ -21,6 +21,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -129,6 +131,54 @@ public class TileEntitySmelteryOfflineTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// the vanilla ingot/nugget bridge (task crucible-behavior-fixes)
+	// -------------------------------------------------------------------------
+
+	/** the vanilla iron ingot melts into exactly its units of iron — the feed half AND the melt half. */
+	@Test
+	public void vanillaIronIngotMeltsIntoIron() {
+		TileEntitySmeltery tCrucible = makeSmeltery();
+		List<OreDictMaterialStack> tFeed = tCrucible.feedStacks(new ItemStack(Items.IRON_INGOT, 2));
+		assertNotNull(tFeed, "the vanilla ingot bridge must resolve (the silent-swallow fix)");
+		assertEquals(1, tFeed.size());
+		assertSame(MT.Fe, tFeed.get(0).mMaterial, "the melt-out material = iron");
+		assertEquals(2 * OP.ingot.mAmount, tFeed.get(0).mAmount, "the prefix amount per item, whole stack");
+		// the melt half: the hot charge lands as molten iron content
+		assertTrue(tCrucible.addStacks(tFeed, 2000));
+		assertEquals(1, tCrucible.mContent.size());
+		assertSame(MT.Fe, tCrucible.mContent.get(0).mMaterial);
+		assertEquals(2 * OP.ingot.mAmount, tCrucible.mContent.get(0).mAmount);
+	}
+
+	/** the gold and copper ingot pins (the rest of the upstream ingotIron/ingotGold/ingotCopper family). */
+	@Test
+	public void vanillaGoldAndCopperIngotsResolve() {
+		TileEntitySmeltery tCrucible = makeSmeltery();
+		List<OreDictMaterialStack> tGold = tCrucible.feedStacks(new ItemStack(Items.GOLD_INGOT));
+		assertEquals(1, tGold.size());
+		assertSame(MT.Au, tGold.get(0).mMaterial);
+		assertEquals(OP.ingot.mAmount, tGold.get(0).mAmount);
+		List<OreDictMaterialStack> tCopper = tCrucible.feedStacks(new ItemStack(Items.COPPER_INGOT));
+		assertEquals(1, tCopper.size());
+		assertSame(MT.Cu, tCopper.get(0).mMaterial);
+		assertEquals(OP.ingot.mAmount, tCopper.get(0).mAmount);
+	}
+
+	/** the nugget pins: one ninth of a unit per nugget. */
+	@Test
+	public void vanillaNuggetsResolveAtNuggetAmount() {
+		TileEntitySmeltery tCrucible = makeSmeltery();
+		List<OreDictMaterialStack> tIron = tCrucible.feedStacks(new ItemStack(Items.IRON_NUGGET, 9));
+		assertEquals(1, tIron.size());
+		assertSame(MT.Fe, tIron.get(0).mMaterial);
+		assertEquals(9 * OP.nugget.mAmount, tIron.get(0).mAmount, "nine nuggets = one unit");
+		List<OreDictMaterialStack> tGold = tCrucible.feedStacks(new ItemStack(Items.GOLD_NUGGET));
+		assertEquals(1, tGold.size());
+		assertSame(MT.Au, tGold.get(0).mMaterial);
+		assertEquals(OP.nugget.mAmount, tGold.get(0).mAmount);
+	}
+
+	// -------------------------------------------------------------------------
 	// the energy face (:688-698, the HU leg)
 	// -------------------------------------------------------------------------
 
@@ -193,6 +243,39 @@ public class TileEntitySmelteryOfflineTest {
 		tCrucible.mCooldown = 100; // a full window: the buffer-less tick must not lower the temp first
 		tCrucible.onTick(1, true);
 		assertTrue(tCrucible.mContent.isEmpty(), "the melt-down trashes the pile (:315)");
+	}
+
+	/** :320 — the meltdown lava is FLOWING (level 1), never a permanent spreading source (task crucible-behavior-fixes). */
+	@Test
+	public void meltdownLavaIsFlowingNotASource() {
+		TileEntitySmeltery tCrucible = new MeltdownSmeltery(); // the leveled BE: envTemp is the stub seam (the biome climate walk)
+		gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase.MultiBlockLevel tLevel =
+				new gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase.MultiBlockLevel();
+		tCrucible.setLevel(tLevel);
+		tLevel.mStates.put(POS, Blocks.BRICKS.defaultBlockState());
+		// the slot must hold something: the suck seam NPEs offline (MinimalLevel.getEntities → null)
+		tCrucible.getInventory().setStackInSlot(0, new ItemStack(Items.STICK));
+		tCrucible.mContent.add(new OreDictMaterialStack(MT.Fe, CS.U));
+		tCrucible.mTemperature = tCrucible.temperatureMax() + 1;
+		tCrucible.mEnergy = 0;
+		tCrucible.mCooldown = 100;
+		tCrucible.onTick(1, true);
+		BlockState tState = tLevel.getBlockState(POS);
+		assertSame(Blocks.LAVA, tState.getBlock(), "the melt-down block is lava");
+		assertEquals(1, tState.getValue(BlockStateProperties.LEVEL).intValue(),
+				"flowing lava meta 1 — no permanent source (:320)");
+		assertTrue(tCrucible.mContent.isEmpty(), "the melt-down still trashes the pile (:315)");
+	}
+
+	/** The leveled meltdown BE: envTemp() is stubbed — the biome climate walk needs a live chunk source offline. */
+	static final class MeltdownSmeltery extends TileEntitySmeltery {
+		MeltdownSmeltery() {
+			super(sSmelteryType, POS, Blocks.BRICKS.defaultBlockState());
+		}
+		@Override
+		public long envTemp() {
+			return DEF_ENV_TEMP;
+		}
 	}
 
 	// -------------------------------------------------------------------------
