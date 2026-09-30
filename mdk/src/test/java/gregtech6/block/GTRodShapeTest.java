@@ -7,6 +7,10 @@
  * default, MultiTileEntityBlock.java:192), the attachments the taper/spout stack
  * envelopes (MultiTileEntityFluidTap.java:226-233 / MultiTileEntityFluidFunnel
  * :156-163). Offline block construction = the GTWireContactDamageTest unfreeze form.
+ * Review rework: the sensor plate hugs the edge OPPOSITE the display face (the
+ * wall-mount semantics, MultiTileEntitySensor.java:148-150 + :257) and the collision
+ * rides the same plate (:249 — the "MTE default full cell" pin was a misread of the
+ * MultiTileEntityBlock.java:192 IMTE_GetCollisionBoundingBoxFromPool router).
  */
 package gregtech6.block;
 
@@ -111,7 +115,7 @@ public class GTRodShapeTest extends gregtech6.tileentity.GTOfflineTestBase {
     }
 
     // ------------------------------------------------------------------
-    // the sensor: the 2px wall plate (collision stays full)
+    // the sensor: the 2px wall plate on the side OPPOSITE the display
     // ------------------------------------------------------------------
 
     private static GTSensorBlock sSensor;
@@ -126,20 +130,27 @@ public class GTRodShapeTest extends gregtech6.tileentity.GTOfflineTestBase {
 
     @Test
     public void sensorSelectionIsTheTwoPixelPlate() {
-        // MultiTileEntitySensor :250 — the display edge plate (FACING = the display face)
+        // MultiTileEntitySensor :148-150 — the plate hugs the WALL behind the display:
+        // mFacing=SIDE_Z_NEG (north) puts the body at PX_P[14]..PX_N[0] = z 14..16,
+        // SIDE_X_POS (east) at PX_P[0]..PX_N[14] = x 0..2, SIDE_Y_POS (up) at y 0..2
+        // (:257 isSurfaceOpaque2 = OPOS[mFacing] — the wall side is the solid one)
         assertBox(sensor().defaultBlockState().setValue(GTSensorBlock.FACING, Direction.NORTH)
-                .getShape((net.minecraft.world.level.BlockGetter) null, (net.minecraft.core.BlockPos) null, CollisionContext.empty()), 0, 0, 0, 1, 1, 0.125);
+                .getShape((net.minecraft.world.level.BlockGetter) null, (net.minecraft.core.BlockPos) null, CollisionContext.empty()), 0, 0, 0.875, 1, 1, 1);
         assertBox(sensor().defaultBlockState().setValue(GTSensorBlock.FACING, Direction.EAST)
-                .getShape((net.minecraft.world.level.BlockGetter) null, (net.minecraft.core.BlockPos) null, CollisionContext.empty()), 0.875, 0, 0, 1, 1, 1);
+                .getShape((net.minecraft.world.level.BlockGetter) null, (net.minecraft.core.BlockPos) null, CollisionContext.empty()), 0, 0, 0, 0.125, 1, 1);
         assertBox(sensor().defaultBlockState().setValue(GTSensorBlock.FACING, Direction.UP)
-                .getShape((net.minecraft.world.level.BlockGetter) null, (net.minecraft.core.BlockPos) null, CollisionContext.empty()), 0, 0.875, 0, 1, 1, 1);
+                .getShape((net.minecraft.world.level.BlockGetter) null, (net.minecraft.core.BlockPos) null, CollisionContext.empty()), 0, 0, 0, 1, 0.125, 1);
     }
 
     @Test
-    public void sensorCollisionStaysTheFullCell() {
-        // MultiTileEntityBlock.java:192 default — no IMTE_GetCollisionBoundingBoxFromPool
+    public void sensorCollisionIsTheSameTwoPixelPlate() {
+        // MultiTileEntitySensor.java:249 — getCollisionBoundingBoxFromPool = the same
+        // plate box as the selection (:250); the vanilla collision = shape default
+        // carries it (MultiTileEntityBlock.java:192 routes the IMTE interface)
         assertBox(sensor().defaultBlockState().setValue(GTSensorBlock.FACING, Direction.NORTH)
-                .getCollisionShape((net.minecraft.world.level.BlockGetter) null, (net.minecraft.core.BlockPos) null, CollisionContext.empty()), 0, 0, 0, 1, 1, 1);
+                .getCollisionShape((net.minecraft.world.level.BlockGetter) null, (net.minecraft.core.BlockPos) null, CollisionContext.empty()), 0, 0, 0.875, 1, 1, 1);
+        assertBox(sensor().defaultBlockState().setValue(GTSensorBlock.FACING, Direction.UP)
+                .getCollisionShape((net.minecraft.world.level.BlockGetter) null, (net.minecraft.core.BlockPos) null, CollisionContext.empty()), 0, 0, 0, 1, 0.125, 1);
     }
 
     // ------------------------------------------------------------------

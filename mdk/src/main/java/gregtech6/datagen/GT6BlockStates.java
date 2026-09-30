@@ -2347,10 +2347,12 @@ public final class GT6BlockStates extends BlockStateProvider {
      * {@code machines/tools/tap/colored/side.png}) and {@code funnel.png} (upstream
      * {@code machines/tools/funnel/colored/side.png}), the barrel_metal shared-PNG
      * precedent. The model is the upstream three-pass render stack verbatim
-     * (MultiTileEntityFluidTap.java:186-208, MultiTileEntityFluidFunnel.java:99-123 —
-     * px: tap (6,6,2)-(10,7,4) + (7,4,0)-(9,6,4) + (7,3,4)-(9,6,10); funnel north
-     * (5,9,0)-(11,10,10) + (6,8,0)-(10,9,12) + (7,7,0)-(9,8,14); the funnel's
-     * under-host DOWN mount (the :107 default case) gets its own nested-plate model),
+     * (MultiTileEntityFluidTap.java:186-208, MultiTileEntityFluidFunnel.java:99-123,
+     * PX_N[i] = 16-i — px: tap (6,6,2)-(10,7,4) + (7,4,0)-(9,6,4) + (7,3,4)-(9,6,6)
+     * [the :200 PX_N[10]=6 spout tip, not 10]; funnel north (5,9,0)-(11,10,6) +
+     * (6,8,0)-(10,9,4) + (7,7,0)-(9,8,2) [the :103/:111/:119 PX_N[10/12/14]=6/4/2
+     * taper]; the funnel's under-host DOWN mount (the :107 default case) gets its own
+     * nested-plate model),
      * rotated per FACING with the addSensors band (FACING points AT the host). The
      * per-face colored top/bottom art stays unborrowed — the side icon textures every
      * face (the declared texture deviation, the borrow is the p12 card's). The elements
@@ -2360,9 +2362,9 @@ public final class GT6BlockStates extends BlockStateProvider {
      */
     private void addAttachments() {
         ModelFile tTap = attachmentModel("block/attachment_tap", "tap", new float[][] {
-                {6, 6, 2, 10, 7, 4}, {7, 4, 0, 9, 6, 4}, {7, 3, 4, 9, 6, 10}});
+                {6, 6, 2, 10, 7, 4}, {7, 4, 0, 9, 6, 4}, {7, 3, 4, 9, 6, 6}});
         ModelFile tFunnel = attachmentModel("block/attachment_funnel", "funnel", new float[][] {
-                {5, 9, 0, 11, 10, 10}, {6, 8, 0, 10, 9, 12}, {7, 7, 0, 9, 8, 14}});
+                {5, 9, 0, 11, 10, 6}, {6, 8, 0, 10, 9, 4}, {7, 7, 0, 9, 8, 2}});
         ModelFile tFunnelDown = attachmentModel("block/attachment_funnel_down", "funnel", new float[][] {
                 {5, 2, 5, 11, 3, 11}, {6, 1, 6, 10, 2, 10}, {7, 0, 7, 9, 1, 9}});
         for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
@@ -3833,9 +3835,12 @@ public final class GT6BlockStates extends BlockStateProvider {
      * 0.01 overlay plates, cullface synced — the two-layer shells minus the tintindex
      * (the tex-sensors NBT=null ruling) and minus the full cube (task rod-render-pool:
      * the body shrinks to the upstream pass-0 render bounds, MultiTileEntitySensor
-     * .java:148-150 — flush against the display edge, the model space form being
-     * FACING=north with the plate at z 0..2). The south face is the plate's interior
-     * face (z=2 is no block boundary — no cullface); the front and the four rims ride
+     * .java:148-150 — the plate hugs the edge OPPOSITE the display face, the wall-mount
+     * semantics: the model space form being FACING=north with the display plane at z=14
+     * looking north and the plate body at z 14..16 against the south (:150 SIDE_Z_NEG →
+     * PX_P[14]..PX_N[0]; :257 isSurfaceOpaque2 = OPOS — the wall side is the solid one).
+     * The north face is the plate's display plane (z=14 is no block boundary — the
+     * cullface rides the block boundary anyway); the wall face and the four rims ride
      * the boundary planes.
      */
     private ModelFile sensorModel(String aFamily) {
@@ -3857,37 +3862,37 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_back", modLoc(tBase + "/overlay_back"))
                 .texture("overlay_side", modLoc(tBase + "/overlay_side"))
                 .renderType("cutout");
-        tModel.element() // the 2px wall plate (Sensor :148-150, the FACING=north model form)
-                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 2.0F)
+        tModel.element() // the 2px wall plate (Sensor :148-150, the FACING=north model form: display plane z=14, body z 14..16 against the opposite wall)
+                .from(0.0F, 0.0F, 14.0F).to(16.0F, 16.0F, 16.0F)
                 .face(Direction.NORTH).texture("#north").cullface(Direction.NORTH).end()
-                .face(Direction.SOUTH).texture("#south").end()
+                .face(Direction.SOUTH).texture("#south").cullface(Direction.SOUTH).end()
                 .face(Direction.DOWN).texture("#down").cullface(Direction.DOWN).end()
                 .face(Direction.UP).texture("#up").cullface(Direction.UP).end()
                 .face(Direction.WEST).texture("#west").cullface(Direction.WEST).end()
                 .face(Direction.EAST).texture("#east").cullface(Direction.EAST).end()
                 .end();
-        tModel.element() // north — the display face, the 0.01 overlay outside the plate
-                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+        tModel.element() // north — the display face, the 0.01 overlay in front of the display plane (z=14, NOT the block boundary)
+                .from(0.0F, 0.0F, 13.99F).to(16.0F, 16.0F, 14.0F)
                 .face(Direction.NORTH).texture("#overlay_front").cullface(Direction.NORTH)
                 .end();
-        tModel.element() // the plate's interior face — the overlay floats past z=2, NO cullface
-                .from(0.0F, 0.0F, 2.0F).to(16.0F, 16.0F, 2.01F)
-                .face(Direction.SOUTH).texture("#overlay_back")
+        tModel.element() // the plate's wall face — the overlay floats past z=16, the boundary plane
+                .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.01F)
+                .face(Direction.SOUTH).texture("#overlay_back").cullface(Direction.SOUTH)
                 .end();
         tModel.element() // west
-                .from(-0.01F, 0.0F, 0.0F).to(0.0F, 16.0F, 2.0F)
+                .from(-0.01F, 0.0F, 14.0F).to(0.0F, 16.0F, 16.0F)
                 .face(Direction.WEST).texture("#overlay_side").cullface(Direction.WEST)
                 .end();
         tModel.element() // east
-                .from(16.0F, 0.0F, 0.0F).to(16.01F, 16.0F, 2.0F)
+                .from(16.0F, 0.0F, 14.0F).to(16.01F, 16.0F, 16.0F)
                 .face(Direction.EAST).texture("#overlay_side").cullface(Direction.EAST)
                 .end();
         tModel.element() // bottom
-                .from(0.0F, -0.01F, 0.0F).to(16.0F, 0.0F, 2.0F)
+                .from(0.0F, -0.01F, 14.0F).to(16.0F, 0.0F, 16.0F)
                 .face(Direction.DOWN).texture("#overlay_side").cullface(Direction.DOWN)
                 .end();
         tModel.element() // top
-                .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.01F, 2.0F)
+                .from(0.0F, 16.0F, 14.0F).to(16.0F, 16.01F, 16.0F)
                 .face(Direction.UP).texture("#overlay_side").cullface(Direction.UP)
                 .end();
         return tModel;

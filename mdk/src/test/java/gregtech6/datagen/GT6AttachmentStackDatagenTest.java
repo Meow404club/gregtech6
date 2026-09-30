@@ -30,13 +30,22 @@ import gregtech6.tileentity.GTOfflineTestBase;
 
 public class GT6AttachmentStackDatagenTest extends GTOfflineTestBase {
 
-    /** The tap stack, MultiTileEntityFluidTap :186-208 verbatim (px). */
+    /**
+     * The tap stack, MultiTileEntityFluidTap :186-208 verbatim (px, PX_N[i]=16-i) —
+     * the third box is the :200 pass-2 spout: PX_N[7]=9, PX_N[10]=6, PX_N[10]=6
+     * (the PX_N INDEX 10 is a pipe-column index, never a box coordinate — the first
+     * pin rode the raw 10 and read the spout tip 4px too long).
+     */
     private static final List<float[]> TAP_BOXES = List.of(
-            new float[] {6, 6, 2, 10, 7, 4}, new float[] {7, 4, 0, 9, 6, 4}, new float[] {7, 3, 4, 9, 6, 10});
+            new float[] {6, 6, 2, 10, 7, 4}, new float[] {7, 4, 0, 9, 6, 4}, new float[] {7, 3, 4, 9, 6, 6});
 
-    /** The funnel north-mount taper, MultiTileEntityFluidFunnel :100-106 verbatim (px). */
+    /**
+     * The funnel north-mount taper, MultiTileEntityFluidFunnel :99-127 verbatim (px,
+     * PX_N[i]=16-i) — the z-maxes are the :103/:111/:119 PX_N[10/12/14] = 6/4/2 (the
+     * raw indices 10/12/14 pinned here once measured the needle 4/8/12px too long).
+     */
     private static final List<float[]> FUNNEL_BOXES = List.of(
-            new float[] {5, 9, 0, 11, 10, 10}, new float[] {6, 8, 0, 10, 9, 12}, new float[] {7, 7, 0, 9, 8, 14});
+            new float[] {5, 9, 0, 11, 10, 6}, new float[] {6, 8, 0, 10, 9, 4}, new float[] {7, 7, 0, 9, 8, 2});
 
     /** The funnel under-host DOWN mount, the :107-109 default case verbatim (px). */
     private static final List<float[]> FUNNEL_DOWN_BOXES = List.of(

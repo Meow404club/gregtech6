@@ -131,20 +131,22 @@ public class GT6SensorFacetRenderDatagenTest extends GTOfflineTestBase {
                     tRow.path() + ": front/back/side references stay distinct");
 
             // two-layer structure: the 2px wall plate + six 0.01 overlay shells
-            // (task rod-render-pool: the body shrank from the full cube to the upstream
-            // pass-0 plate, MultiTileEntitySensor.java:148-150 — flush against the
-            // display edge, the FACING=north model form being z 0..2)
+            // (task rod-render-pool rework: the body is the upstream pass-0 plate,
+            // MultiTileEntitySensor.java:148-150 — the plate hugs the edge OPPOSITE
+            // the display face, the wall-mount semantics, the FACING=north model form
+            // being the display plane at z=14 and the body at z 14..16; :257
+            // isSurfaceOpaque2 = OPOS names the wall side the solid one)
             var tElements = tModel.getAsJsonArray("elements");
             assertEquals(7, tElements.size(), tRow.path() + ": body + 6 shells");
             JsonObject tBody = tElements.get(0).getAsJsonObject();
             assertEquals(6, tBody.getAsJsonObject("faces").size(),
                     tRow.path() + ": the plate covers all six faces");
             assertEquals(0.0, tBody.getAsJsonArray("from").get(0).getAsDouble(), 1e-9,
-                    tRow.path() + ": the plate starts at the display edge");
-            assertEquals(0.0, tBody.getAsJsonArray("from").get(2).getAsDouble(), 1e-9,
-                    tRow.path() + ": the plate starts at the north plane");
-            assertEquals(2.0, tBody.getAsJsonArray("to").get(2).getAsDouble(), 1e-9,
-                    tRow.path() + ": the plate is the upstream 2px wall plate (:148-150)");
+                    tRow.path() + ": the plate spans the full width");
+            assertEquals(14.0, tBody.getAsJsonArray("from").get(2).getAsDouble(), 1e-9,
+                    tRow.path() + ": the display plane sits at z=14 (the plate body behind it, :150 PX_P[14])");
+            assertEquals(16.0, tBody.getAsJsonArray("to").get(2).getAsDouble(), 1e-9,
+                    tRow.path() + ": the plate is the upstream 2px wall plate against the boundary (:150 PX_N[0])");
             assertEquals(16.0, tBody.getAsJsonArray("to").get(0).getAsDouble(), 1e-9,
                     tRow.path() + ": the plate spans the full width");
             for (int i = 1; i < 7; i++) {
@@ -153,11 +155,12 @@ public class GT6SensorFacetRenderDatagenTest extends GTOfflineTestBase {
                         tRow.path() + ": shell " + i + " is a single-face plate");
                 boolean tFrontShell = i == 1;
                 if (tFrontShell) {
-                    assertTrue(tShell.getAsJsonArray("from").get(2).getAsDouble() < 0,
-                            tRow.path() + ": the front shell rides the 0.01 offset outside the display face");
+                    assertTrue(tShell.getAsJsonArray("from").get(2).getAsDouble() > 13
+                            && tShell.getAsJsonArray("to").get(2).getAsDouble() <= 14,
+                            tRow.path() + ": the front shell rides the 0.01 offset in front of the display plane (z=14)");
                 } else if (i == 2) {
-                    assertEquals(2.0, tShell.getAsJsonArray("from").get(2).getAsDouble(), 1e-9,
-                            tRow.path() + ": the back shell floats past the plate's interior face (z=2), NO cullface");
+                    assertEquals(16.0, tShell.getAsJsonArray("from").get(2).getAsDouble(), 1e-9,
+                            tRow.path() + ": the back shell floats past the plate's wall face (z=16 boundary)");
                 } else {
                     assertTrue(tShell.getAsJsonArray("from").get(0).getAsDouble() < 0
                             || tShell.getAsJsonArray("to").get(0).getAsDouble() > 16
