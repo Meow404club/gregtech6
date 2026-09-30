@@ -582,9 +582,19 @@ public final class GT6WorldgenDatagen {
         // pairs → ChunkGenerator.applyBiomeDecoration:319) — so every companion feature
         // scans host blocks the lens has already placed, independent of where this
         // modifier lands among the other ore-pass modifiers.
-        List<Holder<PlacedFeature>> tLensBand = new ArrayList<>(1 + lensOreRows().size());
+        //
+        // task lens-ore-base-order — the ORDINARY small-ore band (the overworld surface
+        // pairs + the deep-band mirrors, overworldSmallOrePlaced) rides this SAME list
+        // AFTER the companions. It used to hang off its own ore_small_overworld modifier:
+        // the cross-modifier landing order is the uncontracted datapack load order, so
+        // the band could run BEFORE the lens — the ore replaced plain stone first, then
+        // the lens replaced the surrounding stone but never the ore block (ores are not
+        // in stone_ore_replaceables), leaving stone-based small ore embedded in marble.
+        // One list, one chain: lens → companions → small ores, under ANY landing.
+        List<Holder<PlacedFeature>> tLensBand = new ArrayList<>();
         tLensBand.add(tPlaced.getOrThrow(GT6Worldgen.STRATA_LENSES_PLACED));
         for (LensOreRow tRow : lensOreRows()) tLensBand.add(tPlaced.getOrThrow(lensOrePlacedKey(tRow)));
+        tLensBand.addAll(overworldSmallOrePlaced(tPlaced));
         ctx.register(biomeModifierKeyOf("strata_lenses"), addFeatures(tOverworld,
                 HolderSet.direct(tLensBand),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
@@ -801,15 +811,22 @@ public final class GT6WorldgenDatagen {
     // (row, dim) placement pairs (GTOreWorldgen.placementPairs, the upstream
     // GEN-flag walk) x {configured = vanilla Feature.ORE size=4 over the
     // WD.setSmallOre host targets, placed = Count(veinCount constant)+InSquare+
-    // HeightRange uniform+BiomeFilter}, then 3 biome modifiers
-    // (IS_OVERWORLD/IS_NETHER/IS_END at UNDERGROUND_ORES) hanging the per-dim
-    // placed sets off the vanilla dimension tags. Zero new blocks/features —
+    // HeightRange uniform+BiomeFilter}. The OVERWORLD face (surface pairs + deep
+    // mirrors) rides the one strata_lenses biome modifier AFTER the lens+companion
+    // head (task lens-ore-base-order — the FeatureSorter chain puts the band's
+    // marble-family target arm after the lens); nether/end keep their own
+    // IS_NETHER/IS_END modifiers at the ore pass. Zero new blocks/features —
     // pure JSON consumption of the ore-1 ore_small universe.
     // ------------------------------------------------------------------
 
-    /** The 3 small-ore biome-modifier keys, Dim order (overworld/nether/end). */
+    /**
+     * The 2 small-ore biome-modifier keys (nether/end — the dims with no lens chain).
+     * The OVERWORLD face rides the one strata_lenses modifier after the lens+companion
+     * head (task lens-ore-base-order): a standalone overworld modifier's landing order
+     * was the uncontracted datapack load order, so the band could run before the lens
+     * and ship stone-based ore inside the lens stone.
+     */
     public static final List<ResourceKey<BiomeModifier>> ORE_BIOME_MODIFIER_KEYS = List.of(
-            biomeModifierKeyOf("ore_small_overworld"),
             biomeModifierKeyOf("ore_small_nether"),
             biomeModifierKeyOf("ore_small_end"));
 
@@ -926,6 +943,27 @@ public final class GT6WorldgenDatagen {
         }
     }
 
+    /**
+     * The overworld small-ore placed face in modifier order: the surface pairs
+     * (placementPairs OVERWORLD, table order) then the deep-band mirrors (task
+     * c2-deep-band order). The strata_lenses biome modifier appends this AFTER the
+     * lens+companion head — the one-modifier list order is the FeatureSorter chain
+     * (lens → companions → small ores), so the band's marble-family target arm always
+     * sees lens stone the lens already placed (task lens-ore-base-order).
+     */
+    private static List<Holder<PlacedFeature>> overworldSmallOrePlaced(HolderGetter<PlacedFeature> aPlaced) {
+        List<Holder<PlacedFeature>> tHolders = new ArrayList<>(GTOreWorldgen.placementPairs().size());
+        for (GTOreWorldgen.Placement tPair : GTOreWorldgen.placementPairs()) {
+            if (tPair.dim() == GTOreWorldgen.Dim.OVERWORLD) tHolders.add(aPlaced.getOrThrow(GTOreWorldgen.placedKey(tPair.row(), tPair.dim())));
+        }
+        // task c2-deep-band — the deep-band mirrors, appended after the surface pairs
+        // ("deep" is a key directory, not a Dim — the deepslate band is overworld content).
+        for (GTOreWorldgen.SmallOreRow tRow : GTOreWorldgen.deepMirrorRows()) {
+            tHolders.add(aPlaced.getOrThrow(GTOreWorldgen.deepPlacedKey(tRow)));
+        }
+        return tHolders;
+    }
+
     private static void bootstrapOreBiomeModifiers(
         //? if forge {
         BootstapContext<BiomeModifier> ctx, HolderGetter<Biome> aBiomes, HolderGetter<PlacedFeature> aPlaced
@@ -933,22 +971,14 @@ public final class GT6WorldgenDatagen {
         /*BootstrapContext<BiomeModifier> ctx, HolderGetter<Biome> aBiomes, HolderGetter<PlacedFeature> aPlaced
         *///?}
     ) {
-        // one modifier per vanilla dimension tag, the dim's whole placed set at the ore
-        // pass (spec ④); IS_OVERWORLD/IS_NETHER/IS_END ride Dim ordinal order.
-        TagKey<Biome>[] tDimTags = new TagKey[] {BiomeTags.IS_OVERWORLD, BiomeTags.IS_NETHER, BiomeTags.IS_END};
+        // two modifiers, the nether/end faces at the ore pass (the overworld face rides
+        // the strata_lenses chain — task lens-ore-base-order); keys follow Dim order.
+        TagKey<Biome>[] tDimTags = new TagKey[] {BiomeTags.IS_NETHER, BiomeTags.IS_END};
+        GTOreWorldgen.Dim[] tDims = new GTOreWorldgen.Dim[] {GTOreWorldgen.Dim.NETHER, GTOreWorldgen.Dim.END};
         for (int i = 0; i < ORE_BIOME_MODIFIER_KEYS.size(); i++) {
-            GTOreWorldgen.Dim tDim = GTOreWorldgen.Dim.values()[i];
             List<Holder<PlacedFeature>> tHolders = new ArrayList<>(54);
             for (GTOreWorldgen.Placement tPair : GTOreWorldgen.placementPairs()) {
-                if (tPair.dim() == tDim) tHolders.add(aPlaced.getOrThrow(GTOreWorldgen.placedKey(tPair.row(), tPair.dim())));
-            }
-            // task c2-deep-band — the deep-band mirrors ride the OVERWORLD modifier
-            // ("deep" is a key directory, not a Dim — the deepslate band is overworld
-            // content), appended after the surface pairs.
-            if (tDim == GTOreWorldgen.Dim.OVERWORLD) {
-                for (GTOreWorldgen.SmallOreRow tRow : GTOreWorldgen.deepMirrorRows()) {
-                    tHolders.add(aPlaced.getOrThrow(GTOreWorldgen.deepPlacedKey(tRow)));
-                }
+                if (tPair.dim() == tDims[i]) tHolders.add(aPlaced.getOrThrow(GTOreWorldgen.placedKey(tPair.row(), tPair.dim())));
             }
             ctx.register(ORE_BIOME_MODIFIER_KEYS.get(i), addFeatures(aBiomes.getOrThrow(tDimTags[i]),
                     HolderSet.direct(tHolders),
