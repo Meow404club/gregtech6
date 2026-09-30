@@ -916,7 +916,12 @@ direct	gt6.jade.boiler.heat	储存热量: %s / %s HU (%s%%)	hand
 direct	gt6.jade.boiler.scale	水垢: %s%%	hand
 direct	gt6.jade.boiler.scale.clean	锅炉无水垢	hand
 direct	gt6.jade.boiler.steam	蒸汽: %s / %s mB (%s%%)	hand
-direct	gt6.jade.boiler.water	水: %s / %s mB (%s%%)	hand
+direct	gt6.jade.boiler.water	%s: %s / %s mB (%s%%)	hand
+direct	gt6.jade.boiler.water.empty	空罐	hand
+direct	gt6.jade.burningbox.ash	灰烬: %s x%s	hand
+direct	gt6.jade.burningbox.ash.empty	灰烬: 空	hand
+direct	gt6.jade.burningbox.fuel	燃料: %s x%s	hand
+direct	gt6.jade.burningbox.fuel.empty	燃料: 空	hand
 direct	gt6.jade.common.formed	多方块: 已成形	hand
 direct	gt6.jade.common.incomplete	多方块: 未成形	hand
 direct	gt6.jade.common.malfunction	故障	hand

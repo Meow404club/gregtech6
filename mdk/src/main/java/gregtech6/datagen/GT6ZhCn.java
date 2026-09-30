@@ -498,6 +498,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(GT6BoilerProvider.LANG_SCALE);
 		addDirect(GT6BoilerProvider.LANG_SCALE_CLEAN);
 		addDirect(GT6BoilerProvider.LANG_WATER);
+		addDirect(GT6BoilerProvider.LANG_WATER_EMPTY); // task jade-boiler-burningbox — the empty-water face
 	}
 
 	/**
@@ -517,6 +518,11 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(GT6ConverterProvider.LANG_STORED);
 		addDirect(GT6ConverterProvider.LANG_STORED_BARE);
 		addDirect(GT6ConverterProvider.LANG_RATE);
+		// task jade-boiler-burningbox — the burning-box contents band (fuel/ash x filled/empty)
+		addDirect(GT6ConverterProvider.LANG_FUEL);
+		addDirect(GT6ConverterProvider.LANG_FUEL_EMPTY);
+		addDirect(GT6ConverterProvider.LANG_ASH);
+		addDirect(GT6ConverterProvider.LANG_ASH_EMPTY);
 	}
 
 	/**

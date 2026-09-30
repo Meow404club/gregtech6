@@ -245,8 +245,9 @@ public final class GT6FluidProvider implements IServerExtensionProvider<TileEnti
 		return Math.min(1.0F, (float) ((double) aAmount / aCapacity));
 	}
 
-	/** FluidName 反查注册表（形同 FluidTankGT 21.1 keepFilter 读侧：tryParse null / 未知名 / EMPTY 全拒）。 */
-	private static Fluid resolveFluid(String aName) {
+	/** FluidName 反查注册表（形同 FluidTankGT 21.1 keepFilter 读侧：tryParse null / 未知名 / EMPTY 全拒）。
+	 * 包内可见——GT6BoilerProvider.waterLabel 复用（task jade-boiler-burningbox，不复制第二份）。 */
+	static Fluid resolveFluid(String aName) {
 		ResourceLocation tName = ResourceLocation.tryParse(aName);
 		if (tName == null) return null;
 		Fluid tFluid = BuiltInRegistries.FLUID.get(tName);

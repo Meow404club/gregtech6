@@ -1,8 +1,13 @@
 package gregtech6.jade;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+
+import net.minecraftforge.fluids.FluidStack;
 
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
@@ -10,6 +15,7 @@ import snownee.jade.api.IServerDataProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
 
+import gregtech6.fluid.FluidTankGT;
 import gregtech6.tileentity.TileEntityBase01Root;
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
@@ -27,7 +33,9 @@ import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
  * <li><b>热量条</b>——mEnergy/mCapacity（GTBoilerTankBlockEntity:153/:155；LargeBoiler
  *     :178/:180），"Stored Heat Units: %s / %s HU (Z%)" 借上游温度计读数 verbatim 加百分槽
  *     （thermometer :408-411）；热量 &gt; 0 绿 / 空红（有热 = 在干活）。</li>
- * <li><b>水条常态显示</b>（从潜行升级，ruling boiler_water）——mTanks[0]，空罐整条 RED。</li>
+ * <li><b>水条常态显示</b>（从潜行升级，ruling boiler_water）——mTanks[0]，空罐整条 RED；
+ *     标签 = 实际流体名（KEY_WATER_FLUID 注册名串过缝，task jade-boiler-burningbox；
+ *     空罐/解析失败 = 空态词「Empty/空罐」——用户裁定「没有时显示空」）。</li>
  * <li><b>汽条常态显示</b>——mTanks[1]。两罐文本统一三槽 X / Y (Z%)。</li>
  * <li><b>需求行</b>——"Demand: %s HU/t"，值 = mOutput/2（getEnergyDemanded :458-460）。</li>
  * <li><b>潜行明细 = 水垢</b>（magnifyingglass :414-419——水量已常态上条，潜行只剩水垢面）。
@@ -56,6 +64,8 @@ public final class GT6BoilerProvider implements IBlockComponentProvider, IServer
 	public static final String KEY_EFFICIENCY = "GT6BoilerEfficiency";
 	public static final String KEY_WATER = "GT6BoilerWater";
 	public static final String KEY_WATER_MAX = "GT6BoilerWaterMax";
+	/** 水罐流体身份（注册名串；空罐不写键——键存在即有流体，客户端空态词）。 */
+	public static final String KEY_WATER_FLUID = "GT6BoilerWaterFluid";
 
 	/** lang 键（GT6EnUs/GT6ZhCn 双侧同发，四落纪律）。 */
 	public static final String LANG_HEAT = "gt6.jade.boiler.heat";
@@ -67,8 +77,12 @@ public final class GT6BoilerProvider implements IBlockComponentProvider, IServer
 	public static final String LANG_SCALE = "gt6.jade.boiler.scale";
 	/** 水垢行（潜行）：槽 = 水垢百分比（(10000-mEfficiency)/100，上游 LH.percent 形）。 */
 	public static final String LANG_SCALE_CLEAN = "gt6.jade.boiler.scale.clean";
+	/** 水条行（四槽）：流体显示名 / 水量 / 水罐容量（两 long）/ 整数百分比；空罐条面 RED
+	 * （样式在条不在行），标签槽 = 实际流体名（task jade-boiler-burningbox——原「水」硬编码
+	 * 退役；上游水罐 FL.water 本收水+蒸馏水，类型面真实存在）。 */
 	public static final String LANG_WATER = "gt6.jade.boiler.water";
-	/** 水条行（三槽）：水量 / 水罐容量（两 long）/ 整数百分比；空罐条面 RED（样式在条不在行）。 */
+	/** 水条空态词（空罐/解析失败的标签槽）：en "Empty" / zh "空罐"。 */
+	public static final String LANG_WATER_EMPTY = "gt6.jade.boiler.water.empty";
 
 	/** Provider uid（GT6MachineProvider.java:143 同形——双腿 ctor swap 由 stonecutter 表消化）。 */
 	private static final ResourceLocation UID = new ResourceLocation("gt6", "boiler_provider");
@@ -88,11 +102,13 @@ public final class GT6BoilerProvider implements IBlockComponentProvider, IServer
 		if (aAccessor.getBlockEntity() instanceof GTBoilerTankBlockEntity aBoiler) {
 			writeBoilerData(aData, aBoiler.mEnergy, aBoiler.mCapacity, aBoiler.mOutput,
 					aBoiler.mTanks[1].amount(), aBoiler.mTanks[1].capacity(),
-					aBoiler.mEfficiency, aBoiler.mTanks[0].amount(), aBoiler.mTanks[0].capacity());
+					aBoiler.mEfficiency, aBoiler.mTanks[0].amount(), aBoiler.mTanks[0].capacity(),
+					tankFluidName(aBoiler.mTanks[0]));
 		} else if (aAccessor.getBlockEntity() instanceof TileEntityLargeBoiler aBoiler) {
 			writeBoilerData(aData, aBoiler.mEnergy, aBoiler.mCapacity, aBoiler.mOutput,
 					aBoiler.mTanks[1].amount(), aBoiler.mTanks[1].capacity(),
-					aBoiler.mEfficiency, aBoiler.mTanks[0].amount(), aBoiler.mTanks[0].capacity());
+					aBoiler.mEfficiency, aBoiler.mTanks[0].amount(), aBoiler.mTanks[0].capacity(),
+					tankFluidName(aBoiler.mTanks[0]));
 		}
 	}
 
@@ -100,9 +116,10 @@ public final class GT6BoilerProvider implements IBlockComponentProvider, IServer
 	 * 锅炉族同步写（appendServerData 的静态缝——GT6CrucibleProvider.writeCrucibleData 同姿势：
 	 * accessor 薄壳 live-only，纯值离线可测）。水/汽键无条件写（条常态显示的载荷面）。
 	 * 需求 = aOutput/2 服务端定死（getEnergyDemanded 返回值面，:458-460），客户端不做二次推导。
+	 * 流体身份串非空才写键（空罐 = 键缺席 = 客户端空态词）。
 	 */
 	public static void writeBoilerData(CompoundTag aData, long aHeat, long aHeatMax, long aOutput, long aSteam,
-			long aSteamMax, int aEfficiency, long aWater, long aWaterMax) {
+			long aSteamMax, int aEfficiency, long aWater, long aWaterMax, String aWaterFluid) {
 		aData.putLong(KEY_HEAT, aHeat);
 		aData.putLong(KEY_HEAT_MAX, aHeatMax);
 		aData.putLong(KEY_DEMAND, aOutput / 2); // :253/:371 mOutput/2
@@ -111,6 +128,21 @@ public final class GT6BoilerProvider implements IBlockComponentProvider, IServer
 		aData.putShort(KEY_EFFICIENCY, (short)aEfficiency); // ten-thousandths, 5000 floor
 		aData.putLong(KEY_WATER, aWater);
 		aData.putLong(KEY_WATER_MAX, aWaterMax);
+		if (!aWaterFluid.isEmpty()) aData.putString(KEY_WATER_FLUID, aWaterFluid);
+	}
+
+	/**
+	 * 水罐流体身份串（注册名；空罐/空流体 = 空串——GT6FluidProvider.tankViews :189-194 同卫，
+	 * task jade-boiler-burningbox）。getRawFluid 由 neo 腿 stonecutter 正则换名吃掉
+	 * （swap 表 getRawFluid→getFluid 条目，测试 6 位点同缝）。
+	 */
+	public static String tankFluidName(FluidTankGT aTank) {
+		FluidStack tStack = aTank.fluid();
+		if (tStack == null || tStack.isEmpty()) return "";
+		Fluid tFluid = tStack.getRawFluid();
+		if (tFluid == null || tFluid == Fluids.EMPTY) return "";
+		ResourceLocation tName = BuiltInRegistries.FLUID.getKey(tFluid);
+		return tName == null ? "" : tName.toString();
 	}
 
 	@Override
@@ -124,10 +156,14 @@ public final class GT6BoilerProvider implements IBlockComponentProvider, IServer
 		long tHeatMax = aData.getLong(KEY_HEAT_MAX);
 		GT6JadeRows.bar(aTooltip, GT6JadeRows.ratio(tHeat, tHeatMax), heatLine(tHeat, tHeatMax),
 				tHeat > 0 ? GT6JadeRows.COLOR_OK : GT6JadeRows.COLOR_STALLED);
-		// ② 水条：常态显示（从潜行升级），空罐整条 RED。
+		// ② 水条：常态显示（从潜行升级），空罐整条 RED；标签 = 实际流体名（空罐/解析失败 =
+		// 空态词，task jade-boiler-burningbox——原「水」硬编码退役）。
 		long tWater = aData.getLong(KEY_WATER);
 		long tWaterMax = aData.getLong(KEY_WATER_MAX);
-		GT6JadeRows.bar(aTooltip, GT6JadeRows.ratio(tWater, tWaterMax), waterLine(tWater, tWaterMax),
+		Component tWaterLabel = aData.contains(KEY_WATER_FLUID)
+				? waterLabel(aData.getString(KEY_WATER_FLUID))
+				: Component.translatable(LANG_WATER_EMPTY);
+		GT6JadeRows.bar(aTooltip, GT6JadeRows.ratio(tWater, tWaterMax), waterLine(tWaterLabel, tWater, tWaterMax),
 				tWater > 0 ? GT6JadeRows.COLOR_NEUTRAL : GT6JadeRows.COLOR_STALLED);
 		// ③ 汽条：常态显示。
 		long tSteam = aData.getLong(KEY_STEAM);
@@ -157,9 +193,22 @@ public final class GT6BoilerProvider implements IBlockComponentProvider, IServer
 		return Component.translatable(LANG_STEAM, aSteam, aSteamMax, GT6JadeRows.percent(aSteam, aSteamMax));
 	}
 
-	/** 水条行（纯函数离线面，三槽）：mTanks[0] 现量/容量/百分（空罐红色在条面，行不 styling）。 */
-	public static Component waterLine(long aWater, long aWaterMax) {
-		return Component.translatable(LANG_WATER, aWater, aWaterMax, GT6JadeRows.percent(aWater, aWaterMax));
+	/** 水条行（纯函数离线面，四槽）：标签（流体名/空态词）/ mTanks[0] 现量/容量/百分
+	 * （空罐红色在条面，行不 styling）。 */
+	public static Component waterLine(Component aLabel, long aWater, long aWaterMax) {
+		return Component.translatable(LANG_WATER, aLabel, aWater, aWaterMax, GT6JadeRows.percent(aWater, aWaterMax));
+	}
+
+	/**
+	 * 水行标签（client 纯函数）：注册名串 → 流体显示名（{@code FluidStack.getDisplayName}
+	 * 双腿 javap 实证 21.1/47.4.10 同形；GTCEu RecipeOutputProvider 先例）；解析失败回落
+	 * 空态词。反查走 {@link GT6FluidProvider#resolveFluid}（本卡 private → 包内收编复用）。
+	 */
+	public static Component waterLabel(String aFluidId) {
+		Fluid tFluid = GT6FluidProvider.resolveFluid(aFluidId);
+		return tFluid == null
+				? Component.translatable(LANG_WATER_EMPTY)
+				: new FluidStack(tFluid, 1).getDisplayName();
 	}
 
 	/** 水垢行（纯函数离线面）：上游放大镜措辞（magnifyingglass :416/:419——满效率 = 无水垢行）。 */

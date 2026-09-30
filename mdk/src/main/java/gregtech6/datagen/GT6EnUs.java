@@ -2325,16 +2325,21 @@ public class GT6EnUs extends LanguageProvider {
 
     /**
      * The boiler Jade face keys (task jade-boiler, jade-redesign-core reface —
-     * 6 keys): the heat line (stored/max HU — the upstream thermometer wording,
-     * MultiTileEntityBoilerTank.java:182 — over the three-slot bar template), the demand
-     * line (mOutput/2 HU/t, the getEnergyDemanded value), the WATER/STEAM TANK BARS now
-     * always visible (upgraded from the sneak band — the empty water tank paints the bar
-     * red, the styling lives on the bar not the row) and the sneak-detail calcification
-     * pair (the upstream magnifyingglass wording :414-419 verbatim). The two output-gate
-     * states and the no-water warning retired (the user ruling: the half-gate lines are
-     * noise; the red empty bar IS the warning face). The {@code %%} escape renders a
-     * literal percent (TranslatableContents.java:80-81). Consumed by GT6BoilerProvider;
-     * zh faces ride the reference table's hand layer via GT6ZhCn.addBoilerJadeUnits.
+     * 6 keys, task jade-boiler-burningbox grows the water band): the heat line (stored/max
+     * HU — the upstream thermometer wording, MultiTileEntityBoilerTank.java:182 — over the
+     * three-slot bar template), the demand line (mOutput/2 HU/t, the getEnergyDemanded
+     * value), the WATER/STEAM TANK BARS now always visible (upgraded from the sneak band —
+     * the empty water tank paints the bar red, the styling lives on the bar not the row)
+     * and the sneak-detail calcification pair (the upstream magnifyingglass wording
+     * :414-419 verbatim). The WATER label slot now carries the ACTUAL fluid display name
+     * (the KEY_WATER_FLUID registry-name wire, the upstream FL.water tank accepts water +
+     * distilled water — the hardcoded "Water" label retired) with the "Empty" word on a
+     * dry/unresolvable tank (the user ruling: show empty when there is none). The two
+     * output-gate states and the no-water warning retired (the user ruling: the half-gate
+     * lines are noise; the red empty bar IS the warning face). The {@code %%} escape
+     * renders a literal percent (TranslatableContents.java:80-81). Consumed by
+     * GT6BoilerProvider; zh faces ride the reference table's hand layer via
+     * GT6ZhCn.addBoilerJadeUnits.
      */
     private void addBoilerJade() {
         add(GT6BoilerProvider.LANG_HEAT, "Stored Heat Units: %s / %s HU (%s%%)");
@@ -2342,14 +2347,19 @@ public class GT6EnUs extends LanguageProvider {
         add(GT6BoilerProvider.LANG_STEAM, "Steam: %s / %s mB (%s%%)");
         add(GT6BoilerProvider.LANG_SCALE, "Calcification: %s%%");
         add(GT6BoilerProvider.LANG_SCALE_CLEAN, "No Calcification in this Boiler");
-        add(GT6BoilerProvider.LANG_WATER, "Water: %s / %s mB (%s%%)");
+        add(GT6BoilerProvider.LANG_WATER, "%s: %s / %s mB (%s%%)");
+        add(GT6BoilerProvider.LANG_WATER_EMPTY, "Empty");
     }
 
     /**
-     * The converter-family Jade face keys (task jade-converters, 7 keys): the status
+     * The converter-family Jade face keys (task jade-converters, 7 keys; task
+     * jade-boiler-burningbox grows the burning-box contents band, +4): the status
      * line + its three state words (Stopped > Running > Idle), the stored line in its
      * ceiling form and bare form (no-hard-cap families like the burning boxes), and the
      * rated-output line (the GTCEu RecipeLogicProvider :75+ throughput-row precedent).
+     * The burning-box CONTENT rows name the fuel (slot 0) and ash (slot 1) stacks — the
+     * no-GUI family's only content face (the upstream NO_GUI_CLICK_TO_INVENTORY :92) —
+     * each with an Empty state word (the same show-empty ruling as the boiler water band).
      * The unit words (EU/KU/HU/...) stay bare symbols per the thermometer-anchor rule
      * (GT6CrucibleProvider zh ruling). Consumed by GT6ConverterProvider (the lang
      * constants live there); zh faces ride the reference table's hand layer via
@@ -2363,6 +2373,10 @@ public class GT6EnUs extends LanguageProvider {
         add(GT6ConverterProvider.LANG_STORED, "Stored: %s / %s %s");
         add(GT6ConverterProvider.LANG_STORED_BARE, "Stored: %s %s");
         add(GT6ConverterProvider.LANG_RATE, "Output: %s %s/t");
+        add(GT6ConverterProvider.LANG_FUEL, "Fuel: %s x%s");
+        add(GT6ConverterProvider.LANG_FUEL_EMPTY, "Fuel: Empty");
+        add(GT6ConverterProvider.LANG_ASH, "Ash: %s x%s");
+        add(GT6ConverterProvider.LANG_ASH_EMPTY, "Ash: Empty");
     }
 
     /**

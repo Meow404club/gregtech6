@@ -11,6 +11,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -38,7 +41,10 @@ import gregtech6.tileentity.energy.generators.GTGeneratorLiquidBlockEntity;
  * <p>Four groups: the engine trio (status two-state + stored/capacity/rate values), the
  * transformer/dynamo storage faces, the burning-box bare-stored form + the no-status FE
  * lane absence, and the line functions (key + %s args + the GREEN/RED state colours).
- * The lang VALUES (en/zh) are pinned by the datagen faces + runData, not here.
+ * Task jade-boiler-burningbox adds the burning-box CONTENT group: the two-slot fuel/ash
+ * wire (registry name + count, empty slot = no keys) + the contentLine faces (the no-GUI
+ * family's only content view). The lang VALUES (en/zh) are pinned by the datagen faces +
+ * runData, not here.
  */
 public class GT6ConverterProviderTest extends GTOfflineTestBase {
 
@@ -205,6 +211,76 @@ public class GT6ConverterProviderTest extends GTOfflineTestBase {
 		CompoundTag tTag = new CompoundTag();
 		GT6ConverterProvider.writeFamilyData(tTag, tWheel);
 		assertFalse(tTag.contains(GT6ConverterProvider.KEY_UNIT), "the client gate stays shut for skipped BEs");
+	}
+
+	// ------------------------------------------------------------------------------------
+	// group ③b the burning-box content slots (task jade-boiler-burningbox)
+	// ------------------------------------------------------------------------------------
+
+	@Test
+	public void burningBoxCarriesTheTwoContentSlots() {
+		// slot 0 = fuel, slot 1 = ash (the upstream GeneratorSolid :112/:184-190 pair) —
+		// the wire carries registry name + count per FILLED slot only
+		GTGeneratorLiquidBlockEntity tBox = new GTGeneratorLiquidBlockEntity(sBurningType, POS, Blocks.STONE.defaultBlockState());
+		tBox.mInventory.setStackInSlot(0, new ItemStack(Items.COAL, 3));
+		CompoundTag tTag = new CompoundTag();
+		GT6ConverterProvider.writeFamilyData(tTag, tBox);
+		assertTrue(tTag.getBoolean(GT6ConverterProvider.KEY_CONTENTS), "the family gate rides even with both slots empty");
+		assertEquals("minecraft:coal", tTag.getString(GT6ConverterProvider.KEY_FUEL_ID));
+		assertEquals(3, tTag.getInt(GT6ConverterProvider.KEY_FUEL_COUNT));
+		assertEquals(Tag.TAG_STRING, tTag.getTagType(GT6ConverterProvider.KEY_FUEL_ID));
+		assertEquals(Tag.TAG_INT, tTag.getTagType(GT6ConverterProvider.KEY_FUEL_COUNT));
+		assertFalse(tTag.contains(GT6ConverterProvider.KEY_ASH_ID), "an empty ash slot writes no identity keys");
+		assertFalse(tTag.contains(GT6ConverterProvider.KEY_ASH_COUNT));
+	}
+
+	@Test
+	public void bothSlotsFilledRideTheirOwnKeys() {
+		GTGeneratorLiquidBlockEntity tBox = new GTGeneratorLiquidBlockEntity(sBurningType, POS, Blocks.STONE.defaultBlockState());
+		tBox.mInventory.setStackInSlot(0, new ItemStack(Items.COAL, 1));
+		tBox.mInventory.setStackInSlot(1, new ItemStack(Items.IRON_NUGGET, 7));
+		CompoundTag tTag = new CompoundTag();
+		GT6ConverterProvider.writeBurningContents(tTag, tBox.mInventory.getStackInSlot(0), tBox.mInventory.getStackInSlot(1));
+		assertEquals("minecraft:coal", tTag.getString(GT6ConverterProvider.KEY_FUEL_ID));
+		assertEquals(1, tTag.getInt(GT6ConverterProvider.KEY_FUEL_COUNT));
+		assertEquals("minecraft:iron_nugget", tTag.getString(GT6ConverterProvider.KEY_ASH_ID));
+		assertEquals(7, tTag.getInt(GT6ConverterProvider.KEY_ASH_COUNT));
+	}
+
+	@Test
+	public void nonBurningFamiliesStayContentless() {
+		// the contents rows ride ONLY the burning branch — the engine keeps a shut gate
+		GTSteamEngineBlockEntity tEngine = new GTSteamEngineBlockEntity(sEngineType, POS, Blocks.STONE.defaultBlockState());
+		CompoundTag tTag = new CompoundTag();
+		GT6ConverterProvider.writeFamilyData(tTag, tEngine);
+		assertFalse(tTag.contains(GT6ConverterProvider.KEY_CONTENTS),
+				"the transformer/engine families never grow fuel/ash rows");
+	}
+
+	@Test
+	public void contentLineSpeaksFilledAndEmptyFaces() {
+		// filled: "Fuel: <item hover name> x<count>" — the name rides the item's own hover
+		// face (the GTCEu getItemName posture); empty: the dedicated empty-state key
+		CompoundTag tFilled = new CompoundTag();
+		tFilled.putString(GT6ConverterProvider.KEY_FUEL_ID, "minecraft:coal");
+		tFilled.putInt(GT6ConverterProvider.KEY_FUEL_COUNT, 3);
+		TranslatableContents tFuel = (TranslatableContents) GT6ConverterProvider.contentLine(tFilled,
+				GT6ConverterProvider.KEY_FUEL_ID, GT6ConverterProvider.KEY_FUEL_COUNT,
+				GT6ConverterProvider.LANG_FUEL, GT6ConverterProvider.LANG_FUEL_EMPTY).getContents();
+		assertEquals(GT6ConverterProvider.LANG_FUEL, tFuel.getKey());
+		assertEquals(2, tFuel.getArgs().length);
+		assertTrue(tFuel.getArgs()[0] instanceof net.minecraft.network.chat.Component,
+				"slot 0 = the resolved item display name");
+		assertEquals(3, tFuel.getArgs()[1]);
+		// empty: no id key = the empty-state word
+		TranslatableContents tEmpty = (TranslatableContents) GT6ConverterProvider.contentLine(new CompoundTag(),
+				GT6ConverterProvider.KEY_ASH_ID, GT6ConverterProvider.KEY_ASH_COUNT,
+				GT6ConverterProvider.LANG_ASH, GT6ConverterProvider.LANG_ASH_EMPTY).getContents();
+		assertEquals(GT6ConverterProvider.LANG_ASH_EMPTY, tEmpty.getKey());
+		assertEquals(0, tEmpty.getArgs().length);
+		// itemFace resolves a registry name to the item's hover face (garbage degrades to AIR)
+		assertTrue(GT6ConverterProvider.itemFace("minecraft:coal").getContents() instanceof TranslatableContents,
+				"the item name rides a translatable face");
 	}
 
 	// ------------------------------------------------------------------------------------

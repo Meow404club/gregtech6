@@ -1069,7 +1069,11 @@ HAND_TRANSLATIONS = {
     "gt6.jade.boiler.scale": ("水垢: %s%%", "hand"),
     "gt6.jade.boiler.scale.clean": ("锅炉无水垢", "hand"),
     "gt6.jade.boiler.steam": ("蒸汽: %s / %s mB (%s%%)", "hand"),
-    "gt6.jade.boiler.water": ("水: %s / %s mB (%s%%)", "hand"),
+    # task jade-boiler-burningbox: the water label slot carries the ACTUAL fluid name
+    # (the hardcoded 水 retired — the upstream FL.water tank takes water + distilled
+    # water) with 空罐 on a dry tank (the show-empty ruling).
+    "gt6.jade.boiler.water": ("%s: %s / %s mB (%s%%)", "hand"),
+    "gt6.jade.boiler.water.empty": ("空罐", "hand"),
     # task p33-bees-lv3-b-bumbliary: the 2 Bumbliary machine display names are DUMP faces
     # (gt.multitileentity.32741/32007) that the merge reconciliation landed in the TSV
     # direct band with status=auto — not hand-authored, so the status rides here verbatim
@@ -1170,6 +1174,12 @@ HAND_TRANSLATIONS = {
     "gt6.jade.converter.stopped": ("已停机", "hand"),
     "gt6.jade.converter.stored": ("存量: %s / %s %s", "hand"),
     "gt6.jade.converter.stored.bare": ("存量: %s %s", "hand"),
+    # task jade-boiler-burningbox: the burning-box contents band (slot 0 fuel / slot 1
+    # ash — the no-GUI family's only content face), each slot filled/empty two keys.
+    "gt6.jade.burningbox.ash": ("灰烬: %s x%s", "hand"),
+    "gt6.jade.burningbox.ash.empty": ("灰烬: 空", "hand"),
+    "gt6.jade.burningbox.fuel": ("燃料: %s x%s", "hand"),
+    "gt6.jade.burningbox.fuel.empty": ("燃料: 空", "hand"),
     # task r8-jade-sensor-provider: the sensor-family Jade band keyed (reading/mode/redstone
     # lines + the sneak pair + the 8 mode names — upstream has zero textual mode names, the
     # names are authored against the GTSensorLogic mode semantics; the probe face arg rides
