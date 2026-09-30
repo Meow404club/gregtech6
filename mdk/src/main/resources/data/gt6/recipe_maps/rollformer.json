@@ -1,10 +1,480 @@
 {
+  "comment": "task recipe-data-b2c-roll - the RollFormer handler static expansion. Row source: RM.RollFormer.add(RecipeMapHandlerPrefix) x2, Loader_Recipes_Handlers.java:314 (hard leg) + :316 (easy leg), both plate 1 -> railGt 4, eut 16, And(ANTIMATTER.NOT, COATED.NOT, SMITHABLE, easyWorkable) with easyWorkable = FURNACE|SOFT (Loader_Recipes_Handlers.java:58). Engine: RecipeMapHandlerPrefix query-time lazy per material (RecipeMapHandlerPrefix.java:135-146/:204-218/:170-178), condition gate :205 + input/output item existence gates :209/:214. Duration: easy leg 16 fixed; hard leg getCosts (:225-227) = 64*(toolQuality+1) exactly (plate U = railGt 4 x U4 = U). DECLARED DEVIATION (handler semantics -> JSON static rows): lazy per-material generation frozen to the port universe snapshot (GTMaterialItems.registrationOrder, plate-prefix members with both plate and railGt items, minus ANTIMATTER / COATED / not-SMITHABLE / INVALID_MATERIAL) - the craftfrom 962-row precedent deviation class. The GT6RecipeMapDataB2cRollRowsPourTest live-walk cross-check fails when registrations drift from this snapshot. SEMANTICS CORRECTION carried forward from the replaced p29-w1 smoke row: the handler is plate -> railGt 4 (its comment already corrected stick -> rail); that row also rode duration 32, the hard-leg iron value here is 64*(2+1)=192, easy legs are 16. Row census: 8 easy + 20 hard = 28 rows.",
   "recipes": [
     {
-      "comment": "task p29-w1-kinetic-roll-ladder smoke row, SEMANTICS CORRECTED by task p29-w3-heat-smelter — the upstream RollFormer handler (Loader_Recipes_Handlers.java:314) is plate 1 -> railGt 4, NOT stick -> rail: the shipped row fed a stick while citing the OP.railGt product class (the port rod semantics on the wrong family). eut 16 / duration 32 riding the RollingMill row shape",
-      "inputs": [{"item": "gt6:plate_iron", "count": 1}],
-      "outputs": [{"item": "gt6:rail_gt_iron", "count": 4}],
-      "duration": 32,
+      "comment": "Loader_Recipes_Handlers.java:316 aluminium - plate 1 -> rail_gt 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_aluminium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_aluminium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 titanium - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_titanium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_titanium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 iron - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_iron",
+          "count": 4
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:316 copper - plate 1 -> rail_gt 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_copper",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_copper",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:316 silver - plate 1 -> rail_gt 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_silver",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_silver",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 tungsten - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_tungsten",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_tungsten",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 osmium_elemental - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_osmium_elemental",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_osmium_elemental",
+          "count": 4
+        }
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 platinum - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_platinum",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_platinum",
+          "count": 4
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:316 gold - plate 1 -> rail_gt 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_gold",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_gold",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 adamantium - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=5, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_adamantium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_adamantium",
+          "count": 4
+        }
+      ],
+      "duration": 384,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:316 electrum - plate 1 -> rail_gt 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_electrum",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_electrum",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 steel - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_steel",
+          "count": 4
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 meteoric_iron - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_meteoric_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_meteoric_iron",
+          "count": 4
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 meteorite - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_meteorite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_meteorite",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:316 bronze - plate 1 -> rail_gt 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_bronze",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_bronze",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 tungstensteel - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_tungstensteel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_tungstensteel",
+          "count": 4
+        }
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 stainless_steel - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_stainless_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_stainless_steel",
+          "count": 4
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 hslasteel - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_hslasteel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_hslasteel",
+          "count": 4
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 tungsten_carbide - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_tungsten_carbide",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_tungsten_carbide",
+          "count": 4
+        }
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 meteoric_steel - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_meteoric_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_meteoric_steel",
+          "count": 4
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:316 magnalium - plate 1 -> rail_gt 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_magnalium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_magnalium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 obsidian_steel - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_obsidian_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_obsidian_steel",
+          "count": 4
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 hssg - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_hssg",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_hssg",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 hsse - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_hsse",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_hsse",
+          "count": 4
+        }
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 hsss - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_hsss",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_hsss",
+          "count": 4
+        }
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:316 annealed_copper - plate 1 -> rail_gt 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_annealed_copper",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_annealed_copper",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 wrought_iron - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_wrought_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_wrought_iron",
+          "count": 4
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:314 tungsten_sintered - plate 1 -> rail_gt 4, hard leg (NOT FURNACE, NOT SOFT), duration 64*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_tungsten_sintered",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rail_gt_tungsten_sintered",
+          "count": 4
+        }
+      ],
+      "duration": 256,
       "eut": 16
     }
   ]

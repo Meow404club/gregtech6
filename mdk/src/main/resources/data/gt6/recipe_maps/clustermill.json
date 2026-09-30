@@ -1,10 +1,5223 @@
 {
+  "comment": "task recipe-data-b2c-roll - the ClusterMill handler static expansion. Row source: RM.ClusterMill.add(RecipeMapHandlerPrefix) x2, Loader_Recipes_Handlers.java:309 (hard leg) + :311 (easy leg), both plate 1 -> foil 4, eut 16, And(ANTIMATTER.NOT, SMITHABLE, easyWorkable) with easyWorkable = FURNACE|SOFT (Loader_Recipes_Handlers.java:58 Or(TD.Processing.FURNACE, TD.Properties.SOFT)). Engine: RecipeMapHandlerPrefix is query-time lazy per material - addRecipesUsing/Producing (:135-146) gate on the material condition (:205) and input/output item existence (:209/:214); addAllRecipesInternal (:170-178) walks mInputPrefixes[0].mRegisteredMaterials. Duration: easy leg mDuration=16 fixed; hard leg mDuration=0 -> getCosts (:225-227) = UT.Code.units(U, U, multiplier*(mToolQuality+1), T) = 256*(toolQuality+1) exactly (plate U = foil 4 x U4 = U, no rounding remainder). DECLARED DEVIATION (handler semantics -> JSON static rows): the handler generates lazily against the LIVE material universe at query time; this file is the frozen port universe snapshot (GTMaterialItems.registrationOrder, plate-prefix members with both plate and foil items, minus ANTIMATTER / not-SMITHABLE / INVALID_MATERIAL) - the craftfrom 962-row precedent of the same deviation class. New plate/foil registrations need a re-pour or the JSON trails the live walk (the GT6RecipeMapDataB2cRollRowsPourTest live-walk cross-check pins this file against the live registration and fails when they drift). REPLACED SMOKE ROW: the p29-w1 row (plate_iron -> foil_iron x2, duration 32, \"riding the RollingMill row shape\") was semantically wrong against the handler (upstream count 4, iron NEVER_FURNACE+not-SOFT = hard leg -> 256*(2+1)=768); the full expansion below supersedes it. Row census: 87 easy + 220 hard = 307 rows.",
   "recipes": [
     {
-      "comment": "task p29-w1-kinetic-roll-ladder smoke row — the plate->foil minimal row (the cluster mill rolls plate thinner: OP.foil, the FOILS-tagged iron material pair), eut 16 / duration 32 riding the RollingMill row shape",
-      "inputs": [{"item": "gt6:plate_iron", "count": 1}],
-      "outputs": [{"item": "gt6:foil_iron", "count": 2}],
-      "duration": 32,
+      "comment": "Loader_Recipes_Handlers.java:311 lithium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_lithium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_lithium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 lithium6 - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_lithium6",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_lithium6",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 beryllium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_beryllium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_beryllium",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 beryllium7 - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_beryllium7",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_beryllium7",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 beryllium8 - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_beryllium8",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_beryllium8",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 boron - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_boron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_boron",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 boron11 - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_boron11",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_boron11",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 sodium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_sodium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_sodium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 magnesium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_magnesium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_magnesium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 aluminium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_aluminium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_aluminium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 silicon - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_silicon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_silicon",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 potassium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_potassium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_potassium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 calcium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_calcium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_calcium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 scandium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_scandium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_scandium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 titanium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_titanium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_titanium",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 vanadium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_vanadium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_vanadium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 chromium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_chromium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_chromium",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 manganese - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_manganese",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_manganese",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 iron - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_iron",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 cobalt - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_cobalt",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_cobalt",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 cobalt60 - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_cobalt60",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_cobalt60",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 nickel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_nickel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_nickel",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 copper - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_copper",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_copper",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 zinc - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_zinc",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_zinc",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 gallium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_gallium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_gallium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 germanium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_germanium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_germanium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 arsenic - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_arsenic",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_arsenic",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 rubidium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_rubidium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_rubidium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 strontium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_strontium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_strontium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 yttrium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_yttrium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_yttrium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 zirconium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_zirconium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_zirconium",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 niobium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_niobium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_niobium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 molybdenum - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_molybdenum",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_molybdenum",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 technetium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=1, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_technetium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_technetium",
+          "count": 4
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 ruthenium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_ruthenium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_ruthenium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 rhodium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_rhodium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_rhodium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 palladium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_palladium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_palladium",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 silver - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_silver",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_silver",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 cadmium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_cadmium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_cadmium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 indium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_indium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_indium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 tin - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_tin",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_tin",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 antimony - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_antimony",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_antimony",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 tellurium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_tellurium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_tellurium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 caesium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_caesium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_caesium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 barium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_barium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_barium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 lanthanium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_lanthanium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_lanthanium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 cerium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_cerium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_cerium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 praseodymium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_praseodymium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_praseodymium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 neodymium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_neodymium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_neodymium",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 promethium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_promethium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_promethium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 samarium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_samarium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_samarium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 europium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_europium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_europium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 gadolinium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_gadolinium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_gadolinium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 terbium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_terbium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_terbium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 dysprosium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_dysprosium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_dysprosium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 holmium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_holmium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_holmium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 erbium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_erbium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_erbium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 thulium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_thulium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_thulium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 ytterbium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_ytterbium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_ytterbium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 lutetium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_lutetium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_lutetium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 hafnium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_hafnium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_hafnium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 tantalum - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_tantalum",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_tantalum",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 tungsten - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_tungsten",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_tungsten",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 rhenium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_rhenium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_rhenium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 osmium_elemental - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_osmium_elemental",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_osmium_elemental",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 iridium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_iridium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_iridium",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 platinum - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_platinum",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_platinum",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 gold - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_gold",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_gold",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 gold198 - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_gold198",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_gold198",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 mercury - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_mercury",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_mercury",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 thallium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_thallium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_thallium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 lead - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_lead",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_lead",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 bismuth - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_bismuth",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_bismuth",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 polonium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_polonium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_polonium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 astatine - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_astatine",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_astatine",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 francium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_francium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_francium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 radium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_radium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_radium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 actinium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_actinium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_actinium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 thorium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_thorium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_thorium",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 protactinium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_protactinium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_protactinium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 uranium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_uranium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_uranium",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 uranium235 - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_uranium235",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_uranium235",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 uranium233 - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_uranium233",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_uranium233",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 neptunium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_neptunium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_neptunium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 plutonium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_plutonium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_plutonium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 plutonium240 - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_plutonium240",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_plutonium240",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 plutonium241 - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_plutonium241",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_plutonium241",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 plutonium243 - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_plutonium243",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_plutonium243",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 plutonium238 - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_plutonium238",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_plutonium238",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 plutonium239 - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_plutonium239",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_plutonium239",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 americium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_americium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_americium",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 americium241 - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_americium241",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_americium241",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 americium242 - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_americium242",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_americium242",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 curium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_curium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_curium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 berkelium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_berkelium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_berkelium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 californium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_californium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_californium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 einsteinium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_einsteinium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_einsteinium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 fermium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_fermium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_fermium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 mendelevium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_mendelevium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_mendelevium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 nobelium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_nobelium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_nobelium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 lawrencium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_lawrencium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_lawrencium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 rutherfordium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_rutherfordium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_rutherfordium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 dubnium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_dubnium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_dubnium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 seaborgium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_seaborgium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_seaborgium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 bohrium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_bohrium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_bohrium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 hassium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_hassium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_hassium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 copernicium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_copernicium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_copernicium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 flerovium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_flerovium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_flerovium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 flerovium298 - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_flerovium298",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_flerovium298",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 trinium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_trinium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_trinium",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 naquadah - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_naquadah",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_naquadah",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 naquadah_enriched - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_naquadah_enriched",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_naquadah_enriched",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 naquadria - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_naquadria",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_naquadria",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 abyssalnite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_abyssalnite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_abyssalnite",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 coralium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_coralium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_coralium",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 dreadium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_dreadium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_dreadium",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 ethaxium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_ethaxium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_ethaxium",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 atlarus - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_atlarus",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_atlarus",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 adamantium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=5, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_adamantium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_adamantium",
+          "count": 4
+        }
+      ],
+      "duration": 1536,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 carborundum - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_carborundum",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_carborundum",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 ferrite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_ferrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_ferrite",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 electrum - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_electrum",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_electrum",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_steel",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 deep_iron - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_deep_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_deep_iron",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 pig_iron - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_pig_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_pig_iron",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 dark_iron - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_dark_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_dark_iron",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 meteoric_iron - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_meteoric_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_meteoric_iron",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 shadow_iron - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_shadow_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_shadow_iron",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 astral_silver - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_astral_silver",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_astral_silver",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 midasium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_midasium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_midasium",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 mithril - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_mithril",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_mithril",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 thaumium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_thaumium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_thaumium",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 aredrite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_aredrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_aredrite",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 ardite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_ardite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_ardite",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 yellorium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_yellorium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_yellorium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 blutonium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_blutonium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_blutonium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 cyanite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_cyanite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_cyanite",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 elven_elementium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_elven_elementium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_elven_elementium",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 ludicrite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_ludicrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_ludicrite",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 endium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_endium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_endium",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 mauftrium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_mauftrium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_mauftrium",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 elvorium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_elvorium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_elvorium",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 ancient_debris - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_ancient_debris",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_ancient_debris",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 efrine - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_efrine",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_efrine",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 desh - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_desh",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_desh",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 oriharukon - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_oriharukon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_oriharukon",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 adamantite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_adamantite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_adamantite",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 meteorite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_meteorite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_meteorite",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 frozen_iron - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_frozen_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_frozen_iron",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 kreknorite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_kreknorite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_kreknorite",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 alduorite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_alduorite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_alduorite",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 infuscolium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_infuscolium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_infuscolium",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 rubracium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_rubracium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_rubracium",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 meutoite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_meutoite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_meutoite",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 lemurite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_lemurite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_lemurite",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 ceruclase - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_ceruclase",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_ceruclase",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 oureclase - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_oureclase",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_oureclase",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 kalendrite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_kalendrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_kalendrite",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 orichalcum - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_orichalcum",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_orichalcum",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 carmot - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_carmot",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_carmot",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 sanguinite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_sanguinite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_sanguinite",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 vyroxeres - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_vyroxeres",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_vyroxeres",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 eximite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_eximite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_eximite",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 prometheum - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_prometheum",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_prometheum",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 ignatius - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_ignatius",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_ignatius",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 vulcanite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_vulcanite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_vulcanite",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 celenegil - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_celenegil",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_celenegil",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 adamantine - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=5, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_adamantine",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_adamantine",
+          "count": 4
+        }
+      ],
+      "duration": 1536,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 syrmorite - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_syrmorite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_syrmorite",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 octine - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_octine",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_octine",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 draconium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_draconium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_draconium",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 bedrockium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_bedrockium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_bedrockium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 sterling_silver - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_sterling_silver",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_sterling_silver",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 rose_gold - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_rose_gold",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_rose_gold",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 angmallen - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_angmallen",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_angmallen",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 gold_inductive - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_gold_inductive",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_gold_inductive",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 cd_in_ag_alloy - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_cd_in_ag_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_cd_in_ag_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 gilded_iron - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_gilded_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_gilded_iron",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 bronze - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_bronze",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_bronze",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 black_bronze - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_black_bronze",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_black_bronze",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 bismuth_bronze - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_bismuth_bronze",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_bismuth_bronze",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 hepatizon - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_hepatizon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_hepatizon",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 arsenic_copper - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_arsenic_copper",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_arsenic_copper",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 arsenic_bronze - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_arsenic_bronze",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_arsenic_bronze",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 brass - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_brass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_brass",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 cobalt_brass - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_cobalt_brass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_cobalt_brass",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 aluminium_alloy - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_aluminium_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_aluminium_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 black_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_black_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_black_steel",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 blue_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_blue_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_blue_steel",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 red_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_red_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_red_steel",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 damascus_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_damascus_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_damascus_steel",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 tungstensteel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_tungstensteel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_tungstensteel",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 stainless_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_stainless_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_stainless_steel",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 hslasteel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_hslasteel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_hslasteel",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 tungsten_carbide - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_tungsten_carbide",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_tungsten_carbide",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 hslaspring_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_hslaspring_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_hslaspring_steel",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 meteoric_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_meteoric_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_meteoric_steel",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 steel_galvanized - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_steel_galvanized",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_steel_galvanized",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 vanadium_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_vanadium_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_vanadium_steel",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 titanium_gold - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_titanium_gold",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_titanium_gold",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 purple_alloy - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_purple_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_purple_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 electrotine_alloy - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_electrotine_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_electrotine_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 blue_alloy - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_blue_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_blue_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 red_alloy - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_red_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_red_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 invar - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_invar",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_invar",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 constantan - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=1, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_constantan",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_constantan",
+          "count": 4
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 nichrome - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_nichrome",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_nichrome",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 kanthal - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_kanthal",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_kanthal",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 magnalium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_magnalium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_magnalium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 ultimet - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_ultimet",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_ultimet",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 tin_alloy - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_tin_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_tin_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 battery_alloy - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_battery_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_battery_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 soldering_alloy - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_soldering_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_soldering_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 shadow_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_shadow_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_shadow_steel",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 ironwood - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_ironwood",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_ironwood",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 steeleaf - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_steeleaf",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_steeleaf",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 knightmetal - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_knightmetal",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_knightmetal",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 fiery_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_fiery_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_fiery_steel",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 dark_thaumium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_dark_thaumium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_dark_thaumium",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 void_metal - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_void_metal",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_void_metal",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 osmiridium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_osmiridium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_osmiridium",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 sunnarium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_sunnarium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_sunnarium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 trinaquadalloy - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=5, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_trinaquadalloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_trinaquadalloy",
+          "count": 4
+        }
+      ],
+      "duration": 1536,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 chromium_dioxide - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_chromium_dioxide",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_chromium_dioxide",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 vanadium_gallium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_vanadium_gallium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_vanadium_gallium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 yttrium_barium_cuprate - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_yttrium_barium_cuprate",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_yttrium_barium_cuprate",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 niobium_nitride - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_niobium_nitride",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_niobium_nitride",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 niobium_titanium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_niobium_titanium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_niobium_titanium",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 meteoric_black_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_meteoric_black_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_meteoric_black_steel",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 meteoric_blue_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_meteoric_blue_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_meteoric_blue_steel",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 meteoric_red_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_meteoric_red_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_meteoric_red_steel",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 meteoflame_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_meteoflame_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_meteoflame_steel",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 meteoflame_black_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_meteoflame_black_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_meteoflame_black_steel",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 meteoflame_blue_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_meteoflame_blue_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_meteoflame_blue_steel",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 meteoflame_red_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_meteoflame_red_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_meteoflame_red_steel",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 flamascus_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_flamascus_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_flamascus_steel",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 fireleaf - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_fireleaf",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_fireleaf",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 aluminium_brass - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_aluminium_brass",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_aluminium_brass",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 alumite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_alumite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_alumite",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 manyullyn - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_manyullyn",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_manyullyn",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 vibranium_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=10, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_vibranium_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_vibranium_steel",
+          "count": 4
+        }
+      ],
+      "duration": 2816,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 vibranium_silver - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=9, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_vibranium_silver",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_vibranium_silver",
+          "count": 4
+        }
+      ],
+      "duration": 2560,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 vibramantium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=15, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_vibramantium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_vibramantium",
+          "count": 4
+        }
+      ],
+      "duration": 4096,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 signalum - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_signalum",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_signalum",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 lumium - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_lumium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_lumium",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 enderium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_enderium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_enderium",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 electrum_flux - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_electrum_flux",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_electrum_flux",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 obsidian_refined - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_obsidian_refined",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_obsidian_refined",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 bedrock_hslaalloy - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=5, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_bedrock_hslaalloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_bedrock_hslaalloy",
+          "count": 4
+        }
+      ],
+      "duration": 1536,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 manasteel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_manasteel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_manasteel",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 terrasteel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_terrasteel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_terrasteel",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 pulsating_iron - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_pulsating_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_pulsating_iron",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 vibrant_alloy - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_vibrant_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_vibrant_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 conductive_iron - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_conductive_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_conductive_iron",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 energetic_alloy - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_energetic_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_energetic_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 enderium_base - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_enderium_base",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_enderium_base",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 electrical_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_electrical_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_electrical_steel",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 obsidian_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_obsidian_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_obsidian_steel",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 soularium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_soularium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_soularium",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 redstone_alloy - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_redstone_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_redstone_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 spectre_iron - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_spectre_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_spectre_iron",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 gaia_spirit - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_gaia_spirit",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_gaia_spirit",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 nikoline_alloy - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_nikoline_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_nikoline_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 niflheim_power - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_niflheim_power",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_niflheim_power",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 muspelheim_power - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_muspelheim_power",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_muspelheim_power",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 netherite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_netherite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_netherite",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 netherized_diamond - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_netherized_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_netherized_diamond",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 duranium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_duranium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_duranium",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 tritanium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=5, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_tritanium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_tritanium",
+          "count": 4
+        }
+      ],
+      "duration": 1536,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 duralumin - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_duralumin",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_duralumin",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 hslatungsten_alloy - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_hslatungsten_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_hslatungsten_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 inolashite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_inolashite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_inolashite",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 haderoth - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_haderoth",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_haderoth",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 workers_alloy - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_workers_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_workers_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 desichalkos - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_desichalkos",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_desichalkos",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 tartarite - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=5, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_tartarite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_tartarite",
+          "count": 4
+        }
+      ],
+      "duration": 1536,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 amordrine - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_amordrine",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_amordrine",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 trinitanium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_trinitanium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_trinitanium",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 draconium_awakened - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=5, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_draconium_awakened",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_draconium_awakened",
+          "count": 4
+        }
+      ],
+      "duration": 1536,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 titanium_iridium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_titanium_iridium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_titanium_iridium",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 titanium_aluminide - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_titanium_aluminide",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_titanium_aluminide",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 hssg - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_hssg",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_hssg",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 hsse - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_hsse",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_hsse",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 hsss - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_hsss",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_hsss",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 crystal_matrix - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=4, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_crystal_matrix",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_crystal_matrix",
+          "count": 4
+        }
+      ],
+      "duration": 1280,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 cosmic_neutronium - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=10, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_cosmic_neutronium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_cosmic_neutronium",
+          "count": 4
+        }
+      ],
+      "duration": 2816,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 infinity - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=15, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_infinity",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_infinity",
+          "count": 4
+        }
+      ],
+      "duration": 4096,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 tantalum_hafnium_carbide - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_tantalum_hafnium_carbide",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_tantalum_hafnium_carbide",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 mingrade - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_mingrade",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_mingrade",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 unstable - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_unstable",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_unstable",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 clay_compound - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_clay_compound",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_clay_compound",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 end_steel - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_end_steel",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_end_steel",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 energetic_silver - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_energetic_silver",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_energetic_silver",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 melodic_alloy - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_melodic_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_melodic_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 stellar_alloy - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_stellar_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_stellar_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 vivid_alloy - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_vivid_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_vivid_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 crystalline_alloy - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_crystalline_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_crystalline_alloy",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 crystalline_pink_slime - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=0, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_crystalline_pink_slime",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_crystalline_pink_slime",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:311 annealed_copper - plate 1 -> foil 4, easy leg (FURNACE|SOFT), duration 16 fixed, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_annealed_copper",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_annealed_copper",
+          "count": 4
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 wrought_iron - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_wrought_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_wrought_iron",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 iron_compressed - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_iron_compressed",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_iron_compressed",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 iron_magnetic - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_iron_magnetic",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_iron_magnetic",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 steel_magnetic - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_steel_magnetic",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_steel_magnetic",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 neodymium_magnetic - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_neodymium_magnetic",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_neodymium_magnetic",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 tungsten_sintered - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=3, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_tungsten_sintered",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_tungsten_sintered",
+          "count": 4
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 glowstone_refined - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_glowstone_refined",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_glowstone_refined",
+          "count": 4
+        }
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:309 cast_iron - plate 1 -> foil 4, hard leg (NOT FURNACE, NOT SOFT), duration 256*(toolQuality+1), q=2, eut 16",
+      "inputs": [
+        {
+          "item": "gt6:plate_cast_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_cast_iron",
+          "count": 4
+        }
+      ],
+      "duration": 768,
       "eut": 16
     }
   ]
