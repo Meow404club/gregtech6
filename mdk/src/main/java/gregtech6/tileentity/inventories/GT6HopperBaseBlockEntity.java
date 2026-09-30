@@ -26,6 +26,13 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import brachy.modularui.factory.PosGuiData;
+import brachy.modularui.screen.ModularPanel;
+import brachy.modularui.screen.UISettings;
+import brachy.modularui.value.sync.PanelSyncManager;
+
+import gregtech6.gui.machines.GT6HopperMUI;
+import gregtech6.gui.machines.GT6MuiMachine;
 import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.util.GTItemMover;
@@ -79,8 +86,18 @@ import gregtech6.util.GTItemMover;
  *     against" no longer holds).</li>
  * <li>The snowman walk-over easter egg (:156-159 / :143-147) is DEFERRED (card spec ⑦).</li>
  * </ul>
+ *
+ * <h2>The GUI face (task hopper-gui-family — the R-L census A2 card)</h2>
+ * The base implements {@link gregtech6.gui.machines.GT6MuiMachine}: the two upstream
+ * {@code getGUIServer2/getGUIClient2} overrides (MultiTileEntityHopper.java:299-300 /
+ * MultiTileEntityQueueHopper.java:281-282 — identical
+ * {@code ContainerCommonDefault} re-declarations over the chest default case table) land
+ * here as ONE {@code buildUI} delegating to the {@link gregtech6.gui.machines.GT6HopperMUI}
+ * panel, parameterized by the live inventory size — both subclasses (and the block's
+ * {@code use()} dispatch) inherit the face untouched.
  */
-public abstract class GT6HopperBaseBlockEntity extends TileEntityBase03TicksAndSync implements GT6AdjacentInventoryUpdatable {
+public abstract class GT6HopperBaseBlockEntity extends TileEntityBase03TicksAndSync
+		implements GT6AdjacentInventoryUpdatable, GT6MuiMachine {
 
 	// -----------------------------------------------------------------------
 	// side constants — the GT6 order == Direction.getIndex() (01Root doc)
@@ -241,6 +258,22 @@ public abstract class GT6HopperBaseBlockEntity extends TileEntityBase03TicksAndS
 	/** Upstream 05:103 updateInventory — the change flag (the handler hook funnels here). */
 	public void updateInventory() {
 		mInventoryChanged = true;
+	}
+
+	// -----------------------------------------------------------------------
+	// the GUI face (upstream getGUIServer2/getGUIClient2 :299-300 / :281-282 —
+	// see the class-doc GUI section)
+	// -----------------------------------------------------------------------
+
+	/**
+	 * The family GUI: the {@link GT6HopperMUI} panel over the chest default case table,
+	 * sized by the live inventory ({@code getSizeInventoryGUI} = the registration
+	 * {@code NBT_INV_SIZE}). Both legs build it inside the MUI factory chain (the
+	 * IUIHolder buildUI contract); the open arm is the block's {@code use()}.
+	 */
+	@Override
+	public ModularPanel<?> buildUI(PosGuiData aData, PanelSyncManager aSyncManager, UISettings aSettings) {
+		return GT6HopperMUI.panel(this, aSyncManager);
 	}
 
 	/** Upstream getInventoryStackLimit :248/:230 — the per-kind per-slot cap. */

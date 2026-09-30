@@ -367,8 +367,9 @@ public final class GT6Hoppers {
 	 * useInversePlacementRotation = T), the row (slots/kind) rides the instance. The use()
 	 * arms are the upstream onToolClick2 tool face ported onto the in-repo dispatch
 	 * (SCREWDRIVER action = the mode cycle, the wrench layer = the exact toggle) plus the
-	 * always-consumed click of onBlockActivated3 :108-111 (the GUI arm is the deferred
-	 * panel face — the card's menu-less ruling).
+	 * always-consumed click of onBlockActivated3 :108-111 whose openGUI lands as the
+	 * {@link gregtech6.gui.machines.GT6HopperMUI} panel through the BE's
+	 * {@code GT6MuiMachine} face (task hopper-gui-family; zero MenuType — the P26 ruling).
 	 */
 	public static final class GT6HopperBlock extends GTEntityBlock {
 
@@ -465,8 +466,10 @@ public final class GT6Hoppers {
 		 * The upstream onBlockActivated3 :108-111 port (return T — the click is consumed,
 		 * no block places against a hopper) with the tool arms between: the SCREWDRIVER
 		 * action drives the mode cycle (:128-135, sneak reverses), the wrench layer drives
-		 * the exact toggle (:137-141, hopper kind only). The GUI open arm is the deferred
-		 * panel face (the card's menu-less ruling).
+		 * the exact toggle (:137-141, hopper kind only). With no tool claiming the click,
+		 * the GUI open arm answers — the upstream openGUI re-expressed as
+		 * {@link gregtech6.gui.machines.GT6MuiMachine#tryOpen} (the batterybox-gui
+		 * two-arm shape; both hopper kinds share the arm, the BE base carries buildUI).
 		 */
 		@Override
 		//? if forge {
@@ -489,6 +492,12 @@ public final class GT6Hoppers {
 					tHopper.monkeyWrench(aPlayer); // :137-141 — the exact/divisible toggle
 					return InteractionResult.CONSUME;
 				}
+			}
+			// the GUI open arm (task hopper-gui-family — the upstream onBlockActivated3
+			// :108-111 openGUI → getGUIServer2 :299-300/:281-282 chest grid, re-expressed
+			// as the MUI factory chain, zero MenuType)
+			if (tTile instanceof GT6HopperBaseBlockEntity tGuiHopper && aPlayer instanceof net.minecraft.server.level.ServerPlayer tServerPlayer) {
+				gregtech6.gui.machines.GT6MuiMachine.tryOpen(tServerPlayer, tGuiHopper);
 			}
 			return InteractionResult.CONSUME; // upstream :110 return T — consumed with or without a tool
 		}
