@@ -13,7 +13,6 @@ import net.minecraft.resources.ResourceLocation;
 
 import gregapi.code.TagData;
 import gregapi.data.TD;
-import gregtech6.jade.GT6MachineProvider;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
 
@@ -343,15 +342,70 @@ public final class GT6RecipeMapViewerMeta {
 			TD.Energy.QU, ChatFormatting.DARK_PURPLE,   // :137 PURPLE (= DARK_PURPLE, :669)
 			TD.Energy.TU, ChatFormatting.DARK_BLUE);    // :144 DBLUE
 
+	// -----------------------------------------------------------------------
+	// The energy-carrier short codes (task p27-machine-energy-display-fix, moved HERE in
+	// task r10-debt-viewer-polish). History: energyUnit used to call the Jade integration
+	// class gregtech6.jade.GT6MachineProvider, whose interfaces (snownee.jade.api.*) are
+	// compileOnly — on a no-Jade runtime classpath the first recipe-page draw died in
+	// NoClassDefFoundError (crash-2026-09-30_01.24.41-client.txt, known_bugs
+	// r934_nojade_recipe_page_draw_ncdfe). The dependency is now inverted: the pure
+	// TagData→String table lives in this Jade-free seam and the Jade provider references
+	// IT — the viewer path never touches a Jade class whatever the runtime carries.
+	// -----------------------------------------------------------------------
+
 	/**
-	 * The colored short-code unit component: the short code rides the jade face's formatter
-	 * ({@link GT6MachineProvider#energyTypeShortCode}, same module, task p27) and the color
-	 * the upstream LH.Chat transcription above. Both viewers eat the style — JEI draws via
-	 * GuiGraphics.drawString (vanilla Font applies the per-run style color) and EMI's
-	 * addText goes through Text.asOrderedText (style runs preserved).
+	 * 能量类型短码表（task p27-machine-energy-display-fix，原 gregtech6.jade.GT6MachineProvider
+	 * 侧表 verbatim 移入）：accepted-energy 载体在 {@code mEnergyTypeAccepted}
+	 * （TileEntityBasicMachine.java:254），但 {@link TagData#mName} 不是显示名——移植把名字
+	 * 全大写折叠、丢弃 LH 短/长本地名（root TagData.java:68-71 createTagData 丢
+	 * aLocalShort/aLocalLong，mName="ENERGY.RU" :88），短码按研究卡裁定落本映射（root 不动）。
+	 * 恒等查找安全：createTagData 按名去重（TagData.java:77-81），TD.Energy 常量即单例。
+	 * 短码值 = 上游 aLocalShort 字面 verbatim（root TD.java:81/:88/:95/:102/:109/:116/:123/
+	 * :130/:137/:144/:151/:158/:165/:172/:175-185——被丢弃的实参仍原样在盘）。
+	 */
+	private static final Map<TagData, String> ENERGY_SHORT_CODES = Map.ofEntries(
+			Map.entry(TD.Energy.EU, "EU"),           // TD.java:81 ELECTRICITY（Canner 电机族）
+			Map.entry(TD.Energy.RU, "RU"),           // :88 KINETIC_ROTATION（Shredder/Lathe/Wiremill）
+			Map.entry(TD.Energy.KU, "KU"),           // :95 KINETIC_PUSH（Crusher/Sifter/Compressor/Press）
+			Map.entry(TD.Energy.HU, "HU"),           // :102 HEAT（Oven/Dryer/Extruder/Distillery）
+			Map.entry(TD.Energy.CU, "CU"),           // :109 CRYO
+			Map.entry(TD.Energy.LU, "LU"),           // :116 LIGHT
+			Map.entry(TD.Energy.MU, "MU"),           // :123 MAGNETIC
+			Map.entry(TD.Energy.NU, "NU"),           // :130 NEUTRON
+			Map.entry(TD.Energy.QU, "QU"),           // :137 QUANTUM
+			Map.entry(TD.Energy.TU, "TU"),           // :144 TIME（:254 字段默认）
+			Map.entry(TD.Energy.RF, "RF"),           // :151 REDSTONE_FLUX
+			Map.entry(TD.Energy.MJ, "MJ"),           // :158 MINECRAFT_JOULES
+			Map.entry(TD.Energy.STEAM, "Steam"),     // :165（上游短名是词不是字头）
+			Map.entry(TD.Energy.AU, "AU"),           // :172 AIR
+			Map.entry(TD.Energy.VIS_ORDO, "Ordo"),       // :175
+			Map.entry(TD.Energy.VIS_AER, "Aer"),         // :177
+			Map.entry(TD.Energy.VIS_AQUA, "Aqua"),       // :179
+			Map.entry(TD.Energy.VIS_TERRA, "Terra"),     // :181
+			Map.entry(TD.Energy.VIS_IGNIS, "Ignis"),     // :183
+			Map.entry(TD.Energy.VIS_PERDITIO, "Perditio")); // :185
+
+	/**
+	 * 能量载体的显示短码（{@link #ENERGY_SHORT_CODES} 查找；回退 = 折叠 mName 剥 "ENERGY."
+	 * 前缀——大写、无参数（TagData.java:69-71 折叠语义），兜住映射未及的未来载体。
+	 * The one short-code home: the Jade provider (GT6MachineProvider) and the viewer
+	 * cost lines both read through here.
+	 */
+	public static String energyTypeShortCode(TagData aType) {
+		String tCode = aType == null ? null : ENERGY_SHORT_CODES.get(aType);
+		if (tCode != null) return tCode;
+		String tName = aType == null ? "" : aType.mName;
+		return tName.startsWith("ENERGY.") ? tName.substring("ENERGY.".length()) : tName;
+	}
+
+	/**
+	 * The colored short-code unit component: the short code from the Jade-free table above
+	 * and the color the upstream LH.Chat transcription. Both viewers eat the style — JEI
+	 * draws via GuiGraphics.drawString (vanilla Font applies the per-run style color) and
+	 * EMI's addText goes through Text.asOrderedText (style runs preserved).
 	 */
 	public static Component energyUnit(TagData aEnergy) {
-		return Component.literal(GT6MachineProvider.energyTypeShortCode(aEnergy))
+		return Component.literal(energyTypeShortCode(aEnergy))
 				.withStyle(ENERGY_COLORS.getOrDefault(aEnergy, ChatFormatting.WHITE));
 	}
 

@@ -420,4 +420,41 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 		assertEquals(GT6RecipeMapViewerMeta.CATEGORY_WIDTH, tCategory.getWidth());
 		assertEquals(GT6RecipeMapViewerMeta.CATEGORY_HEIGHT, tCategory.getHeight());
 	}
+
+	// -------------------------------------------------------------------
+	// Task r10-debt-viewer-polish: the nojade decoupling + the gear-spot machine icon
+	// -------------------------------------------------------------------
+
+	/**
+	 * The known_bugs r934_nojade_recipe_page_draw_ncdfe mechanism proof: on a no-Jade
+	 * runtime the first recipe-page draw died in NoClassDefFoundError because THIS class's
+	 * bytecode referenced the Jade integration class (the old energyUnit →
+	 * GT6MachineProvider.energyTypeShortCode edge; Jade's API is compileOnly). A class can
+	 * only trigger a load through a reference in its constant pool, so the decoupling is
+	 * provable at the byte layer — the same offline-proof layer the GT6JeiPluginTest
+	 * annotation guard reads. Absent strings: any snownee Jade API AND the gregtech6.jade
+	 * integration package.
+	 */
+	@Test
+	void viewerMetaBytecodeCarriesNoJadeReference() throws Exception {
+		try (java.io.InputStream tIn = GT6RecipeMapViewerMeta.class.getResourceAsStream("GT6RecipeMapViewerMeta.class")) {
+			assertNotNull(tIn, "meta class resource not found on the test classpath");
+			String tBytes = new String(tIn.readAllBytes(), java.nio.charset.StandardCharsets.ISO_8859_1);
+			assertFalse(tBytes.contains("snownee"), "a Jade API class leaked into the viewer seam's constant pool — nojade runtimes NCDFE again");
+			assertFalse(tBytes.contains("gregtech6/jade"), "the Jade integration class is referenced from the viewer seam — nojade runtimes NCDFE again");
+		}
+	}
+
+	/**
+	 * The moved p27 short-code face: the table now lives here (the provider delegates to
+	 * it — its own pins stay green in GT6MachineProviderTest). Values verbatim, and the
+	 * unknown-carrier fallback still folds the mName prefix (null carrier folds to "").
+	 */
+	@Test
+	void energyTypeShortCodeLivesOnTheJadeFreeSeam() {
+		assertEquals("EU", GT6RecipeMapViewerMeta.energyTypeShortCode(gregapi.data.TD.Energy.EU));
+		assertEquals("RU", GT6RecipeMapViewerMeta.energyTypeShortCode(gregapi.data.TD.Energy.RU));
+		assertEquals("Steam", GT6RecipeMapViewerMeta.energyTypeShortCode(gregapi.data.TD.Energy.STEAM));
+		assertEquals("", GT6RecipeMapViewerMeta.energyTypeShortCode(null));
+	}
 }
