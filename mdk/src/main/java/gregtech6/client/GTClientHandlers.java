@@ -160,7 +160,9 @@ public final class GTClientHandlers {
      * lambda is block-type-free (the PAINT model-data lookup is the gate) and every barrel
      * BE supplies it through the 03 base, so the two domains share one decision site and
      * the tint classes stay untouched (this card extends the registration face only).
-     * Unpainted = the {@code -1} white-multiply identity, zero visual change.
+     * Task tank-render-tint: an unpainted barrel resolves its row NBT_MATERIAL through the
+     * combined dispatch (the former "zero visual change" white identity retires to the
+     * material-less fallback, upstream renders colored x mRGBa).
      */
     private static void onRegisterBarrelPaintBlockColors(RegisterColorHandlersEvent.Block event) {
         event.getBlockColors().register(GTMachinePaintTint.blockColor(), GTBarrels.paintableBlockArray());

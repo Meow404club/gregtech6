@@ -9,8 +9,9 @@
  * <p>THE SEMANTICS OF "UNPAINTED" CHANGED with the fidelity card (the expected regression
  * face, declared in the task): unpainted machines now render their NBT_MATERIAL row colour
  * (upstream MultiTileEntityClassContainer.java:51 derives NBT_COLOR from fRGBaSolid) — the
- * former white-default assertions here pin the MATERIAL-LESS arm only (barrels, MT.NULL
- * rows, vanilla states), which keeps the white identity byte-identical.
+ * former white-default assertions here pin the MATERIAL-LESS arm only (MT.NULL rows,
+ * vanilla states; the barrels LEFT that set in task tank-render-tint, their unpainted
+ * face renders the row colour through the GTBarrelBlock carrier).
  */
 package gregtech6.client.render;
 
@@ -82,9 +83,11 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 	}
 
 	/**
-	 * The material-LESS arm keeps the white identity (the P21 contract, byte-identical for
-	 * the P23 barrel co-registration): null material AND MT.NULL rows stay the vanilla -1
-	 * no-tint sentinel — the laser-style negative assertion of the task card.
+	 * The material-LESS arm keeps the white identity (the P21 contract): null material AND
+	 * MT.NULL rows stay the vanilla -1 no-tint sentinel — the laser-style negative
+	 * assertion of the task card. Task tank-render-tint: the barrels LEFT the material-less
+	 * set (their unpainted face resolves the row colour through the GTBarrelBlock carrier),
+	 * the white identity stays the MT.NULL / vanilla-state fallback only.
 	 */
 	@Test
 	void materialLessArmsStayTheWhiteNoTintIdentity() {
@@ -98,7 +101,6 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 		assertEquals(-1, GTMachinePaintTint.tintARGB(ModelData.EMPTY, gregapi.data.MT.NULL, 0),
 				"an MT.NULL material row stays the no-tint identity (the laser-style rows)");
 	}
-
 	/** Acceptance: a non-zero tint index is never tinted, painted or not. */
 	@Test
 	void nonZeroTintIndexIsNeverTinted() {
@@ -181,6 +183,62 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 		} catch (Exception aE) {
 			throw new IllegalStateException("could not unfreeze the offline block registry", aE);
 		}
+	}
+
+	/**
+	 * Task tank-render-tint: the barrel family rides the combined dispatch through the new
+	 * {@code GTBarrelBlock.materialOf} carrier — the four standalone rows' upstream
+	 * NBT_MATERIAL columns (Loader :2140 WoodTreated, :2150 ANY.Plastic, :2151 MT.Bronze,
+	 * :2171 ANY.W), one high-tier drum row's MetalDrumRow column, the steel valve arm
+	 * through the controller gate (the tungstensteel pin above), and the PAINT override
+	 * still beating the row colour on a barrel carrier (the P23 spray-paint face). The
+	 * former P23 white identity retires to the material-less fallback only.
+	 */
+	@Test
+	void barrelFamilyRidesTheCombinedDispatch() {
+		unfreezeBlockRegistry();
+		gregtech6.block.tank.GTBarrelBlock tWood = barrelBlock(() -> gregapi.data.MT.WoodTreated);
+		gregtech6.block.tank.GTBarrelBlock tPlastic = barrelBlock(() -> gregapi.data.ANY.Plastic);
+		gregtech6.block.tank.GTBarrelBlock tBronze = barrelBlock(() -> gregapi.data.MT.Bronze);
+		gregtech6.block.tank.GTBarrelBlock tLogistics = barrelBlock(() -> gregapi.data.ANY.W);
+		assertSame(gregapi.data.MT.WoodTreated, GTMachinePaintTint.tintMaterialOf(tWood),
+				"the wood barrel tints the :2140 WoodTreated row (not the unported Cheap-row ANY.Wood)");
+		assertSame(gregapi.data.ANY.Plastic, GTMachinePaintTint.tintMaterialOf(tPlastic),
+				"the plastic canister tints the :2150 ANY.Plastic row");
+		assertSame(gregapi.data.MT.Bronze, GTMachinePaintTint.tintMaterialOf(tBronze),
+				"the bronze drum tints the :2151 row");
+		assertSame(gregapi.data.ANY.W, GTMachinePaintTint.tintMaterialOf(tLogistics),
+				"the logistics tank tints the :2171 ANY.W row");
+		// a high-tier drum rides its MetalDrumRow column (the :2159-2170 ladder)
+		gregtech6.registry.GTBarrels.MetalDrumRow tDrumRow = gregtech6.registry.GTBarrels.HIGH_TIER_METAL_DRUMS.stream()
+				.filter(r -> r.path().equals("barrel_tungstensteel")).findFirst().orElseThrow();
+		assertSame(gregapi.data.MT.TungstenSteel, GTMachinePaintTint.tintMaterialOf(
+						new gregtech6.block.tank.GTBarrelBlock(tDrumRow.capacityL(), tDrumRow.meltingPointK(), true,
+								() -> null, tDrumRow.material(),
+								net.minecraft.world.level.block.state.BlockBehaviour.Properties.of())),
+				"the tungstensteel drum tints its MetalDrumRow column");
+		// the row colours resolve through the single decision site (the fRGBaSolid derivation)
+		assertEquals(GTMachinePaintTint.tintARGB(null, gregapi.data.MT.WoodTreated, 0),
+				GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tWood), 0),
+				"the wood barrel's tint value is the fRGBaSolid derivation");
+		assertEquals(GTMachinePaintTint.tintARGB(null, gregapi.data.ANY.W, 0),
+				GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tLogistics), 0),
+				"the logistics tank's tint value is the fRGBaSolid derivation");
+		// the spray-paint override wins over the row colour (upstream Paintable:85)
+		assertEquals(0xFFFF0000, GTMachinePaintTint.tintARGB(paintedData(PAINT_RED),
+				GTMachinePaintTint.tintMaterialOf(tLogistics), 0), "painted wins over the barrel row colour");
+		// the pairwise-distinct regression killer (the all-gray lesson): wood-brown vs steel-gray vs ANY.W
+		int tWoodTint = GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tWood), 0) & 0xFFFFFF;
+		int tBronzeTint = GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tBronze), 0) & 0xFFFFFF;
+		int tLogisticsTint = GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tLogistics), 0) & 0xFFFFFF;
+		assertTrue(tWoodTint != tBronzeTint && tBronzeTint != tLogisticsTint && tWoodTint != tLogisticsTint,
+				"the barrel row colours are pairwise distinct");
+	}
+
+	/** A bare barrel carrier for the dispatch pin (properties irrelevant to the material gate). */
+	private static gregtech6.block.tank.GTBarrelBlock barrelBlock(java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
+		return new gregtech6.block.tank.GTBarrelBlock(16000, 340, false, () -> null, aMaterial,
+				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
 	}
 
 	/**

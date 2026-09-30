@@ -12,9 +12,10 @@
  * each (barrels have no blockstate properties) = 16 block-model JSONs. Upstream canonical:
  * the barrel renders its colored/ texture multiplied by mRGBa (MultiTileEntityBarrelWood
  * .java:42-55; Plastic:42/Metal:39/Logistics:45 isomorphic). Task tex-tank-family:
- * the 15 borrowable rows ride the two-layer per-face barrel_parts grammar (the p23
- * "overlay stays pooled" deviation is RETIRED — the overlay decal shells landed); the
- * p12 logistics row keeps the tintedCubeAll single-element form (its borrow deferred).
+ * the borrowable rows ride the two-layer per-face barrel_parts grammar (the p23
+ * "overlay stays pooled" deviation is RETIRED — the overlay decal shells landed); task
+ * tank-render-tint: the p12 logistics row joined the same borrow — all 16 models are
+ * the two-layer form, the old {@code barrel_logistics.png} single texture retired.
  */
 package gregtech6.datagen;
 
@@ -74,31 +75,28 @@ class GT6BarrelPaintRenderDatagenTest {
 
     /**
      * Every barrel block model carries the tintindex-0 seat on its body faces. Task
-     * tex-tank-family: the 15 borrowable rows ride the two-layer per-face
+     * tex-tank-family: the borrowable rows ride the two-layer per-face
      * barrel_parts form (body + six decal shells — the body faces tinted, the decals
      * untinted; the drums share the drum family set, every other two-layer row its own);
-     * the p12 logistics row keeps the tintedCubeAll single-element form. The full
-     * two-layer shape pins live in {@link GT6TankFamilyPaintRenderDatagenTest}.
+     * task tank-render-tint: the p12 logistics row joined, so ALL 16 models are the
+     * two-layer form. The full two-layer shape pins live in
+     * {@link GT6TankFamilyPaintRenderDatagenTest}.
      */
     @Test
     void everyBarrelModelCarriesTintIndexZeroOnAllSixFaces() throws Exception {
         for (String tBase : BARREL_BASES) {
             JsonObject tModel = json("assets/gt6/models/block/" + tBase + ".json");
             var tElements = tModel.getAsJsonArray("elements");
-            if (tBase.equals("barrel_logistics")) {
-                // the declared single-layer exemption (the p12 row, out of the r8 borrow's scope)
-                assertEquals(1, tElements.size(), tBase + ": ONE element (the tintedCubeAll shortcut)");
-            } else {
-                String tFamily = DRUM_BASES.contains(tBase) ? "drum"
-                        : "barrel_wood".equals(tBase) ? "barrel"
-                        : "barrel_metal".equals(tBase) ? "drum" : "plasticcan";
-                var tTextures = tModel.getAsJsonObject("textures");
-                String tBand = "gt6:block/barrel_parts/" + tFamily + "/";
-                assertEquals(tBand + "colored_bottom", tTextures.get("down").getAsString(), tBase + ": the bottom borrow");
-                assertEquals(tBand + "colored_top", tTextures.get("up").getAsString(), tBase + ": the top borrow");
-                assertEquals(tBand + "colored_side", tTextures.get("north").getAsString(), tBase + ": the side borrow");
-                assertEquals(7, tElements.size(), tBase + ": body + 6 decal shells (the two-layer form)");
-            }
+            String tFamily = DRUM_BASES.contains(tBase) ? "drum"
+                    : "barrel_wood".equals(tBase) ? "barrel"
+                    : "barrel_metal".equals(tBase) ? "drum"
+                    : "barrel_logistics".equals(tBase) ? "logistics" : "plasticcan";
+            var tTextures = tModel.getAsJsonObject("textures");
+            String tBand = "gt6:block/barrel_parts/" + tFamily + "/";
+            assertEquals(tBand + "colored_bottom", tTextures.get("down").getAsString(), tBase + ": the bottom borrow");
+            assertEquals(tBand + "colored_top", tTextures.get("up").getAsString(), tBase + ": the top borrow");
+            assertEquals(tBand + "colored_side", tTextures.get("north").getAsString(), tBase + ": the side borrow");
+            assertEquals(7, tElements.size(), tBase + ": body + 6 decal shells (the two-layer form)");
             var tFaces = tElements.get(0).getAsJsonObject().getAsJsonObject("faces");
             for (String tFaceKey : FACE_KEYS) {
                 assertEquals(0, tFaces.getAsJsonObject(tFaceKey).get("tintindex").getAsInt(),

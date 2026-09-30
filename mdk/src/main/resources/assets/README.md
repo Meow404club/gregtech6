@@ -775,6 +775,12 @@ mRGBa tint and the overlay pass ride the render pool with the other barrels.
 Filenames lowercased on borrow, contents byte-identical, no rescaling or
 redrawing.
 
+SUPERSEDED (task tank-render-tint): `barrel_logistics.png` is retired — the row
+joined the barrel_parts two-layer borrow (the full `colored/` + `overlay/`
+3+3 group, the tint riding `GTBarrelBlock.materialOf`), see the task
+tex-tank-family section; the digest above now grounds through
+`barrel_parts/logistics/colored_side.png` (byte-identical).
+
 Fluid Tap + Fluid Funnel block textures, task tap-funnel-attachment: the 2 PNGs
 under `gt6/textures/block/` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/tools/` (the
@@ -3463,6 +3469,9 @@ simplification, not a gap). The twelve high-tier metal drums keep sharing the on
 p12 entry stays byte-exact (sha256 re-verified `f348ace8e2d98ed701a060a87c4c66ec25b708449cd96611b66aa01cc9c595f1`).
 The `overlay/{bottom,top,side}.png` groups are NOT borrowed; the grayscale colored
 base renders un-tinted (the mRGBa material tint is the render pool card).
+SUPERSEDED twice over: the task tex-tank-family section (the two-layer
+barrel_parts grammar) and task tank-render-tint (the `barrel_logistics` join —
+the p12 digest grounds through `barrel_parts/logistics/colored_side.png`).
 
 Burning Box family block textures, task borrow-tank-barrel-pipe: the 4 PNGs
 under `gt6/textures/block/burning_box_*.png` come from upstream
@@ -9827,7 +9836,7 @@ DECLARED DEFERS (not this card):
   stack ever carries it; the pipe BlockItems do not write BE NBT on drop yet — a pipe
   BEHAVIOUR gap, not a texture gap).
 
-Tank family block textures, task tex-tank-family: the 42 PNGs under
+Tank family block textures, task tex-tank-family: the 48 PNGs under
 `gt6/textures/block/barrel_parts/` and `gt6/textures/block/tank_valves/` come from
 upstream `src/main/resources/assets/gregtech/textures/blocks/machines/`, byte-identical
 to upstream (cmp-verified at copy time), sha256 verified. This section SUPERSEDES the
@@ -9839,10 +9848,10 @@ valve controllers render the Base10 front-layer-pair form
 (TileEntityBase10MultiBlockBase.java:192-194 — front face = colored_front +
 overlay_front, remaining faces = colored + overlay).
 
-Barrel borrows (18) — upstream `machines/tanks/<family>/<layer>/<face>.png` flattens to
+Barrel borrows (24) — upstream `machines/tanks/<family>/<layer>/<face>.png` flattens to
 `barrel_parts/<family>/<layer>_<face>.png`, family = the upstream iconset name
 (barrel = the wood row, drum = the metal row + the 12 high-tier drums, plasticcan =
-the plastic row):
+the plastic row, logistics = the Logistics Tank row — the tank-render-tint join):
 
 - `barrel_parts/barrel/colored_bottom.png`   `6ec21c5ccdc13f6f074c33ec28b681b99bb68fa74b21e5afd506a09516cffca6`
 - `barrel_parts/barrel/colored_side.png`     `24c4d75618258809715e41527b5189351ef4870e0372a07463bfd266a883e6d0` (= the retired `barrel_wood.png`)
@@ -9863,13 +9872,24 @@ the plastic row):
 - `barrel_parts/plasticcan/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `barrel_parts/plasticcan/overlay_top.png`  `9f726ce665f1b8f9899814225917f201ce16311c7648c45d79e561e81432fae0`
 
+Logistics Tank borrows (6, task tank-render-tint — the declared tex-tank-family
+follow-up) — upstream `machines/tanks/logistics/<layer>/<face>.png` flattens to
+`barrel_parts/logistics/<layer>_<face>.png`, the same two-layer grammar:
+
+- `barrel_parts/logistics/colored_bottom.png` `07da6fadfd8c42bbeb8dd0f1b07a7b48ec08d76ece9fb49ec793ab55d01e7d23`
+- `barrel_parts/logistics/colored_side.png`   `f348ace8e2d98ed701a060a87c4c66ec25b708449cd96611b66aa01cc9c595f1` (= the retired `barrel_logistics.png`)
+- `barrel_parts/logistics/colored_top.png`    `633b57da65fad5f0f604c48806221479e0eab9512fd514789d3520c513782547`
+- `barrel_parts/logistics/overlay_bottom.png` `c9a11fa46a0d9c379c3dbb783fff383769239e0cbc31284274c4d556bde8745b`
+- `barrel_parts/logistics/overlay_side.png`   `839d7a44d8233d40ecb821128d21b59d0cb1315d30581f13f2b099f2dcd8001e`
+- `barrel_parts/logistics/overlay_top.png`    `c9a11fa46a0d9c379c3dbb783fff383769239e0cbc31284274c4d556bde8745b`
+
 The three retired single-texture borrows (`barrel_wood.png`, `barrel_plastic.png`,
 `barrel_metal.png` — their content survives as the `<family>/colored_side.png` borrows
 above, sha256 unchanged) are DELETED: the per-face two-layer models replaced them.
-`barrel_logistics.png` is NOT touched (the p12 row byte-exact, sha256 re-verified
-`f348ace8e2d98ed701a060a87c4c66ec25b708449cd96611b66aa01cc9c595f1`) — the logistics
-row keeps its single-texture form this card, its two-layer borrow
-(`machines/tanks/logistics/` colored+overlay 3+3) is a declared follow-up. The barrel
+Task tank-render-tint: `barrel_logistics.png` joins them (the p12 row byte-exact,
+sha256 `f348ace8e2d98ed701a060a87c4c66ec25b708449cd96611b66aa01cc9c595f1` — its
+content survives as the `logistics/colored_side.png` borrow above) — the logistics
+row renders the same two-layer form as the other barrel rows. The barrel
 TESR/lid omission stays declared (MultiTileEntityBarrelWood.java:44-54). The remaining
 tanks families (thermos/jug/cup/cell/barometer_gas_cylinder) are NOT
 ported as blocks (feature gap, not a texture gap — the tex-r1 census); their

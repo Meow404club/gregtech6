@@ -269,22 +269,21 @@ class GT6PaintableRenderTypeCensusTest {
     }
 
     /**
-     * The tex-tank-family barrel addition (tail-append): the 15 two-layer barrel
+     * The tex-tank-family barrel addition (tail-append): the two-layer barrel
      * models are NOT in the {@code GTMachineTintModel} walk (the p23 runtime-BlockColor
      * domain), but their {@code barrel_parts} shells carry the same alpha-discard need —
      * a barrel model losing its cutout declaration plates the decal shell on the SOLID
      * layer here, not in a player's world. The valve pair (tank_wood/tank_metal) stays
      * covered by {@link #controllerModels()} — the model names survived the r8 rewire.
-     * The p12 logistics row is the declared single-layer exemption (no decal shell —
-     * {@code tintedCubeAll} needs no alpha discard), pinned exact like the kitchen
-     * quartet above.
+     * Task tank-render-tint: the p12 logistics row joined the two-layer borrow, so the
+     * former single-layer exemption folded into the census (16 two-layer models).
      */
     @Test
     public void barrelModelsJoinTheCutoutCensus() throws Exception {
-        List<String> tUniverse = new ArrayList<>(List.of("barrel_wood", "barrel_plastic", "barrel_metal"));
+        List<String> tUniverse = new ArrayList<>(List.of("barrel_wood", "barrel_plastic", "barrel_metal", "barrel_logistics"));
         for (var tRow : gregtech6.registry.GTBarrels.HIGH_TIER_METAL_DRUMS) tUniverse.add(tRow.path());
-        org.junit.jupiter.api.Assertions.assertEquals(15, tUniverse.size(),
-                "the two-layer barrel census stays 15 (3 rows + 12 high-tier drums)");
+        org.junit.jupiter.api.Assertions.assertEquals(16, tUniverse.size(),
+                "the two-layer barrel census stays 16 (4 rows + 12 high-tier drums)");
         List<String> tOffenders = new ArrayList<>();
         for (String tModel : tUniverse) {
             JsonObject tJson = blockModelJson(tModel);
@@ -295,11 +294,5 @@ class GT6PaintableRenderTypeCensusTest {
         }
         assertTrue(tOffenders.isEmpty(), "barrel models without the cutout declaration "
                 + "(the two-layer overlay shells plate over the tint on the SOLID layer): " + tOffenders);
-        // the declared single-layer exemption stays shell-free (one element, no render_type)
-        JsonObject tLogistics = blockModelJson("barrel_logistics");
-        assertTrue(tLogistics.get("render_type") == null,
-                "barrel_logistics declares a render_type — fold it into the cutout census and retire the exemption");
-        org.junit.jupiter.api.Assertions.assertEquals(1, tLogistics.getAsJsonArray("elements").size(),
-                "barrel_logistics stays the single-layer form (the r8 two-layer borrow deferred)");
     }
 }

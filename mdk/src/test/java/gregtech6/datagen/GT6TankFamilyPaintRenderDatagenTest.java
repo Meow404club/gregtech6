@@ -17,8 +17,9 @@
  *     untinted, cutout declared;</li>
  * <li>the 12 high-tier drums share the drum family's barrel_parts set (upstream
  *     registers the ladder over the same icon set) — 16 barrel models total, the three
- *     retired {@code barrel_<material>.png} single textures gone off the classpath
- *     while the p12 {@code barrel_logistics.png} row stays;</li>
+ *     retired {@code barrel_<material>.png} single textures gone off the classpath;
+ *     task tank-render-tint: the p12 {@code barrel_logistics.png} row joined them
+ *     (the four-row two-layer borrow, the logistics family set);</li>
  * <li>the two valve models (tank_wood/tank_metal) keep the front layer pair on north —
  *     colored_front_side body + overlay_front_side decal — with the colored/overlay set
  *     on the remaining faces, and the 12 front-pair PNGs exist on disk;</li>
@@ -67,8 +68,8 @@ class GT6TankFamilyPaintRenderDatagenTest {
     private static final java.util.Map<String, Integer> ROT_Y = java.util.Map.of(
             "north", 0, "south", 180, "west", 270, "east", 90);
 
-    /** The three borrowed barrel families (the upstream machines/tanks iconset names). */
-    private static final List<String> BARREL_FAMILIES = List.of("barrel", "plasticcan", "drum");
+    /** The borrowed barrel families (the upstream machines/tanks iconset names; logistics joined in task tank-render-tint). */
+    private static final List<String> BARREL_FAMILIES = List.of("barrel", "plasticcan", "drum", "logistics");
 
     @BeforeAll
     static void bootMaterials() {
@@ -152,6 +153,7 @@ class GT6TankFamilyPaintRenderDatagenTest {
         assertBarrelFamilyModel("barrel_wood", "barrel");
         assertBarrelFamilyModel("barrel_plastic", "plasticcan");
         assertBarrelFamilyModel("barrel_metal", "drum");
+        assertBarrelFamilyModel("barrel_logistics", "logistics"); // task tank-render-tint — the p12 row joins the borrow
     }
 
     /**
@@ -174,12 +176,11 @@ class GT6TankFamilyPaintRenderDatagenTest {
             assertEquals("gt6:block/" + tDrum, tItem.get("parent").getAsString(), tDrum + ": the item parents the block model");
         }
         assertEquals(1, tTextureSets.size(), "all 12 drums share the ONE drum barrel_parts set (upstream so)");
-        for (String tRetired : List.of("barrel_wood", "barrel_plastic", "barrel_metal")) {
+        for (String tRetired : List.of("barrel_wood", "barrel_plastic", "barrel_metal", "barrel_logistics")) {
             assertNull(GT6TankFamilyPaintRenderDatagenTest.class.getClassLoader()
                     .getResourceAsStream("assets/gt6/textures/block/" + tRetired + ".png"),
                     tRetired + ".png must be retired (the two-layer borrow replaced the single texture)");
         }
-        assertPng("assets/gt6/textures/block/barrel_logistics.png");
     }
 
     // ------------------------------------------------------------------
@@ -238,9 +239,9 @@ class GT6TankFamilyPaintRenderDatagenTest {
         }
     }
 
-    /** The 18 barrel_parts PNGs exist on disk (3 families x colored/overlay x bottom/top/side). */
+    /** The 24 barrel_parts PNGs exist on disk (4 families x colored/overlay x bottom/top/side — logistics joined in task tank-render-tint). */
     @Test
-    public void eighteenBarrelPartsPngsExist() throws IOException {
+    public void twentyFourBarrelPartsPngsExist() throws IOException {
         for (String tFamily : BARREL_FAMILIES) {
             for (String tLayer : List.of("colored", "overlay")) {
                 for (String tFace : List.of("bottom", "top", "side")) {

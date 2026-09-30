@@ -66,6 +66,8 @@ public class GTBarrelBlock extends GTEntityBlock {
 	private final long mMeltingPointK;
 	private final boolean mGasProof;
 	private final Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> mTickerType;
+	@javax.annotation.Nullable
+	private final java.util.function.Supplier<gregapi.oredict.OreDictMaterial> mMaterial;
 
 	/**
 	 * @param aCapacityL the tank size (upstream {@code NBT_TANK_CAPACITY}: wood 16000,
@@ -82,14 +84,21 @@ public class GTBarrelBlock extends GTEntityBlock {
 	 *        overrides
 	 * @param aTickerType the BET this family member mounts (one TE class per material row,
 	 *        the upstream Wood/Plastic/Metal trio shape)
+	 * @param aMaterial the row's upstream {@code NBT_MATERIAL} column (task
+	 *        tank-render-tint — the tint colour source; the lazy Supplier is the
+	 *        {@code GTBarrels.MetalDrumRow} / {@code GTTankValveBlock} form since
+	 *        class-load precedes MT.init)
 	 */
 	public GTBarrelBlock(long aCapacityL, long aMeltingPointK, boolean aGasProof,
-			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType, Properties aProperties) {
+			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType,
+			@javax.annotation.Nullable java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial,
+			Properties aProperties) {
 		super(aProperties);
 		mCapacityL = aCapacityL;
 		mMeltingPointK = aMeltingPointK;
 		mGasProof = aGasProof;
 		mTickerType = aTickerType;
+		mMaterial = aMaterial;
 	}
 
 	//? if neoforge {
@@ -98,9 +107,29 @@ public class GTBarrelBlock extends GTEntityBlock {
 	// round-trips through datapacks: the barrel is code-registered like every GT6 block.)
 	@Override
 	protected MapCodec<GTBarrelBlock> codec() {
-		return simpleCodec(aProperties -> new GTBarrelBlock(mCapacityL, mMeltingPointK, mGasProof, mTickerType, aProperties));
+		return simpleCodec(aProperties -> new GTBarrelBlock(mCapacityL, mMeltingPointK, mGasProof, mTickerType, mMaterial, aProperties));
 	}
 	 *///?}
+
+	/**
+	 * The row's upstream {@code NBT_MATERIAL}, resolved lazily through the Supplier (the
+	 * {@link gregtech6.block.multiblock.GTMultiBlockControllerBlock#material} mirror);
+	 * null = the material-less rows (the white identity, upstream UNCOLORED CS.java:327).
+	 */
+	@javax.annotation.Nullable
+	public gregapi.oredict.OreDictMaterial material() {
+		return mMaterial == null ? null : mMaterial.get();
+	}
+
+	/**
+	 * The barrel-domain material dispatch (the {@code GTMultiBlockControllerBlock
+	 * .materialOf} mirror shape): only the carrier blocks resolve a material — every
+	 * other block is null here.
+	 */
+	@javax.annotation.Nullable
+	public static gregapi.oredict.OreDictMaterial materialOf(@javax.annotation.Nullable net.minecraft.world.level.block.Block aBlock) {
+		return aBlock instanceof GTBarrelBlock tBarrel ? tBarrel.material() : null;
+	}
 
 	/** The tank size in litres (upstream NBT_TANK_CAPACITY, Loader_MultiTileEntities.java:2140/:2150/:2151). */
 	public long capacityL() {
