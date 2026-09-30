@@ -133,17 +133,23 @@ public class GT6RecipeMapEmiCategoryTest {
 		new GT6RecipeMapEmiRecipe(tLathe, tRow, GT6RecipeMapEmiCategory.CATEGORIES.apply(tLathe), 0).addWidgets(tHolder);
 
 		// the row's two slots (the gear-spot machine icon was RETIRED by task
-		// viewer-icon-retire-gu-pin — EMI renders workstations itself, RecipeScreen:203-217)
+		// viewer-icon-retire-gu-pin — EMI renders workstations itself, RecipeScreen:203-217;
+		// the spot returned as the CLICKABLE jump port, task viewer-energy-jump-gear, pinned
+		// in full in GT6EnergyJumpTest)
 		assertEquals(2, tHolder.mSlots.size(), "one input slot + one output slot");
 		assertSlot(tHolder.mSlots.get(0), 48, 18);
 		assertSlot(tHolder.mSlots.get(1), 102, 18);
 		// the drawExtras face rides as five text widgets (Costs/Usage/Tier/Power/Time —
 		// the line CONTENT is pinned by the JEI-side test's costLines asserts, the shared
-		// seam; TextWidget.getBounds is client-bound so only the count is assertable here).
-		// The two backdrop TextureWidgets do NOT land here — the recording double sorts
-		// them into mTextures, pinned in the dedicated test below.
-		assertEquals(5, tHolder.mOtherWidgets, "the Lathe row's five drawExtras lines");
+		// seam; TextWidget.getBounds is client-bound so only the count is assertable here)
+		// PLUS the gear-port jump widget — LATHE is a RU carrier map, so the no-draw
+		// GearJumpWidget rides third, right after the two backdrop textures (the art's z face).
+		assertEquals(6, tHolder.mOtherWidgets, "the Lathe row's five drawExtras lines + the gear-port widget");
 		assertEquals(2, tHolder.mTextures.size(), "the two backdrop textures lead the stack (z order pinned below)");
+		assertTrue(tHolder.mAll.get(2) instanceof GT6RecipeMapEmiRecipe.GearJumpWidget,
+				"the gear-port jump widget rides third, right after the two backdrops");
+		assertEquals(new Bounds(147, 76, 18, 18), tHolder.mAll.get(2).getBounds(),
+				"the port covers the folded gear art (152,83)-(5,7)=(147,76), 18px form");
 	}
 
 	/**

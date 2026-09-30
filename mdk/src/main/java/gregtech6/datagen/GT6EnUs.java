@@ -648,6 +648,23 @@ public class GT6EnUs extends LanguageProvider {
         // GT6MultiblockPreviews.TITLE_KEY consumer on both viewer legs); modern
         // enhancement, upstream has no structure page (P20 negative)
         add(GT6MultiblockPreviews.TITLE_KEY, "Multiblock Structure Preview");
+        // task viewer-energy-jump-gear — the gear-port affordance line + the nine
+        // per-carrier info pages (the jump targets): one body line each, the upstream
+        // TD.Energy long name (TD.java:81-147 createTagData 3rd arg) plus its units face;
+        // the fuller "how is this produced" copy rides the data card (the research
+        // ruling: 内容文案=数据卡). Keys derive through the shared meta formulas, so the
+        // census cannot drift from the live ENERGY_BY_MAP transcription.
+        add(GT6RecipeMapViewerMeta.ENERGY_JUMP_HINT_KEY, "Click to see how this energy is produced");
+        for (gregapi.code.TagData tCarrier : GT6RecipeMapViewerMeta.pinnedEnergyCarriers()) {
+            add(GT6RecipeMapViewerMeta.energyInfoKey(tCarrier), energyCarrierInfoLine(tCarrier));
+        }
+    }
+
+    /** The en body of one carrier's info page: the upstream long name + the units face (TU is "Ticks" per the upstream "Amount = Ticks" doc). */
+    private static String energyCarrierInfoLine(gregapi.code.TagData aCarrier) {
+        String tName = GT6RecipeMapViewerMeta.energyLongName(aCarrier);
+        if (aCarrier == gregapi.data.TD.Energy.TU) return tName + ". Units are Ticks.";
+        return tName + ". Units are IndustrialCraft EU.";
     }
 
 

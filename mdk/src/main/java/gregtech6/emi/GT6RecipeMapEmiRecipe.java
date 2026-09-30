@@ -41,11 +41,14 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 	private final ResourceLocation mId;
 	private final List<EmiIngredient> mInputs;
 	private final List<EmiStack> mOutputs;
+	/** The map's accepted-energy carrier ({@code null} = GU — no gear port, the decoration stays dead). */
+	private final gregapi.code.TagData mEnergyCarrier;
 
 	public GT6RecipeMapEmiRecipe(RecipeMap aMap, Recipe aRow, GT6RecipeMapEmiCategory aCategory, int aSortedIndex) {
 		mMap = aMap;
 		mRow = aRow;
 		mCategory = aCategory;
+		mEnergyCarrier = gregtech6.jei.GT6RecipeMapViewerMeta.energyOf(aMap);
 		//? if forge {
 		mId = new ResourceLocation("gt6", "recipe_map/" + aMap.mNameInternal + "/" + aSortedIndex);
 		//?} else {
@@ -118,6 +121,15 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 		int[] tPlate = GT6RecipeMapViewerMeta.PLATE_CROP, tBand = GT6RecipeMapViewerMeta.BAND_CROP;
 		aWidgets.add(new TextureWidget(GT6RecipeMapViewerMeta.PLATE_TEXTURE, 0, 0, tPlate[2], tPlate[3], tPlate[0], tPlate[1]));
 		aWidgets.add(new TextureWidget(GT6RecipeMapViewerMeta.guiTexture(mMap), 0, 0, tBand[2], tBand[3], tBand[0], tBand[1]));
+		// The gear-spot jump port (task viewer-energy-jump-gear, the user ruling): carrier
+		// maps get the click widget third — right after the two backdrop textures (render
+		// order = add order, the art's z face), riding the baked gear decoration. GU maps
+		// (mEnergyCarrier null) add nothing — the gear stays decoration (无载体图不画).
+		// The jump consumer is injected so the offline tests can pin the click target
+		// without touching EmiApi's static runtime.
+		if (mEnergyCarrier != null) {
+			aWidgets.add(new GearJumpWidget(mEnergyCarrier, GT6EmiPlugin::displayEnergyCarrierInfo));
+		}
 		// NO hand-drawn machine item on the plate's gear spot (task viewer-icon-retire-gu-pin,
 		// the user ruling): EMI renders the workstation list itself (RecipeScreen.java:203-217,
 		// fed by GT6EmiPlugin:157 addWorkstation) — the retired SlotWidget draw was an
@@ -158,6 +170,53 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 		for (Component tLine : GT6RecipeMapViewerMeta.costLines(mMap, mRow)) {
 			aWidgets.addText(tLine, GT6RecipeMapViewerMeta.TEXT_X, tY, 0xFF000000, false);
 			tY += GT6RecipeMapViewerMeta.TEXT_LINE_HEIGHT;
+		}
+	}
+
+	/**
+	 * The gear-spot jump port of the EMI leg (task viewer-energy-jump-gear): a no-draw
+	 * {@link dev.emi.emi.api.widget.Widget} over the folded gear rect — the decoration is
+	 * already baked into the plate, the widget only carries the hit box, the hint tooltip
+	 * and the click. EMI's RecipeScreen routes mouse clicks to every non-{@code SlotWidget}
+	 * widget whose bounds contain the cursor (RecipeScreen.java:429-436, the emi 1.1.24
+	 * source) — pressed on mouse-down, no simulate/up split. The jump consumer is
+	 * constructor-injected (production: {@link GT6EmiPlugin#displayEnergyCarrierInfo}) so
+	 * the offline pin can drive clicks without EMI's static runtime.
+	 */
+	public static final class GearJumpWidget extends dev.emi.emi.api.widget.Widget {
+
+		private final gregapi.code.TagData mCarrier;
+		private final java.util.function.Consumer<gregapi.code.TagData> mJump;
+
+		public GearJumpWidget(gregapi.code.TagData aCarrier, java.util.function.Consumer<gregapi.code.TagData> aJump) {
+			mCarrier = aCarrier;
+			mJump = aJump;
+		}
+
+		/** The folded gear rect — the same face the JEI twin's {@code IJeiInputHandler.getArea} returns. */
+		@Override
+		public dev.emi.emi.api.widget.Bounds getBounds() {
+			int[] tPos = GT6RecipeMapViewerMeta.viewerGearPos();
+			return new dev.emi.emi.api.widget.Bounds(tPos[0], tPos[1],
+					GT6RecipeMapViewerMeta.GEAR_SIZE, GT6RecipeMapViewerMeta.GEAR_SIZE);
+		}
+
+		/** No draw — the gear art is baked into the backdrop plate. */
+		@Override
+		public void render(net.minecraft.client.gui.GuiGraphics aDraw, int aMouseX, int aMouseY, float aDelta) {
+		}
+
+		@Override
+		public List<net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent> getTooltip(int aMouseX, int aMouseY) {
+			return List.of(net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent.create(
+					Component.translatable(GT6RecipeMapViewerMeta.ENERGY_JUMP_HINT_KEY).getVisualOrderText()));
+		}
+
+		@Override
+		public boolean mouseClicked(int aMouseX, int aMouseY, int aButton) {
+			if (!getBounds().contains(aMouseX, aMouseY)) return false;
+			mJump.accept(mCarrier);
+			return true;
 		}
 	}
 }

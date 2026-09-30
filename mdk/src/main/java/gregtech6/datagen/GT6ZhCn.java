@@ -2576,6 +2576,13 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("gt6.jei.cost.start");
 		addDirect("gt6.jei.cost.temperature");
 		addDirect("gt6.jei.cost.not_consumed");
+		// task viewer-energy-jump-gear — the gear-port hint + the nine per-carrier info
+		// pages (the tsv direct band carries the values; the keys derive through the
+		// shared meta formulas over pinnedEnergyCarriers)
+		for (gregapi.code.TagData tCarrier : gregtech6.jei.GT6RecipeMapViewerMeta.pinnedEnergyCarriers()) {
+			addDirect(gregtech6.jei.GT6RecipeMapViewerMeta.energyInfoKey(tCarrier));
+		}
+		addDirect(gregtech6.jei.GT6RecipeMapViewerMeta.ENERGY_JUMP_HINT_KEY);
 	}
 
 	private void addDirect(String aKey) {

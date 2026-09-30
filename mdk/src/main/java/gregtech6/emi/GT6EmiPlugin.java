@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 //? if forge {
@@ -17,6 +18,7 @@ import dev.emi.emi.api.EmiApi;
 import dev.emi.emi.api.EmiEntrypoint;
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
+import dev.emi.emi.api.recipe.EmiInfoRecipe;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.stack.EmiStack;
 
@@ -78,6 +80,7 @@ public class GT6EmiPlugin implements EmiPlugin {
 	@Override
 	public void register(EmiRegistry registry) {
 		registerMultiblockPreviews(registry);
+		registerEnergyCarrierInfo(registry);
 		registerMaterialToolRows(registry);
 		registerRecipeMapCategories(registry);
 		registerOreGenInfo(registry);
@@ -100,6 +103,30 @@ public class GT6EmiPlugin implements EmiPlugin {
 			registry.addWorkstation(GT6MultiblockPreviewEmiCategory.CATEGORY,
 					EmiStack.of(new net.minecraft.world.item.ItemStack(tEntry.item().get())));
 		}
+	}
+
+	/**
+	 * The energy-carrier info pages (task viewer-energy-jump-gear, the r6-30 phase-2
+	 * design; the JEMI red line's arm on the info face): one {@link EmiInfoRecipe} per
+	 * accepted-energy carrier over the shared pseudo {@link GT6EnergyCarrierEmiStack} and
+	 * the {@code gt6.jei.info.energy.*} keys — the page the gear widget
+	 * ({@link GT6RecipeMapEmiRecipe.GearJumpWidget}) jumps to. The carriers never enter
+	 * EMI's stack list (nothing registers them as index stacks) — the on-screen
+	 * visibility of the pseudo stack is the r6-30-flagged POC face, field_test's.
+	 */
+	private static void registerEnergyCarrierInfo(EmiRegistry registry) {
+		for (gregapi.code.TagData tCarrier : gregtech6.jei.GT6RecipeMapViewerMeta.pinnedEnergyCarriers()) {
+			registry.addRecipe(new EmiInfoRecipe(
+					List.of(GT6EnergyCarrierEmiStack.of(tCarrier)),
+					List.of(Component.translatable(gregtech6.jei.GT6RecipeMapViewerMeta.energyInfoKey(tCarrier))),
+					infoPageId(tCarrier)));
+		}
+	}
+
+	/** The {@code gt6:info/energy/<code>} info-page id (paren-free arg — the ctor swap's regex). */
+	private static ResourceLocation infoPageId(gregapi.code.TagData aCarrier) {
+		String tPath = "info/energy/" + gregtech6.jei.GT6RecipeMapViewerMeta.energyTypeShortCode(aCarrier).toLowerCase(java.util.Locale.ROOT);
+		return new ResourceLocation("gt6", tPath);
 	}
 
 	/**
@@ -220,6 +247,19 @@ public class GT6EmiPlugin implements EmiPlugin {
 		if (aMap == null) return false;
 		EmiApi.displayRecipeCategory(GT6RecipeMapEmiCategory.CATEGORIES.apply(aMap));
 		return true;
+	}
+
+	/**
+	 * The gear-port jump face (task viewer-energy-jump-gear), the native EMI twin of
+	 * {@link gregtech6.jei.GT6JeiPlugin#openEnergyCarrierInfo}: opens the carrier's info
+	 * page via {@code EmiApi.displayRecipes} (EmiApi.java:131 — the recipes-for-stack page;
+	 * the info recipes index under the pseudo stack through EmiInfoRecipe.getInputs, so
+	 * the INFO category tab surfaces). Never call unguarded: only the EMI-side gear widget
+	 * reaches it (EMI present by construction there). The method reference is what the
+	 * widget carries, so the offline click pin can substitute its own consumer.
+	 */
+	public static void displayEnergyCarrierInfo(gregapi.code.TagData aCarrier) {
+		EmiApi.displayRecipes(GT6EnergyCarrierEmiStack.of(aCarrier));
 	}
 
 	/**

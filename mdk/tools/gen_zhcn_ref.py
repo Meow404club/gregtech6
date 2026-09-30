@@ -1865,6 +1865,19 @@ HAND_TRANSLATIONS = {
     "gt6.concrete.slab_reinforced": ("%s强化混凝土半砖", "hand"),
     "gt6.jei.cost.temperature": ("温度: %s%s", "hand"),
     "gt6.jei.cost.not_consumed": ("该物品不会被消耗", "hand"),
+    # task viewer-energy-jump-gear: the gear-port affordance line + the nine per-carrier
+    # info pages (the JEI/EMI gear jump targets; keys derive through the shared
+    # GT6RecipeMapViewerMeta.energyInfoKey formula over pinnedEnergyCarriers).
+    "gt6.jei.info.energy.cu": ("冷能。单位为工业 EU。", "hand"),
+    "gt6.jei.info.energy.eu": ("电能。单位为工业 EU。", "hand"),
+    "gt6.jei.info.energy.hu": ("热能。单位为工业 EU。", "hand"),
+    "gt6.jei.info.energy.ku": ("动能。单位为工业 EU。", "hand"),
+    "gt6.jei.info.energy.lu": ("光能。单位为工业 EU。", "hand"),
+    "gt6.jei.info.energy.mu": ("磁能。单位为工业 EU。", "hand"),
+    "gt6.jei.info.energy.qu": ("量子能。单位为工业 EU。", "hand"),
+    "gt6.jei.info.energy.ru": ("旋转能。单位为工业 EU。", "hand"),
+    "gt6.jei.info.energy.tu": ("时间。单位为刻。", "hand"),
+    "gt6.jei.info.energy_jump_hint": ("点击查看这种能量的生产方式", "hand"),
 }
 
 # ---------------------------------------------------------------------------
