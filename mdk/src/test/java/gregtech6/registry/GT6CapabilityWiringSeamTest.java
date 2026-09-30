@@ -191,6 +191,7 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		tFaces.put("electric_motor", "none (GT-energy converter — no item/fluid face)");
 		tFaces.put("oven", "item"); // the exception: the gated item handler alone
 		tFaces.put("advanced_crafting_table", "item"); // task act-machine — the second item-only face (zero fluid tanks)
+		tFaces.put("charging_crafting_table", "item"); // task act-matrix — the charging twin BET (same inventory face; the energy push is the BE-root dispatch, not a capability)
 		BASIC_MACHINE_FAMILY_FACES = Collections.unmodifiableMap(tFaces);
 	}
 

@@ -364,7 +364,7 @@ public class GT6SingleBlockFacingIntegrityTest extends GTOfflineTestBase {
 					.getStateForPlacement(tCtx).getValue(GTBasicMachineBlock.FACING), "BasicMachine state, view " + tView);
 			assertEquals(tExpected, new GTOvenBlock(BlockBehaviour.Properties.of())
 					.getStateForPlacement(tCtx).getValue(GTOvenBlock.FACING), "Oven state, view " + tView);
-			assertEquals(tExpected, new GTAdvancedCraftingTableBlock(BlockBehaviour.Properties.of())
+			assertEquals(tExpected, new GTAdvancedCraftingTableBlock(gregtech6.registry.GTMachines.CRAFTING_TABLE_ROWS.get(0), BlockBehaviour.Properties.of())
 					.getStateForPlacement(tCtx).getValue(GTAdvancedCraftingTableBlock.FACING), "ACT state, view " + tView);
 		}
 	}

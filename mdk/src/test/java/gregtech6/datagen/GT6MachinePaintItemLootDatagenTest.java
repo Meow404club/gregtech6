@@ -47,16 +47,15 @@ import net.minecraft.server.Bootstrap;
 class GT6MachinePaintItemLootDatagenTest {
 
     /**
-     * The 79 paint-carry bases, in the census order: the p22 painted-item domain
+     * The manual paint-carry bases, in the census order: the p22 painted-item domain
      * ({@code paintableBlockArray}: the oven Heat_T ladder (4, task oven-heat-t-ladder),
      * shredder/crusher/lathe, dryer, distillery) plus
-     * the p24 canner rows, the p26 W1 kinetic trio, the p26 press/extruder rows, the six
-     * P29 W1 process families (24, task w1-kinetic-process-ladder) and the
-     * ACT controller — every consumer
-     * of the shared {@code paintSelfTable} builder, so the pinned shape covers the full
-     * regen surface.
+     * the p24 canner rows, the p26 W1 kinetic trio, the p26 press/extruder rows and the
+     * six P29 W1 process families (24, task w1-kinetic-process-ladder). The act-matrix
+     * 120 ACT rows ride the row walk (act-matrix: the former single
+     * "advanced_crafting_table" literal retired with the bare path).
      */
-    private static final List<String> PAINT_BASES = List.of(
+    private static final List<String> MANUAL_PAINT_BASES = List.of(
             "oven", "oven_t2", "oven_t3", "oven_t4", // task oven-heat-t-ladder
             "shredder", "shredder_t2", "shredder_t3", "shredder_t4",
             "crusher", "crusher_t2", "crusher_t3", "crusher_t4",
@@ -82,8 +81,16 @@ class GT6MachinePaintItemLootDatagenTest {
             "electricsifter", "electricsifter_t2", "electricsifter_t3", "electricsifter_t4", // task w1-eu-hu-families
             "boxinator", "boxinator_t2", "boxinator_t3", "boxinator_t4", // task w1-eu-hu-families
             "unboxinator", "unboxinator_t2", "unboxinator_t3", "unboxinator_t4", // task w1-eu-hu-families
-            "fermenter", // task w1-eu-hu-families
-            "advanced_crafting_table");
+            "fermenter"); // task w1-eu-hu-families
+
+    /** The full census: the manual bases + the 120 act-matrix ACT rows walked (walked so the pin cannot drift from the registered rows). */
+    private static List<String> paintBases() {
+        List<String> rBases = new java.util.ArrayList<>(MANUAL_PAINT_BASES);
+        for (gregtech6.registry.GTMachines.CraftingTableRow tRow : gregtech6.registry.GTMachines.CRAFTING_TABLE_ROWS) {
+            rBases.add(tRow.path());
+        }
+        return rBases;
+    }
 
     /** The paint keys the 03 base writes while painted (CS.java:1161-1162, verbatim upstream). */
     private static final String NBT_COLOR = "gt.color";
@@ -108,11 +115,12 @@ class GT6MachinePaintItemLootDatagenTest {
         }
     }
 
-    /** The census shape: all 49 paintSelfTable tables carry the (quoted) paint carry function. */
+    /** The census shape: every paintSelfTable table carries the (quoted) paint carry function. */
     @Test
     void pinnedMachinePaintLootCensus() throws Exception {
-        assertEquals(104, PAINT_BASES.size(), "the paintSelfTable census (24 p22 rows incl. the oven ladder + canner 4 + kinetic trio 12 + press/extruder 8 + the six p28 ULV rows + the six p29 process families 24 + the 25 p29 eu-hu rows + ACT 1)");
-        for (String tBase : PAINT_BASES) assertPaintSelfTable(tBase);
+        List<String> tBases = paintBases();
+        assertEquals(223, tBases.size(), "the paintSelfTable census (103 manual rows: 24 p22 incl. the oven ladder + canner 4 + kinetic trio 12 + press/extruder 8 + the six p28 ULV rows + the six p29 process families 24 + the 25 p29 eu-hu rows + the act-matrix 120: 103 + 120 = 223)");
+        for (String tBase : tBases) assertPaintSelfTable(tBase);
     }
 
     /**

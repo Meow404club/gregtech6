@@ -84,7 +84,8 @@ class GT6TagsDatagenTest {
     // the sixteen hu-tu rows joined at task w2-hu-tu-piggyback
     // the +9 burner/plantalyzer machine carriers join at task machines-burner-plantalyzer (the machines bucket 247 -> 256)
     // the +4 plate-gem block carriers join at task machines-bumblelyzer-crucible (the bouleGt force-table cascade: blockPlateGem over Si/Ge/RedstoneAlloy/NikolineAlloy) and the +9 p34 machine rows ride the whole-class machine band (bumblelyzer x5 + crystallisationcrucible x4)
-    private static final int PINNED_PICKAXE_TOTAL = 272 + 256 + 1 + 2681 + 629 + 2 + 15 + 2 + 278; // the +14 eu-special (task w2-eu-special), +30 exotic (task w2-exotic-energy), +25 eu-core (task w2-eu-core-5tier), +16 hu-tu (task w2-hu-tu-piggyback), +5 heat-smelter (task w3-heat-smelter) and +19 eu-bridge (task w4-eu-bridge: the 15 converter rows + the 4 Roasting rows) and +5 small Massfab (task massfab) machine blocks auto-ride the whole-class band (120 + 14 + 30 + 25 + 16 + 5 + 19 + 5) and +4 QU machines (task qu-scanner-replicator: the molecular_scanner_t3 single + the replicator three-rung) and +278 (task fluid-pipe-matrix: the 280 <mat>_fluid_pipe_<size> carrier blocks auto-ride the whole-class pickaxe band, 2 pipes were already pinned — net +278, measured 3858 -> 4136; the pin follow-move landed by review seat on hopper-matrix, main pre-existing red, hoppers add 0: the metalset hopper pair is not a pickaxe-band block)
+    private static final int PINNED_PICKAXE_TOTAL = 272 + 256 + 1 + 2681 + 629 + 2 + 15 + 2 + 278 + 119; // the +14 eu-special (task w2-eu-special), +30 exotic (task w2-exotic-energy), +25 eu-core (task w2-eu-core-5tier), +16 hu-tu (task w2-hu-tu-piggyback), +5 heat-smelter (task w3-heat-smelter) and +19 eu-bridge (task w4-eu-bridge: the 15 converter rows + the 4 Roasting rows) and +5 small Massfab (task massfab) machine blocks auto-ride the whole-class band (120 + 14 + 30 + 25 + 16 + 5 + 19 + 5) and +4 QU machines (task qu-scanner-replicator: the molecular_scanner_t3 single + the replicator three-rung) +278 the fluid-pipe-matrix tree landed on main (c97bdde79) without this pin moving — the main checkout was RED on this pin (the committed 4136 vs the 3858 pin; 280 pipe rows minus the 2 W1 wood rows already counted = +278 net) — this bump carries the reconciliation — and +119 act-matrix rows (the 120-block crafting table matrix minus the one counted single-variant row, 4136 -> 4255)
+>>>>>>> b1de9eb4a (test(census): matrix census 120, loader-verbatim pins, ratchet follow-moves)
 
     /** The 16 tier-ladder machine ids of the first machines card + the oven ladder + the ACT single-variant row (the dryer/distillery/canner rows ride the total pin). */
     private static final List<String> PINNED_LADDER_MACHINES = List.of(
@@ -92,7 +93,7 @@ class GT6TagsDatagenTest {
             "gt6:shredder", "gt6:shredder_t2", "gt6:shredder_t3", "gt6:shredder_t4",
             "gt6:crusher", "gt6:crusher_t2", "gt6:crusher_t3", "gt6:crusher_t4",
             "gt6:lathe", "gt6:lathe_t2", "gt6:lathe_t3", "gt6:lathe_t4",
-            "gt6:advanced_crafting_table");
+            "gt6:advanced_crafting_table_steel"); // act-matrix: the steel row stands in for the retired bare path (the ladder pin stays one representative)
 
     /**
      * The pickaxe-band prefixes — the GT6BlockTags band set mirrored (blockDust excluded).
