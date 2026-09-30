@@ -8,20 +8,21 @@ import org.junit.jupiter.api.Test;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * FluidBridge skeleton offline tests (task fluid-pipes spec ⑥): the empty-bridge
- * semantics. The null-path assertions exercise the MAP-MISS path (materials the bridge
- * never seeded): leg-neutral by construction — on the 21.1 leg the test JVM boots through
- * FML (GTOfflineTestBase javadoc :25-33), so the seeded "iron" holder is really bound and
- * the old "seeded entry unregistered offline" premise is unreachable there.
+ * FluidBridge offline tests (task fluid-pipes spec ⑥ skeleton; domain walk task
+ * jade-molten-bridge-full): the outside-the-domain semantics. The null-path assertions
+ * exercise the SEAM-MISS path (materials with no {@code gt6:<mat>_molten} row): leg-neutral
+ * by construction — on the 21.1 leg the test JVM boots through FML (GTOfflineTestBase
+ * javadoc :25-33), so domain rows are really bound there and the null can only come from
+ * the convention lookup missing.
  */
 public class FluidBridgeTest extends GTOfflineTestBase {
 
 	@Test
 	public void unknownMaterialsResolveToNull() {
-		assertNull(FluidBridge.moltenFluidForMaterial("cobalt"), "empty-table entries stay null");
+		assertNull(FluidBridge.moltenFluidForMaterial("cobalt"), "no gt6:cobalt_molten row — the convention walk answers null");
 		assertNull(FluidBridge.moltenFluidForMaterial(null));
 		assertNull(FluidBridge.moltenStack("cobalt", 2), "no stack for unknown materials");
-		assertNull(FluidBridge.moltenStack("copper", 2, 144), "a never-seeded material is a map miss on both legs — null regardless of registry state");
+		assertNull(FluidBridge.moltenStack("copper", 2, 144), "a material outside the domain is a seam miss on both legs — null regardless of registry state");
 	}
 
 	@Test

@@ -1,29 +1,30 @@
 package gregtech6.fluid;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Locale;
 
 import javax.annotation.Nullable;
 
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.RegistryObject;
 
 import net.minecraft.world.level.material.Fluid;
 
 /**
- * The material-name → fluid bridge skeleton (task fluid-pipes spec ⑥). Upstream binds
- * {@code OreDictMaterial.mLiquid/mGas/mPlasma} FluidStacks directly onto the material
- * objects (OreDictMaterial.java:314-315); this port deletes those fields (root red line:
- * no net.minecraft types in gregapi) and recreates the lookup from the material's
- * internal name — the seam the root OreDictMaterial.java:174-175 comment leaves open
- * ("the Phase-2 fluid module recreates them from mNameInternal").
- *
- * <p>Shape: material name (lowercase, {@code mNameInternal}) → {@link RegistryObject}
- * of the still fluid. The W1 table carries the seed entry ("iron" →
- * {@link GTFluids#IRON_MOLTEN}); water/lava need no entry (vanilla fluids, resolved by
- * the callers directly). The unit conversion keeps the upstream Liter convention where
- * one molten material unit = 144 L — the {@code FL.make("iron.molten", 144)} binding
- * (Loader_Fluids.java:161-190); the per-material unit amount rides on the root
+ * The material-name → molten-fluid bridge (task fluid-pipes spec ⑥ skeleton; full-domain
+ * walk task jade-molten-bridge-full). Upstream binds {@code OreDictMaterial.mLiquid/mGas/
+ * mPlasma} FluidStacks directly onto the material objects (OreDictMaterial.java:314-315);
+ * this port deletes those fields (root red line: no net.minecraft types in gregapi) and
+ * recreates the lookup LIVE — no hand-kept table: the specOf id convention
+ * ({@code GTFluids.java:2294-2297}: sanitized lowercase internal name + {@code "_molten"})
+ * resolves against {@link GTFluids#chemicalSource}, the SOURCE_SEAM every spec-registered
+ * family feeds (GTFluids.java:2368-2369), so the whole {@code gt6:<mat>_molten} domain
+ * answers as rows land. iron is the W1 seed registered outside the spec tables
+ * (GTFluids.java:241) and rides its own handle. Rows registered under legacy FL shorthand
+ * ids (glass/plastic/molten_hsla — the naming-parity rows, upstream {@code FL.Glass} etc.)
+ * sit outside the {@code <mat>_molten} convention and stay unbridged: callers keep their
+ * fallback arm (the crucible overlay's ContentFace molten face — same origin, no crash).
+ * Unknown/unregistered material → null. The unit conversion keeps the upstream Liter
+ * convention where one molten material unit = 144 L — the {@code FL.make("iron.molten", 144)}
+ * binding (Loader_Fluids.java:161-190); the per-material unit amount rides on the root
  * {@code mLiquidUnit} seam (OreDictMaterial.java:175), passed in by the caller until the
  * Phase-2 conversion decision lands.
  */
@@ -32,43 +33,25 @@ public final class FluidBridge {
 	/** The TCon molten-metal Liter convention (Loader_Fluids.java:161: 144 L per material unit). */
 	public static final long L_PER_MOLTEN_UNIT = 144;
 
-	//? if forge {
-	private static final Map<String, RegistryObject<? extends Fluid>> MOLTEN_FLUIDS = new HashMap<>();
-	//?} else {
-	/*private static final Map<String, net.neoforged.neoforge.registries.DeferredHolder<Fluid, ? extends Fluid>> MOLTEN_FLUIDS = new HashMap<>();
-	//21.1: the swap's wildcard entry ate the "? extends " literal segment (id258 family) —
-	//the type face is spelled out per leg here; the wildcard second parameter is covariant
-	//(Supplier/Holder read positions only), so the FlowingFluid holder puts in fine.
-	*///?}
-
-	static {
-		MOLTEN_FLUIDS.put("iron", GTFluids.IRON_MOLTEN);
-		// task qu-scanner-replicator — the molten.redstone carrier lands (the GTFluids
-		// :194 row), so the Smeltery pour-back and any material walker resolve MT.Redstone.
-		// The handle rides the table-driven CHEMICALS registration through the chemicalSource
-		// seam (the bridge map stays material-name keyed).
-		MOLTEN_FLUIDS.put("redstone", GTFluids.chemicalSource("redstone_molten"));
-		// task machines-bumblelyzer-crucible — the crystallisation quintet joins the same
-		// table-driven form (the keys are the sanitized lowercase internal names, the
-		// specOf/materialOf seam's id convention).
-		MOLTEN_FLUIDS.put("silicon", GTFluids.chemicalSource("silicon_molten"));
-		MOLTEN_FLUIDS.put("germanium", GTFluids.chemicalSource("germanium_molten"));
-		MOLTEN_FLUIDS.put("redstonealloy", GTFluids.chemicalSource("redstonealloy_molten"));
-		MOLTEN_FLUIDS.put("nikolinealloy", GTFluids.chemicalSource("nikolinealloy_molten"));
-		MOLTEN_FLUIDS.put("alumina", GTFluids.chemicalSource("alumina_molten"));
-	}
-
 	private FluidBridge() {}
 
-	/** The molten fluid for a material, or null when the bridge has no entry (unknown/unregistered). */
+	/**
+	 * The molten fluid for a material, or null when no {@code gt6:<mat>_molten} row exists
+	 * (unknown material) or the registry hasn't bound the row yet (the offline-JVM face).
+	 */
 	@Nullable
 	public static net.minecraft.world.level.material.Fluid moltenFluidForMaterial(@Nullable String aMaterialName) {
 		if (aMaterialName == null) return null;
+		String tName = aMaterialName.toLowerCase(Locale.ROOT);
 		//? if forge {
-		RegistryObject<? extends Fluid> tEntry = MOLTEN_FLUIDS.get(aMaterialName.toLowerCase(java.util.Locale.ROOT));
+		net.minecraftforge.registries.RegistryObject<? extends Fluid> tEntry;
+		if ("iron".equals(tName)) tEntry = GTFluids.IRON_MOLTEN;
+		else tEntry = GTFluids.chemicalSource(tName + "_molten");
 		return tEntry == null || !tEntry.isPresent() ? null : tEntry.get();
 		//?} else {
-		/*net.neoforged.neoforge.registries.DeferredHolder<Fluid, ? extends Fluid> tEntry = MOLTEN_FLUIDS.get(aMaterialName.toLowerCase(java.util.Locale.ROOT));
+		/*net.neoforged.neoforge.registries.DeferredHolder<Fluid, ? extends Fluid> tEntry;
+		if ("iron".equals(tName)) tEntry = GTFluids.IRON_MOLTEN;
+		else tEntry = GTFluids.chemicalSource(tName + "_molten");
 		//21.1: RegistryObject.isPresent → Holder.isBound (the command-file truth).
 		return tEntry == null || !tEntry.isBound() ? null : tEntry.get();
 		*///?}
