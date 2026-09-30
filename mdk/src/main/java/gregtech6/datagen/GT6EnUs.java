@@ -21,6 +21,7 @@ import gregtech6.fluid.GTFluids;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.items.armor.GT6ArmorMaterials;
 import gregtech6.jei.GT6JeiPlugin;
+import gregtech6.jei.GT6MultiblockPreviews;
 import gregtech6.jei.GT6RecipeMapViewerMeta;
 import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6BookText;
@@ -597,11 +598,12 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The JEI ingredient info page (task jei-integration, ADR 2026-09-02-jei-dependency):
-     * the coke oven structure description shown by JEI's built-in info page on the controller
-     * item — the consumer is {@code GT6JeiPlugin.registerRecipes}
-     * ({@code addIngredientInfo} → {@code Component.translatable}), so the key comes from the
-     * plugin's constant and cannot drift from the consumer side.
+     * The multiblock preview page texts (task jei-integration origin, ADR
+     * 2026-09-02-jei-dependency): the coke oven structure description — since task
+     * multiblock-preview-infra rendered as the DESCRIPTION line inside the 3D preview
+     * page ({@code GT6MultiblockPreviewWidget}, both viewer legs; the former text-info
+     * pages are gone), so the key comes from the plugin's constant and cannot drift from
+     * the consumer side.
      *
      * <p>Structure facts are pinned by the port's own live gate (task cokeoven-processing,
      * RCON {@code gt6multiblock frame/check}: {@code linked_parts=25/25}): the 3x3x3 cube has
@@ -618,6 +620,10 @@ public class GT6EnUs extends LanguageProvider {
         // GT6OreGenInfoLayout.TITLE_KEY consumer): hand row, no dump face — the page is
         // a modern enhancement, upstream 1.7.10 has no NEI distribution face
         add(GT6OreGenInfoLayout.TITLE_KEY, "Ore Generation Distribution");
+        // task multiblock-preview-infra — the 3D structure preview category title (the
+        // GT6MultiblockPreviews.TITLE_KEY consumer on both viewer legs); modern
+        // enhancement, upstream has no structure page (P20 negative)
+        add(GT6MultiblockPreviews.TITLE_KEY, "Multiblock Structure Preview");
     }
 
 

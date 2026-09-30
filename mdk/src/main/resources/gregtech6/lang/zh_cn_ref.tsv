@@ -980,6 +980,7 @@ direct	gt6.jei.cost.usage	功耗: %s GU/t	hand
 direct	gt6.jei.cost.usage_unit	功耗: %s %s/t	hand
 direct	gt6.jei.info.multiblock_coke_oven	焦炉是一个 3x3x3 的立方体：将焦炉控制器放在其中一面的中央并朝外，保持立方体中心格为空，其余 25 格全部放满焦炉砖。点燃控制器即可启动——它自行积攒热量，结构下方一层的储罐会收集杂酚油。	hand
 direct	gt6.jei.info.ore_gen_info	矿石生成分布	hand
+direct	gt6.jei.multiblock_preview	多方块结构预览	hand
 direct	gt6.jei.recipe_map.anvil	铁砧	hand
 direct	gt6.jei.recipe_map.anvil_bend	铁砧弯曲	hand
 direct	gt6.jei.recipe_map.autoclave	高压釜	hand

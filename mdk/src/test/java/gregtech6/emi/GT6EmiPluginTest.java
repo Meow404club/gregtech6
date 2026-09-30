@@ -96,14 +96,19 @@ public class GT6EmiPluginTest {
 	public void infoKeySharedBetweenTheTwoViewers() throws Exception {
 		// Face 1's seam: the info page text must be the ONE shared key (holder), not an
 		// EMI-side copy — a silent rename on either side would orphan the other's page.
+		// Since task multiblock-preview-infra the key's consumer is the preview widget's
+		// description line (the text-info pages are gone from both plugins); the literal
+		// share pin stays, and the EMI plugin's face is the preview category instead.
 		assertEquals("gt6.jei.info.multiblock_coke_oven", GT6RecipeViewerText.INFO_KEY_COKE_OVEN);
 		assertEquals(GT6JeiPlugin.INFO_KEY_COKE_OVEN, GT6RecipeViewerText.INFO_KEY_COKE_OVEN,
 				"the JEI forwarding constant and the holder literal must stay one seam");
-		// and the plugin bytecode rides the shared factory (no private Component copy):
+		// and the plugin bytecode carries the modern replacement face (no EmiInfoRecipe):
 		try (java.io.InputStream in = GT6EmiPlugin.class.getResourceAsStream("GT6EmiPlugin.class")) {
 			String tBytes = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.ISO_8859_1);
-			assertTrue(tBytes.contains("GT6RecipeViewerText"),
-					"the EMI info face must consume the shared text seam");
+			assertFalse(tBytes.contains("EmiInfoRecipe"),
+					"the EMI text-info face must be gone (task multiblock-preview-infra)");
+			assertTrue(tBytes.contains("GT6MultiblockPreviewEmiCategory"),
+					"the EMI plugin must register the preview category twin");
 		}
 	}
 
