@@ -9347,6 +9347,25 @@ posture); the asphalt plate rides the plain `ASPHALT` icon — the 16 dye-varian
 panel row (`Textures.BlockIcons.ASPHALT` + `DYES[i]`) collapses onto the one
 sprite (the worldgen streets face family, DYE_INDEX_Gray).
 
+Vent facet textures, task cover-underlay-census: the vent plate is the one
+faceted cover in the port (upstream `CoverVent.java:77-84` — surface=`front`,
+attachment back face=`back`, attachment rim/holder faces=`sides`); `front.png`
+already landed byte-identical with the p34 gameplay wave (its row lives here
+now), this card adds the missing two facets. Byte-identical borrows, sha256
+verified (upstream `src/main/resources/assets/gregtech/textures/blocks/machines/covers/vent/`):
+
+- `vent/front.png`      `1a900f4d7210e53c4dd9cfd396937112d2030b3e597bca909dda8260cb9eb921` (upstream `vent/front`, p34 borrow — row added here)
+- `vent/back.png`       `3a9ee5f389dda29955f504ccea94ba002b2d6c59ae9981d340e17727e59f89c9` (upstream `vent/back`)
+- `vent/sides.png`      `0256a6939c3593ee24eff57651ab94ea8120e4bfebbb71d69a3132c3cc330689` (upstream `vent/sides`)
+
+`drain/back`/`drain/sides` are the SAME upstream bytes as `vent/back`/`vent/sides`
+(drain's own front differs) — the facet dispatch follow-up consumes them from the
+vent directory, no separate borrow needed. The `GTCoverRenderSnapshot.FACETS`
+table maps the surface sprite to the back/rim pair (the CoverPlateModel null/rim
+passes); the underlay census gives every plate its base layer, so the vent outer
+face renders `[covers/base, vent/front]` while the back/rim faces keep their
+upstream single facet sprites.
+
 ## Render pool stand-in retirement (task render-texture-bake)
 
 Eighteen block textures under `gt6/textures/block/` land the three stand-ins
