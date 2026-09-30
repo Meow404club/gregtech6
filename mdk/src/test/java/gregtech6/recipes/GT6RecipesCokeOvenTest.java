@@ -201,7 +201,10 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 	/**
 	 * The p8 flip: the seven block rows ARE transcribed (39 = 32 + 7), and the skip list
 	 * declares them backfilled instead of pooled; the remaining pools (beam, the log-family
-	 * replacement) stay declared.
+	 * replacement) stay declared. The beam pool entry rides the beam-blocks-register
+	 * refresh: the 8 wood-beam items EXIST (gt6:oak_beam..gt6:wood_beam), so the pool's
+	 * justification moved from item-absence to untagged-ness (the wood surface is the
+	 * #minecraft:logs tag listener; beams are not log-tag members).
 	 */
 	@Test
 	void blockRowsBackfilled39Total() {
@@ -215,6 +218,9 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 		assertTrue(tSkipped.contains("BACKFILLED by prefixblock-registry"), "the block rows are declared backfilled, not pooled");
 		assertTrue(tSkipped.contains(":787-789/:803-805") && tSkipped.contains(":815"), "both former pool entries declare the backfill");
 		assertTrue(tSkipped.contains("beam"));
+		assertTrue(tSkipped.contains("beam-blocks-register"), "the beam pool entry declares the item registration follow-up");
+		assertTrue(tSkipped.contains("POOLED by untagged-ness"), "the beam pool survives on untagged-ness, no longer on 'no beam item'");
+		assertFalse(tSkipped.contains("no beam item"), "the retired absence wording must not survive the refresh");
 		assertTrue(tSkipped.contains("#minecraft:logs"), "the tag listener replaces the log family");
 	}
 
