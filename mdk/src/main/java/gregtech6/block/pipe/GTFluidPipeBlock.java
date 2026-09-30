@@ -31,10 +31,12 @@ import gregtech6.covers.ICoverableTE;
 /**
  * The GT6 fluid pipe block (task fluid-pipes spec ④) — the block side of the pipe
  * family over the shared BET (ADR-P3-1: one BlockEntityType mounting several blocks,
- * the GT6 "one TE class, many material blocks" counterpart). W1 shipped the two wood
- * tiers (the card fixes aStat=50 at 50 L / 300 L per tank; the upstream tiny/small/
- * medium multiplier row MultiTileEntityPipeFluid.java:92-94 is collapsed into the two
- * card-named tiers, other materials/tank-counts are a later card).
+ * the GT6 "one TE class, many material blocks" counterpart). The family is row-driven
+ * (the {@link GTItemPipeBlock} shape): the block carries its {@link gregtech6.registry.GTFluidPipes.FluidPipeRow}
+ * (40 materials × 7 sizes = 280 rows, Loader_MultiTileEntities.java:1846-1885 — the
+ * upstream tiny/small/medium multiplier row MultiTileEntityPipeFluid.java:92-98); the
+ * W1 card's 50 L wood "small" tier was the upstream TINY capacity under a small name —
+ * the matrix expansion corrects it to the upstream :93 {@code aStat * 2 = 100 L}.
  *
  * <p>{@link #CONNECTIONS} is the 6-bit connection mask as a BlockState property — the
  * visual counterpart of {@code TileEntityBase09Connector.mConnections} (upstream
@@ -78,11 +80,11 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 	/** The 6-bit connection mask (0..63) — bit i = side i connected (GT6 side order) — the GTBlockProperties single instance (ADR-P16-2). */
 	public static final IntegerProperty CONNECTIONS = GTBlockProperties.CONNECTIONS;
 
-	private final long mCapacityPerTank;
+	private final gregtech6.registry.GTFluidPipes.FluidPipeRow mRow;
 
-	public GTFluidPipeBlock(long aCapacityPerTank, Properties aProperties) {
+	public GTFluidPipeBlock(gregtech6.registry.GTFluidPipes.FluidPipeRow aRow, Properties aProperties) {
 		super(aProperties);
-		mCapacityPerTank = aCapacityPerTank;
+		mRow = aRow;
 		registerDefaultState(defaultBlockState().setValue(CONNECTIONS, 0));
 	}
 	//? if neoforge {
@@ -93,25 +95,35 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 	// runs through this codec (the registry-id + property mapper does).
 	@Override
 	protected com.mojang.serialization.MapCodec<? extends GTFluidPipeBlock> codec() {
-		return simpleCodec(aProperties -> new GTFluidPipeBlock(50, aProperties));
+		return simpleCodec(aProperties -> new GTFluidPipeBlock(gregtech6.registry.GTFluidPipes.ROWS.get(0), aProperties));
 	}
 	*///?}
 
+	/** The row this block carries (capacity/variant/material/display). */
+	public gregtech6.registry.GTFluidPipes.FluidPipeRow row() {
+		return mRow;
+	}
+
 	/** Per-tank capacity in Liters (upstream NBT_TANK_CAPACITY :114). */
 	public long capacityPerTank() {
-		return mCapacityPerTank;
+		return mRow.capacity();
+	}
+
+	/** The composed row name (the GTItemPipeBlock.getName posture — the item stack name delegates here). */
+	@Override
+	public net.minecraft.network.chat.MutableComponent getName() {
+		return mRow.displayName();
 	}
 
 	/**
-	 * The family's row material — both ported tiers ride upstream MT.Wood (the
-	 * addFluidPipes 26000 row's NBT_MATERIAL column, Loader_MultiTileEntities.java:1846;
-	 * the WoodTreated/IronWood/Plastic/Rubber siblings are later line-data batches). The
-	 * tex-pipe-textures tint dispatch seam (the {@code GTBasicMachineBlock.materialOf}
-	 * shape): null for any other block, so the {@code GTMachinePaintTint.tintMaterialOf}
-	 * gate keeps every foreign domain byte-identical.
+	 * The row's ore-dict material off the carried row (the loader line's {@code MT.*}
+	 * argument, Loader_MultiTileEntities.java:1846-1885). The tex-pipe-textures tint
+	 * dispatch seam (the {@code GTBasicMachineBlock.materialOf} shape): null for any
+	 * other block, so the {@code GTMachinePaintTint.tintMaterialOf} gate keeps every
+	 * foreign domain byte-identical.
 	 */
 	public static gregapi.oredict.OreDictMaterial materialOf(Block aBlock) {
-		return aBlock instanceof GTFluidPipeBlock ? gregapi.data.MT.Wood : null;
+		return aBlock instanceof GTFluidPipeBlock tPipe ? tPipe.mRow.material().oreDictMaterial() : null;
 	}
 
 	@Override

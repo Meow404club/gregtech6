@@ -86,8 +86,11 @@ public class GTNoOcclusionCensusTest {
 
 	@Test
 	public void fluidPipeBlocksNeverOcclude() {
-		assertNeverOccludes("fluid pipe", new GTFluidPipeBlock(50, GTFluidPipes.pipeProperties()));
-		assertEquals(2, GTFluidPipes.BLOCKS.getEntries().size(), "the fluid-pipe register census drifted");
+		// the row-carrier ctor (task fluid-pipe-matrix — row 0 = the wood tiny)
+		assertNeverOccludes("fluid pipe",
+				new GTFluidPipeBlock(GTFluidPipes.ROWS.get(0), GTFluidPipes.pipeProperties(GTFluidPipes.ROWS.get(0))));
+		assertEquals(280, GTFluidPipes.BLOCKS.getEntries().size(),
+				"the fluid-pipe register census drifted (40 materials x 7 sizes, task fluid-pipe-matrix)");
 	}
 
 	@Test

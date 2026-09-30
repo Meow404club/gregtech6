@@ -257,12 +257,12 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// migrates away, the p32 bake ruling).
 		for (Block tBlock : gregtech6.registry.GT6BeeHives.paintableBlockArray()) wrapStates(tBlock, aEvent);
 		// task tex-pipe-textures — the three pipe connector families join the
-		// baked-tint domain: the 2 wood fluid rows, the 18 item pipe rows and the single
-		// logistics wire over their two-layer models (the body cube is the tintindex-0
-		// seat, the overlay bands untinted). The wire's material resolves NULL (upstream
-		// NBT_MATERIAL = MT.NULL) — the white identity passes through unchanged.
-		wrapStates(gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_SMALL.get(), aEvent);
-		wrapStates(gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.get(), aEvent);
+		// baked-tint domain: the 280 fluid rows (task fluid-pipe-matrix — the per-row
+		// material dispatch), the 18 item pipe rows and the single logistics wire over
+		// their two-layer models (the body cube is the tintindex-0 seat, the overlay
+		// bands untinted). The wire's material resolves NULL (upstream NBT_MATERIAL =
+		// MT.NULL) — the white identity passes through unchanged.
+		for (Block tBlock : gregtech6.registry.GTFluidPipes.blockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GTItemPipes.blockArray()) wrapStates(tBlock, aEvent);
 		wrapStates(gregtech6.registry.GT6Logistics.LOGISTICS_WIRE.get(), aEvent);
 		// task tex-composite-family — the composite-energy families join the baked-tint
@@ -338,12 +338,11 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		tPaintItems.add(gregtech6.registry.GT6Logistics.LOGISTICS_CORE_ITEM.get());
 		tPaintItems.add(gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_ITEM.get());
 		tPaintItems.add(gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_ITEM.get());
-		// task tex-pipe-textures — the three pipe connector families' 21 BlockItems
-		// (the 2 wood fluid rows, the 18 item pipe rows, the logistics wire) join the
-		// same lambda; the wire's carrier resolves NULL (upstream NBT_MATERIAL = MT.NULL)
-		// so its unpainted identity stays the white no-op.
-		tPaintItems.add(gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_SMALL_ITEM.get());
-		tPaintItems.add(gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM_ITEM.get());
+		// task tex-pipe-textures — the three pipe connector families' BlockItems (the
+		// 280 fluid rows — task fluid-pipe-matrix, the 18 item pipe rows, the logistics
+		// wire) join the same lambda; the wire's carrier resolves NULL (upstream
+		// NBT_MATERIAL = MT.NULL) so its unpainted identity stays the white no-op.
+		for (Block tBlock : gregtech6.registry.GTFluidPipes.blockArray()) tPaintItems.add(tBlock.asItem());
 		// task tex-bridge-kinetic — the kinetic engines' 37 BlockItems (the 28 steam
 		// rows, the 8 diesel rows, the rotation transformer) join the same lambda: the
 		// two-layer shells carry tintindex 0 on the body, and an unregistered BlockItem

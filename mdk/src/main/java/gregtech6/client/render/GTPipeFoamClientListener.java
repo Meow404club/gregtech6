@@ -64,8 +64,8 @@ public final class GTPipeFoamClientListener {
 
 	@SubscribeEvent
 	public static void onRegisterBlockColors(RegisterColorHandlersEvent.Block aEvent) {
-		aEvent.getBlockColors().register(foamBlockColor(),
-				gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_SMALL.get(),
-				gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.get());
+		// the full matrix walk (task fluid-pipe-matrix — the foam rider covers every row,
+		// not just the W1 wood pair)
+		aEvent.getBlockColors().register(foamBlockColor(), gregtech6.registry.GTFluidPipes.blockArray());
 	}
 }

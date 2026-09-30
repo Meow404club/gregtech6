@@ -1,5 +1,6 @@
 package gregtech6.client.render;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.resources.ResourceLocation;
@@ -17,8 +18,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  * at mod construct (strictly before the first resource reload that fires
  * ModifyBakingResult — GTRenderModelListener class doc).
  *
- * <p>Targets: the two pipe blockstate models (one per wood tier — GT6BlockStates
- * addFluidPipe names each model after the block registry path). The ATLAS WIRING is
+ * <p>Targets: the pipe blockstate models, one per row (the full 280-row matrix —
+ * {@link #TARGET_MODELS}; GT6BlockStates pipeBlockstate names each blockstate after the
+ * block registry path). The ATLAS WIRING is
  * the consumer-side datagen (GT6Atlases → the Forge SpriteSourceProvider): the arrow
  * sprite {@code gt6:block/pipe_flow_arrow} lands as an explicit single-file source in
  * the block atlas definition.
@@ -26,8 +28,21 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 @Mod.EventBusSubscriber(modid = GTRenderModelListener.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTPipeFlowClientListener {
 
-	/** The pipe blockstate-model ids that carry the dynamic flow model. */
-	public static final List<String> TARGET_MODELS = List.of("block/wood_fluid_pipe_small", "block/wood_fluid_pipe_medium");
+	/**
+	 * The pipe blockstate-model ids that carry the dynamic flow model — the full matrix
+	 * walk (task fluid-pipe-matrix; the W1 pair only covered the two wood rows, leaving
+	 * the other rows' output arrows unrendered). Same key form per row (the baked
+	 * per-state key — the r8-tex-pipe-textures note).
+	 */
+	public static final List<String> TARGET_MODELS;
+
+	static {
+		List<String> tModels = new ArrayList<>();
+		for (String tPath : gregtech6.registry.GTFluidPipes.BLOCKS_BY_PATH.keySet()) {
+			tModels.add("block/" + tPath);
+		}
+		TARGET_MODELS = List.copyOf(tModels);
+	}
 
 	private GTPipeFlowClientListener() {
 	}

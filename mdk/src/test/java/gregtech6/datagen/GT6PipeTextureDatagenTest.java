@@ -44,7 +44,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -65,9 +67,21 @@ class GT6PipeTextureDatagenTest {
     /**
      * The pipe blockstate registry paths (task item-pipe-matrix: the item material slugs
      * walk the GTItemPipes table — 21 loader lines × 6 variants — so the datagen shape
-     * stays pinned over the whole matrix, not a slug snapshot).
+     * stays pinned over the whole matrix, not a slug snapshot) and the 280 fluid row
+     * paths (task fluid-pipe-matrix) with the declared RENDER TRANSITION picks: WOODEN-
+     * block rows ride the wood family, everything else the copper family (the only
+     * borrowed pipe art in the repo — the per-material colour rides the tint chain;
+     * connection-aware geometry is the rod-render-pool card).
      */
-    private static final List<String> FLUID_PATHS = List.of("wood_fluid_pipe_small", "wood_fluid_pipe_medium");
+    private static Map<String, String> fluidModelPicks() {
+        Map<String, String> rPicks = new LinkedHashMap<>();
+        for (gregtech6.registry.GTFluidPipes.FluidPipeRow tRow : gregtech6.registry.GTFluidPipes.ROWS) {
+            rPicks.put(tRow.path(),
+                    tRow.material().blockFamily() == gregtech6.registry.GTFluidPipes.PipeBlockFamily.WOODEN ? WOOD_MODEL : COPPER_MODEL);
+        }
+        return rPicks;
+    }
+
     private static final List<String> RESTRICTIVE_TAILS = List.of("restrictive_medium", "restrictive_large", "restrictive_huge");
     private static final List<String> ITEM_MATERIALS = gregtech6.registry.GTItemPipes.MATERIALS.stream()
             .map(gregtech6.registry.GTItemPipes.ItemPipeMaterial::slug).toList();
@@ -186,7 +200,6 @@ class GT6PipeTextureDatagenTest {
             tItemPaths.add(tMat + "_item_pipe_huge");
         }
         for (Expect tExpect : List.of(
-                new Expect(FLUID_PATHS, "gt6:block/" + WOOD_MODEL),
                 new Expect(tItemPaths, "gt6:block/" + COPPER_MODEL),
                 new Expect(tRestrictivePaths, "gt6:block/" + COPPER_RESTRICTIVE_MODEL),
                 new Expect(List.of("logistics_wire"), "gt6:block/" + LOGISTICS_MODEL))) {
@@ -204,13 +217,27 @@ class GT6PipeTextureDatagenTest {
                 }
             }
         }
+        // the fluid matrix: per-row family picks over the 64-variant shape (the datagen
+        // loop mirrors fluidModelPicks — the zero-drift walk face)
+        for (Map.Entry<String, String> tFluid : fluidModelPicks().entrySet()) {
+            JsonObject tJson = treeJson("assets/gt6/blockstates/" + tFluid.getKey() + ".json");
+            var tVariants = tJson.getAsJsonObject("variants");
+            assertEquals(64, tVariants.size(), tFluid.getKey() + " lost the 64 CONNECTIONS variants");
+            for (var tEntry : tVariants.entrySet()) {
+                JsonObject tVariant = tEntry.getValue().getAsJsonObject().get("model") != null
+                        ? tEntry.getValue().getAsJsonObject()
+                        : tEntry.getValue().getAsJsonArray().get(0).getAsJsonObject();
+                assertEquals("gt6:block/" + tFluid.getValue(), tVariant.get("model").getAsString(),
+                        tFluid.getKey() + " variant " + tEntry.getKey() + " drifted off the family pick");
+            }
+        }
     }
 
     @Test
     public void itemModelsParentTheSharedModels() throws Exception {
-        for (String tPath : FLUID_PATHS) {
-            assertEquals("gt6:block/" + WOOD_MODEL,
-                    treeJson("assets/gt6/models/item/" + tPath + ".json").get("parent").getAsString());
+        for (Map.Entry<String, String> tFluid : fluidModelPicks().entrySet()) {
+            assertEquals("gt6:block/" + tFluid.getValue(),
+                    treeJson("assets/gt6/models/item/" + tFluid.getKey() + ".json").get("parent").getAsString());
         }
         assertEquals("gt6:block/" + LOGISTICS_MODEL,
                 treeJson("assets/gt6/models/item/logistics_wire.json").get("parent").getAsString());

@@ -1919,16 +1919,19 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The fluid-pipe family block list (task c-foam-pipe-spray spec ⑦): the two wood
-     * tiers. Pre-existing state: the pipes shipped TABLE-LESS (breaking dropped nothing —
-     * the same gap the p22 machine census closed for its 13); the foam NBT round-trip
-     * needs a real drop, so this card gives them the upstream MTE default self-drop WITH
-     * the foam carry (upstream writeItemNBT2, TileEntityBase10ConnectorRendered.java:82-87 —
-     * the port's writeItemNBT2 counterpart is the loot copy_nbt, the p22 painted-item form).
+     * The fluid-pipe family block list (task c-foam-pipe-spray spec ⑦, extended to
+     * the full matrix by task fluid-pipe-matrix): all 280 row blocks walk
+     * {@link gregtech6.registry.GTFluidPipes#BLOCKS_BY_PATH}. Pre-existing state: the
+     * pipes shipped TABLE-LESS (breaking dropped nothing — the same gap the p22 machine
+     * census closed for its 13); the foam NBT round-trip needs a real drop, so this card
+     * gives them the upstream MTE default self-drop WITH the foam carry (upstream
+     * writeItemNBT2, TileEntityBase10ConnectorRendered.java:82-87 — the port's
+     * writeItemNBT2 counterpart is the loot copy_nbt, the p22 painted-item form).
      */
     public static List<Block> pipeLootBlocks() {
-        return List.of(gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_SMALL.get(),
-                gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.get());
+        java.util.List<Block> rBlocks = new java.util.ArrayList<>();
+        for (var tHandle : gregtech6.registry.GTFluidPipes.BLOCKS_BY_PATH.values()) rBlocks.add(tHandle.get());
+        return rBlocks;
     }
 
     /**

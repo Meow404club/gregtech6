@@ -1012,8 +1012,6 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.shredder");
 		addDirect("block.gt6.wire_electric_1x");
 		addDirect("block.gt6.wire_electric_2x");
-		addDirect("block.gt6.wood_fluid_pipe_medium");
-		addDirect("block.gt6.wood_fluid_pipe_small");
 		// fluids: the 21 remaining display names (dump anchors 柴油/蒸馏水/幻露 per the research card)
 		addDirect("fluid.gt6.cactuswater");
 		addDirect("fluid.gt6.cold_water");
@@ -1319,6 +1317,20 @@ public class GT6ZhCn extends LanguageProvider {
 			addRowUnit(tEmitted, tPipeMat.unitKey());
 		}
 		addDirect("itemGroup.gt6.item_pipes");
+		// fluid pipes (task fluid-pipe-matrix): the seven variant templates + the 40
+		// row-material words — the walk mirrors the en addFluidPipes over the SAME rows;
+		// the two W1 atomic wood keys (block.gt6.wood_fluid_pipe_*) retired into the
+		// compose. Values dump-verbatim (tmp/gregtech.lang:11976-12255 — 微型木流体管道
+		// ..九合一碳化钽铪流体管道): the template affixes 微型/小型/(无)/大型/巨型/四合一/
+		// 九合一 + the material word + 流体管道. The mat words ride the FAMILY-SCOPED
+		// gt6.row.fluid_pipe.mat.* namespace — the axle family's row.mat.wood_treated is
+		// the ADJECTIVE 木制, the dump noun here is 防腐木.
+		for (gregtech6.registry.GTFluidPipes.FluidPipeVariant tPipeVariant : gregtech6.registry.GTFluidPipes.VARIANTS) {
+			addDirect(tPipeVariant.displayKey());
+		}
+		for (gregtech6.registry.GTFluidPipes.FluidPipeMaterial tFluidMat : gregtech6.registry.GTFluidPipes.MATERIALS) {
+			addRowUnit(tEmitted, tFluidMat.unitKey());
+		}
 		// W1 Kinetic trio (task w1-sifter-compressor-wiremill): the three family
 		// templates (the unit-key carrier) + the Kinetic_T row-material units
 		addDirect(gregtech6.registry.GTMachines.MACHINE_SIFTER_UNIT_KEY);
