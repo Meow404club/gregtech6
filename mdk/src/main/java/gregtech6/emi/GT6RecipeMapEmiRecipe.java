@@ -113,8 +113,8 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 		// (upstream NEI_RecipeMap.drawBackground :629-635). The ctor
 		// (texture, x, y, width, height, u, v) defaults to a 256x256 canvas — both the
 		// amazawa redraws and the upstream panels are 256x256 (assets/README.md reskin
-		// section). The slots below land on the baked-in art via the meta's VIEWER exits
-		// (the sOffset(-5,-11) panel fold happened once inside GT6RecipeMapViewerMeta).
+	// section). The slots below land on the baked-in art via the meta's VIEWER exits
+	// (the re-anchored -(5,7) panel fold happened once inside GT6RecipeMapViewerMeta).
 		int[] tPlate = GT6RecipeMapViewerMeta.PLATE_CROP, tBand = GT6RecipeMapViewerMeta.BAND_CROP;
 		aWidgets.add(new TextureWidget(GT6RecipeMapViewerMeta.PLATE_TEXTURE, 0, 0, tPlate[2], tPlate[3], tPlate[0], tPlate[1]));
 		aWidgets.add(new TextureWidget(GT6RecipeMapViewerMeta.guiTexture(mMap), 0, 0, tBand[2], tBand[3], tBand[0], tBand[1]));

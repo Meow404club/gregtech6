@@ -183,55 +183,147 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 	@Test
 	void viewerFoldTablePinnedAgainstTheNeiNumbers() {
 		GT6RecipeMaps.init();
-		// the fold is exactly -(5,11) everywhere (NEI_RecipeMap.java:66/:112)
+		// the fold is the re-anchored -(5,7) everywhere (task viewer-row-headroom): NEI
+		// :66's sOffsetY 11 minus the 4px headroom the modern zero-headroom category
+		// rects can't show (the S_OFFSET_Y doc carries the full mechanism)
 		assertEquals(5, GT6RecipeMapViewerMeta.S_OFFSET_X);
-		assertEquals(11, GT6RecipeMapViewerMeta.S_OFFSET_Y);
+		assertEquals(7, GT6RecipeMapViewerMeta.S_OFFSET_Y);
 		// BATH (6 in / 1 in-fluid → the 16/34 band, 3 item outputs at row 0 y16): GUI
-		// (17,16)/(35,34)/(107,16)/(125,16)/(143,16) → panel (12,5)/(30,23)/(102,5)/
-		// (120,5)/(138,5); the fluid input GUI (53,63) → panel (48,52)
-		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(0, GT6RecipeMaps.BATH), 12, 5);
-		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(4, GT6RecipeMaps.BATH), 30, 23);
-		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(0, GT6RecipeMaps.BATH), 102, 5);
-		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(1, GT6RecipeMaps.BATH), 120, 5);
-		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(2, GT6RecipeMaps.BATH), 138, 5);
-		assertPos(GT6RecipeMapViewerMeta.viewerFluidInputPos(0), 48, 52);
-		assertPos(GT6RecipeMapViewerMeta.viewerFluidOutputPos(1), 120, 52);
-		// MIXER (6 in / 6 in-fluids → the y7 lift): the negative-row case — GUI (17,7)/
-		// (53,25) → panel (12,-4)/(48,14). y=-4 is the upstream-faithful shape (the NEI
-		// FixedPositionedStack carried the same), JEI/EMI don't clip widgets — no clamping.
-		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(0, GT6RecipeMaps.MIXER), 12, -4);
-		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(1, GT6RecipeMaps.MIXER), 30, -4);
-		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(5, GT6RecipeMaps.MIXER), 48, 14);
+		// (17,16)/(35,34)/(107,16)/(125,16)/(143,16) → panel (12,9)/(30,27)/(102,9)/
+		// (120,9)/(138,9) — the r9-34 pins (12,5)/(30,23)/(102,5)/(120,5)/(138,5)
+		// translated by the re-anchor's pure +4; the fluid input GUI (53,63) → (48,56)
+		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(0, GT6RecipeMaps.BATH), 12, 9);
+		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(4, GT6RecipeMaps.BATH), 30, 27);
+		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(0, GT6RecipeMaps.BATH), 102, 9);
+		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(1, GT6RecipeMaps.BATH), 120, 9);
+		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(2, GT6RecipeMaps.BATH), 138, 9);
+		assertPos(GT6RecipeMapViewerMeta.viewerFluidInputPos(0), 48, 56);
+		assertPos(GT6RecipeMapViewerMeta.viewerFluidOutputPos(1), 120, 56);
+		// MIXER (6 in / 6 in-fluids → the y7 lift): the former negative-row case — GUI
+		// (17,7)/(53,25) → panel (12,0)/(48,18). Pre-fix (12,-4) was upstream-faithful
+		// (the NEI FixedPositionedStack carried it) but the modern category rect starts
+		// AT its origin — the user-visible "首行被裁剪" (task viewer-row-headroom); the
+		// +4 re-anchor lands the topmost slot row at exactly y0.
+		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(0, GT6RecipeMaps.MIXER), 12, 0);
+		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(1, GT6RecipeMaps.MIXER), 30, 0);
+		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(5, GT6RecipeMaps.MIXER), 48, 18);
 		// STEAM_CRACKING (1 in / 3 out / 9 out-fluids → outputs lift to y7): the output
-		// side's negative row — GUI (53,25)/(107,7)/(143,7) → panel (48,14)/(102,-4)/(138,-4)
-		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(0, GT6RecipeMaps.STEAM_CRACKING), 48, 14);
-		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(0, GT6RecipeMaps.STEAM_CRACKING), 102, -4);
-		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(2, GT6RecipeMaps.STEAM_CRACKING), 138, -4);
+		// side's former negative row — GUI (53,25)/(107,7)/(143,7) → (48,18)/(102,0)/(138,0)
+		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(0, GT6RecipeMaps.STEAM_CRACKING), 48, 18);
+		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(0, GT6RecipeMaps.STEAM_CRACKING), 102, 0);
+		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(2, GT6RecipeMaps.STEAM_CRACKING), 138, 0);
 		// FUSION (2 in / 6+6 out, fluids >3 both sides): the two-row 7/25 output band
-		// folded — GUI (35,25)/(107,7)/(143,25) → panel (30,14)/(102,-4)/(138,14)
-		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(0, GT6RecipeMaps.FUSION), 30, 14);
-		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(1, GT6RecipeMaps.FUSION), 48, 14);
-		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(0, GT6RecipeMaps.FUSION), 102, -4);
-		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(5, GT6RecipeMaps.FUSION), 138, 14);
+		// folded — GUI (35,25)/(107,7)/(143,25) → (30,18)/(102,0)/(138,18)
+		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(0, GT6RecipeMaps.FUSION), 30, 18);
+		assertPos(GT6RecipeMapViewerMeta.viewerInputPos(1, GT6RecipeMaps.FUSION), 48, 18);
+		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(0, GT6RecipeMaps.FUSION), 102, 0);
+		assertPos(GT6RecipeMapViewerMeta.viewerOutputPos(5, GT6RecipeMaps.FUSION), 138, 18);
 		// the null contract passes through the fold untouched
 		assertNull(GT6RecipeMapViewerMeta.viewerOutputPos(12, GT6RecipeMaps.SHREDDER), "past the 12th drawn slot: null in, null out");
 	}
 
+	/**
+	 * The zero-negative census (task viewer-row-headroom acceptance ①): every visible
+	 * map × every declared slot index, all four viewer exits return y ≥ 0 (null
+	 * excepted) — nothing the modern JEI/EMI category rects can clip at the top any
+	 * more. The pre-fix negative set (same loop over the pre-re-anchor fold, i.e. any
+	 * current y < 4) is pinned as the exact 21-map list the live census produces: the
+	 * 7+-item-slot maps plus the fluid-lift maps (the 4-6-item two-row band or the 1-3
+	 * row lifting to y7 under >3/>6 fluids) — PRINTER has 4+ fluids but ≤3 items and
+	 * ≤6 of them, so its row stays at y25 and it is NOT affected; any future map
+	 * entering the set must re-run this acceptance deliberately.
+	 */
+	@Test
+	void everyViewerExitStaysNonNegativeAcrossTheWholeVisibleCensus() {
+		GT6RecipeMaps.init();
+		Set<String> tPreFixNegative = new TreeSet<>();
+		for (RecipeMap tMap : GT6RecipeMapViewerMeta.visibleMaps()) {
+			for (int i = 0; i < tMap.mInputItemsCount; i++) {
+				int[] tPos = GT6RecipeMapViewerMeta.viewerInputPos(i, tMap);
+				if (tPos == null) continue;
+				assertTrue(tPos[1] >= 0, tMap.mNameInternal + " input " + i + " at y" + tPos[1] + " — clipped again");
+				if (tPos[1] < 4) tPreFixNegative.add(tMap.mNameInternal); // pre-fix y = current − 4
+			}
+			for (int i = 0; i < tMap.mOutputItemsCount; i++) {
+				int[] tPos = GT6RecipeMapViewerMeta.viewerOutputPos(i, tMap);
+				if (tPos == null) continue;
+				assertTrue(tPos[1] >= 0, tMap.mNameInternal + " output " + i + " at y" + tPos[1] + " — clipped again");
+				if (tPos[1] < 4) tPreFixNegative.add(tMap.mNameInternal);
+			}
+			for (int i = 0; i < tMap.mInputFluidCount; i++) {
+				int[] tPos = GT6RecipeMapViewerMeta.viewerFluidInputPos(i);
+				assertTrue(tPos[1] >= 0, tMap.mNameInternal + " fluid input " + i + " at y" + tPos[1] + " — clipped again");
+				if (tPos[1] < 4) tPreFixNegative.add(tMap.mNameInternal);
+			}
+			for (int i = 0; i < tMap.mOutputFluidCount; i++) {
+				int[] tPos = GT6RecipeMapViewerMeta.viewerFluidOutputPos(i);
+				assertTrue(tPos[1] >= 0, tMap.mNameInternal + " fluid output " + i + " at y" + tPos[1] + " — clipped again");
+				if (tPos[1] < 4) tPreFixNegative.add(tMap.mNameInternal);
+			}
+		}
+		// the affected list, in the record: 9 maps with a 7+-slot side + 12 fluid-lift
+		// maps; canaries MIXER (6 in-items lifted by 6 in-fluids), STEAM_CRACKING (its
+		// OUTPUTS lifted by 9 out-fluids) and FUSION (both) ride the r9-34 fold-table pins
+		assertEquals(Set.of("gt.recipe.bedrockorelist", "gt.recipe.burnmixer", "gt.recipe.catalyticcracking",
+				"gt.recipe.centrifuge", "gt.recipe.cokeoven", "gt.recipe.cooker", "gt.recipe.crusher",
+				"gt.recipe.cryodistillationtower", "gt.recipe.cryomixer", "gt.recipe.distillationtower",
+				"gt.recipe.electrolyzer", "gt.recipe.fusionreactor", "gt.recipe.lightning",
+				"gt.recipe.magneticseparator", "gt.recipe.mixer", "gt.recipe.shredder", "gt.recipe.sifter",
+				"gt.recipe.sluice", "gt.recipe.steamcracking", "gt.recipe.unboxinator", "gt.recipe.welder"),
+				tPreFixNegative, "the pre-fix negative-row census drifted — re-run the headroom acceptance");
+		assertTrue(tPreFixNegative.containsAll(List.of("gt.recipe.mixer", "gt.recipe.steamcracking", "gt.recipe.fusionreactor")),
+				"the three named canaries must be among the affected");
+	}
+
+	/**
+	 * The relative-geometry pin (task viewer-row-headroom acceptance ②): the re-anchor
+	 * is a pure +4 translation — the element-to-element invariants that held pre-fix
+	 * hold post-fix, each reading off the constants it relates. The ABSOLUTE pre/post
+	 * values ride the fold-table and crop pins above (BATH 5→9, MIXER −4→0, fluid
+	 * 52→56, icon (147,72)→(147,76), text 73→77 — every diff exactly +4 in y).
+	 */
+	@Test
+	void headroomReAnchorIsAPurePlusFourTranslation() {
+		GT6RecipeMaps.init();
+		// the band still ends on texture row 81 (v+h = 82) — the SHREDDER fourth-row
+		// holes at rows 61..78 stay fully covered, exactly as the pre-fix v11+h71 crop did
+		assertEquals(82, GT6RecipeMapViewerMeta.BAND_CROP[1] + GT6RecipeMapViewerMeta.BAND_CROP[3]);
+		// the plate origin rides 5px below the band origin in texture space (16−11 = 12−7)
+		assertEquals(GT6RecipeMapViewerMeta.BAND_CROP[1] + 5, GT6RecipeMapViewerMeta.PLATE_CROP[1]);
+		// the text band still opens 3px under the band bottom edge (bottom edge = last
+		// band row 81 at category row − S_OFFSET_Y: 73−70 pre, 77−74 post)
+		assertEquals(3, GT6RecipeMapViewerMeta.TEXT_BASE_Y
+				- (GT6RecipeMapViewerMeta.BAND_CROP[1] + GT6RecipeMapViewerMeta.BAND_CROP[3] - 1 - GT6RecipeMapViewerMeta.S_OFFSET_Y));
+		// the gear spot still rides 1px above the text band ((147,72)/(73) pre, (147,76)/(77) post)
+		assertEquals(-1, GT6RecipeMapViewerMeta.machineIconPos()[1] - GT6RecipeMapViewerMeta.TEXT_BASE_Y);
+		assertEquals(147, GT6RecipeMapViewerMeta.machineIconPos()[0],
+				"the gear x = upstream GUI 152 folded by S_OFFSET_X only — untouched by the y re-anchor");
+		// the 18px row pitch is fold-independent (the raw switch geometry)
+		assertEquals(18, GT6RecipeMapViewerMeta.viewerInputPos(5, GT6RecipeMaps.MIXER)[1]
+				- GT6RecipeMapViewerMeta.viewerInputPos(0, GT6RecipeMaps.MIXER)[1]);
+		assertEquals(18, GT6RecipeMapViewerMeta.viewerFluidOutputPos(0)[1]
+				- GT6RecipeMapViewerMeta.viewerFluidOutputPos(3)[1],
+				"the fluid grid stacks upward at the same 18px pitch");
+	}
+
 	@Test
 	void backdropCropsAndTextBandPinnedToTheUpstreamDraw() {
-		// the two crop quadruples, the NEI_RecipeMap.drawBackground numbers folded to the
-		// panel system: plate (-5,-16,0,0,176,166) → (u,v,w,h)=(5,16,166,140) :632; band
-		// (-5,-8,0,3,176,79) → (5,11,166,71) :634
-		assertArrayEquals(new int[] {5, 16, 166, 140}, GT6RecipeMapViewerMeta.PLATE_CROP);
-		assertArrayEquals(new int[] {5, 11, 166, 71}, GT6RecipeMapViewerMeta.BAND_CROP);
+		// the two crop quadruples: the NEI_RecipeMap.drawBackground numbers carried to the
+		// re-anchored panel system (task viewer-row-headroom) — plate (-5,-16,0,0,176,166)
+		// → v 16−4 = 12, h 140 (the full category; the dropped bottom rows are transparent
+		// margin, the gained top rows sit under the full-width band) :632; band
+		// (-5,-8,0,3,176,79) → v 11−4 = 7, h 71+4 = 75 (the SAME bottom edge, texture row
+		// 81: v+h = 82) :634. Pre-fix pins: {5,16,166,140} / {5,11,166,71}.
+		assertArrayEquals(new int[] {5, 12, 166, 140}, GT6RecipeMapViewerMeta.PLATE_CROP);
+		assertArrayEquals(new int[] {5, 7, 166, 75}, GT6RecipeMapViewerMeta.BAND_CROP);
 		assertEquals("gt6:textures/gui/machines/nei.png", GT6RecipeMapViewerMeta.PLATE_TEXTURE.toString());
-		// the retired text band: the drawExtras lines sit at the FIXED panel y73 for every
-		// map (the +10 fluid deviation died with the backdrop landing — the fluid row ends
-		// at panel y70, 3px clear)
+		// the retired text band: the drawExtras lines sit at the FIXED panel y77 for every
+		// map (the pre-fix 73 + the re-anchor's 4 — still 3px under the band bottom edge
+		// 74; the +10 fluid deviation stays dead; FUSION's 6 lines end at 136 < 140)
 		GT6RecipeMaps.init();
 		for (RecipeMap tMap : List.of(GT6RecipeMaps.BATH, GT6RecipeMaps.MIXER, GT6RecipeMaps.FUSION,
 				GT6RecipeMaps.LATHE, GT6RecipeMaps.STEAM_CRACKING))
-			assertEquals(73, GT6RecipeMapViewerMeta.TEXT_BASE_Y, tMap.mNameInternal + " rides the fixed panel band");
+			assertEquals(77, GT6RecipeMapViewerMeta.TEXT_BASE_Y, tMap.mNameInternal + " rides the fixed panel band");
 		// the per-map machine texture is the live mGUIPath (the mapping table needs no
 		// second copy): anvilbend folds AnvilBendingBig, the five fuel maps share default
 		assertEquals("gt6:textures/gui/machines/anvilbend.png",
@@ -460,13 +552,14 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 
 	/**
 	 * The gear-spot machine icon (the #34 defer): upstream NEI_RecipeMap.java:278 drew
-	 * mRecipeMachineList at GUI (152,83) — folded through the shared (5,11) panel origin
-	 * to (147,72), the spot the NEI.png plate bakes the gear into. And the stock gate: a
-	 * tabled map resolves its machine item, a furnace-fallback whitelist map (zero
-	 * machines in the port) resolves NOTHING — the upstream isEmpty() guard, never the
-	 * lit-furnace default. The resolution rides the {@code sResolver} fixture seam (the
-	 * Forge registry does not exist in a bare JVM) — stubbed inside the test, restored in
-	 * the finally (the per-test-stub lesson of issues #29/#34a).
+	 * mRecipeMachineList at GUI (152,83) — folded through the re-anchored (5,7) panel
+	 * origin (task viewer-row-headroom; pre-fix (5,11) → (147,72), now (147,76)) to the
+	 * spot the NEI.png plate bakes the gear into. And the stock gate: a tabled map
+	 * resolves its machine item, a furnace-fallback whitelist map (zero machines in the
+	 * port) resolves NOTHING — the upstream isEmpty() guard, never the lit-furnace
+	 * default. The resolution rides the {@code sResolver} fixture seam (the Forge
+	 * registry does not exist in a bare JVM) — stubbed inside the test, restored in the
+	 * finally (the per-test-stub lesson of issues #29/#34a).
 	 */
 	@Test
 	void machineIconPinsTheUpstreamGearSpotAndTheRealMachineGate() {

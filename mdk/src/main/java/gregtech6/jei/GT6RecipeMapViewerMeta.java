@@ -46,7 +46,9 @@ import gregtech6.recipes.RecipeMap;
  * drawBackground (:629-635) composited TWO layers under the slots — the grey
  * {@code machines/NEI.png} backdrop plate, then the per-map machine GUI texture as a
  * band — and folded the panel origin (5,11) into every slot coordinate on the way out
- * (:66/:112). The viewers restore exactly that: the crop quadruples
+ * (:66/:112). The viewers restore exactly that composition, RE-ANCHORED 4px up the
+ * texture for the modern viewers' zero-headroom category rects (task
+ * viewer-row-headroom — the {@link #S_OFFSET_Y} doc): the crop quadruples
  * {@link #PLATE_CROP}/{@link #BAND_CROP} plus {@link #PLATE_TEXTURE} feed both legs'
  * background draws, and the {@code viewer*Pos} exits below do the
  * sOffset fold ONCE here (the layout switches above stay in machine-GUI coordinates,
@@ -105,13 +107,15 @@ public final class GT6RecipeMapViewerMeta {
 	public static final int TEXT_LINE_HEIGHT = 10;
 	/**
 	 * The text-band first Y, panel system (task 34-viewer-gui-bg): upstream drew the
-	 * cost lines at FIXED y73..123 in panel coordinates (:680-717) — 3px under the y63
-	 * fluid row that ends at y70. The batch-1 "+10 shift on fluid maps" deviation existed
-	 * only because the viewers carried no background; with the two-layer backdrop
-	 * composited (this task) the band sits where upstream sat, which also retires the
-	 * FUSION 6-line overflow past the 140-high category.
+	 * cost lines at FIXED y73..123 in panel coordinates (:680-717) — 3px under the band
+	 * bottom edge. Re-anchored (task viewer-row-headroom): 73 + the 4px
+	 * {@link #S_OFFSET_Y} shift = 77, still exactly 3px under the band bottom edge
+	 * (BAND_CROP v7 + h75 = 82 → category y74), so the text-to-art gap is untouched.
+	 * The batch-1 "+10 shift on fluid maps" deviation stayed dead: the fixed band rides
+	 * every map, and the FUSION 6-line face (77..127, +9 font = 136) still clears the
+	 * 140-high category.
 	 */
-	public static final int TEXT_BASE_Y = 73;
+	public static final int TEXT_BASE_Y = 77;
 	/** The per-map title key domain (task issues #29/#34a) — one key per visible map, both locales. */
 	public static final String TITLE_KEY_PREFIX = "gt6.jei.recipe_map.";
 	/** NEI :671's not-consumed tooltip, upstream verbatim wording — now the lang-key face. */
@@ -521,25 +525,57 @@ public final class GT6RecipeMapViewerMeta {
 	// "misaligned" though every coordinate was faithful). Layer 1: the grey backdrop
 	// plate gt6:textures/gui/machines/nei.png. Layer 2: the per-map machine GUI texture
 	// (mGUIPath — upstream getGuiTexture :653, drawn as the (-5,-8, 0,3,176,79) band).
-	// Both layers anchor the PANEL origin at texture pixel (5,11) of the machine band /
-	// (5,16) of the plate, which is exactly the offset upstream folded into every
-	// PositionedStack (the ctor super call at :112 over :66 sOffsetX/Y=5/11) — the
-	// layout switches above stay in machine-GUI coordinates and the viewer* exits below
-	// do the fold ONCE here, so neither viewer leg ever folds twice.
+	// Both layers anchor the PANEL origin at texture pixel (5,7) of the machine band /
+	// (5,12) of the plate — the offset upstream folded into every PositionedStack (the
+	// ctor super call at :112 over :66 sOffsetX/Y=5/11), re-anchored 4px for the modern
+	// viewers' zero-headroom category rects (task viewer-row-headroom, the S_OFFSET_Y
+	// doc) — the layout switches above stay in machine-GUI coordinates and the viewer*
+	// exits below do the fold ONCE here, so neither viewer leg ever folds twice.
 	// -----------------------------------------------------------------------
 
-	/** The panel origin inside the machine texture (NEI_RecipeMap.java:66 sOffsetX/sOffsetY). */
+	/**
+	 * The panel origin inside the machine texture — NEI_RecipeMap.java:66's
+	 * {@code sOffsetX=5} verbatim, and {@code sOffsetY} RE-ANCHORED 11 → 7 (task
+	 * viewer-row-headroom). Upstream's 11 put the machine band 8px above the panel
+	 * origin — the band drew from panel −8 ({@code drawTexturedModalRect(-5,-8,...)}
+	 * :634) and the topmost slot row sat at panel −4 — headroom NEI's unclipped handler
+	 * padding provided for free. The modern viewers give the category rect ZERO room
+	 * above its origin (JEI drops the layout directly under its title/page chrome and
+	 * runs the layout's input identity off that rect — RecipeLayout.isMouseOver is
+	 * {@code area.contains}; EMI pins the group origin right under its pagination bars),
+	 * so a negative slot row lands on viewer chrome, outside the managed rect — the
+	 * "首行被裁剪" report. The origin therefore re-anchors 4px up the texture (11−4):
+	 * every viewer y translates +4 (the upstream composition had 8px of headroom, 4 of
+	 * which the topmost slot row consumed — re-anchoring by that 4 makes it land at y0
+	 * exactly), the relative geometry (slot↔band art, text gap, gear spot) is
+	 * pixel-identical, and the raw {@code inputPos}/{@code outputPos} exits stay in
+	 * machine-GUI coordinates, faithful to the upstream switch.
+	 */
 	public static final int S_OFFSET_X = 5;
-	public static final int S_OFFSET_Y = 11;
+	public static final int S_OFFSET_Y = 7;
 	/**
 	 * The backdrop plate crop, {u,v,w,h} panel system (NEI_RecipeMap.java:632
-	 * {@code drawTexturedModalRect(-5,-16, 0,0,176,166)} minus the (-5,-16) anchor). Drawn
-	 * at (0,0); the category height 140 takes the plate to its bottom transparent margin
-	 * (upstream IMC handlerHeight 135 + the 5px batch-1 margin) — harmless.
+	 * {@code drawTexturedModalRect(-5,-16,0,0,176,166)}). Upstream mapped panel y to
+	 * texture row − 16; re-anchored (the same +4 translation as {@link #S_OFFSET_Y},
+	 * the plate origin riding 5px below the band origin in texture space: 16−12 = 11−7).
+	 * Drawn at (0,0); h stays 140 = the full category height — the rows the shifted
+	 * window drops at its bottom are the plate's transparent margin, and the 4 rows it
+	 * gains at its top sit under the band, which covers the full 166-wide strip.
 	 */
-	public static final int[] PLATE_CROP = {5, 16, 166, 140};
-	/** The machine-band crop, {u,v,w,h} panel system (NEI_RecipeMap.java:634 {@code (-5,-8, 0,3,176,79)}). Drawn at (0,0) OVER the plate. */
-	public static final int[] BAND_CROP = {5, 11, 166, 71};
+	public static final int[] PLATE_CROP = {5, 12, 166, 140};
+	/**
+	 * The machine-band crop, {u,v,w,h} panel system. Upstream drew
+	 * {@code (-5,-8, 0,3,176,79)} = texture rows 3..81 with panel y = row − 11
+	 * (NEI_RecipeMap.java:634); the re-anchored origin maps panel y = row − 7
+	 * ({@link #S_OFFSET_Y}), so v slides to 7 and h extends 71 → 75 to keep the SAME
+	 * bottom edge (v+h = 82: the band still ends on texture row 81 — the SHREDDER
+	 * fourth-row slot holes at rows 61..78 stay fully covered). The art the shifted
+	 * window newly shows at its top is exactly the strip upstream drew at panel
+	 * −4..−1; the 4px above it (rows 3..6, upstream panel −8..−5) stays cropped — the
+	 * one sliver of the upstream composition no fixed-origin viewer can show. Drawn at
+	 * (0,0) OVER the plate.
+	 */
+	public static final int[] BAND_CROP = {5, 7, 166, 75};
 	/** The backdrop plate texture (NEI_RecipeMap.java:632; port assets/README.md #34 section, amazawa redraw). */
 	public static final ResourceLocation PLATE_TEXTURE = ResourceLocation.fromNamespaceAndPath("gt6", "textures/gui/machines/nei.png");
 
@@ -558,7 +594,7 @@ public final class GT6RecipeMapViewerMeta {
 		return ResourceLocation.fromNamespaceAndPath(tPath.substring(0, tColon), tPath.substring(tColon + 1));
 	}
 
-	/** The fold: machine-GUI coordinates → panel/viewer coordinates ({@code null} passes through). */
+	/** The fold: machine-GUI coordinates → panel/viewer coordinates ({@code null} passes through) — the re-anchored -(5,7). */
 	private static int[] fold(int[] aPos) {
 		return aPos == null ? null : new int[] {aPos[0] - S_OFFSET_X, aPos[1] - S_OFFSET_Y};
 	}
@@ -597,7 +633,7 @@ public final class GT6RecipeMapViewerMeta {
 	/** The machine-icon GUI coordinate (NEI_RecipeMap.java:278, machine-GUI system like the switches above). */
 	private static final int[] GUI_MACHINE_ICON_POS = {152, 83};
 
-	/** {@link #GUI_MACHINE_ICON_POS} folded into panel/viewer coordinates — (147,72). */
+	/** {@link #GUI_MACHINE_ICON_POS} folded into panel/viewer coordinates — (147,76), the re-anchored gear spot. */
 	public static int[] machineIconPos() {
 		return fold(GUI_MACHINE_ICON_POS);
 	}

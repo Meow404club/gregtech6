@@ -107,7 +107,7 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder aBuilder, Recipe aRecipe, IFocusGroup aFocuses) {
-		// all four loops consume the meta's VIEWER exits — the sOffset(-5,-11) fold to
+		// all four loops consume the meta's VIEWER exits — the re-anchored -(5,7) fold to
 		// panel coordinates happened once inside GT6RecipeMapViewerMeta, never here.
 		int tInputs = Math.min(aRecipe.mInputs.length, mMap.mInputItemsCount);
 		for (int i = 0; i < tInputs; i++) {
