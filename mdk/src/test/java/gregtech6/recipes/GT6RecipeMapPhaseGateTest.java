@@ -136,6 +136,13 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("ROLL_FORMER", 0);
 		SNAPSHOT.put("CENTRIFUGE", 40); // +20 task debt-reactor-c-rods — the 17 depleted + 3 solid-enriched recycle rows (:764-780/:787-790) join the census pour
 		SNAPSHOT.put("SHARPENING", 0);
+		// task recipe-data-b2c-cut — the CUTTER JSON row stock (23596 walk rows in cutter.json, the
+		// 20-statement x 4-leg handler replay of Loader_Recipes_Handlers.java:633-652) rides the JSON
+		// seam, which stays OUT of this offline snapshot walk (the declared snapshot scope: the
+		// census arm pours the no-op JSON face) — the stock is pinned per-file by
+		// GT6RecipeMapDataB2cCutRowsPourTest (the live-walk cross-check ratchet). Merge order for the
+		// parallel B2c cards: weld -> cut — the weld card's pin segment lands first, this one
+		// tail-appends after it (the rebase keeps both segments, neither rewrites the other's line).
 		SNAPSHOT.put("CUTTER", 0);
 		SNAPSHOT.put("BOXINATOR", 0);
 		SNAPSHOT.put("UNBOXINATOR", 0);
