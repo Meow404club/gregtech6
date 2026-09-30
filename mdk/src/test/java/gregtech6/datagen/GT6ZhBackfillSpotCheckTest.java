@@ -61,9 +61,11 @@ public class GT6ZhBackfillSpotCheckTest {
 	@Test
 	public void theFourCardNamedValuesLand() {
 		// task oven-heat-t-ladder: the retired atomic block.gt6.oven joined the composed
-		// gt6.row.oven.display face (the upstream name column "Oven ("+Heat_T local+")") —
-		// the 烤箱 machine word is the same dump row, now the template's constant part
-		assertEquals("烤箱 (%s)", zh().get(gregtech6.registry.GTMachines.OVEN_DISPLAY_KEY), "the oven family display template");
+		// gt6.row.oven.display face (the upstream name column "Oven ("+Heat_T local+")").
+		// Task lang-batch2-fixes: the machine word regressed to the dump MTE name column
+		// verbatim (gt.multitileentity.20001-20004 = 熔炉 (钢)/(殷钢)/(钛)/(碳化钨),
+		// tmp/gregtech.lang:11445-11448) — the oven word 烤箱 appears nowhere upstream
+		assertEquals("熔炉 (%s)", zh().get(gregtech6.registry.GTMachines.OVEN_DISPLAY_KEY), "the oven family display template (dump :11445-11448 machine word)");
 		// task lang-fix P0 (ledger §1.1): the drum family are fluid tanks — the pin
 		// moved 龙合金鼓 → 龙合金储罐 (dump 龙 word root kept, the tank noun follows the
 		// dump's own 储罐 family tmp/gregtech.lang:13535-13540). Task tank-name-regression:

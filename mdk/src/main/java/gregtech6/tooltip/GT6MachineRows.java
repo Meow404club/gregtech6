@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 import gregtech6.block.GTBasicMachineBlock;
+import gregtech6.jei.GT6RecipeMapViewerMeta;
 import gregtech6.recipes.RecipeMap;
 import gregtech6.tooltip.GT6Tooltips.GT6TooltipLine;
 
@@ -128,8 +129,11 @@ public final class GT6MachineRows {
 		List<GT6TooltipLine> rRows = new ArrayList<>(16);
 
 		// :261 — CYAN "Recipes: " + WHITE map name + the optional parallel suffix (an
-		// upstream :261 inline literal, composed into the WHITE segment)
-		MutableComponent tName = Component.literal(aSpec.recipes().mNameLocal).withStyle(GT6TooltipStyle.WHITE);
+		// upstream :261 inline literal, composed into the WHITE segment). The map name rides
+		// the shared viewer title key (task lang-batch2-fixes) — the literal mNameLocal was
+		// the row table's last English-only face; gt6.jei.recipe_map.* carries both locales
+		// (72 maps, task r6-29-34a), the same formula the JEI/EMI categories resolve.
+		MutableComponent tName = Component.translatable(GT6RecipeMapViewerMeta.titleKey(aSpec.recipes())).withStyle(GT6TooltipStyle.WHITE);
 		if (aSpec.parallel() > 1) tName.append(" (up to " + aSpec.parallel() + "x processed per run)");
 		rRows.add(new GT6TooltipLine(KEY_RECIPES, GT6TooltipStyle.CYAN, tName));
 

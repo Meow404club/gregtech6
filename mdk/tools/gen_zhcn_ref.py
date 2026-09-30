@@ -220,7 +220,11 @@ HAND_TRANSLATIONS = {
     "item.gt6.cover_item_filter": ("物品过滤器", "hand"),
     "item.gt6.cover_auto_redstone_machine_switch": ("自动红石机器开关", "hand"),
     "item.gt6.cover_controller": ("面板控制器", "hand"),
-    "item.gt6.integrated_circuit": ("选择器标签", "hand"),
+    # task lang-batch2-fixes — the dump's only face for the "Selector Tag" item (en
+    # ItemIntegratedCircuit.java:50) is gt.integrated_circuit=集成电路 (:3230 verbatim;
+    # the zh rendering predates Greg's rename, IL.java:44) — unified with the cover
+    # display face so one item cannot show two zh names.
+    "item.gt6.integrated_circuit": ("集成电路", "hand"),
     "item.gt6.integrated_circuit.configuration": ("配置：%s", "hand"),
     # ---- the miniature portal face (task p35-portals-mini-nether-end) — hand zh,
     # upstream MultiTileEntityMiniPortal tooltips + the chunk-loader requirement :97.
@@ -374,10 +378,11 @@ HAND_TRANSLATIONS = {
     "gt6.row.dryer.display": ("干燥器 (%s)", "hand"),
     "gt6.row.distillery.display": ("蒸馏器 (%s)", "hand"),
     # task p27-oven-heat-t-ladder — the Oven Heat_T family (the :1288-1291 name column
-    # "Oven ("+Heat_T local+")"): the machine word = the dump row 烤箱 verbatim (the
-    # retired atomic block.gt6.oven backfill row joined the composed face); the
+    # "Oven ("+Heat_T local+")"); task lang-batch2-fixes — the machine word regressed to
+    # the dump MTE name column verbatim (gt.multitileentity.20001-20004 =
+    # 熔炉 (钢)/(殷钢)/(钛)/(碳化钨), tmp/gregtech.lang:11445-11448); the
     # steel/invar/titanium/tungsten_carbide mat units already exist in this table.
-    "gt6.row.oven.display": ("烤箱 (%s)", "hand"),
+    "gt6.row.oven.display": ("熔炉 (%s)", "hand"),
     # task p24-canner-machine — the Canner family: the upstream display is the VN voltage
     # ladder (Loader_MultiTileEntities.java:1379-1382 "Canning Machine ("+VN[tier]+")",
     # CS.java:154) — the voltage numerals stay Latin in zh (the wire-domain proper-noun
@@ -1643,8 +1648,9 @@ for _table in (VOTED_TAGPREFIXES, HAND_TAGPREFIXES):
 # is dead (this key is the BLOCK display name; the randomtools 木桶 rows :9522+ are the
 # hand-held Wooden Bucket item family, NOT this MTE). Draconium rides the dump's
 # own word (单晶觉醒龙 -> 龙, direct rows :13042/:13087). The machine words reuse the
-# committed TSV rows units (粉碎机/破碎机/车床) verbatim; 烤箱 per the task-card
-# spot-check. wire_electric = the × convention on the atomic legacy keys.
+# committed TSV rows units (粉碎机/破碎机/车床) verbatim; the atomic block.gt6.oven row
+# retired with the composed face (task oven-heat-t-ladder — the composed machine word is
+# 熔炉 per lang-batch2-fixes). wire_electric = the × convention on the atomic legacy keys.
 BLOCK_BACKFILL = {
     "block.gt6.barrel_adamantium": "艾德曼合金储罐",
     "block.gt6.barrel_awakened_draconium": "觉醒龙储罐",  # dump gt.multitileentity.32066 verbatim
@@ -2675,15 +2681,16 @@ LEGACY_ITEM_BACKFILL = {
     # 1022 通风口 :10273 / 1024 液体过滤器 :10301 / 1027 按钮覆盖板选择器 :10307 /
     # 2000 释压安全阀 :10557), the torch/repeater pair + the template the hand rows
     # (upstream the pair rode the vanilla item names, GT_API.java:799-802 — no dump face;
-    # the template mirrors the 选择器标签 integrated-circuit face over the conveyor
-    # template form)
+    # the template mirrors the integrated-circuit face over the conveyor template form;
+    # task lang-batch2-fixes — unified with the item face, the dump's only name for this
+    # item, gt.integrated_circuit=集成电路 tmp/gregtech.lang:3230)
     'item.gt6.cover_vent': '通风口',
     'item.gt6.cover_drain': '排液口',
     'item.gt6.cover_pressure_valve': '释压安全阀',
     'item.gt6.cover_fluid_filter': '液体过滤器',
     'item.gt6.cover_redstone_torch': '红石火把面板',
     'item.gt6.cover_redstone_repeater': '红石中继器面板',
-    'gt6.cover.selector_tag.display': '标签选择器 (%s)',
+    'gt6.cover.selector_tag.display': '集成电路 (%s)',
     'item.gt6.cover_selector_redstone': '红石选择面板',
     'item.gt6.cover_selector_manual': '手动选择面板',
     'item.gt6.cover_selector_button_panel': '按钮覆盖板选择器',
@@ -2852,7 +2859,10 @@ LEGACY_ITEM_BACKFILL = {
     'item.gt6.branch_cutter': '修枝剪',
     'item.gt6.butchery_knife': '屠宰刀',
     'item.gt6.butchery_knife.tooltip': '攻击速度较慢',
-    'item.gt6.club': '木棒',
+    # task lang-batch2-fixes — the dump metatool name row verbatim (gt.metatool.01.24=
+    # 棒槌 tmp/gregtech.lang:6712; the port club is a plain durability item, the electric
+    # 01.25 棒槌(空) variant has no port counterpart)
+    'item.gt6.club': '棒槌',
     'item.gt6.club.tooltip': '钝重的原始武器兼碎石器',
     'item.gt6.flint_and_tinder': '打火石',
     'item.gt6.hand_drill': '手钻',

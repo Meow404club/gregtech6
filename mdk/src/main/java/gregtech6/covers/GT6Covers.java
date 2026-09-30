@@ -325,7 +325,9 @@ public final class GT6Covers {
 	 * The p34 tag-selector display template (task covers-gameplay-10):
 	 * "{@code Tag Selector (%s)}" — the 16 ladder items compose the mode numeral
 	 * (the conveyor template form; the upstream tag selector IS the integrated-circuit
-	 * item, whose dump face 选择器标签 names the family).
+	 * item, whose dump face 集成电路 names the family — gt.integrated_circuit=
+	 * 集成电路, tmp/gregtech.lang:3230, unified with the item face by task
+	 * lang-batch2-fixes).
 	 */
 	public static final String SELECTOR_TAG_DISPLAY_KEY = "gt6.cover.selector_tag.display";
 
