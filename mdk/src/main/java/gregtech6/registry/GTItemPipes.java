@@ -118,12 +118,12 @@ public final class GTItemPipes {
 	 * material base. The metaId offset is the {@code aID+n} of the registration call.
 	 */
 	public enum ItemPipeVariant {
-		MEDIUM("medium", 1, 1, 1, 2, "medium"),
-		LARGE("large", 2, 1, 2, 3, "large"),
-		HUGE("huge", 4, 1, 4, 4, "huge"),
-		RESTRICTIVE_MEDIUM("restrictive_medium", 1, 100, 1, 5, "restrictive_medium"),
-		RESTRICTIVE_LARGE("restrictive_large", 1, 50, 2, 6, "restrictive_large"),
-		RESTRICTIVE_HUGE("restrictive_huge", 1, 25, 4, 7, "restrictive_huge");
+		MEDIUM("medium", 1, 1, 1, 2, "medium", 8),
+		LARGE("large", 2, 1, 2, 3, "large", 12),
+		HUGE("huge", 4, 1, 4, 4, "huge", 16),
+		RESTRICTIVE_MEDIUM("restrictive_medium", 1, 100, 1, 5, "restrictive_medium", 8),
+		RESTRICTIVE_LARGE("restrictive_large", 1, 50, 2, 6, "restrictive_large", 12),
+		RESTRICTIVE_HUGE("restrictive_huge", 1, 25, 4, 7, "restrictive_huge", 16);
 
 		/** The path tail ({@code <mat>_item_pipe_<suffix>}). */
 		public final String suffix;
@@ -137,14 +137,18 @@ public final class GTItemPipes {
 		public final int metaOffset;
 		/** The display template tail ({@link #displayKey}). */
 		public final String displayTail;
+		/** The pipe diameter in pixels (NBT_DIAMETER PX_P[8/12/16], MultiTileEntityPipeItem.java:76-82; the restrictive twins share the base diameter). */
+		public final int diameterPx;
 
-		ItemPipeVariant(String aSuffix, int aStepDiv, int aStepMul, int aInvMul, int aMetaOffset, String aDisplayTail) {
+		ItemPipeVariant(String aSuffix, int aStepDiv, int aStepMul, int aInvMul, int aMetaOffset, String aDisplayTail,
+				int aDiameterPx) {
 			suffix = aSuffix;
 			stepDiv = aStepDiv;
 			stepMul = aStepMul;
 			invMul = aInvMul;
 			metaOffset = aMetaOffset;
 			displayTail = aDisplayTail;
+			diameterPx = aDiameterPx;
 		}
 
 		/** Upstream :77-82 — {@code aStepSize / d * m} (exact over the 32768 base). */

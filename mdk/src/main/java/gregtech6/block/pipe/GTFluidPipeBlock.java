@@ -142,6 +142,29 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 		return RenderShape.MODEL; // BaseEntityBlock default INVISIBLE is for BER blocks
 	}
 
+	/**
+	 * The connection-aware thin envelope (task rod-render-pool) — the upstream connector
+	 * collision form (TileEntityBase11ConnectorStraight.addCollisionBoxesToList2 :60):
+	 * the core diameter box of the row (NBT_DIAMETER PX_P[4/6/8/12/16/16/16],
+	 * MultiTileEntityPipeFluid :92-98), extended flush to the block boundary on every
+	 * CONNECTED side. The foam dried swap rides {@link #getCollisionShape} unchanged
+	 * (its {@code super} call lands here — undried foam collides thin like the bare
+	 * pipe, dried foam stays the full block).
+	 */
+	@Override
+	public net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState aState, BlockGetter aLevel, BlockPos aPos,
+			net.minecraft.world.phys.shapes.CollisionContext aContext) {
+		int tMask = aState.getValue(CONNECTIONS);
+		double tInset = (16 - mRow.variant().diameterPx) / 32.0;
+		return net.minecraft.world.phys.shapes.Shapes.box(
+			(tMask & (1 << net.minecraft.core.Direction.WEST.get3DDataValue())) != 0 ? 0 : tInset,
+			(tMask & (1 << net.minecraft.core.Direction.DOWN.get3DDataValue())) != 0 ? 0 : tInset,
+			(tMask & (1 << net.minecraft.core.Direction.NORTH.get3DDataValue())) != 0 ? 0 : tInset,
+			(tMask & (1 << net.minecraft.core.Direction.EAST.get3DDataValue())) != 0 ? 1 : 1 - tInset,
+			(tMask & (1 << net.minecraft.core.Direction.UP.get3DDataValue())) != 0 ? 1 : 1 - tInset,
+			(tMask & (1 << net.minecraft.core.Direction.SOUTH.get3DDataValue())) != 0 ? 1 : 1 - tInset);
+	}
+
 	// ---------------------------------------------------------------------------
 	// dried-foam physical face (task c-foam-pipe-spray spec ⑥ — the block-level
 	// counterparts of the upstream 10ConnectorRendered dried swaps: collision :218

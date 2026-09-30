@@ -1,0 +1,124 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#all",
+          "tintindex": 0
+        },
+        "east": {
+          "texture": "#all",
+          "tintindex": 0
+        },
+        "north": {
+          "texture": "#all",
+          "tintindex": 0
+        },
+        "south": {
+          "texture": "#all",
+          "tintindex": 0
+        },
+        "up": {
+          "texture": "#all",
+          "tintindex": 0
+        },
+        "west": {
+          "texture": "#all",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        5,
+        2,
+        5
+      ],
+      "to": [
+        11,
+        3,
+        11
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#all",
+          "tintindex": 0
+        },
+        "east": {
+          "texture": "#all",
+          "tintindex": 0
+        },
+        "north": {
+          "texture": "#all",
+          "tintindex": 0
+        },
+        "south": {
+          "texture": "#all",
+          "tintindex": 0
+        },
+        "up": {
+          "texture": "#all",
+          "tintindex": 0
+        },
+        "west": {
+          "texture": "#all",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        6,
+        1,
+        6
+      ],
+      "to": [
+        10,
+        2,
+        10
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#all",
+          "tintindex": 0
+        },
+        "east": {
+          "texture": "#all",
+          "tintindex": 0
+        },
+        "north": {
+          "texture": "#all",
+          "tintindex": 0
+        },
+        "south": {
+          "texture": "#all",
+          "tintindex": 0
+        },
+        "up": {
+          "texture": "#all",
+          "tintindex": 0
+        },
+        "west": {
+          "texture": "#all",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        7,
+        0,
+        7
+      ],
+      "to": [
+        9,
+        1,
+        9
+      ]
+    }
+  ],
+  "textures": {
+    "all": "gt6:block/funnel",
+    "particle": "#all"
+  }
+}

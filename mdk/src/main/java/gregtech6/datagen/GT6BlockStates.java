@@ -26,6 +26,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTOvenBlock;
+import gregtech6.block.attachment.GTAttachmentSmallBlock;
 import gregtech6.block.multiblock.GTMultiBlockPartBlock;
 import gregtech6.registry.GT6BeeHives;
 import gregtech6.registry.GT6Portals; // p35 tail-append
@@ -2079,9 +2080,13 @@ public final class GT6BlockStates extends BlockStateProvider {
      * block whose variant per {@link gregtech6.block.GTBlockProperties#CONNECTIONS} mask
      * value (0..63, out of forAllStates — the 64-variant exhaustive listing stays dead,
      * the ADR red line) shares the per-set two-layer model, plus the BlockItem model
-     * parenting the block model. What the task changed is the model TARGET (the shared
-     * {@link #tintedPipeModel} bands) — the per-connection geometry (core + arms) is the
-     * L-level render-pool card.
+     * parenting the block model. Task rod-render-pool installed the true per-connection
+     * geometry (the core + per-diameter arms,
+     * TileEntityBase10ConnectorRendered :113-133) at BAKE time —
+     * {@link gregtech6.client.render.GTRodClientListener} replaces the per-state AND
+     * item baked keys with {@link gregtech6.client.render.GTRodBakedModel}; this JSON
+     * model stays as the fallback carrier and the item parent (the addWireFamily
+     * posture).
      */
     private void pipeBlockstate(Block aPipe, ModelFile aModel) {
         String tName = aPipe.getDescriptionId().replace("block.gt6.", "");
@@ -2314,6 +2319,14 @@ public final class GT6BlockStates extends BlockStateProvider {
      * {@code axisBlock} rotation map (y = none, x = 90/90, z = 90/180) without the
      * RotatedPillarBlock type coupling. The 44 BlockItem models parent the shared block
      * model (44 one-line JSONs, the crank {@code itemModels()} precedent carried per row).
+     *
+     * <p>Task rod-render-pool installed the rod geometry (the row-diameter box,
+     * ConnectorStraight :48-57) at BAKE time —
+     * {@link gregtech6.client.render.GTRodClientListener} replaces the per-state AND
+     * item baked keys with {@link gregtech6.client.render.GTRodBakedModel}; this JSON
+     * model stays as the fallback carrier and the item parent (the pipeBlockstate
+     * posture). The axle material TINT stays the tint-coverage-batch card's declared
+     * defer (this model rides untinted — GTMachinePaintTint untouched here).
      */
     private void addAxles() {
         ModelFile tModel = models().cubeColumn("axle", modLoc("block/axle"), modLoc("block/axle"));
@@ -2328,26 +2341,80 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task tap-funnel-attachment spec ⑤ — the 12 wall attachments: one cube_all
-     * per row over the TWO family textures, {@code tap.png} (borrowed from upstream
+     * Task tap-funnel-attachment spec ⑤; the visual re-formed by task rod-render-pool —
+     * the 12 wall attachments: ONE element model per family over the TWO family
+     * textures, {@code tap.png} (borrowed from upstream
      * {@code machines/tools/tap/colored/side.png}) and {@code funnel.png} (upstream
      * {@code machines/tools/funnel/colored/side.png}), the barrel_metal shared-PNG
-     * precedent — every row's model JSON references the family PNG, the model count
-     * grows with the rows and the PNG count does not. The upstream texture stack is the
-     * mRGBa-tinted colored layer + an overlay pass (MultiTileEntityFluidTap.java:181-208
-     * three-pass faucet/spout boxes); the port shows the grayscale side icon un-tinted
-     * over the WHOLE cube (the thin-plate getShape is the collision-free outline), the
-     * per-face rotated plate model and the tint riding the render pool card (the crank
-     * single-model deviation repeated). The empty-partial variant key applies the model
-     * to all six facings.
+     * precedent. The model is the upstream three-pass render stack verbatim
+     * (MultiTileEntityFluidTap.java:186-208, MultiTileEntityFluidFunnel.java:99-123,
+     * PX_N[i] = 16-i — px: tap (6,6,2)-(10,7,4) + (7,4,0)-(9,6,4) + (7,3,4)-(9,6,6)
+     * [the :200 PX_N[10]=6 spout tip, not 10]; funnel north (5,9,0)-(11,10,6) +
+     * (6,8,0)-(10,9,4) + (7,7,0)-(9,8,2) [the :103/:111/:119 PX_N[10/12/14]=6/4/2
+     * taper]; the funnel's under-host DOWN mount (the :107 default case) gets its own
+     * nested-plate model),
+     * rotated per FACING with the addSensors band (FACING points AT the host). The
+     * per-face colored top/bottom art stays unborrowed — the side icon textures every
+     * face (the declared texture deviation, the borrow is the p12 card's). The elements
+     * carry tintindex 0 as the future tint seat (the material dye is the
+     * tint-coverage-batch card's declared defer — GTMachinePaintTint is NOT touched by
+     * this card, so the seat is inert today).
      */
     private void addAttachments() {
+        ModelFile tTap = attachmentModel("block/attachment_tap", "tap", new float[][] {
+                {6, 6, 2, 10, 7, 4}, {7, 4, 0, 9, 6, 4}, {7, 3, 4, 9, 6, 6}});
+        ModelFile tFunnel = attachmentModel("block/attachment_funnel", "funnel", new float[][] {
+                {5, 9, 0, 11, 10, 6}, {6, 8, 0, 10, 9, 4}, {7, 7, 0, 9, 8, 2}});
+        ModelFile tFunnelDown = attachmentModel("block/attachment_funnel_down", "funnel", new float[][] {
+                {5, 2, 5, 11, 3, 11}, {6, 1, 6, 10, 2, 10}, {7, 0, 7, 9, 1, 9}});
         for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
             Block tBlock = GT6Attachments.BLOCKS_BY_PATH.get(tRow.path()).get();
-            String tTexture = tRow.family() == gregtech6.block.attachment.GTAttachmentSmallBlock.Family.TAP ? "tap" : "funnel";
-            simpleBlock(tBlock, models().cubeAll(tRow.path(), modLoc("block/" + tTexture)));
-            itemModels().withExistingParent(tRow.path(), mcLoc("item/generated")).texture("layer0", modLoc("block/" + tTexture));
+            ModelFile tModel = tRow.family() == gregtech6.block.attachment.GTAttachmentSmallBlock.Family.TAP ? tTap : tFunnel;
+            ModelFile tDownModel = tRow.family() == gregtech6.block.attachment.GTAttachmentSmallBlock.Family.TAP ? tTap : tFunnelDown;
+            getVariantBuilder(tBlock).forAllStates(aState -> switch (aState.getValue(GTAttachmentSmallBlock.FACING)) {
+                case NORTH -> new ConfiguredModel[] {new ConfiguredModel(tModel)};
+                case SOUTH -> new ConfiguredModel[] {new ConfiguredModel(tModel, 0, 180, false)};
+                case WEST  -> new ConfiguredModel[] {new ConfiguredModel(tModel, 0, 270, false)};
+                case EAST  -> new ConfiguredModel[] {new ConfiguredModel(tModel, 0, 90, false)};
+                case DOWN  -> new ConfiguredModel[] {new ConfiguredModel(tDownModel)};
+                case UP    -> new ConfiguredModel[] {new ConfiguredModel(tModel)}; // family-invalid, never placed
+            });
+            itemModels().withExistingParent(tRow.path(), mcLoc("item/generated")).texture("layer0", modLoc("block/" + (tModel == tTap ? "tap" : "funnel")));
         }
+    }
+
+    /**
+     * One attachment stack model: three box elements over the family texture (the
+     * upstream three render passes verbatim), every face untinted-but-seated (tintindex
+     * 0), cullface only where a face lies on the block boundary (the interior coplanar
+     * faces must survive).
+     */
+    private ModelFile attachmentModel(String aName, String aTexture, float[][] aBoxes) {
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("all", modLoc("block/" + aTexture))
+                .texture("particle", "#all");
+        for (int i = 0; i < aBoxes.length; i++) {
+            float[] tBox = aBoxes[i];
+            var tElement = tModel.element()
+                    .from(tBox[0], tBox[1], tBox[2]).to(tBox[3], tBox[4], tBox[5]);
+            for (Direction tDir : Direction.values()) tElement.face(tDir).texture("#all").tintindex(0)
+                    .cullface(isBoundaryFace(tBox, tDir) ? tDir : null).end();
+            tElement.end();
+        }
+        return tModel;
+    }
+
+    /** True when the box face lies on a block boundary plane (cullface-eligible). */
+    private static boolean isBoundaryFace(float[] aBox, Direction aDir) {
+        return switch (aDir) {
+            case DOWN -> aBox[1] <= 0.0F;
+            case UP -> aBox[4] >= 16.0F;
+            case NORTH -> aBox[2] <= 0.0F;
+            case SOUTH -> aBox[5] >= 16.0F;
+            case WEST -> aBox[0] <= 0.0F;
+            case EAST -> aBox[3] >= 16.0F;
+        };
     }
 
     /**
@@ -3723,9 +3790,10 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task tex-sensors (supersedes the sensors-core cube_all bake) — the 21
+     * Task tex-sensors (supersedes the sensors-core cube_all bake; body re-formed to the
+     * upstream wall plate by task rod-render-pool) — the 21
      * sensor families ({@link GT6Sensors#ROWS}) ride the front-bearing two-layer faceted
-     * cube, the {@link #addConverterModel} grammar MINUS the tint seat: the body is the
+     * plate, the {@link #addConverterModel} grammar MINUS the tint seat: the body is the
      * upstream colored layer ({@code sensors/<family>/colored_{front,back,side}}, the
      * byte-identical borrows) and the six 0.01-plate shells the overlay layer — the
      * upstream BlockTextureMulti(colored, overlay) stack (MultiTileEntitySensor
@@ -3758,14 +3826,22 @@ public final class GT6BlockStates extends BlockStateProvider {
             });
             itemModels().withExistingParent(tRow.path(), modLoc("block/sensors/" + tRow.path()));
         }
-        LOGGER.info("GT6 sensors: {} faceted two-layer blockstates x 6 FACING variants (the oriented cube)", GT6Sensors.ROWS.size());
+        LOGGER.info("GT6 sensors: {} faceted two-layer blockstates x 6 FACING variants (the oriented wall plate)", GT6Sensors.ROWS.size());
     }
 
     /**
      * One sensor family's two-layer faceted model ({@code block/sensors/<family>}):
-     * the untinted body cube over the colored trio (front on north) + the six 0.01
-     * overlay plates (front/back/side), cullface synced — the {@link #addConverterModel}
-     * shells verbatim minus the tintindex (the tex-sensors NBT=null ruling).
+     * the untinted 2px wall PLATE over the colored trio (front on north) + the six
+     * 0.01 overlay plates, cullface synced — the two-layer shells minus the tintindex
+     * (the tex-sensors NBT=null ruling) and minus the full cube (task rod-render-pool:
+     * the body shrinks to the upstream pass-0 render bounds, MultiTileEntitySensor
+     * .java:148-150 — the plate hugs the edge OPPOSITE the display face, the wall-mount
+     * semantics: the model space form being FACING=north with the display plane at z=14
+     * looking north and the plate body at z 14..16 against the south (:150 SIDE_Z_NEG →
+     * PX_P[14]..PX_N[0]; :257 isSurfaceOpaque2 = OPOS — the wall side is the solid one).
+     * The north face is the plate's display plane (z=14 is no block boundary — the
+     * cullface rides the block boundary anyway); the wall face and the four rims ride
+     * the boundary planes.
      */
     private ModelFile sensorModel(String aFamily) {
         String tBase = "block/sensors/" + aFamily;
@@ -3786,32 +3862,37 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_back", modLoc(tBase + "/overlay_back"))
                 .texture("overlay_side", modLoc(tBase + "/overlay_side"))
                 .renderType("cutout");
-        tModel.element()
-                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
-                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).cullface(aDir))
+        tModel.element() // the 2px wall plate (Sensor :148-150, the FACING=north model form: display plane z=14, body z 14..16 against the opposite wall)
+                .from(0.0F, 0.0F, 14.0F).to(16.0F, 16.0F, 16.0F)
+                .face(Direction.NORTH).texture("#north").cullface(Direction.NORTH).end()
+                .face(Direction.SOUTH).texture("#south").cullface(Direction.SOUTH).end()
+                .face(Direction.DOWN).texture("#down").cullface(Direction.DOWN).end()
+                .face(Direction.UP).texture("#up").cullface(Direction.UP).end()
+                .face(Direction.WEST).texture("#west").cullface(Direction.WEST).end()
+                .face(Direction.EAST).texture("#east").cullface(Direction.EAST).end()
                 .end();
-        tModel.element() // north
-                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+        tModel.element() // north — the display face, the 0.01 overlay in front of the display plane (z=14, NOT the block boundary)
+                .from(0.0F, 0.0F, 13.99F).to(16.0F, 16.0F, 14.0F)
                 .face(Direction.NORTH).texture("#overlay_front").cullface(Direction.NORTH)
                 .end();
-        tModel.element() // south
+        tModel.element() // the plate's wall face — the overlay floats past z=16, the boundary plane
                 .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.01F)
                 .face(Direction.SOUTH).texture("#overlay_back").cullface(Direction.SOUTH)
                 .end();
         tModel.element() // west
-                .from(-0.01F, 0.0F, 0.0F).to(0.0F, 16.0F, 16.0F)
+                .from(-0.01F, 0.0F, 14.0F).to(0.0F, 16.0F, 16.0F)
                 .face(Direction.WEST).texture("#overlay_side").cullface(Direction.WEST)
                 .end();
         tModel.element() // east
-                .from(16.0F, 0.0F, 0.0F).to(16.01F, 16.0F, 16.0F)
+                .from(16.0F, 0.0F, 14.0F).to(16.01F, 16.0F, 16.0F)
                 .face(Direction.EAST).texture("#overlay_side").cullface(Direction.EAST)
                 .end();
         tModel.element() // bottom
-                .from(0.0F, -0.01F, 0.0F).to(16.0F, 0.0F, 16.0F)
+                .from(0.0F, -0.01F, 14.0F).to(16.0F, 0.0F, 16.0F)
                 .face(Direction.DOWN).texture("#overlay_side").cullface(Direction.DOWN)
                 .end();
         tModel.element() // top
-                .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.01F, 16.0F)
+                .from(0.0F, 16.0F, 14.0F).to(16.0F, 16.01F, 16.0F)
                 .face(Direction.UP).texture("#overlay_side").cullface(Direction.UP)
                 .end();
         return tModel;

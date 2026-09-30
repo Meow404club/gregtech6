@@ -189,9 +189,13 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
                 {"crank", "gt6:block/crank"},
                 // ("diesel_engine" left in task tex-bridge-kinetic — the world face is the
                 // two-layer borrow now, pinned by GT6BridgeKineticTexDatagenTest; the ITEM
+                // ("diesel_engine" left in task tex-bridge-kinetic — the world face is the
+                // two-layer borrow now, pinned by GT6BridgeKineticTexDatagenTest; the ITEM
                 // row left the 2D sprite in task diesel-item-3d, pinned 3D below)
-                {"tap_ceramic", "gt6:block/tap"},
-                {"funnel_ceramic", "gt6:block/funnel"},
+                // ("tap_ceramic"/"funnel_ceramic" left in task rod-render-pool — the world
+                // face is the upstream three-pass element stack now, pinned by
+                // GT6AttachmentStackDatagenTest; the ITEM rows above stay 2D over the
+                // family side sprites, which stay on disk for them)
                 {"water_wheel", "gt6:block/water_wheel"},
                 {"gearbox", "gt6:block/gearbox"},
                 {"distillation_tower", "gt6:block/parts/distillationtowerparts/0/colored/side"},
