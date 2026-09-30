@@ -299,9 +299,17 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 	@Test
 	void pipeCarriersRideTheCombinedDispatch() {
 		unfreezeBlockRegistry();
+		// task fluid-pipe-matrix: the fluid rows carry PER-ROW materials now (the loader
+		// MT.* column, :1846-1885) — the wood row keeps the W1 MT.Wood pin, a metal row
+		// proves the dispatch leaves the W1 constant behind
 		assertSame(gregapi.data.MT.Wood, GTMachinePaintTint.tintMaterialOf(
-						new gregtech6.block.pipe.GTFluidPipeBlock(50, net.minecraft.world.level.block.state.BlockBehaviour.Properties.of())),
-				"both fluid tiers ride the MT.Wood row");
+						new gregtech6.block.pipe.GTFluidPipeBlock(gregtech6.registry.GTFluidPipes.rowByPath("wood_fluid_pipe_small"),
+								net.minecraft.world.level.block.state.BlockBehaviour.Properties.of())),
+				"the wood rows ride the MT.Wood row");
+		assertSame(gregapi.data.MT.Steel, GTMachinePaintTint.tintMaterialOf(
+						new gregtech6.block.pipe.GTFluidPipeBlock(gregtech6.registry.GTFluidPipes.rowByPath("steel_fluid_pipe_medium"),
+								net.minecraft.world.level.block.state.BlockBehaviour.Properties.of())),
+				"the steel row carries its own material (the per-row dispatch)");
 		assertSame(gregapi.data.MT.Brass, GTMachinePaintTint.tintMaterialOf(
 						new gregtech6.block.pipe.GTItemPipeBlock(gregtech6.registry.GTItemPipes.ROWS.get(0),
 								net.minecraft.world.level.block.state.BlockBehaviour.Properties.of())),
@@ -326,7 +334,8 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 				"the brass family rows are pairwise distinct");
 		assertEquals(GTMachinePaintTint.tintARGB(ModelData.EMPTY, gregapi.data.MT.Wood, 0),
 				GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(
-						new gregtech6.block.pipe.GTFluidPipeBlock(300, net.minecraft.world.level.block.state.BlockBehaviour.Properties.of())), 0),
+						new gregtech6.block.pipe.GTFluidPipeBlock(gregtech6.registry.GTFluidPipes.rowByPath("wood_fluid_pipe_medium"),
+								net.minecraft.world.level.block.state.BlockBehaviour.Properties.of())), 0),
 				"the medium wood tier colours through the same seam");
 	}
 
