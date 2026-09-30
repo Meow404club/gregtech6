@@ -1,0 +1,337 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#bottom"
+        },
+        "east": {
+          "texture": "#sides"
+        },
+        "north": {
+          "texture": "#sides"
+        },
+        "south": {
+          "texture": "#sides"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#sides"
+        }
+      },
+      "from": [
+        4,
+        0,
+        5
+      ],
+      "to": [
+        12,
+        8,
+        11
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#overlay_bottom"
+        },
+        "east": {
+          "texture": "#overlay_sides"
+        },
+        "north": {
+          "texture": "#overlay_sides"
+        },
+        "south": {
+          "texture": "#overlay_sides"
+        },
+        "up": {
+          "texture": "#overlay_top"
+        },
+        "west": {
+          "texture": "#overlay_sides"
+        }
+      },
+      "from": [
+        3.99,
+        -0.01,
+        4.99
+      ],
+      "to": [
+        12.01,
+        8.01,
+        11.01
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#bottom"
+        },
+        "east": {
+          "texture": "#sides"
+        },
+        "north": {
+          "texture": "#sides"
+        },
+        "south": {
+          "texture": "#sides"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#sides"
+        }
+      },
+      "from": [
+        5,
+        0,
+        4
+      ],
+      "to": [
+        11,
+        8,
+        12
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#overlay_bottom"
+        },
+        "east": {
+          "texture": "#overlay_sides"
+        },
+        "north": {
+          "texture": "#overlay_sides"
+        },
+        "south": {
+          "texture": "#overlay_sides"
+        },
+        "up": {
+          "texture": "#overlay_top"
+        },
+        "west": {
+          "texture": "#overlay_sides"
+        }
+      },
+      "from": [
+        4.99,
+        -0.01,
+        3.99
+      ],
+      "to": [
+        11.01,
+        8.01,
+        12.01
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#bottom"
+        },
+        "east": {
+          "texture": "#sides"
+        },
+        "north": {
+          "texture": "#sides"
+        },
+        "south": {
+          "texture": "#sides"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#sides"
+        }
+      },
+      "from": [
+        5,
+        8,
+        5
+      ],
+      "to": [
+        11,
+        9,
+        11
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#overlay_bottom"
+        },
+        "east": {
+          "texture": "#overlay_sides"
+        },
+        "north": {
+          "texture": "#overlay_sides"
+        },
+        "south": {
+          "texture": "#overlay_sides"
+        },
+        "up": {
+          "texture": "#overlay_top"
+        },
+        "west": {
+          "texture": "#overlay_sides"
+        }
+      },
+      "from": [
+        4.99,
+        7.99,
+        4.99
+      ],
+      "to": [
+        11.01,
+        9.01,
+        11.01
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#barometer"
+        },
+        "east": {
+          "texture": "#barometer"
+        },
+        "north": {
+          "texture": "#barometer"
+        },
+        "south": {
+          "texture": "#barometer"
+        },
+        "up": {
+          "texture": "#barometer"
+        },
+        "west": {
+          "texture": "#barometer"
+        }
+      },
+      "from": [
+        7,
+        9,
+        7
+      ],
+      "to": [
+        9,
+        16,
+        9
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#overlay_barometer"
+        },
+        "east": {
+          "texture": "#overlay_barometer"
+        },
+        "north": {
+          "texture": "#overlay_barometer"
+        },
+        "south": {
+          "texture": "#overlay_barometer"
+        },
+        "up": {
+          "texture": "#overlay_barometer"
+        },
+        "west": {
+          "texture": "#overlay_barometer"
+        }
+      },
+      "from": [
+        6.99,
+        8.99,
+        6.99
+      ],
+      "to": [
+        9.01,
+        16.01,
+        9.01
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#barometer"
+        },
+        "east": {
+          "texture": "#barometer"
+        },
+        "north": {
+          "texture": "#barometer"
+        },
+        "south": {
+          "texture": "#barometer"
+        },
+        "up": {
+          "texture": "#barometer"
+        },
+        "west": {
+          "texture": "#barometer"
+        }
+      },
+      "from": [
+        6,
+        10,
+        6
+      ],
+      "to": [
+        10,
+        14,
+        10
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#overlay_barometer"
+        },
+        "east": {
+          "texture": "#overlay_barometer"
+        },
+        "north": {
+          "texture": "#overlay_barometer"
+        },
+        "south": {
+          "texture": "#overlay_barometer"
+        },
+        "up": {
+          "texture": "#overlay_barometer"
+        },
+        "west": {
+          "texture": "#overlay_barometer"
+        }
+      },
+      "from": [
+        5.99,
+        9.99,
+        5.99
+      ],
+      "to": [
+        10.01,
+        14.01,
+        10.01
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "barometer": "gt6:block/gas_cylinder/colored_barometer",
+    "bottom": "gt6:block/gas_cylinder/colored_bottom",
+    "overlay_barometer": "gt6:block/gas_cylinder/overlay_barometer",
+    "overlay_bottom": "gt6:block/gas_cylinder/overlay_bottom",
+    "overlay_sides": "gt6:block/gas_cylinder/overlay_sides",
+    "overlay_top": "gt6:block/gas_cylinder/overlay_top",
+    "particle": "#sides",
+    "sides": "gt6:block/gas_cylinder/colored_sides",
+    "top": "gt6:block/gas_cylinder/colored_top"
+  }
+}

@@ -125,6 +125,7 @@ public class GT6EnUs extends LanguageProvider {
         addBarrels();
         addKitchen(); // task kitchen-pot-bowl
         addMeasuringPot(); // task issue45-c3 — the pot pair (issue #45)
+        addGasCylinders(); // task small-tank-gas-cylinder — the four Fluid Containers rows
         addAnvils(); // task c-anvil
         addEnergySource();
         addFeBattery(); // task eu-bridge-outbound — tail-append
@@ -1352,6 +1353,17 @@ public class GT6EnUs extends LanguageProvider {
     private void addMeasuringPot() {
         add("block.gt6.measuring_pot", "Ceramic Measuring Pot"); // the Loader_MultiTileEntities.java:2096 name column verbatim
         add("item.gt6.clay_measuring_pot", "Clay Measuring Pot"); // the MultiItemRandomTools.java:121 raw row verbatim
+    }
+
+    /**
+     * The Barometer Gas Cylinder quartet (task small-tank-gas-cylinder) — the Loader
+     * :2101-2104 name columns verbatim (the "Fluid Containers" tier-S small tank).
+     */
+    private void addGasCylinders() {
+        add("block.gt6.gas_cylinder_steel", "Steel Barometer Gas Cylinder"); // Loader_MultiTileEntities.java:2101 verbatim
+        add("block.gt6.gas_cylinder_stainless_steel", "Stainless Barometer Gas Cylinder"); // :2102 verbatim
+        add("block.gt6.gas_cylinder_tungsten", "Tungsten Barometer Gas Cylinder"); // :2103 verbatim
+        add("block.gt6.gas_cylinder_tantalum_hafnium_carbide", "Tantalum Hafnium Carbide Barometer Gas Cylinder"); // :2104 verbatim
     }
 
     /**

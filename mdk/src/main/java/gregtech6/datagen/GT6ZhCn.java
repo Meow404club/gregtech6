@@ -119,6 +119,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addFoamSprayUnits();    // task c-foam-pipe-spray
 		addKitchenUnits();      // task kitchen-pot-bowl
 		addMeasuringPotUnits(); // task issue45-c3 — the pot pair (issue #45, the dump faces verbatim)
+		addGasCylinderUnits(); // task small-tank-gas-cylinder — the four Fluid Containers rows (the dump faces verbatim)
 		addCrucibleJadeUnits(); // task crucible-jade-face
 		addCommonJadeUnits();   // task jade-redesign-core — the common jade band (hand rows, the tsv direct band)
 		addMachineJadeUnits();  // task hygiene-lang — the machine/fluid jade band (hand rows, the tsv direct band)
@@ -423,6 +424,20 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addMeasuringPotUnits() {
 		add("block.gt6.measuring_pot", "陶瓷量杯");
 		add("item.gt6.clay_measuring_pot", "粘土量杯");
+	}
+
+	/**
+	 * The Barometer Gas Cylinder quartet (task small-tank-gas-cylinder) — the four dump
+	 * MTE faces verbatim (the addBackfillUnits direct-row form over the gen script's
+	 * BLOCK_BACKFILL band): 32055 钢制计压瓶 (tmp/gregtech.lang:13076), 32056
+	 * 不锈钢制计压瓶 (:13077), 32057 钨制计压瓶 (:13078), 32078 碳化钽铪制计压瓶
+	 * (:13099).
+	 */
+	private void addGasCylinderUnits() {
+		addDirect("block.gt6.gas_cylinder_steel");
+		addDirect("block.gt6.gas_cylinder_stainless_steel");
+		addDirect("block.gt6.gas_cylinder_tungsten");
+		addDirect("block.gt6.gas_cylinder_tantalum_hafnium_carbide");
 	}
 
 	/**
