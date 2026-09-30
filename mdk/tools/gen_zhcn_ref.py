@@ -198,7 +198,9 @@ HAND_TRANSLATIONS = {
     # ruling 2026-09-24 — the manuals should be easy for players to get; no dump face)
     "itemGroup.gt6.books": ("说明书", "hand"),
     "itemGroup.gt6.multiblocks": ("多方块", "hand"),
-    "itemGroup.gt6.fluid_containers": ("流体容器", "hand"),
+    # task tank-name-regression: 储罐 = the member-consistency ruling — every tab member is
+    # the 储罐 family (the 16 GTBarrels displayItems); no upstream zh category key exists
+    "itemGroup.gt6.fluid_containers": ("储罐", "hand"),
     "itemGroup.gt6.fluid_pipes": ("流体管道", "hand"),
     # task p27-lang-fix-batch2 P2 (ledger §3): the three wire tabs said 电线/红石线/激光导线 —
     # the wire noun unifies on 导线 (the gt6.wire.form.wire face); laser_wires already carried it.
@@ -1532,7 +1534,8 @@ for _table in (VOTED_TAGPREFIXES, HAND_TAGPREFIXES):
         HAND_TRANSLATIONS[_key] = (_value, "hand")
 
 # ---- block.gt6.* (28): the barrel/fluid-pipe rows join the dump MTE face where one
-# exists ( Wooden Barrel -> gt.multitileentity.6990 木制储物桶); the rest follow en
+# exists (Wooden Barrel -> gt.multitileentity.32714 木制储罐, tmp/gregtech.lang:13535 —
+# task tank-name-regression corrected the bogus 6990 anchor); the rest follow en
 # semantics over the dump's established material words (钨钢/碳化钽铪/艾德曼合金/下界合金
 # ...). Drum = 储罐 per the P0 audit ruling (task p27-lang-fix, ledger §1.1): the drums
 # are FLUID TANKS, not drums-as-cylinders — three independent sources (the upstream
@@ -1540,22 +1543,24 @@ for _table in (VOTED_TAGPREFIXES, HAND_TAGPREFIXES):
 # Loader_MultiTileEntities.java:2168-2171; the community dump itself renders the family
 # as 储罐, tmp/gregtech.lang:13535-13540 木制储罐/塑料储罐/不锈钢储罐/钨钢储罐/钨储罐/
 # 艾德曼合金储罐; and no dictionary supports 鼓 for a container). The 13 鼓 rows flip to
-# 储罐; the two already-correct faces stay (barrel_logistics 物流储罐 = the in-family
-# exemplar, barrel_plastic 塑料罐 = Canister); barrel_wood 木制储物桶 keeps its dump join
-# (item barrel, P2 ledger row, out of this card's scope). Draconium rides the dump's
-# own word (bouleGtDraconiumAwakened = 单晶觉醒龙 -> 龙). The machine words reuse the
+# 储罐. Task tank-name-regression: the 5 hand-drafted strays regressed to the dump's own
+# MTE rows verbatim (wood :13535 id 32714, plastic :13536 id 32715, draconium :13042 id
+# 32021, awakened :13087 id 32066, infinity :13088 id 32067) — the P2 "item barrel" caveat
+# is dead (this key is the BLOCK display name; the randomtools 木桶 rows :9522+ are the
+# hand-held Wooden Bucket item family, NOT this MTE). Draconium rides the dump's
+# own word (单晶觉醒龙 -> 龙, direct rows :13042/:13087). The machine words reuse the
 # committed TSV rows units (粉碎机/破碎机/车床) verbatim; 烤箱 per the task-card
 # spot-check. wire_electric = the × convention on the atomic legacy keys.
 BLOCK_BACKFILL = {
     "block.gt6.barrel_adamantium": "艾德曼合金储罐",
-    "block.gt6.barrel_awakened_draconium": "觉醒龙合金储罐",
-    "block.gt6.barrel_draconium": "龙合金储罐",      # RECHECK: dump 龙 word root (单晶觉醒龙)
+    "block.gt6.barrel_awakened_draconium": "觉醒龙储罐",  # dump gt.multitileentity.32066 verbatim
+    "block.gt6.barrel_draconium": "龙储罐",          # dump gt.multitileentity.32021 verbatim (龙 word root)
     "block.gt6.barrel_gaia_spirit": "盖亚储罐",
-    "block.gt6.barrel_infinity": "无限储罐",
+    "block.gt6.barrel_infinity": "无尽储罐",         # dump gt.multitileentity.32067 verbatim
     "block.gt6.barrel_logistics": "物流储罐",
     "block.gt6.barrel_metal": "青铜储罐",            # the row material word (TSV gt6.row.mat.bronze)
     "block.gt6.barrel_netherite": "下界合金储罐",
-    "block.gt6.barrel_plastic": "塑料罐",            # Canister = 罐
+    "block.gt6.barrel_plastic": "塑料储罐",          # dump gt.multitileentity.32715 verbatim (Canister)
     "block.gt6.barrel_tantalum_hafnium_carbide": "碳化钽铪储罐",
     "block.gt6.barrel_titanium": "钛储罐",
     "block.gt6.barrel_tungsten": "钨储罐",
@@ -1563,7 +1568,7 @@ BLOCK_BACKFILL = {
     "block.gt6.barrel_tungstensteel": "钨钢储罐",
     "block.gt6.barrel_void_metal": "虚空金属储罐",
     "block.gt6.advanced_crafting_table": "高级合成台",  # task p24-act-machine — the GT6 community zh name (no upstream zh_CN.lang dump anchor)
-    "block.gt6.barrel_wood": "木制储物桶",           # dump join: gt.multitileentity.6990 木制储物桶
+    "block.gt6.barrel_wood": "木制储罐",             # dump join: gt.multitileentity.32714 木制储罐 (:13535; tank-name-regression fixed the 6990 anchor)
     "block.gt6.crank": "手摇曲柄",
     "block.gt6.electric_transformer": "变压器 (ULV-LV)",  # task p28-c-ulv-lv-transformer — hand (the upstream registration wording "Transformer (ULV-LV)", Loader :881; the standard zh machine word + the VN pair kept latin)
     "block.gt6.electric_transformer_t2": "变压器 (LV-MV)",  # task p35-energy-tail-machines — hand (the :882 registration wording, VN pair kept latin)
@@ -3049,17 +3054,20 @@ FAMILY_OVERRIDES = {
     ("itemgroup", "wireFine"): "细导线",                    # 细线缆 mixed the cable word into the wire tab (en "Fine Wires")
     # -- §3 P2 rows (task p27-lang-fix-batch2, ledger §3) --
     # prefix-tab titles (itemgroup family): the en-qualifier restores + the two unification
-    # rulings (洗净 for purified, 双重/三重/四重/五重 for the multiplicity ladder — the dump's
+    # rulings (双重/三重/四重/五重 for the multiplicity ladder — the dump's
     # 2x/3x faces split from the tagprefix's 双重%s锭 templates; the ledger's first-listed
-    # option wins). crushedCentrifuged(+Tiny) KEEP 离心 — in sync with the tagprefix rows,
+    # option wins). Task tank-name-regression: casingSmall/chemtube/crushedPurified(+Tiny)
+    # regressed to the dump's itemGroup.* rows verbatim — the 洗净 unification ruling is
+    # retired for these rows (the tagprefix 洗净%s矿 templates keep their own family word,
+    # no upstream zh face there). crushedCentrifuged(+Tiny) KEEP 离心 — in sync with the tagprefix rows,
     # the en "Refined Ores" inconsistency is an en-side report (ledger §4 #4). toolHeadBuilderwand
     # keeps 建筑之杖帽 (en "Caps" vs the tagprefix "Cap" — already faithful).
-    ("itemgroup", "casingSmall"): "物品外壳",               # en "Item Casings" — the missing qualifier
-    ("itemgroup", "chemtube"): "玻璃试管",                  # en "Glass Tubes" — the missing glass word
+    ("itemgroup", "casingSmall"): "外壳",                   # dump itemGroup.casingSmall=外壳 verbatim (:17921)
+    ("itemgroup", "chemtube"): "试管",                      # dump itemGroup.chemtube=试管 verbatim (:17923)
     ("itemgroup", "rockGt"): "岩石",                        # en "Rocks" — 石头 collides with stone
-    ("itemgroup", "oreRaw"): "生矿石",                      # en "Raw Ores" — the missing raw word
-    ("itemgroup", "crushedPurified"): "洗净矿石",           # unified with tagprefix.crushed_purified 洗净%s矿
-    ("itemgroup", "crushedPurifiedTiny"): "小撮洗净矿石",   # unified with tagprefix.crushed_purified_tiny
+    ("itemgroup", "oreRaw"): "粗矿石",                      # DECLARED DEVIATION (user ruling): the direct dump row itemGroup.oreRaw=矿石 (:18048) collides with oreVanillastone=矿石 (:18049) — the upstream tab-name defect is not reproduced; 粗矿石 rides the member-item template gt6.tagprefix.ore_raw 粗%s矿石
+    ("itemgroup", "crushedPurified"): "纯净矿石",           # dump itemGroup.crushedPurified=纯净矿石 verbatim (:17935)
+    ("itemgroup", "crushedPurifiedTiny"): "纯净小撮矿石",   # dump itemGroup.crushedPurifiedTiny=纯净小撮矿石 verbatim (:17936)
     ("itemgroup", "toolHeadSense"): "镰刀刃",               # 镰刀片 vs the tagprefix 刃 — unified on 刃 (en "Sense Blades")
     ("itemgroup", "toolHeadPickaxeGem"): "镶尖镐头",        # unified tipped=镶尖 with the tagprefix %s镶尖镐头
     ("itemgroup", "stick"): "杆",                           # 杆/棍 slash pair — 棍 dropped (the tagprefix is %s杆)

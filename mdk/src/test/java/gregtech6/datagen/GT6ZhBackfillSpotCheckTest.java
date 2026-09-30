@@ -66,12 +66,31 @@ public class GT6ZhBackfillSpotCheckTest {
 		assertEquals("烤箱 (%s)", zh().get(gregtech6.registry.GTMachines.OVEN_DISPLAY_KEY), "the oven family display template");
 		// task lang-fix P0 (ledger §1.1): the drum family are fluid tanks — the pin
 		// moved 龙合金鼓 → 龙合金储罐 (dump 龙 word root kept, the tank noun follows the
-		// dump's own 储罐 family tmp/gregtech.lang:13535-13540)
-		assertEquals("龙合金储罐", zh().get("block.gt6.barrel_draconium"), "the Draconium tank (dump 龙 word root + the 储罐 family)");
+		// dump's own 储罐 family tmp/gregtech.lang:13535-13540). Task tank-name-regression:
+		// regressed to the direct dump row gt.multitileentity.32021=龙储罐 (:13042)
+		assertEquals("龙储罐", zh().get("block.gt6.barrel_draconium"), "the Draconium tank (dump :13042 verbatim)");
 		assertEquals("柴油", zh().get("fluid.gt6.diesel"), "the diesel dump anchor");
 		String tWire14 = zh().get("gt6.tagprefix.wire_gt14");
 		assertTrue(tWire14 != null && tWire14.contains("×%s"),
 			"wire_gt14 must keep the × template shape, got " + tWire14);
+	}
+
+	@Test
+	public void theTankFamilyRegressionLands() {
+		// task tank-name-regression: the barrel strays regressed to the dump MTE rows
+		// verbatim (gt.multitileentity ids cited per assert), the fluid_containers tab rides
+		// the member-consistency ruling (no upstream zh category key), oreRaw is the
+		// declared-deviation member-template value, the 4 itemgroup rows are dump verbatim.
+		assertEquals("木制储罐", zh().get("block.gt6.barrel_wood"), "dump gt.multitileentity.32714 (:13535)");
+		assertEquals("塑料储罐", zh().get("block.gt6.barrel_plastic"), "dump gt.multitileentity.32715 (:13536)");
+		assertEquals("觉醒龙储罐", zh().get("block.gt6.barrel_awakened_draconium"), "dump gt.multitileentity.32066 (:13087)");
+		assertEquals("无尽储罐", zh().get("block.gt6.barrel_infinity"), "dump gt.multitileentity.32067 (:13088)");
+		assertEquals("储罐", zh().get("itemGroup.gt6.fluid_containers"), "the member-consistency tab ruling (all 16 GTBarrels members are 储罐)");
+		assertEquals("粗矿石", zh().get("itemGroup.gt6.ore_raw"), "declared deviation: dump itemGroup.oreRaw=矿石 (:18048) collides with oreVanillastone (:18049) — the member template gt6.tagprefix.ore_raw 粗%s矿石 wins");
+		assertEquals("外壳", zh().get("itemGroup.gt6.casing_small"), "dump itemGroup.casingSmall=外壳 (:17921)");
+		assertEquals("试管", zh().get("itemGroup.gt6.chemtube"), "dump itemGroup.chemtube=试管 (:17923)");
+		assertEquals("纯净矿石", zh().get("itemGroup.gt6.crushed_purified"), "dump itemGroup.crushedPurified=纯净矿石 (:17935)");
+		assertEquals("纯净小撮矿石", zh().get("itemGroup.gt6.crushed_purified_tiny"), "dump itemGroup.crushedPurifiedTiny=纯净小撮矿石 (:17936)");
 	}
 
 	@Test
