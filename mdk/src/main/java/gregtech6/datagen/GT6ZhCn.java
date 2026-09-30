@@ -120,6 +120,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addKitchenUnits();      // task kitchen-pot-bowl
 		addMeasuringPotUnits(); // task issue45-c3 — the pot pair (issue #45, the dump faces verbatim)
 		addGasCylinderUnits(); // task small-tank-gas-cylinder — the four Fluid Containers rows (the dump faces verbatim)
+		addCellUnits();         // task small-tank-cell — the 40 Fluid Containers rows (the dump faces verbatim)
 		addCrucibleJadeUnits(); // task crucible-jade-face
 		addCommonJadeUnits();   // task jade-redesign-core — the common jade band (hand rows, the tsv direct band)
 		addMachineJadeUnits();  // task hygiene-lang — the machine/fluid jade band (hand rows, the tsv direct band)
@@ -424,6 +425,56 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addMeasuringPotUnits() {
 		add("block.gt6.measuring_pot", "陶瓷量杯");
 		add("item.gt6.clay_measuring_pot", "粘土量杯");
+	}
+
+
+	/**
+	 * The Capsule-Cell-Container 40 rows (task small-tank-cell) — the dump MTE faces
+	 * verbatim (the addDirect form over the gen script's BLOCK_BACKFILL band): ids
+	 * 32600-32639, tmp/gregtech.lang:13481-13520, the "单元式流体容器 (<material>)"
+	 * faces in registration order.
+	 */
+	private void addCellUnits() {
+		addDirect("block.gt6.cell_wax");
+		addDirect("block.gt6.cell_bees_wax");
+		addDirect("block.gt6.cell_plant_wax");
+		addDirect("block.gt6.cell_paraffin_wax");
+		addDirect("block.gt6.cell_refractory_wax");
+		addDirect("block.gt6.cell_magic_wax");
+		addDirect("block.gt6.cell_amnesic_wax");
+		addDirect("block.gt6.cell_soulful_wax");
+		addDirect("block.gt6.cell_plastic");
+		addDirect("block.gt6.cell_tin");
+		addDirect("block.gt6.cell_tin_alloy");
+		addDirect("block.gt6.cell_invar");
+		addDirect("block.gt6.cell_gold");
+		addDirect("block.gt6.cell_aluminium");
+		addDirect("block.gt6.cell_stainless_steel");
+		addDirect("block.gt6.cell_tungsten_alloy");
+		addDirect("block.gt6.cell_titanium");
+		addDirect("block.gt6.cell_netherite");
+		addDirect("block.gt6.cell_tungstensteel");
+		addDirect("block.gt6.cell_tungsten_carbide");
+		addDirect("block.gt6.cell_tungsten");
+		addDirect("block.gt6.cell_palladium");
+		addDirect("block.gt6.cell_tantalum_hafnium_carbide");
+		addDirect("block.gt6.cell_desh");
+		addDirect("block.gt6.cell_workers_alloy");
+		addDirect("block.gt6.cell_trinium");
+		addDirect("block.gt6.cell_trinitanium");
+		addDirect("block.gt6.cell_adamantium");
+		addDirect("block.gt6.cell_syrmorite");
+		addDirect("block.gt6.cell_efrine");
+		addDirect("block.gt6.cell_thaumium");
+		addDirect("block.gt6.cell_void");
+		addDirect("block.gt6.cell_manasteel");
+		addDirect("block.gt6.cell_terrasteel");
+		addDirect("block.gt6.cell_elementium");
+		addDirect("block.gt6.cell_gaia_spirit");
+		addDirect("block.gt6.cell_duranium_alloy");
+		addDirect("block.gt6.cell_draconium");
+		addDirect("block.gt6.cell_awakened_draconium");
+		addDirect("block.gt6.cell_infinity");
 	}
 
 	/**

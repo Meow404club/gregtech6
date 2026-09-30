@@ -646,6 +646,14 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 				GT6GasCylinders.GAS_CYLINDER_BE.get();
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tGasCylinder,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+		// task small-tank-cell — the Capsule-Cell-Container family joins the fluid-container
+		// face (the fluid only face over the shared 40-block BET; the gas-only admission gate
+		// answers inside the handler; the forge leg answers from the
+		// GT6CellBlockEntity getCapability override)
+		BlockEntityType<gregtech6.tileentity.tank.GT6CellBlockEntity> tCell =
+				GT6Cells.CELL_BE.get();
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCell,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 	}
 
 	// -- the coke oven (p8 multiblock controller; the commands-card handoff) --

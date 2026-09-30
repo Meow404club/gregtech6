@@ -126,6 +126,7 @@ public class GT6EnUs extends LanguageProvider {
         addKitchen(); // task kitchen-pot-bowl
         addMeasuringPot(); // task issue45-c3 — the pot pair (issue #45)
         addGasCylinders(); // task small-tank-gas-cylinder — the four Fluid Containers rows
+        addCells(); // task small-tank-cell — the 40 Fluid Containers rows
         addAnvils(); // task c-anvil
         addEnergySource();
         addFeBattery(); // task eu-bridge-outbound — tail-append
@@ -1347,6 +1348,18 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.juicer", "Juicer"); // task food-machines-kitchen — the Loader :2184 name column verbatim
         add("item.gt6.clay_bowl", "Clay Bowl");
         add("item.gt6.clay_juicer", "Clay Juicer"); // issue #45 C1 — the MultiItemRandomTools.java:118 name column verbatim
+    }
+
+    /**
+     * The Capsule-Cell-Container 40 rows (task small-tank-cell) — the Loader
+     * :1770-1809 name columns verbatim (the "Capsule-Cell-Container (" + aMat
+     * .getLocal() + ")" construction; the row displayName IS that construction,
+     * one source of truth with the census pin).
+     */
+    private void addCells() {
+        for (gregtech6.registry.GT6Cells.CellRow tRow : gregtech6.registry.GT6Cells.ROWS) {
+            add("block.gt6." + tRow.path(), tRow.displayName());
+        }
     }
 
     /** The Measuring Pot pair (task issue45-c3, issue #45) — the Loader :2096 name column + the :121 raw row, both verbatim. */
