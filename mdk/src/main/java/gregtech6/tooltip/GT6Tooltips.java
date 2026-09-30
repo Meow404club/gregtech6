@@ -44,7 +44,8 @@ public final class GT6Tooltips {
 		// (TileEntityBase09FacingSingle.java:61, getFacingTool = TOOL_wrench :82 = row 13);
 		// rows 3-6 carry the per-variant constants in positional slots (%1$s = Energy IN,
 		// %2$s = Energy OUT, %3$s = Capacity — the carrier hands [in, out, cap] per
-		// BoilerRow, the mOutput/STEAM_PER_EU + mOutput + mOutput*10000 shape of :98-:101)
+		// BoilerRow, the mOutput/STEAM_PER_EU + mOutput + mOutput*10000 shape of :98-:101);
+		// row 14 = the port-authored output-condition annex (task r10-debt-boiler-heat-tip)
 		register("boiler", List.of(
 				new GT6TooltipLine("gt6.tooltip.boiler.1", GT6TooltipStyle.CYAN),    // :96 LH.CONVERTS_FROM_X.. (80 HU -> 160 L Steam, constant across all 26 rows)
 				new GT6TooltipLine("gt6.tooltip.boiler.2", GT6TooltipStyle.YELLOW),  // :97 LH.getToolTipEfficiency(10000) — pristine, the calcified state is carry state
@@ -58,7 +59,12 @@ public final class GT6Tooltips {
 				new GT6TooltipLine("gt6.tooltip.boiler.10", GT6TooltipStyle.DRED),   // :105 LH.HAZARD_MELTDOWN
 				new GT6TooltipLine("gt6.tooltip.boiler.11", GT6TooltipStyle.DGRAY),  // :106 LH.TOOL_TO_DECALCIFY_CHISEL
 				new GT6TooltipLine("gt6.tooltip.boiler.12", GT6TooltipStyle.DGRAY),  // :107 LH.TOOL_TO_DETAIL_MAGNIFYINGGLASS
-				new GT6TooltipLine("gt6.tooltip.boiler.13", GT6TooltipStyle.DGRAY))); // super :61 TOOL_TO_SET_FACING_PRE + Wrench (:82) + POST
+				new GT6TooltipLine("gt6.tooltip.boiler.13", GT6TooltipStyle.DGRAY),  // super :61 TOOL_TO_SET_FACING_PRE + Wrench (:82) + POST
+				// row 14 is the port-authored annex (task r10-debt-boiler-heat-tip, issue #17
+				// UX): the upstream addToolTips :95-109 carries NO output-condition line — the
+				// >half-full gate is tick-body-only (MultiTileEntityBoilerTank.java:139-142 =
+				// the port BE :281-287), and LH.java has no Heat/CONDENSE/half key to transplant
+				new GT6TooltipLine("gt6.tooltip.boiler.14", GT6TooltipStyle.ORANGE)));
 		// the Large Boiler family — MultiTileEntityLargeBoiler.addToolTips :150-167 (rows 1-15,
 		// the STRUCTURE block :151-155 over the static :143-146 LH.add keys) + the multiblock
 		// base rows (TileEntityBase10MultiBlockBase.java:100-101 = rows 16-17) + the facing

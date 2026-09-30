@@ -549,6 +549,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("gt6.tooltip.boiler.11");
 		addDirect("gt6.tooltip.boiler.12");
 		addDirect("gt6.tooltip.boiler.13");
+		addDirect("gt6.tooltip.boiler.14"); // r10-debt-boiler-heat-tip — the port-authored #17 output-condition row
 		// the Large Boiler family
 		addDirect("gt6.tooltip.boiler_large.1");
 		addDirect("gt6.tooltip.boiler_large.2");

@@ -3696,6 +3696,7 @@
   "gt6.tooltip.boiler.11": "Use Chisel to decalcify",
   "gt6.tooltip.boiler.12": "Use Magnifying Glass to see Details",
   "gt6.tooltip.boiler.13": "Use Wrench to set Facing",
+  "gt6.tooltip.boiler.14": "Only emits Steam when more than half full!",
   "gt6.tooltip.boiler.2": "Efficiency: 100.00%",
   "gt6.tooltip.boiler.3": "Energy IN: %1$s HU/t (Any Side)",
   "gt6.tooltip.boiler.4": "Capacity: %3$s HU",

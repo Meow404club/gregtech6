@@ -40,28 +40,32 @@ public class GT6TooltipsTest {
 	}
 
 	@Test
-	public void boilerRegistryPinsTheThirteenRowTable() {
+	public void boilerRegistryPinsTheFourteenRowTable() {
 		List<GT6Tooltips.GT6TooltipLine> tRows = GT6Tooltips.REGISTRY.get("boiler");
 		// MultiTileEntityBoilerTank.addToolTips :95-109 = rows 1-12 (:96-:107) + the super
 		// facing row (TileEntityBase09FacingSingle.java:61, wrench :82) = row 13 — the row
-		// indexes ARE the upstream row positions
-		assertEquals(13, tRows.size(), "the boiler family = the 13-row upstream table");
+		// indexes ARE the upstream row positions; row 14 = the port-authored annex (task
+		// r10-debt-boiler-heat-tip, the issue #17 output-condition line)
+		assertEquals(14, tRows.size(), "the boiler family = the 13-row upstream table + the .14 port-authored annex");
 		for (int i = 0; i < 13; i++) {
 			assertEquals("gt6.tooltip.boiler." + (i + 1), tRows.get(i).key(), "row " + (i + 1) + " rides its upstream position");
 		}
 		// the lead colors, row by row (Chat.CYAN/YELLOW/GREEN/GREEN/RED/RED/ORANGE/ORANGE/
-		// DRED/DRED/DGRAY/DGRAY/DGRAY — the :96-:107 + :61 chat prefixes)
+		// DRED/DRED/DGRAY/DGRAY/DGRAY — the :96-:107 + :61 chat prefixes; .14 = ORANGE,
+		// the requirement-band color the output-condition annex rides)
 		ChatFormatting[] tExpected = {
 				ChatFormatting.AQUA, ChatFormatting.YELLOW, ChatFormatting.GREEN, ChatFormatting.GREEN,
 				ChatFormatting.RED, ChatFormatting.RED, ChatFormatting.GOLD, ChatFormatting.GOLD,
 				ChatFormatting.DARK_RED, ChatFormatting.DARK_RED, ChatFormatting.DARK_GRAY,
-				ChatFormatting.DARK_GRAY, ChatFormatting.DARK_GRAY};
-		for (int i = 0; i < 13; i++) {
+				ChatFormatting.DARK_GRAY, ChatFormatting.DARK_GRAY, ChatFormatting.GOLD};
+		for (int i = 0; i < 14; i++) {
 			assertSame(tExpected[i], tRows.get(i).style(), "row " + (i + 1) + " lead color");
 		}
 		// the T1 pilot pair survives inside the full table, unconflicted at its positions
 		assertEquals("gt6.tooltip.boiler.7", tRows.get(6).key());
 		assertEquals("gt6.tooltip.boiler.9", tRows.get(8).key());
+		// the port-authored annex tails the upstream block, never renumbers it
+		assertEquals("gt6.tooltip.boiler.14", tRows.get(13).key());
 	}
 
 	@Test
@@ -185,7 +189,7 @@ public class GT6TooltipsTest {
 	public void appendProducesKeyedTranslatablesInRegistryOrder() {
 		List<Component> tTooltip = new ArrayList<>();
 		GT6Tooltips.append("boiler", tTooltip);
-		assertEquals(13, tTooltip.size());
+		assertEquals(14, tTooltip.size());
 		TranslatableContents tRow0 = (TranslatableContents) tTooltip.get(0).getContents();
 		TranslatableContents tRow1 = (TranslatableContents) tTooltip.get(1).getContents();
 		assertEquals("gt6.tooltip.boiler.1", tRow0.getKey());
@@ -202,7 +206,7 @@ public class GT6TooltipsTest {
 		// takes the array through its positional slots (TranslatableContents.java:87-88)
 		List<Component> tTooltip = new ArrayList<>();
 		GT6Tooltips.append("boiler", tTooltip, 16, 32, 320000);
-		assertEquals(13, tTooltip.size());
+		assertEquals(14, tTooltip.size());
 		TranslatableContents tRow3 = (TranslatableContents) tTooltip.get(2).getContents(); // boiler.3 = "%1$s HU/t"
 		assertEquals(3, tRow3.getArgs().length);
 		assertEquals(16, tRow3.getArgs()[0]);
@@ -225,6 +229,6 @@ public class GT6TooltipsTest {
 		}
 		assertTrue(tThrew, "a duplicate family registration must fail loud");
 		// the failed put left the original table in place (the registry rows unchanged)
-		assertEquals(13, GT6Tooltips.REGISTRY.get("boiler").size());
+		assertEquals(14, GT6Tooltips.REGISTRY.get("boiler").size());
 	}
 }

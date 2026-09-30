@@ -2376,7 +2376,9 @@ public class GT6EnUs extends LanguageProvider {
      * (the hardcoded-en contentcap face, so zh shows the same literal), the barrel tables =
      * TileEntityBase08Barrel.java:92-102 with the :90/:91 carry rows DELETED (the design
      * ruling) — the row indexes carry the upstream positions, so the gaps ARE the
-     * ported-out rows. The %1$s/%2$s/%3$s positional slots ride the per-variant constants
+     * ported-out rows; the ONE port-authored row is gt6.tooltip.boiler.14 (task
+     * r10-debt-boiler-heat-tip, the issue #17 output-condition annex). The
+     * %1$s/%2$s/%3$s positional slots ride the per-variant constants
      * the carrier hands at registration (TranslatableContents.java:87-88). Consumed by
      * GT6Tooltips; zh faces ride the reference table's hand layer via
      * GT6ZhCn.addTooltipRowUnits.
@@ -2396,6 +2398,11 @@ public class GT6EnUs extends LanguageProvider {
         add("gt6.tooltip.boiler.11", "Use Chisel to decalcify");
         add("gt6.tooltip.boiler.12", "Use Magnifying Glass to see Details");
         add("gt6.tooltip.boiler.13", "Use Wrench to set Facing");
+        // row 14 = port-authored (task r10-debt-boiler-heat-tip, GitHub #17 UX): the upstream
+        // addToolTips :95-109 has no output-condition line — the >half-full steam gate is
+        // tick-body-only (MultiTileEntityBoilerTank.java:139-142, the port BE :281-287);
+        // the heat-capacity face itself is row 4 verbatim (:99), so no duplicate row
+        add("gt6.tooltip.boiler.14", "Only emits Steam when more than half full!");
         // the Large Boiler family (rows 1-18; 2-5 = the :143-146 LH.add structure keys)
         add("gt6.tooltip.boiler_large.1", "Structure:");
         add("gt6.tooltip.boiler_large.2", "3x3 Base of Heat Transmitters");
