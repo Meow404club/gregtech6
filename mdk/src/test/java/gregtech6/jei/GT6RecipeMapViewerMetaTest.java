@@ -457,4 +457,30 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 		assertEquals("Steam", GT6RecipeMapViewerMeta.energyTypeShortCode(gregapi.data.TD.Energy.STEAM));
 		assertEquals("", GT6RecipeMapViewerMeta.energyTypeShortCode(null));
 	}
+
+	/**
+	 * The gear-spot machine icon (the r9-34 defer): upstream NEI_RecipeMap.java:278 drew
+	 * mRecipeMachineList at GUI (152,83) — folded through the shared (5,11) panel origin
+	 * to (147,72), the spot the NEI.png plate bakes the gear into. And the stock gate: a
+	 * tabled map resolves its machine item, a furnace-fallback whitelist map (zero
+	 * machines in the port) resolves NOTHING — the upstream isEmpty() guard, never the
+	 * lit-furnace default. The resolution rides the {@code sResolver} fixture seam (the
+	 * Forge registry does not exist in a bare JVM) — stubbed inside the test, restored in
+	 * the finally (the per-test-stub lesson of r6-29-34a).
+	 */
+	@Test
+	void machineIconPinsTheUpstreamGearSpotAndTheRealMachineGate() {
+		GT6RecipeMaps.init();
+		assertPos(GT6RecipeMapViewerMeta.machineIconPos(), 152 - GT6RecipeMapViewerMeta.S_OFFSET_X,
+				83 - GT6RecipeMapViewerMeta.S_OFFSET_Y);
+		assertNull(GT6RecipeMapViewerMeta.machineIcon(GT6RecipeMaps.MORTAR),
+				"the furnace-fallback whitelist skips the gear slot (upstream empty mRecipeMachineList)");
+		GT6RecipeMapIcons.sResolver = tSupplier -> Items.IRON_INGOT;
+		try {
+			assertNotNull(GT6RecipeMapViewerMeta.machineIcon(GT6RecipeMaps.LATHE), "a tabled map draws its machine");
+			assertFalse(GT6RecipeMapViewerMeta.machineIcon(GT6RecipeMaps.LATHE).isEmpty());
+		} finally {
+			GT6RecipeMapIcons.sResolver = java.util.function.Supplier::get;
+		}
+	}
 }

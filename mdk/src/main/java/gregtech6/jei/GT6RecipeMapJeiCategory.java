@@ -159,6 +159,15 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 		int[] tPlate = GT6RecipeMapViewerMeta.PLATE_CROP, tBand = GT6RecipeMapViewerMeta.BAND_CROP;
 		aGuiGraphics.blit(GT6RecipeMapViewerMeta.PLATE_TEXTURE, 0, 0, tPlate[0], tPlate[1], tPlate[2], tPlate[3]);
 		aGuiGraphics.blit(GT6RecipeMapViewerMeta.guiTexture(mMap), 0, 0, tBand[0], tBand[1], tBand[2], tBand[3]);
+		// the representative machine on the plate's baked-in gear spot (task
+		// r10-debt-viewer-polish): upstream NEI_RecipeMap.java:278 drew mRecipeMachineList
+		// at GUI (152,83) — a bare item, no slot frame. null = no tabled machine (the
+		// four furnace-fallback maps) — the upstream isEmpty() guard, no furnace default.
+		net.minecraft.world.item.ItemStack tMachine = GT6RecipeMapViewerMeta.machineIcon(mMap);
+		if (tMachine != null) {
+			int[] tIconPos = GT6RecipeMapViewerMeta.machineIconPos();
+			aGuiGraphics.renderItem(tMachine, tIconPos[0], tIconPos[1]);
+		}
 		// drawExtras (NEI_RecipeMap.drawExtras :680-717 verbatim arithmetic): the
 		// Costs/Usage/Tier/Power/Time/Special lines at the shared panel-system text band —
 		// NEI's fixed 0xFF000000 ink and x10 kept.

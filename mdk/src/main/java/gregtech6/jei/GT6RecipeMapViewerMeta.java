@@ -584,6 +584,35 @@ public final class GT6RecipeMapViewerMeta {
 	}
 
 	// -----------------------------------------------------------------------
+	// The machine-icon slot (task r10-debt-viewer-polish, the r9-34 defer): upstream
+	// NEI_RecipeMap.java:278 drew the map's representative machine
+	// ({@code mRecipeMachineList}) as a bare PositionedStack at GUI (152,83) — the gear
+	// spot the port's NEI.png plate bakes in (r9-34 landed the plate, the item stayed
+	// declared-deferred). The port's mRecipeMachineList proxy is the GT6RecipeMapIcons
+	// table (r6-29-34a), whose {@code has()} is exactly the upstream non-empty guard and
+	// whose furnace-fallback whitelist maps (zero machines in the port) skip the draw —
+	// only real machine rows land here.
+	// -----------------------------------------------------------------------
+
+	/** The machine-icon GUI coordinate (NEI_RecipeMap.java:278, machine-GUI system like the switches above). */
+	private static final int[] GUI_MACHINE_ICON_POS = {152, 83};
+
+	/** {@link #GUI_MACHINE_ICON_POS} folded into panel/viewer coordinates — (147,72). */
+	public static int[] machineIconPos() {
+		return fold(GUI_MACHINE_ICON_POS);
+	}
+
+	/**
+	 * The representative machine stack for the gear spot, or {@code null} to skip the
+	 * draw: {@code null} exactly when the map carries no tabled machine (the four
+	 * FURNACE-fallback whitelist maps) — the upstream
+	 * {@code !mRecipeMachineList.isEmpty()} guard, never the lit-furnace default.
+	 */
+	public static net.minecraft.world.item.ItemStack machineIcon(RecipeMap aMap) {
+		return GT6RecipeMapIcons.has(aMap) ? GT6RecipeMapIcons.iconOf(aMap) : null;
+	}
+
+	// -----------------------------------------------------------------------
 	// The cost/tier/time/special text — NEI_RecipeMap.drawExtras :680-717, verbatim
 	// arithmetic (UT.Code.makeString folds to plain long-to-string).
 	// -----------------------------------------------------------------------
