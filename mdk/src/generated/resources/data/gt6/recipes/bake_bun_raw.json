@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:food_dough"
+    }
+  ],
+  "result": {
+    "item": "gt6:food_bun_raw"
+  }
+}

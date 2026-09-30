@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:food_dough_flat_ketchup"
+    },
+    {
+      "item": "gt6:food_cheese_sliced"
+    },
+    {
+      "item": "gt6:food_cheese_sliced"
+    },
+    {
+      "item": "gt6:food_cheese_sliced"
+    }
+  ],
+  "result": {
+    "item": "gt6:food_pizza_cheese_raw"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:food_dough"
+    },
+    {
+      "tag": "gt6:tools/rolling_pin"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:food_dough_flat"
+  }
+}

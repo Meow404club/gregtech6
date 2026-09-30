@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:plate_double_paper"
+    },
+    {
+      "item": "gt6:food_fries"
+    }
+  ],
+  "result": {
+    "item": "gt6:food_fries_packaged"
+  }
+}

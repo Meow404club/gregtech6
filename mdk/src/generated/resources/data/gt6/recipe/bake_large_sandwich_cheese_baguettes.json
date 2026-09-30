@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:food_baguettes_sliced"
+    },
+    {
+      "item": "gt6:food_cheese_sliced"
+    },
+    {
+      "item": "gt6:food_cheese_sliced"
+    },
+    {
+      "item": "gt6:food_cheese_sliced"
+    },
+    {
+      "item": "gt6:food_cheese_sliced"
+    },
+    {
+      "item": "gt6:food_cheese_sliced"
+    },
+    {
+      "item": "gt6:food_cheese_sliced"
+    },
+    {
+      "item": "gt6:food_cheese_sliced"
+    },
+    {
+      "item": "gt6:food_cheese_sliced"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:food_large_sandwich_cheese"
+  }
+}
