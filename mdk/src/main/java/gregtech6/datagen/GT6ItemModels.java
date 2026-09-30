@@ -365,6 +365,23 @@ public final class GT6ItemModels extends ItemModelProvider {
                 .texture("layer0", modLoc("item/pocket/" + tTail))
                 .texture("layer1", modLoc("item/pocket/" + tTail + "_overlay"));
         }
+        // the gun family (task pistol-family-items) — THREE four-layer handheld models,
+        // the chisel row shape over iconset borrows on BOTH halves: layer0/1 = the gun
+        // body pair (the upstream getIcon(false) pass, PISTOL/CARBINE/RIFLE.png +
+        // _OVERLAY.png), layer2/3 = the handle pair (the getIcon(true) pass,
+        // HANDLE_*.png — assets/README.md attribution). Upstream tints body/handle with
+        // the primary/secondary material colours — the port shows them un-tinted at the
+        // single steel tier (the family declared deviation; the stamped crafting rows
+        // carry the identity for the ladder card). Walked over GUN_ROWS so the model ids
+        // cannot drift.
+        for (net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tGun : gregtech6.registry.GT6Tools.GUN_ROWS) {
+            String tPath = tGun.getId().getPath();
+            withExistingParent(tPath, mcLoc("item/handheld"))
+                .texture("layer0", modLoc("item/" + tPath))
+                .texture("layer1", modLoc("item/" + tPath + "_overlay"))
+                .texture("layer2", modLoc("item/" + tPath + "_handle"))
+                .texture("layer3", modLoc("item/" + tPath + "_handle_overlay"));
+        }
         // the food-can row0 subset (task food-can-row0) — 8 item/generated models over
         // the byte-identical upstream icon borrows (gt.multiitem.randomtools/998 for the
         // empty can, gt.multiitem.cans/11-16 for the rotten family, :86 for the cookies

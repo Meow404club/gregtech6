@@ -110,6 +110,11 @@ public final class GT6DataGenerators {
         // (both legs construct through the two-arg form; the forge leg ignores the lookup)
         event.getGenerator().addProvider(true,
             new GT6CraftingRecipes(event.getGenerator().getPackOutput(), event.getLookupProvider()));
+        // task pistol-family-items: the gun family band — a SEPARATE provider because
+        // GT6CraftingRecipes.java is the in-flight tool-arg8 card's (the zero-overlap
+        // ruling); it rides the SAME gt6:material_tool serializer + stamped identity seam
+        event.getGenerator().addProvider(true,
+            new GT6GunRecipes(event.getGenerator().getPackOutput(), event.getLookupProvider()));
         // task worldgen-pipeline-skeleton: the first dynamic-registry provider — the 17
         // stone blobs' configured/placed features + biome modifiers off ONE RegistrySetBuilder
         // (three BootstapContexts, GT6WorldgenDatagen.BUILDER; GTCEu DataGenerators.java:40

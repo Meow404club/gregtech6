@@ -2101,6 +2101,15 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.monkey_wrench", "Monkey Wrench");
         add("item.gt6.magnifying_glass", "Magnifying Glass");
         add("item.gt6.pincers", "Pincers");
+        // task pistol-family-items: the gun family display names + desc tooltips (the
+        // upstream registration-row wordings "Pistol"/"Carbine"/"Rifle" and their
+        // desc-column taglines, Loader_Tools.java:198-200 verbatim)
+        add("item.gt6.pistol", "Pistol");
+        add("item.gt6.pistol.tooltip", "Single Shot, Moderate Damage");
+        add("item.gt6.carbine", "Carbine");
+        add("item.gt6.carbine.tooltip", "Single Shot, Big Damage");
+        add("item.gt6.rifle", "Rifle");
+        add("item.gt6.rifle.tooltip", "Single Shot, Massive Damage");
         add(GT6FoodCans.TAB_TITLE_KEY, "GregTech: Cans");
     }
 

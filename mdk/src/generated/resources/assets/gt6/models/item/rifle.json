@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "gt6:item/rifle",
+    "layer1": "gt6:item/rifle_overlay",
+    "layer2": "gt6:item/rifle_handle",
+    "layer3": "gt6:item/rifle_handle_overlay"
+  }
+}

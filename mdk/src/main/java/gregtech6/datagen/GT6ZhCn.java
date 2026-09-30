@@ -1832,6 +1832,14 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.flint_and_tinder"); // 打火石 (dump gt.metatool.01.50 :6766)
 		addDirect("item.gt6.rolling_pin"); // 擀面杖 (dump gt.metatool.01.46 :6756)
 		addDirect("item.gt6.bending_cylinder"); // 弯曲绕筒 (dump gt.metatool.01.54 :6786)
+		// task pistol-family-items — 手枪/卡宾枪/步枪 (dump gt.metatool.01.5000/.5002/.5004 :6768-6779,
+		// Loader_Tools.java:198-200 "Pistol"/"Carbine"/"Rifle")
+		addDirect("item.gt6.pistol");
+		addDirect("item.gt6.pistol.tooltip");
+		addDirect("item.gt6.carbine");
+		addDirect("item.gt6.carbine.tooltip");
+		addDirect("item.gt6.rifle");
+		addDirect("item.gt6.rifle.tooltip");
 		// task w5-t6-electric-nineteen — the 33 electric keys (19 names + 14 tooltips);
 		// the upstream dump carries ZERO electric-tool display rows, so every zh face is a
 		// hand word composed over the EXISTING dump roots (链锯头→链锯 / 扳手 / 圆锯

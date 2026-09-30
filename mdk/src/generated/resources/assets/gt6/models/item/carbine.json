@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "gt6:item/carbine",
+    "layer1": "gt6:item/carbine_overlay",
+    "layer2": "gt6:item/carbine_handle",
+    "layer3": "gt6:item/carbine_handle_overlay"
+  }
+}

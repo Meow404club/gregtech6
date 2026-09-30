@@ -1,0 +1,35 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "tag": "forge:rods/wooden"
+    },
+    "T": {
+      "item": "gt6:screw_osmiridium"
+    },
+    "V": {
+      "item": "minecraft:flint"
+    },
+    "X": {
+      "item": "gt6:plate_curved_osmiridium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "osmiridium",
+  "pattern": [
+    "XXV",
+    " TH",
+    "d h"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:pistol"
+  },
+  "show_notification": true
+}
