@@ -116,9 +116,10 @@ public class GT6RecipeMapEmiCategoryTest {
 	/**
 	 * The widget layout: the recording holder captures the slots/text; the positions are
 	 * the shared-seam coordinates FOLDED to the panel system (task 34-viewer-gui-bg,
-	 * the -5,-11 sOffset fold living in the meta exits) — Lathe 1 in / 2 out (no fluids):
+	 * the re-anchored -(5,7) sOffset fold living in the meta exits — task
+	 * viewer-row-headroom, pre-fix -(5,11)) — Lathe 1 in / 2 out (no fluids):
 	 * the NEI-GUI switch says in0 (53,25), out0/1 (107,25)/(125,25) → the viewer sees
-	 * (48,14)/(102,14)/(120,14), and the cost text starts at the panel band y73.
+	 * (48,18)/(102,18)/(120,18), and the cost text starts at the panel band y77.
 	 */
 	@Test
 	public void addWidgetsLaysSlotsAtTheSharedCoordinates() {
@@ -135,8 +136,8 @@ public class GT6RecipeMapEmiCategoryTest {
 		// riding the input list ahead of the outputs); then the row's two slots
 		assertEquals(3, tHolder.mSlots.size(), "the gear machine icon + one input slot + one output slot");
 		assertSlot(tHolder.mSlots.get(0), GT6RecipeMapViewerMeta.machineIconPos()[0], GT6RecipeMapViewerMeta.machineIconPos()[1]);
-		assertSlot(tHolder.mSlots.get(1), 48, 14);
-		assertSlot(tHolder.mSlots.get(2), 102, 14);
+		assertSlot(tHolder.mSlots.get(1), 48, 18);
+		assertSlot(tHolder.mSlots.get(2), 102, 18);
 		// the drawExtras face rides as five text widgets (Costs/Usage/Tier/Power/Time —
 		// the line CONTENT is pinned by the JEI-side test's costLines asserts, the shared
 		// seam; TextWidget.getBounds is client-bound so only the count is assertable here).
@@ -169,16 +170,19 @@ public class GT6RecipeMapEmiCategoryTest {
 		assertEquals(2, tHolder.mTextures.size(), "exactly two backdrop texture widgets");
 		var tPlate = tHolder.mTextures.get(0);
 		var tBand = tHolder.mTextures.get(1);
-		// plate: NEI.png crop (5,16,166,140) at (0,0) — the layer under everything
+		// plate: NEI.png crop (5,12,166,140) at (0,0) — the layer under everything (the
+		// re-anchored v; pre-fix (5,16,166,140), the +4 task viewer-row-headroom shift)
 		assertEquals(new Bounds(0, 0, 166, 140), tPlate.getBounds(), "the plate fills the 166x140 category");
 		assertEquals("gt6:textures/gui/machines/nei.png", textureOf(tPlate).toString());
 		assertEquals(5, uOf(tPlate));
-		assertEquals(16, vOf(tPlate));
-		// band: the per-map machine GUI (mGUIPath → lathe.png) crop (5,11,166,71) at (0,0)
-		assertEquals(new Bounds(0, 0, 166, 71), tBand.getBounds(), "the machine band rides the plate's top");
+		assertEquals(12, vOf(tPlate));
+		// band: the per-map machine GUI (mGUIPath → lathe.png) crop (5,7,166,75) at (0,0)
+		// — the re-anchored v with h extended to keep the same texture-row-81 bottom edge
+		// (pre-fix (5,11,166,71))
+		assertEquals(new Bounds(0, 0, 166, 75), tBand.getBounds(), "the machine band rides the plate's top");
 		assertEquals("gt6:textures/gui/machines/lathe.png", textureOf(tBand).toString());
 		assertEquals(5, uOf(tBand));
-		assertEquals(11, vOf(tBand));
+		assertEquals(7, vOf(tBand));
 	}
 
 	/**
@@ -207,7 +211,7 @@ public class GT6RecipeMapEmiCategoryTest {
 		assertTrue(tThird instanceof SlotWidget, "the machine icon is a SlotWidget (the hover face), got " + tThird.getClass().getSimpleName());
 		int[] tIconPos = GT6RecipeMapViewerMeta.machineIconPos();
 		assertEquals(new Bounds(tIconPos[0], tIconPos[1], 18, 18), ((SlotWidget) tThird).getBounds(),
-				"the machine icon sits on the folded gear spot (152,83)-(5,11)=(147,72), small 18px form");
+				"the machine icon sits on the folded gear spot (152,83)-(5,7)=(147,76), small 18px form");
 		var tDrawBack = SlotWidget.class.getDeclaredField("drawBack");
 		tDrawBack.setAccessible(true);
 		assertFalse(tDrawBack.getBoolean(tThird), "the machine icon is frame-less (upstream bare PositionedStack form)");
@@ -333,8 +337,8 @@ public class GT6RecipeMapEmiCategoryTest {
 			tPrevX = tSlot.getBounds().x();
 		}
 		// the BATH fold spot (the acceptance card's抽验): a 4-6-slot map with >3 fluids
-		// puts input row 0 at GUI y16 → panel y11, and the fluid input at GUI (53,63) →
-		// panel (48,52)
+		// puts input row 0 at GUI y16 → panel y9 (16−7, the re-anchored fold), and the
+		// fluid input at GUI (53,63) → panel (48,56)
 		int[] tFluid = GT6RecipeMapViewerMeta.viewerFluidInputPos(0);
 		assertTrue(slotAt(tHolder, tFluid[0], tFluid[1]) != null,
 				"the fluid input drawn at the folded " + tFluid[0] + "," + tFluid[1]);
