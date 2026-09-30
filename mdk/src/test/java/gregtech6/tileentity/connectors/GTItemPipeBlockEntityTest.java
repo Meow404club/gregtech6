@@ -2,6 +2,7 @@ package gregtech6.tileentity.connectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import gregtech6.registry.GTItemPipes;
+import gregtech6.registry.GTItemPipes.ItemPipeMaterial;
 import gregtech6.registry.GTItemPipes.ItemPipeRow;
 import gregtech6.registry.GTItemPipes.ItemPipeVariant;
 import gregtech6.tileentity.GTItemStackHandler;
@@ -29,7 +31,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
 /**
  * GTItemPipeBlockEntity offline tests (task pipe-item acceptance ②): the stepSize/
  * invSize parameter axis (the variant table MultiTileEntityPipeItem.java:77-82 over the
- * loader bases :1823-1825), the one-way latch truth table (:268), the monkeywrench
+ * loader line bases :1823-1843), the one-way latch truth table (:268), the monkeywrench
  * face-disable cycle (:128-153), the capacity window (:243-251), the scanPipes distance
  * order (ITileEntityItemPipe.Util :77-101 over the adjacency seam) and the NBT round
  * trip. The live container-to-container transfer is the RCON chain's (acceptance ③).
@@ -83,13 +85,16 @@ public class GTItemPipeBlockEntityTest extends GTOfflineTestBase {
 			assertEquals(tSteps[i], tVariants[i].stepSizeOf(tBase), tVariants[i] + " stepSize");
 			assertEquals(tInvs[i], tVariants[i].invSizeOf(tInv), tVariants[i] + " invSize");
 		}
-		// the whole first batch — three materials, all at the 32768/1 base (:1823-1825), 18 rows
-		assertEquals(18, GTItemPipes.ROWS.size());
+		// the full matrix — 21 loader lines × 6 variants = 126 rows (:1823-1843); every
+		// row's stepSize/invSize derive from its OWN line's base columns (the first batch
+		// collapsed them to the 32768/1 constants — item-pipe-matrix carries them verbatim)
+		assertEquals(21, GTItemPipes.MATERIALS.size());
+		assertEquals(126, GTItemPipes.ROWS.size());
 		for (ItemPipeRow tRow : GTItemPipes.ROWS) {
-			assertEquals(tRow.variant().stepSizeOf(32768), tRow.stepSize(), tRow.path() + " stepSize");
-			assertEquals(tRow.variant().invSizeOf(1), tRow.invSize(), tRow.path() + " invSize");
+			assertEquals(tRow.variant().stepSizeOf(tRow.material().baseStepSize()), tRow.stepSize(), tRow.path() + " stepSize");
+			assertEquals(tRow.variant().invSizeOf(tRow.material().baseInvSize()), tRow.invSize(), tRow.path() + " invSize");
 		}
-		// the metaId table: the three addItemPipes bases at the +2..+7 offsets (:77-82)
+		// the metaId table: the addItemPipes bases at the +2..+7 offsets (:77-82)
 		int[][] tExpectedIds = {{25002, 25003, 25004, 25005, 25006, 25007},
 				{25027, 25028, 25029, 25030, 25031, 25032},
 				{25052, 25053, 25054, 25055, 25056, 25057}};
@@ -104,6 +109,74 @@ public class GTItemPipeBlockEntityTest extends GTOfflineTestBase {
 		assertEquals("brass_item_pipe_restrictive_huge", GTItemPipes.ROWS.get(5).path());
 		assertEquals("constantan_item_pipe_medium", GTItemPipes.ROWS.get(6).path());
 		assertEquals("cobalt_brass_item_pipe_medium", GTItemPipes.ROWS.get(12).path());
+	}
+
+	/**
+	 * The 21-material matrix census (task item-pipe-matrix spec ③): every loader line
+	 * :1823-1843 present in registration order, the per-line base columns verbatim, three
+	 * spot rows across the different base regimes, and the registration face complete
+	 * (126 unique paths, blocks + items + the row table all keyed alike).
+	 */
+	@Test
+	public void matrixCensusPinsTheLoaderLines() {
+		// the loader line order + the per-line (aID, aStepSize, aInvSize) columns verbatim
+		String[][] tLines = {
+				{"brass", "25000", "32768", "1"},            // :1823
+				{"constantan", "25025", "32768", "1"},       // :1824
+				{"cobalt_brass", "25050", "32768", "1"},     // :1825
+				{"germanium", "25075", "32768", "1"},        // :1826
+				{"arsenic_copper", "25350", "16384", "1"},   // :1827
+				{"arsenic_bronze", "25375", "32768", "2"},   // :1828
+				{"electrum", "25100", "16384", "2"},         // :1829
+				{"sterling_silver", "25225", "16384", "2"},  // :1830
+				{"rose_gold", "25250", "16384", "2"},        // :1831
+				{"angmallen", "25275", "16384", "2"},        // :1832
+				{"black_bronze", "25125", "16384", "2"},     // :1833
+				{"aluminium_brass", "25150", "16384", "2"},  // :1834
+				{"manyullyn", "25175", "16384", "2"},        // :1835
+				{"magnalium", "25325", "16384", "2"},        // :1836
+				{"platinum", "25200", "8192", "4"},          // :1837
+				{"osmium", "25300", "4096", "8"},            // :1838
+				{"enderium", "25400", "2048", "16"},         // :1839
+				{"ultimet", "25425", "2048", "16"},          // :1840
+				{"elementium", "25475", "2048", "16"},       // :1841 (the MT.java:1822 setLocal face)
+				{"osmiridium", "25500", "1024", "32"},       // :1842
+				{"vibranium_silver", "25900", "64", "512"}}; // :1843
+		assertEquals(tLines.length, GTItemPipes.MATERIALS.size());
+		for (int tMat = 0; tMat < tLines.length; tMat++) {
+			ItemPipeMaterial tMaterial = GTItemPipes.MATERIALS.get(tMat);
+			assertEquals(tLines[tMat][0], tMaterial.slug(), "loader line " + tMat + " slug order");
+			assertEquals(Integer.parseInt(tLines[tMat][1]), tMaterial.metaIdBase(), tMaterial.slug() + " metaId base");
+			assertEquals(Long.parseLong(tLines[tMat][2]), tMaterial.baseStepSize(), tMaterial.slug() + " base stepSize");
+			assertEquals(Integer.parseInt(tLines[tMat][3]), tMaterial.baseInvSize(), tMaterial.slug() + " base invSize");
+			for (int tVar = 0; tVar < 6; tVar++) {
+				assertSame(tMaterial, GTItemPipes.ROWS.get(tMat * 6 + tVar).material(), tMaterial.slug() + " row band");
+			}
+		}
+		// 参数抽钉 3 行 — one row per distinct base regime (card spec ③)
+		ItemPipeRow tPtHuge = GTItemPipes.rowByPath("platinum_item_pipe_huge");
+		assertEquals(2048, tPtHuge.stepSize(), ":1837 — 8192/4 stepSize"); // NBT_PIPESIZE 8192/4
+		assertEquals(16, tPtHuge.invSize(), ":1837 — 4×4 invSize");
+		assertEquals(25204, tPtHuge.metaId(), ":1837 — 25200+4");
+		ItemPipeRow tOsRestrictive = GTItemPipes.rowByPath("osmium_item_pipe_restrictive_medium");
+		assertEquals(409600, tOsRestrictive.stepSize(), ":1838 — 4096×100 stepSize");
+		assertEquals(8, tOsRestrictive.invSize(), ":1838 — invSize 8");
+		assertEquals(25305, tOsRestrictive.metaId(), ":1838 — 25300+5");
+		ItemPipeRow tVsMedium = GTItemPipes.rowByPath("vibranium_silver_item_pipe_medium");
+		assertEquals(64, tVsMedium.stepSize(), ":1843 — the 64 stepSize floor");
+		assertEquals(512, tVsMedium.invSize(), ":1843 — the 512 invSize ceiling");
+		assertEquals(25902, tVsMedium.metaId(), ":1843 — 25900+2");
+		// registration completeness — 126 unique paths, blocks + items + the BET walk keyed alike
+		java.util.Set<String> tPaths = new java.util.HashSet<>();
+		for (ItemPipeRow tRow : GTItemPipes.ROWS) assertTrue(tPaths.add(tRow.path()), tRow.path() + " unique");
+		assertEquals(tPaths, GTItemPipes.BLOCKS_BY_PATH.keySet(), "every row registered a block");
+		assertEquals(tPaths, GTItemPipes.ITEMS_BY_PATH.keySet(), "every row registered an item");
+		assertEquals(126, GTItemPipes.BLOCKS.getEntries().size());
+		assertEquals(126, GTItemPipes.ITEMS.getEntries().size());
+		// the ore-dict seat resolves for every slug (the tint chain's materialOf face)
+		for (ItemPipeMaterial tMaterial : GTItemPipes.MATERIALS) {
+			assertNotNull(tMaterial.oreDictMaterial(), tMaterial.slug() + " ore-dict material");
+		}
 	}
 
 	@Test

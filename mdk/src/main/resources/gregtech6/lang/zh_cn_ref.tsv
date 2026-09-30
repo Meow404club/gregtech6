@@ -904,13 +904,13 @@ direct	gt.tileentity.portal.nether.tooltip.2	实际可工作区域与计算值�
 direct	gt6.cover.conveyor.display	小型电动输送机 (%s)	hand
 direct	gt6.cover.robot_arm.display	小型机械臂 (%s)	hand
 direct	gt6.cover.selector_tag.display	标签选择器 (%s)	hand
-direct	gt6.foamspray.owned	干燥后仅所有者可破坏	hand
-direct	gt6.foamspray.paint	可以喷射%s泡沫	hand
-direct	gt6.foamspray.mode.single_block	单体方块模式	hand
-direct	gt6.foamspray.mode.line	4米直线模式	hand
 direct	gt6.foamspray.mode.area	3x3区域模式	hand
+direct	gt6.foamspray.mode.line	4米直线模式	hand
+direct	gt6.foamspray.mode.single_block	单体方块模式	hand
 direct	gt6.foamspray.mode.single_slab	单体台阶模式	hand
 direct	gt6.foamspray.mode.slab_area	3x3台阶模式	hand
+direct	gt6.foamspray.owned	干燥后仅所有者可破坏	hand
+direct	gt6.foamspray.paint	可以喷射%s泡沫	hand
 direct	gt6.jade.boiler.demand	需求: %s HU/t	hand
 direct	gt6.jade.boiler.heat	储存热量: %s / %s HU (%s%%)	hand
 direct	gt6.jade.boiler.scale	水垢: %s%%	hand
@@ -1244,19 +1244,26 @@ direct	gt6.row.machine.steam_cracker	蒸汽裂解器 (%s)	hand
 direct	gt6.row.machine.wiremill	线材机 (%s)	hand
 direct	gt6.row.mat.adamantium	艾德曼合金	hand
 direct	gt6.row.mat.aluminium	铝	hand
+direct	gt6.row.mat.aluminium_brass	铝黄铜	hand
+direct	gt6.row.mat.angmallen	神圣之金	hand
 direct	gt6.row.mat.any_wood	木	hand
 direct	gt6.row.mat.arsenic_bronze	砷青铜	hand
 direct	gt6.row.mat.arsenic_copper	砷铜	hand
 direct	gt6.row.mat.bismuth	铋	hand
+direct	gt6.row.mat.black_bronze	黑青铜	hand
 direct	gt6.row.mat.brass	黄铜	hand
 direct	gt6.row.mat.brick	砖	hand
 direct	gt6.row.mat.bronze	青铜	hand
 direct	gt6.row.mat.chromium	铬	hand
 direct	gt6.row.mat.cobalt_brass	钴黄铜	hand
 direct	gt6.row.mat.constantan	康铜	hand
+direct	gt6.row.mat.electrum	琥珀金	hand
+direct	gt6.row.mat.elementium	源质钢	hand
+direct	gt6.row.mat.enderium	末影	hand
 direct	gt6.row.mat.ev	EV	hand
 direct	gt6.row.mat.fiery_steel	炙热钢	hand
 direct	gt6.row.mat.galvanized_steel	镀锌钢	hand
+direct	gt6.row.mat.germanium	锗	hand
 direct	gt6.row.mat.hv	HV	hand
 direct	gt6.row.mat.invar	殷钢	hand
 direct	gt6.row.mat.iridium	铱	hand
@@ -1264,10 +1271,17 @@ direct	gt6.row.mat.iron_wood	铁木	hand
 direct	gt6.row.mat.iv	IV	hand
 direct	gt6.row.mat.lead	铅	hand
 direct	gt6.row.mat.lv	LV	hand
+direct	gt6.row.mat.magnalium	镁铝合金	hand
+direct	gt6.row.mat.manyullyn	玛玉灵	hand
 direct	gt6.row.mat.mv	MV	hand
 direct	gt6.row.mat.netherite	下界合金	hand
+direct	gt6.row.mat.osmiridium	铱锇合金	hand
+direct	gt6.row.mat.osmium	锇	hand
+direct	gt6.row.mat.platinum	铂	hand
+direct	gt6.row.mat.rose_gold	玫瑰金	hand
 direct	gt6.row.mat.stainless_steel	不锈钢	hand
 direct	gt6.row.mat.steel	钢	hand
+direct	gt6.row.mat.sterling_silver	纯银	hand
 direct	gt6.row.mat.t1	T1	hand
 direct	gt6.row.mat.t2	T2	hand
 direct	gt6.row.mat.t3	T3	hand
@@ -1283,6 +1297,7 @@ direct	gt6.row.mat.tungsten_carbide	碳化钨	hand
 direct	gt6.row.mat.tungstensteel	钨钢	hand
 direct	gt6.row.mat.ultimet	钴铬钨合金	hand
 direct	gt6.row.mat.ulv	ULV	hand
+direct	gt6.row.mat.vibranium_silver	银振金合金	hand
 direct	gt6.row.mat.wood	木	hand
 direct	gt6.row.mat.wood_treated	木制	hand
 direct	gt6.row.melter.display	熔化炉	hand
@@ -1826,29 +1841,34 @@ direct	gt6.tagprefix.wire_gt14	14×%s线	hand
 direct	gt6.tagprefix.wire_gt15	15×%s线	hand
 direct	gt6.tagprefix.wire_gt16	16×%s线	hand
 direct	gt6.tagprefix.wood	%s	hand
-direct	gt6.tooltip.boiler.7	需要输入任何种类的水。使用蒸馏水以达到最高效率!	hand
-direct	gt6.tooltip.boiler.9	蒸汽压力过高时会爆炸!	hand
+direct	gt6.tooltip.barrel.10	存储的热量过多时会熔毁! (%s K)	hand
+direct	gt6.tooltip.barrel.11	使用活动扳手调整自动输出	hand
+direct	gt6.tooltip.barrel.12	使用软锤调整状态	hand
+direct	gt6.tooltip.barrel.13	使用放大镜观察细节	hand
+direct	gt6.tooltip.barrel.3	没有界面，手持小型漏斗或龙头右键进行交互!	hand
+direct	gt6.tooltip.barrel.4	进入此容器的任何能量介质流体都将湮灭!	hand
+direct	gt6.tooltip.barrel_gas.10	存储的热量过多时会熔毁! (%s K)	hand
+direct	gt6.tooltip.barrel_gas.11	使用活动扳手调整自动输出	hand
+direct	gt6.tooltip.barrel_gas.12	使用软锤调整状态	hand
+direct	gt6.tooltip.barrel_gas.13	使用放大镜观察细节	hand
+direct	gt6.tooltip.barrel_gas.3	没有界面，手持小型漏斗或龙头右键进行交互!	hand
+direct	gt6.tooltip.barrel_gas.4	进入此容器的任何能量介质流体都将湮灭!	hand
+direct	gt6.tooltip.barrel_gas.6	不漏气	hand
 direct	gt6.tooltip.boiler.1	将 1 L 水 转化为 160 L 蒸汽 消耗 80 HU	hand
-direct	gt6.tooltip.boiler.2	效率: 100.00%	hand
-direct	gt6.tooltip.boiler.3	能量输入: %1$s HU/t (任何面)	hand
-direct	gt6.tooltip.boiler.4	容量: %3$s HU	hand
-direct	gt6.tooltip.boiler.5	能量输出: %2$s 蒸汽/t (顶面)	hand
-direct	gt6.tooltip.boiler.6	容量: %3$s 蒸汽	hand
-direct	gt6.tooltip.boiler.8	没有界面，手持小型漏斗右键进行交互!	hand
 direct	gt6.tooltip.boiler.10	存储的热量过多时会熔毁!	hand
 direct	gt6.tooltip.boiler.11	使用凿子除去钙化残留物	hand
 direct	gt6.tooltip.boiler.12	使用放大镜观察细节	hand
 direct	gt6.tooltip.boiler.13	使用扳手设置朝向	hand
 direct	gt6.tooltip.boiler.14	蒸汽储量过半后才会对外输出!	hand
+direct	gt6.tooltip.boiler.2	效率: 100.00%	hand
+direct	gt6.tooltip.boiler.3	能量输入: %1$s HU/t (任何面)	hand
+direct	gt6.tooltip.boiler.4	容量: %3$s HU	hand
+direct	gt6.tooltip.boiler.5	能量输出: %2$s 蒸汽/t (顶面)	hand
+direct	gt6.tooltip.boiler.6	容量: %3$s 蒸汽	hand
+direct	gt6.tooltip.boiler.7	需要输入任何种类的水。使用蒸馏水以达到最高效率!	hand
+direct	gt6.tooltip.boiler.8	没有界面，手持小型漏斗右键进行交互!	hand
+direct	gt6.tooltip.boiler.9	蒸汽压力过高时会爆炸!	hand
 direct	gt6.tooltip.boiler_large.1	结构:	hand
-direct	gt6.tooltip.boiler_large.2	3x3 热接收器底座	hand
-direct	gt6.tooltip.boiler_large.3	3x3x3 相应材料的致密壁板, 中空	hand
-direct	gt6.tooltip.boiler_large.4	大型蒸汽锅炉主方块放在结构的侧面中心, 正面朝外	hand
-direct	gt6.tooltip.boiler_large.5	只能从锅炉的底层输入	hand
-direct	gt6.tooltip.boiler_large.6	将 1 L 水 转化为 160 L 蒸汽 消耗 80 HU	hand
-direct	gt6.tooltip.boiler_large.7	效率: 100.00%	hand
-direct	gt6.tooltip.boiler_large.8	能量输入: %1$s HU/t (Heat Transmitters)	hand
-direct	gt6.tooltip.boiler_large.9	容量: %3$s HU	hand
 direct	gt6.tooltip.boiler_large.10	能量输出: %2$s 蒸汽/t (Pipe Holes)	hand
 direct	gt6.tooltip.boiler_large.11	容量: %3$s 蒸汽	hand
 direct	gt6.tooltip.boiler_large.12	需要输入任何种类的水。使用蒸馏水以达到最高效率!	hand
@@ -1859,34 +1879,32 @@ direct	gt6.tooltip.boiler_large.16	使用建筑之杖快速搭建结构	hand
 direct	gt6.tooltip.boiler_large.17	使用放大镜观察细节	hand
 direct	gt6.tooltip.boiler_large.18	使用扳手设置朝向	hand
 direct	gt6.tooltip.boiler_large.19	蒸汽储量过半后才会对外输出!	hand
-direct	gt6.tooltip.tank.1	Capacity: %s L	hand
-direct	gt6.tooltip.barrel.3	没有界面，手持小型漏斗或龙头右键进行交互!	hand
-direct	gt6.tooltip.barrel.4	进入此容器的任何能量介质流体都将湮灭!	hand
-direct	gt6.tooltip.barrel.10	存储的热量过多时会熔毁! (%s K)	hand
-direct	gt6.tooltip.barrel.11	使用活动扳手调整自动输出	hand
-direct	gt6.tooltip.barrel.12	使用软锤调整状态	hand
-direct	gt6.tooltip.barrel.13	使用放大镜观察细节	hand
-direct	gt6.tooltip.barrel_gas.3	没有界面，手持小型漏斗或龙头右键进行交互!	hand
-direct	gt6.tooltip.barrel_gas.4	进入此容器的任何能量介质流体都将湮灭!	hand
-direct	gt6.tooltip.barrel_gas.6	不漏气	hand
-direct	gt6.tooltip.barrel_gas.10	存储的热量过多时会熔毁! (%s K)	hand
-direct	gt6.tooltip.barrel_gas.11	使用活动扳手调整自动输出	hand
-direct	gt6.tooltip.barrel_gas.12	使用软锤调整状态	hand
-direct	gt6.tooltip.barrel_gas.13	使用放大镜观察细节	hand
-direct	gt6.tooltip.multiblock.1	使用建筑之杖快速搭建结构	hand
-direct	gt6.tooltip.multiblock.2	使用放大镜观察细节	hand
-direct	gt6.tooltip.multiblock.3	使用扳手设置朝向	hand
+direct	gt6.tooltip.boiler_large.2	3x3 热接收器底座	hand
+direct	gt6.tooltip.boiler_large.3	3x3x3 相应材料的致密壁板, 中空	hand
+direct	gt6.tooltip.boiler_large.4	大型蒸汽锅炉主方块放在结构的侧面中心, 正面朝外	hand
+direct	gt6.tooltip.boiler_large.5	只能从锅炉的底层输入	hand
+direct	gt6.tooltip.boiler_large.6	将 1 L 水 转化为 160 L 蒸汽 消耗 80 HU	hand
+direct	gt6.tooltip.boiler_large.7	效率: 100.00%	hand
+direct	gt6.tooltip.boiler_large.8	能量输入: %1$s HU/t (Heat Transmitters)	hand
+direct	gt6.tooltip.boiler_large.9	容量: %3$s HU	hand
 direct	gt6.tooltip.converter.4	使用建筑之杖快速搭建结构	hand
 direct	gt6.tooltip.converter.5	使用放大镜观察细节	hand
 direct	gt6.tooltip.converter.6	使用扳手设置朝向	hand
+direct	gt6.tooltip.face.any	任何面	hand
+direct	gt6.tooltip.face.back	背面	hand
+direct	gt6.tooltip.face.bottom	底面	hand
+direct	gt6.tooltip.face.front	正面	hand
+direct	gt6.tooltip.face.left	左侧面	hand
+direct	gt6.tooltip.face.right	右侧面	hand
+direct	gt6.tooltip.face.top	顶面	hand
+direct	gt6.tooltip.generator.10	使用铲子清空容器	hand
+direct	gt6.tooltip.generator.11	使用扳手设置朝向	hand
 direct	gt6.tooltip.generator.4	需要正面是空气才能工作	hand
 direct	gt6.tooltip.generator.5	需要清理灰烬 (正面)	hand
 direct	gt6.tooltip.generator.6	需要打火石之类的东西点火 (正面)	hand
 direct	gt6.tooltip.generator.7	没有界面，右键以放入/取出物品! (正面)	hand
 direct	gt6.tooltip.generator.8	会使得周围的方块着火! (4m)	hand
 direct	gt6.tooltip.generator.9	当它在运作的时候接触会受伤! (顶面)	hand
-direct	gt6.tooltip.generator.10	使用铲子清空容器	hand
-direct	gt6.tooltip.generator.11	使用扳手设置朝向	hand
 direct	gt6.tooltip.lightningrod.1	最底层是3x3的钨壁板, 中间是避雷针电力输出口	hand
 direct	gt6.tooltip.lightningrod.2	第二层是3x3的大型铌钛合金线圈	hand
 direct	gt6.tooltip.lightningrod.3	第三层是3x3的钨壁板	hand
@@ -1899,6 +1917,23 @@ direct	gt6.tooltip.lightningrod.9	256m内存在别的避雷针会降低效率	ha
 direct	gt6.tooltip.lightningrod.capacity	%s EU 每次雷击	hand
 direct	gt6.tooltip.lightningrod.energy	能量输出: %s EU/p（至多16安）	hand
 direct	gt6.tooltip.lightningrod.structure	结构：	hand
+direct	gt6.tooltip.machine.1	配方: %s	hand
+direct	gt6.tooltip.machine.10	需要打火石之类的东西点火	hand
+direct	gt6.tooltip.machine.11	使用螺丝刀切换模式	hand
+direct	gt6.tooltip.machine.12	使用活动扳手调整自动输入	hand
+direct	gt6.tooltip.machine.13	使用活动扳手调整自动输出	hand
+direct	gt6.tooltip.machine.14	使用软锤来重置	hand
+direct	gt6.tooltip.machine.16	使用放大镜观察细节	hand
+direct	gt6.tooltip.machine.2	在消耗额外能量时可以超频	hand
+direct	gt6.tooltip.machine.3	效率: %s%%	hand
+direct	gt6.tooltip.machine.4	能量输入: %s	hand
+direct	gt6.tooltip.machine.6	物品输入: %s	hand
+direct	gt6.tooltip.machine.7	物品输出: %s	hand
+direct	gt6.tooltip.machine.8	液体输入: %s	hand
+direct	gt6.tooltip.machine.9	液体输出: %s	hand
+direct	gt6.tooltip.multiblock.1	使用建筑之杖快速搭建结构	hand
+direct	gt6.tooltip.multiblock.2	使用放大镜观察细节	hand
+direct	gt6.tooltip.multiblock.3	使用扳手设置朝向	hand
 direct	gt6.tooltip.pipe_fluid.1	流量: %1$s L/t	hand
 direct	gt6.tooltip.pipe_fluid.10	使用放大镜观察细节	hand
 direct	gt6.tooltip.pipe_fluid.2	容量: %2$s L	hand
@@ -1912,6 +1947,7 @@ direct	gt6.tooltip.sensor.4	在显示屏上使用螺丝刀开关十六进制显�
 direct	gt6.tooltip.sensor.5	在其他地方使用螺丝刀调整其他模式。	hand
 direct	gt6.tooltip.sensor.6	使用活动扳手调整输入(探测)面	hand
 direct	gt6.tooltip.sensor.7	使用扳手设置朝向	hand
+direct	gt6.tooltip.tank.1	Capacity: %s L	hand
 direct	gt6.tooltip.wire.1	电压(V): %1$s EU (%2$s)	hand
 direct	gt6.tooltip.wire.2	电流(A): %3$s	hand
 direct	gt6.tooltip.wire.3	损耗: %4$s EU/m	hand
@@ -9452,24 +9488,3 @@ mte	multiblock.tank.wooden	小型木质储罐	auto
 mte	multiblock.tank555.metal	大型储罐	auto
 mte	plantpot.tooltip.1	上面能种植任意植物!	auto
 mte	usb.switch.tooltip	使用选择面板在16个USB之间切换	auto
-direct	gt6.tooltip.machine.1	配方: %s	hand
-direct	gt6.tooltip.machine.2	在消耗额外能量时可以超频	hand
-direct	gt6.tooltip.machine.3	效率: %s%%	hand
-direct	gt6.tooltip.machine.4	能量输入: %s	hand
-direct	gt6.tooltip.machine.6	物品输入: %s	hand
-direct	gt6.tooltip.machine.7	物品输出: %s	hand
-direct	gt6.tooltip.machine.8	液体输入: %s	hand
-direct	gt6.tooltip.machine.9	液体输出: %s	hand
-direct	gt6.tooltip.machine.10	需要打火石之类的东西点火	hand
-direct	gt6.tooltip.machine.11	使用螺丝刀切换模式	hand
-direct	gt6.tooltip.machine.12	使用活动扳手调整自动输入	hand
-direct	gt6.tooltip.machine.13	使用活动扳手调整自动输出	hand
-direct	gt6.tooltip.machine.14	使用软锤来重置	hand
-direct	gt6.tooltip.machine.16	使用放大镜观察细节	hand
-direct	gt6.tooltip.face.any	任何面	hand
-direct	gt6.tooltip.face.bottom	底面	hand
-direct	gt6.tooltip.face.top	顶面	hand
-direct	gt6.tooltip.face.left	左侧面	hand
-direct	gt6.tooltip.face.front	正面	hand
-direct	gt6.tooltip.face.right	右侧面	hand
-direct	gt6.tooltip.face.back	背面	hand

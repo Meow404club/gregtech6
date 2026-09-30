@@ -120,9 +120,11 @@ public final class GT6BlockStates extends BlockStateProvider {
         // multiplied by mRGBa, pass 1 = the untinted <SET>_OVERLAY black outline
         // (TextureSet.java:145-181 getIcon/getIconPasses). The connector side segment
         // picks INDEX_BLOCK_PIPE_SIDE = the 'pipeSide' art added to every set
-        // (GT_API.java:158 addToAll); the live sets here are wood (the two fluid rows —
-        // the MT wood factory = SET_WOOD) and copper (the 18 item pipe rows — Brass/
-        // Constantan/CobaltBrass ride the clloymachine factory = SET_COPPER, MT.java:716).
+        // (GT_API.java:158 addToAll); the live art here is wood (the two fluid rows —
+        // the MT wood factory = SET_WOOD) and copper (the 126 item pipe rows — since
+        // item-pipe-matrix the materials span SET_COPPER/SHINY/DULL/METALLIC, but only
+        // the copper pair is borrowed: the whole matrix shares it as the declared
+        // placeholder, the per-set art face is the render-pool card's domain).
         // The logistics wire renders its own dedicated pair instead of the set art
         // (MultiTileEntityWireLogistics :48-49 = iconsets/LOGISTICS_WIRE x mRGBa +
         // LOGISTICS_WIRE_OVERLAY; the NBT_MATERIAL column is MT.NULL, Loader :1819, so
