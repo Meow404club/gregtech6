@@ -53,8 +53,8 @@ import gregtech6.tileentity.tools.TileEntitySmeltery;
  * neo :124 双腿实证），桥材质走 {@link FluidBridge#moltenFluidForMaterial}；②其余态 overlay =
  * 自实现 {@link GT6ContentFaceElement} 渲染 ContentFace 缝同源贴图（固体=bodyTexture+mRGBaSolid
  * / 熔融=smeltery_content+mRGBaLiquid——{@code GT6CrucibleDatagen.contentFace} 只读消费，与碗内
- * 观感一致；固体臂的 loud 映射表对未收录材质抛 {@code IllegalStateException}，此处 guard 回落
- * 纯色条——熔融臂对全材质恒可用）；③量纲词 'U'/'份' 进 lang（{@link #LANG_ENTRY} 新键 +
+ * 观感一致；固体臂经 bodyTexture 全铺 SET 分派（task crucible-solid-face-matrix）对全材质
+ * 恒可用）；③量纲词 'U'/'份' 进 lang（{@link #LANG_ENTRY} 新键 +
  * total 键 zh 面 份）；④融毁红字联动——闩落时条文字变红（{@code textColor} =
  * {@link GT6JadeRows#FORMAT_STALLED}），独立红色温度警报行（r8 保留裁定）被用户裁定废除：
  * 行与 gt6.jade.crucible.temperature 键同 lang 四落退役（v3 覆盖 r8 '旧行保留'）。⑤服务端新增
@@ -168,7 +168,7 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 	 * {@link #MAX_CONTENT_ROWS} 条，截去数走 int。容量上限 {@code aTotalMax} 由调用方各取
 	 * 自家参数。overlay 分派（v3 ①②）：lightest（上游显示普查，MultiTileEntitySmeltery
 	 * .java:299 同走）熔融且桥有流体 → Jade 官方流体元素载荷；否则 ContentFace 缝载荷
-	 * （熔融臂全材质可用，固体臂 loud 表 guard 回落 null = 纯色条）。
+	 * （熔融/固体两臂经全铺 SET 分派对全材质恒可用——防御 catch 契约见 {@link #overlayTag}）。
 	 */
 	public static void writeCrucibleData(CompoundTag aData, long aTemp, long aTempMax, boolean aMeltdown,
 			long aTotalMax, List<OreDictMaterialStack> aContent) {
@@ -209,9 +209,10 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 
 	/**
 	 * overlay 载荷（纯函数离线面）：桥熔融流体在 → 官方流体元素载荷（registry id + 桥 144 L/unit
-	 * 惯例量）；否则 ContentFace 缝载荷（texture 全限定名 + 不透明 ARGB tint）。固体臂的 loud
-	 * 映射表（bodyTexture 对未收录材质抛 {@code IllegalStateException}——映射表只收碗模型四行）
-	 * 在此 guard 回落 null：客户端零 overlay 键 = 纯色条（今天的观感），熔融臂恒可用不受此限。
+	 * 惯例量）；否则 ContentFace 缝载荷（texture 全限定名 + 不透明 ARGB tint）。bodyTexture
+	 * 已是全铺 SET 分派（task crucible-solid-face-matrix，上游 :983-990 全材质语义），固体臂
+	 * 恒可用；{@link GT6CrucibleDatagen#contentFace} 的 {@code IllegalStateException} 契约若
+	 * 日后再收窄，此 catch 兜底回落 null = 纯色条，服务器写数据面永不 crash。
 	 */
 	@Nullable
 	public static CompoundTag overlayTag(OreDictMaterialStack aLightest, boolean aMolten, long aTotal) {
@@ -230,8 +231,8 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 			rTag.putInt(OVERLAY_TINT, tFace.tintARGB());
 			return rTag;
 		} catch (IllegalStateException tUnmapped) {
-			// ponytail: 固体臂 loud 表只收碗模型四行（Stone/Ceramic/Bronze/Steel）——其余材质
-			// 回落纯色条；把 bodyTexture 铺满全材质是 datagen 卡的事，此处只读不扩表
+			// ponytail: 全铺表（crucible-solid-face-matrix）后此臂理论不可达——保留作防御：
+			// contentFace 契约若再收窄，回落纯色条而非炸服务器写数据面
 			return null;
 		}
 	}
