@@ -36,7 +36,8 @@ import gregtech6.registry.GT6Molds;
  * <li><b>blockstates</b>: the 32 mold rows (stone + the 31 ceramic — blank + 30
  *     pre-carved shapes, the one upstream MTE design 1072, Loader:347/:352/:391-420) as
  *     the 5x5 bitmap stamp models (issue #41: the CONCAVE mold — the 1px floor + the four
- *     2px walls + one 2.4x3x2.4px element per UNLIT bit, the lit bit = chiseled out,
+ *     2px walls + the 12 wall-top rim handles (MOLD_BOUNDS[6..17]) + one 2.4x3x2.4px
+ *     element per UNLIT bit, the lit bit = chiseled out,
  *     MultiTileEntityMold.java:328-335/:537) riding the MATERIAL SMOOTH body texture
  *     ({@link GT6CrucibleDatagen#bodyTexture}, task 40-41-mold-assets — the former
  *     flat andesite/cobble placeholder is gone), and the 2 faucet rows as material smooth
@@ -174,9 +175,11 @@ public final class GT6MoldDatagen {
 			 * the MOLD is CONCAVE — a chisel strike SETS a bit (MultiTileEntityMold.java
 			 * :328-335) and the render gate :537 skips exactly the lit cells, so bit=1 =
 			 * carved out. The elements: the 1px full-footprint floor, the four 2px-thick
-			 * 4px-tall walls (MOLD_BOUNDS[2..5]), then one 2.4x3x2.4px element per UNLIT
-			 * bit standing as the 3px surface — a lit bit stays a 2px-deep recess over the
-			 * floor. The block/block parent carries ONLY the display transforms (the
+			 * 4px-tall walls (MOLD_BOUNDS[2..5]), the 12 rim handle boxes (MOLD_BOUNDS
+			 * [6..17] — two posts + a spanning cap per side, the upstream wall-top trim),
+			 * then one 2.4x3x2.4px element per UNLIT bit standing as the 3px surface — a
+			 * lit bit stays a 2px-deep recess over the floor. The block/block parent
+			 * carries ONLY the display transforms (the
 			 * portal-frame precedent — the standalone element model would strip them from
 			 * the BlockItem GUI/hand rendering); the formed item model parents this model,
 			 * so the BlockItem inventory face IS the 3D shape for free. The grayscale-borrow
@@ -205,6 +208,29 @@ public final class GT6MoldDatagen {
 				moldWall(tModel, 0, 14, 16, 16, net.minecraft.core.Direction.SOUTH, tTint);
 				moldWall(tModel, 0, 0, 2, 16, net.minecraft.core.Direction.WEST, tTint);
 				moldWall(tModel, 0, 0, 16, 2, net.minecraft.core.Direction.NORTH, tTint);
+				// the rim handles (MOLD_BOUNDS[6..17], MultiTileEntityMold.java:467-478):
+				// per side two posts y 4..6 + the spanning cap y 6..7 — the wall-top trim.
+				// The texture gate getTexture2 :522-533 renders the caps (passes 8/11/14/17)
+				// on all six faces but the posts (6/7/9/10/12/13/15/16) on the four
+				// HORIZONTAL ones only — an emitted post up face would coplanar z-fight the
+				// cap bottom, a post down face the wall top. The outward boundary face rides
+				// the wall cullface; pure decoration, selection/collision stay the :559-560
+				// boxes.
+				for (int tRim = 0; tRim < RIM_HANDLES.length; tRim++) {
+					int[] tBox = RIM_HANDLES[tRim];
+					net.minecraft.core.Direction tOutward = RIM_OUTWARD[tRim / 3];
+					boolean tCap = tRim % 3 == 2;
+					var tElement = tModel.element()
+							.from(tBox[0], tBox[1], tBox[2]).to(tBox[3], tBox[4], tBox[5]);
+					for (net.minecraft.core.Direction tDir : net.minecraft.core.Direction.values()) {
+						if (!tCap && tDir.getAxis() == net.minecraft.core.Direction.Axis.Y) continue;
+						var tFace = tElement.face(tDir).texture("#body");
+						if (tTint) tFace.tintindex(0);
+						if (tDir == tOutward) tFace.cullface(tDir);
+						tFace.end();
+					}
+					tElement.end();
+				}
 				// the unlit cells stand as the surface; the carved (lit) cells stay open
 				for (int i = 0; i < 25; i++) {
 					if ((aShape & (1 << i)) == 0) {
@@ -229,6 +255,21 @@ public final class GT6MoldDatagen {
 							if (aDir == aOutward) aFace.cullface(aDir);
 						}).end();
 			}
+
+			/**
+			 * The rim handle boxes, MOLD_BOUNDS[6..17] verbatim in px (x0,y0,z0 → x1,y1,z1)
+			 * — four sides × (post, post, cap), MultiTileEntityMold.java:467-478.
+			 */
+			private static final int[][] RIM_HANDLES = {
+					{6, 4, 0, 7, 6, 2}, {9, 4, 0, 10, 6, 2}, {6, 6, 0, 10, 7, 2},       // north
+					{6, 4, 14, 7, 6, 16}, {9, 4, 14, 10, 6, 16}, {6, 6, 14, 10, 7, 16}, // south
+					{0, 4, 6, 2, 6, 7}, {0, 4, 9, 2, 6, 10}, {0, 6, 6, 2, 7, 10},       // west
+					{14, 4, 6, 16, 6, 7}, {14, 4, 9, 16, 6, 10}, {14, 6, 6, 16, 7, 10}}; // east
+
+			/** The outward boundary face per {@link #RIM_HANDLES} group. */
+			private static final net.minecraft.core.Direction[] RIM_OUTWARD = {
+					net.minecraft.core.Direction.NORTH, net.minecraft.core.Direction.SOUTH,
+					net.minecraft.core.Direction.WEST, net.minecraft.core.Direction.EAST};
 		}
 
 	// ------------------------------------------------------------------------------------

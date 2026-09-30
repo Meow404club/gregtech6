@@ -3,17 +3,18 @@
  * 41-mold-invert-fix (issue #41) — the mold BLOCKS carry the upstream CONCAVE shape
  * geometry: a chisel strike SETS a bit (MultiTileEntityMold.java:328-335) and the render
  * gate :537 skips the lit cells, so bit=1 = carved out. The committed model JSON is the
- * 1px full-footprint floor + the four 2px walls + one 2.4x3x2.4px element per UNLIT bit
- * (the lit bit = a 2px-deep recess over the floor = the negative/cavity form), the
- * selection/collision shapes riding the upstream boxes (MultiTileEntityMold.java
- * :559-560), and the formed BlockItem parenting the block model (the 3D inventory shape
- * for free).
+ * 1px full-footprint floor + the four 2px walls + the 12 wall-top rim handles
+ * (MOLD_BOUNDS[6..17], two posts + a spanning cap per side — the mold-rim-handles card)
+ * + one 2.4x3x2.4px element per UNLIT bit (the lit bit = a 2px-deep recess over the
+ * floor = the negative/cavity form), the selection/collision shapes riding the upstream
+ * boxes (MultiTileEntityMold.java :559-560), and the formed BlockItem parenting the
+ * block model (the 3D inventory shape for free).
  *
  * <p>Three pins (the card face): (a) the 30 ceramic masks vs the Loader
  * _MultiTileEntities.java:391-420 smelting literals transcribed HERE independently —
  * the transcription is the card's lifeline, so the reference table must not import the
- * registry's own copy; (b) the committed model JSON element census = 5 + (25 − popcount)
- * — plate (all 25 carved) = the bare 5-element dish, blank = 30, every cell element y
+ * registry's own copy; (b) the committed model JSON element census = 17 + (25 − popcount)
+ * — plate (all 25 carved) = the bare 17-element dish, blank = 42, every cell element y
  * 0..3 (nails the retired convex minY=1/maxY=4 forms); (c) the upstream selection box
  * (full 16x16x3px footprint) and collision box (12x12x2px inner cavity).
  */
@@ -121,8 +122,9 @@ public class GT6MoldGeometryDatagenTest extends GTOfflineTestBase {
 	}
 
 	/**
-	 * (b) The committed model JSON: the 5+(25−popcount) elements — floor + 4 walls + one
-	 * element per UNLIT (carved-out) bit, on the 2.4px grid, every cell y 0..3.
+	 * (b) The committed model JSON: the 17+(25−popcount) elements — floor + 4 walls + the
+	 * 12 rim handles + one element per UNLIT (carved-out) bit, on the 2.4px grid, every
+	 * cell y 0..3.
 	 */
 	@Test
 	void moldModelsFollowTheBitmap() throws Exception {
@@ -136,8 +138,8 @@ public class GT6MoldGeometryDatagenTest extends GTOfflineTestBase {
 					tRow.path() + ": the body texture key");
 			JsonArray tElements = tModel.getAsJsonArray("elements");
 			int tCarved = 25 - Integer.bitCount(tMask);
-			assertEquals(tCarved + 5, tElements.size(),
-					tRow.path() + ": floor + 4 walls + one element per carved (unlit) bit");
+			assertEquals(tCarved + 17, tElements.size(),
+					tRow.path() + ": floor + 4 walls + 12 rim handles + one element per carved (unlit) bit");
 			// element 0 = the full-footprint 1px floor (MOLD_BOUNDS[1])
 			JsonArray tFrom = tElements.get(0).getAsJsonObject().getAsJsonArray("from");
 			JsonArray tTo = tElements.get(0).getAsJsonObject().getAsJsonArray("to");
@@ -160,10 +162,44 @@ public class GT6MoldGeometryDatagenTest extends GTOfflineTestBase {
 					assertEquals(tWalls[w][k], tA[k], 1e-9, tRow.path() + " wall " + w + " coord " + k);
 				}
 			}
-			// elements 5..n = the UNLIT cells standing as the 3px surface (the lit bit =
+			// elements 5..16 = the 12 rim handle boxes (MOLD_BOUNDS[6..17],
+			// MultiTileEntityMold.java:467-478 — per side two posts y 4..6 + the spanning
+			// cap y 6..7, MOLD_BOUNDS order N/S/W/E); four representatives pinned, both
+			// kinds on both axes
+			double[][] tRimPins = {
+					{6, 4, 0, 7, 6, 2},     // element 5  = MOLD_BOUNDS[6],  north post
+					{6, 6, 0, 10, 7, 2},    // element 7  = MOLD_BOUNDS[8],  north cap
+					{14, 4, 6, 16, 6, 7},   // element 14 = MOLD_BOUNDS[15], east post
+					{14, 6, 6, 16, 7, 10}}; // element 16 = MOLD_BOUNDS[17], east cap
+			int[] tRimIdx = {5, 7, 14, 16};
+			for (int r = 0; r < tRimPins.length; r++) {
+				double[] tA = coords(tElements.get(tRimIdx[r]).getAsJsonObject());
+				for (int k = 0; k < 6; k++) {
+					assertEquals(tRimPins[r][k], tA[k], 1e-9,
+							tRow.path() + " rim element " + tRimIdx[r] + " coord " + k);
+				}
+			}
+			// the face semantics (getTexture2 :522-533): the posts carry the four
+			// HORIZONTAL faces only — no up/down, whose y6/y4 planes would coplanar
+			// z-fight the cap bottom / wall top — and the caps all six; the outward
+			// boundary face rides the wall cullface
+			JsonObject tPostFaces = tElements.get(5).getAsJsonObject().getAsJsonObject("faces");
+			assertEquals(4, tPostFaces.size(), tRow.path() + ": the post shows its four horizontal faces");
+			assertFalse(tPostFaces.has("up"), tRow.path() + ": the post owns no up face (the cap bottom is at y6)");
+			assertFalse(tPostFaces.has("down"), tRow.path() + ": the post owns no down face (the wall top is at y4)");
+			assertEquals("north", tPostFaces.getAsJsonObject("north").get("cullface").getAsString(),
+					tRow.path() + ": the post outward face culls north");
+			JsonObject tCapFaces = tElements.get(7).getAsJsonObject().getAsJsonObject("faces");
+			assertEquals(6, tCapFaces.size(), tRow.path() + ": the cap shows all six faces");
+			assertEquals("north", tCapFaces.getAsJsonObject("north").get("cullface").getAsString(),
+					tRow.path() + ": the cap outward face culls north");
+			assertEquals("east", tElements.get(16).getAsJsonObject().getAsJsonObject("faces")
+					.getAsJsonObject("east").get("cullface").getAsString(),
+					tRow.path() + ": the east cap outward face culls east");
+			// elements 17..n = the UNLIT cells standing as the 3px surface (the lit bit =
 			// carved out), in bit order i: cell (xcol=i/5, zrow=i%5), the MOLD_BOUNDS[18+i]
 			// walk — independent double math, 1e-3 slack for the 2.4px float print
-			int tElement = 5;
+			int tElement = 17;
 			for (int i = 0; i < 25; i++) {
 				if ((tMask & (1 << i)) != 0) continue;
 				double[] tE = {gridLine(i / 5), 0.0, gridLine(i % 5), gridLine(i / 5 + 1), 3.0, gridLine(i % 5 + 1)};
@@ -174,11 +210,11 @@ public class GT6MoldGeometryDatagenTest extends GTOfflineTestBase {
 				tElement++;
 			}
 		}
-		// the extremes, nailed by name: the all-carved plate = the bare 5-element dish,
-		// the untouched blank = 30 (25 cells + 5)
-		assertEquals(5, generatedJson("assets/gt6/models/block/mold_ceramic_plate.json")
+		// the extremes, nailed by name: the all-carved plate = the bare 17-element dish
+		// (5 + 12 rim), the untouched blank = 42 (25 cells + 17)
+		assertEquals(17, generatedJson("assets/gt6/models/block/mold_ceramic_plate.json")
 				.getAsJsonArray("elements").size(), "the plate molds as the plain dish (25 carved)");
-		assertEquals(30, generatedJson("assets/gt6/models/block/mold_ceramic.json")
+		assertEquals(42, generatedJson("assets/gt6/models/block/mold_ceramic.json")
 				.getAsJsonArray("elements").size(), "the blank keeps all 25 surface cells");
 	}
 

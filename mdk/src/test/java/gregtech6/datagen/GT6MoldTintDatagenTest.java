@@ -76,6 +76,25 @@ public class GT6MoldTintDatagenTest extends GTOfflineTestBase {
 		}
 	}
 
+	/**
+	 * The stamp-element form: every face PRESENT carries tintindex 0, with a face-count
+	 * floor so the walk cannot go vacuous. The mold rim posts (MOLD_BOUNDS[6..17]) carry
+	 * only their four horizontal faces by the upstream texture gate
+	 * (MultiTileEntityMold.java getTexture2 :522-533 — no up/down, whose y6/y4 planes
+	 * would coplanar z-fight the cap bottom / wall top), so the strict six-face cube
+	 * assertion above cannot ride the stamp walk.
+	 */
+	private static void assertEveryPresentFaceTinted(JsonObject aElement, String aLabel) {
+		JsonObject tFaces = aElement.getAsJsonObject("faces");
+		assertTrue(tFaces.size() >= 4, aLabel + ": at least the four horizontal faces exist");
+		for (String tFace : FACES) {
+			if (!tFaces.has(tFace)) continue;
+			JsonElement tTint = tFaces.getAsJsonObject(tFace).get("tintindex");
+			assertNotNull(tTint, aLabel + ": the " + tFace + " face carries a tintindex");
+			assertEquals(0, tTint.getAsInt(), aLabel + ": the " + tFace + " face tintindex is 0");
+		}
+	}
+
 	private static void assertNoTintAnywhere(String aModelPath, JsonObject aModel, String aLabel) {
 		assertFalse(aModel.toString().contains("tintindex"),
 				aLabel + " (" + aModelPath + "): the finished/vanilla row stays un-tinted");
@@ -90,7 +109,7 @@ public class GT6MoldTintDatagenTest extends GTOfflineTestBase {
 		for (GT6Molds.MoldRow tRow : tRows) {
 			JsonObject tModel = generatedJson("assets/gt6/models/block/" + tRow.path() + ".json");
 			for (JsonElement tElement : tModel.getAsJsonArray("elements")) {
-				assertEveryFaceTinted(tElement.getAsJsonObject(), tRow.path());
+				assertEveryPresentFaceTinted(tElement.getAsJsonObject(), tRow.path());
 			}
 		}
 	}
