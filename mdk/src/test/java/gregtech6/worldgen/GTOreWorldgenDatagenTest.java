@@ -359,15 +359,21 @@ class GTOreWorldgenDatagenTest {
                 "redsand/mud are NOT upstream small-ore hosts (the spec exclusion)");
     }
 
-    /** The 3 small-ore biome-modifier keys, Dim order, in the leg's biome_modifier registry. */
+    /**
+     * The 2 small-ore biome-modifier keys (nether/end — the dims with no lens chain),
+     * in the leg's biome_modifier registry. The overworld face rides the strata_lenses
+     * chain instead (task lens-ore-base-order): a standalone ore_small_overworld
+     * modifier's landing order was the uncontracted datapack load order, so the band
+     * could run before the lens and ship stone-based ore inside the lens stone.
+     */
     @Test
     void oreBiomeModifierKeysArePinned() {
-        assertEquals(3, GT6WorldgenDatagen.ORE_BIOME_MODIFIER_KEYS.size(), "one per vanilla dimension tag");
+        assertEquals(2, GT6WorldgenDatagen.ORE_BIOME_MODIFIER_KEYS.size(), "nether/end keep their own modifiers");
         List<String> tPaths = GT6WorldgenDatagen.ORE_BIOME_MODIFIER_KEYS.stream()
                 .map(tKey -> tKey.location().getPath()).toList();
-        assertEquals(List.of("ore_small_overworld", "ore_small_nether", "ore_small_end"), tPaths,
-                "the key paths follow the Dim order");
-        for (int i = 0; i < 3; i++) {
+        assertEquals(List.of("ore_small_nether", "ore_small_end"), tPaths,
+                "the key paths follow the Dim order (no overworld row)");
+        for (int i = 0; i < 2; i++) {
             assertEquals(GT6WorldgenDatagen.biomeModifierRegistryKey().location().toString(),
                     GT6WorldgenDatagen.ORE_BIOME_MODIFIER_KEYS.get(i).registry().toString(),
                     "modifier key " + i + " lives in the leg's biome_modifier registry");
