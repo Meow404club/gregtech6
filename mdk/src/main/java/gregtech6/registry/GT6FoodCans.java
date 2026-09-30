@@ -20,39 +20,31 @@ import net.minecraftforge.registries.RegistryObject;
 import gregtech6.GT6Mod;
 
 /**
- * The GT6 food-can registration home — task food-can-row0, the row0 MINIMAL subset of
- * the upstream {@code MultiItemCans} domain (decisions.p25-foodcan-row0-minimal-subset).
- * Card-owned self-contained {@code @EventBusSubscriber(MOD)} DeferredRegister attached from
- * the construct event (the GT6SprayCans/GT6Tools precedent; GT6Mod.java /
- * GTModBusListener.java stay untouched).
+ * The GT6 food-can registration home — task food-can-row0 (the row0 MINIMAL subset of
+ * the upstream {@code MultiItemCans} domain, decisions.p25-foodcan-row0-minimal-subset),
+ * COMPLETED by task food-meat-items to the full 58-item census (IL.java:287-296): the
+ * nine 6-tier families (unknown/rotten/veggie/fruit/bread/meat/fish/chum/cookies) + the
+ * three air cans + the empty can. Card-owned self-contained
+ * {@code @EventBusSubscriber(MOD)} DeferredRegister attached from the construct event
+ * (the GT6SprayCans/GT6Tools precedent; GT6Mod.java / GTModBusListener.java stay
+ * untouched).
  *
- * <p>The subset — 8 items of the upstream 51-meta census (8 families x 6 tiers + 3 air
- * cans + the empty can), everything else POOLED (acceptance 4: zero appearances):
- * <ul>
- * <li><b>the empty can</b> — upstream {@code IL.Food_Can_Empty} meta 998 "Empty Food Can"
- *     (MultiItemRandomTools.java:234, registered on the RANDOMTOOLS multiitem upstream, the
- *     cans tab member by creative-tab id 74); the canning INPUT of every row0 recipe and
- *     the crafting row's output.</li>
- * <li><b>the CANS_ROTTEN family, all 6 tiers</b> — upstream metas 11-16
- *     (MultiItemCans.java:53-58, {@code IL.CANS_ROTTEN} = {Food_Can_Rotten_1..6},
- *     IL.java:508); the tiered family ARRAY is what the RM.food_can dispatch indexes
- *     (RM.java:743-753 {@code aCans[tier]}), which is why all six land in row0 and not
- *     just the two the rotten_flesh/spider_eye rows output.</li>
- * <li><b>the Cookie Tin output</b> — upstream {@code Food_Can_Cookies_6} meta 86 "Huge
- *     Food Can (Cookies)" (MultiItemCans.java:107, {@code IL.CANS_COOKIES[5]}); the
- *     cookie x6 row's product (the canned-name "Cookie Tin" is the NEI display face of
- *     the row, MultiItemFood.java:600 — the ITEM is the tier-6 cookies can).</li>
- * </ul>
- * POOLED with the other food-can cards: the Undefined/Veggie/Fruit/Bread/Meat/Fish/Chum
- * families, the other five Cookies tiers, the three air cans, the eat-face FoodStat
- * (finishUsingItem — MultiItemCans.getContainerItem :124-126), the rot conversion
- * (getRotten :128-132) and the IC2 can rows.
+ * <p>The census — upstream metas on the MultiItemCans meta item (MultiItemCans.java:46-111):
+ * unknown 1-6, rotten 11-16, veggie 21-26, fruit 31-36, bread 41-46, meat 51-56, fish
+ * 61-66, chum 71-76, cookies 81-86, air 32764-32766, the empty can 998 on
+ * MultiItemRandomTools (:234). Id flattening (the GT6SprayCans ruling): one id per can,
+ * snake of the size adjective + family ({@code "Tiny Food Can (Rotten)"} →
+ * {@code food_can_rotten_tiny}); the air cans keep their IL-name snakes
+ * {@code food_can_air}/{@code _nether}/{@code _end}.
  *
- * <p>Id flattening (the GT6SprayCans ruling): upstream ids were meta ids on the
- * MultiItemCans meta item (11-16/86/998); the port flattens to one id per can, snake of
- * the upstream size adjective + family ({@code "Tiny Food Can (Rotten)"} →
- * {@code food_can_rotten_tiny}). The cans are PLAIN items — zero FoodStat/finishUsingItem
- * surface (spec ⑤ cut), so a fresh {@code Item} carries the whole declared behaviour.
+ * <p>The cans stay PLAIN items — zero FoodStat/finishUsingItem surface (the row0 spec ⑤
+ * cut, now over the whole census): the eat face (EnumAction.drink on the air cans, the
+ * eat/rot/potion channels on the food cans, MultiItemCans.getContainerItem :124-126 and
+ * getRotten :128-132) stays POOLED, and the canning/air recipe rows (RM.food_can, the
+ * Canner air fill/drain :113-120) are the T4b datapack card's surface.
+ *
+ * <p>KJS surface: REGISTRATION face only, deferred to the KJS binding card (the
+ * GT6CrystalChargers.java:44 declaration form).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6FoodCans {
@@ -95,18 +87,86 @@ public final class GT6FoodCans {
 	public static final RegistryObject<Item> FOOD_CAN_COOKIES_HUGE = ITEMS.register("food_can_cookies_huge",
 			() -> new Item(new Item.Properties()));
 
+	/** The six tier adjectives in upstream size order (the "Tiny .. Huge" ladder). */
+	private static final String[] SIZES = {"tiny", "small", "tall", "wide", "large", "huge"};
+
+	/** One plain-can registration (the row0 {@code new Item} face over the snake id). */
+	private static RegistryObject<Item> can(String aId) {
+		return ITEMS.register(aId, () -> new Item(new Item.Properties()));
+	}
+
+	/** One six-tier family — the upstream "Tiny/Small/Tall/Wide/Large/Huge Food Can (X)" ladder. */
+	private static List<RegistryObject<Item>> family(String aName) {
+		List<RegistryObject<Item>> rList = new java.util.ArrayList<>(6);
+		for (String tSize : SIZES) rList.add(can("food_can_" + aName + "_" + tSize));
+		return java.util.List.copyOf(rList);
+	}
+
 	/**
-	 * The "Food Cans" tab display table — the empty can, then the rotten family in tier
-	 * order, then the cookies tin. Table-driven so the offline test asserts the shape +
-	 * the ITEMS parity without resolving {@code get()} (the GT6ToolsCreativeTabTest face).
+	 * The Food_Can_Undefined family, all 6 tiers (upstream metas 1-6, MultiItemCans.java:
+	 * 46-51, display "(Unknown)"). The display word rides the EnUs datagen table.
+	 */
+	public static final List<RegistryObject<Item>> FOOD_CAN_UNKNOWN = family("unknown");
+
+	/** The Food_Can_Veggie family, all 6 tiers (metas 21-26, display "(Vegetables)"). */
+	public static final List<RegistryObject<Item>> FOOD_CAN_VEGGIE = family("veggie");
+
+	/** The Food_Can_Fruit family, all 6 tiers (metas 31-36, display "(Fruits)"). */
+	public static final List<RegistryObject<Item>> FOOD_CAN_FRUIT = family("fruit");
+
+	/** The Food_Can_Bread family, all 6 tiers (metas 41-46). */
+	public static final List<RegistryObject<Item>> FOOD_CAN_BREAD = family("bread");
+
+	/** The Food_Can_Meat family, all 6 tiers (metas 51-56 — the RM.food_can tier-0/1 target). */
+	public static final List<RegistryObject<Item>> FOOD_CAN_MEAT = family("meat");
+
+	/** The Food_Can_Fish family, all 6 tiers (metas 61-66). */
+	public static final List<RegistryObject<Item>> FOOD_CAN_FISH = family("fish");
+
+	/** The Food_Can_Chum family, all 6 tiers (metas 71-76 — the Chum canning target). */
+	public static final List<RegistryObject<Item>> FOOD_CAN_CHUM = family("chum");
+
+	/**
+	 * The CANS_COOKIES tiers 1-5 (metas 81-85, MultiItemCans.java:102-106); the tier-6
+	 * "Cookie Tin" stays the standalone {@link #FOOD_CAN_COOKIES_HUGE} (the row0 field,
+	 * GT6RecipesCanner's output resolver).
+	 */
+	public static final List<RegistryObject<Item>> FOOD_CAN_COOKIES = List.of(
+			can("food_can_cookies_tiny"), can("food_can_cookies_small"), can("food_can_cookies_tall"),
+			can("food_can_cookies_wide"), can("food_can_cookies_large"));
+
+	/** The Canned Space Air — upstream meta 32764 (MultiItemCans.java:109, the End air). */
+	public static final RegistryObject<Item> FOOD_CAN_AIR_END = can("food_can_air_end");
+
+	/** The Canned Hot Air — upstream meta 32765 (:110, the Nether air). */
+	public static final RegistryObject<Item> FOOD_CAN_AIR_NETHER = can("food_can_air_nether");
+
+	/** The Canned Air — upstream meta 32766 (:111, the overworld air). */
+	public static final RegistryObject<Item> FOOD_CAN_AIR = can("food_can_air");
+
+	/**
+	 * The "Food Cans" tab display table — the FULL 58-can census now (task food-meat-items
+	 * completed the row0 subset): the empty can head (the tab icon), then the nine tiered
+	 * families in upstream meta order (unknown 1-6, rotten 11-16, veggie 21-26, fruit
+	 * 31-36, bread 41-46, meat 51-56, fish 61-66, chum 71-76, cookies 81-86), then the
+	 * three air cans in registration order (End 32764, Nether 32765, air 32766).
+	 * Table-driven so the offline test asserts the shape + the ITEMS parity without
+	 * resolving {@code get()} (the GT6ToolsCreativeTabTest face).
 	 */
 	public static final List<RegistryObject<Item>> TAB_TABLE = buildTabTable();
 
 	private static List<RegistryObject<Item>> buildTabTable() {
-		java.util.ArrayList<RegistryObject<Item>> rList = new java.util.ArrayList<>(1 + FOOD_CAN_ROTTEN.size() + 1);
+		java.util.ArrayList<RegistryObject<Item>> rList = new java.util.ArrayList<>(58);
 		rList.add(FOOD_CAN_EMPTY);
-		rList.addAll(FOOD_CAN_ROTTEN);
+		for (List<RegistryObject<Item>> tFamily : java.util.List.of(FOOD_CAN_UNKNOWN, FOOD_CAN_ROTTEN, FOOD_CAN_VEGGIE,
+				FOOD_CAN_FRUIT, FOOD_CAN_BREAD, FOOD_CAN_MEAT, FOOD_CAN_FISH, FOOD_CAN_CHUM)) {
+			rList.addAll(tFamily);
+		}
+		rList.addAll(FOOD_CAN_COOKIES);
 		rList.add(FOOD_CAN_COOKIES_HUGE);
+		rList.add(FOOD_CAN_AIR_END);
+		rList.add(FOOD_CAN_AIR_NETHER);
+		rList.add(FOOD_CAN_AIR);
 		return java.util.List.copyOf(rList);
 	}
 
@@ -147,8 +207,8 @@ public final class GT6FoodCans {
 	@SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
 		aEvent.enqueueWork(() -> {
-			GT6Mod.LOGGER.info("GT6 food cans registered: 1 empty + {} rotten tiers + the cookies tin (the row0 subset, {} tab rows)",
-					FOOD_CAN_ROTTEN.size(), TAB_TABLE.size());
+			GT6Mod.LOGGER.info("GT6 food cans registered: 1 empty + 9 six-tier families + 3 air cans = {} (the full census, {} tab rows)",
+					ITEMS.getEntries().size(), TAB_TABLE.size());
 			// the registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered tab would throw here and fail the runServer gate.
 			GT6Mod.LOGGER.info("GT6 creative tab registered: {} ({} display rows)",

@@ -2163,14 +2163,14 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Food-can family keys (task food-can-row0): the row0 MINIMAL subset's display
-     * names, walked over the {@link GT6FoodCans} registry constants so the lang face
-     * cannot drift from the registered ids (the addSprayCans form). Values are the
-     * upstream registration-row wordings verbatim: "Empty Food Can"
-     * (MultiItemRandomTools.java:234), the six rotten tiers "Tiny/Small/Tall/Wide/Large/
-     * Huge Food Can (Rotten)" (MultiItemCans.java:53-58), the cookies tin "Huge Food Can
-     * (Cookies)" (:107) and the bending cylinder "Small Bending Cylinder"
-     * (Loader_Tools.java:146), plus the tab title ("GregTech: Cans", the upstream
+     * Food-can family keys (task food-can-row0, census-completed by food-meat-items):
+     * the full 58-can display names, walked over the {@link GT6FoodCans} registry
+     * constants so the lang face cannot drift from the registered ids (the addSprayCans
+     * form). Values are the upstream registration-row wordings verbatim: "Empty Food Can"
+     * (MultiItemRandomTools.java:234), the nine size ladders "Tiny/Small/Tall/Wide/Large/
+     * Huge Food Can (Unknown/Rotten/Vegetables/Fruits/Bread/Meat/Fish/Chum/Cookies)"
+     * (MultiItemCans.java:46-:107) and the air trio "Canned Space Air"/"Canned Hot Air"/
+     * "Canned Air" (:109-:111), plus the tab title ("GregTech: Cans", the upstream
      * MultiItemCans.java:41 category label; the key comes from
      * {@link GT6FoodCans#TAB_TITLE_KEY} so the lang face cannot drift from the
      * registered tab).
@@ -2179,14 +2179,30 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6." + GT6FoodCans.FOOD_CAN_EMPTY.getId().getPath(), "Empty Food Can");
         String[] tSizes = {"tiny", "small", "tall", "wide", "large", "huge"};
         String[] tNames = {"Tiny", "Small", "Tall", "Wide", "Large", "Huge"};
-        for (int i = 0; i < 6; i++) {
-            add("item.gt6." + GT6FoodCans.FOOD_CAN_ROTTEN.get(i).getId().getPath(),
-                tNames[i] + " Food Can (Rotten)");
-            if (!GT6FoodCans.FOOD_CAN_ROTTEN.get(i).getId().getPath().equals("food_can_rotten_" + tSizes[i])) {
-                throw new IllegalStateException("rotten can id drifted: " + GT6FoodCans.FOOD_CAN_ROTTEN.get(i).getId().getPath());
+        String[][] tFamilies = {
+                {"unknown", "Unknown"}, {"rotten", "Rotten"}, {"veggie", "Vegetables"},
+                {"fruit", "Fruits"}, {"bread", "Bread"}, {"meat", "Meat"},
+                {"fish", "Fish"}, {"chum", "Chum"}, {"cookies", "Cookies"}};
+        List<List<RegistryObject<Item>>> tTables = List.of(
+                GT6FoodCans.FOOD_CAN_UNKNOWN, GT6FoodCans.FOOD_CAN_ROTTEN,
+                GT6FoodCans.FOOD_CAN_VEGGIE, GT6FoodCans.FOOD_CAN_FRUIT, GT6FoodCans.FOOD_CAN_BREAD,
+                GT6FoodCans.FOOD_CAN_MEAT, GT6FoodCans.FOOD_CAN_FISH, GT6FoodCans.FOOD_CAN_CHUM,
+                GT6FoodCans.FOOD_CAN_COOKIES);
+        for (int f = 0; f < tFamilies.length; f++) {
+            List<RegistryObject<Item>> tFamily = tTables.get(f);
+            if (tFamily.size() != 6 && tFamily.size() != 5) throw new IllegalStateException("can family size drifted: " + tFamily.size());
+            for (int i = 0; i < tFamily.size(); i++) {
+                String tId = tFamily.get(i).getId().getPath();
+                if (!tId.equals("food_can_" + tFamilies[f][0] + "_" + tSizes[i])) {
+                    throw new IllegalStateException("can id drifted: " + tId);
+                }
+                add("item.gt6." + tId, tNames[i] + " Food Can (" + tFamilies[f][1] + ")");
             }
         }
         add("item.gt6." + GT6FoodCans.FOOD_CAN_COOKIES_HUGE.getId().getPath(), "Huge Food Can (Cookies)");
+        add("item.gt6." + GT6FoodCans.FOOD_CAN_AIR_END.getId().getPath(), "Canned Space Air");
+        add("item.gt6." + GT6FoodCans.FOOD_CAN_AIR_NETHER.getId().getPath(), "Canned Hot Air");
+        add("item.gt6." + GT6FoodCans.FOOD_CAN_AIR.getId().getPath(), "Canned Air");
         add("item.gt6.bending_cylinder_small", "Small Bending Cylinder");
         // task w5-t3-machine-face-four: the machine-face four display names (the
         // upstream registration-row wordings "Soft Hammer"/"Monkey Wrench"/"Magnifying
@@ -2208,19 +2224,21 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Food-item family keys (task food-items-core): the T1 subset's display names + desc
-     * tooltips + the tab title, walked over the {@link gregtech6.registry.GT6Foods#FOOD_ROWS}
-     * table so the lang face cannot drift from the registered ids (the addFoodCans form).
-     * Values are the upstream registration-row wordings verbatim: the name + desc columns
-     * of MultiItemFood.java:490 (Cheese/"Click the Cheese"), :491, :497, :498, :365, :374,
-     * :809, :933, :934, and the tab label "GregTech: Nature & Foods"
-     * (MultiItemFood.java:48, the upstream creative-tab ctor literal).
-     * Table-tail append, append-only.
+     * Food-item family keys (task food-items-core, T4a-extended by food-meat-items): the
+     * display names + desc tooltips + the tab title, walked over the
+     * {@link gregtech6.registry.GT6Foods#FOOD_ROWS} table so the lang face cannot drift
+     * from the registered ids (the addFoodCans form). Values are the upstream
+     * registration-row wordings verbatim: the name + desc columns of the anchor lines
+     * (MultiItemFood.java:490 "Click the Cheese", :491, :495-:503 the egg family,
+     * :529-:560/:563-:578/:594/:798 the meat family, :365, :374, :809, :933, :934); a row
+     * with an EMPTY desc column emits NO tooltip key (the upstream renders no line), and
+     * the tab label "GregTech: Nature & Foods" (MultiItemFood.java:48, the upstream
+     * creative-tab ctor literal). Table-tail append, append-only.
      */
     private void addFoodItems() {
         for (gregtech6.registry.GT6Foods.FoodRow tRow : gregtech6.registry.GT6Foods.FOOD_ROWS) {
             add("item.gt6." + tRow.id(), tRow.enName());
-            add(tRow.tooltipKey(), tRow.enTooltip());
+            if (!tRow.enTooltip().isEmpty()) add(tRow.tooltipKey(), tRow.enTooltip());
         }
         add(gregtech6.registry.GT6Foods.TAB_TITLE_KEY, "GregTech: Nature & Foods");
     }

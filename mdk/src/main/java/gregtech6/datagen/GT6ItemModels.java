@@ -388,24 +388,24 @@ public final class GT6ItemModels extends ItemModelProvider {
                 .texture("layer2", modLoc("item/" + tPath + "_handle"))
                 .texture("layer3", modLoc("item/" + tPath + "_handle_overlay"));
         }
-        // the food-can row0 subset (task food-can-row0) — 8 item/generated models over
-        // the byte-identical upstream icon borrows (gt.multiitem.randomtools/998 for the
-        // empty can, gt.multiitem.cans/11-16 for the rotten family, :86 for the cookies
-        // tin — assets/README.md attribution), walked over the registered ids so the model
-        // ids cannot drift (the spray-can band convention)
-        withExistingParent("food_can_empty", mcLoc("item/generated"))
-            .texture("layer0", modLoc("item/food_can/empty"));
-        for (String tSize : new String[] {"tiny", "small", "tall", "wide", "large", "huge"}) {
-            withExistingParent("food_can_rotten_" + tSize, mcLoc("item/generated"))
-                .texture("layer0", modLoc("item/food_can/rotten_" + tSize));
+        // the food-can census (task food-can-row0, completed by food-meat-items) — 58
+        // item/generated models over the byte-identical upstream icon borrows
+        // (gt.multiitem.randomtools/998 for the empty can, gt.multiitem.cans/<meta> for the
+        // nine families + the air cans — assets/README.md attribution), walked over the
+        // registered tab table so the model ids cannot drift (the spray-can band
+        // convention; the texture file drops the food_can_ family prefix,
+        // food_can_rotten_tiny → food_can/rotten_tiny)
+        for (net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tCan : gregtech6.registry.GT6FoodCans.TAB_TABLE) {
+            String tPath = tCan.getId().getPath();
+            withExistingParent(tPath, mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/food_can/" + tPath.substring("food_can_".length())));
         }
-        withExistingParent("food_can_cookies_huge", mcLoc("item/generated"))
-            .texture("layer0", modLoc("item/food_can/cookies_huge"));
-        // the food-item T1 subset (task food-items-core) — 9 item/generated models over
-        // the byte-identical upstream icon borrows (gt.multiitem.food/<meta> per row —
-        // assets/README.md attribution), walked over FOOD_ROWS so the model ids cannot
-        // drift (the food-can band convention; the texture file drops the food_ family
-        // prefix, food_can_rotten_tiny → food_can/rotten_tiny 同型)
+        // the food-item family (task food-items-core, T4a-extended by food-meat-items) —
+        // 38 item/generated models over the byte-identical upstream icon borrows
+        // (gt.multiitem.food/<meta> per row — assets/README.md attribution), walked over
+        // FOOD_ROWS so the model ids cannot drift (the food-can band convention; the
+        // texture file drops the food_ family prefix, food_can_rotten_tiny →
+        // food_can/rotten_tiny 同型)
         for (gregtech6.registry.GT6Foods.FoodRow tFood : gregtech6.registry.GT6Foods.FOOD_ROWS) {
             withExistingParent(tFood.id(), mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/food/" + tFood.id().substring("food_".length())));
