@@ -143,6 +143,12 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		// GT6RecipeMapDataB2cCutRowsPourTest (the live-walk cross-check ratchet). Merge order for the
 		// parallel B2c cards: weld -> cut — the weld card's pin segment lands first, this one
 		// tail-appends after it (the rebase keeps both segments, neither rewrites the other's line).
+		// task recipe-data-b2c-sawing — the RM.sawing SCATTER stock (3959 rows in sawing.json, the
+		// seven-anchor replay) rides the SAME JSON seam under the second "sawing" key into the SAME
+		// CUTTER map (the size-split ruling: cutter.json at 4966700/5242880 bytes), equally OUT of
+		// this offline snapshot walk and pinned per-file by GT6RecipeMapDataB2cSawingRowsPourTest.
+		// Merge order: roll -> generify -> weld -> cut -> magnet -> sawing — this segment tail-appends
+		// after cut's (the rebase keeps every segment, neither rewrites another's line).
 		SNAPSHOT.put("CUTTER", 0);
 		SNAPSHOT.put("BOXINATOR", 0);
 		SNAPSHOT.put("UNBOXINATOR", 0);
