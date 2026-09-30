@@ -44,11 +44,11 @@ public class GT6CrucibleBowlDatagenTest extends GTOfflineTestBase {
     /** The upstream h/292.571428 constant verbatim (MultiTileEntitySmeltery.java:603). */
     private static final double HEIGHT_DIVISOR = 292.571428;
 
-    /** The Steel molten colour — the MT.java:1713 setRGBaLiquid(255, 20, 10, 255) tail. */
-    private static final int STEEL_LIQUID_TINT = 0xFFFF140A;
+    /** The Steel molten colour — the MT.java:1713 setRGBaLiquid(255, 20, 10, 255) tail. Shared with the solid-face matrix test (task crucible-solid-face-matrix). */
+    static final int STEEL_LIQUID_TINT = 0xFFFF140A;
 
-    /** The Ceramic solid tint (the GT6MoldTintDatagenTest literal, mRGBaSolid 220/130/70). */
-    private static final int CERAMIC_SOLID_TINT = 0xFFDC8246;
+    /** The Ceramic solid tint (the GT6MoldTintDatagenTest literal, mRGBaSolid 220/130/70). Shared with the solid-face matrix test (task crucible-solid-face-matrix). */
+    static final int CERAMIC_SOLID_TINT = 0xFFDC8246;
 
     @BeforeAll
     static void bootMaterials() {

@@ -75,28 +75,58 @@ public final class GT6CrucibleDatagen {
 	// ------------------------------------------------------------------------------------
 
 	/**
+	 * The texture-set folders whose {@code block_solid} grayscale the port borrowed verbatim
+	 * (assets/gt6/textures/block/materialicons/&lt;set&gt;/block_solid.png — the prefixblock-render
+	 * borrow). Upstream ships a blockSolid.png for EVERY texture set, and the byte census of the
+	 * upstream tree says the art is shared: 39 of the 41 sets carry the SAME file (md5 75286903,
+	 * the {@code copy_into_*.bat} spreads), only STONE and BRICK differ (they share a second
+	 * file, md5 43496774, which the port borrowed under brick/). So a set with its own borrow
+	 * references that folder and every remaining set — including the ones the port never
+	 * borrowed (GLASS, GEM_*, NETHERSTAR, the gas/fluid/plasma faces, SET_NONE) — references the
+	 * byte-identical rough/ art. Task crucible-solid-face-matrix: the crucible holds ANY
+	 * material, so the mapping is TOTAL — the former four-family loud ISE retires because
+	 * upstream itself never throws either: the setless default IS a set
+	 * (OreDictMaterial.java:252 {@code mTextureSetsBlock = TextureSet.SET_NONE[0].mList}).
+	 */
+	private static final java.util.Set<String> BORROWED_BLOCK_SOLID = java.util.Set.of(
+			"brick", "copper", "cube", "diamond", "dull", "fiery", "fine", "food", "lapis",
+			"leaf", "lignite", "magnetic", "metallic", "quartz", "rad", "redstone", "rough",
+			"rubber", "ruby", "shiny", "space", "wood");
+
+	/**
 	 * The material smooth body texture (task 40-41-mold-assets, GitHub #41 — the former
 	 * flat andesite/cobble placeholder for every row). The upstream body face is the
 	 * material's {@code getTextureSmooth()} — the texture set's blockSolid icon
-	 * (OreDictMaterial.java:983-990, MultiTileEntityMold.java:439): SET_ROUGH (Ceramic),
-	 * SET_COPPER (Bronze) and SET_METALLIC (Steel) ride the borrowed grayscale
-	 * materialicons blockSolid art (assets/README.md, the prefixblock-render borrow),
-	 * the vanilla SET_STONE row (Stone) has no borrowed blockSolid icon and rides the
-	 * vanilla smooth stone. Upstream multiplies the grayscale art with the material colour
-	 * at runtime (the {@code mRGBaSolid} pass of {@code getTextureSmooth(mRGBaSolid, F)}
-	 * :980-987) — task debt-material-tint closed the former un-tinted deviation: the
-	 * tinted rows carry tintindex 0 on the body faces and
-	 * {@code GT6MoldTintListener} answers the {@link #bodyTinted} material's mRGBaSolid.
-	 * Returns the FULLY-QUALIFIED {@code ns:path} (the vanilla row carries its explicit
-	 * {@code minecraft:} — the callers parse it, they must not {@code modLoc} it again).
+	 * (OreDictMaterial.java:983-990 → :974-976 → BlockTextureDefault.java:143-150
+	 * {@code mTextureSetsBlock.get(OP.blockSolid.mIconIndexBlock)}; the icon itself is
+	 * {@code materialicons/<SET>/<file>}, TextureSet.java:63/:78). Dispatch by the
+	 * material's first block texture-set name (MT.setTextures seeds it from the SET_*
+	 * constants, MT.java:225-230):
+	 * <ul>
+	 * <li>the Stone ROW rides vanilla smooth stone — the recorded #40-41 declaration
+	 *     deviation, kept (the four-family regression pins);</li>
+	 * <li>the STONE SET (Lava/Obsidian/Bedrock/the stone() family, MT.java:2052/:2395/:2396)
+	 *     rides the brick borrow — upstream STONE/blockSolid is byte-identical to
+	 *     BRICK/blockSolid (md5 43496774), the port borrowed that art once;</li>
+	 * <li>the 21 further borrowed sets reference their own folder;</li>
+	 * <li>every other set name (and the setless default) references the shared
+	 *     grayscale via rough/ — byte-identical to what upstream registers for them.</li>
+	 * </ul>
+	 * Upstream multiplies the grayscale art with the material colour at runtime (the
+	 * {@code mRGBaSolid} pass of {@code getTextureSmooth(mRGBaSolid, F)} :980-987) — task
+	 * debt-material-tint closed the former un-tinted deviation: the tinted rows carry
+	 * tintindex 0 on the body faces and {@code GT6MoldTintListener} answers the
+	 * {@link #bodyTinted} material's mRGBaSolid. Returns the FULLY-QUALIFIED
+	 * {@code ns:path} (the vanilla row carries its explicit {@code minecraft:} — the
+	 * callers parse it, they must not {@code modLoc} it again).
 	 */
 	static String bodyTexture(gregapi.oredict.OreDictMaterial aMaterial) {
-		if (aMaterial == gregapi.data.MT.Stone)   return "minecraft:block/smooth_stone";
-		if (aMaterial == gregapi.data.MT.Ceramic) return "gt6:block/materialicons/rough/block_solid";
-		if (aMaterial == gregapi.data.MT.Bronze)  return "gt6:block/materialicons/copper/block_solid";
-		if (aMaterial == gregapi.data.MT.Steel)   return "gt6:block/materialicons/metallic/block_solid";
-		throw new IllegalStateException("no smooth body texture mapped for material " + aMaterial
-				+ " — map it here before the row joins (the loud-drift rule)");
+		if (aMaterial == gregapi.data.MT.Stone) return "minecraft:block/smooth_stone";
+		java.util.List<String> tSets = aMaterial.mTextureSetsBlock;
+		String tSet = (tSets.isEmpty() ? "NONE" : tSets.get(0)).toLowerCase(java.util.Locale.ROOT);
+		if (tSet.equals("stone")) tSet = "brick"; // the STONE set ships the BRICK art byte-for-byte
+		if (BORROWED_BLOCK_SOLID.contains(tSet)) return "gt6:block/materialicons/" + tSet + "/block_solid";
+		return "gt6:block/materialicons/rough/block_solid";
 	}
 
 	/**

@@ -176,8 +176,8 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 	 * The v3 ② dispatch matrix, offline: cold Steel content → the ContentFace SOLID arm
 	 * verbatim (the bowl-shell same-origin pin); molten Copper (never bridged on either leg)
 	 * → the MOLTEN arm verbatim (smeltery_content + the mRGBaLiquid tint); molten IRON →
-	 * leg-split (see ironMoltenOverlayFollowsTheBridge*); cold IRON → the loud bodyTexture
-	 * map throws and the guard answers NO overlay payload (plain bar, the honest fallback).
+	 * leg-split (see ironMoltenOverlayFollowsTheBridge*); cold IRON → the TOTAL matrix's
+	 * shared rough/ art, same-origin (crucible-solid-face-matrix retired the loud map).
 	 */
 	@Test
 	public void overlayDispatchFollowsTheContentFaceSeam() {
@@ -208,14 +208,22 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 	}
 
 	@Test
-	public void unmappedSolidFallsBackToNoOverlay() {
-		// Iron is not in the bowl-model four-row bodyTexture map — the loud seam throws and
-		// the guard answers null: no overlay key = the plain progress fill (never a live crash)
+	public void everySolidMaterialAnswersTheTotalMatrix() {
+		// crucible-solid-face-matrix retired the loud four-row bodyTexture map: upstream never
+		// throws either (the TOTAL SET dispatch — the 39/41 byte-identical blockSolid census),
+		// so iron — never a bowl family row — now answers the shared rough/ art and the wire
+		// record EQUALS the seam's own dispatch (same-origin, the solid-arm form). The ISE
+		// guard in overlayTag stays as a belt-and-braces arm, just no longer reachable.
 		List<OreDictMaterialStack> tIron = List.of(new OreDictMaterialStack(MT.Fe, 4 * CS.U));
 		CompoundTag tTag = new CompoundTag();
 		GT6CrucibleProvider.writeCrucibleData(tTag, 300, 2000, false, 16 * CS.U, tIron);
 		assertFalse(tTag.getBoolean(GT6CrucibleProvider.KEY_MOLTEN));
-		assertFalse(tTag.contains(GT6CrucibleProvider.KEY_OVERLAY), "the guard fallback: no payload, no crash");
+		GT6CrucibleDatagen.ContentFace tFace = GT6CrucibleDatagen.contentFace(MT.Fe, false);
+		CompoundTag tOverlay = tTag.getCompound(GT6CrucibleProvider.KEY_OVERLAY);
+		assertEquals(tFace.texture(), tOverlay.getString(GT6CrucibleProvider.OVERLAY_TEXTURE),
+				"the total matrix: the solid wire record is the seam's own dispatch");
+		assertEquals(tFace.tintARGB(), tOverlay.getInt(GT6CrucibleProvider.OVERLAY_TINT),
+				"the total matrix: the mRGBaSolid pack rides the wire record");
 		// the lightest walk itself is the BE mirror (TileEntitySmeltery.java:469-475 shape)
 		assertEquals(MT.Fe, GT6CrucibleProvider.lightest(tIron).mMaterial);
 		assertNull(GT6CrucibleProvider.lightest(List.of()));
