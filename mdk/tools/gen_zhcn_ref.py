@@ -491,6 +491,58 @@ HAND_TRANSLATIONS = {
     "gt6.row.item_pipe.display.restrictive_medium": ("限流%s物品管道", "hand"),
     "gt6.row.item_pipe.display.restrictive_large": ("限流大型%s物品管道", "hand"),
     "gt6.row.item_pipe.display.restrictive_huge": ("限流巨型%s物品管道", "hand"),
+    # ---- fluid pipe matrix (task fluid-pipe-matrix): the seven variant templates + the
+    # 40 material words, dump-verbatim (tmp/gregtech.lang:11976-12255 — each dump row
+    # 微型|小型|(无)|大型|巨型|四合一|九合一 + <mat> + 流体管道 split on the affixes).
+    # The mat keys ride the FAMILY-SCOPED gt6.row.fluid_pipe.mat.* namespace (the axle
+    # family's gt6.row.mat.wood_treated is the ADJECTIVE 木制; the dump noun is 防腐木).
+    "gt6.row.fluid_pipe.display.tiny": ("微型%s流体管道", "hand"),
+    "gt6.row.fluid_pipe.display.small": ("小型%s流体管道", "hand"),
+    "gt6.row.fluid_pipe.display.medium": ("%s流体管道", "hand"),
+    "gt6.row.fluid_pipe.display.large": ("大型%s流体管道", "hand"),
+    "gt6.row.fluid_pipe.display.huge": ("巨型%s流体管道", "hand"),
+    "gt6.row.fluid_pipe.display.quadruple": ("四合一%s流体管道", "hand"),
+    "gt6.row.fluid_pipe.display.nonuple": ("九合一%s流体管道", "hand"),
+    "gt6.row.fluid_pipe.mat.wood": ("木", "hand"),
+    "gt6.row.fluid_pipe.mat.wood_treated": ("防腐木", "hand"),
+    "gt6.row.fluid_pipe.mat.iron_wood": ("铁木", "hand"),
+    "gt6.row.fluid_pipe.mat.plastic": ("塑料", "hand"),
+    "gt6.row.fluid_pipe.mat.rubber": ("橡胶", "hand"),
+    "gt6.row.fluid_pipe.mat.copper": ("铜", "hand"),
+    "gt6.row.fluid_pipe.mat.gold": ("金", "hand"),
+    "gt6.row.fluid_pipe.mat.aluminium": ("铝", "hand"),
+    "gt6.row.fluid_pipe.mat.tin_alloy": ("锡合金", "hand"),
+    "gt6.row.fluid_pipe.mat.bronze": ("青铜", "hand"),
+    "gt6.row.fluid_pipe.mat.invar": ("殷钢", "hand"),
+    "gt6.row.fluid_pipe.mat.steel": ("钢", "hand"),
+    "gt6.row.fluid_pipe.mat.desh": ("戴斯", "hand"),
+    "gt6.row.fluid_pipe.mat.chromium": ("铬", "hand"),
+    "gt6.row.fluid_pipe.mat.hsla": ("HSLA钢", "hand"),
+    "gt6.row.fluid_pipe.mat.efrine": ("绿晶", "hand"),
+    "gt6.row.fluid_pipe.mat.galvanized_steel": ("镀锌钢", "hand"),
+    "gt6.row.fluid_pipe.mat.stainless_steel": ("不锈钢", "hand"),
+    "gt6.row.fluid_pipe.mat.tungsten_alloy": ("钨合金", "hand"),
+    "gt6.row.fluid_pipe.mat.titanium": ("钛", "hand"),
+    "gt6.row.fluid_pipe.mat.netherite": ("下界合金", "hand"),
+    "gt6.row.fluid_pipe.mat.workers_alloy": ("工人合金", "hand"),
+    "gt6.row.fluid_pipe.mat.tungsten": ("钨", "hand"),
+    "gt6.row.fluid_pipe.mat.palladium": ("钯", "hand"),
+    "gt6.row.fluid_pipe.mat.vanadium_steel": ("钒钢", "hand"),
+    "gt6.row.fluid_pipe.mat.tungstensteel": ("钨钢", "hand"),
+    "gt6.row.fluid_pipe.mat.tungsten_carbide": ("碳化钨", "hand"),
+    "gt6.row.fluid_pipe.mat.iridium": ("铱", "hand"),
+    "gt6.row.fluid_pipe.mat.gaia_spirit": ("盖亚之魂", "hand"),
+    "gt6.row.fluid_pipe.mat.draconium": ("龙", "hand"),
+    "gt6.row.fluid_pipe.mat.awakened_draconium": ("觉醒龙", "hand"),
+    "gt6.row.fluid_pipe.mat.infinity": ("无尽", "hand"),
+    "gt6.row.fluid_pipe.mat.adamantium": ("艾德曼合金", "hand"),
+    "gt6.row.fluid_pipe.mat.bedrock_hsla_alloy": ("基岩合金", "hand"),
+    "gt6.row.fluid_pipe.mat.thaumium": ("神秘锭", "hand"),
+    "gt6.row.fluid_pipe.mat.manasteel": ("魔力钢", "hand"),
+    "gt6.row.fluid_pipe.mat.void_metal": ("虚空金属", "hand"),
+    "gt6.row.fluid_pipe.mat.terrasteel": ("泰拉钢", "hand"),
+    "gt6.row.fluid_pipe.mat.carbon": ("碳", "hand"),
+    "gt6.row.fluid_pipe.mat.tantalum_hafnium_carbide": ("碳化钽铪", "hand"),
     "gt6.row.mat.constantan": ("康铜", "hand"),      # dump 25027 康铜物流管道 word root
     "gt6.row.mat.cobalt_brass": ("钴黄铜", "hand"),  # dump 25052 钴黄铜物流管道 word root
     # task item-pipe-matrix — the 15 new row-material words of the 21-material item pipe
@@ -1679,8 +1731,8 @@ BLOCK_BACKFILL = {
     "block.gt6.shredder": "粉碎机",                  # = the TSV gt6.row.machine.shredder unit verbatim
     "block.gt6.wire_electric_1x": "1×导线",  # task p27-lang-fix-batch2 P2 (ledger §3): wire=导线 unified
     "block.gt6.wire_electric_2x": "2×导线",  # (en "1x/2x Electric Wire"; the × convention kept)
-    "block.gt6.wood_fluid_pipe_medium": "木制流体管道",  # dump 26xxx ...流体管道 word set
-    "block.gt6.wood_fluid_pipe_small": "小型木制流体管道",
+    # (block.gt6.wood_fluid_pipe_small/medium retired by task fluid-pipe-matrix — the
+    # compose faces ride gt6.row.fluid_pipe.* below, the dump-verbatim word set)
 
     # ---- the 31 rail block display names (task p35-rails-31-blocks, review-seat backfill 2026-09-23) ----
     # the dump gt.block.rail.* faces tmp/gregtech.lang:2708-2734 verbatim; the rails card

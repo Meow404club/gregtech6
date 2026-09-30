@@ -147,8 +147,16 @@ public final class GT6BlockStates extends BlockStateProvider {
                 modLoc("block/iconsets/pipe_restrictor"));
         ModelFile tLogisticsWire = tintedPipeModel("block/iconsets/logistics_wire",
                 modLoc("block/iconsets/logistics_wire"), modLoc("block/iconsets/logistics_wire_overlay"));
-        pipeBlockstate(GTFluidPipes.WOOD_FLUID_PIPE_SMALL.get(), tWoodPipe);
-        pipeBlockstate(GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.get(), tWoodPipe);
+        // task fluid-pipe-matrix — the fluid pipe matrix (280 rows): the declared
+        // RENDER TRANSITION keeps the shared cube placeholder and its two texture
+        // families (the only borrowed pipe art in the repo): WOODEN-block rows ride the
+        // wood family, everything else the copper family; the per-material colour rides
+        // the tint chain (GTMachinePaintTint over the row material). Connection-aware
+        // geometry = the rod-render-pool card (NOT this one).
+        for (GTFluidPipes.FluidPipeRow tFluidRow : GTFluidPipes.ROWS) {
+            pipeBlockstate(GTFluidPipes.BLOCKS_BY_PATH.get(tFluidRow.path()).get(),
+                    tFluidRow.material().blockFamily() == GTFluidPipes.PipeBlockFamily.WOODEN ? tWoodPipe : tCopperPipe);
+        }
         // task pipe-item — the item pipe family: one shared model per form, the six
         // restrictive variants over the restrictor-band twin (the upstream mRenderType 1)
         for (GTItemPipes.ItemPipeRow tItemRow : GTItemPipes.ROWS) {

@@ -1823,15 +1823,34 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Fluid pipe keys (task fluid-pipes, W1-exclusive provider additions): the two wood
-     * tiers, the "Fluid Pipes" category tab (the upstream MTE category name,
-     * MultiTileEntityPipeFluid.java:83-98) and the molten iron FluidType description
-     * (descriptionId set at GTFluids.IRON_MOLTEN_TYPE, the FL.create local-name counterpart
-     * Loader_Fluids.java:40-106).
+     * Fluid pipe keys (task fluid-pipes, walked over the full matrix by task
+     * fluid-pipe-matrix): the seven variant templates + the 40 material words (the
+     * composed display — the upstream name columns MultiTileEntityPipeFluid.java:92-98
+     * verbatim: "Tiny <mat> Fluid Pipe" .. "Nonuple <mat> Fluid Pipe", the MEDIUM row
+     * carries NO size prefix; the material words are the upstream getLocal() faces —
+     * MT.java setLocal overrides included: "Treated Wood"/"Galvanized Steel"/
+     * "Awakened Draconium"/"Tungsten Alloy" (the internal name stays "HSLA-Tungsten-Alloy")
+     * and the Vanadiumsteel lowercase setLocal), the "Fluid Pipes" category tab (the aCreativeTabID 26142
+     * column) and the molten iron FluidType description (descriptionId set at
+     * GTFluids.IRON_MOLTEN_TYPE, the FL.create local-name counterpart
+     * Loader_Fluids.java:40-106). The wood rows resolve byte-identical to the W1
+     * atomic keys they retired ("Small Wood Fluid Pipe" / "Wood Fluid Pipe").
      */
     private void addFluidPipes() {
-        add("block.gt6.wood_fluid_pipe_small", "Small Wood Fluid Pipe");
-        add("block.gt6.wood_fluid_pipe_medium", "Wood Fluid Pipe");
+        for (gregtech6.registry.GTFluidPipes.FluidPipeVariant tVariant : gregtech6.registry.GTFluidPipes.VARIANTS) {
+            add(tVariant.displayKey(), switch (tVariant) {
+                case TINY -> "Tiny %s Fluid Pipe";
+                case SMALL -> "Small %s Fluid Pipe";
+                case MEDIUM -> "%s Fluid Pipe";
+                case LARGE -> "Large %s Fluid Pipe";
+                case HUGE -> "Huge %s Fluid Pipe";
+                case QUADRUPLE -> "Quadruple %s Fluid Pipe";
+                case NONUPLE -> "Nonuple %s Fluid Pipe";
+            });
+        }
+        for (gregtech6.registry.GTFluidPipes.FluidPipeMaterial tMat : gregtech6.registry.GTFluidPipes.MATERIALS) {
+            addRowMatUnit(tMat.unitKey(), tMat.displayWord());
+        }
         add("itemGroup.gt6.fluid_pipes", "Fluid Pipes");
         add("fluid.gt6.iron_molten", "Molten Iron");
         add("fluid.gt6.natural_gas", "Natural Gas"); // task barrel-side-rules spec ⑤ — the lighter-fluid acceptance carrier
