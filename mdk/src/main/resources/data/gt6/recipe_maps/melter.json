@@ -1,11 +1,75 @@
 {
-  "recipes": [
-    {
-      "comment": "task p29-w3-heat-smelter smoke row — the vanilla ice block melts to water (the upstream RM.Melter row Loader_Recipes_Chem.java:486 verbatim: addRecipe1(T, 16, 1000*2, Blocks.ice, NF, FL.Water.make(1000), NI)), eut 16 / duration 2000 — the same row sits on BOTH maps upstream (the Melter :486 face and the Smelter :501 face)",
-      "inputs": [{"item": "minecraft:ice", "count": 1}],
-      "fluidOutputs": [{"fluid": "minecraft:water", "amount": 1000}],
-      "duration": 2000,
-      "eut": 16
-    }
-  ]
+ "comment": "Static-row replay of the upstream Melter food face (task food-recipes-t2). Source: Loader_Recipes_Food.java:699-707, the 8 cooking oils -> hot frying oil plus the ice melt \u2014 all 9 rows pour, zero skips. Fluid ids are the FL.java upstream ids mapped onto the port GTFluids carriers (Oil_Olive = the \"binnie.juiceolive\" carrier; Oil_Frying = \"hotfryingoil\"). The pre-existing smoke row (the vanilla ice block, Loader_Recipes_Chem.java:486/:501) is untouched \u2014 only-add-never-duplicate.",
+ "recipes": [
+  {
+   "comment": "task p29-w3-heat-smelter smoke row \u2014 the vanilla ice block melts to water (the upstream RM.Melter row Loader_Recipes_Chem.java:486 verbatim: addRecipe1(T, 16, 1000*2, Blocks.ice, NF, FL.Water.make(1000), NI)), eut 16 / duration 2000 \u2014 the same row sits on BOTH maps upstream (the Melter :486 face and the Smelter :501 face)",
+   "inputs": [{"item": "minecraft:ice", "count": 1}],
+   "fluidOutputs": [{"fluid": "minecraft:water", "amount": 1000}],
+   "duration": 2000,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:699 \u2014 Oil_Sunflower 1 -> Oil_Frying 1 (addRecipe0, no item slot)",
+   "fluidInputs": [{"fluid": "gt6:sunfloweroil", "amount": 1}],
+   "fluidOutputs": [{"fluid": "gt6:hotfryingoil", "amount": 1}],
+   "duration": 1,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:700 \u2014 Oil_Olive 1 -> Oil_Frying 1 (addRecipe0, no item slot)",
+   "fluidInputs": [{"fluid": "gt6:juiceolive", "amount": 1}],
+   "fluidOutputs": [{"fluid": "gt6:hotfryingoil", "amount": 1}],
+   "duration": 1,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:701 \u2014 Oil_Nut 1 -> Oil_Frying 1 (addRecipe0, no item slot)",
+   "fluidInputs": [{"fluid": "gt6:nutoil", "amount": 1}],
+   "fluidOutputs": [{"fluid": "gt6:hotfryingoil", "amount": 1}],
+   "duration": 1,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:702 \u2014 Oil_Hemp 1 -> Oil_Frying 1 (addRecipe0, no item slot)",
+   "fluidInputs": [{"fluid": "gt6:hempoil", "amount": 1}],
+   "fluidOutputs": [{"fluid": "gt6:hotfryingoil", "amount": 1}],
+   "duration": 1,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:703 \u2014 Oil_Lin 1 -> Oil_Frying 1 (addRecipe0, no item slot)",
+   "fluidInputs": [{"fluid": "gt6:linoil", "amount": 1}],
+   "fluidOutputs": [{"fluid": "gt6:hotfryingoil", "amount": 1}],
+   "duration": 1,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:704 \u2014 Oil_Seed 1 -> Oil_Frying 1 (addRecipe0, no item slot)",
+   "fluidInputs": [{"fluid": "gt6:seedoil", "amount": 1}],
+   "fluidOutputs": [{"fluid": "gt6:hotfryingoil", "amount": 1}],
+   "duration": 1,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:705 \u2014 Oil_Fish 1 -> Oil_Frying 1 (addRecipe0, no item slot)",
+   "fluidInputs": [{"fluid": "gt6:fishoil", "amount": 1}],
+   "fluidOutputs": [{"fluid": "gt6:hotfryingoil", "amount": 1}],
+   "duration": 1,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:706 \u2014 Oil_Whale 1 -> Oil_Frying 1 (addRecipe0, no item slot)",
+   "fluidInputs": [{"fluid": "gt6:whaleoil", "amount": 1}],
+   "fluidOutputs": [{"fluid": "gt6:hotfryingoil", "amount": 1}],
+   "duration": 1,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:707 \u2014 Ice 1 -> Water 1 (addRecipe0, no item slot)",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 1}],
+   "fluidOutputs": [{"fluid": "minecraft:water", "amount": 1}],
+   "duration": 1,
+   "eut": 16
+  }
+ ]
 }

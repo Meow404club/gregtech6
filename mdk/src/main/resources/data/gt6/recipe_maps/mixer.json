@@ -1,0 +1,1650 @@
+{
+ "comment": "Static-row replay of the upstream Mixer food face (task food-recipes-t2). Sources: Loader_Recipes_Food.java:727, :739-:744, :746-:828 \u2014 the fluid legs of the food band, statically expanded where upstream walks a fluid set (the :774-:777 COOKING_OIL x VINEGAR 11x4 walk, the :746/:749/:752/:755/:761/:770 item-form walks, the :828 FRUIT_JUICE 37-member walk, the B2a list). DECLARED OUT (port blockers / other-card scope): :719-:724 the flour x meat/fish ingot legs (item-only, no fluid leg \u2014 the T1b band), :725 OatAbyssal dough (Food_Dough_Abyssal unported, T3), :729-:731 the butter-salting legs (Food_Butter_Salted unported, T1), :733-:737 the chocolate dust legs (item-only, T3), :771 the chili chips leg (Food_ChiliChips unported, T1), :789 Med_Heal (Sap_Rainbow is a declared-absent shorthand, the GTFluids food-b1 census), :829 the CryoMixer ice-tea walk (already poured by recipe-data-b2a \u2014 only-add-never-duplicate), the :761 gemChipped Sugar form (gem_chipped_sugar unregistered in port \u2014 the juicer :860/:861 gem-form precedent, 7 rows stay out), and the :581-:603 waters-loop Mixer legs (dough/milk/honey/tea \u2014 the shared waters-walk family, outside this card's T2 segments). Row comments keep the per-leg upstream anchors; census: 216 rows, zero skips.",
+ "recipes": [
+  {
+   "comment": "Loader_Recipes_Food.java:727 \u2014 Mash_Wheat 50 + Mash_Hops 50 -> Mash_WheatHops 100",
+   "fluidInputs": [{"fluid": "gt6:mashwheat", "amount": 50}, {"fluid": "gt6:hopsmash", "amount": 50}],
+   "fluidOutputs": [{"fluid": "gt6:wheathopsmash", "amount": 100}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:739 \u2014 Lemonade 125 + Vodka 125 -> Leninade 250",
+   "fluidInputs": [{"fluid": "gt6:lemonade", "amount": 125}, {"fluid": "gt6:vodka", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:leninade", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:740 \u2014 Juice_Ananas 150 + Cream_Coconut 50 + Rum_White 50 -> Pina_Colada 250",
+   "fluidInputs": [{"fluid": "gt6:juicepineapple", "amount": 150}, {"fluid": "gt6:coconutcream", "amount": 50}, {"fluid": "gt6:rumwhite", "amount": 50}],
+   "fluidOutputs": [{"fluid": "gt6:pina_colada", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:746 \u2014 Milk dust walk (dust_milk) + potion.darkcoffee 750 -> potion.coffee 750",
+   "inputs": [{"item": "gt6:dust_milk", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:potion.darkcoffee", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.coffee", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:746 \u2014 Milk dust walk (dust_small_milk) + potion.darkcoffee 750 -> potion.coffee 750",
+   "inputs": [{"item": "gt6:dust_small_milk", "count": 4}],
+   "fluidInputs": [{"fluid": "gt6:potion.darkcoffee", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.coffee", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:746 \u2014 Milk dust walk (dust_tiny_milk) + potion.darkcoffee 750 -> potion.coffee 750",
+   "inputs": [{"item": "gt6:dust_tiny_milk", "count": 9}],
+   "fluidInputs": [{"fluid": "gt6:potion.darkcoffee", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.coffee", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:749 \u2014 Peanut dust walk (dust_peanut) + Cream 250 -> Nutbutter_Peanut 250",
+   "inputs": [{"item": "gt6:dust_peanut", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:grcmilk_cream", "amount": 250}],
+   "fluidOutputs": [{"fluid": "gt6:peanutbutter", "amount": 250}],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:749 \u2014 Peanut dust walk (dust_small_peanut) + Cream 250 -> Nutbutter_Peanut 250",
+   "inputs": [{"item": "gt6:dust_small_peanut", "count": 4}],
+   "fluidInputs": [{"fluid": "gt6:grcmilk_cream", "amount": 250}],
+   "fluidOutputs": [{"fluid": "gt6:peanutbutter", "amount": 250}],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:749 \u2014 Peanut dust walk (dust_tiny_peanut) + Cream 250 -> Nutbutter_Peanut 250",
+   "inputs": [{"item": "gt6:dust_tiny_peanut", "count": 9}],
+   "fluidInputs": [{"fluid": "gt6:grcmilk_cream", "amount": 250}],
+   "fluidOutputs": [{"fluid": "gt6:peanutbutter", "amount": 250}],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:752 \u2014 Hazelnut dust walk (dust_hazelnut) + Cream_Chocolate 250 -> Cream_Nutella 250",
+   "inputs": [{"item": "gt6:dust_hazelnut", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:chocolatecream", "amount": 250}],
+   "fluidOutputs": [{"fluid": "gt6:nutella", "amount": 250}],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:752 \u2014 Hazelnut dust walk (dust_small_hazelnut) + Cream_Chocolate 250 -> Cream_Nutella 250",
+   "inputs": [{"item": "gt6:dust_small_hazelnut", "count": 4}],
+   "fluidInputs": [{"fluid": "gt6:chocolatecream", "amount": 250}],
+   "fluidOutputs": [{"fluid": "gt6:nutella", "amount": 250}],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:752 \u2014 Hazelnut dust walk (dust_tiny_hazelnut) + Cream_Chocolate 250 -> Cream_Nutella 250",
+   "inputs": [{"item": "gt6:dust_tiny_hazelnut", "count": 9}],
+   "fluidInputs": [{"fluid": "gt6:chocolatecream", "amount": 250}],
+   "fluidOutputs": [{"fluid": "gt6:nutella", "amount": 250}],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:756 \u2014 Chocolate dust walk (dust_chocolate) + Milk 750 -> potion.darkchocolatemilk 750",
+   "inputs": [{"item": "gt6:dust_chocolate", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:milk", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.darkchocolatemilk", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:757 \u2014 Chocolate dust walk (dust_chocolate) + MilkGrC 750 -> potion.darkchocolatemilk 750",
+   "inputs": [{"item": "gt6:dust_chocolate", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:grcmilk_milk", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.darkchocolatemilk", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:758 \u2014 Chocolate dust walk (dust_chocolate) + MilkSoy 750 -> potion.darkchocolatemilk 750",
+   "inputs": [{"item": "gt6:dust_chocolate", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:soymilk", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.darkchocolatemilk", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:759 \u2014 Chocolate dust walk (dust_chocolate) + Cream 250 -> Cream_Chocolate 250",
+   "inputs": [{"item": "gt6:dust_chocolate", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:grcmilk_cream", "amount": 250}],
+   "fluidOutputs": [{"fluid": "gt6:chocolatecream", "amount": 250}],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:756 \u2014 Chocolate dust walk (dust_small_chocolate) + Milk 750 -> potion.darkchocolatemilk 750",
+   "inputs": [{"item": "gt6:dust_small_chocolate", "count": 4}],
+   "fluidInputs": [{"fluid": "gt6:milk", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.darkchocolatemilk", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:757 \u2014 Chocolate dust walk (dust_small_chocolate) + MilkGrC 750 -> potion.darkchocolatemilk 750",
+   "inputs": [{"item": "gt6:dust_small_chocolate", "count": 4}],
+   "fluidInputs": [{"fluid": "gt6:grcmilk_milk", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.darkchocolatemilk", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:758 \u2014 Chocolate dust walk (dust_small_chocolate) + MilkSoy 750 -> potion.darkchocolatemilk 750",
+   "inputs": [{"item": "gt6:dust_small_chocolate", "count": 4}],
+   "fluidInputs": [{"fluid": "gt6:soymilk", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.darkchocolatemilk", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:759 \u2014 Chocolate dust walk (dust_small_chocolate) + Cream 250 -> Cream_Chocolate 250",
+   "inputs": [{"item": "gt6:dust_small_chocolate", "count": 4}],
+   "fluidInputs": [{"fluid": "gt6:grcmilk_cream", "amount": 250}],
+   "fluidOutputs": [{"fluid": "gt6:chocolatecream", "amount": 250}],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:756 \u2014 Chocolate dust walk (dust_tiny_chocolate) + Milk 750 -> potion.darkchocolatemilk 750",
+   "inputs": [{"item": "gt6:dust_tiny_chocolate", "count": 9}],
+   "fluidInputs": [{"fluid": "gt6:milk", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.darkchocolatemilk", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:757 \u2014 Chocolate dust walk (dust_tiny_chocolate) + MilkGrC 750 -> potion.darkchocolatemilk 750",
+   "inputs": [{"item": "gt6:dust_tiny_chocolate", "count": 9}],
+   "fluidInputs": [{"fluid": "gt6:grcmilk_milk", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.darkchocolatemilk", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:758 \u2014 Chocolate dust walk (dust_tiny_chocolate) + MilkSoy 750 -> potion.darkchocolatemilk 750",
+   "inputs": [{"item": "gt6:dust_tiny_chocolate", "count": 9}],
+   "fluidInputs": [{"fluid": "gt6:soymilk", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.darkchocolatemilk", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:759 \u2014 Chocolate dust walk (dust_tiny_chocolate) + Cream 250 -> Cream_Chocolate 250",
+   "inputs": [{"item": "gt6:dust_tiny_chocolate", "count": 9}],
+   "fluidInputs": [{"fluid": "gt6:grcmilk_cream", "amount": 250}],
+   "fluidOutputs": [{"fluid": "gt6:chocolatecream", "amount": 250}],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:762 \u2014 Sugar form walk (dust_sugar) + potion.coffee 750 -> potion.cafeaulait 750",
+   "inputs": [{"item": "gt6:dust_sugar", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:potion.coffee", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.cafeaulait", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:763 \u2014 Sugar form walk (dust_sugar) + potion.cafeaulait 750 -> potion.laitaucafe 750",
+   "inputs": [{"item": "gt6:dust_sugar", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:potion.cafeaulait", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.laitaucafe", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:764 \u2014 Sugar form walk (dust_sugar) + potion.darkcoffee 750 -> potion.darkcafeaulait 750",
+   "inputs": [{"item": "gt6:dust_sugar", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:potion.darkcoffee", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.darkcafeaulait", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:765 \u2014 Sugar form walk (dust_sugar) + potion.darkchocolatemilk 750 -> chocolatemilk 750",
+   "inputs": [{"item": "gt6:dust_sugar", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:potion.darkchocolatemilk", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:chocolatemilk", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:766 \u2014 Sugar form walk (dust_sugar) + juicelemon 750 -> lemonade 750",
+   "inputs": [{"item": "gt6:dust_sugar", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:juicelemon", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:lemonade", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:767 \u2014 Sugar form walk (dust_sugar) + juicetomato 750 -> ketchup 750",
+   "inputs": [{"item": "gt6:dust_sugar", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:juicetomato", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:ketchup", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:768 \u2014 Sugar form walk (dust_sugar) + tea 750 -> sweettea 750",
+   "inputs": [{"item": "gt6:dust_sugar", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:tea", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:sweettea", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:762 \u2014 Sugar form walk (dust_small_sugar) + potion.coffee 750 -> potion.cafeaulait 750",
+   "inputs": [{"item": "gt6:dust_small_sugar", "count": 4}],
+   "fluidInputs": [{"fluid": "gt6:potion.coffee", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.cafeaulait", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:763 \u2014 Sugar form walk (dust_small_sugar) + potion.cafeaulait 750 -> potion.laitaucafe 750",
+   "inputs": [{"item": "gt6:dust_small_sugar", "count": 4}],
+   "fluidInputs": [{"fluid": "gt6:potion.cafeaulait", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.laitaucafe", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:764 \u2014 Sugar form walk (dust_small_sugar) + potion.darkcoffee 750 -> potion.darkcafeaulait 750",
+   "inputs": [{"item": "gt6:dust_small_sugar", "count": 4}],
+   "fluidInputs": [{"fluid": "gt6:potion.darkcoffee", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.darkcafeaulait", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:765 \u2014 Sugar form walk (dust_small_sugar) + potion.darkchocolatemilk 750 -> chocolatemilk 750",
+   "inputs": [{"item": "gt6:dust_small_sugar", "count": 4}],
+   "fluidInputs": [{"fluid": "gt6:potion.darkchocolatemilk", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:chocolatemilk", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:766 \u2014 Sugar form walk (dust_small_sugar) + juicelemon 750 -> lemonade 750",
+   "inputs": [{"item": "gt6:dust_small_sugar", "count": 4}],
+   "fluidInputs": [{"fluid": "gt6:juicelemon", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:lemonade", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:767 \u2014 Sugar form walk (dust_small_sugar) + juicetomato 750 -> ketchup 750",
+   "inputs": [{"item": "gt6:dust_small_sugar", "count": 4}],
+   "fluidInputs": [{"fluid": "gt6:juicetomato", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:ketchup", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:768 \u2014 Sugar form walk (dust_small_sugar) + tea 750 -> sweettea 750",
+   "inputs": [{"item": "gt6:dust_small_sugar", "count": 4}],
+   "fluidInputs": [{"fluid": "gt6:tea", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:sweettea", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:762 \u2014 Sugar form walk (dust_tiny_sugar) + potion.coffee 750 -> potion.cafeaulait 750",
+   "inputs": [{"item": "gt6:dust_tiny_sugar", "count": 9}],
+   "fluidInputs": [{"fluid": "gt6:potion.coffee", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.cafeaulait", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:763 \u2014 Sugar form walk (dust_tiny_sugar) + potion.cafeaulait 750 -> potion.laitaucafe 750",
+   "inputs": [{"item": "gt6:dust_tiny_sugar", "count": 9}],
+   "fluidInputs": [{"fluid": "gt6:potion.cafeaulait", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.laitaucafe", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:764 \u2014 Sugar form walk (dust_tiny_sugar) + potion.darkcoffee 750 -> potion.darkcafeaulait 750",
+   "inputs": [{"item": "gt6:dust_tiny_sugar", "count": 9}],
+   "fluidInputs": [{"fluid": "gt6:potion.darkcoffee", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:potion.darkcafeaulait", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:765 \u2014 Sugar form walk (dust_tiny_sugar) + potion.darkchocolatemilk 750 -> chocolatemilk 750",
+   "inputs": [{"item": "gt6:dust_tiny_sugar", "count": 9}],
+   "fluidInputs": [{"fluid": "gt6:potion.darkchocolatemilk", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:chocolatemilk", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:766 \u2014 Sugar form walk (dust_tiny_sugar) + juicelemon 750 -> lemonade 750",
+   "inputs": [{"item": "gt6:dust_tiny_sugar", "count": 9}],
+   "fluidInputs": [{"fluid": "gt6:juicelemon", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:lemonade", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:767 \u2014 Sugar form walk (dust_tiny_sugar) + juicetomato 750 -> ketchup 750",
+   "inputs": [{"item": "gt6:dust_tiny_sugar", "count": 9}],
+   "fluidInputs": [{"fluid": "gt6:juicetomato", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:ketchup", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:768 \u2014 Sugar form walk (dust_tiny_sugar) + tea 750 -> sweettea 750",
+   "inputs": [{"item": "gt6:dust_tiny_sugar", "count": 9}],
+   "fluidInputs": [{"fluid": "gt6:tea", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:sweettea", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:772 \u2014 Chili dust walk (dust_chili) + Sauce_Chili 750 -> potion.hotsauce 750 (the :771 chips leg rides the T1 food-item band)",
+   "inputs": [{"item": "gt6:dust_chili", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:chillysauce", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:hotsauce", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:772 \u2014 Chili dust walk (dust_small_chili) + Sauce_Chili 750 -> potion.hotsauce 750 (the :771 chips leg rides the T1 food-item band)",
+   "inputs": [{"item": "gt6:dust_small_chili", "count": 4}],
+   "fluidInputs": [{"fluid": "gt6:chillysauce", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:hotsauce", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:772 \u2014 Chili dust walk (dust_tiny_chili) + Sauce_Chili 750 -> potion.hotsauce 750 (the :771 chips leg rides the T1 food-item band)",
+   "inputs": [{"item": "gt6:dust_tiny_chili", "count": 9}],
+   "fluidInputs": [{"fluid": "gt6:chillysauce", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:hotsauce", "amount": 750}],
+   "duration": 48,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (coconutmilk + vinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:coconutmilk", "amount": 100}, {"fluid": "gt6:vinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (coconutmilk + vinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:vinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (coconutmilk + applevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:coconutmilk", "amount": 100}, {"fluid": "gt6:applevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (coconutmilk + applevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:applevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (coconutmilk + canevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:coconutmilk", "amount": 100}, {"fluid": "gt6:canevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (coconutmilk + canevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:canevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (coconutmilk + ricevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:coconutmilk", "amount": 100}, {"fluid": "gt6:ricevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (coconutmilk + ricevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:ricevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (hotfryingoil + vinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:hotfryingoil", "amount": 100}, {"fluid": "gt6:vinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (hotfryingoil + vinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:vinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (hotfryingoil + applevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:hotfryingoil", "amount": 100}, {"fluid": "gt6:applevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (hotfryingoil + applevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:applevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (hotfryingoil + canevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:hotfryingoil", "amount": 100}, {"fluid": "gt6:canevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (hotfryingoil + canevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:canevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (hotfryingoil + ricevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:hotfryingoil", "amount": 100}, {"fluid": "gt6:ricevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (hotfryingoil + ricevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:ricevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (seedoil + vinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:seedoil", "amount": 100}, {"fluid": "gt6:vinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (seedoil + vinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:vinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (seedoil + applevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:seedoil", "amount": 100}, {"fluid": "gt6:applevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (seedoil + applevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:applevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (seedoil + canevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:seedoil", "amount": 100}, {"fluid": "gt6:canevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (seedoil + canevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:canevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (seedoil + ricevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:seedoil", "amount": 100}, {"fluid": "gt6:ricevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (seedoil + ricevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:ricevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (plantoil + vinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:plantoil", "amount": 100}, {"fluid": "gt6:vinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (plantoil + vinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:vinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (plantoil + applevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:plantoil", "amount": 100}, {"fluid": "gt6:applevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (plantoil + applevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:applevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (plantoil + canevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:plantoil", "amount": 100}, {"fluid": "gt6:canevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (plantoil + canevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:canevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (plantoil + ricevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:plantoil", "amount": 100}, {"fluid": "gt6:ricevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (plantoil + ricevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:ricevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (sunfloweroil + vinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:sunfloweroil", "amount": 100}, {"fluid": "gt6:vinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (sunfloweroil + vinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:vinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (sunfloweroil + applevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:sunfloweroil", "amount": 100}, {"fluid": "gt6:applevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (sunfloweroil + applevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:applevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (sunfloweroil + canevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:sunfloweroil", "amount": 100}, {"fluid": "gt6:canevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (sunfloweroil + canevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:canevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (sunfloweroil + ricevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:sunfloweroil", "amount": 100}, {"fluid": "gt6:ricevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (sunfloweroil + ricevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:ricevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (juiceolive + vinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:juiceolive", "amount": 100}, {"fluid": "gt6:vinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (juiceolive + vinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:vinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (juiceolive + applevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:juiceolive", "amount": 100}, {"fluid": "gt6:applevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (juiceolive + applevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:applevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (juiceolive + canevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:juiceolive", "amount": 100}, {"fluid": "gt6:canevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (juiceolive + canevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:canevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (juiceolive + ricevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:juiceolive", "amount": 100}, {"fluid": "gt6:ricevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (juiceolive + ricevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:ricevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (nutoil + vinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:nutoil", "amount": 100}, {"fluid": "gt6:vinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (nutoil + vinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:vinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (nutoil + applevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:nutoil", "amount": 100}, {"fluid": "gt6:applevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (nutoil + applevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:applevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (nutoil + canevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:nutoil", "amount": 100}, {"fluid": "gt6:canevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (nutoil + canevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:canevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (nutoil + ricevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:nutoil", "amount": 100}, {"fluid": "gt6:ricevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (nutoil + ricevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:ricevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (linoil + vinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:linoil", "amount": 100}, {"fluid": "gt6:vinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (linoil + vinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:vinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (linoil + applevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:linoil", "amount": 100}, {"fluid": "gt6:applevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (linoil + applevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:applevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (linoil + canevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:linoil", "amount": 100}, {"fluid": "gt6:canevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (linoil + canevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:canevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (linoil + ricevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:linoil", "amount": 100}, {"fluid": "gt6:ricevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (linoil + ricevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:ricevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (hempoil + vinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:hempoil", "amount": 100}, {"fluid": "gt6:vinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (hempoil + vinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:vinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (hempoil + applevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:hempoil", "amount": 100}, {"fluid": "gt6:applevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (hempoil + applevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:applevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (hempoil + canevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:hempoil", "amount": 100}, {"fluid": "gt6:canevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (hempoil + canevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:canevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (hempoil + ricevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:hempoil", "amount": 100}, {"fluid": "gt6:ricevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (hempoil + ricevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:ricevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (fishoil + vinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:fishoil", "amount": 100}, {"fluid": "gt6:vinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (fishoil + vinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:vinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (fishoil + applevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:fishoil", "amount": 100}, {"fluid": "gt6:applevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (fishoil + applevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:applevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (fishoil + canevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:fishoil", "amount": 100}, {"fluid": "gt6:canevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (fishoil + canevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:canevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (fishoil + ricevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:fishoil", "amount": 100}, {"fluid": "gt6:ricevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (fishoil + ricevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:ricevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (whaleoil + vinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:whaleoil", "amount": 100}, {"fluid": "gt6:vinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (whaleoil + vinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:vinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (whaleoil + applevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:whaleoil", "amount": 100}, {"fluid": "gt6:applevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (whaleoil + applevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:applevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (whaleoil + canevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:whaleoil", "amount": 100}, {"fluid": "gt6:canevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (whaleoil + canevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:canevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:775 \u2014 COOKING_OIL x VINEGAR walk (whaleoil + ricevinegar) + Salt dust -> Dressing 250",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:whaleoil", "amount": 100}, {"fluid": "gt6:ricevinegar", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:dressing", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:776 \u2014 COOKING_OIL x VINEGAR walk (whaleoil + ricevinegar) + Salt/PepperBlack dust + Ketchup 250 -> Sauce_BBQ 500",
+   "inputs": [{"item": "gt6:dust_salt", "count": 1}, {"item": "gt6:dust_pepper_black", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:ketchup", "amount": 250}, {"fluid": "gt6:ricevinegar", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bbqsauce", "amount": 500}],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:779 \u2014 juiceplum 125 + juiceapple 125 -> medicine.laxative 250",
+   "fluidInputs": [{"fluid": "gt6:juiceplum", "amount": 125}, {"fluid": "gt6:juiceapple", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:medicine.laxative", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:780 \u2014 juicewhitegrape 125 + juiceapple 125 -> medicine.laxative 250",
+   "fluidInputs": [{"fluid": "gt6:juicewhitegrape", "amount": 125}, {"fluid": "gt6:juiceapple", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:medicine.laxative", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:781 \u2014 grapejuice 125 + juiceapple 125 -> medicine.laxative 250",
+   "fluidInputs": [{"fluid": "gt6:grapejuice", "amount": 125}, {"fluid": "gt6:juiceapple", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:medicine.laxative", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:782 \u2014 juiceredgrape 125 + juiceapple 125 -> medicine.laxative 250",
+   "fluidInputs": [{"fluid": "gt6:juiceredgrape", "amount": 125}, {"fluid": "gt6:juiceapple", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:medicine.laxative", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:783 \u2014 grc_grapewine0 125 + juiceapple 125 -> medicine.laxative 250",
+   "fluidInputs": [{"fluid": "gt6:grc_grapewine0", "amount": 125}, {"fluid": "gt6:juiceapple", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:medicine.laxative", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:784 \u2014 juicewhitegrape 125 + juiceplum 125 -> medicine.laxative 250",
+   "fluidInputs": [{"fluid": "gt6:juicewhitegrape", "amount": 125}, {"fluid": "gt6:juiceplum", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:medicine.laxative", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:785 \u2014 grapejuice 125 + juiceplum 125 -> medicine.laxative 250",
+   "fluidInputs": [{"fluid": "gt6:grapejuice", "amount": 125}, {"fluid": "gt6:juiceplum", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:medicine.laxative", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:786 \u2014 juiceredgrape 125 + juiceplum 125 -> medicine.laxative 250",
+   "fluidInputs": [{"fluid": "gt6:juiceredgrape", "amount": 125}, {"fluid": "gt6:juiceplum", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:medicine.laxative", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:792 \u2014 Ice 125 + Juice 125 -> Smoothie (fruitsmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juice_juice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:793 \u2014 Ice 125 + Juice_Ananas 125 -> Smoothie (pineapplesmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicepineapple", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:pineapplesmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:794 \u2014 Ice 125 + Juice_Apple 125 -> Smoothie (applesmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juiceapple", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:applesmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:795 \u2014 Ice 125 + Juice_AppleGrC 125 -> Smoothie (applesmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:grc_applecider0", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:applesmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:796 \u2014 Ice 125 + Juice_Apricot 125 -> Smoothie (apricotsmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juiceapricot", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:apricotsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:797 \u2014 Ice 125 + Juice_Banana 125 -> Smoothie (bananasmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicebanana", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:bananasmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:798 \u2014 Ice 125 + Juice_Blackberry 125 -> Smoothie (blackberrysmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:blackberryjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:blackberrysmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:799 \u2014 Ice 125 + Juice_Blueberry 125 -> Smoothie (blueberrysmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:blueberryjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:blueberrysmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:800 \u2014 Ice 125 + Juice_Cherry 125 -> Smoothie (cherrysmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicecherry", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:cherrysmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:801 \u2014 Ice 125 + Juice_Cranberry 125 -> Smoothie (cranberrysmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicecranberry", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:cranberrysmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:802 \u2014 Ice 125 + Juice_Currant 125 -> Smoothie (currantsmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:currantjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:currantsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:803 \u2014 Ice 125 + Juice_Elderberry 125 -> Smoothie (elderberrysmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juiceelderberry", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:elderberrysmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:804 \u2014 Ice 125 + Juice_Gooseberry 125 -> Smoothie (gooseberrysmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:gooseberryjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:gooseberrysmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:805 \u2014 Ice 125 + Juice_Grape_Red 125 -> Smoothie (redgrapesmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juiceredgrape", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:redgrapesmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:806 \u2014 Ice 125 + Juice_Grape_White 125 -> Smoothie (whitegrapesmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicewhitegrape", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:whitegrapesmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:807 \u2014 Ice 125 + Juice_Grape_Green 125 -> Smoothie (grapesmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:grapejuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:grapesmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:808 \u2014 Ice 125 + Juice_Grape_Purple 125 -> Smoothie (purplegrapesmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:grc_grapewine0", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:purplegrapesmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:809 \u2014 Ice 125 + Juice_Grapefruit 125 -> Smoothie (grapefruitsmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicegrapefruit", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:grapefruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:810 \u2014 Ice 125 + Juice_Kiwi 125 -> Smoothie (kiwismoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:kiwijuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:kiwismoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:811 \u2014 Ice 125 + Juice_Lemon 125 -> Smoothie (lemonsmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicelemon", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:lemonsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:812 \u2014 Ice 125 + Juice_Lime 125 -> Smoothie (limesmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicelime", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:limesmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:813 \u2014 Ice 125 + Juice_Melon 125 -> Smoothie (melonsmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:melonjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:melonsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:814 \u2014 Ice 125 + Juice_Orange 125 -> Smoothie (orangesmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juiceorange", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:orangesmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:815 \u2014 Ice 125 + Juice_Persimmon 125 -> Smoothie (persimmonsmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:persimmonjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:persimmonsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:816 \u2014 Ice 125 + Juice_Peach 125 -> Smoothie (peachsmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicepeach", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:peachsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:817 \u2014 Ice 125 + Juice_Pear 125 -> Smoothie (pearsmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicepear", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:pearsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:818 \u2014 Ice 125 + Juice_Plum 125 -> Smoothie (plumsmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juiceplum", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:plumsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:819 \u2014 Ice 125 + Juice_Raspberry 125 -> Smoothie (raspberrysmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:raspberryjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:raspberrysmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:820 \u2014 Ice 125 + Juice_Strawberry 125 -> Smoothie (strawberrysmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:strawberryjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:strawberrysmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:821 \u2014 Ice 125 + Juice_Mango 125 -> Smoothie (mangosmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:mangojuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:mangosmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:822 \u2014 Ice 125 + Juice_Starfruit 125 -> Smoothie (starfruitsmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:starfruitjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:starfruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:823 \u2014 Ice 125 + Juice_Fig 125 -> Smoothie (figsmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:figjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:figsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:824 \u2014 Ice 125 + Juice_Pomegranate 125 -> Smoothie (pomegranatesmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:pomegranatejuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:pomegranatesmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:825 \u2014 Ice 125 + Juice_Papaya 125 -> Smoothie (papayasmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:papayajuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:papayasmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:826 \u2014 Ice 125 + Juice_Coconut 125 -> Smoothie (coconutsmoothie) 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:coconutmilk", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:coconutsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (blackberryjuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:blackberryjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (blueberryjuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:blueberryjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (cactusfruitjuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:cactusfruitjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (coconutmilk) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:coconutmilk", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (currantjuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:currantjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (datejuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:datejuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (figjuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:figjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (gooseberryjuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:gooseberryjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (grapejuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:grapejuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (grc_applecider0) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:grc_applecider0", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (grc_grapewine0) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:grc_grapewine0", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (hellderberryjuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:hellderberryjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (juiceapple) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juiceapple", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (juiceapricot) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juiceapricot", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (juicebanana) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicebanana", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (juicecherry) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicecherry", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (juicecranberry) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicecranberry", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (juiceelderberry) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juiceelderberry", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (juicegrapefruit) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicegrapefruit", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (juicelemon) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicelemon", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (juicelime) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicelime", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (juiceorange) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juiceorange", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (juicepeach) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicepeach", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (juicepear) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicepear", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (juicepineapple) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicepineapple", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (juiceplum) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juiceplum", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (juiceredgrape) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juiceredgrape", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (juicewhitegrape) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:juicewhitegrape", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (kiwijuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:kiwijuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (mangojuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:mangojuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (melonjuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:melonjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (papayajuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:papayajuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (persimmonjuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:persimmonjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (pomegranatejuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:pomegranatejuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (raspberryjuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:raspberryjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (starfruitjuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:starfruitjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:828 \u2014 FRUIT_JUICE walk (strawberryjuice) + Ice 125 -> Smoothie_Fruit 250",
+   "fluidInputs": [{"fluid": "gt6:ice", "amount": 125}, {"fluid": "gt6:strawberryjuice", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:fruitsmoothie", "amount": 250}],
+   "duration": 16,
+   "eut": 16
+  }
+ ]
+}
