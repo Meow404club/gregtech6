@@ -163,7 +163,11 @@ class GT6LargeMachineMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 			long tProgress = tAll.stream().filter(w -> w instanceof ProgressWidget).count();
 			assertEquals(tMap.mInputItemsCount + tMap.mOutputItemsCount + 36, tItemSeats,
 					tRow.path() + ": " + tMap.mInputItemsCount + " inputs + " + tMap.mOutputItemsCount + " outputs + 36 player seats");
-			assertEquals(2, tFluidSeats, tRow.path() + ": the 1/1 fluid banks (:267/:268)");
+			// the r10 live bank truth: the fluid seats = the BE's tank banks (the upstream
+			// :267/:268 mInputFluidCount/mOutputFluidCount seats — MIXER 6+1, the zero-fluid
+			// rows 0+1; the old hard 2 was the shadow-field 1/1 era)
+			assertEquals(tMachine.getFluidInputTanks().length + tMachine.getFluidOutputTanks().length, tFluidSeats,
+					tRow.path() + ": the fluid seats = the live tank banks (:267/:268)");
 			assertEquals(1, tProgress, tRow.path() + ": exactly the progress bar");
 			assertNotNull(tAll.stream().filter(w -> "player_inventory".equals(w.getName())).findFirst().orElse(null),
 					tRow.path() + ": the player inventory widget");

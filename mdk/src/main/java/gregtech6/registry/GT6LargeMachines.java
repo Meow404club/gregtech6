@@ -613,14 +613,6 @@ public final class GT6LargeMachines {
 		private final LargeMachineRow mRow;
 
 		/**
-		 * The input tank — the upstream mTanksInput[0], the default FluidTankGT capacity
-		 * (Long.MAX_VALUE, the base output-tank precedent; the twelve rows carry no
-		 * NBT_TANK_CAPACITY). Filled through the fluid capability (the all-open face —
-		 * the upstream mFluidInputs 127 default), drained by the recipe consume.
-		 */
-		public final FluidTankGT[] mTanksInput = {new FluidTankGT()};
-
-		/**
 		 * Upstream :96 mEfficiency — the efficiency divisor of the :768/:771 rows (the
 		 * single-block carrier doc carries the full ruling; 10000 = identity, 5000 =
 		 * half speed). Registration config, never persisted.
@@ -660,6 +652,15 @@ public final class GT6LargeMachines {
 				mInventory = new GTItemStackHandler(tMap.mInputItemsCount + tMap.mOutputItemsCount, this::onInventoryChanged);
 				setInventory(mInventory); // rebind the root capability LazyOptional (TileEntityBase01Root.java:430)
 			}
+			// the :157-162 input-tank re-point (the fusion :147 form over the base bank —
+			// this field shadowed the base mTanksInput until r10, which killed the base
+			// save/load :1051/:1081 chain and hard-coded one tank): the bank is the map
+			// row's mInputFluidCount — MIXER 6 / ELECTROLYZER 2 / nine 1-tank rows, the
+			// zero-fluid CRUSHER/SHREDDER/SQUEEZER rows keep the base empty bank. The
+			// default FluidTankGT capacity rides (Long.MAX — the fusion/distill precedent;
+			// the upstream :159 1000 + mMinInputTankSizes adjustable leg is unported).
+			mTanksInput = new FluidTankGT[tMap.mInputFluidCount];
+			for (int i = 0; i < mTanksInput.length; i++) mTanksInput[i] = new FluidTankGT();
 		}
 	}
 
@@ -1116,10 +1117,10 @@ public final class GT6LargeMachines {
 				return aTank == 0 && aStack != null && !aStack.isEmpty();
 			}
 
-			/** The all-open fill (mask 127) into the input tank; an executed fill OPENS the doActive re-check window (mInventoryChanged, the :798-805 gate) — without it a fluid feed mid-idle would wait for the aTimer%1200 tick. */
+			/** The all-open fill (mask 127) into the input tank; an executed fill OPENS the doActive re-check window (mInventoryChanged, the :798-805 gate) — without it a fluid feed mid-idle would wait for the aTimer%1200 tick. The zero-fluid rows carry the empty base bank — nothing to fill (the upstream zero-length bank behaves the same). */
 			@Override
 			public int fill(FluidStack aResource, FluidAction aAction) {
-				if (aResource == null || aResource.isEmpty()) return 0;
+				if (aResource == null || aResource.isEmpty() || mMachine.mTanksInput.length == 0) return 0;
 				int rFilled = mMachine.mTanksInput[0].fill(aResource, aAction);
 				if (rFilled > 0 && aAction.execute()) {
 					mMachine.setChanged();
@@ -1148,29 +1149,20 @@ public final class GT6LargeMachines {
 
 			@Nullable
 			private FluidTankGT tank(int aTank) {
-				return aTank == 0 ? mMachine.mTanksInput[0] : aTank == 1 ? mMachine.mTanksOutput[0] : null;
+				return aTank == 0 ? (mMachine.mTanksInput.length > 0 ? mMachine.mTanksInput[0] : null) : aTank == 1 ? mMachine.mTanksOutput[0] : null;
 			}
 		}
 
 		// ---------------------------------------------------------------------
-		// NBT — the input tank rides the base save/load chain
+		// NBT — the input tanks ride the base save/load chain (the :1051/:1081
+		// loops bind the base mTanksInput bank: input_tank / input_tank_<i>);
+		// the r10 shadow-field save/load patch is retired with it
 		// ---------------------------------------------------------------------
-
-	// the tank NBT rides the shared chain — no provider-needing IO on this face (the
-	// FluidTankGT readFromNBT/writeToNBT pair is the base output-tank form verbatim)
-	@Override
-	protected void saveAdditional(CompoundTag aNBT) {
-		super.saveAdditional(aNBT);
-		mTanksInput[0].writeToNBT(aNBT, NBT_INPUT_TANK);
-	}
 
 	@Override
 	public void load(CompoundTag aNBT) {
-		super.load(aNBT);
-		if (aNBT.contains(NBT_INPUT_TANK, Tag.TAG_COMPOUND)) {
-			mTanksInput[0].readFromNBT(aNBT, NBT_INPUT_TANK);
-			if (mTanksInput[0].has()) mInventoryChanged = true; // the fed tank opens the doActive re-check window (the :798-805 gate)
-		}
+		super.load(aNBT); // the base loop reads every input tank
+		if (mTanksInput.length > 0 && mTanksInput[0].has()) mInventoryChanged = true; // the fed tank opens the doActive re-check window (the :798-805 gate)
 	}
 	}
 }
