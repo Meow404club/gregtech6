@@ -1,6 +1,7 @@
 package gregtech6.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -39,12 +40,12 @@ import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
  * (craftingtables/charging, MultiTileEntityChargingCraftingTable.java:61-80 getTexture2)
  * ride the ⑩B render/GUI card.
  *
- * <p>use() opens the ModularUI panel over the MenuProvider BE (the C2 wiring); the
- * upstream double-GUI split (top face = crafting GUI 0, front/back = charging GUI 1,
- * MultiTileEntityAdvancedCraftingTable.java:115-116) is the ⑩B card's face — this
- * single open is the declared transitional form.
- */
-public class GTAdvancedCraftingTableBlock extends GTEntityBlock {
+	 * <p>use() routes the upstream double-GUI split (task act-dual-gui,
+	 * MultiTileEntityAdvancedCraftingTable.java:115-117 verbatim semantics): top face =
+	 * crafting GUI 0, front/back = belt/charging GUI 1, other faces no GUI — each GUI
+	 * through its own ModularUI factory (the GT6BumbliaryMUI.Factory form, no MenuType).
+	 */
+	public class GTAdvancedCraftingTableBlock extends GTEntityBlock {
 
 	/** Facing property (horizontal — the shared single instance, the ADR-P16-2 alias). */
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -100,6 +101,22 @@ public class GTAdvancedCraftingTableBlock extends GTEntityBlock {
 		return RenderShape.MODEL; // BaseEntityBlock default is INVISIBLE (the oven :98 note)
 	}
 
+	/**
+	 * The upstream onBlockActivated3 face table (:115-117 verbatim semantics):
+	 * SIDES_TOP → GUI 0 (crafting), the two along-axis vertical faces
+	 * (ALONG_AXIS[aSide][mFacing] = front + back) → GUI 1 (the
+	 * {@code ContainerCommonDefault(…, 35, 36)} belt/charging GUI), everything else →
+	 * no GUI (upstream returns F). Pure so the use() router and the offline pins share
+	 * one table.
+	 *
+	 * @return 0 = crafting GUI, 1 = belt/charging GUI, -1 = no GUI
+	 */
+	public static int guiIdFor(Direction aHitFace, Direction aFacing) {
+		if (aHitFace == Direction.UP) return 0; // SIDES_TOP :115
+		if (aHitFace == aFacing || aHitFace == aFacing.getOpposite()) return 1; // ALONG_AXIS :116
+		return -1; // :117
+	}
+
 	@Override
 	//? if forge {
 	public InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, InteractionHand aHand, net.minecraft.world.phys.BlockHitResult aHit) {
@@ -109,14 +126,16 @@ public class GTAdvancedCraftingTableBlock extends GTEntityBlock {
 	//(the GTOvenBlock fork shape).
 	InteractionHand aHand = InteractionHand.MAIN_HAND;
 	*///?}
-		// C2: the ModularUI open chain (decisions.p24-act-be-form — the mdk-first-consumer
-		// wiring gate PASSED on both legs; BlockEntityUIFactory carries its own network,
-		// no NetworkHooks/MenuType face). The BE must implement IUIHolder<PosGuiData>. The
-		// ⑩B double-GUI split rides the GUI card (declared in the class doc).
+		// the double-GUI split (:115-117): each GUI opens through its own factory (the
+		// GT6BumbliaryMUI.Factory form — the factory identity rides the OpenGuiPacket
+		// wire, no MenuType; the BE's IUIHolder face stays the /gt6act open arm's GUI 0).
+		int tGui = guiIdFor(aHit.getDirection(), aState.getValue(FACING));
+		if (tGui < 0) return InteractionResult.PASS; // upstream :117 return F
 		BlockEntity tBlockEntity = aLevel.getBlockEntity(aPos);
 		if (tBlockEntity instanceof TileEntityAdvancedCraftingTable tTable && aPlayer instanceof net.minecraft.server.level.ServerPlayer tServerPlayer) {
-			brachy.modularui.factory.BlockEntityUIFactory.INSTANCE.open(tServerPlayer, tTable);
-			return InteractionResult.CONSUME; // upstream openGUI :115 (top face) / :116 (along-axis)
+			if (tGui == 0) gregtech6.menu.act.GTActMenu.Factory.CRAFT.open(tServerPlayer, tTable);
+			else gregtech6.menu.act.GTActMenu.Factory.BELT.open(tServerPlayer, tTable);
+			return InteractionResult.CONSUME; // upstream openGUI :115/:116
 		}
 		return InteractionResult.CONSUME;
 	}
