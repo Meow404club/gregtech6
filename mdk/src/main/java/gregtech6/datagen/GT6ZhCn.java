@@ -122,6 +122,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addGasCylinderUnits(); // task small-tank-gas-cylinder — the four Fluid Containers rows (the dump faces verbatim)
 		addCellUnits();         // task small-tank-cell — the 40 Fluid Containers rows (the dump faces verbatim)
 		addCupUnits();          // task small-tank-cup — the cup pair (the dump faces verbatim)
+		addJugUnits();          // task small-tank-jug — the jug pair (the dump faces verbatim)
 		addCrucibleJadeUnits(); // task crucible-jade-face
 		addCommonJadeUnits();   // task jade-redesign-core — the common jade band (hand rows, the tsv direct band)
 		addMachineJadeUnits();  // task hygiene-lang — the machine/fluid jade band (hand rows, the tsv direct band)
@@ -501,6 +502,17 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addCupUnits() {
 		addDirect("block.gt6.porcelain_cup");
 		addDirect("item.gt6.modeled_porcelain_cup");
+	}
+
+	/**
+	 * The Ceramic Jug pair (task small-tank-jug) — the dump faces verbatim (the
+	 * addDirect form over the gen script's BLOCK_BACKFILL band): the block rides the
+	 * ceramic row id 32740 (陶杯, tmp/gregtech.lang:13561) and the raw item the meta-996
+	 * row (粘土杯, tmp/gregtech.lang:10112).
+	 */
+	private void addJugUnits() {
+		addDirect("block.gt6.ceramic_jug");
+		addDirect("item.gt6.clay_jug");
 	}
 
 	/**

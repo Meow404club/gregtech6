@@ -128,6 +128,7 @@ public class GT6EnUs extends LanguageProvider {
         addGasCylinders(); // task small-tank-gas-cylinder — the four Fluid Containers rows
         addCells(); // task small-tank-cell — the 40 Fluid Containers rows
         addCup(); // task small-tank-cup — the Porcelain Cup pair (the 32739 row + the 899 raw)
+        addJug(); // task small-tank-jug — the Ceramic Jug pair (the 32740 row + the 996 raw)
         addAnvils(); // task c-anvil
         addEnergySource();
         addFeBattery(); // task eu-bridge-outbound — tail-append
@@ -1373,6 +1374,12 @@ public class GT6EnUs extends LanguageProvider {
     private void addCup() {
         add("block.gt6.porcelain_cup", "Porcelain Cup"); // the Loader_MultiTileEntities.java:2094 name column verbatim
         add("item.gt6.modeled_porcelain_cup", "Modeled Porcelain Cup"); // the MultiItemRandomTools.java:76 raw row verbatim
+    }
+
+    /** The Ceramic Jug pair (task small-tank-jug) — the Loader :2095 name column + the :120 raw row, both verbatim. */
+    private void addJug() {
+        add("block.gt6.ceramic_jug", "Ceramic Jug"); // the Loader_MultiTileEntities.java:2095 name column verbatim
+        add("item.gt6.clay_jug", "Clay Jug"); // the MultiItemRandomTools.java:120 raw row verbatim
     }
 
     /**

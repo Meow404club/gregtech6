@@ -1,0 +1,40 @@
+{
+  "parent": "gt6:block/ceramic_jug_empty",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#content"
+        },
+        "east": {
+          "texture": "#content"
+        },
+        "north": {
+          "texture": "#content"
+        },
+        "south": {
+          "texture": "#content"
+        },
+        "up": {
+          "texture": "#content"
+        },
+        "west": {
+          "texture": "#content"
+        }
+      },
+      "from": [
+        6,
+        10.05,
+        6
+      ],
+      "to": [
+        10,
+        11.5,
+        10
+      ]
+    }
+  ],
+  "textures": {
+    "content": "gt6:block/smeltery_content"
+  }
+}

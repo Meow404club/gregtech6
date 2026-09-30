@@ -45,6 +45,7 @@ import gregtech6.block.material.GTMaterialPrefixBlock;
 import gregtech6.block.sensors.GTSensorBlock;
 import gregtech6.block.tank.GT6CellBlock; // task small-tank-cell
 import gregtech6.block.tank.GT6CupBlock; // task small-tank-cup
+import gregtech6.block.tank.GT6JugBlock; // task small-tank-jug
 import gregtech6.block.stone.GTStoneBlock;
 import gregtech6.block.stone.StoneVariant;
 import gregtech6.block.surface.GT6SurfaceVariants;
@@ -292,6 +293,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addGasCylinders(); // task small-tank-gas-cylinder — the four gas cylinders (the one shared static bell model, no fluid pass)
         addCells(); // task small-tank-cell — the 40 Capsule-Cell-Container rows (the one shared per-level model family)
         addCup(); // task small-tank-cup — the Porcelain Cup bowl (the 1px-wall per-level model family)
+        addJug(); // task small-tank-jug — the Ceramic Jug (the rim-over-body per-level model family)
     }
 
     /**
@@ -4838,5 +4840,65 @@ public final class GT6BlockStates extends BlockStateProvider {
         tElement.face(Direction.WEST).texture("#" + aBand + "sides").end();
         tElement.face(Direction.EAST).texture("#" + aBand + "sides").end();
         tElement.end();
+    }
+
+    /**
+     * The Ceramic Jug (task small-tank-jug) — the upstream render-pass geometry
+     * MultiTileEntityJug.java:46-56 as elements: four 1px rim walls at y 10..14 (the
+     * pass 0-3 boxes verbatim — the corners stay open like upstream) + the body slab
+     * (3,0,3→13,10,13, the pass-4 box; down=bottom, up=top, horizontals=sides — the
+     * :71-76 pass mapping), every element over the colored band each duplicated by a
+     * 0.01-inflated overlay shell (overlay_top carries real art — the ledger), cutout.
+     * Levels 1..8 parent the shell and APPEND the fluid box (the cup idiom): flat
+     * eighth-fractions of the 3px interior ABOVE the body plane (10.05px off the body,
+     * 12.95px inset off the :53 fluid plane), riding the smeltery_content placeholder
+     * (the declared ceiling — the static model cannot know the BE's actual fluid).
+     */
+    private void addJug() {
+        BlockModelBuilder tEmpty = models().getBuilder("ceramic_jug_empty")
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("sides", modLoc("block/jug/colored_sides"))
+                .texture("top", modLoc("block/jug/colored_top"))
+                .texture("bottom", modLoc("block/jug/colored_bottom"))
+                .texture("insides", modLoc("block/jug/colored_insides"))
+                .texture("overlay_sides", modLoc("block/jug/overlay_sides"))
+                .texture("overlay_top", modLoc("block/jug/overlay_top"))
+                .texture("overlay_bottom", modLoc("block/jug/overlay_bottom"))
+                .texture("overlay_insides", modLoc("block/jug/overlay_insides"))
+                .texture("particle", "#sides")
+                .renderType("cutout");
+        // the pass 0-3 rim walls verbatim: west (5,10,6→6,14,10), east (10,10,6→11,14,10),
+        // north (6,10,5→10,14,6), south (6,10,10→10,14,11) — plus their 0.01 overlay twins
+        cupWallBox(tEmpty, 5.0F, 10.0F, 6.0F, 6.0F, 14.0F, 10.0F, "");
+        cupWallBox(tEmpty, 10.0F, 10.0F, 6.0F, 11.0F, 14.0F, 10.0F, "");
+        cupWallBox(tEmpty, 6.0F, 10.0F, 5.0F, 10.0F, 14.0F, 6.0F, "");
+        cupWallBox(tEmpty, 6.0F, 10.0F, 10.0F, 10.0F, 14.0F, 11.0F, "");
+        cupWallBox(tEmpty, 4.99F, 9.99F, 5.99F, 6.01F, 14.01F, 10.01F, "overlay_");
+        cupWallBox(tEmpty, 9.99F, 9.99F, 5.99F, 11.01F, 14.01F, 10.01F, "overlay_");
+        cupWallBox(tEmpty, 5.99F, 9.99F, 4.99F, 10.01F, 14.01F, 6.01F, "overlay_");
+        cupWallBox(tEmpty, 5.99F, 9.99F, 9.99F, 10.01F, 14.01F, 11.01F, "overlay_");
+        // the pass-4 body slab (3,0,3→13,10,13) — down=bottom, up=top (the :76 pass-4/SIDE_Y_POS form), horizontals=sides
+        cupSlab(tEmpty, 3.0F, 0.0F, 3.0F, 13.0F, 10.0F, 13.0F, "");
+        cupSlab(tEmpty, 2.99F, -0.01F, 2.99F, 13.01F, 10.01F, 13.01F, "overlay_");
+        BlockModelBuilder[] tFilled = new BlockModelBuilder[9];
+        for (int tLevel = 1; tLevel <= 8; tLevel++) {
+            float tTop = 10.05F + tLevel * 2.9F / 8.0F;
+            BlockModelBuilder tModel = models().getBuilder("block/ceramic_jug_filled_" + tLevel)
+                    .parent(tEmpty)
+                    .texture("content", modLoc("block/smeltery_content"));
+            BlockModelBuilder.ElementBuilder tElement = tModel.element()
+                    .from(6.0F, 10.05F, 6.0F).to(10.0F, tTop, 10.0F);
+            for (Direction tDir : Direction.values()) {
+                tElement.face(tDir).texture("#content").end();
+            }
+            tElement.end();
+            tFilled[tLevel] = tModel;
+        }
+        Block tJug = gregtech6.registry.GT6Jugs.CERAMIC_JUG.get();
+        getVariantBuilder(tJug).forAllStates(aState -> {
+            int tLevel = aState.getValue(GT6JugBlock.LIQUID_LEVEL);
+            return ConfiguredModel.builder().modelFile(tLevel == 0 ? tEmpty : tFilled[tLevel]).build();
+        });
+        itemModels().withExistingParent("ceramic_jug", tEmpty.getLocation());
     }
 }
