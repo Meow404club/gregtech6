@@ -213,6 +213,11 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 		return "crucible";
 	}
 
+	/** The break-drop face — {@link gregtech6.block.GTEntityBlock} reflects {@code getInventory} to scatter the slot-0 feed on break (Base10MultiBlockBase carries no accessor; upstream 05Inventories.breakBlock :153-171, canDrop = T). */
+	public GTItemStackHandler getInventory() {
+		return mInventory;
+	}
+
 	// ---------------------------------------------------------------------------
 	// NBT (upstream :91-109)
 	// ---------------------------------------------------------------------------

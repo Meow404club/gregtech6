@@ -2,6 +2,7 @@ package gregtech6.tileentity.energy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.minecraft.SharedConstants;
@@ -90,6 +91,14 @@ public class GT6ZpmDechargerTest extends GTOfflineTestBase {
 		sZpm.setEnergyStored(TD.Energy.QU, tStack, GT6Batteries.ZPM.capacity());
 		aDech.inv().setStackInSlot(0, tStack);
 		return tStack;
+	}
+
+	/** r10-debt-break-drops — the GTEntityBlock drop probe reaches the decharger's own ZPM-gated carrier through the inherited accessor (upstream 05Inventories.breakBlock :153-171 would scatter it). */
+	@Test
+	public void breakDropProbeReachesTheInventory() throws Exception {
+		GT6ZpmDechargerBlockEntity tDech = electricDecharger();
+		assertSame(tDech.inv(), tDech.getClass().getMethod("getInventory").invoke(tDech),
+				"the reflective census hand resolves to the carrier the ctor seated");
 	}
 
 	@Test

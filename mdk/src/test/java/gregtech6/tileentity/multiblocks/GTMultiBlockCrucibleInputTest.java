@@ -108,6 +108,18 @@ public class GTMultiBlockCrucibleInputTest extends GTMultiBlocksOfflineTestBase 
 	}
 
 	// ------------------------------------------------------------------
+	// the break-drop probe (r10-debt-break-drops — the GTEntityBlock reflective census;
+	// Base10MultiBlockBase carries no accessor of its own, the crucible must answer)
+	// ------------------------------------------------------------------
+
+	@Test
+	public void breakDropProbeReachesTheInventory() throws Exception {
+		TestCrucible tCrucible = sCrucibleType.create(new BlockPos(100, 64, 100), Blocks.BRICKS.defaultBlockState());
+		assertSame(tCrucible.inv(), tCrucible.getClass().getMethod("getInventory").invoke(tCrucible),
+				"the reflective census hand resolves to the ctor-seated slot-0 feed (upstream 05Inventories.breakBlock :153-171)");
+	}
+
+	// ------------------------------------------------------------------
 	// a) the slot-0 suck (:204) — the stub seam
 	// ------------------------------------------------------------------
 

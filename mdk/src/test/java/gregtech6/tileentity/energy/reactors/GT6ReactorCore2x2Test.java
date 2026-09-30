@@ -3,6 +3,7 @@ package gregtech6.tileentity.energy.reactors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.annotation.Nullable;
@@ -124,6 +125,14 @@ public class GT6ReactorCore2x2Test extends GTOfflineTestBase {
 
 	private static TestCore core() {
 		return new TestCore(POS, Blocks.BRICKS.defaultBlockState());
+	}
+
+	/** r10-debt-break-drops — the GTEntityBlock drop probe reaches the rod carrier (upstream 05Inventories.breakBlock :153-171 would scatter the 4 rod slots). */
+	@Test
+	public void breakDropProbeReachesTheInventory() throws Exception {
+		TestCore tCore = core();
+		assertSame(tCore.mInventory, tCore.getClass().getMethod("getInventory").invoke(tCore),
+				"the reflective census hand resolves to the carrier the field initializer built");
 	}
 
 	/** A fresh fuel rod: full burn budget on the stack NBT (the upstream canner recipe output carries NBT_MAXDURABILITY, Nuclear.java:49). */

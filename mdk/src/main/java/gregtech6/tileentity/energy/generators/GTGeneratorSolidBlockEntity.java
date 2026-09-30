@@ -136,6 +136,11 @@ public abstract class GTGeneratorSolidBlockEntity extends TileEntityBase03TicksA
 	 */
 	public final GTItemStackHandler mInventory = new GTItemStackHandler(2, this::setChanged);
 
+	/** The break-drop face — {@link gregtech6.block.GTEntityBlock} reflects {@code getInventory} to scatter the fuel/ash slots on break (upstream 05Inventories.breakBlock :153-171, canDrop = T). */
+	public GTItemStackHandler getInventory() {
+		return mInventory;
+	}
+
 	/** The BE runtime facing mirror (byte, the GT6 side order == Direction.get3DDataValue; the FRONT is the fuel/ignite face). */
 	public byte mFacing = 2; // NORTH
 

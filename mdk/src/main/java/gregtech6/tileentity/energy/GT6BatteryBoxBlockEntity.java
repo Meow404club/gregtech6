@@ -159,6 +159,11 @@ public class GT6BatteryBoxBlockEntity extends TileEntityBase03TicksAndSync imple
 		});
 	}
 
+	/** The break-drop face — {@link gregtech6.block.GTEntityBlock} reflects {@code getInventory} to scatter the contents on break (upstream 05Inventories.breakBlock :153-171, canDrop = T). Also the ZPM decharger's answer: it re-seats the same carrier via its own {@code setInventory}. */
+	public GTItemStackHandler getInventory() {
+		return mInventory;
+	}
+
 	/** The family slot count off the block (the NBT_INV_SIZE column; 4 = the STONE/offline fallback). */
 	static int resolveSlots(BlockState aState) {
 		return aState.getBlock() instanceof GT6BatteryBoxBlock tBox ? tBox.slots() : 4;
