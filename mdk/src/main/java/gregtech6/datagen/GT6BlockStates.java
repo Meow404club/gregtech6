@@ -2959,8 +2959,11 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task storage-hopper-family — the 4 storage-hopper rows (Loader_MultiTileEntities
-     * .java:145-146 over :191/:202, Bronze/Steel × hopper/queue). Task tex-placeholder-audit
+     * Task storage-hopper-family — the storage-hopper rows (Loader_MultiTileEntities
+     * .java:145-146; task hopper-matrix grew the walk 4 to 120 — the full 60-material
+     * metalset loop :186-245 × the pair, the datagen stayed table-driven on ROWS and the
+     * TWO shared kind models carry every row: the material has no per-row art face, the
+     * upstream funnel-shape render pool is the declared defer). Task tex-placeholder-audit
      * UPGRADED the target (the "no borrowable source" claim was proven false — the
      * {@code machines/automation/hopper} and {@code queuehopper} groups exist in the snapshot,
      * MultiTileEntityHopper.java:284-293 / QueueHopper:266-275): ONE {@link #boilerModel}

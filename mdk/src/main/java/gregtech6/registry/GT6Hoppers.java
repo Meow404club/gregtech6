@@ -56,24 +56,24 @@ import gregtech6.tileentity.inventories.GT6QueueHopperBlockEntity;
 
 /**
  * The storage-hopper family registration home (task storage-hopper-family, the
- * GT6Boilers self-contained-DR row form): 4 blocks/items over TWO shared BETs — the two BE
+ * GT6Boilers self-contained-DR row form): 120 blocks/items over TWO shared BETs — the two BE
  * classes {@link GT6HopperBlockEntity} / {@link GT6QueueHopperBlockEntity}, the row config
  * (slot count, material) riding the block carrier.
  *
- * <p><b>The rows</b> (Loader_MultiTileEntities.java — the metalset() hopper pair :145-146
- * over the material loop :186-245; first batch = the Bronze/Steel anchor rows of the
- * wave-4 arch ruling — research 'Iron(5)' was a census slip, the 60-material table has no
- * Iron row, the 5-slot anchor is Steel :202):
- * <ul>
- * <li>Bronze Hopper — id 8009 (:191, aHopperSize 3), NBT_INV_SIZE = max(1, 3) = 3,
- *     hardness = resistance = 7.0;</li>
- * <li>Steel Hopper — id 8010 (:202, aHopperSize 5), NBT_INV_SIZE = max(1, 5) = 5,
- *     hardness = resistance = 6.0;</li>
- * <li>Bronze Queue Hopper — id 8209 (:146 aID base 8200 + :191), NBT_INV_SIZE =
- *     max(2, 3) = 3;</li>
- * <li>Steel Queue Hopper — id 8210, NBT_INV_SIZE = max(2, 5) = 5.</li>
- * </ul>
- * The upstream registration columns: tool quality 0, weight 16, the aMachine block family,
+ * <p><b>The rows</b> (task hopper-matrix — the full metalset() hopper pair :145-146 over
+ * the 60-material loop :186-245, VERBATIM order and columns: aID, MT local, aHardness
+ * (== aResistance on every line), aHopperSize; first batch = the Bronze/Steel anchor
+ * rows of the wave-4 arch ruling — research 'Iron(5)' was a census slip, the 60-material
+ * table has no Iron row, the 5-slot anchor is Steel :202). Every loader line expands to
+ * TWO rows through the metalset pair — the plain hopper (:145, id 8000+aID,
+ * NBT_INV_SIZE = max(1, aHopperSize)) then the queue hopper (:146, id 8200+aID,
+ * NBT_INV_SIZE = max(2, aHopperSize)); 60 × 2 = 120. The display word is the MT local —
+ * the setLocal overrides ride ({@code Tungsten Alloy} MT.java:1723, {@code Duranium
+ * Alloy} :1840, {@code Osmium} :633, {@code Elementium} :1822, {@code Awakened
+ * Draconium} :1862, {@code Galvanized Steel} :1731, {@code Tritanium Alloy} :1841) and
+ * the :235 line is {@code ANY.W} → the Tungsten face (ANY.java:133 setLocal).
+ *
+ * <p>The upstream registration columns: tool quality 0, weight 16, the aMachine block family,
  * the recipes "PwP"/"XCX"/" Xh" (hopper) and "PCP"/"XCX"/"wXh" (queue) over plate +
  * plateCurved + OD.craftingChest with the wrench/hammer tool letters (:145-146).
  *
@@ -91,21 +91,176 @@ public final class GT6Hoppers {
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "gt6");
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 
-	/** One loader material anchor — slug + display word (the BoilerMaterial shape). */
-	public record HopperMaterial(String slug, String display, float hardness, int metaId) {
-		/** The loader material face (the recipe 'X' column = OP.plateCurved.dat(aMat), Loader:145-146). */
+	/**
+	 * One loader line of the metalset material loop — slug + display word + the per-line
+	 * columns (the ItemPipeMaterial per-line-columns shape; the aHardness/aResistance pair
+	 * collapses to one column because they are EQUAL on all 60 lines, :186-245).
+	 *
+	 * @param slug     the registry-path tail ({@code hopper_<slug>} / {@code queue_hopper_<slug>})
+	 *                 and the shared {@code gt6.row.mat.<slug>} unit key (the display-snake
+	 *                 convention of the boiler/burning-box mat words)
+	 * @param display  the MT local (the {@code getLocal()} column of the :186-245 names —
+	 *                 the upstream hopper name is {@code <local> Hopper})
+	 * @param hardness the aHardness column (== aResistance)
+	 * @param metaId   the aID column (id 8000+aID / 8200+aID)
+	 * @param slots    the aHopperSize column (NBT_INV_SIZE = max(1,n) / max(2,n))
+	 */
+	public record HopperMaterial(String slug, String display, float hardness, int metaId, int slots) {
+		/**
+		 * The loader material face (the recipe 'X' column = OP.plateCurved.dat(aMat),
+		 * Loader:145-146) — the :186-245 MT argument verbatim per line. Loud drift on an
+		 * unknown slug — the table only ever grows with a loader line in hand.
+		 */
 		public gregapi.oredict.OreDictMaterial mt() {
 			return switch (slug) {
+				case "lead" -> gregapi.data.MT.Pb;
+				case "bismuth" -> gregapi.data.MT.Bi;
+				case "antimony" -> gregapi.data.MT.Sb;
+				case "nickel" -> gregapi.data.MT.Ni;
+				case "constantan" -> gregapi.data.MT.Constantan;
 				case "bronze" -> gregapi.data.MT.Bronze;
+				case "arsenic_copper" -> gregapi.data.MT.ArsenicCopper;
+				case "aluminium" -> gregapi.data.MT.Al;
+				case "brass" -> gregapi.data.MT.Brass;
+				case "tin_alloy" -> gregapi.data.MT.TinAlloy;
+				case "cobalt" -> gregapi.data.MT.Co;
+				case "ardite" -> gregapi.data.MT.Ardite;
+				case "arsenic_bronze" -> gregapi.data.MT.ArsenicBronze;
+				case "bismuth_bronze" -> gregapi.data.MT.BismuthBronze;
+				case "germanium" -> gregapi.data.MT.Ge;
+				case "invar" -> gregapi.data.MT.Invar;
 				case "steel" -> gregapi.data.MT.Steel;
+				case "hsla_steel" -> gregapi.data.MT.HSLA;
+				case "gold" -> gregapi.data.MT.Au;
+				case "silver" -> gregapi.data.MT.Ag;
+				case "manganese" -> gregapi.data.MT.Mn;
+				case "manyullyn" -> gregapi.data.MT.Manyullyn;
+				case "lumium" -> gregapi.data.MT.Lumium;
+				case "knightmetal" -> gregapi.data.MT.Knightmetal;
+				case "galvanized_steel" -> gregapi.data.MT.SteelGalvanized;
+				case "meteorite" -> gregapi.data.MT.Meteorite;
+				case "meteoric_steel" -> gregapi.data.MT.MeteoricSteel;
+				case "gilded_iron" -> gregapi.data.MT.GildedIron;
+				case "molybdenum" -> gregapi.data.MT.Mo;
+				case "syrmorite" -> gregapi.data.MT.Syrmorite;
+				case "electrum" -> gregapi.data.MT.Electrum;
+				case "stainless_steel" -> gregapi.data.MT.StainlessSteel;
+				case "thaumium" -> gregapi.data.MT.Thaumium;
+				case "manasteel" -> gregapi.data.MT.Manasteel;
+				case "efrine" -> gregapi.data.MT.Efrine;
+				case "tungsten_alloy" -> gregapi.data.MT.TungstenAlloy;
+				case "titanium" -> gregapi.data.MT.Ti;
+				case "netherite" -> gregapi.data.MT.Netherite;
+				case "chromium" -> gregapi.data.MT.Cr;
+				case "platinum" -> gregapi.data.MT.Pt;
+				case "octine" -> gregapi.data.MT.Octine;
+				case "desh" -> gregapi.data.MT.Desh;
+				case "terrasteel" -> gregapi.data.MT.Terrasteel;
+				case "tungstensteel" -> gregapi.data.MT.TungstenSteel;
+				case "tungsten_carbide" -> gregapi.data.MT.TungstenCarbide;
+				case "duranium_alloy" -> gregapi.data.MT.DuraniumAlloy;
+				case "draconium" -> gregapi.data.MT.Draconium;
+				case "ultimet" -> gregapi.data.MT.Ultimet;
+				case "workers_alloy" -> gregapi.data.MT.DeshAlloy;
+				case "tungsten" -> gregapi.data.MT.W; // the :235 ANY.W line — the Tungsten face (ANY.java:133)
+				case "palladium" -> gregapi.data.MT.Pd;
+				case "iridium" -> gregapi.data.MT.Ir;
+				case "osmium" -> gregapi.data.MT.Os;
+				case "void_metal" -> gregapi.data.MT.VoidMetal;
+				case "elementium" -> gregapi.data.MT.ElvenElementium;
+				case "tritanium_alloy" -> gregapi.data.MT.TritaniumAlloy;
+				case "adamantium" -> gregapi.data.MT.Ad;
+				case "bedrock_hsla_alloy" -> gregapi.data.MT.Bedrock_HSLA_Alloy;
+				case "awakened_draconium" -> gregapi.data.MT.DraconiumAwakened;
+				case "infinity" -> gregapi.data.MT.Infinity;
 				default -> throw new IllegalStateException("no loader material for hopper slug " + slug);
 			};
 		}
 	}
 
-	/** The two first-batch materials (Loader :191 Bronze / :202 Steel). */
-	public static final HopperMaterial MAT_BRONZE = new HopperMaterial("bronze", "Bronze", 7.0F, 9);
-	public static final HopperMaterial MAT_STEEL = new HopperMaterial("steel", "Steel", 6.0F, 10);
+	/**
+	 * The loader's 60 metalset lines, verbatim order and columns
+	 * (Loader_MultiTileEntities.java:186-245 — aID, MT local, aHardness, aHopperSize).
+	 * The zh words are the dump faces (tmp/gregtech.lang gt.multitileentity.8000-8059 /
+	 * 8200-8259 verbatim heads); the en words are the MT locals — the setLocal overrides
+	 * cited in the class javadoc, the Ultimet word rides the p27-lang-fix-batch2 ⑤ ruling
+	 * (钴铬钨合金, not the dump's 哈氏合金 misattribution).
+	 */
+	public static final HopperMaterial MAT_LEAD = new HopperMaterial("lead", "Lead", 4.0F, 0, 1);
+	public static final HopperMaterial MAT_BISMUTH = new HopperMaterial("bismuth", "Bismuth", 4.0F, 16, 2);
+	public static final HopperMaterial MAT_ANTIMONY = new HopperMaterial("antimony", "Antimony", 4.0F, 47, 2);
+	public static final HopperMaterial MAT_NICKEL = new HopperMaterial("nickel", "Nickel", 4.0F, 22, 3);
+	public static final HopperMaterial MAT_CONSTANTAN = new HopperMaterial("constantan", "Constantan", 4.0F, 37, 3);
+	public static final HopperMaterial MAT_BRONZE = new HopperMaterial("bronze", "Bronze", 7.0F, 9, 3);
+	public static final HopperMaterial MAT_ARSENIC_COPPER = new HopperMaterial("arsenic_copper", "Arsenic Copper", 7.5F, 57, 4);
+	public static final HopperMaterial MAT_ALUMINIUM = new HopperMaterial("aluminium", "Aluminium", 2.0F, 1, 4);
+	public static final HopperMaterial MAT_BRASS = new HopperMaterial("brass", "Brass", 2.5F, 8, 4);
+	public static final HopperMaterial MAT_TIN_ALLOY = new HopperMaterial("tin_alloy", "Tin Alloy", 3.0F, 5, 4);
+	public static final HopperMaterial MAT_COBALT = new HopperMaterial("cobalt", "Cobalt", 4.0F, 21, 4);
+	public static final HopperMaterial MAT_ARDITE = new HopperMaterial("ardite", "Ardite", 2.0F, 38, 4);
+	public static final HopperMaterial MAT_ARSENIC_BRONZE = new HopperMaterial("arsenic_bronze", "Arsenic Bronze", 8.0F, 58, 5);
+	public static final HopperMaterial MAT_BISMUTH_BRONZE = new HopperMaterial("bismuth_bronze", "Bismuth Bronze", 8.0F, 56, 5);
+	public static final HopperMaterial MAT_GERMANIUM = new HopperMaterial("germanium", "Germanium", 4.0F, 23, 5);
+	public static final HopperMaterial MAT_INVAR = new HopperMaterial("invar", "Invar", 4.0F, 6, 5);
+	public static final HopperMaterial MAT_STEEL = new HopperMaterial("steel", "Steel", 6.0F, 10, 5);
+	public static final HopperMaterial MAT_HSLA_STEEL = new HopperMaterial("hsla_steel", "HSLA-Steel", 6.0F, 18, 6);
+	public static final HopperMaterial MAT_GOLD = new HopperMaterial("gold", "Gold", 3.0F, 2, 6);
+	public static final HopperMaterial MAT_SILVER = new HopperMaterial("silver", "Silver", 3.0F, 3, 6);
+	public static final HopperMaterial MAT_MANGANESE = new HopperMaterial("manganese", "Manganese", 6.0F, 46, 6);
+	public static final HopperMaterial MAT_MANYULLYN = new HopperMaterial("manyullyn", "Manyullyn", 4.0F, 39, 6);
+	public static final HopperMaterial MAT_LUMIUM = new HopperMaterial("lumium", "Lumium", 2.0F, 54, 6);
+	public static final HopperMaterial MAT_KNIGHTMETAL = new HopperMaterial("knightmetal", "Knightmetal", 7.0F, 25, 7);
+	public static final HopperMaterial MAT_GALVANIZED_STEEL = new HopperMaterial("galvanized_steel", "Galvanized Steel", 6.0F, 19, 7);
+	public static final HopperMaterial MAT_METEORITE = new HopperMaterial("meteorite", "Meteorite", 7.0F, 43, 7);
+	public static final HopperMaterial MAT_METEORIC_STEEL = new HopperMaterial("meteoric_steel", "Meteoric Steel", 8.0F, 24, 8);
+	public static final HopperMaterial MAT_GILDED_IRON = new HopperMaterial("gilded_iron", "Gilded Iron", 6.0F, 20, 8);
+	public static final HopperMaterial MAT_MOLYBDENUM = new HopperMaterial("molybdenum", "Molybdenum", 6.0F, 49, 8);
+	public static final HopperMaterial MAT_SYRMORITE = new HopperMaterial("syrmorite", "Syrmorite", 4.0F, 44, 9);
+	public static final HopperMaterial MAT_ELECTRUM = new HopperMaterial("electrum", "Electrum", 3.0F, 7, 9);
+	public static final HopperMaterial MAT_STAINLESS_STEEL = new HopperMaterial("stainless_steel", "Stainless Steel", 5.0F, 11, 9);
+	public static final HopperMaterial MAT_THAUMIUM = new HopperMaterial("thaumium", "Thaumium", 9.0F, 27, 9);
+	public static final HopperMaterial MAT_MANASTEEL = new HopperMaterial("manasteel", "Manasteel", 9.0F, 40, 9);
+	public static final HopperMaterial MAT_EFRINE = new HopperMaterial("efrine", "Efrine", 8.0F, 53, 9);
+	public static final HopperMaterial MAT_TUNGSTEN_ALLOY = new HopperMaterial("tungsten_alloy", "Tungsten Alloy", 8.0F, 52, 12);
+	public static final HopperMaterial MAT_TITANIUM = new HopperMaterial("titanium", "Titanium", 9.0F, 12, 12);
+	public static final HopperMaterial MAT_NETHERITE = new HopperMaterial("netherite", "Netherite", 10.0F, 51, 12);
+	public static final HopperMaterial MAT_CHROMIUM = new HopperMaterial("chromium", "Chromium", 4.0F, 13, 14);
+	public static final HopperMaterial MAT_PLATINUM = new HopperMaterial("platinum", "Platinum", 2.0F, 4, 18);
+	public static final HopperMaterial MAT_OCTINE = new HopperMaterial("octine", "Octine", 8.0F, 45, 18);
+	public static final HopperMaterial MAT_DESH = new HopperMaterial("desh", "Desh", 15.0F, 30, 18);
+	public static final HopperMaterial MAT_TERRASTEEL = new HopperMaterial("terrasteel", "Terrasteel", 15.0F, 42, 18);
+	public static final HopperMaterial MAT_TUNGSTENSTEEL = new HopperMaterial("tungstensteel", "Tungstensteel", 12.5F, 14, 27);
+	public static final HopperMaterial MAT_TUNGSTEN_CARBIDE = new HopperMaterial("tungsten_carbide", "Tungsten Carbide", 12.5F, 17, 27);
+	public static final HopperMaterial MAT_DURANIUM_ALLOY = new HopperMaterial("duranium_alloy", "Duranium Alloy", 20.0F, 31, 27);
+	public static final HopperMaterial MAT_DRACONIUM = new HopperMaterial("draconium", "Draconium", 50.0F, 35, 27);
+	public static final HopperMaterial MAT_ULTIMET = new HopperMaterial("ultimet", "Ultimet", 12.5F, 48, 27);
+	public static final HopperMaterial MAT_WORKERS_ALLOY = new HopperMaterial("workers_alloy", "Workers Alloy", 15.0F, 55, 27);
+	public static final HopperMaterial MAT_TUNGSTEN = new HopperMaterial("tungsten", "Tungsten", 10.0F, 26, 36);
+	public static final HopperMaterial MAT_PALLADIUM = new HopperMaterial("palladium", "Palladium", 15.0F, 59, 36);
+	public static final HopperMaterial MAT_IRIDIUM = new HopperMaterial("iridium", "Iridium", 15.0F, 15, 36);
+	public static final HopperMaterial MAT_OSMIUM = new HopperMaterial("osmium", "Osmium", 9.0F, 29, 36);
+	public static final HopperMaterial MAT_VOID_METAL = new HopperMaterial("void_metal", "Void Metal", 30.0F, 28, 36);
+	public static final HopperMaterial MAT_ELEMENTIUM = new HopperMaterial("elementium", "Elementium", 30.0F, 41, 36);
+	public static final HopperMaterial MAT_TRITANIUM_ALLOY = new HopperMaterial("tritanium_alloy", "Tritanium Alloy", 30.0F, 32, 36);
+	public static final HopperMaterial MAT_ADAMANTIUM = new HopperMaterial("adamantium", "Adamantium", 100.0F, 33, 36);
+	public static final HopperMaterial MAT_BEDROCK_HSLA_ALLOY = new HopperMaterial("bedrock_hsla_alloy", "Bedrock-HSLA-Alloy", 100.0F, 34, 36);
+	public static final HopperMaterial MAT_AWAKENED_DRACONIUM = new HopperMaterial("awakened_draconium", "Awakened Draconium", 100.0F, 36, 36);
+	public static final HopperMaterial MAT_INFINITY = new HopperMaterial("infinity", "Infinity", 100.0F, 50, 36);
+
+	/** The 60 loader lines in registration order (:186-245 verbatim). */
+	public static final List<HopperMaterial> MATERIALS = List.of(
+			MAT_LEAD, MAT_BISMUTH, MAT_ANTIMONY, MAT_NICKEL, MAT_CONSTANTAN,
+			MAT_BRONZE, MAT_ARSENIC_COPPER, MAT_ALUMINIUM, MAT_BRASS, MAT_TIN_ALLOY,
+			MAT_COBALT, MAT_ARDITE, MAT_ARSENIC_BRONZE, MAT_BISMUTH_BRONZE, MAT_GERMANIUM,
+			MAT_INVAR, MAT_STEEL, MAT_HSLA_STEEL, MAT_GOLD, MAT_SILVER,
+			MAT_MANGANESE, MAT_MANYULLYN, MAT_LUMIUM, MAT_KNIGHTMETAL, MAT_GALVANIZED_STEEL,
+			MAT_METEORITE, MAT_METEORIC_STEEL, MAT_GILDED_IRON, MAT_MOLYBDENUM, MAT_SYRMORITE,
+			MAT_ELECTRUM, MAT_STAINLESS_STEEL, MAT_THAUMIUM, MAT_MANASTEEL, MAT_EFRINE,
+			MAT_TUNGSTEN_ALLOY, MAT_TITANIUM, MAT_NETHERITE, MAT_CHROMIUM, MAT_PLATINUM,
+			MAT_OCTINE, MAT_DESH, MAT_TERRASTEEL, MAT_TUNGSTENSTEEL, MAT_TUNGSTEN_CARBIDE,
+			MAT_DURANIUM_ALLOY, MAT_DRACONIUM, MAT_ULTIMET, MAT_WORKERS_ALLOY, MAT_TUNGSTEN,
+			MAT_PALLADIUM, MAT_IRIDIUM, MAT_OSMIUM, MAT_VOID_METAL, MAT_ELEMENTIUM,
+			MAT_TRITANIUM_ALLOY, MAT_ADAMANTIUM, MAT_BEDROCK_HSLA_ALLOY, MAT_AWAKENED_DRACONIUM, MAT_INFINITY);
 
 	/** The loader meta id bases of the hopper pair (:145 id 8000+aID, :146 id 8200+aID). */
 	public static final int META_ID_BASE = 8000;
@@ -127,12 +282,14 @@ public final class GT6Hoppers {
 	}
 
 	/**
-	 * One registration row — the block-carrier projection of the metalset hopper pair line.
+	 * One registration row — the block-carrier projection of one metalset hopper-pair
+	 * half (Loader :145 plain / :146 queue).
 	 *
 	 * @param path     the gt6 registry path (the blockstate/model/lang key tail)
-	 * @param metaId   the upstream MultiTileEntity id (8009/8010/8209/8210)
-	 * @param material the row material (slug/display/hardness/loader id)
-	 * @param slots    the aHopperSize column (Bronze 3 / Steel 5)
+	 * @param metaId   the upstream MultiTileEntity id (8000+aID / 8200+aID)
+	 * @param material the row material (slug/display/hardness/loader id/aHopperSize)
+	 * @param slots    the aHopperSize column (rides the material line; the BE applies the
+	 *                 max(1,n) plain / max(2,n) queue floor)
 	 * @param queue    the :146 queue kind flag (NBT_INV_SIZE floor 2, the FIFO compaction)
 	 */
 	public record HopperRow(String path, int metaId, HopperMaterial material, int slots, boolean queue) {
@@ -144,12 +301,20 @@ public final class GT6Hoppers {
 		}
 	}
 
-	/** The four rows in registration order (hopper pair, then the queue pair). */
-	public static final List<HopperRow> ROWS = List.of(
-			new HopperRow("hopper_bronze", META_ID_BASE + MAT_BRONZE.metaId(), MAT_BRONZE, 3, false),
-			new HopperRow("hopper_steel", META_ID_BASE + MAT_STEEL.metaId(), MAT_STEEL, 5, false),
-			new HopperRow("queue_hopper_bronze", META_ID_BASE_QUEUE + MAT_BRONZE.metaId(), MAT_BRONZE, 3, true),
-			new HopperRow("queue_hopper_steel", META_ID_BASE_QUEUE + MAT_STEEL.metaId(), MAT_STEEL, 5, true));
+	/**
+	 * The 120 rows in registration order (the metalset loop walk — per loader line the
+	 * plain hopper :145 then the queue hopper :146, the upstream pair order verbatim).
+	 */
+	public static final List<HopperRow> ROWS = buildRows();
+
+	private static List<HopperRow> buildRows() {
+		List<HopperRow> rRows = new ArrayList<>(MATERIALS.size() * 2);
+		for (HopperMaterial tMat : MATERIALS) {
+			rRows.add(new HopperRow("hopper_" + tMat.slug(), META_ID_BASE + tMat.metaId(), tMat, tMat.slots(), false));
+			rRows.add(new HopperRow("queue_hopper_" + tMat.slug(), META_ID_BASE_QUEUE + tMat.metaId(), tMat, tMat.slots(), true));
+		}
+		return List.copyOf(rRows);
+	}
 
 	/** The registered blocks by path (the BET multi-mount arrays + the datagen walkers). */
 	public static final Map<String, RegistryObject<GT6HopperBlock>> BLOCKS_BY_PATH = new LinkedHashMap<>();

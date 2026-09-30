@@ -603,6 +603,55 @@ HAND_TRANSLATIONS = {
     "gt6.row.mat.tungsten_carbide": ("碳化钨", "hand"),
     "gt6.row.mat.stainless_steel": ("不锈钢", "hand"),
     "gt6.row.mat.adamantium": ("艾德曼合金", "hand"),
+
+    # task hopper-matrix: the 38 new shared mat words of the 60-material hopper loop
+    # (Loader_MultiTileEntities.java:186-245 over the metalset hopper pair :145-146).
+    # Every word is the dump face verbatim — the row heads of gt.multitileentity.8000-8059
+    # / 8200-8259 (the 铅料斗..钯料斗 / 铅队列料斗..钯队列料斗 band) cross-checked against
+    # the gt.material.* faces. The 22 words that already ride the shared namespace
+    # (bronze/steel/titanium/tungstensteel/ultimet/...) are NOT repeated here. Two
+    # dump rows deviate: 8048/8248 哈氏合金料斗 misattributes the Ultimet row (the
+    # p27-lang-fix-batch2 5 ruling above keeps 钴铬钨合金), and the HSLA face rides
+    # gt.material.HSLASteel=HSLA钢 (the dump's bare gt.material.HSLA=HSLA row is the
+    # alias-name row, not the local face of the "HSLA-Steel" material).
+    "gt6.row.mat.antimony": ("锑", "hand"),
+    "gt6.row.mat.nickel": ("镍", "hand"),
+    "gt6.row.mat.cobalt": ("钴", "hand"),
+    "gt6.row.mat.ardite": ("阿迪特", "hand"),
+    "gt6.row.mat.bismuth_bronze": ("铋青铜", "hand"),
+    "gt6.row.mat.germanium": ("锗", "hand"),
+    "gt6.row.mat.hsla_steel": ("HSLA钢", "hand"),
+    "gt6.row.mat.gold": ("金", "hand"),
+    "gt6.row.mat.silver": ("银", "hand"),
+    "gt6.row.mat.manganese": ("锰", "hand"),
+    "gt6.row.mat.manyullyn": ("玛玉灵", "hand"),
+    "gt6.row.mat.lumium": ("流明", "hand"),
+    "gt6.row.mat.knightmetal": ("骑士金属", "hand"),
+    "gt6.row.mat.meteorite": ("陨石", "hand"),
+    "gt6.row.mat.meteoric_steel": ("陨钢", "hand"),
+    "gt6.row.mat.gilded_iron": ("镀金铁", "hand"),
+    "gt6.row.mat.molybdenum": ("钼", "hand"),
+    "gt6.row.mat.syrmorite": ("赛摩铜", "hand"),
+    "gt6.row.mat.electrum": ("琥珀金", "hand"),
+    "gt6.row.mat.thaumium": ("神秘锭", "hand"),
+    "gt6.row.mat.manasteel": ("魔力钢", "hand"),
+    "gt6.row.mat.efrine": ("绿晶", "hand"),
+    "gt6.row.mat.tungsten_alloy": ("钨合金", "hand"),
+    "gt6.row.mat.platinum": ("铂", "hand"),
+    "gt6.row.mat.octine": ("炽炎铁", "hand"),
+    "gt6.row.mat.desh": ("戴斯", "hand"),
+    "gt6.row.mat.terrasteel": ("泰拉钢", "hand"),
+    "gt6.row.mat.duranium_alloy": ("钍瑞铌合金", "hand"),
+    "gt6.row.mat.draconium": ("龙", "hand"),
+    "gt6.row.mat.workers_alloy": ("工人合金", "hand"),
+    "gt6.row.mat.palladium": ("钯", "hand"),
+    "gt6.row.mat.osmium": ("锇", "hand"),
+    "gt6.row.mat.void_metal": ("虚空金属", "hand"),
+    "gt6.row.mat.elementium": ("源质钢", "hand"),
+    "gt6.row.mat.tritanium_alloy": ("钛金", "hand"),
+    "gt6.row.mat.bedrock_hsla_alloy": ("基岩合金", "hand"),
+    "gt6.row.mat.awakened_draconium": ("觉醒龙", "hand"),
+    "gt6.row.mat.infinity": ("无尽", "hand"),
     "gt6.row.attachment.mat.ceramic": ("陶瓷", "hand"),
     "gt6.row.attachment.mat.plastic": ("塑料", "hand"),
     "gt6.row.attachment.mat.stainless_steel": ("不锈钢", "hand"),
