@@ -171,6 +171,10 @@ class GT6PaintableRenderTypeCensusTest {
         rModels.add("logistics_core");
         rModels.add("multiblock_lightning_rod");
         rModels.add("large_heat_exchanger");
+        // task coke-oven-texture — the coke oven controller joins the walk (the last
+        // placeholder multiblock main): the two-layer body+window-decal shell over the
+        // tintindex-0 body
+        rModels.add("multiblock_coke_oven");
         // the pipe connector families (task tex-pipe-textures): the four shared
         // tintedPipeModel two-layer shells over the tintindex-0 body — model names are
         // texture paths, not registry paths, hence the pinned literals

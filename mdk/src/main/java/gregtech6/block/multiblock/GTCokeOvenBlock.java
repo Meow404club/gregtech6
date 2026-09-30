@@ -41,7 +41,12 @@ import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
 public class GTCokeOvenBlock extends GTMultiBlockControllerBlock {
 
 	public GTCokeOvenBlock(Properties aProperties) {
-		super(aProperties);
+		// task coke-oven-texture — the :1193 NBT_MATERIAL column (MT.Ceramic, the same
+		// row the bricks share through the census constant) rides the carrier ctor (the
+		// p38-c2 form, the GTLogisticsCoreBlock shape), so the two-layer model's
+		// tintindex-0 body resolves the colour through the GTMultiBlockControllerBlock
+		// .materialOf gate (the white no-tint identity is gone)
+		super(aProperties, GTMultiBlocks.COKE_BRICKS_MATERIAL);
 	}
 	//? if neoforge {
 	/*

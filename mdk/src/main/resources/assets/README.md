@@ -318,28 +318,62 @@ Wrench-grid icons in `gt6/textures/gui/overlay/` come from GregTech CEu
 Modern under LGPL-3.0-or-later — see `gt6/textures/gui/overlay/README.md`
 for that attribution.
 
-Task render-d-formed-look (2026-09-01) — coke oven controller texture
-census, NEGATIVE result, declared deviation: the plan was to borrow upstream
-`textures/blocks/machines/multiblockmains/cokeoven/` colored+overlay groups
-(the controller look of `TileEntityBase10MultiBlockBase.getTexture2`,
-:192-194 — front/side groups picked by `aSide == mFacing` over a colored+
-overlay two-layer stack; the icon paths themselves are built at :66-81 from
-NBT_TEXTURE "cokeoven", Loader_MultiTileEntities.java:1193). Census found NO
-such PNG group upstream at all — neither `colored/` nor `overlay/` nor the
-`colored_front/`/`overlay_front/` variants ship in the snapshot (the
-`multiblockmains/` directory contains only bedrockdrill, crucible, gasturbine,
-largeboiler, largedynamo, largeheatexchanger, largeturbine, lightningrod,
-logisticscore, tankmetal, tankwood, vondagraagg), so the upstream controller
-itself registers missing-resource icons. Nothing to borrow, and per the
-borrow-or-declare rule nothing was redrawn: the script-generated placeholder
-PNGs (`multiblock_coke_oven*.png`) remain. The only upstream `cokeoven`
-texture family that DOES exist is `basicmachines/cokeoven/` — a
-basicmachine-layout group (back/bottom/front/left/right/top naming, machine
-state overlays) belonging to a different machine family; it is NOT the
-multiblock controller look and was not borrowed, out of this card's scope.
-The addMultiBlocks javadoc in `GT6BlockStates.java` carries the accompanying
-getTexture2 erratum (front by facing, never by formed; the FORMED dual model
-is a declared port enhancement beyond upstream).
+Task coke-oven-texture (2026-09-30) — coke oven controller texture borrow.
+SUPERSEDES the render-d-formed-look negative census (2026-09-01): that probe's
+finding stays TRUE and is why the borrow source differs — the icon paths the
+upstream controller registers (`machines/multiblockmains/cokeoven/`, built at
+`TileEntityBase10MultiBlockBase.java:66-81` from NBT_TEXTURE "cokeoven",
+Loader_MultiTileEntities.java:1193) are missing resources; the directory never
+existed anywhere in upstream git history, so the upstream controller itself
+resolves those paths to the missing-texture checkerboard. The p9 scoping
+ruling ("basicmachines/cokeoven is a different machine family's look, not
+borrowed") is OVERTURNED: the official 6.10.20 asset pack DID ship the coke
+oven's complete art under `machines/basicmachines/cokeoven/` — the standard
+basicmachine four-state scheme (colored six faces / overlay six faces /
+overlay_active / overlay_running) — and borrowing it restores the coke oven's
+real upstream look (the user-reported white front was the script placeholder).
+
+Borrowed verbatim (byte-identical, no rescaling or redrawing; upstream license
+CC0, same section above):
+- `colored/{bottom,top,left,right,front,back}.png` — all six faces hash to the
+  ONE shared gray brick body `b0a5a36bbc4a8f392f602efcc7e87e3761ee27097d35feae2045f6a1c535947f`
+  (the oven-family shared-body precedent), so the four port files are that one
+  image: `multiblock_coke_oven_bottom.png` (←bottom), `multiblock_coke_oven_top.png`
+  (←top), `multiblock_coke_oven_side.png` (←left; right/back byte-identical),
+  `multiblock_coke_oven_front.png` (←front).
+- `overlay/front.png` — the front WINDOW decal `429da649536bd4fdb733fedfcdfbe62f4772854923b218b63272fcbaa78d41dc`
+  → `multiblock_coke_oven_overlay_front.png`, the two-layer model's untinted
+  0.01 north plate (the r4-18 single-front-decal shape; the tinted body cube is
+  the tintindex-0 seat through the Ceramic row carrier).
+- `multiblock_coke_oven_front_formed.png` is RETIRED (deleted) with the FORMED
+  dual model: the 8 FACING x FORMED states share the one oriented model (the
+  graagg form; upstream getTexture2 keys the front/side groups by
+  `aSide == mFacing`, never by formed — the erratum javadoc stays in
+  `GT6BlockStates.addMultiBlocks`; the FORMED blockstate remains the RCON
+  assertion surface on the property alone).
+
+sha256 manifest (5 files, two distinct digests):
+- `gt6/textures/block/multiblock_coke_oven_bottom.png` `b0a5a36bbc4a8f392f602efcc7e87e3761ee27097d35feae2045f6a1c535947f`
+  (upstream `textures/blocks/machines/basicmachines/cokeoven/colored/bottom.png`)
+- `gt6/textures/block/multiblock_coke_oven_top.png` `b0a5a36bbc4a8f392f602efcc7e87e3761ee27097d35feae2045f6a1c535947f`
+  (upstream `colored/top.png`)
+- `gt6/textures/block/multiblock_coke_oven_side.png` `b0a5a36bbc4a8f392f602efcc7e87e3761ee27097d35feae2045f6a1c535947f`
+  (upstream `colored/left.png`)
+- `gt6/textures/block/multiblock_coke_oven_front.png` `b0a5a36bbc4a8f392f602efcc7e87e3761ee27097d35feae2045f6a1c535947f`
+  (upstream `colored/front.png`)
+- `gt6/textures/block/multiblock_coke_oven_overlay_front.png` `429da649536bd4fdb733fedfcdfbe62f4772854923b218b63272fcbaa78d41dc`
+  (upstream `overlay/front.png`)
+
+NOT borrowed, declared defer (the art exists and is official — this is a
+channel note, NOT a negative probe; do not re-probe):
+- `overlay_active/front.png` (the lit window, distinct bytes) and
+  `overlay_running/front.png` (byte-identical to `overlay/front.png`) — the
+  port's controllers carry no ACTIVE/RUNNING render channel, so the two states
+  have no model consumer (the same defer the converter family declared for
+  blinking).
+- the five non-front overlay faces (`back/bottom/left/right/top.png`, shared
+  byte-for-byte across all three overlay groups) — edge decal strips with no
+  consumer in the single-front-decal form.
 
 Oven state-overlay textures, task render-c-oven-overlay: the 12 cutout
 overlay PNGs under `gt6/textures/block/oven_overlay_active_*.png` and
@@ -10142,8 +10176,7 @@ Probe verdicts (family: upstream path — hit? — disposition):
   to `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`, the
   shared gray body) and the "Shared body byte-identical copies" section above
   already carries the three rows. No change.
-- true negatives re-checked IN PLACE, zero changes: coke_oven controller (the
-  p9 section — upstream multiblockmains has no cokeoven group), the placeholder
+- true negatives re-checked IN PLACE, zero changes: the placeholder
   energy family (the p28 dynamo section + the item-form band A row),
   water_wheel (the addWaterWheel javadoc declaration — the kTFRUAddon PNG is not
   borrowed, no README row by design).

@@ -1416,37 +1416,35 @@ public final class GT6BlockStates extends BlockStateProvider {
     /**
      * Task multiblock-framework (W3 provider order 1: multiblock→barrel→cover): the FORMED
      * blockstate fallback rendering (spec ⑧) — the Coke Oven controller carries the base-owned
-     * FACING + FORMED properties (TileEntityBase10MultiBlockBase :188-189 bit-3 replacement),
-     * 4 facings x 2 formed = 8 variants over two cube models.
+     * FACING + FORMED properties (TileEntityBase10MultiBlockBase :188-189 bit-3 replacement).
      *
-     * <p>Erratum (task render-d-formed-look; the earlier "mirrors the upstream getTexture2
-     * mStructureOkay pick" wording here was wrong): upstream getTexture2
+     * <p>Model (task coke-oven-texture, the Von da Graagg single-band form): the 8 FACING x
+     * FORMED states share the ONE oriented two-layer model. Erratum (task
+     * render-d-formed-look, still true): upstream getTexture2
      * (TileEntityBase10MultiBlockBase.java:192-194) picks the front-vs-side texture GROUPS by
-     * {@code aSide == mFacing} over a colored+overlay two-layer stack, and NO upstream
-     * consumer picks the front/side texture groups by mStructureOkay — every getTexture2,
-     * including the Crucible's own (MultiTileEntityCrucible.java:643-651), keys the group on
-     * {@code aSide == mFacing}. The only known VISUAL mStructureOkay consumers are the render
-     * pass count (MultiTileEntityLargeTurbine.getRenderPasses2 :109-111, formed renders an
-     * extra pass) and the render bounds (MultiTileEntityCrucible.setBlockBounds2 :628-638) —
-     * neither touches the texture groups. The formed/unformed dual model below is therefore
-     * a DECLARED this-port enhancement beyond upstream, kept as-is: the FORMED
-     * blockstate is the RCON {@code execute if block ...[formed=true]} assertion surface, and
-     * the GTCEu IS_FORMED ModelProperty technique is not adopted (zero-benefit refactor,
-     * ADR 2026-09-01-render-d-formed-look).
+     * {@code aSide == mFacing} and NO upstream consumer keys the groups on mStructureOkay —
+     * the formed/unformed dual model that used to live here was a declared this-port
+     * enhancement, now retired: the FORMED blockstate stays the RCON
+     * {@code execute if block ...[formed=true]} assertion surface on the property alone,
+     * and the GTCEu IS_FORMED ModelProperty technique is not adopted (zero-benefit
+     * refactor, ADR 2026-09-01-render-d-formed-look).
      *
-     * <p>Texture census (same task, negative): upstream ships NO
-     * {@code machines/multiblockmains/cokeoven/} PNG group at all — the colored/overlay/
-     * colored_front/overlay_front icon paths the upstream controller registers
-     * (TileEntityBase10MultiBlockBase.java:66-81, NBT_TEXTURE "cokeoven",
-     * Loader_MultiTileEntities.java:1193) are missing resources in the upstream snapshot, so
-     * there is nothing to borrow. Per the borrow-or-declare rule nothing was redrawn: the
-     * script-generated placeholder PNGs stay (see assets README). The bricks part is a plain
-     * cube_all (no properties).
+     * <p>Textures (task coke-oven-texture; SUPERSEDES the same task's negative census —
+     * see assets/README.md): the controller's registered icon paths
+     * ({@code machines/multiblockmains/cokeoven/}, built at
+     * TileEntityBase10MultiBlockBase.java:66-81 from NBT_TEXTURE "cokeoven",
+     * Loader_MultiTileEntities.java:1193) are missing resources, but the official
+     * 6.10.20 asset pack ships the coke oven's complete art under
+     * {@code machines/basicmachines/cokeoven/} — the borrowed colored faces (all six
+     * hash to one shared brick body) plus the overlay/front window decal ride the
+     * two-layer form: element 0 the tintindex-0 body (the Ceramic row carrier, the
+     * {@code GTMachineTintModel} seat), element 1 the untinted 0.01 north window plate
+     * (the r4-18 single-front-decal shape). The bricks part keeps the borrowed
+     * firebricks two-layer model (task w3-nbtdesign-parts).
      */
     private void addMultiBlocks() {
         Block tCokeOven = GTMultiBlocks.COKE_OVEN.get();
-        ModelFile tUnformed = cokeOvenModel("multiblock_coke_oven", "multiblock_coke_oven_front");
-        ModelFile tFormed = cokeOvenModel("multiblock_coke_oven_formed", "multiblock_coke_oven_front_formed");
+        ModelFile tModel = cokeOvenModel();
         getVariantBuilder(tCokeOven).forAllStates(aState -> {
             int tY;
             switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
@@ -1455,7 +1453,6 @@ public final class GT6BlockStates extends BlockStateProvider {
                 case EAST -> tY = 90;
                 default -> tY = 0; // NORTH
             }
-            ModelFile tModel = aState.getValue(TileEntityBase10MultiBlockBase.FORMED) ? tFormed : tUnformed;
             return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
         });
         itemModels().withExistingParent("multiblock_coke_oven", modLoc("block/multiblock_coke_oven"));
@@ -1468,12 +1465,31 @@ public final class GT6BlockStates extends BlockStateProvider {
         itemModels().withExistingParent("multiblock_coke_oven_bricks", modLoc("block/multiblock_coke_oven_bricks"));
     }
 
-    /** One cube model over the four-texture key set: down/up/north(front)/south+east+west(side). */
-    private ModelFile cokeOvenModel(String aName, String aFrontTexture) {
-        return models().cube(aName,
-                modLoc("block/multiblock_coke_oven_bottom"), modLoc("block/multiblock_coke_oven_top"),
-                modLoc("block/" + aFrontTexture), modLoc("block/multiblock_coke_oven_side"),
-                modLoc("block/multiblock_coke_oven_side"), modLoc("block/multiblock_coke_oven_side"));
+    /**
+     * The coke oven controller model (task coke-oven-texture): the two-layer front-decal
+     * form over the borrowed art — element 0 the tinted body cube (north = the front
+     * face, the other five sides share the side art), element 1 the 0.01 north window
+     * plate over the overlay/front borrow (untinted, cullface north — the p22 shape).
+     * Cutout so the window's transparent texels discard.
+     */
+    private ModelFile cokeOvenModel() {
+        BlockModelBuilder tModel = models().getBuilder("multiblock_coke_oven")
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc("block/multiblock_coke_oven_bottom"))
+                .texture("up", modLoc("block/multiblock_coke_oven_top"))
+                .texture("north", modLoc("block/multiblock_coke_oven_front"))
+                .texture("south", modLoc("block/multiblock_coke_oven_side"))
+                .texture("west", modLoc("block/multiblock_coke_oven_side"))
+                .texture("east", modLoc("block/multiblock_coke_oven_side"))
+                .texture("particle", modLoc("block/multiblock_coke_oven_side"))
+                .texture("window", modLoc("block/multiblock_coke_oven_overlay_front"))
+                .renderType("cutout");
+        tintedBody(tModel);
+        tModel.element()
+                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+                .face(Direction.NORTH).texture("#window").cullface(Direction.NORTH)
+                .end();
+        return tModel;
     }
 
     /**
