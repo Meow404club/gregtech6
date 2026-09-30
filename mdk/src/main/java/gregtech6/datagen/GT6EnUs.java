@@ -191,6 +191,7 @@ public class GT6EnUs extends LanguageProvider {
         addRails(); // task rails-31-blocks — table-tail append
         addBooks(); // task books-written — table-tail append
         addTechnologicalComponents(); // task debt-emitter-sensor-generators — table-tail append
+        addFoodItems(); // task food-items-core — table-tail append
     }
 
     /**
@@ -2125,6 +2126,24 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.rifle", "Rifle");
         add("item.gt6.rifle.tooltip", "Single Shot, Massive Damage");
         add(GT6FoodCans.TAB_TITLE_KEY, "GregTech: Cans");
+    }
+
+    /**
+     * Food-item family keys (task food-items-core): the T1 subset's display names + desc
+     * tooltips + the tab title, walked over the {@link gregtech6.registry.GT6Foods#FOOD_ROWS}
+     * table so the lang face cannot drift from the registered ids (the addFoodCans form).
+     * Values are the upstream registration-row wordings verbatim: the name + desc columns
+     * of MultiItemFood.java:490 (Cheese/"Click the Cheese"), :491, :497, :498, :365, :374,
+     * :809, :933, :934, and the tab label "GregTech: Nature & Foods"
+     * (MultiItemFood.java:48, the upstream creative-tab ctor literal).
+     * Table-tail append, append-only.
+     */
+    private void addFoodItems() {
+        for (gregtech6.registry.GT6Foods.FoodRow tRow : gregtech6.registry.GT6Foods.FOOD_ROWS) {
+            add("item.gt6." + tRow.id(), tRow.enName());
+            add(tRow.tooltipKey(), tRow.enTooltip());
+        }
+        add(gregtech6.registry.GT6Foods.TAB_TITLE_KEY, "GregTech: Nature & Foods");
     }
 
     /**
