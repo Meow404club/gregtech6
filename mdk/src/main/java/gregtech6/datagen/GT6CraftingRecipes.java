@@ -3995,8 +3995,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	// Loader_Tools:393-404 + the CR.java:193-217 lowercase TOOL letters): P = plate,
 	// I = ingot, S = stick, T = screw, X = plateCurved (ALL OF THE MATERIAL); h/f/d/r
 	// = the hammer/file/screwdriver/soft-hammer TOOL tags; V = the blue dye (the
-	// crowbar's :314 special). The C/G (plateGem/gem) SECOND variants stay cut (the
-	// dig-family declared cut; the blade family is the only plateGem consumer). The
+	// crowbar's :314 special). The C/G (plateGem/gem) SECOND variants of the wrench pair
+	// (:310 arg-8 second shapes) and the hammer (:327 arg-9 G shape) landed with task
+	// r10-debt-gem-sisters — the r9-39 card's declared remainder: 'C' = the plateGem ITEM
+	// (no tag family, the blade-family precedent), 'G' = the gems tag (item-truth gated);
+	// the gem variants swap the in-grid hammer for the file ('f' = CR.java:196 — gem
+	// plates/gems are FILED, not hammered, the upstream letter choice verbatim). The
 	// axis gates are the upstream And() rows verbatim through the M5 identity form
 	// ({@link #woodExcluded}): the mToolTypes>0 listener gate (:426), typemin,
 	// ANTIMATTER.NOT, COATED.NOT, the hammer's Nor(WOOD,BOUNCY,STRETCHY) and the soft
@@ -4017,20 +4021,23 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	// :79-81) rides the ladder through /give-stamped identities only (no serializer
 	// multiplier field — the dig card's yagni ruling stands: no generated row needs one).
 
-	/** One machine ladder form: the id, the axis gates, the Steel inclusion, the stamp multiplier, the upstream row shape. */
-	private record MachineLadderForm(String aId, int aTypeMin, boolean aNoCoated, boolean aNoSoftTag, boolean aSoftTag,
+	/** One machine ladder form: the id, the axis gates, the Steel inclusion, the stamp multiplier, the upstream row shape. (package-private: the offline gem-sister census walk, the TOOL_HEAD_ROW_FORMS precedent) */
+	record MachineLadderForm(String aId, int aTypeMin, boolean aNoCoated, boolean aNoSoftTag, boolean aSoftTag,
 			boolean aNoExtruder, int aQualMin, boolean aIncludeSteel, String[] aPattern) {
 	}
 
-	private static final MachineLadderForm[] MACHINE_LADDER_FORMS = {
+	static final MachineLadderForm[] MACHINE_LADDER_FORMS = {
 			new MachineLadderForm("screwdriver", 2, true, false, false, false, 0, true, new String[] {"hS", "Sf"}), // :306
 			new MachineLadderForm("saw", 2, true, false, false, false, 0, true, new String[] {"PP", "fh"}), // :307
 			new MachineLadderForm("chisel", 2, true, false, false, false, 0, true, new String[] {"hPf", " S "}), // :305
 			new MachineLadderForm("crowbar", 0, false, false, false, false, 0, true, new String[] {"hVS", "VSV", "SVf"}), // :314
 			new MachineLadderForm("cutter", 2, false, true, false, false, 0, true, new String[] {"PfP", "hPd", "STS"}), // :324
 			new MachineLadderForm("hammer", 0, true, true, false, false, 0, false, new String[] {"II ", "IIh", "II "}), // :327
+			new MachineLadderForm("hammer_gem", 0, true, true, false, false, 0, false, new String[] {"GG ", "GGf", "GG "}), // :327 G — the gem head row, 'f' not 'h'
 			new MachineLadderForm("wrench", 2, false, false, false, false, 1, false, new String[] {"PhP", " P ", " P "}), // :310
+			new MachineLadderForm("wrench_gem", 2, false, false, false, false, 1, false, new String[] {"CfC", " C ", " C "}), // :310 C — 'f' not 'h'
 			new MachineLadderForm("monkey_wrench", 2, false, false, false, false, 1, false, new String[] {"PPd", "hPT", " P "}), // :311
+			new MachineLadderForm("monkey_wrench_gem", 2, false, false, false, false, 1, false, new String[] {"CCd", "fCT", " C "}), // :311 C — 'f' not 'h'
 			new MachineLadderForm("pincers", 2, false, false, false, false, 0, false, new String[] {"XhX", " T ", "SdS"}), // :316
 	};
 
@@ -4049,7 +4056,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			case "cutter" -> GT6Tools.CUTTER.get();
 			case "soft_hammer" -> GT6Tools.SOFT_HAMMER.get();
 			case "wrench" -> GT6Tools.WRENCH.get();
+			case "wrench_gem" -> GT6Tools.WRENCH.get();
 			case "monkey_wrench" -> GT6Tools.MONKEY_WRENCH.get();
+			case "monkey_wrench_gem" -> GT6Tools.MONKEY_WRENCH.get();
 			case "pincers" -> GT6Tools.PINCERS.get();
 			default -> null; // the head rows ride machineLadderHeadItem
 		};
@@ -4067,7 +4076,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			case "screwdriver" -> gregapi.data.OP.toolHeadScrewdriver;
 			case "saw" -> gregapi.data.OP.toolHeadSaw;
 			case "chisel" -> gregapi.data.OP.toolHeadChisel;
-			case "hammer" -> gregapi.data.OP.toolHeadHammer;
+			case "hammer", "hammer_gem" -> gregapi.data.OP.toolHeadHammer;
 			default -> null;
 		};
 		if (tPrefix == null) return null;
@@ -4093,6 +4102,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					: net.minecraft.world.item.crafting.Ingredient.of(gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.screw, aMaterial).get());
 			case 'X' -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plateCurved, aMaterial) == null ? null
 					: net.minecraft.world.item.crafting.Ingredient.of(gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plateCurved, aMaterial).get());
+			case 'C' -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plateGem, aMaterial) == null ? null
+					: net.minecraft.world.item.crafting.Ingredient.of(gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plateGem, aMaterial).get());
+			case 'G' -> gregapi.data.OP.gem.isGeneratingItem(aMaterial) ? net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, tSnake)) : null;
 			case 'h' -> net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_HARD_HAMMER);
 			case 'f' -> net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_FILE);
 			case 'd' -> net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_SCREWDRIVER);
@@ -4102,8 +4114,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		};
 	}
 
-	/** The per-form axis gate — the upstream And() rows verbatim (see the block javadoc). */
-	private static boolean machineLadderAxis(gregapi.oredict.OreDictMaterial aMaterial, MachineLadderForm aForm) {
+	/** The per-form axis gate — the upstream And() rows verbatim (see the block javadoc). (package-private: the offline gem-sister census walk) */
+	static boolean machineLadderAxis(gregapi.oredict.OreDictMaterial aMaterial, MachineLadderForm aForm) {
 		if (aMaterial.mToolTypes <= 0 || aMaterial.mToolTypes < aForm.aTypeMin()) return false; // the :426 listener gate + typemin
 		if (aMaterial.mToolQuality < aForm.aQualMin()) return false; // qualmin
 		if (aMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) return false; // ANTIMATTER.NOT
@@ -4140,6 +4152,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(aMaterial.mNameInternal);
 		if (tLetters.contains('P')) return GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake);
 		if (tLetters.contains('I')) return GT6ItemTags.materialTag(GT6ItemTags.INGOTS_FAMILY, tSnake);
+		if (tLetters.contains('C')) return gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plateGem, aMaterial).get(); // the resolvable gate ran first
+		if (tLetters.contains('G')) return GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, tSnake);
 		for (char tKey : new char[] {'S', 'T', 'X'}) {
 			gregapi.oredict.OreDictPrefix tPrefix = tKey == 'S' ? gregapi.data.OP.stick : tKey == 'T' ? gregapi.data.OP.screw : gregapi.data.OP.plateCurved;
 			if (tLetters.contains(tKey) && gregtech6.registry.GTMaterialItems.get(tPrefix, aMaterial) != null) {
@@ -4448,7 +4462,15 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				// the r7-39 inversion fix: the :305/:306/:307/:327 rows are upstream HEAD rows —
 				// vanilla shaped emission, the head item IS the identity
 				if (tHead != null) {
-					headRowBuilder(tHead, tPattern, tKey).unlockedBy("has_head_material", has(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake))).save(aConsumer, tId);
+					// the r7-39 inversion fix: the :305/:306/:307/:327 rows are upstream HEAD rows —
+					// vanilla shaped emission, the head item IS the identity. The G-carrying gem rows
+					// anchor the head item (the toolHeadRows band convention) — the gem universe
+					// carries no plates tag to anchor.
+					if (machineLadderLetters(tForm).contains('G')) {
+						headRowBuilder(tHead, tPattern, tKey).unlockedBy("has_head", has(tHead)).save(aConsumer, tId);
+					} else {
+						headRowBuilder(tHead, tPattern, tKey).unlockedBy("has_head_material", has(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake))).save(aConsumer, tId);
+					}
 					continue;
 				}
 				net.minecraft.world.item.Item tResult = machineLadderResult(tForm.aId());
@@ -4501,7 +4523,14 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				ResourceLocation tId = digLadderRowId(tForm.aId(), tSnake);
 				// the r7-39 inversion fix: the :305/:306/:307/:327 rows are upstream HEAD rows
 				if (tHead != null) {
-					headRowBuilder(tHead, tPattern, tKey).unlockedBy("has_head_material", has(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake))).save(aOutput, tId);
+					// the r7-39 inversion fix: the :305/:306/:307/:327 rows are upstream HEAD rows.
+					// The G-carrying gem rows anchor the head item — the gem universe carries no
+					// plates tag to anchor (the forge-leg mirror).
+					if (machineLadderLetters(tForm).contains('G')) {
+						headRowBuilder(tHead, tPattern, tKey).unlockedBy("has_head", has(tHead)).save(aOutput, tId);
+					} else {
+						headRowBuilder(tHead, tPattern, tKey).unlockedBy("has_head_material", has(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake))).save(aOutput, tId);
+					}
 					continue;
 				}
 				net.minecraft.world.item.Item tResult = machineLadderResult(tForm.aId());

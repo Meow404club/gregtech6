@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "tag": "forge:gems/vinteum_purified"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "GG ",
+    "GGf",
+    "GG "
+  ],
+  "result": {
+    "item": "gt6:tool_head_hammer_vinteum_purified"
+  },
+  "show_notification": true
+}

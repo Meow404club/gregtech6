@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_amethyst_ender"
+    },
+    "T": {
+      "item": "gt6:screw_amethyst_ender"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "amethyst_ender",
+  "pattern": [
+    "CCd",
+    "fCT",
+    " C "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:monkey_wrench"
+  }
+}

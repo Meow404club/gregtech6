@@ -1,0 +1,29 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "gt6:plate_gem_spessartine"
+    },
+    "T": {
+      "item": "gt6:screw_spessartine"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "spessartine",
+  "pattern": [
+    "CCd",
+    "fCT",
+    " C "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:monkey_wrench"
+  },
+  "show_notification": true
+}

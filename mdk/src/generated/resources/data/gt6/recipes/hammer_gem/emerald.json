@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "tag": "forge:gems/emerald"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "GG ",
+    "GGf",
+    "GG "
+  ],
+  "result": {
+    "item": "gt6:tool_head_hammer_emerald"
+  },
+  "show_notification": true
+}
