@@ -87,7 +87,7 @@ public class GTDrinksB2Test extends GTOfflineTestBase {
 	@Test
 	public void earlierTablesAreUntouched() {
 		assertEquals(6, GTFluids.AQUA_SPECS.size());
-		assertEquals(2, GTFluids.SIMPLE_LIQUID_SPECS.size());
+		assertEquals(4, GTFluids.SIMPLE_LIQUID_SPECS.size(), "the p19 pair + the chem-fluids-unlock brine/spruceresin pair");
 		assertEquals(4, GTFluids.FOOD_FLUID_SPECS.size());
 		assertEquals(216, GTFluids.FOOD_B1_SPECS.size());
 	}
