@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.Shapes;
 
 import gregtech6.block.GTEntityBlock;
 import gregtech6.items.tools.GT6ToolActions;
@@ -89,7 +90,36 @@ public class GTSensorBlock extends GTEntityBlock {
 
 	@Override
 	public RenderShape getRenderShape(BlockState aState) {
-		return RenderShape.MODEL; // BaseEntityBlock default INVISIBLE (the GTOvenBlock note)
+		return RenderShape.MODEL; // BaseEntityBlock default INVISIBLE is for BER blocks
+	}
+
+	/**
+	 * The wall plate selection box (task rod-render-pool) — the upstream
+	 * getSelectedBoundingBoxFromPool verbatim (MultiTileEntitySensor.java:250, the
+	 * pass-0 render bounds :148-150): a 2px plate flush against the FACING edge
+	 * (FACING = the display face; the probe reads through the opposite face, the BE
+	 * folds it). Collision stays the full block — the upstream MTE default
+	 * (MultiTileEntityBlock.java:192: no IMTE_GetCollisionBoundingBoxFromPool on the
+	 * sensor → the full cell box), only the selection shrinks.
+	 */
+	@Override
+	public net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState aState, BlockGetter aLevel, BlockPos aPos,
+			net.minecraft.world.phys.shapes.CollisionContext aContext) {
+		return switch (aState.getValue(FACING)) {
+			case NORTH -> Shapes.box(0, 0, 0, 1, 1, 2 / 16.0);
+			case SOUTH -> Shapes.box(0, 0, 14 / 16.0, 1, 1, 1);
+			case WEST -> Shapes.box(0, 0, 0, 2 / 16.0, 1, 1);
+			case EAST -> Shapes.box(14 / 16.0, 0, 0, 1, 1, 1);
+			case DOWN -> Shapes.box(0, 0, 0, 1, 2 / 16.0, 1);
+			case UP -> Shapes.box(0, 14 / 16.0, 0, 1, 1, 1);
+		};
+	}
+
+	/** The upstream collision stays the full cell (MultiTileEntityBlock.java:192 default). */
+	@Override
+	public net.minecraft.world.phys.shapes.VoxelShape getCollisionShape(BlockState aState, BlockGetter aLevel,
+			BlockPos aPos, net.minecraft.world.phys.shapes.CollisionContext aContext) {
+		return Shapes.block();
 	}
 
 	@Override

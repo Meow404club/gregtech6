@@ -55,10 +55,11 @@ import gregtech6.tileentity.attachment.GTAttachmentSmallBlockEntity;
  *     because the upstream interface name is the spec line);</li>
  * <li>{@link #getCollisionShape} → empty (upstream
  *     {@code getCollisionBoundingBoxFromPool() == null}, TileEntityBase10Attachment:35);
- *     the visual {@link #getShape} is the thin 4/16 plate over the attachment centre
- *     (the upstream render-pass-0 box, MultiTileEntityFluidTap.java:186-189 — the
- *     three-pass faucet/spout stack is the render pool card, one flat plate is the
- *     declared placeholder);</li>
+ *     the selection {@link #getShape} is the upstream taper/spout stack envelope
+ *     (MultiTileEntityFluidTap :226-233 / FluidFunnel :156-163) — since task
+ *     rod-render-pool the VISUAL is the upstream three-pass stack too (the datagen
+ *     element models in GT6BlockStates.addAttachments), the per-face top/bottom art
+ *     borrow still declared (the borrowed side icons texture every face);</li>
  * <li>valid mount faces per family: the tap takes the four horizontals (the 10Attachment
  *     default {@code SIDES_HORIZONTAL}, TileEntityBase10Attachment.java:51 — the tap
  *     class carries no override), the funnel the horizontals + DOWN
@@ -168,17 +169,34 @@ public class GTAttachmentSmallBlock extends Block implements EntityBlock {
 		return Shapes.empty();
 	}
 
-	/** The thin plate over the attachment centre — the upstream render-pass-0 box (tap :186-189), the declared placeholder. */
+	/**
+	 * The upstream selection envelopes (task rod-render-pool) — the tap
+	 * getSelectedBoundingBoxFromPool (MultiTileEntityFluidTap.java:226-233) and the
+	 * funnel (MultiTileEntityFluidFunnel.java:156-163) verbatim: the full taper/spout
+	 * stack envelope against the host edge (FACING points AT the host). The previous
+	 * 4x4x4 placeholder predates the render geometry landing; collision stays
+	 * {@link #getCollisionShape empty} (upstream 10Attachment:35).
+	 */
 	@Override
 	public VoxelShape getShape(BlockState aState, BlockGetter aLevel, BlockPos aPos, CollisionContext aContext) {
 		Direction tFacing = aState.getValue(FACING);
+		if (mFamily == Family.TAP) {
+			// MultiTileEntityFluidTap :226-233 (PX_P/PX_N px: (6,3,0)-(10,7,6) on north)
+			return switch (tFacing) {
+				case NORTH -> Block.box(6, 3, 0, 10, 7, 6);
+				case SOUTH -> Block.box(6, 3, 10, 10, 7, 16);
+				case WEST -> Block.box(0, 3, 6, 6, 7, 10);
+				default -> Block.box(10, 3, 6, 16, 7, 10); // EAST (+ the unreachable verticals)
+			};
+		}
+		// MultiTileEntityFluidFunnel :156-163 (px: (5,7,0)-(11,10,6) north / (5,0,5)-(11,3,11) down)
 		return switch (tFacing) {
-			case DOWN -> Block.box(6, 12, 6, 10, 16, 10); // the host is ABOVE (facing points at it), plate sits at the cell top
-			case UP -> Block.box(6, 0, 6, 10, 4, 10);     // the host is BELOW
-			case NORTH -> Block.box(6, 6, 0, 10, 10, 4);  // the host is NORTH, plate at the cell's north edge (tap :186 z 2..4)
-			case SOUTH -> Block.box(6, 6, 12, 10, 10, 16);
-			case WEST -> Block.box(0, 6, 6, 4, 10, 10);   // tap :188 x 2..4
-			case EAST -> Block.box(12, 6, 6, 16, 10, 10);
+			case NORTH -> Block.box(5, 7, 0, 11, 10, 6);
+			case SOUTH -> Block.box(5, 7, 10, 11, 10, 16);
+			case WEST -> Block.box(0, 7, 5, 6, 10, 11);
+			case EAST -> Block.box(10, 7, 5, 16, 10, 11);
+			case DOWN -> Block.box(5, 0, 5, 11, 3, 11); // the under-host mount (:163 default)
+			default -> Block.box(5, 7, 0, 11, 10, 6);   // UP is family-invalid, never placed
 		};
 	}
 

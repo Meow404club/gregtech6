@@ -92,6 +92,26 @@ public class GTItemPipeBlock extends GTEntityBlock {
 		return RenderShape.MODEL; // BaseEntityBlock default INVISIBLE is for BER blocks
 	}
 
+	/**
+	 * The connection-aware thin envelope (task rod-render-pool) — the
+	 * {@link GTFluidPipeBlock#getShape} form over the item-pipe diameters (NBT_DIAMETER
+	 * PX_P[8/12/16], MultiTileEntityPipeItem.java:76-82 — the restrictive twins share
+	 * their base diameter, the upstream :79-82 rows carry the same PX_P column).
+	 */
+	@Override
+	public net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState aState, net.minecraft.world.level.BlockGetter aLevel,
+			BlockPos aPos, net.minecraft.world.phys.shapes.CollisionContext aContext) {
+		int tMask = aState.getValue(CONNECTIONS);
+		double tInset = (16 - mRow.variant().diameterPx) / 32.0;
+		return net.minecraft.world.phys.shapes.Shapes.box(
+			(tMask & (1 << net.minecraft.core.Direction.WEST.get3DDataValue())) != 0 ? 0 : tInset,
+			(tMask & (1 << net.minecraft.core.Direction.DOWN.get3DDataValue())) != 0 ? 0 : tInset,
+			(tMask & (1 << net.minecraft.core.Direction.NORTH.get3DDataValue())) != 0 ? 0 : tInset,
+			(tMask & (1 << net.minecraft.core.Direction.EAST.get3DDataValue())) != 0 ? 1 : 1 - tInset,
+			(tMask & (1 << net.minecraft.core.Direction.UP.get3DDataValue())) != 0 ? 1 : 1 - tInset,
+			(tMask & (1 << net.minecraft.core.Direction.SOUTH.get3DDataValue())) != 0 ? 1 : 1 - tInset);
+	}
+
 	/** The composed row name (the BoilerTankBlock.getName posture — the item stack name delegates here). */
 	@Override
 	public net.minecraft.network.chat.MutableComponent getName() {
