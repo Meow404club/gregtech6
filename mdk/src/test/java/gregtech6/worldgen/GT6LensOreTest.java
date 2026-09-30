@@ -18,6 +18,7 @@ package gregtech6.worldgen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
@@ -220,6 +221,50 @@ class GT6LensOreTest {
                 "ore_lens/komatiite_pyrite"}) {
             assertNotNull(resourceJson("data/gt6/worldgen/configured_feature/" + tPath + ".json"));
             assertNotNull(resourceJson("data/gt6/worldgen/placed_feature/" + tPath + ".json"));
+        }
+    }
+
+    /**
+     * The ordinary small-ore band's order pin (task lens-ore-base-order): the band
+     * (overworld surface pairs then the deep-band mirrors) rides the strata_lenses
+     * modifier as the exact tail AFTER the lens+companion head — the one-modifier list
+     * order is the FeatureSorter chain (FeatureSorter.java:52-57 consecutive pairs →
+     * ChunkGenerator.java:319), so the band's marble-family target arm always sees lens
+     * stone the lens already placed. The standalone ore_small_overworld modifier must
+     * stay gone from both brands: its own-modifier landing order was the uncontracted
+     * datapack load order, the user-reported stone-base-in-marble bug.
+     */
+    @Test
+    void smallOreBandRidesTheLensChainAfterTheLens() throws Exception {
+        List<String> tExpectedSmall = new ArrayList<>();
+        for (GTOreWorldgen.Placement tPair : GTOreWorldgen.placementPairs()) {
+            if (tPair.dim() == GTOreWorldgen.Dim.OVERWORLD) {
+                tExpectedSmall.add(GTOreWorldgen.placedKey(tPair.row(), tPair.dim()).location().toString());
+            }
+        }
+        for (GTOreWorldgen.SmallOreRow tRow : GTOreWorldgen.deepMirrorRows()) {
+            tExpectedSmall.add(GTOreWorldgen.deepPlacedKey(tRow).location().toString());
+        }
+        assertTrue(tExpectedSmall.size() > 0, "the overworld small-ore face is non-empty");
+        for (String tBrand : new String[] {"forge", "neoforge"}) {
+            JsonObject tRow = resourceJson("data/gt6/" + tBrand + "/biome_modifier/strata_lenses.json");
+            List<String> tFeatures = new ArrayList<>();
+            tRow.get("features").getAsJsonArray().forEach(tElement -> tFeatures.add(tElement.getAsString()));
+            assertEquals("gt6:strata_lenses", tFeatures.get(0), tBrand + ": the lens feature rides FIRST");
+            int tFirstSmall = tFeatures.indexOf(tExpectedSmall.get(0));
+            assertTrue(tFirstSmall > 0, tBrand + ": the small-ore band is present in the chain");
+            assertEquals(tExpectedSmall, tFeatures.subList(tFirstSmall, tFeatures.size()),
+                    tBrand + ": the small-ore band is the exact tail, surface-then-deep order");
+            // the whole companion head precedes the band: the last ore_lens entry < the band start
+            int tLastLens = -1;
+            for (int i = 0; i < tFeatures.size(); i++) {
+                if (tFeatures.get(i).startsWith("gt6:ore_lens/")) tLastLens = i;
+            }
+            assertTrue(tLastLens < tFirstSmall, tBrand + ": every companion precedes the small-ore band");
+            // the standalone overworld modifier stays gone
+            assertNull(GT6LensOreTest.class.getClassLoader()
+                    .getResourceAsStream("data/gt6/" + tBrand + "/biome_modifier/ore_small_overworld.json"),
+                    tBrand + ": the standalone ore_small_overworld modifier stays deleted");
         }
     }
 
