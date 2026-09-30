@@ -569,6 +569,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("gt6.tooltip.boiler_large.16");
 		addDirect("gt6.tooltip.boiler_large.17");
 		addDirect("gt6.tooltip.boiler_large.18");
+		addDirect("gt6.tooltip.boiler_large.19"); // r10-debt-boilerlarge-tip — the port-authored #17 output-condition row (the boiler.14 sister line)
 		// the Fluid Container (tank) family — dormant row, hardcoded-en face both locales
 		addDirect("gt6.tooltip.tank.1");
 		// the Barrel family + the gas-proof variant

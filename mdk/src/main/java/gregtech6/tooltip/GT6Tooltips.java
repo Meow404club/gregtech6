@@ -70,7 +70,9 @@ public final class GT6Tooltips {
 		// base rows (TileEntityBase10MultiBlockBase.java:100-101 = rows 16-17) + the facing
 		// row (TileEntityBase09FacingSingle.java:61 = row 18); rows 8-11 ride the same
 		// positional slots as the small boiler, the carrier hands [in, out, cap] per
-		// LargeBoilerRow (NBT_OUTPUT_SU raw 4096..131072, same mOutput*10000 capacity shape :80)
+		// LargeBoilerRow (NBT_OUTPUT_SU raw 4096..131072, same mOutput*10000 capacity shape :80);
+		// row 19 = the port-authored output-condition annex (the small-boiler .14 sister line,
+		// task r10-debt-boilerlarge-tip)
 		register("boiler_large", List.of(
 				new GT6TooltipLine("gt6.tooltip.boiler_large.1", GT6TooltipStyle.CYAN),    // :151 LH.STRUCTURE + ":"
 				new GT6TooltipLine("gt6.tooltip.boiler_large.2", GT6TooltipStyle.WHITE),   // :152 the :143 line
@@ -88,8 +90,13 @@ public final class GT6Tooltips {
 				new GT6TooltipLine("gt6.tooltip.boiler_large.14", GT6TooltipStyle.DRED),   // :164 LH.HAZARD_MELTDOWN
 				new GT6TooltipLine("gt6.tooltip.boiler_large.15", GT6TooltipStyle.DGRAY),  // :165 LH.TOOL_TO_DECALCIFY_CHISEL
 				new GT6TooltipLine("gt6.tooltip.boiler_large.16", GT6TooltipStyle.DGRAY),  // 10MultiBlockBase:100 LH.TOOL_TO_BUILD_BUILDER_WAND
-				new GT6TooltipLine("gt6.tooltip.boiler_large.17", GT6TooltipStyle.DGRAY),  // 10MultiBlockBase:101 LH.TOOL_TO_DETAIL_MAGNIFYINGGLASS
-				new GT6TooltipLine("gt6.tooltip.boiler_large.18", GT6TooltipStyle.DGRAY))); // super :61 the facing row (Wrench)
+			new GT6TooltipLine("gt6.tooltip.boiler_large.17", GT6TooltipStyle.DGRAY),  // 10MultiBlockBase:101 LH.TOOL_TO_DETAIL_MAGNIFYINGGLASS
+			new GT6TooltipLine("gt6.tooltip.boiler_large.18", GT6TooltipStyle.DGRAY),  // super :61 the facing row (Wrench)
+			// row 19 is the port-authored annex (the small-boiler .14 sister line, task
+			// r10-debt-boilerlarge-tip, issue #17 UX): the upstream addToolTips :150-167
+			// carries NO output-condition line — the >half-full gate is tick-body-only
+			// (MultiTileEntityLargeBoiler.java:203-207 = the port BE :417)
+			new GT6TooltipLine("gt6.tooltip.boiler_large.19", GT6TooltipStyle.ORANGE)));
 		// the Fluid Container (tank) family — TileEntityBase08FluidContainer.addToolTips
 		// :99-111, the ONE pure-static row :100 (mTank.contentcap(), the empty-tank face =
 		// "Capacity: <capacity> L"); the :101-110 rows are proof/drinkable conditionals and
