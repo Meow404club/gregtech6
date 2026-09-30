@@ -103,6 +103,21 @@ public final class GTModelProperties {
 	 */
 	public static final ModelProperty<String> SPRING_FLUID = new ModelProperty<>(Objects::nonNull);
 
+	/**
+	 * The boiler barometer property (task boiler-barometer): the synced 5-bit pressure
+	 * gauge reading the boiler BE carries ({@link Integer} 0..31, immutable — the ModelData
+	 * iron law above applies trivially). Upstream is the front-face texture stack
+	 * {@code BI.BAROMETER + BAROMETER_SCALE[mBarometer]} (BI.java:165-166; the single tank
+	 * MultiTileEntityBoilerTank.java:240, the large boiler :357-361), the byte the
+	 * {@code NBT_VISUAL} sync carries (BoilerTank :145/:219-233, LargeBoiler :259/:331-343).
+	 * Present ALWAYS on a boiler BE — gauge 0 (empty) is a real reading, the upstream stack
+	 * draws {@code BAROMETER_SCALE[0]} too — so the consumer
+	 * ({@code GTBoilerBarometerModel}) keys its dial+needle quads on presence, not value.
+	 * The plain-{@link Integer} scalar follows the {@link #PAINT} precedent (the dedicated
+	 * records are for compound payloads). Single-valued like its siblings.
+	 */
+	public static final ModelProperty<Integer> BAROMETER = new ModelProperty<>(Objects::nonNull);
+
 	private GTModelProperties() {
 	}
 

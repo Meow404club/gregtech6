@@ -626,6 +626,73 @@ public class GTBoilerTankBlockEntity extends TileEntityBase03TicksAndSync implem
 	// the update tag — the client copy re-derives mBarometer in load() (the port carrier).
 
 	// ---------------------------------------------------------------------------
+	// the gauge render face (task boiler-barometer — the oven's visual-refresh shape)
+	// ---------------------------------------------------------------------------
+
+	/** The client-side flag of a barometer change landed through either sync channel. */
+	private boolean mBarometerVisualDirty = false;
+
+	/**
+	 * The client arm of the scheduleRenderUpdate pair (the TileEntityOven form, task
+	 * p4-cover-core ⑦): fires when {@code mBarometer} changed through {@link #load} — the
+	 * pair (sendBlockUpdated + requestModelDataUpdate) pushes the fresh
+	 * {@link #getModelData()} snapshot into the ModelDataManager before the rebuild task
+	 * reads it. No server-side forward: the gauge writes already ride the vanilla channels
+	 * (the :221 onTickCheck sync window), both client channels land in {@link #load}.
+	 */
+	private void scheduleBarometerRenderRefresh() {
+		if (!hasLevel() || !isClientSide() || !mBarometerVisualDirty) return;
+		mBarometerVisualDirty = false;
+		gregtech6.client.render.GTRenderUpdates.scheduleRenderUpdate(this);
+	}
+
+	@Override
+	public void onLoad() {
+		super.onLoad();
+		scheduleBarometerRenderRefresh(); // chunk-data channel (login/chunk load)
+	}
+
+	//? if forge {
+	@Override
+	public void handleUpdateTag(CompoundTag aTag) {
+		super.handleUpdateTag(aTag);
+		scheduleBarometerRenderRefresh(); // chunk-data channel (login/chunk load)
+	}
+
+	@Override
+	public void onDataPacket(net.minecraft.network.Connection aNet, net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket aPacket) {
+		super.onDataPacket(aNet, aPacket);
+		scheduleBarometerRenderRefresh(); // block-update channel (the gauge byte changes)
+	}
+	//?} else {
+	/*@Override
+	public void handleUpdateTag(CompoundTag aTag, net.minecraft.core.HolderLookup.Provider aProvider) {
+		super.handleUpdateTag(aTag, aProvider);
+		scheduleBarometerRenderRefresh(); // chunk-data channel (login/chunk load)
+	}
+
+	@Override
+	public void onDataPacket(net.minecraft.network.Connection aNet, net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket aPacket, net.minecraft.core.HolderLookup.Provider aProvider) {
+		super.onDataPacket(aNet, aPacket, aProvider);
+		scheduleBarometerRenderRefresh(); // block-update channel (the gauge byte changes)
+	}
+	// 21.1: both IBlockEntityExtension hooks gain the serialization provider (javap)
+	*///?}
+
+	/**
+	 * The gauge supply (the 03 base PAINT arm derived — its :356-358 coexistence shape):
+	 * the synced 5-bit visual byte as the immutable {@link Integer} snapshot, ALWAYS
+	 * present (gauge 0 = empty is a real reading, the upstream BAROMETER_SCALE[0] stack).
+	 * The consumer ({@code GTBoilerBarometerModel}) keys its dial+needle quads on presence.
+	 */
+	@Override
+	public net.minecraftforge.client.model.data.ModelData getModelData() {
+		return gregtech6.client.render.GTModelProperties.derive(super.getModelData())
+				.with(gregtech6.client.render.GTModelProperties.BAROMETER, Integer.valueOf(mBarometer & 31))
+				.build();
+	}
+
+	// ---------------------------------------------------------------------------
 	// NBT (the upstream :73-92 set; the row config re-derives from the block carrier)
 	// ---------------------------------------------------------------------------
 
@@ -642,6 +709,7 @@ public class GTBoilerTankBlockEntity extends TileEntityBase03TicksAndSync implem
 
 	@Override
 	public void load(CompoundTag aNBT) {
+		byte tWasBarometer = mBarometer;
 		super.load(aNBT);
 		if (aNBT.contains(NBT_ENERGY, Tag.TAG_ANY_NUMERIC)) mEnergy = aNBT.getLong(NBT_ENERGY); // :75
 		if (aNBT.contains(NBT_VISUAL, Tag.TAG_ANY_NUMERIC)) mBarometer = bind5(aNBT.getByte(NBT_VISUAL)); // :76 + :232 mask
@@ -652,5 +720,8 @@ public class GTBoilerTankBlockEntity extends TileEntityBase03TicksAndSync implem
 		mTanks[0].readFromNBT(aNBT, NBT_TANK0); // :83
 		mTanks[1].readFromNBT(aNBT, NBT_TANK1); // :83
 		mTanks[1].setCapacity(steamTankCapacity()); // :78 half two
+		// the client write point of the gauge (the oven's mOvenVisualDirty form, :799-802):
+		// both sync channels converge on this load; flag the render pair
+		if (hasLevel() && isClientSide() && mBarometer != tWasBarometer) mBarometerVisualDirty = true;
 	}
 }
