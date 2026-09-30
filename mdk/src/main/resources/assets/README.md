@@ -10981,3 +10981,36 @@ there.
     (`ab718c6f6f713fef4e3b5f7c76c06591d15fc5ffc85fc8d671bb169be5b118b4` — the Salted
     Butter, :934)
   All 16x16 RGBA, CC0 1.0 per the upstream README block.
+
+## task small-tank-gas-cylinder (2026-09-30) — the barometer gas cylinder 8-tile borrow
+
+Borrowed from **GregTech 6** (https://github.com/GregTech6/gregtech6), snapshot
+`tmp/gt6-1.7.10`, `src/main/resources/assets/gregtech/textures/blocks/machines/tanks/barometer_gas_cylinder/`:
+the 8 PNGs below (byte-identical, `cmp` clean, sha256 verified per file) are the
+upstream static tile set of the Barometer Gas Cylinder family
+(MultiTileEntityBarometerGasCylinder.java:129-137 — colored + overlay over
+{barometer, bottom, sides, top}; there is NO `insides` tile in this set — the
+gas cylinder is the one small-tank family without one, unlike jug/cup/cell).
+
+The port mounts them on the static two-layer elements model (the measuring-pot
+grammar): the bell-body elements carry the colored band per world side
+(horizontal=sides, up=top, down=bottom) and the neck + barometer-arm elements
+carry the barometer tile on every face (upstream getTexture2 :140-142 — the
+`aRenderPass > 2` branch), each element duplicated by a 0.01-inflated overlay
+shell. Path mapping: upstream `barometer_gas_cylinder/<layer>/<face>.png` →
+`block/gas_cylinder/<layer>_<face>.png`.
+
+- `block/gas_cylinder/colored_sides.png` — `6327c95eaf5e6eca151aab7f7a29c2f1c3a191c092ffafaefefb167cdb1fd257` (upstream `barometer_gas_cylinder/colored/sides.png`)
+- `block/gas_cylinder/colored_top.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `barometer_gas_cylinder/colored/top.png`)
+- `block/gas_cylinder/colored_bottom.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `barometer_gas_cylinder/colored/bottom.png`)
+- `block/gas_cylinder/colored_barometer.png` — `f8318c872ac19a09284e9755fe23bd9b1aa7f79b002b8ac80e8c5be8e73ac895` (upstream `barometer_gas_cylinder/colored/barometer.png`)
+- `block/gas_cylinder/overlay_sides.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `barometer_gas_cylinder/overlay/sides.png`)
+- `block/gas_cylinder/overlay_top.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `barometer_gas_cylinder/overlay/top.png`)
+- `block/gas_cylinder/overlay_bottom.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `barometer_gas_cylinder/overlay/bottom.png`)
+- `block/gas_cylinder/overlay_barometer.png` — `1d919a02aea17628436b93fbcb734331974cdc18e1efd649f03f4f1b39194590` (upstream `barometer_gas_cylinder/overlay/barometer.png`)
+
+(The repeated digests are the upstream files' own: colored/top and colored/bottom
+are byte-identical upstream, as are the three overlay body tiles.)
+
+Copied on 2026-09-30. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (as recorded for the machines/tanks borrows above).
