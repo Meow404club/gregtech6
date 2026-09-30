@@ -192,6 +192,22 @@ class GT6ItemModelLayersTest {
         assertLayer(hammer, 3, "gt6:item/material_sets/wood/stick_overlay", "hammer");
     }
 
+    // the gun family (task pistol-family-items): FOUR layers over iconset borrows on
+    // BOTH halves — layer0/1 = the body pair (the getIcon(false) pass), layer2/3 = the
+    // handle pair (the getIcon(true) pass, GT_Tool_Pistol.getIcon :44 verbatim).
+    @Test
+    void gunModelsCarryExactlyFourLayers() throws IOException {
+        Path itemModels = mdkRoot().resolve(GENERATED_TREE).resolve(ITEM_MODELS);
+        for (String gun : new String[] {"pistol", "carbine", "rifle"}) {
+            Map<String, String> textures = texturesOf(itemModels, gun);
+            assertEquals(4, layerKeys(textures).size(), gun + " must carry exactly 4 layers");
+            assertLayer(textures, 0, "gt6:item/" + gun, gun);
+            assertLayer(textures, 1, "gt6:item/" + gun + "_overlay", gun);
+            assertLayer(textures, 2, "gt6:item/" + gun + "_handle", gun);
+            assertLayer(textures, 3, "gt6:item/" + gun + "_handle_overlay", gun);
+        }
+    }
+
     /** The VOID-handle iconset tools: base + overlay, exactly 2 layers. */
     @Test
     void voidHandleToolsCarryExactlyTwoLayers() throws IOException {
@@ -229,7 +245,9 @@ class GT6ItemModelLayersTest {
         "chainsaw_lv", "chainsaw_mv", "chainsaw_hv",
         "wrench_lv", "wrench_mv", "wrench_hv",
         "monkey_wrench_lv", "monkey_wrench_mv", "monkey_wrench_hv",
-        "buzzsaw_lv", "screwdriver_lv");
+        "buzzsaw_lv", "screwdriver_lv",
+        // task pistol-family-items — the gun rows carry their own four-layer pin below
+        "pistol", "carbine", "rifle");
 
     /**
      * The existence-gated overlay rule, walked over EVERY generated item model that
