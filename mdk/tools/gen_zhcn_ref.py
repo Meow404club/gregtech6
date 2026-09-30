@@ -493,6 +493,29 @@ HAND_TRANSLATIONS = {
     "gt6.row.item_pipe.display.restrictive_huge": ("限流巨型%s物品管道", "hand"),
     "gt6.row.mat.constantan": ("康铜", "hand"),      # dump 25027 康铜物流管道 word root
     "gt6.row.mat.cobalt_brass": ("钴黄铜", "hand"),  # dump 25052 钴黄铜物流管道 word root
+    # task item-pipe-matrix — the 15 new row-material words of the 21-material item pipe
+    # matrix (Loader_MultiTileEntities.java:1823-1843). Each word = the upstream dump face
+    # verbatim: the pipe rows' word root (gt.multitileentity.25077-25907 物流管道 family)
+    # cross-checked against the gt.material.* face of the same material. The Ultimet row
+    # STAYS on the existing p27-lang-fix-batch2 ⑤ ruling (钴铬钨合金) — the dump's
+    # 哈氏合金 is the recorded Hastelloy misattribution, not re-litigated here.
+    # ElvenElementium's word is 源质钢 (dump gt.material.ElvenElementium + the MT.java:1822
+    # setLocal("Elementium") local — the pipe rows carry that face).
+    "gt6.row.mat.germanium": ("锗", "hand"),                    # dump 25077 锗物流管道
+    "gt6.row.mat.electrum": ("琥珀金", "hand"),                 # dump 25102 琥珀金物流管道
+    "gt6.row.mat.sterling_silver": ("纯银", "hand"),            # dump 25227 纯银物流管道
+    "gt6.row.mat.rose_gold": ("玫瑰金", "hand"),                # dump 25252 玫瑰金物流管道
+    "gt6.row.mat.angmallen": ("神圣之金", "hand"),              # dump 25277 神圣之金物流管道
+    "gt6.row.mat.black_bronze": ("黑青铜", "hand"),             # dump 25127 黑青铜物流管道
+    "gt6.row.mat.aluminium_brass": ("铝黄铜", "hand"),          # dump 25152 铝黄铜物流管道
+    "gt6.row.mat.manyullyn": ("玛玉灵", "hand"),                # dump 25177 玛玉灵物流管道
+    "gt6.row.mat.magnalium": ("镁铝合金", "hand"),              # dump 25327 镁铝合金物流管道
+    "gt6.row.mat.platinum": ("铂", "hand"),                     # dump 25202 铂物流管道
+    "gt6.row.mat.osmium": ("锇", "hand"),                       # dump 25302 锇物流管道
+    "gt6.row.mat.enderium": ("末影", "hand"),                   # dump 25402 末影物流管道
+    "gt6.row.mat.elementium": ("源质钢", "hand"),               # dump 25477 源质钢物流管道
+    "gt6.row.mat.osmiridium": ("铱锇合金", "hand"),             # dump 25502 铱锇合金物流管道
+    "gt6.row.mat.vibranium_silver": ("银振金合金", "hand"),     # dump 25902 银振金合金物流管道
     "itemGroup.gt6.item_pipes": ("物品管道", "hand"),  # dump :17993 verbatim
     "gt6.row.mat.arsenic_copper": ("砷铜", "hand"),
     "gt6.row.mat.arsenic_bronze": ("砷青铜", "hand"),

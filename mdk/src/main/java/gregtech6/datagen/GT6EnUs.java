@@ -1838,11 +1838,12 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Item pipe keys (task pipe-item): the six variant templates over the three
-     * material words (the composed display — the upstream name columns
-     * Loader_MultiTileEntities.java:1823-1843 + MultiTileEntityPipeItem.java:77-82; the
-     * dump word set tmp/gregtech.lang:11849-11866 keeps 物流管道 for the zh face) and the
-     * "Item Pipes" category tab (itemGroup.gt.multitileentity.25202).
+     * Item pipe keys (task pipe-item + item-pipe-matrix): the six variant templates over
+     * the 21 material words (the composed display — the upstream name columns are the MT
+     * locals composed by MultiTileEntityPipeItem.java:77-82, so the en word IS the row's
+     * displayWord; the dump word set tmp/gregtech.lang gt.multitileentity.25002-25907
+     * keeps 物流管道 for the zh face) and the "Item Pipes" category tab
+     * (itemGroup.gt.multitileentity.25202).
      */
     private void addItemPipes() {
         add(gregtech6.registry.GTItemPipes.DISPLAY_KEY_PREFIX + "medium", "%s Item Pipe");
@@ -1851,9 +1852,9 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTItemPipes.DISPLAY_KEY_PREFIX + "restrictive_medium", "Restrictive %s Item Pipe");
         add(gregtech6.registry.GTItemPipes.DISPLAY_KEY_PREFIX + "restrictive_large", "Restrictive Large %s Item Pipe");
         add(gregtech6.registry.GTItemPipes.DISPLAY_KEY_PREFIX + "restrictive_huge", "Restrictive Huge %s Item Pipe");
-        addRowMatUnit(gregtech6.registry.GTItemPipes.MAT_BRASS.unitKey(), "Brass");
-        addRowMatUnit(gregtech6.registry.GTItemPipes.MAT_CONSTANTAN.unitKey(), "Constantan");
-        addRowMatUnit(gregtech6.registry.GTItemPipes.MAT_COBALT_BRASS.unitKey(), "Cobalt Brass");
+        for (gregtech6.registry.GTItemPipes.ItemPipeMaterial tMat : gregtech6.registry.GTItemPipes.MATERIALS) {
+            addRowMatUnit(tMat.unitKey(), tMat.displayWord());
+        }
         add("itemGroup.gt6.item_pipes", "Item Pipes");
     }
 

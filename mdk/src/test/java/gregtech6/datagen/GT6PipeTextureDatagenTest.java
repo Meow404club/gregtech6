@@ -1,6 +1,7 @@
 /*
  * Offline pinned-census tests for task tex-pipe-textures: the three pipe connector
- * families (2 wood fluid rows, 18 item pipe rows, the logistics wire) leave the
+ * families (2 wood fluid rows, the item pipe matrix — 126 rows since item-pipe-matrix,
+ * the logistics wire) leave the
  * cube_all single-placeholder era for the upstream material-set DUAL-LAYER tinted form
  * — every material-icon render is two passes (pass 0 = the set art multiplied by mRGBa,
  * pass 1 = the untinted <SET>_OVERLAY black outline, TextureSet.java:145-181), the side
@@ -15,12 +16,14 @@
  *     art, UNTINTED overlay bands (no tintindex key — FaceBuilder default -1), the
  *     cutout render_type, the restrictive twin stacking the restrictor band;</li>
  * <li>the set picks ride the row materials: the fluid rows resolve WOOD (the MT wood
- *     factory = SET_WOOD), the 18 item rows COPPER (clloymachine = SET_COPPER,
+ *     factory = SET_WOOD), the item rows the shared COPPER pair (clloymachine = SET_COPPER;
  *     MT.java:716/788), the logistics wire the dedicated pair (NBT_MATERIAL = MT.NULL,
  *     Loader :1819) — the tint-value/dispatch face of that seam is
  *     {@code gregtech6.client.render.GTMachinePaintTintTest#pipeCarriersRideTheCombinedDispatch};</li>
- * <li>all 21 pipe blockstates map every CONNECTIONS variant (0..63) onto the right
- *     shared model, and the BlockItem models parent those shared models;</li>
+ * <li>all 129 pipe blockstates (2 fluid + 126 item + the logistics wire) map every
+ *     CONNECTIONS variant (0..63) onto the right shared model, and the BlockItem models
+ *     parent those shared models — the 18 new materials ride the copper pair too, the
+ *     per-set art face (shiny/dull/metallic) is the render-pool card's domain;</li>
  * <li>the retired placeholders are DEAD — no generated or static JSON references
  *     fluid_pipe_wood / item_pipe_restrictive / the block-root logistics_wire art any
  *     more, and the three PNGs are gone from the static tree (item_pipe.png STAYS: the
@@ -59,10 +62,15 @@ class GT6PipeTextureDatagenTest {
     private static final String COPPER_RESTRICTIVE_MODEL = "materialicons/copper/pipe_side_restrictive";
     private static final String LOGISTICS_MODEL = "iconsets/logistics_wire";
 
-    /** The 21 pipe blockstate registry paths (2 fluid + 18 item + the logistics wire). */
+    /**
+     * The pipe blockstate registry paths (task item-pipe-matrix: the item material slugs
+     * walk the GTItemPipes table — 21 loader lines × 6 variants — so the datagen shape
+     * stays pinned over the whole matrix, not a slug snapshot).
+     */
     private static final List<String> FLUID_PATHS = List.of("wood_fluid_pipe_small", "wood_fluid_pipe_medium");
     private static final List<String> RESTRICTIVE_TAILS = List.of("restrictive_medium", "restrictive_large", "restrictive_huge");
-    private static final List<String> ITEM_MATERIALS = List.of("brass", "constantan", "cobalt_brass");
+    private static final List<String> ITEM_MATERIALS = gregtech6.registry.GTItemPipes.MATERIALS.stream()
+            .map(gregtech6.registry.GTItemPipes.ItemPipeMaterial::slug).toList();
 
     @BeforeAll
     static void bootMaterials() {

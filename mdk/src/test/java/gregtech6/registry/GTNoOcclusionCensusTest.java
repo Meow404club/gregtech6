@@ -94,8 +94,8 @@ public class GTNoOcclusionCensusTest {
 	public void itemPipeBlocksNeverOcclude() {
 		assertNeverOccludes("item pipe",
 				new GTItemPipeBlock(GTItemPipes.ROWS.get(0), GTItemPipes.pipeProperties()));
-		assertEquals(18, GTItemPipes.BLOCKS.getEntries().size(),
-				"the item-pipe register census drifted (3 materials x 6 variants)");
+		assertEquals(126, GTItemPipes.BLOCKS.getEntries().size(),
+				"the item-pipe register census drifted (21 loader lines x 6 variants)");
 	}
 
 	@Test

@@ -43,17 +43,21 @@ import gregtech6.tooltip.GT6Tooltips;
  *
  * <p>The family is row-driven (the GT6Boilers.BoilerRow precedent): one upstream
  * {@code MultiTileEntityPipeItem.addItemPipes} line per material
- * (Loader_MultiTileEntities.java:1823-1825) expands to SIX block rows through the
+ * (Loader_MultiTileEntities.java:1823-1843) expands to SIX block rows through the
  * variant table ({@link ItemPipeVariant}, MultiTileEntityPipeItem.java:76-83 — the
  * stepSize divisors {1, 2, 4} and multipliers {100, 50, 25}, the invSize multipliers
- * {1, 2, 4}). First batch = Brass / Constantan / CobaltBrass (the loader's first three
- * lines, :1823-1825; the other 18 material rows are a later line-data batch, card spec ⑥).
+ * {1, 2, 4}). The full matrix = the loader's 21 material lines × 6 variants = 126 rows
+ * (task item-pipe-matrix — every line verbatim, including the per-line aStepSize /
+ * aInvSize columns the first batch collapsed to constants).
  *
- * <p>Upstream anchor numbers per row: the metaIds ride the addItemPipes bases
- * 25000 / 25025 / 25050 at the variant offsets +2..+7 (:76-83 aID+n), base stepSize
- * 32768 and invSize 1 (:1823-1825). The zh display words are the dump rows verbatim
- * (tmp/gregtech.lang:11849-11866 — 黄铜/康铜/钴黄铜物流管道 family, 限制 prefix for the
- * restrictive variants; itemGroup.gt.multitileentity.25202 = 物品管道 :17993).
+ * <p>Upstream anchor numbers per row: the metaIds ride the addItemPipes bases at the
+ * variant offsets +2..+7 (:76-83 aID+n); stepSize runs 32764..64 and invSize 1..512
+ * across the loader lines. The zh display words are the dump rows verbatim
+ * (tmp/gregtech.lang gt.multitileentity.25002-25907 物流管道 family, 限制 prefix for
+ * the restrictive variants; the Ultimet word rides the p27-lang-fix-batch2 ⑤ ruling
+ * 钴铬钨合金, NOT the dump's 哈氏合金 misattribution; itemGroup.gt.multitileentity.
+ * 25202 = 物品管道 :17993). ElvenElementium's local is "Elementium" (MT.java:1822
+ * setLocal) — the pipe rows carry that face, not the internal name.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GTItemPipes {
@@ -66,8 +70,8 @@ public final class GTItemPipes {
 	/** The display-key namespace of the variant templates ({@code %s} = the material word). */
 	public static final String DISPLAY_KEY_PREFIX = "gt6.row.item_pipe.display.";
 
-	/** One pipe material of the first batch — the loader line's MT argument (:1823-1825). */
-	public record ItemPipeMaterial(String slug, String displayWord, int metaIdBase) {
+	/** One pipe material of the family — one loader line's arguments (:1823-1843). */
+	public record ItemPipeMaterial(String slug, String displayWord, int metaIdBase, long baseStepSize, int baseInvSize) {
 		/** The shared gt6.row.mat small-unit key (the boiler matUnitKeyOf shape). */
 		public String unitKey() {
 			return "gt6.row.mat." + slug;
@@ -75,17 +79,34 @@ public final class GTItemPipes {
 
 		/**
 		 * The row's ore-dict material — the loader line's {@code MT.*} argument verbatim
-		 * (Loader_MultiTileEntities.java:1823-1825 Brass/Constantan/CobaltBrass). The
-		 * tex-pipe-textures tint chain resolves the mRGBa seat from it
-		 * (upstream NBT_MATERIAL + NBT_COLOR = getRGBInt(fRGBaSolid), MultiTileEntityPipeItem
-		 * .java:76-82). Loud drift on an unknown slug — the table only ever grows with a
-		 * loader line in hand.
+		 * (Loader_MultiTileEntities.java:1823-1843). The tex-pipe-textures tint chain
+		 * resolves the mRGBa seat from it (upstream NBT_MATERIAL + NBT_COLOR = getRGBInt
+		 * (fRGBaSolid), MultiTileEntityPipeItem.java:76-82). Loud drift on an unknown
+		 * slug — the table only ever grows with a loader line in hand.
 		 */
 		public gregapi.oredict.OreDictMaterial oreDictMaterial() {
 			return switch (slug) {
 				case "brass" -> gregapi.data.MT.Brass;
 				case "constantan" -> gregapi.data.MT.Constantan;
 				case "cobalt_brass" -> gregapi.data.MT.CobaltBrass;
+				case "germanium" -> gregapi.data.MT.Ge;
+				case "arsenic_copper" -> gregapi.data.MT.ArsenicCopper;
+				case "arsenic_bronze" -> gregapi.data.MT.ArsenicBronze;
+				case "electrum" -> gregapi.data.MT.Electrum;
+				case "sterling_silver" -> gregapi.data.MT.SterlingSilver;
+				case "rose_gold" -> gregapi.data.MT.RoseGold;
+				case "angmallen" -> gregapi.data.MT.Angmallen;
+				case "black_bronze" -> gregapi.data.MT.BlackBronze;
+				case "aluminium_brass" -> gregapi.data.MT.AluminiumBrass;
+				case "manyullyn" -> gregapi.data.MT.Manyullyn;
+				case "magnalium" -> gregapi.data.MT.Magnalium;
+				case "platinum" -> gregapi.data.MT.Pt;
+				case "osmium" -> gregapi.data.MT.Os;
+				case "enderium" -> gregapi.data.MT.Enderium;
+				case "ultimet" -> gregapi.data.MT.Ultimet;
+				case "elementium" -> gregapi.data.MT.ElvenElementium;
+				case "osmiridium" -> gregapi.data.MT.Osmiridium;
+				case "vibranium_silver" -> gregapi.data.MT.VibraniumSilver;
 				default -> throw new IllegalStateException("no ore-dict material pinned for pipe slug " + slug);
 			};
 		}
@@ -155,28 +176,49 @@ public final class GTItemPipes {
 		}
 	}
 
-	// The loader's first three material lines, verbatim order (:1823-1825).
-	public static final ItemPipeMaterial MAT_BRASS = new ItemPipeMaterial("brass", "Brass", 25000);
-	public static final ItemPipeMaterial MAT_CONSTANTAN = new ItemPipeMaterial("constantan", "Constantan", 25025);
-	public static final ItemPipeMaterial MAT_COBALT_BRASS = new ItemPipeMaterial("cobalt_brass", "Cobalt Brass", 25050);
+	// The loader's 21 material lines, verbatim order and columns
+	// (Loader_MultiTileEntities.java:1823-1843 — aID, MT local, aStepSize, aInvSize).
+	public static final ItemPipeMaterial MAT_BRASS = new ItemPipeMaterial("brass", "Brass", 25000, 32768, 1);
+	public static final ItemPipeMaterial MAT_CONSTANTAN = new ItemPipeMaterial("constantan", "Constantan", 25025, 32768, 1);
+	public static final ItemPipeMaterial MAT_COBALT_BRASS = new ItemPipeMaterial("cobalt_brass", "Cobalt Brass", 25050, 32768, 1);
+	public static final ItemPipeMaterial MAT_GERMANIUM = new ItemPipeMaterial("germanium", "Germanium", 25075, 32768, 1);
+	public static final ItemPipeMaterial MAT_ARSENIC_COPPER = new ItemPipeMaterial("arsenic_copper", "Arsenic Copper", 25350, 16384, 1);
+	public static final ItemPipeMaterial MAT_ARSENIC_BRONZE = new ItemPipeMaterial("arsenic_bronze", "Arsenic Bronze", 25375, 32768, 2);
+	public static final ItemPipeMaterial MAT_ELECTRUM = new ItemPipeMaterial("electrum", "Electrum", 25100, 16384, 2);
+	public static final ItemPipeMaterial MAT_STERLING_SILVER = new ItemPipeMaterial("sterling_silver", "Sterling Silver", 25225, 16384, 2);
+	public static final ItemPipeMaterial MAT_ROSE_GOLD = new ItemPipeMaterial("rose_gold", "Rose Gold", 25250, 16384, 2);
+	public static final ItemPipeMaterial MAT_ANGMALLEN = new ItemPipeMaterial("angmallen", "Angmallen", 25275, 16384, 2);
+	public static final ItemPipeMaterial MAT_BLACK_BRONZE = new ItemPipeMaterial("black_bronze", "Black Bronze", 25125, 16384, 2);
+	public static final ItemPipeMaterial MAT_ALUMINIUM_BRASS = new ItemPipeMaterial("aluminium_brass", "Aluminium Brass", 25150, 16384, 2);
+	public static final ItemPipeMaterial MAT_MANYULLYN = new ItemPipeMaterial("manyullyn", "Manyullyn", 25175, 16384, 2);
+	public static final ItemPipeMaterial MAT_MAGNALIUM = new ItemPipeMaterial("magnalium", "Magnalium", 25325, 16384, 2);
+	public static final ItemPipeMaterial MAT_PLATINUM = new ItemPipeMaterial("platinum", "Platinum", 25200, 8192, 4);
+	public static final ItemPipeMaterial MAT_OSMIUM = new ItemPipeMaterial("osmium", "Osmium", 25300, 4096, 8);
+	public static final ItemPipeMaterial MAT_ENDERIUM = new ItemPipeMaterial("enderium", "Enderium", 25400, 2048, 16);
+	public static final ItemPipeMaterial MAT_ULTIMET = new ItemPipeMaterial("ultimet", "Ultimet", 25425, 2048, 16);
+	public static final ItemPipeMaterial MAT_ELEMENTIUM = new ItemPipeMaterial("elementium", "Elementium", 25475, 2048, 16);
+	public static final ItemPipeMaterial MAT_OSMIRIDIUM = new ItemPipeMaterial("osmiridium", "Osmiridium", 25500, 1024, 32);
+	public static final ItemPipeMaterial MAT_VIBRANIUM_SILVER = new ItemPipeMaterial("vibranium_silver", "Vibranium Silver", 25900, 64, 512);
 
-	public static final List<ItemPipeMaterial> MATERIALS = List.of(MAT_BRASS, MAT_CONSTANTAN, MAT_COBALT_BRASS);
+	public static final List<ItemPipeMaterial> MATERIALS = List.of(
+			MAT_BRASS, MAT_CONSTANTAN, MAT_COBALT_BRASS, MAT_GERMANIUM,
+			MAT_ARSENIC_COPPER, MAT_ARSENIC_BRONZE, MAT_ELECTRUM, MAT_STERLING_SILVER,
+			MAT_ROSE_GOLD, MAT_ANGMALLEN, MAT_BLACK_BRONZE, MAT_ALUMINIUM_BRASS,
+			MAT_MANYULLYN, MAT_MAGNALIUM, MAT_PLATINUM, MAT_OSMIUM,
+			MAT_ENDERIUM, MAT_ULTIMET, MAT_ELEMENTIUM, MAT_OSMIRIDIUM,
+			MAT_VIBRANIUM_SILVER);
 
 	/** The registration-order variant list (the addItemPipes body order, :77-82). */
 	public static final List<ItemPipeVariant> VARIANTS = List.of(ItemPipeVariant.values());
 
-	/** The material base axis, verbatim (:1823-1825 — base stepSize 32768, base invSize 1). */
-	public static final long BASE_STEP_SIZE = 32768;
-	public static final int BASE_INV_SIZE = 1;
-
-	/** All 18 rows in registration order (material-major, then the addItemPipes variant order). */
+	/** All 126 rows in registration order (material-major, then the addItemPipes variant order). */
 	public static final List<ItemPipeRow> ROWS;
 	static {
 		List<ItemPipeRow> tRows = new ArrayList<>();
 		for (ItemPipeMaterial tMat : MATERIALS) {
 			for (ItemPipeVariant tVariant : VARIANTS) {
 				tRows.add(new ItemPipeRow(tMat, tVariant,
-						tVariant.stepSizeOf(BASE_STEP_SIZE), tVariant.invSizeOf(BASE_INV_SIZE),
+						tVariant.stepSizeOf(tMat.baseStepSize()), tVariant.invSizeOf(tMat.baseInvSize()),
 						tMat.metaIdBase() + tVariant.metaOffset));
 			}
 		}
@@ -190,7 +232,7 @@ public final class GTItemPipes {
 	public static final Map<String, RegistryObject<Item>> ITEMS_BY_PATH = new LinkedHashMap<>();
 
 	/**
-	 * The shared pipe properties — the ONE chain all 18 rows build from (the GTWires
+	 * The shared pipe properties — the ONE chain all 126 rows build from (the GTWires
 	 * .wireProperties seam form). issue #9: the pipe renders sub-cube quads over the
 	 * default FULL-CUBE shape — a true canOcclude culls neighbor faces (X-ray); the axle
 	 * pipe-block convention (GT6Kinetics.java:244).
@@ -229,7 +271,7 @@ public final class GTItemPipes {
 	}
 
 	/**
-	 * The shared pipe BET: one BlockEntityType over all 18 blocks (ADR-P3-1, the
+	 * The shared pipe BET: one BlockEntityType over all 126 blocks (ADR-P3-1, the
 	 * "one TE class, many material blocks" multi-mount). Registry path "item_pipe"
 	 * mirrors {@link GTItemPipeBlockEntity#getTileEntityName()} (the card spec ⑤ name).
 	 */
