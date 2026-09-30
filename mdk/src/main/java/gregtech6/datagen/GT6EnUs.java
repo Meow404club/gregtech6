@@ -127,6 +127,7 @@ public class GT6EnUs extends LanguageProvider {
         addMeasuringPot(); // task issue45-c3 — the pot pair (issue #45)
         addGasCylinders(); // task small-tank-gas-cylinder — the four Fluid Containers rows
         addCells(); // task small-tank-cell — the 40 Fluid Containers rows
+        addCup(); // task small-tank-cup — the Porcelain Cup pair (the 32739 row + the 899 raw)
         addAnvils(); // task c-anvil
         addEnergySource();
         addFeBattery(); // task eu-bridge-outbound — tail-append
@@ -1366,6 +1367,12 @@ public class GT6EnUs extends LanguageProvider {
     private void addMeasuringPot() {
         add("block.gt6.measuring_pot", "Ceramic Measuring Pot"); // the Loader_MultiTileEntities.java:2096 name column verbatim
         add("item.gt6.clay_measuring_pot", "Clay Measuring Pot"); // the MultiItemRandomTools.java:121 raw row verbatim
+    }
+
+    /** The Porcelain Cup pair (task small-tank-cup) — the Loader :2094 name column + the :76 raw row, both verbatim. */
+    private void addCup() {
+        add("block.gt6.porcelain_cup", "Porcelain Cup"); // the Loader_MultiTileEntities.java:2094 name column verbatim
+        add("item.gt6.modeled_porcelain_cup", "Modeled Porcelain Cup"); // the MultiItemRandomTools.java:76 raw row verbatim
     }
 
     /**

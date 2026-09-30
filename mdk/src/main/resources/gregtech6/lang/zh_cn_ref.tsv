@@ -330,6 +330,7 @@ direct	block.gt6.placed_rock	石头	hand
 direct	block.gt6.placed_scrap	废料	hand
 direct	block.gt6.placed_stick	木棍	hand
 direct	block.gt6.playercounter	玩家数量传感器	hand
+direct	block.gt6.porcelain_cup	瓷杯	hand
 direct	block.gt6.processor_unit_control	控制四核处理器	hand
 direct	block.gt6.processor_unit_conversion	转换四核处理器	hand
 direct	block.gt6.processor_unit_logic	逻辑四核处理器	hand
@@ -2439,6 +2440,7 @@ direct	item.gt6.mining_drill_hv	采矿钻头 (HV)	hand
 direct	item.gt6.mining_drill_lv	采矿钻头 (LV)	hand
 direct	item.gt6.mining_drill_mv	采矿钻头 (MV)	hand
 direct	item.gt6.mode_switch.tooltip	潜行右键切换模式	hand
+direct	item.gt6.modeled_porcelain_cup	已成型的瓷杯	hand
 direct	item.gt6.mold_ceramic_arrow_raw	粘土模具 (箭)	hand
 direct	item.gt6.mold_ceramic_axe_raw	粘土模具 (斧)	hand
 direct	item.gt6.mold_ceramic_billet_raw	粘土模具 (胚料)	hand

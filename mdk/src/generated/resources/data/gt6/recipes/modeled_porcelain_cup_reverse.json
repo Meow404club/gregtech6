@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:modeled_porcelain_cup"
+    }
+  ],
+  "result": {
+    "item": "gt6:dust_porcelain"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "parent": "gt6:block/porcelain_cup_empty",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#content"
+        },
+        "east": {
+          "texture": "#content"
+        },
+        "north": {
+          "texture": "#content"
+        },
+        "south": {
+          "texture": "#content"
+        },
+        "up": {
+          "texture": "#content"
+        },
+        "west": {
+          "texture": "#content"
+        }
+      },
+      "from": [
+        6,
+        1.05,
+        6
+      ],
+      "to": [
+        10,
+        3.675,
+        10
+      ]
+    }
+  ],
+  "textures": {
+    "content": "gt6:block/smeltery_content"
+  }
+}
