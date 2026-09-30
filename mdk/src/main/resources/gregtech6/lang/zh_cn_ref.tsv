@@ -179,6 +179,10 @@ direct	block.gt6.flux_dynamo_t4	红石通量发电机 (末影粗胚)	hand
 direct	block.gt6.flux_dynamo_t5	红石通量发电机 (末影)	hand
 direct	block.gt6.frozen_log	冰冻原木	hand
 direct	block.gt6.fusion_reactor	聚变反应堆	hand
+direct	block.gt6.gas_cylinder_stainless_steel	不锈钢制计压瓶	hand
+direct	block.gt6.gas_cylinder_steel	钢制计压瓶	hand
+direct	block.gt6.gas_cylinder_tantalum_hafnium_carbide	碳化钽铪制计压瓶	hand
+direct	block.gt6.gas_cylinder_tungsten	钨制计压瓶	hand
 direct	block.gt6.gas_turbine_graphene	石墨烯燃气涡轮主外壳	hand
 direct	block.gt6.gas_turbine_magnalium	镁铝合金燃气涡轮主外壳	hand
 direct	block.gt6.gas_turbine_trinitanium	特林钛合金燃气涡轮主外壳	hand

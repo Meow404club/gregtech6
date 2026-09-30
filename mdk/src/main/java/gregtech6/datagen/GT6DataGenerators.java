@@ -133,6 +133,7 @@ public final class GT6DataGenerators {
         GT6CrucibleDatagen.appendProviders(event);
         GT6MoldDatagen.appendProviders(event);
         GT6MeasuringPotDatagen.appendProviders(event); // task issue45-c3 — the pot chain (shaped :134 + reverse :121 + smelt :2096)
+        GT6GasCylinderDatagen.appendProviders(event); // task small-tank-gas-cylinder — the four :2101-2104 inline "RCR"/"BCh"/"TPd" grids
         // task w1-press-extruder-molds: the 1.21 singular-registry aliases — MUST stay
         // LAST (the sequential per-provider join order is the contract: the mirror walks the
         // earlier providers' on-disk output; see GT6DualDirectoryFaces)

@@ -1766,6 +1766,13 @@ BLOCK_BACKFILL = {
     "block.gt6.barrel_void_metal": "虚空金属储罐",
     # (block.gt6.advanced_crafting_table retired with the deviation-⑥ single row — the
     # act-matrix compose keys carry the dump-verbatim 高级工作台/充能工作台 word set)
+    # task small-tank-gas-cylinder — the four Barometer Gas Cylinder rows (Loader
+    # :2101-2104), the dump MTE faces verbatim: 32055/:13076, 32056/:13077,
+    # 32057/:13078, 32078/:13099
+    "block.gt6.gas_cylinder_steel": "钢制计压瓶",                # dump gt.multitileentity.32055 verbatim
+    "block.gt6.gas_cylinder_stainless_steel": "不锈钢制计压瓶",  # dump gt.multitileentity.32056 verbatim
+    "block.gt6.gas_cylinder_tungsten": "钨制计压瓶",             # dump gt.multitileentity.32057 verbatim
+    "block.gt6.gas_cylinder_tantalum_hafnium_carbide": "碳化钽铪制计压瓶",  # dump gt.multitileentity.32078 verbatim
     "block.gt6.barrel_wood": "木制储罐",             # dump join: gt.multitileentity.32714 木制储罐 (:13535; tank-name-regression fixed the 6990 anchor)
     "block.gt6.crank": "手摇曲柄",
     "block.gt6.electric_transformer": "变压器 (ULV-LV)",  # task p28-c-ulv-lv-transformer — hand (the upstream registration wording "Transformer (ULV-LV)", Loader :881; the standard zh machine word + the VN pair kept latin)

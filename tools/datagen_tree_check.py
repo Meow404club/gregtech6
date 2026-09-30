@@ -800,6 +800,18 @@ FORGE_GATED_ONLY_CANONICAL = frozenset({
     "data/gt6/advancements/recipes/misc/clay_measuring_pot.json",
     "data/gt6/advancements/recipes/misc/clay_measuring_pot_reverse.json",
     "data/gt6/advancements/recipes/misc/smelt_clay_measuring_pot.json",
+    # task small-tank-gas-cylinder 交卡补录（2026-09-30，与 clay_measuring_pot 同构
+    # forge-gated）：gas cylinder 四行（Loader :2101-2104 inline "RCR"/"BCh"/"TPd" 网格，
+    # GT6GasCylinderDatagen.Recipes 的 //? if forge crafting 面）×2（配方+advancement），
+    # singular recipe/ 镜像由 SEGMENT_MAP 归一折入复数面对账，无需声明。runtime 不受影响。
+    "data/gt6/recipes/gas_cylinder_steel.json",
+    "data/gt6/recipes/gas_cylinder_stainless_steel.json",
+    "data/gt6/recipes/gas_cylinder_tungsten.json",
+    "data/gt6/recipes/gas_cylinder_tantalum_hafnium_carbide.json",
+    "data/gt6/advancements/recipes/misc/gas_cylinder_steel.json",
+    "data/gt6/advancements/recipes/misc/gas_cylinder_stainless_steel.json",
+    "data/gt6/advancements/recipes/misc/gas_cylinder_tungsten.json",
+    "data/gt6/advancements/recipes/misc/gas_cylinder_tantalum_hafnium_carbide.json",
 })
 
 # ── 声明偏离带（canonical 前瞻孪生树，vanilla-tag-dual-tree 引入）──────────────

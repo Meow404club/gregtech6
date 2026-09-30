@@ -28,6 +28,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTOvenBlock;
 import gregtech6.block.attachment.GTAttachmentSmallBlock;
 import gregtech6.block.multiblock.GTMultiBlockPartBlock;
+import gregtech6.block.tank.GT6GasCylinderBlock; // task small-tank-gas-cylinder
 import gregtech6.registry.GT6BeeHives;
 import gregtech6.registry.GT6Portals; // p35 tail-append
 import gregtech6.tileentity.bees.GT6BumbliaryBlock;
@@ -286,6 +287,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addPortals(); // task portals-mini-nether-end — the two miniature portals (the ACTIVE cube swap)
         addKitchen(); // task issue7-kitchen-models — the four kitchen blocks (the upstream hollow-tub element forms)
         addMeasuringPot(); // task issue45-c3 — the Measuring Pot (the two-layer colored+overlay sub-cube tub)
+        addGasCylinders(); // task small-tank-gas-cylinder — the four gas cylinders (the one shared static bell model, no fluid pass)
     }
 
     /**
@@ -4581,6 +4583,79 @@ public final class GT6BlockStates extends BlockStateProvider {
             // the cavity face (the one inward-facing side per wall, upstream :126-129); the base
             // slab (aOutward null) and every other wall face tile sides (outer + end caps)
             else tFace = aOutward != null && tDir == aOutward.getOpposite() ? "insides" : "sides";
+            tElement.face(tDir).texture("#" + aBand + tFace).end();
+        }
+        tElement.end();
+    }
+
+    /**
+     * The Barometer Gas Cylinder family (task small-tank-gas-cylinder): the four
+     * material rows (GT6GasCylinders.BLOCKS_IN_ORDER) share ONE static elements model —
+     * the upstream render-pass geometry (MultiTileEntityBarometerGasCylinder
+     * .setBlockBounds2 :118-127 verbatim) over the TWO-LAYER colored+overlay grammar
+     * (getTexture2 :140-142 = BlockTextureMulti(colored, overlay) per face). Face
+     * mapping rides the upstream world-side table: the bell body (passes 0-2) tiles
+     * horizontal=sides / up=top / down=bottom; the neck column (pass 3) and the
+     * barometer arm (pass 4) tile EVERY face with the barometer tile (the :141
+     * {@code aRenderPass > 2} branch). Each element is duplicated by a 0.01-inflated
+     * overlay shell (the addMeasuringPot 0.01-plate form, cutout). NO fluid display
+     * pass and NO BER — the Base09 no-sync static face. The colored band ships
+     * UN-TINTED — the measuring-pot declared deviation (upstream tints it with mRGBa;
+     * {@code ponytail:} a tintindex-0 + dispatch row lands it without model change
+     * when the render pool gets to it).
+     */
+    private void addGasCylinders() {
+        BlockModelBuilder tModel = models().getBuilder("barometer_gas_cylinder")
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("sides", modLoc("block/gas_cylinder/colored_sides"))
+                .texture("top", modLoc("block/gas_cylinder/colored_top"))
+                .texture("bottom", modLoc("block/gas_cylinder/colored_bottom"))
+                .texture("barometer", modLoc("block/gas_cylinder/colored_barometer"))
+                .texture("overlay_sides", modLoc("block/gas_cylinder/overlay_sides"))
+                .texture("overlay_top", modLoc("block/gas_cylinder/overlay_top"))
+                .texture("overlay_bottom", modLoc("block/gas_cylinder/overlay_bottom"))
+                .texture("overlay_barometer", modLoc("block/gas_cylinder/overlay_barometer"))
+                .texture("particle", "#sides")
+                .renderType("cutout");
+        // the bell body — upstream passes 0-2 (:120-122): two crossed slabs + the shoulder plate
+        cylinderBodyElement(tModel, 4.0F, 0.0F, 5.0F, 12.0F, 8.0F, 11.0F);
+        cylinderBodyElement(tModel, 5.0F, 0.0F, 4.0F, 11.0F, 8.0F, 12.0F);
+        cylinderBodyElement(tModel, 5.0F, 8.0F, 5.0F, 11.0F, 9.0F, 11.0F);
+        // the neck column + barometer arm — upstream passes 3-4 (:123-124), the barometer tile on every face
+        cylinderBox(tModel, 7.0F, 9.0F, 7.0F, 9.0F, 16.0F, 9.0F, "", "barometer");
+        cylinderBox(tModel, 7.0F - 0.01F, 9.0F - 0.01F, 7.0F - 0.01F, 9.0F + 0.01F, 16.0F + 0.01F, 9.0F + 0.01F, "overlay_", "barometer");
+        cylinderBox(tModel, 6.0F, 10.0F, 6.0F, 10.0F, 14.0F, 10.0F, "", "barometer");
+        cylinderBox(tModel, 6.0F - 0.01F, 10.0F - 0.01F, 6.0F - 0.01F, 10.0F + 0.01F, 14.0F + 0.01F, 10.0F + 0.01F, "overlay_", "barometer");
+        for (RegistryObject<GT6GasCylinderBlock> tRow : gregtech6.registry.GT6GasCylinders.BLOCKS_IN_ORDER) {
+            Block tBlock = tRow.get();
+            simpleBlock(tBlock, tModel);
+            itemModels().withExistingParent(tRow.getId().getPath(), tModel.getLocation()); // the RegistryObject key (the :2378 addDieselEngines form)
+        }
+    }
+
+    /** One bell-body element (body box + the 0.01-inflated overlay shell): up=top, down=bottom, every horizontal face=sides. */
+    private void cylinderBodyElement(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
+            float aMaxX, float aMaxY, float aMaxZ) {
+        cylinderBox(aModel, aMinX, aMinY, aMinZ, aMaxX, aMaxY, aMaxZ, "");
+        cylinderBox(aModel, aMinX - 0.01F, aMinY - 0.01F, aMinZ - 0.01F,
+                aMaxX + 0.01F, aMaxY + 0.01F, aMaxZ + 0.01F, "overlay_");
+    }
+
+    /** One box: all six faces over the given band prefix — body faces use the world-side mapping (or the all-barometer override), no tint. */
+    private void cylinderBox(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
+            float aMaxX, float aMaxY, float aMaxZ, String aBand) {
+        cylinderBox(aModel, aMinX, aMinY, aMinZ, aMaxX, aMaxY, aMaxZ, aBand, null);
+    }
+
+    private void cylinderBox(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
+            float aMaxX, float aMaxY, float aMaxZ, String aBand, String aAllFaces) {
+        BlockModelBuilder.ElementBuilder tElement = aModel.element().from(aMinX, aMinY, aMinZ).to(aMaxX, aMaxY, aMaxZ);
+        for (Direction tDir : Direction.values()) {
+            String tFace;
+            if (aAllFaces != null) tFace = aAllFaces;
+            else if (tDir == Direction.UP) tFace = "top";
+            else if (tDir == Direction.DOWN) tFace = "bottom";
+            else tFace = "sides";
             tElement.face(tDir).texture("#" + aBand + tFace).end();
         }
         tElement.end();
