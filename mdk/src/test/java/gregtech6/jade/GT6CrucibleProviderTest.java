@@ -7,6 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -24,9 +27,11 @@ import org.junit.jupiter.api.Test;
 import gregapi.data.CS;
 import gregapi.data.MT;
 import gregapi.oredict.MaterialRegistry;
+import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictMaterialStack;
 import gregapi.util.CruciblePhysics;
 import gregtech6.datagen.GT6CrucibleDatagen;
+import gregtech6.fluid.GTFluids;
 import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.tools.TileEntitySmeltery;
 
@@ -40,8 +45,9 @@ import gregtech6.tileentity.tools.TileEntitySmeltery;
  * wire (task crucible-jade-tankbar: TOTAL_MAX/MOLTEN/overlay keys + the v3 dispatch — molten
  * bridged = the official fluid payload, molten unbridged = the ContentFace molten arm, solid
  * mapped = the ContentFace solid arm, solid unmapped = the guard fallback, meltdown = the
- * red text path) and the empty state. The tooltip language VALUES (en/zh) are pinned by the
- * datagen faces + runData, not here.
+ * red text path) and the empty state. The bridge coverage census (task
+ * jade-molten-bridge-full) pins the full {@code gt6:<mat>_molten} domain face. The tooltip
+ * language VALUES (en/zh) are pinned by the datagen faces + runData, not here.
  */
 public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 
@@ -233,6 +239,20 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 		assertEquals(tExpected.texture(), tOverlay.getString(GT6CrucibleProvider.OVERLAY_TEXTURE),
 				"the unbound seed is a bridge miss offline — the molten face arm answers");
 		assertFalse(tOverlay.contains(GT6CrucibleProvider.OVERLAY_FLUID));
+		// the full-domain walk (task jade-molten-bridge-full) rides the same leg reality:
+		// EVERY bridged row is unbound in this offline JVM, so a W1 seed (redstone) and an
+		// expansion family row (tungsten) fall back to the identical molten face arm
+		for (OreDictMaterial tMaterial : Arrays.asList(MT.Redstone, MT.W)) {
+			CompoundTag tExpanded = new CompoundTag();
+			GT6CrucibleProvider.writeCrucibleData(tExpanded, 4000, 9999, false, 16 * CS.U,
+					List.of(new OreDictMaterialStack(tMaterial, 4 * CS.U)));
+			assertTrue(tExpanded.getBoolean(GT6CrucibleProvider.KEY_MOLTEN), tMaterial.mNameInternal);
+			GT6CrucibleDatagen.ContentFace tFace = GT6CrucibleDatagen.contentFace(tMaterial, true);
+			CompoundTag tExpandedOverlay = tExpanded.getCompound(GT6CrucibleProvider.KEY_OVERLAY);
+			assertEquals(tFace.texture(), tExpandedOverlay.getString(GT6CrucibleProvider.OVERLAY_TEXTURE),
+					tMaterial.mNameInternal + " unbound offline — same face fallback");
+			assertFalse(tExpandedOverlay.contains(GT6CrucibleProvider.OVERLAY_FLUID), tMaterial.mNameInternal);
+		}
 	}
 	//?} else {
 	/*@Test
@@ -248,7 +268,57 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 				tOverlay.getLong(GT6CrucibleProvider.OVERLAY_AMOUNT), "the 144 L/unit bridge convention");
 		assertFalse(tOverlay.contains(GT6CrucibleProvider.OVERLAY_TEXTURE), "no face payload rides along");
 	}
+
+	@Test
+	public void bridgedMaterialsAnswerTheOfficialFluidPayload() {
+		// task jade-molten-bridge-full spot check: the live convention walk covers the whole
+		// gt6:<mat>_molten domain, so the original 7 seeds AND the expansion families answer
+		// the official fluid payload at their own melting point (the :299 <= gate re-pinned
+		// per material — the temperature rides mMeltingPoint exactly, the equality arm)
+		OreDictMaterial[] tSpot = {MT.Fe, MT.Redstone, MT.Si, MT.Ge, MT.RedstoneAlloy,
+				MT.NikolineAlloy, MT.Al2O3, MT.W, MT.Sn, MT.Na, MT.CaCO3, MT.C, MT.Li,
+				MT.Wax, MT.Chocolate, MT.EnderPearl};
+		for (OreDictMaterial tMaterial : tSpot) {
+			CompoundTag tTag = new CompoundTag();
+			GT6CrucibleProvider.writeCrucibleData(tTag, tMaterial.mMeltingPoint, 99999, false, 16 * CS.U,
+					List.of(new OreDictMaterialStack(tMaterial, 4 * CS.U)));
+			assertTrue(tTag.getBoolean(GT6CrucibleProvider.KEY_MOLTEN), tMaterial.mNameInternal + " at its melting point is the <= arm");
+			CompoundTag tOverlay = tTag.getCompound(GT6CrucibleProvider.KEY_OVERLAY);
+			assertEquals("gt6:" + tMaterial.mNameInternal.toLowerCase(Locale.ROOT) + "_molten",
+					tOverlay.getString(GT6CrucibleProvider.OVERLAY_FLUID),
+					tMaterial.mNameInternal + " rides the official fluid element payload");
+			assertEquals(4 * CS.U * gregtech6.fluid.FluidBridge.L_PER_MOLTEN_UNIT,
+					tOverlay.getLong(GT6CrucibleProvider.OVERLAY_AMOUNT), tMaterial.mNameInternal + " 144 L/unit");
+			assertFalse(tOverlay.contains(GT6CrucibleProvider.OVERLAY_TEXTURE), tMaterial.mNameInternal + " carries no face payload");
+		}
+	}
 	*///?}
+
+	/**
+	 * The bridge coverage census (task jade-molten-bridge-full): the bridge is a LIVE
+	 * convention walk now (specOf id convention over GTFluids.chemicalSource + the iron W1
+	 * seed), so the coverage face = every registered material whose {@code <name>_molten}
+	 * row is a SOURCE_SEAM key. The seam-key face is offline-stable on both legs (no
+	 * registry binding involved). Legacy-id rows (lithium_chloride_molten's underscore,
+	 * glass/plastic FL shorthands) sit outside the convention — the ContentFace fallback
+	 * arm covers them, unchanged.
+	 */
+	@Test
+	public void moltenBridgeCensusCoversTheFullDomain() {
+		Set<String> tBridged = new TreeSet<>();
+		for (OreDictMaterial tMaterial : MaterialRegistry.INSTANCE.MATERIAL_MAP.values()) {
+			String tId = tMaterial.mNameInternal.toLowerCase(Locale.ROOT);
+			if ("iron".equals(tId) || GTFluids.chemicalSource(tId + "_molten") != null) tBridged.add(tId);
+		}
+		assertEquals(34, tBridged.size(), "the full molten-domain census: " + tBridged);
+		// the original 7 seed materials + the expansion spot set stay bridged
+		assertTrue(tBridged.containsAll(Arrays.asList("iron", "redstone", "silicon", "germanium",
+				"redstonealloy", "nikolinealloy", "alumina", "tungsten", "tin", "sodium", "calcite",
+				"wax", "chocolate", "enderpearl")), "seed + expansion spot set: " + tBridged);
+		// the legacy-id rows stay OUTSIDE the convention (fallback arm, zero regression)
+		assertFalse(tBridged.contains("lithiumchloride"), "lithium_chloride_molten carries the underscore — no material-name hit");
+		assertFalse(tBridged.contains("glass"), "the glass row rides the FL shorthand id, not <mat>_molten");
+	}
 
 	// ------------------------------------------------------------------------------------
 	// group ③ the meltdown latch — the v3 red-text path
