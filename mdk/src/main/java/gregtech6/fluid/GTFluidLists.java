@@ -102,6 +102,18 @@ public final class GTFluidLists {
 		register("netherair"      , GAS); // :50
 		register("enderair"       , GAS); // :51
 		register("aerotheum"      , GAS); // :133
+		// the B2 chemical-blocker gases (task chem-fluids-unlock) — the nine gaseous rows
+		// of the CHEMICAL_SPECS batch, the same :660 createGas walk over the GASES-flag
+		// acid/isotope-fluoride materials (MT.java:1020-1029/:1044-1045/:1181-1185)
+		register("hydrogenfluoride", GAS); // MT.java:1021 gasaciddcmp
+		register("hydrochloricacid", GAS); // MT.java:1020 gasaciddcmp
+		register("nitrogenmonoxide", GAS); // MT.java:1028 gaschemelec
+		register("nitrogendioxide", GAS); // MT.java:1029 gaschemelec
+		register("sulfurdioxide"  , GAS); // MT.java:1044 gaschemdcmp
+		register("sulfurtrioxide" , GAS); // MT.java:1045 gaschemdcmp
+		register("uraniumhexafluoride", GAS); // MT.java:1181 gaschemdcmp
+		register("uranium238hexafluoride", GAS); // MT.java:1183 gaschemdcmp
+		register("uranium235hexafluoride", GAS); // MT.java:1185 gaschemdcmp
 	}
 
 	private GTFluidLists() {}

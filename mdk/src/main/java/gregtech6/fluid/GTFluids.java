@@ -765,11 +765,27 @@ public final class GTFluids {
 	 * :553 (Dirty_Water, no guard) — which upstream would silently drop without the
 	 * external mod providing the fluid; the port prefers the rows live (declared
 	 * port-owned decision of the architect card, the rows are transcribed verbatim
-	 * regardless).
+	 * regardless). Task chem-fluids-unlock appends the two B2 chemical-blocker rows of
+	 * the same flag shape (brine/spruceresin — the per-row anchors live on the table
+	 * comments below).
 	 */
 	public static final List<AquaFluidSpec> SIMPLE_LIQUID_SPECS = List.of(
 		new AquaFluidSpec("seawater"  , "Seawater"    , 300, 1000, 1000, 0xFF3E8E9C), // FL.java:125 "seawater" — the Ocean shorthand, salty teal (declared)
-		new AquaFluidSpec("waterdirty", "Dirty Water" , 300, 1000, 1000, 0xFF6B6B3C));// FL.java:127 "waterdirty" — murky waste brown-green (declared)
+		new AquaFluidSpec("waterdirty", "Dirty Water" , 300, 1000, 1000, 0xFF6B6B3C),// FL.java:127 "waterdirty" — murky waste brown-green (declared)
+		// the B2 chemical-blocker pair (task chem-fluids-unlock) — the two remaining
+		// SIMPLE+LIQUID FL-field ids the recipe cards name as blockers, the exact
+		// seawater/waterdirty shape: no GT6 FL.create registration upstream (external-mod
+		// fluid names, FL.java:131/:245 — the FL fields only list them in the FluidsGT
+		// sets), so the HONEST FluidType defaults stand (300 K / 1000 / 1000) and the
+		// tints are port-owned declared values. brine: the Chem:323 electrolyzer row and
+		// the :550 Drying row's exists() gates become live semantics over the registered
+		// fluid (the sap :654 precedent); the dump face S:fluid.brine=Brine
+		// (tmp/gregtech.lang:114) is untranslated — display and zh both ride it verbatim.
+		// spruceresin: the Loader_Recipes_Woods.java:127-128 Squeezer rows' carrier (the
+		// b2b2 squeezer blocker) and the :227 Distillery exists() gate; no dump face at
+		// all — display declared, zh hand row 云杉树脂.
+		new AquaFluidSpec("brine"     , "Brine"       , 300, 1000, 1000, 0xFFC8D8D0), // FL.java:131 "brine" — honest defaults, pale salt grey-green (declared)
+		new AquaFluidSpec("spruceresin", "Spruce Resin", 300, 1000, 1000, 0xFFD8A848));// FL.java:245 "spruceresin" — honest defaults, amber resin (declared)
 
 	/** The simple-liquid row for a gt6 id path, or null (the {@link #aquaSpec} lookup shape, its own table). */
 	public static AquaFluidSpec simpleLiquidSpec(String aName) {
@@ -792,10 +808,12 @@ public final class GTFluids {
 	 */
 	public static final AquaFluid SEAWATER   = simpleLiquidFluid("seawater");
 	public static final AquaFluid WATERDIRTY = simpleLiquidFluid("waterdirty");
+	public static final AquaFluid BRINE      = simpleLiquidFluid("brine");      // task chem-fluids-unlock
+	public static final AquaFluid SPRUCERESIN = simpleLiquidFluid("spruceresin"); // task chem-fluids-unlock
 
-	/** The two registered simple-liquid families in {@link #SIMPLE_LIQUID_SPECS} declaration order (the lang/table walkers). */
+	/** The registered simple-liquid families in {@link #SIMPLE_LIQUID_SPECS} declaration order (the lang/table walkers). */
 	public static List<AquaFluid> simpleLiquids() {
-		return List.of(SEAWATER, WATERDIRTY);
+		return List.of(SEAWATER, WATERDIRTY, BRINE, SPRUCERESIN);
 	}
 
 	/**
@@ -2289,7 +2307,50 @@ public final class GTFluids {
 		// radical is DECLARED untranscribed — the oils port-owned-value precedent).
 		new ChemicalFluidSpec("titaniumtetrachloride", "Titanium Tetrachloride",  300,  1000, 1000, 0xFFE9F4DE, false,  0), // titaniumtetrachloride=四氯化钛 (tmp/gregtech.lang:892) — MT.TiCl4 233,244,222 (MT.java:1959)
 		new ChemicalFluidSpec("sodiumcarbonate_molten", "Molten Sodium Carbonate", 1124, 1000, 1000, 0xFFE6E6E6, false, 10), // molten.sodiumcarbonate=熔融碳酸钠 (:597) — MT.Na2CO3 230,230,230 (MT.java:2005)
-		new ChemicalFluidSpec("calcite_molten"      , "Molten Calcite"        , 1612,  1000, 1000, 0xFFFAE6DC, false, 10)); // molten.calcite=熔融方解石 (:463) — MT.CaCO3 250,230,220 (MT.java:1975)
+		new ChemicalFluidSpec("calcite_molten"      , "Molten Calcite"        , 1612,  1000, 1000, 0xFFFAE6DC, false, 10), // molten.calcite=熔融方解石 (:463) — MT.CaCO3 250,230,220 (MT.java:1975)
+		// the B2 chemical-blocker batch (task chem-fluids-unlock) — the 32
+		// Loader_Fluids.java:657-663 tag-driven loop rows the recipe-data-b2a/b2b2/b2b1
+		// cards declared as discard blockers, plus the acid-chain family those same rows
+		// consume/produce (each id = the mNameInternal-lowercase walk face, verified
+		// against the dump keys S:fluid.*; gases ride the :1080 createGas walk (temp =
+		// bp&lt;300 ? min(300, plasma−1) : bp, the :1128-1136 density formula), liquids the
+		// :1072 createLiquid walk (temp = mp&lt;300 ? min(300, bp−1) : mp), moltens the
+		// :1077 createMolten walk (+ luminosity 10). Density notes state the g/cm³ going
+		// into the formula: the setDensity literals verbatim, the uumMcfg/setMcfg rows as
+		// the Σg·amt/U sums (OreDictMaterial.java:393-409). KJS: registration face only,
+		// the class-doc deferral to the kjs binding card holds.
+		new ChemicalFluidSpec("hydrogenperoxide"   , "Hydrogen Peroxide"       ,  300,  1000, 1000, 0xFF1414FF, false,  0), // hydrogenperoxide=过氧化氢 (tmp/gregtech.lang:357) — MT.H2O2 (MT.java:1019, LIQUID, the Chem:88 Lightning row); setDensity 1.0 → 1000
+		new ChemicalFluidSpec("hydrogenfluoride"   , "Hydrogen Fluoride"       ,  300,     1,  200, 0xFF00F0F0, true ,  0), // hydrogenfluoride=氟化氢 (:356) — MT.HF (MT.java:1021, GASES); g = 0.00008988+0.001696 = 0.00178588 → 1
+		new ChemicalFluidSpec("hydrochloricacid"   , "Hydrochloric Acid"       ,  300,     3,  200, 0xFF00FF80, true ,  0), // hydrochloricacid=盐酸 (:354) — MT.HCl (MT.java:1020, GASES); g = 0.00008988+0.003214 = 0.00330388 → 3
+		new ChemicalFluidSpec("nitricacid"         , "Nitric Acid"             ,  300,  1500, 1000, 0xFF80FF00, false,  0), // nitricacid=硝酸 (:654) — MT.HNO3 (MT.java:1031, LIQUID); setDensity 1.5 → 1500
+		new ChemicalFluidSpec("nitrogenmonoxide"   , "Nitrogen Monoxide"       ,  300,     2,  200, 0xFF64AFFF, true ,  0), // nitrogenmonoxide=一氧化氮 (:660) — MT.NO (MT.java:1028, GASES, the Chem:88-family lightning discard); g = 0.0012506+0.001429 = 0.0026796 → 2
+		new ChemicalFluidSpec("nitrogendioxide"    , "Nitrogen Dioxide"        ,  300,     4,  200, 0xFF78BEFF, true ,  0), // nitrogendioxide=二氧化氮 (:659) — MT.NO2 (MT.java:1029, GASES); g = 0.0012506+2×0.001429 = 0.0041086 → 4
+		new ChemicalFluidSpec("sulfurdioxide"      , "Sulfur Dioxide"          ,  300,  2069,  200, 0xFFFFC800, true ,  0), // sulfurdioxide=二氧化硫 (:879) — MT.SO2 (MT.java:1044, GASES, the b2b1 roasting discard); g = 2.067+2×0.001429 = 2.069858 → 2069
+		new ChemicalFluidSpec("sulfurtrioxide"     , "Sulfur Trioxide"         ,  300,  2071,  200, 0xFFFFDC00, true ,  0), // sulfurtrioxide=三氧化硫 (:882) — MT.SO3 (MT.java:1045, GASES); g = 2.067+3×0.001429 = 2.071287 → 2071
+		new ChemicalFluidSpec("sulfuricacid"       , "Sulfuric Acid"           ,  300,  1500, 1000, 0xFFFF8000, false,  0), // sulfuricacid=硫酸 (:881) — MT.H2SO4 (MT.java:1047, LIQUID); setDensity 1.5 → 1500
+		new ChemicalFluidSpec("disulfuricacid"     , "Disulfuric Acid"         ,  300,  1500, 1000, 0xFFFF9600, false,  0), // disulfuricacid=焦硫酸 (:226) — MT.H2S2O7 (MT.java:1048, LIQUID); setDensity 1.5 → 1500
+		new ChemicalFluidSpec("hexafluorosilicicacid", "Hexafluorosilicic Acid",  300,  1500, 1000, 0xFFBEC8BE, false,  0), // hexafluorosilicicacid=六氟硅酸 (:334) — MT.H2SiF6 (MT.java:1054, LIQUID); setDensity 1.5 → 1500
+		new ChemicalFluidSpec("aquaregia"          , "Aqua Regia"              ,  300,  7526, 1000, 0xFF40FF40, false,  0), // aquaregia=王水 (:48) — MT.AquaRegia (MT.java:1188, LIQUID, the Chem:267 mixer row); g = 5×1.5 + 8×0.00330388 = 7.52643104 → 7526
+		new ChemicalFluidSpec("bromine"            , "Bromine"                 ,  300,  3122, 1000, 0xFF500A0A, false,  0), // bromine=溴 (:118) — MT.Br (MT.java:424 diatomic, LIQUID, the Chem:207 Freezer row); mp 265 → temp 300, g 3.122 → 3122
+		new ChemicalFluidSpec("saltwater"          , "Saltwater"               ,  300,  1000, 1000, 0xFFFF00FF, false,  0), // saltwater=盐水 (:849) — MT.Saltwater (MT.java:1143, LIQUID); mp 300 → temp 300, setDensity 1.0 → 1000
+		new ChemicalFluidSpec("saltedwater"        , "Salted Water"            ,  300,  1000, 1000, 0xFFFF00C8, false,  0), // saltedwater=盐水 (:848) — MT.SaltedWater (MT.java:1160, LIQUID); same walk, setDensity 1.0 → 1000
+		new ChemicalFluidSpec("uraniumhexafluoride", "Uranium Hexafluoride"    ,  329, 18960,  200, 0xFF426255, true ,  0), // uraniumhexafluoride=六氟化铀 (:902) — MT.UF6 (MT.java:1181, GASES, the Chem:175-182 UF6 chain); bp 329 ≥ 300 → temp 329 verbatim, g = 18.95+6×0.001696 = 18.960176 → 18960
+		new ChemicalFluidSpec("uranium238hexafluoride", "Uranium-238 Hexafluoride", 329, 18960, 200, 0xFF426255, true ,  0), // uranium238hexafluoride=六氟化铀-238 (:900) — MT.U238F6 (MT.java:1183, GASES, the Chem:182 centrifuge split); same walk
+		new ChemicalFluidSpec("uranium235hexafluoride", "Uranium-235 Hexafluoride", 329, 18960, 200, 0xFF426255, true ,  0), // uranium235hexafluoride=六氟化铀-235 (:899) — MT.U235F6 (MT.java:1185, GASES); same walk
+		new ChemicalFluidSpec("aluminiumfluoride_molten", "Molten Aluminium Fluoride", 1560, 2703, 1000, 0xFFC8BEBE, false, 10), // molten.aluminiumfluoride=熔融氟化铝 (:432) — MT.AlF3 (MT.java:1082, MOLTEN, the Chem:291-298 aluminium-walk leg); mp 1560, g = 2.698+3×0.001696 = 2.703088 → 2703
+		new ChemicalFluidSpec("cryolite_molten"    , "Molten Cryolite"         , 1285,  5621, 1000, 0xFFC8BEBE, false, 10), // molten.cryolite=熔融冰晶石 (:478) — MT.Na3AlF6 (MT.java:1142, MOLTEN; the .liquid() accessor resolves here — createMolten binds mLiquid, FL.java:1130); mp 1285, g = 3×0.971+2.698+6×0.001696 = 5.621176 → 5621
+		new ChemicalFluidSpec("bluevitriol"        , "Blue Vitriol"            ,  300, 11032, 1000, 0xFF4242DE, false,  0), // bluevitriol=五水合硫酸铜 (:113) — MT.BlueVitriol (MT.java:1169, LIQUID, the Chem:73 electrolyzer walk); g = 8.96+2.067+4×0.001429 = 11.032716 → 11032
+		new ChemicalFluidSpec("redvitriol"         , "Red Vitriol"             ,  300, 10932, 1000, 0xFFDE4242, false,  0), // redvitriol=硫酸钴 (:838) — MT.RedVitriol (MT.java:1171, LIQUID); g = 8.86+2.067+0.005716 = 10.932716 → 10932
+		new ChemicalFluidSpec("pinkvitriol"        , "Pink Vitriol"            ,  300,  3810, 1000, 0xFFDE6F6F, false,  0), // pinkvitriol=硫酸镁 (:685) — MT.PinkVitriol (MT.java:1172, LIQUID); g = 1.738+2.067+0.005716 = 3.810716 → 3810
+		new ChemicalFluidSpec("cyanvitriol"        , "Cyan Vitriol"            ,  300, 10984, 1000, 0xFF6FDEDE, false,  0), // cyanvitriol=硫酸镍 (:204) — MT.CyanVitriol (MT.java:1173, LIQUID); g = 8.912+2.067+0.005716 = 10.984716 → 10984
+		new ChemicalFluidSpec("whitevitriol"       , "White Vitriol"           ,  300,  9206, 1000, 0xFFDEDEDE, false,  0), // whitevitriol=硫酸锌 (:917) — MT.WhiteVitriol (MT.java:1174, LIQUID); g = 7.134+2.067+0.005716 = 9.206716 → 9206
+		new ChemicalFluidSpec("grayvitriol"        , "Gray Vitriol"            ,  300,  9512, 1000, 0xFF6F6F6F, false,  0), // grayvitriol=硫酸锰 (:320) — MT.GrayVitriol (MT.java:1175, LIQUID, also the Chem:265 Eudialyte Bath row); g = 7.44+2.067+0.005716 = 9.512716 → 9512
+		new ChemicalFluidSpec("greenvitriol"       , "Green Vitriol"           ,  300,  9946, 1000, 0xFF42DE42, false,  0), // greenvitriol=硫酸亚铁 (:326) — MT.GreenVitriol (MT.java:1170, LIQUID, also the Chem:261 Ilmenite Bath row); g = 7.874+2.067+0.005716 = 9.946716 → 9946
+		new ChemicalFluidSpec("martianvitriol"     , "Martian Vitriol"         ,  300, 21966, 1000, 0xFFDE42DE, false,  0), // martianvitriol=硫酸铁 (:403) — MT.MartianVitriol (MT.java:1176, LIQUID); g = 2×7.874+3×2.067+12×0.001429 = 21.966148 → 21966
+		new ChemicalFluidSpec("vitriolofclay"      , "Vitriol Of Clay"         ,  300, 33215, 1000, 0xFF42DEDE, false,  0), // vitriolofclay=硫酸铝 (:910) — MT.VitriolOfClay (MT.java:1177, LIQUID); g = 5×5.400287+3×2.067+9×0.001429 = 33.215296 → 33215
+		new ChemicalFluidSpec("chloroauricacid"    , "Chloroauric Acid"        ,  300, 19294, 1000, 0xFFFFC846, false,  0), // chloroauricacid=氯金酸 (:169) — MT.ChloroauricAcid (MT.java:1163, LIQUID, the Chem:83 electrolyzer input); g = 19.282+4×0.003214+0.00008988 = 19.29494588 → 19294
+		new ChemicalFluidSpec("chloroplatinicacid" , "Chloroplatinic Acid"     ,  300, 21479, 1000, 0xFFFF4646, false,  0), // chloroplatinicacid=氯铂酸 (:174) — MT.ChloroplatinicAcid (MT.java:1164, LIQUID, the Chem:84 input); g = 21.46+6×0.003214+2×0.00008988 = 21.47946376 → 21479
+		new ChemicalFluidSpec("stannicchloride"    , "Stannic Chloride"        ,  300,  7299, 1000, 0xFFD2FAFA, false,  0)); // stannicchloride=四氯化锡 (:870) — MT.StannicChloride (MT.java:1165, LIQUID, the Chem:85 input); g = 7.287+4×0.003214 = 7.299856 → 7299
 
 	/** The chemical row for a gt6 id path, or null (the {@link #engineSpec} lookup shape). */
 	public static ChemicalFluidSpec chemicalSpec(String aName) {
@@ -2397,9 +2458,10 @@ public final class GTFluids {
 	}
 
 	/**
-	 * The twenty-five chemical registrations — one per {@link #CHEMICAL_SPECS} row, in
+	 * The chemical registrations — one per {@link #CHEMICAL_SPECS} row, in
 	 * declaration order (the upstream Loader_Fluids.java block order: plasmas,
-	 * hydrocarbons, oils, the gas closure, liquid oxygen). Static-init order: the
+	 * hydrocarbons, oils, the gas closure, liquid oxygen; the per-task batches appended
+	 * after). Static-init order: the
 	 * DeferredRegister fields accumulate, the entries fire with the existing
 	 * {@link #onModConstruct} (types before fluids).
 	 */
@@ -2425,7 +2487,23 @@ public final class GTFluids {
 			// the Burner Mixer row carriers (task machines-burner-plantalyzer;
 			// tritiatedwater rides the CLOSURE row above)
 			chemicalFluid("titaniumtetrachloride"),
-			chemicalFluid("sodiumcarbonate_molten"), chemicalFluid("calcite_molten"));
+			chemicalFluid("sodiumcarbonate_molten"), chemicalFluid("calcite_molten"),
+			// the B2 chemical-blocker batch (task chem-fluids-unlock) — the 32 rows above,
+			// in table order: the acid chain, the brine pair, the UF6 centrifuge trio, the
+			// aluminium-walk molten pair, the vitriol electrolyzer family, the chloro-acid trio
+			chemicalFluid("hydrogenperoxide"), chemicalFluid("hydrogenfluoride"),
+			chemicalFluid("hydrochloricacid"), chemicalFluid("nitricacid"),
+			chemicalFluid("nitrogenmonoxide"), chemicalFluid("nitrogendioxide"),
+			chemicalFluid("sulfurdioxide"), chemicalFluid("sulfurtrioxide"),
+			chemicalFluid("sulfuricacid"), chemicalFluid("disulfuricacid"), chemicalFluid("hexafluorosilicicacid"),
+			chemicalFluid("aquaregia"), chemicalFluid("bromine"),
+			chemicalFluid("saltwater"), chemicalFluid("saltedwater"),
+			chemicalFluid("uraniumhexafluoride"), chemicalFluid("uranium238hexafluoride"), chemicalFluid("uranium235hexafluoride"),
+			chemicalFluid("aluminiumfluoride_molten"), chemicalFluid("cryolite_molten"),
+			chemicalFluid("bluevitriol"), chemicalFluid("redvitriol"), chemicalFluid("pinkvitriol"),
+			chemicalFluid("cyanvitriol"), chemicalFluid("whitevitriol"), chemicalFluid("grayvitriol"),
+			chemicalFluid("greenvitriol"), chemicalFluid("martianvitriol"), chemicalFluid("vitriolofclay"),
+			chemicalFluid("chloroauricacid"), chemicalFluid("chloroplatinicacid"), chemicalFluid("stannicchloride"));
 
 	/**
 	 * The source-fluid handle for a chemical-family row name, or null when the name is not a
