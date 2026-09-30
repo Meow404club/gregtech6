@@ -3275,7 +3275,10 @@ other (and to the kinetic_steam grayscale). Upstream ships NO dedicated front ar
 this tank (`FACES_TBS = {0,1,2,2,2,2}`, CS.java:618 — the barometer face renders the
 side sprite), so the port model keeps `side` art on all four sides and the former
 generated `front.png` placeholder is RETIRED. The `BI.BAROMETER` gauge overlay is NOT
-borrowed — the 5-bit per-state visual is the render pool (the p13 ruling repeated).
+part of this static model — the 5-bit per-state visual rides the dynamic
+`GTBoilerBarometerModel` front face instead (borrowed by task boiler-barometer, the
+`block/barometer/` ledger section at the tail; this supersedes the p13 render-pool
+deferral for the ASSETS half — the dynamic model card carries the render half).
 
 Large Boiler controller block textures, task tex-large-boilers: the 12 PNGs under
 `gt6/textures/block/large_boiler/` come from upstream
@@ -3289,8 +3292,10 @@ multiplies the row NBT_MATERIAL (the five rows, Loader_MultiTileEntities.java:12
 and the overlay layer stays untinted — the port model is the two-layer front-bearing
 grammar (body `colored[_front]` tintindex-0 + `overlay[_front]` 0.01 plates, the
 #18 addConverterModel form). The `BI.BAROMETER` gauge (`front += BAROMETER_SCALE`,
-MultiTileEntityLargeBoiler.java:358-361) is NOT borrowed — the dynamic 5-bit readout is
-the render pool (the p13 ruling; also the boiler_steam entry above). Path mapping:
+MultiTileEntityLargeBoiler.java:358-361) is NOT part of this static model — the dynamic
+5-bit readout rides the `GTBoilerBarometerModel` front face (borrowed by task
+boiler-barometer, the `block/barometer/` ledger section at the tail; the same
+supersedes-the-p13-deferral note as the boiler_steam entry above). Path mapping:
 `{colored,colored_front,overlay,overlay_front}/{bottom,top,side}.png` flattens to
 `large_boiler/{layer}_{face}.png` (the underscore join, the boiler_steam precedent).
 Upstream fact: all six colored-layer faces are byte-identical (37dab1b9…) and all six
@@ -10820,6 +10825,65 @@ Borrowed rows (37):
 - `block/diesel_engine_overlay_back.png` — `d7d7b4e63f3ae789badc895760bacdbc5c5a61332261dbc89e46cb37f1f898a1` (upstream `generators/motor_liquid/overlay/back.png`)
 - `block/diesel_engine_overlay_side.png` — `763844cd3e9003c46357a10cbb0bd30644efabfb224d07de689a147481720a4d` (upstream `generators/motor_liquid/overlay/sides.png`)
 - `block/transformer_rotation_colored_back.png` — `b419727a8d541049e954d8c013f9b7f5c64c37a4b5e4161ec1f87cd500f37e4d` (upstream `transformers/transformer_rotation/colored/back.png`)
+
+Copied on 2026-09-29. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
+
+## task boiler-barometer (2026-09-29) — the boiler front gauge trio
+
+Borrowed from **GregTech 6** (https://github.com/GregTech6/gregtech6), snapshot
+`tmp/gt6-1.7.10`, `src/main/resources/assets/gregapi/textures/blocks/overlays/barometer/`:
+the 33 PNGs below (byte-identical, sha256 verified per file) are the upstream
+`BI.BAROMETER` front gauge (BI.java:165-166) — the `base` dial face plus the 32
+5-bit red-needle states `BAROMETER_SCALE[0..31]` (the needles are 4 white texels
+upstream; the red is the render-time `CA_RED_64 = {64,0,0,255}` modulation,
+CS.java:367, ported as the baked vertex retint `NEEDLE_ARGB = 0xFF400000`).
+
+Upstream semantics (both boiler faces stack the gauge on the FRONT side only): the
+single tank overlays dial+needle on its side art
+(MultiTileEntityBoilerTank.java:240), the large boiler stacks them on the Base10
+front pair (MultiTileEntityLargeBoiler.java:357-361); the needle index is the
+synced 5-bit `scale(steam, steamCapacity, 31)` visual byte (BoilerTank :145,
+LargeBoiler :259). The port mounts both faces on the `GTBoilerBarometerModel`
+dynamic front (the GTOvenOverlayModel shape) over the r8-tex-large-boilers
+two-layer static models — this section SUPERSEDES the two p13 render-pool deferral
+notes above (the boiler_steam and large_boiler entries) for the gauge assets.
+Path mapping: upstream `overlays/barometer/<name>.png` →
+`block/barometer/<name>.png` (names verbatim, the zero-padded needle indices kept).
+
+- `block/barometer/base.png` — `0ba6680e1b12fcb94f2d9e079b569a46f3d1bcaedf397a70ea8bd727a8fe5b49` (upstream `overlays/barometer/base.png`)
+- `block/barometer/00.png` — `55033a864aef1f31c8124767411cedf2468732e4fc8fd9c46e0d2cb058c47b12` (upstream `overlays/barometer/00.png`)
+- `block/barometer/01.png` — `b20631d3ddf4f7ab3611a4863b4194e9f3e56236cf617521607450dc366313af` (upstream `overlays/barometer/01.png`)
+- `block/barometer/02.png` — `8d77a6fabe488d4e3652a1ab11106adeac230e38079238842f6c6b41f087ffbd` (upstream `overlays/barometer/02.png`)
+- `block/barometer/03.png` — `93a6df5d1be617ed456c4fb826ce19304a885634fde157cdfb9eb37f8b744e91` (upstream `overlays/barometer/03.png`)
+- `block/barometer/04.png` — `7d68385237531f8ae207f5b57fd5a06edf30ff00791da2c947b76f9f24ddb846` (upstream `overlays/barometer/04.png`)
+- `block/barometer/05.png` — `d17f7151b2e5a7624d480e3cb779de2b8fe5d1a764216533759fd177b9700882` (upstream `overlays/barometer/05.png`)
+- `block/barometer/06.png` — `64e78e5f166a2f6cb2e20fc74a2524071e127068f1718cfa6af3121233d89fb5` (upstream `overlays/barometer/06.png`)
+- `block/barometer/07.png` — `e1ef0ba6fdde709f531b70ea275dec60696ccb527b53e89d9d3f9162412d0cb5` (upstream `overlays/barometer/07.png`)
+- `block/barometer/08.png` — `9f51bf8c3ad421461a11c5c724043234447d80b960a6fa52ef166efdfd9abf33` (upstream `overlays/barometer/08.png`)
+- `block/barometer/09.png` — `b82126398d85a08c52493d137470531f54a67c0b3a9260ddc1f4a43c194e385e` (upstream `overlays/barometer/09.png`)
+- `block/barometer/10.png` — `aff13e3de49abe865319444f209fb7181ce7e3ba20c7c82880c09b2ffefc8dea` (upstream `overlays/barometer/10.png`)
+- `block/barometer/11.png` — `b8f0f3557b6a8788774e7f9392d7b02deec29b17773a682363c7adebab818b98` (upstream `overlays/barometer/11.png`)
+- `block/barometer/12.png` — `cbb95a0364d99617dec7fba67885fdd928484433b92f3ecbe89a3151ecbf4b17` (upstream `overlays/barometer/12.png`)
+- `block/barometer/13.png` — `5155761a1cff4b463d73143be0e76dc5d93dbb0eda3d3dc938924978c090f7e2` (upstream `overlays/barometer/13.png`)
+- `block/barometer/14.png` — `ea481b7263262114a9a416fd5d48756eadda543df22cb15bbfc7ceb67cc948bf` (upstream `overlays/barometer/14.png`)
+- `block/barometer/15.png` — `2453f45ff5fb7f6de0645d35d7a98930f11ce380abbb0a02fed50b66f5ec7cef` (upstream `overlays/barometer/15.png`)
+- `block/barometer/16.png` — `11c818d37cc0e192155c2e4f7881cbad7ca4cacf57762db9309b51602988e0a9` (upstream `overlays/barometer/16.png`)
+- `block/barometer/17.png` — `64c6e671829648638bfa1ab5131a67ce2816e56245c117c8a3a2b6b37ba733ec` (upstream `overlays/barometer/17.png`)
+- `block/barometer/18.png` — `3bdd13d243d5a2d3606bcd7f04a40b54bb2101e48202d2c0ed9b839c4d86bdd5` (upstream `overlays/barometer/18.png`)
+- `block/barometer/19.png` — `ba4afeb40f9b80d6ddd8415f28fac7bbdecabd3c9dd60f810dd5d8bbe5cfa3fd` (upstream `overlays/barometer/19.png`)
+- `block/barometer/20.png` — `df8ac1e8c797cd1adab86ab76a626c5de12d51bf5799eeba642b48e48109e79b` (upstream `overlays/barometer/20.png`)
+- `block/barometer/21.png` — `cd349c0439fd443352954d3053c23c7ad8b48866dad5d5ca203eff3e973947a9` (upstream `overlays/barometer/21.png`)
+- `block/barometer/22.png` — `871f71855465a4088bf01bef97d8364d9c4f707669dacacd35aa96f934c93a96` (upstream `overlays/barometer/22.png`)
+- `block/barometer/23.png` — `7b0a70d668d8712743c30c62676a513dff44defd28ee152aa91831c30848c053` (upstream `overlays/barometer/23.png`)
+- `block/barometer/24.png` — `98edf98625587315753678ecd3a3ab2c36cd169ae96ad604413d36ce31d00313` (upstream `overlays/barometer/24.png`)
+- `block/barometer/25.png` — `8dd8ab6b7439c58db01d7ad6edf08db97da0e51bf593d6f94ea16f46ae121335` (upstream `overlays/barometer/25.png`)
+- `block/barometer/26.png` — `4b48395607c5f2d9fb1a5254e644b2e7ee111bb899845f175fd8bff8bc727e43` (upstream `overlays/barometer/26.png`)
+- `block/barometer/27.png` — `032db9d3d0ca941f6ed21e4a6f4c7ed947fb5bebb9ef18e8bf6c70500060542a` (upstream `overlays/barometer/27.png`)
+- `block/barometer/28.png` — `77ac370add8a7e7b6096221c17c4a6a53fbcb4a57284d13215883c6537cb7f14` (upstream `overlays/barometer/28.png`)
+- `block/barometer/29.png` — `b42ebafd412af50e4207bf2f214dfcbea0dbca8426fd6d10aa687c4314b27999` (upstream `overlays/barometer/29.png`)
+- `block/barometer/30.png` — `6242d645f1d6aa233df81d4728b487f4ec7825843907a3636b2f61755226f229` (upstream `overlays/barometer/30.png`)
+- `block/barometer/31.png` — `6a500e8053e16ebf886f4acee3dd64d972fdd0f89bf3cb36d9e108e9df1d47f4` (upstream `overlays/barometer/31.png`)
 
 Copied on 2026-09-29. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).

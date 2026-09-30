@@ -115,5 +115,14 @@ public final class GT6Atlases extends SpriteSourceProvider {
         // (the ore-overlay precedent — the atlas source IS the consumer-side stitching;
         // the vanilla water_still/lava_still bases resolve through vanilla's own sources).
         atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.client.render.GTFluidSpringBakedModel.OVERLAY_SPRITE, Optional.empty()));
+        // task boiler-barometer — the 33 borrowed barometer gauge sprites (the base dial +
+        // the 32 zero-padded needle states): emitted by the runtime-built
+        // GTBoilerBarometerModel quads with NO model JSON (the ore-overlay precedent — the
+        // atlas source IS the consumer-side stitching). One directory source covers the
+        // whole folder: DirectoryLister maps textures/<source>/<file>.png to
+        // <prefix>/<file> across the resource stack (DirectoryLister.java:27-31), so the
+        // gt6 folder lands as gt6:block/barometer/{base,00..31} — the model's sprite ids.
+        atlas(BLOCKS_ATLAS).addSource(new net.minecraft.client.renderer.texture.atlas.sources.DirectoryLister(
+                "block/barometer", "block/barometer"));
     }
 }
