@@ -73,11 +73,14 @@ public final class GTBarrels {
 	 * Wood fluid barrel — 16000 L sticky-tank family, melts down at 340 K (upstream
 	 * NBT_CAPACITY_HU row). The capacity/ceiling/ticker-type now ride the block carrier
 	 * explicitly (task barrel-metal-plastic): 16000 L was already the class default,
-	 * so this row is a zero-behaviour-change re-statement.
+	 * so this row is a zero-behaviour-change re-statement. The NBT_MATERIAL column is
+	 * MT.WoodTreated (task tank-render-tint — the Loader :2140 row verbatim, id 32714;
+	 * the ANY.Wood rows are the unported Cheap-barrel pool :2136-2139).
 	 */
 	public static final RegistryObject<GTBarrelBlock> BARREL = BLOCKS.register("barrel_wood",
-			() -> new GTBarrelBlock(16000, 340, false, () -> GTBarrels.BARREL_BE.get(), BlockBehaviour.Properties.of()
-					.strength(1.0F, 5.0F).sound(SoundType.WOOD)));
+			() -> new GTBarrelBlock(16000, 340, false, () -> GTBarrels.BARREL_BE.get(), () -> MT.WoodTreated,
+					BlockBehaviour.Properties.of()
+							.strength(1.0F, 5.0F).sound(SoundType.WOOD)));
 
 	/** The barrel BET: one BlockEntityType over the wood barrel (registry order BLOCKS before BLOCK_ENTITY_TYPES). */
 	public static final RegistryObject<BlockEntityType<GTBarrelBlockEntity>> BARREL_BE =
@@ -96,7 +99,7 @@ public final class GTBarrels {
 	 * every barrel texture here: WOOL is the closest vanilla stand-in for plastic.
 	 */
 	public static final RegistryObject<GTBarrelBlock> BARREL_PLASTIC = BLOCKS.register("barrel_plastic",
-			() -> new GTBarrelBlock(32000, 370, true, () -> GTBarrels.BARREL_PLASTIC_BE.get(),
+			() -> new GTBarrelBlock(32000, 370, true, () -> GTBarrels.BARREL_PLASTIC_BE.get(), () -> ANY.Plastic,
 					BlockBehaviour.Properties.of()
 							.strength(1.0F, 5.0F).sound(SoundType.WOOL)));
 
@@ -120,7 +123,7 @@ public final class GTBarrels {
 	 */
 	public static final RegistryObject<GTBarrelBlock> BARREL_METAL = BLOCKS.register("barrel_metal",
 			() -> new GTBarrelBlock(64000, meltingPointK(MT.Bronze), true, () -> GTBarrels.BARREL_METAL_BE.get(),
-					BlockBehaviour.Properties.of()
+					() -> MT.Bronze, BlockBehaviour.Properties.of()
 							.strength(1.0F, 6.0F).sound(SoundType.COPPER)));
 
 	/**
@@ -192,7 +195,7 @@ public final class GTBarrels {
 		for (MetalDrumRow tRow : HIGH_TIER_METAL_DRUMS) {
 			METAL_DRUM_BLOCKS.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBarrelBlock(tRow.capacityL(), tRow.meltingPointK(), true,
-							() -> GTBarrels.BARREL_METAL_BE.get(), BlockBehaviour.Properties.of()
+							() -> GTBarrels.BARREL_METAL_BE.get(), tRow.material(), BlockBehaviour.Properties.of()
 									.strength(1.0F, tRow.resistanceF()).sound(SoundType.COPPER))));
 			METAL_DRUM_ITEMS.put(tRow.path(), ITEMS.register(tRow.path(),
 					() -> new GTBarrelBlockItem(GTBarrels.METAL_DRUM_BLOCKS.get(tRow.path()).get(), new Item.Properties().stacksTo(16))));
@@ -232,7 +235,7 @@ public final class GTBarrels {
 	 * spec ②.
 	 */
 	public static final RegistryObject<GTBarrelBlock> BARREL_LOGISTICS = BLOCKS.register("barrel_logistics",
-			() -> new GTBarrelBlock(1000000, 100000, true, () -> GTBarrels.BARREL_LOGISTICS_BE.get(),
+			() -> new GTBarrelBlock(1000000, 100000, true, () -> GTBarrels.BARREL_LOGISTICS_BE.get(), () -> ANY.W,
 					BlockBehaviour.Properties.of()
 							.strength(1.0F, 10.0F).sound(SoundType.COPPER)));
 

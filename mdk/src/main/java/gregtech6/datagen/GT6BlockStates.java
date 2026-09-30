@@ -1437,8 +1437,9 @@ public final class GT6BlockStates extends BlockStateProvider {
      * x {bottom,top,side}; Plastic:42-48 / Metal:39-45 isomorphic) in the
      * {@link #barrelPartsModel} two-layer per-face grammar. The former
      * {@code barrel_<material>.png} single-texture shortcut (p20) is retired with its
-     * three PNGs; the {@code barrel_logistics.png} row (task p12) is out of this card's
-     * scope and keeps the {@link #tintedCubeAll} single-PNG form (the TESR/lid
+     * three PNGs; the {@code barrel_logistics.png} row joined the same borrow with task
+     * tank-render-tint (the declared p12/tex-tank-family follow-up — the 3+3
+     * {@code machines/tanks/logistics/} group, the old single PNG retired, the TESR/lid
      * omission stays declared, MultiTileEntityBarrelWood.java:44-54).
      *
      * <p>Task barrel-high-tier-melt-bridge spec ④: the twelve high-tier metal drums
@@ -1459,21 +1460,13 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBarrel(GTBarrels.BARREL.get(), "barrel");
         addBarrel(GTBarrels.BARREL_PLASTIC.get(), "plasticcan");
         addBarrel(GTBarrels.BARREL_METAL.get(), "drum");
-        addBarrel(GTBarrels.BARREL_LOGISTICS.get()); // task barrel-keepfilter-logistics — the :2171 row, own PNG
+        addBarrel(GTBarrels.BARREL_LOGISTICS.get(), "logistics"); // task tank-render-tint — the :2171 row joins the two-layer borrow
         for (var tDrum : GTBarrels.METAL_DRUM_BLOCKS.values())
             addBarrel(tDrum.get(), "drum");
         // task barrel-paint-render: the datagen-JVM census half — 16 barrel blocks,
         // matching the GTBarrels.paintableBlockArray() client registration census (the
         // offline JUnit half walks the generated tree and pins the same 16).
         LOGGER.info("GT6 barrel paint tint: {} barrel models tinted (4 rows + 12 high-tier drums, addBarrel)", mBarrelTintModels);
-    }
-
-    /** The p12 logistics row: one tinted cube_all over the flat barrel_logistics.png (out of the r8 two-layer borrow's scope). */
-    private void addBarrel(Block aBarrel) {
-        String tName = aBarrel.getDescriptionId().replace("block.gt6.", "");
-        simpleBlock(aBarrel, tintedCubeAll("block/" + tName, modLoc("block/" + tName)));
-        itemModels().withExistingParent(tName, modLoc("block/" + tName));
-        mBarrelTintModels++;
     }
 
     /** The r8 two-layer per-face barrel + its BlockItem parent (the borrowed barrel_parts family form). */

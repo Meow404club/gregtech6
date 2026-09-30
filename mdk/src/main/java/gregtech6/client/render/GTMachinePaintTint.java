@@ -54,10 +54,16 @@ import net.minecraftforge.client.model.data.ModelData;
  *
  * <p>The material dispatch is domain-gated: only the block carriers that mirror upstream
  * NBT_MATERIAL rows resolve a material (the machine blocks, the Oven ladder, the burning
- * boxes) — every other block registered over this lambda (the P23 barrel co-registration)
- * resolves {@code null} and keeps the white identity BYTE-IDENTICAL, so P23's
- * "unpainted barrel = zero visual change" contract survives untouched. Every other tint
- * index returns {@code -1} (no tint).
+ * boxes, the tank-valve controllers through the controller gate — the issue8-residual
+ * join — and, since task tank-render-tint, the barrel rows). The barrel join retires the
+ * former P23 "unpainted barrel = zero visual change" white identity: the borrowed
+ * grayscale {@code barrel_parts} art now multiplies
+ * the row colour exactly like the machines (upstream renders
+ * {@code BlockTextureDefault(colored, mRGBa)}, MultiTileEntityBarrelWood.java:44-55), so
+ * an unpainted wood barrel renders the WoodTreated brown and an unpainted logistics tank
+ * the ANY.W gray — a painted barrel still wins through the PAINT value above, and the
+ * {@code -1} white sentinel stays the material-less fallback (upstream UNCOLORED,
+ * CS.java:327). Every other tint index returns {@code -1} (no tint).
  *
  * <p>CLIENT-ONLY ({@code @OnlyIn(Dist.CLIENT)} — registered from GTClientHandlers under the
  * dist guard; the registration faces are unchanged, the P22 carrier ruling stands).
@@ -146,6 +152,13 @@ public final class GTMachinePaintTint {
 		// lightning rod resolve through the GTMultiBlockControllerBlock gate above (the
 		// p38-c2 carrier form all four now ride)
 		tMaterial = gregtech6.registry.GT6HeatExchangers.HeatExchangerBlock.materialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
+		// task tank-render-tint — the barrel family joins: the four standalone rows carry
+		// their upstream NBT_MATERIAL through the block carrier (Loader :2140 WoodTreated,
+		// :2150 ANY.Plastic, :2151 MT.Bronze, :2171 ANY.W), the twelve high-tier drums the
+		// MetalDrumRow column (:2159-2170); the P23 white identity retires to the
+		// material-less fallback (the class-doc clause)
+		tMaterial = gregtech6.block.tank.GTBarrelBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
 		// task tex-bridge-kinetic — the kinetic engines join: the 28 steam-engine rows
 		// carry their loader NBT_MATERIAL column (Loader :584-612), the 8 diesel rows
