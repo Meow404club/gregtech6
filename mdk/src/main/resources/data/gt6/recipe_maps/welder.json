@@ -1,5 +1,5 @@
 {
-  "comment": "task recipe-data-b2c-weld - the Welder static replay. Row source: the 46 RecipeMapHandlerPrefix statements of RM.Welder in Loader_Recipes_Handlers.java:319-368 (cold leg 14 :319-332 + hot leg 14 :334-347 + two-input cold 9 :350-358 + two-input hot 9 :360-368; engine gregapi/recipes/handlers/RecipeMapHandlerPrefix.java - the condition gate :205, the INVALID_MATERIAL gate, the both-side item existence gates :209/:214, the walk over mInputPrefixes[0].mRegisteredMaterials :173, duration = mDuration>0 ? mDuration : max(1, units(max(mUnitsIn, mUnitsOut), U, mult + mult*mToolQuality, roundUp)) :218/:225-227, eut 16 :218). DECLARED DEVIATION (handler semantics -> JSON static rows): query-time lazy per-material generation frozen to the port universe snapshot (GTMaterialItems.registrationOrder + the condition tags evaluated at generation time; craftfrom 962-row precedent deviation class). SELECTOR LEG DROPPED: the aAdditionalInput ST.tag(2..9) circuit input of :319-347 has no JSON v1 face (resolveItem reads item+count only, no configured-circuit NBT) - the loom.json precedent; the rows keep their main input legs and the welder matches them without a selector. WALK ROW PROVENANCE: all 2538 rows are handler-walk expansions and carry NO per-row comment - the per-row provenance IS the GT6RecipeMapDataB2cWeldRowsPourTest live-walk cross-check, which recomputes all 46 statement walks against the live registration and fails the moment this snapshot trails or outruns it. DECLARED OVER-CAP: 2538 rows, over the 5000-line series soft cap by ruling (id1206-B) - the upstream Welder config is inherently ten-thousand-scale (46 statements x the smithable material axis x the both-side item existence gates). REPLACED SMOKE ROW: the p29-w1 smoke row (minecraft:iron_ingot + minecraft:gold_ingot -> minecraft:chain, duration 16 eut 16) carried no upstream welder handler semantics and is gone; the Java-side wall rows (GT6RecipesWelder, Loader_MultiTileEntities.java:1143-1165) are a separate pour owner and untouched. BLOCKED STATEMENT FACES (28 of the 46 statements expand to zero rows over the port universe - the output prefix item families are NOT registered port-side, so the both-side item existence gate the engine itself applies (:214) drops every material): the 9-ingot block family OP.blockSolid (:323/:338), the pipe family OP.pipeTiny/pipeSmall/pipeMedium/pipeLarge/pipeHuge (:324-328/:339-343), and the machine-casing family OP.casingMachine/casingMachineDouble/casingMachineQuadruple/casingMachineDense (:351-358 and :361-368) - unlocking = prefix item registration cards, declared NOT silently dropped. Row census: 1989 cold + 549 hot = 2538; per statement :319=231 :320=231 :321=231 :322=231 :323=0 :324=0 :325=0 :326=0 :327=0 :328=0 :329=180 :330=234 :331=234 :332=234 :334=71 :335=71 :336=71 :337=71 :338=0 :339=0 :340=0 :341=0 :342=0 :343=0 :344=26 :345=71 :346=71 :347=71 :350=183 :351=0 :352=0 :353=0 :354=0 :355=0 :356=0 :357=0 :358=0 :360=26 :361=0 :362=0 :363=0 :364=0 :365=0 :366=0 :367=0 :368=0.",
+  "comment": "task recipe-data-b2c-weld (rework r2) - the Welder static replay. Row source: the 46 RecipeMapHandlerPrefix statements of RM.Welder in Loader_Recipes_Handlers.java:319-368 (cold leg 14 :319-332 + hot leg 14 :334-347 + two-input cold 9 :350-358 + two-input hot 9 :360-368; engine gregapi/recipes/handlers/RecipeMapHandlerPrefix.java - the condition gate :205, the INVALID_MATERIAL gate, the both-side item existence gates :209/:214, the walk over mInputPrefixes[0].mRegisteredMaterials :173, duration = mDuration>0 ? mDuration : max(1, units(max(mUnitsIn, mUnitsOut), U, mult + mult*mToolQuality, roundUp)) :218/:225-227, eut 16 :218). DECLARED DEVIATION (handler semantics -> JSON static rows): query-time lazy per-material generation frozen to the port universe snapshot (GTMaterialItems.registrationOrder + the condition tags evaluated at generation time; craftfrom 962-row precedent deviation class). SELECTOR LEG DROPPED: the aAdditionalInput ST.tag(2..9) circuit input of :319-347 has no JSON v1 face (resolveItem reads item+count only, no configured-circuit NBT) - the loom.json precedent; the rows keep their main input legs and the welder matches them without a selector. OUTPUT FACES BEYOND THE ITEM REGISTRY WALK (the research.prefix-gap-survey reversal, r2): the blockSolid outputs (:323/:338) resolve in the GTMaterialBlocks storage-block universe (Loader_PrefixBlocks.java:40-46 seven-prefix whitelist, the GTMaterialBlocks.get fallback - the GT6RecipesCokeOven.java:263-267 precedent; both registries land in the Forge ITEM registry so the live GT6RecipeMapJsonLoader.resolveItem resolves them unchanged); the pipe outputs (:324-328/:339-343) resolve in the pipe rows - TINY/SMALL ride the fluid-pipe family (GTFluidPipes, MultiTileEntityPipeFluid.java:92-98, 40 materials) and MEDIUM/LARGE/HUGE ride the item-pipe family (GTItemPipes, MultiTileEntityPipeItem.java:77-79, 21 materials) - for the double-carried medium/large/huge (upstream registers the prefix item AND the fluid/item MTEs) the ITEM side is chosen = the upstream registration order (Loader_MultiTileEntities.java:1823 item before :1846 fluid); the pipe ids use the pipe-family slug form (<slug>_fluid_pipe_<suffix> / <slug>_item_pipe_<suffix>), NOT the material snakeCase - the slug-to-material mapping is the pipe tables' oreDictMaterial() verbatim. WALK ROW PROVENANCE: all 2971 rows are handler-walk expansions and carry NO per-row comment - the per-row provenance IS the GT6RecipeMapDataB2cWeldRowsPourTest live-walk cross-check, which recomputes all 46 statement walks against the live three-universe registration and fails the moment this snapshot trails or outruns it. DECLARED OVER-CAP: 2971 rows, over the 5000-line series soft cap by ruling (id1206-B) - the upstream Welder config is inherently ten-thousand-scale (46 statements x the smithable material axis x the both-side item existence gates). REPLACED SMOKE ROW: the p29-w1 smoke row (minecraft:iron_ingot + minecraft:gold_ingot -> minecraft:chain, duration 16 eut 16) carried no upstream welder handler semantics and is gone; the Java-side wall rows (GT6RecipesWelder, Loader_MultiTileEntities.java:1143-1165) are a separate pour owner and untouched. BLOCKED STATEMENT FACES (16 of the 46 statements expand to zero rows over the port universe - the output prefix item family OP.casingMachine/casingMachineDouble/casingMachineQuadruple/casingMachineDense is NOT registered port-side (GTMaterialItems.itemPathPrefixes has only casingSmall; GTMaterialBlocks keeps the casing four pooled), so the both-side item existence gate the engine itself applies (:214) drops every material): the machine-casing statements :351-358 and :361-368 - unlocking = the casingMachine family registration card (or a declared casingSmall fold, the precedents being per-card manual conventions), declared NOT silently dropped. Row census: 2320 cold + 651 hot = 2971; per statement :319=231 :320=231 :321=231 :322=231 :323=231 :324=29 :325=29 :326=14 :327=14 :328=14 :329=180 :330=234 :331=234 :332=234 :334=71 :335=71 :336=71 :337=71 :338=71 :339=5 :340=5 :341=7 :342=7 :343=7 :344=26 :345=71 :346=71 :347=71 :350=183 :351=0 :352=0 :353=0 :354=0 :355=0 :356=0 :357=0 :358=0 :360=26 :361=0 :362=0 :363=0 :364=0 :365=0 :366=0 :367=0 :368=0.",
   "recipes": [
     {
       "inputs": [
@@ -9239,6 +9239,3316 @@
         {"item": "gt6:ingot_quintuple_crystalline_pink_slime", "count": 1}
       ],
       "duration": 320,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_beryllium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_beryllium", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_beryllium7", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_beryllium7", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_beryllium8", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_beryllium8", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_boron", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_boron", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_boron11", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_boron11", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_silicon", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_silicon", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_scandium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_scandium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_titanium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_titanium", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_vanadium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_vanadium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_chromium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_chromium", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_manganese", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_manganese", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_iron", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_iron", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_cobalt", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_cobalt", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_cobalt60", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_cobalt60", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_nickel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_nickel", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_yttrium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_yttrium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_zirconium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_zirconium", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_niobium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_niobium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_molybdenum", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_molybdenum", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_technetium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_technetium", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_ruthenium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_ruthenium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_rhodium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_rhodium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_palladium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_palladium", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_silver", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_silver", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_praseodymium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_praseodymium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_neodymium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_neodymium", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_promethium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_promethium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_samarium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_samarium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_gadolinium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_gadolinium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_terbium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_terbium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_dysprosium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_dysprosium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_holmium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_holmium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_erbium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_erbium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_thulium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_thulium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_lutetium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_lutetium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_tantalum", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_tantalum", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_tungsten", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_tungsten", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_rhenium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_rhenium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_osmium_elemental", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_osmium_elemental", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_iridium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_iridium", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_platinum", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_platinum", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_gold", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_gold", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_gold198", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_gold198", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_actinium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_actinium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_thorium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_thorium", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_protactinium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_protactinium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_uranium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_uranium", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_uranium235", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_uranium235", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_uranium233", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_uranium233", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_americium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_americium", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_americium241", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_americium241", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_americium242", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_americium242", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_curium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_curium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_berkelium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_berkelium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_lawrencium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_lawrencium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_rutherfordium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_rutherfordium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_trinium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_trinium", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_naquadah", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_naquadah", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_naquadah_enriched", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_naquadah_enriched", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_naquadria", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_naquadria", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_abyssalnite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_abyssalnite", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_coralium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_coralium", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_dreadium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_dreadium", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_ethaxium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_ethaxium", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_atlarus", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_atlarus", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_adamantium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_adamantium", "count": 1}
+      ],
+      "duration": 3456,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_carborundum", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_carborundum", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_ferrite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_ferrite", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_electrum", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_electrum", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_sterling_silver", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_sterling_silver", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_rose_gold", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_rose_gold", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_angmallen", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_angmallen", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_gold_inductive", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_gold_inductive", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_cd_in_ag_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_cd_in_ag_alloy", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_black_bronze", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_black_bronze", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_hepatizon", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_hepatizon", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_aluminium_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_aluminium_alloy", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_steel", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_black_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_black_steel", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_blue_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_blue_steel", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_red_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_red_steel", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_damascus_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_damascus_steel", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_tungstensteel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_tungstensteel", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_stainless_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_stainless_steel", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_hslasteel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_hslasteel", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_tungsten_carbide", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_tungsten_carbide", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_hslaspring_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_hslaspring_steel", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_deep_iron", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_deep_iron", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_pig_iron", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_pig_iron", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_wrought_iron", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_wrought_iron", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_iron_compressed", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_iron_compressed", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_iron_magnetic", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_iron_magnetic", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_steel_magnetic", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_steel_magnetic", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_neodymium_magnetic", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_neodymium_magnetic", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_dark_iron", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_dark_iron", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_meteoric_iron", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_meteoric_iron", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_meteoric_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_meteoric_steel", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_tungsten_sintered", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_tungsten_sintered", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_vanadium_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_vanadium_steel", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_titanium_gold", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_titanium_gold", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_invar", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_invar", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_constantan", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_constantan", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_nichrome", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_nichrome", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_kanthal", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_kanthal", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_ultimet", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_ultimet", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_shadow_iron", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_shadow_iron", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_shadow_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_shadow_steel", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_steeleaf", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_steeleaf", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_knightmetal", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_knightmetal", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_fiery_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_fiery_steel", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_astral_silver", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_astral_silver", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_midasium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_midasium", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_mithril", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_mithril", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_thaumium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_thaumium", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_dark_thaumium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_dark_thaumium", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_void_metal", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_void_metal", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_osmiridium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_osmiridium", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_sunnarium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_sunnarium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_trinaquadalloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_trinaquadalloy", "count": 1}
+      ],
+      "duration": 3456,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_chromium_dioxide", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_chromium_dioxide", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_vanadium_gallium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_vanadium_gallium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_yttrium_barium_cuprate", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_yttrium_barium_cuprate", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_niobium_nitride", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_niobium_nitride", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_niobium_titanium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_niobium_titanium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_meteoric_black_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_meteoric_black_steel", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_meteoric_blue_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_meteoric_blue_steel", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_meteoric_red_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_meteoric_red_steel", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_meteoflame_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_meteoflame_steel", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_meteoflame_black_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_meteoflame_black_steel", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_meteoflame_blue_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_meteoflame_blue_steel", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_meteoflame_red_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_meteoflame_red_steel", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_flamascus_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_flamascus_steel", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_fireleaf", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_fireleaf", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_aredrite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_aredrite", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_alumite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_alumite", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_manyullyn", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_manyullyn", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_vibranium_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_vibranium_steel", "count": 1}
+      ],
+      "duration": 6336,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_vibranium_silver", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_vibranium_silver", "count": 1}
+      ],
+      "duration": 5760,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_vibramantium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_vibramantium", "count": 1}
+      ],
+      "duration": 9216,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_ardite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_ardite", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_enderium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_enderium", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_electrum_flux", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_electrum_flux", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_glowstone_refined", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_glowstone_refined", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_obsidian_refined", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_obsidian_refined", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_yellorium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_yellorium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_blutonium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_blutonium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_cyanite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_cyanite", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_bedrock_hslaalloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_bedrock_hslaalloy", "count": 1}
+      ],
+      "duration": 3456,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_manasteel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_manasteel", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_terrasteel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_terrasteel", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_elven_elementium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_elven_elementium", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_ludicrite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_ludicrite", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_pulsating_iron", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_pulsating_iron", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_vibrant_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_vibrant_alloy", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_conductive_iron", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_conductive_iron", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_energetic_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_energetic_alloy", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_enderium_base", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_enderium_base", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_electrical_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_electrical_steel", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_obsidian_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_obsidian_steel", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_soularium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_soularium", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_redstone_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_redstone_alloy", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_spectre_iron", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_spectre_iron", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_gaia_spirit", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_gaia_spirit", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_endium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_endium", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_nikoline_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_nikoline_alloy", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_mauftrium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_mauftrium", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_elvorium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_elvorium", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_niflheim_power", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_niflheim_power", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_muspelheim_power", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_muspelheim_power", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_ancient_debris", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_ancient_debris", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_netherite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_netherite", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_efrine", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_efrine", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_desh", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_desh", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_duranium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_duranium", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_tritanium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_tritanium", "count": 1}
+      ],
+      "duration": 3456,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_oriharukon", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_oriharukon", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_adamantite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_adamantite", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_duralumin", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_duralumin", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_meteorite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_meteorite", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_frozen_iron", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_frozen_iron", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_kreknorite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_kreknorite", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_alduorite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_alduorite", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_infuscolium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_infuscolium", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_rubracium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_rubracium", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_meutoite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_meutoite", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_lemurite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_lemurite", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_ceruclase", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_ceruclase", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_hslatungsten_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_hslatungsten_alloy", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_oureclase", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_oureclase", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_kalendrite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_kalendrite", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_orichalcum", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_orichalcum", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_carmot", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_carmot", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_sanguinite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_sanguinite", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_vyroxeres", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_vyroxeres", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_eximite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_eximite", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_prometheum", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_prometheum", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_ignatius", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_ignatius", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_vulcanite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_vulcanite", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_inolashite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_inolashite", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_haderoth", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_haderoth", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_celenegil", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_celenegil", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_workers_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_workers_alloy", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_desichalkos", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_desichalkos", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_tartarite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_tartarite", "count": 1}
+      ],
+      "duration": 3456,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_amordrine", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_amordrine", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_adamantine", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_adamantine", "count": 1}
+      ],
+      "duration": 3456,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_syrmorite", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_syrmorite", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_octine", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_octine", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_trinitanium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_trinitanium", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_draconium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_draconium", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_draconium_awakened", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_draconium_awakened", "count": 1}
+      ],
+      "duration": 3456,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_titanium_iridium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_titanium_iridium", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_titanium_aluminide", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_titanium_aluminide", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_bedrockium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_bedrockium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_hssg", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_hssg", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_hsse", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_hsse", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_hsss", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_hsss", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_crystal_matrix", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_crystal_matrix", "count": 1}
+      ],
+      "duration": 2880,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_cosmic_neutronium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_cosmic_neutronium", "count": 1}
+      ],
+      "duration": 6336,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_infinity", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_infinity", "count": 1}
+      ],
+      "duration": 9216,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_tantalum_hafnium_carbide", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_tantalum_hafnium_carbide", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_cast_iron", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_cast_iron", "count": 1}
+      ],
+      "duration": 1728,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_unstable", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_unstable", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_clay_compound", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_clay_compound", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_end_steel", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_end_steel", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_energetic_silver", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_energetic_silver", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_melodic_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_melodic_alloy", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_stellar_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_stellar_alloy", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_vivid_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_vivid_alloy", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_crystalline_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_crystalline_alloy", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_crystalline_pink_slime", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_crystalline_pink_slime", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_titanium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:titanium_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_chromium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:chromium_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_palladium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:palladium_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_tungsten", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:tungsten_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_iridium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:iridium_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_gold", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:gold_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_adamantium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:adamantium_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 384,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_steel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:steel_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_tungstensteel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:tungstensteel_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_stainless_steel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:stainless_steel_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_hslasteel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:hsla_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_tungsten_carbide", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:tungsten_carbide_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_vanadium_steel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:vanadium_steel_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_invar", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:invar_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_thaumium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:thaumium_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_void_metal", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:void_metal_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_bedrock_hslaalloy", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:bedrock_hsla_alloy_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 384,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_manasteel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:manasteel_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_terrasteel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:terrasteel_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_gaia_spirit", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:gaia_spirit_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_netherite", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:netherite_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_efrine", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:efrine_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_desh", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:desh_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_hslatungsten_alloy", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:tungsten_alloy_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_workers_alloy", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:workers_alloy_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_draconium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:draconium_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_draconium_awakened", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:awakened_draconium_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 384,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_infinity", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:infinity_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_tantalum_hafnium_carbide", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:tantalum_hafnium_carbide_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_titanium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:titanium_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_chromium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:chromium_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_palladium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:palladium_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_tungsten", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:tungsten_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_iridium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:iridium_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_gold", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:gold_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_adamantium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:adamantium_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 384,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_steel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:steel_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_tungstensteel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:tungstensteel_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_stainless_steel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:stainless_steel_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_hslasteel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:hsla_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_tungsten_carbide", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:tungsten_carbide_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_vanadium_steel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:vanadium_steel_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_invar", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:invar_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_thaumium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:thaumium_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_void_metal", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:void_metal_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_bedrock_hslaalloy", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:bedrock_hsla_alloy_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 384,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_manasteel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:manasteel_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_terrasteel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:terrasteel_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_gaia_spirit", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:gaia_spirit_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_netherite", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:netherite_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_efrine", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:efrine_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_desh", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:desh_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_hslatungsten_alloy", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:tungsten_alloy_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_workers_alloy", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:workers_alloy_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_draconium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:draconium_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 320,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_draconium_awakened", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:awakened_draconium_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 384,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_infinity", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:infinity_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_tantalum_hafnium_carbide", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:tantalum_hafnium_carbide_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_osmium_elemental", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:osmium_item_pipe_medium", "count": 1}
+      ],
+      "duration": 960,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_platinum", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:platinum_item_pipe_medium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_electrum", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:electrum_item_pipe_medium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_sterling_silver", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:sterling_silver_item_pipe_medium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_rose_gold", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:rose_gold_item_pipe_medium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_angmallen", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:angmallen_item_pipe_medium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_black_bronze", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:black_bronze_item_pipe_medium", "count": 1}
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_constantan", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:constantan_item_pipe_medium", "count": 1}
+      ],
+      "duration": 384,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_ultimet", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:ultimet_item_pipe_medium", "count": 1}
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_osmiridium", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:osmiridium_item_pipe_medium", "count": 1}
+      ],
+      "duration": 960,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_manyullyn", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:manyullyn_item_pipe_medium", "count": 1}
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_vibranium_silver", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:vibranium_silver_item_pipe_medium", "count": 1}
+      ],
+      "duration": 1920,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_enderium", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:enderium_item_pipe_medium", "count": 1}
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_elven_elementium", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:elementium_item_pipe_medium", "count": 1}
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_osmium_elemental", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:osmium_item_pipe_large", "count": 1}
+      ],
+      "duration": 1920,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_platinum", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:platinum_item_pipe_large", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_electrum", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:electrum_item_pipe_large", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_sterling_silver", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:sterling_silver_item_pipe_large", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_rose_gold", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:rose_gold_item_pipe_large", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_angmallen", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:angmallen_item_pipe_large", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_black_bronze", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:black_bronze_item_pipe_large", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_constantan", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:constantan_item_pipe_large", "count": 1}
+      ],
+      "duration": 768,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_ultimet", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:ultimet_item_pipe_large", "count": 1}
+      ],
+      "duration": 1536,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_osmiridium", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:osmiridium_item_pipe_large", "count": 1}
+      ],
+      "duration": 1920,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_manyullyn", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:manyullyn_item_pipe_large", "count": 1}
+      ],
+      "duration": 1536,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_vibranium_silver", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:vibranium_silver_item_pipe_large", "count": 1}
+      ],
+      "duration": 3840,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_enderium", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:enderium_item_pipe_large", "count": 1}
+      ],
+      "duration": 1536,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_elven_elementium", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:elementium_item_pipe_large", "count": 1}
+      ],
+      "duration": 1536,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_osmium_elemental", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:osmium_item_pipe_huge", "count": 1}
+      ],
+      "duration": 3840,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_platinum", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:platinum_item_pipe_huge", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_electrum", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:electrum_item_pipe_huge", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_sterling_silver", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:sterling_silver_item_pipe_huge", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_rose_gold", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:rose_gold_item_pipe_huge", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_angmallen", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:angmallen_item_pipe_huge", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_black_bronze", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:black_bronze_item_pipe_huge", "count": 1}
+      ],
+      "duration": 2304,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_constantan", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:constantan_item_pipe_huge", "count": 1}
+      ],
+      "duration": 1536,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_ultimet", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:ultimet_item_pipe_huge", "count": 1}
+      ],
+      "duration": 3072,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_osmiridium", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:osmiridium_item_pipe_huge", "count": 1}
+      ],
+      "duration": 3840,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_manyullyn", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:manyullyn_item_pipe_huge", "count": 1}
+      ],
+      "duration": 3072,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_vibranium_silver", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:vibranium_silver_item_pipe_huge", "count": 1}
+      ],
+      "duration": 7680,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_enderium", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:enderium_item_pipe_huge", "count": 1}
+      ],
+      "duration": 3072,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_elven_elementium", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:elementium_item_pipe_huge", "count": 1}
+      ],
+      "duration": 3072,
       "eut": 16
     },
     {
@@ -20899,6 +24209,1026 @@
         {"item": "gt6:ingot_quintuple_mingrade", "count": 1}
       ],
       "duration": 80,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_lithium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_lithium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_lithium6", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_lithium6", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_sodium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_sodium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_aluminium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_aluminium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_potassium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_potassium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_calcium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_calcium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_copper", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_copper", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_zinc", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_zinc", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_gallium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_gallium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_germanium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_germanium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_arsenic", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_arsenic", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_rubidium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_rubidium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_strontium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_strontium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_cadmium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_cadmium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_indium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_indium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_tin", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_tin", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_antimony", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_antimony", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_tellurium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_tellurium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_caesium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_caesium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_barium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_barium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_lanthanium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_lanthanium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_cerium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_cerium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_europium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_europium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_ytterbium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_ytterbium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_mercury", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_mercury", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_thallium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_thallium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_lead", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_lead", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_bismuth", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_bismuth", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_polonium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_polonium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_astatine", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_astatine", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_francium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_francium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_radium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_radium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_neptunium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_neptunium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_plutonium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_plutonium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_plutonium240", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_plutonium240", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_plutonium241", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_plutonium241", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_plutonium243", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_plutonium243", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_plutonium238", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_plutonium238", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_plutonium239", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_plutonium239", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_californium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_californium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_einsteinium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_einsteinium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_fermium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_fermium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_mendelevium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_mendelevium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_nobelium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_nobelium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_dubnium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_dubnium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_seaborgium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_seaborgium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_bohrium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_bohrium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_hassium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_hassium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_copernicium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_copernicium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_flerovium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_flerovium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_flerovium298", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_flerovium298", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_bronze", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_bronze", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_bismuth_bronze", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_bismuth_bronze", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_arsenic_copper", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_arsenic_copper", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_arsenic_bronze", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_arsenic_bronze", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_brass", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_brass", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_cobalt_brass", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_cobalt_brass", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_annealed_copper", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_annealed_copper", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_purple_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_purple_alloy", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_electrotine_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_electrotine_alloy", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_blue_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_blue_alloy", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_red_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_red_alloy", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_magnalium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_magnalium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_tin_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_tin_alloy", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_battery_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_battery_alloy", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_soldering_alloy", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_soldering_alloy", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_ironwood", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_ironwood", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_aluminium_brass", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_aluminium_brass", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_signalum", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_signalum", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_lumium", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_lumium", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:ingot_mingrade", "count": 9}
+      ],
+      "outputs": [
+        {"item": "gt6:block_solid_mingrade", "count": 1}
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_aluminium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:aluminium_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_copper", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:copper_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_bronze", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:bronze_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_tin_alloy", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:tin_alloy_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_ironwood", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:iron_wood_fluid_pipe_tiny", "count": 2}
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_aluminium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:aluminium_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_copper", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:copper_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_bronze", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:bronze_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_tin_alloy", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:tin_alloy_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_ironwood", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:iron_wood_fluid_pipe_small", "count": 1}
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_germanium", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:germanium_item_pipe_medium", "count": 1}
+      ],
+      "duration": 48,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_arsenic_copper", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:arsenic_copper_item_pipe_medium", "count": 1}
+      ],
+      "duration": 48,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_arsenic_bronze", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:arsenic_bronze_item_pipe_medium", "count": 1}
+      ],
+      "duration": 48,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_brass", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:brass_item_pipe_medium", "count": 1}
+      ],
+      "duration": 48,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_cobalt_brass", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:cobalt_brass_item_pipe_medium", "count": 1}
+      ],
+      "duration": 48,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_magnalium", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:magnalium_item_pipe_medium", "count": 1}
+      ],
+      "duration": 48,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_aluminium_brass", "count": 3}
+      ],
+      "outputs": [
+        {"item": "gt6:aluminium_brass_item_pipe_medium", "count": 1}
+      ],
+      "duration": 48,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_germanium", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:germanium_item_pipe_large", "count": 1}
+      ],
+      "duration": 96,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_arsenic_copper", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:arsenic_copper_item_pipe_large", "count": 1}
+      ],
+      "duration": 96,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_arsenic_bronze", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:arsenic_bronze_item_pipe_large", "count": 1}
+      ],
+      "duration": 96,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_brass", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:brass_item_pipe_large", "count": 1}
+      ],
+      "duration": 96,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_cobalt_brass", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:cobalt_brass_item_pipe_large", "count": 1}
+      ],
+      "duration": 96,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_magnalium", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:magnalium_item_pipe_large", "count": 1}
+      ],
+      "duration": 96,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_aluminium_brass", "count": 6}
+      ],
+      "outputs": [
+        {"item": "gt6:aluminium_brass_item_pipe_large", "count": 1}
+      ],
+      "duration": 96,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_germanium", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:germanium_item_pipe_huge", "count": 1}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_arsenic_copper", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:arsenic_copper_item_pipe_huge", "count": 1}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_arsenic_bronze", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:arsenic_bronze_item_pipe_huge", "count": 1}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_brass", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:brass_item_pipe_huge", "count": 1}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_cobalt_brass", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:cobalt_brass_item_pipe_huge", "count": 1}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_magnalium", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:magnalium_item_pipe_huge", "count": 1}
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:plate_curved_aluminium_brass", "count": 12}
+      ],
+      "outputs": [
+        {"item": "gt6:aluminium_brass_item_pipe_huge", "count": 1}
+      ],
+      "duration": 192,
       "eut": 16
     },
     {
