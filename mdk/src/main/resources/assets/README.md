@@ -11014,3 +11014,37 @@ are byte-identical upstream, as are the three overlay body tiles.)
 
 Copied on 2026-09-30. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (as recorded for the machines/tanks borrows above).
+
+## task small-tank-cell (2026-09-30) — the Capsule-Cell-Container 8-tile borrow
+
+Borrowed from **GregTech 6** (https://github.com/GregTech6/gregtech6), snapshot
+`tmp/gt6-1.7.10`, `src/main/resources/assets/gregtech/textures/blocks/machines/tanks/cell/`:
+the 8 PNGs below (byte-identical, `cmp` clean, sha256 verified per file) are the
+upstream static tile set of the Capsule-Cell-Container family
+(MultiTileEntityCell.java:58-66 — colored + overlay over {sides, insides, top,
+bottom}; the 4+4 set — unlike the gas cylinder, cell HAS an `insides` tile, and
+all four `overlay` tiles are the one fully-transparent upstream placeholder tile,
+byte-identical to each other).
+
+The port mounts them on the shared static elements model (the measuring-pot/gas-
+cylinder grammar): the shell element carries the colored band per world side
+(horizontal=sides, up=top, down=bottom), a just-inside insides element shows
+through the 16-transparent-pixel window in the colored sides tile, and the
+per-level fluid element (levels 1..8, `LIQUID_LEVEL` 0..8 after the crucible
+bowl form) rides the `smeltery_content` placeholder sprite — the static model
+cannot know the BE's actual fluid, the declared ceiling, the crucible-bowl-card
+ruling. Each shell element is duplicated by a 0.01-inflated overlay shell (the
+overlay tiles are blank upstream — they ride along so future overlay art lands
+without model change). The colored band ships UN-TINTED — the measuring-pot
+declared deviation (`ponytail:` a tintindex-0 + GTMachinePaintTint dispatch row
+lands it without model change when the render pool gets to it). Path mapping:
+upstream `cell/<layer>/<face>.png` → `block/cell/<layer>_<face>.png`.
+
+- `block/cell/colored_sides.png` — `cc2923d3482f102058f7e0a57bc4f7ad40070ff617775cd360bc44ec0e9ba449` (upstream `cell/colored/sides.png`)
+- `block/cell/colored_insides.png` — `61c214d7ae3696e5ff65f4c4c76184fdbfc66149652f1a857f936e6dc601f6df` (upstream `cell/colored/insides.png`)
+- `block/cell/colored_top.png` — `90e80b2475c1f38e2f72cf34bb2476a051b2eb912ebb263090064db1a89da40f` (upstream `cell/colored/top.png`)
+- `block/cell/colored_bottom.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `cell/colored/bottom.png`)
+- `block/cell/overlay_sides.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cell/overlay/sides.png`; the shared blank tile)
+- `block/cell/overlay_insides.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cell/overlay/insides.png`; byte-identical to overlay_sides)
+- `block/cell/overlay_top.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cell/overlay/top.png`; byte-identical to overlay_sides)
+- `block/cell/overlay_bottom.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cell/overlay/bottom.png`; byte-identical to overlay_sides)

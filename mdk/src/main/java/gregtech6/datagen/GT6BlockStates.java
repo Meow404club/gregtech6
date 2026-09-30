@@ -43,6 +43,7 @@ import gregtech6.block.energy.GTDieselEngineBlock;
 import gregtech6.block.energy.GTTransformerRotationBlock;
 import gregtech6.block.material.GTMaterialPrefixBlock;
 import gregtech6.block.sensors.GTSensorBlock;
+import gregtech6.block.tank.GT6CellBlock; // task small-tank-cell
 import gregtech6.block.stone.GTStoneBlock;
 import gregtech6.block.stone.StoneVariant;
 import gregtech6.block.surface.GT6SurfaceVariants;
@@ -288,6 +289,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addKitchen(); // task issue7-kitchen-models — the four kitchen blocks (the upstream hollow-tub element forms)
         addMeasuringPot(); // task issue45-c3 — the Measuring Pot (the two-layer colored+overlay sub-cube tub)
         addGasCylinders(); // task small-tank-gas-cylinder — the four gas cylinders (the one shared static bell model, no fluid pass)
+        addCells(); // task small-tank-cell — the 40 Capsule-Cell-Container rows (the one shared per-level model family)
     }
 
     /**
@@ -4657,6 +4659,94 @@ public final class GT6BlockStates extends BlockStateProvider {
             else if (tDir == Direction.DOWN) tFace = "bottom";
             else tFace = "sides";
             tElement.face(tDir).texture("#" + aBand + tFace).end();
+        }
+        tElement.end();
+    }
+
+    /**
+     * The Capsule-Cell-Container family (task small-tank-cell): the 40 material rows
+     * (GT6Cells.BLOCKS_IN_ORDER) share ONE per-level model family — the upstream render
+     * grammar (MultiTileEntityCell.java:40-46) flattened to static elements: pass 0/1
+     * (the bottom/top plates) and pass 2 (the sides sandwich insides + fluid + sides)
+     * become the shell box over the colored band (horizontal=sides, up=top, down=bottom),
+     * a just-inside insides box, and — levels 1..8 only — the fluid box riding the
+     * smeltery_content placeholder sprite behind the 16-transparent-pixel window of the
+     * colored sides tile (the crucible-bowl-card declared simplification: the static
+     * model cannot know the BE's actual fluid). Each element is duplicated by a
+     * 0.01-inflated overlay shell (the overlay tiles are the blank upstream set — the
+     * borrow rides the grammar so future overlay art lands without model change). The
+     * colored band ships UN-TINTED — the measuring-pot declared deviation
+     * ({@code ponytail:} a tintindex-0 + GTMachinePaintTint dispatch row lands it
+     * without model change when the render pool gets to it). Cutout — the sides window
+     * is genuinely transparent.
+     */
+    private void addCells() {
+        BlockModelBuilder tEmpty = models().getBuilder("cell_container_empty")
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("sides", modLoc("block/cell/colored_sides"))
+                .texture("top", modLoc("block/cell/colored_top"))
+                .texture("bottom", modLoc("block/cell/colored_bottom"))
+                .texture("insides", modLoc("block/cell/colored_insides"))
+                .texture("overlay_sides", modLoc("block/cell/overlay_sides"))
+                .texture("overlay_top", modLoc("block/cell/overlay_top"))
+                .texture("overlay_bottom", modLoc("block/cell/overlay_bottom"))
+                .texture("overlay_insides", modLoc("block/cell/overlay_insides"))
+                .texture("particle", "#sides")
+                .renderType("cutout");
+        // the shell — the upstream silhouette :70-72 (6x12x6 px) with the world-side band mapping
+        cellBox(tEmpty, 5.0F, 0.0F, 5.0F, 11.0F, 12.0F, 11.0F, "");
+        // the 0.01-inflated overlay shell (the blank upstream overlay set — grammar parity)
+        cellBox(tEmpty, 5.0F - 0.01F, 0.0F - 0.01F, 5.0F - 0.01F, 11.0F + 0.01F, 12.0F + 0.01F, 11.0F + 0.01F, "overlay_");
+        // the insides box — the pass-2 base layer, visible only through the sides window
+        cellInsides(tEmpty, 6.0F, 0.0F, 6.0F, 10.0F, 12.0F, 10.0F);
+        cellInsides(tEmpty, 6.0F - 0.01F, 0.0F - 0.01F, 6.0F - 0.01F, 10.0F + 0.01F, 12.0F + 0.01F, 10.0F + 0.01F, "overlay_");
+        BlockModelBuilder[] tFilled = new BlockModelBuilder[9];
+        for (int tLevel = 1; tLevel <= 8; tLevel++) {
+            // the child parents the shell — its elements APPEND (the vanilla candle idiom,
+            // the crucible bowl form); the fluid box rides flat eighth-fractions of the
+            // 12 px interior (no upstream pixel formula exists — BlockTextureFluid was
+            // texture-space; the declared simplification), vertically inset 0.05 px so
+            // neither plane ever sits coplanar with the shell's bottom/top faces (z-fight)
+            float tTop = 0.05F + tLevel * 11.5F / 8.0F;
+            BlockModelBuilder tModel = models().getBuilder("block/cell_container_filled_" + tLevel)
+                    .parent(tEmpty)
+                    .texture("content", modLoc("block/smeltery_content"));
+            BlockModelBuilder.ElementBuilder tElement = tModel.element()
+                    .from(5.5F, 0.05F, 5.5F).to(10.5F, tTop, 10.5F);
+            for (Direction tDir : Direction.values()) {
+                tElement.face(tDir).texture("#content").end();
+            }
+            tElement.end();
+            tFilled[tLevel] = tModel;
+        }
+        for (RegistryObject<GT6CellBlock> tRow : gregtech6.registry.GT6Cells.BLOCKS_IN_ORDER) {
+            Block tBlock = tRow.get();
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tLevel = aState.getValue(GT6CellBlock.LIQUID_LEVEL);
+                return ConfiguredModel.builder().modelFile(tLevel == 0 ? tEmpty : tFilled[tLevel]).build();
+            });
+            itemModels().withExistingParent(tRow.getId().getPath(), tEmpty.getLocation());
+        }
+    }
+
+    /** One cell shell box: all six faces over the band prefix — the world-side mapping (up=top, down=bottom, horizontals=sides). */
+    private void cellBox(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
+            float aMaxX, float aMaxY, float aMaxZ, String aBand) {
+        BlockModelBuilder.ElementBuilder tElement = aModel.element().from(aMinX, aMinY, aMinZ).to(aMaxX, aMaxY, aMaxZ);
+        for (Direction tDir : Direction.values()) {
+            String tFace = tDir == Direction.UP ? "top" : tDir == Direction.DOWN ? "bottom" : "sides";
+            tElement.face(tDir).texture("#" + aBand + tFace).end();
+        }
+        tElement.end();
+    }
+
+    /** One insides box: every face the insides band (the layer only shows through the sides window). */
+    private void cellInsides(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
+            float aMaxX, float aMaxY, float aMaxZ, String... aBand) {
+        String tBand = aBand.length == 0 ? "" : aBand[0];
+        BlockModelBuilder.ElementBuilder tElement = aModel.element().from(aMinX, aMinY, aMinZ).to(aMaxX, aMaxY, aMaxZ);
+        for (Direction tDir : Direction.values()) {
+            tElement.face(tDir).texture("#" + tBand + "insides").end();
         }
         tElement.end();
     }
