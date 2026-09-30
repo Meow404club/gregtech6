@@ -1597,8 +1597,9 @@ public final class GT6BlockStates extends BlockStateProvider {
      * (top/bottom/side/front, spec 8): the front texture is the state carrier, mirroring the
      * upstream getTexture2 overlay pick (MultiTileEntityBasicMachine.java:1014, mActive →
      * mTexturesActive : mRunning → mTexturesRunning : mTexturesInactive); the y rotation maps
-     * the FACING property (model-space north = front). Textures are script-generated
-     * placeholder PNGs, not JSON.
+     * the FACING property (model-space north = front). The texture PNGs are the byte-identical
+     * upstream borrows (the assets README sha256 ledger; the oven-texture-borrow audit
+     * retired the former script-generated-placeholder wording).
      */
     private void addOven() {
         addMachine(GTMachines.OVEN.get(), "oven");
@@ -1873,8 +1874,10 @@ public final class GT6BlockStates extends BlockStateProvider {
      * The p22 two-element form. ACT-only since task b-port-overlay-render (the
      * Advanced Crafting Table is the one machine family with no borrowed side art — the
      * craftingtables/advanced upstream group ships fronts only — so it keeps the shared
-     * oven placeholder body and the single front decal; every addMachine family moved to
-     * {@link #familyMachineModel}).
+     * oven body texture set and the single front decal; every addMachine family moved to
+     * {@link #familyMachineModel}). The body PNGs are the byte-identical upstream borrows
+     * (the assets README sha256 ledger; the oven-texture-borrow audit retired the former
+     * placeholder-body wording).
      *
      * <p>Task paintable-tint-render: the vanilla {@code block/cube} element is re-declared
      * in the child with {@code tintindex 0} on EVERY face — the machine cube is six-texture,
