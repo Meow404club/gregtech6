@@ -17,6 +17,7 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import org.junit.jupiter.api.Test;
 
 import gregtech6.block.GTBasicMachineBlock;
+import gregtech6.jei.GT6RecipeMapViewerMeta;
 import gregtech6.recipes.RecipeMap;
 import gregtech6.tooltip.GT6Tooltips.GT6TooltipLine;
 
@@ -88,7 +89,13 @@ public class GT6MachineRowsTest {
 		GT6TooltipLine tRow1 = GT6MachineRows.rows(legacy(PROBE, 4)).get(0);
 		assertEquals("gt6.tooltip.machine.1", ((TranslatableContents)tRow1.component().getContents()).getKey());
 		assertTrue(arg(tRow1).contains("(up to 4x processed per run)"), ":261 — the upstream inline suffix");
-		assertTrue(arg(tRow1).startsWith("Probe Rows"), "the map's mNameLocal rides first");
+		// task lang-batch2-fixes: the name slot is the translatable viewer title key (the
+		// literal mNameLocal pin retired with it) — the bare-JVM getString() falls back to
+		// the bare key (Language.loadDefault), so the pin rides the TranslatableContents key.
+		Object tNameArg = ((TranslatableContents)tRow1.component().getContents()).getArgs()[0];
+		assertTrue(tNameArg instanceof Component
+				&& GT6RecipeMapViewerMeta.titleKey(PROBE).equals(((TranslatableContents)((Component)tNameArg).getContents()).getKey()),
+				":261 — the map name rides the shared viewer title key, both locales");
 		// parallel 1 = no suffix
 		assertFalse(arg(GT6MachineRows.rows(legacy(PROBE, 1)).get(0)).contains("per run"));
 	}

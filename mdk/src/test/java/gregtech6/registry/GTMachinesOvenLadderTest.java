@@ -172,8 +172,11 @@ public class GTMachinesOvenLadderTest {
 		}
 	}
 
-	/** The offline oven fixture — the BRICKS-state holder shape of GTMachinesOfflineTestBase. */
+	/** The offline oven fixture — the BRICKS-state holder shape of GTMachinesOfflineTestBase.
+	 * The unfreeze call is the r42b filtered-run precedent: the 21.1 junit-fml leg boots
+	 * with the BET registry frozen, the forge leg treats it as a silent no-op. */
 	private static TileEntityOven brickFixtureOven() {
+		gregtech6.tileentity.GTOfflineTestBase.unfreezeBlockEntityTypeRegistry();
 		@SuppressWarnings("unchecked")
 		BlockEntityType<TileEntityOven>[] tHolder = (BlockEntityType<TileEntityOven>[]) new BlockEntityType<?>[1];
 		tHolder[0] = BlockEntityType.Builder.of(

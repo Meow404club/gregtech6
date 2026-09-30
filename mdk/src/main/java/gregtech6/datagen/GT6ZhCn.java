@@ -1806,7 +1806,8 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.shovel"); // 锹 (dump tagprefix tool_head_shovel 锹头 :914)
 		addDirect("item.gt6.spade"); // 铲 (dump tagprefix tool_head_spade 铲头 :907)
 		addDirect("item.gt6.universal_spade"); // 万用铲 (dump tagprefix tool_head_universal_spade 万用铲头 :910)
-		// task w5-t2-blade-six — 剑/小刀/斧 dump gt.lang.tool.name 行逐字；屠宰刀/木棒/双面斧 dump 无行走手翻；tooltip 四行=Loader_Tools desc 列手翻（dump tooltip 行异版不采）
+		// task w5-t2-blade-six — 剑/小刀/斧 dump gt.lang.tool.name 行逐字；屠宰刀/双面斧 dump 无行走手翻；tooltip 四行=Loader_Tools desc 列手翻（dump tooltip 行异版不采）；
+		// task lang-batch2-fixes — 棒槌 = dump gt.metatool.01.24 逐字 (tmp/gregtech.lang:6712)
 		addDirect("item.gt6.sword");
 		addDirect("item.gt6.knife");
 		addDirect("item.gt6.butchery_knife");
@@ -1944,7 +1945,7 @@ public class GT6ZhCn extends LanguageProvider {
 		// verbatim — the zh face the panel item carried upstream)
 		addDirect("item.gt6.cover_crafting");
 		addDirect("item.gt6.cover_asphalt");
-		addDirect("item.gt6.integrated_circuit");
+		addDirect("item.gt6.integrated_circuit"); // task lang-batch2-fixes — 集成电路 = the dump's only face for this item (gt.integrated_circuit=集成电路 :3230; en name "Selector Tag" ItemIntegratedCircuit.java:50, the zh predates the rename IL.java:44)
 		addDirect(GT6Circuits.TOOLTIP_KEY);
 		// task w4-hot-lube ④ — the Lubricant Bucket + the "Industrial Use ONLY!"
 		// tooltip (仅限工业用途！, the :617 hand row; 润滑油桶 the naming candidate).

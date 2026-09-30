@@ -901,7 +901,7 @@ direct	gt.tileentity.portal.nether.tooltip.1	仅在主世界和下界之间工�
 direct	gt.tileentity.portal.nether.tooltip.2	实际可工作区域与计算值的可容错区间: 128m	hand
 direct	gt6.cover.conveyor.display	小型电动输送机 (%s)	hand
 direct	gt6.cover.robot_arm.display	小型机械臂 (%s)	hand
-direct	gt6.cover.selector_tag.display	标签选择器 (%s)	hand
+direct	gt6.cover.selector_tag.display	集成电路 (%s)	hand
 direct	gt6.foamspray.mode.area	3x3区域模式	hand
 direct	gt6.foamspray.mode.line	4米直线模式	hand
 direct	gt6.foamspray.mode.single_block	单体方块模式	hand
@@ -1379,7 +1379,7 @@ direct	gt6.row.mold.display.mold_ceramic_sword	陶瓷模具 (剑)	hand
 direct	gt6.row.mold.display.mold_ceramic_tiny_plate	陶瓷模具 (小块板)	hand
 direct	gt6.row.mold.display.mold_ceramic_universal_spade	陶瓷模具 (万用铲)	hand
 direct	gt6.row.mold.display.mold_stone	石头模具	hand
-direct	gt6.row.oven.display	烤箱 (%s)	hand
+direct	gt6.row.oven.display	熔炉 (%s)	hand
 direct	gt6.row.printer.display	打印机 (%s)	hand
 direct	gt6.row.queue_hopper.display	%s队列料斗	hand
 direct	gt6.row.scannervisuals.display	扫描仪 (%s)	hand
@@ -2070,7 +2070,7 @@ direct	item.gt6.circuit_master	主控电子电路	hand
 direct	item.gt6.circuit_primitive	原始电路	hand
 direct	item.gt6.circuit_ultimate	终极电子电路	hand
 direct	item.gt6.clay_crucible_raw	粘土坩埚	hand
-direct	item.gt6.club	木棒	hand
+direct	item.gt6.club	棒槌	hand
 direct	item.gt6.club.tooltip	钝重的原始武器兼碎石器	hand
 direct	item.gt6.cobalt_60_fuel_rod	钴-60燃料棒	hand
 direct	item.gt6.comb_aero	天空蜜脾	hand
@@ -2298,7 +2298,7 @@ direct	item.gt6.hazmat_universal_helmet.tooltip	穿齐一套可以抵御一切�
 direct	item.gt6.hazmat_universal_leggings	全防裤	hand
 direct	item.gt6.hazmat_universal_leggings.tooltip	穿齐一套可以抵御一切危险	hand
 direct	item.gt6.hoe	锄	hand
-direct	item.gt6.integrated_circuit	选择器标签	hand
+direct	item.gt6.integrated_circuit	集成电路	hand
 direct	item.gt6.integrated_circuit.configuration	配置：%s	hand
 direct	item.gt6.jackhammer_hv_no_ores	电镐 (HV, 无矿石模式)	hand
 direct	item.gt6.jackhammer_hv_no_ores.tooltip	不会破坏矿石方块，层矿除外	hand
