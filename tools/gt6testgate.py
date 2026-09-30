@@ -90,6 +90,17 @@ such runs keep using ``--task-cap 16`` (the knob stays). Value-only change:
 admission cold estimates (filtered 6G) are untouched — the ledger feeds the
 envelope predicate, not the budget.
 
+Serial filtered runs (test-gating-v3.8, 2026-09-30): filtered-test gradle
+runs — any ``--tests`` filter — get ``--max-workers=1`` injected by default.
+Root cause (state research.fml-test-memory): the build script's
+``maxParallelForks = min(cpu*2, 6)`` saturates six FML-boot test forks
+(~1.9G each) ≈ 13G on any ≥6-test-class filter — structurally over the
+filtered 12G budget, no code growth involved. With one worker the measured
+peak is 3.4G (-75%) for +25% wall clock on the same domain. An explicit
+``--max-workers`` in the command wins untouched; full-test, compile,
+rundata, rcon and non-gradle commands are not touched. The injection is
+journalled (``inject-workers`` line in the gate log).
+
 Per-task budget + script watchdog (test-gating-v3.3, 2026-09-29 sixth
 ruling): the ruling holds memory.max cannot be RELIED UPON on this host
 (Brokestar kernel, custom reclaim logic), so the script watchdog is the
@@ -752,6 +763,28 @@ def inject_no_daemon(cmd, keep_daemon=False, env=None):
     return cmd + ["--no-daemon"]
 
 
+def inject_max_workers(cmd):
+    """Append ``--max-workers=1`` to filtered-test gradle runs; else as-is.
+
+    v3.8 serial default (root cause in state research.fml-test-memory,
+    2026-09-30): maxParallelForks=min(cpu*2, 6) (build.neoforge.gradle.kts)
+    saturates six FML-boot test forks ~1.9G each ≈ 13G on any ≥6-test-class
+    ``--tests`` filter — structurally over the filtered 12G budget.
+    --max-workers=1 clamps fork concurrency: measured peak 13.3G → 3.4G
+    (-75%) for +25% wall clock. Reuses classify() — the same "filtered-test"
+    verdict that picks the budget picks this injection, so the two stay in
+    lockstep. An explicit ``--max-workers`` (either ``=N`` or space form)
+    wins untouched, like inject_no_daemon's --daemon respect; non-filtered
+    and non-gradle commands pass through unchanged.
+    """
+    if classify(cmd) != "filtered-test":
+        return cmd
+    if any(tok == "--max-workers" or tok.startswith("--max-workers=")
+           for tok in cmd):
+        return cmd
+    return cmd + ["--max-workers=1"]
+
+
 def unit_name():
     """Deterministic per-run scope name — addressable for the post-run reap.
 
@@ -1055,7 +1088,9 @@ def run_gated(cmd, tag=None, poll=POLL_SECONDS, slot_dir=SLOT_DIR,
     BUDGET_EXIT; project aggregate over cap → kill largest sub-cgroups
     (siblings spared). One cgroup read per tick feeds the ledger peak and
     both checks; without a scope the legacy /proc tree walk stays the ledger
-    source. GITHUB_ACTIONS set → zero-gate passthrough (no injection, no
+    source. v3.8: filtered-test commands further get ``--max-workers=1``
+    (serial default, journalled; an explicit --max-workers wins).
+    GITHUB_ACTIONS set → zero-gate passthrough (no injection, no
     watchdog).
     """
     if ledger_path is None:
@@ -1070,6 +1105,14 @@ def run_gated(cmd, tag=None, poll=POLL_SECONDS, slot_dir=SLOT_DIR,
         return subprocess.run(cmd).returncode
     # v3.1 root fix — after the CI branch so CI keeps its managed daemons.
     cmd = inject_no_daemon(cmd, keep_daemon=keep_daemon)
+    # v3.8 serial filtered default — same CI-branch placement (CI keeps its
+    # parallelism); the journal line is the audit trail for "why so serial".
+    serial = inject_max_workers(cmd)
+    if serial != cmd:
+        _journal("inject-workers", tag,
+                 "injecting --max-workers=1 "
+                 "(filtered-test serial default, v3.8)", log_file)
+    cmd = serial
     mode = command_mode(cmd)
     cls = cls or classify(cmd)
     role = resolve_role(role)

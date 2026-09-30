@@ -49,6 +49,10 @@ python3 tools/gt6testgate_test.py 直跑。全部门控语义用注入桩覆盖�
     平静不杀/usage≤0 跳过/slice 目录缺席不杀）；run_gated rc 语义
     （杀己→BUDGET_EXIT 97 专码≠普通失败/杀兄弟→自身透传继续/未包装不
     看门狗）；GT6_GATE_SLICE_LIVE=1 追加 malloc 膨胀真杀探针（slow）
+  * v3.8 filtered 串行默认（gate-filtered-serial-workers）：inject_max_workers
+    三分支钉（filtered 无旗标→注入 =1/显式 --max-workers 两形→尊重不重复/
+    非 filtered 与非 gradle→不动）；run_gated 端到端（子进程真收到旗标+
+    gate log inject-workers 注入行）
 """
 
 import contextlib
@@ -945,14 +949,92 @@ class NoDaemonTest(unittest.TestCase):
             rc = gate.run_gated([str(stub), ":mdk:test", "--tests", "F"],
                                 poll=0.01, slot_dir=d / "slots")
             self.assertEqual(rc, 0)
+            # v3.8: filtered 命令在 --no-daemon 之后再吃 --max-workers=1
             self.assertEqual(marker.read_text().split(),
-                             [":mdk:test", "--tests", "F", "--no-daemon"])
+                             [":mdk:test", "--tests", "F", "--no-daemon",
+                              "--max-workers=1"])
             rc = gate.run_gated([str(stub), ":mdk:test", "--tests", "F"],
                                 poll=0.01, slot_dir=d / "slots",
                                 keep_daemon=True)
             self.assertEqual(rc, 0)
+            # keep_daemon 只豁免 --no-daemon，v3.8 串行默认照常注入
             self.assertEqual(marker.read_text().split(),
-                             [":mdk:test", "--tests", "F"])
+                             [":mdk:test", "--tests", "F",
+                              "--max-workers=1"])
+        finally:
+            gate.LEDGER_PATH = old
+            gate.slice_usage_mib = sread
+            if mem is not None:
+                os.environ["GT6_GATE_MEM_LIMIT_MIB"] = mem
+            else:
+                os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
+            if sl is not None:
+                os.environ[gate.SLICE_ENV] = sl
+            else:
+                os.environ.pop(gate.SLICE_ENV, None)
+
+
+class MaxWorkersTest(unittest.TestCase):
+    """v3.8 串行默认：filtered-test 注入 --max-workers=1（三分支钉+日志钉）。
+
+    根因（state research.fml-test-memory）：maxParallelForks=min(cpu*2,6) 使
+    ≥6 测试类的宽过滤饱和 6 fork × ~1.9G FML JVM ≈ 13G，结构性超 filtered
+    12G 预算；--max-workers=1 实测峰值 -75%、墙钟 +25%。
+    """
+
+    def test_filtered_without_flag_gets_serial(self):
+        # 触发分支：gradle + --tests、无显式 --max-workers → 追加 =1
+        self.assertEqual(
+            gate.inject_max_workers(["./gradlew", ":mdk:1.21.1-neoforge:test",
+                                     "--tests", "gregtech6.datagen.*"]),
+            ["./gradlew", ":mdk:1.21.1-neoforge:test", "--tests",
+             "gregtech6.datagen.*", "--max-workers=1"])
+
+    def test_explicit_flag_wins_both_spellings(self):
+        # 覆盖分支：显式 --max-workers（=N 与空格两形）原样尊重不重复注入
+        base = ["./gradlew", ":mdk:test", "--tests", "F"]
+        self.assertEqual(gate.inject_max_workers(base + ["--max-workers=2"]),
+                         base + ["--max-workers=2"])
+        spaced = ["./gradlew", ":mdk:test", "--max-workers", "4",
+                  "--tests", "F"]
+        self.assertEqual(gate.inject_max_workers(spaced), spaced)
+
+    def test_non_filtered_untouched(self):
+        # 不触发分支：full/compile/rundata/other/非 gradle 一律原样
+        for cmd in (["./gradlew", ":mdk:1.20.1-forge:test"],   # full-test
+                    ["./gradlew", "compileTestJava"],          # compile
+                    ["./gradlew", ":mdk:runData"],             # rundata
+                    ["./gradlew", "build"],                    # other
+                    ["python3", "tools/rcon/sweep.py",
+                     "--group", "x"],                          # 非 gradle
+                    ["sh", "-c", "./gradlew :test --tests F"]):  # 包层不识别
+            self.assertEqual(gate.inject_max_workers(cmd), cmd, cmd)
+
+    def test_run_gated_journals_injection(self):
+        # 端到端：filtered 命令经 run_gated 后子进程真收到旗标，且 gate log
+        # 出现 inject-workers 注入行（v3.8 审计痕迹）。
+        d = Path(tempfile.mkdtemp())
+        marker = d / "argv"
+        stub = d / "gradlew"
+        stub.write_text(f'#!/bin/sh\nprintf \'%s\\n\' "$@" > {marker}\n')
+        stub.chmod(0o755)
+        glog = d / "gate.log"
+        old = gate.LEDGER_PATH
+        gate.LEDGER_PATH = d / "ledger.json"
+        mem = os.environ.pop("GT6_GATE_MEM_LIMIT_MIB", None)
+        os.environ["GT6_GATE_MEM_LIMIT_MIB"] = "999999"
+        sl = os.environ.pop(gate.SLICE_ENV, None)
+        os.environ[gate.SLICE_ENV] = "0"
+        sread = gate.slice_usage_mib
+        gate.slice_usage_mib = lambda *a, **k: 0
+        try:
+            rc = gate.run_gated([str(stub), ":mdk:test", "--tests", "F"],
+                                poll=0.01, slot_dir=d / "slots",
+                                log_file=glog)
+            self.assertEqual(rc, 0)
+            self.assertIn("--max-workers=1", marker.read_text().split())
+            self.assertIn("inject-workers", glog.read_text())
+            self.assertIn("injecting --max-workers=1", glog.read_text())
         finally:
             gate.LEDGER_PATH = old
             gate.slice_usage_mib = sread

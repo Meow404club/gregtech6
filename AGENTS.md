@@ -174,6 +174,10 @@ BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
    - **预算旋钮**：filtered 默认 12G（v3.7，与 full 同档；六样本峰 8.7-12.6G
      实测裁定）；FML boot 大域被资源杀
      （rc=97/247/143，**非测试红**）用 `--task-cap 16` 重跑（12.6G 离群先例）。
+   - **filtered 串行默认（v3.8）**：filtered 测试（`--tests` 过滤域）默认注入
+     `--max-workers=1`（根因：构建脚本 maxParallelForks=min(cpu*2,6) 使 ≥6 测试
+     类的宽过滤饱和 6 fork≈13G，结构性超 12G 预算；实测峰值 -75%、墙钟 +25%；
+     gate log 留 inject-workers 行），显式传 `--max-workers` 则尊重不注入。
    - **纪律**：gradle/runData 命令显式 `cd` 进 worktree（bash cwd 重置教训）。
    **全量 test（gradle 无 --tests 的 test/cleanTest）仅 `--role review` 可跑，
    coder 请求即拒（exit 2）；全量执行期持 /tmp/gt6_testgate_full.lock 全局互斥，
