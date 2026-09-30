@@ -256,4 +256,28 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
                     tRow[0] + ": rides its block model (the GT6ItemModels placeables band)");
         }
     }
+
+    /**
+     * The gameplay cover items keep the flat plane (task cover-underlay-census, the ⑤-B
+     * double-form check): upstream 1.7.10 cover ITEMS are flat icons too (the plate art
+     * as one plane), so the item form is PRESERVED here — the fix this card ships lives
+     * entirely on the INSTALLED face, where the underlay census + vent facet table make
+     * the plate a base+art stack (with the vent's back/sides facets) instead of the item
+     * icon's single sprite. Before the widening the installed plate rendered exactly the
+     * item icon (the user-reported relief-valve defect); after it the two forms are
+     * naturally distinct — this pin freezes the item half so the distinction cannot rot
+     * back into a shared 3D form.
+     */
+    @Test
+    void gameplayCoverItemsKeepTheFlatPlane() throws Exception {
+        assert2DForm("cover_vent", "gt6:block/vent/front");
+        assert2DForm("cover_drain", "gt6:block/drain/front");
+        assert2DForm("cover_pressure_valve", "gt6:block/pressurevalve/front");
+        assert2DForm("cover_fluid_filter", "gt6:block/filterfluid/normal");
+        assert2DForm("cover_crafting", "gt6:block/crafting/0");
+        assert2DForm("cover_asphalt", "gt6:block/asphalt");
+        for (int i = 0; i < 16; i++) {
+            assert2DForm("cover_selector_tag_" + i, "gt6:block/selectortag/" + i);
+        }
+    }
 }
