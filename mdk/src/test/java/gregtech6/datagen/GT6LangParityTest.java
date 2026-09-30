@@ -1187,11 +1187,11 @@ public class GT6LangParityTest {
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
 		assertEquals(1514, tExemptTotal, "the derived composed-name exemption census"
-			" (+280 task fluid-pipe-matrix: the full fluid-pipe matrix joins the ROWS walk — the"
+			+ " (+280 task fluid-pipe-matrix: the full fluid-pipe matrix joins the ROWS walk — the"
 			+ " 280 <mat>_fluid_pipe_<size> carriers compose over the seven gt6.row.fluid_pipe.display.*"
 			+ " templates + the 40 family-scoped gt6.row.fluid_pipe.mat.* words; the two W1 wood rows"
-			+ " ride the same GTFluidPipeBlock.getName the moment the matrix landed, 1126 + 280)
-			" (+108 task item-pipe-matrix: the 18 new item pipe material rows joined the"
+			+ " ride the same GTFluidPipeBlock.getName the moment the matrix landed, 1126 + 280)"
+			+ " (+108 task item-pipe-matrix: the 18 new item pipe material rows joined the"
 			+ " GTItemPipes.ROWS exemption walk, 6 variants each — 1126 + 108)"
 			+ " (+1 issue #45 C2: the smeltery_ceramic rung carrier joined the ROWS walk, 1125 + 1)"
 			+ " (task surface-rock-lang: the 35 GT6SurfaceBlocks exemptions RETIRED — the 4"
