@@ -2,6 +2,7 @@ package gregtech6.jade;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
@@ -37,9 +38,11 @@ import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
  * (the GT6MachineProviderTest posture), and so is the {@code showDetails()} gate and the
  * bar element assembly.
  *
- * <p>The r8 pin set: the EIGHT wire keys survive verbatim (the water/steam pair written
- * UNCONDITIONALLY — the bars are always visible now, so even the drained boiler carries
- * the tank faces), the three-slot bar template X / Y (Z%) on heat/water/steam, the
+ * <p>The r8 pin set (task jade-boiler-burningbox grows the fluid-identity face): the EIGHT
+ * wire keys survive verbatim plus the KEY_WATER_FLUID registry-name string (written only
+ * when the tank holds a fluid — a dry tank shows the Empty word), the four-slot water bar
+ * template LABEL / X / Y (Z%) with the label = the actual fluid's display name, the
+ * three-slot bar template X / Y (Z%) on heat/steam, the
  * half-gate pair and the no-water warning RETIRED (the user ruling: the red empty bar IS
  * the warning face — the row itself stays unstyled) and the sneak band shrunk to the
  * calcification face only. The tooltip language VALUES (en/zh) are pinned by the datagen
@@ -85,7 +88,8 @@ public class GT6BoilerProviderTest extends GTOfflineTestBase {
 		CompoundTag tTag = new CompoundTag();
 		GT6BoilerProvider.writeBoilerData(tTag, aBoiler.mEnergy, aBoiler.mCapacity, aBoiler.mOutput,
 				aBoiler.mTanks[1].amount(), aBoiler.mTanks[1].capacity(),
-				aBoiler.mEfficiency, aBoiler.mTanks[0].amount(), aBoiler.mTanks[0].capacity());
+				aBoiler.mEfficiency, aBoiler.mTanks[0].amount(), aBoiler.mTanks[0].capacity(),
+				GT6BoilerProvider.tankFluidName(aBoiler.mTanks[0]));
 		return tTag;
 	}
 
@@ -94,7 +98,8 @@ public class GT6BoilerProviderTest extends GTOfflineTestBase {
 		CompoundTag tTag = new CompoundTag();
 		GT6BoilerProvider.writeBoilerData(tTag, aBoiler.mEnergy, aBoiler.mCapacity, aBoiler.mOutput,
 				aBoiler.mTanks[1].amount(), aBoiler.mTanks[1].capacity(),
-				aBoiler.mEfficiency, aBoiler.mTanks[0].amount(), aBoiler.mTanks[0].capacity());
+				aBoiler.mEfficiency, aBoiler.mTanks[0].amount(), aBoiler.mTanks[0].capacity(),
+				GT6BoilerProvider.tankFluidName(aBoiler.mTanks[0]));
 		return tTag;
 	}
 
@@ -120,6 +125,10 @@ public class GT6BoilerProviderTest extends GTOfflineTestBase {
 		assertEquals(9400L, tTag.getShort(GT6BoilerProvider.KEY_EFFICIENCY));
 		assertEquals(2000L, tTag.getLong(GT6BoilerProvider.KEY_WATER));
 		assertEquals(4000L, tTag.getLong(GT6BoilerProvider.KEY_WATER_MAX));
+		// the fluid identity face (task jade-boiler-burningbox): a filled water tank rides
+		// its registry name over the wire
+		assertEquals("minecraft:water", tTag.getString(GT6BoilerProvider.KEY_WATER_FLUID));
+		assertEquals(Tag.TAG_STRING, tTag.getTagType(GT6BoilerProvider.KEY_WATER_FLUID));
 		// the key faces: longs except the ten-thousandths efficiency (short)
 		for (String tKey : Arrays.asList(GT6BoilerProvider.KEY_HEAT, GT6BoilerProvider.KEY_HEAT_MAX,
 				GT6BoilerProvider.KEY_DEMAND, GT6BoilerProvider.KEY_STEAM, GT6BoilerProvider.KEY_STEAM_MAX,
@@ -146,14 +155,23 @@ public class GT6BoilerProviderTest extends GTOfflineTestBase {
 	public void theTankKeysStayOnTheDrainedBoiler() {
 		// the r8 "always visible" ruling: the water/steam bars render for EVERY boiler, so
 		// the tag carries the tank faces even at zero content (the drained boiler still
-		// shows Water: 0 / 4000 mB (0%) on the red bar — the warning face).
+		// shows the red bar — the warning face) — and the FLUID IDENTITY KEY STAYS ABSENT
+		// (an empty tank = the Empty/空罐 label word, task jade-boiler-burningbox).
 		FixtureTankBoiler tBoiler = new FixtureTankBoiler(POS, Blocks.STONE.defaultBlockState());
 		CompoundTag tTag = syncOf(tBoiler);
 		assertTrue(tTag.contains(GT6BoilerProvider.KEY_WATER));
 		assertTrue(tTag.contains(GT6BoilerProvider.KEY_WATER_MAX));
 		assertTrue(tTag.contains(GT6BoilerProvider.KEY_STEAM));
 		assertTrue(tTag.contains(GT6BoilerProvider.KEY_STEAM_MAX));
+		assertFalse(tTag.contains(GT6BoilerProvider.KEY_WATER_FLUID),
+				"a dry tank writes no fluid identity — the client shows the empty word");
 		assertEquals(0L, tTag.getLong(GT6BoilerProvider.KEY_WATER));
+		// the empty-label row: the four-slot template with the empty word in the label slot
+		TranslatableContents tEmpty = (TranslatableContents) GT6BoilerProvider
+				.waterLine(Component.translatable(GT6BoilerProvider.LANG_WATER_EMPTY), 0, 4000).getContents();
+		assertEquals(GT6BoilerProvider.LANG_WATER, tEmpty.getKey());
+		assertEquals(GT6BoilerProvider.LANG_WATER_EMPTY,
+				((TranslatableContents) ((Component) tEmpty.getArgs()[0]).getContents()).getKey());
 	}
 
 	// ------------------------------------------------------------------------------------
@@ -182,24 +200,49 @@ public class GT6BoilerProviderTest extends GTOfflineTestBase {
 	}
 
 	@Test
-	public void waterAndSteamLinesAreTheThreeSlotTankFaces() {
+	public void waterAndSteamLinesAreTheFourSlotTankFaces() {
 		// the water bar (always visible — upgraded from the sneak band): the row itself is
-		// UNSTYLED even when empty (the alarm face moved onto the red bar element)
-		TranslatableContents tWater = (TranslatableContents) GT6BoilerProvider.waterLine(2000, 4000).getContents();
+		// UNSTYLED even when empty (the alarm face moved onto the red bar element); the
+		// LABEL SLOT carries the resolved fluid name (task jade-boiler-burningbox — the
+		// hardcoded "Water" retired)
+		Component tLabel = Component.translatable("test.water.label");
+		TranslatableContents tWater = (TranslatableContents) GT6BoilerProvider.waterLine(tLabel, 2000, 4000).getContents();
 		assertEquals(GT6BoilerProvider.LANG_WATER, tWater.getKey());
-		assertEquals(3, tWater.getArgs().length);
-		assertEquals(2000L, tWater.getArgs()[0]);
-		assertEquals(4000L, tWater.getArgs()[1]);
-		assertEquals(50L, tWater.getArgs()[2]);
-		Component tEmptyWater = GT6BoilerProvider.waterLine(0, 4000);
+		assertEquals(4, tWater.getArgs().length);
+		assertSame(tLabel, tWater.getArgs()[0]);
+		assertEquals(2000L, tWater.getArgs()[1]);
+		assertEquals(4000L, tWater.getArgs()[2]);
+		assertEquals(50L, tWater.getArgs()[3]);
+		Component tEmptyWater = GT6BoilerProvider.waterLine(Component.translatable(GT6BoilerProvider.LANG_WATER_EMPTY), 0, 4000);
 		assertFalse(TextColor.fromLegacyFormat(ChatFormatting.RED).equals(tEmptyWater.getStyle().getColor()),
 				"the empty-tank red lives on the BAR color, the row stays plain");
-		// the steam bar
+		// the steam bar (three slots — the steam tank has no identity face)
 		TranslatableContents tSteam = (TranslatableContents) GT6BoilerProvider.steamLine(160000, 640000).getContents();
 		assertEquals(GT6BoilerProvider.LANG_STEAM, tSteam.getKey());
 		assertEquals(160000L, tSteam.getArgs()[0]);
 		assertEquals(640000L, tSteam.getArgs()[1]);
 		assertEquals(25L, tSteam.getArgs()[2]);
+	}
+
+	@Test
+	public void waterLabelFallsBackToTheEmptyWordOnGarbage() {
+		// task jade-boiler-burningbox: the label slot = the fluid's own display name via
+		// FluidStack.getDisplayName (the GTCEu RecipeOutputProvider posture) — the RESOLVED
+		// branch is live-only (the forge vanilla FluidType RegistryObject is not bootstrapped
+		// in the offline junit env — the GT6FluidProvider.readFluid posture: live faces get
+		// behavior pins on runClient, the offline gate pins the pure fallback)
+		TranslatableContents tFallback = (TranslatableContents) GT6BoilerProvider.waterLabel("gt6:not_a_fluid").getContents();
+		assertEquals(GT6BoilerProvider.LANG_WATER_EMPTY, tFallback.getKey(),
+				"an unresolvable name degrades to the Empty word, never a crash");
+	}
+
+	@Test
+	public void tankFluidNameReadsTheIdentityAndRefusesEmpties() {
+		// the server-side extraction seam (GT6FluidProvider.tankViews guards verbatim)
+		FixtureTankBoiler tBoiler = new FixtureTankBoiler(POS, Blocks.STONE.defaultBlockState());
+		assertEquals("", GT6BoilerProvider.tankFluidName(tBoiler.mTanks[0]), "a dry tank = the empty string");
+		tBoiler.mTanks[0].add(2000, new FluidStack(Fluids.WATER, 2000));
+		assertEquals("minecraft:water", GT6BoilerProvider.tankFluidName(tBoiler.mTanks[0]));
 	}
 
 	// ------------------------------------------------------------------------------------

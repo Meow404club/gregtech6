@@ -1,9 +1,13 @@
 package gregtech6.jade;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
@@ -38,7 +42,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
  * families.converter）：真上限族（capacity&gt;0）的存量行升 B 形钳位比例条（文本复用既有三槽键，
  * lang 裁定 gt6.jade.converter.* 不动）；裸存量形（capacity=0，燃烧箱）保文本；吞吐行保留文本；
  * 状态行字色收编 {@link GT6JadeRows#FORMAT_OK}/{@link GT6JadeRows#FORMAT_STALLED}（J1 交卡
- * 遗留的第三份状态色复制）。
+ * 遗留的第三份状态色复制）。燃烧箱族另有内容物两行（燃料/灰烬，task jade-boiler-burningbox
+ * ——无 GUI 族唯一内容可视面，{@link #writeBurningContents} + {@link #contentLine}）。
  * 上游 1.7.10 零 WAILA 面（research.r5-jade-integration：全源仅 5 处隔离注释）——本面属现代
  * 增强，行式借 {@link GT6MachineProvider}/{@link GT6CrucibleProvider} 的既有家法与 GTCEu
  * RecipeLogicProvider.java:75+ 的吞吐行先例。
@@ -69,6 +74,14 @@ public final class GT6ConverterProvider implements IBlockComponentProvider, ISer
 	public static final String KEY_RATE = "GT6ConverterRate";
 	public static final String KEY_UNIT = "GT6ConverterUnit";
 	public static final String KEY_RATE_UNIT = "GT6ConverterRateUnit";
+	/** 燃烧箱族内容物面（task jade-boiler-burningbox）：族门键 + 两槽 id/count——slot0 燃料/
+	 * slot1 灰烬（上游 GeneratorSolid :112/:184-190），无 GUI（:92 NO_GUI_CLICK_TO_INVENTORY）
+	 * → Jade 是唯一内容可视面。 */
+	public static final String KEY_CONTENTS = "GT6BurningContents";
+	public static final String KEY_FUEL_ID = "GT6BurningFuelId";
+	public static final String KEY_FUEL_COUNT = "GT6BurningFuelCount";
+	public static final String KEY_ASH_ID = "GT6BurningAshId";
+	public static final String KEY_ASH_COUNT = "GT6BurningAshCount";
 
 	/** lang 键（GT6EnUs/GT6ZhCn 双侧同发）。 */
 	public static final String LANG_STATUS = "gt6.jade.converter.status";
@@ -78,6 +91,11 @@ public final class GT6ConverterProvider implements IBlockComponentProvider, ISer
 	public static final String LANG_STORED = "gt6.jade.converter.stored";
 	public static final String LANG_STORED_BARE = "gt6.jade.converter.stored.bare";
 	public static final String LANG_RATE = "gt6.jade.converter.rate";
+	/** 燃烧箱内容物行（task jade-boiler-burningbox）：两槽各自 充满/空态 两键。 */
+	public static final String LANG_FUEL = "gt6.jade.burningbox.fuel";
+	public static final String LANG_FUEL_EMPTY = "gt6.jade.burningbox.fuel.empty";
+	public static final String LANG_ASH = "gt6.jade.burningbox.ash";
+	public static final String LANG_ASH_EMPTY = "gt6.jade.burningbox.ash.empty";
 
 	private static final ResourceLocation UID = new ResourceLocation("gt6", "converter_provider");
 
@@ -144,9 +162,12 @@ public final class GT6ConverterProvider implements IBlockComponentProvider, ISer
 			writeConverterData(aData, true, aAbsorber.mActive, aAbsorber.mStopped,
 					0, 0, aAbsorber.mOutput, "", shortType(aAbsorber.mEnergyTypeEmitted));
 		} else if (aBE instanceof GTGeneratorSolidBlockEntity aBurning) {
-			// 燃烧箱族（solid/liquid/gas/fluid-bed）：mBurning 即状态位（:128），HU 存量无硬盖（裸存量形）。
+			// 燃烧箱族（solid/liquid/gas/fluid-bed——继承树实证：Gas→Liquid→Solid、FluidBed→Solid，
+			// 四 BE 全走本分支）：mBurning 即状态位（:128），HU 存量无硬盖（裸存量形）。
 			writeConverterData(aData, true, aBurning.mBurning, false,
 					aBurning.mEnergy, 0, aBurning.mRate, "HU", "HU");
+			// 两槽内容物行（task jade-boiler-burningbox——slot0 燃料/slot1 灰烬）。
+			writeBurningContents(aData, aBurning.mInventory.getStackInSlot(0), aBurning.mInventory.getStackInSlot(1));
 		} else if (aBE instanceof GTCrankBlockEntity aCrank) {
 			// 手摇曲柄：只有 mActive（:105）。
 			writeConverterData(aData, true, aCrank.mActive, false, 0, 0, 0, "", "");
@@ -185,6 +206,23 @@ public final class GT6ConverterProvider implements IBlockComponentProvider, ISer
 		aData.putString(KEY_RATE_UNIT, aRateUnit);
 	}
 
+	/**
+	 * 燃烧箱两槽内容物同步写（task jade-boiler-burningbox——静态缝纯值离线可测）。族门键恒写
+	 * （客户端据此出两行），空槽不写 id/count 键（客户端空态词）。物品只过 注册名+count——
+	 * CompoundTag 无组件位，显示名客户端反查（{@link #itemFace}）。
+	 */
+	public static void writeBurningContents(CompoundTag aData, ItemStack aFuel, ItemStack aAsh) {
+		aData.putBoolean(KEY_CONTENTS, true);
+		if (!aFuel.isEmpty()) {
+			aData.putString(KEY_FUEL_ID, BuiltInRegistries.ITEM.getKey(aFuel.getItem()).toString());
+			aData.putInt(KEY_FUEL_COUNT, aFuel.getCount());
+		}
+		if (!aAsh.isEmpty()) {
+			aData.putString(KEY_ASH_ID, BuiltInRegistries.ITEM.getKey(aAsh.getItem()).toString());
+			aData.putInt(KEY_ASH_COUNT, aAsh.getCount());
+		}
+	}
+
 	@Override
 	public void appendServerData(CompoundTag aData, BlockAccessor aAccessor) {
 		writeFamilyData(aData, aAccessor.getBlockEntity());
@@ -216,6 +254,11 @@ public final class GT6ConverterProvider implements IBlockComponentProvider, ISer
 		if (tRate > 0) {
 			aTooltip.add(rateLine(tRate, aData.getString(KEY_RATE_UNIT)));
 		}
+		// 燃烧箱内容物两行（task jade-boiler-burningbox）：槽各自充满显 物品名 x数、空槽显空态词。
+		if (aData.getBoolean(KEY_CONTENTS)) {
+			aTooltip.add(contentLine(aData, KEY_FUEL_ID, KEY_FUEL_COUNT, LANG_FUEL, LANG_FUEL_EMPTY));
+			aTooltip.add(contentLine(aData, KEY_ASH_ID, KEY_ASH_COUNT, LANG_ASH, LANG_ASH_EMPTY));
+		}
 	}
 
 	/** 状态行：停机（软停）RED &gt; 运行 GREEN &gt; 待机默认色（字色常量收编
@@ -241,6 +284,24 @@ public final class GT6ConverterProvider implements IBlockComponentProvider, ISer
 	/** 吞吐行（额定输出）："Output: 64 EU/t"（GTCEu RecipeLogicProvider.java:75+ 先例形）。 */
 	public static Component rateLine(long aRate, String aUnit) {
 		return Component.translatable(LANG_RATE, aRate, aUnit);
+	}
+
+	/**
+	 * 内容物行（纯函数离线面，task jade-boiler-burningbox）：id 键在 = "{燃料|灰烬}: 物品名 x数"
+	 * （物品名 client 反查 {@link #itemFace}——GTCEu RecipeOutputProvider.getItemName 的
+	 * getHoverName 先例），缺席 = 空态词。图标 IElementHelper.item live-only 可后加
+	 * （GT6FluidProvider readFluid 同裁定）。
+	 */
+	public static Component contentLine(CompoundTag aData, String aIdKey, String aCountKey, String aLang, String aLangEmpty) {
+		if (!aData.contains(aIdKey)) return Component.translatable(aLangEmpty);
+		return Component.translatable(aLang, itemFace(aData.getString(aIdKey)), aData.getInt(aCountKey));
+	}
+
+	/** 注册名串 → 物品显示名（client 面）；未知名落 AIR 的 hover 名（可接受退化）。 */
+	public static Component itemFace(String aId) {
+		ResourceLocation tId = ResourceLocation.tryParse(aId);
+		Item tItem = tId == null ? Items.AIR : BuiltInRegistries.ITEM.get(tId);
+		return new ItemStack(tItem).getHoverName();
 	}
 
 	/**
