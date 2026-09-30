@@ -1809,6 +1809,26 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.food_can_rotten_large"); // dump :15
 		addDirect("item.gt6.food_can_rotten_huge"); // dump :16
 		addDirect("item.gt6.food_can_cookies_huge"); // task food-can-row0 — 超大食物罐头 (饼干) (dump cans.86 untranslated; 饼干 = the vanilla cookie face)
+		// task food-items-core — 食物域 T1 九项 (dump gt.multiitem.food.{1000,1001,1060,1061,9010,9020,13000,32117,32119} 逐字, MultiItemFood.java:490-934)
+		addDirect("item.gt6.food_cheese");
+		addDirect("item.gt6.food_cheese.tooltip");
+		addDirect("item.gt6.food_cheese_sliced");
+		addDirect("item.gt6.food_cheese_sliced.tooltip");
+		addDirect("item.gt6.food_brown_egg_boiled"); // dump food.1060 与 food.1061 同文 煮鸡蛋
+		addDirect("item.gt6.food_brown_egg_boiled.tooltip");
+		addDirect("item.gt6.food_white_egg_boiled"); // dump food.1061 同文
+		addDirect("item.gt6.food_white_egg_boiled.tooltip");
+		addDirect("item.gt6.food_potato_chips"); // dump food.9010
+		addDirect("item.gt6.food_potato_chips.tooltip");
+		addDirect("item.gt6.food_chili_chips"); // dump food.9020
+		addDirect("item.gt6.food_chili_chips.tooltip");
+		addDirect("item.gt6.food_ice_cream"); // dump food.13000
+		addDirect("item.gt6.food_ice_cream.tooltip");
+		addDirect("item.gt6.food_butter"); // dump food.32117
+		addDirect("item.gt6.food_butter.tooltip");
+		addDirect("item.gt6.food_butter_salted"); // dump food.32119
+		addDirect("item.gt6.food_butter_salted.tooltip");
+		addDirect("itemGroup.gt6.food"); // dump itemGroup.gt.multiitem.food:17957 格雷食品店 (upstream tab label "GregTech: Nature & Foods", MultiItemFood.java:48)
 		addDirect("item.gt6.bending_cylinder_small"); // task food-can-row0 — dump gt.metatool.01.56 小型弯曲绕筒 (Loader_Tools.java:146 "Small Bending Cylinder")
 		addDirect("item.gt6.pickaxe"); // task w5-t1-dig-six — 镐 (dump tagprefix tool_head_pickaxe 镐头 :895, minus 头)
 		addDirect("item.gt6.pickaxe_gem"); // 镶尖镐 (dump tagprefix tool_head_pickaxe_gem 镶尖镐头 :896)

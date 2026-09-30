@@ -1009,6 +1009,30 @@ HAND_TRANSLATIONS = {
     "item.gt6.food_can_rotten_tall": ("高食物罐头 (腐肉)", "hand"),
     "item.gt6.food_can_rotten_tiny": ("迷你食物罐头 (腐肉)", "hand"),
     "item.gt6.food_can_rotten_wide": ("宽食物罐头 (腐肉)", "hand"),
+    # task food-items-core: the food-item T1 subset (the dump gt.multiitem.food faces
+    # verbatim — 1000/.1001/.1060/.1061/.9010/.9020/.13000/.32117/.32119 + their .tooltip
+    # rows, tmp/gregtech.lang:8743-9262, MultiItemFood.java:490-934; the tab label is the
+    # dump itemGroup.gt.multiitem.food:17957 格雷食品店, upstream tab ctor literal
+    # "GregTech: Nature & Foods" MultiItemFood.java:48)
+    "item.gt6.food_cheese": ("奶酪", "hand"),
+    "item.gt6.food_cheese.tooltip": ("戳一戳", "hand"),
+    "item.gt6.food_cheese_sliced": ("奶酪片", "hand"),
+    "item.gt6.food_cheese_sliced.tooltip": ("外星人入侵!!!, 发射奶酪!!!", "hand"),
+    "item.gt6.food_brown_egg_boiled": ("煮鸡蛋", "hand"),
+    "item.gt6.food_brown_egg_boiled.tooltip": ("煮了还是没煮? 这是一个问题", "hand"),
+    "item.gt6.food_white_egg_boiled": ("煮鸡蛋", "hand"),
+    "item.gt6.food_white_egg_boiled.tooltip": ("煮了还是没煮? 这是一个问题", "hand"),
+    "item.gt6.food_potato_chips": ("薯片", "hand"),
+    "item.gt6.food_potato_chips.tooltip": ("嘎嘣脆!", "hand"),
+    "item.gt6.food_chili_chips": ("辣味薯片", "hand"),
+    "item.gt6.food_chili_chips.tooltip": ("辣的够呛", "hand"),
+    "item.gt6.food_ice_cream": ("冰淇淋", "hand"),
+    "item.gt6.food_ice_cream.tooltip": ("牛奶基本款意式冰淇淋", "hand"),
+    "item.gt6.food_butter": ("黄油", "hand"),
+    "item.gt6.food_butter.tooltip": ("一块纯脂肪", "hand"),
+    "item.gt6.food_butter_salted": ("盐味黄油", "hand"),
+    "item.gt6.food_butter_salted.tooltip": ("好像它本来就不健康一样", "hand"),
+    "itemGroup.gt6.food": ("格雷食品店", "hand"),
     "item.gt6.hammer": ("锤", "hand"),
     "item.gt6.hammer.tooltip_prospector": ("勘探周围的矿石", "hand"),
     "item.gt6.saw": ("锯", "hand"),

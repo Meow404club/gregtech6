@@ -10950,3 +10950,34 @@ surface (`GT6OvenTexAuditDatagenTest`: the block-domain white set must stay exac
 the two documented borrows, the material_sets overlay count stays 190, the six oven
 bodies stay below the 95% signature) — a new white texture without a ledger row fails
 there.
+
+- `gt6/textures/item/food/*.png` — the food-item T1 subset (9 textures, task
+  food-items-core), byte-identical borrows renamed to the registered item ids:
+  - `cheese.png`           `textures/items/gt.multiitem.food/1000.png`
+    (`2c850d67d686ddeb73f5d90c98827eb287d2d9d1da59d9c855ca6a73499b8544` — the Cheese,
+    MultiItemFood.java:490)
+  - `cheese_sliced.png`    `textures/items/gt.multiitem.food/1001.png`
+    (`fe00f09a7b29b382666a4c426a836111b6d9559a852723bf28960a61225ddc1f` — the Cheese
+    Slice, :491)
+  - `brown_egg_boiled.png` `textures/items/gt.multiitem.food/1060.png`
+    (`24605260b6d3b5e5ab3230a54766027572f4e66c4bf1de0b39c1789f879c4bed` — the Boiled
+    Egg (brown), :497)
+  - `white_egg_boiled.png` `textures/items/gt.multiitem.food/1061.png`
+    (`ca521ae0d46885a2025185e6ca605ed7948f23913e9049d9748b83f68160fd51` — the Boiled
+    Egg (white), :498)
+  - `potato_chips.png`     `textures/items/gt.multiitem.food/9010.png`
+    (`c24cd40c45953caf94b8f4c4479b87bee9552c451188a49d3df2f7d0d103bf02` — the Potato
+    Chips, :365)
+  - `chili_chips.png`      `textures/items/gt.multiitem.food/9020.png`
+    (`3e8fe40a5f00ee2c1d1a957ba26ee58e022f3db973e83577031db072f74b1ea6` — the Chili
+    Chips, :374)
+  - `ice_cream.png`        `textures/items/gt.multiitem.food/13000.png`
+    (`bbdf943b76ae7c66a37b1c2d0eb3dd35ceaaf5f3a1f9e4373b5a454042d1573c` — the plain
+    Ice Cream, :809; the 37-flavour family stays pooled)
+  - `butter.png`           `textures/items/gt.multiitem.food/32117.png`
+    (`f5349a2182073c177f21bc133bd491a78f7ed770d8a8aad2a517dfe3eb2c59c1` — the Butter,
+    :933)
+  - `butter_salted.png`    `textures/items/gt.multiitem.food/32119.png`
+    (`ab718c6f6f713fef4e3b5f7c76c06591d15fc5ffc85fc8d671bb169be5b118b4` — the Salted
+    Butter, :934)
+  All 16x16 RGBA, CC0 1.0 per the upstream README block.

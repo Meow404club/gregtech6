@@ -395,6 +395,15 @@ public final class GT6ItemModels extends ItemModelProvider {
         }
         withExistingParent("food_can_cookies_huge", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/food_can/cookies_huge"));
+        // the food-item T1 subset (task food-items-core) — 9 item/generated models over
+        // the byte-identical upstream icon borrows (gt.multiitem.food/<meta> per row —
+        // assets/README.md attribution), walked over FOOD_ROWS so the model ids cannot
+        // drift (the food-can band convention; the texture file drops the food_ family
+        // prefix, food_can_rotten_tiny → food_can/rotten_tiny 同型)
+        for (gregtech6.registry.GT6Foods.FoodRow tFood : gregtech6.registry.GT6Foods.FOOD_ROWS) {
+            withExistingParent(tFood.id(), mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/food/" + tFood.id().substring("food_".length())));
+        }
         // the extruder-mold row0 subset (task w1-press-extruder-molds) — 2 item/generated
         // models over the composed placeholder icons (the mold-plate/mold-rod 16x16 stdlib
         // generator, the P20 placeholder-PNG convention; the upstream multiitem icons are

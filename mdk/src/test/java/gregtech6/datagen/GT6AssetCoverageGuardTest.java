@@ -108,6 +108,7 @@ import gregtech6.registry.GT6FluxDynamos;
 import gregtech6.registry.GT6FoamBlocks;
 import gregtech6.registry.GT6FoamSprays;
 import gregtech6.registry.GT6FoodCans;
+import gregtech6.registry.GT6Foods;
 import gregtech6.registry.GTGrassBlocks;
 import gregtech6.registry.GT6HeatExchangers;
 import gregtech6.registry.GT6Hoppers;
@@ -297,7 +298,8 @@ public class GT6AssetCoverageGuardTest {
 			GT6CrystalChargers.class, GT6Distillation.class, GT6DynamoHousings.class,
 			GT6ElectricDynamos.class, GT6ElectricTransformers.class, GT6ExtruderMolds.class,
 			GT6FeBatteries.class, GT6FeConverters.class, GT6FluxDynamos.class, GT6FoamBlocks.class,
-			GT6FoamSprays.class, GT6FoodCans.class, GTGrassBlocks.class, GT6HeatExchangers.class,
+			GT6FoamSprays.class, GT6FoodCans.class, GT6Foods.class, // task food-items-core — the food-item T1 subset container
+			GTGrassBlocks.class, GT6HeatExchangers.class,
 			GT6Hoppers.class, GT6Kinetics.class, GT6Kitchen.class, GT6LargeMachines.class,
 			GT6Lasers.class, GT6Logistics.class, GT6LongDistanceTransformers.class,
 			GT6LongDistPipes.class, GT6LongDistWires.class, GT6MagicAbsorbers.class, GT6Molds.class,
