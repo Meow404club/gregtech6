@@ -16,6 +16,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
+import gregtech6.fluid.FluidTankGT;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
 import gregtech6.registry.GT6LargeMachines.GTLargeMachineBlockEntity;
@@ -244,6 +245,7 @@ class GT6LargeMachineSemanticsTest extends GTMultiBlocksOfflineTestBase {
 				new FluidStack[] {new FluidStack(Fluids.WATER, 1000)}, new FluidStack[0], 64, 1, 0));
 		GTLargeMachineBlockEntity tMachine = new GTLargeMachineBlockEntity(sLargeType, P1, Blocks.BRICKS.defaultBlockState(), null);
 		tMachine.mRecipes = tMap;
+		tMachine.mTanksInput = new FluidTankGT[] {new FluidTankGT()}; // the row-less fixture arms its own bank (the r10 row-ctor sizing)
 		tMachine.applyEnergyRowSpec(new TileEntityBase10MultiBlockMachine.EnergyRowSpec(1L, 1L, 16L, 64, false, false));
 		tMachine.mEnergyTypeAccepted = gregapi.data.TD.Energy.TU;
 		tMachine.mIgnited = 40;
@@ -262,6 +264,7 @@ class GT6LargeMachineSemanticsTest extends GTMultiBlocksOfflineTestBase {
 				new FluidStack[] {new FluidStack(Fluids.WATER, 1000)}, new FluidStack[0], 64, 1, 0));
 		GTLargeMachineBlockEntity tMachine = new GTLargeMachineBlockEntity(sLargeType, P1, Blocks.BRICKS.defaultBlockState(), null);
 		tMachine.mRecipes = tMap;
+		tMachine.mTanksInput = new FluidTankGT[] {new FluidTankGT()}; // the row-less fixture arms its own bank (the r10 row-ctor sizing)
 		tMachine.applyEnergyRowSpec(new TileEntityBase10MultiBlockMachine.EnergyRowSpec(1L, 1L, 16L, 64, false, false));
 		tMachine.mIgnited = 40;
 		assertEquals(TileEntityBase10MultiBlockMachine.DID_NOT_FIND_RECIPE, tMachine.checkRecipe(true, false),
