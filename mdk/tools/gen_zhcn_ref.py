@@ -1214,11 +1214,14 @@ HAND_TRANSLATIONS = {
     # total line's 内容物 label IS the TFRU LH.CONTENT prefix form (first-row label shape);
     # the K unit in the temperature templates stays untranslated (the upstream thermometer
     # face "Temperature: NK" MultiTileEntitySmeltery.java:512 carries it bare). The .bar
-    # face is the B-case two-slot bar template (the unit word moved to the tail); the old
-    # temperature face stays in service as the meltdown alarm row (既有键不退役).
-    "gt6.jade.crucible.temperature": ("温度: %s K / %s K", "hand"),
+    # face is the B-case two-slot bar template (the unit word moved to the tail). The old
+    # standalone alarm face (gt6.jade.crucible.temperature) is RETIRED (task
+    # crucible-jade-tankbar v3: the red face rides the tank-bar text color now — the user
+    # override of the r8 既有键不退役 ruling), and the content band says 份: the total and
+    # the whole-row entry template (indent + name slot + unit) both carry the unit word.
     "gt6.jade.crucible.temperature.bar": ("温度: %s / %s K", "hand"),
-    "gt6.jade.crucible.total": ("内容物: %s U", "hand"),
+    "gt6.jade.crucible.total": ("内容物: %s 份", "hand"),
+    "gt6.jade.crucible.entry": ("  %s: %s 份", "hand"),
     "gt6.jade.crucible.empty": ("空", "hand"),
     "gt6.jade.crucible.more": ("+%s 种", "hand"),
     # task p34-hygiene-lang: the machine/fluid Jade tooltip faces keyed (the v1 literal band

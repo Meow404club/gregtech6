@@ -17,9 +17,11 @@ import org.junit.jupiter.api.Test;
  * word rides a {@code gt6.jade.*} translatable face (en datagen row + tsv hand row, both
  * locales), and dynamic content moves through the %s slots. The scan strips comments
  * first (the javadocs cite the retired literal band) and pins EXACTLY the keyed sources:
- * {@link GT6CrucibleProvider} keeps its documented literal carve-outs (the dynamic
- * name/amount composition of contentLine) — widen the pin consciously when that band
- * keys too (the same shape as the ZH_KEY_FLOOR ratchet: it only ever tightens).
+ * {@link GT6CrucibleProvider} stays UNPINNED — its entry rows ride the
+ * gt6.jade.crucible.entry face since task crucible-jade-tankbar, but the unvouched-name
+ * fallback in contentLine is still a literal by necessity (a name that has no key at all);
+ * widen the pin consciously when that band goes fully keyed (the same shape as the
+ * ZH_KEY_FLOOR ratchet: it only ever tightens).
  *
  * <p>Source-level pin on purpose: the tooltip bodies are live-only offline (ITooltip needs
  * a client element helper — the GT6FluidProviderTest posture), so the behavioral seam pins

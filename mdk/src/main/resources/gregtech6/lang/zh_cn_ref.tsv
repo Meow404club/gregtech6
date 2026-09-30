@@ -933,10 +933,10 @@ direct	gt6.jade.converter.stopped	已停机	hand
 direct	gt6.jade.converter.stored	存量: %s / %s %s	hand
 direct	gt6.jade.converter.stored.bare	存量: %s %s	hand
 direct	gt6.jade.crucible.empty	空	hand
+direct	gt6.jade.crucible.entry	  %s: %s 份	hand
 direct	gt6.jade.crucible.more	+%s 种	hand
-direct	gt6.jade.crucible.temperature	温度: %s K / %s K	hand
 direct	gt6.jade.crucible.temperature.bar	温度: %s / %s K	hand
-direct	gt6.jade.crucible.total	内容物: %s U	hand
+direct	gt6.jade.crucible.total	内容物: %s 份	hand
 direct	gt6.jade.fluid.group.in	流体输入	hand
 direct	gt6.jade.fluid.group.out	流体输出	hand
 direct	gt6.jade.machine.energy	存量: %s %s	hand
