@@ -104,7 +104,14 @@ public final class GTDistillationTowerMUI {
 		aSyncManager.syncValue(SYNC_PROGRESS, tProgress);
 
 		ModularPanel<?> tPanel = ModularPanel.defaultPanel(PANEL_NAME, 176, 166)
-				.background(UITexture.fullImage(GTBasicMachineScreen.backgroundOf(aTower)));
+				// the machine sheets are 256x256 canvases with the art in the top-left 176x166
+				// (the vanilla blit's implicit 256 sampling) — the sub-area is declared
+				// explicitly, fullImage would shrink the art into the corner (task gui-bg-uv-fix)
+				.background(UITexture.builder()
+						.location(GTBasicMachineScreen.backgroundOf(aTower))
+						.imageSize(256, 256)
+						.subAreaXYWH(0, 0, 176, 166)
+						.build());
 
 		// the input item seat — case1 :55 → (53,7)
 		for (int i = 0; i < tInputs; i++) {
