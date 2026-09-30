@@ -1,0 +1,164 @@
+{
+ "comment": "Static-row replay of the upstream Distillery food face (task food-recipes-t2). Source: Loader_Recipes_Food.java:559-579, all 21 rows, zero skips. Fluid ids are the FL.java upstream ids mapped onto the port GTFluids carriers (the recipe-data-b2b1 mapping table); the ST.tag(0) empty item slots carry no JSON inputs. DECLARED OUT: the :582-:583 coffee rows ride the FL.waters(1000) loop (:581-603, the shared Mixer/Injector waters-walk family) \u2014 outside this card's T2 segments. Row-level flag faces (the :573-:574 aBuffered=F legs, the :575 (T,T,F,F,F) overload) are v1-out per the loader boundary note; the rows pour with the loader defaults. The fermenter face :605-649 of the same loader is NOT this file: :605-610 are the main smoke rows and :611-649 the recipe-data-b2b1 pour (195 rows there) \u2014 only-add-never-duplicate, zero delta here.",
+ "recipes": [
+  {
+   "comment": "Loader_Recipes_Food.java:559 \u2014 RoyalJelly 10 -> DistW 1 + Sugar dust",
+   "fluidInputs": [{"fluid": "gt6:royal_jelly", "amount": 10}],
+   "outputs": [{"item": "gt6:dust_sugar", "count": 1}],
+   "fluidOutputs": [{"fluid": "gt6:distilled_water", "amount": 1}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:560 \u2014 Honey (\"for.honey\") 100 -> DistW 10 + Sugar dust (U2 = 1 item)",
+   "fluidInputs": [{"fluid": "gt6:for_honey", "amount": 100}],
+   "outputs": [{"item": "gt6:dust_sugar", "count": 1}],
+   "fluidOutputs": [{"fluid": "gt6:distilled_water", "amount": 10}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:561 \u2014 HoneyGrC (\"grc.honey\") 100 -> DistW 10 + Sugar dust (U2 = 1 item)",
+   "fluidInputs": [{"fluid": "gt6:grc_honey", "amount": 100}],
+   "outputs": [{"item": "gt6:dust_sugar", "count": 1}],
+   "fluidOutputs": [{"fluid": "gt6:distilled_water", "amount": 10}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:562 \u2014 HoneyBoP (the generic \"honey\" collision id) 100 -> DistW 10 + Sugar dust (U2 = 1 item)",
+   "fluidInputs": [{"fluid": "gt6:honey", "amount": 100}],
+   "outputs": [{"item": "gt6:dust_sugar", "count": 1}],
+   "fluidOutputs": [{"fluid": "gt6:distilled_water", "amount": 10}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:563 \u2014 Honeydew 100 -> DistW 10 + Sugar dust (U2 = 1 item)",
+   "fluidInputs": [{"fluid": "gt6:honeydew", "amount": 100}],
+   "outputs": [{"item": "gt6:dust_sugar", "count": 1}],
+   "fluidOutputs": [{"fluid": "gt6:distilled_water", "amount": 10}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:564 \u2014 Juice_Reed 100 -> DistW 50 + Sugar dust",
+   "fluidInputs": [{"fluid": "gt6:reedwater", "amount": 100}],
+   "outputs": [{"item": "gt6:dust_sugar", "count": 1}],
+   "fluidOutputs": [{"fluid": "gt6:distilled_water", "amount": 50}],
+   "duration": 80,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:565 \u2014 Juice_Beet 100 -> DistW 50 + Sugar dust",
+   "fluidInputs": [{"fluid": "gt6:beetjuice", "amount": 100}],
+   "outputs": [{"item": "gt6:dust_sugar", "count": 1}],
+   "fluidOutputs": [{"fluid": "gt6:distilled_water", "amount": 50}],
+   "duration": 80,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:566 \u2014 Juice_Cactus 100 -> DistW 50 (ZL_IS)",
+   "fluidInputs": [{"fluid": "gt6:cactuswater", "amount": 100}],
+   "fluidOutputs": [{"fluid": "gt6:distilled_water", "amount": 50}],
+   "duration": 80,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:567 \u2014 Sap_Maple 125 -> Syrup_Maple 50 + DistW 50",
+   "fluidInputs": [{"fluid": "gt6:maplesap", "amount": 125}],
+   "fluidOutputs": [{"fluid": "gt6:maplesyrup", "amount": 50}, {"fluid": "gt6:distilled_water", "amount": 50}],
+   "duration": 80,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:568 \u2014 Juice_Lemon 4 -> Alcopops 2 (ZL_IS)",
+   "fluidInputs": [{"fluid": "gt6:juicelemon", "amount": 4}],
+   "fluidOutputs": [{"fluid": "gt6:alcopops", "amount": 2}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:569 \u2014 Juice_Lime 4 -> Alcopops 2 (ZL_IS)",
+   "fluidInputs": [{"fluid": "gt6:juicelime", "amount": 4}],
+   "fluidOutputs": [{"fluid": "gt6:alcopops", "amount": 2}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:570 \u2014 Juice_Potato 4 -> Vodka 2 (ZL_IS)",
+   "fluidInputs": [{"fluid": "gt6:potatojuice", "amount": 4}],
+   "fluidOutputs": [{"fluid": "gt6:vodka", "amount": 2}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:571 \u2014 Rum_White 2 -> Rum_Dark 1 (ZL_IS)",
+   "fluidInputs": [{"fluid": "gt6:rumwhite", "amount": 2}],
+   "fluidOutputs": [{"fluid": "gt6:rumdark", "amount": 1}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:572 \u2014 ShortMead 2 -> Mead 1 (ZL_IS)",
+   "fluidInputs": [{"fluid": "gt6:short_mead", "amount": 2}],
+   "fluidOutputs": [{"fluid": "gt6:mead", "amount": 1}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:573 \u2014 Vodka 2 -> Vodka 1 (the aBuffered=F leg \u2014 row-level flags are v1-out, the loader keeps its defaults)",
+   "fluidInputs": [{"fluid": "gt6:vodka", "amount": 2}],
+   "fluidOutputs": [{"fluid": "gt6:vodka", "amount": 1}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:574 \u2014 Rum_Dark 2 -> Rum_Dark 1 (the aBuffered=F leg \u2014 row-level flags are v1-out, the loader keeps its defaults)",
+   "fluidInputs": [{"fluid": "gt6:rumdark", "amount": 2}],
+   "fluidOutputs": [{"fluid": "gt6:rumdark", "amount": 1}],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:575 \u2014 Sap 125 -> DistW 50 + Sugar dust (the (T,T,F,F,F) flag legs are v1-out, the loader keeps its defaults)",
+   "fluidInputs": [{"fluid": "gt6:sap", "amount": 125}],
+   "outputs": [{"item": "gt6:dust_sugar", "count": 1}],
+   "fluidOutputs": [{"fluid": "gt6:distilled_water", "amount": 50}],
+   "duration": 80,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:576 \u2014 Chili dust + Sauce_Hot 750 -> Sauce_Diabolo 750",
+   "inputs": [{"item": "gt6:dust_chili", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:hotsauce", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:diabolosauce", "amount": 750}],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:577 \u2014 Chili dust + Sauce_Diabolo 750 -> Sauce_Diablo 750",
+   "inputs": [{"item": "gt6:dust_chili", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:diabolosauce", "amount": 750}],
+   "fluidOutputs": [{"fluid": "gt6:diablosauce", "amount": 750}],
+   "duration": 128,
+   "eut": 64
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:578 \u2014 Gunpowder dust + Sauce_Diablo 250 -> Sauce_Cow_Level 250",
+   "inputs": [{"item": "gt6:dust_gunpowder", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:diablosauce", "amount": 250}],
+   "fluidOutputs": [{"fluid": "gt6:diablosauce_strong", "amount": 250}],
+   "duration": 128,
+   "eut": 64
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:579 \u2014 Gunpowder dust + Lemonade 250 -> Grenade_Juice 250",
+   "inputs": [{"item": "gt6:dust_gunpowder", "count": 1}],
+   "fluidInputs": [{"fluid": "gt6:lemonade", "amount": 250}],
+   "fluidOutputs": [{"fluid": "gt6:cavejohnsonsgrenadejuice", "amount": 250}],
+   "duration": 128,
+   "eut": 64
+  }
+ ]
+}

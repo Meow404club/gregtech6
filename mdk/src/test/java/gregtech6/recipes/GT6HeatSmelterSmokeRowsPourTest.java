@@ -66,16 +66,17 @@ public class GT6HeatSmelterSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 	@Test
 	void theThreeShippedSmokeFilesPourIntoTheirMaps() throws Exception {
 		// the fuels_hot per-key poured count ratcheted 1 → 14 (the card-④ FM.Hot true rows
-		// appended behind the :196 hot_water row, itself upgraded to the true-row framing;
-		// smelter/melter keep their single smoke rows)
-		java.util.Map<String, Integer> tExpected = java.util.Map.of("smelter", 1, "melter", 1, "fuels_hot", 14);
+		// appended behind the :196 hot_water row, itself upgraded to the true-row framing);
+		// smelter/melter ratcheted 1 → 10 (the food-recipes-t2 append: the :699-707/:709-717
+		// eight cooking oils + ice melt behind the smoke rows)
+		java.util.Map<String, Integer> tExpected = java.util.Map.of("smelter", 10, "melter", 10, "fuels_hot", 14);
 		for (String tKey : new String[] {"smelter", "melter", "fuels_hot"}) {
 			pourShipped(tKey);
 			assertEquals(tExpected.get(tKey), GT6RecipeMapJsonLoader.pouredCount(tKey), tKey + ": the poured row count");
 			assertNotNull(GT6RecipeMapJsonLoader.mapFor(tKey), tKey + ": the whitelist key resolves its map");
 		}
-		assertEquals(1, GT6RecipeMaps.SMELTER.mRecipeList.size(), "the smelter map holds the ice smoke row");
-		assertEquals(1, GT6RecipeMaps.MELTER.mRecipeList.size(), "the melter map holds the ice smoke row");
+		assertEquals(10, GT6RecipeMaps.SMELTER.mRecipeList.size(), "the smelter map holds the ice smoke row + the food-recipes-t2 oil face");
+		assertEquals(10, GT6RecipeMaps.MELTER.mRecipeList.size(), "the melter map holds the ice smoke row + the food-recipes-t2 oil face");
 		// task w4-hot-lube appended the 13 FM.Hot true rows behind the W3 smoke row —
 		// the ratchet: 14 rows now, the smoke row still among them (pinned by content below)
 		assertEquals(14, GT6RecipeMaps.FUELS_HOT.mRecipeList.size(), "the fuels_hot map: the :196 hot-water TRUE row (the review-round upgrade from the smoke-row framing) + the 13 card-④ FM.Hot rows");
@@ -85,11 +86,21 @@ public class GT6HeatSmelterSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 	void theIceRowsCarryTheUpstreamChemLoaderParameters() throws Exception {
 		pourShipped("smelter");
 		pourShipped("melter");
-		Recipe tSmelterRow = GT6RecipeMaps.SMELTER.mRecipeList.iterator().next();
+		// the smoke rows are matched BY CONTENT now (the food-recipes-t2 oil rows ride
+		// beside them; the row list is unordered) — the smoke face is the 2000-tick melt
+		Recipe tSmelterRow = null;
+		for (Recipe tCandidate : GT6RecipeMaps.SMELTER.mRecipeList) {
+			if (tCandidate.mDuration == 2000) tSmelterRow = tCandidate;
+		}
+		assertNotNull(tSmelterRow, "the smelter smoke row still pours (content-matched)");
 		assertEquals(16L, tSmelterRow.mEUt, "the smelter row's eut 16 (Loader_Recipes_Chem.java:501)");
 		assertEquals(2000L, tSmelterRow.mDuration, "the smelter row's duration 2000 (= the :501 1000*2)");
 		assertEquals(1000, tSmelterRow.mFluidOutputs[0].getAmount(), "the smelter row melts to 1000 L water");
-		Recipe tMelterRow = GT6RecipeMaps.MELTER.mRecipeList.iterator().next();
+		Recipe tMelterRow = null;
+		for (Recipe tCandidate : GT6RecipeMaps.MELTER.mRecipeList) {
+			if (tCandidate.mDuration == 2000) tMelterRow = tCandidate;
+		}
+		assertNotNull(tMelterRow, "the melter smoke row still pours (content-matched)");
 		assertEquals(16L, tMelterRow.mEUt, "the melter row's eut 16 (Loader_Recipes_Chem.java:486)");
 		assertEquals(2000L, tMelterRow.mDuration, "the melter row's duration 2000");
 	}
