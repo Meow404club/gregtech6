@@ -44,6 +44,7 @@ import gregtech6.block.energy.GTTransformerRotationBlock;
 import gregtech6.block.material.GTMaterialPrefixBlock;
 import gregtech6.block.sensors.GTSensorBlock;
 import gregtech6.block.tank.GT6CellBlock; // task small-tank-cell
+import gregtech6.block.tank.GT6CupBlock; // task small-tank-cup
 import gregtech6.block.stone.GTStoneBlock;
 import gregtech6.block.stone.StoneVariant;
 import gregtech6.block.surface.GT6SurfaceVariants;
@@ -290,6 +291,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addMeasuringPot(); // task issue45-c3 — the Measuring Pot (the two-layer colored+overlay sub-cube tub)
         addGasCylinders(); // task small-tank-gas-cylinder — the four gas cylinders (the one shared static bell model, no fluid pass)
         addCells(); // task small-tank-cell — the 40 Capsule-Cell-Container rows (the one shared per-level model family)
+        addCup(); // task small-tank-cup — the Porcelain Cup bowl (the 1px-wall per-level model family)
     }
 
     /**
@@ -4748,6 +4750,93 @@ public final class GT6BlockStates extends BlockStateProvider {
         for (Direction tDir : Direction.values()) {
             tElement.face(tDir).texture("#" + tBand + "insides").end();
         }
+        tElement.end();
+    }
+
+    /**
+     * The Porcelain Cup bowl (task small-tank-cup) — the upstream render-pass geometry
+     * MultiTileEntityCup.java:43-50 as elements: four 1px walls (y 1..5, the pass 0-3
+     * boxes verbatim — the corners stay open like upstream) + the bottom slab (the pass-4
+     * box), every element over the colored band (walls: outer=sides, inner=insides, the
+     * rim top edge=top; the slab: down=bottom, the interior floor rides the top tile after
+     * the upstream pass-4/SIDE_Y_POS mapping :73) each duplicated by a 0.01-inflated
+     * overlay shell (the blank overlay set — grammar parity), cutout — the sides window is
+     * genuinely transparent. Levels 1..8 parent the shell and APPEND the fluid box (the
+     * candle idiom): flat eighth-fractions of the 4px interior, from 0.05px above the
+     * slab plane, riding the smeltery_content placeholder (the declared ceiling — the
+     * static model cannot know the BE's actual fluid).
+     */
+    private void addCup() {
+        BlockModelBuilder tEmpty = models().getBuilder("porcelain_cup_empty")
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("sides", modLoc("block/cup/colored_sides"))
+                .texture("top", modLoc("block/cup/colored_top"))
+                .texture("bottom", modLoc("block/cup/colored_bottom"))
+                .texture("insides", modLoc("block/cup/colored_insides"))
+                .texture("overlay_sides", modLoc("block/cup/overlay_sides"))
+                .texture("overlay_top", modLoc("block/cup/overlay_top"))
+                .texture("overlay_bottom", modLoc("block/cup/overlay_bottom"))
+                .texture("overlay_insides", modLoc("block/cup/overlay_insides"))
+                .texture("particle", "#sides")
+                .renderType("cutout");
+        // the pass 0-3 walls verbatim: west (5,1,6→6,5,10), east (10,1,6→11,5,10),
+        // north (6,1,5→10,5,6), south (6,1,10→10,5,11) — plus their 0.01 overlay twins
+        cupWallBox(tEmpty, 5.0F, 1.0F, 6.0F, 6.0F, 5.0F, 10.0F, "");
+        cupWallBox(tEmpty, 10.0F, 1.0F, 6.0F, 11.0F, 5.0F, 10.0F, "");
+        cupWallBox(tEmpty, 6.0F, 1.0F, 5.0F, 10.0F, 5.0F, 6.0F, "");
+        cupWallBox(tEmpty, 6.0F, 1.0F, 10.0F, 10.0F, 5.0F, 11.0F, "");
+        cupWallBox(tEmpty, 4.99F, 0.99F, 5.99F, 6.01F, 5.01F, 10.01F, "overlay_");
+        cupWallBox(tEmpty, 9.99F, 0.99F, 5.99F, 11.01F, 5.01F, 10.01F, "overlay_");
+        cupWallBox(tEmpty, 5.99F, 0.99F, 4.99F, 10.01F, 5.01F, 6.01F, "overlay_");
+        cupWallBox(tEmpty, 5.99F, 0.99F, 9.99F, 10.01F, 5.01F, 11.01F, "overlay_");
+        // the pass-4 bottom slab (6,0,6→10,1,10) — down=bottom, the interior floor=top (the :73 mapping)
+        cupSlab(tEmpty, 6.0F, 0.0F, 6.0F, 10.0F, 1.0F, 10.0F, "");
+        cupSlab(tEmpty, 5.99F, -0.01F, 5.99F, 10.01F, 1.01F, 10.01F, "overlay_");
+        BlockModelBuilder[] tFilled = new BlockModelBuilder[9];
+        for (int tLevel = 1; tLevel <= 8; tLevel++) {
+            float tTop = 1.05F + tLevel * 3.5F / 8.0F;
+            BlockModelBuilder tModel = models().getBuilder("block/porcelain_cup_filled_" + tLevel)
+                    .parent(tEmpty)
+                    .texture("content", modLoc("block/smeltery_content"));
+            BlockModelBuilder.ElementBuilder tElement = tModel.element()
+                    .from(6.0F, 1.05F, 6.0F).to(10.0F, tTop, 10.0F);
+            for (Direction tDir : Direction.values()) {
+                tElement.face(tDir).texture("#content").end();
+            }
+            tElement.end();
+            tFilled[tLevel] = tModel;
+        }
+        Block tCup = gregtech6.registry.GT6Cups.PORCELAIN_CUP.get();
+        getVariantBuilder(tCup).forAllStates(aState -> {
+            int tLevel = aState.getValue(GT6CupBlock.LIQUID_LEVEL);
+            return ConfiguredModel.builder().modelFile(tLevel == 0 ? tEmpty : tFilled[tLevel]).build();
+        });
+        itemModels().withExistingParent("porcelain_cup", tEmpty.getLocation());
+    }
+
+    /** One wall box at x=aMinX..aMaxX, z=aMinZ..aMaxZ: the outer face = sides, the inner face = insides, the rim top = top (the :73 SIDE_Y_POS non-5 mapping), both overlay bands ride the prefix. */
+    private void cupWallBox(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ, float aMaxX, float aMaxY, float aMaxZ, String aBand) {
+        BlockModelBuilder.ElementBuilder tElement = aModel.element().from(aMinX, aMinY, aMinZ).to(aMaxX, aMaxY, aMaxZ);
+        boolean tWestFacing = aMinX < 8.0F && (aMaxX - aMinX) < 2.0F; // the wall hugging the west edge → its west face is the outer
+        tElement.face(Direction.WEST).texture("#" + aBand + (tWestFacing ? "sides" : "insides")).end();
+        tElement.face(Direction.EAST).texture("#" + aBand + (tWestFacing ? "insides" : "sides")).end();
+        boolean tNorthFacing = aMinZ < 8.0F && (aMaxZ - aMinZ) < 2.0F;
+        tElement.face(Direction.NORTH).texture("#" + aBand + (tNorthFacing ? "sides" : "insides")).end();
+        tElement.face(Direction.SOUTH).texture("#" + aBand + (tNorthFacing ? "insides" : "sides")).end();
+        tElement.face(Direction.UP).texture("#" + aBand + "top").end();
+        tElement.face(Direction.DOWN).texture("#" + aBand + "sides").end();
+        tElement.end();
+    }
+
+    /** The bottom slab: down=bottom, every other face the interior mapping (up=top after the :73 pass-4/SIDE_Y_POS form, horizontals=sides). */
+    private void cupSlab(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ, float aMaxX, float aMaxY, float aMaxZ, String aBand) {
+        BlockModelBuilder.ElementBuilder tElement = aModel.element().from(aMinX, aMinY, aMinZ).to(aMaxX, aMaxY, aMaxZ);
+        tElement.face(Direction.DOWN).texture("#" + aBand + "bottom").end();
+        tElement.face(Direction.UP).texture("#" + aBand + "top").end();
+        tElement.face(Direction.NORTH).texture("#" + aBand + "sides").end();
+        tElement.face(Direction.SOUTH).texture("#" + aBand + "sides").end();
+        tElement.face(Direction.WEST).texture("#" + aBand + "sides").end();
+        tElement.face(Direction.EAST).texture("#" + aBand + "sides").end();
         tElement.end();
     }
 }

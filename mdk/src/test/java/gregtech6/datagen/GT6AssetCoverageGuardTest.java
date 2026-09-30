@@ -96,6 +96,7 @@ import gregtech6.registry.GT6Boilers;
 import gregtech6.registry.GT6Books;
 import gregtech6.registry.GT6BurningBoxes;
 import gregtech6.registry.GT6Crucibles;
+import gregtech6.registry.GT6Cups;
 import gregtech6.registry.GT6CrystalChargers;
 import gregtech6.registry.GT6Distillation;
 import gregtech6.registry.GT6DynamoHousings;
@@ -306,6 +307,7 @@ public class GT6AssetCoverageGuardTest {
 			GT6Lasers.class, GT6Logistics.class, GT6LongDistanceTransformers.class,
 			GT6LongDistPipes.class, GT6LongDistWires.class, GT6MagicAbsorbers.class, GT6Molds.class,
 			GT6Cells.class, // task small-tank-cell — the 40 Capsule-Cell-Container rows
+			GT6Cups.class, // task small-tank-cup — the Porcelain Cup row (block + raw item)
 			GT6MeasuringPot.class, // task issue45-c3 — the measuring pot family (block + raw item)
 			GT6GasCylinders.class, // task small-tank-gas-cylinder — the four Fluid Containers rows
 			GT6Placeables.class, GT6Portals.class, GT6QuantumEnergizers.class, GT6Rails.class,

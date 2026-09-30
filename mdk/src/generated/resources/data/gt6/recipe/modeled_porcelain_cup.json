@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:dust_porcelain"
+    },
+    "R": {
+      "tag": "gt6:tools/rolling_pin"
+    },
+    "k": {
+      "tag": "gt6:tools/knife"
+    }
+  },
+  "pattern": [
+    "kPR"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:modeled_porcelain_cup"
+  }
+}

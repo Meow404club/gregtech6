@@ -1749,6 +1749,10 @@ for _table in (VOTED_TAGPREFIXES, HAND_TAGPREFIXES):
 # retired with the composed face (task oven-heat-t-ladder — the composed machine word is
 # 熔炉 per lang-batch2-fixes). wire_electric = the × convention on the atomic legacy keys.
 BLOCK_BACKFILL = {
+    # task small-tank-cup — the Porcelain Cup pair (Loader :2094 id 32739 + the raw
+    # randomtools meta 899), the dump faces verbatim
+    "block.gt6.porcelain_cup": "瓷杯",                    # dump gt.multitileentity.32739 verbatim (task small-tank-cup)
+    "item.gt6.modeled_porcelain_cup": "已成型的瓷杯",          # dump gt.multiitem.randomtools.899 verbatim (task small-tank-cup)
     # task small-tank-cell — the 40 Capsule-Cell-Container rows (Loader :1770-1809,
     # ids 32600-32639), the dump MTE faces verbatim: tmp/gregtech.lang:13481-13520
     "block.gt6.cell_wax": "蜡",                       # dump gt.multitileentity.32600 verbatim (task small-tank-cell)

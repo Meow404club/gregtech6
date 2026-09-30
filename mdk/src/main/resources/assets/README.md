@@ -11048,3 +11048,40 @@ upstream `cell/<layer>/<face>.png` → `block/cell/<layer>_<face>.png`.
 - `block/cell/overlay_insides.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cell/overlay/insides.png`; byte-identical to overlay_sides)
 - `block/cell/overlay_top.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cell/overlay/top.png`; byte-identical to overlay_sides)
 - `block/cell/overlay_bottom.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cell/overlay/bottom.png`; byte-identical to overlay_sides)
+
+## task small-tank-cup (2026-10-01) — the Porcelain Cup 9-tile borrow
+
+Borrowed from **GregTech 6** (https://github.com/GregTech6/gregtech6), snapshot
+`tmp/gt6-1.7.10`, `src/main/resources/assets/gregtech/textures/blocks/machines/
+tanks/cup/` + `textures/items/gt.multiitem.randomtools/899.png`: the 9 PNGs below
+(byte-identical, `cmp` clean, sha256 verified per file) are the upstream tile set of
+the Porcelain Cup (MultiTileEntityCup.java:55-63 — colored + overlay over {sides,
+insides, top, bottom}, the 4+4 set; all four `overlay` tiles are the one fully-
+transparent upstream placeholder tile, byte-identical to each other AND to the cell
+set's; the colored top and bottom tiles are the same file upstream — both hash
+`c256f570…`, the flat-rim rim/floor tile).
+
+The port mounts them on the shared static elements model (the small-tank-cell
+grammar): the four 1px wall elements + the bottom slab carry the colored band
+(walls: outer=sides, rim top edge=top; the slab: down=bottom, the interior floor
+rides the top tile after the upstream pass-4/SIDE_Y_POS mapping, MultiTileEntityCup
+.java:72-73), the insides boxes show through the 16-transparent-pixel window of the
+colored sides tile, and the per-level fluid element (levels 1..8, `LIQUID_LEVEL`
+0..8 after the crucible bowl / cell form) rides the `smeltery_content` placeholder
+sprite — the static model cannot know the BE's actual fluid, the declared ceiling.
+Each shell element is duplicated by a 0.01-inflated overlay shell (the overlay
+tiles are blank upstream — they ride along so future overlay art lands without
+model change). The colored band ships UN-TINTED — the measuring-pot declared
+deviation (`ponytail:` a tintindex-0 + GTMachinePaintTint dispatch row lands it
+without model change when the render pool gets to it). Path mapping: upstream
+`cup/<layer>/<face>.png` → `block/cup/<layer>_<face>.png`.
+
+- `block/cup/colored_sides.png` — `a0f89c312f9893c111e322de2fa4904400d6f52b17c3325c9cc9d897228c64c2` (upstream `cup/colored/sides.png`)
+- `block/cup/colored_insides.png` — `f473154c5fa57694fdfdcb7fed48b1a612979144da3a226ba5d6b20e39e4ae2a` (upstream `cup/colored/insides.png`)
+- `block/cup/colored_top.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `cup/colored/top.png`; byte-identical to colored_bottom)
+- `block/cup/colored_bottom.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `cup/colored/bottom.png`)
+- `block/cup/overlay_sides.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cup/overlay/sides.png`; the shared blank tile)
+- `block/cup/overlay_insides.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cup/overlay/insides.png`; byte-identical to overlay_sides)
+- `block/cup/overlay_top.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cup/overlay/top.png`; byte-identical to overlay_sides)
+- `block/cup/overlay_bottom.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cup/overlay/bottom.png`; byte-identical to overlay_sides)
+- `item/modeled_porcelain_cup.png` — `36cec9451e3b27c46467b0daea2af2a8b85cd9132852d0d131048aa975f78260` (upstream `gt.multiitem.randomtools/899.png`, MultiItemRandomTools.java:76 — the raw item icon)
