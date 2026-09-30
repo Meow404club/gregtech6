@@ -732,6 +732,9 @@ HAND_TRANSLATIONS = {
     "gt6.tooltip.boiler_large.16": ("使用建筑之杖快速搭建结构", "hand"),
     "gt6.tooltip.boiler_large.17": ("使用放大镜观察细节", "hand"),
     "gt6.tooltip.boiler_large.18": ("使用扳手设置朝向", "hand"),
+    # task r10-debt-boilerlarge-tip (GitHub #17 UX): port-authored row, the boiler.14
+    # sister line — the gate is LargeBoiler :203-207 tick-body-only (same ruling)
+    "gt6.tooltip.boiler_large.19": ("蒸汽储量过半后才会对外输出!", "hand"),
     "gt6.tooltip.tank.1": ("Capacity: %s L", "hand"),
     "gt6.tooltip.barrel.3": ("没有界面，手持小型漏斗或龙头右键进行交互!", "hand"),
     "gt6.tooltip.barrel.4": ("进入此容器的任何能量介质流体都将湮灭!", "hand"),

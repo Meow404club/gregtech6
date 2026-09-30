@@ -69,12 +69,13 @@ public class GT6TooltipsTest {
 	}
 
 	@Test
-	public void boilerLargeRegistryPinsTheEighteenRowTable() {
+	public void boilerLargeRegistryPinsTheNineteenRowTable() {
 		List<GT6Tooltips.GT6TooltipLine> tRows = GT6Tooltips.REGISTRY.get("boiler_large");
 		// MultiTileEntityLargeBoiler.addToolTips :150-167 = rows 1-15 (the STRUCTURE block
 		// :151-155 over the :143-146 keys) + TileEntityBase10MultiBlockBase.java:100-101 =
-		// rows 16-17 + the facing row :61 = row 18
-		assertEquals(18, tRows.size(), "the boiler_large family = the 18-row upstream table");
+		// rows 16-17 + the facing row :61 = row 18 — row 19 = the port-authored annex
+		// (task r10-debt-boilerlarge-tip, the issue #17 output-condition sister line)
+		assertEquals(19, tRows.size(), "the boiler_large family = the 18-row upstream table + the .19 port-authored annex");
 		for (int i = 0; i < 18; i++) {
 			assertEquals("gt6.tooltip.boiler_large." + (i + 1), tRows.get(i).key(), "row " + (i + 1) + " rides its upstream position");
 		}
@@ -88,6 +89,10 @@ public class GT6TooltipsTest {
 		assertSame(ChatFormatting.GOLD, tRows.get(11).style());     // :162 REQUIREMENT_WATER_PURE
 		assertSame(ChatFormatting.DARK_RED, tRows.get(12).style()); // :163 HAZARD_EXPLOSION_STEAM
 		assertSame(ChatFormatting.DARK_GRAY, tRows.get(15).style()); // 10MultiBlockBase:100 builder wand
+		// the port-authored annex tails the upstream block, never renumbers it — ORANGE,
+		// the requirement-band color its small-boiler sibling (boiler.14) rides
+		assertEquals("gt6.tooltip.boiler_large.19", tRows.get(18).key());
+		assertSame(ChatFormatting.GOLD, tRows.get(18).style());
 	}
 
 	@Test
