@@ -72,6 +72,15 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * the box's mEnergyType is EU (the row column), so LU batteries fail the canInsertItem2
  * gate and never enter, and an LU getEnergyStored sum reads 0 per-battery.
  *
+ * <h2>The GUI face (task batterybox-gui — the R-L census A1 card)</h2>
+ * The base implements {@link gregtech6.gui.machines.GT6MuiMachine}: the upstream
+ * {@code getGUIServer2/getGUIClient2} (:195-196, the {@code ContainerCommonDefault}
+ * chest-grid) re-expressed as the {@link gregtech6.gui.machines.GT6BatteryBoxMUI}
+ * panel — ONE implementation over the whole family (the 12 BatteryBoxes, the 20
+ * Crystal Chargers and the 2 ZPM Dechargers all ride this class; the Charger and
+ * Decharger BEs subclass it). The open arm is the block's {@code use()} dispatch
+ * (the MUI factory chain, zero MenuType — the P26 ruling).
+ *
  * <p>NBT (the upstream literal keys, CS.java): {@code gt.energy} (the buffer), {@code
  * gt.mode}, {@code gt.active}, {@code gt.stopped}, {@code gt.active.energy} (the
  * {@link #mEmitsEnergy} display lane), {@code gt.input}/{@code gt.output} (the row
@@ -79,7 +88,8 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * read form) plus the port's {@code facing}/{@code inventory} carriers (the hopper
  * shape). KJS surface: none (behavior + registration face is deferred — the KJS pool).
  */
-public class GT6BatteryBoxBlockEntity extends TileEntityBase03TicksAndSync implements ITileEntityEnergy {
+public class GT6BatteryBoxBlockEntity extends TileEntityBase03TicksAndSync implements ITileEntityEnergy,
+		gregtech6.gui.machines.GT6MuiMachine {
 
 	// upstream CS.java literals
 	public static final String NBT_ENERGY = "gt.energy";
@@ -204,6 +214,20 @@ public class GT6BatteryBoxBlockEntity extends TileEntityBase03TicksAndSync imple
 	/** The family slot count (the :216 invsize term). */
 	public int slots() {
 		return mSlots;
+	}
+
+	/**
+	 * The family GUI (the upstream getGUIServer2 :195-196 seat — the
+	 * {@code ContainerCommonDefault} chest-grid over the NBT_INV_SIZE slots): the
+	 * {@link gregtech6.gui.machines.GT6BatteryBoxMUI} panel, parameterized by
+	 * {@link #slots()} (1/4/16 — the ZPM Decharger, the small and the Large rows).
+	 * Both legs build it inside the MUI factory chain (the IUIHolder buildUI contract);
+	 * the open arm is the block's {@code use()}.
+	 */
+	@Override
+	public brachy.modularui.screen.ModularPanel<?> buildUI(brachy.modularui.factory.PosGuiData aData,
+			brachy.modularui.value.sync.PanelSyncManager aSyncManager, brachy.modularui.screen.UISettings aSettings) {
+		return gregtech6.gui.machines.GT6BatteryBoxMUI.panel(this, aSyncManager);
 	}
 
 	GTItemStackHandler inv() { // package-private: the offline test seeding seam
