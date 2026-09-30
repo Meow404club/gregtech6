@@ -151,6 +151,16 @@ public final class GT6Foods {
 						for (RegistryObject<Item> tRow : GT6BakeFoods.FOODS) {
 							aOutput.accept(new ItemStack(tRow.get()));
 						}
+						// task food-crop-items: the T5a berry/nut/fruit band + the fodder family
+						// ride the SAME "GregTech: Nature & Foods" tab (all 61 rows are
+						// MultiItemFood items — the upstream per-multiitem tab discipline; the
+						// T1 rows lead, the T5a tail appends)
+						for (RegistryObject<Item> tRow : GT6CropFoods.FOODS) {
+							aOutput.accept(new ItemStack(tRow.get()));
+						}
+						for (RegistryObject<Item> tRow : GT6CropFoods.PLAINS) {
+							aOutput.accept(new ItemStack(tRow.get()));
+						}
 					})
 					.build());
 
@@ -185,7 +195,9 @@ public final class GT6Foods {
 	/**
 	 * The food item — a vanilla food Item plus the registration-row desc tooltip (the
 	 * GTPistolItem appendHoverText face; the eat walk is the vanilla default, the
-	 * upstream container/alwaysEdible/potion channels are the declared pool).
+	 * upstream container/alwaysEdible/potion channels are the declared pool). A
+	 * {@code null} tooltip key (the upstream {@code ""} desc rows, task food-crop-items)
+	 * emits no tooltip line — a missing lang key would render the RAW key at runtime.
 	 */
 	public static class GT6FoodItem extends Item {
 
