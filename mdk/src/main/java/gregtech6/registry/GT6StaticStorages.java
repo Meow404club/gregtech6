@@ -210,6 +210,20 @@ public final class GT6StaticStorages {
 		return rBlocks.toArray(new Block[0]);
 	}
 
+	/**
+	 * The eight METAL-row blocks (task tint-coverage-batch — the locker/drawer/safe pair
+	 * kinds over the Bronze/Steel anchors): the tint-walk registration payload, since only
+	 * these carry a grayscale {@code colored_*} body (the bookshelf/bottlecrate rows are
+	 * the vanilla-finished plank art, the stone precedent — never wrapped).
+	 */
+	public static Block[] metalBlockArray() {
+		List<Block> rBlocks = new ArrayList<>();
+		for (StaticRow tRow : ROWS) {
+			if (tRow.material() != null) rBlocks.add(BLOCKS_BY_PATH.get(tRow.path()).get());
+		}
+		return rBlocks.toArray(new Block[0]);
+	}
+
 	/** The lookup for the data-driven place arms — null for an unknown path. */
 	@Nullable
 	public static Block blockByPath(String aPath) {
@@ -255,6 +269,20 @@ public final class GT6StaticStorages {
 		/** The registration row (the block-carrier config read). */
 		public StaticRow row() {
 			return mRow;
+		}
+
+		/**
+		 * The storage-domain material dispatch (task tint-coverage-batch, the
+		 * {@code GTBarrelBlock.materialOf} mirror shape): the metal rows resolve their
+		 * loader anchor (Bronze :191 / Steel :202 — the hopper-family ruling) through the
+		 * row carrier, the wooden rows answer null (the vanilla-finished plank art keeps
+		 * the white identity, the stone precedent). Every non-storage block is null here.
+		 */
+		@Nullable
+		public static gregapi.oredict.OreDictMaterial materialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
+			if (!(aBlock instanceof GT6StorageBlock tStorage)) return null;
+			StaticMaterial tMaterial = tStorage.row().material();
+			return tMaterial == null ? null : tMaterial.mt();
 		}
 
 		@Override

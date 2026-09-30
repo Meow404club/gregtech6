@@ -28,6 +28,8 @@ import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GT6BeeHives;
+import gregtech6.registry.GT6Reactors;
+import gregtech6.registry.GT6StaticStorages;
 import gregtech6.registry.GTBarrels;
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.registry.GT6Tools;
@@ -63,6 +65,7 @@ public final class GTClientHandlers {
         modBus.addListener(GTClientHandlers::onRegisterBarrelPaintItemColors); // task barrel-paint-render: barrel paint tint, inventory half
         modBus.addListener(GTClientHandlers::onRegisterBeePaintItemColors); // task beehive-tint + 15-hive-jade-tint: the bee trio paint tint, inventory half
         modBus.addListener(GTClientHandlers::onRegisterToolIdentityItemColors); // task identity-seam: the crowbar material identity tint, inventory half
+        modBus.addListener(GTClientHandlers::onRegisterStorageReactorPaintItemColors); // task tint-coverage-batch: the metal storage + reactor row tint, inventory half
     }
 
     /** Material tint for every registered material prefix item (GTCEu TagPrefixItem.java:55-57 isomorph). */
@@ -255,6 +258,49 @@ public final class GTClientHandlers {
         // index 2 = the handle pass (the secondary, the Spruce fallback), the overlays
         // stay the -1 sentinel (GT6ToolLadder.fourPassTintARGB).
         event.getItemColors().register(GT6ToolLadder::fourPassTintARGB, GT6Tools.SCREWDRIVER.get(), GT6Tools.HAMMER.get());
+        // task tint-coverage-batch: the file (the 锉刀全白 root cause — its four-layer
+        // model GT6ItemModels :117-121 carries the grayscale tool_head_file + handle
+        // pairs with NO ItemColor) and the nine un-tinted single-tier families join the
+        // SAME fourPassTintARGB face. The composed two-layer forms (club/scissors/scoop/
+        // plunger/branch_cutter/hand_drill/rolling_pin/bending_cylinder pair) have a VOID
+        // handle, so their index-2 arm draws nothing and the whole grayscale sprite
+        // tints with the head pass — the upstream getRGBa modulation over the composed
+        // icon (the layer0 = the borrow, GT6ItemModels :630-633). The identity-less
+        // single tier rides the fallbacks: the Steel head / the Spruce handle.
+        event.getItemColors().register(GT6ToolLadder::fourPassTintARGB,
+                fourPassToolItems().stream().map(RegistryObject::get).toArray(Item[]::new));
+    }
+
+    /**
+     * The four-pass tool-family registration seam (task tint-coverage-batch) — the exact
+     * array the event handler registers {@link GT6ToolLadder#fourPassTintARGB} over,
+     * hoisted so the offline census pin drives the real membership (the
+     * {@link #beePaintItems()} shape; the {@code RegistryObject} list form so the offline
+     * legs pin {@code getId().getPath()} without touching the live registry).
+     */
+    public static java.util.List<RegistryObject<Item>> fourPassToolItems() {
+        return java.util.List.of(GT6Tools.FILE, GT6Tools.CLUB, GT6Tools.SCISSORS, GT6Tools.SCOOP,
+                GT6Tools.PLUNGER, GT6Tools.BRANCH_CUTTER, GT6Tools.HAND_DRILL, GT6Tools.ROLLING_PIN,
+                GT6Tools.BENDING_CYLINDER, GT6Tools.BENDING_CYLINDER_SMALL);
+    }
+
+    /**
+     * Task tint-coverage-batch: the METAL static-storage rows (the 8 locker/drawer/safe
+     * BlockItems over the Bronze/Steel anchors) and the reactor core BlockItem — the
+     * INVENTORY half of their row-material tint. Their BlockItems parent the block models
+     * (GT6BlockStates :1217/:1340), whose colored_* cube bodies now carry tintindex 0, so
+     * explicit registration is mandatory (a BlockColor does NOT colour its BlockItem AND
+     * the baked world tint cannot colour the creative-tab face, ItemColors.java:25-93).
+     * The shared {@link GTItemPaintTint} lambda resolves the row material through the
+     * combined {@code GTMachinePaintTint.tintMaterialOf} dispatch; the bookshelf/
+     * bottlecrate BlockItems stay OUT (the vanilla-finished plank art — the stone
+     * precedent, the material-less rows keep the white identity).
+     */
+    private static void onRegisterStorageReactorPaintItemColors(RegisterColorHandlersEvent.Item event) {
+        List<Item> tRowTintItems = new ArrayList<>();
+        for (Block tBlock : GT6StaticStorages.metalBlockArray()) tRowTintItems.add(tBlock.asItem());
+        tRowTintItems.add(GT6Reactors.REACTOR_CORE_2X2_ITEM.get());
+        event.getItemColors().register(GTItemPaintTint.itemColor(), tRowTintItems.toArray(Item[]::new));
     }
 
     /** Translation key existence check (Language.getInstance Language.java:83, has :97). */

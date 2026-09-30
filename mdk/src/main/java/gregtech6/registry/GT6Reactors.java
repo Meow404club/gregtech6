@@ -102,6 +102,22 @@ public final class GT6Reactors {
 		}
 		*///?}
 
+		/**
+		 * The reactor-domain material dispatch (task tint-coverage-batch, the
+		 * {@code GTBarrelBlock.materialOf} mirror shape): the single :738 row is its own
+		 * carrier — the one-block domain over a fixed NBT_MATERIAL Pb column needs no
+		 * Supplier ctor (the {@code GTMultiBlockControllerBlock} "the row IS the carrier"
+		 * form). Resolved at tint time (never class-load, the bySlug ruling). The DYNAMIC
+		 * face (the facing-dependent texture routing + the 11-pass rod/fluid render stack,
+		 * Core2x2:320-390) stays with the rod-render-pool card — this arm tints the static
+		 * cube body only, and the GTMachineTintModel wrap guard skips the dynamic model
+		 * once that card lands its own seat.
+		 */
+		@javax.annotation.Nullable
+		public static gregapi.oredict.OreDictMaterial materialOf(@javax.annotation.Nullable net.minecraft.world.level.block.Block aBlock) {
+			return aBlock instanceof ReactorCoreBlock ? gregapi.data.MT.Pb : null;
+		}
+
 		@Override
 		protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> aBuilder) {
 			// no properties — the running/stop visual rides the render pool

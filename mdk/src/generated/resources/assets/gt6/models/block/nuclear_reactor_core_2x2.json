@@ -1,11 +1,58 @@
 {
   "parent": "minecraft:block/cube",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#down",
+          "tintindex": 0
+        },
+        "east": {
+          "cullface": "east",
+          "texture": "#east",
+          "tintindex": 0
+        },
+        "north": {
+          "cullface": "north",
+          "texture": "#north",
+          "tintindex": 0
+        },
+        "south": {
+          "cullface": "south",
+          "texture": "#south",
+          "tintindex": 0
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#up",
+          "tintindex": 0
+        },
+        "west": {
+          "cullface": "west",
+          "texture": "#west",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ]
+    }
+  ],
   "textures": {
     "down": "gt6:block/reactor_core_2x2_face1",
-    "east": "gt6:block/reactor_core_2x2_side1",
+    "east": "gt6:block/reactor_core_2x2_side2",
     "north": "gt6:block/reactor_core_2x2_side1",
+    "particle": "gt6:block/reactor_core_2x2_side1",
     "south": "gt6:block/reactor_core_2x2_side2",
     "up": "gt6:block/reactor_core_2x2_top",
-    "west": "gt6:block/reactor_core_2x2_side2"
+    "west": "gt6:block/reactor_core_2x2_side1"
   }
 }

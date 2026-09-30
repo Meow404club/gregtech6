@@ -6,8 +6,10 @@
  * <ul>
  * <li>the four hit storage groups (lockers/normal, drawers/quad, safes/mechanical,
  *     safes/keylocked — MultiTileEntityLocker.java:100-110, DrawerQuad:132-142,
- *     SafeMechanical:105-111): the sensorModel two-layer faceted form, NO tintindex (the
- *     unpaint deviation), the locker/drawer quad carrying distinct top/bottom art, the
+ *     SafeMechanical:105-111): the sensorModel two-layer faceted form, the body cube the
+ *     tintindex-0 seat since task tint-coverage-batch (the decal plates untinted — the
+ *     P22 contract; the former tex-placeholder-audit "NO tintindex" unpaint deviation is
+ *     retired), the locker/drawer quad carrying distinct top/bottom art, the
  *     safes folding the side art onto the vertical pair;</li>
  * <li>the two hopper groups (automation/hopper + queuehopper, MultiTileEntityHopper
  *     .java:284-293): the boilerModel TBS form with the tint seat OFF and no front art
@@ -96,14 +98,23 @@ class GT6StorageTexDatagenTest {
                 tTextures.get("overlay_down").getAsString(), aBand + ": overlay down");
         assertEquals("gt6:block/" + aBand + "/" + (aDistinctTB ? "overlay_top" : "overlay_side"),
                 tTextures.get("overlay_up").getAsString(), aBand + ": overlay up");
-        // the two-layer split: 7 elements and ZERO tintindex anywhere (the unpaint deviation)
+        // the two-layer split: 7 elements — the body cube is the tintindex-0 seat since
+        // task tint-coverage-batch (the grayscale colored_* art multiplies the row colour,
+        // the GT6StorageBlock.materialOf carrier), the six decal plates stay untinted
+        // (the P22 contract; the former "NO tintindex — the unpaint deviation" declaration
+        // is retired by the same card)
         var tElements = tModel.getAsJsonArray("elements");
         assertEquals(7, tElements.size(), aBand + ": body + 6 decals");
-        for (int i = 0; i < 7; i++) {
+        for (String tFace : tElements.get(0).getAsJsonObject().getAsJsonObject("faces").keySet()) {
+            assertEquals(0, tElements.get(0).getAsJsonObject().getAsJsonObject("faces")
+                            .getAsJsonObject(tFace).get("tintindex").getAsInt(),
+                    aBand + " body face " + tFace + " rides the tintindex-0 seat");
+        }
+        for (int i = 1; i < 7; i++) {
             var tFaces = tElements.get(i).getAsJsonObject().getAsJsonObject("faces");
             for (String tFace : tFaces.keySet()) {
                 assertTrue(!tFaces.getAsJsonObject(tFace).has("tintindex"),
-                        aBand + " element " + i + " face " + tFace + " stays untinted (the unpaint deviation)");
+                        aBand + " decal element " + i + " face " + tFace + " stays untinted (the P22 contract)");
             }
         }
     }
