@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/osmium_elemental"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "material": "osmium_elemental",
+  "pattern": [
+    "sfh",
+    "III",
+    "III"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:bending_cylinder"
+  }
+}

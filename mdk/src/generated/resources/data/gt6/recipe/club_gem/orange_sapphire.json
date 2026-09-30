@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "tag": "c:gems/orange_sapphire"
+    },
+    "H": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "orange_sapphire",
+  "pattern": [
+    " GG",
+    "GGG",
+    "HG "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:club"
+  }
+}

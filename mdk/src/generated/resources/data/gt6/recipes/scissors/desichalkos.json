@@ -1,0 +1,32 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "O": {
+      "item": "gt6:ring_desichalkos"
+    },
+    "P": {
+      "tag": "forge:plates/desichalkos"
+    },
+    "T": {
+      "item": "gt6:screw_desichalkos"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "desichalkos",
+  "pattern": [
+    "PfP",
+    " T ",
+    "OdO"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:scissors"
+  },
+  "show_notification": true
+}

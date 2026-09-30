@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "gt6:tool_head_universal_spade_pink_diamond"
+    },
+    "S": {
+      "item": "gt6:stick_pink_diamond"
+    },
+    "T": {
+      "item": "gt6:screw_pink_diamond"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "material": "pink_diamond",
+  "pattern": [
+    "AT",
+    "Sd"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:universal_spade"
+  },
+  "show_notification": true
+}

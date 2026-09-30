@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "gt6:tool_head_universal_spade_bismuth_bronze"
+    },
+    "S": {
+      "item": "gt6:stick_bismuth_bronze"
+    },
+    "T": {
+      "item": "gt6:screw_bismuth_bronze"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "material": "bismuth_bronze",
+  "pattern": [
+    "AT",
+    "Sd"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:universal_spade"
+  },
+  "show_notification": true
+}

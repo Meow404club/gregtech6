@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "gt6:tool_head_universal_spade_ocean_jasper"
+    },
+    "S": {
+      "item": "gt6:stick_ocean_jasper"
+    },
+    "T": {
+      "item": "gt6:screw_ocean_jasper"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "material": "ocean_jasper",
+  "pattern": [
+    "AT",
+    "Sd"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:universal_spade"
+  }
+}

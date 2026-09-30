@@ -1,0 +1,32 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/nickel"
+    },
+    "S": {
+      "item": "gt6:stick_nickel"
+    },
+    "T": {
+      "item": "gt6:screw_nickel"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "nickel",
+  "pattern": [
+    "PfP",
+    "PdP",
+    "STS"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:branch_cutter"
+  },
+  "show_notification": true
+}

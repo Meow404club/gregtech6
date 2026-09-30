@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "gt6:tool_head_universal_spade_deep_iron"
+    },
+    "S": {
+      "item": "gt6:stick_deep_iron"
+    },
+    "T": {
+      "item": "gt6:screw_deep_iron"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "material": "deep_iron",
+  "pattern": [
+    "AT",
+    "Sd"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:universal_spade"
+  },
+  "show_notification": true
+}

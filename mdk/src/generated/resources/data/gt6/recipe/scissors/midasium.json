@@ -1,0 +1,31 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "O": {
+      "item": "gt6:ring_midasium"
+    },
+    "P": {
+      "tag": "c:plates/midasium"
+    },
+    "T": {
+      "item": "gt6:screw_midasium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "midasium",
+  "pattern": [
+    "PfP",
+    " T ",
+    "OdO"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:scissors"
+  }
+}

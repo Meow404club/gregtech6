@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "gt6:tool_head_universal_spade_golden_amber"
+    },
+    "S": {
+      "item": "gt6:stick_golden_amber"
+    },
+    "T": {
+      "item": "gt6:screw_golden_amber"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "material": "golden_amber",
+  "pattern": [
+    "AT",
+    "Sd"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:universal_spade"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,32 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "O": {
+      "item": "gt6:ring_copper"
+    },
+    "P": {
+      "tag": "forge:plates/copper"
+    },
+    "T": {
+      "item": "gt6:screw_copper"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "copper",
+  "pattern": [
+    "PfP",
+    " T ",
+    "OdO"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:scissors"
+  },
+  "show_notification": true
+}

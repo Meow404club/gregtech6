@@ -1,0 +1,31 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "O": {
+      "item": "gt6:ring_americium241"
+    },
+    "P": {
+      "tag": "c:plates/americium241"
+    },
+    "T": {
+      "item": "gt6:screw_americium241"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "americium241",
+  "pattern": [
+    "PfP",
+    " T ",
+    "OdO"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:scissors"
+  }
+}

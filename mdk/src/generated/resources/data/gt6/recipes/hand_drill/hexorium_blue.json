@@ -1,0 +1,26 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "tag": "forge:rods/wooden"
+    },
+    "X": {
+      "item": "gt6:tool_head_arrow_hexorium_blue"
+    },
+    "Y": {
+      "item": "gt6:bolt_hexorium_blue"
+    }
+  },
+  "material": "hexorium_blue",
+  "pattern": [
+    "  X",
+    "HYH",
+    "YH "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:hand_drill"
+  },
+  "show_notification": true
+}

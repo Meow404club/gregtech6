@@ -97,8 +97,6 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation HAMMER_STONE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hammer_stone");
 	public static final ResourceLocation HAMMER_INGOTS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hammer_ingots");
 	public static final ResourceLocation WRENCH_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "wrench");
-	/** The bending-cylinder self-craft row (task food-can-row0 spec ②) — the result-path convention. */
-	public static final ResourceLocation BENDING_CYLINDER_SMALL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bending_cylinder_small");
 	/** The pocket multitool recipe id (task w5-t7-pocket-eight, the result-path convention). */
 	public static final ResourceLocation POCKET_MULTITOOL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pocket_multitool");
 	/** The empty-food-can crafting row (task food-can-row0 spec ③, MultiItemRandomTools.java:239). */
@@ -196,26 +194,19 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation PICKAXE_CONSTRUCTION_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pickaxe_construction");
 	public static final ResourceLocation SHOVEL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shovel");
 	public static final ResourceLocation SPADE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "spade");
-	public static final ResourceLocation UNIVERSAL_SPADE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "universal_spade");
-	public static final ResourceLocation CLUB_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "club");
 	public static final ResourceLocation AXE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "axe");
 	public static final ResourceLocation AXE_DOUBLE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "axe_double");
 
 	/** The five field-tool row ids (task w5-t4-field-five — the t1 row-id shape). */
 	public static final ResourceLocation HOE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hoe");
 	public static final ResourceLocation PLOW_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "plow");
-	public static final ResourceLocation BRANCH_CUTTER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "branch_cutter");
 	public static final ResourceLocation SENSE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "sense");
-	public static final ResourceLocation HAND_DRILL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hand_drill");
 
-	/** The six scene-tool row ids (task w5-t5-scene-six — the same CR row id shape; the flint pair is TWO rows). */
-	public static final ResourceLocation SCISSORS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "scissors");
-	public static final ResourceLocation SCOOP_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "scoop");
-	public static final ResourceLocation PLUNGER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "plunger");
+	/** The scene-tool row ids (task w5-t5-scene-six — the same CR row id shape; the flint pair is TWO rows). */
 	public static final ResourceLocation FLINT_AND_TINDER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "flint_and_tinder");
 	public static final ResourceLocation FLINT_AND_STEEL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "flint_and_steel");
+	/** The rolling-pin WOOD-route row (Loader_Recipes_Woods.java:237) — the metal/plastic ladder (:250-253) rides the arg-8 band's per-material rows. */
 	public static final ResourceLocation ROLLING_PIN_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "rolling_pin");
-	public static final ResourceLocation BENDING_CYLINDER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bending_cylinder");
 
 	/** The CR.shapeless self-recast row id of a sensor path (task sensors-core) — the path + the {@code _recast} suffix (the grass reverse-row suffix shape). */
 	public static ResourceLocation sensorRecastId(String aPath) {
@@ -237,7 +228,6 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		hammerFromStoneBuilder().save(aConsumer, HAMMER_STONE_ID);
 		hammerFromIngotsBuilder().save(aConsumer, HAMMER_INGOTS_ID);
 		wrenchBuilder().save(aConsumer, WRENCH_ID);
-		bendingCylinderSmallBuilder().save(aConsumer, BENDING_CYLINDER_SMALL_ID);
 		foodCanEmptyBuilder().save(aConsumer, FOOD_CAN_EMPTY_ID);
 		softHammerBuilder().save(aConsumer, SOFT_HAMMER_ID);
 		monkeyWrenchBuilder().save(aConsumer, MONKEY_WRENCH_ID);
@@ -344,31 +334,23 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		pickaxeConstructionBuilder().save(aConsumer, PICKAXE_CONSTRUCTION_ID);
 		shovelBuilder().save(aConsumer, SHOVEL_ID);
 		spadeBuilder().save(aConsumer, SPADE_ID);
-		universalSpadeBuilder().save(aConsumer, UNIVERSAL_SPADE_ID);
 		// task w5-t2-blade-six — the six blade-tool steel-route rows (the dig-tool row shape)
-		clubBuilder().save(aConsumer, CLUB_ID);
 		// task blade-ladder — the three blade forms move to the per-material rows
 		// (the OreProcessing_Tool rows Loader_Tools.java:321-323; the t1 steel-route
-		// convergence placeholders for sword/knife/butchery retire — club stays the
-		// single-tier convergence row, the single-tier-ruling card owns it)
+		// convergence placeholders for sword/knife/butchery retired with the ladder)
 		bladeLadderRows(aConsumer);
 		axeBuilder().save(aConsumer, AXE_ID);
 		axeDoubleBuilder().save(aConsumer, AXE_DOUBLE_ID);
 		// task w5-t4-field-five — the five field-tool steel-route rows (the t1 shape)
 		hoeBuilder().save(aConsumer, HOE_ID);
 		plowBuilder().save(aConsumer, PLOW_ID);
-		branchCutterBuilder().save(aConsumer, BRANCH_CUTTER_ID);
 		senseBuilder().save(aConsumer, SENSE_ID);
-		handDrillBuilder().save(aConsumer, HAND_DRILL_ID);
-		// task w5-t5-scene-six — the six scene-tool rows (the same steel-route shape)
-		scissorsBuilder().save(aConsumer, SCISSORS_ID);
-		scoopBuilder().save(aConsumer, SCOOP_ID);
-		net.minecraft.world.item.Item tRubberPlate = itemOrNull(gregapi.data.OP.plate, gregapi.data.MT.Rubber);
-		if (tRubberPlate != null) plungerBuilder(tRubberPlate).save(aConsumer, PLUNGER_ID); // the CR.ONLY_IF_HAS_RESULT face — no rubber plate, no row
+		// task w5-t5-scene-six — the scene-tool rows (the same steel-route shape; the
+		// universal spade/club/branch cutter/hand drill/scissors/scoop/plunger/
+		// bending cylinders ride the arg-8 per-material band — the w5 anchors retired)
 		flintAndTinderFromFlintAndSteelBuilder().save(aConsumer, FLINT_AND_TINDER_ID);
 		flintAndSteelBuilder().save(aConsumer, FLINT_AND_STEEL_ID);
 		rollingPinBuilder().save(aConsumer, ROLLING_PIN_ID);
-		bendingCylinderBuilder().save(aConsumer, BENDING_CYLINDER_ID);
 		// task w5-t6-electric-nineteen — the fifteen electric rows (the :356-377 convergence)
 		for (ElectricToolRow tRow : electricToolRows()) {
 			tRow.builder().save(aConsumer, tRow.id());
@@ -384,6 +366,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		digLadderRows(aConsumer);
 		// task machine-ladder — the machine family material rows (the identity-stamped walk)
 		machineLadderRows(aConsumer);
+		// task tool-arg8-nine-families — the nine arg-8 direct-craft families + the
+		// rolling-pin metal/plastic ladder (the identity-stamped walk, the w5 anchors retired)
+		toolArg8Rows(aConsumer);
 		// task 39-toolhead-rows — the arg-9 completion band: the 9 missing head families
 		// + the dig/chisel/saw C variants (GitHub #39)
 		toolHeadRows(aConsumer);
@@ -475,7 +460,6 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		hammerFromStoneBuilder().save(aOutput, HAMMER_STONE_ID);
 		hammerFromIngotsBuilder().save(aOutput, HAMMER_INGOTS_ID);
 		wrenchBuilder().save(aOutput, WRENCH_ID);
-		bendingCylinderSmallBuilder().save(aOutput, BENDING_CYLINDER_SMALL_ID);
 		foodCanEmptyBuilder().save(aOutput, FOOD_CAN_EMPTY_ID);
 		softHammerBuilder().save(aOutput, SOFT_HAMMER_ID);
 		monkeyWrenchBuilder().save(aOutput, MONKEY_WRENCH_ID);
@@ -582,31 +566,23 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		pickaxeConstructionBuilder().save(aOutput, PICKAXE_CONSTRUCTION_ID);
 		shovelBuilder().save(aOutput, SHOVEL_ID);
 		spadeBuilder().save(aOutput, SPADE_ID);
-		universalSpadeBuilder().save(aOutput, UNIVERSAL_SPADE_ID);
 		// task w5-t2-blade-six — the six blade-tool steel-route rows (the dig-tool row shape)
-		clubBuilder().save(aOutput, CLUB_ID);
 		// task blade-ladder — the three blade forms move to the per-material rows
 		// (the OreProcessing_Tool rows Loader_Tools.java:321-323; the t1 steel-route
-		// convergence placeholders for sword/knife/butchery retire — club stays the
-		// single-tier convergence row, the single-tier-ruling card owns it)
+		// convergence placeholders for sword/knife/butchery retired with the ladder)
 		bladeLadderRows(aOutput);
 		axeBuilder().save(aOutput, AXE_ID);
 		axeDoubleBuilder().save(aOutput, AXE_DOUBLE_ID);
 		// task w5-t4-field-five — the five field-tool steel-route rows (the t1 shape)
 		hoeBuilder().save(aOutput, HOE_ID);
 		plowBuilder().save(aOutput, PLOW_ID);
-		branchCutterBuilder().save(aOutput, BRANCH_CUTTER_ID);
 		senseBuilder().save(aOutput, SENSE_ID);
-		handDrillBuilder().save(aOutput, HAND_DRILL_ID);
-		// task w5-t5-scene-six — the six scene-tool rows (the same steel-route shape)
-		scissorsBuilder().save(aOutput, SCISSORS_ID);
-		scoopBuilder().save(aOutput, SCOOP_ID);
-		net.minecraft.world.item.Item tRubberPlate = itemOrNull(gregapi.data.OP.plate, gregapi.data.MT.Rubber);
-		if (tRubberPlate != null) plungerBuilder(tRubberPlate).save(aOutput, PLUNGER_ID); // the CR.ONLY_IF_HAS_RESULT face — no rubber plate, no row
+		// task w5-t5-scene-six — the scene-tool rows (the same steel-route shape; the
+		// universal spade/club/branch cutter/hand drill/scissors/scoop/plunger/
+		// bending cylinders ride the arg-8 per-material band — the w5 anchors retired)
 		flintAndTinderFromFlintAndSteelBuilder().save(aOutput, FLINT_AND_TINDER_ID);
 		flintAndSteelBuilder().save(aOutput, FLINT_AND_STEEL_ID);
 		rollingPinBuilder().save(aOutput, ROLLING_PIN_ID);
-		bendingCylinderBuilder().save(aOutput, BENDING_CYLINDER_ID);
 		// task w5-t6-electric-nineteen — the fifteen electric rows (the :356-377 convergence)
 		for (ElectricToolRow tRow : electricToolRows()) {
 			tRow.builder().save(aOutput, tRow.id());
@@ -621,6 +597,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task dig-ladder — the per-material identity-stamped rows (the axis walk)
 		digLadderRows(aOutput);
 		machineLadderRows(aOutput);
+		toolArg8Rows(aOutput);
 		toolHeadRows(aOutput);
 		toolAssemblyRows(aOutput);
 		// task circuits-crafting-c — the circuits band: the 26 integrated-circuit rows
@@ -1104,19 +1081,6 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The bending-cylinder SELF-CRAFT row (task food-can-row0 spec ②) — the upstream
-	 * {"sfh", "III"} row (Loader_Tools.java:313, the OreProcessing_Tool material loop
-	 * flattened to ONE tag-keyed row, the hammer-ingots-route precedent; the per-material
-	 * {@code typemin(2)} gate folds onto the whole INGOTS tag): 's' = #gt6:tools/saw,
-	 * 'f' = #gt6:tools/file, 'h' = #gt6:tools/hard_hammer (the CR.java:200/201/211 tool
-	 * alphabet — the three p25 tools this row CONSUMES in-grid, the live consumption
-	 * chain), 'I' = the ecosystem generic ingots tag ({@code Tags.Items.INGOTS}; upstream
-	 * walks {@code ingot.dat(tMat)} per metal — {@code setMaterialAmount(3*U)} = the
-	 * 3-ingot row). Each tool pays one durability point per craft and rides along (the
-	 * container-item channel via Recipe.getRemainingItems). Result 1x
-	 * {@code gt6:bending_cylinder_small}.
-	 */
-	/**
 	 * The storage-hopper crafting rows (task storage-hopper-family — the Loader
 	 * metalset :145-146 recipes, one per Bronze/Steel × hopper/queue row): the upstream
 	 * "PwP"/"XCX"/" Xh" (hopper) and "PCP"/"XCX"/"wXh" (queue) grids with 'P' =
@@ -1142,17 +1106,6 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('w', GT6ItemTags.TOOLS_WRENCH)
 				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
 				.unlockedBy("has_chest", has(Tags.Items.CHESTS));
-	}
-
-	private ShapedRecipeBuilder bendingCylinderSmallBuilder() {
-		return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.BENDING_CYLINDER_SMALL.get())
-				.pattern("sfh")
-				.pattern("III")
-				.define('s', GT6ItemTags.TOOLS_SAW)
-				.define('f', GT6ItemTags.TOOLS_FILE)
-				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
-				.define('I', Tags.Items.INGOTS)
-				.unlockedBy("has_ingot", has(Tags.Items.INGOTS));
 	}
 
 	/**
@@ -3049,32 +3002,26 @@ public class GT6CraftingRecipes extends RecipeProvider {
                 'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
     }
 
-    /** The universal spade row — the heavy head + the file pair (the multi-tool face). */
-    private ShapedRecipeBuilder universalSpadeBuilder() {
-        return digToolBuilder(GT6Tools.UNIVERSAL_SPADE.get(), new String[] {"PPP", "PSP", "fSf"},
-                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
-                'f', GT6ItemTags.TOOLS_FILE);
-    }
-
     // ---------------------------------------------------------------------
-    // The six blade-tool steel-route rows (task w5-t2-blade-six). The upstream
+    // The blade-tool steel-route rows (task w5-t2-blade-six). The upstream
     // AdvancedCraftingTool rows (Loader_Tools.java:337/:342-343 — SWORD toolHeadSword,
-    // AXE toolHeadAxe, DOUBLE_AXE toolHeadAxeDouble; KNIFE/BUTCHERYKNIFE/CLUB carry NO
-    // AdvancedCraftingTool row — the knife's grid face is the cutting-board pool, the
-    // club's is the 6*U material scale) over the single steel tier: the plate counts
-    // keep the head-amount PROPORTIONS (the t1 mapping; the exact toolHead mAmount
-    // ladder is the standing pool cut). The worn hammer/file letters ride the dig-tool
-    // builder (each pays one point through the crafting-remaining face).
+    // AXE toolHeadAxe, DOUBLE_AXE toolHeadAxeDouble; KNIFE/BUTCHERYKNIFE carry NO
+    // AdvancedCraftingTool row — the knife's grid face is the cutting-board pool) over
+    // the single steel tier: the plate counts keep the head-amount PROPORTIONS (the t1
+    // mapping; the exact toolHead mAmount ladder is the standing pool cut). The worn
+    // hammer/file letters ride the dig-tool builder (each pays one point through the
+    // crafting-remaining face). The club's t1 placeholder retired with task
+    // tool-arg8-nine-families — the club's upstream face is the :329 OreProcessing_Tool
+    // direct rows, the arg-8 band's per-material face.
     // -----------------------------------------------------------------------
-    // The five field-tool steel-route rows (task w5-t4-field-five). The upstream
+    // The field-tool steel-route rows (task w5-t4-field-five). The upstream
     // AdvancedCraftingTool rows for hoe/sense/plow (Loader_Tools.java:344-346 — the
     // :344 Birch and :346 Spruce suggestions converge steel per the t1 single-tier
-    // ruling); the branch cutter and hand drill ride the same family shape. Plate
-    // counts keep the upstream tool-head material ratios (OP.java:244-246/:254):
-    // hoe 2 plates (toolHeadHoe U*2), sense 3 (toolHeadSense U*3), plow 4
-    // (toolHeadPlow U*4), branch cutter 5 (the :133 setMaterialAmount(5*U)),
-    // hand drill 1 (the :152 toolHeadArrow+2*bolt row — the arrow head folds to a
-    // plate, the two bolts to two rods, the file worn like the :349 screwdriver row).
+    // ruling). Plate counts keep the upstream tool-head material ratios
+    // (OP.java:244-246/:254): hoe 2 plates (toolHeadHoe U*2), sense 3 (toolHeadSense
+    // U*3), plow 4 (toolHeadPlow U*4). The branch cutter's t1 placeholder retired with
+    // task tool-arg8-nine-families (the upstream face is the :325 direct rows, the
+    // arg-8 band) — the hand drill likewise (:330, the toolHeadArrow+2*bolt row).
     /** The hoe row — the 2-plate head (the :344 Birch-suggestion row, steel converged). */
     private ShapedRecipeBuilder hoeBuilder() {
         return digToolBuilder(GT6Tools.HOE.get(), new String[] {"PP ", " S ", "hSf"},
@@ -3089,23 +3036,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
                 'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
     }
 
-    /** The branch cutter row — the 5-plate material (the :133 row, the scissors-form file pair). */
-    private ShapedRecipeBuilder branchCutterBuilder() {
-        return digToolBuilder(GT6Tools.BRANCH_CUTTER.get(), new String[] {"PPP", "PSP", "fSf"},
-                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
-                'f', GT6ItemTags.TOOLS_FILE);
-    }
-
     /** The sense row — the 3-plate scythe blade (the :345 row). */
     private ShapedRecipeBuilder senseBuilder() {
         return digToolBuilder(GT6Tools.SENSE.get(), new String[] {"PPP", " S ", "hSf"},
-                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
-                'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
-    }
-
-    /** The club row — the 6*U heavy mass (6 plates + the rod, the biggest blade tier). */
-    private ShapedRecipeBuilder clubBuilder() {
-        return digToolBuilder(GT6Tools.CLUB.get(), new String[] {"PPP", "PPP", "hSf"},
                 'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
                 'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
     }
@@ -3124,74 +3057,15 @@ public class GT6CraftingRecipes extends RecipeProvider {
                 'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
     }
 
-    /** The hand drill row — the arrow head + 2 bolts (the :152 row, the worn file). */
-    private ShapedRecipeBuilder handDrillBuilder() {
-        return digToolBuilder(GT6Tools.HAND_DRILL.get(), new String[] {"P  ", " S ", "hSf"},
-                'P', DIG_STEEL_PLATES, 'S', Tags.Items.RODS_WOODEN,
-                'h', GT6ItemTags.TOOLS_HARD_HAMMER, 'f', GT6ItemTags.TOOLS_FILE);
-    }
-
     // ------------------------------------------------------------------
-    // task w5-t5-scene-six — the six scene-tool rows. The OreProcessing_Tool
+    // task w5-t5-scene-six — the scene-tool rows. The OreProcessing_Tool
     // uppercase alphabet (Loader_Tools.java:308-318 comment): I=ingot P=plate
     // T=screw O=ring S=stick G=gem C=plateGem R=stone; the lowercase letters are
     // the CR.java:339-361 tool keys. Single-steel-tier convergence folds the
     // material loops onto the steel plates/screw/ring items (the t7 pocket
-    // letter-by-letter precedent).
-
-    /**
-     * The scissors row — the upstream {"PfP"," T ","OdO"} pattern (Loader_Tools.java:326,
-     * the plateGem variant "CfC" CUT with the gem-plate system): 2 steel plates + the
-     * file tool + the steel screw (the 'T' centre) + 2 steel rings + the screwdriver tool.
-     * The screw/ring ride the BARE GTMaterialItems items (the ring_steel bare-item
-     * precedent, the tank-valve rows); the two tools pay one point per craft through
-     * their crafting-remaining faces.
-     */
-    private ShapedRecipeBuilder scissorsBuilder() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.SCISSORS.get())
-                .pattern("PfP").pattern(" T ").pattern("OdO")
-                .define('P', DIG_STEEL_PLATES)
-                .define('f', GT6ItemTags.TOOLS_FILE)
-                .define('T', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.screw, gregapi.data.MT.Steel).get())
-                .define('O', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.ring, gregapi.data.MT.Steel).get())
-                .define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
-                .unlockedBy("has_steel_plate", has(DIG_STEEL_PLATES));
-    }
-
-    /**
-     * The scoop row — the upstream {"SVS","SSS","xSh"} pattern verbatim (Loader_Tools.java:320
-     * with V = the special auxiliary wool, S = stick): 6 rods frame the wool net ('V' =
-     * {@code ItemTags.WOOL}, the auxiliary identity kept; the vanilla tag rides both legs — the 21.1 neoforge Tags.Items has no WOOL field) + the wire cutter + the hammer
-     * tools (the 'x'/'h' letters, the CR.java:359/:346 alphabet).
-     */
-    private ShapedRecipeBuilder scoopBuilder() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.SCOOP.get())
-                .pattern("SVS").pattern("SSS").pattern("xSh")
-                .define('S', Tags.Items.RODS_WOODEN)
-                .define('V', ItemTags.WOOL)
-                .define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
-                .define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
-                // the key sorts BEFORE "has_the_recipe": the canonical criteria/requirements
-                // order must stay insertion==alphabetical or the datagen_tree_check
-                // requirements normalizer cannot bridge the 1.21 leg ("has_wool" > "has_the_recipe").
-                .unlockedBy("has_fleece", has(ItemTags.WOOL));
-    }
-
-    /**
-     * The plunger row — the upstream {"xVV"," SV","S f"} pattern (Loader_Tools.java:315
-     * with V = the special auxiliary rubber plate): the wire cutter + 2 rubber plates +
-     * 2 rods + the file tool. CALLER GUARDS the null rubber plate (the
-     * CR.ONLY_IF_HAS_RESULT face — no registered plate item, no row).
-     */
-    private ShapedRecipeBuilder plungerBuilder(net.minecraft.world.item.Item aRubberPlate) {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.PLUNGER.get())
-                .pattern("xVV").pattern(" SV").pattern("S f")
-                .define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
-                .define('V', aRubberPlate)
-                .define('S', Tags.Items.RODS_WOODEN)
-                .define('f', GT6ItemTags.TOOLS_FILE)
-                .unlockedBy("has_rubber_plate", has(aRubberPlate));
-    }
+    // letter-by-letter precedent). The scissors/scoop/plunger t1 placeholders
+    // retired with task tool-arg8-nine-families — their upstream faces are the
+    // :326/:320/:315 direct rows, the arg-8 band's per-material face.
 
     /**
      * The flint-and-tinder SELF-RECAST row — the upstream :207 Steel shapeless row
@@ -3232,22 +3106,6 @@ public class GT6CraftingRecipes extends RecipeProvider {
                 .define('P', ItemTags.PLANKS)
                 .define('f', GT6ItemTags.TOOLS_FILE)
                 .unlockedBy("has_planks", has(ItemTags.PLANKS));
-    }
-
-    /**
-     * The LARGE bending-cylinder row — the upstream {"sfh","III","III"} self-craft row
-     * (Loader_Tools.java:312, the Small :313 with ONE more ingot row — the 6*U amount
-     * made literal): saw+file+hammer worn, 6 generic ingots (the
-     * bendingCylinderSmallBuilder shape, one ingot row longer).
-     */
-    private ShapedRecipeBuilder bendingCylinderBuilder() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.BENDING_CYLINDER.get())
-                .pattern("sfh").pattern("III").pattern("III")
-                .define('s', GT6ItemTags.TOOLS_SAW)
-                .define('f', GT6ItemTags.TOOLS_FILE)
-                .define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
-                .define('I', Tags.Items.INGOTS)
-                .unlockedBy("has_ingot", has(Tags.Items.INGOTS));
     }
 
     // -------------------------------------------------------------------------
@@ -4557,6 +4415,286 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 	}
 
+*///?}
+
+	// ------------------------------------------------------------------------
+	// The arg-8 direct-craft band (task tool-arg8-nine-families) — the nine tool
+	// families whose upstream crafting face is the OreProcessing_Tool mToolRecipes
+	// DIRECT rows (Loader_Tools.java:298 universal spade, :312-313 bending cylinders,
+	// :315 plunger, :320 scoop, :325 branch cutter, :326 scissors, :329 club, :330 hand
+	// drill) plus the rolling-pin metal/plastic ladder (:250-253, the non-listener
+	// fixed-material loop). The w5-era single-steel anchors RETIRED — the stamped row
+	// IS the steel row (the blade-family ruling), and every material crafts its own
+	// tool (the audit's EMI dimension: one row per material, not one tag-folded
+	// anchor). ONE gt6:material_tool row per (form x axis material), the upstream
+	// shapes VERBATIM over the letter alphabet (Loader_Tools.java:455-472: I = ingot,
+	// P = plate, G = gem, R = stone, S = stick, H = stick of the HANDLE material (the
+	// useNormalHandle rows :329/:330 — the handle-material stick item when generated,
+	// else the wooden-rod tag: the r7-39 assembly-band declared relaxation, the modern
+	// material set carries no wood-family prefix items), T = screw, O = ring, A = the
+	// listening prefix item (the universal spade's toolHeadUniversalSpade), X/Y = the
+	// row specials (the hand drill's toolHeadArrow/bolt); the CR.java:193-217 lowercase
+	// TOOL letters s/f/h/d/x ride the tool tags). The axis gates are the upstream And() rows
+	// verbatim through the M5 identity form ({@link #woodExcluded}): the mToolTypes>0
+	// listener gate (:426), typemin, the hand drill's qualmin(2), ANTIMATTER.NOT,
+	// MT.Wood.NOT, the hand drill's WOOD.NOT tag gate, the scissors/branch-cutter/
+	// hand-drill BOUNCY.NOT/STRETCHY.NOT. Fixed letters: the scoop 'V' = the wool tag
+	// (the anchor precedent — the vanilla tag rides both legs, the 21.1 neoforge
+	// Tags.Items has no WOOL field), the plunger 'V' = the rubber plate item (the
+	// ONLY_IF_HAS face — no registered rubber plate, no plunger rows). DECLARED
+	// zero-row variant: the club stone shape (:329 third pattern) rides 'R' =
+	// OP.stone.dat — the port stone prefix carries no items (the rockGt card's
+	// finding), so the walk emits nothing for it. The rolling-pin ladder walks the
+	// upstream fixed list (Syrmorite/Au/Al/Cr/StainlessSteel/Netherite/
+	// NetherizedDiamond) + the ANY.Plastic family; the WOOD-route rolling-pin anchor
+	// (rollingPinBuilder, Loader_Recipes_Woods.java:237) is a DIFFERENT upstream loader
+	// row and stays.
+	// ------------------------------------------------------------------------
+
+	/** One arg-8 form: the id, the axis gates, the shape, the fixed TAG letters (static-safe; the plunger's rubber-plate item resolves at emission). */
+	record ToolArg8Form(String aId, int aTypeMin, int aQualMin, boolean aNoBouncy, boolean aNoStretchy,
+			boolean aNoWoodTag, String[] aPattern, java.util.Map<Character, TagKey<Item>> aFixedTags) {}
+
+	/** The :298-:330 direct rows + the club gem/stone variants — upstream order, shapes verbatim. (package-private: the offline census walk) */
+	static final java.util.List<ToolArg8Form> TOOL_ARG8_FORMS = java.util.List.of(
+			new ToolArg8Form("universal_spade", 2, 0, false, false, false, new String[] {"AT", "Sd"}, null), // :298 — 'A' = the toolHeadUniversalSpade item (the HEAD-consuming direct row)
+			new ToolArg8Form("bending_cylinder", 2, 0, false, false, false, new String[] {"sfh", "III", "III"}, null), // :312
+			new ToolArg8Form("bending_cylinder_small", 2, 0, false, false, false, new String[] {"sfh", "III"}, null), // :313
+			new ToolArg8Form("plunger", 0, 0, false, false, false, new String[] {"xVV", " SV", "S f"}, null), // :315 — 'V' = the rubber plate (emission-resolved)
+			new ToolArg8Form("scoop", 0, 0, false, false, false, new String[] {"SVS", "SSS", "xSh"}, java.util.Map.of('V', ItemTags.WOOL)), // :320 — 'V' = the wool tag
+			new ToolArg8Form("branch_cutter", 2, 0, true, true, false, new String[] {"PfP", "PdP", "STS"}, null), // :325
+			new ToolArg8Form("scissors", 2, 0, true, true, false, new String[] {"PfP", " T ", "OdO"}, null), // :326
+			new ToolArg8Form("club", 0, 0, false, false, false, new String[] {" II", "III", "HI "}, null), // :329 ingot variant — 'H' = the handle stick
+			new ToolArg8Form("club_gem", 0, 0, false, false, false, new String[] {" GG", "GGG", "HG "}, null), // :329 gem variant
+			new ToolArg8Form("club_stone", 0, 0, false, false, false, new String[] {" RR", "RRR", "HR "}, null), // :329 stone variant — the DECLARED zero-row 'R' face
+			new ToolArg8Form("hand_drill", 2, 2, true, true, true, new String[] {"  X", "HYH", "YH "}, null)); // :330 — 'X' = the arrow head, 'Y' = the bolt
+
+	/** The :250-253 metal/plastic rolling-pin row — no listener axis, walked over {@link #rollingPinMaterials}. */
+	static final ToolArg8Form ROLLING_PIN_FORM = new ToolArg8Form("rolling_pin", 0, 0, false, false, false,
+			new String[] {"  S", " I ", "S f"}, null);
+
+	/**
+	 * The :250-253 fixed list + the ANY.Plastic family (the alias-merged dedup walk, the
+	 * MATERIAL_ARRAY convention). (package-private: the offline census walk)
+	 */
+	static List<OreDictMaterial> rollingPinMaterials() {
+		java.util.LinkedHashMap<String, OreDictMaterial> rRows = new java.util.LinkedHashMap<>();
+		for (OreDictMaterial tMaterial : new OreDictMaterial[] {gregapi.data.MT.Syrmorite, gregapi.data.MT.Au, gregapi.data.MT.Al,
+				gregapi.data.MT.Cr, gregapi.data.MT.StainlessSteel, gregapi.data.MT.Netherite, gregapi.data.MT.NetherizedDiamond}) {
+			addRollingPinMaterial(rRows, tMaterial);
+		}
+		for (OreDictMaterial tMaterial : gregapi.data.ANY.Plastic.mToThis) {
+			addRollingPinMaterial(rRows, tMaterial);
+		}
+		return new ArrayList<>(rRows.values());
+	}
+
+	private static void addRollingPinMaterial(java.util.LinkedHashMap<String, OreDictMaterial> aRows, OreDictMaterial aMaterial) {
+		if (aMaterial == null || aMaterial.mID < 0) return;
+		OreDictMaterial tMerged = MaterialRegistry.INSTANCE.get(aMaterial); // the alias merge
+		if (tMerged == null || tMerged.mID < 0) return;
+		aRows.putIfAbsent(tMerged.mNameInternal, tMerged);
+	}
+
+	/** The per-form axis gate — the upstream And() rows verbatim (see the band javadoc). (package-private: the offline census walk) */
+	static boolean toolArg8Axis(OreDictMaterial aMaterial, ToolArg8Form aForm) {
+		if (aMaterial.mToolTypes <= 0 || aMaterial.mToolTypes < aForm.aTypeMin()) return false; // the :426 listener gate + typemin
+		if (aMaterial.mToolQuality < aForm.aQualMin()) return false; // qualmin
+		if (aMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) return false; // ANTIMATTER.NOT
+		if (woodExcluded(aMaterial)) return false; // MT.Wood.NOT — the M5 identity form
+		if (aForm.aNoWoodTag() && aMaterial.contains(gregapi.data.TD.Properties.WOOD)) return false; // the :330 WOOD.NOT tag gate
+		if (aForm.aNoBouncy() && aMaterial.contains(gregapi.data.TD.Properties.BOUNCY)) return false; // BOUNCY.NOT
+		if (aForm.aNoStretchy() && aMaterial.contains(gregapi.data.TD.Properties.STRETCHY)) return false; // STRETCHY.NOT
+		return true;
+	}
+
+	/** The result item of an arg-8 form (the GT6Tools registry face; datagen JVM only). */
+	private static Item toolArg8Result(String aForm) {
+		return switch (aForm) {
+			case "universal_spade" -> GT6Tools.UNIVERSAL_SPADE.get();
+			case "bending_cylinder" -> GT6Tools.BENDING_CYLINDER.get();
+			case "bending_cylinder_small" -> GT6Tools.BENDING_CYLINDER_SMALL.get();
+			case "plunger" -> GT6Tools.PLUNGER.get();
+			case "scoop" -> GT6Tools.SCOOP.get();
+			case "branch_cutter" -> GT6Tools.BRANCH_CUTTER.get();
+			case "scissors" -> GT6Tools.SCISSORS.get();
+			case "club", "club_gem", "club_stone" -> GT6Tools.CLUB.get();
+			case "hand_drill" -> GT6Tools.HAND_DRILL.get();
+			case "rolling_pin" -> GT6Tools.ROLLING_PIN.get();
+			default -> throw new IllegalArgumentException("unknown arg-8 form: " + aForm);
+		};
+	}
+
+	/** The prefix-carrying letters (S/T/O/A/X/Y — 'H' rides the HANDLE material column, resolved by the caller). Null = not a prefix letter. */
+	private static gregapi.oredict.OreDictPrefix toolArg8Prefix(char aKey) {
+		return switch (aKey) {
+			case 'S' -> gregapi.data.OP.stick;
+			case 'T' -> gregapi.data.OP.screw;
+			case 'O' -> gregapi.data.OP.ring;
+			case 'A' -> gregapi.data.OP.toolHeadUniversalSpade;
+			case 'X' -> gregapi.data.OP.toolHeadArrow;
+			case 'Y' -> gregapi.data.OP.bolt;
+			default -> null;
+		};
+	}
+
+	/**
+	 * The row letters (the Loader_Tools.java:455-472 alphabet + the CR.java:193-217 TOOL
+	 * letters). {@code null} = the item-truth miss — the row is skipped, never emitted
+	 * with an unresolvable ingredient.
+	 */
+	private static net.minecraft.world.item.crafting.Ingredient toolArg8Ingredient(char aKey, ToolArg8Form aForm,
+			OreDictMaterial aMaterial, Item aRubberPlate) {
+		String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(aMaterial.mNameInternal);
+		switch (aKey) {
+			case 'P': return gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plate, aMaterial) == null ? null
+					: net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake));
+			case 'I': return gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.ingot, aMaterial) == null ? null
+					: net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.materialTag(GT6ItemTags.INGOTS_FAMILY, tSnake));
+			case 'G': return gregapi.data.OP.gem.isGeneratingItem(aMaterial)
+					? net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, tSnake)) : null;
+			case 'R': return null; // the OP.stone prefix carries no port items — the declared zero-row variant
+			case 'H': {
+				// the 'H' letter = stick.dat(mHandleMaterial) — the item when the port
+				// generates the handle-material stick (the self-handle materials, upstream
+				// verbatim), otherwise the wooden-rod tag (the r7-39 assembly-band declared
+				// relaxation: wood-handled metals demand a wood stick the modern material set
+				// carries no prefix item for)
+				if (gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.stick, aMaterial.mHandleMaterial) != null) {
+					return net.minecraft.world.item.crafting.Ingredient.of(gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.stick, aMaterial.mHandleMaterial).get());
+				}
+				return net.minecraft.world.item.crafting.Ingredient.of(Tags.Items.RODS_WOODEN);
+			}
+			case 'V': {
+				TagKey<Item> tTag = aForm.aFixedTags() == null ? null : aForm.aFixedTags().get('V');
+				if (tTag != null) return net.minecraft.world.item.crafting.Ingredient.of(tTag);
+				return aRubberPlate == null ? null : net.minecraft.world.item.crafting.Ingredient.of(aRubberPlate); // the ONLY_IF_HAS face
+			}
+			case 's': return net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_SAW);
+			case 'f': return net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_FILE);
+			case 'h': return net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_HARD_HAMMER);
+			case 'd': return net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_SCREWDRIVER);
+			case 'x': return net.minecraft.world.item.crafting.Ingredient.of(GT6ItemTags.TOOLS_WIRE_CUTTER);
+			default: {
+				gregapi.oredict.OreDictPrefix tPrefix = toolArg8Prefix(aKey);
+				if (tPrefix == null) throw new IllegalArgumentException("unknown arg-8 letter: " + aKey);
+				if (gregtech6.registry.GTMaterialItems.get(tPrefix, aMaterial) == null) return null;
+				return net.minecraft.world.item.crafting.Ingredient.of(gregtech6.registry.GTMaterialItems.get(tPrefix, aMaterial).get());
+			}
+		}
+	}
+
+	/** The advancement anchor — the plates/ingots/gems tag when carried, else the first prefix item (resolvability ran first). Leg-agnostic value. */
+	private static Object toolArg8Criterion(ToolArg8Form aForm, OreDictMaterial aMaterial) {
+		java.util.Set<Character> tLetters = new java.util.HashSet<>();
+		for (String tRow : aForm.aPattern()) for (char tChar : tRow.toCharArray()) if (tChar != ' ') tLetters.add(tChar);
+		String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(aMaterial.mNameInternal);
+		if (tLetters.contains('P')) return GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake);
+		if (tLetters.contains('I')) return GT6ItemTags.materialTag(GT6ItemTags.INGOTS_FAMILY, tSnake);
+		if (tLetters.contains('G')) return GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, tSnake);
+		for (char tKey : new char[] {'S', 'T', 'O', 'A', 'X', 'Y'}) {
+			if (!tLetters.contains(tKey)) continue;
+			gregapi.oredict.OreDictPrefix tPrefix = toolArg8Prefix(tKey);
+			if (tPrefix != null && gregtech6.registry.GTMaterialItems.get(tPrefix, aMaterial) != null) {
+				return gregtech6.registry.GTMaterialItems.get(tPrefix, aMaterial).get();
+			}
+		}
+		throw new IllegalArgumentException("no material-carrying letter to anchor the advancement: " + aForm.aId());
+	}
+
+//? if forge {
+	private void toolArg8Rows(Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
+		Item tRubberPlate = itemOrNull(gregapi.data.OP.plate, gregapi.data.MT.Rubber); // the :315 'V' special — the ONLY_IF_HAS face
+		java.util.Set<String> tSeen = new java.util.HashSet<>();
+		for (OreDictMaterial tMaterial : MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
+			if (tMaterial == null || tMaterial.mID < 0) continue;
+			tMaterial = MaterialRegistry.INSTANCE.get(tMaterial); // the alias merge
+			if (tMaterial == null || tMaterial.mID < 0 || !tSeen.add(tMaterial.mNameInternal)) continue;
+			for (ToolArg8Form tForm : TOOL_ARG8_FORMS) {
+				if (!toolArg8Axis(tMaterial, tForm)) continue;
+				toolArg8Row(aConsumer, tForm, tMaterial, tRubberPlate);
+			}
+		}
+		for (OreDictMaterial tMaterial : rollingPinMaterials()) { // the :250-253 ladder — the fixed loop, no axis
+			toolArg8Row(aConsumer, ROLLING_PIN_FORM, tMaterial, null);
+		}
+	}
+
+	private void toolArg8Row(Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer, ToolArg8Form tForm,
+			OreDictMaterial tMaterial, @javax.annotation.Nullable Item tRubberPlate) {
+		java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> tKey = new java.util.LinkedHashMap<>();
+		java.util.List<String> tPattern = new ArrayList<>();
+		for (String tRow : tForm.aPattern()) {
+			tPattern.add(tRow);
+			for (char tChar : tRow.toCharArray()) {
+				if (tChar == ' ' || tKey.containsKey(tChar)) continue;
+				net.minecraft.world.item.crafting.Ingredient tIngredient = toolArg8Ingredient(tChar, tForm, tMaterial, tRubberPlate);
+				if (tIngredient == null) return; // the item-truth miss — no row (never an unresolvable ingredient)
+				tKey.put(tChar, tIngredient);
+			}
+		}
+		String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(tMaterial.mNameInternal);
+		ResourceLocation tId = digLadderRowId(tForm.aId(), tSnake);
+		Object tAnchor = toolArg8Criterion(tForm, tMaterial);
+		net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
+				.recipeAdvancement()
+				.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
+				.addCriterion("has_head_material", tAnchor instanceof TagKey ? has((TagKey<Item>) tAnchor) : has((Item) tAnchor))
+				.addCriterion("has_the_recipe", net.minecraft.advancements.critereon.RecipeUnlockedTrigger.unlocked(tId))
+				.rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(tId))
+				.requirements(net.minecraft.advancements.RequirementsStrategy.OR);
+		aConsumer.accept(new MaterialToolRow(tId, tId.withPrefix("recipes/tools/"),
+				net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT, tPattern, tKey,
+				toolArg8Result(tForm.aId()), tSnake, tAdvancement));
+	}
+
+//?} else {
+/*	private void toolArg8Rows(net.minecraft.data.recipes.RecipeOutput aOutput) {
+		Item tRubberPlate = itemOrNull(gregapi.data.OP.plate, gregapi.data.MT.Rubber); // the :315 'V' special — the ONLY_IF_HAS face
+		java.util.Set<String> tSeen = new java.util.HashSet<>();
+		for (OreDictMaterial tMaterial : MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
+			if (tMaterial == null || tMaterial.mID < 0) continue;
+			tMaterial = MaterialRegistry.INSTANCE.get(tMaterial); // the alias merge
+			if (tMaterial == null || tMaterial.mID < 0 || !tSeen.add(tMaterial.mNameInternal)) continue;
+			for (ToolArg8Form tForm : TOOL_ARG8_FORMS) {
+				if (!toolArg8Axis(tMaterial, tForm)) continue;
+				toolArg8Row(aOutput, tForm, tMaterial, tRubberPlate);
+			}
+		}
+		for (OreDictMaterial tMaterial : rollingPinMaterials()) { // the :250-253 ladder — the fixed loop, no axis
+			toolArg8Row(aOutput, ROLLING_PIN_FORM, tMaterial, null);
+		}
+	}
+
+	private void toolArg8Row(net.minecraft.data.recipes.RecipeOutput aOutput, ToolArg8Form tForm,
+			OreDictMaterial tMaterial, @javax.annotation.Nullable Item tRubberPlate) {
+		java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> tKey = new java.util.LinkedHashMap<>();
+		java.util.List<String> tPattern = new ArrayList<>();
+		for (String tRow : tForm.aPattern()) {
+			tPattern.add(tRow);
+			for (char tChar : tRow.toCharArray()) {
+				if (tChar == ' ' || tKey.containsKey(tChar)) continue;
+				net.minecraft.world.item.crafting.Ingredient tIngredient = toolArg8Ingredient(tChar, tForm, tMaterial, tRubberPlate);
+				if (tIngredient == null) return; // the item-truth miss — no row
+				tKey.put(tChar, tIngredient);
+			}
+		}
+		String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(tMaterial.mNameInternal);
+		ResourceLocation tId = digLadderRowId(tForm.aId(), tSnake);
+		Object tAnchor = toolArg8Criterion(tForm, tMaterial);
+		net.minecraft.advancements.Advancement.Builder tAdvancement = net.minecraft.advancements.Advancement.Builder
+				.recipeAdvancement()
+				.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT)
+				.addCriterion("has_head_material", tAnchor instanceof TagKey ? has((TagKey<Item>) tAnchor) : has((Item) tAnchor))
+				.addCriterion("has_the_recipe", net.minecraft.advancements.critereon.RecipeUnlockedTrigger.unlocked(tId))
+				.rewards(net.minecraft.advancements.AdvancementRewards.Builder.recipe(tId))
+				.requirements(net.minecraft.advancements.AdvancementRequirements.Strategy.OR);
+		gregtech6.items.tools.GT6MaterialToolRecipe tRecipe = new gregtech6.items.tools.GT6MaterialToolRecipe("",
+				net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT,
+				net.minecraft.world.item.crafting.ShapedRecipePattern.of(tKey, tPattern),
+				new ItemStack(toolArg8Result(tForm.aId())), true, tSnake);
+		aOutput.accept(tId, tRecipe, tAdvancement.build(tId.withPrefix("recipes/tools/")));
+	}
 *///?}
 
 	// -----------------------------------------------------------------------

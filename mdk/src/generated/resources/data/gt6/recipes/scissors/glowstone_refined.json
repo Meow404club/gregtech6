@@ -1,0 +1,32 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "O": {
+      "item": "gt6:ring_glowstone_refined"
+    },
+    "P": {
+      "tag": "forge:plates/glowstone_refined"
+    },
+    "T": {
+      "item": "gt6:screw_glowstone_refined"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "glowstone_refined",
+  "pattern": [
+    "PfP",
+    " T ",
+    "OdO"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:scissors"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,23 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:stick_vibranium_steel"
+    },
+    "I": {
+      "tag": "forge:ingots/vibranium_steel"
+    }
+  },
+  "material": "vibranium_steel",
+  "pattern": [
+    " II",
+    "III",
+    "HI "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:club"
+  },
+  "show_notification": true
+}

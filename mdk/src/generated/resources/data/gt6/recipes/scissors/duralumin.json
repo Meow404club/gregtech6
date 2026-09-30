@@ -1,0 +1,32 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "O": {
+      "item": "gt6:ring_duralumin"
+    },
+    "P": {
+      "tag": "forge:plates/duralumin"
+    },
+    "T": {
+      "item": "gt6:screw_duralumin"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "duralumin",
+  "pattern": [
+    "PfP",
+    " T ",
+    "OdO"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:scissors"
+  },
+  "show_notification": true
+}

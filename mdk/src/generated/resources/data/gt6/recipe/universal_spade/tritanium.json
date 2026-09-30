@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "gt6:tool_head_universal_spade_tritanium"
+    },
+    "S": {
+      "item": "gt6:stick_tritanium"
+    },
+    "T": {
+      "item": "gt6:screw_tritanium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "material": "tritanium",
+  "pattern": [
+    "AT",
+    "Sd"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:universal_spade"
+  }
+}

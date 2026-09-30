@@ -1,0 +1,31 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "O": {
+      "item": "gt6:ring_bedrock_hslaalloy"
+    },
+    "P": {
+      "tag": "c:plates/bedrock_hslaalloy"
+    },
+    "T": {
+      "item": "gt6:screw_bedrock_hslaalloy"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "bedrock_hslaalloy",
+  "pattern": [
+    "PfP",
+    " T ",
+    "OdO"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:scissors"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/niflheim_power"
+    },
+    "S": {
+      "item": "gt6:stick_niflheim_power"
+    },
+    "T": {
+      "item": "gt6:screw_niflheim_power"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "niflheim_power",
+  "pattern": [
+    "PfP",
+    "PdP",
+    "STS"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:branch_cutter"
+  },
+  "show_notification": true
+}

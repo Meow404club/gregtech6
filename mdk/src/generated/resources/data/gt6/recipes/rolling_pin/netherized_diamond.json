@@ -1,0 +1,26 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/netherized_diamond"
+    },
+    "S": {
+      "item": "gt6:stick_netherized_diamond"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "netherized_diamond",
+  "pattern": [
+    "  S",
+    " I ",
+    "S f"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:rolling_pin"
+  },
+  "show_notification": true
+}

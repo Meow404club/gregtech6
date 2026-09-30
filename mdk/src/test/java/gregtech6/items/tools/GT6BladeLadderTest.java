@@ -225,13 +225,15 @@ public class GT6BladeLadderTest {
 	}
 
 	@Test
-	public void theRetiredSteelRouteRowsAreGoneAndTheClubRowStays() {
+	public void theRetiredSteelRouteRowsAreGone() {
 		assertNull(GT6BladeLadderTest.class.getResourceAsStream("/data/gt6/recipes/sword.json"),
 				"the t1 sword steel-route placeholder retired with the ladder");
 		assertNull(GT6BladeLadderTest.class.getResourceAsStream("/data/gt6/recipes/knife.json"));
 		assertNull(GT6BladeLadderTest.class.getResourceAsStream("/data/gt6/recipes/butchery_knife.json"));
-		assertNotNull(GT6BladeLadderTest.class.getResourceAsStream("/data/gt6/recipes/club.json"),
-				"the club stays the single-tier convergence row (the single-tier-ruling card owns it)");
+		assertNull(GT6BladeLadderTest.class.getResourceAsStream("/data/gt6/recipes/club.json"),
+				"the club anchor retired with the arg-8 band (task tool-arg8-nine-families — the :329 direct rows own the club)");
+		assertNotNull(GT6BladeLadderTest.class.getResourceAsStream("/data/gt6/recipes/club/steel.json"),
+				"the club's steel face rides the stamped arg-8 matrix row");
 		// the ladder rows themselves: the three forms exist for Steel on the plate variant
 		assertNotNull(GT6BladeLadderTest.class.getResourceAsStream("/data/gt6/recipes/sword/steel.json"));
 		assertNotNull(GT6BladeLadderTest.class.getResourceAsStream("/data/gt6/recipes/knife/steel.json"));

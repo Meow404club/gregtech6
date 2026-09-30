@@ -1,0 +1,31 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "O": {
+      "item": "gt6:ring_annealed_copper"
+    },
+    "P": {
+      "tag": "c:plates/annealed_copper"
+    },
+    "T": {
+      "item": "gt6:screw_annealed_copper"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "annealed_copper",
+  "pattern": [
+    "PfP",
+    " T ",
+    "OdO"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:scissors"
+  }
+}

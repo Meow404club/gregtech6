@@ -1,0 +1,23 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "tag": "forge:gems/diamond_industrial"
+    },
+    "H": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "material": "diamond_industrial",
+  "pattern": [
+    " GG",
+    "GGG",
+    "HG "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:club"
+  },
+  "show_notification": true
+}

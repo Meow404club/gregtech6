@@ -1,0 +1,31 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "O": {
+      "item": "gt6:ring_molybdenum"
+    },
+    "P": {
+      "tag": "c:plates/molybdenum"
+    },
+    "T": {
+      "item": "gt6:screw_molybdenum"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "molybdenum",
+  "pattern": [
+    "PfP",
+    " T ",
+    "OdO"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:scissors"
+  }
+}

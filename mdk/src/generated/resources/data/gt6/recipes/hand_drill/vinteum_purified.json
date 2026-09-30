@@ -1,0 +1,26 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "tag": "forge:rods/wooden"
+    },
+    "X": {
+      "item": "gt6:tool_head_arrow_vinteum_purified"
+    },
+    "Y": {
+      "item": "gt6:bolt_vinteum_purified"
+    }
+  },
+  "material": "vinteum_purified",
+  "pattern": [
+    "  X",
+    "HYH",
+    "YH "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:hand_drill"
+  },
+  "show_notification": true
+}

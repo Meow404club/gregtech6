@@ -1,0 +1,29 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/meteoflame_red_steel"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "material": "meteoflame_red_steel",
+  "pattern": [
+    "sfh",
+    "III",
+    "III"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:bending_cylinder"
+  },
+  "show_notification": true
+}

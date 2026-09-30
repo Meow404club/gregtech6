@@ -1,0 +1,28 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "gt6:tool_head_universal_spade_hexorium_white"
+    },
+    "S": {
+      "item": "gt6:stick_hexorium_white"
+    },
+    "T": {
+      "item": "gt6:screw_hexorium_white"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "material": "hexorium_white",
+  "pattern": [
+    "AT",
+    "Sd"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:universal_spade"
+  },
+  "show_notification": true
+}

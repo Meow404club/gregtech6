@@ -1,0 +1,23 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "tag": "forge:gems/smokey_quartz"
+    },
+    "H": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "material": "smokey_quartz",
+  "pattern": [
+    " GG",
+    "GGG",
+    "HG "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:club"
+  },
+  "show_notification": true
+}

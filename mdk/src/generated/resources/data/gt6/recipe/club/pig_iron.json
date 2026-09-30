@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "tag": "c:rods/wooden"
+    },
+    "I": {
+      "tag": "c:ingots/pig_iron"
+    }
+  },
+  "material": "pig_iron",
+  "pattern": [
+    " II",
+    "III",
+    "HI "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:club"
+  }
+}

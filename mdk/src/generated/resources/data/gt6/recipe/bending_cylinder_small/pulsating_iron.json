@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/pulsating_iron"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "material": "pulsating_iron",
+  "pattern": [
+    "sfh",
+    "III"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:bending_cylinder_small"
+  }
+}

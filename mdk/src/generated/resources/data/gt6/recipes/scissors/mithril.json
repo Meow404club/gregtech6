@@ -1,0 +1,32 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "O": {
+      "item": "gt6:ring_mithril"
+    },
+    "P": {
+      "tag": "forge:plates/mithril"
+    },
+    "T": {
+      "item": "gt6:screw_mithril"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "mithril",
+  "pattern": [
+    "PfP",
+    " T ",
+    "OdO"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:scissors"
+  },
+  "show_notification": true
+}

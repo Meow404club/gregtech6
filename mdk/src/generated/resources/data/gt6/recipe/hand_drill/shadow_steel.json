@@ -1,0 +1,25 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "tag": "c:rods/wooden"
+    },
+    "X": {
+      "item": "gt6:tool_head_arrow_shadow_steel"
+    },
+    "Y": {
+      "item": "gt6:bolt_shadow_steel"
+    }
+  },
+  "material": "shadow_steel",
+  "pattern": [
+    "  X",
+    "HYH",
+    "YH "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:hand_drill"
+  }
+}

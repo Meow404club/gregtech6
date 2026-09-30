@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "tag": "c:gems/continuum"
+    },
+    "H": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "continuum",
+  "pattern": [
+    " GG",
+    "GGG",
+    "HG "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:club"
+  }
+}

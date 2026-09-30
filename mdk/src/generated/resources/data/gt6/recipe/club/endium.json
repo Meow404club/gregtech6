@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:stick_endstone"
+    },
+    "I": {
+      "tag": "c:ingots/endium"
+    }
+  },
+  "material": "endium",
+  "pattern": [
+    " II",
+    "III",
+    "HI "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:club"
+  }
+}

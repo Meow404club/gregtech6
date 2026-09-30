@@ -1,0 +1,25 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:stick_vibranium_steel"
+    },
+    "X": {
+      "item": "gt6:tool_head_arrow_vibranium"
+    },
+    "Y": {
+      "item": "gt6:bolt_vibranium"
+    }
+  },
+  "material": "vibranium",
+  "pattern": [
+    "  X",
+    "HYH",
+    "YH "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:hand_drill"
+  }
+}

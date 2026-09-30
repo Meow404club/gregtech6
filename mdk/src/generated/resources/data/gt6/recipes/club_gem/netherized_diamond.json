@@ -1,0 +1,23 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "tag": "forge:gems/netherized_diamond"
+    },
+    "H": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "material": "netherized_diamond",
+  "pattern": [
+    " GG",
+    "GGG",
+    "HG "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:club"
+  },
+  "show_notification": true
+}
