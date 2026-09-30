@@ -48,7 +48,11 @@ class GT6EuCoreSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		default -> null;
 	};
 
-	private static final Function<ResourceLocation, Fluid> FLUID_FIXTURE = aId -> Fluids.WATER;
+	/** The gt6-domain fluids resolve null offline (the item fixture's posture — the landed
+	 * recipe-data-b2b2 electrolysis rows are fluid-only and must WARN-skip here, the smoke-row
+	 * exclusivity pin is the vanilla-id face); vanilla carriers resolve to WATER. */
+	private static final Function<ResourceLocation, Fluid> FLUID_FIXTURE =
+			aId -> "gt6".equals(aId.getNamespace()) ? null : Fluids.WATER;
 
 	private static final Function<ResourceLocation, Item> sDefaultItems = GT6RecipeMapJsonLoader.sItemResolver;
 	private static final Function<ResourceLocation, Fluid> sDefaultFluids = GT6RecipeMapJsonLoader.sFluidResolver;
