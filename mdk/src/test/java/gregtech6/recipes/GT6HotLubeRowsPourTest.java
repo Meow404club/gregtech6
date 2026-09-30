@@ -25,7 +25,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * The p29-w4-hot-lube true-row pour test (the GT6ChemicalRowsPourTest fixture posture): the
+ * The w4-hot-lube true-row pour test (the GT6ChemicalRowsPourTest fixture posture): the
  * TWO data/gt6/recipe_maps JSON files this card ships (fuels_hot / distillationtower) are
  * read VERBATIM off the classpath and poured through the real {@link GT6RecipeMapJsonLoader}
  * seam. Every gt6 fluid id resolves through the injected resolver seam onto a vanilla

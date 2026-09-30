@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 /**
- * The Gibbl-O-Meter Sensor (task p34-sensors-trivial-14 row ④) — the port of
+ * The Gibbl-O-Meter Sensor (task sensors-trivial-14 row ④) — the port of
  * MultiTileEntityGibblometer.java:32-53. Upstream reads
  * {@code ITileEntityGibbl.getGibblValue/getGibblMax / 1000} (:33-34, the boiler steam
  * compression face, the Gibbl unit = 1000 steam units per Gibbl). The port has NO

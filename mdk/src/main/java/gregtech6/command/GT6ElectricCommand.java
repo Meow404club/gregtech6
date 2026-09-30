@@ -41,7 +41,7 @@ import gregtech6.registry.GT6Tools;
 
 /**
  * {@code /gt6electric} — the electric-tool acceptance command (task
- * p29-w5-t6-electric-nineteen; card-local in command/ like GT6DigToolCommand — the
+ * w5-t6-electric-nineteen; card-local in command/ like GT6DigToolCommand — the
  * fake-player channel: the RCON arms drive the EXACT item surfaces the keyboard player
  * hits, the "the command IS the acceptance channel" ruling):
  *

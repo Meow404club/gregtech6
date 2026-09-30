@@ -1,5 +1,5 @@
 /**
- * Tests for task p31-fluid-spring: the 16-row table parity (Loader_Worldgen.java:782-797
+ * Tests for task fluid-spring: the 16-row table parity (Loader_Worldgen.java:782-797
  * row-for-row), the first-hit-wins spring draw, the dome shape pin (shell/lake per layer,
  * the cave-seal skin), the codec roundtrip and the fixed-seed projection with the
  * per-chunk bedrock-ore mutual exclusion — the acceptance's offline audit unit (the
@@ -82,7 +82,7 @@ class GT6FluidSpringWorldgenTest extends gregtech6.tileentity.GTOfflineTestBase 
      * THE parity pin: the 16-row table against the upstream transcription, row-for-row
      * (Loader_Worldgen.java:782-797). The indicatorType column (2/2/2/2/1/3/1) is the
      * remaining declared spec ③ deferral; the springFluid amounts are the loader values
-     * verbatim (the task p38-issue5-fluid-spring-nozzle column return).
+     * verbatim (the task issue5-fluid-spring-nozzle column return).
      */
     @Test
     void tableParityAgainstUpstream() {
@@ -299,7 +299,7 @@ class GT6FluidSpringWorldgenTest extends gregtech6.tileentity.GTOfflineTestBase 
         assertFalse(tSink.tFluid.containsKey(FakeSink.key(64, -60, 128)), "outside the footprints nothing writes");
     }
 
-    // ---------------------------------------------------------------- the nozzle arm (task p38-issue5-fluid-spring-nozzle)
+    // ---------------------------------------------------------------- the nozzle arm (task issue5-fluid-spring-nozzle)
 
     /** A row with the nozzle arm parameterized by the springFluid amount (null = the arm-less upstream NF face). */
     private static GTFluidSpringConfig nozzleRow(Integer aSpringFluid) {
@@ -388,7 +388,7 @@ class GT6FluidSpringWorldgenTest extends gregtech6.tileentity.GTOfflineTestBase 
         }
     }
 
-    // ---------------------------------------------------------------- the nozzle spray (task p38-issue5-fluid-spring-nozzle)
+    // ---------------------------------------------------------------- the nozzle spray (task issue5-fluid-spring-nozzle)
 
     /**
      * The spray decision pin (MultiTileEntityFluidSpring.java:110-141, the infinite-fluid
@@ -518,6 +518,6 @@ class GT6FluidSpringWorldgenTest extends gregtech6.tileentity.GTOfflineTestBase 
         // half of it, the pipeline-drift semantics)
         assertTrue(tSpring1.size() >= 70 && tSpring1.size() <= 220,
                 "the spring decision count stays the upstream order: " + tSpring1.size());
-        System.out.println("[p31-fluid-spring projection] springs=" + tSpring1.size() + " oreClaims=" + tOre1.size());
+        System.out.println("[fluid-spring projection] springs=" + tSpring1.size() + " oreClaims=" + tOre1.size());
     }
 }

@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import gregtech6.gui.machines.GTBasicMachineMenu;
 
 /**
- * The Progress Sensor (task p26-sensors-core pioneer ①) — the port of
+ * The Progress Sensor (task sensors-core pioneer ①) — the port of
  * MultiTileEntityProgressmeter.java:38-79 (the ≈40-line per-sensor典型). The read face:
  * upstream {@code ITileEntityProgress} (the gregapi interface the port never grew — the
  * progress face lives on the menu Host here) maps onto {@link GTBasicMachineMenu.Host}

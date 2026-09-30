@@ -12,7 +12,7 @@ import gregtech6.tileentity.machines.ITileEntitySwitchableOnOff;
 
 /**
  * The redstone machine switch cover — 1.20.1 port of gregapi/cover/covers/
- * CoverControllerRedstone.java (71 lines, task p10-cover-controller-redstone).
+ * CoverControllerRedstone.java (71 lines, task cover-controller-redstone).
  * Mounts on a switchable machine and holds it stopped while its face sees NO
  * redstone (default value-lane polarity) — or the inverse after the screwdriver
  * toggle: {@code getStateOnOff = bind1(getRedstoneIncoming(side)) != (mValues &
@@ -28,7 +28,7 @@ import gregtech6.tileentity.machines.ITileEntitySwitchableOnOff;
  *     {@code onCoverPlaced} and {@code onCoverLoaded};</li>
  * <li>the block-update drive (:52-54) — rides the GTOvenBlock.neighborChanged →
  *     {@code covers().onBlockUpdate()} seam the conductor card landed
- *     (task p10-cover-conductor-redstone, commit bef7527);</li>
+ *     (task cover-conductor-redstone, commit bef7527);</li>
  * <li>the server tick poll (:57-59) — the CoverData.tickPre dispatch the ticking
  *     hosts already run.</li>
  * </ul>

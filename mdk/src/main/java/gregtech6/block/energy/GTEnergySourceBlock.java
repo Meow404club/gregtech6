@@ -10,7 +10,7 @@ import gregtech6.registry.GTBlockEntities;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The GT6 test energy source block (task p8-d4-energy-source spec ②) — a simple cube
+ * The GT6 test energy source block (task d4-energy-source spec ②) — a simple cube
  * carrier over the shared BET (ADR-P3-1), the GTWireBlock shape minus the CONNECTIONS
  * property: the source probes its neighbours live on every emit packet
  * (GTEnergySourceBlockEntity.adjacency), so there is no connection mask to carry.

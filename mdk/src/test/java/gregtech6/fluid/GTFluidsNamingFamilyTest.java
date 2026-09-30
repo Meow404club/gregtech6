@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Naming-parity fluid family offline tests (task p37-fluids-naming): the THIRTY-FOUR
+ * Naming-parity fluid family offline tests (task fluids-naming): the THIRTY-FOUR
  * {@link GTFluids.ChemicalFluidSpec} rows of {@link GTFluids#NAMING_FLUID_SPECS} — the
  * census-gap GT-owned {@code FL.create} rows of the upstream Loader_Fluids.java walk
  * (753 lines section-by-section, state research.p37-fluids-naming-census), asserted
@@ -124,7 +124,7 @@ public class GTFluidsNamingFamilyTest extends GTOfflineTestBase {
 	/**
 	 * The three state-2 rows must sit in the {@link GTFluidLists#GAS} list under their port
 	 * registry paths — the FL.java:1105 auto-add rule every port fluid born gaseous rides
-	 * (the p30-pool-gas-seeds-13 reconciliation shape); the liquids and the null-density
+	 * (the pool-gas-seeds-13 reconciliation shape); the liquids and the null-density
 	 * airs' non-gas siblings must not.
 	 */
 	@Test

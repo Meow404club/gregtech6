@@ -27,7 +27,7 @@ import gregtech6.items.tools.loot.GT6ToolLootModifiers;
 import gregtech6.registry.GT6Tools;
 
 /**
- * Offline tests for task p29-w5-t5-scene-six — the six scene tools (the DigSixTest
+ * Offline tests for task w5-t5-scene-six — the six scene tools (the DigSixTest
  * offline boot form: a bootstrapped-and-frozen JVM cannot construct mod Items, so every
  * assertion rides the PURE static seams — the GTCrowbarItem.mines ruling).
  *

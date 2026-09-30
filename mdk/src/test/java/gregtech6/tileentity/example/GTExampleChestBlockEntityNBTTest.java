@@ -20,7 +20,7 @@ import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Acceptance 5 (task p3-example-machine): chest NBT round trip — slot contents survive
+ * Acceptance 5 (task example-machine): chest NBT round trip — slot contents survive
  * saveAdditional → load, the GTItemStackHandler content-change hook fires on mutation, and
  * the openers counter (mUsingPlayers) drives the :160-168 sync gate like upstream
  * MultiTileEntityChest.java:160-168. Offline fixtures follow the

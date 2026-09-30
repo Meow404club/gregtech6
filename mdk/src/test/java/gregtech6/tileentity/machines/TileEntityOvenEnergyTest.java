@@ -19,7 +19,7 @@ import gregapi.code.TagData;
 import gregapi.data.TD;
 
 /**
- * Acceptance 1 (task p4-machine-oven): the energy semantics of the ADR-P4 option-A fake
+ * Acceptance 1 (task machine-oven): the energy semantics of the ADR-P4 option-A fake
  * power source, traced against the upstream math (MultiTileEntityBasicMachine.java:761-774
  * energy, :780-793 doWork, :795-887 doActive, :894 CONSTANT_ENERGY reset).
  *
@@ -188,7 +188,7 @@ public class TileEntityOvenEnergyTest extends GTMachinesOfflineTestBase {
 	}
 
 	// -------------------------------------------------------------------------
-	// grid-fed mode group (task p8-d3 §⑤, HU-rebased by task p34-oven-hu-conversion):
+	// grid-fed mode group (task p8-d3 §⑤, HU-rebased by task oven-hu-conversion):
 	// ENERGY_FAKE_SOURCE = false — the machine eats HU packets through the
 	// ITileEntityEnergy surface (Root gate :717 + oven doInject :489-508; the oven is
 	// the upstream 20001-04 shape, NBT_ENERGY_ACCEPTED = TD.Energy.HU,

@@ -5,7 +5,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ToolAction;
 
 /**
- * The formal GT6 wrench — task p25-tool-hammer-wrench spec ①, the GT6FileItem form.
+ * The formal GT6 wrench — task tool-hammer-wrench spec ①, the GT6FileItem form.
  * Upstream the tool is a crafting-domain meta id ({@code ToolsGT.WRENCH = 16},
  * CS.java:1736) mounted by the Loader_Tools.java:126 registration row (display name
  * "Wrench", the CS.java:1083 TOOL_LOCALISER row verbatim) over {@code GT_Tool_Wrench}
@@ -32,7 +32,7 @@ import net.minecraftforge.common.ToolAction;
  * card's regression wall, family-wide). The wrench enters recipes through the
  * {@code #gt6:tools/wrench} tag and nothing else until the interaction card lands.
  *
- * <p>MATERIAL LADDER (task p31-machine-ladder): the stack's {@code GT.ToolStats} identity
+ * <p>MATERIAL LADDER (task machine-ladder): the stack's {@code GT.ToolStats} identity
  * scales durability (the {@link GT6ToolLadder} j/100 points), the composed display name
  * ("Wrench (Bronze)") and the head tint ride the same seam; the IDENTITY-LESS arm
  * reproduces Steel bit-exact (the upstream {@code getPrimaryMaterial(stack, MT.Steel)}
@@ -84,7 +84,7 @@ public class GTWrenchItem extends Item implements GT6ToolLadder.LadderTool {
 		return classifies(aToolAction);
 	}
 
-	// ------------------------------ the GT6ToolLadder identity faces (task p31-machine-ladder) ------------------------------
+	// ------------------------------ the GT6ToolLadder identity faces (task machine-ladder) ------------------------------
 
 	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — Steel fallback = 512). */
 	@Override

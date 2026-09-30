@@ -11,7 +11,7 @@ import net.minecraftforge.registries.RegistryObject;
 import net.minecraft.world.level.material.Fluid;
 
 /**
- * The material-name → fluid bridge skeleton (task p4-fluid-pipes spec ⑥). Upstream binds
+ * The material-name → fluid bridge skeleton (task fluid-pipes spec ⑥). Upstream binds
  * {@code OreDictMaterial.mLiquid/mGas/mPlasma} FluidStacks directly onto the material
  * objects (OreDictMaterial.java:314-315); this port deletes those fields (root red line:
  * no net.minecraft types in gregapi) and recreates the lookup from the material's
@@ -43,12 +43,12 @@ public final class FluidBridge {
 
 	static {
 		MOLTEN_FLUIDS.put("iron", GTFluids.IRON_MOLTEN);
-		// task p32-qu-scanner-replicator — the molten.redstone carrier lands (the GTFluids
+		// task qu-scanner-replicator — the molten.redstone carrier lands (the GTFluids
 		// :194 row), so the Smeltery pour-back and any material walker resolve MT.Redstone.
 		// The handle rides the table-driven CHEMICALS registration through the chemicalSource
 		// seam (the bridge map stays material-name keyed).
 		MOLTEN_FLUIDS.put("redstone", GTFluids.chemicalSource("redstone_molten"));
-		// task p34-machines-bumblelyzer-crucible — the crystallisation quintet joins the same
+		// task machines-bumblelyzer-crucible — the crystallisation quintet joins the same
 		// table-driven form (the keys are the sanitized lowercase internal names, the
 		// specOf/materialOf seam's id convention).
 		MOLTEN_FLUIDS.put("silicon", GTFluids.chemicalSource("silicon_molten"));

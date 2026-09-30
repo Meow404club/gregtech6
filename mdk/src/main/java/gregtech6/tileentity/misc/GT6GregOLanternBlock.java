@@ -23,7 +23,7 @@ import gregtech6.registry.GT6Placeables;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Greg o'Lantern block carrier (task p32-placeables) — the upstream row
+ * The Greg o'Lantern block carrier (task placeables) — the upstream row
  * "Greg o'Lantern" (Loader_MultiTileEntities.java:2031, MTE 32758, the aUtilWood row over
  * {@code MultiTileEntityGregOLantern}).
  *

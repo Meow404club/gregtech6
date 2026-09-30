@@ -14,7 +14,7 @@ import gregtech6.multiblock.GTMultiBlockPattern;
 
 /**
  * The green/red per-cell match classifier of the ghost preview (task
- * p12-ghost-render-match, ADR 2026-09-02-p12-ghost-render-translucent): a pure function
+ * ghost-render-match, ADR 2026-09-02-ghost-render-translucent): a pure function
  * from ({@link GTMultiBlockPattern} read-only structure + {@link Level} + controller
  * position + facing byte) to a per-cell three-valued verdict.
  *
@@ -51,7 +51,7 @@ import gregtech6.multiblock.GTMultiBlockPattern;
  * fresh every frame — 27..125 reads is nothing, no caching (the P12 ruling), and no
  * static mutable field exists here (the P5+P10 constraints, structural in this class:
  * pure static functions over per-frame inputs only). Fusion-grade patterns (~600-1000
- * cells, p12-ghost-upstream-census) are the noted future consumer of a cached mesh on
+ * cells, ghost-upstream-census) are the noted future consumer of a cached mesh on
  * top — not an API change, and not this card.
  */
 @OnlyIn(Dist.CLIENT)

@@ -1,5 +1,5 @@
 /**
- * Offline tests for task p12-jei-integration: the JEI plugin detection contract and the
+ * Offline tests for task jei-integration: the JEI plugin detection contract and the
  * lang-key reconciliation seam (acceptance b).
  *
  * <p>JEI discovers plugins by scanning for {@code @JeiPlugin} and instantiating the class
@@ -14,7 +14,7 @@
  * <li>the bytecode references only the loader-neutral JEI common API — never the platform
  *     packages (mezz/jei/api/forge/, mezz/jei/api/neoforge/) — so the single shared source
  *     keeps compiling on both the 1.20.1 Forge and 1.21.1 NeoForge legs (task
- *     p15-jei-dual-wiring).</li>
+ *     jei-dual-wiring).</li>
  * </ul>
  * The lang-key reconciliation ({@link GT6JeiPlugin#INFO_KEY_COKE_OVEN} ↔ the GT6EnUs
  * provider) rides the datagen-side test (GT6EnUsJeiInfoTest) plus the runData gate; here we
@@ -64,7 +64,7 @@ public class GT6JeiPluginTest {
 
 	@Test
 	public void noPlatformSpecificJeiApiInBytecode() throws Exception {
-		// Dual-node guard (task p15-jei-dual-wiring): the plugin source is shared across the
+		// Dual-node guard (task jei-dual-wiring): the plugin source is shared across the
 		// 1.20.1 Forge leg (JEI forge-api exposes mezz/jei/api/forge/) and the 1.21.1 NeoForge
 		// leg (JEI neoforge-api exposes mezz/jei/api/neoforge/ — NeoForgeTypes). A single
 		// shared source only compiles on both legs if it sticks to the loader-neutral common

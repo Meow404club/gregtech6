@@ -13,7 +13,7 @@ import gregtech6.registry.GT6FeBatteries;
 import gregtech6.tileentity.energy.GT6FeBatteryBlockEntity;
 
 /**
- * The FE battery test fixture block (task p26-eu-bridge-outbound) — a simple-cube
+ * The FE battery test fixture block (task eu-bridge-outbound) — a simple-cube
  * BaseEntityBlock carrier over the fixture BET. The RECEIVING end of the EU->FE outbound
  * bridge acceptance chain: the RCON chain (/gt6febattery place|stat|reset) drives it
  * headless, so there is NO {@code use} interaction and NO onRemove override (the

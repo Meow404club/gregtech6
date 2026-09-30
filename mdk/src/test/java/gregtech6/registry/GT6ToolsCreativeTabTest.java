@@ -1,5 +1,5 @@
 /**
- * Offline tests for task p10-tool-creative-tab: the "Tools" creative tab registration
+ * Offline tests for task tool-creative-tab: the "Tools" creative tab registration
  * (GT6Tools.TAB_TABLE + TOOLS_TAB, the GTWires.ELECTRIC_WIRES_TAB table-driven form).
  *
  * <p>The tab itself (a mod CreativeModeTab) and the items are NOT constructible in this
@@ -103,7 +103,7 @@ public class GT6ToolsCreativeTabTest {
 	 */
 	@Test
 	public void displayTableIsExactlyTheTenToolRows() {
-		// task p29-w5-t8-armor-24: the seam is APPEND-ONLY (decisions.p30-w5-split-rulings)
+		// task w5-t8-armor-24: the seam is APPEND-ONLY (decisions.p30-w5-split-rulings)
 		// — the ten base rows stay pinned at the HEAD (the asserts below), while the total
 		// grows: this baseline 10 + 24 armor = 34; the W5 tool cards' 54 rows rebase in
 		// between and the wave-final census the wave gate re-measures is 88. The tail alone

@@ -16,7 +16,7 @@ import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.registry.GTMachines;
 
 /**
- * Task p29-w1-rm-maps-scaffold ② — the efficiency column and the :768/:771 progress
+ * Task w1-rm-maps-scaffold ② — the efficiency column and the :768/:771 progress
  * division. Upstream semantics (MultiTileEntityBasicMachine.java): {@code short
  * mEfficiency = 10000} (:96), the :125 read binds 0..10000, and the progress rows run
  * {@code mMaxProgress = max(1, UT.Code.units(minEnergy × duration [× parallelCount],

@@ -8,7 +8,7 @@ import gregtech6.registry.GTBlockEntities;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The bedrock fluid-spring nozzle block (task p38-issue5-fluid-spring-nozzle) — the modern
+ * The bedrock fluid-spring nozzle block (task issue5-fluid-spring-nozzle) — the modern
  * carrier of the upstream MultiTileEntityFluidSpring block face (id 32763, placed by
  * WorldgenFluidSpring.java:77-79 under the spring dome), mounted with the
  * {@link gregtech6.tileentity.misc.GTFluidSpringBlockEntity}. Worldgen-only: no BlockItem,

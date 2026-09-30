@@ -14,7 +14,7 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import org.junit.jupiter.api.Test;
 
 /**
- * The four connector families' row-table gate (task r8-tooltip-wire-pipe-sensor acceptance
+ * The four connector families' row-table gate (task tooltip-wire-pipe-sensor acceptance
  * ①): row count, row order, key shape and the ChatFormatting per row, pinned as executable
  * assertions — the GT6TooltipsTest pure-JVM form (the registry, the line record and
  * {@code Component.translatable} are plain-object faces, no Bootstrap).

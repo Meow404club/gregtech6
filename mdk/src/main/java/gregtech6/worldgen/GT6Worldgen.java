@@ -15,7 +15,7 @@ import gregtech6.registry.GT6TreeBlocks;
 import gregtech6.registry.GTStoneBlocks;
 
 /**
- * The worldgen constant table + the datagen key face (task p26-worldgen-pipeline-skeleton).
+ * The worldgen constant table + the datagen key face (task worldgen-pipeline-skeleton).
  * Pure data — offline-safe by construction (no registry access: {@code ResourceKey.create}
  * is a map intern, the GTStoneBlocksRegistrationTest posture), the datagen walks and the
  * offline test both consume this class.
@@ -96,7 +96,7 @@ public final class GT6Worldgen {
     }
 
     // ------------------------------------------------------------------
-    // The strata-lens band (task p31-strata-lens) — the option-b ruling
+    // The strata-lens band (task strata-lens) — the option-b ruling
     // (decisions.2026-09-17-p30-strata-ruling): the 5 marker stones generate as
     // mountain-scale flattened-blob lenses through the ONE gt6:strata_lenses
     // feature (the GT6VeinGenerator isomorphic core + row table); the other 12
@@ -130,7 +130,7 @@ public final class GT6Worldgen {
     public static final ResourceKey<PlacedFeature> STRATA_LENSES_PLACED = placedKeyOf("strata_lenses");
 
     // ------------------------------------------------------------------
-    // The nether stone-lens band (task p31-nether-lens-end-yield). Upstream:
+    // The nether stone-lens band (task nether-lens-end-yield). Upstream:
     // the WorldgenStone loop's nether row per stone —
     // {@code new WorldgenStone("nether.stone.<mat>", F, stone, 0, 1, 200, 200,
     // 0, 120, null, F, GEN_NETHER)} (Loader_Worldgen.java:656; the ctor order
@@ -158,7 +158,7 @@ public final class GT6Worldgen {
     public static final ResourceKey<PlacedFeature> NETHER_LENSES_PLACED = placedKeyOf("nether_lenses");
 
     // ------------------------------------------------------------------
-    // The nether three-form band (task p31-nether-lens-end-yield spec ①):
+    // The nether three-form band (task nether-lens-end-yield spec ①):
     // WorldgenNetherQuartz (:600)/WorldgenNetherCrystals (:601)/WorldgenNetherClay
     // (:599), all default T upstream and all GEN_NETHER — three NoneFeatureConfiguration
     // features over the GT6WorleyNoise port. The payloads are the GT6NetherOres
@@ -172,7 +172,7 @@ public final class GT6Worldgen {
     public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_CLAY_CONFIGURED = configKey("nether_clay");
     public static final ResourceKey<PlacedFeature> NETHER_CLAY_PLACED = placedKeyOf("nether_clay");
 
-    // ------------------------------------------------------------------ the tree band (task p30-w6-t1-trees-nine)
+    // ------------------------------------------------------------------ the tree band (task w6-t1-trees-nine)
 
     /**
      * The modern entry id per tree: {@code tree_<snake>} — the upstream config name {@code
@@ -204,7 +204,7 @@ public final class GT6Worldgen {
             .map(GT6TreeKind::snake).map(GT6Worldgen::treePlacedKey).toList();
 
     // ------------------------------------------------------------------
-    // The surface deco band (task p30-w6-rocks-sticks) — WorldgenOnSurface
+    // The surface deco band (task w6-rocks-sticks) — WorldgenOnSurface
     // ray-cast semantics (WorldgenOnSurface.java:49-76) translated into the
     // vanilla placed-feature modifiers: Amount -> Count, the per-ray
     // nextInt(mProbability) gate -> RarityFilter, the sky ray ->
@@ -226,7 +226,7 @@ public final class GT6Worldgen {
     public static final int STICKS_SPARSE_COUNT = 2;
 
     // ------------------------------------------------------------------
-    // The surface-plants + soil band (task p30-w6-t2-surface-blocks). The
+    // The surface-plants + soil band (task w6-t2-surface-blocks). The
     // WorldgenOnSurface ray gates (Amount targets x the nextInt(Probability)
     // gate, WorldgenOnSurface.java:49-76) translate to Count+RarityFilter; the
     // WorldgenPit/BlackSand/Turf chunk gates (nextInt(divider)) translate to
@@ -364,7 +364,7 @@ public final class GT6Worldgen {
     public static final TagKey<Biome> STICKS_SPARSE_BIOMES = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("gt6", "sticks_sparse"));
 
     // ------------------------------------------------------------------
-    // The large-vein band (task p30-w6-t3-large-veins) — the single Feature over the
+    // The large-vein band (task w6-t3-large-veins) — the single Feature over the
     // 40-row JSON vein table; key form = the surface-band path-direct shape.
     // ------------------------------------------------------------------
 
@@ -374,7 +374,7 @@ public final class GT6Worldgen {
     public static final ResourceKey<PlacedFeature> LARGE_VEINS_PLACED = placedKeyOf("large_veins");
 
     // ------------------------------------------------------------------
-    // The deep-band mirror vein band (task r6-c2-deep-band) — the SECOND large-vein
+    // The deep-band mirror vein band (task c2-deep-band) — the SECOND large-vein
     // configured feature over the SHIFTED mirror table (GT6WorldgenDatagen.DEEP_VEIN_TABLE),
     // the SAME GT6LargeVeinFeature instance under its own key (a configured feature is a
     // (feature, config) pair — vanilla mounts one Feature instance many times). A separate
@@ -391,7 +391,7 @@ public final class GT6Worldgen {
     public static final ResourceKey<PlacedFeature> LARGE_VEINS_DEEP_PLACED = placedKeyOf("large_veins_deep");
 
     // ------------------------------------------------------------------
-    // The bedrock-ore band (task p31-bedrock-ore-worldgen) — the single Feature over the
+    // The bedrock-ore band (task bedrock-ore-worldgen) — the single Feature over the
     // 46-row bedrock-ore table; key form = the large-vein band's path-direct shape.
     // ------------------------------------------------------------------
 
@@ -405,7 +405,7 @@ public final class GT6Worldgen {
     public static final ResourceKey<PlacedFeature> BEDROCK_ORES_PLACED = placedKeyOf("bedrock_ores");
 
     // ------------------------------------------------------------------
-    // The bedrock-spring band (task p31-fluid-spring) — the single Feature over the
+    // The bedrock-spring band (task fluid-spring) — the single Feature over the
     // 16-row spring table; key form = the bedrock-ore band's path-direct shape. The
     // biome modifier ships textually AFTER the bedrock_ores row (the upstream
     // "Has to be after Bedrock Ores" order, Loader_Worldgen.java:781 — though the
@@ -429,7 +429,7 @@ public final class GT6Worldgen {
     public static final long SPRING_DIMENSION_SALT = 2;
 
     // ------------------------------------------------------------------
-    // The bumble-hive band (task p32-bees-lv2) — ONE feature over the three
+    // The bumble-hive band (task bees-lv2) — ONE feature over the three
     // dimensions (upstream was three WorldgenObject rows, overworld/nether/end,
     // Loader_Worldgen.java:635-637; the modern split = three biome modifiers over
     // ONE placed feature, the END_YIELD modifier face). The in-feature walk rides

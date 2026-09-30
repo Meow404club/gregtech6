@@ -27,7 +27,7 @@ import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The BatteryBox BE (task p29-w4-battery-storage ④) — the
+ * The BatteryBox BE (task w4-battery-storage ④) — the
  * {@code TileEntityBase10EnergyBatBox} transcription over the port BE tree (Base10 :50-236,
  * the EU-only shape the Loader rows register: {@code NBT_ENERGY_EMITTED/EU,
  * NBT_INPUT, V[i], NBT_OUTPUT, V[i]}). One class over the twelve blocks; the 4/16 slot
@@ -232,7 +232,7 @@ public class GT6BatteryBoxBlockEntity extends TileEntityBase03TicksAndSync imple
 	}
 
 	/**
-	 * The activity visual write (task r8-tex-composite-family — the upstream getTexture2
+	 * The activity visual write (task tex-composite-family — the upstream getTexture2
 	 * {@code sOverlays[mActiveState & 3]} layer, the GT6ElectricTransformerBlockEntity
 	 * .syncActiveToState form): the {@code mActive} flag lands on the blockstate's ACTIVE
 	 * property, the overlay_active model shell reads it. Same-block state writes keep the

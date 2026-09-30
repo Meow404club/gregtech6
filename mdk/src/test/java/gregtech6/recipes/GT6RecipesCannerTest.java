@@ -25,7 +25,7 @@ import gregtech6.registry.GT6FoodCans;
 import gregtech6.registry.GT6SprayCans;
 
 /**
- * The Canner refill pour + the R5 four-way alignment (task p24-canner-machine acceptance ⑥,
+ * The Canner refill pour + the R5 four-way alignment (task canner-machine acceptance ⑥,
  * offline over the resolver seams — the GT6RecipesDistilleryTest shape):
  * <ul>
  * <li>the 17-row pour census (16 colour refills + the chlorine remover row) through
@@ -151,7 +151,7 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	void pourLandFiftyNineRows() {
 		GT6RecipesCanner.load();
 		assertEquals(59, GT6RecipeMaps.CANNER.mRecipeList.size(),
-				"16 colour refills + the chlorine remover + the 3 food-can rows (p25-food-can-row0) + the 32 C-Foam refills (p26, :254/:262) + the 7 pouring laser gas fill rows (p32 :403 + debt-laser-gas-family :396-403 + debt-hene-fluid — the heliumneon fluid row landed, helium skips on the offline registry arm)");
+				"16 colour refills + the chlorine remover + the 3 food-can rows (food-can-row0) + the 32 C-Foam refills (p26, :254/:262) + the 7 pouring laser gas fill rows (p32 :403 + debt-laser-gas-family :396-403 + debt-hene-fluid — the heliumneon fluid row landed, helium skips on the offline registry arm)");
 		assertEquals(16, sResolvedIndices.size(), "the dye resolver saw exactly the 16 walk indices (the chlorine row rides its own seam)");
 		assertEquals(16, sResolvedIndices.stream().distinct().count(), "each dye index resolved exactly once");
 	}
@@ -198,7 +198,7 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the p26-c-foam-fluid-refill 32 (MultiItemRandomTools.java:254/:262)
+	// the c-foam-fluid-refill 32 (MultiItemRandomTools.java:254/:262)
 	// ---------------------------------------------------------------------------
 
 	/** The C-Foam refill census: 32 poured rows (16 dyed + 16 owned), 25600 mB each. */
@@ -230,7 +230,7 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the laser gas fill family (p32-qu-laser-domain :403 + debt-laser-gas-family :396-403)
+	// the laser gas fill family (qu-laser-domain :403 + debt-laser-gas-family :396-403)
 	// ---------------------------------------------------------------------------
 
 	/** The gas laser emitter row verbatim (:403 — EUt 16, duration 128, one unit of CO2 = 144 mB, empty in / CO2 emitter out). */
@@ -297,7 +297,7 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the p25-food-can-row0 trio (RM.food_can over Loader_Recipes_Food.java:41-42 + MultiItemFood.java:600)
+	// the food-can-row0 trio (RM.food_can over Loader_Recipes_Food.java:41-42 + MultiItemFood.java:600)
 	// ---------------------------------------------------------------------------
 
 	/** The rotten_flesh row: foodValue 4 → the dispatch tier 1 → the SMALL rotten can, EUt 16 / duration 16 CONSTANT. */

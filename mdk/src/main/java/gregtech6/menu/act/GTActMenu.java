@@ -23,7 +23,7 @@ import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
 
 /**
- * The Advanced Crafting Table ModularUI panel (task p24-act-machine C2 — the mdk-first
+ * The Advanced Crafting Table ModularUI panel (task act-machine C2 — the mdk-first
  * ModularUI consumer, decisions.p24-act-be-form). The MUI2 machine path: the BE
  * implements {@code IUIHolder<PosGuiData>}, the panel builds SERVER+CLIENT in
  * {@link #buildPanel} (the sync handlers register there), the client screen wraps it in

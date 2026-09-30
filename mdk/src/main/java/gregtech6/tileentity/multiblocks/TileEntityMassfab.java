@@ -28,7 +28,7 @@ import gregtech6.registry.GTMultiBlocks;
 import gregtech6.fluid.FluidTankGT;
 
 /**
- * The Large Matter Fabricator multiblock controller (task p31-massfab) — the 1.20.1/1.21.1
+ * The Large Matter Fabricator multiblock controller (task massfab) — the 1.20.1/1.21.1
  * port of gregtech/tileentity/multiblocks/MultiTileEntityMatterFabricator.java over
  * {@link TileEntityBase10MultiBlockMachine} (Loader_MultiTileEntities.java:1241: meta 17199,
  * item 17101, "Large Matter Fabricator", MT.Pb, NBT_HARDNESS 6.0F == NBT_RESISTANCE 6.0F,
@@ -120,7 +120,7 @@ public class TileEntityMassfab extends TileEntityBase10MultiBlockMachine impleme
 		// virtual-dispatch; a subclass shadow would leave the base checkRecipe on TU)
 		mEnergyTypeAccepted = TD.Energy.QU;
 		// the :161 readFromNBT2 row — the output bank re-points to the map's fluid-OUT
-		// count (RM.java:144 fluids 1/2/0 → TWO tanks; the p30-distill-output-routing
+		// count (RM.java:144 fluids 1/2/0 → TWO tanks; the distill-output-routing
 		// form): the disintegration rows park charged + neutral, and the base one-tank
 		// default would fail the canOutput :664 required-empty-tank gate forever.
 		mTanksOutput = new FluidTankGT[] {new FluidTankGT(), new FluidTankGT()};

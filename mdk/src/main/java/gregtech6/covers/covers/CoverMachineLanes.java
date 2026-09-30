@@ -6,7 +6,7 @@ import gregtech6.tileentity.machines.TileEntityOven;
 import gregtech6.util.UT6;
 
 /**
- * The coverable-machine state lane reads (task p35-covers-display-scale-6) — the
+ * The coverable-machine state lane reads (task covers-display-scale-6) — the
  * declared two-form mapping the P11 controller card established
  * (CoverControllerAutoRedstone.runsActivelyWithoutSuccess): the upstream
  * {@code ITileEntityRunningPossible/Passively/Actively/Successfully},

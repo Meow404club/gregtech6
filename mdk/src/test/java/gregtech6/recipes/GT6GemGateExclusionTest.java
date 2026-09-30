@@ -26,7 +26,7 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
- * The behavior pin of the p31-supplier-rule-pin compressor fix: the :226 dust→plateGem row's
+ * The behavior pin of the supplier-rule-pin compressor fix: the :226 dust→plateGem row's
  * gem Nor gate actually EXCLUDES gem-chain members again. The eager
  * {@code GEM_CHAIN_PREFIXES} field froze four pre-init null prefixes at mod construct (before
  * {@code OP.init()}) and the probe silently passed every material; the fix reads the prefixes

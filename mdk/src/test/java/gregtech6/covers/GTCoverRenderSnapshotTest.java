@@ -31,7 +31,7 @@ import gregtech6.covers.covers.CoverRobotArm;
 import gregtech6.covers.covers.CoverShutter;
 
 /**
- * The cover snapshot LAYER TABLE contract (task p11-render-cover-multilayer): the
+ * The cover snapshot LAYER TABLE contract (task render-cover-multilayer): the
  * census map (every port-registered surface sprite carries the upstream
  * {@code BlockTextureMulti} underlay — see the {@link GTCoverRenderSnapshot} class
  * doc), the layer order (background bottom, surface top), the record roundtrip over

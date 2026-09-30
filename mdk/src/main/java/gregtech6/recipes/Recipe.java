@@ -43,16 +43,16 @@ import gregtech6.item.MaterialPrefixItem;
  * The upstream OreDict unification inside {@code checkStacksEqual} is ported as a
  * two-stage equality — exact item + tag equality first (the {@link #isSameItemAndTag}
  * shape), then the material-family tag fallback ({@link #matchesByMaterialTag}, the
- * p25-tag-input-machine-fallback primitive of the unification semantics); NBT-lenient
+ * tag-input-machine-fallback primitive of the unification semantics); NBT-lenient
  * matching keeps the upstream {@code mNoNBTChecks || !recipeInput.hasTagCompound()}
  * rule on the exact branch while the tag branch ignores NBT by ruling.
- * Output chances are carried since p8-recipe-chances-orechain: {@link #mChances} is a
+ * Output chances are carried since recipe-chances-orechain: {@link #mChances} is a
  * 10000-based per-output-slot chance array aligned to {@link #mOutputs} (upstream
  * Recipe.java:666 carries {@code mChances, mMaxChances}; {@code mMaxChances} is NOT
  * ported — its every read defaults to 10000, upstream Recipe.java:687, so the port
  * folds that constant into the chance semantics, declared deviation).
  *
- * <p><b>Consumer contract (pinned for p4-machine-oven):</b>
+ * <p><b>Consumer contract (pinned for machine-oven):</b>
  * {@code RecipeMap.findRecipe} and {@code RecipeMapFurnace.findRecipe} only
  * LOOK UP — they never modify the passed inputs (decrease flag is always false
  * inside the search). Consuming is the machine's job:
@@ -82,10 +82,10 @@ public class Recipe {
 	public long mDuration, mEUt, mSpecialValue;
 
 	/**
-	 * The never-consumed input predicate (task p16-distillery-family ①): the consume pass
+	 * The never-consumed input predicate (task distillery-family ①): the consume pass
 	 * ({@code checkStacksEqual(true, ...)}) skips every matched input the predicate claims —
 	 * the production default is the Integrated Circuit identity ({@code GT6Circuits::isSelector})
-	 * OR the extruder-mold identity (task p26-w1-press-extruder-molds), the port of the
+	 * OR the extruder-mold identity (task w1-press-extruder-molds), the port of the
 	 * upstream STACK-SIZE-0 marker ({@code ST.tag(n)} = circuit size 0, whose consume
 	 * decrements by zero, ST.java:779-781 + Recipe.java:780-781; the molds ride the same
 	 * marker — RM.java:405/:407 {@code IL.Shape_Extruder_*.get(0)}, the remember-id478
@@ -96,23 +96,23 @@ public class Recipe {
 	 * routes the configuration number exactly). Public as the offline test seam (the machines-package row-test e2e swaps it) —
 	 * the vanilla item registry freezes at bootstrap, so the offline fixture predicate stands
 	 * in for the circuit identity (the GT6RecipesShCLTest synthetic-item convention). The
-	 * third disjunct is the p32-qu-scanner-replicator face: a data-bearing USB stick is the
+	 * third disjunct is the qu-scanner-replicator face: a data-bearing USB stick is the
 	 * replicator's never-consumed data medium (the upstream {@code ST.amount(0, aUSB)}
 	 * zero-consume input, RecipeMapReplicator.java:94/:108) — only the dynamic replication
 	 * rows carry such an input, so the claim stays narrow. The fourth disjunct is the
-	 * p35-slicer-row-domain face: a slicer blade is the Slicer rows' never-consumed shaping
+	 * slicer-row-domain face: a slicer blade is the Slicer rows' never-consumed shaping
 	 * tool (the upstream {@code IL.Shape_Slicer_*.get(0)} stack-size-0 marker over
 	 * Loader_Recipes_Vanilla.java:638-642 / Loader_Recipes_Other.java:420) — only the
 	 * RM.Slicer rows carry such an input, so the claim stays narrow.
 	 */
 	public static java.util.function.Predicate<ItemStack> sNotConsumable =
 			aStack -> gregtech6.item.GT6Circuits.isSelector(aStack) || gregtech6.registry.GT6ExtruderMolds.isMold(aStack)
-					|| gregtech6.items.GT6UsbSticks.readData(aStack) != null // task p32-qu-scanner-replicator — the replicator's ST.amount(0, aUSB) data-medium face (RecipeMapReplicator.java:94/:108)
-					|| gregtech6.registry.GT6SlicerBlades.isBlade(aStack); // task p35-slicer-row-domain — the Slicer rows' size-0 blade face (Loader_Recipes_Vanilla.java:638)
+					|| gregtech6.items.GT6UsbSticks.readData(aStack) != null // task qu-scanner-replicator — the replicator's ST.amount(0, aUSB) data-medium face (RecipeMapReplicator.java:94/:108)
+					|| gregtech6.registry.GT6SlicerBlades.isBlade(aStack); // task slicer-row-domain — the Slicer rows' size-0 blade face (Loader_Recipes_Vanilla.java:638)
 
 	/**
 	 * The tag-membership seam of the material-tag fallback (task
-	 * p25-tag-input-machine-fallback, decisions.p25-tag-input-fallback-rulings ②): the
+	 * tag-input-machine-fallback, decisions.p25-tag-input-fallback-rulings ②): the
 	 * PRODUCTION binding is {@code ItemStack::is} — the real registry tag path. The static
 	 * seam exists because {@code ItemStack.is(TagKey)} does not resolve offline (the tag
 	 * manager never boots in the test JVM — every tag reads empty), so the offline tests
@@ -319,7 +319,7 @@ public class Recipe {
 	 * equality is replaced by item + tag equality; NBT is skipped when the recipe
 	 * input carries no tag (upstream {@code mNoNBTChecks || !tInput.hasTag()}).
 	 *
-	 * <p><b>The material-tag fallback (task p25-tag-input-machine-fallback)</b>: a
+	 * <p><b>The material-tag fallback (task tag-input-machine-fallback)</b>: a
 	 * failed EXACT match retries once, tag-driven — the modern primitive of the
 	 * upstream unification semantics (upstream OreDictManager.equal_ :628-634 resolves
 	 * the machine input's oredict association to its unification target and compares
@@ -344,7 +344,7 @@ public class Recipe {
 	 * through the exact branch — circuits are not MaterialPrefixItems, so the
 	 * fallback never fires for them).
 	 *
-	 * <p><b>The circuit identity-skip (task p16-distillery-family ①)</b>: the consume
+	 * <p><b>The circuit identity-skip (task distillery-family ①)</b>: the consume
 	 * pass never shrinks a matched INTEGRATED CIRCUIT input — the upstream ST.tag(n)
 	 * marker is a STACK-SIZE-0 input whose consume decrements by zero
 	 * (ST.java:779-781 {@code getWithDamage(0, n)} + Recipe.java:780-781

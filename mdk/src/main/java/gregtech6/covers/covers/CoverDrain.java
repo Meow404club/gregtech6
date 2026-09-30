@@ -22,7 +22,7 @@ import gregtech6.fluid.FluidTankGT;
 
 /**
  * The drain cover — 1.20.1 port of gregapi/cover/covers/CoverDrain.java:63-254 (task
- * p34-covers-gameplay-10; upstream item id 1020 "Drain"). Three collection arms on the
+ * covers-gameplay-10; upstream item id 1020 "Drain"). Three collection arms on the
  * ported surface: the rain arm (:70-84 — every 100-tick beat, phase-offset per beat
  * slot, a top/horizontal face with sky access fills {@code 1000 * (thundering?2:1)} L
  * of water in precipitating biomes above 0.2 temperature), and the fluid-block arms
@@ -45,7 +45,7 @@ import gregtech6.fluid.FluidTankGT;
  * and the OpenBlocks XP drain all key on fluids/entities this port does not register
  * (the census fluid gaps); the slab/stairs rain-geometry special cases (:76-80) fold
  * into the sky-access check. The {@code onWalkOver} hook exists since the asphalt
- * restoration (task p37-covers-crafting-asphalt) but the drain's walk arms stay cut with
+ * restoration (task covers-crafting-asphalt) but the drain's walk arms stay cut with
  * the fluid zoo they key on.
  */
 public class CoverDrain extends AbstractCoverDefault {

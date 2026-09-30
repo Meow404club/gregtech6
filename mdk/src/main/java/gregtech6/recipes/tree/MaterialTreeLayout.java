@@ -29,7 +29,7 @@ import gregtech6.recipes.tree.MaterialTreeDisplay.Edge;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Node;
 
 /**
- * The material-tree node-graph GEOMETRY (task r8-mattree-v2-nodes) — the viewer-NEUTRAL
+ * The material-tree node-graph GEOMETRY (task mattree-v2-nodes) — the viewer-NEUTRAL
  * helper both legs render from (spec clause ⑦): pure vanilla math over the
  * {@link MaterialTreeDisplay} model, zero JEI/EMI imports, every rect pinned by
  * {@code MaterialTreeLayoutTest}. The JEI category's {@code draw(GuiGraphics)} and the EMI

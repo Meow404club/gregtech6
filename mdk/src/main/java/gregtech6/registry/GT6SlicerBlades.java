@@ -17,7 +17,7 @@ import net.minecraftforge.registries.RegistryObject;
 import gregtech6.GT6Mod;
 
 /**
- * The GT6 slicer-blade registration home — task p35-slicer-row-domain, the vanilla-face
+ * The GT6 slicer-blade registration home — task slicer-row-domain, the vanilla-face
  * MINIMAL subset of the upstream {@code Shape_Slicer_*} domain (the content-unit
  * completeness ruling: the blades and their RM rows land on the SAME card — the
  * GT6ExtruderMolds shape; the Slicer rows are {@code addRecipe2(item, blade, out)} and the
@@ -29,7 +29,7 @@ import gregtech6.GT6Mod;
  * <p>The subset — 2 RM-row0 items of the upstream 8-blade census (MultiItemTechnological.java
  * :362-372; the pooled melon/food faces stay pooled, the never pool): the Empty frame +
  * the Flat blade with the CUT fur row, the Eigths/Quarters blades with the pooled melon/food
- * faces. Task p36-recipes-obtainability (ruling B, the obtainability domain = items +
+ * faces. Task recipes-obtainability (ruling B, the obtainability domain = items +
  * recipes inseparable) completes the census: the frame and the five remaining blade forms
  * register — same plain-item pattern — because the eight :364+:374-380 crafting rows need
  * all eight outputs and the frame as the shared 'O' ingredient. The full census walks in
@@ -114,7 +114,7 @@ public final class GT6SlicerBlades {
 	 * The full EIGHT-item census in upstream meta order (:362 frame, :366-:372 the seven
 	 * blades) — the crafting-row and lang walk; the RM row0 subset {@link #BLADES} stays
 	 * the {@link #sBladeTest} face (the six p36 blades carry no RM rows — the never pool
-	 * holds, task p36-recipes-obtainability ruling B).
+	 * holds, task recipes-obtainability ruling B).
 	 */
 	public static final List<RegistryObject<Item>> ALL = List.of(SHAPE_SLICER_EMPTY, SHAPE_SLICER_FLAT,
 			SHAPE_SLICER_GRID, SHAPE_SLICER_EIGHTS, SHAPE_SLICER_EIGHTS_HOLLOW, SHAPE_SLICER_SPLIT,
@@ -175,7 +175,7 @@ public final class GT6SlicerBlades {
 	}
 
 	/**
-	 * The MACHINES_TAB join (task p38-tabfix-c-misc — the census zero-tab adjudication;
+	 * The MACHINES_TAB join (task tabfix-c-misc — the census zero-tab adjudication;
 	 * the GT6BurningBoxes.onBuildTabContents verbatim form, delivered by the class-level
 	 * MOD-bus {@code @Mod.EventBusSubscriber} at the class head). Upstream the blades are
 	 * MultiItemTechnological metas riding the GT tab list; the port pools them with the

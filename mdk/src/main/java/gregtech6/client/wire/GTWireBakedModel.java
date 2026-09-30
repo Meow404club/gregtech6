@@ -32,7 +32,7 @@ import net.minecraftforge.client.model.data.ModelData;
 import gregtech6.block.wire.GTWireBlock;
 
 /**
- * The connection-aware wire baked model (task p9-wire-family-w2) — the modern direct
+ * The connection-aware wire baked model (task wire-family-w2) — the modern direct
  * translation of the upstream 7-pass connector rendering
  * (TileEntityBase10ConnectorRendered): pass 0 = the core box of the wire diameter
  * ({@code setBlockBounds2 :113-116}), passes 1-6 = one connection arm per connected side
@@ -40,7 +40,7 @@ import gregtech6.block.wire.GTWireBlock;
  * cross-section — the port's connector length is always 0 because covers/ITileEntitySurface
  * are not ported, {@code getConnectorLength :241-249} rLength = 0 in every reachable case).
  *
- * <p>ADR ⑨ (2026-09-01-p9-wire-family): the connection mask LIVES IN THE BLOCKSTATE
+ * <p>ADR ⑨ (2026-09-01-wire-family): the connection mask LIVES IN THE BLOCKSTATE
  * ({@link GTWireBlock#CONNECTIONS}, 0..63), so this model is a pure state function — it
  * NEVER touches {@link ModelData} or any BlockEntity (the world-persistent visual red
  * line: BakedModel only; BEWLR/TESR/BER forbidden). 64 mask shapes are generated lazily
@@ -64,7 +64,7 @@ import gregtech6.block.wire.GTWireBlock;
  * The insulation tier follows the upstream :238 diameter ladder: &lt;0.37 TINY, &lt;0.49
  * SMALL, &lt;0.74 MEDIUM, &lt;0.99 LARGE, else HUGE (diameters = PX_P/16, CS.java:492).
  *
- * <p>Task p11-wire-fiber-texture — the LASER family branch (MultiTileEntityWireLaser.java
+ * <p>Task wire-fiber-texture — the LASER family branch (MultiTileEntityWireLaser.java
  * :121-122): upstream overrides BOTH texture picks with the SAME fixed pair
  * {@code BlockTextureMulti(BlockTextureDefault(FIBER_WIRE, mRGBa),
  * BlockTextureDefault(FIBER_WIRE_OVERLAY))} — every visible face (core, arm caps AND arm
@@ -78,7 +78,7 @@ import gregtech6.block.wire.GTWireBlock;
  * rides tint index 0 through {@link GTWireTint} — the row material is MT.NULL
  * (Loader_MultiTileEntities.java:1815), the same {@code mRGBa} source upstream dyes with.
  *
- * <p>Task p11-wire-brightness — the REDSTONE family joins the table (the last family off
+ * <p>Task wire-brightness — the REDSTONE family joins the table (the last family off
  * the JSON fallback; the same swap the electric rows got, {@link GTWireClientListener}
  * feeds the six rows with the row's set sprite and the cable's insulation layers). The
  * per-family jacket colour rides {@link GTWireTint} (the upstream redstone fixed

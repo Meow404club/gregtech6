@@ -20,7 +20,7 @@ import gregtech6.tileentity.energy.generators.GT6MagicAbsorberBlockEntity;
 
 /**
  * {@code /gt6magicabsorber} — the Magic Field Absorber acceptance command (task
- * p32-magic-absorber; the /gt6laser stat|reset shape over the absorber's probe face):
+ * magic-absorber; the /gt6laser stat|reset shape over the absorber's probe face):
  *
  * <ul>
  * <li>{@code stat <pos>} — the live state snapshot: {@code active} (the :82-97 trophy
@@ -54,7 +54,7 @@ public final class GT6MagicAbsorberCommand {
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 						.executes(aContext -> absorberReset(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))));
 		aEvent.getDispatcher().register(tAbsorber);
-		LOGGER.info("Registered GT6 magic absorber acceptance command /gt6magicabsorber (stat|reset, task p32-magic-absorber)");
+		LOGGER.info("Registered GT6 magic absorber acceptance command /gt6magicabsorber (stat|reset, task magic-absorber)");
 	}
 
 	private static int absorberStat(CommandSourceStack aSource, BlockPos aPos) {

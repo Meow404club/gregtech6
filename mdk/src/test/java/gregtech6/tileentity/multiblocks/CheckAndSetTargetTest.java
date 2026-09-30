@@ -13,7 +13,7 @@ import gregtech6.tileentity.multiblocks.ITileEntityMultiBlockController.Util;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * The checkAndSetTarget tests (task p4-multiblock-framework acceptance ①): the occupation
+ * The checkAndSetTarget tests (task multiblock-framework acceptance ①): the occupation
  * arbitration (upstream ITileEntityMultiBlockController.Util :70-75), the two-pass wand
  * semantics (:51-68 with the stale-reference quirk) and the inventory consumption.
  */

@@ -12,7 +12,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
 /**
- * The GT6 fluid name lists (task p13-steam-proof-repay spec ①) — the 1.20.1 counterpart
+ * The GT6 fluid name lists (task steam-proof-repay spec ①) — the 1.20.1 counterpart
  * of the upstream registration-set machinery: FL.java:571-575 adds every fluid literal
  * into the {@code Collection<String>} sets its enum-ctor receives, and the consumers
  * query the sets by NAME ({@code UT.powerconducting}, UT.java:187 =
@@ -35,15 +35,15 @@ import net.minecraftforge.registries.ForgeRegistries;
  *     (GTFluids NATURAL_GAS, the {@code gt6:natural_gas} registration). Upstream names
  *     the same fluid {@code gas_natural_gas} with old names {@code naturalgas}/
  *     {@code gas.natural} (FL.java:410, the three-name ctor :583-591 adds all three to
- *     GAS) — the port registered it as {@code natural_gas} (task p5-barrel-side-rules),
+ *     GAS) — the port registered it as {@code natural_gas} (task barrel-side-rules),
  *     and the lists key on OUR registry paths, so the port name is the seed. The
  *     upstream CS.java:1534 pre-seed {@code "rc fusion plasma"} stays unported (a
  *     RotaryCraft compat name, no such fluid — pool).</li>
- * <li>the gaseous chemical seeds (task p30-pool-gas-seeds-13) in GAS — upstream,
+ * <li>the gaseous chemical seeds (task pool-gas-seeds-13) in GAS — upstream,
  *     {@code FL.create} AUTO-adds every STATE_GASEOUS fluid to {@code FluidsGT.GAS}
  *     (FL.java:1105), so every port fluid born gaseous is a GAS member by the same rule:
  *     the thirteen-row createGas closure + the four cracked hydrocarbons (both from task
- *     p29-w4-f1-chemicals, Loader_Fluids.java:45-48 and the :660 walk over the GASES-flag
+ *     w4-f1-chemicals, Loader_Fluids.java:45-48 and the :660 walk over the GASES-flag
  *     materials, MT.java:380/:383/:395-398/:406/:425/:443/:476/:1034-1037) + the p24
  *     standalone {@code chlorine} row (MT.java:405 diatomicgas, the same walk). The
  *     plasmas are the deliberate NON-members (Loader_Fluids.java:40-41 — STATE_PLASMA
@@ -63,7 +63,7 @@ public final class GTFluidLists {
 		register("steam", GAS, POWER_CONDUCTING); // FL.java:85 — SIMPLE, GAS, STEAM, POWER_CONDUCTING
 		register("natural_gas", GAS); // the port registry path (GTFluids NATURAL_GAS); upstream FL.java:410 gas_natural_gas
 
-		// task p30-pool-gas-seeds-13 — the gaseous chemical seeds. Upstream the FL.create
+		// task pool-gas-seeds-13 — the gaseous chemical seeds. Upstream the FL.create
 		// STATE_GASEOUS arm auto-adds the name to FluidsGT.GAS (FL.java:1105); the port rows
 		// below were born gaseous (the spec gas flag) but the list never followed. Port
 		// registry paths, one per birth row:
@@ -91,12 +91,12 @@ public final class GTFluidLists {
 		register("ethylene"       , GAS); // :48
 		// the p24 standalone row — MT.java:405 diatomicgas, the same :660 walk
 		register("chlorine"       , GAS); // density −100, the :1105 gaseous carrier shape
-		// the isotope batch (task p31-qu-b-materials) — the same :660 createGas walk over
+		// the isotope batch (task qu-b-materials) — the same :660 createGas walk over
 		// the GASES-flag fusion isotopes (diatomicgas/noblegas, MT.java:66/:68)
 		register("deuterium"      , GAS); // MT.java:381 diatomicgas
 		register("tritium"        , GAS); // MT.java:382 diatomicgas
 		register("helium3"        , GAS); // MT.java:384 noblegas
-		// the naming-parity gases (task p37-fluids-naming) — the three state-2 rows of the
+		// the naming-parity gases (task fluids-naming) — the three state-2 rows of the
 		// census batch (Loader_Fluids.java:50-51 the dimension airs, :133 aerotheum); the
 		// same FL.java:1105 auto-add rule the gaseous seeds above ride
 		register("netherair"      , GAS); // :50

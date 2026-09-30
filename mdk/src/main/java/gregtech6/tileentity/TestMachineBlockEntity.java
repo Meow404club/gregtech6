@@ -10,7 +10,7 @@ import gregtech6.block.TestMachineBlock;
 import gregtech6.registry.GTBlockEntities;
 
 /**
- * Framework test vehicle for task p3-be-framework (the real example machine is the
+ * Framework test vehicle for task be-framework (the real example machine is the
  * WAVE-2 chest, ADR-P3-5). Exercises the 01Root/03TicksAndSync face end to end:
  * the eight-phase tick dispatch, the item-handler capability, and both sync channels.
  *

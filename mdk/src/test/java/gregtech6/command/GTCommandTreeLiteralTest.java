@@ -33,7 +33,7 @@ import gregtech6.tileentity.example.GTExampleChestCommand;
 import gregtech6.tileentity.machines.GTMachineCommand;
 
 /**
- * Task p11-gt6machine-literal-fix: the double-registration literal hijack regression guard.
+ * Task gt6machine-literal-fix: the double-registration literal hijack regression guard.
  *
  * <p>History: GTExampleChestCommand (p3) and GTMachineCommand (p7) both registered the root
  * literal {@code gt6machine}. Brigadier's CommandNode.addChild silently MERGES same-name
@@ -60,46 +60,46 @@ public class GTCommandTreeLiteralTest {
 	/**
 	 * The machine-family root's exact subtree (p7 12 machine literals + p8 fakesource;
 	 * the p14 dryer ladder grew it to 16 — the census follows the tree, task
-	 * p14-dryer-family; p21 grew it again with the paint write-point arm).
+	 * dryer-family; p21 grew it again with the paint write-point arm).
 	 */
 	private static final Set<String> MACHINE_ROOT_CHILDREN = Set.of("fakesource",
 		"shredder", "shredder_t2", "shredder_t3", "shredder_t4",
 		"crusher", "crusher_t2", "crusher_t3", "crusher_t4",
 		"lathe", "lathe_t2", "lathe_t3", "lathe_t4",
 		"dryer", "dryer_t2", "dryer_t3", "dryer_t4",
-		"distillery", "distillery_t2", "distillery_t3", "distillery_t4", // task p16-distillery-family
-		"canner", "canner_t2", "canner_t3", "canner_t4", // task p24-canner-machine — the Canner ladder
-		"sifter", "sifter_t2", "sifter_t3", "sifter_t4", // task p26-w1-sifter-compressor-wiremill — the W1 Kinetic trio
+		"distillery", "distillery_t2", "distillery_t3", "distillery_t4", // task distillery-family
+		"canner", "canner_t2", "canner_t3", "canner_t4", // task canner-machine — the Canner ladder
+		"sifter", "sifter_t2", "sifter_t3", "sifter_t4", // task w1-sifter-compressor-wiremill — the W1 Kinetic trio
 		"compressor", "compressor_t2", "compressor_t3", "compressor_t4",
 		"wiremill", "wiremill_t2", "wiremill_t3", "wiremill_t4",
-		"press", "press_t2", "press_t3", "press_t4", // task p26-w1-press-extruder-molds — the Press ladder
-		"extruder", "extruder_t2", "extruder_t3", "extruder_t4", // task p26-w1-press-extruder-molds — the Extruder ladder
-		"rollingmill_t1", "rollingmill_t2", "rollingmill_t3", "rollingmill_t4", // task p29-w1-kinetic-roll-ladder — the RU RollingMill ladder (the p28 ULV rung has no arm)
-		"rollbender", "rollbender_t2", "rollbender_t3", "rollbender_t4", // task p29-w1-kinetic-roll-ladder — the Roll Bender ladder
-		"rollformer", "rollformer_t2", "rollformer_t3", "rollformer_t4", // task p29-w1-kinetic-roll-ladder — the Roll Former ladder
-		"clustermill", "clustermill_t2", "clustermill_t3", "clustermill_t4", // task p29-w1-kinetic-roll-ladder — the Cluster Mill ladder
-		"mixer", "mixer_t2", "mixer_t3", "mixer_t4", // task p29-w1-eu-hu-families — the eu-hu families
+		"press", "press_t2", "press_t3", "press_t4", // task w1-press-extruder-molds — the Press ladder
+		"extruder", "extruder_t2", "extruder_t3", "extruder_t4", // task w1-press-extruder-molds — the Extruder ladder
+		"rollingmill_t1", "rollingmill_t2", "rollingmill_t3", "rollingmill_t4", // task w1-kinetic-roll-ladder — the RU RollingMill ladder (the p28 ULV rung has no arm)
+		"rollbender", "rollbender_t2", "rollbender_t3", "rollbender_t4", // task w1-kinetic-roll-ladder — the Roll Bender ladder
+		"rollformer", "rollformer_t2", "rollformer_t3", "rollformer_t4", // task w1-kinetic-roll-ladder — the Roll Former ladder
+		"clustermill", "clustermill_t2", "clustermill_t3", "clustermill_t4", // task w1-kinetic-roll-ladder — the Cluster Mill ladder
+		"mixer", "mixer_t2", "mixer_t3", "mixer_t4", // task w1-eu-hu-families — the eu-hu families
 		"electricmixer", "electricmixer_t2", "electricmixer_t3", "electricmixer_t4",
 		"electricloom", "electricloom_t2", "electricloom_t3", "electricloom_t4",
 		"electricsifter", "electricsifter_t2", "electricsifter_t3", "electricsifter_t4",
 		"boxinator", "boxinator_t2", "boxinator_t3", "boxinator_t4",
 		"unboxinator", "unboxinator_t2", "unboxinator_t3", "unboxinator_t4",
-		// task p29-w2-hu-tu-piggyback — the seven hu-tu families
+		// task w2-hu-tu-piggyback — the seven hu-tu families
 		"steamcracker", "steamcracker_t2", "steamcracker_t3", "steamcracker_t4",
 		"catalyticcracker", "catalyticcracker_t2", "catalyticcracker_t3", "catalyticcracker_t4",
 		"coagulator", "generifier", "bath", "autoclave",
 		"loom", "loom_t2", "loom_t3", "loom_t4",
-		"fermenter", // task p29-w1-eu-hu-families — the single-variant rung
-		// task p29-w3-heat-smelter — the Smelter ladder + the Melter single
+		"fermenter", // task w1-eu-hu-families — the single-variant rung
+		// task w3-heat-smelter — the Smelter ladder + the Melter single
 		"smelter", "smelter_t2", "smelter_t3", "smelter_t4", "melter",
-		"roasting_oven", "roasting_oven_t2", "roasting_oven_t3", "roasting_oven_t4", // task p29-w4-eu-bridge — the Roasting ladder
-		// task p34-machines-bumblelyzer-crucible — the Bumblelyzer EU 5-ladder + the Crystallisation Crucible HU 4-ladder
+		"roasting_oven", "roasting_oven_t2", "roasting_oven_t3", "roasting_oven_t4", // task w4-eu-bridge — the Roasting ladder
+		// task machines-bumblelyzer-crucible — the Bumblelyzer EU 5-ladder + the Crystallisation Crucible HU 4-ladder
 		"bumblelyzer", "bumblelyzer_t2", "bumblelyzer_t3", "bumblelyzer_t4", "bumblelyzer_t5",
 		"crystallisationcrucible", "crystallisationcrucible_t2", "crystallisationcrucible_t3", "crystallisationcrucible_t4",
-		"paint", "unpaint", // task p21-paintable-storage-sync — the spray write-point arm
+		"paint", "unpaint", // task paintable-storage-sync — the spray write-point arm
 		"burner_mixer", "burner_mixer_t2", "burner_mixer_t3", "burner_mixer_t4",
-		"plantalyzer", "plantalyzer_t2", "plantalyzer_t3", "plantalyzer_t4", "plantalyzer_t5", // task p34-machines-burner-plantalyzer — the two machine families (+9 literals; the ignite arm rides EVERY family literal)
-		"slicer", "slicer_t2", "slicer_t3", "slicer_t4", "slicer_t5"); // task p35-slicer-row-domain — the Slicer EU 5-ladder (+5 literals, the leather-helmet feed)
+		"plantalyzer", "plantalyzer_t2", "plantalyzer_t3", "plantalyzer_t4", "plantalyzer_t5", // task machines-burner-plantalyzer — the two machine families (+9 literals; the ignite arm rides EVERY family literal)
+		"slicer", "slicer_t2", "slicer_t3", "slicer_t4", "slicer_t5"); // task slicer-row-domain — the Slicer EU 5-ladder (+5 literals, the leather-helmet feed)
 
 	private static CommandSourceStack stack() {
 		// permission level 2 satisfies both commands' requires(...) gate; level/server are
@@ -118,7 +118,7 @@ public class GTCommandTreeLiteralTest {
 
 	/**
 	 * The vanilla boot (the GTMachinesOfflineTestBase :47 idiom, added by task
-	 * p14-dryer-family): registration does build only builders, but it class-initializes
+	 * dryer-family): registration does build only builders, but it class-initializes
 	 * {@code GTMachines} (the RegistryObject references) whose {@code <clinit>} needs
 	 * ForgeRegistries — a bootable JVM state. The old "without any bootstrap" claim above
 	 * held only while test-class ORDER kept this class behind a bootstrapping class in the
@@ -157,7 +157,7 @@ public class GTCommandTreeLiteralTest {
 		CommandNode<CommandSourceStack> tBridge = tDispatcher.getRoot().getChild("gt6bridge");
 		assertNotNull(tChest, "the chest open-chain proof must have its own root literal");
 		assertNotNull(tMachine, "the machine family must keep /gt6machine");
-		assertNotNull(tBridge, "the EU-bridge converter family keeps /gt6bridge (task p29-w4-eu-bridge)");
+		assertNotNull(tBridge, "the EU-bridge converter family keeps /gt6bridge (task w4-eu-bridge)");
 		assertNotEquals(tChest, tMachine);
 		assertNotEquals(tMachine, tBridge);
 	}

@@ -5,7 +5,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ToolAction;
 
 /**
- * The formal GT6 saw — task p24-tool-system spec ①/② (the GT6FileItem form). Upstream
+ * The formal GT6 saw — task tool-system spec ①/② (the GT6FileItem form). Upstream
  * the tool carries the {@code TOOL_saw} behaviour ({@code Behavior_Tool(TOOL_saw,
  * SFX.MC_DIG_WOOD, getToolDamagePerContainerCraft(), …)}, GT_Tool_Saw.java:197) whose
  * container-craft row is {@code = 100} units (:65-67) — the port folds it onto the
@@ -21,7 +21,7 @@ import net.minecraftforge.common.ToolAction;
  * attack face (getBaseDamage :80-82 1.75F) is the cutter precedent cut; the crafting
  * recipe is pooled with the tool-family card.
  *
- * <p>MATERIAL LADDER (task p31-machine-ladder): the stack's {@code GT.ToolStats} identity
+ * <p>MATERIAL LADDER (task machine-ladder): the stack's {@code GT.ToolStats} identity
  * scales durability (the {@link GT6ToolLadder} j/100 points), the composed display name
  * ("Saw (Bronze)") and the head tint ride the same seam; the IDENTITY-LESS arm reproduces
  * Steel bit-exact (so the pre-ladder 512 constant IS the steel fallback).
@@ -70,7 +70,7 @@ public class GTSawItem extends Item implements GT6ToolLadder.LadderTool {
 		return classifies(aToolAction);
 	}
 
-	// ------------------------------ the GT6ToolLadder identity faces (task p31-machine-ladder) ------------------------------
+	// ------------------------------ the GT6ToolLadder identity faces (task machine-ladder) ------------------------------
 
 	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — Steel fallback = 512). */
 	@Override

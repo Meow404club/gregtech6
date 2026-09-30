@@ -16,7 +16,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /**
- * The r6-c4-copper-bridge pin: GT copper is the ONLY copper source (r6-32 suppressed the
+ * The c4-copper-bridge pin: GT copper is the ONLY copper source (#32 suppressed the
  * vanilla copper ore blobs), so the four 1.20.1 vanilla rows that consume
  * {@code minecraft:copper_ingot} (brush / copper_block / lightning_rod / spyglass — the
  * complete crafting-INPUT census; 1.20.1 has no copper armor, doors or trapdoors) are

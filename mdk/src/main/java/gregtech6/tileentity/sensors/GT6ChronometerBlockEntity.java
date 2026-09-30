@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 /**
- * The Chronometer Sensor (task p34-sensors-trivial-14 row ③) — the port of
+ * The Chronometer Sensor (task sensors-trivial-14 row ③) — the port of
  * MultiTileEntityChronometer.java:33-56. The read is the upstream time-of-day minute
  * ((:34) {@code ((worldTime+6000)%24000*60)/1000}, max 1440 — the vanilla day cycle
  * offset +6000 puts midnight at minute 0); the 1.7.10 {@code getWorldTime()} face is the

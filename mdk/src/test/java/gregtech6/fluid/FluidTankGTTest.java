@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Acceptance 3 (task p4-fluid-pipes): FluidTankGT long-amount NBT round trip verified
+ * Acceptance 3 (task fluid-pipes): FluidTankGT long-amount NBT round trip verified
  * offline (CompoundTag + FluidStack.loadFluidStackFromNBT need no registry beyond the
  * GTOfflineTestBase boot; the water/lava FluidStacks resolve against the vanilla fluid
  * registry that bootStrap populates).

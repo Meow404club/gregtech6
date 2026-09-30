@@ -46,7 +46,7 @@ import gregtech6.fluid.GTFluids;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The Matter Fabricator recipe book (task p31-massfab) — the element-disintegration walk
+ * The Matter Fabricator recipe book (task massfab) — the element-disintegration walk
  * of Loader_Recipes_Other.java:969-987, poured into {@link GT6RecipeMaps#MASSFAB}.
  *
  * <p><b>The upstream loop</b> (:969): every material of {@code MATERIAL_ARRAY} with

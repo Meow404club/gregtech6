@@ -10,7 +10,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 /**
- * Task p13-steam-proof-repay acceptance ① — the name-list truth table, offline. The
+ * Task steam-proof-repay acceptance ① — the name-list truth table, offline. The
  * seeds are the task-card literals: steam in BOTH lists (FL.java:85), natural_gas in
  * GAS only (the port registry path), water in neither.
  */
@@ -82,12 +82,12 @@ public class GTFluidListsTest {
 		// POWER_CONDUCTING seed census (the FL.java:90+:95-102 nine rows + the three
 		// unseeded :89/:93/:105 faces) lives in GTFluidsHotFamilyTest, the bootstrapped
 		// seat that owns the GTFluids static block.
-		// the p30-pool-gas-seeds-13 reconciliation: the eighteen gaseous chemical seeds join
+		// the pool-gas-seeds-13 reconciliation: the eighteen gaseous chemical seeds join
 		// the two originals (the per-row upstream anchors live in the GTFluidLists static
 		// block; the CHEMICAL_SPECS-side invariant in GTFluidsChemicalFamilyTest); plus the
-		// p31-qu-b-materials isotope trio — the same :660 createGas walk over the
+		// qu-b-materials isotope trio — the same :660 createGas walk over the
 		// GASES-flag fusion isotopes (diatomicgas/noblegas, MT.java:381/:382/:384); plus
-		// the p37-fluids-naming trio — the three state-2 census rows (Loader_Fluids.java
+		// the fluids-naming trio — the three state-2 census rows (Loader_Fluids.java
 		// :50-51 the dimension airs, :133 aerotheum; the NAMING_SPECS-side invariant in
 		// GTFluidsNamingFamilyTest); plus the debt-hene-fluid blend row — the same :660
 		// createGas walk over MT.HeNe's GASES flag (MT.java:1024)

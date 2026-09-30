@@ -16,7 +16,7 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 /**
- * The GT6 fallen-log worldgen Feature (task p30-w6-t2-surface-blocks) — the four
+ * The GT6 fallen-log worldgen Feature (task w6-t2-surface-blocks) — the four
  * {@code WorldgenOnSurface} log classes (WorldgenLogDry/Rotten/Mossy/Frozen.java) folded
  * into ONE parametrised instance per wood, the shapes verbatim:
  * <ul>

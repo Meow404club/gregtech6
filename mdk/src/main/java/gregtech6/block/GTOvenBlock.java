@@ -35,7 +35,7 @@ import gregtech6.util.UT6;
 import net.minecraft.world.entity.Entity;
 
 /**
- * The Oven block (task p4-machine-oven, spec 7/8) — the block-side of the first real
+ * The Oven block (task machine-oven, spec 7/8) — the block-side of the first real
  * processing machine. BlockState carries the machine's whole visual payload: FACING
  * (upstream byte mFacing, the GT6 side order == Direction horizontal subset) plus
  * ACTIVE/RUNNING, the two visual bits of upstream getVisualData :1010-1011
@@ -45,7 +45,7 @@ import net.minecraft.world.entity.Entity;
  * <p>use() is the chest/open-GUI chain (GTExampleChestBlock.use, upstream
  * onBlockActivated3 :483-486 → openGUI) without the blocked-above guard (a furnace-style
  * machine has no lid). Between the cover consumption and the GUI open sits the GTCEu
- * onWrenchClick :509-525 rotation layer (task p6-oven-rotation): a hoe held with shift
+ * onWrenchClick :509-525 rotation layer (task oven-rotation): a hoe held with shift
  * rotates the front through the grid edge cells (shift never opens the GUI), everything
  * else opens the GUI unchanged. setPlacedBy mirrors onPlaced (:128-131): the BE's facing
  * becomes the player's horizontal look direction, double-written NBT + BlockState.
@@ -62,7 +62,7 @@ public class GTOvenBlock extends GTEntityBlock {
 	public static final BooleanProperty RUNNING = GTBlockProperties.RUNNING;
 
 	/**
-	 * The row index of this block in the Oven Heat_T ladder (task p27-oven-heat-t-ladder,
+	 * The row index of this block in the Oven Heat_T ladder (task oven-heat-t-ladder,
 	 * 0 = T1 .. 3 = T4): the tier rows are compile-time constants upstream
 	 * (NBT_INPUT/NBT_HARDNESS, Loader_MultiTileEntities.java:1288-1291), so the block
 	 * identity IS the config selector — the GTBasicMachineBlock tierOf ruling carried as
@@ -72,7 +72,7 @@ public class GTOvenBlock extends GTEntityBlock {
 	private final int mTier;
 
 	/**
-	 * The composed-name carrier of the ladder rows (task p27-oven-heat-t-ladder): the
+	 * The composed-name carrier of the ladder rows (task oven-heat-t-ladder): the
 	 * GTBasicMachineBlock tier-ladder form (:137-148) verbatim — a pre-composed
 	 * {@code "Oven (<material word>)"} supplier the registrations supply, resolved through
 	 * {@link #getName()} (the single compose point the GTComposedNameItem delegation and
@@ -85,7 +85,7 @@ public class GTOvenBlock extends GTEntityBlock {
 		this(aProperties, 0, null);
 	}
 
-	/** The tier-ladder form (task p27-oven-heat-t-ladder): a row index plus the composed name. */
+	/** The tier-ladder form (task oven-heat-t-ladder): a row index plus the composed name. */
 	public GTOvenBlock(Properties aProperties, int aTier,
 			@javax.annotation.Nullable java.util.function.Supplier<net.minecraft.network.chat.MutableComponent> aComposedName) {
 		super(aProperties);
@@ -103,7 +103,7 @@ public class GTOvenBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The ladder row material (task p27-machine-material-tint-fidelity): the Heat_T[1..4]
+	 * The ladder row material (task machine-material-tint-fidelity): the Heat_T[1..4]
 	 * column of {@link GTMachines#OVEN_ROWS} at this block's tier — the upstream
 	 * NBT_MATERIAL (Loader_MultiTileEntities.java:1288-1291,
 	 * {@code aMat = MT.DATA.Heat_T[1..4]}) the 1.7.10 registration derives the render
@@ -117,7 +117,7 @@ public class GTOvenBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The composed name (task p27-oven-heat-t-ladder): a ladder row hands back its
+	 * The composed name (task oven-heat-t-ladder): a ladder row hands back its
 	 * pre-composed {@code "Oven (<material word>)"} supplier, the legacy single-oven shape
 	 * keeps the vanilla atomic-key lookup.
 	 */
@@ -147,7 +147,7 @@ public class GTOvenBlock extends GTEntityBlock {
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
 		// the front TOWARDS the placer (the GT6PlacementFacing canon, task
-		// p28-singleblock-facing-canon) — the same side setFacingFromPlacement writes
+		// singleblock-facing-canon) — the same side setFacingFromPlacement writes
 		// (chest precedent onPlaced :128-131, UT.Code.getSideForPlayerPlacing SIDES_HORIZONTAL)
 		return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 	}
@@ -168,7 +168,7 @@ public class GTOvenBlock extends GTEntityBlock {
 		// the side the RECEIVER sees the machine from; the emission face is UT6.OPOS of it
 		// (folded inside the ICoverableTE exit). super.getSignal (the vanilla Block
 		// default, 0 for the oven) rides in as the machine-default argument the cover may
-		// override (task p9-redstone-hooks; the P6/P8 multiblock bases are deliberately
+		// override (task redstone-hooks; the P6/P8 multiblock bases are deliberately
 		// NOT bridged — ADR FORBIDDEN ④, the multiblock per-face dispatch is unresearched).
 		return bridgeSignal(aLevel, aPos, aDirection, super.getSignal(aState, aLevel, aPos, aDirection), false);
 	}
@@ -186,7 +186,7 @@ public class GTOvenBlock extends GTEntityBlock {
 		// onNeighborBlockChange notification is this Block hook, BlockBehaviour.java:138).
 		// Every cover on the block receives onBlockUpdate — the seam the redstone
 		// conductor OUT face refreshes its cached value through (task
-		// p10-cover-conductor-redstone; the seam existed in CoverData.onBlockUpdate with
+		// cover-conductor-redstone; the seam existed in CoverData.onBlockUpdate with
 		// zero callers until this override). super keeps the vanilla debug-packet default.
 		super.neighborChanged(aState, aLevel, aPos, aBlock, aFromPos, aIsMoving);
 		dispatchCoverBlockUpdate(aLevel, aPos);
@@ -243,7 +243,7 @@ public class GTOvenBlock extends GTEntityBlock {
 					(float) (aHit.getLocation().x - aPos.getX()), (float) (aHit.getLocation().y - aPos.getY()), (float) (aHit.getLocation().z - aPos.getZ()))) {
 				return InteractionResult.CONSUME;
 			}
-			// task p6-oven-rotation — the GTCEu onWrenchClick :509-525 layer, between the
+			// task oven-rotation — the GTCEu onWrenchClick :509-525 layer, between the
 			// cover consumption above and the GUI open below (upstream onBlockActivated3
 			// :124): a hoe held with shift rotates the machine through the grid edge cells.
 			// The side resolution is the same UT6.getSideWrenching pick the wrench grid
@@ -279,6 +279,6 @@ public class GTOvenBlock extends GTEntityBlock {
 	@Override
 	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
 		super.stepOn(aLevel, aPos, aState, aEntity);
-		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (p37-covers-crafting-asphalt)
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (covers-crafting-asphalt)
 	}
 }

@@ -48,7 +48,7 @@ import gregtech6.recipes.Recipe;
 import gregtech6.recipes.GT6RecipeMaps;
 
 /**
- * The Bumblelyzer map acceptance (task p34-machines-bumblelyzer-crucible): the two dynamic
+ * The Bumblelyzer map acceptance (task machines-bumblelyzer-crucible): the two dynamic
  * findRecipe arms (the :58-60 scan arm + the :61 pass-through arm, RecipeMapBumblelyzer.java
  * :50-74), the honey accept set (:55), the DECLARED-empty static stock (the fake display face
  * never joins the findable list), and the display-stock census — the :581-588 make() walk

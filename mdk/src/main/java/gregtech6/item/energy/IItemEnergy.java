@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import gregapi.code.TagData;
 
 /**
- * The item energy seam (task p29-w4-battery-storage ①) — a literal translation of upstream
+ * The item energy seam (task w4-battery-storage ①) — a literal translation of upstream
  * {@code gregapi/item/IItemEnergy.java:41-190}, NARROWED to the minimum face the card's
  * consumers need (the port archaeology: ZERO prior IItemEnergy in this repo — the seam is
  * pure-new, the sym_query zero-hit census 2026-09-15):

@@ -12,7 +12,7 @@ import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 
 /**
- * The nether surface-form band census (task p31-nether-lens-end-yield, the coordinator
+ * The nether surface-form band census (task nether-lens-end-yield, the coordinator
  * option A): 14 minimal carriers, upstream identity order, distinct paths, resolvable
  * materials. Offline-safe by construction (the KEYS table is a static List, the census
  * walk reads no registry — the GT6BedrockOreBlocksRegistrationTest posture).

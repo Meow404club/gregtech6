@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 /**
- * The Heavy Weight-O-Meter Sensor (task p34-sensors-trivial-14 row ⑫) — the port of
+ * The Heavy Weight-O-Meter Sensor (task sensors-trivial-14 row ⑫) — the port of
  * MultiTileEntityWeightometerHeavy.java:32-63, the TON scale (upstream :54
  * {@code rWeightKG / 1000}). The declared mass-face gap rides the
  * {@link GT6LightWeightometerBlockEntity} declaration verbatim — same seam, one scale

@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * The Bucket-O-Meter Sensor (task p34-sensors-trivial-14 row ⑧) — the port of
+ * The Bucket-O-Meter Sensor (task sensors-trivial-14 row ⑧) — the port of
  * MultiTileEntityBucketometer.java:30-63: the Fluidometer tank walk at the CUBIC-METER
  * grain — contents/capacity {@code / 1000} (:33-40/:47-52) via the shared
  * {@link GT6FluidometerBlockEntity#tankCensus} census. The still-fluid arm (:42-45,

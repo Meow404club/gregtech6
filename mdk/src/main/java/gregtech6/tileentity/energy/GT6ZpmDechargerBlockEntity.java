@@ -21,7 +21,7 @@ import gregtech6.item.energy.GT6ZpmItem;
 import gregtech6.tileentity.GTItemStackHandler;
 
 /**
- * The ZPM Decharger BE (task p36-energy-zpm-dechargers) — the thin shell over
+ * The ZPM Decharger BE (task energy-zpm-dechargers) — the thin shell over
  * {@link GT6BatteryBoxBlockEntity} that upstream files as
  * {@code MultiTileEntityZPMDechargerEU/QU} (gregtech/tileentity/energy/storage/:35-:66, the
  * texture-only subclasses of {@code TileEntityBase10EnergyBatBox} — the exact reuse posture

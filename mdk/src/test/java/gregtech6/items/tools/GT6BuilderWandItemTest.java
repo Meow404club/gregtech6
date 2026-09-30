@@ -1,5 +1,5 @@
 /**
- * Offline tests for task p24-builder-wand: the builder wand's classification face, the
+ * Offline tests for task builder-wand: the builder wand's classification face, the
  * pinned single-tier constants, the tag face, and the wear-accounting seam. The
  * structure-click chain itself (the P28 ONE-CLICK full-structure scaffold, the part
  * relay, the null-player (T,F) consume) lives with the multiblock fixtures —

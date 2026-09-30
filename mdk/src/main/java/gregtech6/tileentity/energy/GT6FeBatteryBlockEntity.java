@@ -19,7 +19,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import gregtech6.registry.GT6FeBatteries;
 
 /**
- * The FE battery test fixture BE (task p26-eu-bridge-outbound): a platform
+ * The FE battery test fixture BE (task eu-bridge-outbound): a platform
  * {@code EnergyStorage} reference implementation inside a plain BlockEntity. Both legs ship
  * the same reference class shape — javap-verified constructor twins
  * {@code (int capacity, int maxReceive, int maxExtract)} and the same six IEnergyStorage
@@ -64,7 +64,7 @@ import gregtech6.registry.GT6FeBatteries;
  *
  * <p>Foreign FE consumers find this storage through the LEVEL QUERY — the same face every
  * foreign FE machine answers (the p26 bridge handler arm that also queried it here was cut
- * by task p28-cut-eu-fe-bridge; the fixture stays as the W3 dynamo-chain measurement end).
+ * by task cut-eu-fe-bridge; the fixture stays as the W3 dynamo-chain measurement end).
  *
  * <p>Persistence: the stored FE rides "energy"; no tile-name lane (the fixture is not on
  * the 01Root NBT schema).

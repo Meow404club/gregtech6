@@ -15,14 +15,14 @@ import gregtech6.tileentity.connectors.GTItemPipeBlockEntity;
  * {@link GTFluidPipeBlockItem} shape) over the composed-name posture
  * ({@code GTComposedNameItem}: vanilla BlockItem has NO getName override, so the stack
  * name delegates to the block's composed row name — the boiler precedent, task
- * p20-i18n-compose-rows).
+ * i18n-compose-rows).
  *
  * <p>{@code placeBlock} is the only vanilla placement hook where the BE already exists
  * while the {@link BlockPlaceContext} is still in hand, so the clicked face survives to
  * {@link GTItemPipeBlockEntity#onPlaced(byte)}. NOT a BE.onLoad hook — onLoad replays on
  * every chunk load (the p4 ruling).
  *
- * <p>Task r8-tooltip-wire-pipe-sensor: the parent {@code GTComposedNameItem} becomes the
+ * <p>Task tooltip-wire-pipe-sensor: the parent {@code GTComposedNameItem} becomes the
  * machine carrier {@link GT6MachineBlockItem} (its direct superclass) — the
  * {@code pipe_item} family rows replay off the registration-site key, the site hands
  * [stepSize, invSize]. The block parameter widens from {@link GTItemPipeBlock} to

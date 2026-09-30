@@ -4,7 +4,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShearsItem;
 
 /**
- * The formal GT6 scoop — item id {@code gt6:scoop} (task p29-w5-t5-scene-six spec ②,
+ * The formal GT6 scoop — item id {@code gt6:scoop} (task w5-t5-scene-six spec ②,
  * single steel tier ruling d). Upstream GT_Tool_Scoop.java:38 (registration :132 "Scoop",
  * {@code 3*U}); the port ruling per the research ammunition:
  * <ul>

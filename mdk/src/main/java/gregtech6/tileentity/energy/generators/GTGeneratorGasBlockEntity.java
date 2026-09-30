@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fluids.FluidStack;
 
 /**
- * 1.20.1 counterpart of the GT6 Gas Burning Box — task p13-burning-box-family spec ③,
+ * 1.20.1 counterpart of the GT6 Gas Burning Box — task burning-box-family spec ③,
  * ported from gregtech/tileentity/energy/generators/MultiTileEntityGeneratorGas.java
  * (:38-80): {@code extends MultiTileEntityGeneratorLiquid} there, the same shape here.
  *

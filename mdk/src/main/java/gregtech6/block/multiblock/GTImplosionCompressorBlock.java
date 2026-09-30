@@ -6,7 +6,7 @@ import gregtech6.registry.GTMultiBlocks;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Implosion Compressor controller block (task p31-implosion) — the concrete
+ * The Implosion Compressor controller block (task implosion) — the concrete
  * {@link GTMultiBlockControllerBlock} mounting the Implosion BET (the GTCokeOvenBlock
  * minimal form: everything visual/behavioural is base-owned FACING + FORMED, this class
  * only mounts the BET; no use-face — the controller runs headless, the W2 menu-null

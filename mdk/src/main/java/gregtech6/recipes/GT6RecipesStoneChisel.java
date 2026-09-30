@@ -44,7 +44,7 @@ import gregtech6.block.stone.StoneVariant;
 import gregtech6.registry.GTStoneBlocks;
 
 /**
- * The Chisel recipe book — task p19-chisel-recipes, the three upstream sources of the
+ * The Chisel recipe book — task chisel-recipes, the three upstream sources of the
  * RM.Chisel map ({@link GT6RecipeMaps#CHISEL}), in upstream order:
  *
  * <ul>
@@ -68,7 +68,7 @@ import gregtech6.registry.GTStoneBlocks;
  * </ul>
  *
  * <p><b>The variant carrier</b> (the declared port-ism, evolved by task
- * p21-stoneblocks-16item-registry-split): upstream the rows live in the 1.7.10 item-damage
+ * stoneblocks-16item-registry-split): upstream the rows live in the 1.7.10 item-damage
  * domain ({@code ST.make(block, 1, meta)}). At the p19 landing one GT stone family was ONE
  * registered Block, so the port encoded the variant in a stack tag ({@link #VARIANT_TAG}).
  * Task p21 split the registry per-pair — one Block+BlockItem per (stone, variant), the id
@@ -248,7 +248,7 @@ public final class GT6RecipesStoneChisel {
 			"RM.java:517-518 the CR.shaped cobble hand rows — the crafting bridge pool (zero-hit upstream, same :513 else-if gate)",
 			"RecipeMapChisel.java:47-64 the oredict ring-composition findRecipe synthesizer (blockSolid/storage-prefix inputs rotating through the oredict set) — the OM runtime face (OreDictManager.getOres + the GAPI_POST.mFinishedServerStarted gate); declared deviation: the port map is the base RecipeMap",
 			"BlockStones.java:573-576 the BlockStones TE-face chisel arm (the CHISEL_MAPPINGS direct-meta write, pays 1250/octant) — the TE-face pool; the port gate routes every target through the RM.Chisel findRecipe face at the ToolCompat.java:224-229 shape (architect ruling)",
-			"GT_Tool_Chisel.java:57-79 convertBlockDrops (the mining-drop chisel conversion) — 1.20.1 has no HarvestDropsEvent, so the BlockStones arm (:73-77, the CHISEL_MAPPINGS variant item) LANDED as a loot face instead: GT6StoneBlockLoot alternatives[match_tool(gt6:chisel) -> the mapped variant item, otherwise the BlockStones.java:731 baseline] (task p21-chisel-drop-conversion, 170 dispatch / 102 pass-through tables); the vanilla stone/stonebrick arms (:58-72) stay pooled (the vanilla-owned tables carry silk arms an override would inherit, GLM the architect ruling for them)",
+			"GT_Tool_Chisel.java:57-79 convertBlockDrops (the mining-drop chisel conversion) — 1.20.1 has no HarvestDropsEvent, so the BlockStones arm (:73-77, the CHISEL_MAPPINGS variant item) LANDED as a loot face instead: GT6StoneBlockLoot alternatives[match_tool(gt6:chisel) -> the mapped variant item, otherwise the BlockStones.java:731 baseline] (task chisel-drop-conversion, 170 dispatch / 102 pass-through tables); the vanilla stone/stonebrick arms (:58-72) stay pooled (the vanilla-owned tables carry silk arms an override would inherit, GLM the architect ruling for them)",
 			"BlockStones.java:495-498 the LaserEngraver white-lens rows — the research-card cut pool",
 			"BlockStones.java:405-411 the CHISL equal-set machine family (Hammer/Crusher/Shredder/generify/smelting) — the tool/smelting pools (the CHISEL-map face of the family is RM.java:470, poured here)",
 			"BlockStones.java:419-424 the SMOTH equal-set CR.shaped hand rows x6 (chiseled 'y'/bricks x4/tiles x2/small-tiles x2/small-bricks x2/windmill x2) — the crafting bridge pool");

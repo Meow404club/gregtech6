@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregtech6.tileentity.machines.TileEntityOven;
 
 /**
- * The test probe oven (task p4-cover-core): records the cover drops instead of spawning
+ * The test probe oven (task cover-core): records the cover drops instead of spawning
  * ItemEntities (the offline doubles have no entity system) and narrows
  * {@link #allowCovers} per the {@link #mAllowMask} so the validity sweep and the
  * admission gate get exercised. Drops recorded per side keep the assertion order-safe.
@@ -23,7 +23,7 @@ public class TileEntityOvenCoverProbe extends TileEntityOven {
 	public int mAllowMask = 0b111111;
 	/**
 	 * Records {@code setChanged()} (the chunk-dirty persistence mark) — task
-	 * p10-debug-oven-cover-resurrect regression: the cover dispatch must reach it. The
+	 * debug-oven-cover-resurrect regression: the cover dispatch must reach it. The
 	 * stub level makes the super call a documented no-op (hasChunkAt → false), so the
 	 * count is the only observable.
 	 */

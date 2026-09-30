@@ -22,7 +22,7 @@ import gregtech6.tileentity.connectors.GTItemPipeBlockEntity;
 import gregtech6.util.GTItemMover;
 
 /**
- * GT6 hopper family offline tests (task p26-storage-hopper-family acceptance): the
+ * GT6 hopper family offline tests (task storage-hopper-family acceptance): the
  * Bronze/Steel row axis (Loader_MultiTileEntities.java:191/:202), the hopper batch math
  * (the :177-184 budget loop, the :183 exact break, the :246-247 face gates, the :248 stack
  * limit, the :212-223 compaction, the :195-196 suction pick), the queue FIFO (the :199-207

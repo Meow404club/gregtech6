@@ -33,7 +33,7 @@ import gregtech6.recipes.maps.GT6RecipeMapBumblelyzer;
 import gregtech6.registry.GTMachines;
 
 /**
- * The p34 machine-row acceptance (task p34-machines-bumblelyzer-crucible, the OFFLINE half —
+ * The p34 machine-row acceptance (task machines-bumblelyzer-crucible, the OFFLINE half —
  * the {@link GT6HuTuPiggybackRowTest} shape): the two families pinned to the upstream columns
  * (Loader_MultiTileEntities.java :1608-1612 Bumblelyzer / :1437-1440 CrystallisationCrucible)
  * — the meta ladders, the masks, the parallel and energy columns, the texture tokens, the RM

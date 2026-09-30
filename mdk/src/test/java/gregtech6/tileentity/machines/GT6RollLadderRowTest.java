@@ -15,7 +15,7 @@ import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.registry.GTMachines;
 
 /**
- * The p29-w1-kinetic-roll-ladder row census (the OFFLINE half — the
+ * The w1-kinetic-roll-ladder row census (the OFFLINE half — the
  * {@link GT6UlvMachineLadderRowTest} shape): the four RU roll-ladder families pinned to
  * the upstream Loader_MultiTileEntities.java:1349-1370 rows — the :1349-1370 face all
  * four families share (item in left / auto left, out right / auto right, energy back),

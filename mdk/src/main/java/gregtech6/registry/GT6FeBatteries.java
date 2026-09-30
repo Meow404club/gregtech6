@@ -32,9 +32,9 @@ import gregtech6.tileentity.energy.GT6FeSourceBlockEntity;
  *
  * <p>This battery is a PLAIN platform {@code EnergyStorage} reference implementation
  * (capacity = maxReceive, maxExtract = 0 — a pure sink) behind a simple-cube block, the
- * measurement endpoint of the W3 flux-dynamo RCON chain (task p28-c-flux-dynamo-rcon).
+ * measurement endpoint of the W3 flux-dynamo RCON chain (task c-flux-dynamo-rcon).
  * The RCON chain drives it headless (/gt6febattery place|stat|reset); the two items also
- * join MACHINES_TAB (task p38-tabfix-b-energy, {@link #onBuildTabContents} — supersedes
+ * join MACHINES_TAB (task tabfix-b-energy, {@link #onBuildTabContents} — supersedes
  * the old no-creative-tab fixture note; port-native family, no upstream category to
  * preserve).
  *
@@ -62,11 +62,11 @@ public final class GT6FeBatteries {
 					GT6FeBatteryBlockEntity::new, FE_BATTERY.get()).build(null));
 
 	// -------------------------------------------------------------------------
-	// the FE source fixture (task p28-b-fe-converter-machine — TAIL-APPENDED, the
+	// the FE source fixture (task b-fe-converter-machine — TAIL-APPENDED, the
 	// fixture domain): the EXTRACTABLE twin of the sink battery above. The converter's
 	// pull face (EnergyBridge.extractFe over the adapted extractEnergy) needs a source
 	// that canExtract — the sink's maxExtract=0 keeps it a pure sink. Creative tab:
-	// rides the same MACHINES_TAB join as the sink (the p38-tabfix-b-energy pool-cut;
+	// rides the same MACHINES_TAB join as the sink (the tabfix-b-energy pool-cut;
 	// /gt6fesource still drives it headless).
 	// -------------------------------------------------------------------------
 
@@ -102,7 +102,7 @@ public final class GT6FeBatteries {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — both fixture items join the machines tab;
+	 * The tab walk (task tabfix-b-energy — both fixture items join the machines tab;
 	 * the GT6BurningBoxes.onBuildTabContents verbatim form, the class-level MOD-bus
 	 * {@code @Mod.EventBusSubscriber} at the class head is what delivers this handler).
 	 * JEI 1.20.1 derives its item list from the tab display items, so registered-but-

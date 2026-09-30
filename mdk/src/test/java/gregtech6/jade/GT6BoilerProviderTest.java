@@ -28,7 +28,7 @@ import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 
 /**
- * Offline gate for the boiler Jade face (task r5-jade-boiler base, task r8-jade-redesign-core
+ * Offline gate for the boiler Jade face (task jade-boiler base, task jade-redesign-core
  * reface): the tag contract over the SAME static seam the live {@code appendServerData}
  * reads through (the public field shape mEnergy/mCapacity/mOutput/mEfficiency/mTanks —
  * GTBoilerTankBlockEntity.java:149-161, TileEntityLargeBoiler.java:170-186), plus the row

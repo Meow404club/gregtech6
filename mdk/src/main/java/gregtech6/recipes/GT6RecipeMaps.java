@@ -68,7 +68,7 @@ import com.mojang.logging.LogUtils;
  * unit (Recipe.java:723-725 getAbsoluteTotalPower semantics).
  *
  * <p>{@code BURN} / {@code FLUIDBED} mirror the FM.java:41 / FM.java:40 RecipeMapFuel rows
- * (task p13-hu-steam-foundation, decision 2026-09-03-p13-boiler-family-split ②): "Burnable
+ * (task hu-steam-foundation, decision 2026-09-03-boiler-family-split ②): "Burnable
  * Fuels" ("gt.recipe.fuels.burn", item 1/2/0, fluid 1/2/0, minimal inputs 1) and "Fluidized
  * Bed Fuels" ("gt.recipe.fuels.fluidbed", item 1/2/1, fluid 1/2/1, minimal inputs 2) — the
  * two maps differ ONLY in those minimal-input columns. Same base-{@link RecipeMap} form as
@@ -84,7 +84,7 @@ import com.mojang.logging.LogUtils;
  * findRecipe consumer for BURN.
  *
  * <p>{@code DISTILLERY} / {@code DRYING} mirror the RM.java:70 / RM.java:71 base-{@link
- * RecipeMap} rows (task p14-drying-distillery-maps, decision 2026-09-03-p14-distilled-loop
+ * RecipeMap} rows (task drying-distillery-maps, decision 2026-09-03-distilled-loop
  * ⑥), declared in the upstream order (Distillery :70 before Drying :71):
  * "gt.recipe.distillery" / "Distillery" (item 1/2/1, fluid 1/2/1, minimal inputs 2) and
  * "gt.recipe.drying" / "Dryer" (item 1/1/0, fluid 1/3/0, minimal inputs 1). The trailing
@@ -93,13 +93,13 @@ import com.mojang.logging.LogUtils;
  * ResourceLocation-charset convention as the Shredder line — {@code
  * GTBasicMachineScreen.backgroundOf} parses this string). DRYING's Water→Distilled Water row
  * poured with the W3 loop-closure card (Loader_Recipes_Chem.java:525); DISTILLERY stayed
- * DECLARED-empty until task p16-distillery-family ③ landed the Integrated Circuit item
+ * DECLARED-empty until task distillery-family ③ landed the Integrated Circuit item
  * system (the ST.tag(0) selector every :534-541 row carries) — its seven water-family rows
  * now pour via {@code GT6RecipesDistillery} (the other ~299 census rows stay pooled on
  * unregistered fluids/items, the class doc carries the census). Both maps have live
  * findRecipe consumers since the dryer/distillery family BETs.
  *
- * <p>{@code CHISEL} mirrors the RM.java:138 base-map row (task p19-chisel-recipes):
+ * <p>{@code CHISEL} mirrors the RM.java:138 base-map row (task chisel-recipes):
  * "gt.recipe.chisel" / "Chisel" (item 1/1/1, fluid 0/0/0, minimal inputs 0, power 1), GUI
  * machines/Chisel lowercased per the Shredder-line convention. The rows pour in via
  * {@link GT6RecipesStoneChisel} (FMLCommonSetup — the RM.java:470/:508/:514 stonetypes
@@ -113,7 +113,7 @@ import com.mojang.logging.LogUtils;
  * {@code GTChiselItem} right-click gate (the ToolCompat.java:224-229 transcription) —
  * there is no machine behind this map (upstream likewise).
  *
- * <p>The P29 W1 twelve-map block (task p29-w1-rm-maps-scaffold): {@code FERMENTER}
+ * <p>The P29 W1 twelve-map block (task w1-rm-maps-scaffold): {@code FERMENTER}
  * (RM.java:69), {@code LOOM} (:89), {@code PRESSURE_WASHER} (:98), {@code SQUEEZER}
  * (:101), {@code CLUSTER_MILL} (:112), {@code ROLL_BENDER} (:114), {@code ROLL_FORMER}
  * (:115), {@code CENTRIFUGE} (:122), {@code SHARPENING} (:126), {@code CUTTER} (:130),
@@ -131,7 +131,7 @@ import com.mojang.logging.LogUtils;
  * map without a findRecipe consumer is the CHISEL judged form. {@code UNBOXINATOR}
  * carries the one subclass deviation of the block (documented on the field).
  *
- * <p>The P29 W2 nineteen-map block (task p29-w2-energy-types-5tier, the shared-layer
+ * <p>The P29 W2 nineteen-map block (task w2-energy-types-5tier, the shared-layer
  * card of the wave): {@code AUTOCRAFTER} (RM.java:63), {@code STEAM_CRACKING} (:67),
  * {@code CATALYTIC_CRACKING} (:68), {@code COAGULATOR} (:72), {@code CRYO_MIXER} (:77),
  * {@code MAGNETIC_SEPARATOR} (:82), {@code INJECTOR} (:88), {@code LAMINATOR} (:90),
@@ -155,7 +155,7 @@ import com.mojang.logging.LogUtils;
  * SCANNER_VISUALS ({@code RecipeMapScannerVisuals} — the NBT scan-data face) all
  * stay POOLED (documented on their fields).
  *
- * <p>The P31 QU trio (task p31-qu-a-foundation): {@code SCANNER_MOLECULAR} (RM.java:143),
+ * <p>The P31 QU trio (task qu-a-foundation): {@code SCANNER_MOLECULAR} (RM.java:143),
  * {@code MASSFAB} (:144) and {@code REPLICATOR} (:145) — declared in the upstream order,
  * each the base-{@link RecipeMap} row transcribed parameter-for-parameter over the 15-arg
  * port ctor, the GUI paths the upstream machines/&lt;Name&gt; strings lowercased (the
@@ -169,7 +169,7 @@ import com.mojang.logging.LogUtils;
  * ({@code RecipeMapReplicator} — the runtime USB-data replication, :54-86, including the
  * ctor's {@code mMaxFluidInputSize = 2000} tweak, a field the port RecipeMap does not
  * carry) both stay POOLED — the USB chain is not ported (declared card scope). The
- * conflict-audit ⑤ red line is FLIPPED by task p32-ignition-gate: the earlier "dead field"
+ * conflict-audit ⑤ red line is FLIPPED by task ignition-gate: the earlier "dead field"
  * reading (MultiTileEntityBasicMachine.java:755 write, zero read points) missed the
  * registration-config supply route — the Loader_MultiTileEntities.java:1242 fusion row
  * carries {@code NBT_SPECIAL_IS_START_ENERGY, T} through readFromNBT2 :112-124, so the
@@ -182,7 +182,7 @@ import com.mojang.logging.LogUtils;
  * <p>P1 registry discipline: {@link #init()} is idempotent per JVM generation
  * (duplicate-name registration throws upstream Recipe.java:139), and
  * {@link #reset()} drops the generation so a subsequent init re-registers
- * cleanly. W2 (p4-machine-oven) wires {@code init()} into the mod lifecycle.
+ * cleanly. W2 (machine-oven) wires {@code init()} into the mod lifecycle.
  */
 public class GT6RecipeMaps {
 
@@ -193,11 +193,11 @@ public class GT6RecipeMaps {
 	 * registers its resetForTest here from its static initializer, so {@link #reset()}
 	 * retires the WHOLE generation. One generation = the 60 map fields (the 12 pre-W1
  * fields + the mixer/W1-trio/press-extruder/crucible-pair appends + the BATH append
- * of task p26-kitchen-pot-bowl + the ROLLING_MILL append of task
- * p28-c-ulv-machine-ladder + the anvil pair of task p28-c-anvil + the twelve-map
- * P29 W1 block of task p29-w1-rm-maps-scaffold + the SLUICE batch-C tail-append
-	 * + the nineteen-map P29 W2 block of task p29-w2-energy-types-5tier + the QU trio of
-	 * task p31-qu-a-foundation + the P37 five-map append of task p37-rm-six-maps) + RecipeMap.RECIPE_MAPS
+ * of task kitchen-pot-bowl + the ROLLING_MILL append of task
+ * c-ulv-machine-ladder + the anvil pair of task c-anvil + the twelve-map
+ * P29 W1 block of task w1-rm-maps-scaffold + the SLUICE batch-C tail-append
+	 * + the nineteen-map P29 W2 block of task w2-energy-types-5tier + the QU trio of
+	 * task qu-a-foundation + the P37 five-map append of task rm-six-maps) + RecipeMap.RECIPE_MAPS
 	 * + every registered loader pour-flag — the flags must retire WITH the maps, or the
 	 * "maps cleared × pour-flag set" poison state becomes representable and the loaders'
 	 * load() silently early-returns (ADR-P18 staticinit poison fix, case A: generation-wise
@@ -212,7 +212,7 @@ public class GT6RecipeMaps {
 	 * recipe loaders' static initializers are the only intended callers, keeping this off
 	 * the public API surface.
 	 */
-	/** Public since p34-machines-bumblelyzer-crucible: the {@code recipes.maps} subclasses join the generation too (GT6RecipeMapBumblelyzer's display stock). */
+	/** Public since machines-bumblelyzer-crucible: the {@code recipes.maps} subclasses join the generation too (GT6RecipeMapBumblelyzer's display stock). */
 	public static void registerGenerationResetHook(Runnable aHook) {
 		sGenerationResetHooks.addIfAbsent(aHook);
 	}
@@ -223,7 +223,7 @@ public class GT6RecipeMaps {
 	}
 
 	/**
-	 * The registration phase of the whole map generation (task p32-rm-phase-gate), the
+	 * The registration phase of the whole map generation (task rm-phase-gate), the
 	 * GTCEu MaterialRegistry shape reduced to the two states the RM lifecycle has
 	 * (gtceu-modern MaterialRegistry.java:34-45 PRE/OPEN/CLOSED/FROZEN; the PRE/CLOSED
 	 * material-domain refinements have no RM counterpart):
@@ -338,17 +338,17 @@ public class GT6RecipeMaps {
 	/** FM.java:41 — the Burnable Fuels map (1/2/0 items, 1/2/0 fluids, minimal inputs 1; empty until the W2 burning-box card pours the rows). */
 	public static volatile RecipeMap BURN;
 
-	/** FM.java:42 — the Gas Fuels map (1/2/0 items, 1/2/0 fluids, minimal inputs 1; the Gas Turbine fuel face, task p29-w3-turbine-dynamo ③ — the natural-gas row pours via data/gt6/recipe_maps/gas_fuels.json, the direct-fill anchor; FM.Hot/Plasma/Turbine/Magic stay the pool bottom, decisions.p29-w3-split-rulings). */
+	/** FM.java:42 — the Gas Fuels map (1/2/0 items, 1/2/0 fluids, minimal inputs 1; the Gas Turbine fuel face, task w3-turbine-dynamo ③ — the natural-gas row pours via data/gt6/recipe_maps/gas_fuels.json, the direct-fill anchor; FM.Hot/Plasma/Turbine/Magic stay the pool bottom, decisions.p29-w3-split-rulings). */
 	public static volatile RecipeMap GAS_FUELS;
 
 	/** RM.java:70 — the Distillery map (1/2/1 items, 1/2/1 fluids, minimal inputs 2; the seven water-family rows pour via GT6RecipesDistillery, the rest of the census stays pooled). */
 	public static volatile RecipeMap DISTILLERY;
 
-	/** RM.java:71 — the Drying map (1/1/0 items, 1/3/0 fluids, minimal inputs 1; the water-family + ice/snow rows pour via GT6RecipesDrying — task p16-drying-rows-backfill backfilled the 13 ice/snow rows of Loader_Recipes_Chem.java:510-522 on top of the :525-532 water family). */
+	/** RM.java:71 — the Drying map (1/1/0 items, 1/3/0 fluids, minimal inputs 1; the water-family + ice/snow rows pour via GT6RecipesDrying — task drying-rows-backfill backfilled the 13 ice/snow rows of Loader_Recipes_Chem.java:510-522 on top of the :525-532 water family). */
 	public static volatile RecipeMap DRYING;
 
 	/**
-	 * RM.java:148 — the Canner map (task p24-canner-machine): the
+	 * RM.java:148 — the Canner map (task canner-machine): the
 	 * {@link gregtech6.recipes.maps.GT6RecipeMapCanner} subclass (the dynamic fill/empty
 	 * semantics, ruling R1), transcribed parameter-for-parameter over the 15-arg port ctor:
 	 * "gt.recipe.canner", "Canning Machine", NEI name null → the internal name, progress 0/1,
@@ -364,7 +364,7 @@ public class GT6RecipeMaps {
 	public static volatile gregtech6.recipes.maps.GT6RecipeMapCanner CANNER;
 
 	/**
-	 * RM.java:74 — the Mixer map (task p26-c-foam-fluid-refill): "gt.recipe.mixer",
+	 * RM.java:74 — the Mixer map (task c-foam-fluid-refill): "gt.recipe.mixer",
 	 * "Mixer", NEI name null → the internal name, progress 0/1, GUI machines/mixer
 	 * (lowercased, the Shredder-line convention), item slots 6/1/0, fluid slots 6/2/0,
 	 * minimal inputs 2, power 1 — the upstream ctor row parameter-for-parameter over the
@@ -384,16 +384,16 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap MIXER;
 
 	/**
-	 * RM.java:76 — the Burner Mixer map (task p34-machines-burner-plantalyzer): the MIXER
+	 * RM.java:76 — the Burner Mixer map (task machines-burner-plantalyzer): the MIXER
 	 * constants row two lines up — items 6/1/0, fluids 6/2/0, MIN 2, AMP 1 — "gt.recipe.burnmixer",
 	 * "Burner Mixer", progress 0/1, GUI machines/burnmixer (the upstream NBT_TEXTURE word,
 	 * lowercased per the Shredder-line convention). Consumer = the Burner Mixer family
-	 * 20521-20524 (RU + NBT_NEEDS_IGNITION, task p32-ignition-gate's single-block fuel).
+	 * 20521-20524 (RU + NBT_NEEDS_IGNITION, task ignition-gate's single-block fuel).
 	 */
 	public static volatile RecipeMap BURN_MIXER;
 
 	/**
-	 * RM.java:109 — the Plantalyzer map (task p34-machines-burner-plantalyzer): items 2/2/0,
+	 * RM.java:109 — the Plantalyzer map (task machines-burner-plantalyzer): items 2/2/0,
 	 * fluids 1/0/0, MIN 1, AMP 1 — "gt.recipe.plantalyzer", "Plantalyzer", progress 0/1,
 	 * GUI machines/plantalyzer. DECLARED-empty and staying that way: the upstream rows are
 	 * the two {@code addFakeRecipe} scans of GT6_Main.java:321 (IL.FR_Tree_Sapling /
@@ -404,7 +404,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap PLANTALYZER;
 
 	/**
-	 * RM.java:83 — the Sifting map (task p26-w1-sifter-compressor-wiremill), transcribed
+	 * RM.java:83 — the Sifting map (task w1-sifter-compressor-wiremill), transcribed
 	 * parameter-for-parameter over the 15-arg port ctor: "gt.recipe.sifter", "Sifter", NEI
 	 * name null → the internal name, progress bar direction 2 / amount 1 (the RM.java:83
 	 * row is the ONLY map in the RM.java:60-115 block whose direction is not 0 — the two
@@ -417,7 +417,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap SIFTING;
 
 	/**
-	 * RM.java:87 — the Compressor map (task p26-w1-sifter-compressor-wiremill): "gt.recipe
+	 * RM.java:87 — the Compressor map (task w1-sifter-compressor-wiremill): "gt.recipe
 	 * .compressor", "Compressor", NEI name null → the internal name, progress 0/1, GUI
 	 * machines/Compressor (lowercased, string only — no asset while the menu stays null),
 	 * item slots 1/1/1, fluid slots 0/0/0, minimal inputs 0, power 1. Base-{@link RecipeMap}
@@ -426,7 +426,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap COMPRESSOR;
 
 	/**
-	 * RM.java:111 — the Wiremill map (task p26-w1-sifter-compressor-wiremill): "gt.recipe
+	 * RM.java:111 — the Wiremill map (task w1-sifter-compressor-wiremill): "gt.recipe
 	 * .wiremill", "Wiremill", NEI name null → the internal name, progress 0/1, GUI
 	 * machines/Wiremill (lowercased, string only — no asset while the menu stays null),
 	 * item slots 1/1/1, fluid slots 0/0/0, minimal inputs 0, power 1. Base-{@link
@@ -435,7 +435,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap WIREMILL;
 
 	/**
-	 * RM.java:113 — the Rolling Mill map (task p28-c-ulv-machine-ladder): "gt.recipe
+	 * RM.java:113 — the Rolling Mill map (task c-ulv-machine-ladder): "gt.recipe
 	 * .rollingmill", "Rolling Mill", NEI name null → the internal name, progress 0/1, GUI
 	 * machines/rollingmill (lowercased, string only — no asset while the menu stays null),
 	 * item slots 1/1/1, fluid slots 0/0/0, minimal inputs 0, power 1. Base-{@link
@@ -448,7 +448,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap ROLLING_MILL;
 
 	/**
-	 * RM.java:80 — the Bath map (task p26-kitchen-pot-bowl): "gt.recipe.bath", "Bath",
+	 * RM.java:80 — the Bath map (task kitchen-pot-bowl): "gt.recipe.bath", "Bath",
 	 * NEI name null → the internal name, progress 0/1, GUI machines/bath (lowercased, the
 	 * Shredder-line convention), item slots 6/6/1, fluid slots 1/3/1, minimal inputs 2,
 	 * power 1 — the upstream ctor row parameter-for-parameter over the 15-arg port ctor
@@ -473,7 +473,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap BATH;
 
 	/**
-	 * FM.java:38 — the Furnace Fuels map (task p13-burning-box-family spec ①): the
+	 * FM.java:38 — the Furnace Fuels map (task burning-box-family spec ①): the
 	 * Solid Burning Box fuel face. Upstream this map is a static-row-EMPTY on-demand
 	 * synthesizer (RecipeMapFurnaceFuel.findRecipe builds fuel rows from the vanilla
 	 * furnace fuel value) — the port carries the same shape over the ForgeHooks
@@ -483,7 +483,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMapFurnaceFuel FURNACE_FUEL;
 
 	/**
-	 * RM.java:99 — the Forming Press map (task p26-w1-press-extruder-molds): the
+	 * RM.java:99 — the Forming Press map (task w1-press-extruder-molds): the
 	 * {@link gregtech6.recipes.maps.GT6RecipeMapFormingPress} subclass, transcribed
 	 * parameter-for-parameter over the 15-arg port ctor: "gt.recipe.press", "Press",
 	 * NEI name null → the internal name, progress 0/1, GUI machines/press (lowercased, the
@@ -498,7 +498,7 @@ public class GT6RecipeMaps {
 	public static volatile gregtech6.recipes.maps.GT6RecipeMapFormingPress PRESS;
 
 	/**
-	 * RM.java:136 — the Extruder map (task p26-w1-press-extruder-molds), the base-RecipeMap
+	 * RM.java:136 — the Extruder map (task w1-press-extruder-molds), the base-RecipeMap
 	 * row transcribed parameter-for-parameter: "gt.recipe.extruder", "Extruder", NEI name
 	 * null → the internal name, progress 0/1, GUI machines/extruder (lowercased), item
 	 * slots 2/2/2, fluid slots 0/0/0, minimal inputs 0, power 1. The :405/:407 material
@@ -509,7 +509,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap EXTRUDER;
 
 	/**
-	 * RM.java:129 — the Crucible Smelting map (task p26-crucible-physics-smeltery): the
+	 * RM.java:129 — the Crucible Smelting map (task crucible-physics-smeltery): the
 	 * {@link gregtech6.recipes.maps.GT6RecipeMapCrucible} subclass with the on-demand
 	 * material-graph derivation (RecipeMapCrucible.java:82-97), transcribed over the
 	 * 15-arg port ctor: "gt.recipe.cruciblesmelting", "Crucible Smelting", NEI name null,
@@ -522,7 +522,7 @@ public class GT6RecipeMaps {
 
 	/**
 	 * RM.java:128 — the Combination Smelting (Crucible Alloying) map (task
-	 * p26-crucible-physics-smeltery), the base-{@link RecipeMap} row verbatim: items
+	 * crucible-physics-smeltery), the base-{@link RecipeMap} row verbatim: items
 	 * 12/12/1, fluids 0/0/0, minimal inputs 0, power 1, GUI machines/alloying (lowercased).
 	 * ZERO static rows — the display rows synthesize off the material graph via
 	 * {@link gregtech6.recipes.maps.GT6RecipeMapCrucible#alloyingDisplayRows}.
@@ -530,7 +530,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap CRUCIBLE_ALLOYING;
 
 	/**
-	 * RM.java:118 — the Anvil map (task p28-c-anvil): the zero-energy manual grinding/
+	 * RM.java:118 — the Anvil map (task c-anvil): the zero-energy manual grinding/
 	 * forging face of the stone anvil family, the base-{@link RecipeMap} row transcribed
 	 * parameter-for-parameter over the 15-arg port ctor: "gt.recipe.anvil", "Anvil", NEI
 	 * name null → the internal name, progress 0/1, GUI machines/anvil (lowercased, string
@@ -544,7 +544,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap ANVIL;
 
 	/**
-	 * The Anvil Bending map (task p28-c-anvil) — the side-strike face. DECLARED TWO-MAPS-
+	 * The Anvil Bending map (task c-anvil) — the side-strike face. DECLARED TWO-MAPS-
 	 * IN-THREE FOLD: upstream carries the pair RM.AnvilBendSmall / RM.AnvilBendBig
 	 * (RM.java:119-120, "gt.recipe.anvil.bend.small|big", items 2/2/2, fluids 0/0/0, MIN 0,
 	 * AMP 1 — identical constants rows), split only by WHERE on the anvil side the hammer
@@ -571,9 +571,9 @@ public class GT6RecipeMaps {
 	/** RM.java:101 — the Squeezer map (1/2/1 items, 0/1/0 fluids, minimal inputs 0). DECLARED-empty; consumer = batch C. */
 	public static volatile RecipeMap SQUEEZER;
 
-	/** RM.java:102 — the Juicer map (1/3/1 items, 0/1/0 fluids, minimal inputs 0). DECLARED-empty until task p33-food-fluids-b1 pours the core rows (data/gt6/recipe_maps/juicer.json); the consumer is the kitchen card's manual Juicer (MultiTileEntityJuicer.java:63-65, Loader:2184 id 32722, b2/kitchen scope). */
+	/** RM.java:102 — the Juicer map (1/3/1 items, 0/1/0 fluids, minimal inputs 0). DECLARED-empty until task food-fluids-b1 pours the core rows (data/gt6/recipe_maps/juicer.json); the consumer is the kitchen card's manual Juicer (MultiTileEntityJuicer.java:63-65, Loader:2184 id 32722, b2/kitchen scope). */
 	public static volatile RecipeMap JUICER;
-	/** RM.java:153 — the RM.BedrockOreList display face (task p31-bedrock-ore-worldgen): the NEI fake-recipe map of the bedrock drill outputs; NO machine consumes it (the 17999 body is a later card), the rows are the datapack JSON's show face. */
+	/** RM.java:153 — the RM.BedrockOreList display face (task bedrock-ore-worldgen): the NEI fake-recipe map of the bedrock drill outputs; NO machine consumes it (the 17999 body is a later card), the rows are the datapack JSON's show face. */
 	public static volatile RecipeMap BEDROCK_ORE_LIST;
 
 	/** RM.java:112 — the Cluster Mill map (1/1/1 items, 0/0/0 fluids, minimal inputs 0). DECLARED-empty; consumer = batch B. */
@@ -622,9 +622,9 @@ public class GT6RecipeMaps {
 	 * TileEntityBasicMachine.checkRecipe).
 	 *
 	 * <p><b>Provenance (declared deviation on the card-A-owned file):</b> the
-	 * p29-w1-rm-maps-scaffold twelve-map enumeration stopped at :149-150 and did not
+	 * w1-rm-maps-scaffold twelve-map enumeration stopped at :149-150 and did not
 	 * include the :81 Sluice row, while the batch-C machine card (task
-	 * p29-w1-kinetic-process-ladder) registers the Sluice family against THIS map. The
+	 * w1-kinetic-process-ladder) registers the Sluice family against THIS map. The
 	 * card owns the family end-to-end and no other wave card consumes SLUICE, so the
 	 * constant lands as a tail-append here in the exact card-A transcription form (the
 	 * base-RecipeMap row transcribed parameter-for-parameter over the 15-arg port ctor,
@@ -637,7 +637,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap SLUICE;
 
 	// -----------------------------------------------------------------------
-	// the P29 W2 nineteen-map block (task p29-w2-energy-types-5tier) — the energy
+	// the P29 W2 nineteen-map block (task w2-energy-types-5tier) — the energy
 	// types + 5-tier shared-layer scaffold. Every field the base-{@link RecipeMap}
 	// row transcribed parameter-for-parameter over the 15-arg port ctor, upstream
 	// RM.java declaration order, ALL DECLARED-empty row0 (empty maps are legal —
@@ -724,7 +724,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap GENERIFIER;
 
 	/**
-	 * RM.java:65 — the Distillation Tower map (task p29-w3-distill-crucible ①): items
+	 * RM.java:65 — the Distillation Tower map (task w3-distill-crucible ①): items
 	 * 1/3/0, fluids 1/9/0, MIN 1, AMP 1 — the RM.java:65 row verbatim over the 15-arg port
 	 * ctor (the trailing NEI booleans fold away like every other map), the GUI path the
 	 * upstream "machines/DistillationTower" string lowercased. Base-{@link RecipeMap}
@@ -736,7 +736,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap DISTILLATION_TOWER;
 
 	/**
-	 * RM.java:66 — the Cryo Distillation Tower map (task p29-w3-distill-crucible ②): the
+	 * RM.java:66 — the Cryo Distillation Tower map (task w3-distill-crucible ②): the
 	 * SAME constants row as DISTILLATION_TOWER (RM.java:66, the STEAM_CRACKING/its-twin
 	 * judged form — split only by map name/GUI), GUI "machines/CryoDistillationTower"
 	 * lowercased. The smoke row rides the JSON seam (key "cryodistillationtower"); the
@@ -746,7 +746,7 @@ public class GT6RecipeMaps {
 
 	/**
 	 * RM.java:131 — the Melter map (1/1/0 items, 1/1/0 fluids, MIN 1). DECLARED-empty;
-	 * consumer = the Melter (task p29-w3-heat-smelter, the HU single at 22010). The
+	 * consumer = the Melter (task w3-heat-smelter, the HU single at 22010). The
 	 * upstream Ice→Water family (Loader_Recipes_Chem.java:480-492) is the canonical row
 	 * pool; the live pour is the smoke row via the {@code fuels}-independent map key.
 	 */
@@ -754,7 +754,7 @@ public class GT6RecipeMaps {
 
 	/**
 	 * RM.java:132 — the Smelter map (1/1/0 items, 1/1/0 fluids, MIN 1). DECLARED-empty;
-	 * consumer = the Smelter 4-ladder (task p29-w3-heat-smelter, HU 20241-20244). The
+	 * consumer = the Smelter 4-ladder (task w3-heat-smelter, HU 20241-20244). The
 	 * map shares the Melter's constant row shape — the two maps differ ONLY in their
 	 * local names and GUI paths, exactly like the upstream declaration pair.
 	 */
@@ -767,13 +767,13 @@ public class GT6RecipeMaps {
 	 * DECLARED-empty as a static stock — the upstream Hot table (Loader_Fuels.java:191-205)
 	 * burns the Pahoehoe/Hot-Water/coolant fluid families no card has registered except the
 	 * one live anchor: gt6:hot_water (GTFluids.AquaFluid) → vanilla water, :196/:198 — the
-	 * smoke row pours through the {@code fuels_hot} JSON key (task p29-w3-heat-smelter,
+	 * smoke row pours through the {@code fuels_hot} JSON key (task w3-heat-smelter,
 	 * the Large Heat Exchanger's fuel map).
 	 */
 	public static volatile RecipeMap FUELS_HOT;
 
 	/**
-	 * RM.java:79 — the Roasting map (task p29-w4-eu-bridge): items 1/3/1, fluids 1/1/1,
+	 * RM.java:79 — the Roasting map (task w4-eu-bridge): items 1/3/1, fluids 1/1/1,
 	 * MIN 2 — the RM.java:79 row verbatim over the 15-arg port ctor, the GUI path the
 	 * upstream "machines/Roaster" string lowercased (the Shredder-line convention). Base-
 	 * {@link RecipeMap} (RM.Roasting IS a plain RecipeMap upstream). The MIN columns are
@@ -791,7 +791,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap ROASTING;
 
 	/**
-	 * RM.java:86 — the Implosion Compressor map (task p31-implosion): items 3/3/3, fluids
+	 * RM.java:86 — the Implosion Compressor map (task implosion): items 3/3/3, fluids
 	 * 0/0/0, MIN 0, AMP 1 — the RM.java:86 row verbatim over the 15-arg port ctor (the
 	 * trailing NEI booleans fold away like every other map), the GUI path the upstream
 	 * "machines/ImplosionCompressor" lowercased (the Shredder-line convention; string
@@ -808,20 +808,20 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap IMPLOSION;
 
 	/**
-	 * RM.java:143 — the Molecular Scanner map (task p31-qu-a-foundation): items 2/1/1,
+	 * RM.java:143 — the Molecular Scanner map (task qu-a-foundation): items 2/1/1,
 	 * fluids 0/0/0, MIN 2. {@link gregtech6.recipes.maps.GT6RecipeMapScannerMolecular}
-	 * SINCE task p32-qu-scanner-replicator — the upstream RecipeMapScannerMolecular
+	 * SINCE task qu-scanner-replicator — the upstream RecipeMapScannerMolecular
 	 * subclass synthesizes USB-scan rows at lookup time from SCANNABLE items + a T3 USB
 	 * stick (RecipeMapScannerMolecular.java:46-67, power (protons+neutrons)×512), writing
 	 * {@code gt.replicator.data} + the tier-3 byte through the GT6UsbSticks carrier (the
-	 * p32-usb-data plane). DECLARED-empty as a static stock — the upstream rows ARE that
+	 * usb-data plane). DECLARED-empty as a static stock — the upstream rows ARE that
 	 * runtime synthesis; the shipped {@code scannermolecular.json} smoke row (the vanilla
 	 * stand-in, declared as such) keeps the map visible.
 	 */
 	public static volatile RecipeMap SCANNER_MOLECULAR;
 
 	/**
-	 * RM.java:144 — the Matter Fabricator map (task p31-qu-a-foundation): items 2/1/0,
+	 * RM.java:144 — the Matter Fabricator map (task qu-a-foundation): items 2/1/0,
 	 * fluids 1/2/0, MIN 1. Upstream RM.Massfab IS a plain RecipeMap. DECLARED-empty as a
 	 * static stock — the element-disintegration rows (Loader_Recipes_Other.java:969-987:
 	 * every ELEMENT material's dust/ingot/plate/gem → FL.MatterCharged mProtons +
@@ -830,7 +830,7 @@ public class GT6RecipeMaps {
 	 * material-walk pour, the RM-shape ruling of research.p31-qu-line); the shipped
 	 * {@code massfab.json} smoke row (the iron-ingot disintegration stand-in, :971-972
 	 * constants verbatim) keeps the map visible in NEI. The conflict-audit ⑤ note (updated
-	 * task p32-ignition-gate): the ignition gate IS ported on the machine face now (the
+	 * task ignition-gate): the ignition gate IS ported on the machine face now (the
 	 * TileEntityBase10MultiBlockMachine carriers + the :755/:809/:497 arms) — the Massfab
 	 * itself carries NO start-energy column (the Loader :1241 row has no
 	 * NBT_SPECIAL_IS_START_ENERGY key), so its behaviour is unchanged; see the class doc.
@@ -838,9 +838,9 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap MASSFAB;
 
 	/**
-	 * RM.java:145 — the Matter Replicator map (task p31-qu-a-foundation): items 3/3/1,
+	 * RM.java:145 — the Matter Replicator map (task qu-a-foundation): items 3/3/1,
 	 * fluids 3/3/0, MIN 2. {@link gregtech6.recipes.maps.GT6RecipeMapReplicator} SINCE task
-	 * p32-qu-scanner-replicator — the upstream RecipeMapReplicator subclass replicates from
+	 * qu-scanner-replicator — the upstream RecipeMapReplicator subclass replicates from
 	 * USB-stick data at lookup time (RecipeMapReplicator.java:54-86, the GT6UsbSticks data
 	 * plane); its ctor tweak {@code mMaxFluidInputSize = 2000} (:50) stays POOLED (a field
 	 * the port RecipeMap does not carry, the machine tanks are the bound) and the USB-cable
@@ -854,7 +854,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap REPLICATOR;
 
 	/**
-	 * RM.java:146 — the Fusion Reactor map (task p31-fusion): items 2/6/1, fluids 2/6/0,
+	 * RM.java:146 — the Fusion Reactor map (task fusion): items 2/6/1, fluids 2/6/0,
 	 * MIN 2, AMP 1. Base-{@link RecipeMap} — RM.Fusion IS a plain RecipeMap upstream. The
 	 * 18 static rows (Loader_Recipes_Other.java:949-966) pour via
 	 * {@link gregtech6.recipes.GT6RecipesFusion} (the implosion static-content form): every
@@ -863,7 +863,7 @@ public class GT6RecipeMaps {
 	 * Recipe.sNotConsumable), fluids in/out are ordinary gas/molten states (NOT plasmas).
 	 * The {@code mSpecialValue} of every row carries the upstream
 	 * {@code setSpecialNumber(dur*8192*16)} ("Start: %s LU", the :8469/:94956 outliers
-	 * verbatim) — LIVE gate payload since task p32-ignition-gate (the S31-7 waiver flipped
+	 * verbatim) — LIVE gate payload since task ignition-gate (the S31-7 waiver flipped
 	 * once the laser domain landed the LU economy): the :1242 NBT_SPECIAL_IS_START_ENERGY
 	 * flag IS supplied through readFromNBT2 :112-124, the :755 write is reachable, the :809
 	 * gate closes until the :497-500 LU decrement pays it — the fusion machine arms its
@@ -873,7 +873,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap FUSION;
 
 	/**
-	 * RM.java:73 — the Crystallisation Crucible map (task p34-machines-bumblelyzer-crucible):
+	 * RM.java:73 — the Crystallisation Crucible map (task machines-bumblelyzer-crucible):
 	 * items 1/1/1, fluids 3/0/1, MIN 1, AMP 1. Base-{@link RecipeMap} (RM.CrystallisationCrucible
 	 * IS a plain RecipeMap upstream). The 39 static rows (Loader_Recipes_Other.java:683-706, the
 	 * six noble gases × the Si/Ge/RedstoneAlloy/NikolineAlloy boule quartet + the Al2O3 sapphire
@@ -884,7 +884,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap CRYSTALLISATION_CRUCIBLE;
 
 	/**
-	 * RM.java:107 — the Bumblelyzer map (task p34-machines-bumblelyzer-crucible): items 2/2/0,
+	 * RM.java:107 — the Bumblelyzer map (task machines-bumblelyzer-crucible): items 2/2/0,
 	 * fluids 1/0/0, MIN 2, AMP 1. The {@link gregtech6.recipes.maps.GT6RecipeMapBumblelyzer}
 	 * subclass (RM.Bumblelyzer IS a RecipeMapBumblelyzer upstream) — the dynamic findRecipe scan
 	 * arm ports IN FULL (the Canner R1 ruling's second consumer); the upstream addFakeRecipe
@@ -896,7 +896,7 @@ public class GT6RecipeMaps {
 	public static volatile gregtech6.recipes.maps.GT6RecipeMapBumblelyzer BUMBLELYZER;
 
 	/**
-	 * RM.java:104 — the Microwave map (task p37-rm-six-maps): items 1/1/1, fluids 1/1/0,
+	 * RM.java:104 — the Microwave map (task rm-six-maps): items 1/1/1, fluids 1/1/0,
 	 * MIN 0, AMP 1, the FURNACE column shape over the same machines/Oven GUI. Upstream the
 	 * field is a {@code RecipeMapMicrowave} subclass whose {@code findRecipe} override
 	 * (RecipeMapMicrowave.java:50-104) synthesizes vanilla-smelting rows at lookup time plus
@@ -909,7 +909,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap MICROWAVE;
 
 	/**
-	 * RM.java:105 — the Cooker map (task p37-rm-six-maps): items 9/1/1, fluids 3/1/1,
+	 * RM.java:105 — the Cooker map (task rm-six-maps): items 9/1/1, fluids 3/1/1,
 	 * MIN 2, AMP 1. Upstream ZERO rows and ZERO consumers — the only reference is the
 	 * deprecated {@code RecipeMap.sCookingRecipes} alias (Recipe.java:652); nothing ever
 	 * pours into it (the no-op honest form — no rows are invented). DECLARED-empty, the
@@ -918,7 +918,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap COOKING;
 
 	/**
-	 * RM.java:125 — the "Craft Head on Handle" display map (task p37-rm-six-maps): items
+	 * RM.java:125 — the "Craft Head on Handle" display map (task rm-six-maps): items
 	 * 4/1/0, fluids 0/0/0, MIN 0, AMP 0 (the one zero-power map). Upstream rows are
 	 * synthesized by the {@code AdvancedCraftingTool} oredict listener (AdvancedCraftingTool.java:70-79):
 	 * every registered tool head × its handle materials → the finished tool, a per-material
@@ -931,7 +931,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap TOOL_HEADS;
 
 	/**
-	 * RM.java:133 — the Mortar map (task p37-rm-six-maps): items 1/2/1, fluids 0/0/0,
+	 * RM.java:133 — the Mortar map (task rm-six-maps): items 1/2/1, fluids 0/0/0,
 	 * MIN 0, AMP 1. The static rows (Loader_Recipes_Vanilla.java:674-684 + the :705-706
 	 * blaze-stick pair) pour via the tier-b JSON seam (key "mortar",
 	 * {@code data/gt6/recipe_maps/mortar.json}); the {@code RecipeMapHandlerPrefix} lazy
@@ -942,7 +942,7 @@ public class GT6RecipeMaps {
 	public static volatile RecipeMap MORTAR;
 
 	/**
-	 * RM.java:137 — the Hammer map (task p37-rm-six-maps): items 1/1/1, fluids 0/0/0,
+	 * RM.java:137 — the Hammer map (task rm-six-maps): items 1/1/1, fluids 0/0/0,
 	 * MIN 0, AMP 1, progress 6/3 (the one non-0/1 progress pair). The static rows
 	 * (RM.smash :545-554 + Loader_Recipes_Vanilla.java:556-569 + the OreDict listener
 	 * trio :81/:91/:95 — the :87 stoneNetherBrick listener's vanilla face duplicates the
@@ -1036,7 +1036,7 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 2, 0,
 				/*MIN=*/ 1,
 				/*AMP=*/ 1);
-		// FM.java:42 — the Gas Fuels map (task p29-w3-turbine-dynamo ③): the Gas Turbine fuel
+		// FM.java:42 — the Gas Fuels map (task w3-turbine-dynamo ③): the Gas Turbine fuel
 		// face, the FM.java:42 column row verbatim (1/2/0 items, 1/2/0 fluids, MIN 1, AMP 1 —
 		// the ENGINE_FUELS shape). The rows pour via the datapack (gas_fuels.json, the
 		// direct-fill anchor); the Hot/Plasma/Turbine/Magic FM maps stay the pool bottom.
@@ -1078,7 +1078,7 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 1, 0,
 				/*MIN=*/ 1,
 				/*AMP=*/ 1);
-		// RM.java:74 — the Mixer map (task p26-c-foam-fluid-refill, the declared boundary note
+		// RM.java:74 — the Mixer map (task c-foam-fluid-refill, the declared boundary note
 		// on the field above): items 6/1/0, fluids 6/2/0, MIN 2, AMP 1 — the RM.java:74 row
 		// verbatim, the trailing NEI booleans folding away in the 15-arg port ctor
 		MIXER = new RecipeMap(new HashSet<>(),
@@ -1089,7 +1089,7 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 6, 2, 0,
 				/*MIN=*/ 2,
 				/*AMP=*/ 1);
-		// RM.java:76 — the Burner Mixer map (task p34-machines-burner-plantalyzer): the
+		// RM.java:76 — the Burner Mixer map (task machines-burner-plantalyzer): the
 		// MIXER constants row verbatim — items 6/1/0, fluids 6/2/0, MIN 2, AMP 1
 		BURN_MIXER = new RecipeMap(new HashSet<>(),
 				"gt.recipe.burnmixer", "Burner Mixer", null,
@@ -1099,7 +1099,7 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 6, 2, 0,
 				/*MIN=*/ 2,
 				/*AMP=*/ 1);
-		// RM.java:109 — the Plantalyzer map (task p34-machines-burner-plantalyzer): items
+		// RM.java:109 — the Plantalyzer map (task machines-burner-plantalyzer): items
 		// 2/2/0, fluids 1/0/0, MIN 1, AMP 1; DECLARED-empty (the field doc — the upstream
 		// rows are Forestry/IC2 compat, the P10 cut; the base-map form is the declared fold)
 		PLANTALYZER = new RecipeMap(new HashSet<>(),
@@ -1110,7 +1110,7 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 0, 0,
 				/*MIN=*/ 1,
 				/*AMP=*/ 1);
-		// the RM.java:83/:87/:111 W1 trio (task p26-w1-sifter-compressor-wiremill), upstream
+		// the RM.java:83/:87/:111 W1 trio (task w1-sifter-compressor-wiremill), upstream
 		// declaration order — Sifting carries progress direction 2 (the one non-0 direction
 		// in the RM.java:60-115 block), Compressor/Wiremill the plain 0/1 row
 		SIFTING = new RecipeMap(new HashSet<>(),
@@ -1187,7 +1187,7 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
 				/*MIN=*/ 0,
 				/*AMP=*/ 1);
-		// RM.java:118 — the Anvil map (task p28-c-anvil): progress 2/1, items 2/2/2, fluids
+		// RM.java:118 — the Anvil map (task c-anvil): progress 2/1, items 2/2/2, fluids
 		// 0/0/0, MIN 0, AMP 1 — the RM.java:118 row verbatim over the 15-arg port ctor; the
 		// zero-energy manual face, the consumer is the anvil BE's top-face hammer strike
 		ANVIL = new RecipeMap(new HashSet<>(),
@@ -1198,7 +1198,7 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
 				/*MIN=*/ 0,
 				/*AMP=*/ 1);
-		// the RM.java:119/:120 AnvilBendSmall|Big pair folded onto ONE map (task p28-c-anvil,
+		// the RM.java:119/:120 AnvilBendSmall|Big pair folded onto ONE map (task c-anvil,
 		// the card's two-map freeze; identical constants rows upstream, the Small/Big split was
 		// pure strike-point aiming — the field doc carries the declared fold)
 		ANVIL_BEND = new RecipeMap(new HashSet<>(),
@@ -1209,7 +1209,7 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
 				/*MIN=*/ 0,
 				/*AMP=*/ 1);
-		// RM.java:80 — the Bath map (task p26-kitchen-pot-bowl): items 6/6/1, fluids 1/3/1,
+		// RM.java:80 — the Bath map (task kitchen-pot-bowl): items 6/6/1, fluids 1/3/1,
 		// MIN 2, AMP 1 — the RM.java:80 row verbatim over the 15-arg port ctor (the base-form
 		// deviation is documented on the field above); the upstream RecipeMapBath subclass
 		// stays pooled with the rest of the handler layer
@@ -1221,7 +1221,7 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 3, 1,
 				/*MIN=*/ 2,
 				/*AMP=*/ 1);
-		// --- the P29 W1 twelve-map block (task p29-w1-rm-maps-scaffold), upstream RM.java
+		// --- the P29 W1 twelve-map block (task w1-rm-maps-scaffold), upstream RM.java
 		// declaration order; every row verbatim over the 15-arg port ctor, all DECLARED-empty
 		// (the row pour is the B/C/D card content) ---
 		// RM.java:69 — items 1/1/1, fluids 1/1/0, MIN 1, AMP 1
@@ -1368,7 +1368,7 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 1, 1,
 				/*MIN=*/ 2,
 				/*AMP=*/ 1);
-		// --- the P29 W2 nineteen-map block (task p29-w2-energy-types-5tier), upstream RM.java
+		// --- the P29 W2 nineteen-map block (task w2-energy-types-5tier), upstream RM.java
 		// declaration order; every row verbatim over the 15-arg port ctor, all DECLARED-empty
 		// (the row pour is the W2 consumer cards' content; the three subclass deviations are
 		// documented on their fields above) ---
@@ -1552,7 +1552,7 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 1, 0,
 				/*MIN=*/ 1,
 				/*AMP=*/ 1);
-		// --- the P29 W3 tower pair (task p29-w3-distill-crucible), the RM.java:65/:66 rows
+		// --- the P29 W3 tower pair (task w3-distill-crucible), the RM.java:65/:66 rows
 		// verbatim over the 15-arg port ctor — the SAME constants split only by map name/GUI
 		// (the STEAM_CRACKING/its-twin judged form); the smoke rows ride the tier-b JSON seam ---
 		// RM.java:65 — items 1/3/0, fluids 1/9/0, MIN 1, AMP 1
@@ -1573,7 +1573,7 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 9, 0,
 				/*MIN=*/ 1,
 				/*AMP=*/ 1);
-		// the P29 W3 three-map block (task p29-w3-heat-smelter), upstream declaration
+		// the P29 W3 three-map block (task w3-heat-smelter), upstream declaration
 		// order — Melter :131 before Smelter :132, then FM.Hot (FM.java:43): the first
 		// two are the IDENTICAL-constants pair (item 1/1/0, fluid 1/1/0, MIN 1), the
 		// fuel map is the BURN row shape over its own local name (the RecipeMapFuel
@@ -1602,7 +1602,7 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 2, 0,
 				/*MIN=*/ 1,
 				/*AMP=*/ 1);
-		// RM.java:79 — the Roasting map (task p29-w4-eu-bridge): items 1/3/1, fluids 1/1/1,
+		// RM.java:79 — the Roasting map (task w4-eu-bridge): items 1/3/1, fluids 1/1/1,
 		// MIN 2, AMP 1 — the RM.java:79 row verbatim over the 15-arg port ctor (the trailing
 		// NEI booleans fold away like every other map), the GUI path the upstream
 		// "machines/Roaster" string lowercased (the Shredder-line convention). Base-RecipeMap
@@ -1629,13 +1629,13 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
 				/*MIN=*/ 0,
 				/*AMP=*/ 1);
-		// --- the P31 QU trio (task p31-qu-a-foundation), upstream declaration order ---
+		// --- the P31 QU trio (task qu-a-foundation), upstream declaration order ---
 		// ScannerMolecular :143, Massfab :144, Replicator :145; all three DECLARED-empty,
 		// the base-RecipeMap carry over the two runtime-synthesis subclasses (the judged
 		// form); the smoke rows ride the tier-b JSON seam; the ignition gate lives on the
-		// machine face, not the maps (task p32-ignition-gate, the class-doc note) ---
+		// machine face, not the maps (task ignition-gate, the class-doc note) ---
 		// RM.java:143 — items 2/1/1, fluids 0/0/0, MIN 2, AMP 1 (the USB-scan synthesis
-		// subclass LIVE since task p32-qu-scanner-replicator, RecipeMapScannerMolecular.java:46-67)
+		// subclass LIVE since task qu-scanner-replicator, RecipeMapScannerMolecular.java:46-67)
 		SCANNER_MOLECULAR = new gregtech6.recipes.maps.GT6RecipeMapScannerMolecular(new HashSet<>(),
 				"gt.recipe.scannermolecular", "Molecular Scanner", null,
 				0, 1,
@@ -1655,7 +1655,7 @@ public class GT6RecipeMaps {
 				/*MIN=*/ 1,
 				/*AMP=*/ 1);
 		// RM.java:145 — items 3/3/1, fluids 3/3/0, MIN 2, AMP 1 (the USB-data subclass LIVE
-		// since task p32-qu-scanner-replicator, RecipeMapReplicator.java:54-86; the upstream
+		// since task qu-scanner-replicator, RecipeMapReplicator.java:54-86; the upstream
 		// mMaxFluidInputSize=2000 ctor tweak (:50) stays POOLED — the port RecipeMap carries
 		// no cap field, the machine tanks are the bound)
 		REPLICATOR = new gregtech6.recipes.maps.GT6RecipeMapReplicator(new HashSet<>(),
@@ -1667,7 +1667,7 @@ public class GT6RecipeMaps {
 				/*MIN=*/ 2,
 				/*AMP=*/ 1);
 		// RM.java:146 — the Fusion Reactor map, the base-map row verbatim (items 2/6/1,
-		// fluids 2/6/0, MIN 2, AMP 1); the rows pour via GT6RecipesFusion (task p31-fusion).
+		// fluids 2/6/0, MIN 2, AMP 1); the rows pour via GT6RecipesFusion (task fusion).
 		FUSION = new RecipeMap(new HashSet<>(),
 				"gt.recipe.fusionreactor", "Fusion Reactor", null,
 				0, 1,
@@ -1676,7 +1676,7 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 2, 6, 0,
 				/*MIN=*/ 2,
 				/*AMP=*/ 1);
-		// the P34 machine-four tail (task p34-machines-bumblelyzer-crucible, the Bumblelyzer +
+		// the P34 machine-four tail (task machines-bumblelyzer-crucible, the Bumblelyzer +
 		// CrystallisationCrucible two of the four) — upstream RM.java declaration order
 		// (CrystallisationCrucible :73, Bumblelyzer :107); both DECLARED-empty at declaration,
 		// the content is the consumer arms' (the JSON pour / the dynamic findRecipe walk)
@@ -1699,7 +1699,7 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 1, 0, 0,
 				/*MIN=*/ 2,
 				/*AMP=*/ 1);
-		// the P37 five-map append (task p37-rm-six-maps, the p36-census open_faces[0] close) —
+		// the P37 five-map append (task rm-six-maps, the census open_faces[0] close) —
 		// upstream RM.java declaration order (Microwave :104 < Cooking :105 < ToolHeads :125
 		// < Mortar :133 < Hammer :137); Microwave/Cooking/ToolHeads DECLARED-empty (the
 		// no-op honest form — see the field docs), Mortar/Hammer rows ride the JSON seam
@@ -1839,7 +1839,7 @@ public class GT6RecipeMaps {
 		MORTAR = null;
 		HAMMER = null;
 		RecipeMap.reset();
-		sPhase = Phase.OPEN; // the phase joins the generation — a fresh generation always registers (task p32-rm-phase-gate)
+		sPhase = Phase.OPEN; // the phase joins the generation — a fresh generation always registers (task rm-phase-gate)
 		for (Runnable tHook : sGenerationResetHooks) {
 			try {tHook.run();}
 			catch (Throwable tThrowable) {LOGGER.warn("GT6 RecipeMaps: a generation-reset hook failed — continuing with the remaining hooks", tThrowable);}

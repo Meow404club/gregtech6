@@ -10,7 +10,7 @@ import gregapi.oredict.OreDictMaterial;
 
 /**
  * The tool-stats payload — the FIRST key registered in the {@link GT6ItemData}
- * seam (task p31-identity-seam, guardrail ① "the metatool lands first"): the
+ * seam (task identity-seam, guardrail ① "the metatool lands first"): the
  * material identity of a GT6 tool, riding the upstream verbatim
  * {@code "GT.ToolStats"} compound shape (MultiItemTool.java:180-192 write,
  * :351-362 read):

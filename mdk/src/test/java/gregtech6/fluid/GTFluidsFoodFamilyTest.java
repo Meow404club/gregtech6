@@ -15,7 +15,7 @@ import gregtech6.recipes.GT6RecipesDrying;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Food fluid family offline tests (task p21-drying-food-fluids — the registration-row
+ * Food fluid family offline tests (task drying-food-fluids — the registration-row
  * assertions against the DECLARED values, the GTFluidsSimpleLiquidFamilyTest shape): four
  * {@link GTFluids.AquaFluidSpec} rows on the THIRD table — sap, maplesap, reedwater,
  * cactuswater (the FL.java:250/:252/:233/:234 shorthands, upstream FOOD-tagged). Three of
@@ -43,7 +43,7 @@ public class GTFluidsFoodFamilyTest extends GTOfflineTestBase {
 	/** The cross-family contract: the two earlier tables are UNCHANGED by the third (their exact-order assertions stay green). */
 	@Test
 	public void theAquaAndSimpleLiquidTablesAreUntouched() {
-		assertEquals(6, GTFluids.AQUA_SPECS.size(), "the p16-aqua-fluids six, never appended");
+		assertEquals(6, GTFluids.AQUA_SPECS.size(), "the aqua-fluids six, never appended");
 		assertEquals(List.of("spdew", "mnwtr", "water_geothermal", "water_boiling", "hot_water", "cold_water"),
 				GTFluids.AQUA_SPECS.stream().map(GTFluids.AquaFluidSpec::name).toList());
 		assertEquals(2, GTFluids.SIMPLE_LIQUID_SPECS.size(), "the p19 simple-liquid pair, never appended");

@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregtech6.registry.GT6Rails;
 
 /**
- * The GT6 normal material rail (task p35-rails-31-blocks) — the upstream
+ * The GT6 normal material rail (task rails-31-blocks) — the upstream
  * {@code BlockBaseRail(power=F, detector=F)} third, one block per rail material. The
  * upstream class is a 1.7.10 BlockRailBase subclass (gregapi/block/misc/BlockBaseRail.java)
  * whose shape/curve/slope settlement, waterlogging and drop faces are all the vanilla rail
@@ -29,7 +29,7 @@ import gregtech6.registry.GT6Rails;
  *
  * <p>Declared cut: the upstream crowbar shape-rotation arm (BlockBaseRail.onToolClick :147-153)
  * rides the IBlockToolable broadcast, which the modern crowbar ({@code GTCrowbarItem}) does
- * not implement — its rails arm is the mining half only (the p10-tool-crowbar-mining ruling).
+ * not implement — its rails arm is the mining half only (the tool-crowbar-mining ruling).
  */
 public class GT6RailBlock extends RailBlock {
 

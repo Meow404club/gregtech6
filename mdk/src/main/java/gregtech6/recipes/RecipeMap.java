@@ -44,7 +44,7 @@ import gregtech6.item.MaterialPrefixItem;
  * <p>Trimmed against upstream (documented deviations for the Furnace-level port):
  * <ul>
  * <li>the upstream findRecipeInternal hash indexes (Recipe.java:469-551) are restored
- * (task p32-perf-recipe-hash-index): {@code mRecipeItemMap} → the item/tag indexes and
+ * (task perf-recipe-hash-index): {@code mRecipeItemMap} → the item/tag indexes and
  * {@code mRecipeFluidMap} → the fluid index below, plus the map-level {@code oRecipe}
  * last-recipe buffer (:488). Modern key difference: the 1.7.10 ItemStackContainer key
  * (item+damage+NBT) folds into the {@link Item} identity (the exact-branch NBT routing
@@ -84,7 +84,7 @@ public class RecipeMap {
 	public final int mInputItemsCount, mOutputItemsCount, mInputFluidCount, mOutputFluidCount, mMinimalInputItems, mMinimalInputFluids, mMinimalInputs;
 	public final long mPower;
 
-	// ---- the findRecipe hash indexes (task p32-perf-recipe-hash-index, upstream Recipe.java:469-551) ----
+	// ---- the findRecipe hash indexes (task perf-recipe-hash-index, upstream Recipe.java:469-551) ----
 	// Phase accounting (rm-phase-gate contract): the indexes are maintained INCREMENTALLY by
 	// addRecipe — the single pour funnel, legal only while the generation phase is OPEN — so a
 	// FROZEN generation has a settled index. The two declared direct-write seams (the JSON
@@ -138,11 +138,11 @@ public class RecipeMap {
 	/**
 	 * Registers a Recipe into this Map. Upstream Recipe.add() feeds three hash
 	 * indexes; the port feeds the same indexes incrementally (task
-	 * p32-perf-recipe-hash-index): every pour through this single funnel keeps
+	 * perf-recipe-hash-index): every pour through this single funnel keeps
 	 * {@link #mItemIndex}/{@link #mTagIndex}/{@link #mFluidIndex} in step with
 	 * {@code mRecipeList}, so the FROZEN phase inherits a settled index.
 	 *
-	 * <p><b>Late-pour gate (p32-rm-phase-gate)</b>: once the map generation is FROZEN
+	 * <p><b>Late-pour gate (rm-phase-gate)</b>: once the map generation is FROZEN
 	 * ({@link GT6RecipeMaps#freeze()}, live switch = ServerStarted), this is the one place
 	 * a late pour fails loud — the {@link IllegalStateException} message carries the map
 	 * name and the exception's own stack trace carries the offending caller. Registration
@@ -150,7 +150,7 @@ public class RecipeMap {
 	 * the phase is OPEN for all of them. This is the single funnel — every pour in the repo
 	 * routes through here, so one guard covers all maps.
 	 *
-	 * <p><b>Double-empty guard (p8-recipe-chances-orechain)</b>: a recipe with neither item
+	 * <p><b>Double-empty guard (recipe-chances-orechain)</b>: a recipe with neither item
 	 * nor fluid inputs is REJECTED — not added to {@code mRecipeList}, no exception thrown,
 	 * {@code null} returned. Upstream is structurally immune to these ghost recipes at the
 	 * index layer: {@code addToItemMap} (upstream Recipe.java:632-640) never buckets a
@@ -172,7 +172,7 @@ public class RecipeMap {
 		if (GT6RecipeMaps.phase() == GT6RecipeMaps.Phase.FROZEN) throw new IllegalStateException( // fail-loud AFTER the gate, fail-silent only for null (not a pour)
 				"RecipeMap \"" + mNameInternal + "\" is FROZEN — addRecipe rejected outside the registration phase "
 				+ "(pour during registration: the static loaders at FMLCommonSetup or the JSON reload window; "
-				+ "the caller stack above names the offender — task p32-rm-phase-gate)");
+				+ "the caller stack above names the offender — task rm-phase-gate)");
 		if (aRecipe.mInputs.length == 0 && aRecipe.mFluidInputs.length == 0) return null; // ghost-recipe guard, see javadoc
 		if (aRecipe.mEnabled && !aRecipe.mFakeRecipe) {
 			if (mRecipeList.add(aRecipe)) indexRecipe(aRecipe);
@@ -211,7 +211,7 @@ public class RecipeMap {
 
 	/**
 	 * Forces the next lookup to rebuild the hash indexes (the P1 fix of task
-	 * p32-perf-recipe-hash-index). For the one runtime remove+add seam that can be
+	 * perf-recipe-hash-index). For the one runtime remove+add seam that can be
 	 * SIZE-NEUTRAL: {@code GT6CokeOvenTagListener.replaceLogRecipes} swaps its tag-derived
 	 * subset on every /reload (TagsUpdatedEvent.shouldUpdateStaticData fires at runtime too)
 	 * — with an unchanged #minecraft:logs that is remove M rows, add M fresh instances, Δ=0,
@@ -235,7 +235,7 @@ public class RecipeMap {
 	 * is kept verbatim: the FIRST input-matching candidate decides, and a disabled or
 	 * underpowered match returns {@code null} for the whole lookup (upstream :501).
 	 *
-	 * <p>Upstream findRecipeInternal structure restored (task p32-perf-recipe-hash-index):
+	 * <p>Upstream findRecipeInternal structure restored (task perf-recipe-hash-index):
 	 * the caller-passed buffer (:487), the map-level {@code oRecipe} buffer (:488), the
 	 * item/tag hash buckets (:498-516) and the fluid buckets (:519-523). The hash index
 	 * over-approximates the linear scan exactly — every stored row is reachable through a
@@ -247,7 +247,7 @@ public class RecipeMap {
 		// upstream findRecipeInternal (Recipe.java:findRecipeInternal) gates on the MAP's
 		// minimal counts (mMinimalInputItems/mMinimalInputFluids/mMinimalInputs), NOT a hard
 		// empty-array null — the zero-item-slot machines (the Coagulator, task
-		// p29-w2-hu-tu-piggyback, the FIRST port carrier of an item-slot-free map) look up
+		// w2-hu-tu-piggyback, the FIRST port carrier of an item-slot-free map) look up
 		// FLUID-ONLY rows through an empty item array. The per-recipe isRecipeInputEqual
 		// probe simply matches nothing for item-bearing rows (the mInputs.length > 0 guard),
 		// and the addRecipe ghost guard keeps empty-input rows out of the list — so the

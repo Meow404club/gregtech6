@@ -27,13 +27,13 @@ import gregtech6.covers.ICoverableTE;
 /**
  * The default implementation for regular covers — 1.20.1 port of
  * gregapi/cover/covers/AbstractCoverDefault.java (:49-112), trimmed to the ported
- * {@link ICover} surface (task p4-cover-core ②). The sound hooks map the upstream
+ * {@link ICover} surface (task cover-core ②). The sound hooks map the upstream
  * custom SFX.GT_SCREWDRIVER/SFX.MC_BREAK onto vanilla equivalents (the GT sound
  * registration system stays pooled); the addToolTips :77 and bounds/collisions :85-88
  * stay pooled; the redstone defaults :78-80 are RESTORED with the cover redstone
- * framework (task p9-redstone-hooks — a plain cover is transparent to redstone); the
+ * framework (task redstone-hooks — a plain cover is transparent to redstone); the
  * item-intercept defaults :93-100 are RESTORED with the side-aware item capability
- * framework (task p10-cover-item-intercept — a plain cover is transparent to item
+ * framework (task cover-item-intercept — a plain cover is transparent to item
  * transfer: no intercept, no override, the host default passes straight through); the
  * GUI defaults :82-83 and the fluid override family defaults :102-109 live in their
  * pooled method groups.

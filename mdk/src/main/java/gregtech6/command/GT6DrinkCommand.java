@@ -32,7 +32,7 @@ import gregtech6.fluid.GTDrinks;
 import gregtech6.tileentity.tank.TileEntityBase08Barrel;
 
 /**
- * The drink-seam RCON driver (task p33-food-fluids-b2 acceptance, the GT6FaucetCommand
+ * The drink-seam RCON driver (task food-fluids-b2 acceptance, the GT6FaucetCommand
  * card-local form): RCON sessions have no player, so the seam that IS a player right-click
  * gets the FakePlayerFactory stand-in and the real dispatch.
  * <ul>
@@ -67,7 +67,7 @@ public final class GT6DrinkCommand {
 					.executes(aContext -> use(aContext.getSource(),
 							BlockPosArgument.getLoadedBlockPos(aContext, "pos")))));
 		aEvent.getDispatcher().register(tDrink);
-		LOGGER.info("Registered GT6 drink command /gt6drink (hunger | clear | use) — the p33-food-fluids-b2 acceptance home");
+		LOGGER.info("Registered GT6 drink command /gt6drink (hunger | clear | use) — the food-fluids-b2 acceptance home");
 	}
 
 	/** The fresh-drinker reset: food 20, no effects. */

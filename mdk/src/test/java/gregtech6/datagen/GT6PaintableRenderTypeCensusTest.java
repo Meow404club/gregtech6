@@ -1,5 +1,5 @@
 /**
- * The paintable-family {@code render_type} census (task r3-world-tint-render-type, the
+ * The paintable-family {@code render_type} census (task world-tint-render-type, the
  * issue #8 world-bake tint fix): every model the {@code GTMachineTintModel} walk wraps
  * must declare {@code "render_type": "minecraft:cutout"} — the D2 root cause pair is
  * (a) the P22 overlay shells' transparent texels paint as opaque plates on the default
@@ -24,9 +24,9 @@
  *     (addBridgeFamily, model name = the texture token);</li>
  * <li>the magic absorber; the tank valves (tank_wood/tank_metal) and the crucible
  *     walls (tintedCube); the boiler tank + the large boiler band (the two-layer
- *     boilerModel shells, task r8-tex-large-boilers over the C5 wiring).</li>
+ *     boilerModel shells, task tex-large-boilers over the C5 wiring).</li>
  * <li>the bee trio — bumble_hive/bumbliary/bumbliary_adv (the addHive/
- *     bumbliaryModel two-layer grammar; since the r3-beehive-tint return-fix —
+ *     bumbliaryModel two-layer grammar; since the beehive-tint return-fix —
  *     the trio entered the {@code GTMachineTintModel} walk with the C4 card but
  *     this census did not know them, so the SOLID-layer white-plating regression
  *     shipped; the structural lesson: the universe must mirror the walk, not the
@@ -134,13 +134,13 @@ class GT6PaintableRenderTypeCensusTest {
         for (String tPath : gregtech6.registry.GT6Crucibles.CRUCIBLE_WALL_BLOCKS_BY_PATH.keySet()) {
             rModels.add(tPath); // the eight dedicated crucible walls (tintedCube)
         }
-        // the bee trio (task r3-beehive-tint): the addHive/bumbliaryModel two-layer
+        // the bee trio (task beehive-tint): the addHive/bumbliaryModel two-layer
         // shells over the tintindex-0 body — model names are bands, not registry paths
         // (bumbliary_adv vs the bumbliary_advanced block), hence the pinned literals
         rModels.add("bumble_hive");
         rModels.add("bumbliary");
         rModels.add("bumbliary_adv");
-        // the converter family (issue #18, task r4-18-converter-tex-facing): the
+        // the converter family (issue #18, task 18-converter-tex-facing): the
         // transformer + dynamo model pairs (the addConverterModel two-layer shells over
         // the tintindex-0 body — model names are bands, not registry paths)
         rModels.add("electric_transformer");
@@ -149,7 +149,7 @@ class GT6PaintableRenderTypeCensusTest {
         rModels.add("electric_dynamo_active");
         rModels.add("flux_dynamo");
         rModels.add("flux_dynamo_active");
-        // task r8-tex-bridge-kinetic — the bridge/laser ACTIVE shells (heater + the two
+        // task tex-bridge-kinetic — the bridge/laser ACTIVE shells (heater + the two
         // lasers; the art-less engine/motor pairs stay on the inactive names above) and
         // the kinetic joiners: the steam/diesel engine shells + the rotation transformer
         rModels.add("bridge_heater_active");
@@ -158,12 +158,12 @@ class GT6PaintableRenderTypeCensusTest {
         rModels.add("steam_engine");
         rModels.add("diesel_engine");
         rModels.add("transformer_rotation");
-        // the boiler domains (task r8-tex-large-boilers): the steam boiler tank already
+        // the boiler domains (task tex-large-boilers): the steam boiler tank already
         // rides the List.of above (since the C5 wiring, now the two-layer boilerModel
         // form); the large boiler band model joins — the two-layer front-bearing shell
         // the five controllers share
         rModels.add("large_boiler");
-        // the four multiblockmains controller families (task r8-tex-multiblockmains):
+        // the four multiblockmains controller families (task tex-multiblockmains):
         // the shared two-layer front-bearing boilerModel shells over the tintindex-0
         // body — the shared large_crucible band model is not a registry path, the other
         // three keep their registry-path model names
@@ -171,14 +171,14 @@ class GT6PaintableRenderTypeCensusTest {
         rModels.add("logistics_core");
         rModels.add("multiblock_lightning_rod");
         rModels.add("large_heat_exchanger");
-        // the pipe connector families (task r8-tex-pipe-textures): the four shared
+        // the pipe connector families (task tex-pipe-textures): the four shared
         // tintedPipeModel two-layer shells over the tintindex-0 body — model names are
         // texture paths, not registry paths, hence the pinned literals
         rModels.add("materialicons/wood/pipe_side");
         rModels.add("materialicons/copper/pipe_side");
         rModels.add("materialicons/copper/pipe_side_restrictive");
         rModels.add("iconsets/logistics_wire");
-        // the 17 large-controller domains (task r8-tex-large-machines): the
+        // the 17 large-controller domains (task tex-large-machines): the
         // familyMachineModel state trios (the twelve large-12 rows + the massfab/fusion/
         // implosion controllers — the _active/_running bands ride the tree with the
         // blockstate switch declared defer) + the two boilerModel front pairs (no
@@ -269,7 +269,7 @@ class GT6PaintableRenderTypeCensusTest {
     }
 
     /**
-     * The r8-tex-tank-family barrel addition (tail-append): the 15 two-layer barrel
+     * The tex-tank-family barrel addition (tail-append): the 15 two-layer barrel
      * models are NOT in the {@code GTMachineTintModel} walk (the p23 runtime-BlockColor
      * domain), but their {@code barrel_parts} shells carry the same alpha-discard need —
      * a barrel model losing its cutout declaration plates the decal shell on the SOLID

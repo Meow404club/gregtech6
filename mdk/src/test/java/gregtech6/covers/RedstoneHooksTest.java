@@ -21,8 +21,8 @@ import gregtech6.covers.covers.CoverTextureSimple;
 import gregtech6.util.UT6;
 
 /**
- * The cover redstone framework truth tables (task p9-redstone-hooks, ADR
- * 2026-09-01-p9-redstone-hooks acceptance ⑤). Offline and exhaustive — the OPOS
+ * The cover redstone framework truth tables (task redstone-hooks, ADR
+ * 2026-09-01-redstone-hooks acceptance ⑤). Offline and exhaustive — the OPOS
  * direction fold is the one irreversible mistake this card can make, so the emission
  * side each hook receives is asserted for all six query directions, plus the explicit
  * front/back oven case and the Block-carrier bridge (GTOvenBlock.getSignal /

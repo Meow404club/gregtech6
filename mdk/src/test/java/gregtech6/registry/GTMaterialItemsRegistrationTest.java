@@ -1,5 +1,5 @@
 /**
- * Tests for task p3-fullprefix-creativetab: the full-prefix registration expansion.
+ * Tests for task fullprefix-creativetab: the full-prefix registration expansion.
  *
  * <p>Pins the upstream item-path universe (Loader_Items.java:57-171, 105 prefixes) as a name
  * spec independent of the production list, recomputes the registration set with an independent
@@ -108,7 +108,7 @@ public class GTMaterialItemsRegistrationTest {
     public void phaseTwoPrefixCountsAreRegressionAnchors() {
         Map<String, Integer> tCounts = new LinkedHashMap<>();
         for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) tCounts.merge(tPair.prefix().mNameInternal, 1, Integer::sum);
-        assertEquals(483, tCounts.get("ingot"), "phase-2 registered 483 ingots (p2-registration-bridge handoff)");
+        assertEquals(483, tCounts.get("ingot"), "phase-2 registered 483 ingots (registration-bridge handoff)");
         assertEquals(1096, tCounts.get("dust"), "phase-2 registered 1096 dusts");
         assertEquals(217, tCounts.get("gem"), "phase-2 registered 217 gems");
         assertEquals(673, tCounts.get("plate"), "phase-2 registered 673 plates");

@@ -1,5 +1,5 @@
 /**
- * Offline pin for task r10-debt-material-tint — the r7-40-41 declared-deviation rework.
+ * Offline pin for task debt-material-tint — the #40-41 declared-deviation rework.
  * The borrowed grayscale materialicons blockSolid bodies (the
  * {@code GT6CrucibleDatagen.bodyTexture} rows) now carry tintindex 0 on every body face,
  * and {@code GT6MoldTintListener} multiplies the row material's {@code mRGBaSolid} over

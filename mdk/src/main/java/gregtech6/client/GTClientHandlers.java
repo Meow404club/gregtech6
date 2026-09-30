@@ -54,22 +54,22 @@ public final class GTClientHandlers {
      */
     public static void init(IEventBus modBus) {
         modBus.addListener(GTClientHandlers::onRegisterItemColors);
-        modBus.addListener(GTClientHandlers::onRegisterBlockColors); // task p8-prefixblock-render ③: world-side tint
-        modBus.addListener(GTClientHandlers::onRegisterWireBlockColors); // task p16-clienthandlers-2111: wire tints, world half (p9-wire-family-w2 semantics)
-        modBus.addListener(GTClientHandlers::onRegisterWireItemColors); // task p16-clienthandlers-2111: wire tints, inventory half
-        modBus.addListener(GTClientHandlers::onRegisterMachinePaintItemColors); // task p22-painted-item-domain: machine paint tint, inventory half
-        modBus.addListener(GTClientHandlers::onRegisterPartPaintItemColors); // task p38-issue8-multipart-tint: part-family paint tint, inventory half
-        modBus.addListener(GTClientHandlers::onRegisterBarrelPaintBlockColors); // task p23-barrel-paint-render: barrel paint tint, world half
-        modBus.addListener(GTClientHandlers::onRegisterBarrelPaintItemColors); // task p23-barrel-paint-render: barrel paint tint, inventory half
-        modBus.addListener(GTClientHandlers::onRegisterBeePaintItemColors); // task r3-beehive-tint + r6-15-hive-jade-tint: the bee trio paint tint, inventory half
-        modBus.addListener(GTClientHandlers::onRegisterToolIdentityItemColors); // task p31-identity-seam: the crowbar material identity tint, inventory half
+        modBus.addListener(GTClientHandlers::onRegisterBlockColors); // task prefixblock-render ③: world-side tint
+        modBus.addListener(GTClientHandlers::onRegisterWireBlockColors); // task clienthandlers-2111: wire tints, world half (wire-family-w2 semantics)
+        modBus.addListener(GTClientHandlers::onRegisterWireItemColors); // task clienthandlers-2111: wire tints, inventory half
+        modBus.addListener(GTClientHandlers::onRegisterMachinePaintItemColors); // task painted-item-domain: machine paint tint, inventory half
+        modBus.addListener(GTClientHandlers::onRegisterPartPaintItemColors); // task issue8-multipart-tint: part-family paint tint, inventory half
+        modBus.addListener(GTClientHandlers::onRegisterBarrelPaintBlockColors); // task barrel-paint-render: barrel paint tint, world half
+        modBus.addListener(GTClientHandlers::onRegisterBarrelPaintItemColors); // task barrel-paint-render: barrel paint tint, inventory half
+        modBus.addListener(GTClientHandlers::onRegisterBeePaintItemColors); // task beehive-tint + 15-hive-jade-tint: the bee trio paint tint, inventory half
+        modBus.addListener(GTClientHandlers::onRegisterToolIdentityItemColors); // task identity-seam: the crowbar material identity tint, inventory half
     }
 
     /** Material tint for every registered material prefix item (GTCEu TagPrefixItem.java:55-57 isomorph). */
     private static void onRegisterItemColors(RegisterColorHandlersEvent.Item event) {
         ItemColor tColor = MaterialPrefixItem.tintColor();
         event.getItemColors().register(tColor, GTMaterialItems.itemArray()); // ItemColors.register(ItemColor, ItemLike...)
-        // task p8-prefixblock-render: the 3773 block items tint through the same colour seam —
+        // task prefixblock-render: the 3773 block items tint through the same colour seam —
         // per the Forge docs a BlockColor does NOT colour its BlockItem (PrefixBlockItem.java:103
         // tints the item side upstream), so the GTMaterialPrefixBlockItem ItemColor is registered
         // explicitly over the block-item array.
@@ -77,17 +77,17 @@ public final class GTClientHandlers {
                 GTMaterialBlocks.items().values().stream().map(RegistryObject::get).toArray(Item[]::new));
     }
 
-    /** Task p8-prefixblock-render ③: the material tint for every registered material prefix block (GTMaterialPrefixBlock.blockColor). */
+    /** Task prefixblock-render ③: the material tint for every registered material prefix block (GTMaterialPrefixBlock.blockColor). */
     private static void onRegisterBlockColors(RegisterColorHandlersEvent.Block event) {
         event.getBlockColors().register(GTMaterialPrefixBlock.blockColor(), GTMaterialBlocks.blockArray());
     }
 
     /**
-     * Task p9-wire-family-w2: the wire family tints — the world half over every wire block
+     * Task wire-family-w2: the wire family tints — the world half over every wire block
      * (the p7 legacy pair + the 620 family, {@code GTWires.wireBlockArray()}).
      * {@link GTWireTint} = fRGBaSolid on tint index 0, the fixed insulation gray on index 1.
      *
-     * <p>Task p16-clienthandlers-2111: split from the former abstract-typed
+     * <p>Task clienthandlers-2111: split from the former abstract-typed
      * {@code onRegisterWireColors} (instanceof dispatch over the parent) into a concrete
      * {@code .Block} listener — both dispatch arms preserved verbatim as separate methods.</p>
      */
@@ -96,10 +96,10 @@ public final class GTClientHandlers {
     }
 
     /**
-     * Task p9-wire-family-w2 (continued): the inventory half over the same blocks' items
+     * Task wire-family-w2 (continued): the inventory half over the same blocks' items
      * (a BlockColor does not colour its BlockItem, the prefix-card comment above).
      *
-     * <p>Task p16-clienthandlers-2111: the other dispatch arm of the split, see
+     * <p>Task clienthandlers-2111: the other dispatch arm of the split, see
      * {@link #onRegisterWireBlockColors}.</p>
      */
     private static void onRegisterWireItemColors(RegisterColorHandlersEvent.Item event) {
@@ -111,10 +111,10 @@ public final class GTClientHandlers {
     }
 
     /**
-     * Task p21-paintable-tint-render: the machine paint tint, the world half over the pinned
+     * Task paintable-tint-render: the machine paint tint, the world half over the pinned
      * 21 machine-domain blocks ({@code GTMachines.paintableBlockArray()}).
      *
-     * <p>REPLACED by task p32-render-embeddium-tint: the world tint now rides
+     * <p>REPLACED by task render-embeddium-tint: the world tint now rides
      * {@code GTMachineTintModel} — the colour is BAKED into the quads at
      * {@code getQuads} time (the same {@code GTMachinePaintTint.tintARGB} source), because
      * the runtime {@code BlockColor} route rendered achromatic in the live client with
@@ -124,7 +124,7 @@ public final class GTClientHandlers {
      */
 
     /**
-     * Task p22-painted-item-domain: the machine paint tint, the INVENTORY half over the
+     * Task painted-item-domain: the machine paint tint, the INVENTORY half over the
      * 21 machine-domain blocks' items ({@code GTMachines.paintableBlockArray()} BlockItems).
      * Explicit registration is mandatory — a BlockColor does NOT colour its BlockItem AND
      * vanilla {@code ItemColors.createDefault} has no BlockItem delegation either
@@ -140,7 +140,7 @@ public final class GTClientHandlers {
     }
 
     /**
-     * Task p38-issue8-multipart-tint: the PART paint tint, the INVENTORY half over the
+     * Task issue8-multipart-tint: the PART paint tint, the INVENTORY half over the
      * part-family blocks ({@code GTMultiBlocks.partPaintableBlockArray()}) — the same
      * {@link GTItemPaintTint} lambda (the unpainted arms resolve the row NBT_MATERIAL
      * through the combined {@code GTMachinePaintTint.tintMaterialOf} dispatch), so the
@@ -154,7 +154,7 @@ public final class GTClientHandlers {
     }
 
     /**
-     * Task p23-barrel-paint-render: the BARREL paint tint, the world half over the pinned
+     * Task barrel-paint-render: the BARREL paint tint, the world half over the pinned
      * 16 barrel-domain blocks ({@code GTBarrels.paintableBlockArray()}). The SAME
      * {@link GTMachinePaintTint#blockColor()} lambda as the machine registration — the
      * lambda is block-type-free (the PAINT model-data lookup is the gate) and every barrel
@@ -167,13 +167,13 @@ public final class GTClientHandlers {
     }
 
     /**
-     * Task p23-barrel-paint-render: the BARREL paint tint, the INVENTORY half over the 16
+     * Task barrel-paint-render: the BARREL paint tint, the INVENTORY half over the 16
      * barrel blocks' BlockItems ({@code GTBarrels.paintableBlockArray()}) — the explicit
      * registration is mandatory for the same no-delegation reason as the machine half
      * above (a BlockColor does not colour its BlockItem; ItemColors.java:25-93). The SAME
      * {@link GTItemPaintTint#itemColor()} lambda; the stack keys it reads
      * ({@code gt.color}/{@code gt.painted}) are written by the barrel item-NBT carrier
-     * (task p23-barrel-paint-item-seam, merge order A→B — the barrel stacks stay the
+     * (task barrel-paint-item-seam, merge order A→B — the barrel stacks stay the
      * {@code -1} sentinel until that carrier lands).
      */
     private static void onRegisterBarrelPaintItemColors(RegisterColorHandlersEvent.Item event) {
@@ -183,7 +183,7 @@ public final class GTClientHandlers {
     }
 
     /**
-     * Task r3-beehive-tint (issue #15): the BUMBLIARY pair paint tint, the INVENTORY half —
+     * Task beehive-tint (issue #15): the BUMBLIARY pair paint tint, the INVENTORY half —
      * the two BlockItems ride the shared {@link GTItemPaintTint} lambda, the unpainted arms
      * resolving the row NBT_MATERIAL ({@code ANY.Wood} / {@code MT.StainlessSteel},
      * Loader :2222-2223) through the combined {@link GTMachinePaintTint} dispatch — the
@@ -192,7 +192,7 @@ public final class GTClientHandlers {
      * ItemColors.java:25-93). The WORLD half rides {@code GTMachineTintModel} (the p32
      * bake ruling).
      *
-     * <p>Task r6-15-hive-jade-tint: the HIVE BlockItem joins the same lambda — the former
+     * <p>Task 15-hive-jade-tint: the HIVE BlockItem joins the same lambda — the former
      * "deliberately NOT registered" stance read the upstream :2041 row as flat-white
      * unconditionally, but that row only pins the UNPAINTED stack (no NBT_COLOR — white is
      * the faithful UNPAINTED icon, and the {@code tintMaterialOf} hive arm is material-less,
@@ -205,7 +205,7 @@ public final class GTClientHandlers {
     }
 
     /**
-     * The bee-family item-colour registration seam (r6-15-hive-jade-tint) — the exact array
+     * The bee-family item-colour registration seam (15-hive-jade-tint) — the exact array
      * the event handler registers {@link GTItemPaintTint#itemColor()} over, hoisted so the
      * offline pin drives the real membership (the {@code GT6BeeHivesTest} neo-leg posture:
      * the forge leg resolves no RegistryObjects offline, compilation is its proof).
@@ -216,7 +216,7 @@ public final class GTClientHandlers {
     }
 
     /**
-     * Task p31-identity-seam: the crowbar MATERIAL IDENTITY tint, the inventory half —
+     * Task identity-seam: the crowbar MATERIAL IDENTITY tint, the inventory half —
      * the former GT6Tools pool cut ③. {@link GTCrowbarItem#tintARGB} reads the
      * {@code GT.ToolStats} identity through the GT6ItemData seam (client-visible on
      * both legs: the 1.20.1 root NBT rides the stack sync, the 1.21.1 payload is the
@@ -227,25 +227,25 @@ public final class GTClientHandlers {
      */
     private static void onRegisterToolIdentityItemColors(RegisterColorHandlersEvent.Item event) {
         event.getItemColors().register(GTCrowbarItem::tintARGB, GT6Tools.CROWBAR.get());
-        // task p31-dig-ladder: the dig family shares ONE tint face — the GT6ToolLadder
+        // task dig-ladder: the dig family shares ONE tint face — the GT6ToolLadder
         // static (tint index 0 = the head layer, the material mRGBaSolid with the steel
         // fallback); the universal spade rides it too (it stays single-steel, so the
         // fallback arm is its whole colour face).
         event.getItemColors().register(GT6ToolLadder::tintARGB, GT6Tools.PICKAXE.get(), GT6Tools.PICKAXE_GEM.get(),
                 GT6Tools.PICKAXE_CONSTRUCTION.get(), GT6Tools.SHOVEL.get(), GT6Tools.SPADE.get(),
                 GT6Tools.UNIVERSAL_SPADE.get(), GT6Tools.HOE.get(), GT6Tools.AXE.get());
-        // task p31-blade-ladder: the three blade forms carry their OWN tintARGB statics —
+        // task blade-ladder: the three blade forms carry their OWN tintARGB statics —
         // the family dispatch over GT6ToolLadder.bladeTintARGB (the sword handle pass and
         // the knife secondary face; the head-pass-VOID knife renders the secondary).
         event.getItemColors().register(GTSwordItem::tintARGB, GT6Tools.SWORD.get());
         event.getItemColors().register(GTKnifeItem::tintARGB, GT6Tools.KNIFE.get());
         event.getItemColors().register(GTButcheryKnifeItem::tintARGB, GT6Tools.BUTCHERY_KNIFE.get());
-        // task p31-machine-ladder: the machine family rides the ONE GT6ToolLadder head-pass
+        // task machine-ladder: the machine family rides the ONE GT6ToolLadder head-pass
         // face (tint index 0, the material mRGBaSolid with the steel fallback).
         event.getItemColors().register(GT6ToolLadder::tintARGB, GT6Tools.WRENCH.get(), GT6Tools.MONKEY_WRENCH.get(),
                 GT6Tools.CUTTER.get(), GT6Tools.CHISEL.get(), GT6Tools.SAW.get(), GT6Tools.SOFT_HAMMER.get(),
                 GT6Tools.MAGNIFYING_GLASS.get(), GT6Tools.PINCERS.get());
-        // task p38-issue6-tool-4layer-tint: the screwdriver + hard hammer join the tint
+        // task issue6-tool-4layer-tint: the screwdriver + hard hammer join the tint
         // face over the four-layer models (the census-erratum "composed single, un-tinted"
         // declaration is SUPERSEDED — a head-pass tint no longer recolours the whole icon
         // because the composed singles are retired for the four-pass structure,

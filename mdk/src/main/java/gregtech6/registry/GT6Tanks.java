@@ -32,7 +32,7 @@ import gregtech6.block.multiblock.GTTankValveBlock;
 import gregtech6.tileentity.multiblocks.GTTankValveBlockEntity;
 
 /**
- * The Tank Main Valve family registration home — task p29-w3-tank-valves, the ADR-P3-4
+ * The Tank Main Valve family registration home — task w3-tank-valves, the ADR-P3-4
  * self-contained listener form (GT6BurningBoxes/GT6Crucibles shape): block + item + BET
  * DeferredRegisters attached from the construct event, {@code GTMultiBlocks.java} untouched.
  *
@@ -61,7 +61,7 @@ import gregtech6.tileentity.multiblocks.GTTankValveBlockEntity;
  * would capture null. The BE resolves the supplier at RUNTIME (tick time, melting point
  * reads) and guards the null generation with the class-default melting point.
  *
-	 * <p><b>The creative tab</b> (task p38-tabfix-a-multiblock, superseding the "NOT joined
+	 * <p><b>The creative tab</b> (task tabfix-a-multiblock, superseding the "NOT joined
 	 * this card" ruling): all 25 valve items join MULTIBLOCKS_TAB via
 	 * {@link #onBuildTabContents} — registered-but-tab-less is invisible in BOTH the creative
 	 * menu and JEI (the BurningBoxes issue-#10 form). Pool cut declared: upstream rode the
@@ -286,7 +286,7 @@ public final class GT6Tanks {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-a-multiblock — the whole {@link #ITEMS_BY_PATH} valve
+	 * The tab walk (task tabfix-a-multiblock — the whole {@link #ITEMS_BY_PATH} valve
 	 * family joins the multiblocks tab; the GT6BurningBoxes.onBuildTabContents verbatim
 	 * form, the class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is
 	 * what delivers this handler). JEI derives its item list from the tab display items.

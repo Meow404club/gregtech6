@@ -15,7 +15,7 @@ import gregtech6.covers.CoverData;
 
 /**
  * The crafting-table cover — 1.20.1 port of gregapi/cover/covers/CoverCrafting.java:36-60
- * (task p37-covers-crafting-asphalt; upstream item id 1001 "Crafting Table Cover",
+ * (task covers-crafting-asphalt; upstream item id 1001 "Crafting Table Cover",
  * MultiItemTechnological.java:60). Right-clicking the covered face opens the VANILLA
  * workbench GUI anchored at the covered host — a machine face that carries a regular old
  * crafting table on it.

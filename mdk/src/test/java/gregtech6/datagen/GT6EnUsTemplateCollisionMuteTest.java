@@ -1,5 +1,5 @@
 /**
- * Mute guard for task p37-polish-compressed-warn: the prefix-template walk's real-world
+ * Mute guard for task polish-compressed-warn: the prefix-template walk's real-world
  * snake_case collision is exactly the declared first-wins pair compressed/Compressed
  * (declaration pin GTMaterialItemsRegistrationTest.firstWinsIdCollisionRule; id collision
  * policy javadoc in GTMaterialItems) — that one is muted to debug. Any UNdeclared duplicate

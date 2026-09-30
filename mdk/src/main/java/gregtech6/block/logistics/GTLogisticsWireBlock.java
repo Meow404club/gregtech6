@@ -16,7 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 /**
- * The GT6 logistics wire block (task p32-logistics-lv2) — the block carrier of the
+ * The GT6 logistics wire block (task logistics-lv2) — the block carrier of the
  * single "Logistics Wire" row (upstream meta id 24901, Loader_MultiTileEntities.java:1819),
  * the {@link gregtech6.block.pipe.GTItemPipeBlock} shape minus the interaction layer:
  * the upstream wire carries no tool interactions beyond the cutter facing (MultiTileEntityWireLogistics
@@ -69,6 +69,6 @@ public class GTLogisticsWireBlock extends GTEntityBlock {
 	@Override
 	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
 		super.stepOn(aLevel, aPos, aState, aEntity);
-		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (p37-covers-crafting-asphalt)
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (covers-crafting-asphalt)
 	}
 }

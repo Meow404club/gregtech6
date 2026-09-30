@@ -11,7 +11,7 @@ package gregtech6.tileentity;
  * inheritance stratum machines ride on), so every machine BE carries the face and the
  * future spray-can item (pool) can {@code instanceof IPaintableTE} route.
  *
- * <p>Storage semantics (ADR 2026-09-07-p21-paintable-rulings ruling 3): the paint colour
+ * <p>Storage semantics (ADR 2026-09-07-paintable-rulings ruling 3): the paint colour
  * is stored directly as the final 0xRRGGBB int — the upstream route sprayed the
  * complemented dye index through {@code ~mColor&15} + the DYES_INT_INVERTED table, whose
  * composition is provably identical to {@code DYES_INT[mColor]} ("the colour you spray is
@@ -41,7 +41,7 @@ public interface IPaintableTE {
 	/**
 	 * Upstream Paintable:83 shape — clears the painted flag and returns the colour to the
 	 * MATERIAL default ({@code mMaterial.fRGBaSolid}), resolved through the block carrier
-	 * ({@code GTBasicMachineBlock.materialOf}, task p27-machine-material-tint-fidelity —
+	 * ({@code GTBasicMachineBlock.materialOf}, task machine-material-tint-fidelity —
 	 * the port rows mirror the upstream NBT_MATERIAL column again). A material-less block
 	 * restores UNCOLORED white, which renders as "no tint" (the P21 contract for the
 	 * domains that never carried NBT_MATERIAL).

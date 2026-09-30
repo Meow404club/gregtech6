@@ -1,5 +1,5 @@
 /**
- * The machine-domain NBT_MATERIAL row census (task p27-machine-material-tint-fidelity,
+ * The machine-domain NBT_MATERIAL row census (task machine-material-tint-fidelity,
  * the A data leg): every machine row mirrors the upstream {@code aMat = MT.DATA.*_T[n]}
  * registration column (Loader_MultiTileEntities.java:1288-1318/:1343/:1373/:1379/:1398/
  * :1406/:1425 — the burning boxes :519-548/:619-704), because upstream derives the

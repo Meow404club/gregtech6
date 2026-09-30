@@ -35,7 +35,7 @@ import gregtech6.registry.GTGrassBlocks;
 import gregtech6.tileentity.IPaintableTE;
 
 /**
- * The GT6 spray paint can (16 dyes) and the paint removal spray — task p22-spraycan-items.
+ * The GT6 spray paint can (16 dyes) and the paint removal spray — task spraycan-items.
  * The 1.20.1 counterpart of upstream {@code Behavior_Spray_Color}
  * (gregtech/items/behaviors/Behavior_Spray_Color.java:45-183) and
  * {@code Behavior_Spray_Color_Remover} (:46-123) flattened onto one Item subclass per
@@ -60,7 +60,7 @@ import gregtech6.tileentity.IPaintableTE;
  * <li><b>the vanilla whitelist is the upstream {@code mAllowedVanillaBlocks} + the
  *     {@code BlockColored} family (:144) minus one arm with no port target:</b> the
  *     Thermal-Expansion rockwool arm (IL.TE_Rockwool :148 — no TE on this port; it stays
- *     pooled). The GRASS arm is LIVE since task p24-grass-block: the vanilla grass block
+ *     pooled). The GRASS arm is LIVE since task grass-block: the vanilla grass block
  *     and the six GT grass variants route through the upstream six-dye switch (:153-162
  *     — six dyes recolour, ten are the :161 no-op non-payment) and the remover unpaints
  *     any GT variant back to the vanilla grass block (Remover :104). Glass/pane/stained
@@ -78,7 +78,7 @@ import gregtech6.tileentity.IPaintableTE;
  *     declared placeholder hiss (the GTCEu custom {@code spray_can} sound entry is pooled).</li>
  * <li>the C-Foam family, the Canner refill and the empty-can crafting are card-pool cuts;
  *     the sheep/wolf entity leg is LIVE (the {@link #interactLivingEntity} arm, task
- *     p23-spraycan-entity-leg).</li>
+ *     spraycan-entity-leg).</li>
  * </ul>
  *
  * <p>Routing (the upstream :60-94 order): server side only, an {@link IPaintableTE} target
@@ -490,7 +490,7 @@ public class GTSprayCanItem extends Item {
 			FAM_STAINED_PANE = 4, FAM_STAINED_TERRACOTTA = 5, FAM_WOOL = 6, FAM_CARPET = 7;
 
 	/**
-	 * The grass family (task p24-grass-block, the P22 pool row's backfill): NOT a
+	 * The grass family (task grass-block, the P22 pool row's backfill): NOT a
 	 * {@link #FAMILY_OF} entry — the classification is computed lazily in
 	 * {@link #colorTarget}/{@link #decolorTarget} via {@link GTGrassBlocks#isGrass},
 	 * because the six GT grass blocks register AFTER this class's static init (the
@@ -538,7 +538,7 @@ public class GTSprayCanItem extends Item {
 
 	/**
 	 * The colour target — the upstream :146-167 table over the {@link #FAMILY_OF} families,
-	 * PLUS the grass arm (task p24-grass-block, the upstream :153-162 route the P22 card
+	 * PLUS the grass arm (task grass-block, the upstream :153-162 route the P22 card
 	 * pooled): the vanilla grass block AND any GT grass variant map through the six-dye
 	 * table — Green→variant 0, Lime→1, Black→2, LightGray→3, Yellow→4, Brown→5 (the
 	 * Behavior_Spray_Color.java:154-160 switch order); the other TEN dyes return
@@ -594,7 +594,7 @@ public class GTSprayCanItem extends Item {
 	/**
 	 * The decolour target — the upstream Remover :101-103 reverse rows verbatim (stained
 	 * terracotta/glass/pane → plain); wool/carpet have no uncoloured vanilla variant and the
-	 * upstream remover has no wool arm either. Task p24-grass-block prepends the grass arm
+	 * upstream remover has no wool arm either. Task grass-block prepends the grass arm
 	 * (the Remover :104 block swap): ANY GT grass variant → the VANILLA grass block, the
 	 * colour lost with the variant; the vanilla grass block itself is NOT removable (it is
 	 * the arm's target, upstream has no reverse row for it).

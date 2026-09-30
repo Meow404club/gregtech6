@@ -1,13 +1,13 @@
 package gregtech6.items.tools;
 
 /**
- * The formal GT6 gem pickaxe — item id {@code gt6:pickaxe_gem} (task p29-w5-t1-dig-six,
+ * The formal GT6 gem pickaxe — item id {@code gt6:pickaxe_gem} (task w5-t1-dig-six,
  * the STEEL body keeps the pre-ladder fallback; the gem identity rides the recipe's
  * diamond tip + the quarter durability). Upstream GT_Tool_PickaxeGem.java:28-30 is a
  * two-line subclass of GT_Tool_Pickaxe:
  * <ul>
  * <li>{@code getMaxDurabilityMultiplier() / 4} (:29) → {@link #DURABILITY_MULTIPLIER}
- *     0.25F — the ladder face (task p31-dig-ladder): an identity-less stack falls back
+ *     0.25F — the ladder face (task dig-ladder): an identity-less stack falls back
  *     to the steel stats at ×0.25 = the flat 128 (512/4, bit-exact the pre-ladder
  *     constant), an identity-carrying stack gets {@code mToolDurability * 100 * 0.25}.</li>
  * <li>{@code getBrokenItem} → {@code toolHeadPickaxeGem of Empty} (:30) → CUT: the port

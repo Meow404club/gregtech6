@@ -26,7 +26,7 @@ import gregtech6.tileentity.inventories.GT6LongDistanceItemPipeBlockEntity;
 import gregtech6.tileentity.tank.GT6LongDistanceFluidPipeBlockEntity;
 
 /**
- * The Long Distance Pipe registration (task p35-long-distance-pipes) — the 16 metas of
+ * The Long Distance Pipe registration (task long-distance-pipes) — the 16 metas of
  * the upstream {@code BlocksGT.LongDistPipe01} as 16 plain blocks over one class
  * (Loader_Blocks.java:179, the temperature row verbatim: meta 0 = -1 the ITEM pipeline,
  * metas 1..4 = the StainlessSteel/W/Adamantium/Draconium melting points the FLUID
@@ -150,7 +150,7 @@ public final class GT6LongDistPipes {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — the 16 {@link #WIRE_ITEMS_BY_META} metas
+	 * The tab walk (task tabfix-b-energy — the 16 {@link #WIRE_ITEMS_BY_META} metas
 	 * plus the two endpoint items join the machines tab; the GT6BurningBoxes
 	 * .onBuildTabContents verbatim form, the class-level MOD-bus
 	 * {@code @Mod.EventBusSubscriber} at the class head is what delivers this handler).

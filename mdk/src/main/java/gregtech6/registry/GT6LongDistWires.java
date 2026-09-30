@@ -20,7 +20,7 @@ import net.minecraftforge.registries.RegistryObject;
 import gregtech6.block.energy.GT6LongDistWireBlock;
 
 /**
- * The Long Distance Electric Wire registration (task p35-energy-tail-machines) — the
+ * The Long Distance Electric Wire registration (task energy-tail-machines) — the
  * 16 metas of the upstream {@code BlocksGT.LongDistWire01} as 16 plain blocks over one
  * class (Loader_Blocks.java:160, the tier byte table {4,4,5,6,6,6,6,6,7,7,7,7,8,8,8,8}
  * verbatim). The wire carries NO BE and NO energy face of its own: it is the passive
@@ -97,7 +97,7 @@ public final class GT6LongDistWires {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #ITEMS_BY_META} family
+	 * The tab walk (task tabfix-b-energy — the whole {@link #ITEMS_BY_META} family
 	 * joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
 	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
 	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display

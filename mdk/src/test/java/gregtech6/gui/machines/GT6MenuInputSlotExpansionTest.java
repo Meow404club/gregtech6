@@ -21,7 +21,7 @@ import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 
 /**
- * The R7 menu input-slot parameterisation regression (task p24-canner-machine, the card's
+ * The R7 menu input-slot parameterisation regression (task canner-machine, the card's
  * declared highest-risk point): {@link GTBasicMachineMenu} used to hardcode the ONE input
  * slot (the mInputItemsCount==1 case, ContainerCommonBasicMachine.java:55) — the Canner
  * map's 2/2 declaration (:57-60 case 2) needs the count parameterised WITHOUT moving any
@@ -115,7 +115,7 @@ class GT6MenuInputSlotExpansionTest extends GTRecipesOfflineTestBase {
 	}
 
 	/**
-	 * The >=3 arm rides the faithful case table (task r8-gui-layout-descriptor — the
+	 * The >=3 arm rides the faithful case table (task gui-layout-descriptor — the
 	 * extrapolation WARNING debt): case-3 is x 17/35/53 (upstream :62-64), NOT 35/53/71,
 	 * and the y arm wakes for >6 fluid maps — while the 0/1/2 arms stay fluid-blind.
 	 */

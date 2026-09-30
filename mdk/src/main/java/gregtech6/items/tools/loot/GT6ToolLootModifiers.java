@@ -37,7 +37,7 @@ import gregtech6.recipes.Recipe;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
- * The GT6 tool drop-conversion seam — task p29-w5-t1-dig-six shared infrastructure ①
+ * The GT6 tool drop-conversion seam — task w5-t1-dig-six shared infrastructure ①
  * (the wave ruling decisions.p30-w5-split-rulings: the upstream {@code convertBlockDrops}
  * arm lands as the Forge Global-Loot-Modifier chain — the datapack-driven, reload-safe
  * form; direct drop edits inside {@code item.mineBlock} are the card's declared RED
@@ -105,7 +105,7 @@ public final class GT6ToolLootModifiers {
 	*///?}
 
 	/**
-	 * The tree-fell serializer row — id {@code gt6:gt6_tree_fell} (task p29-w5-t2-blade-six,
+	 * The tree-fell serializer row — id {@code gt6:gt6_tree_fell} (task w5-t2-blade-six,
 	 * the documented consumer contract's "new modifier class + a serializer row under
 	 * SERIALIZERS" path: the whole-tree felling needs the loot ORIGIN/entity context the
 	 * pure convert() switch does not carry).
@@ -120,7 +120,7 @@ public final class GT6ToolLootModifiers {
 
 	/**
 	 * The dungeon-injection serializer row — id {@code gt6:gt6_dungeon_inject} (task
-	 * p34-loot-injection): the upstream Loader_Loot structure-chest rows re-armed as one
+	 * loot-injection): the upstream Loader_Loot structure-chest rows re-armed as one
 	 * modifier per target table (the documented consumer contract's "new modifier class + a
 	 * serializer row under SERIALIZERS" path).
 	 */
@@ -162,7 +162,7 @@ public final class GT6ToolLootModifiers {
 
 	/**
 	 * The club rock-crush mapping table — the prefix x material pair each block crushes
-	 * into (task p29-w5-t2-blade-six; the card ACCEPTANCE "club rockGt 映射表纯函数" —
+	 * into (task w5-t2-blade-six; the card ACCEPTANCE "club rockGt 映射表纯函数" —
 	 * the KEY SET is the offline-pinnable face, the handle resolution is the live RCON
 	 * face: the gt6 OP/MT handles are runtime {@code init()}-filled, so the record holds
 	 * SUPPLIERS resolved at conversion time through {@code GTMaterialItems.get}).
@@ -208,7 +208,7 @@ public final class GT6ToolLootModifiers {
 	}
 
 	/**
-	 * The shear-plant self-drop set (task p29-w5-t5-scene-six): the vine arm of
+	 * The shear-plant self-drop set (task w5-t5-scene-six): the vine arm of
 	 * GT_Tool_Scissors.convertBlockDrops (:87-101 — the cleared-drops + vine self
 	 * replacement, verbatim) and the shears-class cobweb/vine full-drop face of the scoop
 	 * (the research-ammunition declarative mapping; the vanilla loot match_tool predicate
@@ -332,7 +332,7 @@ public final class GT6ToolLootModifiers {
 				return true;
 			}
 			case SENSE_VEGETAL -> {
-				return GTSenseItem.convertVegetal(aState, aDrops); // task p29-w5-t4-field-five — the grass/fern self-drop + the dead-bush stick
+				return GTSenseItem.convertVegetal(aState, aDrops); // task w5-t4-field-five — the grass/fern self-drop + the dead-bush stick
 			}
 			case PLANT_SELF_DROP -> {
 				Block tBlock = aState.getBlock();
@@ -362,7 +362,7 @@ public final class GT6ToolLootModifiers {
 			Blocks.NETHERRACK, "netherrack", Blocks.END_STONE, "endstone");
 
 	/**
-	 * The rock-family mapping — task p29-w5-t6-electric-nineteen (the jackhammer "Breaks
+	 * The rock-family mapping — task w5-t6-electric-nineteen (the jackhammer "Breaks
 	 * Rocks into pieces" conversion). The upstream face routed drops through the
 	 * {@code RM.Hammer} map; the card rules the port arm a PURE FUNCTION (no RM map): the
 	 * vanilla rock-family blocks map onto the registered {@code gt6:rock_gt_*} items, the
@@ -402,7 +402,7 @@ public final class GT6ToolLootModifiers {
 		 */
 		UNBOXINATOR_OPEN,
 		/**
-		 * The sword grass/stick/vine harvest (task p29-w5-t2-blade-six; upstream
+		 * The sword grass/stick/vine harvest (task w5-t2-blade-six; upstream
 		 * GT_Tool_Sword.convertBlockDrops :94-105 over the harvestGrass :111-146 /
 		 * harvestStick :148-176 ToolStats helpers): the grass family (the 1.7.10
 		 * tallgrass 1/2 + double_plant 2/3 pairs, the flattening unfolded) ADDS the
@@ -412,7 +412,7 @@ public final class GT6ToolLootModifiers {
 		 */
 		SWORD_HARVEST,
 		/**
-		 * The club rockGt crush (task p29-w5-t2-blade-six; upstream GT_Tool_Club
+		 * The club rockGt crush (task w5-t2-blade-six; upstream GT_Tool_Club
 		 * :61-110): the {@link GT6ToolLootModifiers#ROCK_CRUSH} block (or the single
 		 * drop's block — the :62-63 face that catches the stone→cobblestone drop)
 		 * REPLACES the drops with 1-4 of the crushed material item (the :66
@@ -421,19 +421,19 @@ public final class GT6ToolLootModifiers {
 		CLUB_ROCK_CRUSH,
 		/**
 		 * The sense grass/fern self-drop + dead-bush stick conversion (task
-		 * p29-w5-t4-field-five; upstream harvestGrass/harvestStick, ToolStats.java:111-176) —
+		 * w5-t4-field-five; upstream harvestGrass/harvestStick, ToolStats.java:111-176) —
 		 * pure, rides {@link GT6ToolLootModifiers#convert} →
 		 * {@code GTSenseItem.convertVegetal}.
 		 */
 		SENSE_VEGETAL,
 		/**
-		 * The branch-cutter leaves→sapling/apple conversion (task p29-w5-t4-field-five;
+		 * The branch-cutter leaves→sapling/apple conversion (task w5-t4-field-five;
 		 * upstream GT_Tool_BranchCutter.java:84-92). NOT a pure convert-mode member —
 		 * the apple arm reads the tool's fortune enchantment + the loot random, so the
 		 * dispatch lives on {@link #doApply} over {@code GTBranchCutterItem.convertLeaves}.
 		 */
 		BRANCHCUTTER_LEAVES,
-		/** The scissors/scoop vine+cobweb self-drop (task p29-w5-t5-scene-six, GT_Tool_Scissors.java:87-101). */
+		/** The scissors/scoop vine+cobweb self-drop (task w5-t5-scene-six, GT_Tool_Scissors.java:87-101). */
 		PLANT_SELF_DROP,
 		/** The jackhammer rockGt conversion (upstream GT_Tool_JackHammer_HV convertBlockDrops — the pure-function ruling). */
 		JACKHAMMER_ROCKS

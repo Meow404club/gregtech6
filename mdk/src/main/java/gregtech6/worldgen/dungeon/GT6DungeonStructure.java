@@ -22,7 +22,7 @@ import gregtech6.registry.GT6Structures;
 import gregtech6.registry.GTStoneBlocks;
 
 /**
- * The GT6 shelter dungeon STRUCTURE (task p38-dungeon-framework) — the modern
+ * The GT6 shelter dungeon STRUCTURE (task dungeon-framework) — the modern
  * {@code Structure} port of upstream {@code gregapi.worldgen.dungeon.WorldgenDungeonGT}
  * (tmp/gt6-1.7.10, 379 lines): the whole N×N grid layout is rolled ONCE at
  * {@link #findGenerationPoint} time and dispatched into per-chunk pieces (the vanilla
@@ -118,7 +118,7 @@ public class GT6DungeonStructure extends Structure {
         // by construction, so cross-dungeon collisions stay impossible) and keeps the
         // draw seed-deterministic. The roll rides a DERIVED random seeded from that
         // chunk tag — ZERO draws off the structure stream, so the layout/stones/color
-        // draws above stay bit-identical (the p38-dungeon-framework scan pins keep
+        // draws above stay bit-identical (the dungeon-framework scan pins keep
         // their meaning; the p31 decision-level determinism precedent).
         long[] tKeyIds = keyIds(aContext.chunkPos());
 

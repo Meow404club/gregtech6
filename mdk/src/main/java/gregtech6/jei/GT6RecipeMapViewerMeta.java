@@ -42,7 +42,7 @@ import gregtech6.recipes.RecipeMap;
  * viewers render FluidStack natively, decisions.2026-09-26-debt-jei-emi-coverage ⑤),
  * aConfigAllowed/aNeedsOutputs (NEI-config faces with no port counterpart).
  *
- * <p><b>The viewer backdrop (task r9-34-viewer-gui-bg, GitHub #34):</b> upstream
+ * <p><b>The viewer backdrop (task 34-viewer-gui-bg, GitHub #34):</b> upstream
  * drawBackground (:629-635) composited TWO layers under the slots — the grey
  * {@code machines/NEI.png} backdrop plate, then the per-map machine GUI texture as a
  * band — and folded the panel origin (5,11) into every slot coordinate on the way out
@@ -104,7 +104,7 @@ public final class GT6RecipeMapViewerMeta {
 	/** NEI's 10px line pitch (73/83/93/103/113/123). */
 	public static final int TEXT_LINE_HEIGHT = 10;
 	/**
-	 * The text-band first Y, panel system (task r9-34-viewer-gui-bg): upstream drew the
+	 * The text-band first Y, panel system (task 34-viewer-gui-bg): upstream drew the
 	 * cost lines at FIXED y73..123 in panel coordinates (:680-717) — 3px under the y63
 	 * fluid row that ends at y70. The batch-1 "+10 shift on fluid maps" deviation existed
 	 * only because the viewers carried no background; with the two-layer backdrop
@@ -112,11 +112,11 @@ public final class GT6RecipeMapViewerMeta {
 	 * FUSION 6-line overflow past the 140-high category.
 	 */
 	public static final int TEXT_BASE_Y = 73;
-	/** The per-map title key domain (task r6-29-34a) — one key per visible map, both locales. */
+	/** The per-map title key domain (task issues #29/#34a) — one key per visible map, both locales. */
 	public static final String TITLE_KEY_PREFIX = "gt6.jei.recipe_map.";
 	/** NEI :671's not-consumed tooltip, upstream verbatim wording — now the lang-key face. */
 	public static final String NOT_CONSUMED_KEY = "gt6.jei.cost.not_consumed";
-	/** The cost/tier/time/special line keys (task r6-29-34a) — the drawExtras label faces. */
+	/** The cost/tier/time/special line keys (task issues #29/#34a) — the drawExtras label faces. */
 	public static final String KEY_COSTS = "gt6.jei.cost.costs";
 	public static final String KEY_USAGE = "gt6.jei.cost.usage";
 	public static final String KEY_TIER = "gt6.jei.cost.tier";
@@ -132,7 +132,7 @@ public final class GT6RecipeMapViewerMeta {
 	public static final String KEY_UNIT_MINS = "gt6.jei.cost.unit_mins";
 	public static final String KEY_START = "gt6.jei.cost.start";
 	public static final String KEY_TEMPERATURE = "gt6.jei.cost.temperature";
-	/** The unit-suffix faces of the energy-column maps (task r7-30a, GitHub #30 phase 1):
+	/** The unit-suffix faces of the energy-column maps (task #30a, GitHub #30 phase 1):
 	 * same label wording as the GU keys with the unit lifted into the second arg, so the
 	 * colored short code rides as a styled Component (the en values are the :680-717
 	 * literals with " GU" → "%s %s"). Only maps with a pinned carrier use these. */
@@ -227,7 +227,7 @@ public final class GT6RecipeMapViewerMeta {
 	}
 
 	// -----------------------------------------------------------------------
-	// The per-map accepted-energy column (task r7-30a, GitHub #30 phase 1) — the
+	// The per-map accepted-energy column (task #30a, GitHub #30 phase 1) — the
 	// upstream "Costs: n GU" face splits into the concrete carrier short code where the
 	// registration rows are unambiguous, and stays GU where they are not (GU's very
 	// semantics: Recipe.mEUt is energy-type-agnostic, upstream NEI_RecipeMap.java:688-710
@@ -246,7 +246,7 @@ public final class GT6RecipeMapViewerMeta {
 	/**
 	 * The per-map carrier, keyed by the internal name (the census key). A map lands here
 	 * only when EVERY registration row carrying it agrees on one TagData; the mixed set
-	 * is the r7-30a conflict list, reported on the card and left on GU:
+	 * is the #30a conflict list, reported on the card and left on GU:
 	 * gt.recipe.crusher (KU small GTMachines:438-440 vs RU large GT6LargeMachines:1238),
 	 * gt.recipe.squeezer (KU :2940 vs RU :1240), gt.recipe.sifter (KU :949 vs EU
 	 * electricsifter :1689), gt.recipe.mixer (RU :1631/:1234 vs EU electricmixer :1652)
@@ -343,8 +343,8 @@ public final class GT6RecipeMapViewerMeta {
 			TD.Energy.TU, ChatFormatting.DARK_BLUE);    // :144 DBLUE
 
 	// -----------------------------------------------------------------------
-	// The energy-carrier short codes (task p27-machine-energy-display-fix, moved HERE in
-	// task r10-debt-viewer-polish). History: energyUnit used to call the Jade integration
+	// The energy-carrier short codes (task machine-energy-display-fix, moved HERE in
+	// task debt-viewer-polish). History: energyUnit used to call the Jade integration
 	// class gregtech6.jade.GT6MachineProvider, whose interfaces (snownee.jade.api.*) are
 	// compileOnly — on a no-Jade runtime classpath the first recipe-page draw died in
 	// NoClassDefFoundError (crash-2026-09-30_01.24.41-client.txt, known_bugs
@@ -354,7 +354,7 @@ public final class GT6RecipeMapViewerMeta {
 	// -----------------------------------------------------------------------
 
 	/**
-	 * 能量类型短码表（task p27-machine-energy-display-fix，原 gregtech6.jade.GT6MachineProvider
+	 * 能量类型短码表（task machine-energy-display-fix，原 gregtech6.jade.GT6MachineProvider
 	 * 侧表 verbatim 移入）：accepted-energy 载体在 {@code mEnergyTypeAccepted}
 	 * （TileEntityBasicMachine.java:254），但 {@link TagData#mName} 不是显示名——移植把名字
 	 * 全大写折叠、丢弃 LH 短/长本地名（root TagData.java:68-71 createTagData 丢
@@ -424,7 +424,7 @@ public final class GT6RecipeMapViewerMeta {
 	}
 
 	/**
-	 * The per-map category title lang key (task r6-29-34a, GitHub #29b): the internal name
+	 * The per-map category title lang key (task issues #29/#34a, GitHub #29b): the internal name
 	 * minus its {@code gt.recipe.}/{@code mc.recipe.} prefix, dots folded to underscores —
 	 * {@code gt.recipe.cokeoven} → {@code gt6.jei.recipe_map.cokeoven},
 	 * {@code gt.recipe.anvil.bend} → {@code gt6.jei.recipe_map.anvil_bend}. One formula,
@@ -515,7 +515,7 @@ public final class GT6RecipeMapViewerMeta {
 	}
 
 	// -----------------------------------------------------------------------
-	// The viewer backdrop geometry (task r9-34-viewer-gui-bg, GitHub #34) — the
+	// The viewer backdrop geometry (task 34-viewer-gui-bg, GitHub #34) — the
 	// two-layer composite upstream NEI_RecipeMap.drawBackground(:629-635) drew and the
 	// port's viewers shipped without (items floated on the raw category grey, read as
 	// "misaligned" though every coordinate was faithful). Layer 1: the grey backdrop
@@ -540,7 +540,7 @@ public final class GT6RecipeMapViewerMeta {
 	public static final int[] PLATE_CROP = {5, 16, 166, 140};
 	/** The machine-band crop, {u,v,w,h} panel system (NEI_RecipeMap.java:634 {@code (-5,-8, 0,3,176,79)}). Drawn at (0,0) OVER the plate. */
 	public static final int[] BAND_CROP = {5, 11, 166, 71};
-	/** The backdrop plate texture (NEI_RecipeMap.java:632; port assets/README.md r9-34 section, amazawa redraw). */
+	/** The backdrop plate texture (NEI_RecipeMap.java:632; port assets/README.md #34 section, amazawa redraw). */
 	public static final ResourceLocation PLATE_TEXTURE = ResourceLocation.fromNamespaceAndPath("gt6", "textures/gui/machines/nei.png");
 
 	/**
@@ -584,12 +584,12 @@ public final class GT6RecipeMapViewerMeta {
 	}
 
 	// -----------------------------------------------------------------------
-	// The machine-icon slot (task r10-debt-viewer-polish, the r9-34 defer): upstream
+	// The machine-icon slot (task debt-viewer-polish, the #34 defer): upstream
 	// NEI_RecipeMap.java:278 drew the map's representative machine
 	// ({@code mRecipeMachineList}) as a bare PositionedStack at GUI (152,83) — the gear
-	// spot the port's NEI.png plate bakes in (r9-34 landed the plate, the item stayed
+	// spot the port's NEI.png plate bakes in (#34 landed the plate, the item stayed
 	// declared-deferred). The port's mRecipeMachineList proxy is the GT6RecipeMapIcons
-	// table (r6-29-34a), whose {@code has()} is exactly the upstream non-empty guard and
+	// table (issues #29/#34a), whose {@code has()} is exactly the upstream non-empty guard and
 	// whose furnace-fallback whitelist maps (zero machines in the port) skip the draw —
 	// only real machine rows land here.
 	// -----------------------------------------------------------------------
@@ -619,9 +619,9 @@ public final class GT6RecipeMapViewerMeta {
 
 	/**
 	 * The drawExtras line list, top-down (the viewers draw them at TEXT_LINE_HEIGHT pitch).
-	 * Since task r6-29-34a the label faces are translatable components with the verbatim
+	 * Since task issues #29/#34a the label faces are translatable components with the verbatim
 	 * upstream numbers as args — the en values are the :680-717 literals to the character.
-	 * Since task r7-30a a map with a pinned carrier (the ENERGY_BY_MAP column) prints its
+	 * Since task #30a a map with a pinned carrier (the ENERGY_BY_MAP column) prints its
 	 * unit-suffix key with the colored short code as the second arg; carrier-less and
 	 * mixed-carrier maps keep the GU keys byte-identical.
 	 */
@@ -661,7 +661,7 @@ public final class GT6RecipeMapViewerMeta {
 	}
 
 	/**
-	 * One cost line: no carrier → the GU key, one number arg (the r6-29-34a face,
+	 * One cost line: no carrier → the GU key, one number arg (the issues #29/#34a face,
 	 * untouched); pinned carrier → the _unit key, number + colored short code.
 	 */
 	private static Component unitLine(String aGuKey, String aUnitKey, long aNumber, TagData aEnergy) {

@@ -28,13 +28,13 @@ import gregtech6.block.GTEntityBlock;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The BatteryBox block (task p29-w4-battery-storage ④) — the facing-cube carrier of
+ * The BatteryBox block (task w4-battery-storage ④) — the facing-cube carrier of
  * {@link gregtech6.tileentity.energy.GT6BatteryBoxBlockEntity}, the
  * GT6ElectricTransformerBlock shape with the BatteryBox convention (Base10EnergyBatBox
  * :232-233): the FRONT face ({@code mFacing}) is the OUTPUT face (the emit side), ALL
  * OTHER faces are input. Row :894-:895 hardness/resistance 4.0/4.0, stack 16.
  *
- * <p>Placement = the GT6PlacementFacing canon (issue #18, task r4-18-converter-tex-facing:
+ * <p>Placement = the GT6PlacementFacing canon (issue #18, task 18-converter-tex-facing:
  * SIX-WAY now — upstream Base10EnergyBatBox rides Base09 whose SIDES_VALID = all six,
  * CS.java:699 — the front TOWARDS the placer over the full look, the monkey wrench
  * re-faces to the clicked sub-face). The BE mirror re-syncs from the state each tick
@@ -45,11 +45,11 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * handler); the {@code use()} override is the wrench-rotate arm ONLY, NO onRemove
  * override (the BaseEntityBlock kill+recreate lesson).
  *
- * <p>Since task r8-tex-composite-family the block carries the ACTIVITY and MATERIAL
+ * <p>Since task tex-composite-family the block carries the ACTIVITY and MATERIAL
  * columns of the upstream rows: the ACTIVE property drives the overlay_active texture
  * shell (upstream {@code getTexture2 sOverlays[mActiveState & 3]} — MultiTileEntityBatteryBox
  * :31-:33 / CrystalCharger :33-:36 / ZPMDechargerEU :39-:44, the trinary collapsed to the
- * boolean, 0=overlay / 1=overlay_active, the blinking third state the r4-18 defer), and
+ * boolean, 0=overlay / 1=overlay_active, the blinking third state the #18 defer), and
  * the material supplier feeds the tint seat (upstream {@code NBT_MATERIAL, MT.DATA.
  * Electric_T[i]} per row — Loader_MultiTileEntities :894-:895/:970-:971, the ZPM rows
  * MT.Osmiridium :1000-:1001 — the {@link GT6ElectricTransformerBlock} lazy-Supplier
@@ -77,7 +77,7 @@ public class GT6BatteryBoxBlock extends GTEntityBlock {
 	private final Supplier<TagData> mEnergyType;
 
 	/**
-	 * The block's upstream {@code NBT_MATERIAL} column (task r8-tex-composite-family —
+	 * The block's upstream {@code NBT_MATERIAL} column (task tex-composite-family —
 	 * the tint colour source, the {@link GT6ElectricTransformerBlock} lazy-Supplier
 	 * form): the row's Electric_T[i] casing (Loader :894-:895/:970-:971) or Osmiridium
 	 * (the ZPM rows :1000-:1001).
@@ -96,7 +96,7 @@ public class GT6BatteryBoxBlock extends GTEntityBlock {
 		this(aProperties, aTier, aSlots, aTickerType, aEnergyType, null);
 	}
 
-	/** The material-carrier form (task r8-tex-composite-family): the row feeds the tint colour source. */
+	/** The material-carrier form (task tex-composite-family): the row feeds the tint colour source. */
 	public GT6BatteryBoxBlock(Properties aProperties, int aTier, int aSlots,
 			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType, Supplier<TagData> aEnergyType,
 			@Nullable Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
@@ -119,7 +119,7 @@ public class GT6BatteryBoxBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The battery-box material dispatch (task r8-tex-composite-family, the
+	 * The battery-box material dispatch (task tex-composite-family, the
 	 * {@link GT6ElectricTransformerBlock#materialOf} mirror shape): the carrier blocks
 	 * (battery boxes, crystal chargers, ZPM dechargers) resolve their row material —
 	 * every other block is null here.

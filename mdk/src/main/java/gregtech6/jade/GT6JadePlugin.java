@@ -9,7 +9,7 @@ import snownee.jade.api.IWailaPlugin;
 import snownee.jade.api.WailaPlugin;
 
 /**
- * Jade（WAILA 后继）兼容入口（task p21-jade-compat）。形源 GTCEu Modern GTJadePlugin.java:21-22：
+ * Jade（WAILA 后继）兼容入口（task jade-compat）。形源 GTCEu Modern GTJadePlugin.java:21-22：
  * {@code @WailaPlugin} 裸注解 + {@link IWailaPlugin}。
  *
  * <p>发现机制 = Jade 在 FMLLoadCompleteEvent 扫 {@code @WailaPlugin} 注解后 Class.forName +
@@ -20,7 +20,7 @@ import snownee.jade.api.WailaPlugin;
  * jade-1201 CommonProxy.java:230 / jade-1211 :516）→ 服务端 provider 挂这里；
  * registerClient() 仅物理客户端 → 客户端 provider 挂这里。
  *
- * <p>流体段（task p23-jade-universal-fluid，v1 b9b0b23f 的 block-component 自渲染对升级为
+ * <p>流体段（task jade-universal-fluid，v1 b9b0b23f 的 block-component 自渲染对升级为
  * universal registerFluidStorage 正字标——GTCEu GTJadePlugin.java:56/:93 同款调用形）：
  * 注册行只有两行（GTCEu 同姿势），服务端取数与客户端 parse 都在 {@link GT6FluidProvider}
  * 单体内，行渲染归 Jade 自家 universal append。 clazz 挂 BE 全族根
@@ -28,7 +28,7 @@ import snownee.jade.api.WailaPlugin;
  * 1201 IWailaCommonRegistration.java:32 / 1211 :31；客户端注册双腿逐字同形
  * 1201 IWailaClientRegistration.java:164 / 1211 :173），machines 内部再 instanceof 分发。
  * 机器四段 tooltip（{@link GT6MachineProvider}）不变，仍是 block-component 对。坩埚族
- * （{@link GT6CrucibleProvider}，task p28-crucible-jade-face）同一注册形追加两行——
+ * （{@link GT6CrucibleProvider}，task crucible-jade-face）同一注册形追加两行——
  * GT6MachineProvider 零改动（不塞坩埚分支的裁定）。
  */
 @WailaPlugin
@@ -42,16 +42,16 @@ public class GT6JadePlugin implements IWailaPlugin {
 		// 流体段 universal 服务端腿（数据载体=Jade 自家 universal FluidStorageProvider，
 		// 本 provider 按 priority 抢跑取数——GT6FluidProvider#getDefaultPriority 的裁定）。
 		aRegistration.registerFluidStorage(GT6FluidProvider.INSTANCE, TileEntityBase01Root.class);
-		// 坩埚族服务端腿（task p28-crucible-jade-face）：小型 Smeltery + 大型 Crucible 同一
+		// 坩埚族服务端腿（task crucible-jade-face）：小型 Smeltery + 大型 Crucible 同一
 		// provider 同一格式，体内双 concrete instanceof 分发（GT6CrucibleProvider 类 doc）。
 		aRegistration.registerBlockDataProvider(GT6CrucibleProvider.INSTANCE, TileEntityBase01Root.class);
-		// 锅炉族服务端腿（task r5-jade-boiler）：单方块锅炉罐 + 大型锅炉同一 provider 同一
+		// 锅炉族服务端腿（task jade-boiler）：单方块锅炉罐 + 大型锅炉同一 provider 同一
 		// 格式，体内双 concrete instanceof 分发（GT6BoilerProvider 类 doc）。
 		aRegistration.registerBlockDataProvider(GT6BoilerProvider.INSTANCE, TileEntityBase01Root.class);
-		// 转换器/引擎族服务端腿（task r5-jade-converters）：变压器/dynamo/引擎/燃烧箱/电池箱
+		// 转换器/引擎族服务端腿（task jade-converters）：变压器/dynamo/引擎/燃烧箱/电池箱
 		// 等 ~19 BE，体内 writeFamilyData instanceof 全族分发（GT6CrucibleProvider N 分支版）。
 		aRegistration.registerBlockDataProvider(GT6ConverterProvider.INSTANCE, TileEntityBase01Root.class);
-		// 传感器族服务端腿（task r8-jade-sensor-provider）：21 传感器一族一个 provider——
+		// 传感器族服务端腿（task jade-sensor-provider）：21 传感器一族一个 provider——
 		// 抽象基 GTSensorBlockEntity 一个 instanceof 全覆盖，体内 writeSensorData 静态缝
 		// （公开 getter 只读，字段 protected 不动）。
 		aRegistration.registerBlockDataProvider(GT6SensorProvider.INSTANCE, TileEntityBase01Root.class);
@@ -64,20 +64,20 @@ public class GT6JadePlugin implements IWailaPlugin {
 		// 流体段 universal 客户端腿：Jade 按 JadeFluidStorageUid 从 uid map 找回本 provider
 		// （jade-1201 addon/universal/FluidStorageProvider.java:44 / jade-1211 :67-68）。
 		aRegistration.registerFluidStorageClient(GT6FluidProvider.INSTANCE);
-		// 坩埚族客户端腿（task p28-crucible-jade-face）：GTEntityBlock 全覆盖两坩埚方块
+		// 坩埚族客户端腿（task crucible-jade-face）：GTEntityBlock 全覆盖两坩埚方块
 		// （CrucibleBlock extends GTEntityBlock；GTMultiBlockControllerBlock 同），体内键门分发。
 		aRegistration.registerBlockComponent(GT6CrucibleProvider.INSTANCE, GTEntityBlock.class);
-		// 锅炉族客户端腿（task r5-jade-boiler）：GTEntityBlock 全覆盖两锅炉方块
+		// 锅炉族客户端腿（task jade-boiler）：GTEntityBlock 全覆盖两锅炉方块
 		// （GT6Boilers.BoilerTankBlock / GTLargeBoilerBlock 同基类），体内键门分发。
 		aRegistration.registerBlockComponent(GT6BoilerProvider.INSTANCE, GTEntityBlock.class);
-		// 转换器/引擎族客户端腿（task r5-jade-converters）：GTEntityBlock 全覆盖族内方块
+		// 转换器/引擎族客户端腿（task jade-converters）：GTEntityBlock 全覆盖族内方块
 		// （电变/动力机/引擎方块均经它），体内 KEY_UNIT 键门分发（GT6CrucibleProvider 同门）。
 		aRegistration.registerBlockComponent(GT6ConverterProvider.INSTANCE, GTEntityBlock.class);
-		// 传感器族客户端腿（task r8-jade-sensor-provider）：GTEntityBlock 全覆盖 21 传感器
+		// 传感器族客户端腿（task jade-sensor-provider）：GTEntityBlock 全覆盖 21 传感器
 		// 方块（GTSensorBlock extends GTEntityBlock），体内 KEY_DISPLAYED 键门分发
 		// （GT6BoilerProvider 同门）。
 		aRegistration.registerBlockComponent(GT6SensorProvider.INSTANCE, GTEntityBlock.class);
-		// 漆色图标腿（task r6-15-hive-jade-tint）：registerBlockIcon 接管显示图标（jade-1201
+		// 漆色图标腿（task 15-hive-jade-tint）：registerBlockIcon 接管显示图标（jade-1201
 		// impl WailaClientRegistration.java:142-145 / jade-1211 :132-137，与 registerBlockComponent
 		// 同一 IBlockComponentProvider 面），体内 painted 门分发（GT6PaintIconProvider 类 doc）。
 		aRegistration.registerBlockIcon(GT6PaintIconProvider.INSTANCE, GTEntityBlock.class);

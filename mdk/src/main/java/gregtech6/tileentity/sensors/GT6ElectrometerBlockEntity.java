@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import gregtech6.tileentity.connectors.GTWireBlockEntity;
 
 /**
- * The Electrometer Sensor (task p26-sensors-core pioneer ③) — the port of
+ * The Electrometer Sensor (task sensors-core pioneer ③) — the port of
  * MultiTileEntityElectrometer.java:45-98. The primary read face is the wire wattage:
  * upstream {@code MultiTileEntityWireElectric.mWattageLast} (:51) maps verbatim onto
  * {@link GTWireBlockEntity#mWattageLast} (the EU/t the wire moved in its last transfer

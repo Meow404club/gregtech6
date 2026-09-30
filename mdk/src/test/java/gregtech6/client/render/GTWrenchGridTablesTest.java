@@ -9,7 +9,7 @@ import gregtech6.client.render.GTWrenchGridTables.GTWrenchGridIcon;
 import gregtech6.util.UT6;
 
 /**
- * The wrench grid tables (task p5-wrench-ui-gtceu acceptance — offline, MC-free):
+ * The wrench grid tables (task wrench-ui-gtceu acceptance — offline, MC-free):
  * ① the full cell→side table 6 faces x 9 cells against a hardcoded expectation
  * (centre = the face, edges = the axis neighbours, corners = OPOS), ② per-cell
  * multi-sample equivalence — any point inside the icon quad maps back to the cell's
@@ -139,7 +139,7 @@ public class GTWrenchGridTablesTest {
 	}
 
 	/**
-	 * The oven rotation table (task p6-oven-rotation acceptance 1): the full 6 faces x
+	 * The oven rotation table (task oven-rotation acceptance 1): the full 6 faces x
 	 * 9 cells x front 2..5 x both shift states = 432 assertions. The expectation per
 	 * cell is derived from the HARDCODED 54-cell table of
 	 * {@link #cellSideFullTable54Cells()} — so this checks that ovenCellIcon consumes

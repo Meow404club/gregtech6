@@ -17,7 +17,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.Level;
 
 /**
- * The bumble-hive worldgen acceptance (task p32-bees-lv2, the GT6FluidSpringWorldgenTest
+ * The bumble-hive worldgen acceptance (task bees-lv2, the GT6FluidSpringWorldgenTest
  * posture): the HiveKind family-table parity against the upstream placeHive call-site
  * constants (WorldgenHives.java:111/:120/:135/:155-186), the family-tag composition
  * pins, and the FIXED-SEED PLACEMENT-SET DETERMINISM — the offline leg of the card

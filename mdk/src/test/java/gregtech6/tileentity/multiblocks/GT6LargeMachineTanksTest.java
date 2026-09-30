@@ -21,7 +21,7 @@ import gregtech6.registry.GT6LargeMachines.GTLargeMachineBlockEntity;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The r10-debt-tank-shadow pins — the large-machine input-tank bank over the base
+ * The debt-tank-shadow pins — the large-machine input-tank bank over the base
  * {@code TileEntityBase10MultiBlockMachine.mTanksInput} (the shadow-field fix):
  * <ol>
  * <li>the multi-tank bank survives the NBT round-trip — before the fix the base

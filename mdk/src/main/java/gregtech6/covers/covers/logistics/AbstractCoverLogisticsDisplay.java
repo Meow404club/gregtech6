@@ -7,7 +7,7 @@ import gregtech6.covers.covers.AbstractCoverAttachmentLogistics;
 
 /**
  * The logistics CPU-display base — 1.20.1 port of gregapi/cover/covers/
- * AbstractCoverAttachmentLogisticsDisplay.java (:34-55), task p33-logistics-covers-12.
+ * AbstractCoverAttachmentLogisticsDisplay.java (:34-55), task logistics-covers-12.
  * The upstream body is 20 lines: the redstone emission is the value lane bound to 0-15
  * (:42-49 {@code UT.Code.bind4(mValues)}), the visuals lane persists (:52), and the
  * priority/stacksize lanes are OFF (:53-54).

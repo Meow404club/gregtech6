@@ -9,12 +9,12 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * The formal GT6 construction pickaxe — item id {@code gt6:pickaxe_construction} (task
- * p29-w5-t1-dig-six). Upstream GT_Tool_PickaxeConstruction.java:39-65 extends
+ * w5-t1-dig-six). Upstream GT_Tool_PickaxeConstruction.java:39-65 extends
  * GT_Tool_Pickaxe with three arms:
  * <ul>
  * <li><b>Speed ×2</b> (:41-43) → {@link #SPEED_MULTIPLIER} = 2.0F (the pickaxe ×1.0
  *     doubled — "Good for Bricks and alike", Loader_Tools.java:147). The ladder face
- *     (task p31-dig-ladder) reads the stack's material speed × this multiplier.</li>
+ *     (task dig-ladder) reads the stack's material speed × this multiplier.</li>
  * <li><b>Ore-stone penalty</b> (:62-65 {@code WD.ore_stone → default / 4}) →
  *     {@link #destroySpeedLadder} quarters the speed on {@link #ORE_STONE} (the vanilla
  *     ore set; the GT ore blocks of the W6 worldgen join the set when they land).</li>

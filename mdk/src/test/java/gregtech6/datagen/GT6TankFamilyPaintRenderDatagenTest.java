@@ -1,5 +1,5 @@
 /*
- * Offline pinned-census tests for task r8-tex-tank-family: the barrel family
+ * Offline pinned-census tests for task tex-tank-family: the barrel family
  * (wood/plastic/metal + the 12 high-tier drums) joins the two-layer per-face grammar —
  * the tintindex-0 grayscale colored body is the mRGBa/paint seat (upstream
  * MultiTileEntityBarrelWood.java:44-55 BlockTextureDefault(colored, mRGBa)), the six
@@ -28,7 +28,7 @@
  *     distinct);</li>
  * <li>the retired deviation claims are dead in the datagen source (the "no overlay
  *     decal pool" barrel note and the "no multiblockmains tankwood/tankmetal group"
- *     valve note — both PROVEN FALSE by the r8-tex-r1 probes).</li>
+ *     valve note — both PROVEN FALSE by the tex-r1 probes).</li>
  * </ul>
  */
 package gregtech6.datagen;
@@ -308,7 +308,7 @@ class GT6TankFamilyPaintRenderDatagenTest {
     // ------------------------------------------------------------------
 
     /**
-     * The two proven-false claims the r8-tex-r1 probes killed must not return to the
+     * The two proven-false claims the tex-r1 probes killed must not return to the
      * datagen source: the p23 "no overlay decal pool" barrel deviation and the p29
      * "no multiblockmains tankwood/tankmetal group" valve note.
      */

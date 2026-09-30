@@ -18,7 +18,7 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Chemical fluid family offline tests (task p29-w4-f1-chemicals acceptance ①⑤ — the
+ * Chemical fluid family offline tests (task w4-f1-chemicals acceptance ①⑤ — the
  * registration-row assertions against the DECLARED values): the thirty-four
  * {@link GTFluids.ChemicalFluidSpec} rows, id/temperature/density/viscosity/gas/luminosity
  * transcribed from the upstream anchors (Loader_Fluids.java:40-41/:45-48/:59-63/:68 the
@@ -26,7 +26,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
  * plasma = boiling × 100, OreDictMaterial.java:927, so the temperature rule lands on 300 K;
  * the densities the :1128-1136 formula per material g/cm³ — MT.java:380/:383/:395-398/
  * :406/:425/:443/:476/:1027-1037; the isotope batch the :658-662 tag-driven loop — task
- * p31-qu-b-materials). The live registry side is the runServer smoke evidence
+ * qu-b-materials). The live registry side is the runServer smoke evidence
  * (the per-fluid GT6 fluid registered lines); offline asserts the declaration table and the
  * registration-shape ids.
  */
@@ -44,14 +44,14 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 			"deuterium", "tritium", "helium3",
 			"lithium6_molten", "beryllium7_molten", "beryllium8_molten",
 			"boron11_molten", "carbon13_molten", "ancientdebris_molten",
-			// task p31-fusion — the fusion-row closure quartet (the C/Li/W/Ad parent molten rows)
+			// task fusion — the fusion-row closure quartet (the C/Li/W/Ad parent molten rows)
 			"carbon_molten", "lithium_molten", "tungsten_molten", "adamantium_molten",
-			// task p32-qu-scanner-replicator — the :194 molten-redstone replicator carrier
+			// task qu-scanner-replicator — the :194 molten-redstone replicator carrier
 			"redstone_molten",
-			// task p34-machines-bumblelyzer-crucible — the crystallisation molten quintet (the :683-706 row carriers)
+			// task machines-bumblelyzer-crucible — the crystallisation molten quintet (the :683-706 row carriers)
 			"silicon_molten", "germanium_molten", "redstonealloy_molten", "nikolinealloy_molten", "alumina_molten",
-			// task p34-machines-burner-plantalyzer — the three new Burner Mixer row
-			// carriers (the fourth, tritiatedwater, is the p29-w4-hot-lube closure row)
+			// task machines-burner-plantalyzer — the three new Burner Mixer row
+			// carriers (the fourth, tritiatedwater, is the w4-hot-lube closure row)
 			"titaniumtetrachloride", "sodiumcarbonate_molten", "calcite_molten");
 
 
@@ -187,7 +187,7 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 	}
 
 	/**
-	 * Task p30-pool-gas-seeds-13 — the GAS-list reconciliation: upstream the
+	 * Task pool-gas-seeds-13 — the GAS-list reconciliation: upstream the
 	 * {@code FL.create} STATE_GASEOUS arm auto-adds the fluid name to {@code FluidsGT.GAS}
 	 * (FL.java:1105) while STATE_PLASMA routes to {@code FluidsGT.PLASMA} (:1106) and the
 	 * liquid rows never touch it — so every gaseous non-plasma row of
@@ -228,7 +228,7 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 	}
 
 	/**
-	 * Task p31-qu-b-materials — the isotope batch census: the nine Loader_Fluids.java:
+	 * Task qu-b-materials — the isotope batch census: the nine Loader_Fluids.java:
 	 * 658-662 tag-driven loop rows for the fusion isotope materials. Gases ride the :1080
 	 * createGas walk (temp = min(300, plasma−1) = 300 over the default 10000 K plasma
 	 * point; density = the :1128-1136 −0.1/g formula), the molten rows the :1077
@@ -277,7 +277,7 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 	}
 
 	/**
-	 * Task p31-qu-b-materials — the material↔spec binding seam: the two lookup legs
+	 * Task qu-b-materials — the material↔spec binding seam: the two lookup legs
 	 * ({@link GTFluids#specOf} / {@link GTFluids#materialOf}) round-trip over the live
 	 * MT table, and MT.Dilithium — the one batch material the upstream tag loop never
 	 * reached (the crystal helper, MT.java:198, carries no GASES/MOLTEN/LIQUID tag) —

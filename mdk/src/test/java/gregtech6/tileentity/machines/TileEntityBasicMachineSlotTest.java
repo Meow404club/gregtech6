@@ -17,7 +17,7 @@ import gregtech6.gui.machines.GTBasicMachineMenu;
 import gregtech6.recipes.GT6RecipeMaps;
 
 /**
- * Acceptance 4 (task p7-basicmachine-family ⑦): the data-driven slot shape — 1 input +
+ * Acceptance 4 (task basicmachine-family ⑦): the data-driven slot shape — 1 input +
  * mOutputItemsCount outputs (12/12/2, RM.java:134/:135/:97), the P6 gated capability gate
  * (insert input-only / extract output-only, canInsertItem2 :549-554 / canExtractItem2
  * :556-559), and the menu layout derived from the RecipeMap (the upstream output grid

@@ -18,7 +18,7 @@ import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.registry.GTMachines;
 
 /**
- * The p29-w2-energy-types-5tier 5-tier 立行制 constants (the OFFLINE half):
+ * The w2-energy-types-5tier 5-tier 立行制 constants (the OFFLINE half):
  * {@link GTMachines#ELECTRIC_T5} = Ti (upstream MT.java:3691 index 5, the lazy-supplier
  * form), {@link GTMachines#EV_TIER_INPUTS} = {4096, 8192, 16384} (the :126 conversion
  * min = in/2 / max = in*2 over the Loader:1340 T5 NBT_INPUT 8192) as a PARALLEL constant

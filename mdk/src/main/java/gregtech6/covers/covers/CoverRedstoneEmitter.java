@@ -7,7 +7,7 @@ import gregtech6.covers.CoverData;
 
 /**
  * The redstone emitter cover — 1.20.1 port of gregapi/cover/covers/CoverRedstoneEmitter.java
- * (136 lines, task p9-redstone-cover-emitter, ADR 2026-09-01-p9-redstone-cover-emitter).
+ * (136 lines, task redstone-cover-emitter, ADR 2026-09-01-redstone-cover-emitter).
  * The first REAL redstone cover: the visual lane holds the emitted tier (0..15, weak
  * signal), the value lane holds only the strong gate (bit 0), and bare-hand right
  * clicks tune the tier through the 16-zone keypad on the plate (:72-109).

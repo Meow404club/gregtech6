@@ -22,7 +22,7 @@ import gregtech6.block.ore.GTBedrockOreBlock;
 import gregtech6.item.GTMaterialPrefixBlockItem;
 
 /**
- * Registration home of the GT6 BEDROCK-ore block band (task p31-bedrock-ore-worldgen
+ * Registration home of the GT6 BEDROCK-ore block band (task bedrock-ore-worldgen
  * spec ①): the two upstream forms split per-pair over the bedrock row-table material
  * axis — {@code gt6:ore_bedrock_<material>} (OP.oreBedrock, the large form) and
  * {@code gt6:ore_small_bedrock_<material>} (OP.oreSmall, the upstream name segment

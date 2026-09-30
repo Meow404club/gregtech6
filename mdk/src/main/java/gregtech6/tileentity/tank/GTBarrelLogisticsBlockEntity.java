@@ -15,7 +15,7 @@ import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.registry.GTBarrels;
 
 /**
- * The Logistics Tank (task p12-barrel-keepfilter-logistics) — the counterpart of the
+ * The Logistics Tank (task barrel-keepfilter-logistics) — the counterpart of the
  * upstream {@code MultiTileEntityBarrelLogistics} (gregtech/tileentity/tanks/
  * MultiTileEntityBarrelLogistics.java:37-58, row Loader_MultiTileEntities.java:2171,
  * 1000000 L @ 100000 K, ANY.W = tungsten, aUtilMetal, hardness 1.0 / resistance 10.0).
@@ -42,7 +42,7 @@ import gregtech6.registry.GTBarrels;
  *     flips the base to.</li>
  * </ul>
  * {@code canLogistics(byte)} and the storage face joined the port with task
- * p32-logistics-lv3 (the Core's BFS endpoint face, below) — until the cover family lands
+ * logistics-lv3 (the Core's BFS endpoint face, below) — until the cover family lands
  * this tank IS the logistics network's storage endpoint (research.p31-logistics
  * missing_by_cost_asc row 4, the Storage-endpoint slice).
  */
@@ -99,7 +99,7 @@ public class GTBarrelLogisticsBlockEntity extends GTBarrelMetalBlockEntity imple
 	}
 
 	// ---------------------------------------------------------------------------
-	// the logistics endpoint face (task p32-logistics-lv3)
+	// the logistics endpoint face (task logistics-lv3)
 	// ---------------------------------------------------------------------------
 
 	/**

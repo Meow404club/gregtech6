@@ -20,7 +20,7 @@
 package gregtech6.integration.kjs;
 
 /**
- * THE dual-leg fork of the KJS module (task p34-kjs-bindings): the one file in the
+ * THE dual-leg fork of the KJS module (task kjs-bindings): the one file in the
  * package importing KubeJS types. The 6.x/7.x divergence is the WHOLE hook surface,
  * not just the class declaration (the original card spec ② underestimated it):
  * <ul>

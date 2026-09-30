@@ -46,7 +46,7 @@ import gregtech6.tileentity.MaterialStackNBT;
 
 /**
  * 1.20.1 counterpart of gregtech/tileentity/multiblocks/MultiTileEntityCrucible.java
- * (714 lines, task p26-crucible-multiblock) — the LARGE 3x3x3 crucible multiblock:
+ * (714 lines, task crucible-multiblock) — the LARGE 3x3x3 crucible multiblock:
  * a hollow of wall parts with the opening on top, the controller at the
  * bottom-centre cell ("Main at Bottom-Center", upstream tooltip :139-140).
  *
@@ -61,7 +61,7 @@ import gregtech6.tileentity.MaterialStackNBT;
  * checker's fail-not-clear hollow semantics are the same judgement). The layer masks
  * are consumed, never re-declared — the three ONLY_* constants are verbatim already
  * in {@link MultiBlockPartBlockEntity} (:103/:113/:118). The structure check walks
- * the declared pattern through the shared checker (the p16-pattern-checker seam, the
+ * the declared pattern through the shared checker (the pattern-checker seam, the
  * CokeOven production pilot) — one judgement source for the server check and the
  * ghost preview.
  *
@@ -191,7 +191,7 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 		// answers and the wall-part relay carries a hopper push the last step in
 		// (issue #20: the crucible previously had NO item face at all). NEVER a fresh
 		// mInventory field here: it would shadow the base carrier and the capability
-		// would stay empty (the r4-20a TileEntitySmeltery lesson).
+		// would stay empty (the #20a TileEntitySmeltery lesson).
 		setInventory(new GTItemStackHandler(1, this::setChanged));
 		// the crucible has NO facing semantics upstream (getDefaultSide SIDE_UP :689, the
 		// structure fully symmetric around the controller cell). The shared checker's cell
@@ -203,7 +203,7 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 		// setFacingFromPlacement (GTMultiBlockControllerBlock.setPlacedBy, every player
 		// placement) overwrites mFacing with the player's horizontal look direction 2..5
 		// — which is why the walk itself must read patternWalkFacing() (the
-		// p27-builder-wand-form-fix override below); the RCON chains never saw the
+		// builder-wand-form-fix override below); the RCON chains never saw the
 		// displacement only because `setblock` has no placer and kept the pin.
 		mFacing = 0;
 	}
@@ -294,7 +294,7 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	 * the controller box ("Main at Bottom-Center", the upstream :140 tooltip line). The
 	 * declared pattern cells below are therefore CONTROLLER-relative, and the walk must
 	 * NOT pass them through a horizontal facing's side-offset table: task
-	 * p27-builder-wand-form-fix — feeding {@code mFacing} displaced the whole check (and
+	 * builder-wand-form-fix — feeding {@code mFacing} displaced the whole check (and
 	 * the builder-wand scaffold plus the {@code /gtmultiblock form} arm sharing the seam)
 	 * one block off the machine for EVERY live facing, so the wand scaffolded a half-box
 	 * and the part relay refused the far column ({@code wandTarget} →
@@ -309,7 +309,7 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	}
 
 	/**
-	 * Upstream :112-131, walked from the declared pattern (the p16-pattern-checker seam):
+	 * Upstream :112-131, walked from the declared pattern (the pattern-checker seam):
 	 * the three wall rings carry their per-layer usage masks, the centre column at
 	 * y+1/y+2 is the fail-not-clear hollow pair (upstream :115-116), and the controller's
 	 * own cell (y+0 centre) passes via the checker's inherited self-cell arm. The
@@ -659,7 +659,7 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	 * (the :210-212 trash+fizz arm).
 	 *
 	 * <p>ponytail: the ladder + the vanilla-ore bridge are duplicated from
-	 * TileEntitySmeltery (r4-20a owns that file this round, and the card scopes forbid
+	 * TileEntitySmeltery (#20a owns that file this round, and the card scopes forbid
 	 * touching it); extract one shared crucible-io helper when both scopes allow.
 	 */
 	@Nullable

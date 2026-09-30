@@ -26,14 +26,14 @@ import gregtech6.block.GTEntityBlock;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Dynamo family block (task p28-c-dynamo-family-be) — the facing-cube carrier shared
+ * The Dynamo family block (task c-dynamo-family-be) — the facing-cube carrier shared
  * by BOTH dynamo families (Flux and Electric; one block class, ten registrations), upstream
  * MultiTileEntityDynamoFlux / MultiTileEntityDynamoElectric (aClass rows,
  * Loader_MultiTileEntities.java:945-957 — NBT_HARDNESS 4.0F, NBT_RESISTANCE 4.0F, stack
  * 16, no GUI: {@code canDrop} = F, TileEntityBase10EnergyConverter :161).
  *
  * <p>Facing = the placement orientation over the GT6PlacementFacing canon (issue #18,
- * task r4-18-converter-tex-facing): the FRONT face ({@code mFacing}) is the OUTPUT face
+ * task 18-converter-tex-facing): the FRONT face ({@code mFacing}) is the OUTPUT face
  * (upstream isOutput {@code mFacing == aSide}, DynamoFlux :37 — the dynamo is placed
  * facing its consumer), the BACK face the only input (upstream isInput
  * {@code mFacing == OPOS[aSide]}, :36 — the driven axle sits behind). SIX-WAY now —
@@ -72,7 +72,7 @@ public class GT6DynamoBlock extends GTEntityBlock {
 	private final Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> mTickerType;
 
 	/**
-	 * The block's upstream {@code NBT_MATERIAL} column (task p38-c2-controller-tint — the
+	 * The block's upstream {@code NBT_MATERIAL} column (task c2-controller-tint — the
 	 * tint colour source, the lazy-Supplier GTBarrels form): the EU-bridge and laser
 	 * families hand their Electric_T rung material in. Null = the material-less
 	 * registrations (the Flux/Electric dynamos, the quantum energizer) — the white
@@ -86,7 +86,7 @@ public class GT6DynamoBlock extends GTEntityBlock {
 		this(aProperties, aTier, aTickerType, null);
 	}
 
-	/** The material-carrier form (task p38-c2-controller-tint): the row feeds the tint colour source. */
+	/** The material-carrier form (task c2-controller-tint): the row feeds the tint colour source. */
 	public GT6DynamoBlock(Properties aProperties, int aTier,
 			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType,
 			@Nullable Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
@@ -108,7 +108,7 @@ public class GT6DynamoBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The dynamo-carrier material dispatch (task p38-c2-controller-tint, the
+	 * The dynamo-carrier material dispatch (task c2-controller-tint, the
 	 * {@code GTMultiBlockPartBlock.materialOf} mirror shape): only the carrier blocks
 	 * resolve a material — every other block is null here.
 	 */

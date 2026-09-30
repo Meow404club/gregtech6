@@ -36,12 +36,12 @@ public final class GTEnergySources {
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "gt6");
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 
-	/** The command-driven test generator (task p8-d4-energy-source spec ①/②). */
+	/** The command-driven test generator (task d4-energy-source spec ①/②). */
 	public static final RegistryObject<GTEnergySourceBlock> ENERGY_SOURCE = BLOCKS.register("energy_source",
 			() -> new GTEnergySourceBlock(BlockBehaviour.Properties.of()
 					.strength(1.0F, 2.0F).sound(SoundType.COPPER)));
 
-	// task r8-tooltip-multiblock-generator — the generator-family carrier replays gt6.tooltip.generator.*
+	// task tooltip-multiblock-generator — the generator-family carrier replays gt6.tooltip.generator.*
 	public static final RegistryObject<Item> ENERGY_SOURCE_ITEM = ITEMS.register("energy_source",
 			() -> new GT6MachineBlockItem(ENERGY_SOURCE.get(), new Item.Properties(), "generator"));
 

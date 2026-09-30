@@ -37,10 +37,10 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
- * The DRYING water-family pour offline tests (task p14-loop-closure-chain acceptance,
- * extended by task p16-drying-rows-backfill): the row transcription of
+ * The DRYING water-family pour offline tests (task loop-closure-chain acceptance,
+ * extended by task drying-rows-backfill): the row transcription of
  * Loader_Recipes_Chem.java:525-532, the seven-row pour (the Water 10 L → DistW 8 L
- * foundation plus the six p16-aqua-fluids rows, EUt 16, duration 16, the buffered
+ * foundation plus the six aqua-fluids rows, EUt 16, duration 16, the buffered
  * addRecipe0 shape), the :530 water_hot absent-fluid pool reconciliation, the
  * machine-shape findRecipe lookup, and the isRecipeInputEqual consume semantics. The
  * live loop itself is the RCON chain (offline cannot touch the Forge registries).
@@ -51,7 +51,7 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 
 	/**
 	 * The offline fixture: every REGISTERED fluid id of the water and salt families —
-	 * water, distw, the six p16-aqua-fluids ids and the two p19 simple-liquid ids —
+	 * water, distw, the six aqua-fluids ids and the two p19 simple-liquid ids —
 	 * resolves to the vanilla water fluid (the recipe mechanics only compare identities —
 	 * the GTEngineFuelsTest WATER_FIXTURE convention); the deliberately unregistered
 	 * water_hot alias (:530) AND the four p21 food ids stay null, mirroring the
@@ -249,7 +249,7 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 	/**
 	 * The pool reconciliation after the p16 backfill: the :530 water_hot row is the ONLY
 	 * water-family row the live resolver still answers null for (the IC2 alias
-	 * "ic2hotwater", FL.java:116, deliberately unregistered by p16-aqua-fluids) — the
+	 * "ic2hotwater", FL.java:116, deliberately unregistered by aqua-fluids) — the
 	 * upstream {@code if (FL.Water_Hot.exists())} guard shape, so load() skips it. The
 	 * other six non-water ids resolve through live RegistryObjects, which only exist under
 	 * a real registry event — their live resolution is the RCON chain's proof, offline the
@@ -270,7 +270,7 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ==================================================================
-	// the ice/snow family (Loader_Recipes_Chem.java:510-522, task p16-drying-rows-backfill)
+	// the ice/snow family (Loader_Recipes_Chem.java:510-522, task drying-rows-backfill)
 	// ==================================================================
 
 	/** The transcription walk: thirteen rows, values per Loader_Recipes_Chem.java:510-522. */
@@ -447,7 +447,7 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 
 	// ==================================================================
 	// the salt + mineral-dehydration + clay-loop + BlockDiggable families
-	// (Loader_Recipes_Chem.java:544-568 / BlockDiggable.java:73, task p19-drying-rows-backfill-2)
+	// (Loader_Recipes_Chem.java:544-568 / BlockDiggable.java:73, task drying-rows-backfill-2)
 	// ==================================================================
 
 	/** The transcription walk: two rows, values per Loader_Recipes_Chem.java:548/:553 verbatim. */
@@ -606,7 +606,7 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ==================================================================
-	// the food family (Loader_Recipes_Food.java:654-658, task p21-drying-food-fluids)
+	// the food family (Loader_Recipes_Food.java:654-658, task drying-food-fluids)
 	// ==================================================================
 
 	/** The transcription walk: four rows, values per Loader_Recipes_Food.java:655-658 verbatim. */
@@ -727,7 +727,7 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 	}
 
 	/**
-	 * The audit walk update (task p21-drying-food-fluids): the food family entry stands as
+	 * The audit walk update (task drying-food-fluids): the food family entry stands as
 	 * the POURED annotation — the pool pointer retired, the anchor kept. (The live sap
 	 * resolution itself is never probed offline — RegistryObject.get() needs the registry —
 	 * it is the RCON chain's proof; here the pour tests carry the rows through fixtures.)
@@ -738,7 +738,7 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 				.filter(r -> r.note().equals(":655")).findFirst().orElse(null);
 		assertNotNull(tSap, "the :655 row is transcribed");
 		assertEquals(GT6RecipesDrying.FLUID_SAP, tSap.input(), "the guard row's input is the sap id");
-		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(3).contains("POURED by task p21-drying-food-fluids"),
+		assertTrue(GT6RecipesDrying.SKIPPED_UPSTREAM.get(3).contains("POURED by task drying-food-fluids"),
 				"the food entry is the poured annotation, not a pool pointer");
 	}
 

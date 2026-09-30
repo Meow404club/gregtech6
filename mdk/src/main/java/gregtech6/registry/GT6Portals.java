@@ -26,7 +26,7 @@ import gregtech6.tileentity.portals.GTMiniPortalEndBlockEntity;
 import gregtech6.tileentity.portals.GTMiniPortalNetherBlockEntity;
 
 /**
- * The portal registration home (task p35-portals-mini-nether-end) — the self-contained
+ * The portal registration home (task portals-mini-nether-end) — the self-contained
  * {@code @EventBusSubscriber} shape (the GT6HeatExchangers form: blocks, items, BETs and
  * the server-lifecycle listener in ONE card-owned file; the GTBlockEntities shared file
  * stays untouched — the W2 merge-order ratchet, energy→pipes→portals→rails).
@@ -46,7 +46,7 @@ import gregtech6.tileentity.portals.GTMiniPortalNetherBlockEntity;
  * onServerStart/Stop, MultiTileEntityMiniPortal.java:209-210).
  *
  * <p>Creative tab: both portal items join MACHINES_TAB via {@link #onBuildTabContents}
- * (task p38-tabfix-d-ruling, the user ruling over the port-native tab-less state; the
+ * (task tabfix-d-ruling, the user ruling over the port-native tab-less state; the
  * GT6BurningBoxes join form).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -63,7 +63,7 @@ public final class GT6Portals {
 	 * The shared portal block properties — the package-private seam is the offline pin's
 	 * single source of truth (GT6PortalFrameDatagenTest asserts the noOcclusion through
 	 * THIS factory, so dropping it here fails the test). noOcclusion is the hollow
-	 * 12-beam frame's see-through premise (issue #23 / task r4-23a-portal-frame): with
+	 * 12-beam frame's see-through premise (issue #23 / task 23a-portal-frame): with
 	 * the default canOcclude the neighbours cull their faces against this block and the
 	 * cage center turns into an x-ray hole (BlockBehaviour.java:582-588 isSolidRender);
 	 * upstream marks the same surface semantics (MultiTileEntityMiniPortal.java:264-265
@@ -171,7 +171,7 @@ public final class GT6Portals {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-d-ruling — the two portal items join the machines tab;
+	 * The tab walk (task tabfix-d-ruling — the two portal items join the machines tab;
 	 * the GT6BurningBoxes.onBuildTabContents verbatim form, the class-level MOD-bus
 	 * {@code @Mod.EventBusSubscriber} at the class head is what delivers this handler).
 	 */

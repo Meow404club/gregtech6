@@ -8,7 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 
 /**
- * One strata-lens row (task p31-strata-lens) — the {@link GTVeinConfig} isomorphic row
+ * One strata-lens row (task strata-lens) — the {@link GTVeinConfig} isomorphic row
  * face: the marker stone, its rarity (the weight of the exactly-one origin draw) and the
  * Y domain (the CENTER-y range, nextInt bound = maxY - minY + 1 &gt; 0), plus the freshly
  * calibrated shape pair (horizontal radius + vertical half-height of the flattened-blob

@@ -1,5 +1,5 @@
 /**
- * Tests for task p31-bedrock-ore-worldgen spec ①: the bedrock-ore band census (the 45
+ * Tests for task bedrock-ore-worldgen spec ①: the bedrock-ore band census (the 45
  * row-table materials x the 2 forms = 90 per-pair blocks), the verbatim id scheme, the
  * Loader_Ores.java:44-45 column face and the axis/table consistency.
  *

@@ -56,7 +56,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 
 /**
- * Loot tables of the material prefix blocks (task p8-prefixblock-render spec ④). One
+ * Loot tables of the material prefix blocks (task prefixblock-render spec ④). One
  * self-drop table per block, at the vanilla default location
  * {@code gt6:blocks/<registry-path>} — {@code Block.getLootTable()} already resolves there
  * with ZERO block code (vanilla default {@code "blocks/" + registry path}), so
@@ -95,125 +95,125 @@ public final class GT6LootTables extends LootTableProvider {
         //? if neoforge {
         /*
         super(output, Set.of(), List.of(
-                new SubProviderEntry(GT6RailBlockLoot::new, LootContextParamSets.BLOCK), // task p35-rails-31-blocks — the 31 rail rows self-drop
+                new SubProviderEntry(GT6RailBlockLoot::new, LootContextParamSets.BLOCK), // task rails-31-blocks — the 31 rail rows self-drop
                 new SubProviderEntry(GT6BlockLoot::new, LootContextParamSets.BLOCK),
-                new SubProviderEntry(GT6WireBlockLoot::new, LootContextParamSets.BLOCK), // task p9-wire-family-w1 ⑥
-                new SubProviderEntry(GT6AxleBlockLoot::new, LootContextParamSets.BLOCK), // task p12-axle-family
-                new SubProviderEntry(GT6EngineBlockLoot::new, LootContextParamSets.BLOCK), // task p12-engine-diesel
-                new SubProviderEntry(GT6KineticsBlockLoot::new, LootContextParamSets.BLOCK), // task p12-gearbox-transformer
-                new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task p13-burning-box-family
-                new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task p13-boiler-tank
-                new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task p14-dryer-family
-                new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
-                new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task p24-canner-machine
-                new SubProviderEntry(GT6KineticMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-sifter-compressor-wiremill
-                new SubProviderEntry(GT6ProcessMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w1-kinetic-process-ladder
-                new SubProviderEntry(GT6PressBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
-                new SubProviderEntry(GT6ExtruderBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
-                new SubProviderEntry(GT6EuHuFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w1-eu-hu-families — the seven eu-hu families
-                new SubProviderEntry(GT6EuSpecialMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-special — the Autocrafter/Lightning/Laminator families
-                new SubProviderEntry(GT6ExoticFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-exotic-energy — the six exotic-energy families
-                new SubProviderEntry(GT6EuCoreMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-core-5tier — the five eu-core families
-                new SubProviderEntry(GT6HuTuPiggybackBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-hu-tu-piggyback — the seven hu-tu families
-                new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
-                new SubProviderEntry(GT6HeatExchangerBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-heat-smelter — the Large Heat Exchanger controller
-                new SubProviderEntry(GT6PartBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-nbtdesign-parts — the part-family expansion
-                new SubProviderEntry(GT6TankBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-tank-valves — the 25 valve self-drops
-                new SubProviderEntry(GT6TurbineDynamoBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-turbine-dynamo — the twelve turbine/dynamo controllers
-                new SubProviderEntry(GT6DistillCrucibleLoot::new, LootContextParamSets.BLOCK), // task p29-w3-distill-crucible — the towers + the crucible ladder
-                new SubProviderEntry(GT6LargeMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-large-12 — the twelve large machines
-                new SubProviderEntry(GT6ImplosionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-implosion — the Implosion Compressor controller
-                new SubProviderEntry(GT6GraaggBlockLoot::new, LootContextParamSets.BLOCK), // task p31-graagg — the Von da Graagg controller
-                new SubProviderEntry(GT6BedrockDrillBlockLoot::new, LootContextParamSets.BLOCK), // task p37-bedrock-drill — the Bedrock Mining Drill controller
-                new SubProviderEntry(GT6MassfabBlockLoot::new, LootContextParamSets.BLOCK), // task p31-massfab — the Large Matter Fabricator controller
-                new SubProviderEntry(GT6FusionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-fusion — the Fusion Reactor controller
-                new SubProviderEntry(GT6LogisticsCoreBlockLoot::new, LootContextParamSets.BLOCK), // task p32-logistics-lv3 — the Logistics Core controller
-                new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
-                new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
-                new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
+                new SubProviderEntry(GT6WireBlockLoot::new, LootContextParamSets.BLOCK), // task wire-family-w1 ⑥
+                new SubProviderEntry(GT6AxleBlockLoot::new, LootContextParamSets.BLOCK), // task axle-family
+                new SubProviderEntry(GT6EngineBlockLoot::new, LootContextParamSets.BLOCK), // task engine-diesel
+                new SubProviderEntry(GT6KineticsBlockLoot::new, LootContextParamSets.BLOCK), // task gearbox-transformer
+                new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task burning-box-family
+                new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task boiler-tank
+                new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task dryer-family
+                new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task distillery-family
+                new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task canner-machine
+                new SubProviderEntry(GT6KineticMachineBlockLoot::new, LootContextParamSets.BLOCK), // task w1-sifter-compressor-wiremill
+                new SubProviderEntry(GT6ProcessMachineBlockLoot::new, LootContextParamSets.BLOCK), // task w1-kinetic-process-ladder
+                new SubProviderEntry(GT6PressBlockLoot::new, LootContextParamSets.BLOCK), // task w1-press-extruder-molds
+                new SubProviderEntry(GT6ExtruderBlockLoot::new, LootContextParamSets.BLOCK), // task w1-press-extruder-molds
+                new SubProviderEntry(GT6EuHuFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task w1-eu-hu-families — the seven eu-hu families
+                new SubProviderEntry(GT6EuSpecialMachineBlockLoot::new, LootContextParamSets.BLOCK), // task w2-eu-special — the Autocrafter/Lightning/Laminator families
+                new SubProviderEntry(GT6ExoticFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task w2-exotic-energy — the six exotic-energy families
+                new SubProviderEntry(GT6EuCoreMachineBlockLoot::new, LootContextParamSets.BLOCK), // task w2-eu-core-5tier — the five eu-core families
+                new SubProviderEntry(GT6HuTuPiggybackBlockLoot::new, LootContextParamSets.BLOCK), // task w2-hu-tu-piggyback — the seven hu-tu families
+                new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task lightning-rod
+                new SubProviderEntry(GT6HeatExchangerBlockLoot::new, LootContextParamSets.BLOCK), // task w3-heat-smelter — the Large Heat Exchanger controller
+                new SubProviderEntry(GT6PartBlockLoot::new, LootContextParamSets.BLOCK), // task w3-nbtdesign-parts — the part-family expansion
+                new SubProviderEntry(GT6TankBlockLoot::new, LootContextParamSets.BLOCK), // task w3-tank-valves — the 25 valve self-drops
+                new SubProviderEntry(GT6TurbineDynamoBlockLoot::new, LootContextParamSets.BLOCK), // task w3-turbine-dynamo — the twelve turbine/dynamo controllers
+                new SubProviderEntry(GT6DistillCrucibleLoot::new, LootContextParamSets.BLOCK), // task w3-distill-crucible — the towers + the crucible ladder
+                new SubProviderEntry(GT6LargeMachineBlockLoot::new, LootContextParamSets.BLOCK), // task w3-large-12 — the twelve large machines
+                new SubProviderEntry(GT6ImplosionBlockLoot::new, LootContextParamSets.BLOCK), // task implosion — the Implosion Compressor controller
+                new SubProviderEntry(GT6GraaggBlockLoot::new, LootContextParamSets.BLOCK), // task graagg — the Von da Graagg controller
+                new SubProviderEntry(GT6BedrockDrillBlockLoot::new, LootContextParamSets.BLOCK), // task bedrock-drill — the Bedrock Mining Drill controller
+                new SubProviderEntry(GT6MassfabBlockLoot::new, LootContextParamSets.BLOCK), // task massfab — the Large Matter Fabricator controller
+                new SubProviderEntry(GT6FusionBlockLoot::new, LootContextParamSets.BLOCK), // task fusion — the Fusion Reactor controller
+                new SubProviderEntry(GT6LogisticsCoreBlockLoot::new, LootContextParamSets.BLOCK), // task logistics-lv3 — the Logistics Core controller
+                new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task act-machine
+                new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task painted-item-domain
+                new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task stoneblocks-render
                 new SubProviderEntry(GT6StoneSlabLoot::new, LootContextParamSets.BLOCK), // task debt-slab-gap — the 272 slab tables
-                new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task p24-grass-block
-                new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task p25-c-foam-pipe-spray
-                new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task p26-c-foam-block-family
-                new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task p26-sensors-core
-                new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task p26-storage-static-batch — the 28 self-drops
-                new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task p28-b-fe-converter-machine
-                new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-anvil — the stone anvil pair
-                new SubProviderEntry(GT6EuBridgeBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting ladder
-                new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
-                new SubProviderEntry(GT6LongDistanceBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
-                new SubProviderEntry(GT6CrystalChargerBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
-                new SubProviderEntry(GT6LongDistancePipeBlockLoot::new, LootContextParamSets.BLOCK), // task p35-long-distance-pipes
-                new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
-                new SubProviderEntry(GT6PortalBlockLoot::new, LootContextParamSets.BLOCK), // task p35-portals-mini-nether-end — the portal pair self-drops
-                new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
-                new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
-                new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task p32-placeables — the lantern + sandwich self-drops
-                new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task p33-bees-lv3-b-bumbliary — the Bumbliary pair self-drops
-                new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task p30-ore-4-loot — the 4884 ore tables
-                new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST), // task p34-loot-injection — the gt.flawless/gems/misc bag tables
-                new SubProviderEntry(GT6DungeonChestLoot::new, LootContextParamSets.CHEST)), // task p38-dungeon-framework — the gt6:chests/dungeon_chest carrier
+                new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task grass-block
+                new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-pipe-spray
+                new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-block-family
+                new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task sensors-core
+                new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-static-batch — the 28 self-drops
+                new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task b-fe-converter-machine
+                new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task c-anvil — the stone anvil pair
+                new SubProviderEntry(GT6EuBridgeBlockLoot::new, LootContextParamSets.BLOCK), // task w4-eu-bridge — the three EU-bridge families + the Roasting ladder
+                new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task c-ulv-lv-transformer
+                new SubProviderEntry(GT6LongDistanceBlockLoot::new, LootContextParamSets.BLOCK), // task energy-tail-machines
+                new SubProviderEntry(GT6CrystalChargerBlockLoot::new, LootContextParamSets.BLOCK), // task energy-tail-machines
+                new SubProviderEntry(GT6LongDistancePipeBlockLoot::new, LootContextParamSets.BLOCK), // task long-distance-pipes
+                new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task c-ulv-dynamo-row — the T0 self-drop
+                new SubProviderEntry(GT6PortalBlockLoot::new, LootContextParamSets.BLOCK), // task portals-mini-nether-end — the portal pair self-drops
+                new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task w6-t1-trees-nine — the 27 tree blocks
+                new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task w6-rocks-sticks — the surface deco band
+                new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task placeables — the lantern + sandwich self-drops
+                new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task bees-lv3-b-bumbliary — the Bumbliary pair self-drops
+                new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task ore-4-loot — the 4884 ore tables
+                new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST), // task loot-injection — the gt.flawless/gems/misc bag tables
+                new SubProviderEntry(GT6DungeonChestLoot::new, LootContextParamSets.CHEST)), // task dungeon-framework — the gt6:chests/dungeon_chest carrier
             lookupProvider);
          *///?} else {
         super(output, Set.of(), List.of(
-                new SubProviderEntry(GT6RailBlockLoot::new, LootContextParamSets.BLOCK), // task p35-rails-31-blocks — the 31 rail rows self-drop
+                new SubProviderEntry(GT6RailBlockLoot::new, LootContextParamSets.BLOCK), // task rails-31-blocks — the 31 rail rows self-drop
                 new SubProviderEntry(GT6BlockLoot::new, LootContextParamSets.BLOCK),
-                new SubProviderEntry(GT6WireBlockLoot::new, LootContextParamSets.BLOCK), // task p9-wire-family-w1 ⑥
-                new SubProviderEntry(GT6AxleBlockLoot::new, LootContextParamSets.BLOCK), // task p12-axle-family
-                new SubProviderEntry(GT6EngineBlockLoot::new, LootContextParamSets.BLOCK), // task p12-engine-diesel
-                new SubProviderEntry(GT6KineticsBlockLoot::new, LootContextParamSets.BLOCK), // task p12-gearbox-transformer
-                new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task p13-burning-box-family
-                new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task p13-boiler-tank
-                new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task p14-dryer-family
-                new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task p16-distillery-family
-                new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task p24-canner-machine
-                new SubProviderEntry(GT6KineticMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-sifter-compressor-wiremill
-                new SubProviderEntry(GT6ProcessMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w1-kinetic-process-ladder
-                new SubProviderEntry(GT6PressBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
-                new SubProviderEntry(GT6ExtruderBlockLoot::new, LootContextParamSets.BLOCK), // task p26-w1-press-extruder-molds
-                new SubProviderEntry(GT6EuHuFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w1-eu-hu-families — the seven eu-hu families
-                new SubProviderEntry(GT6EuSpecialMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-special — the Autocrafter/Lightning/Laminator families
-                new SubProviderEntry(GT6ExoticFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-exotic-energy — the six exotic-energy families
-                new SubProviderEntry(GT6EuCoreMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-eu-core-5tier — the five eu-core families
-                new SubProviderEntry(GT6HuTuPiggybackBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w2-hu-tu-piggyback — the seven hu-tu families
-                new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task p24-lightning-rod
-                new SubProviderEntry(GT6HeatExchangerBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-heat-smelter — the Large Heat Exchanger controller
-                new SubProviderEntry(GT6PartBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-nbtdesign-parts — the part-family expansion
-                new SubProviderEntry(GT6TankBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-tank-valves — the 25 valve self-drops
-                new SubProviderEntry(GT6TurbineDynamoBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-turbine-dynamo — the twelve turbine/dynamo controllers
-                new SubProviderEntry(GT6DistillCrucibleLoot::new, LootContextParamSets.BLOCK), // task p29-w3-distill-crucible — the towers + the crucible ladder
-                new SubProviderEntry(GT6LargeMachineBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w3-large-12 — the twelve large machines
-                new SubProviderEntry(GT6ImplosionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-implosion — the Implosion Compressor controller
-                new SubProviderEntry(GT6GraaggBlockLoot::new, LootContextParamSets.BLOCK), // task p31-graagg — the Von da Graagg controller
-                new SubProviderEntry(GT6BedrockDrillBlockLoot::new, LootContextParamSets.BLOCK), // task p37-bedrock-drill — the Bedrock Mining Drill controller
-                new SubProviderEntry(GT6MassfabBlockLoot::new, LootContextParamSets.BLOCK), // task p31-massfab — the Large Matter Fabricator controller
-                new SubProviderEntry(GT6FusionBlockLoot::new, LootContextParamSets.BLOCK), // task p31-fusion — the Fusion Reactor controller
-                new SubProviderEntry(GT6LogisticsCoreBlockLoot::new, LootContextParamSets.BLOCK), // task p32-logistics-lv3 — the Logistics Core controller
-                new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task p24-act-machine
-                new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task p22-painted-item-domain
-                new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task p19-stoneblocks-render
+                new SubProviderEntry(GT6WireBlockLoot::new, LootContextParamSets.BLOCK), // task wire-family-w1 ⑥
+                new SubProviderEntry(GT6AxleBlockLoot::new, LootContextParamSets.BLOCK), // task axle-family
+                new SubProviderEntry(GT6EngineBlockLoot::new, LootContextParamSets.BLOCK), // task engine-diesel
+                new SubProviderEntry(GT6KineticsBlockLoot::new, LootContextParamSets.BLOCK), // task gearbox-transformer
+                new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task burning-box-family
+                new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task boiler-tank
+                new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task dryer-family
+                new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task distillery-family
+                new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task canner-machine
+                new SubProviderEntry(GT6KineticMachineBlockLoot::new, LootContextParamSets.BLOCK), // task w1-sifter-compressor-wiremill
+                new SubProviderEntry(GT6ProcessMachineBlockLoot::new, LootContextParamSets.BLOCK), // task w1-kinetic-process-ladder
+                new SubProviderEntry(GT6PressBlockLoot::new, LootContextParamSets.BLOCK), // task w1-press-extruder-molds
+                new SubProviderEntry(GT6ExtruderBlockLoot::new, LootContextParamSets.BLOCK), // task w1-press-extruder-molds
+                new SubProviderEntry(GT6EuHuFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task w1-eu-hu-families — the seven eu-hu families
+                new SubProviderEntry(GT6EuSpecialMachineBlockLoot::new, LootContextParamSets.BLOCK), // task w2-eu-special — the Autocrafter/Lightning/Laminator families
+                new SubProviderEntry(GT6ExoticFamiliesBlockLoot::new, LootContextParamSets.BLOCK), // task w2-exotic-energy — the six exotic-energy families
+                new SubProviderEntry(GT6EuCoreMachineBlockLoot::new, LootContextParamSets.BLOCK), // task w2-eu-core-5tier — the five eu-core families
+                new SubProviderEntry(GT6HuTuPiggybackBlockLoot::new, LootContextParamSets.BLOCK), // task w2-hu-tu-piggyback — the seven hu-tu families
+                new SubProviderEntry(GT6LightningRodBlockLoot::new, LootContextParamSets.BLOCK), // task lightning-rod
+                new SubProviderEntry(GT6HeatExchangerBlockLoot::new, LootContextParamSets.BLOCK), // task w3-heat-smelter — the Large Heat Exchanger controller
+                new SubProviderEntry(GT6PartBlockLoot::new, LootContextParamSets.BLOCK), // task w3-nbtdesign-parts — the part-family expansion
+                new SubProviderEntry(GT6TankBlockLoot::new, LootContextParamSets.BLOCK), // task w3-tank-valves — the 25 valve self-drops
+                new SubProviderEntry(GT6TurbineDynamoBlockLoot::new, LootContextParamSets.BLOCK), // task w3-turbine-dynamo — the twelve turbine/dynamo controllers
+                new SubProviderEntry(GT6DistillCrucibleLoot::new, LootContextParamSets.BLOCK), // task w3-distill-crucible — the towers + the crucible ladder
+                new SubProviderEntry(GT6LargeMachineBlockLoot::new, LootContextParamSets.BLOCK), // task w3-large-12 — the twelve large machines
+                new SubProviderEntry(GT6ImplosionBlockLoot::new, LootContextParamSets.BLOCK), // task implosion — the Implosion Compressor controller
+                new SubProviderEntry(GT6GraaggBlockLoot::new, LootContextParamSets.BLOCK), // task graagg — the Von da Graagg controller
+                new SubProviderEntry(GT6BedrockDrillBlockLoot::new, LootContextParamSets.BLOCK), // task bedrock-drill — the Bedrock Mining Drill controller
+                new SubProviderEntry(GT6MassfabBlockLoot::new, LootContextParamSets.BLOCK), // task massfab — the Large Matter Fabricator controller
+                new SubProviderEntry(GT6FusionBlockLoot::new, LootContextParamSets.BLOCK), // task fusion — the Fusion Reactor controller
+                new SubProviderEntry(GT6LogisticsCoreBlockLoot::new, LootContextParamSets.BLOCK), // task logistics-lv3 — the Logistics Core controller
+                new SubProviderEntry(GT6AdvancedCraftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task act-machine
+                new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task painted-item-domain
+                new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task stoneblocks-render
                 new SubProviderEntry(GT6StoneSlabLoot::new, LootContextParamSets.BLOCK), // task debt-slab-gap — the 272 slab tables
-                new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task p24-grass-block
-                new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task p25-c-foam-pipe-spray
-                new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task p26-c-foam-block-family
-                new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task p26-sensors-core
-                new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task p26-storage-static-batch — the 28 self-drops
-                new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task p28-b-fe-converter-machine
-                new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-anvil — the stone anvil pair
-                new SubProviderEntry(GT6EuBridgeBlockLoot::new, LootContextParamSets.BLOCK), // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting ladder
-                new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-lv-transformer
-                new SubProviderEntry(GT6LongDistanceBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
-                new SubProviderEntry(GT6CrystalChargerBlockLoot::new, LootContextParamSets.BLOCK), // task p35-energy-tail-machines
-                new SubProviderEntry(GT6LongDistancePipeBlockLoot::new, LootContextParamSets.BLOCK), // task p35-long-distance-pipes
-                new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task p28-c-ulv-dynamo-row — the T0 self-drop
-                new SubProviderEntry(GT6PortalBlockLoot::new, LootContextParamSets.BLOCK), // task p35-portals-mini-nether-end — the portal pair self-drops
-                new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-t1-trees-nine — the 27 tree blocks
-                new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task p30-w6-rocks-sticks — the surface deco band
-                new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task p32-placeables — the lantern + sandwich self-drops
-                new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task p33-bees-lv3-b-bumbliary — the Bumbliary pair self-drops
-                new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task p30-ore-4-loot — the 4884 ore tables
-                new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST), // task p34-loot-injection — the gt.flawless/gems/misc bag tables
-                new SubProviderEntry(GT6DungeonChestLoot::new, LootContextParamSets.CHEST))); // task p38-dungeon-framework — the gt6:chests/dungeon_chest carrier
+                new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task grass-block
+                new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-pipe-spray
+                new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-block-family
+                new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task sensors-core
+                new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-static-batch — the 28 self-drops
+                new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task b-fe-converter-machine
+                new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task c-anvil — the stone anvil pair
+                new SubProviderEntry(GT6EuBridgeBlockLoot::new, LootContextParamSets.BLOCK), // task w4-eu-bridge — the three EU-bridge families + the Roasting ladder
+                new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task c-ulv-lv-transformer
+                new SubProviderEntry(GT6LongDistanceBlockLoot::new, LootContextParamSets.BLOCK), // task energy-tail-machines
+                new SubProviderEntry(GT6CrystalChargerBlockLoot::new, LootContextParamSets.BLOCK), // task energy-tail-machines
+                new SubProviderEntry(GT6LongDistancePipeBlockLoot::new, LootContextParamSets.BLOCK), // task long-distance-pipes
+                new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task c-ulv-dynamo-row — the T0 self-drop
+                new SubProviderEntry(GT6PortalBlockLoot::new, LootContextParamSets.BLOCK), // task portals-mini-nether-end — the portal pair self-drops
+                new SubProviderEntry(GT6TreeBlockLoot::new, LootContextParamSets.BLOCK), // task w6-t1-trees-nine — the 27 tree blocks
+                new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task w6-rocks-sticks — the surface deco band
+                new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task placeables — the lantern + sandwich self-drops
+                new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task bees-lv3-b-bumbliary — the Bumbliary pair self-drops
+                new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task ore-4-loot — the 4884 ore tables
+                new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST), // task loot-injection — the gt.flawless/gems/misc bag tables
+                new SubProviderEntry(GT6DungeonChestLoot::new, LootContextParamSets.CHEST))); // task dungeon-framework — the gt6:chests/dungeon_chest carrier
         //?}
     }
 
@@ -224,8 +224,8 @@ public final class GT6LootTables extends LootTableProvider {
 
     /**
      * The wire-family block list this second provider owns: the 620 GTWireSpecs variants
-     * (datagen JVM) plus, since task p10-wire-contact-damage (the R1 review handoff), the
-     * 6 redstone-family blocks, plus, since task p11-wire-laser-loot, the laser-family
+     * (datagen JVM) plus, since task wire-contact-damage (the R1 review handoff), the
+     * 6 redstone-family blocks, plus, since task wire-laser-loot, the laser-family
      * blocks — they are the same wire carrier block (GTWireBlock) and breaking a placed
      * one must drop the item, the identical upstream Drops==null self-drop default
      * (PrefixBlock.java:227; the laser carrier is MultiTileEntityWireLaser, the same
@@ -244,7 +244,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The wire-family self-drop provider (task p9-wire-family-w1 ⑥): known-blocks narrowed
+     * The wire-family self-drop provider (task wire-family-w1 ⑥): known-blocks narrowed
      * to {@link #wireLootBlocks()} so the missing-table validation covers exactly this card's
      * surface; the legacy p7 pair keeps shipping without a table (pre-existing state, not
      * this card's delta).
@@ -274,7 +274,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The tree-family loot (task p30-w6-t1-trees-nine): logs and saplings self-drop
+     * The tree-family loot (task w6-t1-trees-nine): logs and saplings self-drop
      * (dropSelf, the wire-family face); leaves carry the upstream chance table —
      * sapling 1-in-50 (coconut 2-in-50) with the fortune scaling arithmetic verbatim
      * (tChance = max(5, 50 - 5&lt;&lt;fortune), BlockTreeLeavesAB.java:110-114), the
@@ -379,7 +379,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The axle-family block list (task p12-axle-family): the 44 material x diameter rows
+     * The axle-family block list (task axle-family): the 44 material x diameter rows
      * (datagen JVM). The upstream axle registers {@code canDrop(0) == F} with the MTE
      * default drop = the block item itself (MultiTileEntityAxle.java:153, the popOff
      * {@code getDrops} path of TileEntityBase04:173-177 — the axle's overspeed break drops
@@ -392,7 +392,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The axle-family self-drop provider (task p12-axle-family — the popOff drop path). */
+    /** The axle-family self-drop provider (task axle-family — the popOff drop path). */
     public static final class GT6AxleBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -418,20 +418,20 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The kinetics-machine block list (task p12-gearbox-transformer): the gearbox + the
+     * The kinetics-machine block list (task gearbox-transformer): the gearbox + the
      * rotation transformer, the wood kinetic rows. The upstream MTEs register
      * {@code canDrop(0) == F} with the default drop = the block item itself
      * (MultiTileEntityGearBox.java:426 / TileEntityBase10EnergyConverter.java:161); the
      * 1.20.1 equivalent is exactly {@code dropSelf} like the axle/wire families.
      */
     public static List<Block> kineticsLootBlocks() {
-        // the water wheel rides the kinetics family (task p28-c-water-wheel): the upstream
+        // the water wheel rides the kinetics family (task c-water-wheel): the upstream
         // wheel registers the MTE default self-drop (canDrop(0) == T, the axle/engine
         // Drops==null semantics); the 1.20.1 equivalent is the same dropSelf
         return List.of(GT6Kinetics.GEARBOX.get(), GT6Kinetics.TRANSFORMER_ROTATION.get(), GT6Kinetics.WATER_WHEEL.get());
     }
 
-    /** The kinetics-machine self-drop provider (task p12-gearbox-transformer). */
+    /** The kinetics-machine self-drop provider (task gearbox-transformer). */
     public static final class GT6KineticsBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -482,7 +482,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The diesel engine family block list (task p12-engine-diesel): the 8 material tiers
+     * The diesel engine family block list (task engine-diesel): the 8 material tiers
      * (datagen JVM). The upstream engine registers the MTE default drop (canDrop(0) == T,
      * MultiTileEntityMotorLiquid.java:224 — the block item itself, the same
      * Drops==null self-drop default as the axle/wire rows); the 1.20.1 equivalent is
@@ -494,7 +494,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The diesel engine family self-drop provider (task p12-engine-diesel). */
+    /** The diesel engine family self-drop provider (task engine-diesel). */
     public static final class GT6EngineBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -520,7 +520,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The burning-box family block list (task p13-burning-box-family): all 97 rows
+     * The burning-box family block list (task burning-box-family): all 97 rows
      * (Brick + Solid + Liquid + Gas + FluidBed). The upstream machines carry the MTE
      * default self-drop (canDrop(0) == T across the generator family); the 1.20.1
      * equivalent is exactly {@code dropSelf}.
@@ -533,7 +533,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The burning-box family self-drop provider (task p13-burning-box-family). */
+    /** The burning-box family self-drop provider (task burning-box-family). */
     public static final class GT6BurningBoxBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -559,7 +559,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The boiler-tank family block list (task p13-boiler-tank): all 26 rows. The upstream
+     * The boiler-tank family block list (task boiler-tank): all 26 rows. The upstream
      * machines carry the MTE default self-drop (canDrop :269 returns F for the TANK
      * inventory — the boiler has no item inventory at all; the block itself drops, the
      * vanilla {@code dropSelf} equivalent).
@@ -572,7 +572,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The boiler-tank family self-drop provider (task p13-boiler-tank). */
+    /** The boiler-tank family self-drop provider (task boiler-tank). */
     public static final class GT6BoilerTankBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -598,7 +598,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The dryer-family block list (task p14-dryer-family): the four Dryer rows
+     * The dryer-family block list (task dryer-family): the four Dryer rows
      * (Loader_MultiTileEntities.java:1477-1480). The upstream machines carry the MTE
      * default self-drop (canDrop(0) == T — the block item itself, the same Drops==null
      * default as the boiler/burning-box families); the 1.20.1 equivalent is exactly
@@ -612,7 +612,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The dryer-family self-drop provider (task p14-dryer-family; the paint carry = task p22-painted-item-domain). */
+    /** The dryer-family self-drop provider (task dryer-family; the paint carry = task painted-item-domain). */
     public static final class GT6DryerBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -638,7 +638,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The distillery-family block list (task p16-distillery-family): the four Distillery
+     * The distillery-family block list (task distillery-family): the four Distillery
      * rows (Loader_MultiTileEntities.java:1398-1401) — the dryerLootBlocks shape verbatim,
      * the MTE default self-drop (the same Drops==null default).
      */
@@ -650,7 +650,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The distillery-family self-drop provider (task p16-distillery-family; the paint carry = task p22-painted-item-domain). */
+    /** The distillery-family self-drop provider (task distillery-family; the paint carry = task painted-item-domain). */
     public static final class GT6DistilleryBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -676,7 +676,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The canner-family block list (task p24-canner-machine): the four Canner rows
+     * The canner-family block list (task canner-machine): the four Canner rows
      * (Loader_MultiTileEntities.java:1379-1382) — the distilleryLootBlocks shape verbatim,
      * the MTE default self-drop (the same Drops==null default).
      */
@@ -685,14 +685,14 @@ public final class GT6LootTables extends LootTableProvider {
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.CANNER_ROWS) {
             rBlocks.add(gregtech6.registry.GTMachines.CANNER_BLOCKS_BY_PATH.get(tRow.path()).get());
         }
-        // task p28-c-ulv-machine-ladder — the ULV Canner rung joins the family table
+        // task c-ulv-machine-ladder — the ULV Canner rung joins the family table
         for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.CANNER_ULV_ROWS) {
             rBlocks.add(gregtech6.registry.GTMachines.CANNER_BLOCKS_BY_PATH.get(tRow.path()).get());
         }
         return rBlocks;
     }
 
-    /** The canner-family self-drop provider (task p24-canner-machine; the paint carry = task p22-painted-item-domain). */
+    /** The canner-family self-drop provider (task canner-machine; the paint carry = task painted-item-domain). */
     public static final class GT6CannerBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -718,7 +718,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The eu-hu families block list (task p29-w1-eu-hu-families): the 25 blocks of the
+     * The eu-hu families block list (task w1-eu-hu-families): the 25 blocks of the
      * seven families (Mixer + ElectricMixer + ElectricLoom + ElectricSifter + Boxinator +
      * Unboxinator 4 tiers each, plus the single-variant Fermenter) — the cannerLootBlocks
      * shape verbatim, the MTE default self-drop.
@@ -735,7 +735,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The eu-hu families self-drop provider (task p29-w1-eu-hu-families; the paint carry = task p22-painted-item-domain). */
+    /** The eu-hu families self-drop provider (task w1-eu-hu-families; the paint carry = task painted-item-domain). */
     public static final class GT6EuHuFamiliesBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -762,7 +762,7 @@ public final class GT6LootTables extends LootTableProvider {
 
     /**
     /**
-     * The eu-special families block list (task p29-w2-eu-special): the 14 blocks of the
+     * The eu-special families block list (task w2-eu-special): the 14 blocks of the
      * three families (Autocrafter + Lightning Processor 5 tiers each — the first _t5
      * rungs — plus the Laminator 4 tiers) — the euHuFamiliesLootBlocks shape verbatim,
      * the MTE default self-drop.
@@ -775,7 +775,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The eu-special families self-drop provider (task p29-w2-eu-special; the paint carry = task p22-painted-item-domain). */
+    /** The eu-special families self-drop provider (task w2-eu-special; the paint carry = task painted-item-domain). */
     public static final class GT6EuSpecialMachineBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -801,7 +801,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The exotic-energy families block list (task p29-w2-exotic-energy): the 30 blocks of
+     * The exotic-energy families block list (task w2-exotic-energy): the 30 blocks of
      * the six families (Polarizer/MagneticSeparator/LaserEngraver/LaserWelder/Freezer/
      * CryoMixer, 5 tiers each, Loader_MultiTileEntities.java :1418-1422/:1470-1474/
      * :1483-1487/:1490-1494/:1621-1625/:1628-1632) — the euHuFamiliesLootBlocks shape
@@ -815,12 +815,12 @@ public final class GT6LootTables extends LootTableProvider {
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.laserWelderBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.freezerBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.cryoMixerBlockArray());
-        // task p31-massfab — the small Matter Fabricator 5-ladder (the exotic shape)
+        // task massfab — the small Matter Fabricator 5-ladder (the exotic shape)
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.massfabSmallBlockArray());
-        // task p32-qu-scanner-replicator — the QU machine pair (the exotic shape)
+        // task qu-scanner-replicator — the QU machine pair (the exotic shape)
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.molecularScannerBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.replicatorBlockArray());
-        // task p34-machines-burner-plantalyzer — the Burner Mixer 4-ladder + the
+        // task machines-burner-plantalyzer — the Burner Mixer 4-ladder + the
         // Plantalyzer 5-ladder (the same MTE default self-drop, the tail-append EDIT ruling)
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.burnerMixerBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.plantalyzerBlockArray());
@@ -828,7 +828,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The eu-core families block list (task p29-w2-eu-core-5tier): the 25 blocks of the
+     * The eu-core families block list (task w2-eu-core-5tier): the 25 blocks of the
      * five EU 5-tier families (Electrolyzer/Injector/Printer/ScannerVisuals/Slicer,
      * Loader_MultiTileEntities.java :1336-1340/:1443-1447/:1450-1454/:1457-1461/
      * :1525-1529) — the euHuFamiliesLootBlocks shape verbatim, the MTE default self-drop.
@@ -843,7 +843,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The eu-core families self-drop provider (task p29-w2-eu-core-5tier; the paint carry = task p22-painted-item-domain). */
+    /** The eu-core families self-drop provider (task w2-eu-core-5tier; the paint carry = task painted-item-domain). */
     public static final class GT6EuCoreMachineBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -868,7 +868,7 @@ public final class GT6LootTables extends LootTableProvider {
         }
     }
 
-    /** The exotic-energy families self-drop provider (task p29-w2-exotic-energy; the paint carry = task p22-painted-item-domain). */
+    /** The exotic-energy families self-drop provider (task w2-exotic-energy; the paint carry = task painted-item-domain). */
     public static final class GT6ExoticFamiliesBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -894,7 +894,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The hu-tu piggyback block list (task p29-w2-hu-tu-piggyback): the 16 blocks of the
+     * The hu-tu piggyback block list (task w2-hu-tu-piggyback): the 16 blocks of the
      * seven families (SteamCracker/CatalyticCracker 4-ladders + the TU four singles +
      * the Loom 4-ladder) — the euHuFamiliesLootBlocks shape verbatim, the MTE default
      * self-drop.
@@ -908,12 +908,12 @@ public final class GT6LootTables extends LootTableProvider {
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.bathBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.autoclaveBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.loomBlockArray());
-        // task p29-w3-heat-smelter — the Smelter 4-ladder + the Melter single join the
+        // task w3-heat-smelter — the Smelter 4-ladder + the Melter single join the
         // machine self-drop provider (the same MTE default self-drop, the tail-append
         // EDIT ruling: the provider is the generic machine self-drop walker)
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.smelterBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.melterBlockArray());
-        // task p34-machines-bumblelyzer-crucible — the Bumblelyzer 5-ladder + the
+        // task machines-bumblelyzer-crucible — the Bumblelyzer 5-ladder + the
         // Crystallisation Crucible 4-ladder join the machine self-drop provider (the same
         // MTE default self-drop, the tail-append EDIT ruling)
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.bumblelyzerBlockArray());
@@ -921,7 +921,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The hu-tu piggyback self-drop provider (task p29-w2-hu-tu-piggyback; the paint carry = task p22-painted-item-domain). */
+    /** The hu-tu piggyback self-drop provider (task w2-hu-tu-piggyback; the paint carry = task painted-item-domain). */
     public static final class GT6HuTuPiggybackBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -947,7 +947,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The W1 Kinetic trio block list (task p26-w1-sifter-compressor-wiremill): the twelve
+     * The W1 Kinetic trio block list (task w1-sifter-compressor-wiremill): the twelve
      * Sifter/Compressor/Wiremill rows (Loader_MultiTileEntities.java :1312-1315/
      * :1343-1346/:1373-1376) — the cannerLootBlocks shape verbatim, the MTE default
      * self-drop.
@@ -957,14 +957,14 @@ public final class GT6LootTables extends LootTableProvider {
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.sifterBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.compressorBlockArray());
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.wiremillBlockArray());
-        // task p28-c-ulv-machine-ladder — the sifter/wiremill ULV rungs ride the family
+        // task c-ulv-machine-ladder — the sifter/wiremill ULV rungs ride the family
         // map walks above (the BY_PATH tables carry them); the Rolling Mill family joins
         // here (its single-row BET shares the TileEntityBasicMachine loot shape)
         java.util.Collections.addAll(rBlocks, gregtech6.registry.GTMachines.rollingmillBlockArray());
         return rBlocks;
     }
 
-    /** The W1 Kinetic trio self-drop provider (task p26-w1-sifter-compressor-wiremill; the paint carry = task p22-painted-item-domain). */
+    /** The W1 Kinetic trio self-drop provider (task w1-sifter-compressor-wiremill; the paint carry = task painted-item-domain). */
     public static final class GT6KineticMachineBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -990,7 +990,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The P29 W1 process-family block list (task p29-w1-kinetic-process-ladder): the
+     * The P29 W1 process-family block list (task w1-kinetic-process-ladder): the
      * twenty-four Buzzsaw/Squeezer/Centrifuge/Sluice/Sanding Machine/Pressure Washer rows
      * (Loader_MultiTileEntities.java :1318-1321/:1324-1327/:1330-1333/:1464-1467/
      * :1589-1592/:1615-1618) — the kineticLootBlocks shape verbatim, the MTE default
@@ -1007,7 +1007,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The P29 W1 process-family self-drop provider (task p29-w1-kinetic-process-ladder; the paint carry = task p22-painted-item-domain). */
+    /** The P29 W1 process-family self-drop provider (task w1-kinetic-process-ladder; the paint carry = task painted-item-domain). */
     public static final class GT6ProcessMachineBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -1033,7 +1033,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The press-family block list (task p26-w1-press-extruder-molds): the four Press rows
+     * The press-family block list (task w1-press-extruder-molds): the four Press rows
      * (Loader_MultiTileEntities.java:1425-1428) — the cannerLootBlocks shape verbatim, the
      * MTE default self-drop (the same Drops==null default).
      */
@@ -1045,7 +1045,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The press-family self-drop provider (task p26-w1-press-extruder-molds; the paint carry = task p22-painted-item-domain). */
+    /** The press-family self-drop provider (task w1-press-extruder-molds; the paint carry = task painted-item-domain). */
     public static final class GT6PressBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -1071,7 +1071,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The extruder-family block list (task p26-w1-press-extruder-molds): the four Extruder
+     * The extruder-family block list (task w1-press-extruder-molds): the four Extruder
      * rows (Loader_MultiTileEntities.java:1406-1409) — the pressLootBlocks shape verbatim,
      * the MTE default self-drop (the same Drops==null default).
      */
@@ -1083,7 +1083,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The extruder-family self-drop provider (task p26-w1-press-extruder-molds; the paint carry = task p22-painted-item-domain). */
+    /** The extruder-family self-drop provider (task w1-press-extruder-molds; the paint carry = task painted-item-domain). */
     public static final class GT6ExtruderBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -1109,7 +1109,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The Lightning Rod family block list (task p24-lightning-rod): the controller plus the
+     * The Lightning Rod family block list (task lightning-rod): the controller plus the
      * three part blocks (Loader :1282/:1151/:1168/:1179) — the canner shape verbatim. The
      * upstream part MTEs and the controller all self-drop (the MTE default); NOTE this is
      * the FIRST loot-tabled multiblock family — the older coke-oven/boiler/wall blocks
@@ -1124,12 +1124,12 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The heat-exchanger block list (task p29-w3-heat-smelter): the one controller block. */
+    /** The heat-exchanger block list (task w3-heat-smelter): the one controller block. */
     public static List<Block> heatExchangerLootBlocks() {
         return List.of(gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_BLOCK.get());
     }
 
-    /** The heat-exchanger self-drop provider (task p29-w3-heat-smelter; the lightning-rod shape). */
+    /** The heat-exchanger self-drop provider (task w3-heat-smelter; the lightning-rod shape). */
     public static final class GT6HeatExchangerBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -1154,7 +1154,7 @@ public final class GT6LootTables extends LootTableProvider {
         }
     }
 
-    /** The Lightning Rod family self-drop provider (task p24-lightning-rod; plain dropSelf, no paint on the part BEs). */
+    /** The Lightning Rod family self-drop provider (task lightning-rod; plain dropSelf, no paint on the part BEs). */
     public static final class GT6LightningRodBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -1180,7 +1180,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The Advanced Crafting Table block list (task p24-act-machine): the single-variant
+     * The Advanced Crafting Table block list (task act-machine): the single-variant
      * row (Loader_MultiTileEntities.java:136) — the cannerLootBlocks shape over one
      * block, the MTE default self-drop.
      */
@@ -1188,7 +1188,7 @@ public final class GT6LootTables extends LootTableProvider {
         return List.of(gregtech6.registry.GTMachines.ADVANCED_CRAFTING_TABLE.get());
     }
 
-    /** The ACT self-drop provider (task p24-act-machine; the paint carry = task p22-painted-item-domain). */
+    /** The ACT self-drop provider (task act-machine; the paint carry = task painted-item-domain). */
     public static final class GT6AdvancedCraftingTableBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -1214,7 +1214,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The FE converter block list (task p28-b-fe-converter-machine): the single ULV
+     * The FE converter block list (task b-fe-converter-machine): the single ULV
      * machine row — the ACT list shape over one block, self-drop (the MTE default). The
      * fe_source fixture deliberately has NO loot row (the fixture rule, the fe_battery
      * precedent — RCON-driven, not survival-obtainable).
@@ -1223,7 +1223,7 @@ public final class GT6LootTables extends LootTableProvider {
         return List.of(gregtech6.registry.GT6FeConverters.FE_CONVERTER.get());
     }
 
-    /** The FE converter self-drop provider (task p28-b-fe-converter-machine). */
+    /** The FE converter self-drop provider (task b-fe-converter-machine). */
     public static final class GT6FeConverterBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -1257,7 +1257,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The Crystal Charger block list (task p35-energy-tail-machines): the 20-row LU family, self-drop (the battery-box storage shape). */
+    /** The Crystal Charger block list (task energy-tail-machines): the 20-row LU family, self-drop (the battery-box storage shape). */
     public static List<Block> crystalChargerLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();
         for (gregtech6.registry.GT6CrystalChargers.ChargerRow tRow : gregtech6.registry.GT6CrystalChargers.ROWS) {
@@ -1266,7 +1266,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The Crystal Charger self-drop provider (task p35-energy-tail-machines, the transformer shape verbatim). */
+    /** The Crystal Charger self-drop provider (task energy-tail-machines, the transformer shape verbatim). */
     public static final class GT6CrystalChargerBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -1291,7 +1291,7 @@ public final class GT6LootTables extends LootTableProvider {
         }
     }
 
-    /** The Long Distance block list (task p35-energy-tail-machines): the 5 LD transformer endpoints + the 16 LD wire metas, self-drop (the MTE Drops default / the wire family shape). */
+    /** The Long Distance block list (task energy-tail-machines): the 5 LD transformer endpoints + the 16 LD wire metas, self-drop (the MTE Drops default / the wire family shape). */
     public static List<Block> longDistanceLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();
         for (gregtech6.registry.GT6LongDistanceTransformers.LDRow tRow : gregtech6.registry.GT6LongDistanceTransformers.ROWS) {
@@ -1303,7 +1303,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The Long Distance self-drop provider (task p35-energy-tail-machines, the transformer shape verbatim). */
+    /** The Long Distance self-drop provider (task energy-tail-machines, the transformer shape verbatim). */
     public static final class GT6LongDistanceBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -1328,14 +1328,14 @@ public final class GT6LootTables extends LootTableProvider {
         }
     }
 
-    /** The electric-transformer self-drop provider (task p28-c-ulv-lv-transformer, the FE-converter shape verbatim). */
+    /** The electric-transformer self-drop provider (task c-ulv-lv-transformer, the FE-converter shape verbatim). */
     /**
-     * The eu-bridge block list (task p29-w4-eu-bridge): the Roasting 4-ladder (the MTE
+     * The eu-bridge block list (task w4-eu-bridge): the Roasting 4-ladder (the MTE
      * default self-drop with the paint carry, the smelter shape) + the 15 EU-bridge
      * converter rungs (plain self-drop — the dynamo/transformer shape, the converters
      * carry no paint face) + the 10 laser-domain converter rungs of task
-     * p32-qu-laser-domain (the same plain self-drop posture over the same reused carrier)
-     * + the Magic Field Absorber of task p32-magic-absorber (the same plain self-drop).
+     * qu-laser-domain (the same plain self-drop posture over the same reused carrier)
+     * + the Magic Field Absorber of task magic-absorber (the same plain self-drop).
      */
     public static List<Block> euBridgeLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();
@@ -1353,7 +1353,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The eu-bridge self-drop provider (task p29-w4-eu-bridge; the Roasting paint carry = task p22-painted-item-domain). */
+    /** The eu-bridge self-drop provider (task w4-eu-bridge; the Roasting paint carry = task painted-item-domain). */
     public static final class GT6EuBridgeBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -1409,7 +1409,7 @@ public final class GT6LootTables extends LootTableProvider {
         }
     }
 
-    /** The LD pipe block list (task p35-long-distance-pipes): the 16 wire metas + the two endpoints, self-drop (the transformer storage shape). */
+    /** The LD pipe block list (task long-distance-pipes): the 16 wire metas + the two endpoints, self-drop (the transformer storage shape). */
     public static List<Block> longDistancePipeLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();
         for (int tMeta = 0; tMeta < 16; tMeta++) rBlocks.add(gregtech6.registry.GT6LongDistPipes.wireBlockOf(tMeta));
@@ -1418,7 +1418,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The LD pipe self-drop provider (task p35-long-distance-pipes, the transformer shape verbatim). */
+    /** The LD pipe self-drop provider (task long-distance-pipes, the transformer shape verbatim). */
     public static final class GT6LongDistancePipeBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -1444,7 +1444,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The anvil block list (task p28-c-anvil): the two stone anvil rows — the FE
+     * The anvil block list (task c-anvil): the two stone anvil rows — the FE
      * converter list shape over two blocks, self-drop (the MTE Drops default; the
      * working-surface content pop rides the block's onRemove face, not the loot table).
      */
@@ -1454,7 +1454,7 @@ public final class GT6LootTables extends LootTableProvider {
                 gregtech6.registry.GT6Anvils.BLACKSTONE_ANVIL.get());
     }
 
-    /** The anvil self-drop provider (task p28-c-anvil, the GT6FeConverterBlockLoot form). */
+    /** The anvil self-drop provider (task c-anvil, the GT6FeConverterBlockLoot form). */
     public static final class GT6AnvilBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -1480,7 +1480,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The Electric Dynamo T0 row block list (task p28-c-ulv-dynamo-row): the single ULV
+     * The Electric Dynamo T0 row block list (task c-ulv-dynamo-row): the single ULV
      * self-drop — the feConverterLootBlocks list shape over one block. The upstream dynamo
      * rows carry the MTE default self-drop (canDrop = F with the Base10 default drop =
      * the block item itself, TileEntityBase10EnergyConverter.java:161 — the
@@ -1493,12 +1493,12 @@ public final class GT6LootTables extends LootTableProvider {
         return List.of(gregtech6.registry.GT6ElectricDynamos.ELECTRIC_DYNAMO_ULV.get());
     }
 
-    /** The portal self-drop pair (task p35-portals-mini-nether-end; the dynamo-ULV plain dropSelf form). */
+    /** The portal self-drop pair (task portals-mini-nether-end; the dynamo-ULV plain dropSelf form). */
     public static List<Block> portalLootBlocks() {
         return List.of(gregtech6.registry.GT6Portals.PORTAL_NETHER.get(), gregtech6.registry.GT6Portals.PORTAL_END.get());
     }
 
-    /** The portal self-drop provider (task p35-portals-mini-nether-end). */
+    /** The portal self-drop provider (task portals-mini-nether-end). */
     public static final class GT6PortalBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -1523,7 +1523,7 @@ public final class GT6LootTables extends LootTableProvider {
         }
     }
 
-    /** The Electric Dynamo T0 self-drop provider (task p28-c-ulv-dynamo-row). */
+    /** The Electric Dynamo T0 self-drop provider (task c-ulv-dynamo-row). */
     public static final class GT6DynamoUlvBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -1550,7 +1550,7 @@ public final class GT6LootTables extends LootTableProvider {
 
     /**
      * The paint-carrying self-drop table — the machine-domain drop form (task
-     * p22-painted-item-domain): the vanilla {@code createSingleItemTable} shape verbatim
+     * painted-item-domain): the vanilla {@code createSingleItemTable} shape verbatim
      * (BlockLootSubProvider.java:108-111 — one pool, rolls 1, the {@code survives_explosion}
      * condition, one item entry) plus ONE entry-level function carrying the placed-paint
      * round trip: {@code copy_nbt} from the block entity into the dropped stack's
@@ -1592,7 +1592,7 @@ public final class GT6LootTables extends LootTableProvider {
      * {@code {"function": "minecraft:copy_nbt", "source": "block_entity", "ops":
      * [{"source": "'gt.color'", "target": "BlockEntityTag.'gt.color'", "op": "replace"}, ...]}}.
      *
-     * <p>QUOTED DOT KEYS (task p25-paint-loot-dotkey-fix): NbtPathArgument splits a path
+     * <p>QUOTED DOT KEYS (task paint-loot-dotkey-fix): NbtPathArgument splits a path
      * on {@code '.'} (vanilla 1.20.1 NbtPathArgument.java:70-73 {@code expect('.')} between
      * nodes; :140 {@code isAllowedInUnquotedName} — a dot is NOT a name character), so the
      * raw dotted key {@code gt.color} parsed as the compound traversal root→gt→color and
@@ -1634,8 +1634,8 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The machine-family block list (task p22-painted-item-domain; the Oven ladder joins in
-     * task p27-oven-heat-t-ladder): the 16 machine-domain
+     * The machine-family block list (task painted-item-domain; the Oven ladder joins in
+     * task oven-heat-t-ladder): the 16 machine-domain
      * blocks whose loot this NEW provider owns — the oven ladder (4) + the shredder/crusher/lathe
      * ladders (4 each = 12), the {@code GTMachines.paintableBlockArray()} census rows the
      * dryer/distillery providers do NOT cover. Pre-existing state: these 13 shipped
@@ -1647,7 +1647,7 @@ public final class GT6LootTables extends LootTableProvider {
     public static List<Block> machineLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();
         rBlocks.add(gregtech6.registry.GTMachines.OVEN.get());
-        rBlocks.add(gregtech6.registry.GTMachines.OVEN_T2.get()); // task p27-oven-heat-t-ladder
+        rBlocks.add(gregtech6.registry.GTMachines.OVEN_T2.get()); // task oven-heat-t-ladder
         rBlocks.add(gregtech6.registry.GTMachines.OVEN_T3.get());
         rBlocks.add(gregtech6.registry.GTMachines.OVEN_T4.get());
         for (RegistryObject<Block> tBlock : java.util.List.of(
@@ -1659,7 +1659,7 @@ public final class GT6LootTables extends LootTableProvider {
                 gregtech6.registry.GTMachines.LATHE_T3, gregtech6.registry.GTMachines.LATHE_T4)) {
             rBlocks.add(tBlock.get());
         }
-        // task p28-c-ulv-machine-ladder — the shredder/crusher ULV rungs (the row-carrier
+        // task c-ulv-machine-ladder — the shredder/crusher ULV rungs (the row-carrier
         // blocks of the legacy tierOf families; the sifter/wiremill/canner/rollingmill ULV
         // rungs ride their own family providers above)
         rBlocks.add(gregtech6.registry.GTMachines.SHREDDER_ULV.get());
@@ -1668,7 +1668,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The machine-family provider (task p22-painted-item-domain): every block in
+     * The machine-family provider (task painted-item-domain): every block in
      * {@link #machineLootBlocks()} drops its own item carrying the paint round-trip
      * function ({@link #paintSelfTable}).
      */
@@ -1697,7 +1697,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The stone-family block list (task p21-stoneblocks-16item-registry-split): the 272
+     * The stone-family block list (task stoneblocks-16item-registry-split): the 272
      * per-pair GTStoneBlock registrations ({@link gregtech6.registry.GTStoneBlocks#blockArray()},
      * stone-major in CS.java:1668 order, variant-major in meta order). Upstream drops come
      * from the BlockStones.getDrops override (BlockStones.java:731): {@code ST.make(this, 1,
@@ -1707,7 +1707,7 @@ public final class GT6LootTables extends LootTableProvider {
      * BlockItem per (stone, variant), the variant-0 block's table drops the SAME STONE's
      * COBBL variant item (a single pool, {@code dropOther}) and the other 271 blocks
      * {@code dropSelf} — the :731 line direct-translated, no collapse left. Task
-     * p21-chisel-drop-conversion adds the mining-tool face on top: the ten non-identity
+     * chisel-drop-conversion adds the mining-tool face on top: the ten non-identity
      * chisel mappings rewrite their table into the {@link GT6StoneBlockLoot#chiselDispatchTable}
      * dispatch (the variant-0 baseline item stays the same stone's COBBL item), the six
      * identity mappings stay pass-through on this form. Each table lives
@@ -1718,8 +1718,8 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The stone-family provider (task p19-stoneblocks-render; the chisel mining-drop face =
-     * task p21-chisel-drop-conversion). Per block, one of two forms:
+     * The stone-family provider (task stoneblocks-render; the chisel mining-drop face =
+     * task chisel-drop-conversion). Per block, one of two forms:
      *
      * <ul>
      * <li>identity chisel mapping ({@link #chiselTarget} null, variants 1,2,6,8,9,11 — the
@@ -1866,7 +1866,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The grass-family block list (task p24-grass-block): the 6 GT grass variants, the
+     * The grass-family block list (task grass-block): the 6 GT grass variants, the
      * registration walk order.
      */
     public static List<Block> grassLootBlocks() {
@@ -1876,7 +1876,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The grass-family loot provider (task p24-grass-block) — the upstream
+     * The grass-family loot provider (task grass-block) — the upstream
      * {@code BlockGrass.getDrops} shape (BlockGrass.java:105 returns vanilla dirt x1 with
      * the fortune parameter IGNORED) plus the silk-touch self-drop (upstream
      * canSilkHarvest = T, BlockBase.java:109, {@code createStackedBlock} = self with its
@@ -1919,7 +1919,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The fluid-pipe family block list (task p25-c-foam-pipe-spray spec ⑦): the two wood
+     * The fluid-pipe family block list (task c-foam-pipe-spray spec ⑦): the two wood
      * tiers. Pre-existing state: the pipes shipped TABLE-LESS (breaking dropped nothing —
      * the same gap the p22 machine census closed for its 13); the foam NBT round-trip
      * needs a real drop, so this card gives them the upstream MTE default self-drop WITH
@@ -1932,7 +1932,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The pipe-family self-drop provider (task p25-c-foam-pipe-spray; the paint carry = the
+     * The pipe-family self-drop provider (task c-foam-pipe-spray; the paint carry = the
      * p22 painted-item-domain form — the pipe BE rides the 03 base IPaintableTE stratum, so
      * a paint-less drop would reintroduce the exact regression p22 closed).
      */
@@ -1993,7 +1993,7 @@ public final class GT6LootTables extends LootTableProvider {
      * BE writes — the op silently no-ops. The literal key rides as a quoted segment
      * {@code 'gt.foamed'} (parseNode :81-82 — a quote-opening node reads a full string).
      * The p22 {@link #paintSelfTable} ops shared this defect (dotted, unquoted) — fixed
-     * in the same rebase window by task p25-paint-loot-dotkey-fix (this file's
+     * in the same rebase window by task paint-loot-dotkey-fix (this file's
      * {@link #paintCopyNbt} + the shared {@link #quoted} helper).
      */
     private static LootItemFunction.Builder foamPaintCopyNbt() {
@@ -2026,11 +2026,11 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     // -------------------------------------------------------------------------
-    // task p26-c-foam-block-family — the C-Foam block family band
+    // task c-foam-block-family — the C-Foam block family band
     // -------------------------------------------------------------------------
 
     /**
-     * The DRIED self-drop pair (task p26-c-foam-block-family): upstream BlockCFoam has no
+     * The DRIED self-drop pair (task c-foam-block-family): upstream BlockCFoam has no
      * getDrops override (BlockCFoam.java:37-76 — the vanilla default self-drop, the same
      * Drops==null form as the wire/axle families). NO foam NBT carry: the dried block's
      * item is the UNCOLOURED ladder collapse (the GT6FoamBlocks registry doc — the placed
@@ -2086,7 +2086,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The static storage batch block list (task p26-storage-static-batch): the 28
+     * The static storage batch block list (task storage-static-batch): the 28
      * GT6StaticStorages rows — the loader MTE default self-drop (Drops==null,
      * PrefixBlock.java:227) over the locker/drawer/safe/bookshelf/bottlecrate ladders,
      * the cannerLootBlocks shape verbatim.
@@ -2100,7 +2100,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The sensor-family sub-provider (task p26-sensors-core): the three pioneer sensor
+     * The sensor-family sub-provider (task sensors-core): the three pioneer sensor
      * blocks self-drop (the axle/wire family form — the upstream MTE default, the block
      * itself drops; a sensor carries no item inventory, canDrop :291 answers F for the
      * slots and the tile drops as its block).
@@ -2139,7 +2139,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The static storage self-drop provider (task p26-storage-static-batch): one
+     * The static storage self-drop provider (task storage-static-batch): one
      * unconditional self-drop per row (the vanilla survives_explosion condition, the
      * GT6BlockLoot convention). NOTE the safe's dungeon-loot seam does NOT live here —
      * the safe marker resolves ANY loot table id at runtime through the LootDataManager
@@ -2176,7 +2176,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The part-family expansion block list (task p29-w3-nbtdesign-parts ③): the 28
+     * The part-family expansion block list (task w3-nbtdesign-parts ③): the 28
      * new-form part blocks (metal walls 10 — the tungsten wall already rides the
      * Lightning Rod provider — plus coils 5, parts 6, ventilation, processor units 5,
      * the wood wall). The upstream part MTEs self-drop (the MTE default). NOTE the six
@@ -2193,7 +2193,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The turbine/dynamo controller block list (task p29-w3-turbine-dynamo): the twelve
+     * The turbine/dynamo controller block list (task w3-turbine-dynamo): the twelve
      * Large Turbine + Large Dynamo mains (Loader_MultiTileEntities.java:1254-1257/
      * :1259-1262/:1264-1267). The upstream machines carry the MTE default self-drop (the
      * same Drops==null default as the boiler/burning-box families); the 1.20.1 equivalent
@@ -2213,7 +2213,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The turbine/dynamo controller self-drop provider (task p29-w3-turbine-dynamo; the part-family provider shape). */
+    /** The turbine/dynamo controller self-drop provider (task w3-turbine-dynamo; the part-family provider shape). */
     public static final class GT6TurbineDynamoBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -2238,7 +2238,7 @@ public final class GT6LootTables extends LootTableProvider {
         }
     }
 
-    /** The part-family self-drop provider (task p29-w3-nbtdesign-parts; the lightning-rod provider shape). */
+    /** The part-family self-drop provider (task w3-nbtdesign-parts; the lightning-rod provider shape). */
     public static final class GT6PartBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -2263,7 +2263,7 @@ public final class GT6LootTables extends LootTableProvider {
         }
     }
 
-    /** The Tank Main Valve block list (task p29-w3-tank-valves): the 25 valve blocks (the upstream MTE default self-drop). */
+    /** The Tank Main Valve block list (task w3-tank-valves): the 25 valve blocks (the upstream MTE default self-drop). */
     public static List<Block> tankLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();
         for (var tRow : gregtech6.registry.GT6Tanks.ROWS) {
@@ -2272,7 +2272,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The Tank Main Valve self-drop provider (task p29-w3-tank-valves; the part-family provider shape). */
+    /** The Tank Main Valve self-drop provider (task w3-tank-valves; the part-family provider shape). */
     public static final class GT6TankBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -2298,7 +2298,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
 /**
-     * The distill-crucible family block list (task p29-w3-distill-crucible): the two tower
+     * The distill-crucible family block list (task w3-distill-crucible): the two tower
      * controllers + the SEVEN new crucible rungs and their walls (self-drops, the MTE
      * default). The pre-existing crucible_steel lootless gap CARRIES (the P26 state — not
      * this card's delta, the dense-wall gap precedent).
@@ -2318,7 +2318,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The distill-crucible self-drop provider (task p29-w3-distill-crucible; the part provider shape). */
+    /** The distill-crucible self-drop provider (task w3-distill-crucible; the part provider shape). */
     public static final class GT6DistillCrucibleLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -2344,7 +2344,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The twelve large machines (task p29-w3-large-12) — the upstream large-machine MTEs
+     * The twelve large machines (task w3-large-12) — the upstream large-machine MTEs
      * self-drop (the MTE default; the controllers carry no item inventory face this port
      * drops — the gated item handler is the BE's, not the block drop's), the vanilla
      * {@code dropSelf} equivalent.
@@ -2357,12 +2357,12 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The Fusion Reactor self-drop list (task p31-fusion — the massfabLootBlocks singleton form). */
+    /** The Fusion Reactor self-drop list (task fusion — the massfabLootBlocks singleton form). */
     public static List<Block> fusionLootBlocks() {
         return List.of(gregtech6.registry.GTMultiBlocks.FUSION_REACTOR.get());
     }
 
-    /** The Fusion Reactor self-drop provider (task p31-fusion; the massfab provider shape). */
+    /** The Fusion Reactor self-drop provider (task fusion; the massfab provider shape). */
     public static final class GT6FusionBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -2387,12 +2387,12 @@ public final class GT6LootTables extends LootTableProvider {
         }
     }
 
-    /** The Logistics Core self-drop list (task p32-logistics-lv3 — the massfabLootBlocks singleton form). */
+    /** The Logistics Core self-drop list (task logistics-lv3 — the massfabLootBlocks singleton form). */
     public static List<Block> logisticsCoreLootBlocks() {
         return List.of(gregtech6.registry.GT6Logistics.LOGISTICS_CORE.get());
     }
 
-    /** The Logistics Core self-drop provider (task p32-logistics-lv3; the massfab provider shape). */
+    /** The Logistics Core self-drop provider (task logistics-lv3; the massfab provider shape). */
     public static final class GT6LogisticsCoreBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -2417,12 +2417,12 @@ public final class GT6LootTables extends LootTableProvider {
         }
     }
 
-    /** The Large Matter Fabricator self-drop list (task p31-massfab — the graaggLootBlocks singleton form). */
+    /** The Large Matter Fabricator self-drop list (task massfab — the graaggLootBlocks singleton form). */
     public static List<Block> massfabLootBlocks() {
         return List.of(gregtech6.registry.GTMultiBlocks.MASSFAB.get());
     }
 
-    /** The Large Matter Fabricator self-drop provider (task p31-massfab; the graagg provider shape). */
+    /** The Large Matter Fabricator self-drop provider (task massfab; the graagg provider shape). */
     public static final class GT6MassfabBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -2447,12 +2447,12 @@ public final class GT6LootTables extends LootTableProvider {
         }
     }
 
-    /** The Implosion Compressor self-drop list (task p31-implosion — the largeMachineLootBlocks singleton form). */
+    /** The Implosion Compressor self-drop list (task implosion — the largeMachineLootBlocks singleton form). */
     public static List<Block> implosionLootBlocks() {
         return List.of(gregtech6.registry.GTMultiBlocks.IMPLOSION_COMPRESSOR.get());
     }
 
-    /** The Implosion Compressor self-drop provider (task p31-implosion; the large-machine provider shape). */
+    /** The Implosion Compressor self-drop provider (task implosion; the large-machine provider shape). */
     public static final class GT6ImplosionBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -2477,12 +2477,12 @@ public final class GT6LootTables extends LootTableProvider {
         }
     }
 
-    /** The Von da Graagg self-drop list (task p31-graagg — the implosionLootBlocks singleton form). */
+    /** The Von da Graagg self-drop list (task graagg — the implosionLootBlocks singleton form). */
     public static List<Block> graaggLootBlocks() {
         return List.of(gregtech6.registry.GTMultiBlocks.VON_DA_GRAAGG.get());
     }
 
-    /** The Von da Graagg self-drop provider (task p31-graagg; the implosion provider shape). */
+    /** The Von da Graagg self-drop provider (task graagg; the implosion provider shape). */
     public static final class GT6GraaggBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -2507,12 +2507,12 @@ public final class GT6LootTables extends LootTableProvider {
         }
     }
 
-    /** The Bedrock Mining Drill self-drop list (task p37-bedrock-drill — the graaggLootBlocks singleton form). */
+    /** The Bedrock Mining Drill self-drop list (task bedrock-drill — the graaggLootBlocks singleton form). */
     public static List<Block> bedrockDrillLootBlocks() {
         return List.of(gregtech6.registry.GTMultiBlocks.BEDROCK_DRILL.get());
     }
 
-    /** The Bedrock Mining Drill self-drop provider (task p37-bedrock-drill; the graagg provider shape). */
+    /** The Bedrock Mining Drill self-drop provider (task bedrock-drill; the graagg provider shape). */
     public static final class GT6BedrockDrillBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -2537,7 +2537,7 @@ public final class GT6LootTables extends LootTableProvider {
         }
     }
 
-    /** The large-machine self-drop provider (task p29-w3-large-12; the part-provider shape). */
+    /** The large-machine self-drop provider (task w3-large-12; the part-provider shape). */
     public static final class GT6LargeMachineBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {
@@ -2563,7 +2563,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The surface deco block list (task p30-w6-rocks-sticks): the three per-material
+     * The surface deco block list (task w6-rocks-sticks): the three per-material
      * surface rocks + the stick — four blocks, four pickup/break loot tables.
      */
     public static List<Block> surfaceLootBlocks() {
@@ -2571,7 +2571,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The obtainable surface-plants + fallen-woods block list (task p30-w6-t2-surface-blocks):
+     * The obtainable surface-plants + fallen-woods block list (task w6-t2-surface-blocks):
      * the plant quartet (glowtus/bush/black sand/turf) + the four fallen-log woods — all
      * drop themselves (the bush's berry item face is the declared cut, GT6WildBushBlock).
      */
@@ -2583,7 +2583,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The surface deco provider (task p30-w6-rocks-sticks). The upstream MTE getDrops
+     * The surface deco provider (task w6-rocks-sticks). The upstream MTE getDrops
      * {@code getRock(1+rng(1+fortune))} (MultiTileEntityRock.java:81) transcribes as ONE
      * pool: count uniform 1..2 (SetItemCountFunction + UniformGenerator), the winner per
      * the upstream NBT lottery —
@@ -2649,11 +2649,11 @@ public final class GT6LootTables extends LootTableProvider {
                                     .add(LootItem.lootTableItem(GTMaterialItems.get(OP.rockGt, MT.MeteoricIron).get()).setWeight(3))
                                     .add(LootItem.lootTableItem(GTMaterialItems.get(OP.oreRaw, MT.MeteoricIron).get()).setWeight(1)))));
             add(GT6SurfaceBlocks.SURFACE_STICK.get(), collectedTable(Items.STICK));
-            // task p30-w6-t2-surface-blocks — the obtainable band: self-drop
+            // task w6-t2-surface-blocks — the obtainable band: self-drop
             for (Block tBlock : plantLootBlocks()) {
                 dropSelf(tBlock);
             }
-            // task p30-w6-t3-large-veins — the 31 vein-indicator rocks: the WorldgenOresLarge
+            // task w6-t3-large-veins — the 31 vein-indicator rocks: the WorldgenOresLarge
             // .java:104 arm (the rock carries rockGt of the picked vein material) as one
             // collectedTable per rock, INDICATOR_SPECS order.
             for (int i = 0; i < GT6SurfaceBlocks.INDICATOR_ROCKS.size(); i++) {
@@ -2664,7 +2664,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The placeables-band loot (task p32-placeables): the Greg o'Lantern + the Sandwich
+     * The placeables-band loot (task placeables): the Greg o'Lantern + the Sandwich
      * drop themselves (dropSelf — the upstream lantern {@code canDrop F :51} means the MTE
      * item never drops while the block drops itself via getDrops; the modern item IS that
      * loot face; the upstream Sandwich getDrops single-stack branch collapses to the item
@@ -2698,7 +2698,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The Bumbliary pair loot (task p33-bees-lv3-b-bumbliary): both machines drop
+     * The Bumbliary pair loot (task bees-lv3-b-bumbliary): both machines drop
      * themselves (the upstream MTE item form — the assembled machine the :2222-2223
      * registry rows craft); the contents scatter through the block's vanilla
      * {@code onRemove} container walk, not the loot table.
@@ -2730,7 +2730,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The gt.flawless/gt.gems/gt.misc bag weight tables (task p34-loot-injection spec ③, the
+     * The gt.flawless/gt.gems/gt.misc bag weight tables (task loot-injection spec ③, the
      * upstream ChestGenHooks categories {@code Loader_Loot.java:81-177}): one CHEST-param-set
      * table each at {@code gt6:chests/<name>}, one pool rolling the {@code setMin(8)/setMax(24)}
      * column ({@code :82-83/:107-108/:130-131} — the upstream roll count of a bag/category
@@ -2797,7 +2797,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The {@code gt6:chests/dungeon_chest} carrier table (task p38-dungeon-framework) —
+     * The {@code gt6:chests/dungeon_chest} carrier table (task dungeon-framework) —
      * the GT6 dungeon structure's loot chests bind here (GT6DungeonPiece.createDungeonChest,
      * the MineshaftPieces.java:270-282 createChest face), so the DUNGEON_CHEST category
      * rows get a NATIVE, pack-editable table instead of only the vanilla-table injection.
@@ -2854,7 +2854,7 @@ public final class GT6LootTables extends LootTableProvider {
         }
     }
     /**
-     * The rail family block list (task p35-rails-31-blocks): the Road Stripe + the 30
+     * The rail family block list (task rails-31-blocks): the Road Stripe + the 30
      * material rows. The upstream rails carry the MTE-default self-drop (the vanilla rail
      * drop form, BlockBaseRail.java:110-114 damageDropped 0 / self item); the 1.20.1/21.1
      * equivalent is exactly {@code dropSelf} like the wire/axle families.
@@ -2866,7 +2866,7 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The rail family self-drop provider (task p35-rails-31-blocks). */
+    /** The rail family self-drop provider (task rails-31-blocks). */
     public static final class GT6RailBlockLoot extends BlockLootSubProvider {
 
         //? if neoforge {

@@ -6,7 +6,7 @@ import gregtech6.registry.GTMultiBlocks;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Fusion Reactor controller block (task p31-fusion) — the concrete
+ * The Fusion Reactor controller block (task fusion) — the concrete
  * {@link GTMultiBlockControllerBlock} mounting the Fusion BET (the GTMassfabBlock minimal
  * form: everything visual/behavioural is base-owned FACING + FORMED, this class only
  * mounts the BET; no use-face — the controller runs headless, the W2 menu-null form).

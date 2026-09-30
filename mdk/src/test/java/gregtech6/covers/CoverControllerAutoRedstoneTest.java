@@ -26,7 +26,7 @@ import gregtech6.covers.covers.CoverControllerCovers;
 import gregtech6.tileentity.machines.ITileEntitySwitchableOnOff;
 
 /**
- * The auto redstone machine switch acceptance tables (task p11-cover-controllers).
+ * The auto redstone machine switch acceptance tables (task cover-controllers).
  * Offline and exhaustive, upstream AbstractCoverAttachmentController.java:32-62 +
  * CoverControllerAutoRedstone.java:41-72 as the mother:
  *

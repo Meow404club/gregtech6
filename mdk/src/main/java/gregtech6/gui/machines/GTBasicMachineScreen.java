@@ -17,7 +17,7 @@ import gregtech6.gui.GTGuiScreen;
  * GT6RecipeMaps.java:97/:105/:113) parsed into a ResourceLocation per machine, so one screen
  * class serves the three backgrounds the gui-family card landed.
  *
- * <p>Progress (p27-gui-render-fixes ①): the three-state ContainerData value drives the upstream
+ * <p>Progress (gui-render-fixes ①): the three-state ContainerData value drives the upstream
  * RecipeMap progress-arrow overlay — the white arrow baked at UV (176,0) 20x18 on the same
  * 256x256 canvas as the panel (every machine GUI texture ships it next to the 176x166 panel,
  * cokeoven.png/shredder.png/... pixel-verified), width-clipped by the scaled progress. Upstream
@@ -59,7 +59,7 @@ public class GTBasicMachineScreen extends GTGuiScreen<GTBasicMachineMenu> {
 	/**
 	 * Upstream mGUITexture = mRecipes.mGUIPath (:114) as a ResourceLocation — the map
 	 * constants are full "namespace:path.png" strings (RecipeMap.java:84 appends .png).
-	 * Host-typed since p8-cokeoven-gui-menu ①: single-block and multiblock machines
+	 * Host-typed since cokeoven-gui-menu ①: single-block and multiblock machines
 	 * alike carry the path through {@link GTBasicMachineMenu.Host#getGuiTexture()}.
 	 */
 	public static ResourceLocation backgroundOf(GTBasicMachineMenu.Host aMachine) {

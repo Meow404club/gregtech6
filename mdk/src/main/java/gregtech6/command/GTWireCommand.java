@@ -28,13 +28,13 @@ import gregtech6.tileentity.connectors.GTWireBlockEntity;
 import gregtech6.util.UT6;
 
 /**
- * {@code /gt6wire} — the automated electric-wire acceptance command (task p7-d2-cable
- * spec ⑦, ADR 2026-08-31-p7-energy-network ruling 7). Game-bus listener, self-contained
+ * {@code /gt6wire} — the automated electric-wire acceptance command (task d2-cable
+ * spec ⑦, ADR 2026-08-31-energy-network ruling 7). Game-bus listener, self-contained
  * per ADR-P3-4, the GTFluidPipeCommand template.
  *
  * <ul>
  * <li>{@code place <1x|2x> <pos>} — the p7 legacy tier driver (the P8 RCON chain and the
- *     gen→wire→oven e2e regression keep driving it), and since task p9-wire-family-w1 also
+ *     gen→wire→oven e2e regression keep driving it), and since task wire-family-w1 also
  *     the full registry-path form {@code place wire_sn_gt04 <pos>} / {@code place cable_w_gt08 <pos>};</li>
  * <li>{@code place <material> <size> <pos>} and {@code place <material> <size> cable <pos>}
  *     — the 620-block selector (spec ③): material token = the snake-cased row token from
@@ -105,7 +105,7 @@ public final class GTWireCommand {
 						.then(Commands.argument("side", IntegerArgumentType.integer(0, 5))
 							.executes(aContext -> connect(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
 									(byte)IntegerArgumentType.getInteger(aContext, "side"))))))
-				.then(Commands.literal("redstone") // task p10-wire-redstone-family — the redstone selector
+				.then(Commands.literal("redstone") // task wire-redstone-family — the redstone selector
 					.then(Commands.argument("material", StringArgumentType.word())
 						.then(Commands.argument("pos", BlockPosArgument.blockPos())
 							.executes(aContext -> placeRedstone(aContext.getSource(),
@@ -155,7 +155,7 @@ public final class GTWireCommand {
 	/**
 	 * The headless placement driver (spec ⑦): setBlock, then the automatic neighbour-scan
 	 * connect. The spec is the p7 legacy tier ("1x"/"2x") or a family registry path
-	 * ("wire_sn_gt04" / "cable_w_gt08", the p9-wire-family-w1 selector).
+	 * ("wire_sn_gt04" / "cable_w_gt08", the wire-family-w1 selector).
 	 */
 	private static int place(CommandSourceStack aSource, String aSpec, BlockPos aPos) {
 		var tBlock = switch (aSpec) {
@@ -196,7 +196,7 @@ public final class GTWireCommand {
 	}
 
 	/**
-	 * The 620-block family selector (task p9-wire-family-w1 spec ③): material token + size
+	 * The 620-block family selector (task wire-family-w1 spec ③): material token + size
 	 * (+ optional "cable" literal resolved upstream in the brigadier tree) — resolved through
 	 * the GTWireSpecs table and the GTWires family index.
 	 */

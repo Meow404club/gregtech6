@@ -31,7 +31,7 @@ import gregtech6.block.energy.GT6BatteryBoxBlock;
 import gregtech6.item.energy.GT6BatteryItem;
 
 /**
- * The battery + energy-storage registration (task p29-w4-battery-storage) — card-owned
+ * The battery + energy-storage registration (task w4-battery-storage) — card-owned
  * {@code @EventBusSubscriber(MOD)} DeferredRegisters attached from the construct event,
  * the GT6FeConverters shape (ADR-P3-4; a separate class keeps the card scopes disjoint,
  * GTMachines stays zero-edited).
@@ -219,7 +219,7 @@ public final class GT6Batteries {
 	// ---------------------------------------------------------------------------
 
 	/**
-	 * The ZPM row — the Loader :1103 single-item registration (task p36-energy-zpm-dechargers;
+	 * The ZPM row — the Loader :1103 single-item registration (task energy-zpm-dechargers;
 	 * NOT a {@link BatteryRow}: the ladder records drive the crafting/cell/tag faces and the
 	 * ZPM carries none of them — no recipe (the dungeon artifact, TODO.md:389), no cell, no
 	 * tag). Columns: meta 14999, packet V[7]=131072, the explicit NBT_INPUT_MIN 1 /
@@ -301,7 +301,7 @@ public final class GT6Batteries {
 	 * The row block: hardness/resistance 4.0/4.0 (the NBT_HARDNESS/NBT_RESISTANCE columns),
 	 * metal sounds, the family BET supplier picked by the slot count (the two-loop form of
 	 * the :893-:896 pair), the row's Electric_T[i] casing material
-	 * (Loader :894-:895 NBT_MATERIAL, the tint colour source — task r8-tex-composite-family).
+	 * (Loader :894-:895 NBT_MATERIAL, the tint colour source — task tex-composite-family).
 	 */
 	private static GT6BatteryBoxBlock batteryBox(BoxRow aRow) {
 		return new GT6BatteryBoxBlock(BlockBehaviour.Properties.of().strength(4.0F, 4.0F).sound(SoundType.METAL),
@@ -310,7 +310,7 @@ public final class GT6Batteries {
 	}
 
 	/**
-	 * The tint-walk array (task r8-tex-composite-family — the
+	 * The tint-walk array (task tex-composite-family — the
 	 * GT6ElectricTransformers.paintableBlockArray form): all twelve row blocks, every row
 	 * carries its NBT_MATERIAL casing column.
 	 */

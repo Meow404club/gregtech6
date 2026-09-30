@@ -25,7 +25,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
 
 /**
- * The distillation-tower ModularUI panel factory (task p33-gui-distill-tower, Option A —
+ * The distillation-tower ModularUI panel factory (task gui-distill-tower, Option A —
  * a NEW file; the shared {@link GTBasicMachineMUI}/{@link GT6MuiMachine} faces are only
  * consumed, never modified). The upstream contract is the generic machine container with
  * the tower's map shape (research.p32-r-distill-gui mapping table, ContainerCommonBasicMachine):

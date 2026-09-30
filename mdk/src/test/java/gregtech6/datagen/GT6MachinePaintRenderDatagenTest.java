@@ -1,12 +1,12 @@
 /*
- * Offline pinned-count tests for task p21-paintable-tint-render: the generated machine
+ * Offline pinned-count tests for task paintable-tint-render: the generated machine
  * blockstate/model JSONs carry tintindex 0 on every BODY face of all three models per
  * machine — the generated-JSON half of the 21x3 census, asserted against the committed
  * src/generated tree (the GT6StoneBlocksRenderDatagenTest split: the write side is gated
  * by runData, first run written>0, second run written:0; the datagen-JVM counter half is
  * the GT6BlockStates runData log line).
  *
- * <p>Task p22-paint-front-overlay-split extends the shape: each model is TWO elements —
+ * <p>Task paint-front-overlay-split extends the shape: each model is TWO elements —
  * the tinted body cube (p21, unchanged) plus a thin front decal with NO tintindex
  * (the upstream two-layer getTexture2 form: the state overlay layer is UNCOLOURED,
  * MultiTileEntityBasicMachine.java:1014 + BlockTextureDefault.java:179-180), so a painted
@@ -14,7 +14,7 @@
  * composites are retired for the separate colored/_colored_front + _overlay_front*
  * borrows (assets/README.md).
  *
- * <p>Task p28-b-port-overlay-render completes the six-face form: each model is SEVEN
+ * <p>Task b-port-overlay-render completes the six-face form: each model is SEVEN
  * elements — the tinted body cube now bound to the family's OWN colored six-set
  * ({@code <family>_colored_bottom/top/front/back/left/right}, the A-card borrow) plus six
  * thin untinted state decals (the p22 front decal generalized to all six faces), one per
@@ -25,17 +25,17 @@
  * :1014 pick — the p28 static-art ruling (no BE read).
  *
  * <p>Census ground truth: the machine domain is the oven Heat_T ladder (4, task
- * p27-oven-heat-t-ladder) + shredder/crusher/lathe T1-T4
- * (12) + dryer (4) + distillery (4) + canner (4, task p24-canner-machine) + sifter/
- * compressor/wiremill (12, task p26-w1-sifter-compressor-wiremill) + press (4) +
- * extruder (4, both rows of the last task p26-w1-press-extruder-molds) + the six ULV
- * rows (task p28-c-ulv-machine-ladder) + the four roll-ladder RU families (16, task
- * p29-w1-kinetic-roll-ladder — the RU rollingmill rungs ride tier-suffixed bases while
+ * oven-heat-t-ladder) + shredder/crusher/lathe T1-T4
+ * (12) + dryer (4) + distillery (4) + canner (4, task canner-machine) + sifter/
+ * compressor/wiremill (12, task w1-sifter-compressor-wiremill) + press (4) +
+ * extruder (4, both rows of the last task w1-press-extruder-molds) + the six ULV
+ * rows (task c-ulv-machine-ladder) + the four roll-ladder RU families (16, task
+ * w1-kinetic-roll-ladder — the RU rollingmill rungs ride tier-suffixed bases while
  * sharing the ULV rung's family texture set) + the six P29 W1 process families (24,
- * task p29-w1-kinetic-process-ladder) + the seven eu-hu families (25, task
- * p29-w1-eu-hu-families) + the six exotic-energy families (30, task
- * p29-w2-exotic-energy) + the five eu-core 5-tier families (25, task
- * p29-w2-eu-core-5tier) = 192 blocks (the
+ * task w1-kinetic-process-ladder) + the seven eu-hu families (25, task
+ * w1-eu-hu-families) + the six exotic-energy families (30, task
+ * w2-exotic-energy) + the five eu-core 5-tier families (25, task
+ * w2-eu-core-5tier) = 192 blocks (the
  * GTMachines.paintableBlockArray
  * registration census), three models each (inactive/active/running) = 576 block-model
  * JSONs. Upstream canonical: every faced face multiplies the grayscale texture by mRGBa
@@ -65,11 +65,11 @@ class GT6MachinePaintRenderDatagenTest {
 
     /**
      * The 192 machine-domain bases (the paintableBlockArray census). Package-visible
-     * since task r3-world-tint-render-type — the render_type census
+     * since task world-tint-render-type — the render_type census
      * (GT6PaintableRenderTypeCensusTest) reuses the list instead of duplicating it.
      */
     static final List<String> MACHINE_BASES = List.of(
-            "oven", "oven_t2", "oven_t3", "oven_t4", // task p27-oven-heat-t-ladder
+            "oven", "oven_t2", "oven_t3", "oven_t4", // task oven-heat-t-ladder
             "shredder", "shredder_t2", "shredder_t3", "shredder_t4",
             "crusher", "crusher_t2", "crusher_t3", "crusher_t4",
             "lathe", "lathe_t2", "lathe_t3", "lathe_t4",
@@ -79,49 +79,49 @@ class GT6MachinePaintRenderDatagenTest {
             "sifter", "sifter_t2", "sifter_t3", "sifter_t4",
             "compressor", "compressor_t2", "compressor_t3", "compressor_t4",
             "wiremill", "wiremill_t2", "wiremill_t3", "wiremill_t4",
-            "press", "press_t2", "press_t3", "press_t4", // task p26-w1-press-extruder-molds
-            "extruder", "extruder_t2", "extruder_t3", "extruder_t4", // task p26-w1-press-extruder-molds
-            "shredder_ulv", "crusher_ulv", "canner_ulv", "sifter_ulv", "wiremill_ulv", "rollingmill", // task p28-c-ulv-machine-ladder
-            "rollingmill_t1", "rollingmill_t2", "rollingmill_t3", "rollingmill_t4", // task p29-w1-kinetic-roll-ladder — the RU rungs
+            "press", "press_t2", "press_t3", "press_t4", // task w1-press-extruder-molds
+            "extruder", "extruder_t2", "extruder_t3", "extruder_t4", // task w1-press-extruder-molds
+            "shredder_ulv", "crusher_ulv", "canner_ulv", "sifter_ulv", "wiremill_ulv", "rollingmill", // task c-ulv-machine-ladder
+            "rollingmill_t1", "rollingmill_t2", "rollingmill_t3", "rollingmill_t4", // task w1-kinetic-roll-ladder — the RU rungs
             "rollbender", "rollbender_t2", "rollbender_t3", "rollbender_t4",
             "rollformer", "rollformer_t2", "rollformer_t3", "rollformer_t4",
             "clustermill", "clustermill_t2", "clustermill_t3", "clustermill_t4",
-            "buzzsaw", "buzzsaw_t2", "buzzsaw_t3", "buzzsaw_t4", // task p29-w1-kinetic-process-ladder
+            "buzzsaw", "buzzsaw_t2", "buzzsaw_t3", "buzzsaw_t4", // task w1-kinetic-process-ladder
             "squeezer", "squeezer_t2", "squeezer_t3", "squeezer_t4",
             "centrifuge", "centrifuge_t2", "centrifuge_t3", "centrifuge_t4",
             "sluice", "sluice_t2", "sluice_t3", "sluice_t4",
             "sanding_machine", "sanding_machine_t2", "sanding_machine_t3", "sanding_machine_t4",
             "pressure_washer", "pressure_washer_t2", "pressure_washer_t3", "pressure_washer_t4",
-            "mixer", "mixer_t2", "mixer_t3", "mixer_t4", // task p29-w1-eu-hu-families
-            "electricmixer", "electricmixer_t2", "electricmixer_t3", "electricmixer_t4", // task p29-w1-eu-hu-families
-            "electricloom", "electricloom_t2", "electricloom_t3", "electricloom_t4", // task p29-w1-eu-hu-families
-            "electricsifter", "electricsifter_t2", "electricsifter_t3", "electricsifter_t4", // task p29-w1-eu-hu-families
-            "boxinator", "boxinator_t2", "boxinator_t3", "boxinator_t4", // task p29-w1-eu-hu-families
-            "unboxinator", "unboxinator_t2", "unboxinator_t3", "unboxinator_t4", // task p29-w1-eu-hu-families
-            "fermenter", // task p29-w1-eu-hu-families
-            "autocrafter", "autocrafter_t2", "autocrafter_t3", "autocrafter_t4", "autocrafter_t5", // task p29-w2-eu-special
-            "lightning", "lightning_t2", "lightning_t3", "lightning_t4", "lightning_t5", // task p29-w2-eu-special
-            "laminator", "laminator_t2", "laminator_t3", "laminator_t4", // task p29-w2-eu-special
-            "polarizer", "polarizer_t2", "polarizer_t3", "polarizer_t4", "polarizer_t5", // task p29-w2-exotic-energy
-            "magnetic_separator", "magnetic_separator_t2", "magnetic_separator_t3", "magnetic_separator_t4", "magnetic_separator_t5", // task p29-w2-exotic-energy
-            "laser_engraver", "laser_engraver_t2", "laser_engraver_t3", "laser_engraver_t4", "laser_engraver_t5", // task p29-w2-exotic-energy
-            "laser_welder", "laser_welder_t2", "laser_welder_t3", "laser_welder_t4", "laser_welder_t5", // task p29-w2-exotic-energy
-            "freezer", "freezer_t2", "freezer_t3", "freezer_t4", "freezer_t5", // task p29-w2-exotic-energy
-            "cryo_mixer", "cryo_mixer_t2", "cryo_mixer_t3", "cryo_mixer_t4", "cryo_mixer_t5", // task p29-w2-exotic-energy
-            "electrolyzer", "electrolyzer_t2", "electrolyzer_t3", "electrolyzer_t4", "electrolyzer_t5", // task p29-w2-eu-core-5tier — the first 5-tier ladders
-            "injector", "injector_t2", "injector_t3", "injector_t4", "injector_t5", // task p29-w2-eu-core-5tier
-            "printer", "printer_t2", "printer_t3", "printer_t4", "printer_t5", // task p29-w2-eu-core-5tier
-            "scannervisuals", "scannervisuals_t2", "scannervisuals_t3", "scannervisuals_t4", "scannervisuals_t5", // task p29-w2-eu-core-5tier
-            "slicer", "slicer_t2", "slicer_t3", "slicer_t4", "slicer_t5", // task p29-w2-eu-core-5tier
-            "steamcracker", "steamcracker_t2", "steamcracker_t3", "steamcracker_t4", // task p29-w2-hu-tu-piggyback
+            "mixer", "mixer_t2", "mixer_t3", "mixer_t4", // task w1-eu-hu-families
+            "electricmixer", "electricmixer_t2", "electricmixer_t3", "electricmixer_t4", // task w1-eu-hu-families
+            "electricloom", "electricloom_t2", "electricloom_t3", "electricloom_t4", // task w1-eu-hu-families
+            "electricsifter", "electricsifter_t2", "electricsifter_t3", "electricsifter_t4", // task w1-eu-hu-families
+            "boxinator", "boxinator_t2", "boxinator_t3", "boxinator_t4", // task w1-eu-hu-families
+            "unboxinator", "unboxinator_t2", "unboxinator_t3", "unboxinator_t4", // task w1-eu-hu-families
+            "fermenter", // task w1-eu-hu-families
+            "autocrafter", "autocrafter_t2", "autocrafter_t3", "autocrafter_t4", "autocrafter_t5", // task w2-eu-special
+            "lightning", "lightning_t2", "lightning_t3", "lightning_t4", "lightning_t5", // task w2-eu-special
+            "laminator", "laminator_t2", "laminator_t3", "laminator_t4", // task w2-eu-special
+            "polarizer", "polarizer_t2", "polarizer_t3", "polarizer_t4", "polarizer_t5", // task w2-exotic-energy
+            "magnetic_separator", "magnetic_separator_t2", "magnetic_separator_t3", "magnetic_separator_t4", "magnetic_separator_t5", // task w2-exotic-energy
+            "laser_engraver", "laser_engraver_t2", "laser_engraver_t3", "laser_engraver_t4", "laser_engraver_t5", // task w2-exotic-energy
+            "laser_welder", "laser_welder_t2", "laser_welder_t3", "laser_welder_t4", "laser_welder_t5", // task w2-exotic-energy
+            "freezer", "freezer_t2", "freezer_t3", "freezer_t4", "freezer_t5", // task w2-exotic-energy
+            "cryo_mixer", "cryo_mixer_t2", "cryo_mixer_t3", "cryo_mixer_t4", "cryo_mixer_t5", // task w2-exotic-energy
+            "electrolyzer", "electrolyzer_t2", "electrolyzer_t3", "electrolyzer_t4", "electrolyzer_t5", // task w2-eu-core-5tier — the first 5-tier ladders
+            "injector", "injector_t2", "injector_t3", "injector_t4", "injector_t5", // task w2-eu-core-5tier
+            "printer", "printer_t2", "printer_t3", "printer_t4", "printer_t5", // task w2-eu-core-5tier
+            "scannervisuals", "scannervisuals_t2", "scannervisuals_t3", "scannervisuals_t4", "scannervisuals_t5", // task w2-eu-core-5tier
+            "slicer", "slicer_t2", "slicer_t3", "slicer_t4", "slicer_t5", // task w2-eu-core-5tier
+            "steamcracker", "steamcracker_t2", "steamcracker_t3", "steamcracker_t4", // task w2-hu-tu-piggyback
             "catalyticcracker", "catalyticcracker_t2", "catalyticcracker_t3", "catalyticcracker_t4",
             "coagulator", "generifier", "bath", "autoclave",
             "loom", "loom_t2", "loom_t3", "loom_t4",
-            "smelter", "smelter_t2", "smelter_t3", "smelter_t4", // task p29-w3-heat-smelter
+            "smelter", "smelter_t2", "smelter_t3", "smelter_t4", // task w3-heat-smelter
             "melter",
-            "roasting_oven", "roasting_oven_t2", "roasting_oven_t3", "roasting_oven_t4", // task p29-w4-eu-bridge — the Roasting ladder (the "roaster" NBT_TEXTURE token)
+            "roasting_oven", "roasting_oven_t2", "roasting_oven_t3", "roasting_oven_t4", // task w4-eu-bridge — the Roasting ladder (the "roaster" NBT_TEXTURE token)
             "burner_mixer", "burner_mixer_t2", "burner_mixer_t3", "burner_mixer_t4",
-            "plantalyzer", "plantalyzer_t2", "plantalyzer_t3", "plantalyzer_t4", "plantalyzer_t5"); // task p34-machines-burner-plantalyzer — the Burner Mixer 4-ladder + the Plantalyzer 5-ladder, +9
+            "plantalyzer", "plantalyzer_t2", "plantalyzer_t3", "plantalyzer_t4", "plantalyzer_t5"); // task machines-burner-plantalyzer — the Burner Mixer 4-ladder + the Plantalyzer 5-ladder, +9
     /** The addMachine three-model split (inactive/active/running). */
     private static final List<String> MODEL_SUFFIXES = List.of("", "_active", "_running");
 
@@ -175,17 +175,17 @@ class GT6MachinePaintRenderDatagenTest {
 
     /** The tier rows keep the family textures (the p8 texture-base overload); the p28 ULV rows and the p29 W2 _t5 rungs likewise (the addUlvLadder/addEuSpecialFamilies family tokens). */
     private static String familyOf(String aBase) {
-        if (aBase.startsWith("rollingmill_t")) return "rollingmill"; // task p29-w1-kinetic-roll-ladder — the RU rungs share the ULV rung's family set
-        for (String tTier : new String[] {"_t2", "_t3", "_t4", "_t5"}) { // _t5 joins at task p29-w2-eu-core-5tier (the first 5-tier ladders)
+        if (aBase.startsWith("rollingmill_t")) return "rollingmill"; // task w1-kinetic-roll-ladder — the RU rungs share the ULV rung's family set
+        for (String tTier : new String[] {"_t2", "_t3", "_t4", "_t5"}) { // _t5 joins at task w2-eu-core-5tier (the first 5-tier ladders)
             if (aBase.endsWith(tTier)) return artTokenOf(aBase.substring(0, aBase.length() - tTier.length()));
         }
-        if (aBase.endsWith("_ulv")) return aBase.substring(0, aBase.length() - "_ulv".length()); // task p28-c-ulv-machine-ladder
+        if (aBase.endsWith("_ulv")) return aBase.substring(0, aBase.length() - "_ulv".length()); // task c-ulv-machine-ladder
         return artTokenOf(aBase);
     }
 
     /**
      * The art token overrides: two p29 process families carry upstream NBT_TEXTURE
-     * tokens distinct from their registry path (task p29-w1-kinetic-process-ladder —
+     * tokens distinct from their registry path (task w1-kinetic-process-ladder —
      * the Sanding Machine rows ride "sander", the Pressure Washer rows "debarker",
      * the row.texture() column verbatim).
      */
@@ -193,14 +193,14 @@ class GT6MachinePaintRenderDatagenTest {
         return switch (aBase) {
             case "sanding_machine" -> "sander";
             case "pressure_washer" -> "debarker";
-            // task p29-w2-exotic-energy — the snake-case registry paths over the upstream
+            // task w2-exotic-energy — the snake-case registry paths over the upstream
             // camel-joined NBT_TEXTURE art tokens (the row.texture() columns verbatim)
             case "magnetic_separator" -> "magneticseparator";
             case "laser_engraver" -> "laserengraver";
             case "laser_welder" -> "laserwelder";
             case "cryo_mixer" -> "cryomixer";
-            case "roasting_oven" -> "roaster"; // task p29-w4-eu-bridge — the roaster art token
-            case "burner_mixer" -> "burnmixer"; // task p34-machines-burner-plantalyzer — the upstream NBT_TEXTURE word
+            case "roasting_oven" -> "roaster"; // task w4-eu-bridge — the roaster art token
+            case "burner_mixer" -> "burnmixer"; // task machines-burner-plantalyzer — the upstream NBT_TEXTURE word
             default -> aBase;
         };
     }
@@ -223,7 +223,7 @@ class GT6MachinePaintRenderDatagenTest {
     /**
      * Every machine block model: the block/cube parent, the twelve-texture key set (six
      * body keys + the six overlay art tokens), the full tinted body cube over the family's
-     * own colored art, and the six thin untinted state decals (task p28-b-port-overlay-render).
+     * own colored art, and the six thin untinted state decals (task b-port-overlay-render).
      */
     @Test
     void everyMachineModelCarriesTintIndexZeroOnAllSixFaces() throws Exception {

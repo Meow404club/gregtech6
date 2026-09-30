@@ -18,7 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 /**
- * The p28-c-ulv-machine-ladder melting gate (the OFFLINE pure-function + hook half):
+ * The c-ulv-machine-ladder melting gate (the OFFLINE pure-function + hook half):
  * {@link TileEntityBasicMachine#meltingGateBlocks} is the decision function, the
  * {@code checkRecipe} arm is its only production consumer. Threshold = 1375 K, the
  * stone-crucible ceiling (GT6Crucibles.java:86, TileEntitySmelteryOfflineTest :281) —

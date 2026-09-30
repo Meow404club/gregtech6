@@ -35,7 +35,7 @@ import gregtech6.registry.GT6Molds;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The card-B mold truth tables (task p26-crucible-mold-faucet acceptance b): the FULL
+ * The card-B mold truth tables (task crucible-mold-faucet acceptance b): the FULL
  * {@link TileEntityMold#MOLD_RECIPES} universe — the 30 pre-carved ceramic shapes
  * (Loader_MultiTileEntities.java:391-420) map 30/30 onto their prefixes through the
  * ported :628-921 static block; the nugget single-center-bit falls back (:79-83); the

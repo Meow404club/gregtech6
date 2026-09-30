@@ -26,7 +26,7 @@ import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 
 /**
- * Offline tests for task p31-dig-ladder — the dig-family material ladder over the
+ * Offline tests for task dig-ladder — the dig-family material ladder over the
  * {@link GT6ToolLadder} seam (the DigSixTest pure-static premise; the mod-Item wall
  * keeps the items out, the math rides vanilla stacks: the identity is item-agnostic).
  *
@@ -220,7 +220,7 @@ public class DigLadderTest {
 	}
 
 	/**
-	 * The assembly multiplier stamp (task r7-39-toolhead-assembly): the OPTIONAL
+	 * The assembly multiplier stamp (task 39-toolhead-assembly): the OPTIONAL
 	 * "multiplier" JSON field (default 1.0) carries the form budget — the gem pick's
 	 * x0.25 — into the stamped identity (MultiItemTool.java:182 mToolDurability * 100 * mult).
 	 */
@@ -276,7 +276,7 @@ public class DigLadderTest {
 		assertSame(MT.Bronze, tPrimary, "the assembled stack carries the row's material identity");
 	}
 
-	// The assembly multiplier stamp (task r7-39-toolhead-assembly): the x0.25 gem-pick form
+	// The assembly multiplier stamp (task 39-toolhead-assembly): the x0.25 gem-pick form
 	// rides the 8-arg ctor (the codec optionalFieldOf face is exercised by the emitted JSON).
 	@Test
 	public void assemblyMultiplierFieldStampsTheBudget() {

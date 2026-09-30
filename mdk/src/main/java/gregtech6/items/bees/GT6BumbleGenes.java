@@ -27,7 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
 
 /**
- * The {@code gt.bumble} gene NBT domain (task p33-bees-lv3-a-items, do-item 2) — the
+ * The {@code gt.bumble} gene NBT domain (task bees-lv3-a-items, do-item 2) — the
  * port of {@code IItemBumbleBee.Util} (gregapi/item/bumble/IItemBumbleBee.java:96-184):
  * the 13-key gene compound the whole Lv3 bee chain shares.
  *

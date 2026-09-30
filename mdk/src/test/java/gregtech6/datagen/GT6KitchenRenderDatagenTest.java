@@ -1,5 +1,5 @@
 /**
- * Offline census for task p38-issue7-kitchen-models — the kitchen family's render wave.
+ * Offline census for task issue7-kitchen-models — the kitchen family's render wave.
  * The four manual kitchen blocks (GT6Kitchen.java:89-113) rendered as the magenta-black
  * missing-model checkerboard: zero blockstates/models/item-models in the generated tree.
  * This census pins the fix end to end (the {@link GT6StoneBlocksRenderDatagenTest} split):

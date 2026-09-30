@@ -10,7 +10,7 @@ import gregapi.code.TagData;
 import gregapi.data.TD;
 
 /**
- * The battery ITEM (task p29-w4-battery-storage ②) — the port counterpart of the upstream
+ * The battery ITEM (task w4-battery-storage ②) — the port counterpart of the upstream
  * battery MTE family's ITEM-STATE face, {@code TileEntityBase08Battery} transcribed onto a
  * plain {@link Item}. Upstream files every battery as an item-form MultiTileEntity whose
  * charge lives in the MTE fields mirrored to the item NBT; the port has no MTE layer, so

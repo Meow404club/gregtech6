@@ -28,7 +28,7 @@ import net.minecraft.world.level.block.state.BlockState;
  *     Block forwards it back into {@link #scheduleRenderUpdate} (client branch).</li>
  * </ul>
  *
- * <p>CONSUMER-SIDE WIRING TEMPLATE (W3 p4-cover-core per GTCEu
+ * <p>CONSUMER-SIDE WIRING TEMPLATE (W3 cover-core per GTCEu
  * MetaMachineBlock.java:216-219 / PipeBlockEntity.java:307-315; the BE-side variant):
  * <pre>{@code
  * // Block side (e.g. an override in the consumer's GTEntityBlock subclass):

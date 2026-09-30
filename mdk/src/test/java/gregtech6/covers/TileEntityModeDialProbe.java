@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregtech6.tileentity.machines.ITileEntitySwitchableMode;
 
 /**
- * The test probe switchable-mode host (task p34-covers-gameplay-10) — the minimal
+ * The test probe switchable-mode host (task covers-gameplay-10) — the minimal
  * composition-contract BE: {@link ICoverableTE} (the mCovers store) plus
  * {@link ITileEntitySwitchableMode} (the selector dial). The dial and the redstone
  * answer are plain fields the tests drive; the first LIVE host is the declared

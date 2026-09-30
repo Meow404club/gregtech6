@@ -16,12 +16,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * The pipe flow-arrow render-path sentinel tests (task p4-pipe-flow-control acceptance
+ * The pipe flow-arrow render-path sentinel tests (task pipe-flow-control acceptance
  * ① render group, the CoverPlateModelTest shape): the planner is pure geometry over the
  * immutable snapshot — the per-face emission rules (null pass + the face's own pass,
  * never culled), the 0.002 Z-fighting slab geometry, the snapshot clamp, and the client
  * registration hook. The sprite→BakedQuad baker is pinned offline too since
- * r8-uvof-private-copies (the #27 GTOreBakedModelSideUvTest form): the arrow is
+ * uvof-private-copies (the #27 GTOreBakedModelSideUvTest form): the arrow is
  * directional art, so the corrected canonical UV walk is asserted per vertex.
  */
 public class GTFluidPipeFlowModelTest extends GTOfflineRenderTestBase {
@@ -100,7 +100,7 @@ public class GTFluidPipeFlowModelTest extends GTOfflineRenderTestBase {
 	}
 
 	/**
-	 * THE r8-uvof-private-copies PIN: the arrow bakes the canonical full-face UV walk on
+	 * THE uvof-private-copies PIN: the arrow bakes the canonical full-face UV walk on
 	 * all six faces — the sprite top (V=0, the arrow head) on the side faces' top corners
 	 * (upright, the orientation the art was drawn for). The old GTCEu cubeUV table hung
 	 * the arrow upside down on every side (plus a U mirror on NORTH/EAST).

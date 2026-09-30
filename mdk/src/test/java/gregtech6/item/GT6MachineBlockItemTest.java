@@ -27,10 +27,10 @@ import gregtech6.block.multiblock.GTCokeOvenBlock;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The carrier gate (task r8-tooltip-infra acceptance ①, task r8-tooltip-boiler-tank
+ * The carrier gate (task tooltip-infra acceptance ①, task tooltip-boiler-tank
  * expansion): {@link GT6MachineBlockItem} replays the family row table through the offline
  * {@code appendHoverText} direct call — the boiler fixture appends the full 14-row table
- * (the 13-row upstream table + the .14 port-authored annex, task r10-debt-boiler-heat-tip)
+ * (the 13-row upstream table + the .14 port-authored annex, task debt-boiler-heat-tip)
  * after the vanilla super chain (the T1 pilot pair pinned at rows 7/9 inside it), the
  * arg-less vs per-variant carrier forms both pinned, the untabled family appends ZERO.
  * The test call itself is the dual-leg compile pin: this file compiles per leg against the
@@ -55,7 +55,7 @@ public class GT6MachineBlockItemTest extends GTOfflineTestBase {
 	 * shape): real GT block classes cannot be constructed after the offline Bootstrap
 	 * froze the block registry, so the latch reopens the write window for the two fixture
 	 * blocks. Unarmed (the 1.21.1 JVM form) = the real-block tests telemetry-skip — the
-	 * known ItemLatch dual-leg asymmetry, the r8-tex-large-machines 备案 form.
+	 * known ItemLatch dual-leg asymmetry, the tex-large-machines 备案 form.
 	 */
 	private static final class BlockLatch {
 		static final sun.misc.Unsafe UNSAFE;
@@ -95,12 +95,12 @@ public class GT6MachineBlockItemTest extends GTOfflineTestBase {
 				() -> new GT6MachineBlockItem(Blocks.BRICKS, new Item.Properties(), "boiler", 16, 32, 320000));
 		sUntable = registerItemFixture("fixture_tooltip_pilot_untabled",
 				() -> new GT6MachineBlockItem(Blocks.BRICKS, new Item.Properties(), "machine"));
-		// the converter family carrier (the review rider, task r8-tooltip-multiblock-generator):
+		// the converter family carrier (the review rider, task tooltip-multiblock-generator):
 		// the turbine/dynamo registration sites hand family="converter" — the vanilla-block
 		// fixture pins the replay without the block-registry latch
 		sConverter = registerItemFixture("fixture_tooltip_converter_rider",
 				() -> new GT6MachineBlockItem(Blocks.BRICKS, new Item.Properties(), "converter"));
-		// the real-block carriers (task r8-tooltip-multiblock-generator acceptance ①):
+		// the real-block carriers (task tooltip-multiblock-generator acceptance ①):
 		// the actual controller block classes a swap hands the carrier — the coke oven
 		// (the multiblock family) and the energy-source rig (the generator family);
 		// constructed AND registered under the block write window (the item registration
@@ -199,7 +199,7 @@ public class GT6MachineBlockItemTest extends GTOfflineTestBase {
 
 	@Test
 	public void cokeOvenBlockHoverCarriesTheMultiblockBaseRows() {
-		// task r8-tooltip-multiblock-generator acceptance ① — the real controller block
+		// task tooltip-multiblock-generator acceptance ① — the real controller block
 		// through the carrier: the three Base10MultiBlockBase chain rows in upstream order
 		List<Component> tTooltip = new ArrayList<>();
 		callHoverText(sCokeOven, new ItemStack(sCokeOven), tTooltip);

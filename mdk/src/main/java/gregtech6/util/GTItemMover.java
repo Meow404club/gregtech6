@@ -77,7 +77,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
  * (ST.java:457, :483, :513, :537, :561). The ported int triple does <b>not</b> keep that
  * seat order: {@code (aMaxMove, aMinMove, aMaxSlotSize)} — the two move-side caps first,
  * the per-slot size cap last. This is the fold, declared here because the seats are the
- * whole interface (task p32-ops-census-mover; the review seam of task p32-logistics-lv3
+ * whole interface (task ops-census-mover; the review seam of task logistics-lv3
  * mis-seated it and shipped the bug shape). The roles ride verbatim:
  * <ul>
  * <li><b>Seat 1 {@code aMaxMove}</b> — the per-pair total cap, ST.java:470
@@ -109,7 +109,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
  * <h2>Trimmed upstream surface (out of the cover subset, none reachable from the call sites)</h2>
  * <ul>
  * <li>Filter/invertFilter parameters (ST.java:457) — RESTORED with the retriever cover
- *     (task p31-retriever-cover, the {@code ST.move(tDelegator, tTarget, tFilter, F, F,
+ *     (task retriever-cover, the {@code ST.move(tDelegator, tTarget, tFilter, F, F,
  *     aInvertFilter, T, 64, 1, 64, 1)} call shape, CoverRetrieverItem.java:72): the
  *     {@link #move(IItemHandler, IItemHandler, ItemStack, boolean)} overloads carry the
  *     :467 source gate. The ejectItems parameter STAYS trimmed — no handler-world
@@ -151,7 +151,7 @@ public final class GTItemMover {
 	}
 
 	/**
-	 * The retriever shape (task p31-retriever-cover) — the ST.java:457 filter pair over the
+	 * The retriever shape (task retriever-cover) — the ST.java:457 filter pair over the
 	 * cover defaults: {@code aFilter == null} pulls anything, otherwise the NBT-insensitive
 	 * item identity gate (:467) runs, inverted by {@code aInvertFilter}. CoverRetrieverItem.java:72.
 	 */

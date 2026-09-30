@@ -26,7 +26,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 *///?}
 
 /**
- * The formal GT6 plunger — item id {@code gt6:plunger} (task p29-w5-t5-scene-six spec ③,
+ * The formal GT6 plunger — item id {@code gt6:plunger} (task w5-t5-scene-six spec ③,
  * single steel tier ruling d). Upstream GT_Tool_Plunger.java:39 (registration :140
  * "Plunger", tooltip "Not as good at cleaning Pipes as flaming Flowers", mAmount 0):
  * <ul>

@@ -12,7 +12,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 /**
- * The keyed-tooltip ratchet (task p34-hygiene-lang acceptance ③): the two Jade providers
+ * The keyed-tooltip ratchet (task hygiene-lang acceptance ③): the two Jade providers
  * this card keyed must never grow a bare {@code Component.literal} again — every fixed
  * word rides a {@code gt6.jade.*} translatable face (en datagen row + tsv hand row, both
  * locales), and dynamic content moves through the %s slots. The scan strips comments
@@ -48,7 +48,7 @@ public class GT6JadeTooltipKeyPinTest {
 					tRelative + " grew a bare Component.literal — route the face through a "
 							+ "gt6.jade.* translatable key (en datagen row + tsv hand row) and move "
 							+ "the dynamic part into a %s slot; a genuinely new literal carve-out "
-							+ "must widen this pin consciously (the task p34-hygiene-lang ratchet)");
+							+ "must widen this pin consciously (the task hygiene-lang ratchet)");
 			assertTrue(tCode.contains("Component.translatable"),
 					tRelative + " lost its translatable face — the keyed contract is broken");
 		}

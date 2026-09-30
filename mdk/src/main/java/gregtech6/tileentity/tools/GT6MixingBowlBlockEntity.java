@@ -16,7 +16,7 @@ import gregtech6.recipes.GT6RecipeMaps;
  * (tmp/gt6-1.7.10 .../tools/MultiTileEntityMixingBowl.java:62-480), the ceramic row
  * (MT.Ceramic, 8000 L, RM.Mixer — Loader_MultiTileEntities.java:2177; the Table variant
  * :2178 is the task-card pool cut). Processes the {@code RM.Mixer} map — the one the
- * p26-c-foam-fluid-refill card declared and poured (NO map creation here, the hard
+ * c-foam-fluid-refill card declared and poured (NO map creation here, the hard
  * ordering gate of the task card).
  *
  * <p><b>Body differences from the pot (the upstream copy deltas):</b>

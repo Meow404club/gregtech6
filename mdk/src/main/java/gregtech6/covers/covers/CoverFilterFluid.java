@@ -21,7 +21,7 @@ import gregtech6.covers.ICover;
 
 /**
  * The fluid filter cover — 1.20.1 port of gregapi/cover/covers/CoverFilterFluid.java
- * :46-140 (task p34-covers-gameplay-10; upstream item id 1024 "Fluid Filter"). The
+ * :46-140 (task covers-gameplay-10; upstream item id 1024 "Fluid Filter"). The
  * covered face passes fluid transfer only when the fluid satisfies the filter: visual
  * 0 = WHITELIST (only the filter fluid passes), visual 1 = BLACKLIST (only the filter
  * fluid is refused), toggled with the screwdriver (:62-66). The filter fluid is set by

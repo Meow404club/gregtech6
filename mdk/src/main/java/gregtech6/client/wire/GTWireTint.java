@@ -17,7 +17,7 @@ import gregtech6.block.wire.GTWireBlock;
 import gregtech6.registry.GTWireSpecs;
 
 /**
- * The wire family material tints (task p9-wire-family-w2) — the runtime half of the true-
+ * The wire family material tints (task wire-family-w2) — the runtime half of the true-
  * material rendering, the {@code GTMaterialPrefixBlock.blockColor} shape applied to the
  * wires: the grayscale {@code materialicons/<set>/wire.png} carries the shape, tint index 0
  * carries the material colour.
@@ -26,7 +26,7 @@ import gregtech6.registry.GTWireSpecs;
  * {@code UT.Code.getRGBInt(mMaterial.fRGBaSolid)} (TileEntityBase07Paintable.unpaint :83 —
  * the exact {@code fRGBaSolid} expression), so index 0 = {@code fRGBaSolid} bound to ARGB
  * (the UT.Code.getRGBInt :1580-1582 encoding, GTMaterialPrefixBlock.tintARGB form). The
- * insulation jacket is a per-family FIXED colour (task p11-wire-brightness spec 3): the
+ * insulation jacket is a per-family FIXED colour (task wire-brightness spec 3): the
  * electric family uses the upstream gray 64,64,64 (MultiTileEntityWireElectric.java:237-238,
  * {@code isPainted() ? mRGBa : getRGBInt(64,64,64)}), the redstone family the upstream
  * {@code 96,64,64} (MultiTileEntityWireRedstoneInsulated.java:184-185 — the same constant on

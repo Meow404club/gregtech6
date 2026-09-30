@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The core-half of the id686 registration-death-chain guard (task p32-logistics-lv3
+ * The core-half of the id686 registration-death-chain guard (task logistics-lv3
  * acceptance ①, the {@link GT6LogisticsRegistrationTest} two-legs-one-contract form): the
  * Logistics Core controller plus its SEVEN structure parts must all be live — the parts
  * (18008 wall / 18299 vents / 18200-04 CPU units) are the GTMultiBlocks rows the massfab

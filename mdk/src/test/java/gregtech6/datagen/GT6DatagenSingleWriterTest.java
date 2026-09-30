@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 
 /**
- * The datagen single-writer pin (task p30-ops-datagen-lang-order, the ADR-P17-1 single
+ * The datagen single-writer pin (task ops-datagen-lang-order, the ADR-P17-1 single
  * producer discipline over the lang face): exactly ONE {@code @Mod.EventBusSubscriber} in
  * this package (GT6DataGenerators — every provider band folds into its listener) and the
  * ONE registered en_us writer is the FULL-UNION chain tail. The disease: three subscribers

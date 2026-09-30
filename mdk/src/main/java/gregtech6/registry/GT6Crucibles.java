@@ -46,11 +46,11 @@ import gregtech6.tileentity.tools.TileEntitySmeltery;
  * GT6BurningBoxes/GT6Boilers shape): block + item + BET DeferredRegisters attached from
  * the construct event, {@code GTMachines.java} and {@code GTMultiBlocks.java} untouched.
  *
- * <p><b>The union</b> (the S8 merge of tasks p26-crucible-multiblock and
- * p26-crucible-mold-faucet — the A/B/C bodies landed as ONE DeferredRegister trio, the
+ * <p><b>The union</b> (the S8 merge of tasks crucible-multiblock and
+ * crucible-mold-faucet — the A/B/C bodies landed as ONE DeferredRegister trio, the
  * same field names, one onModConstruct attach, exactly the union this file's discipline
  * paragraph declared): <ul>
- * <li><b>the SMALL Smeltery rows</b> (task p26-crucible-physics-smeltery spec ⑥ — the
+ * <li><b>the SMALL Smeltery rows</b> (task crucible-physics-smeltery spec ⑥ — the
  *     Loader_MultiTileEntities.java:250-289 projection, the Stone/Bronze/Steel minimal
  *     ladder; the {@link SmelteryRow} carrier with the lazy {@link java.util.function.Supplier}
  *     material — the static rows initialize at class-load time BEFORE MT.init() assigns the
@@ -59,8 +59,8 @@ import gregtech6.tileentity.tools.TileEntitySmeltery;
  *     mounted by {@link TileEntitySmeltery} through {@link #CRUCIBLE_BE} over the
  *     {@link CrucibleBlock} carrier with the {@link CrucibleBlock#LIQUID_LEVEL} fill-height
  *     property (spec ⑦, the mDisplayedHeight census bucketed to 9 datagen-native variants);</li>
- * <li><b>the LARGE-crucible rows</b> (task p26-crucible-multiblock SPEC ⑤, the ladder
- *     completed by task p29-w3-distill-crucible ③): the wall is the upstream metal-wall
+ * <li><b>the LARGE-crucible rows</b> (task crucible-multiblock SPEC ⑤, the ladder
+ *     completed by task w3-distill-crucible ③): the wall is the upstream metal-wall
  *     family (the "Steel Wall" part id 18009, Loader:1145 — hardness == resistance 6.0, the
  *     NBT_DESIGN :1270 wall reference as a Block identity); the controller is the "Large
  *     Steel Crucible" (:1270 — MTE id 17309, NBT_ACIDPROOF F). The FULL 8-material ladder
@@ -73,7 +73,7 @@ import gregtech6.tileentity.tools.TileEntitySmeltery;
  *     {@link TileEntityCrucibleRow}.</li>
  * </ul>
  *
-	 * <p>Creative tab (task p38-tabfix-a-multiblock): all 20 items — the 4 Smeltery rungs, the
+	 * <p>Creative tab (task tabfix-a-multiblock): all 20 items — the 4 Smeltery rungs, the
  * 8 crucible controllers, the Steel wall and the 7 ladder walls — join MULTIBLOCKS_TAB via
  * {@link #onBuildTabContents} (registered-but-tab-less is invisible in BOTH the creative
  * menu and JEI, the BurningBoxes issue-#10 form). Pool cut declared: upstream rode the
@@ -88,7 +88,7 @@ public final class GT6Crucibles {
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, "gt6");
 
 	// ------------------------------------------------------------------------------------
-	// the SMALL Smeltery family (task p26-crucible-physics-smeltery spec ⑥/⑦)
+	// the SMALL Smeltery family (task crucible-physics-smeltery spec ⑥/⑦)
 	// ------------------------------------------------------------------------------------
 
 	/**
@@ -260,13 +260,13 @@ public final class GT6Crucibles {
 	}
 
 	// ------------------------------------------------------------------------------------
-	// the LARGE-crucible family (task p26-crucible-multiblock SPEC ⑤)
+	// the LARGE-crucible family (task crucible-multiblock SPEC ⑤)
 	// ------------------------------------------------------------------------------------
 
 	/**
 	 * One LARGE registration row — the Loader aRegistry.add projection (path + shell material
 	 * + hardness + the NBT_DESIGN wall). The material rides a {@link java.util.function.Supplier}
-	 * (the {@link SmelteryRow} form, task p29-w3-distill-crucible ③): the static rows initialize
+	 * (the {@link SmelteryRow} form, task w3-distill-crucible ③): the static rows initialize
 	 * at class-load time which on the 21.1 leg runs before MT.init() — a direct MT.Steel
 	 * reference captured null and the shell (the physics ceiling input) read as null.
 	 */
@@ -292,7 +292,7 @@ public final class GT6Crucibles {
 			new CrucibleRow("crucible_steel_wall", () -> MT.Steel, "Steel Wall", 6.0F, "crucible_steel_wall", false, 18009);
 
 	// ------------------------------------------------------------------------------------
-	// task p29-w3-distill-crucible ③ — the 8-material ladder completion (the P26 defer pool
+	// task w3-distill-crucible ③ — the 8-material ladder completion (the P26 defer pool
 	// row this card harvests). The seven rows re-read VERBATIM from Loader_MultiTileEntities
 	// .java:1271-1277 (the upstream line order below): the NBT_DESIGN column names the metal
 	// wall (18002/18007/18006/18003/18004/18012/18005) and NBT_ACIDPROOF is T for the
@@ -357,7 +357,7 @@ public final class GT6Crucibles {
 			ITEMS.register(STEEL_WALL_ROW.path(), () -> new GTComposedNameItem(CRUCIBLE_STEEL_WALL.get(), new Item.Properties()));
 
 	/**
-	 * The seven ladder wall blocks by path (task p29-w3-distill-crucible ③ — the dedicated
+	 * The seven ladder wall blocks by path (task w3-distill-crucible ③ — the dedicated
 	 * {@link GTCrucibleWallBlock} per material, the mold-pour relay). The display composes
 	 * "{@code <mat> Wall}" over the EXISTING gt6.row.mat words (the card ① metal-wall
 	 * template — zero new unit keys, all seven slugs ride the dense-wall walk).
@@ -441,7 +441,7 @@ public final class GT6Crucibles {
 					TileEntityCrucibleRow::new, crucibleBlockArray()).build(null));
 
 	/**
-	 * The row-aware crucible controller (task p29-w3-distill-crucible ③): the P26 base
+	 * The row-aware crucible controller (task w3-distill-crucible ③): the P26 base
 	 * hardcodes the single-rung Steel shell ({@code getShellMaterial} → MT.Steel); the
 	 * ladder swaps the SHELL MATERIAL — the CruciblePhysics ceiling input
 	 * ({@code temperatureMax = material melting point × 1.10}, zero new physics) — so this
@@ -520,7 +520,7 @@ public final class GT6Crucibles {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-a-multiblock — the whole 19-item family joins the
+	 * The tab walk (task tabfix-a-multiblock — the whole 19-item family joins the
 	 * multiblocks tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the class-level
 	 * MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what delivers this
 	 * handler). The three walk maps plus the single-rung wall item, all 19. JEI derives its

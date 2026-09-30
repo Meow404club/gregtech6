@@ -29,7 +29,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.multiblocks.GTLargeDynamoBlockEntity;
 
 /**
- * The Large Dynamo family registration home (task p29-w3-turbine-dynamo ④, the
+ * The Large Dynamo family registration home (task w3-turbine-dynamo ④, the
  * GT6Boilers self-contained-DR form, ADR-P3-4): 4 controller blocks/items over ONE shared
  * BET row — {@link GTLargeDynamoBlockEntity} over the
  * {@link gregtech6.tileentity.multiblocks.GTMultiBlockConverter} base. RU in at the front,
@@ -37,7 +37,7 @@ import gregtech6.tileentity.multiblocks.GTLargeDynamoBlockEntity;
  * 4096→3072 / 8192→6144 / 16384→12288 / 131072→98304), WASTE_ENERGY = T; the structure
  * walls are the card ① Dense Walls, the middle segment the 18 Large Copper Coils (18040).
  *
- * <p>Creative tab (task p38-tabfix-a-multiblock): all 4 items join MULTIBLOCKS_TAB via
+ * <p>Creative tab (task tabfix-a-multiblock): all 4 items join MULTIBLOCKS_TAB via
  * {@link #onBuildTabContents} — registered-but-tab-less is invisible in BOTH the creative
  * menu and JEI (the BurningBoxes issue-#10 form, superseding the old p28 dynamo tab-less
  * precedent). Pool cut declared: upstream rode the per-family "Multiblock Machines"
@@ -61,7 +61,7 @@ public final class GT6DynamoHousings {
 	/** The part-block path this family resolves defensively (the row 1 Dense SS Wall, unreachable in production). */
 	public static final String DEFAULT_WALL_PATH = "dense_wall_stainless_steel";
 
-	/** One dynamo registration row — the block-carrier projection of one :1259-1262 line (the 75% ratio lives in the input/output pair; {@code material} the row's NBT_MATERIAL aMat — task p38-c2-controller-tint). */
+	/** One dynamo registration row — the block-carrier projection of one :1259-1262 line (the 75% ratio lives in the input/output pair; {@code material} the row's NBT_MATERIAL aMat — task c2-controller-tint). */
 	public record DynamoRow(String path, String display, int metaId, long input, long output,
 			float hardness, String wallPath, java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material) {}
 
@@ -101,7 +101,7 @@ public final class GT6DynamoHousings {
 	}
 
 	/**
-	 * The dynamo-main paint-tint walker (task p38-c2-controller-tint): the 4 controller
+	 * The dynamo-main paint-tint walker (task c2-controller-tint): the 4 controller
 	 * blocks whose datagen models carry tintindex 0 on the body cube (the
 	 * {@code GTMachines.paintableBlockArray} census convention), feeding BOTH consumption
 	 * halves: the baked world tint ({@code GTMachineTintModel}, the p32 route) and the
@@ -178,7 +178,7 @@ public final class GT6DynamoHousings {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-a-multiblock — the whole {@link #ITEMS_BY_PATH} family
+	 * The tab walk (task tabfix-a-multiblock — the whole {@link #ITEMS_BY_PATH} family
 	 * joins the multiblocks tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
 	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what delivers
 	 * this handler). JEI derives its item list from the tab display items.

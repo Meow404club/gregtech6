@@ -11,8 +11,8 @@ import gregtech6.covers.ICover;
 import gregtech6.registry.GTBarrels;
 
 /**
- * The wood fluid barrel (task p4-fluid-barrel, cover admission restored by task
- * p6-barrel-metal-plastic ①) — the concrete mount of the ported
+ * The wood fluid barrel (task fluid-barrel, cover admission restored by task
+ * barrel-metal-plastic ①) — the concrete mount of the ported
  * {@link TileEntityBase08Barrel} family base, the counterpart of the upstream
  * {@code MultiTileEntityBarrelWood} row (gregtech/tileentity/tanks/MultiTileEntityBarrelWood.java:38).
  *
@@ -24,7 +24,7 @@ import gregtech6.registry.GTBarrels;
  * read seam (:66) still overrides the field at load. Wood does NOT override
  * {@code keepsFilter()} upstream — the barrel drains to a true empty.
  *
- * <p>Cover admission (task p6-barrel-metal-plastic ①): the upstream :39 verbatim
+ * <p>Cover admission (task barrel-metal-plastic ①): the upstream :39 verbatim
  * predicate — {@code allowCover → aCover.isDecorative(aSide, getCoverData())} — restores
  * the decorative-only rule: CoverTextureSimple plates pass (the p4 iron-plate cover),
  * functional covers like the pump are refused; the P5 pump-covers-open-all-faces deviation

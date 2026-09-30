@@ -34,7 +34,7 @@ import gregtech6.registry.GT6Distillation.TileEntityDistillationTower;
 import gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase;
 
 /**
- * The distillation-tower offline panel gate (task p33-gui-distill-tower, the
+ * The distillation-tower offline panel gate (task gui-distill-tower, the
  * GT6BasicMachineMUIPanelTest shape): {@link GTDistillationTowerMUI} builds the tower
  * panel from a local tower fixture (row()==null — the panel factory must not depend on
  * row()) with no player, no screen.

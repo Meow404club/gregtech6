@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 /**
- * The getSideWrenching parse table (task p4-pipe-flow-control acceptance ①): every
+ * The getSideWrenching parse table (task pipe-flow-control acceptance ①): every
  * branch of the upstream UT.java:1776-1798 switch exercised per face — the 0.25/0.75
  * edge thresholds, the corner fallback onto OPOS[aSide], the centre hit returning the
  * face itself, and the SIDE_INVALID fall-through.

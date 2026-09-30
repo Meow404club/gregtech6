@@ -40,7 +40,7 @@ import gregtech6.registry.GTBlockEntities;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * 1.20.1 counterpart of the GT6 Steam Engine — task p12-engine-steam, the full-semantics
+ * 1.20.1 counterpart of the GT6 Steam Engine — task engine-steam, the full-semantics
  * port of gregtech/tileentity/energy/converters/MultiTileEntityEngineSteam.java
  * (Loader_MultiTileEntities.java:583-612, the Steam + Strong Steam Engine rows) as the
  * first REAL KU source: steam in the back, an AC square wave of KU out the front.
@@ -93,7 +93,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * handler on its back face (steam only, the :239 gate), consulted through the NEIGHBOUR's
  * top face (see {@link #mFluidAdjacency}). The RCON acceptance chain's {@code /gt6tank
  * fill}-ed metal drum plays the pipe. POWER_CONDUCTING caveat (the
- * p12-research-steam-barrel-gasproof verdict): upstream NO tank holds steam — the
+ * research-steam-barrel-gasproof verdict): upstream NO tank holds steam — the
  * steam flag set carries POWER_CONDUCTING, so a filled tank is destroyed the next tick
  * (wood/plastic melt at their 340/370 K ceilings, metal/Logistics fizz away); the port
  * barrels carry no such destruction chain, a DECLARED deviation (steam persists here),
@@ -396,7 +396,7 @@ public class GTSteamEngineBlockEntity extends TileEntityBase03TicksAndSync imple
 
 	/**
 	 * The placement mirror (the GTCrankBlockEntity.setFacingFromPlacement form). Task
-	 * p28-singleblock-facing-canon: the KU-emit front TOWARDS the placer — the
+	 * singleblock-facing-canon: the KU-emit front TOWARDS the placer — the
 	 * GT6PlacementFacing canon (view OPPOSITE).
 	 */
 	public void setFacingFromPlacement(net.minecraft.world.entity.player.Player aPlayer) {

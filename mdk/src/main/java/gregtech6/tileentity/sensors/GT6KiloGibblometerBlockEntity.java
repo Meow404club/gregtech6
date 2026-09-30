@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 /**
- * The Kilo-Gibbl-O-Meter Sensor (task p34-sensors-trivial-14 row ⑤) — the port of
+ * The Kilo-Gibbl-O-Meter Sensor (task sensors-trivial-14 row ⑤) — the port of
  * MultiTileEntityKiloGibblometer.java:31-46, the {@link GT6GibblometerBlockEntity}
  * sibling at the Kilo divisor (upstream :32-33 {@code / 1000000} vs the Gibbl meter's
  * {@code / 1000} — the SAME ITileEntityGibbl seam, so the declared-zero baseline and its

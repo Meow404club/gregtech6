@@ -33,7 +33,7 @@ import net.minecraft.world.item.Items;
 import gregtech6.registry.GT6SlicerBlades;
 
 /**
- * The RM.Slicer vanilla-face static pour, offline (task p35-slicer-row-domain): the
+ * The RM.Slicer vanilla-face static pour, offline (task slicer-row-domain): the
  * upstream row对照 pins over the fixture-seam pour (the GT6RecipesExtruderTest stub form).
  * The vanilla items ARE constructible offline — only the blades and the tiny-paper output
  * ride the loader's resolver seams over distinct vanilla stand-ins (the recipe mechanics

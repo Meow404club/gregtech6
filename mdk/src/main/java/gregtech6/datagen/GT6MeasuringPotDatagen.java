@@ -21,7 +21,7 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import gregtech6.registry.GT6MeasuringPot;
 
 /**
- * The Measuring Pot crafting datagen (task r8-issue45-c3, issue #45) — the
+ * The Measuring Pot crafting datagen (task issue45-c3, issue #45) — the
  * GT6CrucibleDatagen form (the card-owned provider band appended by
  * {@link GT6DataGenerators}, the {@code RecipeProvider.getName() final} duplicate-provider
  * constraint answered by implementing DataProvider directly). Three rows, the clay-band

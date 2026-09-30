@@ -1,5 +1,5 @@
 /**
- * The offline truth tables of the redstone-wire family (task p10-wire-redstone-family).
+ * The offline truth tables of the redstone-wire family (task wire-redstone-family).
  * The push-BFS engine (GTWireRedstoneNode.doRedstoneUpdate, the upstream
  * ITileEntityRedstoneWire.Util :43-56 verbatim port) drives over FAKE nodes — the engine
  * is interface-typed exactly so this needs no Level — while the updateRedstone scan

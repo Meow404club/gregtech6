@@ -5,7 +5,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 /**
  * The single owner of the GT6 BlockState Property constants that more than one block class
- * shares by name (ADR-P16-2, task p16-blockstates-2111-prop-intern). Each consumer block
+ * shares by name (ADR-P16-2, task blockstates-2111-prop-intern). Each consumer block
  * declares its own constant as an alias of the constant here, so all holders share one real
  * instance and any cross-class read is identity-safe.
  *

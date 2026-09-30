@@ -21,7 +21,7 @@ import gregtech6.registry.GTBlockEntities;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Axle block (task p12-axle-family spec ②) — the AXIS-axis carrier over the shared BET
+ * The Axle block (task axle-family spec ②) — the AXIS-axis carrier over the shared BET
  * (ADR-P3-1), the vanilla-log property shape ({@code RotatedPillarBlock}): the straight
  * line is the whole connectivity model of the port (the declared port-ism — upstream
  * mFacing six-way placement collapses to one three-state axis because the
@@ -64,7 +64,7 @@ public class GTAxleBlock extends GTEntityBlock {
 		registerDefaultState(this.stateDefinition.any().setValue(AXIS, Direction.Axis.X));
 	}
 
-	/** The composed axle name (task p20-i18n-compose-rows): the {@link GT6Kinetics#axleDisplayOf} carrier over the registration fields. */
+	/** The composed axle name (task i18n-compose-rows): the {@link GT6Kinetics#axleDisplayOf} carrier over the registration fields. */
 	@Override
 	public net.minecraft.network.chat.MutableComponent getName() {
 		return GT6Kinetics.axleDisplayOf(spec, sizeIndex);

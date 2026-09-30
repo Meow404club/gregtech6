@@ -8,7 +8,7 @@ import gregtech6.covers.CoverData;
 /**
  * The redstone conductor (accept) marker — 1.20.1 port of
  * gregapi/cover/covers/CoverRedstoneConductorIN.java (36 lines, task
- * p10-cover-conductor-redstone). Upstream :30-36 is ZERO behaviour: the class exists
+ * cover-conductor-redstone). Upstream :30-36 is ZERO behaviour: the class exists
  * so the sibling {@link CoverRedstoneConductorOUT#onBlockUpdate} scan can
  * {@code instanceof}-test the face (the machine's world signal at THIS face is the
  * value the wire-through face re-emits on its own), plus the plate art.

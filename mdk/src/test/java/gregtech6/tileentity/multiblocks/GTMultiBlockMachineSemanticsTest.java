@@ -21,7 +21,7 @@ import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
 
 /**
- * The large-machine behavior constants pinned (task p29-w3-nbtdesign-parts ② — the card
+ * The large-machine behavior constants pinned (task w3-nbtdesign-parts ② — the card
  * ④⑤⑥ semantic predecessors). Every case is an upstream-direct translation of the
  * TileEntityBase10MultiBlockMachine doWork path — i.e. the MultiTileEntityBasicMachine
  * :126-131 NBT keys and the :626-629/:742-745/:761-774 doWork bodies, byte-for-byte:

@@ -6,7 +6,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * The formal GT6 double axe — item id {@code gt6:axe_double} (task p29-w5-t2-blade-six).
+ * The formal GT6 double axe — item id {@code gt6:axe_double} (task w5-t2-blade-six).
  * Upstream GT_Tool_AxeDouble.java:29-62 is a {@code GT_Tool_Axe} SUBCLASS (the
  * Loader_Tools.java:123 registration row):
  * <ul>

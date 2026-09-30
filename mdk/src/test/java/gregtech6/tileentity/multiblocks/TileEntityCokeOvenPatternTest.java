@@ -14,12 +14,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregtech6.multiblock.GTMultiBlockPattern;
 
 /**
- * The Coke Oven pattern binding (task p12-ghost-pattern-api acceptance — offline):
+ * The Coke Oven pattern binding (task ghost-pattern-api acceptance — offline):
  * ① the bound pattern is the LITERAL 26+1 expectation — 26 brick cells in the upstream
  * checkStructure2 loop order (TileEntityCokeOven.java:97-111, {@code i} outer / {@code j}
  * middle / {@code k} inner) plus the hollow air centre appended (:52), exactly the table
  * the POC renderer hardcoded (GTMultiBlockPreviewRenderer PATTERN_CELLS, task
- * p10-ghost-preview-poc) — this test is the byte-for-byte pin that the lift to the
+ * ghost-preview-poc) — this test is the byte-for-byte pin that the lift to the
  * declarative API changed nothing; ② the pattern's brick judgement rides the
  * {@link TileEntityCokeOven#getPartBlock()} hook (BRICKS on the offline fixture) and the
  * centre judgement is AIR; ③ the bounds fold to the 3x3x3 shell; ④ the interface default

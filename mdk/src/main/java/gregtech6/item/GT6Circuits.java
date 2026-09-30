@@ -19,7 +19,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 /**
- * The Integrated Circuit carrier (task p16-distillery-family ①) — the port counterpart of
+ * The Integrated Circuit carrier (task distillery-family ①) — the port counterpart of
  * upstream {@code ItemIntegratedCircuit} (gregapi/item/ItemIntegratedCircuit.java:48-52,
  * registered as {@code IL.Circuit_Selector}, GT_API.java:731), the "Selector Tag" item every
  * sub-recipe-selecting row carries in its input slot ({@code ST.tag(n)},
@@ -133,7 +133,7 @@ public final class GT6Circuits {
 
 	/**
 	 * The recipe-serializer face of {@link #applyConfiguration} — the assemble-time stamp
-	 * the gt6:circuit_program rows ride (task p33-circuits-crafting-c). Public so the
+	 * the gt6:circuit_program rows ride (task circuits-crafting-c). Public so the
 	 * serializer (a different package) can stamp without touching the private carrier.
 	 */
 	public static void applyConfigurationFace(ItemStack aStack, int aConfig) {

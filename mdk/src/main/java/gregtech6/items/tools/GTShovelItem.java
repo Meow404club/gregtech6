@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * The formal GT6 shovel — item id {@code gt6:shovel} (task p29-w5-t1-dig-six). Upstream
+ * The formal GT6 shovel — item id {@code gt6:shovel} (task w5-t1-dig-six). Upstream
  * GT_Tool_Shovel.java:39-101:
  * <ul>
  * <li><b>Mining surface</b> (isMinableBlock :62-63): the {@code TOOL_shovel} harvest arm
@@ -42,7 +42,7 @@ import net.minecraft.world.level.block.state.BlockState;
  *     single point (the family mapping).</li>
  * </ul>
  *
- * <p>Durability ladder (task p31-dig-ladder): the {@link GT6ToolLadder} form over the
+ * <p>Durability ladder (task dig-ladder): the {@link GT6ToolLadder} form over the
  * stack's identity — durability j/100, speed ×1.0 × mToolSpeed, the :482 quality gate;
  * the identity-less arm = Steel bit-exact (512 / 6.0F, the pre-ladder constants). The
  * drop authorization stays the stackless coarse floor on 1.20.1 (no vanilla shovel

@@ -22,7 +22,7 @@ import gregtech6.block.energy.GT6DynamoBlock;
 import gregtech6.tileentity.energy.GT6ElectricDynamoBlockEntity;
 
 /**
- * The Electric Dynamo family registration (task p28-c-dynamo-family-be) — card-owned
+ * The Electric Dynamo family registration (task c-dynamo-family-be) — card-owned
  * {@code @EventBusSubscriber(MOD)} DeferredRegisters attached from the construct event,
  * the GT6FeConverters/GT6FluxDynamos shape (ADR-P3-4). The connected port (the wave-card
  * ruling c): the upstream Flux Dynamo recipe's middle key IS the same-tier Electric
@@ -41,7 +41,7 @@ import gregtech6.tileentity.energy.GT6ElectricDynamoBlockEntity;
  * zero-edited, ADR-P3-4), and the row-table test pins
  * {@code ELECTRIC_T_LADDER.get(5).get() == MT.Ti}.
  *
- * <p>THE T0 ULV ROW (task p28-c-ulv-dynamo-row — the water-wheel chain's last link,
+ * <p>THE T0 ULV ROW (task c-ulv-dynamo-row — the water-wheel chain's last link,
  * research.p28-r-ulv-tier-design): upstream GT6 ships NO VN[0] machine at all (only the
  * Transformer :881 and the batteries :1009/:1033), so the T0 row is a DECLARED
  * tier-extension deviation on three axes. (1) RATIO: in 8 RU / out 8 EU / 1 A — exactly
@@ -49,7 +49,7 @@ import gregtech6.tileentity.energy.GT6ElectricDynamoBlockEntity;
  * 22 EU; the rounded 1:1 makes the water wheel's 8 RU packet come out as ONE 8 EU packet,
  * the exact V[0] the ULV machine window [4,16] — GTMachines.ULV_TIER_INPUTS — is centered
  * on). (2) MATERIAL: Electric_T[0] = TinAlloy (upstream MT.java:3691 member [0]). (3)
- * META ID: 10116 = the family base 10111 + 5, the p28-c-ulv-machine-ladder invented-id
+ * META ID: 10116 = the family base 10111 + 5, the c-ulv-machine-ladder invented-id
  * convention (upstream has no ULV dynamo id). The tier index PREPENDS (ULV = 0, LV..IV
  * shift to 1..5) so the ladder index stays the VN ordinal; the input band rides the
  * Base10:76 ≤16 arm (min = 1, the GT6DynamoBlockEntity fix commit) and the output band
@@ -71,7 +71,7 @@ public final class GT6ElectricDynamos {
 	public record ElectricRow(String path, int metaId, int tier, String voltageWord) {}
 
 	/**
-	 * The six rows — the T0 ULV extension row (the task p28-c-ulv-dynamo-row declared
+	 * The six rows — the T0 ULV extension row (the task c-ulv-dynamo-row declared
 	 * deviation, path suffix "_ulv" the p28 ULV ladder convention, invented id 族基+5)
 	 * PREPENDED to the five upstream lines in their line order :946-950 (LV..IV; metaId
 	 * 10111-10115; the VN[1..5] display words, CS.java:154; ULV = VN[0]). The tier field
@@ -175,7 +175,7 @@ public final class GT6ElectricDynamos {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — the whole six-item ladder joins the
+	 * The tab walk (task tabfix-b-energy — the whole six-item ladder joins the
 	 * machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the class-level
 	 * MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what delivers this
 	 * handler). JEI 1.20.1 derives its item list from the tab display items, so

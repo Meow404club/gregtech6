@@ -38,7 +38,7 @@ import gregtech6.tooltip.GT6Tooltips;
  * Item pipe registration, card-owned (ADR-P3-4): self-contained
  * {@code @EventBusSubscriber(MOD)} DeferredRegisters attached from the construct event —
  * the {@link GTFluidPipes} shape repeated verbatim so the two pipe cards' scopes stay
- * disjoint (this class NEVER touches GTFluidPipes/GTFluidPipeCommand — the p26-arch
+ * disjoint (this class NEVER touches GTFluidPipes/GTFluidPipeCommand — the arch
  * ruling; tasks.p26-pipe-item spec ⑤).
  *
  * <p>The family is row-driven (the GT6Boilers.BoilerRow precedent): one upstream
@@ -76,7 +76,7 @@ public final class GTItemPipes {
 		/**
 		 * The row's ore-dict material — the loader line's {@code MT.*} argument verbatim
 		 * (Loader_MultiTileEntities.java:1823-1825 Brass/Constantan/CobaltBrass). The
-		 * r8-tex-pipe-textures tint chain resolves the mRGBa seat from it
+		 * tex-pipe-textures tint chain resolves the mRGBa seat from it
 		 * (upstream NBT_MATERIAL + NBT_COLOR = getRGBInt(fRGBaSolid), MultiTileEntityPipeItem
 		 * .java:76-82). Loud drift on an unknown slug — the table only ever grows with a
 		 * loader line in hand.

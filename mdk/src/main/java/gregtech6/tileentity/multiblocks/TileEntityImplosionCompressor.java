@@ -28,7 +28,7 @@ import gregtech6.fluid.FluidTankGT;
 import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 
 /**
- * The Implosion Compressor multiblock controller (task p31-implosion) — the 1.20.1 port
+ * The Implosion Compressor multiblock controller (task implosion) — the 1.20.1 port
  * of gregtech/tileentity/multiblocks/MultiTileEntityImplosionCompressor.java over
  * {@link TileEntityBase10MultiBlockMachine} (the twelfth-plus-one machine: the same
  * Loader block as the W3 large-12 family, registered separately upstream at

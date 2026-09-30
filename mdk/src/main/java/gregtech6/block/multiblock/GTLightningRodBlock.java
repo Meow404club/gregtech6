@@ -37,7 +37,7 @@ import gregtech6.tileentity.multiblocks.TileEntityLightningRod;
 public class GTLightningRodBlock extends GTMultiBlockControllerBlock {
 
 	public GTLightningRodBlock(Properties aProperties) {
-		// task r8-tex-multiblockmains — the :1282 NBT_MATERIAL column (ANY.W, the
+		// task tex-multiblockmains — the :1282 NBT_MATERIAL column (ANY.W, the
 		// machine_wall_tungsten MT.W mapping) rides the carrier ctor (the p38-c2 form),
 		// so the two-layer model's tintindex-0 body resolves the colour through the
 		// GTMultiBlockControllerBlock.materialOf gate

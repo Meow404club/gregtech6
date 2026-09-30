@@ -3,7 +3,7 @@ package gregtech6.client.render;
 import gregtech6.util.UT6;
 
 /**
- * The wrench 3x3 grid tables (task p5-wrench-ui-gtceu, ADR 2026-08-30-p5-wrench-ui
+ * The wrench 3x3 grid tables (task wrench-ui-gtceu, ADR 2026-08-30-wrench-ui
  * ruling ⑤ "the table IS the specification"): the hover grid is a pure visual layer
  * over {@link UT6#getSideWrenching} — the very function the click path uses
  * (GTFluidPipeBlock.use:114) — so what the grid draws is constructively what a click
@@ -128,8 +128,8 @@ public final class GTWrenchGridTables {
 	}
 
 	/**
-	 * The machine-rotation icon table (task p6-oven-rotation, the second table of the
-	 * grid — ADR 2026-08-30-p6-oven-rotation ruling ④): the oven counterpart of
+	 * The machine-rotation icon table (task oven-rotation, the second table of the
+	 * grid — ADR 2026-08-30-oven-rotation ruling ④): the oven counterpart of
 	 * {@link #iconFor}. Without shift the machine grid draws no icons at all (GTCEu
 	 * MetaMachine sideTips :683-688 — the arrows are the shift mode only; the grid
 	 * lines still render via shouldRenderGrid :670). With shift, a cell is live when

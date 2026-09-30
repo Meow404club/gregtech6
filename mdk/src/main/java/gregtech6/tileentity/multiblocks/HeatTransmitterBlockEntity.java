@@ -16,7 +16,7 @@ import gregtech6.tileentity.TileEntityBase01Root;
 /**
  * The Heat Transmitter part BE — the energy-relaying half of the multiblock part (upstream
  * MultiTileEntityMultiBlockPart.java:496-595 "Relay Energy" section verbatim, task
- * p13-large-boiler SPEC ④): a {@link MultiBlockPartBlockEntity} whose ITileEntityEnergy
+ * large-boiler SPEC ④): a {@link MultiBlockPartBlockEntity} whose ITileEntityEnergy
  * face forwards to the CONTROLLER through the mode gate.
  *
  * <p><b>The upstream relay shape, each method</b>: the mMode gate first (a NO_ENERGY_IN /

@@ -16,7 +16,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
- * The crowbar mining-surface truth table (task p10-tool-crowbar-mining acceptance,
+ * The crowbar mining-surface truth table (task tool-crowbar-mining acceptance,
  * offline half): the upstream isMinableBlock :108-114 modern halves pinned through
  * the static seam — rails arm (BaseRailBlock instanceof) true with speed>1, the
  * redstone-IO family arm true, stone/dirt (and everything else) false at the vanilla

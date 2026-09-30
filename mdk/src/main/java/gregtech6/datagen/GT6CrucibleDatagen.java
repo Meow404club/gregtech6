@@ -24,8 +24,8 @@ import gregtech6.registry.GT6Crucibles;
 import gregtech6.registry.GT6Molds;
 
 /**
- * The crucible-chain datagen home (task p26-crucible-physics-smeltery spec ⑦). Since task
- * p30-ops-datagen-lang-order the provider band folds into {@link GT6DataGenerators#onGatherData}
+ * The crucible-chain datagen home (task crucible-physics-smeltery spec ⑦). Since task
+ * ops-datagen-lang-order the provider band folds into {@link GT6DataGenerators#onGatherData}
  * — this class is NO LONGER a {@code @Mod.EventBusSubscriber}: three self-contained
  * GatherDataEvent subscribers ordered themselves by the annotation-scan lottery and the
  * per-family full-file lang writers made the last one win (the p30 card's live repro: an
@@ -75,16 +75,16 @@ public final class GT6CrucibleDatagen {
 	// ------------------------------------------------------------------------------------
 
 	/**
-	 * The material smooth body texture (task r7-40-41-mold-assets, GitHub #41 — the former
+	 * The material smooth body texture (task 40-41-mold-assets, GitHub #41 — the former
 	 * flat andesite/cobble placeholder for every row). The upstream body face is the
 	 * material's {@code getTextureSmooth()} — the texture set's blockSolid icon
 	 * (OreDictMaterial.java:983-990, MultiTileEntityMold.java:439): SET_ROUGH (Ceramic),
 	 * SET_COPPER (Bronze) and SET_METALLIC (Steel) ride the borrowed grayscale
-	 * materialicons blockSolid art (assets/README.md, the p8-prefixblock-render borrow),
+	 * materialicons blockSolid art (assets/README.md, the prefixblock-render borrow),
 	 * the vanilla SET_STONE row (Stone) has no borrowed blockSolid icon and rides the
 	 * vanilla smooth stone. Upstream multiplies the grayscale art with the material colour
 	 * at runtime (the {@code mRGBaSolid} pass of {@code getTextureSmooth(mRGBaSolid, F)}
-	 * :980-987) — task r10-debt-material-tint closed the former un-tinted deviation: the
+	 * :980-987) — task debt-material-tint closed the former un-tinted deviation: the
 	 * tinted rows carry tintindex 0 on the body faces and
 	 * {@code GT6MoldTintListener} answers the {@link #bodyTinted} material's mRGBaSolid.
 	 * Returns the FULLY-QUALIFIED {@code ns:path} (the vanilla row carries its explicit
@@ -100,7 +100,7 @@ public final class GT6CrucibleDatagen {
 	}
 
 	/**
-	 * Whether the body face needs the material tint (task r10-debt-material-tint): the
+	 * Whether the body face needs the material tint (task debt-material-tint): the
 	 * borrowed grayscale materialicons art is multiplied with the mRGBaSolid colour, the
 	 * vanilla smooth-stone row is a FINISHED texture — a second multiply would dirty it
 	 * (the recorded declaration deviation, kept). Derived from {@link #bodyTexture}'s own
@@ -150,7 +150,7 @@ public final class GT6CrucibleDatagen {
 			// share the one concave MTE design 1072 — the flat-cube placeholder retired)
 		}
 
-		/** One crucible: 9 LIQUID_LEVEL variants + the BlockItem parent (the empty face = the material smooth body, tintindex 0 on the grayscale-borrow rows — task r10-debt-material-tint). */
+		/** One crucible: 9 LIQUID_LEVEL variants + the BlockItem parent (the empty face = the material smooth body, tintindex 0 on the grayscale-borrow rows — task debt-material-tint). */
 		private void addCrucible(GT6Crucibles.SmelteryRow aRow, Block aBlock) {
 			String tEmpty = "block/" + aRow.path() + "_empty";
 			String tFilled = "block/" + aRow.path() + "_filled";
@@ -194,7 +194,7 @@ public final class GT6CrucibleDatagen {
 	 * GT6EnUs provider on purpose: a standalone LanguageProvider would clobber
 	 * en_us.json (LanguageProvider.finish rewrites the whole file — the later-registered
 	 * provider would wipe every GT6EnUs key), so this provider replays the full base
-	 * translation set plus the four crucible keys. Since task p30-ops-datagen-lang-order this
+	 * translation set plus the four crucible keys. Since task ops-datagen-lang-order this
 	 * class is a CHAIN LINK only — never registered itself; {@link GT6MoldDatagen.Lang}, the
 	 * chain tail, is the single registered en_us writer.
 	 */
@@ -225,7 +225,7 @@ public final class GT6CrucibleDatagen {
 			// the mold card grew the 30 ceramic rows — their display keys belong to
 			// GT6MoldDatagen.Lang, which chains BELOW this provider and relabels them properly;
 			// labelling every ceramic row "Stone Mold" here would win whenever this listener
-			// registers last — the p26-sensors-core merge review)
+			// registers last — the sensors-core merge review)
 			add("gt6.row.mold.display.mold_stone", "Stone Mold");
 		}
 	}

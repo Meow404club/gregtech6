@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 /**
- * The QU-matter fluid family offline tests (task p31-qu-a-foundation acceptance — the
+ * The QU-matter fluid family offline tests (task qu-a-foundation acceptance — the
  * registration-row assertions against the DECLARED values, the GTFluidsHotFamilyTest
  * posture): the three {@link GTFluids.ChemicalFluidSpec} rows of
  * {@link GTFluids#QU_FLUID_SPECS} (Loader_Fluids.java:70/:71 the matter pair, :193 the

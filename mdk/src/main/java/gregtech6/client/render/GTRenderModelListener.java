@@ -25,8 +25,8 @@ import net.minecraftforge.fml.common.Mod;
  * {@link ConcurrentHashMap} and factories must not touch anything but the baked model they
  * receive. BakingCompleted (ModelEvent.java:91) is read-only and deliberately unused.
  *
- * <p>CONSUMER TEMPLATE (W3 p4-cover-core; the key shape corrected to the per-state
- * form by p10-cover-plate-perstate-fix — a variant block's registration is its FULL
+ * <p>CONSUMER TEMPLATE (W3 cover-core; the key shape corrected to the per-state
+ * form by cover-plate-perstate-fix — a variant block's registration is its FULL
  * per-state key set, not one entry):
  * <pre>{@code
  * // during mod construction (before the first resource reload):
@@ -47,7 +47,7 @@ import net.minecraftforge.fml.common.Mod;
  * {@code directory("block")} atlas source (vanilla blocks.json) — the explicit source is
  * belt-and-suspenders.
  *
- * <p>DISPATCH-KEY SHAPE (clarified by task p9-render-c-oven-overlay): vanilla ModelBakery
+ * <p>DISPATCH-KEY SHAPE (clarified by task render-c-oven-overlay): vanilla ModelBakery
  * loads one TOP-LEVEL model per BLOCK STATE (ModelBakery.java:136
  * {@code loadTopLevel(BlockModelShaper.stateToModelLocation(block, state))}), so the map
  * exposed here is keyed by per-state {@link net.minecraft.resources.ModelResourceLocation}s
@@ -55,7 +55,7 @@ import net.minecraftforge.fml.common.Mod;
  * are only unbaked dependencies and never appear as keys. A consumer targeting a
  * variant-based block must therefore register its per-state keys (see
  * {@link GTOvenClientListener} for the oven's 16-key form); a model-file id (the
- * template's pre-p10 form, landed until p10-cover-plate-perstate-fix) silently
+ * template's pre-p10 form, landed until cover-plate-perstate-fix) silently
  * degrades (the absent-target skip below).
  */
 @Mod.EventBusSubscriber(modid = GTRenderModelListener.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)

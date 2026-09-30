@@ -26,7 +26,7 @@ import gregtech6.registry.GTMultiBlocks;
 /**
  * 1.20.1 port of the Coke Oven multiblock controller — direct translation of
  * gregtech/tileentity/multiblocks/MultiTileEntityCokeOven.java:44-103 (structure face:
- * task p4-multiblock-framework W3; machine face: task p6-cokeoven-processing).
+ * task multiblock-framework W3; machine face: task cokeoven-processing).
  *
  * <p>checkStructure2 (:46-60): the 3x3x3 loop around the cell behind the facing
  * (getOffsetXN/YN/ZN arithmetic — "Main Block centered on Side and facing outwards"), the
@@ -35,7 +35,7 @@ import gregtech6.registry.GTMultiBlocks;
  * a non-air centre is a failure, NOT a silent clear), and
  * {@code checkAndSetTarget} for the other 26 cells (:54) with the upstream mode
  * {@link MultiBlockPartBlockEntity#ONLY_ITEM_FLUID_ENERGY} and design 0. Since
- * p16-pattern-checker the WALK is the shared checker over the bound pattern (task ③, the
+ * pattern-checker the WALK is the shared checker over the bound pattern (task ③, the
  * production pilot) — the upstream semantics above are what the pattern declares, not a
  * second hand-written copy.
  *
@@ -45,13 +45,13 @@ import gregtech6.registry.GTMultiBlocks;
  *     {@link #getPartBlock()} Block — the "coke oven bricks" part type as a Block instance
  *     (card note: ids keep the gt6:multiblock_* prefix, the card-ruled form);</li>
  * <li>extends {@link TileEntityBase10MultiBlockMachine} (the upstream parent class of the
- *     same name) since p6-cokeoven-processing: the TU self-generation, doWork/checkRecipe/
+ *     same name) since cokeoven-processing: the TU self-generation, doWork/checkRecipe/
  *     parallel/ignition business and the fluid push live there — this class carries only
  *     the Coke Oven shape and its fluid-output scan;</li>
  * <li>isInsideStructure (:76-79) verbatim bounding box;</li>
- * <li>{@link #getStructurePattern()} (task p12-ghost-pattern-api, enriched by
- *     p16-pattern-checker): the shape above, now carrying the forming expectation —
- *     since the ADR 2026-09-05-p16-formation-scoping the pattern is the check
+ * <li>{@link #getStructurePattern()} (task ghost-pattern-api, enriched by
+ *     pattern-checker): the shape above, now carrying the forming expectation —
+ *     since the ADR 2026-09-05-formation-scoping the pattern is the check
  *     ({@link #checkStructure2} walks it through the shared checker);</li>
  * <li>{@link #getFluidOutputTarget(Fluid)} (:84-96 verbatim shape): the cache-then-rescan
  *     fluid target one layer BELOW the structure (tY-2 relative to the facing offsets,
@@ -103,14 +103,14 @@ public class TileEntityCokeOven extends TileEntityBase10MultiBlockMachine {
 
 	/**
 	 * The declared structure pattern ({@link GTMultiBlockPattern} binding, task
-	 * p12-ghost-pattern-api + the p16-pattern-checker enrichment): the 26 brick cells in
+	 * ghost-pattern-api + the pattern-checker enrichment): the 26 brick cells in
 	 * the upstream checkStructure2 loop order (:97-111, {@code i} outer / {@code j}
 	 * middle / {@code k} inner — the loop order the checker no longer needs to rediscover)
 	 * plus the hollow air centre appended (:52 — a non-air centre is a check failure, NOT
 	 * a silent clear). Each brick cell carries the FULL forming expectation — part block
 	 * {@link #getPartBlock()}, design 0, usage {@link MultiBlockPartBlockEntity#ONLY_ITEM_FLUID_ENERGY}
 	 * — exactly the triple the hand-written loop passed checkAndSetTarget; since
-	 * p16-pattern-checker the pattern IS the check ({@link #checkStructure2} walks it
+	 * pattern-checker the pattern IS the check ({@link #checkStructure2} walks it
 	 * through the shared checker), ending the double bookkeeping. The binding is lazy,
 	 * never derived by running the old hand-written loop.
 	 */
@@ -130,7 +130,7 @@ public class TileEntityCokeOven extends TileEntityBase10MultiBlockMachine {
 	}
 
 	/**
-	 * Upstream :46-60, now WALKED FROM THE PATTERN (task p16-pattern-checker ③ — the
+	 * Upstream :46-60, now WALKED FROM THE PATTERN (task pattern-checker ③ — the
 	 * production pilot): the shared checker resolves each cell through
 	 * {@link GTMultiBlockPattern#cellOffset} (the same getOffsetXN/YN/ZN anchor arithmetic
 	 * this loop used to inline), drives the same checkAndSetTarget path for the 26 bricks

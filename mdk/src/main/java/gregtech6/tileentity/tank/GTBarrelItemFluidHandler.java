@@ -25,7 +25,7 @@ import gregtech6.fluid.FluidTankGT;
 import gregtech6.fluid.GTFluidLists;
 
 /**
- * The item face of the barrel family (task p12-fluid-item-carrier spec ③) — the
+ * The item face of the barrel family (task fluid-item-carrier spec ③) — the
  * 1.20.1 counterpart of the 1.7.10 {@code IFluidContainerItem} implementers
  * (forge-api 1.7.10 IFluidContainerItem.java:16-59, every method ItemStack-taking):
  * a barrel ItemStack holds fluid exactly like the placed BlockEntity does, through

@@ -19,7 +19,7 @@ import gregtech6.tileentity.inventories.GT6LongDistanceItemPipeBlockEntity;
 import gregtech6.tileentity.tank.GT6LongDistanceFluidPipeBlockEntity;
 
 /**
- * The Long Distance Pipe block (task p35-long-distance-pipes) — the 1.20.1 counterpart
+ * The Long Distance Pipe block (task long-distance-pipes) — the 1.20.1 counterpart
  * of {@code BlockLongDistPipe} (49 lines, BlockBaseMachineUpdate): a PLAIN block (no BE
  * — upstream stores only {@code mTemperatures[aMeta]}), one block per upstream meta
  * 0..15 over one class (the GT6LongDistWireBlock family form), the temperature rating

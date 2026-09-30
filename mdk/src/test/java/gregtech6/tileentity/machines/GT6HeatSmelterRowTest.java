@@ -22,7 +22,7 @@ import gregtech6.registry.GTMachines;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 
 /**
- * The heat-smelter row acceptance (task p29-w3-heat-smelter, the OFFLINE half — the
+ * The heat-smelter row acceptance (task w3-heat-smelter, the OFFLINE half — the
  * {@link GT6HuTuPiggybackRowTest} shape): the Smelter HU 4-ladder 20241-20244 and the
  * Melter single 22010 pinned to the upstream columns (Loader_MultiTileEntities.java
  * :1431-1434 / :1657), the SHARED mask shape 对拍 (both families carry the IDENTICAL

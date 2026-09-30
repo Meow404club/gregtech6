@@ -4,7 +4,7 @@ import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.material.MapColor;
 
 /**
- * The GT6 tree log (task p30-w6-t1-trees-nine): one {@link RotatedPillarBlock} per
+ * The GT6 tree log (task w6-t1-trees-nine): one {@link RotatedPillarBlock} per
  * {@link GT6TreeKind} — the AXIS pillar face the vanilla log idiom rides (the
  * RotatedPillarBlock.java:14-16 default AXIS=Y the worldgen placement expects). Properties
  * are the GTCEu RubberLogBlock row verbatim ({@code strength(2.0F).sound(WOOD)},

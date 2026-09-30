@@ -22,7 +22,7 @@ import gregtech6.block.energy.GT6DynamoBlock;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Dynamo family shared conversion core (task p28-c-dynamo-family-be) — the 1.20.1
+ * The Dynamo family shared conversion core (task c-dynamo-family-be) — the 1.20.1
  * counterpart of {@code TileEntityBase10EnergyConverter} (:45-180) ridden through
  * {@code TE_Behavior_Energy_Converter.doConversion} (:61-94) and
  * {@code TE_Behavior_Energy_Stats.doInject} (:56-66), shared verbatim by both families
@@ -267,7 +267,7 @@ public abstract class GT6DynamoBlockEntity extends TileEntityBase03TicksAndSync 
 	// the size bands, type-guarded like the upstream Stats.sizeMin/Rec/Max (:46-48 — the
 	// wrong type answers 0). Input band (Base10:76 VERBATIM: {@code takesAnyLowerSize() ||
 	// tInput <= 16 ? 1 : tInput / 2} — this family answers takesAnyLowerSize() = F; the
-	// Electric T0 ULV row (task p28-c-ulv-dynamo-row) rides tInput = 8 ≤ 16 onto the
+	// Electric T0 ULV row (task c-ulv-dynamo-row) rides tInput = 8 ≤ 16 onto the
 	// small-arms min 1, every other row (all > 16) keeps the in/2 door the W1 port
 	// hardwired), rec = in, max = 2in. Output band (Base10:77 — NO ≤16 arm there): min =
 	// out/2.

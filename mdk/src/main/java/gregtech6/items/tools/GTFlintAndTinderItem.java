@@ -22,7 +22,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 
 /**
  * The formal GT6 flint and tinder — item id {@code gt6:flint_and_tinder} (task
- * p29-w5-t5-scene-six spec ④). Upstream GT_Tool_FlintAndTinder.java:35 (registration
+ * w5-t5-scene-six spec ④). Upstream GT_Tool_FlintAndTinder.java:35 (registration
  * :143 "Flint and Tinder", mAmount 0):
  * <ul>
  * <li><b>Ignition arm</b> (Behavior_FlintAndTinder.java:45-61): the right-click strike

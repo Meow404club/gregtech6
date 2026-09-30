@@ -20,8 +20,8 @@ import gregtech6.covers.covers.CoverRedstoneEmitter;
 import gregtech6.util.UT6;
 
 /**
- * The redstone emitter acceptance tables (task p9-redstone-cover-emitter, ADR
- * 2026-09-01-p9-redstone-cover-emitter acceptance ④). Offline and exhaustive:
+ * The redstone emitter acceptance tables (task redstone-cover-emitter, ADR
+ * 2026-09-01-redstone-cover-emitter acceptance ④). Offline and exhaustive:
  *
  * <ul>
  * <li>the emission truth table — tier 0..15 x weak/strong x the strong gate, with the

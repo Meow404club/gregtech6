@@ -28,14 +28,14 @@ import gregtech6.multiblock.GTMultiBlockStructureChecker.FormedVerdict;
 import gregtech6.tileentity.multiblocks.ITileEntityMultiBlockController.Util;
 
 /**
- * The SET scaffold walk (task p16-form-scaffold — the ADR 2026-09-05-p16-formation-scoping
+ * The SET scaffold walk (task form-scaffold — the ADR 2026-09-05-formation-scoping
  * SET capability): {@link GTMultiBlockStructureChecker#form} completes a pattern-bound
  * structure from inventory. The four acceptance arms — scaffold, no-scaffold, short stock,
  * hollow never scaffolded — plus the inventory-free regressions: form(null, null) classifies
  * exactly like the pure check and writes nothing (the 600-tick poll and the onTickFirst
  * forced check keep their three-null arm), and a formed structure consumes nothing.
  *
- * <p>Task p22-boiler-form-reject-creative-fixture adds the refusal calibres: a
+ * <p>Task boiler-form-reject-creative-fixture adds the refusal calibres: a
  * declaration-only {@code part()} mismatch is a HARD failure — never scaffolded, never
  * consumed, zero world writes (the :226-227 classification, arms 5 and 6, the boiler
  * carrying the whole-shell arm). The creative Player arm was PROBED and cut
@@ -387,7 +387,7 @@ public class GTMultiBlockStructureCheckerFormTest extends GTMultiBlocksOfflineTe
 	}
 
 	// ------------------------------------------------------------------
-	// task p24-creative-form-seam — the Util.checkAndSetTarget boolean seam:
+	// task creative-form-seam — the Util.checkAndSetTarget boolean seam:
 	// the creative/OP(2) rulings injected as a boolean pair (no Player is
 	// constructible offline — the Forge FluidType.SIZE wall, the probe record
 	// above), so the permission chain becomes directly drivable
@@ -489,8 +489,8 @@ public class GTMultiBlockStructureCheckerFormTest extends GTMultiBlocksOfflineTe
 	}
 
 	// ------------------------------------------------------------------
-	// arm 7 — the builder-wand click chain (task p24-builder-wand, REWRITTEN by
-	// task p28-builder-wand-oneclick): the ONE-CLICK full-structure walk through
+	// arm 7 — the builder-wand click chain (task builder-wand, REWRITTEN by
+	// task builder-wand-oneclick): the ONE-CLICK full-structure walk through
 	// the wand dispatch seam
 	// ------------------------------------------------------------------
 
@@ -501,7 +501,7 @@ public class GTMultiBlockStructureCheckerFormTest extends GTMultiBlocksOfflineTe
 	 * the post-reform (T,F) face a real mayBuild player feeds. Upstream the wand was
 	 * INHERENTLY multi-click (the ±1 neighbourhood window, Util :51 — four clicks for a
 	 * fresh oven); the P28 user ruling (2026-09-12, ADR
-	 * 2026-09-12-p28-builder-wand-oneclick) REPLACED that with ONE CLICK = the complete
+	 * 2026-09-12-builder-wand-oneclick) REPLACED that with ONE CLICK = the complete
 	 * structure: forming-pattern controllers ride the checker's SET walk
 	 * ({@code aClickedAt = null} = the whole structure is the target), materials consumed
 	 * per placed cell, the transactional failure semantics inherited verbatim. The

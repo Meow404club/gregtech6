@@ -22,7 +22,7 @@ import net.minecraft.data.PackOutput;
 /**
  * The 1.21 singular-registry directory aliases — the datagen-produced mirror of the
  * generated tree's data faces onto the directory names the 1.21+ loaders actually read
- * (task p26-w1-press-extruder-molds).
+ * (task w1-press-extruder-molds).
  *
  * <p><b>Why this provider exists</b> (the r2 live finding): vanilla 1.21/24w21a renamed the
  * data pack directories to the singular registry-key form — {@code tags/items → tags/item},
@@ -45,7 +45,7 @@ import net.minecraft.data.PackOutput;
  * hash to unchanged mirrors). A later removed source purges its stale alias through the
  * normal {@code purgeStaleAndWrite} accounting.
  *
- * <p><b>The loot face is an ADAPTER, not a byte mirror</b> (task p28-neo-loot-copy-custom-data):
+ * <p><b>The loot face is an ADAPTER, not a byte mirror</b> (task neo-loot-copy-custom-data):
  * the 1.21.1 loot parser never shipped {@code minecraft:copy_nbt} — 1.21.1
  * LootItemFunctions.java:49 registers {@code minecraft:copy_custom_data}
  * ({@code CopyCustomDataFunction}, the 1.20.5+ components-era rename) and the whole
@@ -71,7 +71,7 @@ import net.minecraft.data.PackOutput;
  * function name. Any OTHER source shape (the typed-object nbt provider forms) is NOT
  * codec-verified and throws — a silent rename would re-create the dead-table bug class.
  *
-	 * <p><b>The recipe face is a KEY-FORM ADAPTER too</b> (task p30-pool-recipe-key-form):
+	 * <p><b>The recipe face is a KEY-FORM ADAPTER too</b> (task pool-recipe-key-form):
 	 * the byte-mirrored singular recipe band made the 21.1 RecipeManager reject EVERY gt6
 	 * row at boot (225/225 "Parsing error loading recipe", 2026-09-16 live run) — the
 	 * 1.20.1 {@code {"item": X}}/bare-string result forms and the {@code forge:} tag
@@ -116,7 +116,7 @@ public class GT6DualDirectoryFaces implements DataProvider {
 	private static final String RECIPE_FACE_SINGULAR = "recipe";
 
 	/**
-	 * The platform material-tag namespaces IN RECIPE VALUES (task p30-pool-recipe-key-form):
+	 * The platform material-tag namespaces IN RECIPE VALUES (task pool-recipe-key-form):
 	 * the canonical 1.20.1 face carries {@code forge:} tag keys (the {@code Tags} constants,
 	 * e.g. {@code forge:plates/steel}) while the 1.21.1 runtime tag carrier is the {@code c:}
 	 * namespace (GT6ItemTags MATERIALS_NAMESPACE; the build-side neoforgeTagFaces graft lands
@@ -128,7 +128,7 @@ public class GT6DualDirectoryFaces implements DataProvider {
 	private static final String COMMON_TAG_PREFIX = "c:";
 
 	/**
-	 * The biome-modifier dual-brand face (task p30-ops-biome-modifier-dual-dir, decisions
+	 * The biome-modifier dual-brand face (task ops-biome-modifier-dual-dir, decisions
 	 * .p26-worldgen-biome-modifier-dual-dir plan a): the band's directory follows the
 	 * REGISTRY-KEY namespace — {@code data/gt6/forge/biome_modifier/} (the registry key
 	 * {@code forge:biome_modifier}, ForgeRegistries.java:195) vs
@@ -242,7 +242,7 @@ public class GT6DualDirectoryFaces implements DataProvider {
 			}
 		}
 		for (BiomeMirrorRow tRow : tRows) {
-			// task p32-ops-biome-keyorder: NOT DataProvider.saveStable — the 1.21.1 leg
+			// task ops-biome-keyorder: NOT DataProvider.saveStable — the 1.21.1 leg
 			// comparator pins neoforge:conditions FIRST (1.21.1 DataProvider.java:30-38),
 			// so a warm re-run re-emitted the end-yield row conditions-head while the
 			// injection provider (GT6BiomeModifierConditions) keeps it at the alphabetical
@@ -298,7 +298,7 @@ public class GT6DualDirectoryFaces implements DataProvider {
 	}
 
 	/**
-	 * The conditions-root-key rebrand (task p31-nether-lens-end-yield): a row carrying the
+	 * The conditions-root-key rebrand (task nether-lens-end-yield): a row carrying the
 	 * loader conditions key — {@code forge:conditions} / {@code neoforge:conditions}
 	 * (forge ICondition.java:25 / neo ConditionalOps.java:49 DEFAULT_CONDITIONS_KEY) —
 	 * keeps that key at its member position (the end-yield row emits it FIRST, both
@@ -385,7 +385,7 @@ public class GT6DualDirectoryFaces implements DataProvider {
 
 	/**
 	 * The loot face 1.21.1 adapter — the ONE value-shape delta the legs' loot JSON has
-	 * (task p28-neo-loot-copy-custom-data; the full codec evidence trail lives in the class
+	 * (task neo-loot-copy-custom-data; the full codec evidence trail lives in the class
 	 * javadoc). Recursive over pools/entries/functions: every {@code copy_nbt} function
 	 * object becomes {@code copy_custom_data}, the member order is preserved (the Gson map
 	 * keeps insertion order; an existing key's value swap is not a structural change), and
@@ -421,7 +421,7 @@ public class GT6DualDirectoryFaces implements DataProvider {
 	}
 
 	/**
-	 * The loot face 1.21.1 predicate-dialect adapter (task p33-ops-rundata-loot) — the two
+	 * The loot face 1.21.1 predicate-dialect adapter (task ops-rundata-loot) — the two
 	 * census-proven ItemPredicate/MatchTool dialect deltas the 1.20.1 producers emit and
 	 * the 1.21.1 datagen writes natively, i.e. the INVERSE of treecheck's registered
 	 * node→canonical normalizers {@code _norm_items_wrap} / {@code _norm_enchant_pred}
@@ -509,7 +509,7 @@ public class GT6DualDirectoryFaces implements DataProvider {
 
 	/**
 	 * The recipe face 1.21.1 adapter — the key-form deltas the 21.1 RecipeManager needs to
-	 * parse the singular alias (task p30-pool-recipe-key-form; the before-fix live run had
+	 * parse the singular alias (task pool-recipe-key-form; the before-fix live run had
 	 * ALL 225 gt6 rows dying at boot with "Parsing error loading recipe", RecipeManager
 	 * .java:70 — the 1.20.1-shaped alias face is the ONLY recipe face the 1.21.1 loader
 	 * scans, plural recipe/ is the 24w21a singular form it never reads). The census-proven

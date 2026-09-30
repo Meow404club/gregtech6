@@ -35,7 +35,7 @@ import net.minecraft.core.registries.Registries;
  *///?}
 
 /**
- * Loot tables of the ore universe (task p30-ore-4-loot): one table per block of the
+ * Loot tables of the ore universe (task ore-4-loot): one table per block of the
  * 4884-block per-pair registration walk ({@link GT6OreBlocks#blocks()}, 26 stone families
  * x 66 materials x the family's forms), at the vanilla default {@code gt6:blocks/<path>}
  * location — zero block code, the {@link GT6StoneBlockLoot} per-pair precedent. The

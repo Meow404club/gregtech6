@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Food-fluid batch-2 offline tests (task p33-food-fluids-b2 — the drink-seam card): the
+ * Food-fluid batch-2 offline tests (task food-fluids-b2 — the drink-seam card): the
  * FOOD_B2_SPECS table reconciliation (94 potion rows + 9 residual FOOD-flag drink fluids)
  * and the GTDrinks map reconciliation (the DrinksGT.REGISTER mirror — every REGISTER key
  * resolves to a gt6 fluid path registered on one of the six tables or the chemical family).
@@ -101,11 +101,11 @@ public class GTDrinksB2Test extends GTOfflineTestBase {
 	 */
 	@Test
 	public void drinkStatMapClosesOntoRegisteredFluids() {
-		assertEquals(215, GTDrinks.KEPT_SPECS.size(), "the kept census: 210 ported-fluid rows + the juice_juice/lemonade/cavejohnsonsgrenadejuice fillers + the vanilla water row + the p33-food-tail mnwtr fill");
-		assertEquals(10, GTDrinks.KEPT_FILLS.size(), "the p33-food-tail reverse-census fills — the potion.-prefixed rows over the existing b1/p31 ids");
+		assertEquals(215, GTDrinks.KEPT_SPECS.size(), "the kept census: 210 ported-fluid rows + the juice_juice/lemonade/cavejohnsonsgrenadejuice fillers + the vanilla water row + the food-tail mnwtr fill");
+		assertEquals(10, GTDrinks.KEPT_FILLS.size(), "the food-tail reverse-census fills — the potion.-prefixed rows over the existing b1/p31 ids");
 		assertEquals(9, GTDrinks.RESIDUAL_SPECS.size(), "the b2 registrations");
 		assertEquals(94, GTDrinks.POTION_SPECS.size(), "the Loader_Fluids.java:230-350 card block (64 main :230-294 + 30 lingering :319-348)");
-		assertEquals(10, GTDrinks.TAIL_SPECS.size(), "the p33-food-tail registrations (:607-610 the golden-apple brews + :637-642 the coffee family)");
+		assertEquals(10, GTDrinks.TAIL_SPECS.size(), "the food-tail registrations (:607-610 the golden-apple brews + :637-642 the coffee family)");
 		assertEquals(338, GTDrinks.REGISTER.size(), "215 kept + 10 kept-fills + 9 residual + 94 potion + 10 tail — all keys unique (the LinkedHashMap.put mirror)");
 		java.util.Set<String> tFluidIds = new java.util.HashSet<>();
 		for (List<GTFluids.AquaFluid> tWalk : List.of(GTFluids.aquaFluids(), GTFluids.simpleLiquids(), GTFluids.foodFluids(), GTFluids.foodB1Fluids(), GTFluids.foodB2Fluids(), GTFluids.foodTailFluids())) {
@@ -128,7 +128,7 @@ public class GTDrinksB2Test extends GTOfflineTestBase {
 		assertNotNull(GTDrinks.stat("juice_juice"));
 		assertNotNull(GTDrinks.stat("lemonade"));
 		assertNotNull(GTDrinks.stat("cavejohnsonsgrenadejuice"));
-		assertNotNull(GTDrinks.stat("mnwtr"), "the p33-food-tail KEPT fill — upstream :371 potion.mineralwater over the p16 aqua id");
+		assertNotNull(GTDrinks.stat("mnwtr"), "the food-tail KEPT fill — upstream :371 potion.mineralwater over the p16 aqua id");
 		assertNotNull(GTDrinks.stat("potion.coffee"), "the tail coffee family is keyed");
 		assertNotNull(GTDrinks.stat("potion.notchesbrew"), "the tail golden-apple family is keyed");
 		assertNull(GTDrinks.stat(null));

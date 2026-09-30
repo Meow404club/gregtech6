@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 /**
- * The Luminometer Sensor (task p34-sensors-trivial-14 row ②) — the port of
+ * The Luminometer Sensor (task sensors-trivial-14 row ②) — the port of
  * MultiTileEntityLuminometer.java:33-60. The read is the upstream
  * {@code getBlockLightValue(x, y, z)} (:37, BLOCK light only, 0-15) at the probe
  * position — the vanilla-1.20.1 face is

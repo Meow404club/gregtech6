@@ -27,7 +27,7 @@ import gregtech6.registry.GT6FoamSprays;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * C-Foam family offline tests (task p26-c-foam-fluid-refill — the registration-row
+ * C-Foam family offline tests (task c-foam-fluid-refill — the registration-row
  * assertions against the DECLARED values, the GTFluidsDyeChemicalFamilyTest shape): the
  * {@code gt6:cfoam} base (the decisions.p26-cfoam-fluid-naming ruling row) + the sixteen
  * WITH-BLOCK {@code cfoam_<DYE_IDS[i]>} families + the sixteen
@@ -244,7 +244,7 @@ public class GTFluidsCFoamFamilyTest extends GTOfflineTestBase {
 		assertEquals("Advanced White C-Foam", tEn.get("fluid.gt6.cfoam_owned_white"), "the :125 compose over DYE_NAMES[15]");
 		assertEquals("Construction Foam", tEn.get("fluid.gt6.cfoam"), "the FL.java:432 base local (the 建筑泡沫 face)");
 		assertEquals("红色建筑泡沫", tZh.get("fluid.gt6.cfoam_red"), "dump S:fluid.cfoam.red :159");
-		// task p28-cfoam-lang-key (user ruling 2026-09-12): the owned zh word became 强化
+		// task cfoam-lang-key (user ruling 2026-09-12): the owned zh word became 强化
 		// (was the B4-era 高级; the dump S:fluid.cfoam.owned.white :155 word root rides the
 		// hand row, renamed with the owned block key 强化建筑泡沫)
 		assertEquals("强化白色建筑泡沫", tZh.get("fluid.gt6.cfoam_owned_white"), "dump S:fluid.cfoam.owned.white :155 under the p28 ruling word");

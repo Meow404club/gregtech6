@@ -10,7 +10,7 @@ import gregtech6.util.UT6;
 
 /**
  * The energy sensor cover — 1.20.1 port of gregapi/cover/covers/CoverScaleEnergy.java
- * (:36-53, task p35-covers-display-scale-6; upstream MultiItemTechnological.java:73
+ * (:36-53, task covers-display-scale-6; upstream MultiItemTechnological.java:73
  * meta 1014 "Energy Sensor", dump 能量传感器). "Emits depending on Energy stored": every
  * tickPost the 15-step scale (:44) rides the VALUE lane — 0 empty, 15 full, the 14 steps
  * between map the remaining-fill fraction, the same formula shape as the progress sensor

@@ -55,7 +55,7 @@ import gregtech6.tileentity.inventories.GT6HopperBlockEntity;
 import gregtech6.tileentity.inventories.GT6QueueHopperBlockEntity;
 
 /**
- * The storage-hopper family registration home (task p26-storage-hopper-family, the
+ * The storage-hopper family registration home (task storage-hopper-family, the
  * GT6Boilers self-contained-DR row form): 4 blocks/items over TWO shared BETs — the two BE
  * classes {@link GT6HopperBlockEntity} / {@link GT6QueueHopperBlockEntity}, the row config
  * (slot count, material) riding the block carrier.
@@ -79,7 +79,7 @@ import gregtech6.tileentity.inventories.GT6QueueHopperBlockEntity;
  *
  * <p>Creative tab: the upstream "Hoppers" MTE-registry category (tab 8010, the
  * metalset() hopper pair Loader_MultiTileEntities.java:145-146) pools into the
- * MACHINES_TAB join (task p38-tabfix-b-energy, {@link #onBuildTabContents}; the
+ * MACHINES_TAB join (task tabfix-b-energy, {@link #onBuildTabContents}; the
  * GTBarrels:257 pooling precedent — supersedes the old later-append note). The placement
  * face is the INVERSE clicked face (09FacingSingle.onPlaced :73 with
  * useInversePlacementRotation = T :257/:239 → OPOS[clickedFace], all six faces valid) —
@@ -234,7 +234,7 @@ public final class GT6Hoppers {
 			return mRow;
 		}
 
-		/** The composed hopper name (task p20-i18n-compose-rows: the {@link GT6Hoppers#displayOf} carrier). */
+		/** The composed hopper name (task i18n-compose-rows: the {@link GT6Hoppers#displayOf} carrier). */
 		@Override
 		public MutableComponent getName() {
 			return displayOf(mRow);
@@ -371,7 +371,7 @@ public final class GT6Hoppers {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
+	 * The tab walk (task tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
 	 * joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
 	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
 	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display

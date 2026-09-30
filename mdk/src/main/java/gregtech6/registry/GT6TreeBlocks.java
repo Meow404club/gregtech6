@@ -21,7 +21,7 @@ import gregtech6.block.tree.GT6TreeSaplingBlock;
 import gregtech6.worldgen.GT6Worldgen;
 
 /**
- * Registration home of the GT6 tree universe (task p30-w6-t1-trees-nine): <b>27 per-pair
+ * Registration home of the GT6 tree universe (task w6-t1-trees-nine): <b>27 per-pair
  * Block+BlockItem registrations</b> — sapling/log/leaves x the 9 {@link GT6TreeKind} rows
  * (the upstream Saplings_AB meta 0-7 + Saplings_CD meta 0 face, Loader_Woods.java:67-70,
  * fully expanded per the P8 ADR ④ / GTStoneBlocks / GTGrassBlocks precedent: the canopy

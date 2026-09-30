@@ -13,9 +13,9 @@ import gregtech6.gui.machines.GTBasicMachineMenu;
 import gregtech6.recipes.RecipeMap;
 
 /**
- * The Burner Mixer family BET (task p34-machines-burner-plantalyzer) — the single-block
+ * The Burner Mixer family BET (task machines-burner-plantalyzer) — the single-block
  * {@link TileEntityBasicMachine} with the NBT_NEEDS_IGNITION half the shared class cut,
- * revived in the FAMILY-SCOPED form the p32-ignition-gate ruling established on the
+ * revived in the FAMILY-SCOPED form the ignition-gate ruling established on the
  * multiblock base ({@code TileEntityBase10MultiBlockMachine#ignite()} = the upstream
  * TOOL_igniter branch, MultiTileEntityBasicMachine.java:373-379) and the mIgnited_ruling
  * (the same field carries BOTH the ignition gate AND the post-action re-check window;

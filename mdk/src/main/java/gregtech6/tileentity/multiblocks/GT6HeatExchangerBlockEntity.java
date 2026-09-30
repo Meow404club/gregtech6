@@ -44,7 +44,7 @@ import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 
 /**
  * 1.20.1 counterpart of the GT6 Large Heat Exchanger multiblock — task
- * p29-w3-heat-smelter, ported from gregtech/tileentity/multiblocks/
+ * w3-heat-smelter, ported from gregtech/tileentity/multiblocks/
  * MultiTileEntityLargeHeatExchanger.java (:54-266) as the W3 FM.Hot consumer and the
  * boiler family's HU source: a 3x3x2 machine whose controller sits at the CENTRE of both
  * layers, burning Hot Fuels into a buffered HU stream pushed UP through the receiver's

@@ -29,7 +29,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * The p34-machines-burner-plantalyzer Burner Mixer acceptance test: the row-table pins
+ * The machines-burner-plantalyzer Burner Mixer acceptance test: the row-table pins
  * (the 4-ladder, Loader_MultiTileEntities.java:1595-1598 — the RU carrier, the 4/8/16/32
  * parallel band with NBT_PARALLEL_DURATION T, the "burnmixer" texture, the Kinetic_T
  * hardness ladder, the ignition-family BET), the RM.java:76 map constants (the MIXER :74

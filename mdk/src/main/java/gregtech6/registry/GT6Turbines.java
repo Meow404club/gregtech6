@@ -30,14 +30,14 @@ import gregtech6.tileentity.multiblocks.GTGasTurbineBlockEntity;
 import gregtech6.tileentity.multiblocks.GTSteamTurbineBlockEntity;
 
 /**
- * The Large Turbine family registration home (task p29-w3-turbine-dynamo ②③, the
+ * The Large Turbine family registration home (task w3-turbine-dynamo ②③, the
  * GT6Boilers self-contained-DR form, ADR-P3-4): 8 controller blocks/items over TWO shared
  * BET rows — {@link GTSteamTurbineBlockEntity} (4) and {@link GTGasTurbineBlockEntity} (4)
  * over the {@link gregtech6.tileentity.multiblocks.GTMultiBlockConverter} base. The
  * structure walls are the card ① Dense Walls (the NBT_DESIGN column becomes the row's
  * wallPath).
  *
- * <p>Creative tab (task p38-tabfix-a-multiblock): all 8 items join MULTIBLOCKS_TAB via
+ * <p>Creative tab (task tabfix-a-multiblock): all 8 items join MULTIBLOCKS_TAB via
  * {@link #onBuildTabContents} — registered-but-tab-less is invisible in BOTH the creative
  * menu and JEI (the BurningBoxes issue-#10 form, superseding the old p28 dynamo tab-less
  * precedent). Pool cut declared: upstream rode the per-family "Multiblock Machines"
@@ -83,7 +83,7 @@ public final class GT6Turbines {
 	/** The part-block path this family resolves defensively (the row 1 Dense SS Wall, unreachable in production). */
 	public static final String DEFAULT_WALL_PATH = "dense_wall_stainless_steel";
 
-	/** One steam-turbine registration row — the block-carrier projection of one :1254-1257 line ({@code input} is the raw NBT_INPUT × STEAM_PER_EU, {@code wallPath} the NBT_DESIGN Dense Wall, hardness == resistance; {@code material} the row's NBT_MATERIAL aMat — task p38-c2-controller-tint). */
+	/** One steam-turbine registration row — the block-carrier projection of one :1254-1257 line ({@code input} is the raw NBT_INPUT × STEAM_PER_EU, {@code wallPath} the NBT_DESIGN Dense Wall, hardness == resistance; {@code material} the row's NBT_MATERIAL aMat — task c2-controller-tint). */
 	public record SteamTurbineRow(String path, String display, int metaId, long input, long output,
 			float hardness, String wallPath, java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material) {}
 
@@ -142,7 +142,7 @@ public final class GT6Turbines {
 	}
 
 	/**
-	 * The turbine-main paint-tint walker (task p38-c2-controller-tint): the 8 controller
+	 * The turbine-main paint-tint walker (task c2-controller-tint): the 8 controller
 	 * blocks whose datagen models carry tintindex 0 on the body cube (the
 	 * {@code GTMachines.paintableBlockArray} census convention), feeding BOTH consumption
 	 * halves: the baked world tint ({@code GTMachineTintModel}, the p32 route) and the
@@ -267,7 +267,7 @@ public final class GT6Turbines {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-a-multiblock — the whole {@link #ITEMS_BY_PATH} family
+	 * The tab walk (task tabfix-a-multiblock — the whole {@link #ITEMS_BY_PATH} family
 	 * joins the multiblocks tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
 	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what delivers
 	 * this handler). JEI derives its item list from the tab display items.

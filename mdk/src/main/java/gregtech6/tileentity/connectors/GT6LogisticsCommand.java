@@ -37,7 +37,7 @@ import gregtech6.tileentity.tank.GTBarrelLogisticsBlockEntity;
 
 /**
  * {@code /gt6logistics} — the automated logistics acceptance command (task
- * p32-logistics-lv2 acceptance ②, the GTItemPipeCommand shape; game-bus listener,
+ * logistics-lv2 acceptance ②, the GTItemPipeCommand shape; game-bus listener,
  * self-contained per ADR-P3-4, NEVER touching the other connector commands).
  *
  * <ul>
@@ -53,7 +53,7 @@ import gregtech6.tileentity.tank.GTBarrelLogisticsBlockEntity;
  * <li>{@code gate <pos>} — the {@link AbstractCoverAttachmentLogistics} placement gate
  *     driven live against the host at pos (acceptance ③): a member host answers allowed,
  *     everything else refused.</li>
- * <li><b>task p32-logistics-lv3 — the core subtree</b> (the GTItemPipeCommand
+ * <li><b>task logistics-lv3 — the core subtree</b> (the GTItemPipeCommand
  *     place|insert|accept|stat shape): {@code core form <pos>} (the forced structure
  *     check + the four CPU pools), {@code core stat <pos>} (power, the used-op counters,
  *     the tier registration, the protected-set size, the moved totals), {@code core
@@ -245,7 +245,7 @@ public final class GT6LogisticsCommand {
 	}
 
 	// ---------------------------------------------------------------------------
-	// core form / stat / import / export / accept + tank priority (task p32-logistics-lv3)
+	// core form / stat / import / export / accept + tank priority (task logistics-lv3)
 	// ---------------------------------------------------------------------------
 
 	/** The structure driver — the forced checkStructure pass with the four CPU pools as the verdict. */

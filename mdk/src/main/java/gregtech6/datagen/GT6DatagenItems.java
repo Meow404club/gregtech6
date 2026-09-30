@@ -19,7 +19,7 @@ import net.minecraft.world.item.Item;
  * RegistryObject/DeferredHolder family swap) so model ids cannot drift from registry ids.
  *
  * <p>The headless fallback is {@link GTMaterialItems#registrationOrder()} — since the
- * p3-fullprefix-creativetab criterion convergence there is ONE enumeration walk (universe
+ * fullprefix-creativetab criterion convergence there is ONE enumeration walk (universe
  * x isGeneratingItem, PrefixItem.java:104; same-name merge via MaterialRegistry.get,
  * MaterialRegistry.java:182-185; first-wins id dedup), and this class is a thin adapter over
  * it. The bridge and datagen can no longer drift apart by construction.

@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 /**
  * The panel of {@link ModelProperty ModelProperties} of the GT6 render domain plus the
  * immutable {@link ModelData} snapshot builder — the C-grade render foundation consumed
- * by the W3 cover card (p4-cover-core, plate quads) and the pooled D-grade work
+ * by the W3 cover card (cover-core, plate quads) and the pooled D-grade work
  * (multiblock formed-state visuals, dynamic machine rendering).
  *
  * <p>Iron law (ModelData.java:28): every value stored in {@link ModelData} must be
@@ -43,9 +43,9 @@ public final class GTModelProperties {
 	public static final ModelProperty<GTRenderSnapshot> RENDER_SNAPSHOT = new ModelProperty<>(Objects::nonNull);
 
 	/**
-	 * The second snapshot property (task p9-render-c-oven-overlay ⑤/coexistence ruling):
+	 * The second snapshot property (task render-c-oven-overlay ⑤/coexistence ruling):
 	 * the oven state overlay snapshot ({@link GTOvenRenderSnapshot}). RENDER_SNAPSHOT is
-	 * a single-valued ModelProperty — the cover chain (p4-cover-core,
+	 * a single-valued ModelProperty — the cover chain (cover-core,
 	 * TileEntityOvenCoverTest:122-137) already occupies it, so the oven snapshot must ride
 	 * its own key instead of overwriting the cover value. A BE may carry both at once
 	 * (a covered oven): {@code getModelData()} builds them together, each consumer model
@@ -55,7 +55,7 @@ public final class GTModelProperties {
 	public static final ModelProperty<GTOvenRenderSnapshot> OVEN_SNAPSHOT = new ModelProperty<>(Objects::nonNull);
 
 	/**
-	 * The pipe foam snapshot property (task p25-c-foam-pipe-spray spec ⑤): the C-Foam state
+	 * The pipe foam snapshot property (task c-foam-pipe-spray spec ⑤): the C-Foam state
 	 * the foamed pipe BE carries ({@link PipeFoamSnapshot}, immutable record). Present
 	 * exactly while the pipe carries foam — fresh overlay or dried full-block swap, the
 	 * consumer ({@code GTFluidPipeFoamModel}) keys on THIS property while the flow-arrow
@@ -65,7 +65,7 @@ public final class GTModelProperties {
 	public static final ModelProperty<PipeFoamSnapshot> FOAM_SNAPSHOT = new ModelProperty<>(Objects::nonNull);
 
 	/**
-	 * The pipe flow-arrow snapshot property (task p35-cover-narrowing-render-snapshot, the
+	 * The pipe flow-arrow snapshot property (task cover-narrowing-render-snapshot, the
 	 * P34 leftover-debt split): the output-arrow mask the fluid pipe BE carries
 	 * ({@link PipeFlowSnapshot}, immutable record). The arrows used to ride the generic
 	 * {@link #RENDER_SNAPSHOT} beside the cover chain — single-valued, so a covered pipe
@@ -79,7 +79,7 @@ public final class GTModelProperties {
 	public static final ModelProperty<PipeFlowSnapshot> FLOW_SNAPSHOT = new ModelProperty<>(Objects::nonNull);
 
 	/**
-	 * The machine paint property (task p21-paintable-storage-sync, ADR ruling 5): the
+	 * The machine paint property (task paintable-storage-sync, ADR ruling 5): the
 	 * painted 0xRRGGBB colour the paintable BE carries ({@link Integer}, immutable — the
 	 * ModelData iron law above applies trivially). Present exactly while the machine is
 	 * painted (an unpainted machine keeps the absent-property = no-tint contract, the
@@ -92,7 +92,7 @@ public final class GTModelProperties {
 	public static final ModelProperty<Integer> PAINT = new ModelProperty<>(Objects::nonNull);
 
 	/**
-	 * The fluid-spring identity property (task p38-spring-texture-tint): the spring block
+	 * The fluid-spring identity property (task spring-texture-tint): the spring block
 	 * id string the nozzle BE carries ({@code gt6:liquid_medium_oil_block} /
 	 * {@code minecraft:lava} — an immutable {@link String}, the ModelData iron law above
 	 * applies trivially). Present exactly while the BE carries a spring ({@code

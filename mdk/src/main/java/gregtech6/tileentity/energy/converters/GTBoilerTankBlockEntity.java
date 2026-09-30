@@ -43,7 +43,7 @@ import gregtech6.tileentity.attachment.GTFunnelBlockEntity;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 
 /**
- * 1.20.1 counterpart of the GT6 single-block Steam Boiler Tank — task p13-boiler-tank,
+ * 1.20.1 counterpart of the GT6 single-block Steam Boiler Tank — task boiler-tank,
  * ported from gregtech/tileentity/energy/converters/MultiTileEntityBoilerTank.java (:65-283)
  * as the HU consumer closing the P13 steam loop: water + HU in the bottom/sides, steam out
  * the top, a pressure gauge on the front.
@@ -587,7 +587,7 @@ public class GTBoilerTankBlockEntity extends TileEntityBase03TicksAndSync implem
 
 	/**
 	 * The placement mirror (the engine setFacingFromPlacement form — the FRONT = barometer
-	 * face, :246). Task p28-singleblock-facing-canon: the barometer face TOWARDS the placer
+	 * face, :246). Task singleblock-facing-canon: the barometer face TOWARDS the placer
 	 * — the GT6PlacementFacing canon (view OPPOSITE).
 	 */
 	public void setFacingFromPlacement(Player aPlayer) {

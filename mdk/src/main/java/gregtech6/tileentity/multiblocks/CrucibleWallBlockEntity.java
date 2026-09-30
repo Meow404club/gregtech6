@@ -11,7 +11,7 @@ import gregapi.tileentity.machines.ITileEntityMold;
 import gregtech6.registry.GT6Crucibles;
 
 /**
- * The LARGE-crucible wall part BE (task p26-crucible-multiblock SPEC ③) — the
+ * The LARGE-crucible wall part BE (task crucible-multiblock SPEC ③) — the
  * {@link MultiBlockPartBlockEntity} that carries BOTH through-wall relays the crucible
  * chain needs, as a subclass pair rather than a touch on the shared part BE (the p13
  * FORBIDDEN zero-diff ruling on MultiBlockPartBlockEntity stands unbroken):

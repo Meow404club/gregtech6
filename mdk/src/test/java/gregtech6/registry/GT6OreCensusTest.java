@@ -1,5 +1,5 @@
 /**
- * The p30 ore wave close-out full-census ratchet (task p30-ore-5-census): the four
+ * The p30 ore wave close-out full-census ratchet (task ore-5-census): the four
  * ledgers of the landed ore universe pinned against EACH OTHER per key, not just per
  * card — the registration walk (ledger 1, ore-1: 9028), the generated blockstates +
  * item models + shared base models + atlas seam (ledger 2, ore-3), the generated loot
@@ -46,20 +46,20 @@ import gregtech6.registry.GT6OreBlocks.OreKey;
 
 class GT6OreCensusTest {
 
-    /** Ledger 1 — the registration walk (74 form-rows x M=122, the ore-1 pin; 66 since r7-a-ore-axis-extension, 122 since r7-b-gem-pool-extension). */
+    /** Ledger 1 — the registration walk (74 form-rows x M=122, the ore-1 pin; 66 since a-ore-axis-extension, 122 since b-gem-pool-extension). */
     private static final int PINNED_BLOCKS = 9028;
     /** Ledger 2 — the ore-3 faces: per-pair blockstates + item models, shared base models.
-     *  29 since task p31-bedrock-ore-worldgen: the ONE shared bedrock cube
-     *  32 since task p31-nether-lens-end-yield: the THREE nether stand-in cubes
+     *  29 since task bedrock-ore-worldgen: the ONE shared bedrock cube
+     *  32 since task nether-lens-end-yield: the THREE nether stand-in cubes
      *  (nether_quartz_ore / amethyst_block / packed_mud, GT6NetherOres.KEYS)
      *  (gt6:block/ore/bedrock, minecraft:block/bedrock) joins the 28. */
     private static final int PINNED_BASE_MODELS = 32;
     /** Ledger 3 — the ore-4 loot trees: one table per block, BOTH directory bands. */
     private static final int PINNED_LOOT_TOTAL = 2 * PINNED_BLOCKS;
-    /** Ledger 4 — the ore-2 texture batch: 20 SETs x {ore, ore_small, + the two overlays} (gem_vertical joined with r7-a-ore-axis-extension; emerald/glass/gem_horizontal/opal joined with r7-b-gem-pool-extension). */
+    /** Ledger 4 — the ore-2 texture batch: 20 SETs x {ore, ore_small, + the two overlays} (gem_vertical joined with a-ore-axis-extension; emerald/glass/gem_horizontal/opal joined with b-gem-pool-extension). */
     private static final int PINNED_SETS = 20;
     private static final int PINNED_TEXTURES = PINNED_SETS * 4;
-    /** The atlas seam: every distinct overlay sprite stitched — 20 SETs x {ore, ore_small} pass-0 + the two pass-1 outline forms (r3-ore-tint-abgr-seam). */
+    /** The atlas seam: every distinct overlay sprite stitched — 20 SETs x {ore, ore_small} pass-0 + the two pass-1 outline forms (ore-tint-abgr-seam). */
     private static final int PINNED_ATLAS_SOURCES = PINNED_SETS * 4;
     /** The tab content face: every axis material is visible today (122 = M, the mHidden filter empty). */
     private static final int PINNED_TAB_ITEMS = 122;
@@ -97,7 +97,7 @@ class GT6OreCensusTest {
     }
 
     /**
-     * The bedrock band's blockstate/item-model paths (task p31-bedrock-ore-worldgen, 2 x
+     * The bedrock band's blockstate/item-model paths (task bedrock-ore-worldgen, 2 x
      * 45 = 90) — they share the ore_-prefixed generated directories with ledger 2, so the
      * no-orphans censuses must count them. They carry NO loot files (noLootTable = the
      * upstream Drops_None), so the ledger-3 loot faces stay the 9028-only walks.
@@ -156,7 +156,7 @@ class GT6OreCensusTest {
     @Test
     void oreFileCensusHasNoOrphans() throws IOException {
         Set<String> tWalk = new HashSet<>(walkPaths());
-        tWalk.addAll(bedrockPaths()); // ledger 2's generated dirs carry the bedrock band too (p31-bedrock-ore)
+        tWalk.addAll(bedrockPaths()); // ledger 2's generated dirs carry the bedrock band too (bedrock-ore)
         Set<String> tLootWalk = new HashSet<>(walkPaths()); // the loot bands stay 9028-only: the bedrock band is noLootTable
         Path tAssets = mdkRoot().resolve(GENERATED_TREE).resolve("assets").resolve("gt6");
         Path tData = mdkRoot().resolve(GENERATED_TREE).resolve("data").resolve("gt6");
@@ -184,7 +184,7 @@ class GT6OreCensusTest {
         }
         assertEquals(PINNED_LOOT_TOTAL, tLoot, "ledger 3: both directory bands carry the walk");
         // the shared base models: the vanilla-named anchors at the ore/ top level —
-        // 11 free + the r4-ore-tex-b trio (granite/diorite/andesite) — plus the remaining
+        // 11 free + the ore-tex-b trio (granite/diorite/andesite) — plus the remaining
         // 14 GT-stone models under ore/stones/ + the bedrock cube + the 3 nether stand-ins = 32
         int tBase = 0;
         try (Stream<Path> tWalk = Files.walk(tAssets.resolve("models").resolve("block").resolve("ore"))) {

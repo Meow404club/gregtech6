@@ -36,7 +36,7 @@ import gregtech6.tileentity.foam.ITileEntityFoamable;
 
 /**
  * The GT6 C-Foam spray (16 colours) and the Advanced player-owned variant (16 colours) —
- * task p25-c-foam-pipe-spray spec ①/⑨. The 1.20.1 counterpart of upstream
+ * task c-foam-pipe-spray spec ①/⑨. The 1.20.1 counterpart of upstream
  * {@code Behavior_Spray_Foam} (gregtech/items/behaviors/Behavior_Spray_Foam.java:46-215)
  * flattened onto one Item subclass per colour+owned pair (the p22 {@link GTSprayCanItem}
  * single-item-per-can precedent), reusing its {@code gt.remaining} ledger verbatim (the

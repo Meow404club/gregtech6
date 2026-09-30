@@ -17,7 +17,7 @@ import com.google.gson.JsonParser;
 import gregtech6.registry.GT6SlicerBlades;
 
 /**
- * The slicer obtainability pins (task p36-recipes-obtainability, coordinator ruling B —
+ * The slicer obtainability pins (task recipes-obtainability, coordinator ruling B —
  * the obtainability domain = items + recipes inseparable): the census-completion item
  * face (EIGHT registered slicer items, the upstream :362-:372 meta order; the RM row0
  * {@code BLADES} subset stays the {@code sBladeTest} face) and the JSON-ship half of the

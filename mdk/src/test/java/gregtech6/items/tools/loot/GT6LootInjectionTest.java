@@ -1,5 +1,5 @@
 /**
- * Offline pins for task p34-loot-injection — the dungeon-loot injection face
+ * Offline pins for task loot-injection — the dungeon-loot injection face
  * ({@code loaders/c/Loader_Loot.java} tail rows + the three bag weight tables).
  *
  * <p>Three layers, mirroring the card's double-insurance split:
@@ -70,7 +70,7 @@ public class GT6LootInjectionTest {
 
     /**
      * The verified category → table-id mapping (ACCEPTANCE ④, both jars listed) — the nine
-     * landed rows (task p38-book-loot-first re-arms the bonus chest and the stronghold
+     * landed rows (task book-loot-first re-arms the bonus chest and the stronghold
      * library through the Guide rows); STRONGHOLD_CROSSING keeps zero rows (the declared
      * pool) and gets no row at all.
      */
@@ -194,7 +194,7 @@ public class GT6LootInjectionTest {
                 ":463 the dispenser fire charges");
     }
 
-    /** The four re-armed Guide rows verbatim + the MatDict cut (task p38-book-loot-first). */
+    /** The four re-armed Guide rows verbatim + the MatDict cut (task book-loot-first). */
     @Test
     public void theGuideRowsAreVerbatimAndTheMatDictStaysCut() {
         // BONUS :413 / DUNGEON :442 / BLACKSMITH :512 / LIBRARY :524 — weight + stack verbatim
@@ -375,7 +375,7 @@ public class GT6LootInjectionTest {
     /** The pooled categories stay OUT of the modifier set (no JSON, no index entry). */
     @Test
     public void thePooledCategoriesHaveNoModifierJson() {
-        // task p38-book-loot-first: the bonus chest and the stronghold library now carry
+        // task book-loot-first: the bonus chest and the stronghold library now carry
         // their Guide rows and ship modifier JSONs; the crossing crates remain the pool
         for (String tPooled : new String[] {"stronghold_crossing"}) {
             try (InputStream tStream = GT6LootInjectionTest.class.getClassLoader()

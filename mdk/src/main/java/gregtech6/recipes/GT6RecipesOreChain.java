@@ -49,13 +49,13 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
- * The Crusher ore chain — task p8-recipe-chances-orechain ④: the upstream runtime handler
+ * The Crusher ore chain — task recipe-chances-orechain ④: the upstream runtime handler
  * {@code RecipeMapHandlerCrushing.addRecipesUsing} (RecipeMapHandlerCrushing.java:50-137)
  * transcribed into a registration-time row expansion poured into
  * {@link GT6RecipeMaps#CRUSHER} (the GT6RecipesShCL static-pour precedent; the port keeps
  * no runtime RecipeMapHandlers — Recipe.java:526-542 stays unported, and the handler's
  * containsInput ore-block special case :141-143 dies with the runtime layer, ADR
- * 2026-08-31-p8-machine-closeout ③(b)).
+ * 2026-08-31-machine-closeout ③(b)).
  *
  * <p><b>First-wave input shapes</b>: {@link OP#oreRaw} and {@link OP#blockRaw} item rows —
  * the two {@code addRecipesProducing} driver items (RecipeMapHandlerCrushing.java:153-154).
@@ -74,7 +74,7 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 	 * writes the main output twice: slot 0 chance 0, slot 1 chance 10000). Upstream Recipe.java:906
 	 * rewrites {@code chances[i] <= 0} to 10000 in the ctor, making the sentinel a second full
 	 * output — every handler row crushes into TWO main outputs. The p9 yield reform (task
-	 * p9-recipe-yield-reform) writes that end state directly: the port emits BOTH slots at
+	 * recipe-yield-reform) writes that end state directly: the port emits BOTH slots at
 	 * 10000 (the sentinel's upstream-effective value) instead of relying on the ctor rewrite
 	 * it does NOT replicate, while the {@code chance == 0 → no output} code ruling (Recipe.java
 	 * javadoc) stays untouched — no sentinel slots are written anymore. The Cinnabar gem row

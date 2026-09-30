@@ -7,7 +7,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
 
 /**
- * The Sandwich item (task p32-placeables) — the BlockItem of the MTE 32105 port, the
+ * The Sandwich item (task placeables) — the BlockItem of the MTE 32105 port, the
  * upstream "OnlyPlaceableWhenSneaking + OnItemRightClick eat" pair over the modern faces:
  * <ul>
  * <li><b>SNEAK-PLACE</b> — {@code useOn} places ONLY while sneaking (the upstream

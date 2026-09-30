@@ -40,7 +40,7 @@ import gregtech6.tileentity.GTItemStackHandler;
 /**
  * 1.20.1 port of gregapi/tileentity/multiblocks/TileEntityBase10MultiBlockMachine.java —
  * the machine layer between the structure base and the concrete multiblock machines
- * (task p6-cokeoven-processing; the first consumer is TileEntityCokeOven). Upstream this
+ * (task cokeoven-processing; the first consumer is TileEntityCokeOven). Upstream this
  * class extends MultiTileEntityBasicMachine and only adds structure defaults; the port
  * carries the BasicMachine business directly because the upstream 1036-line single-block
  * machine is not a separate ported layer (the Oven already proved the trimmed translation,
@@ -55,7 +55,7 @@ import gregtech6.tileentity.GTItemStackHandler;
  * <li>{@link #doWork} :780-793 verbatim (energy gate + {@link #doActive}/
  *     {@link #doInactive} + the drain + the mIgnited decrement :792);</li>
  * <li>{@link #doActive} :795-887 trimmed: the recipe re-check (:800), the :809 ignition
- *     gate (task p32-ignition-gate — LIVE: a {@link #mSpecialIsStartEnergy} machine freezes
+ *     gate (task ignition-gate — LIVE: a {@link #mSpecialIsStartEnergy} machine freezes
  *     progress while the {@link #mChargeRequirement} ledger is unpaid), progress += energy
  *     (:813 — the progress unit IS an energy unit), item placement i % outCount (:816),
  *     fluid placement merge-then-empty-tank (:817-835), the keep-alive mIgnited = 40
@@ -104,7 +104,7 @@ import gregtech6.tileentity.GTItemStackHandler;
  * mOutputItems/mOutputFluids and the output-tank bank (default one tank, re-pointable —
  * constructor capacity = Long.MAX_VALUE, upstream FluidTankGT.java:49).
  *
- * <p>GUI face (task p8-cokeoven-gui-menu ②): the class implements MenuProvider +
+ * <p>GUI face (task cokeoven-gui-menu ②): the class implements MenuProvider +
  * {@link GTBasicMachineMenu.Host} — the Host methods read the raw slot/field face directly
  * (the upstream ContainerCommonBasicMachine reads the TE inventory the same way; the
  * output no-put rule is the menu's OutputSlot), so the Coke Oven reuses the
@@ -141,14 +141,14 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	public static final String NBT_OUTPUT_TANK = "output_tank";
 	public static final String NBT_INPUT_TANK = "input_tank";
 	/**
-	 * Upstream NBT_INPUT_EU (task p32-ignition-gate) — the {@link #mChargeRequirement}
+	 * Upstream NBT_INPUT_EU (task ignition-gate) — the {@link #mChargeRequirement}
 	 * persistence key, PLAIN in-repo form. Unlike the two carrier fields above this one IS
 	 * persisted (the upstream :228 write / :155 read): an unpaid start-LU ledger survives
 	 * a restart.
 	 */
 	public static final String NBT_CHARGE_REQUIREMENT = "charge_requirement";
 	/**
-	 * Upstream NBT_SPECIAL_IS_START_ENERGY (task p32-ignition-gate, the :124 readFromNBT2
+	 * Upstream NBT_SPECIAL_IS_START_ENERGY (task ignition-gate, the :124 readFromNBT2
 	 * leg) — the {@link #mSpecialIsStartEnergy} registration-config key: hasKey-guarded on
 	 * load (the /data merge override face, the NBT_USE_OUTPUT_TANK family), NEVER persisted
 	 * (the upstream writeToNBT2 writes none of the registration keys either — the flag is
@@ -164,7 +164,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 
 	// fields (:92-109 trimmed set, the :1193 registration values)
 	public long mEnergy = 0, mInputMin = 1, mInput = 1, mInputMax = 16, mMinEnergy = 0;
-	/** Upstream :98 mOutputEnergy (task p31-fusion) — the generator-row emission rate:
+	/** Upstream :98 mOutputEnergy (task fusion) — the generator-row emission rate:
 	 *  the :762 negative-EUt branch sets {@code mOutputEnergy = -mEUt} and the
 	 *  {@link #doActive} :812 spot pushes it through {@link #doOutputEnergy} per active
 	 *  tick while progressing. Zero for every consumer machine (never assigned). */
@@ -173,7 +173,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	public long mParallel = 16;
 	public boolean mSuccessful = false, mActive = false, mRunning = false;
 	public boolean mStopped = false, mCouldUseRecipe = false, mInventoryChanged = false;
-	/** The per-instance ops drive (task p31-massfab): NBT {@code fake_source} (the
+	/** The per-instance ops drive (task massfab): NBT {@code fake_source} (the
 	 *  {@code gt6machine fakesource} regime made instance-scoped — the BasicMachine
 	 *  twin is a static the offline test bases leak) refills mEnergy to mInputMax in
 	 *  {@link #doWork} while set, giving the RCON acceptance chains a grid-less,
@@ -183,7 +183,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	/** Upstream :1193 NBT_NO_CONSTANT_POWER = T for the Coke Oven — the :894 reset is skipped. */
 	public boolean mNoConstantEnergy = true;
 	/**
-	 * Upstream :92 mCheapOverclocking (task p29-w3-nbtdesign-parts ②) — the
+	 * Upstream :92 mCheapOverclocking (task w3-nbtdesign-parts ②) — the
 	 * NBT_CHEAP_OVERCLOCKING rows (the Distillation Tower, Loader:1226) gate the :773
 	 * overclock loop: T = the row refuses the forced 4x-energy/2x-speed fold, the recipe
 	 * runs at its natural eUt inside the window. Registration config (the single-block
@@ -192,21 +192,21 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	 */
 	public boolean mCheapOverclocking = false;
 	/**
-	 * Upstream :92 mParallelDuration (task p29-w3-nbtdesign-parts ②) — the
+	 * Upstream :92 mParallelDuration (task w3-nbtdesign-parts ②) — the
 	 * NBT_PARALLEL_DURATION rows: T = the duration carries the parallels
 	 * (the :766-768 linear-duration form + the :626-629 chain-processing cap), F = the
 	 * energy does (the :770-771 form + the :743 bind). Registration config, not persisted.
 	 */
 	public boolean mParallelDuration = false;
 	/**
-	 * Upstream :99 mEnergyTypeAccepted (task p29-w3-nbtdesign-parts ②) — the
+	 * Upstream :99 mEnergyTypeAccepted (task w3-nbtdesign-parts ②) — the
 	 * NBT_ENERGY_ACCEPTED carrier driving the :743/:770 type gates; the base default TU is
 	 * the Coke Oven shape (the :770 TU half keeps a constant per-process energy and the
 	 * :743 bind folds away). Registration config, not persisted.
 	 */
 	public gregapi.code.TagData mEnergyTypeAccepted = gregapi.data.TD.Energy.TU;
 	/**
-	 * Upstream :99 mEnergyTypeCharged (task p32-ignition-gate) — the SECOND accepted type
+	 * Upstream :99 mEnergyTypeCharged (task ignition-gate) — the SECOND accepted type
 	 * (upstream NBT_ENERGY_ACCEPTED_2, the :150 readFromNBT2 load leg): the start-energy
 	 * carrier the fusion's {@code doEnergyInjection} charged arm banks against the {@link
 	 * #mChargeRequirement} ledger (upstream :497-500). Base default TU (the upstream :99
@@ -217,7 +217,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	 */
 	public gregapi.code.TagData mEnergyTypeCharged = gregapi.data.TD.Energy.TU;
 	/**
-	 * Upstream :92 mSpecialIsStartEnergy (task p32-ignition-gate) — the
+	 * Upstream :92 mSpecialIsStartEnergy (task ignition-gate) — the
 	 * NBT_SPECIAL_IS_START_ENERGY flag (the :124 readFromNBT2 registration-config load leg,
 	 * the same route that supplies it upstream: the Loader_MultiTileEntities.java:1242
 	 * fusion row carries {@code NBT_SPECIAL_IS_START_ENERGY, T}): when set, the {@link
@@ -229,7 +229,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	 */
 	public boolean mSpecialIsStartEnergy = false;
 	/**
-	 * Upstream :98 mChargeRequirement (task p32-ignition-gate) — the start-LU ledger:
+	 * Upstream :98 mChargeRequirement (task ignition-gate) — the start-LU ledger:
 	 * armed by the :755 arm ({@code = tRecipe.mSpecialValue}), banked down by the
 	 * charged-type injection arm (:497-500, the fusion's glass-ring LU), closing the :809
 	 * progress gate while positive; cleared at both :837-841/:843-851 completion arms.
@@ -253,7 +253,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	/**
 	 * The output-tank bank — default ONE tank (the Coke Oven shape; the upstream
 	 * default-constructor capacity = Long.MAX_VALUE, FluidTankGT.java:49). NOT final since
-	 * task p30-distill-output-routing (the 2026-09-16 distill-tower ruling, option a): a
+	 * task distill-output-routing (the 2026-09-16 distill-tower ruling, option a): a
 	 * machine whose map carries more fluid-OUT slots re-points the bank to the upstream
 	 * readFromNBT2 :161 size ({@code mRecipes.mOutputFluidCount}) — the Distillation Tower
 	 * is the first consumer (GT6Distillation, the nine-tank library).
@@ -261,7 +261,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	public FluidTankGT[] mTanksOutput = {new FluidTankGT()};
 
 	/**
-	 * The input-tank bank (task p31-fusion) — upstream :103 mTanksInput, EMPTY by default
+	 * The input-tank bank (task fusion) — upstream :103 mTanksInput, EMPTY by default
 	 * (zero behaviour delta: every pre-fusion map carries 0 fluid inputs, so the
 	 * {@link #checkRecipe} fluid half is a no-op). A machine whose map carries
 	 * {@code mInputFluidCount > 0} re-points the bank in its constructor (the fusion:
@@ -304,7 +304,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	}
 
 	// ---------------------------------------------------------------------------
-	// the row-side energy config (upstream readFromNBT2 :126-131, task p29-w3-nbtdesign-parts ②)
+	// the row-side energy config (upstream readFromNBT2 :126-131, task w3-nbtdesign-parts ②)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -375,7 +375,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 			// :454-455 verbatim — TU self-generation (the mChargeRequirement branch :456 is
 			// cut with charging). The upstream gate IS the type check: only TU machines
 			// self-generate; QU/EU/RF machines charge from the energy face. The task
-			// p31-massfab QU Massfab is the first non-TU consumer (the unconditional port
+			// massfab QU Massfab is the first non-TU consumer (the unconditional port
 			// increment leaked 1 energy/t into every registered type).
 			if (!mStopped && mEnergyTypeAccepted == gregapi.data.TD.Energy.TU) mEnergy++;
 			// :459 — fluid auto-output (the mDisabledFluidOutput/SIDES_VALID gate folds away with the flags)
@@ -457,7 +457,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 
 		mSuccessful = false; // :807
 
-		if (mMaxProgress > 0 && !(mSpecialIsStartEnergy && mChargeRequirement > 0)) { // :809 — the ignition gate CLOSED while an armed ledger is unpaid (task p32-ignition-gate)
+		if (mMaxProgress > 0 && !(mSpecialIsStartEnergy && mChargeRequirement > 0)) { // :809 — the ignition gate CLOSED while an armed ledger is unpaid (task ignition-gate)
 			rActive = true; // :810
 			if (mProgress <= mMaxProgress) {
 				if (mOutputEnergy > 0) doOutputEnergy(); // :812 — the generator-row per-tick push
@@ -587,7 +587,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 			if (aApplyRecipe) applyTankConsumption(mTanksInput, tFluids, tFluidBaseline);
 		}
 
-		// :755 — the ignition ledger (task p32-ignition-gate): arms with the recipe's
+		// :755 — the ignition ledger (task ignition-gate): arms with the recipe's
 		// mSpecialValue on the FIRST start (!mActive) or a RECIPE SWITCH; an active machine
 		// re-running the same recipe pays nothing (the upstream whole-run gate — the D-D
 		// stack pays ~95.6M LU per arm once, id718). The adjacent-inventory notify
@@ -598,7 +598,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		mOutputItems = tRecipe.getOutputs(tMaxProcessCount); // :758
 		mOutputFluids = tRecipe.getFluidOutputs(tMaxProcessCount); // :759
 
-		if (tRecipe.mEUt < 0) { // :761-764 — generator rows (task p31-fusion completes the trio)
+		if (tRecipe.mEUt < 0) { // :761-764 — generator rows (task fusion completes the trio)
 			mOutputEnergy = -tRecipe.mEUt; // :762
 			mMaxProgress = tRecipe.mDuration; // :763
 			mMinEnergy = 0; // :764
@@ -635,7 +635,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	 * Upstream :620-668 — the output-slot blockage semantics kept (equal item + capacity,
 	 * mNeedsEmptyOutput), returns the parallel count (mParallel = 16); the doOutputItems
 	 * pre-push (:623) is cut with the auto-IO surface. The mParallelDuration chain-limiting
-	 * loop (:626-629) is LIVE since task p29-w3-nbtdesign-parts ② (the Coke Oven shape
+	 * loop (:626-629) is LIVE since task w3-nbtdesign-parts ② (the Coke Oven shape
 	 * keeps mParallelDuration = false, so the oven path is unchanged).
 	 */
 	public int canOutput(Recipe aRecipe) {
@@ -647,7 +647,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 			while (rMaxTimes > 1 && aRecipe.getAbsoluteTotalPower() * rMaxTimes > mInputMax * 600) rMaxTimes--;
 		}
 
-		for (int i = 0, j = recipes().mInputItemsCount; i < recipes().mOutputItemsCount && i < aRecipe.mOutputs.length; i++, j++) { // :631 — task p31-fusion: the walk starts at the map's input count (upstream mInputItemsCount+(i%..) :816 shape); identical value for every pre-fusion map (cokeoven in=1 == the old fixed SLOT_INPUT+1 start)
+		for (int i = 0, j = recipes().mInputItemsCount; i < recipes().mOutputItemsCount && i < aRecipe.mOutputs.length; i++, j++) { // :631 — task fusion: the walk starts at the map's input count (upstream mInputItemsCount+(i%..) :816 shape); identical value for every pre-fusion map (cokeoven in=1 == the old fixed SLOT_INPUT+1 start)
 			ItemStack tOutput = aRecipe.mOutputs[i];
 			if (tOutput == null || tOutput.isEmpty()) continue;
 			ItemStack tSlot = slot(j);
@@ -728,13 +728,13 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	 * Upstream :998-1000 — the generator emission hook, fired at the {@link #doActive}
 	 * :812 spot while a generator row progresses. The upstream base emits to its configured
 	 * output side through the energy net; the port default is a no-op (the only consumer is
-	 * the fusion's ±10 remote push, task p31-fusion — machines that never set
+	 * the fusion's ±10 remote push, task fusion — machines that never set
 	 * {@link #mOutputEnergy} never reach the call).
 	 */
 	public void doOutputEnergy() {/**/}
 
 	// ---------------------------------------------------------------------------
-	// the input-tank snapshot adapter (task p31-fusion — the single-block
+	// the input-tank snapshot adapter (task fusion — the single-block
 	// TileEntityBasicMachine :629/:667/:1073 form, copied: the frozen P4 Recipe consumes
 	// FluidStack[] snapshots, the real drain mirrors onto the source tanks after)
 	// ---------------------------------------------------------------------------
@@ -875,7 +875,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	// ---------------------------------------------------------------------------
 	// GUI (upstream getGUIClient2/getGUIServer2 :1007-1008 → MenuProvider; the Host
 	// face is the raw slot/field read — ContainerCommonBasicMachine reads the TE
-	// inventory directly the same way, task p8-cokeoven-gui-menu ②)
+	// inventory directly the same way, task cokeoven-gui-menu ②)
 	// ---------------------------------------------------------------------------
 
 	/** The menu binds this as the SlotItemHandler container (TileEntityBasicMachine :199 same shape). */
@@ -1032,7 +1032,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		aNBT.putLong(NBT_MINENERGY, mMinEnergy);
 		aNBT.putLong(NBT_PROGRESS, mProgress);
 		aNBT.putLong(NBT_MAXPROGRESS, mMaxProgress);
-		aNBT.putLong(NBT_CHARGE_REQUIREMENT, mChargeRequirement); // upstream NBT_INPUT_EU :228 (task p32-ignition-gate)
+		aNBT.putLong(NBT_CHARGE_REQUIREMENT, mChargeRequirement); // upstream NBT_INPUT_EU :228 (task ignition-gate)
 		aNBT.putBoolean(NBT_STOPPED, mStopped);
 		aNBT.putBoolean("fake_source", mFakeSource);
 		aNBT.putByte(NBT_IGNITED, mIgnited);
@@ -1045,7 +1045,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		for (FluidStack tStack : mOutputFluids) if (tStack != null && !tStack.isEmpty()) tOutputFluids.add(tStack.writeToNBT(new CompoundTag()));
 		aNBT.put(NBT_OUTPUT_FLUIDS, tOutputFluids);
 		mTanksOutput[0].writeToNBT(aNBT, NBT_OUTPUT_TANK);
-		// task p31-fusion — the extra-bank halves: input tanks (the Distillation outputTankKey
+		// task fusion — the extra-bank halves: input tanks (the Distillation outputTankKey
 		// indexing form) and output tanks beyond the base [0]. Zero keys written for the
 		// default empty input bank and the single output tank (the Coke Oven shape unchanged).
 		for (int i = 0; i < mTanksInput.length; i++) mTanksInput[i].writeToNBT(aNBT, i == 0 ? NBT_INPUT_TANK : NBT_INPUT_TANK + "_" + i);
@@ -1078,7 +1078,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 			for (int i = 0; i < tOutputFluids.size(); i++) mOutputFluids[i] = FluidStack.loadFluidStackFromNBT(tOutputFluids.getCompound(i));
 		}
 		mTanksOutput[0].readFromNBT(aNBT, NBT_OUTPUT_TANK);
-		for (int i = 0; i < mTanksInput.length; i++) mTanksInput[i].readFromNBT(aNBT, i == 0 ? NBT_INPUT_TANK : NBT_INPUT_TANK + "_" + i); // task p31-fusion
+		for (int i = 0; i < mTanksInput.length; i++) mTanksInput[i].readFromNBT(aNBT, i == 0 ? NBT_INPUT_TANK : NBT_INPUT_TANK + "_" + i); // task fusion
 		for (int i = 1; i < mTanksOutput.length; i++) mTanksOutput[i].readFromNBT(aNBT, NBT_OUTPUT_TANK + "_" + i);
 	}
 	//?}
@@ -1104,7 +1104,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		aNBT.putLong(NBT_MINENERGY, mMinEnergy);
 		aNBT.putLong(NBT_PROGRESS, mProgress);
 		aNBT.putLong(NBT_MAXPROGRESS, mMaxProgress);
-		aNBT.putLong(NBT_CHARGE_REQUIREMENT, mChargeRequirement); // upstream NBT_INPUT_EU :228 (task p32-ignition-gate)
+		aNBT.putLong(NBT_CHARGE_REQUIREMENT, mChargeRequirement); // upstream NBT_INPUT_EU :228 (task ignition-gate)
 		aNBT.putBoolean(NBT_STOPPED, mStopped);
 		aNBT.putBoolean("fake_source", mFakeSource);
 		aNBT.putByte(NBT_IGNITED, mIgnited);
@@ -1117,7 +1117,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		for (FluidStack tStack : mOutputFluids) if (tStack != null && !tStack.isEmpty()) tOutputFluids.add(tStack.save(aProvider, new CompoundTag()));
 		aNBT.put(NBT_OUTPUT_FLUIDS, tOutputFluids);
 		mTanksOutput[0].writeToNBT(aNBT, NBT_OUTPUT_TANK);
-		// task p31-fusion — the extra-bank halves (the forge block loop, mirrored)
+		// task fusion — the extra-bank halves (the forge block loop, mirrored)
 		for (int i = 0; i < mTanksInput.length; i++) mTanksInput[i].writeToNBT(aNBT, i == 0 ? NBT_INPUT_TANK : NBT_INPUT_TANK + "_" + i);
 		for (int i = 1; i < mTanksOutput.length; i++) mTanksOutput[i].writeToNBT(aNBT, NBT_OUTPUT_TANK + "_" + i);
 	}
@@ -1149,7 +1149,7 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 			for (int i = 0; i < tOutputFluids.size(); i++) mOutputFluids[i] = FluidStack.parseOptional(aProvider, tOutputFluids.getCompound(i));
 		}
 		mTanksOutput[0].readFromNBT(aNBT, NBT_OUTPUT_TANK);
-		for (int i = 0; i < mTanksInput.length; i++) mTanksInput[i].readFromNBT(aNBT, i == 0 ? NBT_INPUT_TANK : NBT_INPUT_TANK + "_" + i); // task p31-fusion
+		for (int i = 0; i < mTanksInput.length; i++) mTanksInput[i].readFromNBT(aNBT, i == 0 ? NBT_INPUT_TANK : NBT_INPUT_TANK + "_" + i); // task fusion
 		for (int i = 1; i < mTanksOutput.length; i++) mTanksOutput[i].readFromNBT(aNBT, NBT_OUTPUT_TANK + "_" + i);
 	}
 	 *///?}

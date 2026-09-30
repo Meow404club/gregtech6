@@ -39,7 +39,7 @@ import gregtech6.registry.GT6Turbines;
 import net.minecraftforge.fluids.FluidStack;
 
 /**
- * The GTMultiBlockConverter base suite (task p29-w3-turbine-dynamo): the row ladders pin
+ * The GTMultiBlockConverter base suite (task w3-turbine-dynamo): the row ladders pin
  * the upstream columns (Loader :1254-1257/:1259-1262/:1264-1267), the conversion core pins
  * the Base11 over Converter:61-94 semantics (the door floor, the waste funnel, the waste=F
  * deduction, the proxy emit), the pattern tables pin the two structure usages, and the gas

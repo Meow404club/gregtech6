@@ -31,7 +31,7 @@ import gregtech6.registry.GT6Tanks;
 import gregtech6.tileentity.attachment.GTAttachmentSmallBlockEntity;
 
 /**
- * The Tank Main Valve family offline gate (task p29-w3-tank-valves). The row table is
+ * The Tank Main Valve family offline gate (task w3-tank-valves). The row table is
  * re-pinned COLUMN BY COLUMN against the Loader_MultiTileEntities.java:1195-1222 lines
  * (the 25-line census — the 26-vs-25 correction, decisions.p29-w3-split-rulings); the
  * structure is the hollow 3x3x3/5x5x5 ONLY_FLUID wall walk; the four-flag destruction

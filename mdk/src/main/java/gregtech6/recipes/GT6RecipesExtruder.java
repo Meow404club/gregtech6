@@ -41,7 +41,7 @@ import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The RM.Extruder plate/rod material pour — task p26-w1-press-extruder-molds, the port
+ * The RM.Extruder plate/rod material pour — task w1-press-extruder-molds, the port
  * counterpart of the RM.java:405 (plate row) / :407 (rod row) transcription domain, two
  * rows per material over the registered universe:
  * <pre>

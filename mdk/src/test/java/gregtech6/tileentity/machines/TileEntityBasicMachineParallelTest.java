@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.recipes.GT6RecipeMaps;
 
 /**
- * Acceptance 3 (task p7-basicmachine-family ⑦): the Crusher parallel math — the restored
+ * Acceptance 3 (task basicmachine-family ⑦): the Crusher parallel math — the restored
  * checkRecipe parallel blocks (:742-745) plus the two energy-math branches (:766-768 the
  * parallelDuration linear-duration form; :770 the non-parallelDuration energy-speedup form)
  * and the overclock loop :773, over the poured gem-chain row (:72, Loader_Recipes_Handlers).

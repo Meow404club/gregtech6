@@ -25,7 +25,7 @@ import gregapi.tileentity.energy.ITileEntityEnergy;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * GTWireBlockEntity offline tests (task p7-d2-cable spec ⑧): the connection-mask surface,
+ * GTWireBlockEntity offline tests (task d2-cable spec ⑧): the connection-mask surface,
  * the EU face family behind the connection gate, the size band, the NBT emptiness (the
  * upstream writeToNBT2 :121-123 empty body — only the base mConnections persists) and the
  * pure {@link GTWireBlockEntity#addToEnergyTransferred} overload logic (over-voltage /
@@ -52,7 +52,7 @@ public class GTWireBlockEntityTest extends GTOfflineTestBase {
 		public byte lastProbedSide = -1;
 
 		// 21.1 ctor validation: the fake binds a real BET over the vanilla stone state —
-		// the supplier is stored, never invoked (task p15-m4-test-infra-2).
+		// the supplier is stored, never invoked (task m4-test-infra-2).
 		static final BlockEntityType<FakeSink> FAKE_TYPE =
 				BlockEntityType.Builder.of((aPos, aState) -> new FakeSink(aPos), Blocks.STONE).build(null);
 

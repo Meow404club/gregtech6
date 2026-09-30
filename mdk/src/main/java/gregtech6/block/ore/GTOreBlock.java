@@ -9,7 +9,7 @@ import gregtech6.registry.GT6OreBlocks;
 
 /**
  * One material-scoped ore block for an (ore family, form, material) triple (task
- * p30-ore-1-mech). Upstream GT6 bundles one multi-material PrefixBlock per ore family
+ * ore-1-mech). Upstream GT6 bundles one multi-material PrefixBlock per ore family
  * prefix with metadata = material index (Loader_Ores.java:56-128 vanilla anchors,
  * Loader_Rocks.java:57-139 the 17 GT stones); 1.20.1 has no block metadata, so the
  * per-pair shape applies (the GTMaterialPrefixBlock precedent, ADR ruling against an
@@ -62,7 +62,7 @@ public class GTOreBlock extends Block {
      * family rows (Loader_Ores.java:56-128, Loader_Rocks.java:57-139 — aBaseHardness,
      * aBaseResistance, aSoundType and the vanilla-Material stand-in MapColor per family).
      * Distinct from GTMaterialPrefixBlock.propertiesOf (the seven storage prefixes, whose
-     * throw gate stays untouched — task p30-ore-1-mech spec).
+     * throw gate stays untouched — task ore-1-mech spec).
      */
     public static BlockBehaviour.Properties propertiesOreOf(GT6OreBlocks.OreFamily family, GT6OreBlocks.Form form) {
         return BlockBehaviour.Properties.of()

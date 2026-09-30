@@ -13,7 +13,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /**
- * The shared machine-wall obtainability pins (task p36-recipes-obtainability — the
+ * The shared machine-wall obtainability pins (task recipes-obtainability — the
  * JSON-ship half, the GT6CrucibleLadderCensusTest.theEightWallBlocksAreObtainable form):
  * the :1143-1153 {@code "wPP","hPP"} four-plate crafting grid ships per
  * {@link gregtech6.registry.GTMultiBlocks#METAL_WALL_ROWS} block under

@@ -1,5 +1,5 @@
 /**
- * Offline guard tests for task r6-29-34a (GitHub #29a): the per-map category icon table —
+ * Offline guard tests for task issues #29/#34a (GitHub #29a): the per-map category icon table —
  * every VISIBLE map carries a tabled machine item unless it is on the four-map
  * DECLARED-empty furnace-fallback whitelist (the guard the card's "零兜底或仅白名单兜底"
  * clause turns into a census pin), the whitelist is closed against the live census, and

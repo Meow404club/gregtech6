@@ -22,7 +22,7 @@ import gregtech6.util.UT6;
 /**
  * The composite coverable-BE surface — 1.20.1 port of the upstream
  * {@code ITileEntityCoverable} (ITileEntityCoverable.java:33-43) PLUS the cover-facing
- * logic of {@code TileEntityBase06Covers} (task p4-cover-core ⑤). The ADR pins the
+ * logic of {@code TileEntityBase06Covers} (task cover-core ⑤). The ADR pins the
  * attachment as COMPOSITION: a host BlockEntity declares {@code implements ICoverableTE},
  * owns the {@code mCovers} field through {@link #getCovers()}/{@link #setCovers} and
  * inherits the whole 06Covers behaviour as default methods — the BE base-class chain
@@ -44,7 +44,7 @@ import gregtech6.util.UT6;
  * {@code GTRenderUpdates.scheduleRenderUpdate} (the pair's client branch; the server
  * blockEvent forward stays the GTRenderUpdates class-doc template for Blocks we own).
  *
- * <p>Redstone query exits (task p9-redstone-hooks, upstream 04Covers :408-441 with the
+ * <p>Redstone query exits (task redstone-hooks, upstream 04Covers :408-441 with the
  * Root :577-588 world-only form): {@link #getRedstoneIncoming} — the covered face
  * answers through {@link ICover#getRedstoneIn}, bare faces read the world directly;
  * {@link #getRedstoneOutWeak}/{@link #getRedstoneOutStrong} — the cover on the OPOS
@@ -165,7 +165,7 @@ public interface ICoverableTE {
 
 		// the store changed — the persistence mark is UNCONDITIONAL (the :306 block-update
 		// half stays gated): a mutation that never reaches disk resurrects across restart
-		// (task p10-debug-oven-cover-resurrect). sendBlockUpdateFromCover carries the mark.
+		// (task debug-oven-cover-resurrect). sendBlockUpdateFromCover carries the mark.
 		self().setChanged();
 
 		if (aBlockUpdate) sendBlockUpdateFromCover(); // :306
@@ -289,7 +289,7 @@ public interface ICoverableTE {
 	}
 
 	// ---------------------------------------------------------------------------
-	// walk-over dispatch (06Covers :428-429, restored with p37-covers-crafting-asphalt)
+	// walk-over dispatch (06Covers :428-429, restored with covers-crafting-asphalt)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -324,7 +324,7 @@ public interface ICoverableTE {
 	 * never flags the chunk for save: a save crossing the cover-alive window persists the
 	 * covers NBT, the removal leaves the chunk clean, the next save skips it
 	 * (ChunkMap.save {@code !isUnsaved()} gate) and the covers resurrect across restart
-	 * (task p10-debug-oven-cover-resurrect, known_bugs 2026-09-01).
+	 * (task debug-oven-cover-resurrect, known_bugs 2026-09-01).
 	 */
 	default void sendBlockUpdateFromCover() {
 		self().setChanged(); // the persistence half (see above)
@@ -350,7 +350,7 @@ public interface ICoverableTE {
 
 	// ---------------------------------------------------------------------------
 	// item intercept gates (upstream 04Covers :343-365 host-final dispatch shape,
-	// task p10-cover-item-intercept; the 06Covers :319-343 twin is the same shape)
+	// task cover-item-intercept; the 06Covers :319-343 twin is the same shape)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -408,7 +408,7 @@ public interface ICoverableTE {
 	}
 
 	// ---------------------------------------------------------------------------
-	// fluid intercept iteration (upstream 04Covers :368-374, restored with p5-barrel-side-rules)
+	// fluid intercept iteration (upstream 04Covers :368-374, restored with barrel-side-rules)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -444,7 +444,7 @@ public interface ICoverableTE {
 	}
 
 	// ---------------------------------------------------------------------------
-	// redstone query exits (upstream 04Covers :408-441, task p9-redstone-hooks)
+	// redstone query exits (upstream 04Covers :408-441, task redstone-hooks)
 	// ---------------------------------------------------------------------------
 
 	/**

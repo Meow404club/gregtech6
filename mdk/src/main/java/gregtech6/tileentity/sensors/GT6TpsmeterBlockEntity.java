@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 /**
- * The TPS Sensor (task p34-sensors-trivial-14 row ⑭) — the port of
+ * The TPS Sensor (task sensors-trivial-14 row ⑭) — the port of
  * MultiTileEntityTPSmeter.java:35-58. The read is the wall-clock milli-TPS: every
  * {@code getTickRate()} (=20, :24 verbatim) server ticks the upstream onTick2 (:39-45)
  * measures the elapsed milliseconds and folds them into

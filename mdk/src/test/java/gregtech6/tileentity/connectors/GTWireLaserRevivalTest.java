@@ -1,6 +1,6 @@
 /**
- * The offline assertions of the laser-wire LU revival (task p32-qu-laser-domain — the
- * p10-wire-laser-placeholder revival condition, now fulfilled): the
+ * The offline assertions of the laser-wire LU revival (task qu-laser-domain — the
+ * wire-laser-placeholder revival condition, now fulfilled): the
  * {@link GTWireBlockEntity#transferLaser} flood is LIVE (MultiTileEntityWireLaser :66-86),
  * the laser family answers LU on the energy face family (:94-:100 — EU stays refused),
  * the canConnect LU probe (:89-92) is live, and the flood books the lossless ledger
@@ -75,7 +75,7 @@ public class GTWireLaserRevivalTest {
 		@SuppressWarnings("unchecked")
 		BlockEntityType<TestWire>[] tHolder = (BlockEntityType<TestWire>[]) new BlockEntityType<?>[1];
 		// 21.1 validates the BE type/state pair at the ctor: the valid set carries the
-		// cached GT6 wire blocks (task p15-m4-test-infra-2).
+		// cached GT6 wire blocks (task m4-test-infra-2).
 		tHolder[0] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new TestWire(tHolder[0], aPos, aState),
 				Blocks.STONE, block(Family.LASER, MT.NULL, 0, 0), block(Family.ELECTRIC, MT.Sn, 32, 2)).build(null);
@@ -93,7 +93,7 @@ public class GTWireLaserRevivalTest {
 	 * Offline Block construction needs the block registry temporarily unfrozen (the
 	 * UseLockTest form). Instances are memoized per carrier row — the 21.1 BE ctor
 	 * validates the state against the BET's valid set, so the fixture must hand out ONE
-	 * stable block identity per row (task p15-m4-test-infra-2).
+	 * stable block identity per row (task m4-test-infra-2).
 	 */
 	private record WireKey(Family aFamily, OreDictMaterial aMaterial, long aVoltage, long aLoss) {}
 

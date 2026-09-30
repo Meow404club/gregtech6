@@ -34,10 +34,10 @@ import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.inventories.GT6HopperBaseBlockEntity;
 
 /**
- * The anvil BE offline tests (task p28-c-anvil acceptance ⑤): the working-strike
+ * The anvil BE offline tests (task c-anvil acceptance ⑤): the working-strike
  * semantics (MultiTileEntityAnvil.java:94-141), the durability/fatigue math (:122-130)
  * and the interaction chain (:218-274), plus the hopper-suction easter-egg branch
- * (GT6HopperBaseBlockEntity.moveInPhase, the upstream :191 anvil gate — task p28-c-anvil
+ * (GT6HopperBaseBlockEntity.moveInPhase, the upstream :191 anvil gate — task c-anvil
  * closed the defer).
  */
 public class GT6AnvilBlockEntityTest extends GTOfflineTestBase {

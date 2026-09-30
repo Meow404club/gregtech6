@@ -28,10 +28,10 @@ import gregtech6.client.render.GTModelProperties;
 import gregtech6.client.render.GTOfflineRenderTestBase;
 
 /**
- * The cover plate render-path sentinel tests (task p4-cover-core acceptance ③, offline
+ * The cover plate render-path sentinel tests (task cover-core acceptance ③, offline
  * half): the planner is pure geometry over the immutable snapshot — the quad emission
  * rules, the GTCEu slab geometry (2px thickness + the 0.002 Z-fighting epsilon), the
- * snapshot freeze and the client registration hook — plus the r8-render-leftovers bake
+ * snapshot freeze and the client registration hook — plus the render-leftovers bake
  * pins (the IdentitySprite fixture form of the in-flight FaceBakePins, self-built here to
  * avoid a cross-branch collision): the outer decal quads bake the canonical full-face UV
  * walk on all six cover faces and the rims bake the 1.7.10 proportional top band.
@@ -123,7 +123,7 @@ public class CoverPlateModelTest extends GTOfflineRenderTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the layer table (task p11-render-cover-multilayer)
+	// the layer table (task render-cover-multilayer)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -223,7 +223,7 @@ public class CoverPlateModelTest extends GTOfflineRenderTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the r8-render-leftovers bake pins (the FaceBakePins fixture form)
+	// the render-leftovers bake pins (the FaceBakePins fixture form)
 	// ---------------------------------------------------------------------------
 
 	/** The int[] vertex stride (FaceBakery.VERTEX_INT_SIZE) and UV slot offsets. */
@@ -233,7 +233,7 @@ public class CoverPlateModelTest extends GTOfflineRenderTestBase {
 	private static final float TOLERANCE = 0.1F;
 
 	/**
-	 * THE r8-render-leftovers PIN (outer decal face): every cover face's own pass bakes the
+	 * THE render-leftovers PIN (outer decal face): every cover face's own pass bakes the
 	 * canonical rotation-0 full-face walk (0,0),(0,16),(16,16),(16,0) — the vanilla cube
 	 * JSON form, sprite top (V=0) on the side faces' top corners (upright). The old GTCEu
 	 * cubeUV table flipped every non-UP outer face (V mirror on DOWN/SOUTH/WEST, 180° on

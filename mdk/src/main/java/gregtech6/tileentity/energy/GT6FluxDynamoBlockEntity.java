@@ -20,7 +20,7 @@ import gregapi.tileentity.energy.EnergyBridge;
 import gregtech6.registry.GT6FluxDynamos;
 
 /**
- * The Flux Dynamo (task p28-c-dynamo-family-be) — the 1.20.1 counterpart of
+ * The Flux Dynamo (task c-dynamo-family-be) — the 1.20.1 counterpart of
  * {@code MultiTileEntityDynamoFlux} (DynamoFlux.java:35-64): back face in RU, front face
  * out RF, over the shared {@link GT6DynamoBlockEntity} core. 2.75 FE per RU, expressed the
  * W0-ruled way: the ratio lives in the REGISTRATION CONSTANTS (NBT_OUTPUT/NBT_INPUT =

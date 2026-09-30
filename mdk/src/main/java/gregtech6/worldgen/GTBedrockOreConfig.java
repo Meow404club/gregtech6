@@ -10,7 +10,7 @@ import gregapi.oredict.OreDictMaterial;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 
 /**
- * One bedrock-ore row (task p31-bedrock-ore-worldgen spec ②) — the {@code WorldgenOresBedrock}
+ * One bedrock-ore row (task bedrock-ore-worldgen spec ②) — the {@code WorldgenOresBedrock}
  * ctor read face verbatim (WorldgenOresBedrock.java:61-65: aName, aProbability, aPrimary;
  * the indicator columns ride the deferred-decor deviation below), plus the one modern table
  * column the upstream per-dimension registration lists carried ({@code overworld} = the row

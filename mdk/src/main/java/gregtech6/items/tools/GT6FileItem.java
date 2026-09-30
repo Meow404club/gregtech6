@@ -5,7 +5,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ToolAction;
 
 /**
- * The formal GT6 file — task p24-tool-system spec ①/②. Upstream the tool is a
+ * The formal GT6 file — task tool-system spec ①/②. Upstream the tool is a
  * crafting-domain meta id ({@code GT_Tool_File}, gregtech/items/tools/crafting/):
  * {@code getToolDamagePerContainerCraft() = 400} (GT_Tool_File.java:47-49) is the
  * container-item channel MultiItemTool.getContainerItem serves

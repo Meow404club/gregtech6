@@ -21,7 +21,7 @@ import gregtech6.registry.GT6LongDistPipes;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * GT6LongDistanceFluidPipeBlockEntity offline tests (task p35-long-distance-pipes): the
+ * GT6LongDistanceFluidPipeBlockEntity offline tests (task long-distance-pipes): the
  * fill-only window over the temperature gate (the :200/:216
  * {@code FL.temperature <= mTemperature} arm — the offline rating is set directly, the
  * water 300 K vs a sub-300 rating is the refusal arm), the drain refusal (:206-225),

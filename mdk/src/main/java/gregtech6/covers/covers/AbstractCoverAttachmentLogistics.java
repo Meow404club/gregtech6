@@ -10,7 +10,7 @@ import gregtech6.covers.ICover;
 
 /**
  * The logistics attachment base — 1.20.1 counterpart of gregapi/cover/covers/
- * AbstractCoverAttachmentLogistics.java (113 lines), task p32-logistics-lv2 SKELETON
+ * AbstractCoverAttachmentLogistics.java (113 lines), task logistics-lv2 SKELETON
  * scope: the class exists for its PLACEMENT GATE only (upstream :39-40) — the host must
  * be an {@link ITileEntityLogistics} member whose SIDE_ANY family query answers
  * ({@code canLogistics(SIDE_ANY)}, the CS.java:698 SIDES_INVALID[6]=T query the wire
@@ -54,7 +54,7 @@ public abstract class AbstractCoverAttachmentLogistics extends AbstractCoverDefa
 	public static final String TOOL_CUTTER = "cutter";
 
 	/**
-	 * Upstream :59-81 — the two value lanes of the family (task p33-logistics-covers-12;
+	 * Upstream :59-81 — the two value lanes of the family (task logistics-covers-12;
 	 * the p32 skeleton declared them riding this card): the screwdriver cycles the
 	 * PRIORITY bits 0-1 (damage 10000) and the cutter cycles the TARGET STACKSIZE bits
 	 * 2-8 (damage 1000), gated by {@link #usePriorities()}/{@link #useTargetStackSize()}.

@@ -29,7 +29,7 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
 import gregtech6.tileentity.machines.TileEntityOven;
 
 /**
- * Offline gate for the Jade universal fluid storage section (task p23-jade-universal-fluid
+ * Offline gate for the Jade universal fluid storage section (task jade-universal-fluid
  * acceptance ②): the server-side data seam pin — {@code groupsOfTarget} produces the two
  * id-stamped {@link ViewGroup}s whose CompoundTag views carry the P22 wire contract keys
  * ({@code FluidName / Amount TAG_LONG / Capacity TAG_LONG}, true longs) — plus the pure
@@ -60,7 +60,7 @@ public class GT6FluidProviderTest extends GTOfflineTestBase {
 	 * :325-328), so no recipe-pour/reset discipline is needed.
 	 *
 	 * <p>The fixture map lands in RecipeMap.RECIPE_MAPS and STAYS there after the class —
-	 * the p29-w4-f1-chemicals full-suite lesson (the GT6ChemicalRowsPourTest red): the
+	 * the w4-f1-chemicals full-suite lesson (the GT6ChemicalRowsPourTest red): the
 	 * residue collided with the NEXT init() whose class name sorts before jade's, so the
 	 * class hands the registry back clean via {@link GT6RecipeMaps#reset}.
 	 */
@@ -146,7 +146,7 @@ public class GT6FluidProviderTest extends GTOfflineTestBase {
 
 	@Test
 	public void groupTitlesAreKeyedTranslatablesNotLiterals() {
-		// task p34-hygiene-lang acceptance ③: the decorator's literal band is keyed — the two
+		// task hygiene-lang acceptance ③: the decorator's literal band is keyed — the two
 		// known group ids map to the gt6.jade.fluid.group.* faces (both locales), so the tank
 		// headers localize instead of riding the sync id string.
 		TranslatableContents tIn = (TranslatableContents) GT6FluidProvider.groupTitle(GT6FluidProvider.GROUP_IN).getContents();

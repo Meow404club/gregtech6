@@ -19,7 +19,7 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
 
 /**
- * GT6 机器 Jade provider 对（task p21-jade-compat，r8-jade-redesign-core 重设计）：
+ * GT6 机器 Jade provider 对（task jade-compat，jade-redesign-core 重设计）：
  * 一个实例同挂 client tooltip（{@link IBlockComponentProvider}）+ server 数据同步
  * （{@link IServerDataProvider}&lt;BlockAccessor&gt;），服务端直读 BE 公开字段。
  *
@@ -60,7 +60,7 @@ public final class GT6MachineProvider implements IBlockComponentProvider, IServe
 	public static final String KEY_ACTIVE = "GT6Active";
 	public static final String KEY_RUNNING = "GT6Running";
 	public static final String KEY_ENERGY = "GT6Energy";
-	/** The accepted-energy type short code (task p27-machine-energy-display-fix)——值见 {@link #energyTypeShortCode}。 */
+	/** The accepted-energy type short code (task machine-energy-display-fix)——值见 {@link #energyTypeShortCode}。 */
 	public static final String KEY_ENERGY_TYPE = "GT6EnergyType";
 	public static final String KEY_INPUT_MIN = "GT6InputMin";
 	public static final String KEY_INPUT = "GT6Input";
@@ -84,7 +84,7 @@ public final class GT6MachineProvider implements IBlockComponentProvider, IServe
 	/** 输入带行（四槽）：min / in / max 三 long + 能量类型短码（KEY_INPUT_MIN/INPUT/INPUT_MAX 同序）。 */
 
 	/**
-	 * 能量载体的显示短码——task r10-debt-viewer-polish 起 Delegation 到 Jade-free 的正典家
+	 * 能量载体的显示短码——task debt-viewer-polish 起 Delegation 到 Jade-free 的正典家
 	 * {@link GT6RecipeMapViewerMeta#energyTypeShortCode}（p27 短码表 verbatim 迁入该处；
 	 * 依赖反转：viewer 面不再反向触碰本 Jade 集成类，nojade 运行时配方页不再
 	 * NoClassDefFoundError，known_bugs r934_nojade_recipe_page_draw_ncdfe）。值面与 p27

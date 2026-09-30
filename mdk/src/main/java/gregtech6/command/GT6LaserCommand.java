@@ -19,7 +19,7 @@ import com.mojang.logging.LogUtils;
 import gregtech6.tileentity.energy.converters.GT6LaserConverterBlockEntity;
 
 /**
- * {@code /gt6laser} — the laser-domain acceptance command (task p32-qu-laser-domain;
+ * {@code /gt6laser} — the laser-domain acceptance command (task qu-laser-domain;
  * card-local in command/ like GT6ElectricCommand — the /gt6bridge stat|reset shape over
  * the laser/absorber converter pair):
  *
@@ -52,7 +52,7 @@ public final class GT6LaserCommand {
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 						.executes(aContext -> laserReset(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))));
 		aEvent.getDispatcher().register(tLaser);
-		LOGGER.info("Registered GT6 laser acceptance command /gt6laser (stat|reset, the EU->LU / LU->EU converter live face, task p32-qu-laser-domain)");
+		LOGGER.info("Registered GT6 laser acceptance command /gt6laser (stat|reset, the EU->LU / LU->EU converter live face, task qu-laser-domain)");
 	}
 
 	private static int laserStat(CommandSourceStack aSource, BlockPos aPos) {

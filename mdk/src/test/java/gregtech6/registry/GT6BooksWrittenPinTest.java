@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The written-book pins (task p35-books-written, ACCEPTANCE "文本逐本对照抽样钉"): the
+ * The written-book pins (task books-written, ACCEPTANCE "文本逐本对照抽样钉"): the
  * committed {@link GT6BookText} distillate is pinned against the upstream anchor
  * (loaders/b/Loader_Books.java) — per book: path/upstream-line/title/author/page-count +
  * a whole-book SHA-256 (title+author+every raw page, the mechanical total-coverage pin)

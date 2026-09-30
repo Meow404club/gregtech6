@@ -21,7 +21,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * The p29-w1-kinetic-roll-ladder smoke-row pour test (the GT6RecipeMapJsonLoaderTest
+ * The w1-kinetic-roll-ladder smoke-row pour test (the GT6RecipeMapJsonLoaderTest
  * fixture posture): the FOUR data/gt6/recipe_maps JSON files this card ships are read
  * VERBATIM off the classpath (the main resources ride the test runtime classpath) and
  * poured through the real {@link GT6RecipeMapJsonLoader} seam — the whitelist keys, the
@@ -84,13 +84,13 @@ public class GT6RollSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 			assertNotNull(GT6RecipeMapJsonLoader.mapFor(tKey), tKey + ": the whitelist key resolves its map");
 		}
 		assertEquals(2, GT6RecipeMaps.ROLLING_MILL.mRecipeList.size(), "the rollingmill map holds the iron row + the ULV-rung clay row");
-		assertEquals(3, GT6RecipeMaps.ROLL_BENDER.mRecipeList.size(), "the rollbender map holds the plate/stick/stickLong trio (task p29-w3-heat-smelter)");
+		assertEquals(3, GT6RecipeMaps.ROLL_BENDER.mRecipeList.size(), "the rollbender map holds the plate/stick/stickLong trio (task w3-heat-smelter)");
 		assertEquals(1, GT6RecipeMaps.ROLL_FORMER.mRecipeList.size(), "the rollformer map holds the corrected plate row");
 		assertEquals(1, GT6RecipeMaps.CLUSTER_MILL.mRecipeList.size(), "the clustermill map holds the smoke row");
 	}
 
 	/**
-	 * Task p29-w3-heat-smelter — the row-semantics correction pin: the Bender family rows
+	 * Task w3-heat-smelter — the row-semantics correction pin: the Bender family rows
 	 * are plate->plateCurved / stick->ring x2 / stickLong->spring x1 (Loader_Recipes_
 	 * Handlers.java:298-300) and the RollFormer row is plate->railGt x4 (:314) — the
 	 * shipped rollformer row had fed a stick while citing the OP.railGt product class.

@@ -20,7 +20,7 @@ import gregtech6.covers.covers.CoverTextureSimple;
 import gregtech6.tileentity.machines.TileEntityOven;
 
 /**
- * The oven cover chain tests (task p4-cover-core acceptance ①/② offline half): the
+ * The oven cover chain tests (task cover-core acceptance ①/② offline half): the
  * setCoverItem admission gates (06Covers :284-317), the hoe-class crowbar substitute
  * dismantle (:140-163), the use dispatch (:106-133), the validity sweep (:207-215) and
  * the render snapshot hook.
@@ -63,7 +63,7 @@ public class TileEntityOvenCoverTest extends GTCoverTestBase {
 	}
 
 	/**
-	 * Task p10-debug-oven-cover-resurrect regression (known_bugs 2026-09-01): a cover
+	 * Task debug-oven-cover-resurrect regression (known_bugs 2026-09-01): a cover
 	 * store mutation MUST flag the BE changed — the dispatch used to land on the
 	 * TileEntityBase01Root.causeBlockUpdate override (final, mDoesBlockUpdate buffer),
 	 * which shadows the persisting ICoverableTE default, so the removal left the chunk

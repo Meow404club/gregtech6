@@ -15,7 +15,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.tileentity.energy.GT6DynamoBlockEntityTestHarness;
 
 /**
- * The dynamo-family row census (task p28-c-dynamo-family-be) — the
+ * The dynamo-family row census (task c-dynamo-family-be) — the
  * GTMachinesMaterialRowTest posture over the two dynamo ladders: the row tables mirror
  * the upstream registration columns (Loader_MultiTileEntities.java:946-957), the ratio
  * pairs are EXACT (2.75 = 11/4 and 0.6875 = 22/32, the load-bearing registration
@@ -74,8 +74,8 @@ public class GT6DynamoFamilyRowTest {
 
 	@Test
 	public void electricRowsCarryTheUpstreamIdsAndVoltageWords() {
-		// task p28-c-ulv-dynamo-row: the T0 ULV extension row PREPENDED (tier = VN ordinal);
-		// its id 10116 = the family base 10111 + 5, the p28-c-ulv-machine-ladder invented-id
+		// task c-ulv-dynamo-row: the T0 ULV extension row PREPENDED (tier = VN ordinal);
+		// its id 10116 = the family base 10111 + 5, the c-ulv-machine-ladder invented-id
 		// convention (upstream ships no ULV dynamo — the declared deviation, the class doc)
 		assertEquals(6, GT6ElectricDynamos.ROWS.size());
 		List<String> tWords = GT6ElectricDynamos.ROWS.stream().map(GT6ElectricDynamos.ElectricRow::voltageWord).toList();
@@ -158,7 +158,7 @@ public class GT6DynamoFamilyRowTest {
 	}
 
 	/**
-	 * The water-wheel chain closure (task p28-c-ulv-dynamo-row — the research
+	 * The water-wheel chain closure (task c-ulv-dynamo-row — the research
 	 * chain_closure table, the packet-domain half): the wheel's ±8 RU × 1A packet sits
 	 * dead-center of the T0 dynamo's input band [1..16] (8 = inRec, min 1 by the ≤16 arm,
 	 * max 16 = no overload), converts 1:1 to ONE 8 EU packet, and that packet lands

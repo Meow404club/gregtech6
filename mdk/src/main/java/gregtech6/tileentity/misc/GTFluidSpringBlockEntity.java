@@ -20,7 +20,7 @@ import gregtech6.registry.GTBlockEntities;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The bedrock fluid-spring nozzle BlockEntity (task p38-issue5-fluid-spring-nozzle) — the
+ * The bedrock fluid-spring nozzle BlockEntity (task issue5-fluid-spring-nozzle) — the
  * port of the upstream MultiTileEntityFluidSpring tick body (MultiTileEntityFluidSpring
  * .java:99-146), the never-exhausting spring head: after activation it sprays the spring
  * fluid's SOURCE block at its top face with probability 1/{@code amount} per tick, and
@@ -46,7 +46,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  *     -> source there; full source above -> convert one horizontal neighbor per spray.
  *     The decisions are the static {@link #shouldSprayAbove}/{@link #shouldSpreadTo} (the
  *     offline test face).</li>
- * <li><b>the skin</b> (task p38-spring-texture-tint, upstream :150
+ * <li><b>the skin</b> (task spring-texture-tint, upstream :150
  *     {@code getTexture = BlockTextureMulti(BlockTextureFluid(mFluid), FLUID_SPRING)}):
  *     the per-fluid render face rides {@link #getModelData()} — the spring block id under
  *     {@code GTModelProperties.SPRING_FLUID}, and {@code GTFluidSpringBakedModel} resolves
@@ -207,7 +207,7 @@ public class GTFluidSpringBlockEntity extends TileEntityBase03TicksAndSync {
 
 	/**
 	 * The vanilla two-channel convergence (both the chunk-data and the block-update
-	 * channel land here), plus the client refresh arm (task p38-spring-texture-tint, the
+	 * channel land here), plus the client refresh arm (task spring-texture-tint, the
 	 * paint arm's dirty-gated shape — TileEntityBase03TicksAndSync.load): the spring id
 	 * reaching the client BE refreshes the ModelDataManager, so the first chunk build
 	 * after the load reads the tinting snapshot. Server-side loads (worldgen placement,
@@ -232,7 +232,7 @@ public class GTFluidSpringBlockEntity extends TileEntityBase03TicksAndSync {
 
 	/**
 	 * The {@link GTModelProperties#SPRING_FLUID} supply (the paint arm's
-	 * {@code getModelData} PAINT shape, task p38-spring-texture-tint): the BE carries the
+	 * {@code getModelData} PAINT shape, task spring-texture-tint): the BE carries the
 	 * spring block id whenever a spring is set — the model resolves the per-fluid tint +
 	 * still sprite off it (resolve-once, client-side; this common-side method stays free
 	 * of client classes). No spring = the super default (absent property = the fallback

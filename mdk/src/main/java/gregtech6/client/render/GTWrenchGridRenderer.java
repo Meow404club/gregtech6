@@ -23,8 +23,8 @@ import gregtech6.client.render.GTWrenchGridTables.GTWrenchGridIcon;
 import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 
 /**
- * The wrench 3x3 grid overlay renderer (task p5-wrench-ui-gtceu, the transient
- * input-feedback exception of ADR 2026-08-30-p5-wrench-ui): drawn per frame from the
+ * The wrench 3x3 grid overlay renderer (task wrench-ui-gtceu, the transient
+ * input-feedback exception of ADR 2026-08-30-wrench-ui): drawn per frame from the
  * {@code RenderHighlightEvent.Block} parameters, never cached, never written back —
  * zero BE/Level static references (the BE is handed in fresh from the listener), no
  * event cancellation (the vanilla selection box stays), nothing reaches the chunk mesh.
@@ -92,7 +92,7 @@ public final class GTWrenchGridRenderer {
 	}
 
 	/**
-	 * The oven grid entry (task p6-oven-rotation): the same 3x3 grid over the same
+	 * The oven grid entry (task oven-rotation): the same 3x3 grid over the same
 	 * in-face axis tables, but the icon layer is the machine-rotation table —
 	 * {@link GTWrenchGridTables#ovenCellIcon} decides per cell and a null icon cell
 	 * draws nothing. The front facing arrives from the BlockState, the client display

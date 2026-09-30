@@ -28,7 +28,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.util.UT6;
 
 /**
- * The Electric Transformer block (task p28-c-ulv-lv-transformer) — the facing-cube
+ * The Electric Transformer block (task c-ulv-lv-transformer) — the facing-cube
  * carrier of {@link gregtech6.tileentity.energy.GT6ElectricTransformerBlockEntity},
  * the {@code GT6DynamoBlock} shape with the INPUT/OUTPUT sides swapped to the
  * transformer convention (Base11 :63-64): the FRONT face ({@code mFacing}) is the
@@ -38,7 +38,7 @@ import gregtech6.util.UT6;
  * dynamo family block properties).
  *
  * <p>Placement = the GT6PlacementFacing canon over the FULL view (issue #18, task
- * r4-18-converter-tex-facing): the front TOWARDS the placer, vertical when the look is
+ * 18-converter-tex-facing): the front TOWARDS the placer, vertical when the look is
  * steep — upstream {@code getSideForPlayerPlacing} (UT.java:1755-1763) folds the pitch
  * into the side over SIDES_VALID = all six (CS.java:699, Base09 :92 does not narrow it
  * and Base10/Base11 do not override). The BE mirror re-syncs from the state each tick

@@ -15,7 +15,7 @@ import com.google.gson.JsonParser;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The two Cracker crafting-family json test (task p33-cracker-machines spec ③ — the
+ * The two Cracker crafting-family json test (task cracker-machines spec ③ — the
  * "cracker 机器 crafting pattern 实证" face): the EIGHT generated data/gt6/recipes/
  * {steamcracker,catalyticcracker}[_tN].json files (the Loader_MultiTileEntities.java
  * :1570-1579 grids verbatim) are read off the classpath and asserted on their identity

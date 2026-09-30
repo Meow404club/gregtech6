@@ -16,7 +16,7 @@ import gregtech6.items.tools.GT6MaterialToolRecipe;
 /**
  * The EMI-native face of one {@code gt6:material_tool} crafting row (task debt-emi-tier-b)
  * — the port of the JEI extension seam (gregtech6.jei.GT6MaterialToolJeiExtension, task
- * r3-jei-tool-output-tint) to EMI's own API. Why a replacement at all:
+ * jei-tool-output-tint) to EMI's own API. Why a replacement at all:
  * <ul>
  * <li><b>1.21.1 neoforge leg</b> — GT6MaterialToolRecipe extends ShapedRecipe, so EMI's
  *     VanillaPlugin auto-wraps every row as an {@code EmiShapedRecipe} rendering the BARE

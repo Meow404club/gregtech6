@@ -43,7 +43,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * The p34-machines-bumblelyzer-crucible true-row pour test (the GT6ChemicalRowsPourTest
+ * The machines-bumblelyzer-crucible true-row pour test (the GT6ChemicalRowsPourTest
  * fixture posture): the shipped {@code data/gt6/recipe_maps/crystallisationcrucible.json}
  * (the Loader_Recipes_Other.java:683-706 verbatim stock — the six noble gases × the
  * Si/Ge/RedstoneAlloy/NikolineAlloy boule quartet + the Al2O3 sapphire pair + the

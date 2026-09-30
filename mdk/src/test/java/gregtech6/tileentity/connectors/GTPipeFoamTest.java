@@ -26,7 +26,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase.MultiBlockLevel;
 
 /**
- * The pipe C-Foam offline tests (task p25-c-foam-pipe-spray acceptance ①): the applyFoam
+ * The pipe C-Foam offline tests (task c-foam-pipe-spray acceptance ①): the applyFoam
  * truth table (upstream TileEntityBase10ConnectorRendered.java:159-166 over UUIDs — zero
  * Player/Entity constructed), the third-clause flip (the {@code !mFoamDried} arm of
  * allowInteraction :153-156), the dryFoam no-gate asymmetry (:169-174) and the removeFoam

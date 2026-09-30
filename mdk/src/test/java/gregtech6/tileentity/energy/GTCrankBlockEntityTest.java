@@ -27,7 +27,7 @@ import gregapi.tileentity.energy.ITileEntityEnergy;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * GTCrankBlockEntity offline tests (task p12-engine-crank acceptance a): the RU packet
+ * GTCrankBlockEntity offline tests (task engine-crank acceptance a): the RU packet
  * sign invariant (size &lt; 0 always, the counterclockwise DC the axle/gearbox cards
  * consume, amount = the haste scaler), the type gate (RU only — EU/KU never booked
  * through the real {@code Util.emitEnergyToNetwork}), the emit window gate (nothing
@@ -55,7 +55,7 @@ public class GTCrankBlockEntityTest extends GTOfflineTestBase {
 		BlockEntityType<GTCrankBlockEntity>[] tHolder = (BlockEntityType<GTCrankBlockEntity>[]) new BlockEntityType<?>[1];
 		// OAK_STAIRS joins the valid set for the facingSyncFromState fixture (the vanilla
 		// stairs state carries the SAME HORIZONTAL_FACING property instance); 21.1 validates
-		// the type/state pair at the BE ctor (task p15-m4-test-infra-2).
+		// the type/state pair at the BE ctor (task m4-test-infra-2).
 		tHolder[0] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new GTCrankBlockEntity(tHolder[0], aPos, aState), Blocks.STONE, Blocks.OAK_STAIRS).build(null);
 		sType = tHolder[0];
@@ -77,7 +77,7 @@ public class GTCrankBlockEntityTest extends GTOfflineTestBase {
 		public final TagData acceptedType;
 
 		// 21.1 ctor validation: the fake binds a real BET over the vanilla stone state —
-		// the supplier is stored, never invoked (task p15-m4-test-infra-2).
+		// the supplier is stored, never invoked (task m4-test-infra-2).
 		static final BlockEntityType<CountingSink> FAKE_TYPE =
 				BlockEntityType.Builder.of((aPos, aState) -> new CountingSink(aPos, TD.Energy.RU), Blocks.STONE).build(null);
 

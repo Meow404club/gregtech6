@@ -10,7 +10,7 @@ import gregtech6.util.UT6;
 
 /**
  * The progress sensor cover — 1.20.1 port of gregapi/cover/covers/CoverScaleProgress.java
- * (:35-51, task p35-covers-display-scale-6; upstream MultiItemTechnological.java:77
+ * (:35-51, task covers-display-scale-6; upstream MultiItemTechnological.java:77
  * meta 1018 "Progress Sensor", dump 进度传感器). "Emits depending on Progress": every
  * tickPost the 15-step scale (:42) rides the VALUE lane (the redstone output the Scale
  * base maps onto the host exits) — 0 idle, 15 done, the 14 steps between map the

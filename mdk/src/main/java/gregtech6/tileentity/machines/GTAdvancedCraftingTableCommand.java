@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import gregtech6.item.GT6Circuits;
 
 /**
- * {@code /gt6act} — the Advanced Crafting Table acceptance command (task p24-act-machine,
+ * {@code /gt6act} — the Advanced Crafting Table acceptance command (task act-machine,
  * the C1 "RCON 全验证" face; the GTMachineCommand :96 shape, console-safe throughout).
  * The C1 card acceptance is explicitly GUI-free, so every BE surface is drivable here:
  *
@@ -129,7 +129,7 @@ public final class GTAdvancedCraftingTableCommand {
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 						.executes(context -> stat(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos")))));
 		event.getDispatcher().register(tAct);
-		LOGGER.info("Registered GT6 ACT acceptance command /gt6act (place|fill|selector|clear|compute|craft|sort|mode|stat) — task p24-act-machine");
+		LOGGER.info("Registered GT6 ACT acceptance command /gt6act (place|fill|selector|clear|compute|craft|sort|mode|stat) — task act-machine");
 		LOGGER.info("GT6 ACT registered: 1 block / 1 BET (gt6:advanced_crafting_table, the single-variant row), 71 slots + the mPattern ghost backing, zero energy");
 	}
 
@@ -285,7 +285,7 @@ public final class GTAdvancedCraftingTableCommand {
 	}
 
 	/**
-	 * The openGUI smoke arm (task p24-act-machine C2 — "runServer 冒烟 openGUI"): dispatches
+	 * The openGUI smoke arm (task act-machine C2 — "runServer 冒烟 openGUI"): dispatches
 	 * the ModularUI open chain for a FAKE player (the GTMachineCommand FakePlayerFactory
 	 * shape) — the server half of the open (PosGuiData + the panel build + the sync-manager
 	 * construct + the open packet dispatch) runs verbatim; a fake connection drops the

@@ -15,7 +15,7 @@ import gregtech6.block.stone.StoneVariant;
 import gregtech6.registry.GTStoneBlocks;
 
 /**
- * The strata-lens Feature (task p31-strata-lens) — the {@link GT6LargeVeinFeature}
+ * The strata-lens Feature (task strata-lens) — the {@link GT6LargeVeinFeature}
  * isomorphic per-chunk adapter around {@link GT6LensGenerator} (itself the
  * {@link GT6VeinGenerator} core re-formed for the 5-row marker-stone table). Kept
  * class-separated from the math so the offline tests drive it without class-loading

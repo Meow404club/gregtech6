@@ -32,13 +32,13 @@ import gregtech6.covers.covers.CoverRedstoneEmitter;
 import gregtech6.util.UT6;
 
 /**
- * {@code /gt6cover} — the cover acceptance command (task p4-cover-core acceptance ②,
+ * {@code /gt6cover} — the cover acceptance command (task cover-core acceptance ②,
  * card-local in covers/ like the oven's /gt6oven; RCON-drivable, console-safe via
- * FakePlayerFactory). Task p5-barrel-side-rules spec F generalizes the host from
+ * FakePlayerFactory). Task barrel-side-rules spec F generalizes the host from
  * {@code TileEntityOven} to {@link ICoverableTE} (the barrel joins the covered family),
  * adds the optional {@code itemId} install argument (any registered cover item) and the
  * {@code mode} subcommand (the screwdriver relay that flips the pump direction).
- * Task p9-redstone-cover-emitter extends the {@code mode} target vocabulary with
+ * Task redstone-cover-emitter extends the {@code mode} target vocabulary with
  * {@code cutter} (the emitter's strong-gate toggle, relayed through the same
  * onCoverToolClick arm) and adds the {@code signal} subcommand — the direct
  * {@code covers.visual(side, bind4(v), true)} write that tunes the redstone emitter's
@@ -267,7 +267,7 @@ public final class GTCoverCommand {
 			source.sendFailure(Component.literal("GT6 cover mode FAILED: no cover on face " + side + " at " + tHost.pos().toShortString()));
 			return 0;
 		}
-		// the p33 pinned lanes (task p33-logistics-covers-12) — "p0".."p3" writes the
+		// the p33 pinned lanes (task logistics-covers-12) — "p0".."p3" writes the
 		// PRIORITY bits and "s0".."s127" the TARGET STACKSIZE bits of the value lane
 		// directly: the RCON chain needs a pass-stable setter (a toggle drifts parity
 		// across sweep passes), the same lane shape the screwdriver/cutter relays cycle.
@@ -358,7 +358,7 @@ public final class GTCoverCommand {
 	}
 
 	/**
-	 * The p33 headless filter-set driver (task p33-logistics-covers-12) — the filtered
+	 * The p33 headless filter-set driver (task logistics-covers-12) — the filtered
 	 * logistics bus family's right-click set (:88-100 upstream) needs a live player, so
 	 * the acceptance channel writes the lane directly: the same
 	 * {@link CoverFilterItem#filterTagKeyOf} single-tag shape under the cover's own key.

@@ -16,7 +16,7 @@ import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.registry.GTMachines;
 
 /**
- * The p28-c-ulv-machine-ladder row census (the OFFLINE half — the
+ * The c-ulv-machine-ladder row census (the OFFLINE half — the
  * {@link GT6KineticTrioRowTest} shape): the six V[0] = 8 EU × 1 A rows pinned to the
  * card constants — ULV window {4, 8, 16} ({@link GTMachines#ULV_TIER_INPUTS}, the :126
  * conversion of NBT_INPUT 8), the 1375 K melting gate on EVERY row (the stone-crucible

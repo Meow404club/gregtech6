@@ -319,7 +319,7 @@ public class GTItemMoverTest extends GTOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the :467 filter gate (task p31-retriever-cover — the ST.java:457 filter pair)
+	// the :467 filter gate (task retriever-cover — the ST.java:457 filter pair)
 	// ---------------------------------------------------------------------------
 
 	@Test
@@ -374,12 +374,12 @@ public class GTItemMoverTest extends GTOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the quantity-parameter fold (task p32-ops-census-mover): the upstream quadruple
+	// the quantity-parameter fold (task ops-census-mover): the upstream quadruple
 	// (aMaxSize, aMinSize, aMaxMove, aMinMove — ST.java:457/:483/:513/:537/:561 seat
 	// order) folds to the ported triple (aMaxMove, aMinMove, aMaxSlotSize) — NOT the
 	// upstream seat order, aMinSize trimmed. Class javadoc "The quantity-parameter
 	// fold"; these pins turn the declaration into behavior so no future seat drift
-	// (the p32-logistics-lv3 review-seam bug shape) can land silently.
+	// (the logistics-lv3 review-seam bug shape) can land silently.
 	// ---------------------------------------------------------------------------
 
 	@Test

@@ -29,7 +29,7 @@ import gregapi.data.CS;
 import gregtech6.multiblock.GTMultiBlockPattern;
 
 /**
- * The LARGE CRUCIBLE offline structure suite (task p26-crucible-multiblock acceptance ②):
+ * The LARGE CRUCIBLE offline structure suite (task crucible-multiblock acceptance ②):
  * the 3x3x3 three-layer pattern forms, a missing wall fails it, the centre column is the
  * fail-not-clear air constraint, a structure loss cools the stored heat toward the
  * environment, and the upstream :78-80 constant face is pinned verbatim

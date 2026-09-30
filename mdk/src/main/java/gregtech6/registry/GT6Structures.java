@@ -25,7 +25,7 @@ import gregtech6.worldgen.dungeon.GT6DungeonPiece;
 import gregtech6.worldgen.dungeon.GT6DungeonStructure;
 
 /**
- * The structure registration home (task p38-dungeon-framework) — the GT6Features shape
+ * The structure registration home (task dungeon-framework) — the GT6Features shape
  * (the card-owned {@code @EventBusSubscriber(MOD)} DeferredRegister pair attached from
  * the construct event): the dungeon {@code StructureType} (the codec dispatch face the
  * structure JSON's {@code "type": "gt6:dungeon"} resolves through) and the single

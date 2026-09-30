@@ -11,7 +11,7 @@ import gregtech6.util.UT6;
 
 /**
  * The manual selector cover — 1.20.1 port of gregapi/cover/covers/CoverSelectorManual
- * .java:36-118 (task p34-covers-gameplay-10; upstream item id 1008 "Manual Selector").
+ * .java:36-118 (task covers-gameplay-10; upstream item id 1008 "Manual Selector").
  * The plate IS the GUI: right-click zones drive the host dial — an up-arrow decrement
  * zone and a down-arrow increment zone in the upper band (:60-70), four bit-toggle
  * buttons in the lower band (:71-87, the 8/4/2/1 split of the 4-bit mode). The visual

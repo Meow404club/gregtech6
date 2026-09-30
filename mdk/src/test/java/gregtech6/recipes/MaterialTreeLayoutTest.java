@@ -53,7 +53,7 @@ import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 
 /**
- * The v2 node-graph geometry pins (task r8-mattree-v2-nodes acceptance ②③): the
+ * The v2 node-graph geometry pins (task mattree-v2-nodes acceptance ②③): the
  * {@link MaterialTreeLayout} helper is the ONE coordinate table both viewers render, so the
  * pins are exact rect tables —
  * <ul>

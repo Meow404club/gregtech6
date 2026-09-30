@@ -60,7 +60,7 @@ public class GTMiniPortalNetherBlockEntity extends GTMiniPortalBlockEntity {
 			mTarget = nearestPortal(sListWorldSide, getBlockPos(), 8,
 				128 * 128, false);
 		}
-		// HALF-DEVIATION (issue #23 / task r4-23a-portal-frame; upstream has NO such
+		// HALF-DEVIATION (issue #23 / task 23a-portal-frame; upstream has NO such
 		// update — MultiTileEntityMiniPortal answers nothing on pairing): the modern
 		// relay faces (item/fluid caps, energy, redstone) resolve through the LIVE
 		// mTarget, and neighbouring pipes/lines cache their connection probe until a

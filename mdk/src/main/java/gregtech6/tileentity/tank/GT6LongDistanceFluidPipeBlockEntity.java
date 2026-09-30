@@ -29,7 +29,7 @@ import gregtech6.registry.GT6LongDistPipes;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Long Distance Fluid Pipeline Endpoint (task p35-long-distance-pipes) — the 1.20.1
+ * The Long Distance Fluid Pipeline Endpoint (task long-distance-pipes) — the 1.20.1
  * transcription of {@code MultiTileEntityLongDistancePipelineFluid} (:58-254, the
  * TileEntityBase09FacingSingle shape over the port BE tree; Loader_MultiTileEntities
  * :907, meta id 10061). Two endpoints joined by a blob of {@link GT6LongDistPipeBlock}

@@ -25,7 +25,7 @@ import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 
 /**
- * The formal GT6 chisel — task p16-chisel-decalcify spec ①/②. Upstream the tool mounts
+ * The formal GT6 chisel — task chisel-decalcify spec ①/②. Upstream the tool mounts
  * {@code Behavior_Tool(TOOL_chisel, SFX.MC_DIG_ROCK, 25, !canBlock(), SFX.RANDOM_PITCH)}
  * (GT_Tool_Chisel.java:98) and the boiler tank answers it on the {@code onToolClick2}
  * chain (MultiTileEntityBoilerTank.java:165-179 — the {@code TOOL_chisel} arm). The
@@ -37,7 +37,7 @@ import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
  * server semantics are the pinned GTBoilerTankBlockEntityTest ones (theChiselDetonates*
  * tests, :386/:415) — this item adds NO boiler logic, it only aims the tool.
  *
- * <p>Task p19-chisel-recipes adds the <b>universal gate arm</b> — the ToolCompat.java:224-229
+ * <p>Task chisel-recipes adds the <b>universal gate arm</b> — the ToolCompat.java:224-229
  * transcription, the upstream total entry point for the TOOL_chisel click: for every
  * non-boiler target, the clicked BlockState becomes its item form (GT stone families carry
  * the {@code StoneVariant} stack tag, see {@link GT6RecipesStoneChisel#withVariant}),
@@ -77,7 +77,7 @@ import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
  *     direct-meta write paying 1250/octant) stays pooled with them — the port routes every
  *     stone target through the findRecipe gate instead (the p19 architect ruling).</li>
  * <li>the attack face is the crowbar/cutter declared deviation cut (no attribute map);
- *     the material ladder and the runtime tint LANDED with task p31-machine-ladder (the
+ *     the material ladder and the runtime tint LANDED with task machine-ladder (the
  *     {@link GT6ToolLadder} faces over the {@code GT.ToolStats} identity — the former
  *     single-steel/un-tinted deviations retired; the grayscale HANDLE_CHISEL borrow
  *     stays the un-tinted handle layer, the head pass takes the material colour).</li>
@@ -273,7 +273,7 @@ public class GTChiselItem extends Item implements GT6ToolLadder.LadderTool {
 
 	/**
 	 * The :225 {@code WD.stack(world, x, y, z)} — the clicked block's item form; a GT stone
-	 * block IS one (stone, variant) pair since task p21-stoneblocks-16item-registry-split,
+	 * block IS one (stone, variant) pair since task stoneblocks-16item-registry-split,
 	 * so the item identity already separates the variants — the stack tag still rides along
 	 * (written from the block's fixed variant) to keep the offline synthetic-item universe
 	 * (one item standing for every GT stone leg) exactly-tag-separated as the p19 card
@@ -352,7 +352,7 @@ public class GTChiselItem extends Item implements GT6ToolLadder.LadderTool {
 		return classifies(aToolAction);
 	}
 
-	// ------------------------------ the GT6ToolLadder identity faces (task p31-machine-ladder) ------------------------------
+	// ------------------------------ the GT6ToolLadder identity faces (task machine-ladder) ------------------------------
 
 	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — Steel fallback = 512). */
 	@Override

@@ -27,7 +27,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * The placeables registration contract (task p32-placeables) — the id686 lesson face, the
+ * The placeables registration contract (task placeables) — the id686 lesson face, the
  * GT6LogisticsRegistrationTest dual-leg posture in ONE class: the 1.21.1 leg boots through
  * FML itself (the junit-f LauncherSessionListener), so the containment branch proves the
  * DeferredRegister rows ACTUALLY registered (a silent no-op cannot pass); the forge leg

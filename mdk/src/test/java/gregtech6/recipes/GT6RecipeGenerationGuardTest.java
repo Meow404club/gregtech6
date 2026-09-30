@@ -22,7 +22,7 @@ import gregapi.oredict.OreDictPrefix;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The generation-reset guard (ADR-P18 staticinit poison fix, task p18-staticinit-generation-reset).
+ * The generation-reset guard (ADR-P18 staticinit poison fix, task staticinit-generation-reset).
  *
  * <p><b>Behavioral canary</b> — "a bare {@link GT6RecipeMaps#reset()} (no loader
  * {@code resetForTest}) must retire the loader pour-flags with the maps, so a following
@@ -54,23 +54,23 @@ class GT6RecipeGenerationGuardTest extends GTRecipesOfflineTestBase {
 			"gregtech6.recipes.GT6RecipesOreChain",
 			"gregtech6.recipes.GT6RecipesShCL",
 			"gregtech6.recipes.GT6RecipesStoneChisel",
-			"gregtech6.recipes.GT6RecipesCanner", // task p24-canner-machine — the refill pour joins the ledger
-			"gregtech6.recipes.GT6RecipeMapJsonLoader", // task p26-tier-b-rm-json-loader — the JSON subset tracker joins the ledger
-			"gregtech6.recipes.GT6RecipesMixer", // task p26-c-foam-fluid-refill — the C-Foam rock/Pd pour joins the ledger
-			"gregtech6.recipes.GT6RecipesSifter", // task p26-w1-sifter-compressor-wiremill — the W1 trio joins the ledger
+			"gregtech6.recipes.GT6RecipesCanner", // task canner-machine — the refill pour joins the ledger
+			"gregtech6.recipes.GT6RecipeMapJsonLoader", // task tier-b-rm-json-loader — the JSON subset tracker joins the ledger
+			"gregtech6.recipes.GT6RecipesMixer", // task c-foam-fluid-refill — the C-Foam rock/Pd pour joins the ledger
+			"gregtech6.recipes.GT6RecipesSifter", // task w1-sifter-compressor-wiremill — the W1 trio joins the ledger
 			"gregtech6.recipes.GT6RecipesCompressor",
 			"gregtech6.recipes.GT6RecipesWiremill",
-			"gregtech6.recipes.GT6RecipesExtruder", // task p26-w1-press-extruder-molds — the plate/rod pour joins the ledger
-			"gregtech6.recipes.GT6RecipesPress", // task p26-w1-press-extruder-molds — the declared-empty pour joins the ledger
-			"gregtech6.recipes.GT6RecipesBath", // task p26-kitchen-pot-bowl — the RM.Bath wood-oil pour joins the ledger
-			"gregtech6.recipes.GT6RecipesAnvil", // task p28-c-anvil — the anvil grinding/bending pour joins the ledger
-			"gregtech6.recipes.GT6RecipesWelder", // task p29-w3-nbtdesign-parts — the 22 welder wall rows join the ledger
-			"gregtech6.recipes.GT6RecipesImplosion", // task p31-implosion — the Implosion Compressor 4-tier pour joins the ledger
-			"gregtech6.recipes.GT6RecipesBees", // task p34-machines-bumblelyzer-crucible — the pour also fills the GT6RecipeMapBumblelyzer display stock (the sFakeRecipes list, outside mRecipeList) // task p31-bees-lv1 — the 20+20 bee comb pour joins the ledger
-			"gregtech6.recipes.GT6RecipesMassfab", // task p31-massfab — the element-disintegration walk joins the ledger
+			"gregtech6.recipes.GT6RecipesExtruder", // task w1-press-extruder-molds — the plate/rod pour joins the ledger
+			"gregtech6.recipes.GT6RecipesPress", // task w1-press-extruder-molds — the declared-empty pour joins the ledger
+			"gregtech6.recipes.GT6RecipesBath", // task kitchen-pot-bowl — the RM.Bath wood-oil pour joins the ledger
+			"gregtech6.recipes.GT6RecipesAnvil", // task c-anvil — the anvil grinding/bending pour joins the ledger
+			"gregtech6.recipes.GT6RecipesWelder", // task w3-nbtdesign-parts — the 22 welder wall rows join the ledger
+			"gregtech6.recipes.GT6RecipesImplosion", // task implosion — the Implosion Compressor 4-tier pour joins the ledger
+			"gregtech6.recipes.GT6RecipesBees", // task machines-bumblelyzer-crucible — the pour also fills the GT6RecipeMapBumblelyzer display stock (the sFakeRecipes list, outside mRecipeList) // task bees-lv1 — the 20+20 bee comb pour joins the ledger
+			"gregtech6.recipes.GT6RecipesMassfab", // task massfab — the element-disintegration walk joins the ledger
 			"gregtech6.recipes.GT6RecipesFusion",
-			"gregtech6.recipes.GT6RecipesSlicer", // task p35-slicer-row-domain - the vanilla leather/paper pour joins the ledger
-			"gregtech6.recipes.maps.GT6RecipeMapBumblelyzer", // task p34-machines-bumblelyzer-crucible — the display-stock reset hook joins the ledger // task p31-fusion — the 18-row :949-966 block joins the ledger
+			"gregtech6.recipes.GT6RecipesSlicer", // task slicer-row-domain - the vanilla leather/paper pour joins the ledger
+			"gregtech6.recipes.maps.GT6RecipeMapBumblelyzer", // task machines-bumblelyzer-crucible — the display-stock reset hook joins the ledger // task fusion — the 18-row :949-966 block joins the ledger
 			"gregtech6.recipes.GT6RecipesReactorRods", // task debt-reactor-c-rods — the 45-row reactor-rod pour joins the ledger (the static-init hook is already in; the census was the lagging half)
 		};
 

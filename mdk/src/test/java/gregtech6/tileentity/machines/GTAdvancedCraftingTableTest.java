@@ -22,7 +22,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
- * Task p24-act-machine C1 acceptance (offline, zero Player instances — the pipe-owner
+ * Task act-machine C1 acceptance (offline, zero Player instances — the pipe-owner
  * discipline): the pattern table over the eight selector configs (:222-283 对位), the
  * four-arm consumption priority (:406-413 对位 over the SLOTS_CONSUMPTION 70→0 walk
  * :499), the selector-only whitelist five arms (:515 through the frozen GT6Circuits
@@ -70,7 +70,7 @@ public class GTAdvancedCraftingTableTest extends GTMachinesOfflineTestBase {
 		// GTMachinesOfflineTestBase.buildOvenFixtures @BeforeAll builds BET fixtures and runs
 		// BEFORE this class's own @BeforeAll, so the write window must open at CLASS LOAD
 		// (the provided GTOfflineTestBase reflection helper; this class sorts FIRST in the
-		// package, task p24-act-machine order finding)
+		// package, task act-machine order finding)
 		gregtech6.tileentity.GTOfflineTestBase.unfreezeBlockEntityTypeRegistry();
 	}
 
@@ -83,7 +83,7 @@ public class GTAdvancedCraftingTableTest extends GTMachinesOfflineTestBase {
 		// must force-build the universe FIRST (idempotent via sUniverseBuilt), pinning
 		// the sibling fixtures to the baseline phase; otherwise the +1 pool entry shifts
 		// the wrap and every parallel/recipe fixture downstream drifts (the full-suite
-		// bisect finding, task p24-act-machine).
+		// bisect finding, task act-machine).
 		TileEntityBasicMachineOfflineTestBase.buildSyntheticUniverse();
 		// offline holders avoid the RegistryObject.get() path of the runtime factory
 		@SuppressWarnings("unchecked")

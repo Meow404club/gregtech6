@@ -1,5 +1,5 @@
 /**
- * Offline census for task p38-c1-dynamo-bowl-models — the dynamo + caught-item render-wave
+ * Offline census for task c1-dynamo-bowl-models — the dynamo + caught-item render-wave
  * fixes. The ten GT6DynamoBlock ladder rows (GT6ElectricDynamos T1-T5, GT6FluxDynamos
  * T1-T5) rendered as the magenta-black missing-model checkerboard: zero
  * blockstates/models/item-models in the generated tree. The caught ITEM band — clay_bowl
@@ -9,7 +9,7 @@
  * method):
  * <ul>
  * <li>the 10 generated blockstates carry exactly the TWELVE variants of the SIX-WAY
- *     facing x ACTIVE property (issue #18, task r4-18-converter-tex-facing) over the
+ *     facing x ACTIVE property (issue #18, task 18-converter-tex-facing) over the
  *     output-front rotation map (NORTH→y0 / SOUTH→y180 / WEST→y270 / EAST→y90 /
  *     DOWN→x90 / UP→x270), active=true switching to the {@code _active} overlay shell;
  *     the T0 ULV row keeps its placeholder blockstate;</li>

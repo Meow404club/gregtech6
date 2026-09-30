@@ -1,8 +1,8 @@
 /**
- * Offline tests for task p21-stoneblocks-16item-registry-split (the p19-stoneblocks-render
+ * Offline tests for task stoneblocks-16item-registry-split (the stoneblocks-render
  * pins re-keyed to the per-pair registry): the 272-PNG borrow census, the generated
  * blockstate/item-model/loot census (272 per-pair JSONs each), and the loot FORM pin —
- * the p21-chisel-drop-conversion two-form ruling (170 tables carry the
+ * the chisel-drop-conversion two-form ruling (170 tables carry the
  * alternatives[match_tool(gt6:chisel) -> CHISEL_MAPPINGS item, else :731 baseline]
  * dispatch, 102 identity tables keep the bare dropSelf form) —
  * the {@link GT6PrefixBlockRenderDatagenTest} split verbatim (the enumeration side walks
@@ -143,7 +143,7 @@ class GT6StoneBlocksRenderDatagenTest {
 
     /**
      * The generated block models exist 1:1 with the 272 keys and reference their pair's
-     * texture (the borrowed PNG, or the vanilla counterpart for the r4-ore-tex-b trio's
+     * texture (the borrowed PNG, or the vanilla counterpart for the ore-tex-b trio's
      * STONE/SMOTH — the {@link GT6BlockStates#stoneTexture} seam); the cube_all form
      * carries NO tintindex (the dedicated color-PNG route — the addPrefixBlocks contrast
      * pinned structurally).
@@ -167,7 +167,7 @@ class GT6StoneBlocksRenderDatagenTest {
     }
 
     /**
-     * The r4-ore-tex-b migration is pinned BOTH ways: exactly the six (trio x {STONE, SMOTH})
+     * The ore-tex-b migration is pinned BOTH ways: exactly the six (trio x {STONE, SMOTH})
      * pairs point at the vanilla textures, and the whole 272-walk carries nothing else
      * minecraft-namespaced (the misfire guard — basalt is the same-name DIFFERENT stone and
      * every no-counterpart variant of the trio keeps its borrowed PNG).
@@ -218,7 +218,7 @@ class GT6StoneBlocksRenderDatagenTest {
 
     /**
      * The 272 generated loot tables exist at the vanilla default per-block location and pin
-     * the p21 two-form ruling (task p21-chisel-drop-conversion over the :731 baseline):
+     * the p21 two-form ruling (task chisel-drop-conversion over the :731 baseline):
      * <ul>
      * <li>non-identity chisel mapping (10 variants x 17 stones = 170 tables): the pool's
      *     lone entry is an {@code minecraft:alternatives} dispatch — child 0 armed with

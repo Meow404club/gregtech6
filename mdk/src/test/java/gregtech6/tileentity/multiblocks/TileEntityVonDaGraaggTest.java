@@ -21,7 +21,7 @@ import gregapi.data.TD;
 import gregtech6.multiblock.GTMultiBlockPattern;
 
 /**
- * The Von da Graagg offline acceptance (task p31-graagg): the pattern declaration pins
+ * The Von da Graagg offline acceptance (task graagg): the pattern declaration pins
  * (the 64 forming cells — the cornerless 5x5x2 base of Dense Galvanized Steel Walls with
  * the controller self-cell, the 5-coil pole, the 17 Dense Steel Walls of the top box —
  * in the upstream :66-93 loop order), the controller-anchored walk (the crucible

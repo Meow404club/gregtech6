@@ -25,8 +25,8 @@ import gregtech6.item.GT6Circuits;
 import gregtech6.recipes.GT6RecipesWelder.WelderWallRow;
 
 /**
- * The Welder wall rows in/out (task p29-w3-nbtdesign-parts ④ acceptance ⑤ + task
- * p35-crucible-wall-obtainability): the row table census (11 wall rows :1143-1153 + 11
+ * The Welder wall rows in/out (task w3-nbtdesign-parts ④ acceptance ⑤ + task
+ * crucible-wall-obtainability): the row table census (11 wall rows :1143-1153 + 11
  * dense rows :1155-1165 + the 8 DEDICATED crucible-wall rows :1143-1153 replayed onto the
  * port-side block twins, the EUt/duration columns verbatim), the REAL buildRecipe probe
  * contract — FOUR plates plus the config-10 selector circuit match, the wrong

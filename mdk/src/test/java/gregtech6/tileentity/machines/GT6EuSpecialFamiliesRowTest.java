@@ -27,11 +27,11 @@ import gregtech6.recipes.Recipe;
 import gregtech6.registry.GTMachines;
 
 /**
- * The eu-special families row acceptance (task p29-w2-eu-special, the OFFLINE half —
+ * The eu-special families row acceptance (task w2-eu-special, the OFFLINE half —
  * the {@link GTCannerFamilyRowTest} shape): the fourteen row records pinned to the
  * upstream columns (Loader_MultiTileEntities.java:1497-1501 the Autocrafter EU 5-tier
  * ladder — the WAVE'S FIRST DUAL ENERGY FACE SBIT_U|SBIT_D (the exotic Polarizer
- * later joins with the same U|D face, task p29-w2-exotic-energy) / :1582-1586 the Lightning
+ * later joins with the same U|D face, task w2-exotic-energy) / :1582-1586 the Lightning
  * Processor EU 5-tier ladder with NBT_USE_OUTPUT_TANK T / :1532-1535 the Laminator HU
  * 4-tier Heat_T ladder), the {@link GTMachines#euFiveTierWindow} 5-tier 立行制 resolver
  * (tier 4 = EV_TIER_INPUTS), the 5-row window arithmetic and the output-tank fallback
@@ -40,7 +40,7 @@ import gregtech6.registry.GTMachines;
  * state, a machine with it runs and drains the OUTPUT tank).
  *
  * <p>The lightning-strike attribution (the card discipline): the strike-into-network
- * face is the LightningRod MULTIBLOCK (18104, ported, task p24-lightning-rod) — the
+ * face is the LightningRod MULTIBLOCK (18104, ported, task lightning-rod) — the
  * Lightning Processor is a PLAIN EU consumer (:1582-1586 registers
  * MultiTileEntityBasicMachineElectric, NBT_ENERGY_ACCEPTED EU); only
  * NBT_USE_OUTPUT_TANK is this machine's porting point. The registration half

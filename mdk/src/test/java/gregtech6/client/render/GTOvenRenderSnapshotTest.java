@@ -24,7 +24,7 @@ import gregtech6.tileentity.machines.GTMachinesOfflineTestBase;
 import gregtech6.tileentity.machines.TileEntityOven;
 
 /**
- * The RENDER_SNAPSHOT-contract tests for the oven snapshot (task p9-render-c-oven-overlay
+ * The RENDER_SNAPSHOT-contract tests for the oven snapshot (task render-c-oven-overlay
  * acceptance): the record is a self-contained immutable projection (no BE reference,
  * boolean payload only), {@code getModelData()} projects the live mActive/mRunning fields
  * at the call moment (single-writer: the snapshot is a reader, never a second write path),

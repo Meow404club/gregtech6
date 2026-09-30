@@ -15,7 +15,7 @@ import gregtech6.GT6Mod;
 import gregtech6.registry.GT6Placeables;
 
 /**
- * The placed-pile tint (task p32-placeables) — the upstream material colour pass
+ * The placed-pile tint (task placeables) — the upstream material colour pass
  * ({@code mMaterial.fRGBaSolid} over the grayscale pile icons, MultiTileEntityIngot
  * .java:46-48 the family form) over the modern block-color seam: the tint reads the
  * pile BE's material live (the {@code getClientDataPacket} material-id sync upstream,

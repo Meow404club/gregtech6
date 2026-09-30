@@ -1,4 +1,4 @@
-# GT6 现代复兴计划 CI（task p37-release-ci，规格=state:tasks.p37-release-plan ci_design 段）。
+# GT6 现代复兴计划 CI（task release-ci，规格=state:tasks.p37-release-plan ci_design 段）。
 # 用户裁定「一个版本一个 worker」：双腿各占独立 runner 完全并行，每 job 恰好一次 gradle
 # 调用（lesson id327 双腿禁同调用铁律）；任务表达式=stonecutter 节点直接寻址
 # （settings.gradle.kts:33-43 内联块，全库零 precompute）。
@@ -127,7 +127,7 @@ jobs:
         run: gh api -X DELETE "repos/${{ github.repository }}/git/refs/tags/dev" || true
         env:
           GH_TOKEN: ${{ github.token }}
-      # 正式 release：仅 tag 触发，行为与 p37-release-ci 现状一致。
+      # 正式 release：仅 tag 触发，行为与 release-ci 现状一致。
       - uses: softprops/action-gh-release@v3
         if: startsWith(github.ref, 'refs/tags/v')
         with:

@@ -33,7 +33,7 @@ import gregtech6.multiblock.GTMultiBlockStructureChecker;
 import gregtech6.registry.GTMultiBlocks;
 
 /**
- * {@code /gt6multiblock} — the multiblock acceptance command (task p4-multiblock-framework ②,
+ * {@code /gt6multiblock} — the multiblock acceptance command (task multiblock-framework ②,
  * RCON-drivable like /gt6oven). Console-safe throughout.
  *
  * <ul>
@@ -49,13 +49,13 @@ import gregtech6.registry.GTMultiBlocks;
  *     null player auto-approves the canEdit chain and ST.use-equivalent shrinks the stock)
  *     followed by the linking {@code checkStructure(true)} pass;</li>
  * <li>{@code wandclick <clickedPos> [stock]} — the PLAYER-FEED builder-wand arm (task
- *     p28-builder-wand-oneclick): resolves the scaffold target from the CLICKED cell through
+ *     builder-wand-oneclick): resolves the scaffold target from the CLICKED cell through
  *     {@code GT6BuilderWandItem.scaffoldTarget} (the exact {@code useOn} resolution — a
  *     controller or a linked part) and drives the production dispatch
  *     {@code GT6BuilderWandItem.builderWandScaffold} with that real clicked coordinate (the
  *     other arms feed the controller pos or null — this is the arm that covers the player
  *     feed path); under the P28 one-click ruling one click forms the complete structure;</li>
- * <li>{@code form <pos> [stock]} — the SET scaffold trigger (task p16-form-scaffold): the
+ * <li>{@code form <pos> [stock]} — the SET scaffold trigger (task form-scaffold): the
  *     source player (or the stocked fake player for console/RCON) completes a pattern-bound
  *     structure from inventory — the checker's SET walk places and consumes at the missing
  *     cells transactionally (short stock ⇒ nothing placed, nothing consumed), then the
@@ -71,11 +71,11 @@ import gregtech6.registry.GTMultiBlocks;
  *     {@code dust Oilshale}) drives the oil-shale rows through GTMaterialItems;</li>
  * <li>{@code ignite [pos]} — the TOOL_igniter branch (MultiTileEntityBasicMachine
  *     :373-379 → TileEntityBase10MultiBlockMachine.ignite());</li>
- * <li>{@code menu <pos>} — the GUI geometry/progress report (task p8-cokeoven-gui-menu ⑨):
+ * <li>{@code menu <pos>} — the GUI geometry/progress report (task cokeoven-gui-menu ⑨):
  *     slot shapes, the player offset and the three-state progress, asserted through the
  *     static Host faces — no Menu instance (RCON has no Player);</li>
  * <li>{@code fluid <pos> [side] drain <mB>|fill <mB>} + {@code fluid <pos> stat} — the
- *     fluid-capability probe face (task p8-cokeoven-fluid-capability ⑥): drain walks the
+ *     fluid-capability probe face (task cokeoven-fluid-capability ⑥): drain walks the
  *     capability of the queried face (no side argument = the side-less query) and reports
  *     the drawn amount, fill is the always-zero acceptance probe (output-only), stat reports
  *     the tank content in the machine-report {@code tank=[...]} shape;</li>
@@ -92,13 +92,13 @@ public final class GTMultiBlockCommand {
 	private static final int WAND_STOCK = 25;
 
 	/**
-	 * The default form stock (task p16-form-scaffold): the "give a stack" arm — the console
+	 * The default form stock (task form-scaffold): the "give a stack" arm — the console
 	 * fake player gets this many of EVERY distinct pattern part block; a 64 stack covers the
 	 * 25-brick coke oven and leaves the shortfall visible on the negative arm.
 	 */
 	private static final int FORM_STOCK = 64;
 
-	/** The boiler wand stocks (task p13-large-boiler): 9 transmitters + 25 walls (34 parts, the controller + the hollow excluded). */
+	/** The boiler wand stocks (task large-boiler): 9 transmitters + 25 walls (34 parts, the controller + the hollow excluded). */
 	private static final int BOILER_WAND_TRANSMITTER_STOCK = 9;
 	private static final int BOILER_WAND_WALL_STOCK = 25;
 
@@ -112,7 +112,7 @@ public final class GTMultiBlockCommand {
 			.then(Commands.literal("place")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(aContext -> place(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))
-					// task p27-cokeoven-facing-fix — the player-placement stand-in: VIEW is the
+					// task cokeoven-facing-fix — the player-placement stand-in: VIEW is the
 					// direction the (virtual) placer LOOKS, routed through the same
 					// setFacingFromView mapping the real placement runs (the front lands
 					// OPPOSITE the view, the structure behind it). The facing regression arm.
@@ -231,7 +231,7 @@ public final class GTMultiBlockCommand {
 									.executes(aContext -> fluidFill(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
 											parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(aContext, "side")),
 											com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(aContext, "mB"))))))));
-		// task p13-large-boiler — the Large Boiler arm (append-only: the same place/wand/check
+		// task large-boiler — the Large Boiler arm (append-only: the same place/wand/check
 		// shape over the five variant rows; the existing CokeOven arms are untouched)
 		tMulti.then(Commands.literal("boiler")
 			.then(Commands.literal("place")
@@ -294,7 +294,7 @@ public final class GTMultiBlockCommand {
 	}
 
 	/**
-	 * The p27-cokeoven-facing-fix placement arm: the VIEW argument is the direction the
+	 * The cokeoven-facing-fix placement arm: the VIEW argument is the direction the
 	 * (virtual) placer looks — the exact input {@link TileEntityBase10MultiBlockBase#setFacingFromPlacement}
 	 * consumes. Routing through {@link TileEntityBase10MultiBlockBase#setFacingFromView}
 	 * keeps the command byte-equivalent with a real player placement: the front lands
@@ -396,7 +396,7 @@ public final class GTMultiBlockCommand {
 
 	/**
 	 * {@code wandclick <clickedPos> [stock]} — the PLAYER-FEED builder-wand arm (task
-	 * p28-builder-wand-oneclick). The other arms never feed a real player click: the form
+	 * builder-wand-oneclick). The other arms never feed a real player click: the form
 	 * arm feeds the checker null (the whole structure in one shot by design), the wand arm
 	 * feeds the controller pos to the machine's own walk — the click coordinate the real
 	 * {@code GT6BuilderWandItem.useOn} resolves existed on no RCON path before this arm.
@@ -447,8 +447,8 @@ public final class GTMultiBlockCommand {
 	}
 
 	/**
-	 * {@code form <pos> [stock]} — the SET scaffold trigger (task p16-form-scaffold, the ADR
-	 * 2026-09-05-p16-formation-scoping ③): the three-piece path for pattern-bound controllers.
+	 * {@code form <pos> [stock]} — the SET scaffold trigger (task form-scaffold, the ADR
+	 * 2026-09-05-formation-scoping ③): the three-piece path for pattern-bound controllers.
 	 * The acting player rides {@code CommandSourceStack.getPlayer()} — a real player scaffolds
 	 * from their own inventory (the {@code /give} path); console/RCON has no player, so the
 	 * Minecraft fake player is stocked with {@code stock} (default {@value #FORM_STOCK}) of
@@ -490,7 +490,7 @@ public final class GTMultiBlockCommand {
 		int tBefore = countPartItems(tInventory, tPattern);
 
 		GTMultiBlockStructureChecker.FormedVerdict tVerdict =
-				GTMultiBlockStructureChecker.form(tController, tController.patternWalkFacing(), tPlayer, tInventory); // the placing pass — the declared-pattern feed (task p27-builder-wand-form-fix: NOT the raw mFacing, the controller-anchored crucible walks at 0)
+				GTMultiBlockStructureChecker.form(tController, tController.patternWalkFacing(), tPlayer, tInventory); // the placing pass — the declared-pattern feed (task builder-wand-form-fix: NOT the raw mFacing, the controller-anchored crucible walks at 0)
 		boolean tOkay = tController.checkStructure(true);                                                    // the linking pass
 		int tAfter = countPartItems(tInventory, tPattern);
 
@@ -522,7 +522,7 @@ public final class GTMultiBlockCommand {
 
 	/**
 	 * The magnifying glass (:160-170) + a linked-part census over the 26 cells. Since
-	 * p16-pattern-checker the report ends with {@code first_failed_cell=} — the shared
+	 * pattern-checker the report ends with {@code first_failed_cell=} — the shared
 	 * checker's first failed cell in declaration order (index, centre-relative offset,
 	 * world cell, reason), or {@code none} when formed (the kTFRU CHECK-mode failedPos
 	 * diagnostics, clean-room; the spec ④ surface).
@@ -697,7 +697,7 @@ public final class GTMultiBlockCommand {
 		return null;
 	}
 
-	// ------------------------- the crucible chain (task p26-crucible-multiblock) -------------------------
+	// ------------------------- the crucible chain (task crucible-multiblock) -------------------------
 
 	/** The crucible resolution arm of the acceptance chain — null with a failure message when absent. */
 	@Nullable
@@ -813,7 +813,7 @@ public final class GTMultiBlockCommand {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the through-wall pour probe (task p26-crucible-multiblock acceptance ④)
+	// the through-wall pour probe (task crucible-multiblock acceptance ④)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -910,7 +910,7 @@ public final class GTMultiBlockCommand {
 	}
 
 	/**
-	 * {@code menu <pos>} — the GUI geometry/progress report (task p8-cokeoven-gui-menu ⑨,
+	 * {@code menu <pos>} — the GUI geometry/progress report (task cokeoven-gui-menu ⑨,
 	 * the machine-report shape :257-273): content slot count, the input slot's menu position,
 	 * the first/last output grid positions, the player-inventory offset and the total slot
 	 * count, the three-state progress value and the GUI texture path. The assertions run
@@ -942,7 +942,7 @@ public final class GTMultiBlockCommand {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the fluid-capability probe face (task p8-cokeoven-fluid-capability ⑥)
+	// the fluid-capability probe face (task cokeoven-fluid-capability ⑥)
 	// ---------------------------------------------------------------------------
 
 	/** {@code fluid <pos> stat} — the tank content in the machine-report {@code tank=[...]} shape, plus the side-less capability view. */
@@ -1042,7 +1042,7 @@ public final class GTMultiBlockCommand {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the Large Boiler arm (task p13-large-boiler — the place/wand/check shape over the
+	// the Large Boiler arm (task large-boiler — the place/wand/check shape over the
 	// five variant rows; every failure line carries the FAILED literal, the RCON contract)
 	// ---------------------------------------------------------------------------
 

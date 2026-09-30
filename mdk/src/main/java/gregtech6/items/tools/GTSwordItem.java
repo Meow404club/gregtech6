@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregapi.data.MT;
 
 /**
- * The formal GT6 sword — item id {@code gt6:sword} (task p29-w5-t2-blade-six, the W5
+ * The formal GT6 sword — item id {@code gt6:sword} (task w5-t2-blade-six, the W5
  * tool wave card 2; the {@link GTPickaxeItem} class shape). Upstream
  * GT_Tool_Sword.java:43-127:
  * <ul>
@@ -47,8 +47,8 @@ import gregapi.data.MT;
  *
  * <p>Durability 512 (the family value; upstream per-block 200 units folds to one point).
  *
- * <p>MATERIAL LADDER (task p31-blade-ladder): an identity stack carries its material in
- * {@code GT.ToolStats} (the p31-identity-seam) and the item reads it per stack:
+ * <p>MATERIAL LADDER (task blade-ladder): an identity stack carries its material in
+ * {@code GT.ToolStats} (the identity-seam) and the item reads it per stack:
  * <ul>
  * <li>durability — {@link GT6ToolLadder#durabilityPoints} over
  *     {@link GT6ToolLadder#statsOf} (the payload {@code j}; Steel → the family 512,

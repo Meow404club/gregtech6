@@ -23,7 +23,7 @@ import gregtech6.items.GT6UsbSticks;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The p37-usb-peripherals pins (the card acceptance): ① the registration/asset
+ * The usb-peripherals pins (the card acceptance): ① the registration/asset
  * witnesses (the GT6UsbDataTest census posture — the generated item models, the eight
  * tier tags, the en/zh lang faces, the committed generated files are the offline half
  * of the FML-registration proof), ② the eight crafting rows verbatim (:808-811 the

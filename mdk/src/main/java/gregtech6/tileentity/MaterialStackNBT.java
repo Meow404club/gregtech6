@@ -26,7 +26,7 @@ import gregapi.oredict.OreDictMaterialStack;
  * <li>"m": the material internal name, written instead of "i" when mID &lt; 0.</li>
  * </ul>
  *
- * <p>Task p26-crucible-physics-smeltery closes the list gap announced above: the
+ * <p>Task crucible-physics-smeltery closes the list gap announced above: the
  * saveList/loadList pair (upstream OreDictMaterialStack.java:129-160, NOT
  * ported into the root pure layer per its :37-39 deviation note) lands HERE over the
  * same Storage adapter, because the crucible mContent = List&lt;OreDictMaterialStack&gt;

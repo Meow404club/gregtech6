@@ -27,7 +27,7 @@ import gregtech6.recipes.RecipeMap;
 import gregtech6.recipes.GT6RecipeMaps;
 
 /**
- * The kitchen BE offline tests (task p26-kitchen-pot-bowl) — the tank-array face of the
+ * The kitchen BE offline tests (task kitchen-pot-bowl) — the tank-array face of the
  * acceptance's "图形态断言（槽容按 mInputFluidCount/mOutputFluidCount）": the POT array is
  * sized by the BATH map (1 input / 3 output tanks), the BOWL by the MIXER map (6 / 2 —
  * GT6RecipeMaps.java init rows, RM.java:74/:80). Plus the fluid doors offline (the fill
@@ -158,7 +158,7 @@ class GT6KitchenBlockEntityTest extends gregtech6.tileentity.GTOfflineTestBase {
 				new FluidStack[] {new FluidStack(Fluids.WATER, 1000)},
 				16, 0, 0);
 		RecipeMap tMixer = GT6RecipeMaps.MIXER;
-		assertNotNull(tMixer, "the MIXER map lives (the p26-c-foam declaration)");
+		assertNotNull(tMixer, "the MIXER map lives (the c-foam declaration)");
 		tMixer.mRecipeList.add(tRow);
 		try {
 			GT6MixingBowlBlockEntity tBowl = bowl();

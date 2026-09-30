@@ -43,7 +43,7 @@ import gregtech6.datagen.GT6WorldgenDatagen;
  * (the 7 offworld rows :917-925, table-census data until dim cards exist) and bedrock
  * rows with {@code overworld == false} (the 13 offworld rows :758-770). The axis is the
  * UNION of the three generating faces — 159 materials at the 2026-09-28 table state
- * (118 before r7-b-gem-pool-extension joined the 61 gem-pool small-ore rows),
+ * (118 before b-gem-pool-extension joined the 61 gem-pool small-ore rows),
  * pinned (with the per-table subcounts) by OreDistributionInfoTest.
  *
  * <p><b>Large veins are their own column</b> (coordinator ruling ③): {@link Entry#veins}

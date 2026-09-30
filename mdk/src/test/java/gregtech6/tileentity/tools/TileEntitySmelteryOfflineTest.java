@@ -39,7 +39,7 @@ import gregtech6.registry.GT6Molds;
 import gregtech6.recipes.maps.GT6RecipeMapCrucible;
 
 /**
- * The offline Smeltery/Mold BE acceptance (task p26-crucible-physics-smeltery): the
+ * The offline Smeltery/Mold BE acceptance (task crucible-physics-smeltery): the
  * mMeltDown WARNING latch (:324-327), the acid-destroy path (:265-270 with the
  * acidproof exemption), the feed ladder (:158-183 incl. the vanilla-ore bridge), the
  * HU energy face (:688-698), the mContent NBT round-trip (:87-104), the supply-cut
@@ -317,7 +317,7 @@ public class TileEntitySmelteryOfflineTest {
 	}
 
 	// -------------------------------------------------------------------------
-	// the ITEM_HANDLER capability face (issue #20 sub-task A, r4-20a-smeltery-cap)
+	// the ITEM_HANDLER capability face (issue #20 sub-task A, 20a-smeltery-cap)
 	// -------------------------------------------------------------------------
 
 	/**

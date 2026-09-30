@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 /**
- * The sensor pure-logic truth tables (task p26-sensors-core offline acceptance — "8 模式
+ * The sensor pure-logic truth tables (task sensors-core offline acceptance — "8 模式
  * 真值表单测+滑动平均数学+键区 mSetNumber 边界+NBT 往返；零 MenuType 断言"). Every case is
  * the upstream branch table replayed against the verbatim ports:
  *

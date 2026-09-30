@@ -32,7 +32,7 @@ import gregtech6.tileentity.energy.generators.GTGeneratorSolidBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
- * GT6 转换器/引擎族 Jade 显示面（task r5-jade-converters，r8-jade-converter-crucible-restyle
+ * GT6 转换器/引擎族 Jade 显示面（task jade-converters，jade-converter-crucible-restyle
  * restyle）：变压器/动力机（dynamo）/能量引擎/燃烧箱/电池箱等 ~19 个 TicksAndSync BE 的
  * active/stopped 状态行 + 能量存量行 + 额定吞吐行。r8 微调（design.r8-jade-tooltip
  * families.converter）：真上限族（capacity&gt;0）的存量行升 B 形钳位比例条（文本复用既有三槽键，
@@ -54,7 +54,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
  * {@code accessor.getServerData()} 读回；本 provider 不写键的 BE（非族成员）在客户端零行，
  * 不碰 BasicMachine/多方块/坩埚/锅炉既有面。跳过如实声明：水车（无可读状态字段）、FE 电池/
  * FE 电源（vanilla BE 岛，storedFe() 形不合本缝）、轴/齿轮箱（旋转传动域，非能量存量语义）、
- * 2x2 反应堆（自有多方块面）、锅炉罐（r5-jade-boiler 卡面）。
+ * 2x2 反应堆（自有多方块面）、锅炉罐（jade-boiler 卡面）。
  */
 public final class GT6ConverterProvider implements IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
 
@@ -203,7 +203,7 @@ public final class GT6ConverterProvider implements IBlockComponentProvider, ISer
 		long tCapacity = aData.getLong(KEY_CAPACITY);
 		String tUnit = aData.getString(KEY_UNIT);
 		if (tCapacity > 0) {
-			// B 形条（task r8-jade-converter-crucible-restyle）：真上限族出钳位比例条，文本复用
+			// B 形条（task jade-converter-crucible-restyle）：真上限族出钳位比例条，文本复用
 			// 既有三槽键（lang 裁定 gt6.jade.converter.* 不动——既有键不退役）；条面中性白，
 			// 状态语义已在状态行着色（GT6BoilerProvider 水/汽条同形）。条本体组装 live-only
 			// （IElementHelper 需客户端），离线钉 = 线契约 + 行函数 + GT6JadeRows.ratio。

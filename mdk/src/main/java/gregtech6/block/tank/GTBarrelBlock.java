@@ -36,8 +36,8 @@ import net.minecraft.world.entity.Entity;
 import gregtech6.covers.ICoverableTE;
 
 /**
- * The fluid barrel block — the block side of the barrel family (task p4-fluid-barrel,
- * extended by task p6-barrel-metal-plastic). The carrier pattern: the block carries the
+ * The fluid barrel block — the block side of the barrel family (task fluid-barrel,
+ * extended by task barrel-metal-plastic). The carrier pattern: the block carries the
  * registration values upstream wrote into the MTE definition NBT (the GTFluidPipeBlock
  * carrier shape) — here the {@code NBT_TANK_CAPACITY} tank size and the
  * {@code NBT_CAPACITY_HU} melt-down ceiling (Loader_MultiTileEntities.java:2136-2151)
@@ -53,7 +53,7 @@ import gregtech6.covers.ICoverableTE;
  * and stow handled by FluidUtil. The barrel capability resolves through the
  * side-wrapped {@code BarrelFluidHandler} (getFluidHandler(level, pos, side) :457).
  *
- * <p>Task p12-fluid-item-carrier adds the item-carrier faces: {@code getDrops} rides
+ * <p>Task fluid-item-carrier adds the item-carrier faces: {@code getDrops} rides
  * the loot-context BLOCK_ENTITY parameter and projects the tank + covers NBT onto the
  * dropped {@code GTBarrelBlockItem} (the upstream getDrops chain :157-162 → :81-85,
  * the fix for "breaking a filled barrel voids the content"), the item's
@@ -128,7 +128,7 @@ public class GTBarrelBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The break-drops face (task p12-fluid-item-carrier spec ①) — the upstream getDrops
+	 * The break-drops face (task fluid-item-carrier spec ①) — the upstream getDrops
 	 * chain verbatim, the fix for the in-repo gap "breaking a filled barrel voids the
 	 * content": upstream {@code TileEntityBase03MultiTileEntities.getDrops} (:157-162)
 	 * returns exactly one item — the registry item carrying {@code writeItemNBT} output,
@@ -156,7 +156,7 @@ public class GTBarrelBlock extends GTEntityBlock {
 	 * tank (mode/sealed progress ride the cut sealed-fermentation pool) plus the covers
 	 * (upstream {@code 06Covers.writeItemNBT} :82, the in-repo
 	 * {@code ICoverableTE.writeCoversToNBT} pair) plus the paint root-key pair (task
-	 * p23-barrel-paint-item-seam): a painted barrel's drop carries {@code gt.color} +
+	 * barrel-paint-item-seam): a painted barrel's drop carries {@code gt.color} +
 	 * {@code gt.painted} so the picked-up stack renders tinted (GTItemPaintTint) and
 	 * placement rehydrates the colour ({@code GTBarrelBlockItem.applyItemNBT}).
 	 *
@@ -221,8 +221,8 @@ public class GTBarrelBlock extends GTEntityBlock {
 						(float) (aHit.getLocation().x - aPos.getX()), (float) (aHit.getLocation().y - aPos.getY()), (float) (aHit.getLocation().z - aPos.getZ()))) {
 			return InteractionResult.CONSUME;
 		}
-		// p33-food-fluids-b2 — the upstream tank drink seam, the tryTankDrink helper (the
-		// p33-food-tail fold of the twin 17-line blocks). The FluidUtil face below stays
+		// food-fluids-b2 — the upstream tank drink seam, the tryTankDrink helper (the
+		// food-tail fold of the twin 17-line blocks). The FluidUtil face below stays
 		// first so a container-carrying hand keeps the bucket behaviour.
 		if (aLevel.getBlockEntity(aPos) instanceof TileEntityBase08Barrel tBarrelDrink) {
 			InteractionResult tDrink = tryTankDrink(tBarrelDrink, aPlayer, aPlayer.getItemInHand(aHand).isEmpty());
@@ -247,7 +247,7 @@ public class GTBarrelBlock extends GTEntityBlock {
 						(float) (aHit.getLocation().x - aPos.getX()), (float) (aHit.getLocation().y - aPos.getY()), (float) (aHit.getLocation().z - aPos.getZ()))) {
 			return InteractionResult.CONSUME;
 		}
-		// p33-food-fluids-b2 — the tank drink seam, the forge-branch shape above (the
+		// food-fluids-b2 — the tank drink seam, the forge-branch shape above (the
 		// MAIN_HAND stand-in is the declared deviation; the empty-hand gate is the same).
 		if (aLevel.getBlockEntity(aPos) instanceof TileEntityBase08Barrel tBarrel2) {
 			InteractionResult tDrink = tryTankDrink(tBarrel2, aPlayer, aPlayer.getItemInHand(InteractionHand.MAIN_HAND).isEmpty());
@@ -260,8 +260,8 @@ public class GTBarrelBlock extends GTEntityBlock {
 	 *///?}
 
 	/**
-	 * The p33-food-fluids-b2 tank drink seam (TileEntityBase08FluidContainer :158/:337 +
-	 * isDrinkable :415-417), folded into one helper by p33-food-tail — an empty hand on a
+	 * The food-fluids-b2 tank drink seam (TileEntityBase08FluidContainer :158/:337 +
+	 * isDrinkable :415-417), folded into one helper by food-tail — an empty hand on a
 	 * barrel holding >= 250 mB of a REGISTER-keyed fluid drains the 250 mB and applies the
 	 * DrinkStat (hunger/sat through FoodData.eat, the effects as MobEffectInstance adds —
 	 * GTDrinks.drink). CONSUME (no swing) like the cover intercept, null falls through to
@@ -281,6 +281,6 @@ public class GTBarrelBlock extends GTEntityBlock {
 	@Override
 	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
 		super.stepOn(aLevel, aPos, aState, aEntity);
-		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (p37-covers-crafting-asphalt)
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (covers-crafting-asphalt)
 	}
 }

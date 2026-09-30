@@ -44,7 +44,7 @@ import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The KubeJS-independent core of the KJS binding module (task p34-kjs-bindings).
+ * The KubeJS-independent core of the KJS binding module (task kjs-bindings).
  * EVERY method here is safe to call with KubeJS absent from the classpath — this
  * class imports no {@code dev.latvian.mods} type. The KubeJS-facing halves are:
  * <ul>

@@ -1,5 +1,5 @@
 /**
- * Pin h (task r8-gui-reskin-amazawa) — the machine GUI reskin census. Every PNG under
+ * Pin h (task gui-reskin-amazawa) — the machine GUI reskin census. Every PNG under
  * {@code assets/gt6/textures/gui/machines/} was reskinned from the amazawa resource
  * pack (Modrinth "tfc-amazawa-light-gui" 1.0.5g, Apache-2.0, author 天沢香, chat
  * authorization shipped at docs/licenses/amazawa-gui-authorization.png — the
@@ -10,7 +10,7 @@
  * AnvilBendingBig.png per the assets/README.md Small/Big fold row), the reskinned
  * bytes' sha256, and the canvas size, which equals the replaced upstream size
      * per-file (256x256 on all 73, verified at match time — the sizes pin keeps any
-     * future reskin honest the same way). Since r9-34-viewer-gui-bg the folder also
+     * future reskin honest the same way). Since 34-viewer-gui-bg the folder also
      * carries the viewer's NEI backdrop plate (nei.png) and the bedrockorelist.png
      * display map — both amazawa redraws, rows here like everything else.
  *
@@ -66,7 +66,7 @@ class GT6GuiReskinCensusTest {
      * One row per reskinned PNG: {target stem, amazawa source file, sha256 of the
      * reskinned bytes, width, height}. 73 rows = the full intersection of our
      * gui/machines set with the pack's gregtech domain (anvilbend via the Big fold);
-     * r9-34-viewer-gui-bg added the viewer backdrop rows (nei, bedrockorelist).
+     * 34-viewer-gui-bg added the viewer backdrop rows (nei, bedrockorelist).
      */
     private static final String[][] MANIFEST = {
         {"alloying", "Alloying.png", "c93bb15e340b98314f0053acddda047e65fee4808b4aafe095f8b0a917ed365b", "256", "256"},
@@ -228,7 +228,7 @@ class GT6GuiReskinCensusTest {
     void readmeReskinSectionMirrorsManifest() throws IOException {
         Path readme = mdkRoot().resolve(Path.of("src", "main", "resources", "assets", "README.md"));
         String section = Files.readString(readme)
-            .split("## task r8-gui-reskin-amazawa", 2)[1];
+            .split("## task gui-reskin-amazawa", 2)[1];
         Set<String> readmeRows = new LinkedHashSet<>();
         java.util.regex.Matcher m = java.util.regex.Pattern
             .compile("`gui/machines/([a-z0-9_-]+)\\.png` ← amazawa `([^`]+)` sha256 `([0-9a-f]{64})`")
@@ -260,7 +260,7 @@ class GT6GuiReskinCensusTest {
      * opaque pixel — the vanilla-Screen leg overlays the progress arrow from exactly
      * that window of the SAME PNG, so a reskin cropping it would blank every machine's
      * progress bar (spot pin from the design card open items; verified opaque on all
-     * amazawa files at wave time, the r9-34 viewer rows included).
+     * amazawa files at wave time, the #34 viewer rows included).
      */
     @Test
     void vanillaLegArrowRegionSurvivesReskin() throws IOException {

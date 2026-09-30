@@ -27,7 +27,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.registry.GTMachines;
 
 /**
- * The USB Stick data-storage family (task p32-usb-data) — the four data sticks of the
+ * The USB Stick data-storage family (task usb-data) — the four data sticks of the
  * upstream MultiItemTechnological registrations (MultiItemTechnological.java:791-794,
  * item ids 32001-32004, "USB 1.0 Stick" .. "USB 4.0 Stick", tooltip "Stores Data"), the
  * port counterpart of {@code Behavior_DataStorage} (gregtech/items/behaviors/Behavior_DataStorage.
@@ -58,11 +58,11 @@ import gregtech6.registry.GTMachines;
  * the QU energy line {@code (p+n)*65536} for {@code TD.Processing.UUM} materials, the
  * "(Not Replicatable)" line otherwise — plus the "Data: USB &lt;tier&gt;.0" tier line.</p>
  *
- * <p>The creative-tab face (task p38-tabfix-d-ruling, the user ruling): all four sticks
+ * <p>The creative-tab face (task tabfix-d-ruling, the user ruling): all four sticks
  * join MACHINES_TAB via {@link #onBuildTabContents} — supersedes the old CUT declaration
  * (the /give posture); the crafting rows (:796-799) still ride the crafting card pool.</p>
  *
- * <p>Task p37-usb-peripherals extends the family with the 8 USB peripheral rows of the
+ * <p>Task usb-peripherals extends the family with the 8 USB peripheral rows of the
  * same upstream registration block: USB Cable 1-4 (:803-806, ids 32011-32014, NO
  * behavior — the static "Replaces USB Sticks when connected to USB Ports" line is the
  * whole face) and USB HDD 1-4 (:814-817, ids 32021-32024, the
@@ -105,7 +105,7 @@ public final class GT6UsbSticks {
 			() -> new GT6UsbStickItem(new Item.Properties(), (byte)4));
 
 	// ---------------------------------------------------------------------------
-	// task p37-usb-peripherals — the USB Cable family, upstream
+	// task usb-peripherals — the USB Cable family, upstream
 	// MultiItemTechnological.java:803-806 (item ids 32011-32014, "USB 1.0 Cable" ..
 	// "USB 4.0 Cable", tooltip "Replaces USB Sticks when connected to USB Ports",
 	// OD_USB_CABLES[1..4] = gt:usbcable1..4, CS.java:162). NO Behavior face — the
@@ -127,7 +127,7 @@ public final class GT6UsbSticks {
 			() -> new GT6LaserGas.GT6LaserGasItem(new Item.Properties(), cableTooltipKey((byte)4)));
 
 	// ---------------------------------------------------------------------------
-	// task p37-usb-peripherals — the USB HDD family, upstream
+	// task usb-peripherals — the USB HDD family, upstream
 	// MultiItemTechnological.java:814-817 (item ids 32021-32024, "USB 1.0 HDD" ..
 	// "USB 4.0 HDD", tooltip "Stores up to 16 Files at once", OD_USB_DRIVES[1..4] =
 	// gt:usbdrive1..4, CS.java:164, Behavior_DataStorage16.INSTANCE).
@@ -261,7 +261,7 @@ public final class GT6UsbSticks {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-d-ruling — all four sticks join the machines tab; the
+	 * The tab walk (task tabfix-d-ruling — all four sticks join the machines tab; the
 	 * GT6BurningBoxes.onBuildTabContents verbatim form, the class-level MOD-bus
 	 * {@code @Mod.EventBusSubscriber} at the class head is what delivers this handler).
 	 * COUNT ERRATUM: the census/card said 3, the file registers 4 — the evidence window
@@ -274,7 +274,7 @@ public final class GT6UsbSticks {
 			aEvent.accept(new ItemStack(USB_STICK_2.get()));
 			aEvent.accept(new ItemStack(USB_STICK_3.get()));
 			aEvent.accept(new ItemStack(USB_STICK_4.get()));
-			// task p37-usb-peripherals — the 8 peripheral rows join the same tab (the
+			// task usb-peripherals — the 8 peripheral rows join the same tab (the
 			// upstream rows all hang on the Technological items tab, the pooled join).
 			aEvent.accept(new ItemStack(USB_CABLE_1.get()));
 			aEvent.accept(new ItemStack(USB_CABLE_2.get()));
@@ -357,7 +357,7 @@ public final class GT6UsbSticks {
 	}
 
 	/**
-	 * The drive item (task p37-usb-peripherals): the static "Stores up to 16 Files at
+	 * The drive item (task usb-peripherals): the static "Stores up to 16 Files at
 	 * once" line + the {@code Behavior_DataStorage16} face (upstream
 	 * Behavior_DataStorage16.java:37-58, field-for-field):
 	 *

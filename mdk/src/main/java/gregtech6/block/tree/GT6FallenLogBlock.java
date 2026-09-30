@@ -4,7 +4,7 @@ import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.material.MapColor;
 
 /**
- * One GT6 fallen-log wood (task p30-w6-t2-surface-blocks): Dead/Rotten/Mossy/Frozen —
+ * One GT6 fallen-log wood (task w6-t2-surface-blocks): Dead/Rotten/Mossy/Frozen —
  * the upstream special-wood faces of the shared tree-log block. VERIFICATION ANCHOR (the
  * card's "独立块还是原木变体" ruling): Loader_Worldgen.java:603-606 places
  * {@code BlocksGT.Log1} at {@code PILLARS_Y/X/Z[0..3]} (CS.java:765 = meta variant 0-3 x

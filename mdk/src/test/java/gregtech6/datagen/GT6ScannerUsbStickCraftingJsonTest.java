@@ -18,11 +18,11 @@ import com.google.gson.JsonParser;
  * <ul>
  * <li>the Molecular Scanner T3 controller row, Loader_MultiTileEntities.java:1551
  *     ("DXE","FMF","RYS" — the only active scanner rung): the D/E/R/S
- *     Processor_Crystal gem-tag fold (the p33-circuits-c convention) + the F/X/Y HV
+ *     Processor_Crystal gem-tag fold (the circuits-c convention) + the F/X/Y HV
  *     component columns (the debt-emitter-sensor-generators items) — the Q1=(b) seam
  *     RESTORE;</li>
  * <li>the four USB Stick rows, MultiItemTechnological.java:796-799 ("xWd","PCP","TCT")
- *     — the p37-usb-peripherals Q3 pool closing: circuit3-6 tags + the WIRES_01[3..6]
+ *     — the usb-peripherals Q3 pool closing: circuit3-6 tags + the WIRES_01[3..6]
  *     Au/Al/Pt/Graphene ladder + the plate/screw Al/StainlessSteel/Cr/Ti ladder + the
  *     wirecutter/screwdriver tool letters.</li>
  * </ul>

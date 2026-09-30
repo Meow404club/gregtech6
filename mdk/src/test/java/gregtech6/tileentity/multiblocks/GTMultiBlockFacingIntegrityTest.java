@@ -1,5 +1,5 @@
 /*
- * Offline tests for task p27-builder-wand-form-fix: the crucible's FORM SAMPLING must
+ * Offline tests for task builder-wand-form-fix: the crucible's FORM SAMPLING must
  * cover the whole structure at EVERY controller facing. The regression: the crucible is
  * controller-anchored ("Main at Bottom-Center", upstream MultiTileEntityCrucible.java
  * :118-122 walks the walls straight off xCoord/yCoord/zCoord with no facing anywhere;
@@ -23,7 +23,7 @@
  * <li>the DISPLACED box is NOT the machine (pre-fix it formed — the RCON p26 chain's
  *     blind green: its stray true-box wall row was never declared, hence never judged);</li>
  * <li>the P28 ONE-CLICK builder-wand story (the user ruling 2026-09-12 deviating from
- *     the upstream nine-click window semantics — ADR 2026-09-12-p28-builder-wand-oneclick):
+ *     the upstream nine-click window semantics — ADR 2026-09-12-builder-wand-oneclick):
  *     ONE click on the controller scaffolds ALL 24 walls at the controller-anchored
  *     coordinates, forms, and consumes exactly 24 stock, at every live facing; a click on
  *     an already-formed crucible is an idempotent no-op (zero consumption), and a click
@@ -210,7 +210,7 @@ public class GTMultiBlockFacingIntegrityTest extends GTMultiBlocksOfflineTestBas
 	 * y+0 and y+1 rings only and the y+2 ring took eight relay clicks — research
 	 * research.p28-r-builder-wand-second-root confirmed that window is upstream-faithful,
 	 * so the one-click form is a DECLARED deviation, ADR
-	 * 2026-09-12-p28-builder-wand-oneclick, riding the checker's SET walk).
+	 * 2026-09-12-builder-wand-oneclick, riding the checker's SET walk).
 	 */
 	@Test
 	public void wandClickFormsTheWholeCrucibleAtEveryLiveFacing() {

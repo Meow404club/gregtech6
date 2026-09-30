@@ -29,7 +29,7 @@ import gregtech6.multiblock.GTMultiBlockStructureChecker.FormedVerdict;
 
 /**
  * The {@link GTMultiBlockStructureChecker#form} permission seam (task
- * p24-creative-form-seam) driven directly. This file lives in
+ * creative-form-seam) driven directly. This file lives in
  * {@code gregtech6.multiblock} because the seam overload is package-private to
  * {@link GTMultiBlockStructureChecker} — the sibling fixture base and its tests
  * ({@code gregtech6.tileentity.multiblocks}) cannot see it, so the fixture below is a

@@ -63,7 +63,7 @@ import net.minecraftforge.registries.RegistryObject;
  *     :258-262), which is upstream GT6's item name composition (mMaterialPre + material name +
  *     mMaterialPost);</li>
  * <li>{@code gt6.material.<material_snake>} = the English local name (mNameLocal) — since task
- *     p23-i18n-material-fill-fix the runtime does NOT pass a mNameLocal literal: the outer
+ *     i18n-material-fill-fix the runtime does NOT pass a mNameLocal literal: the outer
  *     tagprefix template's %s slot is filled with this key as a NESTED translatable unit
  *     ({@link MaterialPrefixItem#materialFill}, MaterialPrefixItem.java:77-79, applied at
  *     {@code getName} :85; {@code GTMaterialPrefixBlockItem.getName} :57-62 shares the same
@@ -84,7 +84,7 @@ import net.minecraftforge.registries.RegistryObject;
  * (TreeMap) and writes via DataProvider.saveStable, so the output is deterministic across runs.
  *
  * <p>Non-final on purpose: the offline lang-key reconciliation test (GT6EnUsJeiInfoTest,
- * task p12-jei-integration) records {@code add()} through a same-package subclass — the only
+ * task jei-integration) records {@code add()} through a same-package subclass — the only
  * way to observe {@code addTranslations()} output without a datagen run.
  */
 public class GT6EnUs extends LanguageProvider {
@@ -101,83 +101,83 @@ public class GT6EnUs extends LanguageProvider {
         addMaterialNames();
         addExampleMachine();
         addFluidPipes();
-        addItemPipes(); // task p26-pipe-item — the item pipe family
+        addItemPipes(); // task pipe-item — the item pipe family
         addEngineFluids();
         addAquaFluids();
-        addSimpleLiquidFluids(); // task p19-drying-rows-backfill-2
+        addSimpleLiquidFluids(); // task drying-rows-backfill-2
         addFoodFluids();
-        addFoodB1Fluids(); // task p21-drying-food-fluids
-        addFoodB2Fluids(); // task p33-food-fluids-b2
-        addFoodTailFluids(); // task p33-food-tail
-        addDyeChemicalFluids(); // task p24-dye-chemical-fluids — table-tail append
-        addCFoamFluids(); // task p26-c-foam-fluid-refill — table-tail append
-        addChemicalFluids(); // task p29-w4-f1-chemicals — table-tail append
-        addHotFamilyFluids(); // task p29-w4-hot-lube — table-tail append (hot + closure + lubricant)
-        addQuFluids(); // task p31-qu-a-foundation — table-tail append (the QU matter/ender trio)
-        addNamingFluids(); // task p37-fluids-naming — table-tail append (the 34 census-gap rows)
-        addBeeFamily(); // task p31-bees-lv1 — table-tail append (honey + bee-row fluids + the 20 combs + the tab)
-        addBumbleFamily(); // task p33-bees-lv3-a-items — table-tail append (the 80 species names + the 8 face formats)
-        addCFoamBlocks(); // task p26-c-foam-block-family — table-tail append
+        addFoodB1Fluids(); // task drying-food-fluids
+        addFoodB2Fluids(); // task food-fluids-b2
+        addFoodTailFluids(); // task food-tail
+        addDyeChemicalFluids(); // task dye-chemical-fluids — table-tail append
+        addCFoamFluids(); // task c-foam-fluid-refill — table-tail append
+        addChemicalFluids(); // task w4-f1-chemicals — table-tail append
+        addHotFamilyFluids(); // task w4-hot-lube — table-tail append (hot + closure + lubricant)
+        addQuFluids(); // task qu-a-foundation — table-tail append (the QU matter/ender trio)
+        addNamingFluids(); // task fluids-naming — table-tail append (the 34 census-gap rows)
+        addBeeFamily(); // task bees-lv1 — table-tail append (honey + bee-row fluids + the 20 combs + the tab)
+        addBumbleFamily(); // task bees-lv3-a-items — table-tail append (the 80 species names + the 8 face formats)
+        addCFoamBlocks(); // task c-foam-block-family — table-tail append
         addElectricWires();
         addMachines();
         addMultiBlocks();
         addBarrels();
-        addKitchen(); // task p26-kitchen-pot-bowl
-        addMeasuringPot(); // task r8-issue45-c3 — the pot pair (issue #45)
-        addAnvils(); // task p28-c-anvil
+        addKitchen(); // task kitchen-pot-bowl
+        addMeasuringPot(); // task issue45-c3 — the pot pair (issue #45)
+        addAnvils(); // task c-anvil
         addEnergySource();
-        addFeBattery(); // task p26-eu-bridge-outbound — tail-append
-        addFeConverter(); // task p28-b-fe-converter-machine — tail-append
-        addElectricTransformer(); // task p28-c-ulv-lv-transformer
-        addLDEnergyFamilies(); // task p35-energy-tail-machines
-        addCrystalChargers(); // task p35-energy-tail-machines
-        addZpmFamilies(); // task p36-energy-zpm-dechargers — the ZPM item + the two decharger rows
-        addLongDistancePipes(); // task p35-long-distance-pipes — the 16 wire metas + the two endpoints
-        addEuBridgeFamilies(); // task p29-w4-eu-bridge — the three EU-bridge families + the Roasting template
-        addLaserFamilies(); // task p32-qu-laser-domain — the CO2 Laser + Laser Absorber families + the gas emitters
-        addMagicAbsorber(); // task p32-magic-absorber — the Magic Field Absorber name
-        addFluidSpring(); // task p38-issue5-fluid-spring-nozzle — the Fluid Spring nozzle name
-        addPlaceables(); // task p32-placeables — the lantern + sandwich + the six placed piles
-        addDynamoFamily(); // task p28-c-ulv-dynamo-row — the W1 family's deferred name face + the T0 row
-        addBatteryFamily(); // task p29-w4-battery-storage — the 37+5+7+12 storage face
-        addKinetics(); // task p12-engine-crank
-        addAttachments(); // task p12-tap-funnel-attachment
+        addFeBattery(); // task eu-bridge-outbound — tail-append
+        addFeConverter(); // task b-fe-converter-machine — tail-append
+        addElectricTransformer(); // task c-ulv-lv-transformer
+        addLDEnergyFamilies(); // task energy-tail-machines
+        addCrystalChargers(); // task energy-tail-machines
+        addZpmFamilies(); // task energy-zpm-dechargers — the ZPM item + the two decharger rows
+        addLongDistancePipes(); // task long-distance-pipes — the 16 wire metas + the two endpoints
+        addEuBridgeFamilies(); // task w4-eu-bridge — the three EU-bridge families + the Roasting template
+        addLaserFamilies(); // task qu-laser-domain — the CO2 Laser + Laser Absorber families + the gas emitters
+        addMagicAbsorber(); // task magic-absorber — the Magic Field Absorber name
+        addFluidSpring(); // task issue5-fluid-spring-nozzle — the Fluid Spring nozzle name
+        addPlaceables(); // task placeables — the lantern + sandwich + the six placed piles
+        addDynamoFamily(); // task c-ulv-dynamo-row — the W1 family's deferred name face + the T0 row
+        addBatteryFamily(); // task w4-battery-storage — the 37+5+7+12 storage face
+        addKinetics(); // task engine-crank
+        addAttachments(); // task tap-funnel-attachment
         addTools();
         addCovers();
         addJeiInfo();
-        addRecipeMapViewerKeys(); // task r6-29-34a — the 72 RM titles + the 16 cost-line keys
-        addStoneBlocks(); // task p19-stoneblocks-registry — table-tail append (the drying card appends after this)
-        addSprayCans(); // task p22-spraycan-items — table-tail append
-        addGrassBlocks(); // task p24-grass-block — table-tail append
-        addFoamSprays(); // task p25-c-foam-pipe-spray — table-tail append
-        addFoodCans(); // task p25-food-can-row0 — table-tail append
-        addExtruderMolds(); // task p26-w1-press-extruder-molds — table-tail append
-        addSlicerBlades(); // task p35-slicer-row-domain — table-tail append
-        addSensors(); // task p26-sensors-core — table-tail append
-        addPortals(); // task p35-portals-mini-nether-end — table-tail append
-        addCrucibleJade(); // task p28-crucible-jade-face — table-tail append
-        addCommonJade(); // task r8-jade-redesign-core — table-tail append
-        addMachineJade(); // task p34-hygiene-lang — table-tail append
-        addFluidJade(); // task p34-hygiene-lang — table-tail append
-        addBoilerJade(); // task r5-jade-boiler — table-tail append
-        addConverterJade(); // task r5-jade-converters — table-tail append
-        addBoilerTooltip(); // task r8-tooltip-infra — table-tail append (the T1 pilot rows)
-        addSensorJade(); // task r8-jade-sensor-provider — table-tail append
-        addFamilyTooltips(); // task r8-tooltip-multiblock-generator — table-tail append (the T4 three-family rows)
-        addWirePipeSensorTooltips(); // task r8-tooltip-wire-pipe-sensor — table-tail append (the T5 rows)
-        addMachineTooltip(); // task r8-tooltip-basic-machine-family — the BasicMachine row table + the shared face words
-        addPocketTools(); // task p29-w5-t7-pocket-eight — table-tail append
-        addArmor(); // task p29-w5-t8-armor-24 — table-tail append
-        addTreeBlocks(); // task p30-w6-t1-trees-nine — table-tail append
-        addUsbSticks(); // task p32-usb-data — table-tail append
-        addUsbPeripherals(); // task p37-usb-peripherals — the 8 peripheral rows + the exempted He emitter
+        addRecipeMapViewerKeys(); // task issues #29/#34a — the 72 RM titles + the 16 cost-line keys
+        addStoneBlocks(); // task stoneblocks-registry — table-tail append (the drying card appends after this)
+        addSprayCans(); // task spraycan-items — table-tail append
+        addGrassBlocks(); // task grass-block — table-tail append
+        addFoamSprays(); // task c-foam-pipe-spray — table-tail append
+        addFoodCans(); // task food-can-row0 — table-tail append
+        addExtruderMolds(); // task w1-press-extruder-molds — table-tail append
+        addSlicerBlades(); // task slicer-row-domain — table-tail append
+        addSensors(); // task sensors-core — table-tail append
+        addPortals(); // task portals-mini-nether-end — table-tail append
+        addCrucibleJade(); // task crucible-jade-face — table-tail append
+        addCommonJade(); // task jade-redesign-core — table-tail append
+        addMachineJade(); // task hygiene-lang — table-tail append
+        addFluidJade(); // task hygiene-lang — table-tail append
+        addBoilerJade(); // task jade-boiler — table-tail append
+        addConverterJade(); // task jade-converters — table-tail append
+        addBoilerTooltip(); // task tooltip-infra — table-tail append (the T1 pilot rows)
+        addSensorJade(); // task jade-sensor-provider — table-tail append
+        addFamilyTooltips(); // task tooltip-multiblock-generator — table-tail append (the T4 three-family rows)
+        addWirePipeSensorTooltips(); // task tooltip-wire-pipe-sensor — table-tail append (the T5 rows)
+        addMachineTooltip(); // task tooltip-basic-machine-family — the BasicMachine row table + the shared face words
+        addPocketTools(); // task w5-t7-pocket-eight — table-tail append
+        addArmor(); // task w5-t8-armor-24 — table-tail append
+        addTreeBlocks(); // task w6-t1-trees-nine — table-tail append
+        addUsbSticks(); // task usb-data — table-tail append
+        addUsbPeripherals(); // task usb-peripherals — the 8 peripheral rows + the exempted He emitter
         addKeys(); // task dungeon-keys — the key family display + behavior lines
-        addSurfaceBand(); // task p30-w6-rocks-sticks — table-tail append
-        addSurfacePlants(); // task p30-w6-t2-surface-blocks — table-tail append
-        add("block.gt6.bumble_hive", "Bumble Hive"); // task p32-bees-lv2 — the MTE 32755 display name (Loader_MultiTileEntities.java:2041)
-        add("block.gt6.bumbliary", "Bumbliary"); // task p33-bees-lv3-b-bumbliary — the MTE 32741 name column (:2222)
+        addSurfaceBand(); // task w6-rocks-sticks — table-tail append
+        addSurfacePlants(); // task w6-t2-surface-blocks — table-tail append
+        add("block.gt6.bumble_hive", "Bumble Hive"); // task bees-lv2 — the MTE 32755 display name (Loader_MultiTileEntities.java:2041)
+        add("block.gt6.bumbliary", "Bumbliary"); // task bees-lv3-b-bumbliary — the MTE 32741 name column (:2222)
         add("block.gt6.bumbliary_advanced", "Advanced Bumbliary"); // the MTE 32007 name column (:2223)
-        // task p30-ore-1-mech — template-pin NOTE, zero keys this card (zh ratchet 0): the
+        // task ore-1-mech — template-pin NOTE, zero keys this card (zh ratchet 0): the
         // ore universe (GT6OreBlocks, 26 families x 74 form-rows x M=53) needs NO en_us
         // delta — every ore block item composes the EXISTING gt6.tagprefix.<prefix_snake>
         // templates (addPrefixTemplates covers all OP prefixes; normal/broken share the
@@ -185,10 +185,10 @@ public class GT6EnUs extends LanguageProvider {
         // remaining faces are wave card 3 (datagen): the 26x3 per-family template keys if
         // wanted + the one creative-tab title itemGroup.gt6.ore_vanillastone
         // (GT6OreBlocks.TAB_TITLE_KEY, "Stone Ores" — the PrefixBlockItem.java:62-67 gate).
-        addOreTabTitle(); // task p30-ore-3-datagen — the ore-1 note's card-③ face (the one new key)
-        addBrokenOreTemplates(); // task r4-ore-broken-name — the note's "per-family template keys" face, the broken-form slice (22 keys)
-        addRails(); // task p35-rails-31-blocks — table-tail append
-        addBooks(); // task p35-books-written — table-tail append
+        addOreTabTitle(); // task ore-3-datagen — the ore-1 note's card-③ face (the one new key)
+        addBrokenOreTemplates(); // task ore-broken-name — the note's "per-family template keys" face, the broken-form slice (22 keys)
+        addRails(); // task rails-31-blocks — table-tail append
+        addBooks(); // task books-written — table-tail append
         addTechnologicalComponents(); // task debt-emitter-sensor-generators — table-tail append
     }
 
@@ -212,7 +212,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The rail family keys (task p35-rails-31-blocks, 31 keys): the Road Stripe + the 30
+     * The rail family keys (task rails-31-blocks, 31 keys): the Road Stripe + the 30
      * material rows' display names — the upstream registration strings verbatim
      * (Loader_Rails.java:39 "Road Stripe", :41-50 the {@code <Material> Track} ladder,
      * :52-61 the {@code <Material> Booster Track} ladder, :63-72 the {@code <Material>
@@ -227,8 +227,8 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Surface deco family keys (task p30-w6-rocks-sticks): the composed rock template
-     * (the p20-i18n-compose-rows B-wave form — ONE {@code gt6.surface.rock} template,
+     * Surface deco family keys (task w6-rocks-sticks): the composed rock template
+     * (the i18n-compose-rows B-wave form — ONE {@code gt6.surface.rock} template,
      * the material slot riding the {@code gt6.material.<snake>} small unit at
      * GT6SurfaceRockBlock.getName; per-pair naming is a modern necessity, the upstream
      * MTE name was the generic "Rock", Loader_MultiTileEntities.java:2033) and the
@@ -238,7 +238,7 @@ public class GT6EnUs extends LanguageProvider {
     private void addSurfaceBand() {
         add("gt6.surface.rock", "%s Surface Rock");
         add("block.gt6.surface_stick", "Stick");
-        // task r3-surface-rock-lang — GitHub #13: the 34 bare descriptionId keys. getName
+        // task surface-rock-lang — GitHub #13: the 34 bare descriptionId keys. getName
         // composes the template, but consumers that resolve the RAW key (Jade's block
         // name, F3+H advanced tooltips) hover it bare when neither locale carries it.
         // Values = the exact string the composed face renders (mNameLocal over the
@@ -249,7 +249,7 @@ public class GT6EnUs extends LanguageProvider {
 
     /**
      * The 34 surface-rock descriptionId keys with their (alias-merged) materials,
-     * registration order — task r3-surface-rock-lang, the seam GT6ZhCn shares for its
+     * registration order — task surface-rock-lang, the seam GT6ZhCn shares for its
      * zh composition (the materialWalkEmittedKeys posture: one implementation, both
      * providers). The three first-batch rocks pair with their literal MT constants, the
      * 31 vein-indicator rows ride {@link GT6SurfaceBlocks#INDICATOR_MATERIALS} — the
@@ -271,7 +271,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The surface-plants + fallen-woods keys (task p30-w6-t2-surface-blocks, 8 rows): the
+     * The surface-plants + fallen-woods keys (task w6-t2-surface-blocks, 8 rows): the
      * upstream display names verbatim — "Glowtus" (BlockGlowtus.java:39, the 16-colour
      * ladder collapses to the one name), "Berry Bush" (Loader_MultiTileEntities.java:2030),
      * "Black Sand" (the WorldgenBlackSand soil), "Turf" (BlocksGT.Diggables meta 2), and
@@ -290,7 +290,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Engine fuel family keys (task p12-engine-fuel-fluids spec ③): one description entry
+     * Engine fuel family keys (task engine-fuel-fluids spec ③): one description entry
      * per {@link GTFluids.EngineFluidSpec} row — the exact descriptionId the FluidType is
      * registered with, walked from {@link GTFluids#ENGINE_SPECS} so the lang face cannot
      * drift from the registered fluids. Values are the upstream display names: the
@@ -318,7 +318,7 @@ public class GT6EnUs extends LanguageProvider {
         "ethanol"         , "Ethanol");
 
     /**
-     * Aqua family keys (task p16-aqua-fluids): one description entry per
+     * Aqua family keys (task aqua-fluids): one description entry per
      * {@link GTFluids.AquaFluidSpec} row — the exact descriptionId the FluidType is
      * registered with, walked from {@link GTFluids#AQUA_SPECS} so the lang face cannot
      * drift from the registered fluids. Values ride the row's displayName: the upstream
@@ -334,7 +334,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Simple-liquid family keys (task p19-drying-rows-backfill-2 spec ③): the second loop
+     * Simple-liquid family keys (task drying-rows-backfill-2 spec ③): the second loop
      * over {@link GTFluids#SIMPLE_LIQUID_SPECS} — the exact addAquaFluids shape, walked
      * from the SECOND table so the lang face cannot drift from the registered fluids
      * (gt6:seawater "Seawater" / gt6:waterdirty "Dirty Water", the common-name spellings
@@ -347,7 +347,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Food family keys (task p21-drying-food-fluids): the third loop over
+     * Food family keys (task drying-food-fluids): the third loop over
      * {@link GTFluids#FOOD_FLUID_SPECS} — the addSimpleLiquidFluids shape, walked from the
      * THIRD table so the lang face cannot drift from the registered fluids. Values ride
      * the row's displayName: "Maple Sap" / "Reedwater" / "Cactuswater" verbatim from the
@@ -367,7 +367,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Food-fluid batch-1 keys (task p33-food-fluids-b1): the fifth loop over
+     * Food-fluid batch-1 keys (task food-fluids-b1): the fifth loop over
      * {@link GTFluids#FOOD_B1_SPECS} — the addFoodFluids shape, walked from the FIFTH table
      * so the lang face cannot drift from the registered fluids. Values ride the row's
      * displayName: the upstream {@code FL.create} local names verbatim (Loader_Fluids.java
@@ -383,7 +383,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Food-fluid batch-2 keys (task p33-food-fluids-b2): the sixth loop over
+     * Food-fluid batch-2 keys (task food-fluids-b2): the sixth loop over
      * {@link GTFluids#FOOD_B2_SPECS} — the addFoodB1Fluids shape, walked from the SIXTH
      * table so the lang face cannot drift from the registered fluids. Values ride the row's
      * displayName: the upstream {@code FL.create} local names verbatim (Loader_Fluids.java
@@ -399,7 +399,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Food-fluid tail keys (task p33-food-tail): the seventh loop over
+     * Food-fluid tail keys (task food-tail): the seventh loop over
      * {@link GTFluids#FOOD_TAIL_SPECS} — the addFoodB2Fluids shape, walked from the SEVENTH
      * table so the lang face cannot drift from the registered fluids. Values ride the
      * upstream FL.create local names verbatim (Loader_Fluids.java:607-610 the golden-apple
@@ -413,7 +413,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Dye-chemical family + chlorine keys (task p24-dye-chemical-fluids): one description
+     * Dye-chemical family + chlorine keys (task dye-chemical-fluids): one description
      * entry per {@link GTFluids.DyeChemicalFluid} row — the exact descriptionId the FluidType
      * is registered with, walked from {@link GTFluids#DYE_CHEMICALS} so the lang face cannot
      * drift from the registered fluids. Values ride the row's displayName: the upstream
@@ -431,7 +431,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * C-Foam family keys (task p26-c-foam-fluid-refill): the base + one description entry
+     * C-Foam family keys (task c-foam-fluid-refill): the base + one description entry
      * per {@link GTFluids.CFoamFluid} row — the exact descriptionIds the FluidTypes are
      * registered with, walked from {@link GTFluids#CFOAMS}/{@link GTFluids#CFOAMS_OWNED}
      * so the lang face cannot drift from the registered fluids. Values ride the row's
@@ -453,7 +453,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Chemical family keys (task p29-w4-f1-chemicals + p31-qu-b-materials): one
+     * Chemical family keys (task w4-f1-chemicals + qu-b-materials): one
      * description entry per {@link GTFluids.ChemicalFluidSpec} row — the exact
      * descriptionId the FluidType is registered with, walked from
      * {@link GTFluids#CHEMICAL_SPECS} so the lang face cannot drift from the registered
@@ -476,7 +476,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * QU-matter family keys (task p31-qu-a-foundation): one description entry per
+     * QU-matter family keys (task qu-a-foundation): one description entry per
      * {@link GTFluids.ChemicalFluidSpec} row of {@link GTFluids#QU_FLUID_SPECS}, walked
      * from the table so the lang face cannot drift from the registered fluids (the
      * addChemicalFluids shape). Values are the upstream display names verbatim:
@@ -491,7 +491,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Naming-parity fluid keys (task p37-fluids-naming): the eighth spec-table loop over
+     * Naming-parity fluid keys (task fluids-naming): the eighth spec-table loop over
      * {@link GTFluids#NAMING_FLUID_SPECS} — the addQuFluids shape, walked from the
      * census-gap table so the lang face cannot drift from the registered fluids. Values
      * ride the row's displayName: the upstream {@code FL.create} local strings verbatim
@@ -509,7 +509,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Hot family keys (task p29-w4-hot-lube): one description entry per
+     * Hot family keys (task w4-hot-lube): one description entry per
      * {@link GTFluids.ChemicalFluidSpec} row across the THREE tables this card appends —
      * the twelve hot fluids ({@link GTFluids#HOT_FLUID_SPECS}, the upstream
      * Loader_Fluids.java:85-99 local strings verbatim: "Industrial Coolant"/"Industrial
@@ -535,7 +535,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The bee family (task p31-bees-lv1): the "Bees" tab title, the 20 comb display names
+     * The bee family (task bees-lv1): the "Bees" tab title, the 20 comb display names
      * (walked over the GT6BeeCombs.COMB_SPECS table so the id/name pairs cannot drift —
      * the upstream MultiItemFood.java:226-247 display faces verbatim, the record's single
      * source) and the 11 honey-family + bee-row fluid display names (the spec tables' own
@@ -557,7 +557,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The bumblebee family (task p33-bees-lv3-a-items): the 80 species names
+     * The bumblebee family (task bees-lv3-a-items): the 80 species names
      * ({@code gt6.row.bumble.<code>}, the upstream MultiItemBumbles.java:70-178 display
      * faces walked over the GT6Bumbles.SPECIES table so the id/name pairs cannot drift)
      * and the 8 name-format rows ({@code gt6.row.bumble.name.<face>}) — en keeps the bare
@@ -575,8 +575,8 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The C-Foam BLOCK family display names (task p26-c-foam-block-family; the owned row is
-     * task p28-cfoam-lang-key): the two dried forms carry BlockItems, the two fresh forms +
+     * The C-Foam BLOCK family display names (task c-foam-block-family; the owned row is
+     * task cfoam-lang-key): the two dried forms carry BlockItems, the two fresh forms +
      * the owned carrier are item-less and resolve their block keys (Jade/breaking overlays
      * resolve block.gt6.* through getDescriptionId — the owned row was MISSING from this walk
      * until p28, so Jade showed the raw key on the foam a player sprayed). Values are the
@@ -597,13 +597,13 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The JEI ingredient info page (task p12-jei-integration, ADR 2026-09-02-p12-jei-dependency):
+     * The JEI ingredient info page (task jei-integration, ADR 2026-09-02-jei-dependency):
      * the coke oven structure description shown by JEI's built-in info page on the controller
      * item — the consumer is {@code GT6JeiPlugin.registerRecipes}
      * ({@code addIngredientInfo} → {@code Component.translatable}), so the key comes from the
      * plugin's constant and cannot drift from the consumer side.
      *
-     * <p>Structure facts are pinned by the port's own live gate (task p6-cokeoven-processing,
+     * <p>Structure facts are pinned by the port's own live gate (task cokeoven-processing,
      * RCON {@code gt6multiblock frame/check}: {@code linked_parts=25/25}): the 3x3x3 cube has
      * the controller in the middle of one face and an EMPTY center cell, so the bricks count is
      * 25 (the structure loop checks 26 cells, one of which is the controller itself).
@@ -622,7 +622,7 @@ public class GT6EnUs extends LanguageProvider {
 
 
     /**
-     * The generic RM viewer faces (task r6-29-34a, GitHub #29b): the 72 visible map
+     * The generic RM viewer faces (task issues #29/#34a, GitHub #29b): the 72 visible map
      * titles over the shared {@link GT6RecipeMapViewerMeta#titleKey} formula — the en
      * values ARE the maps' {@code mNameLocal} faces transcribed (the lang-key
      * reconciliation test pins every value against the live map, so transcription drift
@@ -710,7 +710,7 @@ public class GT6EnUs extends LanguageProvider {
         add(GT6RecipeMapViewerMeta.KEY_POWER, "Power: %s");
         add(GT6RecipeMapViewerMeta.KEY_GAIN, "Gain: %s GU");
         add(GT6RecipeMapViewerMeta.KEY_OUTPUT, "Output: %s GU/t");
-        // task r7-30a (GitHub #30 phase 1): the energy-column faces — the :680-717 literals
+        // task #30a (GitHub #30 phase 1): the energy-column faces — the :680-717 literals
         // with " GU" lifted into the second arg (the colored short code component)
         add(GT6RecipeMapViewerMeta.KEY_COSTS_UNIT, "Costs: %s %s");
         add(GT6RecipeMapViewerMeta.KEY_USAGE_UNIT, "Usage: %s %s/t");
@@ -729,18 +729,18 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Tool keys (task p9-tool-crowbar spec ④): the crowbar display name — the upstream
+     * Tool keys (task tool-crowbar spec ④): the crowbar display name — the upstream
      * tool family name ("Crowbar", the GT_Tool_Crowbar registration row wording).
-     * Task p10-tool-cutter spec ③: the wire cutter display name ("Wire Cutter", the
+     * Task tool-cutter spec ③: the wire cutter display name ("Wire Cutter", the
      * upstream WIRECUTTER registration row wording, Loader_Tools.java:131 verbatim).
-     * Task p16-chisel-decalcify spec ①: the chisel display name ("Chisel", the upstream
+     * Task chisel-decalcify spec ①: the chisel display name ("Chisel", the upstream
      * CHISEL registration row wording, Loader_Tools.java:142 verbatim).
-     * Task p24-tool-system: the file + saw display names ("File"/"Saw", the upstream
+     * Task tool-system: the file + saw display names ("File"/"Saw", the upstream
      * TOOL_LOCALISER rows CS.java:1095/:1094 verbatim).
-     * Task p24-screwdriver-item: the screwdriver display name ("Screwdriver", the
+     * Task screwdriver-item: the screwdriver display name ("Screwdriver", the
      * upstream TOOL_LOCALISER row CS.java:1102 verbatim — also the Loader_Tools.java:129
      * registration-row wording).
-     * Task p10-tool-creative-tab: the "Tools" creative tab title (the upstream ToolsGT
+     * Task tool-creative-tab: the "Tools" creative tab title (the upstream ToolsGT
      * meta-tool category, Loader_Tools.java:114-145 registration rows; the key comes from
      * GT6Tools.TAB_TITLE_KEY so the lang face cannot drift from the registered tab —
      * the offline test pins the literal on both sides).
@@ -751,21 +751,21 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.chisel", "Chisel");
         add("item.gt6.file", "File");
         add("item.gt6.saw", "Saw");
-        // task p24-builder-wand: the builder wand display name (the upstream
+        // task builder-wand: the builder wand display name (the upstream
         // registration row wording "Builder Wand", Loader_Tools.java:153 verbatim,
         // matching the TOOL_LOCALISER face CS.java:1112)
         add("item.gt6.builder_wand", "Builder Wand");
         add("item.gt6.screwdriver", "Screwdriver");
-        // task p25-tool-hammer-wrench: the hammer + wrench display names (the upstream
+        // task tool-hammer-wrench: the hammer + wrench display names (the upstream
         // registration-row wordings "Hammer"/"Wrench", Loader_Tools.java:124/:126
         // verbatim, matching the TOOL_LOCALISER faces CS.java:1096/:1083)
         add("item.gt6.hammer", "Hammer");
         add("item.gt6.wrench", "Wrench");
-        // task p30-pool-prospector — the prospector second-behavior tooltip the hammer
+        // task pool-prospector — the prospector second-behavior tooltip the hammer
         // carries (the Behavior_Tool.java:76-78 additional-tooltip face), the CS.java:1154
         // row verbatim
         add("item.gt6.hammer.tooltip_prospector", "Prospecting for Ores in an Area");
-        // task p29-w5-t1-dig-six — the six dig-tool display names (the upstream
+        // task w5-t1-dig-six — the six dig-tool display names (the upstream
         // registration-row wordings verbatim: "Construction Pick" Loader_Tools.java:147,
         // "Gem tipped Pickaxe" :151, "Pickaxe"/"Shovel"/"Spade" the TOOL_LOCALISER rows
         // CS.java:1093-1097 and the :339-341 recipe-row family)
@@ -775,7 +775,7 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.shovel", "Shovel");
         add("item.gt6.spade", "Spade");
         add("item.gt6.universal_spade", "Universal Spade");
-        // task p29-w5-t2-blade-six — the six blade-tool display names (the upstream
+        // task w5-t2-blade-six — the six blade-tool display names (the upstream
         // registration-row wordings verbatim: "Sword" :118, "Knife" :135, "Butchery Knife"
         // :136, "Club" :130, "Axe" :122, "Double Axe" :123) + the four non-empty desc rows
         // (the Loader_Tools third column, the TOOL_LOCALISER tooltip face)
@@ -789,7 +789,7 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.axe_double.tooltip", "Chops down whole Trees and has a slow Attack Rate");
         add("item.gt6.club.tooltip", "A blunt primitive Weapon and Rock Crusher");
         add("item.gt6.butchery_knife.tooltip", "Has a slow Attack Rate");
-        // task p29-w5-t4-field-five — the five field-tool display names (the upstream
+        // task w5-t4-field-five — the five field-tool display names (the upstream
         // registration-row wordings verbatim: "Hoe" Loader_Tools.java:122, "Branch Cutter"
         // :133, "Sense" :138, "Plow" :139, "Hand Drill" :152)
         add("item.gt6.hoe", "Hoe");
@@ -797,7 +797,7 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.sense", "Sense");
         add("item.gt6.plow", "Plow");
         add("item.gt6.hand_drill", "Hand Drill");
-        // task p29-w5-t5-scene-six — the six scene-tool display names (the upstream
+        // task w5-t5-scene-six — the six scene-tool display names (the upstream
         // registration-row wordings verbatim: "Scoop" Loader_Tools.java:132, "Plunger"
         // :140, "Rolling Pin" :141, "Flint and Tinder" :143, "Bending Cylinder" :145,
         // "Scissors" :149)
@@ -807,7 +807,7 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.flint_and_tinder", "Flint and Tinder");
         add("item.gt6.rolling_pin", "Rolling Pin");
         add("item.gt6.bending_cylinder", "Bending Cylinder");
-        // task p29-w5-t6-electric-nineteen — the nineteen electric-tool display names
+        // task w5-t6-electric-nineteen — the nineteen electric-tool display names
         // (the upstream registration-row wordings verbatim, Loader_Tools.java:156-174) +
         // the fourteen tooltips (the row tooltip strings verbatim, :159-171 + the
         // Behavior_Switch_Metadata mode line) = the 33-key band.
@@ -848,29 +848,29 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The cover item display names. Task p9-redstone-cover-emitter: the redstone emitter
+     * The cover item display names. Task redstone-cover-emitter: the redstone emitter
      * cover (upstream MultiItemTechnological.java:80 — meta 1021, display name
      * "Redstone Emitter" verbatim; the "Emits a constant Redstone Signal" tooltip rides
      * the upstream addToolTips channel which the single-item port does not carry).
-     * Task p10-cover-conductor-redstone: the conductor pair (upstream
+     * Task cover-conductor-redstone: the conductor pair (upstream
      * MultiItemTechnological.java:88-89 — metas 1029/1030, display names
      * "Redstone Conductor Cover (Accept)"/"(Emit)" verbatim; the transfer-direction
      * tooltips ride the same cut addToolTips channel).
-     * Task p10-cover-controller-redstone: the machine switch (upstream
+     * Task cover-controller-redstone: the machine switch (upstream
      * MultiItemTechnological.java:64 — meta 1005, display name "Redstone Machine
      * Switch" verbatim; the "Turns Machines ON/OFF using Redstone" tooltip and the
      * screwdriver tooltip ride the cut addToolTips channel).
-     * Task p11-cover-shutter-filter: the shutter (upstream
+     * Task cover-shutter-filter: the shutter (upstream
      * MultiItemTechnological.java:85 — meta 1026, display name "Shutter Cover"
      * verbatim) and the item filter (upstream :82 — meta 1023, display name
      * "Item Filter" verbatim); the toggle/filter tooltips ride the same cut
      * addToolTips channel.
-     * Task p11-cover-controllers: the auto redstone switch (upstream
+     * Task cover-controllers: the auto redstone switch (upstream
      * MultiItemTechnological.java:65 — meta 1006, display name "Auto Redstone
      * Machine Switch" verbatim) and the cover controller (:84 — meta 1025,
      * "Cover Controller" verbatim); the tooltips ride the cut addToolTips channel.
-     * Task p11-cover-conveyor-robotarm: the eight atomic cover names stay verbatim. The
-     * conveyor + robot arm tier ladders became COMPOSED (task p20-i18n-compose-wires, the
+     * Task cover-conveyor-robotarm: the eight atomic cover names stay verbatim. The
+     * conveyor + robot arm tier ladders became COMPOSED (task i18n-compose-wires, the
      * B-wave lang ruling): the twenty per-tier full strings retired into the two
      * position-param templates the item getName fills with the tier literal
      * (GT6Covers.CONVEYOR_DISPLAY_KEY/ROBOT_ARM_DISPLAY_KEY — the tier names are the
@@ -885,7 +885,7 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.cover_shutter", "Shutter Cover");
         add("item.gt6.cover_item_filter", "Item Filter");
         add("item.gt6.cover_item_retriever", "Item Retriever Cover");
-        // task p33-logistics-covers-12 — the 12 logistics covers (upstream
+        // task logistics-covers-12 — the 12 logistics covers (upstream
         // MultiItemTechnological.java:101-114 display names verbatim)
         add("item.gt6.cover_logistics_display_cpu_logic", "Logistics Display (CPU Logic)");
         add("item.gt6.cover_logistics_display_cpu_control", "Logistics Display (CPU Control)");
@@ -905,7 +905,7 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.cover_controller", "Cover Controller");
         add(GT6Covers.CONVEYOR_DISPLAY_KEY, "Compact Electric Conveyor (%s)");
         add(GT6Covers.ROBOT_ARM_DISPLAY_KEY, "Compact Robot Arm (%s)");
-        // task p34-covers-gameplay-10 — the 10 gameplay covers (upstream
+        // task covers-gameplay-10 — the 10 gameplay covers (upstream
         // MultiItemTechnological.java display names verbatim: 1020/:66, 1022/:81,
         // 1024/:83, 1007/:66, 1008/:67, 1027/:86, 2000/:176; the torch/repeater pair is
         // the hand form — upstream it rode the vanilla item names GT_API.java:799-802)
@@ -919,7 +919,7 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.cover_selector_redstone", "Redstone Selector");
         add("item.gt6.cover_selector_manual", "Manual Selector");
         add("item.gt6.cover_selector_button_panel", "Button Panel Selector");
-        // task p35-covers-display-scale-6 — the display/scale covers (upstream
+        // task covers-display-scale-6 — the display/scale covers (upstream
         // MultiItemTechnological.java:61/:63/:73/:77 display names verbatim + the
         // :68-72 reboot-switch ladder)
         add("item.gt6.cover_machine_display", "Machine Status Display Cover");
@@ -932,7 +932,7 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.cover_auto_timer_10m", "Auto Reboot Switch (10 mins)");
         add("item.gt6.cover_auto_timer_20m", "Auto Reboot Switch (20 mins)");
         add("item.gt6.cover_auto_timer_30m", "Auto Reboot Switch (30 mins)");
-        // task p37-covers-crafting-asphalt — the last two gameplay classes: the crafting
+        // task covers-crafting-asphalt — the last two gameplay classes: the crafting
         // cover name is the upstream MultiItemTechnological.java:60 display verbatim; the
         // asphalt cover rode the "Asphalt Panel" item upstream (Loader_MultiTileEntities
         // .java:2053) — the cover item takes the hand en name (the zh face is the dump
@@ -942,7 +942,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Test energy source key (task p8-d4-energy-source spec ②): the block display name,
+     * Test energy source key (task d4-energy-source spec ②): the block display name,
      * the upstream family it borrows the shape from (MultiTileEntitySolarPanelElectric,
      * the simplest generator form).
      */
@@ -951,7 +951,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * FE battery fixture key (task p26-eu-bridge-outbound, tail-append): the block display
+     * FE battery fixture key (task eu-bridge-outbound, tail-append): the block display
      * name — the receiving end of the EU->FE outbound bridge acceptance chain.
      */
     private void addFeBattery() {
@@ -959,7 +959,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * FE converter family keys (task p28-b-fe-converter-machine, tail-append): the ULV
+     * FE converter family keys (task b-fe-converter-machine, tail-append): the ULV
      * machine display name — the inbound FE→EU machine — and the fe_source fixture name.
      */
     private void addFeConverter() {
@@ -980,13 +980,13 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The Long Distance family display keys (task p35-energy-tail-machines): the
+     * The Long Distance family display keys (task energy-tail-machines): the
      * :909-:913 "Long Distance Transformer Endpoint ("+VN[i]+")" wording and the
      * BlockLongDistWire :44 "Long Distance Electric Wire ("+VN[tier]+")" wording,
      * verbatim — the atomic keys.
      */
     /**
-     * The Crystal Charger display keys (task p35-energy-tail-machines): the :970-:971
+     * The Crystal Charger display keys (task energy-tail-machines): the :970-:971
      * registration wording "Crystal Charger (T"+i+")" / "Large Crystal Charger (T"+i+")"
      * verbatim — the atomic keys.
      */
@@ -997,7 +997,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The ZPM faces (task p36-energy-zpm-dechargers): the :1103 item name
+     * The ZPM faces (task energy-zpm-dechargers): the :1103 item name
      * "Zero-Point-Module (ZPM)" and the :1000-:1001 row names verbatim — the atomic keys.
      */
     private void addZpmFamilies() {
@@ -1018,7 +1018,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The Long Distance pipe display keys (task p35-long-distance-pipes): the
+     * The Long Distance pipe display keys (task long-distance-pipes): the
      * BlockLongDistPipe :38-39 wording "Long Distance Item Pipeline" / "Long Distance
      * Fluid Pipeline ("+temp+" K)" verbatim over the 16 wire metas (the temperature
      * column is the row's data), and the :906-:907 "Long Distance Item/Fluid Pipeline
@@ -1035,7 +1035,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The EU-bridge display rows (task p29-w4-eu-bridge): the three converter families'
+     * The EU-bridge display rows (task w4-eu-bridge): the three converter families'
      * atomic keys over the upstream name columns "Electric Heater (LV)" / "Electric
      * Engine (LV)" / "Electric Motor (LV)" (Loader :817-821/:833-837/:849-853, VN[1..5]),
      * plus the Roasting Oven one-slot template (the upstream name column
@@ -1057,7 +1057,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The Dynamo family display rows (task p28-c-ulv-dynamo-row — the W1 name face the
+     * The Dynamo family display rows (task c-ulv-dynamo-row — the W1 name face the
      * family card declared deferred, landed now that the registry-coverage gate walks both
      * registration classes): the upstream registration names verbatim — "Electric Dynamo
      * ("+VN[n]+")" over Loader_MultiTileEntities.java:946-950 and "Flux Dynamo
@@ -1080,17 +1080,17 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Kinetics family keys (task p12-engine-crank): the Hand Crank display name — the
+     * Kinetics family keys (task engine-crank): the Hand Crank display name — the
      * upstream registration row wording ("Hand Crank",
      * Loader_MultiTileEntities.java:2106). The engine + transmission family appends here.
      *
-     * <p>Task p12-axle-family: the 44 axle rows — {@code block.gt6.axle_<material>_<size>}
+     * <p>Task axle-family: the 44 axle rows — {@code block.gt6.axle_<material>_<size>}
      * = "{@code <Size> <Material> Axle}" (the upstream row wording: "Small Wooden Axle"
      * :1663 hard-codes the Wooden display; the metal rows carry mNameLocal, e.g. "Small
      * Bronze Axle" :1672). Table-driven over {@link GT6Kinetics#AXLE_SPECS} — the lang
      * cannot drift from the registry names.
      *
-     * <p>Task p12-engine-diesel: the 8 diesel engine rows —
+     * <p>Task engine-diesel: the 8 diesel engine rows —
      * {@code block.gt6.diesel_engine_<material>} = "{@code <Material> Diesel Engine}" (the
      * upstream row wording "Diesel Engine (Bronze)" :721-729, the port noun-order
      * convention). Table-driven over {@link GT6Kinetics#DIESEL_SPECS}.
@@ -1161,11 +1161,11 @@ public class GT6EnUs extends LanguageProvider {
 
     private void addKinetics() {
         add("block.gt6.crank", "Hand Crank");
-        // task p28-c-water-wheel — the kTFRUAddon registration wording ("Water Mill",
+        // task c-water-wheel — the kTFRUAddon registration wording ("Water Mill",
         // tileEntityInit0.java:112) in its natural English noun form; the atomic key (the
         // crank shape — a single block, no row template to compose)
         add("block.gt6.water_wheel", "Water Wheel");
-        // task p20-i18n-compose-rows — the axle/steam/diesel/burning-box/boiler families
+        // task i18n-compose-rows — the axle/steam/diesel/burning-box/boiler families
         // compose at runtime (the family blocks' getName); the pre-installed full strings
         // retired into ONE family template + the row-material / size / family-word small
         // units, walked from the row tables so the faces cannot drift from the registries
@@ -1179,7 +1179,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The static storage batch display rows (task p26-storage-static-batch): one full
+     * The static storage batch display rows (task storage-static-batch): one full
      * display per row over the vanilla description id — the metal names carry the loader
      * display words verbatim ("Mechanical Bronze Safe", Loader :134-135), the wooden
      * ladders the plank word (the 300-ladder fold, the wave-4 deviation).
@@ -1267,14 +1267,14 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Attachment family keys (task p12-tap-funnel-attachment spec ⑤): one display entry
+     * Attachment family keys (task tap-funnel-attachment spec ⑤): one display entry
      * per {@link GT6Attachments.AttachmentRow} — the upstream registration row display
      * names verbatim ("Ceramic Tap" .. "Adamantium Funnel",
      * Loader_MultiTileEntities.java:2108-2120), walked from {@link GT6Attachments#ROWS}
      * so the lang face cannot drift from the registered rows.
      */
     private void addAttachments() {
-        // task p20-i18n-compose-rows: the twelve tap/funnel rows compose at runtime — two
+        // task i18n-compose-rows: the twelve tap/funnel rows compose at runtime — two
         // family templates + the six material words (the attachment namespace: the row words
         // "Stainless"/"Tantalum Hafnium Carbide" differ from the gt6.material locals)
         add(GT6Attachments.TAP_DISPLAY_KEY, "%s Tap");
@@ -1282,14 +1282,14 @@ public class GT6EnUs extends LanguageProvider {
         for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
             addRowMatUnit(GT6Attachments.matUnitKeyOf(tRow), tRow.matDisplay());
         }
-        // task p12-gearbox-transformer: the wood kinetic rows (the upstream row wording,
+        // task gearbox-transformer: the wood kinetic rows (the upstream row wording,
         // "Custom Wooden Gearbox" :1669 / "Wooden Transformer Gearbox" :1668)
         add("block.gt6.gearbox", "Custom Wooden Gearbox");
         add("block.gt6.transformer_rotation", "Wooden Transformer Gearbox");
     }
 
     /**
-     * The seven material prefix BLOCK tab titles (task p8-prefixblock-registry, spec ⑦):
+     * The seven material prefix BLOCK tab titles (task prefixblock-registry, spec ⑦):
      * one per creative-visible block prefix (upstream PrefixBlockItem.java:66-67 creates one
      * CreativeTab per block* prefix with the prefix's mNameCategory as its label), keyed
      * {@code itemGroup.gt6.block_raw} etc. — the same "itemGroup.&lt;internal&gt; = mNameCategory"
@@ -1307,25 +1307,25 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Fluid barrel keys (task p4-fluid-barrel, W3 provider additions; extended by task
-     * p6-barrel-metal-plastic): the barrel display names (upstream rows — "Wooden Barrel"
+     * Fluid barrel keys (task fluid-barrel, W3 provider additions; extended by task
+     * barrel-metal-plastic): the barrel display names (upstream rows — "Wooden Barrel"
      * Loader_MultiTileEntities.java:2136, "Plastic Canister" :2150, "Bronze Drum" :2151)
      * and the "Fluid Containers" creative tab (the upstream MTE-registry category of the
-     * same rows). Task p7-barrel-high-tier-melt-bridge: the high-tier drum rows
+     * same rows). Task barrel-high-tier-melt-bridge: the high-tier drum rows
      * :2159-2170, display names verbatim.
      */
     /**
-     * The kitchen family keys (task p26-kitchen-pot-bowl): the three manual blocks and
+     * The kitchen family keys (task kitchen-pot-bowl): the three manual blocks and
      * the raw bowl item, display names VERBATIM from the upstream registration rows
      * ("Wooden Bathing Pot" :2173, "Bathing Pot" :2175, "Ceramic Bowl" :2177 — all
      * "Misc Tool Blocks") plus the "Clay Bowl" raw item (MultiItemRandomTools.java:119).
-     * Task p27-lang-fix — the TAB RETIREMENT: the "GT6 Kitchen" tab face
+     * Task lang-fix — the TAB RETIREMENT: the "GT6 Kitchen" tab face
      * (itemGroup.gt6.kitchen) is gone per the user ruling (the pot/bowl rows are
      * processing machines, not cookware; no renamed successor) — the four items ride
      * the machines tab through the GT6Kitchen BuildCreativeModeTabContentsEvent join,
      * so this provider carries no tab key for the family anymore.
      *
-     * <p>Task p29-w3-heat-smelter lang rider (decisions.p29-mixingbowl-ruling, the user
+     * <p>Task w3-heat-smelter lang rider (decisions.p29-mixingbowl-ruling, the user
      * ruling 2026-09-14): the en display of the mixing_bowl row had DRIFTED to the
      * upstream registration literal "Ceramic Bowl" while the zh face always carried the
      * correct 搅拌盆 ("Mixing Bowl") — the en face is corrected to the Mixing Bowl
@@ -1336,19 +1336,19 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.bathing_pot_wood", "Wooden Bathing Pot");
         add("block.gt6.bathing_pot_steel", "Bathing Pot");
         add("block.gt6.mixing_bowl", "Mixing Bowl"); // decisions.p29-mixingbowl-ruling — the en drift corrected
-        add("block.gt6.juicer", "Juicer"); // task p33-food-machines-kitchen — the Loader :2184 name column verbatim
+        add("block.gt6.juicer", "Juicer"); // task food-machines-kitchen — the Loader :2184 name column verbatim
         add("item.gt6.clay_bowl", "Clay Bowl");
         add("item.gt6.clay_juicer", "Clay Juicer"); // issue #45 C1 — the MultiItemRandomTools.java:118 name column verbatim
     }
 
-    /** The Measuring Pot pair (task r8-issue45-c3, issue #45) — the Loader :2096 name column + the :121 raw row, both verbatim. */
+    /** The Measuring Pot pair (task issue45-c3, issue #45) — the Loader :2096 name column + the :121 raw row, both verbatim. */
     private void addMeasuringPot() {
         add("block.gt6.measuring_pot", "Ceramic Measuring Pot"); // the Loader_MultiTileEntities.java:2096 name column verbatim
         add("item.gt6.clay_measuring_pot", "Clay Measuring Pot"); // the MultiItemRandomTools.java:121 raw row verbatim
     }
 
     /**
-     * The anvil family keys (task p28-c-anvil): the two stone anvil blocks, display
+     * The anvil family keys (task c-anvil): the two stone anvil blocks, display
      * names VERBATIM from the upstream registration rows (aMat.mNameLocal + " Anvil",
      * Loader_MultiTileEntities.java:2185-2186 — "Stone Anvil" / "Blackstone Anvil",
      * both "Misc Tool Blocks"). The items ride the machines tab (the kitchen join form),
@@ -1375,18 +1375,18 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.barrel_draconium", "Draconium Drum");
         add("block.gt6.barrel_awakened_draconium", "Awakened Draconium Drum");
         add("block.gt6.barrel_infinity", "Infinity Drum");
-        add("block.gt6.barrel_logistics", "Logistics Tank"); // task p12-barrel-keepfilter-logistics — the :2171 row name verbatim
+        add("block.gt6.barrel_logistics", "Logistics Tank"); // task barrel-keepfilter-logistics — the :2171 row name verbatim
         add("itemGroup.gt6.fluid_containers", "Fluid Containers");
     }
 
     /**
-     * Electric wire keys (task p7-d2-cable spec ⑥): the two W1 variants (the upstream row
+     * Electric wire keys (task d2-cable spec ⑥): the two W1 variants (the upstream row
      * names "1x &lt;material&gt; Wire" / "2x ...", MultiTileEntityWireElectric.java:72-73,
      * material-less here) and the "Electric Wires" category tab (the upstream MTE category
      * name, addElectricWires :72).
      *
-     * <p>Task p20-i18n-compose-wires (the B-wave lang ruling, ADR
-     * 2026-09-06-p20-i18n-zhcn-pipeline §1.4): the 626 per-variant full strings (620
+     * <p>Task i18n-compose-wires (the B-wave lang ruling, ADR
+     * 2026-09-06-i18n-zhcn-pipeline §1.4): the 626 per-variant full strings (620
      * electric + 6 redstone, the old GTWireSpecs.displayName rows) RETIRED — the names
      * compose at runtime from five template keys (GTWireBlock.displayNameOf fills
      * {@code gt6.wire.display[.plain]} with the size numeral, the gt6.material.&lt;snake&gt;
@@ -1406,12 +1406,12 @@ public class GT6EnUs extends LanguageProvider {
         add(GTWireBlock.FORM_WIRE_KEY, "Wire");
         add(GTWireBlock.FORM_CABLE_KEY, "Cable");
         add(GTWireBlock.FORM_WIRELAMP_KEY, "Wirelamp");
-        // task p10-wire-laser-placeholder — the laser stays ATOMIC (the row is material-less,
+        // task wire-laser-placeholder — the laser stays ATOMIC (the row is material-less,
         // Loader:1815 verbatim — no composition applies)
         add("block.gt6.wire_laser", "Laser Fiber Wire");
         // review R2: the tier-material backfill so every compose material slot resolves
         addWireRowMaterialNames();
-        // task p11-flat-redstone-tab — the two new tab titles, the upstream MTE category
+        // task flat-redstone-tab — the two new tab titles, the upstream MTE category
         // strings verbatim: "Redstone Wires" (every Loader:1895-1902 row, tab id 27050) and
         // "Laser Wires" (Loader:1815, tab id 24900) — upstream registers the display via
         // LH.add("itemGroup." + name, aCategoricalName) (CreativeTab.java:35, created at
@@ -1434,8 +1434,8 @@ public class GT6EnUs extends LanguageProvider {
      * missing BOTH walks is structurally red instead of a silent raw-key render.
      */
     private void addWireRowMaterialNames() {
-        // (a) the shared seam's emitted face (task p20-i18n-compose-rows; Map form since task
-        // p21-i18n-walk-seam-normalize — the seam carries the merged material per key, so this
+        // (a) the shared seam's emitted face (task i18n-compose-rows; Map form since task
+        // i18n-walk-seam-normalize — the seam carries the merged material per key, so this
         // backfill membership-checks the walk result instead of keeping its own mutable copy)
         Map<String, OreDictMaterial> tEmitted = materialWalkEmittedKeys();
         // (b) backfill exactly the compose-domain misses (containsKey == was absent from the walk)
@@ -1450,8 +1450,8 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Machine family keys (task p4-machine-oven, W2-exclusive provider additions; extended
-     * by task p7-basicmachine-family; the Oven ladder joins in task p27-oven-heat-t-ladder):
+     * Machine family keys (task machine-oven, W2-exclusive provider additions; extended
+     * by task basicmachine-family; the Oven ladder joins in task oven-heat-t-ladder):
      * the machine family display names (upstream
      * rows "Shredder"/"Crusher"/"Lathe", :1294/:1300/:1306) and the "Machines" creative tab
      * (the upstream MTE-registry category of the same rows). The retired atomic
@@ -1462,26 +1462,26 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.shredder", "Shredder");
         add("block.gt6.crusher", "Crusher");
         add("block.gt6.lathe", "Lathe");
-        // task p20-i18n-compose-rows: the nine tier rows (p8-machine-tiers-doinject ⑧) and
+        // task i18n-compose-rows: the nine tier rows (machine-tiers-doinject ⑧) and
         // the dryer/distillery ladders compose at runtime — one machine template + the three
         // machine words, and one template per row family over the gt6.row.mat small units.
-        // task p27-machine-energy-display-fix: the tier slot rides the Kinetic_T MATERIAL
+        // task machine-energy-display-fix: the tier slot rides the Kinetic_T MATERIAL
         // word (upstream "Shredder ("+aMat.getLocal()+")" :1294-1309, Kinetic_T[1..4]
         // MT.java:3690) — the ordinal gt6.row.tier.* units are RETIRED (the T2-T4 blocks
         // fill the slot with the shared gt6.row.mat.* words below)
-        add(gregtech6.registry.GTMachines.OVEN_DISPLAY_KEY, "Oven (%s)"); // task p27-oven-heat-t-ladder
+        add(gregtech6.registry.GTMachines.OVEN_DISPLAY_KEY, "Oven (%s)"); // task oven-heat-t-ladder
         add(gregtech6.registry.GTMachines.MACHINE_DISPLAY_KEY, "%s (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_SHREDDER_UNIT_KEY, "Shredder");
         add(gregtech6.registry.GTMachines.MACHINE_CRUSHER_UNIT_KEY, "Crusher");
         add(gregtech6.registry.GTMachines.MACHINE_LATHE_UNIT_KEY, "Lathe");
         add(gregtech6.registry.GTMachines.DRYER_DISPLAY_KEY, "Dryer (%s)");
         add(gregtech6.registry.GTMachines.DISTILLERY_DISPLAY_KEY, "Distillery (%s)");
-        // task p24-canner-machine — the Canner family template: the upstream name column
+        // task canner-machine — the Canner family template: the upstream name column
         // "Canning Machine ("+VN[tier]+")" (Loader_MultiTileEntities.java:1379-1382;
         // CS.java:154 the LV/MV/HV/EV voltage ladder — the row mat units are the VOLTAGE
         // ids, not a material word like the Heat_T families below)
         add(gregtech6.registry.GTMachines.CANNER_DISPLAY_KEY, "Canning Machine (%s)");
-        // task p26-w1-sifter-compressor-wiremill — the W1 Kinetic trio: the MACHINE_DISPLAY_KEY
+        // task w1-sifter-compressor-wiremill — the W1 Kinetic trio: the MACHINE_DISPLAY_KEY
         // template face of the card spec lands as the three unit keys in the :101-104 shape;
         // the MachineRow carrier fills exactly ONE slot (the tier rides the Kinetic_T material
         // word), so each unit key's value carries the family template (the one-slot
@@ -1489,7 +1489,7 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.MACHINE_SIFTER_UNIT_KEY, "Sifter (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_COMPRESSOR_UNIT_KEY, "Compressor (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_WIREMILL_UNIT_KEY, "Wiremill (%s)");
-        // task p26-w1-press-extruder-molds — the Press + Extruder family templates and the
+        // task w1-press-extruder-molds — the Press + Extruder family templates and the
         // :101-104 unit words (the T1 Extruder word differs upstream: "Low Heat Extruder",
         // :1406, vs "Extruder" :1407-1409)
         add(gregtech6.registry.GTMachines.PRESS_DISPLAY_KEY, "Press (%s)");
@@ -1498,21 +1498,21 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.MACHINE_PRESS_UNIT_KEY, "Press");
         add(gregtech6.registry.GTMachines.MACHINE_EXTRUDER_UNIT_KEY, "Extruder");
         add(gregtech6.registry.GTMachines.MACHINE_EXTRUDER_LOW_HEAT_UNIT_KEY, "Low Heat Extruder");
-        // task p28-c-ulv-machine-ladder — the ULV face: the one-slot templates the new row
+        // task c-ulv-machine-ladder — the ULV face: the one-slot templates the new row
         // carriers compose with (Shredder/Crusher get their first row-carrier template —
         // their T1-T4 siblings stay tierOf tierName; Rolling Mill is the new family, the
         // upstream name column "Rolling Mill ("+aMat.getLocal()+")" Loader:1349-1352 form)
         add(gregtech6.registry.GTMachines.MACHINE_SHREDDER_DISPLAY_KEY, "Shredder (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_CRUSHER_DISPLAY_KEY, "Crusher (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_ROLLING_MILL_UNIT_KEY, "Rolling Mill (%s)");
-        // task p29-w1-kinetic-roll-ladder — the roll-ladder families: the one-slot
+        // task w1-kinetic-roll-ladder — the roll-ladder families: the one-slot
         // templates the row carriers compose with (the upstream name columns
         // "Roll Bender (" / "Roll Former (" / "Cluster Mill (" + aMat.getLocal(),
         // Loader:1355-1358 / :1361-1364 / :1367-1370 form)
         add(gregtech6.registry.GTMachines.MACHINE_ROLL_BENDER_UNIT_KEY, "Roll Bender (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_ROLL_FORMER_UNIT_KEY, "Roll Former (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_CLUSTER_MILL_UNIT_KEY, "Cluster Mill (%s)");
-        // task p29-w1-kinetic-process-ladder — the six process-family templates (the
+        // task w1-kinetic-process-ladder — the six process-family templates (the
         // :101-104 one-slot unit-key form; the upstream name columns verbatim: "Buzzsaw ("
         // :1318-1321 / "Squeezer (" :1324-1327 / "Centrifuge (" :1330-1333 / "Sluice ("
         // :1464-1467 / "Sanding Machine (" :1589-1592 / "Pressure Washer (" :1615-1618)
@@ -1522,7 +1522,7 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.MACHINE_SLUICE_UNIT_KEY, "Sluice (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_SANDING_UNIT_KEY, "Sanding Machine (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_PRESSURE_WASHER_UNIT_KEY, "Pressure Washer (%s)");
-        // task p29-w1-eu-hu-families — the eu-hu family templates: the Mixer rides the
+        // task w1-eu-hu-families — the eu-hu family templates: the Mixer rides the
         // one-slot unit-key form (the Kinetic_T material word, the upstream name column
         // "Mixer ("+aMat+")" :1392-1395); the five Electric* ladders ride the voltage-word
         // slot (the CANNER_DISPLAY_KEY contract, the VN ladder — the upstream "Electric
@@ -1536,7 +1536,7 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.BOXINATOR_DISPLAY_KEY, "Boxinator (%s)");
         add(gregtech6.registry.GTMachines.UNBOXINATOR_DISPLAY_KEY, "Unboxinator (%s)");
         add(gregtech6.registry.GTMachines.FERMENTER_DISPLAY_KEY, "Fermenter");
-        // task p29-w2-eu-special — the eu-special family templates: the two EU ladders ride
+        // task w2-eu-special — the eu-special family templates: the two EU ladders ride
         // the voltage-word slot (the CANNER_DISPLAY_KEY contract — the upstream name columns
         // "Autocrafter ("+VN[tier]+")" :1497-1501 / "Lightning Processor ("+VN[tier]+")"
         // :1582-1586; the T5 word is IV, VN[5], the card-① erratum face) and the Laminator
@@ -1545,7 +1545,7 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.AUTOCRAFTER_DISPLAY_KEY, "Autocrafter (%s)");
         add(gregtech6.registry.GTMachines.LIGHTNING_PROCESSOR_DISPLAY_KEY, "Lightning Processor (%s)");
         add(gregtech6.registry.GTMachines.LAMINATOR_DISPLAY_KEY, "Laminator (%s)");
-        // task p29-w2-exotic-energy — the six exotic-energy family templates: the
+        // task w2-exotic-energy — the six exotic-energy family templates: the
         // Polarizer/Magnetic Separator ride the material-word slot (the upstream name
         // columns "Polarizer ("+aMat+")" :1418-1422 / "Magnetic Separator ("+aMat+")"
         // :1470-1474 over Electric_T[1..5]); the Laser Engraver / Laser Welder / Freezer /
@@ -1557,15 +1557,15 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.MACHINE_LASER_WELDER_UNIT_KEY, "Laser Welder (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_FREEZER_UNIT_KEY, "Freezer (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_CRYO_MIXER_UNIT_KEY, "Cryo Mixer (%s)");
-        // task p31-massfab — the small Matter Fabricator family template (the literal
+        // task massfab — the small Matter Fabricator family template (the literal
         // tier-word slot; the upstream name column "Matter Fabricator (T1..T5)", :1542-1546)
         add(gregtech6.registry.GTMachines.MACHINE_MASSFAB_UNIT_KEY, "Matter Fabricator (%s)");
-        // task p32-qu-scanner-replicator — the QU machine pair templates (the literal
+        // task qu-scanner-replicator — the QU machine pair templates (the literal
         // tier-word slot; the upstream name columns "Molecular Scanner (T3)" :1551 and
         // "Matter Replicator (T1..T3)" :1556-1558)
         add(gregtech6.registry.GTMachines.MACHINE_MOLECULAR_SCANNER_UNIT_KEY, "Molecular Scanner (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_REPLICATOR_UNIT_KEY, "Matter Replicator (%s)");
-        // task p29-w2-hu-tu-piggyback — the seven hu-tu family templates: the two Crackers
+        // task w2-hu-tu-piggyback — the seven hu-tu family templates: the two Crackers
         // and the Loom ride the one-slot unit-key form (the Kinetic/Heat_T material word,
         // the upstream name columns "Steam Cracker (" :1576-1579 / "Catalytic Cracker ("
         // :1570-1573 / "Loom (" :1412-1415); the TU four are the single-variant ATOMIC
@@ -1573,7 +1573,7 @@ public class GT6EnUs extends LanguageProvider {
         // :1653 / "Autoclave" :1655 — the FERMENTER_DISPLAY_KEY no-slot contract)
         add(gregtech6.registry.GTMachines.MACHINE_STEAM_CRACKER_UNIT_KEY, "Steam Cracker (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_CATALYTIC_CRACKER_UNIT_KEY, "Catalytic Cracker (%s)");
-        // task p34-machines-burner-plantalyzer — the two family templates (the upstream
+        // task machines-burner-plantalyzer — the two family templates (the upstream
         // name columns "Burner Mixer ("+aMat.getLocal()+")" :1595-1598 and
         // "Plantalyzer ("+VN[tier]+")" :1601-1605)
         add(gregtech6.registry.GTMachines.MACHINE_BURNER_MIXER_UNIT_KEY, "Burner Mixer (%s)");
@@ -1583,28 +1583,28 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GTMachines.GENERIFIER_DISPLAY_KEY, "Generifier");
         add(gregtech6.registry.GTMachines.BATH_DISPLAY_KEY, "Bath");
         add(gregtech6.registry.GTMachines.AUTOCLAVE_DISPLAY_KEY, "Autoclave");
-        // task p29-w3-heat-smelter — the two heat families: the Smelter rides the
+        // task w3-heat-smelter — the two heat families: the Smelter rides the
         // one-slot unit-key form (the Heat_T material word, the upstream name column
         // "Smelter ("+aMat+")" :1431-1434); the Melter is the single-variant ATOMIC row
         // (the upstream name column "Melter" :1657 — the FERMENTER_DISPLAY_KEY no-slot
         // contract)
         add(gregtech6.registry.GTMachines.MACHINE_SMELTER_UNIT_KEY, "Smelter (%s)");
         add(gregtech6.registry.GTMachines.MELTER_DISPLAY_KEY, "Melter");
-        // task p34-machines-bumblelyzer-crucible — the two machine families: the Bumblelyzer
+        // task machines-bumblelyzer-crucible — the two machine families: the Bumblelyzer
         // rides the voltage-word slot (the upstream name column "Bumblelyzer ("+VN[tier]+")"
         // :1608-1612); the Crystallisation Crucible the Heat_T material-word slot (the upstream
         // name column "Crystallisation Crucible ("+aMat+")" :1437-1440)
         add(gregtech6.registry.GTMachines.MACHINE_BUMBLELYZER_UNIT_KEY, "Bumblelyzer (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_CRYSTALLISATION_UNIT_KEY, "Crystallisation Crucible (%s)");
-        // task p24-act-machine — the single-variant row (upstream "Advanced Crafting Table",
+        // task act-machine — the single-variant row (upstream "Advanced Crafting Table",
         // Loader_MultiTileEntities.java:136 name column)
         add("block.gt6.advanced_crafting_table", "Advanced Crafting Table");
-        // task p29-w2-eu-core-5tier — the eu-core family templates: the voltage-word slot
+        // task w2-eu-core-5tier — the eu-core family templates: the voltage-word slot
         // (the CANNER_DISPLAY_KEY contract) over the FIVE-word VN ladder LV/MV/HV/EV/IV
         // (the upstream name columns "Electrolyzer ("+VN[tier]+")" :1336-1340 / "Injector ("
         // :1443-1447 / "Printer (" :1450-1454 / "Scanner (Visuals, " :1457-1461 — the comma
         // form verbatim / "Slicer (" :1525-1529; VN[5] = "IV", CS.java:154 — the S9 ruling,
-        // task p29-w2-eu-core-5tier — the eu-core family templates: the voltage-word slot
+        // task w2-eu-core-5tier — the eu-core family templates: the voltage-word slot
         // NOT "EV": ev is T4's word since p24)
         add(gregtech6.registry.GTMachines.ELECTROLYZER_DISPLAY_KEY, "Electrolyzer (%s)");
         add(gregtech6.registry.GTMachines.INJECTOR_DISPLAY_KEY, "Injector (%s)");
@@ -1615,7 +1615,7 @@ public class GT6EnUs extends LanguageProvider {
                 {"tungsten_carbide", "Tungsten Carbide"}, {"bronze", "Bronze"}, {"tungstensteel", "Tungstensteel"},
                 {"lv", "LV"}, {"mv", "MV"}, {"hv", "HV"}, {"ev", "EV"}, {"iv", "IV"},
                 {"any_wood", "Any Wood"}, {"ulv", "ULV"},
-                // task p29-w2-exotic-energy — the Electric_T[1]/[2]/[4] locals (Galvanized
+                // task w2-exotic-energy — the Electric_T[1]/[2]/[4] locals (Galvanized
                 // Steel/Aluminium/Chromium, MT.java:1731/:401/:412 setLocal faces; the
                 // stainless_steel/titanium rungs ride the units above) + the LITERAL
                 // "(T1)".."(T5)" tier words of the four T-named exotic families
@@ -1623,16 +1623,16 @@ public class GT6EnUs extends LanguageProvider {
                 {"t1", "T1"}, {"t2", "T2"}, {"t3", "T3"}, {"t4", "T4"}, {"t5", "T5"}}) {
             addRowMatUnit("gt6.row.mat." + tMat[0], tMat[1]); // the Heat_T[1..4] locals (MT.java:3689) + the VN[1..4] ids (CS.java:154) + the Kinetic_T[1..4] locals (the W1 trio) + the p28 ULV rungs (the T0 material word + VN[0]) + the p29 W2 5-tier rung (VN[5] = "IV" — the card gloss said EV, refuted by the CS.java:154 array and by ev already being T4's word; the GTMachines.EV_TIER_INPUTS doc carries the erratum)
         }
-        // task p16-distillery-family ① — the Integrated Circuit ("Selector Tag", the upstream
+        // task distillery-family ① — the Integrated Circuit ("Selector Tag", the upstream
         // registration name ItemIntegratedCircuit.java:50 verbatim) + the configuration
         // tooltip ("Configuration: ", the LH line :54/:100; the number rides %s).
         add("item.gt6.integrated_circuit", "Selector Tag");
         add(gregtech6.item.GT6Circuits.TOOLTIP_KEY, "Configuration: %s");
         add("itemGroup.gt6.machines", "Machines");
-        // task p38-tabfix-d-ruling — the written-books tab (the user ruling; the zh face
+        // task tabfix-d-ruling — the written-books tab (the user ruling; the zh face
         // rides the tsv hand row 说明书)
         add("itemGroup.gt6.books", "Books");
-        // task p29-w4-hot-lube ④ — the Lubricant Bucket (the architect ruling's naming
+        // task w4-hot-lube ④ — the Lubricant Bucket (the architect ruling's naming
         // candidate) + its "Industrial Use ONLY!" tooltip (the upstream :617 drink
         // description verbatim).
         add("item.gt6.lubricant_bucket", "Lubricant Bucket");
@@ -1640,10 +1640,10 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Multiblock family keys (task p4-multiblock-framework, W3 provider order 1:
+     * Multiblock family keys (task multiblock-framework, W3 provider order 1:
      * multiblock→barrel→cover): the Coke Oven controller + bricks part display names (the
      * upstream coke oven bricks MTE 18000 naming) and the "Multiblocks" creative tab.
-     * Task p13-large-boiler appends the Large Boiler family: the five variant display
+     * Task large-boiler appends the Large Boiler family: the five variant display
      * names + the five Dense Wall names + the Heat Transmitter (the upstream
      * aRegistry.add name column verbatim, Loader_MultiTileEntities.java
      * :1159-1165/:1176/:1248-1252).
@@ -1652,7 +1652,7 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.multiblock_coke_oven", "Coke Oven");
         add("block.gt6.multiblock_coke_oven_bricks", "Coke Oven Bricks");
         add("itemGroup.gt6.multiblocks", "Multiblocks");
-        // task p20-i18n-compose-rows: the Dense Wall + Large Boiler rows compose at runtime
+        // task i18n-compose-rows: the Dense Wall + Large Boiler rows compose at runtime
         // (the wall/boiler blocks' getName); the Heat Transmitter stays ATOMIC (a bare noun,
         // the Loader:1176 row verbatim — nothing to compose)
         add(gregtech6.registry.GTMultiBlocks.DENSE_WALL_DISPLAY_KEY, "Dense %s Wall");
@@ -1665,16 +1665,16 @@ public class GT6EnUs extends LanguageProvider {
         }
         add("block.gt6." + gregtech6.registry.GTMultiBlocks.TRANSMITTER_ROW.path(),
                 gregtech6.registry.GTMultiBlocks.TRANSMITTER_ROW.matDisplay());
-        // task p24-lightning-rod — the controller + the three atomic part names (the Loader
+        // task lightning-rod — the controller + the three atomic part names (the Loader
         // :1282/:1151/:1168/:1179 name column verbatim) and the addToolTips replay keys (the
         // upstream :88-115 LH rows verbatim; the zh wording rides the dump
         // tmp/gregtech.lang :17758-17766 via the reference table)
-        // task p26-crucible-multiblock — the LARGE crucible family (the Loader :1145/:1270
+        // task crucible-multiblock — the LARGE crucible family (the Loader :1145/:1270
         // name column verbatim; the single-rung Steel ladder, the composed-row template
         // defers with the 8-material pool)
         add("block.gt6.crucible_steel_wall", "Steel Wall");
         add("block.gt6.crucible_steel", "Large Steel Crucible");
-        // task p29-w3-distill-crucible — the crucible ladder (the Loader :1271-1277 name
+        // task w3-distill-crucible — the crucible ladder (the Loader :1271-1277 name
         // column verbatim; the ladder walls compose "<mat> Wall" over the EXISTING
         // gt6.row.mat words — zero new unit keys) and the twin towers (:1226-1227 verbatim)
         add("block.gt6.crucible_stainless_steel", "Large Stainless Steel Crucible");
@@ -1687,7 +1687,7 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.distillation_tower", "Distillation Tower");
         add("block.gt6.cryo_distillation_tower", "Cryo Distillation Tower");
         add("block.gt6.multiblock_lightning_rod", "Lightning Rod Electric Output");
-        // task p29-w3-heat-smelter — the Large Heat Exchanger controller (the :1245 name column)
+        // task w3-heat-smelter — the Large Heat Exchanger controller (the :1245 name column)
         add("block.gt6.large_heat_exchanger", "Large Heat Exchanger");
         add("block.gt6.machine_wall_tungsten", "Tungsten Wall");
         add("block.gt6.niobium_titanium_coil", "Large Niobium-Titanium Coil");
@@ -1704,7 +1704,7 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_LINE.formatted(9), "Reduced Efficiency if too close to another Lightning Rod (256m)");
         add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_ENERGY, "%s EU/p (up to 16 Amps)");
         add(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_CAPACITY, "%s EU per Lightning Strike");
-        // task p29-w3-nbtdesign-parts — the part-family expansion: the METAL WALL rows
+        // task w3-nbtdesign-parts — the part-family expansion: the METAL WALL rows
         // compose "<mat> Wall" over the EXISTING gt6.row.mat words (zero new unit keys);
         // every other new row is ATOMIC (the Loader :1138-1189 name column verbatim)
         add(gregtech6.registry.GTMultiBlocks.PartRow.METAL_WALL_DISPLAY_KEY, "%s Wall");
@@ -1717,7 +1717,7 @@ public class GT6EnUs extends LanguageProvider {
                 add("block.gt6." + tRow.path(), tRow.display());
             }
         }
-        // task p29-w3-tank-valves — the 25 Tank Main Valve rows compose over the size words
+        // task w3-tank-valves — the 25 Tank Main Valve rows compose over the size words
         // and the EXISTING gt6.row.mat wall-row words (all six metal materials already in the
         // table); the wood valve takes the ONE-slot template over the new wood unit word
         add(gregtech6.registry.GT6Tanks.TANK_VALVE_DISPLAY_KEY, "%s %s Tank Main Valve");
@@ -1727,7 +1727,7 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.registry.GT6Tanks.SIZE_SMALL_DENSE, "Small Dense");
         add(gregtech6.registry.GT6Tanks.SIZE_LARGE, "Large");
         add(gregtech6.registry.GT6Tanks.SIZE_LARGE_DENSE, "Large Dense");
-        // task p29-w3-turbine-dynamo — the twelve controller names (the Loader
+        // task w3-turbine-dynamo — the twelve controller names (the Loader
         // :1254-1257/:1259-1262/:1264-1267 name column verbatim, ATOMIC rows)
         for (gregtech6.registry.GT6Turbines.SteamTurbineRow tRow : gregtech6.registry.GT6Turbines.STEAM_ROWS) {
             add("block.gt6." + tRow.path(), tRow.display());
@@ -1738,21 +1738,21 @@ public class GT6EnUs extends LanguageProvider {
         for (gregtech6.registry.GT6DynamoHousings.DynamoRow tRow : gregtech6.registry.GT6DynamoHousings.DYNAMO_ROWS) {
             add("block.gt6." + tRow.path(), tRow.display());
         }
-        // task p29-w3-large-12 — the twelve large machines (the Loader :1229-1240 name
+        // task w3-large-12 — the twelve large machines (the Loader :1229-1240 name
         // column verbatim, the row walk over GT6LargeMachines.ROWS)
         for (gregtech6.registry.GT6LargeMachines.LargeMachineRow tRow : gregtech6.registry.GT6LargeMachines.ROWS) {
             add("block.gt6." + tRow.path(), tRow.display());
         }
-        // task p31-implosion — the Implosion Compressor (the Loader :1228 name column)
+        // task implosion — the Implosion Compressor (the Loader :1228 name column)
         add("block.gt6.implosion_compressor", "Implosion Compressor");
-        // task p31-graagg — the Von da Graagg (the Loader :1280 name column verbatim;
+        // task graagg — the Von da Graagg (the Loader :1280 name column verbatim;
         // "Generator" in name only — the EU-consuming mob-suppression tower)
         add("block.gt6.von_da_graagg", "Von da Graagg Generator");
-        add("block.gt6.large_massfab", "Large Matter Fabricator"); // task p31-massfab — the Loader :1241 name column
-        add("block.gt6.fusion_reactor", "Fusion Reactor"); // task p31-fusion — the Loader :1242 name column
-        add("block.gt6.logistics_core", "Logistics Core"); // task p32-logistics-lv3 — the Loader :1281 name column
+        add("block.gt6.large_massfab", "Large Matter Fabricator"); // task massfab — the Loader :1241 name column
+        add("block.gt6.fusion_reactor", "Fusion Reactor"); // task fusion — the Loader :1242 name column
+        add("block.gt6.logistics_core", "Logistics Core"); // task logistics-lv3 — the Loader :1281 name column
         add("block.gt6.nuclear_reactor_core_2x2", "Nuclear Reactor Core (2x2)"); // task debt-reactor-b-2x2-be — the Loader :738 name column verbatim
-        add("block.gt6.bedrock_drill", "Bedrock Mining Drill Controller"); // task p37-bedrock-drill — the Loader :1283 name column verbatim
+        add("block.gt6.bedrock_drill", "Bedrock Mining Drill Controller"); // task bedrock-drill — the Loader :1283 name column verbatim
         // task debt-reactor-c-rods — the 46 rod names (the Loader :741-790 name column
         // verbatim, carried by the ROWS table itself) + the 28 shared tooltip lines (the
         // upstream addToolTips text minus the colour codes; the numeric lines carry %s
@@ -1802,12 +1802,12 @@ public class GT6EnUs extends LanguageProvider {
             java.util.Map.entry("item.gt6.reactor_rod.breeder.loss", "Loss: %s Neutrons"));
 
     /**
-     * Example machine keys (task p3-example-machine): the chest block display name and the
+     * Example machine keys (task example-machine): the chest block display name and the
      * "chests" creative tab title. The tab carries the upstream MTE-registry category name
      * ("Chests", Loader_MultiTileEntities.java:132 / MultiTileEntityRegistry.java:191); the
      * block name resolves through MenuProvider#getDisplayName (block.getName).
      *
-     * <p>The two TestMachine framework blocks join here (task p28-cfoam-lang-key, the
+     * <p>The two TestMachine framework blocks join here (task cfoam-lang-key, the
      * registry-coverage gate's discovery run): they have NO getName override, so their Jade
      * name line resolves the vanilla {@code block.gt6.test_machine[_idle]} keys — which no
      * provider face ever wrote (the same omission class as cfoam_owned). Faces are the
@@ -1816,14 +1816,14 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addExampleMachine() {
         add("block.gt6.example_chest", "GT Example Chest");
-        add("block.gt6.logistics_wire", "Logistics Wire"); // task p32-logistics-lv2 — the dump row tmp/gregtech.lang:11847 family (en face)
+        add("block.gt6.logistics_wire", "Logistics Wire"); // task logistics-lv2 — the dump row tmp/gregtech.lang:11847 family (en face)
         add("block.gt6.test_machine", "Test Machine");
         add("block.gt6.test_machine_idle", "Test Machine (Passive)");
         add("itemGroup.gt6.chests", "Chests");
     }
 
     /**
-     * Fluid pipe keys (task p4-fluid-pipes, W1-exclusive provider additions): the two wood
+     * Fluid pipe keys (task fluid-pipes, W1-exclusive provider additions): the two wood
      * tiers, the "Fluid Pipes" category tab (the upstream MTE category name,
      * MultiTileEntityPipeFluid.java:83-98) and the molten iron FluidType description
      * (descriptionId set at GTFluids.IRON_MOLTEN_TYPE, the FL.create local-name counterpart
@@ -1834,11 +1834,11 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.wood_fluid_pipe_medium", "Wood Fluid Pipe");
         add("itemGroup.gt6.fluid_pipes", "Fluid Pipes");
         add("fluid.gt6.iron_molten", "Molten Iron");
-        add("fluid.gt6.natural_gas", "Natural Gas"); // task p5-barrel-side-rules spec ⑤ — the lighter-fluid acceptance carrier
+        add("fluid.gt6.natural_gas", "Natural Gas"); // task barrel-side-rules spec ⑤ — the lighter-fluid acceptance carrier
     }
 
     /**
-     * Item pipe keys (task p26-pipe-item): the six variant templates over the three
+     * Item pipe keys (task pipe-item): the six variant templates over the three
      * material words (the composed display — the upstream name columns
      * Loader_MultiTileEntities.java:1823-1843 + MultiTileEntityPipeItem.java:77-82; the
      * dump word set tmp/gregtech.lang:11849-11866 keeps 物流管道 for the zh face) and the
@@ -1866,7 +1866,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The ore tab title (task p30-ore-3-datagen): GT6OreBlocks registers its own creative
+     * The ore tab title (task ore-3-datagen): GT6OreBlocks registers its own creative
      * tab under {@link GT6OreBlocks#TAB_TITLE_KEY} — the ore prefixes are NOT in
      * GTMaterialItems.tabPrefixes() (upstream hides them from the tab roster,
      * PrefixBlockItem.java:62-67 SHOW_ORE_BLOCK_PREFIXES=false, so the roster walk above
@@ -1880,7 +1880,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The broken-form ore templates (task r4-ore-broken-name): one extra
+     * The broken-form ore templates (task ore-broken-name): one extra
      * {@code gt6.tagprefix.<prefix_snake>_broken} template per family that owns a SEPARATE
      * broken block — the 4 broken≡normal dust families keep the single upstream name (no
      * _broken key). This is the EXPLICIT reverse-upstream ruling (user 2026-09-28): upstream
@@ -1904,7 +1904,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Replay seam over an arbitrary prefix list (task p37-polish-compressed-warn): the real
+     * Replay seam over an arbitrary prefix list (task polish-compressed-warn): the real
      * walk ({@link OreDictPrefix#VALUES}) hits exactly one snake_case collision — the declared
      * first-wins pair — while the mute guard test feeds a synthetic UNdeclared duplicate to
      * prove that path still WARNs.
@@ -1963,7 +1963,7 @@ public class GT6EnUs extends LanguageProvider {
      * verbatim). Single implementation shared by the en table walk ({@link #addMaterialNames}),
      * the wire-row backfill ({@link #addWireRowMaterialNames}) and the zh family join
      * (GT6ZhCn.addMaterialNames — zh needs the material identity for its TSV family lookup,
-     * which the old Set form could not carry; task p21-i18n-walk-seam-normalize). The parity
+     * which the old Set form could not carry; task i18n-walk-seam-normalize). The parity
      * test does NOT consume this seam: its keyface guards replay the compose domains against
      * the recording face (the recorded entries), covering this walk indirectly.
      */
@@ -1984,9 +1984,9 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The 16 stone-variant display templates (task p20-i18n-compose-rows, the B-wave lang
+     * The 16 stone-variant display templates (task i18n-compose-rows, the B-wave lang
      * ruling): the 272 pre-installed per-(stone, variant) full strings (task
-     * p19-stoneblocks-registry, 17 stones x 16 variants) RETIRED — the name composes at
+     * stoneblocks-registry, 17 stones x 16 variants) RETIRED — the name composes at
      * runtime from {@code gt6.stone.variant.<snake>} (one position-param template per
      * {@link StoneVariant}, the stone name slot riding the {@code gt6.material.<snake>}
      * small unit) at {@link gregtech6.block.stone.GTStoneBlock#getName}. The template VALUES
@@ -2025,7 +2025,7 @@ public class GT6EnUs extends LanguageProvider {
     };
 
     /**
-     * Spray-can family keys (task p22-spraycan-items): the 18 item display names + the family
+     * Spray-can family keys (task spraycan-items): the 18 item display names + the family
      * tab title + the three tooltip templates. The item names are the upstream registration
      * rows verbatim — "Spray Paint (Black)".."Spray Paint (White)"
      * (MultiItemRandomTools.java:243), "Paint Removal Spray" (:269), "Empty Spray Can" (:235)
@@ -2049,7 +2049,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Food-can family keys (task p25-food-can-row0): the row0 MINIMAL subset's display
+     * Food-can family keys (task food-can-row0): the row0 MINIMAL subset's display
      * names, walked over the {@link GT6FoodCans} registry constants so the lang face
      * cannot drift from the registered ids (the addSprayCans form). Values are the
      * upstream registration-row wordings verbatim: "Empty Food Can"
@@ -2074,7 +2074,7 @@ public class GT6EnUs extends LanguageProvider {
         }
         add("item.gt6." + GT6FoodCans.FOOD_CAN_COOKIES_HUGE.getId().getPath(), "Huge Food Can (Cookies)");
         add("item.gt6.bending_cylinder_small", "Small Bending Cylinder");
-        // task p29-w5-t3-machine-face-four: the machine-face four display names (the
+        // task w5-t3-machine-face-four: the machine-face four display names (the
         // upstream registration-row wordings "Soft Hammer"/"Monkey Wrench"/"Magnifying
         // Glass"/"Pincers", Loader_Tools.java:125/:144/:148/:150 verbatim)
         add("item.gt6.soft_hammer", "Soft Hammer");
@@ -2085,7 +2085,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Extruder-mold family keys (task p26-w1-press-extruder-molds): the row0 MINIMAL
+     * Extruder-mold family keys (task w1-press-extruder-molds): the row0 MINIMAL
      * subset's display names, walked over the {@link GT6ExtruderMolds} registry constants
      * so the lang face cannot drift from the registered ids (the addFoodCans form).
      * Values are the upstream registration-row wordings verbatim: "Extruder Shape (Plate)"
@@ -2106,8 +2106,8 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Slicer-blade family keys (task p35-slicer-row-domain; the census completion rides
-     * task p36-recipes-obtainability ruling B): the FULL eight-item census display names,
+     * Slicer-blade family keys (task slicer-row-domain; the census completion rides
+     * task recipes-obtainability ruling B): the FULL eight-item census display names,
      * walked over the {@link gregtech6.registry.GT6SlicerBlades#ALL} registry constants so
      * the lang face cannot drift from the registered ids (the addExtruderMolds form).
      * Values are the upstream registration-row wordings verbatim: "Slicer Blade Frame"
@@ -2134,7 +2134,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Grass family keys (task p24-grass-block): 8 rows — the 6 variant display names and
+     * Grass family keys (task grass-block): 8 rows — the 6 variant display names and
      * the 2 tooltip lines. The 6 block items resolve the VANILLA BlockItem descriptionId
      * face ({@code block.gt6.<registry-path>}); all six names are the SAME word — the
      * upstream 16 meta keys are all named "Grass" (BlockGrass.java:49-64, no colour
@@ -2155,7 +2155,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * C-Foam spray family keys (task p25-c-foam-pipe-spray spec ①): 35 rows — the 32 item
+     * C-Foam spray family keys (task c-foam-pipe-spray spec ①): 35 rows — the 32 item
      * display names (16 C-Foam Sprays + 16 Advanced owned variants), the family tab and the
      * two tooltip templates. The item names are the upstream registration rows verbatim —
      * "C-Foam Spray (Black)".."C-Foam Spray (White)" (MultiItemRandomTools.java:251) and
@@ -2187,7 +2187,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Sensor family keys (task p26-sensors-core, batch p34-sensors-trivial-14): the
+     * Sensor family keys (task sensors-core, batch sensors-trivial-14): the
      * sensor display names — the upstream registration rows verbatim (Loader_MultiTileEntities
      * .java :1995 "Progress Sensor", :1986 "Fluid-O-Meter Sensor", :1997 "Electrometer
      * Sensor", then the :1979-1994 batch tail), walked from the {@link GT6Sensors#ROWS}
@@ -2203,7 +2203,7 @@ public class GT6EnUs extends LanguageProvider {
                 case "progressmeter" -> "Progress Sensor";      // Loader :1995
                 case "fluidometer"   -> "Fluid-O-Meter Sensor"; // Loader :1986
                 case "electrometer"  -> "Electrometer Sensor";  // Loader :1997
-                // p34-sensors-trivial-14 — the upstream display strings verbatim (Loader :1979-:1994)
+                // sensors-trivial-14 — the upstream display strings verbatim (Loader :1979-:1994)
                 case "thermometer"            -> "Thermometer Sensor";             // :1979
                 case "luminometer"            -> "Luminometer Sensor";             // :1980
                 case "chronometer"            -> "Chronometer Sensor";             // :1981
@@ -2219,7 +2219,7 @@ public class GT6EnUs extends LanguageProvider {
                 case "superheavyweightometer" -> "Super Heavy Weight-O-Meter Sensor"; // :1992
                 case "tpsmeter"               -> "TPS Sensor";                     // :1993
                 case "playercounter"          -> "Player Counter Sensor";          // :1994
-                // p37-sensors-3 — the pool closure, the upstream display strings verbatim (Loader :1996/:1998/:1999)
+                // sensors-3 — the pool closure, the upstream display strings verbatim (Loader :1996/:1998/:1999)
                 case "geigercounter"          -> "Geiger Counter Sensor";          // :1996
                 case "tachometer"             -> "Tachometer Sensor";              // :1998
                 case "laserometer"            -> "Laser-O-Meter Sensor";           // :1999
@@ -2229,7 +2229,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Portal family keys (task p35-portals-mini-nether-end, 12 keys): the two display
+     * Portal family keys (task portals-mini-nether-end, 12 keys): the two display
      * names — the upstream registration rows verbatim (Loader_MultiTileEntities.java:2003
      * "Miniature Nether Portal" / :2004 "Miniature End Portal") — plus the upstream
      * tooltip stack (MultiTileEntityMiniPortal.java:86-89 the shared function pair,
@@ -2254,7 +2254,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The crucible Jade face keys (task p28-crucible-jade-face, r8-jade-converter-crucible-
+     * The crucible Jade face keys (task crucible-jade-face, jade-converter-crucible-
      * restyle adds the bar face — 5 keys): the temperature bar line (current/max K over the
      * two-slot B-case template, the thermometer anchor MultiTileEntitySmeltery.java:512 —
      * the unit word moved to the tail) alongside the RETAINED meltdown alarm row (the old
@@ -2274,7 +2274,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The common Jade face keys (task r8-jade-redesign-core, 6 keys — the cross-family
+     * The common Jade face keys (task jade-redesign-core, 6 keys — the cross-family
      * status rows on the shared GT6JadeRows helper): the machine status pair (Active green
      * / Inactive red — the semantics lifted OFF the progress-bar coloring), the two
      * multiblock-formed states (re-keyed from gt6.jade.machine.multiblock.*, the wording
@@ -2294,7 +2294,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The machine Jade face keys (task p34-hygiene-lang, r8-jade-redesign-core reface —
+     * The machine Jade face keys (task hygiene-lang, jade-redesign-core reface —
      * 4 keys): the progress line in its two unit faces (seconds over {@code %.1f}-
      * preformatted slots / ticks over longs — the GTCEu WorkableBlockProvider :72-77
      * split) now over the UNIFORM three-slot bar text template X / Y (Z%) — the percent
@@ -2313,7 +2313,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The fluid-group Jade title keys (task p34-hygiene-lang, 2 keys — the
+     * The fluid-group Jade title keys (task hygiene-lang, 2 keys — the
      * GT6FluidProvider decorator's literal titles retired): the tank group headers over
      * the sync ids ("Fluid In"/"Fluid Out") kept verbatim. Consumed by
      * GT6FluidProvider.groupTitle; zh faces ride the reference table's hand layer.
@@ -2324,7 +2324,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The boiler Jade face keys (task r5-jade-boiler, r8-jade-redesign-core reface —
+     * The boiler Jade face keys (task jade-boiler, jade-redesign-core reface —
      * 6 keys): the heat line (stored/max HU — the upstream thermometer wording,
      * MultiTileEntityBoilerTank.java:182 — over the three-slot bar template), the demand
      * line (mOutput/2 HU/t, the getEnergyDemanded value), the WATER/STEAM TANK BARS now
@@ -2346,7 +2346,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The converter-family Jade face keys (task r5-jade-converters, 7 keys): the status
+     * The converter-family Jade face keys (task jade-converters, 7 keys): the status
      * line + its three state words (Stopped > Running > Idle), the stored line in its
      * ceiling form and bare form (no-hard-cap families like the burning boxes), and the
      * rated-output line (the GTCEu RecipeLogicProvider :75+ throughput-row precedent).
@@ -2366,7 +2366,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The four tooltip row-table families (task r8-tooltip-boiler-tank, 43 keys over the
+     * The four tooltip row-table families (task tooltip-boiler-tank, 43 keys over the
      * T1 pilot's 2): the en faces are the upstream addToolTips rows VERBATIM — the boiler
      * table = MultiTileEntityBoilerTank.java:96-107 + the super facing row
      * (TileEntityBase09FacingSingle.java:61/:82), the boiler_large table =
@@ -2377,8 +2377,8 @@ public class GT6EnUs extends LanguageProvider {
      * TileEntityBase08Barrel.java:92-102 with the :90/:91 carry rows DELETED (the design
      * ruling) — the row indexes carry the upstream positions, so the gaps ARE the
      * ported-out rows; the port-authored rows are gt6.tooltip.boiler.14 and
-     * gt6.tooltip.boiler_large.19 (tasks r10-debt-boiler-heat-tip and
-     * r10-debt-boilerlarge-tip, the issue #17 output-condition annex pair). The
+     * gt6.tooltip.boiler_large.19 (tasks debt-boiler-heat-tip and
+     * debt-boilerlarge-tip, the issue #17 output-condition annex pair). The
      * %1$s/%2$s/%3$s positional slots ride the per-variant constants
      * the carrier hands at registration (TranslatableContents.java:87-88). Consumed by
      * GT6Tooltips; zh faces ride the reference table's hand layer via
@@ -2399,7 +2399,7 @@ public class GT6EnUs extends LanguageProvider {
         add("gt6.tooltip.boiler.11", "Use Chisel to decalcify");
         add("gt6.tooltip.boiler.12", "Use Magnifying Glass to see Details");
         add("gt6.tooltip.boiler.13", "Use Wrench to set Facing");
-        // row 14 = port-authored (task r10-debt-boiler-heat-tip, GitHub #17 UX): the upstream
+        // row 14 = port-authored (task debt-boiler-heat-tip, GitHub #17 UX): the upstream
         // addToolTips :95-109 has no output-condition line — the >half-full steam gate is
         // tick-body-only (MultiTileEntityBoilerTank.java:139-142, the port BE :281-287);
         // the heat-capacity face itself is row 4 verbatim (:99), so no duplicate row
@@ -2423,7 +2423,7 @@ public class GT6EnUs extends LanguageProvider {
         add("gt6.tooltip.boiler_large.16", "Use Builder Wand to ease building");
         add("gt6.tooltip.boiler_large.17", "Use Magnifying Glass to see Details");
         add("gt6.tooltip.boiler_large.18", "Use Wrench to set Facing");
-        // row 19 = port-authored (the small-boiler .14 sister line, task r10-debt-boilerlarge-tip,
+        // row 19 = port-authored (the small-boiler .14 sister line, task debt-boilerlarge-tip,
         // GitHub #17 UX): the upstream addToolTips :150-167 has no output-condition line — the
         // >half-full steam gate is tick-body-only (MultiTileEntityLargeBoiler.java:203-207, the
         // port BE :417); the wording rides the boiler.14 self-written sentence verbatim
@@ -2448,7 +2448,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The sensor-family Jade face keys (task r8-jade-sensor-provider, 13 keys = 5 line keys
+     * The sensor-family Jade face keys (task jade-sensor-provider, 13 keys = 5 line keys
      * + the 8 mode names): the reading line (hex mode rides the {@code 0x%04X}-formatted
      * slot — the upstream display-strip hex face, SensorTE:262 — no separate key), the mode
      * line (its slot is the NESTED translatable of one of the eight mode names — upstream
@@ -2475,7 +2475,7 @@ public class GT6EnUs extends LanguageProvider {
     }
     /**
      * The multiblock / converter / generator family tooltip rows (task
-     * r8-tooltip-multiblock-generator, 14 keys): the T4 row-table faces, en VERBATIM from
+     * tooltip-multiblock-generator, 14 keys): the T4 row-table faces, en VERBATIM from
      * the gregapi/data/LH.java faces — multiblock = the Base10MultiBlockBase:100-101 tool
      * rows + the Base09FacingSingle:61 facing row; converter = the same static tail at the
      * Base11MultiBlockConverter:91-94 sequence positions (slots 1-3 = the per-instance
@@ -2501,7 +2501,7 @@ public class GT6EnUs extends LanguageProvider {
         add("gt6.tooltip.generator.11", "Use Wrench to set Facing");
     }
     /**
-     * The wire/pipe/sensor tooltip rows (task r8-tooltip-wire-pipe-sensor, 20 keys): the
+     * The wire/pipe/sensor tooltip rows (task tooltip-wire-pipe-sensor, 20 keys): the
      * four connector families' static addToolTips transcriptions, en VERBATIM from the
      * upstream assemblies. The stat rows are positional-slot templates over the carrier's
      * per-variant constants (the en line is the upstream string concatenation verbatim —
@@ -2536,7 +2536,7 @@ public class GT6EnUs extends LanguageProvider {
         add("gt6.tooltip.sensor.7", "Use Wrench to set Facing");
     }
     /**
-     * The BasicMachine family row table (task r8-tooltip-basic-machine-family, 21 keys):
+     * The BasicMachine family row table (task tooltip-basic-machine-family, 21 keys):
      * the 14 machine slots (gt6.tooltip.machine.* — the upstream slot numbering with the
      * 5/15 gaps, see GT6MachineRows) + the 7 shared face words (gt6.tooltip.face.* — the
      * upstream LH.FACES/FACE_ANY, LH.java:469-478 en VERBATIM, reused by the T4/T5 row
@@ -2568,7 +2568,7 @@ public class GT6EnUs extends LanguageProvider {
         add("gt6.tooltip.face.back", "Back");
     }
     /**
-     * Pocket multitool family keys (task p29-w5-t7-pocket-eight): the eight display names
+     * Pocket multitool family keys (task w5-t7-pocket-eight): the eight display names
      * (the upstream registration rows Loader_Tools.java:176-183 VERBATIM — "Pocket
      * Multitool" + the seven "Pocket Multitool (X)" faces) and the seven tooltip lines
      * (the registration-row note columns for the six noted forms + the switch hint the
@@ -2595,7 +2595,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The Hazmat armor face (task p29-w5-t8-armor-24): 48 rows — 24 display names + 24
+     * The Hazmat armor face (task w5-t8-armor-24): 48 rows — 24 display names + 24
      * per-piece tooltip keys (one shared value per suit), walked over the
      * {@link GT6ArmorMaterials#SUITS} table so the key set cannot drift from the
      * registered ids. The values are the upstream registration rows verbatim
@@ -2643,7 +2643,7 @@ public class GT6EnUs extends LanguageProvider {
         };
     }
     /**
-     * The tree family keys (task p30-w6-t1-trees-nine, 27 rows): block display names walked
+     * The tree family keys (task w6-t1-trees-nine, 27 rows): block display names walked
      * from {@link gregtech6.registry.GT6TreeBlocks#KINDS} — "Rubber Sapling"/"Rubber
      * Leaves" etc are the upstream LH rows verbatim (BlockTreeSaplingAB.java:47-54,
      * BlockTreeSaplingCD.java:45, BlockTreeLeavesAB.java:47-54), logs follow the same
@@ -2659,7 +2659,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The USB Stick family keys (task p32-usb-data, 8 rows): the 4 display names are the
+     * The USB Stick family keys (task usb-data, 8 rows): the 4 display names are the
      * MultiItemTechnological.java:791-794 registration literals verbatim ("USB 1.0 Stick"
      * .. "USB 4.0 Stick"), the per-tier tooltip keys the "Stores Data" description column
      * (the Behavior_DataStorage static line). The data-state lines ("This Stick is Empty",
@@ -2675,7 +2675,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The USB peripheral family keys (task p37-usb-peripherals, 18 rows): the 8 display
+     * The USB peripheral family keys (task usb-peripherals, 18 rows): the 8 display
      * names + 8 tooltips are the MultiItemTechnological.java:803-806 (cables, "USB N.0
      * Cable" / "Replaces USB Sticks when connected to USB Ports") and :814-817 (HDDs,
      * "USB N.0 HDD" / "Stores up to 16 Files at once") registration literals verbatim,
@@ -2719,13 +2719,13 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Task p32-qu-laser-domain — the laser domain name face: the ten converter rungs
+     * Task qu-laser-domain — the laser domain name face: the ten converter rungs
      * (the :930-934 "Electric CO2 Laser (VN)" / :976-980 "Laser Absorber (VN)" display
      * columns, the voltage words VN[1..5]) + the two gas emitters (the :384/:394 display
      * + description columns).
      */
     /**
-     * The placeables band (task p32-placeables) — the MTE deco rows' display faces. The
+     * The placeables band (task placeables) — the MTE deco rows' display faces. The
      * lantern name is the Loader :2031 registration word VERBATIM ("Greg o'Lantern").
      */
     private void addPlaceables() {
@@ -2753,7 +2753,7 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.laser_absorber_t3", "Laser Absorber (HV)");
         add("block.gt6.laser_absorber_t4", "Laser Absorber (EV)");
         add("block.gt6.laser_absorber_t5", "Laser Absorber (IV)");
-        // task p32-qu-energizer — the Loader :962-966 name column ("Quantum Energizer (T)",
+        // task qu-energizer — the Loader :962-966 name column ("Quantum Energizer (T)",
         // the quantum ladder word, NOT a voltage word)
         add("block.gt6.quantum_energizer", "Quantum Energizer (T1)");
         add("block.gt6.quantum_energizer_t2", "Quantum Energizer (T2)");
@@ -2780,7 +2780,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Task p32-magic-absorber — the Magic Field Absorber name face: the :1005 display
+     * Task magic-absorber — the Magic Field Absorber name face: the :1005 display
      * column "Magic Field Absorber" verbatim.
      */
     private void addMagicAbsorber() {
@@ -2788,7 +2788,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Task p38-issue5-fluid-spring-nozzle — the Fluid Spring nozzle name face: the
+     * Task issue5-fluid-spring-nozzle — the Fluid Spring nozzle name face: the
      * Loader_MultiTileEntities.java:2026 display column "Fluid Spring" verbatim.
      */
     private void addFluidSpring() {
@@ -2796,7 +2796,7 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The written-book display names (task p35-books-written): one {@code item.gt6.<path>}
+     * The written-book display names (task books-written): one {@code item.gt6.<path>}
      * key per generated {@link GT6BookText} row, valued with the row title (the upstream
      * createWrittenBook title column, the single-source extractor face). The 1.20.1 leg
      * resolves these — its stacks carry no NBT, so WrittenBookItem.getName falls through
@@ -2807,7 +2807,7 @@ public class GT6EnUs extends LanguageProvider {
         for (GT6BookText.BookText tRow : GT6BookText.BOOKS) {
             add("item.gt6." + tRow.path(), tRow.title());
         }
-        // the Dusty Guide Book loot carrier (task p38-book-loot-first) — the upstream
+        // the Dusty Guide Book loot carrier (task book-loot-first) — the upstream
         // MultiItemBooks.java:67 name + the two tooltip columns (:67 description +
         // Behavior_Drop_Loot.java:31 behavior line)
         add("item.gt6.book_loot_guide", "Dusty Guide Book");

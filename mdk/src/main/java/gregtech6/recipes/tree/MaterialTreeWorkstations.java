@@ -106,7 +106,7 @@ public final class MaterialTreeWorkstations {
 	}
 
 	/**
-	 * The ONE map's representative machine stack (task r8-mattree-v2-nodes, the v2 node-graph
+	 * The ONE map's representative machine stack (task mattree-v2-nodes, the v2 node-graph
 	 * machine-icon face): EMPTY when the map has no table row or the handle is unbound — the
 	 * degrade face (the edge renders as a plain arrow, the via-label carries the machine
 	 * names). Offline this is always EMPTY; the live client resolves (the census test pins

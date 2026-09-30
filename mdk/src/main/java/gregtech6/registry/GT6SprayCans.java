@@ -21,7 +21,7 @@ import gregtech6.GT6Mod;
 import gregtech6.item.spraycan.GTSprayCanItem;
 
 /**
- * The GT6 spray-can registration home — task p22-spraycan-items. Card-owned self-contained
+ * The GT6 spray-can registration home — task spraycan-items. Card-owned self-contained
  * {@code @EventBusSubscriber(MOD)} DeferredRegister attached from the construct event (the
  * GT6Tools/GTBarrels precedent; GT6Mod.java / GTModBusListener.java stay untouched).
  *

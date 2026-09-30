@@ -34,7 +34,7 @@ import gregtech6.block.stone.StoneVariant;
 import gregtech6.registry.GT6SurfaceBlocks;
 
 /**
- * The prospector static seam — task p30-pool-prospector, the GTCrowbarItem
+ * The prospector static seam — task pool-prospector, the GTCrowbarItem
  * {@code crowbarToolClick} single-source shape: the item's {@code useOn} and the
  * {@code /gt6tool prospect} acceptance command share this one dispatch, so the RCON
  * chain drives the exact logic a player's hand runs.

@@ -1,5 +1,5 @@
 /*
- * Offline pinned-count tests for task p23-barrel-paint-render: the generated barrel
+ * Offline pinned-count tests for task barrel-paint-render: the generated barrel
  * blockstate/model JSONs carry the tintindex-0 paint seat — the generated-JSON half of
  * the 16 census, asserted against the committed src/generated tree (the
  * GT6MachinePaintRenderDatagenTest shape: the write side is gated by runData, first run
@@ -11,7 +11,7 @@
  * ladder) = 16 blocks — the GTBarrels.paintableBlockArray() registration census, one model
  * each (barrels have no blockstate properties) = 16 block-model JSONs. Upstream canonical:
  * the barrel renders its colored/ texture multiplied by mRGBa (MultiTileEntityBarrelWood
- * .java:42-55; Plastic:42/Metal:39/Logistics:45 isomorphic). Task r8-tex-tank-family:
+ * .java:42-55; Plastic:42/Metal:39/Logistics:45 isomorphic). Task tex-tank-family:
  * the 15 borrowable rows ride the two-layer per-face barrel_parts grammar (the p23
  * "overlay stays pooled" deviation is RETIRED — the overlay decal shells landed); the
  * p12 logistics row keeps the tintedCubeAll single-element form (its borrow deferred).
@@ -74,7 +74,7 @@ class GT6BarrelPaintRenderDatagenTest {
 
     /**
      * Every barrel block model carries the tintindex-0 seat on its body faces. Task
-     * r8-tex-tank-family: the 15 borrowable rows ride the two-layer per-face
+     * tex-tank-family: the 15 borrowable rows ride the two-layer per-face
      * barrel_parts form (body + six decal shells — the body faces tinted, the decals
      * untinted; the drums share the drum family set, every other two-layer row its own);
      * the p12 logistics row keeps the tintedCubeAll single-element form. The full

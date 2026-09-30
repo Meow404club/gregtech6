@@ -30,7 +30,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * The LARGE CRUCIBLE offline physics suite (task p26-crucible-multiblock acceptance ②/④):
+ * The LARGE CRUCIBLE offline physics suite (task crucible-multiblock acceptance ②/④):
  * the BE-side consumption of the A-card {@link CruciblePhysics} LARGE parameter face —
  * the HU charge step, the capacity gate, the boiling evaporation, the Invar alloy
  * formation, the through-wall mold proxy, the melt-down WARNING latch and the full

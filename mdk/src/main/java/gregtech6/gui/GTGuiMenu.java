@@ -18,7 +18,7 @@ import net.minecraft.world.item.ItemStack;
  * {@code transferStackInSlot} becomes {@link #quickMoveStack(Player, int)} — both stay abstract
  * here because their upstream bodies are tile-entity-bound (canInteractWith delegates to
  * {@code mTileEntity.isUseableByPlayerGUI}, ContainerCommon.java:326), which is the example
- * machine card's (p3-example-machine) job to wire.
+ * machine card's (example-machine) job to wire.
  */
 public abstract class GTGuiMenu extends AbstractContainerMenu {
 

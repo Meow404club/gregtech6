@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregtech6.registry.GT6Rails;
 
 /**
- * The GT6 booster rail (task p35-rails-31-blocks) — the upstream
+ * The GT6 booster rail (task rails-31-blocks) — the upstream
  * {@code BlockBaseRail(power=T, detector=F)} third. The upstream onMinecartPass
  * (gregapi/block/misc/BlockBaseRail.java:292-322) is the vanilla powered-rail behaviour
  * written out: powered + moving = accelerate, powered + still = the 0.02 start push toward

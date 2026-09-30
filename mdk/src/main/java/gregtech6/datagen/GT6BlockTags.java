@@ -32,7 +32,7 @@ import gregtech6.registry.GTStoneBlocks;
 import gregtech6.registry.GTWires;
 
 /**
- * The GT6 block-tag datagen home — task p24-tags-provider-skeleton, the first
+ * The GT6 block-tag datagen home — task tags-provider-skeleton, the first
  * {@code TagsProvider} over the BLOCK registry. The base class is the platform
  * {@code BlockTagsProvider}: its constructor is the SAME four-argument shape on both
  * legs — {@code (PackOutput, CompletableFuture<HolderLookup.Provider>, String modId,
@@ -54,7 +54,7 @@ import gregtech6.registry.GTWires;
  * and {@code minecraft:mineable/axe} over the wood fluid barrel ({@link GTBarrels#BARREL},
  * the GTCEu wood-drum-to-axe precedent, BlockTagLoader:69-71).
  *
- * <p><b>Rolling batch 1</b> (task p24-tags-prefix-materials, the census matrix P1 rows):
+ * <p><b>Rolling batch 1</b> (task tags-prefix-materials, the census matrix P1 rows):
  * {@code mineable/pickaxe} extends over the wire universe ({@link GTWires#BLOCKS}
  * whole-class enumeration — a future wire row auto-joins, the machine-walk discipline),
  * the fluid-pipe universe ({@link GTFluidPipes#BLOCKS} whole-class — the task card names
@@ -93,17 +93,17 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	protected void addTags(HolderLookup.Provider aProvider) {
 		addPickaxeBand();
 		addAxeBand();
-		addGrassBand(); // task p24-grass-block — the grass family band
+		addGrassBand(); // task grass-block — the grass family band
 		addShovelBand();
-		addTreeBand(); // task p30-w6-t1-trees-nine — the decisions.p25-leaves-logs-tags-deferred unlock
-		addSurfacePlantBand(); // task p30-w6-t2-surface-blocks — the fallen logs (logs/axe) + the soil pair (shovel)
-		addRailsBand(); // task p35-rails-31-blocks — the 31 rails join #minecraft:rails
+		addTreeBand(); // task w6-t1-trees-nine — the decisions.p25-leaves-logs-tags-deferred unlock
+		addSurfacePlantBand(); // task w6-t2-surface-blocks — the fallen logs (logs/axe) + the soil pair (shovel)
+		addRailsBand(); // task rails-31-blocks — the 31 rails join #minecraft:rails
 		// the takeover seam: later cards tail-append their own add*Band() here
-		// (p24-tags-prefix-materials: rolling batches).
+		// (tags-prefix-materials: rolling batches).
 	}
 
 	/**
-	 * The rails band (task p35-rails-31-blocks): all 31 rail blocks join
+	 * The rails band (task rails-31-blocks): all 31 rail blocks join
 	 * {@code #minecraft:rails} — LOAD-BEARING for function, not just mining: the minecart
 	 * engine gates on the tag ({@code BaseRailBlock.isRail} and
 	 * {@code AbstractMinecart.getMaxSpeedWithRail}'s {@code state.is(BlockTags.RAILS)}
@@ -121,7 +121,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	}
 
 	/**
-	 * The surface-plants band (task p30-w6-t2-surface-blocks): the four fallen-log woods
+	 * The surface-plants band (task w6-t2-surface-blocks): the four fallen-log woods
 	 * join {@code #minecraft:logs} + mineable/axe (the t1 log row — NOTE the coke-oven
 	 * recipe rebuild counts #minecraft:logs, 40 vanilla + 9 gt6 becomes +4 with this
 	 * card, the coordinator-noted census drift), and the soil pair (turf + black sand)
@@ -148,7 +148,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	 * compiles against both legs' entry handles ({@code RegistryObject} /
 	 * {@code DeferredHolder}) without a fork.
 	 *
-	 * <p>Task p24-lightning-rod — the conscious +1: the Lightning Rod pillar block
+	 * <p>Task lightning-rod — the conscious +1: the Lightning Rod pillar block
 	 * (upstream part id 18104, Loader :1179, "Multiblock Machines", pickaxe-mined) joins
 	 * the band. The OTHER three new blocks stay OUT, the multiblock-family convention: the
 	 * tungsten wall / coil are part-family blocks like the five Dense Walls and the coke
@@ -169,7 +169,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 			tPickaxe.add(((BlockItem) tEntry.getValue().get()).getBlock());
 		}
 		tPickaxe.add(gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get("lightning_rod").get()); // the p24 +1
-		// Rolling batch 1 (task p24-tags-prefix-materials, census matrix P1 rows): the wire
+		// Rolling batch 1 (task tags-prefix-materials, census matrix P1 rows): the wire
 		// universe (GTWires.BLOCKS whole-class enumeration — the legacy 1x/2x pair + the 620
 		// electric family + 6 redstone + 1 laser, all GTWireBlock metal rows; a future wire row
 		// auto-joins the band) and the fluid-pipe universe (GTFluidPipes.BLOCKS whole-class —
@@ -186,7 +186,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		for (RegistryObject<GTBarrelBlock> tDrum : GTBarrels.METAL_DRUM_BLOCKS.values()) {
 			tPickaxe.add(tDrum.get());
 		}
-		// task p28-c-anvil — the stone anvil pair joins the band: both rows are stone-carrier
+		// task c-anvil — the stone anvil pair joins the band: both rows are stone-carrier
 		// tool blocks (aUtilStone, the Loader :2185-2186 column; the vanilla
 		// mineable/pickaxe gate over hardness 1.0), the hopper/boiler family convention
 		tPickaxe.add(gregtech6.registry.GT6Anvils.STONE_ANVIL.get());
@@ -199,7 +199,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	}
 
 	/**
-	 * The grass-family band (task p24-grass-block, the user tag-paradigm first case — every
+	 * The grass-family band (task grass-block, the user tag-paradigm first case — every
 	 * row lands in the TagsProvider, ZERO block-code workarounds): each of the 6 GT grass
 	 * variants joins {@code minecraft:dirt} (the BushBlock.java:19 planting face, which the
 	 * canSustainPlant default rides), {@code minecraft:mineable/shovel} (the upstream
@@ -231,7 +231,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	}
 
 	/**
-	 * The mineable/shovel band, rolling batch 1 (task p24-tags-prefix-materials, census
+	 * The mineable/shovel band, rolling batch 1 (task tags-prefix-materials, census
 	 * matrix P1 row): the {@code blockDust} prefix family — the powdery storage blocks ride
 	 * the shovel exactly like the vanilla SAND family the census pinned as the evidence
 	 * (GTCEu pins the dust-storage twin to the same face through its {@code block} prefix's
@@ -248,7 +248,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	}
 
 	/**
-	 * The tree-family band (task p30-w6-t1-trees-nine — the decisions
+	 * The tree-family band (task w6-t1-trees-nine — the decisions
 	 * .p25-leaves-logs-tags-deferred UNLOCK, its condition fires): the 9 tree logs join
 	 * {@code minecraft:logs} (the vanilla fire/flammability semantics) and
 	 * {@code mineable/axe}, the 9 leaves join {@code minecraft:leaves} +

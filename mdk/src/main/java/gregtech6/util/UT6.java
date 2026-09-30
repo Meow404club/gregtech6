@@ -1,7 +1,7 @@
 package gregtech6.util;
 
 /**
- * The root UT port of the wrench side-picking math (task p4-pipe-flow-control spec ①):
+ * The root UT port of the wrench side-picking math (task pipe-flow-control spec ①):
  * {@link #getSideWrenching} is the verbatim port of {@code UT.Code.getSideWrenching}
  * (upstream gregapi/util/UT.java:1776-1798) together with its minimal dependencies —
  * the {@link #OPOS} table (upstream gregapi/data/CS.java:620, {@code {1,0,3,2,5,4,6,6}})

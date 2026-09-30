@@ -22,7 +22,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * The eu-special smoke-row datapack acceptance (task p29-w2-eu-special, the OFFLINE
+ * The eu-special smoke-row datapack acceptance (task w2-eu-special, the OFFLINE
  * half — the {@link GT6EuHuSmokeRowJsonTest} shape): the three committed
  * {@code data/gt6/recipe_maps/<map>.json} files — {@code autocrafter}, {@code lightning},
  * {@code laminator} — pour through the PUBLIC {@link GT6RecipeMapJsonLoader#pour} seam

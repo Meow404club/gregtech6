@@ -22,7 +22,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * TileEntityBase09Connector offline tests (task p4-fluid-pipes spec ②): the 6-bit mask
+ * TileEntityBase09Connector offline tests (task fluid-pipes spec ②): the 6-bit mask
  * arithmetic, the NBT round trip with the &amp;63 clamp, and the connector-type
  * intersection gate. The world-level connect() handshake needs live neighbours — it is
  * exercised by the runServer command path (acceptance ②), like the chest open chain was.

@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.RegisterEvent;
 
 /**
- * The project-level keyed item-data access seam (task p31-identity-seam) —
+ * The project-level keyed item-data access seam (task identity-seam) —
  * {@code get}/{@code set(stack, KEY, ...)} over a typed key registry
  * ({@link GT6DataKey}), named after the {@code GT6DualDirectoryFaces} seam
  * family (the phase_anchors.p30 ruling). ONE storage contract, TWO carriers,

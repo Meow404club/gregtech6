@@ -53,7 +53,7 @@ import gregtech6.tileentity.energy.generators.GTGeneratorLiquidBlockEntity;
 import gregtech6.tileentity.energy.generators.GTGeneratorSolidBlockEntity;
 
 /**
- * The Burning Box family registration home (task p13-burning-box-family spec ⑦, the
+ * The Burning Box family registration home (task burning-box-family spec ⑦, the
  * GT6Kinetics self-contained-DR form): 97 blocks/items over FOUR shared BET rows —
  * the upstream hierarchy Solid←(Brick/Metal) + Liquid←Gas + FluidBed collapsed into
  * four BE classes and one block carrier class parameterized by {@link Family}.
@@ -65,7 +65,7 @@ import gregtech6.tileentity.energy.generators.GTGeneratorSolidBlockEntity;
  * <li>{@link #SOLID_ROWS} = 27 — the Brick row (:519, eff 2500, out 16, ID 1199), the
  *     13 Burning Box (Solid) rows (:522-534, IDs 1100-1112, eff 4500-10000, out
  *     16-256) and the 13 Dense rows (:536-548, IDs 1150-1162, out 64-1024). COUNT
- *     ERRATUM (the p12-engine-steam 28-vs-26 census precedent): the task card's
+ *     ERRATUM (the engine-steam 28-vs-26 census precedent): the task card's
  *     acceptance says "26" Solid rows, but 1 + 13 + 13 = 27 — the Brick row the card's
  *     own spec ① lists is the one the arithmetic lost; the no-upstream-subset ruling
  *     keeps all 27.</li>
@@ -113,7 +113,7 @@ public final class GT6BurningBoxes {
 		FLUIDBED
 	}
 
-	/** The composed Solid/Liquid/Gas display template "{@code Burning Box (%s, %s)}" — family + material slots (task p20-i18n-compose-rows). */
+	/** The composed Solid/Liquid/Gas display template "{@code Burning Box (%s, %s)}" — family + material slots (task i18n-compose-rows). */
 	public static final String DISPLAY_KEY = "gt6.row.burning_box.display";
 	/** The Dense form of the Solid/Liquid/Gas template — the Dense wording rides the template. */
 	public static final String DISPLAY_DENSE_KEY = "gt6.row.burning_box.display.dense";
@@ -162,7 +162,7 @@ public final class GT6BurningBoxes {
 
 	/**
 	 * One Loader material — slug + display name + the NBT_HARDNESS (== NBT_RESISTANCE)
-	 * pair + the row's NBT_MATERIAL (task p27-machine-material-tint-fidelity): every
+	 * pair + the row's NBT_MATERIAL (task machine-material-tint-fidelity): every
 	 * upstream burning-box row carries it (Loader_MultiTileEntities.java:519-548/:619-704)
 	 * and the 1.7.10 registration derives the render colour from it
 	 * (MultiTileEntityClassContainer.java:51, {@code getRGBInt(material.fRGBaSolid)}).
@@ -187,7 +187,7 @@ public final class GT6BurningBoxes {
 			MAT_TUNGSTENSTEEL = new BoxMaterial("tungstensteel"        , "Tungstensteel"         , 12.5F, () -> gregapi.data.MT.TungstenSteel),
 			MAT_TANTALUM_HAFNIUM_CARBIDE = new BoxMaterial("tantalum_hafnium_carbide", "Ta4HfC5", 12.5F, () -> gregapi.data.MT.Ta4HfC5);
 
-	/** One registration row — the block-carrier projection of one upstream aRegistry.add line (the display column retired into the composed-name parameters, task p20-i18n-compose-rows). */
+	/** One registration row — the block-carrier projection of one upstream aRegistry.add line (the display column retired into the composed-name parameters, task i18n-compose-rows). */
 	public record BurningBoxRow(String path, short efficiency, long rate, Family family, BoxMaterial material, boolean stone) {
 		/** The block properties (hardness == resistance on every row; the Brick row the STONE sound). */
 		public BlockBehaviour.Properties properties() {
@@ -474,7 +474,7 @@ public final class GT6BurningBoxes {
 		}
 
 		/**
-		 * The row material (task p27-machine-material-tint-fidelity) — the NBT_MATERIAL the
+		 * The row material (task machine-material-tint-fidelity) — the NBT_MATERIAL the
 		 * upstream burning-box rows carry (:519-548/:619-704); the colour source the common
 		 * {@code GTBasicMachineBlock.materialOf} dispatch hands the paint tint and the 03
 		 * base unpaint(). The lazy supplier resolves against {@code MT.init()} at call time.
@@ -488,7 +488,7 @@ public final class GT6BurningBoxes {
 			return mRow.family();
 		}
 
-		/** The composed burning-box name (task p20-i18n-compose-rows): the {@link GT6BurningBoxes#displayOf} carrier. */
+		/** The composed burning-box name (task i18n-compose-rows): the {@link GT6BurningBoxes#displayOf} carrier. */
 		@Override
 		public net.minecraft.network.chat.MutableComponent getName() {
 			return displayOf(mRow);
@@ -502,7 +502,7 @@ public final class GT6BurningBoxes {
 		@Override
 		public BlockState getStateForPlacement(BlockPlaceContext aContext) {
 			// the front (fuel/ignite face) TOWARDS the placer — the GT6PlacementFacing canon
-			// (task p28-singleblock-facing-canon)
+			// (task singleblock-facing-canon)
 			return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 		}
 

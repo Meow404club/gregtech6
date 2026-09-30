@@ -22,7 +22,7 @@ import gregtech6.item.foamspray.GT6FoamSprayItem;
 import gregtech6.item.spraycan.GTSprayCanItem;
 
 /**
- * The GT6 C-Foam spray registration home — task p25-c-foam-pipe-spray spec ①. The
+ * The GT6 C-Foam spray registration home — task c-foam-pipe-spray spec ①. The
  * {@link GT6SprayCans} structure verbatim (card-owned self-contained {@code @EventBusSubscriber}
  * DeferredRegister attached from the construct event; GT6Mod/GTModBusListener untouched).
  *

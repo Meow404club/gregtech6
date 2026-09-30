@@ -31,7 +31,7 @@ import gregtech6.tileentity.tools.GT6ManualKitchenBlockEntity;
 
 /**
  * The manual kitchen block carrier — the block side of the BathingPot/MixingBowl family
- * (task p26-kitchen-pot-bowl). The carrier pattern (the GTBarrelBlock shape): the block
+ * (task kitchen-pot-bowl). The carrier pattern (the GTBarrelBlock shape): the block
  * carries the registration values upstream wrote into the MTE definition NBT — here the
  * {@code NBT_TANK_CAPACITY} per-tank litres, the {@code NBT_MATERIAL} melting point (the
  * canOutput :178 / fill-gate :304 {@code mMaterial.mMeltingPoint - 100} door) and the
@@ -57,7 +57,7 @@ import gregtech6.tileentity.tools.GT6ManualKitchenBlockEntity;
  * {@code LH.NO_GUI_CLICK_TO_INTERACT} (:92) and the wave4 GUI ruling binds the family to
  * menu-less carriers (zero new MenuType).
  *
- * <p>Task p38-c3-kitchen-tint-shape — the SUB-CUBE SHAPE + the tint carrier: the datagen
+ * <p>Task c3-kitchen-tint-shape — the SUB-CUBE SHAPE + the tint carrier: the datagen
  * models are the sub-cube hollow tubs (GT6BlockStates.addKitchen) while the block rode the
  * default full-cube shape over bare properties — the #1 oversized-selection-box and the #9
  * occlusion X-ray compound. The shape now carries the upstream collision-pool rows verbatim
@@ -134,7 +134,7 @@ public class GTKitchenBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The kitchen-domain material dispatch (task p38-c3-kitchen-tint-shape, the
+	 * The kitchen-domain material dispatch (task c3-kitchen-tint-shape, the
 	 * {@code GTMultiBlockPartBlock.materialOf} mirror shape): only the kitchen carriers
 	 * resolve a material — every other block (machines, parts, barrels, vanilla states) is
 	 * null here, the domain gate {@code GTMachinePaintTint.tintMaterialOf} layers into the

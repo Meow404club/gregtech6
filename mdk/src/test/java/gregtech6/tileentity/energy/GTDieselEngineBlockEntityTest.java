@@ -41,7 +41,7 @@ import gregtech6.registry.GT6Kinetics;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * GTDieselEngineBlockEntity offline tests (task p12-engine-diesel acceptance a): the
+ * GTDieselEngineBlockEntity offline tests (task engine-diesel acceptance a): the
  * combustion truth table (the refill gate {@code mEnergy < mRate * 2}, the 64t-inactive
  * fuel-swap clear :130, the immediate invalid-fuel clear :135, the stop gate, the :138
  * floor), the DC constant-sign invariant ({@code +mRate} same-sign every tick through the
@@ -73,7 +73,7 @@ public class GTDieselEngineBlockEntityTest extends GTOfflineTestBase {
 		BlockEntityType<GTDieselEngineBlockEntity>[] tHolder = (BlockEntityType<GTDieselEngineBlockEntity>[]) new BlockEntityType<?>[1];
 		// OAK_STAIRS joins the valid set for the facingMirrorSyncsFromState fixture (the
 		// vanilla stairs state carries the SAME HORIZONTAL_FACING property instance); 21.1
-		// validates the type/state pair at the BE ctor (task p15-m4-test-infra-2).
+		// validates the type/state pair at the BE ctor (task m4-test-infra-2).
 		tHolder[0] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new GTDieselEngineBlockEntity(tHolder[0], aPos, aState), Blocks.STONE, Blocks.OAK_STAIRS).build(null);
 		sType = tHolder[0];
@@ -121,7 +121,7 @@ public class GTDieselEngineBlockEntityTest extends GTOfflineTestBase {
 		public byte lastSide = -1;
 
 		// 21.1 ctor validation: the fake binds a real BET over the vanilla stone state —
-		// the supplier is stored, never invoked (task p15-m4-test-infra-2).
+		// the supplier is stored, never invoked (task m4-test-infra-2).
 		static final BlockEntityType<CountingSink> FAKE_TYPE =
 				BlockEntityType.Builder.of((aPos, aState) -> new CountingSink(aPos), Blocks.STONE).build(null);
 
@@ -378,7 +378,7 @@ public class GTDieselEngineBlockEntityTest extends GTOfflineTestBase {
 		// mod-construct + RCON gate's surface — offline the DeferredRegister loop never fires)
 		for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) {
 			assertEquals("diesel_engine_" + tSpec.material(), GT6Kinetics.dieselName(tSpec.material()));
-			// the composed face (task p20-i18n-compose-rows): template + material unit replay
+			// the composed face (task i18n-compose-rows): template + material unit replay
 			// to the old row wording; the key/unit faces are pinned in GT6LangParityTest
 			assertEquals(tSpec.matDisplay() + " Diesel Engine",
 					"%s Diesel Engine".replace("%s", tSpec.matDisplay()));

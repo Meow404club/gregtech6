@@ -21,7 +21,7 @@ import gregtech6.covers.covers.CoverTextureSimple;
 import gregtech6.tileentity.machines.TileEntityOven;
 
 /**
- * The paintable storage/NBT/sync/ModelData acceptance (task p21-paintable-storage-sync):
+ * The paintable storage/NBT/sync/ModelData acceptance (task paintable-storage-sync):
  * the {@link IPaintableTE} numeric contract (upstream TileEntityBase07Paintable.java:83-86
  * paint/unpaint/getPaint/isPainted + the 04:227-235 mixPaint routing through the UT.java
  * :1576-1578 channel average, pinned to exact hex values), the gt.color/gt.painted NBT
@@ -115,7 +115,7 @@ public class GTPaintableTest extends GTOfflineTestBase {
 
 		assertTrue(tOven.unpaint(), "upstream :83 — a painted machine unpaints true");
 		assertFalse(tOven.isPainted());
-		// task p27-machine-material-tint-fidelity REVERTED the "no material reference"
+		// task machine-material-tint-fidelity REVERTED the "no material reference"
 		// deviation: unpaint now restores the row material's fRGBaSolid through the block
 		// carrier (GTBasicMachineBlock.materialOf/materialColor) — the upstream Paintable:83
 		// mRGBa = mMaterial.fRGBaSolid form. THIS fixture rides a vanilla BRICKS state, the

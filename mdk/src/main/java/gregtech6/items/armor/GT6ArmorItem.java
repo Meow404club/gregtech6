@@ -20,7 +20,7 @@ import net.minecraft.world.level.Level;
 *///?}
 
 /**
- * The 24-shape parameterized Hazmat piece — task p29-w5-t8-armor-24 spec ①/⑥: ONE
+ * The 24-shape parameterized Hazmat piece — task w5-t8-armor-24 spec ①/⑥: ONE
  * class, the vanilla {@link ArmorItem} (implements Equipable, so the right-click
  * equip/dispense faces are the vanilla ones). FLAT registration, non-NBT — the
  * research.p29-gap-refresh-tools-misc ruling over the upstream

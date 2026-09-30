@@ -54,7 +54,7 @@ import com.mojang.logging.LogUtils;
 
 /**
  * The tier-b datapack JSON seam of the runtime RecipeMaps (task
- * p26-tier-b-rm-json-loader, design state research.p26-r-tier-b-rm-json): pack authors
+ * tier-b-rm-json-loader, design state research.p26-r-tier-b-rm-json): pack authors
  * drop {@code data/gt6/recipe_maps/<map_key>.json} files — {@code {"recipes": [...]}} —
  * and every row is poured straight into the matching {@link GT6RecipeMaps} map at each
  * (re)load of the server data.
@@ -90,8 +90,8 @@ import com.mojang.logging.LogUtils;
  * documented v1 limitation — row deletion needs the tier-c script tier).
  *
  * <p><b>MAP KEYS</b> = the 21 pourable maps ({@link #POURABLE}, the census minus the
- * furnace pair; MIXER joined at the p26-c-foam-fluid-refill review ruling, BATH joins
- * with its own map declaration — task p26-kitchen-pot-bowl). A file named
+ * furnace pair; MIXER joined at the c-foam-fluid-refill review ruling, BATH joins
+ * with its own map declaration — task kitchen-pot-bowl). A file named
  * {@code furnace.json} or {@code furnace_fuel.json} is REJECTED with an ERROR log and
  * the whole file is skipped: {@code FURNACE} proxies the vanilla RecipeManager and
  * {@code FURNACE_FUEL} synthesizes rows on demand — neither ever reads its row stock,
@@ -162,35 +162,35 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 	/**
 	 * The 50 pourable map keys (the registered {@link GT6RecipeMaps} census minus
 	 * FURNACE/FURNACE_FUEL — 11 at the tier-b landing, the 12th is the MIXER append of
-	 * task p26-c-foam-fluid-refill (whose review ruling joins it here), the 13th the
-	 * BATH append of task p26-kitchen-pot-bowl; the P29 W1 wave appends its owning
-	 * cards' keys: the four roll-ladder keys of task p29-w1-kinetic-roll-ladder
+	 * task c-foam-fluid-refill (whose review ruling joins it here), the 13th the
+	 * BATH append of task kitchen-pot-bowl; the P29 W1 wave appends its owning
+	 * cards' keys: the four roll-ladder keys of task w1-kinetic-roll-ladder
 	 * (rollingmill — the map the p28 ULV rung shares — rollbender, rollformer,
 	 * clustermill) and the six batch-C process keys of task
-	 * p29-w1-kinetic-process-ladder (cutter, squeezer, centrifuge, sluice, sharpening,
+	 * w1-kinetic-process-ladder (cutter, squeezer, centrifuge, sluice, sharpening,
 	 * pressurewasher) — the whitelist keeps growing with its census).
 	 * The pourable map keys (the registered {@link GT6RecipeMaps} census minus
-	 * FURNACE/FURNACE_FUEL — 13 through the p26-kitchen-pot-bowl BATH append; the four
-	 * card-D datapack-domain maps of task p29-w1-eu-hu-families join at the p29 W1 wave:
+	 * FURNACE/FURNACE_FUEL — 13 through the kitchen-pot-bowl BATH append; the four
+	 * card-D datapack-domain maps of task w1-eu-hu-families join at the p29 W1 wave:
 	 * {@code loom}, {@code boxinator}, {@code unboxinator}, {@code fermenter} — the map
 	 * names are the card-A twelve-map block's GT6RecipeMapJsonLoader anchors, now live
 	 * pour targets for the smoke rows the eu-hu machine chains drive).	 */
 	private static final Set<String> POURABLE = Set.of(
 			"coke_oven", "shredder", "crusher", "lathe", "chisel", "engine_fuels",
 			"fluidbed", "burn", "distillery", "drying", "canner", "mixer", "bath",
-			// the P29 W1 card-B roll-ladder four (task p29-w1-kinetic-roll-ladder)
+			// the P29 W1 card-B roll-ladder four (task w1-kinetic-roll-ladder)
 			"rollingmill", "rollbender", "rollformer", "clustermill",
-			// the P29 W1 process-card six (task p29-w1-kinetic-process-ladder): the batch-C
+			// the P29 W1 process-card six (task w1-kinetic-process-ladder): the batch-C
 			// smoke-row map keys — the card-A constants the Sluice tail-append joins
 			"cutter", "squeezer", "centrifuge", "sluice", "sharpening", "pressurewasher",
-			// the P29 W1 card-D eu-hu four (task p29-w1-eu-hu-families)
+			// the P29 W1 card-D eu-hu four (task w1-eu-hu-families)
 			"loom", "boxinator", "unboxinator", "fermenter",
-			// the P33 food-fluids b1 (task p33-food-fluids-b1): the Juicer map joins with its
+			// the P33 food-fluids b1 (task food-fluids-b1): the Juicer map joins with its
 			// core rows (the juice/oil/sauce pours); the Fermenter core rows ride the
 			// existing key above — the KEY itself was declared b1 but the set entry + the
-			// loader case + the map ctor only bind at task p33-food-machines-kitchen
+			// loader case + the map ctor only bind at task food-machines-kitchen
 			"juicer",
-			// the P29 W2 nineteen (task p29-w2-energy-types-5tier — the shared-layer card
+			// the P29 W2 nineteen (task w2-energy-types-5tier — the shared-layer card
 			// expands ALL the keys so the consumer cards ②③④⑤ never touch this loader):
 			// the keys ARE the card-① GT6RecipeMaps field names in snake case; no datapack
 			// row data ships with the keys (the smoke rows are the consumer cards' content)
@@ -198,25 +198,25 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			"magneticseparator", "injector", "laminator", "autoclave", "freezer", "polarizer",
 			"lightning", "slicer", "laserengraver", "welder", "electrolyzer", "printer",
 			"scannervisuals", "generifier",
-			// the P29 W3 card ③ (task p29-w3-turbine-dynamo): the Gas Turbine fuel face — the
+			// the P29 W3 card ③ (task w3-turbine-dynamo): the Gas Turbine fuel face — the
 			// natural-gas row ships with the key (the direct-fill anchor; the byproduct CO2 of
 			// Loader_Fuels.java:169 is dropped with the unregistered-fluid ruling, the water
 			// leg rides the row verbatim)
 			"gas_fuels",
-			// the P31 card (task p31-bedrock-ore-worldgen): the RM.BedrockOreList display
+			// the P31 card (task bedrock-ore-worldgen): the RM.BedrockOreList display
 			// face — the 48 fake-recipe rows ship with the key (the upstream addFakeRecipe
 			// block, WorldgenOresBedrock.java:87-132 + GT6_Main.java:405-406)
 			"bedrockorelist",
-			// the P29 W3 three (task p29-w3-heat-smelter — the wave's one recipe-batch
+			// the P29 W3 three (task w3-heat-smelter — the wave's one recipe-batch
 			// card): the two new RM maps + the FM.Hot fuel map, the keys ARE the
 			// snake-case GT6RecipeMaps field names; the smelter/melter/fuels_hot smoke
 			// rows ship with this card (the datapack face)
 			"melter", "smelter", "fuels_hot",
-			// the P31 QU trio (task p31-qu-a-foundation): the three declared-empty maps get
+			// the P31 QU trio (task qu-a-foundation): the three declared-empty maps get
 			// their keys WITH the card so the C/D machine cards never touch this loader; the
 			// three smoke rows ship with the keys (the datapack face)
 			"massfab", "replicator", "scannermolecular",
-			// the P34 machine pair (task p34-machines-bumblelyzer-crucible): the
+			// the P34 machine pair (task machines-bumblelyzer-crucible): the
 			// crystallisationcrucible key ships WITH its 132-row stock (the
 			// Loader_Recipes_Other.java:683-706 verbatim pour); the bumblelyzer key is
 			// whitelist-only and empty ON PURPOSE — a bumblelyzer file would pour REAL rows
@@ -224,12 +224,12 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// live semantics ARE the dynamic findRecipe arm (the display stock rides
 			// GT6RecipeMapBumblelyzer.sFakeRecipes outside mRecipeList)
 			"crystallisationcrucible", "bumblelyzer",
-			// the P34 machine pair (task p34-machines-burner-plantalyzer): burnmixer pours
+			// the P34 machine pair (task machines-burner-plantalyzer): burnmixer pours
 			// its 33 Loader_Recipes_Chem rows (Loader_Recipes_Chem.java:220-259); plantalyzer
 			// ships the key only — DECLARED-empty, the upstream rows are the Forestry/IC2
 			// compat scans of GT6_Main.java:321 (the P10 cut)
 			"burnmixer", "plantalyzer",
-			// the P37 five (task p37-rm-six-maps): hammer pours its static stock (RM.smash
+			// the P37 five (task rm-six-maps): hammer pours its static stock (RM.smash
 			// Loader_Recipes_Vanilla.java:545-554 + :556-569 + the OreDict listener trio
 			// :81/:91/:95) and mortar its (:674-684 + :705-706); microwave/cooker/toolhead
 			// ship the keys only — DECLARED-empty, the honest no-op form (upstream zero
@@ -295,7 +295,7 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 	 * The pour: every whitelisted file's rows replace that map's JSON subset. Visible
 	 * offline and live; the {@code apply} override delegates here with the prepared scan.
 	 *
-	 * <p>The reload window (task p32-rm-phase-gate): a live /reload re-apply lands AFTER
+	 * <p>The reload window (task rm-phase-gate): a live /reload re-apply lands AFTER
 	 * the ServerStarted freeze, so this registration-phase seam reopens it for the pour and
 	 * re-freezes on the way out (the GTCEu unfreeze/freeze window, GTRecipeTypes.java:54-73).
 	 * An OPEN generation (boot, offline tests) owes no re-freeze — the window is invisible
@@ -579,23 +579,23 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "engine_fuels" -> GT6RecipeMaps.ENGINE_FUELS;
 			case "fluidbed" -> GT6RecipeMaps.FLUIDBED;
 			case "burn" -> GT6RecipeMaps.BURN;
-			case "gas_fuels" -> GT6RecipeMaps.GAS_FUELS; // task p29-w3-turbine-dynamo — the Gas Turbine fuel face
-			case "bedrockorelist" -> GT6RecipeMaps.BEDROCK_ORE_LIST; // task p31-bedrock-ore-worldgen — the Bedrock Drill display face
+			case "gas_fuels" -> GT6RecipeMaps.GAS_FUELS; // task w3-turbine-dynamo — the Gas Turbine fuel face
+			case "bedrockorelist" -> GT6RecipeMaps.BEDROCK_ORE_LIST; // task bedrock-ore-worldgen — the Bedrock Drill display face
 			case "distillery" -> GT6RecipeMaps.DISTILLERY;
 			case "drying" -> GT6RecipeMaps.DRYING;
 			case "canner" -> GT6RecipeMaps.CANNER;
 			case "mixer" -> GT6RecipeMaps.MIXER;
 			case "bath" -> GT6RecipeMaps.BATH;
-			case "rollingmill" -> GT6RecipeMaps.ROLLING_MILL; // task p29-w1-kinetic-roll-ladder — the roll-ladder smoke rows
+			case "rollingmill" -> GT6RecipeMaps.ROLLING_MILL; // task w1-kinetic-roll-ladder — the roll-ladder smoke rows
 			case "rollbender" -> GT6RecipeMaps.ROLL_BENDER;
 			case "rollformer" -> GT6RecipeMaps.ROLL_FORMER;
 			case "clustermill" -> GT6RecipeMaps.CLUSTER_MILL;
-			// the P29 W1 process-card six (task p29-w1-kinetic-process-ladder; "sharpening"
+			// the P29 W1 process-card six (task w1-kinetic-process-ladder; "sharpening"
 			// keys the SHARPENING field — the key form is the field-name snake case, the
 			// gt.recipe.sharpener LOCAL name is the upstream GUI word)
 			case "cutter" -> GT6RecipeMaps.CUTTER;
 			case "squeezer" -> GT6RecipeMaps.SQUEEZER;
-			// task p33-food-machines-kitchen — the juicer.json pour joins (the b1 card
+			// task food-machines-kitchen — the juicer.json pour joins (the b1 card
 			// declared the key + file; the map ctor + this case + the POURABLE entry are
 			// the seam that actually binds them)
 			case "juicer" -> GT6RecipeMaps.JUICER;
@@ -607,7 +607,7 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "boxinator" -> GT6RecipeMaps.BOXINATOR;
 			case "unboxinator" -> GT6RecipeMaps.UNBOXINATOR;
 			case "fermenter" -> GT6RecipeMaps.FERMENTER;
-			// the P29 W2 nineteen (task p29-w2-energy-types-5tier — the key/field pairs are
+			// the P29 W2 nineteen (task w2-energy-types-5tier — the key/field pairs are
 			// the card-① snake-case anchors; every target is a DECLARED-empty base map until
 			// its consumer card pours)
 			case "autocrafter" -> GT6RecipeMaps.AUTOCRAFTER;
@@ -629,33 +629,33 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "printer" -> GT6RecipeMaps.PRINTER;
 			case "scannervisuals" -> GT6RecipeMaps.SCANNER_VISUALS;
 			case "generifier" -> GT6RecipeMaps.GENERIFIER;
-			// the P29 W3 tower pair (task p29-w3-distill-crucible — the key/field pairs are the
+			// the P29 W3 tower pair (task w3-distill-crucible — the key/field pairs are the
 			// field-name snake case; both targets are the consumer card's live maps)
 			case "distillationtower" -> GT6RecipeMaps.DISTILLATION_TOWER;
 			case "cryodistillationtower" -> GT6RecipeMaps.CRYO_DISTILLATION_TOWER;
-			// the P29 W3 three (task p29-w3-heat-smelter — the wave's one recipe-batch
+			// the P29 W3 three (task w3-heat-smelter — the wave's one recipe-batch
 			// card; the keys are the field-name snake case, FUELS_HOT = the FM.Hot fuel map)
 			case "melter" -> GT6RecipeMaps.MELTER;
 			case "smelter" -> GT6RecipeMaps.SMELTER;
 			case "fuels_hot" -> GT6RecipeMaps.FUELS_HOT;
-			// the P29 W4 tail-append (task p29-w4-eu-bridge — the Roasting Oven card owns the
+			// the P29 W4 tail-append (task w4-eu-bridge — the Roasting Oven card owns the
 			// map end to end; the key is the field-name snake case)
 			case "roasting" -> GT6RecipeMaps.ROASTING;
-			// the P31 QU trio (task p31-qu-a-foundation — the key/field pairs are the
+			// the P31 QU trio (task qu-a-foundation — the key/field pairs are the
 			// field-name snake case; every target is a DECLARED-empty base map, the smoke
 			// rows are the card's content)
 			case "massfab" -> GT6RecipeMaps.MASSFAB;
 			case "replicator" -> GT6RecipeMaps.REPLICATOR;
 			case "scannermolecular" -> GT6RecipeMaps.SCANNER_MOLECULAR;
-			// the P34 machine pair (task p34-machines-bumblelyzer-crucible — the key/field
+			// the P34 machine pair (task machines-bumblelyzer-crucible — the key/field
 			// pairs are the field-name snake case; CRYSTALLISATION_CRUCIBLE carries its row
 			// stock, BUMBLELYZER stays rowless, see the POURABLE note)
 			case "crystallisationcrucible" -> GT6RecipeMaps.CRYSTALLISATION_CRUCIBLE;
 			case "bumblelyzer" -> GT6RecipeMaps.BUMBLELYZER;
-			// the P34 machine pair (task p34-machines-burner-plantalyzer)
+			// the P34 machine pair (task machines-burner-plantalyzer)
 			case "burnmixer" -> GT6RecipeMaps.BURN_MIXER;
 			case "plantalyzer" -> GT6RecipeMaps.PLANTALYZER;
-			// the P37 five (task p37-rm-six-maps — the key/field pairs are the field-name
+			// the P37 five (task rm-six-maps — the key/field pairs are the field-name
 			// snake case; MORTAR/HAMMER carry their static stocks, the other three stay
 			// rowless, see the POURABLE note)
 			case "microwave" -> GT6RecipeMaps.MICROWAVE;

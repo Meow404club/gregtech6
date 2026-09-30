@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 /**
- * The Integrated Circuit carrier offline acceptance (task p16-distillery-family ①): the
+ * The Integrated Circuit carrier offline acceptance (task distillery-family ①): the
  * vanilla 1.20.1 {@code Damage}-key carrier semantics (ItemStack.java:291-297 —
  * getDamageValue reads {@code tag.getInt("Damage")} on ANY item, default 0 for a tag-less
  * stack; setDamageValue writes it), the {@code ST.tag(n)} selector helper shape (count 1 +

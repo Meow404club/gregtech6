@@ -18,8 +18,8 @@ import gregtech6.covers.covers.CoverTextureSimple;
 import gregtech6.tileentity.machines.TileEntityOven;
 
 /**
- * The item-intercept framework tests (task p10-cover-item-intercept, ADR
- * 2026-09-01-p10-cover-item-intercept) — the offline half of the acceptance:
+ * The item-intercept framework tests (task cover-item-intercept, ADR
+ * 2026-09-01-cover-item-intercept) — the offline half of the acceptance:
  * the three-gate truth table at the host level (intercept hit refuses / override hit
  * lets the cover decide / the plain default passes through — the upstream
  * TileEntityBase04Covers:343-365 host-final dispatch shape), the side isolation

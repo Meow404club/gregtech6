@@ -15,7 +15,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /**
- * The circuits C-column recipe-parity test (task p33-circuits-crafting-c acceptance ②):
+ * The circuits C-column recipe-parity test (task circuits-crafting-c acceptance ②):
  * the generated data/gt6/recipes/ files are read verbatim off the classpath (the
  * GT6DieselCraftingJsonTest generated-resources convention) and asserted on their
  * upstream-transcription faces — the Loader_MultiTileEntities.java:1184-1189 six machine

@@ -24,7 +24,7 @@ import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 
 /**
- * The basic-machine ModularUI panel factory (task p26-mui-a-panel-factory, batch A card 1 —
+ * The basic-machine ModularUI panel factory (task mui-a-panel-factory, batch A card 1 —
  * a NEW file, zero existing file touched). The {@link GTActMenu} shape: the panel builds on
  * SERVER and CLIENT inside {@link #buildPanel(GTBasicMachineMenu.Host, PanelSyncManager)}
  * (the sync handlers register there, IUIHolder.java:21-44 buildUI contract) — card 2's
@@ -37,7 +37,7 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  * byte-identical backgrounds (shredder/crusher/lathe, GT6RecipeMaps.java:97/:105/:113).
  *
  * <p>Slot topology is the upstream case table consumed through the {@link
- * GT6MachineGuiLayout} descriptor (task r8-gui-layout-descriptor — the faithful per-case
+ * GT6MachineGuiLayout} descriptor (task gui-layout-descriptor — the faithful per-case
  * transcription of ContainerCommonBasicMachine.java:51-156/:158-263, fluid arms included):
  * {@link GT6MachineGuiLayout#inputPositions} for the input seats (the case-3+ shapes the
  * old {@code GTBasicMachineMenu.inputSlotPos} extrapolation got wrong) and {@link
@@ -54,7 +54,7 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  * arrow drawable ({@link GuiTextures#PROGRESS_ARROW}, modularui's own texture — zero new
  * art; the borrowed machine PNGs carry no baked-in arrow, assets/README.md:8-13).
  *
- * <p>Fluid seats (settled, task p34-gui-basicmachine-fluids — the Option B ruling that
+ * <p>Fluid seats (settled, task gui-basicmachine-fluids — the Option B ruling that
  * redeemed the batch-A boundary declared here before): the two {@link Host} fluid banks
  * (the {@link GTBasicMachineMenu.Host#getFluidInputTanks}/{@link GTBasicMachineMenu.Host#getFluidOutputTanks}
  * default-empty seams, GTBasicMachineMenu.java:117/:122) render one read-only display seat

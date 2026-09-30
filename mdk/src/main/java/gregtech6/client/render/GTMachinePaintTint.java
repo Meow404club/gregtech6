@@ -17,15 +17,15 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.ModelData;
 
 /**
- * The machine paint tint (task p21-paintable-tint-render, card_B of the P21 paintable
+ * The machine paint tint (task paintable-tint-render, card_B of the P21 paintable
  * split; the colour source re-based on the row material by task
- * p27-machine-material-tint-fidelity) — the client consumption half of the paint storage:
+ * machine-material-tint-fidelity) — the client consumption half of the paint storage:
  * the machine-domain block models carry {@code tintindex 0} (the GT6BlockStates
  * machineModel element form) and the tint resolves from the BE's
  * {@link GTModelProperties#PAINT} model data (the 03 base supplies it while painted,
  * TileEntityBase03TicksAndSync.getModelData).
  *
- * <p>Since task p32-render-embeddium-tint this class is the PURE colour-decision seam
+ * <p>Since task render-embeddium-tint this class is the PURE colour-decision seam
  * only: the WORLD half of the consumption moved to {@link GTMachineTintModel}, which
  * bakes {@link #tintARGB} into the quads' vertex colours at {@code getQuads} time (the
  * runtime {@code BlockColor} route rendered achromatic in the live client on both chunk
@@ -69,7 +69,7 @@ public final class GTMachinePaintTint {
 	 * Upstream UNCOLORED = 0xFFFFFF (CS.java:327) — the MATERIAL-LESS fallback: white
 	 * multiplies the grayscale texture unchanged (Paintable:50 field default; the row
 	 * materials render their fRGBaSolid instead since task
-	 * p27-machine-material-tint-fidelity).
+	 * machine-material-tint-fidelity).
 	 */
 	public static final int UNPAINTED = 0xFFFFFF;
 
@@ -91,9 +91,9 @@ public final class GTMachinePaintTint {
 	}
 
 	/**
-	 * The combined tint-material dispatch (task p38-issue8-multipart-tint; the kitchen
-	 * family joined in task p38-c3-kitchen-tint-shape, the controller/energy domains in
-	 * task p38-c2-controller-tint, the bee family in task r3-beehive-tint): the
+	 * The combined tint-material dispatch (task issue8-multipart-tint; the kitchen
+	 * family joined in task c3-kitchen-tint-shape, the controller/energy domains in
+	 * task c2-controller-tint, the bee family in task beehive-tint): the
 	 * part-family carriers first (their material rides the block itself through
 	 * {@code GTMultiBlockPartBlock.materialOf}), then the kitchen carriers
 	 * ({@code GTKitchenBlock.materialOf}), then the machine-domain gate, then the
@@ -111,7 +111,7 @@ public final class GTMachinePaintTint {
 		if (tMaterial != null) return tMaterial;
 		tMaterial = GTBasicMachineBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
-		// task r8-tex-large-machines — the 17 large-controller rows: the twelve
+		// task tex-large-machines — the 17 large-controller rows: the twelve
 		// large-machine rows carry their upstream NBT_MATERIAL through the row itself
 		// (the GTLargeMachineBlock carrier — no Supplier column needed, the row IS the
 		// carrier), the five mains ride their concrete block classes; the Loader
@@ -124,14 +124,14 @@ public final class GTMachinePaintTint {
 		if (tMaterial != null) return tMaterial;
 	tMaterial = gregtech6.block.energy.GT6ElectricTransformerBlock.materialOf(aBlock);
 	if (tMaterial != null) return tMaterial;
-	// task r8-tex-composite-family — the composite-energy carriers (the battery boxes,
+	// task tex-composite-family — the composite-energy carriers (the battery boxes,
 	// the crystal chargers, the ZPM dechargers; the LD endpoints ride the transformer
 	// gate above)
 	tMaterial = gregtech6.block.energy.GT6BatteryBoxBlock.materialOf(aBlock);
 	if (tMaterial != null) return tMaterial;
 	tMaterial = gregtech6.block.energy.GT6MagicAbsorberBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
-		// task r8-tex-pipe-textures — the pipe connector carriers join: the fluid pipe
+		// task tex-pipe-textures — the pipe connector carriers join: the fluid pipe
 		// family rides MT.Wood (the addFluidPipes 26000 NBT_MATERIAL row), the item pipe
 		// family its loader line's MT argument (MultiTileEntityPipeItem :76-82). The
 		// logistics wire resolves NULL on purpose — its upstream NBT_MATERIAL column is
@@ -141,13 +141,13 @@ public final class GTMachinePaintTint {
 		if (tMaterial != null) return tMaterial;
 		tMaterial = gregtech6.block.pipe.GTItemPipeBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
-		// task r8-tex-multiblockmains — the large heat exchanger joins (the :1245
+		// task tex-multiblockmains — the large heat exchanger joins (the :1245
 		// NBT_MATERIAL row, MT.W); the crucible controllers, the logistics core and the
 		// lightning rod resolve through the GTMultiBlockControllerBlock gate above (the
 		// p38-c2 carrier form all four now ride)
 		tMaterial = gregtech6.registry.GT6HeatExchangers.HeatExchangerBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
-		// task r8-tex-bridge-kinetic — the kinetic engines join: the 28 steam-engine rows
+		// task tex-bridge-kinetic — the kinetic engines join: the 28 steam-engine rows
 		// carry their loader NBT_MATERIAL column (Loader :584-612), the 8 diesel rows
 		// theirs (:721-729), the rotation transformer the WoodTreated row (:1668). The
 		// slugs resolve through the bySlug table below (the row records live in
@@ -214,7 +214,7 @@ public final class GTMachinePaintTint {
 
 	/**
 	 * The 17 large-controller rows' upstream NBT_MATERIAL column (task
-	 * r8-tex-large-machines; Loader_MultiTileEntities :1228-1283 verbatim): the twelve
+	 * tex-large-machines; Loader_MultiTileEntities :1228-1283 verbatim): the twelve
 	 * large-machine rows resolve through the row meta id (the
 	 * {@link gregtech6.registry.GT6LargeMachines.GTLargeMachineBlock#row} carrier), the
 	 * five mains through their concrete block classes. Null = not a large controller

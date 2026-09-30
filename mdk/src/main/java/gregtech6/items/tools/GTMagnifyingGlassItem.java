@@ -15,7 +15,7 @@ import net.minecraftforge.common.ToolAction;
 
 /**
  * The formal magnifying glass — item id {@code gt6:magnifying_glass} (task
- * p29-w5-t3-machine-face-four spec ③). Upstream meta id {@code ToolsGT.MAGNIFYING_GLASS =
+ * w5-t3-machine-face-four spec ③). Upstream meta id {@code ToolsGT.MAGNIFYING_GLASS =
  * 62} (CS.java:1736), mounted by the Loader_Tools.java:148 registration row (display name
  * "Magnifying Glass", tagline "Crafted with a Stick and a Lens") over
  * {@code GT_Tool_MagnifyingGlass} (machine/GT_Tool_MagnifyingGlass.java:35).
@@ -37,7 +37,7 @@ import net.minecraftforge.common.ToolAction;
  * read-only, the acceptance asserts it); the crafting-loss face keeps the shared one-point
  * mapping (the upstream :47-49 400-unit row folded).
  *
- * <p>MATERIAL LADDER (task p31-machine-ladder): the stack's {@code GT.ToolStats} identity
+ * <p>MATERIAL LADDER (task machine-ladder): the stack's {@code GT.ToolStats} identity
  * scales durability (the {@link GT6ToolLadder} j/100 points), the composed display name
  * ("Magnifying Glass (Bronze)") and the lens tint ride the same seam; the IDENTITY-LESS
  * arm reproduces Steel bit-exact (the pre-ladder 512 constant IS the steel fallback).
@@ -96,7 +96,7 @@ public class GTMagnifyingGlassItem extends Item implements GT6ToolLadder.LadderT
 		return classifies(aToolAction);
 	}
 
-	// ------------------------------ the GT6ToolLadder identity faces (task p31-machine-ladder) ------------------------------
+	// ------------------------------ the GT6ToolLadder identity faces (task machine-ladder) ------------------------------
 
 	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — Steel fallback = 512). */
 	@Override

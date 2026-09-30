@@ -37,7 +37,7 @@ import gregtech6.fluid.GTFluids;
 import gregtech6.registry.GTBlockEntities;
 
 /**
- * The fluid-spring's per-fluid skin baked INTO the quads (task p38-spring-texture-tint) —
+ * The fluid-spring's per-fluid skin baked INTO the quads (task spring-texture-tint) —
  * the direct translation of the upstream spring render stack, MultiTileEntityFluidSpring
  * .java:150 {@code getTexture = BlockTextureMulti(BlockTextureFluid.get(mFluid),
  * BlockTextureDefault.get(Textures.BlockIcons.FLUID_SPRING))}: every visible face renders
@@ -271,7 +271,7 @@ public final class GTFluidSpringBakedModel extends GTDynamicBakedModel {
 	/**
 	 * The GTCEu StaticFaceBakery.bakeFace cubeUV switch (GTWireBakedModel.uvOf verbatim — private there).
 	 *
-	 * <p>KEPT VERBATIM (the r8-uvof-private-copies ruling, the GTWireBakedModel precedent):
+	 * <p>KEPT VERBATIM (the uvof-private-copies ruling, the GTWireBakedModel precedent):
 	 * every sprite this model bakes is orientation-free — the fluid bases are the vanilla
 	 * animated noise stills ({@code water_still}/{@code lava_still}), the FLUID_SPRING shell
 	 * is a uniform dither and the tint is flat — so the old table's side V-flip /

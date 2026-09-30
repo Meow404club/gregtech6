@@ -27,7 +27,7 @@ import gregtech6.fluid.GTFluids;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The RM.Mixer C-Foam pour offline tests (task p26-c-foam-fluid-refill — the
+ * The RM.Mixer C-Foam pour offline tests (task c-foam-fluid-refill — the
  * GT6RecipesDryingTest loop-walk shape): the thirteen rock groups (the base ten +
  * twelve colours, Loader_Recipes_Other.java:252-302), the faithful water × clay × sand
  * cross-product (the :230 FL.waters(1000) × :251 ANY.Clay.mToThis × ANY.SiO2.mToThis

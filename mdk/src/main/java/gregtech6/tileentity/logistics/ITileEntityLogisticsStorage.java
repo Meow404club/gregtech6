@@ -1,6 +1,6 @@
 /**
  * Ported from GregTech 6 (1.7.10), file gregapi/tileentity/logistics/ITileEntityLogisticsStorage.java
- * (upstream 36 lines, the :28-35 interface face), by task p32-logistics-lv3.
+ * (upstream 36 lines, the :28-35 interface face), by task logistics-lv3.
  *
  * This file is part of GregTech.
  *

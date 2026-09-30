@@ -43,7 +43,7 @@ import gregtech6.registry.GTMultiBlocks;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 
 /**
- * 1.20.1 counterpart of the GT6 Large Boiler multiblock — task p13-large-boiler, ported
+ * 1.20.1 counterpart of the GT6 Large Boiler multiblock — task large-boiler, ported
  * from gregtech/tileentity/multiblocks/MultiTileEntityLargeBoiler.java (:65-393) as the
  * W4 controller closing the steam family: a 3x3 Heat-Transmitter base, a 3x3x3 hollow of
  * Dense Walls with FIVE pipe holes, five-target load-balanced steam output and the

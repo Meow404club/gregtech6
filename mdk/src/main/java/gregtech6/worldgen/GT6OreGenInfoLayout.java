@@ -88,7 +88,7 @@ public final class GT6OreGenInfoLayout {
         return Component.translatable(TITLE_KEY);
     }
 
-    /** The material name line — the {@code gt6.material.<snake>} small unit, composed in BOTH locales since p23-i18n-material-fill-fix. */
+    /** The material name line — the {@code gt6.material.<snake>} small unit, composed in BOTH locales since i18n-material-fill-fix. */
     public static Component name(OreDistributionInfo.Entry aEntry) {
         return Component.translatable("gt6.material." + MaterialPrefixItem.snakeCase(aEntry.material().mNameInternal));
     }

@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import gregapi.code.HashSetNoNulls;
 
 /**
- * The BFS node face of the GT6 redstone-wire family (task p10-wire-redstone-family) — the
+ * The BFS node face of the GT6 redstone-wire family (task wire-redstone-family) — the
  * 1.20.1 counterpart of gregapi/tileentity/connectors/ITileEntityRedstoneWire.java, kept as
  * its own top-level type for the same reason upstream made it one: the push-BFS engine
  * ({@link #doRedstoneUpdate}, the Util.doRedstoneUpdate :43-56 verbatim port) walks this

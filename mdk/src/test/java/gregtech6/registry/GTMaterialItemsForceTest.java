@@ -1,5 +1,5 @@
 /**
- * Tests for task p34-machines-bumblelyzer-crucible: the GTMaterialItems force-table slice —
+ * Tests for task machines-bumblelyzer-crucible: the GTMaterialItems force-table slice —
  * the upstream OP.java:616/:619/:624 forceItemGeneration rows the port OP defers with the
  * MT/ANY-dependent block, landed mdk-side (the coordinator ruling C: the minimal boule
  * registration takes the 39-crystallisation-row output material set as the real count).

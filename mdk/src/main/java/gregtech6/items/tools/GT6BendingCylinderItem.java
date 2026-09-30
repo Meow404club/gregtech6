@@ -5,8 +5,8 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * The formal LARGE bending cylinder — item id {@code gt6:bending_cylinder} (task
- * p29-w5-t5-scene-six spec ⑥, the {@link GT6BendingCylinderSmallItem} form with the
- * census OFF — the structure-empty master; the Small size landed with p25-food-can-row0,
+ * w5-t5-scene-six spec ⑥, the {@link GT6BendingCylinderSmallItem} form with the
+ * census OFF — the structure-empty master; the Small size landed with food-can-row0,
  * this card adds only the missing large form). Upstream Loader_Tools.java:145, display
  * name "Bending Cylinder" verbatim, {@code 6*U}, oredict key
  * {@code OreDictToolNames.bendingcylinder} — the snake translation ruling names the

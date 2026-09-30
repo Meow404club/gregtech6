@@ -25,9 +25,9 @@ import gregtech6.registry.GTBlockEntities;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * 1.20.1 counterpart of the GT6 Axle — task p12-axle-family, ported from
+ * 1.20.1 counterpart of the GT6 Axle — task axle-family, ported from
  * gregapi/tileentity/connectors/MultiTileEntityAxle.java (:55-179) as the ONLY cross-block
- * RU carrier of the rotation system (ADR 2026-09-02-p12-rotation-carrier): RU has NO wire
+ * RU carrier of the rotation system (ADR 2026-09-02-rotation-carrier): RU has NO wire
  * family (upstream WireElectric hard-locks EU, WireElectric.java:180/:184), the axle
  * forwards packets by adjacency recursion, and there is NO network object — every tick the
  * source pushes the packet through the whole chain (the Create KineticNetwork/stress-net

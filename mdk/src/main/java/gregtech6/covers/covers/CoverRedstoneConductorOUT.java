@@ -11,7 +11,7 @@ import gregtech6.covers.CoverData;
 /**
  * The redstone conductor (emit) face — the wire-through cover, 1.20.1 port of
  * gregapi/cover/covers/CoverRedstoneConductorOUT.java (64 lines, task
- * p10-cover-conductor-redstone). The pair turns one machine into a redstone bridge:
+ * cover-conductor-redstone). The pair turns one machine into a redstone bridge:
  * the {@link CoverRedstoneConductorIN} marker faces read the world (plain-cover
  * pass-through), and THIS face re-emits the strongest marker reading — signal
  * travels through the machine body without vanilla wires touching it.

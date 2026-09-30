@@ -23,7 +23,7 @@ import gregtech6.tileentity.TileEntityBase01Root;
 
 /**
  * 1.20.1 counterpart of gregapi/tileentity/multiblocks/MultiTileEntityMultiBlockPart.java
- * (698 lines, task p4-multiblock-framework W3) — the notick half of a multiblock: a cell
+ * (698 lines, task multiblock-framework W3) — the notick half of a multiblock: a cell
  * holding a back-reference to its controller.
  *
  * <p>Port scope (the 698-line relay face cut to the capability minimum, task card ②):
@@ -36,7 +36,7 @@ import gregtech6.tileentity.TileEntityBase01Root;
  * <li>{@link #setTarget} (:216-221) + {@link #setDesign} (:223-231 — the design is the
  *     upstream texture-group index; the updateClientData :227 client-data push re-formed
  *     as the part block's {@code design} blockstate property sync, task
- *     p29-w3-nbtdesign-parts ①);</li>
+ *     w3-nbtdesign-parts ①);</li>
  * <li>the {@code mMode} permission bitmask (:85-126) verbatim, constants and all — the
  *     CokeOven asks its parts for {@link #ONLY_ITEM_FLUID_ENERGY}; the relay consumer that
  *     reads the mask arrives with the IO cards;</li>
@@ -217,7 +217,7 @@ public class MultiBlockPartBlockEntity extends TileEntityBase01Root {
 
 	/**
 	 * Upstream :223-231 with the texture surface re-formed as the DESIGN blockstate
-	 * property (task p29-w3-nbtdesign-parts ①): the upstream {@code updateClientData} :227
+	 * property (task w3-nbtdesign-parts ①): the upstream {@code updateClientData} :227
 	 * shipped mDesign to the client renderer, the 1.20.1 equivalent is the
 	 * {@code design} blockstate variant flip on {@link #syncDesignToState} — the checker's
 	 * per-cell design write (Util.checkAndSetTarget → here) therefore lands visibly.
@@ -234,7 +234,7 @@ public class MultiBlockPartBlockEntity extends TileEntityBase01Root {
 	}
 
 	/**
-	 * The render-slot sync (task p29-w3-nbtdesign-parts ①): mirrors {@link #mDesign} into
+	 * The render-slot sync (task w3-nbtdesign-parts ①): mirrors {@link #mDesign} into
 	 * the part block's {@code design} property, clamped to the block's own
 	 * {@code 0..maxDesign()} range (an NBT-borne index of a wider family never leaves the
 	 * property domain). Server-side only (the setBlock flip IS the client packet); the
@@ -267,7 +267,7 @@ public class MultiBlockPartBlockEntity extends TileEntityBase01Root {
 	}
 
 	/**
-	 * The builder-wand relay target (task p24-builder-wand — the minimal faithful face of
+	 * The builder-wand relay target (task builder-wand — the minimal faithful face of
 	 * the upstream tool-relay, MultiTileEntityMultiBlockPart.java:251-266). The wand
 	 * clicks THIS part, the CONTROLLER does the work: {@code getTarget(false)} resolves
 	 * the owner with the lazy {@code isInsideStructure} rebuild (:199-214), the explicit
@@ -300,7 +300,7 @@ public class MultiBlockPartBlockEntity extends TileEntityBase01Root {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the gregapi energy relay (task p31-fusion — the upstream "Relay Energy" block,
+	// the gregapi energy relay (task fusion — the upstream "Relay Energy" block,
 	// MultiTileEntityMultiBlockPart.java:493-548, re-formed: the upstream per-part
 	// IMultiBlockEnergy callbacks collapse onto the controller's own ITileEntityEnergy
 	// face (every controller is a 01Root), because every ported machine routes by packet

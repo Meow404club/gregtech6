@@ -30,7 +30,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.tools.TileEntitySmeltery;
 
 /**
- * Offline gate for task p28-crucible-jade-face acceptance ①: the crucible Jade face tag
+ * Offline gate for task crucible-jade-face acceptance ①: the crucible Jade face tag
  * contract + the four display-line pure functions, over the SAME static seam the live
  * {@code appendServerData} reads through ({@code getTemperatureValue}/{@code getTemperatureMax}
  * /{@code mMeltDown}/{@code mContent} — TileEntitySmeltery.java:514/:519/:105/:98). The

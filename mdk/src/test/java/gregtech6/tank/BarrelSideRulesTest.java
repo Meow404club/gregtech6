@@ -28,7 +28,7 @@ import gregtech6.tileentity.tank.GTBarrelBlockEntity;
 import gregtech6.tileentity.tank.TileEntityBase08Barrel;
 
 /**
- * The p5 side-rule acceptance tables (task p5-barrel-side-rules acceptance ①/④/⑤/⑦),
+ * The p5 side-rule acceptance tables (task barrel-side-rules acceptance ①/④/⑤/⑦),
  * all offline. The sign verdicts run through the raw {@code (byte, int)} seams — the
  * FluidType density lookup is live-registry territory (the P4 offline lesson), and the
  * live shape (water/iron/natural_gas against real faces) is the RCON chain's job. The

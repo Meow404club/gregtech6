@@ -37,7 +37,7 @@ import gregtech6.item.energy.GT6BatteryItem;
 import gregtech6.item.energy.IItemEnergy;
 
 /**
- * The electric-tool family base — task p29-w5-t6-electric-nineteen: NINETEEN flat item
+ * The electric-tool family base — task w5-t6-electric-nineteen: NINETEEN flat item
  * ids (single steel tier × the three-voltage ladder), all sharing THIS class over a
  * data {@link Spec} table (the card's "基类+表驱动，注册行逐 id 可断言" ruling; the
  * upstream 19 ToolStats classes fold onto 19 spec rows, Loader_Tools.java:156-174).

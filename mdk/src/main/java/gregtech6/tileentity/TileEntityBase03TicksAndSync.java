@@ -42,12 +42,12 @@ import gregtech6.GT6Mod;
  * mTimer == 0 fires onTickFirst on the very first tick, the client sync gate opens
  * at mTimer &gt; 2 (upstream :123).
  *
- * <p>Paintable stratum (task p21-paintable-storage-sync): this class also carries the
+ * <p>Paintable stratum (task paintable-storage-sync): this class also carries the
  * upstream TileEntityBase07Paintable paint layer (the family-wide inheritance stratum,
  * upstream 07Paintable.java:49-52) folded into the 01-07 chain collapse point — the
  * {@link IPaintableTE} face ({@code paint/mixPaint/unpaint/isPainted/getPaint}, upstream
  * Paintable:83-86 + the 04:227-235 recolour routing), the {@code mRGBa}/{@code mIsPainted}
- * storage (direct 0xRRGGBB, ruling 3 of ADR 2026-09-07-p21-paintable-rulings), the NBT
+ * storage (direct 0xRRGGBB, ruling 3 of ADR 2026-09-07-paintable-rulings), the NBT
  * keys {@code gt.color}/{@code gt.painted} (upstream CS.java:1161-1162, read from
  * readFromNBT2:57-58) and the {@code getModelData()} PAINT property supply.
  */
@@ -69,7 +69,7 @@ public abstract class TileEntityBase03TicksAndSync extends TileEntityBase01Root 
 	protected int oX = 0, oY = 0, oZ = 0;
 
 	// ---------------------------------------------------------------------------
-	// paint layer (upstream TileEntityBase07Paintable.java:49-52, task p21-paintable-storage-sync)
+	// paint layer (upstream TileEntityBase07Paintable.java:49-52, task paintable-storage-sync)
 	// ---------------------------------------------------------------------------
 
 	/** Upstream CS.UNCOLORED = 0x00FFFFFF (CS.java:327) — the unpainted colour, white = "no tint" (GTWireTint/GTMaterialPrefixBlock precedent). */
@@ -116,7 +116,7 @@ public abstract class TileEntityBase03TicksAndSync extends TileEntityBase01Root 
 	 * Upstream Paintable:83 verbatim — the painted flag clears and the colour returns to
 	 * the MATERIAL default ({@code mMaterial.fRGBaSolid}, OreDictMaterial.java:111): the
 	 * row material resolves through the block carrier ({@code GTBasicMachineBlock.materialOf},
-	 * task p27-machine-material-tint-fidelity — the port machines carry their upstream
+	 * task machine-material-tint-fidelity — the port machines carry their upstream
 	 * NBT_MATERIAL column again, so the former "no material reference" deviation is
 	 * REVERTED). A material-less block (barrels, the offline BRICKS fixtures) restores
 	 * UNCOLORED white — the {@code materialColor(null)} identity, rendering as "no tint".
@@ -309,7 +309,7 @@ public abstract class TileEntityBase03TicksAndSync extends TileEntityBase01Root 
 	*///?}
 
 	// ---------------------------------------------------------------------------
-	// paint NBT + ModelData supply (task p21-paintable-storage-sync)
+	// paint NBT + ModelData supply (task paintable-storage-sync)
 	// ---------------------------------------------------------------------------
 
 	/**

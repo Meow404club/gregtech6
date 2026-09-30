@@ -12,7 +12,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * The RecipeMap.addRecipe double-empty guard (task p8-recipe-chances-orechain ②): a recipe
+ * The RecipeMap.addRecipe double-empty guard (task recipe-chances-orechain ②): a recipe
  * with neither an item leg nor a fluid leg is rejected — not stored, no exception, null
  * returned. Upstream is immune at the index layer (addToItemMap, Recipe.java:632-640);
  * this port's linear scan + vacuously-true checkStacksEqual (upstream :775) would make an

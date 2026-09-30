@@ -1,7 +1,7 @@
 package gregtech6.block.tree;
 
 /**
- * One GT6 tree species row (task p30-w6-t1-trees-nine): the 9 worldgen trees of the
+ * One GT6 tree species row (task w6-t1-trees-nine): the 9 worldgen trees of the
  * upstream Saplings_AB meta 0-7 + Saplings_CD meta 0 face (BlockTreeSaplingAB.java:47-54
  * and BlockTreeSaplingCD.java:45 LH rows — the display-name evidence this enum's columns
  * transcribe verbatim). The per-pair granularity is the P8 ADR ④ precedent

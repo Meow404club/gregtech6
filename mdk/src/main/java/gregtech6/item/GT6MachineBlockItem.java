@@ -15,7 +15,7 @@ import gregtech6.block.GTComposedNameItem;
 import gregtech6.tooltip.GT6Tooltips;
 
 /**
- * The unified machine-family BlockItem carrier (task r8-tooltip-infra, design card T1):
+ * The unified machine-family BlockItem carrier (task tooltip-infra, design card T1):
  * every GT6 machine block item replays its family's static tooltip table through
  * {@link GT6Tooltips#append} — the registration sites swap their bare/composed BlockItem
  * for this class with the family short key (the twelve-key vocabulary lives on
@@ -46,7 +46,7 @@ public class GT6MachineBlockItem extends GTComposedNameItem {
 		this(aBlock, aProperties, aFamily, new Object[0]);
 	}
 
-	/** The per-variant form (task r8-tooltip-boiler-tank): the numeric rows ride positional slots. */
+	/** The per-variant form (task tooltip-boiler-tank): the numeric rows ride positional slots. */
 	public GT6MachineBlockItem(Block aBlock, Properties aProperties, String aFamily, Object... aLineArgs) {
 		super(aBlock, aProperties);
 		mFamily = aFamily;

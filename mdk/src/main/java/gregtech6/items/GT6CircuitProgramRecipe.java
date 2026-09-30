@@ -35,7 +35,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import gregtech6.item.GT6Circuits;
 
 /**
- * The integrated-circuit crafting rows (task p33-circuits-crafting-c) — the port isomorph
+ * The integrated-circuit crafting rows (task circuits-crafting-c) — the port isomorph
  * of the upstream ItemIntegratedCircuit self-crafting block (gregapi/item/
  * ItemIntegratedCircuit.java:58-85): the base row (:58 "GhG"/"SSS"/"GwG"), the shapeless
  * reset (:59), and the 24 configuration-programming rows (:61-85, each producing the

@@ -24,7 +24,7 @@ import gregtech6.registry.GTMachines;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The real-machine hover gate (task r8-tooltip-basic-machine-family acceptance ①): the
+ * The real-machine hover gate (task tooltip-basic-machine-family acceptance ①): the
  * GTMachines clinit walks every MachineRow list into the {@link GT6Tooltips} registry
  * (the walk IS the batch-replacement census — a duplicate path fails loud at clinit),
  * and fixture carriers keyed {@code machine:<path>} replay the REAL machines' rows
@@ -194,7 +194,7 @@ public class GT6MachineFamilyHoverTest extends GTOfflineTestBase {
 	public void theLargeMachineCarrierHoversTheMultiblockFamilyTable() {
 		// the GT6LargeMachines.java:228 swap rides T4's family word ("multiblock", the
 		// GTMultiBlocks/GT6Distillation vocabulary) — T4 HAS merged (the multiblock /
-		// converter / generator tables went in with r8-tooltip-multiblock-generator), so
+		// converter / generator tables went in with tooltip-multiblock-generator), so
 		// this pin graduated from its former "zero rows until T4" plumbing form to the
 		// replay contract: the carrier replays T4's family table verbatim (review-seat
 		// rebase update — the merge itself retired the zero-output premise; the T2

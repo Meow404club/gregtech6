@@ -26,7 +26,7 @@ import gregtech6.item.GT6MachineBlockItem;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The four connector registration points' carrier gate (task r8-tooltip-wire-pipe-sensor
+ * The four connector registration points' carrier gate (task tooltip-wire-pipe-sensor
  * acceptance ②): the registration-site item classes — {@link GTWireBlockItem},
  * {@link GTFluidPipeBlockItem}, {@link GTItemPipeBlockItem} (the specialized onPlaced
  * carriers, parents moved to the machine carrier) and the bare

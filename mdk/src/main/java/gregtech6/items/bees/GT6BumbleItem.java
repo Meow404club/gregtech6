@@ -31,7 +31,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 /**
- * The bumblebee item (task p33-bees-lv3-a-items) — one instance per type face of the
+ * The bumblebee item (task bees-lv3-a-items) — one instance per type face of the
  * {@code type%5} fractal ({@link GT6Bumbles#FACES}); the species code rides the stack
  * NBT ({@code gt.bumble.meta}, {@link GT6BumbleGenes#codeOf}).
  *
@@ -82,7 +82,7 @@ public final class GT6BumbleItem extends Item {
 	}
 
 	// -------------------------------------------------------------------------
-	// the sting (task p34-bumbliary-gui — MultiItemBumbles.java:440-456 bumbleAttack;
+	// the sting (task bumbliary-gui — MultiItemBumbles.java:440-456 bumbleAttack;
 	// the Bumbliary queen-phase aggro walk and the top-use penalty both land here)
 	// -------------------------------------------------------------------------
 

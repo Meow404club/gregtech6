@@ -46,7 +46,7 @@ import gregtech6.registry.GT6FoamSprays;
 import gregtech6.registry.GT6SprayCans;
 
 /**
- * The RM.Canner spray-can refill pour — task p24-canner-machine, the port counterpart of
+ * The RM.Canner spray-can refill pour — task canner-machine, the port counterpart of
  * the {@code RM.Canner.addRecipe1} rows of MultiItemRandomTools.java:246 (the 16 colour
  * refills, the :242 loop body) and :272 (the paint-remover refill). Everything else the
  * upstream Canner map eats rides the {@link GT6RecipeMapCanner} dynamic arms (R1).
@@ -63,7 +63,7 @@ import gregtech6.registry.GT6SprayCans;
  * is the exact upstream IL.SPRAY_CAN_DYES[i].get(1).
  *
  * <p><b>Seams</b> (the GT6RecipesDistillery shape): the fluid resolvers are live by
- * default (the task p24-dye-chemical-fluids registrations) and the ITEM resolvers close
+ * default (the task dye-chemical-fluids registrations) and the ITEM resolvers close
  * over the GT6SprayCans RegistryObjects — injected offline where the RegistryObjects are
  * unbound (the sCircuitResolver precedent). Every resolver is consulted at load()/lookup
  * time only; the static table is pure data (the @EventBusSubscriber class-load lesson).
@@ -89,7 +89,7 @@ public final class GT6RecipesCanner {
 
 	/**
 	 * The dye-fluid seam: index i → the {@code gt6:dye_chemical_<DYE_IDS[i]>} source fluid
-	 * (the live default = the p24-dye-chemical-fluids registration), fixtures injected
+	 * (the live default = the dye-chemical-fluids registration), fixtures injected
 	 * offline. Public — the row test drives the pour through it.
 	 */
 	public static IntFunction<Fluid> sDyeFluidResolver = aIndex -> GTFluids.DYE_CHEMICALS.get(aIndex).source.get();
@@ -130,7 +130,7 @@ public final class GT6RecipesCanner {
 	public static final List<Integer> DYE_INDICES = List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
 
 	/**
-	 * The C-Foam refill row fluid amount (task p26-c-foam-fluid-refill): the
+	 * The C-Foam refill row fluid amount (task c-foam-fluid-refill): the
 	 * MultiItemRandomTools.java:254/:262 {@code FL.mul(DYED_C_FOAMS[i], 256)} /
 	 * {@code FL.mul(DYED_C_FOAMS_OWNED[i], 256)} = 256 × the 100-unit bucket
 	 * ({@link GTFluids#CFOAM_BUCKET_UNITS}, FL.java:432 "// 100 per Unit") = 25600 mB —
@@ -150,7 +150,7 @@ public final class GT6RecipesCanner {
 	/** The full Advanced spray seam: dye index i → the {@code gt6:foam_spray_owned_<DYE_IDS[i]>} can (upstream IL.SPRAY_CAN_FOAM_OWNED[i] :259, GT6FoamSprays.FOAM_SPRAYS_OWNED), fixtures injected offline. */
 	public static IntFunction<ItemStack> sFoamSprayOwnedResolver = aIndex -> new ItemStack(GT6FoamSprays.FOAM_SPRAYS_OWNED.get(aIndex).get());
 
-	// task p32-qu-laser-domain + debt-laser-gas-family — the gas laser emitter fill family
+	// task qu-laser-domain + debt-laser-gas-family — the gas laser emitter fill family
 	// (MultiItemTechnological.java:396-403, the eight upstream Canner rows)
 
 	/** The EUt column of every laser-gas fill row (:396-403, the addRecipe1 second argument). */
@@ -183,7 +183,7 @@ public final class GT6RecipesCanner {
 	/**
 	 * The emitter seam: fluid name → the filled emitter stack (the :396-403 item output
 	 * column), fixtures injected offline. The helium leg resolves through the item
-	 * REGISTRY — {@code gt6:comp_laser_gas_he} landed with p37-usb-peripherals, so the row
+	 * REGISTRY — {@code gt6:comp_laser_gas_he} landed with usb-peripherals, so the row
 	 * pours in vivo; the OFFLINE fixtures arm the EMPTY skip (the lookup yields nothing on
 	 * an unbooted registry, the upstream FL.exists drop posture).
 	 */
@@ -204,9 +204,9 @@ public final class GT6RecipesCanner {
 	/**
 	 * Pours the 60 rows into {@link GT6RecipeMaps#CANNER}: the 17 refill rows (the 16
 	 * colour refills + the chlorine remover, p24), the 3 food-can rows of task
-	 * p25-food-can-row0 (rotten_flesh/spider_eye/cookie), the 32 C-Foam refills of task
-	 * p26-c-foam-fluid-refill (the :254 dyed + the :262 owned ladders) and the laser gas
-	 * fill family (p32-qu-laser-domain + debt-laser-gas-family + debt-hene-fluid,
+	 * food-can-row0 (rotten_flesh/spider_eye/cookie), the 32 C-Foam refills of task
+	 * c-foam-fluid-refill (the :254 dyed + the :262 owned ladders) and the laser gas
+	 * fill family (qu-laser-domain + debt-laser-gas-family + debt-hene-fluid,
 	 * MultiItemTechnological.java:396-403 — the FULL eight-row walk resolves in vivo: the
 	 * helium item leg self-heals through the registry lookup, the heliumneon fluid leg
 	 * landed with debt-hene-fluid; the offline test fixtures still arm the helium skip —
@@ -230,7 +230,7 @@ public final class GT6RecipesCanner {
 		if (tRemover == null) tSkipped++;
 		else {tMap.addRecipe(tRemover); tPoured++;}
 
-		// the p25-food-can-row0 trio — Canner rows carry ZERO tools (the research card's
+		// the food-can-row0 trio — Canner rows carry ZERO tools (the research card's
 		// correction: the blocked face was only the empty-can CRAFTING row, not these):
 		// upstream RM.food_can(ST.make(Items.rotten_flesh, 1, W), 4, "Canned Meat", IL.CANS_ROTTEN) — Loader_Recipes_Food.java:41
 		// upstream RM.food_can(ST.make(Items.spider_eye , 1, W), 2, "Canned Meat", IL.CANS_ROTTEN) — :42
@@ -250,7 +250,7 @@ public final class GT6RecipesCanner {
 			else {tMap.addRecipe(tCookie); tPoured++;}
 		}
 
-		// the p26-c-foam-fluid-refill 32 — MultiItemRandomTools.java:254 (dyed) / :262 (owned),
+		// the c-foam-fluid-refill 32 — MultiItemRandomTools.java:254 (dyed) / :262 (owned),
 		// one row per colour per ladder: empty can + 256 buckets of C-Foam → the full spray
 		for (int i : DYE_INDICES) {
 			Recipe tFoam = foamRefillRecipe(i, false);

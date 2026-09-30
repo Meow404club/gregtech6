@@ -1,5 +1,5 @@
 /**
- * Tests for task p30-ore-4-loot: the ore loot parity — the offline decision faces of
+ * Tests for task ore-4-loot: the ore loot parity — the offline decision faces of
  * {@link GT6OreLootTables} pinned column-by-column against the upstream Drops /
  * Drops_SmallOre semantics (the card's 对拍表; the live RCON break-drop leg is card 5).
  *

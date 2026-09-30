@@ -16,7 +16,7 @@ import gregtech6.tooltip.GT6Tooltips.GT6TooltipLine;
 import gregapi.code.TagData;
 
 /**
- * The BasicMachine family row table (task r8-tooltip-basic-machine-family): ONE pure
+ * The BasicMachine family row table (task tooltip-basic-machine-family): ONE pure
  * transcription of the upstream {@code MultiTileEntityBasicMachine.addToolTips +
  * addToolTipsSided} (gt6-1.7.10 gregapi/tileentity/machines/MultiTileEntityBasicMachine
  * .java:260-345) parameterized by the registration-time config the BE factories hold —

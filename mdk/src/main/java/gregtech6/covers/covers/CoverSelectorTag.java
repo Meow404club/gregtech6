@@ -12,7 +12,7 @@ import gregtech6.util.UT6;
 
 /**
  * The tag selector cover — 1.20.1 port of gregapi/cover/covers/CoverSelectorTag.java
- * :36-82 (task p34-covers-gameplay-10; upstream item = the integrated circuit
+ * :36-82 (task covers-gameplay-10; upstream item = the integrated circuit
  * configurable item, ItemIntegratedCircuit.java:87 registers ONE CoverSelectorTag(i)
  * per meta 0..15). The cover's constructor mode is the COMMAND: placement (:44-47),
  * chunk load (:49-52) and every server tick (:55-57) assert

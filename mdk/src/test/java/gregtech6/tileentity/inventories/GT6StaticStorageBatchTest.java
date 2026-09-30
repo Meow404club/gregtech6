@@ -21,7 +21,7 @@ import gregtech6.registry.GT6StaticStorages.StaticRow;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * GT6 static storage batch offline tests (task p26-storage-static-batch acceptance): the
+ * GT6 static storage batch offline tests (task storage-static-batch acceptance): the
  * DrawerQuad quadrant index math (the verbatim table over the FACING_ROTATIONS geometry),
  * the Locker armor gate (upstream :84), the Safe 15-slot + dungeon-loot seam + the
  * KeyLocked latch, the bookshelf/bottlecrate range arms and gates, the NBT round trips

@@ -99,14 +99,14 @@ public final class GT6CokeOvenTagListener {
 	 * expansion. Identity-based (Recipe has identity semantics in the HashSet), so repeated
 	 * rebuilds are stable — the idempotence the offline test pins.
 	 *
-	 * <p><b>The index invalidation</b> (task p32-perf-recipe-hash-index P1): the replace is
+	 * <p><b>The index invalidation</b> (task perf-recipe-hash-index P1): the replace is
 	 * a runtime remove+add seam that can be SIZE-NEUTRAL (a /reload re-firing this event with
 	 * an unchanged #minecraft:logs removes M and adds M fresh instances, Δ=0), so the map's
 	 * size-drift self-heal never fires — the fresh instances would live in the list but in no
 	 * hash bucket, and every COKE_OVEN log lookup would silently null until restart. The
 	 * explicit {@link RecipeMap#invalidateIndex()} forces the rebuild on the next lookup.
 	 *
-	 * <p><b>The phase window</b> (task p33-ops-micro, the P32 rm-phase-gate): this listener is
+	 * <p><b>The phase window</b> (task ops-micro, the P32 rm-phase-gate): this listener is
 	 * a direct {@code mRecipeList} writer (it never routes through the {@code addRecipe} pour
 	 * funnel where the FROZEN guard lives), so a tag update that lands AFTER the
 	 * {@code RegistrationFreezer} ServerStarted freeze (a live /reload re-fires

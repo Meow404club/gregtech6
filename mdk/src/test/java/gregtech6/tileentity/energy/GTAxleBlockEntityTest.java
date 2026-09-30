@@ -27,7 +27,7 @@ import gregtech6.registry.GT6Kinetics;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * GTAxleBlockEntity offline tests (task p12-axle-family acceptance a): the adjacency
+ * GTAxleBlockEntity offline tests (task axle-family acceptance a): the adjacency
  * recursion with zero loss (the fake BE chain source→axle→axle→sink, the packet arriving
  * UNTOUCHED), the idle gate (oRotationDir == 0 books the spin-up tick and forwards
  * nothing, upstream :112), the overspeed/bandwidth pop-off truth table (the break flag +
@@ -55,7 +55,7 @@ public class GTAxleBlockEntityTest extends GTOfflineTestBase {
 		BlockEntityType<GTAxleBlockEntity>[] tHolder = (BlockEntityType<GTAxleBlockEntity>[]) new BlockEntityType<?>[1];
 		// OAK_LOG joins the valid set for the axisFaceTruthTable mirror fixture (the vanilla
 		// log state carries the SAME BlockStateProperties.AXIS instance); 21.1 validates the
-		// type/state pair at the BE ctor (task p15-m4-test-infra-2).
+		// type/state pair at the BE ctor (task m4-test-infra-2).
 		tHolder[0] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new GTAxleBlockEntity(tHolder[0], aPos, aState), Blocks.STONE, Blocks.OAK_LOG).build(null);
 		sType = tHolder[0];
@@ -76,7 +76,7 @@ public class GTAxleBlockEntityTest extends GTOfflineTestBase {
 		public final TagData acceptedType;
 
 		// 21.1 ctor validation: the fake binds a real BET over the vanilla stone state —
-		// the supplier is stored, never invoked (task p15-m4-test-infra-2).
+		// the supplier is stored, never invoked (task m4-test-infra-2).
 		static final BlockEntityType<CountingSink> FAKE_TYPE =
 				BlockEntityType.Builder.of((aPos, aState) -> new CountingSink(aPos, TD.Energy.RU), Blocks.STONE).build(null);
 
@@ -205,7 +205,7 @@ public class GTAxleBlockEntityTest extends GTOfflineTestBase {
 	/** Plain non-energy BE — the non-consumer probe of canConnect/the injection chain. */
 	public static class PlainBox extends BlockEntity {
 		// 21.1 ctor validation: real BET over the vanilla stone state, supplier never invoked
-		// (task p15-m4-test-infra-2).
+		// (task m4-test-infra-2).
 		static final BlockEntityType<PlainBox> FAKE_TYPE =
 				BlockEntityType.Builder.of((aPos, aState) -> new PlainBox(aPos), Blocks.STONE).build(null);
 
@@ -493,7 +493,7 @@ public class GTAxleBlockEntityTest extends GTOfflineTestBase {
 		assertEquals(1, GT6Kinetics.AXLE_SPECS.get(1).tier());
 		assertEquals(7, GT6Kinetics.AXLE_SPECS.get(10).tier());
 
-		// the registry-name form + the composed-name parameters (task p20-i18n-compose-rows:
+		// the registry-name form + the composed-name parameters (task i18n-compose-rows:
 		// the display retired into gt6.row.axle.display over the size + row-material units —
 		// the unit VALUES here are the old row wording, the expansion pin lives in GT6LangParityTest)
 		assertEquals("axle_wood_treated_small", GT6Kinetics.axleName("wood_treated", 0));

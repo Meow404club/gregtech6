@@ -25,7 +25,7 @@ import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 import gregtech6.tileentity.connectors.GTWireBlockEntity;
 
 /**
- * The real-host mount acceptance (task p34-pool-cover-hosts): the production carrier
+ * The real-host mount acceptance (task pool-cover-hosts): the production carrier
  * classes themselves implement the cover seams now — {@link GTFluidPipeBlockEntity}
  * (the PressureValve host) and {@link GTWireBlockEntity} (the Torch + selector host and
  * the FIRST {@link gregtech6.tileentity.machines.ITileEntitySwitchableMode} live host).

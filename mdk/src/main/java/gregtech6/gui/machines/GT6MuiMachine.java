@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
- * The GT6 face of the ModularUI machine open chain (task p26-mui-a-open-chain — the P25
+ * The GT6 face of the ModularUI machine open chain (task mui-a-open-chain — the P25
  * batch-A ruling "machines opened after this default to ModularUI"): the ACT full-chain
  * precedent (decisions.p24-act-be-form, the wiring gate PASSED on both legs) lifted onto
  * a reusable default interface. The BE implements this and fills {@link #buildUI} with its

@@ -32,7 +32,7 @@ import gregtech6.registry.GT6FeConverters;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The FE→EU converter core (task p28-b-fe-converter-machine) — the DECLARED DEVIATION
+ * The FE→EU converter core (task b-fe-converter-machine) — the DECLARED DEVIATION
  * machine of decisions.p28-eu-inbound-converter: upstream 1.7.10 deliberately has NO
  * RF→EU converter (Greg wall RF — the Flux family converts RF→HU/KU/RU/LU only,
  * Loader_MultiTileEntities.java:824-957, and EU machines reject RF by type equality), so
@@ -41,7 +41,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * {@code gregapi.tileentity.behavior.TE_Behavior_Energy_Converter.doConversion}
  * (:61-94, ridden by TileEntityBase10EnergyConverter) fused with the GTCEu ConverterTrait
  * FE intake face (ConverterTrait.java:98-148). The reference for the pull-side math is
- * root {@link EnergyBridge#extractFe} (task p28-a-fe-inbound-math, merged 89d4cced) — the
+ * root {@link EnergyBridge#extractFe} (task a-fe-inbound-math, merged 89d4cced) — the
  * conversion core below drives it per tick; the machine, its buffer and its overload
  * explosion live BEHIND that seam, not in it.
  *

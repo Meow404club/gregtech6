@@ -20,7 +20,7 @@ import gregtech6.registry.GT6Molds;
 
 /**
  * The material tint of the mold/faucet/smeltery smooth bodies (task
- * r10-debt-material-tint — the r7-40-41 declared-deviation rework). The borrowed grayscale
+ * debt-material-tint — the #40-41 declared-deviation rework). The borrowed grayscale
  * materialicons blockSolid art (the {@code GT6CrucibleDatagen.bodyTexture} faces) renders
  * multiplied with the row material's {@code mRGBaSolid} — the upstream
  * {@code getTextureSmooth(mRGBaSolid, F)} semantics (OreDictMaterial.java:980-987, the

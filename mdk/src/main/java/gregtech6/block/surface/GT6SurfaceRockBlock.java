@@ -26,7 +26,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import gregapi.oredict.OreDictMaterial;
 
 /**
- * The GT6 surface rock (task p30-w6-rocks-sticks) — the research winner's borrowed shape:
+ * The GT6 surface rock (task w6-rocks-sticks) — the research winner's borrowed shape:
  * GTCEu Modern {@code SurfaceRockBlock.java:44-187} (FACING 6-state + micro box + canSurvive
  * sturdy attach + right-click pickup) per-material, replacing the upstream MTE 32757
  * (MultiTileEntityRock: no-tick TE, hardness 0.25 :250, light opacity 0 :248, random
@@ -68,12 +68,12 @@ public class GT6SurfaceRockBlock extends Block {
 	 * the blockstate dispatch emits, so the wireframe is the size tier actually
 	 * rendered at that position (upstream GetSelectedBoundingBoxFromPool rides the
 	 * per-instance visual box, MultiTileEntityRock.java:237). This supersedes the
-	 * p38-issue1-4 fixed boxes — DOWN/UP tighten per tier (every tier always sat
+	 * issue1-4 fixed boxes — DOWN/UP tighten per tier (every tier always sat
 	 * inside the old 8x3x8/13-high pins) and the four GTCEu :48-53 WALL slabs
 	 * (kept verbatim back when the visual rode the y-only quirk) tighten to the
 	 * rotated tier box, matching what the x/y blockstate rotations actually render.
 	 * A null-pos call (the offline tests, shape caches) falls back to the
-	 * representative 8x3x8 tier — the p38-issue1-4 pin. The stick subclass carries
+	 * representative 8x3x8 tier — the issue1-4 pin. The stick subclass carries
 	 * its own table; collision stays empty (noCollission).
 	 */
 	@Override

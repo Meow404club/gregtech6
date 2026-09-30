@@ -18,7 +18,7 @@ import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GTBlockEntities;
 
 /**
- * The ore universe blockstate + item-model provider (task p30-ore-3-datagen spec ①/②).
+ * The ore universe blockstate + item-model provider (task ore-3-datagen spec ①/②).
  * The composition-model shape of {@code GT6BlockStates.addPrefixBlocks} (GT6BlockStates
  * .java:1550-1568, the 175-models/3773-blocks precedent) applied to the 4884-block ore
  * universe ({@code GT6OreBlocks.registrationOrder()}, 26 families x 74 form-rows x M=53):
@@ -82,7 +82,7 @@ public final class GT6OreBlockStates extends BlockStateProvider {
                 + " (the GTOreBakedModel dual-sprite face carries the SET overlay)", tBlocks, tShared.size());
 
         // ------------------------------------------------------------------
-        // The bedrock band (task p31-bedrock-ore-worldgen): the 90 per-pair bedrock ores
+        // The bedrock band (task bedrock-ore-worldgen): the 90 per-pair bedrock ores
         // over ONE shared bedrock-cube model — the upstream look IS the plain bedrock
         // texture copy (Loader_Ores.java:44-45 BlockTextureCopied.get(Blocks.bedrock, 0)),
         // no ore overlay, no GTOreBlock bake dispatch, no atlas face. 90 blockstates + 90
@@ -104,7 +104,7 @@ public final class GT6OreBlockStates extends BlockStateProvider {
                 tBedrock);
 
         // ------------------------------------------------------------------
-        // The nether surface-form band (task p31-nether-lens-end-yield, the coordinator
+        // The nether surface-form band (task nether-lens-end-yield, the coordinator
         // option A): the 14 minimal carriers over per-TEXTURE shared cube models — the
         // vanilla stand-ins (GT6NetherOres.NetherOreKey.vanillaTexture), no ore overlay,
         // no item models (NO BlockItem is the band's whole point), no tint (the carriers
@@ -124,9 +124,9 @@ public final class GT6OreBlockStates extends BlockStateProvider {
                 tNether, tShared.size());
 
         // ------------------------------------------------------------------
-        // The fluid-spring nozzle band (task p38-issue5-fluid-spring-nozzle): the ONE
+        // The fluid-spring nozzle band (task issue5-fluid-spring-nozzle): the ONE
         // worldgen-only carrier over one shared water-texture cube — the BASE-carrier
-        // JSON of the ore-shared-placeholder composition (task p38-spring-texture-tint
+        // JSON of the ore-shared-placeholder composition (task spring-texture-tint
         // cleared the stand-in debt: the baked GTFluidSpringBakedModel emits the per-BE
         // fluid still x tint base + the borrowed FLUID_SPRING dither overlay at render
         // time; this JSON keeps the atlas stitching, the pre-wrap fallback face and the

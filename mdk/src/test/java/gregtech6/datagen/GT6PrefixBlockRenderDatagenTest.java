@@ -1,5 +1,5 @@
 /**
- * Offline tests for task p8-prefixblock-render: the model-merging census, the SET_NONE
+ * Offline tests for task prefixblock-render: the model-merging census, the SET_NONE
  * fallback rule, and the borrowed-PNG coverage — everything checkable without the MC
  * registries (the datagen JVM gates the generated-JSON counts themselves: runData first
  * run written>0 / second run written:0, and the loot-table file count == 3777).
@@ -63,7 +63,7 @@ class GT6PrefixBlockRenderDatagenTest {
         PINNED_LIVE_SETS.put("blockPlate", sets("BRICK", "COPPER", "DIAMOND", "DULL", "FIERY", "FINE", "FOOD",
                 "LAPIS", "LEAF", "LIGNITE", "MAGNETIC", "METALLIC", "POWDER", "QUARTZ", "RAD", "REDSTONE", "ROUGH",
                 "RUBBER", "RUBY", "SHINY", "SPACE", "STONE", "WOOD"));
-        // the COPPER rung joined at task p34-machines-bumblelyzer-crucible — the bouleGt
+        // the COPPER rung joined at task machines-bumblelyzer-crucible — the bouleGt
         // force-table's plateGem cascade face (Si/Ge/RedstoneAlloy/NikolineAlloy carry
         // SET_COPPER; the Crystalline Silicon/… Alloy plates' block carrier)
         PINNED_LIVE_SETS.put("blockPlateGem", sets("COPPER", "CUBE_SHINY", "DIAMOND", "DULL", "EMERALD", "FINE", "FLINT",
@@ -166,7 +166,7 @@ class GT6PrefixBlockRenderDatagenTest {
 
     /**
      * The prefix-borrowed PNG inventory is exactly the 175 referenced (prefix x set) files —
-     * no strays WITHIN the prefix borrow. Since task p9-wire-family-w2 the tree also hosts
+     * no strays WITHIN the prefix borrow. Since task wire-family-w2 the tree also hosts
      * the 7 wire-family {@code wire.png} borrows (one per live texture set of the 30 wire
      * rows, pinned by GTWireTextureCensusTest), so the walk is filtered to the
      * prefix-referenced names instead of counting the whole directory.

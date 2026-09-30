@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
- * The bumblebee sting tables (task p34-bumbliary-gui, MultiItemBumbles.java:440-456
+ * The bumblebee sting tables (task bumbliary-gui, MultiItemBumbles.java:440-456
  * bumbleAttack): the {@code :448-455} damage ladder and the {@code :443-447}/per-case
  * target immunity gate as pure data — the hurt-call half runs only in the live walk.
  */

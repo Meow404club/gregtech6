@@ -10,7 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * The cover registry — 1.20.1 port of gregapi/cover/CoverRegistry.java (task p4-cover-core
+ * The cover registry — 1.20.1 port of gregapi/cover/CoverRegistry.java (task cover-core
  * ③). Upstream keys an {@code ItemStackMap<ItemStackContainer, ICover>} by item + metadata
  * (:34); 1.20.1 items carry no metadata, so the key collapses to the {@link Item} holder
  * while the {@code short} id/meta lookup surface stays intact for the CoverData lanes:

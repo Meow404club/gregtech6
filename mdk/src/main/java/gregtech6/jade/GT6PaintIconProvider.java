@@ -16,7 +16,7 @@ import gregtech6.tileentity.IPaintableTE;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * GT6 漆色 Jade 图标面（task r6-15-hive-jade-tint，issue #15 尾巴 B）：Jade 悬浮面板的方块
+ * GT6 漆色 Jade 图标面（task 15-hive-jade-tint，issue #15 尾巴 B）：Jade 悬浮面板的方块
  * 图标走 ItemStack 渲染链（jade-1201 impl/BlockAccessorClientHandler.getIcon:45-77 →
  * DisplayHelper.drawItem:219 → guiGraphics.renderFakeItem → ItemColors），只吃 ItemColor +
  * 栈 NBT，不吃 {@code GTMachineTintModel} 的 BlockState 包装器——漆过的方块（蜂巢世界族色、
@@ -26,12 +26,12 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * getUpdateTag=saveWithoutMetadata 双通道持有真值，TileEntityBase03TicksAndSync.java:294-344）
  * 写进<b>显示用</b>临时栈的载荷（{@link GT6ItemData#updateRaw} 双腿缝：1.20.1 根 tag /
  * 1.21.1 CUSTOM_DATA），由 {@code GTItemPaintTint.itemColor()}（GTClientHandlers 侧注册，
- * 含 task r6-15-hive-jade-tint 修 A 的 HIVE_ITEM 挂钩）消费显色。未漆/非漆面 BE 答
+ * 含 task 15-hive-jade-tint 修 A 的 HIVE_ITEM 挂钩）消费显色。未漆/非漆面 BE 答
  * {@code null}（Jade 契约：不接管默认图标）。只动 Jade 显示副本，玩家拾取语义零触碰
  * （getCloneItemStack 覆写=主会话裁定的 C 方案，不做）。
  *
  * <p>显示栈取 {@code new ItemStack(block)} 而非接管 currentIcon——IElement API 不暴露内栈
- * （impl 包 ItemStackElement），GT6 漆面域无 getCloneItemStack 覆写（r6-15-jade-tint 15 族
+ * （impl 包 ItemStackElement），GT6 漆面域无 getCloneItemStack 覆写（15-jade-tint 15 族
  * 盘点），两栈逐字节同形。注册挂 {@code GTEntityBlock} 全族（GT6JadePlugin，与 tooltip
  * provider 同姿势），体内 painted 门分发。
  */

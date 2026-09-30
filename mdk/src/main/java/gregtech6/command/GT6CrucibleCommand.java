@@ -31,7 +31,7 @@ import gregtech6.tileentity.tools.TileEntityMold;
 import gregtech6.tileentity.tools.TileEntitySmeltery;
 
 /**
- * The crucible-chain RCON driver (task p26-crucible-physics-smeltery acceptance, the
+ * The crucible-chain RCON driver (task crucible-physics-smeltery acceptance, the
  * card-local command/ form of GTBoilerCommand/GT6ChiselCommand):
  * <ul>
  * <li>{@code place <pos> <variant>} / {@code place-mold <pos> <variant>} — the block

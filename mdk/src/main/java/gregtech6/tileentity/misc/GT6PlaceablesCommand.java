@@ -31,7 +31,7 @@ import net.minecraftforge.fml.common.Mod;
 import gregtech6.items.behaviors.GT6PlaceablePlacement;
 
 /**
- * {@code /gt6placeables} — the placeables acceptance command (task p32-placeables; the
+ * {@code /gt6placeables} — the placeables acceptance command (task placeables; the
  * GT6KitchenCommand family form + the GT6SceneSixCommand fake-player channel — the
  * "the command IS the acceptance channel" ruling). The arms drive the REAL faces the
  * keyboard player hits:

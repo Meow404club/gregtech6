@@ -62,7 +62,7 @@ import gregtech6.tileentity.inventories.GT6SafeBlockEntity;
 import gregtech6.tileentity.inventories.GT6StaticStorageBaseBlockEntity;
 
 /**
- * The shelter-dungeon PIECE (task p38-dungeon-framework) — one class over the shipped
+ * The shelter-dungeon PIECE (task dungeon-framework) — one class over the shipped
  * room kinds, each an upstream {@code IDungeonChunk} port (tmp/gt6-1.7.10
  * gregapi/worldgen/dungeon/):
  * <ul>
@@ -113,7 +113,7 @@ import gregtech6.tileentity.inventories.GT6StaticStorageBaseBlockEntity;
  * redstone lamp (the 1.7.10 lit_redstone_lamp face) over a redstone-brick; colored →
  * vanilla concrete of the dungeon accent color; the stair slabs → stone brick slabs
  * (the upstream GT slabs). The room-batch card (dungeon-rooms-batch) replaces the
- * framework-card deferral: the loot faces ride vanilla chests bound to the p34-injected
+ * framework-card deferral: the loot faces ride vanilla chests bound to the injected
  * vanilla tables + the ported storage BEs (safe/bookshelf) — the remaining MTE faces
  * (crucibles/molds/tanks/pipes/spikes/tool racks/ingot piles/coins/cups) are empty-shell
  * placeholders or omissions, declared per room in the room javadocs and the card report.
@@ -1347,7 +1347,7 @@ public class GT6DungeonPiece extends StructurePiece {
     /**
      * The manual cabinet contents — the upstream 8-book row (:118) minus the two CUT
      * dynamic manuals (Manual_Elements/Manual_Alloys generate their pages from the
-     * material registry, the p35-books ruling), so the port fills the 6 shipped rows.
+     * material registry, the books ruling), so the port fills the 6 shipped rows.
      */
     private static final String[] WORKSHOP_MANUALS = {
             "manual_smeltery", "manual_random", "manual_extenders", "manual_steam", "manual_tools", "manual_printer"};
@@ -1361,7 +1361,7 @@ public class GT6DungeonPiece extends StructurePiece {
      * (draw-without-replacement) — see {@link GT6DungeonStructure}.
      *
      * <p>Declared MTE folds (the ~30-ID dependency gate): chest MTE 11 → the vanilla
-     * chest on the p34-mapped tables; the mechanical safe 2010 → the ported safe BE +
+     * chest on the mapped tables; the mechanical safe 2010 → the ported safe BE +
      * marker; the drawer 4011 → the ported drawer BE + the 4×8 material fill; the ACT
      * 5011 → the ported {@code gt6:advanced_crafting_table}; the bookshelf 7111 → the
      * ported bookshelf + the 6 shipped manuals; the bottle shelf 8762 → the ported

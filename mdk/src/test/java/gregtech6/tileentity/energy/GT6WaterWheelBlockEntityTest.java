@@ -30,7 +30,7 @@ import gregtech6.registry.GTWireSpecs;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * GT6WaterWheelBlockEntity offline tests (task p28-c-water-wheel acceptance ④⑤): the
+ * GT6WaterWheelBlockEntity offline tests (task c-water-wheel acceptance ④⑤): the
  * four-quadrant rotation table of the pure flow→sign function (the acceptance's
  * 流水向量→旋转方向对表), the opaque-bury stall + the dead-band graze stop (the
  * 无水流/水流不足=停转 contract), the RU output parameter pins against the p28 ULV chain
@@ -46,7 +46,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
  *   流水 (FluidState.getFlow ≠ 0, normalized — FlowingFluid getFlow tail)
  *     → 水车 8 RU × 1A signed packets (this test)
  *       → GTAxle 递归零损 (GTAxleBlockEntity.transferRotations, |aSpeed| gate: 8 ≤ wood VMAX 16)
- *         → Electric Dynamo ULV T0 row (p28-c-ulv-dynamo-row, in 8 RU / out 8 EU × 1A):
+ *         → Electric Dynamo ULV T0 row (c-ulv-dynamo-row, in 8 RU / out 8 EU × 1A):
  *           the 8 packet sits dead-centre in the [4, 16] receive window —
  *           V[0] = 8 (GTWireSpecs, CS.java:148) = this wheel's packet
  *         → ULV 机器 (min 4 / in 8 / max 16): the 8 EU packet lands mid-window, never
@@ -74,7 +74,7 @@ public class GT6WaterWheelBlockEntityTest extends GTOfflineTestBase {
 		BlockEntityType<GT6WaterWheelBlockEntity>[] tHolder = (BlockEntityType<GT6WaterWheelBlockEntity>[]) new BlockEntityType<?>[1];
 		// OAK_LOG joins the valid set for the axis-mirror fixture (the vanilla log state
 		// carries the SAME BlockStateProperties.AXIS instance); 21.1 validates the
-		// type/state pair at the BE ctor (task p15-m4-test-infra-2)
+		// type/state pair at the BE ctor (task m4-test-infra-2)
 		tHolder[0] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new GT6WaterWheelBlockEntity(tHolder[0], aPos, aState), Blocks.STONE, Blocks.OAK_LOG).build(null);
 		sType = tHolder[0];
@@ -102,7 +102,7 @@ public class GT6WaterWheelBlockEntityTest extends GTOfflineTestBase {
 		public byte lastSide = -1;
 
 		// 21.1 ctor validation: the fake binds a real BET over the vanilla stone state —
-		// the supplier is stored, never invoked (task p15-m4-test-infra-2)
+		// the supplier is stored, never invoked (task m4-test-infra-2)
 		static final BlockEntityType<CountingSink> FAKE_TYPE =
 				BlockEntityType.Builder.of((aPos, aState) -> new CountingSink(aPos), Blocks.STONE).build(null);
 
@@ -344,7 +344,7 @@ public class GT6WaterWheelBlockEntityTest extends GTOfflineTestBase {
 		// the ULV wire domain: GTWireSpecs.V[0] = 8 (CS.java:148) — the wheel packet rides it
 		assertEquals(8, GTWireSpecs.V[0]);
 		assertEquals("ULV", GTWireSpecs.VN[0]);
-		// the Electric Dynamo ULV T0 row (p28-c-ulv-dynamo-row: NBT_INPUT=8, window
+		// the Electric Dynamo ULV T0 row (c-ulv-dynamo-row: NBT_INPUT=8, window
 		// [in/2, in*2] = [4, 16]): the 8 packet is the EXACT centre — one wheel runs one
 		// dynamo at full rate, never half-fed, never over-window
 		assertTrue(4 <= GT6WaterWheelBlockEntity.OUTPUT_PACKET_SIZE

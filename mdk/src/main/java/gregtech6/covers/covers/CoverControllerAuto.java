@@ -9,7 +9,7 @@ import gregtech6.covers.CoverData;
 
 /**
  * The automatic machine switch cover — 1.20.1 port of gregapi/cover/covers/
- * CoverControllerAuto.java (:33-46, task p35-covers-display-scale-6; upstream
+ * CoverControllerAuto.java (:33-46, task covers-display-scale-6; upstream
  * MultiItemTechnological.java:63 meta 1003 "Automatic Machine Switch", dump
  * 自动开关). "Automatically turns Machines ON/OFF when needed": the held state IS the
  * machine's own running-possible-or-active answer (:44) — a machine with something to do

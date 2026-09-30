@@ -2,7 +2,7 @@ package gregtech6.gui.machines;
 
 /**
  * The basic-machine GUI layout descriptor — the FAITHFUL per-case transcription of the
- * upstream slot-position case table (task r8-gui-layout-descriptor, design card B): every
+ * upstream slot-position case table (task gui-layout-descriptor, design card B): every
  * coordinate below is transcribed case-by-case from gregapi/gui/ContainerCommonBasicMachine.java
  * addSlots (:45-271), the switch that upstream runs over {@code mRecipes.mInputItemsCount}
  * (:51-156) and {@code mRecipes.mOutputItemsCount} (:158-263).

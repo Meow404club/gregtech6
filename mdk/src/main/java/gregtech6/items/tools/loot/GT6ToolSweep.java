@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * The 3x3x3 neighbourhood re-harvest helper — task p29-w5-t1-dig-six shared
+ * The 3x3x3 neighbourhood re-harvest helper — task w5-t1-dig-six shared
  * infrastructure ② (the wave ruling decisions.p30-w5-split-rulings: t1 builds,
  * t2 Axe / t4 Plow+Sense consume). Upstream form: the {@code sIsHarvestingRightNow}
  * ThreadLocal instance field + the 26-neighbour {@code tryHarvestBlock} walk, verbatim

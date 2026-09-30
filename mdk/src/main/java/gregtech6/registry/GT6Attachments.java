@@ -28,7 +28,7 @@ import gregtech6.block.attachment.GTAttachmentSmallBlock;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The attachment registration home (task p12-tap-funnel-attachment spec ⑤) — the
+ * The attachment registration home (task tap-funnel-attachment spec ⑤) — the
  * shared DeferredRegisters for the wall-attachment family, card-owned (ADR-P3-4):
  * self-contained {@code @EventBusSubscriber(MOD)} DeferredRegisters attached from the
  * construct event — GT6Mod.java / GTModBusListener.java stay untouched. The GT6Kinetics
@@ -53,7 +53,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * <p>Registration-NBT trims (declared): the row ids (32728-32732/32080 taps,
  * 32723-32727/32081 funnels), the stack size (64) and the crafting recipes ride the
  * recipe-system cards; the upstream "Misc Tool Blocks" MTE-registry category (tab 32720)
- * is pooled into the MACHINES_TAB join (task p38-tabfix-b-energy,
+ * is pooled into the MACHINES_TAB join (task tabfix-b-energy,
  * {@link #onBuildTabContents}; the GTBarrels:257 pooling precedent — supersedes the old
  * stay-out sentence).
  */
@@ -63,7 +63,7 @@ public final class GT6Attachments {
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "gt6");
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 
-	/** The composed tap display template "{@code %s Tap}" — one material slot (task p20-i18n-compose-rows). */
+	/** The composed tap display template "{@code %s Tap}" — one material slot (task i18n-compose-rows). */
 	public static final String TAP_DISPLAY_KEY = "gt6.row.tap.display";
 	/** The composed funnel display template "{@code %s Funnel}". */
 	public static final String FUNNEL_DISPLAY_KEY = "gt6.row.funnel.display";
@@ -170,7 +170,7 @@ public final class GT6Attachments {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
+	 * The tab walk (task tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
 	 * joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
 	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
 	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display

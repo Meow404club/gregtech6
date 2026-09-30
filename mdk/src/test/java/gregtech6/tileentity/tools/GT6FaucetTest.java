@@ -22,7 +22,7 @@ import gregapi.tileentity.machines.ITileEntityMold;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The card-B faucet truth tables (task p26-crucible-mold-faucet): the monkey-wrench
+ * The card-B faucet truth tables (task crucible-mold-faucet): the monkey-wrench
  * auto-pull state machine (:151-162), the mount-face mold-input gate (:93-95), the
  * pull-at-the-faced-crucible seam (:84-87 — the crucible receives
  * {@code fillMoldAtSide(this, opposite, facing)}), the pull NBT round-trip, and the

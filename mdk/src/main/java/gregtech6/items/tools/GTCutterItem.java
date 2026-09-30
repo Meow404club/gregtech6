@@ -19,7 +19,7 @@ import gregtech6.tileentity.connectors.GTWireBlockEntity;
 import gregtech6.util.UT6;
 
 /**
- * The formal GT6 wire cutter — task p10-tool-cutter spec ②. Upstream the tool mounts
+ * The formal GT6 wire cutter — task tool-cutter spec ②. Upstream the tool mounts
  * {@code Behavior_Tool(TOOL_cutter, …)} (GT_Tool_WireCutter.java:101) and the wire MTEs
  * answer it through {@code getFacingTool() == TOOL_cutter}
  * (MultiTileEntityWireElectric.java:245) on the {@code onToolClick2} chain
@@ -66,7 +66,7 @@ import gregtech6.util.UT6;
  * cutting behaviour (:102 Behavior_TripwireCutting). Durability 512, single steel tier
  * (upstream {@code 4*U} material-scaled, Loader_Tools.java:131). The crafting recipe
  * ({@code {"PfP","hPd","STS"}}, Loader_Tools.java:324) landed with the material rows
- * (task p31-machine-ladder, the gt6:material_tool axis). The material tint (:95-97)
+ * (task machine-ladder, the gt6:material_tool axis). The material tint (:95-97)
  * landed with the same card (the former declared deviation retired).
  */
 public class GTCutterItem extends Item implements GT6ToolLadder.LadderTool {
@@ -163,7 +163,7 @@ public class GTCutterItem extends Item implements GT6ToolLadder.LadderTool {
 	 * three arms (crowbar :151, cover :159, onToolClick2 :162) without paying, and the
 	 * covers return raw too (CoverRedstoneEmitter.java:51). This overload IS the :159
 	 * relay; the {@link #cutterToolClick(UseOnContext)} outer :135 pay is the Behavior_Tool
-	 * layer. A pay here double-charged the same damage (fixed p11-cutter-payperpoint).
+	 * layer. A pay here double-charged the same damage (fixed cutter-payperpoint).
 	 */
 	public static long cutterToolClick(ICoverableTE aHost, @Nullable Player aPlayer, ItemStack aStack, byte aSide, boolean aSneaking) {
 		return aHost.onCoverToolClick(GT6ToolActions.CUTTER_ID, aPlayer, aStack, aSide, aSneaking);
@@ -171,7 +171,7 @@ public class GTCutterItem extends Item implements GT6ToolLadder.LadderTool {
 
 	/**
 	 * The payPerPoint invocation counter — package-private counting-stub seam for the
-	 * offline tests (p11-cutter-payperpoint, known_bugs 2026-09-01 #1): the cover arm
+	 * offline tests (cutter-payperpoint, known_bugs 2026-09-01 #1): the cover arm
 	 * must reach this exactly ONCE per click (the outer context overload is the sole
 	 * payment site — the upstream Behavior_Tool.java:63 item layer).
 	 */
@@ -205,7 +205,7 @@ public class GTCutterItem extends Item implements GT6ToolLadder.LadderTool {
 		return classifies(aToolAction);
 	}
 
-	// ------------------------------ the GT6ToolLadder identity faces (task p31-machine-ladder) ------------------------------
+	// ------------------------------ the GT6ToolLadder identity faces (task machine-ladder) ------------------------------
 
 	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — Steel fallback = 512). */
 	@Override

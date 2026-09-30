@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import net.minecraft.world.level.block.Block;
 
 /**
- * The bumble-hive FML REGISTRATION assertion (task p32-bees-lv2 acceptance ①, the
+ * The bumble-hive FML REGISTRATION assertion (task bees-lv2 acceptance ①, the
  * id686 lesson: the registration faces are asserted, not assumed) — the
  * GT6SurfaceBlocksTest DeferredRegister-entry posture.
  *
@@ -39,7 +39,7 @@ class GT6BeeHivesTest {
 	@Test
 	void hiveBlockAndBetAreRegisteredUnderPinnedIds() {
 		// acceptance ① — the registry faces exist under the flattened MTE 32755 id and,
-		// since task p33-bees-lv3-b-bumbliary, under the MTE 32741/32007 Bumbliary pair
+		// since task bees-lv3-b-bumbliary, under the MTE 32741/32007 Bumbliary pair
 		assertEquals(List.of("bumble_hive", "bumbliary", "bumbliary_advanced"),
 				GT6BeeHives.BLOCKS.getEntries().stream().map(tRow -> tRow.getId().getPath()).toList(),
 				"the block register holds the hive + the Bumbliary pair");
@@ -62,10 +62,10 @@ class GT6BeeHivesTest {
 
 	@Test
 	void itemFaceIsTheHivePlusTheBumbliaryPair() {
-		// the R2 containment-contract revision (task p34-bumbliary-recipes): the hive GAINS
+		// the R2 containment-contract revision (task bumbliary-recipes): the hive GAINS
 		// its BlockItem (the carryable wild hive — the upstream 32755 item form the 32741
 		// recipe keys on, :2222; the GT6BeeHives javadoc declares the broken-once ruling);
-		// the Bumbliary pair ARE obtainable machines (task p33-bees-lv3-b-bumbliary).
+		// the Bumbliary pair ARE obtainable machines (task bees-lv3-b-bumbliary).
 		// Still no creative tab in the bee home (the hive item rides the gt6:bee tab, the
 		// GT6BeeCombs registration).
 		assertFalse(hasField("CREATIVE_MODE_TABS"), "no creative tab in the bee home");
@@ -82,7 +82,7 @@ class GT6BeeHivesTest {
 	}
 
 	/**
-	 * Issue #15 (task r3-beehive-tint): the world tint rides the BAKED
+	 * Issue #15 (task beehive-tint): the world tint rides the BAKED
 	 * {@code GTMachineTintModel} domain — the runtime {@code BlockColor} registration
 	 * (the former nested ClientTint class, the achromatic-in-live-client route the p32
 	 * bake ruling retired) must stay GONE. The reflection walk fails the test if any

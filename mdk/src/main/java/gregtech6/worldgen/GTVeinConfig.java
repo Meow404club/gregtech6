@@ -17,7 +17,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
  * Loader_Worldgen.java:886-916 rows are {@code true}, the :917-925 Mars/End/Moon/BL rows
  * {@code false}; {@code end} = the row listed ORE_END — exactly the five rows :904
  * platinum/:905 molybdenum/:906 cassiterite/:918 naquadah/:919 trinium, task
- * p31-nether-lens-end-yield; the weighted draw must sum over the dimension's own rows
+ * nether-lens-end-yield; the weighted draw must sum over the dimension's own rows
  * only, the GT6WorldGenerator.java:93 tMaxWeight semantics).
  *
  * <p>The material slots hold {@link OreDictMaterial} constants (the datagen rows reference

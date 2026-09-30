@@ -16,7 +16,7 @@ import gregtech6.block.tree.GT6TreeKind;
 import gregtech6.registry.GT6TreeBlocks;
 
 /**
- * The GT6 tree grow semantics as a worldgen Feature (task p30-w6-t1-trees-nine) — the
+ * The GT6 tree grow semantics as a worldgen Feature (task w6-t1-trees-nine) — the
  * <b>two-option ruling, option b</b>: the upstream canopy math is a per-case sequence of
  * irregular layer loops (diamond thresholds {@code Math.abs(i*j)}, non-convex palm arms,
  * a quadratic spruce cone, maple droop rings down to {@code tMaxHeight-7}) that the

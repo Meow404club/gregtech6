@@ -8,7 +8,7 @@ import gregtech6.covers.covers.AbstractCoverAttachmentLogistics;
 /**
  * The Logistics Dump Bus (Item) — 1.20.1 port of gregapi/cover/covers/
  * CoverLogisticsGenericDump.java (:31-40, upstream item id 1099), task
- * p33-logistics-covers-12. The Core's LAST routing arm: generic item storage drains
+ * logistics-covers-12. The Core's LAST routing arm: generic item storage drains
  * into the dump targets (:478-494), excluded for every item in the network-wide
  * protected set {@code tFilteredFor} (all set filters across every Export/Import/
  * Storage cover and storage endpoint). No priority lane (:37 upstream usePriorities=F).

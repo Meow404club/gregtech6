@@ -30,7 +30,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.tank.GT6MeasuringPotBlockEntity;
 
 /**
- * The Measuring Pot block carrier — the block side of task r8-issue45-c3 (issue #45),
+ * The Measuring Pot block carrier — the block side of task issue45-c3 (issue #45),
  * the GTBarrelBlock/GTKitchenBlock carrier pattern: the block carries the upstream
  * registration row's values (Loader_MultiTileEntities.java:2096 "Ceramic Measuring Pot",
  * category "Fluid Containers": hardness 0.5 / resistance 6.0, aUtilStone) plus the BET,
@@ -52,7 +52,7 @@ import gregtech6.tileentity.tank.GT6MeasuringPotBlockEntity;
  * 4px-inset footprint, 8px tall) over the {@code noOcclusion()} properties seam (the
  * kitchen family's #9 X-ray fix shape). Rendering rides the two-layer element model
  * (the datagen colored+overlay grammar, the bumbliary form); the grayscale colored band
- * ships UN-TINTED — the r7-40-41 crucible bodyTexture declared deviation
+ * ships UN-TINTED — the #40-41 crucible bodyTexture declared deviation
  * ({@code ponytail:} the tintindex-0 + dispatch row would land it, the model needs no
  * change when the render pool gets to it).
  */

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.recipes.GT6RecipeMaps;
 
 /**
- * Acceptance 5 (task p7-basicmachine-family ⑦): the offline recipe chains — one per
+ * Acceptance 5 (task basicmachine-family ⑦): the offline recipe chains — one per
  * machine, driven end-to-end through the BE dispatcher (findRecipe :712 → canOutput →
  * isRecipeInputEqual consume → getOutputs :758 → doActive progress :813 → :816 output
  * placement), over the representative rows poured by the test base.

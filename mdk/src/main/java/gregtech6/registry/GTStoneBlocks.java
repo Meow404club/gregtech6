@@ -25,7 +25,7 @@ import gregtech6.block.stone.GTStoneBlock;
 import gregtech6.block.stone.StoneVariant;
 
 /**
- * Registration home of the GT6 stone universe (task p21-stoneblocks-16item-registry-split,
+ * Registration home of the GT6 stone universe (task stoneblocks-16item-registry-split,
  * superseding the P19 single-block-per-stone shape): the 17 upstream BlockStones families
  * (CS.java:1668 declaration order — GraniteBlack..Shale) x the 16 {@link StoneVariant}
  * metas = <b>272 per-pair Block+BlockItem registrations</b>, in one self-contained
@@ -49,7 +49,7 @@ import gregtech6.block.stone.StoneVariant;
  * -> (stone, StoneVariant.VALUES[table[variantFrom.meta()]]); the tables are stone-blind
  * (the same 16 entries serve every stone, upstream included). CHISEL_MAPPINGS[6]==[7]==CHISL
  * is the self-mapping pin. They are the seams the chisel/file/hammer tool cards and the
- * recipes card (p19-chisel-recipes) consume — upstream BlockStones.onToolClick :573-584
+ * recipes card (chisel-recipes) consume — upstream BlockStones.onToolClick :573-584
  * reads exactly these.
  *
  * <p>Upstream oredict face (BlockStones.java:135-194 {@code OM.reg_}/registerOre_
@@ -211,7 +211,7 @@ public final class GTStoneBlocks {
             /*net.neoforged.neoforge.registries.DeferredHolder<Item, Item> tHandle =
                 net.neoforged.neoforge.registries.DeferredHolder.create(Registries.ITEM, tLoc);
             *///?}
-            // The composed-name BlockItem (task p20-i18n-compose-rows): the stack name
+            // The composed-name BlockItem (task i18n-compose-rows): the stack name
             // delegates to the block compose (vanilla BlockItem only delegates the
             // descriptionId — BlockItem.java:186-189 — whose lang keys retired with the
             // B2 shrink). Per-pair, each block composes its OWN variant template.
@@ -281,7 +281,7 @@ public final class GTStoneBlocks {
      * (:173-194) are merged — the union is what the oredict actually answers. Keys in
      * OP.java:456-465 declaration order; the set is identical for all 17 stones (every
      * stone material passes the :141 gate), so the table is per-prefix rather than
-     * per-stone. OP.stoneChiseled -> [CHISL] is the p19-chisel-recipes anchor.
+     * per-stone. OP.stoneChiseled -> [CHISL] is the chisel-recipes anchor.
      */
     public static Map<OreDictPrefix, List<StoneVariant>> oreDictMappings() {
         Map<OreDictPrefix, List<StoneVariant>> rMap = new LinkedHashMap<>();

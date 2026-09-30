@@ -24,7 +24,7 @@ import gregapi.tileentity.energy.IEnergyAdjacency;
 import gregapi.tileentity.energy.ITileEntityEnergy;
 
 /**
- * The Magic Field Absorber offline tests (task p32-magic-absorber) — the acceptance
+ * The Magic Field Absorber offline tests (task magic-absorber) — the acceptance
  * arms over the {@link GT6MagicAbsorberBlockEntity} probe/emit split:
  * <ul>
  * <li>① the registration census (the offline half): the BET path, the block path and the

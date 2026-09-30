@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 /**
- * The layout-descriptor pin table (task r8-gui-layout-descriptor acceptance ①): every case
+ * The layout-descriptor pin table (task gui-layout-descriptor acceptance ①): every case
  * of {@link GT6MachineGuiLayout} asserted against the upstream coordinates VERBATIM — the
  * expected literals below are transcribed from gregapi/gui/ContainerCommonBasicMachine.java
  * addSlots (:51-156 inputs, :158-263 outputs), the fluid arms included (7 fires the >6 arm,

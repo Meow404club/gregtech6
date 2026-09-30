@@ -1,5 +1,5 @@
 /*
- * Offline tests for task p22-painted-item-domain + the p23-painted-item-tag-fix two-level
+ * Offline tests for task painted-item-domain + the painted-item-tag-fix two-level
  * read: the GTItemPaintTint inventory-half mapping — the ItemColor over the stack NBT the
  * loot copy_nbt function carries. The seam reads the tag only (any item's stack works), so
  * vanilla-registry stacks offline-booted per GTOfflineRenderTestBase drive every arm; the
@@ -9,7 +9,7 @@
  * GT6LootTables.paintCopyNbt — the shape the p22 first-pass tests missed, which is why the
  * kb-painted-item-tag-mismatch dead seam never went red) and the root-tag fallback form.
  *
- * <p>task p27-machine-material-tint-fidelity re-based the unpainted arms on the row
+ * <p>task machine-material-tint-fidelity re-based the unpainted arms on the row
  * material (the upstream item colour is a registration-row function, not item NBT). The
  * stacks below ride Items.BRICKS — a material-LESS block by the
  * {@code GTBasicMachineBlock.materialOf} gate — so every {@code -1} assertion here pins

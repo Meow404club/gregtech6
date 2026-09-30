@@ -44,7 +44,7 @@ import gregtech6.util.UT6;
 
 /**
  * 1.20.1 counterpart of gregapi/tileentity/connectors/MultiTileEntityPipeItem.java
- * (292 lines) — the trimmed direct translation (task p26-pipe-item spec ①-④).
+ * (292 lines) — the trimmed direct translation (task pipe-item spec ①-④).
  *
  * <p>There is NO network object — the SOURCE pipe runs the whole transport: every 10
  * ticks (upstream SERVER_TICK_PR2 gate SERVER_TIME % 10 == 0, :194) a pipe holding
@@ -88,7 +88,7 @@ import gregtech6.util.UT6;
  * fan-out (:210-215/:254-261) has no port-side consumer (the 1.7.10 machine re-plan
  * hint) and is trimmed.
  *
- * <p>Covers (task p31-retriever-cover ①): the BE implements {@link ICoverableTE} by
+ * <p>Covers (task retriever-cover ①): the BE implements {@link ICoverableTE} by
  * composition (the TileEntityOven precedent) — the {@link #mCovers} store, the
  * 06Covers :68/:74 NBT round trip, the :191 validity sweep on the first tick, the
  * :200/:202 tickPre/tickPost dispatch and the :184-186 visual-sync window; the
@@ -146,7 +146,7 @@ public class GTItemPipeBlockEntity extends TileEntityBase09Connector implements 
 	private boolean mPhaseAssigned = false;
 
 	// ---------------------------------------------------------------------------
-	// covers (task p31-retriever-cover ① — the composition attachment, the Oven
+	// covers (task retriever-cover ① — the composition attachment, the Oven
 	// precedent: the store lives here, the 06Covers behaviour comes from the
 	// ICoverableTE defaults; the base-class chain stays untouched)
 	// ---------------------------------------------------------------------------
@@ -530,7 +530,7 @@ public class GTItemPipeBlockEntity extends TileEntityBase09Connector implements 
 	}
 
 	/**
-	 * The adjacent-inventory walk of the retriever cover (task p31-retriever-cover; the
+	 * The adjacent-inventory walk of the retriever cover (task retriever-cover; the
 	 * upstream CoverRetrieverItem :67 {@code getAdjacentTileEntity} / :71
 	 * {@code getAdjacentInventory} pair folded to one query): the item handler of the BE
 	 * sitting on aSide of aPipe — never a connector (the :72 non-pipe arm) and only when

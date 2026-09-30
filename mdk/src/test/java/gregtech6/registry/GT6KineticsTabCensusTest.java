@@ -12,7 +12,7 @@ import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Task p38-tabfix-e-kinetics-tail — the kinetics ladder tab-join coverage census:
+ * Task tabfix-e-kinetics-tail — the kinetics ladder tab-join coverage census:
  * {@link GT6Kinetics#onBuildTabContentsKineticLadders} walks the three registration
  * ladders into {@link GTMachines#MACHINES_TAB}, and this test pins the per-ladder
  * coverage counts so a future row lands only with a conscious census bump (the
@@ -29,7 +29,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
  * rows on their own MTE-registry categories (the "Misc Tool Blocks" 32720 area,
  * Loader_MultiTileEntities.java:2106 and the per-row anchors); this port pools the join
  * into MACHINES_TAB (the GTBarrels:257 pooling precedent). The four single-block items
- * (crank/gearbox/rotation transformer/water wheel) are the p38-tabfix-b-energy crop —
+ * (crank/gearbox/rotation transformer/water wheel) are the tabfix-b-energy crop —
  * its {@code CreativeTabJoinCensusTest#kineticsJoinFour} pins them.
  */
 public class GT6KineticsTabCensusTest extends GTOfflineTestBase {

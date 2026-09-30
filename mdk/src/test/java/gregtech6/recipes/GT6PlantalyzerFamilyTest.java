@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import gregapi.data.TD;
 
 /**
- * The p34-machines-burner-plantalyzer Plantalyzer acceptance test: the row-table pins
+ * The machines-burner-plantalyzer Plantalyzer acceptance test: the row-table pins
  * (the FIRST 5-tier ladder since the eu-core wave's shared {@code euFiveTierMachine}
  * carrier — Loader_MultiTileEntities.java:1601-1605, EU, Electric_T[1..5], parallel 64
  * with NO NBT_PARALLEL_DURATION key, hardness 4.0 on every row, the "plantalyzer"

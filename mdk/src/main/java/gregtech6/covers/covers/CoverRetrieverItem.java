@@ -31,7 +31,7 @@ import gregtech6.util.GTItemMover;
 
 /**
  * The item retriever cover — 1.20.1 port of gregapi/cover/covers/CoverRetrieverItem.java
- * (task p31-retriever-cover; upstream item id 1031 "Item Retriever Cover",
+ * (task retriever-cover; upstream item id 1031 "Item Retriever Cover",
  * MultiItemTechnological.java:90). The plate mounts ONLY on a ticking item pipe
  * ({@code interceptCoverPlacement :50}, {@code canTick() && instanceof
  * ITileEntityItemPipe} — the port's {@code self().canUpdate() && instanceof

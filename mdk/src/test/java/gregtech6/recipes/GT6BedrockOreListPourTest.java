@@ -1,5 +1,5 @@
 /**
- * Tests for task p31-bedrock-ore-worldgen spec ③: the shipped
+ * Tests for task bedrock-ore-worldgen spec ③: the shipped
  * {@code data/gt6/recipe_maps/bedrockorelist.json} pours into RM.BedrockOreList
  * (GT6RecipeMaps.BEDROCK_ORE_LIST, the upstream RM.java:153 NEI fake-recipe display face)
  * — the row count (46 material rows + 1 generic bedrock row), the pour, and the yield-id

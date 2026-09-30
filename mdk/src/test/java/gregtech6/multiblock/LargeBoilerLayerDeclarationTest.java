@@ -24,7 +24,7 @@ import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 
 /**
- * The LARGE BOILER re-declared in the layer-sequence DSL — the task p16-pattern-layers
+ * The LARGE BOILER re-declared in the layer-sequence DSL — the task pattern-layers
  * acceptance stub: the canonical 4-slab shape (the bottom 3x3 transmitter layer + the
  * middle 3x3 wall layer + the repeatable ring segment) expands, at n = 2, to a cell set
  * EQUAL to the production enumeration — the P12 binding this boiler carries
@@ -35,7 +35,7 @@ import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
  * canonical boiler, max = 3 stretches, out-of-window rejected), the
  * {@code ITileEntityMultiBlockController#getStructurePattern(int)} default, and the
  * production declaration itself is untouched (this file adds a TEST-ONLY family — the
- * no-production-consumer ruling, ADR 2026-09-05-p16-formation-scoping ②).
+ * no-production-consumer ruling, ADR 2026-09-05-formation-scoping ②).
  *
  * <p>The ring-segment factory encodes the boiler's vertical grammar without knowing n:
  * ring 0's centre is the keep-hollow cavity top above the anchor (upstream :102), every

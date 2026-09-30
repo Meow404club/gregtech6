@@ -1,5 +1,5 @@
 /**
- * Offline tests for task p24-tool-system: the file + saw pair (the crafting-tool
+ * Offline tests for task tool-system: the file + saw pair (the crafting-tool
  * items), their ToolAction/dispatch-id pins, the crafting-loss seam and the tag
  * face the recipe provider consumes.
  *
@@ -60,7 +60,7 @@ public class FileSawTest {
 		// the full material flood — MT's class-load only registers NULL, the reg0000..reg0038
 		// batches ride MT.init() (the DigLadderTest boot shape). The saw's ladder fallback
 		// reads MT.Steel at getMaxDamage time, and an isolated test JVM has no other class
-		// whose @BeforeAll could flood the table first (the r7-fix-three-npe NPE trap).
+		// whose @BeforeAll could flood the table first (the fix-three-npe NPE trap).
 		MT.init();
 	}
 

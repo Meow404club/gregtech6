@@ -38,9 +38,9 @@ import gregtech6.tileentity.IPaintableTE;
 import gregtech6.tileentity.TileEntityBase01Root;
 
 /**
- * {@code /gt6machine} — the machine-family acceptance command (task p7-basicmachine-family
+ * {@code /gt6machine} — the machine-family acceptance command (task basicmachine-family
  * ⑥, RCON-drivable, GTOvenCommand :63-98 template, console-safe throughout; extended by
- * task p8-machine-tiers-doinject ⑤ and task p14-dryer-family): one literal per registered
+ * task machine-tiers-doinject ⑤ and task dryer-family): one literal per registered
  * machine ({@code shredder|crusher|lathe|dryer} × {@code [t2|t3|t4]}, 16 rows) carrying
  * the subcommands
  *
@@ -51,7 +51,7 @@ import gregtech6.tileentity.TileEntityBase01Root;
  *     resolvable {@code gt6:gem_*} of the gem chain (Loader_Recipes_Handlers.java:72,
  *     gem → gemFlawed x2), lathe = stone (:524), dryer = bricks (the frame column stub),
  *     distillery = the Integrated Circuit at configuration 0 (the ST.tag(0) selector the
- *     poured :534-541 rows carry, task p16-distillery-family);</li>
+ *     poured :534-541 rows carry, task distillery-family);</li>
  * <li>{@code run <ticks> [<pos>]} — drives the BE dispatcher tick by tick and samples the
  *     live menu ContainerData value ({@link GTBasicMachineMenu#computeProgressValue()}): the
  *     acceptance asserts all three states observed (progress &gt;0 &lt;32767, done 32767 via
@@ -71,16 +71,16 @@ import gregtech6.tileentity.TileEntityBase01Root;
  *     slot contents (a menu-less carrier reports {@code data=-2} — the trio is a menu
  *     surface);</li>
  * <li>{@code fluid fill <side> <fluid> <amount> [<pos>]} / {@code fluid draw <side>
- *     <amount> [<pos>]} / {@code fluid stat [<pos>]} (task p14-dryer-family) — the
- *     side-gated FLUID_HANDLER driver over the p14-machine-fluid-face carriers: the
+ *     <amount> [<pos>]} / {@code fluid stat [<pos>]} (task dryer-family) — the
+ *     side-gated FLUID_HANDLER driver over the machine-fluid-face carriers: the
  *     rotated row masks answer fill/draw (0 = REJECTED is a legitimate verdict) and stat
- *     dumps the tank census plus the live fluid/energy face lists (task p14-dryer-family).</li>
- * <li>{@code open [<pos>]} (task p34-gui-basicmachine-fluids) — the MUI open-chain smoke
+ *     dumps the tank census plus the live fluid/energy face lists (task dryer-family).</li>
+ * <li>{@code open [<pos>]} (task gui-basicmachine-fluids) — the MUI open-chain smoke
  *     arm over {@link gregtech6.gui.machines.GT6MuiMachine#tryOpen} (buildUI + sync
  *     construct + open packet): under RCON the sanctioned fake-player SKIP verdict fires
  *     (the MUI open chain is client-boundary), a real exception is a red.</li>
  * <li>{@code paint <pos> <dye0-15|none>} / {@code unpaint <pos>} (task
- *     p21-paintable-storage-sync, ADR 2026-09-07-p21-paintable-rulings ruling 1) — the
+ *     paintable-storage-sync, ADR 2026-09-07-paintable-rulings ruling 1) — the
  *     spray write-point arm over the SAME server {@link IPaintableTE} API the offline
  *     tests drive: {@code <dye>} is the GT6 dye index 0=Black..15=White (the upstream
  *     CS.DYES_INT table values) routed through {@link IPaintableTE#mixPaint} (the
@@ -92,7 +92,7 @@ import gregtech6.tileentity.TileEntityBase01Root;
  *
  * <p>Plus the regime switch {@code /gt6machine fakesource on|off|stat} — flips
  * {@link TileEntityBasicMachine#ENERGY_FAKE_SOURCE} at runtime (task
- * p11-rotor-source-flip: {@code off} IS the shipped default — grid-fed via doInject with
+ * rotor-source-flip: {@code off} IS the shipped default — grid-fed via doInject with
  * the full upstream :815 semantics, the RU/KU machines fed by the /gt6energy source rig;
  * {@code on} re-arms the retired A-tier seam with the :815 alternating arm suspended).
  */
@@ -146,7 +146,7 @@ public final class GTMachineCommand {
 			.then(fakesource())
 			.then(paintArm())
 			.then(unpaintArm());
-		// task p8-machine-tiers-doinject ⑤(a): the t2/t3/t4 selector variants — one literal
+		// task machine-tiers-doinject ⑤(a): the t2/t3/t4 selector variants — one literal
 		// per registered block, the T1 feeds reused per family (same recipe chains).
 		tMachine.then(machine("shredder", GTMachines.SHREDDER, () -> Items.COBBLESTONE)) // Loader_Recipes_Vanilla.java:692
 			.then(machine("shredder_t2", GTMachines.SHREDDER_T2, () -> Items.COBBLESTONE))
@@ -160,14 +160,14 @@ public final class GTMachineCommand {
 			.then(machine("lathe_t2", GTMachines.LATHE_T2, () -> net.minecraft.world.level.block.Blocks.STONE.asItem()))
 			.then(machine("lathe_t3", GTMachines.LATHE_T3, () -> net.minecraft.world.level.block.Blocks.STONE.asItem()))
 			.then(machine("lathe_t4", GTMachines.LATHE_T4, () -> net.minecraft.world.level.block.Blocks.STONE.asItem()))
-			// task p14-dryer-family: the dryer ladder — the input feed is a minimal STUB
+			// task dryer-family: the dryer ladder — the input feed is a minimal STUB
 			// (the DRYING map is declared-empty until the W3 pour, so no feed can ever
 			// start a process; bricks mirror the upstream frame column 'B' = brick_block)
 			.then(machine("dryer", GTMachines.DRYER_BLOCKS_BY_PATH.get("dryer"), () -> Items.BRICKS))
 			.then(machine("dryer_t2", GTMachines.DRYER_BLOCKS_BY_PATH.get("dryer_t2"), () -> Items.BRICKS))
 			.then(machine("dryer_t3", GTMachines.DRYER_BLOCKS_BY_PATH.get("dryer_t3"), () -> Items.BRICKS))
 			.then(machine("dryer_t4", GTMachines.DRYER_BLOCKS_BY_PATH.get("dryer_t4"), () -> Items.BRICKS))
-			// task p16-distillery-family: the distillery ladder — the input feed is the
+			// task distillery-family: the distillery ladder — the input feed is the
 			// Integrated Circuit (the ST.tag(0) selector every poured :534-541 row carries;
 			// input() routes the feed through feedStack() so the stack lands with its
 			// Damage:0 configuration tag)
@@ -175,14 +175,14 @@ public final class GTMachineCommand {
 			.then(machine("distillery_t2", GTMachines.DISTILLERY_BLOCKS_BY_PATH.get("distillery_t2"), () -> gregtech6.item.GT6Circuits.INTEGRATED_CIRCUIT.get()))
 			.then(machine("distillery_t3", GTMachines.DISTILLERY_BLOCKS_BY_PATH.get("distillery_t3"), () -> gregtech6.item.GT6Circuits.INTEGRATED_CIRCUIT.get()))
 			.then(machine("distillery_t4", GTMachines.DISTILLERY_BLOCKS_BY_PATH.get("distillery_t4"), () -> gregtech6.item.GT6Circuits.INTEGRATED_CIRCUIT.get()))
-			// task p24-canner-machine: the canner ladder — the input feed is the empty spray
+			// task canner-machine: the canner ladder — the input feed is the empty spray
 			// can (gt6:spray_can_empty, the MultiItemRandomTools.java:246 refill row's item
 			// input; the fluid half rides the /gt6machine fluid fill arm + the p24 RCON chain)
 			.then(machine("canner", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()))
 			.then(machine("canner_t2", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner_t2"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()))
 			.then(machine("canner_t3", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner_t3"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()))
 			.then(machine("canner_t4", GTMachines.CANNER_BLOCKS_BY_PATH.get("canner_t4"), () -> GT6SprayCans.SPRAY_CAN_EMPTY.get()))
-		// task p26-w1-sifter-compressor-wiremill: the W1 Kinetic trio — the input feeds
+		// task w1-sifter-compressor-wiremill: the W1 Kinetic trio — the input feeds
 		// are the vanilla row inputs (the :224 grass row0 for the Sifter, the :654 sand
 		// row for the Compressor) and the first poured stick→wireFine row's stick for
 		// the Wiremill (the feed walk mirrors firstGemChainGem)
@@ -198,7 +198,7 @@ public final class GTMachineCommand {
 		.then(machine("wiremill_t2", GTMachines.WIREMILL_BLOCKS_BY_PATH.get("wiremill_t2"), GTMachineCommand::firstPouredWiremillStick))
 		.then(machine("wiremill_t3", GTMachines.WIREMILL_BLOCKS_BY_PATH.get("wiremill_t3"), GTMachineCommand::firstPouredWiremillStick))
 		.then(machine("wiremill_t4", GTMachines.WIREMILL_BLOCKS_BY_PATH.get("wiremill_t4"), GTMachineCommand::firstPouredWiremillStick))
-		// task p26-w1-press-extruder-molds: the press + extruder ladders — the input feed
+		// task w1-press-extruder-molds: the press + extruder ladders — the input feed
 		// is the mold-class item (the forming rows take [block + mold]; the chain's `input`
 		// step supplies the block face separately, the mold is the family stub face)
 		.then(machine("press", GTMachines.PRESS_BLOCKS_BY_PATH.get("press"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_PLATE.get()))
@@ -209,7 +209,7 @@ public final class GTMachineCommand {
 		.then(machine("extruder_t2", GTMachines.EXTRUDER_BLOCKS_BY_PATH.get("extruder_t2"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get()))
 		.then(machine("extruder_t3", GTMachines.EXTRUDER_BLOCKS_BY_PATH.get("extruder_t3"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get()))
 		.then(machine("extruder_t4", GTMachines.EXTRUDER_BLOCKS_BY_PATH.get("extruder_t4"), () -> gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get()))
-		// task p29-w1-kinetic-roll-ladder: the roll ladders — the input feed is the iron
+		// task w1-kinetic-roll-ladder: the roll ladders — the input feed is the iron
 		// pair item of each map's poured smoke row (data/gt6/recipe_maps: rollingmill
 		// ingot_iron / rollbender plate_iron / rollformer plate_iron — the W3
 		// row-semantics fix, :314 plate -> railGt x4 / clustermill plate_iron); the RU
@@ -232,7 +232,7 @@ public final class GTMachineCommand {
 		.then(machine("clustermill_t2", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t2"), rollFeed(gregapi.data.OP.plate)))
 		.then(machine("clustermill_t3", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t3"), rollFeed(gregapi.data.OP.plate)))
 		.then(machine("clustermill_t4", GTMachines.CLUSTERMILL_BLOCKS_BY_PATH.get("clustermill_t4"), rollFeed(gregapi.data.OP.plate)))
-		// task p29-w1-eu-hu-families: the seven eu-hu families — the Mixer/ElectricMixer
+		// task w1-eu-hu-families: the seven eu-hu families — the Mixer/ElectricMixer
 		// feeds walk the LIVE SHARED RM.Mixer map (the firstPouredWiremillStick shape: the
 		// first input item of the first poured row — a C-Foam rock dust), the ElectricLoom
 		// feed walks the JSON-poured RM.Loom smoke row, the ElectricSifter reuses the
@@ -263,7 +263,7 @@ public final class GTMachineCommand {
 		.then(machine("unboxinator_t2", GTMachines.UNBOXINATOR_BLOCKS_BY_PATH.get("unboxinator_t2"), () -> net.minecraft.world.item.Items.MAP))
 		.then(machine("unboxinator_t3", GTMachines.UNBOXINATOR_BLOCKS_BY_PATH.get("unboxinator_t3"), () -> net.minecraft.world.item.Items.MAP))
 		.then(machine("unboxinator_t4", GTMachines.UNBOXINATOR_BLOCKS_BY_PATH.get("unboxinator_t4"), () -> net.minecraft.world.item.Items.MAP))
-		// task p29-w2-hu-tu-piggyback: the seven hu-tu families — the cracker feeds are
+		// task w2-hu-tu-piggyback: the seven hu-tu families — the cracker feeds are
 		// their smoke-row item inputs (coal / charcoal), the loom reuses the W1 loom.json
 		// walk (the SAME-map kinetic rung), the generifier/bath/autoclave feeds are their
 		// smoke rows' item faces (sand / wool / kelp), and the coagulator feed is a stub
@@ -272,7 +272,7 @@ public final class GTMachineCommand {
 		.then(machine("steamcracker_t2", GTMachines.STEAM_CRACKER_BLOCKS_BY_PATH.get("steamcracker_t2"), () -> net.minecraft.world.item.Items.COAL))
 		.then(machine("steamcracker_t3", GTMachines.STEAM_CRACKER_BLOCKS_BY_PATH.get("steamcracker_t3"), () -> net.minecraft.world.item.Items.COAL))
 		.then(machine("steamcracker_t4", GTMachines.STEAM_CRACKER_BLOCKS_BY_PATH.get("steamcracker_t4"), () -> net.minecraft.world.item.Items.COAL))
-		// task p33-cracker-machines spec ②: the catalytic feed flips to the TRUE row's item
+		// task cracker-machines spec ②: the catalytic feed flips to the TRUE row's item
 		// input gt6:dust_platinum (Loader_Recipes_Chem.java:373-376 — the leftover input
 		// gap from the first cracker pass; the W2 charcoal literal found no live row and its
 		// merge workaround retires with the literal). Steam keeps its fluid-only row (no item).
@@ -289,7 +289,7 @@ public final class GTMachineCommand {
 		.then(machine("loom_t3", GTMachines.LOOM_BLOCKS_BY_PATH.get("loom_t3"), GTMachineCommand::firstPouredLoomInput))
 		.then(machine("loom_t4", GTMachines.LOOM_BLOCKS_BY_PATH.get("loom_t4"), GTMachineCommand::firstPouredLoomInput))
 		.then(machine("fermenter", GTMachines.FERMENTER_BLOCKS_BY_PATH.get("fermenter"), () -> net.minecraft.world.item.Items.WHEAT)) // fermenter.json smoke row (wheat + water → sugar)
-		// task p29-w3-heat-smelter: the Smelter ladder + the Melter single — the feed is
+		// task w3-heat-smelter: the Smelter ladder + the Melter single — the feed is
 		// the ice smoke-row input (smelter.json / melter.json: ice -> 1000 L water, the
 		// Loader_Recipes_Chem.java:486/:501 transcription; the output is FLUID, the chains
 		// assert through the fluid stat face, not the output slots)
@@ -298,7 +298,7 @@ public final class GTMachineCommand {
 		.then(machine("smelter_t3", GTMachines.SMELTER_BLOCKS_BY_PATH.get("smelter_t3"), () -> net.minecraft.world.item.Items.ICE))
 		.then(machine("smelter_t4", GTMachines.SMELTER_BLOCKS_BY_PATH.get("smelter_t4"), () -> net.minecraft.world.item.Items.ICE))
 		.then(machine("melter", GTMachines.MELTER_BLOCKS_BY_PATH.get("melter"), () -> net.minecraft.world.item.Items.ICE))
-		// task p29-w4-eu-bridge: the Roasting Oven ladder — the feed is the coal dust of the
+		// task w4-eu-bridge: the Roasting Oven ladder — the feed is the coal dust of the
 		// Boudouard row (roasting.json: coal dust + CO2 -> CO, the Loader_Recipes_Chem.java
 		// :400 transcription; the CO2 input rides the fluid fill face, the CO output the
 		// fluid stat face)
@@ -306,7 +306,7 @@ public final class GTMachineCommand {
 		.then(machine("roasting_oven_t2", GTMachines.ROASTING_BLOCKS_BY_PATH.get("roasting_oven_t2"), GTMachineCommand::firstCoalDust))
 		.then(machine("roasting_oven_t3", GTMachines.ROASTING_BLOCKS_BY_PATH.get("roasting_oven_t3"), GTMachineCommand::firstCoalDust))
 		.then(machine("roasting_oven_t4", GTMachines.ROASTING_BLOCKS_BY_PATH.get("roasting_oven_t4"), GTMachineCommand::firstCoalDust))
-		// task p34-machines-bumblelyzer-crucible: the Bumblelyzer 5-tier ladder — the feed
+		// task machines-bumblelyzer-crucible: the Bumblelyzer 5-tier ladder — the feed
 		// is the WILD DRONE (the unscanned base face, FACES index 0; the scan arm's item leg),
 		// and the Crystallisation Crucible 4-ladder — the feed is the silicon dust of the
 		// :683 boule rows (the molten legs ride the fluid fill face, the boule the output slots)
@@ -319,7 +319,7 @@ public final class GTMachineCommand {
 		.then(machine("crystallisationcrucible_t2", GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get("crystallisationcrucible_t2"), GTMachineCommand::firstSiliconDust))
 		.then(machine("crystallisationcrucible_t3", GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get("crystallisationcrucible_t3"), GTMachineCommand::firstSiliconDust))
 		.then(machine("crystallisationcrucible_t4", GTMachines.CRYSTALLISATION_BLOCKS_BY_PATH.get("crystallisationcrucible_t4"), GTMachineCommand::firstSiliconDust))
-		// task p34-machines-burner-plantalyzer: the Burner Mixer ladder — the feed is the
+		// task machines-burner-plantalyzer: the Burner Mixer ladder — the feed is the
 		// sulfate-roast row's Na2SO4 dust (burnmixer.json's first item face; the RU rig
 		// feeds through the inject arm, the ignition through the ignite arm, the fluid
 		// inputs through the fluid fill arm)
@@ -335,7 +335,7 @@ public final class GTMachineCommand {
 		.then(machine("plantalyzer_t3", GTMachines.PLANTALYZER_BLOCKS_BY_PATH.get("plantalyzer_t3"), () -> net.minecraft.world.item.Items.OAK_SAPLING))
 		.then(machine("plantalyzer_t4", GTMachines.PLANTALYZER_BLOCKS_BY_PATH.get("plantalyzer_t4"), () -> net.minecraft.world.item.Items.OAK_SAPLING))
 		.then(machine("plantalyzer_t5", GTMachines.PLANTALYZER_BLOCKS_BY_PATH.get("plantalyzer_t5"), () -> net.minecraft.world.item.Items.OAK_SAPLING))
-		// task p35-slicer-row-domain: the Slicer ladder - the input feed is the leather
+		// task slicer-row-domain: the Slicer ladder - the input feed is the leather
 		// helmet (the Loader_Recipes_Vanilla.java:638 row0 primary input; the blade second
 		// leg rides the `input item` override arm, the p34 bumblelyzer multi-input form)
 		.then(machine("slicer", GTMachines.SLICER_BLOCKS_BY_PATH.get("slicer"), () -> net.minecraft.world.item.Items.LEATHER_HELMET))
@@ -349,8 +349,8 @@ public final class GTMachineCommand {
 		LOGGER.info("Registered GT6 machine acceptance command /gt6machine (shredder|crusher|lathe|dryer|distillery|canner|sifter|compressor|wiremill|press|extruder|rollingmill_t1..t4|rollbender|rollformer|clustermill x t1..t4|smelter x t1..t4|melter | fakesource | paint <pos> <dye0-15|none> | unpaint <pos> x place|input|run|inject|check|fluid|open)");
 		// the p8 ladder registration line (the runServer gate asserts it): every family BET
 		// resolves — proof the RegistryObjects bound (the merge totals: 36 + 8 + 16 blocks
-		// and 9 + 2 + 3 family BETs — the press/extruder join = task p26-w1-press-extruder-
-		// molds, the roll-ladder join = task p29-w1-kinetic-roll-ladder; the RU RollingMill
+		// and 9 + 2 + 3 family BETs — the press/extruder join = task w1-press-extruder-
+		// molds, the roll-ladder join = task w1-kinetic-roll-ladder; the RU RollingMill
 		// ladder shares the p28 ULV rung's rollingmill BET, so it adds blocks but no BET).
 		LOGGER.info("GT6 machine ladder registered: 134 blocks / 36 family BETs (T1-T4 validBlocks multi-attach), tiers "
 			+ java.util.Arrays.deepToString(GTMachines.TIER_INPUTS) + " crusher parallel " + java.util.Arrays.toString(GTMachines.CRUSHER_PARALLEL));
@@ -360,13 +360,13 @@ public final class GTMachineCommand {
 		LOGGER.info("GT6 p34 machine families registered: 9 blocks / 2 family BETs (bumblelyzer EU 5-ladder 20541-20545 + "
 			+ "crystallisationcrucible HU 4-ladder 20251-20254), RM.Bumblelyzer/RM.CrystallisationCrucible "
 			+ "(gt.recipe.bumblelyzer/gt.recipe.crystallisationcrucible) row maps, bumblelyzer parallel " + GTMachines.BUMBLELYZER_PARALLEL);
-		// the p29-w2-hu-tu registration smoke line (the runServer gate asserts it): the
+		// the w2-hu-tu registration smoke line (the runServer gate asserts it): the
 		// seven family BETs resolve — the crackers/loom TIER_INPUTS ladders + the TU four
 		// with the {1, 1, 16} window, the six-face energy mask 63 and NO_CONSTANT_POWER.
 		LOGGER.info("GT6 hu-tu families registered: 16 blocks / 7 family BETs (steamcracker+catalyticcracker HU 4-ladders, "
 			+ "loom RU 4-ladder, coagulator/generifier/bath/autoclave TU singles), TU window " + java.util.Arrays.toString(GTMachines.TU_WINDOW)
 			+ ", energy sides 63 (all six faces), NO_CONSTANT_POWER T, generifier parallel " + GTMachines.GENERIFIER_PARALLEL);
-		// the p29-w3-heat-smelter registration smoke line: the Smelter 4-ladder + the
+		// the w3-heat-smelter registration smoke line: the Smelter 4-ladder + the
 		// Melter single resolve — the :1431/:1657 row shapes (HU bottom-face energy,
 		// parallel 1000 + parallelDuration T, inv/tank in top auto-top, inv out left
 		// auto-left, tank out right auto-right).
@@ -426,7 +426,7 @@ public final class GTMachineCommand {
 					.executes(context -> input(context.getSource(), aFeed,
 							com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "count"),
 							BlockPosArgument.getLoadedBlockPos(context, "pos")))))
-			// task p34-machines-bumblelyzer-crucible — the item override arm: the multi-input
+			// task machines-bumblelyzer-crucible — the item override arm: the multi-input
 			// rows' SECOND leg (the scan recipe's paper tiny) needs a non-default feed; the BE
 			// carries no vanilla Container face, so the /item replace write-point is
 			// structurally unavailable here ("Target position is not a container"). The
@@ -454,7 +454,7 @@ public final class GTMachineCommand {
 					.executes(context -> run(context.getSource(),
 							com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "ticks"),
 							BlockPosArgument.getLoadedBlockPos(context, "pos"))))));
-		// task p8-machine-tiers-doinject ⑤(b): the FALSE-regime rig — inject+consume pairs.
+		// task machine-tiers-doinject ⑤(b): the FALSE-regime rig — inject+consume pairs.
 		// finalSize = the OPTIONAL half-cycle pair: iteration ticks-1 runs at <finalSize>
 		// instead of <size>, so a whole KU pulse cycle (positive train to completion + the
 		// negative transition pair) lands inside ONE command — across RCON calls the idle
@@ -488,12 +488,12 @@ public final class GTMachineCommand {
 			.executes(context -> check(context.getSource(), null))
 			.then(Commands.argument("pos", BlockPosArgument.blockPos())
 				.executes(context -> check(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos")))));
-		// task p14-dryer-family — the fluid arm (the /gt6tank fill/draw driver shape over
+		// task dryer-family — the fluid arm (the /gt6tank fill/draw driver shape over
 		// the machine's side-gated FLUID_HANDLER): fill/draw report 0 with the REJECTED
 		// marker as a legitimate verdict (a masked face, an empty output tank), so the
 		// RCON chain can assert on the row's rotated connectivity masks; stat dumps the
 		// tank contents plus the live six-side mask faces (fluid in/out + the :511 energy
-		// accepts). The first LIVE surface of the p14-machine-fluid-face carriers — the
+		// accepts). The first LIVE surface of the machine-fluid-face carriers — the
 		// W1a offline half drove them through the package-private factory only.
 		tMachine.then(Commands.literal("fluid")
 			.then(Commands.literal("fill")
@@ -525,7 +525,7 @@ public final class GTMachineCommand {
 				.executes(context -> fluidStat(context.getSource(), null))
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
 					.executes(context -> fluidStat(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"))))));
-		// task p34-gui-basicmachine-fluids — the open smoke arm (the GTAdvancedCraftingTableCommand
+		// task gui-basicmachine-fluids — the open smoke arm (the GTAdvancedCraftingTableCommand
 		// open :289-318 / GT6Distillation open :948-992 family shape, generic on purpose): one
 		// subcommand on EVERY family literal, dispatching the MUI open chain for the shared
 		// panel machines; a fake player reports the sanctioned SKIP verdict, a real exception
@@ -534,7 +534,7 @@ public final class GTMachineCommand {
 			.executes(context -> open(context.getSource(), null))
 			.then(Commands.argument("pos", BlockPosArgument.blockPos())
 				.executes(context -> open(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos")))));
-		// task p34-machines-burner-plantalyzer — the ignite arm (the GTMultiBlockCommand
+		// task machines-burner-plantalyzer — the ignite arm (the GTMultiBlockCommand
 		// {@code ignite} precedent): the TOOL_igniter stand-in for the NBT_NEEDS_IGNITION
 		// family (the port has no igniter item seam, GTBurnerCommand.java:44-46). Generic on
 		// the family literals: a non-ignition machine answers NOT-IGNITION (a legitimate
@@ -605,7 +605,7 @@ public final class GTMachineCommand {
 	}
 
 	/**
-	 * The Wiremill acceptance feed (task p26-w1-sifter-compressor-wiremill): the IRON
+	 * The Wiremill acceptance feed (task w1-sifter-compressor-wiremill): the IRON
 	 * stick when its row is poured (the RCON chain pins the item identity), else the
 	 * first material of the stick registration order that survives ALL THREE upstream
 	 * gates — the both-side mat() resolution of the :287/:292 template (stick + wireFine
@@ -635,7 +635,7 @@ public final class GTMachineCommand {
 	}
 
 	/**
-	 * The roll-ladder feed (task p29-w1-kinetic-roll-ladder): the IRON pair item of the
+	 * The roll-ladder feed (task w1-kinetic-roll-ladder): the IRON pair item of the
 	 * prefix, present-checked at feed time (the firstPouredWiremillStick posture,
 	 * simplified — the roll smoke rows are this card's own data/gt6/recipe_maps pours
 	 * pinned to the iron pair, so there is no per-material fallback walk; an unregistered
@@ -663,7 +663,7 @@ public final class GTMachineCommand {
 	}
 
 	/**
-	 * The Mixer acceptance feed (task p29-w1-eu-hu-families): the FIRST input item of the
+	 * The Mixer acceptance feed (task w1-eu-hu-families): the FIRST input item of the
 	 * first poured row of the SHARED RM.Mixer map (the firstPouredWiremillStick shape) —
 	 * a C-Foam rock dust of the GT6RecipesMixer pour. Both the kinetic Mixer and the
 	 * Electric Mixer literals share it (ONE map); the chains fill the full multi-input
@@ -691,7 +691,7 @@ public final class GTMachineCommand {
 	}
 
 	/**
-	 * The Catalytic Cracker acceptance feed (task p33-cracker-machines spec ② — the p29
+	 * The Catalytic Cracker acceptance feed (task cracker-machines spec ② — the p29
 	 * leftover gap): the gt6machine input face carries the TRUE row's item input per
 	 * machine literal instead of the retired W2 charcoal smoke literal — the catalyst
 	 * gt6:dust_platinum (the Loader_Recipes_Chem.java:373-376 rows' dust input; the
@@ -714,7 +714,7 @@ public final class GTMachineCommand {
 	}
 
 	/**
-	 * The EU-bridge acceptance arm (task p29-w4-eu-bridge): the three converter families'
+	 * The EU-bridge acceptance arm (task w4-eu-bridge): the three converter families'
 	 * live face. The blocks ride /setblock (the dynamo-chain RCON form — facing = the
 	 * state), the EU input the /gt6energy dial behind the BACK face; this arm reads and
 	 * resets the persisted accounting pair {@code gt.last_in}/{@code gt.last_out} so the
@@ -781,7 +781,7 @@ public final class GTMachineCommand {
 	}
 
 	/**
-	 * The menu-or-null probe (task p14-dryer-family): the menu-less carriers (the dryer —
+	 * The menu-or-null probe (task dryer-family): the menu-less carriers (the dryer —
 	 * the GUI pool card owns the MenuType registration) throw the documented
 	 * IllegalStateException out of createMenu; the command surface degrades instead of
 	 * crashing ({@code check} reports {@code data=-2}, {@code run} refuses).
@@ -796,7 +796,7 @@ public final class GTMachineCommand {
 	}
 
 	/**
-	 * The openGUI smoke arm (task p34-gui-basicmachine-fluids, the GTAdvancedCraftingTableCommand
+	 * The openGUI smoke arm (task gui-basicmachine-fluids, the GTAdvancedCraftingTableCommand
 	 * open :289-318 / GT6Distillation open :948-992 shape): dispatches the MUI open chain
 	 * ({@link gregtech6.gui.machines.GT6MuiMachine#tryOpen} — buildUI + the sync-manager
 	 * construct + the open packet dispatch) for the machine at pos. The MUI open chain
@@ -991,7 +991,7 @@ public final class GTMachineCommand {
 	 * The feed stack factory: plain items stack plainly; the Integrated Circuit feed lands
 	 * through {@link GT6Circuits#selector} so the stack carries its {@code Damage:0}
 	 * configuration tag (a tag-less circuit would match no poured row — the recipe inputs
-	 * route on the exact tag, the p16-distillery-family ① semantics).
+	 * route on the exact tag, the distillery-family ① semantics).
 	 */
 	private static ItemStack feedStack(Supplier<Item> aFeed, int aCount) {
 		if (aFeed.get() instanceof gregtech6.item.GT6Circuits.IntegratedCircuitItem) return gregtech6.item.GT6Circuits.selector(aFeed.get(), 0); // ST.tag(0)
@@ -1016,7 +1016,7 @@ public final class GTMachineCommand {
 	}
 
 	/**
-	 * The item-override arm (task p34-machines-bumblelyzer-crucible): pushes the named
+	 * The item-override arm (task machines-bumblelyzer-crucible): pushes the named
 	 * {@code <namespace>:<path>} (or bare path → minecraft) item into the input slot —
 	 * the multi-input rows' second leg face. Unknown ids fail the command.
 	 */
@@ -1095,7 +1095,7 @@ public final class GTMachineCommand {
 	}
 
 	/**
-	 * The FALSE-regime rig (task p8-machine-tiers-doinject ⑤(b)): {@code ticks} iterations
+	 * The FALSE-regime rig (task machine-tiers-doinject ⑤(b)): {@code ticks} iterations
 	 * of one direct doInject (size defaults to the machine's mInputMax; negative = the AC
 	 * half-cycle; {@code finalSize} = the optional LAST iteration's size, the negative
 	 * transition pair) + one dispatcher tick per iteration, so each iteration IS one
@@ -1140,7 +1140,7 @@ public final class GTMachineCommand {
 		return tOutputs.toString();
 	}
 
-	/** The regime switch (task p8-machine-tiers-doinject ⑤(c); default flipped by p11-rotor-source-flip): on|off|stat over ENERGY_FAKE_SOURCE. */
+	/** The regime switch (task machine-tiers-doinject ⑤(c); default flipped by rotor-source-flip): on|off|stat over ENERGY_FAKE_SOURCE. */
 	private static LiteralArgumentBuilder<CommandSourceStack> fakesource() {
 		return Commands.literal("fakesource")
 			.then(Commands.literal("on").executes(context -> setFakeSource(context.getSource(), true)))
@@ -1164,7 +1164,7 @@ public final class GTMachineCommand {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the paint arm (task p21-paintable-storage-sync, ADR ruling 1: the spray write-point
+	// the paint arm (task paintable-storage-sync, ADR ruling 1: the spray write-point
 	// rides the SAME IPaintableTE API the offline tests drive — the p19 chisel precedent)
 	// ---------------------------------------------------------------------------
 

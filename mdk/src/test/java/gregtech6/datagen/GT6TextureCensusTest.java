@@ -1,5 +1,5 @@
 /**
- * Pure-JUnit texture census for task p20-texture-census-test — the read-only guard
+ * Pure-JUnit texture census for task texture-census-test — the read-only guard
  * wave of the P20 texture sprint (ADR-P20, docs/adr/2026-09-06-p20-texture-tree-policy.md).
  *
  * <p>Policy pins asserted here (ADR-P20 §2):</p>
@@ -71,8 +71,8 @@ class GT6TextureCensusTest {
     private static final int PINNED_COMBO_TOTAL = 2785;
 
     /**
-     * The machine-wave borrowed families (task p32-hygiene-lang-assets + task
-     * r8-tex-large-machines), static-tree texture path prefixes under
+     * The machine-wave borrowed families (task hygiene-lang-assets + task
+     * tex-large-machines), static-tree texture path prefixes under
      * {@link #TEXTURES_PREFIX}: the three controller colored faces (fusion/implosion
      * colored flats + the massfab small+large families, the attribution backfill), the
      * retriever cover pair, and the r8 large-controller wave — the 15 flat
@@ -94,7 +94,7 @@ class GT6TextureCensusTest {
         "block/implosioncompressor_overlay_",
         "block/vondagraagg/", "block/bedrockdrill/");
 
-    /** The wave pin: 330 borrowed controller/cover PNGs + 20 port-generated comb icons (task r8-tex-large-machines: 44 surviving prior + 270 flat overlays + 16 band faces). */
+    /** The wave pin: 330 borrowed controller/cover PNGs + 20 port-generated comb icons (task tex-large-machines: 44 surviving prior + 270 flat overlays + 16 band faces). */
     private static final int PINNED_WAVE_TOTAL = 350;
 
     /**
@@ -234,7 +234,7 @@ class GT6TextureCensusTest {
     }
 
     /**
-     * Pin d2 (task p38-c5-asset-coverage-guard): the same resolution over the generated
+     * Pin d2 (task c5-asset-coverage-guard): the same resolution over the generated
      * BLOCK models. The census found pin d blind to the block face — a block model
      * referencing a missing PNG bakes the missing-texture checkerboard into the world,
      * and EFH only validates the datagen call sites, not a ref renamed inside the borrowed
@@ -280,7 +280,7 @@ class GT6TextureCensusTest {
     }
 
     /**
-     * Pin e (task p32-hygiene-lang-assets, the M2 script assertion): the P31 new-texture
+     * Pin e (task hygiene-lang-assets, the M2 script assertion): the P31 new-texture
      * wave carries its assets/README.md attribution with ZERO gaps — every borrowed PNG
      * is named in the ledger AND its actual file bytes hash to a sha256 the ledger
      * records (the name check alone can pass while the prose describes a different file;
@@ -324,7 +324,7 @@ class GT6TextureCensusTest {
     }
 
     /**
-     * The declared pin-f exceptions (task p38-c5-asset-coverage-guard): the ledger rows
+     * The declared pin-f exceptions (task c5-asset-coverage-guard): the ledger rows
      * whose digest records an UPSTREAM SOURCE, not a shipped file — the src-over composite
      * sources (basicmachine front/overlay_active pairs, press/laser overlays), the
      * upstream animation frame strips (16x64/16x96/16x128 sheets) and the keypad 0-15
@@ -376,17 +376,17 @@ class GT6TextureCensusTest {
         "f075bba0be3c71dfc2a9f463b9be8ae717350e1675a4531f38a25b2e1c74358c",
         "f91ced667197de43286fee72872c960ef044defaffc1ed27acac70bb2f738e64",
         "ffb243256575a2e80a6a18cf1aa057241959b745ee02ce50b420a03933d94a6a",
-        // r8-gui-part-crops: the amazawa minecraft-domain widget sheet CROP SOURCE
+        // gui-part-crops: the amazawa minecraft-domain widget sheet CROP SOURCE
         // (tmp/amazawa-census snapshot, untracked; the pack's reskinned widgets.png)
         // — only crops of it ship under gui/parts/, so its README row never grounds.
         // The five gregtech-domain crop sources (Default/Melter/Freezer/Distillery/
-        // Crafting2By2) need NO entry: the r8-gui-reskin-amazawa card ships them
+        // Crafting2By2) need NO entry: the gui-reskin-amazawa card ships them
         // byte-identical as gui/machines/<name>.png, so their rows ground there. If
         // this row ever ships verbatim, it grounds and must leave the list.
         "df79a44d9db494198906db71385078383ed32b6ba3c9e880820c66c5fe056aa0");
 
     /**
-     * Pin f (task p38-c5-asset-coverage-guard): the FULL sha256 ledger reconciles against
+     * Pin f (task c5-asset-coverage-guard): the FULL sha256 ledger reconciles against
      * the actual assets — every distinct digest recorded anywhere in assets/README.md must
      * ground to the sha256 of at least one PNG on the static ∪ generated face, except the
      * declared {@link #UPSTREAM_SOURCE_ONLY_LEDGER_ROWS} (composite/animation upstream
@@ -452,7 +452,7 @@ class GT6TextureCensusTest {
     void everyRecipeMapGuiPathIsLowercaseLegalAndGroundedOnDisk() throws IOException {
         // the chisel only (upstream ships no Chisel.png either — the tool applies recipes
         // by right-click, no GUI; assets/README.md issue3-gui-bg section). bedrockorelist
-        // left the exemption with task r9-34-viewer-gui-bg (the amazawa BedrockOreList.png
+        // left the exemption with task 34-viewer-gui-bg (the amazawa BedrockOreList.png
         // borrow — the map is viewer-visible, the file is grounded now).
         Set<String> exemptFiles = Set.of("chisel");
         GT6RecipeMaps.init();

@@ -41,7 +41,7 @@ import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
  * block entity is attached (:286-292) — the propagation here touches only NEIGHBOUR cells
  * (whose BEs exist), never this block's own.
  *
- * <p><b>The DESIGN render dimension (task p29-w3-nbtdesign-parts ①).</b> Upstream every
+ * <p><b>The DESIGN render dimension (task w3-nbtdesign-parts ①).</b> Upstream every
  * part row carries {@code NBT_DESIGNS} = the TEXTURE-VARIANT COUNT and renders
  * {@code mTextures[mDesign][face]} with
  * {@code mTextures = new IIconContainer[UT.Code.bind8(NBT_DESIGNS)+1][6]}
@@ -98,18 +98,18 @@ public class GTMultiBlockPartBlock extends BaseEntityBlock {
 		this(aProperties, null, 0);
 	}
 
-	/** The design-range form (task p29-w3-nbtdesign-parts ①): an NBT_DESIGNS row without a composed row. */
+	/** The design-range form (task w3-nbtdesign-parts ①): an NBT_DESIGNS row without a composed row. */
 	public GTMultiBlockPartBlock(Properties aProperties, int aMaxDesign) {
 		this(aProperties, null, aMaxDesign);
 	}
 
-	/** The wall-carrier form (task p20-i18n-compose-rows): the row feeds the composed Dense Wall name; the Dense family carries NBT_DESIGNS 7. */
+	/** The wall-carrier form (task i18n-compose-rows): the row feeds the composed Dense Wall name; the Dense family carries NBT_DESIGNS 7. */
 	public GTMultiBlockPartBlock(Properties aProperties, gregtech6.registry.GTMultiBlocks.MultiblockPartRow aRow) {
 		this(aProperties, aRow, 7);
 	}
 
 	/**
-	 * The design-range form (task p29-w3-nbtdesign-parts ①): {@code aMaxDesign} = the
+	 * The design-range form (task w3-nbtdesign-parts ①): {@code aMaxDesign} = the
 	 * row's NBT_DESIGNS — upstream {@code mTextures[bind8(NBT_DESIGNS)+1][6]} is the
 	 * variant COUNT, so the property range is {@code 0..N} INCLUSIVE.
 	 */
@@ -119,7 +119,7 @@ public class GTMultiBlockPartBlock extends BaseEntityBlock {
 		this.mMaxDesign = sPendingMaxDesign;
 		this.mComposedName = null;
 		// the row-carrier form derives the tint material from the row's NBT_MATERIAL column
-		// (task p38-issue8-multipart-tint; the lazy Supplier dereferences after MT.init —
+		// (task issue8-multipart-tint; the lazy Supplier dereferences after MT.init —
 		// the GTBarrels MetalDrumRow form)
 		this.mMaterial = aRow == null ? null : aRow.material();
 		// IntegerProperty demands min < max (IntegerProperty.java:19) — a DESIGNS-0 row has
@@ -130,7 +130,7 @@ public class GTMultiBlockPartBlock extends BaseEntityBlock {
 	}
 
 	/**
-	 * The precomposed-name form (task p29-w3-nbtdesign-parts ③): the metal-wall rows
+	 * The precomposed-name form (task w3-nbtdesign-parts ③): the metal-wall rows
 	 * compose "{@code <mat> Wall}" (the {@code gt6.row.metal_wall.display} template over
 	 * the gt6.row.mat small unit) at registration; the other new rows pass null and keep
 	 * the vanilla atomic-key lookup.
@@ -141,7 +141,7 @@ public class GTMultiBlockPartBlock extends BaseEntityBlock {
 	}
 
 	/**
-	 * The material-carrier form (task p38-issue8-multipart-tint): the ROW-LESS part blocks
+	 * The material-carrier form (task issue8-multipart-tint): the ROW-LESS part blocks
 	 * carry their upstream {@code NBT_MATERIAL} column directly (the lazy Supplier — the
 	 * GTBarrels MetalDrumRow form; the composed-name overload keeps delegating with a null
 	 * material for the callers that predate the tint wiring).
@@ -162,12 +162,12 @@ public class GTMultiBlockPartBlock extends BaseEntityBlock {
 	/** This block's NBT_DESIGNS (the top of the DESIGN range; kept beside the property for the sync clamp). */
 	private final int mMaxDesign;
 
-	/** The carried part row (task p13-large-boiler record; null = the rows without a composed name — the coke-oven bricks). */
+	/** The carried part row (task large-boiler record; null = the rows without a composed name — the coke-oven bricks). */
 	@Nullable
 	private final gregtech6.registry.GTMultiBlocks.MultiblockPartRow mRow;
 
 	/**
-	 * The block's upstream {@code NBT_MATERIAL} column (task p38-issue8-multipart-tint —
+	 * The block's upstream {@code NBT_MATERIAL} column (task issue8-multipart-tint —
 	 * the tint colour source): the row-carrier form derives it from the row, the row-less
 	 * tinted forms take the Supplier directly. Null = the material-less rows (the coke
 	 * bricks, the Lightning Rod part borrows) — the white no-tint identity.
@@ -208,7 +208,7 @@ public class GTMultiBlockPartBlock extends BaseEntityBlock {
 	}
 
 	/**
-	 * The part-domain material dispatch (task p38-issue8-multipart-tint, the
+	 * The part-domain material dispatch (task issue8-multipart-tint, the
 	 * {@code GTBasicMachineBlock.materialOf} mirror shape): only the part-family block
 	 * carriers resolve a material — every other block (machines, barrels, vanilla states)
 	 * is null here, the domain gate the shared tint consumers layer over the machine
@@ -220,7 +220,7 @@ public class GTMultiBlockPartBlock extends BaseEntityBlock {
 	}
 
 	/**
-	 * The composed Dense Wall name (task p20-i18n-compose-rows): the row-carried form fills
+	 * The composed Dense Wall name (task i18n-compose-rows): the row-carried form fills
 	 * the {@code gt6.row.dense_wall.display} template over the gt6.row.mat small unit; the
 	 * row-less forms (the bricks) keep the vanilla atomic-key lookup.
 	 */

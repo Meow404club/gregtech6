@@ -24,7 +24,7 @@ import gregtech6.tileentity.tank.TileEntityBase08Barrel;
 
 /**
  * The pump cover — 1.20.1 port of gregapi/cover/covers/CoverPump.java:42-98 (task
- * p5-barrel-side-rules spec ③, trimmed direct translation). Every second beat
+ * barrel-side-rules spec ③, trimmed direct translation). Every second beat
  * ({@code aTimer % 20 == 5}, :68 — the phase offset keeps all pumps off the same tick)
  * it moves its throughput between the host tank and the adjacent fluid handler, in the
  * direction the visual lane encodes: 0 = pump OUT (the host gives), 1 = pump IN (the

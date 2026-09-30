@@ -28,7 +28,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 
 /**
- * The tier-b JSON seam offline suite (task p26-tier-b-rm-json-loader acceptance 2): the
+ * The tier-b JSON seam offline suite (task tier-b-rm-json-loader acceptance 2): the
  * row-parse happy path, the bad-row WARN+skip contract, the identity-subset replace
  * idempotence (same file applied twice keeps the row count), the FURNACE/FURNACE_FUEL
  * whole-file rejection, the chance<=0 no-output deviation, and the negative-eut fuel-gate
@@ -325,7 +325,7 @@ class GT6RecipeMapJsonLoaderTest extends GTRecipesOfflineTestBase {
 		for (String tKey : new String[] {"coke_oven", "shredder", "crusher", "lathe", "chisel", "engine_fuels",
 				"fluidbed", "burn", "distillery", "drying", "canner", "mixer", "bath", "roasting",
 				"burnmixer", "plantalyzer",
-				// the p37 five (task p37-rm-six-maps): mortar/hammer carry row stocks, the
+				// the p37 five (task rm-six-maps): mortar/hammer carry row stocks, the
 				// other three are the declared-empty key-only faces
 				"microwave", "cooker", "toolhead", "mortar", "hammer"}) {
 			assertNotNull(GT6RecipeMapJsonLoader.mapFor(tKey), tKey + " resolves");

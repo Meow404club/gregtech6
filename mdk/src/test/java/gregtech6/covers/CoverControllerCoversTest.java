@@ -18,7 +18,7 @@ import gregtech6.covers.covers.CoverControllerAutoRedstone;
 import gregtech6.covers.covers.CoverControllerCovers;
 
 /**
- * The cover controller acceptance tables (task p11-cover-controllers). Offline and
+ * The cover controller acceptance tables (task cover-controllers). Offline and
  * exhaustive, upstream CoverControllerCovers.java:39-108 as the mother:
  *
  * <ul>

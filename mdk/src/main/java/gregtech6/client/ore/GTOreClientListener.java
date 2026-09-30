@@ -23,7 +23,7 @@ import gregtech6.item.GTMaterialPrefixBlockItem;
 import gregtech6.registry.GT6OreBlocks;
 
 /**
- * The client-side wiring of the ore baked models (task p30-ore-3-datagen, the card-local
+ * The client-side wiring of the ore baked models (task ore-3-datagen, the card-local
  * {@code @EventBusSubscriber} shape — {@code GTWireClientListener} for the bake dispatch +
  * {@code GTCFoamTintListener} for the colour halves; Dist.CLIENT, the dedicated server
  * never loads this class). Three jobs:
@@ -39,7 +39,7 @@ import gregtech6.registry.GT6OreBlocks;
  * path, so the inventory form renders the same dual-sprite model (the item display
  * transforms ride the shared placeholder ancestry through the static-property delegates).
  *
- * <p>③ TINT (the spec ④ fRGBa face): the WORLD half retired (task p38-issue2-ore-baked-tint)
+ * <p>③ TINT (the spec ④ fRGBa face): the WORLD half retired (task issue2-ore-baked-tint)
  * — the colour is baked into the overlay quads' vertex data by {@link GTOreBakedModel} from
  * {@code Params.tintARGB()} at {@code tintARGBOf}, the p32 machine-domain ruling (the
  * runtime {@code BlockColor} route rendered achromatic in the live client; the baked-vertex
@@ -110,7 +110,7 @@ public final class GTOreClientListener {
 	}
 
 	/**
-	 * The pure seam the tests drive (unregistered since p38-issue2-ore-baked-tint — the
+	 * The pure seam the tests drive (unregistered since issue2-ore-baked-tint — the
 	 * world route retired, the colour now baked into the overlay vertices): index 0 over an
 	 * ore block = {@code fRGBa[prefix.mState]} (PrefixBlock.java:279-282), delegating to the
 	 * single encode {@link GTOreBakedModel#tintARGBOf}.

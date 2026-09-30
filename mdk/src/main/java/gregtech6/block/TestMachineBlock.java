@@ -12,7 +12,7 @@ import gregtech6.registry.GTBlockEntities;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * Framework test block (task p3-be-framework): mounts the shared test BET
+ * Framework test block (task be-framework): mounts the shared test BET
  * (ADR-P3-1 multi-mount) in a ticking and a passive variant — the passive one
  * overrides the ticker to null, the 1.20.1 equivalent of the upstream notick chain
  * (a TileEntityBase01Root constructed with mIsTicking=false never entering

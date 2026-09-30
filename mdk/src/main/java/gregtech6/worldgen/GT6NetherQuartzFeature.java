@@ -14,7 +14,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import gregtech6.registry.GT6NetherOres;
 
 /**
- * The nether quartz Feature (task p31-nether-lens-end-yield spec ①) — the
+ * The nether quartz Feature (task nether-lens-end-yield spec ①) — the
  * {@code WorldgenNetherQuartz} port (WorldgenNetherQuartz.java:47-56), shape-verbatim:
  * EVERY chunk, EVERY 16x16 column, TWO noise slices —
  * {@code tY = 40 + noise.get(x, 0, z, 200)} and {@code tY = 40 + noise.get(x, 64, z, 200)},

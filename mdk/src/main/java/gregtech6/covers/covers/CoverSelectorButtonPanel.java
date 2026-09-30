@@ -13,7 +13,7 @@ import gregtech6.util.UT6;
 /**
  * The button panel selector cover — 1.20.1 port of
  * gregapi/cover/covers/CoverSelectorButtonPanel.java:40-137 (task
- * p34-covers-gameplay-10; upstream item id 1027 "Button Panel Selector"). The plate is
+ * covers-gameplay-10; upstream item id 1027 "Button Panel Selector"). The plate is
  * a 4x4 button grid: a right-click hit maps the clicked cell straight onto the mode
  * ({@code column + row*4}, the :62 formula) and drives the host dial (:63). The value
  * lane runs the momentary window: with the mode armed (screwdriver toggle :76-80) a

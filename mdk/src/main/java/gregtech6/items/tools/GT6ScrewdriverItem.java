@@ -5,7 +5,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ToolAction;
 
 /**
- * The formal GT6 screwdriver — task p24-screwdriver-item spec ①/② (the GT6FileItem
+ * The formal GT6 screwdriver — task screwdriver-item spec ①/② (the GT6FileItem
  * form). Upstream the tool is a crafting-domain meta id ({@code GT_Tool_Screwdriver},
  * gregtech/items/tools/machine/, registered Loader_Tools.java:129): its container-craft
  * row is {@code getToolDamagePerContainerCraft() = 400} (GT_Tool_Screwdriver.java:70-72),
@@ -40,7 +40,7 @@ import net.minecraftforge.common.ToolAction;
  * {@code 'hS'/'Sf'} tool-head rows, Loader_Tools.java:306) is pooled with the
  * tool-family card. ZERO {@code useOn} here by card cut.
  *
- * <p>MATERIAL LADDER (task p31-machine-ladder): the stack's {@code GT.ToolStats} identity
+ * <p>MATERIAL LADDER (task machine-ladder): the stack's {@code GT.ToolStats} identity
  * scales durability (the {@link GT6ToolLadder} j/100 points), the composed display name
  * ("Screwdriver (Bronze)") and the head tint ride the same seam; the IDENTITY-LESS arm
  * reproduces Steel bit-exact (so the pre-ladder 512 constant IS the steel fallback).
@@ -96,7 +96,7 @@ public class GT6ScrewdriverItem extends Item implements GT6ToolLadder.LadderTool
 		return classifies(aToolAction);
 	}
 
-	// ------------------------------ the GT6ToolLadder identity faces (task p31-machine-ladder) ------------------------------
+	// ------------------------------ the GT6ToolLadder identity faces (task machine-ladder) ------------------------------
 
 	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — Steel fallback = 512). */
 	@Override

@@ -11,7 +11,7 @@ import gregtech6.registry.GTMultiBlocks;
 import gregtech6.registry.GT6Turbines;
 
 /**
- * The Steam Turbine controller (task p29-w3-turbine-dynamo ②) — the 1.20.1 counterpart of
+ * The Steam Turbine controller (task w3-turbine-dynamo ②) — the 1.20.1 counterpart of
  * MultiTileEntityLargeTurbineSteam over the {@link GTMultiBlockConverter} base. All four
  * rows accept TD.Energy.STEAM packets on the FRONT and emit RU at the far plate (the base
  * conversion is exact for this family — no override), 4096/8192/16384/131072 RU out over

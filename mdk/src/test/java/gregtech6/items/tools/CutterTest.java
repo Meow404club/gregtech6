@@ -44,7 +44,7 @@ import gregtech6.tileentity.machines.GTMachinesOfflineTestBase;
 import gregtech6.util.UT6;
 
 /**
- * The cutter offline tests (task p10-tool-cutter acceptance, offline half): the
+ * The cutter offline tests (task tool-cutter acceptance, offline half): the
  * CUTTER_ID parity with the emitter's strong-gate string (the emitter file itself stays
  * zero-diff), the nine-grid wiring (the resolution rides the already-tested
  * {@link UT6#getSideWrenching} — the full six-face × nine-region table is
@@ -259,7 +259,7 @@ public class CutterTest extends GTOfflineTestBase {
 	}
 
 	/**
-	 * The known_bugs 2026-09-01 #1 counting stub (p11-cutter-payperpoint): the cover arm
+	 * The known_bugs 2026-09-01 #1 counting stub (cutter-payperpoint): the cover arm
 	 * through the CONTEXT overload must call payPerPoint exactly ONCE. Upstream ruling —
 	 * the single payment sits at the item layer (Behavior_Tool.java:63 aggregates the
 	 * IBlockToolable.Util.onToolClick chain and pays once), while the host relay

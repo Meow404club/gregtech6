@@ -34,7 +34,7 @@ import gregtech6.registry.GT6Tools;
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 
 /**
- * The GT6 pocket multitool — task p29-w5-t7-pocket-eight. One class, eight registered
+ * The GT6 pocket multitool — task w5-t7-pocket-eight. One class, eight registered
  * forms (the base + form-parameter shape the card allows): the closed multitool plus
  * seven tool faces, ring-switching on a sneak right-click at a bare target.
  *
@@ -92,7 +92,7 @@ import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
  *     (GT6ScrewdriverItem same cut).</li>
  * <li><b>WIRE CUTTER</b> — the wire/cover right-click face delegates verbatim to
  *     {@link GTCutterItem#cutterToolClick(UseOnContext)} (the shared static, the
- *     p16-chisel reuse shape); the mod-cable mining heuristic stays the twin's cut.
+ *     chisel reuse shape); the mod-cable mining heuristic stays the twin's cut.
  *     Classifies {@link GT6ToolActions#CUTTER}.</li>
  * <li><b>SCISSORS</b> — the attack face: upstream getBaseDamage 1.0F (GT_Tool_Scissors
  *     :70-72). The cloth/web/vine mining surface stays pooled (t5). No modern

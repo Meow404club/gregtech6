@@ -13,7 +13,7 @@ import gregtech6.covers.CoverData;
 /**
  * The filtered-fluid logistics bus base — 1.20.1 port of the fluid-branch body of
  * gregapi/cover/covers/CoverLogisticsFluidExport.java (:45-112, shared verbatim by
- * Import/Storage), task p33-logistics-covers-12. The filter lives in the
+ * Import/Storage), task logistics-covers-12. The filter lives in the
  * {@link CoverData#mNBTs} lane under the verbatim upstream key {@code gt.filter.fluid}
  * — the port stores the fluid's registry path string (the identity form; the upstream
  * FL.save FluidStack wrapper degenerates since the port filter is NBT-insensitive).

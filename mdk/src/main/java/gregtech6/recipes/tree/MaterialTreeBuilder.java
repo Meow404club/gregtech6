@@ -64,7 +64,7 @@ import gregtech6.recipes.RecipeMap;
  *     of byproducts is card B; this card only builds the edges.</li>
  * </ul>
  *
- * <p><b>Performance red line</b> (the p32-perf-recipe-hash-index pattern): ONE full sweep at
+ * <p><b>Performance red line</b> (the perf-recipe-hash-index pattern): ONE full sweep at
  * {@link #build()} fills a {@code material -> edges} hash index; every per-material query is
  * a hash read that never re-enters the row lists — MIXER alone pours 56k rows and CRUSHER
  * 1643, so a per-material re-scan is forbidden. {@link #scannedRows()} counts the rows the

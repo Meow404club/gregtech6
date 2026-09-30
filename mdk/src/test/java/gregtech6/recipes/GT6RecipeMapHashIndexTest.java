@@ -30,7 +30,7 @@ import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The findRecipe hash-index restoration (task p32-perf-recipe-hash-index): the upstream
+ * The findRecipe hash-index restoration (task perf-recipe-hash-index): the upstream
  * Recipe.java:469-551 lookup structure (item/tag/fluid buckets + the map-level
  * {@code oRecipe} buffer) replacing the linear-scan port, with the per-value equivalence
  * contract as the hard acceptance.
@@ -358,7 +358,7 @@ class GT6RecipeMapHashIndexTest extends GTRecipesOfflineTestBase {
 		for (Item tItem : tItems) tMap.findRecipe(null, tSize, ItemStack.EMPTY, null, new ItemStack(tItem, 4));
 		long tIndexedProbes = CountingRecipe.sProbes;
 
-		System.out.println("p32-perf-recipe-hash-index probe census: n=" + tN + " linear=" + tLinearProbes + " indexed=" + tIndexedProbes);
+		System.out.println("perf-recipe-hash-index probe census: n=" + tN + " linear=" + tLinearProbes + " indexed=" + tIndexedProbes);
 		assertTrue(tIndexedProbes <= 4L * tN, "the indexed lookup must answer in O(1) probes per query (expected ~2n-1): indexed=" + tIndexedProbes + " over n=" + tN);
 		assertTrue(tLinearProbes >= (long) tN * (tN - 1) / 2, "the linear baseline must walk the whole table (the census's non-vacuity guard): linear=" + tLinearProbes + " over n=" + tN);
 	}

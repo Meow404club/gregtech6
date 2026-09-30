@@ -9,7 +9,7 @@ import gregtech6.tileentity.energy.GTAxleBlockEntity;
 import gregtech6.tileentity.energy.GTGearBoxBlockEntity;
 
 /**
- * The Tachometer Sensor (task p37-sensors-3, the pool closure) — the port of
+ * The Tachometer Sensor (task sensors-3, the pool closure) — the port of
  * MultiTileEntityTachometer.java:37-73. The read face: the axle/gearbox RU bookkeeping
  * the P34 pooled javadoc called a missing seam is LIVE since p12/p28 (the census-erratum
  * corrigendum: the P34 "the axles cut at GtAxleBE" note predates the kinetics build —

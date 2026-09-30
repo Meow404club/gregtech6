@@ -50,7 +50,7 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
 import gregtech6.tileentity.sensors.GTSensorBlockEntity;
 
 /**
- * Offline tests for task p28-singleblock-facing-canon: EVERY singleblock family places its
+ * Offline tests for task singleblock-facing-canon: EVERY singleblock family places its
  * FRONT TOWARDS the placer — the {@link GT6PlacementFacing} canon (the view OPPOSITE; the
  * upstream UT.java:1751-1753 getHorizontalForPlayerPlacing over CS.java:638
  * COMPASS_DIRECTIONS, the vanilla furnace {@code getHorizontalDirection().getOpposite()}
@@ -379,7 +379,7 @@ public class GT6SingleBlockFacingIntegrityTest extends GTOfflineTestBase {
 				BlockBehaviour.Properties.of());
 		GT6Boilers.BoilerTankBlock tBoilerBlock = new GT6Boilers.BoilerTankBlock(new GT6Boilers.BoilerRow(
 				"test.boiler", 0, 320, new GT6Boilers.BoilerMaterial("steel", "Steel", 6.0F,
-						() -> gregapi.data.MT.Steel), false), // the r3-world-tint-render-type material column
+						() -> gregapi.data.MT.Steel), false), // the world-tint-render-type material column
 				BlockBehaviour.Properties.of());
 		GT6BurningBoxes.BurningBoxBlock tBurningBlock = new GT6BurningBoxes.BurningBoxBlock(
 				GT6BurningBoxes.SOLID_ROWS.get(0), BlockBehaviour.Properties.of());
@@ -457,7 +457,7 @@ public class GT6SingleBlockFacingIntegrityTest extends GTOfflineTestBase {
 		GT6BatteryBoxBlock tBox = new GT6BatteryBoxBlock(BlockBehaviour.Properties.of(), 0, 4, () -> null);
 		assertEquals(12, tTrans.getStateDefinition().getPossibleStates().size(), "transformer: 6 facings x 2 active");
 		assertEquals(12, tDynamo.getStateDefinition().getPossibleStates().size(), "dynamo: 6 facings x 2 active");
-		// r8-tex-composite-family: the battery-box carrier gained the ACTIVE property (the
+		// tex-composite-family: the battery-box carrier gained the ACTIVE property (the
 		// overlay_active shell selector) — the state space joined the 6x2 form
 		assertEquals(12, tBox.getStateDefinition().getPossibleStates().size(), "battery box: 6 facings x 2 active");
 		// the ACTIVE property is the shared single instance (the ADR-P16-2 identity the

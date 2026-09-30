@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * FluidBridge skeleton offline tests (task p4-fluid-pipes spec ⑥): the empty-bridge
+ * FluidBridge skeleton offline tests (task fluid-pipes spec ⑥): the empty-bridge
  * semantics. The null-path assertions exercise the MAP-MISS path (materials the bridge
  * never seeded): leg-neutral by construction — on the 21.1 leg the test JVM boots through
  * FML (GTOfflineTestBase javadoc :25-33), so the seeded "iron" holder is really bound and

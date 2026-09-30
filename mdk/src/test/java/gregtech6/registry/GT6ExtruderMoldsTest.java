@@ -1,5 +1,5 @@
 /*
- * Offline tests for task p26-w1-press-extruder-molds: the GT6ExtruderMolds registration
+ * Offline tests for task w1-press-extruder-molds: the GT6ExtruderMolds registration
  * home — the row0 MINIMAL subset (the plate mold + the rod mold), the GT6FoodCansTest
  * posture over the pure table + registry-wiring data.
  *
@@ -109,7 +109,7 @@ public class GT6ExtruderMoldsTest {
 	}
 
 	/**
-	 * The Recipe.sNotConsumable composition (task p26-w1-press-extruder-molds extension):
+	 * The Recipe.sNotConsumable composition (task w1-press-extruder-molds extension):
 	 * the production default consumes nothing it claims — the fixture swap pins the
 	 * composition face (circuit OR mold), reading the field at method entry (every swap in
 	 * this class is restored by {@link #restoreSeams()}, so the entry value IS the

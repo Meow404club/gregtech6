@@ -73,7 +73,7 @@ import gregapi.data.MT;
 import gregapi.data.OP;
 
 /**
- * The runtime cover registrations (task p4-cover-core ③ — zero new items; the first
+ * The runtime cover registrations (task cover-core ③ — zero new items; the first
  * cover mounts an EXISTING one). Item selection, per the card note:
  *
  * <p><b>gt6:plate_iron</b> — covers are literally material plates upstream
@@ -84,17 +84,17 @@ import gregapi.data.OP;
  * sprite — {@code gt6:item/material_sets/metallic/plate} — derived with the same
  * formula the item-model datagen used (GT6ItemModels.iconsetOf).
  *
- * <p><b>gt6:cover_pump</b> (task p5-barrel-side-rules ruling ⑥) — the first cover that
+ * <p><b>gt6:cover_pump</b> (task barrel-side-rules ruling ⑥) — the first cover that
  * owns its item: the pump has no plate-item analogue, so the card registers a dedicated
  * one through the card-local ITEMS DeferredRegister (the GTFluids four-DR shape,
  * construct-phase registration) and mounts {@link CoverPump} on it in {@link #init()}.
  *
- * <p><b>gt6:cover_redstone_emitter</b> (task p9-redstone-cover-emitter) — the first real
+ * <p><b>gt6:cover_redstone_emitter</b> (task redstone-cover-emitter) — the first real
  * redstone cover, same own-item route as the pump; mounts {@link CoverRedstoneEmitter}
  * in {@link #init()}.
  *
 	 * <p><b>gt6:cover_conveyor_0..9 / gt6:cover_robot_arm_0..9</b> (task
-	 * p11-cover-conveyor-robotarm) — the ten timing tiers of the two item-transport covers
+	 * cover-conveyor-robotarm) — the ten timing tiers of the two item-transport covers
 	 * (upstream MultiItemTechnological.java:51/:53 metas 12040+i / 12080+i, one item per
 	 * {@code 512>>i} tick PERIOD), mounting {@link CoverConveyor} / {@link CoverRobotArm}
 	 * in {@link #init()}.
@@ -125,7 +125,7 @@ public final class GT6Covers {
 
 	/**
 	 * The p10 redstone conductor pair — the accept marker and the emit face of the
-	 * wire-through cover (task p10-cover-conductor-redstone; upstream
+	 * wire-through cover (task cover-conductor-redstone; upstream
 	 * MultiItemTechnological.java:88-89 metas 1029/1030). Same card-local ITEMS
 	 * DeferredRegister as the pump and the emitter.
 	 */
@@ -138,7 +138,7 @@ public final class GT6Covers {
 	/**
 	 * The p10 redstone machine switch cover — the controller that holds a switchable
 	 * machine stopped/running by the redstone on its face (task
-	 * p10-cover-controller-redstone; upstream MultiItemTechnological.java:64 meta 1005).
+	 * cover-controller-redstone; upstream MultiItemTechnological.java:64 meta 1005).
 	 * Same card-local ITEMS DeferredRegister as the pump, the emitter and the conductor
 	 * pair.
 	 */
@@ -147,7 +147,7 @@ public final class GT6Covers {
 
 	/**
 	 * The p11 shutter cover item — the pure open/closed transfer gate on a face
-	 * (task p11-cover-shutter-filter; upstream MultiItemTechnological.java:85 meta
+	 * (task cover-shutter-filter; upstream MultiItemTechnological.java:85 meta
 	 * 1026 "Shutter Cover"). Same card-local ITEMS DeferredRegister as the pump,
 	 * the emitter, the conductor pair and the machine switch.
 	 */
@@ -156,7 +156,7 @@ public final class GT6Covers {
 
 	/**
 	 * The p11 item-filter cover item — the whitelist/blacklist face gate storing its
-	 * filter item in the CoverData mNBTs lane (task p11-cover-shutter-filter; upstream
+	 * filter item in the CoverData mNBTs lane (task cover-shutter-filter; upstream
 	 * MultiItemTechnological.java:82 meta 1023 "Item Filter", class CoverFilterItem).
 	 * Same card-local ITEMS DeferredRegister as the rest of the cover family.
 	 */
@@ -165,7 +165,7 @@ public final class GT6Covers {
 
 	/**
 	 * The p31 item-retriever cover item — the pipe-network puller storing its filter item
-	 * in the CoverData mNBTs lane (task p31-retriever-cover; upstream
+	 * in the CoverData mNBTs lane (task retriever-cover; upstream
 	 * MultiItemTechnological.java:90 meta 1031 "Item Retriever Cover", class
 	 * CoverRetrieverItem). Mounts only on item pipes; pulls through the pipe network into
 	 * the container at the covered face. Same card-local ITEMS DeferredRegister as the
@@ -176,7 +176,7 @@ public final class GT6Covers {
 
 	/**
 	 * The p33 logistics cover family — the 12 dead-endpoint covers (task
-	 * p33-logistics-covers-12; upstream MultiItemTechnological.java:101-114 metas
+	 * logistics-covers-12; upstream MultiItemTechnological.java:101-114 metas
 	 * 1086-1099). The registration PLANE lives here (one item per cover); the BEHAVIOUR
 	 * plane is the pure-Java cover classes + the Core's cover-bus registration arm. Same
 	 * card-local ITEMS DeferredRegister as the rest of the cover family. Upstream id →
@@ -216,7 +216,7 @@ public final class GT6Covers {
 			() -> new Item(new Item.Properties()));
 
 	/**
-	 * The p34 gameplay cover family (task p34-covers-gameplay-10; upstream
+	 * The p34 gameplay cover family (task covers-gameplay-10; upstream
 	 * MultiItemTechnological.java metas 1007/1008/1020/1022/1024/1027/2000) — the same
 	 * card-local ITEMS DeferredRegister as the rest of the cover family. The tag
 	 * selector ladder rides the 16-item static loop below (upstream ONE
@@ -246,7 +246,7 @@ public final class GT6Covers {
 			() -> new Item(new Item.Properties()));
 
 	/**
-	 * The p35 display/scale cover family (task p35-covers-display-scale-6; upstream
+	 * The p35 display/scale cover family (task covers-display-scale-6; upstream
 	 * MultiItemTechnological.java:61/:63/:73/:77 metas 1002/1004/1014/1018) — the five
 	 * singletons of the display/scale face: the machine status display, the energy
 	 * display, the energy sensor and the progress sensor. The auto switch (meta 1003)
@@ -266,7 +266,7 @@ public final class GT6Covers {
 
 	/**
 	 * The p37 crafting-table cover item — the vanilla-workbench face (task
-	 * p37-covers-crafting-asphalt; upstream MultiItemTechnological.java:60 meta 1001,
+	 * covers-crafting-asphalt; upstream MultiItemTechnological.java:60 meta 1001,
 	 * "Crafting Table Cover"). Same card-local ITEMS DeferredRegister as the rest of the
 	 * cover family.
 	 */
@@ -274,7 +274,7 @@ public final class GT6Covers {
 			() -> new Item(new Item.Properties()));
 
 	/**
-	 * The p37 asphalt cover item — the walk-speed plate (task p37-covers-crafting-asphalt;
+	 * The p37 asphalt cover item — the walk-speed plate (task covers-crafting-asphalt;
 	 * upstream the Asphalt Panel items Loader_MultiTileEntities.java:2053-2055 carried the
 	 * CoverAsphalt — the dedicated cover-item form per the family convention, the zh face
 	 * 沥青覆盖板 rides the panel row verbatim).
@@ -284,7 +284,7 @@ public final class GT6Covers {
 
 	/**
 	 * The p11 auto redstone machine switch — the "lets it finish" controller (task
-	 * p11-cover-controllers; upstream MultiItemTechnological.java:65 meta 1006,
+	 * cover-controllers; upstream MultiItemTechnological.java:65 meta 1006,
 	 * "Auto Redstone Machine Switch"). Holds a mid-process machine ON through a
 	 * signal drop until the current process produces. Same card-local ITEMS
 	 * DeferredRegister as the P10 switch.
@@ -294,7 +294,7 @@ public final class GT6Covers {
 
 	/**
 	 * The p11 cover controller — the cover-layer stop switch (task
-	 * p11-cover-controllers; upstream MultiItemTechnological.java:84 meta 1025,
+	 * cover-controllers; upstream MultiItemTechnological.java:84 meta 1025,
 	 * "Cover Controller"). Drives {@code CoverData.setStopped} for the OTHER covers
 	 * on the block and relays clicks/tool clicks across faces. Same card-local
 	 * ITEMS DeferredRegister.
@@ -303,7 +303,7 @@ public final class GT6Covers {
 			() -> new Item(new Item.Properties()));
 
 	/**
-	 * The conveyor display template (task p20-i18n-compose-wires): "{@code Compact Electric
+	 * The conveyor display template (task i18n-compose-wires): "{@code Compact Electric
 	 * Conveyor (%s)}" — the former per-tier full-string keys became ONE position-param
 	 * template, the tier slot filled at getName time (zh rides the dump's own template
 	 * value, dump gt.multiitem.technological.12040 = "输送机模块 (ULV)").
@@ -322,7 +322,7 @@ public final class GT6Covers {
 	public static final String[] TIER_NAMES = {"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "PUV1"};
 
 	/**
-	 * The p34 tag-selector display template (task p34-covers-gameplay-10):
+	 * The p34 tag-selector display template (task covers-gameplay-10):
 	 * "{@code Tag Selector (%s)}" — the 16 ladder items compose the mode numeral
 	 * (the conveyor template form; the upstream tag selector IS the integrated-circuit
 	 * item, whose dump face 选择器标签 names the family).
@@ -334,7 +334,7 @@ public final class GT6Covers {
 	 * MultiItemTechnological.java:51 metas 12040+i ("Compact Electric Conveyor", each
 	 * carrying a {@link CoverConveyor} with the {@code 512>>i} tick PERIOD). Registered
 	 * through the same card-local ITEMS DeferredRegister as every own-item cover. Task
-	 * p20-i18n-compose-wires: the display name composes the {@link #CONVEYOR_DISPLAY_KEY}
+	 * i18n-compose-wires: the display name composes the {@link #CONVEYOR_DISPLAY_KEY}
 	 * template with the tier literal instead of resolving a per-tier lang key.
 	 */
 	public static final List<RegistryObject<Item>> COVER_CONVEYORS = new ArrayList<>();
@@ -354,7 +354,7 @@ public final class GT6Covers {
 	 * The p11 ten robot arm timing tiers — upstream MultiItemTechnological.java:53 metas
 	 * 12080+i ("Compact Robot Arm", each carrying a {@link CoverRobotArm} with the same
 	 * {@code 512>>i} table). Same composed display face as the conveyors
-	 * (task p20-i18n-compose-wires).
+	 * (task i18n-compose-wires).
 	 */
 	public static final List<RegistryObject<Item>> COVER_ROBOT_ARMS = new ArrayList<>();
 	static {
@@ -431,10 +431,10 @@ public final class GT6Covers {
 	}
 
 	/**
-	 * The tab walk (task p33-logistics-covers-12 — the lv2/lv3 遗留账: the logistics
+	 * The tab walk (task logistics-covers-12 — the lv2/lv3 遗留账: the logistics
 	 * wire item, the core item and the 14 logistics covers join the machines tab; the
 	 * GT6Placeables.onBuildTabContents verbatim form). The EARLIER cover family joined
-	 * too (task p38-tabfix-d-ruling, the user ruling — supersedes this walk's old
+	 * too (task tabfix-d-ruling, the user ruling — supersedes this walk's old
 	 * "stays tab-less" declaration): the cover-placed tool faces ride the machines tab
 	 * exactly like upstream, where every MultiItemTechnological item is on the GT tab
 	 * list. COUNT ERRATUM: the census said 3, the disk registers 30 tab-less cover
@@ -459,7 +459,7 @@ public final class GT6Covers {
 			aEvent.accept(new ItemStack(COVER_LOGISTICS_GENERIC_IMPORT.get()));
 			aEvent.accept(new ItemStack(COVER_LOGISTICS_GENERIC_STORAGE.get()));
 			aEvent.accept(new ItemStack(COVER_LOGISTICS_GENERIC_DUMP.get()));
-			// task p34-covers-gameplay-10 — the gameplay cover family joins the machines
+			// task covers-gameplay-10 — the gameplay cover family joins the machines
 			// tab (the logistics-family precedent; upstream the MultiItemTechnological items
 			// ride the GT tab list)
 			aEvent.accept(new ItemStack(COVER_VENT.get()));
@@ -472,7 +472,7 @@ public final class GT6Covers {
 			aEvent.accept(new ItemStack(COVER_SELECTOR_REDSTONE.get()));
 			aEvent.accept(new ItemStack(COVER_SELECTOR_MANUAL.get()));
 			aEvent.accept(new ItemStack(COVER_SELECTOR_BUTTON_PANEL.get()));
-			// task p35-covers-display-scale-6 — the display/scale family joins the machines
+			// task covers-display-scale-6 — the display/scale family joins the machines
 			// tab (the p34 gameplay-family precedent; upstream the MultiItemTechnological
 			// items ride the GT tab list)
 			aEvent.accept(new ItemStack(COVER_MACHINE_DISPLAY.get()));
@@ -481,12 +481,12 @@ public final class GT6Covers {
 			aEvent.accept(new ItemStack(COVER_SCALE_ENERGY.get()));
 			aEvent.accept(new ItemStack(COVER_SCALE_PROGRESS.get()));
 			for (int i = 0; i < COVER_AUTO_TIMERS.size(); i++) aEvent.accept(new ItemStack(COVER_AUTO_TIMERS.get(i).get()));
-			// task p37-covers-crafting-asphalt — the crafting + asphalt pair joins the
+			// task covers-crafting-asphalt — the crafting + asphalt pair joins the
 			// machines tab (the p34/p35 family precedents; upstream the crafting cover rides
 			// the MultiItemTechnological GT tab list, the asphalt panel the Panels list)
 			aEvent.accept(new ItemStack(COVER_CRAFTING.get()));
 			aEvent.accept(new ItemStack(COVER_ASPHALT.get()));
-			// task p38-tabfix-d-ruling — the earlier cover family joins the machines tab (the
+			// task tabfix-d-ruling — the earlier cover family joins the machines tab (the
 			// user ruling superseding the declared tab-less scope; upstream every
 			// MultiItemTechnological item rides the GT tab list). 10 single covers + the 10
 			// conveyors + the 10 robot arms = 30 items (the census "3" truncated its evidence

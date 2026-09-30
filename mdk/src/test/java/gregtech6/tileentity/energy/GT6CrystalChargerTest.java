@@ -27,7 +27,7 @@ import gregtech6.registry.GTWireSpecs;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * GT6CrystalChargers offline tests (task p35-energy-tail-machines): the 20-row declared
+ * GT6CrystalChargers offline tests (task energy-tail-machines): the 20-row declared
  * subset pin (the :969-:972 loop — T0..T9 x small 4-slot / Large 16-slot, ids 10130-10149),
  * the LU-domain column (the BE resolves it off the block — the EU/LU mutual rejection is
  * structural), and the charge cycle over the energium crystal carrier (the IItemEnergy

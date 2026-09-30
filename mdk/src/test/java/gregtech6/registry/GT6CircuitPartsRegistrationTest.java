@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The id686 registration guard for the circuits-parts family (task p33-circuits-parts:
+ * The id686 registration guard for the circuits-parts family (task circuits-parts:
  * the Ventilation Unit 18299 + the five Quadcore Processor Units 18200-18204, the
  * Logistics Core structure parts). The registration face itself landed on main in
  * fc1feb8c2 (the part-family expansion); this card pins the containment: the rows in

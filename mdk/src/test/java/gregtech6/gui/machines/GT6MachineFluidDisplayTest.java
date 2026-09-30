@@ -28,7 +28,7 @@ import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 
 /**
- * The fluid-tank display slots offline (task p16-machine-fluid-gui ②, the
+ * The fluid-tank display slots offline (task machine-fluid-gui ②, the
  * {@link GTBasicMachineMenu} half — the GT6CokeOvenMenuTest shape):
  * <ul>
  * <li>the :267-268 display geometry full table ({@link GTBasicMachineMenu#fluidDisplayPos})

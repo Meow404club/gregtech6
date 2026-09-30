@@ -22,7 +22,7 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
- * The W1 trio pour acceptance (task p26-w1-sifter-compressor-wiremill, the
+ * The W1 trio pour acceptance (task w1-sifter-compressor-wiremill, the
  * {@link GT6RecipesShCLTest} offline shape): the sifter row0 pours over the vanilla
  * resolvers, the compressor/wiremill template walks pour over a synthetic
  * (prefix, material) → item resolver, and the generation reset re-pours (the pour flag

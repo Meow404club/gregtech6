@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import gregapi.oredict.OreDictMaterial;
 
 /**
- * The wire texture-set derivation (task p9-wire-family-w2) — the MC-free single source for
+ * The wire texture-set derivation (task wire-family-w2) — the MC-free single source for
  * "which borrowed {@code materialicons/<set>/wire.png} does this material render with".
  * Deliberately OUTSIDE the datagen class ({@code GT6BlockStates} pulls the Forge
  * BlockStateProvider statics, which bootstrap-gate the offline test JVM) and outside the
@@ -40,7 +40,7 @@ public final class GTWireTextures {
 	}
 
 	/**
-	 * The laser family's fixed texture pair (task p11-wire-fiber-texture) — the borrowed
+	 * The laser family's fixed texture pair (task wire-fiber-texture) — the borrowed
 	 * FIBER_WIRE icons (MultiTileEntityWireLaser.java:121-122; upstream
 	 * {@code textures/blocks/iconsets/FIBER_WIRE[_OVERLAY].png}, lowercased on borrow,
 	 * assets/README.md). The base carries the dye through tint index 0, the overlay is

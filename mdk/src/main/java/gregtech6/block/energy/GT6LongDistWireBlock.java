@@ -11,7 +11,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import gregtech6.registry.GTWireSpecs;
 
 /**
- * The Long Distance Electric Wire block (task p35-energy-tail-machines) — the 1.20.1
+ * The Long Distance Electric Wire block (task energy-tail-machines) — the 1.20.1
  * counterpart of {@code BlockLongDistWire} (63 lines, BlockBaseMachineUpdate): a PLAIN
  * block (no BE — upstream stores only {@code mTiers[aMeta]}), one block per upstream
  * meta 0..15, the tier byte the row's only data column. The scan face of the Long
@@ -26,7 +26,7 @@ import gregtech6.registry.GTWireSpecs;
  * resistance 15, cloth sounds, flammable 150/150, harvest = cutter level 3 (the cutter
  * tool gate is the tool-tag pool; the block drops itself).
  *
- * <p>NOTE for the follow-up p35-long-distance-pipes card: this is the ELECTRIC wire
+ * <p>NOTE for the follow-up long-distance-pipes card: this is the ELECTRIC wire
  * family (the transformer scan object). The ITEM/FLUID pipes are the separate upstream
  * block {@code BlocksGT.LongDistPipe01} (BlockLongDistPipe, Loader_Blocks.java:177) —
  * a different class, registered by the pipes card, NOT scanned by this transformer.

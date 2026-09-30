@@ -9,7 +9,7 @@ import snownee.jade.api.ui.BoxStyle;
 import snownee.jade.api.ui.IElementHelper;
 
 /**
- * GT6 Jade 行件共享 helper（task r8-jade-redesign-core，design.r8-jade-tooltip 裁定）：
+ * GT6 Jade 行件共享 helper（task jade-redesign-core，design.r8-jade-tooltip 裁定）：
  * 两 provider（{@link GT6MachineProvider}/{@link GT6BoilerProvider}）收敛的纯函数行 +
  * 条元素单点。收录三样：
  * <ol>
@@ -46,7 +46,7 @@ public final class GT6JadeRows {
 	public static final int COLOR_NEUTRAL = 0xFFFFFFFF;
 
 	/** 状态行字色（ChatFormatting 形）——Active/Running/formed 绿（GT6ConverterProvider 状态行的
-	 * 第三份复制收编本处，task r8-jade-converter-crucible-restyle——J1 交卡遗留债）。 */
+	 * 第三份复制收编本处，task jade-converter-crucible-restyle——J1 交卡遗留债）。 */
 	public static final ChatFormatting FORMAT_OK = ChatFormatting.GREEN;
 	/** 状态行字色（ChatFormatting 形）——Stopped/Inactive/malfunction/熔毁红（同上收编）。 */
 	public static final ChatFormatting FORMAT_STALLED = ChatFormatting.RED;

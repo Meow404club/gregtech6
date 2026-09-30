@@ -1,6 +1,6 @@
 /**
  * The identity pins of the shared BlockState Property constants (ADR-P16-2, task
- * p16-blockstates-2111-prop-intern). GTOvenBlock/GTBasicMachineBlock ACTIVE+RUNNING and
+ * blockstates-2111-prop-intern). GTOvenBlock/GTBasicMachineBlock ACTIVE+RUNNING and
  * GTWireBlock/GTFluidPipeBlock CONNECTIONS must all be aliases of the same
  * GTBlockProperties instances: 1.21.x StateHolder looks properties up by identity
  * (Reference2ObjectArrayMap), so a same-named foreign instance throws "Cannot get

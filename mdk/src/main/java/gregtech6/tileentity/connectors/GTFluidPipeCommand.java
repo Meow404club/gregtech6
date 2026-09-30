@@ -32,14 +32,14 @@ import gregtech6.fluid.FluidTankGT;
 import gregtech6.registry.GTFluidPipes;
 
 /**
- * {@code /gt6pipe} — the automated fluid-pipe acceptance command (task p4-fluid-pipes
- * acceptance ②, extended by task p4-pipe-flow-control spec ⑥). Game-bus listener,
+ * {@code /gt6pipe} — the automated fluid-pipe acceptance command (task fluid-pipes
+ * acceptance ②, extended by task pipe-flow-control spec ⑥). Game-bus listener,
  * self-contained per ADR-P3-4.
  *
  * <ul>
  * <li>{@code accept <pos>} (console-safe) — the full card scenario against the pipe at
  *     pos (A) and its first neighbouring pipe (B): the explicit symmetric connect
- *     handshake (there is NO auto-connect since p4-pipe-flow-control — the command must
+ *     handshake (there is NO auto-connect since pipe-flow-control — the command must
  *     drive it exactly like the player's hoe right click does), then the explicit
  *     open-end connect of the injection side (connect into air always succeeds — the
  *     upstream :141 open-end semantics, the "manual pipe mouth"), inject 100 L of water
@@ -67,13 +67,13 @@ import gregtech6.registry.GTFluidPipes;
  *     ({@link GTFluidPipeBlockEntity#toggleOutput(byte)}); {@code clear <pos>} drops
  *     every arrow ({@link GTFluidPipeBlockEntity#clearOutputs()}).</li>
  * <li>{@code ownable <pos> <0|1> [ownerUuid]} — the foam applyFoam stand-in (task
- *     p24-pipe-owner, upstream 10ConnectorRendered:159-166): the only live forced write
+ *     pipe-owner, upstream 10ConnectorRendered:159-166): the only live forced write
  *     point while the foam card sleeps in the P10 pool. 1 records ownable (with the
  *     owner UUID when given, null owner = everyone passes — the upstream :107 arm);
  *     0 resets both fields (the removeFoam :177-183 reset form). Console OP force write —
  *     the /setblock-style seam the card accepts.</li>
  * <li>{@code spray <pos> <owned> [dye] [ownerUuid]} / {@code dry <pos>} /
- *     {@code removefoam <pos> [ownerUuid]} — the foam trio (task p25-c-foam-pipe-spray
+ *     {@code removefoam <pos> [ownerUuid]} — the foam trio (task c-foam-pipe-spray
  *     spec ⑧): the SAME GATED BE method faces the item's useOn path calls —
  *     {@link GTFluidPipeBlockEntity#applyFoam} (upstream 10ConnectorRendered:159-166),
  *     {@link GTFluidPipeBlockEntity#dryFoam} (:169-174, the no-gate asymmetry) and
@@ -142,7 +142,7 @@ public final class GTFluidPipeCommand {
 										.executes(aContext -> ownableArg(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
 												IntegerArgumentType.getInteger(aContext, "value") != 0,
 												StringArgumentType.getString(aContext, "owner")))))))
-				// task p25-c-foam-pipe-spray spec ⑧ — the foam trio over the SAME BE method
+				// task c-foam-pipe-spray spec ⑧ — the foam trio over the SAME BE method
 				// faces the item's useOn path calls (GATED faces, unlike the ownable stand-in)
 				.then(Commands.literal("spray")
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
@@ -183,7 +183,7 @@ public final class GTFluidPipeCommand {
 		String tLine = "GT6 pipe stat at " + aPos.toShortString() + ": connections " + aPipe.getConnections()
 				+ " ioMask " + aPipe.getIoMask() + " ownable " + aPipe.mOwnable
 				+ " owner " + (aPipe.mOwner != null ? aPipe.mOwner : "none")
-				// task p25-c-foam-pipe-spray — the foam triple rides the stat line
+				// task c-foam-pipe-spray — the foam triple rides the stat line
 				+ " foam " + aPipe.mFoam + " dried " + aPipe.mFoamDried + " foamOwned " + aPipe.ownedFoam((byte)0)
 				+ " " + tTanks;
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
@@ -275,7 +275,7 @@ public final class GTFluidPipeCommand {
 	}
 
 	/**
-	 * The foam applyFoam stand-in (task p24-pipe-owner — upstream 10ConnectorRendered:159-166
+	 * The foam applyFoam stand-in (task pipe-owner — upstream 10ConnectorRendered:159-166
 	 * is the only runtime owner write point, and the foam family sleeps in the P10 pool):
 	 * a FORCED console write, no allowInteraction gate (the console OP is the accepted
 	 * /setblock-style seam). {@code value=0} resets both fields — the removeFoam :177-183
@@ -310,7 +310,7 @@ public final class GTFluidPipeCommand {
 	}
 
 	/**
-	 * The foam spray driver (task p25-c-foam-pipe-spray spec ⑧) — the SAME gated
+	 * The foam spray driver (task c-foam-pipe-spray spec ⑧) — the SAME gated
 	 * {@link GTFluidPipeBlockEntity#applyFoam} face the item's useOn calls (upstream
 	 * 10ConnectorRendered:159-166; Behavior_Spray_Foam.java:113-114 arm (1)), so the RCON
 	 * chain exercises the real gates: a wet/dried pipe rejects, a locked pipe rejects a
@@ -411,7 +411,7 @@ public final class GTFluidPipeCommand {
 		byte tSideToA = (byte)Direction.from3DDataValue(tSideToB).getOpposite().get3DDataValue();
 
 		// 1. the explicit symmetric handshake (upstream onPlaced :82-96 / onToolClick2 :70-79).
-		// Since p4-pipe-flow-control there is NO auto-connect anywhere — the command drives
+		// Since pipe-flow-control there is NO auto-connect anywhere — the command drives
 		// the same connect(A→B) the player's hoe right click does.
 		boolean tConnected = tPipeA.connect(tSideToB, true);
 		boolean tConnectedBack = tPipeB.connected(tSideToA);

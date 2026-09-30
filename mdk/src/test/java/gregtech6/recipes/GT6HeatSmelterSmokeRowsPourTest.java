@@ -22,7 +22,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * The p29-w3-heat-smelter smoke-row pour test (the GT6RollSmokeRowsPourTest fixture
+ * The w3-heat-smelter smoke-row pour test (the GT6RollSmokeRowsPourTest fixture
  * posture): the THREE data/gt6/recipe_maps JSON files this card ships (smelter / melter /
  * fuels_hot) are read VERBATIM off the classpath and poured through the real
  * {@link GT6RecipeMapJsonLoader} seam — the new POURABLE keys, the map resolution and the
@@ -76,7 +76,7 @@ public class GT6HeatSmelterSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 		}
 		assertEquals(1, GT6RecipeMaps.SMELTER.mRecipeList.size(), "the smelter map holds the ice smoke row");
 		assertEquals(1, GT6RecipeMaps.MELTER.mRecipeList.size(), "the melter map holds the ice smoke row");
-		// task p29-w4-hot-lube appended the 13 FM.Hot true rows behind the W3 smoke row —
+		// task w4-hot-lube appended the 13 FM.Hot true rows behind the W3 smoke row —
 		// the ratchet: 14 rows now, the smoke row still among them (pinned by content below)
 		assertEquals(14, GT6RecipeMaps.FUELS_HOT.mRecipeList.size(), "the fuels_hot map: the :196 hot-water TRUE row (the review-round upgrade from the smoke-row framing) + the 13 card-④ FM.Hot rows");
 	}

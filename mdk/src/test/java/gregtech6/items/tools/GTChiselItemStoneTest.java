@@ -40,7 +40,7 @@ import gregtech6.recipes.Recipe;
 import gregtech6.tileentity.machines.GTMachinesOfflineTestBase;
 
 /**
- * The GTChiselItem universal gate truth table (task p19-chisel-recipes acceptance):
+ * The GTChiselItem universal gate truth table (task chisel-recipes acceptance):
  * the ToolCompat.java:224-229 transcription over the poured CHISEL book.
  *
  * <p><b>Offline drive shape</b> (the CutterTest convention): a map-driven Level double

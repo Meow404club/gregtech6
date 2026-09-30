@@ -1,5 +1,5 @@
 /**
- * Offline pin for task r4-26-fallenlog-rotation (GitHub #26) — the four fallen-log
+ * Offline pin for task 26-fallenlog-rotation (GitHub #26) — the four fallen-log
  * blockstates carry the vanilla {@code axisBlock} rotation map (the addAxles band
  * form: X = x90/y90, Y = none, Z = x90/y180). The previous map (x-only 90 / y-only
  * 90) tipped the Y-column cube_column model onto Z for axis=x and spun the still-

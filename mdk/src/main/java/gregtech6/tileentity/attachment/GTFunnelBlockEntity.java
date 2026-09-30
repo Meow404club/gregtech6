@@ -16,7 +16,7 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 /**
  * 1.20.1 counterpart of gregtech/tileentity/tools/MultiTileEntityFluidFunnel.java
- * (:68-93 onBlockActivated3, task p12-tap-funnel-attachment spec ③) — the wall funnel:
+ * (:68-93 onBlockActivated3, task tap-funnel-attachment spec ③) — the wall funnel:
  * right-clicking POURS the held fluid content INTO the container it is mounted on. The
  * chain, translated:
  *

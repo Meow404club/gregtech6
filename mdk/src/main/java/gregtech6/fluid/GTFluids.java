@@ -34,7 +34,7 @@ import gregtech6.item.spraycan.GTSprayCanItem;
 import gregtech6.registry.GTFluidPipes;
 
 /**
- * The first GT6 fluid content registration (task p4-fluid-pipes spec ⑥) — the official
+ * The first GT6 fluid content registration (task fluid-pipes spec ⑥) — the official
  * four-DeferredRegister template of the Forge debug test FluidTypeTest.java:70-172:
  * FluidType (via {@code ForgeRegistries.Keys.FLUID_TYPES}) + Fluid (Source/Flowing pair
  * over one shared {@link ForgeFlowingFluid.Properties}) + the LiquidBlock, all attached
@@ -53,7 +53,7 @@ import gregtech6.registry.GTFluidPipes;
  * at the vanilla water textures with a molten tint (FluidTypeTest.java:82-150 shape) —
  * no dedicated PNG this card; the blockstate render-type wiring is a client-pool item.
  *
- * <p>Engine fuel family (task p12-engine-fuel-fluids): nine FURTHER fluids —
+ * <p>Engine fuel family (task engine-fuel-fluids): nine FURTHER fluids —
  * {@code steam} (the gaseous one), {@code distilled_water}, and the seven FM.Engine fuels
  * {@code diesel/kerosine/petrol/fuel/nitrofuel/jetfuel/ethanol} — registered through a
  * TABLE-DRIVEN helper ({@link #ENGINE_SPECS}, one row per fluid family) that folds the
@@ -73,7 +73,7 @@ import gregtech6.registry.GTFluidPipes;
  * declared value). The FM.Engine fuel rows that consume these fluids live in
  * {@link gregtech6.recipes.GT6RecipesEngineFuels}.
  *
- * <p>Aqua family (task p16-aqua-fluids): six further fluid-only rows — {@code spdew},
+ * <p>Aqua family (task aqua-fluids): six further fluid-only rows — {@code spdew},
  * {@code mnwtr}, {@code water_geothermal}, {@code water_boiling}, {@code hot_water},
  * {@code cold_water} — registered through the same table-driven shape
  * ({@link #AQUA_SPECS} + {@link #aquaFluid(String)}), which with the vanilla Water make
@@ -83,7 +83,7 @@ import gregtech6.registry.GTFluidPipes;
  * carry (the whole water_boiling definition, the tints) are honest FluidType defaults /
  * port-owned declared values, never invented numbers — see {@link #AQUA_SPECS}.
  *
- * <p>Simple-liquid family (task p19-drying-rows-backfill-2): two further fluid-only rows —
+ * <p>Simple-liquid family (task drying-rows-backfill-2): two further fluid-only rows —
  * {@code seawater}, {@code waterdirty} — on the SECOND AquaFluidSpec table
  * ({@link #SIMPLE_LIQUID_SPECS}, deliberately not an AQUA_SPECS append: the upstream rows
  * carry SIMPLE+LIQUID only, no WATER tag, and the aqua family is exactly-order-pinned),
@@ -91,7 +91,7 @@ import gregtech6.registry.GTFluidPipes;
  * of the Drying backfill (Loader_Recipes_Chem.java:548/:553, behind the
  * GT6RecipesDrying resolver seam).
  *
- * <p>Food family (task p21-drying-food-fluids): four further fluid-only rows —
+ * <p>Food family (task drying-food-fluids): four further fluid-only rows —
  * {@code sap}, {@code maplesap}, {@code reedwater}, {@code cactuswater} — on the THIRD
  * AquaFluidSpec table ({@link #FOOD_FLUID_SPECS}, its own table again: the rows carry the
  * FOOD tag upstream, FL.java:250/:252/:233-234, and the two earlier tables are
@@ -106,7 +106,7 @@ import gregtech6.registry.GTFluidPipes;
  * registers all four and pours all four Drying rows — the upstream
  * {@code FL.Sap.exists()} guard (:654) is live semantics over a registered fluid.
  *
- * <p>Dye-chemical family + chlorine (task p24-dye-chemical-fluids): sixteen WITH-BLOCK
+ * <p>Dye-chemical family + chlorine (task dye-chemical-fluids): sixteen WITH-BLOCK
  * families {@code dye_chemical_<GTSprayCanItem.DYE_IDS[i]>} — the Canner refill input
  * domain (Loader_Fluids.java:120-126), every tint the shared
  * {@link GTSprayCanItem#DYES_INT}[i] table, one borrowed grayscale carrier PNG tinted per
@@ -114,7 +114,7 @@ import gregtech6.registry.GTFluidPipes;
  * port's logic-only material system has no bridge for, ruling R3). See the
  * {@link DyeChemicalFluid} block below for the full ruling map (R3/R4/R6).
  *
- * <p>Chemical family (task p29-w4-f1-chemicals): twenty-five further fluid-only rows —
+ * <p>Chemical family (task w4-f1-chemicals): twenty-five further fluid-only rows —
  * the F-1 chemicals batch of the W4 fluid wave (decisions.p29-w4-split-rulings card ①):
  * the five oils {@code liquid_extra_heavy_oil/liquid_heavy_oil/liquid_medium_oil/
  * liquid_light_oil/soulsandoil} (Loader_Fluids.java:59-63), the four cracked gases
@@ -148,7 +148,7 @@ import gregtech6.registry.GTFluidPipes;
  * fluid leg (MultiItemTechnological.java:396-403 now pours its full eight-row walk in
  * vivo). KJS surface: REGISTRATION face (the one Spec row); NO KubeJS-specific seam.
  *
- * <p><b>The HOT family, the closure carriers and the lubricant</b> (task p29-w4-hot-lube)
+ * <p><b>The HOT family, the closure carriers and the lubricant</b> (task w4-hot-lube)
  * ride the SAME {@link ChemicalFluidSpec} record and the SAME registration body — the
  * FIFTH-SPEC-SECTION append AFTER the chemical table (the merge-order seam: card ① is the
  * first writer, card ④ appends behind it): the twelve hot fluids
@@ -163,7 +163,7 @@ import gregtech6.registry.GTFluidPipes;
  * the FM.HOT/distillation/DieselEngine datapack-domain rows of the same card; NO
  * KubeJS-specific seam.
  *
- * <p>The HONEY family and the bee-row dependency fluids (task p31-bees-lv1) ride the SAME
+ * <p>The HONEY family and the bee-row dependency fluids (task bees-lv1) ride the SAME
  * {@link ChemicalFluidSpec} record and the SAME {@link #specFluid} registration body —
  * the SIXTH-SPEC-SECTION append AFTER the lubricant row (the hot-lube merge-order seam
  * form): the four honey drinks {@code honey/honeydew/royal_jelly/ambrosia}
@@ -175,7 +175,7 @@ import gregtech6.registry.GTFluidPipes;
  * (the 11 Spec rows) + the comb datapack-domain rows of the same card; NO KubeJS-specific
  * seam.
  *
- * <p><b>The naming-parity rows</b> (task p37-fluids-naming) ride the SAME
+ * <p><b>The naming-parity rows</b> (task fluids-naming) ride the SAME
  * {@link ChemicalFluidSpec} record and the SAME {@link #specFluid} registration body —
  * the table-tail append AFTER the QU-matter family: the THIRTY-FOUR census-gap
  * {@code FL.create} rows of the upstream Loader_Fluids.java walk (state
@@ -192,7 +192,7 @@ import gregtech6.registry.GTFluidPipes;
  * providers exist standalone, so the port declares them absent (the seam a future compat
  * card would mount); NO KubeJS-specific seam.
  *
- * <p>The WORLDGEN BLOCK FACE (task p31-fluid-spring): five further LiquidBlocks —
+ * <p>The WORLDGEN BLOCK FACE (task fluid-spring): five further LiquidBlocks —
  * {@code liquid_extra_heavy_oil_block/liquid_heavy_oil_block/liquid_medium_oil_block/
  * liquid_light_oil_block/water_geothermal_block} (see {@link #SPRING_BLOCK_IDS}) — the
  * placeable lake bodies of the {@code gt6:fluid_springs} bedrock-spring feature, with
@@ -249,7 +249,7 @@ public final class GTFluids {
 					.noCollission().strength(100.0F).noLootTable())); // FluidTypeTest.java:155-156 shape
 
 	private static ForgeFlowingFluid.Properties naturalGasProperties() {
-		// the four-DR template again (task p5-barrel-side-rules spec ⑤, the iron_molten :61-94 shape)
+		// the four-DR template again (task barrel-side-rules spec ⑤, the iron_molten :61-94 shape)
 		return new ForgeFlowingFluid.Properties(NATURAL_GAS_TYPE, NATURAL_GAS, NATURAL_GAS_FLOWING)
 				.block(NATURAL_GAS_BLOCK);
 	}
@@ -301,7 +301,7 @@ public final class GTFluids {
 	}
 
 	/**
-	 * {@code gt6:creosote} — the Coke Oven by-product carrier (task p6-cokeoven-processing,
+	 * {@code gt6:creosote} — the Coke Oven by-product carrier (task cokeoven-processing,
 	 * ADR ruling ③). Density +1000 is a PORT-OWNED CARRIER VALUE, not an upstream measurement:
 	 * the port's density consumers only branch on the sign (the P5 gravity rule, FL.java:775
 	 * strictly {@code > 0} = heavier than air), the material density bridge stays in the pool.
@@ -351,7 +351,7 @@ public final class GTFluids {
 	}
 
 	/**
-	 * {@code gt6:oil} — the Coke Oven's oil-shale cracking output (task p7-cokeoven-backfill,
+	 * {@code gt6:oil} — the Coke Oven's oil-shale cracking output (task cokeoven-backfill,
 	 * spec ①; the upstream rows Loader_Recipes_Other.java:807-814 pour
 	 * {@code MT.Oil.liquid(U4/U2, F)}). Both carrier values are UPSTREAM-VERIFIED, unlike the
 	 * creosote port-owned precedent: temperature 300 K is the hardcoded default of the 4-arg
@@ -399,8 +399,8 @@ public final class GTFluids {
 					.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp
 
 	/**
-	 * The engine-steam conversion constants (task p12-engine-fuel-fluids spec ④, consumed by
-	 * the p12-engine-steam card). {@code STEAM_PER_WATER = 200} is the ENGINE-PRIVATE value —
+	 * The engine-steam conversion constants (task engine-fuel-fluids spec ④, consumed by
+	 * the engine-steam card). {@code STEAM_PER_WATER = 200} is the ENGINE-PRIVATE value —
 	 * MultiTileEntityEngineSteam.java:58 {@code public static final int STEAM_PER_WATER = 200},
 	 * the engine's own steam→water recycle ratio (the tooltip math at :98 and the tank
 	 * capacity at :80 both read it); it is NOT the global standard — CS.java:242 carries the
@@ -415,7 +415,7 @@ public final class GTFluids {
 
 	/**
 	 * CS.java:238 — "The value of how many Energy Units a Liter of Water needs to turn into
-	 * Steam" (the BOILER-side global, decision 2026-09-03-p13-boiler-family-split ②). This is
+	 * Steam" (the BOILER-side global, decision 2026-09-03-boiler-family-split ②). This is
 	 * the heat price of one litre of feed water; pair it with {@link #STEAM_PER_WATER_GLOBAL}
 	 * for the steam yield and {@link #STEAM_PER_EU} for the 80 × 2 = 160 self-consistency.
 	 * NOT the engine recycle math — the engine converts steam back with its own private
@@ -425,7 +425,7 @@ public final class GTFluids {
 
 	/**
 	 * CS.java:242 — "The value of how much Steam a Liter of Water is worth. The Standard is
-	 * 160 Steam = 1 Water" (the BOILER-side global, decision 2026-09-03-p13-boiler-family-split
+	 * 160 Steam = 1 Water" (the BOILER-side global, decision 2026-09-03-boiler-family-split
 	 * ②). The {@code _GLOBAL} suffix exists because the short name is TAKEN by the engine-private
 	 * {@link #STEAM_PER_WATER} = 200 (MultiTileEntityEngineSteam.java:58, the engine's own
 	 * steam→water recycle ratio, its five P12 consumers read that one) — the boiler side must
@@ -572,7 +572,7 @@ public final class GTFluids {
 	}
 
 	/**
-	 * One aqua-family declaration row (task p16-aqua-fluids) — the same offline-readable
+	 * One aqua-family declaration row (task aqua-fluids) — the same offline-readable
 	 * data shape as {@link EngineFluidSpec} minus the gas flag (all six are liquids), plus
 	 * the display name inline (the lang walker reads it straight off the row, no side map).
 	 *
@@ -591,7 +591,7 @@ public final class GTFluids {
 	}
 
 	/**
-	 * The six aqua-family rows (task p16-aqua-fluids: SpDew/MnWtr/Geothermal/Boiling/Hot/
+	 * The six aqua-family rows (task aqua-fluids: SpDew/MnWtr/Geothermal/Boiling/Hot/
 	 * Cold), which with the vanilla Water make the seven-row Drying input domain of
 	 * Loader_Recipes_Chem.java:525-532. Every value is census-anchored, honestly defaulted
 	 * where the upstream carries no definition:
@@ -641,7 +641,7 @@ public final class GTFluids {
 		return null;
 	}
 
-	/** One registered aqua family: the declared spec + the three live handles. Fluid-only — no bucket; the block face exists only where the worldgen block seam carries the name (water_geothermal, p31-fluid-spring). */
+	/** One registered aqua family: the declared spec + the three live handles. Fluid-only — no bucket; the block face exists only where the worldgen block seam carries the name (water_geothermal, fluid-spring). */
 	public static final class AquaFluid {
 		/** The declaration row ({@link #AQUA_SPECS}); the offline-readable half. */
 		public final AquaFluidSpec spec;
@@ -658,7 +658,7 @@ public final class GTFluids {
 	 * The table-driven registration helper for one aqua row — the {@link #engineFluid}
 	 * shape verbatim. Client layers reuse the vanilla water textures over the row's tint
 	 * (the natural_gas initializeClient shape); the registration body itself is the shared
-	 * {@link #registerFluidFamily(AquaFluidSpec)} (task p19-drying-rows-backfill-2 splits
+	 * {@link #registerFluidFamily(AquaFluidSpec)} (task drying-rows-backfill-2 splits
 	 * the lookup per family table, the body is one).
 	 */
 	private static AquaFluid aquaFluid(String aName) {
@@ -673,7 +673,7 @@ public final class GTFluids {
 	 * temperature/density/viscosity, Source/Flowing over one shared Properties, NO bucket
 	 * (the bucket container behaviour is out of the card scope) and a LiquidBlock only where
 	 * {@link #withWorldgenBlock} finds one — the fluid-only declaration of p16/p19/p21 held
-	 * until task p31-fluid-spring extended the block face for {@code water_geothermal} (the
+	 * until task fluid-spring extended the block face for {@code water_geothermal} (the
 	 * f1-revision declaration, {@link #SPRING_BLOCK_IDS}). Shares the SOURCE_SEAM/
 	 * FLOWING_SEAM maps — the Properties are built at registry-event time (see engineFluid).
 	 */
@@ -711,7 +711,7 @@ public final class GTFluids {
 
 	/** The shared per-family Properties for the aqua rows — called at registry-event time only (see aquaFluid). */
 	private static ForgeFlowingFluid.Properties aquaProperties(AquaFluidSpec aSpec, RegistryObject<FluidType> aType) {
-		// the block leg rides the worldgen block face where the seam carries the name (p31-fluid-spring)
+		// the block leg rides the worldgen block face where the seam carries the name (fluid-spring)
 		return withWorldgenBlock(aType,
 				new ForgeFlowingFluid.Properties(aType, SOURCE_SEAM.get(aSpec.name()), FLOWING_SEAM.get(aSpec.name())),
 				aSpec.name());
@@ -736,7 +736,7 @@ public final class GTFluids {
 	}
 
 	/**
-	 * The simple-liquid family (task p19-drying-rows-backfill-2 spec ③): the SECOND
+	 * The simple-liquid family (task drying-rows-backfill-2 spec ③): the SECOND
 	 * AquaFluidSpec table, deliberately NOT an {@link #AQUA_SPECS} append — the architect
 	 * ruling: the two rows carry ONLY the SIMPLE+LIQUID flags upstream (FL.java:125
 	 * "seawater" / :127 "waterdirty" — no FOOD/WATER/BATH/THERMOS), while the aqua family
@@ -787,7 +787,7 @@ public final class GTFluids {
 	}
 
 	/**
-	 * The food family (task p21-drying-food-fluids): the THIRD AquaFluidSpec table — the
+	 * The food family (task drying-food-fluids): the THIRD AquaFluidSpec table — the
 	 * {@link #SIMPLE_LIQUID_SPECS} shape verbatim (its own table, not an append: the
 	 * upstream rows carry the FOOD tag, FL.java:250/:252/:233-234, and the two earlier
 	 * families are exactly-order-pinned by their tests). Every value census-anchored:
@@ -859,7 +859,7 @@ public final class GTFluids {
 
 
 	/**
-	 * The food-fluid batch 1 (task p33-food-fluids-b1): the FIFTH AquaFluidSpec table —
+	 * The food-fluid batch 1 (task food-fluids-b1): the FIFTH AquaFluidSpec table —
 	 * its own table, NOT an append to {@link #FOOD_FLUID_SPECS} (that four-row table is
 	 * exact-order-pinned by GTFluidsFoodFamilyTest; the architect split
 	 * research.p33-r-food puts the FL.java:110-408 FOOD-flag remainder here). The full
@@ -1010,7 +1010,7 @@ public final class GTFluids {
 		new AquaFluidSpec("sweettea"                , "Sweet Tea"                        , 300, 1000, 1000, 0xFFC87C28), // FL.java up "sweettea" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
 		new AquaFluidSpec("icetea"                  , "Ice Tea"                          , 255, 1000, 1000, 0xFFC87C28), // FL.java up "icetea" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
 		new AquaFluidSpec("purpledrink"             , "Purple Drink"                     , 300, 1000, 1000, 0xFF9A48D8), // FL.java up "purpledrink" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
-		new AquaFluidSpec("lemonade"                , "Lemonade"                         , 275, 1000, 1000, 0xFFE8E86A), // FL.java up "potion.lemonade" — Loader_Fluids.java:603 the FL.create 275 K carrier verbatim (the p33-food-tail correction: the row shipped the 300 K honest-default before the :603 literal was pinned; tint port-declared, the JetFuel/aqua precedent)
+		new AquaFluidSpec("lemonade"                , "Lemonade"                         , 275, 1000, 1000, 0xFFE8E86A), // FL.java up "potion.lemonade" — Loader_Fluids.java:603 the FL.create 275 K carrier verbatim (the food-tail correction: the row shipped the 300 K honest-default before the :603 literal was pinned; tint port-declared, the JetFuel/aqua precedent)
 		new AquaFluidSpec("cavejohnsonsgrenadejuice", "Cave Johnson's Grenade Juice"     , 300, 1000, 1000, 0xFFE8A83A), // FL.java up "potion.cavejohnsonsgrenadejuice" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
 		new AquaFluidSpec("vinegar"                 , "Grape Vinegar"                    , 300, 1000, 1000, 0xFFD8A858), // FL.java up "vinegar" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
 		new AquaFluidSpec("applevinegar"            , "Apple Cider Vinegar"              , 300, 1000, 1000, 0xFFD8A858), // FL.java up "applevinegar" (the FL.create carrier / the honest-default row; tint port-declared, the JetFuel/aqua precedent)
@@ -1345,12 +1345,12 @@ public final class GTFluids {
 
 
 	/**
-	 * The food-fluid batch 2 (task p33-food-fluids-b2): the SIXTH AquaFluidSpec table —
+	 * The food-fluid batch 2 (task food-fluids-b2): the SIXTH AquaFluidSpec table —
 	 * the drink-seam residual under the research.p33-r-food b1/b2 boundary: the 94 potion
 	 * brews of the card-block FoodStatDrink run (Loader_Fluids.java:230-350, the
 	 * potion.tainted..potion.invisibility.long.lingering census; the gold-apple rows
 	 * :607-610 are OUTSIDE the card block — they landed on the seventh table,
-	 * {@link #FOOD_TAIL_SPECS}, task p33-food-tail) plus the 9 FOOD-flag
+	 * {@link #FOOD_TAIL_SPECS}, task food-tail) plus the 9 FOOD-flag
 	 * drink fluids b1's census left unregistered (riverwater :361 / ic2distilledwater
 	 * :363-alias / rottendrink :626 / poison :629 / chocolatemilk :643 / goldencarrotjuice
 	 * :606 / holywater :615 / medicine.heal :649 / medicine.laxative :650). Every value is
@@ -1597,7 +1597,7 @@ public final class GTFluids {
 
 
 	/**
-	 * The food-fluid tail (task p33-food-tail): the SEVENTH AquaFluidSpec table — the
+	 * The food-fluid tail (task food-tail): the SEVENTH AquaFluidSpec table — the
 	 * card-block-outside drink fluids the b2 report left in the tail pool (the DrinkStat
 	 * rows were unreachable without a registered carrier): the four ENCHANTED_EFFECT
 	 * golden-apple brews (Loader_Fluids.java:607-610, the goldencarrotjuice :606 family —
@@ -1668,7 +1668,7 @@ public final class GTFluids {
 	}
 	/**
 	 * {@code gt6:dye_chemical_<colour>} + {@code gt6:chlorine} — the Canner refill input
-	 * domain (task p24-dye-chemical-fluids, the ruling R3/R4/R6 of
+	 * domain (task dye-chemical-fluids, the ruling R3/R4/R6 of
 	 * decisions.p24-canner-dyes-rulings). Upstream the 16 chemical dyes ride the
 	 * {@code FL.create("dye.chemical." + colour, tDyeChemical, "Chemical " + DYE_NAMES[i]
 	 * + " Dye", null, DYES[i], 1, L, 300, ...)} loop (Loader_Fluids.java:120-126, the
@@ -1889,7 +1889,7 @@ public final class GTFluids {
 	}
 
 	/**
-	 * {@code gt6:cfoam} + the 32-family C-Foam fluid domain (task p26-c-foam-fluid-refill).
+	 * {@code gt6:cfoam} + the 32-family C-Foam fluid domain (task c-foam-fluid-refill).
 	 *
 	 * <p>The BASE fluid is the {@code FL.CFoam} counterpart — FL.java:432
 	 * {@code CFoam("ic2constructionfoam", LIQUID) // 100 per Unit}. Per the
@@ -2115,7 +2115,7 @@ public final class GTFluids {
 	}
 
 	/**
-	 * One chemical-family declaration row (task p29-w4-f1-chemicals) — the offline-readable
+	 * One chemical-family declaration row (task w4-f1-chemicals) — the offline-readable
 	 * half, the {@link AquaFluidSpec} shape (display name inline) plus the gas flag and the
 	 * luminosity the two plasma rows carry (the STATE_PLASMA lum 15, FL.java:1106).
 	 */
@@ -2126,7 +2126,7 @@ public final class GTFluids {
 	}
 
 	/**
-	 * The twenty-five chemical rows (task p29-w4-f1-chemicals), declaration order = the
+	 * The twenty-five chemical rows (task w4-f1-chemicals), declaration order = the
 	 * upstream Loader_Fluids.java block order (:40-41 plasmas, :45-48 hydrocarbons,
 	 * :59-63 oils, the :66-68 oxygen leg, the createGas closure). Every value census-anchored:
 	 * <ul>
@@ -2201,7 +2201,7 @@ public final class GTFluids {
 		new ChemicalFluidSpec("heliumneon"      , "Helium-Neon"      ,   300,    -92,  200, 0xFF8000FF, true ,  0), // MT.HeNe (MT.java:1024, task debt-hene-fluid); molecule g 0.0001785+0.0008999 = 0.0010784 → −0.1/g = −92.73 → −92
 		// liquid oxygen (:68)
 		new ChemicalFluidSpec("liquidoxygen"    , "Liquid Oxygen"    ,    85,      1, 1000, 0xFF0064C8, false,  0), // the :1130 formula over O's 0.001429 g/cm³; tint = the O RGBa
-		// the isotope batch (task p31-qu-b-materials) — the Loader_Fluids.java:658-662
+		// the isotope batch (task qu-b-materials) — the Loader_Fluids.java:658-662
 		// tag-driven loop rows for the fusion isotope materials, in material-id order
 		// (D 11, T 12, He3 21, Li6 31, Be7 41, Be8 42, B11 51, C13 61, Ad 8744). The gas
 		// rows ride the :1080 createGas walk (temp = min(300, plasma−1) = 300 over the
@@ -2220,7 +2220,7 @@ public final class GTFluids {
 		new ChemicalFluidSpec("boron11_molten"      , "Molten Boron-11"       , 2349,  2340, 1000, 0xFFF0F0F0, false, 10), // molten.boron11 — MT.B_11 mp 2349, 1000×2.34 (:391)
 		new ChemicalFluidSpec("carbon13_molten"     , "Molten Carbon-13"      , 3800,  2267, 1000, 0xFF191919, false, 10), // molten.carbon13 — MT.C_13 mp 3800, 1000×2.267 (:393)
 		new ChemicalFluidSpec("ancientdebris_molten", "Molten Ancient Debris" , 2011,  1000, 1000, 0xFF6E505A, false, 10), // molten.ancientdebris — MT.AncientDebris heat(MeteoricIron) = Fe.mp+200 = 2011 (MT.java:1832/:414); the 1.0 g/cm³ field default → 1000
-		// the fusion-row closure quartet (task p31-fusion) — the four parent-material MOLTEN
+		// the fusion-row closure quartet (task fusion) — the four parent-material MOLTEN
 		// rows the fusion recipe rows reference (Loader_Recipes_Other.java:955/:957/:962/:964/
 		// :965/:966 ride MT.C/MT.Li/MT.W/MT.Ad .liquid(), the molten.fluid the :658-662 loop
 		// created for their MOLTEN tags): the same :1077 createMolten walk constants as the
@@ -2230,7 +2230,7 @@ public final class GTFluids {
 		new ChemicalFluidSpec("lithium_molten"      , "Molten Lithium"        ,  453,   534, 1000, 0xFFE1DCFF, false, 10), // molten.lithium=熔融锂 (:529) — MT.Li mp 453, 1000×0.534 (:385)
 		new ChemicalFluidSpec("tungsten_molten"     , "Molten Tungsten"       , 3695, 19250, 1000, 0xFF323232, false, 10), // molten.tungsten=熔融钨 (:624) — MT.W mp 3695, 1000×19.25 (:463)
 		new ChemicalFluidSpec("adamantium_molten"   , "Molten Adamantium"     , 5225, 13356, 1000, 0xFFFFFFFF, false, 10), // molten.adamantium=熔融艾德曼合金 (:428) — MT.Ad mp 5225, 1000×13.356 (MT.java:794)
-		// the replicator-carrier row (task p32-qu-scanner-replicator) — the :194 explicit
+		// the replicator-carrier row (task qu-scanner-replicator) — the :194 explicit
 		// FL.create("molten.redstone", "Molten Redstone", MT.Redstone, 1, L, 500)
 		// .setLuminosity(5) literal: STATE_LIQUID carriers (viscosity 1000), temperature 500 K
 		// = the MT.Redstone melting point verbatim (MT.java:2326 heat(500, 1500)), the :1128
@@ -2241,7 +2241,7 @@ public final class GTFluids {
 		// "molten.<mat>" literal into the enderpearl_molten suffix form; tint = the material
 		// RGBa (200, 0, 0, MT.java:2326).
 		new ChemicalFluidSpec("redstone_molten"     , "Molten Redstone"       ,  500,  1000, 1000, 0xFFC80000, false,  5), // molten.redstone=熔融红石 (tmp/gregtech.lang:584)
-		// the crystallisation-crucible molten quintet (task p34-machines-bumblelyzer-crucible) —
+		// the crystallisation-crucible molten quintet (task machines-bumblelyzer-crucible) —
 		// the :1077 createMolten walk rows the 39 boule rows reference as their molten leg
 		// (Loader_Recipes_Other.java:683-706: MT.Si/MT.Ge/MT.RedstoneAlloy/MT.NikolineAlloy/
 		// MT.Al2O3 .liquid(...) carriers; lands FIRST so the JSON rows never reference an
@@ -2259,7 +2259,7 @@ public final class GTFluids {
 		new ChemicalFluidSpec("redstonealloy_molten", "Molten Redstone Alloy" , 1093,  2329, 1000, 0xFF8C3232, false, 10), // molten.redstonealloy=熔融红石合金 (tmp/gregtech.lang:585) — (Si 1687 + Redstone 500)/2 (MT.java:2492)
 		new ChemicalFluidSpec("nikolinealloy_molten", "Molten Nikoline Alloy" , 1593,  2329, 1000, 0xFF325A8C, false, 10), // molten.nikolinealloy=熔融蓝石合金 (tmp/gregtech.lang:566) — (Si 1687 + Nikolite 1500)/2 (MT.java:2493)
 		new ChemicalFluidSpec("alumina_molten"      , "Molten Alumina"        , 2345,  5404, 1000, 0xFF78C3EB, false, 10), // molten.alumina=熔融氧化铝 (tmp/gregtech.lang:429) — MT.Al2O3 internal "Alumina", the heat(2345) literal (MT.java:1955)
-		// the Burner Mixer row carriers (task p34-machines-burner-plantalyzer) — the three
+		// the Burner Mixer row carriers (task machines-burner-plantalyzer) — the three
 		// NEW material-state fluids the Loader_Recipes_Chem.java:220-259 rows reference
 		// (the fourth, tritiatedwater, already lives in CLOSURE_FLUID_SPECS above — the
 		// :208 createLiquid MT.T2O row, temp 300 / density 1211, this card's json row
@@ -2281,7 +2281,7 @@ public final class GTFluids {
 	}
 
 	/**
-	 * The material→spec leg of the isotope binding seam (task p31-qu-b-materials): the id
+	 * The material→spec leg of the isotope binding seam (task qu-b-materials): the id
 	 * convention of the upstream Loader_Fluids.java:658-662 tag-driven loop — a gas row is
 	 * the material's sanitized internal name lowercased (FL.createGas:1080 registers
 	 * {@code mNameInternal.toLowerCase()}), a molten row turns the upstream
@@ -2312,7 +2312,7 @@ public final class GTFluids {
 		return null;
 	}
 
-	/** One registered chemical family: the declared spec + the three live handles. Fluid-only — no bucket; the block face exists only where the worldgen block seam carries the name (the four oils, p31-fluid-spring). */
+	/** One registered chemical family: the declared spec + the three live handles. Fluid-only — no bucket; the block face exists only where the worldgen block seam carries the name (the four oils, fluid-spring). */
 	public static final class ChemicalFluid {
 		/** The declaration row ({@link #CHEMICAL_SPECS}); the offline-readable half. */
 		public final ChemicalFluidSpec spec;
@@ -2372,7 +2372,7 @@ public final class GTFluids {
 
 	/** The shared per-family Properties for the chemical rows — registry-event time only (see chemicalFluid). */
 	private static ForgeFlowingFluid.Properties chemicalProperties(ChemicalFluidSpec aSpec, RegistryObject<FluidType> aType) {
-		// the block leg rides the worldgen block face where the seam carries the name (p31-fluid-spring)
+		// the block leg rides the worldgen block face where the seam carries the name (fluid-spring)
 		return withWorldgenBlock(aType,
 				new ForgeFlowingFluid.Properties(aType, SOURCE_SEAM.get(aSpec.name()), FLOWING_SEAM.get(aSpec.name())),
 				aSpec.name());
@@ -2400,11 +2400,11 @@ public final class GTFluids {
 			chemicalFluid("lithium6_molten"), chemicalFluid("beryllium7_molten"), chemicalFluid("beryllium8_molten"),
 			chemicalFluid("boron11_molten"), chemicalFluid("carbon13_molten"), chemicalFluid("ancientdebris_molten"),
 			chemicalFluid("carbon_molten"), chemicalFluid("lithium_molten"), chemicalFluid("tungsten_molten"),
-			chemicalFluid("adamantium_molten"), // task p31-fusion — the fusion-row closure quartet
-			chemicalFluid("redstone_molten"), // task p32-qu-scanner-replicator — the replicator redstone carrier (:194)
-			chemicalFluid("silicon_molten"), chemicalFluid("germanium_molten"), // task p34-machines-bumblelyzer-crucible — the crystallisation molten quintet
+			chemicalFluid("adamantium_molten"), // task fusion — the fusion-row closure quartet
+			chemicalFluid("redstone_molten"), // task qu-scanner-replicator — the replicator redstone carrier (:194)
+			chemicalFluid("silicon_molten"), chemicalFluid("germanium_molten"), // task machines-bumblelyzer-crucible — the crystallisation molten quintet
 			chemicalFluid("redstonealloy_molten"), chemicalFluid("nikolinealloy_molten"), chemicalFluid("alumina_molten"),
-			// the Burner Mixer row carriers (task p34-machines-burner-plantalyzer;
+			// the Burner Mixer row carriers (task machines-burner-plantalyzer;
 			// tritiatedwater rides the CLOSURE row above)
 			chemicalFluid("titaniumtetrachloride"),
 			chemicalFluid("sodiumcarbonate_molten"), chemicalFluid("calcite_molten"));
@@ -2412,7 +2412,7 @@ public final class GTFluids {
 	/**
 	 * The source-fluid handle for a chemical-family row name, or null when the name is not a
 	 * CHEMICAL_SPECS row (the {@link gregtech6.fluid.FluidBridge} seam, task
-	 * p32-qu-scanner-replicator: the "redstone" entry resolves here — the bridge map stays
+	 * qu-scanner-replicator: the "redstone" entry resolves here — the bridge map stays
 	 * material-name keyed while the registration stays table-driven).
 	 */
 	//? if forge {
@@ -2435,7 +2435,7 @@ public final class GTFluids {
 	}
 
 	/**
-	 * The twelve HOT rows (task p29-w4-hot-lube) — the upstream Loader_Fluids.java:85-99
+	 * The twelve HOT rows (task w4-hot-lube) — the upstream Loader_Fluids.java:85-99
 	 * block verbatim in declaration order. Every row is the {@code FL.create(name, display,
 	 * null, 1, 1000, tempK)} six-arg form (FL.java:1089: state = STATE_LIQUID, the 1000 is
 	 * the amount-per-unit NOT a density — the material is null so the :1128 density formula
@@ -2470,7 +2470,7 @@ public final class GTFluids {
 	}
 
 	/**
-	 * The seven CLOSURE carrier rows (task p29-w4-hot-lube spec ②) — the fluids the
+	 * The seven CLOSURE carrier rows (task w4-hot-lube spec ②) — the fluids the
 	 * Loader_Fuels.java:191-211 FM.Hot rows reference that no earlier family registered;
 	 * without them the hot rows would pour into UNRESOLVED ids (the dead-row class the
 	 * card was cut to prevent). One row per referenced carrier, the upstream names where
@@ -2513,7 +2513,7 @@ public final class GTFluids {
 		new ChemicalFluidSpec("tritiatedwater" , "Tritiated Water"   ,  300, 1211, 1000, 0xFFFF6464, false,  0)); // :208 — createLiquid MT.T2O
 
 	/**
-	 * The LUBRICANT row (task p29-w4-hot-lube spec ④, the F-2 single-fluid batch) —
+	 * The LUBRICANT row (task w4-hot-lube spec ④, the F-2 single-fluid batch) —
 	 * Loader_Fluids.java:617 {@code FL.create("lubricant", "Lubricant", MT.Lubricant, 1)}
 	 * (the four-arg form → 300 K STATE_LIQUID carrier; density = the :1128 formula over
 	 * MT.Lubricant's default 1.0 g/cm³ → 1000, MT.java:2081 no uumMcfg/no setDensity), the
@@ -2531,7 +2531,7 @@ public final class GTFluids {
 	}
 
 	/**
-	 * The honey family (task p31-bees-lv1) — the bee domain's own drinks, the Bumblelyzer
+	 * The honey family (task bees-lv1) — the bee domain's own drinks, the Bumblelyzer
 	 * accept set upstream (FluidsGT.HONEY + Honeydew). Four fluid-only rows riding the
 	 * {@link ChemicalFluidSpec} shape (the hot/closure/lubricant append form — no block, no
 	 * bucket, the fluid-only declaration). Port ids are the FL shorthand names snake-cased,
@@ -2570,7 +2570,7 @@ public final class GTFluids {
 	}
 
 	/**
-	 * The bee-row dependency fluids (task p31-bees-lv1) — the SEVEN further GT6-native
+	 * The bee-row dependency fluids (task bees-lv1) — the SEVEN further GT6-native
 	 * FL.create rows the 20 upstream comb centrifuge rows pour as outputs
 	 * (MultiItemFood.java:251-270). The card SPEC's "SQUEEZER/CENTRIFUGE 各 20 行 loaded 0
 	 * skipped" acceptance needs every output fluid live, and these seven were absent — the
@@ -2649,7 +2649,7 @@ public final class GTFluids {
 	/**
 	 * The live SOURCE fluid of ANY spec-based gt6 id — the chemical/hot/closure/lubricant/
 	 * honey/bee-row walk plus the aqua/simple-liquid/food walk — or null. The
-	 * pre-existing-carrier lookup seam of the bee recipe provider (task p31-bees-lv1);
+	 * pre-existing-carrier lookup seam of the bee recipe provider (task bees-lv1);
 	 * call at pour time only (the registries are live).
 	 */
 	@Nullable
@@ -2687,7 +2687,7 @@ public final class GTFluids {
 
 	/**
 	 * The QU-matter row lookup (the {@link #hotSpec} shape) — the matter/ender family of
-	 * task p31-qu-a-foundation.
+	 * task qu-a-foundation.
 	 */
 	public static ChemicalFluidSpec quSpec(String aName) {
 		for (ChemicalFluidSpec tSpec : QU_FLUID_SPECS) if (tSpec.name().equals(aName)) return tSpec;
@@ -2695,7 +2695,7 @@ public final class GTFluids {
 	}
 
 	/**
-	 * The three QU-matter rows (task p31-qu-a-foundation) — the fluid foundation of the
+	 * The three QU-matter rows (task qu-a-foundation) — the fluid foundation of the
 	 * Quantum Energy domain, declaration order = the upstream block order:
 	 * <ul>
 	 * <li><b>chargedmatter / neutralmatter</b> — Loader_Fluids.java:70/:71
@@ -2742,7 +2742,7 @@ public final class GTFluids {
 	public static final List<ChemicalFluid> QU_FLUIDS = QU_FLUID_SPECS.stream().map(s -> specFluid(s, "qu fluid")).toList();
 
 	/**
-	 * The naming-parity rows (task p37-fluids-naming) — the THIRTY-FOUR further GT6-owned
+	 * The naming-parity rows (task fluids-naming) — the THIRTY-FOUR further GT6-owned
 	 * {@code FL.create} rows of the upstream Loader_Fluids.java census (753 lines walked
 	 * section by section, state research.p37-fluids-naming-census) that no earlier card
 	 * carried: the two dimension airs, the UU pair, the theum quartet, the molten trio, the
@@ -2804,7 +2804,7 @@ public final class GTFluids {
 		new ChemicalFluidSpec("mercury"    , "Mercury"     , 300, 13533, 1000, 0xFFE6DCDC, false, 0), // :618 — the 300 K literal; density = 1000·13.5336 over MT.Hg (MT.java:1123); tint 230,220,220
 		new ChemicalFluidSpec("sluicejuice", "Sluice Juice", 300,  1000, 1000, 0xFF6E6450, false, 0)); // :619 — material-null honest defaults; tint declared (murky)
 
-	/** The naming-parity row lookup (the {@link #hotSpec} shape) — task p37-fluids-naming. */
+	/** The naming-parity row lookup (the {@link #hotSpec} shape) — task fluids-naming. */
 	public static ChemicalFluidSpec namingSpec(String aName) {
 		for (ChemicalFluidSpec tSpec : NAMING_FLUID_SPECS) if (tSpec.name().equals(aName)) return tSpec;
 		return null;
@@ -2839,7 +2839,7 @@ public final class GTFluids {
 	}
 
 	// ------------------------------------------------------------------
-	// The worldgen block face (task p31-fluid-spring spec ①). Upstream the
+	// The worldgen block face (task fluid-spring spec ①). Upstream the
 	// bedrock-spring lake bodies are BlocksGT.OilExtraHeavy/OilHeavy/OilMedium/
 	// OilLight/GasNatural/WaterGeothermal (Loader_Worldgen.java:782-788) plus the
 	// vanilla Blocks.lava row (:788), written by WorldgenFluidSpring.generate (:75).
@@ -2854,7 +2854,7 @@ public final class GTFluids {
 	 * {@code natural_gas} block face that already exists, {@link #NATURAL_GAS_BLOCK}).
 	 *
 	 * <p><b>THE F1 RULING REVISION, EXPLICIT (the card spec's no-silent-deviation
-	 * clause):</b> decisions.p29-w4-split-rulings card ① (p29-w4-f1-chemicals) ruled the
+	 * clause):</b> decisions.p29-w4-split-rulings card ① (w4-f1-chemicals) ruled the
 	 * chemical batch "无桶无块" (fluid-only). THIS card REVISES THE BLOCK FACE of that
 	 * ruling for exactly the four oil rows of {@link #CHEMICAL_SPECS} and the one aqua row
 	 * {@code water_geothermal} of {@link #AQUA_SPECS}: the bedrock-spring lake needs a
@@ -2955,7 +2955,7 @@ public final class GTFluids {
 			// keep the pipe registration visible in the same smoke line group
 			GT6Mod.LOGGER.info("GT6 fluid pipes registered: {} {}",
 					GTFluidPipes.WOOD_FLUID_PIPE_SMALL.getId(), GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.getId());
-			// task p12-engine-fuel-fluids — the engine family, one smoke line per fluid (the
+			// task engine-fuel-fluids — the engine family, one smoke line per fluid (the
 			// live registry keys, mirroring the four per-fluid lines above)
 			for (EngineFluid tFamily : engineFluids()) {
 				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}{}",
@@ -2965,7 +2965,7 @@ public final class GTFluids {
 						tFamily.spec.density(),
 						tFamily.spec.gas() ? " (gaseous)" : "");
 			}
-			// task p16-aqua-fluids — the aqua family, the same smoke line shape
+			// task aqua-fluids — the aqua family, the same smoke line shape
 			for (AquaFluid tFamily : aquaFluids()) {
 				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {} (aqua family, {})",
 						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
@@ -2974,7 +2974,7 @@ public final class GTFluids {
 						tFamily.spec.density(),
 						tFamily.spec.displayName());
 			}
-			// task p19-drying-rows-backfill-2 — the simple-liquid family, the same smoke line shape
+			// task drying-rows-backfill-2 — the simple-liquid family, the same smoke line shape
 			for (AquaFluid tFamily : simpleLiquids()) {
 				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {} (simple liquid, {})",
 						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
@@ -2983,7 +2983,7 @@ public final class GTFluids {
 						tFamily.spec.density(),
 						tFamily.spec.displayName());
 			}
-			// task p21-drying-food-fluids — the food family, the same smoke line shape
+			// task drying-food-fluids — the food family, the same smoke line shape
 			for (AquaFluid tFamily : foodFluids()) {
 				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {} (food family, {})",
 						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
@@ -2992,7 +2992,7 @@ public final class GTFluids {
 						tFamily.spec.density(),
 						tFamily.spec.displayName());
 			}
-			// task p24-dye-chemical-fluids — the dye-chemical family (with-block rows), the same
+			// task dye-chemical-fluids — the dye-chemical family (with-block rows), the same
 			// smoke line shape plus the block key and the DYES_INT tint index face
 			for (DyeChemicalFluid tFamily : DYE_CHEMICALS) {
 				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}, block {} (dye-chemical family, {}, dye index {})",
@@ -3009,7 +3009,7 @@ public final class GTFluids {
 					ForgeRegistries.FLUIDS.getKey(CHLORINE_FLOWING.get()),
 					CHLORINE_TEMPERATURE,
 					CHLORINE_DENSITY);
-			// task p26-c-foam-fluid-refill — the C-Foam family: the base row + the 32 with-block
+			// task c-foam-fluid-refill — the C-Foam family: the base row + the 32 with-block
 			// rows (the dye-chemical smoke shape, one line per family + the base)
 			GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}, block {} (c-foam base — the ic2constructionfoam counterpart, the naming ruling)",
 					ForgeRegistries.FLUIDS.getKey(CFOAM.get()),
@@ -3037,7 +3037,7 @@ public final class GTFluids {
 						tFamily.displayName(),
 						tFamily.dyeIndex);
 			}
-			// task p29-w4-f1-chemicals — the chemical family, the same smoke line shape
+			// task w4-f1-chemicals — the chemical family, the same smoke line shape
 			// (temperature K, density, the gaseous/plasma markers, the lum face on the plasmas)
 			for (ChemicalFluid tFamily : CHEMICALS) {
 				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}{}{} (chemical family, {})",

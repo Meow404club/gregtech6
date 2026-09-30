@@ -13,7 +13,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import gregtech6.covers.GT6Covers;
 
 /**
- * The atlas sources provider (task p4-cover-core ⑥ — "land the atlases/blocks.json sources;
+ * The atlas sources provider (task cover-core ⑥ — "land the atlases/blocks.json sources;
  * this card's consumed textures join the atlas"; the C-grade foundation shipped zero
  * textures, GTRenderModelListener
  * class note). Every sprite a dynamic model stitches into runtime-built plate quads must
@@ -74,20 +74,20 @@ public final class GT6Atlases extends SpriteSourceProvider {
     private void addAtlasSources() {
         ResourceLocation tCoverSprite = GT6Covers.ironPlateSprite();
         atlas(BLOCKS_ATLAS).addSource(new SingleFile(tCoverSprite, Optional.empty()));
-        // the pipe flow-arrow sprite (task p4-pipe-flow-control spec ④) — stitched by the
+        // the pipe flow-arrow sprite (task pipe-flow-control spec ④) — stitched by the
         // runtime-built GTFluidPipeFlowModel quads, so it must live in the block atlas
         atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.client.render.GTFluidPipeFlowModel.ARROW_SPRITE, Optional.empty()));
-        // the pump-cover direction sprites (task p5-barrel-side-rules spec ③) — the plate
+        // the pump-cover direction sprites (task barrel-side-rules spec ③) — the plate
         // renderer stitches whichever the visual lane currently encodes (0 = out, 1 = in)
         atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.covers.covers.CoverPump.PUMP_OUT_SPRITE, Optional.empty()));
         atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.covers.covers.CoverPump.PUMP_IN_SPRITE, Optional.empty()));
-        // the four grayscale C-Foam sprites (task p25-c-foam-pipe-spray spec ⑤) — stitched by
+        // the four grayscale C-Foam sprites (task c-foam-pipe-spray spec ⑤) — stitched by
         // the runtime-built GTFluidPipeFoamModel quads (FRESH/HARDENED x normal/owned)
         atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.client.render.GTFluidPipeFoamModel.FRESH_SPRITE, Optional.empty()));
         atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.client.render.GTFluidPipeFoamModel.FRESH_OWNED_SPRITE, Optional.empty()));
         atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.client.render.GTFluidPipeFoamModel.HARDENED_SPRITE, Optional.empty()));
         atlas(BLOCKS_ATLAS).addSource(new SingleFile(gregtech6.client.render.GTFluidPipeFoamModel.HARDENED_OWNED_SPRITE, Optional.empty()));
-        // task p30-ore-3-datagen — the ore SET overlay sprites: the GTOreBakedModel looks
+        // task ore-3-datagen — the ore SET overlay sprites: the GTOreBakedModel looks
         // them up at bake, but they ride NO model JSON (the shared-placeholder composition),
         // so the atlas source IS the consumer-side stitching wiring (this class's javadoc).
         // One (ore, ore_small) pair per distinct SET across the material axis; the PNGs are
@@ -96,7 +96,7 @@ public final class GT6Atlases extends SpriteSourceProvider {
         for (ResourceLocation tOverlay : gregtech6.client.ore.GTOreBakedModel.overlaySprites()) {
             atlas(BLOCKS_ATLAS).addSource(new SingleFile(tOverlay, Optional.empty()));
         }
-        // task p33-logistics-covers-12 — the 4x11 CPU-display bar sprites: queried at
+        // task logistics-covers-12 — the 4x11 CPU-display bar sprites: queried at
         // runtime by the cover plate renderer (getCoverTextureSurface) with NO model JSON
         // (the ore-overlay precedent — the atlas source IS the consumer-side stitching).
         // The filtered/generic/dump role plates ride the item models' layer0 texture and
@@ -110,7 +110,7 @@ public final class GT6Atlases extends SpriteSourceProvider {
                  *///?}
             }
         }
-        // task p38-spring-texture-tint — the borrowed FLUID_SPRING dither: emitted by the
+        // task spring-texture-tint — the borrowed FLUID_SPRING dither: emitted by the
         // GTFluidSpringBakedModel quads as the spring overlay shell with NO model JSON
         // (the ore-overlay precedent — the atlas source IS the consumer-side stitching;
         // the vanilla water_still/lava_still bases resolve through vanilla's own sources).

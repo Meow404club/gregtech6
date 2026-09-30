@@ -1,5 +1,5 @@
 /**
- * Tests for task p30-w6-t1-trees-nine commit 1: the 27-per-pair tree block universe —
+ * Tests for task w6-t1-trees-nine commit 1: the 27-per-pair tree block universe —
  * the census/audit unit in the GTStoneBlocksRegistrationTest posture (offline-safe by
  * construction: only enum walks, string paths and ResourceKey interns; no RegisterEvent,
  * no bootstrapped registries, no BlockState construction).

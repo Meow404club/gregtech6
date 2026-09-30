@@ -36,7 +36,7 @@ public class GTCrucibleWallBlock extends GTMultiBlockPartBlock {
 	}
 
 	/**
-	 * The composed-name ctor (task p29-w3-distill-crucible ③ — the 8-material ladder): the
+	 * The composed-name ctor (task w3-distill-crucible ③ — the 8-material ladder): the
 	 * "{@code <mat> Wall}" template over the EXISTING gt6.row.mat unit words (the card ①
 	 * metal-wall composition — zero new lang unit keys; the composed carrier is the
 	 * GTMultiBlockPartBlock :134 form, DESIGNS 0 → no DESIGN property). The ladder rung's

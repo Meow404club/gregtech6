@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The logistics attachment gate truth tables (task p32-logistics-lv2 acceptance ③, the
+ * The logistics attachment gate truth tables (task logistics-lv2 acceptance ③, the
  * offline half — the live half is /gt6logistics gate). Verbatim anchor: the placement
  * gate AbstractCoverAttachmentLogistics.java:40 — the host must be an ITileEntityLogistics
  * member whose SIDE_ANY family query answers.

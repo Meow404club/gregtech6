@@ -12,8 +12,8 @@ import gregtech6.util.UT6;
 
 /**
  * The cover controller cover — 1.20.1 port of gregapi/cover/covers/
- * CoverControllerCovers.java (109 lines, task p11-cover-controllers, the
- * p11-research-cover-remainder card q3). Turns redstone into an ON/OFF state
+ * CoverControllerCovers.java (109 lines, task cover-controllers, the
+ * research-cover-remainder card q3). Turns redstone into an ON/OFF state
  * for the OTHER covers on the block: its three arms drive
  * {@link CoverData#setStopped} — the block-wide cover stop flag — NOT the
  * machine's {@code setStateOnOff} (that boundary is what separates it from the

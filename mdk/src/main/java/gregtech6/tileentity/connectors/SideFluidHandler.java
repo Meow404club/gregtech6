@@ -11,7 +11,7 @@ import gregtech6.fluid.FluidTankGT;
 
 /**
  * The side-aware {@link IFluidHandler} wrapper over a {@link GTFluidPipeBlockEntity}
- * (task p4-fluid-pipes spec ⑤): the 1.20.1 IFluidHandler carries no Direction parameter
+ * (task fluid-pipes spec ⑤): the 1.20.1 IFluidHandler carries no Direction parameter
  * (IFluidHandler.java:85/:96 — the 1.7.10 fill(ForgeDirection, ...) side argument is
  * gone), so the side travels through the {@code getCapability(FLUID_HANDLER, Direction)}
  * wrapper, the GTCEu IOFluidHandlerList precedent (FluidPipeBlockEntity.java:130-146
@@ -68,7 +68,7 @@ public class SideFluidHandler implements IFluidHandler {
 
 	/**
 	 * Upstream :480-490 — the fillable-tank lookup plus the source-direction record, plus
-	 * the task p5-pipe-flow-semantics spec ② static reject: an arrow-marked face is a pump
+	 * the task pipe-flow-semantics spec ② static reject: an arrow-marked face is a pump
 	 * outlet and refuses external back-fill. The gate sits HERE — never in
 	 * canAcceptFluidsFrom/getFluidTankFillable, which the pipe-to-pipe equalisation receiver
 	 * shares (distribute calls getFluidTankFillable directly, bypassing this wrapper).

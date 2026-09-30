@@ -21,7 +21,7 @@ import gregtech6.registry.GTBlockEntities;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Water Wheel BlockEntity (task p28-c-water-wheel) — a RU DIRECT-CURRENT source with
+ * The Water Wheel BlockEntity (task c-water-wheel) — a RU DIRECT-CURRENT source with
  * SIGNED packets: river flow turns the wheel, the turning becomes one {@code ±8} RU
  * packet per tick pushed out along the block axis, the sign carrying the rotation
  * direction (the fourth RU source semantics beside the crank's negative DC, the diesel

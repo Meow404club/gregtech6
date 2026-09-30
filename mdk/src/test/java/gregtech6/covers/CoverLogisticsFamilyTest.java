@@ -28,7 +28,7 @@ import gregtech6.tileentity.connectors.GTLogisticsWireBlockEntity;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * The p33 logistics cover family offline acceptance (task p33-logistics-covers-12):
+ * The p33 logistics cover family offline acceptance (task logistics-covers-12):
  * the priority bit lanes (upstream AbstractCoverAttachmentLogistics :59-81), the filtered
  * bus lanes, and the Dump exclusion live through the Core scan (the :479-494 protected
  * set minus-arm driven by COVER-mounted endpoints, not the seeded set of the lv3 test).

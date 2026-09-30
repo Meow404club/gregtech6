@@ -34,7 +34,7 @@ import gregtech6.tileentity.tank.GTBarrelMetalBlockEntity;
 import gregtech6.tileentity.tank.TileEntityBase08Barrel;
 
 /**
- * The barrel-family item paint seam (task p23-barrel-paint-item-seam): a spray-painted
+ * The barrel-family item paint seam (task barrel-paint-item-seam): a spray-painted
  * barrel's drop carries the {@code gt.color}/{@code gt.painted} root-key pair (written
  * by {@code GTBarrelBlock.writeItemNBT} under the {@code TileEntityBase03TicksAndSync
  * .saveAdditional} :322-325 gate shape — the upstream root-key seam is {@code

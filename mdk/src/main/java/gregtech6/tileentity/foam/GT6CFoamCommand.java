@@ -33,7 +33,7 @@ import gregtech6.item.spraycan.GTSprayCanItem;
 
 /**
  * {@code /gt6cfoam} — the C-Foam block-family acceptance command (task
- * p26-c-foam-block-family). Game-bus listener, self-contained per ADR-P3-4; the
+ * c-foam-block-family). Game-bus listener, self-contained per ADR-P3-4; the
  * {@code /gt6pipe} foam trio counterpart on the BLOCK family side — it drives the SAME
  * static faces the item's useOn path calls ({@link GT6FoamSprayItem#liveSink} — whose
  * javadoc pins this command as the RCON consumer — and the {@link IBlockFoamable} /

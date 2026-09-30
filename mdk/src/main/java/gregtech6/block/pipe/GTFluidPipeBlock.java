@@ -29,7 +29,7 @@ import net.minecraft.world.entity.Entity;
 import gregtech6.covers.ICoverableTE;
 
 /**
- * The GT6 fluid pipe block (task p4-fluid-pipes spec ④) — the block side of the pipe
+ * The GT6 fluid pipe block (task fluid-pipes spec ④) — the block side of the pipe
  * family over the shared BET (ADR-P3-1: one BlockEntityType mounting several blocks,
  * the GT6 "one TE class, many material blocks" counterpart). W1 shipped the two wood
  * tiers (the card fixes aStat=50 at 50 L / 300 L per tank; the upstream tiny/small/
@@ -42,7 +42,7 @@ import gregtech6.covers.ICoverableTE;
  * (onConnectionChange), and the datagen emits a variant per mask value (GT6 renders
  * its connections from the mask too, getTextureSide :522).
  *
- * <p>Flow-control interaction (task p4-pipe-flow-control spec ①) — the two-layer
+ * <p>Flow-control interaction (task pipe-flow-control spec ①) — the two-layer
  * {@code use} wiring over the upstream tool-click semantics:
  * <ul>
  * <li>hoe-class tool ({@code ToolActions.HOE_DIG} — the wrench substitute, the cover
@@ -58,7 +58,7 @@ import gregtech6.covers.ICoverableTE;
  *     CONSUME to claim the interaction.</li>
  * </ul>
  *
- * <p>Ownership face (task p24-pipe-owner): a locked pipe ({@code mOwnable} with a set
+ * <p>Ownership face (task pipe-owner): a locked pipe ({@code mOwnable} with a set
  * {@code mOwner}) drops its own tools — the hoe use returns PASS before any mutation
  * (the upstream TileEntityBase06Covers.java:141 host-tool-kill counterpart) and the
  * vanilla break progress is denied to 0.0F through the
@@ -106,7 +106,7 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 	 * The family's row material — both ported tiers ride upstream MT.Wood (the
 	 * addFluidPipes 26000 row's NBT_MATERIAL column, Loader_MultiTileEntities.java:1846;
 	 * the WoodTreated/IronWood/Plastic/Rubber siblings are later line-data batches). The
-	 * r8-tex-pipe-textures tint dispatch seam (the {@code GTBasicMachineBlock.materialOf}
+	 * tex-pipe-textures tint dispatch seam (the {@code GTBasicMachineBlock.materialOf}
 	 * shape): null for any other block, so the {@code GTMachinePaintTint.tintMaterialOf}
 	 * gate keeps every foreign domain byte-identical.
 	 */
@@ -131,7 +131,7 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 	}
 
 	// ---------------------------------------------------------------------------
-	// dried-foam physical face (task p25-c-foam-pipe-spray spec ⑥ — the block-level
+	// dried-foam physical face (task c-foam-pipe-spray spec ⑥ — the block-level
 	// counterparts of the upstream 10ConnectorRendered dried swaps: collision :218
 	// addDefaultCollisionBoxToList / light :144 getLightOpacity → LIGHT_OPACITY_MAX;
 	// both overrides are BE lookup + unwrap only, the decision lives in the static
@@ -168,7 +168,7 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 	}
 
 	// ---------------------------------------------------------------------------
-	// break gate (task p24-pipe-owner — the vanilla BlockBehaviour.getDestroyProgress
+	// break gate (task pipe-owner — the vanilla BlockBehaviour.getDestroyProgress
 	// 1.20.1:319-327 public / 1.21.1:343 protected override, the BambooStalkBlock
 	// 1.20.1:184 precedent; the upstream break-gate counterpart is
 	// TileEntityBase01Root.java:941-943 getPlayerRelativeBlockHardness deny-to-0)
@@ -213,7 +213,7 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 
 		BlockEntity tTile = aLevel.getBlockEntity(aPos);
 		if (!(tTile instanceof GTFluidPipeBlockEntity tPipe)) return InteractionResult.PASS;
-		// the ownership gate (task p24-pipe-owner): upstream TileEntityBase06Covers.java:141
+		// the ownership gate (task pipe-owner): upstream TileEntityBase06Covers.java:141
 		// kills every tool on a locked host before dispatch — here the locked pipe simply
 		// stops treating the wrench as a tool: PASS, no CONSUME, zero mutation (the upstream
 		// tool-unhandled semantics). Ownable=false short-circuits allowInteraction, so the
@@ -253,6 +253,6 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 	@Override
 	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
 		super.stepOn(aLevel, aPos, aState, aEntity);
-		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (p37-covers-crafting-asphalt)
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (covers-crafting-asphalt)
 	}
 }

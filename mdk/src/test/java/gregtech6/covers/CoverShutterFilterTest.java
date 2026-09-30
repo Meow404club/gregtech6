@@ -21,7 +21,7 @@ import gregtech6.covers.covers.CoverFilterItem;
 import gregtech6.covers.covers.CoverShutter;
 
 /**
- * The shutter + item filter covers (task p11-cover-shutter-filter) — the offline
+ * The shutter + item filter covers (task cover-shutter-filter) — the offline
  * half of the acceptance: the shutter's four-intercept truth table (upstream
  * CoverShutter :82-85, closed = {@code (visual == 0) == mStopped}) across both
  * directions and the fluid pair, the filter's whitelist/blacklist/empty/stopped

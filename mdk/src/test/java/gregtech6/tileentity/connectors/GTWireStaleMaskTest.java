@@ -1,5 +1,5 @@
 /**
- * The offline test of the p11-connector-stale-mask prune: the connection mask maintenance
+ * The offline test of the connector-stale-mask prune: the connection mask maintenance
  * path the handshake never had. The P10 E1 RCON finding — swap the wire's neighbour via
  * {@code /setblock} (flags=2: no {@code neighborChanged} anywhere upstream or in vanilla)
  * and the old mask bit survives forever — pinned here against
@@ -116,7 +116,7 @@ public class GTWireStaleMaskTest extends GTOfflineTestBase {
 		BlockEntityType<TestWire>[] tHolder = (BlockEntityType<TestWire>[]) new BlockEntityType<?>[1];
 		// 21.1 validates the BE type/state pair at the ctor (validateBlockState →
 		// getType().isValid), so the fixture BET's valid set carries the cached GT6 wire
-		// blocks the wires are created over (task p15-m4-test-infra-2).
+		// blocks the wires are created over (task m4-test-infra-2).
 		tHolder[0] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new TestWire(tHolder[0], aPos, aState),
 				Blocks.STONE, block(Family.REDSTONE), block(Family.ELECTRIC), block(Family.LASER)).build(null);
@@ -132,7 +132,7 @@ public class GTWireStaleMaskTest extends GTOfflineTestBase {
 	 * Offline Block construction needs the block registry temporarily unfrozen (the
 	 * UseLockTest form). Instances are memoized per family: the 21.1 BE ctor validates
 	 * the state against the BET's valid set, so the fixture must hand out ONE stable
-	 * block identity per family (task p15-m4-test-infra-2).
+	 * block identity per family (task m4-test-infra-2).
 	 */
 	private static final Map<Family, GTWireBlock> sBlockCache = new HashMap<>();
 

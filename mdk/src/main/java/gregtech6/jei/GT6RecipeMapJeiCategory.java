@@ -25,7 +25,7 @@ import gregtech6.recipes.RecipeMap;
  * "布局/EU 文案/tooltip 双 viewer 共享" clause.
  *
  * <p>Consumed faces (JEI 15.x = 1.20.1-forge and 19.x = 1.21.1-neoforge, both read from
- * the harvested API sources, identical on this surface — the r3-jei-tool-output-tint
+ * the harvested API sources, identical on this surface — the jei-tool-output-tint
  * dual-node precedent): {@code IRecipeCategory<T>} (getRecipeType/getTitle/getWidth/
  * getHeight/setRecipe/draw), {@code IRecipeLayoutBuilder.addInputSlot(x,y)/addOutputSlot
  * (x,y)}, {@code IRecipeSlotBuilder.addItemStack/addFluidStack(Fluid,long)/
@@ -44,7 +44,7 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 	/** {@code gt6:recipe_map/<internal>} — the JEI-side uid mirrors the EMI category id one-to-one. */
 	public final RecipeType<Recipe> mRecipeType;
 	public final RecipeMap mMap;
-	/** The per-map machine icon (task r6-29-34a) — built by the plugin from {@link GT6RecipeMapIcons}. */
+	/** The per-map machine icon (task issues #29/#34a) — built by the plugin from {@link GT6RecipeMapIcons}. */
 	private final IDrawable mIcon;
 
 	public GT6RecipeMapJeiCategory(RecipeMap aMap, IDrawable aIcon) {
@@ -74,7 +74,7 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 	}
 
 	/**
-	 * The per-map category title (task r6-29-34a, GitHub #29b): the shared
+	 * The per-map category title (task issues #29/#34a, GitHub #29b): the shared
 	 * {@link GT6RecipeMapViewerMeta#titleKey} formula — translatable, so every locale
 	 * resolves its own face (the ctor's English {@code mNameLocal} stays the en_us value,
 	 * produced by the GT6EnUs datagen walk).
@@ -95,7 +95,7 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 	}
 
 	/**
-	 * Per-map machine icon (task r6-29-34a, GitHub #29a): the representative machine
+	 * Per-map machine icon (task issues #29/#34a, GitHub #29a): the representative machine
 	 * BlockItem from the shared {@link GT6RecipeMapIcons} table — the plugin builds the
 	 * drawable via {@code IGuiHelper.createDrawableItemStack} and hands it to the ctor.
 	 * The batch-2 DEFER adjudication is superseded by that table.
@@ -145,7 +145,7 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 	}
 
 	/**
-	 * The backdrop first (task r9-34-viewer-gui-bg, GitHub #34): the two-layer composite
+	 * The backdrop first (task 34-viewer-gui-bg, GitHub #34): the two-layer composite
 	 * of upstream NEI_RecipeMap.drawBackground (:629-635) — the grey {@code machines/NEI.png}
 	 * plate, then the per-map machine GUI band OVER it, both anchored so the panel origin
 	 * lands at (0,0); the slots (already folded by the meta's {@code viewer*Pos} exits)
@@ -160,7 +160,7 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 		aGuiGraphics.blit(GT6RecipeMapViewerMeta.PLATE_TEXTURE, 0, 0, tPlate[0], tPlate[1], tPlate[2], tPlate[3]);
 		aGuiGraphics.blit(GT6RecipeMapViewerMeta.guiTexture(mMap), 0, 0, tBand[0], tBand[1], tBand[2], tBand[3]);
 		// the representative machine on the plate's baked-in gear spot (task
-		// r10-debt-viewer-polish): upstream NEI_RecipeMap.java:278 drew mRecipeMachineList
+		// debt-viewer-polish): upstream NEI_RecipeMap.java:278 drew mRecipeMachineList
 		// at GUI (152,83) — a bare item, no slot frame. null = no tabled machine (the
 		// four furnace-fallback maps) — the upstream isEmpty() guard, no furnace default.
 		net.minecraft.world.item.ItemStack tMachine = GT6RecipeMapViewerMeta.machineIcon(mMap);

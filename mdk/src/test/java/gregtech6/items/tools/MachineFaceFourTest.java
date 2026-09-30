@@ -1,5 +1,5 @@
 /**
- * Offline tests for task p29-w5-t3-machine-face-four: the machine-face four (the soft
+ * Offline tests for task w5-t3-machine-face-four: the machine-face four (the soft
  * hammer, the monkey wrench, the magnifying glass, the pincers) — the stat pins, the
  * action/dispatch-id pins, the tag faces, the soft-hammer rotation cut list (the card's
  * 1.20.1 vanilla 对位 ruling, the literals in test) and the RED LINE walls (the monkey

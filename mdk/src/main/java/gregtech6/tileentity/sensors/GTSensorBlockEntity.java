@@ -16,11 +16,11 @@ import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.util.UT6;
 
 /**
- * The sensor double base (task p26-sensors-core) — the 1.20.1 counterpart of the upstream
+ * The sensor double base (task sensors-core) — the 1.20.1 counterpart of the upstream
  * chain {@code MultiTileEntitySensorTE} (gregapi/tileentity/machines/MultiTileEntitySensorTE
  * .java:46) extends {@code MultiTileEntitySensor} (:53) extends
  * {@code TileEntityBase10FacingDouble}. The generic FacingSingle/FacingDouble BE base
- * classes are not ported (the p26-arch-wave4 ruling), so this BE extends the folded
+ * classes are not ported (the arch-wave4 ruling), so this BE extends the folded
  * {@link TileEntityBase03TicksAndSync} stratum and carries BOTH facings itself:
  * {@link #mFacing} = the display/keypad face (mirrored into the block's FACING property —
  * the GTOvenBlock A-tier shape) and {@link #mSecondFacing} = the probe face, the side the

@@ -32,7 +32,7 @@ import gregtech6.tileentity.bees.GT6BumbliaryBlockEntity;
 import gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase;
 
 /**
- * The Bumbliary offline panel gate (task p34-bumbliary-gui acceptance ①, the
+ * The Bumbliary offline panel gate (task bumbliary-gui acceptance ①, the
  * GT6DistillationTowerMUIPanelTest shape): the dual-variant slot geometry and the
  * per-slot interaction flags over the mAdvanced/scoop pair, exactly the upstream
  * :396-434 (primary normal), :450-488 (primary scoop) and the Advanced :397-419/:435-457

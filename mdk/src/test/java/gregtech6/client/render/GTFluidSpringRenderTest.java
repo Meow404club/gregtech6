@@ -1,5 +1,5 @@
 /**
- * Offline census for task p38-spring-texture-tint — the spring nozzle's borrowed skin +
+ * Offline census for task spring-texture-tint — the spring nozzle's borrowed skin +
  * per-fluid tint wave. The pins:
  * <ul>
  * <li>the borrowed FLUID_SPRING dither ({@code block/fluid_spring.png}, the upstream

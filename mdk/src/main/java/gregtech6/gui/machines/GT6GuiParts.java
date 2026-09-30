@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 
 /**
  * Single source of truth for the cropped composable GUI part sprites
- * (task r8-gui-part-crops; visual-source ruling decisions.r8-gui-visual-source).
+ * (task gui-part-crops; visual-source ruling decisions.r8-gui-visual-source).
  *
  * <p>Every sprite is a rect crop out of the amazawa resource pack's gregtech
  * domain (machine skins) or its minecraft domain (reskinned vanilla widgets —

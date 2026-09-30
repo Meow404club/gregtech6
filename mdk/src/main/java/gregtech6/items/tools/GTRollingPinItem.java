@@ -4,7 +4,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * The formal rolling pin — item id {@code gt6:rolling_pin} (task p29-w5-t5-scene-six
+ * The formal rolling pin — item id {@code gt6:rolling_pin} (task w5-t5-scene-six
  * spec ⑤, the {@link GT6BendingCylinderSmallItem} form with the census OFF — the
  * structure-empty master). Upstream the tool is a crafting-domain meta id
  * ({@code ToolsGT.ROLLING_PIN}, mounted at Loader_Tools.java:141, display name

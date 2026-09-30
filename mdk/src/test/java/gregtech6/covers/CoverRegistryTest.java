@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.covers.covers.CoverTextureSimple;
 
 /**
- * The CoverRegistry contract (task p4-cover-core acceptance ①): the Item holder key,
+ * The CoverRegistry contract (task cover-core acceptance ①): the Item holder key,
  * the short-id/meta lookup surface and the CoverData factory.
  */
 public class CoverRegistryTest extends GTCoverTestBase {

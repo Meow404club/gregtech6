@@ -9,7 +9,7 @@ import gregtech6.covers.CoverData;
 
 /**
  * The asphalt cover — 1.20.1 port of gregapi/cover/covers/CoverAsphalt.java:32-42 (task
- * p37-covers-crafting-asphalt; upstream the Asphalt Panel items, Loader_MultiTileEntities
+ * covers-crafting-asphalt; upstream the Asphalt Panel items, Loader_MultiTileEntities
  * .java:2053-2055, one CoverAsphalt per DYES[i] plate). Walking over the covered TOP face
  * accelerates the walker: horizontal motion ×1.3 while moving, not in water and not
  * sneaking (upstream :39 verbatim) — the pavement speed face the vanilla friction system

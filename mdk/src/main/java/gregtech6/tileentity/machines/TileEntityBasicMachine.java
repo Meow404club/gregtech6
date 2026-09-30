@@ -55,7 +55,7 @@ import gregtech6.util.GTSideTables;
 /**
  * The shared single-block machine base — direct translation of upstream
  * gregapi/tileentity/machines/MultiTileEntityBasicMachine.java trimmed to the Shredder/
- * Crusher/Lathe shape (task p7-basicmachine-family; registration rows
+ * Crusher/Lathe shape (task basicmachine-family; registration rows
  * Loader_MultiTileEntities.java:1294-1309, T1 tier = the field defaults kept here).
  * TileEntityOven is the Furnace-shape sibling cut of the same source and stays UNTOUCHED
  * (P6 ADR precedent: no retroactive re-parenting).
@@ -67,7 +67,7 @@ import gregtech6.util.GTSideTables;
  * (:97), mParallelDuration (:92), mEnergyTypeAccepted (:99, the RU/KU energy-type carrier).
  * The IIconContainer texture sets (:104) become the BlockState ACTIVE/RUNNING properties
  * (upstream getVisualData :1010-1011 = the same two bits); the fluid tanks and side masks
- * are LIVE since task p14-machine-fluid-face (:101/:95/:93 — the per-side FLUID_HANDLER
+ * are LIVE since task machine-fluid-face (:101/:95/:93 — the per-side FLUID_HANDLER
  * face and the :511 energy gate), while mMode/mOutputBlocked and the fluid auto-IO stay
  * cut with their subsystems. Upstream injects mRecipes through the NBT_RECIPEMAP string
  * (getDefaultInventory :525) — the port injects it through the constructor (the
@@ -80,22 +80,22 @@ import gregtech6.util.GTSideTables;
  * <li>{@link #doActive(long, long)} :795-887 with the carryover block :843-851 verbatim —
  *     mProgress += min(mInputMax, mEnergy) :813 (the progress unit IS an energy unit),
  *     item output placement wraps i % mOutputItemsCount :816; the :815 gate is the
- *     upstream form VERBATIM (restored p8-machine-tiers-doinject ③, the p11 unwound
+ *     upstream form VERBATIM (restored machine-tiers-doinject ③, the p11 unwound
  *     fold) —
  *     {@code mStateOld && !mStateNew || !ALL_ALTERNATING.contains(mEnergyTypeAccepted)} with
  *     the :865 {@code mStateOld = mStateNew} shift: the KU/Crusher machine delivers its
  *     outputs only on the injection positive→non-positive transition tick, the AC
  *     half-cycle of the upstream Steam Engine :146 ±alternation (the live source is the
  *     /gt6energy alternating rig); the fluid placement (:817-835) is LIVE since task
- *     p14-machine-fluid-face (pending outputs land in mTanksOutput, containing tank
+ *     machine-fluid-face (pending outputs land in mTanksOutput, containing tank
  *     first then empty — the minimal tank half; the neighbor ITEM auto-push blocks
  *     :853-858/:867-884 stay cut — no item logistics surface — output ITEM slots stay
  *     blocked, while the FLUID auto-output push (:459 → {@link #doOutputFluids}) is LIVE
- *     since task p16-machine-side-io ② and drains a configured mFluidAutoOutput face);</li>
+ *     since task machine-side-io ② and drains a configured mFluidAutoOutput face);</li>
  * <li>{@link #checkRecipe(boolean, boolean)} :683-778 with the :687 doInputItems ITEM
  *     auto-IO cut (the item pool) but the fluid legs LIVE — the :706 tank census since
- *     task p14-machine-fluid-face, the :696-705 auto-input PULL and the :716-732
- *     mCanUseOutputTanks output-tank fallback since task p16-machine-side-io ②③, plus the
+ *     task machine-fluid-face, the :696-705 auto-input PULL and the :716-732
+ *     mCanUseOutputTanks output-tank fallback since task machine-side-io ②③, plus the
  *     :709/:710 minimal-fluid gates, the :712 findRecipe tank argument, the
  *     :738/:744 consume through the tank snapshot mirror, and the PARALLEL blocks
  *     (:742-745) RESTORED (the oven cut them with mParallel=1;
@@ -110,9 +110,9 @@ import gregtech6.util.GTSideTables;
  *     CONSTANT_ENERGY reset verbatim.</li>
  * </ul>
  *
- * <p>Energy (ADR ruling 2026-08-31-p7-machine-family ④ / 2026-08-31-p7-energy-network D1,
- * closed out by task p8-machine-tiers-doinject, the DEFAULT flipped by task
- * p11-rotor-source-flip): BOTH options stay live behind the {@link #ENERGY_FAKE_SOURCE}
+ * <p>Energy (ADR ruling 2026-08-31-machine-family ④ / 2026-08-31-energy-network D1,
+ * closed out by task machine-tiers-doinject, the DEFAULT flipped by task
+ * rotor-source-flip): BOTH options stay live behind the {@link #ENERGY_FAKE_SOURCE}
  * regime switch —
  * <table>
  * <tr><th>ENERGY_FAKE_SOURCE</th><th>supply path</th><th>the :815 alternating arm</th></tr>
@@ -128,28 +128,28 @@ import gregtech6.util.GTSideTables;
  *     every tick while not stopped; doWork drains mInputMax :791)</td><td>SUSPENDED for the
  *     whole family — the pre-p8 behavior</td></tr>
  * </table>
- * The TRUE default was an M1 port-ism ruling (ADR 2026-08-31-p8-machine-closeout ②(d)):
+ * The TRUE default was an M1 port-ism ruling (ADR 2026-08-31-machine-closeout ②(d)):
  * the upstream :501 type-equality gate kept the then-EU-only network out of the RU/KU
  * machines, so FALSE-by-default would have made all three families dead blocks. Task
- * p11-rotor-source-flip shipped the parameterised RU/KU ±alternating source
+ * rotor-source-flip shipped the parameterised RU/KU ±alternating source
  * (GTEnergySourceBlockEntity, upstream EngineSteam :146 form) and retired the port-ism:
  * the default is the upstream truth again and the :815 suspension fold is unwound.
  * {@link #doInject} is the upstream :489-508 body minus the charging branch (:497-500,
  * mEnergyTypeCharged/mChargeRequirement are outside the trimmed field set — a
- * FAMILY-SCOPED deviation since task p32-ignition-gate: the gate IS ported on the
+ * FAMILY-SCOPED deviation since task ignition-gate: the gate IS ported on the
  * multiblock base TileEntityBase10MultiBlockMachine for the fusion's start-LU ledger
  * (upstream :92/:98/:124/:497-500/:755/:809), while this single-block family keeps the
  * cut — no registered row carries a charged-type column, so the arms would be dead code
  * here, the oven :492 same shape); the :511 FACE_CONNECTED receiving gate IS ported
- * since task p14-machine-fluid-face ({@link #mEnergyInputs} + the rotation lookup, default
+ * since task machine-fluid-face ({@link #mEnergyInputs} + the rotation lookup, default
  * 127 = the former Root all-sides behaviour bit-for-bit). Side configuration and the RU/KU
  * accepted-energy types are carrier fields; no named energy interface is introduced
  * (IEnergyPolicy ownership is D1's).
  *
- * <p>Recipe consumption follows the p4-recipe-core pinned contract: findRecipe only LOOKS UP,
+ * <p>Recipe consumption follows the recipe-core pinned contract: findRecipe only LOOKS UP,
  * consuming is {@code Recipe.isRecipeInputEqual(true, false, fluids, inputs)} (:725/:738
  * two-stage) and the parallel rebalance consumes count-1 (:744). Since task
- * p14-machine-fluid-face the {@code fluids} argument is the REAL input-tank snapshot
+ * machine-fluid-face the {@code fluids} argument is the REAL input-tank snapshot
  * (upstream :712/:738 pass the tanks themselves; the frozen P4 Recipe surface takes
  * FluidStack[], so the consume mirrors the drained amounts back onto the tanks).
  *
@@ -167,7 +167,7 @@ import gregtech6.util.GTSideTables;
  * double-written NBT + BlockState (P4 spec 7): NBT is the persistent authority.
  *
  * <p>GUI: the row-less families (Shredder/Crusher/Lathe) open the ModularUI chain since
- * task p26-mui-a-open-chain — the BE implements {@link GT6MuiMachine} and
+ * task mui-a-open-chain — the BE implements {@link GT6MuiMachine} and
  * {@link #buildUI} delegates to the {@link GTBasicMachineMUI} panel factory over the
  * {@link GTBasicMachineMenu#hostOf} projection; the row families (dryer/canner/
  * distillery) keep the vanilla MenuProvider path ({@link #createMenu}) byte-identical.
@@ -184,8 +184,8 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	public static final boolean CONSTANT_ENERGY = true;
 
 	/**
-	 * The energy regime switch (task p8-machine-tiers-doinject ④, the oven p8-d3 §③ shape;
-	 * DEFAULT FLIPPED to false by task p11-rotor-source-flip). {@code false} (shipped
+	 * The energy regime switch (task machine-tiers-doinject ④, the oven p8-d3 §③ shape;
+	 * DEFAULT FLIPPED to false by task rotor-source-flip). {@code false} (shipped
 	 * default, the upstream truth — the switch itself is a pure port invention with ZERO
 	 * upstream hits) = grid-fed only through {@link #doInject} and the :815 gate runs the
 	 * full upstream semantics; the rotor-family source rig (the /gt6energy type|alt dials,
@@ -217,7 +217,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	/**
 	 * Upstream NBT_TANK_CAPACITY (:157-158 — read, NEVER written, the registration-config
 	 * family; the port re-feeds it through {@code /data merge} the same way the upstream
-	 * registry re-feeds the placement NBT). Task p16-machine-side-io ③.
+	 * registry re-feeds the placement NBT). Task machine-side-io ③.
 	 */
 	public static final String NBT_TANK_CAPACITY = "tank_capacity";
 	/** Upstream NBT_USE_OUTPUT_TANK (:132) — the {@link #mCanUseOutputTanks} registration key (read-only, same family). */
@@ -311,7 +311,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 
 	/**
 	 * Port-owned: which MenuType opens this machine's GUI (one per registered machine).
-	 * Null semantics (task p26-mui-a-open-chain): an offline test fixture, OR a
+	 * Null semantics (task mui-a-open-chain): an offline test fixture, OR a
 	 * ModularUI-family machine — the row-less families open through
 	 * {@link GT6MuiMachine#tryOpen} (the BlockEntityUIFactory chain), so their vanilla
 	 * menu is unreachable and {@link #createMenu} keeps its documented throw; the row
@@ -412,8 +412,8 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	}
 
 	/**
-	 * The energy seam (ADR 2026-08-31-p7-machine-family ④, regime-gated by task
-	 * p8-machine-tiers-doinject ④): option A constant full-voltage fake power — oven :74-77
+	 * The energy seam (ADR 2026-08-31-machine-family ④, regime-gated by task
+	 * machine-tiers-doinject ④): option A constant full-voltage fake power — oven :74-77
 	 * semantics verbatim (refill to mInputMax every tick while not stopped; doWork :791
 	 * drains exactly mInputMax, so every active tick advances progress by mInputMax energy
 	 * units) — runs only while {@link #ENERGY_FAKE_SOURCE} is true. With the switch off this
@@ -487,12 +487,12 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		mSuccessful = false; // :807
 
 		if (mMaxProgress > 0) {
-			rActive = true; // :810 — the :809 mSpecialIsStartEnergy half is dead here (no charged-type column on any single-block row); the LIVE port is the multiblock base (task p32-ignition-gate)
+			rActive = true; // :810 — the :809 mSpecialIsStartEnergy half is dead here (no charged-type column on any single-block row); the LIVE port is the multiblock base (task ignition-gate)
 			if (mProgress <= mMaxProgress) {
 				mProgress += aEnergy; // :813 — the progress unit IS an energy unit (ADR-P4)
 			}
 			// :815 upstream verbatim (the p8 suspension fold UNWOUND by task
-			// p11-rotor-source-flip — with ENERGY_FAKE_SOURCE retired to false this is the
+			// rotor-source-flip — with ENERGY_FAKE_SOURCE retired to false this is the
 			// only live shape; upstream MultiTileEntityBasicMachine.java:815):
 			// `mStateOld && !mStateNew || !ALL_ALTERNATING.contains(mEnergyTypeAccepted)`
 			// KU is an ALL_ALTERNATING member (root TD.java:216 = (F, KU)) and delivers its
@@ -507,7 +507,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 				mOutputItems[i] = null;
 				continue;
 			}
-			// :817-826 RESTORED (task p14-machine-fluid-face ④, the doActive tank-placement
+			// :817-826 RESTORED (task machine-fluid-face ④, the doActive tank-placement
 			// half; the auto-push halves :853-858/:867-884 stay cut) — a pending output joins
 			// a CONTAINING output tank first; the :819 updateInventory beat lives in THIS
 			// loop only (upstream shape)
@@ -577,7 +577,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 
 	/**
 	 * Upstream :683-778 — the :687 doInputItems ITEM auto-IO stays cut (the item auto-IO pool
-	 * item; the FLUID pull arm :696-705 is LIVE since task p16-machine-side-io ②); the
+	 * item; the FLUID pull arm :696-705 is LIVE since task machine-side-io ②); the
 	 * parallel blocks (:742-745) restored (the oven cut them at mParallel = 1; the Crusher
 	 * runs 4); the energy math :761-774 verbatim with the RF halves of :767/:770 cut (no RF
 	 * conversion in the port constants). {@code aApplyRecipe=false} probes, {@code true}
@@ -594,7 +594,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 			if (tInputs[i] != null && !tInputs[i].isEmpty()) tInputItemsCount++;
 		}
 
-		// :696-705 RESTORED (task p16-machine-side-io ②, the capability translation) — the
+		// :696-705 RESTORED (task machine-side-io ②, the capability translation) — the
 		// fluid auto-input PULL: the getTankInfo walk (:700) becomes the getTanks/getFluidInTank
 		// census, the FL.move_ beat (:701-702) the drain-SIMULATE → own-fill → drain-EXECUTE
 		// three-beat (the P6 push form mirrored for pull; the :697 mDisabledFluidInput half is
@@ -618,7 +618,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 				}
 			}
 		}
-		// :706 the input-tank census RESTORED (task p14-machine-fluid-face ③) — the pulled
+		// :706 the input-tank census RESTORED (task machine-fluid-face ③) — the pulled
 		// fluids above land here in the SAME pass
 		int tInputFluidsCount = 0;
 		for (FluidTankGT tTank : mTanksInput) if (tTank.has()) tInputFluidsCount++;
@@ -633,7 +633,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		// argument now carries the REAL input-tank snapshot (upstream passes mTanksInput).
 		Recipe tRecipe = mRecipes.findRecipe(mLastRecipe, mInputMax, ItemStack.EMPTY, tankSnapshot(mTanksInput), tInputs);
 
-		// :716-732 RESTORED (task p16-machine-side-io ③) — the mCanUseOutputTanks fallback:
+		// :716-732 RESTORED (task machine-side-io ③) — the mCanUseOutputTanks fallback:
 		// a failed input-tank lookup re-runs against the OUTPUT tanks and the whole consume
 		// chain below drains THEM (upstream :718/:725/:731 pass mTanksOutput). The two
 		// upstream branches differ ONLY in the tank array, so the port keeps the merged
@@ -648,7 +648,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 
 		if (tRecipe == null) return DID_NOT_FIND_RECIPE; // :719/:719-shape
 
-		// the p28-c-ulv-machine-ladder melting gate (NO upstream :72x line — the container
+		// the c-ulv-machine-ladder melting gate (NO upstream :72x line — the container
 		// semantics of Smeltery :194 / Mold :189 re-expressed as a machine recipe gate; the
 		// research.p28-r-ulv-tier-design rejected-arms ledger covers the RM whitelist and
 		// the BE-subclass forms): findRecipe HIT but a consumed input material melts above
@@ -689,11 +689,11 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 
 		// :748-753 adjacent-inventory notify cut (auto-IO pool); :755 mSpecialIsStartEnergy
 		// arm is FAMILY-SCOPED dead here (the live port = the multiblock base, task
-		// p32-ignition-gate)
+		// ignition-gate)
 
 		mCurrentRecipe = tRecipe; // :757
 		mOutputItems = tRecipe.getOutputs(tMaxProcessCount); // :758
-		mOutputFluids = tRecipe.getFluidOutputs(tMaxProcessCount); // :759 RESTORED (task p14-machine-fluid-face ③)
+		mOutputFluids = tRecipe.getFluidOutputs(tMaxProcessCount); // :759 RESTORED (task machine-fluid-face ③)
 
 		if (tRecipe.mEUt < 0) { // :761-764 — generator rows (no mOutputEnergy in the port field set)
 			mMaxProgress = tRecipe.mDuration;
@@ -715,7 +715,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	}
 
 	/**
-	 * The p28-c-ulv-machine-ladder melting gate — the PURE decision function behind the
+	 * The c-ulv-machine-ladder melting gate — the PURE decision function behind the
 	 * {@link #checkRecipe} hook (offline-testable: no world, no BE state). {@code true} =
 	 * BLOCKED. Any ONE input stack whose resolved material carries
 	 * {@code mMeltingPoint > aMaxMeltingPointK} blocks the recipe (the 任一超即拒 ruling);
@@ -795,7 +795,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	}
 
 	// ---------------------------------------------------------------------------
-	// energy surface (task p8-machine-tiers-doinject ② — the network consumer face,
+	// energy surface (task machine-tiers-doinject ② — the network consumer face,
 	// upstream MultiTileEntityBasicMachine :489-519)
 	// ---------------------------------------------------------------------------
 
@@ -803,7 +803,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	 * Upstream :489-508 verbatim minus the charging branch (:497-500 — mChargeRequirement/
 	 * mEnergyTypeCharged are outside the trimmed field set :137, the FAMILY-SCOPED
 	 * deviation — the live port is the multiblock base's fusion ledger, task
-	 * p32-ignition-gate): a stopped machine refuses (0, :490); an over-voltage packet
+	 * ignition-gate): a stopped machine refuses (0, :490); an over-voltage packet
 	 * overcharges ({@code aSize > mInputMax}) and reports the whole amount as used
 	 * (:493-495, the Root overcharge/explode body — D3); an accepted-type packet charges
 	 * {@code min(mInputMax - mEnergy, size * amount)} energy, consuming the corresponding
@@ -825,7 +825,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		}
 		// :497-500 charging branch cut — mEnergyTypeCharged/mChargeRequirement are outside
 		// this family's field set (the live port = the multiblock base's fusion ledger,
-		// task p32-ignition-gate; no single-block row registers a charged type)
+		// task ignition-gate; no single-block row registers a charged type)
 		if (aEnergyType == mEnergyTypeAccepted) { // :501
 			if (aDoInject) mStateNew = tPositive; // :502
 			long tInput = Math.min(mInputMax - mEnergy, aSize * aAmount), tConsumed = Math.min(aAmount, (tInput/aSize) + (tInput%aSize!=0?1:0)); // :503
@@ -855,7 +855,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	public byte mFluidInputs = 127, mFluidOutputs = 127;
 	/**
 	 * Upstream :94 — the per-side item ACCESS masks (machine-relative side bits, default 127
-	 * = every relative side, the upstream field default). Task p16-machine-side-io ①: they
+	 * = every relative side, the upstream field default). Task machine-side-io ①: they
 	 * feed {@link #updateAccessibleSlots()} (upstream :533-541) — the per-world-side
 	 * accessible-slot table every insert/extract consults. Registration rows re-point them
 	 * post-construction (the carrier pattern of mEnergyInputs; the upstream rows write
@@ -866,7 +866,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	public byte mItemInputs = 127, mItemOutputs = 127;
 	/**
 	 * Upstream :95 — the fluid auto-IO sides (machine-relative, {@link #SIDE_UNDEFINED} =
-	 * off, the upstream default). Task p16-machine-side-io ②: {@link #mFluidAutoInput} is
+	 * off, the upstream default). Task machine-side-io ②: {@link #mFluidAutoInput} is
 	 * the PULL face the :696-705 checkRecipe arm drains from, {@link #mFluidAutoOutput} the
 	 * PUSH face the :459/:994-996 tick arm fills through — both fold to no-ops while
 	 * undefined, so the registered machines keep their exact pre-p16 behaviour. The item
@@ -894,7 +894,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	 */
 	public long mTankCapacity = 1000;
 	/**
-	 * Port-owned (task p28-c-ulv-machine-ladder, NO upstream counterpart — the ULV tier
+	 * Port-owned (task c-ulv-machine-ladder, NO upstream counterpart — the ULV tier
 	 * extension is the declared-deviation new machine face): the row's
 	 * {@code maxMeltingPointK} gate column carried onto the BE by
 	 * {@link GTMachines#applyRow} the same way the side masks ride. {@code null} = the
@@ -916,7 +916,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	 * upstream UT.Code.units(a, orig, targ) = a × targ/orig — the LH.java:334 efficiency
 	 * tooltip is the same direction): the FRACTION OF ENERGY-TIME THAT DOES WORK, scaled
 	 * against the 10000 perfection. 10000 = the identity (every unit of energy-time
-	 * counts — every row before task p29-w1-rm-maps-scaffold, which is why the port could
+	 * counts — every row before task w1-rm-maps-scaffold, which is why the port could
 	 * FOLD the divisor to the constant 10000 until this card); 5000 = 2× the REQUIRED
 	 * progress per process (the Electric* rows :1504-1522 NBT_EFFICIENCY 5000 — the
 	 * plug-in convenience burns 2× the energy-time; in the same wall-clock the bar sits
@@ -930,7 +930,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	 */
 	public short mEfficiency = 10000;
 	/**
-	 * Upstream :511 VERBATIM (task p14-machine-fluid-face ②): the receiving gate is the
+	 * Upstream :511 VERBATIM (task machine-fluid-face ②): the receiving gate is the
 	 * rotated connectivity mask — {@code FACE_CONNECTED[FACING_ROTATIONS[mFacing][aSide]]
 	 * [mEnergyInputs]} over the {@code aTheoretical || !mStopped} arm — ANDed with the
 	 * super arm (the Root isEnergyType/isSurfaceEnergyAttachable chain,
@@ -1055,7 +1055,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	 * removed from its snapshot copy (the first-matching-entry semantics of
 	 * Recipe.java:250 align 1:1 with the upstream tank order), then re-baselines the
 	 * amounts array so a second call after the :744 count loop drains only the delta.
-	 * The tank array is a parameter since task p16-machine-side-io ③ — the
+	 * The tank array is a parameter since task machine-side-io ③ — the
 	 * mCanUseOutputTanks fallback consumes from mTanksOutput the same way.
 	 */
 	private void applyTankConsumption(FluidTankGT[] aTanks, FluidStack[] aSnapshot, long[] aBaseline) {
@@ -1087,7 +1087,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	}
 
 	// ---------------------------------------------------------------------------
-	// fluid auto-IO (upstream :459/:696-705/:994-996, task p16-machine-side-io ②)
+	// fluid auto-IO (upstream :459/:696-705/:994-996, task machine-side-io ②)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -1190,12 +1190,12 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	}
 
 	// ---------------------------------------------------------------------------
-	// fluid tank face (upstream :561-597, task p14-machine-fluid-face ⑤)
+	// fluid tank face (upstream :561-597, task machine-fluid-face ⑤)
 	// ---------------------------------------------------------------------------
 
 	/**
 	 * Upstream getFluidTankFillable2 :564-571 — the :565 auto-output-face refuse leg is LIVE
-	 * since task p16-machine-side-io ② (a configured mFluidAutoOutput makes that world face
+	 * since task machine-side-io ② (a configured mFluidAutoOutput makes that world face
 	 * push-only: external fill is refused there), then the :566 mask gate, then the tank
 	 * walk. The :568 containsInput recipe filter is cut with its pool item — any fluid may
 	 * claim an EMPTY input tank (declared deviation; the port RecipeMap carries no
@@ -1265,7 +1265,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	}
 
 	// ---------------------------------------------------------------------------
-	// the per-side item ACCESS table (upstream :533-545, task p16-machine-side-io ①)
+	// the per-side item ACCESS table (upstream :533-545, task machine-side-io ①)
 	// ---------------------------------------------------------------------------
 
 	/** Upstream :543 — the per-WORLD-side accessible slot table (row 6 = the SIDE_ANY entry, built like upstream). */
@@ -1320,7 +1320,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 
 	// ---------------------------------------------------------------------------
 	// capability exposure — the gating IItemHandler (insert input-only, extract output-only)
-	// plus the per-side fluid handler (task p14-machine-fluid-face ⑤)
+	// plus the per-side fluid handler (task machine-fluid-face ⑤)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -1330,7 +1330,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	 * {@link #getFluidTankFillable} (the mFluidInputs rotation mask), drain through
 	 * {@link #getFluidTankDrainable} (mFluidOutputs); the side-less query drains
 	 * all-open and refuses fill (the P5 barrel ruling). The tank VIEW
-	 * (getTanks/getFluidInTank) is side-blind — the p13-boiler-tank lesson: the pipe
+	 * (getTanks/getFluidInTank) is side-blind — the boiler-tank lesson: the pipe
 	 * canConnect handshake probes {@code handler.getTanks() > 0} on the neighbor's face
 	 * (GTFluidPipeBlockEntity.java:281-287) and a masked-to-zero view would dead-end it.
 	 */
@@ -1424,7 +1424,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	 * input slot (canInsertItem2 :549-554 trimmed — the mMode empty-slot rule, the same-item
 	 * dedup and the containsInput legs are the pool), extract only the output slots
 	 * (canExtractItem2 :556-559). Storage stays the plain {@link GTItemStackHandler}.
-	 * Task p16-machine-side-io ①: the {@code aSide} face first consults the ACCESSIBLE
+	 * Task machine-side-io ①: the {@code aSide} face first consults the ACCESSIBLE
 	 * table (upstream getAccessibleSlotsFromSide2 :545 — a side may only touch the slots
 	 * its mask row lists, in BOTH directions); {@code null} = the side-less probe, which
 	 * keeps the pre-p16 all-sides behaviour (the P5 barrel side-less ruling form).
@@ -1476,7 +1476,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		return new BasicMachineFluidHandler(this, aSide);
 	}
 
-	/** The per-side gated item surface (task p16-machine-side-io ①) — null side = the all-sides form. */
+	/** The per-side gated item surface (task machine-side-io ①) — null side = the all-sides form. */
 	IItemHandler newItemHandler(@Nullable Direction aSide) {
 		return newGatedHandler(aSide);
 	}
@@ -1532,7 +1532,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 
 	/**
 	 * Chest precedent onPlaced :128-131 — GT6 side order == Direction.getIndex()
-	 * (get3DDataValue). Task p28-singleblock-facing-canon: the front TOWARDS the placer —
+	 * (get3DDataValue). Task singleblock-facing-canon: the front TOWARDS the placer —
 	 * the GT6PlacementFacing canon (view OPPOSITE), not the raw view direction.
 	 */
 	public void setFacingFromPlacement(Player aPlayer) {
@@ -1546,7 +1546,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	}
 
 	/**
-	 * The GTCEu MetaMachine.setFrontFacing :794-811 counterpart (p6-oven-rotation shape):
+	 * The GTCEu MetaMachine.setFrontFacing :794-811 counterpart (oven-rotation shape):
 	 * only a horizontal side (2..5) different from the current facing rotates — the
 	 * same-facing call is the :796 no-op and vertical/invalid sides are rejected.
 	 *
@@ -1581,7 +1581,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 
 	// ---------------------------------------------------------------------------
 	// GUI (upstream getGUIClient2/getGUIServer2 :1007-1008 → MenuProvider; the
-	// ModularUI chain since task p26-mui-a-open-chain)
+	// ModularUI chain since task mui-a-open-chain)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -1667,7 +1667,7 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 		if (aNBT.contains(NBT_ACTIVE)) mActive = aNBT.getBoolean(NBT_ACTIVE); // :116
 		if (aNBT.contains(NBT_RUNNING)) mRunning = aNBT.getBoolean(NBT_RUNNING); // :118
 		if (aNBT.contains(NBT_STATE + ".new")) mStateNew = aNBT.getBoolean(NBT_STATE + ".new"); // :119 — mStateOld stays false, the first active tick's :865 shift re-derives it
-		// the registration-config family (task p16-machine-side-io ①②③) — hasKey-guarded
+		// the registration-config family (task machine-side-io ①②③) — hasKey-guarded
 		// legs over NEVER-persisted keys (the upstream writeToNBT2 writes none of them), so
 		// absent keys keep the constructor/applyRow values (the p14
 		// loadKeepsTheConstructorInjectedConfig contract) while /data merge (the port form of

@@ -13,7 +13,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * 1.20.1 counterpart of gregapi/fluid/FluidTankGT.java (implements 1.7.10 IFluidTank).
- * Port scope (task p4-fluid-pipes spec ①, the W3 barrel card consumes the same class):
+ * Port scope (task fluid-pipes spec ①, the W3 barrel card consumes the same class):
  * <ul>
  * <li>the long internal amount ({@code mAmount}, upstream :41) behind the int IFluidTank
  *     surface — every int crossing clamps through {@link #bindInt} (upstream UT.Code.bindInt,
@@ -89,7 +89,7 @@ public class FluidTankGT implements IFluidTank {
 					// writes): loadFluidStackFromNBT empty-flagged the 0-amount stack, which would
 					// collapse the kept identity to Fluids.EMPTY. Upstream :56 loads the REAL fluid
 					// at amount 0 — the 1.20.1 carrier rebuilds it un-collapsed at a unit amount
-					// (mAmount stays the authoritative 0; task p12-barrel-keepfilter-logistics).
+					// (mAmount stays the authoritative 0; task barrel-keepfilter-logistics).
 					mFluid = new FluidStack(mFluid.getRawFluid(), 1);
 					mAmount = 0;
 				} else {
@@ -97,8 +97,8 @@ public class FluidTankGT implements IFluidTank {
 				}
 				//?} else {
 				/*// 21.1 leg: parseOptional rides the codec face; a degraded payload lands EMPTY.
-				//keepFilter READ-SIDE REBUILD (ADR-P18, task p18-keepfilter-2111-readback — replaces
-				//the former KNOWN 21.1 DELTA of p15-prod-fix-fluidstack-save): the 0-amount keepFilter
+				//keepFilter READ-SIDE REBUILD (ADR-P18, task keepfilter-2111-readback — replaces
+				//the former KNOWN 21.1 DELTA of prod-fix-fluidstack-save): the 0-amount keepFilter
 				//payload {FluidName: REAL, Amount: 0} carries no codec keys, and the codec amount is
 				//POSITIVE_INT (NeoForge FluidStack MAP_CODEC :65-73/:70 — 0 is unrepresentable), so
 				//parseOptional fails it to EMPTY (parse(...).orElse(EMPTY), never throws). Before
@@ -111,7 +111,7 @@ public class FluidTankGT implements IFluidTank {
 				//failure, never a throw. (Since the leg-dialect arm below, the keepFilter form is
 				//routed here directly instead of through that failing parse.) NON-ZERO roundtrips
 				//stay lossless via the save() return
-				//tag (p15-prod-fix-fluidstack-save). Residual deltas: a 0-amount payload persists
+				//tag (prod-fix-fluidstack-save). Residual deltas: a 0-amount payload persists
 				//neither components nor tag (both legs' pool debt), and a fluid removed from the
 				//registry since the save still folds to an empty tank.
 				// LEG-DIALECT READ ARM (known_bugs barrel_zerofluid_nbt_leg_dialect, task
@@ -168,7 +168,7 @@ public class FluidTankGT implements IFluidTank {
 			// setAmount(0) empty-flags the mutated stack, and the save/sync path (updateClientData
 			// → saveAdditional) would otherwise collapse the LIVE kept-filter stack in memory
 			// (live-proven: the show line degraded to "minecraft:empty" right after a draw to 0 L;
-			// task p12-barrel-keepfilter-logistics). mFluid.amount is a derived cache either way —
+			// task barrel-keepfilter-logistics). mFluid.amount is a derived cache either way —
 			// getFluid() rebinds it on every read.
 			FluidStack tCopy = mFluid.copy();
 			tCopy.setAmount(bindInt(mAmount));
@@ -196,7 +196,7 @@ public class FluidTankGT implements IFluidTank {
 				//tag and never writes the passed one (javap 21.1.249: wrapEncodingExceptions →
 				//CODEC.encode(..., prefix).getOrThrow() — the probe target stayed {}), so the return
 				//value must be kept: discarding it wrote a permanently empty {tank:{}} and every
-				//roundtrip read folded to 0 (p15-prod-fix-fluidstack-save). The cast is safe — the
+				//roundtrip read folded to 0 (prod-fix-fluidstack-save). The cast is safe — the
 				//fluid record codec only ever emits a CompoundTag ({"id", "amount"}), and the
 				//LAmount overflow below needs the CompoundTag surface anyway. The passed tag stays
 				//as the DFU prefix argument; the codec emits its own {"id","amount"} shape.
@@ -271,7 +271,7 @@ public class FluidTankGT implements IFluidTank {
 		// upstream :359 rebinds the amount in place; the 1.20.1 carrier skips the rebind at 0 L
 		// — setAmount(0) empty-flags the stack (FluidStack.updateEmpty) and collapses the kept
 		// filter identity the keepFilter state exists to preserve (task
-		// p12-barrel-keepfilter-logistics). The upstream rebind at 0 was loss-free (no empty
+		// barrel-keepfilter-logistics). The upstream rebind at 0 was loss-free (no empty
 		// flag on a 1.7.10 FluidStack); mAmount stays the authoritative amount either way.
 		if (mFluid != null && mAmount > 0) mFluid.setAmount(bindInt(mAmount));
 		return mFluid;
@@ -385,7 +385,7 @@ public class FluidTankGT implements IFluidTank {
 	 * just the amount). The W1 port added {@code || mFluid.isEmpty()} for the 1.20.1 empty
 	 * flag; that collapsed the keepFilter state ({@code mFluid != null, mAmount == 0}) into
 	 * "empty", so a refill ADOPTED any fluid instead of gating on the kept filter — task
-	 * p12-barrel-keepfilter-logistics restores the upstream verdict. The state is only
+	 * barrel-keepfilter-logistics restores the upstream verdict. The state is only
 	 * reachable under {@code mPreventDraining} (every other path ends in setEmpty's null).
 	 */
 	public boolean isEmpty() {
@@ -402,7 +402,7 @@ public class FluidTankGT implements IFluidTank {
 	 * through the raw fluid when the stored stack is empty-flagged (the keepFilter 0-amount
 	 * state): {@code isFluidEqual} collapses it to Fluids.EMPTY on both sides and would
 	 * answer false for the very identity this state exists to keep (task
-	 * p12-barrel-keepfilter-logistics). A non-empty stored stack takes the plain
+	 * barrel-keepfilter-logistics). A non-empty stored stack takes the plain
 	 * {@code isFluidEqual} path, bit-identical to the W1 behaviour.
 	 */
 	public boolean contains(@Nullable FluidStack aFluid) {

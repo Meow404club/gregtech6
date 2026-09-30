@@ -6,7 +6,7 @@ import gregtech6.registry.GTMultiBlocks;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Bedrock Mining Drill controller block (task p37-bedrock-drill) — the concrete
+ * The Bedrock Mining Drill controller block (task bedrock-drill) — the concrete
  * {@link GTMultiBlockControllerBlock} mounting the drill BET (the GTVonDaGraaggBlock
  * minimal form: everything visual/behavioural is base-owned FACING + FORMED, this class
  * only mounts the BET; the machine runs headless — the lubricant/fluid/output faces ride

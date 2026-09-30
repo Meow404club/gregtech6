@@ -22,7 +22,7 @@ import gregtech6.block.stone.StoneVariant;
 import gregtech6.registry.GTStoneBlocks;
 
 /**
- * The Chisel book pour (task p19-chisel-recipes): the three upstream sources in upstream
+ * The Chisel book pour (task chisel-recipes): the three upstream sources in upstream
  * order — the RM.java:470 stonetypes line (17 STONE→CHISL rows), the RM.java:507-518
  * bricks line (17 :508-shape BRICK→CRACK rows, the :514 else-branch zero-hit) and the
  * Loader_Recipes_Vanilla.java:772-773 vanilla pair — plus the variant-tag carrier

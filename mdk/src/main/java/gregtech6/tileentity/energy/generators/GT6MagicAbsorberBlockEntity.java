@@ -25,7 +25,7 @@ import gregtech6.registry.GT6MagicAbsorbers;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Magic Field Absorber (task p32-magic-absorber) — the 1.20.1 counterpart of
+ * The Magic Field Absorber (task magic-absorber) — the 1.20.1 counterpart of
  * {@code MultiTileEntityMagicFieldAbsorber} (:46-121, upstream id 10180, the
  * Loader_MultiTileEntities.java:1005 "Magical Energy Production" row): a single-block
  * generator with NO fuel and NO inventory — it reads the trophy sitting on its TOP face
@@ -72,7 +72,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  *
  * <p><b>The metering face</b> (gt.last_out, NOT upstream): the cumulative ACCEPTED mass —
  * {@code emitEnergyToNetwork} returns the packets consumers actually took (the Root gate
- * counts white-burned offers as used, the p32-qu-laser live lesson), and this BE books
+ * counts white-burned offers as used, the qu-laser live lesson), and this BE books
  * {@code tUsed × |size|} only when that return is positive. The /gt6magicabsorber
  * stat|reset command reads/resets it — the GT6LaserConverterBlockEntity accounting form.
  */

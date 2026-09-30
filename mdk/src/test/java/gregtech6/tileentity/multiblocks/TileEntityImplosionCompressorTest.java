@@ -24,7 +24,7 @@ import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.RecipeMap;
 
 /**
- * The Implosion Compressor offline acceptance (task p31-implosion): the pattern
+ * The Implosion Compressor offline acceptance (task implosion): the pattern
  * declaration pins (the 26 dense-wall cells + the hollow air centre at (0, +1, 0) —
  * the shell centred front+up of the controller, the MultiTileEntityImplosionCompressor
  * :46-60 geometry IDENTICAL to the Autoclave except the wall id), the :1228

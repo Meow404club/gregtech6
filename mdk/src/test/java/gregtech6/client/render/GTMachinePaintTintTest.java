@@ -1,7 +1,7 @@
 /*
  * Offline tests for the machine paint tint value mapping: the pure tintARGB seam over the
- * PAINT model data (task p21-paintable-tint-render) and the ROW MATERIAL fallback (task
- * p27-machine-material-tint-fidelity). ModelData/ModelProperty are pure data classes (Guava
+ * PAINT model data (task paintable-tint-render) and the ROW MATERIAL fallback (task
+ * machine-material-tint-fidelity). ModelData/ModelProperty are pure data classes (Guava
  * only), offline-testable per GTOfflineRenderTestBase; the world-side BlockColor lambda is
  * covered on its null-guard arms (a live Level+BE needs a running client — the RCON visual
  * chain is the optional live check, not a gate).
@@ -110,7 +110,7 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 	}
 
 	/**
-	 * Task p38-c3-kitchen-tint-shape: the kitchen carriers ride the combined dispatch —
+	 * Task c3-kitchen-tint-shape: the kitchen carriers ride the combined dispatch —
 	 * the tintindex-0 faces resolve the carrier material (the #7 reservation closing), the
 	 * value math being the already-pinned fRGBaSolid derivation. The census blocks replay
 	 * the registration payloads (the material column is what this pins).
@@ -184,7 +184,7 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 	}
 
 	/**
-	 * Task r3-beehive-tint (issue #15): the Bumbliary pair rides the combined dispatch —
+	 * Task beehive-tint (issue #15): the Bumbliary pair rides the combined dispatch —
 	 * the row NBT_MATERIAL of the upstream pair (ANY.Wood :2222; MT.StainlessSteel :2223,
 	 * 200,200,220), the material-less hive block staying the null gate (its worldgen family
 	 * colour rides the BE PAINT model data, not a material). The seam resolves MT.Wood
@@ -231,7 +231,7 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 	}
 
 	/**
-	 * Task r8-tex-pipe-textures: the pipe connector carriers ride the combined dispatch —
+	 * Task tex-pipe-textures: the pipe connector carriers ride the combined dispatch —
 	 * the fluid family through the MT.Wood gate (the addFluidPipes 26000 NBT_MATERIAL row,
 	 * Loader :1846), the item family through its loader line's MT argument
 	 * (MultiTileEntityPipeItem :76-82 registers NBT_MATERIAL + NBT_COLOR =
@@ -273,7 +273,7 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 	}
 
 	/**
-	 * Task p32-render-embeddium-tint: the tint BAKED into the baked-quad vertex data —
+	 * Task render-embeddium-tint: the tint BAKED into the baked-quad vertex data —
 	 * per-channel {@code (colour * tint + 255) >> 8} over the COLOR slot (stride 8, slot
 	 * 3) of all four vertices, every other slot byte-identical. The retinted copies carry
 	 * tintIndex -1 (set by the wrapper), so the runtime BlockColor can never double-multiply.

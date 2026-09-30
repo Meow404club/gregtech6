@@ -37,7 +37,7 @@ import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
 
 /**
- * {@code /gt6blade} — the blade-tool acceptance command (task p29-w5-t2-blade-six;
+ * {@code /gt6blade} — the blade-tool acceptance command (task w5-t2-blade-six;
  * card-local in command/ like GT6DigToolCommand — the fake-player channel: the RCON
  * arms drive the EXACT item surfaces the keyboard player hits, the "the command IS the
  * acceptance channel" ruling):
@@ -54,7 +54,7 @@ import gregapi.oredict.OreDictMaterial;
  *     durability payment per log); the wide-radius report names the drops AND the tool
  *     damage — the whole-tree leg asserts the felled count AND the payment = the log
  *     count.</li>
- * <li>{@code stats <tool> <material>} (task p31-blade-ladder) — the material-ladder
+ * <li>{@code stats <tool> <material>} (task blade-ladder) — the material-ladder
  *     arm: builds a stack, attaches the {@link GT6ToolStats#KEY} identity THE RECIPE WAY
  *     (primary = the material, secondary = {@code mHandleMaterial}, the shape
  *     {@code durabilityMultiplier()}) through {@link GT6ToolLadder#stampIdentity}, then reads the
@@ -115,7 +115,7 @@ public final class GT6BladeToolCommand {
 	}
 
 	/**
-	 * The material-ladder arm (task p31-blade-ladder): identity attached the recipe way,
+	 * The material-ladder arm (task blade-ladder): identity attached the recipe way,
 	 * the item surfaces read BACK — the per-material 伤害/耐久/tint verdict in one line.
 	 */
 	private static int stats(CommandSourceStack aSource, String aTool, String aMaterial) {

@@ -1,5 +1,5 @@
 /**
- * Offline tests for task p25-food-can-row0: the small bending cylinder item
+ * Offline tests for task food-can-row0: the small bending cylinder item
  * ({@link GT6BendingCylinderSmallItem}, the GT6FileItem form with the census OFF) and
  * the REAL crafting-loss channel over the FOUR tool letters the two new crafting rows
  * consume — 's' (saw), 'f' (file), 'h' (hammer), 'o' (the bending cylinder).
@@ -60,7 +60,7 @@ public class BendingCylinderSmallTest {
 		// the full material flood — MT's class-load only registers NULL, the reg0000..reg0038
 		// batches ride MT.init() (the DigLadderTest boot shape). The saw/hammer ladder
 		// fallback reads MT.Steel at getMaxDamage time, and an isolated test JVM has no
-		// other class whose @BeforeAll could flood the table first (the r7-fix-three-npe
+		// other class whose @BeforeAll could flood the table first (the fix-three-npe
 		// NPE trap).
 		MT.init();
 	}
@@ -75,7 +75,7 @@ public class BendingCylinderSmallTest {
 	@Test
 	public void registrationIsThePinnedId() {
 		assertEquals(rl("bending_cylinder_small"), GT6Tools.BENDING_CYLINDER_SMALL.getId());
-		// row 9 since task p29-w5-t1-dig-six appended the six dig rows 10-15 (the
+		// row 9 since task w5-t1-dig-six appended the six dig rows 10-15 (the
 		// table-tail append discipline — the "last row" pin was a point-in-time face)
 		assertSame(GT6Tools.BENDING_CYLINDER_SMALL, GT6Tools.TAB_TABLE.get(9),
 				"the cylinder rides the Tools tab at row 9");

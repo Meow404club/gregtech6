@@ -20,7 +20,7 @@
 package gregtech6.util;
 
 /**
- * The shared side-algebra lookup tables (task p14-machine-fluid-face ①) — the CS.java
+ * The shared side-algebra lookup tables (task machine-fluid-face ①) — the CS.java
  * translations every side-masked machine face reads. Upstream keeps both tables in
  * {@code CS} (gregapi/data/CS.java); the root gregapi port carries no tables yet and the
  * per-class private copies (MultiBlockFluidHandler.java:64 FACING_ROTATIONS,

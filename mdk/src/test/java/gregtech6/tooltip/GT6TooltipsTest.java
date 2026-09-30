@@ -15,7 +15,7 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import org.junit.jupiter.api.Test;
 
 /**
- * The registry pure-function gate (task r8-tooltip-infra acceptance ①): row order, key
+ * The registry pure-function gate (task tooltip-infra acceptance ①): row order, key
  * shape and the LH.Chat→ChatFormatting palette pinned as executable assertions (the
  * mapping table is gregapi/data/LH.java:685-710 verbatim — {@link GT6TooltipStyle}
  * javadoc). Plain JVM, no Bootstrap: the registry, the line record and
@@ -45,7 +45,7 @@ public class GT6TooltipsTest {
 		// MultiTileEntityBoilerTank.addToolTips :95-109 = rows 1-12 (:96-:107) + the super
 		// facing row (TileEntityBase09FacingSingle.java:61, wrench :82) = row 13 — the row
 		// indexes ARE the upstream row positions; row 14 = the port-authored annex (task
-		// r10-debt-boiler-heat-tip, the issue #17 output-condition line)
+		// debt-boiler-heat-tip, the issue #17 output-condition line)
 		assertEquals(14, tRows.size(), "the boiler family = the 13-row upstream table + the .14 port-authored annex");
 		for (int i = 0; i < 13; i++) {
 			assertEquals("gt6.tooltip.boiler." + (i + 1), tRows.get(i).key(), "row " + (i + 1) + " rides its upstream position");
@@ -74,7 +74,7 @@ public class GT6TooltipsTest {
 		// MultiTileEntityLargeBoiler.addToolTips :150-167 = rows 1-15 (the STRUCTURE block
 		// :151-155 over the :143-146 keys) + TileEntityBase10MultiBlockBase.java:100-101 =
 		// rows 16-17 + the facing row :61 = row 18 — row 19 = the port-authored annex
-		// (task r10-debt-boilerlarge-tip, the issue #17 output-condition sister line)
+		// (task debt-boilerlarge-tip, the issue #17 output-condition sister line)
 		assertEquals(19, tRows.size(), "the boiler_large family = the 18-row upstream table + the .19 port-authored annex");
 		for (int i = 0; i < 18; i++) {
 			assertEquals("gt6.tooltip.boiler_large." + (i + 1), tRows.get(i).key(), "row " + (i + 1) + " rides its upstream position");
@@ -131,7 +131,7 @@ public class GT6TooltipsTest {
 
 	@Test
 	public void multiblockTablePinsTheBaseChainRows() {
-		// task r8-tooltip-multiblock-generator — TileEntityBase10MultiBlockBase.java:99-103
+		// task tooltip-multiblock-generator — TileEntityBase10MultiBlockBase.java:99-103
 		// + the TileEntityBase09FacingSingle.java:61 super tail, in upstream order
 		List<GT6Tooltips.GT6TooltipLine> tRows = GT6Tooltips.REGISTRY.get("multiblock");
 		assertEquals(3, tRows.size(), "the multiblock family = the three family-constant base rows");
@@ -180,7 +180,7 @@ public class GT6TooltipsTest {
 	@Test
 	public void unregisteredFamilyAppendsNothing() {
 		List<Component> tTooltip = new ArrayList<>();
-		// the zero-row contract (task r8-tooltip-wire-pipe-sensor rebase): sensor/wire/
+		// the zero-row contract (task tooltip-wire-pipe-sensor rebase): sensor/wire/
 		// pipe_fluid/pipe_item tabled by T4/T5 — the walk-on families are the ones still
 		// waiting for their cards (machine = the T3-side remainder; wire_redstone and
 		// wire_laser = the declared-unregistered wire siblings)

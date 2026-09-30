@@ -1,7 +1,7 @@
 package gregtech6.worldgen;
 
 /**
- * The upstream nether noise port (task p31-nether-lens-end-yield) — the
+ * The upstream nether noise port (task nether-lens-end-yield) — the
  * {@code gregtech.worldgen.NoiseGenerator} cellular (Worley-form) hash verbatim, kept
  * vanilla-free so the offline tests drive it headless. Used by the three nether forms:
  * NetherQuartz (WorldgenNetherQuartz.java:48-55, per-column Y draws), NetherCrystals

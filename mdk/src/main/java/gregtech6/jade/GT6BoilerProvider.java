@@ -15,7 +15,7 @@ import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 
 /**
- * GT6 锅炉族 Jade 显示面（task r5-jade-boiler 建，r8-jade-redesign-core 重设计）：单方块
+ * GT6 锅炉族 Jade 显示面（task jade-boiler 建，jade-redesign-core 重设计）：单方块
  * 锅炉罐 {@link GTBoilerTankBlockEntity} 与大型锅炉 {@link TileEntityLargeBoiler} 同一
  * provider 同一格式——两 BE 无共享内容接口（各自直接 implements ITileEntityEnergy、字段形
  * 同构 mEnergy/mCapacity/mOutput/mEfficiency/mTanks）→ {@code appendServerData} 双 concrete

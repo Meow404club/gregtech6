@@ -3,7 +3,7 @@ package gregtech6.client.render;
 import java.util.Locale;
 
 /**
- * The immutable oven render snapshot (task p9-render-c-oven-overlay) — the
+ * The immutable oven render snapshot (task render-c-oven-overlay) — the
  * {@link GTRenderSnapshot} record {@link gregtech6.tileentity.machines.TileEntityOven}
  * hands to the render thread through {@link GTModelProperties#OVEN_SNAPSHOT}. It is the
  * read-only projection of the BE's {@code mActive}/{@code mRunning} fields taken at the
@@ -12,7 +12,7 @@ import java.util.Locale;
  * same fields via {@code applyVisualState}, and this snapshot is a second reader of the
  * identical bits, never a second write path).
  *
- * <p>Snapshot contract (ADR 2026-09-01-p9-render-c-oven-overlay ④): deeply immutable,
+ * <p>Snapshot contract (ADR 2026-09-01-render-c-oven-overlay ④): deeply immutable,
  * self-contained, never holds a {@code net.minecraft.world.level.block.entity.BlockEntity}
  * (the render thread may read it on a chunk worker thread while the tick thread mutates
  * the live BE — ModelData.java:28 iron law). Continuous quantities (mProgress, the GUI's

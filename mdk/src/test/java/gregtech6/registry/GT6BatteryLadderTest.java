@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The battery LADDER census (task p29-w4-battery-storage acceptance ① and ⑤-half): the 37
+ * The battery LADDER census (task w4-battery-storage acceptance ① and ⑤-half): the 37
  * capacity-ladder rows VERBATIM (every literal pinned independently — the card-① density
  * lesson: the registry table and this test must disagree loudly when a transcription slips,
  * so the expected values here are typed out, never derived from V[i]×mult), the type
@@ -174,7 +174,7 @@ public class GT6BatteryLadderTest extends GTOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the ZPM row (task p36-energy-zpm-dechargers — the Loader :1103 single-item face)
+	// the ZPM row (task energy-zpm-dechargers — the Loader :1103 single-item face)
 	// ---------------------------------------------------------------------------
 
 	/** The ZPM fixture item (the row-driven band; registered through the offline fixture seam). */

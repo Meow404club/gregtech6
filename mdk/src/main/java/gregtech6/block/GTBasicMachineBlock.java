@@ -32,7 +32,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 
 /**
- * The basic-machine block (task p7-basicmachine-family ③) — the GTOvenBlock shape with the
+ * The basic-machine block (task basicmachine-family ③) — the GTOvenBlock shape with the
  * cover machinery and the wrench-rotation layer cut (the machine family registers no cover
  * surface and the side-configuration stays a carrier concern): BlockState carries the whole
  * visual payload — FACING (the upstream byte mFacing, horizontal subset) plus ACTIVE/RUNNING,
@@ -43,13 +43,13 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  *
  * <p>One class, many registered blocks (Shredder/Crusher/Lathe + the Dryer ladder) — each
  * instance resolves its own BlockEntityType through the supplier captured at registration
- * (ADR-P3-1: the ticker asks the live instance every tick). Since task p14-dryer-family a
+ * (ADR-P3-1: the ticker asks the live instance every tick). Since task dryer-family a
  * block may carry a {@link MachineRow} — the block-carrier projection of one upstream
  * aRegistry.add line (the GT6Boilers BoilerRow shape): the tier ladder is then data on the
  * placed BlockState's block (the factory reads {@link #row()}), not a tierOf dispatch. The
  * legacy three families stay row-less (the 2-arg constructor); since task
- * p26-mui-a-open-chain their use() dispatches the ModularUI chain
- * ({@link GT6MuiMachine#tryOpen}) — since task p26-mui-row-menu-null-dispatch the dispatch
+ * mui-a-open-chain their use() dispatches the ModularUI chain
+ * ({@link GT6MuiMachine#tryOpen}) — since task mui-row-menu-null-dispatch the dispatch
  * key is the MenuType supplier itself ({@link #opensModularUi}): every machine WITHOUT a
  * bound gt6:* menu opens ModularUI (the batch-A ruling "new machines default to
  * ModularUI", the W1 row form menu = null), the machines WITH one keep the vanilla menu
@@ -66,7 +66,7 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 
 	/**
 	 * One registration row — the block-carrier projection of one upstream aRegistry.add
-	 * line (task p14-dryer-family, the GT6Boilers BoilerRow record precedent). Every column
+	 * line (task dryer-family, the GT6Boilers BoilerRow record precedent). Every column
 	 * of the Dryer rows (Loader_MultiTileEntities.java:1477-1480) has a named field:
 	 *
 	 * @param path               the gt6 registry path (the blockstate/model/lang key tail)
@@ -74,7 +74,7 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	 * @param matDisplay         the row material local name (MT.DATA.Heat_T[1..4] = Steel/Invar/
 	 *                           Titanium/Tungsten Carbide, MT.java:3689), verbatim
 	 * @param material           the row material — the upstream NBT_MATERIAL column (task
-	 *                           p27-machine-material-tint-fidelity): every upstream basic-machine
+	 *                           machine-material-tint-fidelity): every upstream basic-machine
 	 *                           row carries it and the 1.7.10 registration derives the render
 	 *                           colour from it (MultiTileEntityClassContainer.java:51 —
 	 *                           {@code hasKey(NBT_MATERIAL) && !hasKey(NBT_COLOR) → NBT_COLOR =
@@ -93,7 +93,7 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	 *                           four variants pick the Kinetic/Heat_T material words
 	 *                           (MT.DATA.Heat_T[1..4] here, MT.java:3689-3690); voltage
 	 *                           names (LV/MV/HV/EV) belong to the Electric_T motor classes
-	 *                           only (task p27-machine-energy-display-fix javadoc ruling)
+	 *                           only (task machine-energy-display-fix javadoc ruling)
 	 * @param parallel           the NBT_PARALLEL column (8/16/32/64 — clamped at :130)
 	 * @param parallelDuration   the NBT_PARALLEL_DURATION column (T on all four rows)
 	 * @param recipes            the NBT_RECIPEMAP column as a supplier — RM.Drying is the
@@ -114,15 +114,15 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	 * @param menu               the port-owned MenuType supplier (null = the menu-less
 	 *                           carrier: use() dispatches the ModularUI chain instead of
 	 *                           constructing a vanilla menu — task
-	 *                           p26-mui-row-menu-null-dispatch generalized the
-	 *                           p26-mui-a-open-chain inert gate into the MUI dispatch; a
+	 *                           mui-row-menu-null-dispatch generalized the
+	 *                           mui-a-open-chain inert gate into the MUI dispatch; a
 	 *                           non-null supplier keeps the vanilla menu path, the
 	 *                           dryer/canner registration is the live example)
 	 * @param cheapOverclocking  the NBT_CHEAP_OVERCLOCKING column (T on all four rows — the
 	 *                           port overclock loop :773 runs unconditionally, "no config
 	 *                           source, always T")
 	 * @param maxMeltingPointK   the port-owned melting-gate column (task
-	 *                           p28-c-ulv-machine-ladder, NO upstream NBT key — the ULV
+	 *                           c-ulv-machine-ladder, NO upstream NBT key — the ULV
 	 *                           tier extension is the declared-deviation face): non-null
 	 *                           arms the {@code TileEntityBasicMachine.checkRecipe} input
 	 *                           melting-point hook (any input material stack with
@@ -132,7 +132,7 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	 *                           Smeltery :194 / Mold :189 container semantics
 	 *                           re-expressed as a machine gate. Rides the BE through
 	 *                           {@code GTMachines.applyRow} (the mask-carrier seam).
-	 * @param ulvVoltage         the voltage-ladder marker (task p28-c-ulv-machine-ladder,
+	 * @param ulvVoltage         the voltage-ladder marker (task c-ulv-machine-ladder,
 	 *                           the row-level counterpart of the upstream NBT_INPUT
 	 *                           column — the port folds NBT_INPUT into {@code tier}
 	 *                           through TIER_INPUTS, so the ULV rows need the explicit
@@ -142,7 +142,7 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	 *                           TIER_INPUTS[tier]; false = the legacy material-ladder
 	 *                           behaviour, byte-identical.
 	 * @param efficiency         the upstream NBT_EFFICIENCY column (task
-	 *                           p29-w1-rm-maps-scaffold; upstream default {@code short
+	 *                           w1-rm-maps-scaffold; upstream default {@code short
 	 *                           mEfficiency = 10000}, MultiTileEntityBasicMachine.java:96,
 	 *                           the :125 read binds 0..10000): the progress-division
 	 *                           divisor — {@code mMaxProgress = max(1, units(minEnergy ×
@@ -170,7 +170,7 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 			@Nullable Integer efficiency) {
 
 		/**
-		 * The p28-shape 26-arg constructor (every row this wave inherited): null efficiency —
+		 * The shape 26-arg constructor (every row this wave inherited): null efficiency —
 		 * the row carries no NBT_EFFICIENCY key, the BE keeps the :96 default 10000 and the
 		 * progress math stays byte-identical (the zero-drift regression face).
 		 */
@@ -205,7 +205,7 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	private final MachineRow mRow;
 
 	/**
-	 * The composed-name carrier of the row-less tier blocks (task p20-i18n-compose-rows):
+	 * The composed-name carrier of the row-less tier blocks (task i18n-compose-rows):
 	 * a pre-composed name Component the tier registrations supply — the MachineRow carrier
 	 * would drag the MenuType-supplier dispatch semantics onto the tier ladders, so they
 	 * ride this instead (and keep the plain composed name).
@@ -215,7 +215,7 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 
 	/**
 	 * The material carrier of the legacy row-less tier blocks (task
-	 * p27-machine-material-tint-fidelity): the Shredder/Crusher/Lathe ladders keep the
+	 * machine-material-tint-fidelity): the Shredder/Crusher/Lathe ladders keep the
 	 * tierOf dispatch and the 4-arg constructor for their NAMES, but their upstream rows
 	 * carry NBT_MATERIAL like every other family (Loader_MultiTileEntities.java:1294-1309,
 	 * Kinetic_T[1..4]), so the tier registrations hand the row colour source through this
@@ -244,14 +244,14 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 		this(aProperties, aTickerType, aRow, null);
 	}
 
-	/** The tier-ladder form (task p20-i18n-compose-rows): a row-less block whose name is the pre-composed supplier. */
+	/** The tier-ladder form (task i18n-compose-rows): a row-less block whose name is the pre-composed supplier. */
 	public GTBasicMachineBlock(Properties aProperties, Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType,
 			@Nullable MachineRow aRow, @Nullable java.util.function.Supplier<net.minecraft.network.chat.MutableComponent> aComposedName) {
 		this(aProperties, aTickerType, aRow, aComposedName, null);
 	}
 
 	/**
-	 * The material-carrying tier-ladder form (task p27-machine-material-tint-fidelity): the
+	 * The material-carrying tier-ladder form (task machine-material-tint-fidelity): the
 	 * legacy row-less ladders (Shredder/Crusher/Lathe) hand the tier's Kinetic_T material
 	 * through {@code aMaterial} — the block identity carries the render colour source the
 	 * same way the row carriers do through {@link MachineRow#material}.
@@ -268,7 +268,7 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The composed name (task p20-i18n-compose-rows): a row carrier fills its family template
+	 * The composed name (task i18n-compose-rows): a row carrier fills its family template
 	 * over the gt6.row.mat small unit, a tier carrier hands back its pre-composed name, the
 	 * legacy families keep the vanilla atomic-key lookup.
 	 */
@@ -289,7 +289,7 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The block's row material (task p27-machine-material-tint-fidelity) — the colour
+	 * The block's row material (task machine-material-tint-fidelity) — the colour
 	 * source the paint tint falls back to while unpainted and the unpaint() write-back
 	 * restores: the block-side mirror of the upstream NBT_MATERIAL → NBT_COLOR derivation
 	 * (MultiTileEntityClassContainer.java:51). Row carriers read the row column, the
@@ -303,7 +303,7 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The machine-domain material dispatch (task p27-machine-material-tint-fidelity): the
+	 * The machine-domain material dispatch (task machine-material-tint-fidelity): the
 	 * ONE common-code seam the paint tint (world + inventory halves) and the 03 base
 	 * unpaint() consult, over the three block carriers that mirror upstream NBT_MATERIAL
 	 * rows — {@link GTBasicMachineBlock} (the MachineRow families + the Kinetic legacy
@@ -317,14 +317,14 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 		if (aBlock instanceof GTBasicMachineBlock tMachine) return tMachine.material();
 		if (aBlock instanceof GTOvenBlock tOven) return tOven.material();
 		if (aBlock instanceof gregtech6.registry.GT6BurningBoxes.BurningBoxBlock tBox) return tBox.material();
-		// task r3-world-tint-render-type (the C5 boiler clean-up) — the 43f48149b
+		// task world-tint-render-type (the C5 boiler clean-up) — the 43f48149b
 		// burning-box gate form over the boiler rows' NBT_MATERIAL column
 		if (aBlock instanceof gregtech6.registry.GT6Boilers.BoilerTankBlock tBoiler) return tBoiler.material();
 		return null;
 	}
 
 	/**
-	 * The machine default colour of one material (task p27-machine-material-tint-fidelity):
+	 * The machine default colour of one material (task machine-material-tint-fidelity):
 	 * {@code UT.Code.getRGBInt(mMaterial.fRGBaSolid)} (UT.java:1580-1582 over
 	 * OreDictMaterial.java:111) — the exact 1.7.10 registration expression
 	 * (MultiTileEntityClassContainer.java:51), the 0xRRGGBB form the {@code mRGBa} storage
@@ -365,7 +365,7 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
 		// the front TOWARDS the placer (the GT6PlacementFacing canon, task
-		// p28-singleblock-facing-canon) — the same side setFacingFromPlacement writes,
+		// singleblock-facing-canon) — the same side setFacingFromPlacement writes,
 		// so the client prediction and the server pair-write agree (UseOnContext.java:70
 		// getHorizontalDirection = the VIEW direction; the canon is its opposite)
 		return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
@@ -401,8 +401,8 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 			if (opensModularUi(mRow)) {
 				// no gt6:* MenuType bound — the ModularUI chain (the ACT :91 shape, the
 				// BlockEntityUIFactory's own network): the row-less families since task
-				// p26-mui-a-open-chain, the menu-less row carriers since task
-				// p26-mui-row-menu-null-dispatch (the batch-A ruling "new machines default
+				// mui-a-open-chain, the menu-less row carriers since task
+				// mui-row-menu-null-dispatch (the batch-A ruling "new machines default
 				// to ModularUI" — the W1 five families register MachineRow + menu = null)
 				GT6MuiMachine.tryOpen(tServerPlayer, tMachine);
 				return InteractionResult.CONSUME;
@@ -418,8 +418,8 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The MUI dispatch key of {@code use()} (task p26-mui-row-menu-null-dispatch — the
-	 * generalization of the p26-mui-a-open-chain {@code mRow == null} gate): a machine
+	 * The MUI dispatch key of {@code use()} (task mui-row-menu-null-dispatch — the
+	 * generalization of the mui-a-open-chain {@code mRow == null} gate): a machine
 	 * with NO MenuType supplier opens the {@link GT6MuiMachine#tryOpen} chain. That is the
 	 * row-less families (null row) AND the menu-less row carriers (the batch-A machine
 	 * form: {@code MachineRow + menu = null}, the Distillery today, the W1 five families

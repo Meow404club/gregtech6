@@ -16,7 +16,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 /**
- * The client-side wiring of the pipe C-Foam tint (task p25-c-foam-pipe-spray spec ⑤,
+ * The client-side wiring of the pipe C-Foam tint (task c-foam-pipe-spray spec ⑤,
  * ADR-P3-4: card-local {@code @EventBusSubscriber}, Dist.CLIENT). The foam quads carry
  * {@link GTFluidPipeFoamModel#FOAM_TINT_INDEX} and this BlockColor resolves it from the
  * BE's {@link GTModelProperties#PAINT} model data — applyFoam paints the pipe the foam

@@ -5,7 +5,7 @@ import gregapi.tileentity.energy.EnergyTarget;
 import gregapi.tileentity.energy.IEnergyAdjacency;
 
 /**
- * Shared offline fixtures for the dynamo-family tests (task p28-c-dynamo-family-be) — the
+ * Shared offline fixtures for the dynamo-family tests (task c-dynamo-family-be) — the
  * hand-verified row tables (the Loader :946-957 registration columns), the counting FE
  * sink (the {@code storage::receiveEnergy} lambda shape the Flux BE adapts on the live
  * legs) and the one-sided EU adjacency (the southOf fixture shape).
@@ -20,7 +20,7 @@ public final class GT6DynamoBlockEntityTestHarness {
 
 	/**
 	 * The six Electric rows {NBT_INPUT RU, NBT_OUTPUT EU}, VN-ordinal order: the T0 ULV
-	 * extension {8, 8} (task p28-c-ulv-dynamo-row — the DECLARED 1:1 deviation, the
+	 * extension {8, 8} (task c-ulv-dynamo-row — the DECLARED 1:1 deviation, the
 	 * water-wheel chain's last link) then the five upstream rows {32, 22} .. {8192, 5632}
 	 * (Loader :946-950, each exactly 0.6875).
 	 */

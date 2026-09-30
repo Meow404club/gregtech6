@@ -27,7 +27,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 /**
- * The Large Heat Exchanger offline acceptance (task p29-w3-heat-smelter, the
+ * The Large Heat Exchanger offline acceptance (task w3-heat-smelter, the
  * LargeBoilerPatternTest form over the offline fixtures):
  *
  * <p>① the bound pattern is the LITERAL 17-cell expectation (the y0 8-ring of Dense

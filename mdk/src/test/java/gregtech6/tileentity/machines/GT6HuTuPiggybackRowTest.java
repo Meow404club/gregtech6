@@ -22,7 +22,7 @@ import gregtech6.registry.GTMachines;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 
 /**
- * The hu-tu piggyback row acceptance (task p29-w2-hu-tu-piggyback, the OFFLINE half — the
+ * The hu-tu piggyback row acceptance (task w2-hu-tu-piggyback, the OFFLINE half — the
  * {@link GT6EuHuFamiliesRowTest} shape): the seven families pinned to the upstream columns
  * (Loader_MultiTileEntities.java :1576-1579 SteamCracker / :1570-1573 CatalyticCracker /
  * :1651 Coagulator / :1652 Generifier / :1653 Bath / :1655 Autoclave / :1412-1415 Loom),

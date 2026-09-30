@@ -26,7 +26,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
- * The RM.Press static pour — task p26-w1-press-extruder-molds. DECLARED-EMPTY: the row0
+ * The RM.Press static pour — task w1-press-extruder-molds. DECLARED-EMPTY: the row0
  * static-row census of upstream {@code RM.Press} is fully pooled, so this loader pours
  * ZERO rows and {@link GT6RecipeMaps#PRESS} stays an empty list; the map's row0 rows come
  * from the {@code GT6RecipeMapFormingPress} findRecipe dynamic arm (the mold + block

@@ -10,7 +10,7 @@ import gregtech6.tileentity.multiblocks.TileEntityCrucible;
  * The LARGE Steel Crucible controller block (upstream "Large Steel Crucible",
  * Loader_MultiTileEntities.java :1270 — MTE id 17309, hardness == resistance 6.0,
  * NBT_ACIDPROOF F). The concrete {@link GTMultiBlockControllerBlock} of the single-rung
- * material ladder (task p26-crucible-multiblock SPEC ⑤: the 8-material梯 + NBT_DESIGN
+ * material ladder (task crucible-multiblock SPEC ⑤: the 8-material梯 + NBT_DESIGN
  * wall swap defer pool): it mounts the shared MULTIBLOCK_CRUCIBLE_BE and carries the row
  * — the upstream registration NBT (NBT_MATERIAL + NBT_DESIGN wall id + NBT_ACIDPROOF)
  * becomes the row the controller BE reads its wall block and shell material from (the
@@ -26,7 +26,7 @@ public class GTCrucibleControllerBlock extends GTMultiBlockControllerBlock {
 	private final GT6Crucibles.CrucibleRow mRow;
 
 	public GTCrucibleControllerBlock(GT6Crucibles.CrucibleRow aRow, Properties aProperties) {
-		// task r8-tex-multiblockmains — the row's shell material rides the carrier ctor
+		// task tex-multiblockmains — the row's shell material rides the carrier ctor
 		// (the :1270-1277 NBT_MATERIAL columns; the GTLargeBoilerBlock form), so the
 		// two-layer controller model's tintindex-0 body resolves the row colour through
 		// the GTMultiBlockControllerBlock.materialOf gate (the p38-c2 form)

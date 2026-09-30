@@ -1,5 +1,5 @@
 /**
- * Offline tests for task p25-tool-hammer-wrench: the hard hammer + wrench pair (the
+ * Offline tests for task tool-hammer-wrench: the hard hammer + wrench pair (the
  * crafting-tool items), their ToolAction/dispatch-id pins, the crafting-loss seam (the
  * GT6FileItem.craftRemaining static-seam reuse) and the tag faces the recipe rows
  * consume.
@@ -56,7 +56,7 @@ public class HammerWrenchTest {
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
-		// task p31-machine-ladder: the ladder getMaxDamage read walks the GT.ToolStats
+		// task machine-ladder: the ladder getMaxDamage read walks the GT.ToolStats
 		// fallback (GT6ToolStats.of(MT.Steel, ...)) — the material flood must be live
 		// (the DigLadderTest boot shape; MT class-load alone registers only NULL).
 		gregapi.data.MT.init();
@@ -156,7 +156,7 @@ public class HammerWrenchTest {
 	// ------------------------------------------------------- the zero-world-arm pins
 
 	/**
-	 * The zero-world-interaction surface (card spec ⑥), EVOLVED by task p30-pool-prospector:
+	 * The zero-world-interaction surface (card spec ⑥), EVOLVED by task pool-prospector:
 	 * the WRENCH still may not declare a {@code useOn} override (the wrench pool ruling ②
 	 * stands); the HAMMER half of the pin was the p25 pool statement the prospector card
 	 * came to collect — the hammer now carries the SECOND Behavior_Tool arm

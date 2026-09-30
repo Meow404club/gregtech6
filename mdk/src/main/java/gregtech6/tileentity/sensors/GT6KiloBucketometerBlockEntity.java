@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 /**
- * The Kilo-Bucket-O-Meter Sensor (task p34-sensors-trivial-14 row ⑨) — the port of
+ * The Kilo-Bucket-O-Meter Sensor (task sensors-trivial-14 row ⑨) — the port of
  * MultiTileEntityKiloBucketometer.java:29-56: the same tank census at the
  * CUBIC-DECAMETER grain ({@code / 1000000}, :32-39/:44-48). Upstream's world-fluid arm
  * is ABSENT on this class verbatim (only the kilobucketometer body has no

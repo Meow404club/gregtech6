@@ -44,7 +44,7 @@ import gregtech6.registry.GT6Anvils;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Anvil — the zero-energy manual hammering block (task p28-c-anvil), the port of the
+ * The Anvil — the zero-energy manual hammering block (task c-anvil), the port of the
  * upstream {@code MultiTileEntityAnvil} (tmp/gt6-1.7.10 .../tools/MultiTileEntityAnvil
  * .java:62-430), shared over the Stone + Blackstone rows (Loader_MultiTileEntities.java
  * :2185-2186, one BE class — the ADR-P3-1 shared-BET multi-mount; the rows differ ONLY in

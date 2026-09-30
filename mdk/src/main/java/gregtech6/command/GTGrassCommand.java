@@ -27,7 +27,7 @@ import gregtech6.item.spraycan.GTSprayCanItem;
 import gregtech6.registry.GT6SprayCans;
 
 /**
- * {@code /gt6grass} — the grass-family acceptance command home (task p24-grass-block, the
+ * {@code /gt6grass} — the grass-family acceptance command home (task grass-block, the
  * GTBurnerCommand template). Game-bus listener, self-contained per ADR-P3-4. This port
  * has no player-click RCON seam, so the chain drives the spray-can ROUTE directly — the
  * same code face the {@code GTSprayCanItem.useOn} :216-221 server half runs:

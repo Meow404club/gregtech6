@@ -1,6 +1,6 @@
 /**
- * The client param table (task p9-wire-family-w2): 620 electric family paths + 6 redstone
- * rows (task p11-wire-brightness) + 1 laser row (task p11-wire-fiber-texture) + 2 legacy
+ * The client param table (task wire-family-w2): 620 electric family paths + 6 redstone
+ * rows (task wire-brightness) + 1 laser row (task wire-fiber-texture) + 2 legacy
  * anchors, each carrying its row's texture set, insulated form and PX_P diameter — the
  * dispatch fuel {@link GTWireClientListener} feeds the bake replacement. Spot rows pin the
  * set census per form (bare wires AND cables of one row share the set — the insulation is
@@ -45,7 +45,7 @@ public class GTWireClientParamsTest {
 
     @Test
     public void redstoneRowsCarryTheElectricForm() {
-        // task p11-wire-brightness — the six rows (3 materials x wire/cable), no size ladder,
+        // task wire-brightness — the six rows (3 materials x wire/cable), no size ladder,
         // so the registry names carry no _gt tail (GTWireSpecs.registryName).
         for (String tPath : new String[] {"wire_red_alloy", "cable_red_alloy", "wire_signalum",
                 "cable_signalum", "wire_lumium", "cable_lumium"}) {

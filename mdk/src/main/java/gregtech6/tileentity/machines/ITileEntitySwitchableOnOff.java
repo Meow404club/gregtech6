@@ -3,7 +3,7 @@ package gregtech6.tileentity.machines;
 /**
  * A machine whose ON/OFF state an external controller (the redstone machine switch
  * cover) may flip — 1.20.1 port of gregapi/tileentity/machines/
- * ITileEntitySwitchableOnOff.java (38 lines, task p10-cover-controller-redstone).
+ * ITileEntitySwitchableOnOff.java (38 lines, task cover-controller-redstone).
  *
  * <p>The upstream {@code ITileEntityUnloadable} super-interface folds away (the same
  * trim the multiblock controller interface recorded — every 1.20.1 BlockEntity carries

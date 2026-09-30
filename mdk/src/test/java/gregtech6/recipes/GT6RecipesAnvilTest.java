@@ -27,7 +27,7 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
- * The Anvil recipe pour (task p28-c-anvil, acceptance ⑤ "两 RM 图行匹配"):
+ * The Anvil recipe pour (task c-anvil, acceptance ⑤ "两 RM 图行匹配"):
  * <ul>
  * <li>the two maps register under their upstream internal names with the RM.java:118-120
  *     constants (items 2/2/2, fluids 0/0/0, MIN 0, AMP 1) and lowercase GUI paths;</li>

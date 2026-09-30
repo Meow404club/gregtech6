@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.items.bees.GT6Bumbles;
 
 /**
- * The Bumbliary acceptance pins (task p33-bees-lv3-b-bumbliary): the breeding state
+ * The Bumbliary acceptance pins (task bees-lv3-b-bumbliary): the breeding state
  * machine (the no-drone 600 window / the 1200 pairing window / the offspring-count
  * formula / the same-species mutation copy / the cross-species four-way split), the
  * bumbleCombine pairing-table reconciliation (the :378-437 nested switch as data), the
@@ -227,7 +227,7 @@ class GT6BumbliaryBlockEntityTest {
 		assertNull(GT6Bumbles.speciesOf(9990), "the containment guard stays honest");
 	}
 
-	// ------------------------------------- the penalty + the aggro walk (task p34-bumbliary-gui)
+	// ------------------------------------- the penalty + the aggro walk (task bumbliary-gui)
 
 	@Test
 	void thePenaltyStompsTheWindow() {

@@ -1,5 +1,5 @@
 /**
- * The kitchen shape + occlusion + material census (task p38-c3-kitchen-tint-shape): the
+ * The kitchen shape + occlusion + material census (task c3-kitchen-tint-shape): the
  * kitchen family rendered sub-cube hollow-tub element models (GT6BlockStates.addKitchen)
  * over the DEFAULT full-cube shape and bare properties — the #1 oversized selection box
  * and the #9 occlusion X-ray compound (canOcclude defaults true, BlockBehaviour.java:911;

@@ -27,7 +27,7 @@ import gregtech6.recipes.tree.MaterialTreeLayout.Rect;
 
 /**
  * The material-tree category of the JEI leg (task debt-material-tree-b, ruling
- * 2026-09-26-debt-material-tree; v2 node-graph face task r8-mattree-v2-nodes) — the modern
+ * 2026-09-26-debt-material-tree; v2 node-graph face task mattree-v2-nodes) — the modern
  * counterpart of the GTCEu ore_processing_diagram category (GTJEIPlugin.java:65-66), built
  * on THIS port's dynamic derivation instead of their static hand-drawn widget: every slot
  * position comes from the shared {@link MaterialTreeDisplay} table-driven layout, every

@@ -37,7 +37,7 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The p32-qu-scanner-replicator offline pins (the card acceptance ③ + the runtime-chain
+ * The qu-scanner-replicator offline pins (the card acceptance ③ + the runtime-chain
  * face): ① the molten-redstone six ride the replicator map at the Loader_Recipes_Other
  * .java:941-946 constants verbatim (L = 144, CS.java:129), ② the scanner synthesis writes
  * the gt.replicator.data + tier-3 carrier through a one-time unbuffered row at

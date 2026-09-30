@@ -27,7 +27,7 @@ import gregtech6.registry.GTWireSpecs;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The ZPM Decharger offline tests (task p36-energy-zpm-dechargers): the two-row pin (the
+ * The ZPM Decharger offline tests (task energy-zpm-dechargers): the two-row pin (the
  * :1000-:1001 columns — meta 11170/11171, the QU in lane, the QU/EU out lanes, V[7]
  * packets, 1 slot), the ZPM slot gate positive+negative (the :36-:37 — the artifact
  * enters, the EU/LU battery ladders of the SAME IItemEnergy language fail), the split
@@ -93,7 +93,7 @@ public class GT6ZpmDechargerTest extends GTOfflineTestBase {
 		return tStack;
 	}
 
-	/** r10-debt-break-drops — the GTEntityBlock drop probe reaches the decharger's own ZPM-gated carrier through the inherited accessor (upstream 05Inventories.breakBlock :153-171 would scatter it). */
+	/** debt-break-drops — the GTEntityBlock drop probe reaches the decharger's own ZPM-gated carrier through the inherited accessor (upstream 05Inventories.breakBlock :153-171 would scatter it). */
 	@Test
 	public void breakDropProbeReachesTheInventory() throws Exception {
 		GT6ZpmDechargerBlockEntity tDech = electricDecharger();

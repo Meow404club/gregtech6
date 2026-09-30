@@ -7,7 +7,7 @@ import net.minecraft.util.StringRepresentable;
 import gregtech6.registry.GTStoneBlocks;
 
 /**
- * The 16 stone variants of one GT6 stone family (task p19-stoneblocks-registry) — the
+ * The 16 stone variants of one GT6 stone family (task stoneblocks-registry) — the
  * upstream 16-meta universe of the single-Block BlockStones family, re-expressed as an
  * {@link EnumProperty} value set. Declared order IS the upstream meta order: the enum
  * ordinal is the 1.7.10 metadata value (BlockStones.java:71-77 — STONE=0, COBBL=1, MCOBL=2,
@@ -19,7 +19,7 @@ import gregtech6.registry.GTStoneBlocks;
  * <p>The serialized name is the upstream texture folder segment lower-cased
  * (BlockStones.java:93-108 icon names STONE/COBBLE/COBBLE_MOSSY/BRICKS/.../SQUARE_BRICKS
  * — {@link #iconSegment()} recovers the exact PNG path segment for the render card's
- * asset borrow, p19-stoneblocks-render). The lang suffix composition is the upstream
+ * asset borrow, stoneblocks-render). The lang suffix composition is the upstream
  * LH.add block verbatim (BlockStones.java:117-132, {@code getUnlocalizedName()+".N"} keys
  * split into {@code block.gt6.<stone>.<variant>} keys).
  */
@@ -69,7 +69,7 @@ public enum StoneVariant implements StringRepresentable {
 	}
 
 	/**
-	 * The variant's display template key (task p20-i18n-compose-rows, the B-wave lang ruling):
+	 * The variant's display template key (task i18n-compose-rows, the B-wave lang ruling):
 	 * {@code gt6.stone.variant.<snake>} — ONE position-param template per variant (the stone
 	 * name rides the {@code %s} slot as the {@code gt6.material.<snake>} small unit), replacing
 	 * the 272 pre-installed per-(stone, variant) full strings the old {@code compose} fed. The

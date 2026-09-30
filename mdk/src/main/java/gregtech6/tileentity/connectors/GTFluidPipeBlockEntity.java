@@ -39,7 +39,7 @@ import gregtech6.util.UT6;
 
 /**
  * 1.20.1 counterpart of gregapi/tileentity/connectors/MultiTileEntityPipeFluid.java
- * (533 lines) — the trimmed direct translation (task p4-fluid-pipes spec ③).
+ * (533 lines) — the trimmed direct translation (task fluid-pipes spec ③).
  *
  * <p>The GT6 fluid transport semantics are kept verbatim: there is NO network object —
  * every pipe segment is its own tank+ pump that pushes fluid to its neighbours every few
@@ -67,12 +67,12 @@ import gregtech6.util.UT6;
  * <li>capability — the side-wrapped {@link SideFluidHandler} via
  *     {@code getCapability(FLUID_HANDLER, Direction)} (spec ⑤);</li>
  * <li>ownership — the {@code mOwnable}/{@code mOwner} pair + {@link #allowInteraction(UUID)}
- *     and the live gates (break/use/connect-neighbour; task p24-pipe-owner);</li>
+ *     and the live gates (break/use/connect-neighbour; task pipe-owner);</li>
  * <li>C-Foam — the {@code mFoam}/{@code mFoamDried} pair with the applyFoam/dryFoam/
- *     removeFoam write points and the drying ticker (task p25-c-foam-pipe-spray, the
+ *     removeFoam write points and the drying ticker (task c-foam-pipe-spray, the
  *     upstream TileEntityBase10ConnectorRendered foam stratum :57/:99-102/:153-183);</li>
  * <li>Covers — the BE implements {@link ICoverableTE} by composition (task
- *     p34-pool-cover-hosts, the {@link GTItemPipeBlockEntity} composition precedent):
+ *     pool-cover-hosts, the {@link GTItemPipeBlockEntity} composition precedent):
  *     the {@link #mCovers} store, the 06Covers :68/:74 NBT round trip, the :191
  *     validity sweep on the first tick and the :196-205 tick pair around the pipe
  *     business — CoverPressureValve is the first consumer (its post-tick arm rides
@@ -94,7 +94,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 	public static final String NBT_LAST_PREFIX = "last.";
 	public static final String NBT_TRANSFERRED = "transferred";
 
-	/** The ioMask NBT key (task p4-pipe-flow-control spec ⑤ — the only new key of the card). */
+	/** The ioMask NBT key (task pipe-flow-control spec ⑤ — the only new key of the card). */
 	public static final String NBT_IO_MASK = "ioMask";
 
 	/** Upstream :74 — one 6-bit source mask per tank. */
@@ -110,7 +110,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 	public FluidTankGT[] mTanks = new FluidTankGT[0];
 
 	// ---------------------------------------------------------------------------
-	// covers (task p34-pool-cover-hosts — the composition attachment, the
+	// covers (task pool-cover-hosts — the composition attachment, the
 	// GTItemPipeBlockEntity precedent: the store lives here, the 06Covers behaviour
 	// comes from the ICoverableTE defaults; the base-class chain stays untouched.
 	// Admission stays the interface default — the cover-side placement gates
@@ -133,7 +133,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 	}
 
 	// ---------------------------------------------------------------------------
-	// ownership (task p24-pipe-owner — upstream TileEntityBase10ConnectorRendered:57 +
+	// ownership (task pipe-owner — upstream TileEntityBase10ConnectorRendered:57 +
 	// TileEntityBase03TicksAndSync:40/:106-108, foam-free simplification)
 	// ---------------------------------------------------------------------------
 
@@ -152,7 +152,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 	/**
 	 * Upstream TileEntityBase10ConnectorRendered.java:57 ({@code mOwnable = F}). False by
 	 * default: a freshly placed pipe NEVER locks — the ONLY runtime activation is a dried
-	 * owned foam (the applyFoam write point below, task p25-c-foam-pipe-spray).
+	 * owned foam (the applyFoam write point below, task c-foam-pipe-spray).
 	 */
 	public boolean mOwnable = false;
 
@@ -166,7 +166,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 	 * :106-108 core ({@code mOwner == null || (aEntity != null && mOwner.equals(...))}
 	 * with the Entity unwrapped to its UUID — the offline-test discipline forbids
 	 * constructing Players/Entities). The {@code !mFoamDried} third clause (task
-	 * p25-c-foam-pipe-spray, the javadoc obligation of the p24 fold): UNLESS the foam has
+	 * c-foam-pipe-spray, the javadoc obligation of the p24 fold): UNLESS the foam has
 	 * dried, the ownership half is bypassed entirely — an undried (or unfoamed) pipe
 	 * passes everyone, and only a dried foam arms the lock.
 	 *
@@ -178,7 +178,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 	}
 
 	/**
-	 * The break-gate decision seam (task p24-pipe-owner, the creative-form-seam precedent):
+	 * The break-gate decision seam (task pipe-owner, the creative-form-seam precedent):
 	 * a denied breaker gets 0.0F — progress never accrues, the upstream
 	 * TileEntityBase01Root.java:943 {@code getPlayerRelativeBlockHardness} deny-to-0
 	 * counterpart — an allowed one gets the caller's super progress unchanged. Static and
@@ -194,7 +194,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 	}
 
 	// ---------------------------------------------------------------------------
-	// C-Foam (task p25-c-foam-pipe-spray — the upstream TileEntityBase10ConnectorRendered
+	// C-Foam (task c-foam-pipe-spray — the upstream TileEntityBase10ConnectorRendered
 	// foam stratum: fields :57, write points :159-183, drying :99-102, queries :215-217)
 	// ---------------------------------------------------------------------------
 
@@ -324,7 +324,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 	}
 
 	// ---------------------------------------------------------------------------
-	// dried-foam static seams (task p25-c-foam-pipe-spray spec ⑥ — the
+	// dried-foam static seams (task c-foam-pipe-spray spec ⑥ — the
 	// ownerDestroyProgress shape: the block overrides stay BE-lookup + unwrap only)
 	// ---------------------------------------------------------------------------
 
@@ -389,7 +389,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 			// the random stagger of the two-phase upstream tick lists (:128-135) — GTCEu offset style
 			mPhaseOffset = getLevel().random.nextInt(DISTRIBUTION_PERIOD);
 			mPhaseAssigned = true;
-			// NO auto-handshake here (task p4-pipe-flow-control spec ② — the new baseline is
+			// NO auto-handshake here (task pipe-flow-control spec ② — the new baseline is
 			// "GT6 pipes never auto-connect"): upstream does its placement connect in onPlaced
 			// (TileEntityBase09Connector.java:82-96, driven here by the BlockItem place chain),
 			// everything after that is manual per-face work. The W1 first-tick all-sides
@@ -459,7 +459,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 			}
 
 			// :401-410 — any other fluid handler, probed with 1 L and then the full stack (both simulate).
-			// spec ① (task p5-pipe-flow-semantics): the arrow mask is an OPT-IN pump valve on top
+			// spec ① (task pipe-flow-semantics): the arrow mask is an OPT-IN pump valve on top
 			// of the GT6 default — mask == 0 keeps the upstream all-faces push (upstream :400-410
 			// gates only on backflow :378 + canEmitFluidsTo :380 + cover :382, no ioMask concept);
 			// a non-zero mask restricts the push to the arrow faces. Pipe-to-pipe equalisation
@@ -583,7 +583,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 	}
 
 	// ---------------------------------------------------------------------------
-	// placement (upstream onPlaced :82-96 — task p4-pipe-flow-control spec ②)
+	// placement (upstream onPlaced :82-96 — task pipe-flow-control spec ②)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -604,7 +604,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 	}
 
 	/**
-	 * The owner-carrying placement (task p24-pipe-owner). Order follows upstream: the
+	 * The owner-carrying placement (task pipe-owner). Order follows upstream: the
 	 * owner is recorded FIRST (TileEntityBase10ConnectorRendered.java:148-150 verbatim
 	 * {@code if (mOwnable && aPlayer != null) mOwner = aPlayer.getUniqueID()} — the
 	 * OWNERSHIP_RESET clause of CS.java:866 defaults false and is not ported, the
@@ -645,7 +645,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 	// ---------------------------------------------------------------------------
 
 	/**
-	 * The 6-bit output-arrow mask (task p4-pipe-flow-control spec ①): a set bit = the face
+	 * The 6-bit output-arrow mask (task pipe-flow-control spec ①): a set bit = the face
 	 * pushes to external fluid handlers. Decoupled from the connection state — any face can
 	 * carry the arrow, the gate is applied at runtime ({@link #isOutputFace}).
 	 */
@@ -665,7 +665,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 	}
 
 	/**
-	 * spec ① (task p5-pipe-flow-semantics) — the full external-push truth table, the
+	 * spec ① (task pipe-flow-semantics) — the full external-push truth table, the
 	 * corrected form of the p4 hard gate (which left a mask==0 pipe pushing nowhere):
 	 * <ul>
 	 * <li>{@code mIoMask == 0} → the GT6 default, every face pushes (the connection gate
@@ -713,7 +713,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 	}
 
 	/**
-	 * The owner-carrying toggle (task p24-pipe-owner). Two gates, both upstream:
+	 * The owner-carrying toggle (task pipe-owner). Two gates, both upstream:
 	 * <ul>
 	 * <li>SELF — upstream TileEntityBase06Covers.java:141 kills every tool on a locked
 	 *     host before the tool click even dispatches; the port has no cover layer, so the
@@ -797,7 +797,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 	 * semantics and renders through the plain blockstate model; the paint colour rides the
 	 * 03 base's PAINT supply through the same derived snapshot.
 	 *
-	 * <p>Covers (task p34-pool-cover-hosts; the p35-cover-narrowing-render-snapshot split):
+	 * <p>Covers (task pool-cover-hosts; the cover-narrowing-render-snapshot split):
 	 * the per-face sprite snapshot (the TileEntityBase08Barrel template) rides
 	 * {@code RENDER_SNAPSHOT} and the arrows ride {@code FLOW_SNAPSHOT} — the pre-p35
 	 * single-key {@code else-if} evicted the arrows under any cover (the P34 leftover debt:
@@ -881,7 +881,7 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 		aNBT.putBoolean(NBT_FOAMDRIED, mFoamDried);
 		aNBT.putBoolean(NBT_OWNABLE, mOwnable);
 		if (mOwner != null) aNBT.putUUID(NBT_OWNER, mOwner);
-		writeCoversToNBT(aNBT); // upstream 06Covers :74 (task p34-pool-cover-hosts)
+		writeCoversToNBT(aNBT); // upstream 06Covers :74 (task pool-cover-hosts)
 	}
 
 	@Override
@@ -915,6 +915,6 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 		if (aNBT.hasUUID(NBT_OWNER)) {
 			mOwner = aNBT.getUUID(NBT_OWNER);
 		}
-		readCoversFromNBT(aNBT); // upstream 06Covers :68 (task p34-pool-cover-hosts)
+		readCoversFromNBT(aNBT); // upstream 06Covers :68 (task pool-cover-hosts)
 	}
 }

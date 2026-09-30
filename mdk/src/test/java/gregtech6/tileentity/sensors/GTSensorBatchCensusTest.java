@@ -21,14 +21,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * The sensor batch census (task p34-sensors-trivial-14 ACCEPTANCE ①, pool closure task
- * p37-sensors-3) — the ROWS 钉测: 21 live rows (3 pioneers + the 15-row batch + the
+ * The sensor batch census (task sensors-trivial-14 ACCEPTANCE ①, pool closure task
+ * sensors-3) — the ROWS 钉测: 21 live rows (3 pioneers + the 15-row batch + the
  * 3-row pool closure), ids AND order pinned to the upstream anchor
  * (Loader_MultiTileEntities.java:1979-1999 read line by line — the CENSUS ERRATUM: the
  * upstream sensors() method registers 21 rows, not the 19 the P26/P34 census ledgers
  * carried; the appended subsequences ARE the anchor's row sequence). The three former
  * pooled rows (tachometer 31019 / geigercounter 31020 / laserometer 31021) joined LIVE
- * (task p37-sensors-3): the p34 缺缝 notes went stale — P28 built the kinetics carriers
+ * (task sensors-3): the p34 缺缝 notes went stale — P28 built the kinetics carriers
  * and P32 revived the LU carrier; the geiger's reactor arm stays declared (the s2
  * true-gap pool) with its non-reactor 0 read pinned as the upstream-faithful behaviour.
  * The batch arithmetic pins ride the pure statics and fresh BE instances over a shared
@@ -107,7 +107,7 @@ public class GTSensorBatchCensusTest extends GTOfflineTestBase {
 	}
 
 	/**
-	 * The pool closure (task p37-sensors-3): the three former pooled rows joined the walk —
+	 * The pool closure (task sensors-3): the three former pooled rows joined the walk —
 	 * registered, order-pinned by {@link #rowsCensusPinsTheUpstreamAnchor}, and the block
 	 * carrier map walks ROWS one-to-one (the static-block form).
 	 */

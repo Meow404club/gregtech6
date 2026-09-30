@@ -12,8 +12,8 @@ import net.minecraftforge.fluids.FluidStack;
 
 /**
  * The cover behaviour contract — 1.20.1 port of gregapi/cover/ICover.java (226 lines)
- * trimmed to the first-cover surface (task p4-cover-core ②, ADR
- * 2026-08-30-p4-cover-route). GT6 covers are registry-shared SINGLETONS; all per-face
+ * trimmed to the first-cover surface (task cover-core ②, ADR
+ * 2026-08-30-cover-route). GT6 covers are registry-shared SINGLETONS; all per-face
  * state lives in the {@link CoverData} parallel arrays, unlike the GTCEu instantiated
  * CoverBehavior model (CoverBehavior.java:48) which the ADR rejected.
  *
@@ -31,8 +31,8 @@ import net.minecraftforge.fluids.FluidStack;
  * <li>the texture triple :194-196 (surface/attachment/holder) — the upstream
  *     {@code ITexture} return becomes the atlas sprite id the plate renderer stitches
  *     into the block atlas.</li>
- * <li>the item-intercept family :209-216 (task p10-cover-item-intercept, ADR
- *     2026-09-01-p10-cover-item-intercept — the "pooled D card" cut is lifted, the
+ * <li>the item-intercept family :209-216 (task cover-item-intercept, ADR
+ *     2026-09-01-cover-item-intercept — the "pooled D card" cut is lifted, the
  *     freeze-face expansion is that ADR's single sanctioned one): the intercept pair
  *     :209-210, the override triple :211-213 and the answering triple :214-216.</li>
  * </ul>
@@ -41,12 +41,12 @@ import net.minecraftforge.fluids.FluidStack;
  * {@link Direction#get3DDataValue()} (the chest/oven facing precedent).
  *
  * <p>The redstone hook triple :190-192 is RESTORED with the cover redstone framework
- * (task p9-redstone-hooks, ADR 2026-09-01-p9-redstone-hooks — the P4 spec ② pool cut is
+ * (task redstone-hooks, ADR 2026-09-01-redstone-hooks — the P4 spec ② pool cut is
  * lifted verbatim): {@link #getRedstoneIn} is the covered face's incoming read,
  * {@link #getRedstoneOutWeak}/{@link #getRedstoneOutStrong} the emission pair the host
  * exits hand the machine default to. The item-intercept family :209-216 is RESTORED
- * with the side-aware item capability framework (task p10-cover-item-intercept, ADR
- * 2026-09-01-p10-cover-item-intercept — the "pooled D card" javadoc cut is lifted;
+ * with the side-aware item capability framework (task cover-item-intercept, ADR
+ * 2026-09-01-cover-item-intercept — the "pooled D card" javadoc cut is lifted;
  * note the older ":320-343" line anchor was a transcription error: upstream ICover is
  * 226 lines total, the item family is :209-216, while :320-343 is the HOST-side
  * dispatch in TileEntityBase04Covers). The GUI hook pair :198-199 stays UNPORTED (the
@@ -54,7 +54,7 @@ import net.minecraftforge.fluids.FluidStack;
  *
  * <p>Cut to the pool (spec ②): the GUI hook pair :198-199, the fluid
  * override family :220-225 and the connector hooks :75-80/:183. The two fluid
- * intercept hooks (:218-219) are RESTORED with the pump cover (task p5-barrel-side-rules
+ * intercept hooks (:218-219) are RESTORED with the pump cover (task barrel-side-rules
  * spec F): {@link #interceptFluidFill}/{@link #interceptFluidDrain} are the one-way
  * gate the CoverPump mounts on its covered face; the rest of the fluid family
  * (getFluidTank*Override/defaults, :220-225) stays pooled. The five consuming covers
@@ -140,8 +140,8 @@ public interface ICover {
 
 	/**
 	 * Upstream :148 — an entity walked over the face carrying this cover. RESTORED with
-	 * the asphalt cover (task p37-covers-crafting-asphalt; the P4 spec ② pool cut is
-	 * lifted — the p9-redstone-triple restoration shape). The upstream
+	 * the asphalt cover (task covers-crafting-asphalt; the P4 spec ② pool cut is
+	 * lifted — the redstone-triple restoration shape). The upstream
 	 * {@code EntityLivingBase} parameter widens to {@link Entity} (the port's uniform
 	 * entity-hook form; the LivingEntity narrowing stays at the host dispatch,
 	 * {@link ICoverableTE#onCoverWalkOver}). @return true when the cover CONSUMED the walk

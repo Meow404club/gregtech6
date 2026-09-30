@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * The formal GT6 hand drill — item id {@code gt6:hand_drill} (task
- * p29-w5-t4-field-five). Upstream GT_Tool_HandDrill.java:33-80:
+ * w5-t4-field-five). Upstream GT_Tool_HandDrill.java:33-80:
  * <ul>
  * <li><b>Mining surface</b> (isMinableBlock :58-60): the {@code TOOL_drill} harvest
  *     arm ONLY — the GT6 ore-vein-prospecting blocks. No vanilla block declares a

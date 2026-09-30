@@ -30,7 +30,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The wrapper-path offline tests (task p32-render-embeddium-tint rework): the reviewer
+ * The wrapper-path offline tests (task render-embeddium-tint rework): the reviewer
  * verification upgrade asserts THE VERTEX DATA COLOUR CHANGES WITH THE MODEL DATA —
  * the full getQuads seam (model data in → retinted quads out) over real constructed
  * {@link BakedQuad}s, not just the multiplier math. The wrapper instance itself needs a
@@ -180,7 +180,7 @@ class GTMachineTintModelTest extends GTOfflineRenderTestBase {
 	}
 
 	/**
-	 * Issue #15 (task r3-beehive-tint): the hive's worldgen family colour rides the BE
+	 * Issue #15 (task beehive-tint): the hive's worldgen family colour rides the BE
 	 * PAINT model data through the BAKED wrapper — the exact chain the registered
 	 * {@code getDynamicQuads} runs since the runtime BlockColor registration was removed
 	 * (tintARGB over the PAINT snapshot, null hive material → tintQuads → the ABGR vertex

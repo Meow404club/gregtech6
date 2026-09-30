@@ -21,7 +21,7 @@ import gregtech6.recipes.Recipe;
 import net.minecraftforge.fluids.FluidStack;
 
 /**
- * Acceptance ③ of task p29-w4-f1-chemicals: the FM.Gas METHANE row BURNS in the Gas
+ * Acceptance ③ of task w4-f1-chemicals: the FM.Gas METHANE row BURNS in the Gas
  * Turbine — the {@link GT6MultiBlockConverterTest.TestGasConverter} fixture posture with
  * the row the shipped gas_fuels.json carries (GT6ChemicalRowsPourTest pins the SAME
  * parameters off the verbatim JSON bytes, so the two legs join into "the shipped row runs

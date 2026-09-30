@@ -29,7 +29,7 @@ import gregtech6.tileentity.tank.GTBarrelMetalBlockEntity;
 import gregtech6.tileentity.tank.GTBarrelPlasticBlockEntity;
 
 /**
- * The barrel family table (task p6-barrel-metal-plastic acceptance ①) — the offline half:
+ * The barrel family table (task barrel-metal-plastic acceptance ①) — the offline half:
  * the te_name trio, the allowCover predicate table (wood×{plate=T,pump=F},
  * plastic×{plate=T,pump=F}, metal×{plate=T,pump=T}) and the setCoverItem install gate,
  * over the three BE classes (the upstream Wood :39 / Plastic :38 / Metal no-override shape).
@@ -41,7 +41,7 @@ import gregtech6.tileentity.tank.GTBarrelPlasticBlockEntity;
  * registries are intrusive-holder registries frozen by Bootstrap, and the offline vanilla
  * fixture blocks keep the BE ctor at the 16000 L / MAX_VALUE defaults).
  *
- * <p>Task p7-barrel-high-tier-melt-bridge extends the offline half with the pure-data
+ * <p>Task barrel-high-tier-melt-bridge extends the offline half with the pure-data
  * surfaces that need no Block construction: the high-tier row truth table
  * (GTBarrels.HIGH_TIER_METAL_DRUMS — capacity/explicit-HU/display-name literals,
  * upstream Loader_MultiTileEntities.java:2159-2170) and the melting-point bridge formula
@@ -190,7 +190,7 @@ public class GTBarrelFamilyTest extends GTOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// task p7-barrel-high-tier-melt-bridge — the high-tier row truth table and the
+	// task barrel-high-tier-melt-bridge — the high-tier row truth table and the
 	// melting-point bridge, the offline (no Block construction) halves
 	// ---------------------------------------------------------------------------
 

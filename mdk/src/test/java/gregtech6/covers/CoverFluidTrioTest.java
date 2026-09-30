@@ -23,7 +23,7 @@ import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 import gregtech6.tileentity.tank.GTBarrelMetalBlockEntity;
 
 /**
- * The fluid trio offline acceptance (task p34-covers-gameplay-10): the Vent intake
+ * The fluid trio offline acceptance (task covers-gameplay-10): the Vent intake
  * beat (the pump-seam gate + the declared-minimal air-carrier seam), the Drain
  * collection beats and the PressureValve threshold (the full-tank vent, the
  * gas-vs-liquid split, the endpoint disconnect). The host fixtures ride the pump-test

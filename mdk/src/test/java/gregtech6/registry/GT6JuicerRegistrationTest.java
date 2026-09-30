@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The Juicer registration guard (task p33-food-machines-kitchen; the
+ * The Juicer registration guard (task food-machines-kitchen; the
  * {@link GT6LogisticsCoreRegistrationTest} id686 FML-boot containment form — a clean
  * suite over a dead registration is the failure shape, so the real registries must
  * carry the block/item/BET faces and the BET must be MOUNTED on the carrier block).

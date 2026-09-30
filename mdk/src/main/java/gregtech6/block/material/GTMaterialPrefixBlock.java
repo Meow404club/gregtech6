@@ -11,7 +11,7 @@ import gregapi.oredict.OreDictPrefix;
 
 /**
  * One material-scoped storage block for an OreDictPrefix x OreDictMaterial pair (task
- * p8-prefixblock-registry). Upstream GT6 bundles one multi-material PrefixBlock per prefix
+ * prefixblock-registry). Upstream GT6 bundles one multi-material PrefixBlock per prefix
  * with metadata = material index (gregapi/block/prefixblock/PrefixBlock.java:171-172); 1.20.1
  * has no block metadata, so the per-pair shape applies (the GTBarrels per-row precedent, and
  * the ADR ruling against an IntegerProperty variant — one blockstate JSON per pair instead
@@ -20,7 +20,7 @@ import gregapi.oredict.OreDictPrefix;
  * <p>A PURE block: no EntityBlock, no ticker, no BlockEntity — upstream
  * {@code PrefixBlock.createNewTileEntity} returns {@code null} unconditionally
  * (PrefixBlock.java:584). No {@code onRemove} override either (project lesson id59).
- * Blockstate/model/loot JSONs live in the datagen providers (p8-prefixblock-render);
+ * Blockstate/model/loot JSONs live in the datagen providers (prefixblock-render);
  * this class only carries the client tint colour seam ({@link #blockColor()} /
  * {@link #tintARGB()}, upstream PrefixBlock.java:279-282). Declared deviation: the
  * upstream per-prefix
@@ -76,7 +76,7 @@ public class GTMaterialPrefixBlock extends Block {
     }
 
     /**
-     * The client {@code BlockColor} for every material prefix block (task p8-prefixblock-render
+     * The client {@code BlockColor} for every material prefix block (task prefixblock-render
      * spec ③), registered once over the whole block array in GTClientHandlers — the world-side
      * half of the tint. Upstream colours the block render pass as
      * {@code UT.Code.getRGBInt(aMaterial.fRGBa[mPrefix.mState])} (PrefixBlock.java:279-282,

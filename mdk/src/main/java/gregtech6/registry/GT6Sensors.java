@@ -27,7 +27,7 @@ import gregtech6.item.GT6MachineBlockItem;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The sensor registration home (task p26-sensors-core, ADR-P3-4 card-owned) — the
+ * The sensor registration home (task sensors-core, ADR-P3-4 card-owned) — the
  * GT6Attachments shape: self-contained {@code @EventBusSubscriber(MOD)} DeferredRegisters
  * attached from the construct event, the BET type rows appended in {@link GTBlockEntities}
  * (the cross-register resolution form; one BET per pioneer class, the CRANK_BE
@@ -39,13 +39,13 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * Electrometer 31015 — every live upstream column transcribed: hardness 1, resistance 16,
  * the metal sound (aUtilMetal → METAL).
  *
-	 * <p>CENSUS ERRATUM (task p34-sensors-trivial-14, coordinator ruling A): the upstream
+	 * <p>CENSUS ERRATUM (task sensors-trivial-14, coordinator ruling A): the upstream
 	 * sensors() method registers 21 rows (Loader_MultiTileEntities.java:1979-1999, read line
 	 * by line), not the 19 the P26/P34 census ledgers carried — the zh MTE dump tops out at
 	 * 31022 with no 31023 row, which is where the undercount came from. The p34 batch
 	 * appended 15 rows in the upstream anchor order (:1979 → :1994), POOLING the Tachometer
 	 * 31019 / Geiger Counter 31020 / Laser-O-Meter 31021 rows on their then-missing seams.
-	 * <p>POOL RESOLVED (task p37-sensors-3, 21/21): the p34 seam notes are the stale half —
+	 * <p>POOL RESOLVED (task sensors-3, 21/21): the p34 seam notes are the stale half —
 	 * P28 built the kinetics (GTAxleBlockEntity mTransferredLast/mPower/mSpeed +
 	 * GTGearBoxBlockEntity mMaxThroughPut/mTransferredLast) and P32 revived the LU carrier
 	 * (GTWireBlockEntity mTransferredLast/isLaser), so the Tachometer and Laser-O-Meter
@@ -58,7 +58,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 	 * upstream per-row tails :1979-:1999); the SHAPED rows ride a recipe card (the
 	 * electrometer precedent — its 'X' key is a dedicated GT6 item off the port path). The
 	 * upstream "Sensors" MTE-registry category is pooled into the MACHINES_TAB join (task
-	 * p38-tabfix-b-energy, {@link #onBuildTabContents}; the GTBarrels:257 pooling
+	 * tabfix-b-energy, {@link #onBuildTabContents}; the GTBarrels:257 pooling
 	 * precedent — supersedes the old stay-out sentence).
 	 */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -90,7 +90,7 @@ public final class GT6Sensors {
 			new SensorRow("progressmeter"          , 31018, () -> GTBlockEntities.PROGRESSMETER_BE.get()),
 			new SensorRow("fluidometer"            , 31006, () -> GTBlockEntities.FLUIDOMETER_BE.get()),
 			new SensorRow("electrometer"           , 31015, () -> GTBlockEntities.ELECTROMETER_BE.get()),
-			// p34-sensors-trivial-14 — Loader_MultiTileEntities.java:1979-1994 order
+			// sensors-trivial-14 — Loader_MultiTileEntities.java:1979-1994 order
 			new SensorRow("thermometer"            , 31000, () -> GTBlockEntities.THERMOMETER_BE.get()),            // :1979
 			new SensorRow("luminometer"            , 31002, () -> GTBlockEntities.LUMINOMETER_BE.get()),            // :1980
 			new SensorRow("chronometer"            , 31003, () -> GTBlockEntities.CHRONOMETER_BE.get()),            // :1981
@@ -106,7 +106,7 @@ public final class GT6Sensors {
 			new SensorRow("superheavyweightometer" , 31013, () -> GTBlockEntities.SUPERHEAVYWEIGHTOMETER_BE.get()),  // :1992
 			new SensorRow("tpsmeter"               , 31016, () -> GTBlockEntities.TPSMETER_BE.get()),                // :1993
 			new SensorRow("playercounter"          , 31017, () -> GTBlockEntities.PLAYERCOUNTER_BE.get()),           // :1994
-			// p37-sensors-3 — the pool closure, the anchor's remaining rows (:1996/:1998/:1999)
+			// sensors-3 — the pool closure, the anchor's remaining rows (:1996/:1998/:1999)
 			new SensorRow("geigercounter"          , 31020, () -> GTBlockEntities.GEIGERCOUNTER_BE.get()),           // :1996
 			new SensorRow("tachometer"             , 31019, () -> GTBlockEntities.TACHOMETER_BE.get()),              // :1998
 			new SensorRow("laserometer"            , 31021, () -> GTBlockEntities.LASEROMETER_BE.get()));            // :1999
@@ -121,7 +121,7 @@ public final class GT6Sensors {
 					() -> new GTSensorBlock(fRow.tickerType(), BlockBehaviour.Properties.of()
 							.strength(1.0F, 16.0F).sound(SoundType.METAL))));
 			ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
-					// the sensor family carrier (task r8-tooltip-wire-pipe-sensor): the
+					// the sensor family carrier (task tooltip-wire-pipe-sensor): the
 					// MultiTileEntitySensor tool rows replay through GT6Tooltips — all 21
 					// sensors share the one upstream addToolTips face (Sensor:88-97)
 					() -> new GT6MachineBlockItem(GT6Sensors.BLOCKS_BY_PATH.get(fRow.path()).get(), new Item.Properties(), "sensor")));
@@ -152,7 +152,7 @@ public final class GT6Sensors {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
+	 * The tab walk (task tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
 	 * joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
 	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
 	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display

@@ -15,7 +15,7 @@ import gregtech6.multiblock.GTMultiBlockPattern;
 
 /**
  * 1.20.1 counterpart of gregapi/tileentity/multiblocks/ITileEntityMultiBlockController.java
- * (task p4-multiblock-framework, W3).
+ * (task multiblock-framework, W3).
  *
  * <p>The three structural queries (:41-43) carry over verbatim. The fourth method,
  * {@code onToolClickMultiBlock} (:44), is the 1.7.10 tool-click dispatch seam — there is no
@@ -40,7 +40,7 @@ public interface ITileEntityMultiBlockController {
 	void onStructureChange();
 
 	/**
-	 * The declared structure pattern (task p12-ghost-pattern-api) — read-only display
+	 * The declared structure pattern (task ghost-pattern-api) — read-only display
 	 * data for client-side consumers (the ghost preview). Default null = no declaration:
 	 * existence-probe machines (LightningRod/BedrockDrill census class) keep their
 	 * hand-written checkStructure2 and never bind one. NEVER consulted by
@@ -54,11 +54,11 @@ public interface ITileEntityMultiBlockController {
 	}
 
 	/**
-	 * The size-parametrised variant (task p16-pattern-layers ④) — the seam a variable-size
+	 * The size-parametrised variant (task pattern-layers ④) — the seam a variable-size
 	 * machine would back with its {@link gregtech6.multiblock.GTMultiBlockPatternFamily#forSize}
 	 * expansion. Default null = no size-parametrised declaration (deliberately no consumer
 	 * machine in this card — GT6 canon machines are fixed-size; the wrench/GUI size
-	 * consumer stays in the pool, ADR 2026-09-05-p16-formation-scoping ②).
+	 * consumer stays in the pool, ADR 2026-09-05-formation-scoping ②).
 	 */
 	@Nullable
 	default GTMultiBlockPattern getStructurePattern(int aSize) {
@@ -103,7 +103,7 @@ public interface ITileEntityMultiBlockController {
 		 * pair; upstream {@code UT.Entities.canEdit} (UT.java:3159 — non-players
 		 * auto-approve, players canPlayerEdit) rides the vanilla {@code mayBuild} ability
 		 * (survival and creative pass, adventure is refused — the OP(2) narrowing of task
-		 * p24-creative-form-seam was reopened when the itemized builder wand landed, the
+		 * creative-form-seam was reopened when the itemized builder wand landed, the
 		 * decisions.p24-builder-wand-op2-reform ruling: the survival (T,F) consume arm is
 		 * the upstream-practiced path, double-proven through the upstream inventory-scan
 		 * scaffold :58-66 and the Behavior_Builderwand canPlayerEdit surface :94-95).
@@ -122,7 +122,7 @@ public interface ITileEntityMultiBlockController {
 		}
 
 		/**
-		 * The permission seam (task p24-creative-form-seam): the identical walk with the two
+		 * The permission seam (task creative-form-seam): the identical walk with the two
 		 * rulings pre-resolved by the caller. A real Player is not constructible offline (the
 		 * Forge-patched Entity ctor forces {@code FluidType.SIZE}), so the boolean pair IS the
 		 * testable form of the chain: (true, true) = creative free placement, (true, false) =

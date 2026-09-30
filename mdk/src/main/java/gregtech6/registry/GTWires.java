@@ -46,7 +46,7 @@ import gregtech6.tooltip.GT6Tooltips;
  * "2x" bandwidth doubling :73) — they are the material-less legacy anchors the P8 RCON
  * chain and the gen→wire→oven e2e regression drive on, untouched.
  *
- * <p>Task p9-wire-family-w1 (spec ①/②) adds the FULL spectrum over the {@link GTWireSpecs}
+ * <p>Task wire-family-w1 (spec ①/②) adds the FULL spectrum over the {@link GTWireSpecs}
  * table — the direct addElectricWires :71-109 / Loader_MultiTileEntities.java:1914-1950
  * transcription: 620 per-pair Block+BlockItem registrations (16 bare wires per material,
  * +5 insulated cables on the 28 cable rows; 620 = 28×21 + 2×16). One static loop registers
@@ -107,7 +107,7 @@ public final class GTWires {
 					32L, tierName(32), 2L, GT6Tooltips.makeString(1L)));
 
 	// -------------------------------------------------------------------------
-	// the p9-wire-family-w1 spectrum: 620 per-(row, form, size) pairs over GTWireSpecs
+	// the wire-family-w1 spectrum: 620 per-(row, form, size) pairs over GTWireSpecs
 	// -------------------------------------------------------------------------
 
 	/** The family blocks, GTWireSpecs order (upstream Loader row order, 16 wires then 5 cables per row). */
@@ -118,7 +118,7 @@ public final class GTWires {
 
 	/**
 	 * The selector index: registry path -> family block (GTWireCommand / tests). Task
-	 * p10-wire-laser-placeholder: the laser path ({@code wire_laser}) ALSO keys in here —
+	 * wire-laser-placeholder: the laser path ({@code wire_laser}) ALSO keys in here —
 	 * this map is the {@code /gt6wire place <registry-path>} resolution channel, and keying
 	 * the laser block into it lets the EXISTING command branch place and read the laser
 	 * wire with ZERO command-surface change (the card's "reuse the existing family path,
@@ -148,7 +148,7 @@ public final class GTWires {
 	}
 
 	// -------------------------------------------------------------------------
-	// the p10-wire-redstone-family: 6 per-(row, form) pairs over GTWireSpecs.REDSTONE_ROWS
+	// the wire-redstone-family: 6 per-(row, form) pairs over GTWireSpecs.REDSTONE_ROWS
 	// -------------------------------------------------------------------------
 
 	/** The redstone-family blocks, GTWireSpecs.redstoneVariants() order (Loader:1893-1902 row order). */
@@ -190,7 +190,7 @@ public final class GTWires {
 	}
 
 	// -------------------------------------------------------------------------
-	// the p10-wire-laser-placeholder: 1 per-pair registration over GTWireSpecs.laserVariants()
+	// the wire-laser-placeholder: 1 per-pair registration over GTWireSpecs.laserVariants()
 	// -------------------------------------------------------------------------
 
 	/** The laser-family blocks (Loader:1814-1815 — exactly one, the bare fiber wire). */
@@ -206,7 +206,7 @@ public final class GTWires {
 		for (GTWireSpecs.Variant tVariant : GTWireSpecs.laserVariants()) {
 			String tName = GTWireSpecs.registryName(tVariant);
 			if (LASER_BY_NAME.containsKey(tName)) throw new IllegalStateException("gt6 laser wire family: duplicate registry name " + tName);
-			// task p10-wire-laser-placeholder — the laser block carries the LASER family column;
+			// task wire-laser-placeholder — the laser block carries the LASER family column;
 			// voltage 0 / amperage 1 / loss 0 (upstream getEnergyLossPerMeter :114 = 0 — the
 			// LOSSLESS wire; the Long.MAX_VALUE LU ratings stay the GTWireSpecs.LASER_CAPACITY
 			// data pin, the EU face family is gated off at the BE), diameter PX_P[6] (:1815
@@ -250,7 +250,7 @@ public final class GTWires {
 					GTWireBlockEntity::new, redstoneBlockArray()).build(null));
 
 	/**
-	 * The shared laser-wire BET (task p10-wire-laser-placeholder): one BlockEntityType over
+	 * The shared laser-wire BET (task wire-laser-placeholder): one BlockEntityType over
 	 * the 1 laser family block, same BET class as the electric/redstone wires (the
 	 * shared-carrier ruling — the family gate lives on the BE itself), the WIRE_REDSTONE_BE
 	 * precedent verbatim. Owns its own DeferredRegister so GTBlockEntities stays untouched;
@@ -275,11 +275,11 @@ public final class GTWires {
 	}
 
 	// -------------------------------------------------------------------------
-	// the p11-flat-redstone-tab split: one tab per upstream MTE-registry category
+	// the flat-redstone-tab split: one tab per upstream MTE-registry category
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The Electric Wires tab membership table (task p11-flat-redstone-tab): the legacy pair
+	 * The Electric Wires tab membership table (task flat-redstone-tab): the legacy pair
 	 * followed by the 620 electric family items — EXACTLY what upstream registers into the
 	 * "Electric Wires" category (every addElectricWires row,
 	 * MultiTileEntityWireElectric.java:72-109 aCreativeTabID 28366). The redstone and laser
@@ -324,11 +324,11 @@ public final class GTWires {
 	 * ("Electric Wires", MultiTileEntityWireElectric.java:72 addElectricWires
 	 * aCreativeTabID) as the minimal per-card tab, the GTFluidPipes.FLUID_PIPES_TAB shape.
 	 *
-	 * <p>Task p9-wire-family-w2 (the W1 review handoff): the displayItems are TABLE-DRIVEN
+	 * <p>Task wire-family-w2 (the W1 review handoff): the displayItems are TABLE-DRIVEN
 	 * over the full spectrum — upstream registers every addElectricWires row into this
 	 * category (the whole 16-wire + 5-cable ladder per material), so the legacy pair is
 	 * followed by all 620 family items in registration order (the W1 loop order = the
-	 * upstream Loader row order). Task p11-flat-redstone-tab: the table IS the membership
+	 * upstream Loader row order). Task flat-redstone-tab: the table IS the membership
 	 * ({@link #ELECTRIC_WIRES_TAB_TABLE}, 2 + 620) — the p10 interim riders (6 redstone + 1
 	 * laser) moved to their own upstream categories below.
 	 */
@@ -344,7 +344,7 @@ public final class GTWires {
 					.build());
 
 	/**
-	 * The "Redstone Wires" category tab (task p11-flat-redstone-tab) — upstream 1.7.10 has
+	 * The "Redstone Wires" category tab (task flat-redstone-tab) — upstream 1.7.10 has
 	 * NO static tab icon and NO custom tab texture here: the MTE registry lazily creates
 	 * {@code new CreativeTab(mNameInternal + "." + tabID, aCategoricalName,
 	 * Item.getItemFromBlock(mBlock), tabID)} (MultiTileEntityRegistry.java:191,
@@ -367,7 +367,7 @@ public final class GTWires {
 					.build());
 
 	/**
-	 * The "Laser Wires" category tab (task p11-flat-redstone-tab) — upstream Loader:1815
+	 * The "Laser Wires" category tab (task flat-redstone-tab) — upstream Loader:1815
 	 * registers the "Laser Fiber Wire" with the category string "Laser Wires" and the tab id
 	 * 24900: a single-member category whose icon is the fiber wire itself (the same
 	 * MultiTileEntityRegistry.java:191 icon rule, meta 24900 = the one registered id).

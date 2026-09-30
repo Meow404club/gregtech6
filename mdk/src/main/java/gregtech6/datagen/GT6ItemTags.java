@@ -31,7 +31,7 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GT6Tools;
 
 /**
- * The GT6 item-tag datagen home — task p24-tool-system spec ④, the FIRST TagsProvider of
+ * The GT6 item-tag datagen home — task tool-system spec ④, the FIRST TagsProvider of
  * the port (the card ruling decisions.p24-tool-system-recipe-provider-first: the minimal
  * provider lands here, the tags-foundation card TAKES OVER this file and extends it band
  * by band). The base class is vanilla {@link TagsProvider} over {@link Registries#ITEM};
@@ -66,7 +66,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	public static final TagKey<Item> TOOLS_SAW = gt6("tools/saw");
 
 	/**
-	 * The builder-wand tool tag — #gt6:tools/builder_wand (task p24-builder-wand, the
+	 * The builder-wand tool tag — #gt6:tools/builder_wand (task builder-wand, the
 	 * TOOLS_FILE/TOOLS_SAW snake shape). Upstream carries NO oredict crafting key for the
 	 * wand (id402 proven, the research card) — the tag exists so future relay code and
 	 * the tool-family recipe card key on the TAG, not the item.
@@ -77,7 +77,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	public static final TagKey<Item> TOOLS_SCREWDRIVER = gt6("tools/screwdriver");
 
 	/**
-	 * The crossbred-comb tag (task p34-bumbliary-recipes) — the {@code OD.beeCombCrossbred}
+	 * The crossbred-comb tag (task bumbliary-recipes) — the {@code OD.beeCombCrossbred}
 	 * translation over the ten combs the upstream MultiItemFood rows tag with it
 	 * (:237-246: Clay/Sticky/Royal/Soul/Amnesic/Military + Pyro/Cryo/Aero/Tera, metas
 	 * 30100-30105/30200-30203; the GT6BeeCombs meta rows above 30100). The Advanced
@@ -88,7 +88,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 
 	/**
 	 * The craftingToolHardHammer oredient translation — #gt6:tools/hard_hammer (task
-	 * p25-tool-hammer-wrench spec ④, the TOOLS_FILE/TOOLS_SAW snake shape). Upstream key
+	 * tool-hammer-wrench spec ④, the TOOLS_FILE/TOOLS_SAW snake shape). Upstream key
 	 * {@code OreDictToolNames.hammer = "craftingToolHardHammer"} (CS.java:1890); the
 	 * naming ruling (decisions.p25-tool-hammer-wrench-rulings ①) keeps the HARD semantic
 	 * — "craftingTool" strips and snakes, "Hammer" hard-hammer precision preserved against
@@ -100,7 +100,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	public static final TagKey<Item> TOOLS_WRENCH = gt6("tools/wrench");
 
 	/**
-	 * The USB Stick tier tags (task p32-usb-data) — the {@code OD_USB_STICKS} array
+	 * The USB Stick tier tags (task usb-data) — the {@code OD_USB_STICKS} array
 	 * translation (CS.java:160, the per-tier oredict names {@code gt:usbstick1..4}): the
 	 * digit splits into the {@code usb_stick_N} snake, one tag per tier over the
 	 * {@link gregtech6.items.GT6UsbSticks} registration rows. The tier INDEX is the
@@ -114,7 +114,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	public static final TagKey<Item> USB_STICK_4 = gt6("usb_stick_4");
 
 	/**
-	 * The USB Cable / USB HDD tier tags (task p37-usb-peripherals) — the
+	 * The USB Cable / USB HDD tier tags (task usb-peripherals) — the
 	 * {@code OD_USB_CABLES}/{@code OD_USB_DRIVES} array translation (CS.java:162/:164, the
 	 * per-tier oredict names {@code gt:usbcable1..4}/{@code gt:usbdrive1..4}): the same
 	 * {@code usb_stick_N} snake convention, one tag per tier over the
@@ -133,65 +133,65 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 
 	/**
 	 * The craftingToolWirecutter oredient translation — #gt6:tools/wire_cutter (task
-	 * p29-w3-nbtdesign-parts ③ — the coil crafting rows' 'x' letter, CR.java:359
+	 * w3-nbtdesign-parts ③ — the coil crafting rows' 'x' letter, CR.java:359
 	 * {@code case 'x': OreDictToolNames.wirecutter}; the TOOLS_WRENCH snake shape).
 	 */
 	public static final TagKey<Item> TOOLS_WIRE_CUTTER = gt6("tools/wire_cutter");
 
 	/**
 	 * The craftingToolBendingCylinderSmall oredient translation —
-	 * #gt6:tools/bending_cylinder_small (task p25-food-can-row0 spec ②, the TOOLS_FILE
+	 * #gt6:tools/bending_cylinder_small (task food-can-row0 spec ②, the TOOLS_FILE
 	 * snake shape). Upstream key {@code OreDictToolNames.bendingcylindersmall =
 	 * "craftingToolBendingCylinderSmall"} (CS.java:1903); the empty-can crafting row's
 	 * 'o' letter (CR.java:207 alphabet) keys on THIS tag.
 	 */
 	public static final TagKey<Item> TOOLS_BENDING_CYLINDER_SMALL = gt6("tools/bending_cylinder_small");
 
-	/** The craftingToolPickaxe translation — #gt6:tools/pickaxe (task p29-w5-t1-dig-six, the snake rule). */
+	/** The craftingToolPickaxe translation — #gt6:tools/pickaxe (task w5-t1-dig-six, the snake rule). */
 	public static final TagKey<Item> TOOLS_PICKAXE = gt6("tools/pickaxe");
 
-	/** The gem-pickaxe tool tag — #gt6:tools/pickaxe_gem (task p29-w5-t1-dig-six). */
+	/** The gem-pickaxe tool tag — #gt6:tools/pickaxe_gem (task w5-t1-dig-six). */
 	public static final TagKey<Item> TOOLS_PICKAXE_GEM = gt6("tools/pickaxe_gem");
 
-	/** The construction-pickaxe tool tag — #gt6:tools/pickaxe_construction (task p29-w5-t1-dig-six). */
+	/** The construction-pickaxe tool tag — #gt6:tools/pickaxe_construction (task w5-t1-dig-six). */
 	public static final TagKey<Item> TOOLS_PICKAXE_CONSTRUCTION = gt6("tools/pickaxe_construction");
 
-	/** The craftingToolShovel translation — #gt6:tools/shovel (task p29-w5-t1-dig-six). */
+	/** The craftingToolShovel translation — #gt6:tools/shovel (task w5-t1-dig-six). */
 	public static final TagKey<Item> TOOLS_SHOVEL = gt6("tools/shovel");
 
-	/** The craftingToolSpade translation — #gt6:tools/spade (task p29-w5-t1-dig-six). */
+	/** The craftingToolSpade translation — #gt6:tools/spade (task w5-t1-dig-six). */
 	public static final TagKey<Item> TOOLS_SPADE = gt6("tools/spade");
 
-	/** The universal-spade tool tag — #gt6:tools/universal_spade (task p29-w5-t1-dig-six). */
+	/** The universal-spade tool tag — #gt6:tools/universal_spade (task w5-t1-dig-six). */
 	public static final TagKey<Item> TOOLS_UNIVERSAL_SPADE = gt6("tools/universal_spade");
 
-	/** The sword tool tag — #gt6:tools/sword (task p29-w5-t2-blade-six, the snake rule). */
+	/** The sword tool tag — #gt6:tools/sword (task w5-t2-blade-six, the snake rule). */
 	public static final TagKey<Item> TOOLS_SWORD = gt6("tools/sword");
 
-	/** The knife tool tag — #gt6:tools/knife (task p29-w5-t2-blade-six). */
+	/** The knife tool tag — #gt6:tools/knife (task w5-t2-blade-six). */
 	public static final TagKey<Item> TOOLS_KNIFE = gt6("tools/knife");
 
-	/** The butchery-knife tool tag — #gt6:tools/butchery_knife (task p29-w5-t2-blade-six). */
+	/** The butchery-knife tool tag — #gt6:tools/butchery_knife (task w5-t2-blade-six). */
 	public static final TagKey<Item> TOOLS_BUTCHERY_KNIFE = gt6("tools/butchery_knife");
 
-	/** The club tool tag — #gt6:tools/club (task p29-w5-t2-blade-six). */
+	/** The club tool tag — #gt6:tools/club (task w5-t2-blade-six). */
 	public static final TagKey<Item> TOOLS_CLUB = gt6("tools/club");
 
-	/** The axe tool tag — #gt6:tools/axe (task p29-w5-t2-blade-six). */
+	/** The axe tool tag — #gt6:tools/axe (task w5-t2-blade-six). */
 	public static final TagKey<Item> TOOLS_AXE = gt6("tools/axe");
 
-	/** The double-axe tool tag — #gt6:tools/axe_double (task p29-w5-t2-blade-six). */
+	/** The double-axe tool tag — #gt6:tools/axe_double (task w5-t2-blade-six). */
 	public static final TagKey<Item> TOOLS_AXE_DOUBLE = gt6("tools/axe_double");
 	/**
 	 * The craftingToolSoftHammer oredient translation — #gt6:tools/soft_hammer (task
-	 * p29-w5-t3-machine-face-four ①, the TOOLS_HARD_HAMMER snake shape). Upstream key
+	 * w5-t3-machine-face-four ①, the TOOLS_HARD_HAMMER snake shape). Upstream key
 	 * {@code OreDictToolNames.softhammer = "craftingToolSoftHammer"} (CS.java:1891).
 	 */
 	public static final TagKey<Item> TOOLS_SOFT_HAMMER = gt6("tools/soft_hammer");
 
 	/**
 	 * The craftingToolMonkeyWrench oredient translation — #gt6:tools/monkey_wrench (task
-	 * p29-w5-t3-machine-face-four ②, the snake shape). The upstream :144 row carries the
+	 * w5-t3-machine-face-four ②, the snake shape). The upstream :144 row carries the
 	 * DOUBLE oredict name (OreDictToolNames.monkeywrench + wrench) — the port folds onto
 	 * the ONE tag (the card's tag ruling: no wrench substitution in recipes).
 	 */
@@ -199,49 +199,49 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 
 	/**
 	 * The craftingToolMagnifyingglass oredient translation — #gt6:tools/magnifying_glass
-	 * (task p29-w5-t3-machine-face-four ③, the snake shape; upstream
+	 * (task w5-t3-machine-face-four ③, the snake shape; upstream
 	 * {@code OreDictToolNames.magnifyingglass}, CS.java TOOL family).
 	 */
 	public static final TagKey<Item> TOOLS_MAGNIFYING_GLASS = gt6("tools/magnifying_glass");
 
 	/**
 	 * The craftingToolPincers oredient translation — #gt6:tools/pincers (task
-	 * p29-w5-t3-machine-face-four ④, the snake shape; upstream
+	 * w5-t3-machine-face-four ④, the snake shape; upstream
 	 * {@code OreDictToolNames.pincers = "craftingToolPincers"}, CS.java:1880).
 	 */
 	public static final TagKey<Item> TOOLS_PINCERS = gt6("tools/pincers");
-	/** The craftingToolHoe translation — #gt6:tools/hoe (task p29-w5-t4-field-five, the snake rule). */
+	/** The craftingToolHoe translation — #gt6:tools/hoe (task w5-t4-field-five, the snake rule). */
 	public static final TagKey<Item> TOOLS_HOE = gt6("tools/hoe");
 
-	/** The plow tool tag — #gt6:tools/plow (task p29-w5-t4-field-five). */
+	/** The plow tool tag — #gt6:tools/plow (task w5-t4-field-five). */
 	public static final TagKey<Item> TOOLS_PLOW = gt6("tools/plow");
 
-	/** The branch-cutter tool tag — #gt6:tools/branch_cutter (task p29-w5-t4-field-five). */
+	/** The branch-cutter tool tag — #gt6:tools/branch_cutter (task w5-t4-field-five). */
 	public static final TagKey<Item> TOOLS_BRANCH_CUTTER = gt6("tools/branch_cutter");
 
-	/** The sense tool tag — #gt6:tools/sense (task p29-w5-t4-field-five). */
+	/** The sense tool tag — #gt6:tools/sense (task w5-t4-field-five). */
 	public static final TagKey<Item> TOOLS_SENSE = gt6("tools/sense");
 
-	/** The hand-drill tool tag — #gt6:tools/hand_drill (task p29-w5-t4-field-five). */
+	/** The hand-drill tool tag — #gt6:tools/hand_drill (task w5-t4-field-five). */
 	public static final TagKey<Item> TOOLS_HAND_DRILL = gt6("tools/hand_drill");
-	/** The craftingToolScissors/shears dual-key fold — #gt6:tools/scissors (task p29-w5-t5-scene-six, the snake rule; CS.java:1906/:1907). */
+	/** The craftingToolScissors/shears dual-key fold — #gt6:tools/scissors (task w5-t5-scene-six, the snake rule; CS.java:1906/:1907). */
 	public static final TagKey<Item> TOOLS_SCISSORS = gt6("tools/scissors");
 
-	/** The craftingToolScoop translation — #gt6:tools/scoop (task p29-w5-t5-scene-six, CS.java:1894). */
+	/** The craftingToolScoop translation — #gt6:tools/scoop (task w5-t5-scene-six, CS.java:1894). */
 	public static final TagKey<Item> TOOLS_SCOOP = gt6("tools/scoop");
 
-	/** The craftingToolPlunger translation — #gt6:tools/plunger (task p29-w5-t5-scene-six, CS.java:1892). */
+	/** The craftingToolPlunger translation — #gt6:tools/plunger (task w5-t5-scene-six, CS.java:1892). */
 	public static final TagKey<Item> TOOLS_PLUNGER = gt6("tools/plunger");
 
-	/** The craftingFirestarter/flintandtinder registration-row dual key — #gt6:tools/flint_and_tinder (task p29-w5-t5-scene-six, Loader_Tools.java:143). */
+	/** The craftingFirestarter/flintandtinder registration-row dual key — #gt6:tools/flint_and_tinder (task w5-t5-scene-six, Loader_Tools.java:143). */
 	public static final TagKey<Item> TOOLS_FLINT_AND_TINDER = gt6("tools/flint_and_tinder");
 
-	/** The craftingToolRollingPin translation — #gt6:tools/rolling_pin (task p29-w5-t5-scene-six, CS.java:1901). */
+	/** The craftingToolRollingPin translation — #gt6:tools/rolling_pin (task w5-t5-scene-six, CS.java:1901). */
 	public static final TagKey<Item> TOOLS_ROLLING_PIN = gt6("tools/rolling_pin");
 
-	/** The craftingToolBendingCylinder (LARGE) translation — #gt6:tools/bending_cylinder (task p29-w5-t5-scene-six, CS.java:1902; the Small :1903 keeps its own tag). */
+	/** The craftingToolBendingCylinder (LARGE) translation — #gt6:tools/bending_cylinder (task w5-t5-scene-six, CS.java:1902; the Small :1903 keeps its own tag). */
 	public static final TagKey<Item> TOOLS_BENDING_CYLINDER = gt6("tools/bending_cylinder");
-	// task p29-w5-t6-electric-nineteen — the nineteen electric-tool tags (the same snake
+	// task w5-t6-electric-nineteen — the nineteen electric-tool tags (the same snake
 	// band, one member each; the crafting rows and the future consumers key on the TAG).
 	public static final TagKey<Item> TOOLS_MINING_DRILL_LV = gt6("tools/mining_drill_lv");
 	public static final TagKey<Item> TOOLS_MINING_DRILL_MV = gt6("tools/mining_drill_mv");
@@ -267,7 +267,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	public static final TagKey<Item> REDSTONE_DUSTS = gt6("redstone");
 
 	/**
-	 * The shelf-book material translation — #gt6:books (task p26-storage-static-batch).
+	 * The shelf-book material translation — #gt6:books (task storage-static-batch).
 	 * The {@code BooksGT.BOOK_REGISTER.containsKey} modern equivalent: the bookshelf
 	 * insert gate keys on THIS tag (datapack tier-a, pack authors extend the shelf's
 	 * book universe); the datagen band fills the vanilla book items.
@@ -278,7 +278,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	public static final TagKey<Item> PLATE_CURVED_TIN = gt6("plate_curved_tin");
 
 	/**
-	 * The extruder-mold family tag — #gt6:extruder_shapes (task p26-w1-press-extruder-molds).
+	 * The extruder-mold family tag — #gt6:extruder_shapes (task w1-press-extruder-molds).
 	 * The upstream census has no oredict key for the Shape_Extruder_* items (they match
 	 * recipes by exact item), so the tag is the port's family face — the bidirectional
 	 * paradigm: this provider fills the MEMBERSHIP (both row0 molds) and the runtime
@@ -288,7 +288,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	public static final TagKey<Item> EXTRUDER_SHAPES = gt6("extruder_shapes");
 
 	/**
-	 * The platform material-tag namespace (task p24-tags-provider-skeleton, the
+	 * The platform material-tag namespace (task tags-provider-skeleton, the
 	 * decisions.p24-tool-system-tag-strategy namespace face): {@code forge} on 1.20.1 (the
 	 * Tags.Items constants — Tags.java:310-312/:220/:256) and {@code c} on NeoForge 21.1
 	 * (Tags.java:799/:923). The emitted JSON location follows the tag id's namespace
@@ -303,7 +303,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 
 	/**
 	 * The forward-twin common-tag namespace — {@code c} on BOTH legs (task
-	 * p27-vanilla-tag-dual-tree spec ①): the 1.21 canonical namespace (NeoForge docs
+	 * vanilla-tag-dual-tree spec ①): the 1.21 canonical namespace (NeoForge docs
 	 * resources/server/tags.md:50 "would other mods want to use this tag as well? —
 	 * the c namespace"; the Mekanism 1.21.x generated tree is {@code data/c}-only)
 	 * produced ahead of time on the 1.20.1 leg for the {@link #VANILLA_INTERSECTION}
@@ -344,7 +344,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 
 	/**
 	 * The mold crafting base ingredient — {@code forge:plates/tungsten_carbide} (task
-	 * p26-w1-press-extruder-molds): the row0 flattening of the upstream crafting chain
+	 * w1-press-extruder-molds): the row0 flattening of the upstream crafting chain
 	 * Empty(:182, plateDouble WC) → Rod(:221)/Foil(:222) → Plate(:247) — the Empty/Foil
 	 * intermediates are POOLED (not row0 items), so the two row0 molds key their 'P'
 	 * ingredient on the upstream chain ROOT's material face (the GT6FoodCans
@@ -364,20 +364,20 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	/** The hot-ingot family — GTCEu TagPrefix.java:267 {@code defaultTagPath("hot_ingots/%s")} (rolling batch 2). */
 	public static final String HOT_INGOTS_FAMILY = "hot_ingots/%s";
 
-	/** The double-plate family — GTCEu TagPrefix.java:442 {@code defaultTagPath("double_plates/%s")} (task p26-sensors-core). */
+	/** The double-plate family — GTCEu TagPrefix.java:442 {@code defaultTagPath("double_plates/%s")} (task sensors-core). */
 	public static final String DOUBLE_PLATES_FAMILY = "double_plates/%s";
 
-	/** The fine-wire family — GTCEu TagPrefix.java:575 {@code defaultTagPath("fine_wires/%s")} (task p26-sensors-core). */
+	/** The fine-wire family — GTCEu TagPrefix.java:575 {@code defaultTagPath("fine_wires/%s")} (task sensors-core). */
 	public static final String FINE_WIRES_FAMILY = "fine_wires/%s";
 
-	/** The bolt family — GTCEu TagPrefix.java:514 {@code defaultTagPath("bolts/%s")} (task p26-sensors-core). */
+	/** The bolt family — GTCEu TagPrefix.java:514 {@code defaultTagPath("bolts/%s")} (task sensors-core). */
 	public static final String BOLTS_FAMILY = "bolts/%s";
 
-	/** The small-gear family — GTCEu TagPrefix.java:599 {@code defaultTagPath("small_gears/%s")} (task p26-sensors-core). */
+	/** The small-gear family — GTCEu TagPrefix.java:599 {@code defaultTagPath("small_gears/%s")} (task sensors-core). */
 	public static final String SMALL_GEARS_FAMILY = "small_gears/%s";
 
 	/**
-	 * The cross-mod material-name normalization map (task p24-tags-prefix-materials, the
+	 * The cross-mod material-name normalization map (task tags-prefix-materials, the
 	 * decisions.p24-material-name-normalization ruling): GT {@code mNameInternal} snake →
 	 * the ecosystem-conventional alias snake. Each entry is backed by the upstream
 	 * identical-name alias (OreDictMaterial.put(String) → addIdenticalNames): MT.java:970
@@ -395,7 +395,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 			"aluminium_brass", "aluminum_brass");
 
 	/**
-	 * The (family, material)-granularity canonical-name map (task p27-vanilla-tag-dual-tree
+	 * The (family, material)-granularity canonical-name map (task vanilla-tag-dual-tree
 	 * spec ③ — the ECOSYSTEM_ALIASES dimension lift, the research.p27-vanilla-unify gap ①):
 	 * key = the GT-internal formatted tag path ("&lt;familyBase&gt;&lt;materialSnake&gt;", e.g.
 	 * {@code gems/nether_quartz}), value = the ecosystem-CANONICAL material snake. Unlike
@@ -417,7 +417,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 
 	/**
 	 * The vanilla-intersection face of the forward twin tree (task
-	 * p27-vanilla-tag-dual-tree spec ① — the research.p27-vanilla-unify census, every
+	 * vanilla-tag-dual-tree spec ① — the research.p27-vanilla-unify census, every
 	 * entry re-verified): the (family, material) tags where BOTH faces exist — this port
 	 * emits the material tag (the registration walk) AND the platform ships vanilla
 	 * members into the same tag id (ForgeItemTagsProvider.java:56-157 — ingots :89-:92,
@@ -452,19 +452,19 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		// The takeover seam: the tags-foundation card appends its own add*Tags(aProvider)
 		// bands AFTER the tool band, one band per logical family (the GT6EnUs table-tail
 		// append convention); the hoist clause has fired — itemTagFamily is the shared
-		// static (task p25-tag-input-machine-fallback, the second caller is Recipe).
+		// static (task tag-input-machine-fallback, the second caller is Recipe).
 		addToolTags(aProvider);
 		addMaterialTags(aProvider);
-		addGrassTags(aProvider); // task p24-grass-block
-		addBatteryTags(aProvider); // task p29-w4-battery-storage — the re-battery/re-crystal/circuit tag seams
-		addArmorTags(aProvider); // task p29-w5-t8-armor-24 — the 8 hazard-set tag faces
-		addTreeTags(); // task p30-w6-t1-trees-nine — the decisions.p25-leaves-logs-tags-deferred unlock
-		addFallenLogTags(); // task p30-w6-t2-surface-blocks — the 4 fallen-log item faces (the coke-oven rebuild source)
-		addCombTags(); // task p34-bumbliary-recipes — the OD.beeCombCrossbred face over the ten crossbred combs
+		addGrassTags(aProvider); // task grass-block
+		addBatteryTags(aProvider); // task w4-battery-storage — the re-battery/re-crystal/circuit tag seams
+		addArmorTags(aProvider); // task w5-t8-armor-24 — the 8 hazard-set tag faces
+		addTreeTags(); // task w6-t1-trees-nine — the decisions.p25-leaves-logs-tags-deferred unlock
+		addFallenLogTags(); // task w6-t2-surface-blocks — the 4 fallen-log item faces (the coke-oven rebuild source)
+		addCombTags(); // task bumbliary-recipes — the OD.beeCombCrossbred face over the ten crossbred combs
 	}
 
 	/**
-	 * The crossbred-comb band (task p34-bumbliary-recipes): the ten combs the upstream
+	 * The crossbred-comb band (task bumbliary-recipes): the ten combs the upstream
 	 * MultiItemFood rows tag {@code OD.beeCombCrossbred} with — the
 	 * {@link gregtech6.registry.GT6BeeCombs.CombSpec} walk above meta 30100 (the
 	 * declaration rows ARE the upstream tag membership, single-sourced).
@@ -476,7 +476,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	}
 
 	/**
-	 * The fallen-log item faces (task p30-w6-t2-surface-blocks): the four special-wood
+	 * The fallen-log item faces (task w6-t2-surface-blocks): the four special-wood
 	 * logs join {@code #minecraft:logs} — THE coke-oven recipe rebuild source
 	 * (GT6CokeOvenTagListener.rebuild reads ItemTags.LOGS; 40 vanilla + 9 gt6 grows +4,
 	 * the coordinator-noted census drift). The block face rides GT6BlockTags.
@@ -488,7 +488,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	}
 
 	/**
-	 * The armor hazard band (task p29-w5-t8-armor-24): one {@code #gt6:hazmat/<hazard>}
+	 * The armor hazard band (task w5-t8-armor-24): one {@code #gt6:hazmat/<hazard>}
 	 * tag per {@link GT6HazardSets.Hazard} (the eight CS.java:1712-1721 HAZMATS_* sets),
 	 * membership = the SAME {@link GT6ArmorMaterials#SUITS} walk GT6HazardSets derives
 	 * its runtime table from (Loader_Tools.java:68-112 join semantics) — the tag face and
@@ -506,7 +506,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	}
 
 	/**
-	 * The grass-family item band (task p24-grass-block): the 6 grass BLOCK ITEMS join the
+	 * The grass-family item band (task grass-block): the 6 grass BLOCK ITEMS join the
 	 * vanilla {@code minecraft:dirt} ITEM tag ({@link net.minecraft.tags.ItemTags#DIRT};
 	 * the vanilla tag file carries exactly the nine dirt-family block items —
 	 * vanilla-1.20.1 data/minecraft/tags/items/dirt.json). This is the item-identity half
@@ -522,7 +522,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	}
 
 	/**
-	 * The battery-family tag band (task p29-w4-battery-storage): the upstream oredict seams
+	 * The battery-family tag band (task w4-battery-storage): the upstream oredict seams
 	 * translated — {@code gt:re-battery0..4}/{@code gt:re-crystal0..5} (the Loader
 	 * :1009-:1092 tail columns; the W5 electric-tool capacity-sum face iterates exactly
 	 * these, Loader_Tools.java:356-377) become {@code #gt6:re_battery0..4}/
@@ -542,7 +542,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	}
 
 	/**
-	 * The tree-family item band (task p30-w6-t1-trees-nine — the decisions
+	 * The tree-family item band (task w6-t1-trees-nine — the decisions
 	 * .p25-leaves-logs-tags-deferred UNLOCK): the 9 log ITEMS join
 	 * {@code minecraft:logs} — THIS IS THE SPEC-FIRST-LINE DEPENDENCY: the coke oven
 	 * tag listener (GT6CokeOvenTagListener.java:77 reads ItemTags.LOGS on every
@@ -568,8 +568,8 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	/**
 	 * The p24 tool band: the crafting-tool tags (one member each — the tag exists so
 	 * recipes and future relay code key on the TAG, not the item; the file/saw pair from
-	 * p24-tool-system, the screwdriver from p24-screwdriver-item, the hard-hammer/wrench
-	 * pair from p25-tool-hammer-wrench, the bending cylinder from p25-food-can-row0),
+	 * tool-system, the screwdriver from screwdriver-item, the hard-hammer/wrench
+	 * pair from tool-hammer-wrench, the bending cylinder from food-can-row0),
 	 * the two recipe-material tags, and the ecosystem append (the ten formal tools into
 	 * the platform tools tag — the user ruling's bidirectional face; the platform
 	 * constant resolves to {@code forge:tools} on 1.20.1 and {@code c:tools} on 1.21.1).
@@ -578,43 +578,43 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		tag(TOOLS_FILE).add(item(GT6Tools.FILE.getId()));
 		tag(TOOLS_SAW).add(item(GT6Tools.SAW.getId()));
 		tag(TOOLS_BUILDER_WAND).add(item(GT6Tools.BUILDER_WAND.getId()));
-		tag(TOOLS_SCREWDRIVER).add(item(GT6Tools.SCREWDRIVER.getId())); // task p24-screwdriver-item — the craftingToolScrewdriver snake
-		tag(TOOLS_HARD_HAMMER).add(item(GT6Tools.HAMMER.getId())); // task p25-tool-hammer-wrench — the craftingToolHardHammer snake
-		tag(TOOLS_WRENCH).add(item(GT6Tools.WRENCH.getId())); // task p25-tool-hammer-wrench — the craftingToolWrench snake
-		tag(TOOLS_WIRE_CUTTER).add(item(GT6Tools.CUTTER.getId())); // task p29-w3-nbtdesign-parts — the CR 'x' wirecutter letter
-		tag(TOOLS_BENDING_CYLINDER_SMALL).add(item(GT6Tools.BENDING_CYLINDER_SMALL.getId())); // task p25-food-can-row0 — the craftingToolBendingCylinderSmall snake
-		// task p29-w5-t1-dig-six — the six dig-tool tags (one member each, the p24 band shape)
+		tag(TOOLS_SCREWDRIVER).add(item(GT6Tools.SCREWDRIVER.getId())); // task screwdriver-item — the craftingToolScrewdriver snake
+		tag(TOOLS_HARD_HAMMER).add(item(GT6Tools.HAMMER.getId())); // task tool-hammer-wrench — the craftingToolHardHammer snake
+		tag(TOOLS_WRENCH).add(item(GT6Tools.WRENCH.getId())); // task tool-hammer-wrench — the craftingToolWrench snake
+		tag(TOOLS_WIRE_CUTTER).add(item(GT6Tools.CUTTER.getId())); // task w3-nbtdesign-parts — the CR 'x' wirecutter letter
+		tag(TOOLS_BENDING_CYLINDER_SMALL).add(item(GT6Tools.BENDING_CYLINDER_SMALL.getId())); // task food-can-row0 — the craftingToolBendingCylinderSmall snake
+		// task w5-t1-dig-six — the six dig-tool tags (one member each, the p24 band shape)
 		tag(TOOLS_PICKAXE).add(item(GT6Tools.PICKAXE.getId()));
 		tag(TOOLS_PICKAXE_GEM).add(item(GT6Tools.PICKAXE_GEM.getId()));
 		tag(TOOLS_PICKAXE_CONSTRUCTION).add(item(GT6Tools.PICKAXE_CONSTRUCTION.getId()));
 		tag(TOOLS_SHOVEL).add(item(GT6Tools.SHOVEL.getId()));
 		tag(TOOLS_SPADE).add(item(GT6Tools.SPADE.getId()));
 		tag(TOOLS_UNIVERSAL_SPADE).add(item(GT6Tools.UNIVERSAL_SPADE.getId()));
-		// task p29-w5-t2-blade-six — the six blade-tool tags (one member each, the p24 band shape)
+		// task w5-t2-blade-six — the six blade-tool tags (one member each, the p24 band shape)
 		tag(TOOLS_SWORD).add(item(GT6Tools.SWORD.getId()));
 		tag(TOOLS_KNIFE).add(item(GT6Tools.KNIFE.getId()));
 		tag(TOOLS_BUTCHERY_KNIFE).add(item(GT6Tools.BUTCHERY_KNIFE.getId()));
 		tag(TOOLS_CLUB).add(item(GT6Tools.CLUB.getId()));
 		tag(TOOLS_AXE).add(item(GT6Tools.AXE.getId()));
 		tag(TOOLS_AXE_DOUBLE).add(item(GT6Tools.AXE_DOUBLE.getId()));
-		tag(TOOLS_SOFT_HAMMER).add(item(GT6Tools.SOFT_HAMMER.getId())); // task p29-w5-t3-machine-face-four — the craftingToolSoftHammer snake
-		tag(TOOLS_MONKEY_WRENCH).add(item(GT6Tools.MONKEY_WRENCH.getId())); // task p29-w5-t3-machine-face-four — the single-name ruling (no wrench fold)
-		tag(TOOLS_MAGNIFYING_GLASS).add(item(GT6Tools.MAGNIFYING_GLASS.getId())); // task p29-w5-t3-machine-face-four — the craftingToolMagnifyingglass snake
-		tag(TOOLS_PINCERS).add(item(GT6Tools.PINCERS.getId())); // task p29-w5-t3-machine-face-four — the craftingToolPincers snake
-		// task p29-w5-t4-field-five — the five field-tool tags (one member each, the t1 band shape)
+		tag(TOOLS_SOFT_HAMMER).add(item(GT6Tools.SOFT_HAMMER.getId())); // task w5-t3-machine-face-four — the craftingToolSoftHammer snake
+		tag(TOOLS_MONKEY_WRENCH).add(item(GT6Tools.MONKEY_WRENCH.getId())); // task w5-t3-machine-face-four — the single-name ruling (no wrench fold)
+		tag(TOOLS_MAGNIFYING_GLASS).add(item(GT6Tools.MAGNIFYING_GLASS.getId())); // task w5-t3-machine-face-four — the craftingToolMagnifyingglass snake
+		tag(TOOLS_PINCERS).add(item(GT6Tools.PINCERS.getId())); // task w5-t3-machine-face-four — the craftingToolPincers snake
+		// task w5-t4-field-five — the five field-tool tags (one member each, the t1 band shape)
 		tag(TOOLS_HOE).add(item(GT6Tools.HOE.getId()));
 		tag(TOOLS_PLOW).add(item(GT6Tools.PLOW.getId()));
 		tag(TOOLS_BRANCH_CUTTER).add(item(GT6Tools.BRANCH_CUTTER.getId()));
 		tag(TOOLS_SENSE).add(item(GT6Tools.SENSE.getId()));
 		tag(TOOLS_HAND_DRILL).add(item(GT6Tools.HAND_DRILL.getId()));
-		// task p29-w5-t5-scene-six — the six scene-tool tags (one member each, the same band shape)
+		// task w5-t5-scene-six — the six scene-tool tags (one member each, the same band shape)
 		tag(TOOLS_SCISSORS).add(item(GT6Tools.SCISSORS.getId()));
 		tag(TOOLS_SCOOP).add(item(GT6Tools.SCOOP.getId()));
 		tag(TOOLS_PLUNGER).add(item(GT6Tools.PLUNGER.getId()));
 		tag(TOOLS_FLINT_AND_TINDER).add(item(GT6Tools.FLINT_AND_TINDER.getId()));
 		tag(TOOLS_ROLLING_PIN).add(item(GT6Tools.ROLLING_PIN.getId()));
 		tag(TOOLS_BENDING_CYLINDER).add(item(GT6Tools.BENDING_CYLINDER.getId()));
-		// task p29-w5-t6-electric-nineteen — the nineteen electric tags (the p24 band shape)
+		// task w5-t6-electric-nineteen — the nineteen electric tags (the p24 band shape)
 		tag(TOOLS_MINING_DRILL_LV).add(item(GT6Tools.MINING_DRILL_LV.getId()));
 		tag(TOOLS_MINING_DRILL_MV).add(item(GT6Tools.MINING_DRILL_MV.getId()));
 		tag(TOOLS_MINING_DRILL_HV).add(item(GT6Tools.MINING_DRILL_HV.getId()));
@@ -634,7 +634,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		tag(TOOLS_MONKEY_WRENCH_MV).add(item(GT6Tools.MONKEY_WRENCH_MV.getId()));
 		tag(TOOLS_MONKEY_WRENCH_HV).add(item(GT6Tools.MONKEY_WRENCH_HV.getId()));
 		tag(TOOLS_TRIMMER_LV).add(item(GT6Tools.TRIMMER_LV.getId()));
-		// task p29-w5-t7-pocket-eight — the pocket switch forms join the tool tags their
+		// task w5-t7-pocket-eight — the pocket switch forms join the tool tags their
 		// upstream rows carried (Loader_Tools.java:178-183 verbatim: pocket_saw rides
 		// OreDictToolNames.saw, etc.); the closed multitool form carries none (:176)
 		tag(TOOLS_SAW).add(item(GT6Tools.POCKET_MULTITOOL_SAW.getId()));
@@ -643,13 +643,13 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		tag(TOOLS_WIRE_CUTTER).add(item(GT6Tools.POCKET_MULTITOOL_WIRE_CUTTER.getId()));
 		tag(REDSTONE_DUSTS).add(item(gt6Rl("dust_redstone")));
 		tag(PLATE_CURVED_TIN).add(item(gt6Rl("plate_curved_tin")));
-		// task p32-usb-data — the four USB Stick tier tags (one member each, the OD_USB_STICKS
+		// task usb-data — the four USB Stick tier tags (one member each, the OD_USB_STICKS
 		// per-tier oredict face: the tier index is the scanner/replicator gate axis)
 		tag(USB_STICK_1).add(item(gregtech6.items.GT6UsbSticks.USB_STICK_1.getId()));
 		tag(USB_STICK_2).add(item(gregtech6.items.GT6UsbSticks.USB_STICK_2.getId()));
 		tag(USB_STICK_3).add(item(gregtech6.items.GT6UsbSticks.USB_STICK_3.getId()));
 		tag(USB_STICK_4).add(item(gregtech6.items.GT6UsbSticks.USB_STICK_4.getId()));
-		// task p37-usb-peripherals — the 8 peripheral tier tags (one member each, the
+		// task usb-peripherals — the 8 peripheral tier tags (one member each, the
 		// OD_USB_CABLES/OD_USB_DRIVES per-tier oredict face, the stick-band convention)
 		tag(USB_CABLE_1).add(item(gregtech6.items.GT6UsbSticks.USB_CABLE_1.getId()));
 		tag(USB_CABLE_2).add(item(gregtech6.items.GT6UsbSticks.USB_CABLE_2.getId()));
@@ -659,14 +659,14 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		tag(USB_DRIVE_2).add(item(gregtech6.items.GT6UsbSticks.USB_DRIVE_2.getId()));
 		tag(USB_DRIVE_3).add(item(gregtech6.items.GT6UsbSticks.USB_DRIVE_3.getId()));
 		tag(USB_DRIVE_4).add(item(gregtech6.items.GT6UsbSticks.USB_DRIVE_4.getId()));
-		// task p26-w1-press-extruder-molds — the mold-family membership face (the row0 pair,
+		// task w1-press-extruder-molds — the mold-family membership face (the row0 pair,
 		// upstream meta 10001/:212; the not-consumable predicate's read side). The entry
 		// handle rides the SIMPLE-NAME import (the stonecutter rewrite touches imports, not
 		// inline qualified names — the neo-leg compile break lesson, the GT6BlockTags form).
 		for (RegistryObject<Item> tMold : gregtech6.registry.GT6ExtruderMolds.MOLDS) {
 			tag(EXTRUDER_SHAPES).add(item(tMold.getId()));
 		}
-		// task p26-storage-static-batch — the shelf-book band: the vanilla book family (the
+		// task storage-static-batch — the shelf-book band: the vanilla book family (the
 		// BooksGT.BOOK_REGISTER modern equivalent; pack authors extend the shelf universe)
 		tag(BOOKS).add(
 				item(net.minecraft.resources.ResourceLocation.withDefaultNamespace("book")),
@@ -677,21 +677,21 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 				item(GT6Tools.FILE.getId()), item(GT6Tools.SAW.getId()),
 				item(GT6Tools.CROWBAR.getId()), item(GT6Tools.CUTTER.getId()), item(GT6Tools.CHISEL.getId()),
 				item(GT6Tools.BUILDER_WAND.getId()), item(GT6Tools.SCREWDRIVER.getId()),
-				item(GT6Tools.HAMMER.getId()), item(GT6Tools.WRENCH.getId()), // task p25-tool-hammer-wrench — the family band 7 → 9
-				item(GT6Tools.BENDING_CYLINDER_SMALL.getId()), // task p25-food-can-row0 — the family band 9 → 10
+				item(GT6Tools.HAMMER.getId()), item(GT6Tools.WRENCH.getId()), // task tool-hammer-wrench — the family band 7 → 9
+				item(GT6Tools.BENDING_CYLINDER_SMALL.getId()), // task food-can-row0 — the family band 9 → 10
 				item(GT6Tools.PICKAXE.getId()), item(GT6Tools.PICKAXE_GEM.getId()), item(GT6Tools.PICKAXE_CONSTRUCTION.getId()),
-				item(GT6Tools.SHOVEL.getId()), item(GT6Tools.SPADE.getId()), item(GT6Tools.UNIVERSAL_SPADE.getId()), // task p29-w5-t1-dig-six — the family band 10 → 16
+				item(GT6Tools.SHOVEL.getId()), item(GT6Tools.SPADE.getId()), item(GT6Tools.UNIVERSAL_SPADE.getId()), // task w5-t1-dig-six — the family band 10 → 16
 				item(GT6Tools.SWORD.getId()), item(GT6Tools.KNIFE.getId()), item(GT6Tools.BUTCHERY_KNIFE.getId()),
-				item(GT6Tools.CLUB.getId()), item(GT6Tools.AXE.getId()), item(GT6Tools.AXE_DOUBLE.getId()), // task p29-w5-t2-blade-six — the family band 16 → 22
+				item(GT6Tools.CLUB.getId()), item(GT6Tools.AXE.getId()), item(GT6Tools.AXE_DOUBLE.getId()), // task w5-t2-blade-six — the family band 16 → 22
 				item(GT6Tools.HOE.getId()), item(GT6Tools.BRANCH_CUTTER.getId()), item(GT6Tools.SENSE.getId()),
-				item(GT6Tools.PLOW.getId()), item(GT6Tools.HAND_DRILL.getId()), // task p29-w5-t4-field-five — the family band 22 → 27 (the machine-face four stay the t3 one-member tag shape, outside the family band)
+				item(GT6Tools.PLOW.getId()), item(GT6Tools.HAND_DRILL.getId()), // task w5-t4-field-five — the family band 22 → 27 (the machine-face four stay the t3 one-member tag shape, outside the family band)
 				item(GT6Tools.SCISSORS.getId()), item(GT6Tools.SCOOP.getId()), item(GT6Tools.PLUNGER.getId()),
-				item(GT6Tools.FLINT_AND_TINDER.getId()), item(GT6Tools.ROLLING_PIN.getId()), item(GT6Tools.BENDING_CYLINDER.getId())); // task p29-w5-t5-scene-six — the family band 27 → 33
-		// task p29-w5-t6-electric-nineteen — the family band 33 → 52 (the electric nineteen)
+				item(GT6Tools.FLINT_AND_TINDER.getId()), item(GT6Tools.ROLLING_PIN.getId()), item(GT6Tools.BENDING_CYLINDER.getId())); // task w5-t5-scene-six — the family band 27 → 33
+		// task w5-t6-electric-nineteen — the family band 33 → 52 (the electric nineteen)
 		for (RegistryObject<Item> tRow : GT6Tools.ELECTRIC_TOOLS) {
 			tag(Tags.Items.TOOLS).add(item(tRow.getId()));
 		}
-		// task p29-w5-t7-pocket-eight — the seven switch forms (the closed multitool
+		// task w5-t7-pocket-eight — the seven switch forms (the closed multitool
 		// carries no tool-name oredict upstream, :176 — it stays out of the band);
 		// the family band 52 → 59
 		tag(Tags.Items.TOOLS).add(
@@ -702,7 +702,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	}
 
 	/**
-	 * The p24 tags-foundation material band + the p24-tags-prefix-materials rolling batch 2:
+	 * The p24 tags-foundation material band + the tags-prefix-materials rolling batch 2:
 	 * one {@code <platform>:<family>/<material>} tag per (family, material) that actually has
 	 * a registered item, strictly NO {@code addOptional} (TagsProvider.java:85-94 throws on
 	 * a missing reference, and every id below is a live-registered item at datagen time —
@@ -802,7 +802,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 
 	/**
 	 * The forward-twin tag key — same composition as {@link #materialTag(String, String)}
-	 * but in {@link #COMMON_NAMESPACE} (task p27-vanilla-tag-dual-tree spec ①). Consumed
+	 * but in {@link #COMMON_NAMESPACE} (task vanilla-tag-dual-tree spec ①). Consumed
 	 * on the forge leg only (the {@code //? if forge} band in {@link #addFamilyFace});
 	 * the path lives in a local so both ctor args are bare identifiers — the stonecutter
 	 * two-arg-ctor shift deliberately skips parenthesized argument expressions
@@ -816,7 +816,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 
 	/**
 	 * The item-path family path of a prefix, or null when the prefix carries no P0 platform
-	 * tag. SHARED static (the :159-161 takeover hoist, task p25-tag-input-machine-fallback —
+	 * tag. SHARED static (the :159-161 takeover hoist, task tag-input-machine-fallback —
 	 * the second caller is the machine-side tag fallback in {@code gregtech6.recipes.Recipe}):
 	 * the family list itself stays a datagen-side census ("this card writes no family list",
 	 * the rolling prefix cards grow it and the fallback inherits automatically).
@@ -826,11 +826,11 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		if (aPrefix == OP.dust) return DUSTS_FAMILY;
 		if (aPrefix == OP.gem) return GEMS_FAMILY;
 		if (aPrefix == OP.nugget) return NUGGETS_FAMILY;
-		// rolling batch 2 (p24-tags-prefix-materials)
+		// rolling batch 2 (tags-prefix-materials)
 		if (aPrefix == OP.plate) return PLATES_FAMILY;
 		if (aPrefix == OP.stick) return RODS_FAMILY;
 		if (aPrefix == OP.ingotHot) return HOT_INGOTS_FAMILY;
-		// rolling batch 3 (p26-sensors-core — the three sensor crafting rows' shared keys)
+		// rolling batch 3 (sensors-core — the three sensor crafting rows' shared keys)
 		if (aPrefix == OP.plateDouble) return DOUBLE_PLATES_FAMILY;
 		if (aPrefix == OP.wireFine) return FINE_WIRES_FAMILY;
 		if (aPrefix == OP.bolt) return BOLTS_FAMILY;

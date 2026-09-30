@@ -1,5 +1,5 @@
 /**
- * Offline pin for task r5-rail-item-model-fix (GitHub #22) — the 31 rail BlockItem
+ * Offline pin for task rail-item-model-fix (GitHub #22) — the 31 rail BlockItem
  * models carry the vanilla rail item form: {@code item/generated} over the flat arm's
  * own texture (the vanilla item/rail.json shape). The former parent-the-flat-model form
  * inherited the 16x1x16 {@code rail_flat} slab, which renders near-invisible under the

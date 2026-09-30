@@ -1,5 +1,5 @@
 /**
- * Offline pin for task r4-23a-portal-frame (issue #23) — the miniature portal blocks are
+ * Offline pin for task 23a-portal-frame (issue #23) — the miniature portal blocks are
  * noOcclusion: the hollow 12-beam frame model is only see-through while the neighbours
  * keep their faces (the default canOcclude makes isSolidRender true —
  * BlockBehaviour.java:582-588 — and every face abutting the portal culles into an x-ray

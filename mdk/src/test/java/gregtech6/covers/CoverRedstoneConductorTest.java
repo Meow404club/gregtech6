@@ -24,7 +24,7 @@ import gregtech6.covers.covers.CoverRedstoneConductorIN;
 import gregtech6.covers.covers.CoverRedstoneConductorOUT;
 
 /**
- * The redstone conductor pair acceptance tables (task p10-cover-conductor-redstone).
+ * The redstone conductor pair acceptance tables (task cover-conductor-redstone).
  * Offline and exhaustive, upstream CoverRedstoneConductorOUT.java:36-57 as the mother:
  *
  * <ul>

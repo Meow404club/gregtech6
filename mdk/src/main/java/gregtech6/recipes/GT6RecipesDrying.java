@@ -52,8 +52,8 @@ import gregtech6.fluid.GTFluids;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The RM.Drying recipe book — task p14-loop-closure-chain (the water family foundation)
- * extended by task p16-drying-rows-backfill: the port counterpart of the
+ * The RM.Drying recipe book — task loop-closure-chain (the water family foundation)
+ * extended by task drying-rows-backfill: the port counterpart of the
  * {@code RM.Drying} rows of Loader_Recipes_Chem.java:525-532 (the water-to-distilled-water
  * half) — the ice/snow rows :510-522 land with the same card, the Distillery rows
  * :534-541 stay pooled (the circuit-selector-gated half, the distillery card's domain).
@@ -64,17 +64,17 @@ import gregtech6.registry.GTMaterialItems;
  * 20} (:528), {@code Water_Boiling 25 → 20} (:529), {@code Hot_Water 25 → 20} (:531) and
  * {@code Cold_Water 25 → 20} (:532) — all EUt 16, duration 16, the buffered
  * {@code addRecipe0(T, ...)} fluid-only shape. Six of the seven inputs are the
- * {@link GTFluids.AQUA_SPECS} registrations of task p16-aqua-fluids (spdew/mnwtr/
+ * {@link GTFluids.AQUA_SPECS} registrations of task aqua-fluids (spdew/mnwtr/
  * water_geothermal/water_boiling/hot_water/cold_water); water is vanilla.
  *
  * <p><b>The one pooled water row</b> (:530): {@code Water_Hot} — the IC2 hot-water alias
  * ("ic2hotwater", FL.java:116) is deliberately unregistered in this port (outside the
- * p16-aqua-fluids six), so its row keeps the upstream absent-fluid skip: the resolver
+ * aqua-fluids six), so its row keeps the upstream absent-fluid skip: the resolver
  * answers null and {@link #load()} drops the row with the upstream
  * {@code if (FL.Water_Hot.exists())} guard semantics (the guard sits at the END of the
  * :528 line, before the :529 pour).
  *
- * <p><b>The ice/snow family</b> (:510-522, the p16-drying-rows-backfill second half): THIRTEEN
+ * <p><b>The ice/snow family</b> (:510-522, the drying-rows-backfill second half): THIRTEEN
  * one-item-input rows — the upstream census (the task card's "12" counts 12, the file holds 13
  * lines, every one transcribed): six Ice dust/gem rows (:510-515), the two vanilla ice blocks
  * (:516-517), three Snow dust rows (:518-520), the snowball (:521) and the vanilla snow block
@@ -96,7 +96,7 @@ import gregtech6.registry.GTMaterialItems;
  * slot array the machine always passes (TileEntityBasicMachine.java:512, mInputItemsCount
  * slots that may be empty), and the row's zero item inputs pass the stack check trivially.
  *
- * <p><b>The salt/brine family</b> (:544-557, task p19-drying-rows-backfill-2): of the seven
+ * <p><b>The salt/brine family</b> (:544-557, task drying-rows-backfill-2): of the seven
  * upstream Drying rows between the ice and mineral blocks only the two UNGUARDED rows pour —
  * :548 {@code Ocean 7000 → DistW 6750 + dustSmall NaCl} (11200 ticks) and :553
  * {@code Dirty_Water 8000 → DistW 7000 + vanilla dirt} (16000 ticks), both the buffered
@@ -108,7 +108,7 @@ import gregtech6.registry.GTMaterialItems;
  * rows (declared port-owned decision). The five {@code FL.exists()}-guarded rows and the two
  * material-liquid rows are pooled — see {@link #SKIPPED_UPSTREAM}.
  *
- * <p><b>The food family</b> (Loader_Recipes_Food.java:654-658, task p21-drying-food-fluids):
+ * <p><b>The food family</b> (Loader_Recipes_Food.java:654-658, task drying-food-fluids):
  * exactly FOUR rows, all EUt 16 — {@code Sap 250 → DistW 100 + Sugar dust} (200 ticks, the
  * :654 {@code FL.Sap.exists()} guard row), {@code Sap_Maple 250 → 100 + Sugar} (200),
  * {@code Juice_Reed 200 → 50 + Sugar} (100) and {@code Juice_Cactus 200 → 50} (100, ZL_IS:
@@ -165,7 +165,7 @@ public final class GT6RecipesDrying {
 
 	/**
 	 * The fluid seam: the live lookups by default (vanilla water in, the registered
-	 * distilled water out, the six p16-aqua-fluids registrations, and the deliberate
+	 * distilled water out, the six aqua-fluids registrations, and the deliberate
 	 * null for the unregistered water_hot alias), fixtures injected offline (the
 	 * GT6RecipesEngineFuels sFluidResolver precedent).
 	 */
@@ -192,7 +192,7 @@ public final class GT6RecipesDrying {
 		if (tTable == null) sTable = tTable = List.of(
 		// Loader_Recipes_Chem.java:525 — the Water row, the P14 loop-closure foundation
 		new DryingRow(":525", FLUID_WATER     , 10,  8),
-		// Loader_Recipes_Chem.java:526-532 — the p16-aqua-fluids six + the :530 pooled alias
+		// Loader_Recipes_Chem.java:526-532 — the aqua-fluids six + the :530 pooled alias
 		new DryingRow(":526", FLUID_SPDEW     , 10,  8),
 		new DryingRow(":527", FLUID_MNWTR     , 10,  8),
 		new DryingRow(":528", FLUID_GEOTHERMAL, 25, 20),
@@ -273,7 +273,7 @@ public final class GT6RecipesDrying {
 
 	/**
 	 * One transcribed salt-family row (Loader_Recipes_Chem.java:548/:553, task
-	 * p19-drying-rows-backfill-2): the input fluid id, the in/out litre amounts, the
+	 * drying-rows-backfill-2): the input fluid id, the in/out litre amounts, the
 	 * duration (NOT the water family's flat 16 — these rows carry their own literals),
 	 * and the single item output (stack size 1 — the upstream {@code OM.dust(MT.NaCl, U4)}
 	 * is the OM.dust U4 → dustSmall x1 mapping, OM.java:460-467).
@@ -312,7 +312,7 @@ public final class GT6RecipesDrying {
 
 	/**
 	 * One transcribed food row (Loader_Recipes_Food.java:655-658, task
-	 * p21-drying-food-fluids): the input fluid id, the in/out litre amounts, the sugar
+	 * drying-food-fluids): the input fluid id, the in/out litre amounts, the sugar
 	 * dust count ({@code OM.dust(MT.Sugar)} = 1 on :655-657, ZL_IS = 0 on :658) and the
 	 * duration (NOT the water family's flat 16 — these rows carry their own literals).
 	 * EUt 16 is a family constant (every :655-658 row carries it). NOT a DryingRow/SaltRow
@@ -406,18 +406,18 @@ public final class GT6RecipesDrying {
 
 	/**
 	 * The skipped upstream surface of the RM.Drying book OUTSIDE the poured families — the
-	 * p19-drying-rows-backfill-2 spec ④ audit, kept as DATA for the audit walk (the
+	 * drying-rows-backfill-2 spec ④ audit, kept as DATA for the audit walk (the
 	 * GT6RecipesShCL precedent). Every entry is a POOL item of a named future family, not a
 	 * silent drop; the census behind it is tasks.p19-research-drying-rows (the full-file
 	 * reads, RM.Drying ≈137 statements). The crops/resin BODIES are deliberately not
 	 * audited row-by-row here (they need their own domain cards); the food body POURED
-	 * with task p21-drying-food-fluids — its entry stands as the poured annotation.
+	 * with task drying-food-fluids — its entry stands as the poured annotation.
 	 */
 	public static final List<String> SKIPPED_UPSTREAM = List.of(
 		"Loader_Recipes_Chem.java:544-545 Tropics_Water + :546-547 OceanGrC + :549-550 Brine + :554-555 Swampwater + :556-557 Stagnant_Water — the FL.exists() external-fluid guard rows (FL.java:124/:126/:131/:129/:128, no GT6 FL.create): CUT = the absent-fluid skip is the guard semantics; a compat-fluids card would carry them",
 		"Loader_Recipes_Chem.java:551-552 MT.SaltWater.liquid / MT.SaltedWater.liquid material-liquid rows — the port has no material-liquid registration face (MT.liquid(U, T) creates bucket fluids, not FL shorthand ids); material-liquid pool",
 		"Loader_Recipes_Chem.java:530 Water_Hot (\"ic2hotwater\", FL.java:116) — stays UNREGISTERED (ruling: IC2 alias parity, absent-fluid skip; all 8 consumers upstream carry exists() guards; an IC2-compat card must handle all 8, not the Drying row alone)",
-		"Loader_Recipes_Food.java:654-658 the food family — POURED by task p21-drying-food-fluids (all four rows pour via the GTFluids.FOOD_FLUID_SPECS registrations sap/maplesap/reedwater/cactuswater; the :654 FL.Sap.exists() guard is live semantics over a registered fluid; the upstream bottle/container faces stay in the MultiItemBottles domain pool)",
+		"Loader_Recipes_Food.java:654-658 the food family — POURED by task drying-food-fluids (all four rows pour via the GTFluids.FOOD_FLUID_SPECS registrations sap/maplesap/reedwater/cactuswater; the :654 FL.Sap.exists() guard is live semantics over a registered fluid; the upstream bottle/container faces stay in the MultiItemBottles domain pool)",
 		"Loader_Recipes_Crops.java the crop/bale listener family: rice:158/:167, oats:174/:183, abyssalOats:191/:201, barley:208/:217, rye:224/:233 DEAD upstream (no vanilla registrant, ST.valid guard); tobacco/coca/marijuana :381/:385/:389/:393 DEAD (leaf*bud*Dried ST.valid); HaC :742 DEAD (MD.HaC.mLoaded); pomegranate :716 + grapes :746/:751/:756/:761 DEAD (no 1.20.1 grape/pomegranate); baleGrass :121 + itemGrass :138 inputs ARE reachable (tall grass → SHORT_GRASS via itemGrassTall re-reg LoaderOreDictReRegistrations:624; wheat → WHEAT :146-147) but outputs IL.Grass_Dry/Bale_Dry (MultiItemFood.java:53-54) are not ported — crop-bale card pool",
 		"Loader_Recipes_OreDict.java:128/:136/:145/:154 the slimeball family (4 listener rows) — outputs ST.make(MD.SC2, \"ItemSlimeRubber\") = Steamcraft2, ST.java:353-354 !mLoaded → null = dead upstream; :190 logWood/logRubber — output BlocksGT.Log1 (BlockTreeLog1, Loader_Woods.java:38) not ported — resin-family pool",
 		"Loader_Recipes_Ores.java:49 Sluice fluid 100→DistW50+SluiceSand U9 — needs the sluice fluid (GT6-own, unregistered); :67-68 Biotite crushedPurified/tiny → Ar gas — item legs resolve but the argon gas registration is the gas-family pool",
@@ -601,7 +601,7 @@ public final class GT6RecipesDrying {
 	}
 
 	/** The live fluid lookup — vanilla water for the :525 row, the registered distilled
-	 * water for the output, the six p16-aqua-fluids registrations for the :526-529/:531-532
+	 * water for the output, the six aqua-fluids registrations for the :526-529/:531-532
 	 * rows, the two p19 simple-liquid registrations for the :548/:553 rows (the
 	 * RegistryObjects are live at load() time), the four p21 food registrations for the
 	 * :655-658 rows, and NULL for the water_hot alias

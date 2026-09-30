@@ -31,7 +31,7 @@ import gregtech6.items.GT6UsbSticks;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The p32-usb-data pins (the card acceptance): ① the registration/asset witnesses (the
+ * The usb-data pins (the card acceptance): ① the registration/asset witnesses (the
  * generated-tree census, the ArmorSetTest posture — the mod-Item intrusive-holder wall
  * keeps the live registry out of offline reach, the committed generated files + the RCON
  * give chain are the registration witnesses), ② the material-data NBT carrier round trip
@@ -138,7 +138,7 @@ public class GT6UsbDataTest extends GTOfflineTestBase {
 		GT6RecipeMapJsonLoader.sItemResolver = aId -> switch (aId.getPath()) {
 			case "ender_pearl" -> Items.ENDER_PEARL;
 			case "paper" -> Items.PAPER; // the scanner stand-in's data medium
-			// task p32-qu-scanner-replicator — the six gem-tier stand-ins of the :941-946 rows
+			// task qu-scanner-replicator — the six gem-tier stand-ins of the :941-946 rows
 			case "gem_chipped_redstone", "gem_flawed_redstone", "gem_redstone",
 					"gem_flawless_redstone", "gem_exquisite_redstone", "gem_legendary_redstone" -> Items.DIAMOND;
 			default -> Items.AIR; // a miss is LOUD (the unregistered-id bad row)
@@ -168,7 +168,7 @@ public class GT6UsbDataTest extends GTOfflineTestBase {
 
 	/**
 	 * ③ The replicator map holds the official row PLUS the molten-redstone six (task
-	 * p32-qu-scanner-replicator landed them) — the :929 constants re-pinned here, the
+	 * qu-scanner-replicator landed them) — the :929 constants re-pinned here, the
 	 * :941-946 six pinned exhaustively in GT6QuMachinesTest; the :912/:934-939 _TE compat
 	 * rows stay unmounted, the TF trophy rows are the card's compat cut.
 	 */

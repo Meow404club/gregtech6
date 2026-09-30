@@ -29,7 +29,7 @@ import net.minecraft.world.level.material.Fluids;
  * (RecipeMapFurnace.java:54/:154 semantics).
  *
  * <p>Server-level RCON verification of the same query happens with the W2
- * p4-machine-oven acceptance (the RCON command file belongs to that card's
+ * machine-oven acceptance (the RCON command file belongs to that card's
  * files scope).
  */
 class RecipeMapFurnaceBridgeTest extends GTRecipesOfflineTestBase {

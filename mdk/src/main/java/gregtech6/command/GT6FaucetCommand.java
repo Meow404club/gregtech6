@@ -21,7 +21,7 @@ import gregtech6.tileentity.tools.TileEntityFaucet;
 import gregtech6.tileentity.tools.TileEntityMold;
 
 /**
- * The card-B RCON driver (task p26-crucible-mold-faucet acceptance, the card-local
+ * The card-B RCON driver (task crucible-mold-faucet acceptance, the card-local
  * command/ form of {@link GT6CrucibleCommand}):
  * <ul>
  * <li>{@code place <pos> <variant> <facing>} — the faucet placement arm with the mount

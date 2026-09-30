@@ -24,7 +24,7 @@ import net.neoforged.neoforge.common.loot.LootModifier;
 *///?}
 
 /**
- * The dungeon-loot INJECTION seam — task p34-loot-injection. Upstream
+ * The dungeon-loot INJECTION seam — task loot-injection. Upstream
  * {@code loaders/c/Loader_Loot.java:410-552} added weighted {@code WeightedRandomChestContent}
  * rows into the vanilla {@code ChestGenHooks} structure categories (dungeon, mineshaft,
  * stronghold x3, pyramid x2/dispenser, village blacksmith); the port re-arms those rows as a

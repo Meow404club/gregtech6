@@ -16,7 +16,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * The formal GT6 spade — item id {@code gt6:spade} (task p29-w5-t1-dig-six). Upstream
+ * The formal GT6 spade — item id {@code gt6:spade} (task w5-t1-dig-six). Upstream
  * GT_Tool_Spade.java:39-119 vs the plain shovel: the SPEED and the HARVEST.
  * <ul>
  * <li><b>Speed ×1.5</b> (:70-73) → {@link #MINING_SPEED} = 9.0F (the 6.0F anchor ×
@@ -39,7 +39,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * <li><b>Damage</b>: base 1.5F (:65-67); per-block 50 / per-attack 200 fold to one point.</li>
  * </ul>
  *
- * <p>Durability ladder (task p31-dig-ladder): the {@link GT6ToolLadder} form over the
+ * <p>Durability ladder (task dig-ladder): the {@link GT6ToolLadder} form over the
  * stack's identity — durability j/100, speed ×1.5 × mToolSpeed, the :482 quality gate;
  * the identity-less arm = Steel bit-exact (512 / 9.0F, the pre-ladder constants).
  */

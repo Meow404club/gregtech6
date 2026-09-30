@@ -18,7 +18,7 @@ import gregtech6.block.GTEntityBlock;
 import gregtech6.registry.GT6BeeHives;
 
 /**
- * The Bumble Hive block (task p32-bees-lv2) — the block carrier of the MTE 32755 port
+ * The Bumble Hive block (task bees-lv2) — the block carrier of the MTE 32755 port
  * (Loader_MultiTileEntities.java:2041 over the {@code aHive} "rock" MTE block,
  * :111: {@code MaterialScoopable + soundTypeWood + TOOL_scoop}). The material/tool pair
  * maps onto the modern declarative face:
@@ -41,7 +41,7 @@ import gregtech6.registry.GT6BeeHives;
  *
  * <p>Strength 1.0/1.0 (the upstream getBlockHardness/getExplosionResistance2 lit-pumpkin
  * pair, :80-82 = vanilla jack_o_lantern {@code strength(1.0F)}), wood sound (the aHive
- * row). Obtainable since the R2 containment-contract revision (task p34-bumbliary-recipes,
+ * row). Obtainable since the R2 containment-contract revision (task bumbliary-recipes,
  * the GT6BeeHives javadoc): a proper harvest drops the BOX + the contents — the upstream
  * drop list puts the block item into every break (the base getDrops,
  * TileEntityBase04MultiTileEntities.java:166-171) beside the mDroppable inventory walk.
@@ -83,7 +83,7 @@ public class GT6BumbleHiveBlock extends GTEntityBlock {
 	 * The mDroppable collapse: the whole BE inventory drops on a proper harvest (:97-98),
 	 * BESIDE the box itself — the upstream base getDrops always leads the drop list with
 	 * the block item (TileEntityBase04MultiTileEntities.java:166-171), so the harvest
-	 * yield is box + contents (the p34-bumbliary-recipes ③ verdict; the p33-c card's
+	 * yield is box + contents (the bumbliary-recipes ③ verdict; the p33-c card's
 	 * contents-only walk predates the BlockItem).
 	 */
 	@Override

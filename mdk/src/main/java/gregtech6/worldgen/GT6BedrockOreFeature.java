@@ -19,7 +19,7 @@ import gregtech6.registry.GT6BedrockOreBlocks;
 import gregtech6.registry.GT6OreBlocks;
 
 /**
- * The bedrock-ore Feature (task p31-bedrock-ore-worldgen spec ②) — the per-chunk adapter
+ * The bedrock-ore Feature (task bedrock-ore-worldgen spec ②) — the per-chunk adapter
  * around {@link GT6BedrockOreGenerator}, the {@link GT6StrataLensFeature} isomorphic shape
  * minus the origin grid: the bedrock ore has NO lattice, every chunk rolls its own rows on
  * its own coordinate-seeded stream ({@link GT6VeinGenerator#veinRandom} — the decision-level

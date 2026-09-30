@@ -22,7 +22,7 @@ import gregtech6.recipes.RecipeMap;
 import gregtech6.tileentity.attachment.GTTapBlockEntity;
 
 /**
- * 1.20.1 counterpart of the GT6 Liquid Burning Box — task p13-burning-box-family spec ②,
+ * 1.20.1 counterpart of the GT6 Liquid Burning Box — task burning-box-family spec ②,
  * ported from gregtech/tileentity/energy/generators/MultiTileEntityGeneratorLiquid.java
  * (:63-285), the FM.Burn ("gt.recipe.fuels.burn") fluid-fuel HU source.
  *
@@ -227,7 +227,7 @@ public class GTGeneratorLiquidBlockEntity extends GTGeneratorSolidBlockEntity im
 	 * && !FL.gas(...)}) — "is this fluid a valid FM.Burn input AND not a gas" (the
 	 * Liquid family refuses gas fuel; the GAS family inverts the tail,
 	 * MultiTileEntityGeneratorGas.java:41 {@code && FL.gas(...)}). The gas check rides
-	 * the registry path over {@link GTFluidLists#isGas} (the p13-steam-proof-repay
+	 * the registry path over {@link GTFluidLists#isGas} (the steam-proof-repay
 	 * GTFluidLists carrier).
 	 */
 	public boolean acceptsFuelFluid(@Nullable FluidStack aFluid) {

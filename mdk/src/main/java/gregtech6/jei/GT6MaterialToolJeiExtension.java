@@ -16,7 +16,7 @@ import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategor
 import gregtech6.items.tools.GT6MaterialToolRecipe;
 
 /**
- * The gt6:material_tool crafting-category extension (task r3-jei-tool-output-tint,
+ * The gt6:material_tool crafting-category extension (task jei-tool-output-tint,
  * GitHub #6 round 3) — the b' ruling face (custom category / subtypes / result
  * components were ruled out, research.issues-r3-tool-jei). JEI renders the vanilla
  * crafting category's output slot from the bare {@code getResultItem} stack

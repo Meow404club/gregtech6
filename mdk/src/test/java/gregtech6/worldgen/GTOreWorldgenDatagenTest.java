@@ -1,7 +1,7 @@
 /**
- * Tests for task p30-w6-small-ore-datagen: the small-ore table + the (row, dim)
+ * Tests for task w6-small-ore-datagen: the small-ore table + the (row, dim)
  * placement pairs — the acceptance's offline parity unit. The table grew 54 → 115
- * rows and the pairs 91 → 152 with r7-b-gem-pool-extension (the RANDOM_SMALL_GEM_ORE
+ * rows and the pairs 91 → 152 with b-gem-pool-extension (the RANDOM_SMALL_GEM_ORE
  * pool loop joined).
  *
  * <p>Compile anchors (transcribed independently here, production and test must agree
@@ -11,7 +11,7 @@
  *     ctor order (name, minY, maxY, amount, material) + the row's GEN_* vanilla-dim
  *     projection; every row below cites its upstream line.</li>
  * <li>Loader_Worldgen.java:877-878 + CS.java:965 — the 61 RANDOM_SMALL_GEM_ORE pool
- *     rows (r7-b-gem-pool-extension): the loop carries no axis filter, one row per
+ *     rows (b-gem-pool-extension): the loop carries no axis filter, one row per
  *     flagged material, all (T, 5, 250, 1, GEN_GEMS); GEN_GEMS projects to OVERWORLD
  *     only (the other eight domains have no modern carrier).</li>
  * <li>WorldgenOresSmall.java:61 — the per-chunk count; the declared constant deviation
@@ -71,7 +71,7 @@ class GTOreWorldgenDatagenTest {
     /**
      * The 115 rows pinned line-by-line: name → {upstream line, minY, maxY, amount, dims}.
      * Every entry transcribed from its Loader_Worldgen.java row text; the 61 gem-pool rows
-     * (r7-b-gem-pool-extension) all cite the :877-878 loop with the loop's literal
+     * (b-gem-pool-extension) all cite the :877-878 loop with the loop's literal
      * (T, 5, 250, 1, GEN_GEMS→OVERWORLD) parameters.
      */
     private static Map<String, String> UPSTREAM_ROWS = Map.ofEntries(
@@ -129,7 +129,7 @@ class GTOreWorldgenDatagenTest {
         Map.entry("ore.small.cinnabar"    , "851 5 250 16 NETHER"),
         Map.entry("ore.small.ancientdebris", "852 5 90 16 NETHER"), // placement-gated
         Map.entry("ore.small.nikolite"    , "875 10 40 4 OVERWORLD NETHER END"),
-        // -- :877-878, the RANDOM_SMALL_GEM_ORE pool loop (r7-b-gem-pool-extension) —
+        // -- :877-878, the RANDOM_SMALL_GEM_ORE pool loop (b-gem-pool-extension) —
         // 61 rows, all "877 5 250 1 OVERWORLD" (the loop literal; tails = the sanitized
         // internal names). Pinned name-by-name against the upstream MT.java flag walk.
         Map.entry("ore.small.sapphire"        , "877 5 250 1 OVERWORLD"),
@@ -389,7 +389,7 @@ class GTOreWorldgenDatagenTest {
     }
 
     /**
-     * The deep-band mirror band (task r6-c2-deep-band): the 15 selected rows grow a
+     * The deep-band mirror band (task c2-deep-band): the 15 selected rows grow a
      * PLACED-only overworld mirror whose band is the upstream band shifted -64 (the
      * GTOreWorldgen.DEEP_SHIFT rule), wholly below y0 — the modern face of the upstream
      * mNoDeep deep-slate layer (WorldgenStoneLayers.java:77/:196).

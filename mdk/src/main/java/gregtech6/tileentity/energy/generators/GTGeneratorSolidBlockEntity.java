@@ -36,7 +36,7 @@ import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * 1.20.1 counterpart of the GT6 Solid Burning Box base — task p13-burning-box-family
+ * 1.20.1 counterpart of the GT6 Solid Burning Box base — task burning-box-family
  * spec ①/⑤, ported from gregtech/tileentity/energy/generators/MultiTileEntityGeneratorSolid.java
  * (:53-287) as the HU source of the whole burning-box family: EVERY family row emits
  * {@code TD.Energy.HU} (the Loader_MultiTileEntities.java:517-704 {@code NBT_ENERGY_EMITTED}

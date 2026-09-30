@@ -23,7 +23,7 @@ import gregtech6.registry.GT6Placeables;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Sandwich block carrier (task p32-placeables) — the upstream row "Sandwich"
+ * The Sandwich block carrier (task placeables) — the upstream row "Sandwich"
  * (Loader_MultiTileEntities.java:2032, MTE 32105, the aUtilWool row). The model is the
  * fixed 12/16 layered box (the upstream {@code mSize} variable height pins at the default
  * sandwich — the per-ingredient model band is the declared render cut); the click face is

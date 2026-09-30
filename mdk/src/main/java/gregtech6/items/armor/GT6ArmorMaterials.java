@@ -20,7 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 *///?}
 
 /**
- * The six Hazmat suit materials — task p29-w5-t8-armor-24 spec ①, the vanilla
+ * The six Hazmat suit materials — task w5-t8-armor-24 spec ①, the vanilla
  * {@link ArmorMaterial} face of the upstream
  * {@code EnumHelper.addArmorMaterial("armor." + aUnlocalized, ...)} row
  * (gregapi/item/ItemArmorBase.java:82, once per registration row Loader_Tools.java:68-96).

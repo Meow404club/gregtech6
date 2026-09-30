@@ -32,7 +32,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.ore.GTBedrockOreBlock;
 
 /**
- * The Bedrock Mining Drill offline acceptance (task p37-bedrock-drill): the probe-seam
+ * The Bedrock Mining Drill offline acceptance (task bedrock-drill): the probe-seam
  * structure (no declared pattern — the GTMultiBlockPattern.java:77-81 standing clause),
  * the hand-written :82-120 check (the y>=5 gate, the 3x3 y-5 floor probe with the
  * large-x2 / small-x1 material weighting, the bedrock-only floor gate, the four machine

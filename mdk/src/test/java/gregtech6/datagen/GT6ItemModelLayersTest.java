@@ -1,5 +1,5 @@
 /**
- * Pure-JUnit item-model structure census for task p27-tool-model-layers — pins the
+ * Pure-JUnit item-model structure census for task tool-model-layers — pins the
  * multi-layer wave offline (no client, no datagen run).
  *
  * <p>What it nails:</p>
@@ -11,7 +11,7 @@
  *       texture paths; hammer = the soft-hammer metallic-head shape, also 4 layers;
  *       the VOID-handle iconset tools (crowbar/cutter/wrench/bending_cylinder_small,
  *       passes 2/3 draw nothing upstream) = exactly 2 layers;</li>
- *   <li>the p38-issue6-tool-4layer-tint supersession: the former composed singles
+ *   <li>the issue6-tool-4layer-tint supersession: the former composed singles
  *       (screwdriver/hammer, the p24/p25 census-erratum ruling) are RETIRED — both tools
  *       now carry the upstream four-pass structure; the composed single-layer pin is
  *       gone with the ruling it guarded;</li>
@@ -150,7 +150,7 @@ class GT6ItemModelLayersTest {
         // saw/file/chisel/screwdriver: layer0/1 = the toolHead* materialicon pair
         // (Steel = metallic), layer2/3 = the HANDLE_* iconset pair borrows
         // (GT_Tool_Saw.java:186-188, GT_Tool_File.java:91-93, GT_Tool_Chisel.java:87-89,
-        // GT_Tool_Screwdriver.java:115-117 — the p38-issue6 four-layer migration).
+        // GT_Tool_Screwdriver.java:115-117 — the issue6 four-layer migration).
         for (String head : new String[] {"saw", "file", "chisel", "screwdriver"}) {
             Map<String, String> textures = texturesOf(itemModels, head);
             assertEquals(4, layerKeys(textures).size(), head + " must carry exactly 4 layers");
@@ -169,7 +169,7 @@ class GT6ItemModelLayersTest {
         assertLayer(wand, 2, "gt6:item/material_sets/wood/stick", "builder_wand");
         assertLayer(wand, 3, "gt6:item/material_sets/wood/stick_overlay", "builder_wand");
 
-        // soft_hammer (task p29-w5-t3-machine-face-four): the RUBBER-set toolHeadHammer
+        // soft_hammer (task w5-t3-machine-face-four): the RUBBER-set toolHeadHammer
         // pair (the upstream ANY.Rubber primary, GT_Tool_SoftHammer.getIcon :120) + the
         // wood stick pair (the MT.WOODS.Spruce secondary, the same row) — the wand shape,
         // all four layers material_sets borrows (zero new sprites).
@@ -180,7 +180,7 @@ class GT6ItemModelLayersTest {
         assertLayer(softHammer, 2, "gt6:item/material_sets/wood/stick", "soft_hammer");
         assertLayer(softHammer, 3, "gt6:item/material_sets/wood/stick_overlay", "soft_hammer");
 
-        // hard hammer (task p38-issue6-tool-4layer-tint, supersedes the p25 composed
+        // hard hammer (task issue6-tool-4layer-tint, supersedes the p25 composed
         // single): the soft-hammer row shape over the METALLIC head pair (the default
         // primary Steel) + the wood stick pair (the secondary MT.WOODS.Spruce ride,
         // GT_Tool_HardHammer.getIcon :123) — zero new sprites, all in-tree borrows.
@@ -204,7 +204,7 @@ class GT6ItemModelLayersTest {
         }
     }
 
-    // RETIRED with the ruling it guarded (task p38-issue6-tool-4layer-tint): the former
+    // RETIRED with the ruling it guarded (task issue6-tool-4layer-tint): the former
     // composedSinglesStaySingleLayer test ("screwdriver/hammer stay exactly 1 layer",
     // the census erratum) is superseded by the four-layer migration — both tools are
     // pinned in fourPassToolsCarryExactlyFourLayers above.
@@ -212,16 +212,16 @@ class GT6ItemModelLayersTest {
     /** The tool ids with their own model rows (pinned by the dedicated tests above). */
     private static final Set<String> TOOL_MODEL_IDS = Set.of(
         "crowbar", "cutter", "chisel", "file", "saw", "builder_wand", "screwdriver", "hammer",
-        "sword", "knife", "butchery_knife", "club", "axe", "axe_double", // task p29-w5-t2-blade-six — the blade rows carry their own multi-layer pins
-        // task p31-dig-ladder — the dig band's restored 4-layer rows (head pair + stick pair):
+        "sword", "knife", "butchery_knife", "club", "axe", "axe_double", // task w5-t2-blade-six — the blade rows carry their own multi-layer pins
+        // task dig-ladder — the dig band's restored 4-layer rows (head pair + stick pair):
         "pickaxe", "pickaxe_gem", "pickaxe_construction", "shovel", "spade", "universal_spade", "hoe",
-        "soft_hammer", // task p29-w5-t3-machine-face-four — the 4-layer rubber-head pin
-        // task p38-c1-dynamo-bowl-models — the p29-w5-t4 un-laddered quartet's restored
+        "soft_hammer", // task w5-t3-machine-face-four — the 4-layer rubber-head pin
+        // task c1-dynamo-bowl-models — the p29-w5-t4 un-laddered quartet's restored
         // rows (plow/sense = the 4-layer head-pair + stick-pair row; branch_cutter /
         // hand_drill = the 2-layer iconset pair — their own pins live in
         // GT6DynamoBowlRenderDatagenTest.caughtItemModelsPinParentsAndLayers)
         "plow", "sense", "branch_cutter", "hand_drill",
-        // task p29-w5-t6-electric-nineteen — the electric rows whose layer0 rides the
+        // task w5-t6-electric-nineteen — the electric rows whose layer0 rides the
         // material_sets head sprite: their layer1 is the POWER-UNIT/HANDLE pass (the
         // upstream getIcon(true) pass), NOT the base's _overlay sibling — the deliberate
         // exemption, the t3 machine-face-four TOOL_MODEL_IDS ruling

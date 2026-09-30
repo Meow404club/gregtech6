@@ -19,7 +19,7 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
 
 /**
- * The Coke Oven menu pure-function face offline (task p8-cokeoven-gui-menu ⑧):
+ * The Coke Oven menu pure-function face offline (task cokeoven-gui-menu ⑧):
  * <ul>
  * <li>the three-state progress function {@link GTBasicMachineMenu#progressValue(Host)}
  *     over fake Hosts — idle = -1, success = 32767, running = the units() normalization

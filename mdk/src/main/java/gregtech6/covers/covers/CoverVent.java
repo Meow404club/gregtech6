@@ -18,7 +18,7 @@ import gregtech6.fluid.FluidTankGT;
 
 /**
  * The air vent cover — 1.20.1 port of gregapi/cover/covers/CoverVent.java:40-85 (task
- * p34-covers-gameplay-10; upstream item id 1022 "Air Vent"). The vent is the AIR
+ * covers-gameplay-10; upstream item id 1022 "Air Vent"). The vent is the AIR
  * INTAKE face of a tank: every 360-tick beat, phase-offset per covered side
  * ({@code aTimer % 360 == 30 + 60*aSide}, upstream :45 over SERVER_TIME — the host
  * timer is the port's beat carrier, the CoverPump :68 precedent), when the block in

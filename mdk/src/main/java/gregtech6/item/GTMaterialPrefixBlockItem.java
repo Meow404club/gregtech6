@@ -22,18 +22,18 @@ import gregtech6.registry.GTMaterialItems;
 
 /**
  * The BlockItem of a {@link GTMaterialPrefixBlock}, carrying its (prefix, material) pair
- * (task p8-prefixblock-registry). Naming mirrors {@link MaterialPrefixItem} with ZERO
+ * (task prefixblock-registry). Naming mirrors {@link MaterialPrefixItem} with ZERO
  * per-pair lang: the composed template key {@code gt6.tagprefix.<prefix_snake>} — already
  * generated for every OP prefix (GT6EnUs.addPrefixTemplates) — is filled with the material's
  * {@code gt6.material.<snake>} translatable small unit at getName time
- * ({@link MaterialPrefixItem#materialFill}, the task p23-i18n-material-fill-fix shared seam:
+ * ({@link MaterialPrefixItem#materialFill}, the task i18n-material-fill-fix shared seam:
  * each locale resolves the slot in its own language, en = mNameLocal verbatim, zh = the
  * localized word), so "Block of %s Ingots" style names come for free (the block*
  * prefixes carry mMaterialPre/mMaterialPost exactly like the item prefixes, upstream
  * OP.java:345-351). The special-case key {@code gt6.<prefix_snake>_<material_snake>} stays
  * the hand-translation layer, preferred only when a translation exists.
  *
- * <p>Broken ores (task r4-ore-broken-name, the declared reverse-upstream deviation): the
+ * <p>Broken ores (task ore-broken-name, the declared reverse-upstream deviation): the
  * BROKEN form of an ore family (the {@code kind} field on GTOreBlock/GTOreFallingBlock)
  * composes its name from the extra
  * template {@code gt6.tagprefix.<prefix_snake>_broken} instead of the family's shared
@@ -43,7 +43,7 @@ import gregtech6.registry.GTMaterialItems;
  *
  * <p>Tint: {@code material.mRGBa[prefix.mState]} (upstream PrefixBlockItem.java:103
  * {@code mRGBa[mBlock.mPrefix.mState]}); the ItemColor registration itself is the render
- * card's surface (p8-prefixblock-render, GTClientHandlers) — this class only supplies the
+ * card's surface (prefixblock-render, GTClientHandlers) — this class only supplies the
  * shared {@link #tintColor()} implementation.
  */
 public class GTMaterialPrefixBlockItem extends BlockItem {
@@ -67,8 +67,8 @@ public class GTMaterialPrefixBlockItem extends BlockItem {
     @Override
     public Component getName(ItemStack stack) {
         // The %s fill only works on the returned Component (the MaterialPrefixItem/Card R3 form);
-        // the slot is the shared gt6.material.<snake> translatable unit (p23-i18n-material-fill-fix).
-        // r4-ore-broken-name: the broken ore form gets its own template
+        // the slot is the shared gt6.material.<snake> translatable unit (i18n-material-fill-fix).
+        // ore-broken-name: the broken ore form gets its own template
         // gt6.tagprefix.<prefix_snake>_broken — an EXPLICIT reverse-upstream enhancement
         // (user ruling 2026-09-28): upstream oreBroken shares the family prefix and composes
         // the SAME display name (PrefixBlockItem.java:108-114 oredict compose, no broken

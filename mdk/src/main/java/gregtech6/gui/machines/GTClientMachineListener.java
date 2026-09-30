@@ -20,8 +20,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
  * explicitly-typed lambda drives the M/U inference of
  * {@code MenuScreens.register(MenuType<? extends M>, ScreenConstructor<M, U>)}.
  *
- * <p>The shredder/crusher/lathe trio has no entry since task p26-mui-a-menu-deregistration:
- * their GUI is ModularUI (no vanilla MenuType, task p26-mui-a-open-chain open chain).
+ * <p>The shredder/crusher/lathe trio has no entry since task mui-a-menu-deregistration:
+ * their GUI is ModularUI (no vanilla MenuType, task mui-a-open-chain open chain).
  *
  * <p>1.21.1: {@code MenuScreens#register} is private (javap universal 21.1.249) — the
  * sanctioned hook is the mod-bus {@code RegisterMenuScreensEvent} whose {@code register}

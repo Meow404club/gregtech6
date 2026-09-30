@@ -27,7 +27,7 @@ import gregtech6.registry.GT6Tools;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Offline tests for task p29-w5-t6-electric-nineteen — the nineteen electric tools
+ * Offline tests for task w5-t6-electric-nineteen — the nineteen electric tools
  * (the DigSixTest offline boot form: pure static seams + the registerFixture item
  * seat for the IItemEnergy face, the GT6BatteryItemTest posture).
  *

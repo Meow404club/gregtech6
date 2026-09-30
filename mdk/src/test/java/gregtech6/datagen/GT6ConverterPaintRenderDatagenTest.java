@@ -1,5 +1,5 @@
 /*
- * Offline pinned-census tests for task r4-18-converter-tex-facing (GitHub #18): the
+ * Offline pinned-census tests for task 18-converter-tex-facing (GitHub #18): the
  * converter family (9 electric transformer rows + 10 dynamo rows) joins the two-layer
  * tinted grammar — the tintindex-0 grayscale colored body is the mRGBa seat (upstream
  * MultiTileEntityTransformerElectric.java:35-39 BlockTextureMulti(colored x mRGBa,
@@ -284,7 +284,7 @@ class GT6ConverterPaintRenderDatagenTest {
                 "zpm_decharger_quantum", "zpm_decharger_electric");
         for (String tPath : tBattery) {
             JsonObject tVariants = json("assets/gt6/blockstates/" + tPath + ".json").getAsJsonObject("variants");
-            // r8-tex-composite-family: the battery-box carrier gained the ACTIVE property —
+            // tex-composite-family: the battery-box carrier gained the ACTIVE property —
             // the companion blockstates joined the 12-variant form (their own texture rows
             // are the GT6CompositeEnergyTexDatagenTest domain)
             assertEquals(12, tVariants.size(), tPath + ": the six-way x active variants");

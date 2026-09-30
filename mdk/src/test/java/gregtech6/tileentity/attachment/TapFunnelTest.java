@@ -34,7 +34,7 @@ import gregtech6.tileentity.tank.GTBarrelBlockEntity;
 import gregtech6.tileentity.tank.TileEntityBase08Barrel;
 
 /**
- * The tap/funnel offline truth tables (task p12-tap-funnel-attachment acceptance a):
+ * The tap/funnel offline truth tables (task tap-funnel-attachment acceptance a):
  *
  * <ul>
  * <li>the tap priority chain — VOIDING item drains-all-and-trashes (:82-86); the
@@ -82,7 +82,7 @@ public class TapFunnelTest extends GTOfflineTestBase {
 		sBarrelType = tBarrels[0];
 		// 21.1 BlockEntity ctor validates the type/state pair (validateBlockState →
 		// getType().isValid), so the fakes bind real BETs over the vanilla stone state
-		// too — the suppliers are stored, never invoked (task p15-m4-test-infra-2).
+		// too — the suppliers are stored, never invoked (task m4-test-infra-2).
 		sFakeTankType = BlockEntityType.Builder.of((aPos, aState) -> new FakeTankBE(aPos, 0), Blocks.STONE).build(null);
 		sFakeFillableType = BlockEntityType.Builder.of((aPos, aState) -> new FakeFillableBE(aPos), Blocks.STONE).build(null);
 	}

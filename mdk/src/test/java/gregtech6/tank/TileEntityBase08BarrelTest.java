@@ -30,7 +30,7 @@ import gregtech6.tileentity.tank.GTBarrelMetalBlockEntity;
 import gregtech6.tileentity.tank.TileEntityBase08Barrel;
 
 /**
- * Acceptance ①/③ (task p4-fluid-barrel): the 16000 L capacity, the sticky
+ * Acceptance ①/③ (task fluid-barrel): the 16000 L capacity, the sticky
  * preventDraining NBT round trip, the voidExcess-off behaviour and the melt-down
  * judgment, all offline. CompoundTag and BlockEntityType.Builder.of(...).build(null)
  * construct without a registry (GTOfflineTestBase); the vanilla water/lava FluidStacks
@@ -88,7 +88,7 @@ public class TileEntityBase08BarrelTest extends GTOfflineTestBase {
 				Blocks.STONE).build(null);
 		sMetalType = tMetal[0];
 
-		// the real logistics BE (task p12-barrel-keepfilter-logistics) over the same vanilla
+		// the real logistics BE (task barrel-keepfilter-logistics) over the same vanilla
 		// fixture shape — the BE ctor takes the offline BET, the GTBarrels constants stay untouched
 		BlockEntityType<GTBarrelLogisticsBlockEntity>[] tLogistics = (BlockEntityType<GTBarrelLogisticsBlockEntity>[]) new BlockEntityType<?>[1];
 		tLogistics[0] = BlockEntityType.Builder.of(
@@ -129,7 +129,7 @@ public class TileEntityBase08BarrelTest extends GTOfflineTestBase {
 		assertTrue(tBack.mTank.getFluid() != null, "the identity stack stays reachable");
 
 		// the empty-but-identity state writes the NBT_TANK key under preventDraining (writeToNBT
-		// :85) AND carries the real identity since task p12-barrel-keepfilter-logistics: the
+		// :85) AND carries the real identity since task barrel-keepfilter-logistics: the
 		// W1-era payload degraded to "minecraft:empty" (the 1.20.1 empty flag collapsed
 		// FluidStack.writeToNBT) — the logistics card's FluidTankGT serialization fix now writes
 		// the real FluidName at Amount 0, asserted over the real BE below
@@ -216,7 +216,7 @@ public class TileEntityBase08BarrelTest extends GTOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// task p12-fluid-item-carrier — the BE↔item round-trip seam: getDrops writes the
+	// task fluid-item-carrier — the BE↔item round-trip seam: getDrops writes the
 	// tank onto the drop item (upstream 03:157-162 → Base08:81-85), placement reads it
 	// back (GTBarrelBlockItem.applyItemNBT); both halves over the offline BE fixtures
 	// (a mod Block cannot be constructed — the getDrops/placeBlock wrappers themselves
@@ -286,7 +286,7 @@ public class TileEntityBase08BarrelTest extends GTOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// task p12-barrel-keepfilter-logistics — the real BE replaces the sticky test
+	// task barrel-keepfilter-logistics — the real BE replaces the sticky test
 	// mount as the keepsFilter()=T consumer (the mount above stays as the base-class
 	// regression). The StickyBarrelBlockEntity mount (:49) is retained per the card
 	// spec ③; the logistics BE asserts the same stickiness over the real class.

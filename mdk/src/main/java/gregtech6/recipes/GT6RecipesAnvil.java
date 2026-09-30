@@ -46,7 +46,7 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
- * The Anvil recipe book (task p28-c-anvil) — the registration-time expansion of the
+ * The Anvil recipe book (task c-anvil) — the registration-time expansion of the
  * upstream {@code RM.Anvil} + {@code RM.AnvilBendSmall|Big} handler templates of
  * Loader_Recipes_Handlers.java:157-205 (:157-172 the Shredding grinding rows, :175-205
  * the forging/welding rows, :208-214 the bending rows), the GT6RecipesShCL pour shape.

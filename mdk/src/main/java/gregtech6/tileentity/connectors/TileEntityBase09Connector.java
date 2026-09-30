@@ -24,7 +24,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * (04TileEntityBase / 05Inventories / 06Covers / 07Energy / 08Directional) contribute
  * nothing the W1 pipe consumes.
  *
- * <p>Port scope (task p4-fluid-pipes spec ②):
+ * <p>Port scope (task fluid-pipes spec ②):
  * <ul>
  * <li>{@code mConnections} — the 6-bit connection mask (upstream :50), NBT persisted
  *     with the {@code & 63} clamp on read (upstream :55/:61, key "gt.connection"

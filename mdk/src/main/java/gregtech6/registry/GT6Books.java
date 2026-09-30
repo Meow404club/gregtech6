@@ -24,7 +24,7 @@ import gregtech6.item.GT6LootBookItem;
 import gregtech6.item.GT6WrittenBookItem;
 
 /**
- * The written-book registration home (task p35-books-written) — the GT6Sensors shape:
+ * The written-book registration home (task books-written) — the GT6Sensors shape:
  * a self-contained {@code @EventBusSubscriber(MOD)} DeferredRegister attached from the
  * construct event, one item per row over the generated {@link GT6BookText} data (the
  * mechanical extractor output, never hand-edited).
@@ -60,7 +60,7 @@ import gregtech6.item.GT6WrittenBookItem;
  * field), applied on BOTH legs so the converter stays single-sourced (one title, the
  * "Hunting Guide for Blazes and Ghasts" 35-char row, truncates on the forge NBT leg too).
  *
- * <p>Obtainability: the dedicated BOOKS_TAB (task p38-tabfix-d-ruling, the user ruling —
+ * <p>Obtainability: the dedicated BOOKS_TAB (task tabfix-d-ruling, the user ruling —
  * the manuals should be easy for players to get; supersedes the old "/give-reachable,
  * the sensors posture" declaration). The dungeon-loot face (the upstream "gt.books" table
  * via the p34 loot injection seam) and the Printer recipe face (GT6_Main.java:352) are
@@ -100,11 +100,11 @@ public final class GT6Books {
 	}
 
 	/**
-	 * The Dusty Guide Book (task p38-book-loot-first) — upstream MultiItemBooks.java:67
+	 * The Dusty Guide Book (task book-loot-first) — upstream MultiItemBooks.java:67
 	 * meta 32765, the sealed loot package that opens into one random manual. NOT a
 	 * {@link GT6BookText.BookText} row (no static content), so it rides outside
 	 * {@link #ITEMS_BY_PATH}; the creative-tab join is the BOOKS_TAB displayItems tail
-	 * line below (the review-merge disposition over the merged p38-tabfix-d-ruling state).
+	 * line below (the review-merge disposition over the merged tabfix-d-ruling state).
 	 */
 	public static final RegistryObject<Item> BOOK_LOOT_GUIDE =
 			ITEMS.register("book_loot_guide", () -> new GT6LootBookItem(new Item.Properties()));
@@ -125,7 +125,7 @@ public final class GT6Books {
 	}
 
 	/**
-	 * The books tab (task p38-tabfix-d-ruling, the user ruling — the written books get a
+	 * The books tab (task tabfix-d-ruling, the user ruling — the written books get a
 	 * dedicated creative tab so players can reach them; the GTMultiBlocks.MULTIBLOCKS_TAB
 	 * self-contained registration form: own DeferredRegister + a displayItems walk over
 	 * the item map, the icon the first registered book). Upstream has no books tab (the
@@ -141,7 +141,7 @@ public final class GT6Books {
 						for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
 							aOutput.accept(new ItemStack(tItem.get()));
 						}
-						// task p38-book-loot-first — the Guide carrier joins the books tab too (the
+						// task book-loot-first — the Guide carrier joins the books tab too (the
 						// review-merge disposition; it rides outside ITEMS_BY_PATH, so the map walk
 						// above does not cover it)
 						aOutput.accept(new ItemStack(BOOK_LOOT_GUIDE.get()));

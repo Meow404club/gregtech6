@@ -31,7 +31,7 @@ import gregtech6.block.surface.GT6WildBushBlock;
 import gregtech6.block.tree.GT6FallenLogBlock;
 
 /**
- * The surface deco block registrations (task p30-w6-rocks-sticks) — the card-owned
+ * The surface deco block registrations (task w6-rocks-sticks) — the card-owned
  * self-contained {@code @EventBusSubscriber(MOD)} DeferredRegister shape (the
  * {@link GT6FoamBlocks} precedent; GT6Mod/GTModBusListener untouched). Four blocks:
  * three per-material surface rocks (the first batch of the WorldgenRocks universe) and
@@ -77,7 +77,7 @@ public final class GT6SurfaceBlocks {
 	private record IndicatorSpec(String snake, Supplier<OreDictMaterial> material) {}
 
 	/**
-	 * The large-vein indicator rock rows (task p30-w6-t3-large-veins, the spec ⑤
+	 * The large-vein indicator rock rows (task w6-t3-large-veins, the spec ⑤
 	 * compensation for the MTE 32757 arm): the DISTINCT VALID slots of the 40-row vein
 	 * table (Loader_Worldgen.java:886-925 — a slot is valid when its material is in the
 	 * GT6OreBlocks.materialAxis() universe, the same gate the vein Feature draws through).
@@ -95,9 +95,9 @@ public final class GT6SurfaceBlocks {
 			new IndicatorSpec("zeolite",      () -> MT.OREMATS.Zeolite),      // ore.large.iodinesalt spread
 			new IndicatorSpec("sylvite",      () -> MT.KCl),                  // ore.large.rocksalt top
 			new IndicatorSpec("coltan",       () -> MT.OREMATS.Coltan),       // ore.large.rocksalt bottom / manganese spread
-			new IndicatorSpec("chromite",     () -> MT.OREMATS.Chromite),             // ore.large.asbestos top (r7-a-ore-axis-extension: the stone-layer axis member)
+			new IndicatorSpec("chromite",     () -> MT.OREMATS.Chromite),             // ore.large.asbestos top (a-ore-axis-extension: the stone-layer axis member)
 			new IndicatorSpec("asbestos",     () -> MT.Asbestos),             // ore.large.asbestos spread
-			new IndicatorSpec("blue_sapphire", () -> MT.BlueSapphire),        // ore.large.sapphire top (r7-b-gem-pool-extension: the gem-pool axis members)
+			new IndicatorSpec("blue_sapphire", () -> MT.BlueSapphire),        // ore.large.sapphire top (b-gem-pool-extension: the gem-pool axis members)
 			new IndicatorSpec("orange_sapphire", () -> MT.OrangeSapphire),    // ore.large.sapphire bottom (r7-b)
 			new IndicatorSpec("yellow_sapphire", () -> MT.YellowSapphire),    // ore.large.sapphire between (r7-b)
 			new IndicatorSpec("ruby",         () -> MT.Ruby),                 // ore.large.sapphire spread / sapphire2 bottom / redstone between (r7-b)
@@ -106,30 +106,30 @@ public final class GT6SurfaceBlocks {
 			new IndicatorSpec("almandine",    () -> MT.Almandine),            // ore.large.garnet top (r7-b)
 			new IndicatorSpec("pyrope",       () -> MT.Pyrope),               // ore.large.garnet bottom (r7-b)
 			new IndicatorSpec("andradite",    () -> MT.Andradite),            // ore.large.garnet between (r7-b)
-			new IndicatorSpec("uvarovite",    () -> MT.Uvarovite),            // ore.large.garnet spread (r7-a-ore-axis-extension)
-			new IndicatorSpec("pitchblende",  () -> MT.OREMATS.Pitchblende),  // ore.large.pitchblende top/bottom (r7-a-ore-axis-extension)
-			new IndicatorSpec("uraninite",    () -> MT.OREMATS.Uraninite),            // ore.large.pitchblende between/spread (r7-a-ore-axis-extension)
+			new IndicatorSpec("uvarovite",    () -> MT.Uvarovite),            // ore.large.garnet spread (a-ore-axis-extension)
+			new IndicatorSpec("pitchblende",  () -> MT.OREMATS.Pitchblende),  // ore.large.pitchblende top/bottom (a-ore-axis-extension)
+			new IndicatorSpec("uraninite",    () -> MT.OREMATS.Uraninite),            // ore.large.pitchblende between/spread (a-ore-axis-extension)
 			new IndicatorSpec("graphite",     () -> MT.Graphite),             // ore.large.diamond top/bottom/spread
 			new IndicatorSpec("diamond",      () -> MT.Diamond),              // ore.large.diamond between
 			new IndicatorSpec("galena",       () -> MT.OREMATS.Galena),       // ore.large.galena top/bottom
 			new IndicatorSpec("silver",      () -> MT.Ag),                   // ore.large.galena between
 			new IndicatorSpec("lead",        () -> MT.Pb),                   // ore.large.galena spread
-			new IndicatorSpec("magnesium_carbonate", () -> MT.MgCO3),        // ore.large.peridot bottom (r7-a-ore-axis-extension)
-			new IndicatorSpec("peridot",      () -> MT.Peridot),              // ore.large.peridot between (r7-a-ore-axis-extension)
+			new IndicatorSpec("magnesium_carbonate", () -> MT.MgCO3),        // ore.large.peridot bottom (a-ore-axis-extension)
+			new IndicatorSpec("peridot",      () -> MT.Peridot),              // ore.large.peridot between (a-ore-axis-extension)
 			new IndicatorSpec("pyrite",       () -> MT.Pyrite),               // ore.large.gold top / copper between
 			new IndicatorSpec("chalcopyrite", () -> MT.OREMATS.Chalcopyrite), // ore.large.gold bottom / copper top
 			new IndicatorSpec("gold",        () -> MT.Au),                   // ore.large.gold spread
 			new IndicatorSpec("cooperite",    () -> MT.OREMATS.Cooperite),    // ore.large.platinum top
 			new IndicatorSpec("sperrylite",   () -> MT.OREMATS.Sperrylite),   // ore.large.platinum between
 			new IndicatorSpec("iridium",     () -> MT.Ir),                   // ore.large.platinum spread
-			new IndicatorSpec("stannite",     () -> MT.OREMATS.Stannite),     // ore.large.cassiterite top (r7-a-ore-axis-extension)
-			new IndicatorSpec("kesterite",    () -> MT.OREMATS.Kesterite),    // ore.large.cassiterite bottom (r7-a-ore-axis-extension)
+			new IndicatorSpec("stannite",     () -> MT.OREMATS.Stannite),     // ore.large.cassiterite top (a-ore-axis-extension)
+			new IndicatorSpec("kesterite",    () -> MT.OREMATS.Kesterite),    // ore.large.cassiterite bottom (a-ore-axis-extension)
 			new IndicatorSpec("cassiterite",  () -> MT.OREMATS.Cassiterite),  // ore.large.cassiterite spread
 			new IndicatorSpec("scheelite",    () -> MT.OREMATS.Scheelite),    // ore.large.tungstate top
-			new IndicatorSpec("grossular",    () -> MT.Grossular),            // ore.large.manganese top (r7-a-ore-axis-extension)
-			new IndicatorSpec("spessartine",  () -> MT.Spessartine),          // ore.large.manganese bottom (r7-b-gem-pool-extension)
+			new IndicatorSpec("grossular",    () -> MT.Grossular),            // ore.large.manganese top (a-ore-axis-extension)
+			new IndicatorSpec("spessartine",  () -> MT.Spessartine),          // ore.large.manganese bottom (b-gem-pool-extension)
 			new IndicatorSpec("pyrolusite",   () -> MT.MnO2),                 // ore.large.manganese between
-			new IndicatorSpec("aquamarine",   () -> MT.Aquamarine),           // ore.large.beryllium top (r7-b-gem-pool-extension)
+			new IndicatorSpec("aquamarine",   () -> MT.Aquamarine),           // ore.large.beryllium top (b-gem-pool-extension)
 			new IndicatorSpec("maxixe",       () -> MT.Maxixe),               // ore.large.beryllium bottom (r7-b)
 			new IndicatorSpec("emerald",      () -> MT.Emerald),              // ore.large.beryllium between (r7-b)
 			new IndicatorSpec("bixbite",      () -> MT.Bixbite),              // ore.large.beryllium2 top (r7-b)
@@ -145,7 +145,7 @@ public final class GT6SurfaceBlocks {
 			new IndicatorSpec("hematite",     () -> MT.Fe2O3),                // ore.large.iron between / copper bottom
 			new IndicatorSpec("malachite",    () -> MT.OREMATS.Malachite));   // ore.large.iron spread
 
-	/** The 57 indicator rock handles, INDICATOR_SPECS order (31 + 9 since r7-a-ore-axis-extension + 17 since r7-b-gem-pool-extension lit the dormant slots). */
+	/** The 57 indicator rock handles, INDICATOR_SPECS order (31 + 9 since a-ore-axis-extension + 17 since b-gem-pool-extension lit the dormant slots). */
 	public static final List<RegistryObject<Block>> INDICATOR_ROCKS = INDICATOR_SPECS.stream()
 			.map(tRow -> BLOCKS.<Block>register("surface_rock_" + tRow.snake(),
 					() -> new GT6SurfaceRockBlock(surfaceProperties(MapColor.COLOR_GRAY, SoundType.STONE), tRow.material().get())))
@@ -180,7 +180,7 @@ public final class GT6SurfaceBlocks {
 	}
 
 	// ------------------------------------------------------------------
-	// The surface-plants + fallen-woods band (task p30-w6-t2-surface-blocks)
+	// The surface-plants + fallen-woods band (task w6-t2-surface-blocks)
 	// — tail-append. Unlike the pickup-only rocks/sticks these are OBTAINABLE
 	// blocks (worldgen loot = self-drop), so each carries a BlockItem and a
 	// creative-tab row.

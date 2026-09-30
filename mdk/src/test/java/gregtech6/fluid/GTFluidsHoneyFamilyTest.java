@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Honey + bee-row fluid family offline tests (task p31-bees-lv1 — the registration-row
+ * Honey + bee-row fluid family offline tests (task bees-lv1 — the registration-row
  * assertions against the DECLARED values): the four honey-family
  * {@link GTFluids.ChemicalFluidSpec} rows (Loader_Fluids.java:572/:575/:577/:576 — the
  * Bumblelyzer accept set) and the seven bee-row dependency rows (Loader_Fluids.java:49/

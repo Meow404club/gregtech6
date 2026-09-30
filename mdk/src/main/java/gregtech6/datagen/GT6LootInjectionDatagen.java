@@ -16,7 +16,7 @@ import gregtech6.registry.GTMaterialItems;
 
 /**
  * The upstream {@code loaders/c/Loader_Loot.java} loot rows as pure datagen data — task
- * p34-loot-injection. THREE faces, all computed through the REGISTRATION-FREE material system
+ * loot-injection. THREE faces, all computed through the REGISTRATION-FREE material system
  * (init + {@code registrationOrder()} + {@code itemIdOf} — the headless faces the pin tests
  * replay), so datagen and the offline tests see byte-identical tables:
  * <ul>
@@ -39,7 +39,7 @@ import gregtech6.registry.GTMaterialItems;
  * <li><b>the declared POOL</b> — rows whose item has no modern registration are NOT emitted
  *     (the upstream {@code addLoot :566-569} invalid-skip face, minus the stderr noise): the
  *     loot bags {@code IL.Bag_Loot_*}, the loot book {@code IL.Book_Loot_MatDict} (task
- *     p38-book-loot-first ruling: the Guide 32765 is registered and its four rows re-armed,
+ *     book-loot-first ruling: the Guide 32765 is registered and its four rows re-armed,
  *     but the MatDict 32766 stays cut — its {@code gt.matdicts} pool is the per-material
  *     DYNAMIC book generator {@code UT.java:769-880}, the p35 dynamic-book CUT class; a
  *     registered MatDict with no pool is a dead item, so the four MatDict rows
@@ -223,7 +223,7 @@ public final class GT6LootInjectionDatagen {
 		// carrier: the upstream obtainment IS the GT6 dungeon Library room
 		// (DungeonChunkRoomLibraryNormal.java:57/59/71/:85/:87/:99/:101 — 1/16 per trophy
 		// seat, DungeonData.zpm :306-311 spawning 2/3 FULL), and the port has the dungeon
-		// since p38-dungeon-framework, so the artifact leaves the vanilla simple_dungeon
+		// since dungeon-framework, so the artifact leaves the vanilla simple_dungeon
 		// stopgap and rides the GT6 dungeon's own chests (gt6:chests/dungeon_chest — the
 		// table the Library + storage chests bind). The rows mirror the carrier rows + the
 		// artifact (a single-row ladder would fire 1..3 guaranteed ZPMs per chest — the
@@ -240,7 +240,7 @@ public final class GT6LootInjectionDatagen {
 	 * The DUNGEON_CHEST category rows (Loader_Loot.java:418-443 对位) — ONE source for
 	 * the carriers: the vanilla {@code chests/simple_dungeon} injection (above) and the
 	 * {@code gt6:chests/dungeon_chest} carrier table the GT6 dungeon structure's chests
-	 * bind (task p38-dungeon-framework), whose injection modifier now carries the
+	 * bind (task dungeon-framework), whose injection modifier now carries the
 	 * artifact row too (task dungeon-library-zpm — the rows mirror + the ZPM tail). The
 	 * plain-tag artifact row stays OUT of the table JSON itself (keeps this table off
 	 * the set_nbt/set_custom_data dual-leg seam, the framework ruling).
@@ -251,7 +251,7 @@ public final class GT6LootInjectionDatagen {
 	}
 
 	/**
-	 * The Dusty Guide Book row (task p38-book-loot-first) — the registered
+	 * The Dusty Guide Book row (task book-loot-first) — the registered
 	 * {@code gt6:book_loot_guide} carrier (MultiItemBooks.java:67 meta 32765); the
 	 * weight/stack columns ride verbatim per table (:413/:442/:512/:524).
 	 */

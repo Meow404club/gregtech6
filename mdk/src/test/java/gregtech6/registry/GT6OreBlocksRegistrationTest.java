@@ -1,5 +1,5 @@
 /**
- * Tests for task p30-ore-1-mech: the ore universe census (26 families, the 74 form-rows,
+ * Tests for task ore-1-mech: the ore universe census (26 families, the 74 form-rows,
  * the material axis M, the total block count) + the verbatim family rows + the per-pair
  * id scheme + the block property face + the stone-anchor semantics + the tab structure.
  *
@@ -66,7 +66,7 @@ class GT6OreBlocksRegistrationTest {
     private static final int PINNED_ROWS = 74;
     /**
      * The pinned material axis M (the reviewer-corrected口径, 2026-09-16, extended by
-     * r7-a-ore-axis-extension and r7-b-gem-pool-extension): the 53 distinct upstream
+     * a-ore-axis-extension and b-gem-pool-extension): the 53 distinct upstream
      * always-on worldgen small-ore
      * materials (Loader_Worldgen.java:800-852 — 53 rows whose redcinnabar :828 /
      * cinnabar :851 pair shares MT.OREMATS.Cinnabar — plus nikolite :875) UNION the 13
@@ -101,7 +101,7 @@ class GT6OreBlocksRegistrationTest {
             throw new IllegalStateException("could not unfreeze the offline block registry", aE);
         }
         // the item ctor's intrusive-holder gate (Item.java:61) — the broken-name test
-        // (r4-ore-broken-name) constructs GTMaterialPrefixBlockItems offline; the block
+        // (ore-broken-name) constructs GTMaterialPrefixBlockItems offline; the block
         // unfreeze above is the GTStoneBlocksRegistrationTest lesson, this is its item twin
         try {
             java.lang.reflect.Method tUnfreezeItems = net.minecraft.core.registries.BuiltInRegistries.ITEM.getClass().getMethod("unfreeze");
@@ -154,10 +154,10 @@ class GT6OreBlocksRegistrationTest {
             "Pollucite", "Zeolite", "Coltan", "Platinum", "Iridium", "Sperrylite", "Cooperite", "Naquadah", "Trinium",
             "Dolamide", "Endium", "Sugilite", "Ambrosium", "Zanite", "Sulfur", "Niter", "Efrine",
             "AncientDebris", "Nikolite",
-            // the 13 stone-layer companions (r7-a-ore-axis-extension, STONE_LAYER_ORES order)
+            // the 13 stone-layer companions (a-ore-axis-extension, STONE_LAYER_ORES order)
             "Peridot", "Uvarovite", "Grossular", "Chromite", "Spinel", "BalasRuby",
             "Pitchblende", "Uraninite", "Tantalite", "Columbite", "MagnesiumCarbonate", "Stannite", "Kesterite",
-            // the 56 gem-pool gap materials (r7-b-gem-pool-extension, GEM_POOL_ORES order —
+            // the 56 gem-pool gap materials (b-gem-pool-extension, GEM_POOL_ORES order —
             // internal names are the oredict strings space/apostrophe-stripped)
             "Sapphire", "Ruby", "BlueSapphire", "GreenSapphire", "PurpleSapphire", "YellowSapphire", "OrangeSapphire",
             "Emerald", "Aquamarine", "Morganite", "Heliodor", "Goshenite", "Bixbite", "Maxixe",
@@ -389,7 +389,7 @@ class GT6OreBlocksRegistrationTest {
     }
 
     /**
-     * The broken-form name routing (task r4-ore-broken-name, the EXPLICIT reverse-upstream
+     * The broken-form name routing (task ore-broken-name, the EXPLICIT reverse-upstream
      * deviation): a BROKEN ore block item composes its display name from the extra
      * {@code gt6.tagprefix.<prefix_snake>_broken} template, the NORMAL item keeps the shared
      * family template — the two keys differ, so the names can never collide again (upstream

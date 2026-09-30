@@ -26,7 +26,7 @@ import gregapi.tileentity.machines.ITileEntityMold;
 
 /**
  * 1.20.1 counterpart of gregtech/tileentity/tools/MultiTileEntityFaucet.java (task
- * p26-crucible-mold-faucet spec ④) — the crucible faucet attachment: mounted on one
+ * crucible-mold-faucet spec ④) — the crucible faucet attachment: mounted on one
  * horizontal face of a crucible it pulls melt into the mold BELOW itself.
  *
  * <p>Upstream surface, translated branch by branch:

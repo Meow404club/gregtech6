@@ -39,7 +39,7 @@ import gregtech6.recipes.Recipe;
 import gregtech6.recipes.maps.GT6RecipeMapBumblelyzer;
 
 /**
- * The bumblebee ITEM domain (task p33-bees-lv3-a-items) — the port of the upstream
+ * The bumblebee ITEM domain (task bees-lv3-a-items) — the port of the upstream
  * {@code MultiItemBumbles} 640-variant meta item (MultiItemBumbles.java:61-692).
  *
  * <p><b>The meta flattening</b> (the GT6SprayCans/GT6FoodCans ruling scaled to the bee
@@ -308,7 +308,7 @@ public final class GT6Bumbles {
 	}
 
 	// -------------------------------------------------------------------------
-	// the Bumblelyzer scan display stock (task p34-machines-bumblelyzer-crucible —
+	// the Bumblelyzer scan display stock (task machines-bumblelyzer-crucible —
 	// MultiItemBumbles.make :581-588, the RM.Bumblelyzer.addFakeRecipe walk): the fill
 	// hook this card owns. The rows are DISPLAY/CENSUS only — the port RecipeMap.addRecipe
 	// (:177, the upstream :293 "findRecipe wont find fake Recipes" javadoc) keeps fake rows

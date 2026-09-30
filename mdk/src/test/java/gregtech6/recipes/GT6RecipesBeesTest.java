@@ -27,7 +27,7 @@ import gregtech6.registry.GT6BeeCombs;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The bee-comb pour offline acceptance (task p31-bees-lv1): the 20-row centrifuge
+ * The bee-comb pour offline acceptance (task bees-lv1): the 20-row centrifuge
  * transcription (MultiItemFood.java:251-270 — eUt 16, duration 64, item chances verbatim,
  * the FR-propolis tails CUT with their chances), the 20-row squeezer generalization
  * (Loader_Recipes_Food.java:264 — the materialHoneycomb listener body per comb, the

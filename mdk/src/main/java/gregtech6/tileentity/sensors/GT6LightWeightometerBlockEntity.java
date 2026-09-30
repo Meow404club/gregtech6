@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 /**
- * The Light Weight-O-Meter Sensor (task p34-sensors-trivial-14 row ⑩) — the port of
+ * The Light Weight-O-Meter Sensor (task sensors-trivial-14 row ⑩) — the port of
  * MultiTileEntityWeightometerLight.java:32-67, the GRAM scale: upstream returns
  * {@code (long)(rWeightKG * 1000)} (:58). The measured quantity is the inventory mass:
  * upstream reads {@code ITileEntityWeight.getWeightValue} (:36-37) or sums

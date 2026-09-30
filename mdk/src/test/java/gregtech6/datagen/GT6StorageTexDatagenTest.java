@@ -1,5 +1,5 @@
 /*
- * Offline pinned tests for task r8-tex-placeholder-audit: the static-storage / hopper /
+ * Offline pinned tests for task tex-placeholder-audit: the static-storage / hopper /
  * anvil placeholder domains upgrade to the probed upstream art (asserted against the
  * committed generated tree, the {@link GT6BoilerTexDatagenTest} shape). Upstream semantics
  * pinned:

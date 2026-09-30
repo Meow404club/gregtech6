@@ -61,7 +61,7 @@ import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
 
 /**
- * The twelve W3 large machines (task p29-w3-large-12) — the
+ * The twelve W3 large machines (task w3-large-12) — the
  * {@code gregtech/tileentity/multiblocks/MultiTileEntity<Centrifuge|Electrolyzer|...>}
  * family, Loader_MultiTileEntities.java:1229-1240, ported as ONE self-registration file
  * (the ADR-P3-4 GT6Boilers/GT6Tanks shape): one row record + one controller Block class +
@@ -92,7 +92,7 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
  * 5000) ride {@code units(minEnergy * duration, mEfficiency, 10000, T)} — 5000 = 2x the
  * required progress = half speed (the W1 units() ruling).
  *
- * <p><b>GUI face:</b> the MUI machine chain (issue r4-24a, the p33 tower template): the
+ * <p><b>GUI face:</b> the MUI machine chain (issue #24a, the p33 tower template): the
  * controller block's use arm dispatches {@link GT6MuiMachine#tryOpen} and the BE's
  * {@code buildUI} delegates to the shared {@link GTBasicMachineMUI} panel — background =
  * {@code recipes().mGUIPath} (the upstream MultiTileEntityBasicMachine.java:114 chain,
@@ -517,7 +517,7 @@ public final class GT6LargeMachines {
 /**
  * The large-machine controller block — the concrete
  * {@link GTMultiBlockControllerBlock} over the shared BET; the row rides the instance
- * (the BoilerTankBlock carrier read). The use arm (issue r4-24a) opens the MUI panel
+ * (the BoilerTankBlock carrier read). The use arm (issue #24a) opens the MUI panel
  * through {@link GT6MuiMachine#tryOpen} — the GTDistillationTowerBlock template verbatim
  * with the BE type swapped (no MenuType, the P26 ruling; the upstream openGUI is
  * unconditional, so is this).
@@ -642,7 +642,7 @@ public final class GT6LargeMachines {
 			// base TRUE default is the Coke-Oven-only fold (its :1193 row wrote the key T),
 			// the large machines start on their own
 			mRequiresIgnition = false;
-			// the map-sized inventory (issue r4-24a, upstream getDefaultInventory :524-530):
+			// the map-sized inventory (issue #24a, upstream getDefaultInventory :524-530):
 			// the base INVENTORY_SIZE 11 is the Coke-Oven 1+9 shape — the Crusher/Shredder
 			// 1+12 maps overflow it (addStackToSlot :468 wraps past index 10, and the GUI
 			// output grid binds index 11+ = a live render IndexOutOfBounds). max()-gated so
@@ -689,7 +689,7 @@ public final class GT6LargeMachines {
 	}
 
 	// ---------------------------------------------------------------------
-	// GUI (issue r4-24a) — the shared MUI machine panel; the BE IS the
+	// GUI (issue #24a) — the shared MUI machine panel; the BE IS the
 	// GTBasicMachineMenu.Host (the base implements it directly, the
 	// GTBasicMachineMenu.java:75 form), so the delegation passes this
 	// ---------------------------------------------------------------------
@@ -717,9 +717,9 @@ public final class GT6LargeMachines {
 	/**
 	 * The row map's live input slot count (upstream mInputItemsCount — the case-table
 	 * selector, ContainerCommonBasicMachine.java:51). Mirrors the base getOutputSlotCount
-	 * (TileEntityBase10MultiBlockMachine.java:889); the Host default 1 was the r4-24a
+	 * (TileEntityBase10MultiBlockMachine.java:889); the Host default 1 was the #24a
 	 * leftover — MIXER/BATH 6, AUTOCLAVE/ELECTROLYZER 2 now seat their real input banks
-	 * (task r8-gui-layout-descriptor).
+	 * (task gui-layout-descriptor).
 	 */
 	@Override
 	public int getInputSlotCount() { return recipes().mInputItemsCount; }

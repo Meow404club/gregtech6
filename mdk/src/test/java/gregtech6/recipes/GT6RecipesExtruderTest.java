@@ -23,7 +23,7 @@ import gregapi.oredict.OreDictPrefix;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The RM.Extruder plate/rod static pour, offline (task p26-w1-press-extruder-molds): the
+ * The RM.Extruder plate/rod static pour, offline (task w1-press-extruder-molds): the
  * fixture-seam pour over the offline material universe (the GT6RecipesOreChainTest stub
  * form) and the row-consumption semantics — the MOLD-NOT-CONSUMED pin on the STATIC rows
  * (both the plate AND the rod row, the remember-id478 archaeology: the RM.java:405/:407

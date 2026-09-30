@@ -41,7 +41,7 @@ import gregtech6.itemdata.GT6ToolStats;
 import gregapi.oredict.OreDictMaterial;
 
 /**
- * The per-material tool crafting row (task p31-dig-ladder) — the port isomorph of the
+ * The per-material tool crafting row (task dig-ladder) — the port isomorph of the
  * upstream OreProcessing_Tool rows on the toolHead prefixes (Loader_Tools.java:293-300,
  * the dig family: pickaxe :295 / construction :294 / shovel :296 / spade :297 / hoe
  * :299 / axe :300, the {@code And(ANTIMATTER.NOT, MT.Wood.NOT, COATED.NOT)} axis): a
@@ -60,7 +60,7 @@ import gregapi.oredict.OreDictMaterial;
  *
  * <p>The stamped budget is {@code mToolDurability * 100 * multiplier} (MultiItemTool.java:182)
  * — every ladder axis form carries the upstream ×1.0 durability multiplier (rows omit the
- * field); the head+handle assembly rows (task r7-39-toolhead-assembly, the
+ * field); the head+handle assembly rows (task 39-toolhead-assembly, the
  * AdvancedCraftingTool :332-350 port) needed the pre-declared growth: the OPTIONAL
  * {@code "multiplier"} JSON field (default 1.0) carries the item's own
  * {@code durabilityMultiplier()} face (the gem pick ×0.25) so the assembled budget stays
@@ -116,7 +116,7 @@ public class GT6MaterialToolRecipe implements net.minecraft.world.item.crafting.
 	}
 
 	/**
-	 * The recipe-viewer display face (task r3-jei-tool-output-tint, GitHub #6 round 3): JEI
+	 * The recipe-viewer display face (task jei-tool-output-tint, GitHub #6 round 3): JEI
 	 * renders the crafting category's output slot from {@link #getResultItem}, which stays
 	 * bare BY CONTRACT (the vanilla shaped JSON carries no result tag, ShapedRecipe.java:274)
 	 * — so every material row would show the identity-less Steel fallback. This accessor
@@ -285,7 +285,7 @@ public class GT6MaterialToolRecipe implements net.minecraft.world.item.crafting.
 		return tResult;
 	}
 
-	// The recipe-viewer display face (task r3-jei-tool-output-tint): a COPY of the bare
+	// The recipe-viewer display face (task jei-tool-output-tint): a COPY of the bare
 	// result stamped with this row's identity — the display twin of assemble(). The JSON
 	// result stays bare BY CONTRACT (:50-53); JEI's 19.x default dispatch reads the shaped
 	// width/height straight off the ShapedRecipe superclass, so no layout accessor is

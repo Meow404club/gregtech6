@@ -18,7 +18,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import gregtech6.registry.GT6NetherOres;
 
 /**
- * The nether crystal Feature (task p31-nether-lens-end-yield spec ①) — the
+ * The nether crystal Feature (task nether-lens-end-yield spec ①) — the
  * {@code WorldgenNetherCrystals} port (WorldgenNetherCrystals.java:49-70), shape-verbatim:
  * half the chunks skip (:50 {@code nextBoolean()}), a random column starts at the lava
  * sea level, the ray climbs to the cave ceiling (:53), the ceiling must be natural rock

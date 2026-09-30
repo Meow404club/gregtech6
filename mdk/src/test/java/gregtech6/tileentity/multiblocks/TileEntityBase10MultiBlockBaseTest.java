@@ -7,7 +7,7 @@ import net.minecraft.core.BlockPos;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * The controller state-machine tests (task p4-multiblock-framework acceptance ①): the
+ * The controller state-machine tests (task multiblock-framework acceptance ①): the
  * checkStructure template semantics (TileEntityBase10MultiBlockBase :177-185), the trigger
  * wiring (onTickFirst :112-115 + the 600-tick poll :121-124) and the facing arithmetic.
  */
@@ -105,7 +105,7 @@ public class TileEntityBase10MultiBlockBaseTest extends GTMultiBlocksOfflineTest
 
 	@Test
 	void placementFacesThePlacerNotTheView() {
-		// task p27-cokeoven-facing-fix — the p27 user scene pin: the placement mapping is
+		// task cokeoven-facing-fix — the p27 user scene pin: the placement mapping is
 		// the VIEW OPPOSITE (the GT6 front towards the placer; upstream UT.java:1751 over
 		// CS.java:639 COMPASS_DIRECTIONS {NORTH,EAST,SOUTH,WEST}: yaw 180 (view north)
 		// yields SIDE_SOUTH; the vanilla furnace getHorizontalDirection().getOpposite()

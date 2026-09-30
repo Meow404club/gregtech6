@@ -36,7 +36,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.tools.GT6AnvilBlockEntity;
 
 /**
- * The anvil block carrier — the block side of the stone anvil family (task p28-c-anvil),
+ * The anvil block carrier — the block side of the stone anvil family (task c-anvil),
  * the GTKitchenBlock carrier pattern: the block carries the registration values upstream
  * wrote into the MTE definition NBT — here the {@code NBT_MATERIAL} (the smash-target
  * scrap rain reads {@code mTargetSmashing.mMaterial} through it, MultiTileEntityAnvil
