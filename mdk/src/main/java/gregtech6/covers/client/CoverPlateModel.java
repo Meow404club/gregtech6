@@ -61,6 +61,9 @@ import gregtech6.covers.GTCoverRenderSnapshot;
  * {@code PLATE_EPSILON * layerIndex} so stacked layers never coplanar-fight. The shift
  * runs along the quad normal, so the front face's UV extents (the two tangential axes)
  * are unchanged and every layer's foreground sits pixel-aligned over the background.
+ * The FACET family (task cover-underlay-census, upstream CoverVent :78-79) swaps the
+ * back/rim quads' background sprite for the cover's dedicated facet art — single
+ * sprites, no base behind a facet.
  *
  * <p>RED LINE: reads ONLY the immutable snapshot — no BlockEntity is reachable from
  * here (render-thread semantics, GTDynamicBakedModel class doc). CLIENT-ONLY class:
@@ -133,8 +136,9 @@ public class CoverPlateModel extends GTDynamicBakedModel {
 			List<ResourceLocation> tLayers = aSnapshot.layers(tFace);
 			if (tLayers.isEmpty()) continue;
 			if (aSide == null) {
-				// ICoverableRenderer.java:76 — the inner back face (unculled), null pass, background layer only
-				rPlans.add(new PlateQuad(tFace.getOpposite(), false, tFace, slabOf(tFace), tLayers.get(0), 0));
+				// ICoverableRenderer.java:76 — the inner back face (unculled), null pass; the facet family paints its
+				// dedicated back art (upstream CoverVent :78 — the attachment back face), the rest the background layer
+				rPlans.add(new PlateQuad(tFace.getOpposite(), false, tFace, slabOf(tFace), facetSpriteOf(aSnapshot, tFace, tLayers, true), 0));
 				continue;
 			}
 			if (aSide == tFace) {
@@ -148,11 +152,25 @@ public class CoverPlateModel extends GTDynamicBakedModel {
 				continue;
 			}
 			if (aSide.getAxis() != tFace.getAxis() && !aSnapshot.hasCover(aSide)) {
-				// the plate's rim on the perpendicular pass, suppressed when that face has its own cover — background layer only
-				rPlans.add(new PlateQuad(aSide, true, tFace, slabOf(tFace), tLayers.get(0), 0));
+				// the plate's rim on the perpendicular pass, suppressed when that face has its own cover — the facet
+				// family paints its rim art (upstream CoverVent :78/:79 — the rim/holder faces), the rest the background
+				rPlans.add(new PlateQuad(aSide, true, tFace, slabOf(tFace), facetSpriteOf(aSnapshot, tFace, tLayers, false), 0));
 			}
 		}
 		return rPlans;
+	}
+
+	/**
+	 * The non-front sprite of one plate: the facet family's dedicated back/rim art
+	 * ({@link GTCoverRenderSnapshot#facetsOf}), else the plate background (the face's
+	 * layer 0). Single sprite either way — no base stacks behind a facet (upstream
+	 * returns ONE texture per attachment face, CoverVent :78).
+	 */
+	private static ResourceLocation facetSpriteOf(GTCoverRenderSnapshot aSnapshot, Direction aCoverFace,
+			List<ResourceLocation> aLayers, boolean aBack) {
+		GTCoverRenderSnapshot.Facets tFacets = GTCoverRenderSnapshot.facetsOf(aSnapshot.sprite(aCoverFace));
+		if (tFacets == null) return aLayers.get(0);
+		return aBack ? tFacets.back() : tFacets.rim();
 	}
 
 	/**
