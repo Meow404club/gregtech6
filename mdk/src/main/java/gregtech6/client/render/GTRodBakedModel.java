@@ -25,9 +25,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+
 import net.minecraftforge.client.model.data.ModelData;
 
+import gregapi.data.MT;
+import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTBlockProperties;
+import gregtech6.block.energy.GTAxleBlock;
 
 /**
  * The connection-aware rod baked model (task rod-render-pool) — the non-full-block
@@ -50,13 +56,24 @@ import gregtech6.block.GTBlockProperties;
  * resolve there (the tex-pipe-textures arms), so this model multiplies
  * {@code tintARGB(modelData, tintMaterialOf(block), 0)} into the tintindex-0 body quads
  * at query time (the {@link GTMachineTintModel} vertex-colour route, tintIndex flipped
- * to -1 on the retinted copies) and passes overlays/axles through untinted. The tint
+ * to -1 on the retinted copies) and passes overlays through untinted. The pipe tint
  * gate is the ModelData emptiness: world rebuilds hand the pipe BE snapshot in
  * (non-empty → pre-tinted, the GTMachineTintModel byte-for-byte semantics), the ITEM
  * render passes EMPTY (raw tintindex-0 quads → the registered
- * {@link GTItemPaintTint} ItemColor tints the inventory form exactly once). The axle
- * carries {@code block == null} — the paint-tint coverage for the axle family is the
- * tint-coverage-batch card's declared defer, the borrowed gray sprite shows raw.
+ * {@link GTItemPaintTint} ItemColor tints the inventory form exactly once).
+ *
+ * <p>Task axle-tint-arm — the AXLE rows join the same dye on the CONSUMER side
+ * ({@link GTMachinePaintTint} zero-touch): the listener still seats them with
+ * {@code block == null}, so the arm keys on the state's {@link GTAxleBlock} carrier and
+ * resolves the row material through {@link #axleMaterialOf} (the bySlug table plus the
+ * three-row wood/alloy tail) into the SAME {@code tintARGB} decision site. No ModelData
+ * gate here — an UNPAINTED axle BE hands EMPTY in (TileEntityBase03TicksAndSync
+ * .getModelData), and the row colour IS the unpainted identity (upstream renders
+ * {@code BlockTextureDefault(colored, mRGBa)}); a spray-painted axle's PAINT snapshot
+ * still wins inside tintARGB. The inventory form stays raw (state null → tintindex 0)
+ * and tints exactly once through the registered {@link #axleRowTintARGB} ItemColor
+ * (GTClientHandlers, the explicit-registration face — a BlockColor does not colour its
+ * BlockItem).
  *
  * <p>Texture semantics (TextureSet.java:145-181 two-pass form): the grayscale
  * {@code materialicons/<set>/pipe_side} art carries the material colour through tint
@@ -108,7 +125,11 @@ public class GTRodBakedModel extends GTDynamicBakedModel {
 	private static final Map<Long, List<Shape>> SHAPE_CACHE = new ConcurrentHashMap<>();
 
 	private final Params mParams;
-	/** The tint carrier (the pipe blocks; null = the untinted axle form). */
+	/**
+	 * The tint carrier (the pipe/wire blocks — the combined dispatch gate); null = the
+	 * axle rows, whose row material resolves consumer-side off the state's
+	 * {@link GTAxleBlock} carrier (task axle-tint-arm).
+	 */
 	@Nullable
 	private final Block mBlock;
 	/** Sprite resolver — runtime: the block atlas (Minecraft.java:2386); tests: a stub. */
@@ -161,7 +182,18 @@ public class GTRodBakedModel extends GTDynamicBakedModel {
 		int tMask = maskOf(aState);
 		List<BakedQuad> tAll = mBakedCache.computeIfAbsent(tMask,
 				tM -> bakeShapes(planShapes(mParams.diameterPx(), tM, mParams.overlays().size())));
-		// the tint gate: world rebuilds hand the BE snapshot in (non-empty ModelData →
+		// task axle-tint-arm — the axle arm: the state's GTAxleBlock carrier resolves the
+		// row material (the consumer-side slug dispatch, axleMaterialOf) into the same
+		// tintARGB decision site. Deliberately NO ModelData gate: an UNPAINTED axle BE
+		// hands EMPTY in (TileEntityBase03TicksAndSync.getModelData) and the row colour is
+		// the unpainted identity; a painted axle's PAINT snapshot wins inside tintARGB
+		// (the spray override). The item form (state null) falls through raw — the
+		// axleRowTintARGB ItemColor tints the inventory form exactly once.
+		if (aState != null && mBlock == null && aState.getBlock() instanceof GTAxleBlock tAxle) {
+			return GTMachineTintModel.tintQuads(tAll,
+					GTMachinePaintTint.tintARGB(aModelData, axleMaterialOf(tAxle), 0), mTintedQuads);
+		}
+		// the pipe tint gate: world rebuilds hand the BE snapshot in (non-empty ModelData →
 		// the GTMachineTintModel pre-tint); the item render passes EMPTY → raw
 		// tintindex-0 quads, the ItemColor half tints the inventory form exactly once
 		if (aState != null && mBlock != null && !aModelData.getProperties().isEmpty()) {
@@ -169,6 +201,41 @@ public class GTRodBakedModel extends GTDynamicBakedModel {
 					GTMachinePaintTint.tintARGB(aModelData, GTMachinePaintTint.tintMaterialOf(mBlock), 0), mTintedQuads);
 		}
 		return tAll;
+	}
+
+	/**
+	 * The axle row material (task axle-tint-arm, the CONSUMER-side slug dispatch —
+	 * {@link GTMachinePaintTint} zero-touch): 8 of the 11 row slugs already live in the
+	 * {@link GTMachinePaintTint#bySlug} table (the shared GT6Boilers slug conventions —
+	 * ANY.Steel → {@code "steel"}, MT.Ti → {@code "titanium"}, MT.Ir → {@code "iridium"}),
+	 * the wood/alloy tail is the axle-local arm: the wooden rows Loader :1662-1666
+	 * (MT.WoodTreated), the Iritanium alloy row {@code titanium_iridium} (MT.Iritanium,
+	 * GT6Kinetics.AXLE_SPECS), Trinitanium :1748-1752.
+	 */
+	public static OreDictMaterial axleMaterialOf(GTAxleBlock aAxle) {
+		OreDictMaterial tMaterial = GTMachinePaintTint.bySlug(aAxle.spec.material());
+		if (tMaterial != null) return tMaterial;
+		return switch (aAxle.spec.material()) {
+			case "wood_treated" -> MT.WoodTreated;
+			case "titanium_iridium" -> MT.Iritanium;
+			case "trinitanium" -> MT.Trinitanium;
+			default -> null;
+		};
+	}
+
+	/**
+	 * The axle row tint, the INVENTORY half (the ItemColor face GTClientHandlers registers
+	 * over {@link gregtech6.registry.GT6Kinetics#AXLE_ITEMS}): index 0 = the row material's
+	 * fRGBaSolid through the single {@link GTMachinePaintTint#tintARGB} decision site (the
+	 * axle drops carry no paint NBT — the unpainted row colour is the whole item face);
+	 * every other index, and any off-family stack, the -1 sentinel. Explicit registration
+	 * is mandatory — a BlockColor does not colour its BlockItem AND the baked world arm
+	 * cannot colour the creative-tab face (the GTItemPaintTint doc face).
+	 */
+	public static int axleRowTintARGB(ItemStack aStack, int aTintIndex) {
+		if (aTintIndex != 0 || !(aStack.getItem() instanceof BlockItem tItem)
+				|| !(tItem.getBlock() instanceof GTAxleBlock tAxle)) return -1;
+		return GTMachinePaintTint.tintARGB(null, axleMaterialOf(tAxle), 0);
 	}
 
 	/** The state → 6-bit mask map: CONNECTIONS verbatim, AXIS as the straight line, null = N-S. */

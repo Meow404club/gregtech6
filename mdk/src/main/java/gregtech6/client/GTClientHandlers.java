@@ -16,6 +16,7 @@ import net.minecraftforge.registries.RegistryObject;
 import gregtech6.block.material.GTMaterialPrefixBlock;
 import gregtech6.client.render.GTItemPaintTint;
 import gregtech6.client.render.GTMachinePaintTint;
+import gregtech6.client.render.GTRodBakedModel;
 import gregtech6.client.wire.GTWireTint;
 import gregtech6.item.GTMaterialPrefixBlockItem;
 import gregtech6.item.MaterialPrefixItem;
@@ -28,6 +29,7 @@ import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GT6BeeHives;
+import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6Reactors;
 import gregtech6.registry.GT6StaticStorages;
 import gregtech6.registry.GTBarrels;
@@ -66,6 +68,7 @@ public final class GTClientHandlers {
         modBus.addListener(GTClientHandlers::onRegisterBeePaintItemColors); // task beehive-tint + 15-hive-jade-tint: the bee trio paint tint, inventory half
         modBus.addListener(GTClientHandlers::onRegisterToolIdentityItemColors); // task identity-seam: the crowbar material identity tint, inventory half
         modBus.addListener(GTClientHandlers::onRegisterStorageReactorPaintItemColors); // task tint-coverage-batch: the metal storage + reactor row tint, inventory half
+        modBus.addListener(GTClientHandlers::onRegisterAxleRowTintItemColors); // task axle-tint-arm: the 44 axle rows' material tint, inventory half
     }
 
     /** Material tint for every registered material prefix item (GTCEu TagPrefixItem.java:55-57 isomorph). */
@@ -301,6 +304,34 @@ public final class GTClientHandlers {
         for (Block tBlock : GT6StaticStorages.metalBlockArray()) tRowTintItems.add(tBlock.asItem());
         tRowTintItems.add(GT6Reactors.REACTOR_CORE_2X2_ITEM.get());
         event.getItemColors().register(GTItemPaintTint.itemColor(), tRowTintItems.toArray(Item[]::new));
+    }
+
+    /**
+     * The axle row tint registration seam (task axle-tint-arm) — the FULL
+     * {@link GT6Kinetics#AXLE_ITEMS} map, the RegistryObject list form so the offline
+     * census pins the paths without touching the live registry (the
+     * {@link #beePaintItems()} posture). The whole map IS the census: a future axle row
+     * joins the tint face automatically, and a hand-copied subset would show as a
+     * census miss.
+     */
+    public static List<RegistryObject<Item>> axleRowTintItems() {
+        return List.copyOf(GT6Kinetics.AXLE_ITEMS.values());
+    }
+
+    /**
+     * Task axle-tint-arm: the 44 axle rows (AXLE_SPECS 11 materials x AXLE_DIAMETERS 4
+     * diameters), the INVENTORY half of the row-material tint — the axle item models ride
+     * the wrapped {@code GTRodBakedModel} N-S segment whose base quads carry tintindex 0,
+     * and the creative-tab face needs the explicit registration (a BlockColor does NOT
+     * colour its BlockItem AND the baked world arm cannot colour the inventory render,
+     * ItemColors.java:25-93). The value face is
+     * {@link GTRodBakedModel#axleRowTintARGB} — the row material through the single
+     * {@code GTMachinePaintTint.tintARGB} decision site, the consumer-side slug dispatch
+     * ({@code GTMachinePaintTint} zero-touch).
+     */
+    private static void onRegisterAxleRowTintItemColors(RegisterColorHandlersEvent.Item event) {
+        event.getItemColors().register(GTRodBakedModel::axleRowTintARGB,
+                axleRowTintItems().stream().map(RegistryObject::get).toArray(Item[]::new));
     }
 
     /** Translation key existence check (Language.getInstance Language.java:83, has :97). */
