@@ -1,0 +1,25 @@
+{
+  "parent": "gt6:block/smeltery_bronze_empty",
+  "elements": [
+    {
+      "faces": {
+        "up": {
+          "texture": "#content"
+        }
+      },
+      "from": [
+        0,
+        2,
+        0
+      ],
+      "to": [
+        16,
+        10.71582,
+        16
+      ]
+    }
+  ],
+  "textures": {
+    "content": "gt6:block/smeltery_content"
+  }
+}
