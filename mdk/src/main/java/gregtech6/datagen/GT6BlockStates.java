@@ -4703,15 +4703,16 @@ public final class GT6BlockStates extends BlockStateProvider {
         BlockModelBuilder[] tFilled = new BlockModelBuilder[9];
         for (int tLevel = 1; tLevel <= 8; tLevel++) {
             // the child parents the shell — its elements APPEND (the vanilla candle idiom,
-            // the crucible bowl form); the fluid top rides flat eighth-fractions of the
+            // the crucible bowl form); the fluid box rides flat eighth-fractions of the
             // 12 px interior (no upstream pixel formula exists — BlockTextureFluid was
-            // texture-space; the declared simplification)
-            float tTop = tLevel * 12.0F / 8.0F;
+            // texture-space; the declared simplification), vertically inset 0.05 px so
+            // neither plane ever sits coplanar with the shell's bottom/top faces (z-fight)
+            float tTop = 0.05F + tLevel * 11.5F / 8.0F;
             BlockModelBuilder tModel = models().getBuilder("block/cell_container_filled_" + tLevel)
                     .parent(tEmpty)
                     .texture("content", modLoc("block/smeltery_content"));
             BlockModelBuilder.ElementBuilder tElement = tModel.element()
-                    .from(5.5F, 0.0F, 5.5F).to(10.5F, tTop, 10.5F);
+                    .from(5.5F, 0.05F, 5.5F).to(10.5F, tTop, 10.5F);
             for (Direction tDir : Direction.values()) {
                 tElement.face(tDir).texture("#content").end();
             }

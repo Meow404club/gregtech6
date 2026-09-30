@@ -1,0 +1,145 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#bottom"
+        },
+        "east": {
+          "texture": "#sides"
+        },
+        "north": {
+          "texture": "#sides"
+        },
+        "south": {
+          "texture": "#sides"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#sides"
+        }
+      },
+      "from": [
+        5,
+        0,
+        5
+      ],
+      "to": [
+        11,
+        12,
+        11
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#overlay_bottom"
+        },
+        "east": {
+          "texture": "#overlay_sides"
+        },
+        "north": {
+          "texture": "#overlay_sides"
+        },
+        "south": {
+          "texture": "#overlay_sides"
+        },
+        "up": {
+          "texture": "#overlay_top"
+        },
+        "west": {
+          "texture": "#overlay_sides"
+        }
+      },
+      "from": [
+        4.99,
+        -0.01,
+        4.99
+      ],
+      "to": [
+        11.01,
+        12.01,
+        11.01
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#insides"
+        },
+        "east": {
+          "texture": "#insides"
+        },
+        "north": {
+          "texture": "#insides"
+        },
+        "south": {
+          "texture": "#insides"
+        },
+        "up": {
+          "texture": "#insides"
+        },
+        "west": {
+          "texture": "#insides"
+        }
+      },
+      "from": [
+        6,
+        0,
+        6
+      ],
+      "to": [
+        10,
+        12,
+        10
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#overlay_insides"
+        },
+        "east": {
+          "texture": "#overlay_insides"
+        },
+        "north": {
+          "texture": "#overlay_insides"
+        },
+        "south": {
+          "texture": "#overlay_insides"
+        },
+        "up": {
+          "texture": "#overlay_insides"
+        },
+        "west": {
+          "texture": "#overlay_insides"
+        }
+      },
+      "from": [
+        5.99,
+        -0.01,
+        5.99
+      ],
+      "to": [
+        10.01,
+        12.01,
+        10.01
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "bottom": "gt6:block/cell/colored_bottom",
+    "insides": "gt6:block/cell/colored_insides",
+    "overlay_bottom": "gt6:block/cell/overlay_bottom",
+    "overlay_insides": "gt6:block/cell/overlay_insides",
+    "overlay_sides": "gt6:block/cell/overlay_sides",
+    "overlay_top": "gt6:block/cell/overlay_top",
+    "particle": "#sides",
+    "sides": "gt6:block/cell/colored_sides",
+    "top": "gt6:block/cell/colored_top"
+  }
+}
