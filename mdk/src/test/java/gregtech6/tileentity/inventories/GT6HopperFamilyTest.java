@@ -2,6 +2,7 @@ package gregtech6.tileentity.inventories;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.minecraft.core.BlockPos;
@@ -22,8 +23,10 @@ import gregtech6.tileentity.connectors.GTItemPipeBlockEntity;
 import gregtech6.util.GTItemMover;
 
 /**
- * GT6 hopper family offline tests (task storage-hopper-family acceptance): the
- * Bronze/Steel row axis (Loader_MultiTileEntities.java:191/:202), the hopper batch math
+ * GT6 hopper family offline tests (task storage-hopper-family acceptance; the row axis
+ * widened to the full matrix by task hopper-matrix — the 60-material loop
+ * Loader_MultiTileEntities.java:186-245 over the metalset pair :145-146): the 120-row
+ * axis census + spot pins, the hopper batch math
  * (the :177-184 budget loop, the :183 exact break, the :246-247 face gates, the :248 stack
  * limit, the :212-223 compaction, the :195-196 suction pick), the queue FIFO (the :199-207
  * fixed point, the :227-229 tail-insert/head-extract, the per-slot cap) and the NBT round
@@ -80,37 +83,102 @@ public class GT6HopperFamilyTest extends GTOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the row axis (Loader :145-146 over :191/:202 — the arch Iron-slip correction)
+	// the row axis (Loader :145-146 over the 60-material loop :186-245 — task hopper-matrix)
 	// ---------------------------------------------------------------------------
 
 	@Test
 	public void rowAxisReproducesTheLoaderAnchors() {
-		assertEquals(4, GT6Hoppers.ROWS.size());
-		HopperRow tBronze = GT6Hoppers.ROWS.get(0), tSteel = GT6Hoppers.ROWS.get(1);
-		HopperRow tBronzeQueue = GT6Hoppers.ROWS.get(2), tSteelQueue = GT6Hoppers.ROWS.get(3);
-		// the meta ids: hopper 8000+aID (:145), queue 8200+aID (:146); Bronze aID 9 (:191), Steel aID 10 (:202)
+		// the matrix census: 60 loader lines x the metalset hopper pair = 120 rows
+		assertEquals(60, GT6Hoppers.MATERIALS.size());
+		assertEquals(120, GT6Hoppers.ROWS.size());
+		// the verbatim interleaved walk: row 2i = the plain hopper of loader line i (:145),
+		// row 2i+1 = its queue twin (:146) — the upstream metalset pair order
+		for (int i = 0; i < GT6Hoppers.MATERIALS.size(); i++) {
+			GT6Hoppers.HopperMaterial tMat = GT6Hoppers.MATERIALS.get(i);
+			HopperRow tPlain = GT6Hoppers.ROWS.get(i * 2), tQueue = GT6Hoppers.ROWS.get(i * 2 + 1);
+			assertEquals(tMat, tPlain.material());
+			assertEquals(tMat, tQueue.material());
+			assertFalse(tPlain.queue());
+			assertTrue(tQueue.queue());
+			// the paths and the id columns (:145 id 8000+aID, :146 id 8200+aID)
+			assertEquals("hopper_" + tMat.slug(), tPlain.path());
+			assertEquals("queue_hopper_" + tMat.slug(), tQueue.path());
+			assertEquals(8000 + tMat.metaId(), tPlain.metaId());
+			assertEquals(8200 + tMat.metaId(), tQueue.metaId());
+			// the aHopperSize column rides the material line (the BE applies the floors)
+			assertEquals(tMat.slots(), tPlain.slots());
+			assertEquals(tMat.slots(), tQueue.slots());
+		}
+		// the ids and paths stay unique across the 120
+		assertEquals(120, GT6Hoppers.ROWS.stream().map(HopperRow::metaId).distinct().count());
+		assertEquals(120, GT6Hoppers.ROWS.stream().map(HopperRow::path).distinct().count());
+		// the registration integrity — every loader line resolves its ore-dict material
+		for (GT6Hoppers.HopperMaterial tMat : GT6Hoppers.MATERIALS) {
+			assertNotNull(tMat.mt(), "no loader material for hopper slug " + tMat.slug());
+		}
+		// the Bronze/Steel anchors keep their loader seats (:191 line 6, :202 line 17 — 1-based)
+		HopperRow tBronze = GT6Hoppers.ROWS.get(5 * 2), tBronzeQueue = GT6Hoppers.ROWS.get(5 * 2 + 1);
+		HopperRow tSteel = GT6Hoppers.ROWS.get(16 * 2), tSteelQueue = GT6Hoppers.ROWS.get(16 * 2 + 1);
 		assertEquals(8009, tBronze.metaId());
-		assertEquals(8010, tSteel.metaId());
 		assertEquals(8209, tBronzeQueue.metaId());
+		assertEquals(8010, tSteel.metaId());
 		assertEquals(8210, tSteelQueue.metaId());
 		// the aHopperSize column + the NBT_INV_SIZE floors (:145 max(1,n), :146 max(2,n))
 		assertEquals(3, tBronze.slots());
 		assertEquals(5, tSteel.slots());
 		assertEquals(3, tBronzeQueue.slots());
-		assertEquals(5, tSteelQueue.queue() ? tSteelQueue.slots() : -1);
+		assertEquals(5, tSteelQueue.slots());
 		assertFalse(tBronze.queue());
 		assertTrue(tBronzeQueue.queue());
-		// the paths
-		assertEquals("hopper_bronze", tBronze.path());
-		assertEquals("hopper_steel", tSteel.path());
-		assertEquals("queue_hopper_bronze", tBronzeQueue.path());
-		assertEquals("queue_hopper_steel", tSteelQueue.path());
 		// the hardness column (:191 7.0 / :202 6.0) — the row record verbatim
 		// (the Properties destroyTime field is package-private, so the row is the check)
 		assertEquals("bronze", tBronze.material().slug());
 		assertEquals("steel", tSteel.material().slug());
 		assertEquals(7.0F, tBronze.material().hardness());
 		assertEquals(6.0F, tSteel.material().hardness());
+	}
+
+	/**
+	 * The parameter spot pins — three rows across the matrix against the loader columns
+	 * verbatim (Loader_MultiTileEntities.java:186-245), the item-pipe-matrix spot-pin shape.
+	 */
+	@Test
+	public void matrixSpotPinsMatchTheLoaderColumns() {
+		// the first line (:186): Lead, aID 0, hardness 4.0, aHopperSize 1 — the queue floor
+		// max(2, 1) makes the Lead QUEUE the smallest inventory of the family
+		HopperRow tLead = GT6Hoppers.ROWS.get(0), tLeadQueue = GT6Hoppers.ROWS.get(1);
+		assertEquals("lead", tLead.material().slug());
+		assertEquals(8000, tLead.metaId());
+		assertEquals(8200, tLeadQueue.metaId());
+		assertEquals(1, tLead.slots());
+		assertEquals(4.0F, tLead.material().hardness());
+		// the Tungsten line (:235) is ANY.W — the loader resolves it to the Tungsten face
+		// (ANY.java:133 setLocal), aID 26, hardness 10.0, aHopperSize 36
+		HopperRow tTungsten = GT6Hoppers.ROWS.get(49 * 2);
+		assertEquals("tungsten", tTungsten.material().slug());
+		assertEquals("Tungsten", tTungsten.material().display());
+		assertEquals(gregapi.data.MT.W, tTungsten.material().mt());
+		assertEquals(8026, tTungsten.metaId());
+		assertEquals(10.0F, tTungsten.material().hardness());
+		assertEquals(36, tTungsten.slots());
+		// the last line (:245): Infinity, aID 50, hardness 100.0, aHopperSize 36
+		HopperRow tInfinityQueue = GT6Hoppers.ROWS.get(120 - 1);
+		assertEquals("infinity", tInfinityQueue.material().slug());
+		assertEquals(8250, tInfinityQueue.metaId());
+		assertEquals(100.0F, tInfinityQueue.material().hardness());
+		// the setLocal display-word faces (the en display evidence = MT.java, the only source)
+		assertEquals("Osmium", GT6Hoppers.MAT_OSMIUM.display()); // :633 setLocal over "OsmiumElemental"
+		assertEquals("Tungsten Alloy", GT6Hoppers.MAT_TUNGSTEN_ALLOY.display()); // :1723 over "HSLA-Tungsten-Alloy"
+		assertEquals("Duranium Alloy", GT6Hoppers.MAT_DURANIUM_ALLOY.display()); // :1840 over "Duranium"
+		assertEquals("Tritanium Alloy", GT6Hoppers.MAT_TRITANIUM_ALLOY.display()); // :1841 over "Tritanium"
+		assertEquals("Workers Alloy", GT6Hoppers.MAT_WORKERS_ALLOY.display()); // :1839 "Workers Alloy" verbatim
+		assertEquals("Galvanized Steel", GT6Hoppers.MAT_GALVANIZED_STEEL.display()); // :1731 over "SteelGalvanized"
+		assertEquals("Elementium", GT6Hoppers.MAT_ELEMENTIUM.display()); // :1822 over "Elven Elementium"
+		assertEquals("Awakened Draconium", GT6Hoppers.MAT_AWAKENED_DRACONIUM.display()); // :1862
+		assertEquals("HSLA-Steel", GT6Hoppers.MAT_HSLA_STEEL.display()); // :1721 the ctor local, no override
+		// the aHopperSize ladder: floors 1 (Lead :186) and 36 (the :235-245 tail) exist, mid 12 (Ti :222)
+		assertEquals(12, GT6Hoppers.MAT_TITANIUM.slots());
+		assertEquals(36, GT6Hoppers.MAT_TUNGSTEN.slots());
 	}
 
 	// ---------------------------------------------------------------------------

@@ -147,10 +147,11 @@ public class CreativeTabJoinCensusTest {
 		assertEquals(28, GT6StaticStorages.ITEMS_BY_PATH.size());
 	}
 
-	/** The four hoppers (Bronze/Steel x plain/queue, :145-146). */
+	/** The 120 hoppers (the 60-material metalset loop :186-245 x the pair :145-146). */
 	@Test
-	public void hoppersJoinFour() {
-		assertEquals(4, GT6Hoppers.ITEMS_BY_PATH.size());
+	public void hoppersJoinTheMatrix() {
+		assertEquals(120, GT6Hoppers.ROWS.size());
+		assertEquals(120, GT6Hoppers.ITEMS_BY_PATH.size());
 	}
 
 	// ---------------------------------------------------------------------------
@@ -221,7 +222,7 @@ public class CreativeTabJoinCensusTest {
 				+ itemFields(GT6FeBatteries.class).size()
 				+ itemFields(GT6LaserGas.class).size()
 				+ GT6Emitters.ITEMS_BY_PATH.size();
-		assertEquals(207, tTotal, "177 (p38 batch 171+usb-He+laser-gas six) + the 30 technological components (task debt-emitter-sensor-generators)");
+		assertEquals(323, tTotal, "207 (the p38 batch 177 + the 30 technological components) + 116 (task hopper-matrix: the hopper join grew 4 to 120 over the 60-material metalset loop)");
 	}
 
 	/**

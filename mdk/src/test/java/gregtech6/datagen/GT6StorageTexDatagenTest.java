@@ -207,7 +207,7 @@ class GT6StorageTexDatagenTest {
 
     @Test
     public void hopperBlockstatesPinTheSixWayFacingVariants() throws Exception {
-        assertEquals(4, gregtech6.registry.GT6Hoppers.ROWS.size(), "the hopper census stays 4");
+        assertEquals(120, gregtech6.registry.GT6Hoppers.ROWS.size(), "the hopper census stays 120 (the 60-material loop x the pair)");
         for (var tRow : gregtech6.registry.GT6Hoppers.ROWS) {
             JsonObject tVariants = json("assets/gt6/blockstates/" + tRow.path() + ".json").getAsJsonObject("variants");
             assertEquals(6, tVariants.size(), tRow.path() + ": exactly the 6 facing variants");
