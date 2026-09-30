@@ -145,6 +145,12 @@ public final class GT6Foods {
 						for (RegistryObject<Item> tRow : FOODS) {
 							aOutput.accept(new ItemStack(tRow.get()));
 						}
+						// task food-bake-items: the T3 bake chain rides the SAME "GregTech: Nature
+						// & Foods" tab (all 60 rows are MultiItemFood items — the upstream
+						// per-multiitem tab discipline; the T1 rows lead, the T3 tail appends)
+						for (RegistryObject<Item> tRow : GT6BakeFoods.FOODS) {
+							aOutput.accept(new ItemStack(tRow.get()));
+						}
 					})
 					.build());
 
