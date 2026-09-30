@@ -1363,7 +1363,8 @@ public class GT6DungeonPiece extends StructurePiece {
      * <p>Declared MTE folds (the ~30-ID dependency gate): chest MTE 11 → the vanilla
      * chest on the mapped tables; the mechanical safe 2010 → the ported safe BE +
      * marker; the drawer 4011 → the ported drawer BE + the 4×8 material fill; the ACT
-     * 5011 → the ported {@code gt6:advanced_crafting_table}; the bookshelf 7111 → the
+     * 5011 → the ported {@code gt6:advanced_crafting_table_stainless_steel} (act-matrix);
+     * the bookshelf 7111 → the
      * ported bookshelf + the 6 shipped manuals; the bottle shelf 8762 → the ported
      * bottlecrate + glass bottles (the GT fluid bottles omit); ingot/plate piles
      * 32084/32085 → the material blockIngot/blockPlate (smooth shell fallback); EMPTY
@@ -1410,8 +1411,9 @@ public class GT6DungeonPiece extends StructurePiece {
                     tBE -> seedSafe(tBE, "minecraft:chests/jungle_temple"));
         }
 
-        // the ACT + the manual cabinet row (:112-124).
-        set(aLevel, aClip, 1, 1, 4, gregtech6.registry.GTMachines.ADVANCED_CRAFTING_TABLE.get().defaultBlockState()
+        // the ACT + the manual cabinet row (:112-124) — MTE 5011 is the STAINLESS STEEL
+        // variant (metalset aID 11, Loader_MultiTileEntities.java:217), the act-matrix row path
+        set(aLevel, aClip, 1, 1, 4, gregtech6.registry.GTMachines.CRAFTING_TABLE_BLOCKS_BY_PATH.get("advanced_crafting_table_stainless_steel").get().defaultBlockState()
                 .setValue(gregtech6.block.GTAdvancedCraftingTableBlock.FACING, Direction.EAST));
         smooth(aLevel, aClip, 1, 2, 4); // the measuring pot → shell
         smooth(aLevel, aClip, 4, 1, 1); // the primary mass storage → shell

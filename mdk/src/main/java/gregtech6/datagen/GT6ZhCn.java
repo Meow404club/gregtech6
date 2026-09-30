@@ -820,7 +820,7 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addBackfillUnits() {
 		// blocks: barrels (Drum = 鼓), the wood barrel (dump MTE 6990 join), the machines,
 		// the coke-oven multiblock pair, the two atomic legacy electric wires, the pipes
-		addDirect("block.gt6.advanced_crafting_table"); // task act-machine
+		// (the bare act-machine key retired into the act-matrix compose — the walk below)
 		addDirect("block.gt6.barrel_adamantium");
 		addDirect("block.gt6.barrel_awakened_draconium");
 		addDirect("block.gt6.barrel_draconium");
@@ -1523,6 +1523,15 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(gregtech6.registry.GT6Hoppers.DISPLAY_QUEUE_KEY);
 		for (gregtech6.registry.GT6Hoppers.HopperRow tRow : gregtech6.registry.GT6Hoppers.ROWS) {
 			addRowUnit(tEmitted, gregtech6.registry.GT6Hoppers.matUnitKeyOf(tRow));
+		}
+		// advanced/charging crafting tables (task act-matrix): the two kind templates over
+		// the 60-material walk (the dump composed rows gt.multitileentity.5000-5059 高级工作台
+		// / 5500-5559 充能工作台 verbatim shape — the material word slot; the tsv hand rows
+		// carry both templates + the words the material family skips)
+		addDirect(gregtech6.registry.GTMachines.ADVANCED_CRAFTING_TABLE_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GTMachines.CHARGING_CRAFTING_TABLE_DISPLAY_KEY);
+		for (gregtech6.registry.GTMachines.CraftingTableRow tRow : gregtech6.registry.GTMachines.CRAFTING_TABLE_ROWS) {
+			addRowUnit(tEmitted, gregtech6.registry.GTMachines.craftingTableMatUnitKeyOf(tRow));
 		}
 		// large boiler + dense wall: the templates + the row-material units
 		addDirect(gregtech6.registry.GTMultiBlocks.LARGE_BOILER_DISPLAY_KEY);

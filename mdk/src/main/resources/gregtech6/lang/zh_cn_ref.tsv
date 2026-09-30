@@ -14,7 +14,6 @@
 # filters: dropped ktfru/written.book/enchantment keys; duplicate keys: first occurrence wins.
 #   mte rows are inert census data until the MTE ID-join subface lands (arch tasks.p20-arch-i18n).
 #
-direct	block.gt6.advanced_crafting_table	高级合成台	hand
 direct	block.gt6.barrel_adamantium	艾德曼合金储罐	hand
 direct	block.gt6.barrel_awakened_draconium	觉醒龙储罐	hand
 direct	block.gt6.barrel_draconium	龙储罐	hand
@@ -1058,6 +1057,7 @@ direct	gt6.material.carminite	胭脂石	hand
 direct	gt6.material.fireleaf	火叶	hand
 direct	gt6.material.golden_amber	金琥珀	hand
 direct	gt6.material.superconductor	超导体	hand
+direct	gt6.row.advanced_crafting_table.display	高级工作台 (%s)	hand
 direct	gt6.row.attachment.mat.adamantium	艾德曼合金	hand
 direct	gt6.row.attachment.mat.ceramic	陶瓷	hand
 direct	gt6.row.attachment.mat.plastic	塑料	hand
@@ -1167,6 +1167,7 @@ direct	gt6.row.burning_box.family.gas	气体	hand
 direct	gt6.row.burning_box.family.liquid	液体	hand
 direct	gt6.row.burning_box.family.solid	固体	hand
 direct	gt6.row.canner.display	罐装机 (%s)	hand
+direct	gt6.row.charging_crafting_table.display	充能工作台 (%s)	hand
 direct	gt6.row.coagulator.display	凝结器	hand
 direct	gt6.row.crucible.display.smeltery_bronze	熔炼坩埚 (青铜)	hand
 direct	gt6.row.crucible.display.smeltery_ceramic	熔炼坩埚 (陶瓷)	hand
@@ -1310,7 +1311,9 @@ direct	gt6.row.mat.cobalt	钴	hand
 direct	gt6.row.mat.cobalt_brass	钴黄铜	hand
 direct	gt6.row.mat.constantan	康铜	hand
 direct	gt6.row.mat.desh	戴斯	hand
+direct	gt6.row.mat.desh_alloy	工人合金	hand
 direct	gt6.row.mat.draconium	龙	hand
+direct	gt6.row.mat.draconium_awakened	觉醒龙	hand
 direct	gt6.row.mat.duranium_alloy	钍瑞铌合金	hand
 direct	gt6.row.mat.efrine	绿晶	hand
 direct	gt6.row.mat.electrum	琥珀金	hand
@@ -1322,6 +1325,7 @@ direct	gt6.row.mat.galvanized_steel	镀锌钢	hand
 direct	gt6.row.mat.germanium	锗	hand
 direct	gt6.row.mat.gilded_iron	镀金铁	hand
 direct	gt6.row.mat.gold	金	hand
+direct	gt6.row.mat.hsla	HSLA钢	hand
 direct	gt6.row.mat.hsla_steel	HSLA钢	hand
 direct	gt6.row.mat.hv	HV	hand
 direct	gt6.row.mat.infinity	无尽	hand

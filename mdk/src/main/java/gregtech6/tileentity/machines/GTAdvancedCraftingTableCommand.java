@@ -130,7 +130,7 @@ public final class GTAdvancedCraftingTableCommand {
 						.executes(context -> stat(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos")))));
 		event.getDispatcher().register(tAct);
 		LOGGER.info("Registered GT6 ACT acceptance command /gt6act (place|fill|selector|clear|compute|craft|sort|mode|stat) — task act-machine");
-		LOGGER.info("GT6 ACT registered: 1 block / 1 BET (gt6:advanced_crafting_table, the single-variant row), 71 slots + the mPattern ghost backing, zero energy");
+		LOGGER.info("GT6 ACT registered: 120 blocks / 2 BETs (the act-matrix, 60 loader materials x plain+charging, Loader:136-137), 71 slots + the mPattern ghost backing, zero crafting energy");
 	}
 
 	@javax.annotation.Nullable
@@ -141,8 +141,9 @@ public final class GTAdvancedCraftingTableCommand {
 
 	private static int place(CommandSourceStack aSource, @javax.annotation.Nullable BlockPos aPos) {
 		BlockPos tTarget = aPos != null ? aPos : BlockPos.containing(aSource.getPosition());
-		aSource.getLevel().setBlock(tTarget, gregtech6.registry.GTMachines.ADVANCED_CRAFTING_TABLE.get().defaultBlockState(), 3);
-		aSource.sendSuccess(() -> Component.literal("GT6 advanced_crafting_table placed at " + tTarget.toShortString()), false);
+		// the steel row is the representative anchor (the metalset aID 10 row, the hopper 8010 precedent)
+		aSource.getLevel().setBlock(tTarget, gregtech6.registry.GTMachines.CRAFTING_TABLE_BLOCKS_BY_PATH.get("advanced_crafting_table_steel").get().defaultBlockState(), 3);
+		aSource.sendSuccess(() -> Component.literal("GT6 advanced_crafting_table_steel placed at " + tTarget.toShortString()), false);
 		return Command.SINGLE_SUCCESS;
 	}
 
