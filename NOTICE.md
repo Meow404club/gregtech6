@@ -17,6 +17,16 @@
 - fork 身份、基线与逐文件偏离台账：`third-party/modularui/` 下 `FORK.md`、`THIRD_PARTY.md`、`DIVERGE.md`；
 - 分发方式：经 Gradle jarJar 嵌入各发布腿 mod jar（`META-INF/jarjar`）。LGPL §4/§6 的对应源码义务由本公开仓库内的完整可构建源码满足。
 
+## TFC Amazawa Light GUI（资源包，GUI 美术借鉴）
+
+- 机器 GUI 的现代化换装（面板底图、部件、槽格装饰等）借鉴并裁切自资源包
+  [TFC Amazawa Light GUI](https://modrinth.com/resourcepack/tfc-amazawa-light-gui)（版本 1.0.5g），作者 天沢香；
+- 资源包许可：Apache-2.0；
+- 使用授权：作者在群聊中口头授权（原话大意："没问题的 标注一下就行 modrinth 有链接"、"需要帮忙画也可以"），
+  授权聊天截图随仓携带：[docs/licenses/amazawa-gui-authorization.png](docs/licenses/amazawa-gui-authorization.png)；
+- 使用方式：仅取该包 `gregtech` 域与 `minecraft` 域通用件裁切借图（TFC 域一张不裁不带），
+  逐文件 sha256 与来源对照台账见 `mdk/src/main/resources/assets/README.md`（task r8-gui-reskin-amazawa 段起）。
+
 ## JEI / Jade / KubeJS（未捆绑，无分发）
 
 - Just Enough Items（JEI）、Jade、KubeJS 仅作为 compileOnly / runtime-optional 依赖参与编译与可选运行时集成，**不打入任何分发 jar**；
