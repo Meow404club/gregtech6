@@ -80,9 +80,10 @@ public final class GT6ItemModels extends ItemModelProvider {
         // pass3 = handle OVERLAY (UNCOLOURED). The vanilla item-model layer number IS
         // the tint index (ItemModelGenerator.java:15 LAYERS = layer0..layer4, the
         // processFrames layer argument becomes the quad tint index), so the four passes
-        // map 1:1 onto layer0..layer3. The port stays un-tinted at the single steel tier
-        // (the family declared deviation, GT6Tools) — the layer STRUCTURE is what this
-        // wave restores; the tint ladder is a later card.
+        // map 1:1 onto layer0..layer3. The layer STRUCTURE is what this wave restores —
+        // the tint ladder has since landed runtime-side (issue6-tool-4layer-tint +
+        // tint-coverage-batch registered the fourPassTintARGB ItemColor faces over
+        // these same layers), so the models here stay tint-blind by design.
 
         // the formal crowbar item (task tool-crowbar): handheld parent = the vanilla
         // tool shape; layer0 = the upstream CROWBAR.png iconset borrow + layer1 = the
@@ -650,7 +651,8 @@ public final class GT6ItemModels extends ItemModelProvider {
 		// byte borrows shared by the whole family (assets/README.md attribution): upstream
 		// has NO 2D rod icons (block MTEs, inventory form = the 3D block) and differentiates
 		// the rods only by the material tint (RodBase.java:69-70) — the un-tinted shared
-		// icon is the declared deviation, the tint rides the render-pool card. The walk is
+		// icon stays the declared deviation (the render-pool card landed without the rod
+		// item face; the tint seat is unbuilt today). The walk is
 		// over GT6ReactorRods.ROWS so the model ids cannot drift from the registry rows.
 		for (gregtech6.items.GT6ReactorRods.RodRow tRod : gregtech6.items.GT6ReactorRods.ROWS) {
 			withExistingParent(tRod.path(), mcLoc("item/generated"))

@@ -93,30 +93,30 @@ public class GTSensorBlock extends GTEntityBlock {
 		return RenderShape.MODEL; // BaseEntityBlock default INVISIBLE is for BER blocks
 	}
 
-    /**
-     * The wall plate selection box (task rod-render-pool) — the upstream
-     * getSelectedBoundingBoxFromPool verbatim (MultiTileEntitySensor.java:250, the
-     * pass-0 render bounds :148-150): a 2px plate flush against the edge OPPOSITE the
-     * FACING face (FACING = the display face pointing into the room, the plate hugs the
-     * wall BEHIND it — :150 mFacing=SIDE_Z_NEG puts the plate at PX_P[14]..PX_N[0] =
-     * z 14..16; :257 isSurfaceOpaque2 = OPOS[mFacing] names the wall side the solid
-     * one). Collision rides the SAME plate (MultiTileEntitySensor.java:249
-     * getCollisionBoundingBoxFromPool = the same box — MultiTileEntityBlock.java:192
-     * routes it through IMTE_GetCollisionBoundingBoxFromPool, so the vanilla
-     * collision = shape default here IS the upstream verbatim, no override needed).
-     */
-    @Override
-    public net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState aState, BlockGetter aLevel, BlockPos aPos,
-            net.minecraft.world.phys.shapes.CollisionContext aContext) {
-        return switch (aState.getValue(FACING)) {
-            case NORTH -> Shapes.box(0, 0, 14 / 16.0, 1, 1, 1);
-            case SOUTH -> Shapes.box(0, 0, 0, 1, 1, 2 / 16.0);
-            case WEST -> Shapes.box(14 / 16.0, 0, 0, 1, 1, 1);
-            case EAST -> Shapes.box(0, 0, 0, 2 / 16.0, 1, 1);
-            case DOWN -> Shapes.box(0, 14 / 16.0, 0, 1, 1, 1);
-            case UP -> Shapes.box(0, 0, 0, 1, 2 / 16.0, 1);
-        };
-    }
+	/**
+	 * The wall plate selection box (task rod-render-pool) — the upstream
+	 * getSelectedBoundingBoxFromPool verbatim (MultiTileEntitySensor.java:250, the
+	 * pass-0 render bounds :148-150): a 2px plate flush against the edge OPPOSITE the
+	 * FACING face (FACING = the display face pointing into the room, the plate hugs the
+	 * wall BEHIND it — :150 mFacing=SIDE_Z_NEG puts the plate at PX_P[14]..PX_N[0] =
+	 * z 14..16; :257 isSurfaceOpaque2 = OPOS[mFacing] names the wall side the solid
+	 * one). Collision rides the SAME plate (MultiTileEntitySensor.java:249
+	 * getCollisionBoundingBoxFromPool = the same box — MultiTileEntityBlock.java:192
+	 * routes it through IMTE_GetCollisionBoundingBoxFromPool, so the vanilla
+	 * collision = shape default here IS the upstream verbatim, no override needed).
+	 */
+	@Override
+	public net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState aState, BlockGetter aLevel, BlockPos aPos,
+			net.minecraft.world.phys.shapes.CollisionContext aContext) {
+		return switch (aState.getValue(FACING)) {
+			case NORTH -> Shapes.box(0, 0, 14 / 16.0, 1, 1, 1);
+			case SOUTH -> Shapes.box(0, 0, 0, 1, 1, 2 / 16.0);
+			case WEST -> Shapes.box(14 / 16.0, 0, 0, 1, 1, 1);
+			case EAST -> Shapes.box(0, 0, 0, 2 / 16.0, 1, 1);
+			case DOWN -> Shapes.box(0, 14 / 16.0, 0, 1, 1, 1);
+			case UP -> Shapes.box(0, 0, 0, 1, 2 / 16.0, 1);
+		};
+	}
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
