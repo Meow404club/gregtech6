@@ -4,6 +4,7 @@ import gregapi.util.UT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.annotation.Nullable;
@@ -119,6 +120,17 @@ public class GTGeneratorSolidBlockEntityTest extends GTOfflineTestBase {
 		} catch (Throwable tIgnored) {
 			// the bridge test gates itself on getBurnTime availability
 		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// the break-drop probe (r10-debt-break-drops — the GTEntityBlock reflective census)
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void breakDropProbeReachesTheInventory() throws Exception {
+		FixtureBox tBox = new FixtureBox(POS, Blocks.STONE.defaultBlockState());
+		assertSame(tBox.mInventory, tBox.getClass().getMethod("getInventory").invoke(tBox),
+				"the reflective census hand resolves to the fuel/ash carrier (upstream 05Inventories.breakBlock :153-171)");
 	}
 
 	// ---------------------------------------------------------------------------

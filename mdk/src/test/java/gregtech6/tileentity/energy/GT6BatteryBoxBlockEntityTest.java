@@ -2,6 +2,7 @@ package gregtech6.tileentity.energy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -68,6 +69,14 @@ public class GT6BatteryBoxBlockEntityTest extends GTOfflineTestBase {
 	/** A 16-slot box (buffer 8*320*16 = 40960; band divisor 8*40*16 = 5120). */
 	private GT6BatteryBoxBlockEntity box16() {
 		return new GT6BatteryBoxBlockEntity(sType, POS, Blocks.STONE.defaultBlockState(), 0, 16);
+	}
+
+	/** r10-debt-break-drops — the GTEntityBlock drop probe reaches the ctor-seated carrier (upstream 05Inventories.breakBlock :153-171 would scatter the battery slots). */
+	@Test
+	public void breakDropProbeReachesTheInventory() throws Exception {
+		GT6BatteryBoxBlockEntity tBox = box4();
+		assertSame(tBox.inv(), tBox.getClass().getMethod("getInventory").invoke(tBox),
+				"the reflective census hand resolves to the carrier the ctor seated");
 	}
 
 	/** The counting sink (the p26 eu-bridge fixture): counts accepted EU packets. */

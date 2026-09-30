@@ -2,6 +2,7 @@ package gregtech6.tileentity.connectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
@@ -56,6 +57,14 @@ public class GTItemPipeBlockEntityTest extends GTOfflineTestBase {
 
 	private static ItemStack stone(int aCount) {
 		return new ItemStack(Items.STONE, aCount);
+	}
+
+	/** r10-debt-break-drops — the GTEntityBlock drop probe reaches the in-flight item carrier (upstream MultiTileEntityPipeItem.java:266-270 carries a real inventory; 05Inventories.breakBlock :153-171 would scatter it). */
+	@Test
+	public void breakDropProbeReachesTheInventory() throws Exception {
+		GTItemPipeBlockEntity tPipe = pipe();
+		assertSame(tPipe.mInventory, tPipe.getClass().getMethod("getInventory").invoke(tPipe),
+				"the reflective census hand resolves to the ctor-seated carrier");
 	}
 
 	// ---------------------------------------------------------------------------
