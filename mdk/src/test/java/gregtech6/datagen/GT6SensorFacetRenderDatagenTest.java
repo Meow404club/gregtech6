@@ -130,23 +130,41 @@ public class GT6SensorFacetRenderDatagenTest extends GTOfflineTestBase {
                     || tTex.get("south").getAsString().equals(tTex.get("west").getAsString()),
                     tRow.path() + ": front/back/side references stay distinct");
 
-            // two-layer structure: body cube + six 0.01 overlay plates
+            // two-layer structure: the 2px wall plate + six 0.01 overlay shells
+            // (task rod-render-pool: the body shrank from the full cube to the upstream
+            // pass-0 plate, MultiTileEntitySensor.java:148-150 — flush against the
+            // display edge, the FACING=north model form being z 0..2)
             var tElements = tModel.getAsJsonArray("elements");
             assertEquals(7, tElements.size(), tRow.path() + ": body + 6 shells");
             JsonObject tBody = tElements.get(0).getAsJsonObject();
             assertEquals(6, tBody.getAsJsonObject("faces").size(),
-                    tRow.path() + ": the body covers all six faces");
+                    tRow.path() + ": the plate covers all six faces");
+            assertEquals(0.0, tBody.getAsJsonArray("from").get(0).getAsDouble(), 1e-9,
+                    tRow.path() + ": the plate starts at the display edge");
+            assertEquals(0.0, tBody.getAsJsonArray("from").get(2).getAsDouble(), 1e-9,
+                    tRow.path() + ": the plate starts at the north plane");
+            assertEquals(2.0, tBody.getAsJsonArray("to").get(2).getAsDouble(), 1e-9,
+                    tRow.path() + ": the plate is the upstream 2px wall plate (:148-150)");
+            assertEquals(16.0, tBody.getAsJsonArray("to").get(0).getAsDouble(), 1e-9,
+                    tRow.path() + ": the plate spans the full width");
             for (int i = 1; i < 7; i++) {
                 JsonObject tShell = tElements.get(i).getAsJsonObject();
                 assertEquals(1, tShell.getAsJsonObject("faces").size(),
                         tRow.path() + ": shell " + i + " is a single-face plate");
-                assertTrue(tShell.getAsJsonArray("from").get(0).getAsDouble() < 0
-                        || tShell.getAsJsonArray("to").get(0).getAsDouble() > 16
-                        || tShell.getAsJsonArray("from").get(2).getAsDouble() < 0
-                        || tShell.getAsJsonArray("to").get(2).getAsDouble() > 16
-                        || tShell.getAsJsonArray("from").get(1).getAsDouble() < 0
-                        || tShell.getAsJsonArray("to").get(1).getAsDouble() > 16,
-                        tRow.path() + ": shell " + i + " rides the 0.01 offset outside the cube");
+                boolean tFrontShell = i == 1;
+                if (tFrontShell) {
+                    assertTrue(tShell.getAsJsonArray("from").get(2).getAsDouble() < 0,
+                            tRow.path() + ": the front shell rides the 0.01 offset outside the display face");
+                } else if (i == 2) {
+                    assertEquals(2.0, tShell.getAsJsonArray("from").get(2).getAsDouble(), 1e-9,
+                            tRow.path() + ": the back shell floats past the plate's interior face (z=2), NO cullface");
+                } else {
+                    assertTrue(tShell.getAsJsonArray("from").get(0).getAsDouble() < 0
+                            || tShell.getAsJsonArray("to").get(0).getAsDouble() > 16
+                            || tShell.getAsJsonArray("from").get(1).getAsDouble() < 0
+                            || tShell.getAsJsonArray("to").get(1).getAsDouble() > 16,
+                            tRow.path() + ": shell " + i + " rides the 0.01 offset outside a boundary rim");
+                }
             }
         }
     }
