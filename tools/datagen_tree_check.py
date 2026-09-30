@@ -823,6 +823,16 @@ FORGE_GATED_ONLY_CANONICAL = frozenset({
     "data/gt6/advancements/recipes/misc/modeled_porcelain_cup.json",
     "data/gt6/advancements/recipes/misc/modeled_porcelain_cup_reverse.json",
     "data/gt6/advancements/recipes/misc/smelt_modeled_porcelain_cup.json",
+    # task small-tank-jug 交卡补录（2026-10-01）：陶杯配方面 GT6JugDatagen.Recipes 与
+    # GT6CupDatagen.Recipes 同构（//? if forge 整类门控，21.1 节点结构性无输出）；
+    # shaped :133 "kCR"/"C C"/"CCC" / reverse :120 / smelt :2095 三行 ×2（配方+advancement），
+    # singular recipe/ 镜像由 SEGMENT_MAP 归一折入复数面对账，无需声明。runtime 不受影响。
+    "data/gt6/recipes/clay_jug.json",
+    "data/gt6/recipes/clay_jug_reverse.json",
+    "data/gt6/recipes/smelt_clay_jug.json",
+    "data/gt6/advancements/recipes/misc/clay_jug.json",
+    "data/gt6/advancements/recipes/misc/clay_jug_reverse.json",
+    "data/gt6/advancements/recipes/misc/smelt_clay_jug.json",
 })
 
 # ── 声明偏离带（canonical 前瞻孪生树，vanilla-tag-dual-tree 引入）──────────────

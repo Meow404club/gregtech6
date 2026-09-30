@@ -118,6 +118,7 @@ direct	block.gt6.cell_void	虚空金属	hand
 direct	block.gt6.cell_wax	蜡	hand
 direct	block.gt6.cell_workers_alloy	工人合金	hand
 direct	block.gt6.centrifuge_part	大型离心机部件	hand
+direct	block.gt6.ceramic_jug	陶杯	hand
 direct	block.gt6.cfoam	建筑泡沫	hand
 direct	block.gt6.cfoam_fresh	新鲜建筑泡沫	hand
 direct	block.gt6.cfoam_fresh_slab	新鲜建筑泡沫台阶	hand
@@ -2152,6 +2153,7 @@ direct	item.gt6.circuit_master	主控电子电路	hand
 direct	item.gt6.circuit_primitive	原始电路	hand
 direct	item.gt6.circuit_ultimate	终极电子电路	hand
 direct	item.gt6.clay_crucible_raw	粘土坩埚	hand
+direct	item.gt6.clay_jug	粘土杯	hand
 direct	item.gt6.club	棒槌	hand
 direct	item.gt6.club.tooltip	钝重的原始武器兼碎石器	hand
 direct	item.gt6.cobalt_60_fuel_rod	钴-60燃料棒	hand

@@ -760,6 +760,12 @@ public final class GT6ItemModels extends ItemModelProvider {
         // attribution).
         withExistingParent("modeled_porcelain_cup", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/modeled_porcelain_cup"));
+        // the Clay Jug raw item (task small-tank-jug) — the modeled_porcelain_cup row
+        // shape; layer0 = the byte-identical gt.multiitem.randomtools/996.png borrow
+        // (meta 996 = "Clay Jug", MultiItemRandomTools.java:120 — assets/README.md
+        // attribution).
+        withExistingParent("clay_jug", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/clay_jug"));
         // the ZPM item (task p38-c1 append, the C5-guard catch; GT6Batteries.ZPM_ITEM) —
         // item/generated over the byte-identical ZPM_SIDES.png iconset borrow. Declared
         // deviation: upstream 14999 is a BLOCK item (the isometric block render is the

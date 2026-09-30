@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "minecraft:clay_ball"
+    },
+    "R": {
+      "tag": "gt6:tools/rolling_pin"
+    },
+    "k": {
+      "tag": "gt6:tools/knife"
+    }
+  },
+  "pattern": [
+    "kCR",
+    "C C",
+    "CCC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:clay_jug"
+  }
+}
