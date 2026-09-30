@@ -1,9 +1,24 @@
-# TODO（镜像·维护期版 2026-09-30）
+# TODO（镜像·维护期版 2026-09-30 · r10）
 
 > 权威数据在 MCP `gt6-brain` state（`tasks.r9-issue-wave` 等）。
 > P1-P38 已完成项全史见 [docs/archive/ARCHIVE-2026-09-27-p1-p37.md](archive/ARCHIVE-2026-09-27-p1-p37.md)。
 
-## r9 波（#34/#39/#41）· 已收官（2026-09-30）
+## r10 还债波 · 已收官（2026-09-30）
+
+七卡两席全 approve 合入（main=fb479f3f1）：数据丢失级两枚（大机输入罐遮蔽=存档即失+多流体不可达；
+六族破坏掉落缺口）+玩家面（nojade 崩溃+齿轮装饰）+观感面（材质 tint+#17 锅炉过半满两脸）+
+宝石姊妹行。盘点销卡 r4-24c；r4-19b/24d 债清。
+
+## 次批待池
+
+- **r4-24b 大机 active 贴图三态属性接线**（素材 r8 已备齐，GTMultiBlockControllerBlock 仅 FACING+FORMED，
+  缺 active/running 属性+换模接线；单块机先例齐全；风险=共享基类属性面+datagen 变体矩阵增长）
+- **FML 预算墙 ops 裁定（等用户）**：测试启动面 12-13.5G 三撞 filtered 12G——调预算 or 查增重根因（疑似 KJS）
+- 量锅/BlockStates javadoc 措辞陈旧（tint 卡遗留 docs-sweep，顺带次批任何卡）
+- EMI 槽底叠画观感（等 field）；黏土带形（等用户）；温度计读数行（等温度计移植卡）
+- r9 defer 维持：SHARPENING 磨床 13 行/Press 宝石镐/电动直合成行/NEI 齿轮已清/宝石姊妹已清
+
+## 前态 r9 波（#34/#39/#41）· 已收官（2026-09-30）
 
 三卡一审查席全 approve 合入+push（main=1b2e1a4cc）：#41 模具阴模还原、#39 工具头 9 族行补全
 （'s'=SAW 翻案）、#34 查看器背景两层合成（视觉取证确诊→像素级复验闭环）。
