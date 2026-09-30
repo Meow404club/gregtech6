@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:plate_quadruple_aredrite"
+    },
+    "Y": {
+      "item": "gt6:stick_long_aredrite"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "YXX",
+    "XwX",
+    "XXY"
+  ],
+  "result": {
+    "item": "gt6:casing_machine_quadruple_aredrite"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:plate_orichalcum"
+    },
+    "Y": {
+      "item": "gt6:stick_long_orichalcum"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "YXX",
+    "XwX",
+    "XXY"
+  ],
+  "result": {
+    "item": "gt6:casing_machine_orichalcum"
+  },
+  "show_notification": true
+}
