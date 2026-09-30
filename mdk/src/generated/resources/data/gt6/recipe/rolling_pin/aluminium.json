@@ -1,0 +1,25 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/aluminium"
+    },
+    "S": {
+      "item": "gt6:stick_aluminium"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "aluminium",
+  "pattern": [
+    "  S",
+    " I ",
+    "S f"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:rolling_pin"
+  }
+}

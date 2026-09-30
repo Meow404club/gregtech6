@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "gt6:tool_head_universal_spade_uranium235"
+    },
+    "S": {
+      "item": "gt6:stick_uranium235"
+    },
+    "T": {
+      "item": "gt6:screw_uranium235"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "material": "uranium235",
+  "pattern": [
+    "AT",
+    "Sd"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:universal_spade"
+  }
+}

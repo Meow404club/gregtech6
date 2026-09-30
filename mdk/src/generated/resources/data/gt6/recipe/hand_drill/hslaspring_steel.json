@@ -1,0 +1,25 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "tag": "c:rods/wooden"
+    },
+    "X": {
+      "item": "gt6:tool_head_arrow_hslaspring_steel"
+    },
+    "Y": {
+      "item": "gt6:bolt_hslaspring_steel"
+    }
+  },
+  "material": "hslaspring_steel",
+  "pattern": [
+    "  X",
+    "HYH",
+    "YH "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:hand_drill"
+  }
+}

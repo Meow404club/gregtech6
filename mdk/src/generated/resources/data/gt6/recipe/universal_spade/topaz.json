@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "gt6:tool_head_universal_spade_topaz"
+    },
+    "S": {
+      "item": "gt6:stick_topaz"
+    },
+    "T": {
+      "item": "gt6:screw_topaz"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "material": "topaz",
+  "pattern": [
+    "AT",
+    "Sd"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:universal_spade"
+  }
+}

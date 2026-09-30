@@ -1,0 +1,32 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/vyroxeres"
+    },
+    "S": {
+      "item": "gt6:stick_vyroxeres"
+    },
+    "T": {
+      "item": "gt6:screw_vyroxeres"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "vyroxeres",
+  "pattern": [
+    "PfP",
+    "PdP",
+    "STS"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:branch_cutter"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,27 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "gt6:tool_head_universal_spade_tiger_eye"
+    },
+    "S": {
+      "item": "gt6:stick_tiger_eye"
+    },
+    "T": {
+      "item": "gt6:screw_tiger_eye"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "material": "tiger_eye",
+  "pattern": [
+    "AT",
+    "Sd"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:universal_spade"
+  }
+}

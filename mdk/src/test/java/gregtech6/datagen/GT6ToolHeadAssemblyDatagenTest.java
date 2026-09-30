@@ -33,6 +33,7 @@ package gregtech6.datagen;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -434,5 +435,180 @@ public class GT6ToolHeadAssemblyDatagenTest extends GTOfflineTestBase {
 		assertEquals(114, tCounts.get("monkey_wrench_gem").intValue(), "every plateGem wrench material also carries the screw letter");
 		assertEquals(130, tCounts.get("hammer_gem").intValue(), "the gem universe without the typemin/qualmin cuts (the quartz family lands here, not in the wrench pair)");
 		assertTrue(tCounts.containsKey("wrench_gem") && tCounts.size() == 3, "exactly the three gem-sister forms walked");
+	}
+
+	// --------------------------------------------------------------- the arg-8 direct-craft band (task tool-arg8-nine-families)
+
+	/**
+	 * Three families pinned VERBATIM (the task's shape-pin quota) — the universal spade
+	 * (the A-slot HEAD-consuming row, Loader_Tools.java:298), the hand drill (:330, the
+	 * arrow-head/bolt specials) and the scissors (:326, the screw/ring items). The output
+	 * is the TOOL through gt6:material_tool (the direct rows keep the stamped face).
+	 */
+	@Test
+	public void theArg8FamiliesEmitDirectToolRows() throws Exception {
+		JsonObject tSpade = generated("recipes/universal_spade/iron");
+		assertEquals("gt6:material_tool", tSpade.get("type").getAsString(), ":298 rides the stamped serializer");
+		assertEquals(List.of("AT", "Sd"), tSpade.getAsJsonArray("pattern").asList().stream()
+				.map(JsonElement::getAsString).toList(), ":298 pattern verbatim");
+		assertEquals(headItem(OP.toolHeadUniversalSpade, "iron"), key(tSpade, 'A').getAsJsonObject().get("item").getAsString(),
+				"'A' = the listening toolHeadUniversalSpade item (the upstream HEAD-consuming direct row)");
+		assertEquals("gt6:tool_head_universal_spade_iron", key(tSpade, 'A').getAsJsonObject().get("item").getAsString());
+		assertEquals("gt6:screw_iron", key(tSpade, 'T').getAsJsonObject().get("item").getAsString(), "'T' = the screw item");
+		assertEquals("gt6:stick_iron", key(tSpade, 'S').getAsJsonObject().get("item").getAsString(), "'S' = the stick item");
+		assertTrue(key(tSpade, 'd').getAsJsonObject().get("tag").getAsString().equals("gt6:tools/screwdriver"),
+				"'d' = the screwdriver tool tag");
+		assertEquals("gt6:universal_spade", tSpade.getAsJsonObject("result").get("item").getAsString(), "the TOOL output");
+		assertEquals("iron", tSpade.get("material").getAsString(), "the stamp material field");
+
+		JsonObject tDrill = generated("recipes/hand_drill/iron");
+		assertEquals(List.of("  X", "HYH", "YH "), tDrill.getAsJsonArray("pattern").asList().stream()
+				.map(JsonElement::getAsString).toList(), ":330 pattern verbatim");
+		assertEquals("gt6:tool_head_arrow_iron", key(tDrill, 'X').getAsJsonObject().get("item").getAsString(),
+				"'X' = the toolHeadArrow item (the :330 special)");
+		assertEquals("gt6:bolt_iron", key(tDrill, 'Y').getAsJsonObject().get("item").getAsString(),
+				"'Y' = the bolt item (the :330 special)");
+		assertTrue(key(tDrill, 'H').getAsJsonObject().has("tag")
+				&& key(tDrill, 'H').getAsJsonObject().get("tag").getAsString().endsWith("rods/wooden"),
+				"'H' = the wooden-rod fallback for wood-handled metals (the assembly-band relaxation)");
+		assertEquals("gt6:hand_drill", tDrill.getAsJsonObject("result").get("item").getAsString());
+
+		JsonObject tScissors = generated("recipes/scissors/iron");
+		assertEquals(List.of("PfP", " T ", "OdO"), tScissors.getAsJsonArray("pattern").asList().stream()
+				.map(JsonElement::getAsString).toList(), ":326 pattern verbatim");
+		assertTrue(key(tScissors, 'P').getAsJsonObject().get("tag").getAsString().endsWith("plates/iron"),
+				"'P' = the plates tag");
+		assertEquals("gt6:screw_iron", key(tScissors, 'T').getAsJsonObject().get("item").getAsString(), "'T' = the screw item");
+		assertEquals("gt6:ring_iron", key(tScissors, 'O').getAsJsonObject().get("item").getAsString(), "'O' = the ring item");
+		assertTrue(key(tScissors, 'f').getAsJsonObject().get("tag").getAsString().equals("gt6:tools/file"),
+				"'f' = the file tool tag");
+		assertEquals("gt6:scissors", tScissors.getAsJsonObject("result").get("item").getAsString());
+	}
+
+	/** The plunger 'V' = the rubber plate item, the scoop 'V' = the wool tag (:315/:320 verbatim); the club ingot shape with the 'H' fallback. */
+	@Test
+	public void theArg8FixedLettersRideTheUpstreamSpecials() throws Exception {
+		JsonObject tPlunger = generated("recipes/plunger/rubber");
+		assertEquals(List.of("xVV", " SV", "S f"), tPlunger.getAsJsonArray("pattern").asList().stream()
+				.map(JsonElement::getAsString).toList(), ":315 pattern verbatim");
+		assertEquals("gt6:plate_rubber", key(tPlunger, 'V').getAsJsonObject().get("item").getAsString(),
+				"'V' = the rubber plate item (the :315 special, the ONLY_IF_HAS face)");
+		assertEquals("gt6:plunger", tPlunger.getAsJsonObject("result").get("item").getAsString());
+
+		JsonObject tScoop = generated("recipes/scoop/iron");
+		assertEquals(List.of("SVS", "SSS", "xSh"), tScoop.getAsJsonArray("pattern").asList().stream()
+				.map(JsonElement::getAsString).toList(), ":320 pattern verbatim");
+		assertTrue(key(tScoop, 'V').getAsJsonObject().has("tag")
+				&& key(tScoop, 'V').getAsJsonObject().get("tag").getAsString().endsWith("wool"),
+				"'V' = the wool tag (the :320 special, the anchor precedent)");
+
+		JsonObject tClub = generated("recipes/club/iron");
+		assertEquals(List.of(" II", "III", "HI "), tClub.getAsJsonArray("pattern").asList().stream()
+				.map(JsonElement::getAsString).toList(), ":329 ingot pattern verbatim");
+		assertTrue(key(tClub, 'I').getAsJsonObject().get("tag").getAsString().endsWith("ingots/iron"),
+				"'I' = the ingots tag");
+		assertEquals("gt6:club", tClub.getAsJsonObject("result").get("item").getAsString());
+	}
+
+	/** The nine w5 steel anchors RETIRED — the stamped steel rows replace them; the rolling-pin WOOD anchor stays (a different upstream loader row). */
+	@Test
+	public void theArg8SteelAnchorsAreRetiredForTheMatrix() throws Exception {
+		for (String tAnchor : List.of("club", "scoop", "plunger", "scissors", "branch_cutter", "hand_drill",
+				"universal_spade", "bending_cylinder", "bending_cylinder_small")) {
+			assertNull(GT6ToolHeadAssemblyDatagenTest.class.getResourceAsStream("/data/gt6/recipes/" + tAnchor + ".json"),
+					tAnchor + ": the w5 single-steel anchor retired (the matrix owns the family)");
+			JsonObject tSteel = generated("recipes/" + tAnchor + "/steel");
+			assertEquals("gt6:material_tool", tSteel.get("type").getAsString(), tAnchor + "/steel: the stamped row IS the steel row");
+			assertEquals("steel", tSteel.get("material").getAsString(), tAnchor + "/steel: the stamp material field");
+		}
+		assertNotNull(GT6ToolHeadAssemblyDatagenTest.class.getResourceAsStream("/data/gt6/recipes/rolling_pin.json"),
+				"the rolling-pin WOOD route stays (Loader_Recipes_Woods.java:237, not an arg-8 family row)");
+		JsonObject tPin = generated("recipes/rolling_pin/stainless_steel");
+		assertEquals("gt6:rolling_pin", tPin.getAsJsonObject("result").get("item").getAsString(),
+				"the :250-253 metal ladder rides StainlessSteel (the upstream fixed list)");
+		assertNull(GT6ToolHeadAssemblyDatagenTest.class.getResourceAsStream("/data/gt6/recipes/club_stone/steel.json"),
+				"the club stone variant emits nothing ('R' = OP.stone.dat, the port stone prefix carries no items)");
+	}
+
+	/**
+	 * The arg-8 census: the offline walk over the alias-merged material array, the
+	 * toolArg8Axis gates + the letter item truth (the isGeneratingItem judge, the r9
+	 * offline-reproducibility ruling). The counts are the measured dead numbers matching
+	 * the generated trees; the negative gates prove the ghost rows constructibly zero.
+	 */
+	@Test
+	public void theArg8WalkCarriesTheMaterialGates() {
+		java.util.Map<String, Integer> tCounts = new java.util.HashMap<>();
+		java.util.Set<String> tSeen = new java.util.HashSet<>();
+		for (OreDictMaterial tMaterial : gregapi.oredict.MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
+			if (tMaterial == null || tMaterial.mID < 0) continue;
+			tMaterial = gregapi.oredict.MaterialRegistry.INSTANCE.get(tMaterial); // the alias merge
+			if (tMaterial == null || tMaterial.mID < 0 || !tSeen.add(tMaterial.mNameInternal)) continue;
+			for (GT6CraftingRecipes.ToolArg8Form tForm : GT6CraftingRecipes.TOOL_ARG8_FORMS) {
+				if (!GT6CraftingRecipes.toolArg8Axis(tMaterial, tForm)) continue;
+				boolean tResolvable = true;
+				for (String tPatternRow : tForm.aPattern()) {
+					for (char tChar : tPatternRow.toCharArray()) {
+						if (tChar == ' ') continue;
+						switch (tChar) {
+							case 'P' -> tResolvable &= OP.plate.isGeneratingItem(tMaterial);
+							case 'I' -> tResolvable &= OP.ingot.isGeneratingItem(tMaterial);
+							case 'G' -> tResolvable &= OP.gem.isGeneratingItem(tMaterial);
+							case 'S' -> tResolvable &= OP.stick.isGeneratingItem(tMaterial);
+							case 'H' -> {} // the handle stick item OR the wooden-rod fallback — always resolvable
+							case 'T' -> tResolvable &= OP.screw.isGeneratingItem(tMaterial);
+							case 'O' -> tResolvable &= OP.ring.isGeneratingItem(tMaterial);
+							case 'A' -> tResolvable &= OP.toolHeadUniversalSpade.isGeneratingItem(tMaterial);
+							case 'X' -> tResolvable &= OP.toolHeadArrow.isGeneratingItem(tMaterial);
+							case 'Y' -> tResolvable &= OP.bolt.isGeneratingItem(tMaterial);
+							case 'R' -> tResolvable = false; // the declared zero-row variant (no port stone items)
+							case 'V' -> tResolvable &= tForm.aId().equals("scoop") || OP.plate.isGeneratingItem(MT.Rubber);
+							case 'f', 'd', 'h', 's', 'x' -> {} // the tool tags carry no material truth
+							default -> throw new IllegalArgumentException(tForm.aId() + ": unexpected letter " + tChar);
+						}
+					}
+				}
+				if (!tResolvable) continue;
+				tCounts.merge(tForm.aId(), 1, Integer::sum);
+				// the axis pins: the scissors/branch-cutter family carries NO soft material
+				if (tForm.aId().equals("scissors") || tForm.aId().equals("branch_cutter")) {
+					assertFalse(tMaterial.contains(TD.Properties.BOUNCY) || tMaterial.contains(TD.Properties.STRETCHY),
+							tForm.aId() + "/" + tMaterial.mNameInternal + ": the :325/:326 BOUNCY/STRETCHY gates");
+					assertTrue(tMaterial.mToolTypes >= 2, tForm.aId() + ": the typemin(2) axis");
+				}
+				// the hand drill carries the qualmin(2) + the WOOD.NOT tag gate
+				if (tForm.aId().equals("hand_drill")) {
+					assertTrue(tMaterial.mToolQuality >= 2 && tMaterial.mToolTypes >= 2,
+							tForm.aId() + "/" + tMaterial.mNameInternal + ": the :330 typemin(2)+qualmin(2) axis");
+					assertFalse(tMaterial.contains(TD.Properties.WOOD), tForm.aId() + ": the :330 WOOD.NOT tag gate");
+					assertTrue(OP.toolHeadArrow.isGeneratingItem(tMaterial) && OP.bolt.isGeneratingItem(tMaterial),
+							tForm.aId() + "/" + tMaterial.mNameInternal + ": the arrow + bolt letter truth");
+				}
+			}
+		}
+		assertEquals(312, tCounts.get("universal_spade").intValue(), "the measured universal-spade head truth");
+		assertEquals(200, tCounts.get("bending_cylinder").intValue(), "the measured bending-cylinder ingot truth");
+		assertEquals(200, tCounts.get("bending_cylinder_small").intValue(), "the measured small-cylinder ingot truth");
+		assertEquals(543, tCounts.get("plunger").intValue(), "the measured plunger stick truth + the rubber plate");
+		assertEquals(543, tCounts.get("scoop").intValue(), "the measured scoop stick truth");
+		assertEquals(203, tCounts.get("branch_cutter").intValue(), "the measured branch-cutter plate/screw/ring truth");
+		assertEquals(203, tCounts.get("scissors").intValue(), "the measured scissors plate/screw/ring truth");
+		assertEquals(206, tCounts.get("club").intValue(), "the measured club ingot truth");
+		assertEquals(133, tCounts.get("club_gem").intValue(), "the measured club gem truth");
+		assertFalse(tCounts.containsKey("club_stone"), "the club stone variant stays the declared zero-row face");
+		assertEquals(294, tCounts.get("hand_drill").intValue(), "the measured hand-drill arrow+bolt truth");
+		assertEquals(10, tCounts.size(), "exactly the eleven forms walked minus the zero-row club_stone");
+	}
+
+	/** The rolling-pin ladder = the :250-253 fixed list + the ANY.Plastic family (the alias-merged walk). */
+	@Test
+	public void theRollingPinLadderRidesTheFixedList() {
+		List<OreDictMaterial> tMaterials = GT6CraftingRecipes.rollingPinMaterials();
+		assertEquals(12, tMaterials.size(), "the measured fixed list + plastic family total");
+		assertTrue(tMaterials.stream().anyMatch(tMaterial -> tMaterial == MT.StainlessSteel), "the upstream StainlessSteel row");
+		assertTrue(tMaterials.stream().anyMatch(tMaterial -> tMaterial == MT.Syrmorite), "the upstream Syrmorite row");
+		assertTrue(tMaterials.stream().anyMatch(tMaterial -> tMaterial == MT.NetherizedDiamond), "the upstream NetherizedDiamond row");
+		assertTrue(tMaterials.stream().anyMatch(tMaterial -> tMaterial == MT.Plastic), "the ANY.Plastic family");
+		assertTrue(tMaterials.stream().anyMatch(tMaterial -> tMaterial == MT.PVC), "the ANY.Plastic family aliases merge");
 	}
 }

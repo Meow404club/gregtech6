@@ -1,0 +1,26 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/pvc"
+    },
+    "S": {
+      "item": "gt6:stick_pvc"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "pvc",
+  "pattern": [
+    "  S",
+    " I ",
+    "S f"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:rolling_pin"
+  },
+  "show_notification": true
+}

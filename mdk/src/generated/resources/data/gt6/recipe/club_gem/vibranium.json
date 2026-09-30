@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "tag": "c:gems/vibranium"
+    },
+    "H": {
+      "item": "gt6:stick_vibranium_steel"
+    }
+  },
+  "material": "vibranium",
+  "pattern": [
+    " GG",
+    "GGG",
+    "HG "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:club"
+  }
+}

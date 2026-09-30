@@ -1,0 +1,23 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "item": "gt6:stick_elven_elementium"
+    },
+    "I": {
+      "tag": "forge:ingots/gaia_spirit"
+    }
+  },
+  "material": "gaia_spirit",
+  "pattern": [
+    " II",
+    "III",
+    "HI "
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:club"
+  },
+  "show_notification": true
+}

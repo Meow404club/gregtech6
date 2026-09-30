@@ -1,0 +1,25 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "tag": "c:rods/wooden"
+    },
+    "X": {
+      "item": "gt6:tool_head_arrow_deep_iron"
+    },
+    "Y": {
+      "item": "gt6:bolt_deep_iron"
+    }
+  },
+  "material": "deep_iron",
+  "pattern": [
+    "  X",
+    "HYH",
+    "YH "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:hand_drill"
+  }
+}

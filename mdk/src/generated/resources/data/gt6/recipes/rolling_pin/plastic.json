@@ -1,0 +1,26 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/plastic"
+    },
+    "S": {
+      "item": "gt6:stick_plastic"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "plastic",
+  "pattern": [
+    "  S",
+    " I ",
+    "S f"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:rolling_pin"
+  },
+  "show_notification": true
+}

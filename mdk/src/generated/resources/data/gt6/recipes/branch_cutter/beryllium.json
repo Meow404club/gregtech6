@@ -1,0 +1,32 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/beryllium"
+    },
+    "S": {
+      "item": "gt6:stick_beryllium"
+    },
+    "T": {
+      "item": "gt6:screw_beryllium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "beryllium",
+  "pattern": [
+    "PfP",
+    "PdP",
+    "STS"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:branch_cutter"
+  },
+  "show_notification": true
+}

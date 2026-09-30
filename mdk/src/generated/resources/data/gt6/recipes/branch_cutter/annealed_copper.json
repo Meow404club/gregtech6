@@ -1,0 +1,32 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "forge:plates/annealed_copper"
+    },
+    "S": {
+      "item": "gt6:stick_annealed_copper"
+    },
+    "T": {
+      "item": "gt6:screw_annealed_copper"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "material": "annealed_copper",
+  "pattern": [
+    "PfP",
+    "PdP",
+    "STS"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:branch_cutter"
+  },
+  "show_notification": true
+}

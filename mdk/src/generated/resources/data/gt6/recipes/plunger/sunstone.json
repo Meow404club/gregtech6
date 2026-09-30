@@ -1,0 +1,29 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "item": "gt6:stick_sunstone"
+    },
+    "V": {
+      "item": "gt6:plate_rubber"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "material": "sunstone",
+  "pattern": [
+    "xVV",
+    " SV",
+    "S f"
+  ],
+  "result": {
+    "count": 1,
+    "item": "gt6:plunger"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,22 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "tag": "c:gems/ender_pearl"
+    },
+    "H": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "material": "ender_pearl",
+  "pattern": [
+    " GG",
+    "GGG",
+    "HG "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:club"
+  }
+}
