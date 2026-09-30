@@ -12269,3 +12269,33 @@ placeholder, swap for a borrow the day a snapshot surfaces. sha256
   names with no GT6 FL.create and no material) declare port-owned tints: brine
   0xFFC8D8D0 pale salt grey-green, spruceresin 0xFFD8A848 amber resin (the
   sap/maplesap amber family).
+
+Advanced Crafting Table GUI backgrounds, task act-dual-gui (2 PNGs, CC0 from
+the upstream craftingtables machine set, sha256 verified):
+
+- `gt6/textures/gui/machines/advancedcraftingtable.png` — the crafting panel
+  background, upstream
+  `src/main/resources/assets/gregtech/textures/gui/machines/AdvancedCraftingTable.png`
+  (256x256 panel canvas), byte-identical, sha256
+  `af774ea0631d00b61242ea8d18deaba148c9fc581fd90201c615091381729a5a`.
+- `gt6/textures/gui/machines/advancedcraftingtablecharging.png` — the
+  charging-row panel background, upstream
+  `src/main/resources/assets/gregtech/textures/gui/machines/AdvancedCraftingTableCharging.png`
+  (256x256 panel canvas), byte-identical, sha256
+  `cd57524d0fcb72efd3519e4a0e9a62fe8e67b7422aff61194985da9a500f198a`.
+
+Path mapping (the dryer.png entry's lowercase convention): upstream
+`machines/AdvancedCraftingTable{,Charging}` →
+`machines/advancedcraftingtable{,charging}`. Upstream picks the sheet per
+VARIANT, not per GUI id — the plain row's `mGUITexture` defaults to the plain
+sheet (MultiTileEntityAdvancedCraftingTable.java:74) and the charging row's
+registration column carries the charging sheet via `NBT_GUI`
+(Loader_MultiTileEntities.java:137), so the port panels take the sheet from the
+BE kind the same way (both panels of one table share it, upstream :585/:750).
+The upstream canvas paints its slot frames at the same coordinates the port
+panel widgets use — the crafting GUI's :691-731 seats and the charging GUI's
+ContainerCommon case-36 9x4 belt (8,8)..(152,62) — so the borrowed canvas and
+the port slot geometry align by construction (the dryer.png rationale).
+
+Copied on 2026-09-30. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
