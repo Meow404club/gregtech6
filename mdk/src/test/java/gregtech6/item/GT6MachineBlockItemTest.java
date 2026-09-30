@@ -29,7 +29,8 @@ import gregtech6.tileentity.GTOfflineTestBase;
 /**
  * The carrier gate (task r8-tooltip-infra acceptance ①, task r8-tooltip-boiler-tank
  * expansion): {@link GT6MachineBlockItem} replays the family row table through the offline
- * {@code appendHoverText} direct call — the boiler fixture appends the full 13-row table
+ * {@code appendHoverText} direct call — the boiler fixture appends the full 14-row table
+ * (the 13-row upstream table + the .14 port-authored annex, task r10-debt-boiler-heat-tip)
  * after the vanilla super chain (the T1 pilot pair pinned at rows 7/9 inside it), the
  * arg-less vs per-variant carrier forms both pinned, the untabled family appends ZERO.
  * The test call itself is the dual-leg compile pin: this file compiles per leg against the
@@ -145,7 +146,7 @@ public class GT6MachineBlockItemTest extends GTOfflineTestBase {
 	public void boilerFamilyAppendsTheFullRowTableAfterSuper() {
 		List<Component> tTooltip = new ArrayList<>();
 		callHoverText(sBoiler, new ItemStack(sBoiler), tTooltip);
-		assertEquals(13, tTooltip.size(), "the boiler family replays the full 13-row table");
+		assertEquals(14, tTooltip.size(), "the boiler family replays the 13-row upstream table + the .14 port-authored annex");
 		TranslatableContents tRow0 = assertInstanceOf(TranslatableContents.class, tTooltip.get(0).getContents());
 		TranslatableContents tRow6 = assertInstanceOf(TranslatableContents.class, tTooltip.get(6).getContents());
 		TranslatableContents tRow8 = assertInstanceOf(TranslatableContents.class, tTooltip.get(8).getContents());

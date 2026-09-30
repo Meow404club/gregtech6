@@ -711,6 +711,9 @@ HAND_TRANSLATIONS = {
     "gt6.tooltip.boiler.11": ("使用凿子除去钙化残留物", "hand"),
     "gt6.tooltip.boiler.12": ("使用放大镜观察细节", "hand"),
     "gt6.tooltip.boiler.13": ("使用扳手设置朝向", "hand"),
+    # task r10-debt-boiler-heat-tip (GitHub #17 UX): port-authored row — the upstream
+    # addToolTips has no output-condition line (the gate is BoilerTank :139-142 code-only)
+    "gt6.tooltip.boiler.14": ("蒸汽储量过半后才会对外输出!", "hand"),
     "gt6.tooltip.boiler_large.1": ("结构:", "hand"),
     "gt6.tooltip.boiler_large.2": ("3x3 热接收器底座", "hand"),
     "gt6.tooltip.boiler_large.3": ("3x3x3 相应材料的致密壁板, 中空", "hand"),

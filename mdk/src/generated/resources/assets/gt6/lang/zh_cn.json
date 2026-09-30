@@ -3696,6 +3696,7 @@
   "gt6.tooltip.boiler.11": "使用凿子除去钙化残留物",
   "gt6.tooltip.boiler.12": "使用放大镜观察细节",
   "gt6.tooltip.boiler.13": "使用扳手设置朝向",
+  "gt6.tooltip.boiler.14": "蒸汽储量过半后才会对外输出!",
   "gt6.tooltip.boiler.2": "效率: 100.00%",
   "gt6.tooltip.boiler.3": "能量输入: %1$s HU/t (任何面)",
   "gt6.tooltip.boiler.4": "容量: %3$s HU",
