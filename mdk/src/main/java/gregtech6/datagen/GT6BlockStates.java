@@ -1349,30 +1349,33 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task act-machine — the Advanced Crafting Table (Loader_MultiTileEntities.java
-     * :136, the single-variant row): FACING-ONLY blockstate (the upstream machine has no
-     * ACTIVE/RUNNING visual payload — the craftingtables/advanced texture group ships no
-     * overlay_active/overlay_running layers, the borrow-or-declare rule landed exactly
-     * the two borrowable fronts), 4 facing variants over ONE tinted machine model
-     * (machineModel = the shared oven body + the advanced_colored/overlay fronts), and
-     * the BlockItem parent. The model joins the tint census count but NOT the
-     * paintableBlockArray (the family-wide paint extension stays pooled, the class doc
-     * of the block).
+     * Task act-machine → act-matrix — the Advanced/Charging Crafting Table matrix
+     * (Loader_MultiTileEntities.java:136-137 over :186-245): FACING-ONLY blockstate (the
+     * upstream machine has no ACTIVE/RUNNING visual payload — the craftingtables/advanced
+     * texture group ships no overlay_active/overlay_running layers, the borrow-or-declare
+     * rule landed exactly the two borrowable fronts), 4 facing variants over ONE shared
+     * tinted machine model for ALL 120 rows (the declared TRANSITIONAL render — the
+     * upstream per-material mRGBa tint and the charging texture family ride the ⑩B
+     * render/GUI card), and the BlockItem parent per row. The model joins the tint census
+     * count once but NOT the paintableBlockArray (the family-wide paint extension stays
+     * pooled, the class doc of the block).
      */
     private void addAdvancedCraftingTable() {
-        Block tBlock = GTMachines.ADVANCED_CRAFTING_TABLE.get();
         ModelFile tModel = machineModel("advanced_crafting_table", "advanced_colored_front", "advanced_overlay_front");
-        getVariantBuilder(tBlock).forAllStates(aState -> {
-            int tY;
-            switch (aState.getValue(GTOvenBlock.FACING)) {
-                case SOUTH -> tY = 180;
-                case WEST -> tY = 270;
-                case EAST -> tY = 90;
-                default -> tY = 0; // NORTH
-            }
-            return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
-        });
-        itemModels().withExistingParent("advanced_crafting_table", modLoc("block/advanced_crafting_table"));
+        for (var tEntry : GTMachines.CRAFTING_TABLE_BLOCKS_BY_PATH.entrySet()) {
+            Block tBlock = tEntry.getValue().get();
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tY;
+                switch (aState.getValue(GTOvenBlock.FACING)) {
+                    case SOUTH -> tY = 180;
+                    case WEST -> tY = 270;
+                    case EAST -> tY = 90;
+                    default -> tY = 0; // NORTH
+                }
+                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            });
+            itemModels().withExistingParent(tEntry.getKey(), tModel.getLocation());
+        }
     }
 
     /**

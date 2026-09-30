@@ -20,6 +20,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregapi.code.TagData;
+import gregapi.data.MT;
 import gregapi.data.TD;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.tileentity.energy.ITileEntityEnergy;
@@ -2573,26 +2574,245 @@ public final class GTMachines {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the Advanced Crafting Table (task act-machine) — the SINGLE-VARIANT machine
-	// (decisions.p24-act-be-form: the upstream MTE extends TileEntityBase09FacingSingle,
-	// NOT the TileEntityBasicMachine energy family — zero energy, zero tick auto-craft —
-	// so the registration is the OVEN three-row shape, not a MachineRow ladder): one
-	// block + one BET + one item, id gt6:advanced_crafting_table (upstream
-	// "gt.multitileentity.crafting.advanced", Loader_MultiTileEntities.java:136
-	// metalset id 5000+aID — the 1.7.10 numeric id axis is dead on the string axis, the
-	// variant ladder consciously unpinned, the deviation ⑥ ruling). Hardness 6.0F
-	// (the oven tier-1 row shape, GTMachines:58-59).
+	// the Advanced/Charging Crafting Table matrix (task act-matrix) — R-H ⑩段: the
+	// metalset two-line family Loader_MultiTileEntities.java:136-137 over the 60-material
+	// loop :186-245, 60 materials x 2 machines = 120 rows. Per line the verbatim columns
+	// are: name "Advanced Crafting Table (local)" / "Charging Crafting Table (local)",
+	// id 5000+aID / 5500+aID (sorted tab 5010 both), class Advanced/Charging, tool
+	// quality aMat.mToolQuality + weight 16 + the aMachine block family, NBT MATERIAL +
+	// NBT_HARDNESS == NBT_RESISTANCE == aHardness (the two columns are equal on all 60
+	// lines, so the record carries one hardness). The charging line's extra NBT_GUI
+	// texture column and the shaped recipe strings ride the deferred faces (the GUI/⑩B
+	// card and the GT6CraftingRecipes queue — zero-touch red line).
+	//
+	// The retired deviation-⑥ single row gt6:advanced_crafting_table (the "variant
+	// ladder consciously unpinned" ruling) is ABSORBED here: the unpinned ladder was its
+	// own deviation, and this card restores the upstream family verbatim — paths are
+	// material-slugged, the bare path retires with its consumers re-pointed (dungeon
+	// workshop 5011 → the stainless_steel row, the /gt6act place arm → steel, the
+	// 5010-anchor precedent).
+	//
+	// KJS surface: the registration face rides the kjs-binding card (defer declared).
 	// ---------------------------------------------------------------------------
 
-	public static final RegistryObject<Block> ADVANCED_CRAFTING_TABLE = BLOCKS.register("advanced_crafting_table",
-			() -> new gregtech6.block.GTAdvancedCraftingTableBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(6.0F, 6.0F).sound(SoundType.METAL)));
+	/** The plain ACT meta id base (Loader:136, id 5000+aID). */
+	public static final int CRAFTING_TABLE_META_ID_BASE = 5000;
+	/** The charging variant meta id base (Loader:137, id 5500+aID). */
+	public static final int CHARGING_CRAFTING_TABLE_META_ID_BASE = 5500;
+
+	/**
+	 * One loader material anchor — slug + the metalset aID + the shared hardness column
+	 * (the HopperMaterial shape; aHardness == aResistance on every :186-245 line).
+	 */
+	public record CraftingTableMaterial(String slug, int metaId, float hardness) {
+		/**
+		 * The row's ore-dict material — the loader line's {@code MT.*} argument verbatim
+		 * (:186-245; the W line is the {@code ANY.W} group whose representative is
+		 * {@code MT.W}). Loud drift on an unknown slug — the table only ever grows with a
+		 * loader line in hand.
+		 */
+		public OreDictMaterial mt() {
+			return switch (slug) {
+				case "lead" -> MT.Pb;
+				case "bismuth" -> MT.Bi;
+				case "antimony" -> MT.Sb;
+				case "nickel" -> MT.Ni;
+				case "constantan" -> MT.Constantan;
+				case "bronze" -> MT.Bronze;
+				case "arsenic_copper" -> MT.ArsenicCopper;
+				case "aluminium" -> MT.Al;
+				case "brass" -> MT.Brass;
+				case "tin_alloy" -> MT.TinAlloy;
+				case "cobalt" -> MT.Co;
+				case "ardite" -> MT.Ardite;
+				case "arsenic_bronze" -> MT.ArsenicBronze;
+				case "bismuth_bronze" -> MT.BismuthBronze;
+				case "germanium" -> MT.Ge;
+				case "invar" -> MT.Invar;
+				case "steel" -> MT.Steel;
+				case "hsla" -> MT.HSLA;
+				case "gold" -> MT.Au;
+				case "silver" -> MT.Ag;
+				case "manganese" -> MT.Mn;
+				case "manyullyn" -> MT.Manyullyn;
+				case "lumium" -> MT.Lumium;
+				case "knightmetal" -> MT.Knightmetal;
+				case "galvanized_steel" -> MT.SteelGalvanized;
+				case "meteorite" -> MT.Meteorite;
+				case "meteoric_steel" -> MT.MeteoricSteel;
+				case "gilded_iron" -> MT.GildedIron;
+				case "molybdenum" -> MT.Mo;
+				case "syrmorite" -> MT.Syrmorite;
+				case "electrum" -> MT.Electrum;
+				case "stainless_steel" -> MT.StainlessSteel;
+				case "thaumium" -> MT.Thaumium;
+				case "manasteel" -> MT.Manasteel;
+				case "efrine" -> MT.Efrine;
+				case "tungsten_alloy" -> MT.TungstenAlloy;
+				case "titanium" -> MT.Ti;
+				case "netherite" -> MT.Netherite;
+				case "chromium" -> MT.Cr;
+				case "platinum" -> MT.Pt;
+				case "octine" -> MT.Octine;
+				case "desh" -> MT.Desh;
+				case "terrasteel" -> MT.Terrasteel;
+				case "tungstensteel" -> MT.TungstenSteel;
+				case "tungsten_carbide" -> MT.TungstenCarbide;
+				case "duranium_alloy" -> MT.DuraniumAlloy;
+				case "draconium" -> MT.Draconium;
+				case "ultimet" -> MT.Ultimet;
+				case "desh_alloy" -> MT.DeshAlloy;
+				case "tungsten" -> MT.W;
+				case "palladium" -> MT.Pd;
+				case "iridium" -> MT.Ir;
+				case "osmium" -> MT.Os;
+				case "void_metal" -> MT.VoidMetal;
+				case "elementium" -> MT.ElvenElementium;
+				case "tritanium_alloy" -> MT.TritaniumAlloy;
+				case "adamantium" -> MT.Ad;
+				case "bedrock_hsla_alloy" -> MT.Bedrock_HSLA_Alloy;
+				case "draconium_awakened" -> MT.DraconiumAwakened;
+				case "infinity" -> MT.Infinity;
+				default -> throw new IllegalStateException("no loader material for crafting table slug " + slug);
+			};
+		}
+	}
+
+	/** The 60 metalset materials in loader line order :186-245 (aID + the shared hardness column verbatim). */
+	public static final java.util.List<CraftingTableMaterial> CRAFTING_TABLE_MATERIALS = java.util.List.of(
+			new CraftingTableMaterial("lead"              ,  0,   4.0F),
+			new CraftingTableMaterial("bismuth"           , 16,   4.0F),
+			new CraftingTableMaterial("antimony"          , 47,   4.0F),
+			new CraftingTableMaterial("nickel"            , 22,   4.0F),
+			new CraftingTableMaterial("constantan"        , 37,   4.0F),
+			new CraftingTableMaterial("bronze"            ,  9,   7.0F),
+			new CraftingTableMaterial("arsenic_copper"    , 57,   7.5F),
+			new CraftingTableMaterial("aluminium"         ,  1,   2.0F),
+			new CraftingTableMaterial("brass"             ,  8,   2.5F),
+			new CraftingTableMaterial("tin_alloy"         ,  5,   3.0F),
+			new CraftingTableMaterial("cobalt"            , 21,   4.0F),
+			new CraftingTableMaterial("ardite"            , 38,   2.0F),
+			new CraftingTableMaterial("arsenic_bronze"    , 58,   8.0F),
+			new CraftingTableMaterial("bismuth_bronze"    , 56,   8.0F),
+			new CraftingTableMaterial("germanium"         , 23,   4.0F),
+			new CraftingTableMaterial("invar"             ,  6,   4.0F),
+			new CraftingTableMaterial("steel"             , 10,   6.0F),
+			new CraftingTableMaterial("hsla"              , 18,   6.0F),
+			new CraftingTableMaterial("gold"              ,  2,   3.0F),
+			new CraftingTableMaterial("silver"            ,  3,   3.0F),
+			new CraftingTableMaterial("manganese"         , 46,   6.0F),
+			new CraftingTableMaterial("manyullyn"         , 39,   4.0F),
+			new CraftingTableMaterial("lumium"            , 54,   2.0F),
+			new CraftingTableMaterial("knightmetal"       , 25,   7.0F),
+			new CraftingTableMaterial("galvanized_steel"  , 19,   6.0F),
+			new CraftingTableMaterial("meteorite"         , 43,   7.0F),
+			new CraftingTableMaterial("meteoric_steel"    , 24,   8.0F),
+			new CraftingTableMaterial("gilded_iron"       , 20,   6.0F),
+			new CraftingTableMaterial("molybdenum"        , 49,   6.0F),
+			new CraftingTableMaterial("syrmorite"         , 44,   4.0F),
+			new CraftingTableMaterial("electrum"          ,  7,   3.0F),
+			new CraftingTableMaterial("stainless_steel"   , 11,   5.0F),
+			new CraftingTableMaterial("thaumium"          , 27,   9.0F),
+			new CraftingTableMaterial("manasteel"         , 40,   9.0F),
+			new CraftingTableMaterial("efrine"            , 53,   8.0F),
+			new CraftingTableMaterial("tungsten_alloy"    , 52,   8.0F),
+			new CraftingTableMaterial("titanium"          , 12,   9.0F),
+			new CraftingTableMaterial("netherite"         , 51,  10.0F),
+			new CraftingTableMaterial("chromium"          , 13,   4.0F),
+			new CraftingTableMaterial("platinum"          ,  4,   2.0F),
+			new CraftingTableMaterial("octine"            , 45,   8.0F),
+			new CraftingTableMaterial("desh"              , 30,  15.0F),
+			new CraftingTableMaterial("terrasteel"        , 42,  15.0F),
+			new CraftingTableMaterial("tungstensteel"     , 14,  12.5F),
+			new CraftingTableMaterial("tungsten_carbide"  , 17,  12.5F),
+			new CraftingTableMaterial("duranium_alloy"    , 31,  20.0F),
+			new CraftingTableMaterial("draconium"         , 35,  50.0F),
+			new CraftingTableMaterial("ultimet"           , 48,  12.5F),
+			new CraftingTableMaterial("desh_alloy"        , 55,  15.0F),
+			new CraftingTableMaterial("tungsten"          , 26,  10.0F),
+			new CraftingTableMaterial("palladium"         , 59,  15.0F),
+			new CraftingTableMaterial("iridium"           , 15,  15.0F),
+			new CraftingTableMaterial("osmium"            , 29,   9.0F),
+			new CraftingTableMaterial("void_metal"        , 28,  30.0F),
+			new CraftingTableMaterial("elementium"        , 41,  30.0F),
+			new CraftingTableMaterial("tritanium_alloy"   , 32,  30.0F),
+			new CraftingTableMaterial("adamantium"        , 33, 100.0F),
+			new CraftingTableMaterial("bedrock_hsla_alloy", 34, 100.0F),
+			new CraftingTableMaterial("draconium_awakened", 36, 100.0F),
+			new CraftingTableMaterial("infinity"          , 50, 100.0F));
+
+	/**
+	 * One registration row — the metalset line's two-machine pair projection
+	 * ({@code :136} plain / {@code :137} charging).
+	 *
+	 * @param path     the gt6 registry path (blockstate/model/lang key tail)
+	 * @param metaId   the upstream MultiTileEntity id (5000+aID plain, 5500+aID charging)
+	 * @param material the row material (slug/loader id/hardness)
+	 * @param charging the :137 charging kind flag (the tool-slot charger BE)
+	 */
+	public record CraftingTableRow(String path, int metaId, CraftingTableMaterial material, boolean charging) {
+		/** The block properties (hardness == resistance on every row; the METAL sound, the :136 aMachine family). */
+		public net.minecraft.world.level.block.state.BlockBehaviour.Properties properties() {
+			return net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+					.strength(material.hardness(), material.hardness())
+					.sound(SoundType.METAL);
+		}
+	}
+
+	/** The composed display template keys ({@code gt6.row.advanced_crafting_table.display} / the charging twin, the p20 compose ruling). */
+	public static final String ADVANCED_CRAFTING_TABLE_DISPLAY_KEY = "gt6.row.advanced_crafting_table.display";
+	public static final String CHARGING_CRAFTING_TABLE_DISPLAY_KEY = "gt6.row.charging_crafting_table.display";
+
+	/** The row's material small-unit key (the shared gt6.row.mat namespace). */
+	public static String craftingTableMatUnitKeyOf(CraftingTableRow aRow) {
+		return "gt6.row.mat." + aRow.material().slug();
+	}
+
+	/** The composed name of a row (the pure compose seam, the GT6Hoppers.displayOf shape). */
+	public static net.minecraft.network.chat.MutableComponent displayOf(CraftingTableRow aRow) {
+		return Component.translatable(aRow.charging() ? CHARGING_CRAFTING_TABLE_DISPLAY_KEY : ADVANCED_CRAFTING_TABLE_DISPLAY_KEY,
+				Component.translatable(craftingTableMatUnitKeyOf(aRow)));
+	}
+
+	/** The 120 rows in upstream registration order: per material the plain line then the charging line (:136 then :137). */
+	public static final java.util.List<CraftingTableRow> CRAFTING_TABLE_ROWS = CRAFTING_TABLE_MATERIALS.stream()
+			.flatMap(tMat -> java.util.stream.Stream.of(
+					new CraftingTableRow("advanced_crafting_table_" + tMat.slug(), CRAFTING_TABLE_META_ID_BASE + tMat.metaId(), tMat, false),
+					new CraftingTableRow("charging_crafting_table_" + tMat.slug(), CHARGING_CRAFTING_TABLE_META_ID_BASE + tMat.metaId(), tMat, true)))
+			.toList();
+
+	/** The registered blocks by path (the BET multi-mount arrays + the datagen walkers + the dungeon place arm). */
+	public static final java.util.Map<String, RegistryObject<Block>> CRAFTING_TABLE_BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	/** The registered items, same keys as {@link #CRAFTING_TABLE_BLOCKS_BY_PATH}. */
+	public static final java.util.Map<String, RegistryObject<Item>> CRAFTING_TABLE_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
+
+	static {
+		for (CraftingTableRow tRow : CRAFTING_TABLE_ROWS) {
+			CRAFTING_TABLE_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new gregtech6.block.GTAdvancedCraftingTableBlock(tRow, tRow.properties())));
+			// the qualified-read forward-reference form (the P6 lambda lesson, the GT6Hoppers walk shape)
+			CRAFTING_TABLE_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
+					() -> new gregtech6.block.GTComposedNameItem(GTMachines.CRAFTING_TABLE_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The plain-ACT blocks in registration order (the BET multi-mount array). */
+	private static Block[] craftingTableBlockArray(boolean aCharging) {
+		java.util.List<Block> rBlocks = new java.util.ArrayList<>();
+		for (CraftingTableRow tRow : CRAFTING_TABLE_ROWS) {
+			if (tRow.charging() == aCharging) rBlocks.add(CRAFTING_TABLE_BLOCKS_BY_PATH.get(tRow.path()).get());
+		}
+		return rBlocks.toArray(new Block[0]);
+	}
 
 	public static final RegistryObject<BlockEntityType<TileEntityAdvancedCraftingTable>> ADVANCED_CRAFTING_TABLE_BE =
 			BLOCK_ENTITY_TYPES.register("advanced_crafting_table", () -> BlockEntityType.Builder.of(
-					TileEntityAdvancedCraftingTable::new, ADVANCED_CRAFTING_TABLE.get()).build(null));
+					TileEntityAdvancedCraftingTable::new, craftingTableBlockArray(false)).build(null));
 
-	public static final RegistryObject<Item> ADVANCED_CRAFTING_TABLE_ITEM = ITEMS.register("advanced_crafting_table",
-			() -> new gregtech6.block.GTComposedNameItem(ADVANCED_CRAFTING_TABLE.get(), new Item.Properties()));
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.machines.TileEntityChargingCraftingTable>> CHARGING_CRAFTING_TABLE_BE =
+			BLOCK_ENTITY_TYPES.register("charging_crafting_table", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.machines.TileEntityChargingCraftingTable::new, craftingTableBlockArray(true)).build(null));
 
 
 	// ---------------------------------------------------------------------------
@@ -4023,8 +4243,10 @@ public final class GTMachines {
 							for (GTBasicMachineBlock.MachineRow tRow : GTMachines.ROASTING_ROWS) {
 								aOutput.accept(new ItemStack(GTMachines.ROASTING_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
-								// task act-machine: the Advanced Crafting Table (the single-variant row)
-								aOutput.accept(new ItemStack(ADVANCED_CRAFTING_TABLE_ITEM.get()));
+								// task act-machine → act-matrix: the 120-row crafting table matrix
+								for (RegistryObject<Item> tRowItem : CRAFTING_TABLE_ITEMS_BY_PATH.values()) {
+									aOutput.accept(new ItemStack(tRowItem.get()));
+								}
 								// task distillery-family ①: the Integrated Circuit ("Selector Tag") —
 								// the recipe-slot selector feeds these machines, the machines tab is the
 								// nearest live category (the gregapi items tab is not ported, declared)

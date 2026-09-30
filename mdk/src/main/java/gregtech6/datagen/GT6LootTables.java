@@ -1224,12 +1224,17 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The Advanced Crafting Table block list (task act-machine): the single-variant
-     * row (Loader_MultiTileEntities.java:136) — the cannerLootBlocks shape over one
-     * block, the MTE default self-drop.
+     * The Advanced/Charging Crafting Table block list (task act-machine → act-matrix):
+     * the 120-row matrix (Loader_MultiTileEntities.java:136-137 over :186-245) — the
+     * cannerLootBlocks shape over the two shared BETs' 120 blocks, the MTE default
+     * self-drop with the paint carry on every row.
      */
     public static List<Block> advancedCraftingTableLootBlocks() {
-        return List.of(gregtech6.registry.GTMachines.ADVANCED_CRAFTING_TABLE.get());
+        List<Block> rBlocks = new java.util.ArrayList<>();
+        for (var tHandle : gregtech6.registry.GTMachines.CRAFTING_TABLE_BLOCKS_BY_PATH.values()) {
+            rBlocks.add(tHandle.get());
+        }
+        return rBlocks;
     }
 
     /** The ACT self-drop provider (task act-machine; the paint carry = task painted-item-domain). */

@@ -127,7 +127,7 @@ public class GT6DualDirectoryFacesTest {
 	@Test
 	public void theLootFaceAliasCarriesThe21FunctionForm() throws Exception {
 		String[] tTables = {"wood_fluid_pipe_small", "wood_fluid_pipe_medium",
-				"lathe", "lathe_t2", "lathe_t3", "lathe_t4", "canner", "press", "advanced_crafting_table"};
+				"lathe", "lathe_t2", "lathe_t3", "lathe_t4", "canner", "press", "advanced_crafting_table_steel"}; // act-matrix: the steel row stands in for the retired bare-path table
 		for (String tTable : tTables) {
 			String tPlural = resource("data/gt6/loot_tables/blocks/" + tTable + ".json");
 			String tSingular = resource("data/gt6/loot_table/blocks/" + tTable + ".json");

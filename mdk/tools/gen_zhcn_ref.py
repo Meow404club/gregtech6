@@ -652,6 +652,23 @@ HAND_TRANSLATIONS = {
     "gt6.row.mat.bedrock_hsla_alloy": ("基岩合金", "hand"),
     "gt6.row.mat.awakened_draconium": ("觉醒龙", "hand"),
     "gt6.row.mat.infinity": ("无尽", "hand"),
+
+    # task act-matrix — the advanced/charging crafting table matrix: the two kind
+    # templates over the 60-material walk. Template shape = the dump composed rows
+    # gt.multitileentity.5000-5059 高级工作台 / 5500-5559 充能工作台 verbatim (the
+    # material word slot). The unit words below are the gt.material.* family faces
+    # verbatim (the composed name resolves aMat.getLocal() — the SAME word upstream);
+    # the material family skips are covered from the dump composed row of the row id
+    # (hsla: family ASCII "HSLA", the composed 5018 word HSLA钢; tungsten_alloy: the
+    # family row is absent, the composed 5052 word 钨合金 — the en face is the MT.java
+    # :1723 setLocal "Tungsten Alloy"; duranium_alloy/desh_alloy/tritanium_alloy ride
+    # the family faces keyed on the TRUE internals Duranium/WorkersAlloy/Tritanium,
+    # the Tritanium word being the earlier hand ruling 三钛合金 not the ASCII dump).
+    "gt6.row.advanced_crafting_table.display": ("高级工作台 (%s)", "hand"),
+    "gt6.row.charging_crafting_table.display": ("充能工作台 (%s)", "hand"),
+    "gt6.row.mat.hsla": ("HSLA钢", "hand"),                     # dump 5018 高级工作台 (HSLA钢)
+    "gt6.row.mat.desh_alloy": ("工人合金", "hand"),             # dump gt.material.WorkersAlloy
+    "gt6.row.mat.draconium_awakened": ("觉醒龙", "hand"),       # dump gt.material.DraconiumAwakened
     "gt6.row.attachment.mat.ceramic": ("陶瓷", "hand"),
     "gt6.row.attachment.mat.plastic": ("塑料", "hand"),
     "gt6.row.attachment.mat.stainless_steel": ("不锈钢", "hand"),
@@ -1720,7 +1737,8 @@ BLOCK_BACKFILL = {
     "block.gt6.barrel_tungsten_alloy": "钨合金储罐",
     "block.gt6.barrel_tungstensteel": "钨钢储罐",
     "block.gt6.barrel_void_metal": "虚空金属储罐",
-    "block.gt6.advanced_crafting_table": "高级合成台",  # task p24-act-machine — the GT6 community zh name (no upstream zh_CN.lang dump anchor)
+    # (block.gt6.advanced_crafting_table retired with the deviation-⑥ single row — the
+    # act-matrix compose keys carry the dump-verbatim 高级工作台/充能工作台 word set)
     "block.gt6.barrel_wood": "木制储罐",             # dump join: gt.multitileentity.32714 木制储罐 (:13535; tank-name-regression fixed the 6990 anchor)
     "block.gt6.crank": "手摇曲柄",
     "block.gt6.electric_transformer": "变压器 (ULV-LV)",  # task p28-c-ulv-lv-transformer — hand (the upstream registration wording "Transformer (ULV-LV)", Loader :881; the standard zh machine word + the VN pair kept latin)

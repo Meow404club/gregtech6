@@ -1602,9 +1602,17 @@ public class GT6EnUs extends LanguageProvider {
         // name column "Crystallisation Crucible ("+aMat+")" :1437-1440)
         add(gregtech6.registry.GTMachines.MACHINE_BUMBLELYZER_UNIT_KEY, "Bumblelyzer (%s)");
         add(gregtech6.registry.GTMachines.MACHINE_CRYSTALLISATION_UNIT_KEY, "Crystallisation Crucible (%s)");
-        // task act-machine — the single-variant row (upstream "Advanced Crafting Table",
-        // Loader_MultiTileEntities.java:136 name column)
-        add("block.gt6.advanced_crafting_table", "Advanced Crafting Table");
+        // task act-machine → act-matrix — the two machine templates over the 60-material
+        // walk (the upstream name columns "Advanced Crafting Table ("+aMat.getLocal()+")" /
+        // "Charging Crafting Table ("+aMat.getLocal()+")", Loader_MultiTileEntities.java
+        // :136-137 — the composed word IS the material's mNameLocal, read live off the row's
+        // MT face); the bare single-row key block.gt6.advanced_crafting_table retires with
+        // the deviation-⑥ row it named
+        add(gregtech6.registry.GTMachines.ADVANCED_CRAFTING_TABLE_DISPLAY_KEY, "Advanced Crafting Table (%s)");
+        add(gregtech6.registry.GTMachines.CHARGING_CRAFTING_TABLE_DISPLAY_KEY, "Charging Crafting Table (%s)");
+        for (gregtech6.registry.GTMachines.CraftingTableRow tRow : gregtech6.registry.GTMachines.CRAFTING_TABLE_ROWS) {
+            addRowMatUnit(gregtech6.registry.GTMachines.craftingTableMatUnitKeyOf(tRow), tRow.material().mt().mNameLocal);
+        }
         // task w2-eu-core-5tier — the eu-core family templates: the voltage-word slot
         // (the CANNER_DISPLAY_KEY contract) over the FIVE-word VN ladder LV/MV/HV/EV/IV
         // (the upstream name columns "Electrolyzer ("+VN[tier]+")" :1336-1340 / "Injector ("

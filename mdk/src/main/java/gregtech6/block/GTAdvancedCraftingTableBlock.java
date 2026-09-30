@@ -1,6 +1,7 @@
 package gregtech6.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,41 +18,65 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 import gregtech6.registry.GTMachines;
+import gregtech6.registry.GTMachines.CraftingTableRow;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
 
 /**
- * The Advanced Crafting Table block (task act-machine) — the GTOvenBlock shape over
- * the facing axis ONLY: the ACT is zero-energy and player-click driven, so there is no
- * ACTIVE/RUNNING visual payload (the upstream machine carries no state decals — the
- * texture set has no overlay_active/overlay_running layers, the craftingtables/advanced
- * group). FACING is the shared BlockStateProperties.HORIZONTAL_FACING instance (the
- * ADR-P16-2 single-owner alias — the datagen variant builder reads it through the same
- * GTOvenBlock.FACING reference).
+ * The Advanced/Charging Crafting Table block (task act-machine → act-matrix) — the
+ * GTOvenBlock shape over the facing axis ONLY, now the row-carrier cube (the
+ * GT6Hoppers.GT6HopperBlock form): the ACT is zero-energy and player-click driven, so
+ * there is no ACTIVE/RUNNING visual payload (the upstream machine carries no state
+ * decals — the texture set has no overlay_active/overlay_running layers, the
+ * craftingtables/advanced group). FACING is the shared
+ * BlockStateProperties.HORIZONTAL_FACING instance (the ADR-P16-2 single-owner alias —
+ * the datagen variant builder reads it through the same GTOvenBlock.FACING reference).
+ * The row (material + charging kind) rides the instance; the composed display name
+ * resolves through {@link GTMachines#displayOf}.
  *
- * <p>use() stays inert through the C1 review (the card's phased commits: the BE is the
- * independently-verifiable unit — the RCON chain drives everything through /gt6act);
- * C2 wires the ModularUI open chain here (NetworkHooks.openScreen over the MenuProvider
- * BE, the oven :199 shape) when the menu lands.
+ * <p>Rendering stays the TRANSITIONAL shared model for all 120 rows (task act-matrix
+ * declared state): the upstream per-material mRGBa tint and the charging texture family
+ * (craftingtables/charging, MultiTileEntityChargingCraftingTable.java:61-80 getTexture2)
+ * ride the ⑩B render/GUI card.
+ *
+ * <p>use() opens the ModularUI panel over the MenuProvider BE (the C2 wiring); the
+ * upstream double-GUI split (top face = crafting GUI 0, front/back = charging GUI 1,
+ * MultiTileEntityAdvancedCraftingTable.java:115-116) is the ⑩B card's face — this
+ * single open is the declared transitional form.
  */
 public class GTAdvancedCraftingTableBlock extends GTEntityBlock {
 
 	/** Facing property (horizontal — the shared single instance, the ADR-P16-2 alias). */
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-	public GTAdvancedCraftingTableBlock(Properties aProperties) {
+	private final CraftingTableRow mRow;
+
+	public GTAdvancedCraftingTableBlock(CraftingTableRow aRow, Properties aProperties) {
 		super(aProperties);
+		mRow = aRow;
 		registerDefaultState(this.stateDefinition.any().setValue(FACING, net.minecraft.core.Direction.NORTH));
 	}
 	//? if neoforge {
 	/*
 	// 21.1 made BaseEntityBlock.codec() abstract (the vanilla 1.21 block-state codec
-	// dispatch) — the GTOvenBlock simpleCodec precedent verbatim.
+	// dispatch) — the GTOvenBlock simpleCodec precedent verbatim; the representative row
+	// carries no live config (the GT6HopperBlock codec shape).
 	@Override
 	protected com.mojang.serialization.MapCodec<? extends GTAdvancedCraftingTableBlock> codec() {
-		return simpleCodec(aProperties -> new GTAdvancedCraftingTableBlock(aProperties));
+		return simpleCodec(aProperties -> new GTAdvancedCraftingTableBlock(GTMachines.CRAFTING_TABLE_ROWS.get(0), aProperties));
 	}
 	*///?}
+
+	/** The registration row (the block-carrier config read, the hopper row() seam). */
+	public CraftingTableRow row() {
+		return mRow;
+	}
+
+	/** The composed row name (task i18n-compose-rows: the {@link GTMachines#displayOf} carrier). */
+	@Override
+	public MutableComponent getName() {
+		return GTMachines.displayOf(mRow);
+	}
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> aBuilder) {
@@ -67,7 +92,7 @@ public class GTAdvancedCraftingTableBlock extends GTEntityBlock {
 
 	@Override
 	protected BlockEntityType<? extends TileEntityBase03TicksAndSync> tickerType() {
-		return GTMachines.ADVANCED_CRAFTING_TABLE_BE.get();
+		return mRow.charging() ? GTMachines.CHARGING_CRAFTING_TABLE_BE.get() : GTMachines.ADVANCED_CRAFTING_TABLE_BE.get();
 	}
 
 	@Override
@@ -86,7 +111,8 @@ public class GTAdvancedCraftingTableBlock extends GTEntityBlock {
 	*///?}
 		// C2: the ModularUI open chain (decisions.p24-act-be-form — the mdk-first-consumer
 		// wiring gate PASSED on both legs; BlockEntityUIFactory carries its own network,
-		// no NetworkHooks/MenuType face). The BE must implement IUIHolder<PosGuiData>.
+		// no NetworkHooks/MenuType face). The BE must implement IUIHolder<PosGuiData>. The
+		// ⑩B double-GUI split rides the GUI card (declared in the class doc).
 		BlockEntity tBlockEntity = aLevel.getBlockEntity(aPos);
 		if (tBlockEntity instanceof TileEntityAdvancedCraftingTable tTable && aPlayer instanceof net.minecraft.server.level.ServerPlayer tServerPlayer) {
 			brachy.modularui.factory.BlockEntityUIFactory.INSTANCE.open(tServerPlayer, tTable);
