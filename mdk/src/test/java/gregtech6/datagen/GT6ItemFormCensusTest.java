@@ -11,7 +11,8 @@
  * the GT6ItemModels.java fallback rows pin the census missing-hole verdict (the
  * placeables/bumbliary items were never missing — they ride their block models).
  * Task tex-itemform-b extends the census with the tier-B front-view families (the
- * 28 kinematics/controller/composite rows) on the same 2D form.
+ * 28 kinematics/controller/composite rows) on the same 2D form; task diesel-item-3d
+ * retired the 8 diesel rows of that band into the block-model 3D form.
  */
 package gregtech6.datagen;
 

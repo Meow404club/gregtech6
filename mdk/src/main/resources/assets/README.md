@@ -10223,8 +10223,11 @@ inventory form tiled that one flat view over all six faces:
 
 - crank 1 — layer0 = `block/crank` (the borrowed upstream crank front icon the block
   model already tiles).
-- diesel engines 8 — layer0 = the shared `block/diesel_engine` front icon (the
-  motor_liquid borrow).
+- diesel engines 8 — RETIRED from this band by task diesel-item-3d: the BlockItems now
+  parent `block/diesel_engine` (the genuinely faceted two-layer shell, the steam-family
+  form), so this entry's 28-row census is 20 rows + the 8 diesel pins of
+  `dieselItemsRideTheBlockModels`. (History: layer0 = the shared `block/diesel_engine`
+  front icon, the motor_liquid borrow.)
 - tap + funnel attachments 12 — layer0 = the row's family side sprite
   (`block/tap` / `block/funnel`, the upstream machines/tools borrows).
 - water wheel 1 — layer0 = `block/water_wheel` (the port-original wheel sprite,
