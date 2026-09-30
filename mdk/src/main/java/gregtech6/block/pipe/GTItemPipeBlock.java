@@ -15,10 +15,9 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
-import net.minecraftforge.common.ToolActions;
-
 import gregtech6.block.GTBlockProperties;
 import gregtech6.block.GTEntityBlock;
+import gregtech6.items.tools.GT6ToolActions;
 import gregtech6.registry.GTItemPipes;
 import gregtech6.registry.GTItemPipes.ItemPipeRow;
 import gregtech6.tileentity.connectors.GTItemPipeBlockEntity;
@@ -31,10 +30,12 @@ import gregtech6.covers.ICoverableTE;
  * family over the shared BET (ADR-P3-1), the {@link gregtech6.block.pipe.GTFluidPipeBlock}
  * shape with the item-pipe interaction layer:
  * <ul>
- * <li>plain hoe right click = the per-face connection toggle (the wrench layer,
+ * <li>wrench-key stack right click = the per-face connection toggle (the wrench layer,
+ *     {@code GT6ToolActions.isWrenchInteractionKey} — the formal wrench or the
+ *     vanilla-hoe substitute, the shared key task wrench-interaction-key wired in;
  *     {@link gregtech6.tileentity.connectors.TileEntityBase09Connector#connect} — the
  *     upstream getFacingTool TOOL_wrench face, MultiTileEntityPipeItem.java:288);</li>
- * <li>shift + hoe = the monkeywrench face-disable cycle (upstream onToolClick2
+ * <li>shift + wrench key = the monkeywrench face-disable cycle (upstream onToolClick2
  *     TOOL_monkeywrench :128-153, via {@link GTItemPipeBlockEntity#monkeyWrench(byte)} —
  *     refused between two item pipes, :130-133);</li>
  * <li>the target face is {@code UT6.getSideWrenching} over the 0..1 hit offsets
@@ -143,7 +144,7 @@ public class GTItemPipeBlock extends GTEntityBlock {
 	InteractionHand aHand = InteractionHand.MAIN_HAND;
 	*///?}
 		ItemStack tStack = aPlayer.getItemInHand(aHand);
-		if (tStack.isEmpty() || !tStack.canPerformAction(ToolActions.HOE_DIG)) return InteractionResult.PASS;
+		if (!GT6ToolActions.isWrenchInteractionKey(tStack)) return InteractionResult.PASS; // the shared wrench key (task wrench-interaction-key — same judgment as the fluid pipe and the grid overlay)
 		if (aLevel.isClientSide) return InteractionResult.CONSUME; // claim the interaction, the BE executes server-side
 
 		BlockEntity tTile = aLevel.getBlockEntity(aPos);

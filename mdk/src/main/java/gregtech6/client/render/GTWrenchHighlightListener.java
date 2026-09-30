@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -15,12 +14,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderHighlightEvent;
-import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import gregtech6.block.GTOvenBlock;
 import gregtech6.block.pipe.GTFluidPipeBlock;
+import gregtech6.items.tools.GT6ToolActions;
 import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 import gregtech6.tileentity.machines.TileEntityOven;
@@ -41,9 +40,12 @@ import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
  * frame and passed down by value), zero writes, the event is never cancelled so the
  * vanilla selection box stays.
  *
- * <p>Filter = hoe held in either hand (the same {@code ToolActions.HOE_DIG} predicate
- * as {@link GTFluidPipeBlock#use} at :104 — the "shown means clickable" invariant)
- * hovering a {@link GTFluidPipeBlockEntity} (the connection/ioMask modes, task
+ * <p>Filter = the wrench-interaction key held in either hand — the shared
+ * {@code GT6ToolActions.isWrenchInteractionKey} seam (the formal wrench or the
+ * vanilla-hoe substitute; task wrench-interaction-key wired the wrench in), the same
+ * predicate {@link GTFluidPipeBlock#use}, {@code GTItemPipeBlock#use} and
+ * {@link GTOvenBlock#use} gate on — the "shown means clickable" invariant.
+ * Hovering a {@link GTFluidPipeBlockEntity} (the connection/ioMask modes, task
  * wrench-ui-gtceu), a {@link TileEntityOven} (the front-rotation mode, task
  * oven-rotation — shift marks the rotatable cells, the same predicate
  * {@link GTOvenBlock#use} rotates through) or a {@link TileEntityCokeOven} (the
@@ -67,8 +69,9 @@ public final class GTWrenchHighlightListener {
 		Player tPlayer = Minecraft.getInstance().player;
 		if (tPlayer == null) return;
 
-		// the trigger predicate — identical to GTFluidPipeBlock.use:104, so the grid is
-		// shown exactly when a click would act ("shown means clickable")
+		// the trigger predicate — the same shared seam GTFluidPipeBlock.use,
+		// GTItemPipeBlock.use and GTOvenBlock.use gate on, so the grid is shown exactly
+		// when a click would act ("shown means clickable")
 		if (!isWrenchHeld(tPlayer, InteractionHand.MAIN_HAND) && !isWrenchHeld(tPlayer, InteractionHand.OFF_HAND)) return;
 
 		BlockHitResult tTarget = aEvent.getTarget();
@@ -78,6 +81,11 @@ public final class GTWrenchHighlightListener {
 		Camera tCamera = aEvent.getCamera();
 		MultiBufferSource tBuffers = aEvent.getMultiBufferSource();
 		if (tTile instanceof GTFluidPipeBlockEntity tPipe) {
+			// task wrench-interaction-key gap (declared defer): the item-pipe family is
+			// clickable through the same key (GTItemPipeBlock.use) but shows no grid here —
+			// its shift layer is the monkeyWrench four-state disable cycle
+			// (mDisabledInputs/mDisabledOutputs), a different data face from the fluid
+			// pipe's ioMask arrows, so the renderer arm is a renderer-domain card.
 			GTWrenchGridRenderer.renderGrid(tPoseStack, tBuffers, tCamera, tTarget, tPlayer.isShiftKeyDown(), tPipe);
 		} else if (tTile instanceof TileEntityOven tOven) {
 			// task oven-rotation — the front facing reads the BlockState, the client
@@ -106,9 +114,8 @@ public final class GTWrenchHighlightListener {
 		// no cancel — the vanilla selection box renders as usual
 	}
 
-	/** The use():104 predicate — an item that can perform the hoe-dig (wrench substitute) action. */
+	/** The use() predicate — the shared wrench-interaction key ({@link GT6ToolActions#isWrenchInteractionKey}). */
 	private static boolean isWrenchHeld(Player aPlayer, InteractionHand aHand) {
-		ItemStack tStack = aPlayer.getItemInHand(aHand);
-		return !tStack.isEmpty() && tStack.canPerformAction(ToolActions.HOE_DIG);
+		return GT6ToolActions.isWrenchInteractionKey(aPlayer.getItemInHand(aHand));
 	}
 }
