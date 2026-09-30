@@ -436,11 +436,13 @@ direct	fluid.gt6.adamantium_molten	熔融艾德曼合金	hand
 direct	fluid.gt6.aerotheum	和谐之空气	hand
 direct	fluid.gt6.alcopops	波普甜酒	hand
 direct	fluid.gt6.alumina_molten	熔融氧化铝	hand
+direct	fluid.gt6.aluminiumfluoride_molten	熔融氟化铝	hand
 direct	fluid.gt6.ambrosia	琼浆	hand
 direct	fluid.gt6.ancientdebris_molten	熔融远古残骸	hand
 direct	fluid.gt6.applesmoothie	苹果冰沙	hand
 direct	fluid.gt6.applevinegar	苹果醋	hand
 direct	fluid.gt6.apricotsmoothie	杏子冰沙	hand
+direct	fluid.gt6.aquaregia	王水	hand
 direct	fluid.gt6.argon	氩	hand
 direct	fluid.gt6.bananasmoothie	香蕉冰沙	hand
 direct	fluid.gt6.bawls	瓜拿纳	hand
@@ -462,6 +464,7 @@ direct	fluid.gt6.blaze	烈焰粘浆	hand
 direct	fluid.gt6.blood	血液	hand
 direct	fluid.gt6.blueberryjuice	蓝莓汁	hand
 direct	fluid.gt6.blueberrysmoothie	蓝莓冰沙	hand
+direct	fluid.gt6.bluevitriol	五水合硫酸铜	hand
 direct	fluid.gt6.boron11_molten	熔融硼-11	hand
 direct	fluid.gt6.brandyapple	苹果白兰地	hand
 direct	fluid.gt6.brandyapricot	杏子白兰地	hand
@@ -472,6 +475,8 @@ direct	fluid.gt6.brandyfruit	白兰地	hand
 direct	fluid.gt6.brandygrape	葡萄白兰地	hand
 direct	fluid.gt6.brandypear	梨子白兰地	hand
 direct	fluid.gt6.brandyplum	李子白兰地	hand
+direct	fluid.gt6.brine	Brine	hand
+direct	fluid.gt6.bromine	溴	hand
 direct	fluid.gt6.butane	丁烷	hand
 direct	fluid.gt6.cactusfruitjuice	仙人掌果汁	hand
 direct	fluid.gt6.cactuswater	仙人掌汁	hand
@@ -520,6 +525,8 @@ direct	fluid.gt6.cheese_molten	熔融奶酪	hand
 direct	fluid.gt6.cherrysmoothie	樱桃冰沙	hand
 direct	fluid.gt6.chillysauce	辣椒酱	hand
 direct	fluid.gt6.chlorine	氯	hand
+direct	fluid.gt6.chloroauricacid	氯金酸	hand
+direct	fluid.gt6.chloroplatinicacid	氯铂酸	hand
 direct	fluid.gt6.chocolate_molten	熔融巧克力	hand
 direct	fluid.gt6.chocolatecream	巧克力冰淇淋	hand
 direct	fluid.gt6.chocolatemilk	巧克力牛奶	hand
@@ -532,10 +539,12 @@ direct	fluid.gt6.coconutsmoothie	椰奶冰沙	hand
 direct	fluid.gt6.cold_water	冷水	hand
 direct	fluid.gt6.concrete	湿混凝土	hand
 direct	fluid.gt6.cranberrysmoothie	蔓越莓冰沙	hand
+direct	fluid.gt6.cryolite_molten	熔融冰晶石	hand
 direct	fluid.gt6.cryotheum	极寒之凛冰	hand
 direct	fluid.gt6.cucumberjuice	黄瓜汁	hand
 direct	fluid.gt6.currantjuice	醋栗汁	hand
 direct	fluid.gt6.currantsmoothie	醋栗冰沙	hand
+direct	fluid.gt6.cyanvitriol	硫酸镍	hand
 direct	fluid.gt6.darkbeer	黑啤酒	hand
 direct	fluid.gt6.datejuice	海枣汁	hand
 direct	fluid.gt6.deuterium	氘	hand
@@ -544,6 +553,7 @@ direct	fluid.gt6.diablosauce_strong	老干爹辣椒酱	hand
 direct	fluid.gt6.diabolosauce	魔改型恶魔辣酱	hand
 direct	fluid.gt6.diesel	柴油	hand
 direct	fluid.gt6.distilled_water	蒸馏水	hand
+direct	fluid.gt6.disulfuricacid	焦硫酸	hand
 direct	fluid.gt6.dragon_breath	龙息	hand
 direct	fluid.gt6.dragonblood	龙血	hand
 direct	fluid.gt6.dressing	敷料	hand
@@ -588,11 +598,13 @@ direct	fluid.gt6.gooseberrysmoothie	鹅莓冰沙	hand
 direct	fluid.gt6.grapefruitsmoothie	葡萄柚冰沙	hand
 direct	fluid.gt6.grapejuice	绿葡萄汁	hand
 direct	fluid.gt6.grapesmoothie	绿葡萄冰沙	hand
+direct	fluid.gt6.grayvitriol	硫酸锰	hand
 direct	fluid.gt6.grc_applecider0	苹果汁(生长工艺)	hand
 direct	fluid.gt6.grc_grapewine0	紫葡萄汁(生长工艺)	hand
 direct	fluid.gt6.grc_honey	蜂蜜 (生长工艺)	hand
 direct	fluid.gt6.grcmilk_cream	生奶油(生长工艺)	hand
 direct	fluid.gt6.grcmilk_milk	牛奶	hand
+direct	fluid.gt6.greenvitriol	硫酸亚铁	hand
 direct	fluid.gt6.heavywater	重水	hand
 direct	fluid.gt6.helium	氦	hand
 direct	fluid.gt6.helium3	氦-3	hand
@@ -600,6 +612,7 @@ direct	fluid.gt6.helium_plasma	氦离子	hand
 direct	fluid.gt6.heliumneon	氦氖混合气体	hand
 direct	fluid.gt6.hellderberryjuice	下界莓汁	hand
 direct	fluid.gt6.hempoil	大麻籽油	hand
+direct	fluid.gt6.hexafluorosilicicacid	六氟硅酸	hand
 direct	fluid.gt6.holywater	圣水	hand
 direct	fluid.gt6.honey	蜂蜜	hand
 direct	fluid.gt6.honeydew	蜜露	hand
@@ -615,7 +628,10 @@ direct	fluid.gt6.hotmoltentin	热熔融锡	hand
 direct	fluid.gt6.hotsauce	辣酱	hand
 direct	fluid.gt6.hotsemiheavywater	热半重水	hand
 direct	fluid.gt6.hottritiatedwater	热超重水	hand
+direct	fluid.gt6.hydrochloricacid	盐酸	hand
 direct	fluid.gt6.hydrogen	氢气	hand
+direct	fluid.gt6.hydrogenfluoride	氟化氢	hand
+direct	fluid.gt6.hydrogenperoxide	过氧化氢	hand
 direct	fluid.gt6.ic2coolant	冷却液	hand
 direct	fluid.gt6.ic2distilledwater	蒸馏水	hand
 direct	fluid.gt6.ic2hotcoolant	热冷却液	hand
@@ -695,6 +711,7 @@ direct	fluid.gt6.mangojuice	芒果汁	hand
 direct	fluid.gt6.mangosmoothie	芒果冰沙	hand
 direct	fluid.gt6.maplesap	枫树汁液	hand
 direct	fluid.gt6.maplesyrup	枫树糖浆	hand
+direct	fluid.gt6.martianvitriol	硫酸铁	hand
 direct	fluid.gt6.mashcorn	玉米浆	hand
 direct	fluid.gt6.mashgrain	谷物浆	hand
 direct	fluid.gt6.mashrye	黑麦浆	hand
@@ -719,9 +736,12 @@ direct	fluid.gt6.neon	氖	hand
 direct	fluid.gt6.netherair	下界空气	hand
 direct	fluid.gt6.neutralmatter	中性物质	hand
 direct	fluid.gt6.nikolinealloy_molten	熔融蓝石合金	hand
+direct	fluid.gt6.nitricacid	硝酸	hand
 direct	fluid.gt6.nitrofuel	硝基柴油	hand
 direct	fluid.gt6.nitrogen	氮	hand
 direct	fluid.gt6.nitrogen_plasma	氮离子	hand
+direct	fluid.gt6.nitrogendioxide	二氧化氮	hand
+direct	fluid.gt6.nitrogenmonoxide	一氧化氮	hand
 direct	fluid.gt6.nutella	能多益	hand
 direct	fluid.gt6.nutoil	坚果油	hand
 direct	fluid.gt6.onionjuice	洋葱汁	hand
@@ -739,6 +759,7 @@ direct	fluid.gt6.petrotheum	构造之地岩	hand
 direct	fluid.gt6.pina_colada	凤梨可乐达	hand
 direct	fluid.gt6.pineapplesmoothie	菠萝冰沙	hand
 direct	fluid.gt6.pinkslime	粉色史莱姆	hand
+direct	fluid.gt6.pinkvitriol	硫酸镁	hand
 direct	fluid.gt6.plantoil	植物油	hand
 direct	fluid.gt6.plastic	熔融塑料	hand
 direct	fluid.gt6.plumsmoothie	李子冰沙	hand
@@ -864,6 +885,7 @@ direct	fluid.gt6.raspberrysmoothie	树莓冰沙	hand
 direct	fluid.gt6.redgrapesmoothie	红葡萄冰沙	hand
 direct	fluid.gt6.redstone_molten	熔融红石	hand
 direct	fluid.gt6.redstonealloy_molten	熔融红石合金	hand
+direct	fluid.gt6.redvitriol	硫酸钴	hand
 direct	fluid.gt6.reedwater	芦苇水	hand
 direct	fluid.gt6.ricardosanchez	里卡多·桑切斯	hand
 direct	fluid.gt6.ricevinegar	米醋	hand
@@ -875,6 +897,8 @@ direct	fluid.gt6.rubber_molten	熔融橡胶	hand
 direct	fluid.gt6.rumdark	海盗啤酒	hand
 direct	fluid.gt6.rumwhite	朗姆酒	hand
 direct	fluid.gt6.sake	米酒	hand
+direct	fluid.gt6.saltedwater	盐水	hand
+direct	fluid.gt6.saltwater	盐水	hand
 direct	fluid.gt6.sap	树液	hand
 direct	fluid.gt6.seawater	海水	hand
 direct	fluid.gt6.seedoil	种子油	hand
@@ -895,13 +919,18 @@ direct	fluid.gt6.spiritgin	金酒	hand
 direct	fluid.gt6.spiritneutral	中性白酒	hand
 direct	fluid.gt6.spiritsugarcane	甘蔗烧酒	hand
 direct	fluid.gt6.spoiledmilk	牛奶	hand
+direct	fluid.gt6.spruceresin	云杉树脂	hand
 direct	fluid.gt6.squidink	墨水	hand
+direct	fluid.gt6.stannicchloride	四氯化锡	hand
 direct	fluid.gt6.starfruitjuice	杨桃汁	hand
 direct	fluid.gt6.starfruitsmoothie	杨桃冰沙	hand
 direct	fluid.gt6.steam	蒸汽	hand
 direct	fluid.gt6.strawberryjuice	草莓汁	hand
 direct	fluid.gt6.strawberrysmoothie	草莓冰沙	hand
 direct	fluid.gt6.sugar_molten	熔融糖	hand
+direct	fluid.gt6.sulfurdioxide	二氧化硫	hand
+direct	fluid.gt6.sulfuricacid	硫酸	hand
+direct	fluid.gt6.sulfurtrioxide	三氧化硫	hand
 direct	fluid.gt6.sunfloweroil	向日葵油	hand
 direct	fluid.gt6.sweettea	甜茶	hand
 direct	fluid.gt6.tea	茶	hand
@@ -912,8 +941,12 @@ direct	fluid.gt6.titaniumtetrachloride	四氯化钛	hand
 direct	fluid.gt6.tritiatedwater	超重水	hand
 direct	fluid.gt6.tritium	氚	hand
 direct	fluid.gt6.tungsten_molten	熔融钨	hand
+direct	fluid.gt6.uranium235hexafluoride	六氟化铀-235	hand
+direct	fluid.gt6.uranium238hexafluoride	六氟化铀-238	hand
+direct	fluid.gt6.uraniumhexafluoride	六氟化铀	hand
 direct	fluid.gt6.uuamplifier	UU增殖液	hand
 direct	fluid.gt6.vinegar	葡萄醋	hand
+direct	fluid.gt6.vitriolofclay	硫酸铝	hand
 direct	fluid.gt6.vodka	伏特加	hand
 direct	fluid.gt6.water_boiling	沸水	hand
 direct	fluid.gt6.water_geothermal	温泉水	hand
@@ -933,6 +966,7 @@ direct	fluid.gt6.whiskeycorn	玉米威士忌	hand
 direct	fluid.gt6.whiskeyrye	黑麦威士忌	hand
 direct	fluid.gt6.whiskeywheat	苏格兰威士忌	hand
 direct	fluid.gt6.whitegrapesmoothie	白葡萄冰沙	hand
+direct	fluid.gt6.whitevitriol	硫酸锌	hand
 direct	fluid.gt6.wine	葡萄酒	hand
 direct	fluid.gt6.wineagave	龙舌兰酒	hand
 direct	fluid.gt6.wineapricot	杏子酒	hand
