@@ -80,7 +80,7 @@ public class PocketEightTest {
 			assertSame(GT6Tools.POCKET_FORMS.get(i), GT6Tools.TAB_TABLE.get(56 + i),
 					"the pocket band mirrors the ring at offset " + i + " (row " + (56 + i) + ")");
 		}
-		assertEquals(88, GT6Tools.TAB_TABLE.size(), "the 64 prior rows + the 24 armor rows");
+		assertEquals(91, GT6Tools.TAB_TABLE.size(), "the 64 prior rows + the 24 armor rows + the gun family (task pistol-family-items)");
 		assertEquals(512, GTPocketMultitoolItem.DURABILITY_POINTS, "the single-steel-tier family value (ruling d)");
 	}
 

@@ -1,0 +1,34 @@
+{
+  "type": "gt6:material_tool",
+  "category": "equipment",
+  "key": {
+    "H": {
+      "tag": "c:rods/wooden"
+    },
+    "T": {
+      "item": "gt6:screw_syrmorite"
+    },
+    "V": {
+      "item": "minecraft:flint"
+    },
+    "X": {
+      "item": "gt6:plate_curved_syrmorite"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "material": "syrmorite",
+  "pattern": [
+    "XXX",
+    "HHV",
+    "dTh"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:rifle"
+  }
+}

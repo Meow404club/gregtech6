@@ -917,6 +917,15 @@ HAND_TRANSLATIONS = {
     "item.gt6.monkey_wrench": ("活动扳手", "hand"),
     "item.gt6.magnifying_glass": ("放大镜", "hand"),
     "item.gt6.pincers": ("钳子", "hand"),
+    # task pistol-family-items: the gun family (the dump metatool faces verbatim —
+    # gt.metatool.01.5000/.5002/.5004 + their .tooltip rows, tmp/gregtech.lang:6768-6779,
+    # Loader_Tools.java:198-200)
+    "item.gt6.pistol": ("手枪", "hand"),
+    "item.gt6.pistol.tooltip": ("单发, 伤害中等", "hand"),
+    "item.gt6.carbine": ("卡宾枪", "hand"),
+    "item.gt6.carbine.tooltip": ("单发, 伤害高", "hand"),
+    "item.gt6.rifle": ("步枪", "hand"),
+    "item.gt6.rifle.tooltip": ("单发, 伤害极高", "hand"),
     "item.gt6.food_can_cookies_huge": ("超大食物罐头 (饼干)", "hand"),
     "item.gt6.food_can_empty": ("空食物罐头", "hand"),
     "item.gt6.food_can_rotten_huge": ("超大食物罐头 (腐肉)", "hand"),

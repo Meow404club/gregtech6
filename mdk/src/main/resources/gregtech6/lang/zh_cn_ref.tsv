@@ -2053,6 +2053,8 @@ direct	item.gt6.butchery_knife	屠宰刀	hand
 direct	item.gt6.butchery_knife.tooltip	攻击速度较慢	hand
 direct	item.gt6.buzzsaw_lv	圆锯 (LV)	hand
 direct	item.gt6.buzzsaw_lv.tooltip	不适合采集方块	hand
+direct	item.gt6.carbine	卡宾枪	hand
+direct	item.gt6.carbine.tooltip	单发, 伤害高	hand
 direct	item.gt6.chainsaw_hv	链锯 (HV)	hand
 direct	item.gt6.chainsaw_hv.tooltip	也可采集冰	hand
 direct	item.gt6.chainsaw_lv	链锯 (LV)	hand
@@ -2385,6 +2387,8 @@ direct	item.gt6.pickaxe	镐	hand
 direct	item.gt6.pickaxe_construction	建筑镐	hand
 direct	item.gt6.pickaxe_gem	镶尖镐	hand
 direct	item.gt6.pincers	钳子	hand
+direct	item.gt6.pistol	手枪	hand
+direct	item.gt6.pistol.tooltip	单发, 伤害中等	hand
 direct	item.gt6.plow	犁	hand
 direct	item.gt6.plunger	搋子	hand
 direct	item.gt6.plutonium_239_enriched_rod	钚-239浓缩燃料棒	hand
@@ -2422,6 +2426,8 @@ direct	item.gt6.reactor_rod.product.2	可离心提取有价值的材料	hand
 direct	item.gt6.reactor_rod.product.breeds	由 %s 培育而来	hand
 direct	item.gt6.reactor_rod.reflector	将中子反射回其源头，增强反应	hand
 direct	item.gt6.reactor_rod.used_in_core	用于核反应堆核心	hand
+direct	item.gt6.rifle	步枪	hand
+direct	item.gt6.rifle.tooltip	单发, 伤害极高	hand
 direct	item.gt6.rolling_pin	擀面杖	hand
 direct	item.gt6.saw	锯	hand
 direct	item.gt6.scissors	剪刀	hand

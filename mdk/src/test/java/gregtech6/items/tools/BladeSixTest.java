@@ -70,7 +70,7 @@ public class BladeSixTest {
 	/** The table holds exactly 37 rows — rows 16..21 are the six blade tools in display order (22..25 the machine-face four, 26..30 the field five, 31..36 the w5-t5-scene-six tail append). */
 	@Test
 	public void tabTableIsExactlyTheTwentyTwoToolRows() {
-		assertEquals(88, GT6Tools.TAB_TABLE.size(), "the Tools tab = the 16 prior rows + the six blade tools + the machine-face four + the field five + the scene six");
+		assertEquals(91, GT6Tools.TAB_TABLE.size(), "the Tools tab = the prior rows + the later task bands (the gun family 91-row census)");
 		assertSame(GT6Tools.SWORD, GT6Tools.TAB_TABLE.get(16), "row 16 is the sword");
 		assertSame(GT6Tools.KNIFE, GT6Tools.TAB_TABLE.get(17), "row 17 is the knife");
 		assertSame(GT6Tools.BUTCHERY_KNIFE, GT6Tools.TAB_TABLE.get(18), "row 18 is the butchery knife");

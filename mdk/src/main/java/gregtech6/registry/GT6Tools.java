@@ -42,6 +42,7 @@ import gregtech6.items.tools.GTSenseItem;
 import gregtech6.items.tools.GTPickaxeConstructionItem;
 import gregtech6.items.tools.GTPickaxeGemItem;
 import gregtech6.items.tools.GTPickaxeItem;
+import gregtech6.items.tools.GTPistolItem;
 import gregtech6.items.tools.GTSwordItem;
 import gregtech6.items.tools.GTFlintAndTinderItem;
 import gregtech6.items.tools.GTPlungerItem;
@@ -308,6 +309,35 @@ public final class GT6Tools {
 	public static final List<RegistryObject<Item>> POCKET_FORMS = List.of(POCKET_MULTITOOL, POCKET_MULTITOOL_KNIFE,
 			POCKET_MULTITOOL_SAW, POCKET_MULTITOOL_FILE, POCKET_MULTITOOL_SCREWDRIVER, POCKET_MULTITOOL_WIRE_CUTTER,
 			POCKET_MULTITOOL_SCISSORS, POCKET_MULTITOOL_CHISEL);
+
+	// ─── the gun family (task pistol-family-items, tail-append after the pocket rows —
+	// the upstream addTool order Loader_Tools.java:198-200 rides :190-196) ───
+	// Three registrations of ONE class over the GTPistolItem.Kind table (the
+	// pocket-multitool form). Single steel tier, durability 512 (the family value; the
+	// upstream setMaterialAmount(U9*19)/(U9*28) per-material scaling :198-200 is the
+	// ladder card's face — LADDER CANDIDATE, the per-material rows :317-319 landed with
+	// the gt6:material_tool stamped identity, GT6GunRecipes). Melee damage 1.0F = the
+	// inherited ToolStats.getBaseDamage default (ToolStats.java:69, no family override),
+	// the vanilla sword attack-rate anchor; the pistol-whip point-per-hit fold.
+	// DEFERRED (declared): the Behavior_Gun shooting chain (BULLETS_SMALL/MEDIUM/LARGE,
+	// the bullet item family, the ranged face, the death messages) — the
+	// gun-behaviour card's surface; this card lands registration + basic attributes +
+	// the per-material crafting rows only.
+
+	/** The pistol — item id {@code gt6:pistol} (Loader_Tools.java:198 "Pistol"). */
+	public static final RegistryObject<Item> PISTOL = ITEMS.register(GTPistolItem.pathOf(GTPistolItem.Kind.PISTOL),
+			() -> new GTPistolItem(GTPistolItem.Kind.PISTOL, new Item.Properties().durability(GTPistolItem.DURABILITY_POINTS)));
+
+	/** The carbine — item id {@code gt6:carbine} (Loader_Tools.java:199 "Carbine"). */
+	public static final RegistryObject<Item> CARBINE = ITEMS.register(GTPistolItem.pathOf(GTPistolItem.Kind.CARBINE),
+			() -> new GTPistolItem(GTPistolItem.Kind.CARBINE, new Item.Properties().durability(GTPistolItem.DURABILITY_POINTS)));
+
+	/** The rifle — item id {@code gt6:rifle} (Loader_Tools.java:200 "Rifle"). */
+	public static final RegistryObject<Item> RIFLE = ITEMS.register(GTPistolItem.pathOf(GTPistolItem.Kind.RIFLE),
+			() -> new GTPistolItem(GTPistolItem.Kind.RIFLE, new Item.Properties().durability(GTPistolItem.DURABILITY_POINTS)));
+
+	/** The gun rows in TAB order (:198-200). */
+	public static final List<RegistryObject<Item>> GUN_ROWS = List.of(PISTOL, CARBINE, RIFLE);
 
 	/**
 	 * The six dig tools — task w5-t1-dig-six (the W5 tool wave card 1; rows 11-16 of
@@ -710,7 +740,10 @@ public final class GT6Tools {
 			BUZZSAW_LV, SCREWDRIVER_LV, HAND_DRILL_LV, HAND_MIXER_LV,
 			MONKEY_WRENCH_LV, MONKEY_WRENCH_MV, MONKEY_WRENCH_HV,
 			TRIMMER_LV,
-			POCKET_MULTITOOL, POCKET_MULTITOOL_KNIFE, POCKET_MULTITOOL_SAW, POCKET_MULTITOOL_FILE, POCKET_MULTITOOL_SCREWDRIVER, POCKET_MULTITOOL_WIRE_CUTTER, POCKET_MULTITOOL_SCISSORS, POCKET_MULTITOOL_CHISEL)
+			POCKET_MULTITOOL, POCKET_MULTITOOL_KNIFE, POCKET_MULTITOOL_SAW, POCKET_MULTITOOL_FILE, POCKET_MULTITOOL_SCREWDRIVER, POCKET_MULTITOOL_WIRE_CUTTER, POCKET_MULTITOOL_SCISSORS, POCKET_MULTITOOL_CHISEL,
+			// task pistol-family-items — the gun rows ride BEFORE the armor tail (the
+			// ArmorSetTest tail-window form: the armor block stays the wave tail)
+			PISTOL, CARBINE, RIFLE)
 			// task w5-t8-armor-24 — the 24 hazmat armor rows, tail-append (rows 65-88;
 			// the wave-final tally 10 base tools + the 54 W5 tool-card rows + these 24 =
 			// the 88-row census the wave gate re-measures)
@@ -851,6 +884,9 @@ public final class GT6Tools {
 			// task w5-t7-pocket-eight — one line for the ring (the census rides the tab line below)
 			GT6Mod.LOGGER.info("GT6 tool registered: gt6:pocket_multitool + 7 switch forms, durability {} (ring {})",
 					GTPocketMultitoolItem.DURABILITY_POINTS, POCKET_FORMS.size());
+			// task pistol-family-items — one line for the gun family (the census rides the tab line below)
+			GT6Mod.LOGGER.info("GT6 tool registered: gt6:pistol + carbine + rifle, durability {} (rows {})",
+					GTPistolItem.DURABILITY_POINTS, GUN_ROWS.size());
 			// task w5-t8-armor-24 — the armor family as ONE evidence line (the 24
 			// per-item lines would drown the log; the family registration rides the same
 			// ITEMS DR whose registry lookup the tab line below already pins)

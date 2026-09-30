@@ -10886,4 +10886,31 @@ Path mapping: upstream `overlays/barometer/<name>.png` →
 - `block/barometer/31.png` — `6a500e8053e16ebf886f4acee3dd64d972fdd0f89bf3cb36d9e108e9df1d47f4` (upstream `overlays/barometer/31.png`)
 
 Copied on 2026-09-29. Upstream license: **CC0 1.0 Universal Public Domain
+
+## Item iconset borrows — the gun family (task pistol-family-items, 2026-09-30)
+
+The three ranged-weapon items' model sprites, byte-identical borrows from upstream
+`src/main/resources/assets/gregtech/textures/items/iconsets/`, filenames lowercased
+on borrow. Upstream renders each gun as FOUR passes (GT_Tool_Pistol.getIcon :44,
+Carbine :29, Rifle :29): the body pass (`getIcon(false)`, tinted with the PRIMARY
+material, Steel fallback) + the handle pass (`getIcon(true)`, tinted with the
+SECONDARY material, Spruce fallback), each base+overlay. The port's four-layer
+handheld model maps the passes onto layer0..layer3 un-tinted at the single steel
+tier (the family declared deviation); the stamped crafting rows carry the material
+identity for the ladder card.
+
+- `gt6/textures/item/pistol.png` — `2a077eed43306bc6775ff4406b1f02d9456cda8ce82c661753d2df44cd0564f7` (upstream `PISTOL.png`)
+- `gt6/textures/item/pistol_overlay.png` — `fb794e795db31e63a00a8722a5a5cc2e4c7d2b05e45623097061c107e026379f` (upstream `PISTOL_OVERLAY.png`)
+- `gt6/textures/item/pistol_handle.png` — `18ab718f4563b91a00018ef5b8373217f18056369deee6b5a25c31f49fac4f9a` (upstream `HANDLE_PISTOL.png`)
+- `gt6/textures/item/pistol_handle_overlay.png` — `fb794e795db31e63a00a8722a5a5cc2e4c7d2b05e45623097061c107e026379f` (upstream `HANDLE_PISTOL_OVERLAY.png`)
+- `gt6/textures/item/carbine.png` — `c21a65c0edb359799741855a0e1591bbc0e8057b939c4f10acd0fd23df6c6db0` (upstream `CARBINE.png`)
+- `gt6/textures/item/carbine_overlay.png` — `fb794e795db31e63a00a8722a5a5cc2e4c7d2b05e45623097061c107e026379f` (upstream `CARBINE_OVERLAY.png`)
+- `gt6/textures/item/carbine_handle.png` — `68e0ae69275348a607f14391f8e40a561899c6fe6cd15e8a8445a227f4f6ee3e` (upstream `HANDLE_CARBINE.png`)
+- `gt6/textures/item/carbine_handle_overlay.png` — `fb794e795db31e63a00a8722a5a5cc2e4c7d2b05e45623097061c107e026379f` (upstream `HANDLE_CARBINE_OVERLAY.png`)
+- `gt6/textures/item/rifle.png` — `23defe1ed0c41d88c203b42db09976677f17a2bea85b0f4bc4167186e470e70a` (upstream `RIFLE.png`)
+- `gt6/textures/item/rifle_overlay.png` — `fb794e795db31e63a00a8722a5a5cc2e4c7d2b05e45623097061c107e026379f` (upstream `RIFLE_OVERLAY.png`)
+- `gt6/textures/item/rifle_handle.png` — `4ef9cb01c1ca585e76b1932b718419b69129d8e3246c4640184ea87698364d67` (upstream `HANDLE_RIFLE.png`)
+- `gt6/textures/item/rifle_handle_overlay.png` — `fb794e795db31e63a00a8722a5a5cc2e4c7d2b05e45623097061c107e026379f` (upstream `HANDLE_RIFLE_OVERLAY.png`)
+
+Copied on 2026-09-30. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
