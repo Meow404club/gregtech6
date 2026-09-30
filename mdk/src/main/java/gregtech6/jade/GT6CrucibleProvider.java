@@ -4,23 +4,31 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.material.Fluid;
 
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.IServerDataProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
+import snownee.jade.api.fluid.JadeFluidObject;
+import snownee.jade.api.ui.IElement;
+import snownee.jade.api.ui.IElementHelper;
 
 import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictMaterialStack;
 import gregapi.util.CruciblePhysics;
+import gregtech6.datagen.GT6CrucibleDatagen;
+import gregtech6.fluid.FluidBridge;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.tileentity.multiblocks.TileEntityCrucible;
 import gregtech6.tileentity.tools.TileEntitySmeltery;
@@ -37,9 +45,22 @@ import gregtech6.tileentity.tools.TileEntitySmeltery;
  * + addToolTips 熔毁暗红行（Smeltery:114 / Crucible:155 的 getTemperatureMax K 值）；内容物列表
  * 是上游没有的新信息面（live 内容物原本零文本通道）。task jade-converter-crucible-restyle
  * 微调（design.r8-jade-tooltip families.crucible）：温度行升 B 形钳位比例条（新键
- * {@code gt6.jade.crucible.temperature.bar}，两槽 'Temperature: %s / %s K'），熔毁行（RED 实时）
- * 保留为闩落才现的警报行（旧键旧行文不退役），内容物行（total+前 {@link #MAX_CONTENT_ROWS}
- * 条目）原样。
+ * {@code gt6.jade.crucible.temperature.bar}，两槽 'Temperature: %s / %s K'）。
+ *
+ * <p>task crucible-jade-tankbar（用户三版终裁 v3）内容面升条：①内容总量行升 tank 条——熔融态
+ * overlay = Jade 官方流体元素（{@code JadeFluidObject.of} → {@code IElementHelper.fluid} →
+ * {@code progressStyle().overlay}，forge FluidView.java:47-48 + FluidStorageProvider.java:68-69 /
+ * neo :124 双腿实证），桥材质走 {@link FluidBridge#moltenFluidForMaterial}；②其余态 overlay =
+ * 自实现 {@link GT6ContentFaceElement} 渲染 ContentFace 缝同源贴图（固体=bodyTexture+mRGBaSolid
+ * / 熔融=smeltery_content+mRGBaLiquid——{@code GT6CrucibleDatagen.contentFace} 只读消费，与碗内
+ * 观感一致；固体臂的 loud 映射表对未收录材质抛 {@code IllegalStateException}，此处 guard 回落
+ * 纯色条——熔融臂对全材质恒可用）；③量纲词 'U'/'份' 进 lang（{@link #LANG_ENTRY} 新键 +
+ * total 键 zh 面 份）；④融毁红字联动——闩落时条文字变红（{@code textColor} =
+ * {@link GT6JadeRows#FORMAT_STALLED}），独立红色温度警报行（r8 保留裁定）被用户裁定废除：
+ * 行与 gt6.jade.crucible.temperature 键同 lang 四落退役（v3 覆盖 r8 '旧行保留'）。⑤服务端新增
+ * {@link #KEY_TOTAL_MAX}（{@code TileEntityCrucible.MAX_AMOUNT} / {@code Params.SMALL.maxAmount()}）
+ * 与 {@link #KEY_MOLTEN}（lightest 熔点≤温度，上游 mDisplayedFluid 门 MultiTileEntitySmeltery
+ * .java:299 语义）两键。
  *
  * <p>同步契约同 {@link GT6MachineProvider}：appendServerData 写 GT6* 前缀键，appendTooltip 经
  * {@code accessor.getServerData()} 读回，tag 由双腿 Jade 网络层搬运（CompoundTag/ListTag 搬运是
@@ -76,6 +97,19 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 	public static final String KEY_TEMP_MAX = "GT6CrucibleTempMax";
 	public static final String KEY_MELTDOWN = "GT6CrucibleMeltdown";
 	public static final String KEY_TOTAL = "GT6CrucibleTotal";
+	/** 容量上限（tank 条分母）：大型 = {@code TileEntityCrucible.MAX_AMOUNT}，小型 =
+	 * {@code CruciblePhysics.Params.SMALL.maxAmount()}（v3 ⑤）。 */
+	public static final String KEY_TOTAL_MAX = "GT6CrucibleTotalMax";
+	/** 熔融态（上游 mDisplayedFluid 门 :299 语义）：lightest 非空且其熔点 ≤ 当前温度。 */
+	public static final String KEY_MOLTEN = "GT6CrucibleMolten";
+	/** 条 overlay 载荷（CompoundTag，lightest 存在才写）——分派在服务端静态缝完成：
+	 * 桥熔融流体走 {@link #OVERLAY_FLUID}+{@link #OVERLAY_AMOUNT}（Jade 官方流体元素），
+	 * 否则 {@link #OVERLAY_TEXTURE}+{@link #OVERLAY_TINT}（ContentFace 缝）。 */
+	public static final String KEY_OVERLAY = "GT6CrucibleOverlay";
+	public static final String OVERLAY_FLUID = "fluid";
+	public static final String OVERLAY_AMOUNT = "amount";
+	public static final String OVERLAY_TEXTURE = "texture";
+	public static final String OVERLAY_TINT = "tint";
 	public static final String KEY_CONTENT = "GT6CrucibleContent";
 	public static final String KEY_TRUNCATED = "GT6CrucibleTruncated";
 
@@ -87,11 +121,13 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 	public static final String ENTRY_AMOUNT = "amount";
 
 	/** lang 键（GT6EnUs/GT6ZhCn 双侧同发）。 */
-	public static final String LANG_TEMPERATURE = "gt6.jade.crucible.temperature";
-	/** 温度条行键（task jade-converter-crucible-restyle，B 形两槽）：现值/上限 K——单位词尾置
-	 * 一次（design 'Temperature: %s / %s K'；旧键 {@link #LANG_TEMPERATURE} 保留为熔毁警报行）。 */
+	/** 条行键（task jade-converter-crucible-restyle，B 形两槽）：现值/上限 K——单位词尾置
+	 * 一次（design 'Temperature: %s / %s K'）。 */
 	public static final String LANG_TEMPERATURE_BAR = "gt6.jade.crucible.temperature.bar";
 	public static final String LANG_TOTAL = "gt6.jade.crucible.total";
+	/** 条目明细行键（task crucible-jade-tankbar ③）：缩进+名+量全行 translatable——原
+	 * contentLine 的裸 literal 组合退役（KeyPin 棘轮收编），量纲词 U/份进 lang。 */
+	public static final String LANG_ENTRY = "gt6.jade.crucible.entry";
 	public static final String LANG_EMPTY = "gt6.jade.crucible.empty";
 	public static final String LANG_MORE = "gt6.jade.crucible.more";
 
@@ -113,29 +149,39 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 	public void appendServerData(CompoundTag aData, BlockAccessor aAccessor) {
 		// 两坩埚 BE 无共享内容接口（ITileEntityCrucible 仅 pour 缝，ITileEntityTemperature 仅温度
 		// 两 getter）——双 concrete instanceof 汇进同一静态缝，格式严格同体（research 裁定）。
+		// 容量分母各取自家参数（v3 ⑤：MAX_AMOUNT = Params.LARGE 形，TileEntityCrucible.java:136）。
 		if (aAccessor.getBlockEntity() instanceof TileEntitySmeltery aSmeltery) {
 			writeCrucibleData(aData, aSmeltery.getTemperatureValue((byte) 0), aSmeltery.getTemperatureMax((byte) 0),
-					aSmeltery.mMeltDown, aSmeltery.mContent);
+					aSmeltery.mMeltDown, CruciblePhysics.Params.SMALL.maxAmount(), aSmeltery.mContent);
 		} else if (aAccessor.getBlockEntity() instanceof TileEntityCrucible aCrucible) {
 			writeCrucibleData(aData, aCrucible.getTemperatureValue((byte) 0), aCrucible.getTemperatureMax((byte) 0),
-					aCrucible.mMeltDown, aCrucible.mContent);
+					aCrucible.mMeltDown, TileEntityCrucible.MAX_AMOUNT, aCrucible.mContent);
 		}
 	}
 
 	/**
 	 * 坩埚族同步写（appendServerData 的静态缝——GT6MachineProvider.appendMachineData 同姿势：
 	 * accessor 薄壳 live-only，BE 读面离线可测）。温度/上限走 {@code ITileEntityTemperature}
-	 * 面（Smeltery :514/:519 → temperatureMax()；Crucible :316/:321）；熔毁警告闩两 BE 均 tick
+	 * 面（Smeltery :514/:519 → temperatureMax()；Crucible :316/:321）；熔毁闩两 BE 均 tick
 	 * 内活维护（Smeltery :234-235 / Crucible :475-479 isMeltDownWarning 重推导）——闩真值即
 	 * 上游 isMeltDownWarning 门的服务端权威形，客户端不重复猜。内容物降序截前
-	 * {@link #MAX_CONTENT_ROWS} 条，截去数走 int。
+	 * {@link #MAX_CONTENT_ROWS} 条，截去数走 int。容量上限 {@code aTotalMax} 由调用方各取
+	 * 自家参数。overlay 分派（v3 ①②）：lightest（上游显示普查，MultiTileEntitySmeltery
+	 * .java:299 同走）熔融且桥有流体 → Jade 官方流体元素载荷；否则 ContentFace 缝载荷
+	 * （熔融臂全材质可用，固体臂 loud 表 guard 回落 null = 纯色条）。
 	 */
 	public static void writeCrucibleData(CompoundTag aData, long aTemp, long aTempMax, boolean aMeltdown,
-			List<OreDictMaterialStack> aContent) {
+			long aTotalMax, List<OreDictMaterialStack> aContent) {
 		aData.putLong(KEY_TEMP, aTemp);
 		aData.putLong(KEY_TEMP_MAX, aTempMax);
 		aData.putBoolean(KEY_MELTDOWN, aMeltdown);
 		aData.putLong(KEY_TOTAL, CruciblePhysics.total(aContent));
+		aData.putLong(KEY_TOTAL_MAX, aTotalMax);
+		OreDictMaterialStack tLightest = lightest(aContent);
+		boolean tMolten = tLightest != null && tLightest.mMaterial.mMeltingPoint <= aTemp; // :299 门
+		aData.putBoolean(KEY_MOLTEN, tMolten);
+		CompoundTag tOverlay = tLightest == null ? null : overlayTag(tLightest, tMolten, CruciblePhysics.total(aContent));
+		if (tOverlay != null) aData.put(KEY_OVERLAY, tOverlay); // guard 回落 = 零键（纯色条）
 		List<OreDictMaterialStack> tSorted = new ArrayList<>(aContent);
 		tSorted.sort(Comparator.comparingLong((OreDictMaterialStack aStack) -> aStack.mAmount).reversed());
 		ListTag tList = new ListTag();
@@ -145,6 +191,49 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 		}
 		aData.put(KEY_CONTENT, tList);
 		aData.putInt(KEY_TRUNCATED, tSorted.size() - tShown);
+	}
+
+	/**
+	 * lightest 普查（provider 侧镜像两 BE 的 {@code lightest()}——TileEntitySmeltery.java:469-475 /
+	 * TileEntityCrucible.java:823-829 同一密度最轻走查，上游 :299 显示面的取材；BE 禁碰，故在此
+	 * 重写为纯函数）。
+	 */
+	@Nullable
+	public static OreDictMaterialStack lightest(List<OreDictMaterialStack> aContent) {
+		OreDictMaterialStack rLightest = null;
+		for (OreDictMaterialStack tMaterial : aContent) {
+			if (rLightest == null || tMaterial.mMaterial.mGramPerCubicCentimeter < rLightest.mMaterial.mGramPerCubicCentimeter) rLightest = tMaterial;
+		}
+		return rLightest;
+	}
+
+	/**
+	 * overlay 载荷（纯函数离线面）：桥熔融流体在 → 官方流体元素载荷（registry id + 桥 144 L/unit
+	 * 惯例量）；否则 ContentFace 缝载荷（texture 全限定名 + 不透明 ARGB tint）。固体臂的 loud
+	 * 映射表（bodyTexture 对未收录材质抛 {@code IllegalStateException}——映射表只收碗模型四行）
+	 * 在此 guard 回落 null：客户端零 overlay 键 = 纯色条（今天的观感），熔融臂恒可用不受此限。
+	 */
+	@Nullable
+	public static CompoundTag overlayTag(OreDictMaterialStack aLightest, boolean aMolten, long aTotal) {
+		CompoundTag rTag = new CompoundTag();
+		if (aMolten) {
+			Fluid tFluid = FluidBridge.moltenFluidForMaterial(aLightest.mMaterial.mNameInternal);
+			if (tFluid != null) {
+				rTag.putString(OVERLAY_FLUID, BuiltInRegistries.FLUID.getKey(tFluid).toString());
+				rTag.putLong(OVERLAY_AMOUNT, aTotal * FluidBridge.L_PER_MOLTEN_UNIT);
+				return rTag;
+			}
+		}
+		try {
+			GT6CrucibleDatagen.ContentFace tFace = GT6CrucibleDatagen.contentFace(aLightest.mMaterial, aMolten);
+			rTag.putString(OVERLAY_TEXTURE, tFace.texture());
+			rTag.putInt(OVERLAY_TINT, tFace.tintARGB());
+			return rTag;
+		} catch (IllegalStateException tUnmapped) {
+			// ponytail: 固体臂 loud 表只收碗模型四行（Stone/Ceramic/Bronze/Steel）——其余材质
+			// 回落纯色条；把 bodyTexture 铺满全材质是 datagen 卡的事，此处只读不扩表
+			return null;
+		}
 	}
 
 	/** 单条内容物 → 自描述 CompoundTag（name+amount，slug 核销成功才带 mat 键）。 */
@@ -194,18 +283,18 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 		long tTempMax = aData.getLong(KEY_TEMP_MAX);
 		GT6JadeRows.bar(aTooltip, GT6JadeRows.ratio(tTemp, tTempMax),
 				temperatureBarLine(tTemp, tTempMax), GT6JadeRows.COLOR_NEUTRAL);
-		// 行 2：熔毁行（RED 实时，闩落才现）——原温度行的 RED 警告面逐字保留
-		// （既有键不退役：旧键旧行文原样在盘），常温坩埚零附加行。
-		if (aData.getBoolean(KEY_MELTDOWN)) {
-			aTooltip.add(temperatureLine(tTemp, tTempMax, true));
-		}
-		// 行 3+：内容物总量 + 前 5 条 + 截断尾行；空坩埚只有 "Empty"。
+		// 行 2：内容 tank 条（task crucible-jade-tankbar v3）——overlay = 服务端分派好的载荷
+		// （官方流体元素 / ContentFace 同源元素），条文本 = 总量行；融毁闩落时条文字变红
+		// （④：独立红色警报行废除，红字面并入此条——v3 覆盖 r8 '旧行保留' 裁定）。
 		long tTotal = aData.getLong(KEY_TOTAL);
 		if (tTotal <= 0) {
 			aTooltip.add(emptyLine());
 			return;
 		}
-		aTooltip.add(totalLine(tTotal));
+		GT6JadeRows.bar(aTooltip, GT6JadeRows.ratio(tTotal, aData.getLong(KEY_TOTAL_MAX)),
+				totalLine(tTotal), GT6JadeRows.COLOR_NEUTRAL, barTextColor(aData.getBoolean(KEY_MELTDOWN)),
+				overlayElement(aData));
+		// 行 3+：前 5 条目 + 截断尾行。
 		ListTag tList = aData.getList(KEY_CONTENT, Tag.TAG_COMPOUND);
 		for (int tIndex = 0; tIndex < tList.size(); tIndex++) {
 			aTooltip.add(contentLine(tList.getCompound(tIndex)));
@@ -221,11 +310,30 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 		return Component.translatable(LANG_TEMPERATURE_BAR, aTemp, aTempMax);
 	}
 
-	/** 熔毁警报行（纯函数离线面）：mMeltDown 时整行 RED，否则默认色——r8 起仅闩落时上屏，
-	 * 字色常量收编 {@link GT6JadeRows#FORMAT_STALLED}。 */
-	public static Component temperatureLine(long aTemp, long aTempMax, boolean aMeltdown) {
-		MutableComponent rLine = Component.translatable(LANG_TEMPERATURE, aTemp, aTempMax);
-		return aMeltdown ? rLine.withStyle(GT6JadeRows.FORMAT_STALLED) : rLine;
+	/**
+	 * 条文字色（纯函数离线面，④红字路径钉）：融毁闩落 = {@link GT6JadeRows#FORMAT_STALLED}
+	 * 红（原独立警报行的字面收进条文本），常温 = -1（Jade 默认白——GT6JadeRows.bar 原字面色）。
+	 */
+	public static int barTextColor(boolean aMeltdown) {
+		return aMeltdown ? GT6JadeRows.FORMAT_STALLED.getColor() : -1;
+	}
+
+	/**
+	 * 条 overlay 组装（live-only 客户端面）：官方流体元素（载荷为桥流体 id 时）或
+	 * {@link GT6ContentFaceElement}（ContentFace 缝载荷）；零载荷键/回落 null → 纯色条。
+	 * 精灵/流体 id 都经 {@code tryParse}（双腿同形——1.20.1 单参构造在 21.1 已删，
+	 * GT6CrucibleDatagen.loc 同款教训）。
+	 */
+	@Nullable
+	private static IElement overlayElement(CompoundTag aData) {
+		if (!aData.contains(KEY_OVERLAY, Tag.TAG_COMPOUND)) return null;
+		CompoundTag tOverlay = aData.getCompound(KEY_OVERLAY);
+		if (tOverlay.contains(OVERLAY_FLUID)) {
+			Fluid tFluid = BuiltInRegistries.FLUID.get(ResourceLocation.tryParse(tOverlay.getString(OVERLAY_FLUID)));
+			return IElementHelper.get().fluid(JadeFluidObject.of(tFluid, tOverlay.getLong(OVERLAY_AMOUNT)));
+		}
+		return new GT6ContentFaceElement(ResourceLocation.tryParse(tOverlay.getString(OVERLAY_TEXTURE)),
+				tOverlay.getInt(OVERLAY_TINT));
 	}
 
 	/** 总量行："Content: 4.000 U" 形（displayUnits 形移植，量串纯文本客户端算）。 */
@@ -244,15 +352,16 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 	}
 
 	/**
-	 * 内容物行（两格缩进 + 显示名 + 量）：slug 核销条目走 {@code gt6.material.<snake>}
-	 * translatable（各 locale 自解——en 即 mNameLocal 词，zh 有则译名），否则纯文本回退名。
+	 * 内容物行（整行 translatable，③）：两格缩进 + 显示名 + 量 + 量纲词全在
+	 * {@link #LANG_ENTRY} 值里（en "  %s: %s U" / zh "  %s: %s 份"）——slug 核销条目的名字槽
+	 * 走 {@code gt6.material.<snake>} translatable（各 locale 自解），否则纯文本回退名；
+	 * vanilla 的 %s 组件槽递归渲染嵌套 translatable（MaterialPrefixItem 小单位链同款）。
 	 */
 	public static Component contentLine(CompoundTag aEntry) {
 		Component tName = aEntry.contains(ENTRY_MAT)
 				? Component.translatable("gt6.material." + aEntry.getString(ENTRY_MAT))
 				: Component.literal(aEntry.getString(ENTRY_NAME));
-		return Component.literal("  ").append(tName)
-				.append(Component.literal(": " + displayUnits(aEntry.getLong(ENTRY_AMOUNT)) + " U"));
+		return Component.translatable(LANG_ENTRY, tName, displayUnits(aEntry.getLong(ENTRY_AMOUNT)));
 	}
 
 	/**

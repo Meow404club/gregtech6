@@ -2317,20 +2317,24 @@ public class GT6EnUs extends LanguageProvider {
 
     /**
      * The crucible Jade face keys (task crucible-jade-face, jade-converter-crucible-
-     * restyle adds the bar face — 5 keys): the temperature bar line (current/max K over the
-     * two-slot B-case template, the thermometer anchor MultiTileEntitySmeltery.java:512 —
-     * the unit word moved to the tail) alongside the RETAINED meltdown alarm row (the old
-     * key and wording stay in service — shown only when the latch trips, 既有键不退役), the
-     * content total line (its "Content" label IS the TFRU LH.CONTENT prefix form — the total
-     * row is the label row, the item rows below are indented details), the empty state and
-     * the "+N more" truncation tail. The Formed line is NOT here — the large crucible's
+     * restyle adds the bar face, crucible-jade-tankbar re-keys the band — 5 keys): the
+     * temperature bar line (current/max K over the two-slot B-case template, the
+     * thermometer anchor MultiTileEntitySmeltery.java:512 — the unit word moved to the
+     * tail), the content total line (its "Content" label IS the TFRU LH.CONTENT prefix
+     * form — the total row is the label row, en keeps the U unit word, zh says 份), the
+     * entry detail line (the whole row is ONE translatable now — indent, name slot and
+     * unit word all ride the value; the old literal composition retired), the empty
+     * state and the "+N more" truncation tail. The standalone meltdown alarm row
+     * (gt6.jade.crucible.temperature) is RETIRED in this same commit — the user ruling
+     * (v3, 2026-09-30) folds the red face into the tank-bar text color, superseding the
+     * r8 "keep the old row" decision. The Formed line is NOT here — the large crucible's
      * formed state already rides the GT6MachineProvider "Multiblock: formed/incomplete" row.
      * Values are consumed by GT6CrucibleProvider (the lang constants live there).
      */
     private void addCrucibleJade() {
-        add("gt6.jade.crucible.temperature", "Temperature: %s K / %s K");
         add("gt6.jade.crucible.temperature.bar", "Temperature: %s / %s K");
         add("gt6.jade.crucible.total", "Content: %s U");
+        add("gt6.jade.crucible.entry", "  %s: %s U");
         add("gt6.jade.crucible.empty", "Empty");
         add("gt6.jade.crucible.more", "+%s more");
     }

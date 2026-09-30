@@ -1,11 +1,14 @@
 package gregtech6.jade;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.ui.BoxStyle;
+import snownee.jade.api.ui.IElement;
 import snownee.jade.api.ui.IElementHelper;
 
 /**
@@ -80,20 +83,30 @@ public final class GT6JadeRows {
 	}
 
 	/**
-	 * B 案条（双腿收敛点）：Jade 原生 progress + 条内文本。IElementHelper.get() 静态双腿同形
-	 * （jade-1201 IElementHelper.java:14）——1.20.1 的 ITooltip.getElementHelper()（:124）在
-	 * 1.21.1 已删除，不能作桥。
+	 * B 案条（双腿收敛点）：Jade 原生 progress + 条内文本，中性白字。IElementHelper.get()
+	 * 静态双腿同形（jade-1201 IElementHelper.java:14）——1.20.1 的 ITooltip.getElementHelper()
+	 * （:124）在 1.21.1 已删除，不能作桥。
 	 */
 	public static void bar(ITooltip aTooltip, float aRatio, Component aText, int aColor) {
+		bar(aTooltip, aRatio, aText, aColor, -1, null);
+	}
+
+	/**
+	 * B 案条全形（task crucible-jade-tankbar）：overlay 塞 Jade 官方 {@code progressStyle()
+	 * .overlay(IElement)} 链（forge ProgressStyle.java:78-81 接口方法 / neo api.ui.ProgressStyle
+	 * 具体类同形——双腿编译期各解），ProgressStyle.render:91-94 双腿实证 overlay 被强制
+	 * size 成条内填充区再渲染；aTextColor 显式钉字色（-1 = 默认白——原 4 参形的字面色，
+	 * 坩埚融毁红字路径经此接 {@link #FORMAT_STALLED}）。var 局部承接双腿 progressStyle()
+	 * 的各异返回型（forge IProgressStyle / neo ProgressStyle），链式调用两边同形。
+	 */
+	public static void bar(ITooltip aTooltip, float aRatio, Component aText, int aColor, int aTextColor,
+			@Nullable IElement aOverlay) {
 		IElementHelper tHelper = IElementHelper.get();
-		aTooltip.add(tHelper.progress(
-				aRatio,
-				aText,
-				// style color(int) 双腿同名同形（Jade 侧 API）——撞 chisel VertexConsumer 改名
-				// 条目的坑见 GT6MachineProvider 类 doc（p22 收窄后裸写双腿编译绿）。
-				tHelper.progressStyle().color(aColor).textColor(-1),
-				jadeBox(),
-				true));
+		// style color(int) 双腿同名同形（Jade 侧 API）——撞 chisel VertexConsumer 改名
+		// 条目的坑见 GT6MachineProvider 类 doc（p22 收窄后裸写双腿编译绿）。
+		var tStyle = tHelper.progressStyle().color(aColor).textColor(aTextColor);
+		if (aOverlay != null) tStyle = tStyle.overlay(aOverlay);
+		aTooltip.add(tHelper.progress(aRatio, aText, tStyle, jadeBox(), true));
 	}
 
 	/** 状态行：Active GREEN / Inactive RED（mActive&&mRunning 由调用侧合取）。 */
