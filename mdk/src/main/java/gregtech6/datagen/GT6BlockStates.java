@@ -1235,7 +1235,13 @@ public final class GT6BlockStates extends BlockStateProvider {
      * side art on the vertical pair per the upstream getTexture2 index mapping, SafeMechanical
      * :100 front/back/side trio) plus the six 0.01 {@code <base>/overlay_<face>} decal
      * plates (untinted, cullface synced, cutout — all 16 overlay PNGs carry transparent
-     * texels, all 16 colored PNGs fully opaque 16x16). NO tintindex — the unpaint deviation.
+     * texels, all 16 colored PNGs fully opaque 16x16). Task tint-coverage-batch RETIRES
+     * the "NO tintindex — the unpaint deviation" declaration: the body cube is the
+     * tintindex-0 seat (the upstream getTexture2 = BlockTextureMulti colored×mRGBa +
+     * overlay, MultiTileEntityLocker :92-110 / DrawerQuad:124-142 / SafeMechanical
+     * :97-111 — the grayscale bodies multiply the row colour through the
+     * GT6StorageBlock.materialOf carrier), the decal plates stay the -1 sentinel (the
+     * P22 contract).
      */
     private ModelFile storageModel(String aBase, boolean aDistinctTopBottom) {
         // the "block/" prefix rides INSIDE the builder path: getBuilder only prepends the
@@ -1259,7 +1265,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .renderType("cutout");
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
-                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).cullface(aDir))
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
                 .end();
         tModel.element() // north
                 .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
@@ -1332,18 +1338,33 @@ public final class GT6BlockStates extends BlockStateProvider {
      * oriented cube over the six borrowed upstream faces (reactor_core_2x2_<face>.png,
      * the byte-level borrows of the assets README). DECLARED static assignment: the
      * upstream texture routing is facing-dependent (the mFacing face shows face1, the
-     * mSecondFacing face face2, Core2x2:392-395) with the Pb material tint and the
-     * 11-pass rod/fluid render stack (:320-390) — all of that rides the render-pool
-     * card, so the port pins the default-facing view (down = face1 — the default SIDE_BOTTOM
-     * facing pair routes the hot-port face onto the bottom, Core2x2:394) and the
-     * side1/side2 alternation.
+     * mSecondFacing face face2, Core2x2:392-395) and the 11-pass rod/fluid render stack
+     * (:320-390) — those ride the render-pool card, so the port pins the default-facing
+     * view (down = face1 — the default SIDE_BOTTOM facing pair routes the hot-port face
+     * onto the bottom, Core2x2:394) and the side1/side2 alternation. Task
+     * tint-coverage-batch: the STATIC Pb body tint lands here — the borrowed faces are
+     * grayscale (colored_ratio=0.000, the borrow probe) and the upstream body multiplies
+     * the :738 Pb column, so the six cube faces are the tintindex-0 seat over the
+     * ReactorCoreBlock.materialOf carrier (the models().cube helper cannot set
+     * tintindex — the storageModel getBuilder form); the dynamic rod/fluid/axle stack is
+     * untouched and the GTMachineTintModel wrap guard skips the render-pool card's own
+     * dynamic-model seat once it lands.
      */
     private void addReactorCore() {
         net.minecraft.world.level.block.Block tCore = gregtech6.registry.GT6Reactors.REACTOR_CORE_2X2_BLOCK.get();
-        ModelFile tModel = models().cube("nuclear_reactor_core_2x2",
-                modLoc("block/reactor_core_2x2_face1"), modLoc("block/reactor_core_2x2_top"),
-                modLoc("block/reactor_core_2x2_side1"), modLoc("block/reactor_core_2x2_side2"),
-                modLoc("block/reactor_core_2x2_side1"), modLoc("block/reactor_core_2x2_side2"));
+        BlockModelBuilder tModel = models().getBuilder("nuclear_reactor_core_2x2")
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc("block/reactor_core_2x2_face1"))
+                .texture("up", modLoc("block/reactor_core_2x2_top"))
+                .texture("north", modLoc("block/reactor_core_2x2_side1"))
+                .texture("south", modLoc("block/reactor_core_2x2_side2"))
+                .texture("west", modLoc("block/reactor_core_2x2_side1"))
+                .texture("east", modLoc("block/reactor_core_2x2_side2"))
+                .texture("particle", modLoc("block/reactor_core_2x2_side1"));
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
+                .end();
         getVariantBuilder(tCore).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
         itemModels().withExistingParent("nuclear_reactor_core_2x2", tModel.getLocation());
     }

@@ -55,7 +55,9 @@ import net.minecraftforge.client.model.data.ModelData;
  * <p>The material dispatch is domain-gated: only the block carriers that mirror upstream
  * NBT_MATERIAL rows resolve a material (the machine blocks, the Oven ladder, the burning
  * boxes, the tank-valve controllers through the controller gate — the issue8-residual
- * join — and, since task tank-render-tint, the barrel rows). The barrel join retires the
+ * join —, since task tank-render-tint the barrel rows, and since task
+ * tint-coverage-batch the metal static-storage rows and the reactor core). The barrel
+ * join retires the
  * former P23 "unpainted barrel = zero visual change" white identity: the borrowed
  * grayscale {@code barrel_parts} art now multiplies
  * the row colour exactly like the machines (upstream renders
@@ -171,6 +173,20 @@ public final class GTMachinePaintTint {
 		tMaterial = dieselEngineMaterialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
 		tMaterial = rotationTransformerMaterialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
+		// task tint-coverage-batch — the static-storage METAL rows join: the four
+		// locker/drawer/safe kinds carry their loader material anchor (Loader :191 Bronze /
+		// :202 Steel — the hopper-family ruling) through the block-row carrier; the
+		// bookshelf/bottlecrate rows answer null (the vanilla-finished plank art, the stone
+		// precedent) and the borrowed grayscale colored_* bodies multiply the row colour
+		// (upstream BlockTextureMulti colored×mRGBa + overlay, MultiTileEntityLocker
+		// :92-110 / DrawerQuad:124-142 / SafeMechanical:97-111)
+		tMaterial = gregtech6.registry.GT6StaticStorages.GT6StorageBlock.materialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
+		// task tint-coverage-batch — the reactor core joins: the :738 Pb row through the
+		// block-class carrier (the grayscale borrowed faces multiply Pb; the DYNAMIC
+		// rod/fluid/axle render stack stays with the rod-render-pool card)
+		tMaterial = gregtech6.registry.GT6Reactors.ReactorCoreBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
 		return gregtech6.tileentity.bees.GT6BumbliaryBlock.materialOf(aBlock);
 	}

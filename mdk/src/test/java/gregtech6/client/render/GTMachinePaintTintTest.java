@@ -382,4 +382,64 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 		assertEquals(65, (tMidColour >> 8) & 255, "mid-gray G (128 -> 65)");
 		assertEquals(30, (tMidColour >> 16) & 255, "mid-gray B (128 -> 30)");
 	}
+
+	/**
+	 * Task tint-coverage-batch: the four metal static-storage kinds (the
+	 * locker/drawer/safe pair over the Bronze :191 / Steel :202 loader anchors) and the
+	 * reactor core (the :738 Pb row) ride the combined dispatch — the borrowed grayscale
+	 * colored_* cube bodies multiply the row colour. The GRAYSCALE/VANILLA dispatch pin:
+	 * the bookshelf/bottlecrate rows (vanilla-finished plank art, colored_ratio=1.000 on
+	 * the borrow probe) answer NULL and keep the white identity — the stone precedent;
+	 * non-carrier blocks stay null too. The painted override still wins on a carrier
+	 * (the P23 spray face), and the storage row colours stay pairwise distinct (the
+	 * all-gray lesson).
+	 */
+	@Test
+	void storageAndReactorRideTheCombinedDispatch() {
+		unfreezeBlockRegistry();
+		// one representative per metal kind — the four families of the card
+		assertSame(gregapi.data.MT.Bronze, GTMachinePaintTint.tintMaterialOf(storageBlock("locker_bronze")),
+				"the bronze locker tints the :191 anchor");
+		assertSame(gregapi.data.MT.Bronze, GTMachinePaintTint.tintMaterialOf(storageBlock("safe_mechanical_bronze")),
+				"the bronze mechanical safe tints the anchor");
+		assertSame(gregapi.data.MT.Steel, GTMachinePaintTint.tintMaterialOf(storageBlock("drawer_steel")),
+				"the steel drawer tints the :202 anchor");
+		assertSame(gregapi.data.MT.Steel, GTMachinePaintTint.tintMaterialOf(storageBlock("safe_keylocked_steel")),
+				"the steel key-locked safe tints the anchor");
+		// the grayscale/vanilla dispatch: the wooden rows are the finished art, never tinted
+		assertNull(GTMachinePaintTint.tintMaterialOf(storageBlock("bookshelf_oak")),
+				"the bookshelf plank rows stay the null gate (vanilla finished art, the stone precedent)");
+		assertNull(GTMachinePaintTint.tintMaterialOf(storageBlock("bottlecrate_oak")),
+				"the bottlecrate plank rows stay the null gate");
+		// the reactor family: the :738 Pb row through the block-class carrier
+		gregtech6.registry.GT6Reactors.ReactorCoreBlock tCore = new gregtech6.registry.GT6Reactors.ReactorCoreBlock(
+				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+		assertSame(gregapi.data.MT.Pb, GTMachinePaintTint.tintMaterialOf(tCore),
+				"the reactor core tints the :738 Pb row");
+		// the row colours resolve through the single decision site (the fRGBaSolid derivation)
+		for (gregapi.oredict.OreDictMaterial tMat : java.util.List.of(gregapi.data.MT.Bronze, gregapi.data.MT.Steel, gregapi.data.MT.Pb)) {
+			int tColor = GTMachinePaintTint.tintARGB(null, tMat, 0);
+			assertEquals(tMat.mRGBaSolid[0], (tColor >> 16) & 255, tMat.mNameInternal + " R (the mRGBaSolid pin)");
+			assertEquals(tMat.mRGBaSolid[1], (tColor >> 8) & 255, tMat.mNameInternal + " G");
+			assertEquals(tMat.mRGBaSolid[2], tColor & 255, tMat.mNameInternal + " B");
+		}
+		// the pairwise-distinct regression killer within the storage domain (Bronze vs Steel)
+		int tBronze = GTMachinePaintTint.tintARGB(ModelData.EMPTY, gregapi.data.MT.Bronze, 0) & 0xFFFFFF;
+		int tSteel = GTMachinePaintTint.tintARGB(ModelData.EMPTY, gregapi.data.MT.Steel, 0) & 0xFFFFFF;
+		assertTrue(tBronze != tSteel, "the bronze and steel storage rows stay visually distinct");
+		// the spray-paint override wins over a storage row colour (upstream Paintable:85)
+		assertEquals(0xFFFF0000, GTMachinePaintTint.tintARGB(paintedData(PAINT_RED),
+				GTMachinePaintTint.tintMaterialOf(storageBlock("locker_bronze")), 0), "painted wins over the locker row colour");
+		// and the non-carrier block keeps the white identity
+		assertNull(GTMachinePaintTint.tintMaterialOf(net.minecraft.world.level.block.Blocks.BRICKS),
+				"a vanilla block stays the null gate");
+	}
+
+	/** A registered storage carrier for the dispatch pin (the row lookup by path, the valve-test shape). */
+	private static gregtech6.registry.GT6StaticStorages.GT6StorageBlock storageBlock(String aPath) {
+		gregtech6.registry.GT6StaticStorages.StaticRow tRow = gregtech6.registry.GT6StaticStorages.ROWS.stream()
+				.filter(r -> r.path().equals(aPath)).findFirst().orElseThrow();
+		return new gregtech6.registry.GT6StaticStorages.GT6StorageBlock(tRow,
+				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+	}
 }

@@ -284,6 +284,17 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (Block tBlock : gregtech6.registry.GT6Kinetics.steamEngineBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GT6Kinetics.dieselBlockArray()) wrapStates(tBlock, aEvent);
 		wrapStates(gregtech6.registry.GT6Kinetics.TRANSFORMER_ROTATION.get(), aEvent);
+		// task tint-coverage-batch — the four static-storage metal families (the
+		// locker/drawer/safe pair kinds over the Bronze/Steel anchors, 8 blocks) and the
+		// reactor core (the :738 Pb row) join the baked-tint domain: the borrowed grayscale
+		// colored_* cube bodies are the tintindex-0 seat (the storageModel/addReactorCore
+		// datagen change), the overlay decal plates untinted (the P22 contract); the
+		// bookshelf/bottlecrate rows stay OUT (the vanilla-finished plank art, the stone
+		// precedent — metalBlockArray carries the material rows only). The reactor's
+		// DYNAMIC rod/fluid/axle stack stays with the rod-render-pool card — the wrap
+		// guard below is order-safe against that card's own dynamic-model seat.
+		for (Block tBlock : gregtech6.registry.GT6StaticStorages.metalBlockArray()) wrapStates(tBlock, aEvent);
+		wrapStates(gregtech6.registry.GT6Reactors.REACTOR_CORE_2X2_BLOCK.get(), aEvent);
 	}
 
 	/**
