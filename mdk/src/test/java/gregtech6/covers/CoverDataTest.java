@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.covers.covers.CoverTextureSimple;
 
 /**
- * CoverData NBT contract tests (task p4-cover-core acceptance ①): the 6-face parallel
+ * CoverData NBT contract tests (task cover-core acceptance ①): the 6-face parallel
  * arrays, the GT6 save-format key families (a-f/g-l/m-r/0-5/s-x/y), the
  * needsVisualsSaved write gate and the empty-compound lane normalization.
  */

@@ -10,7 +10,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
- * The client-side wiring of the pipe flow-arrow models (task p4-pipe-flow-control
+ * The client-side wiring of the pipe flow-arrow models (task pipe-flow-control
  * spec ④, ADR-P3-4: card-local {@code @EventBusSubscriber}, GT6Mod/GTModBusListener
  * untouched). Dist.CLIENT — the dedicated server never loads this class, so the
  * client-only {@link GTFluidPipeFlowModel} chain stays server-safe. Registration runs
@@ -41,7 +41,7 @@ public final class GTPipeFlowClientListener {
 	public static void register() {
 		// String-key form (toString) — the 1.21.1 event map keys by the ModelResourceLocation
 		// record, so the factory table is keyed leg-neutrally by the id string.
-		// Task p25-c-foam-pipe-spray: the factory is the COMPOSED chain — foam(outer) →
+		// Task c-foam-pipe-spray: the factory is the COMPOSED chain — foam(outer) →
 		// flow(inner) → baked blockstate model (GTFluidPipeFoamModel.chain()). One
 		// registration per per-state key (GTRenderModelListener last-wins), so the foam
 		// wrapper rides HERE instead of a second competing registration of the same keys.

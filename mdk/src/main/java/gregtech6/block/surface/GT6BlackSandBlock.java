@@ -3,7 +3,7 @@ package gregtech6.block.surface;
 import net.minecraft.world.level.block.FallingBlock;
 
 /**
- * The GT6 magnetite black sand (task p30-w6-t2-surface-blocks) — the WorldgenBlackSand
+ * The GT6 magnetite black sand (task w6-t2-surface-blocks) — the WorldgenBlackSand
  * river-bed soil block. The vanilla sand family rides {@link FallingBlock} gravity; the
  * 1.20.1 {@code SandBlock} is the 21.1-removed face (the SandBlock-into-FallingBlock
  * merge made the parent abstract there), so the shared face is this one concrete

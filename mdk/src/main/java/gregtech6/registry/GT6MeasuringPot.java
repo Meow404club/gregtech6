@@ -24,7 +24,7 @@ import gregtech6.block.tank.GT6MeasuringPotBlock;
 import gregtech6.tileentity.tank.GT6MeasuringPotBlockEntity;
 
 /**
- * The Measuring Pot family registration (task r8-issue45-c3, issue #45) — the ADR-P3-4
+ * The Measuring Pot family registration (task issue45-c3, issue #45) — the ADR-P3-4
  * self-contained listener form (the GT6Kitchen/GT6Tanks shape: a separate class keeps the
  * parallel issue-#45 card scopes disjoint — C1 owns GT6Kitchen, C2 owns GT6Crucibles).
  * Ports the "Fluid Containers" ceramic row Loader_MultiTileEntities.java:2096 verbatim:

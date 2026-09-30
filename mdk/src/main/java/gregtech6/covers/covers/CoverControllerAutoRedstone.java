@@ -15,8 +15,8 @@ import gregtech6.tileentity.machines.TileEntityOven;
 
 /**
  * The auto redstone machine switch cover — 1.20.1 port of gregapi/cover/covers/
- * CoverControllerAutoRedstone.java (73 lines, task p11-cover-controllers, the
- * p11-research-cover-remainder card q2). Mounts on a switchable machine and adds
+ * CoverControllerAutoRedstone.java (73 lines, task cover-controllers, the
+ * research-cover-remainder card q2). Mounts on a switchable machine and adds
  * the "lets it finish" arm to the plain redstone switch: while the machine is
  * actively running WITHOUT having produced ({@code mActive && !mSuccessful}) the
  * cover holds it ON regardless of the redstone on its face, so a mid-process

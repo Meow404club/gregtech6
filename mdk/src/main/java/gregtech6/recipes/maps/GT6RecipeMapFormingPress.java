@@ -37,7 +37,7 @@ import gregtech6.registry.GTMaterialItems;
 
 /**
  * The Forming Press map — the port of upstream
- * {@code gregapi/recipes/maps/RecipeMapFormingPress.java} (task p26-w1-press-extruder-molds,
+ * {@code gregapi/recipes/maps/RecipeMapFormingPress.java} (task w1-press-extruder-molds,
  * the RM.Press subclass, RM.java:99 "gt.recipe.press" 3/1/2 items, 0/0/0 fluids, MIN 0,
  * AMP 1, transcribed parameter-for-parameter over the 15-arg port ctor).
  *

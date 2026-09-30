@@ -23,7 +23,7 @@ import gregtech6.multiblock.GTMultiBlockStructureChecker;
 import gregtech6.multiblock.GTMultiBlockStructureChecker.FormedVerdict;
 
 /**
- * The production switch + the equivalence pins (task p16-pattern-checker ③).
+ * The production switch + the equivalence pins (task pattern-checker ③).
  *
  * <p><b>Coke Oven (the pilot).</b> checkStructure2 now walks the bound pattern through
  * the shared checker; these tests pin that the switch is behaviour-preserving against

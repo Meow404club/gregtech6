@@ -27,7 +27,7 @@ import net.minecraft.world.entity.Entity;
 import gregtech6.covers.ICoverableTE;
 
 /**
- * The GT6 item pipe block (task p26-pipe-item spec ⑤) — the block carrier of the row
+ * The GT6 item pipe block (task pipe-item spec ⑤) — the block carrier of the row
  * family over the shared BET (ADR-P3-1), the {@link gregtech6.block.pipe.GTFluidPipeBlock}
  * shape with the item-pipe interaction layer:
  * <ul>
@@ -101,7 +101,7 @@ public class GTItemPipeBlock extends GTEntityBlock {
 	/**
 	 * The row's ore-dict material off the carried {@link ItemPipeRow} (the loader line's
 	 * MT argument; upstream registers NBT_MATERIAL + NBT_COLOR = getRGBInt(fRGBaSolid),
-	 * MultiTileEntityPipeItem.java:76-82). The r8-tex-pipe-textures tint dispatch seam
+	 * MultiTileEntityPipeItem.java:76-82). The tex-pipe-textures tint dispatch seam
 	 * (the {@code GTBasicMachineBlock.materialOf} shape): null for any other block, so
 	 * the {@code GTMachinePaintTint.tintMaterialOf} gate keeps every foreign domain
 	 * byte-identical.
@@ -146,6 +146,6 @@ public class GTItemPipeBlock extends GTEntityBlock {
 	@Override
 	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
 		super.stepOn(aLevel, aPos, aState, aEntity);
-		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (p37-covers-crafting-asphalt)
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (covers-crafting-asphalt)
 	}
 }

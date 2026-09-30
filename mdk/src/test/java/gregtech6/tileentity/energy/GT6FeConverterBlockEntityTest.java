@@ -26,7 +26,7 @@ import gregapi.tileentity.energy.ITileEntityEnergy;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The FE→EU converter core offline tests (task p28-b-fe-converter-machine) — the
+ * The FE→EU converter core offline tests (task b-fe-converter-machine) — the
  * EnergyBridgeTest posture (hand-verified math tables) over the ULV machine: the push
  * intake (ratio floor + capacity clamp), the pull intake (the root
  * {@code EnergyBridge.extractFe} whole-packet math driven through the seam, the hostile

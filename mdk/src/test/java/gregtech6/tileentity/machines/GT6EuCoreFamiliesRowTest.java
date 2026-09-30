@@ -19,7 +19,7 @@ import gregtech6.recipes.Recipe;
 import gregtech6.registry.GTMachines;
 
 /**
- * The eu-core families row acceptance (task p29-w2-eu-core-5tier, the OFFLINE half — the
+ * The eu-core families row acceptance (task w2-eu-core-5tier, the OFFLINE half — the
  * {@link GT6EuHuFamiliesRowTest} shape): the five families pinned to the upstream columns
  * (Loader_MultiTileEntities.java :1336-1340 Electrolyzer / :1443-1447 Injector /
  * :1450-1454 Printer / :1457-1461 Scanner (Visuals) / :1525-1529 Slicer), the FIRST

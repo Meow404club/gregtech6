@@ -31,7 +31,7 @@ import gregtech6.tileentity.TileEntityBase01Root;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 
 /**
- * GT6 机器流体段 Jade universal provider（task p23-jade-universal-fluid，升级 P22 v1 b9b0b23f）：
+ * GT6 机器流体段 Jade universal provider（task jade-universal-fluid，升级 P22 v1 b9b0b23f）：
  * GTCEu {@code GTFluidStorageProvider} 全例姿势（gtceu-modern .../jade/provider/GTFluidStorageProvider.java:40-101）
  * ——一个单例对象双腿同体实现 {@code IServerExtensionProvider<...CompoundTag>}（服务端取数，
  * {@code registerFluidStorage} 注册；Jade 自家 universal {@code FluidStorageProvider} 是数据载体，
@@ -76,7 +76,7 @@ public final class GT6FluidProvider implements IServerExtensionProvider<TileEnti
 	public static final String GROUP_OUT = "Fluid Out";
 
 	/**
-	 * 组标题键（task p34-hygiene-lang——decorator 的 literal 标题退役）：id→键在
+	 * 组标题键（task hygiene-lang——decorator 的 literal 标题退役）：id→键在
 	 * {@link #groupTitle} 一点收敛，值面 = GT6EnUs/GT6ZhCn datagen 行 + tsv 直写带双落。
 	 */
 	public static final String LANG_GROUP_IN = "gt6.jade.fluid.group.in";
@@ -103,7 +103,7 @@ public final class GT6FluidProvider implements IServerExtensionProvider<TileEnti
 	};
 
 	/**
-	 * 组标题（纯函数离线面，task p34-hygiene-lang）：已知组 id 走 {@code gt6.jade.fluid.group.*}
+	 * 组标题（纯函数离线面，task hygiene-lang）：已知组 id 走 {@code gt6.jade.fluid.group.*}
 	 * translatable（各 locale 自解）；未知 id 回退为原串键面（translatable 缺键渲染键名本身，
 	 * vanilla 语义——零 literal，groupsOfTarget 只产两已知 id，此分支纯防御）。
 	 */

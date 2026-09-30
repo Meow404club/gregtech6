@@ -34,7 +34,7 @@ import gregtech6.block.ore.GTOreFallingBlock;
 import gregtech6.item.GTMaterialPrefixBlockItem;
 
 /**
- * Registration home of the GT6 ore BLOCK universe (task p30-ore-1-mech, rulings in
+ * Registration home of the GT6 ore BLOCK universe (task ore-1-mech, rulings in
  * decisions.p30-ore-rulings): the <b>26 stone families</b> (9 vanilla-anchored + the 17
  * GT stones) x the material axis M x the family's forms, as per-pair Block+BlockItem
  * registrations (ADR-P8 ④ per-pair precedent, the GTStoneBlocks/GTMaterialBlocks shape)
@@ -58,7 +58,7 @@ import gregtech6.item.GTMaterialPrefixBlockItem;
  * enumeration (tasks.p30-arch-ore-registration.enumeration.block_rows_per_material).
  *
  * <p><b>Material axis M</b> (the reviewer-corrected口径, 2026-09-16, extended 2026-09-28 by
- * task r7-a-ore-axis-extension and task r7-b-gem-pool-extension): the upstream always-on
+ * task a-ore-axis-extension and task b-gem-pool-extension): the upstream always-on
  * worldgen small-ore materials
  * (Loader_Worldgen.java:800-852 + :875 — {@link #WORLDGEN_ORES}) UNION the stone-layer
  * companion materials ({@link #STONE_LAYER_ORES}, the r6-c3 lens preconditions) UNION
@@ -359,7 +359,7 @@ public final class GT6OreBlocks {
     );
 
     /**
-     * The stone-layer companion materials (task r7-a-ore-axis-extension, the r6-c3 lens
+     * The stone-layer companion materials (task a-ore-axis-extension, the r6-c3 lens
      * precondition, user C-tier "complete & self-consistent" ruling, plan B): the 13
      * distinct companion materials the upstream stone-layer rows place as REAL ore blocks —
      * StoneLayerOres.normal/small → {@code placeBlock(mMaterial.mID)} (StoneLayer.java:124-126,
@@ -388,7 +388,7 @@ public final class GT6OreBlocks {
     );
 
     /**
-     * The RANDOM_SMALL_GEM_ORE pool materials (task r7-b-gem-pool-extension): the 56 pool
+     * The RANDOM_SMALL_GEM_ORE pool materials (task b-gem-pool-extension): the 56 pool
      * members that sit OUTSIDE {@link #WORLDGEN_ORES} and {@link #STONE_LAYER_ORES} — the
      * second axis seam (the r7-a review finding made quantitative). Upstream pool census
      * = 61 flagged materials (offline walk over MT.java, 2026-09-28): the 7 gem factories
@@ -446,7 +446,7 @@ public final class GT6OreBlocks {
 
     /**
      * The material axis M (the reviewer-corrected口径, 2026-09-16, extended by
-     * r7-a-ore-axis-extension and r7-b-gem-pool-extension): the upstream always-on
+     * a-ore-axis-extension and b-gem-pool-extension): the upstream always-on
      * worldgen small-ore materials ({@link #WORLDGEN_ORES}, Loader_Worldgen.java:800-852
      * + :875) UNION the stone-layer companion materials ({@link #STONE_LAYER_ORES}, the
      * r6-c3 lens preconditions) UNION the RANDOM_SMALL_GEM_ORE pool gap

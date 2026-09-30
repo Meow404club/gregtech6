@@ -27,8 +27,8 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
- * The Crusher ore chain (task p8-recipe-chances-orechain ④, yields reformed by
- * p9-recipe-yield-reform): the pure planner math against the upstream handler branches
+ * The Crusher ore chain (task recipe-chances-orechain ④, yields reformed by
+ * recipe-yield-reform): the pure planner math against the upstream handler branches
  * (RecipeMapHandlerCrushing.java:50-137), the pour reconciliation over the offline material
  * universe (the cokeoven/ShCL template), and the row shapes end-to-end (Fe → the double
  * 3x Hematite base at 1152 t — two 10000 main slots, upstream sentinel+dup parity;

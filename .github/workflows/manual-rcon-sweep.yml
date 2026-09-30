@@ -1,4 +1,4 @@
-# 手动全量 RCON 回归 sweep（task r5-ci-manual-sweep）。
+# 手动全量 RCON 回归 sweep（task ci-manual-sweep）。
 # 用户裁定 2026-09-28（state:decisions.2026-09-28-full-sweep-retirement）：本地/阶段末
 # 全量 sweep 退役（移植期已过），替代品即本工作流——用户偶尔手动触发一次。
 # 仅 workflow_dispatch：不接 push/PR，永不占常规 CI 资源。

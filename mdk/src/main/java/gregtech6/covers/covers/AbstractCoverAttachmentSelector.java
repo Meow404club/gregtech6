@@ -10,7 +10,7 @@ import gregtech6.tileentity.machines.ITileEntitySwitchableMode;
 /**
  * The selector-cover base — 1.20.1 port of
  * gregapi/cover/covers/AbstractCoverAttachmentSelector.java:29-35 (task
- * p34-covers-gameplay-10). The one inherited behaviour: removing a selector cover
+ * covers-gameplay-10). The one inherited behaviour: removing a selector cover
  * resets the host's mode dial to 0 (:31-34) — a selectorless machine must not keep the
  * last selector's command. The four concrete selectors (Tag/Manual/Redstone/
  * ButtonPanel) narrow the placement gate to {@link ITileEntitySwitchableMode} hosts

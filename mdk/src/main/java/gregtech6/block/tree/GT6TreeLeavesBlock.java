@@ -9,14 +9,14 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.core.BlockPos;
 
 /**
- * The GT6 tree leaves (task p30-w6-t1-trees-nine): one {@link LeavesBlock} per
+ * The GT6 tree leaves (task w6-t1-trees-nine): one {@link LeavesBlock} per
  * {@link GT6TreeKind} — the vanilla leaves blockstate machine (DISTANCE decay +
  * PERSISTENT) rides untouched. Properties are the vanilla {@code Blocks.leaves(SoundType
  * .GRASS)} row (Blocks.java:7303-7316) with the two private Blocks predicates inlined:
  * {@code ocelotOrParrot} (Blocks.java:7363) and {@code never}.
  *
  * <p>The rainbow face of the Rainbowood leaves (BlockTreeLeavesAB.java:129-139 dynamic
- * RAINBOW_ARRAY tint) is LIVE as of task p38-issue1-4 (GitHub #4): the model carries
+ * RAINBOW_ARRAY tint) is LIVE as of task issue1-4 (GitHub #4): the model carries
  * tintindex 0 over the pixel-true GRAYSCALE PNG and the colour rides the
  * GT6TreeClientListener BlockColor/ItemColor registrations — the former "static
  * rainbow-textured PNG, zero tintindex, pooled" deviation (the GTGrassBlocks

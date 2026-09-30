@@ -4,7 +4,7 @@ import net.minecraft.ChatFormatting;
 
 /**
  * The upstream LH.Chat palette projected onto the modern {@link ChatFormatting} (task
- * r8-tooltip-infra): the transcribed name keeps the upstream citation readable — a family
+ * tooltip-infra): the transcribed name keeps the upstream citation readable — a family
  * row table written {@code GT6TooltipStyle.ORANGE} reads exactly as the upstream row it
  * transcribes ({@code Chat.ORANGE}, gregapi/data/LH.java:692), while the value carries the
  * vanilla color the 1.20.1 {@code withStyle} face needs (ORANGE rode GOLD upstream, :692

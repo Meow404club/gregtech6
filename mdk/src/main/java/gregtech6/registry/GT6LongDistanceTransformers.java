@@ -22,7 +22,7 @@ import gregtech6.block.energy.GT6ElectricTransformerBlock;
 import gregtech6.tileentity.energy.GT6LongDistanceTransformerBlockEntity;
 
 /**
- * The Long Distance Transformer Endpoint registration (task p35-energy-tail-machines) —
+ * The Long Distance Transformer Endpoint registration (task energy-tail-machines) —
  * the five rows of the upstream declared subset verbatim (Loader_MultiTileEntities
  * :909-:913, meta ids 10064-10068 as the parity column): Electric_T[4..8] housings
  * (Cr/Ti/Ir/Os/Trinitanium), NBT_INPUT = NBT_OUTPUT = V[4..8], WASTE F, EU/EU, display
@@ -73,7 +73,7 @@ public final class GT6LongDistanceTransformers {
 	/**
 	 * The row block: the facing-cube carrier REUSED from the electric transformer family
 	 * (the tier column = the row), the row's Electric_T[i] casing material (Loader
-	 * :909-:913 NBT_MATERIAL, the tint colour source — task r8-tex-composite-family).
+	 * :909-:913 NBT_MATERIAL, the tint colour source — task tex-composite-family).
 	 */
 	private static GT6ElectricTransformerBlock ldTransformer(int aTier) {
 		return new GT6ElectricTransformerBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
@@ -88,7 +88,7 @@ public final class GT6LongDistanceTransformers {
 					ROWS.stream().map(aRow -> BLOCKS_BY_PATH.get(aRow.path()).get()).toArray(Block[]::new)).build(null));
 
 	/**
-	 * The tint-walk array (task r8-tex-composite-family — the
+	 * The tint-walk array (task tex-composite-family — the
 	 * GT6ElectricTransformers.paintableBlockArray form): the five endpoint blocks, every
 	 * row carries its NBT_MATERIAL casing column (Electric_T[4..8]).
 	 */
@@ -122,7 +122,7 @@ public final class GT6LongDistanceTransformers {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
+	 * The tab walk (task tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
 	 * joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
 	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
 	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display

@@ -6,7 +6,7 @@ import gregtech6.covers.CoverData;
 
 /**
  * The CPU Storage display — 1.20.1 port of gregapi/cover/covers/CoverLogisticsDisplayCPUStorage.java
- * (:33-55, upstream item id 1086), task p33-logistics-covers-12. The Core drives the
+ * (:33-55, upstream item id 1086), task logistics-covers-12. The Core drives the
  * value (redstone 0..15) and visual (bar 0..10) lanes per second (:311-312).
  */
 public class CoverLogisticsDisplayCPUStorage extends AbstractCoverLogisticsDisplay {

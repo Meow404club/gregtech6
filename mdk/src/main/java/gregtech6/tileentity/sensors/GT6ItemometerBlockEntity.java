@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.items.IItemHandler; // the leg-native handler type (the Fluidometer import swap form)
 
 /**
- * The Item-O-Meter Sensor (task p34-sensors-trivial-14 row ⑥) — the port of
+ * The Item-O-Meter Sensor (task sensors-trivial-14 row ⑥) — the port of
  * MultiTileEntityItemometer.java:33-70. Upstream summed the stack sizes over the
  * neighbour {@code IInventory} (:34-52) with the slot-count × stack-limit max (:57-62);
  * the modern equivalent is the ITEM_HANDLER capability at the probe position — the

@@ -23,17 +23,17 @@ import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
 
 /**
  * The Coke Oven controller block — the concrete {@link GTMultiBlockControllerBlock} of the
- * first multiblock (upstream MultiTileEntityCokeOven, task p4-multiblock-framework spec ④).
+ * first multiblock (upstream MultiTileEntityCokeOven, task multiblock-framework spec ④).
  * Everything visual/behavioural is base-owned (FACING + FORMED); this class only mounts the
  * Coke Oven BET.
  *
- * <p>p6-cokeoven-processing adds the block-side ignition hook (the card block_hook ruling):
+ * <p>cokeoven-processing adds the block-side ignition hook (the card block_hook ruling):
  * a main-hand flint-and-steel click on the controller ignites it server-side
  * ({@link TileEntityCokeOven#ignite()} = the upstream TOOL_igniter branch
  * MultiTileEntityBasicMachine:373-379) and consumes one durability point — the flint is the
  * igniter stand-in (the hoe = crowbar substitution precedent).
  *
- * <p>p8-cokeoven-gui-menu adds the GUI open: any other right-click opens the machine menu
+ * <p>cokeoven-gui-menu adds the GUI open: any other right-click opens the machine menu
  * (upstream MultiTileEntityCokeOven inherits getGUIServer/getGUIClient2 unchanged — formed
  * or not, the GUI opens and an unformed oven just runs no recipe). The flint branch stays
  * first: the ignition intent wins the click.
@@ -81,11 +81,11 @@ public class GTCokeOvenBlock extends GTMultiBlockControllerBlock {
 			*///?}
 			return InteractionResult.CONSUME;
 		}
-		// task p8-cokeoven-gui-menu ⑤ — the GUI open (upstream MultiTileEntityCokeOven has no
+		// task cokeoven-gui-menu ⑤ — the GUI open (upstream MultiTileEntityCokeOven has no
 		// GUI override: it inherits getGUIServer/getGUIClient2, so a non-flint right-click opens
 		// the machine GUI whether or not the structure is formed — an unformed oven just runs no
 		// recipe). The flint branch above stays first: the ignition intent wins the click (the
-		// p6-oven-rotation cover-intent-first construction). The open itself is the GTOvenBlock
+		// oven-rotation cover-intent-first construction). The open itself is the GTOvenBlock
 		// :115 precedent — NetworkHooks.openScreen with the BlockPos payload the menu factory
 		// resolves the BE from.
 		if (aLevel.getBlockEntity(aPos) instanceof TileEntityCokeOven tOven) {

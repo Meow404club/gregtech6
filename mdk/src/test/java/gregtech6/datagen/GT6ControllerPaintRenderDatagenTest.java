@@ -1,5 +1,5 @@
 /*
- * Offline pinned-census tests for task p38-c2-controller-tint (the p38 render-gap census
+ * Offline pinned-census tests for task c2-controller-tint (the p38 render-gap census
  * C2+C4): the controller/energy-domain model JSONs carry tintindex 0 on every BODY face
  * and NO tintindex on the overlay decals, asserted against the committed src/generated
  * tree (the GT6PartPaintRenderDatagenTest census shape), and the row tables carry the
@@ -199,7 +199,7 @@ class GT6ControllerPaintRenderDatagenTest {
 
     @Test
     public void bridgeAndLaserModelsCarryTintedBodies() throws Exception {
-        // the r8-tex-bridge-kinetic double-layer form: the five heater/engine/motor/laser
+        // the tex-bridge-kinetic double-layer form: the five heater/engine/motor/laser
         // families ride the addBridgeFamily aActive overload (GT6BlockStates.java:1744 —
         // addConverterModel's tinted body cube + 6 untinted decal patches), so each model
         // grew from the one-element body to the 7-element two-layer shape

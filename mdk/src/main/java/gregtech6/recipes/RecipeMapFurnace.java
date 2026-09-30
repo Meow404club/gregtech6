@@ -53,7 +53,7 @@ public class RecipeMapFurnace extends RecipeMap {
 	/**
 	 * LOOKUP ONLY: never consumes the passed inputs; the machine consumes via
 	 * {@code Recipe.isRecipeInputEqual(true, false, aFluids, aInputs)} (pinned
-	 * contract for p4-machine-oven, upstream MultiTileEntityBasicMachine.java:725/:738).
+	 * contract for machine-oven, upstream MultiTileEntityBasicMachine.java:725/:738).
 	 */
 	@Nullable
 	public Recipe findRecipe(Level aLevel, @Nullable Recipe aLastRecipe, long aSize, @Nullable ItemStack aSpecialSlot, @Nullable FluidStack[] aFluids, ItemStack... aInputs) {

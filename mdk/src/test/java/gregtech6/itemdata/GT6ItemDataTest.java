@@ -24,7 +24,7 @@ import gregapi.data.MT;
 import gregtech6.items.tools.GTCrowbarItem;
 
 /**
- * The GT6ItemData keyed access seam — task p31-identity-seam acceptance: the
+ * The GT6ItemData keyed access seam — task identity-seam acceptance: the
  * same-key set/get round trip, the raw-tag passthrough keeping payloads verbatim
  * (battery Base08 / bucket keepFilter / still shapes), and the fail-visible
  * missing/corrupt semantics (an exception or the explicit empty, NEVER a silent

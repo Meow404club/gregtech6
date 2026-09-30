@@ -32,7 +32,7 @@ import gregtech6.registry.GT6Portals; // p35 tail-append
 import gregtech6.tileentity.bees.GT6BumbliaryBlock;
 import gregtech6.registry.GT6ElectricTransformers;
 import gregtech6.registry.GT6Lasers;
-import gregtech6.registry.GT6Kitchen; // p38-issue7 tail-append
+import gregtech6.registry.GT6Kitchen; // issue7 tail-append
 import gregtech6.registry.GT6MagicAbsorbers; // p32 tail-append
 import gregtech6.block.foam.GT6CFoamOwnedBlock;
 import gregtech6.block.energy.GT6ElectricTransformerBlock;
@@ -71,7 +71,7 @@ import gregtech6.registry.GTWires;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
 
 /**
- * Blockstate + block model provider (task p3-example-machine — the first blockstates this
+ * Blockstate + block model provider (task example-machine — the first blockstates this
  * pack generates; GT6DataGenerators doc said "blockstates do not exist yet" until this card).
  * Appended to the provider set without restructuring the existing ones.
  *
@@ -83,13 +83,13 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
  * {@code gt6:textures/block/example_chest.png} is a script-generated placeholder PNG
  * (mdk/tools/gen_gui_textures.py), not JSON — no red-line conflict.
  *
- * <p>Task p4-fluid-pipes (W1) appended the fluid pipes: a cube_all placeholder over
+ * <p>Task fluid-pipes (W1) appended the fluid pipes: a cube_all placeholder over
  * {@code gt6:textures/block/fluid_pipe_wood.png} with a variant per
  * {@link gregtech6.block.pipe.GTFluidPipeBlock} CONNECTIONS mask value (0..63, the 6-bit
  * connection state — W1 renders every mask with the same model, the per-connection model
  * picking is the render pool item). The texture was an inline-script generated placeholder
  * PNG (same hand-rolled style as mdk/tools/gen_gui_textures.py), not JSON. Task
- * r8-tex-pipe-textures UPGRADED the three pipe connector families (fluid / item /
+ * tex-pipe-textures UPGRADED the three pipe connector families (fluid / item /
  * logistics wire) onto the shared per-set two-layer tinted models — see
  * {@link #tintedPipeModel} / {@link #pipeBlockstate}; the placeholder PNG generation and
  * the W1 model shape are retired (the LD wire placeholders keep their item_pipe.png
@@ -102,7 +102,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     /** The runData-side tint census counter (machineModel invocations — the datagen-JVM half of the pinned 21x3 audit). */
     private int mMachineTintModels;
 
-    /** The runData-side barrel tint census counter (task p23-barrel-paint-render — the datagen-JVM half of the pinned 16 audit). */
+    /** The runData-side barrel tint census counter (task barrel-paint-render — the datagen-JVM half of the pinned 16 audit). */
     private int mBarrelTintModels;
 
     public GT6BlockStates(PackOutput output, ExistingFileHelper existingFileHelper) {
@@ -114,7 +114,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         Block tChest = GTBlockEntities.EXAMPLE_CHEST.get();
         simpleBlock(tChest, models().cubeAll("example_chest", modLoc("block/example_chest")));
         itemModels().withExistingParent("example_chest", mcLoc("item/generated")).texture("layer0", modLoc("block/example_chest"));
-        // task r8-tex-pipe-textures — the three pipe connector families leave the
+        // task tex-pipe-textures — the three pipe connector families leave the
         // cube_all placeholder era for the upstream material-set DUAL-LAYER tinted form.
         // Upstream every material-icon render is two passes: pass 0 = the set art
         // multiplied by mRGBa, pass 1 = the untinted <SET>_OVERLAY black outline
@@ -147,27 +147,27 @@ public final class GT6BlockStates extends BlockStateProvider {
                 modLoc("block/iconsets/logistics_wire"), modLoc("block/iconsets/logistics_wire_overlay"));
         pipeBlockstate(GTFluidPipes.WOOD_FLUID_PIPE_SMALL.get(), tWoodPipe);
         pipeBlockstate(GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM.get(), tWoodPipe);
-        // task p26-pipe-item — the item pipe family: one shared model per form, the six
+        // task pipe-item — the item pipe family: one shared model per form, the six
         // restrictive variants over the restrictor-band twin (the upstream mRenderType 1)
         for (GTItemPipes.ItemPipeRow tItemRow : GTItemPipes.ROWS) {
             pipeBlockstate(GTItemPipes.BLOCKS_BY_PATH.get(tItemRow.path()).get(),
                     tItemRow.variant().suffix.startsWith("restrictive") ? tCopperPipeRestrictive : tCopperPipe);
         }
-        pipeBlockstate(GT6Logistics.LOGISTICS_WIRE.get(), tLogisticsWire); // task p32-logistics-lv2 — the single logistics connector row
+        pipeBlockstate(GT6Logistics.LOGISTICS_WIRE.get(), tLogisticsWire); // task logistics-lv2 — the single logistics connector row
         addWire(GTWires.WIRE_ELECTRIC_1X.get());
         addWire(GTWires.WIRE_ELECTRIC_2X.get());
         // task p10: the two wire loops SHARE one (set -> model) map — models().getBuilder
         // APPENDS to a same-named builder, so a second local map would stack a duplicate
         // element onto the shared copper/wire model JSON (caught by the runData diff).
         Map<String, ModelFile> tWireShared = new HashMap<>();
-        addWireFamily(tWireShared); // task p9-wire-family-w1 ⑥ — the 620-block loop, isolated section
-        addRedstoneWireFamily(tWireShared); // task p10-wire-redstone-family — the 6-block redstone loop
-        addLaserWireFamily(tWireShared); // task p10-wire-laser-placeholder — the 1-block laser loop (render target upgraded to the baked fiber model by p11-wire-fiber-texture)
+        addWireFamily(tWireShared); // task wire-family-w1 ⑥ — the 620-block loop, isolated section
+        addRedstoneWireFamily(tWireShared); // task wire-redstone-family — the 6-block redstone loop
+        addLaserWireFamily(tWireShared); // task wire-laser-placeholder — the 1-block laser loop (render target upgraded to the baked fiber model by wire-fiber-texture)
         addOven();
-        addMachine(GTMachines.SHREDDER.get(), "shredder"); // task p7-basicmachine-family ④
+        addMachine(GTMachines.SHREDDER.get(), "shredder"); // task basicmachine-family ④
         addMachine(GTMachines.CRUSHER.get(), "crusher");
         addMachine(GTMachines.LATHE.get(), "lathe");
-        // task p8-machine-tiers-doinject ⑧: the T2-T4 ladder, +9 rows (the tier blocks share
+        // task machine-tiers-doinject ⑧: the T2-T4 ladder, +9 rows (the tier blocks share
         // the T1 front textures — the tier is not a visual state upstream either)
         addMachine(GTMachines.SHREDDER_T2.get(), "shredder_t2", "shredder");
         addMachine(GTMachines.SHREDDER_T3.get(), "shredder_t3", "shredder");
@@ -178,107 +178,107 @@ public final class GT6BlockStates extends BlockStateProvider {
         addMachine(GTMachines.LATHE_T2.get(), "lathe_t2", "lathe");
         addMachine(GTMachines.LATHE_T3.get(), "lathe_t3", "lathe");
         addMachine(GTMachines.LATHE_T4.get(), "lathe_t4", "lathe");
-        addDryer(); // task p14-dryer-family
-        addDistillery(); // task p16-distillery-family
-        addCanner(); // task p24-canner-machine
-        addKineticTrio(); // task p26-w1-sifter-compressor-wiremill
-        addPress(); // task p26-w1-press-extruder-molds
-        addExtruder(); // task p26-w1-press-extruder-molds
-        addUlvLadder(); // task p28-c-ulv-machine-ladder — the six ULV rows (family textures, the addCanner shape)
-        addRollLadders(); // task p29-w1-kinetic-roll-ladder — the four roll-ladder RU families (family textures, the addCanner shape)
-        addProcessMachines(); // task p29-w1-kinetic-process-ladder — the six process families (family textures, the addCanner shape)
-        addEuHuFamilies(); // task p29-w1-eu-hu-families — the seven eu-hu families (family textures, the addCanner shape)
-        addEuSpecialFamilies(); // task p29-w2-eu-special — the Autocrafter/Lightning/Laminator families (family textures, the addCanner shape)
-        addExoticFamilies(); // task p29-w2-exotic-energy — the six exotic-energy families (family textures, the addCanner shape)
-        addEuCoreMachines(); // task p29-w2-eu-core-5tier — the five eu-core families (family textures, the addCanner shape)
-        addMassfabMachines(); // task p31-massfab — the small Matter Fabricator 5-ladder (family textures, the addCanner shape)
-        addQuMachines(); // task p32-qu-scanner-replicator — the Molecular Scanner T3 + the Matter Replicator T1-T3 (family textures, the addCanner shape)
-        addP34MachinePair(); // task p34-machines-burner-plantalyzer — the Burner Mixer ladder + the Plantalyzer 5-ladder (family textures, the addCanner shape)
-        addHuTuFamilies(); // task p29-w2-hu-tu-piggyback — the seven hu-tu families (family textures, the addCanner shape)
-        addHeatSmelterFamilies(); // task p29-w3-heat-smelter — the Smelter ladder + the Melter single (family textures, the addCanner shape)
-        addRoastingFamilies(); // task p29-w4-eu-bridge — the Roasting Oven ladder (the "roaster" family textures)
-        addP34MachineFamilies(); // task p34-machines-bumblelyzer-crucible — the Bumblelyzer 5-ladder + the Crystallisation Crucible 4-ladder (family textures, the addCanner shape)
-        addElectricBridges(); // task p29-w4-eu-bridge — the three EU-bridge converter families (the borrowed upstream colored front/side pairs)
-        addLaserFamilies(); // task p32-qu-laser-domain — the CO2 Laser + Laser Absorber families (the borrowed upstream colored front/side pairs)
-        addMagicAbsorber(); // task p32-magic-absorber — the Magic Field Absorber single (the six-way facing cube)
-        addStaticStorages(); // task p26-storage-static-batch
-        addAdvancedCraftingTable(); // task p24-act-machine
-        // task p21-paintable-tint-render: the datagen-JVM census half — 209 machine blocks x
-        // 3 models (the six ULV rows joined at task p28-c-ulv-machine-ladder; the roll ladders
+        addDryer(); // task dryer-family
+        addDistillery(); // task distillery-family
+        addCanner(); // task canner-machine
+        addKineticTrio(); // task w1-sifter-compressor-wiremill
+        addPress(); // task w1-press-extruder-molds
+        addExtruder(); // task w1-press-extruder-molds
+        addUlvLadder(); // task c-ulv-machine-ladder — the six ULV rows (family textures, the addCanner shape)
+        addRollLadders(); // task w1-kinetic-roll-ladder — the four roll-ladder RU families (family textures, the addCanner shape)
+        addProcessMachines(); // task w1-kinetic-process-ladder — the six process families (family textures, the addCanner shape)
+        addEuHuFamilies(); // task w1-eu-hu-families — the seven eu-hu families (family textures, the addCanner shape)
+        addEuSpecialFamilies(); // task w2-eu-special — the Autocrafter/Lightning/Laminator families (family textures, the addCanner shape)
+        addExoticFamilies(); // task w2-exotic-energy — the six exotic-energy families (family textures, the addCanner shape)
+        addEuCoreMachines(); // task w2-eu-core-5tier — the five eu-core families (family textures, the addCanner shape)
+        addMassfabMachines(); // task massfab — the small Matter Fabricator 5-ladder (family textures, the addCanner shape)
+        addQuMachines(); // task qu-scanner-replicator — the Molecular Scanner T3 + the Matter Replicator T1-T3 (family textures, the addCanner shape)
+        addP34MachinePair(); // task machines-burner-plantalyzer — the Burner Mixer ladder + the Plantalyzer 5-ladder (family textures, the addCanner shape)
+        addHuTuFamilies(); // task w2-hu-tu-piggyback — the seven hu-tu families (family textures, the addCanner shape)
+        addHeatSmelterFamilies(); // task w3-heat-smelter — the Smelter ladder + the Melter single (family textures, the addCanner shape)
+        addRoastingFamilies(); // task w4-eu-bridge — the Roasting Oven ladder (the "roaster" family textures)
+        addP34MachineFamilies(); // task machines-bumblelyzer-crucible — the Bumblelyzer 5-ladder + the Crystallisation Crucible 4-ladder (family textures, the addCanner shape)
+        addElectricBridges(); // task w4-eu-bridge — the three EU-bridge converter families (the borrowed upstream colored front/side pairs)
+        addLaserFamilies(); // task qu-laser-domain — the CO2 Laser + Laser Absorber families (the borrowed upstream colored front/side pairs)
+        addMagicAbsorber(); // task magic-absorber — the Magic Field Absorber single (the six-way facing cube)
+        addStaticStorages(); // task storage-static-batch
+        addAdvancedCraftingTable(); // task act-machine
+        // task paintable-tint-render: the datagen-JVM census half — 209 machine blocks x
+        // 3 models (the six ULV rows joined at task c-ulv-machine-ladder; the roll ladders
         // and the six P29 W1 process families joined at their owning cards; the seven eu-hu
-        // families at task p29-w1-eu-hu-families; the three eu-special families at task
-        // p29-w2-eu-special; the six exotic-energy families at task
-        // p29-w2-exotic-energy; the five eu-core 5-tier families at task
-        // p29-w2-eu-core-5tier; the seven hu-tu piggyback families at task
-        // p29-w2-hu-tu-piggyback; the Smelter ladder + Melter single at task
-        // p29-w3-heat-smelter), // matching the paintableBlockArray() client registration census
+        // families at task w1-eu-hu-families; the three eu-special families at task
+        // w2-eu-special; the six exotic-energy families at task
+        // w2-exotic-energy; the five eu-core 5-tier families at task
+        // w2-eu-core-5tier; the seven hu-tu piggyback families at task
+        // w2-hu-tu-piggyback; the Smelter ladder + Melter single at task
+        // w3-heat-smelter), // matching the paintableBlockArray() client registration census
         // (the offline JUnit half walks the generated tree and pins the same 627; the ACT
         // rides its own single-state model OUTSIDE the paint-array census — the
         // GTAdvancedCraftingTableBlock carries no ACTIVE/RUNNING payload, and the
         // family-wide paint extension stays pooled).
-        addHeatExchanger(); // task p29-w3-heat-smelter // task p29-w3-heat-smelter — the Large Heat Exchanger controller (the two-layer front-bearing form)
+        addHeatExchanger(); // task w3-heat-smelter // task w3-heat-smelter — the Large Heat Exchanger controller (the two-layer front-bearing form)
         addReactorCore(); // task debt-reactor-b-2x2-be — the 2x2 reactor core (flat cube over the borrowed faces)
         LOGGER.info("GT6 machine paint tint: {} machine models tinted (209 blocks x 3 + the ACT single-state model, addOven/addMachine/addDryer/addDistillery/addCanner/addKineticTrio/addPress/addExtruder/addUlvLadder/addRollLadders/addProcessMachines/addEuHuFamilies/addEuSpecialFamilies/addExoticFamilies/addEuCoreMachines/addHuTuFamilies/addHeatSmelterFamilies/addAdvancedCraftingTable)", mMachineTintModels);
         addMultiBlocks();
         addBarrel();
         addEnergySource();
-        addFeBattery(); // task p26-eu-bridge-outbound (tail-append; shared serial file)
-        addFeConverter(); // task p28-b-fe-converter-machine (tail-append; shared serial file)
-        addFeSource(); // task p28-b-fe-converter-machine (tail-append; shared serial file)
-        addTestMachines(); // task p20-testmachine-blockstates — the two dev BE-framework blocks
-        addPrefixBlocks(); // task p8-prefixblock-render ①
-        addCrank(); // task p12-engine-crank
-        addAxles(); // task p12-axle-family
-        addAttachments(); // task p12-tap-funnel-attachment
-        addSteamEngines(); // task p12-engine-steam
-        addDieselEngines(); // task p12-engine-diesel
-        addBurningBoxes(); // task p13-burning-box-family
-        addBoilers(); // task p13-boiler-tank
-        addHoppers(); // task p26-storage-hopper-family
-        addGearBoxTransformer(); // task p12-gearbox-transformer
-        addElectricTransformer(); // task p28-c-ulv-lv-transformer
-        addLDEnergyFamilies(); // task p35-energy-tail-machines
-        addWaterWheel(); // task p28-c-water-wheel
-        addLongDistancePipes(); // task p35-long-distance-pipes — the 16 wire metas + the two endpoints
-        addElectricDynamoUlv(); // task p28-c-ulv-dynamo-row — the Electric Dynamo T0 row
-        addDynamoLadders(); // task p38-c1-dynamo-bowl-models — the Electric/Flux T1-T5 ladder rows
-        addBatteryBoxes(); // task p29-w4-battery-storage — the 12-box storage face
-        addCrystalChargers(); // task p35-energy-tail-machines — the 20-row LU charge face
-        addZpmDechargers(); // task p36-energy-zpm-dechargers — the two-row discharge face
-        addLargeBoiler(); // task p13-large-boiler
-        addLightningRod(); // task p24-lightning-rod
-        addParts(); // task p29-w3-nbtdesign-parts — the part-family expansion (per-design variants)
-        addTanks(); // task p29-w3-tank-valves — the 25 valve controllers
-        addTurbinesDynamo(); // task p29-w3-turbine-dynamo — the Large Turbine + Large Dynamo controllers
-        addLargeMachines(); // task p29-w3-large-12 — the twelve large-machine controllers
-        addImplosionCompressor(); // task p31-implosion — the Implosion Compressor controller
-        addVonDaGraagg(); // task p31-graagg — the Von da Graagg controller
-        addBedrockDrill(); // task p37-bedrock-drill — the Bedrock Mining Drill controller
-        addLargeMassfab(); // task p31-massfab — the Large Matter Fabricator controller
-        addFusionReactor(); // task p31-fusion — the Fusion Reactor controller
-        addLogisticsCore(); // task p32-logistics-lv3 — the Logistics Core controller
-        addLargeCrucible(); // task p26-crucible-multiblock
-        addDistillationTowers(); // task p29-w3-distill-crucible — the twin tower controllers
-        addStoneBlocks(); // task p21-stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
+        addFeBattery(); // task eu-bridge-outbound (tail-append; shared serial file)
+        addFeConverter(); // task b-fe-converter-machine (tail-append; shared serial file)
+        addFeSource(); // task b-fe-converter-machine (tail-append; shared serial file)
+        addTestMachines(); // task testmachine-blockstates — the two dev BE-framework blocks
+        addPrefixBlocks(); // task prefixblock-render ①
+        addCrank(); // task engine-crank
+        addAxles(); // task axle-family
+        addAttachments(); // task tap-funnel-attachment
+        addSteamEngines(); // task engine-steam
+        addDieselEngines(); // task engine-diesel
+        addBurningBoxes(); // task burning-box-family
+        addBoilers(); // task boiler-tank
+        addHoppers(); // task storage-hopper-family
+        addGearBoxTransformer(); // task gearbox-transformer
+        addElectricTransformer(); // task c-ulv-lv-transformer
+        addLDEnergyFamilies(); // task energy-tail-machines
+        addWaterWheel(); // task c-water-wheel
+        addLongDistancePipes(); // task long-distance-pipes — the 16 wire metas + the two endpoints
+        addElectricDynamoUlv(); // task c-ulv-dynamo-row — the Electric Dynamo T0 row
+        addDynamoLadders(); // task c1-dynamo-bowl-models — the Electric/Flux T1-T5 ladder rows
+        addBatteryBoxes(); // task w4-battery-storage — the 12-box storage face
+        addCrystalChargers(); // task energy-tail-machines — the 20-row LU charge face
+        addZpmDechargers(); // task energy-zpm-dechargers — the two-row discharge face
+        addLargeBoiler(); // task large-boiler
+        addLightningRod(); // task lightning-rod
+        addParts(); // task w3-nbtdesign-parts — the part-family expansion (per-design variants)
+        addTanks(); // task w3-tank-valves — the 25 valve controllers
+        addTurbinesDynamo(); // task w3-turbine-dynamo — the Large Turbine + Large Dynamo controllers
+        addLargeMachines(); // task w3-large-12 — the twelve large-machine controllers
+        addImplosionCompressor(); // task implosion — the Implosion Compressor controller
+        addVonDaGraagg(); // task graagg — the Von da Graagg controller
+        addBedrockDrill(); // task bedrock-drill — the Bedrock Mining Drill controller
+        addLargeMassfab(); // task massfab — the Large Matter Fabricator controller
+        addFusionReactor(); // task fusion — the Fusion Reactor controller
+        addLogisticsCore(); // task logistics-lv3 — the Logistics Core controller
+        addLargeCrucible(); // task crucible-multiblock
+        addDistillationTowers(); // task w3-distill-crucible — the twin tower controllers
+        addStoneBlocks(); // task stoneblocks-16item-registry-split — the 272 per-pair (stone, variant) blocks
         addStoneSlabs(); // task debt-slab-gap — the 272 per-pair stone slabs (the upstream mSlabs[0] face)
-        addGrassBlocks(); // task p24-grass-block — the 6 per-pair GT grass variants
-        addTreeBlocks(); // task p30-w6-t1-trees-nine — the 27 per-pair tree blocks
-        addFoamBlocks(); // task p26-c-foam-block-family — the C-Foam pair + slabs + the owned carrier
-        addSensors(); // task p26-sensors-core — the three pioneer sensor blocks
-        addAnvils(); // task p28-c-anvil — the stone anvil pair
-        addSurfaceBand(); // task p30-w6-rocks-sticks — the surface rock trio + the stick (shared models, no items)
-        addSurfacePlants(); // task p30-w6-t2-surface-blocks — the plant quartet + the four fallen-log woods
-        addHive(); // task p32-bees-lv2 — the bumble hive (the tinted body + the six-overlay two-layer form)
-        addBumbliary(); // task p33-bees-lv3-b-bumbliary — the Bumbliary pair (the hive two-layer grammar over the facing cube)
-        addPlaceables(); // task p32-placeables — the Greg o'Lantern (the carved-front cube)
-        addRails(); // task p35-rails-31-blocks — the 31-rail family (the vanilla rail grammar)
-        addPortals(); // task p35-portals-mini-nether-end — the two miniature portals (the ACTIVE cube swap)
-        addKitchen(); // task p38-issue7-kitchen-models — the four kitchen blocks (the upstream hollow-tub element forms)
-        addMeasuringPot(); // task r8-issue45-c3 — the Measuring Pot (the two-layer colored+overlay sub-cube tub)
+        addGrassBlocks(); // task grass-block — the 6 per-pair GT grass variants
+        addTreeBlocks(); // task w6-t1-trees-nine — the 27 per-pair tree blocks
+        addFoamBlocks(); // task c-foam-block-family — the C-Foam pair + slabs + the owned carrier
+        addSensors(); // task sensors-core — the three pioneer sensor blocks
+        addAnvils(); // task c-anvil — the stone anvil pair
+        addSurfaceBand(); // task w6-rocks-sticks — the surface rock trio + the stick (shared models, no items)
+        addSurfacePlants(); // task w6-t2-surface-blocks — the plant quartet + the four fallen-log woods
+        addHive(); // task bees-lv2 — the bumble hive (the tinted body + the six-overlay two-layer form)
+        addBumbliary(); // task bees-lv3-b-bumbliary — the Bumbliary pair (the hive two-layer grammar over the facing cube)
+        addPlaceables(); // task placeables — the Greg o'Lantern (the carved-front cube)
+        addRails(); // task rails-31-blocks — the 31-rail family (the vanilla rail grammar)
+        addPortals(); // task portals-mini-nether-end — the two miniature portals (the ACTIVE cube swap)
+        addKitchen(); // task issue7-kitchen-models — the four kitchen blocks (the upstream hollow-tub element forms)
+        addMeasuringPot(); // task issue45-c3 — the Measuring Pot (the two-layer colored+overlay sub-cube tub)
     }
 
     /**
-     * The rail family (task p35-rails-31-blocks, 31 blocks): the vanilla rail grammar over
+     * The rail family (task rails-31-blocks, 31 blocks): the vanilla rail grammar over
      * the 61 borrowed upstream PNGs (tmp/gt6-1.7.10 assets gregtech/textures/blocks/
      * iconsets RAIL_* family, byte-identical copies). Model shapes:
      * <ul>
@@ -376,10 +376,10 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p35-portals-mini-nether-end — the two miniature portals ({@link GT6Portals}).
+     * Task portals-mini-nether-end — the two miniature portals ({@link GT6Portals}).
      * ONE blockstate per portal over TWO element models driven by the ACTIVE property:
      * the faithful transcription of the upstream 13-pass render
-     * (MultiTileEntityMiniPortal.java:273-323, issue #23 / task r4-23a-portal-frame).
+     * (MultiTileEntityMiniPortal.java:273-323, issue #23 / task 23a-portal-frame).
      * Upstream pass 0 = the 1px-inset face cube ({@code PX_P[1]..PX_N[1]}, :283) rendered
      * ONLY when active (:318 — the inactive arm answers the null inactive texture :323,
      * i.e. a hollow see-through frame); passes 1-12 = the twelve 2x2px cube-edge beams
@@ -459,7 +459,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p32-bees-lv2 — the bumble hive: ONE blockstate over ONE model, the
+     * Task bees-lv2 — the bumble hive: ONE blockstate over ONE model, the
      * familyMachineModel two-layer grammar collapsed to the UNFACING cube (the upstream
      * hive renders {@code BlockTextureMulti(colored[FACES_TBS[side]], overlay[FACES_TBS[side]])},
      * MultiTileEntityBumbleHive.java:78 — bottom/top/side triples, no facing):
@@ -482,7 +482,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_side", modLoc("block/bumblehive_overlay_side"))
                 .texture("overlay_top", modLoc("block/bumblehive_overlay_top"))
                 .texture("overlay_bottom", modLoc("block/bumblehive_overlay_bottom"))
-                // issue #15 (task r3-beehive-tint): the six 0.01 overlay decals are
+                // issue #15 (task beehive-tint): the six 0.01 overlay decals are
                 // transparent-texel shells — cutout discards them so the tintindex-0
                 // family body shows through (the C7' fix shape; SOLID plates them
                 // opaque-white over the tint — the review-seat live-verdict root cause).
@@ -519,7 +519,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p33-bees-lv3-b-bumbliary — the Bumbliary pair: the addHive two-layer grammar
+     * Task bees-lv3-b-bumbliary — the Bumbliary pair: the addHive two-layer grammar
      * (the tinted colored body + the six 0.01-plate overlay decals) over the FACING cube
      * (the upstream Bumbliary renders the same
      * {@code BlockTextureMulti(colored[FACES_TBS[side]], overlay[FACES_TBS[side]])}
@@ -545,7 +545,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_side", modLoc("block/" + tBand + "_overlay_sides"))
                 .texture("overlay_top", modLoc("block/" + tBand + "_overlay_top"))
                 .texture("overlay_bottom", modLoc("block/" + tBand + "_overlay_bottom"))
-                // issue #15 (task r3-beehive-tint): the same six-shell cutout form as
+                // issue #15 (task beehive-tint): the same six-shell cutout form as
                 // addHive above (the C7' fix shape) — the material tint on the
                 // tintindex-0 body must survive the overlay shells.
                 .renderType("cutout");
@@ -584,7 +584,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p30-w6-rocks-sticks — the surface deco band: FOUR blocks over TWO shared
+     * Task w6-rocks-sticks — the surface deco band: FOUR blocks over TWO shared
      * models (the research winner's shared-model+tint deviation — a 1.20.1 static model
      * cannot sample the block below, GTCEu SurfaceRockModelGenerator.java:29-51 same).
      * The rock model is ONE tinted micro box (vanilla stone texture, tintindex 0 — the
@@ -594,7 +594,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * borrows — the upstream rocks/sticks copy Blocks.stone/Blocks.log verbatim
      * (MultiTileEntityRock.java:55), so no PNG lands.
      *
-     * <p>Task p38-issue1-4 (GitHub #1, the flat-full-pelt fix): the two boxes tightened
+     * <p>Task issue1-4 (GitHub #1, the flat-full-pelt fix): the two boxes tightened
      * to the upstream forms. The stick: the 12x2x2 ground bar (the MultiTileEntityStick.java
      * :53 default bounds — PX_P[2]..PX_N[2] = 2..14 long axis x PX_P[7]..PX_N[7] = 7..9
      * thickness, height 2, the review-seat endpoint-notation correction; the :58-68
@@ -614,7 +614,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * No BlockItem models: the blocks are never obtainable as items (the pickup loot is
      * the only item path).
      *
-     * <p>Task r3-stick-shape-random (GitHub #12, the "不能千篇一律" face): every state now
+     * <p>Task stick-shape-random (GitHub #12, the "不能千篇一律" face): every state now
      * carries a WEIGHTED variant list — the vanilla position-seeded random chain
      * (BlockRenderDispatcher.java:53-57 getSeed -> WeightedBakedModel.java:29-33) picks
      * per block position, same-position stable, zero new BlockState properties. The
@@ -697,8 +697,8 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p28-c-anvil — the two stone anvil rows (Loader_MultiTileEntities.java
-     * :2185-2186). Task r8-tex-placeholder-audit UPGRADED the target (the probe verdict:
+     * Task c-anvil — the two stone anvil rows (Loader_MultiTileEntities.java
+     * :2185-2186). Task tex-placeholder-audit UPGRADED the target (the probe verdict:
      * upstream ships NO dedicated anvil PNG group — the anvil body renders the row
      * material's SMOOTH SET TEXTURE, {@code mMaterial.getTextureSmooth(mRGBa, T)},
      * MultiTileEntityAnvil.java:306, the material-icon system the mold/crucible body
@@ -736,7 +736,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p14-dryer-family — the four Dryer rows (Loader_MultiTileEntities.java
+     * Task dryer-family — the four Dryer rows (Loader_MultiTileEntities.java
      * :1477-1480, all four NBT_TEXTURE "dryer"): the addMachine texture-base overload —
      * model names per path (dryer/dryer_t2/... own 16-variant blockstates + item
      * parents) while the FRONT TEXTURES stay on the family "dryer" set (the tier is not
@@ -744,7 +744,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * the placeholder fronts).
      */
     /**
-     * Task p26-crucible-multiblock — the LARGE crucible family (the wall "Steel Wall"
+     * Task crucible-multiblock — the LARGE crucible family (the wall "Steel Wall"
      * + the "Large Steel Crucible" controller): the WALLS over the borrowed metalwall part
      * textures with the material tint (task issue8-residual — the upstream :1145 "Steel
      * Wall" row is NBT_TEXTURE "metalwall" + NBT_MATERIAL Steel, so the dedicated
@@ -752,7 +752,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * the already-borrowed parts/metalwall/0 colored family, the tank_metal borrow; the
      * former large_boiler flat-gray placeholder tinted into a flat plate), while the
      * CONTROLLERS wear the two-layer front-bearing tinted grammar, task
-     * r8-tex-multiblockmains — the former {@code large_boiler/wall} borrow placeholder
+     * tex-multiblockmains — the former {@code large_boiler/wall} borrow placeholder
      * and its "no borrowable crucible face" era are retired (the probe found the full
      * machines/multiblockmains/crucible group): the Base10 default {@code getTexture2}
      * semantics (MultiTileEntityCrucible.java:643-650 rides the same
@@ -770,7 +770,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         simpleBlock(tWall, tintedCube("crucible_steel_wall",
                 "block/parts/metalwall/0/colored/bottom", "block/parts/metalwall/0/colored/top", "block/parts/metalwall/0/colored/side"));
         itemModels().withExistingParent("crucible_steel_wall", modLoc("block/crucible_steel_wall"));
-        // task p29-w3-distill-crucible ③ — the seven ladder walls (the same metalwall
+        // task w3-distill-crucible ③ — the seven ladder walls (the same metalwall
         // borrow; the composed names ride the metal-wall template, zero new keys)
         for (var tHandle : gregtech6.registry.GT6Crucibles.CRUCIBLE_WALL_BLOCKS_BY_PATH.values()) {
             Block tLadderWall = tHandle.get();
@@ -795,7 +795,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p29-w3-distill-crucible ①② — the twin tower controllers (Loader:1226-1227,
+     * Task w3-distill-crucible ①② — the twin tower controllers (Loader:1226-1227,
      * NBT_TEXTURE "distillationtower"/"cryodistillationtower"): placeholder cubes over the
      * BORROWED distillation-tower-part texture (the card ① texture table carries no
      * controller family — the machine-wall placeholder convention; the FACING×FORMED block
@@ -817,7 +817,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p16-distillery-family — the four Distillery rows (Loader_MultiTileEntities.java
+     * Task distillery-family — the four Distillery rows (Loader_MultiTileEntities.java
      * :1398-1401, all four NBT_TEXTURE "distillery"): the addDryer shape verbatim —
      * model names per path, the FRONT TEXTURES stay on the family "distillery" set
      * (three placeholder PNGs total, the p14 dryer ruling).
@@ -829,7 +829,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p24-canner-machine — the four Canner rows (Loader_MultiTileEntities.java
+     * Task canner-machine — the four Canner rows (Loader_MultiTileEntities.java
      * :1379-1382, all four NBT_TEXTURE "canner"): the addDistillery shape verbatim —
      * model names per path, the FRONT TEXTURES stay on the family "canner" set (the
      * p22 split-front borrow: canner_colored_front + the three overlay decals).
@@ -841,7 +841,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p26-w1-sifter-compressor-wiremill — the W1 Kinetic trio (Sifter/Compressor/
+     * Task w1-sifter-compressor-wiremill — the W1 Kinetic trio (Sifter/Compressor/
      * Wiremill rows, Loader_MultiTileEntities.java :1312-1315/:1343-1346/:1373-1376, all
      * rows NBT_TEXTURE "sifter"/"compressor"/"wiremill" per family): the addCanner shape
      * verbatim — model names per path, the FRONT TEXTURES stay on the family set (the
@@ -860,7 +860,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p26-w1-press-extruder-molds — the four Press rows (Loader_MultiTileEntities.java
+     * Task w1-press-extruder-molds — the four Press rows (Loader_MultiTileEntities.java
      * :1425-1428, all four NBT_TEXTURE "press"): the addCanner shape verbatim — model names
      * per path, the FRONT TEXTURES stay on the family "press" set (the borrowed upstream
      * basicmachines/press fronts, the p22 split-front borrow).
@@ -872,7 +872,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p26-w1-press-extruder-molds — the four Extruder rows (Loader_MultiTileEntities
+     * Task w1-press-extruder-molds — the four Extruder rows (Loader_MultiTileEntities
      * .java:1406-1409, all four NBT_TEXTURE "extruder"): the addPress shape verbatim (the
      * borrowed upstream basicmachines/extruder fronts).
      */
@@ -883,7 +883,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p28-c-ulv-machine-ladder — the six ULV rows (the five family extension rows +
+     * Task c-ulv-machine-ladder — the six ULV rows (the five family extension rows +
      * the Rolling Mill rung, all NBT_TEXTURE riding their family/upstream tokens
      * "shredder"/"crusher"/"canner"/"sifter"/"wiremill"/"rollingmill"): the addCanner
      * shape verbatim — model names per path, the FRONT TEXTURES stay on the family sets
@@ -912,7 +912,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p29-w1-kinetic-roll-ladder — the four roll-ladder RU families (the RollingMill
+     * Task w1-kinetic-roll-ladder — the four roll-ladder RU families (the RollingMill
      * RU ladder + RollBender + RollFormer + ClusterMill, upstream Loader_MultiTileEntities
      * .java:1349-1370, all NBT_TEXTURE riding their family tokens "rollingmill"/
      * "rollbender"/"rollformer"/"clustermill"): the addCanner shape verbatim — model
@@ -938,7 +938,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p29-w1-kinetic-process-ladder — the six process families (Buzzsaw/Squeezer/
+     * Task w1-kinetic-process-ladder — the six process families (Buzzsaw/Squeezer/
      * Centrifuge/Sluice/Sanding Machine/Pressure Washer, Loader_MultiTileEntities.java
      * :1318-1321/:1324-1327/:1330-1333/:1464-1467/:1589-1592/:1615-1618, the rows of each
      * family sharing one NBT_TEXTURE): the addCanner shape verbatim — model names per
@@ -970,7 +970,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p29-w1-eu-hu-families — the seven eu-hu families (the Mixer RU ladder :1392-1395
+     * Task w1-eu-hu-families — the seven eu-hu families (the Mixer RU ladder :1392-1395
      * + the ElectricMixer/ElectricLoom/ElectricSifter/Boxinator/Unboxinator EU ladders
      * :1504-1522/:1635-1646 + the single-variant Fermenter :1654, every row NBT_TEXTURE
      * riding its family token): the addCanner shape verbatim — model names per path, the
@@ -1002,7 +1002,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p29-w2-eu-special — the three eu-special families (the Autocrafter EU 5-tier
+     * Task w2-eu-special — the three eu-special families (the Autocrafter EU 5-tier
      * ladder :1497-1501 + the Lightning Processor EU 5-tier ladder :1582-1586 + the
      * Laminator HU ladder :1532-1535, every row NBT_TEXTURE riding its family token
      * "autocrafter"/"lightning"/"laminator"): the addEuHuFamilies shape verbatim — model
@@ -1023,7 +1023,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p29-w2-exotic-energy — the six exotic-energy families (Polarizer/MagneticSeparator/
+     * Task w2-exotic-energy — the six exotic-energy families (Polarizer/MagneticSeparator/
      * LaserEngraver/LaserWelder/Freezer/CryoMixer, Loader_MultiTileEntities.java :1418-1422/
      * :1470-1474/:1483-1487/:1490-1494/:1621-1625/:1628-1632, the rows of each family sharing
      * one NBT_TEXTURE): the addCanner shape verbatim — model names per path, the FRONT
@@ -1054,7 +1054,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p31-massfab — the small Matter Fabricator 5-ladder (Loader_MultiTileEntities
+     * Task massfab — the small Matter Fabricator 5-ladder (Loader_MultiTileEntities
      * .java:1542-1546, the rows of the family sharing the one NBT_TEXTURE "massfab"): the
      * addCanner shape verbatim — model names per path, the front textures stay on the
      * family set (the borrowed upstream basicmachines/massfab fronts, the animated
@@ -1067,7 +1067,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p32-qu-scanner-replicator — the QU machine pair (Loader_MultiTileEntities.java
+     * Task qu-scanner-replicator — the QU machine pair (Loader_MultiTileEntities.java
      * :1551 the Molecular Scanner T3 single, :1556-1558 the Matter Replicator T1-T3 rungs;
      * the rows of each family sharing the one NBT_TEXTURE "scannermolecular"/"replicator"):
      * the addCanner shape verbatim — model names per path, the front textures stay on the
@@ -1085,7 +1085,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p29-w2-eu-core-5tier — the five eu-core families (the Electrolyzer/Injector/
+     * Task w2-eu-core-5tier — the five eu-core families (the Electrolyzer/Injector/
      * Printer/Scanner(Visuals)/Slicer EU 5-tier ladders, Loader_MultiTileEntities.java
      * :1336-1340/:1443-1447/:1450-1454/:1457-1461/:1525-1529, the rows of each family
      * sharing one NBT_TEXTURE): the addCanner shape verbatim — model names per path, the
@@ -1115,7 +1115,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p29-w2-hu-tu-piggyback — the seven hu-tu families (the SteamCracker/CatalyticCracker
+     * Task w2-hu-tu-piggyback — the seven hu-tu families (the SteamCracker/CatalyticCracker
      * HU 4-ladders :1576-1579/:1570-1573 + the TU four singles :1651-1655 + the Loom RU
      * 4-ladder :1412-1415, every row NBT_TEXTURE riding its family token): the addCanner
      * shape verbatim — model names per path, the FRONT TEXTURES stay on the family sets
@@ -1147,7 +1147,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p29-w3-heat-smelter — the two heat families (the Smelter HU 4-ladder
+     * Task w3-heat-smelter — the two heat families (the Smelter HU 4-ladder
      * :1431-1434 + the Melter HU single :1657, every row NBT_TEXTURE riding its family
      * token): the addCanner shape verbatim — model names per path, the FRONT TEXTURES
      * stay on the family sets (the borrowed upstream basicmachines/{smelter,melter}
@@ -1163,8 +1163,8 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p26-storage-static-batch — the 28 static storage rows (GT6StaticStorages.ROWS).
-     * Task r8-tex-placeholder-audit UPGRADED four of the six kinds (the former "no upstream
+     * Task storage-static-batch — the 28 static storage rows (GT6StaticStorages.ROWS).
+     * Task tex-placeholder-audit UPGRADED four of the six kinds (the former "no upstream
      * borrowable iconset in this repo" claim here was proven false — the probe found the
      * dedicated groups): LOCKER over {@code machines/lockers/normal}, DRAWER over
      * {@code machines/drawers/quad}, both safes over {@code machines/safes/{mechanical,
@@ -1218,7 +1218,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * One static-storage two-layer faceted model (task r8-tex-placeholder-audit; the
+     * One static-storage two-layer faceted model (task tex-placeholder-audit; the
      * {@link #sensorModel} grammar with an own top/bottom column): the borrowed grayscale
      * {@code <base>/colored_<face>} art on the six body faces (front on north — the FACING
      * face — and back on south, the locker/drawer quad distinct top/bottom or the safes'
@@ -1294,9 +1294,9 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p29-w3-heat-smelter — the Large Heat Exchanger controller (Loader
+     * Task w3-heat-smelter — the Large Heat Exchanger controller (Loader
      * :1245): the two-layer front-bearing tinted grammar over the borrowed upstream
-     * multiblockmains/largeheatexchanger group, task r8-tex-multiblockmains — the
+     * multiblockmains/largeheatexchanger group, task tex-multiblockmains — the
      * former borrow-time-composite single-image cube and its "all faces composite to
      * the same pixels" claim are retired (the group's colored/colored_front split is
      * real art): the Base10 default {@code getTexture2} semantics
@@ -1308,7 +1308,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * formed-look visual is the p9 pool). No facing rotation (the structure is
      * facing-independent — the controller is the centre cell of both layers; the front
      * pair lands on north, the default-facing view pin). The BlockItem is the 2D icon
-     * over the composite sprite (r8-tex-itemform-b).
+     * over the composite sprite (tex-itemform-b).
      */
     private void addHeatExchanger() {
         ModelFile tMain = boilerModel("large_heat_exchanger", "large_heat_exchanger", true);
@@ -1339,7 +1339,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p24-act-machine — the Advanced Crafting Table (Loader_MultiTileEntities.java
+     * Task act-machine — the Advanced Crafting Table (Loader_MultiTileEntities.java
      * :136, the single-variant row): FACING-ONLY blockstate (the upstream machine has no
      * ACTIVE/RUNNING visual payload — the craftingtables/advanced texture group ships no
      * overlay_active/overlay_running layers, the borrow-or-declare rule landed exactly
@@ -1366,12 +1366,12 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p4-multiblock-framework (W3 provider order 1: multiblock→barrel→cover): the FORMED
+     * Task multiblock-framework (W3 provider order 1: multiblock→barrel→cover): the FORMED
      * blockstate fallback rendering (spec ⑧) — the Coke Oven controller carries the base-owned
      * FACING + FORMED properties (TileEntityBase10MultiBlockBase :188-189 bit-3 replacement),
      * 4 facings x 2 formed = 8 variants over two cube models.
      *
-     * <p>Erratum (task p9-render-d-formed-look; the earlier "mirrors the upstream getTexture2
+     * <p>Erratum (task render-d-formed-look; the earlier "mirrors the upstream getTexture2
      * mStructureOkay pick" wording here was wrong): upstream getTexture2
      * (TileEntityBase10MultiBlockBase.java:192-194) picks the front-vs-side texture GROUPS by
      * {@code aSide == mFacing} over a colored+overlay two-layer stack, and NO upstream
@@ -1384,7 +1384,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * a DECLARED this-port enhancement beyond upstream, kept as-is: the FORMED
      * blockstate is the RCON {@code execute if block ...[formed=true]} assertion surface, and
      * the GTCEu IS_FORMED ModelProperty technique is not adopted (zero-benefit refactor,
-     * ADR 2026-09-01-p9-render-d-formed-look).
+     * ADR 2026-09-01-render-d-formed-look).
      *
      * <p>Texture census (same task, negative): upstream ships NO
      * {@code machines/multiblockmains/cokeoven/} PNG group at all — the colored/overlay/
@@ -1413,7 +1413,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         itemModels().withExistingParent("multiblock_coke_oven", modLoc("block/multiblock_coke_oven"));
 
         Block tBricks = GTMultiBlocks.COKE_OVEN_BRICKS.get();
-        // task p29-w3-nbtdesign-parts — the firebricks retexture: multiblock_coke_oven_bricks
+        // task w3-nbtdesign-parts — the firebricks retexture: multiblock_coke_oven_bricks
         // IS the upstream Fire Bricks (MTE 18000, the reuse ruling), so the placeholder
         // cube_all gives way to the borrowed two-layer firebricks textures
         simpleBlock(tBricks, partModel("multiblock_coke_oven_bricks", "firebricks", 0));
@@ -1429,8 +1429,8 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p4-fluid-barrel (W3 provider addition, merge order multiblock→barrel→cover),
-     * extended by task p6-barrel-metal-plastic, re-textured by task r8-tex-tank-family:
+     * Task fluid-barrel (W3 provider addition, merge order multiblock→barrel→cover),
+     * extended by task barrel-metal-plastic, re-textured by task tex-tank-family:
      * the barrel family over the BORROWED two-layer upstream art — the per-face
      * {@code barrel_parts/<family>/{colored,overlay}_{bottom,top,side}.png} borrows
      * (upstream {@code machines/tanks/<family>/}, BarrelWood.java:44-55 colored+overlay
@@ -1441,13 +1441,13 @@ public final class GT6BlockStates extends BlockStateProvider {
      * scope and keeps the {@link #tintedCubeAll} single-PNG form (the TESR/lid
      * omission stays declared, MultiTileEntityBarrelWood.java:44-54).
      *
-     * <p>Task p7-barrel-high-tier-melt-bridge spec ④: the twelve high-tier metal drums
+     * <p>Task barrel-high-tier-melt-bridge spec ④: the twelve high-tier metal drums
      * (Loader_MultiTileEntities.java:2159-2170) share the ONE {@code drum} family —
      * every model JSON references the same barrel_parts textures, so the model count
      * grows with the rows and the PNG count does not (upstream registers the high tiers
      * over the same drum icon set).
      *
-     * <p>Task p23-barrel-paint-render: the tint seat stays the body element's
+     * <p>Task barrel-paint-render: the tint seat stays the body element's
      * {@code tintindex 0} — the upstream barrel renders its {@code colored/} texture
      * multiplied by mRGBa (MultiTileEntityBarrelWood.java:42-55
      * {@code new BlockTextureDefault(tTex, mRGBa)}), the {@code overlay/} decal shell
@@ -1459,10 +1459,10 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBarrel(GTBarrels.BARREL.get(), "barrel");
         addBarrel(GTBarrels.BARREL_PLASTIC.get(), "plasticcan");
         addBarrel(GTBarrels.BARREL_METAL.get(), "drum");
-        addBarrel(GTBarrels.BARREL_LOGISTICS.get()); // task p12-barrel-keepfilter-logistics — the :2171 row, own PNG
+        addBarrel(GTBarrels.BARREL_LOGISTICS.get()); // task barrel-keepfilter-logistics — the :2171 row, own PNG
         for (var tDrum : GTBarrels.METAL_DRUM_BLOCKS.values())
             addBarrel(tDrum.get(), "drum");
-        // task p23-barrel-paint-render: the datagen-JVM census half — 16 barrel blocks,
+        // task barrel-paint-render: the datagen-JVM census half — 16 barrel blocks,
         // matching the GTBarrels.paintableBlockArray() client registration census (the
         // offline JUnit half walks the generated tree and pins the same 16).
         LOGGER.info("GT6 barrel paint tint: {} barrel models tinted (4 rows + 12 high-tier drums, addBarrel)", mBarrelTintModels);
@@ -1485,7 +1485,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * The two-layer per-face barrel model (task r8-tex-tank-family, the addConverterModel
+     * The two-layer per-face barrel model (task tex-tank-family, the addConverterModel
      * grammar without the front band): element 0 = the tinted body cube over the borrowed
      * grayscale {@code barrel_parts/<family>/colored_{bottom,top,side}} art (tintindex 0
      * = the paint/mRGBa seat, bottom/top/side each on their own face key), elements 1-6 =
@@ -1552,8 +1552,8 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p4-machine-oven (W2-exclusive provider addition), generalized by task
-     * p7-basicmachine-family into {@link #addMachine(Block, String)}: the A-tier machine
+     * Task machine-oven (W2-exclusive provider addition), generalized by task
+     * basicmachine-family into {@link #addMachine(Block, String)}: the A-tier machine
      * rendering — a pure datagen blockstate over 4 horizontal facings x 2 active x 2
      * running = 16 variants (HORIZONTAL_FACING, A-tier furnace idiom). Three
      * models (inactive/active/running), each a {@code cube} with the four-texture key set
@@ -1565,7 +1565,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      */
     private void addOven() {
         addMachine(GTMachines.OVEN.get(), "oven");
-        // task p27-oven-heat-t-ladder — the Heat_T ladder rows through the p8 texture-base
+        // task oven-heat-t-ladder — the Heat_T ladder rows through the p8 texture-base
         // overload: the tier models derive from aBase (oven_t2/_active/_running) while the
         // FRONT TEXTURES stay on the family T1 "oven" set (upstream NBT_TEXTURE "oven" on
         // all four rows :1288-1291) — the ladder adds zero PNGs.
@@ -1575,10 +1575,10 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * The addOven generalization (task p7-basicmachine-family ④): one {@code aBase} machine
+     * The addOven generalization (task basicmachine-family ④): one {@code aBase} machine
      * = three models ({@code aBase}, {@code aBase_active}, {@code aBase_running}), the
      * 16-variant blockstate, and the BlockItem model parenting the block model. Since task
-     * p28-b-port-overlay-render the three models come from {@link #familyMachineModel} —
+     * b-port-overlay-render the three models come from {@link #familyMachineModel} —
      * the family colored six-face body plus the six static state decals (the upstream
      * :1014 two-layer form over the full upstream texture arrays :176-203, not the
      * front-only split the p22 borrow started from).
@@ -1593,7 +1593,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * distinct instances crash there, hence the single-owner aliases.)
      */
     /**
-     * Task p29-w4-eu-bridge — the Roasting Oven 4-ladder (Loader_MultiTileEntities.java
+     * Task w4-eu-bridge — the Roasting Oven 4-ladder (Loader_MultiTileEntities.java
      * :1386-1389): the addMachine three-model walk over the "roaster" family texture set
      * (the borrowed upstream basicmachines/roaster colored 6-set + the overlay state trio
      * x6; the front_active strip is cropped to its first frame — the port carries no
@@ -1607,7 +1607,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p34-machines-bumblelyzer-crucible — the two machine families (the Bumblelyzer
+     * Task machines-bumblelyzer-crucible — the two machine families (the Bumblelyzer
      * EU 5-ladder :1608-1612 + the Crystallisation Crucible HU 4-ladder :1437-1440, every
      * row NBT_TEXTURE riding its family token): the addHeatSmelterFamilies shape verbatim —
      * model names per path, the FRONT TEXTURES stay on the family sets (the borrowed
@@ -1624,7 +1624,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p34-machines-burner-plantalyzer — the Burner Mixer 4-ladder (20521-20524,
+     * Task machines-burner-plantalyzer — the Burner Mixer 4-ladder (20521-20524,
      * NBT_TEXTURE "burnmixer") + the Plantalyzer 5-ladder (20531-20535, "plantalyzer"):
      * the addCanner shape verbatim — model names per path, the front textures stay on the
      * family set (the borrowed upstream basicmachines/{burnmixer,plantalyzer} split
@@ -1641,7 +1641,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p29-w4-eu-bridge — the three EU-bridge converter families (Loader
+     * Task w4-eu-bridge — the three EU-bridge converter families (Loader
      * :815-821/:831-837/:847-853, 15 blocks). NOT paintable machines — the reused
      * {@link gregtech6.block.energy.GT6DynamoBlock} carrier rides the converter
      * two-layer form instead of the addMachine paint walk: one {@link #addConverterModel}
@@ -1661,7 +1661,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p32-qu-laser-domain — the CO2 Laser + Laser Absorber families (Loader
+     * Task qu-laser-domain — the CO2 Laser + Laser Absorber families (Loader
      * :930-934/:976-980, 10 blocks): the SAME reused-dynamo-carrier converter form as the
      * bridges, over the borrowed upstream colored + overlay groups (lasers/laser_electric,
      * laserabsorbers/electric_laser — the assets/README.md faces), both with upstream
@@ -1674,8 +1674,8 @@ public final class GT6BlockStates extends BlockStateProvider {
     private void addLaserFamilies() {
         addBridgeFamily(GT6Lasers.CO2_LASER_BLOCKS_BY_PATH, "co2_laser", "laser_electric", true);
         addBridgeFamily(GT6Lasers.LASER_ABSORBER_BLOCKS_BY_PATH, "laser_absorber", "laser_absorber", true);
-        // task p32-qu-energizer — the third laser-converter family keeps the plain
-        // single-layer orientable (the r8-tex-bridge-kinetic probe: the upstream
+        // task qu-energizer — the third laser-converter family keeps the plain
+        // single-layer orientable (the tex-bridge-kinetic probe: the upstream
         // quantum_laser overlay groups are alpha-0 EMPTY layers and the colored layer is
         // mRGBa-dependent gray noise — nothing to borrow, the committed derived amber
         // faces stay the rung identity, the assets/README.md probe verdict)
@@ -1684,7 +1684,7 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /**
      * One bridge family: the orientable cube + the five rung blockstates + the item parents
-     * (the transformer form). Task p38-c2-controller-tint: the re-declared body element
+     * (the transformer form). Task c2-controller-tint: the re-declared body element
      * carries {@code tintindex 0} on every face (the machineModel grammar — the child's
      * elements replace the parent's, the partModel precedent) — the grayscale colored
      * front/side pairs multiply the row's NBT_MATERIAL (the upstream
@@ -1699,7 +1699,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     private void addBridgeFamily(java.util.Map<String, RegistryObject<Block>> aBlocks, String aFamily, String aTexture) {
         BlockModelBuilder tModel = models().orientable(aTexture,
                 modLoc("block/" + aTexture + "_side"), modLoc("block/" + aTexture + "_front"), modLoc("block/" + aTexture + "_side"))
-                // issue #8 (task r3-world-tint-render-type): uniform cutout over the paintable
+                // issue #8 (task world-tint-render-type): uniform cutout over the paintable
                 // family (the census convention — an opaque-texture body renders identically on
                 // cutout, and the family stays shell-safe if decals join later)
                 .renderType("cutout");
@@ -1729,8 +1729,8 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * The two-layer bridge family (task r8-tex-bridge-kinetic — the census B2 ruling): the
-     * {@link #addConverterModel} grammar the r4-18 converter band already speaks, over the
+     * The two-layer bridge family (task tex-bridge-kinetic — the census B2 ruling): the
+     * {@link #addConverterModel} grammar the #18 converter band already speaks, over the
      * borrowed upstream {@code <band>_colored_*} + {@code <band>_overlay_*} groups — the
      * tintindex-0 body is the mRGBa seat, the six 0.01 decal shells ride untinted (the
      * upstream {@code BlockTextureMulti(colored x mRGBa, overlay)} stack, MultiTileEntity
@@ -1754,7 +1754,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p32-magic-absorber — the Magic Field Absorber single (Loader :1005, id 10180):
+     * Task magic-absorber — the Magic Field Absorber single (Loader :1005, id 10180):
      * the cube_directional model over the borrowed upstream colored base (assets/README.md
      * — the four upstream colored faces are one byte-identical grayscale file) with the
      * SIX-WAY facing rotation map (the vanilla dispenser form: north = identity,
@@ -1772,11 +1772,11 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("south", modLoc("block/magic_absorber_base"))
                 .texture("west", modLoc("block/magic_absorber_base"))
                 .texture("east", modLoc("block/magic_absorber_base"))
-                // issue #8 (task r3-world-tint-render-type): uniform cutout over the
+                // issue #8 (task world-tint-render-type): uniform cutout over the
                 // paintable family (the census convention)
                 .renderType("cutout");
         // the re-declared body element (tintindex 0 = the material tint, task
-        // p38-c2-controller-tint — the child's elements replace the cube_directional
+        // c2-controller-tint — the child's elements replace the cube_directional
         // parent's): the grayscale base PNG multiplies the row's NBT_MATERIAL MT.Pd (the
         // upstream MultiTileEntityMagicFieldAbsorber.getTexture2 :133-136
         // BlockTextureMulti(BlockTextureDefault(colored, mRGBa), overlay) form); the
@@ -1804,12 +1804,12 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * The texture-base overload (task p8-machine-tiers-doinject ⑧): the model names derive
+     * The texture-base overload (task machine-tiers-doinject ⑧): the model names derive
      * from {@code aBase} (so shredder_t2 gets shredder_t2/_active/_running models + its own
      * 16-variant blockstate + the item parent) while the TEXTURES stay on the family's
      * T1 set ({@code aTextureBase_colored_*} + the {@code aTextureBase_overlay_*} state
-     * trio, task p22-paint-front-overlay-split extended to all six faces by task
-     * p28-b-port-overlay-render) — the tier is not a visual state upstream (the rows
+     * trio, task paint-front-overlay-split extended to all six faces by task
+     * b-port-overlay-render) — the tier is not a visual state upstream (the rows
      * :1294-1309 share the NBT_TEXTURE per family), so the ladder adds zero PNGs.
      */
     private void addMachine(Block aBlock, String aBase, String aTextureBase) {
@@ -1833,13 +1833,13 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /**
      * One cube model over the four-texture key set: down/up/north(front)/south+east+west(side).
-     * The p22 two-element form. ACT-only since task p28-b-port-overlay-render (the
+     * The p22 two-element form. ACT-only since task b-port-overlay-render (the
      * Advanced Crafting Table is the one machine family with no borrowed side art — the
      * craftingtables/advanced upstream group ships fronts only — so it keeps the shared
      * oven placeholder body and the single front decal; every addMachine family moved to
      * {@link #familyMachineModel}).
      *
-     * <p>Task p21-paintable-tint-render: the vanilla {@code block/cube} element is re-declared
+     * <p>Task paintable-tint-render: the vanilla {@code block/cube} element is re-declared
      * in the child with {@code tintindex 0} on EVERY face — the machine cube is six-texture,
      * so the {@link #tintedCubeAll} {@code #all} shortcut does not apply and the per-face
      * element form is required. Upstream canonical: every faced face multiplies the
@@ -1851,7 +1851,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * bounds; the {@code block/cube} parent keeps the display transforms and its
      * {@code particle = #down} binding).
      *
-     * <p>Task p22-paint-front-overlay-split: the former single BAKED front composite
+     * <p>Task paint-front-overlay-split: the former single BAKED front composite
      * (colored base + state overlay flattened, the P20 bake) is retired for the upstream
      * TWO-LAYER form (:1014 = BlockTextureMulti(BlockTextureDefault(colored, mRGBa),
      * BlockTextureDefault(state overlay)) with the second layer UNCOLOURED,
@@ -1877,7 +1877,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("west", modLoc("block/oven_side"))
                 .texture("east", modLoc("block/oven_side"))
                 .texture("overlay", modLoc("block/" + aOverlayTexture))
-                // issue #8 (task r3-world-tint-render-type): the 0.01 front decal is a
+                // issue #8 (task world-tint-render-type): the 0.01 front decal is a
                 // transparent-texel overlay shell — the default SOLID chunk layer has no
                 // alpha discard, so the shell's transparent texels paint their RGB residue
                 // as an opaque plate over the tintindex-0 body. cutout discards them (the
@@ -1896,7 +1896,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p28-b-port-overlay-render — the full-family machine model over the borrowed
+     * Task b-port-overlay-render — the full-family machine model over the borrowed
      * upstream basicmachines texture arrays (MultiTileEntityBasicMachine.java:176-203:
      * mTexturesMaterial + the mTexturesInactive/Active/Running trio, each the six-entry
      * array [bottom, top, left, front, right, back]). The upstream :1014 two-layer form
@@ -1950,7 +1950,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_right", modLoc("block/" + aTextureBase + "_overlay_right" + aStateSuffix))
                 .texture("overlay_top", modLoc("block/" + aTextureBase + "_overlay_top" + aStateSuffix))
                 .texture("overlay_bottom", modLoc("block/" + aTextureBase + "_overlay_bottom" + aStateSuffix))
-                // issue #8 (task r3-world-tint-render-type): the six 0.01 state decals are
+                // issue #8 (task world-tint-render-type): the six 0.01 state decals are
                 // transparent-texel overlay shells — cutout discards their transparent
                 // texels so the tintindex-0 body shows through (the D2 leg6 fix shape).
                 .renderType("cutout");
@@ -1990,7 +1990,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task r8-tex-pipe-textures — one shared two-layer tinted cube model per pipe texture
+     * Task tex-pipe-textures — one shared two-layer tinted cube model per pipe texture
      * set: the {@link #tintedCubeAll} body (every face tintindex 0 over {@code #all}, the
      * mRGBa seat — the wire-family grammar) plus one 0.01 six-face decal band per overlay
      * texture in {@code aOverlays}, each face cullface-synced with the body and carrying
@@ -1998,7 +1998,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * FaceBuilder's default -1 omits the key, so the paint chain can never tint the
      * outlines). The shell re-declares {@code cutout}: the overlay art is a
      * transparent-texel plate and the default SOLID chunk layer has no alpha discard
-     * (issue #8, the r3-world-tint-render-type root-cause pair). No explicit UVs — they
+     * (issue #8, the world-tint-render-type root-cause pair). No explicit UVs — they
      * default to the element bounds. {@code aName} is the full {@code block/...} model
      * path; the restrictive twin stacks the PIPE_RESTRICTOR band as the second overlay
      * (the upstream third render pass, MultiTileEntityPipeItem.java:280).
@@ -2046,7 +2046,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task r8-tex-pipe-textures — the pipe/connector blockstate form, UNCHANGED from the
+     * Task tex-pipe-textures — the pipe/connector blockstate form, UNCHANGED from the
      * W1/p26/p32 placeholder era (the three former addFluidPipe/addItemPipe/
      * addLogisticsWire one-model builders collapsed onto it): ONE blockstate JSON per
      * block whose variant per {@link gregtech6.block.GTBlockProperties#CONNECTIONS} mask
@@ -2063,7 +2063,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p7-d2-cable spec ⑥ — the electric wires, the pipe section shape: one shared
+     * Task d2-cable spec ⑥ — the electric wires, the pipe section shape: one shared
      * cube_all model over {@code gt6:textures/block/wire_electric.png} (both variants
      * reference the same PNG, the p7 shared-PNG drum family form) with a variant per
      * {@link gregtech6.block.wire.GTWireBlock} CONNECTIONS mask value (0..63, the 6-bit
@@ -2079,7 +2079,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p9-wire-family-w1 spec ⑥, MODEL TARGET UPGRADED by task p9-wire-family-w2
+     * Task wire-family-w1 spec ⑥, MODEL TARGET UPGRADED by task wire-family-w2
      * (the card's "swap the model target to GTWireBakedModel + textured models"): the 620-block wire family,
      * looped over the {@link GTWireSpecs} table. The blockstate form is UNCHANGED from W1 —
      * per block ONE blockstate JSON whose SINGLE property-less variant (the {@code ""} key,
@@ -2117,7 +2117,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p10-wire-redstone-family — the redstone-wire family (6 blocks over
+     * Task wire-redstone-family — the redstone-wire family (6 blocks over
      * {@link GTWireSpecs#REDSTONE_ROWS}), the addWireFamily pipe over the redstone variant
      * list. The three materials (RedAlloy/Signalum/Lumium) all resolve to the
      * {@code copper} texture set (clloy/clloymachine construct with SET_COPPER —
@@ -2125,7 +2125,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * single property-less variant wildcard maps the 64 CONNECTIONS states per block onto
      * the shared tinted model.
      *
-     * <p>Task p11-wire-brightness UPGRADED the runtime target (the fiber-card shape): the
+     * <p>Task wire-brightness UPGRADED the runtime target (the fiber-card shape): the
      * listener table ({@link gregtech6.client.wire.GTWireClientListener#buildParams}) now
      * covers the six redstone paths, so every per-state key
      * {@code gt6:wire_red_alloy#connections=0..63} et al AND the item keys bake into the
@@ -2155,13 +2155,13 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p10-wire-laser-placeholder — the laser-wire family (1 block over
+     * Task wire-laser-placeholder — the laser-wire family (1 block over
      * {@link GTWireSpecs#LASER_ROWS}), the addWireFamily pipe over the laser variant list.
      * The row material is MT.NULL (upstream NBT_MATERIAL MT.NULL, Loader:1815), which
      * resolves to the {@code none} set (GTWireTextures.blockSetOf empty-list rule) — the
      * W2 borrow already shipped that set (the Superconductor row), so zero new PNGs.
      *
-     * <p>Task p11-wire-fiber-texture UPGRADED the runtime target: the listener table
+     * <p>Task wire-fiber-texture UPGRADED the runtime target: the listener table
      * ({@link gregtech6.client.wire.GTWireClientListener#buildParams}) now covers
      * {@code wire_laser}, so every per-state key AND the item key bake into the
      * {@link gregtech6.client.wire.GTWireBakedModel} fiber form (the fixed FIBER_WIRE
@@ -2171,7 +2171,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * the blockstate's single wildcard variant is what mints the 64 per-state
      * {@code gt6:wire_laser#connections=N} keys the listener swaps), and as the baked
      * fallback safety net if the listener never fires. This is the exact shape the 620
-     * electric rows and — since task p11-wire-brightness — the 6 redstone rows have;
+     * electric rows and — since task wire-brightness — the 6 redstone rows have;
      * every wire family now renders through the per-state baked model.
      */
     private void addLaserWireFamily(Map<String, ModelFile> aShared) {
@@ -2190,10 +2190,10 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p8-d4-energy-source spec ② — the test energy source: one cube_all over
+     * Task d4-energy-source spec ② — the test energy source: one cube_all over
      * {@code gt6:textures/block/energy_source.png} (the borrowed upstream
-     * solarpanel_electric_8eu side texture, the p7-gui-family byte-identical form) plus
-     * the 2D BlockItem icon over the same sprite (r8-tex-itemform-a — the former
+     * solarpanel_electric_8eu side texture, the gui-family byte-identical form) plus
+     * the 2D BlockItem icon over the same sprite (tex-itemform-a — the former
      * parent-the-block-model form tiled the sprite over six inventory faces). No
      * properties, a single variant.
      */
@@ -2204,11 +2204,11 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p26-eu-bridge-outbound (TAIL-APPENDED row, the shared serial file) — the FE
+     * Task eu-bridge-outbound (TAIL-APPENDED row, the shared serial file) — the FE
      * battery fixture: the addEnergySource shape verbatim, one cube_all over the SHARED
      * placeholder {@code gt6:textures/block/energy_source.png} (no new PNG — the borrow
      * posture the p20 testmachine rows pinned), plus the 2D BlockItem icon over the same
-     * sprite (r8-tex-itemform-a). No properties, a single variant.
+     * sprite (tex-itemform-a). No properties, a single variant.
      */
     private void addFeBattery() {
         Block tBattery = GT6FeBatteries.FE_BATTERY.get();
@@ -2217,10 +2217,10 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p28-b-fe-converter-machine (TAIL-APPENDED row, the shared serial file) — the
+     * Task b-fe-converter-machine (TAIL-APPENDED row, the shared serial file) — the
      * ULV FE→EU converter: the addFeBattery shape verbatim, one cube_all over the SHARED
      * placeholder {@code gt6:textures/block/energy_source.png} (no new PNG — the borrow
-     * posture), plus the 2D BlockItem icon over the same sprite (r8-tex-itemform-a). No
+     * posture), plus the 2D BlockItem icon over the same sprite (tex-itemform-a). No
      * properties, a single variant.
      */
     private void addFeConverter() {
@@ -2230,9 +2230,9 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p28-b-fe-converter-machine (TAIL-APPENDED row, the shared serial file) — the
+     * Task b-fe-converter-machine (TAIL-APPENDED row, the shared serial file) — the
      * FE source fixture: the addFeBattery shape verbatim, one cube_all over the SHARED
-     * placeholder, plus the 2D BlockItem icon over the same sprite (r8-tex-itemform-a).
+     * placeholder, plus the 2D BlockItem icon over the same sprite (tex-itemform-a).
      */
     private void addFeSource() {
         Block tSource = GT6FeBatteries.FE_SOURCE.get();
@@ -2241,7 +2241,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p20-testmachine-blockstates — the two dev BE-framework blocks (task p3-be-framework,
+     * Task testmachine-blockstates — the two dev BE-framework blocks (task be-framework,
      * {@link GTBlockEntities#TEST_MACHINE} / {@link GTBlockEntities#TEST_MACHINE_IDLE}): the last
      * model-less blocks in the registry face (P20 texture census, research card
      * tasks.p20-research-texture-census — every other registered blockstate+item model was
@@ -2249,7 +2249,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * SHARED placeholder {@code gt6:textures/block/example_chest.png} (no new PNG per the card
      * scope — the placeholder-to-upstream art swap stays a P20 wave item; the census pin d
      * resolves the layer0 against the static tree), plus the 2D item icon over the same
-     * sprite (r8-tex-itemform-a). Datagen-only JSON: the dev blocks register no BlockItem
+     * sprite (tex-itemform-a). Datagen-only JSON: the dev blocks register no BlockItem
      * (the census "dev blocks have no item" note), the item model row merely closes the
      * model-resolution loop the way TestMachineBlock.java:21-22 expected when it deferred
      * this datagen to the example machine card. No properties, a single variant each —
@@ -2266,7 +2266,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p12-engine-crank — the Hand Crank: one cube_all over
+     * Task engine-crank — the Hand Crank: one cube_all over
      * {@code gt6:textures/block/crank.png} (the borrowed upstream crank front icon, the
      * energy_source byte-identical-borrow form; assets/README.md attribution), single
      * model for every state — the FACING property drives the EMIT side, not the visuals
@@ -2280,7 +2280,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p12-axle-family — the 44 axle blocks (11 materials x 4 diameters): ONE shared
+     * Task axle-family — the 44 axle blocks (11 materials x 4 diameters): ONE shared
      * {@code cube_column} model over the borrowed static {@code gt6:block/axle} texture
      * (end == side, the GTWires shared-texture form; assets/README.md attribution) and a
      * 3-variant blockstate per block driving the AXIS property — the vanilla
@@ -2301,7 +2301,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p12-tap-funnel-attachment spec ⑤ — the 12 wall attachments: one cube_all
+     * Task tap-funnel-attachment spec ⑤ — the 12 wall attachments: one cube_all
      * per row over the TWO family textures, {@code tap.png} (borrowed from upstream
      * {@code machines/tools/tap/colored/side.png}) and {@code funnel.png} (upstream
      * {@code machines/tools/funnel/colored/side.png}), the barrel_metal shared-PNG
@@ -2324,12 +2324,12 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p12-engine-steam — the Steam Engine family (all 28 rows of
+     * Task engine-steam — the Steam Engine family (all 28 rows of
      * {@link GT6Kinetics#STEAM_ENGINES}, the no-upstream-subset ruling): ONE shared
      * {@link #addConverterModel} two-layer shell for the whole family — front (the KU
      * emit face) / back (the steam face) / side over the borrowed upstream
      * {@code machines/engines/kinetic_steam/} colored + overlay groups (task
-     * r8-tex-bridge-kinetic; the overlay trio is the :285-294 sOverlays stack the p12
+     * tex-bridge-kinetic; the overlay trio is the :285-294 sOverlays stack the p12
      * borrow left unborrowed — the census B3 ruling supersedes the old note). Rotated per
      * {@code FACING} exactly like the machine ladder ({@code addMachine}) with NO
      * active split — upstream keys the visuals on synced mState/mActive byte data
@@ -2351,10 +2351,10 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p12-engine-diesel — the 8 diesel engine tiers (Loader_MultiTileEntities.java
+     * Task engine-diesel — the 8 diesel engine tiers (Loader_MultiTileEntities.java
      * :721-729): ONE shared {@link #addConverterModel} two-layer shell over the borrowed
      * upstream {@code machines/generators/motor_liquid/} colored {front,back,sides} +
-     * overlay groups (task r8-tex-bridge-kinetic — the p12 single-cube_all borrow retired;
+     * overlay groups (task tex-bridge-kinetic — the p12 single-cube_all borrow retired;
      * the census B3 ruling), the FACING property rotating the front exactly like the steam
      * family (upstream MultiTileEntityMotorLiquid.java:242-254 + getTexture2 :216-221 —
      * the front is the emit face, the back the exhaust). The upstream overlay_active
@@ -2363,7 +2363,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * tintindex-0 seat and the row's loader NBT_MATERIAL (:721-729) is the tint — the
      * GTMachinePaintTint diesel arm resolves it off {@code DieselSpec.material}.
      * The 8 BlockItem models stay 2D icons over the shared front sprite (the
-     * r8-tex-itemform-b form per row), repointed to the renamed byte-identical
+     * tex-itemform-b form per row), repointed to the renamed byte-identical
      * {@code diesel_engine_colored_front}.
      */
     private void addDieselEngines() {
@@ -2375,14 +2375,14 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p28-c-water-wheel — the Water Wheel: one cube_all over the ORIGINAL
+     * Task c-water-wheel — the Water Wheel: one cube_all over the ORIGINAL
      * {@code gt6:block/water_wheel} texture (the kTFRUAddon PNG is NOT borrowed — the
      * research-card license ruling: AGPL artwork never enters this repo, the wheel
      * texture is drawn for the port). ONE model over every AXIS state (simpleBlock =
      * partialState().setModels() matches all states, the diesel FACING precedent) — the
      * blade spin visual is the declared defer (the GT6Kinetics.WATER_WHEEL doc; the
      * functional ACTIVE output rides the BE). The BlockItem is the 2D icon over the
-     * wheel sprite (r8-tex-itemform-b).
+     * wheel sprite (tex-itemform-b).
      */
     private void addWaterWheel() {
         Block tWheel = GT6Kinetics.WATER_WHEEL.get();
@@ -2391,29 +2391,29 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p28-c-ulv-dynamo-row — the Electric Dynamo T0 ULV row: the addFeConverter
+     * Task c-ulv-dynamo-row — the Electric Dynamo T0 ULV row: the addFeConverter
      * shape (one cube_all over the SHARED placeholder {@code block/energy_source.png}, no
      * new PNG — the p20 borrow posture) with the empty-partial wildcard variant covering
      * the FACING property (the addAttachments convention — the partialState().setModels()
      * empty key matches every state, the water wheel "static facing" precedent). The
      * facing is a functional IO face (FRONT out EU / BACK in RU), not a visual state in
-     * this placeholder — issue #18 (task r4-18-converter-tex-facing) upgraded the five
+     * this placeholder — issue #18 (task 18-converter-tex-facing) upgraded the five
      * LV..IV rows to the borrowed upstream dynamos art; the T0 row KEEPS the placeholder
      * because upstream carries no T0 art at all (the Electric_T[0] slot has no machine,
      * MT.java:3691 — PLACEHOLDER, NO UPSTREAM COUNTERPART, the README ledger row).
      */
     /**
-     * Task p29-w4-battery-storage, re-formed by task r8-tex-composite-family — the twelve
+     * Task w4-battery-storage, re-formed by task tex-composite-family — the twelve
      * BatteryBox rows ride the true two-layer borrows (the p29 src-over side bake retired):
      * the compositeEnergyModel pair per size ({@code block/battery_box{,_large}} — the
      * tintindex-0 grayscale colored body + the six 0.01 overlay plates, cutout) with the
      * ACTIVE variant swapping the shell to the overlay_active art (upstream getTexture2
      * {@code sOverlays[mActiveState & 3]}, MultiTileEntityBatteryBox :31-:33 — the
-     * trinary collapsed to the boolean, the blinking third state the r4-18 defer). Front
+     * trinary collapsed to the boolean, the blinking third state the #18 defer). Front
      * on the FACING face (the OUTPUT), side elsewhere (upstream has no back art, the
      * two-icon table). The rows tint Electric_T[i] through the block's material column
      * (Loader :894-:895 NBT_MATERIAL, the GTMachinePaintTint seat). The BlockItems parent
-     * the two-layer block models again (the ok3D form — the r8-tex-itemform-a transitional
+     * the two-layer block models again (the ok3D form — the tex-itemform-a transitional
      * 2D icons retired per that card's flip-back declaration).
      */
     private void addBatteryBoxes() {
@@ -2430,13 +2430,13 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p35-energy-tail-machines, re-formed by task r8-tex-composite-family — the
+     * Task energy-tail-machines, re-formed by task tex-composite-family — the
      * Crystal Chargers: the 20-row LU family rides the true two-layer borrows (the p36
      * src-over composites retired): the compositeEnergyModel pair per size
      * ({@code block/crystal_charger{,_large}} — the upstream crystal_laser{,_large} art,
      * MultiTileEntityCrystalCharger :39-:50) with the ACTIVE variant swapping the shell
      * to the overlay_active trio (upstream {@code sOverlays[mActiveState & 3]}, :33-:36
-     * — the blinking third state the r4-18 defer). Front on the FACING face, side on the
+     * — the blinking third state the #18 defer). Front on the FACING face, side on the
      * other five (upstream has no back art, the two-icon table). The rows tint
      * Electric_T[i] (Loader :970-:971 NBT_MATERIAL).
      */
@@ -2454,12 +2454,12 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p36-energy-zpm-dechargers, re-formed by task r8-tex-composite-family — the two
+     * Task energy-zpm-dechargers, re-formed by task tex-composite-family — the two
      * ZPM Decharger rows ride the true two-layer borrows (the p36 src-over composites
      * retired): the compositeEnergyModel pair ({@code block/zpm_decharger{,_quantum}} —
      * the upstream zpm_electricity/zpm_quantum art) with the ACTIVE variant swapping the
      * shell to the overlay_active trio (upstream {@code sOverlays[mActiveState & 3]},
-     * MultiTileEntityZPMDechargerEU :39-:44 — the blinking third state the r4-18 defer).
+     * MultiTileEntityZPMDechargerEU :39-:44 — the blinking third state the #18 defer).
      * Front on the FACING face, back on the opposite, side elsewhere (upstream index
      * 0/1/2). The {@code BI.ZPM_TOP} back decal (the {@code (mActiveState & 4)}
      * ZPM-inserted lamp, :42) stays the render-pool defer — the dynamic item-presence
@@ -2486,10 +2486,10 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p38-c1-dynamo-bowl-models — the Electric (T1-T5) and Flux (T1-T5) dynamo ladder
+     * Task c1-dynamo-bowl-models — the Electric (T1-T5) and Flux (T1-T5) dynamo ladder
      * rows: the ten registered {@code GT6DynamoBlock}s had ZERO generated assets (placed
      * they fell to the missing-model checkerboard; the census probe). Each family's ladder
-     * shares the ONE facing-cube model pair (issue #18, task r4-18-converter-tex-facing —
+     * shares the ONE facing-cube model pair (issue #18, task 18-converter-tex-facing —
      * the per-tier visual is not a column of the upstream registration, Loader
      * :946-950/:953-957 all ride one icon set): the addConverterModel two-layer grammar —
      * the tintindex-0 grayscale colored body (the runtime mRGBa multiply, the row
@@ -2525,12 +2525,12 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p12-gearbox-transformer — the GearBox (one cube_all over the borrowed
+     * Task gearbox-transformer — the GearBox (one cube_all over the borrowed
      * {@code gt6:block/gearbox} texture, the upstream iconsets/GEARBOX.png; assets/README.md
      * attribution) and the Rotation Transformer (the crank facing-cube posture: the FRONT =
      * input face, BACK = output face — MultiTileEntityTransformerRotation :42-45, now the
      * {@link #addConverterModel} two-layer shell over the borrowed transformer_rotation
-     * colored + overlay groups, task r8-tex-bridge-kinetic; the tint seat is the
+     * colored + overlay groups, task tex-bridge-kinetic; the tint seat is the
      * WoodTreated row, Loader :1668 NBT_MATERIAL, the GTMachinePaintTint arm). The
      * upstream overlay trio is an alpha-0 EMPTY layer (the README probe) — the shell is
      * the upstream-faithful pass structure, visually inert. The animated colored_active/
@@ -2549,10 +2549,10 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p28-c-ulv-lv-transformer — the Electric Transformer ULV-LV: the p12 rotation
+     * Task c-ulv-lv-transformer — the Electric Transformer ULV-LV: the p12 rotation
      * transformer's facing-cube posture (the FRONT = INPUT face — the Base11 :63
      * convention; ALL-BUT-FRONT = output), now over the BORROWED two-layer upstream art
-     * (issue #18, task r4-18-converter-tex-facing — the p28 src-over bake is retired, it
+     * (issue #18, task 18-converter-tex-facing — the p28 src-over bake is retired, it
      * dropped the per-tier mRGBa and painted all nine rows the same gray-white): the
      * addConverterModel tinted-body + overlay-shell grammar, the row's Electric_T[i]
      * casing multiply through GTMachineTintModel (upstream
@@ -2563,7 +2563,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * README defer note).
      */
     /**
-     * Task p35-long-distance-pipes — the Long Distance pipes: the 16 wire metas ride the
+     * Task long-distance-pipes — the Long Distance pipes: the 16 wire metas ride the
      * cube-all shape over the shared item-pipe texture (the dedicated upstream
      * LONG_DIST_PIPES_01 iconset is the render pool — the energy-tail wire posture), the
      * two endpoints share the p28 electric-transformer orientable model (the facing-cube
@@ -2589,14 +2589,14 @@ public final class GT6BlockStates extends BlockStateProvider {
             Block tWire = gregtech6.registry.GT6LongDistPipes.wireBlockOf(tMeta);
             String tPath = gregtech6.registry.GT6LongDistPipes.pathOf(tMeta);
             simpleBlock(tWire, models().cubeAll(tPath, modLoc("block/item_pipe")));
-            // r8-tex-itemform-a — the 2D icon over the shared placeholder sprite (the former
+            // tex-itemform-a — the 2D icon over the shared placeholder sprite (the former
             // parent-the-block-model form tiled it over six inventory faces).
             itemModels().withExistingParent(tPath, mcLoc("item/generated")).texture("layer0", modLoc("block/item_pipe"));
         }
     }
 
     /**
-     * The converter two-layer model (issue #18, task r4-18-converter-tex-facing — the
+     * The converter two-layer model (issue #18, task 18-converter-tex-facing — the
      * addHive grammar over the addBridgeFamily front/back/side texture assignment):
      * element 0 = the tinted body cube over the borrowed grayscale
      * {@code <band>_colored_{front,back,side}} art (tintindex 0 = the material tint
@@ -2666,7 +2666,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * One composite-energy two-layer model (task r8-tex-composite-family, the
+     * One composite-energy two-layer model (task tex-composite-family, the
      * sensorModel subdirectory form over the {@link #addConverterModel} grammar): the
      * tintindex-0 body cube over the borrowed grayscale colored art ({@code block/<aFamily>/
      * colored_front} on north, {@code colored_side} on the other five — or
@@ -2751,7 +2751,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * The explicit-active walk (task r8-tex-bridge-kinetic): {@code aActive == null} (the
+     * The explicit-active walk (task tex-bridge-kinetic): {@code aActive == null} (the
      * families whose upstream art has no active group, or whose port carrier has no ACTIVE
      * property) pins BOTH property values to the inactive model — the static-face posture,
      * one model per facing.
@@ -2786,8 +2786,8 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p35-energy-tail-machines — the Long Distance families. The five LD transformer
-     * endpoints re-formed by task r8-tex-composite-family: the true two-layer borrows
+     * Task energy-tail-machines — the Long Distance families. The five LD transformer
+     * endpoints re-formed by task tex-composite-family: the true two-layer borrows
      * ({@code block/long_distance_transformer} — the upstream
      * longdistancetransformer_electric art, MultiTileEntityLongDistanceTransformer
      * :284-:299 — front = the INPUT face, back = the OUTPUT face) with the ACTIVE variant
@@ -2814,7 +2814,7 @@ public final class GT6BlockStates extends BlockStateProvider {
             Block tWire = gregtech6.registry.GT6LongDistWires.BLOCKS_BY_META.get(tRow.meta()).get();
             var tModel = models().cubeAll(tPath, modLoc("block/long_dist_wire_" + wireArtOf(tRow.tier())));
             getVariantBuilder(tWire).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
-            // r8-tex-itemform-a — the 2D icon over the row's own tier sprite (the former
+            // tex-itemform-a — the 2D icon over the row's own tier sprite (the former
             // parent-the-cube-all form stretched the 1px-ish wire art into six block faces).
             itemModels().withExistingParent(tPath, mcLoc("item/generated"))
                     .texture("layer0", modLoc("block/long_dist_wire_" + wireArtOf(tRow.tier())));
@@ -2834,7 +2834,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p8-prefixblock-render spec ① — the 3773 material prefix blocks
+     * Task prefixblock-render spec ① — the 3773 material prefix blocks
      * ({@link GTMaterialBlocks#blockArray()}, the card-A census order).
      *
      * <p><b>Model merging rule (pinned, anti-bloat)</b>: one SHARED block model per
@@ -2909,7 +2909,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     /**
      * The material's BLOCK texture-set name, lower-snaked; an empty/blank list falls back
      * to {@code "none"} = upstream SET_NONE (TextureSet.java:188; MT.setTextures
-     * MT.java:210-215 assigns the set name strings). Since task p9-wire-family-w2 the
+     * MT.java:210-215 assigns the set name strings). Since task wire-family-w2 the
      * implementation lives in the MC-free single source
      * {@link gregtech6.client.wire.GTWireTextures} (shared with the client listener — this
      * class's statics bootstrap-gate the offline test JVM, that one does not).
@@ -2919,9 +2919,9 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p13-boiler-tank — the 26 Steam Boiler Tank rows (Loader_MultiTileEntities.java
+     * Task boiler-tank — the 26 Steam Boiler Tank rows (Loader_MultiTileEntities.java
      * :553-579): ONE oriented cube model over the borrowed boiler_steam group, RE-BORROWED
-     * by task r8-tex-large-boilers (the former grayscale placeholder set and its "the
+     * by task tex-large-boilers (the former grayscale placeholder set and its "the
      * overlay iconset has no borrowable source" claim are retired — the
      * machines/tanks/boiler_steam overlay group ships upstream): the {@link #boilerModel}
      * two-layer grammar — the grayscale colored body is the tintindex-0 seat (the upstream
@@ -2933,7 +2933,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * render pool — the burning-box ruling repeated). Both ladders share the model (the
      * SAME block class upstream, :552 aClass). The 26 BlockItem models parent it.
      *
-     * <p>Task r3-world-tint-render-type (the C5 clean-up) put the body on the
+     * <p>Task world-tint-render-type (the C5 clean-up) put the body on the
      * {@code GTMachineTintModel} bake + the {@code GTItemPaintTint} inventory half (the
      * 43f48149b burning-box form) — unchanged; the uniform cutout declaration joins the
      * paintable census (opaque textures render identically on cutout).
@@ -2956,8 +2956,8 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p26-storage-hopper-family — the 4 storage-hopper rows (Loader_MultiTileEntities
-     * .java:145-146 over :191/:202, Bronze/Steel × hopper/queue). Task r8-tex-placeholder-audit
+     * Task storage-hopper-family — the 4 storage-hopper rows (Loader_MultiTileEntities
+     * .java:145-146 over :191/:202, Bronze/Steel × hopper/queue). Task tex-placeholder-audit
      * UPGRADED the target (the "no borrowable source" claim was proven false — the
      * {@code machines/automation/hopper} and {@code queuehopper} groups exist in the snapshot,
      * MultiTileEntityHopper.java:284-293 / QueueHopper:266-275): ONE {@link #boilerModel}
@@ -2991,7 +2991,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p13-burning-box-family — the 97 burning-box rows (Loader_MultiTileEntities.java
+     * Task burning-box-family — the 97 burning-box rows (Loader_MultiTileEntities.java
      * :517-704). Task issue11-burningbox UPGRADED the target (the former "the upstream
      * colored/overlay iconsets have no borrowable source in this repo" claim here was
      * proven false — all five burning_* groups exist in the snapshot): per GROUP one
@@ -3066,7 +3066,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_right", modLoc("block/burning_box_" + aGroup + "_overlay_right" + tSuffix))
                 .texture("overlay_top", modLoc("block/burning_box_" + aGroup + "_overlay_top" + tSuffix))
                 .texture("overlay_bottom", modLoc("block/burning_box_" + aGroup + "_overlay_bottom" + tSuffix))
-                // issue #8 (task r3-world-tint-render-type): the six burning decals are
+                // issue #8 (task world-tint-render-type): the six burning decals are
                 // transparent-texel overlay shells — cutout discards them off the body
                 // (the D2 leg6 fix shape).
                 .renderType("cutout");
@@ -3105,9 +3105,9 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p13-large-boiler — the Large Boiler family (Loader_MultiTileEntities.java
+     * Task large-boiler — the Large Boiler family (Loader_MultiTileEntities.java
      * :1159-1165/:1176/:1248-1252): the five boiler variant controllers over ONE shared
-     * two-layer front-bearing model, task r8-tex-large-boilers — the former single-layer
+     * two-layer front-bearing model, task tex-large-boilers — the former single-layer
      * grayscale cube and its "no borrowable largeboiler group" claim are retired (the
      * probe found the full machines/multiblockmains/largeboiler group): the Base10 default
      * {@code getTexture2} semantics (TileEntityBase10MultiBlockBase.java:192-194) — the
@@ -3117,7 +3117,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * form) and the overlay plates untinted. The BI.BAROMETER dynamic gauge is the render
      * pool (the p13 ruling). The FORMED variants map to the same model (the formed-look
      * visual is the p9 pool). The 5 BlockItem models parent their block model. The Dense
-     * Wall + transmitter parts ride addParts() (the p29-w3-nbtdesign-parts walk).
+     * Wall + transmitter parts ride addParts() (the w3-nbtdesign-parts walk).
      */
     private void addLargeBoiler() {
         ModelFile tMain = boilerModel("large_boiler", "large_boiler", true);
@@ -3134,13 +3134,13 @@ public final class GT6BlockStates extends BlockStateProvider {
             });
             itemModels().withExistingParent(tRow.path(), tMain.getLocation());
         }
-        // task p29-w3-nbtdesign-parts — the Dense Wall parts + the transmitter moved to
+        // task w3-nbtdesign-parts — the Dense Wall parts + the transmitter moved to
         // addParts() (the dense walls carry the DESIGN property — per-design variants; the
         // transmitter rides the upstream heatacceptor borrow); addLargeBoilerPart retired
     }
 
     /**
-     * One boiler two-layer model (task r8-tex-large-boilers; the addConverterModel grammar
+     * One boiler two-layer model (task tex-large-boilers; the addConverterModel grammar
      * over the boiler groups' bottom/top/side face keys): the tinted body cube over the
      * borrowed grayscale {@code block/<band>/colored_<face>} art (tintindex 0 = the
      * material tint seat; {@code aFront} binds the north face to the
@@ -3148,7 +3148,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * {@code block/<band>/overlay[_front]_<face>} decal shells (untinted, cullface synced
      * — the P22 pairing; the upstream overlay pass is NOT multiplied by mRGBa). Cutout so
      * the shells' transparent texels discard (the C7' fix shape). The {@code aTint} arm
-     * (task r8-tex-placeholder-audit) drops the tint seat for the unpaint families (the
+     * (task tex-placeholder-audit) drops the tint seat for the unpaint families (the
      * hoppers — the static-storages unpaint deviation row shape).
      */
     private ModelFile boilerModel(String aName, String aBand, boolean aFront) {
@@ -3216,12 +3216,12 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p24-lightning-rod — the Lightning Rod family (Loader_MultiTileEntities.java
+     * Task lightning-rod — the Lightning Rod family (Loader_MultiTileEntities.java
      * :1151/:1168/:1179/:1282): the three part blocks as plain cube_all over the borrowed
      * upstream textures (the multiblockparts metalwall/coil/lightningrod colored faces, the
      * P20 ruling ①), and the single controller over the two-layer front-bearing tinted
      * grammar over the borrowed multiblockmains lightningrod group, task
-     * r8-tex-multiblockmains — the former borrow-time-composite single-image cube and
+     * tex-multiblockmains — the former borrow-time-composite single-image cube and
      * its "all faces composite to the same pixels" claim are retired (the group's
      * colored/colored_front split is real art): the Base10 default {@code getTexture2}
      * semantics (TileEntityBase10MultiBlockBase.java:192-194), the boiler form — the
@@ -3232,12 +3232,12 @@ public final class GT6BlockStates extends BlockStateProvider {
      * The facing is structurally meaningless (the rod is vertical), so every state maps to
      * the same model with no rotation (the front pair lands on north); the FORMED variants
      * map to the same model (the formed-look visual is the p9 pool). The controller and the
-     * rod BlockItems are 2D icons over their composite/rod sprites (r8-tex-itemform-b).
+     * rod BlockItems are 2D icons over their composite/rod sprites (tex-itemform-b).
      */
     /**
-     * Task p29-w3-tank-valves — the Tank Main Valve family (Loader_MultiTileEntities.java
+     * Task w3-tank-valves — the Tank Main Valve family (Loader_MultiTileEntities.java
      * :1195-1222): the 25 variant controllers over ONE shared two-layer front-bearing
-     * cube model per material family, re-textured by task r8-tex-tank-family — the
+     * cube model per material family, re-textured by task tex-tank-family — the
      * borrowed {@code tank_valves/<family>_*} multiblockmains art (the wood valve over
      * the tankwood group, the 24 metal valves over the tankmetal group) in the
      * {@link #tankValveModel} Base10 front-layer-pair grammar: the north face carries
@@ -3272,7 +3272,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * The valve two-layer front-bearing model (task r8-tex-tank-family, the
+     * The valve two-layer front-bearing model (task tex-tank-family, the
      * addConverterModel grammar over the multiblockmains per-face key set): element 0 =
      * the tinted body cube (tintindex 0 = the material tint seat; down/up =
      * {@code colored_bottom}/{@code colored_top}, north = the {@code colored_front_side}
@@ -3312,7 +3312,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * The front-bearing overload (task r3-world-tint-render-type, the C5 boiler clean-up):
+     * The front-bearing overload (task world-tint-render-type, the C5 boiler clean-up):
      * the north face carries {@code aFront} (the boiler's barometer face) while the other
      * four sides share {@code aSide} — the blockstate y-rotation moves the front with the
      * FACING, so north IS the model-space front.
@@ -3323,7 +3323,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("down", modLoc(aBottom)).texture("up", modLoc(aTop))
                 .texture("north", modLoc(aFront)).texture("south", modLoc(aSide))
                 .texture("west", modLoc(aSide)).texture("east", modLoc(aSide))
-                // issue #8 (task r3-world-tint-render-type): uniform cutout over the
+                // issue #8 (task world-tint-render-type): uniform cutout over the
                 // paintable families (the census convention — tanks, crucible walls, boilers)
                 .renderType("cutout");
         tModel.element()
@@ -3338,7 +3338,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         Block tController = gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD.get();
         getVariantBuilder(tController).forAllStates(aState -> ConfiguredModel.builder().modelFile(tMain).build());
         itemModels().withExistingParent("multiblock_lightning_rod", mcLoc("item/generated")).texture("layer0", modLoc("block/lightningrod/main"));
-        // the Tungsten Wall (task r3-world-tint-render-type, the C5 clean-up; task
+        // the Tungsten Wall (task world-tint-render-type, the C5 clean-up; task
         // debt-tungsten-wall-designs): the row IS the :1151 machine_wall row (texture
         // "metalwall", NBT_DESIGNS 7, ANY.W) — its blockstate/item/models moved to the
         // addParts() new-form walk (the anyPartBlock lookup), where it emits the full
@@ -3352,7 +3352,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addLightningRodPart("lightning_rod", "block/lightningrod/rod");
     }
 
-    /** One cube_all Lightning Rod part block + its 2D-icon BlockItem (the addLargeBoilerPart shape, r8-tex-itemform-b). */
+    /** One cube_all Lightning Rod part block + its 2D-icon BlockItem (the addLargeBoilerPart shape, tex-itemform-b). */
     private void addLightningRodPart(String aPath, String aTexture) {
         Block tBlock = gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get(aPath).get();
         simpleBlock(tBlock, models().cubeAll(aPath, modLoc(aTexture)));
@@ -3360,7 +3360,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p21-stoneblocks-16item-registry-split — the 272 GT6 stone VARIANT blocks
+     * Task stoneblocks-16item-registry-split — the 272 GT6 stone VARIANT blocks
      * ({@link GTStoneBlocks#blockArray()}, stone-major in CS.java:1668 order and
      * variant-major in meta order, the per-pair registry split): each block is a degenerate
      * pure block with a FIXED {@link StoneVariant}, so each gets a plain single-state
@@ -3373,7 +3373,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * attribution, census 17x16 = 272 files, zero gaps, NO tintindex — the colored-PNG
      * route), so only the blockstate/item/loot faces re-key per pair. The TEXTURE of a pair
      * rides {@link #stoneTexture}: the granite/diorite/andesite trio's STONE/SMOTH variants
-     * point at the vanilla current textures (task r4-ore-tex-b), every other pair keeps its
+     * point at the vanilla current textures (task ore-tex-b), every other pair keeps its
      * borrowed PNG.
      *
      * <p>Same provider, same pass, so the parent resolves in the ExistingFileHelper (the
@@ -3401,7 +3401,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     /**
      * The texture a (stone, variant) pair renders: the borrowed per-pair PNG
      * {@code gt6:block/stones/<stone>/<variant>} — except the granite/diorite/andesite
-     * trio where vanilla 1.20.1 HAS a counterpart (task r4-ore-tex-b, the user B ruling
+     * trio where vanilla 1.20.1 HAS a counterpart (task ore-tex-b, the user B ruling
      * "same look both sides"): the STONE variant points at {@code minecraft:block/<stone>}
      * and the SMOOTH (= polished, the OP.stonePolished carrier) variant at
      * {@code minecraft:block/polished_<stone>}. The other 14 variants (cobble, bricks,
@@ -3424,7 +3424,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         return ResourceLocation.fromNamespaceAndPath("gt6", "block/stones/" + aStoneSnake + "/" + aVariant.snake);
     }
 
-    /** The trio with a vanilla 1.20.1 counterpart stone (task r4-ore-tex-b; basalt is the same-name DIFFERENT stone and stays borrowed). */
+    /** The trio with a vanilla 1.20.1 counterpart stone (task ore-tex-b; basalt is the same-name DIFFERENT stone and stays borrowed). */
     private static final List<String> VANILLA_MIGRATED_STONES = List.of("granite", "diorite", "andesite");
 
     /**
@@ -3447,7 +3447,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         for (Block tBlock : gregtech6.registry.GTStoneSlabBlocks.blockArray()) {
             gregtech6.block.stone.GTStoneSlabBlock tSlab = (gregtech6.block.stone.GTStoneSlabBlock)tBlock;
             String tTexture = "block/stones/" + tSlab.stoneSnake + "/" + tSlab.variant.snake;
-            ResourceLocation tTexLoc = stoneTexture(tSlab.stoneSnake, tSlab.variant); // the trio STONE/SMOTH rides vanilla (r4-ore-tex-b)
+            ResourceLocation tTexLoc = stoneTexture(tSlab.stoneSnake, tSlab.variant); // the trio STONE/SMOTH rides vanilla (ore-tex-b)
             ModelFile tBottom = models().getBuilder(tTexture + "_slab")
                     .parent(models().getExistingFile(mcLoc("block/slab")))
                     .texture("bottom", tTexLoc).texture("top", tTexLoc).texture("side", tTexLoc);
@@ -3471,7 +3471,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p24-grass-block — the 6 GT grass VARIANT blocks ({@link GTGrassBlocks#BLOCKS},
+     * Task grass-block — the 6 GT grass VARIANT blocks ({@link GTGrassBlocks#BLOCKS},
      * upstream meta order): one single-state blockstate per pair (the addStoneBlocks
      * degenerate-pure-block form) over a {@code cube_bottom_top} model — top/side ride the
      * BORROWED pre-coloured PNGs ({@code gt6:block/grass/top_<colour>}/
@@ -3506,14 +3506,14 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p30-w6-t1-trees-nine — the 27 GT tree blocks ({@link GT6TreeBlocks}): saplings
+     * Task w6-t1-trees-nine — the 27 GT tree blocks ({@link GT6TreeBlocks}): saplings
      * render the vanilla cross idiom over the borrowed SAPLING_SMALL PNGs (cutout layer,
      * the vanilla sapling render type), logs the axis blockstate over
      * cube_column(side/end, the vanilla log idiom), leaves a cube_all over the borrowed
      * LEAVES PNG (cutout_mipped, the vanilla leaves layer). All 36 textures are the
      * upstream iconsets PNGs byte-borrowed ({@code gt6:block/tree/*}, the
      * assets/README.md ledger face; the grass card pre-coloured-PNG precedent). The
-     * Rainbowood leaves carry tintindex 0 over their grayscale PNG (task p38-issue1-4,
+     * Rainbowood leaves carry tintindex 0 over their grayscale PNG (task issue1-4,
      * GitHub #4): the dynamic RAINBOW tint renders through the GT6TreeClientListener
      * BlockColor/ItemColor registrations (the upstream BlockTreeLeavesAB.java:129-139
      * face). The RED LINE
@@ -3540,7 +3540,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                     switch (tState.getValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS)) {
                 // the vanilla axisBlock rotation map (the addAxles/addSurfacePlants form;
                 // x-only-90 tips a Y-column onto Z and y-only-90 spins it in place —
-                // GitHub #26, the r4-26 fallen-log fix applied to the standing rows)
+                // GitHub #26, the #26 fallen-log fix applied to the standing rows)
                 case X -> new ConfiguredModel[] {new ConfiguredModel(tLogModel, 90, 90, false)};
                 case Y -> new ConfiguredModel[] {new ConfiguredModel(tLogModel)};
                 case Z -> new ConfiguredModel[] {new ConfiguredModel(tLogModel, 90, 180, false)};
@@ -3549,7 +3549,7 @@ public final class GT6BlockStates extends BlockStateProvider {
             // leaves: cube_all + cutout_mipped. The Rainbowood row adds tintindex 0 on
             // every face (the tintedCubeAll grammar) over its GRAYSCALE PNG — the world/
             // inventory tint tables are the GT6TreeClientListener RAINBOW registrations
-            // (task p38-issue1-4, GitHub #4 — the upstream BlockTreeLeavesAB.java:129-139
+            // (task issue1-4, GitHub #4 — the upstream BlockTreeLeavesAB.java:129-139
             // face; the other 8 kinds keep their pre-coloured PNGs untinted).
             ModelFile tLeavesModel;
             if (tKind == gregtech6.block.tree.GT6TreeKind.RAINBOWOOD) {
@@ -3566,7 +3566,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p30-w6-t2-surface-blocks — the obtainable surface band ({@link GT6SurfaceBlocks}
+     * Task w6-t2-surface-blocks — the obtainable surface band ({@link GT6SurfaceBlocks}
      * PLANT_BAND + FALLEN_LOGS, 8 per-pair Block+Item blocks). The glowtus renders the
      * lily-pad face (BlockGlowtus = BlockBaseLilyPad): a hand-built 1px flat plate over the
      * borrowed GLOWTUS_RED.png (cutout — the texture carries transparency; the tintedSlab
@@ -3618,7 +3618,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p26-c-foam-block-family — the C-Foam block family band (upstream
+     * Task c-foam-block-family — the C-Foam block family band (upstream
      * BlockCFoamFresh/BlockCFoam + the MTE 32765 carrier). The four-state texture set of
      * upstream MultiTileEntityCFoam.getTexture2 (:132 — CFOAM_FRESH/CFOAM_FRESH_OWNED/
      * CFOAM_HARDENED/CFOAM_HARDENED_OWNED) maps onto:
@@ -3692,7 +3692,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task r8-tex-sensors (supersedes the p26-sensors-core cube_all bake) — the 21
+     * Task tex-sensors (supersedes the sensors-core cube_all bake) — the 21
      * sensor families ({@link GT6Sensors#ROWS}) ride the front-bearing two-layer faceted
      * cube, the {@link #addConverterModel} grammar MINUS the tint seat: the body is the
      * upstream colored layer ({@code sensors/<family>/colored_{front,back,side}}, the
@@ -3710,7 +3710,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * parents the block model (the block IS what 1.7.10 rendered for the held sensor).
      *
      * <p>Declared defer: the upstream pass1-6 LIVE digit boards (the CHAR_* sprite stack,
-     * MultiTileEntitySensor :143-261) stay the render pool card (r8-pool-gauges) — the
+     * MultiTileEntitySensor :143-261) stay the render pool card (pool-gauges) — the
      * borrowed overlay/front is the static art, same ruling as the boiler barometer.
      */
     private void addSensors() {
@@ -3734,7 +3734,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * One sensor family's two-layer faceted model ({@code block/sensors/<family>}):
      * the untinted body cube over the colored trio (front on north) + the six 0.01
      * overlay plates (front/back/side), cullface synced — the {@link #addConverterModel}
-     * shells verbatim minus the tintindex (the r8-tex-sensors NBT=null ruling).
+     * shells verbatim minus the tintindex (the tex-sensors NBT=null ruling).
      */
     private ModelFile sensorModel(String aFamily) {
         String tBase = "block/sensors/" + aFamily;
@@ -3786,14 +3786,14 @@ public final class GT6BlockStates extends BlockStateProvider {
         return tModel;
     }
     /**
-     * Task p29-w3-nbtdesign-parts ③④ — the part-family expansion (Loader
+     * Task w3-nbtdesign-parts ③④ — the part-family expansion (Loader
      * :1138-1189). Every new-form part block gets ONE MODEL PER DESIGN VARIANT: the
      * upstream part renders {@code mTextures[mDesign][face]} with
      * {@code mTextures = new IIconContainer[bind8(NBT_DESIGNS)+1][6]}
      * (MultiTileEntityMultiBlockPart.java:138-146), the 1.20.1 form is the
      * {@code design} blockstate variant per model. Each model is the two-layer part
      * shape: the body cube over the BORROWED upstream colored textures with tintindex 0
-     * on the body (the material tint, task p38-issue8-multipart-tint — the row
+     * on the body (the material tint, task issue8-multipart-tint — the row
      * NBT_MATERIAL bakes in through GTMachineTintModel/ItemColor, the machine-domain
      * route; the crank grayscale deviation is retired for this family, the lightning-rod
      * part borrows keep their untinted cube_all) plus six 0.01-offset overlay decals (the
@@ -3850,7 +3850,7 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /** One two-layer part model (body cube + six overlay decals) over the borrowed design textures. */
     /**
-     * Task r8-tex-large-machines — the twelve large-machine controllers go two-layer:
+     * Task tex-large-machines — the twelve large-machine controllers go two-layer:
      * the {@link #familyMachineModel} state trio per row over the row's upstream
      * basicmachines texture arrays (MultiTileEntityBasicMachine.java:176-203, the
      * mTexturesMaterial + mTexturesInactive/Active/Running trio — the large controllers
@@ -3887,15 +3887,15 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task r8-tex-large-machines — the Large Matter Fabricator controller joins the
+     * Task tex-large-machines — the Large Matter Fabricator controller joins the
      * familyMachineModel state trio over the upstream NBT_TEXTURE "largemassfab" family
      * (Loader :1241; the colored six-set stays the p31 borrow, the overlay state trio the
      * r8 ledger). The blockstate stays static on the inactive model (the addLargeMachines
      * defer declaration), the 8 FACING x FORMED states share it.
      */
     /**
-     * Task p32-logistics-lv3 — the Logistics Core controller (upstream meta 17997, the
-     * NBT_TEXTURE "logisticscore" family). Task r8-tex-multiblockmains — the former
+     * Task logistics-lv3 — the Logistics Core controller (upstream meta 17997, the
+     * NBT_TEXTURE "logisticscore" family). Task tex-multiblockmains — the former
      * "the dedicated textures have no port face yet" galvanized-steel-wall borrow and
      * its outdated claim are retired (the probe found the full
      * machines/multiblockmains/logisticscore group): the two-layer front-bearing
@@ -3945,7 +3945,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task r8-tex-large-machines — the Fusion Reactor controller joins the
+     * Task tex-large-machines — the Fusion Reactor controller joins the
      * familyMachineModel state trio over the upstream NBT_TEXTURE "fusionreactor" family
      * (Loader :1242; colored six-set = the p31 borrow, overlay state trio = the r8
      * ledger). The blockstate stays static on the inactive model (the addLargeMachines
@@ -3971,7 +3971,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task r8-tex-large-machines — the Implosion Compressor controller joins the
+     * Task tex-large-machines — the Implosion Compressor controller joins the
      * familyMachineModel state trio over the upstream NBT_TEXTURE "implosioncompressor"
      * family (Loader :1228; colored six-set = the p31 borrow, overlay state trio = the
      * r8 ledger). The blockstate stays static on the inactive model (the addLargeMachines
@@ -3997,7 +3997,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p31-graagg — the Von da Graagg controller: the addImplosionCompressor form over
+     * Task graagg — the Von da Graagg controller: the addImplosionCompressor form over
      * the upstream NBT_TEXTURE "vondagraagg" family (Loader :1280). The upstream family
      * carries ONE texture (colored/side == colored_front/side == bottom == top, byte-equal)
      * so all six faces borrow the same PNG (the autoclave all-faces-equal precedent); the
@@ -4005,7 +4005,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * rides the blockstate property, not the model).
      */
     /**
-     * Task r8-tex-large-machines — the Von da Graagg controller takes the boilerModel
+     * Task tex-large-machines — the Von da Graagg controller takes the boilerModel
      * front-pair form (the Base10 default getTexture2, TileEntityBase10MultiBlockBase
      * :192-194: the front face renders the colored_front+overlay_front pair, the other
      * five the plain pair) over the band dir borrowed from upstream multiblockmains/
@@ -4030,7 +4030,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task r8-tex-large-machines — the Bedrock Mining Drill controller joins the graagg
+     * Task tex-large-machines — the Bedrock Mining Drill controller joins the graagg
      * boilerModel front-pair form over the upstream "bedrockdrill" band dir (Loader
      * :1283); the retired six-face flat spread is the band-dir TBS borrow (the README
      * ledger). No upstream active group — ONE static model, the 4 FACING x FORMED
@@ -4065,12 +4065,12 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_bottom", modLoc(tBase + "/overlay/bottom"))
                 .texture("overlay_top", modLoc(tBase + "/overlay/top"))
                 .texture("overlay_side", modLoc(tBase + "/overlay/side"))
-                // issue #8 (task r3-world-tint-render-type): the six 0.01 wall decals are
+                // issue #8 (task world-tint-render-type): the six 0.01 wall decals are
                 // transparent-texel overlay shells — cutout discards them off the body
                 // (the D2 leg6 fix shape).
                 .renderType("cutout");
         // element 0 — the body cube (the colored layer; tintindex 0 = the material tint,
-        // task p38-issue8-multipart-tint: the shared grayscale wall textures multiply the
+        // task issue8-multipart-tint: the shared grayscale wall textures multiply the
         // row's NBT_MATERIAL — the upstream getTexture2 BlockTextureDefault(colored, mRGBa)
         // form, MultiTileEntityMultiBlockPart.java:234-236; the bake/ItemColor consumers
         // ride GTMachineTintModel/GTItemPaintTint, the machine-domain route)
@@ -4107,7 +4107,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p29-w3-turbine-dynamo — the twelve Large Turbine + Large Dynamo controllers
+     * Task w3-turbine-dynamo — the twelve Large Turbine + Large Dynamo controllers
      * (Loader_MultiTileEntities.java:1254-1257/:1259-1262/:1264-1267). ONE oriented cube
      * model per family over the borrowed multiblockmains groups (the front face composes
      * colored_front + overlay_front, the other five faces the plain pair — the partModel
@@ -4141,12 +4141,12 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_top", modLoc(tBase + "/overlay/top"))
                 .texture("overlay_side", modLoc(tBase + "/overlay/side"))
                 .texture("overlay_front", modLoc(tBase + "/overlay_front/side"))
-                // issue #8 (task r3-world-tint-render-type): the six 0.01 controller decals
+                // issue #8 (task world-tint-render-type): the six 0.01 controller decals
                 // are transparent-texel overlay shells — cutout discards them off the body
                 // (the D2 leg6 fix shape).
                 .renderType("cutout");
         // element 0 — the body cube (tintindex 0 = the material tint, task
-        // p38-c2-controller-tint: the grayscale turbine_mains colored groups multiply the
+        // c2-controller-tint: the grayscale turbine_mains colored groups multiply the
         // row's NBT_MATERIAL — the upstream TileEntityBase10MultiBlockBase.getTexture2
         // :193 BlockTextureMulti(BlockTextureDefault(colored, mRGBa), overlay) form; the
         // bake/ItemColor consumers ride GTMachineTintModel/GTItemPaintTint, the
@@ -4197,7 +4197,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p32-placeables — the placeables band, half one: the Greg o'Lantern blockstate
+     * Task placeables — the placeables band, half one: the Greg o'Lantern blockstate
      * (upstream MTE 32758, Loader_MultiTileEntities.java:2031). ONE model over the four
      * horizontal facings: the FRONT (facing) face carries the borrowed upstream
      * GREG_O_LANTERN icon (assets/README.md), the other five faces the vanilla jack_o_lantern
@@ -4235,7 +4235,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .allFaces((aDir, aFace) -> aFace.texture("#sandwich").cullface(aDir))
                 .end();
         simpleBlock(gregtech6.registry.GT6Placeables.SANDWICH.get(), tSandwich);
-        // the four placed piles (task p32-placeables, half two): fixed silhouettes over the
+        // the four placed piles (task placeables, half two): fixed silhouettes over the
         // borrowed upstream icon pairs (assets/README.md); tintindex 0 on the five
         // material-tinted faces (GT6PlaceableTint reads the BE material). The rock and
         // stick piles left this band for the surface-variant weighted bands (issue #47 +
@@ -4290,7 +4290,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task p38-issue7-kitchen-models — the kitchen family (GT6Kitchen.java:89-113), the
+     * Task issue7-kitchen-models — the kitchen family (GT6Kitchen.java:89-113), the
      * four manual kitchen blocks that rendered as the magenta-black missing-model
      * checkerboard (the datagen face had zero kitchen coverage; the GT6Kitchen.java:58-59
      * plain-cube placeholder declaration never landed). This is the real upstream form
@@ -4309,7 +4309,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * declared pool cut — the static model is the EMPTY vessel, the cavity floor being
      * the base slab's up face. Textures: the borrowed upstream grayscale colored/ tile
      * sets (assets/README.md, the kitchen section) with tintindex 0 on every face; since
-     * task p38-c3-kitchen-tint-shape the reservation is WIRED — the baked
+     * task c3-kitchen-tint-shape the reservation is WIRED — the baked
      * GTMachineTintModel world half and the GTItemPaintTint inventory half resolve the row
      * material's mRGBa (WoodTreated/StainlessSteel/Ceramic, the GT6Kitchen
      * .paintableBlockArray census) over these faces, the upstream getTexture2 multiply
@@ -4413,7 +4413,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * The Measuring Pot (task r8-issue45-c3, issue #45): the upstream render-pass geometry
+     * The Measuring Pot (task issue45-c3, issue #45): the upstream render-pass geometry
      * (MultiTileEntityMeasuringPot.setBlockBounds2 :103-108 verbatim) — the base slab
      * (5,0,5)-(11,1,11) plus the four 1px walls y 1..8 at the 4px inset ring — over the
      * TWO-LAYER colored+overlay grammar (getTexture2 :124-134 = BlockTextureMulti(colored,
@@ -4421,7 +4421,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * 0.01-inflated overlay shell (the addHive/addBumbliary 0.01-plate form, cutout).
      * Face mapping rides the upstream world-side table: up=top, down=bottom, the wall's
      * outward face=sides, the cavity face=insides, the end caps=sides. The colored band
-     * ships UN-TINTED — the r7-40-41 crucible bodyTexture declared deviation (upstream
+     * ships UN-TINTED — the #40-41 crucible bodyTexture declared deviation (upstream
      * tints it with mRGBa; {@code ponytail:} a tintindex-0 + dispatch row lands it
      * without model change when the render pool gets to it).
      */

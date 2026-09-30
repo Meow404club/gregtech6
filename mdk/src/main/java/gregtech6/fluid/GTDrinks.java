@@ -14,7 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
 /**
- * The GT self-held drink-stat registry (task p33-food-fluids-b2) — the port counterpart of
+ * The GT self-held drink-stat registry (task food-fluids-b2) — the port counterpart of
  * the upstream DrinksGT.REGISTER (FoodStatDrink.java:35-83: every FoodStatDrink
  * constructor puts itself into the map keyed by the fluid name, and
  * TileEntityBase08FluidContainer.isDrinkable() :415-417 gates the tank drink seam on
@@ -28,7 +28,7 @@ import net.minecraft.world.entity.player.Player;
  * vanilla-visible face stays minimal: hunger/saturation ride Player.foodData.eat
  * (FoodData.java:21), the potion effects ride MobEffectInstance adds, the
  * hydration/temperature numbers are the declared GT data this registry holds for the
- * downstream consumers (the barrel-block drink seam + the p33-food-drink card).
+ * downstream consumers (the barrel-block drink seam + the food-drink card).
  *
  * <p>Every row is census-anchored to the upstream FoodStatDrink lines of
  * Loader_Fluids.java (the :230-350 card-block potion run + the 345-row FoodStatDrink
@@ -88,7 +88,7 @@ public final class GTDrinks {
 		if (!aPlayer.canEat(aStat.food() == 0)) return false;
 		if (aStat.food() > 0 || aStat.saturation() > 0) aPlayer.getFoodData().eat(aStat.food(), aStat.saturation());
 		for (DrinkEffect tEffect : aStat.effects()) {
-			// one line both legs (the p33-food-tail un-fork): the record accessor name IS the
+			// one line both legs (the food-tail un-fork): the record accessor name IS the
 			// leg seam (MobEffect vs Holder<MobEffect>), so the statement is leg-invariant —
 			// the identical-body //? fork here was dead weight
 			aPlayer.addEffect(new MobEffectInstance(tEffect.effect(), tEffect.duration(), tEffect.amplifier()));
@@ -110,7 +110,7 @@ public final class GTDrinks {
 	// the binnie./dotted upstream names ride the comment. 215 rows (incl. the one
 	// vanilla-carried "water" row — the barrel seam keys bare registry paths, so a
 	// water-filled barrel resolves minecraft:water → "water", the upstream :360 row —
-	// and the p33-food-tail "mnwtr" fill, the census walk had skipped the :371
+	// and the food-tail "mnwtr" fill, the census walk had skipped the :371
 	// potion.mineralwater row because its ported id is the dotted-name-abbreviated
 	// p16 aqua id).
 
@@ -124,7 +124,7 @@ public final class GTDrinks {
 		new DrinkStat("waterdirty", "Dirty", 0, 0.0F, 10, 310, 0.50F, new DrinkEffect(MobEffects.HUNGER, 200, 1), new DrinkEffect(MobEffects.POISON, 200, 0)), // upstream "waterdirty"
 		new DrinkStat("seawater", "Salty", 0, 0.0F, 10, 308, 0.50F, new DrinkEffect(MobEffects.HUNGER, 400, 2)), // upstream "seawater"
 		new DrinkStat("soda", "Simply carbonated Water", 1, 0.1F, 50, 308, 0.50F), // upstream "soda"
-		new DrinkStat("mnwtr", "Stay hydrated!", 1, 0.1F, 40, 308, 0.50F, new DrinkEffect(MobEffects.REGENERATION, 100, 1)), // upstream "potion.mineralwater" (Loader_Fluids.java:371 — the FL.MnWtr fluid, ported as the p16 aqua id "mnwtr"; the p33-food-tail KEPT fill between the :370/:372 census neighbours)
+		new DrinkStat("mnwtr", "Stay hydrated!", 1, 0.1F, 40, 308, 0.50F, new DrinkEffect(MobEffects.REGENERATION, 100, 1)), // upstream "potion.mineralwater" (Loader_Fluids.java:371 — the FL.MnWtr fluid, ported as the p16 aqua id "mnwtr"; the food-tail KEPT fill between the :370/:372 census neighbours)
 		new DrinkStat("mineralsoda", "Stay hydrated!", 1, 0.2F, 50, 308, 0.50F, new DrinkEffect(MobEffects.REGENERATION, 100, 1)), // upstream "mineralsoda"
 		new DrinkStat("water_geothermal", "Fresh from the Geothermal Hot Spring!", 1, 0.1F, 40, 313, 0.50F, new DrinkEffect(MobEffects.REGENERATION, 100, 1)), // upstream "watergeothermal"
 		new DrinkStat("juice_juice", "From a Random Fruit", 3, 0.4F, 20, 310, 0.50F, new DrinkEffect(MobEffects.HUNGER, 100, 1)), // upstream "juice" (Loader_Fluids.java:376) — the b1 "juice_juice" id
@@ -352,7 +352,7 @@ public final class GTDrinks {
 	);
 
 	// The POTION rows: the 94-row card-block brew run, Loader_Fluids.java:230-350 verbatim
-	// semantics (the gold-apple rows :607-610 are OUTSIDE the card block — the p33-food-tail
+	// semantics (the gold-apple rows :607-610 are OUTSIDE the card block — the food-tail
 	// TAIL_SPECS below).
 
 	// 94 potion rows — Loader_Fluids.java:230-350 verbatim semantics (tip = the upstream tooltip verbatim).
@@ -453,12 +453,12 @@ public final class GTDrinks {
 		new DrinkStat("potion.invisibility.long.lingering", "lingering_potion", 0, 0.0F, 0, 310, 0.00F, 10, new DrinkEffect(MobEffects.INVISIBILITY, 2400, 0))
 	);
 
-	// The TAIL rows: the 10 card-block-outside drink fluids the p33-food-tail table newly
+	// The TAIL rows: the 10 card-block-outside drink fluids the food-tail table newly
 	// registers — the golden-apple ENCHANTED_EFFECT brews (Loader_Fluids.java:607-610, the
 	// .setLuminosity(15) family) and the coffee-family drinks (:637-642), the census walk
 	// the b2 card could not carry (their fluids did not exist before the tail table).
 
-	/** The 10 tail rows (the p33-food-tail registrations), upstream line order. */
+	/** The 10 tail rows (the food-tail registrations), upstream line order. */
 	public static final List<DrinkStat> TAIL_SPECS = List.of(
 		new DrinkStat("potion.goldenapplejuice", "A golden Apple in liquid form", 4, 0.2F, 100, 310, 0.75F, 15, new DrinkEffect(MobEffects.ABSORPTION, 2400, 0), new DrinkEffect(MobEffects.REGENERATION, 100, 1)), // upstream "potion.goldenapplejuice" (Loader_Fluids.java:607 — field_76444_x = absorption)
 		new DrinkStat("potion.goldencider", "More Resistance, less Regeneration", 4, 0.2F, 100, 310, 0.75F, 15, new DrinkEffect(MobEffects.ABSORPTION, 2400, 1)), // upstream "potion.goldencider" (:608)
@@ -472,7 +472,7 @@ public final class GTDrinks {
 		new DrinkStat("potion.darkchocolatemilk", "A bit bitter, better add a bit Sugar", 4, 0.4F, 10, 310, 0.50F) // upstream "potion.darkchocolatemilk" (:642 — the C+37 fold, the chocolatemilk :643 sibling)
 	);
 
-	// The KEPT fills (task p33-food-tail, the reverse-census closure): the 10 potion.-prefixed
+	// The KEPT fills (task food-tail, the reverse-census closure): the 10 potion.-prefixed
 	// upstream FoodStatDrink rows whose fluids ALREADY rode the b1/p31 registrations — the
 	// b2 census walk stripped only the binnie. prefix, so these slipped the KEPT face exactly
 	// like the :371 mineralwater row. Keyed by the ported b1/p31 ids; the GT-only potion

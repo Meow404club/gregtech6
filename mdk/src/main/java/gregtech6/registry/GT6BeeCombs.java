@@ -20,7 +20,7 @@ import net.minecraftforge.registries.RegistryObject;
 import gregtech6.GT6Mod;
 
 /**
- * The GT6 bee-comb registration home — task p31-bees-lv1, the 20-comb static chain of the
+ * The GT6 bee-comb registration home — task bees-lv1, the 20-comb static chain of the
  * upstream {@code MultiItemFood} bee block (MultiItemFood.java:226-247, metas 30000-30009 /
  * 30100-30105 / 30200-30203, {@code OD.beeComb}; the six crossbred-family combs carry
  * {@code OD.beeCombCrossbred} upstream — a tag-face the port pools with the bee-item
@@ -108,8 +108,8 @@ public final class GT6BeeCombs {
 						for (RegistryObject<Item> tRow : COMBS) {
 							aOutput.accept(new ItemStack(tRow.get()));
 						}
-						aOutput.accept(new ItemStack(GT6BeeHives.HIVE_ITEM.get())); // task p34-bumbliary-recipes — the R2 carryable hive rides the bee tab
-						// task p38-tabfix-c-misc — the Bumbliary pair joins the bee home (the census
+						aOutput.accept(new ItemStack(GT6BeeHives.HIVE_ITEM.get())); // task bumbliary-recipes — the R2 carryable hive rides the bee tab
+						// task tabfix-c-misc — the Bumbliary pair joins the bee home (the census
 						// zero-tab adjudication: the bee domain's machines pool with the bee tab,
 						// the p34 hive-row precedent above)
 						aOutput.accept(new ItemStack(GT6BeeHives.BUMBLIARY_ITEM.get()));

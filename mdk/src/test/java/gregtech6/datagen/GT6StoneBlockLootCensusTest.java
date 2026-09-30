@@ -1,5 +1,5 @@
 /**
- * Offline census for task p21-chisel-drop-conversion: the chisel mining-drop face of the
+ * Offline census for task chisel-drop-conversion: the chisel mining-drop face of the
  * GT6 stone loot tables (the GT_Tool_Chisel.java:73-77 arm landed as a loot dispatch —
  * the ADR ruling, tmp/adr-drafts/2026-09-07-p21-chisel-drop-conversion-ruling.md).
  *

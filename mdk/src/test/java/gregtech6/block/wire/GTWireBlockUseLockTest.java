@@ -1,5 +1,5 @@
 /**
- * The explicit {@code use = PASS} semantic lock (task p9-wire-family-w1 spec ④) — the
+ * The explicit {@code use = PASS} semantic lock (task wire-family-w1 spec ④) — the
  * executable half of the RCON negative assertion: a right-click on a wire with ANY held item
  * must fall through (the upstream GUI-less wire outcome, TileEntityBase06Covers
  * .onBlockActivated2 :106-130 = nothing happens); the connection tool is the cutter on the

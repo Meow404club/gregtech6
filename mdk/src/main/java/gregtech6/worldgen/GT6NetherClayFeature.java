@@ -14,7 +14,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import gregtech6.registry.GT6NetherOres;
 
 /**
- * The nether red-clay Feature (task p31-nether-lens-end-yield spec ①) — the
+ * The nether red-clay Feature (task nether-lens-end-yield spec ①) — the
  * {@code WorldgenNetherClay} port (WorldgenNetherClay.java:47-55), shape-verbatim: every
  * 16x16 column whose noise cell reads 0 ({@code noise.get(x, 42, z, 8) == 0}, the 1/8
  * column gate :52) gets the two-layer band at the lava line —

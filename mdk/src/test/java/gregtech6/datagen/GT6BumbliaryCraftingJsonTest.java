@@ -21,7 +21,7 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The Bumbliary pair crafting-row json test (task p34-bumbliary-recipes acceptance ① —
+ * The Bumbliary pair crafting-row json test (task bumbliary-recipes acceptance ① —
  * the "两配方 json 资源钉测（形状/键/结果逐参）" face): the TWO generated
  * data/gt6/recipes/ files are read verbatim off the classpath and asserted on their
  * IDENTITY faces against the upstream registration-line varargs

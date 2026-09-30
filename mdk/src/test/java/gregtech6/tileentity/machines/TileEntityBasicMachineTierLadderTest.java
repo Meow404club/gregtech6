@@ -16,7 +16,7 @@ import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.registry.GTMachines;
 
 /**
- * The T2-T4 full-ladder acceptance (task p8-machine-tiers-doinject ①, the OFFLINE half):
+ * The T2-T4 full-ladder acceptance (task machine-tiers-doinject ①, the OFFLINE half):
  * the tier tables pinned to the upstream rows (Loader_MultiTileEntities.java:1294-1309
  * NBT_INPUT 32/128/512/2048 through the MultiTileEntityBasicMachine :126 conversion
  * min = in/2 / max = in*2; the Crusher NBT_PARALLEL 4/8/16/32 + NBT_PARALLEL_DURATION T

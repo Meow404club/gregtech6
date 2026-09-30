@@ -24,8 +24,8 @@ import gregtech6.tileentity.energy.GTEnergySourceBlockEntity;
 
 /**
  * {@code /gt6energy} — the command-driven test generator acceptance command (task
- * p8-d4-energy-source spec ③, ADR 2026-08-31-p7-energy-network ruling 4; extended by task
- * p11-rotor-source-flip: the emitted-type and ±alternating dials). Game-bus
+ * d4-energy-source spec ③, ADR 2026-08-31-energy-network ruling 4; extended by task
+ * rotor-source-flip: the emitted-type and ±alternating dials). Game-bus
  * listener, self-contained per ADR-P3-4, the GTWireCommand template.
  *
  * <ul>

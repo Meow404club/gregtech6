@@ -32,7 +32,7 @@ import gregtech6.recipes.RecipeMap;
 import net.minecraftforge.fluids.FluidStack;
 
 /**
- * The CRUCIBLE_SMELTING/CRUCIBLE_ALLOYING map faces (task p26-crucible-physics-smeltery
+ * The CRUCIBLE_SMELTING/CRUCIBLE_ALLOYING map faces (task crucible-physics-smeltery
  * acceptance): zero static rows on both maps, the findRecipe ON-DEMAND arm derives the
  * smelting row from the input's material data (dust iron → ingot iron, duration =
  * mMeltingPoint, EUt 0), and the alloying display rows synthesize off the material graph.

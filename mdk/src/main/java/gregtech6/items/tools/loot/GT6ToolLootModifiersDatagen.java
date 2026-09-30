@@ -22,7 +22,7 @@ import net.minecraftforge.common.data.GlobalLootModifierProvider;
 import gregtech6.registry.GT6Tools;
 
 /**
- * The drop-conversion loot JSON producer — task p29-w5-t1-dig-six spec ①: ONE datagen
+ * The drop-conversion loot JSON producer — task w5-t1-dig-six spec ①: ONE datagen
  * JSON per converting tool, over the platform {@code GlobalLootModifierProvider} (the
  * base class writes the per-modifier JSONs AND the platform index; the forge leg emits
  * {@code data/forge/loot_modifiers/global_loot_modifiers.json}, the 21.1 runtime reads
@@ -70,9 +70,9 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 			"sense_vegetal",
 			"scissors_plant_self",
 			"scoop_plant_self",
-			// task p34-loot-injection — the structure-chest injections tail-append (the names are
+			// task loot-injection — the structure-chest injections tail-append (the names are
 			// the GT6LootInjectionDatagen.injections() sequence, upstream Loader_Loot order;
-			// task p38-book-loot-first adds the bonus-chest head and the stronghold-library row;
+			// task book-loot-first adds the bonus-chest head and the stronghold-library row;
 			// task dungeon-library-zpm appends the GT6 dungeon carrier face — the ZPM artifact
 			// row's new home, the tail of the injections() sequence)
 			"dungeon_inject_spawn_bonus_chest",
@@ -112,7 +112,7 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 		add("construction_ender_chest", new GT6ToolLootModifiers.GT6ToolConvertModifier(
 				conditions(GT6Tools.PICKAXE_CONSTRUCTION.get()),
 				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.ENDER_CHEST_SELF));
-		// task p29-w5-t6-electric-nineteen — BOTH jackhammer forms carry the rockGt
+		// task w5-t6-electric-nineteen — BOTH jackhammer forms carry the rockGt
 		// conversion (the upstream convertBlockDrops rides the base class GT_Tool_JackHammer_HV;
 		// the No_Ores form only narrows the MINING surface, not the drop arm).
 		add("jackhammer_hv_no_ores_rocks", new GT6ToolLootModifiers.GT6ToolConvertModifier(
@@ -127,7 +127,7 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 		add("universal_spade_openable", new GT6ToolLootModifiers.GT6ToolConvertModifier(
 				conditions(GT6Tools.UNIVERSAL_SPADE.get()),
 				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.UNBOXINATOR_OPEN));
-		// task p29-w5-t2-blade-six — the three blade-conversion rows (the same per-tool
+		// task w5-t2-blade-six — the three blade-conversion rows (the same per-tool
 		// holds_tool gate; the felling row rides the gt6_tree_fell serializer, the two
 		// pure rows ride gt6_tool_convert with the new modes)
 		add("axe_tree_fell", new GT6TreeFellModifier(conditions(GT6Tools.AXE.get())));
@@ -137,14 +137,14 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 		add("sword_harvest", new GT6ToolLootModifiers.GT6ToolConvertModifier(
 				conditions(GT6Tools.SWORD.get()),
 				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.SWORD_HARVEST));
-		// task p29-w5-t4-field-five — the field-tool rows (the same per-tool gate shape)
+		// task w5-t4-field-five — the field-tool rows (the same per-tool gate shape)
 		add("branch_cutter_leaves", new GT6ToolLootModifiers.GT6ToolConvertModifier(
 				conditions(GT6Tools.BRANCH_CUTTER.get()),
 				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.BRANCHCUTTER_LEAVES));
 		add("sense_vegetal", new GT6ToolLootModifiers.GT6ToolConvertModifier(
 				conditions(GT6Tools.SENSE.get()),
 				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.SENSE_VEGETAL));
-		// task p29-w5-t5-scene-six — the scissors vine self-drop (GT_Tool_Scissors.java:87-101)
+		// task w5-t5-scene-six — the scissors vine self-drop (GT_Tool_Scissors.java:87-101)
 		// and the scoop shears-class vine+cobweb full-drop; one shared mode, two identity gates.
 		add("scissors_plant_self", new GT6ToolLootModifiers.GT6ToolConvertModifier(
 				conditions(GT6Tools.SCISSORS.get()),
@@ -152,7 +152,7 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 		add("scoop_plant_self", new GT6ToolLootModifiers.GT6ToolConvertModifier(
 				conditions(GT6Tools.SCOOP.get()),
 				GT6ToolLootModifiers.GT6ToolConvertModifier.Mode.PLANT_SELF_DROP));
-		// task p34-loot-injection — the structure-chest injections (Loader_Loot.java:410-552 tail
+		// task loot-injection — the structure-chest injections (Loader_Loot.java:410-552 tail
 		// rows, the verified category→table-id mapping). The target table id rides the modifier
 		// codec (NOT a platform LootTableIdCondition — the loader-branded condition would fork
 		// the shared JSON); conditions stay EMPTY. Order = MODIFIER_NAMES tail.

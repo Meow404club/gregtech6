@@ -15,7 +15,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 /**
- * The multiblock fluid-capability offline face (task p8-cokeoven-fluid-capability spec ⑦):
+ * The multiblock fluid-capability offline face (task cokeoven-fluid-capability spec ⑦):
  * the side-rule truth table over the pure rotation+mask seams — 4 horizontal facings ×
  * 6 world faces + the side-less query, UP refuses, the five other faces and null admit —
  * and the fill-is-always-zero contract. The wrapper drain/fill semantics run against the

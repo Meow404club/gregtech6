@@ -31,7 +31,7 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
- * The Shredder/Crusher/Lathe recipe pour (task p7-recipe-maps-shcl, acceptance ④):
+ * The Shredder/Crusher/Lathe recipe pour (task recipe-maps-shcl, acceptance ④):
  * <ul>
  * <li>the transcription walk: every material (prefix, material) pair of every row resolves
  *     inside the offline material universe ({@link GTMaterialItems#registrationOrder}) and
@@ -65,14 +65,14 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	private static final Set<Item> RESERVED_VANILLA_ITEMS = Set.of(
 			Items.FLINT, Items.GRAVEL, Items.SAND, Items.COBWEB, Items.STRING,
 			Items.COBBLESTONE, Items.STONE, Items.GLASS_PANE,
-			// p10-compat-vanilla-rows vanilla identities (row inputs and the all-vanilla outputs)
+			// compat-vanilla-rows vanilla identities (row inputs and the all-vanilla outputs)
 			Items.BONE, Items.BONE_MEAL, Items.NETHER_BRICK,
 			Blocks.NETHER_BRICKS.asItem(), Blocks.NETHERRACK.asItem(), Blocks.END_STONE.asItem(), Blocks.OBSIDIAN.asItem());
 
 	@BeforeAll
 	static void buildSyntheticUniverse() {
 		GTMaterialItems.initMaterials(); // the offline material universe (MT.init + OP.init)
-		// VANILLA-NAMESPACE ITEMS ONLY (task p25-tool-hammer-wrench stabilization): the
+		// VANILLA-NAMESPACE ITEMS ONLY (task tool-hammer-wrench stabilization): the
 		// wrap-around aliasing (tNext % tPool.size()) makes every pair assignment sensitive
 		// to the POOL SIZE — a probe-registering test class (the FileSawTest reflection
 		// bracket, p24; the HammerWrenchTest pair, p25) shifts the size and silently
@@ -384,7 +384,7 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 			Recipe tRecipe = fixedRowResolves(tRow) ? GT6RecipesShCL.buildFixedRecipe(tRow) : null;
 			if (tRecipe != null && tLatheKeys.add(GT6RecipesShCL.rowKey(tRecipe))) tExpectedLathe++;
 		}
-		// p26-rm-row-backfill: the handler-template expansions join the reconciliation
+		// rm-row-backfill: the handler-template expansions join the reconciliation
 		for (GT6RecipesShCL.LatheTemplate tTpl : GT6RecipesShCL.latheTemplateTable()) {
 			for (OreDictMaterial tMaterial : GT6RecipesShCL.expandCrusherMaterials(tTpl.inPrefix())) {
 				Recipe tRecipe = latheRowResolves(tTpl, tMaterial) ? GT6RecipesShCL.buildLatheRecipe(tTpl, tMaterial) : null;
@@ -561,7 +561,7 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ------------------------------------------------------------------
-	// p10-compat-vanilla-rows: end-to-end lookups + the chances passthrough proof
+	// compat-vanilla-rows: end-to-end lookups + the chances passthrough proof
 	// ------------------------------------------------------------------
 
 	/**
@@ -674,7 +674,7 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ------------------------------------------------------------------
-	// p26-rm-row-backfill — the Lathe handler-template expansion (Handlers:371-393)
+	// rm-row-backfill — the Lathe handler-template expansion (Handlers:371-393)
 	// ------------------------------------------------------------------
 
 	/** The :371-393 census: 22 templates, twin arms, and the conjunct flags land on the right rows. */
@@ -808,7 +808,7 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ------------------------------------------------------------------
-	// p26-rm-row-backfill — the Shredder handler templates + the RECYCLABLE ring (:114-155)
+	// rm-row-backfill — the Shredder handler templates + the RECYCLABLE ring (:114-155)
 	// ------------------------------------------------------------------
 
 	/** The :114-150 census: 34 templates, twin MORTAR arms, the crushed-array rows carry 2-4 outputs. */
@@ -1035,7 +1035,7 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 		static net.minecraft.world.level.block.Block COBWEB = net.minecraft.world.level.block.Blocks.COBWEB;
 		static net.minecraft.world.level.block.Block GLASS_PANE = net.minecraft.world.level.block.Blocks.GLASS_PANE;
 		static net.minecraft.world.level.block.Block STONE = net.minecraft.world.level.block.Blocks.STONE;
-		// p10-compat-vanilla-rows identities
+		// compat-vanilla-rows identities
 		static net.minecraft.world.level.block.Block NETHER_BRICKS = net.minecraft.world.level.block.Blocks.NETHER_BRICKS;
 		static net.minecraft.world.level.block.Block NETHERRACK = net.minecraft.world.level.block.Blocks.NETHERRACK;
 		static net.minecraft.world.level.block.Block END_STONE = net.minecraft.world.level.block.Blocks.END_STONE;

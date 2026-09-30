@@ -23,7 +23,7 @@ import gregtech6.registry.GT6Portals;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The miniature portal offline pins (task p35-portals-mini-nether-end) — the pairing
+ * The miniature portal offline pins (task portals-mini-nether-end) — the pairing
  * kernel (×8/128² Nether, ×128/512² End, the Y tie-break, the dead-entry skip), the
  * redstone/comparator promote + 20-tick watchdog state machine, the mActive two-channel
  * sync face and the pair-list lifecycle (upstream MultiTileEntityMiniPortal.java anchors
@@ -205,11 +205,11 @@ public class GTMiniPortalBlockEntityTest {
 		}
 	}
 
-	// ------------------------------- the pairing notify (r4-23a HALF-DEVIATION pin)
+	// ------------------------------- the pairing notify (#23a HALF-DEVIATION pin)
 
 	@Test
 	public void pairingTransitionArmsTheNeighbourUpdate() {
-		// issue #23 / task r4-23a-portal-frame: a targetless→paired findTargetPortal
+		// issue #23 / task 23a-portal-frame: a targetless→paired findTargetPortal
 		// re-notifies the neighbours (the modern relay faces are probed through the LIVE
 		// mTarget and pipes cache their connection until a block update — upstream has
 		// no such update, the declared HALF-DEVIATION on the subclass arms)

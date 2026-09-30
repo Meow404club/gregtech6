@@ -23,7 +23,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.example.GTExampleChestBlockEntity;
 
 /**
- * The example chest block (task p3-example-machine) — the block-side of the playable chain:
+ * The example chest block (task example-machine) — the block-side of the playable chain:
  * right-click opens the chest BE's menu through NetworkHooks.openScreen, the 1.20.1 mapping of
  * upstream onBlockActivated2 → openGUI (MultiTileEntityChest.java:234-240,
  * TileEntityBase01Root.java:180). openScreen(player, provider, pos) writes the BlockPos

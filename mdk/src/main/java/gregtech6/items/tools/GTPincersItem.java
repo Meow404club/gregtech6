@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.DragonEggBlock;
 import net.minecraftforge.common.ToolAction;
 
 /**
- * The formal pincers — item id {@code gt6:pincers} (task p29-w5-t3-machine-face-four spec
+ * The formal pincers — item id {@code gt6:pincers} (task w5-t3-machine-face-four spec
  * ④). Upstream meta id {@code ToolsGT.PINCERS = 66} (CS.java:1736), mounted by the
  * Loader_Tools.java:150 registration row (display name "Pincers", material amount
  * {@code U*2 + screw + 2*stick} — the recipe's scale) over {@code GT_Tool_Pincers}
@@ -38,7 +38,7 @@ import net.minecraftforge.common.ToolAction;
  * SoundEvent both legs share); it plays on the collect. The crafting-loss face rides the
  * shared one-point mapping (the upstream :45-48 100-unit row folded).
  *
- * <p>MATERIAL LADDER (task p31-machine-ladder): the stack's {@code GT.ToolStats} identity
+ * <p>MATERIAL LADDER (task machine-ladder): the stack's {@code GT.ToolStats} identity
  * scales durability (the {@link GT6ToolLadder} j/100 points), the composed display name
  * ("Pincers (Bronze)") and the head tint ride the same seam; the IDENTITY-LESS arm
  * reproduces Steel bit-exact (the pre-ladder 512 constant IS the steel fallback).
@@ -86,7 +86,7 @@ public class GTPincersItem extends Item implements GT6ToolLadder.LadderTool {
 		return classifies(aToolAction);
 	}
 
-	// ------------------------------ the GT6ToolLadder identity faces (task p31-machine-ladder) ------------------------------
+	// ------------------------------ the GT6ToolLadder identity faces (task machine-ladder) ------------------------------
 
 	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — Steel fallback = 512). */
 	@Override

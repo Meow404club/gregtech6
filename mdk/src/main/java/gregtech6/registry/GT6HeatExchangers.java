@@ -44,7 +44,7 @@ import gregtech6.tileentity.multiblocks.GT6HeatExchangerBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
 
 /**
- * The Large Heat Exchanger registration home (task p29-w3-heat-smelter, the GT6Boilers
+ * The Large Heat Exchanger registration home (task w3-heat-smelter, the GT6Boilers
  * self-contained-DR form, ADR-P3-4): ONE controller block + item + BET over the row —
  * the upstream registration line Loader_MultiTileEntities.java:1245 verbatim
  * ("Large Heat Exchanger", "Multiblock Machines", 17197, ANY.W, NBT_HARDNESS ==
@@ -55,7 +55,7 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
  * structural-conflict ruling: GTMachines.java belongs to this card's machine rows, this
  * file to the HEX — zero shared-file edits beyond the parallel-card appends).
  *
- * <p>Creative tab (task p38-tabfix-a-multiblock): the single item joins MULTIBLOCKS_TAB
+ * <p>Creative tab (task tabfix-a-multiblock): the single item joins MULTIBLOCKS_TAB
  * via the {@link ModBusListener#onBuildTabContents} handler — registered-but-tab-less is
  * invisible in BOTH the creative menu and JEI (the BurningBoxes issue-#10 form,
  * superseding the old GT6Boilers no-tab precedent). Pool cut declared: upstream rode the
@@ -115,7 +115,7 @@ public final class GT6HeatExchangers {
 		}
 
 		/**
-		 * The HEX-carrier material dispatch (task r8-tex-multiblockmains — the
+		 * The HEX-carrier material dispatch (task tex-multiblockmains — the
 		 * {@code GT6DynamoBlock.materialOf} mirror shape): the single controller resolves
 		 * the :1245 NBT_MATERIAL column (ANY.W, the machine_wall_tungsten MT.W mapping) so
 		 * the two-layer model's tintindex-0 body tints; every other block is null here
@@ -215,7 +215,7 @@ public final class GT6HeatExchangers {
 		}
 
 		/**
-		 * The tab walk (task p38-tabfix-a-multiblock — the single HEX item joins the
+		 * The tab walk (task tabfix-a-multiblock — the single HEX item joins the
 		 * multiblocks tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the MOD-bus
 		 * {@code @Mod.EventBusSubscriber} on this nested listener is what delivers it). JEI
 		 * derives its item list from the tab display items.

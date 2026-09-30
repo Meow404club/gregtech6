@@ -14,7 +14,7 @@ import gregtech6.registry.GT6Placeables;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The placed-pile BlockEntity (task p32-placeables) — the port of the upstream
+ * The placed-pile BlockEntity (task placeables) — the port of the upstream
  * {@code MultiTileEntityPlaceable} base (gregapi/tileentity/misc/MultiTileEntityPlaceable
  * .java:48-139) shared over the six placement faces (the Ingot/Plate/GemPlate/Scrap/Rock/
  * Stick placed piles, Loader_MultiTileEntities.java:2033-2040; the ADR-P3-1 shared-BET

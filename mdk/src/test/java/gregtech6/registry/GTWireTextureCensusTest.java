@@ -1,5 +1,5 @@
 /**
- * The wire texture census (task p9-wire-family-w2 spec ④ — "census first"): the borrowed
+ * The wire texture census (task wire-family-w2 spec ④ — "census first"): the borrowed
  * {@code materialicons/<set>/wire.png} coverage is counted per ICONSET (not per material —
  * 30 rows collapse into few sets). The set of a row comes from
  * {@link gregtech6.client.wire.GTWireTextures#blockSetOf} (the MC-free single source the
@@ -54,7 +54,7 @@ public class GTWireTextureCensusTest {
             assertNotNull(getClass().getResource("/assets/gt6/textures/block/iconsets/insulation_" + tTail + ".png"),
                     "missing borrowed insulation_" + tTail + ".png");
         }
-        // task p11-wire-fiber-texture — the laser fiber pair (MultiTileEntityWireLaser :121-122)
+        // task wire-fiber-texture — the laser fiber pair (MultiTileEntityWireLaser :121-122)
         assertNotNull(getClass().getResource("/assets/gt6/textures/block/iconsets/fiber_wire.png"),
                 "missing borrowed fiber_wire.png");
         assertNotNull(getClass().getResource("/assets/gt6/textures/block/iconsets/fiber_wire_overlay.png"),
@@ -78,7 +78,7 @@ public class GTWireTextureCensusTest {
         assertTrue(tReference != null && tReference.length() == 64);
     }
 
-    /** Task p11-wire-fiber-texture: the fiber pair pins its upstream sha256 (assets/README.md). */
+    /** Task wire-fiber-texture: the fiber pair pins its upstream sha256 (assets/README.md). */
     @Test
     public void theFiberPairIsTheUpstreamBytes() throws Exception {
         MessageDigest tDigest = MessageDigest.getInstance("SHA-256");

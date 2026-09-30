@@ -1,5 +1,5 @@
 /*
- * Offline pinned-census tests for task r8-tex-pipe-textures: the three pipe connector
+ * Offline pinned-census tests for task tex-pipe-textures: the three pipe connector
  * families (2 wood fluid rows, 18 item pipe rows, the logistics wire) leave the
  * cube_all single-placeholder era for the upstream material-set DUAL-LAYER tinted form
  * — every material-icon render is two passes (pass 0 = the set art multiplied by mRGBa,

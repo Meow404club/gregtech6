@@ -52,7 +52,7 @@ import gregtech6.registry.GT6BeeCombs;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The bee-comb recipe book (task p31-bees-lv1) — the two pours of the Lv1 static chain.
+ * The bee-comb recipe book (task bees-lv1) — the two pours of the Lv1 static chain.
  * Both maps are the card-A DECLARED-EMPTY maps, consumed directly:
  * <ul>
  * <li><b>CENTRIFUGE — the 20 specific comb rows</b> (MultiItemFood.java:251-270, all
@@ -90,9 +90,9 @@ import gregtech6.registry.GTMaterialItems;
  * <p>Fluid identities: vanilla Water, and eleven gt6 fluids — the four honey-family rows
  * and the seven bee-row dependency rows of {@link GTFluids#HONEY_FLUID_SPECS} /
  * {@link GTFluids#BEE_ROW_FLUID_SPECS} (this card's registration face), plus the four
- * pre-existing carriers the rows reference: {@code blaze} (the p29-w4-hot-lube closure
- * carrier), {@code cactuswater} (p21 food family), {@code soulsandoil} (p29-w4-f1-chemicals)
- * and {@code lubricant} (p29-w4-hot-lube). Amounts are the 1.7.10 literals verbatim —
+ * pre-existing carriers the rows reference: {@code blaze} (the w4-hot-lube closure
+ * carrier), {@code cactuswater} (p21 food family), {@code soulsandoil} (w4-f1-chemicals)
+ * and {@code lubricant} (w4-hot-lube). Amounts are the 1.7.10 literals verbatim —
  * {@code CS.L = 144} (CS.java:129) and the material-liquid {@code U} → 144 L per unit
  * (the iron_molten port anchor).
  *
@@ -280,7 +280,7 @@ public final class GT6RecipesBees {
 			tPoured++;
 		}
 		LOGGER.info("GT6 Bee squeezer poured: {} loaded, {} skipped (unresolvable comb/fluid/items, = upstream mat() null drops)", tPoured, tSkipped);
-		// task p34-machines-bumblelyzer-crucible — the Bumblelyzer scan display stock joins
+		// task machines-bumblelyzer-crucible — the Bumblelyzer scan display stock joins
 		// the bee loader (the same timing: the maps exist, the bee items/fluids registered;
 		// the display stock census is the acceptance's 行数对账 read). The try face keeps the
 		// OFFLINE legs alive (the frozen registry forbids the live RegistryObject walk — the

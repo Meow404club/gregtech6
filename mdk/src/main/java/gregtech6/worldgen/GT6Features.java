@@ -16,12 +16,12 @@ import gregtech6.registry.GT6TreeBlocks;
 
 /**
  * The worldgen Feature registration home — the L1 large-vein pipeline skeleton (task
- * p26-worldgen-pipeline-skeleton), self-contained in the GT6Attachments/GT6Kinetics
+ * worldgen-pipeline-skeleton), self-contained in the GT6Attachments/GT6Kinetics
  * shape: a card-owned {@code @EventBusSubscriber(MOD)} DeferredRegister attached from the
  * construct event — GT6Mod.java / GTModBusListener.java stay untouched.
  *
  * <p>L0 registered ZERO entries (the 17 stone blobs are pure datagen over the vanilla
- * {@code Feature.ORE} + {@code OreConfiguration}). Task p30-w6-t1-trees-nine lands the
+ * {@code Feature.ORE} + {@code OreConfiguration}). Task w6-t1-trees-nine lands the
  * FIRST custom features: the nine {@link GT6TreeFeature} instances (one per
  * {@link GT6TreeKind}, the grow-semantics option-b ruling) — the sapling grower and the
  * placed feature run the same code through the configured-feature key
@@ -60,7 +60,7 @@ public final class GT6Features {
     }
 
     /**
-     * The L1 large-vein feature (task p30-w6-t3-large-veins) — the reserved seam fulfilled:
+     * The L1 large-vein feature (task w6-t3-large-veins) — the reserved seam fulfilled:
      * ONE registration row {@code gt6:large_veins}, the single Feature over the 40-row JSON
      * vein table (the card spec ①/② — 40 separate configured features would lose the
      * weight-for-exactly-one draw semantics, GT6WorldGenerator.java:93-103). The
@@ -75,7 +75,7 @@ public final class GT6Features {
     }
 
     /**
-     * The strata-lens feature (task p31-strata-lens) — ONE registration row
+     * The strata-lens feature (task strata-lens) — ONE registration row
      * {@code gt6:strata_lenses}, the single Feature over the 5-row marker-stone lens table
      * (the same single-feature-over-a-row-table shape as LARGE_VEINS: five separate
      * configured features would lose the exactly-one weighted origin draw). The
@@ -90,7 +90,7 @@ public final class GT6Features {
     }
 
     /**
-     * The bedrock-ore feature (task p31-bedrock-ore-worldgen) — ONE registration row
+     * The bedrock-ore feature (task bedrock-ore-worldgen) — ONE registration row
      * {@code gt6:bedrock_ores}, the single Feature over the 46-row bedrock-ore table
      * (the same single-feature-over-a-row-table shape as LARGE_VEINS/STRATA_LENSES; the
      * rows roll INDEPENDENTLY in table order, not exactly-one — one WorldgenObject per
@@ -106,7 +106,7 @@ public final class GT6Features {
     }
 
     /**
-     * The nether stone-lens feature (task p31-nether-lens-end-yield) — ONE registration row
+     * The nether stone-lens feature (task nether-lens-end-yield) — ONE registration row
      * {@code gt6:nether_lenses}, the single Feature over the 17-stone nether lens table (the
      * strata-lens adapter with the upstream independent per-row 1/200 rolls). The
      * configured/placed/biome-modifier rows hang off it in GT6WorldgenDatagen.
@@ -120,7 +120,7 @@ public final class GT6Features {
     }
 
     /**
-     * The bedrock-spring feature (task p31-fluid-spring) — ONE registration row
+     * The bedrock-spring feature (task fluid-spring) — ONE registration row
      * {@code gt6:fluid_springs}, the single Feature over the 16-row spring table (the
      * single-feature-over-a-row-table shape as LARGE_VEINS/BEDROCK_ORES; the rows roll
      * first-hit-wins in table order, not exactly-one and not independent — the upstream
@@ -137,7 +137,7 @@ public final class GT6Features {
     }
 
     /**
-     * The three nether surface forms (task p31-nether-lens-end-yield spec ①) — quartz /
+     * The three nether surface forms (task nether-lens-end-yield spec ①) — quartz /
      * crystals / clay, one registration row each ({@code gt6:nether_quartz},
      * {@code gt6:nether_crystals}, {@code gt6:nether_clay}), all NoneFeatureConfiguration
      * (the upstream constants live in the classes, not a config surface). The
@@ -148,7 +148,7 @@ public final class GT6Features {
     public static final GT6NetherClayFeature NETHER_CLAY = registerForm("nether_clay", new GT6NetherClayFeature());
 
     /**
-     * The bumble-hive feature (task p32-bees-lv2) — ONE registration row
+     * The bumble-hive feature (task bees-lv2) — ONE registration row
      * {@code gt6:bumble_hives}, NoneFeatureConfiguration (the nether-form shape): the
      * upstream three WorldgenObject rows (Loader_Worldgen.java:635-637) collapse into
      * one Feature with in-place dimension routing, hanging off three biome modifiers
@@ -167,7 +167,7 @@ public final class GT6Features {
     }
 
     /**
-     * The 4 fallen-log feature instances (task p30-w6-t2-surface-blocks), dry/rotten/mossy
+     * The 4 fallen-log feature instances (task w6-t2-surface-blocks), dry/rotten/mossy
      * /frozen — registry ids {@code log_<kind>} ({@link GT6Worldgen#FALLEN_LOG_PATHS}).
      * The blocks resolve through the supplier at worldgen/datagen use time (the
      * DeferredRegister entries are NOT up at this class's static init).

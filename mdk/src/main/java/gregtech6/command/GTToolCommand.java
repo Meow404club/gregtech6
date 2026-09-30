@@ -44,7 +44,7 @@ import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
 
 /**
- * {@code /gt6tool} — the tool acceptance command (task p9-tool-crowbar spec ③; the
+ * {@code /gt6tool} — the tool acceptance command (task tool-crowbar spec ③; the
  * RCON entry that drives the formal crowbar without a player at the keyboard,
  * card-local in command/ like GTWireCommand/GT6EnergyCommand). The dismantle runs the
  * exact {@link GTCrowbarItem#crowbarToolClick(UseOnContext)} dispatch the item's
@@ -56,7 +56,7 @@ import gregapi.oredict.OreDictMaterial;
  *     at the face (a synthetic BlockHitResult, the miss-free constructor form), run the
  *     shared dispatch and assert the upstream 10000 return, the one-point durability
  *     payment and the cover leaving the store; the report names the inventory landing.</li>
- * <li>{@code cut <pos> <side>} (task p10-tool-cutter spec ③) — give the fake player a
+ * <li>{@code cut <pos> <side>} (task tool-cutter spec ③) — give the fake player a
  *     gt6:cutter and run the same-shape dispatch into
  *     {@link GTCutterItem#cutterToolClick(UseOnContext)}; the report asserts the :76
  *     10000 return, the one-point durability payment and the wire's CONNECTIONS mask
@@ -104,7 +104,7 @@ public final class GTToolCommand {
 					.then(Commands.argument("side", com.mojang.brigadier.arguments.StringArgumentType.word())
 						.executes(context -> prospect(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "pos"),
 								parseSide(com.mojang.brigadier.arguments.StringArgumentType.getString(context, "side")))))))
-			// task p31-machine-ladder — the machine-family material-ladder arm (the
+			// task machine-ladder — the machine-family material-ladder arm (the
 			// GT6BladeToolCommand.stats shape): identity attached THE RECIPE WAY through
 			// GT6ToolLadder.stampIdentity, the item surfaces read BACK.
 			.then(Commands.literal("stats")
@@ -115,7 +115,7 @@ public final class GTToolCommand {
 								com.mojang.brigadier.arguments.StringArgumentType.getString(context, "material"))))));
 		event.getDispatcher().register(tTool);
 		LOGGER.info("Registered GT6 tool acceptance command /gt6tool (dismantle, cut, prospect, stats)");
-		// task p27-vanilla-tag-dual-tree: the tag-membership debug command — the RCON
+		// task vanilla-tag-dual-tree: the tag-membership debug command — the RCON
 		// face of the dual-tree acceptance (`/gt6tags dump <tag>` lists the bound
 		// runtime members of ANY item tag, so the forge:/c: twin faces are provable
 		// live on both legs). Greedy-string argument: the tag id carries ':' and '/'
@@ -131,7 +131,7 @@ public final class GTToolCommand {
 
 	/**
 	 * {@code /gt6tags dump <tag>} — list the bound runtime members of one item tag
-	 * (task p27-vanilla-tag-dual-tree). The spec string parses to a ResourceLocation
+	 * (task vanilla-tag-dual-tree). The spec string parses to a ResourceLocation
 	 * (bare-identifier ctor argument — the 1.20.1 form, shifted to
 	 * {@code ResourceLocation.parse} on the 21.1 leg by the stonecutter swap table),
 	 * the members read through {@code BuiltInRegistries.ITEM.getTagOrEmpty} (the
@@ -177,7 +177,7 @@ public final class GTToolCommand {
 	 * Crowbar-dismantle the cover through the item's own dispatch: the fake player
 	 * holds a gt6:crowbar, the report asserts the 10000 upstream return, the 1-point
 	 * durability payment and the cover landing in the fake player's inventory. The
-	 * optional {@code material} argument (task p31-machine-ladder) stamps the
+	 * optional {@code material} argument (task machine-ladder) stamps the
 	 * {@code GT.ToolStats} identity THE RECIPE WAY first, so the per-material crowbar
 	 * (its max-damage read and the payment ceiling) is the asserted surface.
 	 */
@@ -230,7 +230,7 @@ public final class GTToolCommand {
 
 	/**
 	 * Cutter-toggle the wire connection through the item's own dispatch (task
-	 * p10-tool-cutter spec ③, the dismantle shape): the fake player holds a gt6:cutter,
+	 * tool-cutter spec ③, the dismantle shape): the fake player holds a gt6:cutter,
 	 * the synthetic hit lands at the block centre so the nine-grid resolves the clicked
 	 * face itself, and the report asserts the :76 10000 return, the 1-point durability
 	 * payment and the CONNECTIONS mask flip.
@@ -267,7 +267,7 @@ public final class GTToolCommand {
 	}
 
 	/**
-	 * Prospect through the item's own dispatch (task p30-pool-prospector spec, the cut
+	 * Prospect through the item's own dispatch (task pool-prospector spec, the cut
 	 * shape): the fake player holds a gt6:hammer, the synthetic hit pins the clicked face
 	 * at the block pos, and the {@link GTHammerItem#useOn} arm runs the
 	 * {@link GT6Prospector#prospect} single-source seam. The chat lines ride the report
@@ -300,7 +300,7 @@ public final class GTToolCommand {
 	}
 
 	/**
-	 * The machine-family material-ladder arm (task p31-machine-ladder, the
+	 * The machine-family material-ladder arm (task machine-ladder, the
 	 * GT6BladeToolCommand.stats shape): builds a stack, attaches the {@code GT.ToolStats}
 	 * identity THE RECIPE WAY (the {@link GT6ToolLadder#stampIdentity} seam — the same
 	 * face the gt6:material_tool rows assemble through), then reads the item surfaces

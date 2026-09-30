@@ -23,7 +23,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.energy.GT6DynamoBlockEntityTestHarness.CountingFeSink;
 
 /**
- * The Flux Dynamo core offline tests (task p28-c-dynamo-family-be) — the
+ * The Flux Dynamo core offline tests (task c-dynamo-family-be) — the
  * GT6FeConverterBlockEntityTest posture (hand-verified math tables over an offline BET)
  * on the RU→FE machine: the 2.75 ratio table per tier (the W0 whole-packet seam — the
  * packet sizes ARE the NBT_OUTPUT column, the math rides the root

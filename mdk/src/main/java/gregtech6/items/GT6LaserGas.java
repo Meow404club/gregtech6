@@ -20,7 +20,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 /**
- * The Gas Laser Emitter components (task p32-qu-laser-domain, family closure task
+ * The Gas Laser Emitter components (task qu-laser-domain, family closure task
  * debt-laser-gas-family) — upstream MultiItemTechnological.java:384-394:
  * <ul>
  * <li>{@code gt6:comp_laser_gas_empty} — the :384 row (id 11000, "Empty Gas Laser
@@ -32,18 +32,18 @@ import net.minecraftforge.registries.RegistryObject;
  *     Emitter", tooltip "Purpose: Strong Material Processing"), the crafting component of
  *     every Electric CO2 Laser rung (the 'L' key, :930-934).</li>
  * <li>{@code gt6:comp_laser_gas_he} — the :387 row (id 11001, "Helium Laser Emitter",
- *     tooltip "Purpose: Weak Optical Appliances"), task p37-usb-peripherals under the
+ *     tooltip "Purpose: Weak Optical Appliances"), task usb-peripherals under the
  *     coordinator's SINGLE-ITEM EXEMPTION: the USB HDD crafting rows' 'L' column
  *     (MultiItemTechnological.java:819-822) is its direct consumer — the consumption
  *     chain the ruling names; the He line's own laser-machine faces stay pooled.</li>
  * </ul>
  * The family is CLOSED (task debt-laser-gas-family, the rebase-merged shape): every
- * gas row of :384-394 is in — the :387 He row landed first with p37-usb-peripherals
+ * gas row of :384-394 is in — the :387 He row landed first with usb-peripherals
  * (the single-item exemption, its consumer the USB HDD 'L' column :819-822), the
  * :388-393 six landed with the family closure card. The HeNe Canner fill leg poured
  * once task debt-hene-fluid landed the {@code gt6:heliumneon} CHEMICAL_SPECS row.
  *
- * <p>The creative-tab face joins MACHINES_TAB (task p38-tabfix-b-energy,
+ * <p>The creative-tab face joins MACHINES_TAB (task tabfix-b-energy,
  * {@link #onBuildTabContents} — supersedes the old CUT ruling; the GTBarrels:257 pooling
  * precedent, the upstream crafting rows ride the Technological items tab this port does
  * not split out). The upstream crafting row of the empty emitter (:385) is the crafting
@@ -58,7 +58,7 @@ public final class GT6LaserGas {
 	/** The :384 row (id 11000) — "Empty Gas Laser Emitter". */
 	public static final RegistryObject<Item> COMP_LASER_GAS_EMPTY = ITEMS.register("comp_laser_gas_empty",
 			() -> new GT6LaserGasItem(new Item.Properties(), "item.gt6.comp_laser_gas_empty.tooltip"));
-	/** The :387 row (id 11001) — "Helium Laser Emitter" (task p37-usb-peripherals, the coordinator's single-item exemption; the rebase moved it to the upstream id order). */
+	/** The :387 row (id 11001) — "Helium Laser Emitter" (task usb-peripherals, the coordinator's single-item exemption; the rebase moved it to the upstream id order). */
 	public static final RegistryObject<Item> COMP_LASER_GAS_HE = ITEMS.register("comp_laser_gas_he",
 			() -> new GT6LaserGasItem(new Item.Properties(), "item.gt6.comp_laser_gas_he.tooltip"));
 	/** The :388 row (id 11002) — "Neon Laser Emitter". */
@@ -95,7 +95,7 @@ public final class GT6LaserGas {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — every emitter item joins the machines tab;
+	 * The tab walk (task tabfix-b-energy — every emitter item joins the machines tab;
 	 * the GT6BurningBoxes.onBuildTabContents verbatim form, the class-level MOD-bus
 	 * {@code @Mod.EventBusSubscriber} at the class head is what delivers this handler).
 	 * JEI 1.20.1 derives its item list from the tab display items, so registered-but-

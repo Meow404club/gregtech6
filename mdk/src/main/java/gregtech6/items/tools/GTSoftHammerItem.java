@@ -24,7 +24,7 @@ import net.minecraftforge.common.ToolAction;
 import javax.annotation.Nullable;
 
 /**
- * The formal soft hammer — item id {@code gt6:soft_hammer} (task p29-w5-t3-machine-face-four
+ * The formal soft hammer — item id {@code gt6:soft_hammer} (task w5-t3-machine-face-four
  * spec ①, the GTWrenchItem family form). Upstream the tool is meta id
  * {@code ToolsGT.SOFTHAMMER = 14} (CS.java:1736) mounted by the Loader_Tools.java:125
  * registration row (display name "Soft Hammer", tagline "Can rotate vanilla-ish things and
@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
  * (GT_Tool_SoftHammer.java:74-76) ported as the flat {@link #getDestroySpeed} — slower
  * than the bare hand, the {@code isMiningTool() = false} semantics; and
  * {@code getMaxDurabilityMultiplier() = 8.0F} (:79-81) — LIVE since the material ladder
- * (task p31-machine-ladder): the form multiplier rides the {@link GT6ToolLadder} j/100
+ * (task machine-ladder): the form multiplier rides the {@link GT6ToolLadder} j/100
  * budget (Steel 512 ×8 = 4096 points; the pre-ladder flat 512 was the pool-cut shell,
  * a declared behaviour change). The crafting-loss face rides the shared one-point
  * mapping (the upstream :49-51 800-unit row folded, the p25 ruling).
@@ -53,7 +53,7 @@ import javax.annotation.Nullable;
  * (SFX.IC_TRAMPOLINE — an IC2-namespace sound with no vanilla counterpart) stays pooled
  * with the sounds.json card.
  *
- * <p>MATERIAL LADDER (task p31-machine-ladder): the stack's {@code GT.ToolStats} identity
+ * <p>MATERIAL LADDER (task machine-ladder): the stack's {@code GT.ToolStats} identity
  * scales durability at the form's ×8 multiplier, the composed display name
  * ("Soft Hammer (Bronze)") and the head tint ride the same seam; the IDENTITY-LESS arm
  * is Steel ×8 (the upstream {@code getPrimaryMaterial(stack, MT.Steel)} read over the
@@ -112,7 +112,7 @@ public class GTSoftHammerItem extends Item implements GT6ToolLadder.LadderTool {
 		return classifies(aToolAction);
 	}
 
-	// ------------------------------ the GT6ToolLadder identity faces (task p31-machine-ladder) ------------------------------
+	// ------------------------------ the GT6ToolLadder identity faces (task machine-ladder) ------------------------------
 
 	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — the identity-less arm is Steel ×8 = 4096). */
 	@Override

@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregtech6.items.tools.loot.GT6ToolSweep;
 
 /**
- * The formal GT6 sense — item id {@code gt6:sense} (task p29-w5-t4-field-five; the
+ * The formal GT6 sense — item id {@code gt6:sense} (task w5-t4-field-five; the
  * upstream tooltip: "Because a Scythe doesn't make Sense"). Upstream GT_Tool_Sense.java
  * :46-111:
  * <ul>

@@ -11,7 +11,7 @@ import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Bumble Hive BE (task p32-bees-lv2) — the {@code MultiTileEntityBumbleHive} port
+ * The Bumble Hive BE (task bees-lv2) — the {@code MultiTileEntityBumbleHive} port
  * (MultiTileEntityBumbleHive.java:50-102, MTE 32755 "Bumble Hive",
  * Loader_MultiTileEntities.java:2041). The 03 base carries the paintable stratum
  * ({@link gregtech6.tileentity.IPaintableTE} + the PAINT model-data supply, the
@@ -29,7 +29,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * harvest ever reaches the drop (the wrong-tool break drops nothing, the
  * TOOL_scoop aHive semantics, Loader_MultiTileEntities.java:111).
  *
- * <p>Loot content (the Lv2 deferral closed in p33-bees-lv3-c-hive-loot): worldgen fills
+ * <p>Loot content (the Lv2 deferral closed in bees-lv3-c-hive-loot): worldgen fills
  * slots 0-2 ({@link gregtech6.worldgen.GT6HiveFeature#fillLoot}, the :203 placeHive
  * shape) — slot 0 the family comb (the {@code bumbleProductStack} species table), slot 1
  * the princess, slot 2 the drones (the offspring gene the count), the royals carrying

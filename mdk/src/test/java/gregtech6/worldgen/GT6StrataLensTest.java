@@ -1,5 +1,5 @@
 /**
- * Tests for task p31-strata-lens: the 5-row marker-stone lens table, the exactly-one
+ * Tests for task strata-lens: the 5-row marker-stone lens table, the exactly-one
  * origin draw, the codec roundtrip, the ellipsoid shape pin and the per-chunk slice
  * tiling — the acceptance's offline audit unit (the GT6LargeVeinTest posture).
  *

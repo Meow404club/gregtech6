@@ -1,5 +1,5 @@
 /**
- * Offline tests for task p27-oven-heat-t-ladder: the Oven Heat_T ladder — the four rows
+ * Offline tests for task oven-heat-t-ladder: the Oven Heat_T ladder — the four rows
  * Loader_MultiTileEntities.java:1288-1291 (upstream metaIds 20001-20004, the MT.java:3689
  * Heat_T[1..4] locals ANY.Steel/Invar/Ti/TungstenCarbide, NBT_HARDNESS 6.0/4.0/9.0/12.5
  * with the T2 4.0F special case, NBT_INPUT 32/128/512/2048 through TIER_INPUTS).

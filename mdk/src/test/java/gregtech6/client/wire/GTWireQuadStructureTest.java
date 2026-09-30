@@ -1,13 +1,13 @@
 /**
  * The 64-connection-state quad structure of {@link GTWireBakedModel} (task
- * p9-wire-family-w2 acceptance "64 connection-state quad structure unit test"): the planner is a pure
+ * wire-family-w2 acceptance "64 connection-state quad structure unit test"): the planner is a pure
  * (insulated, diameter, mask) → face/box/tint/sprite-kind function — the offline half of
  * the visual correctness (the runClient eye check stays with the user). Every expected box
  * below is the direct transcription of the upstream arm switch
  * (TileEntityBase10ConnectorRendered.setBlockBounds2 :124-129) and core box (:115), and the
  * texture pick of :138-139 (core = getTextureSide, caps = getTextureConnected, buried faces
  * skipped), with the :238 insulation tier ladder from MultiTileEntityWireElectric.
- * Task p11-wire-fiber-texture appends the fiber form (planShapesFiber): the laser family
+ * Task wire-fiber-texture appends the fiber form (planShapesFiber): the laser family
  * twins every material quad with an untinted FIBER_WIRE_OVERLAY (WireLaser :121-122).
  */
 package gregtech6.client.wire;
@@ -167,7 +167,7 @@ public class GTWireQuadStructureTest {
     }
 
     // -------------------------------------------------------------------------
-    // task p11-wire-fiber-texture — the laser (fiber) family form
+    // task wire-fiber-texture — the laser (fiber) family form
     // -------------------------------------------------------------------------
 
     @Test

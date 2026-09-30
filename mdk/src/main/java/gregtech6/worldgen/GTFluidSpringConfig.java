@@ -8,8 +8,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 
 /**
- * One bedrock-spring row (task p31-fluid-spring spec ②, the springFluid column returned by
- * task p38-issue5-fluid-spring-nozzle) — the {@code WorldgenFluidSpring} ctor read face
+ * One bedrock-spring row (task fluid-spring spec ②, the springFluid column returned by
+ * task issue5-fluid-spring-nozzle) — the {@code WorldgenFluidSpring} ctor read face
  * verbatim (WorldgenFluidSpring.java:50: aName, aDefault, aBlock, aMeta, aProbability,
  * [aIndicatorType,] aSpringFluid), minus the two columns the deferrals cut:
  * <ul>
@@ -21,7 +21,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
  *     即可）"), exactly the sibling bedrock card's indicator-arm posture.</li>
  * </ul>
  *
- * <p><b>The springFluid column</b> (task p38-issue5-fluid-spring-nozzle): the upstream
+ * <p><b>The springFluid column</b> (task issue5-fluid-spring-nozzle): the upstream
  * mSpringFluid FluidStack, the nozzle arm's identity — the port carries the AMOUNT only
  * (one block per fluid makes the fluid identity the row's blockId; the nozzle BE sprays
  * the row's block), null = upstream NF (no nozzle arm, the tInfiniteOil=false face).

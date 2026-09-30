@@ -25,7 +25,7 @@ import gregtech6.tileentity.tank.GTBarrelItemFluidHandler;
 import gregtech6.tileentity.tank.TileEntityBase08Barrel;
 
 /**
- * The item-side tank face (task p12-fluid-item-carrier acceptance a): the
+ * The item-side tank face (task fluid-item-carrier acceptance a): the
  * fill→NBT→load→drain round trip keeping amount AND identity, the count!=1 guard
  * (FluidHandlerItemStack.java:108), the long-internal-amount bindInt boundary over a
  * 10B drum capacity, and the wood-barrel drains-to-true-empty semantics

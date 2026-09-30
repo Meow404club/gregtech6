@@ -19,7 +19,7 @@ import gregtech6.items.GT6Emitters;
 import gregtech6.items.GT6LaserGas;
 
 /**
- * Task p38-tabfix-b-energy — the creative-tab join census for the energy/equipment
+ * Task tabfix-b-energy — the creative-tab join census for the energy/equipment
  * family batch: every family of the card joins {@link GTMachines#MACHINES_TAB} through
  * its own {@code onBuildTabContents} handler (the GT6BurningBoxes verbatim form), and
  * this test pins the per-family join-coverage counts so a future registration cannot
@@ -28,13 +28,13 @@ import gregtech6.items.GT6LaserGas;
  * creative menu and JEI).
  *
  * <p><b>COUNT ERRATUM (declared, the BurningBoxRowTableTest precedent)</b>: the task
- * card's SPEC (from the p38-tab-census ledger) says 164 items, with
+ * card's SPEC (from the tab-census ledger) says 164 items, with
  * GT6ElectricDynamos=3 and GT6FluxDynamos=3. The code truth is 6 + 5 = 11 dynamo items —
  * the census evidence windows (:117-:121 / :88-:92) stopped at the T2 row while the
  * ladders continue to T5. GT6Kinetics likewise holds a fourth single-block item the
  * census lost: the water wheel (:545). The tests pin the code truth: 170 items across
  * the 18 files (17 card slots; the dynamo slot is two files) — 171 since the
- * p37-usb-peripherals He exemption (the :387 single item) + the 6 debt-laser-gas-family
+ * usb-peripherals He exemption (the :387 single item) + the 6 debt-laser-gas-family
  * emitter rows (:388-393) = 177 (the review-seat rebase resolution of the two census
  * legs). Coverage = what the
  * family's {@code onBuildTabContents} walk accepts: map-walk families are counted by
@@ -182,7 +182,7 @@ public class CreativeTabJoinCensusTest {
 	}
 
 	/** The laser gas emitters: the closed family 9 (empty + He + the :388-393 six + CO2, MultiItemTechnological :384-394 —
-	 * He via the p37-usb-peripherals exemption, the six via debt-laser-gas-family; the review-seat rebase merged pin). */
+	 * He via the usb-peripherals exemption, the six via debt-laser-gas-family; the review-seat rebase merged pin). */
 	@Test
 	public void laserGasJoinsNine() {
 		assertEquals(9, itemFields(GT6LaserGas.class).size());

@@ -21,7 +21,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
 
 /**
- * The Advanced Crafting Table block (task p24-act-machine) — the GTOvenBlock shape over
+ * The Advanced Crafting Table block (task act-machine) — the GTOvenBlock shape over
  * the facing axis ONLY: the ACT is zero-energy and player-click driven, so there is no
  * ACTIVE/RUNNING visual payload (the upstream machine carries no state decals — the
  * texture set has no overlay_active/overlay_running layers, the craftingtables/advanced
@@ -61,7 +61,7 @@ public class GTAdvancedCraftingTableBlock extends GTEntityBlock {
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
 		// the front TOWARDS the placer (the GT6PlacementFacing canon, task
-		// p28-singleblock-facing-canon) — the setFacingFromPlacement twin (the oven :88 shape)
+		// singleblock-facing-canon) — the setFacingFromPlacement twin (the oven :88 shape)
 		return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 	}
 

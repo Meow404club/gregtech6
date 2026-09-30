@@ -23,7 +23,7 @@ import gregtech6.gui.machines.GTOvenMenu;
 import gregtech6.registry.GTMachines;
 
 /**
- * {@code /gt6oven} — the machine-level acceptance command (task p4-machine-oven ⑨, W2
+ * {@code /gt6oven} — the machine-level acceptance command (task machine-oven ⑨, W2
  * exclusive, RCON-drivable like the chest's /gt6chest). Console-safe throughout
  * (FakePlayerFactory for the menu path, no client involved):
  *
@@ -39,7 +39,7 @@ import gregtech6.registry.GTMachines;
  * <li>{@code check [<pos>]} — state report: slots, progress trio, energy, stop flags;</li>
  * <li>{@code rotate &lt;side 0..6&gt; [<pos>]} — the front-facing rotation through the
  *     same BE entry the shift-hoe grid path calls ({@link TileEntityOven#setFrontFacing},
- *     task p6-oven-rotation): vertical sides (0/1), SIDE_INVALID (6) and the
+ *     task oven-rotation): vertical sides (0/1), SIDE_INVALID (6) and the
  *     same-facing call are REJECTED.</li>
  * </ul>
  *
@@ -191,7 +191,7 @@ public final class GTOvenCommand {
 	}
 
 	/**
-	 * The rotation acceptance entry (task p6-oven-rotation ⑦): the same BE entry the
+	 * The rotation acceptance entry (task oven-rotation ⑦): the same BE entry the
 	 * shift-hoe grid path calls — {@link TileEntityOven#setFrontFacing} — so the command
 	 * asserts exactly what the interaction rotates. Rejections mirror the BE double
 	 * guard: vertical sides (0/1), SIDE_INVALID (6) and the same-facing call all report

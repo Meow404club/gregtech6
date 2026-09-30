@@ -1,5 +1,5 @@
 /**
- * Offline guard tests for task r7-30a (GitHub #30 phase 1): the per-map accepted-energy
+ * Offline guard tests for task #30a (GitHub #30 phase 1): the per-map accepted-energy
  * column of the shared viewer metadata — the census classification (every visible map is
  * either pinned to one carrier or declared GU), the registration-row pin sample, the
  * mixed-carrier GU fallback (the conflict list), the colored short-code unit lines and
@@ -55,7 +55,7 @@ class GT6RecipeMapEnergySplitTest extends GTRecipesOfflineTestBase {
 	// The census classification: pinned + declared-GU covers the visible set exactly
 	// -------------------------------------------------------------------
 
-	/** The declared GU faces — mixed-carrier maps first (the r7-30a conflict list), then the carrier-less ones. */
+	/** The declared GU faces — mixed-carrier maps first (the #30a conflict list), then the carrier-less ones. */
 	private static final Set<String> GU_MIXED = Set.of(
 			// the conflict list: every pair upstream-faithful (small KU/RU vs large/EU variant)
 			"gt.recipe.crusher",   // KU small GTMachines:438-440 vs RU large GT6LargeMachines:1238
@@ -193,7 +193,7 @@ class GT6RecipeMapEnergySplitTest extends GTRecipesOfflineTestBase {
 	}
 
 	// -------------------------------------------------------------------
-	// The GU zero-change guard: mixed and carrier-less maps keep the r6-29-34a face
+	// The GU zero-change guard: mixed and carrier-less maps keep the issues #29/#34a face
 	// -------------------------------------------------------------------
 
 	@Test
@@ -205,7 +205,7 @@ class GT6RecipeMapEnergySplitTest extends GTRecipesOfflineTestBase {
 		assertArrayArgs(new Object[]{12800L}, contents(tLines.get(0)).getArgs());
 		assertEquals("gt6.jei.cost.usage", contents(tLines.get(1)).getKey());
 		assertEquals("gt6.jei.cost.tier", contents(tLines.get(2)).getKey());
-		// COKE_OVEN: the carrier-less face (the r6-29-34a pin shape, byte-identical)
+		// COKE_OVEN: the carrier-less face (the issues #29/#34a pin shape, byte-identical)
 		var tCoke = GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.COKE_OVEN, row(32, 400, 0));
 		assertEquals("gt6.jei.cost.costs", contents(tCoke.get(0)).getKey());
 		assertArrayArgs(new Object[]{12800L}, contents(tCoke.get(0)).getArgs());

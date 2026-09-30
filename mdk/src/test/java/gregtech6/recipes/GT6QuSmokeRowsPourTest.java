@@ -22,7 +22,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * The p31-qu-a-foundation smoke-row pour test (the GT6HeatSmelterSmokeRowsPourTest
+ * The qu-a-foundation smoke-row pour test (the GT6HeatSmelterSmokeRowsPourTest
  * fixture posture): the THREE data/gt6/recipe_maps JSON files this card ships (massfab /
  * replicator / scannermolecular) are read VERBATIM off the classpath and poured through
  * the real {@link GT6RecipeMapJsonLoader} seam — the new POURABLE keys, the map
@@ -46,7 +46,7 @@ public class GT6QuSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 			case "iron_ingot" -> Items.IRON_INGOT;
 			case "ender_pearl" -> Items.ENDER_PEARL;
 			case "paper" -> Items.PAPER;
-			// the p31-massfab Ender rows' material items — enumerated EXACTLY so a typo in a
+			// the massfab Ender rows' material items — enumerated EXACTLY so a typo in a
 			// shipped row stays a LOUD bad row (the default miss)
 			case "dust_div72_dilithium", "dust_tiny_dilithium", "dust_small_dilithium", "dust_dilithium",
 					"gem_dilithium", "block_dust_dilithium", "block_gem_dilithium",
@@ -78,7 +78,7 @@ public class GT6QuSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 		}
 	}
 
-	/** The p31-massfab massfab file = the 14 Ender smoke rows (Loader_Recipes_Other.java:915-928 verbatim constants). */
+	/** The massfab massfab file = the 14 Ender smoke rows (Loader_Recipes_Other.java:915-928 verbatim constants). */
 	@Test
 	void theThreeShippedSmokeFilesPourIntoTheirMaps() throws Exception {
 		pourShipped("massfab");
@@ -121,7 +121,7 @@ public class GT6QuSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 	@Test
 	void theReplicatorRowCarriesTheEnderReplicationConstants() throws Exception {
 		pourShipped("replicator");
-		// task p32-qu-scanner-replicator — the map now carries the :929 row PLUS the
+		// task qu-scanner-replicator — the map now carries the :929 row PLUS the
 		// :941-946 molten-redstone six; the ender row is found by its output (the set is
 		// unordered, the amount-144 redstone row would be a coin-flip on iterator().next()).
 		// The redstone constants themselves are pinned exhaustively in GT6QuMachinesTest.
@@ -140,7 +140,7 @@ public class GT6QuSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 
 	/**
 	 * The Ender rows' item ids are the GTMaterialItems id-composition outputs (task
-	 * p31-massfab): every hand-typed id in the shipped massfab.json must equal
+	 * massfab): every hand-typed id in the shipped massfab.json must equal
 	 * {@code itemIdOf(prefix, material)} so the LIVE pour resolves them — a typo here is
 	 * a LOUD bad row at load and a silently missing NEI row.
 	 */

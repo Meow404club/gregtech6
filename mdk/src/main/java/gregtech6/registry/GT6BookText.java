@@ -9,7 +9,7 @@ import java.util.List;
  * <p>The 15 static books of the upstream "gt.books" obtainability face
  * (Loader_Loot.java:340-356), pages VERBATIM ('¶' page markers included — the
  * runtime conversion lives in GT6Books, the single-source converter, UT.java:622-628
- * semantics). Task p35-books-written, coordinator-approved 15-book scope; the five CUT
+ * semantics). Task books-written, coordinator-approved 15-book scope; the five CUT
  * books carry their own evidence in the generator docstring (Punch_Cards/Microwave/
  * Portal_TF/Alloys/Elements).
  */

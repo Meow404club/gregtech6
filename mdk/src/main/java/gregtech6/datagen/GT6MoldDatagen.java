@@ -24,8 +24,8 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import gregtech6.registry.GT6Molds;
 
 /**
- * The card-B datagen home (task p26-crucible-mold-faucet). Since task
- * p30-ops-datagen-lang-order the provider band folds into {@link GT6DataGenerators#onGatherData}
+ * The card-B datagen home (task crucible-mold-faucet). Since task
+ * ops-datagen-lang-order the provider band folds into {@link GT6DataGenerators#onGatherData}
  * — this class is NO LONGER a {@code @Mod.EventBusSubscriber}: three self-contained
  * GatherDataEvent subscribers ordered themselves by the annotation-scan lottery and the
  * per-family full-file lang writers made the last one win (the p30 card's live repro: an
@@ -38,14 +38,14 @@ import gregtech6.registry.GT6Molds;
  *     the 5x5 bitmap stamp models (issue #41: the CONCAVE mold — the 1px floor + the four
  *     2px walls + one 2.4x3x2.4px element per UNLIT bit, the lit bit = chiseled out,
  *     MultiTileEntityMold.java:328-335/:537) riding the MATERIAL SMOOTH body texture
- *     ({@link GT6CrucibleDatagen#bodyTexture}, task r7-40-41-mold-assets — the former
+ *     ({@link GT6CrucibleDatagen#bodyTexture}, task 40-41-mold-assets — the former
  *     flat andesite/cobble placeholder is gone), and the 2 faucet rows as material smooth
  *     body cubes (the p12 addAttachments single-model-over-all-facings form, the oriented
  *     thin plate is the render pool).</li>
  * <li><b>item models</b>: the formed molds and faucets parent their block models; the
  *     31 raw clay items ride {@code item/generated} over their OWN borrowed upstream
  *     icon ({@code item/<path>_raw}, the gt.multiitem.randomtools 900-929/991 borrows,
- *     assets/README.md — task r7-40-41-mold-assets; the former shared vanilla clay
+ *     assets/README.md — task 40-41-mold-assets; the former shared vanilla clay
  *     sprite made every shape look identical, GitHub #40).</li>
  * <li><b>lang</b>: the composed display keys (en_us; the zh_cn walk rides the
  *     committed-tsv pipeline, this card adds none).</li>
@@ -118,9 +118,9 @@ public final class GT6MoldDatagen {
 					registerMoldModels(tRow);
 				}
 				// the faucets: cube_all over every FACING (the p12 addAttachments form), the
-				// material smooth body (task r7-40-41-mold-assets — the former flat cobble
+				// material smooth body (task 40-41-mold-assets — the former flat cobble
 				// placeholder is gone); the grayscale-borrow rows carry tintindex 0 (task
-				// r10-debt-material-tint), the vanilla smooth-stone row stays the finished
+				// debt-material-tint), the vanilla smooth-stone row stays the finished
 				// texture (a second multiply would dirty it — the recorded declaration shortcut)
 				for (GT6Molds.FaucetRow tRow : GT6Molds.FAUCET_ROWS) {
 					Block tBlock = GT6Molds.FAUCET_BLOCKS_BY_PATH.get(tRow.path()).get();
@@ -152,11 +152,11 @@ public final class GT6MoldDatagen {
 
 			/**
 			 * One mold row: the 5x5 bitmap-stamp blockstate over the material smooth body
-			 * texture (the r7-mold-geometry geometry × r7-40-41-mold-assets bodyTexture
+			 * texture (the mold-geometry geometry × 40-41-mold-assets bodyTexture
 			 * stitch — the upstream getTextureSmooth face, the former cobble placeholder is
 			 * gone) + the formed item model + the raw clay item as a flat generated sprite
 			 * over ITS OWN borrowed upstream icon ({@code item/<path>_raw}, the
-			 * gt.multiitem.randomtools 900-929/991 borrows — task r7-40-41-mold-assets,
+			 * gt.multiitem.randomtools 900-929/991 borrows — task 40-41-mold-assets,
 			 * GitHub #40; the former shared vanilla clay sprite made all 31 shapes look
 			 * identical). The icon files are named after the raw item ids, so the layer0
 			 * mapping needs no shape table.
@@ -170,7 +170,7 @@ public final class GT6MoldDatagen {
 			}
 
 			/**
-			 * The 5x5 bitmap stamp model (r7-mold-geometry geometry, issue #41 polarity):
+			 * The 5x5 bitmap stamp model (mold-geometry geometry, issue #41 polarity):
 			 * the MOLD is CONCAVE — a chisel strike SETS a bit (MultiTileEntityMold.java
 			 * :328-335) and the render gate :537 skips exactly the lit cells, so bit=1 =
 			 * carved out. The elements: the 1px full-footprint floor, the four 2px-thick
@@ -180,7 +180,7 @@ public final class GT6MoldDatagen {
 			 * portal-frame precedent — the standalone element model would strip them from
 			 * the BlockItem GUI/hand rendering); the formed item model parents this model,
 			 * so the BlockItem inventory face IS the 3D shape for free. The grayscale-borrow
-			 * body faces carry tintindex 0 (task r10-debt-material-tint — the upstream
+			 * body faces carry tintindex 0 (task debt-material-tint — the upstream
 			 * getTextureSmooth mRGBaSolid multiply, :980-987); the vanilla smooth-stone row
 			 * stays un-tinted (a finished texture, the recorded declaration shortcut).
 			 */
@@ -238,11 +238,11 @@ public final class GT6MoldDatagen {
 	/**
 	 * The composed display keys. Chains BELOW {@link GT6CrucibleDatagen.Lang} (which chains
 	 * below {@link GT6EnUs}): the tail replays the FULL base set through
-	 * {@code super.addTranslations()}. Since task p30-ops-datagen-lang-order this tail is the
+	 * {@code super.addTranslations()}. Since task ops-datagen-lang-order this tail is the
 	 * SINGLE registered en_us writer (GT6DataGenerators registers it at a fixed position), so
 	 * the file stays complete with no second writer to race — the pre-p30 form registered this
 	 * AND the two chained providers as separate subscribers and the annotation-scan order
-	 * decided which full-file write landed last (the p26-sensors-core merge gate caught the
+	 * decided which full-file write landed last (the sensors-core merge gate caught the
 	 * standalone-provider ancestor of this class wiping the 2701-key table down to 66 keys;
 	 * the t4 re-gate lost the 66 ceramic rows the same way).
 	 */

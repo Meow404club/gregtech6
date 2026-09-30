@@ -147,7 +147,7 @@ public class GTDynamicBakedModelTest extends GTOfflineRenderTestBase {
 	}
 
 	/**
-	 * Issue #8 (task r3-world-tint-render-type): the chunk-layer query forwards to the
+	 * Issue #8 (task world-tint-render-type): the chunk-layer query forwards to the
 	 * fallback model. Without the forward the IForgeBakedModel default resolves the layer
 	 * from the ItemBlockRenderTypes block table (solid), burying the fallback JSON's
 	 * {@code render_type} — the D2 leg4/leg5 pair (JSON-only = no effect, JSON + forward =

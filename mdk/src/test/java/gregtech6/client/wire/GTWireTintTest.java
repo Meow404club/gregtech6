@@ -1,7 +1,7 @@
 /**
- * The wire tint seam (task p9-wire-family-w2): index 0 = the material {@code fRGBaSolid}
+ * The wire tint seam (task wire-family-w2): index 0 = the material {@code fRGBaSolid}
  * (the unpainted TE default, TileEntityBase07Paintable.unpaint :83), index 1 = the fixed
- * insulation jacket — PER FAMILY since task p11-wire-brightness spec 3: the electric gray
+ * insulation jacket — PER FAMILY since task wire-brightness spec 3: the electric gray
  * 64,64,64 (MultiTileEntityWireElectric.java:237-238) vs the redstone {@code 96,64,64}
  * (MultiTileEntityWireRedstoneInsulated.java:184-185, the INSULATION_FULL side jacket AND
  * the tier caps carry the same constant), everything else -1. Pure-function form — no

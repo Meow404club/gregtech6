@@ -38,7 +38,7 @@ import gregtech6.registry.GTStoneBlocks;
 import gregtech6.util.GTItemMover;
 
 /**
- * The Bedrock Mining Drill multiblock controller (task p37-bedrock-drill) — the 1.20.1/1.21.1
+ * The Bedrock Mining Drill multiblock controller (task bedrock-drill) — the 1.20.1/1.21.1
  * port of gregtech/tileentity/multiblocks/MultiTileEntityBedrockDrill.java over
  * {@link TileEntityBase10MultiBlockBase} (Loader_MultiTileEntities.java:1283 re-read VERBATIM:
  * meta 17999, item 17101, "Bedrock Mining Drill Controller", MT.Ti, NBT_HARDNESS 9.0F ==
@@ -69,7 +69,7 @@ import gregtech6.util.GTItemMover;
  * (1/1000 bedrock dust). The ore blocks are NEVER destroyed (the bedrock ore stays; the
  * machine is an infinite miner over the floor it reads).
  *
- * <p><b>Declared output deviations</b> (the p31-bedrock-ore faces): the port's ore-block
+ * <p><b>Declared output deviations</b> (the bedrock-ore faces): the port's ore-block
  * universe is per-(family,kind,material) over the 53-axis materials, so the ore-path yield
  * rides the P31 contract — the broken ore of the drawn {@link #mType} skin family when the
  * material is in the axis, the {@code gt6:dust_<material>} fallback otherwise (upstream

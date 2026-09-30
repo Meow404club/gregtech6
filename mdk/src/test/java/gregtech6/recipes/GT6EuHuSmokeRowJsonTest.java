@@ -24,7 +24,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * The eu-hu smoke-row datapack acceptance (task p29-w1-eu-hu-families, the OFFLINE half):
+ * The eu-hu smoke-row datapack acceptance (task w1-eu-hu-families, the OFFLINE half):
  * the four committed {@code data/gt6/recipe_maps/<map>.json} files — {@code loom},
  * {@code boxinator}, {@code unboxinator}, {@code fermenter} — pour through the PUBLIC
  * {@link GT6RecipeMapJsonLoader#pour} seam into their maps (the card-D datapack domain),
@@ -88,7 +88,7 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("loom"), "one loom smoke row");
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("boxinator"), "one boxinator smoke row");
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("unboxinator"), "one unboxinator smoke row");
-		assertEquals(7, GT6RecipeMapJsonLoader.pouredCount("fermenter"), "the fermenter file — 1 smoke row + the 6 p33-food-fluids-b1 core rows");
+		assertEquals(7, GT6RecipeMapJsonLoader.pouredCount("fermenter"), "the fermenter file — 1 smoke row + the 6 food-fluids-b1 core rows");
 
 		// the Ananas row content pin (review fix): the OFFLINE fixture collapses every
 		// fluid id to Fluids.WATER (FLUID_FIXTURE above), so the poured Recipe objects

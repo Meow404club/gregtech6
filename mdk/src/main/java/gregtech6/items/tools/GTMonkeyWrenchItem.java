@@ -5,7 +5,7 @@ import net.minecraftforge.common.ToolAction;
 
 /**
  * The formal monkey wrench — item id {@code gt6:monkey_wrench} (task
- * p29-w5-t3-machine-face-four spec ②, the {@link GTWrenchItem} subclass, the card's
+ * w5-t3-machine-face-four spec ②, the {@link GTWrenchItem} subclass, the card's
  * "GT_Tool_Wrench 子类" ruling). Upstream meta id {@code ToolsGT.MONKEY_WRENCH = 52}
  * (CS.java:1736), mounted by the Loader_Tools.java:144 registration row (display name
  * "Monkey Wrench") over {@code GT_Tool_MonkeyWrench extends GT_Tool_Wrench}
@@ -22,7 +22,7 @@ import net.minecraftforge.common.ToolAction;
  *
  * <p>The subclass keeps the wrench's crafting-loss face inherited (the has/get pair on
  * {@link GT6FileItem#craftRemaining} — the upstream 800-unit wrench row, the shared
- * one-point mapping) and the material-ladder faces (task p31-machine-ladder, the
+ * one-point mapping) and the material-ladder faces (task machine-ladder, the
  * {@link GT6ToolLadder} seam over the {@code GT.ToolStats} identity — durability,
  * the composed "Monkey Wrench (Bronze)" name, the head tint). Zero {@code useOn} by the
  * RED LINE — the classifies pin is the same reflection wall the hammer/wrench pair carries.

@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
 
 /**
- * {@code /gt6portal} — the portal acceptance command (task p35-portals-mini-nether-end,
+ * {@code /gt6portal} — the portal acceptance command (task portals-mini-nether-end,
  * the /gt6heatexchanger self-contained command shape):
  *
  * <ul>

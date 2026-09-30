@@ -24,7 +24,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.energy.GT6DynamoBlockEntityTestHarness.CountingFeSink;
 
 /**
- * The Electric Dynamo core offline tests (task p28-c-dynamo-family-be) — the RU→EU
+ * The Electric Dynamo core offline tests (task c-dynamo-family-be) — the RU→EU
  * machine over the shared core: the 0.6875 ratio table per tier (Loader :946-950, the
  * upstream size-carrying Converter:85 emit — ONE packet whose SIZE is the whole converted
  * amount), the LIVE negative sign (RU ∧ EU both ∈ ALL_NEGATIVE_ALLOWED — the family that
@@ -75,7 +75,7 @@ public class GT6ElectricDynamoBlockEntityTest extends GTOfflineTestBase {
 			tDynamo.setAdjacencyOverride(GT6DynamoBlockEntityTestHarness.adjacencyAt(tSink, FRONT));
 			assertEquals(1, inject(tDynamo, tRow[0], 1));
 			tDynamo.doConversion(100);
-			// the T0 row {8, 8} rides the DECLARED 1:1 deviation (task p28-c-ulv-dynamo-row);
+			// the T0 row {8, 8} rides the DECLARED 1:1 deviation (task c-ulv-dynamo-row);
 			// rows 1..5 are the Loader :946-950 pairs, exactly 0.6875
 			assertEquals(tRow[1], tSink.totalEu,
 					tRow[0] + " RU -> one " + tRow[1] + " EU packet (the row pair: 1:1 declared at T0, 0.6875 above)");
@@ -86,7 +86,7 @@ public class GT6ElectricDynamoBlockEntityTest extends GTOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the T0 ULV row (task p28-c-ulv-dynamo-row): the water-wheel window + the ≤16 arm
+	// the T0 ULV row (task c-ulv-dynamo-row): the water-wheel window + the ≤16 arm
 	// ---------------------------------------------------------------------------
 
 	@Test

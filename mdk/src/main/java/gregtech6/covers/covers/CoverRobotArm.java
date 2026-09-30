@@ -15,7 +15,7 @@ import gregtech6.util.GTItemMover;
 
 /**
  * The robot arm cover — 1.20.1 port of gregapi/cover/covers/CoverRobotArm.java:41-121
- * (task p11-cover-conveyor-robotarm). The conveyor's skeleton with a slot address: the
+ * (task cover-conveyor-robotarm). The conveyor's skeleton with a slot address: the
  * value lane ({@code mValues[aSide]}) addresses one fixed slot on one end of the transfer
  * — negative means TAKE from slot {@code -1 - mValues} (:85-90, {@code ST.moveFrom} with
  * {@code aIgnoreSideFrom = T}), non-negative means PUT into slot {@code mValues} (:91-97,

@@ -32,7 +32,7 @@ import gregtech6.util.GTItemMover;
 
 /**
  * The shared transfer engine of the storage-hopper family — 1.20.1 counterpart of the two
- * upstream BEs' common skeleton (task p26-storage-hopper-family spec ④, the "搬运数学逐字"
+ * upstream BEs' common skeleton (task storage-hopper-family spec ④, the "搬运数学逐字"
  * clause): {@code MultiTileEntityHopper.java:62-301} and
  * {@code MultiTileEntityQueueHopper.java:62-283}, both extending TileEntityBase09FacingSingle
  * and implementing ITileEntityAdjacentInventoryUpdatable. The two kinds share EVERYTHING
@@ -72,7 +72,7 @@ import gregtech6.util.GTItemMover;
  *     {@code !(tDelegator.mTileEntity instanceof MultiTileEntityAnvil)} — the GT6 anvil's
  *     suck-what-falls-on-it pairing, MultiTileEntityHopper.java:191 for the hopper arm
  *     and MultiTileEntityQueueHopper.java:178 for the queue arm) is IMPLEMENTED as of
- *     task p28-c-anvil: the {@link #topIsAnvil} gate rides the shared drain arm exactly
+ *     task c-anvil: the {@link #topIsAnvil} gate rides the shared drain arm exactly
  *     like those conjuncts, so a hopper under a GT6 anvil skips the (NO_SLOTS-refusing)
  *     drain half and sucks the item entities out of the anvil's block space — the anvil
  *     family card lifted the former defer (the former "no GT6 anvil class to test
@@ -337,7 +337,7 @@ public abstract class GT6HopperBaseBlockEntity extends TileEntityBase03TicksAndS
 	 * GTItemMover.move(64, 1, 64)); no container — OR an anvil above (the upstream
 	 * {@code !(tDelegator.mTileEntity instanceof MultiTileEntityAnvil)} conjunct —
 	 * MultiTileEntityHopper.java:191, the queue arm's twin at MultiTileEntityQueueHopper
-	 * .java:178 — implemented by task p28-c-anvil after the former defer, the class doc)
+	 * .java:178 — implemented by task c-anvil after the former defer, the class doc)
 	 * — and a see-through block space → the {@link #findSuctionSlot} hook picks the slot
 	 * and one dropped item entity is sucked (:196-204 / :182-190, the WD.suck arm).
 	 */
@@ -362,7 +362,7 @@ public abstract class GT6HopperBaseBlockEntity extends TileEntityBase03TicksAndS
 	/**
 	 * The upstream anvil gate (MultiTileEntityHopper.java:191, the queue arm's twin at
 	 * MultiTileEntityQueueHopper.java:178) — the GT6 anvil's suck-what-falls-on-it pairing
-	 * (task p28-c-anvil): a hopper under a {@link gregtech6.tileentity.tools.GT6AnvilBlockEntity}
+	 * (task c-anvil): a hopper under a {@link gregtech6.tileentity.tools.GT6AnvilBlockEntity}
 	 * skips the drain half and sucks the item entities sitting in the anvil's block space
 	 * (outputs spawn at y + 1.2 and land back inside it), never its working slots.
 	 */

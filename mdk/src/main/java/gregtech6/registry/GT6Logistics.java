@@ -82,7 +82,7 @@ public final class GT6Logistics {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the Logistics Core (task p32-logistics-lv3, upstream meta 17997,
+	// the Logistics Core (task logistics-lv3, upstream meta 17997,
 	// Loader_MultiTileEntities.java:1281 — MT.SteelGalvanized, NBT_HARDNESS 6.0F ==
 	// NBT_RESISTANCE 6.0F, NBT_TEXTURE "logisticscore", category "Multiblock Machines").
 	// The seven structure parts (18008 wall / 18299 vents / 18200-04 CPU units) are the

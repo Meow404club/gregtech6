@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Hot fluid family offline tests (task p29-w4-hot-lube acceptance ① — the registration-row
+ * Hot fluid family offline tests (task w4-hot-lube acceptance ① — the registration-row
  * assertions against the DECLARED values): the twelve hot {@link GTFluids.ChemicalFluidSpec}
  * rows (Loader_Fluids.java:85-99, the STATE_LIQUID carriers — the six-arg create's 1000 is
  * the amount-per-unit NOT a density, FL.java:1089, so the non-pahoehoe rows ride the vanilla

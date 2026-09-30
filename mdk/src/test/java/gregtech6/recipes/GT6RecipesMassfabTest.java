@@ -29,7 +29,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 
 /**
- * The Matter Fabricator disintegration walk offline acceptance (task p31-massfab): the
+ * The Matter Fabricator disintegration walk offline acceptance (task massfab): the
  * Loader_Recipes_Other.java:969-987 element filter and the :971-981 unit/block arm
  * template — the iron constants (26p/30n → 7340032 ticks, 26 mB charged + 30 mB neutral,
  * eUt 1), the ×9 block arm, the proton-less arm skip (the :971 {@code NF} halves over

@@ -1,5 +1,5 @@
 /**
- * Tests for task p31-bedrock-ore-worldgen: the 46-row table parity (Loader_Worldgen.java
+ * Tests for task bedrock-ore-worldgen: the 46-row table parity (Loader_Worldgen.java
  * :725-770 row-for-row), the independent per-chunk row rolls, the generateVein shape pin
  * (patch/muffin/tails, all in-chunk), the codec roundtrip and the fixed-seed projection —
  * the acceptance's offline audit unit (the GT6StrataLensTest posture).

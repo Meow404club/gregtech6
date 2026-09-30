@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.items.IItemHandler; // the leg-native handler type (the Fluidometer import swap form)
 
 /**
- * The Stack-O-Meter Sensor (task p34-sensors-trivial-14 row ⑦) — the port of
+ * The Stack-O-Meter Sensor (task sensors-trivial-14 row ⑦) — the port of
  * MultiTileEntityStackometer.java:33-63: the OCCUPIED-STACK count over the neighbour
  * inventory (:34-50) with the slot count as max (:53-58) — the
  * {@link GT6ItemometerBlockEntity} probe at the stack grain (the same declared cuts:

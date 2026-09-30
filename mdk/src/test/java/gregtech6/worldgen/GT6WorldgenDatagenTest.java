@@ -1,5 +1,5 @@
 /**
- * Tests for task p26-worldgen-pipeline-skeleton: the worldgen constant table + the
+ * Tests for task worldgen-pipeline-skeleton: the worldgen constant table + the
  * RegistrySetBuilder band — the acceptance's offline audit unit.
  *
  * <p>Compile anchors (transcribed independently here, production and test must agree
@@ -83,13 +83,13 @@ class GT6WorldgenDatagenTest {
 
     /**
      * The 12 blob configured keys, BLOB_STONES order, all in the CONFIGURED_FEATURE
-     * registry. Task p31-strata-lens: the 5 marker stones ride the strata-lens feature
+     * registry. Task strata-lens: the 5 marker stones ride the strata-lens feature
      * (GT6Worldgen.LENS_STONE_SNAKES), their blob rows retired.
      */
     @Test
     void configuredKeysOrderIsPinned() {
         assertEquals(12, GT6Worldgen.CONFIGURED_KEYS.size(),
-                "12 stone blobs (task p31-strata-lens: 17 minus the 5 marker stones, see the lens band)");
+                "12 stone blobs (task strata-lens: 17 minus the 5 marker stones, see the lens band)");
         assertEquals(SNAKES, GTStoneBlocks.STONES.stream().map(GTStoneBlocks.StoneSpec::snake).toList(),
                 "precondition: STONES order is the CS.java:1668 order");
         List<String> tBlobSnakes = GT6Worldgen.BLOB_STONES.stream().map(GTStoneBlocks.StoneSpec::snake).toList();
@@ -155,7 +155,7 @@ class GT6WorldgenDatagenTest {
                 "minecraft:worldgen/configured_feature",
                 "minecraft:worldgen/placed_feature",
                 GT6WorldgenDatagen.biomeModifierRegistryKey().location().toString(),
-                // task p38-dungeon-framework: the shelter dungeon rides the same provider
+                // task dungeon-framework: the shelter dungeon rides the same provider
                 "minecraft:worldgen/structure",
                 "minecraft:worldgen/structure_set");
         assertEquals(tExpected, tKeys,
@@ -169,7 +169,7 @@ class GT6WorldgenDatagenTest {
     /**
      * The registration face: the worldgen universe's own DeferredRegister declares
      * Feature-only (no BLOCK register in the package) and every worldgen id maps back 1:1
-     * onto a GTStoneBlocks.STONES row. Task p30-w6-t1-trees-nine note: the
+     * onto a GTStoneBlocks.STONES row. Task w6-t1-trees-nine note: the
      * {@code GT6Features.TREE_FEATURES} instance face is NOT loadable here — Feature's
      * clinit chains into MonsterRoomFeature/EntityType (Feature.java:82) whose bootstrap
      * needs the live datafixer (Util.fetchChoiceType), so the offline JVM ignores the
@@ -180,7 +180,7 @@ class GT6WorldgenDatagenTest {
     void zeroNewBlockDependencyIsPinned() {
         assertEquals(17, GTStoneBlocks.STONES.size(), "the GTStoneBlocksRegistrationTest.java:108 pin holds");
         // NOTE: GT6Features itself is NOT loadable in the offline JVM since
-        // p30-w6-t1-trees-nine — its clinit instantiates GT6TreeFeature (extends Feature),
+        // w6-t1-trees-nine — its clinit instantiates GT6TreeFeature (extends Feature),
         // and Feature's clinit chains into MonsterRoomFeature/EntityType (Feature.java:82)
         // whose bootstrap needs the live datafixer (Util.fetchChoiceType) — so the
         // registers-Feature-only pin and the 9-entry face are audited by runData (9
@@ -208,7 +208,7 @@ class GT6WorldgenDatagenTest {
      * datagen getOrThrow). Key spellings pinned against the card's names: ore_debris_small
      * (not ore_ancient_debris_small), the lake pair lake_lava_surface/lake_lava_underground
      * (1.18+ ships no lake_water — nothing to remove). {@code amethyst_geode} is
-     * deliberately ABSENT (r8-geode-revert, decisions.r8-geode-revert): the #33 GT geode
+     * deliberately ABSENT (geode-revert, decisions.r8-geode-revert): the #33 GT geode
      * band that justified its suppression is reverted, so the vanilla geode generates.
      */
     @Test

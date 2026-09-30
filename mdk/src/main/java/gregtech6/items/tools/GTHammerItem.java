@@ -8,7 +8,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
 
 /**
- * The formal GT6 hard hammer — task p25-tool-hammer-wrench spec ①, the GT6FileItem form.
+ * The formal GT6 hard hammer — task tool-hammer-wrench spec ①, the GT6FileItem form.
  * Upstream the tool is a crafting-domain meta id ({@code ToolsGT.HARDHAMMER = 12},
  * CS.java:1736) mounted by the Loader_Tools.java:124 registration row (display name
  * "Hammer", the CS.java:1096 TOOL_LOCALISER row verbatim) over
@@ -33,7 +33,7 @@ import net.minecraftforge.common.ToolAction;
  * lives in the GET face).
  *
 	 * <p>Classification: the item performs {@link GT6ToolActions#HAMMER} and the
-	 * prospector second arm {@link GT6ToolActions#PROSPECTOR} (task p30-pool-prospector —
+	 * prospector second arm {@link GT6ToolActions#PROSPECTOR} (task pool-prospector —
 	 * upstream GT_Tool_HardHammer.java:132-135 mounts TWO Behavior_Tool rows on this one
 	 * tool; the GTClubItem multi-action classifier precedent). The file/saw red-line shape
 	 * otherwise holds. Cut (the p25 card spec ⑥, still standing): the ENTIRE world
@@ -44,7 +44,7 @@ import net.minecraftforge.common.ToolAction;
 	 * :73 5.0F, the golem-effective doubling :62-66) is the cutter precedent cut (the tool
 	 * is not registered as a weapon here, no attribute map).
 	 *
-	 * <p>The prospector world arm (task p30-pool-prospector): the {@link #useOn} direct
+	 * <p>The prospector world arm (task pool-prospector): the {@link #useOn} direct
 	 * dispatch into the {@link GT6Prospector#prospect} static seam — the crowbar
 	 * single-source shape, shared verbatim with the {@code /gt6tool prospect} acceptance
 	 * command. Upstream rode Behavior_Tool.onItemUseFirst (Behavior_Tool.java:56-68,
@@ -55,7 +55,7 @@ import net.minecraftforge.common.ToolAction;
 	 * on the plain click and lets the vanilla block use have everything it wants first
 	 * (stone has no use of its own, the acceptance drives the seam live).
  *
- * <p>MATERIAL LADDER (task p31-machine-ladder): the stack's {@code GT.ToolStats} identity
+ * <p>MATERIAL LADDER (task machine-ladder): the stack's {@code GT.ToolStats} identity
  * scales durability (the {@link GT6ToolLadder} j/100 points), the composed display name
  * ("Hammer (Bronze)") and the head tint ride the same seam; the IDENTITY-LESS arm
  * reproduces Steel bit-exact (so the pre-ladder 512 constant IS the steel fallback).
@@ -155,7 +155,7 @@ public class GTHammerItem extends Item implements GT6ToolLadder.LadderTool {
 		return classifies(aToolAction);
 	}
 
-	// ------------------------------ the GT6ToolLadder identity faces (task p31-machine-ladder) ------------------------------
+	// ------------------------------ the GT6ToolLadder identity faces (task machine-ladder) ------------------------------
 
 	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — Steel fallback = 512). */
 	@Override

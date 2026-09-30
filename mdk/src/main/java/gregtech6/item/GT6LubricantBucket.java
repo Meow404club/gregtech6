@@ -19,7 +19,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 /**
- * The F-2 Lubricant container item (task p29-w4-hot-lube spec ④) — the port counterpart of
+ * The F-2 Lubricant container item (task w4-hot-lube spec ④) — the port counterpart of
  * the upstream crafting ingredient {@code OD.itemLubricant} (the Diesel Engine rows' 'L'
  * slot, Loader_MultiTileEntities.java:722-729 verbatim {@code 'L', OD.itemLubricant}; the
  * OD entry is the 1000 mB fluid-container re-registration face,

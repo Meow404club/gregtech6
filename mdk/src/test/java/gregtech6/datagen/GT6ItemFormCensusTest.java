@@ -1,6 +1,6 @@
 /**
- * Offline pin for task r8-tex-itemform-a — the item-model form census (the
- * {@link GT6RailItemModelDatagenTest} shape over the r8-tex-r2 item_form column). The
+ * Offline pin for task tex-itemform-a — the item-model form census (the
+ * {@link GT6RailItemModelDatagenTest} shape over the tex-r2 item_form column). The
  * single-texture cubeAll families whose BlockItems parented the block model rendered
  * the inventory form as one flat sprite tiled over six faces (the census "bad" form);
  * this card moves them to the 2D {@code item/generated} icon over the family's own
@@ -10,7 +10,7 @@
  * genuinely FACETED (the vanilla furnace form) so a future sweep cannot "fix" them, and
  * the GT6ItemModels.java fallback rows pin the census missing-hole verdict (the
  * placeables/bumbliary items were never missing — they ride their block models).
- * Task r8-tex-itemform-b extends the census with the tier-B front-view families (the
+ * Task tex-itemform-b extends the census with the tier-B front-view families (the
  * 28 kinematics/controller/composite rows) on the same 2D form.
  */
 package gregtech6.datagen;
@@ -68,7 +68,7 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
 
     /**
      * The 12 battery boxes: FLIPPED BACK to the ok3D block-parent form by task
-     * r8-tex-composite-family (the block models are the true two-layer borrows now —
+     * tex-composite-family (the block models are the true two-layer borrows now —
      * the 2D transitional icons this card shipped retired per their own declaration).
      */
     @Test
@@ -118,7 +118,7 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
     }
 
     /**
-     * The tier-B front-view families (r8-tex-itemform-b, the 28 rows): 2D icons over the
+     * The tier-B front-view families (tex-itemform-b, the 28 rows): 2D icons over the
      * family's own front/side/composite sprite — the single kinematics rows (crank, the
      * water wheel, the gearbox), the lightning-rod controller+rod pair and the heat
      * exchanger over their composite sprites, the 8 diesel tiers over the shared front
@@ -135,7 +135,7 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
         assert2DForm("large_heat_exchanger", "gt6:block/large_heat_exchanger/main");
         assertEquals(8, GT6Kinetics.DIESEL_SPECS.size(), "the 8-tier walk");
         for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) {
-            assert2DForm(GT6Kinetics.dieselName(tSpec.material()), "gt6:block/diesel_engine_colored_front"); // r8-tex-bridge-kinetic rename, byte-identical
+            assert2DForm(GT6Kinetics.dieselName(tSpec.material()), "gt6:block/diesel_engine_colored_front"); // tex-bridge-kinetic rename, byte-identical
         }
         assertEquals(12, GT6Attachments.ROWS.size(), "the 12-attachment walk");
         for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
@@ -151,11 +151,11 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
     /**
      * The world-face guard: the touched block models stay the cube_all form over the
      * same sprites — one archetype per family (the item fix must not leak into the
-     * blockstate/model chain), extended with the tier-B families (r8-tex-itemform-b).
-     * The battery boxes LEFT this guard in task r8-tex-composite-family: their world
+     * blockstate/model chain), extended with the tier-B families (tex-itemform-b).
+     * The battery boxes LEFT this guard in task tex-composite-family: their world
      * face is intentionally the two-layer borrow now, pinned by
      * GT6CompositeEnergyTexDatagenTest. The lightning-rod CONTROLLER and the heat
-     * exchanger left it in task r8-tex-multiblockmains (the same departure shape —
+     * exchanger left it in task tex-multiblockmains (the same departure shape —
      * the flat bakes were placeholders, the groups' colored/colored_front splits are
      * real two-layer art), pinned by GT6MultiblockMainsTexDatagenTest; their ITEM
      * rows above stay 2D over the composites, which stay on disk for them.
@@ -167,7 +167,7 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
                 {"long_dist_pipe_0", "gt6:block/item_pipe"},
                 {"energy_source", "gt6:block/energy_source"},
                 {"crank", "gt6:block/crank"},
-                // ("diesel_engine" left in task r8-tex-bridge-kinetic — the world face is the
+                // ("diesel_engine" left in task tex-bridge-kinetic — the world face is the
                 // two-layer borrow now, pinned by GT6BridgeKineticTexDatagenTest; the ITEM
                 // row above stays 2D over the renamed byte-identical colored_front)
                 {"tap_ceramic", "gt6:block/tap"},
@@ -187,7 +187,7 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
 
     /**
      * The ok3D whitelist — the census families whose BlockItems LEGITIMATELY parent a
-     * faceted block model (the vanilla furnace form; the r8-tex-census item_form ok3D
+     * faceted block model (the vanilla furnace form; the tex-census item_form ok3D
      * column): the basic-machine family, the bridge band, the converter/dynamo two-layer
      * band, the turbine mains, the parts design_0 walk and the large-machine controllers.
      * These stay block-parented; only the single-texture cubeAll families went 2D.
@@ -202,7 +202,7 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
                 {"steam_turbine_graphene", "gt6:block/turbine_main_steam"}, // the turbine mains
                 {"machine_wall_tungsten", "gt6:block/machine_wall_tungsten_design_0"}, // the parts walk
                 {"large_massfab", "gt6:block/large_massfab"}, // the large-machine controllers
-                {"battery_box_lv", "gt6:block/battery_box/battery_box"}}; // the composite-energy band (r8-tex-composite-family flip-back)
+                {"battery_box_lv", "gt6:block/battery_box/battery_box"}}; // the composite-energy band (tex-composite-family flip-back)
         for (String[] tCase : tArchetypes) {
             JsonObject tModel = generatedJson("assets/gt6/models/item/" + tCase[0] + ".json");
             assertEquals(tCase[1], tModel.get("parent").getAsString(),

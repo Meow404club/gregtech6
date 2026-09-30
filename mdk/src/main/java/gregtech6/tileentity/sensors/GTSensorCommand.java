@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import gregtech6.registry.GT6Sensors;
 
 /**
- * {@code /gt6sensor} — the sensor-family acceptance command (task p26-sensors-core, the
+ * {@code /gt6sensor} — the sensor-family acceptance command (task sensors-core, the
  * GTWireCommand template). The RCON channel for every tool arm whose ITEM is not ported
  * (the monkey-wrench second-face arm and the soft-hammer reset arm — the gearbox
  * monkey-wrench / card RCON stand-in rulings) and the read-out channel for the chain:

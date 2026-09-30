@@ -16,7 +16,7 @@ import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase.MultiBlockLevel;
 
 /**
- * The green/red classifier matrix (task p12-ghost-render-match, offline): the
+ * The green/red classifier matrix (task ghost-render-match, offline): the
  * {@link GTMultiBlockGhostMatcher} three-valued semantics over the declared Coke Oven
  * shape (26 brick cells + the hollow centre, the TileEntityCokeOven binding with the
  * fixture part block BRICKS) against a stub Level — ① the all-green matrix over all

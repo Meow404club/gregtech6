@@ -21,7 +21,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase.MultiBlockLevel;
 
 /**
- * The pipe-ownership offline tests (task p24-pipe-owner acceptance ①): the
+ * The pipe-ownership offline tests (task pipe-owner acceptance ①): the
  * {@link GTFluidPipeBlockEntity#allowInteraction(UUID)} truth table (five arms — the
  * upstream TileEntityBase03TicksAndSync:106-108 shape over UUIDs, zero Player/Entity
  * constructed), the placement owner record (upstream 10ConnectorRendered:148-150), the
@@ -61,7 +61,7 @@ public class GTPipeOwnerTest extends GTOfflineTestBase {
 		return tPipe;
 	}
 
-	/** The locked form: ownable + owner set in one step. Task p25-c-foam-pipe-spray: a
+	/** The locked form: ownable + owner set in one step. Task c-foam-pipe-spray: a
 	 * locked pipe IS a dried owned foam — the third clause {@code !mFoamDried} of upstream
 	 * 10ConnectorRendered:153-156 is the ONLY lock arming (an undried owned pipe passes
 	 * everyone), so the fixture sets the dried foam too. */
@@ -90,7 +90,7 @@ public class GTPipeOwnerTest extends GTOfflineTestBase {
 		assertTrue(tPipe.allowInteraction(OWNER));
 
 		// arm 2: ownable=true, owner set, foam DRIED, null identity → deny (the console is
-		// nobody — the upstream :107 `aEntity != null` arm). Task p25-c-foam-pipe-spray:
+		// nobody — the upstream :107 `aEntity != null` arm). Task c-foam-pipe-spray:
 		// the lock arms only through the dried foam (the third clause) — an undried owned
 		// pipe passes everyone (see GTPipeFoamTest.thirdClauseFlipsOnDrying).
 		tPipe.mOwnable = true;
@@ -324,7 +324,7 @@ public class GTPipeOwnerTest extends GTOfflineTestBase {
 		assertEquals(tSuper, GTFluidPipeBlockEntity.ownerDestroyProgress(tPipe, tSuper, FOREIGN), 1e-9F);
 
 		// locked: deny = 0.0F (progress never accrues — the upstream :943 `: 0` arm).
-		// Task p25-c-foam-pipe-spray: the lock arms through the dried foam (the third clause).
+		// Task c-foam-pipe-spray: the lock arms through the dried foam (the third clause).
 		tPipe.mOwnable = true;
 		tPipe.mOwner = OWNER;
 		tPipe.mFoamDried = true;

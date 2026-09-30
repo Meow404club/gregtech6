@@ -25,7 +25,7 @@ import gregtech6.recipes.RecipeMap;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Task p13-burning-box-family — the offline fixture for the Liquid/GAS Burning Box
+ * Task burning-box-family — the offline fixture for the Liquid/GAS Burning Box
  * family: the FM.Burn burn cycle (the :135-145 probe/consume/while-loop over an
  * injected fixture map), the invalid-fuel tank clear (:146-149), the Tap face
  * (:228-231), the gas/liquid fill-gate inversion (Liquid :214 vs Gas :41), the GAS

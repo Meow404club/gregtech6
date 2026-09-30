@@ -26,7 +26,7 @@ import gregtech6.multiblock.GTMultiBlockStructureChecker;
 import gregtech6.registry.GTMultiBlocks;
 
 /**
- * The Von da Graagg multiblock controller (task p31-graagg) — the 1.20.1/1.21.1 port of
+ * The Von da Graagg multiblock controller (task graagg) — the 1.20.1/1.21.1 port of
  * gregtech/tileentity/multiblocks/MultiTileEntityVonDaGraagg.java over
  * {@link TileEntityBase10MultiBlockBase} (Loader_MultiTileEntities.java:1280: meta 17996,
  * "Von da Graagg Generator", MT.SteelGalvanized, hardness 6.0 == resistance 6.0,
@@ -51,7 +51,7 @@ import gregtech6.registry.GTMultiBlocks;
  *     NOTHING.</li>
  * </ul>
  * All three part ids (18028/18040/18029) are EXISTING GTMultiBlocks rows — zero new part
- * blocks (the p29-w3-nbtdesign-parts census).
+ * blocks (the w3-nbtdesign-parts census).
  *
  * <p><b>The behavior (:141-152)</b>: every server tick
  * {@code mCurrentRange = bind8(mStructureOkay ? min(mEnergy, 4096) / 16 : 0)} — the pure
@@ -80,7 +80,7 @@ import gregtech6.registry.GTMultiBlocks;
  * server-side, freshly-spawned ({@code !loadedFromDisk}) Mobs only — covers all
  * join-path spawns incl. spawner/egg/breeding, while chunk-reload re-joins pass
  * (upstream CheckSpawn covered natural attempts only; declared deviation,
- * coordinator-approved task p31-graagg ruling). {@link #inhibitsSpawn} is the :130-138
+ * coordinator-approved task graagg ruling). {@link #inhibitsSpawn} is the :130-138
  * port: range 0 / wrong dimension / outside the Chebyshev x-z radius passes, then the
  * ±5 vertical scan at the spawn column exempts mossy cobblestone — the vanilla block AND
  * the GT stone MCOBL variant (upstream {@code BlockStones.MCOBL} meta 2, BlockStones.java:73).

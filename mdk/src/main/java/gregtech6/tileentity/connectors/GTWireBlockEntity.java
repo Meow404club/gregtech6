@@ -34,8 +34,8 @@ import gregtech6.util.UT6;
 
 /**
  * 1.20.1 counterpart of gregapi/tileentity/connectors/MultiTileEntityWireElectric.java
- * (249 lines) — the trimmed direct translation (task p7-d2-cable spec ①/②, ADR
- * 2026-08-31-p7-energy-network ruling 2). The upstream class extended
+ * (249 lines) — the trimmed direct translation (task d2-cable spec ①/②, ADR
+ * 2026-08-31-energy-network ruling 2). The upstream class extended
  * TileEntityBase10ConnectorRendered; this port mounts the same
  * {@link TileEntityBase09Connector} base the fluid pipe already uses (read-only reuse,
  * zero base-class changes — the "no seam extraction" ruling), and implements the D1
@@ -82,7 +82,7 @@ import gregtech6.util.UT6;
  *     owns no onPlaced in this port.</li>
  * </ul>
  *
- * <p>Cuts and placeholders after task p9-wire-family-w1: the material spectrum itself now
+ * <p>Cuts and placeholders after task wire-family-w1: the material spectrum itself now
  * EXISTS (620 GTWireSpecs variants share THIS ONE BE class over the block carrier — the
  * upstream "one TE class, many material rows" shape), but the material/insulation conductor
  * data (ITileEntityEnergyDataConductor), the texture/render passes,
@@ -90,7 +90,7 @@ import gregtech6.util.UT6;
  * standing placeholders are declared at their exact positions below: the IC2-pull cut on
  * {@link #onTick} (with the reserved external-energy-bridge seam) and the bundled-channel
  * {@code aChannel} parameter on {@link #transferElectricity}. The contact damage JOINED in
- * task p10-wire-contact-damage ({@link #applyElectricityDamage}, the :203 hook over the
+ * task wire-contact-damage ({@link #applyElectricityDamage}, the :203 hook over the
  * block-side entityInside). Persistence: the upstream writeToNBT2 (:121-123) is an empty
  * body — the ratings travel on the block carrier ({@link GTWireBlock}, the GTBarrelBlock
  * registration-carrier precedent), so this BE adds NO NBT beyond the base
@@ -98,11 +98,11 @@ import gregtech6.util.UT6;
  * the same upstream body (fresh load = 0 = the wire cannot bite until power flows again —
  * the restart-safe property of the shock gate), the p7 card's NBT test pins that contract.
  *
- * <p>Covers + the selector dial (task p34-pool-cover-hosts): the BE implements
+ * <p>Covers + the selector dial (task pool-cover-hosts): the BE implements
  * {@link ICoverableTE} by composition (the {@link GTFluidPipeBlockEntity} twin of the same
  * card) and {@link ITileEntitySwitchableMode} over {@link #mMode} (upstream
  * MultiTileEntityWireRedstoneInsulated :177/:178 passthrough) — the FIRST live host of
- * both faces, the landing the p34-covers-gameplay-10 cards declared. The torch/repeater
+ * both faces, the landing the covers-gameplay-10 cards declared. The torch/repeater
  * covers drive the visual lane from {@link #mRedstone} in their tickPost arm, the four
  * selector covers drive {@link #setStateMode}; {@link #getRedstoneOut} routes the vanilla
  * emission bridge through the cover exits (upstream 04Covers :427-438 — the plate on the
@@ -128,7 +128,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	/** Upstream :65 — the overload strike counter; 16 strikes burn the wire (mRenderType is a render cut). */
 	public byte mBurnCounter = 0;
 
-	// task p32-qu-laser-domain — the laser family transfer counters (upstream
+	// task qu-laser-domain — the laser family transfer counters (upstream
 	// MultiTileEntityWireLaser :49, mTransferred/mTransferredLast; TRANSIENT like the
 	// electric family's wattage window — upstream writes no NBT on the laser rows)
 
@@ -157,7 +157,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	/**
 	 * Upstream MultiTileEntityWireRedstone :36 — the visual/emission byte,
 	 * {@code bind4(divup(mRedstone, MAX_RANGE))} 0..15 (:53). THE LIGHT VALUE (task
-	 * p11-wire-brightness: {@code GTWireBlock.getLightEmission} reads it through
+	 * wire-brightness: {@code GTWireBlock.getLightEmission} reads it through
 	 * {@link #mRedstone}) and the texture-fullbright data pin upstream (:81-82, the render
 	 * side is a declared deviation). Server side it refreshes in {@link #onTickCheck}
 	 * (:51-58 — the dispatcher consumes a {@code true} return as the visual-sync trigger);
@@ -182,13 +182,13 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
      * Upstream :56 — the constant-strength source mode: updateRedstone :124 baselines the
      * wire at {@code mMode * MAX_RANGE - mLoss}. Switched through {@link #setStateMode} —
      * upstream only by the CoverSelectorRedstone cover (CoverSelectorRedstone.java:42-51),
-     * this port by the four selector covers (task p34-covers-gameplay-10) whose FIRST live
-     * host this BE now is (task p34-pool-cover-hosts, upstream :177/:178 passthrough).
+     * this port by the four selector covers (task covers-gameplay-10) whose FIRST live
+     * host this BE now is (task pool-cover-hosts, upstream :177/:178 passthrough).
      */
     public byte mMode = 0;
 
     // ---------------------------------------------------------------------------
-    // covers + the selector dial (task p34-pool-cover-hosts — the composition
+    // covers + the selector dial (task pool-cover-hosts — the composition
     // attachment, the GTFluidPipeBlockEntity twin: the store lives here, the 06Covers
     // behaviour comes from the ICoverableTE defaults; the base-class chain stays untouched)
     // ---------------------------------------------------------------------------
@@ -249,8 +249,8 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 
 	/**
 	 * The family flag — a laser-family row (GTWireSpecs.Family.LASER, task
-	 * p10-wire-laser-placeholder) mounted on this shared BE class. INERT at the p10
-	 * placeholder landing; since task p32-qu-laser-domain it carries the LIVE LU carrier
+	 * wire-laser-placeholder) mounted on this shared BE class. INERT at the p10
+	 * placeholder landing; since task qu-laser-domain it carries the LIVE LU carrier
 	 * (the p10 revival condition): the family answers LU on the energy face family
 	 * ({@link #isEnergyType}, MultiTileEntityWireLaser :94), the doEnergyInjection LU arm
 	 * floods {@link #transferLaser} (:66-86), and the canConnect LU probe (:89-92) is live.
@@ -330,7 +330,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	private static BlockEntityType<? extends GTWireBlockEntity> tickerTypeOf(BlockState aState) {
 		if (aState.getBlock() instanceof GTWireBlock tWire) {
 			if (tWire.family() == GTWireSpecs.Row.Family.REDSTONE) return gregtech6.registry.GTWires.WIRE_REDSTONE_BE.get();
-			if (tWire.family() == GTWireSpecs.Row.Family.LASER) return gregtech6.registry.GTWires.WIRE_LASER_BE.get(); // task p10-wire-laser-placeholder
+			if (tWire.family() == GTWireSpecs.Row.Family.LASER) return gregtech6.registry.GTWires.WIRE_LASER_BE.get(); // task wire-laser-placeholder
 		}
 		return GTBlockEntities.WIRE_ELECTRIC_BE.get();
 	}
@@ -340,7 +340,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 		return mRedstoneFamily;
 	}
 
-	/** The family gate for everything laser on this shared class (task p10-wire-laser-placeholder). */
+	/** The family gate for everything laser on this shared class (task wire-laser-placeholder). */
 	public boolean isLaser() {
 		return mLaserFamily;
 	}
@@ -355,7 +355,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	// ---------------------------------------------------------------------------
 
 	/**
-	 * Upstream onTick2 :145-168, server branch. PLACEHOLDER DECLARATION (task p9-wire-family-w1
+	 * Upstream onTick2 :145-168, server branch. PLACEHOLDER DECLARATION (task wire-family-w1
 	 * spec 5a): the IC2 IEnergySource pull branch (upstream :156-165 — the wire TICKS actively
 	 * pull from IC2 energy sources adjacent to it: EnergyCompat.IC_ENERGY gate, EnergyNet
 	 * unwrap, {@code getOfferedEnergy}, drawEnergy only after a successful transfer) is NOT
@@ -367,7 +367,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	 */
 	/**
 	 * The per-family tick. Electric rows: upstream onTick2 :145-168 server branch (the IC2
-	 * pull cut declaration below is untouched, task p9-wire-family-w1 spec 5a).
+	 * pull cut declaration below is untouched, task wire-family-w1 spec 5a).
 	 *
 	 * <p>Redstone rows (task p10): upstream onTick2 :98-106 server branch verbatim — the
 	 * per-tick CONVERGENCE trigger of the push-BFS network: the vanilla input cache clears
@@ -377,7 +377,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	 * registration carries no overload machinery at all (mBurnCounter stays 0 forever, the
 	 * electric branch is unreachable on redstone rows).
 	 *
-	 * <p>Laser rows (task p10-wire-laser-placeholder, revived by task p32-qu-laser-domain):
+	 * <p>Laser rows (task wire-laser-placeholder, revived by task qu-laser-domain):
 	 * upstream onTick2 (MultiTileEntityWireLaser :57-64) only lags the mTransferred transfer
 	 * counter into mTransferredLast and clears the window (:61-62) — now that the LU carrier
 	 * machines exist the lag is live bookkeeping again. The burn gate stays OUT (the laser
@@ -386,7 +386,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	 */
 	/**
 	 * The per-family tick (see {@link #tickFamilies}) wrapped in the cover tick pair —
-	 * upstream 06Covers :196/:200, the pipe-BE shape (task p34-pool-cover-hosts): the
+	 * upstream 06Covers :196/:200, the pipe-BE shape (task pool-cover-hosts): the
 	 * torch family drives its visual lane from {@link #mRedstone} in tickPost, the
 	 * Tag selector re-asserts its constructor mode from tickPre.
 	 */
@@ -428,7 +428,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 				mTransferredWattage = 0;
 				mTransferredAmperes = 0;
 				// upstream :156-165 — the IC2 IEnergySource pull branch: EnergyCompat has no
-				// 1.20.1 counterpart (ADR 2026-08-31-p7-energy-network ruling 5), pool.
+				// 1.20.1 counterpart (ADR 2026-08-31-energy-network ruling 5), pool.
 			}
 		}
 	}
@@ -444,7 +444,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 
 	/**
 	 * Upstream MultiTileEntityWireRedstone onTickCheck :51-58, verbatim shape (task
-	 * p11-wire-brightness): the per-tick refresh of {@link #mState} — the change DETECTOR of
+	 * wire-brightness): the per-tick refresh of {@link #mState} — the change DETECTOR of
 	 * the visual/emission byte. A change does two things, exactly the upstream pair:
 	 * <ul>
 	 * <li>{@code if (mIsGlowing) updateLightValue()} (:55) → {@link #refreshGlowLight} — the
@@ -516,7 +516,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	}
 
 	// ---------------------------------------------------------------------------
-	// the contact damage (task p10-wire-contact-damage — upstream :203 + UT.Entities)
+	// the contact damage (task wire-contact-damage — upstream :203 + UT.Entities)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -575,7 +575,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	}
 
 	// ---------------------------------------------------------------------------
-	// transferLaser (task p32-qu-laser-domain — the LU revival the p10 placeholder
+	// transferLaser (task qu-laser-domain — the LU revival the p10 placeholder
 	// declared, MultiTileEntityWireLaser :66-86 verbatim over the port's pure-data
 	// adjacency form)
 	// ---------------------------------------------------------------------------
@@ -678,7 +678,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	}
 
 	// ---------------------------------------------------------------------------
-	// EU face family (upstream :205-230) + the LU face family (task p32-qu-laser-domain,
+	// EU face family (upstream :205-230) + the LU face family (task qu-laser-domain,
 	// the MultiTileEntityWireLaser :94-:100 revival the p10 placeholder declared)
 	// ---------------------------------------------------------------------------
 
@@ -690,7 +690,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	 * electric neighbour from pumping EU into a redstone wire (transferElectricity :207-210
 	 * checks isEnergyAcceptingFrom, which reaches this method).
 	 *
-	 * <p>Laser rows (task p32-qu-laser-domain): upstream the laser wire conducts LU only
+	 * <p>Laser rows (task qu-laser-domain): upstream the laser wire conducts LU only
 	 * (MultiTileEntityWireLaser :94) and REFUSES everything else — the p10 inertness is
 	 * gone now that the LU carrier machines exist (the p10 revival condition): laser rows
 	 * answer LU on this face (the :94 arm) and the electric rows keep answering EU. The EU
@@ -790,7 +790,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	 * connecting to any solid non-BE neighbour. Electric rows are untouched (their
 	 * canConnect needs a BE, the air/liquid routing is exactly the upstream behaviour).
 	 *
-	 * <p>THE :130-140 BRANCH (task p10-wire-contact-damage ride-along, the R1 review
+	 * <p>THE :130-140 BRANCH (task wire-contact-damage ride-along, the R1 review
 	 * handoff): upstream gives a redstone wire a SECOND escape hatch inside the connector
 	 * neighbourhood — when the neighbour IS an {@code ITileEntityConnector} but the two
 	 * connector-type sets share NO element (TileEntityBase09Connector.java:130-140, the
@@ -831,7 +831,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	/**
 	 * Upstream :201 → EnergyCompat.canConnectElectricity :102 — the DOUBLE probe,
 	 * accepting {@code ||} emitting, both probed theoretically (the conductor visual
-	 * connect). The emitting branch is the p8-d4-energy-source backfill of the upstream
+	 * connect). The emitting branch is the d4-energy-source backfill of the upstream
 	 * :102 verbatim pair: a pure emitter BE (e.g. the test energy source, whose
 	 * isEnergyAcceptingFrom is permanently false) must be wire-connectable, or the
 	 * gen→wire chain can never form (the D2 review handoff obligation).
@@ -841,7 +841,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	 * neighbour BE (visual connection to whatever it feeds; vanilla blocks still need the
 	 * air/liquid slot of the base connect). No ITileEntityEnergy probe on this family.
 	 *
-		 * <p>Laser rows (task p32-qu-laser-domain): upstream MultiTileEntityWireLaser
+		 * <p>Laser rows (task qu-laser-domain): upstream MultiTileEntityWireLaser
 		 * :89-92 — the probe accepts a neighbour that accepts-or-emits LU, both probed
 		 * theoretically (the aTheoretical conductor visual connect). The p10 inert posture
 		 * (permanently false) is gone with the LU carrier revival: the probe is LIVE again,
@@ -862,7 +862,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 			}
 		if (!(aNeighbor instanceof ITileEntityEnergy tEnergy)) {
 			// no foreign connections: the EU->FE outbound bridge was cut (task
-			// p28-cut-eu-fe-bridge), the wire attaches to ITileEntityEnergy neighbours only —
+			// cut-eu-fe-bridge), the wire attaches to ITileEntityEnergy neighbours only —
 			// the behaviour this port shipped with before the p26 bridge, restored.
 			return false;
 		}
@@ -874,7 +874,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	@Override
 	public Collection<TagData> getConnectorTypes(byte aSide) {
 		return isRedstone() ? TD.Connectors.WIRE_REDSTONE.AS_LIST // upstream :180
-				: isLaser() ? TD.Connectors.WIRE_LASER.AS_LIST // MultiTileEntityWireLaser :124 (task p10-wire-laser-placeholder)
+				: isLaser() ? TD.Connectors.WIRE_LASER.AS_LIST // MultiTileEntityWireLaser :124 (task wire-laser-placeholder)
 				: TD.Connectors.WIRE_ELECTRIC.AS_LIST; // upstream :243
 	}
 
@@ -927,7 +927,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	}
 
 	// ===========================================================================
-	// the stale-mask prune (task p11-connector-stale-mask)
+	// the stale-mask prune (task connector-stale-mask)
 	// ===========================================================================
 
 	/**
@@ -1016,7 +1016,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	}
 
 	// ===========================================================================
-	// the redstone family core (task p10-wire-redstone-family) — the verbatim port
+	// the redstone family core (task wire-redstone-family) — the verbatim port
 	// of gregapi/tileentity/connectors/ITileEntityRedstoneWire +
 	// MultiTileEntityWireRedstoneInsulated. PUSH semantics: the wire PUSHES changed
 	// values along the wire chain (GTWireRedstoneNode.doRedstoneUpdate layer-order
@@ -1115,7 +1115,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	 * and NEVER outputs towards redstone-wire neighbours (:162 — the wire chain is
 	 * BFS-internal).
 	 *
-	 * <p>The cover exits (task p34-pool-cover-hosts, upstream 04Covers :427-438): the
+	 * <p>The cover exits (task pool-cover-hosts, upstream 04Covers :427-438): the
 	 * plate on the emission face answers BEFORE the wire's own emission — the query-side
 	 * convention of {@link ICoverableTE#getRedstoneOutWeak}/{@link ICoverableTE#getRedstoneOutStrong}
 	 * is exactly the aQuerySide this bridge receives, and a bare face passes the wire's
@@ -1213,7 +1213,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	// -- persistence (upstream readFromNBT2 :60-67 / writeToNBT2 :70-75, redstone rows) --
 
 	/**
-	 * DEVIATION DECLARATION (task p10-wire-contact-damage ride-along, the R1 review
+	 * DEVIATION DECLARATION (task wire-contact-damage ride-along, the R1 review
 	 * handoff): on {@code gt.mredstone} this port deliberately does NOT reproduce the
 	 * upstream read — upstream :63 reloads with {@code aNBT.getByte("gt.mredstone")}, a
 	 * TRUNCATED 8-bit read of a value written as a full long (:74,
@@ -1225,7 +1225,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	@Override
 	protected void saveAdditional(CompoundTag aNBT) {
 		super.saveAdditional(aNBT);
-		writeCoversToNBT(aNBT); // upstream 06Covers :74 (task p34-pool-cover-hosts — BEFORE the family gate, covers ride every row)
+		writeCoversToNBT(aNBT); // upstream 06Covers :74 (task pool-cover-hosts — BEFORE the family gate, covers ride every row)
 		if (!isRedstone()) return;
 		if (mMode != 0) aNBT.putByte(NBT_MODE, mMode); // :72
 		aNBT.putByte(NBT_MRECEIVED, mReceived); // :73
@@ -1235,7 +1235,7 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 	@Override
 	public void load(CompoundTag aNBT) {
 		super.load(aNBT);
-		readCoversFromNBT(aNBT); // upstream 06Covers :68 (task p34-pool-cover-hosts — BEFORE the family gate)
+		readCoversFromNBT(aNBT); // upstream 06Covers :68 (task pool-cover-hosts — BEFORE the family gate)
 		if (!isRedstone()) return;
 		if (aNBT.contains(NBT_MRECEIVED, Tag.TAG_ANY_NUMERIC)) mReceived = aNBT.getByte(NBT_MRECEIVED); // :62
 		if (aNBT.contains(NBT_MREDSTONE, Tag.TAG_ANY_NUMERIC)) mRedstone = aNBT.getLong(NBT_MREDSTONE); // :63 — DEVIATION, see below
@@ -1243,19 +1243,19 @@ public class GTWireBlockEntity extends TileEntityBase09Connector implements ITil
 		// :65 (NBT_PIPELOSS) — the loss rides the block carrier in this port (GTWireBlock.lossL), not NBT.
 		// BOTH sync channels converge here on the client (chunk data = handleUpdateTag default,
 		// block-update = onDataPacket default) — the upstream setVisualData :62-67 landing (task
-		// p11-wire-brightness): re-derive mState from the fresh signal and re-check the client
+		// wire-brightness): re-derive mState from the fresh signal and re-check the client
 		// light engine when it moved (the packet that carries gt.mredstone is exactly the one
 		// onTickCheck's `true` return triggers — see the onTickCheck javadoc).
 		if (isClientSide()) {
 			byte tOldState = mState;
 			mState = UT6.bind4(UT6.divup(mRedstone, GTWireSpecs.MAX_RANGE)); // :64
 			if (tOldState != mState && glowingWire()) refreshGlowLight(); // :65, the mIsGlowing gate
-			scheduleCoverRenderRefresh(); // task p34-pool-cover-hosts — both sync channels land here
+			scheduleCoverRenderRefresh(); // task pool-cover-hosts — both sync channels land here
 		}
 	}
 
 	// ---------------------------------------------------------------------------
-	// the cover render face (task p34-pool-cover-hosts — the TileEntityBase08Barrel
+	// the cover render face (task pool-cover-hosts — the TileEntityBase08Barrel
 	// template: the per-face sprite snapshot for the CoverPlateModel, and the client
 	// render refresh on every sync landing; a bare wire keeps ModelData.EMPTY)
 	// ---------------------------------------------------------------------------

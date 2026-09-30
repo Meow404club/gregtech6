@@ -6,16 +6,16 @@ Machine GUI backgrounds borrowed from **GregTech 6**
 `src/main/resources/assets/gregtech/textures/gui/machines/`:
 
 - `gt6/textures/gui/machines/shredder.png` — Shredder GUI background
-  (upstream `Shredder.png`, task p7-gui-family)
+  (upstream `Shredder.png`, task gui-family)
 - `gt6/textures/gui/machines/crusher.png` — Crusher GUI background
-  (upstream `Crusher.png`, task p7-gui-family)
+  (upstream `Crusher.png`, task gui-family)
 - `gt6/textures/gui/machines/lathe.png` — Lathe GUI background
-  (upstream `Lathe.png`, task p7-gui-family)
+  (upstream `Lathe.png`, task gui-family)
 - `gt6/textures/block/energy_source.png` — test energy source block texture
   (upstream `textures/blocks/machines/solarpanels/solarpanel_electric_8eu/colored/side.png`,
-  task p8-d4-energy-source — the SolarPanelElectric family the rig ports)
+  task d4-energy-source — the SolarPanelElectric family the rig ports)
 - `gt6/textures/block/crank.png` — Hand Crank block texture (upstream
-  `textures/blocks/machines/tools/crank/colored/front.png`, task p12-engine-crank;
+  `textures/blocks/machines/tools/crank/colored/front.png`, task engine-crank;
   sha256 `a29789c46513a00f1d866a8351c777c8c2b7a365e5a387145f6d6b6dd2abf07a`).
   Upstream tints this grayscale "colored" icon with the material colour
   (ANY.Iron mRGBa via the MTE mRGBa pass) and layers the spin overlay
@@ -23,17 +23,17 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   icon un-tinted with no active visual — declared deviation, the tint and the
   ACTIVE-state model swap ride the render pool card.
 - `gt6/textures/gui/machines/cokeoven.png` — Coke Oven GUI background
-  (upstream `CokeOven.png`, task p8-cokeoven-gui-menu; sha256
+  (upstream `CokeOven.png`, task cokeoven-gui-menu; sha256
   `bdca3b3399173ca025771c598c57ac8ba6b6dd207263750ec693669dcbe0d03f`)
 - `gt6/textures/item/crowbar.png` — crowbar item texture (upstream
-  `textures/items/iconsets/CROWBAR.png`, task p9-tool-crowbar; sha256
+  `textures/items/iconsets/CROWBAR.png`, task tool-crowbar; sha256
   `4190549e7662b5fe4657face4097818eb1a4745f16b1740de11e619f8f046894`).
   Upstream tints this grayscale icon with the tool material colour
   (GT_Tool_Crowbar.getRGBa → MT.Steel.mRGBaSolid); the port renders it
   un-tinted at the single steel tier — declared deviation, a runtime tint
   rides the tool-family pool card.
 - `gt6/textures/item/cutter.png` — wire cutter item texture (upstream
-  `textures/items/iconsets/WIRE_CUTTER.png`, task p10-tool-cutter; sha256
+  `textures/items/iconsets/WIRE_CUTTER.png`, task tool-cutter; sha256
   `3ccb7a752f1b51f6ed7940462098523826491ea595f27cedae8882efa66167c0`).
   Same single-steel-tier story as the crowbar: upstream tints the tool head
   (GT_Tool_WireCutter.getRGBa :95-97, the material pool) and renders only the
@@ -41,7 +41,7 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   grayscale head un-tinted — declared deviation, same runtime-tint pool.
 
 - `gt6/textures/item/chisel.png` — chisel item texture (upstream
-  `textures/items/iconsets/HANDLE_CHISEL.png`, task p16-chisel-decalcify; sha256
+  `textures/items/iconsets/HANDLE_CHISEL.png`, task chisel-decalcify; sha256
   `fef0d79fe8722697dae9175426db103b29478be033ed06a186f65fddc6e5bd2e`).
   Same single-steel-tier story as the crowbar/cutter: upstream composes the material
   head layer (`toolHeadChisel`) over this handle icon and tints both with the tool
@@ -50,21 +50,21 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   (spec ③ resolves to no-tint, no client listener row).
 
 - `gt6/textures/item/file.png` — file item texture (upstream
-  `textures/items/iconsets/HANDLE_FILE.png`, task p24-tool-system; sha256
+  `textures/items/iconsets/HANDLE_FILE.png`, task tool-system; sha256
   `fef0d79fe8722697dae9175426db103b29478be033ed06a186f65fddc6e5bd2e`).
   Same single-steel-tier story as the chisel: upstream composes the material
   head layer (`toolHeadFile`) over this handle icon and tints both with the tool
   material colour (GT_Tool_File.getIcon :91-92, the material pool); the port shows the
   grayscale handle silhouette un-tinted — declared deviation, same runtime-tint pool.
 - `gt6/textures/item/saw.png` — saw item texture (upstream
-  `textures/items/iconsets/HANDLE_SAW.png`, task p24-tool-system; sha256
+  `textures/items/iconsets/HANDLE_SAW.png`, task tool-system; sha256
   `3ab930729112f139863462767c026f4e327a62b23e81bf3ae7b60d57e6dbe952`).
   Same story as the file: the upstream head layer (`toolHeadSaw`) rides the material
   pool (GT_Tool_Saw.getIcon :186-187); the port shows the grayscale handle silhouette
   un-tinted — declared deviation, same runtime-tint pool.
 - `gt6/textures/item/builder_wand.png` — builder wand item texture (upstream
   `textures/items/materialicons/EMERALD/toolHeadBuilderwand.png`, task
-  p24-builder-wand; sha256
+  builder-wand; sha256
   `4f3d7f68653d508e974da81beb1bd499d5c3ba0f0a588c4e4ddcddcdf6181c18`).
   Upstream has no iconsets face for this tool: GT_Tool_Builderwand.getIcon :52 renders
   the primary material's texture-set `toolHeadBuilderwand` icon, the default primary
@@ -74,43 +74,43 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   the single tier — declared deviation, the family runtime-tint pool.
 - `gt6/textures/item/screwdriver.png` / `screwdriver_overlay.png` — screwdriver handle
   textures (upstream `textures/items/iconsets/HANDLE_SCREWDRIVER.png` +
-  `_OVERLAY.png`, task p38-issue6-tool-4layer-tint; base sha256
+  `_OVERLAY.png`, task issue6-tool-4layer-tint; base sha256
   `fef0d79fe8722697dae9175426db103b29478be033ed06a186f65fddc6e5bd2e` — the shared
   handle sprite, byte-identical to the HANDLE_CHISEL/HANDLE_FILE borrows above; overlay
   sha256 `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510` — the same
   overlay bytes as the METALLIC head overlay). Byte-identical borrows, filenames
-  lowercased on borrow. SUPERSEDES the p24-screwdriver-item composed-single ruling
+  lowercased on borrow. SUPERSEDES the screwdriver-item composed-single ruling
   (GitHub issue #6): the offline composite is retired for the four-layer model — the
   head half rides the in-tree toolHeadScrewdriver metallic-set pair, the handle tint =
   the secondary with the Spruce fallback (GT_Tool_Screwdriver.getIcon :115-117 +
   getRGBa :120-122, GT6ToolLadder.fourPassTintARGB).
 - `gt6/textures/item/sword.png` / `sword_overlay.png` — sword handle textures (upstream
-  `textures/items/iconsets/HANDLE_SWORD.png` + `_OVERLAY.png`, task p29-w5-t2-blade-six;
+  `textures/items/iconsets/HANDLE_SWORD.png` + `_OVERLAY.png`, task w5-t2-blade-six;
   base sha256 `f678c93377fcd7799c37429c06182f18e20563125f285bbfe437e3956dfb74e5`).
   Byte-identical borrows, filenames lowercased on borrow; the head half rides the
   in-tree toolHeadSword metallic-set pair (upstream GT_Tool_Sword.getIcon :113-115).
 - `gt6/textures/item/knife.png` / `knife_overlay.png` — knife icon borrows (upstream
-  `textures/items/iconsets/KNIFE.png` + `_OVERLAY.png`, task p29-w5-t2-blade-six; base
+  `textures/items/iconsets/KNIFE.png` + `_OVERLAY.png`, task w5-t2-blade-six; base
   sha256 `e0a3ac8791620ccf66e17e319914e4105b8578c58bae43d3a4d0048da84e227b`), the VOID
   handle face (GT_Tool_Knife.getIcon :85-87).
 - `gt6/textures/item/butchery_knife.png` / `butchery_knife_overlay.png` — butchery-knife
-  icon borrows (upstream `BUTCHERYKNIFE.png` + `_OVERLAY.png`, task p29-w5-t2-blade-six;
+  icon borrows (upstream `BUTCHERYKNIFE.png` + `_OVERLAY.png`, task w5-t2-blade-six;
   base sha256 `8d69d7ea6ac203a5b550aede86362656252678ba30c19c39aadbd9db358623f3`), the
   VOID handle face (GT_Tool_ButcheryKnife.getIcon :97-99).
 - `gt6/textures/item/club.png` / `club_overlay.png` — club icon borrows (upstream
-  `CLUB.png` + `_OVERLAY.png`, task p29-w5-t2-blade-six; base sha256
+  `CLUB.png` + `_OVERLAY.png`, task w5-t2-blade-six; base sha256
   `b8ed2f3b2170421783419e88981018d4fe5ed3692ff5b3039a54b457f1e576d8`), the VOID handle
   face (GT_Tool_Club.getIcon :113-115).
 - `gt6/textures/item/wrench.png` — wrench item texture (upstream
-  `textures/items/iconsets/WRENCH.png`, task p25-tool-hammer-wrench; sha256
+  `textures/items/iconsets/WRENCH.png`, task tool-hammer-wrench; sha256
   `7c5b36f19b5607c9cc122f72b5796512db091e5baa2d815ef649d1761d9351cc`).
   Byte-identical borrow, filename lowercased on borrow. The standalone full-silhouette
   wrench face (upstream's per-material render composes `toolHeadWrench` head over a
   stick handle — GT_Tool_Wrench.getIcon, the material pool); the port shows the
   grayscale silhouette un-tinted at the single steel tier — declared deviation, the
   family runtime-tint pool.
-- `gt6/textures/item/hammer.png` — RETIRED (task p38-issue6-tool-4layer-tint
-  SUPERSEDES the p25-tool-hammer-wrench composition ruling, GitHub issue #6): the
+- `gt6/textures/item/hammer.png` — RETIRED (task issue6-tool-4layer-tint
+  SUPERSEDES the tool-hammer-wrench composition ruling, GitHub issue #6): the
   offline-composed flat icon is gone — the hard hammer rides the four-layer model over
   in-tree sprites only (the toolHeadHammer metallic-set pair for the head + the WOOD-set
   stick pair for the handle, the secondary MT.WOODS.Spruce ride,
@@ -120,7 +120,7 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   in-tree under material_sets.
 - `gt6/textures/item/bending_cylinder_small.png` — small bending cylinder item texture
   (upstream `textures/items/iconsets/BENDING_CYLINDER_SMALL.png`, task
-  p25-food-can-row0; sha256
+  food-can-row0; sha256
   `686b961d1477d133a1a16abc8c292f9648f3c3d92e3fa1b32ae725b7132ea570`).
   Byte-identical borrow, filename lowercased on borrow. The upstream tool head icon
   (GT_Tool_BendingCylinderSmall.getIcon — the head half; the handle half is
@@ -128,7 +128,7 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   shows the grayscale icon un-tinted at the single steel tier — declared deviation,
   the family runtime-tint pool.
 - `gt6/textures/item/{scissors,scoop,plunger,flint_tinder,rolling_pin,bending_cylinder}.png`
-  (+ the `_overlay` twins, 12 textures, task p29-w5-t5-scene-six) — byte-identical
+  (+ the `_overlay` twins, 12 textures, task w5-t5-scene-six) — byte-identical
   borrows from upstream `textures/items/iconsets/{SCISSORS,SCOOP,PLUNGER,FLINT_TINDER,
   ROLLING_PIN,BENDING_CYLINDER}{,_OVERLAY}.png`, filenames lowercased on borrow; sha256
   heads: scissors `e03dde3e0ac705ff`, scoop `7fe747cd488395e6`, plunger `39e8d99b127e6d7c`,
@@ -139,7 +139,7 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   the port shows the grayscale icons un-tinted at the single steel tier — declared
   deviation, the family runtime-tint pool.
 - `gt6/textures/item/food_can/*.png` — the food-can row0 subset (8 textures, task
-  p25-food-can-row0), byte-identical borrows renamed to the registered item ids:
+  food-can-row0), byte-identical borrows renamed to the registered item ids:
   - `empty.png`            `textures/items/gt.multiitem.randomtools/998.png`
     (`3d9075d45ec657759fedfc71a95a03a85fe399ba3537d04e8daec0172f18c63e` — the empty
     can lives on the RANDOMTOOLS multiitem upstream, MultiItemRandomTools.java:234)
@@ -163,14 +163,14 @@ Machine GUI backgrounds borrowed from **GregTech 6**
 - `gt6/textures/item/clay_bowl.png` — byte-identical borrow of upstream
   `textures/items/gt.multiitem.randomtools/995.png` (meta 995 = the "Clay Bowl" raw item,
   MultiItemRandomTools.java:119, the same randomtools multiitem the spray/food-can bands
-  borrow from; task p38-c1-dynamo-bowl-models — the registered port item had zero item
+  borrow from; task c1-dynamo-bowl-models — the registered port item had zero item
   model, the hand-held magenta case):
   `cf5aacdfa8a463be57722161a1962219912928f5e41ec6c9500fce66162ca9bd`.
   16x16 RGBA, CC0 1.0 per the upstream README block.
 
 - `gt6/textures/item/faucet_ceramic_raw.png` — byte-identical borrow of upstream
   `textures/items/gt.multiitem.randomtools/992.png` (meta 992 = the "Clay Faucet" raw
-  item, MultiItemRandomTools.java:117; task p38-c1-dynamo-bowl-models C5-guard append —
+  item, MultiItemRandomTools.java:117; task c1-dynamo-bowl-models C5-guard append —
   the mold model segment covered only the finished pairs):
   `1a6c9713213e2a0f64c73d116721dbe5d26006eead78397dcbc86fe201a4d091`.
   16x16 RGBA, CC0 1.0 per the upstream README block.
@@ -192,7 +192,7 @@ Machine GUI backgrounds borrowed from **GregTech 6**
 - the 31 raw clay mold icons `gt6/textures/item/mold_ceramic(<_shape>)_raw.png` —
   byte-identical borrows of upstream `textures/items/gt.multiitem.randomtools/<meta>.png`
   (the "Clay X Mold" raw item band, MultiItemRandomTools.java:80-121; task
-  r7-40-41-mold-assets, GitHub #40 — the 31 raw items all rode the vanilla clay sprite,
+  40-41-mold-assets, GitHub #40 — the 31 raw items all rode the vanilla clay sprite,
   every shape looked identical). Filenames are the registered raw item ids; the shape →
   upstream meta mapping follows the upstream item names (NOT the port's CERAMIC_ROWS
   order, which differs from the meta sequence). All 16x16 RGBA, CC0 1.0 per the upstream
@@ -265,11 +265,11 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   The formed-mold/faucet/crucible BLOCK bodies reference the material smooth art per the
   upstream `getTextureSmooth` face (the texture set's blockSolid icon,
   OreDictMaterial.java:983-990): `block/materialicons/rough|copper|metallic/block_solid`
-  (the task p8-prefixblock-render borrows) and vanilla `minecraft:block/smooth_stone`
+  (the task prefixblock-render borrows) and vanilla `minecraft:block/smooth_stone`
   for the Stone rows.
 
 - `gt6/textures/item/zpm.png` — byte-identical borrow of upstream
-  `textures/blocks/iconsets/ZPM_SIDES.png` (task p38-c1-dynamo-bowl-models C5-guard
+  `textures/blocks/iconsets/ZPM_SIDES.png` (task c1-dynamo-bowl-models C5-guard
   append; GT6Batteries.ZPM_ITEM). Declared deviation: upstream meta 14999 is a BLOCK item
   (Loader :1103 — the item face is the isometric block render, no standalone item sprite
   exists); the flat ZPM casing art is the nearest upstream sprite:
@@ -279,7 +279,7 @@ Machine GUI backgrounds borrowed from **GregTech 6**
 - `gt6/textures/item/branch_cutter.png` + `branch_cutter_overlay.png` — byte-identical
   borrows of upstream `textures/items/iconsets/GRAFTER{,_OVERLAY}.png` renamed to the
   registered item id (GT_Tool_BranchCutter.getIcon :126-127 renders the GRAFTER icon head
-  with a VOID handle; task p38-c1-dynamo-bowl-models C5-guard append):
+  with a VOID handle; task c1-dynamo-bowl-models C5-guard append):
   `branch_cutter.png`          `3637bb94c22cc4162b2f50359635a3698af8d2a32fbe771aa2238aa8cab27567`
   `branch_cutter_overlay.png`  `85429942b0e37d8ad3bc854666c978ff93352a695096f57f136540ae31c8d1d9`
   16x16 RGBA, CC0 1.0 per the upstream README block.
@@ -287,13 +287,13 @@ Machine GUI backgrounds borrowed from **GregTech 6**
 - `gt6/textures/item/hand_drill.png` + `hand_drill_overlay.png` — byte-identical borrows
   of upstream `textures/items/iconsets/HAND_DRILL{,_OVERLAY}.png` (GT_Tool_HandDrill
   .getIcon :63-64 renders the HAND_DRILL icon head with a VOID handle; the electric drill
-  band's tip/handle art is a different sprite; task p38-c1-dynamo-bowl-models C5-guard
+  band's tip/handle art is a different sprite; task c1-dynamo-bowl-models C5-guard
   append):
   `hand_drill.png`          `a856f481060a41855851b4955e48913f3ef2c02f2c80608549aa010846775e8d`
   `hand_drill_overlay.png`  `e8a5d757f0bf4ac82d33157de9a984da1f1f3c328a4f0a7189207e4316061e00`
   16x16 RGBA, CC0 1.0 per the upstream README block.
 
-Material prefix BLOCK textures, task p8-prefixblock-render: the 175 grayscale
+Material prefix BLOCK textures, task prefixblock-render: the 175 grayscale
 base icons under `gt6/textures/block/materialicons/<set>/<prefix>.png` come from
 upstream `src/main/resources/assets/gregtech/textures/blocks/materialicons/<SET>/<Prefix>.png`
 (exactly the prefix x live-texture-set intersection the datagen models reference,
@@ -306,7 +306,7 @@ Filenames were lowercased on borrow: 1.20.1 `ResourceLocation` paths only
 accept `[a-z0-9_.-/]`. The PNG contents are byte-identical to upstream
 (sha256 verified, no rescaling or redrawing).
 
-Copied on 2026-08-31; the chisel item texture (task p16-chisel-decalcify) on
+Copied on 2026-08-31; the chisel item texture (task chisel-decalcify) on
 2026-09-05. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (upstream `README.md`: "All assets, unless otherwise stated, are
 dedicated to the public domain according to the CC0 1.0 Universal Public
@@ -318,7 +318,7 @@ Wrench-grid icons in `gt6/textures/gui/overlay/` come from GregTech CEu
 Modern under LGPL-3.0-or-later — see `gt6/textures/gui/overlay/README.md`
 for that attribution.
 
-Task p9-render-d-formed-look (2026-09-01) — coke oven controller texture
+Task render-d-formed-look (2026-09-01) — coke oven controller texture
 census, NEGATIVE result, declared deviation: the plan was to borrow upstream
 `textures/blocks/machines/multiblockmains/cokeoven/` colored+overlay groups
 (the controller look of `TileEntityBase10MultiBlockBase.getTexture2`,
@@ -341,7 +341,7 @@ The addMultiBlocks javadoc in `GT6BlockStates.java` carries the accompanying
 getTexture2 erratum (front by facing, never by formed; the FORMED dual model
 is a declared port enhancement beyond upstream).
 
-Oven state-overlay textures, task p9-render-c-oven-overlay: the 12 cutout
+Oven state-overlay textures, task render-c-oven-overlay: the 12 cutout
 overlay PNGs under `gt6/textures/block/oven_overlay_active_*.png` and
 `gt6/textures/block/oven_overlay_running_*.png` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/basicmachines/oven/overlay_active/<face>.png`
@@ -368,7 +368,7 @@ borrow (1.20.1 `ResourceLocation` charset; the sprite ids are
 `gt6:block/oven_overlay_<group>_<face>`); the PNG contents are byte-identical
 to upstream (sha256 above, no rescaling or redrawing).
 
-Animation metadata (task r8-render-leftovers): the front/back active strips are
+Animation metadata (task render-leftovers): the front/back active strips are
 16x128 eight-frame animations upstream and the borrow initially missed the side
 `.mcmeta` files, so vanilla sampled the whole strip as one texture (v0..16,
 all eight frames squeezed into the face). The two files
@@ -394,7 +394,7 @@ Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
 
-Redstone Emitter cover textures, task p9-redstone-cover-emitter: the 17 PNGs
+Redstone Emitter cover textures, task redstone-cover-emitter: the 17 PNGs
 under `gt6/textures/block/redstone_emitter/` (`0.png`..`15.png` + `underlay.png`)
 derive from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/covers/redstoneemitter/`
@@ -420,7 +420,7 @@ UPSTREAM SOURCES sha256 (provenance):
 - `15.png`         `797d94f589520541dfb74922a86e1f40b48454a3083880e23a78e620504caa48`
 - `underlay.png`   `5951db3704bfc3346837196c66207e99e58a26e9079abfaa2376fb3e87962c37`
 
-Composition (declared, the p9-render-d-formed-look option-(b) precedent): the
+Composition (declared, the render-d-formed-look option-(b) precedent): the
 upstream tier PNGs are 6-8%-opaque digit OVERLAYS — upstream stacks them
 `BlockTextureMulti(sTexturesBase, sTextures[tier])` (:111). The 1.20.1 plate
 renderer stitches ONE sprite per face (`CoverPlateModel.planQuads` —
@@ -464,7 +464,7 @@ atlas wiring (the same convention the pump-cover sprites use). The card's
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Electric wire family textures, task p9-wire-family-w2: the 7 grayscale wire
+Electric wire family textures, task wire-family-w2: the 7 grayscale wire
 icons under `gt6/textures/block/materialicons/<set>/wire.png` (sets
 `copper, shiny, metallic, dull, quartz, rad, none` — the exact iconset census of
 the 30 wire rows; `none` = upstream `NONE/wire.png`, landing the setless
@@ -497,7 +497,7 @@ Declared deviation: the painted-foam colour variant (`isPainted() ? mRGBa`)
 is not ported — foam is not in this card's scope, the unpainted gray-64 jacket
 is rendered.
 
-Redstone Conductor cover textures, task p10-cover-conductor-redstone: the 2
+Redstone Conductor cover textures, task cover-conductor-redstone: the 2
 PNGs under `gt6/textures/block/redstone_conductor/` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/covers/redstoneconductor/`
 (the `CoverRedstoneConductorIN.java:35` / `CoverRedstoneConductorOUT.java:63`
@@ -519,7 +519,7 @@ the p9 emitter note).
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Redstone Machine Switch cover texture, task p10-cover-controller-redstone: the
+Redstone Machine Switch cover texture, task cover-controller-redstone: the
 1 PNG under `gt6/textures/block/redstone_switch/` comes from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/covers/redstoneswitch/`
 (the `CoverControllerRedstone.java:65` `sTextureForeground` single sprite,
@@ -540,7 +540,7 @@ the single-sprite plate like every cover (AbstractCoverDefault :71-72 defaults).
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Shutter + Item Filter cover textures, task p11-cover-shutter-filter: the 4 PNGs
+Shutter + Item Filter cover textures, task cover-shutter-filter: the 4 PNGs
 under `gt6/textures/block/shutter/` and `gt6/textures/block/filteritem/` come
 from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/covers/shutter/`
@@ -567,7 +567,7 @@ cover (AbstractCoverDefault :71-72 defaults).
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Item Retriever cover textures, task p31-retriever-cover: the 2 PNGs under
+Item Retriever cover textures, task retriever-cover: the 2 PNGs under
 `gt6/textures/block/retrieveritem/` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/covers/retrieveritem/`
 (the `CoverRetrieverItem.java:147-148` normal/inverted sprite pair),
@@ -589,7 +589,7 @@ defaults).
 Copied on 2026-09-17. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Auto Redstone Machine Switch cover texture, task p11-cover-controllers: the
+Auto Redstone Machine Switch cover texture, task cover-controllers: the
 1 PNG under `gt6/textures/block/auto_redstone_switch/` comes from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/covers/autoredstoneswitch/`
 (the `CoverControllerAutoRedstone.java:67` `sTextureForeground` single sprite,
@@ -610,7 +610,7 @@ the single-sprite plate like every cover (AbstractCoverDefault :71-72 defaults).
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Cover Controller cover texture, task p11-cover-controllers: the 1 PNG under
+Cover Controller cover texture, task cover-controllers: the 1 PNG under
 `gt6/textures/block/cover_switch/` comes from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/covers/coverswitch/`
 (the `CoverControllerCovers.java:104` `sTextureForeground` single sprite,
@@ -635,7 +635,7 @@ Dedication** (same upstream `README.md` block as above).
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Laser Fiber Wire textures, task p11-wire-fiber-texture: the 2 PNGs under
+Laser Fiber Wire textures, task wire-fiber-texture: the 2 PNGs under
 `gt6/textures/block/iconsets/` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/iconsets/`
 (the `MultiTileEntityWireLaser.java:121-122` fixed texture pair — both
@@ -650,7 +650,7 @@ to upstream (16x16 RGBA, `cmp` + sha256 verified per file):
   (upstream `FIBER_WIRE_OVERLAY.png`; the sprite id is
   `gt6:block/iconsets/fiber_wire_overlay`)
 
-Path mapping (declared, the p9-wire-family-w2 insulation-mask precedent):
+Path mapping (declared, the wire-family-w2 insulation-mask precedent):
 upstream `iconsets/<UPPER_SNAKE>.png` is lowercased to
 `iconsets/<lower_snake>.png` (1.20.1 `ResourceLocation` charset), landing under
 `textures/block/` — the vanilla block atlas `directory("block")` source
@@ -665,7 +665,7 @@ byte-identical, no rescaling or redrawing.
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Conveyor + Robot Arm cover textures, task p11-cover-conveyor-robotarm: the 4
+Conveyor + Robot Arm cover textures, task cover-conveyor-robotarm: the 4
 PNGs + 4 animation mcmeta files under `gt6/textures/block/conveyor/` and
 `gt6/textures/block/robotarm/` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/covers/conveyor/`
@@ -697,7 +697,7 @@ single-sprite plate like every cover (AbstractCoverDefault :71-72 defaults).
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Cover plate BACKGROUND layer textures, task p11-render-cover-multilayer: the 2
+Cover plate BACKGROUND layer textures, task render-cover-multilayer: the 2
 PNGs under `gt6/textures/block/covers/` and `gt6/textures/block/cover_switch/`
 come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/covers/`
@@ -714,7 +714,7 @@ byte-identical to upstream, sha256 verified:
 This section SUPERSEDES the per-card "the upstream `BACKGROUND_COVER` layer is
 NOT borrowed — it folds into the single-sprite plate" notes above (p9 emitter,
 p10 conductor/switch, p11 shutter/filter/controllers/conveyor notes): the
-p11-render-cover-multilayer snapshot carries a per-face LAYER TABLE now
+render-cover-multilayer snapshot carries a per-face LAYER TABLE now
 (`GTCoverRenderSnapshot.layers` — the census `BlockTextureMulti` stack, bottom
 first), so every registered cover plate renders `covers/base` (or
 `cover_switch/base` for the cover controller) beneath its surface sprite, each
@@ -736,14 +736,14 @@ or redrawing.
 Copied on 2026-09-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Axle block texture, task p12-axle-family: the 1 PNG
+Axle block texture, task axle-family: the 1 PNG
 `gt6/textures/block/axle.png` comes from upstream
 `src/main/resources/assets/gregtech/textures/blocks/iconsets/AXLE.png`,
 byte-identical to upstream, sha256 verified:
 
 - `axle.png`   `12f95f070c3eb11a04e5a5ae5a8e461e88b1f13bc71bed33fad9f4187474a49b`
 
-Path mapping (declared, the p11-wire-fiber-texture precedent): upstream
+Path mapping (declared, the wire-fiber-texture precedent): upstream
 `iconsets/AXLE.png` is lowercased to `axle.png`, landing under
 `textures/block/` (1.20.1 `ResourceLocation` charset). Declared deviation: the
 upstream axle picks per-material textures with a rotation animation group
@@ -754,7 +754,7 @@ rows as the placeholder (the tint/animation/render-family is the render pool
 card; the GTWires shared-texture form). The upstream `.mcmeta` files are NOT
 borrowed (no animation carrier in the static cube-column model).
 
-Logistics Tank block texture, task p12-barrel-keepfilter-logistics: the 1 PNG
+Logistics Tank block texture, task barrel-keepfilter-logistics: the 1 PNG
 `gt6/textures/block/barrel_logistics.png` comes from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/tanks/logistics/colored/side.png`
 (the `MultiTileEntityBarrelLogistics.java:44-46` `getTexture2` colored base
@@ -775,7 +775,7 @@ mRGBa tint and the overlay pass ride the render pool with the other barrels.
 Filenames lowercased on borrow, contents byte-identical, no rescaling or
 redrawing.
 
-Fluid Tap + Fluid Funnel block textures, task p12-tap-funnel-attachment: the 2 PNGs
+Fluid Tap + Fluid Funnel block textures, task tap-funnel-attachment: the 2 PNGs
 under `gt6/textures/block/` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/tools/` (the
 `MultiTileEntityFluidTap.java:130-133` / `MultiTileEntityFluidFunnel.java:130-132`
@@ -797,7 +797,7 @@ over the whole cube — the mRGBa material tint (MT.Ceramic/Plastic/StainlessSte
 and the multi-pass overlay/faucet stack (MultiTileEntityFluidTap getRenderPasses2
 :178-208) ride the render pool card, the single-model deviation the crank card
 declared first.
-Steam Engine family textures, task p12-engine-steam: the 3 PNGs under
+Steam Engine family textures, task engine-steam: the 3 PNGs under
 `gt6/textures/block/steam_engine_{front,back,side}.png` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/engines/kinetic_steam/colored/`
 (the `MultiTileEntityEngineSteam.java:276-284` `sColoreds` icon group —
@@ -813,7 +813,7 @@ Path mapping (declared, the crank precedent): upstream
 `steam_engine_<face>.png` under `textures/block/`. The upstream
 `overlay/<face>` second layer (the :285-294 `sOverlays` stack) is NOT
 borrowed — the port renders the single-pass cube model (the
-p8-prefixblock-render single-pass grayscale ruling). Both the Steam Engine
+prefixblock-render single-pass grayscale ruling). Both the Steam Engine
 and Strong Steam Engine loader rows share this one texture group upstream
 (same MTE class, no per-material icon differentiation), so all 28 blocks
 share the three sprites. Upstream tints the grayscale `colored` icons with
@@ -825,14 +825,14 @@ the tint and the heat-state model swap ride the render pool card.
 Copied on 2026-09-02. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Diesel Engine block texture, task p12-engine-diesel: the 1 PNG
+Diesel Engine block texture, task engine-diesel: the 1 PNG
 `gt6/textures/block/diesel_engine.png` comes from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/generators/motor_liquid/colored/front.png`,
 byte-identical to upstream, sha256 verified:
 
 - `diesel_engine.png`   `b94934858d010e0381fd5056dbc0ec00e964cad00c152944b2e6e0918991f977`
 
-Path mapping (the p12-axle-family precedent): the upstream MTE icon
+Path mapping (the axle-family precedent): the upstream MTE icon
 `machines/generators/motor_liquid/colored/front` lands as
 `textures/block/diesel_engine.png` (1.20.1 `ResourceLocation` charset).
 Declared deviation: upstream layers per-face colored icons with the
@@ -845,7 +845,7 @@ family is the render pool card). The overlay PNGs are NOT borrowed.
 Copied on 2026-09-02. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Gearbox + rotation transformer block textures, task p12-gearbox-transformer: the 3
+Gearbox + rotation transformer block textures, task gearbox-transformer: the 3
 PNGs under `gt6/textures/block/` come from upstream
 `src/main/resources/assets/gregtech/textures/`, byte-identical to upstream, sha256
 verified:
@@ -854,7 +854,7 @@ verified:
 - `transformer_rotation_front.png` `fd2ac7adc0f7aa8ab2d0434a17847fe747f6b50ec3b16d8499da945f3b7db766`  (machines/transformers/transformer_rotation/colored/front.png)
 - `transformer_rotation_side.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (machines/transformers/transformer_rotation/colored/side.png)
 
-Path mapping (declared, the p12-axle-family precedent): upstream iconset/machine
+Path mapping (declared, the axle-family precedent): upstream iconset/machine
 paths flatten to lowercase snake files under `textures/block/`. Declared deviation:
 the upstream gearbox renders per-face gear/axle overlays keyed on the connection mask
 with clockwise/counterclockwise rotation icons (MultiTileEntityGearBox :331-344) and
@@ -866,7 +866,7 @@ tint are the render pool card).
 Copied on 2026-09-02. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Burning Box family block textures, task p13-burning-box-family: the 4 PNGs under
+Burning Box family block textures, task burning-box-family: the 4 PNGs under
 `gt6/textures/block/burning_box_*.png` are GENERATED grayscale placeholders — the
 upstream burning-box iconsets
 (`machines/generators/burning_{solid,liquid,gas,fluidbed}/colored/*.png` +
@@ -883,16 +883,16 @@ glyph is a dark border + box outline + glowing core, deterministic generator in
 the card's tooling).
 
 - `gt6/textures/block/large_boiler/{wall,transmitter}.png` — generated grayscale
-  placeholders (task p13-large-boiler). The former "no borrowable
+  placeholders (task large-boiler). The former "no borrowable
   `machines/multiblockmains/largeboiler/` group in this snapshot" claim is SUPERSEDED by
-  task r8-tex-large-boilers (the probe found the full 4-layer/3-face group): `main.png`
+  task tex-large-boilers (the probe found the full 4-layer/3-face group): `main.png`
   is RETIRED — the controller wears the borrowed two-layer art (the
-  r8-tex-large-boilers borrow entry); `wall.png` stays as the large-crucible controller
-  stand-in (task p13-borrow declaration), `transmitter.png` is an orphaned leftover kept
+  tex-large-boilers borrow entry); `wall.png` stays as the large-crucible controller
+  stand-in (task borrow declaration), `transmitter.png` is an orphaned leftover kept
   on disk (the `heat_transmitter` block borrows the `heatacceptor` set since
-  p29-w3-nbtdesign-parts).
+  w3-nbtdesign-parts).
 
-Dryer GUI background texture, task p16-machine-fluid-gui: the 1 PNG
+Dryer GUI background texture, task machine-fluid-gui: the 1 PNG
 `gt6/textures/gui/machines/dryer.png` comes from upstream
 `src/main/resources/assets/gregtech/textures/gui/machines/Dryer.png`
 (256x256, the GTGuiScreen 176x166 panel canvas), byte-identical to upstream,
@@ -900,7 +900,7 @@ sha256 verified:
 
 - `dryer.png`   `d1fae3b57b7c56c01463cbd87d977eb0581cf14128ad4a65f1e95608f9fec7d7`
 
-Path mapping (the p7-gui-family / p8-cokeoven-gui-menu precedents): upstream
+Path mapping (the gui-family / cokeoven-gui-menu precedents): upstream
 `machines/Dryer` is lowercased to `machines/dryer` (1.20.1 `ResourceLocation`
 charset) — the lowercased path is exactly what the DRYING RecipeMap declares
 (`gt6:textures/gui/machines/dryer`, GT6RecipeMaps the p14 W1b card), parsed by
@@ -912,7 +912,7 @@ the borrowed canvas and the port slot geometry align by construction.
 Copied on 2026-09-05. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Canner family textures, task p24-canner-machine (5 PNGs, CC0 from the upstream
+Canner family textures, task canner-machine (5 PNGs, CC0 from the upstream
 canner iconset, sha256 verified):
 
 - `gt6/textures/gui/machines/canner.png` — the GUI background, upstream
@@ -946,7 +946,7 @@ Copied on 2026-09-07. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
 
-Press + Extruder family fronts, task p26-w1-press-extruder-molds:
+Press + Extruder family fronts, task w1-press-extruder-molds:
 
 - `gt6/textures/block/press_{colored,overlay,overlay_active,overlay_running}_front.png`
   and `gt6/textures/block/extruder_{colored,overlay,overlay_active,overlay_running}_front.png`
@@ -973,7 +973,7 @@ Press + Extruder family fronts, task p26-w1-press-extruder-molds:
   byte-identical to upstream — declared placeholder.
 
 - `gt6/textures/item/shape_slicer/{grid,split}.png` — COMPOSED placeholders (the P20
-  stdlib generator convention, 16x16 RGBA, task p35-slicer-row-domain): the upstream
+  stdlib generator convention, 16x16 RGBA, task slicer-row-domain): the upstream
   Shape_Slicer_* icons are meta-atlas tiles with no standalone sprite file to borrow, so
   the two row0 blade icons are hand-rolled steel-frame pixels over the shape_extruder
   palette (grid = the 3x3 cutting lattice, split = the center split line). NOT
@@ -983,7 +983,7 @@ Press + Extruder family fronts, task p26-w1-press-extruder-molds:
 
 - `gt6/textures/item/shape_slicer/{empty,flat,eigths,eigths_hollow,quarters,quarters_hollow}.png`
   — COMPOSED placeholders (the same generator convention, 16x16 RGBA, task
-  p36-recipes-obtainability ruling B): the six census-completion icons over the same
+  recipes-obtainability ruling B): the six census-completion icons over the same
   steel palette (empty = the bare frame interior, flat = the solid face, eigths = the
   2x4 cut lattice, quarters = the center cross, the two hollow forms carry the 2x2
   see-through center hole). NOT byte-identical to upstream — declared placeholder.
@@ -997,7 +997,7 @@ Press + Extruder family fronts, task p26-w1-press-extruder-molds:
 Copied on 2026-09-09. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Distillery family + Integrated Circuit textures, task p16-distillery-family:
+Distillery family + Integrated Circuit textures, task distillery-family:
 
 - `gt6/textures/item/integrated_circuit.png` — the Integrated Circuit item icon
   (upstream `src/main/resources/assets/gregapi/textures/items/gt.integrated_circuit/0.png`,
@@ -1014,7 +1014,7 @@ Distillery family + Integrated Circuit textures, task p16-distillery-family:
 - `gt6/textures/block/distillery_front{,_active,_running}.png` — BAKED from the
   upstream Distillery iconset
   (`src/main/resources/assets/gregtech/textures/blocks/machines/basicmachines/distillery/`,
-  CC0 1.0 per the upstream `README.md` block above), task p19-distillery-front-canonical.
+  CC0 1.0 per the upstream `README.md` block above), task distillery-front-canonical.
   Upstream is a MULTI-LAYER per-face stack (the MultiTileEntityBasicMachine getTexture2
   pass system): an opaque grayscale `colored/` material base with transparent-bearing
   `overlay*` decals drawn on top at runtime — borrowing an overlay alone would leave the
@@ -1044,7 +1044,7 @@ Distillery family + Integrated Circuit textures, task p16-distillery-family:
 Copied / generated on 2026-09-05. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-GT6 stone-family block textures, task p19-stoneblocks-render: the 272 PNGs under
+GT6 stone-family block textures, task stoneblocks-render: the 272 PNGs under
 `gt6/textures/block/stones/<stone>/<variant>.png` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/stones/gt.stone.<name>/<VARIANT>.png`
 (the BlockStones.java:93-108 16-icon table, one folder per stone —
@@ -1063,7 +1063,7 @@ file for both variants), borrowed 1:1 anyway to keep the one-to-one path mapping
 Copied on 2026-09-06. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Update 2026-09-27, task r4-ore-tex-b (user B ruling — the vanilla-named trio
+Update 2026-09-27, task ore-tex-b (user B ruling — the vanilla-named trio
 migrates to the vanilla 1.20.1 current textures, curing the "old-look ore in
 new-look vanilla stone" mismatch): the granite/diorite/andesite STONE and
 SMOOTH (= polished) variants no longer reference the borrowed PNGs — the full
@@ -1365,7 +1365,7 @@ the same-name DIFFERENT stone and stays borrowed wholesale.
   - `` `7bc82814a3fb35982779453555799daa7f7f46a930abb46fd6a133e58c6faf58`
   - `` `b7cfff5afad72b0359bd810564bf876f5930b3c525bfab5b6e2367640c858dc0`
 
-GT6 stone-family block textures, task p19-stoneblocks-render: the 272 PNGs under
+GT6 stone-family block textures, task stoneblocks-render: the 272 PNGs under
 `gt6/textures/block/stones/<stone>/<variant>.png` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/stones/gt.stone.<name>/<VARIANT>.png`
 (the BlockStones.java:93-108 16-icon table, one folder per stone —
@@ -1675,9 +1675,9 @@ Dedication** (same upstream `README.md` block as above).
   - `WINDMILL_TILES_B.PNG` `7bc82814a3fb35982779453555799daa7f7f46a930abb46fd6a133e58c6faf58`
   - `SQUARE_BRICKS.PNG` `b7cfff5afad72b0359bd810564bf876f5930b3c525bfab5b6e2367640c858dc0`
 
-Machine front + shared body textures, task p20-borrow-machine-fronts (the
+Machine front + shared body textures, task borrow-machine-fronts (the
 `<family>_front{,_active,_running}.png` COMPOSITES are RETIRED by task
-p22-paint-front-overlay-split — see the split-borrow section below; the
+paint-front-overlay-split — see the split-borrow section below; the
 `oven_{bottom,top,side}.png` body borrows remain ACTIVE): the 21
 PNGs under `gt6/textures/block/` (`<family>_front{,_active,_running}.png` for
 the six families the model enumeration carries — oven, shredder, crusher,
@@ -1731,7 +1731,7 @@ Overlay source digests per family (`overlay/front`, `overlay_active/front`,
               `88b5c302301a4773e5b880878f9423a79d3e12c2ac05dbb2a3c31dd84c961a57`
 
 Baked product digests (16x16, fully opaque) — RETIRED products, REMOVED from
-the tree by task p22-paint-front-overlay-split (kept as the historical audit
+the tree by task paint-front-overlay-split (kept as the historical audit
 trail of the P19/P20 bake; no model references them any more):
 
 - `oven_front.png`         `a7e6ff28615bd73a017a9e59518023b80e823a6178117d58fecfc606053d5ee6`
@@ -1777,7 +1777,7 @@ per-face pass system stays the render pool card.
 Baked / copied on 2026-09-06. Upstream license: **CC0 1.0 Universal Public
 Domain Dedication** (same upstream `README.md` block as above).
 
-Split machine front layers, task p22-paint-front-overlay-split (2026-09-07):
+Split machine front layers, task paint-front-overlay-split (2026-09-07):
 the baked composites above are RETIRED — the machine model is now the upstream
 TWO-LAYER form (datagen TWO elements per model: the tinted body cube keeps the
 plain grayscale `colored/front` north face; the state decal is a separate thin
@@ -1828,10 +1828,10 @@ The P9 GTOvenOverlayModel strip borrows (`oven_overlay_active_front.png`,
 `oven_overlay_running_front.png`, full 16xN strips, digests in the P20 overlay
 source table above) are a DIFFERENT namespace consumed by the oven render
 snapshot system and are untouched by this split.
-GT6 item materialicon textures, task p20-borrow-item-material-sets-a: the 1373
+GT6 item materialicon textures, task borrow-item-material-sets-a: the 1373
 PNGs under `gt6/textures/item/material_sets/<set>/<prefix>.png` — the
 alphabetical first half of the 40-set census (`brick`..`lignite`; the second
-half rides task p20-borrow-item-material-sets-b) — come from upstream
+half rides task borrow-item-material-sets-b) — come from upstream
 `src/main/resources/assets/gregtech/textures/items/materialicons/<SET>/<Prefix>.png`,
 byte-identical to upstream, sha256 verified per file (manifest below). The set
 folder lowercases (`CUBE_SHINY` -> `cube_shiny`) and the icon segment maps
@@ -3241,15 +3241,15 @@ Dedication** (same upstream `README.md` block as above).
   - `screw.png` `94e94ed6ead3d8353caaa0c293ff3269213d677794c1b94c87f57f9dc119311d`
   - `stick.png` `ee2306110d3da12e5340607760cbefaf8d17b047a84d6202780c735dc74dc85d`
   - `stick_long.png` `44e5500af3a30267caeefa2109110687f9e051986b9d13f47542501bca923642`
-Steam Boiler Tank block textures, task p20-borrow-tank-barrel-pipe, RE-BORROWED by task
-r8-tex-large-boilers: the 6 PNGs under `gt6/textures/block/boiler_steam/` come from
+Steam Boiler Tank block textures, task borrow-tank-barrel-pipe, RE-BORROWED by task
+tex-large-boilers: the 6 PNGs under `gt6/textures/block/boiler_steam/` come from
 upstream `src/main/resources/assets/gregtech/textures/blocks/machines/tanks/boiler_steam/`
 (the `MultiTileEntityBoilerTank` icon stack — the same group the 26 Steam Boiler Tank
 rows render through), byte-identical to upstream, sha256 verified. The p20-era layout
 (`bottom/top/side.png` over the colored set, the `front.png` placeholder, "the overlay
 group is NOT borrowed") is SUPERSEDED — the port model is the two-layer grammar (the
 grayscale colored body is the tintindex-0 tint seat, the overlay plates are the untinted
-decals, the r4-18 addConverterModel form), so both layers borrow per-face:
+decals, the #18 addConverterModel form), so both layers borrow per-face:
 
 - `boiler_steam/colored_bottom.png` `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
   (upstream `boiler_steam/colored/bottom.png`)
@@ -3271,7 +3271,7 @@ side sprite), so the port model keeps `side` art on all four sides and the forme
 generated `front.png` placeholder is RETIRED. The `BI.BAROMETER` gauge overlay is NOT
 borrowed — the 5-bit per-state visual is the render pool (the p13 ruling repeated).
 
-Large Boiler controller block textures, task r8-tex-large-boilers: the 12 PNGs under
+Large Boiler controller block textures, task tex-large-boilers: the 12 PNGs under
 `gt6/textures/block/large_boiler/` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/multiblockmains/largeboiler/`,
 byte-identical to upstream, sha256 verified. This SUPERSEDES the p13-era "no borrowable
@@ -3282,7 +3282,7 @@ upstream semantics are the Base10 default `getTexture2`
 multiplies the row NBT_MATERIAL (the five rows, Loader_MultiTileEntities.java:1248-1252)
 and the overlay layer stays untinted — the port model is the two-layer front-bearing
 grammar (body `colored[_front]` tintindex-0 + `overlay[_front]` 0.01 plates, the
-r4-18 addConverterModel form). The `BI.BAROMETER` gauge (`front += BAROMETER_SCALE`,
+#18 addConverterModel form). The `BI.BAROMETER` gauge (`front += BAROMETER_SCALE`,
 MultiTileEntityLargeBoiler.java:358-361) is NOT borrowed — the dynamic 5-bit readout is
 the render pool (the p13 ruling; also the boiler_steam entry above). Path mapping:
 `{colored,colored_front,overlay,overlay_front}/{bottom,top,side}.png` flattens to
@@ -3317,7 +3317,7 @@ kept verbatim anyway so the ledger stays 1:1 with the upstream group.
   (upstream `largeboiler/overlay_front/side.png`)
 
 Logistics Core / Lightning Rod / Large Heat Exchanger / Large Crucible controller
-block textures, task r8-tex-multiblockmains: the 48 PNGs under
+block textures, task tex-multiblockmains: the 48 PNGs under
 `gt6/textures/block/{logistics_core,lightningrod,large_heat_exchanger,crucible}/`
 come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/multiblockmains/{logisticscore,lightningrod,largeheatexchanger,crucible}/`,
@@ -3336,7 +3336,7 @@ painting is the render pool. Path mapping:
 `{colored,colored_front,overlay,overlay_front}/{bottom,top,side}.png` flattens to
 `<band>/{layer}_{face}.png` (the underscore join, the large_boiler precedent).
 The two borrow-time composites are KEPT as item-form-only sprites: the
-r8-tex-itemform-b item layer0 lines pin `block/lightningrod/main` and
+tex-itemform-b item layer0 lines pin `block/lightningrod/main` and
 `block/large_heat_exchanger/main`, so both PNGs stay on disk with zero block-model
 consumers (the transmitter.png orphan-keep precedent). The former
 `large_boiler/wall.png` (its last consumer, the crucible controller placeholder,
@@ -3438,7 +3438,7 @@ dies with this task) is RETIRED.
 - `crucible/overlay_front_side.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `crucible/overlay_front/side.png`)
 
-Barrel family block textures, task p20-borrow-tank-barrel-pipe: the 3 PNGs
+Barrel family block textures, task borrow-tank-barrel-pipe: the 3 PNGs
 `gt6/textures/block/barrel_{wood,plastic,metal}.png` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/tanks/`, byte-identical
 to upstream, sha256 verified:
@@ -3464,7 +3464,7 @@ p12 entry stays byte-exact (sha256 re-verified `f348ace8e2d98ed701a060a87c4c66ec
 The `overlay/{bottom,top,side}.png` groups are NOT borrowed; the grayscale colored
 base renders un-tinted (the mRGBa material tint is the render pool card).
 
-Burning Box family block textures, task p20-borrow-tank-barrel-pipe: the 4 PNGs
+Burning Box family block textures, task borrow-tank-barrel-pipe: the 4 PNGs
 under `gt6/textures/block/burning_box_*.png` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/generators/`, byte-identical
 to upstream, sha256 verified:
@@ -3478,7 +3478,7 @@ to upstream, sha256 verified:
 - `burning_box_fluidbed.png` `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
   (upstream `burning_fluidbed/colored/front.png`)
 
-This section SUPERSEDES the p13-burning-box-family declaration above (the
+This section SUPERSEDES the burning-box-family declaration above (the
 "no borrowable source" claim): the probe found the five
 `machines/generators/burning_{solid,liquid,gas,fluidbed,brick}/` iconsets in the
 snapshot, each with a 6-face `colored` set plus `overlay`/`overlay_active`
@@ -3594,7 +3594,7 @@ verbatim. mcmeta files present (provenance only):
 - `burning_box_liquid_overlay_front_active.png.mcmeta`
 - `burning_box_solid_overlay_front_active.png.mcmeta`
 
-Fluid pipe block texture — DECLARED GAP, task p20-borrow-tank-barrel-pipe:
+Fluid pipe block texture — DECLARED GAP, task borrow-tank-barrel-pipe:
 `gt6/textures/block/fluid_pipe_wood.png` KEEPS its generated placeholder. The
 upstream wood fluid pipes render through the material icon system, not a dedicated
 block tile: `TileEntityBase10ConnectorRendered.getIconIndexConnected` (:265) picks
@@ -3617,10 +3617,10 @@ is the render pool card.
 Copied on 2026-09-06. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-GT6 item materialicon textures, task p20-borrow-item-material-sets-b: the 1412
+GT6 item materialicon textures, task borrow-item-material-sets-b: the 1412
 PNGs under `gt6/textures/item/material_sets/<set>/<prefix>.png` — the
 alphabetical second half of the 40-set census (`magnetic`..`wood`; the first
-half rode task p20-borrow-item-material-sets-a) — come from upstream
+half rode task borrow-item-material-sets-a) — come from upstream
 `src/main/resources/assets/gregtech/textures/items/materialicons/<SET>/<Prefix>.png`,
 byte-identical to upstream, sha256 verified per file (manifest below). The set
 folder lowercases (`CUBE_SHINY` -> `cube_shiny`) and the icon segment maps
@@ -5070,7 +5070,7 @@ Dedication** (same upstream `README.md` block as above).
   - `tool_head_wrench.png` `8d5a94bccbdc5594c9a1b4bc85e276597a4899f3163580c9cb9867c5d8bfced7`
   - `wire_fine.png` `448903897a3949381b86f0887b65636cd4bfbb71ef76151d7ee7e0abc88b40cd`
 
-Spray-can item textures, task p22-spraycan-items: the 18 16x16 icons under
+Spray-can item textures, task spraycan-items: the 18 16x16 icons under
 `gt6/textures/item/spray/` come from upstream
 `src/main/resources/assets/gregtech/textures/items/gt.multiitem.randomtools/`
 (meta ids on the MultiItemRandomTools meta item, the MultiItemRandomTools.java:243
@@ -5100,9 +5100,9 @@ tones on 1030/1000). Upstream license CC0 (see above).
 - `remover.png` (1096) `e7abadec9a0165a34204abbc6d16654ad93bdb48d6552d990280bd40a686f9a3`
 - `empty.png` (999) `b2efa1cdc63efa06f3677bc165f1bb51774b262881e4170927d3df48f5efdbe1`
 
-Copied on 2026-09-07 (task p22-spraycan-items).
+Copied on 2026-09-07 (task spraycan-items).
 
-Dye-chemical fluid carrier texture, task p24-dye-chemical-fluids: ONE grayscale
+Dye-chemical fluid carrier texture, task dye-chemical-fluids: ONE grayscale
 tint-carrier borrowed from upstream
 `src/main/resources/assets/gregtech/textures/blocks/fluids/dyes.chemical.png`,
 byte-identical copy at `gt6/textures/block/fluids/dyes_chemical.png`, sha256
@@ -5117,7 +5117,7 @@ identity rides the runtime FluidType tint = `GTSprayCanItem.DYES_INT[i]` (CS.jav
 items (P22) and the machine paint tints (P21). Chlorine borrows NOTHING (vanilla water
 textures + the MT.java:405 material colour tint, ruling R3). Copied on 2026-09-07.
 
-C-Foam fluid carrier texture, task p26-c-foam-fluid-refill: ONE grayscale tint-carrier
+C-Foam fluid carrier texture, task c-foam-fluid-refill: ONE grayscale tint-carrier
 borrowed from upstream
 `src/main/resources/assets/gregtech/textures/blocks/fluids/cfoam.png`, byte-identical
 copy at `gt6/textures/block/fluids/cfoam.png`, sha256
@@ -5131,7 +5131,7 @@ for the 32 family rows; the base `gt6:cfoam` row rides the carrier untinted (the
 construction-foam grey IS the base look, the decisions.p26-cfoam-fluid-naming ruling).
 Copied on 2026-09-08.
 
-GT grass block family textures, task p24-grass-block: TWELVE 16x16 RGBA PNGs borrowed
+GT grass block family textures, task grass-block: TWELVE 16x16 RGBA PNGs borrowed
 byte-identical from upstream
 `src/main/resources/assets/gregtech/textures/blocks/iconsets/`, renamed to the
 VARIANT-SEMANTICS tail. The upstream FILE names are the trap (research pin: meta 3
@@ -5163,12 +5163,12 @@ The bottom face borrows NOTHING (the models reference the vanilla
 `IconContainerCopied(Blocks.dirt, 0, SIDE_BOTTOM)` semantics, BlockGrass.java:102-104).
 The PNGs are pre-coloured (zero biome tint, zero tintindex). Copied on 2026-09-07.
 
-Lightning Rod family block textures, task p24-lightning-rod: the three faces
+Lightning Rod family block textures, task lightning-rod: the three faces
 borrowed from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/`, snapshot
 `v6.17.06-22-g3703e4030`, copied on 2026-09-08:
 
-(RETIRED — task r3-world-tint-render-type, the C5 clean-up:
+(RETIRED — task world-tint-render-type, the C5 clean-up:
 `gt6/textures/block/lightningrod/wall.png` — the Tungsten Wall part (upstream
 `multiblockparts/metalwall/0/colored/side.png`, the Loader :1151 texture key
 "metalwall"; sha256
@@ -5194,10 +5194,10 @@ borrowed copy was byte-redundant and is deleted.)
 
 The "colored" groups are grayscale tint-carriers (the ANY.W tungsten tint is the gray
 itself); the coil/rod stay un-tinted (the same declared deviation as the crank
-(task p12-engine-crank) and the tool family) while the tungsten wall tints since
-task r3-world-tint-render-type.
+(task engine-crank) and the tool family) while the tungsten wall tints since
+task world-tint-render-type.
 
-C-Foam spray item textures, task p25-c-foam-pipe-spray: the 32 16x16 icons under
+C-Foam spray item textures, task c-foam-pipe-spray: the 32 16x16 icons under
 `gt6/textures/item/spray/` (`foam_<dye>.png` / `foam_owned_<dye>.png`) come from the same
 upstream `gt.multiitem.randomtools/` directory (the MultiItemRandomTools.java:251-264
 "C-Foam Spray"/"Advanced C-Foam Spray" rows: `foam_<dye>` = meta `1100+2i`, `foam_owned_<dye>`
@@ -5239,7 +5239,7 @@ Upstream license CC0 (see above).
 - `foam_white.png` (1130) `15fe6c3e22d845a3e41f622e5b18c2ec87354484243f3b1a26caec0104256cb3`
 - `foam_owned_white.png` (1162) `29f55f0e2b67541b1f8d25289573484a34ddcf64e4449bba468f7d67c89c6006`
 
-W1 Kinetic trio machine textures, task p26-w1-sifter-compressor-wiremill: the
+W1 Kinetic trio machine textures, task w1-sifter-compressor-wiremill: the
 Sifter / Compressor / Wiremill family sets (15 PNG). The block fronts land via
 `mdk/tools/bake_machine_fronts.py --split-fronts --machine basicmachines/{sifter,
 compressor,wiremill}` over the same upstream snapshot (`v6.17.06-22-g3703e4030`,
@@ -5270,14 +5270,14 @@ card. Upstream license CC0 (see above).
 - `block/wiremill_overlay_front_active.png` (FRAME 0 of 10) `f69cdb02d3fdc1d8a7ea11d678964b42e6d6436e6d076c08852fef06811f3b8d`
 - `block/wiremill_overlay_front_running.png` (FRAME 0 of 2) `88be632c759d7cfee9a881d6efdaca871a58351ba6407e4c2f3d4e9dc7964453`
 
-Sensor block textures (the p26-sensors-core bake), RETIRED by task r8-tex-sensors:
+Sensor block textures (the sensors-core bake), RETIRED by task tex-sensors:
 the three src-over front bakes (`gt6/textures/block/{progressmeter,fluidometer,
 electrometer}.png`) are deleted — the family now borrows the upstream two-layer
 art verbatim (126 PNGs, the `Sensor block textures — two-layer faceted borrow,
-task r8-tex-sensors` section at the tail of this ledger).
+task tex-sensors` section at the tail of this ledger).
 
 
-GT6 item OVERLAY pass textures, task p27-tool-overlay-assets: the 2785
+GT6 item OVERLAY pass textures, task tool-overlay-assets: the 2785
 `gt6/textures/item/material_sets/<set>/<prefix>_overlay.png` files and the
 7 `gt6/textures/item/<stem>_overlay.png` iconset overlays come from
 upstream `https://github.com/GregTech6/gregtech6` snapshot `v6.17.06-22-g3703e4030`, files
@@ -8145,7 +8145,7 @@ upstream `README.md` block as above).
   - `wire_fine_overlay.png` `e7706aff0582ee538eb20996e3142e729d0512bdb2eb4ee6b2bbd0d17750c83a`
 
 
-Machine port side-face overlay borrows, task p28-a-port-overlay-assets
+Machine port side-face overlay borrows, task a-port-overlay-assets
 (copied 2026-09-12). The port-face art set for the B render card: per
 basicmachines family the colored six-face body plus the five NON-front side
 faces of the three state overlay layers. The front face is the WORK face — its
@@ -8167,7 +8167,7 @@ upstream-registered and disk-present:
 
   canner, compressor, crusher, distillery, dryer, extruder, lathe, oven, press, shredder, sifter, wiremill
 
-Roll-ladder append, task p29-w1-kinetic-roll-ladder (copied 2026-09-13): the
+Roll-ladder append, task w1-kinetic-roll-ladder (copied 2026-09-13): the
 same pipeline re-run after the four RU roll-ladder families joined the local
 registration face — `rollingmill` was already in the P28 set (the p28 ULV rung
 shares it), `rollbender` / `rollformer` / `clustermill` join here: 3 new
@@ -8476,7 +8476,7 @@ borrowed=0 in-place=255 declared=0 errors=0.
 Copied on 2026-09-12. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Converter family block textures (the two-layer tinted grammar), task r4-18-converter-tex-facing
+Converter family block textures (the two-layer tinted grammar), task 18-converter-tex-facing
 (GitHub #18): the 27 PNGs under `gt6/textures/block/{electric_transformer,electric_dynamo,
 flux_dynamo}_{colored,overlay,overlay_active}_{front,back,side}.png` are the upstream
 iconsets borrowed VERBATIM (bytes unmodified):
@@ -8554,12 +8554,12 @@ Landed files (27):
 - flux_dynamo_overlay_active_side.png
 
 Borrowed on 2026-09-27 (cp verbatim, no bake). The `electric_dynamo_ulv` placeholder
-cube_all over `energy_source.png` (task p28-c-ulv-dynamo-row) stays: the upstream
+cube_all over `energy_source.png` (task c-ulv-dynamo-row) stays: the upstream
 Electric_T[0] slot carries NO machine (MT.java:3691, the T0 ULV row is the port
 extension) — PLACEHOLDER, NO UPSTREAM COUNTERPART (the render pool upgrades it if the
 T0 art ever exists upstream).
 - `gt6/textures/block/parts/<family>/<design>/{colored,overlay}/{bottom,top,side}.png` —
-  the multiblock part-family design textures (372 files, task p29-w3-nbtdesign-parts;
+  the multiblock part-family design textures (372 files, task w3-nbtdesign-parts;
   upstream `textures/blocks/machines/multiblockparts/<family>/<design>/...` verbatim,
   families: metalwall 0-7, metalwalldense 0-7, coil 0-1, woodwall, centrifugeparts 0-8,
   electrolyzerparts 0-7, distillationtowerparts 0-1, sluiceparts 0-7, crusherwheels 0-3,
@@ -8570,13 +8570,13 @@ T0 art ever exists upstream).
   (the familyMachineModel two-layer form) — declared deviation, the material tint rides
   the render pool card.
 
-  Bedrock-drill append, task p30-pool-drillhead-18103 (copied 2026-09-16): the
+  Bedrock-drill append, task pool-drillhead-18103 (copied 2026-09-16): the
   `bedrockdrill/0` family (6 files — colored 3 + overlay 3, byte copies of the upstream
   `multiblockparts/bedrockdrill/0/` layers, snapshot v6.17.06) joined for the missed
   18103 Bedrock Mining Drill Head part row (Loader :1178, NBT_TEXTURE "bedrockdrill",
   NBT_DESIGNS 0). Upstream license: **CC0 1.0 Universal Public Domain Dedication**.
 - `gt6/textures/block/turbine_mains/<family>/<group>/{bottom,top,side}.png` — the Large
-  Turbine / Large Dynamo controller main textures (36 files, task p29-w3-turbine-dynamo;
+  Turbine / Large Dynamo controller main textures (36 files, task w3-turbine-dynamo;
   upstream `textures/blocks/machines/multiblockmains/{largeturbine,gasturbine,largedynamo}/
   <group>/...` verbatim, groups: colored, colored_front, overlay, overlay_front). The
   <family> dir holds the four upstream groups verbatim; the blockstate models compose the
@@ -8586,7 +8586,7 @@ T0 art ever exists upstream).
   372-file parts precedent. Copied on 2026-09-14. Upstream license: **CC0 1.0 Universal
   Public Domain Dedication** (same upstream `README.md` block as above).
 
-Heat-smelter append, task p29-w3-heat-smelter (copied 2026-09-14): two new
+Heat-smelter append, task w3-heat-smelter (copied 2026-09-14): two new
 basicmachines families joined the local registration face — `smelter` (the HU
 4-ladder :1431-1434) and `melter` (the single :1657) — via the same pipeline:
 borrow_port_overlays census self-discovery (the GTMachines
@@ -8605,7 +8605,7 @@ alpha-overlays the state layers; the port renders the grayscale colored layer
 through the runtime paint tint (tintindex 0) and carries the overlays as
 untinted decal elements (the familyMachineModel two-layer form).
 
-Heat-exchanger append, task p29-w3-heat-smelter (composited 2026-09-14): the
+Heat-exchanger append, task w3-heat-smelter (composited 2026-09-14): the
 Large Heat Exchanger controller borrows the upstream
 `multiblockmains/largeheatexchanger/` group (snapshot v6.17.06-22-g3703e4030)
 — the colored base alpha-over the overlay layer composited into the single
@@ -8615,7 +8615,7 @@ SAME visible pixels, the lightningrod one-texture ruling).
 
 - `gt6/textures/item/battery/{lead_acid,alkaline,nicd,licoo2,limn,energium_red,energium_cyan}.png`
   and `gt6/textures/item/battery/cell.png` — the battery-family item sprites (task
-  p29-w4-battery-storage), byte-copy borrows from upstream
+  w4-battery-storage), byte-copy borrows from upstream
   `src/main/resources/assets/gregtech/textures/blocks/machines/batteries/…/sides.png|top.png`
   (eu/standard 8/32/128, eu/advanced 8/32, lu/8/32; the cell = eu/standard/8/top).
   Upstream tints the grayscale colored icons per battery family via the MTE NBT_COLOR
@@ -8623,15 +8623,15 @@ SAME visible pixels, the lightningrod one-texture ruling).
   posture one declared step further — the runtime tint lane is the render-pool card).
   Produced by `mdk/tools/bake_battery_textures.py` (pure stdlib, byte-copy mode).
 - `gt6/textures/block/battery_box.png` and `battery_box_large.png` — the BatteryBox side
-  sprites (task p29-w4-battery-storage), BAKED src-over composites of upstream
+  sprites (task w4-battery-storage), BAKED src-over composites of upstream
   `textures/blocks/machines/energystorages/battery_electric[_large]/colored/side.png`
   + `overlay/side.png` (the transformer bake treatment). Produced by
   `mdk/tools/bake_battery_textures.py`; the circuit-carrier items reuse the in-repo
   `item/integrated_circuit.png` (no new file, the declared placeholder).
-  RETIRED by task r8-tex-composite-family: the block models ride the true two-layer
+  RETIRED by task tex-composite-family: the block models ride the true two-layer
   borrows (`block/battery_box{,_large}/`, the tail manifest below) — these flat bakes
   are deleted.
-Hot-lube append, task p29-w4-hot-lube (2026-09-15): the Lubricant Bucket item
+Hot-lube append, task w4-hot-lube (2026-09-15): the Lubricant Bucket item
 icon borrows the VANILLA `item/bucket.png` (1.20.1 client jar, 16x16,
 byte-identical, sha256 verified) — the port's declared single-item-container
 face needs a neutral bucket glyph; the tinted/filled upgrade rides the
@@ -8640,7 +8640,7 @@ fluid-container capability card.
 - `gt6/textures/item/lubricant_bucket.png` — vanilla
   `assets/minecraft/textures/item/bucket.png` verbatim,
   sha256 `3f14980d6d2dea8d547e44104a55a51d62bee71bd45f16068113b279b3d2d042`
-Machine-face-four append, task p29-w5-t3-machine-face-four (2026-09-16): the
+Machine-face-four append, task w5-t3-machine-face-four (2026-09-16): the
 soft hammer model carries NO new sprite — all four layers are existing
 material_sets borrows (rubber/tool_head_hammer + overlay = the upstream
 ANY.Rubber primary default, GT_Tool_SoftHammer.getIcon :120; wood/stick +
@@ -8655,7 +8655,7 @@ overlay = the MT.WOODS.Spruce secondary, the builder-wand borrow posture).
 - `gt6/textures/item/pincers.png` + `pincers_overlay.png` — byte-copy borrows
   of upstream `textures/items/iconsets/PINCERS[_OVERLAY].png`.
 
-Electric nineteen append, task p29-w5-t6-electric-nineteen (2026-09-16): the
+Electric nineteen append, task w5-t6-electric-nineteen (2026-09-16): the
 19 electric-tool models borrow the 12 upstream iconset sprites (one borrow
 per icon face; the drill/chainsaw/wrench ladders share the POWER_UNIT_LV/MV/HV
 top pass, the monkey-wrench rows reuse the wrench head art — the upstream
@@ -8669,7 +8669,7 @@ MonkeyWrench getIcon inherits GT_Tool_Wrench_LV verbatim).
   the IN-REPO `item/material_sets/metallic/tool_head_*` sprites (no new file,
   the chisel/file/saw row convention). The OVERLAY passes are cut — the port
   draws the base borrow untinted (the family single-tier deviation).
-Pocket append, task p29-w5-t7-pocket-eight (2026-09-16): the eight pocket-multitool
+Pocket append, task w5-t7-pocket-eight (2026-09-16): the eight pocket-multitool
 item icons + their OVERLAY passes borrow the upstream 1.7.10 iconset sprites
 byte-identical (16 files, POCKET_MULTITOOL_* + POCKET_MULTITOOL_*_OVERLAY.png from
 `textures/items/iconsets/`, the closed multitool sprite = the "Multitool" form per
@@ -8679,19 +8679,19 @@ the CUTTER pair serves the wire-cutter form). Renamed to the snake id tails unde
 scissors/chisel + _overlay), 16x16 RGBA, sha256s of the copies match the sources.
 
 
-GT6 ore block overlay textures, task p30-ore-2-textures: the 80
+GT6 ore block overlay textures, task ore-2-textures: the 80
 `gt6/textures/block/materialicons/<set>/{ore,ore_small,ore_overlay,ore_small_overlay}.png`
 files come from upstream `https://github.com/GregTech6/gregtech6` snapshot `v6.17.06-22-g3703e4030`, files
 `src/main/resources/assets/gregtech/textures/blocks/materialicons/<SET>/<Name>.png`,
 byte-identical to upstream, sha256 verified per file (manifest below). Consumers:
 the ore block atlas sources `gt6:block/materialicons/<set>/{ore,ore_small}`
 (GT6Atlases <- GTOreBakedModel.overlaySprites(), 20 SETs over the 122-material
-registration axis, task p30-ore-1-mech; the GEM_VERTICAL quartet joined with
-task r7-a-ore-axis-extension — the SET of the stone-layer companions Spinel/
+registration axis, task ore-1-mech; the GEM_VERTICAL quartet joined with
+task a-ore-axis-extension — the SET of the stone-layer companions Spinel/
 BalasRuby; the EMERALD/GLASS/GEM_HORIZONTAL/OPAL quartets joined with task
-r7-b-gem-pool-extension — the SETs of the RANDOM_SMALL_GEM_ORE pool members,
+b-gem-pool-extension — the SETs of the RANDOM_SMALL_GEM_ORE pool members,
 borrowed byte-identical, same snapshot) — the missingno intermediate state of
-p30-ore-3-datagen closes with this wave; the `_overlay` pair is the upstream
+ore-3-datagen closes with this wave; the `_overlay` pair is the upstream
 pass-1 extension (TextureSet.java:113-116), borrowed for pair completeness
 (the p27 posture), no modern consumer yet. Naming follows the P20/P27 rules:
 set folder lowercased, icon segment camelCase -> snake_case
@@ -8804,7 +8804,7 @@ Universal Public Domain Dedication** (same upstream `README.md` block as above).
   - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
   - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
 
-## Surface-plants + fallen-woods block textures (task p30-w6-t2-surface-blocks)
+## Surface-plants + fallen-woods block textures (task w6-t2-surface-blocks)
 
 13 upstream block-texture borrows from `src/main/resources/assets/gregtech/textures/blocks/`
 (GregTech 6, snapshot `v6.17.06-22-g3703e4030`) onto `gt6/textures/block/`:
@@ -8841,7 +8841,7 @@ Universal Public Domain Dedication** (same upstream `README.md` block as above).
   `ca3053f9843ff4f3475051e21667ccce90a4c575dc7dd7fbf7b59e207771b33c`)
 
 - `gt6/textures/item/comb/comb_<name>.png` (×20) — the bee-comb item icons (task
-  p31-bees-lv1). PORT-GENERATED ART (not borrowed): one 16×16 five-cell honeycomb
+  bees-lv1). PORT-GENERATED ART (not borrowed): one 16×16 five-cell honeycomb
   silhouette, per-comb tinted — the upstream 1.7.10 combs carry no dedicated item PNGs
   (the MultiItemFood icons composite from the FOOD material icon set at runtime), so the
   port declares the tint family: honey e8b84a / water 6fa8e8 / magic b070e0 / nether
@@ -8852,7 +8852,7 @@ Universal Public Domain Dedication** (same upstream `README.md` block as above).
   top edge = 125%, bottom edge = 45%), PIL, RGBA 16×16.
 
 - `gt6/textures/item/bumble/bumble_{drone,princess,queen,dead}.png` (×4) — the
-  bumblebee face icons (task p33-bees-lv3-a-items). PORT-GENERATED ART (not
+  bumblebee face icons (task bees-lv3-a-items). PORT-GENERATED ART (not
   borrowed): one 16×16 bee silhouette per fractal face — the scanned items reuse
   the base-face sprite (the scan state is the item id, not the art). drone = the
   yellow/black striped bee (white wings, dark head, antenna), princess = the
@@ -8862,7 +8862,7 @@ Universal Public Domain Dedication** (same upstream `README.md` block as above).
   stripe bands + the dark head ellipse + the antenna pixels; the queen adds the
   crown pixels, the dead form flips vertically and greys; PIL, RGBA 16×16.
 
-Massfab machine + controller textures, task p31-massfab: the 24 small-family PNGs
+Massfab machine + controller textures, task massfab: the 24 small-family PNGs
 under `gt6/textures/block/massfab_{colored,overlay}_{face}.png` and
 `gt6/textures/block/massfab_overlay_{face}_{active,running}.png` plus the 6
 large-controller PNGs under `gt6/textures/block/largemassfab_colored_{face}.png`
@@ -8902,18 +8902,18 @@ byte-identical to upstream, sha256 verified per file:
 - `massfab_overlay_right_running.png` — `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`
 - `largemassfab_colored_right.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e`
 
-(RETIRED r8-tex-large-machines: the six vondagraagg flat PNGs below are DELETED — the
+(RETIRED tex-large-machines: the six vondagraagg flat PNGs below are DELETED — the
 band dir `gt6/textures/block/vondagraagg/` replaces them byte-for-byte; the fusion and
 implosion colored flats STAY and the new overlay state trio joins them — the new wave
 ledger is tail-appended. The rows below stay as historical digests.)
 
 Fusion reactor / Implosion Compressor / Von da Graagg controller faces, task
-p32-hygiene-lang-assets (attribution backfill for the P31 machine wave): the 18
+hygiene-lang-assets (attribution backfill for the P31 machine wave): the 18
 controller PNGs `gt6/textures/block/fusionreactor_colored_{face}.png`,
 `gt6/textures/block/implosioncompressor_colored_{face}.png` and
 `gt6/textures/block/vondagraagg_colored_{face}.png` (face ∈
-bottom/top/front/back/left/right; borrow commits p31-implosion 35830a9eb,
-p31-fusion 6f118eef7, p31-graagg d4e418beb) come from upstream
+bottom/top/front/back/left/right; borrow commits implosion 35830a9eb,
+fusion 6f118eef7, graagg d4e418beb) come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/`:
 
 - `basicmachines/fusionreactor/colored/<face>.png` (the NBT_TEXTURE
@@ -8960,7 +8960,7 @@ look (the multi-block formed look rides the frame-face blocks, the p31 card
 specs). License: upstream GregTech 6 assets are CC0 (see the Public Domain
 Dedication block above).
 
-## USB Stick item textures (task p32-usb-data)
+## USB Stick item textures (task usb-data)
 
 The four USB Stick item icons under `gt6/textures/item/usb_stick_{1,2,3,4}.png` come
 from upstream `src/main/resources/assets/gregtech/textures/items/gt.multiitem.technological/`
@@ -8972,7 +8972,7 @@ to upstream, sha256 verified per file:
 - `usb_stick_3.png` — `795405d6c96c7a91cc1ed70c38413bab64d7b459051461d97ca93c437302d446` (upstream `32003.png`)
 - `usb_stick_4.png` — `c08a8b8789e8e48b93e0cec5a8f49fb419c968d5fb918f52e3db48ece69180eb` (upstream `32004.png`)
 
-## USB peripheral item textures (task p37-usb-peripherals)
+## USB peripheral item textures (task usb-peripherals)
 
 The eight USB peripheral icons under `gt6/textures/item/usb_cable_{1..4}.png` /
 `usb_drive_{1..4}.png` (the HDDs) plus the exempted Helium Laser Emitter icon
@@ -8994,7 +8994,7 @@ verified per file:
 - `comp_laser_gas_he.png` — `096f6c689de0afd0e79a6223e9c33d20ad333f4659fe67cc3b1e7776a3660d45` (upstream `11001.png`)
 
 Bumble-hive block art borrowed from **GregTech 6**
-(task p32-bees-lv2, upstream
+(task bees-lv2, upstream
 `textures/blocks/nature/bumblehive/{colored,overlay}/{bottom,top,side}.png`,
 byte-identical, filenames flattened to `bumblehive_colored_<face>` /
 `bumblehive_overlay_<face>`): the MTE 32755 colored-grayscale + overlay pair —
@@ -9002,7 +9002,7 @@ the colored layer rides tintindex 0 (the p21 paint seat; worldgen paints the
 biome-family colour, GTMachinePaintTint resolves the BE PAINT), the overlay
 layer is the untinted decal (the machineModel two-layer grammar).
 
-## Laser domain textures (task p32-qu-laser-domain)
+## Laser domain textures (task qu-laser-domain)
 
 The two gas laser emitter item icons under `gt6/textures/item/` and the four converter
 block faces under `gt6/textures/block/` come from upstream
@@ -9039,7 +9039,7 @@ assets are CC0 (see the Public Domain Dedication block above).
 - `item/comp_laser_gas_hene.png` — `4e88371cc64a2efbd05c2d97730c4444fb8c220162d8ea315686bd0a11acf928` (upstream `11006.png`)
 - `item/comp_laser_gas_co.png` — `87ee050835d91c29e6d920c576c46c85e8fe994bcb5fc27752b71ae4544226a3` (upstream `11007.png`)
 
-## Magic absorber texture (task p32-magic-absorber)
+## Magic absorber texture (task magic-absorber)
 
 The absorber block face under `gt6/textures/block/` comes from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/magicenergyabsorber/colored/side.png`
@@ -9053,7 +9053,7 @@ are CC0 (see the Public Domain Dedication block above).
 
 - `block/magic_absorber_base.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `magicenergyabsorber/colored/side.png`; side_facing/top/bottom byte-identical)
 
-## Quantum Energizer textures (task p32-qu-energizer)
+## Quantum Energizer textures (task qu-energizer)
 
 The two converter block faces under `gt6:textures/block/` are DERIVED, not borrowed:
 both are the committed laser-absorber face (`laser_absorber_{front,side}.png`, the
@@ -9069,7 +9069,7 @@ this project's.
 - `block/quantum_energizer_front.png` — `f79d1113d3d95de0466b0eea881a4d8a0fc002b0fd356371e7f12fa125ba48eb` (derived: tinted `laser_absorber_front.png`)
 - `block/quantum_energizer_side.png` — `c257afe7a8678434de349e86f0be010abc78cbcfd4405f2126a784e8715df5d3` (derived: tinted `laser_absorber_side.png`)
 
-## task p32-placeables (2026-09-19) — the placeables band
+## task placeables (2026-09-19) — the placeables band
 
 Borrowed from **GregTech 6** (https://github.com/GregTech6/gregtech6), snapshot
 `v6.17.06-22-g3703e4030`, `src/main/resources/assets/gregtech/textures/`:
@@ -9108,7 +9108,7 @@ Per-file sha256 (byte-identical copies):
 - `block/placeable/scrap_sides.png` `f78b93bf6759ddda850e5a5f713b15bcc8d72abd03a5fc965e10cb663c4d9836`
 - `block/placeable/scrap_top.png` `f78b93bf6759ddda850e5a5f713b15bcc8d72abd03a5fc965e10cb663c4d9836` (upstream ships sides==top byte-identical; the port renames the camelCase upstream
   pair to the modern lowercase-snake resource namespace)
-QU machine pair textures, task p32-qu-scanner-replicator: the 48 PNGs under
+QU machine pair textures, task qu-scanner-replicator: the 48 PNGs under
 `gt6/textures/block/{scannermolecular,replicator}_{colored,overlay}_{face}.png`
 (face ∈ bottom/top/front/back/left/right; the overlay fronts carry the
 `_active`/`_running` state tails) come from upstream
@@ -9133,7 +9133,7 @@ across both families and their state layers):
 - `replicator_overlay_front_active.png` — `e7d764c6722b0230aecff5d84cfa8361f9d295336565391f721f571d7da10cf8`
 - `replicator_overlay_front_running.png` — `6a60b16caa227f4b5652ab9444c0818e29a542e69ccd93cae7d00a6a7113d212`
 
-Distillation Tower GUI pair textures, task p33-gui-distill-tower:
+Distillation Tower GUI pair textures, task gui-distill-tower:
 `gt6/textures/gui/machines/distillationtower.png` and
 `gt6/textures/gui/machines/cryodistillationtower.png` come from upstream
 `src/main/resources/assets/gregtech/textures/gui/machines/{DistillationTower,CryoDistillationTower}.png`
@@ -9143,7 +9143,7 @@ RM.java:65/:66), byte-identical to upstream, sha256 verified:
 - `cryodistillationtower.png` — `1e69a7683c1dccb8823568a67ef2f497cc7290e771ecbcd960109b4760db48b2`
 
 
-Burner Mixer + Plantalyzer family textures, task p34-machines-burner-plantalyzer:
+Burner Mixer + Plantalyzer family textures, task machines-burner-plantalyzer:
 the 48 PNGs under `gt6/textures/block/{burnmixer,plantalyzer}_{colored,overlay}_{face}.png`
 (face ∈ bottom/top/front/back/left/right; the overlay fronts carry the
 `_active`/`_running` state tails) come from upstream
@@ -9182,16 +9182,16 @@ by content):
 - `plantalyzer_overlay_top_active.png` — `c8b55df2525bff5559a4e54090f1a886ed18890191c1c4eac012b5e990bddcb9`
 - `plantalyzer_overlay_top_running.png` — `281b4be07d722a32965bcb7c24b0f83c082f1d70d09337afcbd83b87af5c2d0f`
 
-Sensor block textures, batches 2+3 (15+3 rows, tasks p34-sensors-trivial-14 and
-p37-sensors-3), RETIRED by task r8-tex-sensors: the fifteen src-over front bakes
+Sensor block textures, batches 2+3 (15+3 rows, tasks sensors-trivial-14 and
+sensors-3), RETIRED by task tex-sensors: the fifteen src-over front bakes
 (`gt6/textures/block/{thermometer,luminometer,chronometer,gibblometer,
 kilogibblometer,itemometer,stackometer,bucketometer,kilobucketometer,
 lightweightometer,mediumweightometer,heavyweightometer,superheavyweightometer,
 tpsmeter,playercounter,tachometer,geigercounter,laserometer}.png`) are deleted —
 the whole 21-family census now borrows the upstream two-layer art verbatim (the
-`Sensor block textures — two-layer faceted borrow, task r8-tex-sensors` section
+`Sensor block textures — two-layer faceted borrow, task tex-sensors` section
 at the tail of this ledger).
-Bumbliary GUI pair textures, task p34-bumbliary-gui:
+Bumbliary GUI pair textures, task bumbliary-gui:
 `gt6/textures/gui/machines/bumbliary.png` and
 `gt6/textures/gui/machines/bumbliaryadvanced.png` come from upstream
 `src/main/resources/assets/gregtech/textures/gui/machines/{Bumbliary,BumbliaryAdvanced}.png`
@@ -9200,7 +9200,7 @@ MultiTileEntityBumbliaryAdvanced.java:469), byte-identical to upstream, sha256 v
 - `bumbliary.png` — `d8273f498408a31a2cf1f5c3b515f38c50fde5ecf5c9ab7f5ab2317b76912ac8`
 - `bumbliaryadvanced.png` — `6fb9c48274095e8ef7a9b4e610dd0d21551b1e99985a17715d42b414c7f114e1`
 
-## Bumblelyzer + Crystallisation Crucible machine textures (task p34-machines-bumblelyzer-crucible)
+## Bumblelyzer + Crystallisation Crucible machine textures (task machines-bumblelyzer-crucible)
 
 The two machine families' block texture sets under `gt6/textures/block/` are upstream
 borrows with the established conversion: `basicmachines/<family>/colored|overlay/
@@ -9221,7 +9221,7 @@ upstream GregTech 6 assets are CC0 (see the Public Domain Dedication block above
 Copied on 2026-09-22. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
-Display/scale cover family textures, task p35-covers-display-scale-6: the PNGs
+Display/scale cover family textures, task covers-display-scale-6: the PNGs
 under `gt6/textures/block/{auto_switch,auto_timer_switch,energy_display,
 energy_redstone,progress_redstone,status_display}/` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/covers/`.
@@ -9252,7 +9252,7 @@ the `statusdisplay` indicator overlay sprites (`1_off..4_on`, both styles) are N
 borrowed — the CoverControllerDisplay lamp composition is the declared deviation
 (the plate shows the style base, the live states ride the visual lane).
 
-Crafting + asphalt cover pair textures, task p37-covers-crafting-asphalt: the two
+Crafting + asphalt cover pair textures, task covers-crafting-asphalt: the two
 PNGs under `gt6/textures/block/` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/`. Byte-identical borrows,
 sha256 verified:
@@ -9268,13 +9268,13 @@ posture); the asphalt plate rides the plain `ASPHALT` icon — the 16 dye-varian
 panel row (`Textures.BlockIcons.ASPHALT` + `DYES[i]`) collapses onto the one
 sprite (the worldgen streets face family, DYE_INDEX_Gray).
 
-## Render pool stand-in retirement (task p36-render-texture-bake)
+## Render pool stand-in retirement (task render-texture-bake)
 
 Eighteen block textures under `gt6/textures/block/` land the three stand-ins
 self-declared in GT6BlockStates.java (the p35 crystal-charger battery-box cube, the
 p35 LD-wire wire_electric cube, the p35 LD-transformer electric-transformer model
 share) plus the ZPM Decharger art ahead of its consumer card
-(p36-energy-zpm-dechargers binds `block/zpm_decharger{,_quantum}_{front,back,side}`
+(energy-zpm-dechargers binds `block/zpm_decharger{,_quantum}_{front,back,side}`
 on its rebase). The composites are the battery-box/transformer bake treatment:
 src-over(colored, overlay) via `mdk/tools/bake_render_pool_textures.py` (idempotent,
 deterministic bytes). The overlay_active/overlay_blinking/overlay_unloaded trios and
@@ -9289,7 +9289,7 @@ OUTPUT face), machines/energystorages/zpm_electricity|zpm_quantum
 (MultiTileEntityZPMDechargerEU.java:47-63 / QU.java:47-54). License: upstream GregTech
 6 assets are CC0 (see the Public Domain Dedication block above).
 
-RETIRED (part) by task r8-tex-composite-family: the 13 charger/zpm/LD composites
+RETIRED (part) by task tex-composite-family: the 13 charger/zpm/LD composites
 below are deleted — those families now ride the true two-layer borrows with the
 overlay_active shell wired (the ACTIVE property landed on the battery-box block
 carrier, the tail manifest below). The 5 long_dist_wire byte copies stay (the wire
@@ -9298,19 +9298,19 @@ metas are out of this card's scope).
 Baked composites (derived; the colored casing layer is one byte-identical grayscale
 across every family here, only the overlays differ):
 
-- `block/crystal_charger_front.png` — digest retired with the file (r8-tex-composite-family) (src-over `crystal_laser/colored/front + overlay/front`; byte-identical to the large-front composite — the two families share the front art) [RETIRED r8-tex-composite-family]
-- `block/crystal_charger_side.png` — digest retired with the file (r8-tex-composite-family) [RETIRED r8-tex-composite-family]
-- `block/crystal_charger_large_front.png` — digest retired with the file (r8-tex-composite-family) (src-over `crystal_laser_large/colored/front + overlay/front`) [RETIRED r8-tex-composite-family]
-- `block/crystal_charger_large_side.png` — digest retired with the file (r8-tex-composite-family) (src-over `crystal_laser_large/colored/side + overlay/side`) [RETIRED r8-tex-composite-family]
-- `block/long_distance_transformer_front.png` — digest retired with the file (r8-tex-composite-family) (src-over `longdistancetransformer_electric/colored/front + overlay/front`) [RETIRED r8-tex-composite-family]
-- `block/long_distance_transformer_back.png` — digest retired with the file (r8-tex-composite-family) (src-over `.../colored/back + overlay/back`) [RETIRED r8-tex-composite-family]
-- `block/long_distance_transformer_side.png` — digest retired with the file (r8-tex-composite-family) (src-over `.../colored/side + overlay/side`) [RETIRED r8-tex-composite-family]
-- `block/zpm_decharger_front.png` — digest retired with the file (r8-tex-composite-family) (src-over `zpm_electricity/colored/front + overlay/front`) [RETIRED r8-tex-composite-family]
-- `block/zpm_decharger_back.png` — digest retired with the file (r8-tex-composite-family) (src-over `zpm_electricity/colored/back + overlay/back`; byte-identical to the quantum-back composite — the two families share the back overlay) [RETIRED r8-tex-composite-family]
-- `block/zpm_decharger_side.png` — `27dac6bf9e5d2cfeafb11dd83d89bf8317ed3b05ae3dc35caa7fdf3f3b718fec` (src-over `zpm_electricity/colored/side + overlay/side`; byte-identical to the quantum-side composite) [RETIRED r8-tex-composite-family]
-- `block/zpm_decharger_quantum_front.png` — digest retired with the file (r8-tex-composite-family) (src-over `zpm_quantum/colored/front + overlay/front`) [RETIRED r8-tex-composite-family]
-- `block/zpm_decharger_quantum_back.png` — digest retired with the file (r8-tex-composite-family) (src-over `zpm_quantum/colored/back + overlay/back`) [RETIRED r8-tex-composite-family]
-- `block/zpm_decharger_quantum_side.png` — `27dac6bf9e5d2cfeafb11dd83d89bf8317ed3b05ae3dc35caa7fdf3f3b718fec` (src-over `zpm_quantum/colored/side + overlay/side`) [RETIRED r8-tex-composite-family]
+- `block/crystal_charger_front.png` — digest retired with the file (tex-composite-family) (src-over `crystal_laser/colored/front + overlay/front`; byte-identical to the large-front composite — the two families share the front art) [RETIRED tex-composite-family]
+- `block/crystal_charger_side.png` — digest retired with the file (tex-composite-family) [RETIRED tex-composite-family]
+- `block/crystal_charger_large_front.png` — digest retired with the file (tex-composite-family) (src-over `crystal_laser_large/colored/front + overlay/front`) [RETIRED tex-composite-family]
+- `block/crystal_charger_large_side.png` — digest retired with the file (tex-composite-family) (src-over `crystal_laser_large/colored/side + overlay/side`) [RETIRED tex-composite-family]
+- `block/long_distance_transformer_front.png` — digest retired with the file (tex-composite-family) (src-over `longdistancetransformer_electric/colored/front + overlay/front`) [RETIRED tex-composite-family]
+- `block/long_distance_transformer_back.png` — digest retired with the file (tex-composite-family) (src-over `.../colored/back + overlay/back`) [RETIRED tex-composite-family]
+- `block/long_distance_transformer_side.png` — digest retired with the file (tex-composite-family) (src-over `.../colored/side + overlay/side`) [RETIRED tex-composite-family]
+- `block/zpm_decharger_front.png` — digest retired with the file (tex-composite-family) (src-over `zpm_electricity/colored/front + overlay/front`) [RETIRED tex-composite-family]
+- `block/zpm_decharger_back.png` — digest retired with the file (tex-composite-family) (src-over `zpm_electricity/colored/back + overlay/back`; byte-identical to the quantum-back composite — the two families share the back overlay) [RETIRED tex-composite-family]
+- `block/zpm_decharger_side.png` — `27dac6bf9e5d2cfeafb11dd83d89bf8317ed3b05ae3dc35caa7fdf3f3b718fec` (src-over `zpm_electricity/colored/side + overlay/side`; byte-identical to the quantum-side composite) [RETIRED tex-composite-family]
+- `block/zpm_decharger_quantum_front.png` — digest retired with the file (tex-composite-family) (src-over `zpm_quantum/colored/front + overlay/front`) [RETIRED tex-composite-family]
+- `block/zpm_decharger_quantum_back.png` — digest retired with the file (tex-composite-family) (src-over `zpm_quantum/colored/back + overlay/back`) [RETIRED tex-composite-family]
+- `block/zpm_decharger_quantum_side.png` — `27dac6bf9e5d2cfeafb11dd83d89bf8317ed3b05ae3dc35caa7fdf3f3b718fec` (src-over `zpm_quantum/colored/side + overlay/side`) [RETIRED tex-composite-family]
 
 Byte copies:
 
@@ -9320,7 +9320,7 @@ Byte copies:
 - `block/long_dist_wire_zpm.png` — `8ff978fa6328e9b293cb46a9a09e1b3055e97c3dc86040953b36301939826a49` (upstream `blocks/iconsets/LONG_DIST_WIRE_ZPM.png`)
 - `block/long_dist_wire_uv.png` — `9105d68018de154d8b59950e8fea1c73b28d3d1fc6b1de80422d05618d5eee80` (upstream `blocks/iconsets/LONG_DIST_WIRE_UV.png`)
 
-## Kitchen tool block textures (task p38-issue7-kitchen-models)
+## Kitchen tool block textures (task issue7-kitchen-models)
 
 The kitchen family's hollow-tub element models (`GT6BlockStates.addKitchen`) borrow the
 upstream grayscale `colored/` tile sets — the mRGBa tint-me variants of
@@ -9352,7 +9352,7 @@ tiles upstream (only `bathing_pot_wood` differs), which is why the digests repea
 - `block/tools/juicer/middleside.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/juicer/colored/middleside.png`; the same uniform tile as the bottom — upstream ships it un-detailed, the mRGBa tint carries the face)
 - `block/tools/juicer/middletop.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/juicer/colored/middletop.png`; the same uniform tile as the bottom)
 
-## Fluid spring block texture (task p38-spring-texture-tint)
+## Fluid spring block texture (task spring-texture-tint)
 
 The bedrock fluid-spring nozzle (GTFluidSpringBlock) borrow. Upstream renders the spring
 as a two-layer stack on every visible face
@@ -9410,7 +9410,7 @@ the p32 vertex-colour route).
 ## owned (generated, not borrowed)
 
 - `gt6/textures/block/mini_portal_end.png` — the Miniature End Portal's active
-  face (task p35-portals-mini-nether-end). NOT a borrow: vanilla ships no
+  face (task portals-mini-nether-end). NOT a borrow: vanilla ships no
   end-portal block texture (the vanilla end-portal effect is a tile renderer,
   not a texture), so the card generates a 16x16 near-black starfield (10
   seeded purple/blue star pixels over an (8,4,16) base — the upstream
@@ -9485,7 +9485,7 @@ ResourceLocation.java:213-232). sha256 per file:
 - `gui/machines/unboxinator.png` (upstream `Unboxinator.png`) `0dda888d5409026672f7efdbe887ff07cc2acf442a14d715ee5f369eccaaae30`
 - `gui/machines/welder.png` (upstream `Welder.png`) `a9558b22d7648adde07e6feb12132765e25ea15ec9973404186e0a86648eb33e`
 - `gui/machines/oven.png` — NOT a fresh borrow: the existing ported `Oven.png`
-  (p27-machine-tint lineage, overlay strip already cropped, ported bytes differ
+  (machine-tint lineage, overlay strip already cropped, ported bytes differ
   from upstream `Oven.png` by intent) renamed lowercase alongside the
   GT6RecipeMaps/GTOvenScreen string fix; sha256 of the ported bytes
   `cc6f224752b815458c361911dd38456ecf3f5fdf2283cc650ed23c2dea1b099a`.
@@ -9513,11 +9513,11 @@ ResourceLocation.java:213-232). sha256 per file:
   face1, face2, side2),
   `33fe99c466efd19f6e4dcb14349690b60f49c2626f4b435799f1a0b0bfbc9aa1` (side1),
   `a9582e2de34a2e51aeb4031ab456db5791a27c42f32aa60886554ef9b4e6f467` (top).
-(RETIRED r8-tex-large-machines: the six flat PNGs below are DELETED — the band dir
+(RETIRED tex-large-machines: the six flat PNGs below are DELETED — the band dir
 `gt6/textures/block/bedrockdrill/` replaces them byte-for-byte on the three TBS
 tiles; the rows stay as historical digests.)
 
-Bedrock Mining Drill controller faces, task p37-bedrock-drill: the 6 controller
+Bedrock Mining Drill controller faces, task bedrock-drill: the 6 controller
 PNGs `gt6/textures/block/bedrockdrill_colored_{face}.png` (face ∈
 bottom/top/front/back/left/right) come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/multiblockmains/bedrockdrill/colored/{side,top,bottom}.png`
@@ -9584,10 +9584,10 @@ ULV/LV/MV/HV/EV/IV/LuV/ZPM/UV/PUV1 = VN[0..9].
   declared deviation, the tint and the 11-pass in-core render stack ride the
   render-pool card (Core2x2.java:320-390).
 
-## Item-model form census, band A (task r8-tex-itemform-a)
+## Item-model form census, band A (task tex-itemform-a)
 
 Zero new PNGs this task — every layer0 below points at a sprite already in the tree.
-The item-form census (r8-tex-r2, the item_form column) found the single-texture
+The item-form census (tex-r2, the item_form column) found the single-texture
 cubeAll families rendering their inventory form as one flat sprite tiled over six
 faces (the BlockItem parented the block model). Band A moves the display/placeholder
 families to the 2D `item/generated` icon over their own sprite (the r5 rail
@@ -9596,7 +9596,7 @@ precedent); the block models are UNCHANGED (world face untouched):
 - battery boxes 12 — layer0 = the row's baked composite (`block/battery_box` /
   `block/battery_box_large`). Declared TRANSITIONAL form: when the composite-family
   card double-layers the block model (colored+overlay split), the items flip back to
-  the ok3D block-parent form. FLIPPED BACK by task r8-tex-composite-family: the
+  the ok3D block-parent form. FLIPPED BACK by task tex-composite-family: the
   block models are the true two-layer borrows now, the 12 BlockItems parent the
   `block/battery_box{,_large}` two-layer models again (the ok3D form).
 - LD wires 16 — layer0 = the row's tier sprite (`block/long_dist_wire_<ev|iv|luv|zpm|uv>`).
@@ -9617,7 +9617,7 @@ GT6BlockStates — NOT missing: their BlockItem models live in GT6ItemModels.jav
 the vanilla jack_o_lantern form). Their block models are faceted element models, so
 the ok3D classification holds; no action.
 
-Sensor block textures — two-layer faceted borrow, task r8-tex-sensors: the 126
+Sensor block textures — two-layer faceted borrow, task tex-sensors: the 126
 PNGs under `gt6/textures/block/sensors/<family>/{colored,overlay}_{front,back,side}.png`
 (one pair per face for all 21 sensor families) come from upstream
 `https://github.com/GregTech6/gregtech6` snapshot `v6.17.06-22-g3703e4030`, files
@@ -9634,7 +9634,7 @@ the body tolerates it (the opaque colored texels simply never discard). Zero
 tintindex: the rows register NBT-less (Loader_MultiTileEntities.java:1979-1999)
 so upstream mRGBa is white = the colored art displays its own colours. The
 upstream pass1-6 live digit boards (CHAR_* sprite stack, MultiTileEntitySensor
-.java:143-261) stay the r8-pool-gauges render-pool defer — the borrowed
+.java:143-261) stay the pool-gauges render-pool defer — the borrowed
 overlay/front is the static art. sha256 manifest (21 families x 6):
 - `gt6/textures/block/sensors/bucketometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/bucketometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
@@ -9763,7 +9763,7 @@ overlay/front is the static art. sha256 manifest (21 families x 6):
 - `gt6/textures/block/sensors/tpsmeter/overlay_front.png` `4a909e8e5fb4ad511d81084f3785ed050fe856950c8d96764729b692e8ae31a6`
 - `gt6/textures/block/sensors/tpsmeter/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 
-## task r8-tex-pipe-textures — the pipe connector families' material-set dual-layer band
+## task tex-pipe-textures — the pipe connector families' material-set dual-layer band
 
 The three pipe connector families (fluid / item / logistics wire) leave the cube_all
 single-placeholder era for the upstream material-set system: every material-icon render
@@ -9827,11 +9827,11 @@ DECLARED DEFERS (not this card):
   stack ever carries it; the pipe BlockItems do not write BE NBT on drop yet — a pipe
   BEHAVIOUR gap, not a texture gap).
 
-Tank family block textures, task r8-tex-tank-family: the 42 PNGs under
+Tank family block textures, task tex-tank-family: the 42 PNGs under
 `gt6/textures/block/barrel_parts/` and `gt6/textures/block/tank_valves/` come from
 upstream `src/main/resources/assets/gregtech/textures/blocks/machines/`, byte-identical
 to upstream (cmp-verified at copy time), sha256 verified. This section SUPERSEDES the
-p20-borrow-tank-barrel-pipe barrel declaration above (the single-texture flattening and
+borrow-tank-barrel-pipe barrel declaration above (the single-texture flattening and
 its "no overlay group" simplifications): the barrels render the upstream two-layer
 BlockTextureMulti(colored x mRGBa, overlay) stack per face
 (MultiTileEntityBarrelWood.java:44-55; Plastic:42-48; Metal(drum):39-45), and the tank
@@ -9872,8 +9872,8 @@ row keeps its single-texture form this card, its two-layer borrow
 (`machines/tanks/logistics/` colored+overlay 3+3) is a declared follow-up. The barrel
 TESR/lid omission stays declared (MultiTileEntityBarrelWood.java:44-54). The remaining
 tanks families (thermos/jug/cup/cell/barometer_gas_cylinder) are NOT
-ported as blocks (feature gap, not a texture gap — the r8-tex-r1 census); their
-textures stay unborrowed. measuring_pot LEFT that pool in task r8-issue45-c3 — the
+ported as blocks (feature gap, not a texture gap — the tex-r1 census); their
+textures stay unborrowed. measuring_pot LEFT that pool in task issue45-c3 — the
 block family landed with its textures (the band below); the jug/tap/funnel/basin/
 crossing ceramic raw band stays the issue-#45 defer pool.
 
@@ -9930,7 +9930,7 @@ orientation reserve — the models do not reference it. The woodwall/metalwall p
 borrows the p29 valve models used before this card are released (the part textures
 stay owned by their own part blocks). The formed-look visual stays the p9 render
 pool, as declared since p29.
-## task r8-gui-reskin-amazawa — the machine GUI reskin (amazawa pack)
+## task gui-reskin-amazawa — the machine GUI reskin (amazawa pack)
 
 All 73 machine GUI backgrounds under `gt6/textures/gui/machines/` are reskinned
 from the amazawa resource pack "TFC Amazawa Light GUI" 1.0.5g
@@ -10026,7 +10026,7 @@ pixel copies of AE2 assets; nothing removed.
 - `gui/machines/welder.png` ← amazawa `Welder.png` sha256 `a9558b22d7648adde07e6feb12132765e25ea15ec9973404186e0a86648eb33e`
 - `gui/machines/wiremill.png` ← amazawa `Wiremill.png` sha256 `e9699da9e901cb541803fdc1b7c624310e3f55e14bfb2df186cfbaea285b1458`
 
-Two more amazawa files joined the folder with task r9-34-viewer-gui-bg (GitHub
+Two more amazawa files joined the folder with task 34-viewer-gui-bg (GitHub
 #34, the JEI/EMI viewer backdrop): the `NEI.png` grey backdrop plate every
 recipe-viewer page composites under the machine band, and `BedrockOreList.png`
 (the BEDROCK_ORE_LIST display map was viewer-visible but its pin-g exemption had
@@ -10035,9 +10035,9 @@ them; same style source as the 73 above), same matching rules and canvas:
 
 - `gui/machines/bedrockorelist.png` ← amazawa `BedrockOreList.png` sha256 `3722cae8d75171c1c8c75384b72a00c7979b6ff5cfc7cd3b83ce00631fa9865d`
 - `gui/machines/nei.png` ← amazawa `NEI.png` sha256 `93fda523222f02a0dbc2b405e2226a9454cbaca0e776c65b861352f8d965b4ac`
-## Static storages + hoppers + anvils placeholder audit (task r8-tex-placeholder-audit)
+## Static storages + hoppers + anvils placeholder audit (task tex-placeholder-audit)
 
-The r8-tex-census tierC batch-5 probe verdicts, then the borrows the probes found.
+The tex-census tierC batch-5 probe verdicts, then the borrows the probes found.
 Upstream snapshot `v6.17.06-22-g3703e4030`, byte-identical `cp` borrows, sha256
 verified per file.
 
@@ -10187,7 +10187,7 @@ sha256 manifest (44 files):
   (upstream `textures/blocks/machines/automation/queuehopper/overlay/top.png`)
 - `gt6/textures/block/queuehopper/overlay_side.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `textures/blocks/machines/automation/queuehopper/overlay/side.png`)
-## Item-model form census, band B — the front-view families (task r8-tex-itemform-b)
+## Item-model form census, band B — the front-view families (task tex-itemform-b)
 
 Zero new PNGs this task — every layer0 below points at a sprite already in the tree.
 Band B moves the 28 front-view rows (the census "正视图整铺类" column) to the 2D
@@ -10222,7 +10222,7 @@ the battery box / LD wire / LD pipe / placeholder families (band A), and the
 transformer_rotation row in the same gearbox function (an orientable faceted model,
 not a single-texture cube — it stays block-parented).
 
-Composite-energy-family two-layer borrows, task r8-tex-composite-family: the 51
+Composite-energy-family two-layer borrows, task tex-composite-family: the 51
 PNGs under `gt6/textures/block/{battery_box,battery_box_large,crystal_charger,
 crystal_charger_large,zpm_decharger,zpm_decharger_quantum,long_distance_transformer}/
 {colored,overlay,overlay_active}_{front,back,side}.png` come from upstream
@@ -10236,7 +10236,7 @@ addConverterModel two-layer grammar (tintindex-0 colored body + six 0.01 overlay
 plates, cutout render type) + the ACTIVE blockstate variant swapping the shell to
 the overlay_active trio — the upstream getTexture2 `sOverlays[mActiveState & 3]`
 layer with the trinary collapsed to the boolean (0=overlay, 1=overlay_active;
-2=blinking UNMAPPED, the r4-18 defer stands). Face trios per upstream getTexture2:
+2=blinking UNMAPPED, the #18 defer stands). Face trios per upstream getTexture2:
 battery/crystal = front on the FACING face + side elsewhere (no back art, the
 :31-:33/:33-:36 two-icon tables); zpm = front/back/side (ZPMDechargerEU :39-44) —
 the `BI.ZPM_TOP` back decal (the `(mActiveState & 4)` ZPM-inserted lamp,
@@ -10301,7 +10301,7 @@ files):
 - `gt6/textures/block/long_distance_transformer/overlay_back.png` `730c38e957b9a9c755f654098723a8605665eb1ba51896728cb488e86bcbb227`
 - `gt6/textures/block/long_distance_transformer/overlay_front.png` `5c728ec16e0f33fd41d656f32d8f697d9622e324666e909d37ed0af386530594`
 - `gt6/textures/block/long_distance_transformer/overlay_side.png` `e050854cf05804a7dd0654039666f71f6016185e4704efc3375b80155ba91c24`
-Large machine controller two-layer wave, task r8-tex-large-machines: the 17
+Large machine controller two-layer wave, task tex-large-machines: the 17
 controller domains swap the single-layer tintless cubes for the two-layer
 grammar. The 15 basicmachines families (the twelve large-12 rows + the massfab/
 fusion/implosion controllers) take the familyMachineModel state trio: the
@@ -10618,14 +10618,14 @@ reading of the census card was disprobed) — one static front-pair model each.
 - `gt6/textures/block/bedrockdrill/overlay_side.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
 - `gt6/textures/block/bedrockdrill/overlay_front_side.png` `43de1896bef12ed23f903714b6e62374cdff5d7cde869f0fc4c69d1caff306e8`
 
-RETIRED (r8-tex-large-machines): the twelve flat `vondagraagg_colored_<face>.png` /
+RETIRED (tex-large-machines): the twelve flat `vondagraagg_colored_<face>.png` /
 `bedrockdrill_colored_<face>.png` (the two six-row P31/P37 ledger sections above)
 are deleted — the band dirs above replace them byte-for-byte on the TBS faces
 (the six-face flat spread was the port-side deviation; upstream Base10 renders
 the FACES_TBS form, the four horizontals one side tile), and the old rows stay
 as historical digests. The fusion/implosion/massfab colored flats STAY (the new
 body cubes still bind them).
-## GUI part crops, amazawa gregtech + minecraft domains (task r8-gui-part-crops)
+## GUI part crops, amazawa gregtech + minecraft domains (task gui-part-crops)
 
 New small-caps texture domain `gt6:textures/gui/parts/` (12 sprites): composable GUI
 parts cropped out of the amazawa resource-pack's gregtech domain (machine skins) and
@@ -10702,12 +10702,12 @@ GT6 crops are the fallback. Two-domain split: this domain is modern amazawa styl
 the block/item domains stay GT6-fidelity (r8 mainline) — census tests treat the two
 separately.
 
-## task r8-tex-bridge-kinetic (2026-09-29) — the bridge/kinetic two-layer wave
+## task tex-bridge-kinetic (2026-09-29) — the bridge/kinetic two-layer wave
 
 Borrowed from **GregTech 6** (https://github.com/GregTech6/gregtech6), snapshot
 `tmp/gt6-1.7.10` (the census tree), `src/main/resources/assets/gregtech/textures/blocks/machines/`:
 the 37 PNGs below (byte-identical, sha256 verified per file) join the
-`addConverterModel` two-layer grammar of task r4-18 — grayscale `colored` body
+`addConverterModel` two-layer grammar of task #18 — grayscale `colored` body
 (tintindex 0, the mRGBa seat) + untinted `overlay` decal shell, ACTIVE switching the
 shell to `overlay_active` where the port block carries the channel. The 16 former
 single-layer sprites were RENAMED in place to the `<band>_colored_<face>` convention
@@ -10721,7 +10721,7 @@ The old flat names are dead references everywhere after the same task's model re
 Probe conclusions (the borrow-or-declare rule, per family):
 
 - `heaters/heat_electric` (electric_heater): colored 3 + overlay 3 + overlay_active 3,
-  NO colored_active — the ACTIVE model swaps the shell only (the r4-18
+  NO colored_active — the ACTIVE model swaps the shell only (the #18
   `addConverterActiveModel` form). All borrowed.
 - `engines/kinetic_electric` (electric_engine): colored 3 + overlay 3, NO active groups
   on disk — static two-layer, both ACTIVE values ride the inactive model. Borrowed.
@@ -10757,7 +10757,7 @@ Probe conclusions (the borrow-or-declare rule, per family):
   no ACTIVE property; declared defer).
 
 Path mapping: upstream `machines/<dir>/<group>/<face>` →
-`textures/block/<port_band>_<group>_<face>.png` (the r4-18 converter convention;
+`textures/block/<port_band>_<group>_<face>.png` (the #18 converter convention;
 `colored/sides` flattens to `_colored_side`, the diesel row).
 
 Borrowed rows (37):

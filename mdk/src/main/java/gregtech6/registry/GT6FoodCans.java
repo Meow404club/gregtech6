@@ -20,7 +20,7 @@ import net.minecraftforge.registries.RegistryObject;
 import gregtech6.GT6Mod;
 
 /**
- * The GT6 food-can registration home — task p25-food-can-row0, the row0 MINIMAL subset of
+ * The GT6 food-can registration home — task food-can-row0, the row0 MINIMAL subset of
  * the upstream {@code MultiItemCans} domain (decisions.p25-foodcan-row0-minimal-subset).
  * Card-owned self-contained {@code @EventBusSubscriber(MOD)} DeferredRegister attached from
  * the construct event (the GT6SprayCans/GT6Tools precedent; GT6Mod.java /

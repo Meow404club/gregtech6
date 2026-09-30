@@ -39,13 +39,13 @@ import gregtech6.util.UT6;
 import gregtech6.covers.ICoverableTE;
 
 /**
- * The GT6 electric wire block (task p7-d2-cable spec ④) — the block side of the wire
+ * The GT6 electric wire block (task d2-cable spec ④) — the block side of the wire
  * family over the shared BET (ADR-P3-1), mirroring the GTFluidPipeBlock shape. The
  * carrier pattern (the GTBarrelBlock registration-carrier precedent): the block carries
  * the wire ratings upstream wrote into the MTE definition NBT — the {@code NBT_PIPESIZE}
  * voltage, the {@code NBT_PIPEBANDWIDTH} amperage and the {@code NBT_PIPELOSS} per-segment
  * loss (MultiTileEntityWireElectric.java:114-116 read them back in readFromNBT2). Since task
- * p9-wire-family-w1 the block additionally carries the row identity the W2 render card consumes:
+ * wire-family-w1 the block additionally carries the row identity the W2 render card consumes:
  * the {@link OreDictMaterial} (may be null on the two material-less p7 legacy blocks), the
  * band size {@code n} (the "1x..16x" multiplier) and the {@code insulated} form flag — the
  * ratings (voltage/amperage/loss/diameter/max-stack) still come from the registration site
@@ -54,11 +54,11 @@ import gregtech6.covers.ICoverableTE;
  * <p>{@link #CONNECTIONS} is the 6-bit connection mask as a BlockState property — the
  * visual counterpart of {@code TileEntityBase09Connector.mConnections}, written by the
  * wire BlockEntity on every connection change (GTWireBlockEntity.onConnectionChange,
- * the pipe twin). Since p9-wire-family-w1 the datagen blockstate maps every mask to the one
+ * the pipe twin). Since wire-family-w1 the datagen blockstate maps every mask to the one
  * placeholder model through a single property-less variant (the ModelBakery.java:173 empty-key
  * wildcard) — the connection-aware model picking is the W2 card's BakedModel.
  *
- * <p>{@code use} is a SEMANTIC LOCK (task p9-wire-family-w1 spec ④, promoted from the
+ * <p>{@code use} is a SEMANTIC LOCK (task wire-family-w1 spec ④, promoted from the
  * accidental base default to an explicit override): it always returns
  * {@link InteractionResult#PASS}. Upstream wires have no vanilla right-click action — the
  * connection-management tool is the cutter ({@code getFacingTool() = TOOL_cutter},
@@ -118,7 +118,7 @@ public class GTWireBlock extends GTEntityBlock {
 	*///?}
 
 	/**
-	 * The full W1 carrier (task p9-wire-family-w1 spec ②) — the electric family form.
+	 * The full W1 carrier (task wire-family-w1 spec ②) — the electric family form.
 	 *
 	 * @param aVoltage the packet size ceiling in EU (upstream NBT_PIPESIZE)
 	 * @param aAmperage the packet count ceiling (upstream NBT_PIPEBANDWIDTH)
@@ -134,7 +134,7 @@ public class GTWireBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The family carrier (task p10-wire-redstone-family): one extra column over the W1
+	 * The family carrier (task wire-redstone-family): one extra column over the W1
 	 * form. A REDSTONE-family block is the same visual carrier (the CONNECTIONS mask
 	 * stays THE ONLY BlockState payload — spec 3 red line: the signal VALUE lives on the
 	 * BlockEntity, a POWER-style state property would be the 64×16 variant explosion the
@@ -201,11 +201,11 @@ public class GTWireBlock extends GTEntityBlock {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the composed display name (task p20-i18n-compose-wires, the B-wave lang
+	// the composed display name (task i18n-compose-wires, the B-wave lang
 	// ruling): the ~626 per-variant pre-installed full-string keys became five
 	// position-param template keys the runtime fills at getName time — the
 	// MaterialPrefixItem.java:62-66 runtime-fill precedent on the block face
-	// (ADR 2026-09-06-p20-i18n-zhcn-pipeline §1.4).
+	// (ADR 2026-09-06-i18n-zhcn-pipeline §1.4).
 	// ---------------------------------------------------------------------------
 
 	/** The electric display template "{@code %sx %s %s}" — size, material, form slots (the material/form SPACE rides the template: the form units are bare nouns). */
@@ -262,7 +262,7 @@ public class GTWireBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The B-wave composed name (task p20-i18n-compose-wires): the template fill replaces
+	 * The B-wave composed name (task i18n-compose-wires): the template fill replaces
 	 * the retired per-variant lang key; the nameless forms (legacy pair, laser) fall back
 	 * to the vanilla descriptionId lookup (Block.java:359-361), whose keys stay in the
 	 * provider.
@@ -336,7 +336,7 @@ public class GTWireBlock extends GTEntityBlock {
 	 * change :94 and the per-tick convergence :104). The 1.7.10 MTE block fed the same
 	 * flag from onNeighborBlockChange.
 	 *
-	 * <p>Since task p11-connector-stale-mask this hook ALSO runs the synchronous
+	 * <p>Since task connector-stale-mask this hook ALSO runs the synchronous
 	 * connection-mask rescan ({@link GTWireBlockEntity#validateConnections}) — the flag-1
 	 * half of the two delivery channels (this one and {@link #updateShape}; see there for
 	 * why both exist). Player break/place arrives through here; deferring the prune to the
@@ -398,7 +398,7 @@ public class GTWireBlock extends GTEntityBlock {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the redstone emission bridge (task p10-wire-redstone-family spec 4)
+	// the redstone emission bridge (task wire-redstone-family spec 4)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -440,7 +440,7 @@ public class GTWireBlock extends GTEntityBlock {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the contact-damage hook (task p10-wire-contact-damage spec 1)
+	// the contact-damage hook (task wire-contact-damage spec 1)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -476,7 +476,7 @@ public class GTWireBlock extends GTEntityBlock {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the light emission (task p11-wire-brightness spec 1 — the wirelamp)
+	// the light emission (task wire-brightness spec 1 — the wirelamp)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -530,11 +530,11 @@ public class GTWireBlock extends GTEntityBlock {
 	/**
 	 * The per-family BET (task p10): redstone rows resolve GTWires.WIRE_REDSTONE_BE (the 6
 	 * redstone blocks), laser rows resolve GTWires.WIRE_LASER_BE (task
-	 * p10-wire-laser-placeholder — the 1 laser block, the WIRE_REDSTONE_BE precedent:
+	 * wire-laser-placeholder — the 1 laser block, the WIRE_REDSTONE_BE precedent:
 	 * the valid-block list MUST carry every block that stamps the BET, the
 	 * promotePendingBlockEntity lesson), electric rows keep
 	 * GTBlockEntities.WIRE_ELECTRIC_BE (the p7 pair + the 620 family) — the same BE CLASS
-	 * mounts all three, the family gate lives inside it. (Task p10-wire-laser-placeholder
+	 * mounts all three, the family gate lives inside it. (Task wire-laser-placeholder
 	 * NARROW touch: this ternary line is the registration-required branch for the laser
 	 * BET mount; everything else in this file is untouched.)
 	 */
@@ -559,6 +559,6 @@ public class GTWireBlock extends GTEntityBlock {
 	@Override
 	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
 		super.stepOn(aLevel, aPos, aState, aEntity);
-		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (p37-covers-crafting-asphalt)
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (covers-crafting-asphalt)
 	}
 }

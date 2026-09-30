@@ -29,7 +29,7 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
 
 /**
- * Offline gate for task r8-jade-redesign-core (the machine face of the Jade redesign,
+ * Offline gate for task jade-redesign-core (the machine face of the Jade redesign,
  * over the p27 energy-seam base): the machine-family tag contract — now written by BOTH
  * arms, the single-block {@link TileEntityBasicMachine} AND the multiblock controller
  * {@link TileEntityBase10MultiBlockMachine} (the field-isomorphic progress blind-spot
@@ -111,7 +111,7 @@ public class GT6MachineProviderTest extends GTOfflineTestBase {
 
 	/**
 	 * The fixture map lands in RecipeMap.RECIPE_MAPS and STAYS after the class — the
-	 * p29-w4-f1-chemicals full-suite lesson (the GT6ChemicalRowsPourTest red): the residue
+	 * w4-f1-chemicals full-suite lesson (the GT6ChemicalRowsPourTest red): the residue
 	 * collided with the NEXT init() whose class name sorts before jade's, so the class
 	 * hands the registry back clean via {@link GT6RecipeMaps#reset}.
 	 */

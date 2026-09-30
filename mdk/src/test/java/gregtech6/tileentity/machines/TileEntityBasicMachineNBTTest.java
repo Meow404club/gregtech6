@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.recipes.GT6RecipeMaps;
 
 /**
- * Acceptance 1 (task p7-basicmachine-family ⑦): the NBT round trip — the plain-key oven
+ * Acceptance 1 (task basicmachine-family ⑦): the NBT round trip — the plain-key oven
  * contract (TileEntityOven.java:111-121) over the machine field set, facing/active/running
  * persistence, and the pending-output list.
  *

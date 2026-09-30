@@ -46,7 +46,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 *///?}
 
 /**
- * Task p19-nbtaccess-dynamic-rebind — the NBT_ACCESS rebind contract, offline.
+ * Task nbtaccess-dynamic-rebind — the NBT_ACCESS rebind contract, offline.
  *
  * <p>Production shape (the {@code //? if neoforge} leg of TileEntityBase03TicksAndSync):
  * the public static NBT_ACCESS stays a FINAL field, its value a delegating Provider over an

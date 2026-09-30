@@ -18,9 +18,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
 
 /**
- * The layer-sequence DSL self-tests (task p16-pattern-layers ①② — the kTFRU
+ * The layer-sequence DSL self-tests (task pattern-layers ①② — the kTFRU
  * {@code ExpandableLayer}/{@code LayerStructure} mechanism re-declared clean-room per
- * ADR 2026-09-05-p16-formation-scoping ②): the {@link GTMultiBlockPattern.Layer} slab
+ * ADR 2026-09-05-formation-scoping ②): the {@link GTMultiBlockPattern.Layer} slab
  * vocabulary (part/hollow/formingPart, the same triple as the flat builder), the
  * {@link GTMultiBlockPattern.Builder#layer}/{@link GTMultiBlockPattern.Builder#repeatable}
  * sequence with its Y-stacking-by-order rule, the build-time {@code min..max} expansion

@@ -33,7 +33,7 @@ import gregtech6.recipes.RecipeMap;
 
 /**
  * The Canning Machine map — the port of upstream
- * {@code gregapi/recipes/maps/RecipeMapFluidCanner.java} (task p24-canner-machine, ruling
+ * {@code gregapi/recipes/maps/RecipeMapFluidCanner.java} (task canner-machine, ruling
  * R1 of decisions.p24-canner-dyes-rulings: the DYNAMIC fill/empty semantics port IN FULL,
  * not a narrow pinned face — foam cans, Lighter, food-canning pool items all resolve
  * through this one {@code findRecipe} override upstream, and pinning only the 17 refill

@@ -75,7 +75,7 @@ public final class GTBlockEntities {
 					TestMachineBlockEntity::new, TEST_MACHINE.get(), TEST_MACHINE_IDLE.get()).build(null));
 
 	// -------------------------------------------------------------------------
-	// example chest (task p3-example-machine, WAVE-2)
+	// example chest (task example-machine, WAVE-2)
 	// -------------------------------------------------------------------------
 
 	/**
@@ -95,15 +95,15 @@ public final class GTBlockEntities {
 					GTExampleChestBlockEntity::new, EXAMPLE_CHEST.get()).build(null));
 
 	// -------------------------------------------------------------------------
-	// electric wire (task p7-d2-cable)
+	// electric wire (task d2-cable)
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Shared electric-wire BET over the whole family (task p7-d2-cable spec ⑤ — the BET type
+	 * Shared electric-wire BET over the whole family (task d2-cable spec ⑤ — the BET type
 	 * row lives here per the card, the blocks/items in GTWires; ADR-P3-1 one-type-many-
 	 * blocks). The supplier resolves the GTWires block RegistryObjects — safe because the
 	 * vanilla registry order fires the Block event before the BlockEntityType event across
-	 * DeferredRegisters. Since task p9-wire-family-w1 the valid-block list is the ONE-LINE
+	 * DeferredRegisters. Since task wire-family-w1 the valid-block list is the ONE-LINE
 	 * family reference {@link GTWires#wireBlockArray()} (the p7 legacy pair + the 620
 	 * GTWireSpecs variants). Registry path "wire_electric" mirrors
 	 * GTWireBlockEntity#getTileEntityName like every other row.
@@ -113,11 +113,11 @@ public final class GTBlockEntities {
 					GTWireBlockEntity::new, GTWires.wireBlockArray()).build(null));
 
 	// -------------------------------------------------------------------------
-	// test energy source (task p8-d4-energy-source)
+	// test energy source (task d4-energy-source)
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The test energy source BET (task p8-d4-energy-source spec ② — the BET type row lives
+	 * The test energy source BET (task d4-energy-source spec ② — the BET type row lives
 	 * here per the card, the block/item in GTEnergySources; the WIRE_ELECTRIC_BE
 	 * cross-register resolution shape). Registry path "energy_source" mirrors
 	 * GTEnergySourceBlockEntity#getTileEntityName like every other row.
@@ -127,11 +127,11 @@ public final class GTBlockEntities {
 					GTEnergySourceBlockEntity::new, GTEnergySources.ENERGY_SOURCE.get()).build(null));
 
 	// -------------------------------------------------------------------------
-	// hand crank (task p12-engine-crank) — the kinetics family's first BET row
+	// hand crank (task engine-crank) — the kinetics family's first BET row
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The Hand Crank BET (task p12-engine-crank spec ③ — the BET type row lives here per
+	 * The Hand Crank BET (task engine-crank spec ③ — the BET type row lives here per
 	 * the card, the block/item in GT6Kinetics; the ENERGY_SOURCE_BE cross-register
 	 * resolution shape). Registry path "crank" mirrors
 	 * GTCrankBlockEntity#getTileEntityName like every other row.
@@ -141,11 +141,11 @@ public final class GTBlockEntities {
 					GTCrankBlockEntity::new, GT6Kinetics.CRANK.get()).build(null));
 
 	// -------------------------------------------------------------------------
-	// axle (task p12-axle-family) — the kinetics family's shared multi-mount row
+	// axle (task axle-family) — the kinetics family's shared multi-mount row
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The Axle BET (task p12-axle-family spec ③ — the BET type row lives here per the card,
+	 * The Axle BET (task axle-family spec ③ — the BET type row lives here per the card,
 	 * the 44 blocks/items in GT6Kinetics; the WIRE_ELECTRIC_BE one-type-many-blocks
 	 * multi-mount form over {@link GT6Kinetics#axleBlockArray()}). Registry path "axle"
 	 * mirrors GTAxleBlockEntity#getTileEntityName like every other row.
@@ -155,11 +155,11 @@ public final class GTBlockEntities {
 					GTAxleBlockEntity::new, GT6Kinetics.axleBlockArray()).build(null));
 
 	// -------------------------------------------------------------------------
-	// wall attachments (task p12-tap-funnel-attachment) — the shared-BET pair
+	// wall attachments (task tap-funnel-attachment) — the shared-BET pair
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The fluid-tap BET (task p12-tap-funnel-attachment spec ⑤ — the BET type rows live
+	 * The fluid-tap BET (task tap-funnel-attachment spec ⑤ — the BET type rows live
 	 * here per the card, the 6 tap blocks/items in GT6Attachments; the CRANK_BE
 	 * cross-register resolution shape, the shared-BET multi-mount ADR-P3-1 over the
 	 * whole family). Registry path "tap" mirrors GTTapBlockEntity#getTileEntityName.
@@ -177,11 +177,11 @@ public final class GTBlockEntities {
 					gregtech6.tileentity.attachment.GTFunnelBlockEntity::new, GT6Attachments.funnelBlockArray()).build(null));
 
 	// -------------------------------------------------------------------------
-	// steam engine (task p12-engine-steam) — the kinetics family's second BET row
+	// steam engine (task engine-steam) — the kinetics family's second BET row
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The Steam Engine BET (task p12-engine-steam spec ② — the BET type row lives here per
+	 * The Steam Engine BET (task engine-steam spec ② — the BET type row lives here per
 	 * the card, the 28 blocks/items in {@link GT6Kinetics#STEAM_ENGINE_BLOCKS}; the
 	 * WIRE_ELECTRIC_BE one-line family-reference shape over
 	 * {@link GT6Kinetics#steamEngineBlockArray()}). ADR-P3-1 one-shared-type-many-blocks:
@@ -193,11 +193,11 @@ public final class GTBlockEntities {
 			BLOCK_ENTITY_TYPES.register("steam_engine", () -> BlockEntityType.Builder.of(
 					GTSteamEngineBlockEntity::new, GT6Kinetics.steamEngineBlockArray()).build(null));
 
-	// diesel engine (task p12-engine-diesel) — the kinetics family's shared multi-mount row
+	// diesel engine (task engine-diesel) — the kinetics family's shared multi-mount row
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The Diesel Engine BET (task p12-engine-diesel — the BET type row lives here per the
+	 * The Diesel Engine BET (task engine-diesel — the BET type row lives here per the
 	 * card, the 8 tier blocks/items in GT6Kinetics; the AXLE_BE one-type-many-blocks
 	 * multi-mount form over {@link GT6Kinetics#dieselBlockArray()}). Registry path
 	 * "diesel_engine" mirrors GTDieselEngineBlockEntity#getTileEntityName like every other
@@ -206,11 +206,11 @@ public final class GTBlockEntities {
 	public static final RegistryObject<BlockEntityType<GTDieselEngineBlockEntity>> DIESEL_ENGINE_BE =
 			BLOCK_ENTITY_TYPES.register("diesel_engine", () -> BlockEntityType.Builder.of(
 					GTDieselEngineBlockEntity::new, GT6Kinetics.dieselBlockArray()).build(null));
-	// gearbox + rotation transformer (task p12-gearbox-transformer)
+	// gearbox + rotation transformer (task gearbox-transformer)
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The GearBox BET (task p12-gearbox-transformer — the BET type row lives here per the
+	 * The GearBox BET (task gearbox-transformer — the BET type row lives here per the
 	 * card family form, the block/item in GT6Kinetics; the CRANK_BE single-mount shape).
 	 * Registry path "gearbox" mirrors GTGearBoxBlockEntity#getTileEntityName like every
 	 * other row.
@@ -220,7 +220,7 @@ public final class GTBlockEntities {
 					GTGearBoxBlockEntity::new, GT6Kinetics.GEARBOX.get()).build(null));
 
 	/**
-	 * The Rotation Transformer BET (task p12-gearbox-transformer — the CRANK_BE
+	 * The Rotation Transformer BET (task gearbox-transformer — the CRANK_BE
 	 * single-mount shape, the block/item in GT6Kinetics). Registry path
 	 * "transformer_rotation" mirrors GTTransformerRotationBlockEntity#getTileEntityName.
 	 */
@@ -228,11 +228,11 @@ public final class GTBlockEntities {
 			BLOCK_ENTITY_TYPES.register("transformer_rotation", () -> BlockEntityType.Builder.of(
 					GTTransformerRotationBlockEntity::new, GT6Kinetics.TRANSFORMER_ROTATION.get()).build(null));
 
-	// water wheel (task p28-c-water-wheel) — the kinetics family's RU-source row
+	// water wheel (task c-water-wheel) — the kinetics family's RU-source row
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The Water Wheel BET (task p28-c-water-wheel — the CRANK_BE single-mount shape, the
+	 * The Water Wheel BET (task c-water-wheel — the CRANK_BE single-mount shape, the
 	 * block/item in GT6Kinetics). Registry path "water_wheel" mirrors
 	 * GT6WaterWheelBlockEntity#getTileEntityName like every other row.
 	 */
@@ -241,11 +241,11 @@ public final class GTBlockEntities {
 					GT6WaterWheelBlockEntity::new, GT6Kinetics.WATER_WHEEL.get()).build(null));
 
 	// -------------------------------------------------------------------------
-	// the burning boxes (task p13-burning-box-family) — the four shared family rows
+	// the burning boxes (task burning-box-family) — the four shared family rows
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The Solid Burning Box BET (task p13-burning-box-family spec ⑦ — the shared
+	 * The Solid Burning Box BET (task burning-box-family spec ⑦ — the shared
 	 * multi-mount form over the Brick row + the 26 metal Solid rows of
 	 * {@link GT6BurningBoxes}; the AXLE_BE one-type-many-blocks shape). The abstract
 	 * family base mounts through an anonymous concrete subclass — the SOLID family has
@@ -296,11 +296,11 @@ public final class GTBlockEntities {
 					GT6BurningBoxes.blockArray(gregtech6.registry.GT6BurningBoxes.Family.FLUIDBED)).build(null));
 
 	// -------------------------------------------------------------------------
-	// the steam boiler tank (task p13-boiler-tank) — the converters family's BET row
+	// the steam boiler tank (task boiler-tank) — the converters family's BET row
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The Steam Boiler Tank BET (task p13-boiler-tank spec ⑨ — the BET type row lives here
+	 * The Steam Boiler Tank BET (task boiler-tank spec ⑨ — the BET type row lives here
 	 * per the card, the 26 blocks/items in {@link GT6Boilers}; the AXLE_BE one-type-many-
 	 * blocks multi-mount form over {@link GT6Boilers#blockArray()}). ADR-P3-1 one-shared-
 	 * type-many-blocks: both ladders (Steam + Strong, 13+13) are ONE BE class, the row
@@ -312,7 +312,7 @@ public final class GTBlockEntities {
 					gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity::new, GT6Boilers.blockArray()).build(null));
 
 		// -------------------------------------------------------------------------
-	// the bedrock fluid-spring nozzle (task p38-issue5-fluid-spring-nozzle)
+	// the bedrock fluid-spring nozzle (task issue5-fluid-spring-nozzle)
 	// -------------------------------------------------------------------------
 
 	/**
@@ -339,11 +339,11 @@ public final class GTBlockEntities {
 					GTFluidSpringBlockEntity::new, FLUID_SPRING.get()).build(null));
 
 	// -------------------------------------------------------------------------
-	// the storage hoppers (task p26-storage-hopper-family) — the two family rows
+	// the storage hoppers (task storage-hopper-family) — the two family rows
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The regular Hopper BET (task p26-storage-hopper-family — the BET type rows live here
+	 * The regular Hopper BET (task storage-hopper-family — the BET type rows live here
 	 * per the card, the 4 blocks/items in GT6Hoppers; the BOILER_TANK_BE one-type-many-blocks
 	 * multi-mount form over {@link GT6Hoppers#hopperBlockArray()}). ADR-P3-1: both material
 	 * ladders (Bronze 3 / Steel 5) are ONE BE class, the row config rides the block carrier.
@@ -363,11 +363,11 @@ public final class GTBlockEntities {
 					gregtech6.tileentity.inventories.GT6QueueHopperBlockEntity::new, GT6Hoppers.queueBlockArray()).build(null));
 
 	// -------------------------------------------------------------------------
-	// the sensors (task p26-sensors-core, batch p34-sensors-trivial-14) — the 18 BET rows
+	// the sensors (task sensors-core, batch sensors-trivial-14) — the 18 BET rows
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The Progressmeter BET (task p26-sensors-core — the BET type rows live here per the
+	 * The Progressmeter BET (task sensors-core — the BET type rows live here per the
 	 * card, the blocks/items in {@link GT6Sensors}; the CRANK_BE single-mount shape). One
 	 * BET per sensor class: the concrete sensors are unrelated subtypes of the abstract
 	 * {@code GTSensorBlockEntity} base, so the ADR-P3-1 one-type-many-blocks degenerates
@@ -388,7 +388,7 @@ public final class GTBlockEntities {
 			BLOCK_ENTITY_TYPES.register("electrometer", () -> BlockEntityType.Builder.of(
 					gregtech6.tileentity.sensors.GT6ElectrometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("electrometer").get()).build(null));
 
-	// The p34-sensors-trivial-14 batch — Loader_MultiTileEntities.java:1979-1994 row
+	// The sensors-trivial-14 batch — Loader_MultiTileEntities.java:1979-1994 row
 	// order, one BET per class over its own GT6Sensors block (the CRANK_BE form). The
 	// tachometer/geigercounter/laserometer rows stay pooled on their missing seams (the
 	// GT6Sensors census-erratum javadoc).
@@ -437,7 +437,7 @@ public final class GTBlockEntities {
 	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6PlayerCounterBlockEntity>> PLAYERCOUNTER_BE =
 			BLOCK_ENTITY_TYPES.register("playercounter", () -> BlockEntityType.Builder.of(
 					gregtech6.tileentity.sensors.GT6PlayerCounterBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("playercounter").get()).build(null)); // :1994
-	// p37-sensors-3 — the pool closure (the anchor's remaining rows :1996/:1998/:1999,
+	// sensors-3 — the pool closure (the anchor's remaining rows :1996/:1998/:1999,
 	// one BET per class over its own GT6Sensors block, the CRANK_BE form)
 	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.sensors.GT6GeigerCounterBlockEntity>> GEIGERCOUNTER_BE =
 			BLOCK_ENTITY_TYPES.register("geigercounter", () -> BlockEntityType.Builder.of(
@@ -450,11 +450,11 @@ public final class GTBlockEntities {
 					gregtech6.tileentity.sensors.GT6LaserometerBlockEntity::new, GT6Sensors.BLOCKS_BY_PATH.get("laserometer").get()).build(null)); // :1999
 
 	// -------------------------------------------------------------------------
-	// the static storage batch (task p26-storage-static-batch) — the six family rows
+	// the static storage batch (task storage-static-batch) — the six family rows
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The Locker BET (task p26-storage-static-batch — the BET type rows live here per the
+	 * The Locker BET (task storage-static-batch — the BET type rows live here per the
 	 * card, the 2 blocks/items in GT6StaticStorages; the AXLE_BE one-type-many-blocks
 	 * multi-mount form over {@link GT6StaticStorages#blockArray}. ADR-P3-1: the metal
 	 * ladder (Bronze/Steel) is ONE BE class, the row config rides the block carrier.

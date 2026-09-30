@@ -32,7 +32,7 @@ import gregtech6.tileentity.misc.GT6SandwichBlockEntity;
 import gregtech6.tileentity.misc.GT6SandwichItem;
 
 /**
- * The placeables family registration (task p32-placeables) — the card-owned
+ * The placeables family registration (task placeables) — the card-owned
  * {@code @EventBusSubscriber(MOD)} DeferredRegisters attached from the construct event, the
  * GT6Kitchen shape (ADR-P3-4; a separate class keeps the card scopes disjoint). Ports the
  * "Untyped" deco rows of Loader_MultiTileEntities.java:2023-2041 — the Greg o'Lantern

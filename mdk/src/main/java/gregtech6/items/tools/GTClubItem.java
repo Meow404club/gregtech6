@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * The formal GT6 club — item id {@code gt6:club} (task p29-w5-t2-blade-six). Upstream
+ * The formal GT6 club — item id {@code gt6:club} (task w5-t2-blade-six). Upstream
  * GT_Tool_Club.java:47-142 is a {@code GT_Tool_HardHammer} SUBCLASS (the
  * Loader_Tools.java:130 registration row {@code 6*U}, NO OreDictToolNames — the pure
  * weapon + rock-crusher identity, registered with the {@code TOOL_hammer} behaviour):

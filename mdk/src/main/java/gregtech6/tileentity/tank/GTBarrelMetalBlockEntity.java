@@ -10,7 +10,7 @@ import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.registry.GTBarrels;
 
 /**
- * The metal drum (task p6-barrel-metal-plastic) — the counterpart of the upstream
+ * The metal drum (task barrel-metal-plastic) — the counterpart of the upstream
  * {@code MultiTileEntityBarrelMetal} row (gregtech/tileentity/tanks/
  * MultiTileEntityBarrelMetal.java:36, Loader_MultiTileEntities.java:2151, 64000 L bronze).
  *
@@ -21,7 +21,7 @@ import gregtech6.registry.GTBarrels;
  * the frozen {@link TileEntityBase08Barrel} base.
  *
  * <p>Melting: the P6-era declared deviation ("MAX_VALUE, never melts — the material
- * melting-point bridge is a pool item") was revoked by task p7-barrel-high-tier-melt-bridge.
+ * melting-point bridge is a pool item") was revoked by task barrel-high-tier-melt-bridge.
  * The bridge now ships as {@code GTBarrels.meltingPointK} — the verbatim gregapi
  * TileEntityBase08Barrel.java:66 else-branch {@code (long)(mMaterial.mMeltingPoint * 1.25)}
  * — and the ctor below reads the ceiling off the block carrier ({@code meltingPointK()}),

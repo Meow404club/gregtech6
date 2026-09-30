@@ -15,7 +15,7 @@ import gregtech6.recipes.GT6RecipesDrying;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Aqua fluid family offline tests (task p16-aqua-fluids — the registration-row
+ * Aqua fluid family offline tests (task aqua-fluids — the registration-row
  * assertions against the DECLARED values, the GTFluidsEngineFamilyTest shape): six
  * {@link GTFluids.AquaFluidSpec} rows with every value census-anchored —
  * spdew/mnwtr 300 K (Loader_Fluids.java:362/:371 {@code FL.create(..., 1, 1000, 300)}),

@@ -12,7 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * The formal GT6 axe — item id {@code gt6:axe} (task p29-w5-t2-blade-six; the
+ * The formal GT6 axe — item id {@code gt6:axe} (task w5-t2-blade-six; the
  * {@link GTPickaxeItem} class shape). Upstream GT_Tool_Axe.java:51-171:
  * <ul>
  * <li><b>Damage</b> — base damage 3.0F (:78-80) verbatim; per-block 50 (:53-55) folds to
@@ -35,7 +35,7 @@ import net.minecraft.world.level.block.state.BlockState;
  *     CUT (the mod-entity face; the placement arms are the interaction-card pool).</li>
  * </ul>
  *
- * <p>Durability ladder (task p31-dig-ladder): the {@link GT6ToolLadder} form over the
+ * <p>Durability ladder (task dig-ladder): the {@link GT6ToolLadder} form over the
  * stack's identity — durability j/100, speed ×1.0 × mToolSpeed, the :482 quality gate;
  * the identity-less arm = Steel bit-exact (512 / 6.0F, the pre-ladder constants).
  * AXE LADDER RULING (the card's in-card 归属 decision): the axe is the upstream DIG

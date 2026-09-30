@@ -8,7 +8,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.registry.GT6BedrockOreBlocks;
 
 /**
- * The bedrock-ore deterministic core (task p31-bedrock-ore-worldgen) — the pure
+ * The bedrock-ore deterministic core (task bedrock-ore-worldgen) — the pure
  * generation math of {@code WorldgenOresBedrock} (the third, independent generation
  * form next to the large veins and the strata lenses), isolated from the Feature
  * adapter so the offline tests drive it WITHOUT class-loading vanilla {@code Feature}

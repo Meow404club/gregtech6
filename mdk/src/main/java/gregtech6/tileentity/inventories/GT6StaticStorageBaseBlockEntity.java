@@ -23,7 +23,7 @@ import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The shared skeleton of the static storage batch (task p26-storage-static-batch): the
+ * The shared skeleton of the static storage batch (task storage-static-batch): the
  * no-tick pure slot-face posture of the five upstream storage containers
  * {@code MultiTileEntityLocker.java} / {@code MultiTileEntityDrawerQuad.java} /
  * {@code MultiTileEntitySafe.java} / {@code MultiTileEntityBookShelf.java} /

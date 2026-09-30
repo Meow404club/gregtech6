@@ -33,7 +33,7 @@ import gregtech6.registry.GT6Tools;
 
 /**
  * {@code /gt6pocket} — the pocket multitool acceptance command (task
- * p29-w5-t7-pocket-eight; card-local in command/ like GT6ChiselCommand/GTToolCommand —
+ * w5-t7-pocket-eight; card-local in command/ like GT6ChiselCommand/GTToolCommand —
  * the card's own-file extension, the RCON chains cannot reach a useOn dispatch without
  * it). Every arm drives the EXACT {@link GTPocketMultitoolItem#useOn} dispatch the item
  * runs for a player (the p19 {@code /gt6chisel click} same-source convention), a fake

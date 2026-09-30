@@ -41,7 +41,7 @@ public class GTLargeBoilerBlock extends GTMultiBlockControllerBlock {
 	private final GTMultiBlocks.LargeBoilerRow mRow;
 
 	public GTLargeBoilerBlock(GTMultiBlocks.LargeBoilerRow aRow, Properties aProperties) {
-		// the row's NBT_MATERIAL column is the tint colour source (task r8-tex-large-boilers,
+		// the row's NBT_MATERIAL column is the tint colour source (task tex-large-boilers,
 		// the p38-c2 material-carrier ctor — the tint rides GTMultiBlockControllerBlock.materialOf)
 		super(aProperties, aRow.mat());
 		mRow = aRow;
@@ -68,7 +68,7 @@ public class GTLargeBoilerBlock extends GTMultiBlockControllerBlock {
 		return mRow.path();
 	}
 
-	/** The composed boiler name (task p20-i18n-compose-rows): the {@link GTMultiBlocks#largeBoilerDisplayOf} carrier. */
+	/** The composed boiler name (task i18n-compose-rows): the {@link GTMultiBlocks#largeBoilerDisplayOf} carrier. */
 	@Override
 	public net.minecraft.network.chat.MutableComponent getName() {
 		return GTMultiBlocks.largeBoilerDisplayOf(mRow);

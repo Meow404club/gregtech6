@@ -24,7 +24,7 @@ import gregtech6.covers.covers.CoverConveyor;
 import gregtech6.covers.covers.CoverRobotArm;
 
 /**
- * The conveyor + robot arm acceptance tables (task p11-cover-conveyor-robotarm), all
+ * The conveyor + robot arm acceptance tables (task cover-conveyor-robotarm), all
  * offline: the 512&gt;&gt;i timing-tier truth table (PERIOD semantics — tier 0 beats once
  * per 512 ticks, tier 9 every tick), the screwdriver/monkeywrench tool tables, the
  * one-way item gates, the GTItemMover consumption-point alignment (the direction split

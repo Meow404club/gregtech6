@@ -17,7 +17,7 @@ import gregtech6.registry.GT6BookText;
 import gregtech6.registry.GT6Books;
 
 /**
- * The per-book written-book item (task p35-books-written) — every registry row of
+ * The per-book written-book item (task books-written) — every registry row of
  * {@link GT6BookText} gets one of these; the content is the row's static text through the
  * GT6Books single-source converter.
  *

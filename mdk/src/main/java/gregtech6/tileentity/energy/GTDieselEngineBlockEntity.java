@@ -36,7 +36,7 @@ import gregtech6.registry.GTBlockEntities;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * 1.20.1 counterpart of the GT6 Diesel Engine — task p12-engine-diesel, ported from
+ * 1.20.1 counterpart of the GT6 Diesel Engine — task engine-diesel, ported from
  * gregtech/tileentity/energy/generators/MultiTileEntityMotorLiquid.java (:62-257,
  * Loader_MultiTileEntities.java:721-729 eight material tiers 9145-9199) as the RU
  * DIRECT-CURRENT source of the fluid-engine chain: FM.Engine fluid fuel burned into
@@ -99,7 +99,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  *
  * <p><b>The funnel/tap face (:203-213)</b>: upstream has NO GUI — supply goes through
  * Funnels (the containsInput-gated input-tank fill :203-207) and Taps (drain
- * output-else-input :209-213). The p12-tap-funnel-attachment card was IN FLIGHT at
+ * output-else-input :209-213). The tap-funnel-attachment card was IN FLIGHT at
  * dispatch (not in main), so the attachment wiring is NOT mounted here; the two
  * upstream methods are ported verbatim as {@link #funnelFill}/{@link #tapDrain} for the
  * attachment card to wire and the tests to drive, and the ACCEPTANCE channel is the
@@ -561,7 +561,7 @@ public class GTDieselEngineBlockEntity extends TileEntityBase03TicksAndSync impl
 
 	/**
 	 * The chest/oven placement mirror (the crank setFacingFromPlacement form). Task
-	 * p28-singleblock-facing-canon: the emit/front side TOWARDS the placer — the
+	 * singleblock-facing-canon: the emit/front side TOWARDS the placer — the
 	 * GT6PlacementFacing canon (view OPPOSITE).
 	 */
 	public void setFacingFromPlacement(net.minecraft.world.entity.player.Player aPlayer) {

@@ -29,7 +29,7 @@ import gregtech6.registry.GTWireSpecs;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * GT6LongDistanceTransformerBlockEntity offline tests (task p35-energy-tail-machines):
+ * GT6LongDistanceTransformerBlockEntity offline tests (task energy-tail-machines):
  * the row-table pins (the :909-:913 declared subset — FIVE rows, meta ids 10064-10068,
  * NBT_INPUT = NBT_OUTPUT = V[4..8]; the 16 wire metas with the Loader_Blocks:160 tier
  * bytes and the VMAX throughput), the DELEGATE MATH (the doInject :232-259 shape over

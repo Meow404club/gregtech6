@@ -12,19 +12,19 @@ import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 
 /**
  * The fluid-pipe BlockItem — the onPlaced face-direction carrier (task
- * p4-pipe-flow-control spec ②, the architect ruling): {@code placeBlock} is the only vanilla
+ * pipe-flow-control spec ②, the architect ruling): {@code placeBlock} is the only vanilla
  * placement hook where the BE already exists (super placed the block) while the
  * {@link BlockPlaceContext} is still in hand, so the clicked face survives to
  * {@link GTFluidPipeBlockEntity#onPlaced(byte, UUID)}. Deliberately NOT a BE.onLoad hook —
  * onLoad replays on every chunk load, which would resurrect connections the user tore
  * down by hand.
  *
- * <p>Task p24-pipe-owner adds the owner carrier: the placing player's UUID rides into
+ * <p>Task pipe-owner adds the owner carrier: the placing player's UUID rides into
  * {@code onPlaced(byte, UUID)} (null when the context has no player), where the ownable
  * pipe records it (upstream TileEntityBase10ConnectorRendered:148-150) and the locked
  * support-side neighbour can deny the first connect (upstream 09Connector:86).
  *
- * <p>Task p25-c-foam-pipe-spray adds the item-tag pre-merge: a broken foamed pipe's item
+ * <p>Task c-foam-pipe-spray adds the item-tag pre-merge: a broken foamed pipe's item
  * carries the three keys {@code gt.foamed/gt.foamdried/gt.ownable} inside the vanilla
  * {@code BlockEntityTag} envelope (the loot copy_nbt form, the p22 painted-item precedent).
  * Vanilla applies that tag AFTER {@code placeBlock} returns (BlockItem.java:78), which
@@ -34,7 +34,7 @@ import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
  * later vanilla re-application is idempotent (the same keys over the same values,
  * BlockItem.updateCustomBlockEntityTag :158 merge+load).
  *
- * <p>Task r8-tooltip-wire-pipe-sensor moves the parent to the machine carrier
+ * <p>Task tooltip-wire-pipe-sensor moves the parent to the machine carrier
  * {@link GT6MachineBlockItem} (the {@code pipe_fluid} family rows, the registration site
  * hands [capacity/2, capacity]). Zero name drift: {@code GTFluidPipeBlock} has no
  * {@code getName} compose, so the inherited {@code GTComposedNameItem.getName} resolves the

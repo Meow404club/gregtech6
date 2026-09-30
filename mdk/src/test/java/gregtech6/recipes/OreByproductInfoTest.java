@@ -46,7 +46,7 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
  * debt-ore-purified-edge, so over today's pour the on-axis materials' intersections cover the
  * three tiny-tier faces exactly (the first three declared byproducts), while the 4th+
  * byproducts stay declared-only (差集不消灭). Pitchblende sat off the sifter walk's axis
- * (EMPTY intersection) until r7-a-ore-axis-extension admitted the stone-layer companions —
+ * (EMPTY intersection) until a-ore-axis-extension admitted the stone-layer companions —
  * it now rides the ON-axis shape. That was the expected-signal
  * pattern (the material-tree-a crushedPurified precedent) — the signal has now fired and the
  * cross-table asserts the landed shape.
@@ -161,7 +161,7 @@ class OreByproductInfoTest extends GTRecipesOfflineTestBase {
 	 * (the :331-333 first-three byproducts of the landed sifting rows) while the 4th+
 	 * byproducts stay declared-only — the difference shrinks but is never destroyed
 	 * (差集不消灭). Pitchblende kept the EMPTY intersection while off-axis (pre
-	 * r7-a-ore-axis-extension); on the extended axis it now rides the ON-axis shape. The
+	 * a-ore-axis-extension); on the extended axis it now rides the ON-axis shape. The
 	 * declared full list stays pinned
 	 * verbatim in every case — upstream semantics preserved, never trimmed to what the maps
 	 * happen to contain.
@@ -180,7 +180,7 @@ class OreByproductInfoTest extends GTRecipesOfflineTestBase {
 		for (Map.Entry<OreDictMaterial, List<OreDictMaterial>> tRow : tDeclared.entrySet()) {
 			OreDictMaterial tMaterial = tRow.getKey();
 			Set<OreDictMaterial> tDerivedOf = tDerived.getOrDefault(tMaterial, Set.of());
-			// ON-axis (all four rows since r7-a-ore-axis-extension admitted Pitchblende): the
+			// ON-axis (all four rows since a-ore-axis-extension admitted Pitchblende): the
 			// landed :351 rows output the first-three tiny dusts — the derived face covers
 			// exactly that head of the declared list...
 			List<OreDictMaterial> tTinyHead = tRow.getValue().subList(0, 3);

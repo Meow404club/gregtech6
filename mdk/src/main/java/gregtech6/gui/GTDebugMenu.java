@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
  * Minimal Menu/Screen demo pair backing the {@code /gt6gui} debug command — proves the whole
  * framework chain (MenuType registration, MenuProvider opening, screen binding, player inventory
  * binding, quick-move) with no block entity behind it. The example machine card
- * (p3-example-machine) swaps the {@link SimpleContainer} stand-in for the real machine inventory
+ * (example-machine) swaps the {@link SimpleContainer} stand-in for the real machine inventory
  * and replaces {@link #stillValid(Player)} with the BE check (upstream ContainerCommon.java:326
  * {@code mTileEntity.isUseableByPlayerGUI}); ContainerData progress sync (upstream
  * ContainerCommonBasicMachine.java:277-297) is likewise out of this card's scope per ADR-P3.

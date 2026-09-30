@@ -1,7 +1,7 @@
 package gregtech6.client.render;
 
 /**
- * The immutable foam render snapshot (task p25-c-foam-pipe-spray spec ⑤) — the {@link
+ * The immutable foam render snapshot (task c-foam-pipe-spray spec ⑤) — the {@link
  * GTRenderSnapshot} record the pipe BE hands to the render thread through
  * {@code getModelData()} whenever the pipe carries C-Foam. The texture selection stays
  * model-side in {@code GTFluidPipeFoamModel}: dried swaps the WHOLE body to the hardened

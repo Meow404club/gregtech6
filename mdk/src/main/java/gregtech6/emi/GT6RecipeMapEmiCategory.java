@@ -21,7 +21,7 @@ import gregtech6.recipes.RecipeMap;
  * {@link gregtech6.jei.GT6RecipeMapViewerMeta} seam — the same functions the JEI twin
  * renders from, the card's 双 viewer 共享 clause.
  *
- * <p>The icon (task r6-29-34a, GitHub #29a) is the map's representative machine item from
+ * <p>The icon (task issues #29/#34a, GitHub #29a) is the map's representative machine item from
  * the shared {@link GT6RecipeMapIcons} table — the batch-2 adjudication (task
  * debt-jei-emi-batch2) ruled the table DEFERRED, this card landed it. The furnace stack
  * survives ONLY as that table's whitelist fallback for the four DECLARED-empty maps —
@@ -50,7 +50,7 @@ public final class GT6RecipeMapEmiCategory extends EmiRecipeCategory {
 	}
 
 	/**
-	 * The per-map category title (task r6-29-34a, GitHub #29b) — the shared
+	 * The per-map category title (task issues #29/#34a, GitHub #29b) — the shared
 	 * {@link gregtech6.jei.GT6RecipeMapViewerMeta#titleKey} formula, the EMI twin of the
 	 * JEI leg's translatable getTitle.
 	 */

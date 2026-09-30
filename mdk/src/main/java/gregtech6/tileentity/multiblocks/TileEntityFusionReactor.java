@@ -25,7 +25,7 @@ import gregtech6.recipes.RecipeMap;
 import gregtech6.registry.GTMultiBlocks;
 
 /**
- * The Fusion Reactor multiblock controller (task p31-fusion) — the 1.20.1/1.21.1 port of
+ * The Fusion Reactor multiblock controller (task fusion) — the 1.20.1/1.21.1 port of
  * gregtech/tileentity/multiblocks/MultiTileEntityFusionReactor.java over
  * {@link TileEntityBase10MultiBlockMachine} (Loader_MultiTileEntities.java:1242: meta 17198,
  * item 17101, "Fusion Reactor", MT.SteelGalvanized, NBT_HARDNESS 12.5F == NBT_RESISTANCE
@@ -80,7 +80,7 @@ import gregtech6.registry.GTMultiBlocks;
  * window 1..16384; the :493-496 overcharge arm REFUSES the packet — the declared
  * no-explosion narrowing, the Massfab form). The glass ring ADVERTISES LU acceptance
  * (isEnergyType :510 second arm) through the part relay, and the injection it carries IS
- * the ignition ledger (task p32-ignition-gate): a packet whose type is the charged
+ * the ignition ledger (task ignition-gate): a packet whose type is the charged
  * {@code LU} lands on the :497-500 arm and banks against the {@link #mChargeRequirement}
  * start-LU ledger the :755 arm armed — the whole packet reports consumed (upstream
  * verbatim) and nothing reaches the TU buffer. With the ledger unarmed (0) an LU packet
@@ -89,14 +89,14 @@ import gregtech6.registry.GTMultiBlocks;
  * 8192-EU packet pushed ({@code insertEnergyInto}) at each of the four orthogonal ±10
  * offsets of the core level, first accepting receiver wins — the remote launch seam.
  *
- * <p><b>The ignition gate — PORTED (task p32-ignition-gate, the S31-7 waiver flipped)</b>:
+ * <p><b>The ignition gate — PORTED (task ignition-gate, the S31-7 waiver flipped)</b>:
  * <b>upstream = full-run ignition gating</b> — the Loader_MultiTileEntities.java:1242 row
  * carries {@code NBT_SPECIAL_IS_START_ENERGY, T}, the flag is SUPPLIED through readFromNBT2
  * (:112-124, the registration-config injection route shared with NBT_INPUT/NBT_RECIPEMAP)
  * → the :755 write IS reachable (on recipe switch / non-active: {@code mChargeRequirement
  * = mSpecialValue}) → the :809 progress gate CLOSES until paid → the glass-ring :497-500
  * LU decrement feeds it. D-D: 730×8192×16 ≈ 95.6M LU per arm. The former port waiver
- * (gateless until a LU economy) expired with the laser domain (p32-qu-laser-domain: the
+ * (gateless until a LU economy) expired with the laser domain (qu-laser-domain: the
  * CO2 Laser EU→LU bridge IS the LU economy): the three arms live on {@link
  * TileEntityBase10MultiBlockMachine} (the {@code mSpecialIsStartEnergy} flag — constructor
  * set here, the registration-config form; the :755 arm; the :809 gate; the persisted
@@ -137,7 +137,7 @@ public class TileEntityFusionReactor extends TileEntityBase10MultiBlockMachine {
 		// the :1242 energy-type + ignition columns — the BASE fields assigned (fields do
 		// not virtual-dispatch; the massfab constructor form). NBT_ENERGY_ACCEPTED_2 = LU
 		// is the glass-ring charged type (the :497 arm banks LU against the ledger);
-		// NBT_SPECIAL_IS_START_ENERGY = T is the :755/:809 gate arm (task p32-ignition-gate,
+		// NBT_SPECIAL_IS_START_ENERGY = T is the :755/:809 gate arm (task ignition-gate,
 		// the constructor-injected registration-config form).
 		mEnergyTypeAccepted = TD.Energy.TU;
 		mEnergyTypeCharged = TD.Energy.LU;
@@ -452,7 +452,7 @@ public class TileEntityFusionReactor extends TileEntityBase10MultiBlockMachine {
 	public long doEnergyInjection(TagData aEnergyType, byte aSide, long aSize, long aAmount, boolean aDoInject) {
 		if (mStopped) return 0; // :490
 		aSize = Math.abs(aSize); // :492
-		// :497-500 — the charged (LU) arm (task p32-ignition-gate): a packet of the
+		// :497-500 — the charged (LU) arm (task ignition-gate): a packet of the
 		// mEnergyTypeCharged type banks WHOLE against the armed start-LU ledger (aSize ×
 		// aAmount deducted, the whole aAmount reported consumed — upstream verbatim; no
 		// size gate on this arm, matching the upstream order where :493 already screened

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Food-fluid tail offline tests (task p33-food-tail — the b1/b2 尾货清账 card): the
+ * Food-fluid tail offline tests (task food-tail — the b1/b2 尾货清账 card): the
  * FOOD_TAIL_SPECS table reconciliation (the card-block-outside drink fluids — the
  * golden-apple brews Loader_Fluids.java:607-610 + the coffee family :637-642), the
  * DrinkStat reachability the b2 report named (stat rows for :371 mnwtr + the two tail
@@ -63,7 +63,7 @@ public class GTFoodTailTest extends GTOfflineTestBase {
 	/** The lemonade carrier correction: Loader_Fluids.java:603 rides the 275 K FL.create literal (b1 shipped the honest-default 300 K). */
 	@Test
 	public void lemonadeCarrierIsThe603Literal() {
-		assertEquals(275, GTFluids.foodB1Spec("lemonade").temperature(), "FL.create :603 275 K verbatim (the p33-food-tail correction)");
+		assertEquals(275, GTFluids.foodB1Spec("lemonade").temperature(), "FL.create :603 275 K verbatim (the food-tail correction)");
 		assertEquals("Lemonade", GTFluids.foodB1Spec("lemonade").displayName(), ":603 verbatim");
 	}
 

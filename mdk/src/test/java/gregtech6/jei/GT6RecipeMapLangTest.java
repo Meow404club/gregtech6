@@ -1,5 +1,5 @@
 /**
- * Offline guard tests for task r6-29-34a (GitHub #29b): the generic RM viewer lang faces.
+ * Offline guard tests for task issues #29/#34a (GitHub #29b): the generic RM viewer lang faces.
  * Both datagen providers are recorded through same-package recording subclasses (the
  * GT6LangParityTest posture) and the gt6.jei.recipe_map.* / gt6.jei.cost.* domain is pinned:
  * every one of the 72 visible map titles exists in BOTH locales, the en value is the live

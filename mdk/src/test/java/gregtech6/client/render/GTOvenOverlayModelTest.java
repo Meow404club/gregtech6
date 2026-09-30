@@ -27,13 +27,13 @@ import gregtech6.client.render.GTOvenOverlayModel.OverlayPlan;
 import gregtech6.covers.GTCoverRenderSnapshot;
 
 /**
- * The oven overlay render-path sentinel tests (task p9-render-c-oven-overlay, the
+ * The oven overlay render-path sentinel tests (task render-c-oven-overlay, the
  * GTFluidPipeFlowModelTest shape): the offline quad-level half of the acceptance — the
  * upstream :1014 overlay-pick truth table (four states, mActive winning over mRunning),
  * the CS.java:528-537 FACING_ROTATIONS face table verbatim, the per-face emission and
  * sprite-id rules, the OVEN_SNAPSHOT dispatch gate (the second ModelProperty, the cover
  * chain's key untouched), and the 16 per-state ModelResourceLocation registrations. The
- * sprite→BakedQuad baker is pinned offline too since r8-uvof-private-copies (the #27
+ * sprite→BakedQuad baker is pinned offline too since uvof-private-copies (the #27
  * GTOreBakedModelSideUvTest form): the overlay PNGs are upright art (the running front's
  * glow window sits in the sprite's bottom half), so the corrected canonical UV walk is
  * asserted per vertex.
@@ -174,7 +174,7 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 	}
 
 	/**
-	 * THE r8-uvof-private-copies PIN: the overlay bakes the canonical full-face UV walk on
+	 * THE uvof-private-copies PIN: the overlay bakes the canonical full-face UV walk on
 	 * all six faces — the sprite top (V=0) on the side faces' top corners (upright; the
 	 * running front's glow window keeps its bottom-of-the-door position). The old GTCEu
 	 * cubeUV table baked every side face upside down (plus a U mirror on NORTH/EAST).
@@ -209,7 +209,7 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the 64 per-state registrations (4 ladder rows x 16, task p27-oven-heat-t-ladder)
+	// the 64 per-state registrations (4 ladder rows x 16, task oven-heat-t-ladder)
 	// ---------------------------------------------------------------------------
 
 	@Test

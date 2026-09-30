@@ -16,7 +16,7 @@ import gregtech6.registry.GT6Lasers;
 import gregtech6.tileentity.energy.GT6DynamoBlockEntity;
 
 /**
- * The CO2 Laser + Laser Absorber conversion core (task p32-qu-laser-domain) — the two
+ * The CO2 Laser + Laser Absorber conversion core (task qu-laser-domain) — the two
  * 1.20.1 counterparts of {@code MultiTileEntityLaserElectric} (:38, EU→LU) and
  * {@code MultiTileEntityLaserAbsorberElectric} (:34, LU→EU), both riding the shared
  * {@link GT6DynamoBlockEntity} core (the TileEntityBase10EnergyConverter :45-180 port)
@@ -29,7 +29,7 @@ import gregtech6.tileentity.energy.GT6DynamoBlockEntity;
  * <li><b>Laser Absorber</b> (:976-980, ids 10151-10155): LU in / EU out, input = BACK
  *     (MultiTileEntityLaserAbsorberElectric :35 {@code mFacing == OPOS[aSide]}), output =
  *     FRONT (:36) — exactly the dynamo-core faces.</li>
- * <li><b>Quantum Energizer</b> (task p32-qu-energizer; Loader :961-966, ids 10121-10125):
+ * <li><b>Quantum Energizer</b> (task qu-energizer; Loader :961-966, ids 10121-10125):
  *     LU in / QU out, input = BACK / output = FRONT (MultiTileEntityQuantumEnergizerLaser
  *     :36-:37 — the absorber faces), the THIRD type-pair instance. The ladder columns are
  *     numerically the same shared rungs (the Loader energizer rows carry the identical

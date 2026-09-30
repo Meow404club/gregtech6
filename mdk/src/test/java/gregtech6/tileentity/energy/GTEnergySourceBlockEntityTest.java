@@ -26,7 +26,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.connectors.GTWireBlockEntity;
 
 /**
- * GTEnergySourceBlockEntity offline tests (task p8-d4-energy-source spec ④): the emitter
+ * GTEnergySourceBlockEntity offline tests (task d4-energy-source spec ④): the emitter
  * face gate (isEnergyType = the EU lock, accepting = false — the pure source), the size
  * band, the NBT round trip over the card's three keys, and the joint test with the D1
  * fixture adjacency — the emit call books into a counting fake sink through the real
@@ -35,7 +35,7 @@ import gregtech6.tileentity.connectors.GTWireBlockEntity;
  * GTWireBlockEntity.canConnect double-probe assertions (the p8 ruling 1 backfill:
  * upstream EnergyCompat.canConnectElectricity :102 accepting || emitting).
  *
- * <p>Offline-harness note on the mEmitting default (task p11-infra-hygiene-bundle,
+ * <p>Offline-harness note on the mEmitting default (task infra-hygiene-bundle,
  * the in-case record): {@code mEmitting} starts {@code false} (the p8-d4 card) and
  * NOTHING in the offline harness flips it or fires the tick emit on its own — there is
  * no server ticker, {@code onTick} only runs when a test drives {@code updateEntity()}
@@ -75,7 +75,7 @@ public class GTEnergySourceBlockEntityTest extends GTOfflineTestBase {
 		public byte lastSide = -1;
 
 		// 21.1 ctor validation: the fake binds a real BET over the vanilla stone state —
-		// the supplier is stored, never invoked (task p15-m4-test-infra-2).
+		// the supplier is stored, never invoked (task m4-test-infra-2).
 		static final BlockEntityType<CountingSink> FAKE_TYPE =
 				BlockEntityType.Builder.of((aPos, aState) -> new CountingSink(aPos), Blocks.STONE).build(null);
 
@@ -298,7 +298,7 @@ public class GTEnergySourceBlockEntityTest extends GTOfflineTestBase {
 	// ---------------------------------------------------------------------------
 
 	// ---------------------------------------------------------------------------
-	// the p11 dials (task p11-rotor-source-flip): the emitted type + the ±alternating mode
+	// the p11 dials (task rotor-source-flip): the emitted type + the ±alternating mode
 	// ---------------------------------------------------------------------------
 
 	@Test

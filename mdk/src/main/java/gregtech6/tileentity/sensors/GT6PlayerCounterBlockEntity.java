@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 /**
- * The Player Counter Sensor (task p34-sensors-trivial-14 row ⑮) — the port of
+ * The Player Counter Sensor (task sensors-trivial-14 row ⑮) — the port of
  * MultiTileEntityPlayerCounter.java:32-49. Upstream read
  * {@code ((WorldServer)worldObj).func_73046_m()} — the obfuscated MinecraftServer — for
  * {@code getCurrentPlayerCount()/getMaxPlayers()} (:34-42); the modern face is

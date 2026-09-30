@@ -21,7 +21,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 
 /**
- * The FM.Engine fuel table offline tests (task p12-engine-fuel-fluids acceptance a): the
+ * The FM.Engine fuel table offline tests (task engine-fuel-fluids acceptance a): the
  * row values transcribed from Loader_Fuels.java:77-120 (JetFuel 1536 / Kerosine = Petrol =
  * Diesel 448 / Fuel 512 / nitrofuel 768 / ethanol 144, the |EUt × duration| semantics of
  * Recipe.java:723-725), the fluid-only row shape, the end-to-end pour + fluid probe lookup,

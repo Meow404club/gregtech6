@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.PoweredRailBlock;
 import net.minecraft.world.level.block.RailBlock;
 
 /**
- * The rail family pin tests (task p35-rails-31-blocks, ACCEPTANCE ①) — the ROWS 钉测 over
+ * The rail family pin tests (task rails-31-blocks, ACCEPTANCE ①) — the ROWS 钉测 over
  * the upstream anchor (Loader_Rails.java:39-72 read line by line) plus the speed-ladder
  * pure seam ({@link GT6Rails#ladderSpeed(float, boolean, boolean)}, the BlockBaseRail.java
  * :278-289 direct translation) pinned per material. The vanilla-root shape assertions are

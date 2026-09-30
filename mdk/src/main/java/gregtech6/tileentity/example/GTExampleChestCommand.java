@@ -25,7 +25,7 @@ import gregtech6.gui.GTMenuTypes;
 
 /**
  * {@code /gt6chest} — the automated open-chain proof for the example chest
- * (task p3-example-machine acceptance 4), the {@code /gt6gui} shape (GTGuiCommand) applied to
+ * (task example-machine acceptance 4), the {@code /gt6gui} shape (GTGuiCommand) applied to
  * a real MenuProvider block entity. Two subcommands:
  *
  * <ul>
@@ -48,7 +48,7 @@ import gregtech6.gui.GTMenuTypes;
  * blocked-above placement guard of the block's use() is deliberately not replayed here — this
  * exercises the open chain, not the placement guard.
  *
- * <p>Renamed from {@code /gt6machine} (task p11-gt6machine-literal-fix): the original root
+ * <p>Renamed from {@code /gt6machine} (task gt6machine-literal-fix): the original root
  * literal was registered twice — here and by GTMachineCommand — and Brigadier's
  * CommandNode.addChild silently merges same-name literals into ONE dispatch node, so the
  * bare {@code /gt6machine check} slot resolved to this class's chest check while the

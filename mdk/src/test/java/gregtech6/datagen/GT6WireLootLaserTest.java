@@ -1,5 +1,5 @@
 /**
- * Offline assertions for task p11-wire-laser-loot: the laser wire block joins the shared
+ * Offline assertions for task wire-laser-loot: the laser wire block joins the shared
  * wire loot provider (the p10 E1 redstone six precedent, commit 23e2292), so breaking a
  * placed laser fiber wire drops the block itself.
  *

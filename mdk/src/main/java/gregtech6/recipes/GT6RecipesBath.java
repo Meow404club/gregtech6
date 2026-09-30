@@ -27,7 +27,7 @@ import gregapi.oredict.OreDictPrefix;
 import gregtech6.fluid.GTFluids;
 
 /**
- * The {@code RM.Bath} static-row loader — task p26-kitchen-pot-bowl, the pour face the
+ * The {@code RM.Bath} static-row loader — task kitchen-pot-bowl, the pour face the
  * {@link GT6RecipeMaps#BATH} field doc promises ({@code GT6RecipesBath}, FMLCommonSetup,
  * the {@link GT6RecipesMixer} shape). The upstream Bath rows split into:
  *

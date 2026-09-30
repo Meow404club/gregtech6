@@ -49,7 +49,7 @@ import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The Sifter recipe book (task p26-w1-sifter-compressor-wiremill) — the row audit of the
+ * The Sifter recipe book (task w1-sifter-compressor-wiremill) — the row audit of the
  * RM.Sifting pour surface. Upstream feeders outside compat/:
  *
  * <ul>
@@ -64,7 +64,7 @@ import gregtech6.registry.GTMaterialItems;
  *       tail, eUt 16, duration 144, chances {8000, 2000, 1000, 1000, 1000}. The 1.7.10
  *       {@code ST.make(Blocks.dirt, 1, 1)} meta-1 identity is 1.20.1
  *       {@link Blocks#COARSE_DIRT}; the EtFu beet-seed tail is the 1.20.1
- *       {@link Items#BEETROOT_SEEDS} identity (the p10-compat-vanilla-rows
+ *       {@link Items#BEETROOT_SEEDS} identity (the compat-vanilla-rows
  *       identity-mapping precedent). The trailing foreign outputs (IL.BoP_Turnip_Seeds,
  *       the MaCu bait items) are CUT — the chances array trims with them (a declared
  *       prefix-trim deviation).</li>

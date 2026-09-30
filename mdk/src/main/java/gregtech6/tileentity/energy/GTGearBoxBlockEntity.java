@@ -31,14 +31,14 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * 1.20.1 counterpart of the GT6 Custom GearBox — task p12-gearbox-transformer spec 1,
+ * 1.20.1 counterpart of the GT6 Custom GearBox — task gearbox-transformer spec 1,
  * ported from gregtech/tileentity/energy/transformers/MultiTileEntityGearBox.java
  * (:58-441) as the RU split/direction block of the fluid-engine chain (the total ADR
- * 2026-09-02-p12-fluid-engine-chain ⑥). With the axle family (main 93b5913) this closes
+ * 2026-09-02-fluid-engine-chain ⑥). With the axle family (main 93b5913) this closes
  * the RU transmission face: source → axle → GEARBOX → machines.
  *
  * <p>The connection mask (upstream {@code mAxleGear} :61, the :142-153 monkey-wrench
- * structure built verbatim, the TOOL interactions themselves are the p12-gear-items pool
+ * structure built verbatim, the TOOL interactions themselves are the gear-items pool
  * card): bits 0-5 = a gear mounted on that face, bits 6-7 = a through-axle on the axis
  * (1 = X, 2 = Y, 3 = Z — the CS {@code AXIS_XYZ} indexing, CS.java:756-761, the same
  * encoding the monkey-wrench rows :145-147 write). Persistence rides the upstream
@@ -56,7 +56,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  *     :357-370) EXPLODES the gears: scrap 9+rng(27) of the material + tCount-1 gears
  *     drop, the mask zeroes, the block SURVIVES ({@code mGearsWork = checkGears()} :368
  *     with 0 gears = true). Declared port deviation: the gear ITEM does not exist yet
- *     (the p12-gear-items pool card), so the gear leg drops the block item itself; the
+ *     (the gear-items pool card), so the gear leg drops the block item itself; the
  *     scrap leg rides the runtime material-item lookup and skips silently when the
  *     (prefix, material) pair is not registered. The {@code mTimer < 10} grace (:358)
  *     and the SFX (audio pool) are kept out of the drop path.</li>
@@ -404,7 +404,7 @@ public class GTGearBoxBlockEntity extends TileEntityBase03TicksAndSync implement
 	 * material through the runtime material-item lookup (silently absent when the
 	 * (prefix, material) item is not registered), and the gear leg tCount-1 — the gear
 	 * ITEM does not exist yet, so the block item itself drops (the declared
-	 * p12-gear-items-pool substitution, the task card ruling).
+	 * gear-items-pool substitution, the task card ruling).
 	 */
 	private void dropGearDebris(int aGearCount) {
 		if (!hasLevel() || isClientSide()) return;

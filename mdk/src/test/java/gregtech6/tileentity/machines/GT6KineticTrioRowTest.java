@@ -16,7 +16,7 @@ import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.registry.GTMachines;
 
 /**
- * The W1 Kinetic trio row acceptance (task p26-w1-sifter-compressor-wiremill, the OFFLINE
+ * The W1 Kinetic trio row acceptance (task w1-sifter-compressor-wiremill, the OFFLINE
  * half — the {@link GTCannerFamilyRowTest} shape): the twelve row records pinned to the
  * upstream columns (Sifter :1312-1315 ids 20051-20054 / Compressor :1343-1346 ids
  * 20101-20104 / Wiremill :1373-1376 ids 20151-20154 — Kinetic_T tier-material name column

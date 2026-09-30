@@ -1,12 +1,12 @@
 /**
- * Spot-check pins for task p23-i18n-zh-442-backfill: the acceptance card names four
+ * Spot-check pins for task i18n-zh-442-backfill: the acceptance card names four
  * values that must land in the zh face (the oven word per the dump/hand terminal value,
- * a Draconium tank — the drum noun re-ruled 储罐 by task p27-lang-fix P0, the diesel
+ * a Draconium tank — the drum noun re-ruled 储罐 by task lang-fix P0, the diesel
  * dump anchor, and the ×-shaped wire_gt14 template), plus
  * the full-closure count — every en key now has a zh entry (zero translation debt, the
  * parity subset reaching the en cardinality). Lives in its OWN file so the ratchet
  * constant and the material keyface assertions in GT6LangParityTest (task
- * p23-i18n-material-fill-fix's file) stay untouched apart from the floor bump.
+ * i18n-material-fill-fix's file) stay untouched apart from the floor bump.
  *
  * <p>Same bare-JVM recording posture as GT6LangParityTest.collect: a same-package
  * {@link GT6ZhCn} subclass captures every add() the provider makes.
@@ -60,11 +60,11 @@ public class GT6ZhBackfillSpotCheckTest {
 
 	@Test
 	public void theFourCardNamedValuesLand() {
-		// task p27-oven-heat-t-ladder: the retired atomic block.gt6.oven joined the composed
+		// task oven-heat-t-ladder: the retired atomic block.gt6.oven joined the composed
 		// gt6.row.oven.display face (the upstream name column "Oven ("+Heat_T local+")") —
 		// the 烤箱 machine word is the same dump row, now the template's constant part
 		assertEquals("烤箱 (%s)", zh().get(gregtech6.registry.GTMachines.OVEN_DISPLAY_KEY), "the oven family display template");
-		// task p27-lang-fix P0 (ledger §1.1): the drum family are fluid tanks — the pin
+		// task lang-fix P0 (ledger §1.1): the drum family are fluid tanks — the pin
 		// moved 龙合金鼓 → 龙合金储罐 (dump 龙 word root kept, the tank noun follows the
 		// dump's own 储罐 family tmp/gregtech.lang:13535-13540)
 		assertEquals("龙合金储罐", zh().get("block.gt6.barrel_draconium"), "the Draconium tank (dump 龙 word root + the 储罐 family)");
@@ -76,17 +76,17 @@ public class GT6ZhBackfillSpotCheckTest {
 
 	@Test
 	public void theBackfillClosesTheGapExactly() {
-		// task p27-lang-fix-batch2: the zh face covers the mold/crucible/faucet chain now
+		// task lang-fix-batch2: the zh face covers the mold/crucible/faucet chain now
 		// (the ledger §6 gap closed), so the en face rides the CHAIN recording — the plain
 		// GT6EnUs face stopped being the whole en_us.json when the Lang chain
 		// (GT6CrucibleDatagen/GT6MoldDatagen) grew past the base walk.
-		// Task p28-cfoam-lang-key: en == zh == 2796 (+1 block.gt6.cfoam_owned + the +2
+		// Task cfoam-lang-key: en == zh == 2796 (+1 block.gt6.cfoam_owned + the +2
 		// block.gt6.test_machine[_idle] rows the registry-coverage gate lit up); the +33
 		// owned-cfoam zh VALUE renames (16 fluids + the block row 高级→强化, c0f16149 +
 		// the 16 spray items 高级→强化建筑泡沫喷罐, d1f49d52 — user rulings 2026-09-12)
 		// move no counts.
-		// (the stale "+17" note predated the spray follow-up; fixed by task p28-lang-batch1-fix)
-		// Task p28-crucible-jade-face (rebased onto the cfoam state): en == zh == 2800
+		// (the stale "+17" note predated the spray follow-up; fixed by task lang-batch1-fix)
+		// Task crucible-jade-face (rebased onto the cfoam state): en == zh == 2800
 		// (+4 gt6.jade.crucible.* keys, both locales, hand-row zh values) — value renames
 		// move no counts, only key adds move the floor.
 		Map<String, String> tEn = GT6LangParityTest.chainedEnFace();

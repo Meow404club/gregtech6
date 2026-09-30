@@ -23,7 +23,7 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 
 /**
- * The both-legs loader-conditions emission pass (task p31-nether-lens-end-yield,
+ * The both-legs loader-conditions emission pass (task nether-lens-end-yield,
  * the research.p31-nether-conditional-api asymmetry face): forge 1.20.1 RUNTIME gates
  * datapack-registry JSONs on the {@code forge:conditions} root key
  * (ICondition.java:24-30 {@code shouldRegisterEntry}, the RegistryDataLoader patch's
@@ -64,7 +64,7 @@ public class GT6BiomeModifierConditions implements DataProvider {
      * gate. This fixed order is what the 1.20.1 saveStable (the canonical producer's
      * mirror) emits, so every brand twin lands byte-identical modulo the brand strings.
      *
-     * <p>Package-shared (task p32-ops-biome-keyorder) because the brand mirror rides the
+     * <p>Package-shared (task ops-biome-keyorder) because the brand mirror rides the
      * SAME face: on the 21.1 leg the leg saveStable re-pinned {@code neoforge:conditions}
      * to the head of the re-emitted row while this provider's injection kept it at the
      * alphabetical slot — two canonical forms fighting over one file, the provider own
@@ -128,7 +128,7 @@ public class GT6BiomeModifierConditions implements DataProvider {
     }
 
     /**
-     * The ONE biome-modifier serializer face (task p32-ops-biome-keyorder): the byte shape
+     * The ONE biome-modifier serializer face (task ops-biome-keyorder): the byte shape
      * of the 1.20.1 {@code DataProvider.saveStable} (JsonWriter UTF-8, serializeNulls(false),
      * two-space indent, GsonHelper.writeValue under {@link #CANONICAL_KEY_ORDER}, recursive
      * — GsonHelper.java:532-562 both legs) with the LEG-COMPARATOR DETOUR REMOVED. The 1.21.1

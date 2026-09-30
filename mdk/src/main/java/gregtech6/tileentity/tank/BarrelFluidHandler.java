@@ -11,7 +11,7 @@ import gregtech6.fluid.FluidTankGT;
 
 /**
  * The side-aware {@link IFluidHandler} wrapper over a {@link TileEntityBase08Barrel}
- * (task p4-fluid-barrel spec ①, "side wrapper, W1 same shape"): the 1.20.1 IFluidHandler carries
+ * (task fluid-barrel spec ①, "side wrapper, W1 same shape"): the 1.20.1 IFluidHandler carries
  * no Direction parameter, so the side travels through the
  * {@code getCapability(FLUID_HANDLER, Direction)} wrapper — the W1
  * SideFluidHandler shape (GTFluidPipeBlockEntity.java:297-303), typed to the barrel.
@@ -24,7 +24,7 @@ import gregtech6.fluid.FluidTankGT;
  * barrel down on the next pass. Executed changes mark the BE dirty and queue the
  * client sync (onTankChanged, the pipe onFilledFrom shape).
  *
- * <p>Side rules (task p5-barrel-side-rules spec ①, the user feature — upstream :292-293
+ * <p>Side rules (task barrel-side-rules spec ①, the user feature — upstream :292-293
  * is face-blind): fill is open through every face (only the cover intercept may refuse,
  * {@link #interceptFluidFill}); {@link #drain} is the single choke point — the cover
  * intercept first, then the admission rule {@link #drainAllowedBySide(byte, FluidStack)}:

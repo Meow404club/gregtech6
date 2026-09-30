@@ -25,7 +25,7 @@ import gregtech6.tileentity.TileEntityBase01Root;
 
 /**
  * 1.20.1 counterpart of gregapi/tileentity/multiblocks/TileEntityBase11MultiBlockConverter
- * (:48-160, task p29-w3-turbine-dynamo ①) — the energy-in → energy-out conversion base the
+ * (:48-160, task w3-turbine-dynamo ①) — the energy-in → energy-out conversion base the
  * Large Turbines (steam/gas) and the Large Dynamo ride. The consumers of this base are the
  * card's twelve controllers; the family behaviour lives on the block-carrier ROWS
  * ({@link gregtech6.registry.GT6Turbines} / {@link gregtech6.registry.GT6DynamoHousings}),
@@ -121,7 +121,7 @@ public abstract class GTMultiBlockConverter extends TileEntityBase10MultiBlockBa
 	public static final String NBT_ENERGY_EMITTED = "gt.energy.emitted";
 	public static final String NBT_WASTE_ENERGY = "gt.waste_energy";
 	public static final String NBT_LIMIT_CONSUMPTION = "gt.limit_consumption";
-	/** The RCON observability pair (the p28-c-dynamo-family-be handoff's W3 accounting channel): the last injected packet size, the last conversion door readout, the last delivered packet size. Live diagnostics — re-derived from zero on reload. */
+	/** The RCON observability pair (the c-dynamo-family-be handoff's W3 accounting channel): the last injected packet size, the last conversion door readout, the last delivered packet size. Live diagnostics — re-derived from zero on reload. */
 	public static final String NBT_LAST_IN = "gt.last_in";
 	public static final String NBT_LAST_CONVERTED = "gt.last_converted";
 	public static final String NBT_LAST_OUT = "gt.last_out";

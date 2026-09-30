@@ -22,7 +22,7 @@ import gregtech6.recipes.Recipe;
 import gregtech6.registry.GTMachines;
 
 /**
- * The P29 W1 process-family row acceptance (task p29-w1-kinetic-process-ladder, the
+ * The P29 W1 process-family row acceptance (task w1-kinetic-process-ladder, the
  * OFFLINE half — the {@link GT6KineticTrioRowTest} shape): the twenty-four row records
  * pinned to the upstream columns (Buzzsaw :1318-1321 ids 20061-20064 / Squeezer
  * :1324-1327 ids 20071-20074 / Centrifuge :1330-1333 ids 20081-20084 / Sluice :1464-1467

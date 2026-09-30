@@ -102,7 +102,7 @@ public final class MaterialTreeDisplay {
 	public static final int COL_ORE = 0, COL_CRUSHED = 1, COL_PURIFIED = 2, COL_DUST = 3, COL_BYPRODUCT = 4;
 
 	/**
-	 * The v2 node-graph pitch (task r8-mattree-v2-nodes): 28 px columns crushed the v1
+	 * The v2 node-graph pitch (task mattree-v2-nodes): 28 px columns crushed the v1
 	 * "via" labels against the next column's item icons — 40 px leaves a 22 px wire gap
 	 * between slots with room for the machine-icon node (the 「from –线– [机器] –箭头→ to」
 	 * three-part edge, spec clause ②).

@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
 
 /**
- * The pipe C-Foam dynamic model (task p25-c-foam-pipe-spray spec ⑤) — the third consumer
+ * The pipe C-Foam dynamic model (task c-foam-pipe-spray spec ⑤) — the third consumer
  * of the C-grade render foundation, the {@link GTFluidPipeFlowModel} shape over the
  * {@link PipeFoamSnapshot}: fresh foam OVERLAYS the full-block fresh texture on the pipe
  * body (the upstream pass-7 overlay, TileEntityBase10ConnectorRendered.java:108/:137) and
@@ -191,7 +191,7 @@ public class GTFluidPipeFoamModel extends GTDynamicBakedModel {
 	/**
 	 * The GTCEu StaticFaceBakery.bakeFace cubeUV switch (StaticFaceBakery.java:54-66, the arrow baker's table).
 	 *
-	 * <p>KEPT VERBATIM (the r8-uvof-private-copies ruling, the GTWireBakedModel precedent):
+	 * <p>KEPT VERBATIM (the uvof-private-copies ruling, the GTWireBakedModel precedent):
 	 * the four C-Foam sprites are orientation-free grayscale noise (the upstream
 	 * {@code BlockTextureDefault} full-face foam icons, TileEntityBase10ConnectorRendered
 	 * .java:261-262) and the foam's PAINT tint is flat — so the old table's side V-flip /

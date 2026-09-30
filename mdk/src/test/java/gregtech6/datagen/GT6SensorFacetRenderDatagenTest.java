@@ -1,5 +1,5 @@
 /*
- * Offline pin for task r8-tex-sensors — the 21 sensor families trade the p26/p34/p37
+ * Offline pin for task tex-sensors — the 21 sensor families trade the p26/p34/p37
  * src-over front bake (one cube_all texture on all six faces) for the front-bearing
  * two-layer faceted cube: the untinted colored body (front on north = the FACING face,
  * back on south, side on the four flanks — the upstream

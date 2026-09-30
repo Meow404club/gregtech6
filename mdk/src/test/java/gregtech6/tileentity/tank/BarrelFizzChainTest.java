@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Task p13-steam-proof-repay acceptance ① — the barrel fizz chain truth table, offline.
+ * Task steam-proof-repay acceptance ① — the barrel fizz chain truth table, offline.
  *
  * <p>The live gt6 fluids (steam 373 K) are registry-side and exercised by the RCON chain
  * (the GTFluidsEngineFamilyTest offline/live split); offline the gates are driven through

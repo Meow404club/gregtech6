@@ -1,5 +1,5 @@
 /*
- * Offline pinned-census tests for task r8-tex-composite-family (the R2 batch-3 swap):
+ * Offline pinned-census tests for task tex-composite-family (the R2 batch-3 swap):
  * the composite-energy four families (the 12 battery boxes, the 20 crystal chargers,
  * the 2 ZPM dechargers, the 5 LD transformer endpoints) leave the p29/p36 baked
  * composites for the two-layer grammar — the tintindex-0 grayscale colored body is the
@@ -8,7 +8,7 @@
  * CrystalCharger :33-:36 / ZPMDechargerEU :39-:44 / LongDistanceTransformer
  * :284-:299), the six 0.01-plate overlay decals stay untinted, and ACTIVE switches
  * the shell to the overlay_active art (the trinary collapsed to the boolean — the
- * blinking third state stays the r4-18 defer).
+ * blinking third state stays the #18 defer).
  *
  * <p>Coverage (asserted against the committed generated + static trees, the
  * {@link GT6ConverterPaintRenderDatagenTest} shape):
@@ -87,7 +87,7 @@ class GT6CompositeEnergyTexDatagenTest extends GTOfflineTestBase {
             "zpm_decharger", true, "zpm_decharger_quantum", true,
             "long_distance_transformer", true);
 
-    /** The 51 borrowed PNGs (r8-tex-composite-family commit 1, the README tail manifest). */
+    /** The 51 borrowed PNGs (tex-composite-family commit 1, the README tail manifest). */
     private static final List<String> BORROWED_PNGS = List.of(
             "battery_box/colored_front.png", "battery_box/colored_side.png",
             "battery_box/overlay_front.png", "battery_box/overlay_side.png",

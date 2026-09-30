@@ -1,5 +1,5 @@
 /**
- * Tests for task p30-w6-t3-large-veins: the 40-row vein table, the draw/validity
+ * Tests for task w6-t3-large-veins: the 40-row vein table, the draw/validity
  * semantics, the codec roundtrip and the per-chunk slice tiling — the acceptance's
  * offline audit unit (the GT6WorldgenDatagenTest posture).
  *
@@ -51,9 +51,9 @@ class GT6LargeVeinTest {
         "ore.large.moonmars", "ore.large.cheese", "ore.large.desh", "ore.large.syrmorite", "ore.large.octine");
 
     /** The rows drawable overworld under the registered-universe gate (the mInvalid gate: >= 1 valid slot).
-     *  garnet/pitchblende/peridot revived with r7-a-ore-axis-extension (the stone-layer companions
+     *  garnet/pitchblende/peridot revived with a-ore-axis-extension (the stone-layer companions
      *  Uvarovite / Pitchblende+Uraninite / MgCO3+Peridot landed in the axis); sapphire/sapphire2/
-     *  beryllium/beryllium2 revived with r7-b-gem-pool-extension (the gem-pool axis members lit
+     *  beryllium/beryllium2 revived with b-gem-pool-extension (the gem-pool axis members lit
      *  their all-gem slot rows). */
     private static final List<String> DRAWABLE = List.of(
         "ore.large.lignite", "ore.large.coal", "ore.large.lapis", "ore.large.iodinesalt", "ore.large.rocksalt",
@@ -241,7 +241,7 @@ class GT6LargeVeinTest {
     }
 
     /**
-     * The deep-band mirror table (task r6-c2-deep-band): row-for-row shift of the selected
+     * The deep-band mirror table (task c2-deep-band): row-for-row shift of the selected
      * surface twins ({@code y - 64}, the GTOreWorldgen.DEEP_SHIFT rule), wholly below y0,
      * every other column verbatim — and a deep-table draw produces a wholly-negative slice.
      */

@@ -28,8 +28,8 @@ import gregtech6.block.material.GTMaterialPrefixBlock;
 import gregtech6.item.GTMaterialPrefixBlockItem;
 
 /**
- * Registration home of the material prefix BLOCK universe (task p8-prefixblock-registry,
- * ADR 2026-08-31-p8-prefixblocks): the seven upstream storage-block prefixes
+ * Registration home of the material prefix BLOCK universe (task prefixblock-registry,
+ * ADR 2026-08-31-prefixblocks): the seven upstream storage-block prefixes
  * (Loader_PrefixBlocks.java:40-46 blockRaw/Gem/Dust/Ingot/Plate/PlateGem/Solid) as per-pair
  * blocks + block items + one creative tab per non-empty prefix, in one self-contained
  * {@code @EventBusSubscriber(MOD)} listener (ADR-P3-4 — GT6Mod/GTModBusListener stay
@@ -46,7 +46,7 @@ import gregtech6.item.GTMaterialPrefixBlockItem;
  * (GTMaterialItems.java:53-57), plus a defensive REGISTERED_IDS set across re-fired
  * RegisterEvents (ADR-P2-2 fix 1). The {@link #get} seam is the query path for later
  * consumers (cokeoven resolver fallback, /gt6multiblock input); the render card
- * (p8-prefixblock-render) consumes {@link #registrationOrder()}/{@link #blockArray()} for
+ * (prefixblock-render) consumes {@link #registrationOrder()}/{@link #blockArray()} for
  * its datagen. Material system initialisation is NOT owned here — GTMaterialItems
  * .initMaterials() already runs at ConstructMod (GT6Mod wiring, OP.init idempotent).
  *

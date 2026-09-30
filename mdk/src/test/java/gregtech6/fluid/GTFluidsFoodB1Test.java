@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Food-fluid batch-1 offline tests (task p33-food-fluids-b1 — the registration-row
+ * Food-fluid batch-1 offline tests (task food-fluids-b1 — the registration-row
  * assertions against the DECLARED values, the GTFluidsFoodFamilyTest shape over the
  * FIFTH AquaFluidSpec table). The batch is the FL.java FOOD-flag census remainder:
  * 234 FOOD rows in FL.java:110-408, minus the 15 already-ported earlier-table rows
@@ -258,7 +258,7 @@ public class GTFluidsFoodB1Test extends GTOfflineTestBase {
 		assertEquals(6, GTFluids.AQUA_SPECS.size());
 		assertEquals(2, GTFluids.SIMPLE_LIQUID_SPECS.size());
 		assertEquals(4, GTFluids.FOOD_FLUID_SPECS.size());
-		assertEquals(48, GTFluids.CHEMICAL_SPECS.size(), "the chemical domain is a different card — zero overlap (39 + 5 task p34-machines-bumblelyzer-crucible molten quintet + 3 task p34-machines-burner-plantalyzer Burner Mixer row carriers + 1 task debt-hene-fluid heliumneon blend row)");
+		assertEquals(48, GTFluids.CHEMICAL_SPECS.size(), "the chemical domain is a different card — zero overlap (39 + 5 task machines-bumblelyzer-crucible molten quintet + 3 task machines-burner-plantalyzer Burner Mixer row carriers + 1 task debt-hene-fluid heliumneon blend row)");
 	}
 
 	/** The representative-row property assertions (one per family, acceptance 属性断言). */

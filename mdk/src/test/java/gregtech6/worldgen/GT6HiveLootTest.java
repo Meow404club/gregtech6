@@ -28,7 +28,7 @@ import gregtech6.registry.GT6BeeCombs;
 import gregtech6.tileentity.bees.GT6BumbleHiveBlockEntity;
 
 /**
- * The hive LOOT reconciliation (task p33-bees-lv3-c-hive-loot, acceptance ①): the
+ * The hive LOOT reconciliation (task bees-lv3-c-hive-loot, acceptance ①): the
  * {@link GT6HiveFeature#fillLoot} layout against the upstream placeHive inventory table
  * (WorldgenHives.java:203) — slot 0 the family comb over the :189-213 species-comb table
  * with the {@code UT.Code.units(work, 10000, 10, T)} count fold, slot 1 the princess

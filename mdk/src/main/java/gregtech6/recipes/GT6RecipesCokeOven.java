@@ -46,9 +46,9 @@ import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The Coke Oven recipe book — task p6-cokeoven-processing (ADR ruling ② static pour +
+ * The Coke Oven recipe book — task cokeoven-processing (ADR ruling ② static pour +
  * the 2026-08-30 coordinator amendment: log recipes are TAG-driven, this file owns the
- * material-universe rows only; task p8-prefixblock-registry backfills the seven block
+ * material-universe rows only; task prefixblock-registry backfills the seven block
  * rows, 32 → 39).
  *
  * <p><b>Upstream source</b>: Loader_Recipes_Other.java:775-815 — 39
@@ -70,7 +70,7 @@ import gregtech6.registry.GTMaterialItems;
  * 27*U4 = 6750, per the file scale; a 3375 figure in the task card contradicted its own
  * :803 = 27*U2 = 13500 line and the evidence rows).
  *
- * <p><b>Fluid identity</b> (task p7-cokeoven-backfill, spec ③): the row's fluid field is the
+ * <p><b>Fluid identity</b> (task cokeoven-backfill, spec ③): the row's fluid field is the
  * gt6 fluid id path (creosote/oil) instead of a hardcoded creosote amount; each row resolves
  * its fluid through {@link #sFluidResolver} at pour time, so an unregistered fluid skips its
  * rows exactly like the upstream absent-fluid behaviour.
@@ -78,7 +78,7 @@ import gregtech6.registry.GTMaterialItems;
  * <p><b>Skipped upstream rows (the pool, not silent — asserted by the offline walk)</b>:
  * the block-family six (:787-789 Coal / :803-805 Lignite) and the oil-shale blockDust row
  * (:815) were pooled in p6/p7 (block* prefixes had no items) and are BACKFILLED by task
- * p8-prefixblock-registry — GTMaterialBlocks now registers the block universe, the two
+ * prefixblock-registry — GTMaterialBlocks now registers the block universe, the two
  * resolvers below fall back to it, and the table carries all seven rows (39 total). The
  * Woods/OreDict/Crops/Tools dynamic surface (:176-180/:197-201, OreDict:205, Crops:76,
  * Tools:418) is replaced by the tag-driven {@link GT6CokeOvenTagListener} (one recipe per
@@ -190,13 +190,13 @@ public final class GT6RecipesCokeOven {
 	/**
 	 * The skipped upstream surface, kept as DATA for the audit walk (see class doc):
 	 * the block rows (:787-789/:803-805/:815) were p6/p7 pool and are BACKFILLED by task
-	 * p8-prefixblock-registry (GTMaterialBlocks + the resolver fallback); the dynamic
+	 * prefixblock-registry (GTMaterialBlocks + the resolver fallback); the dynamic
 	 * log/beam family is now owned by the tag listener (beam/bamboo/wood-pellet have no
 	 * tagged counterpart → pooled).
 	 */
 	public static final List<String> SKIPPED_UPSTREAM = List.of(
-		"Loader_Recipes_Other.java:787-789/:803-805 — blockRaw/blockIngot/blockGem x Coal/Lignite: BACKFILLED by p8-prefixblock-registry (GTMaterialBlocks block items; was the p6 pool)",
-		"Loader_Recipes_Other.java:815 — Oilshale blockDust row: BACKFILLED by p8-prefixblock-registry (blockDust joined the block universe; was the p7 ruling)",
+		"Loader_Recipes_Other.java:787-789/:803-805 — blockRaw/blockIngot/blockGem x Coal/Lignite: BACKFILLED by prefixblock-registry (GTMaterialBlocks block items; was the p6 pool)",
+		"Loader_Recipes_Other.java:815 — Oilshale blockDust row: BACKFILLED by prefixblock-registry (blockDust joined the block universe; was the p7 ruling)",
 		"Loader_Recipes_Woods.java:197-201 — beam family (no beam item; p6 pool)",
 		"Loader_Recipes_Woods.java:165-180 log family — replaced by the #minecraft:logs tag listener (coordinator amendment 2026-08-30)",
 		"Loader_Recipes_Other.java:205 OreDict listener — no dynamic oredict surface; static pour only",

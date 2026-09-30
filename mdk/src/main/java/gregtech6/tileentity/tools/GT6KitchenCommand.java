@@ -31,7 +31,7 @@ import gregtech6.registry.GT6Kitchen;
 
 /**
  * {@code /gt6kitchen} — the manual-kitchen acceptance command (task
- * p26-kitchen-pot-bowl; the GTMachineCommand :202 machine() shape, console-safe). One
+ * kitchen-pot-bowl; the GTMachineCommand :202 machine() shape, console-safe). One
  * literal per carrier — {@code pot} (the steel 8000 L body), {@code pot_wood} (the
  * wooden 4000 L row) and {@code bowl} (the ceramic RM.Mixer body) — carrying:
  *
@@ -64,7 +64,7 @@ public final class GT6KitchenCommand {
 		tKitchen.then(carrier("pot", GT6Kitchen.BATHING_POT_STEEL))
 				.then(carrier("pot_wood", GT6Kitchen.BATHING_POT_WOOD))
 				.then(carrier("bowl", GT6Kitchen.MIXING_BOWL))
-				// task p33-food-machines-kitchen — the Juicer joins (RM.Juicer, the manual top-face round)
+				// task food-machines-kitchen — the Juicer joins (RM.Juicer, the manual top-face round)
 				.then(carrier("juicer", GT6Kitchen.JUICER));
 		event.getDispatcher().register(tKitchen);
 	}

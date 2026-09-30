@@ -32,7 +32,7 @@ import gregtech6.util.UT6;
  * 1.20.1 counterpart of the upstream 1.7.10 root base class
  * gregapi/tileentity/base/TileEntityBase01Root.java (extends TileEntity, 1011 lines).
  *
- * <p>Port scope (task p3-be-framework, minimal face):
+ * <p>Port scope (task be-framework, minimal face):
  * <ul>
  * <li>lifecycle flags (:97-115) — the IC2 E-net pair (:109) and the AE2/IC2
  *     {@code @Optional} interfaces (:92-94) are stripped together with their

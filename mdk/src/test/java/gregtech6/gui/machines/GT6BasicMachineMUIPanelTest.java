@@ -38,7 +38,7 @@ import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 
 /**
- * The offline panel-factory gate (task p26-mui-a-panel-factory): {@link GTBasicMachineMUI}
+ * The offline panel-factory gate (task mui-a-panel-factory): {@link GTBasicMachineMUI}
  * builds the machine panel from a bare Host fake with no player, no screen and no registry
  * beyond the offline bootstrap (the GT6MenuInputSlotExpansionTest shape — since issue #3 the
  * player-inventory widget rides the tree unconditionally, it binds by sync key with no

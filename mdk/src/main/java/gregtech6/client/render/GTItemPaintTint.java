@@ -15,7 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The machine paint tint, the INVENTORY half (task p22-painted-item-domain) — the item
+ * The machine paint tint, the INVENTORY half (task painted-item-domain) — the item
  * counterpart of {@link GTMachinePaintTint} over the same machine-domain census: a placed
  * painted machine now drops a stack whose NBT carries {@code gt.color}/{@code gt.painted}
  * under {@code BlockEntityTag} (the GT6LootTables copy_nbt function), and this
@@ -26,7 +26,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * hand-written forwards), the Forge-docs "a BlockColor does NOT colour its BlockItem"
  * caveat of the wire/prefix cards applies verbatim here.
  *
- * <p>TWO-LEVEL READ (task p23-painted-item-tag-fix, kb-painted-item-tag-mismatch): the
+ * <p>TWO-LEVEL READ (task painted-item-tag-fix, kb-painted-item-tag-mismatch): the
  * loot copy_nbt lands the paint pair under {@code BlockEntityTag} (GT6LootTables.paintCopyNbt —
  * the vanilla placement read-back key, {@code BlockItem.BLOCK_ENTITY_TAG}), so the first-pass
  * root-tag-only read missed the dropped stacks (no inventory tint). The lambda now probes the
@@ -34,7 +34,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * root form are both tinted, the write side stays untouched ({@code BlockEntityTag} is the
  * load-bearing placement key).
  *
- * <p>COLOUR SOURCE (task p27-machine-material-tint-fidelity): the unpainted arms no longer
+ * <p>COLOUR SOURCE (task machine-material-tint-fidelity): the unpainted arms no longer
  * short-circuit to the {@code -1} sentinel — an UNPAINTED machine stack renders its row
  * material (the upstream item colour is a function of the MTE id's registration row, not of
  * item NBT: writeItemNBT2 carries no NBT_COLOR, and the creative-tab/JEI enumeration rides
@@ -69,7 +69,7 @@ public final class GTItemPaintTint {
     public static ItemColor itemColor() {
         return (@Nullable ItemStack aStack, int aTintIndex) -> {
             if (aTintIndex != 0 || aStack == null) return -1;
-            // the combined dispatch (task p38-issue8-multipart-tint): the part-family wall
+            // the combined dispatch (task issue8-multipart-tint): the part-family wall
             // stacks resolve their row material here — the unpainted creative-tab face the
             // issue names
             OreDictMaterial tMaterial = aStack.getItem() instanceof BlockItem tItem

@@ -28,7 +28,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
  * GTGearBoxBlockEntity + GTTransformerRotationBlockEntity offline tests (task
- * p12-gearbox-transformer acceptance a): the checkGears topology truth table (the
+ * gearbox-transformer acceptance a): the checkGears topology truth table (the
  * corner-pair/opposite-pair/triangle/D-shape/5-6-gear rules over the mask space), the
  * multi-input lowest-speed + power-accumulation, the overspeed gear explosion (>VMAX →
  * the mask zeroes + the block-level state change; the physical drops are the RCON
@@ -83,7 +83,7 @@ public class GearBoxTest extends GTOfflineTestBase {
 
 		// 21.1 ctor validation (validateBlockState → getType().isValid): the fake binds a
 		// real BET over the vanilla stone state — the supplier is stored, never invoked
-		// (task p15-m4-test-infra-2).
+		// (task m4-test-infra-2).
 		static final BlockEntityType<CappedSink> FAKE_TYPE =
 				BlockEntityType.Builder.of((aPos, aState) -> new CappedSink(aPos, 0), Blocks.STONE).build(null);
 

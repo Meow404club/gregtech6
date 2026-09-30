@@ -40,7 +40,7 @@ import gregtech6.registry.GT6Tools;
 import gregapi.oredict.OreDictMaterial;
 
 /**
- * {@code /gt6dig} — the dig-tool acceptance command (task p29-w5-t1-dig-six; card-local
+ * {@code /gt6dig} — the dig-tool acceptance command (task w5-t1-dig-six; card-local
  * in command/ like GT6ChiselCommand/GTToolCommand — the fake-player channel: the RCON
  * arms drive the EXACT item surfaces the keyboard player hits, the
  * "the command IS the acceptance channel" ruling):
@@ -55,7 +55,7 @@ import gregapi.oredict.OreDictMaterial;
  *     (empty inventory, no torch).</li>
  * <li>{@code mine <pos> <tool> [hand]} — the chisel-mine face (Block.playerDestroy +
  *     removeBlock — the ServerPlayerGameMode.destroyBlock drop face, dropResources
- *     consults the table with THIS_ENTITY + TOOL context, the p21-chisel-drop-conversion
+ *     consults the table with THIS_ENTITY + TOOL context, the chisel-drop-conversion
  *     shape); the spawned drops are counted, DISCARDED (rerun idempotency) and listed —
  *     the report IS the conversion verdict.</li>
  * <li>{@code speed <pos> <tool>} — the mining-face read: getDestroySpeed + the
@@ -67,7 +67,7 @@ import gregapi.oredict.OreDictMaterial;
  * the GLOBAL loot modifier chain — mine with the right tool and the spawned drops are
  * the converted ones (the seed for the per-tool GLM JSONs).
  *
- * <p>MATERIAL ARMS (task p31-dig-ladder): {@code speed <pos> <tool> <material>} and
+ * <p>MATERIAL ARMS (task dig-ladder): {@code speed <pos> <tool> <material>} and
  * {@code mine <pos> <tool> <material>} stamp the {@code GT.ToolStats} identity through
  * the {@link GT6ToolLadder#stampIdentity} seam (the same face the material-tool recipes
  * assemble through) before the read — the per-material level/speed/durability

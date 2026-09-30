@@ -1,5 +1,5 @@
 /*
- * Offline pinned tests for task r8-tex-bridge-kinetic (the census tierB2/B3 batch 2):
+ * Offline pinned tests for task tex-bridge-kinetic (the census tierB2/B3 batch 2):
  * the five borrowable bridge/laser families, the rotation transformer and the kinetic
  * engines (28 steam rows + 8 diesel rows) join the addConverterModel two-layer grammar —
  * the tintindex-0 grayscale colored body is the mRGBa seat (upstream
@@ -283,7 +283,7 @@ class GT6BridgeKineticTexDatagenTest {
     // the borrowed wave (the PNG face)
     // ------------------------------------------------------------------
 
-    /** The 38 borrowed wave files (the assets/README.md r8-tex-bridge-kinetic section). */
+    /** The 38 borrowed wave files (the assets/README.md tex-bridge-kinetic section). */
     private static final List<String> BORROWED = List.of(
             "bridge_heater_colored_back.png",
             "bridge_heater_overlay_front.png", "bridge_heater_overlay_back.png", "bridge_heater_overlay_side.png",

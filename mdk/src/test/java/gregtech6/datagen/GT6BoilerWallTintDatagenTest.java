@@ -1,5 +1,5 @@
 /**
- * The C5 clean-up wiring census (task r3-world-tint-render-type): the two #8 stragglers
+ * The C5 clean-up wiring census (task world-tint-render-type): the two #8 stragglers
  * the R3 research caught (research.issues-r3-wall q3) join the baked-tint domain —
  * <ul>
  * <li><b>the boiler tank family</b> — every upstream row carries NBT_MATERIAL
@@ -124,7 +124,7 @@ class GT6BoilerWallTintDatagenTest {
 
     /**
      * The boiler model seats the tint on every body face and ships the untinted overlay
-     * shell (task r8-tex-large-boilers — the former single-layer pin and its front
+     * shell (task tex-large-boilers — the former single-layer pin and its front
      * placeholder art are retired: upstream ships NO front art for this tank,
      * FACES_TBS={0,1,2,2,2,2}, so all four sides bind the side sprite).
      */

@@ -53,7 +53,7 @@ import gregtech6.registry.GT6Sensors;
 import gregapi.data.MT;
 
 /**
- * The GT6 vanilla-crafting datagen home — task p24-tool-system spec ③, the FIRST
+ * The GT6 vanilla-crafting datagen home — task tool-system spec ③, the FIRST
  * RecipeProvider of the port (decisions.p24-tool-system-recipe-provider-first: single
  * file, {@code //?} forks confined to the constructor and the {@code buildRecipes}
  * signature, the builder chain shared; the tags-foundation/tool-family cards take over
@@ -65,7 +65,7 @@ import gregapi.data.MT;
  * result {@code gt6:spray_can_empty} ({@link GT6SprayCans#SPRAY_CAN_EMPTY}, the p22
  * depletion-swap target — the crafted can is what the colour cans deplete INTO, so
  * this recipe closes the p22 "v1 acquisition" note's crafting cut). Task
- * p25-food-can-row0 appends the food-can second row itself ({@code "fh"}/{@code "oP"},
+ * food-can-row0 appends the food-can second row itself ({@code "fh"}/{@code "oP"},
  * :239 — {@link #foodCanEmptyBuilder}) plus the bending-cylinder self-craft
  * ({@code "sfh"}/{@code "III"}, Loader_Tools.java:313 — {@link #bendingCylinderSmallBuilder}),
  * the row that consumes the hammer/file/saw trio through its own tool letters.
@@ -90,32 +90,32 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation SPRAY_CAN_EMPTY_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "spray_can_empty");
 
 	/**
-	 * The tool-family recipe ids (task p25-tool-hammer-wrench spec ⑤) — the result-path
+	 * The tool-family recipe ids (task tool-hammer-wrench spec ⑤) — the result-path
 	 * vanilla naming convention; the two hammer routes cannot share the result's own id,
 	 * so the route names the suffix (the vanilla two-recipe-per-result precedent shape).
 	 */
 	public static final ResourceLocation HAMMER_STONE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hammer_stone");
 	public static final ResourceLocation HAMMER_INGOTS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hammer_ingots");
 	public static final ResourceLocation WRENCH_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "wrench");
-	/** The bending-cylinder self-craft row (task p25-food-can-row0 spec ②) — the result-path convention. */
+	/** The bending-cylinder self-craft row (task food-can-row0 spec ②) — the result-path convention. */
 	public static final ResourceLocation BENDING_CYLINDER_SMALL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bending_cylinder_small");
-	/** The pocket multitool recipe id (task p29-w5-t7-pocket-eight, the result-path convention). */
+	/** The pocket multitool recipe id (task w5-t7-pocket-eight, the result-path convention). */
 	public static final ResourceLocation POCKET_MULTITOOL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pocket_multitool");
-	/** The empty-food-can crafting row (task p25-food-can-row0 spec ③, MultiItemRandomTools.java:239). */
+	/** The empty-food-can crafting row (task food-can-row0 spec ③, MultiItemRandomTools.java:239). */
 	public static final ResourceLocation FOOD_CAN_EMPTY_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "food_can_empty");
-	/** The machine-face four self-craft rows (task p29-w5-t3-machine-face-four) — the result-path convention, one per tool. */
+	/** The machine-face four self-craft rows (task w5-t3-machine-face-four) — the result-path convention, one per tool. */
 	public static final ResourceLocation SOFT_HAMMER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "soft_hammer");
 	public static final ResourceLocation MONKEY_WRENCH_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "monkey_wrench");
 	public static final ResourceLocation MAGNIFYING_GLASS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "magnifying_glass");
 	public static final ResourceLocation PINCERS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pincers");
-	/** The plate-mold crafting row (task p26-w1-press-extruder-molds, MultiItemTechnological.java:247 stroke). */
+	/** The plate-mold crafting row (task w1-press-extruder-molds, MultiItemTechnological.java:247 stroke). */
 	public static final ResourceLocation SHAPE_EXTRUDER_PLATE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_extruder_plate");
-	/** The rod-mold crafting row (task p26-w1-press-extruder-molds, MultiItemTechnological.java:221 stroke). */
+	/** The rod-mold crafting row (task w1-press-extruder-molds, MultiItemTechnological.java:221 stroke). */
 	public static final ResourceLocation SHAPE_EXTRUDER_ROD_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_extruder_rod");
-	/** The LARGE Steel Crucible crafting row (task p26-crucible-multiblock SPEC ⑦). */
+	/** The LARGE Steel Crucible crafting row (task crucible-multiblock SPEC ⑦). */
 	public static final ResourceLocation LARGE_STEEL_CRUCIBLE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "large_steel_crucible");
 	/**
-	 * The kitchen band (task p26-kitchen-pot-bowl): the steel pot's crafting row (the
+	 * The kitchen band (task kitchen-pot-bowl): the steel pot's crafting row (the
 	 * result-path convention) + the clay-bowl reverse shapeless + the Raw-bowl hardening
 	 * smelt (the :2177 tail — the result path is the vanilla convention again).
 	 */
@@ -151,32 +151,32 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
 	}
 
-	/** The Progress Sensor crafting row (task p26-sensors-core, Loader_MultiTileEntities.java:1995) — the result-path convention. */
+	/** The Progress Sensor crafting row (task sensors-core, Loader_MultiTileEntities.java:1995) — the result-path convention. */
 	public static final ResourceLocation PROGRESSMETER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "progressmeter");
-	/** The Miniature Nether Portal crafting row (task p35-portals-mini-nether-end, Loader :2003) — the result-path convention. */
+	/** The Miniature Nether Portal crafting row (task portals-mini-nether-end, Loader :2003) — the result-path convention. */
 	public static final ResourceLocation MINI_PORTAL_NETHER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "mini_portal_nether");
-	/** The Miniature End Portal crafting row (task p35-portals-mini-nether-end, Loader :2004). */
+	/** The Miniature End Portal crafting row (task portals-mini-nether-end, Loader :2004). */
 	public static final ResourceLocation MINI_PORTAL_END_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "mini_portal_end");
-	/** The Fluid-O-Meter Sensor crafting row (task p26-sensors-core, Loader :1986). */
+	/** The Fluid-O-Meter Sensor crafting row (task sensors-core, Loader :1986). */
 	public static final ResourceLocation FLUIDOMETER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "fluidometer");
 	/**
-	 * The ULV FE→EU converter crafting row (task p28-b-fe-converter-machine) — DECLARED
+	 * The ULV FE→EU converter crafting row (task b-fe-converter-machine) — DECLARED
 	 * NEW DESIGN, no upstream recipe exists (the machine itself is the declared deviation):
 	 * the tin-alloy double plates + red-alloy fine wires carry the signal side, the copper
 	 * ingots the conductor core; the result-path vanilla convention.
 	 */
 	public static final ResourceLocation FE_CONVERTER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "fe_converter");
 	/**
-	 * The Water Wheel crafting row (task p28-c-water-wheel) — the kTFRUAddon registration
+	 * The Water Wheel crafting row (task c-water-wheel) — the kTFRUAddon registration
 	 * row QUANTITIES (tileEntityInit0.java:112 "Water Mill": {@code "PPP","SRS","PPP"} =
 	 * 6 planks + 2 bronze rings + 1 axle part, the clean-room semantic anchor) over the
 	 * port carriers; the result-path vanilla convention.
 	 */
 	public static final ResourceLocation WATER_WHEEL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "water_wheel");
-	/** The Greg o'Lantern crafting row id (task p32-placeables, the result-path convention). */
+	/** The Greg o'Lantern crafting row id (task placeables, the result-path convention). */
 	public static final ResourceLocation GREG_O_LANTERN_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "greg_o_lantern");
 	/**
-	 * The Electric Transformer (ULV-LV) crafting row (task p28-c-ulv-lv-transformer) —
+	 * The Electric Transformer (ULV-LV) crafting row (task c-ulv-lv-transformer) —
 	 * the Loader_MultiTileEntities.java:881 row SHAPE ("WIW","XMx","WIW" — the unbound
 	 * 'm' dead cell folds to a space; CR has no 'm' tool letter) over the LV-era
 	 * MATERIAL-LOCK carriers (decisions.p28-ulv-tier-rulings transformer_ruling): the
@@ -186,11 +186,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 */
 	public static final ResourceLocation ELECTRIC_TRANSFORMER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "electric_transformer");
 
-	/** The Bumbliary pair row ids (task p34-bumbliary-recipes — the result-path convention). */
+	/** The Bumbliary pair row ids (task bumbliary-recipes — the result-path convention). */
 	public static final ResourceLocation BUMBLIARY_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bumbliary");
 	public static final ResourceLocation BUMBLIARY_ADVANCED_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bumbliary_advanced");
 
-	/** The six dig-tool row ids (task p29-w5-t1-dig-six — the CR row id per tool, the WRENCH_ID shape). */
+	/** The six dig-tool row ids (task w5-t1-dig-six — the CR row id per tool, the WRENCH_ID shape). */
 	public static final ResourceLocation PICKAXE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pickaxe");
 	public static final ResourceLocation PICKAXE_GEM_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pickaxe_gem");
 	public static final ResourceLocation PICKAXE_CONSTRUCTION_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pickaxe_construction");
@@ -201,14 +201,14 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation AXE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "axe");
 	public static final ResourceLocation AXE_DOUBLE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "axe_double");
 
-	/** The five field-tool row ids (task p29-w5-t4-field-five — the t1 row-id shape). */
+	/** The five field-tool row ids (task w5-t4-field-five — the t1 row-id shape). */
 	public static final ResourceLocation HOE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hoe");
 	public static final ResourceLocation PLOW_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "plow");
 	public static final ResourceLocation BRANCH_CUTTER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "branch_cutter");
 	public static final ResourceLocation SENSE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "sense");
 	public static final ResourceLocation HAND_DRILL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hand_drill");
 
-	/** The six scene-tool row ids (task p29-w5-t5-scene-six — the same CR row id shape; the flint pair is TWO rows). */
+	/** The six scene-tool row ids (task w5-t5-scene-six — the same CR row id shape; the flint pair is TWO rows). */
 	public static final ResourceLocation SCISSORS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "scissors");
 	public static final ResourceLocation SCOOP_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "scoop");
 	public static final ResourceLocation PLUNGER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "plunger");
@@ -217,7 +217,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation ROLLING_PIN_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "rolling_pin");
 	public static final ResourceLocation BENDING_CYLINDER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bending_cylinder");
 
-	/** The CR.shapeless self-recast row id of a sensor path (task p26-sensors-core) — the path + the {@code _recast} suffix (the grass reverse-row suffix shape). */
+	/** The CR.shapeless self-recast row id of a sensor path (task sensors-core) — the path + the {@code _recast} suffix (the grass reverse-row suffix shape). */
 	public static ResourceLocation sensorRecastId(String aPath) {
 		return new ResourceLocation(GT6DataGenerators.MOD_ID, aPath + "_recast");
 	}
@@ -259,8 +259,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			hopperRecipeBuilder(tRow).save(aConsumer, hopperRecipeId(tRow));
 		}
 		progressmeterBuilder().save(aConsumer, PROGRESSMETER_ID);
-		miniPortalNetherBuilder().save(aConsumer, MINI_PORTAL_NETHER_ID); // task p35-portals-mini-nether-end
-		miniPortalEndBuilder().save(aConsumer, MINI_PORTAL_END_ID); // task p35-portals-mini-nether-end
+		miniPortalNetherBuilder().save(aConsumer, MINI_PORTAL_NETHER_ID); // task portals-mini-nether-end
+		miniPortalEndBuilder().save(aConsumer, MINI_PORTAL_END_ID); // task portals-mini-nether-end
 		fluidometerBuilder().save(aConsumer, FLUIDOMETER_ID);
 		feConverterBuilder().save(aConsumer, FE_CONVERTER_ID);
 		waterWheelBuilder().save(aConsumer, WATER_WHEEL_ID);
@@ -294,15 +294,15 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (CrucibleLadderRecipeRow tRow : crucibleLadderRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
-		// task p35-crucible-wall-obtainability — the 8 dedicated crucible-wall rows
+		// task crucible-wall-obtainability — the 8 dedicated crucible-wall rows
 		for (PartFamilyRecipeRow tRow : crucibleWallRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
-		// task p36-recipes-obtainability — the 11 shared machine-wall rows
+		// task recipes-obtainability — the 11 shared machine-wall rows
 		for (PartFamilyRecipeRow tRow : machineWallRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
-		// task p36-recipes-obtainability — the 8 slicer-blade rows (frame + 7 forms, ruling B)
+		// task recipes-obtainability — the 8 slicer-blade rows (frame + 7 forms, ruling B)
 		for (PartFamilyRecipeRow tRow : slicerBladeRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
@@ -310,7 +310,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			if (tRow.family().startsWith("energium")) continue; // the crystals carry NO rows (upstream :1079-:1092, the declared cut)
 			batteryRecipeBuilder(tRow).save(aConsumer, batteryRecipeId(tRow));
 		}
-		// task p32-placeables — the Greg o'Lantern row
+		// task placeables — the Greg o'Lantern row
 		gregOLanternBuilder().save(aConsumer, GREG_O_LANTERN_ID);
 		for (BatteryBoxRecipeRow tRow : batteryBoxRecipeBuilders()) {
 			tRow.builder().save(aConsumer, batteryBoxRecipeId(tRow.row()));
@@ -324,7 +324,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (CrackerRecipeRow tRow : burnerMixerRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
-		// task p37-usb-peripherals — the 8 USB peripheral rows (the cables :808-811, the HDDs :819-822)
+		// task usb-peripherals — the 8 USB peripheral rows (the cables :808-811, the HDDs :819-822)
 		for (BridgeCraftRow tRow : usbCableRecipeRows()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
@@ -338,29 +338,29 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		CrackerRecipeRow tScanner = molecularScannerRow();
 		tScanner.builder().save(aConsumer, tScanner.id());
-		// task p29-w5-t1-dig-six — the six dig-tool steel-route rows (the wrench row shape)
+		// task w5-t1-dig-six — the six dig-tool steel-route rows (the wrench row shape)
 		pickaxeBuilder().save(aConsumer, PICKAXE_ID);
 		pickaxeGemBuilder().save(aConsumer, PICKAXE_GEM_ID);
 		pickaxeConstructionBuilder().save(aConsumer, PICKAXE_CONSTRUCTION_ID);
 		shovelBuilder().save(aConsumer, SHOVEL_ID);
 		spadeBuilder().save(aConsumer, SPADE_ID);
 		universalSpadeBuilder().save(aConsumer, UNIVERSAL_SPADE_ID);
-		// task p29-w5-t2-blade-six — the six blade-tool steel-route rows (the dig-tool row shape)
+		// task w5-t2-blade-six — the six blade-tool steel-route rows (the dig-tool row shape)
 		clubBuilder().save(aConsumer, CLUB_ID);
-		// task p31-blade-ladder — the three blade forms move to the per-material rows
+		// task blade-ladder — the three blade forms move to the per-material rows
 		// (the OreProcessing_Tool rows Loader_Tools.java:321-323; the t1 steel-route
 		// convergence placeholders for sword/knife/butchery retire — club stays the
 		// single-tier convergence row, the single-tier-ruling card owns it)
 		bladeLadderRows(aConsumer);
 		axeBuilder().save(aConsumer, AXE_ID);
 		axeDoubleBuilder().save(aConsumer, AXE_DOUBLE_ID);
-		// task p29-w5-t4-field-five — the five field-tool steel-route rows (the t1 shape)
+		// task w5-t4-field-five — the five field-tool steel-route rows (the t1 shape)
 		hoeBuilder().save(aConsumer, HOE_ID);
 		plowBuilder().save(aConsumer, PLOW_ID);
 		branchCutterBuilder().save(aConsumer, BRANCH_CUTTER_ID);
 		senseBuilder().save(aConsumer, SENSE_ID);
 		handDrillBuilder().save(aConsumer, HAND_DRILL_ID);
-		// task p29-w5-t5-scene-six — the six scene-tool rows (the same steel-route shape)
+		// task w5-t5-scene-six — the six scene-tool rows (the same steel-route shape)
 		scissorsBuilder().save(aConsumer, SCISSORS_ID);
 		scoopBuilder().save(aConsumer, SCOOP_ID);
 		net.minecraft.world.item.Item tRubberPlate = itemOrNull(gregapi.data.OP.plate, gregapi.data.MT.Rubber);
@@ -369,54 +369,54 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		flintAndSteelBuilder().save(aConsumer, FLINT_AND_STEEL_ID);
 		rollingPinBuilder().save(aConsumer, ROLLING_PIN_ID);
 		bendingCylinderBuilder().save(aConsumer, BENDING_CYLINDER_ID);
-		// task p29-w5-t6-electric-nineteen — the fifteen electric rows (the :356-377 convergence)
+		// task w5-t6-electric-nineteen — the fifteen electric rows (the :356-377 convergence)
 		for (ElectricToolRow tRow : electricToolRows()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
 		pocketMultitoolBuilder().save(aConsumer, POCKET_MULTITOOL_ID);
-		// task p29-w5-t8-armor-24 — the 24 hazmat rows (tail-append)
+		// task w5-t8-armor-24 — the 24 hazmat rows (tail-append)
 		for (GT6ArmorMaterials.SuitRow tSuit : GT6ArmorMaterials.SUITS) {
 			for (int i = 0; i < GT6ArmorMaterials.PIECE_TYPES.length; i++) {
 				armorPieceBuilder(tSuit, i).save(aConsumer, armorRecipeId(tSuit, i));
 			}
 		}
-		// task p31-dig-ladder — the per-material identity-stamped rows (the axis walk)
+		// task dig-ladder — the per-material identity-stamped rows (the axis walk)
 		digLadderRows(aConsumer);
-		// task p31-machine-ladder — the machine family material rows (the identity-stamped walk)
+		// task machine-ladder — the machine family material rows (the identity-stamped walk)
 		machineLadderRows(aConsumer);
-		// task r9-39-toolhead-rows — the arg-9 completion band: the 9 missing head families
+		// task 39-toolhead-rows — the arg-9 completion band: the 9 missing head families
 		// + the dig/chisel/saw C variants (GitHub #39)
 		toolHeadRows(aConsumer);
-		// task r7-39-toolhead-assembly — the 17 head+handle assembly rows (the ACT :332-350 port)
+		// task 39-toolhead-assembly — the 17 head+handle assembly rows (the ACT :332-350 port)
 		toolAssemblyRows(aConsumer);
-		// task p33-circuits-crafting-c — the circuits band: the 26 integrated-circuit rows
+		// task circuits-crafting-c — the circuits band: the 26 integrated-circuit rows
 		// (gt6:circuit_program) + the ventilation/processor-unit six (gt6 shaped)
 		circuitProgramRows(aConsumer);
 		partCircuitRows(aConsumer);
-		// task p34-bumbliary-recipes — the Bumbliary pair rows (the :2222/:2223 line-tail varargs)
+		// task bumbliary-recipes — the Bumbliary pair rows (the :2222/:2223 line-tail varargs)
 		bumbliaryBuilder().save(aConsumer, BUMBLIARY_ID);
 		advancedBumbliaryBuilder().save(aConsumer, BUMBLIARY_ADVANCED_ID);
-		// task p35-rails-31-blocks — the 30 rail rows (the :107-140 no-RC fallback band)
+		// task rails-31-blocks — the 30 rail rows (the :107-140 no-RC fallback band)
 		for (GT6Rails.RailRow tRailRow : GT6Rails.ROWS) {
 			railRecipeBuilder(tRailRow).save(aConsumer, railRecipeId(tRailRow));
 		}
-		// task p36-craftfrom-plategem — the CraftFrom hand-craft family (Loader_OreProcessing.java:171-178)
+		// task craftfrom-plategem — the CraftFrom hand-craft family (Loader_OreProcessing.java:171-178)
 		for (CraftFromRow tRow : craftFromDatagenRows()) {
 			craftFromBuilder(tRow).save(aConsumer, tRow.aId());
 		}
-		// task p37-craftfrom-stick — the stick/stickLong CraftFrom family (Loader_OreProcessing.java:156-163)
+		// task craftfrom-stick — the stick/stickLong CraftFrom family (Loader_OreProcessing.java:156-163)
 		for (StickCraftFromRow tRow : stickCraftFromDatagenRows()) {
 			stickCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
 		}
-		// task p37-craftfrom-foil — the fine-wire CraftFrom batch (Loader_OreProcessing.java:168-169)
+		// task craftfrom-foil — the fine-wire CraftFrom batch (Loader_OreProcessing.java:168-169)
 		for (FineWireCraftFromRow tRow : fineWireCraftFromDatagenRows()) {
 			fineWireCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
 		}
-		// task p37-craftfrom-rockgt — the rockGt CraftFrom batch (Loader_OreProcessing.java:148)
+		// task craftfrom-rockgt — the rockGt CraftFrom batch (Loader_OreProcessing.java:148)
 		for (RockGtCraftFromRow tRow : rockGtCraftFromDatagenRows()) {
 			rockGtCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
 		}
-		// task p37-craftfrom-residual — the 28 residual CraftFrom statements (the panel closeout:
+		// task craftfrom-residual — the 28 residual CraftFrom statements (the panel closeout:
 		// the gear/rotor-buzzSaw/casing/small-parts/minecartWheels shaped bands + the shapeless panel)
 		for (GearGtCraftFromRow tRow : gearGtCraftFromDatagenRows()) {
 			gearGtCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
@@ -461,7 +461,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (PartFamilyRecipeRow tRow : keyRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
-		// task r6-c4-copper-bridge — the four vanilla copper-ingot rows (the minecraft-namespace
+		// task c4-copper-bridge — the four vanilla copper-ingot rows (the minecraft-namespace
 		// overrides, the vanilla row ids verbatim; the copper-bridge band javadoc at the tail)
 		vanillaBrushBuilder().save(aConsumer, VANILLA_BRUSH_ID);
 		vanillaCopperBlockBuilder().save(aConsumer, VANILLA_COPPER_BLOCK_ID);
@@ -497,11 +497,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			hopperRecipeBuilder(tRow).save(aOutput, hopperRecipeId(tRow));
 		}
 		progressmeterBuilder().save(aOutput, PROGRESSMETER_ID);
-		miniPortalNetherBuilder().save(aOutput, MINI_PORTAL_NETHER_ID); // task p35-portals-mini-nether-end
-		miniPortalEndBuilder().save(aOutput, MINI_PORTAL_END_ID); // task p35-portals-mini-nether-end
+		miniPortalNetherBuilder().save(aOutput, MINI_PORTAL_NETHER_ID); // task portals-mini-nether-end
+		miniPortalEndBuilder().save(aOutput, MINI_PORTAL_END_ID); // task portals-mini-nether-end
 		fluidometerBuilder().save(aOutput, FLUIDOMETER_ID);
 		feConverterBuilder().save(aOutput, FE_CONVERTER_ID);
-		waterWheelBuilder().save(aOutput, WATER_WHEEL_ID); // task p30-pool-waterwheel-neo-recipes — the forge branch row (this file :195), the 21.1 face was born without it
+		waterWheelBuilder().save(aOutput, WATER_WHEEL_ID); // task pool-waterwheel-neo-recipes — the forge branch row (this file :195), the 21.1 face was born without it
 		for (BridgeCraftRow tRow : transformerCraftingRows()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
@@ -532,15 +532,15 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (CrucibleLadderRecipeRow tRow : crucibleLadderRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
-		// task p35-crucible-wall-obtainability — the 8 dedicated crucible-wall rows
+		// task crucible-wall-obtainability — the 8 dedicated crucible-wall rows
 		for (PartFamilyRecipeRow tRow : crucibleWallRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
-		// task p36-recipes-obtainability — the 11 shared machine-wall rows
+		// task recipes-obtainability — the 11 shared machine-wall rows
 		for (PartFamilyRecipeRow tRow : machineWallRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
-		// task p36-recipes-obtainability — the 8 slicer-blade rows (frame + 7 forms, ruling B)
+		// task recipes-obtainability — the 8 slicer-blade rows (frame + 7 forms, ruling B)
 		for (PartFamilyRecipeRow tRow : slicerBladeRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
@@ -548,7 +548,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			if (tRow.family().startsWith("energium")) continue; // the crystals carry NO rows (upstream :1079-:1092, the declared cut)
 			batteryRecipeBuilder(tRow).save(aOutput, batteryRecipeId(tRow));
 		}
-		// task p32-placeables — the Greg o'Lantern row
+		// task placeables — the Greg o'Lantern row
 		gregOLanternBuilder().save(aOutput, GREG_O_LANTERN_ID);
 		for (BatteryBoxRecipeRow tRow : batteryBoxRecipeBuilders()) {
 			tRow.builder().save(aOutput, batteryBoxRecipeId(tRow.row()));
@@ -562,7 +562,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (CrackerRecipeRow tRow : burnerMixerRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
-		// task p37-usb-peripherals — the 8 USB peripheral rows (the cables :808-811, the HDDs :819-822)
+		// task usb-peripherals — the 8 USB peripheral rows (the cables :808-811, the HDDs :819-822)
 		for (BridgeCraftRow tRow : usbCableRecipeRows()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
@@ -576,29 +576,29 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		CrackerRecipeRow tScanner = molecularScannerRow();
 		tScanner.builder().save(aOutput, tScanner.id());
-		// task p29-w5-t1-dig-six — the six dig-tool steel-route rows (the wrench row shape)
+		// task w5-t1-dig-six — the six dig-tool steel-route rows (the wrench row shape)
 		pickaxeBuilder().save(aOutput, PICKAXE_ID);
 		pickaxeGemBuilder().save(aOutput, PICKAXE_GEM_ID);
 		pickaxeConstructionBuilder().save(aOutput, PICKAXE_CONSTRUCTION_ID);
 		shovelBuilder().save(aOutput, SHOVEL_ID);
 		spadeBuilder().save(aOutput, SPADE_ID);
 		universalSpadeBuilder().save(aOutput, UNIVERSAL_SPADE_ID);
-		// task p29-w5-t2-blade-six — the six blade-tool steel-route rows (the dig-tool row shape)
+		// task w5-t2-blade-six — the six blade-tool steel-route rows (the dig-tool row shape)
 		clubBuilder().save(aOutput, CLUB_ID);
-		// task p31-blade-ladder — the three blade forms move to the per-material rows
+		// task blade-ladder — the three blade forms move to the per-material rows
 		// (the OreProcessing_Tool rows Loader_Tools.java:321-323; the t1 steel-route
 		// convergence placeholders for sword/knife/butchery retire — club stays the
 		// single-tier convergence row, the single-tier-ruling card owns it)
 		bladeLadderRows(aOutput);
 		axeBuilder().save(aOutput, AXE_ID);
 		axeDoubleBuilder().save(aOutput, AXE_DOUBLE_ID);
-		// task p29-w5-t4-field-five — the five field-tool steel-route rows (the t1 shape)
+		// task w5-t4-field-five — the five field-tool steel-route rows (the t1 shape)
 		hoeBuilder().save(aOutput, HOE_ID);
 		plowBuilder().save(aOutput, PLOW_ID);
 		branchCutterBuilder().save(aOutput, BRANCH_CUTTER_ID);
 		senseBuilder().save(aOutput, SENSE_ID);
 		handDrillBuilder().save(aOutput, HAND_DRILL_ID);
-		// task p29-w5-t5-scene-six — the six scene-tool rows (the same steel-route shape)
+		// task w5-t5-scene-six — the six scene-tool rows (the same steel-route shape)
 		scissorsBuilder().save(aOutput, SCISSORS_ID);
 		scoopBuilder().save(aOutput, SCOOP_ID);
 		net.minecraft.world.item.Item tRubberPlate = itemOrNull(gregapi.data.OP.plate, gregapi.data.MT.Rubber);
@@ -607,50 +607,50 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		flintAndSteelBuilder().save(aOutput, FLINT_AND_STEEL_ID);
 		rollingPinBuilder().save(aOutput, ROLLING_PIN_ID);
 		bendingCylinderBuilder().save(aOutput, BENDING_CYLINDER_ID);
-		// task p29-w5-t6-electric-nineteen — the fifteen electric rows (the :356-377 convergence)
+		// task w5-t6-electric-nineteen — the fifteen electric rows (the :356-377 convergence)
 		for (ElectricToolRow tRow : electricToolRows()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 		pocketMultitoolBuilder().save(aOutput, POCKET_MULTITOOL_ID);
-		// task p29-w5-t8-armor-24 — the 24 hazmat rows (tail-append)
+		// task w5-t8-armor-24 — the 24 hazmat rows (tail-append)
 		for (GT6ArmorMaterials.SuitRow tSuit : GT6ArmorMaterials.SUITS) {
 			for (int i = 0; i < GT6ArmorMaterials.PIECE_TYPES.length; i++) {
 				armorPieceBuilder(tSuit, i).save(aOutput, armorRecipeId(tSuit, i));
 			}
 		}
-		// task p31-dig-ladder — the per-material identity-stamped rows (the axis walk)
+		// task dig-ladder — the per-material identity-stamped rows (the axis walk)
 		digLadderRows(aOutput);
 		machineLadderRows(aOutput);
 		toolHeadRows(aOutput);
 		toolAssemblyRows(aOutput);
-		// task p33-circuits-crafting-c — the circuits band: the 26 integrated-circuit rows
+		// task circuits-crafting-c — the circuits band: the 26 integrated-circuit rows
 		// (gt6:circuit_program) + the ventilation/processor-unit six (gt6 shaped)
 		circuitProgramRows(aOutput);
 		partCircuitRows(aOutput);
-		// task p34-bumbliary-recipes — the Bumbliary pair rows (the :2222/:2223 line-tail varargs)
+		// task bumbliary-recipes — the Bumbliary pair rows (the :2222/:2223 line-tail varargs)
 		bumbliaryBuilder().save(aOutput, BUMBLIARY_ID);
 		advancedBumbliaryBuilder().save(aOutput, BUMBLIARY_ADVANCED_ID);
-		// task p35-rails-31-blocks — the 30 rail rows (the :107-140 no-RC fallback band)
+		// task rails-31-blocks — the 30 rail rows (the :107-140 no-RC fallback band)
 		for (GT6Rails.RailRow tRailRow : GT6Rails.ROWS) {
 			railRecipeBuilder(tRailRow).save(aOutput, railRecipeId(tRailRow));
 		}
-		// task p36-craftfrom-plategem — the CraftFrom hand-craft family (Loader_OreProcessing.java:171-178)
+		// task craftfrom-plategem — the CraftFrom hand-craft family (Loader_OreProcessing.java:171-178)
 		for (CraftFromRow tRow : craftFromDatagenRows()) {
 			craftFromBuilder(tRow).save(aOutput, tRow.aId());
 		}
-		// task p37-craftfrom-stick — the stick/stickLong CraftFrom family (Loader_OreProcessing.java:156-163)
+		// task craftfrom-stick — the stick/stickLong CraftFrom family (Loader_OreProcessing.java:156-163)
 		for (StickCraftFromRow tRow : stickCraftFromDatagenRows()) {
 			stickCraftFromBuilder(tRow).save(aOutput, tRow.aId());
 		}
-		// task p37-craftfrom-foil — the fine-wire CraftFrom batch (Loader_OreProcessing.java:168-169)
+		// task craftfrom-foil — the fine-wire CraftFrom batch (Loader_OreProcessing.java:168-169)
 		for (FineWireCraftFromRow tRow : fineWireCraftFromDatagenRows()) {
 			fineWireCraftFromBuilder(tRow).save(aOutput, tRow.aId());
 		}
-		// task p37-craftfrom-rockgt — the rockGt CraftFrom batch (Loader_OreProcessing.java:148)
+		// task craftfrom-rockgt — the rockGt CraftFrom batch (Loader_OreProcessing.java:148)
 		for (RockGtCraftFromRow tRow : rockGtCraftFromDatagenRows()) {
 			rockGtCraftFromBuilder(tRow).save(aOutput, tRow.aId());
 		}
-		// task p37-craftfrom-residual — the 28 residual CraftFrom statements (the panel closeout:
+		// task craftfrom-residual — the 28 residual CraftFrom statements (the panel closeout:
 		// the gear/rotor-buzzSaw/casing/small-parts/minecartWheels shaped bands + the shapeless panel)
 		for (GearGtCraftFromRow tRow : gearGtCraftFromDatagenRows()) {
 			gearGtCraftFromBuilder(tRow).save(aOutput, tRow.aId());
@@ -694,7 +694,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (PartFamilyRecipeRow tRow : keyRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
-		// task r6-c4-copper-bridge — the four vanilla copper-ingot rows (the minecraft-namespace
+		// task c4-copper-bridge — the four vanilla copper-ingot rows (the minecraft-namespace
 		// overrides, the vanilla row ids verbatim; the copper-bridge band javadoc at the tail)
 		vanillaBrushBuilder().save(aOutput, VANILLA_BRUSH_ID);
 		vanillaCopperBlockBuilder().save(aOutput, VANILLA_COPPER_BLOCK_ID);
@@ -809,7 +809,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The static storage crafting rows (task p26-storage-static-batch — one per row):
+	 * The static storage crafting rows (task storage-static-batch — one per row):
 	 * <ul>
 	 * <li>Locker (:138 "SdS","LCL","TMT"): 'T' = screw, 'M' = casing — the upstream
 	 *     casingMachine column folds to casingSmall (the prefix has no port item row, the
@@ -830,7 +830,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * resolve through GTMaterialItems (the hopper plateCurved shape).
 	 */
 	/**
-	 * The rail rows (task p35-rails-31-blocks) — the upstream :107-140 no-RC fallback band,
+	 * The rail rows (task rails-31-blocks) — the upstream :107-140 no-RC fallback band,
 	 * walked over the {@link GT6Rails#ROWS} table: 10 normals ("RSR"/"RSR"/"RSR", railGt +
 	 * treated-wood stick, 4 out), 10 boosters ("RSR"/"GDG"/"RSR", the gold-family railGt
 	 * column + redstone) and 10 detectors ("RSR"/"RPR"/"RDR", redstone + the stone
@@ -960,7 +960,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The grass dye band (task p24-grass-block) — the upstream BlockGrass.java:72-80
+	 * The grass dye band (task grass-block) — the upstream BlockGrass.java:72-80
 	 * registrations as 12 shapeless rows, ONLY the save face forked (the ctor rule):
 	 * <ul>
 	 * <li><b>forward ×6</b>: 8 vanilla grass BLOCKS (the literal {@code Items.GRASS_BLOCK}
@@ -1035,7 +1035,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The hammer STONE route (task p25-tool-hammer-wrench spec ⑤α) — the upstream
+	 * The hammer STONE route (task tool-hammer-wrench spec ⑤α) — the upstream
 	 * {@code "XX "}/{@code "XXS"}/{@code "XX "} row (Loader_Tools.java:277/:285,
 	 * {@code CR.DEF_MIR}) with the input translated: upstream 'X' walks
 	 * {@code rockGt.dat(tRock)} over the stone/pebble material universe, the port keys
@@ -1060,7 +1060,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The hammer METAL route (task p25-tool-hammer-wrench spec ⑤β) — the upstream
+	 * The hammer METAL route (task tool-hammer-wrench spec ⑤β) — the upstream
 	 * {@code "II "}/{@code "IIh"}/{@code "II "} row (Loader_Tools.java:327, the
 	 * OreProcessing_Tool material loop flattened to ONE tag-keyed row): 'I' = the
 	 * ecosystem generic ingots tag ({@code Tags.Items.INGOTS} — forge:ingots on 1.20.1,
@@ -1082,7 +1082,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The wrench self-craft row (task p25-tool-hammer-wrench spec ⑤γ) — the upstream
+	 * The wrench self-craft row (task tool-hammer-wrench spec ⑤γ) — the upstream
 	 * {@code "PhP"}/{@code " P "}/{@code " P "} row (Loader_Tools.java:310): 'P' =
 	 * the steel plate platform tag ({@code gregtech6.datagen.GT6ItemTags.materialTag(PLATES_FAMILY,
 	 * "steel")} — the forge:plates/steel form the plate family band already emits),
@@ -1104,7 +1104,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The bending-cylinder SELF-CRAFT row (task p25-food-can-row0 spec ②) — the upstream
+	 * The bending-cylinder SELF-CRAFT row (task food-can-row0 spec ②) — the upstream
 	 * {"sfh", "III"} row (Loader_Tools.java:313, the OreProcessing_Tool material loop
 	 * flattened to ONE tag-keyed row, the hammer-ingots-route precedent; the per-material
 	 * {@code typemin(2)} gate folds onto the whole INGOTS tag): 's' = #gt6:tools/saw,
@@ -1117,7 +1117,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * {@code gt6:bending_cylinder_small}.
 	 */
 	/**
-	 * The storage-hopper crafting rows (task p26-storage-hopper-family — the Loader
+	 * The storage-hopper crafting rows (task storage-hopper-family — the Loader
 	 * metalset :145-146 recipes, one per Bronze/Steel × hopper/queue row): the upstream
 	 * "PwP"/"XCX"/" Xh" (hopper) and "PCP"/"XCX"/"wXh" (queue) grids with 'P' =
 	 * {@code OP.plate.dat(aMat)} → the {@code #forge:plates/<mat>} platform tag, 'X' =
@@ -1150,7 +1150,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The soft-hammer self-craft row (task p29-w5-t3-machine-face-four spec ①) — the
+	 * The soft-hammer self-craft row (task w5-t3-machine-face-four spec ①) — the
 	 * upstream AdvancedCraftingTool(SOFTHAMMER, toolHeadHammer, …) head+handle row
 	 * (Loader_Tools.java:334) flattened to ONE steel-tier row: 'H' =
 	 * {@code OP.toolHeadHammer.dat(MT.Steel)} → the GTMaterialItems tool_head_hammer_steel
@@ -1168,7 +1168,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The monkey-wrench self-craft row (task p29-w5-t3-machine-face-four spec ②) — the
+	 * The monkey-wrench self-craft row (task w5-t3-machine-face-four spec ②) — the
 	 * wrenchBuilder "PhP"/" P "/" P " grid over the monkey-wrench result (the upstream
 	 * monkey wrench IS the wrench-family variant, GT_Tool_MonkeyWrench extends
 	 * GT_Tool_Wrench, machine/GT_Tool_MonkeyWrench.java:33; the :311 OreProcessing_Tool
@@ -1188,7 +1188,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The POCKET MULTITOOL crafting row (task p29-w5-t7-pocket-eight) — the upstream
+	 * The POCKET MULTITOOL crafting row (task w5-t7-pocket-eight) — the upstream
 	 * OreProcessing_Tool row over toolHeadScrewdriver (Loader_Tools.java:354) with its
 	 * {"AXO","ZPV","OWY"} grid kept letter-verbatim and the tool-head universe folded to
 	 * the steel convergence (the W5 ruling d: the per-material listener loop flattens to
@@ -1222,7 +1222,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The magnifying-glass self-craft row (task p29-w5-t3-machine-face-four spec ③) — the
+	 * The magnifying-glass self-craft row (task w5-t3-machine-face-four spec ③) — the
 	 * upstream tagline "Crafted with a Stick and a Lens" (:148) over the
 	 * AdvancedCraftingTool(MAGNIFYING_GLASS, lens, MT.Glass) row (Loader_Tools.java:332):
 	 * 'L' = {@code OP.lens.dat(MT.Glass)} → the GTMaterialItems lens_glass item (the
@@ -1239,7 +1239,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The pincers self-craft row (task p29-w5-t3-machine-face-four spec ④) — the upstream
+	 * The pincers self-craft row (task w5-t3-machine-face-four spec ④) — the upstream
 	 * {"XhX"," T ","SdS"} row (Loader_Tools.java:316, plateCurved prefix) with the
 	 * material scale {@code U*2 + screw + 2*stick} (the :150 registration amount):
 	 * 'X' = {@code OP.plateCurved.dat(MT.Steel)} (the GTMaterialItems curved plate, the
@@ -1260,7 +1260,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The empty-food-can crafting row (task p25-food-can-row0 spec ③) — the upstream
+	 * The empty-food-can crafting row (task food-can-row0 spec ③) — the upstream
 	 * {"fh", "oP"} row VERBATIM (MultiItemRandomTools.java:239, CR.DEF_NCC): 'f' =
 	 * {@code #gt6:tools/file} (the CR.java:200 craftingToolFile letter), 'h' =
 	 * {@code #gt6:tools/hard_hammer} (:201), 'o' = {@code #gt6:tools/bending_cylinder_small}
@@ -1271,7 +1271,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * Result 1x {@code gt6:food_can_empty} — the canning machine's consumable input.
 	 */
 	/**
-	 * The LARGE Steel Crucible crafting row (task p26-crucible-multiblock SPEC ⑦) — the
+	 * The LARGE Steel Crucible crafting row (task crucible-multiblock SPEC ⑦) — the
 	 * upstream "hMy" row (Loader_MultiTileEntities.java:1270, 'M' = the wall item 18009
 	 * 对位) with the declared port deviation that the soldering-tool family is not ported
 	 * yet: the row runs "hM" ('h' = the hard-hammer tool tag, the hammerFromIngotsBuilder
@@ -1279,7 +1279,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * and rides along (the container-item channel). Result 1x the controller block item.
 	 */
 	/**
-	 * The crucible ladder crafting rows (task p29-w3-distill-crucible ③) — the
+	 * The crucible ladder crafting rows (task w3-distill-crucible ③) — the
 	 * largeSteelCrucibleBuilder "hM" form (the upstream "hMy" row with the soldering-tool
 	 * family cut, the same declared deviation) over each of the seven ladder rungs:
 	 * 'M' = the rung's own wall item, result = the rung controller.
@@ -1302,7 +1302,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The crucible WALL crafting rows (task p35-crucible-wall-obtainability) — the upstream
+	 * The crucible WALL crafting rows (task crucible-wall-obtainability) — the upstream
 	 * wall rows {@code "wPP","hPP"} (Loader_MultiTileEntities.java:1143-1153, 'w' = wrench,
 	 * 'h' = hard hammer per CR.java:344-358, 'P' = {@code OP.plate.dat(aMat)}) replayed over
 	 * the EIGHT DEDICATED crucible-wall blocks (the port-side twins of the metalwall items
@@ -1333,7 +1333,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The shared machine-WALL crafting rows (task p36-recipes-obtainability) — the SAME
+	 * The shared machine-WALL crafting rows (task recipes-obtainability) — the SAME
 	 * {@code "wPP","hPP"} four-plate grid as the dedicated crucible band above, replayed
 	 * over the ELEVEN {@link gregtech6.registry.GTMultiBlocks#METAL_WALL_ROWS} blocks
 	 * (Loader_MultiTileEntities.java:1143-1153, {@code 'P' = OP.plate.dat(aMat)}). The
@@ -1365,7 +1365,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The slicer-blade crafting rows (task p36-recipes-obtainability, coordinator ruling B
+	 * The slicer-blade crafting rows (task recipes-obtainability, coordinator ruling B
 	 * — the obtainability domain = items + recipes inseparable) — the upstream EIGHT rows
 	 * VERBATIM (MultiItemTechnological.java:364 the frame + :374-380 the seven blade
 	 * forms): the frame row {" R ","RhR"," R "} over StainlessSteel sticks + the hard
@@ -1442,7 +1442,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	private record DieselEngineRecipeRow(ShapedRecipeBuilder builder, ResourceLocation id) {}
 
 	/**
-	 * The Diesel Engine crafting rows (task p29-w4-hot-lube spec ④) — the Loader
+	 * The Diesel Engine crafting rows (task w4-hot-lube spec ④) — the Loader
 	 * MultiTileEntities.java:722-729 grids VERBATIM: "PLP"/"SMS"/"GPC" per material with
 	 * 'M' = {@code OP.casingMachineDouble.dat(aMat)} folded to casingSmall (the prefix has
 	 * no port item row — the Locker 'M' fold precedent), 'P' = plateCurved, 'S' = stick,
@@ -1490,7 +1490,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	// -------------------------------------------------------------------------
-	// task p33-cracker-machines — the two Cracker crafting families (Loader
+	// task cracker-machines — the two Cracker crafting families (Loader
 	// MultiTileEntities.java:1570-1579 grids VERBATIM, the 'IwI','PMP','ICI'
 	// SteamCracker / 'IPI','ZMZ','ICI' CatalyticCracker three rows per tier):
 	//   'I' = plateDouble/plateTriple/plateQuadruple/plateQuintuple Invar (per
@@ -1563,7 +1563,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	// -------------------------------------------------------------------------
-	// task p34-machines-burner-plantalyzer — the Burner Mixer crafting family
+	// task machines-burner-plantalyzer — the Burner Mixer crafting family
 	// (Loader MultiTileEntities.java:1595-1598 grids VERBATIM, "PMP","PRP","hSw"
 	// four rows over the Kinetic_T ladder):
 	//   'M' = casingMachine.dat(aMat) → casingSmall (the cracker/transformer fold —
@@ -1579,7 +1579,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	// (the diesel result-path convention). The Plantalyzer "WXW","ZMP","CYC" rows are
 	// CUT — the absent-component ruling (the GTMachines family note: the CABLES_01/
 	// EMITTERS/SENSORS columns and IL.Processor_Crystal_Diamond are absent port
-	// identities, the molecular-scanner ruling). Task p37-usb-peripherals, coordinator
+	// identities, the molecular-scanner ruling). Task usb-peripherals, coordinator
 	// ruling Q1=(b) SUPERSEDED by task debt-scanner-t3-usb-stick: the molecular-scanner
 	// T3 controller row (:1551 "DXE","FMF","RYS") is RESTORED (the molecularScannerRow
 	// band below) — the component pool card (debt-emitter-sensor-generators) landed the
@@ -1618,7 +1618,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	//   - 'M' = casingMachine.dat(Osmiridium) → casingSmall (the cracker/transformer
 	//     fold — the prefix has no port item row);
 	//   - 'D'/'E'/'R'/'S' = IL.Processor_Crystal_Diamond/Emerald/Ruby/Sapphire → the
-	//     matching GEM TAGS (the p33-circuits-c gem-tag fold, the crystal circuits'
+	//     matching GEM TAGS (the circuits-c gem-tag fold, the crystal circuits'
 	//     material carriers);
 	//   - 'F'/'X'/'Y' = IL.FIELD_GENERATORS[3]/IL.EMITTERS[3]/IL.SENSORS[3] → the HV
 	//     rungs of the three component families (VN[3] = HV, the
@@ -1661,7 +1661,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	// -------------------------------------------------------------------------
-	// task p37-usb-peripherals — the USB peripheral crafting rows, upstream
+	// task usb-peripherals — the USB peripheral crafting rows, upstream
 	// MultiItemTechnological.java:808-811 (the four USB Cable rows, "xWd","PCP","TCT")
 	// and :819-822 (the four USB HDD rows, "PLT","dRW","TCP"). Column map (VERBATIM):
 	//   - 'x' = the wirecutter (CR.java:359), 'd' = the screwdriver (CR.java:342) —
@@ -1773,8 +1773,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	//   - 'P'/'T' = OP.plate/OP.screw dat(Al/StainlessSteel/Cr/Ti) — the shared
 	//     USB_PLATE_MATS ladder (the tier column the peripheral rows already ride);
 	//   - 'x' = the wirecutter (CR.java:359), 'd' = the screwdriver (CR.java:342).
-	// The p37-usb-peripherals Q3 pool ruling closes here: the sticks carry the
-	// Behavior_DataStorage data plane since p32-usb-data, the rows complete their
+	// The usb-peripherals Q3 pool ruling closes here: the sticks carry the
+	// Behavior_DataStorage data plane since usb-data, the rows complete their
 	// obtainability chain.
 	// -------------------------------------------------------------------------
 
@@ -1812,7 +1812,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The plate-mold crafting row (task p26-w1-press-extruder-molds) — the upstream
+	 * The plate-mold crafting row (task w1-press-extruder-molds) — the upstream
 	 * {@code "x  ", " P ", "   "} stroke VERBATIM (MultiItemTechnological.java:247, the
 	 * plate-identity file position): 'x' = {@code #gt6:tools/file} (the CR.java:200
 	 * craftingToolFile letter), 'P' = {@link GT6ItemTags#EXTRUDER_SHAPE_BASE} (the declared
@@ -1832,7 +1832,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The rod-mold crafting row (task p26-w1-press-extruder-molds) — the upstream
+	 * The rod-mold crafting row (task w1-press-extruder-molds) — the upstream
 	 * {@code "   ", " Px", "   "} stroke VERBATIM (MultiItemTechnological.java:221, the
 	 * rod-identity file position; the flattened base ingredient per the plate-mold doc).
 	 * Result 1x rod mold — the RM.Extruder rod row's shaping tool (RM.java:407).
@@ -1848,7 +1848,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	// -------------------------------------------------------------------------
-	// the kitchen band (task p26-kitchen-pot-bowl)
+	// the kitchen band (task kitchen-pot-bowl)
 	// -------------------------------------------------------------------------
 
 	/**
@@ -1866,7 +1866,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * wood-chemistry face, not dropped.
 	 */
 	/**
-	 * The two stone anvil crafting rows (task p28-c-anvil) — the upstream registration
+	 * The two stone anvil crafting rows (task c-anvil) — the upstream registration
 	 * pattern VERBATIM (Loader_MultiTileEntities.java:2185-2186 {@code "RRR","hR ","RRR"}):
 	 * 'R' = the row's stone carrier ({@code Blocks.stone} for MT.Stone, the vanilla
 	 * blackstone item for OP.stone.dat(MT.STONES.Blackstone) — the OP.stone.dat 1.20.1
@@ -1885,7 +1885,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The Greg o'Lantern crafting row (task p32-placeables) — the upstream
+	 * The Greg o'Lantern crafting row (task placeables) — the upstream
 	 * "Greg o'Lantern" registration tail (Loader_MultiTileEntities.java:2031,
 	 * {@code "Pk", "T ", 'P' Blocks.pumpkin, 'T' OD.blockTorch}): the pumpkin OVER the
 	 * torch. DECLARED FOLD: the 'k' knife tool letter rides the CR tool-letter face the
@@ -2022,7 +2022,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The Progress Sensor crafting row (task p26-sensors-core) — the upstream
+	 * The Progress Sensor crafting row (task sensors-core) — the upstream
 	 * {@code "WGW"}/{"CXC"}/{"WPW"} row VERBATIM (Loader_MultiTileEntities.java:1995,
 	 * CR.DEF) with the keys translated onto the port faces: 'P' = {@code OP.plateDouble
 	 * .dat(MT.TinAlloy)} → the new {@code #forge:double_plates/tin_alloy} material tag
@@ -2057,7 +2057,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The Miniature Nether Portal crafting row (task p35-portals-mini-nether-end) — the
+	 * The Miniature Nether Portal crafting row (task portals-mini-nether-end) — the
 	 * upstream "SSS"/"SsS"/"SSS" SHAPE (Loader_MultiTileEntities.java:2003) with the GT6
 	 * dead-cell 's' folded to a vanilla space — the 8-S ring is the vanilla furnace pattern.
 	 * DECLARED DEVIATION on the key: upstream 'S' = {@code OP.stickLong.dat(MT.Obsidian)},
@@ -2077,7 +2077,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The Miniature End Portal crafting row (task p35-portals-mini-nether-end) — the
+	 * The Miniature End Portal crafting row (task portals-mini-nether-end) — the
 	 * upstream "ESE"/"SGS"/"ESE" row VERBATIM (Loader :2004): 'S' = Endstone long rods
 	 * → vanilla end_stone (the same no-rods fold as the Nether row above), 'E' =
 	 * {@code OP.gem.dat(MT.EnderEye)} → vanilla {@code minecraft:ender_eye}, 'G' =
@@ -2096,7 +2096,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The Fluid-O-Meter Sensor crafting row (task p26-sensors-core) — the upstream
+	 * The Fluid-O-Meter Sensor crafting row (task sensors-core) — the upstream
 	 * {@code "WYW"}/{"BXB"}/{"WPW"} row VERBATIM (Loader_MultiTileEntities.java:1986):
 	 * the shared P/W/R/G/B/C alphabet as {@link #progressmeterBuilder}, plus 'X' = {@code
 	 * OD.pressurePlateStone} → vanilla {@code minecraft:stone_pressure_plate} and 'Y' =
@@ -2120,8 +2120,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The ULV FE→EU converter crafting row (task p28-b-fe-converter-machine, retuned by
-	 * task p28-ulv-recipe-retune — the stone-crucible ruling): the progressmeter vocabulary
+	 * The ULV FE→EU converter crafting row (task b-fe-converter-machine, retuned by
+	 * task ulv-recipe-retune — the stone-crucible ruling): the progressmeter vocabulary
 	 * keeps its shape (double plates + RedAlloy fine wires) but the shell drops from
 	 * TinAlloy to plain Tin double plates, killing the row's only mid-game gate — TinAlloy
 	 * is 1 Fe + 1 Sn (Loader_Recipes_Alloys.java:57) and melting iron (1811 K) exceeds the
@@ -2149,7 +2149,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The Water Wheel crafting row (task p28-c-water-wheel) — the kTFRUAddon
+	 * The Water Wheel crafting row (task c-water-wheel) — the kTFRUAddon
 	 * "Water Mill" registration-row SHAPE + QUANTITIES over the port carriers
 	 * (tileEntityInit0.java:112, CR.DEF "PPP"/"SRS"/"PPP"): the grid carries the
 	 * research-card census 6 planks + 2 bronze rings + 1 axle part. Key translation (the
@@ -2170,7 +2170,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * Result 1x {@code gt6:water_wheel}.
 	 */
 	/**
-	 * The Electric Transformer (ULV-LV) crafting row (task p28-c-ulv-lv-transformer) —
+	 * The Electric Transformer (ULV-LV) crafting row (task c-ulv-lv-transformer) —
 	 * the :881 shape over the MATERIAL-LOCK carriers: 'M' =
 	 * {@code OP.casingSmall.dat(MT.SteelGalvanized)} (the Electric_T[1] LV-era rung —
 	 * the DECLARED DEVIATION from the :881 {@code casingMachine.dat(Electric_T[0])}
@@ -2182,7 +2182,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * {@code gt6:electric_transformer}.
 	 */
 	// -------------------------------------------------------------------------
-	// task p29-w4-battery-storage — the battery + BatteryBox crafting rows (the Loader
+	// task w4-battery-storage — the battery + BatteryBox crafting rows (the Loader
 	// :1009-:1068 battery strings and the :893-:896 box strings; the pattern columns ride
 	// the GT6Batteries mapping helpers, the datagen and the tests share that one source).
 	// Declared CUTS (the absent-input rows ride the pool, the electrolyzer_part precedent):
@@ -2267,7 +2267,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	// -------------------------------------------------------------------------
-	// task p35-energy-tail-machines — the Long Distance families (the :909-:913
+	// task energy-tail-machines — the Long Distance families (the :909-:913
 	// transformer strings and the Loader_Blocks.java:162-177 wire strings). Declared
 	// folds: the LD 'M' column = the SAME-tier electric transformer item (the p35
 	// ladder); the unbound 'x' dead cell folds to a space; the wire rows guard every
@@ -2364,7 +2364,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	// -------------------------------------------------------------------------
-	// task p29-w4-eu-bridge — the EU-bridge crafting rows (Loader :817-821/:833-837/
+	// task w4-eu-bridge — the EU-bridge crafting rows (Loader :817-821/:833-837/
 	// :849-853 recipe strings, the tool letters per CR.java:339-361: d = screwdriver,
 	// h = hard hammer, w = wrench). Declared folds and CUTS:
 	//   - casingMachineDouble → casingSmall (the transformerBuilder casing fold —
@@ -2432,7 +2432,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		return rRows;
 	}
 
-	/** The Electric_T[1..5] rung material by ladder index (upstream MT.java:3691 members, the dynamo family's ladder face) — the single source lives in {@code GTMachines.electricTierMat} (task p38-c2-controller-tint: the bridge/laser tint rows ride the same ladder). */
+	/** The Electric_T[1..5] rung material by ladder index (upstream MT.java:3691 members, the dynamo family's ladder face) — the single source lives in {@code GTMachines.electricTierMat} (task c2-controller-tint: the bridge/laser tint rows ride the same ladder). */
 	private static gregapi.oredict.OreDictMaterial bridgeMat(int aTier) {
 		return gregtech6.registry.GTMachines.electricTierMat(aTier);
 	}
@@ -2449,7 +2449,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The three CR.shapeless self-recast rows (task p26-sensors-core) — the upstream
+	 * The three CR.shapeless self-recast rows (task sensors-core) — the upstream
 	 * {@code CR.shapeless(aRegistry.getItem(), CR.DEF_NCC, new Object[] {aRegistry.getItem()})}
 	 * per-row companion (Loader :1979-:1999 every row's tail): 1 sensor item → 1 clean
 	 * sensor item, the NBT-reset recast face (a configured sensor re-crafted back to the
@@ -2477,7 +2477,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	private record SensorRecastRow(ShapelessRecipeBuilder builder, String path) {}
 
     // -------------------------------------------------------------------------
-    // task p29-w3-nbtdesign-parts ③ — the part-family crafting rows (Loader
+    // task w3-nbtdesign-parts ③ — the part-family crafting rows (Loader
     // :1138-1182 recipe strings, the tool letters per CR.java:339-361: h = hard
     // hammer, s = saw, w = wrench, x = wirecutter, d = screwdriver). Declared CUTS
     // (the absent-input rows ride the pool, the sensor-shaped-row precedent):
@@ -2486,9 +2486,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
     //   - distill_part :18102 / sluice_part :18106 ('P' pipeSmall/pipeMedium — the
     //     pipe prefixes are off the port item path);
     //   - ventilation_unit :1184 ('F' IL.Cover_Vent + 'E' IL.MOTORS[1] absent — RESOLVED
-    //     by the p33-circuits-crafting-c band below, the ruling-B substitutions);
+    //     by the circuits-crafting-c band below, the ruling-B substitutions);
     //   - processor units :1185-1189 ('S/D/R/E' IL.Processor_Crystal_* absent — RESOLVED
-    //     by the p33-circuits-crafting-c band below, the gem-tag substitutions).
+    //     by the circuits-crafting-c band below, the gem-tag substitutions).
     // The coil 'W' fold: wireGt04 has no port items — ONE fine wire per cell (the
     // transformerBuilder fold precedent, the count differential declared).
     // -------------------------------------------------------------------------
@@ -2552,7 +2552,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
     }
 
     // -------------------------------------------------------------------------
-    // task p33-circuits-crafting-c — the circuits C-column band (coordinator ruling B,
+    // task circuits-crafting-c — the circuits C-column band (coordinator ruling B,
     // every substitution row DECLARED): the Ventilation Unit (Loader_MultiTileEntities
     // .java:1184) + the five Quadcore Processor Units (:1185-1189) crafting rows. The
     // 'M' casingMachine(SteelGalvanized) column folds to casingSmall (the Locker/diesel
@@ -2682,7 +2682,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
     *///?}
 
     // -------------------------------------------------------------------------
-    // task p33-circuits-crafting-c — the 26 integrated-circuit rows (the upstream
+    // task circuits-crafting-c — the 26 integrated-circuit rows (the upstream
     // ItemIntegratedCircuit.java:58-85 self-crafting block, verbatim): the base row
     // (:58 "GhG"/"SSS"/"GwG" — G = gearGtSmall Iron, S = stick Iron, h/w = the tool
     // tags, configuration 0), the shapeless reset (:59, configuration 0 over ANY
@@ -2895,7 +2895,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
     *///?}
 
     // -------------------------------------------------------------------------
-    // task p29-w3-tank-valves — the 25 Tank Main Valve rows (Loader :1195-1222 recipe
+    // task w3-tank-valves — the 25 Tank Main Valve rows (Loader :1195-1222 recipe
     // strings: wood " R ","rMs"," R "; the small pair " R ","hMs"," R " over the ROW's
     // wall; the large pair "PPP","hMs","PPP" over the SMALL valve + the material plate
     // (plateDense on the dense larges); R/r = OP.ring of Pb (wood) or the row material,
@@ -2981,7 +2981,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
     }
 
     // -----------------------------------------------------------------------
-    // The six dig-tool steel-route rows (task p29-w5-t1-dig-six). The upstream
+    // The six dig-tool steel-route rows (task w5-t1-dig-six). The upstream
     // AdvancedCraftingTool rows (Loader_Tools.java:336-341 — head + sticks + the worn
     // hammer/file) over the single steel tier ruling d: the tool-HEAD system is the pool
     // cut, so the head folds to STEEL PLATES (#forge:plates/steel, the wrench-row key),
@@ -3051,7 +3051,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
     }
 
     // ---------------------------------------------------------------------
-    // The six blade-tool steel-route rows (task p29-w5-t2-blade-six). The upstream
+    // The six blade-tool steel-route rows (task w5-t2-blade-six). The upstream
     // AdvancedCraftingTool rows (Loader_Tools.java:337/:342-343 — SWORD toolHeadSword,
     // AXE toolHeadAxe, DOUBLE_AXE toolHeadAxeDouble; KNIFE/BUTCHERYKNIFE/CLUB carry NO
     // AdvancedCraftingTool row — the knife's grid face is the cutting-board pool, the
@@ -3060,7 +3060,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
     // ladder is the standing pool cut). The worn hammer/file letters ride the dig-tool
     // builder (each pays one point through the crafting-remaining face).
     // -----------------------------------------------------------------------
-    // The five field-tool steel-route rows (task p29-w5-t4-field-five). The upstream
+    // The five field-tool steel-route rows (task w5-t4-field-five). The upstream
     // AdvancedCraftingTool rows for hoe/sense/plow (Loader_Tools.java:344-346 — the
     // :344 Birch and :346 Spruce suggestions converge steel per the t1 single-tier
     // ruling); the branch cutter and hand drill ride the same family shape. Plate
@@ -3126,7 +3126,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
     }
 
     // ------------------------------------------------------------------
-    // task p29-w5-t5-scene-six — the six scene-tool rows. The OreProcessing_Tool
+    // task w5-t5-scene-six — the six scene-tool rows. The OreProcessing_Tool
     // uppercase alphabet (Loader_Tools.java:308-318 comment): I=ingot P=plate
     // T=screw O=ring S=stick G=gem C=plateGem R=stone; the lowercase letters are
     // the CR.java:339-361 tool keys. Single-steel-tier convergence folds the
@@ -3245,7 +3245,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
     }
 
     // -------------------------------------------------------------------------
-    // task p29-w5-t6-electric-nineteen — the fifteen electric-tool crafting rows
+    // task w5-t6-electric-nineteen — the fifteen electric-tool crafting rows
     // (the upstream OreProcessing_Tool rows Loader_Tools.java:356-377 converged to the
     // single steel tier; the VANILLA pattern strings byte-kept, the keys remapped):
     //   'A' = the steel tool head item (the per-material head loop folds to steel);
@@ -3371,7 +3371,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
         return tBuilder.unlockedBy("has_battery", has(batteryTag(tTier)));
     }
 
-    // ─── the Hazmat armor band (task p29-w5-t8-armor-24, tail-append) ───
+    // ─── the Hazmat armor band (task w5-t8-armor-24, tail-append) ───
 
     /**
      * The id of one armor recipe — the result-path convention ({@code gt6:hazmat_<suit>_<piece>}).
@@ -3457,20 +3457,20 @@ public class GT6CraftingRecipes extends RecipeProvider {
     }
 
 	// ------------------------------------------------------------------------
-	// The dig ladder material rows (task p31-dig-ladder) — the upstream
+	// The dig ladder material rows (task dig-ladder) — the upstream
 	// OreProcessing_Tool shapes on the toolHead prefixes (Loader_Tools.java:293-300,
 	// the And(ANTIMATTER.NOT, MT.Wood.NOT, COATED.NOT) axis), ONE gt6:material_tool
 	// row per (dig form x plate+ingot material). The plain steel anchors above are the
 	// identity-less steel arm; every other axis material gets its own stamped row (the
 	// upstream second C-variant rows ride the head-row completion band below — the
-	// r9-39-toolhead-rows card; the blade ladder kept C where its plateGem item truth
+	// 39-toolhead-rows card; the blade ladder kept C where its plateGem item truth
 	// exists).
-	// NOTE (r9-39-toolhead-rows): the spade row's lowercase 's' cell is the CR.java:211
-	// SAW tool letter (the decisions.r9-toolhead-s-letter ruling) — r7-39 had emitted
+	// NOTE (39-toolhead-rows): the spade row's lowercase 's' cell is the CR.java:211
+	// SAW tool letter (the decisions.r9-toolhead-s-letter ruling) — #39 had emitted
 	// the wooden-rod tag there; the dig walk carries the reform.
 
 	/**
-	 * M5 unification (task p31-machine-ladder): the upstream {@code MT.Wood.NOT} axis
+	 * M5 unification (task machine-ladder): the upstream {@code MT.Wood.NOT} axis
 	 * gate is the MATERIAL IDENTITY test — {@code OreDictMaterial.isTrue} is
 	 * {@code aObject == this} (OreDictMaterial.java:1507-1509) — so every ladder walk
 	 * (dig/blade/machine) excludes exactly MT.Wood through this ONE expression. The
@@ -3517,7 +3517,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * prefix, Loader_Tools.java:451 {@code tStack = aEvent.mPrefix.mat(aEvent.mMaterial, 1)}
 	 * + the :514-516 emission): pickaxe :295, construction :294, shovel :296, spade :297,
 	 * hoe :299, axe :300 — each row's output is the TOOL HEAD, never the tool (the
-	 * r7-39 inversion fix; the tool itself rides the head+handle assembly band below and
+	 * #39 inversion fix; the tool itself rides the head+handle assembly band below and
 	 * the steel anchors).
 	 */
 	static gregapi.oredict.OreDictPrefix digLadderHeadPrefix(String aForm) { // package-private: the test prefix ledger
@@ -3550,7 +3550,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	/**
 	 * The row letters (the upstream OreProcessing_Tool alphabet over the P/I variant).
 	 * 's' = the CR.java:211 lowercase SAW tool letter — the decisions.r9-toolhead-s-letter
-	 * ruling (r7-39 had misread it as the wooden rod; the tool-damage slot is a saw tag).
+	 * ruling (#39 had misread it as the wooden rod; the tool-damage slot is a saw tag).
 	 */
 	private static TagKey<Item> digLadderIngredient(char aKey, gregapi.oredict.OreDictMaterial aMaterial) {
 		String tSnake = gregtech6.registry.GTMaterialItems.snakeCase(aMaterial.mNameInternal);
@@ -3822,7 +3822,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	*///?}
 
 	// ------------------------------------------------------------------------
-	// The blade ladder material rows (task p31-blade-ladder) — the upstream
+	// The blade ladder material rows (task blade-ladder) — the upstream
 	// OreProcessing_Tool shapes on the toolHeadSword prefix (Loader_Tools.java:321-323),
 	// ONE gt6:material_tool row per (blade form x plate/plateGem material), riding the
 	// SAME serializer + MaterialToolRow face as the dig ladder above (the S31-3 seam
@@ -3854,7 +3854,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * The result item of a blade ladder form (the GT6Tools registry face) — the DIRECT
 	 * rows only: knife/butchery ride the upstream mToolRecipes (:322/:323, the arg-8 face)
 	 * and stay tool rows. The sword rows are NOT here — upstream :321 is an mToolHeadRecipes
-	 * row (the arg-9 face) so they emit the head ({@link #bladeLadderHeadItem}), the r7-39
+	 * row (the arg-9 face) so they emit the head ({@link #bladeLadderHeadItem}), the #39
 	 * inversion fix.
 	 */
 	private static net.minecraft.world.item.Item bladeLadderResult(String aForm) {
@@ -3920,7 +3920,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						if (tChar != ' ') tKey.put(tChar, bladeLadderIngredient(tChar, tMaterial));
 					}
 				}
-				// the r7-39 inversion fix: the sword rows are upstream HEAD rows (:321, the
+				// the #39 inversion fix: the sword rows are upstream HEAD rows (:321, the
 				// mToolHeadRecipes face) — vanilla shaped emission, the head item IS the identity
 				net.minecraft.world.item.Item tHead = bladeLadderHeadItem(tForm.aId(), tMaterial);
 				if (tHead != null) {
@@ -3961,7 +3961,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						if (tChar != ' ') tKey.put(tChar, bladeLadderIngredient(tChar, tMaterial));
 					}
 				}
-					// the r7-39 inversion fix: the sword rows are upstream HEAD rows (:321) — vanilla shaped emission
+					// the #39 inversion fix: the sword rows are upstream HEAD rows (:321) — vanilla shaped emission
 					net.minecraft.world.item.Item tHead = bladeLadderHeadItem(tForm.aId(), tMaterial);
 					if (tHead != null) {
 						headRowBuilder(tHead, tPattern, tKey).unlockedBy("has_head_material", has(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, tSnake))).save(aOutput, tId);
@@ -3987,7 +3987,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	*///?}
 
 	// ------------------------------------------------------------------------
-	// The machine ladder material rows (task p31-machine-ladder) — the upstream
+	// The machine ladder material rows (task machine-ladder) — the upstream
 	// OreProcessing_Tool mToolRecipes over the machine rows (Loader_Tools.java:305-316
 	// chisel/screwdriver/saw, :310-311 wrench/monkey wrench, :314 crowbar, :324 cutter,
 	// :327-328 hammer/soft hammer, :316 pincers), ONE gt6:material_tool row per
@@ -3997,7 +3997,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	// = the hammer/file/screwdriver/soft-hammer TOOL tags; V = the blue dye (the
 	// crowbar's :314 special). The C/G (plateGem/gem) SECOND variants of the wrench pair
 	// (:310 arg-8 second shapes) and the hammer (:327 arg-9 G shape) landed with task
-	// r10-debt-gem-sisters — the r9-39 card's declared remainder: 'C' = the plateGem ITEM
+	// debt-gem-sisters — the #39 card's declared remainder: 'C' = the plateGem ITEM
 	// (no tag family, the blade-family precedent), 'G' = the gems tag (item-truth gated);
 	// the gem variants swap the in-grid hammer for the file ('f' = CR.java:196 — gem
 	// plates/gems are FILED, not hammered, the upstream letter choice verbatim). The
@@ -4046,7 +4046,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * rows only (the upstream mToolRecipes arg-8 face: crowbar :314 / cutter(wire) :324 /
 	 * wrench :310 / monkey wrench :311 / pincers :316). The screwdriver :306 / saw :307 /
 	 * chisel :305 / hammer :327 shapes are upstream mToolHeadRecipes rows (the arg-9 face)
-	 * — they emit the head via {@link #machineLadderHeadItem} (the r7-39 inversion fix),
+	 * — they emit the head via {@link #machineLadderHeadItem} (the #39 inversion fix),
 	 * and the soft hammer's :328 head shape is EMPTY (its axis ∩ the port item truth = ∅,
 	 * the softHammerBuilder steel anchor owns the tool face).
 	 */
@@ -4164,8 +4164,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	// ------------------------------------------------------------------------
-	// The head-row completion band (task r9-39-toolhead-rows, GitHub #39) — the arg-9
-	// tool-head rows r7-39 left uncrafted: the 9 families builderwand (Loader_Tools
+	// The head-row completion band (task 39-toolhead-rows, GitHub #39) — the arg-9
+	// tool-head rows #39 left uncrafted: the 9 families builderwand (Loader_Tools
 	// :293), axeDouble (:301), sense (:302), plow (:303), file (:304), chainsaw (:308),
 	// drill (:309), wrench head (:310), plus the C (plateGem)/G (gem) SECOND variants of
 	// the dig six (:294-300) and the machine chisel (:305)/saw (:307). ONE vanilla
@@ -4371,7 +4371,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 *///?}
 
 	// ------------------------------------------------------------------
-	// task p34-bumbliary-recipes — the Bumbliary pair rows: the registration-line
+	// task bumbliary-recipes — the Bumbliary pair rows: the registration-line
 	// varargs transcriptions (Loader_MultiTileEntities.java:2222/:2223). The
 	// NBT_RECIPEMAP RM.BumbleQueens tag upstream rides the same lines — the DISPLAY-only
 	// fold (a null-backend fake-recipe map, MultiItemBumbles.java:614; the port BE has
@@ -4459,10 +4459,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				}
 				if (!tResolvable) continue; // the item-truth miss — no row
 				ResourceLocation tId = digLadderRowId(tForm.aId(), tSnake);
-				// the r7-39 inversion fix: the :305/:306/:307/:327 rows are upstream HEAD rows —
+				// the #39 inversion fix: the :305/:306/:307/:327 rows are upstream HEAD rows —
 				// vanilla shaped emission, the head item IS the identity
 				if (tHead != null) {
-					// the r7-39 inversion fix: the :305/:306/:307/:327 rows are upstream HEAD rows —
+					// the #39 inversion fix: the :305/:306/:307/:327 rows are upstream HEAD rows —
 					// vanilla shaped emission, the head item IS the identity. The G-carrying gem rows
 					// anchor the head item (the toolHeadRows band convention) — the gem universe
 					// carries no plates tag to anchor.
@@ -4521,9 +4521,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				}
 				if (!tResolvable) continue; // the item-truth miss — no row
 				ResourceLocation tId = digLadderRowId(tForm.aId(), tSnake);
-				// the r7-39 inversion fix: the :305/:306/:307/:327 rows are upstream HEAD rows
+				// the #39 inversion fix: the :305/:306/:307/:327 rows are upstream HEAD rows
 				if (tHead != null) {
-					// the r7-39 inversion fix: the :305/:306/:307/:327 rows are upstream HEAD rows.
+					// the #39 inversion fix: the :305/:306/:307/:327 rows are upstream HEAD rows.
 					// The G-carrying gem rows anchor the head item — the gem universe carries no
 					// plates tag to anchor (the forge-leg mirror).
 					if (machineLadderLetters(tForm).contains('G')) {
@@ -4554,7 +4554,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 *///?}
 
 	// -----------------------------------------------------------------------
-	// The head+handle assembly band (task r7-39-toolhead-assembly, GitHub #39) — the
+	// The head+handle assembly band (task 39-toolhead-assembly, GitHub #39) — the
 	// upstream AdvancedCraftingTool registrations (Loader_Tools.java:332-350, 19 tools),
 	// the shapeless workbench head+stick → tool row whose matches gate is
 	// stick-material == head.mHandleMaterial (AdvancedCraftingTool.java:105). Ported as
@@ -4717,7 +4717,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 *///?}
 
 	// -----------------------------------------------------------------------
-	// The CraftFrom band (task p36-craftfrom-plategem) — the upstream plateGem/plateGemTiny
+	// The CraftFrom band (task craftfrom-plategem) — the upstream plateGem/plateGemTiny
 	// hand-craft family (Loader_OreProcessing.java:171-178): every row is the same 2x2
 	// frame "s "/" X" — 's' = the saw tool letter (the spray-can band translation),
 	// 'X' = the same-material input. The upstream IOreDictListenerEvent dispatch rides
@@ -4820,7 +4820,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	// -----------------------------------------------------------------------
-	// The stick CraftFrom band (task p37-craftfrom-stick) — the upstream stick/
+	// The stick CraftFrom band (task craftfrom-stick) — the upstream stick/
 	// stickLong hand-craft family (Loader_OreProcessing.java:156-163, the
 	// coordinator-approved family boundary: BOTH stick* output prefixes, the
 	// P36 plategem card's plateGem+plateGemTiny companion shape). Eight row
@@ -4916,7 +4916,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	// -----------------------------------------------------------------------
-	// The fine-wire CraftFrom band (task p37-craftfrom-foil — the coordinator
+	// The fine-wire CraftFrom band (task craftfrom-foil — the coordinator
 	// fine-wire-batch ruling: the "foil family" upstream OUTPUT face is the
 	// EMPTY set — foil never appears as a CraftFrom output in
 	// Loader_OreProcessing.java, its production rides the AnvilBendSmall/
@@ -5004,7 +5004,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	// -----------------------------------------------------------------------
-	// The rockGt CraftFrom band (task p37-craftfrom-rockgt) — the rockGt batch
+	// The rockGt CraftFrom band (task craftfrom-rockgt) — the rockGt batch
 	// of the 47-statement CraftFrom panorama (the fine-wire card's residual
 	// ledger): :148 is the ONLY rockGt statement of the shaped panel (:322/
 	// :323/:338 ride the Crusher/Hammer/ByProductList machine domain), and
@@ -5119,7 +5119,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	// -----------------------------------------------------------------------
-	// The residual CraftFrom bands (task p37-craftfrom-residual — the 47-
+	// The residual CraftFrom bands (task craftfrom-residual — the 47-
 	// statement panel closeout: the 28 statements the plategem/stick/fine-wire/
 	// rockGt batches did not land). Five shaped bands + one shapeless band,
 	// each an independent band per the census law, all riding the digLadder
@@ -5133,7 +5133,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	//
 	// Tool letters = the upstream CR.java:342-359 oredict keys: 'd'
 	// screwdriver, 'f' file, 'h' the HARD hammer (craftingToolHardHammer,
-	// the p25-tool-hammer-wrench ruling), 's' saw, 'w' wrench, 'x' wire
+	// the tool-hammer-wrench ruling), 's' saw, 'w' wrench, 'x' wire
 	// cutter. The fixed uppercase vocabulary rides the :520-533 key table:
 	// S = stick, P = plate, C = plateGem, T = screw (X/Y = the special
 	// prefixes, null defaulting to plate :535-537).
@@ -5835,8 +5835,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	// -----------------------------------------------------------------------
-	// task r6-c4-copper-bridge — the vanilla-copper recipe bridge (the C4
-	// fusion ruling: GT copper is the ONLY copper source — r6-32 suppresses the
+	// task c4-copper-bridge — the vanilla-copper recipe bridge (the C4
+	// fusion ruling: GT copper is the ONLY copper source — #32 suppresses the
 	// vanilla copper ore blobs; this band keeps the vanilla copper USES unbroken
 	// by re-keying the four 1.20.1 rows that consume {@code minecraft:copper_ingot}
 	// onto the platform ingot tag). The tag face needs NO new datagen:

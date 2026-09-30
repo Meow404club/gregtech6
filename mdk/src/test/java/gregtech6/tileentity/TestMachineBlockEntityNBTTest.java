@@ -32,7 +32,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 
 /**
- * Acceptance 4 (task p3-be-framework): BE NBT round trip verified offline.
+ * Acceptance 4 (task be-framework): BE NBT round trip verified offline.
  * CompoundTag and BlockEntityType.Builder.of(...).build(null) construct without a
  * registry (see GTOfflineTestBase); load() has no Level dependency.
  *
@@ -55,7 +55,7 @@ public class TestMachineBlockEntityNBTTest extends GTOfflineTestBase {
 	 * constructor passed a null BET/state, which the 21.1 ctor validation rejects
 	 * (validateBlockState → getType().isValid). The passive fixture block drives the same
 	 * {@code mIsTicking = isTicking()} ctor branch through the full constructor instead
-	 * (task p15-m4-test-infra-2).
+	 * (task m4-test-infra-2).
 	 */
 	static TestMachineBlock sPassiveBlock;
 

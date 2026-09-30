@@ -21,7 +21,7 @@ import gregtech6.registry.GT6Books;
 
 /**
  * The Dusty Guide Book — the loot carrier that opens into a random manual (task
- * p38-book-loot-first). Upstream {@code MultiItemBooks.java:67} meta 32765 "Dusty Guide
+ * book-loot-first). Upstream {@code MultiItemBooks.java:67} meta 32765 "Dusty Guide
  * Book" carrying {@code Behavior_Drop_Loot("gt.books")}: right-click a block to CONSUME the
  * book and drop one random {@code gt.books} pool item at the clicked face
  * ({@code Behavior_Drop_Loot.java:37-47} — one use, one book, the cloth-dig sound). The

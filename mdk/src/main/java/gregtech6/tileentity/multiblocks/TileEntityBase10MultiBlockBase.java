@@ -19,7 +19,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
  * 1.20.1 counterpart of gregapi/tileentity/multiblocks/TileEntityBase10MultiBlockBase.java
- * (226 lines, task p4-multiblock-framework W3) — the state machine and trigger wiring every
+ * (226 lines, task multiblock-framework W3) — the state machine and trigger wiring every
  * multiblock controller shares. Controllers tick (the 600-tick poll needs the dispatcher).
  *
  * <p>Port scope:
@@ -199,7 +199,7 @@ public abstract class TileEntityBase10MultiBlockBase extends TileEntityBase03Tic
 	 * {@code -OFF[facing]} behind the controller, and the declared cells are
 	 * CENTRE-relative (the Coke Oven family, upstream MultiTileEntityCokeOven).
 	 *
-	 * <p>Task p27-builder-wand-form-fix: a controller whose shape is anchored AT the
+	 * <p>Task builder-wand-form-fix: a controller whose shape is anchored AT the
 	 * controller itself — the crucible "Main at Bottom-Center" (upstream
 	 * MultiTileEntityCrucible.java:118-122 walks the walls straight off xCoord/yCoord/zCoord
 	 * with no facing at all, and its :134-136 isInsideStructure is the controller box) —
@@ -225,7 +225,7 @@ public abstract class TileEntityBase10MultiBlockBase extends TileEntityBase03Tic
 	}
 
 	/**
-	 * The placement facing table (task p27-cokeoven-facing-fix): the GT6 front TOWARDS the
+	 * The placement facing table (task cokeoven-facing-fix): the GT6 front TOWARDS the
 	 * placer — the OPPOSITE of the view direction. Upstream evidence chain:
 	 * {@code getSideForPlayerPlacing} → {@code getHorizontalForPlayerPlacing}
 	 * (UT.java:1751-1753) over {@code COMPASS_DIRECTIONS = {SIDE_NORTH, SIDE_EAST,
@@ -237,7 +237,7 @@ public abstract class TileEntityBase10MultiBlockBase extends TileEntityBase03Tic
 	 * front (the getOffsetXN = pos − OFF[facing] arithmetic), AWAY from the placer —
 	 * standing in front and building behind just forms (the 2026-09-10 user report).
 	 *
-	 * <p>Task p28-singleblock-facing-canon: the table now LIVES on the shared canon seam
+	 * <p>Task singleblock-facing-canon: the table now LIVES on the shared canon seam
 	 * {@link GT6PlacementFacing} (every singleblock family consumes the same mapping); this
 	 * multiblock form delegates — API and behaviour byte-identical.
 	 */

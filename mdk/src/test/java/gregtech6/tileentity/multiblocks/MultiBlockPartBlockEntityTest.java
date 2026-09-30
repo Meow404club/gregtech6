@@ -17,7 +17,7 @@ import gregtech6.tileentity.GTItemStackHandler;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * The part BE tests (task p4-multiblock-framework acceptance ①): the mTargetPos NBT
+ * The part BE tests (task multiblock-framework acceptance ①): the mTargetPos NBT
  * round-trip (upstream MultiTileEntityMultiBlockPart :76/:131/:161-166), the lazy
  * getTarget rebuild with the isInsideStructure validation (:199-214), the mMode bitmask
  * and the capability relay to the controller.
@@ -131,7 +131,7 @@ public class MultiBlockPartBlockEntityTest extends GTMultiBlocksOfflineTestBase 
 	}
 
 	// ---------------------------------------------------------------------------
-	// the builder-wand relay (task p24-builder-wand — the upstream part :251-266
+	// the builder-wand relay (task builder-wand — the upstream part :251-266
 	// minimal faithful face, builder-wand exclusive)
 	// ---------------------------------------------------------------------------
 

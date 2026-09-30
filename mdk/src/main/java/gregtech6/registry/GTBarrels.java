@@ -43,8 +43,8 @@ import gregtech6.tileentity.tank.GTBarrelPlasticBlockEntity;
  * GT6Mod.java / GTModBusListener.java stay untouched. Same shape as GTFluidPipes/GTFluids;
  * a separate class keeps the W3 card scopes disjoint.
  *
- * <p>The barrel family (task p4-fluid-barrel wood, p6-barrel-metal-plastic wood-carrier
- * extension + plastic/metal, p7-barrel-high-tier-melt-bridge the 128K→10B ladder)
+ * <p>The barrel family (task fluid-barrel wood, barrel-metal-plastic wood-carrier
+ * extension + plastic/metal, barrel-high-tier-melt-bridge the 128K→10B ladder)
  * ports the upstream tank rows (Loader_MultiTileEntities.java:2136-2170, category
  * "Fluid Containers"): each material row carries its own TE class and BET, the capacity
  * and melt-down ceiling ride the block (the W1 registration-NBT-carrier pattern).
@@ -52,7 +52,7 @@ import gregtech6.tileentity.tank.GTBarrelPlasticBlockEntity;
  * category — the upstream MTE-registry category of the same rows — as this card's
  * minimal per-card tab.
  *
- * <p>Task p7-barrel-high-tier-melt-bridge: (a) the material melting-point bridge —
+ * <p>Task barrel-high-tier-melt-bridge: (a) the material melting-point bridge —
  * {@link #meltingPointK} is the verbatim {@code TileEntityBase08Barrel.readFromNBT2}
  * :66 pair of branches (explicit NBT_CAPACITY_HU wins, else
  * {@code (long)(mMaterial.mMeltingPoint * 1.25)}), which revokes the P6 declared
@@ -72,7 +72,7 @@ public final class GTBarrels {
 	/**
 	 * Wood fluid barrel — 16000 L sticky-tank family, melts down at 340 K (upstream
 	 * NBT_CAPACITY_HU row). The capacity/ceiling/ticker-type now ride the block carrier
-	 * explicitly (task p6-barrel-metal-plastic): 16000 L was already the class default,
+	 * explicitly (task barrel-metal-plastic): 16000 L was already the class default,
 	 * so this row is a zero-behaviour-change re-statement.
 	 */
 	public static final RegistryObject<GTBarrelBlock> BARREL = BLOCKS.register("barrel_wood",
@@ -113,7 +113,7 @@ public final class GTBarrels {
 	 * Metal drum — 64000 L bronze tier (upstream row Loader_MultiTileEntities.java:2151,
 	 * the lowest metal drum of the 64K→10B ladder). The P6 declared deviation (MAX_VALUE,
 	 * never melts) is revoked by the material melting-point bridge (task
-	 * p7-barrel-high-tier-melt-bridge spec ①): the ceiling is the verbatim :66 else-branch
+	 * barrel-high-tier-melt-bridge spec ①): the ceiling is the verbatim :66 else-branch
 	 * over the live dataset — Bronze carries Copper's 1357 K (MT.java:1705
 	 * {@code heat(Cu.mMeltingPoint)}), so the drum melts at (long)(1357 * 1.25) = 1696 K.
 	 * Copper sound for the bronze drum.
@@ -216,7 +216,7 @@ public final class GTBarrels {
 			() -> new GTBarrelBlockItem(BARREL_METAL.get(), new Item.Properties().stacksTo(16)));
 
 	/**
-	 * Logistics Tank — the keepFilter barrel (task p12-barrel-keepfilter-logistics), the
+	 * Logistics Tank — the keepFilter barrel (task barrel-keepfilter-logistics), the
 	 * upstream row Loader_MultiTileEntities.java:2171 verbatim on the load-bearing numbers:
 	 * {@code "Logistics Tank", MultiTileEntityBarrelLogistics, NBT_HARDNESS 1.0F,
 	 * NBT_RESISTANCE 10.0F, NBT_TANK_CAPACITY 1000000L, NBT_CAPACITY_HU 100000} — the block
@@ -262,7 +262,7 @@ public final class GTBarrels {
 	private GTBarrels() {}
 
 	/**
-	 * The barrel-family paint-tint walker (task p23-barrel-paint-render): the pinned 16
+	 * The barrel-family paint-tint walker (task barrel-paint-render): the pinned 16
 	 * barrel-domain blocks the client paint Block/Item colors register over — the wood
 	 * barrel + plastic canister + bronze drum + logistics tank (4 standalone rows) plus the
 	 * twelve high-tier metal drums (the :2159-2170 ladder, {@link #METAL_DRUM_BLOCKS} in

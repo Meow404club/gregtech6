@@ -35,7 +35,7 @@ import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.RecipeMap;
 
 /**
- * The bindings census pins (task p34-kjs-bindings acceptance ②): the exact binding
+ * The bindings census pins (task kjs-bindings acceptance ②): the exact binding
  * key set, the class-filter prefixes, the kubejs.plugins.txt resource registration
  * and the row-write seam's RECIPE_MAPS coverage census (the "schema count ==
  * RECIPE_MAPS count" pin restated for the bindings face, ruling 2026-09-22 —

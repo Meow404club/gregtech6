@@ -12,7 +12,7 @@ import gregtech6.tileentity.connectors.GTWireBlockEntity;
 /**
  * The torch-cover base — 1.20.1 port of
  * gregapi/cover/covers/AbstractCoverAttachmentTorch.java:34-81 (task
- * p34-covers-gameplay-10). A torch-family cover mounts on a redstone wire
+ * covers-gameplay-10). A torch-family cover mounts on a redstone wire
  * (upstream {@code MultiTileEntityWireRedstoneInsulated}; the port's shared carrier
  * {@link GTWireBlockEntity}), mirrors the wire's signal state into the visual lane
  * through the abstract {@link #condition} (:60-68 — the ON art is visual 0, the
@@ -37,7 +37,7 @@ public abstract class AbstractCoverAttachmentTorch extends AbstractCoverDefault 
 
 	/**
 	 * Upstream :35 — the torch family only mounts on the REDSTONE family of the wire
-	 * carrier (task p35-cover-narrowing-render-snapshot: the P34 carrier-class gate
+	 * carrier (task cover-narrowing-render-snapshot: the P34 carrier-class gate
 	 * narrows to the redstone-class rows; electric/laser wire rows refuse).
 	 */
 	@Override

@@ -14,7 +14,7 @@ import gregtech6.registry.GTBlockEntities;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Transformer Rotation block (task p12-gearbox-transformer) — the facing-cube carrier
+ * The Transformer Rotation block (task gearbox-transformer) — the facing-cube carrier
  * over the shared BET (ADR-P3-1), one single wood-row variant for this card (the upstream
  * "Wooden Transformer Gearbox" Loader row :1668 — hardness 6.0 / resistance 6.0; the
  * material family fan-out rides the pool).
@@ -58,7 +58,7 @@ public class GTTransformerRotationBlock extends GTEntityBlock {
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
 		// the front TOWARDS the placer, the driven axle sits behind (the
-		// GT6PlacementFacing canon, task p28-singleblock-facing-canon — the old comment
+		// GT6PlacementFacing canon, task singleblock-facing-canon — the old comment
 		// declared this intent while the code wrote the raw view direction, the same-disease
 		// self-witness; the BE follows via syncFacingFromState :164)
 		return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));

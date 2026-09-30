@@ -24,7 +24,7 @@ import gregtech6.registry.GT6BeeHives;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Bumbliary block (task p33-bees-lv3-b-bumbliary) — the block carrier of the MTE
+ * The Bumbliary block (task bees-lv3-b-bumbliary) — the block carrier of the MTE
  * 32741 / 32007 ports (Loader_MultiTileEntities.java:2222-2223). Both variants share the
  * class; the mounted BET picks the TE layout ({@link GT6BumbliaryBlockEntity#slotCount}).
  *
@@ -49,7 +49,7 @@ public class GT6BumbliaryBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The row material (issue #15, task r3-beehive-tint): the NBT_MATERIAL column the
+	 * The row material (issue #15, task beehive-tint): the NBT_MATERIAL column the
 	 * upstream pair registers — {@code ANY.Wood} on the primary (:2222) and
 	 * {@code MT.StainlessSteel} on the advanced (:2223). The seam resolves {@code MT.Wood}
 	 * DIRECTLY (the row's stats source, the GT6ManualKitchenBlockEntity precedent; pre
@@ -122,7 +122,7 @@ public class GT6BumbliaryBlock extends GTEntityBlock {
 	// :230-241 idiom) is exactly this deleted override.
 
 	/**
-	 * The top-face use walk (task p34-bumbliary-gui — the upstream onBlockActivated3
+	 * The top-face use walk (task bumbliary-gui — the upstream onBlockActivated3
 	 * :282-296 plus the onToolClick2 :305-313 scoop arm over one dispatch): the top face
 	 * with the scoop (a shears-action tool — the GTScoopItem) rides
 	 * {@link GT6BumbliaryBlockEntity#scoopUse}, any other top-face poke rides

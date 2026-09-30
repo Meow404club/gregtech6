@@ -19,7 +19,7 @@ import gregtech6.covers.covers.CoverFilterItem;
 /**
  * The filtered logistics bus base — 1.20.1 port of the shared body of
  * gregapi/cover/covers/CoverLogisticsItemExport.java (:41-107) and its fluid siblings
- * (CoverLogisticsFluidExport/Import/Storage), task p33-logistics-covers-12. The 1.7.10
+ * (CoverLogisticsFluidExport/Import/Storage), task logistics-covers-12. The 1.7.10
  * family repeats the SAME ~65-line body per cover with only the filter key
  * ({@code gt.filter.item} vs {@code gt.filter.fluid}) and the chat wording changing —
  * the port folds it into one parameterised base (the CoverRetrieverItem single-lane

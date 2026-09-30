@@ -25,7 +25,7 @@ import org.junit.jupiter.api.BeforeAll;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
 
 /**
- * Offline boot + fixtures for the multiblock tests (task p4-multiblock-framework acceptance ①).
+ * Offline boot + fixtures for the multiblock tests (task multiblock-framework acceptance ①).
  * Every multiblock test class extends THIS one base — the class execution order is undefined,
  * and the vanilla registries must be bootstrapped before any Block/ItemStack class initializes.
  *
@@ -55,10 +55,10 @@ public abstract class GTMultiBlocksOfflineTestBase extends GTRecipesOfflineTestB
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
-		// task p24-lightning-rod — on the 1.21.1 leg the bootstrap freeze lands MID-SUITE
+		// task lightning-rod — on the 1.21.1 leg the bootstrap freeze lands MID-SUITE
 		// (class-order lottery: whichever multiblock class first runs this @BeforeAll after
 		// the freeze dies at BlockEntityType's intrusive-holder init, "Registry is already
-		// frozen"). The GTOfflineTestBase p15-m4-test-infra remedy, verbatim: reopen the
+		// frozen"). The GTOfflineTestBase m4-test-infra remedy, verbatim: reopen the
 		// write window so the fixture BETs stay constructible regardless of scheduling.
 		gregtech6.tileentity.GTOfflineTestBase.unfreezeBlockEntityTypeRegistry();
 		sCokeOvenType = selfHolder(TestCokeOven::new);

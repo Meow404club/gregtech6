@@ -1,5 +1,5 @@
 /**
- * The offline truth tables of the wirelamp light chain (task p11-wire-brightness spec 1).
+ * The offline truth tables of the wirelamp light chain (task wire-brightness spec 1).
  * Upstream the 1.7.10 engine polled {@code bind4(TE.getLightValue())} (MultiTileEntityBlock
  * :212) with {@code getLightValue() = mIsGlowing ? mState : 0} (MultiTileEntityWireRedstone
  * :79) and moved the value through {@code onTickCheck} :51-58 / {@code setVisualData}
@@ -142,7 +142,7 @@ public class GTWireGlowLightTest extends GTOfflineTestBase {
 		// 21.1 validates the BE type/state pair at the ctor (validateBlockState →
 		// getType().isValid), so the fixture BET's valid set carries the GT6 wire blocks
 		// the CountingWires are created over — the vanilla STONE stand-in alone cannot
-		// validate a wire state (task p15-m4-test-infra-2).
+		// validate a wire state (task m4-test-infra-2).
 		sType = BlockEntityType.Builder.of(GTWireBlockEntity::new,
 				Blocks.STONE, sLumiumWire, sLumiumCable, sRedAlloyWire, sElectricWire).build(null);
 	}

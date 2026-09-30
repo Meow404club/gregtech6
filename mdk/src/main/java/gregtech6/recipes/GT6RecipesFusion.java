@@ -45,7 +45,7 @@ import gregtech6.item.GT6Circuits;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The Fusion Reactor recipe book (task p31-fusion) — the 18 static rows of
+ * The Fusion Reactor recipe book (task fusion) — the 18 static rows of
  * Loader_Recipes_Other.java:949-966, poured into {@link GT6RecipeMaps#FUSION}.
  *
  * <p><b>The row template</b> (every line :949-966 verbatim):
@@ -66,7 +66,7 @@ import gregtech6.registry.GTMaterialItems;
  *     generator form ({@code mOutputEnergy = 8192}, the BasicMachine :761-764 trio);</li>
  * <li>{@code mSpecialValue} carries the upstream {@code setSpecialNumber} number —
  *     {@code dur*8192*16} for most rows, the {@code 8469}/{@code 94956} outliers verbatim
- *     (:954/:966). LIVE gate payload since task p32-ignition-gate (the S31-7 waiver
+ *     (:954/:966). LIVE gate payload since task ignition-gate (the S31-7 waiver
  *     flipped once the laser domain landed the LU economy): the fusion's :755 arm arms
  *     the {@code mChargeRequirement} ledger with this exact number on the first start /
  *     recipe switch, and the :497-500 glass-ring LU arm drains it while the :809 gate

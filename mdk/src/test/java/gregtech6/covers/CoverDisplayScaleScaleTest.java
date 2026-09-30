@@ -15,7 +15,7 @@ import gregtech6.covers.covers.CoverScaleProgress;
 import gregtech6.util.UT6;
 
 /**
- * The display/scale acceptance tables (task p35-covers-display-scale-6) — the energy
+ * The display/scale acceptance tables (task covers-display-scale-6) — the energy
  * display (:36-68), the progress sensor (:35-51) and the energy sensor (:36-53), plus
  * the Scale base emission machinery (:39-69):
  *

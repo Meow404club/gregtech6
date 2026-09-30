@@ -10,7 +10,7 @@ import gregtech6.tileentity.inventories.GT6DrawerQuadBlockEntity;
 import gregtech6.tileentity.inventories.GT6SafeBlockEntity;
 
 /**
- * The static-storage batch MUI panel factory (task p26-storage-static-batch — the
+ * The static-storage batch MUI panel factory (task storage-static-batch — the
  * {@link GTBasicMachineMUI} shape, container edition: no progress values, slot grids only).
  * The wave-4 GUI ruling: the storage containers with an upstream GUI (DrawerQuad/Safe)
  * open through {@link GT6MuiMachine#tryOpen} with ZERO new MenuType; the panels build on

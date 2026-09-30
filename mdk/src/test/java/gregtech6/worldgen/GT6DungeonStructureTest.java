@@ -1,5 +1,5 @@
 /**
- * Tests for task p38-dungeon-framework: the shelter-dungeon layout arithmetic + the
+ * Tests for task dungeon-framework: the shelter-dungeon layout arithmetic + the
  * piece vocabulary constants + the dungeon-chest loot carrier — the acceptance's
  * offline audit unit.
  *

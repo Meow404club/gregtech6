@@ -11,7 +11,7 @@ import gregtech6.covers.ICover;
 import gregtech6.registry.GTBarrels;
 
 /**
- * The plastic canister (task p6-barrel-metal-plastic) — the counterpart of the upstream
+ * The plastic canister (task barrel-metal-plastic) — the counterpart of the upstream
  * {@code MultiTileEntityBarrelPlastic} row (gregtech/tileentity/tanks/
  * MultiTileEntityBarrelPlastic.java:37, Loader_MultiTileEntities.java:2150, 32000 L).
  *

@@ -16,7 +16,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
- * The mode 0-4 air-placement truth table (task p26-c-foam-block-family SPEC pin ① — the
+ * The mode 0-4 air-placement truth table (task c-foam-block-family SPEC pin ① — the
  * card's biggest uncertainty face, pinned offline): the pure {@link GT6FoamPlacement} arm
  * walk over a recording sink, the upstream Behavior_Spray_Foam.foam() :132-176 semantics
  * transposed — the origin = clicked+face (:132), the player-side orientation (:135), the

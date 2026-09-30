@@ -20,7 +20,7 @@ import gregtech6.datagen.GT6WorldgenDatagen;
 import gregtech6.registry.GTStoneBlocks;
 
 /**
- * The nether worldgen band pins (task p31-nether-lens-end-yield): the 17-stone lens
+ * The nether worldgen band pins (task nether-lens-end-yield): the 17-stone lens
  * table census + the independent per-row 1/200 draw semantics + the coordinate-seeded
  * decision determinism + the End five-row draw filter + the conditions-key JSON
  * snapshots (the acceptance's 双腿各自家品牌 face). The JSON reads go off the

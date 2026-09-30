@@ -18,7 +18,7 @@ import gregtech6.registry.GT6Kinetics;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The Diesel Engine crafting-row json test (task p29-w4-hot-lube acceptance ④ — the
+ * The Diesel Engine crafting-row json test (task w4-hot-lube acceptance ④ — the
  * "lubricant 行+item crafting 位" face): the EIGHT generated data/gt6/recipes/
  * diesel_engine_*.json files (the Loader_MultiTileEntities.java:722-729 grids) are read
  * verbatim off the classpath and asserted on their IDENTITY faces — the "PLP"/"SMS"/"GPC"

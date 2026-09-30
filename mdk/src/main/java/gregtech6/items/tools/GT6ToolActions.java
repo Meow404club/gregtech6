@@ -4,8 +4,8 @@ import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 
 /**
- * The GT6 tool-action entry — task p9-tool-crowbar spec ①, the ADR
- * 2026-09-01-p9-tool-crowbar ① surface. Upstream classifies tools through the
+ * The GT6 tool-action entry — task tool-crowbar spec ①, the ADR
+ * 2026-09-01-tool-crowbar ① surface. Upstream classifies tools through the
  * {@code TOOL_*} string family (CS.java:1040, e.g. {@code TOOL_crowbar}) plus the
  * ToolsGT meta ids (CS.java:1734-1755, CROWBAR=20); this port flattens both layers
  * onto Forge {@link ToolAction}s — the id string stays {@code ICover.TOOL_CROWBAR}
@@ -30,7 +30,7 @@ public final class GT6ToolActions {
 	public static final ToolAction CROWBAR = ToolAction.get("gt6_crowbar");
 
 	/**
-	 * The wire-cutter stack-classification action ("gt6_cutter" — task p10-tool-cutter
+	 * The wire-cutter stack-classification action ("gt6_cutter" — task tool-cutter
 	 * spec ①). Upstream rides the {@code TOOL_cutter} behaviour string
 	 * (GT_Tool_WireCutter.java:101 {@code Behavior_Tool(TOOL_cutter, …)}) while the wire
 	 * block entities gate on {@code getFacingTool() == TOOL_cutter}
@@ -41,7 +41,7 @@ public final class GT6ToolActions {
 	public static final ToolAction CUTTER = ToolAction.get("gt6_cutter");
 
 	/**
-	 * The chisel stack-classification action ("gt6_chisel" — task p16-chisel-decalcify
+	 * The chisel stack-classification action ("gt6_chisel" — task chisel-decalcify
 	 * spec ①, the crowbar/cutter entry shape). Upstream rides the {@code TOOL_chisel}
 	 * behaviour string (GT_Tool_Chisel.java:98 {@code Behavior_Tool(TOOL_chisel, …)}) and
 	 * the boiler tank answers it on the onToolClick2 chain
@@ -53,7 +53,7 @@ public final class GT6ToolActions {
 	public static final ToolAction CHISEL = ToolAction.get("gt6_chisel");
 
 	/**
-	 * The file stack-classification action ("gt6_file" — task p24-tool-system spec ①, the
+	 * The file stack-classification action ("gt6_file" — task tool-system spec ①, the
 	 * crowbar/cutter/chisel entry shape). Upstream rides the {@code TOOL_file} behaviour
 	 * string (CS.java:1050, the GT_Tool_File tool row) and the {@code craftingToolFile}
 	 * oredict key (CS.java:1867) as the crafting-tool ingredient face; the port flattens
@@ -65,7 +65,7 @@ public final class GT6ToolActions {
 	public static final ToolAction FILE = ToolAction.get("gt6_file");
 
 	/**
-	 * The saw stack-classification action ("gt6_saw" — task p24-tool-system spec ①, the
+	 * The saw stack-classification action ("gt6_saw" — task tool-system spec ①, the
 	 * FILE entry shape). Upstream rides the {@code TOOL_saw} behaviour string
 	 * (CS.java:1049, GT_Tool_Saw.java:197 {@code Behavior_Tool(TOOL_saw, …)}) and the
 	 * {@code craftingToolSaw} oredict key (CS.java:1864); the port flattens the
@@ -79,7 +79,7 @@ public final class GT6ToolActions {
 
 	/**
 	 * The builder-wand stack-classification action ("gt6_builderwand" — task
-	 * p24-builder-wand, the FILE/SAW entry shape). Upstream rides the
+	 * builder-wand, the FILE/SAW entry shape). Upstream rides the
 	 * {@code TOOL_builderwand} behaviour string (CS.java:1068, mounted by
 	 * GT_Tool_Builderwand.onStatsAddedToTool :63 as
 	 * {@code Behavior_Tool(TOOL_builderwand, SFX.MC_XP, 100, ...)}) and the
@@ -103,7 +103,7 @@ public final class GT6ToolActions {
 
 	/**
 	 * The screwdriver stack-classification action ("gt6_screwdriver" — task
-	 * p24-screwdriver-item spec ①, the FILE/SAW entry shape). Upstream rides the
+	 * screwdriver-item spec ①, the FILE/SAW entry shape). Upstream rides the
 	 * {@code TOOL_screwdriver} behaviour string (CS.java:1057, the Loader_Tools.java:129
 	 * registration row {@code new GT_Tool_Screwdriver() … , TOOL_screwdriver}) and the
 	 * {@code craftingToolScrewdriver} oredict key (CS.java:1895) as the crafting-tool
@@ -123,7 +123,7 @@ public final class GT6ToolActions {
 
 	/**
 	 * The hard-hammer stack-classification action ("gt6_hammer" — task
-	 * p25-tool-hammer-wrench spec ②, the FILE/SAW entry shape). Upstream rides the
+	 * tool-hammer-wrench spec ②, the FILE/SAW entry shape). Upstream rides the
 	 * {@code TOOL_hammer} behaviour string (CS.java:1051, the Loader_Tools.java:124
 	 * registration row {@code new GT_Tool_HardHammer() … , TOOL_hammer}) and the
 	 * {@code craftingToolHardHammer} oredict key (CS.java:1890) as the crafting-tool
@@ -134,13 +134,13 @@ public final class GT6ToolActions {
  * naming ruling, decisions.p25-tool-hammer-wrench-rulings). The world arms (the
  * ore-crush drop conversion + the mining surface, GT_Tool_HardHammer.java:83-119) stay
  * the world-interaction card's pool; the SECOND behavior arm (TOOL_prospector,
- * GT_Tool_HardHammer.java:132-135) landed with task p30-pool-prospector — see
+ * GT_Tool_HardHammer.java:132-135) landed with task pool-prospector — see
  * {@link #PROSPECTOR} and {@link GT6Prospector}.
  */
 	public static final ToolAction HAMMER = ToolAction.get("gt6_hammer");
 
 	/**
-	 * The wrench stack-classification action ("gt6_wrench" — task p25-tool-hammer-wrench
+	 * The wrench stack-classification action ("gt6_wrench" — task tool-hammer-wrench
 	 * spec ②, the FILE/SAW entry shape). Upstream rides the {@code TOOL_wrench} behaviour
 	 * string (CS.java:1038, the Loader_Tools.java:126 registration row
 	 * {@code new GT_Tool_Wrench() … , TOOL_wrench}) and the {@code craftingToolWrench}
@@ -213,7 +213,7 @@ public final class GT6ToolActions {
 	public static final String WRENCH_ID = "wrench";
 
 	/**
-	 * The pickaxe stack-classification action ("gt6_pickaxe" — task p29-w5-t1-dig-six,
+	 * The pickaxe stack-classification action ("gt6_pickaxe" — task w5-t1-dig-six,
 	 * the CROWBAR entry shape). Upstream rides the {@code TOOL_pickaxe} behaviour string
 	 * (CS.java:1035, the Loader_Tools.java:147/:151 rows {@code TOOL_pickaxe}); the port
 	 * flattens the classification onto this Forge {@link ToolAction}. Consumers:
@@ -223,13 +223,13 @@ public final class GT6ToolActions {
 	public static final ToolAction PICKAXE = ToolAction.get("gt6_pickaxe");
 
 	/**
-	 * The shovel stack-classification action ("gt6_shovel" — task p29-w5-t1-dig-six, the
+	 * The shovel stack-classification action ("gt6_shovel" — task w5-t1-dig-six, the
 	 * PICKAXE entry shape; upstream {@code TOOL_shovel} CS.java:1045).
 	 */
 	public static final ToolAction SHOVEL = ToolAction.get("gt6_shovel");
 
 	/**
-	 * The spade stack-classification action ("gt6_spade" — task p29-w5-t1-dig-six, the
+	 * The spade stack-classification action ("gt6_spade" — task w5-t1-dig-six, the
 	 * PICKAXE entry shape; upstream {@code TOOL_shovel} on the spade behaviour row
 	 * GT_Tool_Spade.java:112 — the spade keeps its OWN action here so the flat port can
 	 * tell the harvest-spade from the plain shovel while both classify
@@ -239,7 +239,7 @@ public final class GT6ToolActions {
 
 	/**
 	 * The universal-spade stack-classification action ("gt6_universal_spade" — task
-	 * p29-w5-t1-dig-six, the PICKAXE entry shape; upstream GT_Tool_UniversalSpade.java:87
+	 * w5-t1-dig-six, the PICKAXE entry shape; upstream GT_Tool_UniversalSpade.java:87
 	 * {@code isCrowbar}+{@code TOOL_crowbar}/{@code TOOL_shovel} behaviour rows — the
 	 * five vanilla faces ride {@code ToolActions.SHOVEL_DIG/AXE_DIG/SWORD_DIG} beside
 	 * this gt6 key).
@@ -247,7 +247,7 @@ public final class GT6ToolActions {
 	public static final ToolAction UNIVERSAL_SPADE = ToolAction.get("gt6_universal_spade");
 
 	/**
-	 * The sword stack-classification action ("gt6_sword" — task p29-w5-t2-blade-six, the
+	 * The sword stack-classification action ("gt6_sword" — task w5-t2-blade-six, the
 	 * PICKAXE entry shape; upstream {@code TOOL_sword} CS.java:1039, the
 	 * Loader_Tools.java:118 registration row). Consumer: {@link GTSwordItem} (the Knife
 	 * subclass inherits the classifier).
@@ -255,7 +255,7 @@ public final class GT6ToolActions {
 	public static final ToolAction SWORD = ToolAction.get("gt6_sword");
 
 	/**
-	 * The knife stack-classification action ("gt6_knife" — task p29-w5-t2-blade-six, the
+	 * The knife stack-classification action ("gt6_knife" — task w5-t2-blade-six, the
 	 * SWORD entry shape; upstream {@code TOOL_knife} CS.java:1046, the
 	 * Loader_Tools.java:135 registration row). Consumer: {@link GTKnifeItem}.
 	 */
@@ -263,14 +263,14 @@ public final class GT6ToolActions {
 
 	/**
 	 * The butchery-knife stack-classification action ("gt6_butchery_knife" — task
-	 * p29-w5-t2-blade-six, the SWORD entry shape; upstream the Loader_Tools.java:136 row
+	 * w5-t2-blade-six, the SWORD entry shape; upstream the Loader_Tools.java:136 row
 	 * rides {@code TOOL_knife} — the port gives the flat item its OWN key so the two
 	 * knives stay tellable, the spade/shovel ruling).
 	 */
 	public static final ToolAction BUTCHERY_KNIFE = ToolAction.get("gt6_butchery_knife");
 
 	/**
-	 * The club stack-classification action ("gt6_club" — task p29-w5-t2-blade-six, the
+	 * The club stack-classification action ("gt6_club" — task w5-t2-blade-six, the
 	 * SWORD entry shape; upstream the Loader_Tools.java:130 row rides
 	 * {@code TOOL_hammer} — the club ALSO classifies {@link #HAMMER} so the machine
 	 * dispatch sees it exactly as the 1.7.10 behaviour row did; the own key keeps the
@@ -279,7 +279,7 @@ public final class GT6ToolActions {
 	public static final ToolAction CLUB = ToolAction.get("gt6_club");
 
 	/**
-	 * The axe stack-classification action ("gt6_axe" — task p29-w5-t2-blade-six, the
+	 * The axe stack-classification action ("gt6_axe" — task w5-t2-blade-six, the
 	 * SWORD entry shape; upstream {@code TOOL_axe} CS.java:1036, the
 	 * Loader_Tools.java:122/:123 rows). Consumers: {@link GTAxeItem} and the
 	 * {@link GTAxeDoubleItem} subclass (the PICKAXE family ruling — one action for the
@@ -288,7 +288,7 @@ public final class GT6ToolActions {
 	public static final ToolAction AXE = ToolAction.get("gt6_axe");
 
 	/**
-	 * The hoe stack-classification action ("gt6_hoe" — task p29-w5-t4-field-five, the
+	 * The hoe stack-classification action ("gt6_hoe" — task w5-t4-field-five, the
 	 * PICKAXE entry shape; upstream {@code TOOL_hoe} CS.java:1044, the
 	 * Loader_Tools.java:122 registration row). RED LINE: the hoe NEVER classifies
 	 * {@code ToolActions.HOE_DIG} — the wrench-substitute predicates key on it
@@ -297,7 +297,7 @@ public final class GT6ToolActions {
 	public static final ToolAction HOE = ToolAction.get("gt6_hoe");
 
 	/**
-	 * The plow stack-classification action ("gt6_plow" — task p29-w5-t4-field-five, the
+	 * The plow stack-classification action ("gt6_plow" — task w5-t4-field-five, the
 	 * PICKAXE entry shape; upstream {@code TOOL_plow} CS.java, the Loader_Tools.java:139
 	 * registration row).
 	 */
@@ -305,14 +305,14 @@ public final class GT6ToolActions {
 
 	/**
 	 * The branch-cutter stack-classification action ("gt6_branch_cutter" — task
-	 * p29-w5-t4-field-five, the PICKAXE entry shape; upstream the Loader_Tools.java:133
+	 * w5-t4-field-five, the PICKAXE entry shape; upstream the Loader_Tools.java:133
 	 * row registers {@code TOOL_grafter} — the grafter class flattens onto this gt6 key,
 	 * no vanilla action exists for it).
 	 */
 	public static final ToolAction BRANCH_CUTTER = ToolAction.get("gt6_branch_cutter");
 
 	/**
-	 * The sense stack-classification action ("gt6_sense" — task p29-w5-t4-field-five,
+	 * The sense stack-classification action ("gt6_sense" — task w5-t4-field-five,
 	 * the PICKAXE entry shape; upstream {@code TOOL_sense} on the Loader_Tools.java:138
 	 * row — the scythe-face tool).
 	 */
@@ -320,14 +320,14 @@ public final class GT6ToolActions {
 
 	/**
 	 * The hand-drill stack-classification action ("gt6_hand_drill" — task
-	 * p29-w5-t4-field-five, the PICKAXE entry shape; upstream {@code TOOL_drill} on the
+	 * w5-t4-field-five, the PICKAXE entry shape; upstream {@code TOOL_drill} on the
 	 * Loader_Tools.java:152 row — the isMiningTool-F prospecting face).
 	 */
 	public static final ToolAction HAND_DRILL = ToolAction.get("gt6_hand_drill");
 
 	/**
 	 * The prospector stack-classification action ("gt6_prospector" — task
-	 * p30-pool-prospector, the CROWBAR entry shape). Upstream rides the
+	 * pool-prospector, the CROWBAR entry shape). Upstream rides the
 	 * {@code TOOL_prospector} behaviour string (CS.java:1074) mounted as the HardHammer's
 	 * SECOND Behavior_Tool arm (GT_Tool_HardHammer.java:132-135 — the only mount in the
 	 * library; hammer 100 / prospector 10 durability scale), so the port does NOT mint a

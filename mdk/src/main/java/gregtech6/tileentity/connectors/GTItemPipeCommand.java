@@ -35,9 +35,9 @@ import net.minecraftforge.items.IItemHandler;
 import gregtech6.registry.GTItemPipes;
 
 /**
- * {@code /gt6itempipe} — the automated item-pipe acceptance command (task p26-pipe-item
+ * {@code /gt6itempipe} — the automated item-pipe acceptance command (task pipe-item
  * acceptance ③, the GTFluidPipeCommand shape; game-bus listener, self-contained per
- * ADR-P3-4, NEVER touching GTFluidPipeCommand — the p26-arch ruling).
+ * ADR-P3-4, NEVER touching GTFluidPipeCommand — the arch ruling).
  *
  * <ul>
  * <li>{@code place <pos> <againstFace> [path]} — the headless placement driver: setBlock
@@ -398,7 +398,7 @@ public final class GTItemPipeCommand {
 	}
 
 	/**
-	 * {@code retriever <pos>} — the retriever acceptance drive (task p31-retriever-cover
+	 * {@code retriever <pos>} — the retriever acceptance drive (task retriever-cover
 	 * acceptance ④, the {@code accept} shape): the pipe at pos with TWO connected
 	 * containers (the first found face carries the cover and is the pull TARGET, the
 	 * second the pull SOURCE), each container pre-loaded by the caller (the chain feeds

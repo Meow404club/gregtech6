@@ -19,8 +19,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregtech6.multiblock.GTMultiBlockPattern;
 
 /**
- * The ghost preview emission pin (tasks p10-ghost-preview-poc → p12-ghost-pattern-api →
- * p12-ghost-render-match, offline): ① the FORMED shell draw is STILL the POC's literal
+ * The ghost preview emission pin (tasks ghost-preview-poc → ghost-pattern-api →
+ * ghost-render-match, offline): ① the FORMED shell draw is STILL the POC's literal
  * draw — a recording {@link VertexConsumer} captures the exact vertex stream of
  * {@link GTMultiBlockPreviewRenderer#emitFormedShell} and compares it vertex-by-vertex
  * (positions AND colours, exact float equality) against the POC shell emission

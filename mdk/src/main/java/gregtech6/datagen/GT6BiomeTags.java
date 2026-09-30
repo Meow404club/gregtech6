@@ -19,7 +19,7 @@ import gregtech6.worldgen.GT6HiveFeature;
 import gregtech6.worldgen.GT6Worldgen;
 
 /**
- * The GT6 biome-tag datagen home (task p30-w6-t1-trees-nine spec ③): the biome
+ * The GT6 biome-tag datagen home (task w6-t1-trees-nine spec ③): the biome
  * determination face of the 9 tree worldgen rows — the upstream {@code BIOMES_*}
  * BiomeNameSets (CS.java:263-290) translate onto per-tree tags
  * {@code #gt6:trees/<snake>}, and the tree biome-modifier JSONs reference exactly these
@@ -65,7 +65,7 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
      * time, so a typo fails runData loudly (the zero-optional discipline).
      */
     // ------------------------------------------------------------------
-    // The bumble-hive family tags (task p32-bees-lv2) — the WorldgenHives surface
+    // The bumble-hive family tags (task bees-lv2) — the WorldgenHives surface
     // chain's biome-name families (WorldgenHives.java:157-172) onto
     // {@code #gt6:bumble_hives/<family>}: the vanilla members live, the modded
     // families (magical/volcanic/end/nether — 1.7.10 modded BiomeNameSets) emit
@@ -136,7 +136,7 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
 
     @Override
     protected void addTags(HolderLookup.Provider aProvider) {
-        addHiveTags(); // task p32-bees-lv2 — the 8 bumble-hive family tags (tail-append)
+        addHiveTags(); // task bees-lv2 — the 8 bumble-hive family tags (tail-append)
         for (int i = 0; i < gregtech6.registry.GT6TreeBlocks.KINDS.size(); i++) {
             List<ResourceKey<Biome>> tBiomes = TREE_BIOMES.get(i);
             if (tBiomes.isEmpty()) {
@@ -146,7 +146,7 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
             tag(treeTag(gregtech6.registry.GT6TreeBlocks.KINDS.get(i).snake()))
                     .add(tBiomes.toArray(new ResourceKey[0]));
         }
-        // task p30-w6-rocks-sticks — the surface deco bands (the tags are NOT
+        // task w6-rocks-sticks — the surface deco bands (the tags are NOT
         // loader-branded, one band serves both legs; the rocks version's
         // BiomeTagsProvider base folds into this TagsProvider<Biome>):
         // WorldgenRocks.java:54 — the nine rock biome groups (wastelands skipped, no vanilla tag).
@@ -173,7 +173,7 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
                 .addTag(BiomeTags.IS_TAIGA)
                 .addTag(BiomeTags.IS_BADLANDS);
 
-        // task p30-w6-t2-surface-blocks — the surface-plants + soil bands. The
+        // task w6-t2-surface-blocks — the surface-plants + soil bands. The
         // BIOMES_* vanilla-subset discipline (the class javadoc): 1.7.10 sets
         // carry the 1.18-removed hills names, the survivors + the vanilla tag
         // families stand in, modded names are the datapack extension face.

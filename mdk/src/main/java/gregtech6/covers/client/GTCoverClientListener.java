@@ -13,13 +13,13 @@ import gregtech6.client.render.GTOvenClientListener;
 import gregtech6.client.render.GTRenderModelListener;
 
 /**
- * The client-side wiring of the cover plate models (task p4-cover-core ⑥, ADR-P3-4:
+ * The client-side wiring of the cover plate models (task cover-core ⑥, ADR-P3-4:
  * card-local {@code @EventBusSubscriber}, GT6Mod/GTModBusListener untouched). Dist.CLIENT —
  * the dedicated server never loads this class, so the client-only {@link CoverPlateModel}
  * chain stays server-safe. Registration runs at mod construct (strictly before the first
  * resource reload that fires ModifyBakingResult — GTRenderModelListener class doc).
  *
- * <p>Targets (task p10-cover-plate-perstate-fix, the P9 erratum landed): the oven's
+ * <p>Targets (task cover-plate-perstate-fix, the P9 erratum landed): the oven's
  * <b>16 per-state</b> ModelResourceLocations ({@code gt6:oven#active=…,facing=…,running=…}),
  * reused read-only from {@link GTOvenClientListener#targetModelIds()} (that file stays
  * zero-diff). Vanilla ModelBakery loads one TOP-LEVEL model per BLOCK STATE
@@ -28,7 +28,7 @@ import gregtech6.client.render.GTRenderModelListener;
  * JSON's model-file paths — the pre-p10 registration ids ({@code block/oven},
  * {@code block/oven_active}, {@code block/oven_running}) never matched any key, and every
  * wrap silently degraded through the absent-target skip (GTRenderModelListener.java:97-99,
- * the mechanism proven by task p9-render-c-oven-overlay).
+ * the mechanism proven by task render-c-oven-overlay).
  *
  * <p>SHARED KEYS (declared, not settled here): the oven overlay listener registers the
  * SAME 16 keys with {@code GTOvenOverlayModel::new} on the same last-wins factory table

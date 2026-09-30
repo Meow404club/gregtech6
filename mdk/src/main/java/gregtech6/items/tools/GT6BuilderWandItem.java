@@ -22,14 +22,14 @@ import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
 
 /**
- * The formal GT6 Builder's Wand — task p24-builder-wand. Upstream the tool is a meta id
+ * The formal GT6 Builder's Wand — task builder-wand. Upstream the tool is a meta id
  * (Loader_Tools.java:153 {@code ToolsGT.sMetaTool.addTool(BUILDERWAND, "Builder Wand", ...)}
  * with the behaviour pair GT_Tool_Builderwand.onStatsAddedToTool :61-64 mounts:
  * {@code Behavior_Builderwand} (the surface-extension arm, the separate card
- * p24-wand-surface-arm) + {@code Behavior_Tool(TOOL_builderwand, SFX.MC_XP, 100, ...)}).
+ * wand-surface-arm) + {@code Behavior_Tool(TOOL_builderwand, SFX.MC_XP, 100, ...)}).
  * This card ports the MULTIBLOCK SCAFFOLD arm — the click flattens the upstream
  * IBlockToolable broadcast onto a {@link #useOn} direct dispatch (the GTCrowbarItem
- * port-ism shape, ADR 2026-09-01-p9-tool-crowbar ⑦), because 1.20.1 has no per-item
+ * port-ism shape, ADR 2026-09-01-tool-crowbar ⑦), because 1.20.1 has no per-item
  * pre-use hook and the port has no tool-broadcast layer (the research gap ③ pool).
  *
  * <p>The dispatch (upstream TileEntityBase10MultiBlockBase.onToolClick2 :141-146, the
@@ -48,7 +48,7 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
  * <li>the upstream material ladder (radius = toolQuality+1, durability ×0.1) collapses
  *     to ONE tier — radius 2 (the mid-gem quality+1) and durability 512, the pinned
  *     crowbar/cutter/chisel/file/saw family value; the surface arm is card
- *     p24-wand-surface-arm;</li>
+ *     wand-surface-arm;</li>
  * <li>the upstream no-controller chat line (part :256-258 "There is no Multiblock
  *     Controller for this Block.") is a silent {@code PASS} — the {@code aChatReturn}
  *     mechanism has no port counterpart;</li>
@@ -57,7 +57,7 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
  *     :43-45) to vanilla {@link SoundEvents#EXPERIENCE_ORB_PICKUP} with the
  *     {@code SFX.RANDOM_PITCH} flag (:63) as a light pitch wobble;</li>
  * <li><b>the P28 ONE-CLICK ruling (user 2026-09-12, the declared deviation from the
- *     upstream nine-click semantics — ADR 2026-09-12-p28-builder-wand-oneclick)</b>:
+ *     upstream nine-click semantics — ADR 2026-09-12-builder-wand-oneclick)</b>:
  *     upstream the scaffold click only places the Chebyshev ≤ 1 neighbourhood of the
  *     clicked cell (the ±1 click window, Util :51), so a fresh multiblock takes many
  *     clicks; HERE one click forms the COMPLETE structure (research
@@ -88,7 +88,7 @@ public class GT6BuilderWandItem extends Item {
 	/**
 	 * The single-tier scaffold radius — the upstream {@code getPrimaryMaterial()
 	 * .mToolQuality+1} (Behavior_Builderwand :86) collapsed to the mid-gem quality+1
-	 * (declared deviation; consumed by the surface-extension card p24-wand-surface-arm).
+	 * (declared deviation; consumed by the surface-extension card wand-surface-arm).
 	 */
 	public static final int SCAFFOLD_RADIUS = 2;
 
@@ -181,12 +181,12 @@ public class GT6BuilderWandItem extends Item {
 
 	/**
 	 * The P28 one-click scaffold, two mechanisms over one semantics (a click = the complete
-	 * structure, the ADR 2026-09-12-p28-builder-wand-oneclick deviation):
+	 * structure, the ADR 2026-09-12-builder-wand-oneclick deviation):
 	 * <ul>
 	 * <li><b>a forming-pattern controller</b> (the Coke Oven family, the Crucible family —
 	 *     the pattern carries {@code formingPart} cells) rides the checker's transactional
 	 *     SET walk {@link GTMultiBlockStructureChecker#form} fed
-	 *     {@code aController.patternWalkFacing()} (the p27-builder-wand-form-fix seam, the
+	 *     {@code aController.patternWalkFacing()} (the builder-wand-form-fix seam, the
 	 *     same feed the /gt6multiblock form arm rides): aClickedAt = null opens the ±1 gate
 	 *     for the WHOLE structure, and the walk's own failure semantics hold — already formed
 	 *     ⇒ zero side effects (idempotent), short stock / hard failure ⇒ zero writes, zero

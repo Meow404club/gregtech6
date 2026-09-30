@@ -30,7 +30,7 @@ import gregtech6.tileentity.tools.GT6JuicerBlockEntity;
 import gregtech6.tileentity.tools.GT6MixingBowlBlockEntity;
 
 /**
- * The kitchen family registration (task p26-kitchen-pot-bowl) — card-owned
+ * The kitchen family registration (task kitchen-pot-bowl) — card-owned
  * {@code @EventBusSubscriber(MOD)} DeferredRegisters attached from the construct event,
  * the GTBarrels shape (ADR-P3-4; a separate class keeps the wave-4 card scopes
  * disjoint). Ports the "Misc Tool Blocks" kitchen rows of
@@ -58,14 +58,14 @@ import gregtech6.tileentity.tools.GT6MixingBowlBlockEntity;
  * <p>GUI: none — the upstream tooltip is {@code LH.NO_GUI_CLICK_TO_INTERACT} and the
  * wave4 GUI ruling binds menu-less carriers (zero new MenuType). Rendering: the #7
  * element-model wave drew the sub-cube hollow tubs (the mDisplay fluid surface stays the
- * pool cut); task p38-c3-kitchen-tint-shape closed the render double-gap — the
+ * pool cut); task c3-kitchen-tint-shape closed the render double-gap — the
  * {@link #kitchenProperties} seam rides {@code .noOcclusion().isViewBlocking(never)} (the
  * #9 wire seam form: the sub-cube quads over a canOcclude block culled neighbour faces),
  * the carriers mount the upstream collision-pool shapes, and the tintindex-0 faces resolve
  * the row material colour through {@link #paintableBlockArray()} (the #8 census convention,
  * feeding the baked world tint and the inventory ItemColor).
  *
- * <p>Task p27-lang-fix — the CREATIVE-TAB RETIREMENT: the standalone "kitchen" tab
+ * <p>Task lang-fix — the CREATIVE-TAB RETIREMENT: the standalone "kitchen" tab
  * ({@code gt6:kitchen}, the former "Misc Tool Blocks" category face) is retired per the
  * user ruling — the pot/bowl rows are processing machines, not cookware, and NO renamed
  * successor tab was kept; the four family items join {@code GTMachines.MACHINES_TAB}
@@ -81,7 +81,7 @@ public final class GT6Kitchen {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 
 	/**
-	 * The shared kitchen-family properties seam (task p38-c3-kitchen-tint-shape, the
+	 * The shared kitchen-family properties seam (task c3-kitchen-tint-shape, the
 	 * {@code GTWires.wireProperties} per-file seam form): the ONE chain every registration
 	 * point builds from. The sub-cube element models over a true {@code canOcclude} make
 	 * the occlusion culling treat the vessel cell as a full cube — neighbour faces get
@@ -138,7 +138,7 @@ public final class GT6Kitchen {
 
 	/**
 	 * The Juicer — MT.Ceramic, RM.Juicer (upstream Loader_MultiTileEntities.java:2184,
-	 * id 32722, aUtilStone, hardness 1.0 / resistance 5.0; task p33-food-machines-kitchen).
+	 * id 32722, aUtilStone, hardness 1.0 / resistance 5.0; task food-machines-kitchen).
 	 * The tank capacity rides the upstream :75 per-tank litres ({@code new
 	 * FluidTankGT(1000000)}) — 1000000 L through the carrier (the p26 family reads the
 	 * carrier capacity for every tank, so the carrier carries the Juicer's own shape, not
@@ -162,7 +162,7 @@ public final class GT6Kitchen {
 			BLOCK_ENTITY_TYPES.register("mixing_bowl", () -> BlockEntityType.Builder.of(
 					GT6MixingBowlBlockEntity::new, MIXING_BOWL.get()).build(null));
 
-	/** The Juicer BET — one BlockEntityType over the ceramic Juicer (task p33-food-machines-kitchen). */
+	/** The Juicer BET — one BlockEntityType over the ceramic Juicer (task food-machines-kitchen). */
 	public static final RegistryObject<BlockEntityType<GT6JuicerBlockEntity>> JUICER_BE =
 			BLOCK_ENTITY_TYPES.register("juicer", () -> BlockEntityType.Builder.of(
 					GT6JuicerBlockEntity::new, JUICER.get()).build(null));
@@ -200,7 +200,7 @@ public final class GT6Kitchen {
 			() -> new Item(new Item.Properties()));
 
 	/**
-	 * The MACHINES-TAB join (task p27-lang-fix — the kitchen-tab retirement): the user
+	 * The MACHINES-TAB join (task lang-fix — the kitchen-tab retirement): the user
 	 * ruling retired the standalone kitchen tab WITHOUT a renamed successor (the pot/bowl
 	 * rows are processing machines, not cookware — "no kitchen-machines tab"), so the four
 	 * family items ride the machines tab through the same event seam the grass family uses
@@ -236,7 +236,7 @@ public final class GT6Kitchen {
 		BLOCKS.register(tModBus);
 		BLOCK_ENTITY_TYPES.register(tModBus);
 		ITEMS.register(tModBus);
-		// task p27-lang-fix: the kitchen CREATIVE_MODE_TABS register retired with the tab —
+		// task lang-fix: the kitchen CREATIVE_MODE_TABS register retired with the tab —
 		// the family items join GTMachines.MACHINES_TAB via onBuildTabContents instead.
 	}
 
@@ -259,7 +259,7 @@ public final class GT6Kitchen {
 	}
 
 	/**
-	 * The kitchen-family paint-tint walker (task p38-c3-kitchen-tint-shape, the
+	 * The kitchen-family paint-tint walker (task c3-kitchen-tint-shape, the
 	 * {@code GTMultiBlocks.partPaintableBlockArray} census convention): the four blocks
 	 * whose datagen models carry tintindex 0 on every face (the #7 reservation). Feeding
 	 * BOTH consumption halves — the baked world tint ({@code GTMachineTintModel}, the p32

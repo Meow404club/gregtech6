@@ -17,7 +17,7 @@ import gregtech6.covers.covers.CoverTextureSimple;
 import gregtech6.tileentity.machines.GTMachinesOfflineTestBase;
 
 /**
- * Offline fixtures for the cover tests (task p4-cover-core acceptance ①/②) — reuses the
+ * Offline fixtures for the cover tests (task cover-core acceptance ①/②) — reuses the
  * machine base (boot + recipe-map lifecycle + the public {@code MachineLevel} stub) and
  * adds the cover fixture set: an oven BET over the vanilla BRICKS fixture block (the
  * registries are frozen after boot; the machines-base precedent) and a CoverRegistry

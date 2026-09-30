@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The sensor NBT round-trip (task p26-sensors-core offline acceptance — the "NBT 往返"
+ * The sensor NBT round-trip (task sensors-core offline acceptance — the "NBT 往返"
  * arm): every key of the double base rides the upstream verbatim name
  * (GTSensorBlockEntity.java:64-83 — CS.NBT_MODE/NBT_VISUAL/NBT_VALUE/NBT_CONNECTION/
  * NBT_REDSTONE + the SensorTE :66-87 quartet "gt.sensor.max/value/index/array"), and the

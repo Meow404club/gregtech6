@@ -1,5 +1,5 @@
 /**
- * Tests for task p30-w6-rocks-sticks: the surface deco registration + worldgen band —
+ * Tests for task w6-rocks-sticks: the surface deco registration + worldgen band —
  * the acceptance's offline audit unit (the GT6WorldgenDatagenTest posture).
  *
  * <p>Compile anchors: WorldgenRocks.java:63 (the NBT lottery), WorldgenSticks.java:53-55
@@ -51,10 +51,10 @@ class GT6SurfaceBlocksTest {
         assertEquals(List.of("surface_rock_stone", "surface_rock_flint", "surface_rock_meteorite", "surface_stick"),
                 GT6SurfaceBlocks.ALL.stream().map(tRow -> tRow.getId().getPath()).limit(4).toList(),
                 "the first-batch surface deco blocks, rocks first (the WorldgenRocks first-batch set + the stick)");
-        // +8 (task p30-w6-t2-surface-blocks): the plant quartet + the 4 fallen-log woods.
+        // +8 (task w6-t2-surface-blocks): the plant quartet + the 4 fallen-log woods.
         // the vein-indicator rocks, pickup-only like the first-batch rocks/sticks
-        // (31 at p30-w6-t3-large-veins; 40 since r7-a-ore-axis-extension;
-        // 57 since r7-b-gem-pool-extension, the gem-pool axis chain).
+        // (31 at w6-t3-large-veins; 40 since a-ore-axis-extension;
+        // 57 since b-gem-pool-extension, the gem-pool axis chain).
         // 4 + 8 + 57 = 69; the ITEMS register holds the 8
         // obtainable block items (the rocks/sticks/indicator rocks stay zero-item).
         assertEquals(69, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
@@ -63,7 +63,7 @@ class GT6SurfaceBlocksTest {
                 "the obtainable band's block items (the rocks/sticks/indicator rocks stay zero-item)");
     }
 
-    /** The obtainable band paths + item pairing (task p30-w6-t2-surface-blocks). */
+    /** The obtainable band paths + item pairing (task w6-t2-surface-blocks). */
     @Test
     void surfacePlantPathsArePinned() {
         assertEquals(List.of("glowtus", "berry_bush", "black_sand", "turf"),
@@ -85,8 +85,8 @@ class GT6SurfaceBlocksTest {
     }
 
     /**
-     * The 57 vein-indicator rocks (task p30-w6-t3-large-veins; 31 -> 40 with r7-a-ore-axis-extension;
-     * 40 -> 57 with r7-b-gem-pool-extension): each literal id snake
+     * The 57 vein-indicator rocks (task w6-t3-large-veins; 31 -> 40 with a-ore-axis-extension;
+     * 40 -> 57 with b-gem-pool-extension): each literal id snake
      * matches the material's composed path (GTMaterialItems.snakeCase over mNameInternal —
      * the literal was required because the class loads before MT.init), the rockGt loot
      * item exists in the headless enumeration, and the {@code indicatorRock} lookup
@@ -123,7 +123,7 @@ class GT6SurfaceBlocksTest {
      * position-seeded draw and shows that variant's box (the same-position wireframe
      * == the same-position model). Collision stays empty (the upstream :177 null —
      * noCollission). The rock null-pos stays the representative 8x3x8 tier (the
-     * p38-issue1-4 pin) and follows its tier live.
+     * issue1-4 pin) and follows its tier live.
      */
     @Test
     void stickSelectionShapeIsBarExact() {
@@ -194,7 +194,7 @@ class GT6SurfaceBlocksTest {
         // 4-arg form went protected on 21.1) — noCollission short-circuits to empty
         assertTrue(tStick.defaultBlockState().getCollisionShape(null, null).isEmpty(),
                 "stick collision stays empty — MultiTileEntityStick.java:177 collision null");
-        // the rock null-pos pin: the representative 8x3x8 tier (p38-issue1-4 pin kept)
+        // the rock null-pos pin: the representative 8x3x8 tier (issue1-4 pin kept)
         var tRockBox = tRock.getShape(tRock.defaultBlockState(), null, null, null).toAabbs().get(0);
         assertEquals(new net.minecraft.world.phys.AABB(4 / 16.0, 0, 4 / 16.0, 12 / 16.0, 3 / 16.0, 12 / 16.0), tRockBox,
                 "rock null-pos selection falls back to the 8x3x8 representative tier");

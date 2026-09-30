@@ -27,7 +27,7 @@ import gregtech6.registry.GTMachines;
 import gregtech6.util.GTSideTables;
 
 /**
- * The Distillery-family row acceptance (task p16-distillery-family ②, the OFFLINE half —
+ * The Distillery-family row acceptance (task distillery-family ②, the OFFLINE half —
  * the GTDryerFamilyRowTest shape): the four row records pinned to the upstream columns
  * (Loader_MultiTileEntities.java:1398-1401 — the name/material/hardness/NBT_INPUT/
  * NBT_ENERGY_ACCEPTED HU/RM.Distillery/NBT_TEXTURE "distillery"/NBT_PARALLEL 8/16/32/64 +
@@ -72,7 +72,7 @@ public class GTDistilleryFamilyRowTest extends TileEntityBasicMachineOfflineTest
 					+ "acceptance drives inject+check like the pre-gui dryer)");
 		}
 		// the four differing columns, row by row - the composed face replays the old name
-		// column from the family template + the material word (task p20-i18n-compose-rows)
+		// column from the family template + the material word (task i18n-compose-rows)
 		String[] tWords = {"Steel", "Invar", "Titanium", "Tungsten Carbide"};
 		String[] tSlugs = {"steel", "invar", "titanium", "tungsten_carbide"};
 		for (int tI = 0; tI < 4; tI++) {

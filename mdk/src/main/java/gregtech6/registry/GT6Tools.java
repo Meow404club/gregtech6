@@ -65,25 +65,25 @@ import gregtech6.items.tools.electric.GT6ElectricToolItem;
 import gregtech6.items.tools.pocket.GTPocketMultitoolItem;
 
 /**
- * The GT6 tool registration home — task p9-tool-crowbar spec ③, the ADR
- * 2026-09-01-p9-tool-crowbar ① surface. Card-owned self-contained
+ * The GT6 tool registration home — task tool-crowbar spec ③, the ADR
+ * 2026-09-01-tool-crowbar ① surface. Card-owned self-contained
  * {@code @EventBusSubscriber(MOD)} DeferredRegister attached from the construct event
- * (the GTBarrels precedent, ADR 2026-08-31-p8-prefixblocks): GT6Mod.java /
+ * (the GTBarrels precedent, ADR 2026-08-31-prefixblocks): GT6Mod.java /
  * GTModBusListener.java stay untouched.
  *
- * <p>Task p10-tool-creative-tab adds the self-owned "Tools" creative tab
+ * <p>Task tool-creative-tab adds the self-owned "Tools" creative tab
  * ({@link #TOOLS_TAB}, id {@code gt6:tools}) over a table-driven
  * {@code displayItems} ({@link #TAB_TABLE}, the GTWires.ELECTRIC_WIRES_TAB form, the
  * W1 ADR ①c) — the p9 ADR cut ("the item is {@code /give} reachable") closes here.
  *
- * <p>Declared pool cuts (ADR 2026-09-01-p10-tools-covers-split):
+ * <p>Declared pool cuts (ADR 2026-09-01-tools-covers-split):
  * <ol>
  * <li><b>Crowbar crafting recipe</b> — upstream shapes {@code {"hVS","VSV","SVf"}} per
  *     material, requiring the {@code h} hammer + {@code f} file TOOL PIECES plus a blue
  *     dye auxiliary (Loader_Tools.java:314, the OreProcessing_Tool row over
  *     toolHeadWrench); the port has no tool-piece item family and inventing vanilla
  *     substitutes is not done — unlocks with the tool-family card.</li>
- * <li><b>Crowbar material ladder</b> — UNLOCKED by task p31-identity-seam (was: the
+ * <li><b>Crowbar material ladder</b> — UNLOCKED by task identity-seam (was: the
  *     single steel tier at durability 512). Upstream registers ONE meta id with an
  *     NBT-chosen material (the whole ToolsGT block Loader_Tools.java:114-145; the
  *     crowbar row :128 carries {@code setMaterialAmount(3*U2)}); the port isomorph
@@ -99,7 +99,7 @@ import gregtech6.items.tools.pocket.GTPocketMultitoolItem;
  *     GTClientHandlers.</li>
  * </ol>
  *
- * <p>Task p31-single-tier-ruling walked every registration row below and ruled, per
+ * <p>Task single-tier-ruling walked every registration row below and ruled, per
  * item, either PERMANENT single tier (no material identity, zero {@code GT6ItemData}
  * seam consumption) or LADDER CANDIDATE (recorded in decisions.p31-single-tier-ruling).
  * The upstream test: the material axis exists (per-material obtainment rows, the
@@ -117,7 +117,7 @@ public final class GT6Tools {
 	/**
 	 * The formal crowbar — item id {@code gt6:crowbar}. Base durability 512 = the
 	 * IDENTITY-LESS legacy value (the ADR pin); identity-carrying stacks scale per
-	 * material through the p31-identity-seam (upstream Loader_Tools:128 row,
+	 * material through the identity-seam (upstream Loader_Tools:128 row,
 	 * {@link GTCrowbarItem#getMaxDamage}). Durability semantics: one vanilla point per
 	 * 10000 upstream tool-damage units, so one cover dismantle = one point.
 	 */
@@ -125,9 +125,9 @@ public final class GT6Tools {
 			() -> new GTCrowbarItem(new Item.Properties().durability(GTCrowbarItem.DURABILITY_POINTS)));
 
 	/**
-	 * The formal wire cutter — item id {@code gt6:cutter} (task p10-tool-cutter spec ③).
+	 * The formal wire cutter — item id {@code gt6:cutter} (task tool-cutter spec ③).
 	 * Single steel tier, durability 512 (upstream {@code 4*U} material-scaled,
-	 * Loader_Tools.java:131 — the ladder UNLOCKED by task p31-machine-ladder, the
+	 * Loader_Tools.java:131 — the ladder UNLOCKED by task machine-ladder, the
 	 * {@link gregtech6.items.tools.GT6ToolLadder} faces over the {@code GT.ToolStats}
 	 * identity; the identity-less arm keeps the 512).
 	 * Upstream display name "Wire Cutter" (the same :131 registration row); no attack
@@ -137,9 +137,9 @@ public final class GT6Tools {
 			() -> new GTCutterItem(new Item.Properties().durability(GTCutterItem.DURABILITY_POINTS)));
 
 	/**
-	 * The formal chisel — item id {@code gt6:chisel} (task p16-chisel-decalcify spec ①).
+	 * The formal chisel — item id {@code gt6:chisel} (task chisel-decalcify spec ①).
 	 * Single steel tier, durability 512 (the crowbar/cutter pinned family value; the
-	 * material ladder UNLOCKED by task p31-machine-ladder, the identity-less arm keeps
+	 * material ladder UNLOCKED by task machine-ladder, the identity-less arm keeps
 	 * the 512).
 	 * Upstream display name "Chisel" (the same :142 registration row); the decalcify
 	 * durability mapping is the upstream behaviour's mDamage=25 conversion
@@ -149,9 +149,9 @@ public final class GT6Tools {
 			() -> new GTChiselItem(new Item.Properties().durability(GTChiselItem.DURABILITY_POINTS)));
 
 	/**
-	 * The formal file — item id {@code gt6:file} (task p24-tool-system spec ①/⑤). Single
+	 * The formal file — item id {@code gt6:file} (task tool-system spec ①/⑤). Single
 	 * steel tier, durability 512 (the crowbar/cutter/chisel pinned family value; upstream
-	 * scales per material — the p31-single-tier-ruling: LADDER CANDIDATE of the
+	 * scales per material — the single-tier-ruling: LADDER CANDIDATE of the
 	 * machine-face family, the per-material rows Loader_Tools.java:304 ("P"/"Pk",
 	 * typemin(2) qualmax(2)), the toolHeadFile amount :127, the AdvancedCraftingTool :347;
 	 * {@code GT6FileItem} carries no seam face until its ladder card). Upstream display
@@ -165,9 +165,9 @@ public final class GT6Tools {
 			() -> new GT6FileItem(new Item.Properties().durability(GT6FileItem.DURABILITY_POINTS)));
 
 	/**
-	 * The formal saw — item id {@code gt6:saw} (task p24-tool-system spec ①/⑤). Single
+	 * The formal saw — item id {@code gt6:saw} (task tool-system spec ①/⑤). Single
 	 * steel tier, durability 512 (the family value; the material ladder UNLOCKED by
-	 * task p31-machine-ladder). Upstream display name "Saw" (CS.java:1094); the crafting-loss face
+	 * task machine-ladder). Upstream display name "Saw" (CS.java:1094); the crafting-loss face
 	 * rides {@link GTSawItem#getCraftingRemainingItem} (the shared one-point mapping);
 	 * the crafting INGREDIENT face is the {@code #gt6:tools/saw} item tag (GT6ItemTags,
 	 * the craftingToolSaw oredict translation). The world arms (bark strip, sapling/
@@ -178,9 +178,9 @@ public final class GT6Tools {
 
 	/**
 	 * The formal builder's wand — item id {@code gt6:builder_wand} (task
-	 * p24-builder-wand). Single tier, durability 512 (the family value; upstream scales
+	 * builder-wand). Single tier, durability 512 (the family value; upstream scales
 	 * per material with the ×0.1 multiplier, GT_Tool_Builderwand :42 — the
-	 * p31-single-tier-ruling: LADDER CANDIDATE (the per-material rows Loader_Tools.java:
+	 * single-tier-ruling: LADDER CANDIDATE (the per-material rows Loader_Tools.java:
 	 * 293, the AdvancedCraftingTool YellowSapphire :336); the radius-2-flat face stays
 	 * the declared port behaviour — a material identity would scale the durability
 	 * budget, not the radius). Upstream display name "Builder Wand" (the :153 registration row and
@@ -193,9 +193,9 @@ public final class GT6Tools {
 			() -> new GT6BuilderWandItem(new Item.Properties().durability(GT6BuilderWandItem.DURABILITY_POINTS)));
 
 	/**
-	 * The formal screwdriver — item id {@code gt6:screwdriver} (task p24-screwdriver-item
+	 * The formal screwdriver — item id {@code gt6:screwdriver} (task screwdriver-item
 	 * spec ①/③). Single steel tier, durability 512 (the family value; the material
-	 * ladder UNLOCKED by task p31-machine-ladder). Upstream display name "Screwdriver"
+	 * ladder UNLOCKED by task machine-ladder). Upstream display name "Screwdriver"
 	 * (CS.java:1102); the crafting-loss face rides
 	 * {@link GT6ScrewdriverItem#getCraftingRemainingItem} (the shared one-point mapping,
 	 * the upstream :70-72 400-unit row folded); the crafting INGREDIENT face is the
@@ -208,9 +208,9 @@ public final class GT6Tools {
 			() -> new GT6ScrewdriverItem(new Item.Properties().durability(GT6ScrewdriverItem.DURABILITY_POINTS)));
 
 	/**
-	 * The formal hard hammer — item id {@code gt6:hammer} (task p25-tool-hammer-wrench
+	 * The formal hard hammer — item id {@code gt6:hammer} (task tool-hammer-wrench
 	 * spec ③). Single steel tier at the identity-less arm, durability 512 (the family
-	 * value; the material ladder UNLOCKED by task p31-machine-ladder — upstream scales
+	 * value; the material ladder UNLOCKED by task machine-ladder — upstream scales
 	 * per material via {@code toolHeadHammer.mAmount}, Loader_Tools.java:124, and
 	 * {@link GTHammerItem} implements the {@code GT6ToolLadder.LadderTool} face).
 	 * Upstream display name "Hammer" (CS.java:1096, the same :124 registration row);
@@ -224,9 +224,9 @@ public final class GT6Tools {
 			() -> new GTHammerItem(new Item.Properties().durability(GTHammerItem.DURABILITY_POINTS)));
 
 	/**
-	 * The formal wrench — item id {@code gt6:wrench} (task p25-tool-hammer-wrench spec
+	 * The formal wrench — item id {@code gt6:wrench} (task tool-hammer-wrench spec
 	 * ③). Single steel tier, durability 512 (the family value; the material ladder
-	 * UNLOCKED by task p31-machine-ladder). Upstream display name "Wrench" (CS.java:1083, the same :126 registration row); the
+	 * UNLOCKED by task machine-ladder). Upstream display name "Wrench" (CS.java:1083, the same :126 registration row); the
 	 * crafting-loss face rides {@link GTWrenchItem#getCraftingRemainingItem} (the shared
 	 * one-point mapping, the upstream :59 800-unit row folded); the crafting INGREDIENT
 	 * face is the {@code #gt6:tools/wrench} item tag (GT6ItemTags, the craftingToolWrench
@@ -238,10 +238,10 @@ public final class GT6Tools {
 
 	/**
 	 * The formal small bending cylinder — item id {@code gt6:bending_cylinder_small} (task
-	 * p25-food-can-row0 spec ②, the GT6FileItem form with the census OFF). Single steel
+	 * food-can-row0 spec ②, the GT6FileItem form with the census OFF). Single steel
 	 * tier, durability 512 (the family value; upstream scales per material via
 	 * {@code setMaterialAmount(3*U)}, Loader_Tools.java:146 — the
-	 * p31-single-tier-ruling: LADDER CANDIDATE, the crafting-consumable axis (the
+	 * single-tier-ruling: LADDER CANDIDATE, the crafting-consumable axis (the
 	 * per-material ingot rows :313, typemin(2))). Upstream
 	 * display name "Small Bending Cylinder" (the same :146 registration row); the
 	 * crafting-loss face rides {@link GT6BendingCylinderSmallItem#getCraftingRemainingItem}
@@ -255,7 +255,7 @@ public final class GT6Tools {
 	public static final RegistryObject<Item> BENDING_CYLINDER_SMALL = ITEMS.register("bending_cylinder_small",
 			() -> new GT6BendingCylinderSmallItem(new Item.Properties().durability(GT6BendingCylinderSmallItem.DURABILITY_POINTS)));
 
-	// ─── the pocket multitool family (task p29-w5-t7-pocket-eight, tail-append) ───
+	// ─── the pocket multitool family (task w5-t7-pocket-eight, tail-append) ───
 	// Eight forms of one tool (Loader_Tools.java:176-183): the closed multitool plus the
 	// seven switch faces, ring-chained by GTPocketMultitoolItem.next = (i+1)%8 (the :187-196
 	// NEI-redirect walk, which itself has no modern counterpart — the declared deviation
@@ -263,7 +263,7 @@ public final class GT6Tools {
 	// class, eight registrations (the card's base + form-parameter shape); pure durability
 	// 512 (the family value, ruling d) — NO battery/EU face (the reversal ruling: the :354
 	// recipe row carries no battery slot).
-	// p31-single-tier-ruling: LADDER CANDIDATE, GATED on the tool-piece family — the
+	// single-tier-ruling: LADDER CANDIDATE, GATED on the tool-piece family — the
 	// upstream material identity is injected by the five tool heads the :354 recipe
 	// consumes (typemin(3) qualmin(1)), and this port cut that head family (the class
 	// javadoc cut ①), so the eight forms stay identity-less until the family lands.
@@ -301,7 +301,7 @@ public final class GT6Tools {
 			() -> new GTPocketMultitoolItem(GTPocketMultitoolItem.CHISEL, new Item.Properties().durability(GTPocketMultitoolItem.DURABILITY_POINTS)));
 
 	/**
-	 * The pocket ring in switch order (task p29-w5-t7-pocket-eight) — the registration-row
+	 * The pocket ring in switch order (task w5-t7-pocket-eight) — the registration-row
 	 * sequence Loader_Tools.java:176-183 pins: each form's switch target is the NEXT entry,
 	 * the chisel wrapping back to the multitool (GTPocketMultitoolItem.next = (i+1)%8).
 	 */
@@ -310,7 +310,7 @@ public final class GT6Tools {
 			POCKET_MULTITOOL_SCISSORS, POCKET_MULTITOOL_CHISEL);
 
 	/**
-	 * The six dig tools — task p29-w5-t1-dig-six (the W5 tool wave card 1; rows 11-16 of
+	 * The six dig tools — task w5-t1-dig-six (the W5 tool wave card 1; rows 11-16 of
 	 * the table). Single steel tier, durability 512 (the family value; upstream scales
 	 * per material, the same pool cut — the gem pick's upstream ×0.25 multiplier folds
 	 * into its flat 128, GTPickaxeGemItem javadoc). Display names = the upstream
@@ -330,13 +330,13 @@ public final class GT6Tools {
 	 *     surface + the openableCrowbar Unboxinator conversion riding the loot seam).</li>
 	 * </ul>
 	 *
-	 * <p>MATERIAL LADDER (task p31-dig-ladder): the pickaxe trio + the shovel/spade/hoe
+	 * <p>MATERIAL LADDER (task dig-ladder): the pickaxe trio + the shovel/spade/hoe
 	 * ride the {@code GT6ToolLadder} face over the {@code GT.ToolStats} identity (the
 	 * per-material durability/speed/level/tint/name, the upstream MultiItemTool :482/:483
 	 * formulas; the identity-less arm = the steel fallback bit-exact). The AXE joins the
 	 * dig ladder per the upstream family table (row :120 sits in the dig rows, harvest
 	 * TOOL_axe, OreDictToolNames.axe — the blade family = sword/universal_spade/knife/
-	 * butchery_knife/sense). THE W3 SINGLE-TIER RULING (task p31-single-tier-ruling):
+	 * butchery_knife/sense). THE W3 SINGLE-TIER RULING (task single-tier-ruling):
 	 * the axe_double is a LADDER CANDIDATE of THIS dig family — row :121 sits inside the
 	 * dig block :117-122 (between the axe :120 and the hoe :122), the harvest tag is
 	 * TOOL_axe, the oredict name is {@code axe} with no blade (the three-evidence
@@ -369,7 +369,7 @@ public final class GT6Tools {
 			() -> new GTSpadeItem(new Item.Properties().durability(GTSpadeItem.DURABILITY_POINTS)));
 
 	/**
-	 * The universal spade — item id {@code gt6:universal_spade}. p31-single-tier-ruling:
+	 * The universal spade — item id {@code gt6:universal_spade}. single-tier-ruling:
 	 * LADDER CANDIDATE of the BLADE family (the evidence on the dig block javadoc above;
 	 * the per-material head rows Loader_Tools.java:298, the toolHeadUniversalSpade amount
 	 * :134) — identity-less until its ladder card.
@@ -378,7 +378,7 @@ public final class GT6Tools {
 			() -> new GTUniversalSpadeItem(new Item.Properties().durability(GTUniversalSpadeItem.DURABILITY_POINTS)));
 
 	/**
-	 * The six blade tools — task p29-w5-t2-blade-six (the W5 tool wave card 2; rows
+	 * The six blade tools — task w5-t2-blade-six (the W5 tool wave card 2; rows
 	 * 17-22 of the table). Single steel tier, durability 512 (the family value; the
 	 * double axe carries the upstream ×1.5 multiplier as the flat 768). Display names =
 	 * the upstream registration-row wordings (Loader_Tools.java:118-136). The world arms:
@@ -396,10 +396,10 @@ public final class GT6Tools {
 	 * <li>{@code gt6:axe_double} (upstream GT_Tool_AxeDouble — 6.0F, durability 768).</li>
 	 * </ul>
 	 *
-	 * <p>MATERIAL LADDER (task p31-blade-ladder): the sword/knife/butchery_knife read the
+	 * <p>MATERIAL LADDER (task blade-ladder): the sword/knife/butchery_knife read the
 	 * {@code GT.ToolStats} identity per stack (durability, the MultiItemTool.java:392
 	 * attack fold, the name template, the tint — {@link GT6ToolLadder}); the axe pair and
-	 * the club were ruled by task p31-single-tier-ruling: the axe_double is a DIG-family
+	 * the club were ruled by task single-tier-ruling: the axe_double is a DIG-family
 	 * ladder candidate (the dig block javadoc above) and the club is a HAMMER-family
 	 * ladder candidate (upstream GT_Tool_Club extends GT_Tool_HardHammer,
 	 * early/GT_Tool_Club.java:47; the per-material ingot rows Loader_Tools.java:329; the
@@ -426,9 +426,9 @@ public final class GT6Tools {
 			() -> new GTAxeDoubleItem(new Item.Properties().durability(GTAxeDoubleItem.DURABILITY_POINTS)));
 
 	/**
-	 * The formal soft hammer — item id {@code gt6:soft_hammer} (task p29-w5-t3-machine-face-four
+	 * The formal soft hammer — item id {@code gt6:soft_hammer} (task w5-t3-machine-face-four
 	 * spec ①). The 8.0x durability multiplier is LIVE over the material ladder
-	 * (task p31-machine-ladder): {@link GTSoftHammerItem#MAX_DURABILITY_MULTIPLIER}
+	 * (task machine-ladder): {@link GTSoftHammerItem#MAX_DURABILITY_MULTIPLIER}
 	 * (GT_Tool_SoftHammer.java:79-81) rides the {@code GT.ToolStats} j/100 budget —
 	 * a Steel soft hammer is 512 ×8 = 4096 points (the declared behaviour change).
 	 * Upstream display name "Soft Hammer" (the :125 registration row); the vanilla-ish rotation face
@@ -441,9 +441,9 @@ public final class GT6Tools {
 
 	/**
 	 * The formal monkey wrench — item id {@code gt6:monkey_wrench} (task
-	 * p29-w5-t3-machine-face-four spec ②, the {@link GTWrenchItem} subclass). Single steel
+	 * w5-t3-machine-face-four spec ②, the {@link GTWrenchItem} subclass). Single steel
 	 * tier, durability 512 (the family value; the material ladder UNLOCKED by
-	 * task p31-machine-ladder). Upstream display name "Monkey Wrench" (the
+	 * task machine-ladder). Upstream display name "Monkey Wrench" (the
 	 * same :144 registration row); the crafting INGREDIENT face is the
 	 * {@code #gt6:tools/monkey_wrench} item tag (the craftingToolMonkeyWrench snake) — the
 	 * upstream wrench double-name folds to the single tag, the card's tag ruling. RED LINE:
@@ -454,8 +454,8 @@ public final class GT6Tools {
 
 	/**
 	 * The formal magnifying glass — item id {@code gt6:magnifying_glass} (task
-	 * p29-w5-t3-machine-face-four spec ③). Single steel tier, durability 512 (the family
-	 * value; the material ladder UNLOCKED by task p31-machine-ladder). Upstream display
+	 * w5-t3-machine-face-four spec ③). Single steel tier, durability 512 (the family
+	 * value; the material ladder UNLOCKED by task machine-ladder). Upstream display
 	 * name "Magnifying Glass" (the same :148 registration
 	 * row); the pure right-click check face rides {@link GTMagnifyingGlassItem#useOn}
 	 * (AHA/HMM, zero change); the crafting INGREDIENT face is the
@@ -465,9 +465,9 @@ public final class GT6Tools {
 			() -> new GTMagnifyingGlassItem(new Item.Properties().durability(GTMagnifyingGlassItem.DURABILITY_POINTS)));
 
 	/**
-	 * The formal pincers — item id {@code gt6:pincers} (task p29-w5-t3-machine-face-four spec
+	 * The formal pincers — item id {@code gt6:pincers} (task w5-t3-machine-face-four spec
 	 * ④). Single steel tier, durability 512 (the family value; the material ladder
-	 * UNLOCKED by task p31-machine-ladder). Upstream display name "Pincers" (the same :150 registration row); the dragon-egg collect face
+	 * UNLOCKED by task machine-ladder). Upstream display name "Pincers" (the same :150 registration row); the dragon-egg collect face
 	 * (the Material.dragonEgg isMinableBlock arm + canCollect, GT_Tool_Pincers.java:105-110)
 	 * rides {@link GTPincersItem#useOn} — sneak right-click pops the egg; the crafting
 	 * INGREDIENT face is the {@code #gt6:tools/pincers} item tag (the craftingToolPincers
@@ -477,7 +477,7 @@ public final class GT6Tools {
 			() -> new GTPincersItem(new Item.Properties().durability(GTPincersItem.DURABILITY_POINTS)));
 
 	/**
-	 * The five field tools — task p29-w5-t4-field-five (the W5 tool wave card 4; rows
+	 * The five field tools — task w5-t4-field-five (the W5 tool wave card 4; rows
 	 * 27-31 of the table). Single steel tier over the family durability mapping (512 ×
 	 * the upstream getMaxDurabilityMultiplier). Display names = the upstream
 	 * registration-row wordings (Loader_Tools.java:122/:133/:138/:139/:152). The world
@@ -497,7 +497,7 @@ public final class GT6Tools {
 	 *     prospecting face, the DECLARED EMPTY surface in this universe).</li>
 	 * </ul>
 	 *
-	 * <p>p31-single-tier-ruling: ALL FOUR un-laddered rows here are LADDER CANDIDATES —
+	 * <p>single-tier-ruling: ALL FOUR un-laddered rows here are LADDER CANDIDATES —
 	 * the plow (the per-material rows Loader_Tools.java:303 typemin(2), the
 	 * AdvancedCraftingTool Spruce handle :346 — the {@code secondaryOf} Spruce fallback
 	 * precedent), the branch_cutter (:325 typemin(2), the 5*U amount :133), the sense
@@ -521,7 +521,7 @@ public final class GT6Tools {
 			() -> new GTHandDrillItem(new Item.Properties().durability(GTHandDrillItem.DURABILITY_POINTS)));
 
 	/**
-	 * The six scene tools — task p29-w5-t5-scene-six (the W5 tool wave card 5; rows 32-37
+	 * The six scene tools — task w5-t5-scene-six (the W5 tool wave card 5; rows 32-37
 	 * of the table). Single steel tier, durability 512 (the family value; the flint-and-
 	 * tinder's upstream ×0.25 multiplier folds into its flat 128, the gem-pick precedent).
 	 * Display names = the upstream registration-row wordings (Loader_Tools.java:132/:140/
@@ -538,10 +538,10 @@ public final class GT6Tools {
 	 * <li>{@code gt6:rolling_pin} (upstream GT_Tool_RollingPin — the pure-crafting
 	 *     consumable, the GT6BendingCylinderSmallItem structure-empty form);</li>
 	 * <li>{@code gt6:bending_cylinder} (upstream GT_Tool_BendingCylinder, the LARGE form —
-	 *     the Small size landed with p25-food-can-row0; same structure-empty form).</li>
+	 *     the Small size landed with food-can-row0; same structure-empty form).</li>
 	 * </ul>
 	 *
-	 * <p>p31-single-tier-ruling: LADDER CANDIDATES = the scissors (the per-material rows
+	 * <p>single-tier-ruling: LADDER CANDIDATES = the scissors (the per-material rows
 	 * Loader_Tools.java:326 typemin(2), the screw+ring amount :149), the scoop (:320, the
 	 * material-stick rows, the 3*U amount :132), the plunger (:315 — the WEAKEST axis:
 	 * material sticks only, the registration amount is 0 :140 so the upstream scrap face
@@ -572,7 +572,7 @@ public final class GT6Tools {
 			() -> new GT6BendingCylinderItem(new Item.Properties().durability(GT6BendingCylinderItem.DURABILITY_POINTS)));
 
 	/**
-	 * The nineteen electric tools — task p29-w5-t6-electric-nineteen (rows 38-56 of the
+	 * The nineteen electric tools — task w5-t6-electric-nineteen (rows 38-56 of the
 	 * table, the upstream registration order Loader_Tools.java:156-174). ONE shared base
 	 * class ({@code GT6ElectricToolItem}) over its {@code Spec} table: EU pool per tier
 	 * (lead-acid representative capacities 64000/256000/1024000 — the declared 收敛 of the
@@ -580,7 +580,7 @@ public final class GT6Tools {
 	 * value), the sneak bare-target twin swap (:162-166 cross-references), the mining
 	 * surfaces (the upstream isMinableBlock mappings; zero machine face — the RED LINE).
 	 *
-	 * <p>p31-single-tier-ruling: PERMANENT single-material — the tier axis is VOLTAGE
+	 * <p>single-tier-ruling: PERMANENT single-material — the tier axis is VOLTAGE
 	 * (the per-voltage rows Loader_Tools.java:156-174; the battery/motor recipes :357-378
 	 * pin the structural materials to the DATA.Electric tables), not the raw-material
 	 * ladder; zero {@code GT6ItemData} seam consumption.</p>
@@ -643,7 +643,7 @@ public final class GT6Tools {
 	}
 
 	/**
-	 * The Hazmat armor family — task p29-w5-t8-armor-24 (tail-append,
+	 * The Hazmat armor family — task w5-t8-armor-24 (tail-append,
 	 * decisions.p30-w5-split-rulings): 24 FLAT items (6 suits x 4 slots, non-NBT, the
 	 * research ruling over the upstream per-piece rows Loader_Tools.java:68-96),
 	 * registered into THIS single DeferredRegister (the card boundary — no second DR)
@@ -679,21 +679,21 @@ public final class GT6Tools {
 	 * (RegistryObject.java:287) and nothing here resolves {@code get()} — the offline test
 	 * asserts the table shape and the ITEMS parity without touching the frozen registry;
 	 * the displayItems generator below does the runtime resolution (the
-	 * GTWires.ELECTRIC_WIRES_TAB form). Task p24-tool-system appended rows 3/4 (file,
-	 * saw); task p24-builder-wand appended row 5 (the builder wand); task
-	 * p24-screwdriver-item appends row 6 (the screwdriver); task p25-tool-hammer-wrench
-	 * appends rows 7/8 (the hammer, the wrench); task p25-food-can-row0 appends row 9
-	 * (the small bending cylinder); task p29-w5-t1-dig-six appends rows 10-15 (the six
+	 * GTWires.ELECTRIC_WIRES_TAB form). Task tool-system appended rows 3/4 (file,
+	 * saw); task builder-wand appended row 5 (the builder wand); task
+	 * screwdriver-item appends row 6 (the screwdriver); task tool-hammer-wrench
+	 * appends rows 7/8 (the hammer, the wrench); task food-can-row0 appends row 9
+	 * (the small bending cylinder); task w5-t1-dig-six appends rows 10-15 (the six
 	 * dig tools — pickaxe, pickaxe_gem, pickaxe_construction, shovel, spade,
-	 * universal_spade); task p29-w5-t2-blade-six appends rows 17-22 (the six blade
+	 * universal_spade); task w5-t2-blade-six appends rows 17-22 (the six blade
 	 * tools — sword, knife, butchery_knife, club, axe, axe_double); task
-	 * p29-w5-t3-machine-face-four appends rows 23-26 (the machine-face four: the soft
+	 * w5-t3-machine-face-four appends rows 23-26 (the machine-face four: the soft
 	 * hammer, the monkey wrench, the magnifying glass, the pincers); task
-	 * p29-w5-t4-field-five appends rows 27-31 (the five field tools — hoe,
+	 * w5-t4-field-five appends rows 27-31 (the five field tools — hoe,
 	 * branch_cutter, sense, plow, hand_drill, the upstream Loader_Tools id order
-	 * 122/133/138/139/152); task p29-w5-t5-scene-six appends rows 32-37 (the six scene
+	 * 122/133/138/139/152); task w5-t5-scene-six appends rows 32-37 (the six scene
 	 * tools — scissors, scoop, plunger, flint_and_tinder, rolling_pin, bending_cylinder);
-	 * task p29-w5-t6-electric-nineteen appends rows 38-56 (the nineteen electric tools —
+	 * task w5-t6-electric-nineteen appends rows 38-56 (the nineteen electric tools —
 	 * the upstream Loader_Tools.java:156-174 registration-row order).
 	 */
 	public static final List<RegistryObject<Item>> TAB_TABLE = ImmutableList.<RegistryObject<Item>>builder()
@@ -711,7 +711,7 @@ public final class GT6Tools {
 			MONKEY_WRENCH_LV, MONKEY_WRENCH_MV, MONKEY_WRENCH_HV,
 			TRIMMER_LV,
 			POCKET_MULTITOOL, POCKET_MULTITOOL_KNIFE, POCKET_MULTITOOL_SAW, POCKET_MULTITOOL_FILE, POCKET_MULTITOOL_SCREWDRIVER, POCKET_MULTITOOL_WIRE_CUTTER, POCKET_MULTITOOL_SCISSORS, POCKET_MULTITOOL_CHISEL)
-			// task p29-w5-t8-armor-24 — the 24 hazmat armor rows, tail-append (rows 65-88;
+			// task w5-t8-armor-24 — the 24 hazmat armor rows, tail-append (rows 65-88;
 			// the wave-final tally 10 base tools + the 54 W5 tool-card rows + these 24 =
 			// the 88-row census the wave gate re-measures)
 			.addAll(ARMOR_ROWS)
@@ -784,7 +784,7 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.BENDING_CYLINDER_SMALL.get()), GT6BendingCylinderSmallItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.UNIVERSAL_SPADE.get()), GTUniversalSpadeItem.DURABILITY_POINTS);
-			// task p29-w5-t1-dig-six — the six dig tools join the registration smoke log
+			// task w5-t1-dig-six — the six dig tools join the registration smoke log
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.PICKAXE.get()), GTPickaxeItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
@@ -797,7 +797,7 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.SPADE.get()), GTSpadeItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.UNIVERSAL_SPADE.get()), GTUniversalSpadeItem.DURABILITY_POINTS);
-			// task p29-w5-t2-blade-six — the six blade tools join the registration smoke log
+			// task w5-t2-blade-six — the six blade tools join the registration smoke log
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.SWORD.get()), GTSwordItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
@@ -810,7 +810,7 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.AXE.get()), GTAxeItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.AXE_DOUBLE.get()), GTAxeDoubleItem.DURABILITY_POINTS);
-			// task p29-w5-t3-machine-face-four — the machine-face four join the registration smoke log
+			// task w5-t3-machine-face-four — the machine-face four join the registration smoke log
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.SOFT_HAMMER.get()), GTSoftHammerItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
@@ -819,7 +819,7 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.MAGNIFYING_GLASS.get()), GTMagnifyingGlassItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.PINCERS.get()), GTPincersItem.DURABILITY_POINTS);
-			// task p29-w5-t4-field-five — the five field tools join the registration smoke log
+			// task w5-t4-field-five — the five field tools join the registration smoke log
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.HOE.get()), GTHoeItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
@@ -830,7 +830,7 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.SENSE.get()), GTSenseItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.HAND_DRILL.get()), GTHandDrillItem.DURABILITY_POINTS);
-			// task p29-w5-t5-scene-six — the six scene tools join the registration smoke log
+			// task w5-t5-scene-six — the six scene tools join the registration smoke log
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.SCISSORS.get()), GTScissorsItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
@@ -843,15 +843,15 @@ public final class GT6Tools {
 					ForgeRegistries.ITEMS.getKey(GT6Tools.ROLLING_PIN.get()), GTRollingPinItem.DURABILITY_POINTS);
 			GT6Mod.LOGGER.info("GT6 tool registered: {} durability {}",
 					ForgeRegistries.ITEMS.getKey(GT6Tools.BENDING_CYLINDER.get()), GT6BendingCylinderItem.DURABILITY_POINTS);
-			// task p29-w5-t6-electric-nineteen — the nineteen electric tools join the smoke log
+			// task w5-t6-electric-nineteen — the nineteen electric tools join the smoke log
 			for (RegistryObject<Item> tRow : ELECTRIC_TOOLS) {
 				GT6Mod.LOGGER.info("GT6 tool registered: {} durability {} (electric)",
 						ForgeRegistries.ITEMS.getKey(tRow.get()), GT6ElectricToolItem.DURABILITY_POINTS);
 			}
-			// task p29-w5-t7-pocket-eight — one line for the ring (the census rides the tab line below)
+			// task w5-t7-pocket-eight — one line for the ring (the census rides the tab line below)
 			GT6Mod.LOGGER.info("GT6 tool registered: gt6:pocket_multitool + 7 switch forms, durability {} (ring {})",
 					GTPocketMultitoolItem.DURABILITY_POINTS, POCKET_FORMS.size());
-			// task p29-w5-t8-armor-24 — the armor family as ONE evidence line (the 24
+			// task w5-t8-armor-24 — the armor family as ONE evidence line (the 24
 			// per-item lines would drown the log; the family registration rides the same
 			// ITEMS DR whose registry lookup the tab line below already pins)
 			GT6Mod.LOGGER.info("GT6 armor registered: {} pieces across {} hazmat suits",

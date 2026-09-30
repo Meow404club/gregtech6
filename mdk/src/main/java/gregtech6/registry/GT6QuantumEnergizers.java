@@ -29,7 +29,7 @@ import gregtech6.block.energy.GT6DynamoBlock;
 import gregtech6.tileentity.energy.converters.GT6LaserConverterBlockEntity;
 
 /**
- * The Quantum Energizer registration (task p32-qu-energizer) — the card-owned
+ * The Quantum Energizer registration (task qu-energizer) — the card-owned
  * {@code @EventBusSubscriber(MOD)} DeferredRegisters attached from the construct event,
  * the {@link GT6Lasers} shape (ADR-P3-4) over the REUSED {@link GT6DynamoBlock} carrier
  * and the REUSED {@link GT6LaserConverterBlockEntity} core: the energizer is the THIRD
@@ -138,12 +138,12 @@ public final class GT6QuantumEnergizers {
 	@SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
 		aEvent.enqueueWork(() -> {
-			gregtech6.GT6Mod.LOGGER.info("GT6 quantum energizers registered: 5 rows (10121-10125, LU->QU back-in/front-out, osmiridium 16.0), task p32-qu-energizer");
+			gregtech6.GT6Mod.LOGGER.info("GT6 quantum energizers registered: 5 rows (10121-10125, LU->QU back-in/front-out, osmiridium 16.0), task qu-energizer");
 		});
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #QUANTUM_ENERGIZER_ITEMS_BY_PATH}
+	 * The tab walk (task tabfix-b-energy — the whole {@link #QUANTUM_ENERGIZER_ITEMS_BY_PATH}
 	 * family joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form,
 	 * the class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
 	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display items,

@@ -1,5 +1,5 @@
 /*
- * Offline pinned tests for task p38-issue1-4 (GitHub #1 + #4): the surface deco band
+ * Offline pinned tests for task issue1-4 (GitHub #1 + #4): the surface deco band
  * geometry fix and the Rainbowood leaves tint wiring, asserted against the committed
  * src/generated tree (the GT6BarrelPaintRenderDatagenTest shape).
  *
@@ -71,7 +71,7 @@ class GT6SurfaceTreeRenderDatagenTest {
     }
 
     /**
-     * #12 stick blockstate (r3-stick-shape-random + debt-issue12-shape-follow-tilt): all
+     * #12 stick blockstate (stick-shape-random + debt-issue12-shape-follow-tilt): all
      * six FACINGS, each a weighted EIGHT-variant list — the shared-table order
      * (GT6SurfaceVariants.Stick declaration order == JSON array order == the
      * WeightedRandom scan order the selection box replays): centered arms x2, one slide

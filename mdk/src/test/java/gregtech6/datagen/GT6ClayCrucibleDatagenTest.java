@@ -7,7 +7,7 @@
  *     non-hidden row upstream carries NO crafting pattern — the furnace-hardened raw is its
  *     only acquisition), and {@link gregtech6.registry.GT6Crucibles#CLAY_CRUCIBLE_RAW} is
  *     registered beside it (the upstream IL.Ceramic_Crucible_Raw, meta 989);</li>
- * <li>the bodyTexture Ceramic branch answers for the new row's empty face (the r7-40-41
+ * <li>the bodyTexture Ceramic branch answers for the new row's empty face (the #40-41
  *     rough blockSolid borrow — the branch predated the row, this pin ties them);</li>
  * <li>the recipe chain closes over the committed generated tree: 7 clay → raw (shaped, the
  *     MultiItemRandomTools.java:125 row with the k/R tool marks cut — the GT6MoldDatagen

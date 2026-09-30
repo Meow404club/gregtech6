@@ -23,7 +23,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.energy.GTDieselEngineBlockEntity;
 
 /**
- * The Diesel Engine block (task p12-engine-diesel) — the facing cube carrier over the
+ * The Diesel Engine block (task engine-diesel) — the facing cube carrier over the
  * shared BET (ADR-P3-1), the GTCrankBlock facing shape minus the interaction (the engine
  * has NO GUI and NO click arm — the upstream NO_GUI_FUNNEL_TAP_TO_TANK tooltip
  * MultiTileEntityMotorLiquid.java:101; supply is the funnel/tap face, ported as the
@@ -50,7 +50,7 @@ public class GTDieselEngineBlock extends GTEntityBlock {
 		registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
 	}
 
-	/** The composed diesel-engine name (task p20-i18n-compose-rows): the {@link GT6Kinetics#dieselDisplayOf} carrier. */
+	/** The composed diesel-engine name (task i18n-compose-rows): the {@link GT6Kinetics#dieselDisplayOf} carrier. */
 	@Override
 	public net.minecraft.network.chat.MutableComponent getName() {
 		return GT6Kinetics.dieselDisplayOf(spec);
@@ -75,7 +75,7 @@ public class GTDieselEngineBlock extends GTEntityBlock {
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
 		// the front TOWARDS the placer (the GT6PlacementFacing canon, task
-		// p28-singleblock-facing-canon) — the emit/front side points away from the
+		// singleblock-facing-canon) — the emit/front side points away from the
 		// machine, towards the player (the crank getStateForPlacement precedent)
 		return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 	}

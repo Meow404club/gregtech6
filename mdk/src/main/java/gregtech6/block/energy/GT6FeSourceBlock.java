@@ -13,7 +13,7 @@ import gregtech6.registry.GT6FeBatteries;
 import gregtech6.tileentity.energy.GT6FeSourceBlockEntity;
 
 /**
- * The FE source test fixture block (task p28-b-fe-converter-machine) — the sink battery
+ * The FE source test fixture block (task b-fe-converter-machine) — the sink battery
  * block's extractable twin: a simple-cube BaseEntityBlock carrier over the fixture BET,
  * NO use interaction and NO onRemove override (the BaseEntityBlock kill+recreate lesson,
  * remember id59). Plain BaseEntityBlock, NOT the GTEntityBlock carrier — the fixture BE

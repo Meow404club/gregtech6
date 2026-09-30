@@ -36,7 +36,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
  * 1.20.1 counterpart of gregapi/tileentity/tank/TileEntityBase08Barrel.java (317 lines)
- * — the sticky-tank barrel family base, trimmed direct translation (task p4-fluid-barrel
+ * — the sticky-tank barrel family base, trimmed direct translation (task fluid-barrel
  * spec ①). The base chain TileEntityBase07Paintable maps onto the in-repo
  * {@link TileEntityBase03TicksAndSync} (the 01Root→03 port carries the tick dispatcher
  * and the two sync channels).
@@ -76,16 +76,16 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * upstream {@code allowFluid} temperature branch (:234) is covered by that same melt
  * judgment. Task p13 restores the :180 gas gate and the :184 allowFluid gate (the
  * power-conductor list form) with the {@link #gasProof()} override point — the P5
- * freeze is narrowed by ADR 2026-09-03-p13-barrel-base-unfreeze.
+ * freeze is narrowed by ADR 2026-09-03-barrel-base-unfreeze.
  *
- * <p>Cover wiring (task p5-barrel-side-rules spec ④ — the oven :167-177/:221/:230/:241/:652
+ * <p>Cover wiring (task barrel-side-rules spec ④ — the oven :167-177/:221/:230/:241/:652
  * template, composition over the {@link ICoverableTE} defaults): the store lives here, the
  * covers ride the NBT pair and the 03 sync channels, and the barrel hands
  * {@code mTank} out through {@link #getCoverPumpTank()} — the pump-cover direct-call seam
  * that lets the pump bypass the {@link BarrelFluidHandler} side rules (the upstream
  * FL.move(IFluidTank, ...) shape, the free reverse-output exemption).
  *
- * <p>Task p12-tap-funnel-attachment mounts the attachment faces: {@code tapDrain} and
+ * <p>Task tap-funnel-attachment mounts the attachment faces: {@code tapDrain} and
  * {@code funnelFill} (upstream :273-276, the two hooks the mdk trim list flagged as the
  * restore point) — the Tap/Funnel attachments' direct-tank channel, translated on the
  * tank itself with the upstream single-gate shape. The sealed-bit gate of :270/:275
@@ -188,7 +188,7 @@ public abstract class TileEntityBase08Barrel extends TileEntityBase03TicksAndSyn
 	}
 
 	// ---------------------------------------------------------------------------
-	// the attachment faces (upstream :273-276, task p12-tap-funnel-attachment spec ④)
+	// the attachment faces (upstream :273-276, task tap-funnel-attachment spec ④)
 	// ---------------------------------------------------------------------------
 
 	/**

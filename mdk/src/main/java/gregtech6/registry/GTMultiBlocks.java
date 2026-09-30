@@ -53,7 +53,7 @@ import gregtech6.tileentity.multiblocks.TileEntityVonDaGraagg;
 /**
  * Multiblock domain registration, card-owned (ADR-P3-4 self-contained listener form, the
  * GTMachines precedent): controller + part blocks, their BlockEntityTypes, items, and the
- * "multiblocks" creative tab — task p4-multiblock-framework.
+ * "multiblocks" creative tab — task multiblock-framework.
  *
  * <p>id choice (task card ④ note): the registry paths keep the card-ruled {@code gt6:multiblock_*}
  * prefix — {@code multiblock_coke_oven} (controller), {@code multiblock_coke_oven_bricks}
@@ -81,7 +81,7 @@ public final class GTMultiBlocks {
 	/**
 	 * The coke oven bricks part block (the 26-cell structure body, upstream MTE id 18000
 	 * "Fire Bricks") — the material-carrier ctor form: the :1138 row's NBT_MATERIAL
-	 * MT.Ceramic is the tint colour source (task p38-c2-controller-tint, the #8 declared
+	 * MT.Ceramic is the tint colour source (task c2-controller-tint, the #8 declared
 	 * deviation retired). The census-facing constant keeps the row colour single-source.
 	 */
 	public static final java.util.function.Supplier<gregapi.oredict.OreDictMaterial> COKE_BRICKS_MATERIAL = () -> gregapi.data.MT.Ceramic;
@@ -102,7 +102,7 @@ public final class GTMultiBlocks {
 	/**
 	 * The SHARED part BET (ADR-P3-1): one MultiBlockPartBlockEntity class, every part block.
 	 * Registry path mirrors {@link MultiBlockPartBlockEntity#getTileEntityName()}.
-	 * <p>task p13-large-boiler — the five Dense Wall blocks join the valid list (the card's
+	 * <p>task large-boiler — the five Dense Wall blocks join the valid list (the card's
 	 * sanctioned append; the Heat Transmitter is NOT here — its relaying BE is
 	 * {@link #HEAT_TRANSMITTER_BE}).
 	 */
@@ -111,7 +111,7 @@ public final class GTMultiBlocks {
 					MultiBlockPartBlockEntity::new,
 					sharedPartBlockArray()).build(null));
 
-	/** The Coke Oven controller item (the family carrier — the gt6.tooltip.multiblock.* replay, task r8-tooltip-multiblock-generator). */
+	/** The Coke Oven controller item (the family carrier — the gt6.tooltip.multiblock.* replay, task tooltip-multiblock-generator). */
 	public static final RegistryObject<Item> COKE_OVEN_ITEM = ITEMS.register("multiblock_coke_oven",
 			() -> new GT6MachineBlockItem(COKE_OVEN.get(), new Item.Properties(), "multiblock"));
 
@@ -128,25 +128,25 @@ public final class GTMultiBlocks {
 					.displayItems((aParameters, aOutput) -> {
 						aOutput.accept(new ItemStack(COKE_OVEN_ITEM.get()));
 						aOutput.accept(new ItemStack(COKE_OVEN_BRICKS_ITEM.get()));
-						// task p13-large-boiler — the wall/transmitter parts then the five boiler mains
+						// task large-boiler — the wall/transmitter parts then the five boiler mains
 						for (RegistryObject<Item> tItem : GTMultiBlocks.PART_ITEMS_BY_PATH.values()) aOutput.accept(new ItemStack(tItem.get()));
 						for (RegistryObject<Item> tItem : GTMultiBlocks.LARGE_BOILER_ITEMS_BY_PATH.values()) aOutput.accept(new ItemStack(tItem.get()));
-						// task p24-lightning-rod — the controller (the addToolTips item) then the three parts
+						// task lightning-rod — the controller (the addToolTips item) then the three parts
 						aOutput.accept(new ItemStack(GTMultiBlocks.LIGHTNING_ROD_ITEM.get()));
 						for (RegistryObject<Item> tItem : GTMultiBlocks.LIGHTNING_ROD_PART_ITEMS_BY_PATH.values()) aOutput.accept(new ItemStack(tItem.get()));
-						// task p29-w3-nbtdesign-parts — the part-family expansion (walls, coils, parts, ventilation, processor units, wood wall)
+						// task w3-nbtdesign-parts — the part-family expansion (walls, coils, parts, ventilation, processor units, wood wall)
 						for (RegistryObject<Item> tItem : GTMultiBlocks.NEW_PART_ITEMS_BY_PATH.values()) aOutput.accept(new ItemStack(tItem.get()));
-						// task p29-w3-large-12 — the twelve large-machine controllers
+						// task w3-large-12 — the twelve large-machine controllers
 						for (RegistryObject<Item> tItem : GT6LargeMachines.ITEMS_BY_PATH.values()) aOutput.accept(new ItemStack(tItem.get()));
-						// task p31-implosion — the Implosion Compressor controller
+						// task implosion — the Implosion Compressor controller
 						aOutput.accept(new ItemStack(GTMultiBlocks.IMPLOSION_COMPRESSOR_ITEM.get()));
-						// task p31-graagg — the Von da Graagg controller
+						// task graagg — the Von da Graagg controller
 						aOutput.accept(new ItemStack(GTMultiBlocks.VON_DA_GRAAGG_ITEM.get()));
-						// task p31-massfab — the Large Matter Fabricator controller
+						// task massfab — the Large Matter Fabricator controller
 						aOutput.accept(new ItemStack(GTMultiBlocks.MASSFAB_ITEM.get()));
-						// task p31-fusion — the Fusion Reactor controller
+						// task fusion — the Fusion Reactor controller
 						aOutput.accept(new ItemStack(GTMultiBlocks.FUSION_REACTOR_ITEM.get()));
-						// task p37-bedrock-drill — the Bedrock Mining Drill controller
+						// task bedrock-drill — the Bedrock Mining Drill controller
 						aOutput.accept(new ItemStack(GTMultiBlocks.BEDROCK_DRILL_ITEM.get()));
 					})
 					.build());
@@ -174,7 +174,7 @@ public final class GTMultiBlocks {
 	}
 
 	// ===========================================================================
-	// task p13-large-boiler — the Large Boiler family section (append-only per the
+	// task large-boiler — the Large Boiler family section (append-only per the
 	// card EDIT ruling). Rows re-read VERBATIM from Loader_MultiTileEntities.java at
 	// implementation time:
 	//   :1159-1165 — the five Dense Walls (part ids 18022/18027/18026/18023/18025,
@@ -197,7 +197,7 @@ public final class GTMultiBlocks {
 	 * ({@code matDisplay} is the row material word, verbatim; {@code material} is the row's
 	 * upstream {@code NBT_MATERIAL} — the lazy Supplier form, the class-load runs before
 	 * MT.init, the GT6Tanks TankValveRow ruling — feeding the part tint, task
-	 * p38-issue8-multipart-tint).
+	 * issue8-multipart-tint).
 	 */
 	public record MultiblockPartRow(String path, String matDisplay, int metaId, float hardness,
 			java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material) {}
@@ -207,7 +207,7 @@ public final class GTMultiBlocks {
 	 * (the BoilerRow form): {@code outputSteamPerTick} is the raw NBT_OUTPUT_SU value (the
 	 * loader already multiplied by STEAM_PER_EU 2), {@code wallPath} is the NBT_DESIGN
 	 * Dense Wall, hardness == resistance. The lazy {@code mat} Supplier is the upstream
-	 * NBT_MATERIAL column (task r8-tex-large-boilers — the tint colour source, the
+	 * NBT_MATERIAL column (task tex-large-boilers — the tint colour source, the
 	 * {@link MultiblockPartRow} material form; the registry class loads before
 	 * {@code MT.init()}, a direct field read would resolve null).
 	 */
@@ -215,7 +215,7 @@ public final class GTMultiBlocks {
 			long outputSteamPerTick, float hardness, String wallPath,
 			java.util.function.Supplier<gregapi.oredict.OreDictMaterial> mat) {}
 
-	/** The composed Dense Wall display template "{@code Dense %s Wall}" — one material slot (task p20-i18n-compose-rows). */
+	/** The composed Dense Wall display template "{@code Dense %s Wall}" — one material slot (task i18n-compose-rows). */
 	public static final String DENSE_WALL_DISPLAY_KEY = "gt6.row.dense_wall.display";
 	/** The composed Large Boiler display template "{@code %s Boiler Main Barometer}" — one material slot. */
 	public static final String LARGE_BOILER_DISPLAY_KEY = "gt6.row.large_boiler.display";
@@ -238,9 +238,9 @@ public final class GTMultiBlocks {
 
 	/**
 	 * The five Dense Wall rows (:1159-1165, the registration order) + the six Dense
-	 * additions (:1155-1165, task p29-w3-nbtdesign-parts ③ — appended, the p13 EDIT-ruling
+	 * additions (:1155-1165, task w3-nbtdesign-parts ③ — appended, the p13 EDIT-ruling
 	 * append-only shape; 11 = the full metalwalldense family, DESIGNS 7). The material
-	 * column is the upstream {@code aMat} of each line verbatim (task p38-issue8 — the
+	 * column is the upstream {@code aMat} of each line verbatim (task issue8 — the
 	 * tint source; ANY.Steel→MT.Steel / ANY.W→MT.W, the GT6Crucibles CrucibleRow mapping).
 	 */
 	public static final java.util.List<MultiblockPartRow> WALL_ROWS = java.util.List.of(
@@ -259,7 +259,7 @@ public final class GTMultiBlocks {
 	/** The Heat Transmitter row (:1176) — the ATOMIC form (a bare noun, nothing to compose; the wire_laser/bricks precedent); upstream aMat = MT.Invar. */
 	public static final MultiblockPartRow TRANSMITTER_ROW = new MultiblockPartRow("heat_transmitter", "Heat Transmitter", 18101, 10.0F, () -> MT.Invar);
 
-	/** The five Large Boiler rows (:1248-1252, the upstream line order — raw NBT_OUTPUT_SU 4096/4096/8192/16384/131072; the aMat column the WALL_ROWS mapping, task r8-tex-large-boilers). */
+	/** The five Large Boiler rows (:1248-1252, the upstream line order — raw NBT_OUTPUT_SU 4096/4096/8192/16384/131072; the aMat column the WALL_ROWS mapping, task tex-large-boilers). */
 	public static final java.util.List<LargeBoilerRow> LARGE_BOILER_ROWS = java.util.List.of(
 			boilerRow("Stainless Steel", 17201,   4096,   6.0F, "dense_wall_stainless_steel", () -> MT.StainlessSteel),
 			boilerRow("Invar"          , 17205,   4096,   6.0F, "dense_wall_invar"           , () -> MT.Invar),
@@ -291,7 +291,7 @@ public final class GTMultiBlocks {
 	/** The boiler variant items, same keys (the tab walk + the wand-less placement). */
 	public static final java.util.Map<String, RegistryObject<Item>> LARGE_BOILER_ITEMS_BY_PATH = new java.util.LinkedHashMap<>();
 
-	/** The Heat Transmitter block (the 18101 part, the ONLY_ENERGY_IN base layer; the row's Invar column rides along for the tint, task p38-issue8). */
+	/** The Heat Transmitter block (the 18101 part, the ONLY_ENERGY_IN base layer; the row's Invar column rides along for the tint, task issue8). */
 	public static final RegistryObject<GTHeatTransmitterBlock> HEAT_TRANSMITTER = BLOCKS.register(TRANSMITTER_ROW.path(),
 			() -> new GTHeatTransmitterBlock(partProperties(TRANSMITTER_ROW.hardness()), TRANSMITTER_ROW.material()));
 
@@ -310,7 +310,7 @@ public final class GTMultiBlocks {
 		PART_ITEMS_BY_PATH.put(TRANSMITTER_ROW.path(), ITEMS.register(TRANSMITTER_ROW.path(),
 				() -> new GTComposedNameItem(HEAT_TRANSMITTER.get(), new Item.Properties())));
 		// the five boiler variant blocks + items over ONE shared BE class (the GT6Boilers row form);
-		// task r8-tooltip-boiler-tank — the item carries the boiler_large row table, the per-row
+		// task tooltip-boiler-tank — the item carries the boiler_large row table, the per-row
 		// constants of the :158-:161 numeric rows ride the positional slots ([in, out, cap], the
 		// MultiTileEntityLargeBoiler readFromNBT :79-:80 shape — mOutput = NBT_OUTPUT_SU,
 		// mCapacity = mOutput*10000)
@@ -357,7 +357,7 @@ public final class GTMultiBlocks {
 	}
 
 	/**
-	 * The large-boiler paint-tint walker (task r8-tex-large-boilers — the r3 C5
+	 * The large-boiler paint-tint walker (task tex-large-boilers — the r3 C5
 	 * boiler-tank form): the five boiler variant controllers. Every row carries
 	 * NBT_MATERIAL upstream (Loader :1248-1252) and the shared datagen model carries
 	 * tintindex 0 since this card, so the family joins the baked world tint (the
@@ -377,7 +377,7 @@ public final class GTMultiBlocks {
 	}
 
 	// ===========================================================================
-	// task p24-lightning-rod — the Lightning Rod family section (append-only per the
+	// task lightning-rod — the Lightning Rod family section (append-only per the
 	// card EDIT ruling). Rows re-read VERBATIM from Loader_MultiTileEntities.java at
 	// implementation time:
 	//   :1151 — the Tungsten Wall (part id 18004, ANY.W, hardness == resistance 10.0,
@@ -397,7 +397,7 @@ public final class GTMultiBlocks {
 	// shape).
 	// ===========================================================================
 
-	/** The three Lightning Rod part rows (Loader :1151/:1168/:1179, the registration order; the material columns are the upstream aMat verbatim, task p38-issue8). */
+	/** The three Lightning Rod part rows (Loader :1151/:1168/:1179, the registration order; the material columns are the upstream aMat verbatim, task issue8). */
 	public static final java.util.List<MultiblockPartRow> LIGHTNING_ROD_PART_ROWS = java.util.List.of(
 			new MultiblockPartRow("machine_wall_tungsten", "Tungsten Wall", 18004, 10.0F, () -> MT.W),
 			new MultiblockPartRow("niobium_titanium_coil", "Large Niobium-Titanium Coil", 18041, 6.0F, () -> MT.NiobiumTitanium),
@@ -429,7 +429,7 @@ public final class GTMultiBlocks {
 		// the three Lightning Rod part blocks + items (the shared part BET mounts them; the
 		// forward-reference lambda form — the BET builder resolves these handles at REGISTER
 		// time, after every static field is initialized, the WALL_ROWS lesson comment above).
-		// Task r3-world-tint-render-type (the C5 clean-up): the rows hand their upstream
+		// Task world-tint-render-type (the C5 clean-up): the rows hand their upstream
 		// NBT_MATERIAL column through the row-less material-carrier constructor — the
 		// Tungsten Wall (machine_wall_tungsten, :1151 ANY.W) joins the paint walk this
 		// card; the rod material rides along dormant (its cube_all model stays untinted,
@@ -461,7 +461,7 @@ public final class GTMultiBlocks {
 	}
 
 	// ===========================================================================
-	// task p31-implosion — the Implosion Compressor controller (Loader_MultiTileEntities
+	// task implosion — the Implosion Compressor controller (Loader_MultiTileEntities
 	// .java:1228 re-read VERBATIM at implementation time: meta 17110, MT.TungstenSteel,
 	// NBT_HARDNESS 12.5 == NBT_RESISTANCE 12.5, NBT_TEXTURE "implosioncompressor",
 	// NBT_INPUT 1 / MIN 1 / MAX 16, NBT_ENERGY_ACCEPTED TD.Energy.TU,
@@ -480,7 +480,7 @@ public final class GTMultiBlocks {
 
 	/** The Implosion Compressor controller item (the family carrier — the twelve-row shape; the gt6.tooltip.multiblock.* replay). */
 	public static final RegistryObject<Item> IMPLOSION_COMPRESSOR_ITEM = ITEMS.register("implosion_compressor",
-			() -> new GT6MachineBlockItem(IMPLOSION_COMPRESSOR.get(), new Item.Properties(), "multiblock")); // task r8-tooltip-multiblock-generator
+			() -> new GT6MachineBlockItem(IMPLOSION_COMPRESSOR.get(), new Item.Properties(), "multiblock")); // task tooltip-multiblock-generator
 
 	/**
 	 * The Implosion Compressor BET: one controller class over its one block (the
@@ -492,7 +492,7 @@ public final class GTMultiBlocks {
 					TileEntityImplosionCompressor::new, IMPLOSION_COMPRESSOR.get()).build(null));
 
 	// ===========================================================================
-	// task p31-graagg — the Von da Graagg controller (Loader_MultiTileEntities.java:1280
+	// task graagg — the Von da Graagg controller (Loader_MultiTileEntities.java:1280
 	// re-read VERBATIM at implementation time: meta 17996, item 17101, "Von da Graagg
 	// Generator", MT.SteelGalvanized, NBT_HARDNESS 6.0F == NBT_RESISTANCE 6.0F,
 	// NBT_TEXTURE "vondagraagg", NBT_ENERGY_ACCEPTED TD.Energy.EU). The controller
@@ -502,7 +502,7 @@ public final class GTMultiBlocks {
 	// 'E' Eye of Ender identities too — one CUT for the whole row). The structure parts
 	// are EXISTING rows — dense_wall_galvanized_steel (18028, :1162 family),
 	// large_copper_coil (18040, :1170), dense_wall_steel (18029, :1163) — zero new part
-	// blocks (the p29-w3-nbtdesign-parts census). The suppression face rides
+	// blocks (the w3-nbtdesign-parts census). The suppression face rides
 	// EntityJoinLevelEvent (CheckSpawn has no modern counterpart; the deviation ledger
 	// lives on TileEntityVonDaGraagg/GTGraaggSpawnListener).
 	// ===========================================================================
@@ -513,7 +513,7 @@ public final class GTMultiBlocks {
 
 	/** The Von da Graagg controller item (the family carrier — the implosion twelve-row shape; the gt6.tooltip.multiblock.* replay). */
 	public static final RegistryObject<Item> VON_DA_GRAAGG_ITEM = ITEMS.register("von_da_graagg",
-			() -> new GT6MachineBlockItem(VON_DA_GRAAGG.get(), new Item.Properties(), "multiblock")); // task r8-tooltip-multiblock-generator
+			() -> new GT6MachineBlockItem(VON_DA_GRAAGG.get(), new Item.Properties(), "multiblock")); // task tooltip-multiblock-generator
 
 	/**
 	 * The Von da Graagg BET: one controller class over its one block (the
@@ -525,7 +525,7 @@ public final class GTMultiBlocks {
 					TileEntityVonDaGraagg::new, VON_DA_GRAAGG.get()).build(null));
 
 	// ===========================================================================
-	// task p31-massfab — the Large Matter Fabricator controller (Loader_MultiTileEntities
+	// task massfab — the Large Matter Fabricator controller (Loader_MultiTileEntities
 	// .java:1241 re-read VERBATIM at implementation time: meta 17199, item 17101, "Large
 	// Matter Fabricator", MT.Pb, NBT_HARDNESS 6.0F == NBT_RESISTANCE 6.0F, NBT_TEXTURE
 	// "largemassfab", NBT_INPUT 1 / MIN 1 / MAX 2097152, NBT_ENERGY_ACCEPTED TD.Energy.QU,
@@ -539,7 +539,7 @@ public final class GTMultiBlocks {
 	// GTMachines side, whose 'R'/'S' Processor_Crystal_Ruby/Sapphire are absent too).
 	// The structure parts are EXISTING rows — dense_wall_lead (18031), large_osmium_coil
 	// (18044), ventilation_unit (18299), processor_unit_versatile/control/conversion
-	// (18200/18202/18204) — zero new part blocks (the p29-w3-nbtdesign-parts census).
+	// (18200/18202/18204) — zero new part blocks (the w3-nbtdesign-parts census).
 	// ===========================================================================
 
 	/** The Large Matter Fabricator controller block — the FACING+FORMED base owns the visuals. */
@@ -548,7 +548,7 @@ public final class GTMultiBlocks {
 
 	/** The Large Matter Fabricator controller item (the family carrier — the implosion twelve-row shape; the gt6.tooltip.multiblock.* replay). */
 	public static final RegistryObject<Item> MASSFAB_ITEM = ITEMS.register("large_massfab",
-			() -> new GT6MachineBlockItem(MASSFAB.get(), new Item.Properties(), "multiblock")); // task r8-tooltip-multiblock-generator
+			() -> new GT6MachineBlockItem(MASSFAB.get(), new Item.Properties(), "multiblock")); // task tooltip-multiblock-generator
 
 	/**
 	 * The Massfab BET: one controller class over its one block (the
@@ -560,13 +560,13 @@ public final class GTMultiBlocks {
 					TileEntityMassfab::new, MASSFAB.get()).build(null));
 
 	// ===========================================================================
-	// task p31-fusion — the Fusion Reactor controller (Loader_MultiTileEntities.java:1242
+	// task fusion — the Fusion Reactor controller (Loader_MultiTileEntities.java:1242
 	// re-read VERBATIM at implementation time: meta 17198, item 17101, "Fusion Reactor",
 	// MT.SteelGalvanized, NBT_HARDNESS 12.5F == NBT_RESISTANCE 12.5F, NBT_TEXTURE
 	// "fusionreactor", NBT_INPUT 8192 / NBT_INPUT_MIN 1 / NBT_INPUT_MAX 16384,
 	// NBT_ENERGY_ACCEPTED TD.Energy.TU, NBT_RECIPEMAP RM.Fusion, NBT_ENERGY_ACCEPTED_2
 	// TD.Energy.LU, NBT_ENERGY_EMITTED TD.Energy.EU, NBT_SPECIAL_IS_START_ENERGY T — the
-	// ignition column IS ported (task p32-ignition-gate, the S31-7 waiver flipped once the
+	// ignition column IS ported (task ignition-gate, the S31-7 waiver flipped once the
 	// laser domain landed the LU economy: the flag IS supplied through readFromNBT2 :112-124
 	// -> the :755 write is reachable -> the :809 gate closes until the :497-500 LU decrement
 	// pays it, D-D 730*8192*16 ~= 95.6M LU/arm — the flag + the :755/:809 arms live on
@@ -580,7 +580,7 @@ public final class GTMultiBlocks {
 	// machine_wall_tungstensteel (18003, the design 0/2/5/6 'glass' ring),
 	// machine_wall_stainless_steel (18002), large_iridium_coil (18045),
 	// ventilation_unit (18299), processor_unit_versatile/logic/control (18200/18201/
-	// 18202) — zero new part blocks (the p29-w3-nbtdesign-parts census).
+	// 18202) — zero new part blocks (the w3-nbtdesign-parts census).
 	// ===========================================================================
 
 	/** The Fusion Reactor controller block — the FACING+FORMED base owns the visuals. */
@@ -589,7 +589,7 @@ public final class GTMultiBlocks {
 
 	/** The Fusion Reactor controller item (the family carrier — the massfab twelve-row shape; the gt6.tooltip.multiblock.* replay). */
 	public static final RegistryObject<Item> FUSION_REACTOR_ITEM = ITEMS.register("fusion_reactor",
-			() -> new GT6MachineBlockItem(FUSION_REACTOR.get(), new Item.Properties(), "multiblock")); // task r8-tooltip-multiblock-generator
+			() -> new GT6MachineBlockItem(FUSION_REACTOR.get(), new Item.Properties(), "multiblock")); // task tooltip-multiblock-generator
 
 	/**
 	 * The Fusion Reactor BET: one controller class over its one block (the
@@ -601,7 +601,7 @@ public final class GTMultiBlocks {
 					TileEntityFusionReactor::new, FUSION_REACTOR.get()).build(null));
 
 	// ===========================================================================
-	// task p37-bedrock-drill — the Bedrock Mining Drill controller (Loader_MultiTileEntities
+	// task bedrock-drill — the Bedrock Mining Drill controller (Loader_MultiTileEntities
 	// .java:1283 re-read VERBATIM at implementation time: meta 17999, item 17101, "Bedrock
 	// Mining Drill Controller", MT.Ti, NBT_HARDNESS 9.0F == NBT_RESISTANCE 9.0F,
 	// NBT_TEXTURE "bedrockdrill", NBT_RECIPEMAP RM.BedrockOreList — display face only,
@@ -609,7 +609,7 @@ public final class GTMultiBlocks {
 	// is CUT (the W3 absent-input pool, the implosion/graagg/massfab precedent: 'P'
 	// Processor_Crystal_Ruby, 'Y' CONVEYERS[5], 'C' OD_CIRCUITS[6] have no port item
 	// identity). The structure parts are EXISTING rows — bedrock_drill_head (18103, the
-	// p30-pool-drillhead registration) and dense_wall_titanium (18026) — zero new part
+	// pool-drillhead registration) and dense_wall_titanium (18026) — zero new part
 	// blocks. The structure itself is the PROBE-SEAM machine: TileEntityBedrockDrill keeps
 	// its hand-written checkStructure2 (GTMultiBlockPattern.java:77-81, the standing
 	// clause), no declared pattern.
@@ -621,7 +621,7 @@ public final class GTMultiBlocks {
 
 	/** The Bedrock Mining Drill controller item (the family carrier — the graagg twelve-row shape; the gt6.tooltip.multiblock.* replay). */
 	public static final RegistryObject<Item> BEDROCK_DRILL_ITEM = ITEMS.register("bedrock_drill",
-			() -> new GT6MachineBlockItem(BEDROCK_DRILL.get(), new Item.Properties(), "multiblock")); // task r8-tooltip-multiblock-generator
+			() -> new GT6MachineBlockItem(BEDROCK_DRILL.get(), new Item.Properties(), "multiblock")); // task tooltip-multiblock-generator
 
 	/**
 	 * The Bedrock Drill BET: one controller class over its one block (the
@@ -633,7 +633,7 @@ public final class GTMultiBlocks {
 					TileEntityBedrockDrill::new, BEDROCK_DRILL.get()).build(null));
 
 	// ===========================================================================
-	// task p29-w3-nbtdesign-parts ③ — the part-family expansion (Loader_MultiTileEntities
+	// task w3-nbtdesign-parts ③ — the part-family expansion (Loader_MultiTileEntities
 	// .java:1138-1189 re-read VERBATIM at implementation time). Every row is one
 	// MultiTileEntityMultiBlockPart registration: NBT_TEXTURE → the texture family (the
 	// per-design model source), NBT_DESIGNS → the DESIGN property range (the variant
@@ -658,7 +658,7 @@ public final class GTMultiBlocks {
 	 * is the NBT_TEXTURE column (the upstream multiblockparts/&lt;family&gt;/&lt;design&gt;/
 	 * {colored,overlay}/{bottom,top,side} texture source for the datagen walk);
 	 * {@code material} is the row's upstream {@code NBT_MATERIAL} (the lazy Supplier — the
-	 * MultiblockPartRow form — feeding the part tint, task p38-issue8-multipart-tint).
+	 * MultiblockPartRow form — feeding the part tint, task issue8-multipart-tint).
 	 */
 	public record PartRow(String path, String display, int metaId, float hardness, int designs, String textureFamily,
 			java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material) {
@@ -677,7 +677,7 @@ public final class GTMultiBlocks {
 		}
 	}
 
-	/** The eleven Metal Wall rows (:1143-1153, the registration order — texture "metalwall", NBT_DESIGNS 7; material = the upstream aMat verbatim, task p38-issue8). */
+	/** The eleven Metal Wall rows (:1143-1153, the registration order — texture "metalwall", NBT_DESIGNS 7; material = the upstream aMat verbatim, task issue8). */
 	public static final java.util.List<PartRow> METAL_WALL_ROWS = java.util.List.of(
 			new PartRow("machine_wall_lead"                    , "Lead"                     , 18011,   6.0F, 7, "metalwall", () -> MT.Pb),
 			new PartRow("machine_wall_bronze"                  , "Bronze"                   , 18010,   6.0F, 7, "metalwall", () -> MT.Bronze),
@@ -693,7 +693,7 @@ public final class GTMultiBlocks {
 
 	/**
 	 * The six Coil rows (:1167-1172, the registration order — texture "coil", NBT_DESIGNS 1
-	 * — designs 0/1; material = the upstream aMat verbatim, task p38-issue8). The 18041 row
+	 * — designs 0/1; material = the upstream aMat verbatim, task issue8). The 18041 row
 	 * is REUSED — the block stays the Lightning Rod family's registration, the
 	 * machine_wall_tungsten shape (task debt-coil-design; the registration loop in
 	 * {@link #registerAtomicPart} skips it).
@@ -709,7 +709,7 @@ public final class GTMultiBlocks {
 	/**
 	 * The seven Part rows (:1174-1182 minus the registered transmitter/rod; per-row
 	 * NBT_TEXTURE, per-row NBT_DESIGNS). The Bedrock Mining Drill Head (:1178) joined in
-	 * task p30-pool-drillhead-18103 — the research.p29-gap-refresh-worldgen-mb
+	 * task pool-drillhead-18103 — the research.p29-gap-refresh-worldgen-mb
 	 * mb_residual.part_miss line: the card-① census carried
 	 * 18100/18101/18102/18105/18106/18107/18108 and missed 18103; the parent Bedrock
 	 * Mining Drill machine (17999, :1283) itself STAYS pool-deferred (the W6 bedrock
@@ -757,7 +757,7 @@ public final class GTMultiBlocks {
 			this(aProperties, null);
 		}
 
-		/** The tinted form (task p38-issue8): the row's WoodTreated column rides along. */
+		/** The tinted form (task issue8): the row's WoodTreated column rides along. */
 		public WoodWallPartBlock(Properties aProperties, @Nullable java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
 			super(aProperties, WOOD_WALL_ROW.designs(), null, aMaterial);
 		}
@@ -804,7 +804,7 @@ public final class GTMultiBlocks {
 		}
 		// the wood wall rides the WOOD sound (upstream aWooden block column) and the
 		// flammability subclass; DESIGNS 0 → no property; the row's WoodTreated column rides
-		// along for the tint (task p38-issue8)
+		// along for the tint (task issue8)
 		NEW_PART_BLOCKS_BY_PATH.put(WOOD_WALL_ROW.path(), BLOCKS.register(WOOD_WALL_ROW.path(),
 				() -> new WoodWallPartBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
 						.strength(WOOD_WALL_ROW.hardness(), WOOD_WALL_ROW.hardness()).sound(SoundType.WOOD), WOOD_WALL_ROW.material())));
@@ -819,7 +819,7 @@ public final class GTMultiBlocks {
 
 	/**
 	 * One ATOMIC-row registration pair (the name resolves through the vanilla {@code block.gt6.<path>}
-	 * key; the row's material column rides along for the tint, task p38-issue8). The reused
+	 * key; the row's material column rides along for the tint, task issue8). The reused
 	 * rows SKIP — niobium_titanium_coil stays the Lightning Rod family's registration, the
 	 * machine_wall_tungsten METAL_WALL_ROWS-loop guard shape (task debt-coil-design;
 	 * decisions.p29-w3-split-rulings).
@@ -842,12 +842,12 @@ public final class GTMultiBlocks {
 	}
 
 	/**
-	 * The part-family paint-tint walker (task p38-issue8-multipart-tint): the 44 part
+	 * The part-family paint-tint walker (task issue8-multipart-tint): the 44 part
 	 * blocks whose datagen models carry tintindex 0 on the body cube — the 11 Dense Walls,
 	 * the 29 new-form part blocks (10 Metal Walls + Wood Wall + 5 Coils + 7 Parts +
 	 * Ventilation + 5 Processor Units), the Heat Transmitter, since task
-	 * p38-c2-controller-tint the coke-oven bricks (the upstream Ceramic tint wired — the
-	 * #8 declared deviation retired), since task r3-world-tint-render-type (the C5
+	 * c2-controller-tint the coke-oven bricks (the upstream Ceramic tint wired — the
+	 * #8 declared deviation retired), since task world-tint-render-type (the C5
 	 * clean-up) machine_wall_tungsten (the Lightning Rod family's registration of the
 	 * :1151 row — its models are the metalwall per-design two-layer forms since task
 	 * debt-tungsten-wall-designs, over the identical bytes of the former lightningrod/
@@ -865,7 +865,7 @@ public final class GTMultiBlocks {
 		for (RegistryObject<GTMultiBlockPartBlock> tHandle : WALL_BLOCKS_BY_PATH.values()) rBlocks.add(tHandle.get());
 		for (RegistryObject<GTMultiBlockPartBlock> tHandle : NEW_PART_BLOCKS_BY_PATH.values()) rBlocks.add(tHandle.get());
 		// the Lightning Rod family's reused registrations (the tungsten wall — task
-		// r3-world-tint-render-type, the C5 clean-up; the coil — task debt-coil-design)
+		// world-tint-render-type, the C5 clean-up; the coil — task debt-coil-design)
 		rBlocks.add(LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get("machine_wall_tungsten").get());
 		rBlocks.add(LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get("niobium_titanium_coil").get());
 		rBlocks.add(HEAT_TRANSMITTER.get());

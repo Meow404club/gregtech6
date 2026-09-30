@@ -17,7 +17,7 @@ import gregtech6.block.ore.GTBedrockOreBlock;
 import gregtech6.registry.GTBlockEntities;
 
 /**
- * The bedrock-spring Feature (task p31-fluid-spring spec ②) — the per-chunk adapter around
+ * The bedrock-spring Feature (task fluid-spring spec ②) — the per-chunk adapter around
  * {@link GT6FluidSpringGenerator}, the {@link GT6BedrockOreFeature} isomorphic shape: the
  * placed feature runs Count(1)+InSquare+BiomeFilter (one attempt per chunk), the work
  * chunk is the REGION CENTER (WorldGenRegion.getCenter(), the /place path falls back to
@@ -48,7 +48,7 @@ import gregtech6.registry.GTBlockEntities;
  *
  * <p>Declared deferrals: the surface grass-indicator arm (WorldgenFluidSpring.java:82-103)
  * rides the card spec ③ defer — the dome/lake/shell half (p31) and the infinite-spring
- * nozzle arm (:77-79, task p38-issue5-fluid-spring-nozzle: the GTBlockEntities.FLUID_SPRING
+ * nozzle arm (:77-79, task issue5-fluid-spring-nozzle: the GTBlockEntities.FLUID_SPRING
  * block + its GTFluidSpringBlockEntity at the strict-bedrock floor, 1/16 per position at
  * dome layers i &gt; 2) are complete. The shell block is deepslate (the sibling bedrock
  * muffin translation; the

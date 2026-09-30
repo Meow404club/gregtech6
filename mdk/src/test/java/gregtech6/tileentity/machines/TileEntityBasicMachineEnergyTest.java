@@ -14,8 +14,8 @@ import gregapi.data.TD;
 import gregtech6.recipes.GT6RecipeMaps;
 
 /**
- * Acceptance 2 (task p7-basicmachine-family ⑦, regime-extended by task
- * p8-machine-tiers-doinject ②③④, source-flip rewritten by task p11-rotor-source-flip):
+ * Acceptance 2 (task basicmachine-family ⑦, regime-extended by task
+ * machine-tiers-doinject ②③④, source-flip rewritten by task rotor-source-flip):
  * the option-A fake-power math under the legacy TRUE seam (supplyEnergy refills to
  * mInputMax, doWork :791 drains exactly mInputMax — every active tick advances the
  * progress by exactly mInputMax energy units :813) plus the shipped-default FALSE group:
@@ -62,8 +62,8 @@ public class TileEntityBasicMachineEnergyTest extends TileEntityBasicMachineOffl
 	}
 
 	// -------------------------------------------------------------------------
-	// grid-fed group (the SHIPPED default since task p11-rotor-source-flip;
-	// p8-machine-tiers-doinject ②④): ENERGY_FAKE_SOURCE = false — the machine eats
+	// grid-fed group (the SHIPPED default since task rotor-source-flip;
+	// machine-tiers-doinject ②④): ENERGY_FAKE_SOURCE = false — the machine eats
 	// packets of its accepted type through the ITileEntityEnergy surface (Root gate :717
 	// + the restored doInject :489-508). doInject math first.
 	// -------------------------------------------------------------------------
@@ -149,7 +149,7 @@ public class TileEntityBasicMachineEnergyTest extends TileEntityBasicMachineOffl
 
 	@Test
 	void kuCrusherDeliversOnlyOnThePositiveToNonPositiveTransition() {
-		// THE KU pulse semantics (task p8-machine-tiers-doinject ③): KU IS an
+		// THE KU pulse semantics (task machine-tiers-doinject ③): KU IS an
 		// ALL_ALTERNATING member, so a continuous POSITIVE injection must NOT deliver even
 		// after the progress completes (mStateOld && !mStateNew stays false — mStateNew
 		// persists the last packet sign, the :865 shift is a no-reset form); the delivery
@@ -179,7 +179,7 @@ public class TileEntityBasicMachineEnergyTest extends TileEntityBasicMachineOffl
 
 	@Test
 	void kuCrusherDeliversOnTheZeroCrossingUnderAnAlternatingSource() {
-		// THE p11 REWRITE (task p11-rotor-source-flip, replacing the retired
+		// THE p11 REWRITE (task rotor-source-flip, replacing the retired
 		// fakeSourceRegimeStillDeliversKuImmediately TRUE-suspension assertion — the same
 		// KU alternating/zero-crossing semantics, now driven by the SOURCE form instead of
 		// the fake supply): the /gt6energy alternating rig emits the upstream EngineSteam

@@ -29,7 +29,7 @@ import gregtech6.item.spraycan.GTSprayCanItem;
 import gregtech6.tileentity.foam.GT6CFoamBlockEntity;
 
 /**
- * The C-Foam block family registration — task p26-c-foam-block-family. The card-owned
+ * The C-Foam block family registration — task c-foam-block-family. The card-owned
  * self-contained {@code @EventBusSubscriber(MOD)} DeferredRegister shape (the
  * {@link GT6FoamSprays} precedent; GT6Mod/GTModBusListener untouched).
  *
@@ -52,7 +52,7 @@ import gregtech6.tileentity.foam.GT6CFoamBlockEntity;
  * this card's files_scope asks for no 16-item band).
  *
  * <p>The registry paths deliberately do NOT overlap the fluid family ({@code cfoam_*}
- * fluids, task p26-c-foam-fluid-refill) at the STRING level even though the registries
+ * fluids, task c-foam-fluid-refill) at the STRING level even though the registries
  * are distinct — the block {@code cfoam} row is the dried block, the fluid {@code cfoam}
  * row is the base fluid (decisions.p26-cfoam-fluid-naming), both gt6-namespaced.
  */
@@ -129,7 +129,7 @@ public final class GT6FoamBlocks {
 	}
 
 	/**
-	 * The vanilla BUILDING_BLOCKS join (task p38-tabfix-c-misc — the GTGrassBlocks
+	 * The vanilla BUILDING_BLOCKS join (task tabfix-c-misc — the GTGrassBlocks
 	 * .onBuildTabContents form; the census adjudicates the C-Foam family decorative, the
 	 * GTGrassBlocks/GT6TreeBlocks decorative-block precedent — the upstream tab mount was
 	 * not traced (BlocksGT.CFoam unverified), so the pool cut IS the census ruling).

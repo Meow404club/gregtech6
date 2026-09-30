@@ -12,7 +12,7 @@ import gregtech6.registry.GT6DataComponents;
 
 /**
  * 1.20.1 port of gregapi/cover/CoverData.java — the 6-face parallel-array cover store
- * (task p4-cover-core ①, ADR 2026-08-30-p4-cover-route keeps the GT6 singleton +
+ * (task cover-core ①, ADR 2026-08-30-cover-route keeps the GT6 singleton +
  * array shape against the GTCEu instantiated CoverBehavior model).
  *
  * <p>Field translation (:37-40 verbatim): {@code mIDs/mMetas/mVisuals/mValues} are the

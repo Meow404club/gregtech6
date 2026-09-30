@@ -3,9 +3,9 @@ package gregtech6.tileentity.machines;
 /**
  * The switchable-mode host dial — 1.20.1 port of
  * gregapi/tileentity/machines/ITileEntitySwitchableMode.java:27-38 (task
- * p34-covers-gameplay-10; the {@code extends ITileEntityUnloadable} marker interface
+ * covers-gameplay-10; the {@code extends ITileEntityUnloadable} marker interface
  * rides the port's BE base, so this port is the plain two-method face). The four
- * selector covers (task p34-covers-gameplay-10) drive it: the host narrows the mode
+ * selector covers (task covers-gameplay-10) drive it: the host narrows the mode
  * it accepts, the cover asserts {@link #setStateMode} and reads back through the
  * return.
  *

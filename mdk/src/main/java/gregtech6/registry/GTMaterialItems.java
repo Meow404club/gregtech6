@@ -33,7 +33,7 @@ import gregtech6.GT6Mod;
 import gregtech6.item.MaterialPrefixItem;
 
 /**
- * Registration bridge (ADR-P2-2 / ADR-P2-3, full-prefix expansion per task p3-fullprefix-creativetab):
+ * Registration bridge (ADR-P2-2 / ADR-P2-3, full-prefix expansion per task fullprefix-creativetab):
  * floods the GT6 material system during FMLConstructModEvent.enqueueWork, then injects the material
  * prefix items into the RegisterEvent stream (LOW priority, GTCEu GTRegistrate.java:148-151 precedent)
  * plus one creative tab per creative-visible prefix in the same listener. FMLCommonSetupEvent then
@@ -57,7 +57,7 @@ import gregtech6.item.MaterialPrefixItem;
  * Block/MTE families are later cards; PREFIX_UNUSED aliases never generate.
  *
  * <p><b>id collision policy = first-wins</b>, identical rule to the phase-2 lang collision
- * (compressed/Compressed both snake to "compressed", first registration wins, task p2-datagen-pipeline).
+ * (compressed/Compressed both snake to "compressed", first registration wins, task datagen-pipeline).
  * Within the item universe the census found zero id collisions (the only snake_case collision pair in
  * all of OP is compressed/Compressed, both outside the item path), so {@link #firstWinsById} is pinned
  * by unit tests on synthetic pairs instead of by runtime evidence.
@@ -98,10 +98,10 @@ public final class GTMaterialItems {
     }
 
     /**
-     * The force-table slice (task p34-machines-bumblelyzer-crucible) — the upstream
+     * The force-table slice (task machines-bumblelyzer-crucible) — the upstream
      * OP.java:603-625 disable/forceItemGeneration rows the port OP defers with the whole
      * MT/ANY-dependent block, landed HERE (mdk-side, caller-of-OP.init timing) because a port
-     * row consumes the items. The p2-material-condition-system "47 unlocked prefixes" is the
+     * row consumes the items. The material-condition-system "47 unlocked prefixes" is the
      * same pattern: the port keeps the upstream model and lands the table rows per consuming
      * card. Exactly three rows, each upstream verbatim:
      * <ul>
@@ -138,7 +138,7 @@ public final class GTMaterialItems {
     /**
      * The single enumeration source for "what material prefix items exist": the registration bridge,
      * the datagen fallback and the creative tab layout all take this one walk (dual-criterion
-     * convergence, task p3-fullprefix-creativetab). Order: {@link OreDictPrefix#VALUES} x
+     * convergence, task fullprefix-creativetab). Order: {@link OreDictPrefix#VALUES} x
      * MATERIAL_ARRAY ascending-mID, mirroring the upstream default material list; same-name
      * re-registrations merge onto the registration target (MaterialRegistry.java:182-185 = upstream
      * OreDictMaterial.java:199-202).

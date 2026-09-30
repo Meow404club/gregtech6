@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * The formal GT6 branch cutter — item id {@code gt6:branch_cutter} (task
- * p29-w5-t4-field-five). Upstream GT_Tool_BranchCutter.java:42-138 — the Grafter-class
+ * w5-t4-field-five). Upstream GT_Tool_BranchCutter.java:42-138 — the Grafter-class
  * leaf tool:
  * <ul>
  * <li><b>Mining surface</b> (isMinableBlock :121-123): the {@code grafter} harvest arm

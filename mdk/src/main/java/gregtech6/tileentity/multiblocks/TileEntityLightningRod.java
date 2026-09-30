@@ -29,7 +29,7 @@ import gregapi.tileentity.energy.ITileEntityEnergy;
 import gregtech6.registry.GTMultiBlocks;
 
 /**
- * 1.20.1 counterpart of the GT6 Lightning Rod multiblock — task p24-lightning-rod, ported
+ * 1.20.1 counterpart of the GT6 Lightning Rod multiblock — task lightning-rod, ported
  * from gregtech/tileentity/multiblocks/MultiTileEntityLightningRod.java (:50-197) as the
  * canon-FIRST variable-length multiblock (research.p24-r-variable-length: the only
  * variable-formation machine in the whole GT6 census). A 3x3x5 base (Tungsten Walls /

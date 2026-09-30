@@ -25,7 +25,7 @@ import gregtech6.covers.covers.CoverAsphalt;
 import gregtech6.covers.covers.CoverCrafting;
 
 /**
- * The last-two-classes behavior pins (task p37-covers-crafting-asphalt acceptance ②):
+ * The last-two-classes behavior pins (task covers-crafting-asphalt acceptance ②):
  *
  * <ul>
  * <li>the asphalt walk boost — the upstream CoverAsphalt :39 gate table (boost ×1.3 only

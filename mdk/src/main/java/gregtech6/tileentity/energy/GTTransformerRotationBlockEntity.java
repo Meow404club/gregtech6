@@ -24,7 +24,7 @@ import gregtech6.registry.GT6Kinetics;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * 1.20.1 counterpart of the GT6 Transformer Gearbox — task p12-gearbox-transformer
+ * 1.20.1 counterpart of the GT6 Transformer Gearbox — task gearbox-transformer
  * spec 2, ported from
  * gregtech/tileentity/energy/transformers/MultiTileEntityTransformerRotation.java
  * (:34-67) over the Base10EnergyConverter / Base11Bidirectional converter shape

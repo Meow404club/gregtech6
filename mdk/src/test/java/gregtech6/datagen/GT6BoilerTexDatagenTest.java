@@ -1,5 +1,5 @@
 /*
- * Offline pinned tests for task r8-tex-large-boilers: the two boiler domains swap the
+ * Offline pinned tests for task tex-large-boilers: the two boiler domains swap the
  * single-layer placeholders for the two-layer front-bearing tinted grammar (the
  * {@link GT6ConverterPaintRenderDatagenTest} shape — asserted against the committed
  * generated tree). Upstream semantics pinned:

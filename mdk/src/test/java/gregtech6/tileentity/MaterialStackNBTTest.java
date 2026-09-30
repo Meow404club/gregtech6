@@ -88,7 +88,7 @@ public class MaterialStackNBTTest extends GTOfflineTestBase {
 	}
 
 	// ====================================================================================
-	// the list face (task p26-crucible-physics-smeltery): the crucible mContent
+	// the list face (task crucible-physics-smeltery): the crucible mContent
 	// List<OreDictMaterialStack> round trip — upstream OreDictMaterialStack.saveList/
 	// loadList (:129-160): a "0".."n"-indexed compound + "size", NOT a vanilla ListTag.
 	// ====================================================================================

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The id686 registration-death-chain guard (task p32-logistics-lv2 acceptance ①): a
+ * The id686 registration-death-chain guard (task logistics-lv2 acceptance ①): a
  * registration-face card must carry a JVM assertion on its FML face — the P31 lesson (a
  * neo-leg static-block snapshot registered ZERO entries while cleanTest stayed green;
  * the real break was a codec NPE at world load).

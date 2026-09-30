@@ -27,7 +27,7 @@ import gregtech6.fluid.GTFluids;
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 
 /**
- * {@code /gt6boiler} — the Steam Boiler Tank acceptance command home (task p13-boiler-tank
+ * {@code /gt6boiler} — the Steam Boiler Tank acceptance command home (task boiler-tank
  * spec ⑦, the GTBurnerCommand template). Game-bus listener, self-contained per ADR-P3-4.
  * The five upstream tool faces (:161-196) plus the two pressurised-removal faces land here
  * as the RCON command gates — the "acceptance channel is not the upstream player semantics"
@@ -62,7 +62,7 @@ import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
  *     TOOL_magnifyingglass lines (:186-196), the tanks, the energy store, the gauge, the
  *     facing and the row path (the stored/capacity reporting surface of :257-258 — the
  *     capacitor interface half is the cut ADR-D1 subsystem).</li>
- * <li>{@code efficiency <pos>} — the calcification readout (task p14-boiler-distw-immunity):
+ * <li>{@code efficiency <pos>} — the calcification readout (task boiler-distw-immunity):
  *     the :119/:188-192 state as ONE line carrying the PRISTINE/SCALED verdict token, so a
  *     chain asserts the efficiency verdict without string negation.</li>
  * <li>{@code dismantle <pos>} — the removedByPlayer arm (:202-205): barometer &gt; 4 (the
@@ -167,7 +167,7 @@ public final class GTBoilerCommand {
 	}
 
 	/**
-	 * The distilled-water half of the intake (task p14-boiler-distw-immunity). Upstream the
+	 * The distilled-water half of the intake (task boiler-distw-immunity). Upstream the
 	 * :262 fill gate is {@code FL.water(aFluidToFill)} and the DistW fluid carries the WATER
 	 * tag (FL.java:111) — the upstream door admits distilled water canonically. The P13 live
 	 * door seam (mWaterMatch, GTBoilerTankBlockEntity.java:172) is the vanilla-water-only
@@ -302,7 +302,7 @@ public final class GTBoilerCommand {
 	}
 
 	/**
-	 * The calcification readout (task p14-boiler-distw-immunity) — the :119/:188-192 state
+	 * The calcification readout (task boiler-distw-immunity) — the :119/:188-192 state
 	 * as one line with the PRISTINE/SCALED verdict token: a chain asserts the verdict by
 	 * substring (no negation), the exact efficiency number rides along for the transcript.
 	 */

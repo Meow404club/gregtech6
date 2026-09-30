@@ -42,7 +42,7 @@ import gregtech6.datagen.GT6ZhCn;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Dye-chemical family + chlorine offline tests (task p24-dye-chemical-fluids — the
+ * Dye-chemical family + chlorine offline tests (task dye-chemical-fluids — the
  * registration-row assertions against the DECLARED values, the GTFluidsFoodFamilyTest
  * shape): sixteen WITH-BLOCK {@code dye_chemical_<GTSprayCanItem.DYE_IDS[i]>} families +
  * {@code chlorine} (the rulings R3/R4/R6 of decisions.p24-canner-dyes-rulings).

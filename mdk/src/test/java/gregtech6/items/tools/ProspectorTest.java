@@ -1,5 +1,5 @@
 /**
- * Offline tests for task p30-pool-prospector: the HardHammer's prospector SECOND
+ * Offline tests for task pool-prospector: the HardHammer's prospector SECOND
  * behavior arm — the classification face (HAMMER + PROSPECTOR both true), the scan
  * radius pin (bind(1,20,quality+4) = 4 at the HardHammer quality 0), the vanilla-ore
  * trace table row by row, the five chat literals byte-for-byte (the upstream
@@ -45,7 +45,7 @@ public class ProspectorTest {
 		// registry (the GT6RecipeMapCrucibleTest boot shape, createPrefix's open gate).
 		// The trace-message pins read MT.Cu/MT.Fe and OP.oreSmall/oreVanillastone directly,
 		// and an isolated test JVM has no other class whose @BeforeAll could flood the
-		// tables first (the r7-fix-three-npe NPE trap).
+		// tables first (the fix-three-npe NPE trap).
 		gregapi.oredict.MaterialRegistry.INSTANCE.open();
 		MT.init();
 		gregapi.data.OP.init();

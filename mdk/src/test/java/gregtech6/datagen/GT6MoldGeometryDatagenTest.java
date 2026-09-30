@@ -1,6 +1,6 @@
 /**
- * Offline pin for task r7-mold-geometry (GitHub #40/#41 card 2) as amended by
- * r9-41-mold-invert-fix (issue #41) — the mold BLOCKS carry the upstream CONCAVE shape
+ * Offline pin for task mold-geometry (GitHub #40/#41 card 2) as amended by
+ * 41-mold-invert-fix (issue #41) — the mold BLOCKS carry the upstream CONCAVE shape
  * geometry: a chisel strike SETS a bit (MultiTileEntityMold.java:328-335) and the render
  * gate :537 skips the lit cells, so bit=1 = carved out. The committed model JSON is the
  * 1px full-footprint floor + the four 2px walls + one 2.4x3x2.4px element per UNLIT bit
@@ -238,7 +238,7 @@ public class GT6MoldGeometryDatagenTest extends GTOfflineTestBase {
 		}
 	}
 
-	/** The 0..1-normalized AABB pin (VoxelShape.toAabbs space, the r3-stick precedent). */
+	/** The 0..1-normalized AABB pin (VoxelShape.toAabbs space, the stick precedent). */
 	private static void assertBox(net.minecraft.world.phys.AABB aBox, double aX0, double aY0, double aZ0,
 			double aX1, double aY1, double aZ1, String aLabel) {
 		assertEquals(aX0 / 16.0, aBox.minX, 1e-9, aLabel + " minX");

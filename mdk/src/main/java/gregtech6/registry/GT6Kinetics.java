@@ -44,7 +44,7 @@ import gregtech6.block.energy.GTGearBoxBlock;
 import gregtech6.block.energy.GTTransformerRotationBlock;
 
 /**
- * The kinetics registration family home (task p12-engine-crank spec ③): the shared
+ * The kinetics registration family home (task engine-crank spec ③): the shared
  * DeferredRegister pair for the engine + rotation-transmission family — the Hand Crank
  * is its first member, the axle/gearbox/transformer/engine cards append here. Card-owned
  * (ADR-P3-4): self-contained {@code @EventBusSubscriber(MOD)} DeferredRegisters attached
@@ -61,11 +61,11 @@ import gregtech6.block.energy.GTTransformerRotationBlock;
  * :2106): hardness 1.0F / resistance 6.0F, the metal tool material →
  * {@link SoundType#METAL}. Creative tab: the crank (upstream "Misc Tool Blocks", tab
  * 32720, :2106), its gearbox/rotation-transformer siblings and the water wheel join
- * MACHINES_TAB (task p38-tabfix-b-energy, {@link #onBuildTabContents}; the GTBarrels:257
+ * MACHINES_TAB (task tabfix-b-energy, {@link #onBuildTabContents}; the GTBarrels:257
  * pooling precedent — supersedes the old /give-reachable note). The axle/steam-engine/
  * diesel ladders stay out of this card's join — the p38 tail card owns them.
  *
- * <p><b>The axle family</b> (task p12-axle-family spec ③): 11 materials x 4 diameters =
+ * <p><b>The axle family</b> (task axle-family spec ③): 11 materials x 4 diameters =
  * 44 blocks/items over the ONE shared {@link GTBlockEntities#AXLE_BE} (the ADR-P3-1
  * multi-mount, the GTWires 620-variant form). {@link #AXLE_SPECS} is the Loader kinetic
  * section verbatim (Loader_MultiTileEntities.java:1662-1744 and the material rows through
@@ -74,12 +74,12 @@ import gregtech6.block.energy.GTTransformerRotationBlock;
  * 6/9/12/16 px. The table is NAME+NUMBER only — no OreDictMaterial references: the static
  * init of this class runs at MOD construct time, where MT is not yet initialized (the
  * GTFluids lesson, p6 a9027ac).
- * <p>Task p12-engine-steam appends the Steam Engine family: the full
+ * <p>Task engine-steam appends the Steam Engine family: the full
  * Loader_MultiTileEntities.java:583-612 row projection (both the Steam Engine and Strong
  * Steam Engine ladders), the efficiency/capacity/output values riding the block carrier
  * ({@link SteamEngineBlock#row()}, the GTBarrelBlock capacityL shape), one shared BET
  * ({@link GTBlockEntities#STEAM_ENGINE_BE}, ADR-P3-1 multi-mount). COUNT ERRATUM
- * (census over card text, the p12-jei-integration brick-count precedent): the task card
+ * (census over card text, the jei-integration brick-count precedent): the task card
  * says "26 variants, 13+13" but 1300..1313 and 1350..1363 are FOURTEEN ids each — the
  * upstream loop :584-597 + :599-612 adds 14+14 = 28 rows, and the wire-W1 "no upstream
  * subset" ruling forbids dropping the two the card's arithmetic lost. The table below is
@@ -100,7 +100,7 @@ public final class GT6Kinetics {
 			() -> new BlockItem(CRANK.get(), new Item.Properties()));
 
 	// -------------------------------------------------------------------------
-	// the gearbox + rotation transformer (task p12-gearbox-transformer) — the wood
+	// the gearbox + rotation transformer (task gearbox-transformer) — the wood
 	// kinetic rows, one variant each (the material family fan-out rides the pool)
 	// -------------------------------------------------------------------------
 
@@ -133,7 +133,7 @@ public final class GT6Kinetics {
 			() -> new BlockItem(TRANSFORMER_ROTATION.get(), new Item.Properties()));
 
 	// -------------------------------------------------------------------------
-	// the axle family (task p12-axle-family) — 11 materials x 4 diameters = 44
+	// the axle family (task axle-family) — 11 materials x 4 diameters = 44
 	// -------------------------------------------------------------------------
 
 	/**
@@ -144,7 +144,7 @@ public final class GT6Kinetics {
 	 */
 	public record AxleSpec(String material, String matDisplay, int tier, int[] bandwidth) {}
 
-	/** The composed axle display template "{@code %s %s Axle}" (task p20-i18n-compose-rows): size unit + material unit slots. */
+	/** The composed axle display template "{@code %s %s Axle}" (task i18n-compose-rows): size unit + material unit slots. */
 	public static final String AXLE_DISPLAY_KEY = "gt6.row.axle.display";
 
 	/** The i-th diameter size unit key (the small unit nouns the template consumes — slot-less). */
@@ -253,10 +253,10 @@ public final class GT6Kinetics {
 		}
 	}
 
-	// steam engines (task p12-engine-steam — Loader_MultiTileEntities.java:583-612)
+	// steam engines (task engine-steam — Loader_MultiTileEntities.java:583-612)
 	// -------------------------------------------------------------------------
 
-	/** The composed Steam Engine display template "{@code Steam Engine (%s)}" (task p20-i18n-compose-rows) — one material slot. */
+	/** The composed Steam Engine display template "{@code Steam Engine (%s)}" (task i18n-compose-rows) — one material slot. */
 	public static final String STEAM_DISPLAY_KEY = "gt6.row.steam_engine.display";
 
 	/** The Strong-ladder template "{@code Strong Steam Engine (%s)}" — the Strong wording rides the template, not a slot. */
@@ -364,7 +364,7 @@ public final class GT6Kinetics {
 	/**
 	 * The steam-engine block — the facing cube carrier over the shared BET (the
 	 * GTCrankBlock shape minus the click drive: the engine has no GUI, no tool face and no
-	 * use() interaction — the soft-hammer toggle is the p12-engine-steam pool cut and the
+	 * use() interaction — the soft-hammer toggle is the engine-steam pool cut and the
 	 * on/off gate is the {@code /gt6engine mode} command). The row (efficiency/capacity/
 	 * output/hardness) rides THIS block (the GTBarrelBlock capacityL registration-carrier
 	 * pattern): the BE reads it off the placed BlockState.
@@ -401,7 +401,7 @@ public final class GT6Kinetics {
 			return mRow;
 		}
 
-		/** The composed row name (task p20-i18n-compose-rows): the family template over the material small unit. */
+		/** The composed row name (task i18n-compose-rows): the family template over the material small unit. */
 		@Override
 		public net.minecraft.network.chat.MutableComponent getName() {
 			return steamDisplayOf(mRow);
@@ -415,7 +415,7 @@ public final class GT6Kinetics {
 		@Override
 		public BlockState getStateForPlacement(BlockPlaceContext aContext) {
 			// the front TOWARDS the placer (the GT6PlacementFacing canon, task
-			// p28-singleblock-facing-canon) — the KU emit side faces the machine
+			// singleblock-facing-canon) — the KU emit side faces the machine
 			return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 		}
 
@@ -439,7 +439,7 @@ public final class GT6Kinetics {
 	}
 
 	// -------------------------------------------------------------------------
-	// the diesel engine family (task p12-engine-diesel) — 8 material tiers
+	// the diesel engine family (task engine-diesel) — 8 material tiers
 	// -------------------------------------------------------------------------
 
 	/**
@@ -460,7 +460,7 @@ public final class GT6Kinetics {
 	/** {@code material} is the row slug (the gt6.row.mat small-unit key tail), {@code matDisplay} the row's material word verbatim. */
 	public record DieselSpec(String material, String matDisplay, long output) {}
 
-	/** The composed Diesel Engine display template "{@code %s Diesel Engine}" (task p20-i18n-compose-rows) — one material slot. */
+	/** The composed Diesel Engine display template "{@code %s Diesel Engine}" (task i18n-compose-rows) — one material slot. */
 	public static final String DIESEL_DISPLAY_KEY = "gt6.row.diesel.display";
 
 	/** The row's material small-unit key. */
@@ -524,7 +524,7 @@ public final class GT6Kinetics {
 	}
 
 	/**
-	 * The three registration ladders join the machines tab (task p38-tabfix-e-kinetics-tail;
+	 * The three registration ladders join the machines tab (task tabfix-e-kinetics-tail;
 	 * the GT6Batteries.onBuildTabContents verbatim walk form, delivered by the class-level
 	 * MOD-bus {@code @Mod.EventBusSubscriber} at the class head): the 44 axles
 	 * ({@link #AXLE_ITEMS}, 11 materials x 4 diameters), the 28 steam engines
@@ -539,7 +539,7 @@ public final class GT6Kinetics {
 	 * {@link GTMachines#MACHINES_TAB} (the GTBarrels:257 pooling precedent).
 	 *
 	 * <p>Why a SEPARATE handler and not an arm inside a single {@code onBuildTabContents}:
-	 * the in-flight p38-tabfix-b-energy card (488849b01, merge order = b first, this branch
+	 * the in-flight tabfix-b-energy card (488849b01, merge order = b first, this branch
 	 * rebases second) adds that exact-signature walk to this class for the four single
 	 * blocks (crank/gearbox/rotation transformer/water wheel — its crop, its census pins 4).
 	 * Two same-signature handlers would collide at that rebase; two distinct walks deliver
@@ -556,11 +556,11 @@ public final class GT6Kinetics {
 	}
 
 	// -------------------------------------------------------------------------
-	// the water wheel (task p28-c-water-wheel) — the ULV chain's RU source
+	// the water wheel (task c-water-wheel) — the ULV chain's RU source
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The Water Wheel (task p28-c-water-wheel) — the kinetics family's RU source: river
+	 * The Water Wheel (task c-water-wheel) — the kinetics family's RU source: river
 	 * flow turns it, it pushes {@code ±8} RU × 1A packets out along its axis into the
 	 * axle faces (the kTFRUAddon WaterMill "Water Mill" registration-row semantics,
 	 * tileEntityInit0.java:112 WoodTreated hardness 1.5 — clean-room re-expression, the
@@ -597,7 +597,7 @@ public final class GT6Kinetics {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — the four single-block kinetic items join
+	 * The tab walk (task tabfix-b-energy — the four single-block kinetic items join
 	 * the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
 	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
 	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display

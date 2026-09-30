@@ -12,7 +12,7 @@ import com.google.common.collect.Multimap;
 
 /**
  * The formal GT6 butchery knife — item id {@code gt6:butchery_knife} (task
- * p29-w5-t2-blade-six). Upstream GT_Tool_ButcheryKnife.java:35-115 (the
+ * w5-t2-blade-six). Upstream GT_Tool_ButcheryKnife.java:35-115 (the
  * Loader_Tools.java:136 registration row, {@code 4*U}):
  * <ul>
  * <li><b>Damage</b> — base damage 1.0F (:57-59) verbatim; per-entity 400 (:52-54) folds
@@ -35,7 +35,7 @@ import com.google.common.collect.Multimap;
  *     upstream MultiItemTool attack pipeline is not carried).</li>
  * </ul>
  *
- * <p>MATERIAL LADDER (task p31-blade-ladder — the {@link GTSwordItem} javadoc carries the
+ * <p>MATERIAL LADDER (task blade-ladder — the {@link GTSwordItem} javadoc carries the
  * family face; the attack speed has NO material axis): durability, the :392 attack fold,
  * the per-material name, and the tint — upstream the visible sprite takes the PRIMARY
  * colour with the Steel fallback (getRGBa :97-99 verbatim, the head pass {@code VOID}).

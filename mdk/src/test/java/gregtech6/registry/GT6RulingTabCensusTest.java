@@ -10,7 +10,7 @@ import gregtech6.items.GT6UsbSticks;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Task p38-tabfix-d-ruling — the user-ruling-pool tab-join coverage census: the rails,
+ * Task tabfix-d-ruling — the user-ruling-pool tab-join coverage census: the rails,
  * portals, USB sticks and the earlier covers join {@link GTMachines#MACHINES_TAB}
  * (gt6:machines), the written books get the dedicated {@link GT6Books#BOOKS_TAB}
  * (gt6:books), and GTEnergySources stays tab-less (the test-rig ruling, zero code).
@@ -27,7 +27,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
  * shutter/item-filter/retriever/auto-machine-switch/controller + the 10 conveyors + the
  * 10 robot arms; the p33 walk javadoc's "EARLIER cover family stays tab-less" covered
  * them all, upstream every one rides the MultiItemTechnological GT tab list). The
- * coordinator rulings (2026-09-24, the p38-tabfix-a Boilers 3→26 precedent): pin the
+ * coordinator rulings (2026-09-24, the tabfix-a Boilers 3→26 precedent): pin the
  * disk truth. Rails 31 and Books 15 match the ledger.
  */
 public class GT6RulingTabCensusTest extends GTOfflineTestBase {

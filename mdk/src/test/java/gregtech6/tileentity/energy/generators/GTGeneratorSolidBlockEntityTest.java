@@ -34,7 +34,7 @@ import net.minecraftforge.common.ForgeHooks;
 //?}
 
 /**
- * Task p13-burning-box-family — the offline acceptance fixture for the Solid Burning
+ * Task burning-box-family — the offline acceptance fixture for the Solid Burning
  * Box semantics (the HuEnergyHandshakeTest fixture form): the HU emit truth table, the
  * SIDES_TOP six-direction gate, the refuel continue-burn gate, the fuel-charge
  * formula (UT.Code.units), the fire-spread pure-function rng table, and the
@@ -64,7 +64,7 @@ public class GTGeneratorSolidBlockEntityTest extends GTOfflineTestBase {
 		public byte lastSide = -1;
 
 		// 21.1 ctor validation: the fake binds a real BET over the vanilla stone state —
-		// the supplier is stored, never invoked (task p15-m4-test-infra-2).
+		// the supplier is stored, never invoked (task m4-test-infra-2).
 		static final net.minecraft.world.level.block.entity.BlockEntityType<HuSink> FAKE_TYPE =
 				net.minecraft.world.level.block.entity.BlockEntityType.Builder.of(
 						(aPos, aState) -> new HuSink(aPos), Blocks.STONE).build(null);
@@ -123,7 +123,7 @@ public class GTGeneratorSolidBlockEntityTest extends GTOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the break-drop probe (r10-debt-break-drops — the GTEntityBlock reflective census)
+	// the break-drop probe (debt-break-drops — the GTEntityBlock reflective census)
 	// ---------------------------------------------------------------------------
 
 	@Test

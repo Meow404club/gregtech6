@@ -22,7 +22,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.bees.GT6BumbleHiveBlockEntity;
 
 /**
- * Offline gate for task r6-15-hive-jade-tint (issue #15 tail): the Jade icon tint chain —
+ * Offline gate for task 15-hive-jade-tint (issue #15 tail): the Jade icon tint chain —
  * the {@link GT6PaintIconProvider#iconStack} pure seam (the {@code getIcon} static, the
  * GT6MachineProviderTest posture: the BlockAccessor wrapper itself is live-only) and its
  * consumption by the fix-A {@link GTItemPaintTint#itemColor()} over the SAME payload form.
@@ -116,7 +116,7 @@ public class GT6PaintIconProviderTest extends GTOfflineTestBase {
 		assertEquals(3, tItems.length, "the Bumbliary pair + the hive");
 		assertSame(gregtech6.registry.GT6BeeHives.BUMBLIARY_ITEM.get(), tItems[0]);
 		assertSame(gregtech6.registry.GT6BeeHives.BUMBLIARY_ADVANCED_ITEM.get(), tItems[1]);
-		assertSame(gregtech6.registry.GT6BeeHives.HIVE_ITEM.get(), tItems[2], "the r6-15 tail: the hive joins");
+		assertSame(gregtech6.registry.GT6BeeHives.HIVE_ITEM.get(), tItems[2], "the #15 tail: the hive joins");
 		GT6BumbleHiveBlockEntity tHive = new GT6BumbleHiveBlockEntity(
 				gregtech6.registry.GT6BeeHives.HIVE_BE.get(), POS,
 				gregtech6.registry.GT6BeeHives.HIVE.get().defaultBlockState());

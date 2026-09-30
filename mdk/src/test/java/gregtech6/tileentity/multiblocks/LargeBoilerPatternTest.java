@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregtech6.multiblock.GTMultiBlockPattern;
 
 /**
- * The Large Boiler pattern binding + the structure-mode write pin (task p13-large-boiler
+ * The Large Boiler pattern binding + the structure-mode write pin (task large-boiler
  * acceptance ①, the TileEntityCokeOvenPatternTest form):
  *
  * <p>① the bound pattern is the LITERAL 34+1 expectation — the 34 part cells in the
@@ -64,7 +64,7 @@ public class LargeBoilerPatternTest extends GTMultiBlocksOfflineTestBase {
 		BlockEntityType<HeatTransmitterBlockEntity>[] tTxHolder = (BlockEntityType<HeatTransmitterBlockEntity>[]) new BlockEntityType<?>[1];
 		// the pattern mounts transmitters on the STONE cells (the part-BE factory below);
 		// 21.1 validates the type/state pair at the ctor, so STONE joins the valid set
-		// (task p15-m4-test-infra-2)
+		// (task m4-test-infra-2)
 		tTxHolder[0] = BlockEntityType.Builder.of((aPos, aState) -> new HeatTransmitterBlockEntity(tTxHolder[0], aPos, aState), Blocks.BRICKS, Blocks.STONE).build(null);
 		sTransmitterType = tTxHolder[0];
 	}

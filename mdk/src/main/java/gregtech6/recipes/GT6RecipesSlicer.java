@@ -37,7 +37,7 @@ import gregapi.data.OP;
 import gregtech6.registry.GT6SlicerBlades;
 
 /**
- * The RM.Slicer vanilla-face row pour — task p35-slicer-row-domain, the ruling-③
+ * The RM.Slicer vanilla-face row pour — task slicer-row-domain, the ruling-③
  * re-domained card (the boule-slicing hypothesis stays falsified; these rows are ZERO
  * boule-coupled). Five rows over the two registered blades, the upstream lines verbatim:
  * <pre>

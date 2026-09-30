@@ -23,7 +23,7 @@ import gregtech6.client.render.GTOvenClientListener;
 import gregtech6.client.render.GTRenderModelListener;
 
 /**
- * The cover plate registration sentinel tests (task p10-cover-plate-perstate-fix, the
+ * The cover plate registration sentinel tests (task cover-plate-perstate-fix, the
  * {@code GTOvenOverlayModelTest.registrationWrapsTheBakedPerStateModels} shape): the
  * listener's targets are the oven's 16 per-state ModelResourceLocations (read-only reuse
  * of {@link GTOvenClientListener#targetModelIds()} — vanilla ModelBakery.java:136 keys
@@ -45,7 +45,7 @@ public class GTCoverClientListenerTest {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the key set — read-only reuse of the oven listener's 64 per-state keys (4 ladder rows x 16, task p27-oven-heat-t-ladder)
+	// the key set — read-only reuse of the oven listener's 64 per-state keys (4 ladder rows x 16, task oven-heat-t-ladder)
 	// ---------------------------------------------------------------------------
 
 	@Test

@@ -9,7 +9,7 @@ import gregtech6.registry.GT6FeConverters;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The FE→EU converter block carrier (task p28-b-fe-converter-machine) — a simple cube
+ * The FE→EU converter block carrier (task b-fe-converter-machine) — a simple cube
  * over the shared BET, the GTEnergySourceBlock shape minus the command rig. SINGLE-TIER
  * family (the ULV balance ruling of decisions.p28-eu-inbound-converter): one block, the
  * tier voltage living as the constant in {@link GT6FeConverters} — the BE reads it from

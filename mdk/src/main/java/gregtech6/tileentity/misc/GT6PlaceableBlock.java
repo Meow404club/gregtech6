@@ -25,7 +25,7 @@ import gregtech6.registry.GT6Placeables;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The placed-pile block carrier (task p32-placeables) — the six "Untyped" placement faces
+ * The placed-pile block carrier (task placeables) — the six "Untyped" placement faces
  * of Loader_MultiTileEntities.java:2033-2040 over the {@code MultiTileEntityPlaceable}
  * base semantics (gregapi/tileentity/misc/MultiTileEntityPlaceable.java). One class, six
  * registrations, the {@link Kind} carrying the differences (the upstream class split was

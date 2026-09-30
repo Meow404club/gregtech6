@@ -21,7 +21,7 @@ import gregtech6.block.energy.GT6ElectricTransformerBlock;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Electric Transformer ULV-LV (task p28-c-ulv-lv-transformer) — the 1.20.1
+ * The Electric Transformer ULV-LV (task c-ulv-lv-transformer) — the 1.20.1
  * counterpart of {@code MultiTileEntityTransformerElectric} over the bidirectional
  * base semantics ({@code TileEntityBase11Bidirectional} :40-95, the row
  * Loader_MultiTileEntities.java:881: {@code NBT_INPUT, V[1]=32, NBT_OUTPUT, V[0]=8,
@@ -89,7 +89,7 @@ public class GT6ElectricTransformerBlockEntity extends TileEntityBase03TicksAndS
 	public static final boolean WASTE_ENERGY = false;
 
 	// ---------------------------------------------------------------------------
-	// the per-row pair (task p35-energy-tail-machines — the :881-:889 declared ladder,
+	// the per-row pair (task energy-tail-machines — the :881-:889 declared ladder,
 	// every row NBT_INPUT V[i+1] / NBT_OUTPUT V[i] / NBT_MULTIPLIER 4 / WASTE F; the
 	// tier rides the block like the BatteryBox family, the STONE/offline fallback = 0)
 	// ---------------------------------------------------------------------------

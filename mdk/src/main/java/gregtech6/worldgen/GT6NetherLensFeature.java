@@ -18,7 +18,7 @@ import gregtech6.block.stone.StoneVariant;
 import gregtech6.registry.GTStoneBlocks;
 
 /**
- * The nether stone-lens Feature (task p31-nether-lens-end-yield) — the
+ * The nether stone-lens Feature (task nether-lens-end-yield) — the
  * {@link GT6StrataLensFeature} per-chunk adapter re-formed for the 17-stone nether table,
  * carrying TWO upstream deltas:
  *

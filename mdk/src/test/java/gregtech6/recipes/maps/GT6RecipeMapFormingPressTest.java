@@ -27,7 +27,7 @@ import gregtech6.recipes.GTRecipesOfflineTestBase;
 import gregtech6.recipes.Recipe;
 
 /**
- * The Forming Press map, offline (task p26-w1-press-extruder-molds): the findRecipe
+ * The Forming Press map, offline (task w1-press-extruder-molds): the findRecipe
  * override's arms over fixture seams — the stored-rows-first priority, the two-slot gate,
  * the row0 FORMING arm ([mold, blockIngot] → 9 plates / 18 sticks, either slot order) and
  * the MOLD-NOT-CONSUMED crown (the two-stage isRecipeInputEqual consume skips the mold

@@ -13,7 +13,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /**
- * The 18103 Bedrock Mining Drill Head acceptance census (task p30-pool-drillhead-18103):
+ * The 18103 Bedrock Mining Drill Head acceptance census (task pool-drillhead-18103):
  * the row registration (the census test's row face, here re-anchored over
  * {@code NEW_PART_ROWS} — the membership that drives the creative-tab walk, the BET
  * valid list and every datagen walk), the generated blockstate/model/loot artifacts

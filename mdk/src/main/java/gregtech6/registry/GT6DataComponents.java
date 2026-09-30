@@ -10,7 +10,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
-// 1.21.1-only item DataComponent carriers (task p15-fork-carrier-components, ADR-P15-1).
+// 1.21.1-only item DataComponent carriers (task fork-carrier-components, ADR-P15-1).
 // The 1.20.1 node carries these payloads as freeform ItemStack NBT, which 1.20.5+ replaces
 // with data components; the payload KEYS keep their exact 1.20.1 shape byte-for-byte inside
 // the opaque CustomData envelope (the 'tank' tank compound / the cover 's'..'x' lane keys) —

@@ -1,5 +1,5 @@
 /**
- * Offline pin for task r7-40-41-mold-assets (GitHub #40 + #41) — the mold/crucible asset
+ * Offline pin for task 40-41-mold-assets (GitHub #40 + #41) — the mold/crucible asset
  * family carries the per-shape borrows and the material smooth bodies. Two live gaps
  * pinned here:
  * <ol>
@@ -131,7 +131,7 @@ public class GT6MoldAssetDatagenTest extends GTOfflineTestBase {
 
     /**
      * The body pin: the model's single body texture key must be exactly the expected
-     * reference. Two carrier forms coexist (the r7-mold-geometry rebase seam): the
+     * reference. Two carrier forms coexist (the mold-geometry rebase seam): the
      * cube_all rows (faucets, crucible empties) pin "all", the 32 bitmap-stamped molds
      * (stone + ceramic, issue #41 — the stone rung retired its flat-cube placeholder and
      * rides the same concave MTE design 1072) pin "body" — the material smooth face and

@@ -50,7 +50,7 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
- * The Compressor recipe book (task p26-w1-sifter-compressor-wiremill) — the row audit of
+ * The Compressor recipe book (task w1-sifter-compressor-wiremill) — the row audit of
  * the RM.Compressor pour surface. Upstream feeders outside compat/ (the P10 59-class
  * ruling cuts the whole Compat_* tree):
  *

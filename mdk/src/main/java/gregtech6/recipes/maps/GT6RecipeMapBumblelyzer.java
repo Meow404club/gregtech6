@@ -35,7 +35,7 @@ import gregtech6.registry.GTMaterialItems;
 
 /**
  * The Bumblelyzer map — the port of upstream {@code gregapi/recipes/maps/RecipeMapBumblelyzer.java}
- * (task p34-machines-bumblelyzer-crucible). The map itself is DECLARED-empty as a static stock:
+ * (task machines-bumblelyzer-crucible). The map itself is DECLARED-empty as a static stock:
  * the live scan semantics are the DYNAMIC {@code findRecipe} arm (:50-74), the
  * {@link GT6RecipeMapCanner} R1 ruling's second consumer — every bee of every species resolves
  * through this one override upstream, and the static stock is only the NEI display face.

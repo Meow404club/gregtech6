@@ -21,7 +21,7 @@ import net.minecraftforge.client.model.data.ModelData;
 
 /**
  * Base for all GT6 dynamic baked models (C-grade render foundation, ADR
- * 2026-08-30-p4-render-route-execution). Implements the Forge dispatch skeleton of
+ * 2026-08-30-render-route-execution). Implements the Forge dispatch skeleton of
  * {@link IDynamicBakedModel#getQuads(BlockState, Direction, RandomSource, ModelData, RenderType)}
  * (IDynamicBakedModel.java:35 — the forced 5-arg overload):
  * <ul>
@@ -101,7 +101,7 @@ public abstract class GTDynamicBakedModel implements IDynamicBakedModel {
 	// ---------------------------------------------------------------------------
 
 	/**
-	 * Issue #8 (task r3-world-tint-render-type): forward the chunk-layer query to the
+	 * Issue #8 (task world-tint-render-type): forward the chunk-layer query to the
 	 * fallback model. The IForgeBakedModel default (IForgeBakedModel.java:85) resolves
 	 * the layer from the {@code ItemBlockRenderTypes} block table — solid — which BURIES
 	 * whatever {@code render_type} the fallback's model JSON declares: the D2 leg4/leg5

@@ -22,7 +22,7 @@ import gregtech6.multiblock.GTMultiBlockStructureChecker;
 import gregtech6.multiblock.GTMultiBlockStructureChecker.FormedVerdict;
 
 /**
- * The shared structure checker (task p16-pattern-checker ②) over a generic
+ * The shared structure checker (task pattern-checker ②) over a generic
  * pattern-bound controller — the per-cell-kind semantics, the unloaded short-circuit
  * and the binding side effects. The Coke Oven production switch and the Large Boiler
  * five-arm equivalence pins live in {@link TileEntityCokeOvenCheckerTest}

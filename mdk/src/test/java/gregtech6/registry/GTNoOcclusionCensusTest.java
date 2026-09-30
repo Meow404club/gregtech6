@@ -1,5 +1,5 @@
 /**
- * The issue #9 noOcclusion census (task p38-issue9-wire-noocclusion): EVERY wire/pipe-family
+ * The issue #9 noOcclusion census (task issue9-wire-noocclusion): EVERY wire/pipe-family
  * block must register {@code canOcclude = false}. Root cause being pinned: these carriers
  * render sub-cube quads (GTWireBakedModel / the pipe family models) over the DEFAULT
  * full-cube getShape, and neither the family block classes nor the registration touched the

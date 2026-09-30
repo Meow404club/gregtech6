@@ -38,7 +38,7 @@ import gregtech6.recipes.RecipeMap;
 import gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase;
 
 /**
- * The twelve-large-machine offline panel gate (issue r4-24a, the
+ * The twelve-large-machine offline panel gate (issue #24a, the
  * GT6DistillationTowerMUIPanelTest shape over the SHARED {@link GTBasicMachineMUI}
  * panel): every row's controller BE builds the panel headless (no player, no screen)
  * against its REAL RecipeMap — the BE IS the Host, the row-null fixture seam injects the
@@ -57,8 +57,8 @@ import gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase;
  *
  * <p>Plus the map-sized inventory: the Crusher/Shredder 1+12 shape overflows the base
  * INVENTORY_SIZE 11 — the row ctor re-sizes, every ≤11 map keeps the base handler. And the
- * input-truth face (task r8-gui-layout-descriptor): getInputSlotCount returns the row
- * map's live mInputItemsCount (the Host default 1 was the r4-24a leftover), the MIXER/BATH
+ * input-truth face (task gui-layout-descriptor): getInputSlotCount returns the row
+ * map's live mInputItemsCount (the Host default 1 was the #24a leftover), the MIXER/BATH
  * six input seats land on the descriptor's case-6 table.
  */
 class GT6LargeMachineMUIPanelTest extends GTMultiBlocksOfflineTestBase {
@@ -212,7 +212,7 @@ class GT6LargeMachineMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 
 	/**
 	 * The six-input rows seat their inputs at the descriptor's case-6 table (upstream
-	 * ContainerCommonBasicMachine.java:80-85) — the r4-24a leftover in its end form: the
+	 * ContainerCommonBasicMachine.java:80-85) — the #24a leftover in its end form: the
 	 * Host default 1 used to render a single (53,25) seat for the MIXER/BATH.
 	 */
 	@Test
@@ -221,7 +221,7 @@ class GT6LargeMachineMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 			GTLargeMachineBlockEntity tMachine = newMachine(GT6LargeMachines.ROWS_BY_PATH.get(tPath));
 			RecipeMap tMap = tMachine.recipes();
 			assertEquals(6, tMap.mInputItemsCount, tPath + ": the six-input row");
-			assertEquals(6, tMachine.getInputSlotCount(), tPath + ": the live input truth (the Host default 1 was the r4-24a leftover)");
+			assertEquals(6, tMachine.getInputSlotCount(), tPath + ": the live input truth (the Host default 1 was the #24a leftover)");
 
 			ModularPanel<?> tPanel = tMachine.buildUI(null, headlessSyncManager(), null);
 			int[][] tExpected = GT6MachineGuiLayout.inputPositions(6, tMachine.getFluidInputTanks().length);

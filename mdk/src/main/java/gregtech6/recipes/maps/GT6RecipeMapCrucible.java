@@ -51,12 +51,12 @@ import static gregapi.data.CS.U9;
 
 /**
  * The Crucible map pair — the port of upstream gregapi/recipes/maps/RecipeMapCrucible.java
- * (task p26-crucible-physics-smeltery). The upstream {@code RM.CrucibleSmelting} is the
+ * (task crucible-physics-smeltery). The upstream {@code RM.CrucibleSmelting} is the
  * on-demand {@code RecipeMapSpecialSingleInput} subclass whose {@code getRecipeFor}
  * (RecipeMapCrucible.java:82-97) derives the row from the MATERIAL GRAPH at lookup time —
  * zero static rows, the crucible is a recipe-table machine only in appearance. This port
  * carries the same shape over the {@link gregtech6.recipes.maps.GT6RecipeMapCanner} form
- * (the {@code findRecipe} override precedent, p24-canner-machine): the stored-row scan
+ * (the {@code findRecipe} override precedent, canner-machine): the stored-row scan
  * runs first, and when nothing stored matched the on-demand arm derives a one-time
  * {@link Recipe} from the input's material data.
  *

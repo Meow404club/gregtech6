@@ -36,7 +36,7 @@ import gregtech6.tileentity.bees.GT6BumbliaryBlockEntity;
 import gregtech6.tileentity.bees.GT6BumbleHiveBlockEntity;
 
 /**
- * The bumble-hive worldgen Feature (task p32-bees-lv2) — the {@code WorldgenHives} port
+ * The bumble-hive worldgen Feature (task bees-lv2) — the {@code WorldgenHives} port
  * (WorldgenHives.java:48-193) collapsed onto ONE registered feature
  * ({@code gt6:bumble_hives}; upstream was three WorldgenObject rows over the same
  * generator body — overworld/nether/end, Loader_Worldgen.java:635-637 — the modern
@@ -59,7 +59,7 @@ import gregtech6.tileentity.bees.GT6BumbleHiveBlockEntity;
  * {@code #gt6:bumble_hives/<family>} tags (the tree-tag pattern: vanilla members live,
  * modded biomes are the pack-extension surface — magical/volcanic/end/nether emit
  * EMPTY, the rainbowood precedent). The species trace wires the loot since
- * p33-bees-lv3-c-hive-loot: the family picks the comb ({@code bumbleProductStack} :189-213)
+ * bees-lv3-c-hive-loot: the family picks the comb ({@code bumbleProductStack} :189-213)
  * and the princess/drone codes ({@link #fillLoot}).
  *
  * <p>KJS face (card declaration): the placed/configured/biome-modifier JSONs are the
@@ -279,7 +279,7 @@ public class GT6HiveFeature extends Feature<NoneFeatureConfiguration> {
 	/**
 	 * The placeHive collapse (:195-204): the hive block in, the family paint applied
 	 * (NBT_COLOR+NBT_PAINTED, the born-painted face), then the loot fill (:203 — task
-	 * p33-bees-lv3-c-hive-loot closes the Lv2 deferral): the family comb, the princess
+	 * bees-lv3-c-hive-loot closes the Lv2 deferral): the family comb, the princess
 	 * and the drones, all sharing the one wild gene roll. The gene rolls ride the SAME
 	 * stream after the placement rolls (the getBumbleGenes consumption slot upstream) —
 	 * the coordinate-deterministic recompute covers the loot too.

@@ -19,7 +19,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import gregtech6.registry.GT6FeBatteries;
 
 /**
- * The FE source test fixture BE (task p28-b-fe-converter-machine) — the EXTRACTABLE twin
+ * The FE source test fixture BE (task b-fe-converter-machine) — the EXTRACTABLE twin
  * of the p26 sink battery: the same platform {@code EnergyStorage} reference shape, but
  * (capacity, maxReceive=0, maxExtract=capacity) — a PURE SOURCE. The existing fe_battery
  * is a pure sink (maxExtract = 0), which is exactly right for the OUTBOUND bridge and

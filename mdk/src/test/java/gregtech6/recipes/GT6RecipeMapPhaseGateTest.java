@@ -26,7 +26,7 @@ import gregapi.oredict.OreDictPrefix;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The RM phase gate (task p32-rm-phase-gate): the whole map generation lives in the
+ * The RM phase gate (task rm-phase-gate): the whole map generation lives in the
  * OPEN→FROZEN phase ({@link GT6RecipeMaps.Phase}, the GTCEu MaterialRegistry shape,
  * MaterialRegistry.java:34-45). Three contracts, each with its pin:
  * <ol>
@@ -82,11 +82,11 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 			"gregtech6.recipes.GT6RecipesAnvil",
 			"gregtech6.recipes.GT6RecipesWelder",
 			"gregtech6.recipes.GT6RecipesImplosion",
-			"gregtech6.recipes.GT6RecipesBees", // task p34-machines-bumblelyzer-crucible — the pour also fills the GT6RecipeMapBumblelyzer display stock (the sFakeRecipes list, outside mRecipeList)
+			"gregtech6.recipes.GT6RecipesBees", // task machines-bumblelyzer-crucible — the pour also fills the GT6RecipeMapBumblelyzer display stock (the sFakeRecipes list, outside mRecipeList)
 			"gregtech6.recipes.GT6RecipesMassfab",
 			"gregtech6.recipes.GT6RecipesFusion",
-			"gregtech6.recipes.GT6RecipesSlicer", // task p35-slicer-row-domain - the vanilla leather/paper pour joins the ledger
-			"gregtech6.recipes.maps.GT6RecipeMapBumblelyzer", // task p34-machines-bumblelyzer-crucible — the display-stock reset hook joins the ledger
+			"gregtech6.recipes.GT6RecipesSlicer", // task slicer-row-domain - the vanilla leather/paper pour joins the ledger
+			"gregtech6.recipes.maps.GT6RecipeMapBumblelyzer", // task machines-bumblelyzer-crucible — the display-stock reset hook joins the ledger
 			"gregtech6.recipes.GT6RecipesReactorRods", // task debt-reactor-c-rods — the 45-row reactor-rod pour joins the ledger
 	};
 
@@ -96,8 +96,8 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("FURNACE", 0);
 		SNAPSHOT.put("COKE_OVEN", 39);
 		SNAPSHOT.put("SHREDDER", 353);
-		SNAPSHOT.put("CRUSHER", 1643); // +11 task p34-machines-bumblelyzer-crucible — the bouleGt force-table item universe grows the ore-chain crush-back walk (the plate-gem/tiny/boule carriers)
-		SNAPSHOT.put("LATHE", 77); // +3 task p34-machines-bumblelyzer-crucible — the same cascade over the lathe rod/wire walk
+		SNAPSHOT.put("CRUSHER", 1643); // +11 task machines-bumblelyzer-crucible — the bouleGt force-table item universe grows the ore-chain crush-back walk (the plate-gem/tiny/boule carriers)
+		SNAPSHOT.put("LATHE", 77); // +3 task machines-bumblelyzer-crucible — the same cascade over the lathe rod/wire walk
 		SNAPSHOT.put("CHISEL", 36);
 		SNAPSHOT.put("ENGINE_FUELS", 7);
 		SNAPSHOT.put("FLUIDBED", 0);
@@ -107,14 +107,14 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("DRYING", 42);
 		SNAPSHOT.put("CANNER", 84); // +5: the laser gas fill family closure (task debt-laser-gas-family, MultiItemTechnological.java:396-403 — neon/argon/krypton/xenon/carbonmonoxide pour; helium skips over the fixture arm) +1: task debt-hene-fluid — the heliumneon blend fluid row landed (MT.java:1024 → the Loader_Fluids.java:660 createGas walk), the :401 fill row pours; helium keeps the offline fixture skip +25: task debt-reactor-c-rods — the 24 reactor-rod fills (:742-744/:746-762/:782-785) + the :789 Tritium unpack pour
 		SNAPSHOT.put("MIXER", 56000);
-		SNAPSHOT.put("SIFTING", 489); // +212 task debt-ore-purified-edge — the Loader_OreProcessing.java:351 DUST_ORE arm lands: 4 port families (gravel/sand/redsand/mud, the DUST_ORE-tagged prefixes of GT6OreBlocks.FAMILIES) x the material axis, every row resolving under the brick fixture; +52 task r7-a-ore-axis-extension — the axis grew 53 -> 66 (4 x 13); +224 task r7-b-gem-pool-extension — the axis grew 66 -> 122 (4 x 56, + 1: the 489th row is the grass row0)
+		SNAPSHOT.put("SIFTING", 489); // +212 task debt-ore-purified-edge — the Loader_OreProcessing.java:351 DUST_ORE arm lands: 4 port families (gravel/sand/redsand/mud, the DUST_ORE-tagged prefixes of GT6OreBlocks.FAMILIES) x the material axis, every row resolving under the brick fixture; +52 task a-ore-axis-extension — the axis grew 53 -> 66 (4 x 13); +224 task b-gem-pool-extension — the axis grew 66 -> 122 (4 x 56, + 1: the 489th row is the grass row0)
 		// the ONE version-sensitive census: the Compressor walk rides the vanilla item
 		// universe, which differs 1.20.1 vs 1.21.1 by 109 compressibles — the per-leg pin
 		// (the stonecutter swap-table convention, GTRecipesOfflineTestBase shape)
 		//? if forge {
 		SNAPSHOT.put("COMPRESSOR", 2630);
 		//?} else {
-		/*SNAPSHOT.put("COMPRESSOR", 2517); // -4 task p34-machines-bumblelyzer-crucible — the compressor walk derives from the live item universe, which the bouleGt force-table changed (the row-level mechanism rides the exclusion filters over the new gem-plate/tiny/boule items; the ratchet protocol: bump the verified drift, the walk-level accounting is the cutting-domain card's audit face)
+		/*SNAPSHOT.put("COMPRESSOR", 2517); // -4 task machines-bumblelyzer-crucible — the compressor walk derives from the live item universe, which the bouleGt force-table changed (the row-level mechanism rides the exclusion filters over the new gem-plate/tiny/boule items; the ratchet protocol: bump the verified drift, the walk-level accounting is the cutting-domain card's audit face)
 		*///?}
 		SNAPSHOT.put("WIREMILL", 912);
 		SNAPSHOT.put("ROLLING_MILL", 0);
@@ -152,9 +152,9 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("FREEZER", 0);
 		SNAPSHOT.put("POLARIZER", 0);
 		SNAPSHOT.put("LIGHTNING", 0);
-		SNAPSHOT.put("SLICER", 5); // task p35-slicer-row-domain - the vanilla-face rows land (the leather quartet + the paper row); the declared smoke-JSON debt is retired with the card
+		SNAPSHOT.put("SLICER", 5); // task slicer-row-domain - the vanilla-face rows land (the leather quartet + the paper row); the declared smoke-JSON debt is retired with the card
 		SNAPSHOT.put("LASER_ENGRAVER", 0);
-		SNAPSHOT.put("WELDER", 30); // +8 task p35-crucible-wall-obtainability — the dedicated crucible-wall rows replay the :1143-1153 row onto the 8 port-side block twins
+		SNAPSHOT.put("WELDER", 30); // +8 task crucible-wall-obtainability — the dedicated crucible-wall rows replay the :1143-1153 row onto the 8 port-side block twins
 		SNAPSHOT.put("ELECTROLYZER", 0);
 		SNAPSHOT.put("PRINTER", 0);
 		SNAPSHOT.put("SCANNER_VISUALS", 0);
@@ -443,7 +443,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 			assertEquals(SNAPSHOT.get(tEntry.getKey()), Integer.valueOf(tEntry.getValue().mRecipeList.size()),
 					tEntry.getKey() + " must be identical across the freeze");
 		}
-		assertEquals(80, RecipeMap.RECIPE_MAPS.size(), "the freeze-point registry census (the GT6RecipeMapsTest pin shape; +2 task p34-machines-bumblelyzer-crucible (the crystallisationcrucible row stock + the bumblelyzer declared-empty) +2 task p34-machines-burner-plantalyzer (the Burner Mixer constants row + the declared-empty Plantalyzer compat map) +5 task p37-rm-six-maps (microwave/cooker/toolhead declared-empty + mortar/hammer whose rows ride the JSON seam — JSON-seam maps stay OUT of the SNAPSHOT walk, the juicer/crystallisationcrucible precedent))");
+		assertEquals(80, RecipeMap.RECIPE_MAPS.size(), "the freeze-point registry census (the GT6RecipeMapsTest pin shape; +2 task machines-bumblelyzer-crucible (the crystallisationcrucible row stock + the bumblelyzer declared-empty) +2 task machines-burner-plantalyzer (the Burner Mixer constants row + the declared-empty Plantalyzer compat map) +5 task rm-six-maps (microwave/cooker/toolhead declared-empty + mortar/hammer whose rows ride the JSON seam — JSON-seam maps stay OUT of the SNAPSHOT walk, the juicer/crystallisationcrucible precedent))");
 	}
 
 	/** The JSON reload window: a FROZEN /reload re-pour lands its rows and re-freezes; an OPEN pour owes no re-freeze. */

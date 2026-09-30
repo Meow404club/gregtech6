@@ -1,5 +1,5 @@
 /*
- * Offline pinned-census tests for task p38-issue8-multipart-tint (GitHub issue #8): the
+ * Offline pinned-census tests for task issue8-multipart-tint (GitHub issue #8): the
  * generated part-family model JSONs carry tintindex 0 on every BODY face and NO tintindex
  * on the six overlay decals, asserted against the committed src/generated tree (the
  * GT6MachinePaintRenderDatagenTest census shape), and the row tables carry the upstream
@@ -17,7 +17,7 @@
  * coils + parts + ventilation + processor units + wood wall + the tungsten wall + the
  * niobium-titanium coil +
  * transmitter + the coke-oven bricks, whose Ceramic tint
- * task p38-c2-controller-tint wired) rides the same partModel helper, so the
+ * task c2-controller-tint wired) rides the same partModel helper, so the
  * body/decal split asserted here covers them; the material columns of those rows are
  * pinned non-null (the upstream aMat verbatim mapping, ANY.Steel→MT.Steel / ANY.W→MT.W,
  * the GT6Crucibles CrucibleRow precedent).
@@ -213,7 +213,7 @@ class GT6PartPaintRenderDatagenTest {
 
     /**
      * The valve family model mapping: a wood-row and a metal-row blockstate both map
-     * their FACING×FORMED variants onto the family model. (Task r8-tex-tank-family
+     * their FACING×FORMED variants onto the family model. (Task tex-tank-family
      * rewire: the two shared models left the woodwall/metalwall part borrows for the
      * dedicated tank_valves two-layer front-pair art — the shape pins live in
      * {@link GT6TankFamilyPaintRenderDatagenTest#valveModelsKeepTheFrontLayerPair}.)
@@ -229,7 +229,7 @@ class GT6PartPaintRenderDatagenTest {
     @Test
     public void tankValveRowsCarryTheUpstreamMaterials() {
         var tRows = gregtech6.registry.GT6Tanks.ROWS;
-        assertEquals(25, tRows.size(), "the tank valve census stays 25 (the p29-w3-tank-valves family)");
+        assertEquals(25, tRows.size(), "the tank valve census stays 25 (the w3-tank-valves family)");
         for (var tRow : tRows) assertNotNull(rowMaterial(tRow.material()), tRow.path());
         assertSame(gregapi.data.MT.WoodTreated    , valveMaterial(tRows, "tank_wood"));
         assertSame(gregapi.data.MT.StainlessSteel , valveMaterial(tRows, "tank_small_stainless_steel"));

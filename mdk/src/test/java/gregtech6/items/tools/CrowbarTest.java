@@ -32,7 +32,7 @@ import gregtech6.tileentity.machines.GTMachinesOfflineTestBase;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
 
 /**
- * The crowbar classifier + dispatch tests (task p9-tool-crowbar acceptance, offline
+ * The crowbar classifier + dispatch tests (task tool-crowbar acceptance, offline
  * half): the TOOL_CROWBAR-id path through the ICoverableTE :246-247 OR gate, the
  * classifier red line (CROWBAR action yes, HOE_DIG never), the durability mapping and
  * the legacy hoe-substitute branch regression. The live give/install/dismantle chain

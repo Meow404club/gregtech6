@@ -33,7 +33,7 @@ import gregtech6.tileentity.energy.GTGearBoxBlockEntity;
 import gregtech6.tileentity.energy.GTTransformerRotationBlockEntity;
 
 /**
- * {@code /gt6engine} — the engine-chain acceptance command home (task p12-engine-crank
+ * {@code /gt6engine} — the engine-chain acceptance command home (task engine-crank
  * spec ④). Game-bus listener, self-contained per ADR-P3-4, the GT6EnergyCommand template;
  * the later engine cards (steam/diesel/axle family) append their subcommands to this same
  * literal rather than growing new command roots.
@@ -49,31 +49,31 @@ import gregtech6.tileentity.energy.GTTransformerRotationBlockEntity;
  *     DECLARED counterfactual of "a potionless player keeps cranking" — the player
  *     right-click ({@code GTCrankBlock.use}) stays the real-interaction path. ticks 0
  *     stops a running window (the chain's stop gate).</li>
- * <li>{@code mode <pos> on|off} — task p12-engine-steam: the steam-engine on/off gate
+ * <li>{@code mode <pos> on|off} — task engine-steam: the steam-engine on/off gate
  *     ({@link GTSteamEngineBlockEntity#setStopped}, the upstream
  *     MultiTileEntityEngineSteam.java:225 setStateOnOff seam) — the RCON counterfactual
  *     of the :175 soft-hammer toggle (the tool face is the pool cut). {@code stat} gains
  *     the steam-engine detail branch (facing/stopped/active/heat-state/energy/tank).</li>
- * <li>{@code fill <pos> <amount>} — task p12-engine-steam, ADR
- *     2026-09-02-p12-steam-proof-deviation: the DIRECT steam-injection channel — pushes
+ * <li>{@code fill <pos> <amount>} — task engine-steam, ADR
+ *     2026-09-02-steam-proof-deviation: the DIRECT steam-injection channel — pushes
  *     gt6:steam through the engine's back-face capability door (the canonical
  *     intake-face supply, the pipe-into-getFluidTankFillable2 :239 form); the door's
  *     gates (stopped / steam-only / back face) make a REJECTED echo a legitimate
  *     chain verdict.</li>
  * <li>{@code fuel <pos> <fluid> <amount>} — the diesel engine's funnel-face counterpart
- *     (task p12-engine-diesel spec ⑤): fills the input tank through
+ *     (task engine-diesel spec ⑤): fills the input tank through
  *     {@link GTDieselEngineBlockEntity#funnelFill} under the containsInput gate — the
- *     DECLARED acceptance channel while the p12-tap-funnel-attachment card is in flight
+ *     DECLARED acceptance channel while the tap-funnel-attachment card is in flight
  *     (no GUI, no funnel item in this port).</li>
  * <li>{@code gearbox <pos> <gearmask> <axlemask>} — the direct connection-mask write
- *     (task p12-gearbox-transformer spec 3): gearmask = bits 0-5 gear faces, axlemask =
+ *     (task gearbox-transformer spec 3): gearmask = bits 0-5 gear faces, axlemask =
  *     the through-axle axis (0 none / 1 X / 2 Y / 3 Z). The RCON acceptance channel for
  *     the monkey-wrench data structure — the P9 "acceptance channel is not the upstream
- *     player semantics" ruling; the gear-item installation is the p12-gear-items pool.</li>
+ *     player semantics" ruling; the gear-item installation is the gear-items pool.</li>
  * </ul>
  *
  * <p>{@code stat} also carries the gearbox/transformer detail branches (the tachometer /
- * magnifying-glass readouts pooled here — the p12-gearbox-transformer ruling).
+ * magnifying-glass readouts pooled here — the gearbox-transformer ruling).
  */
 @Mod.EventBusSubscriber(modid = "gt6")
 public final class GTEngineCommand {
@@ -95,7 +95,7 @@ public final class GTEngineCommand {
 					.then(Commands.argument("ticks", IntegerArgumentType.integer(0, 1000000000))
 						.executes(aContext -> crank(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
 								IntegerArgumentType.getInteger(aContext, "ticks"))))))
-			// task p12-engine-steam — the steam-engine on/off gate: the
+			// task engine-steam — the steam-engine on/off gate: the
 			// ITileEntityAdjacentOnOff.setStateOnOff seam (MultiTileEntityEngineSteam.java:225)
 			// in command form, the RCON counterfactual of the soft-hammer toggle (:175, pool)
 			.then(Commands.literal("mode")
@@ -104,8 +104,8 @@ public final class GTEngineCommand {
 						.executes(aContext -> mode(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"), true)))
 					.then(Commands.literal("off")
 						.executes(aContext -> mode(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"), false)))))
-			// task p12-engine-steam — the DIRECT steam-injection channel (ADR
-			// 2026-09-02-p12-steam-proof-deviation): pushes gt6:steam through the engine's
+			// task engine-steam — the DIRECT steam-injection channel (ADR
+			// 2026-09-02-steam-proof-deviation): pushes gt6:steam through the engine's
 			// BACK-face capability door — the canonical intake-face supply (what a 1.7.10
 			// pipe did into getFluidTankFillable2), never a tank intermediate
 			.then(Commands.literal("fill")
@@ -113,7 +113,7 @@ public final class GTEngineCommand {
 					.then(Commands.argument("amount", IntegerArgumentType.integer(1))
 						.executes(aContext -> fill(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
 								IntegerArgumentType.getInteger(aContext, "amount"))))))
-			// task p12-engine-diesel — the funnel-face supply channel (the RCON counterpart
+			// task engine-diesel — the funnel-face supply channel (the RCON counterpart
 			// of MotorLiquid funnelFill :203-207), the acceptance arm while the tap-funnel
 			// attachment card is in flight
 			.then(Commands.literal("fuel")
@@ -122,7 +122,7 @@ public final class GTEngineCommand {
 						.then(Commands.argument("amount", IntegerArgumentType.integer(1, 1000000000))
 							.executes(aContext -> fuel(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"),
 									ResourceLocationArgument.getId(aContext, "fluid"), IntegerArgumentType.getInteger(aContext, "amount")))))))
-			// task p12-gearbox-transformer — the direct connection-mask write (the RCON
+			// task gearbox-transformer — the direct connection-mask write (the RCON
 			// acceptance channel for the monkey-wrench :142-153 data structure)
 			.then(Commands.literal("gearbox")
 				.then(Commands.argument("pos", BlockPosArgument.blockPos())
@@ -137,14 +137,14 @@ public final class GTEngineCommand {
 	/**
 	 * The BE energy-surface readback (spec ④ stat): crank detail, axle detail, generic
 	 * energy dump, failure otherwise. The axle branch IS the tachometer channel (task
-	 * p12-axle-family spec ⑤ — the upstream onToolClick2 :82-87
+	 * axle-family spec ⑤ — the upstream onToolClick2 :82-87
 	 * {@code mTransferredLast + " RU/t"} readout is pooled to this command): axis, the
 	 * VMAX speed rating, the bandwidth rating, and the last-tick transferred magnitude.
 	 */
 	private static int stat(CommandSourceStack aSource, BlockPos aPos) {
 		ServerLevel tLevel = aSource.getLevel();
 		if (tLevel.getBlockEntity(aPos) instanceof GTSteamEngineBlockEntity tEngine) {
-			// the task p12-engine-steam readback: the conversion state surface the chain
+			// the task engine-steam readback: the conversion state surface the chain
 			// asserts (facing/stopped/active/heat-state/energy/output band/piston/tank)
 			String tFacing = Direction.from3DDataValue(tEngine.getFacing()).getName();
 			String tTank = tEngine.mTank.isEmpty() ? "tank=empty" : "tank=" + tEngine.mTank.amount() + "/"
@@ -192,7 +192,7 @@ public final class GTEngineCommand {
 			return Command.SINGLE_SUCCESS;
 		}
 		if (tLevel.getBlockEntity(aPos) instanceof GTDieselEngineBlockEntity tEngine) {
-			// the diesel readback (task p12-engine-diesel): the upstream :163-168 magnifying-glass
+			// the diesel readback (task engine-diesel): the upstream :163-168 magnifying-glass
 			// "Input/Output" click readout plus the surfaces the acceptance chain asserts — the
 			// DC band (rate), the stored energy, the fuel-swap state, the activity trinary and
 			// the CO2 exhaust counter with its back-face arm state.
@@ -290,7 +290,7 @@ public final class GTEngineCommand {
 	}
 
 	/**
-	 * The steam-engine on/off gate (task p12-engine-steam spec ③): {@code on} clears
+	 * The steam-engine on/off gate (task engine-steam spec ③): {@code on} clears
 	 * {@link GTSteamEngineBlockEntity#mStopped}, {@code off} sets it — the upstream :225
 	 * {@code setStateOnOff} pair in command form (the RCON counterfactual of the :175 soft
 	 * hammer, which rides the tool pool). The overheat stop (:155) re-arms through the same
@@ -311,8 +311,8 @@ public final class GTEngineCommand {
 	}
 
 	/**
-	 * The direct steam-injection channel (task p12-engine-steam, ADR
-	 * 2026-09-02-p12-steam-proof-deviation): pushes gt6:steam through the engine's
+	 * The direct steam-injection channel (task engine-steam, ADR
+	 * 2026-09-02-steam-proof-deviation): pushes gt6:steam through the engine's
 	 * BACK-face capability door — the canonical intake-face supply, the 1.7.10
 	 * pipe-into-{@code getFluidTankFillable2}(:239) form. The door itself carries the
 	 * gates (stopped refusal, steam-only, back face), so a REJECTED echo is a legitimate
@@ -353,13 +353,13 @@ public final class GTEngineCommand {
 	 * namespaced id ({@code gt6:diesel}); the brigadier string reader would reject the
 	 * colon in an unquoted word.
 	 *
-	 * <p>The fuel subcommand (task p12-engine-diesel spec ⑤) — the RCON counterpart of the
+	 * <p>The fuel subcommand (task engine-diesel spec ⑤) — the RCON counterpart of the
 	 * upstream funnel face (MultiTileEntityMotorLiquid.java:203-207): the diesel engine's
 	 * input tank is filled through {@link GTDieselEngineBlockEntity#funnelFill}, gated on
 	 * the same containsInput seam (a non-fuel fluid is REFUSED, the acceptance chain's
 	 * negative arm). The fluid id carries the namespace ({@code gt6:diesel}); a bare path
 	 * resolves against gt6. This is the DECLARED acceptance channel while the
-	 * p12-tap-funnel-attachment card is in flight (no GUI, no funnel item in this port).
+	 * tap-funnel-attachment card is in flight (no GUI, no funnel item in this port).
 	 */
 	private static int fuel(CommandSourceStack aSource, BlockPos aPos, ResourceLocation tId, int aAmount) {
 		ServerLevel tLevel = aSource.getLevel();
@@ -390,11 +390,11 @@ public final class GTEngineCommand {
 	}
 
 	/**
-	 * The gearbox mask write (task p12-gearbox-transformer spec 3 — the RCON acceptance
+	 * The gearbox mask write (task gearbox-transformer spec 3 — the RCON acceptance
 	 * channel, the P9 "acceptance channel is not the upstream player semantics" ruling):
 	 * {@code gearmask} = the bits 0-5 gear faces, {@code axlemask} = the bits 6-7 through-
 	 * axle axis (0 = none, 1 = X, 2 = Y, 3 = Z) — the monkey-wrench :142-153 data
-	 * structure without the tool (the wrench installation itself is the p12-gear-items
+	 * structure without the tool (the wrench installation itself is the gear-items
 	 * pool card). Clears the jam and re-checks the topology like the tool path (:148-149).
 	 */
 	private static int gearbox(CommandSourceStack aSource, BlockPos aPos, int aGearMask, int aAxleMask) {

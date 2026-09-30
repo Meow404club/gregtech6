@@ -4,7 +4,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShearsItem;
 
 /**
- * The formal GT6 scissors — item id {@code gt6:scissors} (task p29-w5-t5-scene-six spec
+ * The formal GT6 scissors — item id {@code gt6:scissors} (task w5-t5-scene-six spec
  * ①, single steel tier ruling d). Upstream GT_Tool_Scissors.java:43 rides the
  * {@code TOOL_shears} harvest name (isMinableBlock :104-107) — the modern
  * {@link ShearsItem} base IS that surface, so the whole shear universe arrives by

@@ -15,7 +15,7 @@ import gregtech6.registry.GT6Kitchen;
  * (tmp/gt6-1.7.10 .../tools/MultiTileEntityJuicer.java:63, the
  * {@code TileEntityBase07Paintable} manual block; registered at Loader_MultiTileEntities
  * .java:2184 id 32722, MT.Ceramic, aUtilStone, hardness 1.0 / resistance 5.0, the RM.Juicer
- * map — task p33-food-machines-kitchen). Shares the p26 manual-kitchen base
+ * map — task food-machines-kitchen). Shares the p26 manual-kitchen base
  * ({@link GT6ManualKitchenBlockEntity}, the BathingPot/MixingBowl family body) — the
  * upstream Juicer class is itself the same manual top-face
  * {@code findRecipe → canOutput → isRecipeInputEqual → ST.give(outputs) + tank fill +

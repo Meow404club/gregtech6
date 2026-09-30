@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
- * One layered declaration, fronted per size (task p16-pattern-layers ②): the family
+ * One layered declaration, fronted per size (task pattern-layers ②): the family
  * holds the {@link GTMultiBlockPattern.Builder} layer sequence as a pure declaration
  * and expands it to an immutable {@link GTMultiBlockPattern} for any layer count in the
  * declared window — {@link #build(int)} expands fresh on every call, {@link #forSize(int)}
@@ -16,7 +16,7 @@ import java.util.function.Consumer;
  * {@code ExpandableLayer} (ExpandableLayer.java:47-58) carries its size as RUNTIME probe
  * state (the repeat count is discovered by trial-validating layers at check time, then
  * re-discovered every check); its per-size handle is the {@code setExtraData} string
- * (:61-68). The re-declaration per ADR 2026-09-05-p16-formation-scoping ② inverts that:
+ * (:61-68). The re-declaration per ADR 2026-09-05-formation-scoping ② inverts that:
  * the size is a BUILD-TIME parameter, the expansion freezes an ordinary dumb immutable
  * cell list, and the runtime (the shared checker, the ghost preview — the P12 consumers)
  * never learns layers existed. The size-parametrised MACHINE that would consume this

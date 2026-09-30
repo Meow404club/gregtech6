@@ -25,7 +25,7 @@ import gregtech6.registry.GT6Boilers;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Task p13-boiler-tank — the offline acceptance fixture for the Steam Boiler Tank
+ * Task boiler-tank — the offline acceptance fixture for the Steam Boiler Tank
  * semantics (the GTGeneratorSolidBlockEntityTest fixture form). Covers the conversion
  * truth table (the :116-126 triple min, the efficiency scaling, the scale decrement with
  * its 5000 floor and the distilled-water immunity), the cooldown drain (:129-137 — the
@@ -562,7 +562,7 @@ public class GTBoilerTankBlockEntityTest extends GTOfflineTestBase {
 			GT6Boilers.BoilerRow tGot = tRows.get(i);
 			assertEquals(tWant.path(), tGot.path(), "row " + i + " path");
 			assertEquals(tWant.metaId(), tGot.metaId(), "row " + i + " meta id (the upstream line order kept)");
-			// the composed face (task p20-i18n-compose-rows): the fixture display replays from
+			// the composed face (task i18n-compose-rows): the fixture display replays from
 			// the template + the material word — a per-row expansion pin (all 26 rows)
 			String tReplay = (tGot.strong() ? "Strong Steam Boiler Tank (%s)" : "Steam Boiler Tank (%s)")
 					.replace("%s", tGot.material().display());
@@ -587,7 +587,7 @@ public class GTBoilerTankBlockEntityTest extends GTOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// 9. the distilled-water immunity canon (task p14-boiler-distw-immunity) — the
+	// 9. the distilled-water immunity canon (task boiler-distw-immunity) — the
 	//    :119 criterion `rng(10) == 0 && mEfficiency > 5000 && has() && !FL.distw(...)`
 	//    short-circuits on the LAST conjunct: a distilled tank makes the whole scaling
 	//    branch rng-INDEPENDENT (deterministic immunity), while the family mates

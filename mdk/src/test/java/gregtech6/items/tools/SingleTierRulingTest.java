@@ -1,5 +1,5 @@
 /**
- * The structural snapshot of task p31-single-tier-ruling (decisions.p31-single-tier-ruling):
+ * The structural snapshot of task single-tier-ruling (decisions.p31-single-tier-ruling):
  * which tool classes consume the {@code GT6ItemData} identity seam (implement
  * {@link GT6ToolLadder.LadderTool}, directly or through inheritance) and which carry
  * ZERO seam faces. The ruling itself is javadoc + the decisions key; this test pins its
@@ -40,18 +40,18 @@ public class SingleTierRulingTest {
 	@Test
 	public void ladderWiredClassesImplementTheLadderToolFace() {
 		List<Class<?>> tWired = List.of(
-				// the crowbar (p31-identity-seam) + the machine-face ladder (p31-machine-ladder)
+				// the crowbar (identity-seam) + the machine-face ladder (machine-ladder)
 				GTCrowbarItem.class, GTCutterItem.class, GTChiselItem.class, GTSawItem.class,
 				GT6ScrewdriverItem.class, GTHammerItem.class, GTWrenchItem.class,
 				GTMonkeyWrenchItem.class, GTMagnifyingGlassItem.class, GTPincersItem.class,
 				GTSoftHammerItem.class,
-				// the dig ladder (p31-dig-ladder)
+				// the dig ladder (dig-ladder)
 				GTPickaxeItem.class, GTPickaxeGemItem.class, GTPickaxeConstructionItem.class,
 				GTShovelItem.class, GTSpadeItem.class, GTHoeItem.class, GTAxeItem.class,
 				// the axe_double rides INHERITANCE (GTAxeDoubleItem extends GTAxeItem) — the
 				// ruling notes the faces are live; only its obtainment row is missing
 				GTAxeDoubleItem.class,
-				// the blade ladder (p31-blade-ladder)
+				// the blade ladder (blade-ladder)
 				GTSwordItem.class, GTKnifeItem.class, GTButcheryKnifeItem.class);
 		for (Class<?> tClass : tWired) {
 			assertTrue(GT6ToolLadder.LadderTool.class.isAssignableFrom(tClass),
@@ -60,7 +60,7 @@ public class SingleTierRulingTest {
 	}
 
 	/**
-	 * The zero-seam-face set — every class the p31-single-tier-ruling walked and left
+	 * The zero-seam-face set — every class the single-tier-ruling walked and left
 	 * identity-less: the ladder-candidate pool (until its ladder card) plus the permanent
 	 * singles (the flint_and_tinder; the electric nineteen whose axis is voltage).
 	 */

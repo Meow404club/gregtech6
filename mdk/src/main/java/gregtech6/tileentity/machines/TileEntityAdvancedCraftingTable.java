@@ -46,7 +46,7 @@ import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Advanced Crafting Table (task p24-act-machine) — the multi-material batch crafting
+ * The Advanced Crafting Table (task act-machine) — the multi-material batch crafting
  * machine, port of upstream
  * gregapi/tileentity/tools/MultiTileEntityAdvancedCraftingTable.java:72 (753 lines,
  * 2025-maintained). ZERO energy, ZERO crafting tick: the whole machine is player-click
@@ -789,7 +789,7 @@ public class TileEntityAdvancedCraftingTable extends TileEntityBase03TicksAndSyn
 	// facing (the oven precedent — NBT authority + BlockState re-application)
 	// ---------------------------------------------------------------------------
 
-	/** Task p28-singleblock-facing-canon: the front TOWARDS the placer — the GT6PlacementFacing canon (view OPPOSITE). */
+	/** Task singleblock-facing-canon: the front TOWARDS the placer — the GT6PlacementFacing canon (view OPPOSITE). */
 	public void setFacingFromPlacement(Player aPlayer) {
 		mFacing = gregtech6.block.GT6PlacementFacing.placementFacing(aPlayer.getDirection());
 		applyVisualState();

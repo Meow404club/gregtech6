@@ -47,7 +47,7 @@ public class GT6ItemDataNeoRegistrationTest {
 
 	@Test
 	void materialToolRecipeSerializerIsRegistered() {
-		// task p31-dig-ladder: the gt6:material_tool serializer rides the same
+		// task dig-ladder: the gt6:material_tool serializer rides the same
 		// mod-construct DeferredRegister attach — the FML JVM pins the registry truth
 		// (the lesson id686 form: cleanTest green does not prove a registration face alive)
 		ResourceLocation tId = ResourceLocation.fromNamespaceAndPath("gt6", "material_tool");

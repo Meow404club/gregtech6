@@ -20,7 +20,7 @@ import gregtech6.fluid.FluidTankGT;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The Measuring Pot BE offline tests (task r8-issue45-c3, issue #45) — the hitY
+ * The Measuring Pot BE offline tests (task issue45-c3, issue #45) — the hitY
  * fill-limit band walk (upstream MultiTileEntityMeasuringPot.onBlockActivated3 :73-93,
  * the GT6 signature interaction) driven straight against the server-side chain: the
  * offline JVM has no level and {@code isServerSide()} answers true

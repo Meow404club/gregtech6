@@ -1,5 +1,5 @@
 /*
- * Offline pinned tests for task r8-tex-multiblockmains: the four multiblockmains
+ * Offline pinned tests for task tex-multiblockmains: the four multiblockmains
  * controller families (the eight large crucibles, the large heat exchanger, the
  * lightning rod, the logistics core) swap the borrowed-wall/composite placeholders for
  * the two-layer front-bearing tinted grammar (the {@link GT6BoilerTexDatagenTest} shape
@@ -303,7 +303,7 @@ class GT6MultiblockMainsTexDatagenTest {
      * The retired large_boiler/wall placeholder is gone from disk AND no generated JSON
      * references it (its last consumer, the crucible controller borrow, died with this
      * task — the census walk over the generated tree, the boiler-test filesystem shape).
-     * The two borrow-time composites STAY on disk: they are the r8-tex-itemform-b item
+     * The two borrow-time composites STAY on disk: they are the tex-itemform-b item
      * layer0 reservation (README-declared, zero block-model consumers).
      */
     @Test

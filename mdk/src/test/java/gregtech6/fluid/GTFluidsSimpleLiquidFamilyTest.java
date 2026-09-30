@@ -15,7 +15,7 @@ import gregtech6.recipes.GT6RecipesDrying;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Simple-liquid fluid family offline tests (task p19-drying-rows-backfill-2 — the
+ * Simple-liquid fluid family offline tests (task drying-rows-backfill-2 — the
  * registration-row assertions against the DECLARED values, the GTFluidsAquaFamilyTest
  * shape): two {@link GTFluids.AquaFluidSpec} rows on the SECOND table — seawater
  * (FL.java:125, the Ocean shorthand) and waterdirty (FL.java:127, the Dirty_Water
@@ -43,7 +43,7 @@ public class GTFluidsSimpleLiquidFamilyTest extends GTOfflineTestBase {
 	/** The cross-family contract: the aqua table is UNCHANGED by the second table (the exact-order aqua assertion stays green). */
 	@Test
 	public void theAquaTableIsUntouched() {
-		assertEquals(6, GTFluids.AQUA_SPECS.size(), "the p16-aqua-fluids six, never appended");
+		assertEquals(6, GTFluids.AQUA_SPECS.size(), "the aqua-fluids six, never appended");
 		assertEquals(List.of("spdew", "mnwtr", "water_geothermal", "water_boiling", "hot_water", "cold_water"),
 				GTFluids.AQUA_SPECS.stream().map(GTFluids.AquaFluidSpec::name).toList());
 	}

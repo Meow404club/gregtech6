@@ -36,7 +36,7 @@ import gregtech6.recipes.RecipeMap;
 /**
  * The Molecular Scanner map — the port of upstream
  * {@code gregapi/recipes/maps/RecipeMapScannerMolecular.java} (task
- * p32-qu-scanner-replicator, the GT6RecipeMapCanner judged form: the DYNAMIC scan
+ * qu-scanner-replicator, the GT6RecipeMapCanner judged form: the DYNAMIC scan
  * semantics port IN FULL, not a narrow pinned face — the upstream map carries zero static
  * rows, the runtime synthesis IS the map).
  *

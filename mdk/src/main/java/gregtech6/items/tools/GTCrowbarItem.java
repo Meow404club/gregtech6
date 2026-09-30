@@ -32,8 +32,8 @@ import gregtech6.itemdata.GT6ToolStats;
 import gregapi.oredict.OreDictMaterial;
 
 /**
- * The formal GT6 crowbar — task p9-tool-crowbar spec ②, the ADR
- * 2026-09-01-p9-tool-crowbar ①/⑦ surface. Upstream rides
+ * The formal GT6 crowbar — task tool-crowbar spec ②, the ADR
+ * 2026-09-01-tool-crowbar ①/⑦ surface. Upstream rides
  * {@code Behavior_Tool(TOOL_crowbar, SFX.MC_BREAK, 100, ...)} mounted by
  * GT_Tool_Crowbar.onStatsAddedToTool :151-154, whose Behavior_Tool.onItemUseFirst
  * (:57-68) broadcasts IBlockToolable.Util.onToolClick (:73-80) to the block entity.
@@ -62,7 +62,7 @@ import gregapi.oredict.OreDictMaterial;
  * :75-77); the canBlock/isWeapon blocking semantics are cut (1.20.1 has no item-blocking
  * mechanic, ADR ①).
  *
- * <p>IDENTITY SEAM (task p31-identity-seam — the crowbar is the GT6ItemData seam's
+ * <p>IDENTITY SEAM (task identity-seam — the crowbar is the GT6ItemData seam's
  * FIRST consumer, the GT6Tools pool cuts ②③ unlocked): a stack carries its material
  * in {@link GT6ToolStats#KEY} (the upstream {@code GT.ToolStats} compound,
  * MultiItemTool.java:192) and the item reads it per stack:
@@ -79,7 +79,7 @@ import gregapi.oredict.OreDictMaterial;
  * Identity-less stacks are the declared legacy arm, not a fabricated default: the
  * seam's own reads are fail-visible ({@link GT6ItemData#find} = explicit empty).
  *
- * <p>Mining half (task p10-tool-crowbar-mining, unlocking the formerly-pooled rails/
+ * <p>Mining half (task tool-crowbar-mining, unlocking the formerly-pooled rails/
  * circuits arm — the javadoc here previously declared it pooled): upstream
  * isMinableBlock (GT_Tool_Crowbar.java:108-114) grants the crowbar a mining surface of
  * rails + circuits blocks, mapped to the 1.20.1 pair the vanilla decompile proves —
@@ -277,7 +277,7 @@ public class GTCrowbarItem extends Item implements GT6ToolLadder.LadderTool {
 		return mines(aState) ? MINING_SPEED : 1.0F;
 	}
 
-	// ------------------------------ the GT6ItemData identity seams (tasks p31-identity-seam + p31-machine-ladder) ------------------------------
+	// ------------------------------ the GT6ItemData identity seams (tasks identity-seam + machine-ladder) ------------------------------
 
 	/**
 	 * The primary material of a stack's {@link GT6ToolStats#KEY} identity, or
@@ -305,7 +305,7 @@ public class GTCrowbarItem extends Item implements GT6ToolLadder.LadderTool {
 
 	/**
 	 * The stack-level durability read the vanilla bar renders and pays from — UNIFIED
-	 * onto the {@link GT6ToolLadder} face (task p31-machine-ladder: the same statsOf →
+	 * onto the {@link GT6ToolLadder} face (task machine-ladder: the same statsOf →
 	 * durabilityPoints route every ladder family runs; the identity-less arm = the Steel
 	 * fallback = the ADR 512, bit-exact).
 	 */
@@ -325,7 +325,7 @@ public class GTCrowbarItem extends Item implements GT6ToolLadder.LadderTool {
 	 * head layer, the material {@code mRGBaSolid} packed ARGB with the VERBATIM upstream
 	 * {@code getPrimaryMaterial(aStack, MT.Steel)} fallback; every other index = the
 	 * {@code -1} no-tint sentinel like every other GT6 tint seam. UNIFIED onto the
-	 * {@link GT6ToolLadder} face (task p31-machine-ladder).
+	 * {@link GT6ToolLadder} face (task machine-ladder).
 	 */
 	public static int tintARGB(ItemStack aStack, int aTintIndex) {
 		return GT6ToolLadder.tintARGB(aStack, aTintIndex);

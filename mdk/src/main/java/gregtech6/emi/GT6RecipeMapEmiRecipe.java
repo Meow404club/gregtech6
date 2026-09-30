@@ -107,7 +107,7 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 
 	@Override
 	public void addWidgets(WidgetHolder aWidgets) {
-		// the two-layer backdrop FIRST (task r9-34-viewer-gui-bg, GitHub #34) — render
+		// the two-layer backdrop FIRST (task 34-viewer-gui-bg, GitHub #34) — render
 		// order = add order, so these two TextureWidgets are the bottom of the z stack:
 		// the grey machines/NEI.png plate, then the per-map machine GUI band over it
 		// (upstream NEI_RecipeMap.drawBackground :629-635). The ctor
@@ -119,7 +119,7 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 		aWidgets.add(new TextureWidget(GT6RecipeMapViewerMeta.PLATE_TEXTURE, 0, 0, tPlate[2], tPlate[3], tPlate[0], tPlate[1]));
 		aWidgets.add(new TextureWidget(GT6RecipeMapViewerMeta.guiTexture(mMap), 0, 0, tBand[2], tBand[3], tBand[0], tBand[1]));
 		// the representative machine on the plate's baked-in gear spot (task
-		// r10-debt-viewer-polish): upstream NEI_RecipeMap.java:278 drew mRecipeMachineList
+		// debt-viewer-polish): upstream NEI_RecipeMap.java:278 drew mRecipeMachineList
 		// at GUI (152,83) as a bare item — the SlotWidget's drawBack(false) is EMI's
 		// no-frame form (bounds stay 18x18 for the hover/tooltip face; the JEI twin draws
 		// plain GuiGraphics.renderItem). null = no tabled machine (the four

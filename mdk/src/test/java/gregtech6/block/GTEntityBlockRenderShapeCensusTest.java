@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.junit.jupiter.api.Test;
 
 /**
- * The offline census hardening for the p27-cfoam-owned-render root cause: vanilla
+ * The offline census hardening for the cfoam-owned-render root cause: vanilla
  * BaseEntityBlock.java:19-21 defaults {@code getRenderShape} to {@code RenderShape.INVISIBLE}
  * (the BlockEntityRenderer assumption), so EVERY concrete GTEntityBlock subclass must override
  * it to MODEL or the chunk renderer silently skips the block client-side. GT6CFoamOwnedBlock
@@ -151,7 +151,7 @@ public class GTEntityBlockRenderShapeCensusTest {
 					// absolute string carries an arbitrary checkout name — a repo cloned
 					// into a directory literally named "gregtech6" made indexOf(first marker)
 					// bind to the checkout name and every derived binary name CNF'd
-					// (checked=[] — the p28-c-ulv-machine-ladder merge-session finding)
+					// (checked=[] — the c-ulv-machine-ladder merge-session finding)
 					.map(aPath -> aRoot.relativize(aPath).toString())
 					.filter(aName -> aName.endsWith(".class") && !aName.endsWith("module-info.class"))
 					.map(GTEntityBlockRenderShapeCensusTest::pathToBinaryName)

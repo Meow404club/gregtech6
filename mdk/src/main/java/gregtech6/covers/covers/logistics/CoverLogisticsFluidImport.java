@@ -6,7 +6,7 @@ import gregtech6.covers.CoverData;
 
 /**
  * The Filtered Logistics Import Bus (Fluid) — 1.20.1 port of gregapi/cover/covers/
- * CoverLogisticsFluidImport.java (upstream item id 1091), task p33-logistics-covers-12.
+ * CoverLogisticsFluidImport.java (upstream item id 1091), task logistics-covers-12.
  * The Core registers the covered-face adjacency as a fluid IMPORT target (:336-346).
  */
 public class CoverLogisticsFluidImport extends AbstractCoverLogisticsFluid {

@@ -1,5 +1,5 @@
 /**
- * The bake-time overlay tint pins (task p38-issue2-ore-baked-tint): the material colour
+ * The bake-time overlay tint pins (task issue2-ore-baked-tint): the material colour
  * rides {@link GTOreBakedModel.Params#tintARGB()} and is multiplied into the overlay quads'
  * VERTEX data at bake time (the {@code GTMachineTintModel.retintVertices} product) — the
  * p32 machine-domain migration applied to the ore domain, retiring the runtime BlockColor

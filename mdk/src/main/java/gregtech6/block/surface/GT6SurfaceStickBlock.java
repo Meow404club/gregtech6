@@ -10,7 +10,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * The GT6 surface stick (task p30-w6-rocks-sticks) — ONE block for the upstream MTE 32756
+ * The GT6 surface stick (task w6-rocks-sticks) — ONE block for the upstream MTE 32756
  * (WorldgenSticks.java:65 places it bare, MultiTileEntityStick: no NBT, hardness 0.25 :189,
  * no collision :177, fire 300/300 :190-191). Same attach/pickup/micro-slab behaviour as the
  * rock (the :72-99 rows are the MultiTileEntityRock rows re-run for sticks), so this is a
@@ -34,7 +34,7 @@ public class GT6SurfaceStickBlock extends GT6SurfaceRockBlock {
 	 * arm y-rotation the blockstate dispatch emits (upstream
 	 * GetSelectedBoundingBoxFromPool rides the per-instance visual box,
 	 * MultiTileEntityStick.java:176). The exact boxes: the two centered arms and the
-	 * two slide tiers are bar-EXACT (the r3-stick-shape-random bar-exact face kept);
+	 * two slide tiers are bar-EXACT (the stick-shape-random bar-exact face kept);
 	 * the four tilt variants carry the declared ENVELOPE deviation — a ±22.5/45
 	 * tilted bar's quads are not axis-aligned and VoxelShape cannot express them, so
 	 * the wireframe is the conservative axis-aligned box over the tilted bar

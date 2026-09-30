@@ -11,7 +11,7 @@ import gregtech6.registry.GTMultiBlocks;
 import gregtech6.registry.GT6DynamoHousings;
 
 /**
- * The Large Dynamo controller (task p29-w3-turbine-dynamo ④) — the 1.20.1 counterpart of
+ * The Large Dynamo controller (task w3-turbine-dynamo ④) — the 1.20.1 counterpart of
  * MultiTileEntityLargeDynamo (MultiTileEntityLargeDynamo.java:43-110) over the
  * {@link GTMultiBlockConverter} base: RU packets in at the FRONT, EU out at the far plate,
  * 4096→3072 / 8192→6144 / 16384→12288 / 131072→98304 (exactly 75%, Loader :1259-1262),

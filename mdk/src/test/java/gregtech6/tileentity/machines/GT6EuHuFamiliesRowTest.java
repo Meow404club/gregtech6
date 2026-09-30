@@ -20,7 +20,7 @@ import gregtech6.recipes.Recipe;
 import gregtech6.registry.GTMachines;
 
 /**
- * The eu-hu families row acceptance (task p29-w1-eu-hu-families, the OFFLINE half — the
+ * The eu-hu families row acceptance (task w1-eu-hu-families, the OFFLINE half — the
  * {@link GTCannerFamilyRowTest} shape): the seven families pinned to the upstream columns
  * (Loader_MultiTileEntities.java :1392-1395 Mixer RU / :1504-1508 ElectricMixer /
  * :1511-1515 ElectricLoom / :1518-1522 ElectricSifter / :1635-1639 Boxinator /

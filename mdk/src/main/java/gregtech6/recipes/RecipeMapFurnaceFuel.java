@@ -30,7 +30,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 /**
  * GT6 RecipeMapFurnaceFuel, the FM.Furnace ("mc.recipe.furnacefuel", FM.java:38) port —
- * the SOLID Burning Box fuel map (task p13-burning-box-family spec ①).
+ * the SOLID Burning Box fuel map (task burning-box-family spec ①).
  *
  * <p><b>The port form ruling</b>: upstream this map carries ZERO static rows —
  * {@code findRecipe} synthesizes a fuel Recipe ON DEMAND from the vanilla furnace fuel

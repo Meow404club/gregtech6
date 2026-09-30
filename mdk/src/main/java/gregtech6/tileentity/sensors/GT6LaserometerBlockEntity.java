@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import gregtech6.tileentity.connectors.GTWireBlockEntity;
 
 /**
- * The Laser-O-Meter Sensor (task p37-sensors-3, the pool closure) — the port of
+ * The Laser-O-Meter Sensor (task sensors-3, the pool closure) — the port of
  * MultiTileEntityLaserometer.java:36-70. The read face: the LU carrier is LIVE since
  * p32 (the P34 "no measurement domain" pooled note is the stale half — the p10 wire
  * rows carried the data plane, the p32 LU revival lit the transfer bookkeeping):

@@ -3,7 +3,7 @@ package gregtech6.worldgen.dungeon;
 import net.minecraft.util.RandomSource;
 
 /**
- * The shelter-dungeon grid layout (task p38-dungeon-framework) — the upstream
+ * The shelter-dungeon grid layout (task dungeon-framework) — the upstream
  * {@code WorldgenDungeonGT.generate} layout math (tmp/gt6-1.7.10
  * WorldgenDungeonGT.java:159-248) as a PURE function over a RandomSource: no world
  * access, so the offline tests can pin the maze arithmetic byte-for-byte against the

@@ -23,7 +23,7 @@ import gregtech6.items.tools.loot.GT6ToolLootModifiers;
 
 /**
  * The formal GT6 universal spade — item id {@code gt6:universal_spade} (task
- * p29-w5-t1-dig-six). Upstream GT_Tool_UniversalSpade.java:44-135 — the five-face
+ * w5-t1-dig-six). Upstream GT_Tool_UniversalSpade.java:44-135 — the five-face
  * adventure tool ({@code canCollect/canBlock/isCrowbar/isWeapon} all true :85-88):
  * <ul>
  * <li><b>Mining surface</b> (:91-95), arm by arm:

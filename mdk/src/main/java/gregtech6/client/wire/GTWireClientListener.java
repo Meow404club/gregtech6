@@ -15,7 +15,7 @@ import gregtech6.client.render.GTRenderModelListener;
 import gregtech6.registry.GTWireSpecs;
 
 /**
- * The client-side wiring of the wire family models (task p9-wire-family-w2, the
+ * The client-side wiring of the wire family models (task wire-family-w2, the
  * {@code GTPipeFlowClientListener} shape: card-local {@code @EventBusSubscriber},
  * GT6Mod/GTModBusListener untouched; Dist.CLIENT — the dedicated server never loads this
  * class). Two jobs:
@@ -25,9 +25,9 @@ import gregtech6.registry.GTWireSpecs;
  * {@link GTWireBakedModel.Params} (borrowed texture set, insulated form, PX_P diameter).
  * The paths come from the {@link GTWireSpecs} table (the W1 registration is driven by the
  * same rows, so path drift is structurally impossible) plus the two legacy p7 anchors —
- * and, since task p11-wire-fiber-texture, the laser row ({@code wire_laser}, the fixed
+ * and, since task wire-fiber-texture, the laser row ({@code wire_laser}, the fixed
  * FIBER_WIRE+OVERLAY pair of MultiTileEntityWireLaser :121-122) and, since task
- * p11-wire-brightness, the six redstone rows (the electric form: the row's set sprite —
+ * wire-brightness, the six redstone rows (the electric form: the row's set sprite —
  * all three materials resolve to the borrowed copper set — with the insulation layers on
  * the cable form).
  *
@@ -38,7 +38,7 @@ import gregtech6.registry.GTWireSpecs;
  * ({@code gt6:<path>#connections=<0..63>}) AND the plain item-model id
  * ({@code gt6:<path>}) — vanilla ModelBakery loads one top-level model per BLOCK STATE
  * (ModelBakery.java:136) and a separate one per item, and the blockstate JSON's model-file
- * paths never appear as keys (the p9-render-c-oven-overlay dispatch-key finding). Wrapping
+ * paths never appear as keys (the render-c-oven-overlay dispatch-key finding). Wrapping
  * the item key too gives the inventory form the upstream {@code worldObj == null} N-S
  * segment (GTWireBakedModel.ITEM_MASK).
  */
@@ -88,9 +88,9 @@ public final class GTWireClientListener {
 	 * The param table (idempotent, test-callable). Materials dereference here is safe:
 	 * MT.init ran during mod loading, long before client setup / the first bake.
 	 *
-	 * <p>Task p11-wire-fiber-texture: the LASER rows join the table (the p10 placeholder
+	 * <p>Task wire-fiber-texture: the LASER rows join the table (the p10 placeholder
 	 * card left them off — the {@code wire_laser} blockstate fell back to the shared JSON
-	 * cube). Task p11-wire-brightness: the SIX REDSTONE rows join too (the last family on
+	 * cube). Task wire-brightness: the SIX REDSTONE rows join too (the last family on
 	 * the JSON fallback) — every per-state key {@code gt6:wire_red_alloy#connections=0..63}
 	 * et al AND the item keys now bake into the {@link GTWireBakedModel} electric form:
 	 * the row's set sprite (all three materials land on the borrowed copper set, the same

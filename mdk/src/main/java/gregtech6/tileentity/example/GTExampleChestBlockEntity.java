@@ -26,7 +26,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * (TileEntityBase01Root/03TicksAndSync) and the Menu/Screen framework (GTGuiMenu/
  * GTGuiScreen) into one playable chain.
  *
- * <p>Port scope (task p3-example-machine):
+ * <p>Port scope (task example-machine):
  * <ul>
  * <li>inventory — the upstream ItemStack[] of TileEntityBase05Inventories (:42) becomes
  *     a {@link GTItemStackHandler} exposed to the menu through SlotItemHandler and to the
@@ -98,7 +98,7 @@ public class GTExampleChestBlockEntity extends TileEntityBase03TicksAndSync impl
 
 	/**
 	 * Upstream mFacing = UT.Code.getSideForPlayerPlacing(aPlayer, mFacing, SIDES_HORIZONTAL),
-	 * see class doc. Task p28-singleblock-facing-canon: the doc quoted the canon while the
+	 * see class doc. Task singleblock-facing-canon: the doc quoted the canon while the
 	 * code wrote the raw view direction (the same-disease self-witness that "teaches later
 	 * porters the wrong idiom"); now the front TOWARDS the placer via the GT6PlacementFacing
 	 * canon seam. The block's setPlacedBy delegates here, so this single seam fixes the pair.

@@ -12,7 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 /**
- * The Logistics Core controller block (task p32-logistics-lv3, upstream meta 17997,
+ * The Logistics Core controller block (task logistics-lv3, upstream meta 17997,
  * Loader_MultiTileEntities.java:1281, MT.SteelGalvanized, hardness/resistance 6.0F) —
  * the concrete {@link GTMultiBlockControllerBlock} mounting the core BET (the massfab
  * minimal form: everything visual/behavioural is base-owned FACING + FORMED; no use-face
@@ -22,7 +22,7 @@ import net.minecraft.world.level.Level;
 public class GTLogisticsCoreBlock extends GTMultiBlockControllerBlock {
 
 	public GTLogisticsCoreBlock(Properties aProperties) {
-		// task r8-tex-multiblockmains — the :1281 NBT_MATERIAL column (MT.SteelGalvanized,
+		// task tex-multiblockmains — the :1281 NBT_MATERIAL column (MT.SteelGalvanized,
 		// the registered core material) rides the carrier ctor (the p38-c2 form), so the
 		// two-layer model's tintindex-0 body resolves the colour through the
 		// GTMultiBlockControllerBlock.materialOf gate
@@ -46,6 +46,6 @@ public class GTLogisticsCoreBlock extends GTMultiBlockControllerBlock {
 	@Override
 	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
 		super.stepOn(aLevel, aPos, aState, aEntity);
-		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (p37-covers-crafting-asphalt)
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (covers-crafting-asphalt)
 	}
 }

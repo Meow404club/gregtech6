@@ -16,7 +16,7 @@ import gregtech6.tileentity.sensors.GTSensorBlockEntity;
 import gregtech6.tileentity.sensors.GTSensorLogic;
 
 /**
- * GT6 传感器族 Jade 显示面（task r8-jade-sensor-provider，design.r8-jade-tooltip
+ * GT6 传感器族 Jade 显示面（task jade-sensor-provider，design.r8-jade-tooltip
  * families.sensor）：21 个传感器（progressmeter/thermometer/… 全族）一个 provider——
  * 全族 BE 经抽象基 {@link GTSensorBlockEntity} 一个 instanceof 覆盖，行件复用
  * {@link GT6JadeRows} 的键纪律。取数缝 = 公开 getter 只读（字段 protected：

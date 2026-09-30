@@ -36,7 +36,7 @@ import gregtech6.tileentity.MaterialStackNBT;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * 1.20.1 counterpart of the GT6 Mold — task p26-crucible-physics-smeltery spec ⑤ (the
+ * 1.20.1 counterpart of the GT6 Mold — task crucible-physics-smeltery spec ⑤ (the
  * A-card minimal face, ported from gregtech/tileentity/tools/MultiTileEntityMold.java:
  * the :74 class face), the crucible's casting partner: pour molten material in, let it
  * cool past the melting point, take the solidified shape out.
@@ -63,7 +63,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * right-click drives the adjacent {@link ITileEntityCrucible#fillMoldAtSide} (:267-294)
  * and the output hand-take (:296-322). The wrench auto-pull arm (:170-176) is card B.
  *
- * <p><b>Card B append (p26-crucible-mold-faucet)</b>: the FULL shape universe —
+ * <p><b>Card B append (crucible-mold-faucet)</b>: the FULL shape universe —
  * {@link #MOLD_RECIPES} filled by the literal port of the :628-921 static block (the
  * base shapes, the three per-entry bijections :849-877 and the two round-two
  * bijections :889-917 over the merged map; java.util.HashMap keeps the upstream

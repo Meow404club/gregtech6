@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * GTFluidPipeBlockEntity offline tests (task p4-fluid-pipes spec ③): NBT persistence,
+ * GTFluidPipeBlockEntity offline tests (task fluid-pipes spec ③): NBT persistence,
  * the fillable/drainable side gates, the anti-backflow record surface and the side-wrapped
  * handler (spec ⑤). The world-level distribute equalisation (pressure difference, divup
  * split, pipe-before-tank, leftover push) needs live neighbours — the card prescribes it
@@ -134,7 +134,7 @@ public class GTFluidPipeBlockEntityTest extends GTOfflineTestBase {
 
 	@Test
 	public void fillRejectionTableForMarkedOutputFaces() {
-		// task p5-pipe-flow-semantics acceptance ② — the SideFluidHandler.fill static reject:
+		// task pipe-flow-semantics acceptance ② — the SideFluidHandler.fill static reject:
 		// an arrow-marked face is a pump outlet and refuses the external back-fill; the gate
 		// lives in the wrapper (never in canAcceptFluidsFrom/getFluidTankFillable, which the
 		// pipe-to-pipe equalisation receiver shares) and precedes onFilledFrom

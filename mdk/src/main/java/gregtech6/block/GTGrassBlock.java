@@ -15,7 +15,7 @@ import net.minecraft.world.level.material.MapColor;
 import javax.annotation.Nullable;
 
 /**
- * One GT6 grass VARIANT block (task p24-grass-block): the 1.20.1 counterpart of upstream
+ * One GT6 grass VARIANT block (task grass-block): the 1.20.1 counterpart of upstream
  * {@code BlockGrass extends BlockBaseMeta, maxMeta = 6} (BlockGrass.java:46-48) as ONE
  * class instantiated 6x per-pair (the P21 GTStoneBlock degenerate-pure-block precedent;
  * the EnumProperty form is ruled OUT by decisions.p24-grass-behavior-trim ④ — the dye

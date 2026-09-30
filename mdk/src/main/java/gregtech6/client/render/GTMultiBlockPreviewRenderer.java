@@ -20,13 +20,13 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import gregtech6.multiblock.GTMultiBlockPattern;
 
 /**
- * The multiblock structure ghost preview (task p10-ghost-preview-poc POC; task
- * p12-ghost-pattern-api lifted to the declarative API; task p12-ghost-render-match
+ * The multiblock structure ghost preview (task ghost-preview-poc POC; task
+ * ghost-pattern-api lifted to the declarative API; task ghost-render-match
  * upgraded to per-cell translucent faces with green/red match colouring, ADR
- * 2026-09-02-p12-ghost-render-translucent): drawn per frame from the
+ * 2026-09-02-ghost-render-translucent): drawn per frame from the
  * {@code RenderHighlightEvent.Block} parameters while a wrench (hoe substitute) hovers
  * a controller, exactly like the wrench grid of {@link GTWrenchGridRenderer} — the same
- * transient input-feedback exception of ADR 2026-08-30-p5-wrench-ui, its three
+ * transient input-feedback exception of ADR 2026-08-30-wrench-ui, its three
  * constraints honored structurally: zero static BE/Level references (everything arrives
  * per frame by value), zero writes, no event cancellation (the vanilla selection box
  * stays).
@@ -48,7 +48,7 @@ import gregtech6.multiblock.GTMultiBlockPattern;
  * this constructively, and the formed-shell vertex-stream test still pins the shell
  * draw to the POC's literal draw, frame-equal.
  *
- * <p><b>Draw modes (ADR 2026-09-02-p12-ghost-render-translucent).</b> UNFORMED — one
+ * <p><b>Draw modes (ADR 2026-09-02-ghost-render-translucent).</b> UNFORMED — one
  * ghost cell per pattern cell in declaration order, classified per frame by
  * {@link GTMultiBlockGhostMatcher} (pure function over the pattern + the listener's
  * Level): a matched part paints a translucent GREEN face cube, a missing-or-wrong one

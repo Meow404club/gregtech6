@@ -13,7 +13,7 @@ import net.minecraftforge.items.IItemHandler;
 
 /**
  * The side-aware {@link IItemHandler} wrapper over a {@link GTItemPipeBlockEntity} —
- * the item-face twin of {@link SideFluidHandler} (task p26-pipe-item spec ①): the
+ * the item-face twin of {@link SideFluidHandler} (task pipe-item spec ①): the
  * 1.20.1 IItemHandler carries no Direction parameter, so the side travels through the
  * {@code getCapability(ITEM_HANDLER, Direction)} wrapper (the fresh-per-call
  * SideFluidHandler posture — the side is part of the handler identity).

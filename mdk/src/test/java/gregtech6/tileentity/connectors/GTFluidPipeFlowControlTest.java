@@ -32,9 +32,9 @@ import org.junit.jupiter.api.Test;
 import gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase.MultiBlockLevel;
 
 /**
- * The flow-control offline tests (task p4-pipe-flow-control acceptance ①): the ioMask
+ * The flow-control offline tests (task pipe-flow-control acceptance ①): the ioMask
  * NBT round-trip, the isOutputFace/externalPushAllowed gate truth tables (ioMask bit x
- * connected; task p5-pipe-flow-semantics adds the mask==0 GT6-default row), the toggle
+ * connected; task pipe-flow-semantics adds the mask==0 GT6-default row), the toggle
  * entries, the unmarked-external-face distribute skip, and the onPlaced support/
  * back-connect semantics on a stub level.
  *
@@ -109,7 +109,7 @@ public class GTFluidPipeFlowControlTest {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the render snapshot keys (task p35-cover-narrowing-render-snapshot — the P34
+	// the render snapshot keys (task cover-narrowing-render-snapshot — the P34
 	// leftover debt: the arrows shared the cover chain's single-valued RENDER_SNAPSHOT,
 	// so the pre-p35 else-if evicted the arrows under any cover; the split sends each
 	// consumer family to its own key and the two never invalidate each other)
@@ -174,7 +174,7 @@ public class GTFluidPipeFlowControlTest {
 
 	@Test
 	public void externalPushAllowedTruthTable() {
-		// task p5-pipe-flow-semantics acceptance ① — the corrected distribute gate (the p4
+		// task pipe-flow-semantics acceptance ① — the corrected distribute gate (the p4
 		// hard gate left a mask==0 pipe pushing nowhere, off the GT6 default)
 		GTFluidPipeBlockEntity tPipe = sType.create(POS_A, Blocks.STONE.defaultBlockState());
 
@@ -208,7 +208,7 @@ public class GTFluidPipeFlowControlTest {
 		// the round must be a silent no-op (no push, no crash). The mask==0 probe half (the
 		// GT6 default all-faces push) executes the live ForgeCapabilities lookup, which
 		// cannot class-init offline (MultiBlockPartBlockEntityTest:91) — that half is RCON
-		// territory (p5-pipe-flow-semantics acceptance ②/③).
+		// territory (pipe-flow-semantics acceptance ②/③).
 		MultiBlockLevel tLevel = new MultiBlockLevel();
 		GTFluidPipeBlockEntity tPipe = place(tLevel, POS_A);
 		BlockPos tPosSign = POS_A.relative(Direction.EAST);

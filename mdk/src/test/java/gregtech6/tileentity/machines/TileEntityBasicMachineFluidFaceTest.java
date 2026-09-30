@@ -28,7 +28,7 @@ import gregtech6.recipes.RecipeMap;
 import gregtech6.util.GTSideTables;
 
 /**
- * Task p14-machine-fluid-face — the offline acceptance fixture for the machine fluid tank
+ * Task machine-fluid-face — the offline acceptance fixture for the machine fluid tank
  * face + the :511 HU receiving gate. Four sections:
  *
  * <ol>
@@ -44,7 +44,7 @@ import gregtech6.util.GTSideTables;
  *     capability drains it back out;</li>
  * <li>the drain/side-less rules: the mFluidOutputs mask, the side-less all-open drain /
  *     refused fill (the P5 barrel ruling), and the side-blind tank view (the
- *     p13-boiler-tank pipe-canConnect lesson);</li>
+ *     boiler-tank pipe-canConnect lesson);</li>
  * <li>the blocked-output parking (:837 containsSomething over BOTH pendings) and the tank
  *     NBT round-trip.</li>
  * </ol>
@@ -267,7 +267,7 @@ public class TileEntityBasicMachineFluidFaceTest extends TileEntityBasicMachineO
 		tMachine.mFluidInputs = 0;
 		tMachine.mFluidOutputs = 0; // a FULLY masked machine
 
-		// every face still reports the tanks (the p13-boiler-tank lesson: the pipe canConnect
+		// every face still reports the tanks (the boiler-tank lesson: the pipe canConnect
 		// handshake probes handler.getTanks() > 0 — a masked-to-zero view would dead-end it)
 		for (Direction tSide : Direction.values()) {
 			IFluidHandler tHandler = fluidHandler(tMachine, tSide);

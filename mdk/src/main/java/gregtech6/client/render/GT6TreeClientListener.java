@@ -17,7 +17,7 @@ import gregtech6.block.tree.GT6TreeKind;
 import gregtech6.registry.GT6TreeBlocks;
 
 /**
- * The client wiring of the Rainbowood leaves tint (task p38-issue1-4, GitHub #4): the
+ * The client wiring of the Rainbowood leaves tint (task issue1-4, GitHub #4): the
  * {@code rainbowood_leaves} model carries {@code tintindex 0} on every face over its
  * GRAYSCALE {@code leaves_rainbowood.png} and this listener paints it with the upstream
  * RAINBOW table (CS.java:330-355, all 24 colors ported verbatim — the datagen leaves the

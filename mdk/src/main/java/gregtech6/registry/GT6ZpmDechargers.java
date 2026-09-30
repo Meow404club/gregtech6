@@ -28,7 +28,7 @@ import gregtech6.block.energy.GT6ZpmDechargerBlock;
 import gregtech6.tileentity.energy.GT6ZpmDechargerBlockEntity;
 
 /**
- * The ZPM Decharger family registration (task p36-energy-zpm-dechargers) — the two
+ * The ZPM Decharger family registration (task energy-zpm-dechargers) — the two
  * Loader_MultiTileEntities.java:1000-:1001 rows verbatim:
  * <ul>
  * <li>{@code zpm_decharger_quantum} — meta 11170, "ZPM Decharger (Quantum)",
@@ -42,13 +42,13 @@ import gregtech6.tileentity.energy.GT6ZpmDechargerBlockEntity;
  * resistance 50.0, Osmiridium casing. The BE is ONE class over both blocks (upstream the
  * two MTE classes are TEXTURE-ONLY siblings over the same BatBox — the port folds the
  * pair, the out-type rides the block column; the dedicated textures are the render pool,
- * the p36-render-texture-bake card).
+ * the render-texture-bake card).
  *
  * <p>The crafting rows (:1000-:1001 recipe strings: circuits[6] + the tier-6 crystal
  * processors + FIELD_GENERATORS[6] + casingMachineDense) are DEFERRED to the crafting
  * pool — the component items have no port item rows (the p35 charger posture verbatim);
  * obtainment rides the creative inventory through the MACHINES_TAB join (task
- * p38-tabfix-b-energy, {@link #onBuildTabContents} — the dechargers had registered with
+ * tabfix-b-energy, {@link #onBuildTabContents} — the dechargers had registered with
  * zero tab membership, so the "creative inventory" sentence was unreachable until the
  * join landed; the ZPM itself rides the dungeon injection, GT6LootInjectionDatagen).
  * KJS surface: none (registration face deferred — the KJS binding pool).
@@ -98,7 +98,7 @@ public final class GT6ZpmDechargers {
 	}
 
 	/**
-	 * The tint-walk array (task r8-tex-composite-family — the
+	 * The tint-walk array (task tex-composite-family — the
 	 * GT6ElectricTransformers.paintableBlockArray form): both row blocks, every row
 	 * carries its NBT_MATERIAL column (Osmiridium).
 	 */
@@ -132,7 +132,7 @@ public final class GT6ZpmDechargers {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
+	 * The tab walk (task tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
 	 * joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
 	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
 	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display

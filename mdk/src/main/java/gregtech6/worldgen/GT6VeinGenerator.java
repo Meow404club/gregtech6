@@ -9,7 +9,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.registry.GT6OreBlocks;
 
 /**
- * The large-vein deterministic core (task p30-w6-t3-large-veins) — the pure
+ * The large-vein deterministic core (task w6-t3-large-veins) — the pure
  * generation math of the {@code WorldgenOresLarge} algorithm, isolated from the
  * {@link GT6LargeVeinFeature} adapter so the offline tests can drive it WITHOUT
  * class-loading vanilla {@code Feature} (whose clinit drags the entity registry,
@@ -93,7 +93,7 @@ public final class GT6VeinGenerator {
     }
 
     /**
-     * The dimension-filtered draw (task p31-nether-lens-end-yield): {@code aEndRows}
+     * The dimension-filtered draw (task nether-lens-end-yield): {@code aEndRows}
      * selects the ORE_END rows (exactly platinum/molybdenum/cassiterite/naquadah/
      * trinium, Loader_Worldgen.java:904-919) instead of the ORE_OVERWORLD rows — the
      * draw sum rides the dimension's own rows, the upstream :93 semantics. NOTE the

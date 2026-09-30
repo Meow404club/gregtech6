@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The id686 registration guard for the QU machine pair (task p32-qu-scanner-replicator
+ * The id686 registration guard for the QU machine pair (task qu-scanner-replicator
  * acceptance ①: 2 families, 4 tiers — the Molecular Scanner T3 single :1551 and the Matter
  * Replicator T1-T3 rungs :1556-1558), the GT6LogisticsRegistrationTest two-leg form: the
  * FML-booted leg probes the real registries (block/item/BET faces, the BET mounted on each

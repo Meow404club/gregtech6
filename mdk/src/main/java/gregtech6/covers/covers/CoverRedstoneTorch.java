@@ -10,7 +10,7 @@ import gregtech6.tileentity.connectors.GTWireBlockEntity;
 
 /**
  * The redstone torch cover — 1.20.1 port of gregapi/cover/covers/CoverRedstoneTorch
- * .java:30-45 (task p34-covers-gameplay-10; upstream rides the vanilla redstone-torch
+ * .java:30-45 (task covers-gameplay-10; upstream rides the vanilla redstone-torch
  * items, GT_API.java:799-801). The INVERTER face of the redstone wire: the torch is ON
  * (art + the full 15 emission) exactly while the wire carries NO signal — the wire
  * powered ({@code mRedstone > 0}, the :42-44 condition) drives the torch OFF. The

@@ -32,7 +32,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * {@code /gt6feconverter} + {@code /gt6fesource} — the p28 inbound converter acceptance
- * commands (task p28-b-fe-converter-machine), the /gt6febattery template (game-bus
+ * commands (task b-fe-converter-machine), the /gt6febattery template (game-bus
  * listener, self-contained per ADR-P3-4).
  *
  * <ul>

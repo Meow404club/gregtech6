@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 /**
- * The Medium Weight-O-Meter Sensor (task p34-sensors-trivial-14 row ⑪) — the port of
+ * The Medium Weight-O-Meter Sensor (task sensors-trivial-14 row ⑪) — the port of
  * MultiTileEntityWeightometerMedium.java:32-63, the KILOGRAM scale (upstream :62 returns
  * the raw kg reading). The declared mass-face gap rides the
  * {@link GT6LightWeightometerBlockEntity} declaration verbatim — same seam, one scale

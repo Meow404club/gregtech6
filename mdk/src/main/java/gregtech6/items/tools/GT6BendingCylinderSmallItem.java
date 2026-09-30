@@ -4,7 +4,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * The formal small bending cylinder — task p25-food-can-row0 spec ②, the GT6FileItem form
+ * The formal small bending cylinder — task food-can-row0 spec ②, the GT6FileItem form
  * with the census OFF. Upstream the tool is a crafting-domain meta id
  * ({@code ToolsGT.BENDING_CYLINDER_SMALL = 56}, CS.java:1736) mounted by the
  * Loader_Tools.java:146 registration row (display name "Small Bending Cylinder" verbatim)
@@ -30,7 +30,7 @@ import net.minecraft.world.item.ItemStack;
  * isMinableBlock (:59-60 returns false verbatim), zero Behavior_Tool machine face, so the
  * census finds nothing to port). No {@code canPerformAction} override here — the vanilla
  * default (false for every action) IS the declared surface, and the same default keeps the
- * three HOE_DIG wrench-substitute predicates blind (the p25-tool-hammer-wrench red line
+ * three HOE_DIG wrench-substitute predicates blind (the tool-hammer-wrench red line
  * shape, inherited for free).
  *
  * <p>Registration form: the file/saw row shape — {@code Item.Properties().durability(

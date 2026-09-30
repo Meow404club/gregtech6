@@ -1,5 +1,5 @@
 /*
- * Offline pinned tests for task r8-tex-large-machines: the 17 large-controller domains
+ * Offline pinned tests for task tex-large-machines: the 17 large-controller domains
  * swap the single-layer tintless cubes for the two-layer grammar (the
  * {@link GT6BoilerTexDatagenTest} shape — asserted against the committed generated
  * tree). Upstream semantics pinned:

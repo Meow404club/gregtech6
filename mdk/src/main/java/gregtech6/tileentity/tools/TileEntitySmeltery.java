@@ -46,7 +46,7 @@ import gregtech6.tileentity.MaterialStackNBT;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * 1.20.1 counterpart of the GT6 small Smeltery — task p26-crucible-physics-smeltery,
+ * 1.20.1 counterpart of the GT6 small Smeltery — task crucible-physics-smeltery,
  * ported from gregtech/tileentity/tools/MultiTileEntitySmeltery.java (the :75 class face)
  * as the row0 crucible: a single-block material pile heated by raw HU. THE PHYSICS IS
  * {@link CruciblePhysics} (the shared pure core, class doc there) — this BE is the World

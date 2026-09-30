@@ -29,7 +29,7 @@ import gregtech6.block.tools.GTAnvilBlock;
 import gregtech6.tileentity.tools.GT6AnvilBlockEntity;
 
 /**
- * The anvil family registration (task p28-c-anvil) — card-owned
+ * The anvil family registration (task c-anvil) — card-owned
  * {@code @EventBusSubscriber(MOD)} DeferredRegisters attached from the construct event,
  * the GT6Kitchen shape (a separate class keeps the card scopes disjoint). Ports the FIRST
  * TWO "Misc Tool Blocks" anvil rows of Loader_MultiTileEntities.java:2185-2186:

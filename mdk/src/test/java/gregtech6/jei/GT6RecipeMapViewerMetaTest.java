@@ -173,7 +173,7 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 	}
 
 	// -------------------------------------------------------------------
-	// The viewer backdrop (task r9-34-viewer-gui-bg, GitHub #34): the sOffset fold
+	// The viewer backdrop (task 34-viewer-gui-bg, GitHub #34): the sOffset fold
 	// table, the two-layer crop quadruples and the retired text band — the coordinates
 	// the JEI draw()/setRecipe and the EMI addWidgets legs all consume through the
 	// viewer* exits below (the raw inputPos/outputPos/fluid*Pos stay in machine-GUI
@@ -314,7 +314,7 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 				new ItemStack[]{new ItemStack(Items.IRON_NUGGET)}, null, null, aDuration, aEUt, aSpecialValue);
 	}
 
-	/** The translatable contents of one cost line (the r6-29-34a key+args face). */
+	/** The translatable contents of one cost line (the issues #29/#34a key+args face). */
 	private static net.minecraft.network.chat.contents.TranslatableContents contents(net.minecraft.network.chat.Component aLine) {
 		return (net.minecraft.network.chat.contents.TranslatableContents) aLine.getContents();
 	}
@@ -411,7 +411,7 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 		GT6RecipeMapJeiCategory tCategory = new GT6RecipeMapJeiCategory(GT6RecipeMaps.COKE_OVEN, null /* the icon rides the plugin, not the offline surface */);
 		assertEquals("gt6:recipe_map/gt.recipe.cokeoven", tCategory.getRecipeType().getUid().toString());
 		assertEquals(Recipe.class, tCategory.getRecipeType().getRecipeClass());
-		// the r6-29-34a title face: translatable, keyed by the shared formula (the oregen
+		// the issues #29/#34a title face: translatable, keyed by the shared formula (the oregen
 		// precedent — offline getString() rides Language.loadDefault back to the bare key,
 		// so the pin is the TranslatableContents key, not a literal)
 		var tTitle = tCategory.getTitle().getContents();
@@ -422,7 +422,7 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 	}
 
 	// -------------------------------------------------------------------
-	// Task r10-debt-viewer-polish: the nojade decoupling + the gear-spot machine icon
+	// Task debt-viewer-polish: the nojade decoupling + the gear-spot machine icon
 	// -------------------------------------------------------------------
 
 	/**
@@ -459,14 +459,14 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 	}
 
 	/**
-	 * The gear-spot machine icon (the r9-34 defer): upstream NEI_RecipeMap.java:278 drew
+	 * The gear-spot machine icon (the #34 defer): upstream NEI_RecipeMap.java:278 drew
 	 * mRecipeMachineList at GUI (152,83) — folded through the shared (5,11) panel origin
 	 * to (147,72), the spot the NEI.png plate bakes the gear into. And the stock gate: a
 	 * tabled map resolves its machine item, a furnace-fallback whitelist map (zero
 	 * machines in the port) resolves NOTHING — the upstream isEmpty() guard, never the
 	 * lit-furnace default. The resolution rides the {@code sResolver} fixture seam (the
 	 * Forge registry does not exist in a bare JVM) — stubbed inside the test, restored in
-	 * the finally (the per-test-stub lesson of r6-29-34a).
+	 * the finally (the per-test-stub lesson of issues #29/#34a).
 	 */
 	@Test
 	void machineIconPinsTheUpstreamGearSpotAndTheRealMachineGate() {

@@ -1,5 +1,5 @@
 /**
- * The Measuring Pot datagen pin (task r8-issue45-c3, issue #45) — reads the committed
+ * The Measuring Pot datagen pin (task issue45-c3, issue #45) — reads the committed
  * generated tree on the classpath (the GT6MoldAssetDatagenTest form — no datagen run) and
  * pins the whole chain: the three recipe rows (the upstream :134 shaped + the :121 reverse
  * + the Loader :2096 smelt), the two-layer block model over the 8 borrowed PNGs, the raw

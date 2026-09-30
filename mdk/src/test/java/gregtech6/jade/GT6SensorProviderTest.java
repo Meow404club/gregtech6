@@ -22,7 +22,7 @@ import gregtech6.tileentity.sensors.GTSensorLogic;
 import gregtech6.tileentity.sensors.GT6ProgressmeterBlockEntity;
 
 /**
- * Offline gate for the sensor Jade face (task r8-jade-sensor-provider): the tag contract
+ * Offline gate for the sensor Jade face (task jade-sensor-provider): the tag contract
  * over the SAME static seam the live {@code appendServerData} reads through —
  * {@code writeSensorData} dispatches on the abstract {@code GTSensorBlockEntity} (ONE
  * instanceof covers the 21-sensor family, the public-getter face GTSensorBlockEntity

@@ -30,7 +30,7 @@ import gregtech6.fluid.FluidTankGT;
 
 /**
  * 1.20.1 counterpart of gregtech/tileentity/tools/MultiTileEntityFluidTap.java
- * (:77-176 onBlockActivated3, task p12-tap-funnel-attachment spec ②) — the wall tap:
+ * (:77-176 onBlockActivated3, task tap-funnel-attachment spec ②) — the wall tap:
  * right-clicking DRAWS from the fluid container it is mounted on. The activation is a
  * strict priority chain, translated in order; the first branch that acts consumes the
  * click:

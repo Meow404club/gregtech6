@@ -34,7 +34,7 @@ import gregtech6.tileentity.energy.generators.GTGeneratorLiquidBlockEntity;
 import gregtech6.tileentity.energy.generators.GTGeneratorSolidBlockEntity;
 
 /**
- * {@code /gt6burner} — the burning-box acceptance command home (task p13-burning-box-family,
+ * {@code /gt6burner} — the burning-box acceptance command home (task burning-box-family,
  * the GTEngineCommand template). Game-bus listener, self-contained per ADR-P3-4.
  *
  * <ul>

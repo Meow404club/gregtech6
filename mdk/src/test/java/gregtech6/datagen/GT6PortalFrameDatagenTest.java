@@ -1,5 +1,5 @@
 /**
- * Offline pin for task r4-23a-portal-frame (issue #23) — the miniature portals carry the
+ * Offline pin for task 23a-portal-frame (issue #23) — the miniature portals carry the
  * faithful transcription of the upstream 13-pass render
  * (MultiTileEntityMiniPortal.java:273-323) instead of the old frame/portal cube swap:
  * inactive = the twelve 2x2px edge beams ONLY (the hollow see-through cage — the

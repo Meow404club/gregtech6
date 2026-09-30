@@ -16,7 +16,7 @@ import gregtech6.covers.covers.CoverControllerDisplay;
 import gregtech6.tileentity.machines.ITileEntitySwitchableOnOff;
 
 /**
- * The controller-family acceptance tables (task p35-covers-display-scale-6) — the
+ * The controller-family acceptance tables (task covers-display-scale-6) — the
  * automatic machine switch (:33-46) + the auto reboot switch (:34-56) + the machine
  * status display (:43-124), upstream CoverControllerAuto/CoverControllerAutoTimer/
  * CoverControllerDisplay as the mothers, on the real oven probe:

@@ -132,7 +132,7 @@ class GT6SurfaceVariantsTest {
      * The FACING rotation pin, anchored to the VANILLA convention (not our own table):
      * end_rod "facing=north" = {"x": 90} tips the up-model's head to -Z, so JSON x=90
      * maps a point (x,y,z) to (x, z, 16-y) — the card's x-rot90 formula. The
-     * r3-stick-shape-random C2 table carried x90/x270 TRANSPOSED against the emitted
+     * stick-shape-random C2 table carried x90/x270 TRANSPOSED against the emitted
      * dispatch (NORTH/SOUTH wireframes sat on the wrong side of the block); these pins
      * are the corrected boxes.
      */

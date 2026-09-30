@@ -49,7 +49,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 /**
  * 1.20.1 port of the first real processing machine, the Oven (RM.Furnace tier) — direct
  * translation of upstream gregapi/tileentity/machines/MultiTileEntityBasicMachine.java
- * trimmed to the Furnace shape (task p4-machine-oven; upstream self-certification
+ * trimmed to the Furnace shape (task machine-oven; upstream self-certification
  * Example_Mod.java:167-167 and Loader_MultiTileEntities.java:1288-1291 "Oven" NBT_INPUT
  * 32..2048, tier 1 = the field defaults kept here).
  *
@@ -105,7 +105,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * {@code CONSTANT_ENERGY} (GT_API.java:510, default T) drives the doInactive progress
  * reset :894 verbatim.
  *
- * <p>Recipe consumption follows the p4-recipe-core pinned contract: findRecipe only LOOKS UP
+ * <p>Recipe consumption follows the recipe-core pinned contract: findRecipe only LOOKS UP
  * (RecipeMapFurnace.findRecipe), consuming is
  * {@code Recipe.isRecipeInputEqual(true, false, fluids, inputs)} (:725/:738 two-stage).
  *
@@ -114,7 +114,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * furnace idiom (AbstractFurnaceBlockEntity.serverTick: {@code level.setBlock(pos, state,
  * 3)} — same-block state changes keep the BE, LevelChunk.setBlockState:292). Facing is
  * double-written NBT + BlockState (spec 7): NBT is the persistent authority, the BlockState
- * is re-applied from it. Since p9-render-c-oven-overlay the same two fields additionally
+ * is re-applied from it. Since render-c-oven-overlay the same two fields additionally
  * project into the C-grade {@link GTOvenRenderSnapshot} ({@code getModelData()}); the
  * client arm of the render pair rides {@link #load} (both sync channels converge there).
  */
@@ -191,7 +191,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	protected byte mFacing = 2;
 	protected boolean oActive = false, oRunning = false;
 	/**
-	 * Client-side render-dirty flag (task p9-render-c-oven-overlay): set when the client
+	 * Client-side render-dirty flag (task render-c-oven-overlay): set when the client
 	 * copy of {@code mActive}/{@code mRunning} changes through {@link #load} (both sync
 	 * channels converge there) and consumed by {@link #scheduleRenderRefresh} — the client
 	 * arm of the scheduleRenderUpdate pair (requestModelDataUpdate alone never triggers a
@@ -200,7 +200,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	private boolean mOvenVisualDirty = false;
 
 	// ---------------------------------------------------------------------------
-	// covers (task p4-cover-core ⑤ — composition: the store lives here, the 06Covers
+	// covers (task cover-core ⑤ — composition: the store lives here, the 06Covers
 	// behaviour comes from the ICoverableTE defaults; the base-class chain is untouched)
 	// ---------------------------------------------------------------------------
 
@@ -229,7 +229,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 		// the oven ticks: the upstream MTE sits on the 03 ticking chain (mIsTicking = true)
 		super(true, aType, aPos, aState);
 		setInventory(new GTItemStackHandler(INVENTORY_SIZE, this::onInventoryChanged));
-		// task p27-oven-heat-t-ladder — the Oven ladder's per-row energy three-value
+		// task oven-heat-t-ladder — the Oven ladder's per-row energy three-value
 		// (upstream NBT_INPUT 32/128/512/2048, Loader_MultiTileEntities.java:1288-1291,
 		// through the GTMachines.TIER_INPUTS conversion): the block identity IS the config
 		// selector (the GTOvenBlock row index), the same tierOf dispatch shape the
@@ -240,7 +240,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	}
 
 	/**
-	 * The tier-inputs assignment (task p27-oven-heat-t-ladder) — the upstream NBT_INPUT
+	 * The tier-inputs assignment (task oven-heat-t-ladder) — the upstream NBT_INPUT
 	 * column (:1288-1291) through the GTMachines.TIER_INPUTS conversion, as a static seam:
 	 * the constructor runs it with the block-identity tier ({@link GTOvenBlock#tier}), the
 	 * offline test drives it directly (a Block is unconstructible offline on both sides of
@@ -528,7 +528,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	 * ALL_SIZE_IRRELEVANT (TD.java:218), so the gate's below-minimum swallow arm does not
 	 * apply to the accepted type and every packet reaches the body (the oven is the
 	 * upstream 20001-04 shape, NBT_ENERGY_ACCEPTED = TD.Energy.HU). The overcharge flag is
-	 * consumed by the machine's own next tick. (Task p34-oven-hu-conversion: the port
+	 * consumed by the machine's own next tick. (Task oven-hu-conversion: the port
 	 * historically pinned EU here — a p4-era misreading of the :510 NBT-configured
 	 * mEnergyTypeAccepted as an EU identity — ruled R3 and re-based on HU.)
 	 */
@@ -557,7 +557,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	 * The upstream :510 face compares the NBT-configured mEnergyTypeAccepted
 	 * (NBT_ENERGY_ACCEPTED, Loader_MultiTileEntities.java:1288-1291 = TD.Energy.HU for all
 	 * four oven rows) — the earlier port javadoc reading it as "accepting EU only" mistook
-	 * the configured carrier for an EU identity (ruled R3, task p34-oven-hu-conversion).
+	 * the configured carrier for an EU identity (ruled R3, task oven-hu-conversion).
 	 */
 	@Override public boolean isEnergyType(TagData aEnergyType, byte aSide, boolean aEmitting) {return !aEmitting && aEnergyType == TD.Energy.HU;}
 
@@ -671,7 +671,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 
 	/**
 	 * Chest precedent onPlaced :128-131 — GT6 side order == Direction.getIndex()
-	 * (get3DDataValue). Task p28-singleblock-facing-canon: the front TOWARDS the placer —
+	 * (get3DDataValue). Task singleblock-facing-canon: the front TOWARDS the placer —
 	 * the GT6PlacementFacing canon (view OPPOSITE), not the raw view direction.
 	 */
 	public void setFacingFromPlacement(Player aPlayer) {
@@ -684,7 +684,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	}
 
 	/**
-	 * GTCEu MetaMachine.setFrontFacing :794-811 counterpart (task p6-oven-rotation): the
+	 * GTCEu MetaMachine.setFrontFacing :794-811 counterpart (task oven-rotation): the
 	 * shift-click edge-cell rotation of the wrench grid. Only a horizontal side (2..5, the
 	 * HORIZONTAL_FACING domain) different from the current facing rotates — the same-facing
 	 * call is the :796 no-op and vertical/invalid sides are rejected (the
@@ -796,14 +796,14 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 			*///?}
 		}
 		readCoversFromNBT(aNBT); // upstream 06Covers :68
-		// task p9-render-c-oven-overlay: the client write point of mActive/mRunning — both
+		// task render-c-oven-overlay: the client write point of mActive/mRunning — both
 		// sync channels (chunk data + block update) converge on this load; flag the render
 		// pair, scheduleRenderRefresh consumes it
 		if (hasLevel() && isClientSide() && (mActive != tWasActive || mRunning != tWasRunning)) mOvenVisualDirty = true;
 	}
 
 	// ---------------------------------------------------------------------------
-	// cover sync + render refresh (task p4-cover-core ⑦/⑥)
+	// cover sync + render refresh (task cover-core ⑦/⑥)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -850,8 +850,8 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	*///?}
 
 	/**
-	 * The client arm of the scheduleRenderUpdate pair (task p4-cover-core ⑦ + task
-	 * p9-render-c-oven-overlay): fires when the covers changed OR the oven visual fields
+	 * The client arm of the scheduleRenderUpdate pair (task cover-core ⑦ + task
+	 * render-c-oven-overlay): fires when the covers changed OR the oven visual fields
 	 * changed through {@link #load} — the pair (sendBlockUpdated + requestModelDataUpdate)
 	 * pushes the fresh snapshot into the ModelDataManager before the rebuild task reads
 	 * it. The server side needs no blockEvent forward here: the machine's visual writes
@@ -868,20 +868,20 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 
 	/**
 	 * The C-grade render hook (IForgeBlockEntity.java:174), rebuilt by task
-	 * p9-render-c-oven-overlay as a two-snapshot payload over disjoint properties:
+	 * render-c-oven-overlay as a two-snapshot payload over disjoint properties:
 	 * <ul>
 	 * <li>{@link GTModelProperties#OVEN_SNAPSHOT} — always present: the read-only
 	 *     projection of {@code mActive}/{@code mRunning} taken at this exact moment
 	 *     (single-writer: those fields are the only source; the blockstate ACTIVE/RUNNING
 	 *     properties and this snapshot are both readers of them, never a second writer).</li>
-	 * <li>{@link GTModelProperties#RENDER_SNAPSHOT} — the cover chain (p4-cover-core),
+	 * <li>{@link GTModelProperties#RENDER_SNAPSHOT} — the cover chain (cover-core),
 	 *     present exactly when a face carries a cover; untouched.</li>
 	 * </ul>
 	 * The {@link GTOvenOverlayModel} keys on the oven property, the cover plate model on
 	 * the cover property — the second ModelProperty exists precisely because
 	 * RENDER_SNAPSHOT is single-valued and the cover value must not be overwritten.
 	 *
-	 * <p>Task p21-paintable-storage-sync: {@code super.getModelData()} (the 03 paintable
+	 * <p>Task paintable-storage-sync: {@code super.getModelData()} (the 03 paintable
 	 * base) now carries {@link GTModelProperties#PAINT} while the machine is painted, and
 	 * every branch below derives from it — PAINT/OVEN_SNAPSHOT/RENDER_SNAPSHOT coexist on
 	 * the same snapshot, each single-valued property on its own key (unpainted uncovered
@@ -916,7 +916,7 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 
 	// ---------------------------------------------------------------------------
 	// capability exposure — the side-aware cover-gated IItemHandler
-	// (task p10-cover-item-intercept, ADR 2026-09-01-p10-cover-item-intercept)
+	// (task cover-item-intercept, ADR 2026-09-01-cover-item-intercept)
 	// ---------------------------------------------------------------------------
 
 	/**

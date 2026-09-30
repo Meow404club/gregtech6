@@ -45,7 +45,7 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
- * The Wiremill recipe book (task p26-w1-sifter-compressor-wiremill) — the row audit of the
+ * The Wiremill recipe book (task w1-sifter-compressor-wiremill) — the row audit of the
  * RM.Wiremill pour surface. Upstream the map is fed ONLY by the {@code RecipeMapHandlerPrefix}
  * templates of Loader_Recipes_Handlers.java:287-295 (the class-load grep found no fixed
  * {@code addRecipe1} rows outside the compat/ tree, which the P10 ruling does not port):

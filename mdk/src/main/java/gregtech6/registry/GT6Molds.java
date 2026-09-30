@@ -34,7 +34,7 @@ import gregtech6.tileentity.tools.TileEntityFaucet;
 import gregtech6.tileentity.tools.TileEntityMold;
 
 /**
- * The mold family registration home (task p26-crucible-physics-smeltery spec ⑤⑥, the
+ * The mold family registration home (task crucible-physics-smeltery spec ⑤⑥, the
  * ADR-P3-4 self-contained form — GT6Crucibles/GT6BurningBoxes shape). Card A ships the
  * STONE rung only (the Loader_MultiTileEntities.java:347 opening row: "Mold (Stone)",
  * the 7-cobblestone handcraft of the card face); the Bronze/Invar/Steel/Ceramic rungs
@@ -44,7 +44,7 @@ import gregtech6.tileentity.tools.TileEntityMold;
  * minimal-face deviation on {@link TileEntityMold}): the row0 chain needs no chisel
  * gymnastics to cast an ingot.
  *
- * <p><b>Card B append (p26-crucible-mold-faucet)</b>: the CERAMIC rung — the blank mold
+ * <p><b>Card B append (crucible-mold-faucet)</b>: the CERAMIC rung — the blank mold
  * (Loader:352, one row, no pre-carve) plus the 30 pre-carved shape molds (:391-420, each
  * upstream a one-item-NBT variant; the 1.20.1 vanilla smelting JSON cannot emit item
  * NBT — SimpleCookingSerializer.fromJson reads a bare item id — so each shape is its
@@ -117,7 +117,7 @@ public final class GT6Molds {
 	}
 
 	// ------------------------------------------------------------------------------------
-	// card B (p26-crucible-mold-faucet): the ceramic rung + raw clay items + the faucet
+	// card B (crucible-mold-faucet): the ceramic rung + raw clay items + the faucet
 	// ------------------------------------------------------------------------------------
 
 	/** The ceramic blank (Loader:352 — the one row without a crafting recipe, shape 0 until carved). */
@@ -281,7 +281,7 @@ public final class GT6Molds {
 
 
 	// ------------------------------------------------------------------------------------
-	// the block carrier (the CrucibleBlock form) + the shape geometry (r7-mold-geometry)
+	// the block carrier (the CrucibleBlock form) + the shape geometry (mold-geometry)
 	// ------------------------------------------------------------------------------------
 
 	/**
@@ -419,13 +419,13 @@ public final class GT6Molds {
 	}
 
 	/**
-	 * The MACHINES_TAB join (task p38-tabfix-c-misc — the census zero-tab adjudication;
+	 * The MACHINES_TAB join (task tabfix-c-misc — the census zero-tab adjudication;
 	 * the GT6BurningBoxes.onBuildTabContents verbatim form, delivered by the class-level
 	 * MOD-bus {@code @Mod.EventBusSubscriber} at the class head). JEI 1.20.1 derives its
 	 * item list from the tab display items, so registered-but-tab-less was invisible in
 	 * BOTH the creative menu and JEI.
 	 *
-	 * <p><b>Pool cut (the census ruling, task p38-tab-census)</b>: upstream the molds ride
+	 * <p><b>Pool cut (the census ruling, task tab-census)</b>: upstream the molds ride
 	 * the per-family MTE tab "Molds" (1072, Loader_MultiTileEntities.java:347-352/:391-420)
 	 * and the faucets the "Crucibles Faucets" tab (1722, :300/:305) — this port pools both
 	 * finished families into MACHINES_TAB. The RAW clay items stay OUT ({@link

@@ -30,8 +30,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 
 /**
- * The formal GT6 pickaxe — item id {@code gt6:pickaxe} (task p29-w5-t1-dig-six spec;
- * the MATERIAL LADDER face is task p31-dig-ladder, the {@link GT6ToolLadder} form).
+ * The formal GT6 pickaxe — item id {@code gt6:pickaxe} (task w5-t1-dig-six spec;
+ * the MATERIAL LADDER face is task dig-ladder, the {@link GT6ToolLadder} form).
  * Upstream GT_Tool_Pickaxe.java:41-72:
  * <ul>
  * <li><b>Mining surface</b> (:54-56): the {@code TOOL_pickaxe} harvest arm + the
@@ -63,7 +63,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
  *     precedent, ADR ①).</li>
  * </ul>
  *
- * <p>Durability ladder (task p31-dig-ladder): the stack's {@code GT.ToolStats} identity
+ * <p>Durability ladder (task dig-ladder): the stack's {@code GT.ToolStats} identity
  * scales durability ({@code j}/100 points), dig speed ({@code mToolSpeed}), mining
  * level ({@code baseQuality + mToolQuality}, the :482 gate that also returns ZERO speed
  * on too-hard surfaces) and the head tint; the IDENTITY-LESS arm reproduces Steel
@@ -401,7 +401,7 @@ public class GTPickaxeItem extends Item implements GT6ToolLadder.LadderTool {
 			Blocks.MYCELIUM, Blocks.DIRT_PATH,
 			Blocks.ROOTED_DIRT, Blocks.DIRT_PATH);
 
-	// ------------------------------ the GT6ItemData identity seams (task p31-dig-ladder) ------------------------------
+	// ------------------------------ the GT6ItemData identity seams (task dig-ladder) ------------------------------
 
 	/** The per-material durability (the {@link GT6ToolLadder} j/100 points — Steel fallback = 512). */
 	@Override

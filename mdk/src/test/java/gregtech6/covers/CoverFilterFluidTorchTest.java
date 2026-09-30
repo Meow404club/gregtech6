@@ -24,7 +24,7 @@ import gregtech6.tileentity.connectors.GTWireBlockEntity;
 import gregtech6.tileentity.tank.GTBarrelMetalBlockEntity;
 
 /**
- * The fluid-filter and torch-family offline acceptance (task p34-covers-gameplay-10):
+ * The fluid-filter and torch-family offline acceptance (task covers-gameplay-10):
  * the filter gates (the whitelist/blacklist polarity over a set and an empty filter,
  * the screwdriver flip, the soft-hammer clear) and the torch-family emission truth
  * (the torch inverts the wire, the repeater follows it, the full-15 emission rides the

@@ -29,10 +29,10 @@ import gregtech6.block.energy.GT6DynamoBlock;
 import gregtech6.tileentity.energy.converters.GT6LaserConverterBlockEntity;
 
 /**
- * The Laser domain registration (task p32-qu-laser-domain) — the card-owned
+ * The Laser domain registration (task qu-laser-domain) — the card-owned
  * {@code @EventBusSubscriber(MOD)} DeferredRegisters attached from the construct event,
  * the GT6ElectricTransformers shape (ADR-P3-4). TWO families over the REUSED
- * {@link GT6DynamoBlock} carrier (the p29-w4-eu-bridge posture — one block per rung, the
+ * {@link GT6DynamoBlock} carrier (the w4-eu-bridge posture — one block per rung, the
  * tier index rides the block, the FACING property carries the emission face):
  * <ul>
  * <li><b>Electric CO2 Laser</b> — Loader_MultiTileEntities.java:930-934, ids 10101-10105,
@@ -48,7 +48,7 @@ import gregtech6.tileentity.energy.converters.GT6LaserConverterBlockEntity;
  * hardness/resistance 4.0/4.0 and stack 16 (the aRegistry.add columns).
  *
  * <p>NOT done here (the task card cuts, declared): the Buildcraft Assembly Laser and the
- * Flux Laser (the p28-cut-eu-fe-bridge RF/BC crop precedent), the Laserometer, the laser
+ * Flux Laser (the cut-eu-fe-bridge RF/BC crop precedent), the Laserometer, the laser
  * beam rendering (visual = the static block face; the beam defer rides the ore_OVERLAY POC
  * verdict). Crafting rows are the crafting pool (the usb-data posture — the machines stay
  * RCON/test-obtainable until the pool card lands). KJS surface: REGISTRATION face only,
@@ -61,7 +61,7 @@ public final class GT6Lasers {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, "gt6");
 
-	/** One ladder row — the upstream-parity columns of one Loader aRegistry.add line; {@code material} the row's NBT_MATERIAL aMat (task p38-c2-controller-tint, the Electric_T ladder via {@code GTMachines.electricTierMat}). */
+	/** One ladder row — the upstream-parity columns of one Loader aRegistry.add line; {@code material} the row's NBT_MATERIAL aMat (task c2-controller-tint, the Electric_T ladder via {@code GTMachines.electricTierMat}). */
 	public record LaserRow(String path, int metaId, int tier, String voltageWord,
 			java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material) {}
 
@@ -148,7 +148,7 @@ public final class GT6Lasers {
 	}
 
 	/**
-	 * The laser-domain paint-tint walker (task p38-c2-controller-tint): the 10 ladder
+	 * The laser-domain paint-tint walker (task c2-controller-tint): the 10 ladder
 	 * blocks (CO2 Laser :930-934 + Laser Absorber :976-980) whose datagen models carry
 	 * tintindex 0 on the body cube (the {@code paintableBlockArray} census convention),
 	 * feeding BOTH consumption halves: the baked world tint ({@code GTMachineTintModel},
@@ -184,12 +184,12 @@ public final class GT6Lasers {
 	@SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
 		aEvent.enqueueWork(() -> {
-			gregtech6.GT6Mod.LOGGER.info("GT6 laser domain registered: 5 CO2 Laser rows (10101-10105, EU->LU) + 5 Laser Absorber rows (10151-10155, LU->EU), task p32-qu-laser-domain");
+			gregtech6.GT6Mod.LOGGER.info("GT6 laser domain registered: 5 CO2 Laser rows (10101-10105, EU->LU) + 5 Laser Absorber rows (10151-10155, LU->EU), task qu-laser-domain");
 		});
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — both item maps join the machines tab; the
+	 * The tab walk (task tabfix-b-energy — both item maps join the machines tab; the
 	 * GT6BurningBoxes.onBuildTabContents verbatim form, the class-level MOD-bus
 	 * {@code @Mod.EventBusSubscriber} at the class head is what delivers this handler).
 	 * JEI 1.20.1 derives its item list from the tab display items, so registered-but-

@@ -25,7 +25,7 @@ import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
 
 /**
- * Offline boot + fixtures for the TileEntityBasicMachine suite (task p7-basicmachine-family
+ * Offline boot + fixtures for the TileEntityBasicMachine suite (task basicmachine-family
  * ⑦, the GTMachinesOfflineTestBase :36 precedent): the vanilla registries boot through the
  * oven base, and each test pours a REPRESENTATIVE recipe chain per map straight through the
  * public {@code Recipe}/{@code RecipeMap.addRecipe} face — the real GT6RecipesShCL pour is
@@ -69,7 +69,7 @@ public abstract class TileEntityBasicMachineOfflineTestBase extends GTMachinesOf
 	static void buildSyntheticUniverse() {
 		if (sUniverseBuilt) return;
 		GTMaterialItems.initMaterials(); // the offline material universe (MT.init + OP.init)
-		// VANILLA-NAMESPACE ITEMS ONLY (task p25-tool-hammer-wrench stabilization): the
+		// VANILLA-NAMESPACE ITEMS ONLY (task tool-hammer-wrench stabilization): the
 		// wrap-around aliasing (tNext % tPool.size()) makes every pair assignment sensitive
 		// to the POOL SIZE — a probe-registering test class (the FileSawTest reflection
 		// bracket, p24; the HammerWrenchTest pair, p25) shifts the size and silently
@@ -135,7 +135,7 @@ public abstract class TileEntityBasicMachineOfflineTestBase extends GTMachinesOf
 	 * The machine-family regime fixture: TRUE per test — the RETIRED A-tier seam, kept as
 	 * the offline coverage for the legacy supply semantics (supplyEnergy + the pre-p11
 	 * behavior; the oven fixture GTMachinesOfflineTestBase:71 same shape). NOT the shipped
-	 * default any more: task p11-rotor-source-flip flipped
+	 * default any more: task rotor-source-flip flipped
 	 * {@link TileEntityBasicMachine#ENERGY_FAKE_SOURCE} to false — the grid-fed tests flip
 	 * it off at their own start (netMachine), and this restore point re-arms the seam for
 	 * the fixture-regime tests that follow.

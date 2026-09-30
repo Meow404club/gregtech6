@@ -21,7 +21,7 @@ import gregtech6.tileentity.energy.GT6ZpmDechargerBlockEntity;
 import gregapi.data.TD;
 
 /**
- * The decharger cover-host arming (task p36-energy-zpm-dechargers, the card acceptance ⑤
+ * The decharger cover-host arming (task energy-zpm-dechargers, the card acceptance ⑤
  * offline half): the p35 covers card documented the non-zero gauge face as STRUCTURALLY
  * UNREACHABLE — "no coverable capacitor host exists in this port yet". The ZPM decharger
  * IS that host (upstream the display/scale energy covers admit the

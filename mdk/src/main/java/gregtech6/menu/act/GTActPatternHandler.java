@@ -13,7 +13,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
 
 /**
- * The ghost-grid GUI adapter (task p24-act-machine C2): a 9-slot
+ * The ghost-grid GUI adapter (task act-machine C2): a 9-slot
  * {@link IItemHandlerModifiable} VIEW over {@link TileEntityAdvancedCraftingTable#mPattern}
  * — the server backing stays a bare array (decisions.p24-act-ghost-form: never an
  * IItemHandler on the BE capability face, so no automation/drop leak); this adapter exists

@@ -29,8 +29,8 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
- * The Coke Oven recipe pour (tasks p6-cokeoven-processing + p7-cokeoven-backfill +
- * p8-prefixblock-registry): 39 rows = 32 item-universe rows + the 7 backfilled block rows
+ * The Coke Oven recipe pour (tasks cokeoven-processing + cokeoven-backfill +
+ * prefixblock-registry): 39 rows = 32 item-universe rows + the 7 backfilled block rows
  * (Loader_Recipes_Other.java:787-789/:803-805/:815 — GTMaterialBlocks pairs).
  * <ul>
  * <li>the transcription walk: every (prefix, material) pair of every row resolves inside
@@ -80,7 +80,7 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 			// AIR (or any item making an empty stack) must be skipped: new ItemStack(AIR, n) is an
 			// empty stack, the Recipe ctor trims it, and the resulting empty-input row would match
 			// EVERY lookup (the p7 ghost recipe). The RecipeMap.addRecipe double-empty guard
-			// (p8-recipe-chances-orechain ②) is the structural backstop; keeping AIR out of the
+			// (recipe-chances-orechain ②) is the structural backstop; keeping AIR out of the
 			// pool keeps the poured-count assertions exact.
 			do {tItem = tPool.get(tNext++ % tPool.size());} while (new ItemStack(tItem, 1).isEmpty());
 			SYNTHETIC_ITEMS.put(tPair, tItem);
@@ -212,7 +212,7 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 			assertTrue(tByNote.containsKey(tNote), "block row " + tNote + " must be transcribed");
 		}
 		String tSkipped = String.join("\n", GT6RecipesCokeOven.SKIPPED_UPSTREAM);
-		assertTrue(tSkipped.contains("BACKFILLED by p8-prefixblock-registry"), "the block rows are declared backfilled, not pooled");
+		assertTrue(tSkipped.contains("BACKFILLED by prefixblock-registry"), "the block rows are declared backfilled, not pooled");
 		assertTrue(tSkipped.contains(":787-789/:803-805") && tSkipped.contains(":815"), "both former pool entries declare the backfill");
 		assertTrue(tSkipped.contains("beam"));
 		assertTrue(tSkipped.contains("#minecraft:logs"), "the tag listener replaces the log family");

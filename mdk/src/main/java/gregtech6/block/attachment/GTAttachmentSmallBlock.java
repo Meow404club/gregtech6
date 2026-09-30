@@ -34,7 +34,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.attachment.GTAttachmentSmallBlockEntity;
 
 /**
- * The small wall-attachment block (task p12-tap-funnel-attachment spec ①) — the 1.20.1
+ * The small wall-attachment block (task tap-funnel-attachment spec ①) — the 1.20.1
  * block side of {@code TileEntityBase11AttachmentSmall}: a thin plate MOUNTED ON one
  * face of a sturdy neighbour, carrying the facing as the blockstate ({@code FACING},
  * six directions — the attachment looks AT its host, {@code mFacing} == clicked face)
@@ -94,7 +94,7 @@ public class GTAttachmentSmallBlock extends Block implements EntityBlock {
 
 	private final Family mFamily;
 	private final boolean mAcidProof;
-	/** The carried registration row (task p20-i18n-compose-rows) — feeds the composed tap/funnel name. */
+	/** The carried registration row (task i18n-compose-rows) — feeds the composed tap/funnel name. */
 	private final gregtech6.registry.GT6Attachments.AttachmentRow mRow;
 	private final java.util.function.Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> mTickerType;
 
@@ -114,7 +114,7 @@ public class GTAttachmentSmallBlock extends Block implements EntityBlock {
 	}
 
 	/**
-	 * The composed attachment name (task p20-i18n-compose-rows): the tap/funnel family
+	 * The composed attachment name (task i18n-compose-rows): the tap/funnel family
 	 * template over the gt6.row.attachment.mat small unit.
 	 */
 	@Override

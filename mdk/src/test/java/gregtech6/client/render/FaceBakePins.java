@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import com.mojang.blaze3d.platform.NativeImage;
 
 /**
- * The r8-uvof-private-copies pin fixture (the #27 GTOreBakedModelSideUvTest pattern,
+ * The uvof-private-copies pin fixture (the #27 GTOreBakedModelSideUvTest pattern,
  * package-shared by the flow-arrow and oven-overlay bake pins): a leg-uniform identity
  * sprite stands in for the atlas so the decoded vertex UV floats ARE the 0..16 model-space
  * values, plus the one assertion that pins a baked quad to the canonical vanilla
@@ -78,7 +78,7 @@ final class FaceBakePins {
 	}
 
 	/**
-	 * THE r8-uvof-private-copies PIN: the quad's four vertices carry exactly the canonical
+	 * THE uvof-private-copies PIN: the quad's four vertices carry exactly the canonical
 	 * rotation-0 walk (0,0),(0,16),(16,16),(16,0) in FaceInfo vertex order — the full-face
 	 * {@code [0,0,16,16]} form, i.e. the sprite renders exactly as a vanilla cube JSON
 	 * would. Cross-checks the orientation reading against the quad's own positions: side

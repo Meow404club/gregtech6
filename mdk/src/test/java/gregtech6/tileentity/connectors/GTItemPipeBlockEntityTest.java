@@ -27,7 +27,7 @@ import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * GTItemPipeBlockEntity offline tests (task p26-pipe-item acceptance ②): the stepSize/
+ * GTItemPipeBlockEntity offline tests (task pipe-item acceptance ②): the stepSize/
  * invSize parameter axis (the variant table MultiTileEntityPipeItem.java:77-82 over the
  * loader bases :1823-1825), the one-way latch truth table (:268), the monkeywrench
  * face-disable cycle (:128-153), the capacity window (:243-251), the scanPipes distance
@@ -59,7 +59,7 @@ public class GTItemPipeBlockEntityTest extends GTOfflineTestBase {
 		return new ItemStack(Items.STONE, aCount);
 	}
 
-	/** r10-debt-break-drops — the GTEntityBlock drop probe reaches the in-flight item carrier (upstream MultiTileEntityPipeItem.java:266-270 carries a real inventory; 05Inventories.breakBlock :153-171 would scatter it). */
+	/** debt-break-drops — the GTEntityBlock drop probe reaches the in-flight item carrier (upstream MultiTileEntityPipeItem.java:266-270 carries a real inventory; 05Inventories.breakBlock :153-171 would scatter it). */
 	@Test
 	public void breakDropProbeReachesTheInventory() throws Exception {
 		GTItemPipeBlockEntity tPipe = pipe();

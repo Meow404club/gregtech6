@@ -38,7 +38,7 @@ import gregtech6.client.wire.GTWireTextures;
 import gregtech6.registry.GT6OreBlocks;
 
 /**
- * The dual-sprite ore baked model (task p30-ore-3-datagen spec ①, the first-choice route):
+ * The dual-sprite ore baked model (task ore-3-datagen spec ①, the first-choice route):
  * the direct translation of the upstream ore render stack — a copied STONE base plus the
  * material's texture-set ORE overlay coloured with {@code fRGBa[prefix.mState]}
  * (PrefixBlock.java:294 {@code BlockTextureMulti(mTexture, BlockTextureDefault.get(aMaterial,
@@ -83,7 +83,7 @@ import gregtech6.registry.GT6OreBlocks;
  * PNGs themselves are card ②'s borrow face: until that card lands, the overlay layer
  * renders the missingno checkerboard — the declared ADR ④ intermediate state.
  *
- * <p>Tint (task p38-issue2-ore-baked-tint, the p32 machine-domain migration applied to the
+ * <p>Tint (task issue2-ore-baked-tint, the p32 machine-domain migration applied to the
  * ore domain): the material colour rides {@link Params#tintARGB()} — {@code
  * fRGBa[prefix.mState]} (PrefixBlock.java:279-282), the exact value the retired runtime
  * {@code BlockColor} resolved — and is BAKED into the overlay quads' vertex colours (the
@@ -113,7 +113,7 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 	private final BakedModel mFallbackModel;
 	private final Params mParams;
 	/**
-	 * Sprite resolver — task p33-ore-overlay-impl 21.1 seam: MATERIAL-keyed on both legs.
+	 * Sprite resolver — task ore-overlay-impl 21.1 seam: MATERIAL-keyed on both legs.
 	 * Runtime 1.20.1 Forge: the block atlas over the material's atlas location ({@link
 	 * #defaultSpriteLookup()}); runtime 1.21.1 NeoForge: the bake-time {@code
 	 * ModelEvent.ModifyBakingResult#getTextureGetter()} handed through the listener (the
@@ -135,7 +135,7 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 	 * as an opaque ore-coloured plate that depth-wins over the base, dyeing the entire
 	 * stone surface (GitHub issue #2).
 	 *
-	 * <p>Baked LAZILY at first {@link #getQuads} — task p33-fix-forge-ore-invisible. Eager
+	 * <p>Baked LAZILY at first {@link #getQuads} — task fix-forge-ore-invisible. Eager
 	 * constructor baking was the forge-leg whole-ore invisibility root cause:
 	 * ModifyBakingResult fires BEFORE the sprite upload (ModelManager.java.patch —
 	 * onModifyBakingResult precedes the dispatch/registry set) and its javadoc forbids
@@ -300,7 +300,7 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 			case "sand"       -> mcBlock("sand");
 			case "redsand"    -> mcBlock("red_sand");
 			case "mud"        -> mcBlock("mud");
-			// the vanilla-named GT trio rides the vanilla current textures too (task r4-ore-tex-b,
+			// the vanilla-named GT trio rides the vanilla current textures too (task ore-tex-b,
 			// the user B ruling): worldgen maps the vanilla three-stone hosts onto these families
 			// (GT6WorldgenDatagen.oreTargets), so the borrowed 1.7.10-generation PNGs read as the
 			// "old-look ore in new-look vanilla stone" mismatch — the vanilla texture IS this

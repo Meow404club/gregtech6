@@ -38,7 +38,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import gregtech6.fluid.GTFluids;
 
 /**
- * The FM.Engine fuel table — task p12-engine-fuel-fluids spec ②, the port counterpart of
+ * The FM.Engine fuel table — task engine-fuel-fluids spec ②, the port counterpart of
  * RM.sFuelsEngine = FM.Engine (RM.java:172) poured from Loader_Fuels.java:77-120.
  *
  * <p><b>Upstream source</b>: every {@code FM.Engine.addRecipe0(T, aEUt, aDuration, tFuel,
@@ -66,14 +66,14 @@ import gregtech6.fluid.GTFluids;
  * is NOT one of this card's nine fluids, and a missing output fluid would zero the whole
  * table at pour time. The byproduct therefore rides the row as the {@link FuelRow#co2()}
  * DATA mark (asserted for all seven rows) instead of a FluidStack in the Recipe — the
- * p12-engine-diesel card owns the live exhaust surface and decides the emission form.
+ * engine-diesel card owns the live exhaust surface and decides the emission form.
  *
  * <p><b>Row shape</b>: fluid-only — empty item arrays, one 1-unit FluidStack input (the
  * upstream {@code tFuel = FL.X.list(1)} amount), no fluid outputs, duration/EUt verbatim.
  * The double-empty guard of {@link RecipeMap#addRecipe} does not fire (the fluid leg is a
  * real input).
  *
- * <p><b>Lookup seam handed to p12-engine-diesel</b>: upstream answers fluid-only lookups
+ * <p><b>Lookup seam handed to engine-diesel</b>: upstream answers fluid-only lookups
  * through the fluid hash indexes when {@code mMinimalInputItems == 0} (Recipe.java:518-523),
  * but the port's {@code RecipeMap.findRecipe} hard-returns on empty item input arrays
  * (RecipeMap.java:137-138, a Furnace-level port simplification predating this card). The

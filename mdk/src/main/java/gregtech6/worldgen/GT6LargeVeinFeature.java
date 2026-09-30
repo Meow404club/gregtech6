@@ -20,7 +20,7 @@ import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GT6SurfaceBlocks;
 
 /**
- * The L1 large-vein Feature (task p30-w6-t3-large-veins) — the per-chunk adapter around
+ * The L1 large-vein Feature (task w6-t3-large-veins) — the per-chunk adapter around
  * {@link GT6VeinGenerator} (the deterministic WorldgenOresLarge core; kept class-separated
  * so the offline tests drive the math without class-loading vanilla {@code Feature}, whose
  * clinit drags the entity registry that is unbootstrappable headless).

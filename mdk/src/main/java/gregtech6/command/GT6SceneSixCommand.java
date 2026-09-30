@@ -47,7 +47,7 @@ import org.slf4j.Logger;
 import gregtech6.registry.GT6Tools;
 
 /**
- * {@code /gt6scene6} — the scene-tool acceptance command (task p29-w5-t5-scene-six;
+ * {@code /gt6scene6} — the scene-tool acceptance command (task w5-t5-scene-six;
  * card-local in command/ like GT6DigToolCommand/GT6ChiselCommand — the fake-player
  * channel: the RCON arms drive the EXACT item surfaces the keyboard player hits, the
  * "the command IS the acceptance channel" ruling):

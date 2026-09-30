@@ -20,7 +20,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import gregtech6.fluid.GTFluids;
 
 /**
- * Task p13-large-boiler — the offline acceptance fixture for the Large Boiler business
+ * Task large-boiler — the offline acceptance fixture for the Large Boiler business
  * semantics (the W3 GTBoilerTankBlockEntityTest form). Covers the five-target
  * load-balanced steam output (the :203-256 five-Delegator algorithm, all four branches
  * pinned as a truth table), the conversion truth table (:180-190, the W3-style triple
@@ -451,7 +451,7 @@ public class LargeBoilerSemanticsTest extends GTMultiBlocksOfflineTestBase {
 		for (int i = 0; i < 5; i++) {
 			var tRow = tRows.get(i);
 			assertEquals(tExpected[i][0], tRow.path(), "row " + i + " path");
-			// the composed face (task p20-i18n-compose-rows): the fixture display replays from
+			// the composed face (task i18n-compose-rows): the fixture display replays from
 			// the template + the material word — a per-row expansion pin
 			assertEquals(tExpected[i][1], "%s Boiler Main Barometer".replace("%s", tRow.material()),
 					"row " + i + " composed display replay (the Loader line verbatim)");
@@ -469,7 +469,7 @@ public class LargeBoilerSemanticsTest extends GTMultiBlocksOfflineTestBase {
 	public void theWallRowsAndTheTransmitterRowAreTheLoaderLinesVerbatim() {
 		var tWalls = gregtech6.registry.GTMultiBlocks.WALL_ROWS;
 		assertEquals(11, tWalls.size(), "eleven Dense Wall rows (5 at :1159-1165 + the 6 additions"
-			+ " at :1155-1165, task p29-w3-nbtdesign-parts — appended, the p13 EDIT-ruling shape)");
+			+ " at :1155-1165, task w3-nbtdesign-parts — appended, the p13 EDIT-ruling shape)");
 		String[][] tExpected = {
 			{"dense_wall_stainless_steel", "Dense Stainless Steel Wall", "18022", "6.0"},
 			{"dense_wall_invar"          , "Dense Invar Wall"           , "18027", "6.0"},
@@ -486,7 +486,7 @@ public class LargeBoilerSemanticsTest extends GTMultiBlocksOfflineTestBase {
 		}
 		var tTx = gregtech6.registry.GTMultiBlocks.TRANSMITTER_ROW;
 		assertEquals("heat_transmitter", tTx.path());
-		// the transmitter stays ATOMIC (task p20-i18n-compose-rows) — its word rides the row's
+		// the transmitter stays ATOMIC (task i18n-compose-rows) — its word rides the row's
 		// matDisplay column as the whole-string lang VALUE (the bare-noun form, nothing to compose)
 		assertEquals("Heat Transmitter", tTx.matDisplay(), "the :1176 row verbatim");
 		assertEquals(18101, tTx.metaId());

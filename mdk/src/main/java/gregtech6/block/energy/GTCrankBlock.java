@@ -23,7 +23,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.energy.GTCrankBlockEntity;
 
 /**
- * The Hand Crank block (task p12-engine-crank spec ②) — the facing cube carrier over the
+ * The Hand Crank block (task engine-crank spec ②) — the facing cube carrier over the
  * shared BET (ADR-P3-1), the GTOvenBlock facing shape minus the GUI/cover/rotation layers:
  * the crank has NO GUI (the upstream {@code NO_GUI_CLICK_TO_INTERACT} tooltip
  * MultiTileEntityCrank.java:68) and {@code use} IS the drive (upstream
@@ -69,7 +69,7 @@ public class GTCrankBlock extends GTEntityBlock {
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
 		// the front TOWARDS the placer (the GT6PlacementFacing canon, task
-		// p28-singleblock-facing-canon) — the same side setFacingFromPlacement
+		// singleblock-facing-canon) — the same side setFacingFromPlacement
 		// mirrors into the BE (the GTOvenBlock.getStateForPlacement :72-76 precedent)
 		return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 	}

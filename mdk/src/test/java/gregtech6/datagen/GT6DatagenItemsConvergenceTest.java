@@ -1,5 +1,5 @@
 /**
- * Tests for task p3-fullprefix-creativetab: dual-criterion convergence.
+ * Tests for task fullprefix-creativetab: dual-criterion convergence.
  *
  * <p>GT6DatagenItems must be a pure adapter over the single enumeration source in
  * GTMaterialItems — in a headless JVM (no RegisterEvent) the datagen fallback walk and the

@@ -1,5 +1,5 @@
 /**
- * Pure-JUnit census for the cropped GUI part sprites (task r8-gui-part-crops).
+ * Pure-JUnit census for the cropped GUI part sprites (task gui-part-crops).
  *
  * <p>Pins asserted here:</p>
  * <ul>

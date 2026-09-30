@@ -46,7 +46,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 
 /**
- * The Steam Boiler Tank family registration home (task p13-boiler-tank spec ⑨, the
+ * The Steam Boiler Tank family registration home (task boiler-tank spec ⑨, the
  * GT6BurningBoxes self-contained-DR form): 26 blocks/items over ONE shared BET row —
  * the single BE class {@link GTBoilerTankBlockEntity} over the block carrier.
  *
@@ -74,7 +74,7 @@ import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
  * MT.Ultimet → ultimet. Hardness == resistance on every row (upstream NBT_HARDNESS ==
  * NBT_RESISTANCE); the METAL sound (the machine-block convention).
  *
- * <p>Creative tab (task p38-tabfix-a-multiblock): all 26 items join MULTIBLOCKS_TAB via
+ * <p>Creative tab (task tabfix-a-multiblock): all 26 items join MULTIBLOCKS_TAB via
  * {@link #onBuildTabContents} — registered-but-tab-less is invisible in BOTH the creative
  * menu and JEI (the BurningBoxes issue-#10 form, superseding the old axle/diesel tab-less
  * precedent). Pool cut declared: upstream rode the per-family "Multiblock Machines"
@@ -97,7 +97,7 @@ public final class GT6Boilers {
 
 	/**
 	 * One Loader material — slug + display name + the NBT_HARDNESS (== NBT_RESISTANCE) pair
-	 * + the material itself (task r3-world-tint-render-type, the C5 clean-up: every
+	 * + the material itself (task world-tint-render-type, the C5 clean-up: every
 	 * upstream boiler row carries NBT_MATERIAL, Loader :553-579 — the row's
 	 * {@code aMat} is the render colour source exactly like the burning boxes). The lazy
 	 * Supplier per the GTBarrels MetalDrumRow convention (the registry class loads before
@@ -123,7 +123,7 @@ public final class GT6Boilers {
 			MAT_TUNGSTENSTEEL = new BoilerMaterial("tungstensteel", "Tungstensteel", 12.5F, () -> gregapi.data.MT.TungstenSteel),
 			MAT_ULTIMET     = new BoilerMaterial("ultimet"     , "Ultimet"       , 12.5F, () -> gregapi.data.MT.Ultimet);
 
-	/** The composed Steam Boiler Tank display template "{@code Steam Boiler Tank (%s)}" — one material slot (task p20-i18n-compose-rows). */
+	/** The composed Steam Boiler Tank display template "{@code Steam Boiler Tank (%s)}" — one material slot (task i18n-compose-rows). */
 	public static final String DISPLAY_KEY = "gt6.row.boiler.display";
 	/** The Strong template "{@code Strong Steam Boiler Tank (%s)}" — the Strong wording rides the template. */
 	public static final String DISPLAY_STRONG_KEY = "gt6.row.boiler.display.strong";
@@ -223,8 +223,8 @@ public final class GT6Boilers {
 			BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new BoilerTankBlock(tRow, tRow.properties())));
 			// the GT6Kinetics.STEAM_ENGINE_ITEMS qualified-read forward-reference form (the P6 lambda lesson);
-			// task r8-tooltip-infra pilot — the family carrier replays gt6.tooltip.boiler.* via GT6Tooltips;
-			// task r8-tooltip-boiler-tank — the per-row constants of the :98-:101 numeric rows ride the
+			// task tooltip-infra pilot — the family carrier replays gt6.tooltip.boiler.* via GT6Tooltips;
+			// task tooltip-boiler-tank — the per-row constants of the :98-:101 numeric rows ride the
 			// positional slots: [in = mOutput/STEAM_PER_EU, out = mOutput, cap = mOutput*10000] (the
 			// upstream readFromNBT :77-:78 shape — the raw loader value ×STEAM_PER_EU is mOutput)
 			ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
@@ -249,7 +249,7 @@ public final class GT6Boilers {
 	}
 
 	/**
-	 * The boiler-family paint-tint walker (task r3-world-tint-render-type, the C5
+	 * The boiler-family paint-tint walker (task world-tint-render-type, the C5
 	 * clean-up): all 26 boiler tank blocks — every upstream row carries NBT_MATERIAL
 	 * (Loader :553-579) and the shared datagen model carries tintindex 0 since this
 	 * card, so the family joins the baked world tint + the inventory ItemColor halves.
@@ -302,7 +302,7 @@ public final class GT6Boilers {
 		}
 
 		/**
-		 * The row material (task r3-world-tint-render-type, the C5 clean-up) — the
+		 * The row material (task world-tint-render-type, the C5 clean-up) — the
 		 * NBT_MATERIAL every upstream boiler row carries (Loader :553-579); the colour
 		 * source the common {@code GTBasicMachineBlock.materialOf} dispatch hands the paint
 		 * tint (the 43f48149b burning-box form). The lazy supplier resolves against
@@ -312,7 +312,7 @@ public final class GT6Boilers {
 			return mRow.material().mat().get();
 		}
 
-		/** The composed boiler name (task p20-i18n-compose-rows): the {@link GT6Boilers#displayOf} carrier. */
+		/** The composed boiler name (task i18n-compose-rows): the {@link GT6Boilers#displayOf} carrier. */
 		@Override
 		public net.minecraft.network.chat.MutableComponent getName() {
 			return displayOf(mRow);
@@ -326,7 +326,7 @@ public final class GT6Boilers {
 		@Override
 		public BlockState getStateForPlacement(BlockPlaceContext aContext) {
 			// the front (barometer face) TOWARDS the placer — the GT6PlacementFacing canon
-			// (task p28-singleblock-facing-canon)
+			// (task singleblock-facing-canon)
 			return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 		}
 
@@ -411,7 +411,7 @@ public final class GT6Boilers {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-a-multiblock — the whole {@link #ITEMS_BY_PATH} family
+	 * The tab walk (task tabfix-a-multiblock — the whole {@link #ITEMS_BY_PATH} family
 	 * joins the multiblocks tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
 	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what delivers
 	 * this handler). JEI derives its item list from the tab display items.

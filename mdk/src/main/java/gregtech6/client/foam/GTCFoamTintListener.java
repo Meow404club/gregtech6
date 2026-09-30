@@ -20,7 +20,7 @@ import gregtech6.tileentity.foam.GT6CFoamBlockEntity;
 
 /**
  * The client-side BlockColor wiring of the C-Foam block family (task
- * p26-c-foam-block-family, the spec_rulings.ruling_color_dim tint leg) — the P25
+ * c-foam-block-family, the spec_rulings.ruling_color_dim tint leg) — the P25
  * {@code GTPipeFoamClientListener} shape (card-local {@code @EventBusSubscriber},
  * Dist.CLIENT, no GTClientHandlers touch).
  *

@@ -26,7 +26,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.item.GT6Circuits;
 
 /**
- * The Implosion Compressor pour offline acceptance (task p31-implosion): the 4-tier
+ * The Implosion Compressor pour offline acceptance (task implosion): the 4-tier
  * transcription of Loader_Recipes_Other.java:709-764 (the :711-714 template arms —
  * counts, selector configs, output prefixes, eUt 0 / duration 256), the group walk
  * (ANY.Diamond→DiamondIndustrial, the identity groups, the :758 singles), the

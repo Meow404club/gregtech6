@@ -13,7 +13,7 @@ import gregapi.data.TD;
 import gregtech6.recipes.GT6RecipeMaps;
 
 /**
- * The p29-w2-energy-types-5tier ③ TU supply dynamics (the OFFLINE half, the W1
+ * The w2-energy-types-5tier ③ TU supply dynamics (the OFFLINE half, the W1
  * retained-vs-reset 数值自洽 method — assertions describe BEHAVIOR, never a type
  * attribution):
  *

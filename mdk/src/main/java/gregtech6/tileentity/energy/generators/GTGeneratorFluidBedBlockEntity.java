@@ -22,7 +22,7 @@ import gregtech6.recipes.RecipeMap;
 import gregtech6.tileentity.attachment.GTTapBlockEntity;
 
 /**
- * 1.20.1 counterpart of the GT6 Fluidized Bed Burning Box — task p13-burning-box-family
+ * 1.20.1 counterpart of the GT6 Fluidized Bed Burning Box — task burning-box-family
  * spec ④, ported from gregtech/tileentity/energy/generators/MultiTileEntityGeneratorFluidBed.java
  * (:65-305): the FM.FluidBed ("gt.recipe.fuels.fluidbed") dust+calcite HU source —
  * {@code mRecipes = FM.FluidBed} (:72, MIN=2: one ITEM and one FLUID input per row).

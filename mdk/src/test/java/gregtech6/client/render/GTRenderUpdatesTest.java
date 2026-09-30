@@ -65,7 +65,7 @@ public class GTRenderUpdatesTest extends GTOfflineRenderTestBase {
 	 * RenderBE binds a real BET over the vanilla stone state — the supplier is stored,
 	 * never invoked. The BET registry needs its write window reopened after an FML boot
 	 * (the GTOfflineTestBase.unfreezeBlockEntityTypeRegistry mirror, task
-	 * p15-m4-test-infra-2).
+	 * m4-test-infra-2).
 	 */
 	static BlockEntityType<RenderBE> sRenderType;
 
@@ -203,7 +203,7 @@ public class GTRenderUpdatesTest extends GTOfflineRenderTestBase {
 
 		RenderBE(List<String> aTimeline) {
 			// real BET + state: the 21.1 ctor validates the pair, and the server branch
-			// uses the state as the blockEvent payload (task p15-m4-test-infra-2).
+			// uses the state as the blockEvent payload (task m4-test-infra-2).
 			super(sRenderType, BlockPos.ZERO, Blocks.STONE.defaultBlockState());
 			mTimeline = aTimeline;
 		}

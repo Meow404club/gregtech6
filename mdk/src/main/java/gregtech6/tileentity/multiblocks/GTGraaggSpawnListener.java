@@ -7,7 +7,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 /**
- * The GAME-bus listener of the Von da Graagg spawn suppression (task p31-graagg) —
+ * The GAME-bus listener of the Von da Graagg spawn suppression (task graagg) —
  * the first shared server-side main-bus listener of this repo (the
  * GTWrenchHighlightListener is the client-only FORGE-bus precedent; the annotation
  * without a bus clause rides the game bus on both loaders: 1.20.1 the annotation

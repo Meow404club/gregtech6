@@ -12,7 +12,7 @@ import gregtech6.util.UT6;
 
 /**
  * The redstone selector cover — 1.20.1 port of gregapi/cover/covers/CoverSelectorRed
- * stone.java:36-79 (task p34-covers-gameplay-10; upstream item id 1007 "Redstone
+ * stone.java:36-79 (task covers-gameplay-10; upstream item id 1007 "Redstone
  * Selector"). The host's mode dial BECOMES the redstone signal on the covered face:
  * placement (:40-43), chunk load (:45-48) and block updates (:50-52) write the face's
  * incoming redstone ({@code getRedstoneIncoming}, the ICoverableTE exit) into the dial

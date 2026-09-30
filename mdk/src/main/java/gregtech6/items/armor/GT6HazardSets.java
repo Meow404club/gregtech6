@@ -15,7 +15,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * The GT6 hazard full-set judgment seam — task p29-w5-t8-armor-24 spec ②/③, the ONLY
+ * The GT6 hazard full-set judgment seam — task w5-t8-armor-24 spec ②/③, the ONLY
  * public seam of the armor card (the SPEC boundary: future hazard-damage-source cards
  * CONSUME this API, they do not modify it).
  *

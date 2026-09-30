@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregtech6.registry.GT6Rails;
 
 /**
- * The Road Stripe (task p35-rails-31-blocks) — the upstream {@code BlockRailRoad} single
+ * The Road Stripe (task rails-31-blocks) — the upstream {@code BlockRailRoad} single
  * block (gregtech/blocks/BlockRailRoad.java), the unconditional booster: the onMinecartPass
  * (:100-115) accelerates with NO redstone gate, the power-propagation chain is killed
  * (func_150057_a :51-59 returns F, func_150048_a :72-74 NO-OP) and the placement face

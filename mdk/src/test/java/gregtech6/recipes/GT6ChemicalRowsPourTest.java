@@ -26,7 +26,7 @@ import net.minecraft.world.level.material.Fluids;
 import gregtech6.registry.GT6Distillation;
 
 /**
- * The p29-w4-f1-chemicals true-row pour test (the GT6HeatSmelterSmokeRowsPourTest fixture
+ * The w4-f1-chemicals true-row pour test (the GT6HeatSmelterSmokeRowsPourTest fixture
  * posture): the FOUR data/gt6/recipe_maps JSON files this card ships (steamcracking /
  * catalyticcracking / gas_fuels / burn) are read VERBATIM off the classpath and poured
  * through the real {@link GT6RecipeMapJsonLoader} seam — the smoke rows are GONE, the

@@ -17,7 +17,7 @@ import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The small-ore (single-block scatter) worldgen constant table (task p30-w6-small-ore-datagen).
+ * The small-ore (single-block scatter) worldgen constant table (task w6-small-ore-datagen).
  * Pure data — offline-safe by construction (suppliers + ResourceKey interns only, the
  * {@link GT6OreBlocks#WORLDGEN_ORES} posture); the datagen band (GT6WorldgenDatagen ore
  * band) and the offline parity test both consume this class.
@@ -25,7 +25,7 @@ import gregtech6.registry.GTMaterialItems;
  * <p><b>The 115-row table</b> is the upstream small-ore universe verbatim: the 53
  * always-on {@code WorldgenOresSmall} rows (Loader_Worldgen.java:800-852) + the
  * {@code !mHidden} nikolite row (:875) + the RANDOM_SMALL_GEM_ORE pool loop (:877-878,
- * one row per flagged material — 61 rows, task r7-b-gem-pool-extension). Per-row fields
+ * one row per flagged material — 61 rows, task b-gem-pool-extension). Per-row fields
  * = upstream ctor order
  * (name, minY, maxY, amount, material) plus the vanilla-dimension projection of the
  * row's GEN_* flag list ({@code dims} — GEN_OVERWORLD/GEN_NETHER/GEN_END; the
@@ -68,11 +68,11 @@ import gregtech6.registry.GTMaterialItems;
  * 1.7.10 nether is 128 tall; a higher band would be dead attempts, distribution
  * unchanged), overworld/end bands fit the modern heights as-is (max 250 < 256/319).
  *
- * <p><b>The deep-band mirror face</b> (task r6-c2-deep-band): a selected subset
+ * <p><b>The deep-band mirror face</b> (task c2-deep-band): a selected subset
  * ({@link #DEEP_MIRROR_TAILS}) grows a SECOND, placed-only overworld placement whose band
  * is the upstream band shifted into the modern deepslate band ({@link #DEEP_SHIFT}) — the
  * upstream mNoDeep deep-slate protection layer semantics (WorldgenStoneLayers.java:77),
- * filling the y&lt;0 content vacuum that the r6-32 de-vanilla option would open.
+ * filling the y&lt;0 content vacuum that the #32 de-vanilla option would open.
  */
 public final class GTOreWorldgen {
 
@@ -163,7 +163,7 @@ public final class GTOreWorldgen {
         row("ore.small.ancientdebris",  5,  90, 16, () -> MT.AncientDebris          , Dim.NETHER),                          // :852 — placement-gated
         // -- :875, the !mHidden closer --------------------------------------------------------------
         row("ore.small.nikolite"    ,  10,  40,  4, () -> MT.Nikolite               , Dim.OVERWORLD, Dim.NETHER, Dim.END),  // :875
-        // -- :877-878, the RANDOM_SMALL_GEM_ORE pool loop (task r7-b-gem-pool-extension) ------------
+        // -- :877-878, the RANDOM_SMALL_GEM_ORE pool loop (task b-gem-pool-extension) ------------
         // the upstream loop walks the whole flagged pool with no axis filter and creates
         // `WorldgenOresSmall("ore.small."+mNameInternal.toLowerCase(), T, 5, 250, 1, tGem,
         // GEN_GEMS)` per member — 61 rows (48 factory members + 13 inline flags), all
@@ -413,7 +413,7 @@ public final class GTOreWorldgen {
         throw new IllegalArgumentException("not an ore family snake: " + aSnake);
     }
 
-    // ---------------------------------------------------------------- deep-band mirror face (task r6-c2-deep-band)
+    // ---------------------------------------------------------------- deep-band mirror face (task c2-deep-band)
 
     /**
      * The deep-band mirror shift: a mirrored row generates a SECOND placement whose band
@@ -429,7 +429,7 @@ public final class GTOreWorldgen {
     public static final int DEEP_SHIFT = 64;
 
     /**
-     * The deep-band mirror selection (task r6-c2-deep-band spec ①), the row TAILS that
+     * The deep-band mirror selection (task c2-deep-band spec ①), the row TAILS that
      * grow a {@code ore_small_deep} placement. The card rule: overworld rows whose upstream
      * band sits in the upstream LOWER half ({@code maxY <= 64}) AND whose material family
      * is a major METAL ORE or GEM — the depth counterparts of what a 1.7.10 player met in

@@ -1,6 +1,6 @@
 /**
  * Census and representative-row assertions for the electric-wire data table (task
- * p9-wire-family-w1 spec ⑦). The table ({@link GTWireSpecs}) is the direct transcription of
+ * wire-family-w1 spec ⑦). The table ({@link GTWireSpecs}) is the direct transcription of
  * upstream addElectricWires (MultiTileEntityWireElectric.java:71-109) and the 30-material
  * registration loop (Loader_MultiTileEntities.java:1914-1950); this test pins the 620 count
  * (28 cable rows x 21 + 2 pure-wire rows x 16), the CS.java:148-154 voltage table, one fully
@@ -189,7 +189,7 @@ public class GTWireSpecsCensusTest {
 
     @Test
     public void displayNamesComposeTheWireTemplates() {
-        // task p20-i18n-compose-wires: the pre-installed full strings ("1x Tin Wire" &co)
+        // task i18n-compose-wires: the pre-installed full strings ("1x Tin Wire" &co)
         // became the GTWireBlock.displayNameOf composition — "%sx %s %s" over (size,
         // material small unit, form unit). The REGISTRY names above stay untouched; the
         // en template wording lives in the provider, here the slot structure is the pin.
@@ -222,7 +222,7 @@ public class GTWireSpecsCensusTest {
     }
 
     // -------------------------------------------------------------------------
-    // the redstone family (task p10-wire-redstone-family, Loader:1893-1902)
+    // the redstone family (task wire-redstone-family, Loader:1893-1902)
     // -------------------------------------------------------------------------
 
     /** The upstream losses as the raw long divisions (MAX_RANGE = Integer.MAX_VALUE, ITileEntityRedstoneWire :32). */
@@ -287,7 +287,7 @@ public class GTWireSpecsCensusTest {
         assertEquals("cable_lumium", GTWireSpecs.registryName(GTWireSpecs.findRedstone("lumium", true)));
         // display: the size-less PLAIN template (upstream shows no multiplier on the
         // family); the bare Lumium wire takes the WIRELAMP form unit (Loader:1900)
-        // — task p20-i18n-compose-wires
+        // — task i18n-compose-wires
         TranslatableContents tWire = contents(GTWireBlock.displayNameOf(GTWireSpecs.findRedstone("red_alloy", false)));
         assertEquals(GTWireBlock.DISPLAY_PLAIN_KEY, tWire.getKey());
         assertEquals(2, tWire.getArgs().length, "material + form slots, NO size slot");
@@ -305,7 +305,7 @@ public class GTWireSpecsCensusTest {
     }
 
     // -------------------------------------------------------------------------
-    // the laser family (task p10-wire-laser-placeholder, Loader:1814-1815)
+    // the laser family (task wire-laser-placeholder, Loader:1814-1815)
     // -------------------------------------------------------------------------
 
     @Test

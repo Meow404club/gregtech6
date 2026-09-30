@@ -20,7 +20,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregapi.util.CruciblePhysics;
 
 /**
- * The crucible 8-material ladder census (task p29-w3-distill-crucible ③ — ACCEPTANCE ③,
+ * The crucible 8-material ladder census (task w3-distill-crucible ③ — ACCEPTANCE ③,
  * the OFFLINE half; the live half is the crucible_ladder RCON chain):
  * <ul>
  * <li>the eight rungs (the Loader :1270-1277 meta set 17302..17312 complete with the Steel
@@ -151,7 +151,7 @@ class GT6CrucibleLadderCensusTest {
 	}
 
 	/**
-	 * The census flag flip (task p35-crucible-wall-obtainability — the p34 verify found the
+	 * The census flag flip (task crucible-wall-obtainability — the p34 verify found the
 	 * eight dedicated wall blocks creative-only, the no-op-with-proof leftover): EVERY tier
 	 * is now OBTAINABLE, pinned per rung on both acquisition faces —
 	 * <ul>

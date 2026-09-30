@@ -20,7 +20,7 @@ import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 
 /**
- * Offline tests for task p31-machine-ladder — the machine-family material ladder over
+ * Offline tests for task machine-ladder — the machine-family material ladder over
  * the {@link GT6ToolLadder} seam (the DigLadderTest premise: the mod-Item wall keeps the
  * items out, the math rides vanilla stacks — the identity is item-agnostic, so the
  * stamped {@link Items#STICK} stands in for every family item; the CLASS faces pinned
@@ -104,7 +104,7 @@ public class MachineLadderTest {
 	}
 
 	/**
-	 * Task p38-issue6-tool-4layer-tint: the screwdriver/hammer four-pass tint — index 0 =
+	 * Task issue6-tool-4layer-tint: the screwdriver/hammer four-pass tint — index 0 =
 	 * the head (the primary, the Steel fallback), index 2 = the handle (the secondary,
 	 * the Spruce fallback), the overlays stay the -1 sentinel (the supersession of the
 	 * census-erratum "composed single, un-tinted" ruling; upstream GT_Tool_Screwdriver

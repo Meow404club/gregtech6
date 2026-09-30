@@ -24,7 +24,7 @@ import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
 
 /**
- * Offline boot + fixtures for the machines tests (task p4-machine-oven acceptance 1).
+ * Offline boot + fixtures for the machines tests (task machine-oven acceptance 1).
  * Every machine test class extends THIS one base — the class execution order is undefined,
  * and the vanilla registries must be bootstrapped before any ItemStack class initializes.
  *
@@ -61,7 +61,7 @@ public abstract class GTMachinesOfflineTestBase extends GTRecipesOfflineTestBase
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
-		unfreezeForIntrusiveHolders(); // task p34-machines-bumblelyzer-crucible — see the method doc
+		unfreezeForIntrusiveHolders(); // task machines-bumblelyzer-crucible — see the method doc
 		// offline holders avoid the RegistryObject.get() path of the runtime factory
 		@SuppressWarnings("unchecked")
 		BlockEntityType<TileEntityOven>[] tHolder = (BlockEntityType<TileEntityOven>[]) new BlockEntityType<?>[1];
@@ -72,7 +72,7 @@ public abstract class GTMachinesOfflineTestBase extends GTRecipesOfflineTestBase
 	}
 
 	/**
-	 * The offline registry-open face (task p34-machines-bumblelyzer-crucible): the
+	 * The offline registry-open face (task machines-bumblelyzer-crucible): the
 	 * {@code BlockEntityType.Builder.build} (:342) writes an INTRUSIVE HOLDER
 	 * (MappedRegistry.createIntrusiveHolder :384 → validateWrite :111), which the frozen
 	 * registry refuses — the {@code Registry is already frozen} initializationError. Whether

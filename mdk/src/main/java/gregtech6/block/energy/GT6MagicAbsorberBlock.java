@@ -21,7 +21,7 @@ import gregtech6.block.GTEntityBlock;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Magic Field Absorber block carrier (task p32-magic-absorber) — the dynamo-carrier
+ * The Magic Field Absorber block carrier (task magic-absorber) — the dynamo-carrier
  * form over the SIX-WAY facing (upstream :128-129 getValidSides = SIDES_BOTTOM_HORIZONTAL
  * with the default {@code getDefaultSide() = SIDE_BOTTOM}): the FACING face is the OUTPUT
  * face (upstream isEnergyEmittingTo :117 {@code aSide == mFacing}), the TOP face is the
@@ -42,7 +42,7 @@ public class GT6MagicAbsorberBlock extends GTEntityBlock {
 	private final Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> mTickerType;
 
 	/**
-	 * The block's upstream {@code NBT_MATERIAL} column (task p38-c2-controller-tint — the
+	 * The block's upstream {@code NBT_MATERIAL} column (task c2-controller-tint — the
 	 * tint colour source): the :1005 registration row carries NBT_MATERIAL MT.Pd. Null
 	 * = the white no-tint identity (upstream UNCOLORED CS.java:327).
 	 */
@@ -54,7 +54,7 @@ public class GT6MagicAbsorberBlock extends GTEntityBlock {
 		this(aProperties, aTickerType, null);
 	}
 
-	/** The material-carrier form (task p38-c2-controller-tint): the row feeds the tint colour source. */
+	/** The material-carrier form (task c2-controller-tint): the row feeds the tint colour source. */
 	public GT6MagicAbsorberBlock(Properties aProperties,
 			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType,
 			@Nullable Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
@@ -74,7 +74,7 @@ public class GT6MagicAbsorberBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The absorber material dispatch (task p38-c2-controller-tint, the
+	 * The absorber material dispatch (task c2-controller-tint, the
 	 * {@code GTMultiBlockPartBlock.materialOf} mirror shape): only the carrier block
 	 * resolves a material — every other block is null here.
 	 */

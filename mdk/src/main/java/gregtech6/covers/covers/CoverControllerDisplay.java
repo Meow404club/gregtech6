@@ -10,7 +10,7 @@ import gregtech6.tileentity.machines.ITileEntitySwitchableOnOff;
 
 /**
  * The machine status display cover — 1.20.1 port of gregapi/cover/covers/
- * CoverControllerDisplay.java (:43-124, task p35-covers-display-scale-6; upstream
+ * CoverControllerDisplay.java (:43-124, task covers-display-scale-6; upstream
  * MultiItemTechnological.java:61 meta 1002 "Machine Status Display Cover", dump
  * 状态显示覆盖板). Shows a machine's four running states as indicator lamps AND carries
  * an ON/OFF switch face.

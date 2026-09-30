@@ -25,7 +25,7 @@ import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The machine-input material-tag fallback (task p25-tag-input-machine-fallback): the
+ * The machine-input material-tag fallback (task tag-input-machine-fallback): the
  * three acceptance arms of the card plus the two rulings seams.
  *
  * <ul>

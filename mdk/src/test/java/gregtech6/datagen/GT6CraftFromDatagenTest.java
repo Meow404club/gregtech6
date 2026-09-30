@@ -1,5 +1,5 @@
 /**
- * The CraftFrom band pin test (task p36-craftfrom-plategem acceptance ③, coordinator
+ * The CraftFrom band pin test (task craftfrom-plategem acceptance ③, coordinator
  * ruling A on the declared口径 conflict — the EMPIRICAL caliber): the row-count pins are
  * the measured item-truth numbers written dead (11 / 205 / 109x5 / 201 = 962), the
  * universe pins are SET assertions against the live registrationOrder faces (the
@@ -14,19 +14,19 @@
  * misread the ForceTest quartet pins as the full set — the p8 census "PlateGem 203"
  * and the runData walk both give the ≈205/109 faces; this test pins THOSE.
  *
- * <p>task p37-craftfrom-stick extension (the same family law): the stick/stickLong
+ * <p>task craftfrom-stick extension (the same family law): the stick/stickLong
  * rows (Loader_OreProcessing.java:156-163, 1586 rows = 109x3 stickLong tiers +
  * 731 stickLong split + 201 regular gem + 109x3 stick tiers), the universe pins
  * against the live conditioned prefix faces, the :156-163 amount pins, and the
  * three-grid identity faces (["sf"," X"] / ["s "," X"] / ["s ","fX"]).
  *
- * <p>task p37-craftfrom-foil extension (the coordinator fine-wire-batch ruling):
+ * <p>task craftfrom-foil extension (the coordinator fine-wire-batch ruling):
  * the upstream foil-family OUTPUT face is the EMPTY set — foil is only the :168
  * INPUT — so the batch = :168 foil2wireFine + :169 plate2wire (219 measured foil
  * rows + 0 wire rows, the GT6RecipesWiremill seam), the single-row grid pins
  * (["Xx"] / ["Px"]), the wire-cutter tag, and the count=1 key-omission identity.
  *
- * <p>task p37-craftfrom-rockgt extension (the rockGt batch): :148 is the ONLY
+ * <p>task craftfrom-rockgt extension (the rockGt batch): :148 is the ONLY
  * rockGt statement of the 47-statement panel (:149-150 output gearGt from stick —
  * not this family, the residual closeout card owns them) — the single
  * {"XYX","YfY","XYX"} gear row carrying the FIRST POSITIVE material condition
@@ -36,7 +36,7 @@
  * block-path OP.stone face, keyed on the family STONE-variant block item) rides
  * the declared carrier deviation.
  *
- * <p>task p37-craftfrom-residual extension (the panel closeout — the 28 residual
+ * <p>task craftfrom-residual extension (the panel closeout — the 28 residual
  * statements in five shaped bands + the shapeless panel): the :149 gear twin rides
  * the SAME universe as the :148 rockGt row (the equality pin), :150 folds
  * +SMITHABLE, the casingMachine/cableGt/plank faces pour ZERO (no
@@ -244,7 +244,7 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
     }
 
     // ------------------------------------------------------------------
-    // task p37-craftfrom-stick — the stick/stickLong family
+    // task craftfrom-stick — the stick/stickLong family
     // (Loader_OreProcessing.java:156-163, the coordinator-approved boundary:
     // BOTH stick* output prefixes, the plategem companion shape)
     // ------------------------------------------------------------------
@@ -353,7 +353,7 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
     }
 
     // ------------------------------------------------------------------
-    // task p37-craftfrom-foil — the fine-wire batch (the coordinator ruling:
+    // task craftfrom-foil — the fine-wire batch (the coordinator ruling:
     // the upstream foil-family OUTPUT face is the EMPTY set — foil is only
     // the :168 INPUT — so the batch = :168 foil2wireFine + :169 plate2wire,
     // the two fine-wire/wire-domain rows of the residual pool)
@@ -442,7 +442,7 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
     }
 
     // ------------------------------------------------------------------
-    // task p37-craftfrom-rockgt — the rockGt batch (the :148 gear row, the
+    // task craftfrom-rockgt — the rockGt batch (the :148 gear row, the
     // ONLY rockGt statement of the 47-statement panel; :149-150 output
     // gearGt from stick — not this family, the residual closeout card owns
     // them)
@@ -516,7 +516,7 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
     }
 
     // ------------------------------------------------------------------
-    // task p37-craftfrom-residual — the 28 residual statements (the panel
+    // task craftfrom-residual — the 28 residual statements (the panel
     // closeout): five shaped bands + the shapeless panel
     // ------------------------------------------------------------------
 

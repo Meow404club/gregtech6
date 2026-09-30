@@ -22,7 +22,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
- * The bumblebee domain pins (task p33-bees-lv3-a-items acceptance ①): the meta-decimal
+ * The bumblebee domain pins (task bees-lv3-a-items acceptance ①): the meta-decimal
  * code round-trip (MultiItemBumbles.java:512), the mutation ladder distribution
  * (:459-478), the gt.bumble NBT semantics (IItemBumbleBee.java:109-184) and the 8-face
  * registration containment (the FML-booted leg asserts for real, the offline bare-JVM

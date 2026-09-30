@@ -15,7 +15,7 @@ import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 
 /**
- * The material-ladder math shared by the dig-family tools (task p31-dig-ladder) —
+ * The material-ladder math shared by the dig-family tools (task dig-ladder) —
  * ONE parameterized face over the identity seam instead of seven copies of the
  * crowbar's per-class statics. Every upstream formula (MultiItemTool.java, the
  * research.p31-metatool-ladder pins) reads the stack's {@link GT6ToolStats#KEY}
@@ -172,7 +172,7 @@ public final class GT6ToolLadder {
 		return 0xFF000000 | (tMaterial.mRGBaSolid[0] << 16) | (tMaterial.mRGBaSolid[1] << 8) | tMaterial.mRGBaSolid[2];
 	}
 
-	// ---------------------- the blade-family increments (task p31-blade-ladder) ----------------------
+	// ---------------------- the blade-family increments (task blade-ladder) ----------------------
 	// Merged per the S31-3 alignment: the DIG surface above stays byte-identical; the
 	// blade family adds the attack fold, the secondary (handle) face and the family
 	// tint dispatch — additive only, no dig signature touched.
@@ -223,7 +223,7 @@ public final class GT6ToolLadder {
 	}
 
 	/**
-	 * The head+handle four-pass tint (task p38-issue6-tool-4layer-tint): the screwdriver
+	 * The head+handle four-pass tint (task issue6-tool-4layer-tint): the screwdriver
 	 * and hard hammer — tint index 0 = the head pass (the PRIMARY, the Steel fallback
 	 * verbatim, GT_Tool_Screwdriver.getRGBa :120-122), tint index 2 = the handle pass
 	 * (the SECONDARY, the Spruce fallback, the same row / GT_Tool_HardHammer.getRGBa

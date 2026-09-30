@@ -1,5 +1,5 @@
 /**
- * Offline test for task p12-jei-integration: the producer half of the lang-key reconciliation
+ * Offline test for task jei-integration: the producer half of the lang-key reconciliation
  * (acceptance b — "EnUs lang key 对账断言").
  *
  * <p>GT6JeiPlugin.registerRecipes hangs JEI's built-in ingredient info page on the coke oven

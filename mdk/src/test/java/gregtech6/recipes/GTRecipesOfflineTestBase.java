@@ -66,7 +66,7 @@ public abstract class GTRecipesOfflineTestBase {
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
-		// the p15-m4-test-infra remedy (the GTMultiBlocksOfflineTestBase form, verbatim): on
+		// the m4-test-infra remedy (the GTMultiBlocksOfflineTestBase form, verbatim): on
 		// the 1.21.1 leg the bootstrap freeze lands MID-SUITE (class-order lottery —
 		// whichever fixture-BET class first runs its @BeforeAll after the freeze dies at
 		// BlockEntityType's intrusive-holder init, "Registry is already frozen"). Reopen the

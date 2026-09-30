@@ -14,7 +14,7 @@ import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
 
 /**
- * Acceptance 1 (task p4-machine-oven): the recipe consumption contract — findRecipe only
+ * Acceptance 1 (task machine-oven): the recipe consumption contract — findRecipe only
  * LOOKS UP, the machine consumes through Recipe.isRecipeInputEqual(true, false, ...) in the
  * two-stage checkRecipe (upstream MultiTileEntityBasicMachine.java:725/:738), and canOutput
  * (:620-668) keeps the output blockage semantics.

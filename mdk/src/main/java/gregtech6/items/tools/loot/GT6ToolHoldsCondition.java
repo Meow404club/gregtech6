@@ -19,7 +19,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
 /**
- * The "main hand holds THIS tool" loot condition — task p29-w5-t1-dig-six shared
+ * The "main hand holds THIS tool" loot condition — task w5-t1-dig-six shared
  * infrastructure ①a (the wave ruling decisions.p30-w5-split-rulings: the drop-conversion
  * standard seam rides the Forge {@code IGlobalLootModifier} chain, each per-tool JSON
  * gated by THIS condition so the conversion fires only when the breaking tool is the

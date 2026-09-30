@@ -9,7 +9,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 
 /**
- * One material-scoped bedrock-ore block (task p31-bedrock-ore-worldgen): the per-pair
+ * One material-scoped bedrock-ore block (task bedrock-ore-worldgen): the per-pair
  * split of the upstream single-id pair {@code BlocksGT.oreBedrock} / {@code oreSmallBedrock}
  * (Loader_Ores.java:44-45 — one meta block each, meta = material). Deliberately NOT a
  * {@link GTOreBlock}: the custom ore bake dispatch (GTOreClientListener PARAMS table over

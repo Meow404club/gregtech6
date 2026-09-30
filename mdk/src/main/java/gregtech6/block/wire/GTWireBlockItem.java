@@ -12,14 +12,14 @@ import gregtech6.tileentity.connectors.GTWireBlockEntity;
 
 /**
  * The electric-wire BlockItem — the onPlaced face-direction carrier, the GTFluidPipeBlockItem
- * twin (task p4-pipe-flow-control spec ② ruling): {@code placeBlock} is the only vanilla
+ * twin (task pipe-flow-control spec ② ruling): {@code placeBlock} is the only vanilla
  * placement hook where the BE already exists (super placed the block) while the
  * {@link BlockPlaceContext} is still in hand, so the clicked face survives to
  * {@link GTWireBlockEntity#onPlaced(byte)} (the upstream TileEntityBase09Connector.onPlaced
  * :82-96 support-face connect + symmetric back-connect). Deliberately NOT a BE.onLoad hook —
  * onLoad replays on every chunk load, which would resurrect connections the user tore down.
  *
- * <p>Task r8-tooltip-wire-pipe-sensor moves the parent to the machine carrier
+ * <p>Task tooltip-wire-pipe-sensor moves the parent to the machine carrier
  * {@link GT6MachineBlockItem} (itself a {@code GTComposedNameItem}) so the family row tables
  * replay off the registration-site family key: {@code wire} / the {@code wire_contact}
  * sibling (the bare shock-flagged rows), {@code wire_redstone} / {@code wire_laser}

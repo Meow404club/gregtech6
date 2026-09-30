@@ -45,7 +45,7 @@ import gregtech6.registry.GTMaterialItems;
 
 /**
  * The Matter Replicator map — the port of upstream
- * {@code gregapi/recipes/maps/RecipeMapReplicator.java} (task p32-qu-scanner-replicator,
+ * {@code gregapi/recipes/maps/RecipeMapReplicator.java} (task qu-scanner-replicator,
  * the GT6RecipeMapCanner judged form: the DYNAMIC replication semantics port IN FULL over
  * the static rows — the static stock pours through the datapack seam and the loaders
  * independently of this arm).

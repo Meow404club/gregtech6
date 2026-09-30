@@ -26,7 +26,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.energy.GT6DynamoBlockEntity;
 
 /**
- * The EU-bridge converter offline tests (task p29-w4-eu-bridge) — the EU→{HU,KU,RU}
+ * The EU-bridge converter offline tests (task w4-eu-bridge) — the EU→{HU,KU,RU}
  * machines over the shared {@link GT6DynamoBlockEntity} core with the input arm re-typed
  * to EU. The acceptance arms:
  * <ul>

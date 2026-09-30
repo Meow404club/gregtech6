@@ -40,7 +40,7 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMultiBlocks;
 
 /**
- * The Welder wall rows (task p29-w3-nbtdesign-parts ④) — the per-wall
+ * The Welder wall rows (task w3-nbtdesign-parts ④) — the per-wall
  * {@code RM.Welder.addRecipe2(F, 16, 256, OP.plate.mat(aMat, 4), ST.tag(10), wall)} rows
  * of Loader_MultiTileEntities.java:1143-1153 and the dense
  * {@code addRecipe2(F, 64, 512, OP.plateDense.mat(aMat, 4), ST.tag(10), dense)} rows of
@@ -58,10 +58,10 @@ import gregtech6.registry.GTMultiBlocks;
  * items is registered (incl. {@code plate[_dense]_steel_galvanized}), so all thirty rows
  * pour. (The earlier "Galvanized skips, 28 of 30" note was WRONG twice over — the plate
  * items always existed, and the five MT FIELD short-form names in the material switch
- * silently dropped their rows; both corrected by task p36-recipes-obtainability, see
+ * silently dropped their rows; both corrected by task recipes-obtainability, see
  * {@link #materialNameOf}.)
  *
- * <p>task p35-crucible-wall-obtainability — the 8 DEDICATED crucible-wall rows append
+ * <p>task crucible-wall-obtainability — the 8 DEDICATED crucible-wall rows append
  * ({@code dense=false}, the wall EUt/duration): the dedicated {@code crucible_*_wall}
  * blocks are the port-side twins of the metalwall items :1143-1153 recipes (the
  * GTCrucibleWallBlock deviation — the controllers reference the dedicated blocks, the
@@ -169,7 +169,7 @@ public final class GT6RecipesWelder {
 	/**
 	 * The row material's registry key ({@code mNameInternal}, the form
 	 * {@link #sMaterialResolver} = {@code OreDictMaterial.get} resolves) — a pure switch
-	 * over the eleven wall materials + the eight crucible twins. Task p36-recipes-
+	 * over the eleven wall materials + the eight crucible twins. Task recipes-
 	 * obtainability FIX: five entries rode the MT FIELD short forms (Pb/Ti/W/Ta4HfC5/Ad),
 	 * which are NOT the registered names (Lead/Titanium/Tungsten/TantalumHafniumCarbide/
 	 * Adamantium — MT.java:1127/:1003/:1109/:2482/:1671, the :120-121 sanitize strips

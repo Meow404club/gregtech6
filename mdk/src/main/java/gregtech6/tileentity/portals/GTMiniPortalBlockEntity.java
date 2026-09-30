@@ -32,7 +32,7 @@ import gregtech6.util.UT6;
 /**
  * 1.20.1 counterpart of the upstream miniature portal base
  * gregtech/tileentity/portals/MultiTileEntityMiniPortal.java (520 lines) — the
- * cross-dimension relay block (task p35-portals-mini-nether-end, the POC-concluded
+ * cross-dimension relay block (task portals-mini-nether-end, the POC-concluded
  * direct translation of state research.p35-r-portals-crossdim-sync).
  *
  * <p>Port scope (the POC "chosen" mechanism, verbatim semantics):

@@ -18,7 +18,7 @@ import gregtech6.jade.GT6MachineProvider;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The P29 W2 energy-type census guard (task p29-w2-energy-types-5tier ③) — an
+ * The P29 W2 energy-type census guard (task w2-energy-types-5tier ③) — an
  * ASSERTION card, not a definition card (decisions.p29-w2-split-rulings): the four
  * exotic types ALREADY live in the root gregapi (TD.java:109/:116/:123/:144 —
  * CRYO/LIGHT/MAGNETIC/TIME), the source-block dial

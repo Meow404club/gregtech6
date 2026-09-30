@@ -22,7 +22,7 @@ import gregtech6.block.energy.GT6BatteryBoxBlock;
 import gregtech6.tileentity.energy.GT6BatteryBoxBlockEntity;
 
 /**
- * The Crystal Charger family registration (task p35-energy-tail-machines) — the twenty
+ * The Crystal Charger family registration (task energy-tail-machines) — the twenty
  * rows of the upstream declared loop verbatim (Loader_MultiTileEntities.java:969-972,
  * {@code for (int i = 0; i < 10; i++)}): the small chargers 10130-10139 (4 slots) and
  * the Large chargers 10140-10149 (16 slots), every row NBT_INPUT = NBT_OUTPUT = V[0..9],
@@ -122,7 +122,7 @@ public final class GT6CrystalChargers {
 	}
 
 	/**
-	 * The tint-walk array (task r8-tex-composite-family — the
+	 * The tint-walk array (task tex-composite-family — the
 	 * GT6ElectricTransformers.paintableBlockArray form): all twenty row blocks, every row
 	 * carries its NBT_MATERIAL casing column.
 	 */
@@ -156,7 +156,7 @@ public final class GT6CrystalChargers {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
+	 * The tab walk (task tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
 	 * joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
 	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
 	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display

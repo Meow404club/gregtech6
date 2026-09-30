@@ -127,7 +127,7 @@ public class GT6ReactorCore2x2Test extends GTOfflineTestBase {
 		return new TestCore(POS, Blocks.BRICKS.defaultBlockState());
 	}
 
-	/** r10-debt-break-drops — the GTEntityBlock drop probe reaches the rod carrier (upstream 05Inventories.breakBlock :153-171 would scatter the 4 rod slots). */
+	/** debt-break-drops — the GTEntityBlock drop probe reaches the rod carrier (upstream 05Inventories.breakBlock :153-171 would scatter the 4 rod slots). */
 	@Test
 	public void breakDropProbeReachesTheInventory() throws Exception {
 		TestCore tCore = core();

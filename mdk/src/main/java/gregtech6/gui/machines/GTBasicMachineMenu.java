@@ -46,7 +46,7 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
  * (:49) stays out. All outputs are setCanPut(F) → {@link OutputSlot}. The player inventory
  * binds at the standard 176x166 machine-panel offset 84.
  *
- * <p>Fluid display slots (task p16-machine-fluid-gui ②, the p8 pool item): the upstream
+ * <p>Fluid display slots (task machine-fluid-gui ②, the p8 pool item): the upstream
  * :267-268 pair of Slot_Render banks, one display slot per RecipeMap-declared tank —
  * mInputFluidCount inputs descending from (53,63) right-to-left, mOutputFluidCount outputs
  * ascending from (107,63) left-to-right, both wrapping upward every 3 ({@link
@@ -68,7 +68,7 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
  * -1. The server menu computes it live on every broadcastChanges poll; the client menu caches
  * it through set() and the screen reads {@link #getProgressBar()}.
  *
- * <p>Host parametrization (task p8-cokeoven-gui-menu ①): the menu talks to its backing
+ * <p>Host parametrization (task cokeoven-gui-menu ①): the menu talks to its backing
  * machine through the six-method {@link Host} interface instead of the hard
  * {@link TileEntityBasicMachine} type — the single-block machines keep their ctor (the
  * gui-domain adapter wraps their public face, the machine domain stays untouched) and the
@@ -95,7 +95,7 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 		 * addSlots switch :51-270 case selector). Default 1 = the exact shape every
 		 * pre-Canner family serves (the 1-in RM maps and the COKE_OVEN 1-in map), so the
 		 * multiblock Host implementor and the older fakes keep their byte-identical
-		 * single-input menu. Task p24-canner-machine R7: the parameterisation exists for
+		 * single-input menu. Task canner-machine R7: the parameterisation exists for
 		 * the RM.Canner 2/2 declaration (ContainerCommonBasicMachine.java:57-60 case 2),
 		 * the gui-domain adapter overrides with the machine's live mInputItemsCount.
 		 */
@@ -109,14 +109,14 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 		/** The mGUITexture = mRecipes.mGUIPath semantics (MultiTileEntityBasicMachine.java:114). */
 		String getGuiTexture();
 		/**
-		 * The :267 display bank — the input tanks, in tank order (task p16-machine-fluid-gui ②).
+		 * The :267 display bank — the input tanks, in tank order (task machine-fluid-gui ②).
 		 * Default-empty on purpose: the direct implementor (the multiblock base) and the test
 		 * fakes keep the p8 six-method shape and render zero display slots; the gui-domain
 		 * {@link #hostOf} adapter overrides this with the machine's live public mTanksInput.
 		 */
 		default FluidTankGT[] getFluidInputTanks() { return new FluidTankGT[0]; }
 		/**
-		 * The :268 display bank — the output tanks, in tank order (task p16-machine-fluid-gui ②).
+		 * The :268 display bank — the output tanks, in tank order (task machine-fluid-gui ②).
 		 * Default-empty, same reasoning as {@link #getFluidInputTanks()}.
 		 */
 		default FluidTankGT[] getFluidOutputTanks() { return new FluidTankGT[0]; }
@@ -146,7 +146,7 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 
 	/**
 	 * The display slots in menu order — the :267 input bank first, then the :268 output bank
-	 * (task p16-machine-fluid-gui ②); slot i of each bank is paired with tank i of the
+	 * (task machine-fluid-gui ②); slot i of each bank is paired with tank i of the
 	 * corresponding Host array (each {@link FluidDisplaySlot} carries its tank reference).
 	 */
 	private final List<FluidDisplaySlot> mFluidDisplaySlots = new ArrayList<>();
@@ -180,7 +180,7 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 		// and :57-60 (case 2), then N outputs, all outputs setCanPut(F). The R7 parameterisation
 		// rides the Host.getInputSlotCount() default 1: every pre-Canner family keeps the
 		// byte-identical single-input menu. The >=3 arm rides the faithful
-		// GT6MachineGuiLayout case table (task r8-gui-layout-descriptor — the extrapolation
+		// GT6MachineGuiLayout case table (task gui-layout-descriptor — the extrapolation
 		// WARNING below is retired for the menu path).
 		int tInputSlots = aHost.getInputSlotCount();
 		int tFluidInputs = aHost.getFluidInputTanks().length; // the y-arm input (upstream mInputFluidCount)
@@ -195,7 +195,7 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 		}
 		this.contentSlotCount = tInputSlots + tOutputs;
 		// upstream :267-268 — the Slot_Render fluid banks, one display slot per RM-declared tank,
-		// each paired 1:1 with its BE tank (task p16-machine-fluid-gui ②)
+		// each paired 1:1 with its BE tank (task machine-fluid-gui ②)
 		FluidTankGT[] tInTanks = aHost.getFluidInputTanks();
 		for (int i = 0; i < tInTanks.length; i++) {
 			FluidDisplaySlot tSlot = new FluidDisplaySlot(tInTanks[i], i, fluidDisplayPos(false, i), mDisplayContainer);
@@ -255,7 +255,7 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 	 * The fluid-aware input geometry — the upstream case selector needs BOTH counts
 	 * (ContainerCommonBasicMachine.java:51-156 reads mInputFluidCount for the y arms). The
 	 * &gt;=3 arm rides the faithful {@link GT6MachineGuiLayout#inputPositions} transcription,
-	 * clearing this class's own extrapolation WARNING debt (task r8-gui-layout-descriptor:
+	 * clearing this class's own extrapolation WARNING debt (task gui-layout-descriptor:
 	 * case-3 is x 17/35/53, not 35/53/71; case 4-6 ride the &gt;3 y arms, case 7+ the fixed
 	 * grids). The 0/1/2 arms stay the pinned 25-row form above BYTE-IDENTICAL — every served
 	 * map keeps its exact menu (all sit at mInputFluidCount ≤ 6, and the ≤2 shapes never
@@ -271,12 +271,12 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 	}
 
 	/**
-	 * The gui-domain adapter (task p8-cokeoven-gui-menu ①): wraps the single-block machine's
+	 * The gui-domain adapter (task cokeoven-gui-menu ①): wraps the single-block machine's
 	 * public face — getInventory :199 / getOutputSlotCount :208 / mSuccessful/mProgress/
 	 * mMaxProgress :107-113 / public final mRecipes :161 (mGUIPath) — so the machine domain
 	 * needs no gui knowledge (no implements, the file stays frozen for D3/M1). The p16 ②
 	 * overrides read the W1a public final tank arrays LIVE (same identity the fluid face
-	 * gates answer through), no snapshot. Public since task p26-mui-a-open-chain: the
+	 * gates answer through), no snapshot. Public since task mui-a-open-chain: the
 	 * machine-domain {@code buildUI} delegation (TileEntityBasicMachine →
 	 * GTBasicMachineMUI.buildPanel) adapts through it — the Host projection IS the
 	 * gui/machine seam, zero body change.
@@ -316,7 +316,7 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 	}
 
 	/**
-	 * The multiblock-machine factory path (task p8-cokeoven-gui-menu ①) — the cokeoven
+	 * The multiblock-machine factory path (task cokeoven-gui-menu ①) — the cokeoven
 	 * MenuType closure (GTBasicMachinesMenus) calls this: same BlockPos payload contract,
 	 * the resolve hard-checks {@link TileEntityBase10MultiBlockMachine} instead.
 	 */
@@ -356,7 +356,7 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 
 	/**
 	 * The three-state progress function over any Host — the static assertion face for the
-	 * RCON chain (no Player/Menu instance needed there, task p8-cokeoven-gui-menu ⑨).
+	 * RCON chain (no Player/Menu instance needed there, task cokeoven-gui-menu ⑨).
 	 */
 	public static int progressValue(Host aHost) {
 		if (aHost.isSuccessful()) {
@@ -425,7 +425,7 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 	}
 
 	/**
-	 * The fluid tank display slot (task p16-machine-fluid-gui ②, the upstream :267-268
+	 * The fluid tank display slot (task machine-fluid-gui ②, the upstream :267-268
 	 * Slot_Render): a {@link GTRenderSlot} — Slot_Holo(false,false,0), inert in every
 	 * direction — paired with its backing tank ({@link #tank}, the 1:1 slot-tank pairing the
 	 * menu test asserts and the pooled fluid-content rendering would read). The slot itself

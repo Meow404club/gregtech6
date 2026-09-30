@@ -24,7 +24,7 @@ import gregtech6.util.UT6;
 /**
  * The logistics wire — 1.20.1 counterpart of gregapi/tileentity/connectors/
  * MultiTileEntityWireLogistics.java (60 lines, "Logistics Wire", upstream meta id 24901
- * / category "Logistics", Loader_MultiTileEntities.java:1819), task p32-logistics-lv2.
+ * / category "Logistics", Loader_MultiTileEntities.java:1819), task logistics-lv2.
  * Upstream extended TileEntityBase10ConnectorRendered; this port mounts the same
  * {@link TileEntityBase09Connector} base the pipe and the wire family use (read-only
  * reuse, zero base-class changes) and implements the root {@link ITileEntityLogistics}
@@ -79,7 +79,7 @@ public class GTLogisticsWireBlockEntity extends TileEntityBase09Connector implem
 	}
 
 	// ---------------------------------------------------------------------------
-	// covers (task p33-logistics-covers-12 — the composition attachment, the pipe/Oven
+	// covers (task logistics-covers-12 — the composition attachment, the pipe/Oven
 	// precedent: the 12 logistics covers mount on the wire host, the ITileEntityLogistics
 	// placement-gate answer rides canLogistics(SIDE_ANY). Non-ticking BE — the cover tick
 	// pair rides nothing; the Core's BFS reads the covers straight off the wire member.)

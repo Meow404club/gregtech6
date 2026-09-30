@@ -3,7 +3,7 @@ package gregtech6.client.render;
 import net.minecraft.core.Direction;
 
 /**
- * The immutable flow-control render snapshot (task p4-pipe-flow-control spec ④) — the
+ * The immutable flow-control render snapshot (task pipe-flow-control spec ④) — the
  * {@link GTRenderSnapshot} record the pipe BE hands to the render thread through
  * {@code getModelData()}: one bit per face ({@code SBIT[side]}, the GT6 side order ==
  * {@code Direction.get3DDataValue()} order) telling the model where to bake the output

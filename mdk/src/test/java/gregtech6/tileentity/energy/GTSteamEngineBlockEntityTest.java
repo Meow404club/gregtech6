@@ -39,7 +39,7 @@ import gregtech6.registry.GT6Kinetics;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * GTSteamEngineBlockEntity offline tests (task p12-engine-steam acceptance a): the
+ * GTSteamEngineBlockEntity offline tests (task engine-steam acceptance a): the
  * whole-tank steam-to-KU conversion truth table (STEAM_PER_WATER 200 / STEAM_PER_EU 2 /
  * the ten-thousandths efficiency), the AC square wave (2-bit piston phase, the +/+/-/-
  * sign sequence, the hotter-engine period), the heat-state ramp (scale table, the :138
@@ -69,7 +69,7 @@ public class GTSteamEngineBlockEntityTest extends GTOfflineTestBase {
 		BlockEntityType<GTSteamEngineBlockEntity>[] tHolder = (BlockEntityType<GTSteamEngineBlockEntity>[]) new BlockEntityType<?>[1];
 		// OAK_STAIRS joins the valid set for the facingSyncFromState fixture (the vanilla
 		// stairs state carries the SAME HORIZONTAL_FACING property instance); 21.1 validates
-		// the type/state pair at the BE ctor (task p15-m4-test-infra-2).
+		// the type/state pair at the BE ctor (task m4-test-infra-2).
 		tHolder[0] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new GTSteamEngineBlockEntity(tHolder[0], aPos, aState), Blocks.STONE, Blocks.OAK_STAIRS).build(null);
 		sType = tHolder[0];
@@ -108,7 +108,7 @@ public class GTSteamEngineBlockEntityTest extends GTOfflineTestBase {
 		public byte lastSide = -1;
 
 		// 21.1 ctor validation: the fake binds a real BET over the vanilla stone state —
-		// the supplier is stored, never invoked (task p15-m4-test-infra-2).
+		// the supplier is stored, never invoked (task m4-test-infra-2).
 		static final BlockEntityType<CountingSink> FAKE_TYPE =
 				BlockEntityType.Builder.of((aPos, aState) -> new CountingSink(aPos), Blocks.STONE).build(null);
 
@@ -586,7 +586,7 @@ public class GTSteamEngineBlockEntityTest extends GTOfflineTestBase {
 		// the verbatim spot rows (Loader :584 / :591 / :597 / :599 / :612)
 		GT6Kinetics.SteamEngineRow tLead = GT6Kinetics.STEAM_ENGINES.get(0);
 		assertEquals("steam_engine_lead", tLead.path());
-		// the composed face (task p20-i18n-compose-rows): template replay to the old row wording
+		// the composed face (task i18n-compose-rows): template replay to the old row wording
 		assertEquals("Steam Engine (Lead)", "Steam Engine (%s)".replace("%s", tLead.matDisplay()));
 		assertFalse(tLead.strong(), "the normal ladder flag");
 		assertEquals("gt6.row.mat.lead", GT6Kinetics.steamMatUnitKey(tLead));

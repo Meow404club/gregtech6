@@ -40,7 +40,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.worldgen.GT6HiveFeature;
 
 /**
- * The Bumbliary breeding TE (task p33-bees-lv3-b-bumbliary) — the port of the upstream
+ * The Bumbliary breeding TE (task bees-lv3-b-bumbliary) — the port of the upstream
  * {@code MultiTileEntityBumbliary} (MultiTileEntityBumbliary.java:59-510, MTE 32741) and
  * its {@code Advanced} sibling (:32007) — ONE class over the {@code mAdvanced} flag, the
  * two BET registrations pick the layout (:333-337 36-slot vs the Advanced :333-337 20-slot).
@@ -79,7 +79,7 @@ import gregtech6.worldgen.GT6HiveFeature;
  * fixed order (ponytail: the order only steers WHICH matching block wins; the boolean
  * verdict is order-independent).
  *
- * <p><b>The GUI, the penalty and the aggro walk</b> (task p34-bumbliary-gui, landing the
+ * <p><b>The GUI, the penalty and the aggro walk</b> (task bumbliary-gui, landing the
  * folded faces): the :389-509 container pair is the {@code gregtech6.gui.machines.GT6BumbliaryMUI}
  * panel factory over the {@link #guiSeat} tables (the {@code mAdvanced} flag picks the
  * 36-slot primary / 20-slot advanced grid, the scoop flag picks the interaction flags, the
@@ -218,7 +218,7 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 	}
 
 	// -------------------------------------------------------------------------
-	// the GUI seat tables (task p34-bumbliary-gui — the :396-434 primary-normal,
+	// the GUI seat tables (task bumbliary-gui — the :396-434 primary-normal,
 	// :450-488 primary-scoop and the Advanced :397-419/:435-457 rows as one rule)
 	// -------------------------------------------------------------------------
 
@@ -419,7 +419,7 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 	}
 
 	// -------------------------------------------------------------------------
-	// the penalty, the sting and the aggro walk (task p34-bumbliary-gui)
+	// the penalty, the sting and the aggro walk (task bumbliary-gui)
 	// -------------------------------------------------------------------------
 
 	/**
@@ -457,7 +457,7 @@ public class GT6BumbliaryBlockEntity extends TileEntityBase03TicksAndSync implem
 	}
 
 	// -------------------------------------------------------------------------
-	// the GUI host face (task p34-bumbliary-gui — the :282-296 use walk and the
+	// the GUI host face (task bumbliary-gui — the :282-296 use walk and the
 	// :305-313 scoop walk; the panel factory is gregtech6.gui.machines.GT6BumbliaryMUI)
 	// -------------------------------------------------------------------------
 

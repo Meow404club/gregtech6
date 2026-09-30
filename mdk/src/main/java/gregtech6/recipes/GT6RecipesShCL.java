@@ -54,12 +54,12 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
- * The Shredder / Crusher / Lathe recipe book — task p7-recipe-maps-shcl (first deterministic
+ * The Shredder / Crusher / Lathe recipe book — task recipe-maps-shcl (first deterministic
  * static batch for the basicmachine-family BE card), extended by task
- * p10-compat-vanilla-rows (the vanilla backfill of the machine-family compat research: the
+ * compat-vanilla-rows (the vanilla backfill of the machine-family compat research: the
  * SHREDDER bone row + the four CRUSHER {@code stone*} rows — after these, the in-port
  * 5-map vanilla coverage gap of the compat research is closed), and by task
- * p26-rm-row-backfill (the registration-time expansion of the upstream prefix HANDLER
+ * rm-row-backfill (the registration-time expansion of the upstream prefix HANDLER
  * templates: the Lathe 22-template tEasyWorkable twin arms of Loader_Recipes_Handlers.java
  * :371-393, the Shredder 34-template MORTAR twin arms + crushed-array rows of :114-150, the
  * :152-155 RECYCLABLE ring — two rows per RECYCLABLE prefix material, output = the
@@ -131,7 +131,7 @@ public final class GT6RecipesShCL {
 	 * {@code addRecipe1(aOptimize, aEUt, aDuration, [chances,] input, outputs...)} call).
 	 * {@code note} carries the upstream line number.
 	 *
-	 * <p>{@code chances} is the p10-compat-vanilla-rows extension: the chance-bearing rows
+	 * <p>{@code chances} is the compat-vanilla-rows extension: the chance-bearing rows
 	 * (OreDict:82/:88) carry the upstream {@code new long[] {...}} literal through
 	 * {@link Recipe#mChances} (the P8 9-arg ctor, chances tail-appended). {@code null} = the
 	 * deterministic shape — what every pre-p10 row uses via the compact constructor.
@@ -152,7 +152,7 @@ public final class GT6RecipesShCL {
 	public record CrusherTemplate(String note, OreDictPrefix inPrefix, int inCount, OreDictPrefix outPrefix, int outCount, long eUt, long multiplier) {}
 
 	/**
-	 * One transcribed Lathe prefix-handler template (task p26-rm-row-backfill) — the upstream
+	 * One transcribed Lathe prefix-handler template (task rm-row-backfill) — the upstream
 	 * {@code RecipeMapHandlerPrefix(inPrefix, 1, NF, eUt, duration, multiplier, NF, outPrefix,
 	 * outCount, NI, NI, T, T, F, cond)} 15-arg form (Loader_Recipes_Handlers.java:371-393,
 	 * the tEasyWorkable twin arms), expanded per material at pour time.
@@ -176,7 +176,7 @@ public final class GT6RecipesShCL {
 			long eUt, long duration, long multiplier, boolean easyArm, boolean layeredNot, boolean lensNot) {}
 
 	/**
-	 * One transcribed Shredder prefix-shredding template (task p26-rm-row-backfill) — the
+	 * One transcribed Shredder prefix-shredding template (task rm-row-backfill) — the
 	 * upstream {@code RecipeMapHandlerPrefixShredding(...)} rows of
 	 * Loader_Recipes_Handlers.java:114-124/:126-136 (single-input, 1-2 outputs) and
 	 * :138-143/:145-150 (the crushed-array forms, 2-4 outputs), expanded per material at pour
@@ -201,7 +201,7 @@ public final class GT6RecipesShCL {
 	/**
 	 * The transcribed rows (Loader_Recipes_Vanilla.java:688-693 + :697 + :707-708), order
 	 * mirroring the upstream file order. All eUt 16; :692/:693 carry the
-	 * {@code OM.dust(MT.Stone, U*9)} nine-dust output; :697 is the p10-compat-vanilla-rows
+	 * {@code OM.dust(MT.Stone, U*9)} nine-dust output; :697 is the compat-vanilla-rows
 	 * backfill (bone → 4 bonemeal — the upstream {@code IL.Dye_Bonemeal} item is the
 	 * 1.7.10 white-dye meta, whose 1.20.1 identity is {@link Items#BONE_MEAL}).
 	 *
@@ -258,7 +258,7 @@ public final class GT6RecipesShCL {
 		new CrusherTemplate(":73", OP.gemFlawed    , 1, OP.gemChipped  , 2, 16, 256),
 		// :75 — the boule row (upstream OP.bouleGt is condition-FALSE, so the walk expands to zero materials; the row stays transcribed as DATA)
 		new CrusherTemplate(":75", OP.bouleGt      , 1, OP.gem         , 4, 16, 256),
-		// :65 — the p26-rm-row-backfill raw-ore row (rawOreChunk 27*U72 → crushedTiny 9*U72 x3,
+		// :65 — the rm-row-backfill raw-ore row (rawOreChunk 27*U72 → crushedTiny 9*U72 x3,
 		// quantity-conserving; OP.rawOreChunk exists as prefix DATA in the port but has NO item
 		// registrations — it is not in GTMaterialItems.itemPathPrefixes — so the walk expands to
 		// zero rows and the pour audit names it, lighting up when an item-universe card registers it)
@@ -267,7 +267,7 @@ public final class GT6RecipesShCL {
 	}
 
 	/**
-	 * The p10-compat-vanilla-rows Crusher backfill: the four vanilla rows of the
+	 * The compat-vanilla-rows Crusher backfill: the four vanilla rows of the
 	 * {@code stone*} OreDict listeners (Loader_Recipes_OreDict.java:82/:88/:92/:96), in
 	 * upstream file order. Upstream these fire as oredict-listener events (the Forge 1.7.10
 	 * vanilla registrations "stoneNetherrack"/"stoneEndstone"/"stoneNetherBrick" plus the GT
@@ -309,7 +309,7 @@ public final class GT6RecipesShCL {
 	}
 
 	/**
-	 * The p26-rm-row-backfill Lathe prefix templates (Loader_Recipes_Handlers.java:371-393,
+	 * The rm-row-backfill Lathe prefix templates (Loader_Recipes_Handlers.java:371-393,
 	 * the tEasyWorkable twin arms — arm A :371-381, arm B :383-393), in upstream file order.
 	 * eUt 16 throughout; inCount 1 throughout. Arm A: duration 0 → the getCosts arithmetic
 	 * with multiplier 64; arm B: the upstream fixed integer literals (16/8, 16/9, 16, 16*4,
@@ -472,7 +472,7 @@ public final class GT6RecipesShCL {
 	}
 
 	/**
-	 * The p26-rm-row-backfill Shredder prefix templates (Loader_Recipes_Handlers.java:114-124
+	 * The rm-row-backfill Shredder prefix templates (Loader_Recipes_Handlers.java:114-124
 	 * + :126-136 single-prefix rows and :138-143 + :145-150 the crushed-array rows), in
 	 * upstream file order. eUt 16 throughout; duration is 0 (the getCosts arithmetic) on every
 	 * row — the twin MORTAR/MORTAR.NOT arms carry multiplier 16 / 256 respectively.
@@ -731,15 +731,15 @@ public final class GT6RecipesShCL {
 	 * here is a POOL item of the machine-family wave, not a silent drop.
 	 */
 	public static final List<String> SKIPPED_UPSTREAM = List.of(
-		"Loader_Recipes_Vanilla.java:691 reeds → IL.Remains_Plant and :699 melon 6000-chance → IL.Remains_Fruit: CUT — the GT Remains_* items do not exist in this port (p10-compat-vanilla-rows; :697 bone→bonemeal BACKFILLED there)",
+		"Loader_Recipes_Vanilla.java:691 reeds → IL.Remains_Plant and :699 melon 6000-chance → IL.Remains_Fruit: CUT — the GT Remains_* items do not exist in this port (compat-vanilla-rows; :697 bone→bonemeal BACKFILLED there)",
 		"Loader_Recipes_Vanilla.java:694-696 generator modules (IL.Module_* items; p7 pool) + :698 WiMo_Thick_Bone (foreign-mod item, CUT)",
-		"Loader_Recipes_OreDict.java:81/:87/:91/:95 Hammer + :83 pulverizing sibling rows of the stone* listeners — tool-family pool (handoff p10-arch-tools-covers), and :84 Boxinator TF_Pick_Giant IL.exists() branch — foreign-mod gate, declared, no gates ported",
-		"Loader_Recipes_OreDict.java:82/:88/:92/:96 Crusher rows BACKFILLED by p10-compat-vanilla-rows (:82 input = vanilla obsidian — the port block universe generates no blockSolid Obsidian, the ITEMGENERATOR.INGOTS chain fails; declared deviation)",
+		"Loader_Recipes_OreDict.java:81/:87/:91/:95 Hammer + :83 pulverizing sibling rows of the stone* listeners — tool-family pool (handoff arch-tools-covers), and :84 Boxinator TF_Pick_Giant IL.exists() branch — foreign-mod gate, declared, no gates ported",
+		"Loader_Recipes_OreDict.java:82/:88/:92/:96 Crusher rows BACKFILLED by compat-vanilla-rows (:82 input = vanilla obsidian — the port block universe generates no blockSolid Obsidian, the ITEMGENERATOR.INGOTS chain fails; declared deviation)",
 		"Loader_Recipes_Vanilla.java:702-706 ANY.Blaze.mToThis group expansion + :709-712 compressor rows (only the MT.Blaze representative is transcribed; p7 pool)",
 		"Loader_Recipes_Handlers.java:64-67/:74 rockGt/rawOreChunk/chunk/rubble/gemChipped prefix rows with null outputs (mTargetCrushing pulverize-remains semantics; needs Recipe chances; ore-chain backfill pool)",
 		"Loader_Recipes_Handlers.java:77 RecipeMapHandlerCrushing — the crushed-family ore chain (Recipe chances + Cinnabar probability; ore-chain backfill pool)",
-		"RecipeMapShredder.getRecipeFor RECYCLABLE on-demand synthesis + WOOD duration factor (RecipeMapShredder.java:47-64/:56; the ON-DEMAND synthesis stays a recipe-POOL feature — the STATIC :152-155 RECYCLABLE ring rows are BACKFILLED by p26-rm-row-backfill, two rows per RECYCLABLE prefix material)",
-		"Loader_Recipes_Handlers.java:114-155 dust-impure family + crushed-array rows + the :152-155 RECYCLABLE ring, and Handlers:371-393 the Lathe prefix rows — BACKFILLED by p26-rm-row-backfill (the 20 templates whose input prefix has no port item skip-count and stay declared here until an item-universe card registers them); OreDict:204 wood loop, Furnace:80 fallback bridge, all compat remain pooled");
+		"RecipeMapShredder.getRecipeFor RECYCLABLE on-demand synthesis + WOOD duration factor (RecipeMapShredder.java:47-64/:56; the ON-DEMAND synthesis stays a recipe-POOL feature — the STATIC :152-155 RECYCLABLE ring rows are BACKFILLED by rm-row-backfill, two rows per RECYCLABLE prefix material)",
+		"Loader_Recipes_Handlers.java:114-155 dust-impure family + crushed-array rows + the :152-155 RECYCLABLE ring, and Handlers:371-393 the Lathe prefix rows — BACKFILLED by rm-row-backfill (the 20 templates whose input prefix has no port item skip-count and stay declared here until an item-universe card registers them); OreDict:204 wood loop, Furnace:80 fallback bridge, all compat remain pooled");
 
 	/** Poured flag — one generation, one pour (upstream loaders run once per JVM). */
 	private static boolean sLoaded = false;
@@ -763,10 +763,10 @@ public final class GT6RecipesShCL {
 		pourFixed(GT6RecipeMaps.SHREDDER, "Shredder", shredderTable());
 		pourFixed(GT6RecipeMaps.LATHE, "Lathe", latheTable());
 		pourCrusher(GT6RecipeMaps.CRUSHER, crusherTable());
-		pourFixed(GT6RecipeMaps.CRUSHER, "Crusher vanilla", crusherVanillaTable()); // p10-compat-vanilla-rows
-		pourLathe(GT6RecipeMaps.LATHE, latheTemplateTable()); // p26-rm-row-backfill (Handlers:371-393)
-		pourShredderTemplates(GT6RecipeMaps.SHREDDER, shredTemplateTable()); // p26-rm-row-backfill (Handlers:114-150)
-		pourRecyclableRing(GT6RecipeMaps.SHREDDER); // p26-rm-row-backfill (Handlers:152-155)
+		pourFixed(GT6RecipeMaps.CRUSHER, "Crusher vanilla", crusherVanillaTable()); // compat-vanilla-rows
+		pourLathe(GT6RecipeMaps.LATHE, latheTemplateTable()); // rm-row-backfill (Handlers:371-393)
+		pourShredderTemplates(GT6RecipeMaps.SHREDDER, shredTemplateTable()); // rm-row-backfill (Handlers:114-150)
+		pourRecyclableRing(GT6RecipeMaps.SHREDDER); // rm-row-backfill (Handlers:152-155)
 		sLoaded = true;
 	}
 

@@ -30,7 +30,7 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
 public abstract class GTMultiBlockControllerBlock extends GTEntityBlock {
 
 	/**
-	 * The block's upstream {@code NBT_MATERIAL} column (task p38-c2-controller-tint — the
+	 * The block's upstream {@code NBT_MATERIAL} column (task c2-controller-tint — the
 	 * tint colour source, the {@link GTMultiBlockPartBlock} lazy-Supplier form): the mains
 	 * families hand their row material up through the new ctor. Null = the material-less
 	 * controllers (coke oven, boiler mains, ...) — the white no-tint identity.
@@ -42,7 +42,7 @@ public abstract class GTMultiBlockControllerBlock extends GTEntityBlock {
 		this(aProperties, null);
 	}
 
-	/** The material-carrier form (task p38-c2-controller-tint): the row feeds the tint colour source. */
+	/** The material-carrier form (task c2-controller-tint): the row feeds the tint colour source. */
 	protected GTMultiBlockControllerBlock(Properties aProperties,
 			@Nullable java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
 		super(aProperties);
@@ -63,7 +63,7 @@ public abstract class GTMultiBlockControllerBlock extends GTEntityBlock {
 	}
 
 	/**
-	 * The controller-domain material dispatch (task p38-c2-controller-tint, the
+	 * The controller-domain material dispatch (task c2-controller-tint, the
 	 * {@code GTMultiBlockPartBlock.materialOf} mirror shape): only the carrier blocks
 	 * resolve a material — every other block is null here.
 	 */
@@ -79,7 +79,7 @@ public abstract class GTMultiBlockControllerBlock extends GTEntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
-		// the front TOWARDS the placer (task p27-cokeoven-facing-fix — the placementFacing
+		// the front TOWARDS the placer (task cokeoven-facing-fix — the placementFacing
 		// table: the view OPPOSITE, the vanilla furnace idiom, GT6StaticStorages.java:265
 		// precedent) — the same side setPlacedBy/setFacingFromPlacement writes, so the
 		// client prediction and the server pair-write agree with no flicker.

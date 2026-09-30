@@ -16,7 +16,7 @@ import gregtech6.covers.ICover;
 
 /**
  * The item filter cover — 1.20.1 port of gregapi/cover/covers/CoverFilterItem.java:42-148
- * (task p11-cover-shutter-filter; upstream item id 1023 "Item Filter",
+ * (task cover-shutter-filter; upstream item id 1023 "Item Filter",
  * MultiItemTechnological.java:82; the research card's "FilterItem" shorthand — the
  * upstream class name is CoverFilterItem). The covered face passes item transfer only
  * when the stack satisfies the filter: visual 0 = WHITELIST (only the filter item
@@ -75,7 +75,7 @@ public class CoverFilterItem extends AbstractCoverDefault {
 
 	/**
 	 * The {@link #filterTagFor} parameterised form — the logistics cover family (task
-	 * p33-logistics-covers-12) stores per-family keys ({@code gt.filter.item} /
+	 * logistics-covers-12) stores per-family keys ({@code gt.filter.item} /
 	 * {@code gt.filter.fluid}) in the same single-tag lane shape.
 	 */
 	public static CompoundTag filterTagKeyOf(ItemStack aHeld, String aFilterKey) {

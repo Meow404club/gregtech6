@@ -57,7 +57,7 @@ import gregtech6.tileentity.logistics.ITileEntityLogisticsStorage;
 import gregtech6.util.GTItemMover;
 
 /**
- * The Logistics Core multiblock controller (task p32-logistics-lv3) — the 1.20.1 port of
+ * The Logistics Core multiblock controller (task logistics-lv3) — the 1.20.1 port of
  * gregtech/tileentity/multiblocks/MultiTileEntityLogisticsCore.java over
  * {@link TileEntityBase10MultiBlockBase} (Loader_MultiTileEntities.java:1281: meta 17997,
  * item 17101, "Logistics Core", MT.SteelGalvanized, NBT_HARDNESS 6.0F == NBT_RESISTANCE
@@ -445,7 +445,7 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 					}
 				}
 
-				// :297-435 — the cover bus (task p33-logistics-covers-12): the 12 logistics
+				// :297-435 — the cover bus (task logistics-covers-12): the 12 logistics
 				// covers on any BFS-reachable member (wire host / core / tank), each face
 				// registering its covered-face adjacency into the routing lists above.
 				CoverData tCovers = tLogistics instanceof gregtech6.covers.ICoverableTE tCoverable ? tCoverable.getCovers() : null;

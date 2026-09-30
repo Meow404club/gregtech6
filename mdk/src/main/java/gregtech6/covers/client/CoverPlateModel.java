@@ -29,7 +29,7 @@ import gregtech6.covers.GTCoverRenderSnapshot;
 
 /**
  * The cover-plate dynamic model — the first consumer of the C-grade render foundation
- * (task p4-cover-core ⑥, ADR 2026-08-30-p4-cover-route option ①). A
+ * (task cover-core ⑥, ADR 2026-08-30-cover-route option ①). A
  * {@link GTDynamicBakedModel} over the oven's blockstate-baked models: the
  * {@link GTCoverRenderSnapshot} in the {@code ModelData} says which faces carry covers,
  * and the plate quads are appended to the fallback's own quads.
@@ -51,7 +51,7 @@ import gregtech6.covers.GTCoverRenderSnapshot;
  * Plates are opaque, so quads emit on the solid layer only (the chunk renderer gates
  * the layer calls through the model's ChunkRenderTypeSet; null = the all-layers pass).
  *
- * <p>LAYER TABLE (task p11-render-cover-multilayer): the snapshot carries the upstream
+ * <p>LAYER TABLE (task render-cover-multilayer): the snapshot carries the upstream
  * {@code BlockTextureMulti} stack per face (bottom first — the plate background plus the
  * surface sprite; see {@code GTCoverRenderSnapshot} census). Layer 0 emits exactly the
  * rule set above at the unmoved slab position, so a single-layer face plans
@@ -225,7 +225,7 @@ public class CoverPlateModel extends GTDynamicBakedModel {
 	 *     0/3), so every non-UP outer face baked flipped — visible on the direction-
 	 *     sensitive census sprites (the redstone_emitter digits, the top-left-anchored
 	 *     redstone_switch circuit icons, the conveyor/robotarm strips; pixel-measured in
-	 *     task r8-render-leftovers), hence FIXED here — the plate/pump metal art the old
+	 *     task render-leftovers), hence FIXED here — the plate/pump metal art the old
 	 *     prediction tested is near-symmetric, but it is not the whole census.</li>
 	 * <li>rim faces (16x2): V spans only the sprite's top band (16 - maxY*16 .. 16 -
 	 *     minY*16 = the 2px strip) — the 1.7.10 proportional band, not a full-sprite

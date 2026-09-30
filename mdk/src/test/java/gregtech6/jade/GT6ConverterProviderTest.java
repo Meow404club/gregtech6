@@ -28,7 +28,7 @@ import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 import gregtech6.tileentity.energy.generators.GTGeneratorLiquidBlockEntity;
 
 /**
- * Offline gate for task r5-jade-converters: the converter-family Jade tag contract + the
+ * Offline gate for task jade-converters: the converter-family Jade tag contract + the
  * status/stored/rate display lines, over the SAME {@code writeFamilyData} seam the live
  * {@code appendServerData} reads through (the BlockAccessor wrapper itself is live-only —
  * the GT6CrucibleProviderTest posture). Five representative BEs across the three SPEC

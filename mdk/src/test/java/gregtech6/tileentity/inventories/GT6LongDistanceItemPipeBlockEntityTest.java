@@ -21,7 +21,7 @@ import gregtech6.registry.GT6LongDistPipes;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * GT6LongDistanceItemPipeBlockEntity offline tests (task p35-long-distance-pipes): the
+ * GT6LongDistanceItemPipeBlockEntity offline tests (task long-distance-pipes): the
  * Loader_Blocks :179 temperature row (the literal pin over the zh dump faces), the
  * delegation window (the insert/extract/getSlots forwarding over the offline rig), the
  * sender-claim protocol (:126 — the first sender keeps the target), and the no-link /

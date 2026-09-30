@@ -1,5 +1,5 @@
 /**
- * Offline tests for task r3-jei-tool-output-tint (GitHub #6 round 3): the JEI crafting
+ * Offline tests for task jei-tool-output-tint (GitHub #6 round 3): the JEI crafting
  * category extension for {@code gt6:material_tool} rows. The JEI runtime itself cannot
  * run offline, so the assertions land on the exact seam the extension consumes —
  * {@link GT6MaterialToolRecipe#stampedDisplayResult()} (the output-slot stack) and the

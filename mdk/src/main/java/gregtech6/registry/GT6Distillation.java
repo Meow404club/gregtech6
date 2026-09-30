@@ -58,7 +58,7 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
 
 /**
- * The distillation-tower family registration home (task p29-w3-distill-crucible ①②, the
+ * The distillation-tower family registration home (task w3-distill-crucible ①②, the
  * ADR-P3-4 self-contained form — the {@link GT6Crucibles}/{@code GT6BurningBoxes} shape:
  * block + item + BET DeferredRegisters attached from the construct event;
  * {@code GTMachines.java}/{@code GTMultiBlocks.java} untouched). The KJS face of the card:
@@ -77,7 +77,7 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
  * BE class and ONE BET mount both rows — the row (energy domain + map) rides the block
  * carrier, the GT6Boilers/LargeBoilerRow form.
  *
- * <p>Creative tab (task p38-tabfix-a-multiblock): both controller items join
+ * <p>Creative tab (task tabfix-a-multiblock): both controller items join
  * MULTIBLOCKS_TAB via {@link #onBuildTabContents} — registered-but-tab-less is invisible
  * in BOTH the creative menu and JEI (the BurningBoxes issue-#10 form). Pool cut declared:
  * upstream rode the per-family "Multiblock Machines" creative tab (tab id 17101, Loader
@@ -99,7 +99,7 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
  * NBT_INV_SIDE_AUTO_OUT SIDE_BACK, an auto-out machine by census); fluids push per-class down
  * the back hole column ({@code mTanksOutput} iterate + the upstream fluid-class routing table
  * :148-170: propane/methane y+7 ... default y+1). <b>The output bank is the upstream NINE-tank
- * library</b> (task p30-distill-output-routing, the 2026-09-16 distill-tower ruling option a
+ * library</b> (task distill-output-routing, the 2026-09-16 distill-tower ruling option a
  * — the W3④ single-tank freeze is UNDONE): upstream readFromNBT2 sizes {@code mTanksOutput}
  * from the map's fluid-OUT count (MultiTileEntityBasicMachine.java:161), and RM.java:65/:66
  * fix BOTH tower maps at fluids 1/9/0 — nine default-capacity tanks, so the seven-fraction
@@ -162,7 +162,7 @@ public final class GT6Distillation {
 		for (TowerRow tRow : ROWS) {
 			TOWER_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTDistillationTowerBlock(tRow, GTMultiBlocks.partProperties(6.0F))));
-			// task r8-tooltip-multiblock-generator — the family carrier (extends GTComposedNameItem,
+			// task tooltip-multiblock-generator — the family carrier (extends GTComposedNameItem,
 			// the composed tower names ride Block#getName unchanged) replays gt6.tooltip.multiblock.*
 			TOWER_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
 					() -> new GT6MachineBlockItem(GT6Distillation.TOWER_BLOCKS_BY_PATH.get(tRow.path()).get(), new net.minecraft.world.item.Item.Properties(), "multiblock")));
@@ -186,7 +186,7 @@ public final class GT6Distillation {
 	// the controller block
 	// ------------------------------------------------------------------------------------
 
-	/** The tower controller block — the concrete {@link GTMultiBlockControllerBlock} over the shared BET, the row rides it. The use arm (task p33-gui-distill-tower) opens the ModularUI panel through the {@link GT6MuiMachine#tryOpen} factory chain (the ACT :80-96 shape) — no MenuType (the P26 no-new-MenuType ruling holds, the factory carries its own network). */
+	/** The tower controller block — the concrete {@link GTMultiBlockControllerBlock} over the shared BET, the row rides it. The use arm (task gui-distill-tower) opens the ModularUI panel through the {@link GT6MuiMachine#tryOpen} factory chain (the ACT :80-96 shape) — no MenuType (the P26 no-new-MenuType ruling holds, the factory carries its own network). */
 	public static final class GTDistillationTowerBlock extends GTMultiBlockControllerBlock {
 
 		private final TowerRow mRow;
@@ -287,7 +287,7 @@ public final class GT6Distillation {
 		/** The test seam: offline fixtures build their own BET (the frozen-registry form). */
 		public TileEntityDistillationTower(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
 			super(aType, aPos, aState);
-			// the output bank unfrozen (p30-distill-output-routing, ruling 2026-09-16 option
+			// the output bank unfrozen (distill-output-routing, ruling 2026-09-16 option
 			// a): the upstream readFromNBT2 :161 row — the bank re-points to the map's
 			// fluid-OUT count, nine default-capacity tanks (RM.java:65/:66 fluids 1/9/0; the
 			// tower rows carry no NBT_TANK_CAPACITY so the upstream default FluidTankGT
@@ -313,7 +313,7 @@ public final class GT6Distillation {
 		}
 
 		/**
-		 * The MUI panel build (task p33-gui-distill-tower, the IUIHolder.buildUI :21-44
+		 * The MUI panel build (task gui-distill-tower, the IUIHolder.buildUI :21-44
 		 * contract) — the tower's own panel factory, the GTBasicMachineMUI shared panel is
 		 * NOT touched (the shared-face boundary). MUI-only: the inherited base MenuProvider
 		 * (getMenuType default) is dead code on this family — nobody calls it, no MenuType
@@ -954,7 +954,7 @@ public final class GT6Distillation {
 		}
 
 		/**
-		 * The openGUI smoke arm (task p33-gui-distill-tower, the GTAdvancedCraftingTableCommand
+		 * The openGUI smoke arm (task gui-distill-tower, the GTAdvancedCraftingTableCommand
 		 * open :289-318 shape): dispatches the ModularUI open chain for a FAKE player — the
 		 * server half (buildUI + the sync-manager construct + the open packet dispatch) runs
 		 * verbatim; a fake connection drops the client packet (the sanctioned SKIP verdict),
@@ -1038,7 +1038,7 @@ public final class GT6Distillation {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-a-multiblock — the whole {@link #TOWER_ITEMS_BY_PATH}
+	 * The tab walk (task tabfix-a-multiblock — the whole {@link #TOWER_ITEMS_BY_PATH}
 	 * family joins the multiblocks tab; the GT6BurningBoxes.onBuildTabContents verbatim
 	 * form, the class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is
 	 * what delivers this handler). JEI derives its item list from the tab display items.

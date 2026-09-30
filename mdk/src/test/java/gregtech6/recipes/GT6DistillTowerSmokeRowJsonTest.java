@@ -27,8 +27,8 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * The tower datapack acceptance (task p29-w3-distill-crucible, the OFFLINE half — the
- * tower half RESHAPED by the p29-w4-hot-lube review round: the W3 smoke row
+ * The tower datapack acceptance (task w3-distill-crucible, the OFFLINE half — the
+ * tower half RESHAPED by the w4-hot-lube review round: the W3 smoke row
  * (gt6:oil 1000 → gt6:creosote, 120/160) had no upstream anchor and crowded the
  * Loader_Recipes_Chem.java:356 Oil_Normal true row off its own input face, so the file now
  * carries the SIX :352-:360 true rows while {@code cryodistillationtower} keeps its

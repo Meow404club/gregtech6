@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fluids.capability.IFluidHandler; // the leg-native handler type (the "net.minecraftforge.fluids." swap entry shifts the package on 21.1)
 
 /**
- * The Fluid-O-Meter Sensor (task p26-sensors-core pioneer ②) — the port of
+ * The Fluid-O-Meter Sensor (task sensors-core pioneer ②) — the port of
  * MultiTileEntityFluidometer.java:41-97. Upstream read the 1.7.10
  * {@code IFluidHandler.getTankInfo} face (:46-64/:67-79); the modern equivalent is the
  * FLUID_HANDLER capability at the probe position — the TileEntityBase08Barrel :297-304
@@ -60,7 +60,7 @@ public class GT6FluidometerBlockEntity extends GTSensorBlockEntity {
 	/**
 	 * The probe read, per tank {@code [content, capacity]} pairs (null = no handler — the
 	 * upstream {@code tInfo != null} gate :49/:69). The per-leg capability query lives in
-	 * {@link #probeHandler} below. Package-static since p34-sensors-trivial-14: the
+	 * {@link #probeHandler} below. Package-static since sensors-trivial-14: the
 	 * bucketometer pair reuses the census verbatim (upstream Bucketometer.java:31-40 is the
 	 * same tank walk at a /1000 divisor); the instance probe face rides the explicit
 	 * {@code aSecondFacing} argument — zero behavior change for this class.

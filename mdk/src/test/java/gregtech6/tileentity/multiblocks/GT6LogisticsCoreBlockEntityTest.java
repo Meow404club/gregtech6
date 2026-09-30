@@ -38,7 +38,7 @@ import gregtech6.fluid.FluidTankGT;
 import gregtech6.tileentity.multiblocks.GT6LogisticsCoreBlockEntity.LogisticsData;
 
 /**
- * The Logistics Core offline acceptance (task p32-logistics-lv3, the massfab fixture
+ * The Logistics Core offline acceptance (task logistics-lv3, the massfab fixture
  * posture): the :109-147 structure walk over the stub world (the 44/53/27 cell census,
  * the CPU pool arithmetic, the cheapskate wall substitute, the wrong-part rejection),
  * the :437-444 BFS (cubic radius, tier registration), the :451-500 routing order

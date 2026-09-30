@@ -12,7 +12,7 @@ import gregtech6.fluid.FluidTankGT;
 
 /**
  * The side-aware drain-only {@link IFluidHandler} wrapper over a
- * {@link TileEntityBase10MultiBlockMachine}'s output tank (task p8-cokeoven-fluid-capability
+ * {@link TileEntityBase10MultiBlockMachine}'s output tank (task cokeoven-fluid-capability
  * spec ①, the {@link gregtech6.tileentity.tank.BarrelFluidHandler} shape: a fresh wrapper per
  * {@code getCapability(FLUID_HANDLER, Direction)} call — LazyOptional memoizes its supplier,
  * so a stored field would freeze the first-queried side into the stateless wrapper).

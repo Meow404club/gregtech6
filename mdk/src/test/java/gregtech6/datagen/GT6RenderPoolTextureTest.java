@@ -1,11 +1,11 @@
 /*
- * Offline pinned tests for task p36-render-texture-bake — the render pool stand-in
+ * Offline pinned tests for task render-texture-bake — the render pool stand-in
  * retirement (the three self-declared stand-ins of GT6BlockStates.java, the
- * p35-energy-tail wave): the generated JSON face and the borrowed-PNG ledger face,
+ * energy-tail wave): the generated JSON face and the borrowed-PNG ledger face,
  * both asserted against the committed trees (the GT6MachinePaintRenderDatagenTest
  * classpath split + the GT6TextureCensusTest pin-e digest form).
  *
- * <p>NARROWED by task r8-tex-composite-family: the LD-transformer and crystal-charger
+ * <p>NARROWED by task tex-composite-family: the LD-transformer and crystal-charger
  * segments of the wave moved to the true two-layer borrows — their pins live in
  * {@link GT6CompositeEnergyTexDatagenTest} now (the 13 src-over composites this class
  * used to pin are retired). What stays here is the LD WIRE domain: the 16 wire metas
@@ -55,7 +55,7 @@ class GT6RenderPoolTextureTest {
             Map.entry(8, "zpm"), Map.entry(9, "zpm"), Map.entry(10, "zpm"), Map.entry(11, "zpm"),
             Map.entry(12, "uv"), Map.entry(13, "uv"), Map.entry(14, "uv"), Map.entry(15, "uv"));
 
-    /** The wire wave's 5 PNGs (the p36 bake products still on the tree — the composite 13 retired r8-tex-composite-family). */
+    /** The wire wave's 5 PNGs (the p36 bake products still on the tree — the composite 13 retired tex-composite-family). */
     private static final List<String> WAVE_PNGS = List.of(
             "long_dist_wire_ev.png", "long_dist_wire_iv.png", "long_dist_wire_luv.png",
             "long_dist_wire_zpm.png", "long_dist_wire_uv.png");
@@ -93,7 +93,7 @@ class GT6RenderPoolTextureTest {
         assertTextureOnTree(tTexture);
 
         JsonObject tItem = json("assets/gt6/models/item/long_dist_wire_" + aMeta + ".json");
-        // r8-tex-itemform-a band A: the BlockItem left the cubeAll-parent anti-pattern for
+        // tex-itemform-a band A: the BlockItem left the cubeAll-parent anti-pattern for
         // the 2D item/generated icon over the same tier sprite (the world face is untouched).
         assertEquals("minecraft:item/generated", tItem.get("parent").getAsString(),
                 "meta " + aMeta + " item rides the 2D icon form");
@@ -134,7 +134,7 @@ class GT6RenderPoolTextureTest {
             }
         }
         assertTrue(tViolations.isEmpty(), String.join("\n", tViolations));
-        assertTrue(tReadme.contains("p36-energy-zpm-dechargers binds `block/zpm_decharger"),
+        assertTrue(tReadme.contains("energy-zpm-dechargers binds `block/zpm_decharger"),
             "the consumer-card surface declaration (the battery card binds these paths on its rebase)");
     }
 

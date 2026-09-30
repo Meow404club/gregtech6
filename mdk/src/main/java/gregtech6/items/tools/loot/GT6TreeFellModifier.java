@@ -31,7 +31,7 @@ import net.neoforged.neoforge.common.loot.LootModifier;
 import gregtech6.items.tools.GTAxeItem;
 
 /**
- * The axe whole-tree felling modifier — task p29-w5-t2-blade-six (the serializer row
+ * The axe whole-tree felling modifier — task w5-t2-blade-six (the serializer row
  * rides {@link GT6ToolLootModifiers#SERIALIZERS} per the documented consumer contract:
  * "else a new modifier class + a serializer row"). Upstream
  * GT_Tool_Axe.java:102-125 ({@code LOCK} + the trunk-up walk), modern form:

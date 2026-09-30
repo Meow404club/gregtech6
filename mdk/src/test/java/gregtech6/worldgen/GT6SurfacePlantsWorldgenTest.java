@@ -1,5 +1,5 @@
 /*
- * Tests for task p30-w6-t2-surface-blocks: the surface-plants + soil worldgen band —
+ * Tests for task w6-t2-surface-blocks: the surface-plants + soil worldgen band —
  * the constants transcription and the key-path set (the GT6SurfaceBlocksTest posture).
  *
  * <p>Compile anchors: Loader_Worldgen.java:603-606 (the fallen-log gates), :632-633 (the

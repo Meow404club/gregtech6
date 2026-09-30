@@ -19,7 +19,7 @@ import gregtech6.client.render.GTModelProperties;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Bumble Hive BE acceptance (task p32-bees-lv2, the GTPaintableTest oven-fixture
+ * The Bumble Hive BE acceptance (task bees-lv2, the GTPaintableTest oven-fixture
  * posture): the paintable stratum on the hive carrier (the born-painted worldgen face,
  * WorldgenHives.java:203), the 9-slot inventory under the upstream {@code gt.inv} key
  * (MultiTileEntityBumbleHive.java:99 + CS.NBT_INV_LIST), and the PAINT ModelData supply

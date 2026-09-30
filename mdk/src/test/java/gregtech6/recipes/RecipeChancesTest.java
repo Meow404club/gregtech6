@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 /**
- * Recipe.mChances semantics (task p8-recipe-chances-orechain ①): the 10000-based chance
+ * Recipe.mChances semantics (task recipe-chances-orechain ①): the 10000-based chance
  * array against upstream gregapi/recipes/Recipe.java:749-771.
  * <ul>
  * <li>null chances / all-10000 = the deterministic pre-chances behaviour, byte-identical

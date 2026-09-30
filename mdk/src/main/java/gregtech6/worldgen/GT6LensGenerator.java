@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * The strata-lens deterministic core (task p31-strata-lens) — the {@link GT6VeinGenerator}
+ * The strata-lens deterministic core (task strata-lens) — the {@link GT6VeinGenerator}
  * isomorph: the same origin-grid + origin-seeded-stream + exactly-one-weighted-draw
  * scheme, re-formed for the 5-row marker-stone lens table and the flattened-blob
  * (mountain-scale ellipsoid) shape. Kept vanilla-free and Feature-free exactly like the
@@ -72,7 +72,7 @@ public final class GT6LensGenerator {
     }
 
     /**
-     * The INDEPENDENT-ROW draw (task p31-nether-lens-end-yield — the upstream nether stone
+     * The INDEPENDENT-ROW draw (task nether-lens-end-yield — the upstream nether stone
      * shape, WorldgenBlob.java:68 {@code if (aRandom.nextInt(mProbability) == 0)}): every
      * drawable row rolls {@code nextInt(rarity) == 0} in TABLE ORDER and every hit is kept —
      * one WorldgenObject per row upstream, so several stones can generate from the same

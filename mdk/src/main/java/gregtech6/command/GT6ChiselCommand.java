@@ -35,7 +35,7 @@ import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTStoneBlocks;
 
 /**
- * {@code /gt6chisel} — the chisel stone-gate acceptance command (task p19-chisel-recipes;
+ * {@code /gt6chisel} — the chisel stone-gate acceptance command (task chisel-recipes;
  * card-local in command/ like GTBoilerCommand/GTToolCommand). Drives the universal gate
  * through the item's own static dispatch — the P16 same-source convention (the /gt6boiler
  * decalcify arm calls the exact {@code GTBoilerTankBlockEntity.chisel} the item arm calls;
@@ -49,7 +49,7 @@ import gregtech6.registry.GTStoneBlocks;
  *     trailing {@code sneak} word ({@code setShiftKeyDown(true)}); the report names the
  *     state before → after, the upstream 10000 tool-damage return and the resulting
  *     chisel damage (a conversion pays durabilityPoints(10000) = 25 points).</li>
- * <li>{@code mine [<pos>] [hand]} — the mining-drop face (task p21-chisel-drop-conversion,
+ * <li>{@code mine [<pos>] [hand]} — the mining-drop face (task chisel-drop-conversion,
  *     the GT_Tool_Chisel.java:73-77 arm landed as a loot table dispatch): the fake player
  *     holds the chisel and {@code Block.playerDestroy} + {@code removeBlock} drive the
  *     exact ServerPlayerGameMode.destroyBlock drop face (dropResources consults the loot
@@ -131,7 +131,7 @@ public final class GT6ChiselCommand {
 	}
 
 	/**
-	 * The mining-drop face (task p21-chisel-drop-conversion): the fake player breaks the
+	 * The mining-drop face (task chisel-drop-conversion): the fake player breaks the
 	 * block and the spawned drops answer the chisel-vs-baseline question live. The command
 	 * self-checks every GT stone target against the census decision (the same statics the
 	 * loot provider generated from) and discards what it spawned, so repeated runs are

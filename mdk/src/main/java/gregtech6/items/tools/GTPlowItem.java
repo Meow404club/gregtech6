@@ -25,7 +25,7 @@ import net.minecraft.world.level.Level;
 import gregtech6.items.tools.loot.GT6ToolSweep;
 
 /**
- * The formal GT6 plow — item id {@code gt6:plow} (task p29-w5-t4-field-five). Upstream
+ * The formal GT6 plow — item id {@code gt6:plow} (task w5-t4-field-five). Upstream
  * GT_Tool_Plow.java:41-95:
  * <ul>
  * <li><b>Mining surface</b> (isMinableBlock :62-64): the {@code TOOL_plow} harvest arm

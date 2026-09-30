@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.grower.AbstractTreeGrower;
 import net.minecraft.world.level.material.MapColor;
 
 /**
- * The GT6 tree sapling (task p30-w6-t1-trees-nine): one block per {@link GT6TreeKind},
+ * The GT6 tree sapling (task w6-t1-trees-nine): one block per {@link GT6TreeKind},
  * extending the vanilla {@link SaplingBlock} so the grow semantics ride the platform —
  * randomTick light>=9 + 1/7 + the STAGE 0->1 two-tick gate (SaplingBlock.java:39-50) IS
  * the upstream BlockBaseSapling.updateTick2 face (BlockBaseSapling.java:100-104, the

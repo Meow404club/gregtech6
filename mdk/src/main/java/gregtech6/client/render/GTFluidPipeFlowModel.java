@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
 
 /**
- * The pipe flow-arrow dynamic model (task p4-pipe-flow-control spec ④) — the second
+ * The pipe flow-arrow dynamic model (task pipe-flow-control spec ④) — the second
  * consumer of the C-grade render foundation, the {@link CoverPlateModel} shape applied
  * to the fluid pipe: the {@link PipeFlowSnapshot} in the {@code ModelData} says which
  * faces carry output arrows, and the arrow quads are appended to the fallback's own
@@ -43,7 +43,7 @@ import net.minecraftforge.client.model.data.ModelData;
  * </ul>
  * Opaque quads: solid layer only (plus the null all-layers pass).
  *
- * <p>Key (task p35-cover-narrowing-render-snapshot): the arrows ride the dedicated
+ * <p>Key (task cover-narrowing-render-snapshot): the arrows ride the dedicated
  * {@link GTModelProperties#FLOW_SNAPSHOT} — the generic {@code RENDER_SNAPSHOT} stayed
  * with the cover plate chain (the single-valued-property coexistence ruling), so a
  * covered pipe keeps its arrows and the two snapshots never invalidate each other.
@@ -156,7 +156,7 @@ public class GTFluidPipeFlowModel extends GTDynamicBakedModel {
 	private BakedQuad bakeArrowQuad(FlowQuad aPlan, TextureAtlasSprite aSprite) {
 		double[] tBox = aPlan.box();
 		// FaceBakery works in model space (0..16). The UV is the canonical full-face form
-		// [u0,v0,u1,v1] = [0,0,16,16] (the r8-uvof-private-copies fix, the issue #27
+		// [u0,v0,u1,v1] = [0,0,16,16] (the uvof-private-copies fix, the issue #27
 		// GTOreBakedModel ruling): the arrow is a DIRECTIONAL sprite (drawn pointing at V=0),
 		// and the old GTCEu StaticFaceBakery cubeUV table put the box maxY in the slot that
 		// BlockFaceUV reads as the sprite-top V on every side face (FaceInfo.java:19-42 —

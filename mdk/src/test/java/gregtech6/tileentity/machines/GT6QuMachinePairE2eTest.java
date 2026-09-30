@@ -25,7 +25,7 @@ import gregtech6.recipes.maps.GT6RecipeMapReplicator;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The p32-qu-scanner-replicator machine e2e (the TileEntityBasicMachineRecipeTest form):
+ * The qu-scanner-replicator machine e2e (the TileEntityBasicMachineRecipeTest form):
  * the QU pair driven through the full BE dispatcher — the scanner scan writes the USB
  * carrier, the replicator replicates from it. The windows are the row values
  * (TIER_INPUTS[2] = {256,512,1024} for the scanner T3, TIER_INPUTS[1] = {64,128,256} for

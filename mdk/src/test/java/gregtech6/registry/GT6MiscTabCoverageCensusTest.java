@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Task p38-tabfix-c-misc — the four misc-family tab-coverage pools pinned at the
+ * Task tabfix-c-misc — the four misc-family tab-coverage pools pinned at the
  * disk-read truth (the a-card erratum lesson: read the disk BEFORE pinning numbers).
  * Each group's join handler walks its pool WHOLESALE (the GT6BurningBoxes
  * .onBuildTabContents verbatim form — no filter), so pool count = join count by
@@ -25,7 +25,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
  * (tasks.p38-tab-census) says "SlicerBlades 3" and "Molds 34 finished / 32 raw":
  * <ul>
  * <li>GT6SlicerBlades — the disk truth is EIGHT: the census's "3" (fields :71/:78/:86)
- *     predates the p36-recipes-obtainability completion that registered the full
+ *     predates the recipes-obtainability completion that registered the full
  *     eight-item crafting census ({@link GT6SlicerBlades#ALL}); the join covers all 8.</li>
  * <li>GT6Molds — the census's "34 finished / 32 raw" spans BOTH families of the file:
  *     32 molds (1 stone :347 + 1 blank :352 + 30 carved :391-420) + 2 faucets

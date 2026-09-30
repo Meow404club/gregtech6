@@ -17,7 +17,7 @@ import net.minecraftforge.registries.RegistryObject;
 import gregtech6.GT6Mod;
 
 /**
- * The GT6 extruder-mold registration home — task p26-w1-press-extruder-molds, the row0
+ * The GT6 extruder-mold registration home — task w1-press-extruder-molds, the row0
  * MINIMAL subset of the upstream {@code Shape_Extruder_*} domain (the content-unit
  * completeness ruling: the molds and their RM rows land on the SAME card, the P25
  * food-can row0 precedent). Card-owned self-contained {@code @EventBusSubscriber(MOD)}

@@ -1,6 +1,6 @@
 /**
- * The composed-display-name pin test for task p20-i18n-compose-wires (the B-wave lang
- * ruling, ADR 2026-09-06-p20-i18n-zhcn-pipeline §1.4): the wire family's display names are
+ * The composed-display-name pin test for task i18n-compose-wires (the B-wave lang
+ * ruling, ADR 2026-09-06-i18n-zhcn-pipeline §1.4): the wire family's display names are
  * RUNTIME compositions over the position-param templates — never pre-installed per-variant
  * strings again. Pins sample specs -> expected Component shape (template key + argument
  * slots) through the pure {@link GTWireBlock#displayNameOf} seam (the GTWireTint posture:

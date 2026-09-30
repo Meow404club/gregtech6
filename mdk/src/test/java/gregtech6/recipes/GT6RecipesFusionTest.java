@@ -30,7 +30,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 
 /**
- * The Fusion Reactor 18-row parity test (task p31-fusion) — every
+ * The Fusion Reactor 18-row parity test (task fusion) — every
  * Loader_Recipes_Other.java:949-966 line asserted against its transcribed constants:
  * the selector config (ST.tag(1)/ST.tag(2) as a REAL item input), the eUt (-8192 with
  * the two :952/:953 zero-power rows), the duration, the setSpecialNumber payload
@@ -230,7 +230,7 @@ public class GT6RecipesFusionTest extends GTRecipesOfflineTestBase {
 		assertNotNull(tShortRow, "the lookup probe matches (the amounts unchecked)...");
 		assertFalse(tShortRow.isRecipeInputEqual(true, false, tShort, new ItemStack(Items.PAPER)), "...but the consume refuses the 999 mB short supply");
 		// below the |EUt| voltage refuses (absGreaterEqual). ORDER-FREE pin (task
-		// p32-rm-phase-gate ratchet exposed it): the scan is a SET walk over Recipe
+		// rm-phase-gate ratchet exposed it): the scan is a SET walk over Recipe
 		// IDENTITY hashes (no equals/hashCode), so which shape-match answers first is an
 		// allocation-order coin — and the zero-power :952 (1x2000 water) shape legally
 		// matches this probe and answers at any voltage (|4095| >= 0). The refusal is

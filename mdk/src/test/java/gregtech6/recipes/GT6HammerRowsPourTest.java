@@ -24,7 +24,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * The p37-rm-six-maps Hammer row pour test (the GT6CrystallisationRowsPourTest fixture
+ * The rm-six-maps Hammer row pour test (the GT6CrystallisationRowsPourTest fixture
  * posture): the shipped {@code data/gt6/recipe_maps/hammer.json} (the RM.smash
  * Loader_Recipes_Vanilla.java:545-554 + :556-569 brick families + the OreDict stone
  * listener trio :81/:91/:95 static stock) pours through the real

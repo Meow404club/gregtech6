@@ -9,7 +9,7 @@ import gregtech6.covers.CoverData;
 
 /**
  * The energy display cover — 1.20.1 port of gregapi/cover/covers/CoverDisplayEnergy.java
- * (:36-68, task p35-covers-display-scale-6; upstream MultiItemTechnological.java:63
+ * (:36-68, task covers-display-scale-6; upstream MultiItemTechnological.java:63
  * meta 1004 "Energy Display Cover", dump 能量显示面板). "Displays contained Energy": every
  * tickPost the 11-step gauge (:44) rides the visual lane — 0 empty, 10 full, the 9 steps
  * between map the remaining-fill fraction ({@code 9 - clamp((cap-stored)*9/cap, 0..8)}).

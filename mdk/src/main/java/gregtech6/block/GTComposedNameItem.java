@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.Block;
 
 /**
  * A BlockItem whose stack name DELEGATES to the block's (composed) name — the B-wave
- * composed-name face for the rows/stone families (task p20-i18n-compose-rows, the
+ * composed-name face for the rows/stone families (task i18n-compose-rows, the
  * GTWireBlockItem B1 posture): vanilla BlockItem has NO getName override — it delegates
  * only the descriptionId (BlockItem.java:186-189, the same-file evidence) — so a stack of
  * a block whose lang keys retired into compose templates would resolve the raw default id.

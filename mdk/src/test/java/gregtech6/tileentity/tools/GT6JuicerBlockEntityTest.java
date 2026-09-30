@@ -23,7 +23,7 @@ import gregtech6.recipes.RecipeMap;
 import gregtech6.recipes.GT6RecipeMaps;
 
 /**
- * The Juicer BE offline tests (task p33-food-machines-kitchen) — the p26
+ * The Juicer BE offline tests (task food-machines-kitchen) — the p26
  * GT6KitchenBlockEntityTest shape over the third kitchen-family member: the tank arrays
  * ride the JUICER map (0 input / 1 output fluids, RM.java:102 the 1/3/1 item 0/1/0
  * fluid shape), the recipe map is RM.Juicer, and the manual top-face round is driven

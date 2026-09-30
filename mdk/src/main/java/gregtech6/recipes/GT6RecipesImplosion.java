@@ -48,7 +48,7 @@ import gregtech6.item.GT6Circuits;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The Implosion Compressor recipe book (task p31-implosion) — the per-gem-material
+ * The Implosion Compressor recipe book (task implosion) — the per-gem-material
  * 4-tier walk of Loader_Recipes_Other.java:709-764, poured into
  * {@link GT6RecipeMaps#IMPLOSION}.
  *

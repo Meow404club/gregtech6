@@ -38,7 +38,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.machines.GTMachinesOfflineTestBase;
 
 /**
- * Task p16-chisel-decalcify — the useOn-arm offline tests (the card's test domain): the
+ * Task chisel-decalcify — the useOn-arm offline tests (the card's test domain): the
  * chisel item's static dispatch seam ({@link GTChiselItem#chiselToolClick(UseOnContext)},
  * the GTCutterItem p10/p11 test form) against a real {@link GTBoilerTankBlockEntity}.
  * The server chisel semantics themselves are the GTBoilerTankBlockEntityTest pins (the

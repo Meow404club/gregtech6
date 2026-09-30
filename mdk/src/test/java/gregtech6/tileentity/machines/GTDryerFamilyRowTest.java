@@ -25,7 +25,7 @@ import gregtech6.registry.GTMachines;
 import gregtech6.util.GTSideTables;
 
 /**
- * The Dryer-family row acceptance (task p14-dryer-family, the OFFLINE half — the
+ * The Dryer-family row acceptance (task dryer-family, the OFFLINE half — the
  * TileEntityBasicMachineTierLadderTest shape): the four row records pinned to the upstream
  * columns (Loader_MultiTileEntities.java:1477-1480 — the name/material/hardness/NBT_INPUT/
  * NBT_ENERGY_ACCEPTED HU/RM.Drying/NBT_TEXTURE "dryer"/NBT_PARALLEL 8/16/32/64 +
@@ -67,12 +67,12 @@ public class GTDryerFamilyRowTest extends TileEntityBasicMachineOfflineTestBase 
 			assertEquals("dryer", tRow.texture(), "NBT_TEXTURE dryer on every row (the ladder shares the fronts)");
 			assertSame(GT6RecipeMaps.DRYING, tRow.recipes().get(), "NBT_RECIPEMAP RM.Drying through the supplier");
 			assertTrue(tRow.cheapOverclocking(), "NBT_CHEAP_OVERCLOCKING T on every row (:773 runs unconditionally)");
-			assertNotNull(tRow.menu(), "the gt6:dryer menu supplier is bound on every row (task p16-machine-fluid-gui ① — "
-					+ "the p14-dryer-family pool promise redeemed; the live registration resolves through the RCON gate, "
+			assertNotNull(tRow.menu(), "the gt6:dryer menu supplier is bound on every row (task machine-fluid-gui ① — "
+					+ "the dryer-family pool promise redeemed; the live registration resolves through the RCON gate, "
 					+ "an offline .get() would touch the unbound RegistryObject)");
 		}
 		// the four differing columns, row by row - the composed face replays the old name
-		// column from the family template + the material word (task p20-i18n-compose-rows)
+		// column from the family template + the material word (task i18n-compose-rows)
 		String[] tWords = {"Steel", "Invar", "Titanium", "Tungsten Carbide"};
 		String[] tSlugs = {"steel", "invar", "titanium", "tungsten_carbide"};
 		for (int tI = 0; tI < 4; tI++) {

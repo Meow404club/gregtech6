@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import gregtech6.block.multiblock.GTMultiBlockPartBlock;
 
 /**
- * The DESIGN render dimension tests (task p29-w3-nbtdesign-parts ① acceptance ②):
+ * The DESIGN render dimension tests (task w3-nbtdesign-parts ① acceptance ②):
  * the property range follows the upstream NBT_DESIGNS census
  * ({@code mTextures[bind8(NBT_DESIGNS)+1][6]} — range 0..N inclusive,
  * MultiTileEntityMultiBlockPart.java:138-146), and the BE design write lands in the

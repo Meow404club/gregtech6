@@ -11,7 +11,7 @@ import gregapi.tileentity.temperature.ITileEntityTemperature;
 import gregtech6.util.UT6;
 
 /**
- * The Thermometer Sensor (task p34-sensors-trivial-14 row ①) — the port of
+ * The Thermometer Sensor (task sensors-trivial-14 row ①) — the port of
  * MultiTileEntityThermometer.java:35-71. The primary read face is the upstream
  * {@code ITileEntityTemperature} instanceof (:40-41/:53-54) — the gregapi interface the
  * crucible chain already carries (TileEntityCrucible.java:89/:316/:321

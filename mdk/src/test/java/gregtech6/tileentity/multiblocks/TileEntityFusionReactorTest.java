@@ -39,7 +39,7 @@ import gregtech6.recipes.GT6RecipesFusion;
 import gregtech6.recipes.Recipe;
 
 /**
- * The Fusion Reactor offline acceptance (task p31-fusion): the OCTAGONS mask ledger (the
+ * The Fusion Reactor offline acceptance (task fusion): the OCTAGONS mask ledger (the
  * 72/72/36 ring sizes and the 4 OUT tips), the shell geometry (27 PU / 50 vents / 48 wall
  * cells + 6 arms), the full pre-placed rig FORM with the design-5 glass ring and the
  * mActive flip to design 6 (the :241 refresh semantics through the base onTickCheck
@@ -325,7 +325,7 @@ public class TileEntityFusionReactorTest extends GTMultiBlocksOfflineTestBase {
 		assertEquals(1, tAcceptedPackets, "one packet accepted through the part relay");
 		assertEquals(1024, tController.mEnergy, "the TU packet landed in the machine buffer through the part");
 		// the LU face probes accepting but the injection refuses while the ledger is
-		// unarmed (task p32-ignition-gate: the :497 charged arm requires
+		// unarmed (task ignition-gate: the :497 charged arm requires
 		// mChargeRequirement > 0 — an idle fusion falls through to the :501 type check,
 		// the upstream idle shape; the ARMED payment path is the dedicated gate test below)
 		assertTrue(tInPart.isEnergyAcceptingFrom(TD.Energy.LU, (byte)3, false), "the glass ring advertises LU acceptance");
@@ -414,7 +414,7 @@ public class TileEntityFusionReactorTest extends GTMultiBlocksOfflineTestBase {
 	}
 
 	// ------------------------------------------------------------------
-	// the ignition gate (task p32-ignition-gate — the :755/:809/:497 three arms over the
+	// the ignition gate (task ignition-gate — the :755/:809/:497 three arms over the
 	// single-row T+T fixture; the T+T startLU = 1130 * START_LU_PER_TICK)
 	// ------------------------------------------------------------------
 

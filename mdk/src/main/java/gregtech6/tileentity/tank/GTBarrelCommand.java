@@ -42,7 +42,7 @@ import gregtech6.item.GTBarrelBlockItem;
 import gregtech6.registry.GTBarrels;
 
 /**
- * {@code /gt6tank} — the automated fluid-barrel acceptance command (task p4-fluid-barrel
+ * {@code /gt6tank} — the automated fluid-barrel acceptance command (task fluid-barrel
  * acceptance ②/③, the {@code /gt6pipe} shape of GTFluidPipeCommand). Game-bus listener,
  * self-contained per ADR-P3-4. Console-safe: the FluidUtil container machinery runs with
  * a null player (tryEmptyContainer/tryFillContainer, FluidUtil.java:179/:126 —
@@ -61,7 +61,7 @@ import gregtech6.registry.GTBarrels;
  *     and {@link TileEntityBase08Barrel#meltdown()} — the tank is voided and the block
  *     replaced with fire (:227).</li>
  * <li>{@code stat <pos>} — dump amount/capacity/temperature/melting point for debugging.</li>
- * <li>{@code show <pos>} (task p12-fluid-item-carrier) — the BE-and-drop assertion
+ * <li>{@code show <pos>} (task fluid-item-carrier) — the BE-and-drop assertion
  *     surface: the barrel BE's tank, or the dropped barrel item's content through its
  *     FLUID_HANDLER_ITEM capability — the break-carries-content verdict.</li>
  * </ul>
@@ -129,14 +129,14 @@ public final class GTBarrelCommand {
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
 						.executes(aContext -> show(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
 				.then(Commands.literal("tap")
-					// p12-tap-funnel-attachment — the tap acceptance channel: runs the tap at
+					// tap-funnel-attachment — the tap acceptance channel: runs the tap at
 					// pos through its EMPTY-HAND chain (the deterministic counterfactual of "an
 					// empty-handed player clicks"; the player right-click is the real
 					// interaction — DECLARED deviation, the card's acceptance (b)).
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
 						.executes(aContext -> tap(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
 				.then(Commands.literal("funnel")
-					// p12-tap-funnel-attachment — the funnel acceptance channel: runs the
+					// tap-funnel-attachment — the funnel acceptance channel: runs the
 					// funnel at pos with a VIRTUAL WATER BUCKET (the deterministic
 					// counterfactual of "a player holding a water bucket clicks"; the empty
 					// container is reported, not given — DECLARED deviation).

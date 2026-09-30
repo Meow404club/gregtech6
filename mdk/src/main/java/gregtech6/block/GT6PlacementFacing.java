@@ -3,14 +3,14 @@ package gregtech6.block;
 import net.minecraft.core.Direction;
 
 /**
- * The PLACEMENT-FACING CANON (task p28-singleblock-facing-canon): a machine's FRONT at
+ * The PLACEMENT-FACING CANON (task singleblock-facing-canon): a machine's FRONT at
  * placement points TOWARDS the placer — the OPPOSITE of the player's view direction.
  * The single source both the BlockState seam ({@code getStateForPlacement}) and the
  * BlockEntity seam ({@code setFacingFromPlacement}) of every singleblock family consume,
  * so the client prediction and the server pair-write can never disagree (the P27
  * client-prediction lesson: state and BE must flip through the SAME seam).
  *
- * <p>Upstream evidence chain (task p27-cokeoven-facing-fix, now generalised):
+ * <p>Upstream evidence chain (task cokeoven-facing-fix, now generalised):
  * {@code getSideForPlayerPlacing} → {@code getHorizontalForPlayerPlacing}
  * (UT.java:1751-1753) over {@code COMPASS_DIRECTIONS = {SIDE_NORTH, SIDE_EAST,
  * SIDE_SOUTH, SIDE_WEST}} (CS.java:638-639): yaw 180 (the view NORTH,

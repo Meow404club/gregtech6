@@ -8,7 +8,7 @@ import gregtech6.util.UT6;
 
 /**
  * The scale base — 1.20.1 port of gregapi/cover/covers/AbstractCoverAttachmentScale.java
- * (:36-78, task p35-covers-display-scale-6). A scale cover turns a machine quantity into
+ * (:36-78, task covers-display-scale-6). A scale cover turns a machine quantity into
  * a redstone OUTPUT: the VALUE lane carries the 0..15 reading
  * ({@code needsVisualsSaved} :69 — the visual lane carries the two output-mode bits), the
  * emission pair :60-67 maps the lane onto the host's redstone exits.

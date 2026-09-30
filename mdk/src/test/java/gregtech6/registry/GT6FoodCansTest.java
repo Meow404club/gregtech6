@@ -1,5 +1,5 @@
 /*
- * Offline tests for task p25-food-can-row0: the GT6FoodCans registration home — the
+ * Offline tests for task food-can-row0: the GT6FoodCans registration home — the
  * row0 MINIMAL subset (the empty can + the CANS_ROTTEN 6-tier family + the Cookie Tin
  * output), the GT6SprayCansCreativeTabTest face over the table-driven tab.
  *

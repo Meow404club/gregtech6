@@ -23,7 +23,7 @@ import gregtech6.registry.GT6LargeMachines.GTLargeMachineBlockEntity;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The live doWork-path semantics of the twelve large machines (task p29-w3-large-12 —
+ * The live doWork-path semantics of the twelve large machines (task w3-large-12 —
  * the acceptance ②③④⑤⑥ offline legs), driven on the REAL
  * {@link GTLargeMachineBlockEntity} (row=null fixtures: the declared-pattern arm is
  * null-formed, the row config fields ride direct — the GTMultiBlockMachineSemanticsTest

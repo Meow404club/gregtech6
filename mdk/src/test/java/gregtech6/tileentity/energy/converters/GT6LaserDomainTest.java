@@ -24,7 +24,7 @@ import gregapi.tileentity.energy.ITileEntityEnergy;
 import gregtech6.registry.GT6Lasers;
 
 /**
- * The laser domain offline tests (task p32-qu-laser-domain) — the CO2 Laser (EU→LU) and
+ * The laser domain offline tests (task qu-laser-domain) — the CO2 Laser (EU→LU) and
  * Laser Absorber (LU→EU) converters over the shared {@link GT6DynamoBlockEntity} core with
  * BOTH arms re-typed (the GT6EuBridgeBlockEntityTest one-arm shape generalized). The
  * acceptance arms:

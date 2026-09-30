@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Offline truth tables for the logistics wire BE (task p32-logistics-lv2, the
+ * Offline truth tables for the logistics wire BE (task logistics-lv2, the
  * GTItemPipeBlockEntityTest shape — the RCON live chain carries the adjacency spread,
  * these tables pin the decision functions the spread is made of).
  *

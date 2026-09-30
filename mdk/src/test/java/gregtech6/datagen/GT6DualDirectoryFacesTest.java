@@ -25,7 +25,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /**
- * The dual-directory faces pin (task p26-w1-press-extruder-molds): the generated tree ships
+ * The dual-directory faces pin (task w1-press-extruder-molds): the generated tree ships
  * the data faces at BOTH directory spellings — the 1.20.1 plural form AND the 1.21
  * singular-registry aliases (GT6DualDirectoryFaces, the mirror provider). The r2 live
  * finding: the plural-only tree was structurally dead on the 1.21.1 loader (the 1.21
@@ -78,7 +78,7 @@ public class GT6DualDirectoryFacesTest {
 	}
 
 	/**
-	 * The per-leg c: face contract (task p28-neo-tag-wiring, the ADR-P17-1 re-ruling): the
+	 * The per-leg c: face contract (task neo-tag-wiring, the ADR-P17-1 re-ruling): the
 	 * neoforgeTagFaces Copy task grafts the platform material band onto the singular datapack
 	 * face — data/forge/tags/items/** and the p27 forward twin data/c/tags/items/** re-land as
 	 * data/c/tags/item/** (namespace forge→c, directory items→item, family/file names STAY
@@ -115,7 +115,7 @@ public class GT6DualDirectoryFacesTest {
 	}
 
 	/**
-	 * The loot face 1.21.1 adapter spot pin (task p28-neo-loot-copy-custom-data): the mirrored
+	 * The loot face 1.21.1 adapter spot pin (task neo-loot-copy-custom-data): the mirrored
 	 * singular loot JSON carries {@code minecraft:copy_custom_data} (the 1.21.1 registration,
 	 * LootItemFunctions.java:49) while the plural face stays the canonical {@code copy_nbt}
 	 * form, and the adapted mirror is the FUNCTION-NAME DELTA ALONE — the codec-verified full
@@ -142,7 +142,7 @@ public class GT6DualDirectoryFacesTest {
 	}
 
 	/**
-	 * The full loot band sweep (task p28-neo-loot-copy-custom-data): EVERY mirrored singular
+	 * The full loot band sweep (task neo-loot-copy-custom-data): EVERY mirrored singular
 	 * loot JSON equals its plural twin with EXACTLY the codec-verified function rename —
 	 * files without {@code copy_nbt} stay byte-identical (the pre-existing identity
 	 * contract), files with it differ in the one string. Zero {@code copy_nbt} may survive
@@ -177,7 +177,7 @@ public class GT6DualDirectoryFacesTest {
 		for (Path tSingular : tTables) {
 			String tSingularText = Files.readString(tSingular);
 			String tPluralText = Files.readString(tPluralRoot.resolve(tSingularRoot.relativize(tSingular)));
-			// task p30-ore-5-census dialect tolerance: the singular band carries the 21.1
+			// task ore-5-census dialect tolerance: the singular band carries the 21.1
 			// predicate dialect — the census LIVE finding was that the old byte-identity
 			// contract shipped 1.20.1 match_tool shapes into the 1.21.1 loader, where they
 			// parse as an EMPTY ItemPredicate (the RecordCodecBuilder silently drops the
@@ -196,7 +196,7 @@ public class GT6DualDirectoryFacesTest {
 	}
 
 	/**
-	 * The dual-dialect fold (task p30-ore-5-census): one comparable tree from either
+	 * The dual-dialect fold (task ore-5-census): one comparable tree from either
 	 * loader dialect — ① the value rename {@code minecraft:copy_nbt} → {@code
 	 * minecraft:copy_custom_data} (the p28 adapter), ② the match_tool predicate
 	 * reshape: 1.20.1 (plural) {@code "enchantments": [{"enchantment": X, ...}]} vs
@@ -263,7 +263,7 @@ public class GT6DualDirectoryFacesTest {
 	}
 
 	/**
-	 * The biome-modifier dual-brand faces (task p30-ops-biome-modifier-dual-dir, decisions
+	 * The biome-modifier dual-brand faces (task ops-biome-modifier-dual-dir, decisions
 	 * .p26-worldgen-biome-modifier-dual-dir plan a): the band's directory follows the
 	 * REGISTRY-KEY namespace (forge:biome_modifier → data/gt6/forge/biome_modifier/,
 	 * ForgeRegistries.java:195; neoforge:biome_modifier → data/gt6/neoforge/biome_modifier/,
@@ -282,7 +282,7 @@ public class GT6DualDirectoryFacesTest {
 		assertNotNull(tNeoforgeBand, "the neoforge brand face ships on the classpath (the r2 structural fix)");
 		assertEquals(countJson(tForgeBand), countJson(tNeoforgeBand),
 				"the brand faces are same-source twins: equal member counts");
-		assertTrue(countJson(tForgeBand) >= 12, "the 12 stone-blob modifiers ship (task p31-strata-lens: the 5 marker"
+		assertTrue(countJson(tForgeBand) >= 12, "the 12 stone-blob modifiers ship (task strata-lens: the 5 marker"
 				+ " stones ride the one strata_lenses modifier; got " + countJson(tForgeBand) + ")");
 	}
 
@@ -329,7 +329,7 @@ public class GT6DualDirectoryFacesTest {
 					tForge.getFileName() + " the neoforge face carries no foreign brand");
 			assertFalse(tNeoforgeText.contains("\"forge:remove_features\""),
 					tForge.getFileName() + " the neoforge face carries no foreign brand");
-			// task p31-nether-lens-end-yield: a conditions-carrying row (large_veins_end)
+			// task nether-lens-end-yield: a conditions-carrying row (large_veins_end)
 			// also rebrands the conditions root key + the condition type strings — the
 			// mirror rebrands every "forge:"-prefixed BRAND STRING to its "neoforge:"
 			// twin (GT6DualDirectoryFaces.rebrandConditions), so the comparison
@@ -356,7 +356,7 @@ public class GT6DualDirectoryFacesTest {
 	 * {@link GT6WorldgenDatagen#VANILLA_DEBLOB_OVERWORLD} constant (pinned per leg in
 	 * GT6WorldgenDatagenTest), its node-tree delta folded by the datagen_tree_check
 	 * normalizer remove-features-diamond-medium(1.21.1). {@code amethyst_geode} is
-	 * deliberately ABSENT (r8-geode-revert): the #33 GT geode band that justified its
+	 * deliberately ABSENT (geode-revert): the #33 GT geode band that justified its
 	 * suppression is reverted, so the vanilla geode generates again.
 	 */
 	@Test
@@ -424,7 +424,7 @@ public class GT6DualDirectoryFacesTest {
 	}
 
 	/**
-	 * The conditions key-order canonical face (task p32-ops-biome-keyorder): the end-yield
+	 * The conditions key-order canonical face (task ops-biome-keyorder): the end-yield
 	 * row round-trips {@link GT6BiomeModifierConditions#serializeCanonical} BYTE-IDENTICALLY
 	 * on both brand faces. The regression this pins: the 1.21.1 leg
 	 * {@code DataProvider.KEY_COMPARATOR} pins {@code neoforge:conditions} ahead of
@@ -464,7 +464,7 @@ public class GT6DualDirectoryFacesTest {
 	}
 
 	/**
-	 * The recipe face 1.21.1 key-form adapter spot pin (task p30-pool-recipe-key-form): the
+	 * The recipe face 1.21.1 key-form adapter spot pin (task pool-recipe-key-form): the
 	 * mirrored singular recipe JSON carries the ItemStack id-form result (1.21.1
 	 * ItemStack.java:103-126 — {@code id} fieldOf + {@code count} optionalFieldOf(1), riding
 	 * ShapedRecipe.java:96 / ShapelessRecipe.java:86 / SimpleCookingSerializer.java:23), the
@@ -504,7 +504,7 @@ public class GT6DualDirectoryFacesTest {
 	}
 
 	/**
-	 * The full recipe band sweep (task p30-pool-recipe-key-form): EVERY mirrored singular
+	 * The full recipe band sweep (task pool-recipe-key-form): EVERY mirrored singular
 	 * recipe JSON is the 1.21.1 key form — zero {@code forge:} tag values, zero
 	 * {@code show_notification} keys, every result the {@code {count,id}} object. One
 	 * survivor of any of the three is one boot-time RecipeManager parse death (the

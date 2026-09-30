@@ -15,7 +15,7 @@ import gregapi.code.TagData;
 import gregapi.data.TD;
 
 /**
- * The Zero-Point-Module — task p36-energy-zpm-dechargers. Upstream files the ZPM as the
+ * The Zero-Point-Module — task energy-zpm-dechargers. Upstream files the ZPM as the
  * item-form MTE {@code MultiTileEntityZPM} (gregtech/tileentity/batteries/qu/…ZPM.java:43-83,
  * Loader_MultiTileEntities.java:1103, meta 14999, "Zero-Point-Module (ZPM)"): a
  * {@code TileEntityBase08Battery} of {@code NBT_CAPACITY 2_000_000_000_000L} riding
@@ -46,7 +46,7 @@ import gregapi.data.TD;
  * face verbatim: between the extremes the standard :107 charge line shows; empty OR
  * full shows the :49-:50 artifact pair ("An Ancient Artifact of huge Power" +
  * "Capacity: …"). The light-value and texture faces are declared CUT with the block
- * form (the render pool; p36-render-texture-bake posture). Both extremes stack to 16 —
+ * form (the render pool; render-texture-bake posture). Both extremes stack to 16 —
  * the charged-single :143 face keeps the base behavior (charge &gt; 0 = stack 1, so a
  * FULL artifact still stacks 1; the upstream getMaxStackSize override :76 restores the
  * default for the ZPM: {@code aDefault} — the port keeps the base :143 narrowing, the

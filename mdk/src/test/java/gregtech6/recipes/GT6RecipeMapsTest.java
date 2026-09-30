@@ -50,7 +50,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertTrue(GT6RecipeMaps.FURNACE instanceof RecipeMapFurnace);
 	}
 
-	/** The RM.java:78 Coke Oven map constants (task p6-cokeoven-processing). */
+	/** The RM.java:78 Coke Oven map constants (task cokeoven-processing). */
 	@Test
 	void initRegistersCokeOvenMapWithUpstreamConstants() {
 		GT6RecipeMaps.init();
@@ -68,12 +68,12 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.COKE_OVEN.mPower);
 		assertEquals(0, GT6RecipeMaps.COKE_OVEN.mProgressBarDirection);
 		assertEquals(1, GT6RecipeMaps.COKE_OVEN.mProgressBarAmount);
-		// lowercase since p8-cokeoven-gui-menu ⑥ — the 1.20.1 ResourceLocation charset makes
+		// lowercase since cokeoven-gui-menu ⑥ — the 1.20.1 ResourceLocation charset makes
 		// the upstream-style "CokeOven" spelling unparseable for GTBasicMachineScreen.backgroundOf
 		assertEquals("gt6:textures/gui/machines/cokeoven.png", GT6RecipeMaps.COKE_OVEN.mGUIPath);
 	}
 
-	/** The FM.java:45 Engine Fuels map constants (task p12-engine-fuel-fluids). */
+	/** The FM.java:45 Engine Fuels map constants (task engine-fuel-fluids). */
 	@Test
 	void initRegistersEngineFuelsMapWithUpstreamConstants() {
 		GT6RecipeMaps.init();
@@ -94,7 +94,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals("gt6:textures/gui/machines/default.png", GT6RecipeMaps.ENGINE_FUELS.mGUIPath, "the FM.java:45 machines/Default row, lowercased");
 	}
 
-	/** The FM.java:40 Fluidized Bed Fuels map constants (task p13-hu-steam-foundation). */
+	/** The FM.java:40 Fluidized Bed Fuels map constants (task hu-steam-foundation). */
 	@Test
 	void initRegistersFluidBedMapWithUpstreamConstants() {
 		GT6RecipeMaps.init();
@@ -115,7 +115,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals("gt6:textures/gui/machines/default.png", GT6RecipeMaps.FLUIDBED.mGUIPath, "the FM.java:40 machines/Default row, lowercased");
 	}
 
-	/** The FM.java:41 Burnable Fuels map constants (task p13-hu-steam-foundation). */
+	/** The FM.java:41 Burnable Fuels map constants (task hu-steam-foundation). */
 	@Test
 	void initRegistersBurnMapWithUpstreamConstants() {
 		GT6RecipeMaps.init();
@@ -136,7 +136,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals("gt6:textures/gui/machines/default.png", GT6RecipeMaps.BURN.mGUIPath, "the FM.java:41 machines/Default row, lowercased");
 	}
 
-	/** The RM.java:70 Distillery map constants (task p14-drying-distillery-maps). */
+	/** The RM.java:70 Distillery map constants (task drying-distillery-maps). */
 	@Test
 	void initRegistersDistilleryMapWithUpstreamConstants() {
 		GT6RecipeMaps.init();
@@ -158,7 +158,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertTrue(GT6RecipeMaps.DISTILLERY.mRecipeList.isEmpty(), "DECLARED-empty: rows are pooled behind the circuit-selector item system");
 	}
 
-	/** The RM.java:71 Drying map constants (task p14-drying-distillery-maps). */
+	/** The RM.java:71 Drying map constants (task drying-distillery-maps). */
 	@Test
 	void initRegistersDryingMapWithUpstreamConstants() {
 		GT6RecipeMaps.init();
@@ -178,7 +178,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.DRYING.mProgressBarAmount);
 		assertEquals("gt6:textures/gui/machines/dryer.png", GT6RecipeMaps.DRYING.mGUIPath, "the RM.java:71 machines/Dryer row, lowercased");
 		// the declared-empty assertion on mRecipeList lived here until the W3 pour (task
-		// p14-loop-closure-chain) landed the :525 Water row — the row-level contract now
+		// loop-closure-chain) landed the :525 Water row — the row-level contract now
 		// lives in GT6RecipesDryingTest
 	}
 
@@ -206,9 +206,9 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertSame(tFirstBurn, GT6RecipeMaps.BURN);
 		assertSame(tFirstDistillery, GT6RecipeMaps.DISTILLERY);
 		assertSame(tFirstDrying, GT6RecipeMaps.DRYING);
-		assertEquals(80, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel + mixer + sifter + compressor + wiremill + rollingmill + press + extruder + crucible smelting + crucible alloying + bath + anvil + anvil bend (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the p19-chisel-recipes RM.java:138 append, the p24-canner-machine RM.java:148 append, the p26-c-foam-fluid-refill RM.java:74 append, the p26-w1 RM.java:83/:87/:111 trio, the p26-w1-press-extruder-molds RM.java:99/:136 pair, the p26-crucible-physics-smeltery RM.java:128/:129 pair, the p26-kitchen-pot-bowl RM.java:80 append, the p28-c-ulv-machine-ladder RM.java:113 append, the p28-c-anvil RM.java:118-120 pair with the Small/Big fold) + fermenter + loom + pressurewasher + squeezer + clustermill + rollbender + rollformer + centrifuge + sharpener + cutter + boxinator + unboxinator (the p29-w1-rm-maps-scaffold twelve-map block, RM.java:69/:89/:98/:101/:112-115/:122/:126/:130/:149-150) + sluice (the p29-w1-kinetic-process-ladder batch-C tail-append, RM.java:81 — the Sluice family's map, the card-A enumeration gap) + autocrafter + steamcracking + catalyticcracking + coagulator + cryomixer + magneticseparator + injector + laminator + autoclave + freezer + polarizer + lightning + slicer + laserengraver + welder + electrolyzer + printer + scannervisuals + generifier (the p29-w2-energy-types-5tier nineteen-map block, RM.java:63/:67/:68/:72/:77/:82/:88/:90-94/:96/:116/:117/:123/:141/:142/:151 — the W2 shared-layer card) + gas_fuels (the p29-w3-turbine-dynamo FM.java:42 append — the Gas Turbine fuel face, FM.Hot/Plasma/Turbine/Magic stay the pool bottom) + distillationtower + cryodistillationtower (the p29-w3-distill-crucible RM.java:65/:66 twin pair, the tower consumer card) + melter + smelter + fuels_hot (the p29-w3-heat-smelter three-map block, RM.java:131/:132 + FM.java:43 — the wave's one recipe-batch card) + roasting (the p29-w4-eu-bridge RM.java:79 append — the Roasting Oven card's map) + implosion (the p31-implosion RM.java:86 append — the Implosion Compressor multiblock's map, the 3/3/3 item shape) + scannermolecular + massfab + replicator (the p31-qu-a-foundation QU trio, RM.java:143-145 — the declared-empty foundation, the machines are the C/D cards) + bedrockorelist (the p31-bedrock-ore-worldgen RM.java:153 append -- the Bedrock Drill NEI display face, no machine consumes it) + fusion (the p31-fusion RM.java:146 append — the Fusion Reactor multiblock\'s map, the 2/6/1 item + 2/6/0 fluid shape, the :949-966 rows pour via GT6RecipesFusion) + juicer (the p33-food-machines-kitchen RM.java:102 append — the b1 declared-empty gap closed, the manual Juicer's map) + crystallisationcrucible + bumblelyzer (the p34-machines-bumblelyzer-crucible RM.java:73/:107 pair — the machine-four card's two, the dynamic scan arm on the Bumblelyzer subclass) + burnmixer + plantalyzer (the p34-machines-burner-plantalyzer RM.java:76/:109 pair — the Burner Mixer constants row and the declared-empty Plantalyzer compat map) + microwave + cooker + toolhead + mortar + hammer (the p37-rm-six-maps five-map append, RM.java:104/:105/:125/:133/:137 — the p36 census open_faces[0] close: microwave/cooker/toolhead declared-empty (upstream zero static rows), mortar/hammer static rows on the JSON seam)");	}
+		assertEquals(80, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel + mixer + sifter + compressor + wiremill + rollingmill + press + extruder + crucible smelting + crucible alloying + bath + anvil + anvil bend (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the chisel-recipes RM.java:138 append, the canner-machine RM.java:148 append, the c-foam-fluid-refill RM.java:74 append, the p26-w1 RM.java:83/:87/:111 trio, the w1-press-extruder-molds RM.java:99/:136 pair, the crucible-physics-smeltery RM.java:128/:129 pair, the kitchen-pot-bowl RM.java:80 append, the c-ulv-machine-ladder RM.java:113 append, the c-anvil RM.java:118-120 pair with the Small/Big fold) + fermenter + loom + pressurewasher + squeezer + clustermill + rollbender + rollformer + centrifuge + sharpener + cutter + boxinator + unboxinator (the w1-rm-maps-scaffold twelve-map block, RM.java:69/:89/:98/:101/:112-115/:122/:126/:130/:149-150) + sluice (the w1-kinetic-process-ladder batch-C tail-append, RM.java:81 — the Sluice family's map, the card-A enumeration gap) + autocrafter + steamcracking + catalyticcracking + coagulator + cryomixer + magneticseparator + injector + laminator + autoclave + freezer + polarizer + lightning + slicer + laserengraver + welder + electrolyzer + printer + scannervisuals + generifier (the w2-energy-types-5tier nineteen-map block, RM.java:63/:67/:68/:72/:77/:82/:88/:90-94/:96/:116/:117/:123/:141/:142/:151 — the W2 shared-layer card) + gas_fuels (the w3-turbine-dynamo FM.java:42 append — the Gas Turbine fuel face, FM.Hot/Plasma/Turbine/Magic stay the pool bottom) + distillationtower + cryodistillationtower (the w3-distill-crucible RM.java:65/:66 twin pair, the tower consumer card) + melter + smelter + fuels_hot (the w3-heat-smelter three-map block, RM.java:131/:132 + FM.java:43 — the wave's one recipe-batch card) + roasting (the w4-eu-bridge RM.java:79 append — the Roasting Oven card's map) + implosion (the implosion RM.java:86 append — the Implosion Compressor multiblock's map, the 3/3/3 item shape) + scannermolecular + massfab + replicator (the qu-a-foundation QU trio, RM.java:143-145 — the declared-empty foundation, the machines are the C/D cards) + bedrockorelist (the bedrock-ore-worldgen RM.java:153 append -- the Bedrock Drill NEI display face, no machine consumes it) + fusion (the fusion RM.java:146 append — the Fusion Reactor multiblock\'s map, the 2/6/1 item + 2/6/0 fluid shape, the :949-966 rows pour via GT6RecipesFusion) + juicer (the food-machines-kitchen RM.java:102 append — the b1 declared-empty gap closed, the manual Juicer's map) + crystallisationcrucible + bumblelyzer (the machines-bumblelyzer-crucible RM.java:73/:107 pair — the machine-four card's two, the dynamic scan arm on the Bumblelyzer subclass) + burnmixer + plantalyzer (the machines-burner-plantalyzer RM.java:76/:109 pair — the Burner Mixer constants row and the declared-empty Plantalyzer compat map) + microwave + cooker + toolhead + mortar + hammer (the rm-six-maps five-map append, RM.java:104/:105/:125/:133/:137 — the p36 census open_faces[0] close: microwave/cooker/toolhead declared-empty (upstream zero static rows), mortar/hammer static rows on the JSON seam)");	}
 
-	/** The RM.java:99 Forming Press map constants (task p26-w1-press-extruder-molds). */
+	/** The RM.java:99 Forming Press map constants (task w1-press-extruder-molds). */
 	@Test
 	void initRegistersPressMapWithUpstreamConstants() {
 		GT6RecipeMaps.init();
@@ -229,7 +229,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertTrue(GT6RecipeMaps.PRESS.mRecipeList.isEmpty(), "DECLARED-empty static rows: the census pools (food-mold/electrode/compat), the rows ride the dynamic arm");
 	}
 
-	/** The RM.java:136 Extruder map constants (task p26-w1-press-extruder-molds). */
+	/** The RM.java:136 Extruder map constants (task w1-press-extruder-molds). */
 	@Test
 	void initRegistersExtruderMapWithUpstreamConstants() {
 		GT6RecipeMaps.init();
@@ -268,8 +268,8 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertNull(GT6RecipeMaps.BURN, "reset drops the burn entry too");
 		assertNull(GT6RecipeMaps.DISTILLERY, "reset drops the distillery entry too");
 		assertNull(GT6RecipeMaps.DRYING, "reset drops the drying entry too");
-		assertNull(GT6RecipeMaps.PRESS, "reset drops the press entry too (task p26-w1-press-extruder-molds)");
-		assertNull(GT6RecipeMaps.EXTRUDER, "reset drops the extruder entry too (task p26-w1-press-extruder-molds)");
+		assertNull(GT6RecipeMaps.PRESS, "reset drops the press entry too (task w1-press-extruder-molds)");
+		assertNull(GT6RecipeMaps.EXTRUDER, "reset drops the extruder entry too (task w1-press-extruder-molds)");
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("mc.recipe.furnace"), "reset drops the registry entry");
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.cokeoven"), "reset drops the coke oven entry");
 		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("gt.recipe.fuels.engine"), "reset drops the engine fuels entry");
@@ -318,7 +318,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 				1, 9, 1, 0, 1, 0, 1, 1));
 	}
 
-	/** The RM.java:83 Sifting map constants (task p26-w1-sifter-compressor-wiremill). */
+	/** The RM.java:83 Sifting map constants (task w1-sifter-compressor-wiremill). */
 	@Test
 	void initRegistersSiftingMapWithUpstreamConstants() {
 		GT6RecipeMaps.init();
@@ -339,7 +339,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals("gt6:textures/gui/machines/sifter.png", GT6RecipeMaps.SIFTING.mGUIPath, "the RM.java:83 machines/Sifter row, lowercased");
 	}
 
-	/** The RM.java:87 Compressor map constants (task p26-w1-sifter-compressor-wiremill). */
+	/** The RM.java:87 Compressor map constants (task w1-sifter-compressor-wiremill). */
 	@Test
 	void initRegistersCompressorMapWithUpstreamConstants() {
 		GT6RecipeMaps.init();
@@ -360,7 +360,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals("gt6:textures/gui/machines/compressor.png", GT6RecipeMaps.COMPRESSOR.mGUIPath, "the RM.java:87 machines/Compressor row, lowercased");
 	}
 
-	/** The RM.java:111 Wiremill map constants (task p26-w1-sifter-compressor-wiremill). */
+	/** The RM.java:111 Wiremill map constants (task w1-sifter-compressor-wiremill). */
 	@Test
 	void initRegistersWiremillMapWithUpstreamConstants() {
 		GT6RecipeMaps.init();
@@ -431,7 +431,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 	}
 
 	// -----------------------------------------------------------------------
-	// the P29 W1 twelve-map block (task p29-w1-rm-maps-scaffold) — the RM.java
+	// the P29 W1 twelve-map block (task w1-rm-maps-scaffold) — the RM.java
 	// :69/:89/:98/:101/:112-115/:122/:126/:130/:149-150 transcription pins, all
 	// base-RecipeMap, all DECLARED-empty (the row pour is the B/C/D card content).
 	// -----------------------------------------------------------------------
@@ -601,7 +601,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		String[] tNames = {"gt.recipe.fermenter", "gt.recipe.loom", "gt.recipe.pressurewasher", "gt.recipe.squeezer",
 				"gt.recipe.clustermill", "gt.recipe.rollbender", "gt.recipe.rollformer", "gt.recipe.centrifuge",
 				"gt.recipe.sharpener", "gt.recipe.cutter", "gt.recipe.boxinator", "gt.recipe.unboxinator",
-				"gt.recipe.sluice"}; // the batch-C tail-append (task p29-w1-kinetic-process-ladder)
+				"gt.recipe.sluice"}; // the batch-C tail-append (task w1-kinetic-process-ladder)
 		GT6RecipeMaps.init();
 		RecipeMap tFirstCutter = GT6RecipeMaps.CUTTER;
 		assertNotNull(tFirstCutter);
@@ -648,7 +648,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 	}
 
 	// -----------------------------------------------------------------------
-	// the P29 W2 nineteen-map block (task p29-w2-energy-types-5tier) — the RM.java
+	// the P29 W2 nineteen-map block (task w2-energy-types-5tier) — the RM.java
 	// :63/:67/:68/:72/:77/:82/:88/:90-94/:96/:116/:117/:123/:141/:142/:151 transcription
 	// pins, all base-RecipeMap, all DECLARED-empty. The table mirrors the upstream rows
 	// column-for-column: internal name, local name, GUI word (lowercased), items
@@ -740,7 +740,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		}
 	}
 
-	/** The RM.java:143/:144/:145 QU trio constants (task p31-qu-a-foundation) — all three the base-RecipeMap carry, ALL THREE DECLARED-empty. */
+	/** The RM.java:143/:144/:145 QU trio constants (task qu-a-foundation) — all three the base-RecipeMap carry, ALL THREE DECLARED-empty. */
 	@Test
 	void initRegistersTheQuTrioWithUpstreamConstants() {
 		GT6RecipeMaps.init();
@@ -787,12 +787,12 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.REPLICATOR.mPower);
 		assertEquals("gt6:textures/gui/machines/replicator.png", GT6RecipeMaps.REPLICATOR.mGUIPath, "the RM.java:145 machines/Replicator row, lowercased");
 		// the base-RecipeMap carry over both runtime-synthesis subclasses (the judged form)
-		// task p32-qu-scanner-replicator — the pool note above is LIFTED: the USB-scan arm is
+		// task qu-scanner-replicator — the pool note above is LIFTED: the USB-scan arm is
 		// LIVE (the GT6RecipeMapScannerMolecular synthesis over the GT6UsbSticks carrier)
 		assertTrue(gregtech6.recipes.maps.GT6RecipeMapScannerMolecular.class.isInstance(GT6RecipeMaps.SCANNER_MOLECULAR),
 				"the RecipeMapScannerMolecular USB-scan arm is LIVE (RecipeMapScannerMolecular.java:46-67)");
 		assertEquals(RecipeMap.class, GT6RecipeMaps.MASSFAB.getClass(), "RM.Massfab IS the plain RecipeMap upstream");
-		// task p32-qu-scanner-replicator — the pool note above is LIFTED: the USB-data arm is
+		// task qu-scanner-replicator — the pool note above is LIFTED: the USB-data arm is
 		// LIVE (the GT6RecipeMapReplicator synthesis; the mMaxFluidInputSize=2000 tweak
 		// (:50) stays pooled — the port RecipeMap carries no cap field)
 		assertTrue(gregtech6.recipes.maps.GT6RecipeMapReplicator.class.isInstance(GT6RecipeMaps.REPLICATOR),
@@ -804,8 +804,8 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 	}
 
 	/**
-	 * The FLIPPED conflict-audit ⑤ pin (task p32-ignition-gate; was
-	 * theIgnitionGateStaysUnported, the zero-read ruling of p31-qu-a-foundation): the
+	 * The FLIPPED conflict-audit ⑤ pin (task ignition-gate; was
+	 * theIgnitionGateStaysUnported, the zero-read ruling of qu-a-foundation): the
 	 * "dead field" reading missed the registration-config supply route — the Loader
 	 * :1242 fusion row carries NBT_SPECIAL_IS_START_ENERGY,T through readFromNBT2
 	 * :112-124, so the :755 write is reachable and the :809 gate is REAL. The port now
@@ -838,7 +838,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 	}
 
 	/**
-	 * The P37 five-map constants (task p37-rm-six-maps, the p36 census open_faces[0] close):
+	 * The P37 five-map constants (task rm-six-maps, the p36 census open_faces[0] close):
 	 * Microwave/Cooking/ToolHeads/Mortar/Hammer transcribed parameter-for-parameter over
 	 * the 15-arg port ctor (RM.java:104/:105/:125/:133/:137). Microwave carries the
 	 * FURNACE shape ("smelting" NEI name, the Oven GUI); ToolHeads carries the one

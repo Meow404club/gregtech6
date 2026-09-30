@@ -1,5 +1,5 @@
 /**
- * The ore datagen render face pins (task p30-ore-3-datagen acceptance "渲染面离线断言").
+ * The ore datagen render face pins (task ore-3-datagen acceptance "渲染面离线断言").
  * The composition strategy is the card's contract: 9028 blocks (74 form-rows x M=122, the
  * census pin) walk onto 9028 blockstates + 9028 item models + a SHARED placeholder model
  * per distinct BASE texture (28), and the dual-sprite look is the {@code GTOreBakedModel}
@@ -90,7 +90,7 @@ class GT6OreRenderDatagenTest {
 			GTOreBakedModel.baseSpriteOf(GT6OreBlocks.FAMILIES.get(9), FormKind.NORMAL).toString());
 		assertEquals("gt6:block/stones/prismarine_light/stone",
 			GTOreBakedModel.baseSpriteOf(GT6OreBlocks.FAMILIES.get(22), FormKind.BROKEN).toString());
-		// task r4-ore-tex-b — the vanilla-named trio rides the vanilla current textures
+		// task ore-tex-b — the vanilla-named trio rides the vanilla current textures
 		// (FAMILIES [14]/[15]/[16]; all FormKinds share the one rock, no cobble split);
 		// basalt ([11]) is the same-name DIFFERENT stone and must stay borrowed
 		assertEquals("minecraft:block/granite",

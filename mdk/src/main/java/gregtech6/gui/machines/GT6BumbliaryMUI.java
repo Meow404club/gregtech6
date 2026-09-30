@@ -43,7 +43,7 @@ import brachy.modularui.widgets.slot.ModularSlot;
 import gregtech6.tileentity.bees.GT6BumbliaryBlockEntity;
 
 /**
- * The Bumbliary ModularUI panel factory (task p34-bumbliary-gui) — the
+ * The Bumbliary ModularUI panel factory (task bumbliary-gui) — the
  * {@code MultiTileEntityBumbliary.java:389-509} container pair as one factory over the
  * BE's two dispatch flags: {@code mAdvanced} picks the 36-slot primary 4x9 grid
  * (x=8..152 step 18, y=8/26/44/62 — the :396-434 rows) or the 20-slot advanced 4x5 grid
@@ -227,7 +227,7 @@ public final class GT6BumbliaryMUI {
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
 							.executes(aContext -> open(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))));
 			aEvent.getDispatcher().register(tCmd);
-			CMD_LOGGER.info("Registered GT6 bumbliary command /gt6bumbliary (use|scoop|open) — the p34-bumbliary-gui acceptance home");
+			CMD_LOGGER.info("Registered GT6 bumbliary command /gt6bumbliary (use|scoop|open) — the bumbliary-gui acceptance home");
 		}
 
 		/**

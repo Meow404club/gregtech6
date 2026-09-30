@@ -6,7 +6,7 @@ import gregtech6.registry.GTMultiBlocks;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Large Matter Fabricator controller block (task p31-massfab) — the concrete
+ * The Large Matter Fabricator controller block (task massfab) — the concrete
  * {@link GTMultiBlockControllerBlock} mounting the Massfab BET (the
  * GTImplosionCompressorBlock minimal form: everything visual/behavioural is base-owned
  * FACING + FORMED, this class only mounts the BET; no use-face — the controller runs

@@ -1,5 +1,5 @@
 /**
- * The offline test of the :130-140 connect branch (task p10-wire-contact-damage
+ * The offline test of the :130-140 connect branch (task wire-contact-damage
  * ride-along): a REDSTONE wire connecting to a connector neighbour whose connector-type
  * set shares NO element with its own — the live case being a redstone wire touching an
  * ELECTRIC wire (WIRE_REDSTONE vs WIRE_ELECTRIC never intersect). Upstream sets the own
@@ -90,7 +90,7 @@ public class GTWireConnectBranchTest extends GTOfflineTestBase {
 		@SuppressWarnings("unchecked")
 		BlockEntityType<TestWire>[] tHolder = (BlockEntityType<TestWire>[]) new BlockEntityType<?>[1];
 		// 21.1 validates the BE type/state pair at the ctor: the valid set carries the
-		// cached GT6 wire blocks (task p15-m4-test-infra-2).
+		// cached GT6 wire blocks (task m4-test-infra-2).
 		tHolder[0] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new TestWire(tHolder[0], aPos, aState),
 				Blocks.STONE, block(Family.REDSTONE), block(Family.ELECTRIC)).build(null);
@@ -101,7 +101,7 @@ public class GTWireConnectBranchTest extends GTOfflineTestBase {
 	 * Offline Block construction needs the block registry temporarily unfrozen (the
 	 * UseLockTest form). Instances are memoized per family — the 21.1 BE ctor validates
 	 * the state against the BET's valid set, so the fixture must hand out ONE stable
-	 * block identity per family (task p15-m4-test-infra-2).
+	 * block identity per family (task m4-test-infra-2).
 	 */
 	private static final Map<Family, GTWireBlock> sBlockCache = new HashMap<>();
 

@@ -1,5 +1,5 @@
 /**
- * Offline tests for task p29-w5-t7-pocket-eight: the eight pocket multitool forms
+ * Offline tests for task w5-t7-pocket-eight: the eight pocket multitool forms
  * ({@link GTPocketMultitoolItem}, the base + form-parameter shape) — the registration
  * census, the TAB_TABLE tail parity, the :176-183 ring chain and its :187-196 8x8
  * duality table (the NEI-redirect loop, 64 ordered cells), the durability-preserving

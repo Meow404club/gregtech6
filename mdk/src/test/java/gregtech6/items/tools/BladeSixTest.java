@@ -25,7 +25,7 @@ import gregtech6.items.tools.loot.GT6ToolLootModifiers.GT6ToolConvertModifier.Mo
 import gregtech6.registry.GT6Tools;
 
 /**
- * Offline tests for task p29-w5-t2-blade-six — the six blade tools (the DigSixTest
+ * Offline tests for task w5-t2-blade-six — the six blade tools (the DigSixTest
  * offline-boot form: every assertion rides the pure static seams).
  *
  * <p>Surfaces pinned here (the card ACCEPTANCE rows):
@@ -67,7 +67,7 @@ public class BladeSixTest {
 
 	// ------------------------------------------------------------------ TAB_TABLE parity
 
-	/** The table holds exactly 37 rows — rows 16..21 are the six blade tools in display order (22..25 the machine-face four, 26..30 the field five, 31..36 the p29-w5-t5-scene-six tail append). */
+	/** The table holds exactly 37 rows — rows 16..21 are the six blade tools in display order (22..25 the machine-face four, 26..30 the field five, 31..36 the w5-t5-scene-six tail append). */
 	@Test
 	public void tabTableIsExactlyTheTwentyTwoToolRows() {
 		assertEquals(88, GT6Tools.TAB_TABLE.size(), "the Tools tab = the 16 prior rows + the six blade tools + the machine-face four + the field five + the scene six");

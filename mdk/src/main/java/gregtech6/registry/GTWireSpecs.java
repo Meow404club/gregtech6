@@ -8,7 +8,7 @@ import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 
 /**
- * The electric-wire data table (task p9-wire-family-w1 spec ①) — the direct transcription of
+ * The electric-wire data table (task wire-family-w1 spec ①) — the direct transcription of
  * upstream {@code MultiTileEntityWireElectric.addElectricWires}
  * (tmp/gt6-1.7.10 gregapi/tileentity/connectors/MultiTileEntityWireElectric.java:71-109) and
  * its 30-material registration loop (gregtech/loaders/b/Loader_MultiTileEntities.java:1913-1950).
@@ -51,7 +51,7 @@ public final class GTWireSpecs {
 
 	/**
 	 * The max-voltage tier table, verbatim from CS.java:151 (= V*2 per tier). Unused until
-	 * task p35-energy-tail-machines: the Long Distance Wire throughput reads VMAX[tier]
+	 * task energy-tail-machines: the Long Distance Wire throughput reads VMAX[tier]
 	 * (upstream BlockLongDistWire tooltip + scanWires — {@code VMAX[mTiers[aMetaData]]}).
 	 */
 	public static final long[] VMAX = {
@@ -98,7 +98,7 @@ public final class GTWireSpecs {
 		}
 
 		/**
-		 * The electric-row factory (the 30 Loader:1914-1950 rows, task p9-wire-family-w1 form):
+		 * The electric-row factory (the 30 Loader:1914-1950 rows, task wire-family-w1 form):
 		 * {@code family = ELECTRIC}, never luminous. The 11 parameters are the verbatim
 		 * addElectricWires row shape this table has pinned since W1.
 		 */
@@ -109,7 +109,7 @@ public final class GTWireSpecs {
 		}
 
 		/**
-		 * The redstone-row factory (task p10-wire-redstone-family, the
+		 * The redstone-row factory (task wire-redstone-family, the
 		 * Loader_MultiTileEntities.java:1893-1902 transcription): one row per material covers
 		 * BOTH forms — the bare wire (PX_P[2] diameter, ids 27000/27050/27500) and the
 		 * insulated cable (PX_P[4], ids 27006/27056/27506) share the SAME upstream loss
@@ -129,13 +129,13 @@ public final class GTWireSpecs {
 		/**
 		 * The family column (task p10): ELECTRIC = the 620 addElectricWires variants (the EU
 		 * pump), REDSTONE = the push-BFS signal family, LASER = the LU placeholder family
-		 * (task p10-wire-laser-placeholder — the data pins land, the LU flood is a declared
+		 * (task wire-laser-placeholder — the data pins land, the LU flood is a declared
 		 * shell, see {@link #laserVariants}).
 		 */
 		public enum Family { ELECTRIC, REDSTONE, LASER }
 
 		/**
-		 * The laser-row factory (task p10-wire-laser-placeholder, the
+		 * The laser-row factory (task wire-laser-placeholder, the
 		 * Loader_MultiTileEntities.java:1814-1815 transcription): upstream registers exactly
 		 * ONE "Laser Fiber Wire" (24900) — no size ladder, no cable form — with
 		 * {@code NBT_MATERIAL, MT.NULL} (the row is material-less in spirit, the fiber
@@ -260,7 +260,7 @@ public final class GTWireSpecs {
 	public static final long LASER_CAPACITY = Long.MAX_VALUE;
 
 	/**
-	 * The laser-family registration rows (task p10-wire-laser-placeholder): exactly ONE
+	 * The laser-family registration rows (task wire-laser-placeholder): exactly ONE
 	 * row, verbatim from Loader_MultiTileEntities.java:1814-1815 — upstream registers a
 	 * single "Laser Fiber Wire" (id 24900, maxStack 64, NBT_DIAMETER PX_P[6],
 	 * NBT_CONTACTDAMAGE F). Kept OUT of {@link #ROWS} (the 30 electric rows) and
@@ -274,7 +274,7 @@ public final class GTWireSpecs {
 	public static final int EXPECTED_LASER_VARIANTS = 1;
 
 	/**
-	 * The laser-family spectrum (task p10-wire-laser-placeholder): ONE variant — the bare
+	 * The laser-family spectrum (task wire-laser-placeholder): ONE variant — the bare
 	 * fiber wire at PX_P[6] diameter, maxStack 64, loss 0 (upstream
 	 * getEnergyLossPerMeter :114 = 0). There is NO size ladder and NO cable form upstream
 	 * (Loader:1815 is a single aRegistry.add), so the registry path carries no
@@ -289,7 +289,7 @@ public final class GTWireSpecs {
 	}
 
 	/**
-	 * The redstone-family spectrum (task p10-wire-redstone-family): 3 rows × 2 forms, kept OUT
+	 * The redstone-family spectrum (task wire-redstone-family): 3 rows × 2 forms, kept OUT
 	 * of {@link #variants()} (that list is the 620 electric variants the census pins). Upstream
 	 * registers exactly ONE wire and ONE cable per material — there is NO size ladder on the
 	 * redstone family (Loader:1893-1902 has one aRegistry.add per form: the wire at PX_P[2]
@@ -311,7 +311,7 @@ public final class GTWireSpecs {
 	 * (the snake-cased material internal name, the GTMaterialItems.itemIdOf composition rule).
 	 * The redstone family (task p10) has NO size ladder, so its paths carry no {@code _gt<NN>}
 	 * tail: {@code wire_red_alloy} / {@code cable_red_alloy} / ... (the upstream registration
-	 * is one id per form, Loader:1893-1902). The laser family (task p10-wire-laser-placeholder)
+	 * is one id per form, Loader:1893-1902). The laser family (task wire-laser-placeholder)
 	 * is the same one-id form: {@code wire_laser} (Loader:1814-1815, a single registration).
 	 */
 	public static String registryName(Variant aVariant) {
@@ -323,7 +323,7 @@ public final class GTWireSpecs {
 	}
 
 	// The pre-installed display-name face (the old String displayName(Variant), the
-	// upstream row strings) retired by task p20-i18n-compose-wires: the display name is
+	// upstream row strings) retired by task i18n-compose-wires: the display name is
 	// now COMPOSED at runtime — GTWireBlock.displayNameOf(Variant) fills the
 	// gt6.wire.display[.plain] templates over the gt6.material small units. This table
 	// stays pure Java (no MC classes): the compose lives on the block side, the only
@@ -372,7 +372,7 @@ public final class GTWireSpecs {
 				MOD_ID + " wire table: expected 3 redstone rows (Loader:1893-1902), found " + REDSTONE_ROWS.size());
 		if (redstoneVariants().size() != EXPECTED_REDSTONE_VARIANTS) throw new IllegalStateException(
 				MOD_ID + " wire table: expected " + EXPECTED_REDSTONE_VARIANTS + " redstone variants, found " + redstoneVariants().size());
-		// task p10-wire-laser-placeholder — the laser family split (1 row x 1 form, Loader:1814-1815)
+		// task wire-laser-placeholder — the laser family split (1 row x 1 form, Loader:1814-1815)
 		if (LASER_ROWS.size() != 1) throw new IllegalStateException(
 				MOD_ID + " wire table: expected 1 laser row (Loader:1814-1815), found " + LASER_ROWS.size());
 		if (laserVariants().size() != EXPECTED_LASER_VARIANTS) throw new IllegalStateException(

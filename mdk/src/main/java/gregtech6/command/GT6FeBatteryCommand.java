@@ -22,7 +22,7 @@ import gregtech6.registry.GT6FeBatteries;
 import gregtech6.tileentity.energy.GT6FeBatteryBlockEntity;
 
 /**
- * {@code /gt6febattery} — the FE battery fixture command (task p26-eu-bridge-outbound),
+ * {@code /gt6febattery} — the FE battery fixture command (task eu-bridge-outbound),
  * the /gt6energy template (game-bus listener, self-contained per ADR-P3-4).
  *
  * <ul>

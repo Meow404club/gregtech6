@@ -16,7 +16,7 @@ import gregtech6.registry.GT6BurningBoxes;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Task p13-burning-box-family — the four registration ladders asserted ROW BY ROW
+ * Task burning-box-family — the four registration ladders asserted ROW BY ROW
  * against the Loader_MultiTileEntities.java:517-704 anchors (行值零差), the row-count
  * erratum declaration, the FM.Burn pour values, the FluidBed declared-empty state and
  * the FM.Furnace bridge constants.
@@ -24,7 +24,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
  * <p><b>COUNT ERRATUM (declared)</b>: the task card's acceptance says "26+22+22+26",
  * but the Solid ladder is 1 (Brick, :519) + 13 (:522-534) + 13 (:536-548) = 27 — the
  * Brick row the card's own spec ① lists is the one the acceptance arithmetic lost
- * (the p12-engine-steam 28-vs-26 census precedent). The tests pin the upstream truth:
+ * (the engine-steam 28-vs-26 census precedent). The tests pin the upstream truth:
  * 27 + 22 + 22 + 26 = 97 rows.
  */
 public class BurningBoxRowTableTest extends GTOfflineTestBase {
@@ -77,7 +77,7 @@ public class BurningBoxRowTableTest extends GTOfflineTestBase {
 	public void theBrickRowMatchesLoader519() {
 		GT6BurningBoxes.BurningBoxRow tRow = GT6BurningBoxes.BRICK_ROW;
 		assertEquals("brick_burning_box", tRow.path());
-		// the Brick row stays ATOMIC (task p20-i18n-compose-rows): the lone prefix form,
+		// the Brick row stays ATOMIC (task i18n-compose-rows): the lone prefix form,
 		// Loader:519 verbatim — its lang key is a whole-string key on both faces
 		assertEquals("Brick Burning Box (Solid)", "Brick Burning Box (Solid)");
 		assertEquals(2500, tRow.efficiency(), ":519 NBT_EFFICIENCY");
@@ -190,7 +190,7 @@ public class BurningBoxRowTableTest extends GTOfflineTestBase {
 			GT6BurningBoxes.BurningBoxRow tRow = aRows.get(i);
 			Row tExp = aExpected.get(i);
 			assertEquals(tExp.path(), tRow.path(), "row " + i + " path");
-			// the composed face (task p20-i18n-compose-rows): the fixture display replays
+			// the composed face (task i18n-compose-rows): the fixture display replays
 			// from the family template + the material word — a per-row expansion pin
 			String tExpected = tExp.display();
 			boolean tDense = tExp.path().startsWith("dense_");

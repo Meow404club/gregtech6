@@ -8,7 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
 /**
- * The GT6 item-tooltip line registry (task r8-tooltip-infra): family short key → the
+ * The GT6 item-tooltip line registry (task tooltip-infra): family short key → the
  * static row table the {@link gregtech6.item.GT6MachineBlockItem} carrier replays through
  * {@link #append}. Design = design.r8-jade-tooltip card T1 — the registry is a pure static
  * table, the rows are upstream addToolTips transcriptions (en = the upstream line verbatim,
@@ -23,11 +23,11 @@ import net.minecraft.network.chat.Component;
  *
  * <p>The pilot carried the boiler family's two calibration rows at their upstream positions
  * (MultiTileEntityBoilerTank.java:95-109: row 7 = :102 REQUIREMENT_WATER_PURE, row 9 = :104
- * HAZARD_EXPLOSION_STEAM); task r8-tooltip-boiler-tank (T2) folded them into the full 13-row
+ * HAZARD_EXPLOSION_STEAM); task tooltip-boiler-tank (T2) folded them into the full 13-row
  * table and added the boiler_large / tank / barrel(+barrel_gas) tables — every row numbered
  * by its upstream row index, so a gap in the numbering IS the ported-out row set.
  *
- * <p>Task r8-tooltip-multiblock-generator tables the multiblock / converter / generator
+ * <p>Task tooltip-multiblock-generator tables the multiblock / converter / generator
  * families (the T4 row tables — upstream anchors TileEntityBase10MultiBlockBase.java:99-103
  * + TileEntityBase09FacingSingle.java:61, TileEntityBase11MultiBlockConverter.java:91-104,
  * MultiTileEntityGeneratorSolid.java:85-97; per-instance numeric rows keep their slots
@@ -45,7 +45,7 @@ public final class GT6Tooltips {
 		// rows 3-6 carry the per-variant constants in positional slots (%1$s = Energy IN,
 		// %2$s = Energy OUT, %3$s = Capacity — the carrier hands [in, out, cap] per
 		// BoilerRow, the mOutput/STEAM_PER_EU + mOutput + mOutput*10000 shape of :98-:101);
-		// row 14 = the port-authored output-condition annex (task r10-debt-boiler-heat-tip)
+		// row 14 = the port-authored output-condition annex (task debt-boiler-heat-tip)
 		register("boiler", List.of(
 				new GT6TooltipLine("gt6.tooltip.boiler.1", GT6TooltipStyle.CYAN),    // :96 LH.CONVERTS_FROM_X.. (80 HU -> 160 L Steam, constant across all 26 rows)
 				new GT6TooltipLine("gt6.tooltip.boiler.2", GT6TooltipStyle.YELLOW),  // :97 LH.getToolTipEfficiency(10000) — pristine, the calcified state is carry state
@@ -60,7 +60,7 @@ public final class GT6Tooltips {
 				new GT6TooltipLine("gt6.tooltip.boiler.11", GT6TooltipStyle.DGRAY),  // :106 LH.TOOL_TO_DECALCIFY_CHISEL
 				new GT6TooltipLine("gt6.tooltip.boiler.12", GT6TooltipStyle.DGRAY),  // :107 LH.TOOL_TO_DETAIL_MAGNIFYINGGLASS
 				new GT6TooltipLine("gt6.tooltip.boiler.13", GT6TooltipStyle.DGRAY),  // super :61 TOOL_TO_SET_FACING_PRE + Wrench (:82) + POST
-				// row 14 is the port-authored annex (task r10-debt-boiler-heat-tip, issue #17
+				// row 14 is the port-authored annex (task debt-boiler-heat-tip, issue #17
 				// UX): the upstream addToolTips :95-109 carries NO output-condition line — the
 				// >half-full gate is tick-body-only (MultiTileEntityBoilerTank.java:139-142 =
 				// the port BE :281-287), and LH.java has no Heat/CONDENSE/half key to transplant
@@ -72,7 +72,7 @@ public final class GT6Tooltips {
 		// positional slots as the small boiler, the carrier hands [in, out, cap] per
 		// LargeBoilerRow (NBT_OUTPUT_SU raw 4096..131072, same mOutput*10000 capacity shape :80);
 		// row 19 = the port-authored output-condition annex (the small-boiler .14 sister line,
-		// task r10-debt-boilerlarge-tip)
+		// task debt-boilerlarge-tip)
 		register("boiler_large", List.of(
 				new GT6TooltipLine("gt6.tooltip.boiler_large.1", GT6TooltipStyle.CYAN),    // :151 LH.STRUCTURE + ":"
 				new GT6TooltipLine("gt6.tooltip.boiler_large.2", GT6TooltipStyle.WHITE),   // :152 the :143 line
@@ -93,7 +93,7 @@ public final class GT6Tooltips {
 				new GT6TooltipLine("gt6.tooltip.boiler_large.17", GT6TooltipStyle.DGRAY),  // 10MultiBlockBase:101 LH.TOOL_TO_DETAIL_MAGNIFYINGGLASS
 				new GT6TooltipLine("gt6.tooltip.boiler_large.18", GT6TooltipStyle.DGRAY),  // super :61 the facing row (Wrench)
 				// row 19 is the port-authored annex (the small-boiler .14 sister line, task
-				// r10-debt-boilerlarge-tip, issue #17 UX): the upstream addToolTips :150-167
+				// debt-boilerlarge-tip, issue #17 UX): the upstream addToolTips :150-167
 				// carries NO output-condition line — the >half-full gate is tick-body-only
 				// (MultiTileEntityLargeBoiler.java:203-207 = the port BE :417)
 				new GT6TooltipLine("gt6.tooltip.boiler_large.19", GT6TooltipStyle.ORANGE)));
@@ -133,7 +133,7 @@ public final class GT6Tooltips {
 				new GT6TooltipLine("gt6.tooltip.barrel_gas.12", GT6TooltipStyle.DGRAY),   // :101
 				new GT6TooltipLine("gt6.tooltip.barrel_gas.13", GT6TooltipStyle.DGRAY))); // :102
 
-		// task r8-tooltip-multiblock-generator — the T4 three-family tables (tail-append,
+		// task tooltip-multiblock-generator — the T4 three-family tables (tail-append,
 		// the boiler band above stays the T1/T2 seam). Row numbers n = the upstream slot
 		// position in the family's addToolTips sequence; the per-INSTANCE numeric faces
 		// (energy rates, efficiency percent, recipes names, per-machine structure texts)
@@ -233,7 +233,7 @@ public final class GT6Tooltips {
 	}
 
 	/**
-	 * The per-variant form (task r8-tooltip-boiler-tank): the registration site hands the
+	 * The per-variant form (task tooltip-boiler-tank): the registration site hands the
 	 * row's own constants ([in, out, cap] for the boilers, [meltingPointK] for the barrels,
 	 * [voltage, tierName, amperage, loss] for the wires, [capacity/2, capacity] for the fluid
 	 * pipes, [stepSize, invSize] for the item pipes) and every line

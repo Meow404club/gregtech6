@@ -13,7 +13,7 @@ import gregtech6.covers.ICover;
 
 /**
  * The shutter cover — 1.20.1 port of gregapi/cover/covers/CoverShutter.java:40-96
- * (task p11-cover-shutter-filter; upstream item id 1026 "Shutter Cover",
+ * (task cover-shutter-filter; upstream item id 1026 "Shutter Cover",
  * MultiItemTechnological.java:85). A pure gate: the covered face refuses item AND
  * fluid transfer while the gate is CLOSED, admits it while OPEN. Upstream :82-85
  * verbatim — closed means {@code (visual == 0) == mStopped}, i.e. a NORMAL plate

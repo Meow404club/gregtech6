@@ -17,7 +17,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
  * 1.20.1 counterpart of gregapi/tileentity/base/TileEntityBase11AttachmentSmall.java
- * (:29-31, task p12-tap-funnel-attachment spec ①) — the small wall-attachment BE base
+ * (:29-31, task tap-funnel-attachment spec ①) — the small wall-attachment BE base
  * the Fluid Tap and the Fluid Funnel share. The upstream chain
  * {@code 11AttachmentSmall → 10Attachment → 09FacingSingle} collapses onto the in-repo
  * {@link TileEntityBase03TicksAndSync} with the three faces the two fluid families

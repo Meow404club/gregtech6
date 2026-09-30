@@ -1,10 +1,10 @@
 /**
- * Offline pin for task r4-26b-tree-log-rotation (GitHub #26) — the nine standing
+ * Offline pin for task 26b-tree-log-rotation (GitHub #26) — the nine standing
  * tree log blockstates carry the vanilla {@code axisBlock} rotation map (the
  * addAxles/addSurfacePlants band form: X = x90/y90, Y = none, Z = x90/y180). The
  * previous map (x-only 90 / y-only 90) tipped the Y-column cube_column model onto
  * Z for axis=x and spun the still-upright log in place for axis=z — the same bug
- * the r4-26 fallen-log fix ({@link GT6FallenLogBlockstateTest}) already pinned for
+ * the #26 fallen-log fix ({@link GT6FallenLogBlockstateTest}) already pinned for
  * the surface rows; the standing rows were player-reachable by manual placement.
  * Reads the committed generated tree (the {@link GT6FallenLogBlockstateTest}
  * classpath form — no registry, no datagen run).

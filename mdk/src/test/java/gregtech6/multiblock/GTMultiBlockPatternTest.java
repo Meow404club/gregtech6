@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
 
 /**
- * The {@link GTMultiBlockPattern} API self-tests (task p12-ghost-pattern-api): builder
+ * The {@link GTMultiBlockPattern} API self-tests (task ghost-pattern-api): builder
  * order preservation and immutability, duplicate/empty rejection, the bounds fold, the
  * pure facing anchor (the OFF-table mirror of TileEntityBase01Root.java:174-176 — the
  * test-local table below is the independent specification), the anchor + cell rotation
@@ -139,7 +139,7 @@ public class GTMultiBlockPatternTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ------------------------------------------------------------------
-	// the forming-expectation enrichment (task p16-pattern-checker ①)
+	// the forming-expectation enrichment (task pattern-checker ①)
 	// ------------------------------------------------------------------
 
 	@Test

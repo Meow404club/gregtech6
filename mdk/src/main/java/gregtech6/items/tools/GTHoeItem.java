@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * The formal GT6 hoe — item id {@code gt6:hoe} (task p29-w5-t4-field-five). Upstream
+ * The formal GT6 hoe — item id {@code gt6:hoe} (task w5-t4-field-five). Upstream
  * GT_Tool_Hoe.java:38-113:
  * <ul>
  * <li><b>Mining surface</b> (isMinableBlock :85-87): the {@code TOOL_hoe} harvest arm +
@@ -29,7 +29,7 @@ import net.minecraft.world.level.block.state.BlockState;
  *     same family, declared unfold).</li>
  * <li><b>Damage</b>: base 1.5F (:65-67); per-block 50 / per-attack 200 fold to one
  *     point (the family mapping); the hurt-resistance halving (:80-82) is CUT — the
- *     MultiItemTool attack pipeline does not exist (the p29-w5-t1-dig-six verdict).</li>
+ *     MultiItemTool attack pipeline does not exist (the w5-t1-dig-six verdict).</li>
  * <li><b>buildHoe achievement</b> (onToolCrafted :105-108,
  *     {@code AchievementList.buildHoe}): CUT — 1.20.1 carries no crafting-hoe
  *     advancement (the advancement tree has no build_hoe node), the recipe-unlock
@@ -38,7 +38,7 @@ import net.minecraft.world.level.block.state.BlockState;
  *     the machine-interaction pool, zero useOn here.</li>
  * </ul>
  *
- * <p>Durability ladder (task p31-dig-ladder): the {@link GT6ToolLadder} form over the
+ * <p>Durability ladder (task dig-ladder): the {@link GT6ToolLadder} form over the
  * stack's identity — durability j/100, speed ×1.0 × mToolSpeed, the :482 quality gate;
  * the identity-less arm = Steel bit-exact (512 / 6.0F, the pre-ladder constants).
  */

@@ -23,7 +23,7 @@ import gregtech6.util.GTItemMover;
 
 /**
  * The conveyor cover — 1.20.1 port of gregapi/cover/covers/CoverConveyor.java:40-95
- * (task p11-cover-conveyor-robotarm). Every {@link #mTiming} ticks
+ * (task cover-conveyor-robotarm). Every {@link #mTiming} ticks
  * ({@code SERVER_TIME % mTiming == 0}, :66 — the timing tiers are PERIODS, verified at
  * the source: MultiItemTechnological.java:51 passes {@code 512>>i} into the constructor
  * whose {@code mTiming} only feeds the modulo at CoverConveyor.java:66, so tier 0 moves

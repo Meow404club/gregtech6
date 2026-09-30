@@ -22,7 +22,7 @@ import gregtech6.block.energy.GT6DynamoBlock;
 import gregtech6.tileentity.energy.GT6FluxDynamoBlockEntity;
 
 /**
- * The Flux Dynamo family registration (task p28-c-dynamo-family-be) — card-owned
+ * The Flux Dynamo family registration (task c-dynamo-family-be) — card-owned
  * {@code @EventBusSubscriber(MOD)} DeferredRegisters attached from the construct event,
  * the GT6FeConverters shape (ADR-P3-4; a separate class keeps the card scopes disjoint).
  * Five material rows, the upstream registration column pair verbatim
@@ -145,7 +145,7 @@ public final class GT6FluxDynamos {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — the whole five-item ladder joins the
+	 * The tab walk (task tabfix-b-energy — the whole five-item ladder joins the
 	 * machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the class-level
 	 * MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what delivers this
 	 * handler). JEI 1.20.1 derives its item list from the tab display items, so

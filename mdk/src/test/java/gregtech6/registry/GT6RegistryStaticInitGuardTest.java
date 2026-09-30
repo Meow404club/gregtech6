@@ -22,7 +22,7 @@ import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 /**
- * The rule pin (task p31-supplier-rule-pin): registry-side classes load at MOD CONSTRUCTION
+ * The rule pin (task supplier-rule-pin): registry-side classes load at MOD CONSTRUCTION
  * (the {@code @EventBusSubscriber} scan, the {@code DeferredRegister} holders), which runs
  * BEFORE {@code MT.init()}/{@code OP.init()} in {@code FMLConstructModEvent.enqueueWork} (the
  * GT6Mod lifecycle javadoc). A direct {@code MT.X}/{@code OP.Y} read in a static row

@@ -27,7 +27,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.util.UT6;
 
 /**
- * 1.20.1 counterpart of the GT6 Hand Crank — task p12-engine-crank, ported from
+ * 1.20.1 counterpart of the GT6 Hand Crank — task engine-crank, ported from
  * gregtech/tileentity/tools/MultiTileEntityCrank.java (:51-198, Loader_MultiTileEntities.java
  * :2106 meta 32111 ANY.Iron single variant) as the first REAL RU source of the fluid-engine
  * chain: cranking pushes constant-sign (negative = counterclockwise) RU direct current —
@@ -304,7 +304,7 @@ public class GTCrankBlockEntity extends TileEntityBase03TicksAndSync implements 
 	/**
 	 * Chest/oven precedent onPlaced :128-131 (TileEntityOven.setFacingFromPlacement :632-635
 	 * form) — the BE mirror of the placement-facing the BlockState already carries.
-	 * Task p28-singleblock-facing-canon: the front TOWARDS the placer — the
+	 * Task singleblock-facing-canon: the front TOWARDS the placer — the
 	 * GT6PlacementFacing canon (view OPPOSITE), the same seam the BlockState writes.
 	 */
 	public void setFacingFromPlacement(Player aPlayer) {

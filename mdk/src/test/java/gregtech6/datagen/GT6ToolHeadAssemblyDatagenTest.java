@@ -1,5 +1,5 @@
 /**
- * The tool-head assembly pin test (task r7-39-toolhead-assembly, GitHub #39 — the
+ * The tool-head assembly pin test (task 39-toolhead-assembly, GitHub #39 — the
  * B-lite fix): the upstream tool acquisition splits into the arg-8 DIRECT rows
  * (Loader_Tools.java:453-455 {@code CR.shaped(tTool)} — the tool) and the arg-9 HEAD
  * rows (:514-516 {@code CR.shaped(tStack)} where tStack = the listening prefix item,
@@ -24,9 +24,9 @@
  * iron-handle stick starves most rows.
  *
  * <p>Row-count pins are the measured item-truth numbers dead-written (the craftfrom
- * ruling-A caliber): the dig walk 202, the assembly walk 7063 and the r9-39 completion
+ * ruling-A caliber): the dig walk 202, the assembly walk 7063 and the #39 completion
  * walk (the 9 missing head families + the dig/chisel/saw C variants, task
- * r9-39-toolhead-rows, pinned in {@code theCompletionWalkCarriesTheMaterialGates}).
+ * 39-toolhead-rows, pinned in {@code theCompletionWalkCarriesTheMaterialGates}).
  */
 package gregtech6.datagen;
 
@@ -138,7 +138,7 @@ public class GT6ToolHeadAssemblyDatagenTest extends GTOfflineTestBase {
 			JsonObject tRow = generated("recipes/" + tForm + "/iron");
 			assertEquals("gt6:material_tool", tRow.get("type").getAsString(), tForm + ": the stamped serializer");
 			assertEquals("gt6:" + tForm, tRow.getAsJsonObject("result").get("item").getAsString(),
-					tForm + ": the direct row keeps the TOOL output (the arg-8 face, r7-39 untouched)");
+					tForm + ": the direct row keeps the TOOL output (the arg-8 face, #39 untouched)");
 			assertEquals("iron", tRow.get("material").getAsString(), tForm + ": the stamp material field");
 		}
 	}
@@ -231,11 +231,11 @@ public class GT6ToolHeadAssemblyDatagenTest extends GTOfflineTestBase {
 		assertEquals(List.of("gt6:pickaxe/iron"), tRewards, "the recipe reward keeps the row id");
 	}
 
-	// --------------------------------------------------------------- the r9-39 completion band
+	// --------------------------------------------------------------- the #39 completion band
 
 	/**
 	 * The spade row's lowercase 's' cell is the CR.java:211 SAW tool letter — the
-	 * decisions.r9-toolhead-s-letter reform (r7-39 had emitted the wooden-rod tag).
+	 * decisions.r9-toolhead-s-letter reform (#39 had emitted the wooden-rod tag).
 	 */
 	@Test
 	public void theSpadeRowSawSlotRidesTheSawTag() throws Exception {
@@ -340,7 +340,7 @@ public class GT6ToolHeadAssemblyDatagenTest extends GTOfflineTestBase {
 	// --------------------------------------------------------------- the r10 gem sisters
 
 	/**
-	 * The machine-band gem sisters (task r10-debt-gem-sisters, the r9-39 declared
+	 * The machine-band gem sisters (task debt-gem-sisters, the #39 declared
 	 * remainder): the wrench :310 / monkey wrench :311 C (plateGem) variants stay DIRECT
 	 * TOOL rows (the arg-8 face), the hammer :327 G (gem) variant is a HEAD row (the
 	 * arg-9 face) — the gem variants swap the in-grid hammer for the file (the upstream
@@ -369,7 +369,7 @@ public class GT6ToolHeadAssemblyDatagenTest extends GTOfflineTestBase {
 				"'d' = the screwdriver tool letter (CR.java)");
 		JsonObject tHammer = generated("recipes/hammer_gem/diamond");
 		assertEquals("minecraft:crafting_shaped", tHammer.get("type").getAsString(),
-				"the :327 G variant is a HEAD row (the arg-9 face, the r7-39 inversion face)");
+				"the :327 G variant is a HEAD row (the arg-9 face, the #39 inversion face)");
 		assertEquals("gt6:tool_head_hammer_diamond", tHammer.getAsJsonObject("result").get("item").getAsString(),
 				"the head item IS the identity — never the soft-hammer shape's :328 twin");
 		assertEquals(List.of("GG ", "GGf", "GG "), tHammer.getAsJsonArray("pattern").asList().stream()

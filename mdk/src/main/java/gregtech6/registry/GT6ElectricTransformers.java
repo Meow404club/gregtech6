@@ -22,7 +22,7 @@ import gregtech6.block.energy.GT6ElectricTransformerBlock;
 import gregtech6.tileentity.energy.GT6ElectricTransformerBlockEntity;
 
 /**
- * The Electric Transformer registration (task p28-c-ulv-lv-transformer) — the
+ * The Electric Transformer registration (task c-ulv-lv-transformer) — the
  * card-owned {@code @EventBusSubscriber(MOD)} DeferredRegisters attached from the
  * construct event, the GT6ElectricDynamos shape (ADR-P3-4). ONE row this card: the
  * ULV-LV pair, Loader_MultiTileEntities.java:881 VERBATIM — display "Transformer
@@ -42,7 +42,7 @@ import gregtech6.tileentity.energy.GT6ElectricTransformerBlockEntity;
  *
  * <p>The display-name face rides the datagen lang face (the atomic key
  * {@code block.gt6.electric_transformer}); the creative tab join landed in task
- * p38-tabfix-b-energy ({@link #onBuildTabContents} — the W2 deferral discharged).
+ * tabfix-b-energy ({@link #onBuildTabContents} — the W2 deferral discharged).
  * KJS surface: none (the registration face is deferred — the KJS binding pool
  * declaration); recipe = the datapack domain (the crafting JSON), behavior = no
  * KubeJS face.
@@ -58,7 +58,7 @@ public final class GT6ElectricTransformers {
 	public record TransformerRow(String path, int metaId, int tier, String voltagePair, String wireToken) {}
 
 	/**
-	 * The nine rows, the full upstream declared ladder (task p35-energy-tail-machines —
+	 * The nine rows, the full upstream declared ladder (task energy-tail-machines —
 	 * the :881-:889 line order, meta ids 10040-10048 as the parity column): every row
 	 * NBT_INPUT V[i+1] / NBT_OUTPUT V[i] / NBT_MULTIPLIER 4 / WASTE F, wires Cu on the
 	 * :881-:883 rows and AnnealedCopper on the :884-:889 rows (the upstream wireGt01/04
@@ -200,7 +200,7 @@ public final class GT6ElectricTransformers {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
+	 * The tab walk (task tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
 	 * joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
 	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
 	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display

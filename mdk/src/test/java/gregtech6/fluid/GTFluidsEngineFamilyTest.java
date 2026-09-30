@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Engine fuel fluid family offline tests (task p12-engine-fuel-fluids acceptance a — the
+ * Engine fuel fluid family offline tests (task engine-fuel-fluids acceptance a — the
  * registration-row assertions against the DECLARED values): nine
  * {@link GTFluids.EngineFluidSpec} rows, id/temperature/density/viscosity/gas transcribed
  * from the upstream anchors (steam 373 K = FL.java:794 C+100, density −100/viscosity 200 =

@@ -21,8 +21,8 @@ import gregtech6.registry.GTBlockEntities;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * 1.20.1 counterpart of the simplest GT6 generator shape — task p8-d4-energy-source,
- * ADR 2026-08-31-p7-energy-network ruling 4. Ported from
+ * 1.20.1 counterpart of the simplest GT6 generator shape — task d4-energy-source,
+ * ADR 2026-08-31-energy-network ruling 4. Ported from
  * gregtech/tileentity/energy/generators/MultiTileEntitySolarPanelElectric.java
  * (:82-86/:125-167) as a command-driven test generator: no fuel, no recipe, no fluid,
  * no sky check — the RCON command (/gt6energy) flips {@link #mEmitting} and the server
@@ -39,7 +39,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * emit} — the mode gate lives in the tick, not the face); here {@code if (mEmitting)}
  * takes exactly that spot.
  *
- * <p>Task p11-rotor-source-flip extensions (the rotor-family source regime): the emitted
+ * <p>Task rotor-source-flip extensions (the rotor-family source regime): the emitted
  * TYPE is parameterised ({@link #mEnergyType}, default EU — the p8-d4 card form) and an
  * ALTERNATING mode ({@link #mAlternating}) reproduces the upstream Steam Engine :146
  * piston-phase ±alternation verbatim: a 2-bit phase counter (the :113-114
@@ -304,7 +304,7 @@ public class GTEnergySourceBlockEntity extends TileEntityBase03TicksAndSync impl
 			case "TU" -> TD.Energy.TU;
 			case "RF" -> TD.Energy.RF;
 			case "MJ" -> TD.Energy.MJ;
-			case "STEAM" -> TD.Energy.STEAM; // task p29-w3-turbine-dynamo — the steam-turbine dial (the W2 MU/LU/CU/TU same-ruling short code; the Jade word form, GT6MachineProvider:97)
+			case "STEAM" -> TD.Energy.STEAM; // task w3-turbine-dynamo — the steam-turbine dial (the W2 MU/LU/CU/TU same-ruling short code; the Jade word form, GT6MachineProvider:97)
 			default -> null;
 		};
 	}

@@ -14,7 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 /**
- * The ZPM Decharger block (task p36-energy-zpm-dechargers) — the
+ * The ZPM Decharger block (task energy-zpm-dechargers) — the
  * {@link GT6BatteryBoxBlock} shape with the SECOND energy column: upstream files the two
  * rows (Loader_MultiTileEntities.java:1000-:1001) as
  * {@code NBT_ENERGY_ACCEPTED QU, NBT_ENERGY_EMITTED QU|EU} — the in lane rides the
@@ -26,7 +26,7 @@ import net.minecraft.world.level.Level;
  * inherited), ALL-BUT-FRONT the intake face (dead in practice on this host: the ZPM
  * never registers chargeable, so the :179 guard refuses every network packet — the
  * one-way artifact→machine lane). The per-face zpm_electricity/zpm_quantum art rides
- * the true two-layer borrows since task r8-tex-composite-family (the render-pool
+ * the true two-layer borrows since task tex-composite-family (the render-pool
  * stand-in retired); the row material MT.Osmiridium (Loader :1000-:1001 NBT_MATERIAL)
  * feeds the parent's tint seat.
  */
@@ -41,7 +41,7 @@ public class GT6ZpmDechargerBlock extends GT6BatteryBoxBlock {
 		this(aProperties, aTier, aSlots, aTickerType, aInEnergyType, aOutEnergyType, null);
 	}
 
-	/** The material-carrier form (task r8-tex-composite-family): the row feeds the tint colour source. */
+	/** The material-carrier form (task tex-composite-family): the row feeds the tint colour source. */
 	public GT6ZpmDechargerBlock(BlockBehaviour.Properties aProperties, int aTier, int aSlots,
 			Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType,
 			Supplier<TagData> aInEnergyType, Supplier<TagData> aOutEnergyType,
@@ -58,6 +58,6 @@ public class GT6ZpmDechargerBlock extends GT6BatteryBoxBlock {
 	@Override
 	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
 		super.stepOn(aLevel, aPos, aState, aEntity);
-		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (p37-covers-crafting-asphalt)
+		if (aLevel.getBlockEntity(aPos) instanceof ICoverableTE tCoverable) tCoverable.onCoverWalkOver(aEntity); // MultiTileEntityBlock.java:306 -> 06Covers:428 (covers-crafting-asphalt)
 	}
 }

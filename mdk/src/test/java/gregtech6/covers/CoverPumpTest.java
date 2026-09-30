@@ -35,14 +35,14 @@ import gregtech6.tileentity.tank.TileEntityBase08Barrel;
 import gregtech6.tileentity.machines.TileEntityOven;
 
 /**
- * The pump-cover acceptance tables (task p5-barrel-side-rules acceptance ①/③/⑥), all
+ * The pump-cover acceptance tables (task barrel-side-rules acceptance ①/③/⑥), all
  * offline: the placement seam, the one-way gate, the screwdriver direction toggle, the
  * visual persistence gate and the gate-order over the barrel wrapper (the cover gate
  * answers BEFORE the side rule — the reachable offline proof of spec A's ordering). The
  * live per-second transfer itself is the RCON chain's job (a real level and a real
  * neighbour are out of the offline doubles' reach).
  *
- * <p>Pump host re-judgment (task p6-barrel-metal-plastic ①, the offline mirror of the
+ * <p>Pump host re-judgment (task barrel-metal-plastic ①, the offline mirror of the
  * RCON chain re-record): the wood barrel restored the upstream decorative-only
  * {@code allowCover} (MultiTileEntityBarrelWood.java:39), so the pump mounts the metal
  * drum here — the upstream MultiTileEntityBarrelMetal takes the base default and admits

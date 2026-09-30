@@ -24,7 +24,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * The p37-rm-six-maps Mortar row pour test (the GT6CrystallisationRowsPourTest fixture
+ * The rm-six-maps Mortar row pour test (the GT6CrystallisationRowsPourTest fixture
  * posture): the shipped {@code data/gt6/recipe_maps/mortar.json} (the
  * Loader_Recipes_Vanilla.java:674-684 + :705-706 static stock) pours through the real
  * {@link GT6RecipeMapJsonLoader} seam into {@code GT6RecipeMaps.MORTAR}. The census

@@ -1,5 +1,5 @@
 /**
- * Tests for task p21-stoneblocks-16item-registry-split (superseding the p19 registration
+ * Tests for task stoneblocks-16item-registry-split (superseding the p19 registration
  * pins it keeps): the GT6 stone universe census (272 per-pair ids) + the four
  * mapping-table transcriptions + the Loader_Rocks parameter rows + the oredict
  * equivalence face + the id-scheme ruling.
@@ -82,7 +82,7 @@ class GTStoneBlocksRegistrationTest {
         // any MT.STONES/OP field is dereferenced (GTMaterialItems.initMaterials()).
         GTMaterialItems.initMaterials();
         // the composed-name face builds Component.translatable contents (task
-        // p20-i18n-compose-rows), which initializes vanilla registry classes — bootstrap
+        // i18n-compose-rows), which initializes vanilla registry classes — bootstrap
         // first, the GT6LangParityTest.boot posture (offline-expected throwables ignored)
         // the GTOfflineRenderTestBase recipe: the version detect must precede bootStrap — a bare-JVM first boot poisons DataFixers for every later suite in this JVM (the run-order lottery)
         net.minecraft.SharedConstants.tryDetectVersion();
@@ -94,7 +94,7 @@ class GTStoneBlocksRegistrationTest {
         // freeze (Block.<init> — the GTWireBlockUseLockTest:43 bracket). The class relied
         // IMPLICITLY on another test class unfreezing the block registry first in the
         // shared JVM; a new test class anywhere shifts the discovery order and exposes
-        // the coupling (task p24-act-machine full-suite finding) — self-sufficient now.
+        // the coupling (task act-machine full-suite finding) — self-sufficient now.
         try {
             java.lang.reflect.Method tUnfreeze = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getClass().getMethod("unfreeze");
             tUnfreeze.setAccessible(true);
@@ -274,7 +274,7 @@ class GTStoneBlocksRegistrationTest {
                 StoneVariant.WINDB, StoneVariant.QBRIK), tFace.get(OP.stone),
                 "OP.stone takes 14 variants — RNFBR/RSTBR excluded upstream (:142-155)");
         assertEquals(List.of(StoneVariant.CHISL), tFace.get(OP.stoneChiseled),
-                "OP.stoneChiseled -> CHISL exactly (:163/:183) — the p19-chisel-recipes anchor");
+                "OP.stoneChiseled -> CHISL exactly (:163/:183) — the chisel-recipes anchor");
         assertEquals(List.of(StoneVariant.MCOBL, StoneVariant.MBRIK), tFace.get(OP.stoneMossy),
                 "OP.stoneMossy union (:159/:176/:181)");
         assertEquals(List.of(StoneVariant.BRICK, StoneVariant.CRACK, StoneVariant.MBRIK, StoneVariant.CHISL,
@@ -284,7 +284,7 @@ class GTStoneBlocksRegistrationTest {
     }
 
     /**
-     * The composed-name face (task p20-i18n-compose-rows, unchanged by p21): the 16 variant
+     * The composed-name face (task i18n-compose-rows, unchanged by p21): the 16 variant
      * template keys (one per StoneVariant, the stone name riding the %s slot as the
      * gt6.material small unit), and each block composes ITS OWN variant's template —
      * variant-0 blocks compose the exact same template the P19 single-block form composed

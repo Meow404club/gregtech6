@@ -22,7 +22,7 @@ import gregtech6.tileentity.tank.GTBarrelItemFluidHandler;
 import gregtech6.tileentity.tank.TileEntityBase08Barrel;
 
 /**
- * The barrel BlockItem (task p12-fluid-item-carrier spec ②) — the item carrier of the
+ * The barrel BlockItem (task fluid-item-carrier spec ②) — the item carrier of the
  * fluid-barrel family, the 1.20.1 counterpart of the upstream MTE item shell
  * ({@code MultiTileEntityItemInternal}, the item face that delegates to the TE NBT):
  *
@@ -40,12 +40,12 @@ import gregtech6.tileentity.tank.TileEntityBase08Barrel;
  *     {@code tank}/{@code covers} tags back through {@link #applyItemNBT} — break a
  *     filled barrel, place it again, the content survives both ways;</li>
  * <li>{@link #applyItemNBT} also rehydrates the paint root-key pair (task
- *     p23-barrel-paint-item-seam): a spray-painted barrel's drop carries
+ *     barrel-paint-item-seam): a spray-painted barrel's drop carries
  *     {@code gt.color}/{@code gt.painted} (written by {@code GTBarrelBlock
  *     .writeItemNBT}, the 07Paintable :89 root-key seam), and placement reads the
  *     colour back — the 16-row family (4 barrels + 12 drums) shares this static
  *     seam, so the whole family rides it automatically.</li>
- * <li>Extends {@link GT6MachineBlockItem} since task r8-tooltip-boiler-tank: the family
+ * <li>Extends {@link GT6MachineBlockItem} since task tooltip-boiler-tank: the family
  *     replays the barrel row table (TileEntityBase08Barrel.addToolTips :89-103, the
  *     Sealed/content carry rows deleted by the design ruling) through the registry —
  *     {@code family = barrel_gas / barrel} by the block's gas-proof flag (the wood barrel
@@ -101,7 +101,7 @@ public class GTBarrelBlockItem extends GT6MachineBlockItem {
 	 * vanilla places the block, the fresh BE adopts the item's tank and covers NBT —
 	 * the same keys {@code GTBarrelBlock.writeItemNBT} wrote into the drop.
 	 *
-	 * <p>Task p23-barrel-paint-item-seam adds the paint keys to the same seam: the
+	 * <p>Task barrel-paint-item-seam adds the paint keys to the same seam: the
 	 * {@code gt.color}/{@code gt.painted} root pair rides the item, and the readback
 	 * goes through the BE's public {@code load} gate with a paint-only tag — that runs
 	 * the exact {@code TileEntityBase03TicksAndSync.load} :339-340 hasKey-guarded

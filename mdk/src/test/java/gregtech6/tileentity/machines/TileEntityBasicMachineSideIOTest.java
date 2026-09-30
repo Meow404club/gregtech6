@@ -28,7 +28,7 @@ import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
 
 /**
- * Task p16-machine-side-io — the machine side-IO face over {@link TileEntityBasicMachine}:
+ * Task machine-side-io — the machine side-IO face over {@link TileEntityBasicMachine}:
  *
  * <ul>
  * <li>① the per-side item ACCESS masks (upstream :94 + updateAccessibleSlots :533-545):

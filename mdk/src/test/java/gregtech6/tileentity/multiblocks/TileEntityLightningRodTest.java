@@ -33,7 +33,7 @@ import gregapi.tileentity.energy.IEnergyAdjacency;
 import gregapi.tileentity.energy.ITileEntityEnergy;
 
 /**
- * Offline acceptance rig for the Lightning Rod port (task p24-lightning-rod) — the seven
+ * Offline acceptance rig for the Lightning Rod port (task lightning-rod) — the seven
  * card arms over the GTMultiBlocksOfflineTestBase stub world:
  * <ol>
  * <li>the structure walk: the 45-cell base + the pillar probe per mSize, air self-stop,

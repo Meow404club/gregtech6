@@ -10,7 +10,7 @@ import com.google.common.collect.Multimap;
 
 
 /**
- * The formal GT6 knife — item id {@code gt6:knife} (task p29-w5-t2-blade-six). Upstream
+ * The formal GT6 knife — item id {@code gt6:knife} (task w5-t2-blade-six). Upstream
  * GT_Tool_Knife.java:26-96 is a {@code GT_Tool_Sword} SUBCLASS (the Loader_Tools.java:135
  * registration row, {@code 1*U} material amount) — the port keeps the subclass face:
  * <ul>
@@ -22,7 +22,7 @@ import com.google.common.collect.Multimap;
  * <li><b>canCollect</b> (:75) — CUT (no 1.20.1 vanilla face; the scissors/shears pool).
  * </ul>
  *
- * <p>MATERIAL LADDER (task p31-blade-ladder — the {@link GTSwordItem} javadoc carries the
+ * <p>MATERIAL LADDER (task blade-ladder — the {@link GTSwordItem} javadoc carries the
  * family face): durability/attack/dig-speed ride the shared {@link GT6ToolLadder} reads
  * with the knife constants; the attack speed stays the shape anchor. TINT: upstream
  * renders the knife through the sword {@code getRGBa} inheritance with the head pass

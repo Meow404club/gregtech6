@@ -38,7 +38,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import gregtech6.fluid.GTFluids;
 
 /**
- * The FM.Burn fuel table — task p13-burning-box-family spec ⑥, the port counterpart of
+ * The FM.Burn fuel table — task burning-box-family spec ⑥, the port counterpart of
  * FM.Burn = "gt.recipe.fuels.burn" (FM.java:41) poured from Loader_Fuels.java:77-120 —
  * the SAME pinned row range the p12 ENGINE_FUELS table transcribed, with the BURN column
  * values (every upstream row appears in both maps side by side, FM.Burn/:78 vs

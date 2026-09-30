@@ -31,7 +31,7 @@ import gregtech6.registry.GTWireSpecs;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * GT6ElectricTransformerBlockEntity offline tests (task p28-c-ulv-lv-transformer
+ * GT6ElectricTransformerBlockEntity offline tests (task c-ulv-lv-transformer
  * acceptance ④): the ENERGY CONSERVATION table of both modes (4×8 EU → 1×32 EU and
  * 1×32 EU → 4×8 EU — the Transformer (ULV-LV) row Loader_MultiTileEntities.java:881
  * packet math, {@code NBT_INPUT, V[1]=32, NBT_OUTPUT, V[0]=8, NBT_MULTIPLIER, 4,
@@ -402,7 +402,7 @@ public class GT6ElectricTransformerBlockEntityTest extends GTOfflineTestBase {
 	// ---------------------------------------------------------------------------
 
 	/**
-	 * THE LADDER PIN (task p35-energy-tail-machines): the upstream declared subset is
+	 * THE LADDER PIN (task energy-tail-machines): the upstream declared subset is
 	 * NINE rows (:881-:889, meta ids 10040-10048, pairs V[i+1]→V[i]); the p31
 	 * single-tier ruling is the hand-tool domain and does NOT apply (对照申报) — the
 	 * machine ladder pins at the full declared count.

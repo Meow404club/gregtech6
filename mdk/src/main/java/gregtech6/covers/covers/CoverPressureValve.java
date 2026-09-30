@@ -24,7 +24,7 @@ import gregtech6.util.UT6;
 
 /**
  * The pressure valve cover — 1.20.1 port of gregapi/cover/covers/CoverPressureValve
- * .java:43-92 (task p34-covers-gameplay-10; upstream item id 2000 "Pressure Valve").
+ * .java:43-92 (task covers-gameplay-10; upstream item id 2000 "Pressure Valve").
  * The safety valve rides a SINGLE-TANK fluid pipe: after the host ticked (:49, the
  * onTickPost slot; the {@code aTimer > 2} arm :50 keeps a fresh pipe from venting
  * before its first tick), the valve DISCONNECTS the covered face from the pipe network

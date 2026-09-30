@@ -1,5 +1,5 @@
 /**
- * Offline tests for task p11-flat-redstone-tab: the per-category wire tab split — the 6
+ * Offline tests for task flat-redstone-tab: the per-category wire tab split — the 6
  * redstone wire items move from the flat ELECTRIC_WIRES_TAB into their own "Redstone Wires"
  * tab and the laser fiber wire into its own "Laser Wires" tab, the upstream MTE-registry
  * categories.

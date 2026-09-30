@@ -108,7 +108,7 @@ public class GTMultiBlockCrucibleInputTest extends GTMultiBlocksOfflineTestBase 
 	}
 
 	// ------------------------------------------------------------------
-	// the break-drop probe (r10-debt-break-drops — the GTEntityBlock reflective census;
+	// the break-drop probe (debt-break-drops — the GTEntityBlock reflective census;
 	// Base10MultiBlockBase carries no accessor of its own, the crucible must answer)
 	// ------------------------------------------------------------------
 

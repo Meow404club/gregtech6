@@ -33,7 +33,7 @@ import gregtech6.tileentity.multiblocks.GTTankValveBlockEntity;
 
 /**
  * {@code /gt6tankvalve} — the Tank Main Valve acceptance command (task
- * p29-w3-tank-valves, the GTBarrelCommand/GTMultiBlockCommand RCON shape). Game-bus
+ * w3-tank-valves, the GTBarrelCommand/GTMultiBlockCommand RCON shape). Game-bus
  * listener, SELF-CONTAINED per ADR-P3-4: a new file beside the family, so the
  * GTMultiBlockCommand shared seam stays untouched this wave (the card FILES_SCOPE
  * ruling — cards ③④⑤⑥ own their own arms; a per-family command file eliminates the

@@ -24,7 +24,7 @@ import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMultiBlocks;
 
 /**
- * The per-map category icon table (task r6-29-34a, GitHub #29a) — the reverse seam the
+ * The per-map category icon table (task issues #29/#34a, GitHub #29a) — the reverse seam the
  * batch-2 adjudication (task debt-jei-emi-batch2) deferred: the port's folded 15-arg
  * RecipeMap carries no upstream mRecipeMachineList and the machine registries are
  * forward-keyed (machine row → RecipeMapSupplier, many machines share one map), so the

@@ -19,7 +19,7 @@ import gregtech6.registry.GT6LargeMachines.StructureKind;
 import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 
 /**
- * The twelve large-machine rows and declared structures pinned (task p29-w3-large-12 —
+ * The twelve large-machine rows and declared structures pinned (task w3-large-12 —
  * the Loader :1229-1240 columns and the upstream checkStructure2 geometries). The
  * structure census builds each {@link StructureKind} over vanilla stand-in blocks — the
  * pattern is pure data, no registry access — and pins the cell counts, the usage masks

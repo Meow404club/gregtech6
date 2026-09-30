@@ -25,7 +25,7 @@ import net.minecraftforge.fluids.FluidStack;
 import gregtech6.item.GT6Circuits;
 
 /**
- * The DISTILLERY water-family pour offline acceptance (task p16-distillery-family ③): the
+ * The DISTILLERY water-family pour offline acceptance (task distillery-family ③): the
  * row transcription of Loader_Recipes_Chem.java:534-541, the seven-row pour / one-skip
  * census reconciliation (the :539 water_hot IC2 alias has no port fluid — the upstream
  * {@code if (FL.Water_Hot.exists())} drop), the circuit-selector INPUT TRUTH TABLE (config

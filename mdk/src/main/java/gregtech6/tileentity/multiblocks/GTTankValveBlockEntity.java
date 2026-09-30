@@ -38,7 +38,7 @@ import gregtech6.tileentity.attachment.GTFunnelBlockEntity;
 import gregtech6.tileentity.attachment.GTTapBlockEntity;
 
 /**
- * 1.20.1 counterpart of the GT6 Tank multiblock family — task p29-w3-tank-valves, ported
+ * 1.20.1 counterpart of the GT6 Tank multiblock family — task w3-tank-valves, ported
  * from gregtech/tileentity/multiblocks/MultiTileEntityTank.java (the fluid/proof/meltdown
  * core, :47-129) + MultiTileEntityTank3x3x3.java (:44-141) + MultiTileEntityTank5x5x5.java
  * (:44-140, the same shape at radius 2) as ONE class over the 25 block-carrier rows.

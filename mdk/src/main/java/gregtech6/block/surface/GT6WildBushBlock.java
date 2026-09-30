@@ -9,7 +9,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * The GT6 wild bush (task p30-w6-t2-surface-blocks) — the block-only port of upstream
+ * The GT6 wild bush (task w6-t2-surface-blocks) — the block-only port of upstream
  * MTE 32759 "Berry Bush" (Loader_MultiTileEntities.java:2030, hardness 0.5 / resistance
  * 0.3, WorldgenBushes.java:86 the growth-stage + facing NBT). The vanilla
  * {@link BushBlock} base carries the ground-attach (mayPlaceOn = the plantableGreens

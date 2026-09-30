@@ -25,7 +25,7 @@ import net.minecraft.world.item.ArmorItem;
 import gregtech6.registry.GT6Tools;
 
 /**
- * The offline armor pin (task p29-w5-t8-armor-24 acceptance): the TAB_TABLE tail parity
+ * The offline armor pin (task w5-t8-armor-24 acceptance): the TAB_TABLE tail parity
  * + the 24 id census + the {@link GT6HazardSets} judgment arms + the stat literals — all
  * PURE faces, because the mod-Item intrusive-holder wall makes the pieces themselves
  * unconstructible in this bootstrapped-and-frozen JVM (the GT6ToolsCreativeTabTest

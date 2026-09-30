@@ -10,7 +10,7 @@ import gregtech6.tileentity.machines.ITileEntitySwitchableOnOff;
 
 /**
  * The controller base — 1.20.1 port of gregapi/cover/covers/AbstractCoverAttachmentController.java
- * (:32-62, task p35-covers-display-scale-6). A controller cover OWNS a switchable
+ * (:32-62, task covers-display-scale-6). A controller cover OWNS a switchable
  * machine's ON/OFF state: it refuses non-switchable hosts (:33), releases the machine to
  * ON when dismantled (:36-39), re-derives the state from its own answer on mount/load
  * (:41-49), re-polls on a block update (:52-54) and polls every server tick (:57-59).

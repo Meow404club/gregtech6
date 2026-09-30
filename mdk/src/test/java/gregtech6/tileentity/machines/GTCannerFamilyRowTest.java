@@ -14,7 +14,7 @@ import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.registry.GTMachines;
 
 /**
- * The Canner-family row acceptance (task p24-canner-machine, the OFFLINE half — the
+ * The Canner-family row acceptance (task canner-machine, the OFFLINE half — the
  * {@link GTDryerFamilyRowTest} shape): the four row records pinned to the upstream columns
  * (Loader_MultiTileEntities.java:1379-1382 — the "Canning Machine ("+VN[tier]+")" name
  * column / MultiTileEntity id 20161-20164 / NBT_HARDNESS 4.0F / NBT_INPUT 32/128/512/2048

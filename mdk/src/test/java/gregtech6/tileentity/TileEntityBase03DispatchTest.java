@@ -28,7 +28,7 @@ public class TileEntityBase03DispatchTest extends GTOfflineTestBase {
 		/**
 		 * 21.1 BlockEntity ctor validates its type/state pair (validateBlockState →
 		 * getType().isValid(), javap 21.1.249), so the fixture binds a synthetic BET over
-		 * the vanilla stone block instead of the pre-21.1 nulls (task p15-m4-test-infra).
+		 * the vanilla stone block instead of the pre-21.1 nulls (task m4-test-infra).
 		 * The supplier is stored, never invoked — no init cycle with TEST_TYPE.
 		 */
 		private static final BlockEntityType<RecordingBE> TEST_TYPE = BlockEntityType.Builder

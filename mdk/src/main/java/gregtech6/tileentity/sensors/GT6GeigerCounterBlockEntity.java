@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 /**
- * The Geiger Counter Sensor (task p37-sensors-3, the pool closure) — the port of
+ * The Geiger Counter Sensor (task sensors-3, the pool closure) — the port of
  * MultiTileEntityGeigerCounter.java:40-86. Upstream reads the fission reactor core:
  * the value is the sum of the last-tick per-rod neutron counts (:46-48,
  * {@code oNeutronCounts}), the max the sum of the {@code IItemReactorRod} neutron
@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
  * true-gap ① (the reactor rows never registered here, the census does not carry them;
  * the Fusion Reactor is a different domain with no neutron bookkeeping). The reactor
  * ARM landed with task debt-reactor-b-2x2-be: the 2x2 core BE ({@code
- * GT6ReactorCore2x2BlockEntity}) answers both reads below (the p31-bedrock-ore
+ * GT6ReactorCore2x2BlockEntity}) answers both reads below (the bedrock-ore
  * "pre-left field face" declaration paid off); the 1x1 core stays deferred (the
  * upstream default config OFF ruling), so the 2x2 instanceof is the full reactor face.
  */

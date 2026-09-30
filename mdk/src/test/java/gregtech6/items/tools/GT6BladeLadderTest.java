@@ -26,7 +26,7 @@ import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 
 /**
- * Offline tests for task p31-blade-ladder — the blade material ladder over the UNIFIED
+ * Offline tests for task blade-ladder — the blade material ladder over the UNIFIED
  * {@link GT6ToolLadder} seam (the S31-3 dig/blade unification: the dig surface keeps,
  * the blade increments are the :392 attack fold, the secondary face and the family tint
  * dispatch). The {@link GT6ItemDataTest} boot shape; the mod-Item wall keeps the item
@@ -197,7 +197,7 @@ public class GT6BladeLadderTest {
 
 	@Test
 	public void theGeneratedSwordRowIsTheSharedSerializerShape() throws Exception {
-		// task r7-39-toolhead-assembly: the sword grid row :321 is an mToolHeadRecipes row —
+		// task 39-toolhead-assembly: the sword grid row :321 is an mToolHeadRecipes row —
 		// it emits the HEAD through the vanilla serializer (the shared material_tool face moved
 		// to the head+handle ASSEMBLY row, the soft_hammer seam)
 		JsonObject tPlural = generated("/data/gt6/recipes/sword/steel.json");

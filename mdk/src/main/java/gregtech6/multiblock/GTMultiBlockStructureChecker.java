@@ -20,8 +20,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregtech6.tileentity.multiblocks.ITileEntityMultiBlockController;
 
 /**
- * The shared structure checker (task p16-pattern-checker ② — the ADR
- * 2026-09-05-p16-formation-scoping CHECK capability): walks a bound
+ * The shared structure checker (task pattern-checker ② — the ADR
+ * 2026-09-05-formation-scoping CHECK capability): walks a bound
  * {@link GTMultiBlockPattern} cell by cell and drives the upstream
  * {@code checkAndSetTarget} equivalent path per forming cell — the block judgement,
  * the part-BE binding, and the controller self-cell arm all come from
@@ -202,7 +202,7 @@ public final class GTMultiBlockStructureChecker {
 	}
 
 	/**
-	 * The SET scaffold walk (task p16-form-scaffold — the ADR 2026-09-05-p16-formation-scoping
+	 * The SET scaffold walk (task form-scaffold — the ADR 2026-09-05-formation-scoping
 	 * SET capability): the forming path that COMPLETES a structure from the acting player's
 	 * inventory before binding it. Mechanism-level clean-room over kTFRU's SET mode
 	 * (utils.java:78-96 {@code tryPlaceTile} + :136-141 — the missing-cell-gets-placed-from-
@@ -255,7 +255,7 @@ public final class GTMultiBlockStructureChecker {
 	}
 
 	/**
-	 * The permission seam (task p24-creative-form-seam): the identical SET walk with the two
+	 * The permission seam (task creative-form-seam): the identical SET walk with the two
 	 * rulings pre-resolved by the caller — a real Player is not constructible offline (the
 	 * Forge-patched Entity ctor forces {@code FluidType.SIZE}), so the boolean pair IS the
 	 * testable form of the chain: (true, true) = creative free scaffolding, (true, false) =

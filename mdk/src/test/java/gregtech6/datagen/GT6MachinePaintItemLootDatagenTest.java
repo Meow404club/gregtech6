@@ -1,5 +1,5 @@
 /*
- * Offline pinned tests for task p22-painted-item-domain + p25-paint-loot-dotkey-fix: the
+ * Offline pinned tests for task painted-item-domain + paint-loot-dotkey-fix: the
  * generated paint-carry loot tables assert against the committed src/generated tree (the
  * GT6MachinePaintRenderDatagenTest read-only split: the write side is gated by runData,
  * first run written>0, second run written:0).
@@ -10,7 +10,7 @@
  * reuse the same builder (canner 4 + advanced_crafting_table 1) = 26 tables, each carrying
  * ONE copy_nbt function with the TWO paint ops in the SNBT-quoted dot-key form.
  *
- * <p>Task p25-paint-loot-dotkey-fix adds the semantic half: the committed op path strings
+ * <p>Task paint-loot-dotkey-fix adds the semantic half: the committed op path strings
  * are driven through the REAL vanilla NbtPathArgument (the loot runtime's own parser, via
  * the CopyNbtFunction.compileNbtPath arm) against synthetic block-entity NBT — the quoted
  * form must carry the paint pair into the item's BlockEntityTag compound, the raw unquoted
@@ -48,16 +48,16 @@ class GT6MachinePaintItemLootDatagenTest {
 
     /**
      * The 79 paint-carry bases, in the census order: the p22 painted-item domain
-     * ({@code paintableBlockArray}: the oven Heat_T ladder (4, task p27-oven-heat-t-ladder),
+     * ({@code paintableBlockArray}: the oven Heat_T ladder (4, task oven-heat-t-ladder),
      * shredder/crusher/lathe, dryer, distillery) plus
      * the p24 canner rows, the p26 W1 kinetic trio, the p26 press/extruder rows, the six
-     * P29 W1 process families (24, task p29-w1-kinetic-process-ladder) and the
+     * P29 W1 process families (24, task w1-kinetic-process-ladder) and the
      * ACT controller — every consumer
      * of the shared {@code paintSelfTable} builder, so the pinned shape covers the full
      * regen surface.
      */
     private static final List<String> PAINT_BASES = List.of(
-            "oven", "oven_t2", "oven_t3", "oven_t4", // task p27-oven-heat-t-ladder
+            "oven", "oven_t2", "oven_t3", "oven_t4", // task oven-heat-t-ladder
             "shredder", "shredder_t2", "shredder_t3", "shredder_t4",
             "crusher", "crusher_t2", "crusher_t3", "crusher_t4",
             "lathe", "lathe_t2", "lathe_t3", "lathe_t4",
@@ -67,22 +67,22 @@ class GT6MachinePaintItemLootDatagenTest {
             "sifter", "sifter_t2", "sifter_t3", "sifter_t4",
             "compressor", "compressor_t2", "compressor_t3", "compressor_t4",
             "wiremill", "wiremill_t2", "wiremill_t3", "wiremill_t4",
-            "press", "press_t2", "press_t3", "press_t4", // task p26-w1-press-extruder-molds
-            "extruder", "extruder_t2", "extruder_t3", "extruder_t4", // task p26-w1-press-extruder-molds
-            "shredder_ulv", "crusher_ulv", "canner_ulv", "sifter_ulv", "wiremill_ulv", "rollingmill", // task p28-c-ulv-machine-ladder
-            "buzzsaw", "buzzsaw_t2", "buzzsaw_t3", "buzzsaw_t4", // task p29-w1-kinetic-process-ladder
+            "press", "press_t2", "press_t3", "press_t4", // task w1-press-extruder-molds
+            "extruder", "extruder_t2", "extruder_t3", "extruder_t4", // task w1-press-extruder-molds
+            "shredder_ulv", "crusher_ulv", "canner_ulv", "sifter_ulv", "wiremill_ulv", "rollingmill", // task c-ulv-machine-ladder
+            "buzzsaw", "buzzsaw_t2", "buzzsaw_t3", "buzzsaw_t4", // task w1-kinetic-process-ladder
             "squeezer", "squeezer_t2", "squeezer_t3", "squeezer_t4",
             "centrifuge", "centrifuge_t2", "centrifuge_t3", "centrifuge_t4",
             "sluice", "sluice_t2", "sluice_t3", "sluice_t4",
             "sanding_machine", "sanding_machine_t2", "sanding_machine_t3", "sanding_machine_t4",
             "pressure_washer", "pressure_washer_t2", "pressure_washer_t3", "pressure_washer_t4",
-            "mixer", "mixer_t2", "mixer_t3", "mixer_t4", // task p29-w1-eu-hu-families
-            "electricmixer", "electricmixer_t2", "electricmixer_t3", "electricmixer_t4", // task p29-w1-eu-hu-families
-            "electricloom", "electricloom_t2", "electricloom_t3", "electricloom_t4", // task p29-w1-eu-hu-families
-            "electricsifter", "electricsifter_t2", "electricsifter_t3", "electricsifter_t4", // task p29-w1-eu-hu-families
-            "boxinator", "boxinator_t2", "boxinator_t3", "boxinator_t4", // task p29-w1-eu-hu-families
-            "unboxinator", "unboxinator_t2", "unboxinator_t3", "unboxinator_t4", // task p29-w1-eu-hu-families
-            "fermenter", // task p29-w1-eu-hu-families
+            "mixer", "mixer_t2", "mixer_t3", "mixer_t4", // task w1-eu-hu-families
+            "electricmixer", "electricmixer_t2", "electricmixer_t3", "electricmixer_t4", // task w1-eu-hu-families
+            "electricloom", "electricloom_t2", "electricloom_t3", "electricloom_t4", // task w1-eu-hu-families
+            "electricsifter", "electricsifter_t2", "electricsifter_t3", "electricsifter_t4", // task w1-eu-hu-families
+            "boxinator", "boxinator_t2", "boxinator_t3", "boxinator_t4", // task w1-eu-hu-families
+            "unboxinator", "unboxinator_t2", "unboxinator_t3", "unboxinator_t4", // task w1-eu-hu-families
+            "fermenter", // task w1-eu-hu-families
             "advanced_crafting_table");
 
     /** The paint keys the 03 base writes while painted (CS.java:1161-1162, verbatim upstream). */
@@ -155,7 +155,7 @@ class GT6MachinePaintItemLootDatagenTest {
     }
 
     /**
-     * One REPLACE op in the QUOTED form (task p25-paint-loot-dotkey-fix): the dotted key
+     * One REPLACE op in the QUOTED form (task paint-loot-dotkey-fix): the dotted key
      * rides as a single-quote SNBT segment both on the source and under BlockEntityTag —
      * the unquoted raw form parsed as two compound-child nodes and silently no-oped.
      */
@@ -167,7 +167,7 @@ class GT6MachinePaintItemLootDatagenTest {
     }
 
     /**
-     * The semantic probe (task p25-paint-loot-dotkey-fix): the committed oven-table op
+     * The semantic probe (task paint-loot-dotkey-fix): the committed oven-table op
      * strings, parsed by the REAL vanilla NbtPathArgument (the loot runtime's own parse
      * arm — CopyNbtFunction.compileNbtPath), must resolve the flat BE paint keys and land
      * the pair as flat keys INSIDE the item's BlockEntityTag compound. The drive is the
@@ -207,7 +207,7 @@ class GT6MachinePaintItemLootDatagenTest {
     }
 
     /**
-     * The defect pin (task p25-paint-loot-dotkey-fix): the OLD unquoted path text still
+     * The defect pin (task paint-loot-dotkey-fix): the OLD unquoted path text still
      * parses (into TWO compound-child nodes) but misses the flat key — the vanilla parser
      * throws "nothing found", which CopyNbtFunction.CopyOperation.apply swallows silently
      * (vanilla 1.20.1 CopyNbtFunction.java:143-150). Guards the quoted form against a

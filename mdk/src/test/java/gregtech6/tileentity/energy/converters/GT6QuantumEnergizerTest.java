@@ -26,7 +26,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.energy.converters.GT6LaserDomainTest.CountingSink;
 
 /**
- * The Quantum Energizer offline tests (task p32-qu-energizer) — the THIRD type-pair
+ * The Quantum Energizer offline tests (task qu-energizer) — the THIRD type-pair
  * instance (LU→QU, back-in/front-out) of the {@link GT6LaserConverterBlockEntity} family,
  * the {@link GT6LaserDomainTest} harness form. The acceptance arms:
  * <ul>

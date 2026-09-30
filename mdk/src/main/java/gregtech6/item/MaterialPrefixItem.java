@@ -26,7 +26,7 @@ import gregapi.oredict.OreDictPrefix;
  * translatable (the {@link gregtech6.block.wire.GTWireBlock#displayNameOf} material-slot shape),
  * so each locale resolves the material word in its OWN language — en resolves to mNameLocal
  * (the {@code gt6.material.*} en values ARE the mNameLocal faces, GT6EnUs.addMaterialNames),
- * zh resolves to the localized word (task p23-i18n-material-fill-fix: the raw mNameLocal
+ * zh resolves to the localized word (task i18n-material-fill-fix: the raw mNameLocal
  * literal rendered "Bronze锭" mixed-script names on a zh client);</li>
  * <li>special-case override key {@code gt6.<prefix_snake>_<material_snake>} — used only when a
  * translation actually exists (existence check mirrored from TagPrefix.java:1321).</li>

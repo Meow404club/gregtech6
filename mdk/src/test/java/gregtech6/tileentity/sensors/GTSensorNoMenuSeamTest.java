@@ -14,7 +14,7 @@ import net.minecraft.world.inventory.MenuType;
 import gregtech6.gui.machines.GT6MuiMachine;
 
 /**
- * The structural no-GUI pin (task p26-sensors-core offline acceptance — the "零 MenuType
+ * The structural no-GUI pin (task sensors-core offline acceptance — the "零 MenuType
  * 断言" arm). The sensor family is NO_GUI upstream (MultiTileEntitySensor.java:91, the
  * {@code NO_GUI_CLICK_TO_INTERACT} tooltip): the interaction surface is pure world
  * clicks ({@code GTSensorBlock.use}) and the acceptance channel is the /gt6sensor
@@ -24,7 +24,7 @@ import gregtech6.gui.machines.GT6MuiMachine;
  * <ul>
  * <li>no field typed {@link MenuType} (raw or through a generic — a
  *     {@code DeferredRegister<MenuType<?>>} row would name it in the generic string);</li>
- * <li>no class implementing {@link GT6MuiMachine} — the p26-mui-a-open-chain menu
+ * <li>no class implementing {@link GT6MuiMachine} — the mui-a-open-chain menu
  *     dispatch seam ({@code tryOpen}) a GUI-bearing block would carry;</li>
  * <li>the family's own registration surface ({@code GT6Sensors}) is blocks+items only.</li>
  * </ul>
@@ -42,7 +42,7 @@ public class GTSensorNoMenuSeamTest {
 			, GT6ProgressmeterBlockEntity.class
 			, GT6FluidometerBlockEntity.class
 			, GT6ElectrometerBlockEntity.class
-			// the p34-sensors-trivial-14 batch — the 15 appended rows join the audit
+			// the sensors-trivial-14 batch — the 15 appended rows join the audit
 			// (the batch-2 convention this census guard documents)
 			, GT6ThermometerBlockEntity.class
 			, GT6LuminometerBlockEntity.class
@@ -59,7 +59,7 @@ public class GTSensorNoMenuSeamTest {
 			, GT6SuperHeavyWeightometerBlockEntity.class
 			, GT6TpsmeterBlockEntity.class
 			, GT6PlayerCounterBlockEntity.class
-			// the p37-sensors-3 pool closure — the 3 appended rows join the audit
+			// the sensors-3 pool closure — the 3 appended rows join the audit
 			// (the batch convention this census guard documents)
 			, GT6GeigerCounterBlockEntity.class
 			, GT6TachometerBlockEntity.class

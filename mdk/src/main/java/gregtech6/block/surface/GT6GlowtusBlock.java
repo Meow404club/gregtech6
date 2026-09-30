@@ -3,7 +3,7 @@ package gregtech6.block.surface;
 import net.minecraft.world.level.block.WaterlilyBlock;
 
 /**
- * The GT6 glowtus (task p30-w6-t2-surface-blocks) — the upstream water plant is a
+ * The GT6 glowtus (task w6-t2-surface-blocks) — the upstream water plant is a
  * {@code BlockBaseLilyPad} (BlockGlowtus.java:33, light 15 :52, placed on the water
  * surface by WorldgenGlowtus.java:55 {@code anywater && set(aY+1)}), so the modern block
  * extends the vanilla {@link WaterlilyBlock} (the mayPlaceOn water-top idiom verbatim).

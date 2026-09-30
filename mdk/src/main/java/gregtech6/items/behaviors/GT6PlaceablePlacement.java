@@ -29,7 +29,7 @@ import gregtech6.tileentity.misc.GT6PlaceableBlock;
 import gregtech6.tileentity.misc.GT6PlaceableBlockEntity;
 
 /**
- * The unified placement behavior (task p32-placeables) — the port of the upstream
+ * The unified placement behavior (task placeables) — the port of the upstream
  * sneak-place dispatch: gregtech/GT_Proxy.java:294-313 (the PlayerInteractEvent walk —
  * vanilla stick / flint / the OP-prefixed material items) over the modern material item
  * system. The six faces: {@code OP.ingot → placed_ingot 32084}, {@code OP.plate →

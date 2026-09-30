@@ -18,11 +18,11 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import gregtech6.block.multiblock.GTMultiBlockPartBlock;
 
 /**
- * The part-family registration census (task p29-w3-nbtdesign-parts ③ acceptance ④ +
+ * The part-family registration census (task w3-nbtdesign-parts ③ acceptance ④ +
  * ①): the DESIGNS variant-count table per family (upstream NBT_DESIGNS =
  * mTextures[bind8(n)+1][6], MultiTileEntityMultiBlockPart.java:138-146 — 0/1/3/7/8
  * asserted PER FAMILY), the row counts (metal walls 11, dense 11, coils 6, parts 8 —
- * 7 rows + the transmitter since task p30-pool-drillhead-18103 tail-appended the
+ * 7 rows + the transmitter since task pool-drillhead-18103 tail-appended the
  * missed 18103 Bedrock Mining Drill Head,
  * research.p29-gap-refresh-worldgen-mb mb_residual.part_miss, ventilation 1,
  * processor units 5) and the two reuse rulings (the Tungsten Wall rides
@@ -90,7 +90,7 @@ public class GT6PartFamilyCensusTest extends gregtech6.tileentity.multiblocks.GT
 
 	@Test
 	void partFamilyCountsEightWithTheTransmitter() {
-		// task p30-pool-drillhead-18103 — 6→7 rows: the missed 18103 (Loader :1178,
+		// task pool-drillhead-18103 — 6→7 rows: the missed 18103 (Loader :1178,
 		// "Bedrock Mining Drill Head", hardness 12.5, texture "bedrockdrill",
 		// NBT_DESIGNS 0) tail-appends per research.p29-gap-refresh-worldgen-mb
 		// mb_residual.part_miss; the transmitter (18101) remains the eighth part.
@@ -144,7 +144,7 @@ public class GT6PartFamilyCensusTest extends gregtech6.tileentity.multiblocks.GT
 		assertEquals(7, tVariants.get("sluiceparts"));
 		assertEquals(3, tVariants.get("crusherwheels"));
 		assertEquals(3, tVariants.get("shredderblades"));
-		assertEquals(0, tVariants.get("bedrockdrill")); // task p30-pool-drillhead-18103
+		assertEquals(0, tVariants.get("bedrockdrill")); // task pool-drillhead-18103
 		assertEquals(0, tVariants.get("ventilationunit"));
 		assertEquals(0, tVariants.get("processorversatile"));
 	}

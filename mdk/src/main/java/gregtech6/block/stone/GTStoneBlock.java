@@ -9,7 +9,7 @@ import gregapi.oredict.OreDictMaterial;
 
 /**
  * One GT6 stone VARIANT block: a degenerate pure {@link Block} with a FIXED
- * {@link StoneVariant} (task p21-stoneblocks-16item-registry-split) — one block per
+ * {@link StoneVariant} (task stoneblocks-16item-registry-split) — one block per
  * (stone, variant) pair, 272 registrations over the 17 CS.java:1668 stones. This retires
  * the P19 intermediate shape (ONE Block per stone carrying the 16 variants behind the
  * {@code GTStoneBlock.VARIANT} EnumProperty): 1.20.1 has no metadata, and the upstream
@@ -65,7 +65,7 @@ public class GTStoneBlock extends Block {
 	}
 
 	/**
-	 * The composed display name (task p20-i18n-compose-rows, the B-wave lang ruling): the
+	 * The composed display name (task i18n-compose-rows, the B-wave lang ruling): the
 	 * block composes ITS OWN variant's {@code gt6.stone.variant.<snake>} template (ONE
 	 * position-param template per variant, unchanged by the p21 split — variant-0 blocks
 	 * compose the exact same template the P19 single-block form composed) with the

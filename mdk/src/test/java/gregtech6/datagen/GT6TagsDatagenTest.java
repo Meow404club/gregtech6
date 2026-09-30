@@ -1,9 +1,9 @@
 /**
- * Offline JSON-snapshot tests for task p24-tags-provider-skeleton, extended band by band:
+ * Offline JSON-snapshot tests for task tags-provider-skeleton, extended band by band:
  * the tag batches are pinned against the committed generated tree so a future provider
  * refactor cannot drift the product silently. The block face — mineable/pickaxe over stone272
  * + the whole {@link GTMachines} register + the metal/gem/raw-ore prefix blocks, mineable/axe
- * over exactly the wood barrel, and the p24-tags-prefix-materials rolling batch 1 (the shovel
+ * over exactly the wood barrel, and the tags-prefix-materials rolling batch 1 (the shovel
  * band exactly the blockDust family; the wire universe walk-computed from GTWireSpecs; the
  * barrel closure + the fluid pipes into pickaxe); the item face — the GTCEu
  * {@code defaultTagPath} families (TagPrefix.java:279/:290/:405/:416/:729/:223 plus the
@@ -51,17 +51,17 @@ class GT6TagsDatagenTest {
 
     /**
      * The pickaxe-file member total: 272 stone pairs + 49 machine blocks (the oven Heat_T
-     * ladder 4, task p27-oven-heat-t-ladder + shredder/crusher/lathe ladders + 4 dryers +
+     * ladder 4, task oven-heat-t-ladder + shredder/crusher/lathe ladders + 4 dryers +
      * 4 distilleries + the 4 Canner rows +
      * the W1 sifter/compressor/wiremill ladders + the 4 Press + 4 Extruder rows, task
-     * p26-w1-press-extruder-molds + the Advanced Crafting Table —
+     * w1-press-extruder-molds + the Advanced Crafting Table —
      * GTMachines.java:58/:118-151/:233-237/:347-351/:415-435 + the p26-w1 trio,
      * the whole-class {@code GTMachines.BLOCKS} walk means every landed machine row joins
      * the band) + the 1 conscious multiblock join (the Lightning Rod pillar block, task
-     * p24-lightning-rod — the wall/coil/controller follow the multiblock-family
+     * lightning-rod — the wall/coil/controller follow the multiblock-family
      * non-membership convention, the provider javadoc) +
      * the 6 metal/gem/raw prefixes' live pairs (3777 - 1096 blockDust = 2681) + the
-     * rolling batch 1 faces (task p24-tags-prefix-materials): 629 wires (the legacy
+     * rolling batch 1 faces (task tags-prefix-materials): 629 wires (the legacy
      * 1x/2x pair + 620 electric + 6 redstone + 1 laser — the whole-class
      * {@code GTWires.BLOCKS} walk) + 2 fluid pipes (the task card names GTFluidPipeBlock
      * into pickaxe) + 15 barrels (plastic canister + bronze drum + logistics tank + 12
@@ -69,26 +69,26 @@ class GT6TagsDatagenTest {
      * conscious constant update — the maintenance duty the tags card declared for every
      * future machine card (the four Canner rows 2970 → 2974, the rod block 2974 → 2975,
      * the tags batch 2975 → 3621, the single-variant ACT row 3621 → 3622, task
-     * p24-act-machine — the S4 merge-order reconciliation, then the W1 trio 3622 → 3634,
-     * task p26-w1-sifter-compressor-wiremill — then the press/extruder rows 3634 → 3642,
-     * task p26-w1-press-extruder-molds — then the oven ladder rows 3642 → 3645, task
-     * p27-oven-heat-t-ladder).
+     * act-machine — the S4 merge-order reconciliation, then the W1 trio 3622 → 3634,
+     * task w1-sifter-compressor-wiremill — then the press/extruder rows 3634 → 3642,
+     * task w1-press-extruder-molds — then the oven ladder rows 3642 → 3645, task
+     * oven-heat-t-ladder).
      */
-    // the 3 oven ladder rows joined the whole-class walk at task p27-oven-heat-t-ladder
+    // the 3 oven ladder rows joined the whole-class walk at task oven-heat-t-ladder
     // (46 -> 49 machines on the merged line, 3642 -> 3645); the six p28 ULV rows join the
-    // same whole-class walk (49 -> 55, 3645 -> 3651, task p28-c-ulv-machine-ladder); the
-    // stone anvil pair joined the explicit tail (task p28-c-anvil, 3651 -> 3653); the
+    // same whole-class walk (49 -> 55, 3645 -> 3651, task c-ulv-machine-ladder); the
+    // stone anvil pair joined the explicit tail (task c-anvil, 3651 -> 3653); the
     // sixteen roll-ladder machines joined the whole-class walk (task
-    // p29-w1-kinetic-roll-ladder, 55 -> 71, 3653 -> 3669); the six p29 process families
-    // joined too (71 -> 95, 3669 -> 3693, task p29-w1-kinetic-process-ladder)
-    // the sixteen hu-tu rows joined at task p29-w2-hu-tu-piggyback
-    // the +9 burner/plantalyzer machine carriers join at task p34-machines-burner-plantalyzer (the machines bucket 247 -> 256)
-    // the +4 plate-gem block carriers join at task p34-machines-bumblelyzer-crucible (the bouleGt force-table cascade: blockPlateGem over Si/Ge/RedstoneAlloy/NikolineAlloy) and the +9 p34 machine rows ride the whole-class machine band (bumblelyzer x5 + crystallisationcrucible x4)
-    private static final int PINNED_PICKAXE_TOTAL = 272 + 256 + 1 + 2681 + 629 + 2 + 15 + 2; // the +14 eu-special (task p29-w2-eu-special), +30 exotic (task p29-w2-exotic-energy), +25 eu-core (task p29-w2-eu-core-5tier), +16 hu-tu (task p29-w2-hu-tu-piggyback), +5 heat-smelter (task p29-w3-heat-smelter) and +19 eu-bridge (task p29-w4-eu-bridge: the 15 converter rows + the 4 Roasting rows) and +5 small Massfab (task p31-massfab) machine blocks auto-ride the whole-class band (120 + 14 + 30 + 25 + 16 + 5 + 19 + 5) and +4 QU machines (task p32-qu-scanner-replicator: the molecular_scanner_t3 single + the replicator three-rung)
+    // w1-kinetic-roll-ladder, 55 -> 71, 3653 -> 3669); the six p29 process families
+    // joined too (71 -> 95, 3669 -> 3693, task w1-kinetic-process-ladder)
+    // the sixteen hu-tu rows joined at task w2-hu-tu-piggyback
+    // the +9 burner/plantalyzer machine carriers join at task machines-burner-plantalyzer (the machines bucket 247 -> 256)
+    // the +4 plate-gem block carriers join at task machines-bumblelyzer-crucible (the bouleGt force-table cascade: blockPlateGem over Si/Ge/RedstoneAlloy/NikolineAlloy) and the +9 p34 machine rows ride the whole-class machine band (bumblelyzer x5 + crystallisationcrucible x4)
+    private static final int PINNED_PICKAXE_TOTAL = 272 + 256 + 1 + 2681 + 629 + 2 + 15 + 2; // the +14 eu-special (task w2-eu-special), +30 exotic (task w2-exotic-energy), +25 eu-core (task w2-eu-core-5tier), +16 hu-tu (task w2-hu-tu-piggyback), +5 heat-smelter (task w3-heat-smelter) and +19 eu-bridge (task w4-eu-bridge: the 15 converter rows + the 4 Roasting rows) and +5 small Massfab (task massfab) machine blocks auto-ride the whole-class band (120 + 14 + 30 + 25 + 16 + 5 + 19 + 5) and +4 QU machines (task qu-scanner-replicator: the molecular_scanner_t3 single + the replicator three-rung)
 
     /** The 16 tier-ladder machine ids of the first machines card + the oven ladder + the ACT single-variant row (the dryer/distillery/canner rows ride the total pin). */
     private static final List<String> PINNED_LADDER_MACHINES = List.of(
-            "gt6:oven", "gt6:oven_t2", "gt6:oven_t3", "gt6:oven_t4", // task p27-oven-heat-t-ladder
+            "gt6:oven", "gt6:oven_t2", "gt6:oven_t3", "gt6:oven_t4", // task oven-heat-t-ladder
             "gt6:shredder", "gt6:shredder_t2", "gt6:shredder_t3", "gt6:shredder_t4",
             "gt6:crusher", "gt6:crusher_t2", "gt6:crusher_t3", "gt6:crusher_t4",
             "gt6:lathe", "gt6:lathe_t2", "gt6:lathe_t3", "gt6:lathe_t4",
@@ -165,11 +165,11 @@ class GT6TagsDatagenTest {
                     "prefix block must ride the pickaxe band: " + tPair);
             tPrefixPairs++;
         }
-        assertEquals(2681, tPrefixPairs, "3777 storage pairs (+4 task p34-machines-bumblelyzer-crucible: the blockPlateGem cascade carriers over the quartet) - 1096 blockDust pairs");
+        assertEquals(2681, tPrefixPairs, "3777 storage pairs (+4 task machines-bumblelyzer-crucible: the blockPlateGem cascade carriers over the quartet) - 1096 blockDust pairs");
         // exact product shape: no member outside the census families
         assertEquals(PINNED_PICKAXE_TOTAL, tValues.size(),
                 "272 stones + 256 machines + 1 rod + 2681 prefix blocks + 629 wires + 2 pipes + 15 barrels + 2 anvils"
-                + " (the +14 eu-special machines of task p29-w2-eu-special, the +30 exotic machines of task p29-w2-exotic-energy, the +25 eu-core machines of task p29-w2-eu-core-5tier the +16 hu-tu machines of task p29-w2-hu-tu-piggyback and the +5 heat-smelter machines of task p29-w3-heat-smelter and the +5 small Massfab machines of task p31-massfab joined the machine walk)");
+                + " (the +14 eu-special machines of task w2-eu-special, the +30 exotic machines of task w2-exotic-energy, the +25 eu-core machines of task w2-eu-core-5tier the +16 hu-tu machines of task w2-hu-tu-piggyback and the +5 heat-smelter machines of task w3-heat-smelter and the +5 small Massfab machines of task massfab joined the machine walk)");
         assertTrue(tValues.stream().allMatch(v -> v.startsWith("gt6:")), "mod-face-only members");
     }
 
@@ -197,9 +197,9 @@ class GT6TagsDatagenTest {
     }
 
     /**
-     * The axe band: the wood fluid barrel + the 9 GT6 tree logs (task p30-w6-t1-trees-nine
+     * The axe band: the wood fluid barrel + the 9 GT6 tree logs (task w6-t1-trees-nine
      * — the addTreeBand walk order appended after the barrel; the census material mapping
-     * keeps wood out of pickaxe) + the 4 fallen-log woods (task p30-w6-t2-surface-blocks,
+     * keeps wood out of pickaxe) + the 4 fallen-log woods (task w6-t2-surface-blocks,
      * the addSurfacePlantBand tail-append).
      */
     @Test
@@ -213,7 +213,7 @@ class GT6TagsDatagenTest {
     }
 
     /**
-     * The tree-family vanilla bands (task p30-w6-t1-trees-nine): the datagen file carries
+     * The tree-family vanilla bands (task w6-t1-trees-nine): the datagen file carries
      * ONLY the gt6 additions — the vanilla members (oak_log etc.) live in the vanilla
      * jar's own data layer and merge at load, so the pin is exactly the 9 gt6 members per
      * family, both the block and the item face. The item logs band is THE coke-oven
@@ -226,7 +226,7 @@ class GT6TagsDatagenTest {
                 "gt6:rubber_log", "gt6:maple_log", "gt6:willow_log", "gt6:blue_mahoe_log",
                 "gt6:hazel_log", "gt6:cinnamon_log", "gt6:coconut_log", "gt6:rainbowood_log",
                 "gt6:blue_spruce_log",
-                // task p30-w6-t2-surface-blocks — the 4 fallen-log woods join the band
+                // task w6-t2-surface-blocks — the 4 fallen-log woods join the band
                 "gt6:dead_log", "gt6:rotten_log", "gt6:mossy_log", "gt6:frozen_log");
         assertEquals(tLogs, tagValues("minecraft/tags/items/logs.json"));
         assertEquals(tLogs, tagValues("minecraft/tags/blocks/logs.json"));
@@ -248,7 +248,7 @@ class GT6TagsDatagenTest {
      * The shovel band, rolling batch 1: the blockDust prefix family — walk-exact
      * membership (mirror of the provider's filtered walk), the 3777-2681=1096 census count,
      * all gt6. PIN recomputed at merge order (the conscious-update duty, S3 2045c78d):
-     * p24-grass-block landed first and its addGrassBand rides the SAME shovel face — the
+     * grass-block landed first and its addGrassBand rides the SAME shovel face — the
      * band is now the blockDust family PLUS the 6 GT grass variants (1096+6=1102).
      */
     @Test
@@ -263,9 +263,9 @@ class GT6TagsDatagenTest {
             tDustPairs++;
         }
         assertEquals(1096, tDustPairs, "3777 storage pairs - 2681 pickaxe-band pairs");
-        // +2 (task p30-w6-t2-surface-blocks: turf + black_sand, the addSurfacePlantBand tail)
+        // +2 (task w6-t2-surface-blocks: turf + black_sand, the addSurfacePlantBand tail)
         assertEquals(tDustPairs + 6 + 2, tValues.size(),
-                "the shovel band = the blockDust family + the 6 GT grass variants (p24-grass-block merged first) + the 2 soil pair");
+                "the shovel band = the blockDust family + the 6 GT grass variants (grass-block merged first) + the 2 soil pair");
         assertTrue(tValues.stream().allMatch(v -> v.startsWith("gt6:")), "mod-face-only members");
     }
 
@@ -380,7 +380,7 @@ class GT6TagsDatagenTest {
         assertFamilyFace(GT6ItemTags.DUSTS_FAMILY, Set.of(OP.dust), "redstone", gItemWalk);
         assertFamilyFace(GT6ItemTags.GEMS_FAMILY, Set.of(OP.gem), "diamond", gItemWalk);
         assertFamilyFace(GT6ItemTags.GEMS_FAMILY, Set.of(OP.gem), "coal", gItemWalk);
-        // rolling batch 2 (p24-tags-prefix-materials): TagPrefix.java:456/:502/:267 paths
+        // rolling batch 2 (tags-prefix-materials): TagPrefix.java:456/:502/:267 paths
         assertFamilyFace(GT6ItemTags.PLATES_FAMILY, Set.of(OP.plate), "iron", gItemWalk);
         assertFamilyFace(GT6ItemTags.RODS_FAMILY, Set.of(OP.stick), "iron", gItemWalk);
         assertFamilyFace(GT6ItemTags.HOT_INGOTS_FAMILY, Set.of(OP.ingotHot), "iron", gItemWalk);
@@ -418,13 +418,13 @@ class GT6TagsDatagenTest {
     }
 
     /**
-     * The p25 tool face (task p25-tool-hammer-wrench + p25-food-can-row0, the PIN
+     * The p25 tool face (task tool-hammer-wrench + food-can-row0, the PIN
      * evolution duty): the three new self-owned crafting-tool tags carry EXACTLY their
      * one registered member each, and the ecosystem tools band grew 7 → 9 → 10 → 16 → 22
      * → 27 → 33 (the hammer + wrench pair, then the bending cylinder, then task
-     * p29-w5-t1-dig-six's six dig tools, then task p29-w5-t5-scene-six's six scene
-     * tools, then task p29-w5-t2-blade-six's six blade tools, then task
-     * p29-w5-t4-field-five's five field tools, appended in the band order). Pinned so
+     * w5-t1-dig-six's six dig tools, then task w5-t5-scene-six's six scene
+     * tools, then task w5-t2-blade-six's six blade tools, then task
+     * w5-t4-field-five's five field tools, appended in the band order). Pinned so
      * any band change is a conscious constant update.
      */
     @Test
@@ -432,27 +432,27 @@ class GT6TagsDatagenTest {
         assertEquals(List.of("gt6:hammer"), tagValues("gt6/tags/items/tools/hard_hammer.json"));
         assertEquals(List.of("gt6:wrench"), tagValues("gt6/tags/items/tools/wrench.json"));
         assertEquals(List.of("gt6:bending_cylinder_small"), tagValues("gt6/tags/items/tools/bending_cylinder_small.json"));
-        // task p29-w5-t1-dig-six: the six dig-tool tags join the one-member census
+        // task w5-t1-dig-six: the six dig-tool tags join the one-member census
         assertEquals(List.of("gt6:pickaxe"), tagValues("gt6/tags/items/tools/pickaxe.json"));
         assertEquals(List.of("gt6:pickaxe_gem"), tagValues("gt6/tags/items/tools/pickaxe_gem.json"));
         assertEquals(List.of("gt6:pickaxe_construction"), tagValues("gt6/tags/items/tools/pickaxe_construction.json"));
         assertEquals(List.of("gt6:shovel"), tagValues("gt6/tags/items/tools/shovel.json"));
         assertEquals(List.of("gt6:spade"), tagValues("gt6/tags/items/tools/spade.json"));
         assertEquals(List.of("gt6:universal_spade"), tagValues("gt6/tags/items/tools/universal_spade.json"));
-        // task p29-w5-t2-blade-six: the six blade-tool tags join the one-member census
+        // task w5-t2-blade-six: the six blade-tool tags join the one-member census
         assertEquals(List.of("gt6:sword"), tagValues("gt6/tags/items/tools/sword.json"));
         assertEquals(List.of("gt6:knife"), tagValues("gt6/tags/items/tools/knife.json"));
         assertEquals(List.of("gt6:butchery_knife"), tagValues("gt6/tags/items/tools/butchery_knife.json"));
         assertEquals(List.of("gt6:club"), tagValues("gt6/tags/items/tools/club.json"));
         assertEquals(List.of("gt6:axe"), tagValues("gt6/tags/items/tools/axe.json"));
         assertEquals(List.of("gt6:axe_double"), tagValues("gt6/tags/items/tools/axe_double.json"));
-        // task p29-w5-t4-field-five: the five field-tool tags join the one-member census
+        // task w5-t4-field-five: the five field-tool tags join the one-member census
         assertEquals(List.of("gt6:hoe"), tagValues("gt6/tags/items/tools/hoe.json"));
         assertEquals(List.of("gt6:plow"), tagValues("gt6/tags/items/tools/plow.json"));
         assertEquals(List.of("gt6:branch_cutter"), tagValues("gt6/tags/items/tools/branch_cutter.json"));
         assertEquals(List.of("gt6:sense"), tagValues("gt6/tags/items/tools/sense.json"));
         assertEquals(List.of("gt6:hand_drill"), tagValues("gt6/tags/items/tools/hand_drill.json"));
-        // task p29-w5-t5-scene-six: the six scene-tool tags join the one-member census
+        // task w5-t5-scene-six: the six scene-tool tags join the one-member census
         assertEquals(List.of("gt6:scissors"), tagValues("gt6/tags/items/tools/scissors.json"));
         assertEquals(List.of("gt6:scoop"), tagValues("gt6/tags/items/tools/scoop.json"));
         assertEquals(List.of("gt6:plunger"), tagValues("gt6/tags/items/tools/plunger.json"));
@@ -476,7 +476,7 @@ class GT6TagsDatagenTest {
                 "gt6:buzzsaw_lv", "gt6:screwdriver_lv", "gt6:hand_drill_lv", "gt6:hand_mixer_lv",
                 "gt6:monkey_wrench_lv", "gt6:monkey_wrench_mv", "gt6:monkey_wrench_hv",
                 "gt6:trimmer_lv",
-                // task p29-w5-t7-pocket-eight appended the seven pocket switch forms at the tail
+                // task w5-t7-pocket-eight appended the seven pocket switch forms at the tail
                 // (the closed multitool carries no tool-name oredict upstream, Loader_Tools :176)
                 "gt6:pocket_multitool_knife", "gt6:pocket_multitool_saw", "gt6:pocket_multitool_file",
                 "gt6:pocket_multitool_screwdriver", "gt6:pocket_multitool_wire_cutter",
@@ -514,7 +514,7 @@ class GT6TagsDatagenTest {
     // ------------------------------------------------------------------ the p27 twin tree face
 
     /**
-     * The 26 vanilla-intersection faces (task p27-vanilla-tag-dual-tree — the provider's
+     * The 26 vanilla-intersection faces (task vanilla-tag-dual-tree — the provider's
      * VANILLA_INTERSECTION census mirrored here as literal paths, so a provider-side
      * drift cannot self-confirm; ForgeItemTagsProvider.java:56-157 re-verified per entry).
      */

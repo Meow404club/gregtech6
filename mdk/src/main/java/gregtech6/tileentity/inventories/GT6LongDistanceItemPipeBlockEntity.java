@@ -30,7 +30,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.connectors.GTItemPipeBlockEntity;
 
 /**
- * The Long Distance Item Pipeline Endpoint (task p35-long-distance-pipes) — the 1.20.1
+ * The Long Distance Item Pipeline Endpoint (task long-distance-pipes) — the 1.20.1
  * transcription of {@code MultiTileEntityLongDistancePipelineItem} (:53-306, the
  * TileEntityBase09FacingSingle shape over the port BE tree; Loader_MultiTileEntities
  * :906, meta id 10060). Two endpoints joined by a blob of {@link GT6LongDistPipeBlock}

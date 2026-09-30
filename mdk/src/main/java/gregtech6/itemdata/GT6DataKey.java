@@ -13,7 +13,7 @@ import net.minecraft.nbt.Tag;
 
 /**
  * One registered key of the {@link GT6ItemData} keyed access seam (task
- * p31-identity-seam) — the per-key half of the project-level item data contract,
+ * identity-seam) — the per-key half of the project-level item data contract,
  * named after the {@code GT6DualDirectoryFaces} seam family.
  *
  * <p>A key is a named typed slot: the NBT compound name the payload rides on the

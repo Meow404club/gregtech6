@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 import gregtech6.block.GTGrassBlock;
 
 /**
- * Registration home of the GT6 grass family (task p24-grass-block): <b>6 per-pair
+ * Registration home of the GT6 grass family (task grass-block): <b>6 per-pair
  * Block+BlockItem registrations</b> over the upstream dye variants (NOT ecosystem types)
  * — meta 0..5 = Green/Lime/Black/LightGray/Yellow/Brown, the order pinned by THREE
  * upstream tables in the same sequence (the dye recipes BlockGrass.java:75-80, the Bath

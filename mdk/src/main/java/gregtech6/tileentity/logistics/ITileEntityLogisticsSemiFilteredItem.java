@@ -1,7 +1,7 @@
 /**
  * Ported from GregTech 6 (1.7.10), file gregapi/tileentity/logistics/
  * ITileEntityLogisticsSemiFilteredItem.java (upstream 31 lines, the :29-30 interface face),
- * by task p32-logistics-lv3.
+ * by task logistics-lv3.
  *
  * This file is part of GregTech.
  *

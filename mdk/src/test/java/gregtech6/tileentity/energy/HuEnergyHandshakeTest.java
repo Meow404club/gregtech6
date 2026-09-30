@@ -23,12 +23,12 @@ import gregtech6.fluid.GTFluids;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Task p13-hu-steam-foundation — the offline acceptance fixture for the HU/steam
- * foundation (decision 2026-09-03-p13-hu-energy-face): the full HU handshake over the
+ * Task hu-steam-foundation — the offline acceptance fixture for the HU/steam
+ * foundation (decision 2026-09-03-hu-energy-face): the full HU handshake over the
  * EXISTING faces, zero production code. Three sections:
  *
  * <ol>
- * <li>the boiler-constant scope pin (decision 2026-09-03-p13-boiler-family-split ②);</li>
+ * <li>the boiler-constant scope pin (decision 2026-09-03-boiler-family-split ②);</li>
  * <li>the HU token + the source→sink handshake: {@code resolveEnergyType("HU")} reference
  *     equality, then a real {@code ITileEntityEnergy.Util.emitEnergyToNetwork(TD.Energy.HU, ...)}
  *     booking into an HU sink's double doEnergyInjection (the F probe + the T inject), with
@@ -62,7 +62,7 @@ public class HuEnergyHandshakeTest extends GTOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// 1. the boiler-constant scope pin (decision 2026-09-03-p13-boiler-family-split ②)
+	// 1. the boiler-constant scope pin (decision 2026-09-03-boiler-family-split ②)
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -91,7 +91,7 @@ public class HuEnergyHandshakeTest extends GTOfflineTestBase {
 		public byte lastSide = -1;
 
 		// 21.1 ctor validation: the fake binds a real BET over the vanilla stone state —
-		// the supplier is stored, never invoked (task p15-m4-test-infra-2).
+		// the supplier is stored, never invoked (task m4-test-infra-2).
 		static final BlockEntityType<HuSink> FAKE_TYPE =
 				BlockEntityType.Builder.of((aPos, aState) -> new HuSink(aPos), Blocks.STONE).build(null);
 

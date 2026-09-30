@@ -35,7 +35,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.machines.TileEntityOven;
 
 /**
- * The spray-can offline acceptance (task p22-spraycan-items): the {@link GTSprayCanItem}
+ * The spray-can offline acceptance (task spraycan-items): the {@link GTSprayCanItem}
  * pure seams — the upstream DYES_INT census, the {@code ~mColor&15} vanilla-Dye fold, the
  * colorize/decolorize whitelist tables (upstream Behavior_Spray_Color.java:144-167 / Remover
  * :96-106 minus the two target-less arms), the gt.remaining uses ledger (:68/:78/:83/:85-92),
@@ -307,7 +307,7 @@ public class GTSprayCanTest extends GTOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the grass arm (task p24-grass-block, the upstream :153-162 route + Remover :104)
+	// the grass arm (task grass-block, the upstream :153-162 route + Remover :104)
 	// ---------------------------------------------------------------------------
 
 	/**

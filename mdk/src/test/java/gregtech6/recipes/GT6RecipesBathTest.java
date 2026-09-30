@@ -25,7 +25,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The RM.Bath static-row loader tests (task p26-kitchen-pot-bowl, the
+ * The RM.Bath static-row loader tests (task kitchen-pot-bowl, the
  * GT6RecipesMixerTest seam shape). Three faces:
  * <ol>
  * <li>the MAP shape — the RM.java:80 row verbatim (items 6/6/1, fluids 1/3/1, MIN 2,

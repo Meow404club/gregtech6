@@ -124,7 +124,7 @@ public final class GT6SurfaceVariants {
 	 * 1..4px-high random micro box (MultiTileEntityRock.java:58-67), weights 3/2/1
 	 * (the representative tier heaviest), every tier now its own EXACT shape (the
 	 * boxes always sat inside the old 8x3x8 envelope, so the null-pos fallback keeps
-	 * the p38-issue1-4 pin).
+	 * the issue1-4 pin).
 	 */
 	public enum Rock implements Variant {
 		REPRESENTATIVE(3, "surface_rock", 4, 0, 4, 12, 3, 12),
@@ -194,7 +194,7 @@ public final class GT6SurfaceVariants {
 	 * blockstate (facing=north = "x": 90 tips the up-model's head to -Z — the
 	 * BlockModelRotation.java:42 quaternion plus the :49-51 ROT_90_X_NEG group, so JSON
 	 * x=90 is the NEGATIVE mathematical rotation), the y maps to the furnace front
-	 * (y=90 carries the north-drawn face to +X). NOTE: the r3-stick-shape-random C2
+	 * (y=90 carries the north-drawn face to +X). NOTE: the stick-shape-random C2
 	 * table carried x90/x270 TRANSPOSED against this dispatch (the pin test passed
 	 * tautologically); this card's rewrite pins the corrected NORTH/SOUTH boxes.
 	 * 90-degree steps keep an AABB exact, so a tilt envelope stays a conservative

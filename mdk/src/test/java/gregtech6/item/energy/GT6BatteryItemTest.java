@@ -14,7 +14,7 @@ import gregapi.data.TD;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The battery ITEM behavior pins (task p29-w4-battery-storage acceptance ②/④/⑥): the NBT
+ * The battery ITEM behavior pins (task w4-battery-storage acceptance ②/④/⑥): the NBT
  * round-trip (the {@code gt.energy} carrier, write = the writeItemNBT2 :89-90 shape), the
  * setEnergyStored clamp (the :76 read clamp hoisted to the write face — acceptance ②),
  * the store-as-full lane (the :70-74 NBT_ACTIVE_ENERGY branch), the packet band (the

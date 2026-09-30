@@ -7,7 +7,7 @@ import gregapi.oredict.OreDictPrefix;
 import gregtech6.registry.GT6OreBlocks;
 
 /**
- * The gravity forms of the ore universe (task p30-ore-1-mech): every family row whose
+ * The gravity forms of the ore universe (task ore-1-mech): every family row whose
  * upstream {@code aGravity} column is true (Loader_Ores.java:56-59 the broken stone-likes,
  * :65-67 gravel/sand/redSand, :121-122 mud, :73-75 their small ores; Loader_Rocks.java:58
  * et seq. every GT stone's broken ore) becomes a vanilla FallingBlock — 1.20.1 models

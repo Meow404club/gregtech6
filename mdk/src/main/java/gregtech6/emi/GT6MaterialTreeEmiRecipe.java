@@ -24,7 +24,7 @@ import gregtech6.registry.GTMaterialItems;
 
 /**
  * One material's tree as an EMI recipe (task debt-material-tree-b; v2 node-graph face task
- * r8-mattree-v2-nodes) — wrapping the viewer-neutral {@link MaterialTreeDisplay} and
+ * mattree-v2-nodes) — wrapping the viewer-neutral {@link MaterialTreeDisplay} and
  * rendering the SAME {@link MaterialTreeLayout} plans as the JEI twin (the 双 viewer 一坐标表
  * clause): every slot lands at the shared layout table's coordinates, every wire/arrow/
  * machine box at the shared helper's. The U/R faces mirror the JEI slot split: the

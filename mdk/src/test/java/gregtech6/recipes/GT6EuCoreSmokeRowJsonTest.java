@@ -23,7 +23,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * The eu-core smoke-row datapack acceptance (task p29-w2-eu-core-5tier, the OFFLINE half —
+ * The eu-core smoke-row datapack acceptance (task w2-eu-core-5tier, the OFFLINE half —
  * the {@link GT6EuHuSmokeRowJsonTest} shape): the five committed
  * {@code data/gt6/recipe_maps/<map>.json} files — {@code electrolyzer}, {@code injector},
  * {@code printer}, {@code scannervisuals}, {@code slicer} — pour through the PUBLIC
@@ -76,7 +76,7 @@ class GT6EuCoreSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		}
 	}
 
-	/** The four files pour under their map keys - the whitelist carried them since card 1. The slicer file retired with task p35-slicer-row-domain (the production rows replaced the smoke debt). */
+	/** The four files pour under their map keys - the whitelist carried them since card 1. The slicer file retired with task slicer-row-domain (the production rows replaced the smoke debt). */
 	@Test
 	void theFourSmokeRowsPourThroughTheLoaderSeam() throws Exception {
 		Map<ResourceLocation, JsonElement> tData = new HashMap<>();
@@ -97,7 +97,7 @@ class GT6EuCoreSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.INJECTOR.mRecipeList.size());
 		assertEquals(1, GT6RecipeMaps.PRINTER.mRecipeList.size());
 		assertEquals(1, GT6RecipeMaps.SCANNER_VISUALS.mRecipeList.size());
-		// the SLICER smoke face retired with task p35-slicer-row-domain: the map is a
+		// the SLICER smoke face retired with task slicer-row-domain: the map is a
 		// production map now (the Java pourer), the smoke seam file is gone
 		assertEquals(0, GT6RecipeMapJsonLoader.pouredCount("slicer"), "no slicer smoke row anymore");
 	}

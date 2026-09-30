@@ -27,7 +27,7 @@ import gregtech6.item.energy.GT6BatteryItem;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * The BatteryBox BE pins (task p29-w4-battery-storage acceptance ③/④): the 4/16-slot
+ * The BatteryBox BE pins (task w4-battery-storage acceptance ③/④): the 4/16-slot
  * charge/discharge arms (the :108-:124 bind3 band exchange, the per-battery packet counts
  * riding the IItemEnergy faces), the emit arm (the :141-:151 packet train out of the
  * FRONT into a counting sink — the GTEnergySourceBlockEntityTest adjacency-override
@@ -71,7 +71,7 @@ public class GT6BatteryBoxBlockEntityTest extends GTOfflineTestBase {
 		return new GT6BatteryBoxBlockEntity(sType, POS, Blocks.STONE.defaultBlockState(), 0, 16);
 	}
 
-	/** r10-debt-break-drops — the GTEntityBlock drop probe reaches the ctor-seated carrier (upstream 05Inventories.breakBlock :153-171 would scatter the battery slots). */
+	/** debt-break-drops — the GTEntityBlock drop probe reaches the ctor-seated carrier (upstream 05Inventories.breakBlock :153-171 would scatter the battery slots). */
 	@Test
 	public void breakDropProbeReachesTheInventory() throws Exception {
 		GT6BatteryBoxBlockEntity tBox = box4();

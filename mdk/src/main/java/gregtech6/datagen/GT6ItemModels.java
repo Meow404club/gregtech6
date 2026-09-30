@@ -16,7 +16,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
  * the material colour comes from the runtime ItemColor tint (MaterialPrefixItem.tintColor,
  * tintIndex 0), mirroring upstream's grayscale icon + colour modulation.
  *
- * <p>Layer 2 (task p27-tool-model-layers): upstream pairs every materialicon with an
+ * <p>Layer 2 (task tool-model-layers): upstream pairs every materialicon with an
  * un-tinted OVERLAY pass (TextureSet.java:113-126) — added as layer1 wherever the sprite
  * file exists on the borrow face (never inferred; the sets disagree on what the overlay
  * carries, research.p27-render-three-fixes F2). The vanilla layer number IS the tint
@@ -49,7 +49,7 @@ public final class GT6ItemModels extends ItemModelProvider {
         for (GT6DatagenItems.Entry tEntry : GT6DatagenItems.collect()) {
             String tSet = iconsetOf(tEntry.material());
             String tPrefix = MaterialPrefixItem.snakeCase(tEntry.prefix().mNameInternal);
-            // the OVERLAY second pass (task p27-tool-model-layers): upstream registers
+            // the OVERLAY second pass (task tool-model-layers): upstream registers
             // every materialicon as a base + "<NAME>_OVERLAY" pair and draws pass0 tinted
             // with the material colour / pass1 un-tinted (TextureSet.java:113-116 and
             // :124-126). The overlay is not always mere shading — the rockGt body
@@ -69,11 +69,11 @@ public final class GT6ItemModels extends ItemModelProvider {
                     .texture("layer0", modLoc("item/material_sets/" + tSet + "/" + tPrefix));
             }
         }
-        // the p5 pump cover item (task p5-barrel-side-rules ruling ⑥) — the item shows the
+        // the p5 pump cover item (task barrel-side-rules ruling ⑥) — the item shows the
         // out-facing plate art; the direction sprites live in the block atlas via GT6Atlases
         withExistingParent("cover_pump", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/cover_pump_out"));
-        // ─── the tool family multi-layer wave (task p27-tool-model-layers) ───
+        // ─── the tool family multi-layer wave (task tool-model-layers) ───
         // Upstream renders every tool icon as FOUR passes (ToolStats.java:267-287):
         // pass0 = head base (tinted with the primary material), pass1 = head OVERLAY
         // (UNCOLOURED), pass2 = handle base (tinted with the secondary material),
@@ -84,7 +84,7 @@ public final class GT6ItemModels extends ItemModelProvider {
         // (the family declared deviation, GT6Tools) — the layer STRUCTURE is what this
         // wave restores; the tint ladder is a later card.
 
-        // the formal crowbar item (task p9-tool-crowbar): handheld parent = the vanilla
+        // the formal crowbar item (task tool-crowbar): handheld parent = the vanilla
         // tool shape; layer0 = the upstream CROWBAR.png iconset borrow + layer1 = the
         // CROWBAR_OVERLAY.png shadow borrow (assets/README.md attribution). Upstream's
         // handle is VOID (GT_Tool_Crowbar.getIcon :142-144), so passes 2/3 draw nothing
@@ -92,13 +92,13 @@ public final class GT6ItemModels extends ItemModelProvider {
         withExistingParent("crowbar", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/crowbar"))
             .texture("layer1", modLoc("item/crowbar_overlay"));
-        // the formal wire cutter item (task p10-tool-cutter): the crowbar row shape;
+        // the formal wire cutter item (task tool-cutter): the crowbar row shape;
         // layer0 = the WIRE_CUTTER.png borrow + layer1 = the WIRE_CUTTER_OVERLAY.png
         // shadow borrow (assets/README.md attribution); VOID handle = two-layer.
         withExistingParent("cutter", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/cutter"))
             .texture("layer1", modLoc("item/cutter_overlay"));
-        // the formal chisel item (task p16-chisel-decalcify): FOUR layers. Head = the
+        // the formal chisel item (task chisel-decalcify): FOUR layers. Head = the
         // toolHeadChisel materialicon pair on the default primary Steel's texture set
         // (GT_Tool_Chisel.getIcon :87-89 — MT.Steel, the alloymachore family's
         // SET_METALLIC default, MT.java:247); handle = the HANDLE_CHISEL iconset pair
@@ -110,7 +110,7 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer1", modLoc("item/material_sets/metallic/tool_head_chisel_overlay"))
             .texture("layer2", modLoc("item/chisel"))
             .texture("layer3", modLoc("item/chisel_overlay"));
-        // the formal file item (task p24-tool-system): FOUR layers, the chisel row
+        // the formal file item (task tool-system): FOUR layers, the chisel row
         // shape — head = the toolHeadFile materialicon pair (Steel = metallic set,
         // GT_Tool_File.getIcon :91-93), handle = the HANDLE_FILE iconset pair borrow
         // (the old single layer carried only the handle; the head layer is the restore).
@@ -119,7 +119,7 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer1", modLoc("item/material_sets/metallic/tool_head_file_overlay"))
             .texture("layer2", modLoc("item/file"))
             .texture("layer3", modLoc("item/file_overlay"));
-        // the formal saw item (task p24-tool-system): FOUR layers, the chisel row shape
+        // the formal saw item (task tool-system): FOUR layers, the chisel row shape
         // — head = the toolHeadSaw materialicon pair (Steel = metallic set,
         // GT_Tool_Saw.getIcon :186-188), handle = the HANDLE_SAW iconset pair borrow.
         withExistingParent("saw", mcLoc("item/handheld"))
@@ -127,7 +127,7 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer1", modLoc("item/material_sets/metallic/tool_head_saw_overlay"))
             .texture("layer2", modLoc("item/saw"))
             .texture("layer3", modLoc("item/saw_overlay"));
-        // the formal builder wand item (task p24-builder-wand): FOUR layers — head = the
+        // the formal builder wand item (task builder-wand): FOUR layers — head = the
         // EMERALD-set toolHeadBuilderwand pair (default primary Heliodor = the emerald
         // factory, MT.java:1374; layer0 keeps the existing item/builder_wand.png byte
         // borrow, layer1 = the matching EMERALD OVERLAY pass), handle = the Scorched-wood
@@ -140,8 +140,8 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer1", modLoc("item/material_sets/emerald/tool_head_builderwand_overlay"))
             .texture("layer2", modLoc("item/material_sets/wood/stick"))
             .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
-        // the formal screwdriver item (task p24-screwdriver-item, four-layer migration
-        // task p38-issue6-tool-4layer-tint SUPERSEDES the composition ruling): the chisel
+        // the formal screwdriver item (task screwdriver-item, four-layer migration
+        // task issue6-tool-4layer-tint SUPERSEDES the composition ruling): the chisel
         // row shape — head = the toolHeadScrewdriver materialicon pair (the default
         // primary Steel = metallic set, in-repo), handle = the HANDLE_SCREWDRIVER iconset
         // pair borrow (item/screwdriver.png + screwdriver_overlay.png, assets/README.md
@@ -154,8 +154,8 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer1", modLoc("item/material_sets/metallic/tool_head_screwdriver_overlay"))
             .texture("layer2", modLoc("item/screwdriver"))
             .texture("layer3", modLoc("item/screwdriver_overlay"));
-        // the formal hard hammer item (task p25-tool-hammer-wrench, four-layer migration
-        // task p38-issue6-tool-4layer-tint SUPERSEDES the composition ruling): the
+        // the formal hard hammer item (task tool-hammer-wrench, four-layer migration
+        // task issue6-tool-4layer-tint SUPERSEDES the composition ruling): the
         // soft-hammer row shape — head = the toolHeadHammer materialicon pair (the
         // default primary Steel = metallic set, in-repo), handle = the wood stick pair
         // (the secondary MT.WOODS.Spruce rides SET_WOOD's stick icon,
@@ -167,21 +167,21 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer1", modLoc("item/material_sets/metallic/tool_head_hammer_overlay"))
             .texture("layer2", modLoc("item/material_sets/wood/stick"))
             .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
-        // the formal wrench item (task p25-tool-hammer-wrench): handheld parent = the
+        // the formal wrench item (task tool-hammer-wrench): handheld parent = the
         // vanilla tool shape; layer0 = the byte-identical WRENCH.png iconset borrow +
         // layer1 = the WRENCH_OVERLAY.png pass borrow (transparent upstream, borrowed for
         // structure parity — assets/README.md attribution); VOID handle = two-layer.
         withExistingParent("wrench", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/wrench"))
             .texture("layer1", modLoc("item/wrench_overlay"));
-        // the formal small bending cylinder item (task p25-food-can-row0): the wrench
+        // the formal small bending cylinder item (task food-can-row0): the wrench
         // row shape; layer0 = the BENDING_CYLINDER_SMALL.png borrow + layer1 = its
         // OVERLAY pass borrow (transparent upstream — assets/README.md attribution);
         // VOID handle = two-layer.
         withExistingParent("bending_cylinder_small", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/bending_cylinder_small"))
             .texture("layer1", modLoc("item/bending_cylinder_small_overlay"));
-        // the six blade tools (task p29-w5-t2-blade-six) — the chisel/file four-layer row
+        // the six blade tools (task w5-t2-blade-six) — the chisel/file four-layer row
         // shape. Sword: head = the toolHeadSword metallic-set pair (upstream getIcon :113-115
         // primary Steel), handle = the HANDLE_SWORD iconset pair borrow (item/sword.png).
         // Knife/Butchery Knife/Club: the single composed iconset pair borrows (upstream
@@ -214,10 +214,10 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer1", modLoc("item/material_sets/metallic/tool_head_axe_double_overlay"))
             .texture("layer2", modLoc("item/material_sets/wood/stick"))
             .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
-        // the dig-family ladder rows (task p31-dig-ladder): the axe row shape — head =
+        // the dig-family ladder rows (task dig-ladder): the axe row shape — head =
         // the toolHead metallic-set pair (layer0 = the TINTED head base, tint index 0,
         // the GT6ToolLadder material colour), layer1 = the OVERLAY shadow; handle = the
-        // wood stick pair. The dig-six card (p29-w5-t1-dig-six) shipped these six items
+        // wood stick pair. The dig-six card (w5-t1-dig-six) shipped these six items
         // WITHOUT model rows (the registered items fell back to the missing model) — this
         // batch restores the dig band's render face alongside the material ladder.
         withExistingParent("pickaxe", mcLoc("item/handheld"))
@@ -257,7 +257,7 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer1", modLoc("item/material_sets/metallic/tool_head_hoe_overlay"))
             .texture("layer2", modLoc("item/material_sets/wood/stick"))
             .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
-        // the formal soft hammer item (task p29-w5-t3-machine-face-four): FOUR layers, the
+        // the formal soft hammer item (task w5-t3-machine-face-four): FOUR layers, the
         // builder-wand row shape — head = the RUBBER-set toolHeadHammer pair (the upstream
         // primary ANY.Rubber default, GT_Tool_SoftHammer.getIcon :120 — SET_RUBBER, not the
         // steel head), handle = the wood stick pair (the upstream secondary
@@ -268,26 +268,26 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer1", modLoc("item/material_sets/rubber/tool_head_hammer_overlay"))
             .texture("layer2", modLoc("item/material_sets/wood/stick"))
             .texture("layer3", modLoc("item/material_sets/wood/stick_overlay"));
-        // the formal monkey wrench item (task p29-w5-t3-machine-face-four): the wrench row
+        // the formal monkey wrench item (task w5-t3-machine-face-four): the wrench row
         // shape — layer0 = the byte-identical MONKEYWRENCH.png iconset borrow + layer1 =
         // the MONKEYWRENCH_OVERLAY.png pass borrow (assets/README.md attribution).
         withExistingParent("monkey_wrench", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/monkey_wrench"))
             .texture("layer1", modLoc("item/monkey_wrench_overlay"));
-        // the formal magnifying glass item (task p29-w5-t3-machine-face-four): the wrench
+        // the formal magnifying glass item (task w5-t3-machine-face-four): the wrench
         // row shape — layer0 = the byte-identical MAGNIFYING_GLASS.png iconset borrow +
         // layer1 = the MAGNIFYING_GLASS_OVERLAY.png pass borrow (assets/README.md
         // attribution; the VOID handle = the two-layer form).
         withExistingParent("magnifying_glass", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/magnifying_glass"))
             .texture("layer1", modLoc("item/magnifying_glass_overlay"));
-        // the formal pincers item (task p29-w5-t3-machine-face-four): the wrench row
+        // the formal pincers item (task w5-t3-machine-face-four): the wrench row
         // shape — layer0 = the byte-identical PINCERS.png iconset borrow + layer1 = the
         // PINCERS_OVERLAY.png pass borrow (assets/README.md attribution).
         withExistingParent("pincers", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/pincers"))
             .texture("layer1", modLoc("item/pincers_overlay"));
-        // the electric nineteen (task p29-w5-t6-electric-nineteen): the two-layer tool
+        // the electric nineteen (task w5-t6-electric-nineteen): the two-layer tool
         // face per id — layer0 = the head/tip sprite, layer1 = the handle/power-unit
         // pass (the upstream getIcon(false)/getIcon(true) pass order, the crowbar/cutter
         // row shape). The head faces ride the IN-REPO material_sets metallic sprites
@@ -351,7 +351,7 @@ public final class GT6ItemModels extends ItemModelProvider {
         withExistingParent("trimmer_lv", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/electric/tip_electric_trimmer"))
             .texture("layer1", modLoc("item/electric/handle_electric_trimmer"));
-        // the pocket multitool family (task p29-w5-t7-pocket-eight) — eight handheld
+        // the pocket multitool family (task w5-t7-pocket-eight) — eight handheld
         // models over the byte-identical upstream iconset borrows (the POCKET_MULTITOOL_*
         // pair per form + its OVERLAY pass, the two-layer wrench row shape — the pocket
         // icons are complete single sprites, GT_Tool_Pocket_Multitool.getIcon :42-44,
@@ -365,7 +365,7 @@ public final class GT6ItemModels extends ItemModelProvider {
                 .texture("layer0", modLoc("item/pocket/" + tTail))
                 .texture("layer1", modLoc("item/pocket/" + tTail + "_overlay"));
         }
-        // the food-can row0 subset (task p25-food-can-row0) — 8 item/generated models over
+        // the food-can row0 subset (task food-can-row0) — 8 item/generated models over
         // the byte-identical upstream icon borrows (gt.multiitem.randomtools/998 for the
         // empty can, gt.multiitem.cans/11-16 for the rotten family, :86 for the cookies
         // tin — assets/README.md attribution), walked over the registered ids so the model
@@ -378,11 +378,11 @@ public final class GT6ItemModels extends ItemModelProvider {
         }
         withExistingParent("food_can_cookies_huge", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/food_can/cookies_huge"));
-        // the extruder-mold row0 subset (task p26-w1-press-extruder-molds) — 2 item/generated
+        // the extruder-mold row0 subset (task w1-press-extruder-molds) — 2 item/generated
         // models over the composed placeholder icons (the mold-plate/mold-rod 16x16 stdlib
         // generator, the P20 placeholder-PNG convention; the upstream multiitem icons are
         // meta-atlas tiles with no standalone sprite file to borrow)
-        // the battery family (task p29-w4-battery-storage): 37 item/generated models over
+        // the battery family (task w4-battery-storage): 37 item/generated models over
         // the per-family upstream sprite borrows (the bake_battery_textures.py products,
         // assets/README.md attribution), walked over the ROWS table so model ids cannot
         // drift; the 5 cells share one cell sprite; the 7 circuit carriers reuse the
@@ -406,7 +406,7 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("item/shape_extruder/plate"));
         withExistingParent("shape_extruder_rod", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/shape_extruder/rod"));
-        // the slicer-blade row0 subset (task p35-slicer-row-domain) — 2 item/generated models
+        // the slicer-blade row0 subset (task slicer-row-domain) — 2 item/generated models
         // over the composed placeholder icons (the blade-grid/blade-split 16x16 stdlib
         // generator, the shape_extruder band convention; the upstream multiitem icons are
         // meta-atlas tiles with no standalone sprite file to borrow)
@@ -414,7 +414,7 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("item/shape_slicer/grid"));
         withExistingParent("shape_slicer_split", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/shape_slicer/split"));
-        // the slicer census completion (task p36-recipes-obtainability, ruling B) — the
+        // the slicer census completion (task recipes-obtainability, ruling B) — the
         // frame + five remaining blade forms over the same composed placeholder convention
         withExistingParent("shape_slicer_empty", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/shape_slicer/empty"));
@@ -428,36 +428,36 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("item/shape_slicer/quarters"));
         withExistingParent("shape_slicer_quarters_hollow", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/shape_slicer/quarters_hollow"));
-        // the p9 redstone-emitter cover item (task p9-redstone-cover-emitter) — the item
+        // the p9 redstone-emitter cover item (task redstone-cover-emitter) — the item
         // shows the tier-0 plate art (the offline-composed keypad panel; the sprites live
         // in textures/block/, auto-stitched by the vanilla atlas directory source)
         withExistingParent("cover_redstone_emitter", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/redstone_emitter/0"));
-        // the p10 redstone conductor pair (task p10-cover-conductor-redstone) — the items
+        // the p10 redstone conductor pair (task cover-conductor-redstone) — the items
         // show their own plate art, byte-identical upstream borrows living in
         // textures/block/redstone_conductor/ (assets/README.md attribution)
         withExistingParent("cover_redstone_conductor_in", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/redstone_conductor/in"));
         withExistingParent("cover_redstone_conductor_out", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/redstone_conductor/out"));
-        // the p10 redstone machine switch (task p10-cover-controller-redstone) — the item
+        // the p10 redstone machine switch (task cover-controller-redstone) — the item
         // shows the switch plate art, a byte-identical upstream borrow living in
         // textures/block/redstone_switch/ (assets/README.md attribution)
         withExistingParent("cover_redstone_machine_switch", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/redstone_switch/circuit"));
-        // the p11 shutter + item-filter covers (task p11-cover-shutter-filter) — the items
+        // the p11 shutter + item-filter covers (task cover-shutter-filter) — the items
         // show their normal/whitelist plate art, byte-identical upstream borrows living in
         // textures/block/shutter/ and textures/block/filteritem/ (assets/README.md attribution)
         withExistingParent("cover_shutter", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/shutter/normal"));
         withExistingParent("cover_item_filter", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/filteritem/normal"));
-        // the p31 item-retriever cover (task p31-retriever-cover) — the item shows the
+        // the p31 item-retriever cover (task retriever-cover) — the item shows the
         // normal plate art, a byte-identical upstream borrow living in
         // textures/block/retrieveritem/ (assets/README.md attribution)
         withExistingParent("cover_item_retriever", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/retrieveritem/normal"));
-        // the p33 logistics cover family (task p33-logistics-covers-12) — 12 items, each
+        // the p33 logistics cover family (task logistics-covers-12) — 12 items, each
         // showing its role plate art; the sprites ride the display/fluid/item/generic
         // texture directories (upstream machines/covers/logistics/*, the visual 0 face)
         for (String[] tRow : new String[][] {
@@ -470,7 +470,7 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent(tRow[0], mcLoc("item/generated"))
                 .texture("layer0", modLoc("block/logistics/" + tRow[1]));
         }
-        // the p34 gameplay cover family (task p34-covers-gameplay-10) — the 9 singletons
+        // the p34 gameplay cover family (task covers-gameplay-10) — the 9 singletons
         // show their plate art (the visual-0 face); the 16 tag-selector ladder items each
         // show their own mode plate (upstream the per-meta circuit art, underlay+digit
         // pre-composited — the CoverSelectorTag class-doc cut)
@@ -486,7 +486,7 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent("cover_selector_tag_" + i, mcLoc("item/generated"))
                 .texture("layer0", modLoc("block/selectortag/" + i));
         }
-        // the p11 controller pair (task p11-cover-controllers) — the items show their
+        // the p11 controller pair (task cover-controllers) — the items show their
         // own plate art, byte-identical upstream borrows living in
         // textures/block/auto_redstone_switch/ and textures/block/cover_switch/
         // (assets/README.md attribution)
@@ -494,7 +494,7 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("block/auto_redstone_switch/circuit"));
         withExistingParent("cover_controller", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/cover_switch/circuit"));
-        // the p11 conveyor + robot arm tier ladders (task p11-cover-conveyor-robotarm) —
+        // the p11 conveyor + robot arm tier ladders (task cover-conveyor-robotarm) —
         // 10 items each (one per 512>>i timing tier), all sharing the out-facing plate art
         // (upstream's items all show the same cover texture; the in/out sprites live in
         // textures/block/{conveyor,robotarm}/, byte-identical upstream borrows with their
@@ -505,7 +505,7 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent("cover_robot_arm_" + i, mcLoc("item/generated"))
                 .texture("layer0", modLoc("block/robotarm/out"));
         }
-        // the p35 display/scale cover family (task p35-covers-display-scale-6) — the five
+        // the p35 display/scale cover family (task covers-display-scale-6) — the five
         // singletons show their plate art (the status display the bottom style base, the
         // energy display the empty gauge level 0) and the five reboot-switch ladder items
         // share the timer circuit art (the byte-identical upstream borrows living in
@@ -526,7 +526,7 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent(gregtech6.covers.GT6Covers.AUTO_TIMER_IDS[i], mcLoc("item/generated"))
                 .texture("layer0", modLoc("block/auto_timer_switch/circuit"));
         }
-        // the p37 crafting + asphalt cover pair (task p37-covers-crafting-asphalt) — the
+        // the p37 crafting + asphalt cover pair (task covers-crafting-asphalt) — the
         // items show their plate art (byte-identical upstream borrows living in
         // textures/block/crafting/ and textures/block/asphalt.png — assets/README.md
         // attribution); the crafting variant row keeps variant 0 (the declared fold)
@@ -534,19 +534,19 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("block/crafting/0"));
         withExistingParent("cover_asphalt", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/asphalt"));
-        // the Integrated Circuit item (task p16-distillery-family ①) — item/generated over
+        // the Integrated Circuit item (task distillery-family ①) — item/generated over
         // the byte-identical upstream icon borrow (gt.integrated_circuit/0.png, config 0 —
         // the 256-icon damage ladder is the declared single-model cut, assets/README.md
         // attribution)
         withExistingParent("integrated_circuit", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/integrated_circuit"));
-        // the Lubricant Bucket item (task p29-w4-hot-lube ④) — item/generated over the
+        // the Lubricant Bucket item (task w4-hot-lube ④) — item/generated over the
         // byte-identical vanilla bucket icon borrow (assets/README.md attribution; the
         // crafting-ingredient face needs a neutral bucket glyph, the filled/tinted upgrade
         // rides the fluid-container capability card)
         withExistingParent("lubricant_bucket", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/lubricant_bucket"));
-        // the USB Stick family (task p32-usb-data) — 4 item/generated models over the
+        // the USB Stick family (task usb-data) — 4 item/generated models over the
         // byte-identical upstream icon borrows (gt.multiitem.technological metas 32001-32004,
         // assets/README.md attribution): one model per tier, walked over the tier loop so
         // the model ids cannot drift from the GT6UsbSticks registry rows
@@ -554,7 +554,7 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent("usb_stick_" + tTier, mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/usb_stick_" + tTier));
         }
-        // the USB peripheral families (task p37-usb-peripherals) — 8 item/generated models
+        // the USB peripheral families (task usb-peripherals) — 8 item/generated models
         // over the byte-identical upstream icon borrows (gt.multiitem.technological metas
         // 32011-32014 the cables / 32021-32024 the HDDs, assets/README.md attribution),
         // the same tier-loop convention as the sticks
@@ -572,8 +572,8 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent(tKey.getId().getPath(), mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/" + tKey.getId().getPath()));
         }
-		// the gas laser emitter family (task p32-qu-laser-domain + the debt-laser-gas-family
-		// closure + the p37-usb-peripherals He exemption merged in by the review-seat
+		// the gas laser emitter family (task qu-laser-domain + the debt-laser-gas-family
+		// closure + the usb-peripherals He exemption merged in by the review-seat
 		// rebase) — item/generated models over the byte-identical upstream icon borrows
 		// (gt.multiitem.technological metas 11000-11008, assets/README.md attribution)
 		for (String tEmitter : new String[] {"empty", "he", "ne", "ar", "kr", "xe", "hene", "co", "co2"}) {
@@ -602,7 +602,7 @@ public final class GT6ItemModels extends ItemModelProvider {
 				.texture("layer0", modLoc("item/reactor_rod_colored_sides"))
 				.texture("layer1", modLoc("item/reactor_rod_overlay_sides"));
 		}
-        // the spray-can family (task p22-spraycan-items) — 18 item/generated models over the
+        // the spray-can family (task spraycan-items) — 18 item/generated models over the
         // byte-identical upstream icon borrows (gt.multiitem.randomtools metas
         // 1000+2i/1096/999, assets/README.md attribution): one model per colour + the remover
         // + the empty can, walked over the DYE_IDS snake table so the model ids cannot drift
@@ -616,7 +616,7 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("item/spray/remover"));
         withExistingParent("spray_can_empty", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/spray/empty"));
-        // the C-Foam spray family (task p25-c-foam-pipe-spray spec ①) — 32 item/generated
+        // the C-Foam spray family (task c-foam-pipe-spray spec ①) — 32 item/generated
         // models over the byte-identical upstream icon borrows (gt.multiitem.randomtools
         // metas 1100+2i / 1132+2i, assets/README.md attribution), walked over the DYE_IDS
         // snake table so the model ids cannot drift from the registered item ids
@@ -627,7 +627,7 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent("foam_spray_owned_" + tDye, mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/spray/foam_owned_" + tDye));
         }
-        // the six scene tools (task p29-w5-t5-scene-six) — handheld parents over the
+        // the six scene tools (task w5-t5-scene-six) — handheld parents over the
         // byte-identical upstream iconset borrows (assets/README.md attribution): layer0 =
         // the tool head icon, layer1 = the OVERLAY shadow borrow (the crowbar/cutter
         // two-layer shape; the upstream handle half is VOID — passes 2/3 draw nothing).
@@ -649,7 +649,7 @@ public final class GT6ItemModels extends ItemModelProvider {
         withExistingParent("bending_cylinder", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/bending_cylinder"))
             .texture("layer1", modLoc("item/bending_cylinder_overlay"));
-        // the Hazmat armor family (task p29-w5-t8-armor-24) — 24 item/generated models
+        // the Hazmat armor family (task w5-t8-armor-24) — 24 item/generated models
         // over the bake_armor_textures.py placeholder icons (6 suits x 4 slots, the SUITS
         // walk so the model ids cannot drift from the registered ids; the WORN layer
         // textures are NOT item models — they resolve through the getArmorTexture
@@ -660,7 +660,7 @@ public final class GT6ItemModels extends ItemModelProvider {
                     .texture("layer0", modLoc("item/armor/" + tSuit.textureName() + "/" + gregtech6.items.armor.GT6ArmorMaterials.PIECE_WORDS[i]));
             }
         }
-        // the bee-comb family (task p31-bees-lv1) — 20 item/generated models over the
+        // the bee-comb family (task bees-lv1) — 20 item/generated models over the
         // port-generated tinted honeycomb icons (item/comb/comb_<name>.png, one base
         // silhouette per-comb tinted, assets/README.md), walked over the COMB_SPECS table
         // so the model ids cannot drift (the spray-can band convention)
@@ -668,7 +668,7 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent(tSpec.itemId(), mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/comb/" + tSpec.itemId()));
         }
-        // the bumblebee family (task p33-bees-lv3-a-items) — 8 item/generated models over
+        // the bumblebee family (task bees-lv3-a-items) — 8 item/generated models over
         // the port-generated bee icons (item/bumble/bumble_<face>.png, one sprite per
         // fractal face; the scanned forms share the base-face sprite), walked over the
         // FACES table so the model ids cannot drift (the comb band convention)
@@ -677,18 +677,18 @@ public final class GT6ItemModels extends ItemModelProvider {
                 .texture("layer0", modLoc("item/bumble/bumble_"
                         + tFace.name().substring(0, tFace.name().length() - (tFace.scanned() ? "_scanned" : "").length())));
         }
-        // the placeables band (task p32-placeables) — the BlockItems ride the block models
+        // the placeables band (task placeables) — the BlockItems ride the block models
         // (the vanilla jack_o_lantern item form); the block-model providers run LATER in the
         // generator order, so the parents are the UNCHECKED references (the turbine form)
         withExistingParentUnchecked("greg_o_lantern", "block/greg_o_lantern");
         withExistingParentUnchecked("sandwich", "block/sandwich");
-        // the Bumbliary pair (task p33-bees-lv3-b-bumbliary) — the BlockItems ride the
+        // the Bumbliary pair (task bees-lv3-b-bumbliary) — the BlockItems ride the
         // block models (the same placeables form)
         withExistingParentUnchecked("bumbliary", "block/bumbliary");
         withExistingParentUnchecked("bumbliary_advanced", "block/bumbliary_adv");
-        // the R2 hive BlockItem (task p34-bumbliary-recipes) — the same BlockItem form
+        // the R2 hive BlockItem (task bumbliary-recipes) — the same BlockItem form
         withExistingParentUnchecked("bumble_hive", "block/bumble_hive");
-        // the written-book family (task p35-books-written) — 15 models sharing the vanilla
+        // the written-book family (task books-written) — 15 models sharing the vanilla
         // written_book item model as the parent (zero shipped assets: the upstream
         // ItemsGT.BOOKS carriers render as plain books, MultiItemBooks.java carries no
         // per-book icon face), walked over the generated rows so the model ids cannot
@@ -696,10 +696,10 @@ public final class GT6ItemModels extends ItemModelProvider {
         for (GT6BookText.BookText tRow : GT6BookText.BOOKS) {
             withExistingParent(tRow.path(), mcLoc("item/written_book"));
         }
-        // the Dusty Guide Book loot carrier (task p38-book-loot-first) — the same plain-book
+        // the Dusty Guide Book loot carrier (task book-loot-first) — the same plain-book
         // parent (upstream meta 32765 renders as a book too, MultiItemBooks.java:67)
         withExistingParent("book_loot_guide", mcLoc("item/written_book"));
-        // the Clay Bowl raw item (task p38-c1-dynamo-bowl-models) — item/generated over the
+        // the Clay Bowl raw item (task c1-dynamo-bowl-models) — item/generated over the
         // byte-identical upstream icon borrow (gt.multiitem.randomtools/995.png, meta 995 =
         // the "Clay Bowl" row, MultiItemRandomTools.java:119 — assets/README.md attribution;
         // the registered item had zero model rows, the hand-held magenta case)
@@ -722,7 +722,7 @@ public final class GT6ItemModels extends ItemModelProvider {
         // attribution).
         withExistingParent("clay_crucible_raw", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/clay_crucible_raw"));
-        // the Clay Measuring Pot raw item (task r8-issue45-c3, issue #45) — the clay_bowl
+        // the Clay Measuring Pot raw item (task issue45-c3, issue #45) — the clay_bowl
         // row shape; layer0 = the byte-identical gt.multiitem.randomtools/997.png borrow
         // (meta 997 = "Clay Measuring Pot", MultiItemRandomTools.java:121 — assets/README.md
         // attribution).

@@ -37,7 +37,7 @@ import net.minecraftforge.registries.RegistryObject;
  * through the {@code gtDebug()} accessor, which fails fast if used before registration completed
  * on the current side (registry events fire on both client and dedicated server).
  *
- * <p>21.1 face (task p15-adapt-registry-core): the typed handle is a {@code DeferredHolder}
+ * <p>21.1 face (task adapt-registry-core): the typed handle is a {@code DeferredHolder}
  * (RegistryObject deleted on 21.1) and the self-contained mod-bus source is
  * {@code ModList.get().getModContainerById(...).getEventBus()} — {@code Bus.MOD.bus()} has no
  * accessor there. Both forms delegate to the same RegisterEvent stream; the 1.20.1 face is
@@ -58,7 +58,7 @@ public final class GTMenuTypes {
     private static MenuType<GTDebugMenu> gtDebugMenu;
 
     /**
-     * The example chest MenuType (task p3-example-machine) — the DeferredRegister +
+     * The example chest MenuType (task example-machine) — the DeferredRegister +
      * {@code Bus.MOD.bus().get()} form the BE framework proved self-contained
      * (Mod.java:81; GTBlockEntities precedent). Appended next to the debug RegisterEvent
      * idiom, which stays as-is: both idioms are review-verified paths to the same

@@ -1,5 +1,5 @@
 /**
- * The offline truth tables of the wire contact damage (task p10-wire-contact-damage).
+ * The offline truth tables of the wire contact damage (task wire-contact-damage).
  * What is pinned HERE is the pure decision math the live hook applies: the
  * {@code tierMax(wattage) * 4} formula accessor ({@link GTWireBlockEntity#pendingContactDamage},
  * the upstream UT.Entities.applyElectricityDamage :3024-3031 expression), the
@@ -67,7 +67,7 @@ public class GTWireContactDamageTest {
 		@SuppressWarnings("unchecked")
 		BlockEntityType<TestWire>[] tHolder = (BlockEntityType<TestWire>[]) new BlockEntityType<?>[1];
 		// 21.1 validates the BE type/state pair at the ctor: the valid set carries the
-		// cached GT6 wire blocks the wires are created over (task p15-m4-test-infra-2).
+		// cached GT6 wire blocks the wires are created over (task m4-test-infra-2).
 		tHolder[0] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new TestWire(tHolder[0], aPos, aState),
 				Blocks.STONE,
@@ -80,7 +80,7 @@ public class GTWireContactDamageTest {
 	 * Offline Block construction needs the block registry temporarily unfrozen (the
 	 * UseLockTest form). Instances are memoized per carrier row — the 21.1 BE ctor
 	 * validates the state against the BET's valid set, so the fixture must hand out ONE
-	 * stable block identity per row (task p15-m4-test-infra-2).
+	 * stable block identity per row (task m4-test-infra-2).
 	 */
 	private record WireKey(OreDictMaterial aMaterial, boolean aInsulated, Family aFamily, long aVoltage, long aLoss) {}
 

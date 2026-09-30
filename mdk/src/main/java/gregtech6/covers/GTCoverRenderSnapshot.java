@@ -12,13 +12,13 @@ import gregtech6.client.render.GTRenderSnapshot;
 
 /**
  * The immutable cover render snapshot — the {@link GTRenderSnapshot} record the host BE
- * hands to the render thread (task p4-cover-core ⑥). Carries the per-face cover sprite
+ * hands to the render thread (task cover-core ⑥). Carries the per-face cover sprite
  * id ({@code getCoverTextureSurface}, the ICover :194 hook) PLUS the per-face LAYER
- * TABLE (task p11-render-cover-multilayer): every face value is now an ordered
+ * TABLE (task render-cover-multilayer): every face value is now an ordered
  * {@code List<ResourceLocation>} — the upstream {@code BlockTextureMulti} stack, bottom
  * first — instead of the single sprite that folded the double-layer covers flat.
  *
- * <p><b>Why the layer table lives here</b> (the census, task p11-render-cover-multilayer):
+ * <p><b>Why the layer table lives here</b> (the census, task render-cover-multilayer):
  * upstream renders each cover's 2px plate box with the cover's ATTACHMENT texture
  * (TileEntityBase06Covers.java:449-463 — the odd per-cover pass boxes
  * {@code BOXES_COVERS} and paints {@code getCoverTextureAttachment} on the plate's
@@ -64,7 +64,7 @@ public record GTCoverRenderSnapshot(Map<Direction, ResourceLocation> coverSprite
 	public static final ResourceLocation SPRITE_COVER_SWITCH_BASE = new ResourceLocation("gt6", "block/cover_switch/base");
 
 	/**
-	 * The census table (task p11-render-cover-multilayer): surface sprite id → the
+	 * The census table (task render-cover-multilayer): surface sprite id → the
 	 * underlay sprite rendered beneath it on the plate, each entry pinned to its upstream
 	 * {@code BlockTextureMulti} line in the class doc. Keys mirror the borrowed fg
 	 * texture paths (assets README); the test suite pins the table against the cover

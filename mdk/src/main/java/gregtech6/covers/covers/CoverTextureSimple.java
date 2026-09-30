@@ -14,7 +14,7 @@ import gregtech6.covers.ICoverableTE;
 
 /**
  * The first cover — 1.20.1 port of gregapi/cover/covers/CoverTextureSimple.java:37-57
- * (task p4-cover-core ④, the ADR FIRST_PORT_CANDIDATE: 19 lines of logic covering the
+ * (task cover-core ④, the ADR FIRST_PORT_CANDIDATE: 19 lines of logic covering the
  * install/crowbar/texture/sound whole chain). The upstream {@code ITexture} field becomes
  * the atlas sprite id the plate renderer stitches ({@code mSprite}); the upstream custom
  * {@code mSound} string becomes a nullable vanilla {@link SoundEvent} (null = the

@@ -27,7 +27,7 @@ import gregtech6.tileentity.connectors.GTItemPipeBlockEntity;
 import gregtech6.tileentity.connectors.SideItemHandler;
 
 /**
- * CoverRetrieverItem offline tests (task p31-retriever-cover): the placement gate
+ * CoverRetrieverItem offline tests (task retriever-cover): the placement gate
  * (CoverRetrieverItem.java:50 — ticking item pipes only), the disjunctive pull trigger
  * (:61), the filtered pull through the synthetic pipe network with the path-prefix
  * counter payment (:72-74), the inverted mode (:95), the capacity-window stop and the

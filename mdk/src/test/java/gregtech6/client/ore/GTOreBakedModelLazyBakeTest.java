@@ -1,6 +1,6 @@
 /**
  * The lazy first-render bake contract of {@link GTOreBakedModel} (task
- * p33-fix-forge-ore-invisible). The forge-leg whole-ore invisibility root cause was the
+ * fix-forge-ore-invisible). The forge-leg whole-ore invisibility root cause was the
  * EAGER constructor bake: {@code ModifyBakingResult} fires before the sprite upload and
  * forbids touching ModelManager (ModelEvent.java:40-43, ModelManager.java.patch), so the
  * static atlas lookup resolved against the empty atlas and baked 0 quads. These pins:

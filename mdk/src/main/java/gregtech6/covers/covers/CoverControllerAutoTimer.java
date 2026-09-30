@@ -7,7 +7,7 @@ import gregtech6.tileentity.machines.ITileEntitySwitchableOnOff;
 
 /**
  * The auto reboot switch cover — 1.20.1 port of gregapi/cover/covers/
- * CoverControllerAutoTimer.java (:34-56, task p35-covers-display-scale-6; upstream
+ * CoverControllerAutoTimer.java (:34-56, task covers-display-scale-6; upstream
  * MultiItemTechnological.java:68-72 metas 1009-1013, the five durations 1200..36000
  * ticks = 1..30 minutes, dump 自动重启开关 (N分钟)). "Attempts to Reboot a Machine every
  * Minute": every {@code mTime} ticks the switch pulses the machine OFF for the last 10

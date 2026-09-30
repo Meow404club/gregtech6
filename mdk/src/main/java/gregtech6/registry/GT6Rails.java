@@ -37,7 +37,7 @@ import gregtech6.block.rail.GT6RailBlock;
 import gregtech6.block.rail.GT6RoadRailBlock;
 
 /**
- * The rail registration home (task p35-rails-31-blocks) — the GT6Sensors shape: a
+ * The rail registration home (task rails-31-blocks) — the GT6Sensors shape: a
  * self-contained {@code @EventBusSubscriber(MOD)} DeferredRegister pair attached from the
  * construct event. 31 rows = the Road Stripe + the 10 rail materials x 3 classes
  * (normal/booster/detector), the upstream Loader_Rails.java:39-72 registration order
@@ -59,7 +59,7 @@ import gregtech6.block.rail.GT6RoadRailBlock;
  * platform constant, not a port deviation.
  *
  * <p>Creative tab: all 31 items join MACHINES_TAB via {@link #onBuildTabContents}
- * (task p38-tabfix-d-ruling, the user ruling — supersedes the old "no creative tab, the
+ * (task tabfix-d-ruling, the user ruling — supersedes the old "no creative tab, the
  * sensors precedent" declaration; the census found no upstream tab mount in Loader_Rails,
  * the ruling assigns the machines tab, the GT6BurningBoxes join form). No harvest-level
  * layer (the repo has none — the GTCrowbarItem javadoc ruling); the crowbar mining arm
@@ -206,7 +206,7 @@ public final class GT6Rails {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-d-ruling — the whole 31-item family joins the machines
+	 * The tab walk (task tabfix-d-ruling — the whole 31-item family joins the machines
 	 * tab: the road stripe + the {@link #ITEMS_BY_PATH} walk; the GT6BurningBoxes
 	 * .onBuildTabContents verbatim form, the class-level MOD-bus
 	 * {@code @Mod.EventBusSubscriber} at the class head is what delivers this handler).

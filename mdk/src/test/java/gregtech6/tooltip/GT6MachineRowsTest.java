@@ -21,7 +21,7 @@ import gregtech6.recipes.RecipeMap;
 import gregtech6.tooltip.GT6Tooltips.GT6TooltipLine;
 
 /**
- * The machine row-table pins (task r8-tooltip-basic-machine-family acceptance ①): the
+ * The machine row-table pins (task tooltip-basic-machine-family acceptance ①): the
  * {@link GT6MachineRows#rows} transcription line-pinned — row order, keys, colors, and
  * the composed value slots — as a pure function over a hand-built {@link GT6MachineRows
  * .Spec}. The upstream anchors per slot live on the GT6MachineRows javadoc; the sibling

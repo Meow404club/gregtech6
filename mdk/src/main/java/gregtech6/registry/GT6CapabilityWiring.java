@@ -40,7 +40,7 @@ import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
 import gregtech6.tileentity.machines.TileEntityOven;
 import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
-import gregtech6.registry.GT6Crucibles; // issue#20 r4-20b tail-append
+import gregtech6.registry.GT6Crucibles; // issue#20 #20b tail-append
 import gregtech6.tileentity.multiblocks.GT6HeatExchangerBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 import gregtech6.tileentity.inventories.GT6LongDistanceItemPipeBlockEntity; // p35 tail-append
@@ -51,9 +51,9 @@ import gregtech6.tileentity.tank.BarrelFluidHandler;
 import gregtech6.tileentity.tank.GTBarrelBlockEntity;
 import gregtech6.tileentity.tank.GTBarrelItemFluidHandler;
 
-// RegisterCapabilitiesEvent wiring (task p15-adapt-registry-core) — the 1.21.1 leg of the two
+// RegisterCapabilitiesEvent wiring (task adapt-registry-core) — the 1.21.1 leg of the two
 // capability seams W3 left open:
-// · machines (p15-fork-capability-machines): the six forked BE classes expose a plain
+// · machines (fork-capability-machines): the six forked BE classes expose a plain
 //   getCapability(BlockCapability, Direction) seam method (no @Override — 21.1 deleted
 //   BlockEntity#getCapability); this class hands each BlockEntityType to the event with a
 //   provider delegating into that seam, per the handoff shape
@@ -61,11 +61,11 @@ import gregtech6.tileentity.tank.GTBarrelItemFluidHandler;
 //   Capability coverage mirrors each forge getCapability exactly: shredder/crusher/lathe
 //   and the p14 dryer / p16 distillery serve item + fluid, the oven serves item only,
 //   boiler tank/steam engine/large boiler/fluid pipe serve fluid only. The commands-card
-//   handoff (p15-adapt-commands)
+//   handoff (adapt-commands)
 //   adds the coke-oven pair (item + fluid off the TileEntityBase10MultiBlockMachine seam)
 //   and the barrel BLOCK fluid face (the fresh-per-call BarrelFluidHandler) — both were
 //   CAPABILITY MISSING at runtime before this card.
-// · item carrier (p15-fork-carrier-components): GTBarrelBlockItem.initCapabilities is
+// · item carrier (fork-carrier-components): GTBarrelBlockItem.initCapabilities is
 //   Forge-only; on 21.1 the same GTBarrelItemFluidHandler construction (capacityL AND the
 //   gasProof row flag off the block carrier) rides registerItem instead. The item face is
 //   wired by a CLASS scan (every GTBarrelBlockItem in the item registry), mirroring the
@@ -79,7 +79,7 @@ import gregtech6.tileentity.tank.GTBarrelItemFluidHandler;
 // ItemLike arguments EAGERLY (asItem() inside the handler, javap), which is exactly why the
 // lookups happen here and not earlier.
 //
-// Holder references, not id lookups: the registry-blocks card (p15-adapt-registry-blocks)
+// Holder references, not id lookups: the registry-blocks card (adapt-registry-blocks)
 // forked the registry homes onto DeferredRegister/DeferredHolder, so this class reads the
 // BET handles directly — GTMachines.SHREDDER_BE.get() & co. — instead of the former
 // BuiltInRegistries id lookups. Same fail-fast semantics, one step earlier: an unbound
@@ -107,21 +107,21 @@ public final class GT6CapabilityWiring {
 	public static void onRegisterCapabilities(RegisterCapabilitiesEvent aEvent) {
 		registerMachineBlockEntities(aEvent);
 		registerCokeOvenFaces(aEvent);
-		registerLargeMachineFaces(aEvent); // task p29-w3-large-12 — the twelve large-machine controllers
+		registerLargeMachineFaces(aEvent); // task w3-large-12 — the twelve large-machine controllers
 		registerBarrelBlockFluidHandler(aEvent);
 		registerBarrelItemHandlers(aEvent);
 		registerFeBattery(aEvent); // the pure-sink fixture row, the W3 dynamo-chain measurement end (tail-append; shared serial file)
-		registerFeConverters(aEvent); // task p28-b-fe-converter-machine (tail-append; shared serial file)
-		registerFeSource(aEvent); // task p28-b-fe-converter-machine (tail-append; shared serial file)
+		registerFeConverters(aEvent); // task b-fe-converter-machine (tail-append; shared serial file)
+		registerFeSource(aEvent); // task b-fe-converter-machine (tail-append; shared serial file)
 		registerKitchenFaces(aEvent);
-		registerHopperFamily(aEvent); // task p26-storage-hopper-family (tail-append; shared serial file)
-		registerStaticStorages(aEvent); // task p26-storage-static-batch (tail-append; shared serial file)
-		registerGasTurbine(aEvent); // task p29-w3-turbine-dynamo (tail-append; shared serial file)
-		registerDistillationFaces(aEvent); // task p29-w3-distill-crucible (tail-append; shared serial file)
-		registerBatteryBoxFamily(aEvent); // task p29-w4-battery-storage (tail-append; shared serial file)
-		registerZpmDechargers(aEvent); // task p36-energy-zpm-dechargers (tail-append; shared serial file)
-		registerPortalRelays(aEvent); // task p35-portals-mini-nether-end (tail-append; shared serial file)
-		registerLongDistancePipeFaces(aEvent); // task p35-long-distance-pipes (tail-append; shared serial file)
+		registerHopperFamily(aEvent); // task storage-hopper-family (tail-append; shared serial file)
+		registerStaticStorages(aEvent); // task storage-static-batch (tail-append; shared serial file)
+		registerGasTurbine(aEvent); // task w3-turbine-dynamo (tail-append; shared serial file)
+		registerDistillationFaces(aEvent); // task w3-distill-crucible (tail-append; shared serial file)
+		registerBatteryBoxFamily(aEvent); // task w4-battery-storage (tail-append; shared serial file)
+		registerZpmDechargers(aEvent); // task energy-zpm-dechargers (tail-append; shared serial file)
+		registerPortalRelays(aEvent); // task portals-mini-nether-end (tail-append; shared serial file)
+		registerLongDistancePipeFaces(aEvent); // task long-distance-pipes (tail-append; shared serial file)
 		registerReactorCoreFaces(aEvent); // task debt-reactor-b-2x2-be (tail-append; shared serial file)
 	}
 
@@ -163,7 +163,7 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tDistillery,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		// task p24-canner-machine — the Canner ladder joins the family: the same BE class,
+		// task canner-machine — the Canner ladder joins the family: the same BE class,
 		// the same item + fluid faces (the tileentity class is shared, so the forge leg's
 		// override is already correct; this row is the 21.1 registration only)
 		BlockEntityType<TileEntityBasicMachine> tCanner = GTMachines.CANNER_BE.get();
@@ -171,7 +171,7 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCanner,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		// task p26-w1-sifter-compressor-wiremill — the W1 Kinetic trio (Sifter/Compressor/
+		// task w1-sifter-compressor-wiremill — the W1 Kinetic trio (Sifter/Compressor/
 		// Wiremill) joins the family: the same BE class, the same item + fluid faces — zero
 		// fluid recipes are NOT a zero fluid face (the Shredder precedent; the rows carry
 		// the 127 all-sides tank defaults)
@@ -190,7 +190,7 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tWiremill,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		// task p26-w1-press-extruder-molds — the Press + Extruder ladders join the family:
+		// task w1-press-extruder-molds — the Press + Extruder ladders join the family:
 		// the same BE class, the same item + fluid faces (zero-fluid RECIPE maps, but the
 		// fluid FACE stays — the seam-② hard constraint: zero fluid recipes ≠ zero fluid face)
 		BlockEntityType<TileEntityBasicMachine> tPress = GTMachines.PRESS_BE.get();
@@ -203,7 +203,7 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tExtruder,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		// task p28-c-ulv-machine-ladder — the Rolling Mill family joins (tail-append;
+		// task c-ulv-machine-ladder — the Rolling Mill family joins (tail-append;
 		// shared serial file): the new single-row family's BET, the same item + fluid
 		// faces as every TileEntityBasicMachine family above (the ULV rows of the five
 		// existing families need no row here — they ride their family BETs verbatim)
@@ -212,7 +212,7 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tRollingmill,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		// task p29-w1-kinetic-roll-ladder — the Roll Bender / Roll Former / Cluster Mill
+		// task w1-kinetic-roll-ladder — the Roll Bender / Roll Former / Cluster Mill
 		// families join (tail-append; shared serial file): the same item + fluid faces as
 		// every TileEntityBasicMachine family above (the RU RollingMill ladder needs no
 		// row here — it rides the p28 rollingmill BET verbatim, the ULV-rows precedent)
@@ -232,7 +232,7 @@ public final class GT6CapabilityWiring {
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tClustermill,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 
-		// task p29-w1-kinetic-process-ladder — the six process families join (tail-append;
+		// task w1-kinetic-process-ladder — the six process families join (tail-append;
 		// shared serial file): the Buzzsaw/Squeezer/Centrifuge/Sluice/Sanding Machine/
 		// Pressure Washer BETs, the same item + fluid faces as every
 		// TileEntityBasicMachine family above (the zero-fluid masks of the sander rows
@@ -267,7 +267,7 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tPressurewasher,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		// task p29-w1-eu-hu-families — the seven eu-hu families join (tail-append;
+		// task w1-eu-hu-families — the seven eu-hu families join (tail-append;
 		// shared serial file): the same BE class, the same item + fluid faces (the
 		// mixer/boxinator families' zero-or-fluid rows ride the 127 defaults — zero
 		// fluid recipes are NOT a zero fluid face, the seam-② hard constraint)
@@ -306,7 +306,7 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tFermenter,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		// task p29-w2-eu-special — the three eu-special families join (tail-append;
+		// task w2-eu-special — the three eu-special families join (tail-append;
 		// shared serial file): the Autocrafter/Lightning/Laminator BETs, the same
 		// item + fluid faces as every TileEntityBasicMachine family above — the
 		// Autocrafter/Laminator rows carry NO tank keys (the 127 all-sides defaults,
@@ -328,7 +328,7 @@ public final class GT6CapabilityWiring {
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tLaminator,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 
-		// task p29-w2-exotic-energy — the six exotic-energy families join (tail-append;
+		// task w2-exotic-energy — the six exotic-energy families join (tail-append;
 		// shared serial file): the Polarizer/MagneticSeparator (MU) + LaserEngraver/
 		// LaserWelder (LU) + Freezer/CryoMixer (CU) BETs, the first machine consumers of
 		// the exotic energy domains — the same item + fluid faces as every
@@ -367,7 +367,7 @@ public final class GT6CapabilityWiring {
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCryoMixer,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 
-		// task p31-massfab — the small Massfab 5-ladder joins (tail-append; the same item +
+		// task massfab — the small Massfab 5-ladder joins (tail-append; the same item +
 		// fluid faces; the auto-out sink arm of the RCON chain consumes the UP fluid face)
 		BlockEntityType<TileEntityBasicMachine> tMassfabSmall = GTMachines.MASSFAB_SMALL_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tMassfabSmall,
@@ -375,7 +375,7 @@ public final class GT6CapabilityWiring {
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tMassfabSmall,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 
-		// task p32-qu-scanner-replicator — the QU machine pair joins (tail-append; the same
+		// task qu-scanner-replicator — the QU machine pair joins (tail-append; the same
 		// item + fluid faces; the replicator arm feeds the matter fluids through the U|L
 		// input faces, the scanner arm is item-only)
 		BlockEntityType<TileEntityBasicMachine> tMolecularScanner = GTMachines.MOLECULAR_SCANNER_BE.get();
@@ -389,7 +389,7 @@ public final class GT6CapabilityWiring {
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tReplicator,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 
-		// task p29-w2-eu-core-5tier — the five eu-core families join (tail-append; shared
+		// task w2-eu-core-5tier — the five eu-core families join (tail-append; shared
 		// serial file): the Electrolyzer/Injector/Printer/Scanner(Visuals)/Slicer BETs, the
 		// same item + fluid faces as every TileEntityBasicMachine family above (the
 		// slicer/scannervisuals zero-fluid MASKS stay a data-only face — the seam-② hard
@@ -420,7 +420,7 @@ public final class GT6CapabilityWiring {
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tSlicer,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 
-		// task p29-w2-hu-tu-piggyback — the seven hu-tu families join (tail-append;
+		// task w2-hu-tu-piggyback — the seven hu-tu families join (tail-append;
 		// shared serial file): the same BE class, the same item + fluid faces (the TU four
 		// carry tank faces — the coagulator zero-item row rides the 127 inv-in default,
 		// a zero-item RECIPE is not a zero-item FACE, the seam-② hard constraint; the
@@ -460,7 +460,7 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tLoom,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		// task p29-w3-heat-smelter — the two heat families join (the HU machines whose
+		// task w3-heat-smelter — the two heat families join (the HU machines whose
 		// output is the fluid face: the ice row's water lands in mTanksOutput)
 		BlockEntityType<TileEntityBasicMachine> tSmelter = GTMachines.SMELTER_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tSmelter,
@@ -472,9 +472,9 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tMelter,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		// task p29-w3-heat-smelter — the HEX controller joins as a FLUID-ONLY face (the
+		// task w3-heat-smelter — the HEX controller joins as a FLUID-ONLY face (the
 		// :222 fuel door + the :228 overflow drain; no item face on the controller)
-				// task p29-w4-eu-bridge — the Roasting Oven ladder joins (tail-append; the
+				// task w4-eu-bridge — the Roasting Oven ladder joins (tail-append; the
 		// smelter/melter shape): the HU machine whose CO2 input rides the fluid-in face
 		// and whose CO output lands in mTanksOutput, both faces load-bearing on this node
 		BlockEntityType<TileEntityBasicMachine> tRoastingOven = GTMachines.ROASTING_BE.get();
@@ -482,7 +482,7 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tRoastingOven,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		// task p34-machines-bumblelyzer-crucible — the two machine families join (tail-append;
+		// task machines-bumblelyzer-crucible — the two machine families join (tail-append;
 		// the smelter/roasting shape): the Bumblelyzer's scan arm drinks the honey tank leg,
 		// the Crystallisation Crucible drinks the noble-gas + molten legs, both item faces
 		// load-bearing (the bee + the dust input, the scanned bee + the boule output)
@@ -496,9 +496,9 @@ public final class GT6CapabilityWiring {
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCrystallisation,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		// task p34-machines-burner-plantalyzer — the two machine families join (tail-append;
+		// task machines-burner-plantalyzer — the two machine families join (tail-append;
 		// the roasting shape): the Burner Mixer's tank-in face is the JSON row chemistry's
-		// load-bearing fluid INPUT, the Plantalyzer's single tank-in keeps the p34-gui
+		// load-bearing fluid INPUT, the Plantalyzer's single tank-in keeps the gui
 		// fluid seat live on this node; both BETs item + fluid
 		BlockEntityType<TileEntityBasicMachine> tBurnerMixer = GTMachines.BURNER_MIXER_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tBurnerMixer,
@@ -517,7 +517,7 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 		BlockEntityType<TileEntityOven> tOven = GTMachines.OVEN_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tOven,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
-		// task p24-act-machine — the ACT joins as the SECOND item-only face (zero fluid
+		// task act-machine — the ACT joins as the SECOND item-only face (zero fluid
 		// tanks; the base getCapability serves the 71-slot handler through the gated face)
 		BlockEntityType<TileEntityAdvancedCraftingTable> tAct = GTMachines.ADVANCED_CRAFTING_TABLE_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tAct,
@@ -535,7 +535,7 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 		BlockEntityType<GTFluidPipeBlockEntity> tPipe = GTFluidPipes.FLUID_PIPE_BE.get();
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tPipe,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		// task p26-pipe-item — the item pipe family joins (ADR-P15-4 census discipline):
+		// task pipe-item — the item pipe family joins (ADR-P15-4 census discipline):
 		// the forge getCapability serves the gated SideItemHandler item face alone (zero
 		// fluid tanks on the class). Without this row every external hopper push/pull on
 		// this node lands capability-blind while the 1.20.1 BE override hides the gap —
@@ -561,7 +561,7 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 					return tTarget.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,
 							tTarget.getBlockPos(), aSide);
 				});
-		// issue#20 r4-20b — the part-family ITEM relay joins (the same resolution half as
+		// issue#20 #20b — the part-family ITEM relay joins (the same resolution half as
 		// the fluid row above; the forge face is the MultiBlockPartBlockEntity.getCapability
 		// ITEM_HANDLER arm that already relays to the controller). Without it every hopper
 		// push against a wall part is capability-blind on this node while the 1.20.1 BE
@@ -574,7 +574,7 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 					return tTarget.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,
 							tTarget.getBlockPos(), aSide);
 				});
-		// issue#20 r4-20b — the LARGE-crucible wall BET joins the SAME relay (the dedicated
+		// issue#20 #20b — the LARGE-crucible wall BET joins the SAME relay (the dedicated
 		// CrucibleWallBlockEntity family: hoppers attach to THESE blocks, not the shared
 		// part BET — a row on MULTIBLOCK_PART_BE alone would leave the crucible walls
 		// blind). Same provider shape, same resolution half.
@@ -586,7 +586,7 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 					return tTarget.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,
 							tTarget.getBlockPos(), aSide);
 				});
-		// issue#20 r4-20b — the LARGE-crucible controller item face (the slot-0 feed
+		// issue#20 #20b — the LARGE-crucible controller item face (the slot-0 feed
 		// inventory over the Root mInventory carrier; the BE seam member answers it, the
 		// GT6HopperBaseBlockEntity :673 shape). The terminus of both relay rows above: a
 		// hopper on a wall part resolves the wall's relay row, which lands HERE, which
@@ -594,17 +594,17 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 		BlockEntityType<GT6Crucibles.TileEntityCrucibleRow> tCrucible = GT6Crucibles.MULTIBLOCK_CRUCIBLE_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tCrucible,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
-		// task p29-w3-tank-valves — the Tank Main Valve fluid face (the large-boiler row
+		// task w3-tank-valves — the Tank Main Valve fluid face (the large-boiler row
 		// shape): the forge getCapability serves the fresh wrapper-per-call TankValveFluid-
 		// Handler; without this row every wall-relayed fill and pipe draw on this node is
-		// capability-blind while the 1.20.1 BE override hides the gap (the p26-pipe-item
+		// capability-blind while the 1.20.1 BE override hides the gap (the pipe-item
 		// census discipline).
 		BlockEntityType<gregtech6.tileentity.multiblocks.GTTankValveBlockEntity> tTankValve = GT6Tanks.TANK_VALVE_BE.get();
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tTankValve,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 	}
 
-	// -- the kitchen family (task p26-kitchen-pot-bowl): the pot pair (one shared BET,
+	// -- the kitchen family (task kitchen-pot-bowl): the pot pair (one shared BET,
 	// ADR-P3-1) and the bowl — item + fluid faces both, the machine-family shape; the
 	// forge leg answers from the GT6ManualKitchenBlockEntity override (the fresh
 	// wrapper-per-call fluid face, the cached side-less item face)
@@ -619,14 +619,14 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tBowl,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		// task p33-food-machines-kitchen — the Juicer joins the kitchen family (the same
+		// task food-machines-kitchen — the Juicer joins the kitchen family (the same
 		// item + fluid faces; the 0-in/1-out JUICER tank array answers through the same BE)
 		BlockEntityType<gregtech6.tileentity.tools.GT6JuicerBlockEntity> tJuicer = GT6Kitchen.JUICER_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tJuicer,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tJuicer,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
-		// task r8-issue45-c3 — the Measuring Pot joins the fluid-container face (the fluid
+		// task issue45-c3 — the Measuring Pot joins the fluid-container face (the fluid
 		// only face: no item slots, the single 1000 L tank answers straight; the forge leg
 		// answers from the GT6MeasuringPotBlockEntity getCapability override)
 		BlockEntityType<gregtech6.tileentity.tank.GT6MeasuringPotBlockEntity> tMeasuringPot =
@@ -649,7 +649,7 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 	}
 
-	// task p29-w3-distill-crucible — the distillation tower pair (tail-append; shared serial
+	// task w3-distill-crucible — the distillation tower pair (tail-append; shared serial
 	// file): the item face rides the inherited machine seam, the FLUID face answers the
 	// tower's OWN handler (the input-tank fill + the output-tank drain, the
 	// TileEntityDistillationTower.TowerFluidHandler) — the getCapability seam override in
@@ -675,12 +675,12 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 	// the gap because every BE overrides getCapability directly). One BET per material
 	// row (GTBarrels:83/:104/:207/:240), same fresh-per-call provider for all.
 
-	// -- the twelve large machines (p29-w3-large-12) --
+	// -- the twelve large machines (w3-large-12) --
 	// The forge face lives on GTLargeMachineBlockEntity.getCapability (item = the base
 	// gated inventory surface, fluid = the fill+drain LargeMachineFluidHandler); this
 	// provider row delegates to the same BE seam member (the coke-oven-pair form).
 	// DECLARED DEVIATION: FILES_SCOPE listed no GT6CapabilityWiring touch — the
-	// p29-w2-eu-special precedent applies (the seam test's live-census face + the
+	// w2-eu-special precedent applies (the seam test's live-census face + the
 	// neoforge capability-blind gap force the shared seam; tail-append, card-③'s own
 	// STEAM tail-append rebases on top).
 
@@ -744,7 +744,7 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 				(aBe, aSide) -> aBe.energyStorage());
 	}
 
-	// -- the p28 FE converter family (task p28-b-fe-converter-machine; TAIL-APPENDED ROW,
+	// -- the p28 FE converter family (task b-fe-converter-machine; TAIL-APPENDED ROW,
 	// the shared serial file: append-only discipline) --
 	// One shared BET over the ONE ULV block (the balance ruling: a single machine, no
 	// ladder); the intake face serves on EVERY side (the
@@ -758,7 +758,7 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 				(aBe, aSide) -> aBe.energyStorage());
 	}
 
-	// -- the p28 FE source fixture (task p28-b-fe-converter-machine; TAIL-APPENDED ROW) --
+	// -- the p28 FE source fixture (task b-fe-converter-machine; TAIL-APPENDED ROW) --
 	// The EXTRACTABLE twin of the sink battery above: the converter's pull face resolves
 	// this storage through the level query exactly like any foreign FE source.
 
@@ -768,7 +768,7 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 				(aBe, aSide) -> aBe.energyStorage());
 	}
 
-	// -- the storage hopper family (p26-storage-hopper-family; TAIL-APPENDED ROW, the
+	// -- the storage hopper family (storage-hopper-family; TAIL-APPENDED ROW, the
 	// shared serial file: append-only discipline) --
 	// The two family BETs join as item-only faces (zero fluid tanks on the classes, the
 	// oven/ACT shape). The forge leg answers through the GT6HopperBaseBlockEntity
@@ -788,7 +788,7 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 	}
 
-	// -- the static storage batch (p26-storage-static-batch; TAIL-APPENDED ROW, the
+	// -- the static storage batch (storage-static-batch; TAIL-APPENDED ROW, the
 	// shared serial file: append-only discipline) --
 	// Six family BETs join as item-only faces (zero fluid tanks on the classes — the
 	// oven/ACT shape). The forge leg answers through the GT6StaticStorageBaseBlockEntity
@@ -814,7 +814,7 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 	}
 
-	// -- the gas turbine (p29-w3-turbine-dynamo; TAIL-APPENDED ROW, the shared serial
+	// -- the gas turbine (w3-turbine-dynamo; TAIL-APPENDED ROW, the shared serial
 	// file: append-only discipline) --
 	// The Gas Turbine controller joins as a fluid-only face (the FM.Gas fill gate + the
 	// three exhaust tanks; the Large Boiler face shape). The forge leg answers through the
@@ -831,7 +831,7 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 	}
 
-	// -- the battery family (p29-w4-battery-storage; TAIL-APPENDED ROW, the shared serial
+	// -- the battery family (w4-battery-storage; TAIL-APPENDED ROW, the shared serial
 	// file: append-only discipline) --
 	// The two BatteryBox BETs join as an ITEM-ONLY face (the canInsertItem2/upstream
 	// :199 battery-slot access; the energy face is GT-native — the box answers
@@ -853,7 +853,7 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 	}
 
-	// -- the ZPM decharger family (p36-energy-zpm-dechargers; TAIL-APPENDED ROW, the
+	// -- the ZPM decharger family (energy-zpm-dechargers; TAIL-APPENDED ROW, the
 	// shared serial file: append-only discipline) --
 	// The decharger BET joins as an ITEM-ONLY face (the ZPM slot gate :36-:37 — the
 	// external battery/hopper push of the artifact; the energy face is GT-native, the
@@ -868,7 +868,7 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 	}
 
-	// -- the portal pair (task p35-portals-mini-nether-end; TAIL-APPENDED ROW, the
+	// -- the portal pair (task portals-mini-nether-end; TAIL-APPENDED ROW, the
 	// shared serial file: append-only discipline) --
 	// The RELAY row (the MultiBlockPartBlockEntity part-relay form): the portal BE has no
 	// own handler — the provider resolves the portal's cross-dimension delegate
@@ -902,7 +902,7 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 		return tDelegate.getLevel().getCapability(aCapability, tDelegate.getBlockPos(), aSide); // the access face = the incoming face
 	}
 
-	// -- the long distance pipelines (p35-long-distance-pipes; TAIL-APPENDED ROW, the
+	// -- the long distance pipelines (long-distance-pipes; TAIL-APPENDED ROW, the
 	// shared serial file: append-only discipline) --
 	// The two endpoint BETs join as one item face + one fluid face (the window families:
 	// the forge getCapability serves the delegating IItemHandler/IFluidHandler — the

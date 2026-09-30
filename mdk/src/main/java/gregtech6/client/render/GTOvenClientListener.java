@@ -12,7 +12,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
- * The client-side wiring of the oven overlay model (task p9-render-c-oven-overlay, the
+ * The client-side wiring of the oven overlay model (task render-c-oven-overlay, the
  * {@link GTPipeFlowClientListener} shape: card-local {@code @EventBusSubscriber},
  * GT6Mod/GTModBusListener untouched; Dist.CLIENT — the dedicated server never loads this
  * class). Registration runs at mod construct, strictly before the first resource reload
@@ -20,7 +20,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
  *
 	 * <p>Dispatch keys are the oven ladder's <b>per-state</b> ModelResourceLocations
 	 * ({@code gt6:oven[_t2|_t3|_t4]#active=…,facing=…,running=…} — task
-	 * p27-oven-heat-t-ladder extended the single path to the four Heat_T ladder rows) —
+	 * oven-heat-t-ladder extended the single path to the four Heat_T ladder rows) —
 	 * vanilla ModelBakery loads one
  * top-level model per BLOCK STATE (ModelBakery.java:136
  * {@code loadTopLevel(BlockModelShaper.stateToModelLocation(...))}), so the map the
@@ -37,7 +37,7 @@ public final class GTOvenClientListener {
 
 	/**
 	 * The oven ladder block registry paths (GTMachines OVEN/OVEN_T2/T3/T4 — the generated
-	 * blockstates ids; task p27-oven-heat-t-ladder extended the single "oven" path to the
+	 * blockstates ids; task oven-heat-t-ladder extended the single "oven" path to the
 	 * four Heat_T ladder rows, same 16 states each — the family shares the overlay models,
 	 * upstream NBT_TEXTURE "oven" on every row, Loader_MultiTileEntities.java:1288-1291).
 	 */

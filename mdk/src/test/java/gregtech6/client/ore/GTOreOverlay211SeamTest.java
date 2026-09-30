@@ -1,5 +1,5 @@
 /**
- * The ore OVERLAY seam's 21.1-leg dispatch pins (task p33-ore-overlay-impl — the POC
+ * The ore OVERLAY seam's 21.1-leg dispatch pins (task ore-overlay-impl — the POC
  * harness checks 4/6 of research.p32-r-ore-overlay-render, now asserted against the
  * production wiring instead of a skeleton). The 1.20.1 leg pins the SAME key surface
  * through the toString parse the forge dispatch uses, so both legs assert "a bake key

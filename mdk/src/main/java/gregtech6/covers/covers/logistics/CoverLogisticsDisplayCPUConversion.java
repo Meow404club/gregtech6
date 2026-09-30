@@ -6,7 +6,7 @@ import gregtech6.covers.CoverData;
 
 /**
  * The CPU Conversion display — 1.20.1 port of gregapi/cover/covers/CoverLogisticsDisplayCPUConversion.java
- * (:33-55, upstream item id 1086), task p33-logistics-covers-12. The Core drives the
+ * (:33-55, upstream item id 1086), task logistics-covers-12. The Core drives the
  * value (redstone 0..15) and visual (bar 0..10) lanes per second (:316-317).
  */
 public class CoverLogisticsDisplayCPUConversion extends AbstractCoverLogisticsDisplay {

@@ -40,7 +40,7 @@ import gregtech6.fluid.GTFluids;
 import gregtech6.item.GT6Circuits;
 
 /**
- * The RM.Distillery water-family pour — task p16-distillery-family ③, the port counterpart
+ * The RM.Distillery water-family pour — task distillery-family ③, the port counterpart
  * of the {@code RM.Distillery.addRecipe1} rows of Loader_Recipes_Chem.java:534-541 (the
  * circuit-selector-gated half of the DISTILLERY map; the GT6RecipesDrying pour covers the
  * parallel {@code addRecipe0} DRYING rows :525-532 — different map, zero file overlap).
@@ -63,7 +63,7 @@ import gregtech6.item.GT6Circuits;
  * <p><b>The eight transcribed rows</b> (:534-541, all EUt 16, duration 16, Water-family in,
  * DistW out): Water 10→8, SpDew 10→8, MnWtr 10→8, Geothermal/Boiling/Hot/HotWater/Cold
  * 25→20. SEVEN pour — water (vanilla) and distw plus the five registered aqua fluids of
- * task p16-aqua-fluids (spdew/mnwtr/water_geothermal/water_boiling/hot_water/cold_water);
+ * task aqua-fluids (spdew/mnwtr/water_geothermal/water_boiling/hot_water/cold_water);
  * ONE skips: {@code water_hot} (:539, the "ic2hotwater" IC2 alias, FL.java:116) has NO port
  * registration — the aqua card kept it outside the six on purpose, and the null resolver
  * arm reproduces the upstream {@code if (FL.Water_Hot.exists())} drop verbatim
@@ -93,7 +93,7 @@ public final class GT6RecipesDistillery {
 
 	/**
 	 * The fluid seam: the live lookups by default (vanilla water in, the registered
-	 * distilled water out, the aqua family of task p16-aqua-fluids, the census null for the
+	 * distilled water out, the aqua family of task aqua-fluids, the census null for the
 	 * unregistered water_hot alias), fixtures injected offline (the GT6RecipesDrying
 	 * sFluidResolver precedent). Public — the machines-package row-test e2e drives the pour
 	 * through it (the GTMachines.applyRow public-test-seam precedent).
@@ -103,7 +103,7 @@ public final class GT6RecipesDistillery {
 	/**
 	 * The circuit seam: the live selector stack ({@link GT6Circuits#selector(int)} — every
 	 * :534-541 row carries config 0), fixtures injected offline (the RegistryObjects are
-	 * unbound outside a live registry, the p16-machine-fluid-gui offline lesson). Public —
+	 * unbound outside a live registry, the machine-fluid-gui offline lesson). Public —
 	 * the same cross-domain test seam.
 	 */
 	public static Function<Integer, ItemStack> sCircuitResolver = GT6Circuits::selector;
@@ -199,7 +199,7 @@ public final class GT6RecipesDistillery {
 	/**
 	 * The live fluid lookup — vanilla water for the input row (no registration involved),
 	 * the registered distilled water for the output, the six aqua fluids of task
-	 * p16-aqua-fluids, and NULL for the water_hot IC2 alias: no port registration, and a
+	 * aqua-fluids, and NULL for the water_hot IC2 alias: no port registration, and a
 	 * null makes the row skip exactly like an upstream {@code if (FL.Water_Hot.exists())}
 	 * guard around its pour line. Only invoked at load() time (the registers are live) or
 	 * through injected offline fixtures.

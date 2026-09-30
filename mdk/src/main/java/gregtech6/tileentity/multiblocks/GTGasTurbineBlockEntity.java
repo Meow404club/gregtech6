@@ -17,7 +17,7 @@ import gregtech6.registry.GTMultiBlocks;
 import gregtech6.registry.GT6Turbines;
 
 /**
- * The Gas Turbine controller (task p29-w3-turbine-dynamo ③) — the 1.20.1 counterpart of
+ * The Gas Turbine controller (task w3-turbine-dynamo ③) — the 1.20.1 counterpart of
  * MultiTileEntityLargeTurbineGas (MultiTileEntityLargeTurbineGas.java:44-155) over the
  * {@link GTMultiBlockConverter} base: HU packets accepted on the FRONT (NBT_ENERGY_ACCEPTED
  * HU, Loader :1264-1267) AND the FM.Gas fluid rows burned into the same capacitor, RU out

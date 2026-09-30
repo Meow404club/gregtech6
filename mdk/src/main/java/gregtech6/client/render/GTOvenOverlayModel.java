@@ -29,8 +29,8 @@ import gregtech6.block.GTOvenBlock;
 import gregtech6.client.render.GTOvenRenderSnapshot.OvenOverlayGroup;
 
 /**
- * The oven state-overlay dynamic model (task p9-render-c-oven-overlay, ADR
- * 2026-09-01-p9-render-c-oven-overlay ②) — the C-grade upgrade of the oven from pure
+ * The oven state-overlay dynamic model (task render-c-oven-overlay, ADR
+ * 2026-09-01-render-c-oven-overlay ②) — the C-grade upgrade of the oven from pure
  * A-tier (static BlockState variants) to snapshot-driven overlay rendering. Third
  * consumer of the C-grade foundation, the {@link GTFluidPipeFlowModel} shape applied to
  * the oven.
@@ -210,7 +210,7 @@ public class GTOvenOverlayModel extends GTDynamicBakedModel {
 	/** The sprite id for one overlay group and texture face ({@code gt6:block/oven_overlay_<group>_<face>}). */
 	public static ResourceLocation spriteOf(OvenOverlayGroup aGroup, OvenTextureFace aFace) {
 		// fromNamespaceAndPath, not the two-arg ctor: private in 1.21.1, and Forge 1.20.1
-		// backported the same factory (both legs javap-proven, p15-adapt-registry-core) —
+		// backported the same factory (both legs javap-proven, adapt-registry-core) —
 		// the swap table's conservative regex skips this call (concat expression argument).
 		return ResourceLocation.fromNamespaceAndPath(GTRenderModelListener.MOD_ID,
 				SPRITE_PREFIX + aGroup.textureKey() + "_" + aFace.textureKey());
@@ -240,7 +240,7 @@ public class GTOvenOverlayModel extends GTDynamicBakedModel {
 	private BakedQuad bakeOverlayQuad(OverlayPlan aPlan, TextureAtlasSprite aSprite) {
 		double[] tBox = aPlan.box();
 		// FaceBakery works in model space (0..16). The UV is the canonical full-face form
-		// [u0,v0,u1,v1] = [0,0,16,16] (the r8-uvof-private-copies fix, the issue #27
+		// [u0,v0,u1,v1] = [0,0,16,16] (the uvof-private-copies fix, the issue #27
 		// GTOreBakedModel ruling): the borrowed upstream face PNGs are UPRIGHT art (the
 		// running front's glow window sits in the sprite's bottom half), drawn for the
 		// orientation 1.7.10's renderFixed* ITexture family bakes — which the #27 ruling

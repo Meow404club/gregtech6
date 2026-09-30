@@ -15,10 +15,10 @@ import gregtech6.block.surface.GT6SurfaceRockBlock;
 import gregtech6.registry.GT6SurfaceBlocks;
 
 /**
- * The client wiring of the surface-rock material tint (task p30-w6-rocks-sticks) — the
+ * The client wiring of the surface-rock material tint (task w6-rocks-sticks) — the
  * {@link GTPipeFoamClientListener} card-local {@code @EventBusSubscriber(Dist.CLIENT)}
  * form. The shared rock model carries {@code tintindex 0} on every face (the machineModel
- * p21-paintable-tint-render form) and this BlockColor resolves it to the material's solid
+ * paintable-tint-render form) and this BlockColor resolves it to the material's solid
  * RGB ({@link GT6SurfaceRockBlock#tintARGB}, the GTCEu tintedBlockColor
  * SurfaceRockBlock.java:154-161 form) — the grayscale shared texture paints per material,
  * the same grayscale-multiply pipeline the machine/barrel paint domains render through.

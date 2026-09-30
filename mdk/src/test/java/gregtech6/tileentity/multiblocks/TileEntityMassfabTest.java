@@ -23,7 +23,7 @@ import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.RecipeMap;
 
 /**
- * The Large Matter Fabricator offline acceptance (task p31-massfab): the :1241
+ * The Large Matter Fabricator offline acceptance (task massfab): the :1241
  * registration-config pins (QU, the 1/1/2097152 explicit window, PARALLEL 64 +
  * PARALLEL_DURATION T, CHEAP_OC T, no ignition, no constant power, the TWO-tank output
  * bank), the hand-written :45-224 structure walk over the stub world (the greenfield

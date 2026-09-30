@@ -8,7 +8,7 @@ import gregtech6.covers.CoverData;
 
 /**
  * The attachment base — 1.20.1 port of gregapi/cover/covers/AbstractCoverAttachment.java
- * (:34-43, task p35-covers-display-scale-6). An ATTACHMENT plate interacts less than a
+ * (:34-43, task covers-display-scale-6). An ATTACHMENT plate interacts less than a
  * plain cover: clicks never consume (all four click hooks fall through — upstream the
  * interceptClick pair flips from the AbstractCoverDefault {@code true} to {@code false},
  * :37-38), the plate never blocks the host's light (:39) and never seals the host (:40).
@@ -17,7 +17,7 @@ import gregtech6.covers.CoverData;
  * this card finally ports the attachment family the P11 card inlined):
  * <ul>
  * <li>the {@code onWalkOver} arm (:41) does not answer — the hook exists since the asphalt
- *     cover restoration (task p37-covers-crafting-asphalt), the attachment default passes
+ *     cover restoration (task covers-crafting-asphalt), the attachment default passes
  *     the AbstractCoverDefault consume-true through and the arm stays unimplemented;</li>
  * <li>the {@code onToolClick} host relay (:42, {@code aTileEntity.onToolClick2(...)})
  *     has no ported host face — non-answered tool ids return 0 (the CoverControllerAuto

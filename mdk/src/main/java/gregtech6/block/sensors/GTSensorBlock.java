@@ -29,7 +29,7 @@ import gregtech6.tileentity.sensors.GTSensorLogic;
 import gregtech6.util.UT6;
 
 /**
- * The sensor block (task p26-sensors-core) — the block-side of the sensor family, the
+ * The sensor block (task sensors-core) — the block-side of the sensor family, the
  * GTOvenBlock A-tier shape: the BlockState carries the display face (FACING, the upstream
  * byte mFacing in the GT6 side order), the probe face (mSecondFacing) is BE-only (it has
  * no model impact upstream either), and the emitted redstone reads THROUGH to the BE
@@ -95,7 +95,7 @@ public class GTSensorBlock extends GTEntityBlock {
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext aContext) {
 		// the probe front TOWARDS the placer (the GT6PlacementFacing canon, task
-		// p28-singleblock-facing-canon) — the single seam: setPlacedBy mirrors the state
+		// singleblock-facing-canon) — the single seam: setPlacedBy mirrors the state
 		// into the BE wrenchSetFacing, so fixing the state fixes the pair
 		return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 	}

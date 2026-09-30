@@ -27,7 +27,7 @@ import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.Recipe;
 
 /**
- * The Machine base processing face offline (task p6-cokeoven-processing acceptance ②):
+ * The Machine base processing face offline (task cokeoven-processing acceptance ②):
  * the checkRecipe two-stage contract, the ignition gate, the canOutput parallel/tank
  * gates, the TU tick loop (energy ledger, 3600 t completion, output placement, the
  * mIgnited keep-alive, parallel 16), the fill-then-deduct fluid push, the slot gating and
@@ -287,7 +287,7 @@ class TileEntityBase10MultiBlockMachineTest extends GTMultiBlocksOfflineTestBase
 		TestProcessingOven tRestored = new TestProcessingOven(sCokeOvenType, P1, Blocks.BRICKS.defaultBlockState());
 		// the load face rides the frozen NBT_ACCESS builtin view for the provider-based
 		// inventory/fluid legs (21.1) — no level needed on the load path (ADR-P18);
-		// the saveWithoutMetadata face still rides the level'd fixture (task p15-m4-test-infra-2)
+		// the saveWithoutMetadata face still rides the level'd fixture (task m4-test-infra-2)
 		tRestored.setLevel(tLevel);
 		tRestored.load(tTag);
 

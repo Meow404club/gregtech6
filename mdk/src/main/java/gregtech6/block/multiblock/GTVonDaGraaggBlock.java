@@ -6,7 +6,7 @@ import gregtech6.registry.GTMultiBlocks;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Von da Graagg controller block (task p31-graagg) — the concrete
+ * The Von da Graagg controller block (task graagg) — the concrete
  * {@link GTMultiBlockControllerBlock} mounting the Graagg BET (the GTImplosionCompressorBlock
  * minimal form: everything visual/behavioural is base-owned FACING + FORMED, this class
  * only mounts the BET; no use-face — the controller runs headless, the W2 menu-null form).

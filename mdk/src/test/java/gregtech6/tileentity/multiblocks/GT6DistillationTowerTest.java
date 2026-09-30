@@ -31,7 +31,7 @@ import gregtech6.recipes.RecipeMap;
 import gregtech6.registry.GT6Distillation.TileEntityDistillationTower;
 
 /**
- * The distillation tower offline acceptance (task p29-w3-distill-crucible ①② — the
+ * The distillation tower offline acceptance (task w3-distill-crucible ①② — the
  * OFFLINE half; the live half is the distillation_tower / cryo_tower RCON
  * chains):
  * <ul>
@@ -49,7 +49,7 @@ import gregtech6.registry.GT6Distillation.TileEntityDistillationTower;
  *     a naive override could have dropped the :773 gate — this pins that it did not);</li>
  * <li>the no-self-generation tick face (the upstream :455 TU-gate the base dropped) and
  *     the routing table (:152-166);</li>
- * <li><b>task p30-distill-output-routing</b> — the NINE-tank output bank (the 2026-09-16
+ * <li><b>task distill-output-routing</b> — the NINE-tank output bank (the 2026-09-16
  *     ruling option a, the W3④ single-tank freeze undone): the bank shape (RM.java:65/:66
  *     fluids 1/9/0), the seven-fraction row passing canOutput and landing one fraction per
  *     tank, the routing-cell arithmetic, and the NBT round-trip with the legacy
@@ -347,7 +347,7 @@ class GT6DistillationTowerTest extends GTMultiBlocksOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the nine-tank output bank (task p30-distill-output-routing, ruling option a)
+	// the nine-tank output bank (task distill-output-routing, ruling option a)
 	// ---------------------------------------------------------------------------
 
 	/** Seven DISTINCT in-memory fluids — the registry identity is never queried offline. */
@@ -519,7 +519,7 @@ class GT6DistillationTowerTest extends GTMultiBlocksOfflineTestBase {
 	}
 
 	/**
-	 * The PRODUCTION-entry round-trip (task p31-distill-21-1-tank-serialization): the
+	 * The PRODUCTION-entry round-trip (task distill-21-1-tank-serialization): the
 	 * ENGINE-facing hooks, not the {@code (CompoundTag)} members — 1.21.1 vanilla calls
 	 * {@code loadAdditional/saveAdditional(CompoundTag, Provider)} which the 01Root
 	 * delegates into the {@code (CompoundTag)} chain (TileEntityBase01Root:138-147), and

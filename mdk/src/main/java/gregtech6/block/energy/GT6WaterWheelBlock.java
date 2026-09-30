@@ -16,7 +16,7 @@ import gregtech6.registry.GTBlockEntities;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Water Wheel block (task p28-c-water-wheel) — the AXIS-axis carrier over the shared
+ * The Water Wheel block (task c-water-wheel) — the AXIS-axis carrier over the shared
  * BET, the {@link GTAxleBlock} property shape: the wheel spins about one axis and pushes
  * RU packets out of BOTH axis ends (the kTFRUAddon WaterMill axial-output semantics,
  * clean-room re-expression — WaterMill.java:101-105 inserts along mFacing and OPOS[mFacing]

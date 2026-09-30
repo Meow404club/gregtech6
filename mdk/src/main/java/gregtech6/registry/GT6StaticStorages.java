@@ -59,14 +59,14 @@ import gregtech6.tileentity.inventories.GT6SafeKeyLockedBlockEntity;
 import gregtech6.tileentity.inventories.GT6StaticStorageBaseBlockEntity;
 
 /**
- * The static storage batch registration home (task p26-storage-static-batch, the
+ * The static storage batch registration home (task storage-static-batch, the
  * GT6Hoppers/GT6Boilers self-contained-DR row form): 28 blocks/items over SIX shared
  * BETs — the five BE classes of the {@code gregtech6.tileentity.inventories} batch, the
  * row config riding the block carrier.
  *
  * <p><b>The ITEM BARREL TRAP (the card's hard javadoc clause).</b> Nothing here is the
  * "Item Barrel": the GT6 Item Barrel is the ITEM MASS STORAGE (the
- * MultiTileEntityMassStorageBarrel family, p26-storage-massstorage's card), and it shares
+ * MultiTileEntityMassStorageBarrel family, storage-massstorage's card), and it shares
  * its NAME with this repo's already-ported FLUID barrels (GTBarrels, the
  * TileEntityBase08Barrel fluid carrier). The two are unrelated families — searches,
  * KG queries and reviews must not conflate them.
@@ -90,7 +90,7 @@ import gregtech6.tileentity.inventories.GT6StaticStorageBaseBlockEntity;
  * SFX folds (click/collect/anvil place) defer with the cosmetic layer; the upstream
  * creative-tab homes (Safes 2010, Storage 32751 — Loader_MultiTileEntities.java:134-135
  * and the :138-144/:181-184 storage rows) pool into the MACHINES_TAB join (task
- * p38-tabfix-b-energy, {@link #onBuildTabContents}; the GTBarrels:257 pooling precedent —
+ * tabfix-b-energy, {@link #onBuildTabContents}; the GTBarrels:257 pooling precedent —
  * supersedes the old "no creative tab row" append note).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -589,7 +589,7 @@ public final class GT6StaticStorages {
 	}
 
 	/**
-	 * The tab walk (task p38-tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
+	 * The tab walk (task tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
 	 * joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
 	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
 	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display

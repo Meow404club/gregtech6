@@ -26,7 +26,7 @@ import gregtech6.registry.GT6LongDistanceTransformers;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Long Distance Transformer Endpoint (task p35-energy-tail-machines) — the 1.20.1
+ * The Long Distance Transformer Endpoint (task energy-tail-machines) — the 1.20.1
  * transcription of {@code MultiTileEntityLongDistanceTransformer} (:58-325, the
  * TileEntityBase09FacingSingle shape over the port BE tree). Two endpoints joined by a
  * line of {@link GT6LongDistWireBlock} push EU ACROSS the wire blob in ONE hop

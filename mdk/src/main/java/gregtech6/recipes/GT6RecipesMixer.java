@@ -48,7 +48,7 @@ import gregtech6.fluid.GTFluids;
 import gregtech6.registry.GTMaterialItems;
 
 /**
- * The RM.Mixer C-Foam pour — task p26-c-foam-fluid-refill, the port counterpart of the
+ * The RM.Mixer C-Foam pour — task c-foam-fluid-refill, the port counterpart of the
  * {@code RM.Mixer} rows inside the {@code for (FluidStack tWater : FL.waters(1000))}
  * loop body of Loader_Recipes_Other.java:230-313 (the rock groups, :249-304) plus the two
  * Pd owned-production rows :485-486 (outside the water loop, inside the 16-colour loop).

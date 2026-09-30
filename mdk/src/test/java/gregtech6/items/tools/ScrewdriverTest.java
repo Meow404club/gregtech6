@@ -1,5 +1,5 @@
 /**
- * Offline tests for task p24-screwdriver-item: the screwdriver (the crafting-tool item
+ * Offline tests for task screwdriver-item: the screwdriver (the crafting-tool item
  * in the GT6FileItem form), its ToolAction/dispatch-id pins — including the
  * {@code ICover.TOOL_SCREWDRIVER} reservation parity (the card's zero-ICover-diff
  * drift guard) — and the real crafting channel the loss seam rides.
@@ -59,7 +59,7 @@ public class ScrewdriverTest {
 	}
 
 	/**
-	 * THE PROBE-LEAK INVARIANT (the p24-screwdriver-item takeover lesson, found by the
+	 * THE PROBE-LEAK INVARIANT (the screwdriver-item takeover lesson, found by the
 	 * full-suite gate): the probe items this class registers are REAL registry entries
 	 * (the ItemStack ctor resolves the registry delegate eagerly — an unregistered item
 	 * cannot ride the channel), and the machine suite's

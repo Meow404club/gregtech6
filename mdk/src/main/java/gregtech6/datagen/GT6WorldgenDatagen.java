@@ -82,7 +82,7 @@ import gregtech6.worldgen.GTVeinConfig;
 import gregtech6.worldgen.GTOreWorldgen;
 
 /**
- * The worldgen datagen band (task p26-worldgen-pipeline-skeleton): one
+ * The worldgen datagen band (task worldgen-pipeline-skeleton): one
  * {@link RegistrySetBuilder} with three BootstapContexts — configured feature / placed
  * feature / biome modifier — producing 17+17+17 JSONs for the GT6 stone blobs (the
  * {@code WorldgenStone} loop port, Loader_Worldgen.java:654-661; the parameter
@@ -92,7 +92,7 @@ import gregtech6.worldgen.GTOreWorldgen;
  * seam, handled there).
  *
  * <p>Dual-leg evidence (the biome-modifier triple seam, research card
- * p26-r-worldgen-domain): the registry key is {@code forge:biome_modifier}
+ * r-worldgen-domain): the registry key is {@code forge:biome_modifier}
  * (ForgeRegistries.java:195) vs {@code neoforge:biome_modifier}
  * (NeoForgeRegistries.java:61-66); the AddFeaturesBiomeModifier holder class is
  * {@code net.minecraftforge.common.world.ForgeBiomeModifiers} (ForgeBiomeModifiers.java:46
@@ -117,7 +117,7 @@ import gregtech6.worldgen.GTOreWorldgen;
  * seven, GT6_Main.java:112 DisableVanillaOres default-T, plus the modern extensions),
  * the stone blobs (granite/diorite/andesite/tuff), dirt/gravel and the lava lakes (the
  * upstream DisableVanillaLakes precedent, GT6_Main.java:112). The amethyst geode was on
- * this list only while the #33 GT geode band lived; the band is reverted (r8-geode-revert,
+ * this list only while the #33 GT geode band lived; the band is reverted (geode-revert,
  * decisions.r8-geode-revert) and the vanilla geode generates again. Per-key vanilla
  * placed-feature names ONLY — the ADD phase runs
  * before REMOVE (ForgeBiomeModifiers Phase :80/:84), and disk/clay/infested/magma stay
@@ -146,7 +146,7 @@ public final class GT6WorldgenDatagen {
      * The 12 blob biome-modifier keys, BLOB_STONES order — one AddFeaturesBiomeModifier
      * row per stone (the upstream per-object config face,
      * {@code worldgenerator.overworld.stone.<material>}, becomes one datapack JSON each).
-     * Task p31-strata-lens: the 5 marker stones (GT6Worldgen.LENS_STONE_SNAKES) ride the
+     * Task strata-lens: the 5 marker stones (GT6Worldgen.LENS_STONE_SNAKES) ride the
      * ONE strata-lens modifier below instead, their blob rows retired.
      */
     public static final List<ResourceKey<BiomeModifier>> BIOME_MODIFIER_KEYS =
@@ -159,7 +159,7 @@ public final class GT6WorldgenDatagen {
     }
 
     /**
-     * The 9 tree biome-modifier keys, GT6TreeBlocks.KINDS order (task p30-w6-t1-trees-nine
+     * The 9 tree biome-modifier keys, GT6TreeBlocks.KINDS order (task w6-t1-trees-nine
      * — one AddFeaturesBiomeModifier row per tree, the upstream per-object config face).
      */
     public static final List<ResourceKey<BiomeModifier>> TREE_BIOME_MODIFIER_KEYS =
@@ -185,7 +185,7 @@ public final class GT6WorldgenDatagen {
             .add(Registries.CONFIGURED_FEATURE, GT6WorldgenDatagen::bootstrapConfigured)
             .add(Registries.PLACED_FEATURE, GT6WorldgenDatagen::bootstrapPlaced)
             .add(biomeModifierRegistryKey(), GT6WorldgenDatagen::bootstrapBiomeModifiers)
-            // task p38-dungeon-framework: the shelter dungeon rides the same provider —
+            // task dungeon-framework: the shelter dungeon rides the same provider —
             // the structure + its random_spread structure_set (the 11-chunk grid JSON).
             .add(Registries.STRUCTURE, GT6WorldgenDatagen::bootstrapStructure)
             .add(Registries.STRUCTURE_SET, GT6WorldgenDatagen::bootstrapStructureSet);
@@ -213,7 +213,7 @@ public final class GT6WorldgenDatagen {
             ResourceKey.create(Registries.STRUCTURE_SET, ResourceLocation.fromNamespaceAndPath("gt6", "dungeon"));
 
     /**
-     * The placement constants (task p38-dungeon-framework): spacing 11 = the upstream
+     * The placement constants (task dungeon-framework): spacing 11 = the upstream
      * chunk-grid period {@code maxSize + 4} (WorldgenDungeonGT.java:144), separation 5
      * keeps the candidate at least mid-cell (the upstream FIXED offset 5 becomes the
      * salt-uniform offset in {@code [0, spacing - separation]} — the documented
@@ -262,7 +262,7 @@ public final class GT6WorldgenDatagen {
     // feature/): ore_debris_small (not ore_ancient_debris_small), the lake pair
     // lake_lava_surface / lake_lava_underground (1.18+ ships NO lake_water — the
     // upstream DENY has no modern target). amethyst_geode is deliberately NOT here
-    // (r8-geode-revert): the #33 GT geode band that justified its suppression is
+    // (geode-revert): the #33 GT geode band that justified its suppression is
     // reverted, so the vanilla geode generates again. The ONE leg delta is
     // ore_diamond_medium — the 1.21.1 diamond split
     // (BiomeDefaultFeatures.java:67): the 1.20.1 registry lacks the key (a
@@ -355,7 +355,7 @@ public final class GT6WorldgenDatagen {
                                     GTStoneBlocks.block(tSnake, StoneVariant.STONE).get().defaultBlockState())),
                             GT6Worldgen.oreBlobSize()));
         }
-        // task p30-w6-t1-trees-nine — the 9 tree configured features: the registered
+        // task w6-t1-trees-nine — the 9 tree configured features: the registered
         // GT6TreeFeature instance per kind over NoneFeatureConfiguration (zero JSON
         // config face; the Feature carries the shape). The double casts bind the
         // wildcard key/feature pair to the FC-typed register overload.
@@ -365,32 +365,32 @@ public final class GT6WorldgenDatagen {
             FeatureUtils.register(ctx, GT6Worldgen.TREE_CONFIGURED_KEYS.get(i), tFeature,
                     NoneFeatureConfiguration.INSTANCE);
         }
-        bootstrapSurfaceConfigured(ctx); // task p30-w6-rocks-sticks — tail-append
-        bootstrapPlantsConfigured(ctx); // task p30-w6-t2-surface-blocks — tail-append
-        // task p30-w6-t3-large-veins — the ONE large-vein configured feature: the registered
+        bootstrapSurfaceConfigured(ctx); // task w6-rocks-sticks — tail-append
+        bootstrapPlantsConfigured(ctx); // task w6-t2-surface-blocks — tail-append
+        // task w6-t3-large-veins — the ONE large-vein configured feature: the registered
         // GT6LargeVeinFeature instance over the 40-row vein table ({@link #LARGE_VEIN_TABLE};
         // the table rides the config JSON — the card spec ② tier-a face).
         FeatureUtils.register(ctx, GT6Worldgen.LARGE_VEINS_CONFIGURED, GT6Features.LARGE_VEINS,
                 new GTVeinConfig.Table(LARGE_VEIN_TABLE));
-        // task r6-c2-deep-band — the deep-band mirror table under its OWN configured key
+        // task c2-deep-band — the deep-band mirror table under its OWN configured key
         // (the SAME GT6LargeVeinFeature instance — a configured feature is a (feature,
         // config) pair): a separate table keeps the surface draw mass verbatim (the
         // weighted draw sums every drawable row of its own table — mirror rows inside
         // LARGE_VEIN_TABLE would dilute the surface draw).
         FeatureUtils.register(ctx, GT6Worldgen.LARGE_VEINS_DEEP_CONFIGURED, GT6Features.LARGE_VEINS,
                 new GTVeinConfig.Table(DEEP_VEIN_TABLE));
-        // task p31-strata-lens — the ONE strata-lens configured feature: the registered
+        // task strata-lens — the ONE strata-lens configured feature: the registered
         // GT6StrataLensFeature instance over the 5-row marker-stone lens table
         // ({@link #STRATA_LENS_TABLE}; the table rides the config JSON — the same tier-a
         // face as the vein table).
         FeatureUtils.register(ctx, GT6Worldgen.STRATA_LENSES_CONFIGURED, GT6Features.STRATA_LENSES,
                 new GTLensConfig.Table(STRATA_LENS_TABLE));
-        // task p31-nether-lens-end-yield — the ONE nether-lens configured feature: the
+        // task nether-lens-end-yield — the ONE nether-lens configured feature: the
         // registered GT6NetherLensFeature instance over the 17-stone nether lens table
         // ({@link #NETHER_LENS_TABLE}; the same tier-a face).
         FeatureUtils.register(ctx, GT6Worldgen.NETHER_LENSES_CONFIGURED, GT6Features.NETHER_LENSES,
                 new GTLensConfig.Table(NETHER_LENS_TABLE));
-        // task p31-nether-lens-end-yield — the three nether surface forms: quartz/crystals/
+        // task nether-lens-end-yield — the three nether surface forms: quartz/crystals/
         // clay, NoneFeatureConfiguration each (the upstream constants live in the classes).
         FeatureUtils.register(ctx, GT6Worldgen.NETHER_QUARTZ_CONFIGURED, GT6Features.NETHER_QUARTZ,
                 NoneFeatureConfiguration.INSTANCE);
@@ -398,25 +398,25 @@ public final class GT6WorldgenDatagen {
                 NoneFeatureConfiguration.INSTANCE);
         FeatureUtils.register(ctx, GT6Worldgen.NETHER_CLAY_CONFIGURED, GT6Features.NETHER_CLAY,
                 NoneFeatureConfiguration.INSTANCE);
-        // task p32-bees-lv2 — the ONE bumble-hive configured feature: the registered
+        // task bees-lv2 — the ONE bumble-hive configured feature: the registered
         // GT6HiveFeature instance, NoneFeatureConfiguration (the nether-form shape — the
         // WorldgenHives constants live in the class, not a config surface). One Feature
         // over the three dimensions (upstream WorldgenHives.java:48-193 was three rows
         // over one generator body).
         FeatureUtils.register(ctx, GT6Worldgen.BUMBLE_HIVES_CONFIGURED, GT6Features.BUMBLE_HIVES,
                 NoneFeatureConfiguration.INSTANCE);
-        // task p31-bedrock-ore-worldgen — the ONE bedrock-ore configured feature: the
+        // task bedrock-ore-worldgen — the ONE bedrock-ore configured feature: the
         // registered GT6BedrockOreFeature instance over the 46-row table (the same tier-a
         // face as the vein/lens tables).
         FeatureUtils.register(ctx, GT6Worldgen.BEDROCK_ORES_CONFIGURED, GT6Features.BEDROCK_ORES,
                 new GTBedrockOreConfig.Table(BEDROCK_ORE_TABLE));
-        // task p31-fluid-spring — the ONE bedrock-spring configured feature: the registered
+        // task fluid-spring — the ONE bedrock-spring configured feature: the registered
         // GT6FluidSpringFeature instance over the 16-row table (textually after the bedrock
         // feature = the upstream "Has to be after Bedrock Ores" source order, :781).
         FeatureUtils.register(ctx, GT6Worldgen.FLUID_SPRINGS_CONFIGURED, GT6Features.FLUID_SPRINGS,
                 new GTFluidSpringConfig.Table(FLUID_SPRING_TABLE));
-        bootstrapOreConfigured(ctx); // task p30-w6-small-ore-datagen — tail-append
-        bootstrapLensOreConfigured(ctx); // task r6-c3-lens-ores — tail-append
+        bootstrapOreConfigured(ctx); // task w6-small-ore-datagen — tail-append
+        bootstrapLensOreConfigured(ctx); // task c3-lens-ores — tail-append
     }
 
     /**
@@ -442,7 +442,7 @@ public final class GT6WorldgenDatagen {
                     HeightRangePlacement.uniform(VerticalAnchor.absolute(GT6Worldgen.OVERWORLD_MIN_Y),
                             VerticalAnchor.absolute(GT6Worldgen.OVERWORLD_MAX_Y)));
         }
-        // task p30-w6-t1-trees-nine — the 9 tree placed features: the GTCEu tree modifier
+        // task w6-t1-trees-nine — the 9 tree placed features: the GTCEu tree modifier
         // chain (GTPlacedFeatures.java:31-43 RUBBER_CHECKED: spread + SurfaceWaterDepth(0)
         // + HEIGHTMAP_TOP_SOLID + BiomeFilter + filteredByBlockSurvival) with the upstream
         // 1/N chunk chance as the RarityFilter (count stays the default 1 = Amount 1)
@@ -457,22 +457,22 @@ public final class GT6WorldgenDatagen {
                     PlacementUtils.filteredByBlockSurvival(
                             GT6TreeBlocks.SAPLINGS.get(i).get()));
         }
-        bootstrapSurfacePlaced(ctx, tFeatures); // task p30-w6-rocks-sticks — tail-append
-        bootstrapPlantsPlaced(ctx, tFeatures); // task p30-w6-t2-surface-blocks — tail-append
-        // task p30-w6-t3-large-veins — the large-vein placed feature: ONE attempt per chunk
+        bootstrapSurfacePlaced(ctx, tFeatures); // task w6-rocks-sticks — tail-append
+        bootstrapPlantsPlaced(ctx, tFeatures); // task w6-t2-surface-blocks — tail-append
+        // task w6-t3-large-veins — the large-vein placed feature: ONE attempt per chunk
         // (the default count — the per-chunk origin-grid 5x5 scan lives in the Feature,
         // GT6WorldGenerator.java:95-105), square spread + biome filter as the form.
         PlacementUtils.register(ctx, GT6Worldgen.LARGE_VEINS_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.LARGE_VEINS_CONFIGURED),
                 InSquarePlacement.spread(), BiomeFilter.biome());
-        // task r6-c2-deep-band — the deep-mirror placed feature: the surface chain shape
+        // task c2-deep-band — the deep-mirror placed feature: the surface chain shape
         // (InSquare + BiomeFilter; the per-chunk origin-grid scan lives in the Feature).
         // The Y domain rides the shifted row bands (no HeightRangePlacement — the surface
         // row's own comment face).
         PlacementUtils.register(ctx, GT6Worldgen.LARGE_VEINS_DEEP_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.LARGE_VEINS_DEEP_CONFIGURED),
                 InSquarePlacement.spread(), BiomeFilter.biome());
-        // task p31-strata-lens — the strata-lens placed feature: Count 1 CONSTANT +
+        // task strata-lens — the strata-lens placed feature: Count 1 CONSTANT +
         // InSquare + BiomeFilter, one attempt per chunk (the per-chunk ±3-chunk origin
         // scan lives in the Feature). The conflict-audit UniformInt TRAP: the count is a
         // CONSTANT integer (CountPlacement.of(int) = ConstantInt both legs,
@@ -482,28 +482,28 @@ public final class GT6WorldgenDatagen {
         PlacementUtils.register(ctx, GT6Worldgen.STRATA_LENSES_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.STRATA_LENSES_CONFIGURED),
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
-        // task p31-bedrock-ore-worldgen — the bedrock-ore placed feature: Count 1 CONSTANT +
+        // task bedrock-ore-worldgen — the bedrock-ore placed feature: Count 1 CONSTANT +
         // InSquare + BiomeFilter (the conflict-audit posture; the 1/P row rolls ride the
         // Feature's coordinate-seeded stream, no Y placement — the rows carry their own
         // bedrock-anchored bands).
         PlacementUtils.register(ctx, GT6Worldgen.BEDROCK_ORES_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.BEDROCK_ORES_CONFIGURED),
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
-        // task p31-fluid-spring — the bedrock-spring placed feature: Count 1 CONSTANT +
+        // task fluid-spring — the bedrock-spring placed feature: Count 1 CONSTANT +
         // InSquare + BiomeFilter (the bedrock-ore chain shape; the 1/P row rolls + the
         // exclusion replay live in the Feature's coordinate-seeded streams, no Y placement
         // — the rows carry their own bedrock-anchored bands).
         PlacementUtils.register(ctx, GT6Worldgen.FLUID_SPRINGS_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.FLUID_SPRINGS_CONFIGURED),
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
-        // task p31-nether-lens-end-yield — the nether-lens placed feature: Count 1 CONSTANT +
+        // task nether-lens-end-yield — the nether-lens placed feature: Count 1 CONSTANT +
         // InSquare + BiomeFilter (the strata-lens chain shape; the per-chunk 1/200 row rolls
         // live in the Feature's coordinate-seeded stream, no Y placement — the rows carry
         // their own Y domains).
         PlacementUtils.register(ctx, GT6Worldgen.NETHER_LENSES_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.NETHER_LENSES_CONFIGURED),
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
-        // task p31-nether-lens-end-yield — the three form placed features: Count 1 CONSTANT +
+        // task nether-lens-end-yield — the three form placed features: Count 1 CONSTANT +
         // InSquare + BiomeFilter (the conflict-audit posture; each Feature walks its own
         // 16x16 columns / walk on the coordinate-seeded stream — no Y placement).
         PlacementUtils.register(ctx, GT6Worldgen.NETHER_QUARTZ_PLACED,
@@ -512,7 +512,7 @@ public final class GT6WorldgenDatagen {
         PlacementUtils.register(ctx, GT6Worldgen.NETHER_CRYSTALS_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.NETHER_CRYSTALS_CONFIGURED),
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
-        // task p32-bees-lv2 — the bumble-hive placed feature: Count 1 CONSTANT + InSquare
+        // task bees-lv2 — the bumble-hive placed feature: Count 1 CONSTANT + InSquare
         // + BiomeFilter (the conflict-audit posture; the column pick + the dimension rolls
         // ride the Feature's coordinate-seeded stream, no Y placement — the forms carry
         // their own Y domains). The hive hangs off THREE biome modifiers (the next method).
@@ -522,8 +522,8 @@ public final class GT6WorldgenDatagen {
         PlacementUtils.register(ctx, GT6Worldgen.NETHER_CLAY_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.NETHER_CLAY_CONFIGURED),
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
-        bootstrapOrePlaced(ctx, tFeatures); // task p30-w6-small-ore-datagen — tail-append
-        bootstrapLensOrePlaced(ctx, tFeatures); // task r6-c3-lens-ores — tail-append
+        bootstrapOrePlaced(ctx, tFeatures); // task w6-small-ore-datagen — tail-append
+        bootstrapLensOrePlaced(ctx, tFeatures); // task c3-lens-ores — tail-append
     }
 
     /**
@@ -546,7 +546,7 @@ public final class GT6WorldgenDatagen {
                     HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.PLACED_KEYS.get(i))),
                     GenerationStep.Decoration.UNDERGROUND_ORES));
         }
-        // task p30-w6-t1-trees-nine — the 9 tree biome modifiers: one per kind, keyed on
+        // task w6-t1-trees-nine — the 9 tree biome modifiers: one per kind, keyed on
         // the #gt6:trees/<snake> biome tag (GT6BiomeTags; the tag IS the datapack
         // per-feature biome face) at the VEGETAL_DECORATION step (the vanilla tree pass —
         // the enum has no TREES member, the upstream surface-tree surface pass rides it)
@@ -556,26 +556,26 @@ public final class GT6WorldgenDatagen {
                     HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.TREE_PLACED_KEYS.get(i))),
                     GenerationStep.Decoration.VEGETAL_DECORATION));
         }
-        bootstrapSurfaceBiomeModifiers(ctx, tBiomes, tPlaced); // task p30-w6-rocks-sticks — tail-append
-        bootstrapPlantsBiomeModifiers(ctx, tBiomes, tPlaced); // task p30-w6-t2-surface-blocks — tail-append
-        // task p30-w6-t3-large-veins — the large-vein biome modifier: EVERY overworld biome
+        bootstrapSurfaceBiomeModifiers(ctx, tBiomes, tPlaced); // task w6-rocks-sticks — tail-append
+        bootstrapPlantsBiomeModifiers(ctx, tBiomes, tPlaced); // task w6-t2-surface-blocks — tail-append
+        // task w6-t3-large-veins — the large-vein biome modifier: EVERY overworld biome
         // (the research.p30-w6-vein-boundary impl note: upstream large veins have NO biome
         // gate — the generate signature has no biome parameter — and a per-biome split would
         // carve holes into any vein crossing a biome border), at the UNDERGROUND_ORES step.
         ctx.register(biomeModifierKeyOf("large_veins"), addFeatures(tOverworld,
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.LARGE_VEINS_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
-        // task r6-c2-deep-band — the deep-mirror biome modifier: EVERY overworld biome at
+        // task c2-deep-band — the deep-mirror biome modifier: EVERY overworld biome at
         // the ore pass (the large-vein no-biome-gate note carried over). The modifier set
         // is OVERWORLD-ONLY — the End draw (the END_YIELD modifier above) never sees the
         // deep table, the ORE_END rows stay the only End veins.
         ctx.register(biomeModifierKeyOf("large_veins_deep"), addFeatures(tOverworld,
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.LARGE_VEINS_DEEP_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
-        // task p31-strata-lens + r6-c3-lens-ores — the strata-lens biome modifier: EVERY
+        // task strata-lens + c3-lens-ores — the strata-lens biome modifier: EVERY
         // overworld biome (the research.p30-w6-vein-boundary impl note carried over: a
         // per-biome split would carve holes into any lens crossing a biome border), at the
-        // UNDERGROUND_ORES step. The companion-ore placed features (task r6-c3-lens-ores)
+        // UNDERGROUND_ORES step. The companion-ore placed features (task c3-lens-ores)
         // ride the SAME modifier AFTER the lens feature: the appended list order is the
         // biome feature-list order, and vanilla executes a step's features along the
         // FeatureSorter chain edges (FeatureSorter.buildFeaturesPerStep:52-57 consecutive
@@ -588,13 +588,13 @@ public final class GT6WorldgenDatagen {
         ctx.register(biomeModifierKeyOf("strata_lenses"), addFeatures(tOverworld,
                 HolderSet.direct(tLensBand),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
-        // task p31-bedrock-ore-worldgen — the bedrock-ore biome modifier: EVERY overworld
+        // task bedrock-ore-worldgen — the bedrock-ore biome modifier: EVERY overworld
         // biome (the no-biome-gate impl note carried over: upstream WorldgenOresBedrock has
         // no biome parameter), at the UNDERGROUND_ORES step.
         ctx.register(biomeModifierKeyOf("bedrock_ores"), addFeatures(tOverworld,
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.BEDROCK_ORES_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
-        // task p31-fluid-spring — the bedrock-spring biome modifier: EVERY overworld biome,
+        // task fluid-spring — the bedrock-spring biome modifier: EVERY overworld biome,
         // at the UNDERGROUND_ORES step, registered textually AFTER the bedrock modifier (the
         // :781 "Has to be after Bedrock Ores" order). The GT6FluidSpringFeature replay seam
         // keeps the one-bedrock-event-per-chunk exclusion correct under ANY modifier
@@ -602,7 +602,7 @@ public final class GT6WorldgenDatagen {
         ctx.register(biomeModifierKeyOf("fluid_springs"), addFeatures(tOverworld,
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.FLUID_SPRINGS_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
-        // task p31-nether-lens-end-yield — the nether-lens biome modifier: EVERY nether
+        // task nether-lens-end-yield — the nether-lens biome modifier: EVERY nether
         // biome (upstream GEN_NETHER, Loader_Worldgen.java:656 — the dim flag is the modern
         // biome-tag face, the small-ore band's IS_NETHER convention), at the
         // UNDERGROUND_ORES step (the stone pass the blob/lens rows ride).
@@ -610,7 +610,7 @@ public final class GT6WorldgenDatagen {
                 tBiomes.getOrThrow(BiomeTags.IS_NETHER),
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.NETHER_LENSES_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
-        // task p31-nether-lens-end-yield — the three form biome modifiers (GEN_NETHER,
+        // task nether-lens-end-yield — the three form biome modifiers (GEN_NETHER,
         // Loader_Worldgen.java:599-601): quartz rides the ore pass (a netherrack
         // replacement, the blob convention), the crystals too (ore blocks in caves), the
         // clay rides LOCAL_MODIFICATIONS (the soil-band disk-pass convention — a surface
@@ -627,7 +627,7 @@ public final class GT6WorldgenDatagen {
                 tBiomes.getOrThrow(BiomeTags.IS_NETHER),
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.NETHER_CLAY_PLACED)),
                 GenerationStep.Decoration.LOCAL_MODIFICATIONS));
-        // task p32-bees-lv2 — the THREE bumble-hive biome modifiers over the SAME placed
+        // task bees-lv2 — the THREE bumble-hive biome modifiers over the SAME placed
         // feature (upstream Loader_Worldgen.java:635-637: overworld.bumblehives /
         // nether.bumblehives / end.bumblehives; the END_YIELD same-placed-key modifier
         // precedent). The overworld row rides #minecraft:is_overworld (the small-ore band
@@ -646,7 +646,7 @@ public final class GT6WorldgenDatagen {
                 tBiomes.getOrThrow(BiomeTags.IS_END),
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.BUMBLE_HIVES_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
-        // task p31-nether-lens-end-yield — the END large-vein modifier over the SAME
+        // task nether-lens-end-yield — the END large-vein modifier over the SAME
         // gt6:large_veins placed feature (the Feature's biome probe picks the ORE_END
         // rows there), at the ore step. The CONDITIONS ride the emission providers
         // (the neo leg's native conditions map / the forge leg's GT6BiomeModifierConditions
@@ -655,7 +655,7 @@ public final class GT6WorldgenDatagen {
         ctx.register(END_YIELD_MODIFIER_KEY, addFeatures(tBiomes.getOrThrow(BiomeTags.IS_END),
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.LARGE_VEINS_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
-        bootstrapOreBiomeModifiers(ctx, tBiomes, tPlaced); // task p30-w6-small-ore-datagen — tail-append
+        bootstrapOreBiomeModifiers(ctx, tBiomes, tPlaced); // task w6-small-ore-datagen — tail-append
         bootstrapVanillaDeblob(ctx, tBiomes, tPlaced); // issue #32 vanilla-deblob — tail-append
     }
 
@@ -692,7 +692,7 @@ public final class GT6WorldgenDatagen {
     }
 
     // ------------------------------------------------------------------
-    // The surface deco band (task p30-w6-rocks-sticks). Structure:
+    // The surface deco band (task w6-rocks-sticks). Structure:
     // - configured overworld_surface_rocks = Feature.RANDOM_SELECTOR over three
     //   INLINE placed features (PlacementUtils.inlinePlaced form — the vanilla
     //   patch-feature posture; the inner chains never enter any biome's feature
@@ -796,8 +796,8 @@ public final class GT6WorldgenDatagen {
     }
 
     // ------------------------------------------------------------------
-    // The small-ore band (task p30-w6-small-ore-datagen; the pool loop joined in
-    // r7-b-gem-pool-extension). Structure: 152
+    // The small-ore band (task w6-small-ore-datagen; the pool loop joined in
+    // b-gem-pool-extension). Structure: 152
     // (row, dim) placement pairs (GTOreWorldgen.placementPairs, the upstream
     // GEN-flag walk) x {configured = vanilla Feature.ORE size=4 over the
     // WD.setSmallOre host targets, placed = Count(veinCount constant)+InSquare+
@@ -814,7 +814,7 @@ public final class GT6WorldgenDatagen {
             biomeModifierKeyOf("ore_small_end"));
 
     /**
-     * The End large-vein biome-modifier key (task p31-nether-lens-end-yield): the ONE
+     * The End large-vein biome-modifier key (task nether-lens-end-yield): the ONE
      * row carrying the has_planet_veins yield condition — no planet mod: the modifier
      * applies and the five ORE_END rows generate in the End (the ruling B semantics:
      * GT6 self-sufficient); planet mod present: the conditions fail and the modifier
@@ -909,7 +909,7 @@ public final class GT6WorldgenDatagen {
                             VerticalAnchor.absolute(GTOreWorldgen.placedMaxY(tRow, tPair.dim()))),
                     BiomeFilter.biome());
         }
-        // task r6-c2-deep-band — the deep-band mirrors: PLACED-only (the row's OVERWORLD
+        // task c2-deep-band — the deep-band mirrors: PLACED-only (the row's OVERWORLD
         // configured feature is reused verbatim — its [4] target is the
         // #deepslate_ore_replaceables tag arm, so the deep band resolves the deepslate
         // family block), the band = the upstream band shifted DEEP_SHIFT down (the
@@ -942,7 +942,7 @@ public final class GT6WorldgenDatagen {
             for (GTOreWorldgen.Placement tPair : GTOreWorldgen.placementPairs()) {
                 if (tPair.dim() == tDim) tHolders.add(aPlaced.getOrThrow(GTOreWorldgen.placedKey(tPair.row(), tPair.dim())));
             }
-            // task r6-c2-deep-band — the deep-band mirrors ride the OVERWORLD modifier
+            // task c2-deep-band — the deep-band mirrors ride the OVERWORLD modifier
             // ("deep" is a key directory, not a Dim — the deepslate band is overworld
             // content), appended after the surface pairs.
             if (tDim == GTOreWorldgen.Dim.OVERWORLD) {
@@ -957,7 +957,7 @@ public final class GT6WorldgenDatagen {
     }
 
     // ------------------------------------------------------------------
-    // The lens companion-ore band (task r6-c3-lens-ores) — the C3 bone completion:
+    // The lens companion-ore band (task c3-lens-ores) — the C3 bone completion:
     // the upstream stone-LAYER companion-ore table (Loader_Worldgen.java:61-640, the
     // StoneLayerOres ctor rows — the card brief's "WorldgenStoneLayers.java:220-340"
     // was the placement logic; the table itself lives here) bound to the port's
@@ -975,7 +975,7 @@ public final class GT6WorldgenDatagen {
     // universe and the card rules out new ore blocks: rows outside it stay TABLE
     // data only — the GT6VeinGenerator.valid gate face (the molybdenum precedent),
     // 13 of 22 today. The gate is LIVE data, not a frozen list: the axis-extension
-    // card (r7-a-ore-axis-extension, B plan ruled — coordinator notice 2026-09-28)
+    // card (a-ore-axis-extension, B plan ruled — coordinator notice 2026-09-28)
     // widens the axis and these rows start generating with zero edits here (the
     // basalt row set is entirely gated today, so basalt generates no companion ore
     // until then).
@@ -1159,7 +1159,7 @@ public final class GT6WorldgenDatagen {
     }
 
     // ------------------------------------------------------------------
-    // The surface-plants + soil band (task p30-w6-t2-surface-blocks):
+    // The surface-plants + soil band (task w6-t2-surface-blocks):
     // - glowtus / bush = SIMPLE_BLOCK over the WorldgenOnSurface ray gates
     //   (amount x probability -> Count+RarityFilter); glowtus anchors on the
     //   water surface (HEIGHTMAP + the below-is-water predicate, the
@@ -1322,7 +1322,7 @@ public final class GT6WorldgenDatagen {
     private static GT6FallenLogFeature.Kind mKindOf(int aIndex) {
         return GT6FallenLogFeature.Kind.values()[aIndex];
     }
-    // The large-vein band (task p30-w6-t3-large-veins) — the 40-row vein table,
+    // The large-vein band (task w6-t3-large-veins) — the 40-row vein table,
     // Loader_Worldgen.java:886-925 row-for-row. Column order (WorldgenOresLarge.java:54
     // ctor): name / minY / maxY / weight / density / size / OreTop / OreBottom /
     // OreBetween / OreSpread. The "overworld" column = the row listed ORE_OVERWORLD
@@ -1346,7 +1346,7 @@ public final class GT6WorldgenDatagen {
     }
 
     /**
-     * The row helper for the ORE_END+ORE_OVERWORLD rows (task p31-nether-lens-end-yield:
+     * The row helper for the ORE_END+ORE_OVERWORLD rows (task nether-lens-end-yield:
      * platinum :904 / molybdenum :905 / cassiterite :906 — drawn in BOTH dimensions).
      */
     private static GTVeinConfig veinEnd(String aName, int aMinY, int aMaxY, int aWeight, int aDensity, int aSize,
@@ -1409,7 +1409,7 @@ public final class GT6WorldgenDatagen {
     );
 
     /**
-     * The ONE 20-row deep-band mirror vein table (task r6-c2-deep-band spec ①) — the
+     * The ONE 20-row deep-band mirror vein table (task c2-deep-band spec ①) — the
      * selected overworld rows of {@link #LARGE_VEIN_TABLE} with the band translated
      * {@code y - 64} (the {@link GTOreWorldgen#DEEP_SHIFT} rule: the 1.7.10 column [0, 128]
      * rides the bedrock-anchored translation onto modern [-64, +64], so the mirrored band
@@ -1457,7 +1457,7 @@ public final class GT6WorldgenDatagen {
     );
 
     /**
-     * The ONE 5-row strata-lens table (task p31-strata-lens) — the card spec's settled
+     * The ONE 5-row strata-lens table (task strata-lens) — the card spec's settled
      * marker-stone list, spec order. CLEAN CALIBRATION (the conflict-audit ORE_SIZE
      * lesson): rarity/shape/Y chosen fresh for the mountain-scale lens face, no P30
      * blob/small-ore curve reused. rarity = the weight of the exactly-one origin draw
@@ -1474,7 +1474,7 @@ public final class GT6WorldgenDatagen {
         new GTLensConfig("komatiite"  , 4,  8,  64, 36, 12));
 
     /**
-     * The ONE 17-stone nether-lens table (task p31-nether-lens-end-yield) — every stone of
+     * The ONE 17-stone nether-lens table (task nether-lens-end-yield) — every stone of
      * the upstream nether loop, GTStoneBlocks.STONES order (Loader_Worldgen.java:656 emits
      * one nether row per loop stone; the overworld prismarine-exclusion note rides the
      * GT6Worldgen javadoc, the 17-stone port universe). UNIFORM columns, the upstream
@@ -1497,7 +1497,7 @@ public final class GT6WorldgenDatagen {
             .toList();
 
     // ------------------------------------------------------------------
-    // The bedrock-ore band (task p31-bedrock-ore-worldgen) — the 46-row table,
+    // The bedrock-ore band (task bedrock-ore-worldgen) — the 46-row table,
     // Loader_Worldgen.java:725-770 row-for-row (the :772 hexorium row rides the MD.HEX
     // mod-gated compat pool, the 53-axis ruling face). Column order
     // (WorldgenOresBedrock.java:61-65): name / probability / material; the "overworld"
@@ -1570,8 +1570,8 @@ public final class GT6WorldgenDatagen {
     );
 
     // ------------------------------------------------------------------
-    // The bedrock-spring band (task p31-fluid-spring; the springFluid column
-    // returned by task p38-issue5-fluid-spring-nozzle) — the 16-row table,
+    // The bedrock-spring band (task fluid-spring; the springFluid column
+    // returned by task issue5-fluid-spring-nozzle) — the 16-row table,
     // Loader_Worldgen.java:782-797 row-for-row. Column order (WorldgenFluidSpring
     // .java:50): name / block / probability / overworld / springFluid; the
     // indicatorType column (:782-788 literals 2/2/2/2/1/3/1) stays the declared
@@ -1592,7 +1592,7 @@ public final class GT6WorldgenDatagen {
     }
 
     /**
-     * The shelter-dungeon structure (task p38-dungeon-framework, the upstream
+     * The shelter-dungeon structure (task dungeon-framework, the upstream
      * Loader_Worldgen.java:652 registration row): overworld-only biomes (the
      * {@code #minecraft:is_overworld} tag — the structure JSON biome gate the vanilla
      * findValidGenerationPoint applies at the Y20 stub), no spawn overrides, the
@@ -1657,7 +1657,7 @@ public final class GT6WorldgenDatagen {
     );
 
     // ------------------------------------------------------------------
-    // REVERTED: the gem-geode band (r6-33-geode, GitHub #33; budding row 3b6878913,
+    // REVERTED: the gem-geode band (33-geode, GitHub #33; budding row 3b6878913,
     // IntProvider pins c7b3c44d3) came out here — 4 gem materials x configured+placed+
     // biome-modifier, vanilla Feature.GEODE as pure JSON. User ruling 2026-09-28
     // (decisions.r8-geode-revert): "先r了，后续再看" — reverted for now, revisit later

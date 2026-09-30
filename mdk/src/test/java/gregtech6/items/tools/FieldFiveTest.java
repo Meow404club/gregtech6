@@ -26,7 +26,7 @@ import gregtech6.items.tools.loot.GT6ToolLootModifiers;
 import gregtech6.registry.GT6Tools;
 
 /**
- * Offline tests for task p29-w5-t4-field-five — the five field tools (the DigSixTest
+ * Offline tests for task w5-t4-field-five — the five field tools (the DigSixTest
  * bootstrapped-JVM form: every assertion rides the PURE static seams; the vanilla-tag
  * arms bind only with the datapack and are the live RCON legs).
  *

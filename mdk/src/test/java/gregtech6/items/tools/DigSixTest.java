@@ -27,7 +27,7 @@ import gregtech6.items.tools.loot.GT6ToolSweep;
 import gregtech6.registry.GT6Tools;
 
 /**
- * Offline tests for task p29-w5-t1-dig-six — the six dig tools + the shared loot/sweep
+ * Offline tests for task w5-t1-dig-six — the six dig tools + the shared loot/sweep
  * infrastructure (the GT6ToolsCreativeTabTest offline boot form: a bootstrapped-and-
  * frozen JVM cannot construct mod Items, so every assertion rides the PURE static seams
  * — the GTCrowbarItem.mines ruling).
@@ -69,7 +69,7 @@ public class DigSixTest {
 	 * The dig rows 10..15 — the six dig tools in display order. The TOTAL is the
 	 * later-card head pin (t8-armor precedent): the table only ever grows by appended
 	 * rows, so the dig card pins its own six rows and the >= floor, the blade-six card
-	 * (p29-w5-t2-blade-six, rows 16-21) owns the running total in BladeSixTest.
+	 * (w5-t2-blade-six, rows 16-21) owns the running total in BladeSixTest.
 	 */
 	@Test
 	public void tabTableHoldsTheSixDigRowsAtTenThroughFifteen() {

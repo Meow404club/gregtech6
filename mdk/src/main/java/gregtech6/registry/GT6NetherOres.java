@@ -16,7 +16,7 @@ import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 
 /**
- * Registration home of the GT6 NETHER surface-form block band (task p31-nether-lens-end-yield
+ * Registration home of the GT6 NETHER surface-form block band (task nether-lens-end-yield
  * spec ①, the coordinator-approved option A): 14 plain blocks carrying the three upstream
  * nether forms whose 1.7.10 carriers have no modern port —
  *

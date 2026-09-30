@@ -45,7 +45,7 @@ import gregtech6.tileentity.machines.TileEntityOven;
  * home instead of growing the example-chest registry).
  *
  * <p>Also wires {@link GT6RecipeMaps#init()} into the mod lifecycle — the W1 recipe-core
- * handoff left the FURNACE map un-initialized on purpose ("W2 (p4-machine-oven) wires
+ * handoff left the FURNACE map un-initialized on purpose ("W2 (machine-oven) wires
  * init() into the mod lifecycle", GT6RecipeMaps.java:36-37). init() is idempotent and
  * runs before any BlockEvent/BET registration, so every TileEntityOven resolves
  * {@code RM.Furnace} from its very first tick.
@@ -58,7 +58,7 @@ public final class GTMachines {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gt6");
 
 	// ---------------------------------------------------------------------------
-	// the Oven family (task p27-oven-heat-t-ladder) — the four Heat_T[1..4] rows
+	// the Oven family (task oven-heat-t-ladder) — the four Heat_T[1..4] rows
 	// Loader_MultiTileEntities.java:1288-1291 (aClass = MultiTileEntityBasicMachine,
 	// NBT_TEXTURE "oven" on every row, TD.Energy.HU upstream / the port EU carrier,
 	// RM.Furnace, no parallel keys): one class (GTOvenBlock), one BET (OVEN_BE — the
@@ -73,7 +73,7 @@ public final class GTMachines {
 	// ---------------------------------------------------------------------------
 
 	/**
-	 * The three upstream tier ladders (task p27-machine-material-tint-fidelity) — the
+	 * The three upstream tier ladders (task machine-material-tint-fidelity) — the
 	 * lazy material suppliers behind every row's NBT_MATERIAL column. Upstream
 	 * MT.java:3689-3691 declares them as Java 0-based arrays the Loader rows index
 	 * {@code [1..4]} (Loader_MultiTileEntities.java:1288-1318/:1343/:1373/:1379/:1398/
@@ -97,7 +97,7 @@ public final class GTMachines {
 	public static final java.util.List<java.util.function.Supplier<OreDictMaterial>> ELECTRIC_T_LADDER = java.util.List.of(
 			() -> gregapi.data.MT.SteelGalvanized, () -> gregapi.data.MT.Al, () -> gregapi.data.MT.StainlessSteel, () -> gregapi.data.MT.Cr);
 
-	// the T0 housing materials (task p28-c-ulv-machine-ladder) — upstream MT.java:3690-3691
+	// the T0 housing materials (task c-ulv-machine-ladder) — upstream MT.java:3690-3691
 	// index 0, the ladder rung BELOW the four [1..4] rows every existing family rides:
 	// Kinetic_T[0] = ANY.Wood ("Any Wood", ANY.java:77 createMaterial(-1, "Any Wood", ...);
 	// the port alias MT.AnyWood = ANY.Wood, MT.java:2801) and Electric_T[0] = TinAlloy
@@ -112,7 +112,7 @@ public final class GTMachines {
 
 	/**
 	 * The Electric_T[5] rung (Ti, upstream MT.java:3691 index 5) — the 5-tier 立行制's
-	 * material column (task p29-w2-energy-types-5tier ②, the Electrolyzer family the
+	 * material column (task w2-energy-types-5tier ②, the Electrolyzer family the
 	 * first consumer, card ②). Same lazy-supplier form as the T0 rungs above (the
 	 * GTWireSpecs:35 ruling — the registry classes load before {@code MT.init()}).
 	 */
@@ -129,7 +129,7 @@ public final class GTMachines {
 	 * MT.java:3689 locals ANY.Steel/Invar/Ti/TungstenCarbide, the same Steel/Invar/
 	 * Titanium/Tungsten Carbide word set the Dryer/Distillery/Extruder Heat_T families
 	 * carry; the :1289 hardness 4.0F is the upstream T2 special case). The material
-	 * column is the task p27-machine-material-tint-fidelity NBT_MATERIAL mirror.
+	 * column is the task machine-material-tint-fidelity NBT_MATERIAL mirror.
 	 */
 	public static final java.util.List<OvenRow> OVEN_ROWS = java.util.List.of(
 			new OvenRow("oven"   , "steel"           , "Steel"           , HEAT_T_LADDER.get(0), 20001,  6.0F, 0),
@@ -191,8 +191,8 @@ public final class GTMachines {
 			java.util.List.of(OVEN_ITEM, OVEN_T2_ITEM, OVEN_T3_ITEM, OVEN_T4_ITEM);
 
 	// ---------------------------------------------------------------------------
-	// the Shredder/Crusher/Lathe machine family (task p7-basicmachine-family ②/③, the
-	// T2-T4 full ladder added by task p8-machine-tiers-doinject ①) — the registration rows
+	// the Shredder/Crusher/Lathe machine family (task basicmachine-family ②/③, the
+	// T2-T4 full ladder added by task machine-tiers-doinject ①) — the registration rows
 	// Loader_MultiTileEntities.java:1294-1309: hardness/resistance 7.0F; NBT_INPUT
 	// 32/128/512/2048 → the :126 conversion min = in/2, max = in*2 (TIER_INPUTS below);
 	// Crusher alone carries NBT_PARALLEL 4/8/16/32 + NBT_PARALLEL_DURATION T
@@ -211,7 +211,7 @@ public final class GTMachines {
 	 * min = in/2 / max = in*2): TIER_INPUTS[tier] = {mInputMin, mInput, mInputMax} for
 	 * tier 0 (T1, the :98 field defaults) .. tier 3 (T4).
 	 *
-	 * <p>Naming semantics (task p27-machine-energy-display-fix, constant kept — the RCON/
+	 * <p>Naming semantics (task machine-energy-display-fix, constant kept — the RCON/
 	 * command/test churn outweighs the rename): a MATERIAL tier ladder, not a voltage one —
 	 * the four tier variants ride the Kinetic/Heat_T material words ({@link
 	 * #KINETIC_TIER_MAT_SLUGS}, Kinetic_T[1..4] MT.java:3690); voltage names (LV/MV/HV/EV)
@@ -220,7 +220,7 @@ public final class GTMachines {
 	public static final long[][] TIER_INPUTS = {{16, 32, 64}, {64, 128, 256}, {256, 512, 1024}, {1024, 2048, 4096}};
 
 	/**
-	 * The ULV voltage window (task p28-c-ulv-machine-ladder) — V[0] = 8 EU × 1 A through the
+	 * The ULV voltage window (task c-ulv-machine-ladder) — V[0] = 8 EU × 1 A through the
 	 * same :126 conversion the TIER_INPUTS rows ride (min = in/2, max = in*2): mInputMin 4 /
 	 * mInput 8 / mInputMax 16. The packet-domain closure (research.p28-r-ulv-tier-design
 	 * chain_closure): the 8 EU packet of the FE converter / the ULV Electric Dynamo lands
@@ -235,7 +235,7 @@ public final class GTMachines {
 	public static final long[] ULV_TIER_INPUTS = {4, 8, 16};
 
 	/**
-	 * The 5-tier voltage window (task p29-w2-energy-types-5tier ②) — the :126 conversion
+	 * The 5-tier voltage window (task w2-energy-types-5tier ②) — the :126 conversion
 	 * (min = in/2, max = in*2) over NBT_INPUT 8192: mInputMin 4096 / mInput 8192 /
 	 * mInputMax 16384 (the T5 Electrolyzer row NBT_INPUT column, Loader_MultiTileEntities
 	 * .java:1340). A PARALLEL constant to {@link #TIER_INPUTS} by design: the 4-row table
@@ -260,8 +260,8 @@ public final class GTMachines {
 	 * The shared 4/8/16/32 parallel table (the W1 合流互指 ruling, never re-defined): the
 	 * upstream NBT_PARALLEL {4, 8, 16, 32} + NBT_PARALLEL_DURATION T shape carried by the
 	 * Crusher rows (:1300-1303), the Sifter (:1312-1315) / Compressor (:1343-1346) rows
-	 * (task p26-w1-sifter-compressor-wiremill) AND the Press rows (:1425-1428, task
-	 * p26-w1-press-extruder-molds) — one constant, every consumer references it. Declared
+	 * (task w1-sifter-compressor-wiremill) AND the Press rows (:1425-1428, task
+	 * w1-press-extruder-molds) — one constant, every consumer references it. Declared
 	 * BEFORE its consumers (the static-initializer order — the illegal-forward-reference
 	 * lesson).
 	 */
@@ -271,19 +271,19 @@ public final class GTMachines {
 	public static final int[] CRUSHER_PARALLEL = PARALLEL_4_32;
 
 	/**
-	 * The Centrifuge NON-standard parallel table (task p29-w1-rm-maps-scaffold ③): the
+	 * The Centrifuge NON-standard parallel table (task w1-rm-maps-scaffold ③): the
 	 * upstream NBT_PARALLEL {1, 2, 4, 8} + NBT_PARALLEL_DURATION T columns of the four
 	 * Centrifuge rows (Loader_MultiTileEntities.java:1330-1333) — the T1 = 1 arm is what
 	 * makes the ladder non-standard, unlike the 4/8/16/32 Crusher/Sifter/Compressor/Press
 	 * shape ({@link #PARALLEL_4_32}). NO consumer row yet (the batch C Centrifuge family,
-	 * card p29-w1-kinetic-process-ladder, consumes it); declared BEFORE its consumers per
+	 * card w1-kinetic-process-ladder, consumes it); declared BEFORE its consumers per
 	 * the static-initializer order lesson, next to {@link #PARALLEL_4_32} as the card
 	 * ordered.
 	 */
 	public static final int[] CENTRIFUGE_PARALLEL = {1, 2, 4, 8};
 
 	/**
-	 * The CryoMixer parallel table (task p29-w2-energy-types-5tier ④): the upstream
+	 * The CryoMixer parallel table (task w2-energy-types-5tier ④): the upstream
 	 * NBT_PARALLEL {4, 8, 16, 32, 64} + NBT_PARALLEL_DURATION T columns of the five CU
 	 * CryoMixer rows (Loader_MultiTileEntities.java:1628-1632) — the T1 = 4 arm matches
 	 * the PARALLEL_4_32 shape extended one rung. Declared BEFORE its consumer (card ④
@@ -293,7 +293,7 @@ public final class GTMachines {
 	public static final int[] CRYO_PARALLEL = {4, 8, 16, 32, 64};
 
 	/**
-	 * The Electrolyzer parallel table (task p29-w2-eu-core-5tier): the upstream NBT_PARALLEL
+	 * The Electrolyzer parallel table (task w2-eu-core-5tier): the upstream NBT_PARALLEL
 	 * {1, 2, 4, 8, 16} + NBT_PARALLEL_DURATION T columns of the five EU Electrolyzer rows
 	 * (Loader_MultiTileEntities.java:1336-1340) — the FIRST FIVE-RUNG parallel table (the
 	 * T5 arm rides {@link #EV_TIER_INPUTS}), the T1 = 1 arm matching the NON-standard
@@ -303,8 +303,8 @@ public final class GTMachines {
 	 */
 	public static final int[] ELECTROLYZER_PARALLEL = {1, 2, 4, 8, 16};
 
-	// the composed tier-ladder name face (task p20-i18n-compose-rows, materialized by task
-	// p27-machine-energy-display-fix): the "{Machine} (Material)" rows compose from the
+	// the composed tier-ladder name face (task i18n-compose-rows, materialized by task
+	// machine-energy-display-fix): the "{Machine} (Material)" rows compose from the
 	// machine word + the Kinetic_T material word — the upstream name column is
 	// "Shredder ("+aMat.getLocal()+")" over Kinetic_T[1..4] (:1294-1309, MT.java:3690),
 	// NOT an ordinal tier (the voltage names ride the Electric_T motor classes only — the
@@ -313,7 +313,7 @@ public final class GTMachines {
 	public static final String MACHINE_SHREDDER_UNIT_KEY = "gt6.row.machine.shredder";
 	public static final String MACHINE_CRUSHER_UNIT_KEY = "gt6.row.machine.crusher";
 	public static final String MACHINE_LATHE_UNIT_KEY = "gt6.row.machine.lathe";
-	// the W1 Kinetic trio unit keys (task p26-w1-sifter-compressor-wiremill, the :101-104
+	// the W1 Kinetic trio unit keys (task w1-sifter-compressor-wiremill, the :101-104
 	// shape): the MachineRow carrier fills exactly ONE format slot (the gt6.row.mat unit —
 	// the tier rides the material word, Kinetic_T[1..4] = Bronze/Steel/Titanium/
 	// Tungstensteel), so the family template rides its unit key's value ("Sifter (%s)" —
@@ -321,7 +321,7 @@ public final class GTMachines {
 	public static final String MACHINE_SIFTER_UNIT_KEY = "gt6.row.machine.sifter";
 	public static final String MACHINE_COMPRESSOR_UNIT_KEY = "gt6.row.machine.compressor";
 	public static final String MACHINE_WIREMILL_UNIT_KEY = "gt6.row.machine.wiremill";
-	// the p28-c-ulv-machine-ladder one-slot templates: the W1 trio unit-key shape extended
+	// the c-ulv-machine-ladder one-slot templates: the W1 trio unit-key shape extended
 	// to the three families whose legacy ladders have no row-carrier template face — the
 	// Shredder/Crusher ULV rows are row CARRIERS (their T1-T4 siblings stay tierOf), and
 	// the row getName() fills exactly ONE slot (the GTBasicMachineBlock :221 compose form),
@@ -333,9 +333,9 @@ public final class GTMachines {
 	public static final String MACHINE_CRUSHER_DISPLAY_KEY = "gt6.row.machine.crusher.display";
 	/** The Rolling Mill family unit word (the W1 trio :101-104 key form; upstream name column "Rolling Mill ("+aMat.getLocal()+")", Loader:1349-1352). */
 	public static final String MACHINE_ROLLING_MILL_UNIT_KEY = "gt6.row.machine.rolling_mill";
-	/** The Press family unit word (task p26-w1-press-extruder-molds, the :101-104 key form). */
+	/** The Press family unit word (task w1-press-extruder-molds, the :101-104 key form). */
 	public static final String MACHINE_PRESS_UNIT_KEY = "gt6.row.machine.press";
-	/** The Extruder family unit word (task p26-w1-press-extruder-molds, T2-T4; the :101-104 key form). */
+	/** The Extruder family unit word (task w1-press-extruder-molds, T2-T4; the :101-104 key form). */
 	public static final String MACHINE_EXTRUDER_UNIT_KEY = "gt6.row.machine.extruder";
 	/** The T1 Extruder unit word — the upstream name column differs at T1: "Low Heat Extruder" (:1406) vs "Extruder" (:1407-1409). */
 	public static final String MACHINE_EXTRUDER_LOW_HEAT_UNIT_KEY = "gt6.row.machine.extruder_low_heat";
@@ -354,7 +354,7 @@ public final class GTMachines {
 	 * words (this ladder and the Heat_T Dryer/Oven ladders alike); voltage names (LV/MV/HV/
 	 * EV) belong to the Electric_T motor classes only (the Canner family, :1379-1382).
 	 * T1 keeps the pre-ladder atomic name ("Shredder", block.gt6.shredder), T2-T4 compose
-	 * over {@code gt6.row.mat.<slug>} — task p27-machine-energy-display-fix retired the
+	 * over {@code gt6.row.mat.<slug>} — task machine-energy-display-fix retired the
 	 * ordinal gt6.row.tier.* units.
 	 */
 	public static final String[] KINETIC_TIER_MAT_SLUGS = {"bronze", "steel", "titanium", "tungstensteel"};
@@ -404,7 +404,7 @@ public final class GTMachines {
 			() -> new GTBasicMachineBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(12.5F, 12.5F).sound(SoundType.METAL), () -> GTMachines.LATHE_BE.get(), null, tierName(MACHINE_LATHE_UNIT_KEY, 4), KINETIC_T_LADDER.get(3)));
 
 	/**
-	 * One BET per machine FAMILY (task p8-machine-tiers-doinject ①, the P6 barrel-ladder
+	 * One BET per machine FAMILY (task machine-tiers-doinject ①, the P6 barrel-ladder
 	 * precedent): the class and the configuration factory are shared, the validBlocks set
 	 * multi-attaches the four tier blocks T1-T4 (Builder.of varargs), and the factory reads
 	 * the tier off the placed BlockState (the tier rows are compile-time constants upstream
@@ -418,14 +418,14 @@ public final class GTMachines {
 	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> SHREDDER_BE =
 			BLOCK_ENTITY_TYPES.register("shredder", () -> BlockEntityType.Builder.of(
 					(aPos, aState) -> {
-						// task p28-c-ulv-machine-ladder: the ULV row carrier (the ONLY row
+						// task c-ulv-machine-ladder: the ULV row carrier (the ONLY row
 						// this family carries) routes through the machineUlv arm — the
 						// T1-T4 tier blocks keep the tierOf dispatch below, byte-identical
 						GTBasicMachineBlock.MachineRow tRow = ((GTBasicMachineBlock)aState.getBlock()).row();
 						if (tRow != null) return machineUlv(GTMachines.SHREDDER_BE.get(), aPos, aState, tRow);
 						return machine(GTMachines.SHREDDER_BE.get(), aPos, aState, GT6RecipeMaps.SHREDDER, 1, false,
 								TD.Energy.RU, tierOf(aState.getBlock(), GTMachines.SHREDDER, GTMachines.SHREDDER_T2, GTMachines.SHREDDER_T3, GTMachines.SHREDDER_T4),
-								null /*ModularUI family — no vanilla MenuType (p26-mui-a-menu-deregistration)*/);
+								null /*ModularUI family — no vanilla MenuType (mui-a-menu-deregistration)*/);
 					},
 					SHREDDER.get(), SHREDDER_T2.get(), SHREDDER_T3.get(), SHREDDER_T4.get(),
 					GTMachines.SHREDDER_ULV.get() /*the p28 ULV row, the qualified forward-reference form (the P6 lambda lesson)*/).build(null));
@@ -439,7 +439,7 @@ public final class GTMachines {
 						return machine(GTMachines.CRUSHER_BE.get(), aPos, aState, GT6RecipeMaps.CRUSHER,
 								CRUSHER_PARALLEL[tierOf(aState.getBlock(), GTMachines.CRUSHER, GTMachines.CRUSHER_T2, GTMachines.CRUSHER_T3, GTMachines.CRUSHER_T4)], true,
 								TD.Energy.KU, tierOf(aState.getBlock(), GTMachines.CRUSHER, GTMachines.CRUSHER_T2, GTMachines.CRUSHER_T3, GTMachines.CRUSHER_T4),
-								null /*ModularUI family — no vanilla MenuType (p26-mui-a-menu-deregistration)*/);
+								null /*ModularUI family — no vanilla MenuType (mui-a-menu-deregistration)*/);
 					},
 					CRUSHER.get(), CRUSHER_T2.get(), CRUSHER_T3.get(), CRUSHER_T4.get(),
 					GTMachines.CRUSHER_ULV.get() /*the p28 ULV row*/).build(null));
@@ -448,7 +448,7 @@ public final class GTMachines {
 			BLOCK_ENTITY_TYPES.register("lathe", () -> BlockEntityType.Builder.of(
 					(aPos, aState) -> machine(GTMachines.LATHE_BE.get(), aPos, aState, GT6RecipeMaps.LATHE, 1, false,
 							TD.Energy.RU, tierOf(aState.getBlock(), GTMachines.LATHE, GTMachines.LATHE_T2, GTMachines.LATHE_T3, GTMachines.LATHE_T4),
-							null /*ModularUI family — no vanilla MenuType (p26-mui-a-menu-deregistration)*/),
+							null /*ModularUI family — no vanilla MenuType (mui-a-menu-deregistration)*/),
 					LATHE.get(), LATHE_T2.get(), LATHE_T3.get(), LATHE_T4.get()).build(null));
 
 	public static final RegistryObject<Item> SHREDDER_ITEM = ITEMS.register("shredder",
@@ -479,7 +479,7 @@ public final class GTMachines {
 			() -> new gregtech6.item.GT6MachineBlockItem(LATHE_T4.get(), new Item.Properties(), "machine:lathe_t4"));
 
 	// ---------------------------------------------------------------------------
-	// the Dryer family (task p14-dryer-family) — the four rows
+	// the Dryer family (task dryer-family) — the four rows
 	// Loader_MultiTileEntities.java:1476-1480 (aClass = MultiTileEntityBasicMachine,
 	// NBT_TEXTURE "dryer", TD.Energy.HU, RM.Drying, NBT_CHEAP_OVERCLOCKING T,
 	// NBT_PARALLEL_DURATION T). ONE family BET over the four tier blocks — the tier
@@ -492,7 +492,7 @@ public final class GTMachines {
 	// four auto sides are the :139/:140/:145/:146 columns (the auto-IO pool, data-only).
 	// ---------------------------------------------------------------------------
 
-	/** The Dryer family display template key ({@code gt6.row.dryer.display}, task p20-i18n-compose-rows). */
+	/** The Dryer family display template key ({@code gt6.row.dryer.display}, task i18n-compose-rows). */
 	public static final String DRYER_DISPLAY_KEY = "gt6.row.dryer.display";
 
 	/** The four Dryer rows, upstream line order :1477-1480 (T1-T4). */
@@ -506,7 +506,7 @@ public final class GTMachines {
 	 * One row factory — the four Dryer columns that differ (path/name/id/material/hardness/
 	 * tier/parallel) plus the seven that are family constants (RM.Drying through the
 	 * supplier, HU, "dryer" texture, the masks, the auto sides, cheap overclocking T) and
-	 * the {@code gt6:dryer} MenuType through the supplier (task p16-machine-fluid-gui ① —
+	 * the {@code gt6:dryer} MenuType through the supplier (task machine-fluid-gui ① —
 	 * the p14 row.menu pool promise redeemed; the supplier form survives the deferred
 	 * registration, the BE reads it lazily at createMenu time).
 	 */
@@ -520,7 +520,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A),
 				(byte)5 /*NBT_TANK_SIDE_AUTO_IN SIDE_BACK*/, (byte)1 /*NBT_TANK_SIDE_AUTO_OUT SIDE_TOP*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				GTBasicMachinesMenus.DRYER_MENU::get /*gt6:dryer — the GUI pool card redeemed (p16-machine-fluid-gui ①)*/, true /*NBT_CHEAP_OVERCLOCKING T*/, null /*no melting gate on the legacy rows (p28-c-ulv-machine-ladder)*/, false);
+				GTBasicMachinesMenus.DRYER_MENU::get /*gt6:dryer — the GUI pool card redeemed (machine-fluid-gui ①)*/, true /*NBT_CHEAP_OVERCLOCKING T*/, null /*no melting gate on the legacy rows (c-ulv-machine-ladder)*/, false);
 	}
 
 	/** The registered Dryer blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
@@ -567,7 +567,7 @@ public final class GTMachines {
 	/**
 	 * The Dryer BET factory body: the row's parallel/duration/energy-type/tier-input half
 	 * rides the shared {@link #machine} helper (the menu travels as the row's
-	 * {@code gt6:dryer} supplier, task p16-machine-fluid-gui ①), then the W1a carrier
+	 * {@code gt6:dryer} supplier, task machine-fluid-gui ①), then the W1a carrier
 	 * assignment lands the row's connectivity masks directly on the BE
 	 * (mEnergyInputs/mFluidInputs/mFluidOutputs — the :511/:566/:575 gate geometry;
 	 * the default 127 zero-regression stays proven for the legacy families).
@@ -582,10 +582,10 @@ public final class GTMachines {
 	/**
 	 * The row→BE mask assignment (public — the offline row test drives it against the
 	 * fixture machine; the BET factory calls it right after the {@link #machine} half).
-	 * Task p28-c-ulv-machine-ladder adds the melting-gate column: the row's
+	 * Task c-ulv-machine-ladder adds the melting-gate column: the row's
 	 * {@code maxMeltingPointK} rides onto {@code mMaxMeltingPointK} with the masks
 	 * (null = no gate, the every-legacy-row shape — the gate arms only on the ULV rows).
-	 * Task p29-w1-rm-maps-scaffold adds the efficiency column: the row's
+	 * Task w1-rm-maps-scaffold adds the efficiency column: the row's
 	 * {@code efficiency} rides onto {@code mEfficiency} through the upstream :125 bind form
 	 * {@code bind(0, 10000, value)} — null = no NBT_EFFICIENCY key, the BE keeps its :96
 	 * default 10000 and the progress math stays byte-identical (the zero-drift face).
@@ -600,7 +600,7 @@ public final class GTMachines {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the Canner family (task p24-canner-machine) — the four rows
+	// the Canner family (task canner-machine) — the four rows
 	// Loader_MultiTileEntities.java:1379-1382 (aClass = MultiTileEntityBasicMachineElectric,
 	// NBT_TEXTURE "canner", TD.Energy.EU, RM.Canner, NBT_USE_OUTPUT_TANK T, NBT_TANK_CAPACITY
 	// 128000/512000/2048000/8192000, no NBT_PARALLEL → 1, no NBT_PARALLEL_DURATION → F).
@@ -650,7 +650,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_D*/,
 				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BOTTOM*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				GTBasicMachinesMenus.CANNER_MENU::get /*gt6:canner*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows (p28-c-ulv-machine-ladder)*/, false);
+				GTBasicMachinesMenus.CANNER_MENU::get /*gt6:canner*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows (c-ulv-machine-ladder)*/, false);
 	}
 
 	/** The registered Canner blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
@@ -684,7 +684,7 @@ public final class GTMachines {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the Press family (task p26-w1-press-extruder-molds) — the four rows
+	// the Press family (task w1-press-extruder-molds) — the four rows
 	// Loader_MultiTileEntities.java:1425-1428 (aClass = MultiTileEntityBasicMachine,
 	// NBT_TEXTURE "press", TD.Energy.KU, RM.Press, NBT_PARALLEL 4/8/16/32 +
 	// NBT_PARALLEL_DURATION T, no tank keys — the map is 0/0/0 fluids). ONE family BET
@@ -773,7 +773,7 @@ public final class GTMachines {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the Extruder family (task p26-w1-press-extruder-molds) — the four rows
+	// the Extruder family (task w1-press-extruder-molds) — the four rows
 	// Loader_MultiTileEntities.java:1406-1409 (aClass = MultiTileEntityBasicMachine,
 	// NBT_TEXTURE "extruder", TD.Energy.HU, RM.Extruder, no parallel key → 1, no
 	// NBT_PARALLEL_DURATION → F, no tank keys). ONE family BET over the four tier
@@ -955,7 +955,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_D*/,
 				(byte)-1 /*no NBT_TANK_SIDE_AUTO_IN key → SIDE_UNDEFINED*/, (byte)-1 /*no NBT_TANK_SIDE_AUTO_OUT key → SIDE_UNDEFINED*/,
 				(byte)1 /*NBT_INV_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_INV_SIDE_AUTO_OUT SIDE_BOTTOM*/,
-				null /*the menu-less carrier — zero new gt6:* MenuType (the card GUI clause)*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows (p28-c-ulv-machine-ladder)*/, false);
+				null /*the menu-less carrier — zero new gt6:* MenuType (the card GUI clause)*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows (c-ulv-machine-ladder)*/, false);
 	}
 
 	/** One Compressor row factory — the sifter shape verbatim over the :1343 masks (energy SBIT_L) and RM.Compressor/KU. */
@@ -969,7 +969,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_D*/,
 				(byte)-1 /*SIDE_UNDEFINED*/, (byte)-1 /*SIDE_UNDEFINED*/,
 				(byte)1 /*NBT_INV_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_INV_SIDE_AUTO_OUT SIDE_BOTTOM*/,
-				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows (p28-c-ulv-machine-ladder)*/, false);
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows (c-ulv-machine-ladder)*/, false);
 	}
 
 	/** One Wiremill row factory — the :1373 masks (left in / right out, energy SBIT_B), RM.Wiremill/RU, NO parallel key → 1. */
@@ -983,7 +983,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R*/,
 				(byte)-1 /*SIDE_UNDEFINED*/, (byte)-1 /*SIDE_UNDEFINED*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows (p28-c-ulv-machine-ladder)*/, false);
+				null /*the menu-less carrier*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows (c-ulv-machine-ladder)*/, false);
 	}
 
 	/** The registered Sifter blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
@@ -1097,7 +1097,7 @@ public final class GTMachines {
 	 * The W1-trio BET factory body — the dryerMachine body verbatim (the row carries every
 	 * column the three families need; no extra registration columns, unlike the Canner).
 	 * Shared by all three BETs (the row drives the recipe map, energy type, parallel and
-	 * masks; only the BlockEntityType argument differs). Task p28-c-ulv-machine-ladder adds
+	 * masks; only the BlockEntityType argument differs). Task c-ulv-machine-ladder adds
 	 * the ULV arm: a row with the {@code ulvVoltage} marker routes through
 	 * {@link #machineUlv} (the {4, 8, 16} window), the T1-T4 rows keep the TIER_INPUTS
 	 * assignment byte-identical.
@@ -1111,7 +1111,7 @@ public final class GTMachines {
 	}
 
 	/**
-	 * The ULV row→BE factory arm (task p28-c-ulv-machine-ladder): the {@link #machine}
+	 * The ULV row→BE factory arm (task c-ulv-machine-ladder): the {@link #machine}
 	 * half verbatim, then the V[0] window {@link #ULV_TIER_INPUTS} = {4, 8, 16} overrides
 	 * the TIER_INPUTS[tier] assignment (the row's ulvVoltage marker is the selector — the
 	 * upstream NBT_INPUT column the port folds into tier cannot say "8" for a tier-0 row).
@@ -1127,7 +1127,7 @@ public final class GTMachines {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the p28-c-ulv-machine-ladder ULV machine ladder — the six V[0] = 8 EU x 1 A rows
+	// the c-ulv-machine-ladder ULV machine ladder — the six V[0] = 8 EU x 1 A rows
 	// (min 4 / in 8 / max 16, every row gated at 1375 K). NO upstream VN[0] machine
 	// exists (research.p28-r-ulv-tier-design upstream_census: only the Transformer :881
 	// and the two Battery rows :1009/:1033) — the whole ladder is the declared-deviation
@@ -1300,7 +1300,7 @@ public final class GTMachines {
 					rollingmillBlockArray()).build(null));
 
 	// ---------------------------------------------------------------------------
-	// the P29 W1 roll-ladder families (task p29-w1-kinetic-roll-ladder) — RollingMill
+	// the P29 W1 roll-ladder families (task w1-kinetic-roll-ladder) — RollingMill
 	// (RU, :1349-1352), RollBender (RU, :1355-1358), RollFormer (RU, :1361-1364) and
 	// ClusterMill (RU, :1367-1370), all MultiTileEntityBasicMachine with
 	// MT.DATA.Kinetic_T[1..4] (Bronze / ANY.Steel / Ti / TungstenSteel), NBT_INPUT
@@ -1500,7 +1500,7 @@ public final class GTMachines {
 					(aPos, aState) -> kineticMachine(GTMachines.CLUSTERMILL_BE.get(), aPos, aState),
 					clustermillBlockArray()).build(null));
 
-	// the P29 W1 EU/HU families (task p29-w1-eu-hu-families) — six machine families
+	// the P29 W1 EU/HU families (task w1-eu-hu-families) — six machine families
 	// plus the Mixer kinetic ladder, all MachineRow carriers over ONE family BET each
 	// (the W1-trio shape; the registration rows are the upstream lines verbatim):
 	//
@@ -1981,10 +1981,10 @@ public final class GTMachines {
 					fermenterBlockArray()).build(null));
 
 	// ---------------------------------------------------------------------------
-	// the P29 W2 exotic-energy families (task p29-w2-exotic-energy) — six machine families
+	// the P29 W2 exotic-energy families (task w2-exotic-energy) — six machine families
 	// over the THREE exotic energy domains, the first machine consumers of MU/LU/CU in this
 	// repo (the supply side is the /gt6energy source-block dial, GTEnergySourceBlockEntity
-	// .resolveEnergyType :293-308 — the p29-w2-energy-types-5tier precedent chain; the
+	// .resolveEnergyType :293-308 — the w2-energy-types-5tier precedent chain; the
 	// generators stay deferred, no upstream source exists, the S9 ruling):
 	//
 	//   Polarizer         20221-20225  MU  RM.Polarizer          :1418-1422  parallel 1
@@ -2220,7 +2220,7 @@ public final class GTMachines {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the small Matter Fabricator 5-ladder (task p31-massfab) — the five rows
+	// the small Matter Fabricator 5-ladder (task massfab) — the five rows
 	// Loader_MultiTileEntities.java:1542-1546 (MultiTileEntityBasicMachine, MT.Osmiridium
 	// on EVERY rung, NBT_HARDNESS 16.0F == NBT_RESISTANCE, NBT_TEXTURE "massfab",
 	// NBT_ENERGY_ACCEPTED TD.Energy.QU, RM.Massfab, NBT_CHEAP_OVERCLOCKING T,
@@ -2291,7 +2291,7 @@ public final class GTMachines {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the QU machine pair (task p32-qu-scanner-replicator) — the Molecular Scanner T3
+	// the QU machine pair (task qu-scanner-replicator) — the Molecular Scanner T3
 	// (Loader_MultiTileEntities.java:1551, the ONLY active scanner rung; T1/T2/T4/T5 :1549-
 	// :1550/:1552-1553 are commented out upstream) and the Matter Replicator T1-T3
 	// (:1556-1558; the :1559-1560 T4/T5 rungs are upstream-active but OUTSIDE the card
@@ -2313,7 +2313,7 @@ public final class GTMachines {
 	// machines stay reachable via the machines creative tab.
 	//
 	// The runtime consumption rides the LIVE map subclasses
-	// (GT6RecipeMapScannerMolecular / GT6RecipeMapReplicator) over the p32-usb-data
+	// (GT6RecipeMapScannerMolecular / GT6RecipeMapReplicator) over the usb-data
 	// USB-stick data plane: the scanner writes gt.replicator.data+tier3, the replicator
 	// consumes USB+matter fluids into the replicated material.
 	// ---------------------------------------------------------------------------
@@ -2440,8 +2440,8 @@ public final class GTMachines {
 		registerExoticFamily(FREEZER_ROWS, FREEZER_BLOCKS_BY_PATH, FREEZER_ITEMS_BY_PATH, () -> GTMachines.FREEZER_BE);
 		registerExoticFamily(CRYO_MIXER_ROWS, CRYO_MIXER_BLOCKS_BY_PATH, CRYO_MIXER_ITEMS_BY_PATH, () -> GTMachines.CRYO_MIXER_BE);
 		registerExoticFamily(MASSFAB_SMALL_ROWS, MASSFAB_SMALL_BLOCKS_BY_PATH, MASSFAB_SMALL_ITEMS_BY_PATH, () -> GTMachines.MASSFAB_SMALL_BE);
-		registerExoticFamily(MOLECULAR_SCANNER_ROWS, MOLECULAR_SCANNER_BLOCKS_BY_PATH, MOLECULAR_SCANNER_ITEMS_BY_PATH, () -> GTMachines.MOLECULAR_SCANNER_BE); // task p32-qu-scanner-replicator
-		registerExoticFamily(REPLICATOR_ROWS, REPLICATOR_BLOCKS_BY_PATH, REPLICATOR_ITEMS_BY_PATH, () -> GTMachines.REPLICATOR_BE); // task p32-qu-scanner-replicator
+		registerExoticFamily(MOLECULAR_SCANNER_ROWS, MOLECULAR_SCANNER_BLOCKS_BY_PATH, MOLECULAR_SCANNER_ITEMS_BY_PATH, () -> GTMachines.MOLECULAR_SCANNER_BE); // task qu-scanner-replicator
+		registerExoticFamily(REPLICATOR_ROWS, REPLICATOR_BLOCKS_BY_PATH, REPLICATOR_ITEMS_BY_PATH, () -> GTMachines.REPLICATOR_BE); // task qu-scanner-replicator
 	}
 
 	/**
@@ -2539,7 +2539,7 @@ public final class GTMachines {
 					(aPos, aState) -> exoticMachine(GTMachines.MASSFAB_SMALL_BE.get(), aPos, aState),
 					massfabSmallBlockArray()).build(null));
 
-	// the QU machine pair BETs (task p32-qu-scanner-replicator) — the exotic shape over
+	// the QU machine pair BETs (task qu-scanner-replicator) — the exotic shape over
 	// the shared {@link #exoticMachine} body; all rungs sit at tiers 0..2, inside the
 	// TIER_INPUTS table (the :126 conversion over NBT_INPUT 32/128/512, :1551/:1556-1558)
 	public static final RegistryObject<BlockEntityType<TileEntityBasicMachine>> MOLECULAR_SCANNER_BE =
@@ -2573,7 +2573,7 @@ public final class GTMachines {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the Advanced Crafting Table (task p24-act-machine) — the SINGLE-VARIANT machine
+	// the Advanced Crafting Table (task act-machine) — the SINGLE-VARIANT machine
 	// (decisions.p24-act-be-form: the upstream MTE extends TileEntityBase09FacingSingle,
 	// NOT the TileEntityBasicMachine energy family — zero energy, zero tick auto-craft —
 	// so the registration is the OVEN three-row shape, not a MachineRow ladder): one
@@ -2596,7 +2596,7 @@ public final class GTMachines {
 
 
 	// ---------------------------------------------------------------------------
-	// the Distillery family (task p16-distillery-family ②) — the four rows
+	// the Distillery family (task distillery-family ②) — the four rows
 	// Loader_MultiTileEntities.java:1398-1401 (aClass = MultiTileEntityBasicMachine,
 	// NBT_TEXTURE "distillery", TD.Energy.HU, RM.Distillery, NBT_CHEAP_OVERCLOCKING T,
 	// NBT_PARALLEL_DURATION T). ONE family BET over the four tier blocks — the same
@@ -2611,7 +2611,7 @@ public final class GTMachines {
 	// dryer).
 	// ---------------------------------------------------------------------------
 
-	/** The Distillery family display template key ({@code gt6.row.distillery.display}, task p20-i18n-compose-rows). */
+	/** The Distillery family display template key ({@code gt6.row.distillery.display}, task i18n-compose-rows). */
 	public static final String DISTILLERY_DISPLAY_KEY = "gt6.row.distillery.display";
 
 	/** The four Distillery rows, upstream line order :1398-1401 (T1-T4). */
@@ -2637,7 +2637,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A),
 				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)5 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BACK*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				null /*the menu-less carrier — the GUI pool precedent*/, true /*NBT_CHEAP_OVERCLOCKING T*/, null /*no melting gate on the legacy rows (p28-c-ulv-machine-ladder)*/, false);
+				null /*the menu-less carrier — the GUI pool precedent*/, true /*NBT_CHEAP_OVERCLOCKING T*/, null /*no melting gate on the legacy rows (c-ulv-machine-ladder)*/, false);
 	}
 
 	/** The registered Distillery blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
@@ -2664,26 +2664,26 @@ public final class GTMachines {
 	}
 
 	/**
-	 * The paint-tint walker (task p21-paintable-tint-render; the Canner ladder joins in task
-	 * p24-canner-machine; the W1 Kinetic trio joins in task p26-w1-sifter-compressor-wiremill;
-	 * the Oven ladder joins in task p27-oven-heat-t-ladder; the six ULV rows join in task
-	 * p28-c-ulv-machine-ladder):
+	 * The paint-tint walker (task paintable-tint-render; the Canner ladder joins in task
+	 * canner-machine; the W1 Kinetic trio joins in task w1-sifter-compressor-wiremill;
+	 * the Oven ladder joins in task oven-heat-t-ladder; the six ULV rows join in task
+	 * c-ulv-machine-ladder):
 	 * the 204 machine-domain blocks the client paint BlockColor
 	 * registers over — the oven ladder (4) + the shredder/crusher/lathe ladders (4 each = 12) + the
 	 * dryer (4) + the distillery (4) + the canner (4) + the sifter/compressor/wiremill
 	 * ladders (4 each = 12) + press (4) + extruder (4) + the ULV rows (5 + the rollingmill
 	 * rung = 6) + the roll ladders (rollingmill RU t1-t4 + rollbender/rollformer/clustermill
-	 * 4 each = 16, task p29-w1-kinetic-roll-ladder) + the six process families
+	 * 4 each = 16, task w1-kinetic-roll-ladder) + the six process families
 	 * (buzzsaw/squeezer/centrifuge/sluice/sandingmachine/pressurewasher 4 each = 24,
-	 * task p29-w1-kinetic-process-ladder) + the eu-hu families (mixer/electricmixer/
+	 * task w1-kinetic-process-ladder) + the eu-hu families (mixer/electricmixer/
 	 * electricloom/electricsifter/boxinator/unboxinator 4 each = 24 + the fermenter rung
-	 * = 25, task p29-w1-eu-hu-families) + the eu-special families (autocrafter/lightning
-	 * 5 each + laminator 4 = 14, task p29-w2-eu-special) + the six exotic-energy families
+	 * = 25, task w1-eu-hu-families) + the eu-special families (autocrafter/lightning
+	 * 5 each + laminator 4 = 14, task w2-eu-special) + the six exotic-energy families
 	 * (polarizer/magneticseparator/laserengraver/laserwelder/freezer/cryomixer 5 each
-	 * = 30, task p29-w2-exotic-energy) + the five eu-core families (electrolyzer/injector/
-	 * printer/scannervisuals/slicer 5 each = 25, task p29-w2-eu-core-5tier) + the hu-tu
+	 * = 30, task w2-exotic-energy) + the five eu-core families (electrolyzer/injector/
+	 * printer/scannervisuals/slicer 5 each = 25, task w2-eu-core-5tier) + the hu-tu
 	 * piggyback (steamcracker/catalyticcracker 4 each = 8 + coagulator/generifier/bath/
-	 * autoclave 1 each = 4 + loom 4 = 16, task p29-w2-hu-tu-piggyback),
+	 * autoclave 1 each = 4 + loom 4 = 16, task w2-hu-tu-piggyback),
 	 * the upstream {@code MultiTileEntityBasicMachine} render census (the getTexture2 :1014
 	 * grayscale x mRGBa consumers). Card_A put the paint capability on the 03 base, so the
 	 * whole 03 family can carry PAINT model data (barrels/pipes included) — but this card's
@@ -2693,7 +2693,7 @@ public final class GTMachines {
 	public static Block[] paintableBlockArray() {
 		java.util.List<Block> rBlocks = new java.util.ArrayList<>(217);
 		rBlocks.add(OVEN.get());
-		rBlocks.add(OVEN_T2.get()); // task p27-oven-heat-t-ladder
+		rBlocks.add(OVEN_T2.get()); // task oven-heat-t-ladder
 		rBlocks.add(OVEN_T3.get());
 		rBlocks.add(OVEN_T4.get());
 		for (RegistryObject<Block> tBlock : java.util.List.of(
@@ -2708,15 +2708,15 @@ public final class GTMachines {
 		java.util.Collections.addAll(rBlocks, sifterBlockArray()); // + sifter_ulv
 		java.util.Collections.addAll(rBlocks, compressorBlockArray());
 		java.util.Collections.addAll(rBlocks, wiremillBlockArray()); // + wiremill_ulv
-		java.util.Collections.addAll(rBlocks, pressBlockArray()); // task p26-w1-press-extruder-molds
-		java.util.Collections.addAll(rBlocks, extruderBlockArray()); // task p26-w1-press-extruder-molds
-		rBlocks.add(SHREDDER_ULV.get()); // task p28-c-ulv-machine-ladder — the explicit-RO ULV rows + the new RollingMill family
+		java.util.Collections.addAll(rBlocks, pressBlockArray()); // task w1-press-extruder-molds
+		java.util.Collections.addAll(rBlocks, extruderBlockArray()); // task w1-press-extruder-molds
+		rBlocks.add(SHREDDER_ULV.get()); // task c-ulv-machine-ladder — the explicit-RO ULV rows + the new RollingMill family
 		rBlocks.add(CRUSHER_ULV.get());
 		java.util.Collections.addAll(rBlocks, rollingmillBlockArray());
-		java.util.Collections.addAll(rBlocks, rollbenderBlockArray()); // task p29-w1-kinetic-roll-ladder — the roll ladders join the paint census
+		java.util.Collections.addAll(rBlocks, rollbenderBlockArray()); // task w1-kinetic-roll-ladder — the roll ladders join the paint census
 		java.util.Collections.addAll(rBlocks, rollformerBlockArray());
 		java.util.Collections.addAll(rBlocks, clustermillBlockArray());
-		// task p29-w1-kinetic-process-ladder — the six process families, +24 (the
+		// task w1-kinetic-process-ladder — the six process families, +24 (the
 		// Buzzsaw/Squeezer/Centrifuge/Sluice/SandingMachine/PressureWasher ladders; the
 		// census walks in the section order — the paint tint registration mirrors)
 		java.util.Collections.addAll(rBlocks, buzzsawBlockArray());
@@ -2725,7 +2725,7 @@ public final class GTMachines {
 		java.util.Collections.addAll(rBlocks, sluiceBlockArray());
 		java.util.Collections.addAll(rBlocks, sandingBlockArray());
 		java.util.Collections.addAll(rBlocks, pressurewasherBlockArray());
-		// task p29-w1-eu-hu-families — the seven eu-hu families, +25 blocks (mixer 4 +
+		// task w1-eu-hu-families — the seven eu-hu families, +25 blocks (mixer 4 +
 		// electricmixer 4 + electricloom 4 + electricsifter 4 + boxinator 4 + unboxinator
 		// 4 + fermenter 1), the census comment and the datagen-JVM half move together
 		java.util.Collections.addAll(rBlocks, mixerBlockArray());
@@ -2735,13 +2735,13 @@ public final class GTMachines {
 		java.util.Collections.addAll(rBlocks, boxinatorBlockArray());
 		java.util.Collections.addAll(rBlocks, unboxinatorBlockArray());
 		java.util.Collections.addAll(rBlocks, fermenterBlockArray());
-		// task p29-w2-eu-special — the eu-special families, +14 blocks (autocrafter 5 +
+		// task w2-eu-special — the eu-special families, +14 blocks (autocrafter 5 +
 		// lightning 5 + laminator 4), the census comment and the datagen-JVM half move
 		// together (the 119 → 133 machine-domain re-pin)
 		java.util.Collections.addAll(rBlocks, autocrafterBlockArray());
 		java.util.Collections.addAll(rBlocks, lightningBlockArray());
 		java.util.Collections.addAll(rBlocks, laminatorBlockArray());
-		// task p29-w2-exotic-energy — the six exotic-energy families, +30 blocks (Polarizer/
+		// task w2-exotic-energy — the six exotic-energy families, +30 blocks (Polarizer/
 		// MagneticSeparator 5 each over MU + LaserEngraver/LaserWelder 5 each over LU +
 		// Freezer/CryoMixer 5 each over CU), the census walk order mirrors the section
 		// order. (Review-seat rebase fix: the polarizer addAll rode COMMENTED in the
@@ -2754,7 +2754,7 @@ public final class GTMachines {
 		java.util.Collections.addAll(rBlocks, laserWelderBlockArray());
 		java.util.Collections.addAll(rBlocks, freezerBlockArray());
 		java.util.Collections.addAll(rBlocks, cryoMixerBlockArray());
-		// task p29-w2-eu-core-5tier — the five eu-core families, +25 blocks (each the first
+		// task w2-eu-core-5tier — the five eu-core families, +25 blocks (each the first
 		// FIVE-tier ladder: electrolyzer 5 + injector 5 + printer 5 + scannervisuals 5 +
 		// slicer 5), the census comment and the datagen-JVM half move together (119 → 133
 		// → 163 → 188)
@@ -2763,7 +2763,7 @@ public final class GTMachines {
 		java.util.Collections.addAll(rBlocks, printerBlockArray());
 		java.util.Collections.addAll(rBlocks, scannerVisualsBlockArray());
 		java.util.Collections.addAll(rBlocks, slicerBlockArray());
-		// task p29-w2-hu-tu-piggyback — the seven hu-tu families, +16 blocks (steamcracker
+		// task w2-hu-tu-piggyback — the seven hu-tu families, +16 blocks (steamcracker
 		// 4 + catalyticcracker 4 + coagulator 1 + generifier 1 + bath 1 + autoclave 1 +
 		// loom 4), the census comment and the datagen-JVM half move together
 		java.util.Collections.addAll(rBlocks, steamcrackerBlockArray());
@@ -2773,18 +2773,18 @@ public final class GTMachines {
 		java.util.Collections.addAll(rBlocks, bathBlockArray());
 		java.util.Collections.addAll(rBlocks, autoclaveBlockArray());
 		java.util.Collections.addAll(rBlocks, loomBlockArray());
-		// task p29-w3-heat-smelter — the Smelter 4-ladder + the Melter single, +5 blocks,
+		// task w3-heat-smelter — the Smelter 4-ladder + the Melter single, +5 blocks,
 		// the census comment and the datagen-JVM half move together
 		java.util.Collections.addAll(rBlocks, smelterBlockArray());
 		java.util.Collections.addAll(rBlocks, melterBlockArray());
-		// task p29-w4-eu-bridge — the Roasting 4-ladder, +4 blocks, the census comment and
+		// task w4-eu-bridge — the Roasting 4-ladder, +4 blocks, the census comment and
 		// the datagen-JVM half move together (163 → 188 → 192)
 		java.util.Collections.addAll(rBlocks, roastingBlockArray());
-		// task p32-qu-scanner-replicator — the QU machine pair, +4 blocks (the scanner
+		// task qu-scanner-replicator — the QU machine pair, +4 blocks (the scanner
 		// single + the replicator three-rung, the census comment moves together 213 → 217)
 		java.util.Collections.addAll(rBlocks, molecularScannerBlockArray());
 		java.util.Collections.addAll(rBlocks, replicatorBlockArray());
-		// task p34-machines-burner-plantalyzer — the Burner Mixer 4-ladder + the
+		// task machines-burner-plantalyzer — the Burner Mixer 4-ladder + the
 		// Plantalyzer 5-ladder, +9 blocks, the census comment and the datagen-JVM half
 		// move together (217 → 222)
 		java.util.Collections.addAll(rBlocks, burnerMixerBlockArray());
@@ -2817,7 +2817,7 @@ public final class GTMachines {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the P29 W1 process families (task p29-w1-kinetic-process-ladder) — six Kinetic_T
+	// the P29 W1 process families (task w1-kinetic-process-ladder) — six Kinetic_T
 	// 4-ladders over the CONSUMED card-A recipe maps, all MultiTileEntityBasicMachine
 	// rows with MT.DATA.Kinetic_T[1..4] (the KINETIC_T_LADDER word set Bronze/Steel/
 	// Titanium/Tungstensteel), NBT_INPUT 32/128/512/2048 through the TIER_INPUTS
@@ -2932,7 +2932,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R, the :138 read*/,
 				(byte)0 /*NBT_TANK_SIDE_AUTO_IN SIDE_BOTTOM*/, (byte)-1 /*no NBT_TANK_SIDE_AUTO_OUT key → SIDE_UNDEFINED*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				null /*the menu-less carrier — zero new gt6:* MenuType (the card GUI clause)*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows (p28-c-ulv-machine-ladder)*/, false);
+				null /*the menu-less carrier — zero new gt6:* MenuType (the card GUI clause)*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows (c-ulv-machine-ladder)*/, false);
 	}
 
 	/** One Squeezer row factory — the buzzsaw shape over the :1324 masks (tank OUT bottom, NO tank-in key, energy top) and RM.Squeezer/KU + the PARALLEL_4_32 duration-T ladder. */
@@ -3164,7 +3164,7 @@ public final class GTMachines {
 					pressurewasherBlockArray()).build(null));
 
 	// ---------------------------------------------------------------------------
-	// the P29 W2 eu-special families (task p29-w2-eu-special) — EU special 2 + HU 1,
+	// the P29 W2 eu-special families (task w2-eu-special) — EU special 2 + HU 1,
 	// 14 rows: the Autocrafter ladder (Loader_MultiTileEntities.java:1497-1501, EU,
 	// VN[1..5] — the FIRST 5-tier family shape of the repo together with the W2 card-②
 	// eu-core families) / the Lightning Processor ladder (:1582-1586, EU, VN[1..5],
@@ -3186,7 +3186,7 @@ public final class GTMachines {
 	//   the MAP's GUI path word, not the machine's name column ("Autocrafter ("+VN[tier]
 	//   +")", :1497-1501).
 	// - LIGHTNING: NO lightning-strike mechanism — upstream the lightning-into-network
-	//   face is the LightningRod MULTIBLOCK (18104, ported, task p24-lightning-rod);
+	//   face is the LightningRod MULTIBLOCK (18104, ported, task lightning-rod);
 	//   the Lightning Processor is a plain EU consumer (:1582-1586 registers
 	//   MultiTileEntityBasicMachineElectric with NBT_ENERGY_ACCEPTED EU). Only the
 	//   NBT_USE_OUTPUT_TANK T key (the :716-732 recipe-fallback arm, the Canner
@@ -3206,7 +3206,7 @@ public final class GTMachines {
 	public static final String LAMINATOR_DISPLAY_KEY = "gt6.row.laminator.display";
 
 	/**
-	 * The 5-tier window resolver (the 立行制 carrier, task p29-w2-energy-types-5tier ②):
+	 * The 5-tier window resolver (the 立行制 carrier, task w2-energy-types-5tier ②):
 	 * tier 0..3 ride the SHARED {@link #TIER_INPUTS} table, tier 4 (the T5/IV rung) rides
 	 * {@link #EV_TIER_INPUTS} — the :126 conversion over NBT_INPUT 8192 = min 4096 /
 	 * rec 8192 / max 16384. The two 5-tier eu-special ladders (Autocrafter :1497-1501,
@@ -3460,10 +3460,10 @@ public final class GTMachines {
 	 * The BET factory body: constructor-injected config + the per-row carrier and energy
 	 * three-value assignment (:1294-1309 NBT_ENERGY_ACCEPTED + NBT_INPUT through the :126
 	 * conversion — TileEntityBasicMachine :137 fields are non-final by upstream design :98).
-	 * The menu travels as a plain supplier since task p14-dryer-family (null = the
+	 * The menu travels as a plain supplier since task dryer-family (null = the
 	 * menu-less carrier — the supplier form is what a null menu needs, a RegistryObject
 	 * method reference would capture the null receiver and explode at BE creation); since
-	 * task p16-machine-fluid-gui the Dryer rows pass the bound {@code gt6:dryer} supplier
+	 * task machine-fluid-gui the Dryer rows pass the bound {@code gt6:dryer} supplier
 	 * the same way.
 	 */
 	private static TileEntityBasicMachine machine(BlockEntityType<TileEntityBasicMachine> aType, net.minecraft.core.BlockPos aPos,
@@ -3479,7 +3479,7 @@ public final class GTMachines {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the P29 W2 EU-core families (task p29-w2-eu-core-5tier) — the FIRST 5-TIER ladders
+	// the P29 W2 EU-core families (task w2-eu-core-5tier) — the FIRST 5-TIER ladders
 	// of the port (the 立行制 first consumer set, five MultiTileEntityBasicMachineElectric
 	// families over MT.DATA.Electric_T[1..5] = SteelGalvanized/Al/StainlessSteel/Cr/Ti,
 	// MT.java:3691 — tiers 0-3 ride {@link #ELECTRIC_T_LADDER}, the T5 rung
@@ -3802,15 +3802,15 @@ public final class GTMachines {
 					.title(Component.translatable("itemGroup.gt6.machines"))
 					.icon(() -> new ItemStack(OVEN_ITEM.get()))
 						.displayItems((aParameters, aOutput) -> {
-							// task p27-oven-heat-t-ladder: the Oven Heat_T ladder, +3 rows —
+							// task oven-heat-t-ladder: the Oven Heat_T ladder, +3 rows —
 							// the OVEN_TAB_ITEMS walk (upstream row order :1288-1291)
 							for (RegistryObject<Item> tOvenItem : OVEN_TAB_ITEMS) {
 								aOutput.accept(new ItemStack(tOvenItem.get()));
 							}
-							aOutput.accept(new ItemStack(SHREDDER_ITEM.get())); // task p7-basicmachine-family: +3 machine family rows
+							aOutput.accept(new ItemStack(SHREDDER_ITEM.get())); // task basicmachine-family: +3 machine family rows
 							aOutput.accept(new ItemStack(CRUSHER_ITEM.get()));
 							aOutput.accept(new ItemStack(LATHE_ITEM.get()));
-							// task p8-machine-tiers-doinject ①: the T2-T4 ladder, +9 rows
+							// task machine-tiers-doinject ①: the T2-T4 ladder, +9 rows
 							aOutput.accept(new ItemStack(SHREDDER_T2_ITEM.get()));
 							aOutput.accept(new ItemStack(SHREDDER_T3_ITEM.get()));
 							aOutput.accept(new ItemStack(SHREDDER_T4_ITEM.get()));
@@ -3820,19 +3820,19 @@ public final class GTMachines {
 								aOutput.accept(new ItemStack(LATHE_T2_ITEM.get()));
 								aOutput.accept(new ItemStack(LATHE_T3_ITEM.get()));
 								aOutput.accept(new ItemStack(LATHE_T4_ITEM.get()));
-								// task p14-dryer-family: the Dryer ladder, +4 rows
+								// task dryer-family: the Dryer ladder, +4 rows
 								for (GTBasicMachineBlock.MachineRow tRow : DRYER_ROWS) {
 									aOutput.accept(new ItemStack(DRYER_ITEMS_BY_PATH.get(tRow.path()).get()));
 								}
-								// task p16-distillery-family: the Distillery ladder, +4 rows
+								// task distillery-family: the Distillery ladder, +4 rows
 								for (GTBasicMachineBlock.MachineRow tRow : DISTILLERY_ROWS) {
 									aOutput.accept(new ItemStack(DISTILLERY_ITEMS_BY_PATH.get(tRow.path()).get()));
 								}
-								// task p24-canner-machine: the Canner ladder, +4 rows
+								// task canner-machine: the Canner ladder, +4 rows
 								for (GTBasicMachineBlock.MachineRow tRow : CANNER_ROWS) {
 									aOutput.accept(new ItemStack(CANNER_ITEMS_BY_PATH.get(tRow.path()).get()));
 								}
-								// task p26-w1-sifter-compressor-wiremill: the Kinetic trio, +12 rows
+								// task w1-sifter-compressor-wiremill: the Kinetic trio, +12 rows
 								for (GTBasicMachineBlock.MachineRow tRow : SIFTER_ROWS) {
 									aOutput.accept(new ItemStack(SIFTER_ITEMS_BY_PATH.get(tRow.path()).get()));
 								}
@@ -3842,14 +3842,14 @@ public final class GTMachines {
 								for (GTBasicMachineBlock.MachineRow tRow : WIREMILL_ROWS) {
 									aOutput.accept(new ItemStack(WIREMILL_ITEMS_BY_PATH.get(tRow.path()).get()));
 								}
-								// task p26-w1-press-extruder-molds: the Press + Extruder ladders, +8 rows
+								// task w1-press-extruder-molds: the Press + Extruder ladders, +8 rows
 								for (GTBasicMachineBlock.MachineRow tRow : PRESS_ROWS) {
 									aOutput.accept(new ItemStack(PRESS_ITEMS_BY_PATH.get(tRow.path()).get()));
 								}
 								for (GTBasicMachineBlock.MachineRow tRow : EXTRUDER_ROWS) {
 									aOutput.accept(new ItemStack(EXTRUDER_ITEMS_BY_PATH.get(tRow.path()).get()));
 								}
-								// task p28-c-ulv-machine-ladder: the six ULV rows, +6 (the
+								// task c-ulv-machine-ladder: the six ULV rows, +6 (the
 								// shredder/crusher explicit ROs + the canner/sifter/wiremill/
 								// rollingmill ULV rungs — the V[0] = 8 EU tier face)
 								aOutput.accept(new ItemStack(SHREDDER_ULV_ITEM.get()));
@@ -3866,7 +3866,7 @@ public final class GTMachines {
 							for (GTBasicMachineBlock.MachineRow tRow : ROLLINGMILL_ROWS) {
 								aOutput.accept(new ItemStack(ROLLINGMILL_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
-							// task p29-w1-kinetic-roll-ladder: the roll ladders, +16 rows (the
+							// task w1-kinetic-roll-ladder: the roll ladders, +16 rows (the
 							// RU RollingMill ladder joins its ULV sibling's map walk above — the
 							// ROLLINGMILL_ROWS walk covers the p28 ULV rung only)
 							for (GTBasicMachineBlock.MachineRow tRow : ROLLINGMILL_RU_ROWS) {
@@ -3881,7 +3881,7 @@ public final class GTMachines {
 							for (GTBasicMachineBlock.MachineRow tRow : CLUSTER_MILL_ROWS) {
 								aOutput.accept(new ItemStack(CLUSTERMILL_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
-							// task p29-w1-kinetic-process-ladder: the six process families, +24 rows
+							// task w1-kinetic-process-ladder: the six process families, +24 rows
 							// (Buzzsaw/Squeezer/Centrifuge/Sluice/SandingMachine/PressureWasher,
 							// upstream row order per family)
 							for (GTBasicMachineBlock.MachineRow tRow : BUZZSAW_ROWS) {
@@ -3902,7 +3902,7 @@ public final class GTMachines {
 							for (GTBasicMachineBlock.MachineRow tRow : PRESSURE_WASHER_ROWS) {
 								aOutput.accept(new ItemStack(PRESSURE_WASHER_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
-							// task p29-w2-eu-special: the eu-special families, +14 rows (the
+							// task w2-eu-special: the eu-special families, +14 rows (the
 							// Autocrafter/Lightning 5-tier EU ladders + the Laminator HU ladder,
 							// upstream row order per family)
 							for (GTBasicMachineBlock.MachineRow tRow : AUTOCRAFTER_ROWS) {
@@ -3917,7 +3917,7 @@ public final class GTMachines {
 							for (GTBasicMachineBlock.MachineRow tRow : ROLLINGMILL_ROWS) {
 								aOutput.accept(new ItemStack(ROLLINGMILL_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
-							// task p29-w1-eu-hu-families: the seven eu-hu families, +25 rows
+							// task w1-eu-hu-families: the seven eu-hu families, +25 rows
 							for (GTBasicMachineBlock.MachineRow tRow : MIXER_ROWS) {
 								aOutput.accept(new ItemStack(MIXER_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
@@ -3939,7 +3939,7 @@ public final class GTMachines {
 						for (GTBasicMachineBlock.MachineRow tRow : FERMENTER_ROWS) {
 							aOutput.accept(new ItemStack(FERMENTER_ITEMS_BY_PATH.get(tRow.path()).get()));
 						}
-							// task p29-w2-hu-tu-piggyback: the seven hu-tu families, +16 rows
+							// task w2-hu-tu-piggyback: the seven hu-tu families, +16 rows
 							// (SteamCracker/CatalyticCracker 4-ladders, the TU four singles,
 							// the kinetic Loom 4-ladder — upstream row order per family; the
 							// GTMachines. qualification dodges the simple-name forward-reference
@@ -3965,7 +3965,7 @@ public final class GTMachines {
 							for (GTBasicMachineBlock.MachineRow tRow : GTMachines.LOOM_ROWS) {
 								aOutput.accept(new ItemStack(GTMachines.LOOM_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
-							// task p29-w2-exotic-energy: the six exotic-energy families, +30 rows
+							// task w2-exotic-energy: the six exotic-energy families, +30 rows
 							// (Polarizer/MagneticSeparator/LaserEngraver/LaserWelder/Freezer/
 							// CryoMixer, upstream row order per family)
 							for (GTBasicMachineBlock.MachineRow tRow : POLARIZER_ROWS) {
@@ -3986,11 +3986,11 @@ public final class GTMachines {
 							for (GTBasicMachineBlock.MachineRow tRow : CRYO_MIXER_ROWS) {
 								aOutput.accept(new ItemStack(CRYO_MIXER_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
-							// task p31-massfab — the small Matter Fabricator 5-ladder
+							// task massfab — the small Matter Fabricator 5-ladder
 							for (GTBasicMachineBlock.MachineRow tRow : GTMachines.MASSFAB_SMALL_ROWS) {
 								aOutput.accept(new ItemStack(GTMachines.MASSFAB_SMALL_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
-							// task p29-w2-eu-core-5tier: the five eu-core families, +25 rows
+							// task w2-eu-core-5tier: the five eu-core families, +25 rows
 							// (Electrolyzer/Injector/Printer/ScannerVisuals/Slicer, the first
 							// 5-tier ladders — the T5 rung rides each family walk's tail)
 							for (GTBasicMachineBlock.MachineRow tRow : GTMachines.ELECTROLYZER_ROWS) {
@@ -4008,7 +4008,7 @@ public final class GTMachines {
 							for (GTBasicMachineBlock.MachineRow tRow : SLICER_ROWS) {
 								aOutput.accept(new ItemStack(SLICER_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
-							// task p29-w4-eu-bridge: the three EU-bridge families + the Roasting
+							// task w4-eu-bridge: the three EU-bridge families + the Roasting
 							// Oven ladder, +19 rows (upstream row order per family; the
 							// GTMachines. qualification dodges the tail-section declaration order)
 							for (gregtech6.registry.GTMachines.BridgeRow tRow : GTMachines.ELECTRIC_HEATER_ROWS) {
@@ -4023,13 +4023,13 @@ public final class GTMachines {
 							for (GTBasicMachineBlock.MachineRow tRow : GTMachines.ROASTING_ROWS) {
 								aOutput.accept(new ItemStack(GTMachines.ROASTING_ITEMS_BY_PATH.get(tRow.path()).get()));
 							}
-								// task p24-act-machine: the Advanced Crafting Table (the single-variant row)
+								// task act-machine: the Advanced Crafting Table (the single-variant row)
 								aOutput.accept(new ItemStack(ADVANCED_CRAFTING_TABLE_ITEM.get()));
-								// task p16-distillery-family ①: the Integrated Circuit ("Selector Tag") —
+								// task distillery-family ①: the Integrated Circuit ("Selector Tag") —
 								// the recipe-slot selector feeds these machines, the machines tab is the
 								// nearest live category (the gregapi items tab is not ported, declared)
 								aOutput.accept(new ItemStack(gregtech6.item.GT6Circuits.INTEGRATED_CIRCUIT.get()));
-								// task p26-w1-press-extruder-molds: the extruder-mold row0 pair — the
+								// task w1-press-extruder-molds: the extruder-mold row0 pair — the
 								// shaping tools feed the press/extruder, the nearest live category (the
 								// circuit precedent; the upstream Technological items tab is not ported)
 								aOutput.accept(new ItemStack(gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_PLATE.get()));
@@ -4038,7 +4038,7 @@ public final class GTMachines {
 					.build());
 
 	// ---------------------------------------------------------------------------
-	// the P29 W2 hu-tu piggyback (task p29-w2-hu-tu-piggyback) — seven families, sixteen
+	// the P29 W2 hu-tu piggyback (task w2-hu-tu-piggyback) — seven families, sixteen
 	// MachineRow rows, all MultiTileEntityBasicMachine carriers (the W1 eu-hu shape):
 	//
 	// SteamCracker 20491-94 (Loader_MultiTileEntities.java:1576-1579) and CatalyticCracker
@@ -4497,7 +4497,7 @@ public final class GTMachines {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the P29 W3 heat-smelter section (task p29-w3-heat-smelter — the GTMachines.java
+	// the P29 W3 heat-smelter section (task w3-heat-smelter — the GTMachines.java
 	// EXCLUSIVE append of the wave, the structural conflict-elimination ruling): the
 	// Smelter HU 4-ladder 20241-20244 (Loader_MultiTileEntities.java:1431-1434, the
 	// Heat_T[1..4] ladder, NBT_TEXTURE "smelter", RM.Smelter, NBT_CHEAP_OVERCLOCKING T,
@@ -4642,7 +4642,7 @@ public final class GTMachines {
 					melterBlockArray()).build(null));
 
 	// ---------------------------------------------------------------------------
-	// the P29 W4 EU-bridge card (task p29-w4-eu-bridge) — the three EU→X converter
+	// the P29 W4 EU-bridge card (task w4-eu-bridge) — the three EU→X converter
 	// families (Loader_MultiTileEntities.java:815-821/:831-837/:847-853) + the Roasting
 	// Oven 4-ladder (:1386-1389). The bridges are GT-INTERNAL energy converters, NOT
 	// outbound bridges: EU never leaves the GT grid through them (the P28 ruling,
@@ -4688,7 +4688,7 @@ public final class GTMachines {
 	// the EU input IS negative-allowed, Base10:121).
 	// ---------------------------------------------------------------------------
 
-	/** One EU-bridge ladder row — the upstream-parity columns of one Loader aRegistry.add line (:817-821/:833-837/:849-853); {@code material} the row's NBT_MATERIAL aMat (task p38-c2-controller-tint). */
+	/** One EU-bridge ladder row — the upstream-parity columns of one Loader aRegistry.add line (:817-821/:833-837/:849-853); {@code material} the row's NBT_MATERIAL aMat (task c2-controller-tint). */
 	public record BridgeRow(String path, int metaId, int tier, String voltageWord, TagData outType,
 			java.util.function.Supplier<gregapi.oredict.OreDictMaterial> material) {}
 
@@ -4800,7 +4800,7 @@ public final class GTMachines {
 	}
 
 	/**
-	 * The EU-bridge paint-tint walker (task p38-c2-controller-tint): the 15 ladder blocks
+	 * The EU-bridge paint-tint walker (task c2-controller-tint): the 15 ladder blocks
 	 * (Heater + Engine + Motor, :817-821/:833-837/:849-853) whose datagen models carry
 	 * tintindex 0 on the body cube (the {@code paintableBlockArray} census convention),
 	 * feeding BOTH consumption halves: the baked world tint ({@code GTMachineTintModel},
@@ -4963,7 +4963,7 @@ public final class GTMachines {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the Roasting Oven 4-ladder (task p29-w4-eu-bridge, Loader_MultiTileEntities.java
+	// the Roasting Oven 4-ladder (task w4-eu-bridge, Loader_MultiTileEntities.java
 	// :1386-1389) — the HU recipe machine over RM.ROASTING, the Heat_T[1..4] material
 	// ladder (the Oven/Dryer word set), the smelter-family row shape with the :1386
 	// deltas: hardness 6.0/4.0/9.0/12.5, NBT_PARALLEL {1, 2, 4, 8} with NO
@@ -5037,7 +5037,7 @@ public final class GTMachines {
 					roastingBlockArray()).build(null));
 
 	// ---------------------------------------------------------------------------
-	// the P34 machines-bumblelyzer-crucible section (task p34-machines-bumblelyzer-crucible,
+	// the P34 machines-bumblelyzer-crucible section (task machines-bumblelyzer-crucible,
 	// the GTMachines.java EXCLUSIVE append of the wave): the Bumblelyzer EU 5-tier ladder
 	// 20541-20545 (Loader_MultiTileEntities.java:1608-1612, the Electric_T[1..5] ladder, the
 	// hardness 4.0F constant, NBT_INPUT 32/128/512/2048/8192 through the TIER_INPUTS/EV window,
@@ -5053,7 +5053,7 @@ public final class GTMachines {
 	// data-only, the rows carry no column for them (the W2 cracker ruling).
 	//
 	// KJS face (the wave-plan declaration): REGISTRATION face only — nine MachineRow rows —
-	// covered by the p34-kjs-bindings generalized GT6Recipes facade over RecipeMap.RECIPE_MAPS
+	// covered by the kjs-bindings generalized GT6Recipes facade over RecipeMap.RECIPE_MAPS
 	// (the two new maps are natural RECIPE_MAPS keys, zero adaptation). NO KubeJS surface.
 	// ---------------------------------------------------------------------------
 
@@ -5191,13 +5191,13 @@ public final class GTMachines {
 
 
 	// ---------------------------------------------------------------------------
-	// the p34 machine pair (task p34-machines-burner-plantalyzer) — Burner Mixer
+	// the p34 machine pair (task machines-burner-plantalyzer) — Burner Mixer
 	// 20521-20524 + Plantalyzer 20531-20535, Loader_MultiTileEntities.java:1595-1598/
 	// :1601-1605. CARD ERRATUM: the task card's "HU 消费" is void — the :1595-1598 rows
 	// read NBT_ENERGY_ACCEPTED TD.Energy.RU (the Kinetic_T[1..4] materials) and carry
 	// NBT_NEEDS_IGNITION T + NBT_PARALLEL {4,8,16,32} + NBT_PARALLEL_DURATION T; the
 	// coordinator ruling 2026-09-22 pins RU + the ignition gate (the TileEntityBurnerMixer
-	// subclass — zero shared-class diff, the p32-ignition-gate single-block fuel).
+	// subclass — zero shared-class diff, the ignition-gate single-block fuel).
 	//
 	// Burner Mixer (:1595-1598 verbatim): NBT_INPUT 32/128/512/2048 through TIER_INPUTS,
 	// hardness 7/6/9/12.5 == resistance, NBT_TEXTURE "burnmixer", the :1595 masks —
@@ -5218,7 +5218,7 @@ public final class GTMachines {
 	//
 	// The GUI clause: menu = the SHARED gt6:canner carrier on BOTH families (the generic
 	// GTBasicMachineMenu — slot shape and fluid banks read the live RecipeMap/Host, so the
-	// p34-gui-basicmachine-fluids fluid seats render for the two tank-carrying families at
+	// gui-basicmachine-fluids fluid seats render for the two tank-carrying families at
 	// zero new gt6:* MenuType — the card's "顺享流体座" clause).
 	// ---------------------------------------------------------------------------
 
@@ -5262,7 +5262,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_B, the :138 read*/,
 				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)5 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BACK*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				GTBasicMachinesMenus.CANNER_MENU::get /*the SHARED canner carrier — zero new gt6:* MenuType, the p34-gui-basicmachine-fluids fluid seats ride the live Host banks*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
+				GTBasicMachinesMenus.CANNER_MENU::get /*the SHARED canner carrier — zero new gt6:* MenuType, the gui-basicmachine-fluids fluid seats ride the live Host banks*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
 	}
 
 	/**
@@ -5281,7 +5281,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_D, the :138 read*/,
 				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)-1 /*no NBT_TANK_SIDE_AUTO_OUT key → SIDE_UNDEFINED*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				GTBasicMachinesMenus.CANNER_MENU::get /*the SHARED canner carrier — the single tank-in face keeps the p34-gui-basicmachine-fluids input seat*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
+				GTBasicMachinesMenus.CANNER_MENU::get /*the SHARED canner carrier — the single tank-in face keeps the gui-basicmachine-fluids input seat*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
 	}
 
 	/** The registered Burner Mixer blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
@@ -5368,7 +5368,7 @@ public final class GTMachines {
 
 
 	/**
-	 * The machine-family tooltip walk (task r8-tooltip-basic-machine-family): every
+	 * The machine-family tooltip walk (task tooltip-basic-machine-family): every
 	 * MachineRow list registers its rows under {@code machine:<path>} — one table per
 	 * item, the {@link gregtech6.tooltip.GT6MachineRows} transcription builds the rows off
 	 * the row's own config columns. Runs at mod-construct, RIGHT AFTER
@@ -5488,6 +5488,6 @@ public final class GTMachines {
 		ITEMS.register(tModBus);
 		CREATIVE_MODE_TABS.register(tModBus);
 		GT6RecipeMaps.init(); // W1 handoff: the FURNACE map lifecycle is this card's job (GT6RecipeMaps.java:36-37)
-		registerMachineTooltipRows(); // the volatile maps live now — the row specs resolve (r8-tooltip-basic-machine-family)
+		registerMachineTooltipRows(); // the volatile maps live now — the row specs resolve (tooltip-basic-machine-family)
 	}
 }

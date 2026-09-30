@@ -40,7 +40,7 @@ import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
 
 /**
- * The RM row script-write path offline codec pins (task p34-kjs-bindings acceptance
+ * The RM row script-write path offline codec pins (task kjs-bindings acceptance
  * ③): builder → {@link Recipe} row → {@link RecipeMap#addRecipe} single funnel, the
  * re-run idempotence ledger, the remove half and the FROZEN-gate semantics
  * (restart-to-apply, GT6KJS class doc). Per-test fresh generation = the

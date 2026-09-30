@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.util.UT6;
 
 /**
- * Acceptance 1 (task p6-oven-rotation): the setFrontFacing rotation entry — the GTCEu
+ * Acceptance 1 (task oven-rotation): the setFrontFacing rotation entry — the GTCEu
  * MetaMachine :794-811 counterpart. The same-facing call is the :796 no-op, vertical
  * (0/1) and invalid sides are rejected, a horizontal re-facing writes mFacing and
  * triggers the BlockState re-application ({@link #applyVisualState()} — the spec-7

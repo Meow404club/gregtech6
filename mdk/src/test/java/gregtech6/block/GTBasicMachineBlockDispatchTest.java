@@ -1,12 +1,12 @@
 /**
- * The use() MUI dispatch truth table (task p26-mui-row-menu-null-dispatch, the OFFLINE
+ * The use() MUI dispatch truth table (task mui-row-menu-null-dispatch, the OFFLINE
  * half): {@link GTBasicMachineBlock#opensModularUi} is the dispatch key use() consults
  * before the {@code GT6MuiMachine.tryOpen} / vanilla-menu fork, and the table is two
  * nulls deep —
  *
  * <ul>
  * <li>{@code row == null} → MUI (the row-less families: Shredder/Crusher/Lathe + the
- * Oven, the 2-arg constructor — the p26-mui-a-open-chain arm, unchanged);</li>
+ * Oven, the 2-arg constructor — the mui-a-open-chain arm, unchanged);</li>
  * <li>{@code row != null, menu == null} → MUI (THE flipped arm: the batch-A machine form
  * {@code MachineRow + menu = null} — the Distillery is the live registered carrier
  * today, the W1 five families are the next consumers; before this task these stayed
@@ -59,7 +59,7 @@ public class GTBasicMachineBlockDispatchTest {
 	private static GTBasicMachineBlock.MachineRow row(
 			java.util.function.Supplier<MenuType<gregtech6.gui.machines.GTBasicMachineMenu>> aMenu) {
 		return new GTBasicMachineBlock.MachineRow("fixture", "steel", "Steel",
-				() -> null /*NBT_MATERIAL — inert payload, the dispatch key never resolves it (task p27-machine-material-tint-fidelity column)*/,
+				() -> null /*NBT_MATERIAL — inert payload, the dispatch key never resolves it (task machine-material-tint-fidelity column)*/,
 				"gt6.row.dryer.display", 20311, 6.0F,
 				0, 8, true,
 				() -> null /*NBT_RECIPEMAP — inert payload*/, TD.Energy.HU, "dryer",
@@ -76,7 +76,7 @@ public class GTBasicMachineBlockDispatchTest {
 
 	@Test
 	public void nullRowOpensModularUi() {
-		// arm 1 — the row-less families (the 2-arg constructor): the p26-mui-a-open-chain
+		// arm 1 — the row-less families (the 2-arg constructor): the mui-a-open-chain
 		// dispatch, byte-identical under the generalized key
 		assertTrue(GTBasicMachineBlock.opensModularUi(null), "row == null → the ModularUI chain");
 	}

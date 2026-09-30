@@ -1,6 +1,6 @@
 /**
- * The structural coverage guard (task p38-c5-asset-coverage-guard, the C5 card of the
- * p38-render-gap-census split): EVERY block of the registration universe must have a
+ * The structural coverage guard (task c5-asset-coverage-guard, the C5 card of the
+ * render-gap-census split): EVERY block of the registration universe must have a
  * generated blockstate JSON, and EVERY registered item must have a generated item model
  * JSON. The census (state tasks.p38-render-gap-census) pinned the shared leak channel of
  * the three render issues — nothing gated "registered x generated", so the electric/flux
@@ -37,7 +37,7 @@
  *     {@link #declaredKnownGapsAreStillMissing()}, so the waiver cannot outlive the gap:
  *     the moment the fix card lands the asset, that pin goes red and forces the list to
  *     shrink in the same change. No silent waivers. Currently EMPTY — the C1 card
- *     (p38-c1-dynamo-bowl-models) landed the dynamo blockstates/models and the clay_bowl
+ *     (c1-dynamo-bowl-models) landed the dynamo blockstates/models and the clay_bowl
  *     item model, healing the census bookings.</li>
  * <li>{@link #GUARD_CAUGHT_UNBOOKED_ITEM_ASSETS} — the booking point for models this
  *     guard's own walks catch beyond the census list. The six first-walk catches (zpm,
@@ -176,7 +176,7 @@ public class GT6AssetCoverageGuardTest {
 	 * The known blockstate gaps. Each entry is asserted STILL MISSING by
 	 * {@link #declaredKnownGapsAreStillMissing()} — when the fix card lands the asset the
 	 * pin goes red and the entry must be deleted in the same change. Currently EMPTY:
-	 * the C1 card (p38-c1-dynamo-bowl-models) landed the ten dynamo blockstates the census
+	 * the C1 card (c1-dynamo-bowl-models) landed the ten dynamo blockstates the census
 	 * booked and the entries were retired at that merge. Book new gaps back into this
 	 * set, never waive silently.
 	 */
@@ -194,7 +194,7 @@ public class GT6AssetCoverageGuardTest {
 	 * census list, each a plain registered Item with zero generated model (held = magenta):
 	 * the ZPM battery row (GT6Batteries.ZPM_ITEM), the raw ceramic faucet
 	 * (GT6Molds.FAUCET_CERAMIC_RAW), and the four field tools (GT6Tools PLOW/BRANCH_CUTTER/
-	 * SENSE/HAND_DRILL). All six were fixed by the C1 append (p38-c1-dynamo-bowl-models)
+	 * SENSE/HAND_DRILL). All six were fixed by the C1 append (c1-dynamo-bowl-models)
 	 * and the entries retired at that merge — the set stays as the booking point for the
 	 * next unbooked catch.
 	 */
@@ -301,7 +301,7 @@ public class GT6AssetCoverageGuardTest {
 			GT6Hoppers.class, GT6Kinetics.class, GT6Kitchen.class, GT6LargeMachines.class,
 			GT6Lasers.class, GT6Logistics.class, GT6LongDistanceTransformers.class,
 			GT6LongDistPipes.class, GT6LongDistWires.class, GT6MagicAbsorbers.class, GT6Molds.class,
-			GT6MeasuringPot.class, // task r8-issue45-c3 — the measuring pot family (block + raw item)
+			GT6MeasuringPot.class, // task issue45-c3 — the measuring pot family (block + raw item)
 			GT6Placeables.class, GT6Portals.class, GT6QuantumEnergizers.class, GT6Rails.class,
 			GT6Reactors.class, // task debt-reactor-b-2x2-be — the 2x2 core row
 			GT6Sensors.class, GT6SlicerBlades.class, GT6SprayCans.class, GT6StaticStorages.class,

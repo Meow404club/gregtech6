@@ -22,14 +22,14 @@ import gregtech6.tileentity.bees.GT6BumbliaryBlock;
 import gregtech6.tileentity.bees.GT6BumbliaryBlockEntity;
 
 /**
- * The GT6 bee-hive registration home — task p32-bees-lv2. Card-owned self-contained
+ * The GT6 bee-hive registration home — task bees-lv2. Card-owned self-contained
  * {@code @EventBusSubscriber(MOD)} DeferredRegister attached from the construct event
  * (the GT6SprayCans/GT6BeeCombs precedent verbatim).
  *
  * <p>One block + one BE type: the MTE 32755 "Bumble Hive" port
  * (Loader_MultiTileEntities.java:2041, id row verbatim in the class javadocs).
  *
- * <p><b>THE R2 CONTAINMENT-CONTRACT REVISION (task p34-bumbliary-recipes)</b> — the
+ * <p><b>THE R2 CONTAINMENT-CONTRACT REVISION (task bumbliary-recipes)</b> — the
  * p32 ruling "the hive never gains an item face" is BROKEN ONCE, declared: the MTE 32755
  * HAS an item form upstream ({@code aRegistry.getItem(32755)} is the 32741 Bumbliary
  * recipe's 'B' key, Loader_MultiTileEntities.java:2222; the base getDrops
@@ -44,7 +44,7 @@ import gregtech6.tileentity.bees.GT6BumbliaryBlockEntity;
  * {@code strength(1.0F)}), wood sound (the aHive MTE block, :111), orange map colour
  * (the hive-body tint), noLootTable (the contents are the loot — the block's
  * playerDestroy walk). The world tint is the baked {@code GTMachineTintModel} domain
- * since task r3-beehive-tint ({@link #paintableBlockArray} — the former runtime
+ * since task beehive-tint ({@link #paintableBlockArray} — the former runtime
  * BlockColor registration retired with the p32 bake ruling): the same colour source
  * resolves the BE's PAINT model data — worldgen paints the family colour at placement
  * and the spray cans recolour it; the unpainted fallback resolves white (the
@@ -70,7 +70,7 @@ public final class GT6BeeHives {
 					() -> BlockEntityType.Builder.of(GT6BumbleHiveBlockEntity::new, HIVE.get()).build(null));
 
 	// ---------------------------------------------------------------------------
-	// the Bumbliary pair (task p33-bees-lv3-b-bumbliary) — the MTE 32741/32007 ports,
+	// the Bumbliary pair (task bees-lv3-b-bumbliary) — the MTE 32741/32007 ports,
 	// obtainable machines (the BlockItem face the worldgen-only hive never needed).
 	// ---------------------------------------------------------------------------
 
@@ -92,7 +92,7 @@ public final class GT6BeeHives {
 					.sound(SoundType.WOOD), false));
 
 	/** The Bumbliary BlockItem — the obtainable-machine face. Creative tab: the gt6:bee
-	 *  tab (task p38-tabfix-c-misc — the GT6BeeCombs display walk). */
+	 *  tab (task tabfix-c-misc — the GT6BeeCombs display walk). */
 	public static final RegistryObject<Item> BUMBLIARY_ITEM =
 			ITEMS.register("bumbliary", () -> new BlockItem(BUMBLIARY.get(), new Item.Properties()));
 
@@ -104,7 +104,7 @@ public final class GT6BeeHives {
 					.strength(6.0F, 6.0F)
 					.sound(SoundType.WOOD), true));
 
-	/** The Advanced BlockItem. Creative tab: the gt6:bee tab (task p38-tabfix-c-misc —
+	/** The Advanced BlockItem. Creative tab: the gt6:bee tab (task tabfix-c-misc —
 	 *  the GT6BeeCombs display walk). */
 	public static final RegistryObject<Item> BUMBLIARY_ADVANCED_ITEM =
 			ITEMS.register("bumbliary_advanced", () -> new BlockItem(BUMBLIARY_ADVANCED.get(), new Item.Properties()));
@@ -145,7 +145,7 @@ public final class GT6BeeHives {
 	}
 
 	/**
-	 * The bee-family paintable array (task r3-beehive-tint, issue #15): the three blocks
+	 * The bee-family paintable array (task beehive-tint, issue #15): the three blocks
 	 * join the {@code GTMachineTintModel} baked-tint domain (the GT6Kitchen
 	 * .paintableBlockArray convention) — the hive's worldgen family colour rides the BE
 	 * PAINT model data, the Bumbliary pair's row material rides the

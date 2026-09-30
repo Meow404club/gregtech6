@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Inventory;
  * {@code gt6:textures/gui/example_chest.png} is a generated placeholder
  * (mdk/tools/gen_gui_textures.py), not datagen JSON — no red-line conflict.
  *
- * <p>Inventory label (p27-gui-render-fixes ②): AbstractContainerScreen computes
+ * <p>Inventory label (gui-render-fixes ②): AbstractContainerScreen computes
  * {@code inventoryLabelY = imageHeight - 94} in its CONSTRUCTOR (AbstractContainerScreen.java:78),
  * where imageHeight is still the 166 field default (:33) — the subclass height assignment below
  * runs too late and the label lands at y=72, on the chest grid's 4th row. Vanilla re-pins the

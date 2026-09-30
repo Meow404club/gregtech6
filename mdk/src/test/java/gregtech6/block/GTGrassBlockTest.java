@@ -28,7 +28,7 @@ import net.minecraft.world.level.block.SoundType;
 import gregtech6.registry.GTGrassBlocks;
 
 /**
- * The offline acceptance of task p24-grass-block over the committed generated tree (the
+ * The offline acceptance of task grass-block over the committed generated tree (the
  * GT6TagsDatagenTest snapshot discipline): the 6-variant registry face (id paths, the
  * Behavior_Spray_Color.java:154-160 dye order, the borrow-code texture mapping), the
  * EMPTY behaviour face (no randomTick — the no-spread cut; no flammability override —

@@ -25,7 +25,7 @@ import gregtech6.recipes.GTRecipesOfflineTestBase;
 import gregtech6.recipes.Recipe;
 
 /**
- * The Canner map dynamic arms, offline (task p24-canner-machine acceptance 4 — the
+ * The Canner map dynamic arms, offline (task canner-machine acceptance 4 — the
  * {@link GT6RecipeMapCanner} half over the sContainerResolver seam): the EMPTY arm (a
  * container holding fluid drains onto the fluid-output leg, duration max(amount/64,16) at
  * EUt 16, aCanBeBuffered F), the FILL arm (the first input-tank fluid fills the container

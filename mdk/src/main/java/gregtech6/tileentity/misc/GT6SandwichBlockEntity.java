@@ -16,7 +16,7 @@ import gregtech6.registry.GT6Placeables;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
 /**
- * The Sandwich BlockEntity (task p32-placeables) — the port of upstream MTE 32105
+ * The Sandwich BlockEntity (task placeables) — the port of upstream MTE 32105
  * {@code MultiTileEntitySandwich} (tmp/gt6-1.7.10 .../food/MultiTileEntitySandwich.java),
  * collapsed to the faces the task card accepts: the placed bite face (the upstream
  * onBlockActivated2 add-ingredient arm is the food-domain pool — the port carries no

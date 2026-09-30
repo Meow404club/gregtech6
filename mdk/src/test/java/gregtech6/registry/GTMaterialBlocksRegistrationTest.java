@@ -1,5 +1,5 @@
 /**
- * Tests for task p8-prefixblock-registry: the material prefix BLOCK universe census.
+ * Tests for task prefixblock-registry: the material prefix BLOCK universe census.
  *
  * <p>Pins the upstream seven storage-block prefixes (Loader_PrefixBlocks.java:40-46:
  * blockRaw/blockGem/blockDust/blockIngot/blockPlate/blockPlateGem/blockSolid) with an
@@ -7,7 +7,7 @@
  * (port OreDictPrefix.java:285-287 = upstream :364-366, the item-side criterion; the block*
  * prefixes carry {@code setCondition(basePrefix)} chains, upstream OP.java:345-351, so a
  * block family mirrors its base prefix family). The pinned counts are the acceptance
- * yardstick for this card and for the render card (p8-prefixblock-render).
+ * yardstick for this card and for the render card (prefixblock-render).
  *
  * <p>Measured 2026-08-31 (junit probe over GTMaterialItems.initMaterials): blockRaw 618,
  * blockGem 217, blockDust 1096, blockIngot 483, blockPlate 673, blockPlateGem 207,

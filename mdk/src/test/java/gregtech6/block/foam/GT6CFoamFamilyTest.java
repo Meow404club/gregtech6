@@ -38,7 +38,7 @@ import gregtech6.tileentity.foam.ITileEntityFoamable;
 import gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase.MultiBlockLevel;
 
 /**
- * The C-Foam block-family offline acceptance (task p26-c-foam-block-family): the
+ * The C-Foam block-family offline acceptance (task c-foam-block-family): the
  * fresh/dried property faces over the static registration seams (the GTGrassBlock
  * reflection form), the dry-delay rng seam bounds (upstream :61 100+rand(5900)), the
  * foamTarget EXTENDED routing truth table (the SPEC pin — pipe / foamable-TE / block /
@@ -111,7 +111,7 @@ public class GT6CFoamFamilyTest extends GTOfflineTestBase {
 	}
 
 	/**
-	 * The owned foam renders BOTH states as the static model (task p27-cfoam-owned-render):
+	 * The owned foam renders BOTH states as the static model (task cfoam-owned-render):
 	 * vanilla BaseEntityBlock.java:19-21 defaults getRenderShape to INVISIBLE (the BER
 	 * assumption) and the class chain GT6CFoamOwnedBlock → GTEntityBlock → BaseEntityBlock
 	 * inherited it — the owned foam (wet and dried alike) was skipped by the chunk renderer

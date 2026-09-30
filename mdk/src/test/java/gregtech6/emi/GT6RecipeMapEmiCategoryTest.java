@@ -56,7 +56,7 @@ public class GT6RecipeMapEmiCategoryTest {
 	}
 
 	/**
-	 * The r6-29-34a icon table resolves Forge RegistryObjects, which do not exist in a
+	 * The issues #29/#34a icon table resolves Forge RegistryObjects, which do not exist in a
 	 * bare JVM — the sResolver fixture seam (GT6RecipeMapJsonLoader.sItemResolver
 	 * convention). Stubbed PER TEST (a @BeforeAll-set stub combined with an @AfterEach
 	 * reset wiped it mid-class — the memoize-cache test passed and its successors died),
@@ -85,7 +85,7 @@ public class GT6RecipeMapEmiCategoryTest {
 				"one category instance per map (the Util.memoize factory contract)");
 		assertEquals("gt6:recipe_map/gt.recipe.cokeoven", tFirst.getId().toString(),
 				"the EMI category id mirrors the JEI uid one-to-one — the JEMI skip key stays aligned");
-		// r6-29-34a: the name face is the shared translatable title key (the oregen
+		// issues #29/#34a: the name face is the shared translatable title key (the oregen
 		// precedent — the bare-JVM getString() rides the Language fallback, pin the key)
 		var tName = tFirst.getName().getContents();
 		assertTrue(tName instanceof net.minecraft.network.chat.contents.TranslatableContents, "getName is translatable, not literal");
@@ -115,7 +115,7 @@ public class GT6RecipeMapEmiCategoryTest {
 
 	/**
 	 * The widget layout: the recording holder captures the slots/text; the positions are
-	 * the shared-seam coordinates FOLDED to the panel system (task r9-34-viewer-gui-bg,
+	 * the shared-seam coordinates FOLDED to the panel system (task 34-viewer-gui-bg,
 	 * the -5,-11 sOffset fold living in the meta exits) — Lathe 1 in / 2 out (no fluids):
 	 * the NEI-GUI switch says in0 (53,25), out0/1 (107,25)/(125,25) → the viewer sees
 	 * (48,14)/(102,14)/(120,14), and the cost text starts at the panel band y73.
@@ -147,7 +147,7 @@ public class GT6RecipeMapEmiCategoryTest {
 	}
 
 	/**
-	 * The backdrop composite (task r9-34-viewer-gui-bg, GitHub #34): the FIRST two widgets
+	 * The backdrop composite (task 34-viewer-gui-bg, GitHub #34): the FIRST two widgets
 	 * added are the grey NEI plate and the per-map machine band (render order = add
 	 * order, so these must lead the z stack), cropped at exactly the upstream
 	 * drawBackground quadruples (NEI_RecipeMap.java:632/:634 folded to the panel system)
@@ -182,7 +182,7 @@ public class GT6RecipeMapEmiCategoryTest {
 	}
 
 	/**
-	 * The gear-spot machine icon (task r10-debt-viewer-polish, the r9-34 defer): the THIRD
+	 * The gear-spot machine icon (task debt-viewer-polish, the #34 defer): the THIRD
 	 * widget added — right after the two backdrop textures (render order = add order, the
 	 * z face must not bury it under the band), ahead of every recipe slot. It is the bare
 	 * item form: {@code drawBack(false)} — upstream NEI_RecipeMap.java:278 drew
@@ -214,7 +214,7 @@ public class GT6RecipeMapEmiCategoryTest {
 	}
 
 	/**
-	 * The furnace-fallback whitelist maps (zero machines in the port — the r6-29-34a four)
+	 * The furnace-fallback whitelist maps (zero machines in the port — the issues #29/#34a four)
 	 * draw NO gear-slot item: the upstream {@code !mRecipeMachineList.isEmpty()} guard,
 	 * never the lit-furnace default. MORTAR is the live visible member of that whitelist.
 	 */
@@ -297,7 +297,7 @@ public class GT6RecipeMapEmiCategoryTest {
 	 * pitch overlaps each neighbour by 8px — never again. getBounds() is a pure field
 	 * read (the class doc), so the whole geometry pins offline. The BATH row exercises
 	 * BOTH former large sites at once: 3 item outputs AND a fluid output. Since
-	 * r9-34-viewer-gui-bg the lookups go through the meta's VIEWER exits (the
+	 * 34-viewer-gui-bg the lookups go through the meta's VIEWER exits (the
 	 * panel-system coordinates the slots actually draw at).
 	 */
 	@Test

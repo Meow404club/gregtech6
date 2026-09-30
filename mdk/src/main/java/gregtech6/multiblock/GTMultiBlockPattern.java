@@ -14,14 +14,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * A declarative multiblock structure pattern (task p12-ghost-pattern-api — card 1 of the
+ * A declarative multiblock structure pattern (task ghost-pattern-api — card 1 of the
  * ghost-preview family): an immutable list of cells, each one a relative offset
  * {@code (x, y, z)} plus a per-cell judgement in {@link Predicate}&lt;{@link BlockState}&gt;
  * shape, plus the pure facing anchor that rotates the whole structure around the
  * controller.
  *
  * <p><b>Where this comes from.</b> The upstream GT6 1.7.10 multiblocks (all 30 of them,
- * p12-ghost-upstream-census) carry their shape as the implicit
+ * ghost-upstream-census) carry their shape as the implicit
  * {@code (offset, partID, design, mode)} tuple table handwritten inside each
  * {@code checkStructure2} — there is no pattern object, builder or client ghost upstream
  * (negative, proven). This class makes that table explicit. The Coke Oven binding is the
@@ -33,8 +33,8 @@ import net.minecraft.world.level.block.state.BlockState;
  * auto-place (Util.checkAndSetTarget) — both are deliberately outside this API. A pattern
  * is pure display/sharing data; the server check remains hand-written per machine.
  *
- * <p><b>The forming expectation (task p16-pattern-checker — the P12 ruling consciously
- * lifted, ADR 2026-09-05-p16-formation-scoping).</b> "Display only" was the P12
+ * <p><b>The forming expectation (task pattern-checker — the P12 ruling consciously
+ * lifted, ADR 2026-09-05-formation-scoping).</b> "Display only" was the P12
  * scoping; it is undone by pure INCREMENT here: every cell now optionally carries the
  * upstream {@code (partBlock, design, mode)} triple as {@link Cell#partBlock}/{@link
  * Cell#design}/{@link Cell#usage} ({@link Builder#formingPart}; the sentinel-free
@@ -141,8 +141,8 @@ public final class GTMultiBlockPattern {
 		public final boolean hollow;
 
 		/**
-		 * The forming expectation, part 1 of 3 (task p16-pattern-checker, the ADR
-		 * 2026-09-05-p16-formation-scoping enrichment): the {@code ONLY_*} usage mask the
+		 * The forming expectation, part 1 of 3 (task pattern-checker, the ADR
+		 * 2026-09-05-formation-scoping enrichment): the {@code ONLY_*} usage mask the
 		 * forming check writes into the part BE (upstream checkAndSetTarget {@code aMode},
 		 * MultiBlockPartBlockEntity :85-126 table — the {@code ~NOT} complement form, so
 		 * negative values are the NORM). 0 when the cell carries no forming expectation.
@@ -197,7 +197,7 @@ public final class GTMultiBlockPattern {
 
 	/**
 	 * One HORIZONTAL SLAB of the structure — the declaration unit of the layer-sequence DSL
-	 * (task p16-pattern-layers). A layer is an immutable list of cells whose {@code y} is
+	 * (task pattern-layers). A layer is an immutable list of cells whose {@code y} is
 	 * FIXED AT 0: the caller declares the in-layer {@code (x, z)} footprint only, and the
 	 * {@link Builder#layer}/{@link Builder#repeatable} sequence assigns each layer its
 	 * {@code y} by ORDER (layer k of the sequence lands on {@code y = k} — the stacking axis
@@ -210,7 +210,7 @@ public final class GTMultiBlockPattern {
 	 * portable here (AGPL — code stays; runtime probing — contradicts the P12 immutable
 	 * pattern): what carries over is the IDEA that a shape is a sequence of slabs with a
 	 * variable-length repeat in the middle, re-declared per ADR
-	 * 2026-09-05-p16-formation-scoping ② as a BUILD-TIME expansion: the family asks the
+	 * 2026-09-05-formation-scoping ② as a BUILD-TIME expansion: the family asks the
 	 * factory for layer {@code i} by index (the {@code IntFunction<Layer>} below), stamps
 	 * out {@code min..max} copies, and freezes an ordinary dumb immutable cell list — the
 	 * runtime never learns layers existed.
@@ -218,7 +218,7 @@ public final class GTMultiBlockPattern {
 	 * <p>The layer judgement vocabulary is the SAME triple the flat builder carries —
 	 * {@link #part} (display), {@link #hollow} (the keep-empty marker) and
 	 * {@link #formingPart} (the full {@code (partBlock, usage, design)} forming expectation,
-	 * the p16-pattern-checker enrichment) — so a layered declaration is cell-for-cell
+	 * the pattern-checker enrichment) — so a layered declaration is cell-for-cell
 	 * interchangeable with a flat one.
 	 */
 	public static final class Layer {
@@ -364,14 +364,14 @@ public final class GTMultiBlockPattern {
 	/**
 	 * The pattern builder; offsets are structure-centre-relative, axes world-aligned.
 	 *
-	 * <p><b>The layer sequence (task p16-pattern-layers).</b> Beyond the flat per-cell
+	 * <p><b>The layer sequence (task pattern-layers).</b> Beyond the flat per-cell
 	 * methods, a declaration may stack {@link Layer} slabs: {@link #layer} appends one
 	 * fixed layer, {@link #repeatable} appends a variable-length segment expanded to the
 	 * SAME layer count {@code n} that {@link #build(int)} receives (the family
 	 * {@code GTMultiBlockPatternFamily} is the per-size front over exactly this builder).
 	 * Layers are recorded unexpanded and flattened at build time — layer k of the sequence
 	 * lands on {@code y = k} — so a repeatable segment's followers shift with {@code n}
-	 * (the kTFRU {@code ExpandableLayer} idea, ADR 2026-09-05-p16-formation-scoping ②,
+	 * (the kTFRU {@code ExpandableLayer} idea, ADR 2026-09-05-formation-scoping ②,
 	 * minus the runtime probing and the variation rotation: the expansion happens at
 	 * BUILD time and freezes an ordinary dumb immutable cell list — the P12 immutability
 	 * is untouched). The duplicate-offset rule (the {@code mSeen} precedent) spans the
@@ -414,8 +414,8 @@ public final class GTMultiBlockPattern {
 		}
 
 		/**
-		 * A structural part cell with the FULL forming expectation (task p16-pattern-checker,
-		 * the ADR 2026-09-05-p16-formation-scoping enrichment): the shared checker drives the
+		 * A structural part cell with the FULL forming expectation (task pattern-checker,
+		 * the ADR 2026-09-05-formation-scoping enrichment): the shared checker drives the
 		 * upstream {@code checkAndSetTarget} path with the given part block + usage mask +
 		 * design index, and the block identity doubles as the wand auto-place stock. The
 		 * cell's display predicate is {@link #is(Block)} on the same block — one declaration,
@@ -450,7 +450,7 @@ public final class GTMultiBlockPattern {
 		}
 
 		/**
-		 * Appends a VARIABLE-LENGTH segment (task p16-pattern-layers ① — the kTFRU
+		 * Appends a VARIABLE-LENGTH segment (task pattern-layers ① — the kTFRU
 		 * {@code ExpandableLayer} repeat, re-scoped to build time): the stack expands to
 		 * {@code n} layers — one per index {@code 0..n-1} of {@code aLayer} — where {@code n}
 		 * is the value {@link #build(int)} receives, validated against the declared
@@ -478,7 +478,7 @@ public final class GTMultiBlockPattern {
 		/**
 		 * Freezes the pattern with every {@link #repeatable} segment expanded to
 		 * {@code aSize} layers — the family's per-size expansion point (task
-		 * p16-pattern-layers ②). Each segment's {@code [min, max]} window is enforced
+		 * pattern-layers ②). Each segment's {@code [min, max]} window is enforced
 		 * first (out-of-window = declaration bug); the result is an ordinary immutable
 		 * dumb cell list, identical in kind to a flat declaration's.
 		 */

@@ -16,7 +16,7 @@ import gregtech6.covers.covers.CoverSelectorRedstone;
 import gregtech6.covers.covers.CoverSelectorTag;
 
 /**
- * The selector cover family offline acceptance (task p34-covers-gameplay-10): the four
+ * The selector cover family offline acceptance (task covers-gameplay-10): the four
  * selectors drive the {@link gregtech6.tileentity.machines.ITileEntitySwitchableMode}
  * dial — the Tag selector pins its constructor mode, the Redstone selector mirrors the
  * face signal, the Manual and ButtonPanel selectors are click GUIs over the zone maps —

@@ -1,5 +1,5 @@
 /**
- * Tests for task r6-c3-lens-ores: the lens companion-ore table (the upstream
+ * Tests for task c3-lens-ores: the lens companion-ore table (the upstream
  * stone-layer companion rows bound to the 5 marker-stone lenses), the axis gate
  * face, the count formula and the feature keys — the acceptance's offline audit
  * unit (the GT6LargeVeinTest posture).
@@ -110,7 +110,7 @@ class GT6LensOreTest {
      * The axis gate face: every generated row's material sits in the GT6OreBlocks
      * material axis (the GT6VeinGenerator.valid precedent) and the generated band
      * keeps table order. The gate is LIVE data, never a frozen drop-list — the
-     * axis-extension card (r7-a-ore-axis-extension, B plan ruled) widens the axis
+     * axis-extension card (a-ore-axis-extension, B plan ruled) widens the axis
      * and today-gated rows (all four of basalt, kimberlite's two gems, marble's
      * Stannite/Kesterite, granite_red's uranium family, komatiite's magnesite) start
      * generating with zero edits here, so no assertion names a

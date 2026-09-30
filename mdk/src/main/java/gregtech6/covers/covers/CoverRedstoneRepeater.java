@@ -10,7 +10,7 @@ import gregtech6.tileentity.connectors.GTWireBlockEntity;
 
 /**
  * The redstone repeater cover — 1.20.1 port of gregapi/cover/covers/CoverRedstoneRepeat
- * er.java:30-46 (task p34-covers-gameplay-10; upstream rides the vanilla repeater item,
+ * er.java:30-46 (task covers-gameplay-10; upstream rides the vanilla repeater item,
  * GT_API.java:802). The FOLLOWER face of the redstone wire: the repeater is ON (art +
  * the full 15 emission) exactly while the wire CARRIES a signal — the mirror of the
  * torch family's inverter (the :42-44 condition is the wire-dead arm,

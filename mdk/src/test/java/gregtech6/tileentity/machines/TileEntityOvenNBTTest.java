@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.Blocks;
 import org.junit.jupiter.api.Test;
 
 /**
- * Acceptance 1 (task p4-machine-oven): the machine NBT round trip — mProgress/mEnergy/
+ * Acceptance 1 (task machine-oven): the machine NBT round trip — mProgress/mEnergy/
  * mStopped (the acceptance minimum) plus mMaxProgress/mMinEnergy/mIgnited, the facing byte,
  * the inventory and the pending output stack, upstream readFromNBT2 :112-155 key-for-key
  * (plain in-repo key form, chest precedent).

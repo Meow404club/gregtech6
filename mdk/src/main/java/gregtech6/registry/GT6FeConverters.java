@@ -23,7 +23,7 @@ import gregtech6.block.energy.GT6FeConverterBlock;
 import gregtech6.tileentity.energy.GT6FeConverterBlockEntity;
 
 /**
- * The FE→EU converter registration (task p28-b-fe-converter-machine) — card-owned
+ * The FE→EU converter registration (task b-fe-converter-machine) — card-owned
  * {@code @EventBusSubscriber(MOD)} DeferredRegisters attached from the construct event,
  * the GT6FeBatteries/GT6Kitchen shape (ADR-P3-4; a separate class keeps the card scopes
  * disjoint). GTMod / GTModBusListener stay untouched (the frozen P2 form); GTMachines.java

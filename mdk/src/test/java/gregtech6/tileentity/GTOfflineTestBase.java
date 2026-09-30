@@ -23,7 +23,7 @@ import org.junit.jupiter.api.BeforeAll;
  * (intrusive holder registration hits the frozen registry), so offline fixtures use
  * vanilla blocks.
  *
- * <p>On the 1.21.1 leg (MDG {@code unitTest}, task p15-m4-test-infra) the test JVM boots
+ * <p>On the 1.21.1 leg (MDG {@code unitTest}, task m4-test-infra) the test JVM boots
  * through FML itself (junit-fml LauncherSessionListener), so by the time the first
  * {@code @BeforeAll} runs the registries are fully populated <em>and frozen</em> — the
  * 21.1 {@code BlockEntity} ctor validates its type/state pair
@@ -121,7 +121,7 @@ public abstract class GTOfflineTestBase {
 	/**
 	 * Reopens the write window of the block-entity-type registry so fixture BETs
 	 * ({@code BlockEntityType.Builder.of(...).build(null)}) stay constructible after an
-	 * FML boot froze it (task p15-m4-test-infra). No-op when already unfrozen, and a
+	 * FML boot froze it (task m4-test-infra). No-op when already unfrozen, and a
 	 * silent no-op on any runtime where the method shape drifts.
 	 */
 	public static void unfreezeBlockEntityTypeRegistry() {

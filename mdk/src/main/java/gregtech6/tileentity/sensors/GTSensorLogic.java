@@ -1,7 +1,7 @@
 package gregtech6.tileentity.sensors;
 
 /**
- * The sensor pure-logic core (task p26-sensors-core) — the MC-free port of the numeric
+ * The sensor pure-logic core (task sensors-core) — the MC-free port of the numeric
  * layer of the upstream double base:
  * <ul>
  * <li>{@code MultiTileEntitySensorTE} (gregapi/tileentity/machines/MultiTileEntitySensorTE
