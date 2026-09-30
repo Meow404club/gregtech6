@@ -2,6 +2,8 @@ package gregtech6.client.render;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import javax.annotation.Nullable;
@@ -84,6 +86,21 @@ public class GTOvenOverlayModel extends GTDynamicBakedModel {
 	/** Sprite id prefix: {@code block/oven_overlay_<group>_<face>} (lowercase, 1.20.1 charset). */
 	public static final String SPRITE_PREFIX = "block/oven_overlay_";
 
+	/**
+	 * The per-instance retinted-copy table for the body pass (the {@link
+	 * GTMachineTintModel} shape: tint → (source quad → retinted copy)). The oven ladder
+	 * is SKIPPED by the {@link GTMachineTintModel} wrap (its states already carry this
+	 * dynamic model, the {@code instanceof GTDynamicBakedModel} guard), so the body tint
+	 * rides HERE — the solid-layer fallback quads are retinted with the same
+	 * {@link GTMachinePaintTint#tintARGB} colour every other machine gets (upstream
+	 * unpainted = the row NBT_MATERIAL colour, TileEntityBase07Paintable.java:83-84;
+	 * painted = the PAINT snapshot, which TileEntityOven.getModelData co-hosts on the
+	 * same ModelData as OVEN_SNAPSHOT). Without it the tintindex-0 body cube renders the
+	 * raw grayscale plate untinted — the "pure-white oven" field report root cause
+	 * (task oven-texture-borrow).
+	 */
+	private final Map<Integer, Map<BakedQuad, BakedQuad>> mTintedQuads = new ConcurrentHashMap<>();
+
 	/** Sprite resolver — runtime: the block atlas (Minecraft.java:2386); tests: a stub. */
 	private final Function<ResourceLocation, TextureAtlasSprite> mSpriteLookup;
 
@@ -133,7 +150,8 @@ public class GTOvenOverlayModel extends GTDynamicBakedModel {
 		if (!tSolid && !tCutout) return List.of(); // the machine draws on no other chunk layer
 
 		List<BakedQuad> rQuads = new ArrayList<>();
-		if (tSolid) rQuads.addAll(getFallbackModel().getQuads(aState, aSide, aRand));
+		if (tSolid) rQuads.addAll(GTMachineTintModel.tintQuads(getFallbackModel().getQuads(aState, aSide, aRand),
+				bodyTint(aState, aModelData), mTintedQuads));
 		if (!tCutout) return rQuads;
 
 		Direction tFacing = aState != null && aState.hasProperty(GTOvenBlock.FACING)
@@ -144,6 +162,18 @@ public class GTOvenOverlayModel extends GTDynamicBakedModel {
 			rQuads.add(bakeOverlayQuad(tPlan, tSprite));
 		}
 		return rQuads;
+	}
+
+	/**
+	 * The body-pass tint (the {@link GTMachineTintModel#getDynamicQuads} colour line over
+	 * the same dispatch): index 0 resolves PAINT-wins-else-row-material through the
+	 * combined {@link GTMachinePaintTint#tintMaterialOf} gate (the oven ladder rides the
+	 * {@code GTBasicMachineBlock.materialOf} arm). Reads ONLY the state + ModelData —
+	 * the render-route red line.
+	 */
+	private static int bodyTint(@Nullable BlockState aState, ModelData aModelData) {
+		return GTMachinePaintTint.tintARGB(aModelData,
+				aState == null ? null : GTMachinePaintTint.tintMaterialOf(aState.getBlock()), 0);
 	}
 
 	// ---------------------------------------------------------------------------
@@ -256,8 +286,14 @@ public class GTOvenOverlayModel extends GTDynamicBakedModel {
 		// the bakeQuad rotation slot stays null (no element rotation)
 		Vector3f tFrom = new Vector3f((float) tBox[0] * 16, (float) tBox[1] * 16, (float) tBox[2] * 16);
 		Vector3f tTo = new Vector3f((float) tBox[3] * 16, (float) tBox[4] * 16, (float) tBox[5] * 16);
+		// tintIndex -1 (NO_TINT): the state decal is UNCOLOURED upstream
+		// (BlockTextureDefault.java:179-180, the P22 split) — never multiplied by the
+		// paint/material colour, and the static JSON overlays deserialize to the same
+		// -1 default (BlockElementFace.Deserializer DEFAULT_TINT_INDEX). The old
+		// explicit 0 diverged from both and would have let any tint route wash the
+		// door art (the oven-texture-borrow follow-up).
 		return BAKERY.bakeQuad(tFrom, tTo,
-				new BlockElementFace(aPlan.quadFace(), 0, aPlan.sprite().toString(), new BlockFaceUV(new float[] {0, 0, 16, 16}, 0)),
+				new BlockElementFace(aPlan.quadFace(), -1, aPlan.sprite().toString(), new BlockFaceUV(new float[] {0, 0, 16, 16}, 0)),
 				aSprite, aPlan.quadFace(), BlockModelRotation.X0_Y0, null, true, aPlan.sprite());
 	}
 }
