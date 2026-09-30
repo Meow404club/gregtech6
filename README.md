@@ -112,11 +112,15 @@ Issue 与 PR 均欢迎（中英文皆可）。
 
 - Gregorius Techneticies 与 GregTech-6 Team —— GregTech 6 原作；
 - brachy84 —— [ModularUI-Modern](https://github.com/brachy84/ModularUI-Modern) 作者（本仓 GUI 框架 fork 的上游）；
-- GTCEu Modern 团队 —— 现代 Minecraft 实现的重要参考。
+- GTCEu Modern 团队 —— 现代 Minecraft 实现的重要参考；
+- 天沢香 —— [TFC Amazawa Light GUI](https://modrinth.com/resourcepack/tfc-amazawa-light-gui) 资源包作者。本 mod 机器 GUI 的现代化换装（面板/部件/底图）借鉴并裁切自该包，作者在群聊中慷慨授权（"标注一下就行"）：
+
+  ![amazawa 授权聊天记录](docs/licenses/amazawa-gui-authorization.png)
 
 ## 许可证
 
 - 代码：[LGPL-3.0-or-later](LICENSE)，与上游一致；
 - 资产：CC0-1.0（跟随上游惯例）；
 - 上游 GregTech logo 及其衍生资产（CC BY-NC 4.0）未随本仓分发；
+- GUI 美术部件：借鉴自 [TFC Amazawa Light GUI](https://modrinth.com/resourcepack/tfc-amazawa-light-gui)（Apache-2.0，经作者授权），授权与逐文件来源台账见 [NOTICE.md](NOTICE.md)；
 - 第三方组件清单见 [NOTICE.md](NOTICE.md)。
