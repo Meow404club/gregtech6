@@ -89,6 +89,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 			"gregtech6.recipes.maps.GT6RecipeMapBumblelyzer", // task machines-bumblelyzer-crucible — the display-stock reset hook joins the ledger
 			"gregtech6.recipes.GT6RecipesReactorRods", // task debt-reactor-c-rods — the 45-row reactor-rod pour joins the ledger
 			"gregtech6.recipes.GT6RecipesCrops", // task cbc-5-crop-consumption — the crop consumption pour joins the ledger
+			"gregtech6.recipes.GT6RecipesFood", // task food-recipes-t1b — the five-map food band pour joins the ledger (REVIEW FIX seat XVII: the card selftest ran a narrow Food/Bath/Mixer filter and missed the ADR-P18 ledger ratchet)
 	};
 
 	/** The freeze-point snapshot: map field name → expected row count after the full census pour. Upstream registration order. */
