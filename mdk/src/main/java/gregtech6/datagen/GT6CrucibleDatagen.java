@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 import java.util.concurrent.CompletableFuture;
 
+import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
@@ -81,10 +82,11 @@ public final class GT6CrucibleDatagen {
 	 * SET_COPPER (Bronze) and SET_METALLIC (Steel) ride the borrowed grayscale
 	 * materialicons blockSolid art (assets/README.md, the p8-prefixblock-render borrow),
 	 * the vanilla SET_STONE row (Stone) has no borrowed blockSolid icon and rides the
-	 * vanilla smooth stone. Declared deviation: upstream tints the grayscale art with the
-	 * material colour at runtime (PrefixBlock.getRenderColor) — the port renders it
-	 * un-tinted; the tint rides the render pool (ponytail: un-tinted grayscale, a
-	 * tintindex-0 body + a RegisterColorHandlersEvent row lands it without model changes).
+	 * vanilla smooth stone. Upstream multiplies the grayscale art with the material colour
+	 * at runtime (the {@code mRGBaSolid} pass of {@code getTextureSmooth(mRGBaSolid, F)}
+	 * :980-987) — task r10-debt-material-tint closed the former un-tinted deviation: the
+	 * tinted rows carry tintindex 0 on the body faces and
+	 * {@code GT6MoldTintListener} answers the {@link #bodyTinted} material's mRGBaSolid.
 	 * Returns the FULLY-QUALIFIED {@code ns:path} (the vanilla row carries its explicit
 	 * {@code minecraft:} — the callers parse it, they must not {@code modLoc} it again).
 	 */
@@ -95,6 +97,17 @@ public final class GT6CrucibleDatagen {
 		if (aMaterial == gregapi.data.MT.Steel)   return "gt6:block/materialicons/metallic/block_solid";
 		throw new IllegalStateException("no smooth body texture mapped for material " + aMaterial
 				+ " — map it here before the row joins (the loud-drift rule)");
+	}
+
+	/**
+	 * Whether the body face needs the material tint (task r10-debt-material-tint): the
+	 * borrowed grayscale materialicons art is multiplied with the mRGBaSolid colour, the
+	 * vanilla smooth-stone row is a FINISHED texture — a second multiply would dirty it
+	 * (the recorded declaration deviation, kept). Derived from {@link #bodyTexture}'s own
+	 * namespace so the tint rule can never drift from the texture mapping.
+	 */
+	public static boolean bodyTinted(gregapi.oredict.OreDictMaterial aMaterial) {
+		return !bodyTexture(aMaterial).startsWith("minecraft:");
 	}
 
 	/**
@@ -137,17 +150,38 @@ public final class GT6CrucibleDatagen {
 			// share the one concave MTE design 1072 — the flat-cube placeholder retired)
 		}
 
-		/** One crucible: 9 LIQUID_LEVEL variants + the BlockItem parent (the empty face = the material smooth body). */
+		/** One crucible: 9 LIQUID_LEVEL variants + the BlockItem parent (the empty face = the material smooth body, tintindex 0 on the grayscale-borrow rows — task r10-debt-material-tint). */
 		private void addCrucible(GT6Crucibles.SmelteryRow aRow, Block aBlock) {
 			String tEmpty = "block/" + aRow.path() + "_empty";
 			String tFilled = "block/" + aRow.path() + "_filled";
-			ModelFile tEmptyModel = models().cubeAll(tEmpty, loc(bodyTexture(aRow.material().get())));
+			gregapi.oredict.OreDictMaterial tMaterial = aRow.material().get();
+			ModelFile tEmptyModel = GT6CrucibleDatagen.bodyTinted(tMaterial)
+					? tintedCubeAll(tEmpty, loc(bodyTexture(tMaterial)))
+					: models().cubeAll(tEmpty, loc(bodyTexture(tMaterial)));
 			ModelFile tFilledModel = models().cubeAll(tFilled, modLoc(CONTENT_TEXTURE));
 			getVariantBuilder(aBlock).forAllStates(aState -> {
 				int tLevel = aState.getValue(GT6Crucibles.CrucibleBlock.LIQUID_LEVEL);
 				return ConfiguredModel.builder().modelFile(tLevel == 0 ? tEmptyModel : tFilledModel).build();
 			});
 			itemModels().withExistingParent(aRow.path(), modLoc(tEmpty));
+		}
+
+		/**
+		 * The one-element tinted cube (the GT6OreBlockStates.tintedCubeAll:161-171 idiom,
+		 * local copy — FILES_SCOPE keeps GT6BlockStates/GT6OreBlockStates untouched): every
+		 * face tintindex 0 so {@code GT6MoldTintListener} multiplies the material mRGBaSolid
+		 * over the grayscale borrow.
+		 */
+		private ModelFile tintedCubeAll(String aName, ResourceLocation aTexture) {
+			BlockModelBuilder tModel = models().getBuilder(aName)
+					.parent(models().getExistingFile(mcLoc("block/block")))
+					.texture("all", aTexture)
+					.texture("particle", "#all");
+			tModel.element()
+					.from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+					.allFaces((aDir, aFace) -> aFace.texture("#all").tintindex(0).cullface(aDir))
+					.end();
+			return tModel;
 		}
 	}
 
