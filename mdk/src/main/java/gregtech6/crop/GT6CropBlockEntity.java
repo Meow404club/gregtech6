@@ -547,12 +547,18 @@ public class GT6CropBlockEntity extends BlockEntity implements CropTileView {
 
 	// -------------------------------------------------------------- misc faces
 
-	/** The upstream :176-177 onLoaded phase offset. */
+	/** The upstream :176-177 onLoaded phase offset + the :178 immediate biome bonus refresh. */
 	@Override
 	public void onLoad() {
 		super.onLoad();
-		if (level != null && !level.isClientSide && mTicker == 0) {
-			mTicker = level.getRandom().nextInt(CropTickLogic.TICKRATE);
+		if (level != null && !level.isClientSide) {
+			if (mTicker == 0) {
+				mTicker = level.getRandom().nextInt(CropTickLogic.TICKRATE);
+			}
+			// the onLoaded :178 ride-along -- the biome bonus is valid from the FIRST 256t cycle
+			// (without it the shell would answer 0 until the next :212 40-cycle refresh, up to
+			// 10240t of humidity math over a stale zero).
+			updateBiomeHumidityBonus(level, worldPosition);
 		}
 	}
 
