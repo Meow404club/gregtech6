@@ -50,28 +50,35 @@ public class GT6ModDriverClearOutWaveTest {
     /** The default registration universe (the mdh-2 census 56273 + the casing-machine-register
      * 840 = 4 casing prefixes × 210 materials, which landed on main AFTER this card's freeze —
      * ratchet protocol ADR-MDH4, histogram-verified pair-for-pair: 104 → 108 families, every
-     * other family's count byte-identical; REVIEW FIX merge seat XVI). */
-    private static final int BASELINE = 57113;
+     * other family's count byte-identical; REVIEW FIX merge seat XVI) + 130 task
+     * wood-planks-register (the plank WOOD domain; +1 creative-visible prefix family,
+     * TAB_PREFIX_COUNT 101 → 102; REVIEW FIX seat XVII — the rebase exposed this
+     * post-freeze pin to the card's +130). */
+    private static final int BASELINE = 57243;
     /** The per-domain kept-drop ledger (the card report's 对账表, offline-measured 2026-10-01),
      * re-measured at review on the post-casing universe (probe run, forge offline leg): the
      * casingMachine 210-material axis overlaps five domains' PRIMARY materials, whose casing
      * pairs drop with their domain pin — TE +12, EIO +28, HBM +16, BOTA +16, MET +136
      * (total 8026 → 8234; HaC/IC2/EP untouched, sum = joint = no cross-domain bleed).
-     * Review seat XVI. */
+     * Review seat XVI. +3 BOTA (1129 → 1132) task wood-planks-register REVIEW FIX seat XVII:
+     * Livingwood/Dreamwood/Shimmerwood are wood()-stamped WOOD materials (MT.java:2107-2109)
+     * AND BOTA PRIMARY (atlas :203/:205/:206) — the plank registration put a plank item on
+     * each, which joins BOTA's absent-pin drop. */
     private static final Map<String, Integer> PER_DOMAIN_DROPS = Map.of(
             MT.MD.HaC.mID, 211,
             MT.MD.IC2.mID, 75,
             MT.MD.TE.mID, 336,
             MT.MD.EIO.mID, 873,
             MT.MD.HBM.mID, 908,
-            MT.MD.BOTA.mID, 1129,
+            MT.MD.BOTA.mID, 1132,
             MT.MD.GC_EXTRAPLANETS.mID, 1510,
             MT.MD.MET.mID, 3192);
-    /** 57113 − 8234 = 48879: the eight-domain joint pin keeps the ledger arithmetic honest. */
+    /** 57243 − 8237 = 49006: the eight-domain joint pin keeps the ledger arithmetic honest. */
     private static final int TOTAL_DROP = PER_DOMAIN_DROPS.values().stream().mapToInt(Integer::intValue).sum();
     /** Creative-visible prefix families before and after the wave — no family empties out
-     * (97 + the 4 casingMachine families that landed post-freeze, see BASELINE). */
-    private static final int TAB_PREFIX_COUNT = 101;
+     * (97 + the 4 casingMachine families that landed post-freeze + plank, task
+     * wood-planks-register, see BASELINE). */
+    private static final int TAB_PREFIX_COUNT = 102;
 
     @BeforeAll
     public static void initMaterialSystem() {
@@ -88,7 +95,7 @@ public class GT6ModDriverClearOutWaveTest {
     @Test
     public void perDomainKeptLedgerMatchesTheAtlas() {
         assertEquals(BASELINE, GTMaterialItems.registrationOrder().size(), "default universe unchanged (acceptance 2, zero-change proof)");
-        assertEquals(8234, TOTAL_DROP, "the eight-domain drop total (57113 → 48879)");
+        assertEquals(8237, TOTAL_DROP, "the eight-domain drop total (57243 → 49006)");
 
         Set<String> allDroppedNames = new HashSet<>();
         for (Map.Entry<String, Integer> tEntry : PER_DOMAIN_DROPS.entrySet()) {
@@ -119,7 +126,7 @@ public class GT6ModDriverClearOutWaveTest {
 
         // the eight-domain joint pin: exactly the 137 PRIMARY materials' pairs leave (no cross-domain bleed)
         for (String tDomain : PER_DOMAIN_DROPS.keySet()) GT6ModDrivers.setDriver(tDomain, DriverLevel.ABSENT);
-        assertEquals(BASELINE - TOTAL_DROP, GTMaterialItems.registrationOrder().size(), "all-eight ABSENT keeps 48879");
+        assertEquals(BASELINE - TOTAL_DROP, GTMaterialItems.registrationOrder().size(), "all-eight ABSENT keeps 49006");
         for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder())
             assertFalse(allDroppedNames.contains(tPair.material().mNameInternal),
                     "no PRIMARY material of any pinned domain survives the joint pin: " + tPair.material().mNameInternal);
