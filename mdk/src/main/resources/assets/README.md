@@ -11859,3 +11859,21 @@ Dedication** (same upstream `README.md` block as above).
   - `crop_rice.png` `gt.multiitem.food/12007.png`
     (`828e7aaf8abefb993ebf779097fd5e8a93bdd49fb9f8b96260fda7bd878607fb` — the Rice crop, MultiItemFood.java:60)
   All 16x16 RGBA, CC0 1.0 per the upstream README block.
+
+## task cbc-1-cropstick-base (2026-10-01) — the crop-stick texture trio
+
+The crop-stick block/item art borrows from the IC2 1.12 decompiled assets
+(`tmp/harvest/ic2-crops/reference/ic2-source/decompiled/assets/ic2/textures/` — the GT6
+1.7.10 system parasited the IC2 blockCrop entirely and never owned stick art, so the IC2
+textures ARE the canonical crop-stick art; harvest 2026-10-01). 3 PNGs, byte-identical,
+sha256 verified per file:
+
+  - `block/crop_stick.png` `ic2:blocks/crop/stick.png`
+    (`ffbdc867163032dbcc9ee6a29e5c3d03c15ec1bf5c56fadede62c80a7981fb8a` — the single stick face)
+  - `block/crop_stick_cross.png` `ic2:blocks/crop/stick_upgraded.png`
+    (`160627f24e8e5d7c65860bcaf032be935e2e1d7120febdeaafd215c76f1de157` — the crossingBase double-stick face)
+  - `item/crop_stick.png` `ic2:items/crop/crop_stick.png`
+    (`ffbdc867163032dbcc9ee6a29e5c3d03c15ec1bf5c56fadede62c80a7981fb8a` — IC2 reuses the stick art for the item icon; identical digest to the block face)
+
+All 16x16 RGBA. The crop/59-card stage art (crop/<name>/<1..maxSize>) is card cbc-3's
+census + borrow wave.
