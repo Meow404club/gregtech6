@@ -26,6 +26,11 @@ growth shortcut):
     allow_failed attempts then the strict verdict (0.237^5 ~ 0.07% residual).
   E negative: an immature (size 1) harvest refuses -- harvested=false, the
     plant survives.
+  F Cropnalyzer (card cbc-4-crop-tools): /gt6crop scan over a planted tile --
+    the Behavior_Cropnalyzer readout verdict: the header line and the Plant
+    storage line (Fertilizer/Water/Weed-Ex) ride the response; the scanLevel
+    bump itself is the offline pin (the readout does not carry it, the
+    upstream :92 commented line).
 
 The two framework passes are the [0, 0] idempotency proof (every arm re-lays
 its rig first; the pass-open bbox cleanup restores the sites between passes).
@@ -45,12 +50,13 @@ for _path in (str(_HERE), str(_HERE.parent)):
 import gt6world
 from framework import Chain, Step, main, phase
 
-# The sites -- a fresh z=616 band, x384..390 (x/z-disjoint from every roster
+# The sites -- a fresh z=616 band, x384..392 (x/z-disjoint from every roster
 # band; the roster's former top was the z=600 x500..506 coke-oven strip).
 FARM = gt6world.Site(384, 64, 616, dz=1)   # the place/plant arm (farmland 64 + stick 65)
 CROSS = gt6world.Site(386, 64, 616, dz=1)  # the crossing arm
 MATURE = gt6world.Site(388, 64, 616, dz=1) # the mature harvest arm
 NEG = gt6world.Site(390, 64, 616, dz=1)    # the immature negative arm
+SCAN = gt6world.Site(392, 64, 616, dz=1)   # the Cropnalyzer verdict arm (cbc-4)
 
 FP = "384 64 616"
 FS = "384 65 616"
@@ -60,6 +66,8 @@ MP = "388 64 616"
 MS = "388 65 616"
 NP = "390 64 616"
 NS = "390 65 616"
+SP = "392 64 616"
+SS = "392 65 616"
 
 ITEM_RYE = ('@e[type=minecraft:item,nbt={Item:{id:"gt6:food_crop_rye"}},'
             'distance=..6,x=388,y=65,z=616]')
@@ -124,12 +132,20 @@ steps += [
     Step(f"gt6crop harvest {NS}", expect="harvested=false size=1"),
     Step(f"execute if block {NS} gt6:crop_sticks run gamerule keepInventory",
          expect="Gamerule keepInventory is currently set to"),
+
+    phase("F: Cropnalyzer -- the cbc-4 scan verdict over a planted tile"),
+    *rig(SP, SS),
+    Step(f"gt6crop plant {SS} rye 3", expect="planted=rye size=3 ok=true"),
+    Step(f"gt6crop scan {SS}", expect=f"--- X: 392 Y: 65 Z: 616 ---"),
+    Step(f"gt6crop scan {SS}", expect="Type -- Name: rye   Growth: 1   Gain: 1   Resistance: 1"),
+    Step(f"gt6crop scan {SS}", expect="Plant -- Fertilizer: 0   Water: 0   Weed-Ex: 0"),
+    Step(f"gt6crop scan {SS}", expect="Attributes: Wheat, Food, Grain"),
 ]
 
 CHAIN = Chain(
     name="crop_a_world",
     slug="cropw",
-    sites=gt6world.declare_sites(FARM, CROSS, MATURE, NEG),
+    sites=gt6world.declare_sites(FARM, CROSS, MATURE, NEG, SCAN),
     preferred_ports=(25984, 25994),      # this card's pinned rcon/query pair
     steps=steps,
 )
