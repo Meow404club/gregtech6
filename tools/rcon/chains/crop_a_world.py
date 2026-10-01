@@ -21,11 +21,17 @@ growth shortcut):
   D mature arm: plant rye at size 7 (the :464 signature), /gt6crop harvest
     -- the produce drops as a real item entity (gt6:food_crop_rye pinned via
     execute-if-entity), the size resets to the after-harvest 2. The drop
-    COUNT is a gaussian roll (~24% zero per attempt, upstream :817 resets the
-    size regardless), so the arm rides a bounded re-plant loop: four
-    allow_failed attempts then the strict verdict (0.237^5 ~ 0.07% residual).
+    COUNT is a gaussian roll (~30% zero per attempt, upstream :817 resets the
+    size regardless), so the verdict is CUMULATIVE: eight plant/harvest
+    attempts with no intermediate sweep, then ONE strict produce-entity gate
+    (fails only if all eight rolled zero, 0.3^8 ~ 7e-5).
   E negative: an immature (size 1) harvest refuses -- harvested=false, the
     plant survives.
+  F Cropnalyzer (card cbc-4-crop-tools): /gt6crop scan over a planted tile --
+    the Behavior_Cropnalyzer readout verdict: the header line and the Plant
+    storage line (Fertilizer/Water/Weed-Ex) ride the response; the scanLevel
+    bump itself is the offline pin (the readout does not carry it, the
+    upstream :92 commented line).
 
 The two framework passes are the [0, 0] idempotency proof (every arm re-lays
 its rig first; the pass-open bbox cleanup restores the sites between passes).
@@ -45,12 +51,13 @@ for _path in (str(_HERE), str(_HERE.parent)):
 import gt6world
 from framework import Chain, Step, main, phase
 
-# The sites -- a fresh z=616 band, x384..390 (x/z-disjoint from every roster
+# The sites -- a fresh z=616 band, x384..392 (x/z-disjoint from every roster
 # band; the roster's former top was the z=600 x500..506 coke-oven strip).
 FARM = gt6world.Site(384, 64, 616, dz=1)   # the place/plant arm (farmland 64 + stick 65)
 CROSS = gt6world.Site(386, 64, 616, dz=1)  # the crossing arm
 MATURE = gt6world.Site(388, 64, 616, dz=1) # the mature harvest arm
 NEG = gt6world.Site(390, 64, 616, dz=1)    # the immature negative arm
+SCAN = gt6world.Site(392, 64, 616, dz=1)   # the Cropnalyzer verdict arm (cbc-4)
 
 FP = "384 64 616"
 FS = "384 65 616"
@@ -60,6 +67,8 @@ MP = "388 64 616"
 MS = "388 65 616"
 NP = "390 64 616"
 NS = "390 65 616"
+SP = "392 64 616"
+SS = "392 65 616"
 
 ITEM_RYE = ('@e[type=minecraft:item,nbt={Item:{id:"gt6:food_crop_rye"}},'
             'distance=..6,x=388,y=65,z=616]')
@@ -96,40 +105,41 @@ steps += [
     phase("D: the mature arm -- plant rye at 7 (the :464 size face) and harvest the produce"),
     *rig(MP, MS),
     # The drop COUNT is a gaussian roll (chance = 0.95^1 * 1.03^1 ~ 0.978 -> a zero-drop
-    # harvest resets the size and answers false, upstream :817 runs regardless) — a strict
-    # single-shot expect is a ~24% flake per pass. The bounded re-plant loop drives the
-    # per-attempt miss rate 0.237^5 ~ 0.07%: four allow_failed attempts (each re-plants the
-    # after-harvest size-2 tile back to 7, each sweeps any drops) then the strict verdict.
-    Step(f"gt6crop plant {MS} rye 7", expect="planted=rye size=7 ok=true"),
-    Step(f"gt6crop harvest {MS}", expect="harvested=true size=2", allow_failed=True),
-    Step(f"kill {ITEMS_MATURE}"),
-    Step(f"gt6crop plant {MS} rye 7", expect="planted=rye size=7 ok=true"),
-    Step(f"gt6crop harvest {MS}", expect="harvested=true size=2", allow_failed=True),
-    Step(f"kill {ITEMS_MATURE}"),
-    Step(f"gt6crop plant {MS} rye 7", expect="planted=rye size=7 ok=true"),
-    Step(f"gt6crop harvest {MS}", expect="harvested=true size=2", allow_failed=True),
-    Step(f"kill {ITEMS_MATURE}"),
-    Step(f"gt6crop plant {MS} rye 7", expect="planted=rye size=7 ok=true"),
-    Step(f"gt6crop harvest {MS}", expect="harvested=true size=2", allow_failed=True),
-    Step(f"kill {ITEMS_MATURE}"),
-    Step(f"gt6crop plant {MS} rye 7", expect="planted=rye size=7 ok=true"),
-    Step(f"gt6crop harvest {MS}", expect="harvested=true size=2"),
+    # harvest resets the size and answers false, upstream :817 runs regardless) -- a ~30%
+    # miss per attempt, and the fixed-seed persisted world makes the post-boot draw stream
+    # near-deterministic (a bad stretch repeats within a boot). So the verdict is
+    # CUMULATIVE: eight plant/harvest attempts with NO intermediate sweep, then ONE strict
+    # produce-entity gate -- the arm fails only if ALL eight rolled zero (0.3^8 ~ 7e-5).
+    # A strict verdict on the tail attempt alone stays a ~30% coin toss no matter how many
+    # allow_failed attempts precede it (observed live: [0,3]/[3,0] passes with the strict
+    # tail roll missing).
+    *([step
+       for _attempt in range(8)
+       for step in (Step(f"gt6crop plant {MS} rye 7", expect="planted=rye size=7 ok=true"),
+                    Step(f"gt6crop harvest {MS}", expect="harvested=true size=2", allow_failed=True))]),
     Step(f"execute if entity {ITEM_RYE} run gamerule keepInventory",
          expect="Gamerule keepInventory is currently set to"),
     Step(f"kill {ITEMS_MATURE}", expect="Killed"),
-
     phase("E: negative -- an immature harvest refuses and the plant survives"),
     *rig(NP, NS),
     Step(f"gt6crop plant {NS} rye 1", expect="planted=rye size=1 ok=true"),
     Step(f"gt6crop harvest {NS}", expect="harvested=false size=1"),
     Step(f"execute if block {NS} gt6:crop_sticks run gamerule keepInventory",
          expect="Gamerule keepInventory is currently set to"),
+
+    phase("F: Cropnalyzer -- the cbc-4 scan verdict over a planted tile"),
+    *rig(SP, SS),
+    Step(f"gt6crop plant {SS} rye 3", expect="planted=rye size=3 ok=true"),
+    Step(f"gt6crop scan {SS}", expect=f"--- X: 392 Y: 65 Z: 616 ---"),
+    Step(f"gt6crop scan {SS}", expect="Type -- Name: rye   Growth: 1   Gain: 1   Resistance: 1"),
+    Step(f"gt6crop scan {SS}", expect="Plant -- Fertilizer: 0   Water: 0   Weed-Ex: 0"),
+    Step(f"gt6crop scan {SS}", expect="Attributes: Wheat, Food, Grain"),
 ]
 
 CHAIN = Chain(
     name="crop_a_world",
     slug="cropw",
-    sites=gt6world.declare_sites(FARM, CROSS, MATURE, NEG),
+    sites=gt6world.declare_sites(FARM, CROSS, MATURE, NEG, SCAN),
     preferred_ports=(25984, 25994),      # this card's pinned rcon/query pair
     steps=steps,
 )

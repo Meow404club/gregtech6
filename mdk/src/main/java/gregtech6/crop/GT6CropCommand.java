@@ -27,6 +27,9 @@ import net.minecraftforge.fml.common.Mod;
  * <li>{@code stick <pos>}  --  the crossing upgrade, the rightClick stick arm's command twin.</li>
  * <li>{@code harvest <pos>}  --  the rightClick harvest half; drops spawn as real item entities.</li>
  * <li>{@code readout <pos>}  --  the BE state line (the Cropnalyzer scan domain is cbc-4).</li>
+ * <li>{@code scan <pos>}  --  the Cropnalyzer arm (card cbc-4-crop-tools): the
+ *     Behavior_Cropnalyzer scanLevel-4 bump + the four readout lines through
+ *     {@code gregtech6.crop.behavior.CropnalyzerBehavior#scan}.</li>
  * </ul>
  */
 @Mod.EventBusSubscriber(modid = "gt6")
@@ -53,7 +56,10 @@ public final class GT6CropCommand {
 										.executes(GT6CropCommand::harvest)))
 						.then(Commands.literal("readout")
 								.then(Commands.argument("pos", BlockPosArgument.blockPos())
-										.executes(GT6CropCommand::readout))));
+										.executes(GT6CropCommand::readout)))
+						.then(Commands.literal("scan")
+								.then(Commands.argument("pos", BlockPosArgument.blockPos())
+										.executes(GT6CropCommand::scan))));
 	}
 
 	private static int plant(CommandContext<CommandSourceStack> aContext, int aSize) {
@@ -138,5 +144,31 @@ public final class GT6CropCommand {
 			tBuilder.append(' ').append(tRow.getKey().getName()).append('=').append(tRow.getValue().toString());
 		}
 		return tBuilder.toString();
+	}
+
+	/**
+	 * The Cropnalyzer arm  --  the Behavior_Cropnalyzer onItemUseFirst :47-53 face (the
+	 * chat lines + the scanLevel-4 bump); the EU charge is the declared cbc-4 cut (no
+	 * item-EU system), the scan rides free exactly like the offline pins.
+	 */
+	private static int scan(CommandContext<CommandSourceStack> aContext) {
+		try {
+			BlockPos tPos = BlockPosArgument.getLoadedBlockPos(aContext, "pos");
+			if (!(aContext.getSource().getLevel().getBlockEntity(tPos) instanceof GT6CropBlockEntity tCrop)) {
+				aContext.getSource().sendFailure(Component.literal("no crop sticks at " + tPos.toShortString()));
+				return 0;
+			}
+			if (tCrop.crop() == null) {
+				aContext.getSource().sendFailure(Component.literal("empty crop sticks at " + tPos.toShortString()));
+				return 0;
+			}
+			for (String tLine : gregtech6.crop.behavior.CropnalyzerBehavior.scan(tCrop, tPos)) {
+				aContext.getSource().sendSuccess(() -> Component.literal(tLine), false);
+			}
+			return 1;
+		} catch (Exception aE) {
+			aContext.getSource().sendFailure(Component.literal("scan failed: " + aE.getMessage()));
+			return 0;
+		}
 	}
 }
