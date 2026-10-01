@@ -300,6 +300,38 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// guard below is order-safe against that card's own dynamic-model seat.
 		for (Block tBlock : gregtech6.registry.GT6StaticStorages.metalBlockArray()) wrapStates(tBlock, aEvent);
 		wrapStates(gregtech6.registry.GT6Reactors.REACTOR_CORE_2X2_BLOCK.get(), aEvent);
+		// task small-tank-colored-tint — the four small-tank families join the baked-tint
+		// domain: the borrowed grayscale colored_* elements are the tintindex-0 seat (the
+		// addGasCylinders/addCells/addCup/addJug datagen change — the gas cylinder's
+		// all-barometer arm included), the 0.01 overlay shells and the smeltery_content
+		// fluid boxes untinted (the P22 contract; upstream BlockTextureFluid carries no
+		// mRGBa). The cell rows carry the loader NBT_MATERIAL column (Loader :1770-1809),
+		// the four gas cylinders theirs (:2101-2104), the cup Porcelain (:2094) and the
+		// jug Ceramic (:2095) — the upstream BlockTextureDefault(colored, mRGBa) passes
+		// (GasCylinder :141 / Cell :42-44 / Cup :68-73 / Jug :71-76); the four cards'
+		// declared measuring-pot deviation retires.
+		for (var tCylinder : gregtech6.registry.GT6GasCylinders.BLOCKS_IN_ORDER) wrapStates(tCylinder.get(), aEvent);
+		for (var tCell : gregtech6.registry.GT6Cells.BLOCKS_IN_ORDER) wrapStates(tCell.get(), aEvent);
+		wrapStates(gregtech6.registry.GT6Cups.PORCELAIN_CUP.get(), aEvent);
+		wrapStates(gregtech6.registry.GT6Jugs.CERAMIC_JUG.get(), aEvent);
+	}
+
+	/**
+	 * The small-tank paint tint, the INVENTORY half (task small-tank-colored-tint): the
+	 * four families' BlockItems ride the shared {@link GTItemPaintTint} lambda through the
+	 * combined {@code GTMachinePaintTint.tintMaterialOf} dispatch — the creative-tab face
+	 * (a BlockItem is NOT coloured by any baked world tint, ItemColors.java:25-93). The
+	 * registration mirrors {@link #onRegisterValveWallPaintItemColors} (this class is the
+	 * shared client tint seam).
+	 */
+	@SubscribeEvent
+	public static void onRegisterSmallTankPaintItemColors(RegisterColorHandlersEvent.Item aEvent) {
+		java.util.List<Item> tItems = new ArrayList<>();
+		for (var tCylinder : gregtech6.registry.GT6GasCylinders.BLOCKS_IN_ORDER) tItems.add(tCylinder.get().asItem());
+		for (var tCell : gregtech6.registry.GT6Cells.BLOCKS_IN_ORDER) tItems.add(tCell.get().asItem());
+		tItems.add(gregtech6.registry.GT6Cups.PORCELAIN_CUP.get().asItem());
+		tItems.add(gregtech6.registry.GT6Jugs.CERAMIC_JUG.get().asItem());
+		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tItems.toArray(Item[]::new));
 	}
 
 	/**

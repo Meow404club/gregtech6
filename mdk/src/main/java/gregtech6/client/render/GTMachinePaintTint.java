@@ -55,8 +55,10 @@ import net.minecraftforge.client.model.data.ModelData;
  * <p>The material dispatch is domain-gated: only the block carriers that mirror upstream
  * NBT_MATERIAL rows resolve a material (the machine blocks, the Oven ladder, the burning
  * boxes, the tank-valve controllers through the controller gate — the issue8-residual
- * join —, since task tank-render-tint the barrel rows, and since task
- * tint-coverage-batch the metal static-storage rows and the reactor core). The barrel
+ * join —, since task tank-render-tint the barrel rows, since task
+ * tint-coverage-batch the metal static-storage rows and the reactor core, and since task
+ * small-tank-colored-tint the four small-tank families — the 40 cell rows, the four gas
+ * cylinders, the Porcelain cup, the Ceramic jug). The barrel
  * join retires the
  * former P23 "unpainted barrel = zero visual change" white identity: the borrowed
  * grayscale {@code barrel_parts} art now multiplies
@@ -65,7 +67,9 @@ import net.minecraftforge.client.model.data.ModelData;
  * an unpainted wood barrel renders the WoodTreated brown and an unpainted logistics tank
  * the ANY.W gray — a painted barrel still wins through the PAINT value above, and the
  * {@code -1} white sentinel stays the material-less fallback (upstream UNCOLORED,
- * CS.java:327). Every other tint index returns {@code -1} (no tint).
+ * CS.java:327). The small-tank join rides the same clause: their borrowed grayscale
+ * colored_* art multiplies the row colour (GasCylinder :141 / Cell :42-44 / Cup :68-73 /
+ * Jug :71-76). Every other tint index returns {@code -1} (no tint).
  *
  * <p>CLIENT-ONLY ({@code @OnlyIn(Dist.CLIENT)} — registered from GTClientHandlers under the
  * dist guard; the registration faces are unchanged, the P22 carrier ruling stands).
@@ -187,6 +191,23 @@ public final class GTMachinePaintTint {
 		// block-class carrier (the grayscale borrowed faces multiply Pb; the DYNAMIC
 		// rod/fluid/axle render stack stays with the rod-render-pool card)
 		tMaterial = gregtech6.registry.GT6Reactors.ReactorCoreBlock.materialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
+		// task small-tank-colored-tint — the four small-tank families join: the cell rows
+		// carry their loader NBT_MATERIAL column through the block carrier (Loader
+		// :1770-1809), the four gas-cylinder rows theirs (:2101-2104), the single cup row
+		// MT.Porcelain (:2094) and the single jug row MT.Ceramic (:2095) as fixed
+		// constants; the colored-band seats (incl. the gas cylinder's all-barometer arm)
+		// multiply the row colour like the upstream
+		// BlockTextureDefault(colored, mRGBa) passes (GasCylinder :141 / Cell :42-44 /
+		// Cup :68-73 / Jug :71-76) — the four cards' declared measuring-pot deviation
+		// retires
+		tMaterial = gregtech6.block.tank.GT6CellBlock.materialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
+		tMaterial = gregtech6.block.tank.GT6GasCylinderBlock.materialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
+		tMaterial = gregtech6.block.tank.GT6CupBlock.materialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
+		tMaterial = gregtech6.block.tank.GT6JugBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
 		return gregtech6.tileentity.bees.GT6BumbliaryBlock.materialOf(aBlock);
 	}

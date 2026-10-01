@@ -65,10 +65,13 @@ import gregtech6.tileentity.tank.GT6GasCylinderBlockEntity;
  *
  * <p>The break-drop projects the BE's tank+mode NBT onto the family item (the
  * GTBarrelBlock.getDrops seam — content survives break; placement reads it back through
- * {@link gregtech6.item.GT6GasCylinderBlockItem#placeBlock}). The colored band ships
- * UN-TINTED — the measuring-pot declared deviation ({@code ponytail:} a tintindex-0 +
- * GTMachinePaintTint dispatch row lands it without model change when the render pool
- * gets to it; this card may not touch GTMachinePaintTint).
+ * {@link gregtech6.item.GT6GasCylinderBlockItem#placeBlock}). Since task
+ * small-tank-colored-tint the colored band carries the tintindex-0 seat and the row
+ * material rides the {@link #materialOf} carrier into the combined
+ * {@code GTMachinePaintTint.tintMaterialOf} dispatch — the baked GTMachineTintModel
+ * multiplies the row colour exactly like the upstream
+ * {@code BlockTextureDefault(colored, mRGBa)} pass (:141, the barometer arm included);
+ * the former measuring-pot declared deviation retires.
  */
 public class GT6GasCylinderBlock extends GTEntityBlock {
 
@@ -93,17 +96,43 @@ public class GT6GasCylinderBlock extends GTEntityBlock {
 
 	private final Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> mTickerType;
 
+	/** The row's upstream {@code NBT_MATERIAL} column (Loader_MultiTileEntities.java:2101-2104), resolved lazily — the GTBarrelBlock carrier shape. */
+	@Nullable
+	private final Supplier<gregapi.oredict.OreDictMaterial> mMaterial;
+
 	public GT6GasCylinderBlock(Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType,
+			@Nullable Supplier<gregapi.oredict.OreDictMaterial> aMaterial,
 			net.minecraft.world.level.block.state.BlockBehaviour.Properties aProperties) {
 		super(aProperties);
 		mTickerType = aTickerType;
+		mMaterial = aMaterial;
+	}
+
+	/**
+	 * The row's upstream {@code NBT_MATERIAL}, resolved lazily through the Supplier (the
+	 * {@link GTBarrelBlock#material} mirror); null keeps the white identity (upstream
+	 * UNCOLORED, CS.java:327 — every cylinder row carries a material).
+	 */
+	@Nullable
+	public gregapi.oredict.OreDictMaterial material() {
+		return mMaterial == null ? null : mMaterial.get();
+	}
+
+	/**
+	 * The gas-cylinder-domain material dispatch (the {@code GTBarrelBlock.materialOf}
+	 * mirror shape): only the carrier blocks resolve a material — every other block is
+	 * null here.
+	 */
+	@Nullable
+	public static gregapi.oredict.OreDictMaterial materialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
+		return aBlock instanceof GT6GasCylinderBlock tCylinder ? tCylinder.material() : null;
 	}
 
 	//? if neoforge {
 	/*// (1.21.1: BlockBehaviour.codec() is abstract — the GTBarrelBlock carrier precedent.)
 	@Override
 	protected MapCodec<GT6GasCylinderBlock> codec() {
-		return simpleCodec(aProperties -> new GT6GasCylinderBlock(mTickerType, aProperties));
+		return simpleCodec(aProperties -> new GT6GasCylinderBlock(mTickerType, mMaterial, aProperties));
 	}
 	 *///?}
 

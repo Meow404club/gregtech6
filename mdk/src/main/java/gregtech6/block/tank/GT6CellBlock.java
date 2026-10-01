@@ -61,10 +61,13 @@ import gregtech6.tileentity.tank.GT6CellBlockEntity;
  *
  * <p>The break-drop projects the BE's tank NBT onto the family item (the
  * GTBarrelBlock.getDrops seam — content survives break; placement reads it back
- * through {@link gregtech6.item.GT6CellBlockItem#placeBlock}). The colored band ships
- * UN-TINTED — the measuring-pot declared deviation ({@code ponytail:} a tintindex-0 +
- * GTMachinePaintTint dispatch row lands it without model change when the render pool
- * gets to it; this card may not touch GTMachinePaintTint).
+ * through {@link gregtech6.item.GT6CellBlockItem#placeBlock}). Since task
+ * small-tank-colored-tint the colored band carries the tintindex-0 seat and the row
+ * material rides the {@link #materialOf} carrier into the combined
+ * {@code GTMachinePaintTint.tintMaterialOf} dispatch — the baked GTMachineTintModel
+ * multiplies the row colour exactly like the upstream
+ * {@code BlockTextureDefault(colored, mRGBa)} passes (MultiTileEntityCell.java:42-44);
+ * the former measuring-pot declared deviation retires.
  */
 public class GT6CellBlock extends GTEntityBlock {
 
@@ -92,18 +95,44 @@ public class GT6CellBlock extends GTEntityBlock {
 
 	private final Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> mTickerType;
 
+	/** The row's upstream {@code NBT_MATERIAL} column (Loader_MultiTileEntities.java:1770-1809), resolved lazily — the GTBarrelBlock carrier shape. */
+	@javax.annotation.Nullable
+	private final java.util.function.Supplier<gregapi.oredict.OreDictMaterial> mMaterial;
+
 	public GT6CellBlock(Supplier<BlockEntityType<? extends TileEntityBase03TicksAndSync>> aTickerType,
+			@javax.annotation.Nullable java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial,
 			net.minecraft.world.level.block.state.BlockBehaviour.Properties aProperties) {
 		super(aProperties);
 		mTickerType = aTickerType;
+		mMaterial = aMaterial;
 		registerDefaultState(getStateDefinition().any().setValue(LIQUID_LEVEL, 0));
+	}
+
+	/**
+	 * The row's upstream {@code NBT_MATERIAL}, resolved lazily through the Supplier (the
+	 * {@link GTBarrelBlock#material} mirror); null keeps the white identity (upstream
+	 * UNCOLORED, CS.java:327 — every cell row carries a material, the column is
+	 * recorded-only future-proofing).
+	 */
+	@javax.annotation.Nullable
+	public gregapi.oredict.OreDictMaterial material() {
+		return mMaterial == null ? null : mMaterial.get();
+	}
+
+	/**
+	 * The cell-domain material dispatch (the {@code GTBarrelBlock.materialOf} mirror
+	 * shape): only the carrier blocks resolve a material — every other block is null here.
+	 */
+	@javax.annotation.Nullable
+	public static gregapi.oredict.OreDictMaterial materialOf(@javax.annotation.Nullable net.minecraft.world.level.block.Block aBlock) {
+		return aBlock instanceof GT6CellBlock tCell ? tCell.material() : null;
 	}
 
 	//? if neoforge {
 	/*// (1.21.1: BlockBehaviour.codec() is abstract — the GTBarrelBlock carrier precedent.)
 	@Override
 	protected MapCodec<GT6CellBlock> codec() {
-		return simpleCodec(aProperties -> new GT6CellBlock(mTickerType, aProperties));
+		return simpleCodec(aProperties -> new GT6CellBlock(mTickerType, mMaterial, aProperties));
 	}
 	 *///?}
 
