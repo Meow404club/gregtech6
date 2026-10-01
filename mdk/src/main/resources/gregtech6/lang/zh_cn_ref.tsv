@@ -2555,8 +2555,6 @@ direct	item.gt6.food_grass_dry	干草	hand
 direct	item.gt6.food_grass_moldy	发霉的草	hand
 direct	item.gt6.food_grass_rotten	烂草	hand
 direct	item.gt6.food_hazelnut	榛子	hand
-direct	item.gt6.food_ice_cream	冰淇淋	hand
-direct	item.gt6.food_ice_cream.tooltip	牛奶基本款意式冰淇淋	hand
 direct	item.gt6.food_lemon	柠檬	hand
 direct	item.gt6.food_lemon.tooltip	别把它做成柠檬汁	hand
 direct	item.gt6.food_lemon_sliced	柠檬片	hand
@@ -2577,8 +2575,6 @@ direct	item.gt6.food_pomegranate	石榴	hand
 direct	item.gt6.food_pomegranate.tooltip	一个多籽的苹果	hand
 direct	item.gt6.food_pomeraisins	石榴干	hand
 direct	item.gt6.food_pomeraisins.tooltip	小狗狗(Lesser Dogs)最喜欢的食物	hand
-direct	item.gt6.food_potato_chips	薯片	hand
-direct	item.gt6.food_potato_chips.tooltip	嘎嘣脆!	hand
 direct	item.gt6.food_raisins_chocolate	巧克力葡萄干	hand
 direct	item.gt6.food_raisins_chocolate.tooltip	包在巧克力外壳里的葡萄干	hand
 direct	item.gt6.food_raisins_green	绿色葡萄干	hand
