@@ -5349,10 +5349,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	// prefixes, null defaulting to plate :535-537).
 	//
 	// THE ZERO-ROW FORMS POUR ZERO HONESTLY (the fine-wire :169 precedent):
-	// casingMachine+Double/Quadruple/Dense, cableGt01/02 and plank carry no
+	// casingMachine+Double/Quadruple/Dense and cableGt01/02 carry no
 	// MaterialPrefixItems (upstream Loader_Items.java:57-171 never built a
-	// PrefixItem for them — the MTE-block/plank domains), so their forms
-	// stay in the tables and the rows unlock with those item families.
+	// PrefixItem for them — the MTE-block domains), so their forms stay in
+	// the tables and the rows unlock with those item families. plank LEFT
+	// this zero-row band with task wood-planks-register (the WOOD-gated
+	// item-path adaptation, the :151 cut pours).
 	// NULL-CATEGORY KEY LAW: snake(output) + a "/from_<distinguisher>" leaf
 	// where the output face alone is ambiguous (the P36 leaf law; the
 	// rockGt card's <in>2<out> glue stays untouched on its own form).
@@ -5442,7 +5444,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	// row's stick twin (the same grid and the same five-condition tail, the
 	// family STONE-variant block item carrier), :150 the +SMITHABLE plated
 	// twin (wrench center), :151 the plank cut to gearGtSmall (+MT.Wood.NOT;
-	// the plank face carries no items — 0 rows, the form stays).
+	// live since task wood-planks-register — the plank WOOD domain minus the
+	// identity wood rides the 2x2 cut).
 
 	/** One gear-face row form (Loader_OreProcessing.java:149-151, the grids and amounts verbatim). Package-private for the pin test. */
 	record GearGtCraftFromForm(String aKey, gregapi.oredict.OreDictPrefix aOutput, int aCount,
@@ -5505,7 +5508,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			} else if (tForm.aCompanion() != null) {
 				tCompanion = itemOrNull(tForm.aCompanion(), tMaterialRow.aMaterial());
 			}
-			if (tResult == null || tInput == null || tCompanion == null) continue; // the item-truth guard (belt and braces over the walk)
+			// the companion guard only binds when the form CARRIES a companion (the :151 plank cut is
+			// companion-less — a null check here used to silently swallow the whole form while its
+			// material face sat at zero rows, the wood-planks-register unlock flushed it out)
+			boolean tCarriesCompanion = tForm.aStoneFace() || tForm.aCompanion() != null;
+			if (tResult == null || tInput == null || (tCarriesCompanion && tCompanion == null)) continue; // the item-truth guard (belt and braces over the walk)
 			rRows.add(new GearGtCraftFromRow(craftFromRowId(tForm.aKey(), tSnake), tResult, tForm.aCount(), tInput, tCompanion, tForm.aRows()));
 		}
 		return rRows;

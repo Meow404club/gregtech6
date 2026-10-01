@@ -40,8 +40,9 @@
  * statements in five shaped bands + the shapeless panel): the :149 gear twin rides
  * the SAME universe as the :148 rockGt row (the equality pin), :150 folds
  * +SMITHABLE, the casingMachine faces UNLOCKED at 4x209=836 rows with the item
- * family (task casing-machine-register; cableGt/plank still pour ZERO — no
- * MaterialPrefixItems — the fine-wire :169 seam), the small-parts/minecartWheels
+ * family (task casing-machine-register), the :151 plank cut UNLOCKED with the
+ * WOOD-gated plank items (task wood-planks-register; cableGt still pours
+ * ZERO — no MaterialPrefixItems — the fine-wire :169 seam), the small-parts/minecartWheels
  * universes ride the multi-face item-truth intersection under the verbatim
  * ANTIMATTER-only/COATED tails, the shapeless panel rides the per-material slot
  * substitution law (the :480-510 .dat(m) face) with the fixed MT.Empty slots, the
@@ -529,15 +530,34 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
         return rNames;
     }
 
-    /** Row-count pin (the measured item truth): the :149 twin == the :148 rockGt universe, :150 the smith face, :151 zero (no plank items). */
+    /** Row-count pin (the measured item truth): the :149 twin == the :148 rockGt universe, :150 the smith face, :151 the plank cut (live since task wood-planks-register). */
     @Test
-    public void theGearRowCountIsTheMeasuredItemTruth() {
+    public void theGearRowCountIsTheMeasuredItemTruth() throws Exception {
         Set<String> tRockGtMaterials = rockGtMaterials();
         assertEquals(tRockGtMaterials, gearMaterialsOf("gear_gt/from_stick_stone"),
                 "the :149 twin universe == the :148 rockGt universe (same gearGt/stone family faces + the verbatim five-condition tail)");
         assertEquals(206, gearMaterialsOf("gear_gt/from_stick_plate").size(), "the :150 smith face (gearGt ∩ stick ∩ plate + SMITHABLE)");
-        assertEquals(0, gearMaterialsOf("gear_gt_small/from_plank").size(),
-                "the :151 rows pour zero — no plank MaterialPrefixItems (the plank domain; rows unlock with that item family)");
+        // the :151 plank cut pours over the plank WOOD domain (task wood-planks-register): gearGtSmall
+        // item truth ∩ the 130 plank pairs, minus MT.Wood.NOT / COATED.NOT / ANTIMATTER.NOT — the
+        // remainder is a re-pin on material-tree or gate drift, so the count is re-read, not assumed
+        Set<String> tPlankCut = gearMaterialsOf("gear_gt_small/from_plank");
+        assertFalse(tPlankCut.contains("Wood"), "the :151 MT.Wood.NOT cut holds (the identity wood rides the :149/:150 faces)");
+        assertTrue(tPlankCut.size() > 100, "the :151 plank cut pours over the registered plank domain (" + tPlankCut.size() + " rows)");
+        // the generated face rides the same walk: the FIRST plank cut row verbatim (the
+        // companion-less 2x2 grid used to be swallowed by the datagen item-truth guard —
+        // this pin keeps the generated rows flush with the material face)
+        GT6CraftingRecipes.GearGtCraftFromMaterialRow tFirstCut = GT6CraftingRecipes.gearGtCraftFromMaterialRows().stream()
+                .filter(tRow -> tRow.aForm().aKey().equals("gear_gt_small/from_plank")).findFirst().orElseThrow();
+        String tCutPath = "gear_gt_small/from_plank/" + GTMaterialItems.snakeCase(tFirstCut.aMaterial().mNameInternal);
+        JsonObject tPlankRow = generated(tCutPath);
+        assertEquals(2, tPlankRow.getAsJsonArray("pattern").size(), "the 2x2 plank cut");
+        assertEquals("X ", tPlankRow.getAsJsonArray("pattern").get(0).getAsString(), "the :151 top row");
+        assertEquals(" s", tPlankRow.getAsJsonArray("pattern").get(1).getAsString(), "the saw row");
+        assertTrue(tPlankRow.getAsJsonObject("key").get("s").getAsJsonObject().get("tag").getAsString().endsWith("tools/saw"),
+                "'s' = the saw tool tag (the :151 verbatim tail)");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.plank, tFirstCut.aMaterial()), tPlankRow.getAsJsonObject("key").get("X").getAsJsonObject().get("item").getAsString(),
+                "'X' = the plank item of the walked material");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.gearGtSmall, tFirstCut.aMaterial()), tPlankRow.getAsJsonObject("result").get("item").getAsString(), "the result item");
     }
 
     /** Universe SET pin: :150 == the conditioned gearGt ∩ stick ∩ plate faces under +SMITHABLE. */
