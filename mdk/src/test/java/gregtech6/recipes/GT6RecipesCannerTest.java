@@ -42,6 +42,16 @@ import gregtech6.registry.GT6SprayCans;
  */
 class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 
+	/**
+	 * The material universe boots before any pour — the :44-51 canned-material band reads
+	 * OP prefixes at load() time (the a9027ac lesson: no static capture, but the load path
+	 * still needs OP.init() to have run; the PhaseGate @BeforeAll precedent).
+	 */
+	@org.junit.jupiter.api.BeforeAll
+	static void initMaterialUniverse() {
+		gregtech6.registry.GTMaterialItems.initMaterials();
+	}
+
 	/** The offline item universe: distinct existing items per dye index (the synthetic-universe convention). */
 	private static final net.minecraft.world.item.Item[] SYNTHETIC_PAINTS = {
 			Items.REDSTONE, Items.GLOWSTONE_DUST, Items.GUNPOWDER, Items.BONE_MEAL,
@@ -64,6 +74,18 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 			Items.FLINT, Items.CLAY_BALL, Items.SUGAR, Items.WHEAT_SEEDS,
 			Items.LILY_PAD, Items.COCOA_BEANS, Items.SLIME_BALL, Items.SPIDER_EYE,
 			Items.PAPER, Items.EGG, Items.BRICK, Items.STICK};
+
+	/** The offline meat/fish/veggie can universes (task food-meat-recipes): one distinct item per tier 0..5, disjoint from every other stand-in family. */
+	private static final net.minecraft.world.item.Item[] SYNTHETIC_MEAT_CANS = {
+			Items.LEATHER, Items.RABBIT_HIDE, Items.FEATHER, Items.STRING, Items.BONE, Items.INK_SAC};
+	private static final net.minecraft.world.item.Item[] SYNTHETIC_FISH_CANS = {
+			Items.PUFFERFISH, Items.TROPICAL_FISH, Items.SALMON, Items.COD, Items.KELP, Items.DRIED_KELP};
+	private static final net.minecraft.world.item.Item[] SYNTHETIC_VEGGIE_CANS = {
+			Items.WHEAT, Items.CARROT, Items.POTATO, Items.BEETROOT, Items.APPLE, Items.MELON_SLICE};
+
+	/** The air-can fixtures (the MultiItemCans.java:113-120 band): the plain/nether/end cans, distinct from every other stand-in. */
+	private static final java.util.Map<String, net.minecraft.world.item.Item> SYNTHETIC_AIR_CANS = java.util.Map.of(
+			"air", Items.IRON_INGOT, "netherair", Items.GOLD_INGOT, "enderair", Items.COPPER_INGOT);
 
 	/** The recording dye resolver — captures the indices the pour walks (the four-way pin's row leg). */
 	private static final List<Integer> sResolvedIndices = new ArrayList<>();
@@ -118,6 +140,27 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sLaserGasEmitterResolver = aGas -> "helium".equals(aGas)
 				? ItemStack.EMPTY // the offline posture — the registry lookup yields nothing unbooted
 				: new ItemStack(SYNTHETIC_EMITTERS[java.util.Arrays.asList(FAMILY_GASES).indexOf(aGas)], 1);
+		// task food-meat-recipes — the :44-51 material band + the :113-120 air band fixtures:
+		// the material items resolve per MATERIAL (the four specs stay individually
+		// addressable — the map stock iterates unordered), the three air fluids stay
+		// DISTINCT (upstream the :114/:115/:116 input fluids differ — the fill rows must
+		// not share a lookup key), each under its own amount window
+		GT6RecipesCanner.sFoodMaterialItemResolver = (aPrefix, aMaterial) -> switch (aMaterial.mNameInternal) {
+			case "FishCooked" -> Items.BRICK;
+			case "MeatCooked" -> Items.FLINT;
+			case "Tofu" -> Items.CLAY_BALL;
+			default -> Items.GUNPOWDER; // SoylentGreen
+		};
+		GT6RecipesCanner.sMeatCansResolver = aTier -> new ItemStack(SYNTHETIC_MEAT_CANS[aTier], 1);
+		GT6RecipesCanner.sFishCansResolver = aTier -> new ItemStack(SYNTHETIC_FISH_CANS[aTier], 1);
+		GT6RecipesCanner.sVeggieCansResolver = aTier -> new ItemStack(SYNTHETIC_VEGGIE_CANS[aTier], 1);
+		GT6RecipesCanner.sAirFluidResolver = aAirId -> switch (aAirId) {
+			case "air" -> Fluids.WATER; // the fixture air trio — the air rows carry the 16000 mB window, the (PAPER, WATER 2304) dye rows never cross it
+			case "netherair" -> Fluids.LAVA;
+			case "enderair" -> Fluids.FLOWING_LAVA;
+			default -> null;
+		};
+		GT6RecipesCanner.sAirCanResolver = aAirId -> new ItemStack(SYNTHETIC_AIR_CANS.get(aAirId), 1);
 		GT6RecipesCanner.resetForTest();
 	}
 
@@ -140,6 +183,13 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sLaserGasFluidResolver = GT6RecipesCanner::liveLaserGas;
 		GT6RecipesCanner.sLaserGasEmptyResolver = () -> new ItemStack(gregtech6.items.GT6LaserGas.COMP_LASER_GAS_EMPTY.get());
 		GT6RecipesCanner.sLaserGasEmitterResolver = GT6RecipesCanner::liveLaserEmitter;
+		// task food-meat-recipes — the live defaults restored verbatim (lambda creation runs nothing)
+		GT6RecipesCanner.sFoodMaterialItemResolver = GT6RecipesMixer::resolveItem;
+		GT6RecipesCanner.sMeatCansResolver = aTier -> new ItemStack(GT6FoodCans.FOOD_CAN_MEAT.get(aTier).get());
+		GT6RecipesCanner.sFishCansResolver = aTier -> new ItemStack(GT6FoodCans.FOOD_CAN_FISH.get(aTier).get());
+		GT6RecipesCanner.sVeggieCansResolver = aTier -> new ItemStack(GT6FoodCans.FOOD_CAN_VEGGIE.get(aTier).get());
+		GT6RecipesCanner.sAirFluidResolver = gregtech6.fluid.GTFluids::liveFluidSource;
+		GT6RecipesCanner.sAirCanResolver = GT6RecipesCanner::liveAirCan;
 		GT6RecipeMaps.reset();
 	}
 
@@ -150,8 +200,8 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	@Test
 	void pourLandFiftyNineRows() {
 		GT6RecipesCanner.load();
-		assertEquals(59, GT6RecipeMaps.CANNER.mRecipeList.size(),
-				"16 colour refills + the chlorine remover + the 3 food-can rows (food-can-row0) + the 32 C-Foam refills (p26, :254/:262) + the 7 pouring laser gas fill rows (p32 :403 + debt-laser-gas-family :396-403 + debt-hene-fluid — the heliumneon fluid row landed, helium skips on the offline registry arm)");
+		assertEquals(93, GT6RecipeMaps.CANNER.mRecipeList.size(),
+				"16 colour refills + the chlorine remover + the 3 food-can rows (food-can-row0) + the 32 C-Foam refills (p26, :254/:262) + the 7 pouring laser gas fill rows (p32 :403 + debt-laser-gas-family :396-403 + debt-hene-fluid — the heliumneon fluid row landed, helium skips on the offline registry arm) + the 28 :44-51 canned-material rows + the 6 :113-120 air rows (task food-meat-recipes, the fixture posture)");
 		assertEquals(16, sResolvedIndices.size(), "the dye resolver saw exactly the 16 walk indices (the chlorine row rides its own seam)");
 		assertEquals(16, sResolvedIndices.stream().distinct().count(), "each dye index resolved exactly once");
 	}
@@ -160,7 +210,7 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	void pourIsIdempotentPerGeneration() {
 		GT6RecipesCanner.load();
 		GT6RecipesCanner.load();
-		assertEquals(59, GT6RecipeMaps.CANNER.mRecipeList.size(), "the second load() is a no-op (the generation flag)");
+		assertEquals(93, GT6RecipeMaps.CANNER.mRecipeList.size(), "the second load() is a no-op (the generation flag)");
 	}
 
 	/** The row shape verbatim (MultiItemRandomTools.java:246 — EUt 16, duration 256, 2304 mB, zero fluid output). */
@@ -279,13 +329,13 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 		assertSame(SYNTHETIC_EMITTERS[0], tHeRow.mOutputs[0].getItem(), "helium → the He emitter (the self-healing :396 row)");
 	}
 
-	/** The self-healing helium posture end-to-end: once the item leg resolves the pour lands 60 rows. */
+	/** The self-healing helium posture end-to-end: once the item leg resolves the pour lands the full walk. */
 	@Test
 	void heliumRowPoursOnceTheItemLands() {
 		GT6RecipesCanner.sLaserGasEmitterResolver = aGas -> new ItemStack(
 				SYNTHETIC_EMITTERS[java.util.Arrays.asList(FAMILY_GASES).indexOf(aGas)], 1);
 		GT6RecipesCanner.load();
-		assertEquals(60, GT6RecipeMaps.CANNER.mRecipeList.size(), "the live posture — 59 + the helium :396 row (the full :396-403 walk)");
+		assertEquals(94, GT6RecipeMaps.CANNER.mRecipeList.size(), "the live posture — 93 + the helium :396 row (the full :396-403 walk)");
 	}
 
 	/** A row with an unregistered leg skips silently (the upstream FL.exists drop). */
@@ -293,7 +343,106 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	void unresolvableLegSkipsSilently() {
 		GT6RecipesCanner.sRemoverResolver = () -> null; // the remover leg fails to resolve
 		GT6RecipesCanner.load();
-		assertEquals(58, GT6RecipeMaps.CANNER.mRecipeList.size(), "the chlorine row drops, the 16 refills + 3 food rows + 32 foam rows + the 7 pouring laser gas rows pour");
+		assertEquals(92, GT6RecipeMaps.CANNER.mRecipeList.size(), "the chlorine row drops, the rest pours (16 + 3 food + 32 foam + 7 laser + 28 material + 6 air)");
+	}
+
+	// ---------------------------------------------------------------------------
+	// the :44-51 canned-material band + the :113-120 air band (task food-meat-recipes)
+	// ---------------------------------------------------------------------------
+
+	/** The material band census: 28 rows (4 materials × the 7 ST.array prefixes), all foodValue 2 → the tiny-can tier. */
+	@Test
+	void cannedMaterialBandPoursTwentyEight() {
+		GT6RecipesCanner.load();
+		assertEquals(4 * 7, GT6RecipesCanner.cannedMaterialTable().size() * GT6RecipesCanner.cannedMaterialPrefixes().size(),
+				"the :44-51 walk — FishCooked/MeatCooked/Tofu/SoylentGreen × dustTiny/dustSmall/dust/nugget/chunkGt/billet/ingot");
+		// every foodValue-2 row lands in the tiny tier (the shared dispatch, switch(1) → {1, 0})
+		assertArrayEquals(new int[] {1, 0}, GT6RecipesCanner.foodCanTier(GT6RecipesCanner.CANNED_MATERIAL_FOOD_VALUE),
+				"foodValue 2 → switch(1) → the TINY can, one can out");
+		// 28 foodValue-2 rows over the material-family seams: 7 fish + 7 meat + 14 veggie outputs
+		assertEquals(7, GT6RecipeMaps.CANNER.mRecipeList.stream()
+				.filter(r -> r.mOutputs.length == 1 && r.mOutputs[0].getItem() == SYNTHETIC_FISH_CANS[0]).count(),
+				"the :44-45 FishCooked ladder — 7 tiny fish cans");
+		assertEquals(7, GT6RecipeMaps.CANNER.mRecipeList.stream()
+				.filter(r -> r.mOutputs.length == 1 && r.mOutputs[0].getItem() == SYNTHETIC_MEAT_CANS[0]).count(),
+				"the :46-47 MeatCooked ladder — 7 tiny meat cans");
+		assertEquals(14, GT6RecipeMaps.CANNER.mRecipeList.stream()
+				.filter(r -> r.mOutputs.length == 1 && r.mOutputs[0].getItem() == SYNTHETIC_VEGGIE_CANS[0]).count(),
+				"the :48-51 Tofu + SoylentGreen ladders — 14 tiny veggie cans (both :48 and :50 ride CANS_VEGGIE)");
+	}
+
+	/** The material row shape verbatim (:45 — buffered T, EUt 16, duration 16, food + one empty can in, one tiny can out). */
+	@Test
+	void cannedMaterialRowShapeIsTheUpstreamLine() {
+		GT6RecipesCanner.load();
+		// the identity walk (unordered stock): the dustTiny fixture input isolates the FIRST
+		// :44 row (FishCooked/dustTiny, the loop-head row)
+		Recipe tRow = GT6RecipeMaps.CANNER.mRecipeList.stream()
+				.filter(r -> r.mInputs.length == 2 && r.mInputs[0].getItem() == Items.BRICK && r.mInputs[1].getItem() == Items.PAPER)
+				.findFirst().orElse(null);
+		assertNotNull(tRow, "the dustTiny_FishCooked row resolves for (material item, empty can)");
+		assertTrue(tRow.mCanBeBuffered, "RM.food_can → addRecipe2(T, ...) — buffered");
+		assertEquals(16, tRow.mEUt, "EUt 16 — CONSTANT (RM.java:744)");
+		assertEquals(16, tRow.mDuration, "duration 16 — CONSTANT");
+		assertEquals(1, tRow.mInputs[0].getCount(), "the material item at count 1 (the ST.array element)");
+		assertEquals(1, tRow.mInputs[1].getCount(), "ONE empty can (foodValue 2 → count 1)");
+		assertSame(SYNTHETIC_FISH_CANS[0], tRow.mOutputs[0].getItem(), "the :44-45 spec walks first — the tiny fish can");
+	}
+
+	/** The air band census: 6 rows (3 fills + 3 releases), the :118-120 release shapes and the F-buffered faces. */
+	@Test
+	void airBandPoursSixRows() {
+		GT6RecipesCanner.load();
+		assertEquals(6, GT6RecipeMaps.CANNER.mRecipeList.stream().filter(r -> !r.mCanBeBuffered
+				&& r.mFluidInputs.length + r.mFluidOutputs.length == 1
+				&& (r.mFluidInputs.length == 1 ? r.mFluidInputs[0].getAmount() : r.mFluidOutputs[0].getAmount()) == GT6RecipesCanner.AIR_MB).count(),
+				"the :113-120 band — 3 fills (empty can + 16000 mB in) + 3 releases (can → 16000 mB + empty can), every row buffered F");
+		// the walk-minus face: upstream :113 excludes the two dimension specials from the FluidsGT.AIR loop
+		assertEquals(List.of("air"), GT6RecipesCanner.AIR_FILL_WALK, ":113 — the walk minus End/Nether = plain air");
+		assertEquals(List.of("air", "enderair", "netherair"), GT6RecipesCanner.AIR_FLUIDS, "the FluidsGT.AIR trio (FL.java:64-66)");
+	}
+
+	/** The fill row shape verbatim (:114 — buffered F, EUt 16, duration 64, 16000 mB, empty can in / filled can out). */
+	@Test
+	void airFillRowShapeIsTheUpstreamLine() {
+		GT6RecipesCanner.load();
+		// the identity-walk form (not findRecipe): the map list iterates unordered (the
+		// HashSet stock), the fixture "air" fluid also shares the WATER identity with the
+		// dye rows — the row is located by its own output identity
+		Recipe tRow = GT6RecipeMaps.CANNER.mRecipeList.stream()
+				.filter(r -> !r.mCanBeBuffered && r.mOutputs.length == 1 && r.mOutputs[0].getItem() == Items.IRON_INGOT)
+				.findFirst().orElse(null);
+		assertNotNull(tRow, "the :114 plain-air fill resolves for (empty can, 16000 mB)");
+		assertTrue(!tRow.mCanBeBuffered, "addRecipe1(F, ...) — NOT buffered (upstream verbatim)");
+		assertEquals(16, tRow.mEUt, "EUt 16 (:114)");
+		assertEquals(64, tRow.mDuration, "duration 64 (:114) — NOT the 16 of the release rows");
+		assertEquals(16000, tRow.mFluidInputs[0].getAmount(), "FL.make(tAir, 16000)");
+		assertSame(Items.IRON_INGOT, tRow.mOutputs[0].getItem(), "the Canned Air output (the fixture identity)");
+		assertEquals(0, tRow.mFluidOutputs.length, "NF — no fluid output");
+	}
+
+	/** The release row shape verbatim (:118 — buffered F, EUt 16, duration 16, filled can in / 16000 mB + empty can out). */
+	@Test
+	void airReleaseRowShapeIsTheUpstreamLine() {
+		GT6RecipesCanner.load();
+		Recipe tRow = GT6RecipeMaps.CANNER.findRecipe(null, Long.MAX_VALUE, ItemStack.EMPTY, null,
+				new ItemStack(Items.IRON_INGOT, 1));
+		assertNotNull(tRow, "the :118 release resolves for (Canned Air)");
+		assertTrue(!tRow.mCanBeBuffered, "addRecipe1(F, ...) — NOT buffered");
+		assertEquals(16, tRow.mDuration, "duration 16 (:118)");
+		assertEquals(16000, tRow.mFluidOutputs[0].getAmount(), "FL.Air.make(16000) on the OUTPUT leg");
+		assertEquals(1, tRow.mOutputs.length, "the empty can is the only item output");
+	}
+
+	/** The plain-air dormancy: an unresolvable air-fluid leg drops its row (the live posture — gt6 has no plain air fluid). */
+	@Test
+	void absentAirFluidSkipsItsRows() {
+		GT6RecipesCanner.sAirFluidResolver = aAirId -> "air".equals(aAirId) ? null : Fluids.LAVA;
+		GT6RecipesCanner.load();
+		long tAirRows = GT6RecipeMaps.CANNER.mRecipeList.stream().filter(r -> !r.mCanBeBuffered
+				&& r.mFluidInputs.length + r.mFluidOutputs.length == 1
+				&& (r.mFluidInputs.length == 1 ? r.mFluidInputs[0].getAmount() : r.mFluidOutputs[0].getAmount()) == GT6RecipesCanner.AIR_MB).count();
+		assertEquals(4, tAirRows, "the :114 fill and the :118 release skip — 6 - 2 = 4 rows (the pour-face-forever posture over the port-absent plain air)");
 	}
 
 	// ---------------------------------------------------------------------------
