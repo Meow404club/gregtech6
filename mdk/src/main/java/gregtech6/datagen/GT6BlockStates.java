@@ -3703,11 +3703,13 @@ public final class GT6BlockStates extends BlockStateProvider {
      * PLANT_BAND + FALLEN_LOGS, 8 per-pair Block+Item blocks). The glowtus renders the
      * lily-pad face (BlockGlowtus = BlockBaseLilyPad): a hand-built 1px flat plate over the
      * borrowed GLOWTUS_RED.png (cutout — the texture carries transparency; the tintedSlab
-     * element grammar), the bush/sand/turf are cube_all over the borrowed PNGs (the bush
-     * grayscale pre-coloured at borrow time, the grass-card precedent), and the four
-     * fallen-log woods ride the t1 log idiom verbatim (axis variants + cube_column over
-     * the borrowed LOG_SIDE/TOP iconsets, renamed to the block ids at borrow time). All
-     * 13 textures are upstream iconsets byte-borrows (assets/README.md rows this card).
+     * element grammar), the sand/turf are cube_all over the borrowed PNGs, the bush is the
+     * tinted cube_all over the verbatim grayscale borrow (task bushesgt-tint-color — the
+     * tintindex-0 seat the {@code GT6BushTintListener} default bush colour rides, the
+     * w6-t2 pre-coloured-PNG shortcut retired), and the four fallen-log woods ride the t1
+     * log idiom verbatim (axis variants + cube_column over the borrowed LOG_SIDE/TOP
+     * iconsets, renamed to the block ids at borrow time). All 13 textures are upstream
+     * iconsets byte-borrows (assets/README.md rows this card).
      */
     private void addSurfacePlants() {
         // glowtus: the flat water plate (the vanilla lily-pad form)
@@ -3722,10 +3724,13 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .end();
         simpleBlock(GT6SurfaceBlocks.GLOWTUS.get(), tGlowtus);
         itemModels().withExistingParent("glowtus", modLoc("block/glowtus"));
-        // the three cubes: bush (the leafy ball), black sand, turf
-        for (String tPath : new String[] {"berry_bush", "black_sand", "turf"}) {
-            Block tBlock = tPath.equals("berry_bush") ? GT6SurfaceBlocks.BERRY_BUSH.get()
-                    : tPath.equals("black_sand") ? GT6SurfaceBlocks.BLACK_SAND.get() : GT6SurfaceBlocks.TURF.get();
+        // the berry bush: the tinted cube (the grayscale tintable borrow, index 0)
+        simpleBlock(GT6SurfaceBlocks.BERRY_BUSH.get(),
+                tintedCubeAll("block/berry_bush", modLoc("block/berry_bush")));
+        itemModels().withExistingParent("berry_bush", modLoc("block/berry_bush"));
+        // the two finished cubes: black sand, turf
+        for (String tPath : new String[] {"black_sand", "turf"}) {
+            Block tBlock = tPath.equals("black_sand") ? GT6SurfaceBlocks.BLACK_SAND.get() : GT6SurfaceBlocks.TURF.get();
             simpleBlock(tBlock, models().cubeAll(tPath, modLoc("block/" + tPath)));
             itemModels().withExistingParent(tPath, modLoc("block/" + tPath));
         }

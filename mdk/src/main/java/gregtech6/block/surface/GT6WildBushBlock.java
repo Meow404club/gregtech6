@@ -20,8 +20,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * the MTE growth stages (oStage/mStage), the berry-set right-click and the 5-part cluster
  * shape (core + 4 facing sides, WorldgenBushes.java:71-76) collapse to ONE static block —
  * the placed feature scatters single blocks. The texture is the upstream grayscale
- * {@code bush/colored/bush.png} pre-coloured at borrow time (the grass-card
- * pre-coloured-PNG precedent).
+ * {@code bush/colored/bush.png} verbatim, rendered through the tintindex-0 model seat
+ * (task bushesgt-tint-color): {@code GT6BushTintListener} multiplies the upstream default
+ * bush colour 0x22cc22 (MultiTileEntityBush.java:224/237, CS.java:1588 BushesGT.DEFAULT)
+ * — the w6-t2 pre-coloured-PNG borrow retired.
  */
 public final class GT6WildBushBlock extends BushBlock {
 
