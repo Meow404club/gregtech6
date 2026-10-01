@@ -15,7 +15,10 @@ import net.minecraftforge.registries.RegistryObject;
 import gregtech6.registry.GT6CropFoods;
 
 /**
- * The four GT6 grain crops + the base-seed/crop registry seams (card cbc-1-cropstick-base).
+ * The four GT6 grain crops + the base-seed binding seam (card cbc-1-cropstick-base; the
+ * cbc-2 merge folded the card body into {@link GT6CropCard} and the registry into
+ * {@link GT6Crops} — this class keeps only the grain-band DATA rows and the item binding
+ * the full 59-row table (cbc-3) will fold last).
  *
  * <p><b>Data rows</b>  --  the Compat_Recipes_IndustrialCraft.java:610-613 verbatim walk (the
  * ADR-CB1 dual-source anchors): Rye "Binnie" / Barley "Glitchfiend" / Oats "Pam" /
@@ -25,48 +28,28 @@ import gregtech6.registry.GT6CropFoods;
  * registerBaseSeed(form, size 1, G 1, Ga 1, Re 1) shape, GT_BaseCrop.java:77), carried by
  * the {@link GT6CropFoods#PLAIN_ROWS} band items (food-crop-items T5a).
  *
- * <p><b>Registry seams</b>  --  the minimal cbc-1 form of the IC2 {@code Crops.instance}
- * counterpart; card cbc-2 owns the full registry ({@code GT6Crops}  --  ADR-CB2 naming) and
- * migrates these maps on merge (merge queue cbc-1  ->  cbc-2, "aligned when cbc-2 merges").
- * Both maps key on registry KEYS (not live item references)  --  the lazy-safe face that reads
- * the same offline (unbound keys simply answer null/AIR, the fixture-test posture).
+ * <p><b>The lazy-safe item face</b>  --  the drop/seed stacks resolve LIVE through
+ * {@code item()} (the registry-KEY face, unbound keys answer through the offline fixtures);
+ * {@link #baseSeed(ItemStack)} keys on registry KEYS, not live item references  --  the same
+ * face that reads identically offline (the fixture-test posture). The item-stack-keyed
+ * {@link GT6Crops#getBaseSeed} table is the cbc-3 registry fold.
  */
 public final class GT6CropGrains {
 
 	/** The GT_BaseCrop :58-80 construction as data  --  the 59-row census (cbc-3) folds this band. */
-	public static class GrainCard implements CropCardView {
+	public static class GrainCard extends GT6CropCard {
 
-		private final String mName;
-		private final String mDiscoveredBy;
 		private final String mItemId; // the GT6CropFoods row id  --  the drop/seed carrier binding
-		private final int mTier;
-		private final int mMaxSize;
-		private final int mAfterHarvestSize;
-		private final int mHarvestSize;
-		private final int[] mStats; // Chem, Food, Def, Color, Weed
-		private final String[] mAttributes;
 
 		GrainCard(String aName, String aDiscoveredBy, String aItemId,
 				int aTier, int aMaxSize, int aAfterHarvestSize, int aHarvestSize,
 				int[] aStats, String[] aAttributes) {
-			mName = aName;
-			mDiscoveredBy = aDiscoveredBy;
+			// the protected no-clamp ctor: these rows are clamp-legal as written (tier 1, size 7,
+			// HS 7 <= size, AH 2 <= size-1) and the drop resolves live, not at construction
+			super(aName, aDiscoveredBy, ItemStack.EMPTY, null, null,
+					aTier, aMaxSize, aAfterHarvestSize, aHarvestSize, aStats, aAttributes);
 			mItemId = aItemId;
-			mTier = aTier;
-			mMaxSize = aMaxSize;
-			mAfterHarvestSize = aAfterHarvestSize;
-			mHarvestSize = aHarvestSize;
-			mStats = aStats;
-			mAttributes = aAttributes;
 		}
-
-		@Override public String name() { return mName; }
-		@Override public int tier() { return mTier; }
-		@Override public int maxSize() { return mMaxSize; }
-		@Override public int harvestSize() { return mHarvestSize; }
-		@Override public int afterHarvestSize() { return mAfterHarvestSize; }
-		@Override public int[] properties() { return mStats; }
-		@Override public String[] attributes() { return mAttributes; }
 
 		/** The drop/seed carrier  --  the T5a row item (live; the offline fixtures override the stack faces). */
 		private Item item() {
@@ -76,31 +59,27 @@ public final class GT6CropGrains {
 			throw new IllegalStateException("GT6CropFoods lost the grain row " + mItemId);
 		}
 
+		/** The drop  --  the :610-613 drop column, 1 item. */
 		@Override
-		public List<ItemStack> gains(CropTileView aCrop) {
-			return List.of(new ItemStack(item())); // the :610-613 drop column, 1 item
+		public ItemStack pickGain(CropTileView aCrop, net.minecraft.util.RandomSource aRNG) {
+			return new ItemStack(item());
 		}
 
+		/** The seed  --  the same grain item (the interim seed face, GT_BaseCrop.java:77). */
 		@Override
-		public ItemStack seeds(CropTileView aCrop) {
-			return new ItemStack(item()); // the declared interim (CropCardView class doc)
+		public ItemStack seedStack() {
+			return new ItemStack(item());
 		}
-
-		/** The discovery credit  --  the CropCard face, unused by the tick formulas. */
-		public String discoveredBy() { return mDiscoveredBy; }
 	}
 
-	/** The IC2 {@code BaseSeed} record form (crop + size + G/Ga/Re  --  GT_BaseCrop.java:77). */
-	public record BaseSeed(CropCardView card, int size, int statGrowth, int statGain, int statResistance) {}
-
 	// the :610-613 rows
-	public static final CropCardView RYE = new GrainCard("rye", "Binnie", "food_crop_rye",
+	public static final GT6CropCard RYE = new GrainCard("rye", "Binnie", "food_crop_rye",
 			1, 7, 2, 7, new int[] {0, 4, 0, 0, 2}, new String[] {"Wheat", "Food", "Grain"});
-	public static final CropCardView BARLEY = new GrainCard("barley", "Glitchfiend", "food_crop_barley",
+	public static final GT6CropCard BARLEY = new GrainCard("barley", "Glitchfiend", "food_crop_barley",
 			1, 7, 2, 7, new int[] {0, 4, 0, 0, 2}, new String[] {"Wheat", "Food", "Grain"});
-	public static final CropCardView OATS = new GrainCard("oats", "Pam", "food_crop_oats",
+	public static final GT6CropCard OATS = new GrainCard("oats", "Pam", "food_crop_oats",
 			1, 7, 2, 7, new int[] {0, 4, 0, 0, 2}, new String[] {"Wheat", "Food", "Grain"});
-	public static final CropCardView RICE = new GrainCard("rice", "Ellpeck", "food_crop_rice",
+	public static final GT6CropCard RICE = new GrainCard("rice", "Ellpeck", "food_crop_rice",
 			1, 7, 2, 7, new int[] {0, 4, 0, 0, 2}, new String[] {"Wheat", "Food", "Grain"});
 
 	// -------------------------------------------------------------- the registry seams
@@ -112,9 +91,8 @@ public final class GT6CropGrains {
 			"oats", "food_crop_oats",
 			"rice", "food_crop_rice");
 
-
-	private static final Map<String, CropCardView> CROPS = new ConcurrentHashMap<>();
-	private static final Map<ResourceLocation, BaseSeed> BASE_SEEDS = new ConcurrentHashMap<>();
+	private static final Map<String, GT6CropCard> CROPS = new ConcurrentHashMap<>();
+	private static final Map<ResourceLocation, GT6Crops.BaseSeed> BASE_SEEDS = new ConcurrentHashMap<>();
 
 	static {
 		registerCrop(RYE);
@@ -128,33 +106,35 @@ public final class GT6CropGrains {
 		registerBaseSeed(RICE);
 	}
 
-	/** The card walk  --  the {@code Crops.instance.getCrops()} minimal face (cbc-2 migrates). */
-	public static java.util.Collection<CropCardView> crops() {
+	/** The card walk  --  the {@code Crops.instance.getCrops()} grain-band face (cbc-3 folds). */
+	public static java.util.Collection<GT6CropCard> crops() {
 		return java.util.Collections.unmodifiableCollection(CROPS.values());
 	}
 
+	/** The grain-band card lookup  --  {@link GT6Crops#crop} is the full-registry walk. */
 	@Nullable
-	public static CropCardView crop(String aName) {
+	public static GT6CropCard crop(String aName) {
 		return CROPS.get(aName);
 	}
 
-	/** The {@code registerCrop} seam (GT_BaseCrop.java:76)  --  cbc-2's GT6Crops migrates this. */
-	public static void registerCrop(CropCardView aCard) {
+	/** The {@code registerCrop} seam (GT_BaseCrop.java:76)  --  dual-walked into {@link GT6Crops}. */
+	public static void registerCrop(GT6CropCard aCard) {
 		CROPS.put(aCard.name(), aCard);
+		GT6Crops.registerCrop(aCard);
 	}
 
 	/**
-	 * The {@code registerBaseSeed(stack, crop, 1, 1, 1, 1)} seam, key-keyed (the class doc)  -- 
-	 * cbc-2's item-stack-keyed registry replaces it.
+	 * The {@code registerBaseSeed(stack, crop, 1, 1, 1, 1)} seam, key-keyed (the class doc)  --
+	 * cbc-3's item-stack-keyed {@link GT6Crops} table replaces it.
 	 */
-	public static void registerBaseSeed(CropCardView aCard) {
+	public static void registerBaseSeed(GT6CropCard aCard) {
 		String tItemId = grainItemId(aCard.name()); // the local keeps the 2-arg ctor swap-matchable on 21.1
-		BASE_SEEDS.put(new ResourceLocation("gt6", tItemId), new BaseSeed(aCard, 1, 1, 1, 1));
+		BASE_SEEDS.put(new ResourceLocation("gt6", tItemId), new GT6Crops.BaseSeed(aCard, 1, 1, 1, 1));
 	}
 
 	/** The {@code Crops.instance.getBaseSeed(stack)} face  --  null when the item plants nothing. */
 	@Nullable
-	public static BaseSeed baseSeed(ItemStack aStack) {
+	public static GT6Crops.BaseSeed baseSeed(ItemStack aStack) {
 		if (aStack.isEmpty()) return null;
 		ResourceLocation tKey = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(aStack.getItem());
 		return tKey == null ? null : BASE_SEEDS.get(tKey);

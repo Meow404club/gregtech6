@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
@@ -22,26 +23,28 @@ import gregtech6.registry.GT6CropSticks;
 
 /**
  * The crop-stick tile  --  the decompiled 1.12 TileEntityCrop (IC2, 1289 lines, the
- * ADR-CB1 mechanism authority) ported as the ADR-CB5 thin shell: NBT/registry/world-read
- * duties here, every formula delegated to the {@link CropTickLogic} pure functions over the
- * {@link CropTileView} seam. Upstream was a parasitic tile on the IC2 blockCrop (GT6 1.7.10
- * had no own block); this is the self-owned counterpart pair with {@link GT6CropSticksBlock}.
+ * ADR-CB1 mechanism authority) ported as the ADR-CB5 thin shell over the {@link CropMath}
+ * engine (the cbc-1 -> cbc-2 merge wiring: this BE implements the cbc-2-owned
+ * {@link CropTileView} and delegates every gameplay roll; NBT/registry/world-read duties
+ * stay here). Upstream was a parasitic tile on the IC2 blockCrop (GT6 1.7.10 had no own
+ * block); this is the self-owned counterpart pair with {@link GT6CropSticksBlock}.
  *
  * <p><b>NBT keys</b> are the upstream :91-135 verbatim set (cropOwner/cropId/statGrowth/
  * statGain/statResistance/storageNutrients/storageWater/storageWeedEX/terrain + currentSize/
  * growthPoints/scanLevel/crossingBase)  --  the cross-line carrier face.
  *
- * <p><b>Hook seams (cbc-2, "aligned when cbc-2 merges")</b>: the empty-crossing-tile
- * crossing/spreading attempts (:240) and the weed-spread WORK (:280  ->  performWeedWork
- * :320-359) are cbc-2's engine  --  the shell paces the weed-work gate and no-ops the neighbor
- * work. The weed CARD itself (IC2 {@code Crops.weed}) is likewise cbc-2, so the empty-tile
- * weed roll still fires (the :241-251 contract, pinned offline) and the plant-in seam stays
- * weed-free (tryPlantIn :465).
+ * <p><b>Neighbor slots 0..3 = NORTH, SOUTH, EAST, WEST</b>  --  the attemptCrossing walk
+ * order (TileEntityCrop.java:939-942) the seeded pins contract on.
  */
 public class GT6CropBlockEntity extends BlockEntity implements CropTileView {
 
+	/** The neighbor slot order  --  :939-942 north/south/east/west verbatim. */
+	private static final Direction[] NEIGHBOR_SLOTS = {
+			Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
+
 	/** The upstream save/sync snapshot carries every gameplay field (the :113-135 set minus customData). */
-	private CropCardView mCrop;
+	@Nullable
+	private GT6CropCard mCrop;
 	private int mCurrentSize = 1;
 	private int mGrowthPoints;
 	private int mStatGrowth;
@@ -75,7 +78,8 @@ public class GT6CropBlockEntity extends BlockEntity implements CropTileView {
 	 * The 256t shell  --  updateEntityServer :186-208: the ticker phase-offsets on load
 	 * (onLoaded :173-177 {@code nextInt(256)}), every 40th cycle refreshes the biome bonus
 	 * (:212-217), the three terrain reads spread over the 1024 band (:219-238), then the
-	 * gameplay cycle. World reads here; arithmetic in {@link CropTickLogic}.
+	 * gameplay cycle rides {@link CropMath#tickCrop} (the performTick :240-283 port). World
+	 * reads and world effects here; arithmetic in the engine.
 	 */
 	public static void tick(Level aLevel, BlockPos aPos, BlockState aState, GT6CropBlockEntity aTile) {
 		if (aLevel.isClientSide) return;
@@ -98,47 +102,31 @@ public class GT6CropBlockEntity extends BlockEntity implements CropTileView {
 			updateTerrainAirQuality(aLevel, aPos);
 		}
 
-		RandomSource tRandom = aLevel.getRandom();
-		if (mCrop == null) {
-			// :240  --  cbc-2 wires attemptCrossing/attemptSpreading here for crossing tiles;
-			// the weed self-gen branch runs for every empty tile (crossing tiles included,
-			// the decompiled fall-through  --  the 1% weed invades crossing sticks too).
-			switch (CropTickLogic.weedSelfGenRoll(mStorageWeedEX, tRandom)) {
-				case DRAIN_WEED_EX -> mStorageWeedEX--;
-				case BECOME_WEED -> {
-					// the :249-251 shape  --  the weed CARD is cbc-2's; until then the tile only
-					// resets (the roll + Weed-EX suppression stay pinned by the offline tests).
-					reset();
-					markDirty();
-				}
-				case NOTHING -> {}
-			}
-		} else {
-			// :254-282  --  card hook, growth, size-up, storage decay, weed-work gate.
-			mCrop.tick(this);
-			if (mCrop != null && mCrop.canGrow(this)) {
-				if (CropTickLogic.growthTick(this, mCrop, tRandom)) {
-					reset(); // the :301 quality-death reset
-					markDirty();
-					return;
-				}
-				if (mCrop != null && mGrowthPoints >= mCrop.growthDuration(this)) {
-					mGrowthPoints = 0;
-					setCurrentSize(mCurrentSize + 1);
-					markDirty();
-				}
-			}
-			if (mStorageNutrients > 0) mStorageNutrients--;
-			if (mStorageWater > 0) mStorageWater--;
-			if (mCrop != null && CropTickLogic.weedWorkDue(this, mCrop, tRandom)) {
-				performWeedWorkHook(aLevel, aPos, tRandom); // cbc-2's neighbor work
-			}
+		// the performTick :240-283 port  --  empty-tile crossing/spreading/weed-self-gen and the
+		// planted growth/decay/weed-work gate, one engine walk under the level random
+		int tGrassSlot = CropMath.tickCrop(this, GT6Crops.crops(), aLevel.getRandom());
+		if (tGrassSlot >= 0) {
+			growGrassAt(aLevel, aPos, tGrassSlot); // the :347-357 world effect
 		}
 		markDirty();
 	}
 
-	/** cbc-2 hook  --  the performWeedWork :320-359 neighbor conversion/grass seeding. */
-	protected void performWeedWorkHook(Level aLevel, BlockPos aPos, RandomSource aRandom) {}
+	/**
+	 * The performWeedWork grass branch  --  :347-357: the returned slot's cell is air over
+	 * dirt/grass/farmland, so the soil turns grass and the cell grows tall grass. The engine
+	 * probed via {@link #soilAirAt}; this re-checks air before the write (cheap, avoids
+	 * replacing a block that changed under the view).
+	 */
+	private void growGrassAt(Level aLevel, BlockPos aPos, int aSlot) {
+		BlockPos tDst = aPos.offset(NEIGHBOR_SLOTS[aSlot].getNormal());
+		if (!aLevel.getBlockState(tDst).isAir()) return;
+		BlockPos tSoil = tDst.below();
+		BlockState tSoilState = aLevel.getBlockState(tSoil);
+		if (tSoilState.is(Blocks.DIRT) || tSoilState.is(Blocks.GRASS_BLOCK) || tSoilState.is(Blocks.FARMLAND)) {
+			aLevel.setBlock(tSoil, Blocks.GRASS_BLOCK.defaultBlockState(), 7);
+			aLevel.setBlock(tDst, Blocks.TALL_GRASS.defaultBlockState(), 7);
+		}
+	}
 
 	// -------------------------------------------------------------- terrain reads
 
@@ -168,7 +156,7 @@ public class GT6CropBlockEntity extends BlockEntity implements CropTileView {
 	}
 
 	/**
-	 * :503-532  --  the corner-2x2 fresh scan (the decompiled {@code x-1..<x} window verbatim  -- 
+	 * :503-532  --  the corner-2x2 fresh scan (the decompiled {@code x-1..<x} window verbatim  --
 	 * the tile sits on the far corner) + {@code isBlockNormalCube}  ->  the modern
 	 * {@code isRedstoneConductor} (the 1.12 isNormalCube rename lineage).
 	 */
@@ -207,10 +195,10 @@ public class GT6CropBlockEntity extends BlockEntity implements CropTileView {
 				return true;
 			}
 			if (mCrop == null && !mCrossingBase) {
-				GT6CropGrains.BaseSeed tSeed = GT6CropGrains.baseSeed(aHeld);
+				GT6Crops.BaseSeed tSeed = GT6CropGrains.baseSeed(aHeld);
 				if (tSeed != null) {
-					reset();
-					setCrop(tSeed.card());
+					clear();
+					setCrop(tSeed.crop());
 					mCurrentSize = tSeed.size();
 					mStatGain = tSeed.statGain();
 					mStatGrowth = tSeed.statGrowth();
@@ -255,11 +243,11 @@ public class GT6CropBlockEntity extends BlockEntity implements CropTileView {
 	}
 
 	/** tryPlantIn :464-482  --  the programmatic plant face (the /gt6crop smoke seam). */
-	public boolean tryPlantIn(CropCardView aCard, int aSize, int aGr, int aGa, int aRe, int aScan) {
+	public boolean tryPlantIn(GT6CropCard aCard, int aSize, int aGr, int aGa, int aRe, int aScan) {
 		if (aCard == null || mCrossingBase) return false;
-		reset();
+		clear();
 		setCrop(aCard);
-		setCurrentSize(aSize);
+		setSize(aSize);
 		setStatGain(aGa);
 		setStatGrowth(aGr);
 		setStatResistance(aRe);
@@ -324,12 +312,12 @@ public class GT6CropBlockEntity extends BlockEntity implements CropTileView {
 		return false;
 	}
 
-	/** The trample face  --  onEntityCollision :485-499, the IC2 sprint gate + the pure roll. */
+	/** The trample face  --  onEntityCollision :485-499, the sprint gate + the engine roll. */
 	public void onEntityCollision(Level aLevel, BlockPos aPos, net.minecraft.world.entity.Entity aEntity) {
 		if (mCrop == null) return;
 		boolean tSprint = aEntity instanceof LivingEntity tLiving && tLiving.isSprinting(); // CropCard :166 default
-		if (!CropTickLogic.trampleDue(this, tSprint, aLevel.getRandom())) return;
-		reset();
+		if (!CropMath.isTrampled(mCrop, this, tSprint, aLevel.getRandom())) return;
+		clear();
 		aLevel.setBlock(aPos.below(), Blocks.DIRT.defaultBlockState(), 3);
 		markDirty();
 	}
@@ -346,23 +334,23 @@ public class GT6CropBlockEntity extends BlockEntity implements CropTileView {
 		return true;
 	}
 
-	/** performHarvest :793-823  --  the pure roll + the sizeAfterHarvest reset; null when not harvestable. */
+	/**
+	 * performHarvest :793-823  --  the engine roll + the sizeAfterHarvest reset; null when not
+	 * harvestable (the :821 null contract the command/scythe faces drive).
+	 */
 	@Nullable
-	public java.util.List<ItemStack> performHarvest() {
+	public List<ItemStack> performHarvest() {
 		if (mCrop == null || !mCrop.canBeHarvested(this)) return null;
-		java.util.List<ItemStack> tRet = CropTickLogic.harvestGains(this, mCrop, randomOrNew());
-		if (tRet == null) return null;
-		setCurrentSize(mCrop.afterHarvestSize()); // :817
-		markDirty();
-		return tRet;
+		return CropMath.performHarvest(mCrop, this, randomOrNew());
 	}
 
-	/** pick :731-776  --  the seed drop + the reset; false on an empty tile. */
+	/**
+	 * pick :731-776  --  the seed drop + the reset (the engine carries both, the seeds built
+	 * BEFORE the :764 clear); false on an empty tile.
+	 */
 	public boolean pick(Level aLevel, BlockPos aPos) {
 		if (mCrop == null) return false;
-		int tCount = CropTickLogic.pickSeedCount(this, mCrop, randomOrNew());
-		ItemStack[] tSeeds = buildSeeds(tCount); // the :758-762 drops are built BEFORE the :764 reset
-		reset();
+		List<ItemStack> tSeeds = CropMath.pickSeed(mCrop, this, randomOrNew());
 		for (ItemStack tSeed : tSeeds) {
 			net.minecraft.world.Containers.dropItemStack(aLevel, aPos.getX() + 0.5, aPos.getY() + 0.5, aPos.getZ() + 0.5, tSeed);
 		}
@@ -371,61 +359,93 @@ public class GT6CropBlockEntity extends BlockEntity implements CropTileView {
 
 	/**
 	 * The offline seam  --  the seeded pins inject; live rides the level random (the reference
-	 * port's random() face). Reset kills the card reference, so the seed stacks build BEFORE
-	 * the reset in {@link #pick} (the :758-762 drops-before-reset order transcribed).
+	 * port's random() face).
 	 */
 	private RandomSource randomOrNew() {
 		return getLevel() != null ? getLevel().getRandom() : RandomSource.create();
 	}
 
-	/** pick seed stacks built before reset (the :758 order)  --  the corrected face used by {@link #pick}. */
-	private ItemStack[] buildSeeds(int aCount) {
-		ItemStack[] tStacks = new ItemStack[aCount];
-		for (int i = 0; i < aCount; i++) tStacks[i] = mCrop.seeds(this);
-		return tStacks;
-	}
-
 	// -------------------------------------------------------------- CropTileView
 
-	@Override public CropCardView getCrop() { return mCrop; }
+	@Override @Nullable public GT6CropCard crop() { return mCrop; }
 
 	@Override
-	public void setCrop(CropCardView aCard) {
+	public void setCrop(@Nullable GT6CropCard aCard) {
 		mCrop = aCard;
 		markDirty();
 		// :567-569  --  the setCrop terrain refresh rides the next cycle in the shell (the
 		// world reads need the level; the -1 sentinels keep the first growth honest).
 	}
 
-	@Override public int getCurrentSize() { return mCurrentSize; }
-	@Override public void setCurrentSize(int aSize) { mCurrentSize = aSize; }
-	@Override public int getStatGrowth() { return mStatGrowth; }
-	@Override public void setStatGrowth(int aGrowth) { mStatGrowth = aGrowth; }
-	@Override public int getStatGain() { return mStatGain; }
-	@Override public void setStatGain(int aGain) { mStatGain = aGain; }
-	@Override public int getStatResistance() { return mStatResistance; }
-	@Override public void setStatResistance(int aResistance) { mStatResistance = aResistance; }
-	@Override public int getGrowthPoints() { return mGrowthPoints; }
-	@Override public void setGrowthPoints(int aPoints) { mGrowthPoints = aPoints; }
-	@Override public int getScanLevel() { return mScanLevel; }
-	@Override public void setScanLevel(int aScanLevel) { mScanLevel = aScanLevel; }
-	@Override public int getStorageWater() { return mStorageWater; }
-	@Override public void setStorageWater(int aWater) { mStorageWater = aWater; }
-	@Override public int getStorageNutrients() { return mStorageNutrients; }
-	@Override public void setStorageNutrients(int aNutrients) { mStorageNutrients = aNutrients; }
-	@Override public int getStorageWeedEX() { return mStorageWeedEX; }
-	@Override public void setStorageWeedEX(int aWeedEX) { mStorageWeedEX = aWeedEX; }
-	@Override public int getTerrainHumidity() { return mTerrainHumidity; }
-	@Override public void setTerrainHumidity(int aHumidity) { mTerrainHumidity = aHumidity; }
-	@Override public int getTerrainNutrients() { return mTerrainNutrients; }
-	@Override public void setTerrainNutrients(int aNutrients) { mTerrainNutrients = aNutrients; }
-	@Override public int getTerrainAirQuality() { return mTerrainAirQuality; }
-	@Override public void setTerrainAirQuality(int aAir) { mTerrainAirQuality = aAir; }
-	@Override public boolean isCrossingBase() { return mCrossingBase; }
+	@Override public boolean crossingBase() { return mCrossingBase; }
 	@Override public void setCrossingBase(boolean aCrossingBase) { mCrossingBase = aCrossingBase; }
+	@Override public int size() { return mCurrentSize; }
+	@Override public void setSize(int aSize) { mCurrentSize = aSize; }
+	@Override public int statGrowth() { return mStatGrowth; }
+	@Override public int statGain() { return mStatGain; }
+	@Override public int statResistance() { return mStatResistance; }
+	@Override public void setStats(int aGrowth, int aGain, int aResistance) {
+		mStatGrowth = aGrowth;
+		mStatGain = aGain;
+		mStatResistance = aResistance;
+	}
+
+	/** The single-stat setter face  --  the rightClick/tryPlantIn arms (not part of the view). */
+	public void setStatGrowth(int aGrowth) { mStatGrowth = aGrowth; }
+	/** The single-stat setter face  --  the rightClick/tryPlantIn arms (not part of the view). */
+	public void setStatGain(int aGain) { mStatGain = aGain; }
+	/** The single-stat setter face  --  the rightClick/tryPlantIn arms (not part of the view). */
+	public void setStatResistance(int aResistance) { mStatResistance = aResistance; }
+
+	@Override public int growthPoints() { return mGrowthPoints; }
+	@Override public void setGrowthPoints(int aPoints) { mGrowthPoints = aPoints; }
+	@Override public int scanLevel() { return mScanLevel; }
+	@Override public void setScanLevel(int aScanLevel) { mScanLevel = aScanLevel; }
+	@Override public int storageWater() { return mStorageWater; }
+	@Override public int storageNutrients() { return mStorageNutrients; }
+	@Override public int storageWeedEx() { return mStorageWeedEX; }
+	@Override public void setStorages(int aWater, int aNutrients, int aWeedEx) {
+		mStorageWater = aWater;
+		mStorageNutrients = aNutrients;
+		mStorageWeedEX = aWeedEx;
+	}
+	@Override public int terrainHumidity() { return mTerrainHumidity; }
+	@Override public int terrainNutrients() { return mTerrainNutrients; }
+	@Override public int terrainAirQuality() { return mTerrainAirQuality; }
+
+	/** The terrain rig face  --  the test seam (the shell recomputes at the :219-238 cadence). */
+	public void setTerrainHumidity(int aHumidity) { mTerrainHumidity = aHumidity; }
+	/** The terrain rig face  --  the test seam (the shell recomputes at the :219-238 cadence). */
+	public void setTerrainNutrients(int aNutrients) { mTerrainNutrients = aNutrients; }
+	/** The terrain rig face  --  the test seam (the shell recomputes at the :219-238 cadence). */
+	public void setTerrainAirQuality(int aAir) { mTerrainAirQuality = aAir; }
 
 	@Override
-	public void reset() {
+	@Nullable
+	public CropTileView neighbor(int aIndex) {
+		if (level == null || aIndex < 0 || aIndex >= NEIGHBOR_SLOTS.length) return null;
+		BlockPos tPos = worldPosition.offset(NEIGHBOR_SLOTS[aIndex].getNormal());
+		return level.getBlockEntity(tPos) instanceof GT6CropBlockEntity tCrop ? tCrop : null;
+	}
+
+	@Override
+	public boolean soilAirAt(int aIndex) {
+		if (level == null || aIndex < 0 || aIndex >= NEIGHBOR_SLOTS.length) return false;
+		BlockPos tDst = worldPosition.offset(NEIGHBOR_SLOTS[aIndex].getNormal());
+		if (!level.getBlockState(tDst).isAir()) return false;
+		BlockState tSoil = level.getBlockState(tDst.below());
+		return tSoil.is(Blocks.DIRT) || tSoil.is(Blocks.GRASS_BLOCK) || tSoil.is(Blocks.FARMLAND);
+	}
+
+	@Override
+	public ItemStack generateSeeds(GT6CropCard aCard, int aGrowth, int aGain, int aResistance, int aScan) {
+		// the INTERIM seed face (the base-seed copy, GT_BaseCrop.java:77); the stat-carrying
+		// ItemCropSeed form (TileEntityCrop.generateSeeds :894-897) is card cbc-3's GT6CropSeeds
+		return aCard == null ? ItemStack.EMPTY : aCard.seedStack();
+	}
+
+	@Override
+	public void clear() {
 		mCrop = null; // :826-839 verbatim (customData is a declared cbc-2 cut  --  no card uses it yet)
 		mStatGain = 0;
 		mStatResistance = 0;
@@ -439,7 +459,7 @@ public class GT6CropBlockEntity extends BlockEntity implements CropTileView {
 		markDirty();
 	}
 
-	@Override
+	/** The dirty flag  ->  block sync (not a view member -- the BE's own sync face). */
 	public void markDirty() {
 		mDirty = true;
 		setChanged();
@@ -508,8 +528,8 @@ public class GT6CropBlockEntity extends BlockEntity implements CropTileView {
 	private void loadCrop(CompoundTag aNBT) {
 		mCrossingBase = aNBT.getBoolean("crossingBase");
 		if (aNBT.contains("cropOwner") && aNBT.contains("cropId")) {
-			mCrop = GT6CropGrains.crop(aNBT.getString("cropId"));
-			if (mCrop == null) return; // unknown id (cbc-2's registry answers)  --  stay an empty stick
+			mCrop = GT6Crops.crop(aNBT.getString("cropId"));
+			if (mCrop == null) return; // unknown id  --  stay an empty stick
 			mStatGrowth = aNBT.getByte("statGrowth");
 			mStatGain = aNBT.getByte("statGain");
 			mStatResistance = aNBT.getByte("statResistance");
