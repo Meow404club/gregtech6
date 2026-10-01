@@ -27,6 +27,8 @@ import net.minecraftforge.registries.RegistryObject;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTOvenBlock;
 import gregtech6.block.attachment.GTAttachmentSmallBlock;
+import gregtech6.block.concrete.GT6ConcreteBlock; // task concrete-blocks-register
+import gregtech6.block.concrete.GT6ConcreteSlabBlock; // task concrete-blocks-register
 import gregtech6.block.multiblock.GTMultiBlockPartBlock;
 import gregtech6.block.tank.GT6GasCylinderBlock; // task small-tank-gas-cylinder
 import gregtech6.registry.GT6BeeHives;
@@ -296,6 +298,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addCup(); // task small-tank-cup — the Porcelain Cup bowl (the 1px-wall per-level model family)
         addJug(); // task small-tank-jug — the Ceramic Jug (the rim-over-body per-level model family)
         addBeams(); // task beam-blocks-register — the 8 wood-beam pillar blocks (the axle axis band form)
+        addConcrete(); // task concrete-blocks-register — the 64 per-pair concrete blocks (the grayscale+tint band)
     }
 
     /**
@@ -4949,5 +4952,54 @@ public final class GT6BlockStates extends BlockStateProvider {
             });
             itemModels().withExistingParent(tHandle.getId().getPath(), tModel.getLocation());
         }
+     * Task concrete-blocks-register — the 64 per-pair concrete blocks
+     * ({@link gregtech6.registry.GT6ConcreteBlocks}, the Loader_Blocks.java:63/:67
+     * families x 16 dye colours, full + {@code mSlabs[0]} slab each). The RENDER face is
+     * the upstream tint leg, NOT 16 pre-coloured PNGs: one grayscale tile per family
+     * (Textures.java:704-705 {@code UT.Code.fill} — the SAME CONCRETE PNG on all 16
+     * metas; BlockColored.java:63-73 colours by {@code DYES_INT[meta]}; the borrow is
+     * grayscale by design, the assets/README.md ledger), so ALL 16 colours of a family
+     * SHARE one tinted model (the addFoamBlocks 16-colour-states-over-one-model form)
+     * and the colour resolves per BLOCK in the {@code GT6ConcreteTintListener} BlockColor
+     * (each per-pair block carries its FIXED dye index). The slabs ride the
+     * {@link #tintedSlabFamily} triads (the vanilla slab parents carry NO tintindex, so
+     * the tinted family needs own models); DOUBLE shares the tinted cube. 64 item models:
+     * the full band parents the family cube, the slab band its bottom-slab model (the
+     * vanilla slab item form). Same provider, same pass, so the parents resolve in the
+     * ExistingFileHelper (the GT6BlockStates.java:29-33 ordering precedent).
+     */
+    private void addConcrete() {
+        ModelFile tCube = tintedCubeAll("block/concrete", modLoc("block/concrete"));
+        ModelFile tCubeReinforced = tintedCubeAll("block/concrete_reinforced", modLoc("block/concrete_reinforced"));
+        for (var tHandle : gregtech6.registry.GT6ConcreteBlocks.FULL_BLOCKS) {
+            GT6ConcreteBlock tBlock = (GT6ConcreteBlock) tHandle.get();
+            ModelFile tModel = tBlock.reinforced ? tCubeReinforced : tCube;
+            getVariantBuilder(tBlock).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
+            itemModels().withExistingParent(tBlock.snake,
+                    modLoc("block/concrete" + (tBlock.reinforced ? "_reinforced" : "")));
+        }
+        // the TWO shared slab triads, built ONCE per family — the tintedHalfSlab helper
+        // APPENDS an element to the cached builder, so a per-slab repeat would stack 16
+        // copies (the runData artifact this pass fixed); the vanilla slab parents carry no
+        // tintindex, so the tinted family needs own models (the addFoamBlocks note)
+        ModelFile tSlabBottom = tintedHalfSlab("concrete_slab_bottom", modLoc("block/concrete"), false);
+        ModelFile tSlabTop = tintedHalfSlab("concrete_slab_top", modLoc("block/concrete"), true);
+        ModelFile tSlabDouble = tintedCubeAll("block/concrete_slab_double", modLoc("block/concrete"));
+        ModelFile tSlabRBottom = tintedHalfSlab("concrete_reinforced_slab_bottom", modLoc("block/concrete_reinforced"), false);
+        ModelFile tSlabRTop = tintedHalfSlab("concrete_reinforced_slab_top", modLoc("block/concrete_reinforced"), true);
+        ModelFile tSlabRDouble = tintedCubeAll("block/concrete_reinforced_slab_double", modLoc("block/concrete_reinforced"));
+        for (var tHandle : gregtech6.registry.GT6ConcreteBlocks.SLAB_BLOCKS) {
+            GT6ConcreteSlabBlock tBlock = (GT6ConcreteSlabBlock) tHandle.get();
+            getVariantBuilder(tBlock)
+                    .partialState().with(SlabBlock.TYPE, SlabType.BOTTOM)
+                    .setModels(ConfiguredModel.builder().modelFile(tBlock.reinforced ? tSlabRBottom : tSlabBottom).build())
+                    .partialState().with(SlabBlock.TYPE, SlabType.TOP)
+                    .setModels(ConfiguredModel.builder().modelFile(tBlock.reinforced ? tSlabRTop : tSlabTop).build())
+                    .partialState().with(SlabBlock.TYPE, SlabType.DOUBLE)
+                    .setModels(ConfiguredModel.builder().modelFile(tBlock.reinforced ? tSlabRDouble : tSlabDouble).build());
+            itemModels().withExistingParent(tBlock.snake, modLoc("block/" +
+                    (tBlock.reinforced ? "concrete_reinforced_slab_bottom" : "concrete_slab_bottom")));
+        }
+        LOGGER.info("GT6 concrete: 64 blockstates (32 cubes + 32 slab triads) over 8 shared tinted models, 64 item models");
     }
 }

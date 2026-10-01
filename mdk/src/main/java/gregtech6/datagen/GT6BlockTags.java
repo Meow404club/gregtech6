@@ -194,6 +194,16 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		// mineable/pickaxe gate over hardness 1.0), the hopper/boiler family convention
 		tPickaxe.add(gregtech6.registry.GT6Anvils.STONE_ANVIL.get());
 		tPickaxe.add(gregtech6.registry.GT6Anvils.BLACKSTONE_ANVIL.get());
+		// task concrete-blocks-register — the 64 concrete blocks join the band: upstream
+		// getHarvestTool = TOOL_pickaxe for the WHOLE BlockMetaType family incl. slabs
+		// (BlockMetaType.java:166), and the vanilla pickaxe tag enumerates slabs
+		// explicitly (no #slabs shortcut, vanilla pickaxe.json:95-110), so both bands walk
+		for (RegistryObject<Block> tHandle : gregtech6.registry.GT6ConcreteBlocks.FULL_BLOCKS) {
+			tPickaxe.add(tHandle.get());
+		}
+		for (RegistryObject<Block> tHandle : gregtech6.registry.GT6ConcreteBlocks.SLAB_BLOCKS) {
+			tPickaxe.add(tHandle.get());
+		}
 	}
 
 	/** The mineable/axe band — the wood fluid barrel (first batch: no plastic/metal rows, P2). */

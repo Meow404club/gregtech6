@@ -961,9 +961,29 @@ direct	gt.tileentity.portal.mini.tooltip.1	传送物品、流体、红石、比�
 direct	gt.tileentity.portal.mini.tooltip.2	总是将物品传送到最近的被激活的传送门。	hand
 direct	gt.tileentity.portal.nether.tooltip.1	仅在主世界和下界之间工作, 并且在下界的坐标差为在主世界的八分之一!	hand
 direct	gt.tileentity.portal.nether.tooltip.2	实际可工作区域与计算值的可容错区间: 128m	hand
+direct	gt6.concrete.block	%s混凝土	hand
+direct	gt6.concrete.block_reinforced	%s强化混凝土	hand
+direct	gt6.concrete.slab	%s混凝土半砖	hand
+direct	gt6.concrete.slab_reinforced	%s强化混凝土半砖	hand
 direct	gt6.cover.conveyor.display	小型电动输送机 (%s)	hand
 direct	gt6.cover.robot_arm.display	小型机械臂 (%s)	hand
 direct	gt6.cover.selector_tag.display	集成电路 (%s)	hand
+direct	gt6.dye.black	黑色	hand
+direct	gt6.dye.blue	蓝色	hand
+direct	gt6.dye.brown	褐色	hand
+direct	gt6.dye.cyan	青色	hand
+direct	gt6.dye.gray	灰色	hand
+direct	gt6.dye.green	绿色	hand
+direct	gt6.dye.light_blue	淡蓝色	hand
+direct	gt6.dye.light_gray	淡灰色	hand
+direct	gt6.dye.lime	黄绿色	hand
+direct	gt6.dye.magenta	品红	hand
+direct	gt6.dye.orange	橙色	hand
+direct	gt6.dye.pink	粉色	hand
+direct	gt6.dye.purple	紫色	hand
+direct	gt6.dye.red	红色	hand
+direct	gt6.dye.white	白色	hand
+direct	gt6.dye.yellow	黄色	hand
 direct	gt6.foamspray.mode.area	3x3区域模式	hand
 direct	gt6.foamspray.mode.line	4米直线模式	hand
 direct	gt6.foamspray.mode.single_block	单体方块模式	hand

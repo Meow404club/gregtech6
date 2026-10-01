@@ -126,13 +126,20 @@ public final class GT6ConcreteBlocks {
 
 	private static List<RegistryObject<Item>> registerItems() {
 		List<RegistryObject<Item>> rList = new ArrayList<>(64);
-		for (RegistryObject<Block> tHandle : FULL_BLOCKS) {
-			rList.add(ITEMS_REG.register(((GT6ConcreteBlock) tHandle.get()).snake,
-					() -> new GTComposedNameItem(tHandle.get(), new Item.Properties())));
+		// the id derives from the WALK (no eager RegistryObject deref — the handle is only
+		// .get() inside the supplier, which runs at registration time, the GTGrassBlocks
+		// registerItems form; an eager get() is the clinit NPE trap runData caught)
+		for (int i = 0; i < FULL_BLOCKS.size(); i++) {
+			ConcreteRow tRow = registrationOrder().get(i);
+			int tIndex = i;
+			rList.add(ITEMS_REG.register(path(tRow.family(), tRow.dyeIndex()),
+					() -> new GTComposedNameItem(FULL_BLOCKS.get(tIndex).get(), new Item.Properties())));
 		}
-		for (RegistryObject<Block> tHandle : SLAB_BLOCKS) {
-			rList.add(ITEMS_REG.register(((GT6ConcreteSlabBlock) tHandle.get()).snake,
-					() -> new GTComposedNameItem(tHandle.get(), new Item.Properties())));
+		for (int i = 0; i < SLAB_BLOCKS.size(); i++) {
+			ConcreteRow tRow = registrationOrder().get(i);
+			int tIndex = i;
+			rList.add(ITEMS_REG.register(slabPath(tRow.family(), tRow.dyeIndex()),
+					() -> new GTComposedNameItem(SLAB_BLOCKS.get(tIndex).get(), new Item.Properties())));
 		}
 		return List.copyOf(rList);
 	}
