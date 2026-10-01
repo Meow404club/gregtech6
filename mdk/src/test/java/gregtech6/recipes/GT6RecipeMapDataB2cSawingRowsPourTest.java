@@ -25,7 +25,9 @@ import gregapi.data.CS;
 import gregapi.data.OP;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
+import gregtech6.block.tree.GT6BeamKind;
 import gregtech6.block.tree.GT6TreeKind;
+import gregtech6.registry.GT6BeamBlocks;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTStoneBlocks;
@@ -54,16 +56,25 @@ import net.minecraft.world.level.material.Fluids;
  * x4 mB, distilled_water at x3/x3, and (non-food only) one row per FluidsGT.LUBRICANT
  * member at x1/x1. The port lubricant family is {gt6:lubricant} only; the "rc
  * lubricant"/LubRoCant alias is a declared faithful absence.
+ *
+ * <p>Beam increment (task beam-consume-increment): the anchor-3 face (Woods:192) is
+ * ACTIVATED for the 7 pourable BeamEntry calls of the port universe (the 6 vanilla
+ * LoaderWoodDictionary:51-56 defaults + the :175 Rubber Wood face, whose upstream
+ * PlankEntry is the vanilla jungle planks — WoodDictionary.PLANKS.get(Blocks.planks, 3))
+ * — 35 rows tail-appended; the :66 DEFAULT_BEAM (IL.Beam) stays blocked on the
+ * plank-output face (IL.Plank unported, the gt-tree-planks card). The recompute below
+ * emits the beam face, so this frozen snapshot cannot trail or outrun it.
  */
 public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestBase {
 
 	private static final String FILE_KEY = "sawing";
 
-	/** The frozen snapshot census: 792 calls x the five-leg fan (791 lubricant — :621 melon is food). */
-	private static final int CENSUS = 3959;
+	/** The frozen snapshot census: 799 calls x the five-leg fan (798 lubricant — :621 melon is food). */
+	private static final int CENSUS = 3994;
 	/** The seven-anchor per-call census (calls; rows = the leg fan). */
 	private static final int CALLS_WOOD_WALK = 248, CALLS_DYE_LOOP = 32, CALLS_VANILLA_STATICS = 15,
-			CALLS_VANILLA_LOGS = 6, CALLS_STONE_SLABS = 210, CALLS_BLOCK_SLABS = 272, CALLS_SAPLINGS = 9;
+			CALLS_VANILLA_LOGS = 6, CALLS_STONE_SLABS = 210, CALLS_BLOCK_SLABS = 272, CALLS_SAPLINGS = 9,
+			CALLS_BEAM_WALK = 7; // task beam-consume-increment: Woods:192, the 7 pourable BeamEntry faces
 
 	/** The five leg rows of one non-food call, verbatim RM.java:725-730 (fluid, duration mult, amount mult). */
 	private static final Object[][] LEGS = {
@@ -159,6 +170,7 @@ public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestB
 		assertEquals(CALLS_STONE_SLABS, tByAnchor.get("stone_slabs").intValue(), "BlockStones:272-274 calls (plate-gated)");
 		assertEquals(CALLS_BLOCK_SLABS, tByAnchor.get("block_slabs").intValue(), "BlockMetaType:92 calls");
 		assertEquals(CALLS_SAPLINGS, tByAnchor.get("saplings").intValue(), "OreDict:171 calls");
+		assertEquals(CALLS_BEAM_WALK, tByAnchor.get("beam_walk").intValue(), "Woods:192 beam-walk calls (the pourable BeamEntry faces)");
 		int tSum = tByAnchor.values().stream().mapToInt(Integer::intValue).sum();
 		assertEquals(CENSUS, tSum * 5 - 1, "calls x the five-leg fan minus the melon food leg = the file census");
 	}
@@ -177,7 +189,7 @@ public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestB
 		Set<String> tExpected = Set.of("minecraft:water", "gt6:spdew", "gt6:mnwtr", "gt6:distilled_water", "gt6:lubricant");
 		assertEquals(tExpected, tByFluid.keySet(), "exactly the five legs (the LubRoCant alias is a declared absence)");
 		int tCalls = CALLS_WOOD_WALK + CALLS_DYE_LOOP + CALLS_VANILLA_STATICS + CALLS_VANILLA_LOGS
-				+ CALLS_STONE_SLABS + CALLS_BLOCK_SLABS + CALLS_SAPLINGS;
+				+ CALLS_STONE_SLABS + CALLS_BLOCK_SLABS + CALLS_SAPLINGS + CALLS_BEAM_WALK;
 		for (String tFluid : new String[] {"minecraft:water", "gt6:spdew", "gt6:mnwtr", "gt6:distilled_water"}) {
 			assertEquals(tCalls, tByFluid.get(tFluid).intValue(), tFluid + " carries its leg census");
 		}
@@ -310,6 +322,9 @@ public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestB
 			tItemUniverse.add("gt6:" + tKind.snake() + "_sapling");
 			tItemUniverse.add("gt6:" + tKind.snake() + "_log");
 		}
+		for (GT6BeamKind tBeam : GT6BeamKind.values()) { // task beam-consume-increment: the beam universe
+			tItemUniverse.add("gt6:" + GT6BeamBlocks.path(tBeam));
+		}
 		tItemUniverse.addAll(vanillaWhitelist());
 		Set<String> tMissing = new HashSet<>();
 		for (JsonElement tElement : pourShipped()) {
@@ -379,7 +394,24 @@ public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestB
 		for (String[] tLog : tLogs) {
 			emit(rKeys, 16, 128, 4, false, "minecraft:" + tLog[0], 1, "minecraft:" + tLog[1] + ":6>gt6:dust_bark:1");
 		}
-		// (anchor 3 — Woods:192 is the beam walk: BLOCKED in full, no beams in port — declared, emits nothing)
+		// anchor 3 — Woods:192, the beam-walk sawing (activated by task beam-consume-increment):
+		// the 7 pourable BeamEntry faces of the port universe — the 6 vanilla beams ride the
+		// BeamEntry defaults (LoaderWoodDictionary:51-56: mPlankCountBuzz 7, dust of the plank
+		// material) and the :175 Rubber Wood face (mPlankCountBuzz 5, material WoodRubber,
+		// plank = the vanilla jungle planks per WoodDictionary.PLANKS.get(Blocks.planks, 3));
+		// the :66 DEFAULT_BEAM (IL.Beam) stays blocked on the GT-plank output face
+		String[][] tBeams = {
+				{"oak_beam", "oak_planks", "7", "dust_oak"},
+				{"spruce_beam", "spruce_planks", "7", "dust_spruce"},
+				{"birch_beam", "birch_planks", "7", "dust_birch"},
+				{"jungle_beam", "jungle_planks", "7", "dust_junglewood"},
+				{"acacia_beam", "acacia_planks", "7", "dust_acacia"},
+				{"dark_oak_beam", "dark_oak_planks", "7", "dust_dark_oak"},
+				{"rubber_wood_beam", "jungle_planks", "5", "dust_wood_rubber"}};
+		for (String[] tBeam : tBeams) {
+			emit(rKeys, 16, 128, 4, false, "gt6:" + tBeam[0], 1,
+					"minecraft:" + tBeam[1] + ":" + tBeam[2] + ">gt6:" + tBeam[3] + ":1");
+		}
 
 		// anchors 4+5 — BlockStones:272-274 + BlockMetaType:92 over the 272-pair universe
 		for (GTStoneBlocks.StoneSpec tStone : GTStoneBlocks.STONES) {
@@ -436,6 +468,7 @@ public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestB
 		rMap.put("stone_slabs", tStoneCalls);
 		rMap.put("block_slabs", GTStoneBlocks.STONES.size() * 16);
 		rMap.put("saplings", GT6TreeKind.values().length);
+		rMap.put("beam_walk", 7); // Woods:192, the 7 pourable BeamEntry faces (beam-consume-increment)
 		return rMap;
 	}
 
