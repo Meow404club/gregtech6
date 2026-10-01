@@ -32,9 +32,11 @@ import gregtech6.registry.GTMaterialItems;
  *     "gt.recipe.bath" / "Bath"), the acceptance's "图形态断言（槽容按
  *     mInputFluidCount/mOutputFluidCount）" side (the BE tank arrays read these
  *     constants — the BE half is GT6KitchenBlockEntityTest);</li>
- * <li>the LIVE universe — the wood-oil ladder pours ZERO rows today (no plank item is
- *     an item-path prefix, the plant/fish oil family is port-absent) and the count is
- *     exactly {@code 9 × |ANY.WoodUntreated.mToThis|} (the "首批行 pour 对账");</li>
+ * <li>the LIVE universe — SPLIT BY LEG BINDING since task wood-planks-register (the
+ *     plank leg is on the item path): forge binds NEITHER leg offline (zero rows, the
+ *     {@code 9 × |untreated woods|} 首批行 pour 对账), neo binds BOTH (the FML test
+ *     JVM's Supplier face) so the creosote treated leg pours one row per untreated
+ *     wood — the liveUniverse test pins the split;</li>
  * <li>the POUR FACE — with resolvers injected the SAME load() pours the whole ladder
  *     (duration 144 / EUt 0 / the template amounts), proving the face is live code, not
  *     a dead stub.</li>
@@ -81,9 +83,18 @@ class GT6RecipesBathTest extends GTRecipesOfflineTestBase {
 	}
 
 	/**
-	 * The live universe pours ZERO rows and the dormant count is exactly
-	 * {@code 9 × |untreated woods|} — the "首批行 pour 对账" (every ladder row is
-	 * accounted for: plank items and the plant/fish oil family are port-absent).
+	 * The live-universe reconciliation, SPLIT BY LEG BINDING (task wood-planks-register: the
+	 * plank leg went live on the item path, so the creosote treated leg pours WHEREVER both
+	 * resolver legs bind):
+	 * <ul>
+	 * <li>forge — the offline test JVM binds NEITHER leg (the plank item INDEX fills at
+	 *     RegisterEvent, the creosote RegistryObject at mod registration): ZERO rows pour and
+	 *     the dormant count is exactly {@code 9 × |untreated woods|} (the "首批行 pour 对账");</li>
+	 * <li>neo — the FML test JVM binds BOTH legs (the Supplier face): the creosote treated
+	 *     leg pours {@code |untreated woods|} rows (one per wood — every untreated wood passes
+	 *     the WOOD gate) and the other 8 templates stay dormant on the port-absent oils.</li>
+	 * </ul>
+	 * The live server face is the neo shape (both legs bound — the class doc's attribution).
 	 */
 	@Test
 	void liveUniversePoursZeroRowsWithFullReconciliation() {
@@ -92,14 +103,19 @@ class GT6RecipesBathTest extends GTRecipesOfflineTestBase {
 
 		GT6RecipesBath.load();
 
-		assertTrue(GT6RecipeMaps.BATH.mRecipeList.isEmpty(), "RM.Bath has ZERO static rows in the port universe (the dormant band is the declared pool)");
-		assertEquals(0, GT6RecipesBath.lastPoured(), "zero rows poured live");
-		assertEquals(GT6RecipesBath.WOOD_LADDER_TEMPLATES * tWoods, GT6RecipesBath.lastSkipped(),
-				"every ladder row accounted for: 9 templates x " + tWoods + " untreated woods, all dormant on the missing legs");
+		//? if forge {
+		int tPoured = 0;
+		//?} else {
+		/*int tPoured = tWoods; // the creosote treated leg pours for every untreated wood (both legs bound)
+		*///?}
+		assertEquals(tPoured, GT6RecipesBath.lastPoured(), "the live pour = the creosote treated leg x the untreated woods that resolve");
+		assertEquals(tPoured, GT6RecipeMaps.BATH.mRecipeList.size(), "RM.Bath holds exactly the live creosote rows");
+		assertEquals(GT6RecipesBath.WOOD_LADDER_TEMPLATES * tWoods - tPoured, GT6RecipesBath.lastSkipped(),
+				"every ladder row accounted for: 9 templates x " + tWoods + " untreated woods minus the " + tPoured + " live creosote rows");
 
 		// eight of the nine templates are port-absent oils (the Loader_Fluids oil family);
-		// creosote (gt6:creosote) is the ONE live leg — its RegistryObject only binds in a
-		// mod-registered JVM, so its face is the live server's (the RCON chain drives it)
+		// creosote (gt6:creosote) is the ONE live oil leg — its binding is the forge/neo split
+		// above (the resolveOil isPresent guard / the 21.1 Supplier face)
 		for (String tOil : GT6RecipesBath.TREATED_OILS) {
 			if (!"creosote".equals(tOil)) {
 				assertEquals(null, GT6RecipesBath.resolveOil(new GT6RecipesBath.OilLeg(tOil, 100, false)), tOil + " is port-absent (the Loader_Fluids oil family)");
