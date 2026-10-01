@@ -82,6 +82,11 @@ import gregtech6.fluid.FluidTankGT;
  * ({@code /gt6tank tap <pos>} — the deterministic counterfactual of "an empty-handed
  * player clicks": no held item, no XP cap; DECLARED deviation, the card's acceptance
  * (b)).
+ *
+ * <p>Driver-face interlink (mdh-4 closeout): the MD.OB declared cut above is port-time
+ * static history — the unified mod-driver face is GT6ModDrivers (mdh series;
+ * isLoaded/visibilityGate); OB is an mdh-2 atlas (GT6ForeignMaterialAtlas) takeover
+ * candidate.
  */
 public class GTTapBlockEntity extends GTAttachmentSmallBlockEntity {
 

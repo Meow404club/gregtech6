@@ -336,6 +336,11 @@ public final class GT6OreBlocks {
      * per-row placement gates.
      *
      * <p>Suppliers again (post-OP.init resolution — the {@link OreFamily} lesson).
+     *
+     * <p>Driver-face interlink (mdh-4 closeout): the 21 mod-gated rows' MD.* gates
+     * (AA/AE/ARS/HEX/TC/IHL) are port-time static rulings kept as history — the unified
+     * mod-driver face is GT6ModDrivers (mdh series; isLoaded/visibilityGate); those six
+     * domains are mdh-2 atlas (GT6ForeignMaterialAtlas) takeover candidates.
      */
     public static final List<Supplier<OreDictMaterial>> WORLDGEN_ORES = List.of(
         () -> MT.Cu,                        () -> MT.OREMATS.Chalcopyrite, () -> MT.OREMATS.Malachite,     // :800-802

@@ -73,6 +73,11 @@ import gregtech6.recipes.RecipeMap;
  *     and the offline tests drive the dynamic arms directly through this method.</li>
  * </ul>
  *
+ * <p>Driver-face interlink (mdh-4 closeout): the GC mod-presence gate above is port-time
+ * static history — the unified mod-driver face is GT6ModDrivers (mdh series;
+ * isLoaded/visibilityGate); GC/GC_GALAXYSPACE are mdh-2 atlas (GT6ForeignMaterialAtlas)
+ * takeover candidates.
+ *
  * <p>The {@code containsInput} wide face (:73-75) ports as the three overloads below —
  * the upstream recipe-FILTER face (the :568 getFluidTankFillable consult) is the pool row
  * the port never wired (RecipeMap.java carries no containsInput surface, the p14

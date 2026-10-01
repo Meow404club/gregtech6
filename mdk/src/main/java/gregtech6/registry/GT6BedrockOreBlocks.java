@@ -43,6 +43,11 @@ import gregtech6.item.GTMaterialPrefixBlockItem;
  * RM.BedrockOreList display rows and the future drill card). NO loot tables
  * ({@code noLootTable} = the upstream Drops_None). NO blockstate-model atlas face: plain
  * bedrock cubes, the shared model section in GT6OreBlockStates' bedrock band.
+ *
+ * <p>Driver-face interlink (mdh-4 closeout): the MD.HEX hexorium-row cut above is
+ * port-time static history — the unified mod-driver face is GT6ModDrivers (mdh series;
+ * isLoaded/visibilityGate); HEX is an mdh-2 atlas (GT6ForeignMaterialAtlas) takeover
+ * candidate.
  */
 @net.minecraftforge.fml.common.Mod.EventBusSubscriber(modid = "gt6", bus = net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6BedrockOreBlocks {

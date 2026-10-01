@@ -17,6 +17,10 @@
  * <p>Offline-safe by construction (the GT6OreBlocksRegistrationTest posture): the census
  * walks touch only the material table; the block-ctor assertions bootstrap + unfreeze the
  * registries themselves.
+ *
+ * <p>Driver-face interlink (mdh-4 closeout): the MD.HEX hexorium-row cut above is
+ * port-time static history — the unified mod-driver face is GT6ModDrivers (mdh series);
+ * HEX is an mdh-2 atlas (GT6ForeignMaterialAtlas) takeover candidate.
  */
 package gregtech6.registry;
 
