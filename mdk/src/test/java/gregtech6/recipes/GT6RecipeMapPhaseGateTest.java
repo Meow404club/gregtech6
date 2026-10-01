@@ -95,7 +95,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 	static {
 		SNAPSHOT.put("FURNACE", 0);
 		SNAPSHOT.put("COKE_OVEN", 39);
-		SNAPSHOT.put("SHREDDER", 353);
+		SNAPSHOT.put("SHREDDER", 398); // +45 task casing-machine-register (the shared-layer join, bumped by task squeezer-seed-legs after the two-commit verification: green 353 at f4077ef5d, red 398 at the casing merge 80bd8e605) — the 840 casingMachine-prefix registrations (4 prefixes x 210) light up 45 survivors of the ShCL RECYCLABLE ring gates (pourRecyclableRing, the GT6RecipesShCL:653 walk; this card ran its own registry domain and the recipes-domain ratchet follows here)
 		SNAPSHOT.put("CRUSHER", 1643); // +11 task machines-bumblelyzer-crucible — the bouleGt force-table item universe grows the ore-chain crush-back walk (the plate-gem/tiny/boule carriers)
 		SNAPSHOT.put("LATHE", 77); // +3 task machines-bumblelyzer-crucible — the same cascade over the lathe rod/wire walk
 		SNAPSHOT.put("CHISEL", 36);
@@ -129,6 +129,10 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("FERMENTER", 0);
 		SNAPSHOT.put("LOOM", 0);
 		SNAPSHOT.put("PRESSURE_WASHER", 0);
+		// task squeezer-seed-legs — the 4 vanilla seed-oil legs (squeezer.json, the cbc-5 leftover (4):
+		// the Loader_Recipes_Crops.java:256-305 oredict seed fan folded to wheat/melon/beetroot/pumpkin
+		// per the juicer.json rows-4-7 ruling) ride the SAME JSON seam, equally OUT of this offline
+		// snapshot walk and pinned per-file by GT6RecipeMapDataSqueezerSeedRowsPourTest.
 		SNAPSHOT.put("SQUEEZER", 20);
 		SNAPSHOT.put("BEDROCK_ORE_LIST", 0);
 		SNAPSHOT.put("CLUSTER_MILL", 0);

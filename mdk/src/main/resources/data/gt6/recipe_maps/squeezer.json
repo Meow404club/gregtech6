@@ -1,4 +1,5 @@
 {
+  "comment": "task squeezer-seed-legs — the cbc-5 leftover (4): the four vanilla seed-oil legs of the Loader_Recipes_Crops.java:256-305 oredict seed fan, poured into the SQUEEZER map (the 'squeezer' key rides GT6RecipeMapJsonLoader POURABLE+mapFor). THE FOLDING RULING (the r8-hotfix-juicer precedent, frozen in juicer.json rows 4-7): 1.7.10 Forge oredicts the vanilla seeds as seedWheat/seedMelon/seedPumpkin, and the listener fan assigns tiers — seedWheat family :271-274 = Oil_Seed 50 mB (Squeezer :273, the Juicer twin :274), seedMelon family :261-264 = 30 mB (Squeezer :263), seedPumpkin family :276-279 = 60 mB (Squeezer :278); 1.7.10 vanilla had NO beetroot (seedBeet was mod-foreign produce), so the ruling maps minecraft:beetroot_seeds onto the seedRice family :266-269 tier = 40 mB (Squeezer :268) — mirroring juicer.json row 6 verbatim. ENGINE SEMANTICS: addRecipe1(T, 16, 16, aEvent.mStack, NF, FL.Oil_Seed.make(N), ZL_IS) = duration 16, eut 16, no fluid input, NO item outputs (ZL_IS); FL.Oil_Seed is the port fluid gt6:seedoil (GTFluids.java:1101, the aqua-spec carrier). The two pre-existing smoke rows (apple/melon_slice) are the earlier phase stock, untouched. DECLARED ABSENCE (the b2_backlog seed-crop-items card): the rest of the :256-305 fan — soybean/coffee/thistle/flower/witherShrub/hellderberry/ghost/quartzBerry/hellBush (20 mB), strawberry/turnip/corn/acresia/misc (30), rice/apple/grape/tea/cabbage/purplePear (40), barley/oats/abyssalOats/rye/camellia (50), darkFruit/aspectrus (60), cotton/hemp (lube 5), flax (lube 10), canola (Oil_Canola 14 + Remains_Plant), sunflower (Oil_Sunflower 100) — has no port item carriers; the canola/flax Remains_Plant byproducts are likewise unported. PROVENANCE: pinned per-file by GT6RecipeMapDataSqueezerSeedRowsPourTest (the census ratchet + verbatim pins + the folding-table live cross-check). KJS face: datapack-domain JSON, naturally moddable, zero adaptation.",
   "recipes": [
     {
       "inputs": [
@@ -43,6 +44,10 @@
       ],
       "duration": 512,
       "eut": 16
-    }
+    },
+    { "comment": "Loader_Recipes_Crops.java:273 seedWheat family — Squeezer 50 mB (the juicer.json row-4 twin)", "inputs": [{ "item": "minecraft:wheat_seeds", "count": 1 }], "fluidOutputs": [{ "fluid": "gt6:seedoil", "amount": 50 }], "duration": 16, "eut": 16 },
+    { "comment": "Loader_Recipes_Crops.java:263 seedMelon family — Squeezer 30 mB (the juicer.json row-5 twin)", "inputs": [{ "item": "minecraft:melon_seeds", "count": 1 }], "fluidOutputs": [{ "fluid": "gt6:seedoil", "amount": 30 }], "duration": 16, "eut": 16 },
+    { "comment": "Loader_Recipes_Crops.java:268 seedRice family — Squeezer 40 mB; beetroot rides this tier per the folding ruling (1.7.10 vanilla had no beetroot; the juicer.json row-6 twin)", "inputs": [{ "item": "minecraft:beetroot_seeds", "count": 1 }], "fluidOutputs": [{ "fluid": "gt6:seedoil", "amount": 40 }], "duration": 16, "eut": 16 },
+    { "comment": "Loader_Recipes_Crops.java:278 seedPumpkin family — Squeezer 60 mB (the juicer.json row-7 twin)", "inputs": [{ "item": "minecraft:pumpkin_seeds", "count": 1 }], "fluidOutputs": [{ "fluid": "gt6:seedoil", "amount": 60 }], "duration": 16, "eut": 16 }
   ]
 }
