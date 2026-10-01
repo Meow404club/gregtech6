@@ -78,20 +78,28 @@ import net.minecraft.world.level.material.Fluids;
  * gt6:plank_wood, row counts unchanged. The upstream verbatim vanilla faces stay
  * untouched: the oak-log twin rows and the 7 BeamEntry vanilla-plank faces keep their
  * minecraft:*_planks ids (this recompute emits both faces exactly).
+ *
+ * <p>Task stripped-log-qol tail-appended the six vanilla stripped-log twin rows (6 calls
+ * x the five legs = 30 rows, census 4274 -> 4304): each twin is a byte-level mirror of
+ * its unstripped Woods:169 log row (the user ruling: verbatim same values, no invented
+ * numbers), emitted by the recompute below from the SAME literals as the log loop — the
+ * twin-mirror canon. The stripped rows carry per-row 'qol twin of' comments (the card
+ * test {@link GT6RecipeMapDataStrippedLogQolRowsPourTest} pins the mirror field-by-field).
  */
 public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestBase {
 
 	private static final String FILE_KEY = "sawing";
 
-	/** The frozen snapshot census: 855 calls x the five-leg fan (854 lubricant — :621 melon is food). */
-	private static final int CENSUS = 4274; // 3959 b2c-sawing + 280 sawing-plank-concrete-increment + 35 beam-consume-increment
+	/** The frozen snapshot census: 861 calls x the five-leg fan (860 lubricant — :621 melon is food). */
+	private static final int CENSUS = 4304; // 3959 b2c-sawing + 280 sawing-plank-concrete-increment + 35 beam-consume-increment + 30 stripped-log-qol
 	/** The seven-anchor per-call census (calls; rows = the leg fan). */
 	private static final int CALLS_WOOD_WALK = 248, CALLS_DYE_LOOP = 32, CALLS_VANILLA_STATICS = 15,
 			CALLS_VANILLA_LOGS = 6, CALLS_STONE_SLABS = 210, CALLS_BLOCK_SLABS = 272, CALLS_SAPLINGS = 9,
 			CALLS_BEAM_WALK = 7, // task beam-consume-increment: Woods:192, the 7 pourable BeamEntry faces
-			CALLS_GT_LOGS = 9, CALLS_PLANK_STATICS = 14, CALLS_WOOD_BEAM = 1, CALLS_CONCRETE = 32; // task sawing-plank-concrete-increment: the 9 GT tree logs (Woods:169), the
-	// :604-617 plank-output statics, the :66 DEFAULT_BEAM row (Woods:192), the BlockMetaType:92
-	// BlockColored/concrete face (32 = 2 families x 16 colours)
+			CALLS_GT_LOGS = 9, CALLS_PLANK_STATICS = 14, CALLS_WOOD_BEAM = 1, CALLS_CONCRETE = 32, // task sawing-plank-concrete-increment: the 9 GT tree logs (Woods:169), the
+			// :604-617 plank-output statics, the :66 DEFAULT_BEAM row (Woods:192), the BlockMetaType:92
+			// BlockColored/concrete face (32 = 2 families x 16 colours)
+			CALLS_QOL_STRIPPED = 6; // task stripped-log-qol: the 6 vanilla stripped-log twin calls
 
 	/** The five leg rows of one non-food call, verbatim RM.java:725-730 (fluid, duration mult, amount mult). */
 	private static final Object[][] LEGS = {
@@ -188,6 +196,14 @@ public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestB
 		assertTrue(tComment.contains("gt-tree-planks") && tComment.contains("concrete-blocks-register"),
 				"the two registration cards that unlocked the faces are cited");
 		assertTrue(tComment.contains("beam-consume-increment"), "the pending beam-branch merge-order note is declared");
+		// the stripped-log QoL increment (task stripped-log-qol)
+		assertTrue(tComment.contains("stripped-log-qol"), "the QoL increment card is named");
+		assertTrue(tLower.contains("qol twin"), "the twin-mirror row provenance is declared");
+		assertTrue(tLower.contains("verbatim"), "the verbatim-mirror ruling is declared");
+		assertTrue(tComment.contains("OUT-OF-DOMAIN"), "the mangrove/cherry/crimson/warped domain-out is declared");
+		assertTrue(tComment.contains("#gt6:beam_wood"), "the beam tag pin is declared");
+		assertTrue(tComment.contains("4304"), "the census increment is declared");
+		assertTrue(tLower.contains("_log form only"), "the _wood-form absence is declared");
 	}
 
 	/** The seven-anchor census: each anchor's recomputed call count pins; the sum x legs is the file census. */
@@ -206,6 +222,8 @@ public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestB
 		assertEquals(CALLS_SAPLINGS, tByAnchor.get("saplings").intValue(), "OreDict:171 calls");
 		assertEquals(CALLS_BEAM_WALK, tByAnchor.get("beam_walk").intValue(), "Woods:192 beam-walk calls (the pourable BeamEntry faces)");
 		assertEquals(CALLS_WOOD_BEAM, tByAnchor.get("wood_beam").intValue(), "Woods:192 :66 DEFAULT_BEAM call");
+		assertEquals(CALLS_QOL_STRIPPED, tByAnchor.get("qol_stripped").intValue(),
+				"the stripped-log twin calls (task stripped-log-qol)");
 		int tSum = tByAnchor.values().stream().mapToInt(Integer::intValue).sum();
 		assertEquals(CENSUS, tSum * 5 - 1, "calls x the five-leg fan minus the melon food leg = the file census");
 	}
@@ -225,7 +243,7 @@ public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestB
 		assertEquals(tExpected, tByFluid.keySet(), "exactly the five legs (the LubRoCant alias is a declared absence)");
 		int tCalls = CALLS_WOOD_WALK + CALLS_DYE_LOOP + CALLS_VANILLA_STATICS + CALLS_VANILLA_LOGS + CALLS_GT_LOGS
 				+ CALLS_PLANK_STATICS + CALLS_WOOD_BEAM + CALLS_STONE_SLABS + CALLS_BLOCK_SLABS + CALLS_CONCRETE
-				+ CALLS_SAPLINGS + CALLS_BEAM_WALK;
+				+ CALLS_SAPLINGS + CALLS_BEAM_WALK + CALLS_QOL_STRIPPED;
 		for (String tFluid : new String[] {"minecraft:water", "gt6:spdew", "gt6:mnwtr", "gt6:distilled_water"}) {
 			assertEquals(tCalls, tByFluid.get(tFluid).intValue(), tFluid + " carries its leg census");
 		}
@@ -478,6 +496,13 @@ public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestB
 		for (String[] tLog : tLogs) {
 			emit(rKeys, 16, 128, 4, false, "minecraft:" + tLog[0], 1, "minecraft:" + tLog[1] + ":6>gt6:dust_bark:1");
 		}
+		// QOL INCREMENT (task stripped-log-qol) — the six stripped-log twins: emitted from the SAME
+		// tLogs literals as the loop above (the twin-mirror canon — a twin can only diverge if its
+		// unstripped twin does); the shipped rows carry the per-row 'qol twin of' comments.
+		for (String[] tLog : tLogs) {
+			emit(rKeys, 16, 128, 4, false, "minecraft:stripped_" + tLog[0], 1,
+					"minecraft:" + tLog[1] + ":6>gt6:dust_bark:1");
+		}
 		// anchor 2 — Woods:169, the 9 GT6 tree-log entries (ACTIVATED at sawing-plank-concrete-increment:
 		// the gt6:<snake>_planks items live since gt-tree-planks; mPlankCountBuzz 6 + bark dust, EXCEPT the
 		// Cinnamon row whose mBark is the IL.HaC_Cinnamon.get(1, IL.Food_Cinnamon.get(1, OM.dust(MT.Cinnamon)))
@@ -562,6 +587,7 @@ public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestB
 		rMap.put("dye_loop", DYES.length * 2);
 		rMap.put("vanilla_statics", 15 + 14); // :590-621 pourable + the :604-617 plank-output rows (the increment)
 		rMap.put("vanilla_logs", 6 + GT6TreeKind.values().length); // the vanilla six + the 9 GT6 tree rows (the increment)
+		rMap.put("qol_stripped", 6); // task stripped-log-qol: the 6 vanilla stripped-log twin calls
 		rMap.put("wood_beam", 1); // the Woods:192 :66 DEFAULT_BEAM row (the increment)
 		int tStoneCalls = 0;
 		for (GTStoneBlocks.StoneSpec tStone : GTStoneBlocks.STONES) {
@@ -621,6 +647,9 @@ public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestB
 				"stone", "sandstone", "cobblestone", "bricks", "stone_bricks", "nether_bricks", "quartz_block",
 				"painting", "item_frame", "stick", "ladder", "melon", "melon_slice", "melon_seeds",
 				"oak_log", "spruce_log", "birch_log", "jungle_log", "acacia_log", "dark_oak_log",
+				// the stripped-log twins (task stripped-log-qol)
+				"stripped_oak_log", "stripped_spruce_log", "stripped_birch_log", "stripped_jungle_log",
+				"stripped_acacia_log", "stripped_dark_oak_log",
 				"oak_planks", "spruce_planks", "birch_planks", "jungle_planks", "acacia_planks", "dark_oak_planks",
 				// the :604-617 input faces (sawing-plank-concrete-increment)
 				"oak_button", "oak_pressure_plate", "oak_sign", "oak_door", "oak_fence_gate", "oak_trapdoor",
