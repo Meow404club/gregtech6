@@ -41,3 +41,15 @@
 ## 5. 影响面
 
 ADR-P20 其余裁决（fork 身份钉死 brachy84/ModularUI-Modern、LGPL 三件套、DIVERGE 台账、jarJar 嵌装策略）不受影响；FORK.md/DIVERGE.md/LICENSE 随子仓走。maven 发布形态仍按 docs/TODO.md:235 池项（「maven 发布形态时再议」）——案B 否决不改。
+
+## 6. 追记 2026-10-01：子仓历史修复（洗提交治理，task modularui-history-restore）
+
+本 ADR §1 记录的 squash 底 `6cb2e813`、顶 `a078656` 及拆仓期各 gitlink hash 是**当时史实，正文不改写**。
+2026-10-01 用户指令修复洗提交：子仓 main 全链重写——根提交嫁接真上游 brachy84/ModularUI-Modern
+1.21.1@c13e141（ADR-P20 钉定基线；上游 1.21.1 已前移仍钉原点），后 10 提交 range-diff 全等重放、
+尖端树零变、全链 GPG 补签；旧 squash 史存子仓 `backup/pre-rewrite-20261001`。
+
+后果两条：①本 ADR 所记旧 hash（6cb2e813/a078656/30fef611/ec524db 等）已不在 origin，仅存本地
+（主检出子仓对象+backup ref）——检旧父仓提交的新鲜克隆 `submodule update` 将失败，属历史重写
+固有代价；②§2「跟随上游=重 vendored 换基线+重放」姿势退役：fork 关系现为 git 事实（父=c13e141），
+跟随上游升级为 `git merge upstream/1.21.1`（见子仓 FORK.md §5）。
