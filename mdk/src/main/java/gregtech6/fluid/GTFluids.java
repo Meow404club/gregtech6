@@ -2292,7 +2292,7 @@ public final class GTFluids {
 		new ChemicalFluidSpec("silicon_molten"      , "Molten Silicon"        , 1687,  2329, 1000, 0xFF3C3C50, false, 10), // molten.silicon=熔融硅 (tmp/gregtech.lang:593) — MT.Si mp 1687 (MT.java:987)
 		new ChemicalFluidSpec("germanium_molten"    , "Molten Germanium"      , 1211,  5323, 1000, 0xFFD4D4D4, false, 10), // molten.germanium=熔融锗 (tmp/gregtech.lang:503) — MT.Ge mp 1211, 1000×5.323 (MT.java:1025)
 		new ChemicalFluidSpec("redstonealloy_molten", "Molten Redstone Alloy" , 1093,  2329, 1000, 0xFF8C3232, false, 10), // molten.redstonealloy=熔融红石合金 (tmp/gregtech.lang:585) — (Si 1687 + Redstone 500)/2 (MT.java:2492)
-		new ChemicalFluidSpec("nikolinealloy_molten", "Molten Nikoline Alloy" , 1593,  2329, 1000, 0xFF325A8C, false, 10), // molten.nikolinealloy=熔融蓝石合金 (tmp/gregtech.lang:566) — (Si 1687 + Nikolite 1500)/2 (MT.java:2493)
+		new ChemicalFluidSpec("nikolinealloy_molten", "Molten Nikoline Alloy" , 1593,  2329, 1000, 0xFF325A8C, false, 10, MT.MD.RP.mID), // molten.nikolinealloy=熔融蓝石合金 (tmp/gregtech.lang:566) — (Si 1687 + Nikolite 1500)/2 (MT.java:2493); mdh-clearout-batch2: the material-fluid face hides with its RP PRIMARY attribution (atlas :2655, the deferral's own terms — row + annotation one commit)
 		new ChemicalFluidSpec("alumina_molten"      , "Molten Alumina"        , 2345,  5404, 1000, 0xFF78C3EB, false, 10), // molten.alumina=熔融氧化铝 (tmp/gregtech.lang:429) — MT.Al2O3 internal "Alumina", the heat(2345) literal (MT.java:1955)
 		// the Burner Mixer row carriers (task machines-burner-plantalyzer) — the three
 		// NEW material-state fluids the Loader_Recipes_Chem.java:220-259 rows reference

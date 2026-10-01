@@ -40,8 +40,9 @@ public class GT6ForeignMaterialAtlasTest {
 
     /** The mdh-2 batch-1 ratchet: the table's first 164 rows are the batch-1 transcription, never edited. */
     private static final int BATCH1_ROWS = 164;
-    /** 164 + 276: batch 2 appends 56 domains / 276 rows (1 upstream row deferred — see batchTwoCensusPins). */
-    private static final int TOTAL_ROWS = 440;
+    /** 164 + 277: batch 2 appends 56 domains / 277 rows (the mdh-atlas-batch2 deferral row
+     * NikolineAlloy landed by mdh-clearout-batch2 — see batchTwoCensusPins). */
+    private static final int TOTAL_ROWS = 441;
 
     @BeforeAll
     public static void initMaterialSystem() {
@@ -72,7 +73,7 @@ public class GT6ForeignMaterialAtlasTest {
     public void batchOneCensusPins() {
         List<Row> tRows = GT6ForeignMaterialAtlas.rows();
         // The append-only ratchet: batch 1 is still exactly the mdh-2 prefix, unedited.
-        assertEquals(TOTAL_ROWS, tRows.size(), "total table: batch-1 164 + batch-2 276");
+        assertEquals(TOTAL_ROWS, tRows.size(), "total table: batch-1 164 + batch-2 277");
         assertEquals(BATCH1_ROWS, countKind(tRows.subList(0, BATCH1_ROWS), null), "batch-1 prefix length");
 
         // Per-domain totals, upstream re-read order (each domain's block range in the atlas javadoc).
@@ -90,7 +91,7 @@ public class GT6ForeignMaterialAtlasTest {
         assertEquals(23, countKind(tRows.subList(0, BATCH1_ROWS), AttributionKind.COMMON_SECONDARY), "batch-1 COMMON_SECONDARY total");
         assertEquals(4, countKind(tRows.subList(0, BATCH1_ROWS), AttributionKind.GT6_SELF), "batch-1 GT6_SELF total: the theum quartet only");
 
-        // The seed walks the PRIMARY-bearing domains of the WHOLE table (52: the batch-1 eight
+        // The seed walks the PRIMARY-bearing domains of the WHOLE table (53: the batch-1 eight
         // first in row order, then the batch-2 PRIMARY domains in row order) — the activation
         // derivation, table-driven with the GT5U "gregtech"-modid rows excluded (mdh-clearout-batch2).
         List<String> tSeed = GT6ForeignMaterialAtlas.seedableDomains();
@@ -98,7 +99,7 @@ public class GT6ForeignMaterialAtlasTest {
         assertEquals(8, (int) tSeed.stream().filter(tDomain -> List.of(MT.MD.HaC.mID, MT.MD.IC2.mID,
                 MT.MD.TE.mID, MT.MD.EIO.mID, MT.MD.HBM.mID, MT.MD.BOTA.mID, MT.MD.GC_EXTRAPLANETS.mID, MT.MD.MET.mID)
                 .contains(tDomain)).count(), "all eight batch-1 domains seed");
-        assertEquals(52, tSeed.size(), "the seed = 8 batch-1 + 44 batch-2 PRIMARY domains (56 batch-2 domains minus the 12 CS-only ones)");
+        assertEquals(53, tSeed.size(), "the seed = 8 batch-1 + 45 batch-2 PRIMARY domains (NikolineAlloy made RP a PRIMARY domain; 56 batch-2 domains minus the 11 CS-only ones)");
         assertFalse(tSeed.contains(MT.MD.GT5U.mID), "our own modid (gregtech) never seeds");
         assertEquals(new HashSet<>(tSeed).size(), tSeed.size(), "no duplicate domains in the seed walk");
     }
@@ -107,7 +108,7 @@ public class GT6ForeignMaterialAtlasTest {
     public void batchTwoCensusPins() {
         List<Row> tRows = GT6ForeignMaterialAtlas.rows();
         List<Row> tBatch2 = tRows.subList(BATCH1_ROWS, tRows.size());
-        assertEquals(276, tBatch2.size(), "batch-2 total: 56 domains, 1 upstream row deferred (NikolineAlloy)");
+        assertEquals(277, tBatch2.size(), "batch-2 total: 56 domains, the deferral row NikolineAlloy landed (mdh-clearout-batch2)");
 
         // Per-domain totals against the upstream MT.java re-read account (javadoc batch list).
         assertEquals(7, countDomain(tBatch2, MT.MD.EtFu.mID), "etfuturum :2080-2086");
@@ -160,7 +161,7 @@ public class GT6ForeignMaterialAtlasTest {
         assertEquals(2, countDomain(tBatch2, MT.MD.ExU.mID), "ExtraUtilities :2615-2616");
         assertEquals(13, countDomain(tBatch2, MT.MD.BTL.mID), "thebetweenlands :2619-2631");
         assertEquals(7, countDomain(tBatch2, MT.MD.AETHER.mID), "aether :2634-2640");
-        assertEquals(13, countDomain(tBatch2, MT.MD.RP.mID), "Redpower :2643-2656 — upstream 14, :2655 NikolineAlloy deferred (GTFluids:2277 ratchet), :2657 EnergiumCyan has no put()");
+        assertEquals(14, countDomain(tBatch2, MT.MD.RP.mID), "Redpower :2643-2656 — upstream 14, the :2655 NikolineAlloy PRIMARY row landed by mdh-clearout-batch2 (GTFluids:2277 annotated in the same commit), :2657 EnergiumCyan has no put()");
         assertEquals(1, countDomain(tBatch2, MT.MD.PR.mID), "ProjRed|Core :2660");
         assertEquals(1, countDomain(tBatch2, MT.MD.BP.mID), "bluepower :2663");
         assertEquals(5, countDomain(tBatch2, MT.MD.FZ.mID), "factorization :2666-2670");
@@ -168,7 +169,7 @@ public class GT6ForeignMaterialAtlasTest {
         assertEquals(1, countDomain(tBatch2, MT.MD.UB.mID), "UndergroundBiomes :2680");
 
         // Batch-2 three-value account: 144 PRIMARY / 132 COMMON_SECONDARY / 0 GT6_SELF.
-        assertEquals(144, countKind(tBatch2, AttributionKind.PRIMARY), "batch-2 PRIMARY total");
+        assertEquals(145, countKind(tBatch2, AttributionKind.PRIMARY), "batch-2 PRIMARY total (the NikolineAlloy row joined)");
         assertEquals(132, countKind(tBatch2, AttributionKind.COMMON_SECONDARY), "batch-2 COMMON_SECONDARY total");
         assertEquals(0, countKind(tBatch2, AttributionKind.GT6_SELF), "batch-2 GT6_SELF total: no theum-shaped reversal found (review account in atlas javadoc)");
     }
@@ -198,8 +199,8 @@ public class GT6ForeignMaterialAtlasTest {
             if (tRow.domain().equals(MT.MD.GT5U.mID)) continue; // our own modid — excluded by design
             assertTrue(tSeed.contains(tRow.domain()), "a PRIMARY-bearing batch-2 domain seeds: " + tRow.domain());
         }
-        assertEquals(45, tBatch2PrimaryDomains.size(), "the batch-2 PRIMARY-domain census (44 seedable + GT5U)");
-        assertEquals(52, tSeed.size(), "the seed = the batch-1 eight + the 44 batch-2 PRIMARY domains");
+        assertEquals(46, tBatch2PrimaryDomains.size(), "the batch-2 PRIMARY-domain census (45 seedable + GT5U)");
+        assertEquals(53, tSeed.size(), "the seed = the batch-1 eight + the 45 batch-2 PRIMARY domains");
 
         // A batch-2 COMMON_SECONDARY row answers no domain and survives its own domain's ABSENT pin,
         // while the domain's PRIMARY rows hide (ADR-MDH2 over batch-2 data; Thaumcraft has both kinds).

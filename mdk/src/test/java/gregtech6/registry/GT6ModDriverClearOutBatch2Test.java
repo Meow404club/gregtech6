@@ -5,9 +5,10 @@
  *
  * <p>The kept ledger (the card report's 对账表, probe-measured 2026-10-02, forge offline
  * leg — the mdh-3 probe-first discipline): per-domain registration-order drops reconciled
- * against the atlas PRIMARY row counts, the batch-1 + batch-2 joint pin (15468 = 8234 + 7234
- * exactly — no cross-domain bleed), and the universe/tab before-after (57113 → 41645;
- * 49834 → 36082 creative-visible pairs, 101 prefix families, none empties out).
+ * against the atlas PRIMARY row counts (45 ledger domains, sum 7274), the batch-1 + batch-2
+ * joint pin (15508 = 8234 + 7274 exactly — no cross-domain bleed), and the universe/tab
+ * before-after (57113 → 41605; 49834 → 36049 creative-visible pairs, 101 prefix families,
+ * none empties out).
  *
  * <p>The five census faces re-sign here over a batch-2 domain arm (all five walk the ONE
  * shared root — {@link GTMaterialItems#registrationOrder()}); the SEEDED_DOMAINS activation
@@ -92,6 +93,7 @@ public class GT6ModDriverClearOutBatch2Test {
             Map.entry(MT.MD.GC_GALAXYSPACE.mID, 175),
             Map.entry(MT.MD.MO.mID, 73),
             Map.entry(MT.MD.RT.mID, 99),
+            Map.entry(MT.MD.RP.mID, 40), // the NikolineAlloy row (mdh-clearout-batch2 segment 4) made RP a PRIMARY domain
             Map.entry(MT.MD.ExU.mID, 96),
             Map.entry(MT.MD.BTL.mID, 302),
             Map.entry(MT.MD.AETHER.mID, 52),
@@ -101,7 +103,7 @@ public class GT6ModDriverClearOutBatch2Test {
             Map.entry(MT.MD.PFAA.mID, 104));
     /** The batch-1 ledger (GT6ModDriverClearOutWaveTest) — the joint pin's other half. */
     private static final int BATCH1_TOTAL = 8234;
-    /** 8234 + 7234 = 15468; 57113 − 15468 = 41645. */
+    /** 8234 + 7274 = 15508; 57113 − 15508 = 41605 (the batch-2 total includes the RP 40 from the NikolineAlloy row). */
     private static final int BATCH2_TOTAL = PER_DOMAIN_DROPS.values().stream().mapToInt(Integer::intValue).sum();
     private static final int JOINT_DROP = BATCH1_TOTAL + BATCH2_TOTAL;
     /** The batch-1 eight, the seed prefix (the wave test's ledger keys). */
@@ -109,7 +111,7 @@ public class GT6ModDriverClearOutBatch2Test {
             MT.MD.EIO.mID, MT.MD.HBM.mID, MT.MD.BOTA.mID, MT.MD.GC_EXTRAPLANETS.mID, MT.MD.MET.mID);
     /** Creative-visible pairs before/after the joint pin (the tab face's before/after numbers). */
     private static final int TAB_DEFAULT = 49834;
-    private static final int TAB_AFTER = 36082;
+    private static final int TAB_AFTER = 36049;
 
     @BeforeAll
     public static void initMaterialSystem() {
@@ -134,7 +136,7 @@ public class GT6ModDriverClearOutBatch2Test {
     @Test
     public void perDomainKeptLedgerMatchesTheAtlas() {
         assertEquals(BASELINE, GTMaterialItems.registrationOrder().size(), "default universe unchanged (the zero-change proof)");
-        assertEquals(7234, BATCH2_TOTAL, "the batch-2 drop total");
+        assertEquals(7274, BATCH2_TOTAL, "the batch-2 drop total (incl. the NikolineAlloy RP 40)");
 
         Set<String> allDroppedNames = new java.util.HashSet<>();
         for (Map.Entry<String, Integer> tEntry : PER_DOMAIN_DROPS.entrySet()) {
@@ -166,7 +168,7 @@ public class GT6ModDriverClearOutBatch2Test {
         for (String tDomain : BATCH1) GT6ModDrivers.setDriver(tDomain, DriverLevel.ABSENT);
         for (String tDomain : PER_DOMAIN_DROPS.keySet()) GT6ModDrivers.setDriver(tDomain, DriverLevel.ABSENT);
         assertEquals(BASELINE - JOINT_DROP, GTMaterialItems.registrationOrder().size(),
-                "the joint pin keeps 41645 (15468 = 8234 + 7234 exactly — no cross-domain bleed)");
+                "the joint pin keeps 41605 (15508 = 8234 + 7274 exactly — no cross-domain bleed)");
         for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder())
             assertFalse(allDroppedNames.contains(tPair.material().mNameInternal),
                     "no batch-2 PRIMARY material survives the joint pin: " + tPair.material().mNameInternal);
@@ -231,8 +233,8 @@ public class GT6ModDriverClearOutBatch2Test {
         int tAbsentTabItems = registrationOrderTabItems();
         GT6ModDrivers.reset();
         assertEquals(tDefaultTabs, tAbsentTabs, "no prefix family empties out — the tab set is unchanged (101 families)");
-        assertEquals(TAB_AFTER, tAbsentTabItems, "the creative-visible tab pairs land at 36082 after the joint pin");
-        assertEquals(TAB_DEFAULT - TAB_AFTER, tJointEligible, "the tab drop is exactly the tab-eligible share of the 15468 dropped pairs");
+        assertEquals(TAB_AFTER, tAbsentTabItems, "the creative-visible tab pairs land at 36049 after the joint pin");
+        assertEquals(TAB_DEFAULT - TAB_AFTER, tJointEligible, "the tab drop is exactly the tab-eligible share of the 15508 dropped pairs");
     }
 
     @Test
@@ -250,7 +252,7 @@ public class GT6ModDriverClearOutBatch2Test {
     @Test
     public void theActivationSeedIsTheTableDrivenDomainSet() {
         List<String> tSeed = GT6ForeignMaterialAtlas.seedableDomains();
-        assertEquals(52, tSeed.size(), "8 batch-1 + 44 batch-2 PRIMARY domains");
+        assertEquals(53, tSeed.size(), "8 batch-1 + 45 batch-2 PRIMARY domains (RP joined with the NikolineAlloy row)");
         assertEquals(BATCH1, tSeed.subList(0, 8), "the batch-1 eight are the seed prefix in row order");
         for (String tDomain : PER_DOMAIN_DROPS.keySet()) assertTrue(tSeed.contains(tDomain), "every ledger domain seeds: " + tDomain);
         assertFalse(tSeed.contains(MT.MD.GT5U.mID), "GT5U (modid gregtech = self) never seeds");

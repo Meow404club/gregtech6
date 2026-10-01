@@ -37,6 +37,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import net.minecraft.SharedConstants;
+import net.minecraft.server.Bootstrap;
+
 import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.fluid.GTFluids;
@@ -82,6 +85,14 @@ public class GT6ModDriverClearOutWaveTest {
 
     @BeforeAll
     public static void initMaterialSystem() {
+        // the fluid-ratchet arm touches GTFluids (ForgeRegistries at clinit) — bootstrap offline
+        // instead of relying on a same-fork neighbour to have done it (the GTOfflineTestBase form)
+        SharedConstants.tryDetectVersion();
+        try {
+            Bootstrap.bootStrap();
+        } catch (Throwable ignored) {
+            // offline init noise; the registries are usable by now
+        }
         GTMaterialItems.initMaterials();
     }
 
@@ -207,13 +218,17 @@ public class GT6ModDriverClearOutWaveTest {
 
     @Test
     public void fluidDataFaceThreeAnnotatedRowsAndNoUnannotatedPrimaryRow() {
-        // 1. the annotation census: exactly six material-fluid rows carry a domain (mdh-3).
+        // 1. the annotation census: exactly SEVEN material-fluid rows carry a domain —
+        // mdh-3's three + the chem-blocker three (chem-fluids-unlock review fix:
+        // H2O2/IHL, H2SO4/FZ, AquaRegia/FZ) + the nikolinealloy_molten RP row the
+        // mdh-clearout-batch2 deferral landed (row + annotation one commit).
         Map<String, String> tAnnotated = new HashMap<>();
         for (GTFluids.ChemicalFluidSpec tSpec : allChemicalSpecs())
             if (tSpec.driverDomain() != null) tAnnotated.put(tSpec.name(), tSpec.driverDomain());
         assertEquals(Map.of("chocolate_molten", MT.MD.HaC.mID, "waxplant_molten", MT.MD.HaC.mID, "ic2uumatter", MT.MD.IC2.mID,
-                        "hydrogenperoxide", MT.MD.IHL.mID, "sulfuricacid", MT.MD.FZ.mID, "aquaregia", MT.MD.FZ.mID),
-                tAnnotated, "the mdh-3 fluid annotation census (the six PRIMARY material-fluid faces; +3 the chem-blocker batch, task chem-fluids-unlock review fix — H2O2/H2SO4/AquaRegia are IHL/FZ/FZ PRIMARY per the atlas, the mdh-3 hide-with-owner law rides)");
+                        "hydrogenperoxide", MT.MD.IHL.mID, "sulfuricacid", MT.MD.FZ.mID, "aquaregia", MT.MD.FZ.mID,
+                        "nikolinealloy_molten", MT.MD.RP.mID),
+                tAnnotated, "the fluid annotation census (the seven PRIMARY material-fluid faces; the seat-IX rebase union of the mdh-3/chem-blocker census and this card's RP closeout row)");
         for (GTFluids.AquaFluidSpec tSpec : allAquaSpecs())
             assertNull(tSpec.driverDomain(), "no aqua-family row is driver-annotated: " + tSpec.name());
         for (GTFluids.EngineFluidSpec tSpec : GTFluids.ENGINE_SPECS)

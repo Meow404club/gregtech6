@@ -37,7 +37,8 @@ import gregapi.oredict.OreDictMaterial;
  * <p><b>Batches.</b> Batch 1 = the eight largest foreign domains by exact re-read count
  * (164 rows): Metallurgy 34, ExtraPlanets 27, harvestcraft 19, hbm 18, IC2 17, Botania 17,
  * EnderIO 16, ThermalExpansion 16. Batch 2 (mdh-atlas-batch2, transcribed below) = the
- * remaining 56 domains, 276 rows, 144 PRIMARY / 132 COMMON_SECONDARY / 0 GT6_SELF, in
+ * remaining 56 domains, 277 rows (the mdh-atlas-batch2 deferral row NikolineAlloy included),
+ * 145 PRIMARY / 132 COMMON_SECONDARY / 0 GT6_SELF, in
  * upstream line order: EtFu 7 (:2080-2086), Salt 1 (:2110), GrC 1 (:2113), NePl 3
  * (:2116-2118), NeLi 6 (:2121-2126), EnLi 3 (:2129-2131), GT5U 4 (:2195-2198, modid
  * "gregtech" = our own modid — never seedable), IHL 9 (:2226-2234), BC 2 (:2237-2238), FR
@@ -51,19 +52,16 @@ import gregapi.oredict.OreDictMaterial;
  * ABYSSAL 4 (:2503-2506), Fossil 1 (:2509), DE 2 (:2512-2513), AV 3 (:2516-2518), PE 2
  * (:2521-2522), TROPIC 4 (:2525-2528), BoP 4 (:2531-2534), FM 5 (:2537-2541), ARS 8
  * (:2544-2551), GC 10 (:2554-2563), GC_GALAXYSPACE 8 (:2595-2602), MO 4 (:2605-2608), RT 2
- * (:2611-2612), ExU 2 (:2615-2616), BTL 13 (:2619-2631), AETHER 7 (:2634-2640), RP 13 of
- * 14 (:2643-2656 — :2657 EnergiumCyan carries no {@code put()} and is not an attribution
- * row), PR 1 (:2660), BP 1 (:2663), FZ 5 (:2666-2670), PFAA 5 (:2673-2677), UB 1 (:2680).
+ * (:2611-2612), ExU 2 (:2615-2616), BTL 13 (:2619-2631), AETHER 7 (:2634-2640), RP 14 of
+ * 14 (:2643-2656, incl. the :2655 NikolineAlloy PRIMARY row the mdh-atlas-batch2 deferral
+ * landed — :2657 EnergiumCyan carries no {@code put()} and is not an attribution row), PR 1
+ * (:2660), BP 1 (:2663), FZ 5 (:2666-2670), PFAA 5 (:2673-2677), UB 1 (:2680).
  *
- * <p><b>Batch-2 deferral (a verified upstream row NOT transcribed, recorded in the state
- * ledger {@code tasks.mdh-atlas-batch2}):</b> {@code NikolineAlloy} (RP :2655) — a plain
- * {@code put(MD.RP)} (PRIMARY shape, RP-exclusive, {@code visDefault(Nikolite)}) that owns
- * the un-annotated GT6-created chemical row {@code nikolinealloy_molten}
- * (GTFluids.java:2277), and mdh-3's fluid ratchet requires every PRIMARY material-fluid row
- * to carry its domain annotation. This card may not touch GTFluids, and demoting a
- * foreign-exclusive alloy to COMMON_SECONDARY would wrongly shield it from the clear-out
- * forever — so the row waits for the clear-out card, which lands the annotation and the
- * atlas row together. Its NePl neighbour {@code AncientDebris} (:2118) looked like a second
+ * <p><b>Batch-2 deferral RESOLVED (mdh-clearout-batch2):</b> {@code NikolineAlloy} (RP :2655)
+ * — a plain {@code put(MD.RP)} (PRIMARY shape, RP-exclusive, {@code visDefault(Nikolite)}) that
+ * owns the GT6-created chemical row {@code nikolinealloy_molten} (GTFluids.java:2277) — is
+ * transcribed below now, together with the row's {@code driverDomain=RP} annotation (one
+ * commit, the deferral's own terms); mdh-3's fluid ratchet holds over it. Its NePl neighbour {@code AncientDebris} (:2118) looked like a second
  * deferral on the same grounds, but upstream flags it {@code COMMON_ORE} — the shared-ore
  * shape that maps to COMMON_SECONDARY exactly like its sibling {@code Netherite} (:2116) —
  * so it is transcribed below, never-hidden, and its un-annotated {@code ancientdebris_molten}
@@ -604,6 +602,7 @@ public final class GT6ForeignMaterialAtlas {
 			new Row(() -> MT.Brass, MT.MD.RP.mID, AttributionKind.COMMON_SECONDARY), // :2652 — shared alloy, 7 port files 待复核
 			new Row(() -> MT.RedAlloy, MT.MD.RP.mID, AttributionKind.COMMON_SECONDARY), // :2653 — GTWireSpecs case-map + GT6CraftingRecipes
 			new Row(() -> MT.Nikolite, MT.MD.RP.mID, AttributionKind.COMMON_SECONDARY), // :2654 COMMON_ORE — also GT6 worldgen face (GT6OreBlocks/GTOreWorldgen)
+			new Row(() -> MT.NikolineAlloy, MT.MD.RP.mID, AttributionKind.PRIMARY), // :2655 — the mdh-atlas-batch2 deferral landed by the clear-out card (plain put = PRIMARY shape, RP-exclusive, owns the nikolinealloy_molten GT6 chemical row GTFluids:2277, annotated driverDomain=RP in the same commit)
 			new Row(() -> MT.BlueAlloy, MT.MD.RP.mID, AttributionKind.COMMON_SECONDARY), // :2656 — GTWireSpecs case-map
 			// ---- MD.PR "ProjRed|Core" (upstream MT.java:2660) ----
 			new Row(() -> MT.ElectrotineAlloy, MT.MD.PR.mID, AttributionKind.PRIMARY), // :2660
