@@ -136,6 +136,7 @@ public final class GT6DataGenerators {
         GT6GasCylinderDatagen.appendProviders(event); // task small-tank-gas-cylinder — the four :2101-2104 inline "RCR"/"BCh"/"TPd" grids
         GT6CupDatagen.appendProviders(event); // task small-tank-cup — the cup chain (shaped :78 + reverse :76 + smelt :2094)
         GT6JugDatagen.appendProviders(event); // task small-tank-jug — the jug chain (shaped :133 + reverse :120 + smelt :2095)
+        gregtech6.crop.GT6CropStickAssets.appendProviders(event); // task cbc-1-cropstick-base — the crop-stick cross models + item
         // task w1-press-extruder-molds: the 1.21 singular-registry aliases — MUST stay
         // LAST (the sequential per-provider join order is the contract: the mirror walks the
         // earlier providers' on-disk output; see GT6DualDirectoryFaces)

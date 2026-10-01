@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "crossing=false": {
+      "model": "gt6:block/crop_sticks"
+    },
+    "crossing=true": {
+      "model": "gt6:block/crop_sticks_cross"
+    }
+  }
+}
