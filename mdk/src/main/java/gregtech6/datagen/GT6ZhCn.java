@@ -2082,6 +2082,111 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.shape_foodmold_baguette"); // dump technological.10803
 		addDirect("item.gt6.shape_foodmold_cylinder"); // dump technological.10804
 		addDirect("item.gt6.shape_foodmold_toast"); // dump technological.10805
+		// task food-crop-items — 食物域 T5a 浆果/坚果/水果带+草料族 61 项 (dump gt.multiitem.food.{meta}
+		// 逐字, MultiItemFood.java:53-60+:273-486 行锚见 GT6CropFoods javadoc; 24 条空 desc 行双侧零键
+		// (上游 "" 注册即无 tooltip);
+		// 280 凤梨树皮/290 椰子树木/250 Deez Nuz 为上游 zh 原貌, 不改;
+		// REVIEW FIX (merge seat): food_grass/food_grass_dry/food_cinnamon 的 tooltip dump 行存在但值为空
+		// (:8792/:8794/:9042)=上游 zh 未翻 — 卡面"运行时 en 回落"设计留给 zh 面一个 3 键缺口,
+		// GT6ZhBackfillSpotCheckTest 零缺键契约红灯; 按 hand 行先例手撰 3 键 (zh 4888→4891=en), 不改上游名)
+		addDirect("item.gt6.food_lemon"); // dump food.273
+		addDirect("item.gt6.food_lemon.tooltip");
+		addDirect("item.gt6.food_lemon_sliced"); // dump food.274
+		addDirect("item.gt6.food_lemon_sliced.tooltip");
+		addDirect("item.gt6.food_tomato"); // dump food.279
+		addDirect("item.gt6.food_tomato.tooltip");
+		addDirect("item.gt6.food_tomato_sliced"); // dump food.280
+		addDirect("item.gt6.food_tomato_sliced.tooltip");
+		addDirect("item.gt6.food_mtomato"); // dump food.285
+		addDirect("item.gt6.food_mtomato.tooltip");
+		addDirect("item.gt6.food_onion"); // dump food.290
+		addDirect("item.gt6.food_onion.tooltip");
+		addDirect("item.gt6.food_onion_sliced"); // dump food.291
+		addDirect("item.gt6.food_onion_sliced.tooltip");
+		addDirect("item.gt6.food_cucumber"); // dump food.296
+		addDirect("item.gt6.food_cucumber.tooltip");
+		addDirect("item.gt6.food_cucumber_sliced"); // dump food.297
+		addDirect("item.gt6.food_cucumber_sliced.tooltip");
+		addDirect("item.gt6.food_pickle"); // dump food.298
+		addDirect("item.gt6.food_pickle.tooltip");
+		addDirect("item.gt6.food_pickle_sliced"); // dump food.299
+		addDirect("item.gt6.food_pickle_sliced.tooltip");
+		addDirect("item.gt6.food_chili_pepper"); // dump food.307
+		addDirect("item.gt6.food_chili_pepper.tooltip");
+		addDirect("item.gt6.food_grapes_green"); // dump food.311
+		addDirect("item.gt6.food_grapes_green.tooltip");
+		addDirect("item.gt6.food_raisins_green"); // dump food.312
+		addDirect("item.gt6.food_raisins_green.tooltip");
+		addDirect("item.gt6.food_grapes_white"); // dump food.315
+		addDirect("item.gt6.food_grapes_white.tooltip");
+		addDirect("item.gt6.food_raisins_white"); // dump food.316
+		addDirect("item.gt6.food_raisins_white.tooltip");
+		addDirect("item.gt6.food_grapes_red"); // dump food.319
+		addDirect("item.gt6.food_grapes_red.tooltip");
+		addDirect("item.gt6.food_raisins_red"); // dump food.320
+		addDirect("item.gt6.food_raisins_red.tooltip");
+		addDirect("item.gt6.food_grapes_purple"); // dump food.323
+		addDirect("item.gt6.food_grapes_purple.tooltip");
+		addDirect("item.gt6.food_raisins_purple"); // dump food.324
+		addDirect("item.gt6.food_raisins_purple.tooltip");
+		addDirect("item.gt6.food_raisins_chocolate"); // dump food.327
+		addDirect("item.gt6.food_raisins_chocolate.tooltip");
+		addDirect("item.gt6.food_carrot_sliced"); // dump food.331
+		addDirect("item.gt6.food_carrot_sliced.tooltip");
+		addDirect("item.gt6.food_banana"); // dump food.384
+		addDirect("item.gt6.food_banana.tooltip");
+		addDirect("item.gt6.food_banana_sliced"); // dump food.385
+		addDirect("item.gt6.food_banana_sliced.tooltip");
+		addDirect("item.gt6.food_pomegranate"); // dump food.390
+		addDirect("item.gt6.food_pomegranate.tooltip");
+		addDirect("item.gt6.food_pomeraisins"); // dump food.391
+		addDirect("item.gt6.food_pomeraisins.tooltip");
+		addDirect("item.gt6.food_blueberry"); // dump food.395
+		addDirect("item.gt6.food_gooseberry"); // dump food.399
+		addDirect("item.gt6.food_candleberry"); // dump food.403
+		addDirect("item.gt6.food_cranberry"); // dump food.407
+		addDirect("item.gt6.food_currants_black"); // dump food.411
+		addDirect("item.gt6.food_currants_white"); // dump food.415
+		addDirect("item.gt6.food_currants_red"); // dump food.419
+		addDirect("item.gt6.food_blackberry"); // dump food.423
+		addDirect("item.gt6.food_raspberry"); // dump food.427
+		addDirect("item.gt6.food_strawberry"); // dump food.431
+		addDirect("item.gt6.food_apple_green"); // dump food.436
+		addDirect("item.gt6.food_apple_green_sliced"); // dump food.437
+		addDirect("item.gt6.food_apple_green_core"); // dump food.438
+		addDirect("item.gt6.food_apple_green_core.tooltip");
+		addDirect("item.gt6.food_apple_yellow"); // dump food.443
+		addDirect("item.gt6.food_apple_yellow_sliced"); // dump food.444
+		addDirect("item.gt6.food_apple_yellow_core"); // dump food.445
+		addDirect("item.gt6.food_apple_yellow_core.tooltip");
+		addDirect("item.gt6.food_apple_red_sliced"); // dump food.451
+		addDirect("item.gt6.food_apple_red_core"); // dump food.452
+		addDirect("item.gt6.food_apple_red_core.tooltip");
+		addDirect("item.gt6.food_apple_darkred"); // dump food.457
+		addDirect("item.gt6.food_apple_darkred_sliced"); // dump food.458
+		addDirect("item.gt6.food_apple_darkred_core"); // dump food.459
+		addDirect("item.gt6.food_apple_darkred_core.tooltip");
+		addDirect("item.gt6.food_peanut"); // dump food.467
+		addDirect("item.gt6.food_peanut.tooltip");
+		addDirect("item.gt6.food_hazelnut"); // dump food.472
+		addDirect("item.gt6.food_ananas"); // dump food.476
+		addDirect("item.gt6.food_ananas.tooltip");
+		addDirect("item.gt6.food_ananas_sliced"); // dump food.477
+		addDirect("item.gt6.food_ananas_sliced.tooltip");
+		addDirect("item.gt6.food_cinnamon"); // dump food.482 (凤梨树皮=上游原貌)
+		addDirect("item.gt6.food_cinnamon.tooltip"); // hand 别让任何人挑战你! (dump :9042 空值, 上游未翻)
+		addDirect("item.gt6.food_coconut"); // dump food.486
+		addDirect("item.gt6.food_coconut.tooltip");
+		addDirect("item.gt6.food_grass"); // dump food.12000
+		addDirect("item.gt6.food_grass.tooltip"); // hand 9个合成为一捆以便晒干 (dump :8792 空值)
+		addDirect("item.gt6.food_grass_dry"); // dump food.12001
+		addDirect("item.gt6.food_grass_dry.tooltip"); // hand 可以用来制作简易的取火器 (dump :8794 空值)
+		addDirect("item.gt6.food_grass_moldy"); // dump food.55
+		addDirect("item.gt6.food_grass_rotten"); // dump food.56
+		addDirect("item.gt6.food_crop_rye"); // dump food.57
+		addDirect("item.gt6.food_crop_oats"); // dump food.58
+		addDirect("item.gt6.food_crop_barley"); // dump food.59
+		addDirect("item.gt6.food_crop_rice"); // dump food.60
 		addDirect("item.gt6.bending_cylinder_small"); // task food-can-row0 — dump gt.metatool.01.56 小型弯曲绕筒 (Loader_Tools.java:146 "Small Bending Cylinder")
 		addDirect("item.gt6.pickaxe"); // task w5-t1-dig-six — 镐 (dump tagprefix tool_head_pickaxe 镐头 :895, minus 头)
 		addDirect("item.gt6.pickaxe_gem"); // 镶尖镐 (dump tagprefix tool_head_pickaxe_gem 镶尖镐头 :896)

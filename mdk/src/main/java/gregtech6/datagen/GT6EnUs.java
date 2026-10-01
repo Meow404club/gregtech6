@@ -199,6 +199,7 @@ public class GT6EnUs extends LanguageProvider {
         addBeams(); // task beam-blocks-register — table-tail append
         addConcrete(); // task concrete-blocks-register — table-tail append
         addBakeFoods(); // task food-bake-items — table-tail append
+        addCropFoods(); // task food-crop-items — table-tail append
     }
 
     /**
@@ -2246,6 +2247,30 @@ public class GT6EnUs extends LanguageProvider {
             case "shape_foodmold_toast" -> "Food Grade Mold (Toast)";
             default -> throw new IllegalStateException("unmapped food mold: " + aPath);
         };
+    }
+
+    /**
+     * Food-item family keys (task food-crop-items): the T5a berry/nut/fruit band + the
+     * fodder family's display names + desc tooltips, walked over the
+     * {@link gregtech6.registry.GT6CropFoods#FOOD_ROWS} +
+     * {@link gregtech6.registry.GT6CropFoods#PLAIN_ROWS} tables so the lang face cannot
+     * drift from the registered ids (the addFoodItems form). Values are the upstream
+     * registration-row wordings verbatim (the name + desc columns of the 61
+     * MultiItemFood.java addItem lines, the row anchors in the GT6CropFoods javadoc; the
+     * 24 empty desc rows emit NO tooltip key on either locale — the upstream {@code ""}
+     * registration displays nothing, the GT6BakeFoods empty-desc ruling). The tab title
+     * already landed with addFoodItems (the T1 band owns the single tab).
+     * Table-tail append, append-only.
+     */
+    private void addCropFoods() {
+        for (gregtech6.registry.GT6CropFoods.CropFoodRow tRow : gregtech6.registry.GT6CropFoods.FOOD_ROWS) {
+            add("item.gt6." + tRow.id(), tRow.enName());
+            if (tRow.tooltipKey() != null) add(tRow.tooltipKey(), tRow.enTooltip());
+        }
+        for (gregtech6.registry.GT6CropFoods.CropPlainRow tRow : gregtech6.registry.GT6CropFoods.PLAIN_ROWS) {
+            add("item.gt6." + tRow.id(), tRow.enName());
+            if (tRow.tooltipKey() != null) add(tRow.tooltipKey(), tRow.enTooltip());
+        }
     }
 
     /**

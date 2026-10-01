@@ -11730,4 +11730,130 @@ Dedication** (same upstream `README.md` block as above).
     Mold (Cylinder), :341)
   - `shape_foodmold/toast.png`        `textures/items/gt.multiitem.technological/10805.png`
     (`8e0eb8c82f63edc6d486ea3091e962e8010554cb1b62f452c81a3c33ce0d8475` — the Food Grade Mold (Toast), :342)
+- `gt6/textures/item/food/*.png` — the food T5a berry/nut/fruit band + the fodder
+  family (61 textures, task food-crop-items), byte-identical borrows renamed to the
+  registered item ids (the T1 food-ledger form; every row cmp-verified against the
+  upstream `textures/items/gt.multiitem.food/<meta>.png`):
+  - `lemon.png` `gt.multiitem.food/0.png`
+    (`a2757a39a9b0e47a1ae6fd435d55d72723a5705acb15183b1567ea7eaf9ddcb1` — the Lemon, MultiItemFood.java:273)
+  - `lemon_sliced.png` `gt.multiitem.food/1.png`
+    (`77bab2c8e5314a3ddfa6e1afecba0099847beddb073db5559a442a4de0cb55c8` — the Lemon Slice, MultiItemFood.java:274)
+  - `tomato.png` `gt.multiitem.food/10.png`
+    (`ab4c60bfe079a09034a2904211cb9c2dc930992f8f122a8d323ca450311f9d6d` — the Tomato, MultiItemFood.java:279)
+  - `tomato_sliced.png` `gt.multiitem.food/11.png`
+    (`1b50fc80d9fcf013da66f3928beea9a9286e5bf827ac774da6de0b8ad4e4fa42` — the Tomato Slice, MultiItemFood.java:280)
+  - `mtomato.png` `gt.multiitem.food/20.png`
+    (`941aadb3784c6281f2e33425e612d400be312fc90e674556a159d5901a4970b1` — the Maxim Tomato, MultiItemFood.java:285)
+  - `onion.png` `gt.multiitem.food/30.png`
+    (`50e3186c5b203ceee546a8431bb10ea178f7b8fd52d145ab176f6141ac375dd8` — the Onion, MultiItemFood.java:290)
+  - `onion_sliced.png` `gt.multiitem.food/31.png`
+    (`2b9c732e1baf332e365630c879026312c35c67019baa3536f4c75ee1b6f2aa25` — the Onion Slice, MultiItemFood.java:291)
+  - `cucumber.png` `gt.multiitem.food/40.png`
+    (`90cc882db4d5e5e519283e24990115888bad302911d62073de8459eafa114fba` — the Cucumber, MultiItemFood.java:296)
+  - `cucumber_sliced.png` `gt.multiitem.food/41.png`
+    (`cf0e9744cf38824bb98249add22be7f1da7fa2cb4681109f9ee098c1717ae2dc` — the Cucumber Slice, MultiItemFood.java:297)
+  - `pickle.png` `gt.multiitem.food/42.png`
+    (`a276769c34ca2d84303c94722ac017ab65df773e83adaec0d1605f53cb4ac9f6` — the Pickle, MultiItemFood.java:298)
+  - `pickle_sliced.png` `gt.multiitem.food/43.png`
+    (`0899b94b39595e600d4ab26733d9d3438396b6b609c9f2f4dfe080bcf43f8afe` — the Pickle Slice, MultiItemFood.java:299)
+  - `chili_pepper.png` `gt.multiitem.food/50.png`
+    (`875f37d9b2d59074b7650ea67a70a4401c08eb8273a287a0f3fe3da1349bc3d7` — the Chili Pepper, MultiItemFood.java:307)
+  - `grapes_green.png` `gt.multiitem.food/60.png`
+    (`f86cdac6e07f2632aa7a5825da1a5cc0a554d96021ff2910c71a8328417b2a6a` — the Green Grapes, MultiItemFood.java:311)
+  - `raisins_green.png` `gt.multiitem.food/61.png`
+    (`6bf312dcc0330bc58e9d801d56d40afbd2f39bdfff011a1eca596acd05928c30` — the Green Raisins, MultiItemFood.java:312)
+  - `grapes_white.png` `gt.multiitem.food/63.png`
+    (`0cab0b8857e5da660c1549f4bc43aeb3cd6d393ca4327054ccb72a8cf44589e7` — the White Grapes, MultiItemFood.java:315)
+  - `raisins_white.png` `gt.multiitem.food/64.png`
+    (`e7b7c2f9f90cbde586e2884d7b0779c0f5bbb690d91d5fad559288e4d3b1adbd` — the White Raisins, MultiItemFood.java:316)
+  - `grapes_red.png` `gt.multiitem.food/66.png`
+    (`35bac4f742b2ce23ec17b87fb25b7157b6eca9216138f4df7a3425fec0daf3ee` — the Red Grapes, MultiItemFood.java:319)
+  - `raisins_red.png` `gt.multiitem.food/67.png`
+    (`9e8e8c71d83d7f8c886c0fd3f51bfc59e6ffcb853427b6326e332e757841e4b4` — the Red Raisins, MultiItemFood.java:320)
+  - `grapes_purple.png` `gt.multiitem.food/70.png`
+    (`3cb7f512f90ed8b2fe64490e3b1d55209212b43b49e250df66c8d89f037de5d0` — the Purple Grapes, MultiItemFood.java:323)
+  - `raisins_purple.png` `gt.multiitem.food/71.png`
+    (`9514351771995874c524eac28364bf6702921f3f1c714b733253393f8a77249e` — the Purple Raisins, MultiItemFood.java:324)
+  - `raisins_chocolate.png` `gt.multiitem.food/72.png`
+    (`4d96fa19b23fa580b389f231abef5a0ea23b2ee8fcb038b5b2ab2457387dfb87` — the Chocolate Raisins, MultiItemFood.java:327)
+  - `carrot_sliced.png` `gt.multiitem.food/81.png`
+    (`37ff6c818fbd39eea51e751f43b990de5b83c04bfdb75209083232c4ac2f0b0f` — the Carrot Slice, MultiItemFood.java:331)
+  - `banana.png` `gt.multiitem.food/90.png`
+    (`2bb22ceaa7a9ab474eee217a59876502158b9470f72612376510926c62fa5438` — the Banana, MultiItemFood.java:384)
+  - `banana_sliced.png` `gt.multiitem.food/91.png`
+    (`2da9d48d82c980dee66bf215821c93eb2be3903dd5a647bad3e749e2fb83e5ee` — the Banana Slice, MultiItemFood.java:385)
+  - `pomegranate.png` `gt.multiitem.food/100.png`
+    (`3440503ae68f418d20376e8935f7a095c68e48bf9235f73d0e37d70808182085` — the Pomegranate, MultiItemFood.java:390)
+  - `pomeraisins.png` `gt.multiitem.food/101.png`
+    (`c0dde0cf5ca95f1ed36bda3d81807cb0b76847b007c78862de3f2d5ebe955dba` — the Pomeraisins, MultiItemFood.java:391)
+  - `blueberry.png` `gt.multiitem.food/110.png`
+    (`566404686e2c0db76dea9cc2bafb2ccd778d318aff9ca205a9bb6541a80e1744` — the Blueberry, MultiItemFood.java:395)
+  - `gooseberry.png` `gt.multiitem.food/120.png`
+    (`799078c38e1b1507e3124b2b61b161c062b186b56a058901fd7db5009cb88070` — the Gooseberry, MultiItemFood.java:399)
+  - `candleberry.png` `gt.multiitem.food/130.png`
+    (`df53d10421f3c5ed5a4df6cafd4f863ff21c08832c945104eeb37f5619fded06` — the Candleberry, MultiItemFood.java:403)
+  - `cranberry.png` `gt.multiitem.food/140.png`
+    (`409e4fd75ac760c0feb48143296a0c60d0ac432ae6501a327abc7958390bfe07` — the Cranberry, MultiItemFood.java:407)
+  - `currants_black.png` `gt.multiitem.food/150.png`
+    (`0b9272672d37bb860e76d65c092d3aec4e44c8db91fd25cd2b4ec32f8de95ab8` — the Black Currants, MultiItemFood.java:411)
+  - `currants_white.png` `gt.multiitem.food/160.png`
+    (`06cf7e5a4a8e2b06182693e42e11805a29c96311aebb7c5fded1a3bc8af526cb` — the White Currants, MultiItemFood.java:415)
+  - `currants_red.png` `gt.multiitem.food/170.png`
+    (`0dec96c24ddc4bf14f34dff868d19c09eafa822ce2d7037c62a974fdf1ece185` — the Red Currants, MultiItemFood.java:419)
+  - `blackberry.png` `gt.multiitem.food/180.png`
+    (`c9aa142bfd8d485ee928536ad6795e8e61d2ed0869f371c490dfd6abc5975c94` — the Blackberry, MultiItemFood.java:423)
+  - `raspberry.png` `gt.multiitem.food/190.png`
+    (`0695836ffba8d79e6967f69ccf6dac40c0c97071c27b596d77ea33807b581206` — the Raspberry, MultiItemFood.java:427)
+  - `strawberry.png` `gt.multiitem.food/200.png`
+    (`3cb543faaf9a62e69016ea2352be7bf48fb116c203d0a306cbb579bec2193d3f` — the Strawberry, MultiItemFood.java:431)
+  - `apple_green.png` `gt.multiitem.food/210.png`
+    (`87f1114dc5a9218c3f8314d754243f357e85f6bf1d4aa31c6f5c155dbccab4d0` — the Green Apple, MultiItemFood.java:436)
+  - `apple_green_sliced.png` `gt.multiitem.food/211.png`
+    (`cd38161740288bcb5ff6b8c832fcaa65931150a72687e82ff0563c4ecf5d7ea5` — the Green Apple Slice, MultiItemFood.java:437)
+  - `apple_green_core.png` `gt.multiitem.food/212.png`
+    (`07aeb992ae07f793402c4bb647e0f7bdea6030e64a24e4f5bf43d3de282914b8` — the Green Apple Core, MultiItemFood.java:438)
+  - `apple_yellow.png` `gt.multiitem.food/220.png`
+    (`c7781900b677897ea8550be5c3e6972e1554849dd245cf3efa6d214c23bdcca5` — the Yellow Apple, MultiItemFood.java:443)
+  - `apple_yellow_sliced.png` `gt.multiitem.food/221.png`
+    (`480f984d5e414b8847bb2423f9604c6d206e8132b25997435ba7438d909749fc` — the Yellow Apple Slice, MultiItemFood.java:444)
+  - `apple_yellow_core.png` `gt.multiitem.food/222.png`
+    (`4d1de5667c7f2f1d59005c835b0ece1f30315b72143d3b969cd0816f0942c3c7` — the Yellow Apple Core, MultiItemFood.java:445)
+  - `apple_red_sliced.png` `gt.multiitem.food/231.png`
+    (`f16da93778a4100342f6aaa002579fa1ae1a847ffebfec90f863e88d8fe25bad` — the Red Apple Slice, MultiItemFood.java:451)
+  - `apple_red_core.png` `gt.multiitem.food/232.png`
+    (`f23557a0619231f5ac383b0f9f565b1ccfdc6c453694dcc2b7f24c97072d0237` — the Red Apple Core, MultiItemFood.java:452)
+  - `apple_darkred.png` `gt.multiitem.food/240.png`
+    (`d81dd869a25b4aa6d77c0c2495f852a65d3727a6746bde5afb95e30016d312f8` — the Dark Red Apple, MultiItemFood.java:457)
+  - `apple_darkred_sliced.png` `gt.multiitem.food/241.png`
+    (`dd8f2a8c539a74dde5a8b2a2b786cfcee21b5dae3fccca942269dcc8658886a9` — the Dark Red Apple Slice, MultiItemFood.java:458)
+  - `apple_darkred_core.png` `gt.multiitem.food/242.png`
+    (`c4630eb84e1d5dc53c011f73e92366b0f3df508aef6cfcb6e606675cd270c1e2` — the Dark Red Apple Core, MultiItemFood.java:459)
+  - `peanut.png` `gt.multiitem.food/250.png`
+    (`3f6b86e2c8a9b35f5c5e157a1bead49d41d36e8db8e2675bc321890e6c1e2414` — the Peanut, MultiItemFood.java:467)
+  - `hazelnut.png` `gt.multiitem.food/260.png`
+    (`809648cd5d61d2d3f2026ca3e2ba6a3d65b1f215cad0ae5d48ecfe6c8dbe0a3c` — the Hazelnut, MultiItemFood.java:472)
+  - `ananas.png` `gt.multiitem.food/270.png`
+    (`12f32c35655117d222e0a8ea0376a3d91dd8e2fabe263c50427caf602f7077b5` — the Ananas, MultiItemFood.java:476)
+  - `ananas_sliced.png` `gt.multiitem.food/271.png`
+    (`dea4542a7dd833fad242f4d556d291d733242873171be46512234584ff1cc8fa` — the Ananas Slice, MultiItemFood.java:477)
+  - `cinnamon.png` `gt.multiitem.food/280.png`
+    (`ccfc8cec34c33e47e8d19a00a29d3142c831ee8eeb0225f2a8dcbe20f0de322e` — the Cinnamon Bark, MultiItemFood.java:482)
+  - `coconut.png` `gt.multiitem.food/290.png`
+    (`f71e6e7cf2dac132a7b3012c9ebab0f16d3e0f3d6d164ad490c335c601163a22` — the Coconut, MultiItemFood.java:486)
+  - `grass.png` `gt.multiitem.food/12000.png`
+    (`55818520ed516e98ff5b25c3f67384695011fde377eed7fba494003d97348c44` — the Grass, MultiItemFood.java:53)
+  - `grass_dry.png` `gt.multiitem.food/12001.png`
+    (`4eeff166032678393390076bd9e104032e3a8d32ab9c3e4456d59c8c5a75254b` — the Dry Grass, MultiItemFood.java:54)
+  - `grass_moldy.png` `gt.multiitem.food/12002.png`
+    (`00fbbfd066b7f65c46702731e04b97d5ee494a9f4d6b1e97cbe90ba1ab0b65a9` — the Moldy Grass, MultiItemFood.java:55)
+  - `grass_rotten.png` `gt.multiitem.food/12003.png`
+    (`5019056a8d652c02848abd405404f4cab0f1621ca0444b92a6d4845e14935fc7` — the Rotten Grass, MultiItemFood.java:56)
+  - `crop_rye.png` `gt.multiitem.food/12004.png`
+    (`b8e1c251ad8b7d07b9df9c1dcae617b2d61e040fc98810ee6574fd1ad1b29260` — the Rye crop, MultiItemFood.java:57)
+  - `crop_oats.png` `gt.multiitem.food/12005.png`
+    (`272f983cfdacb7789fcdc546d3607967279da7107b85dc87d1a8f58dfdc483e3` — the Oats crop, MultiItemFood.java:58)
+  - `crop_barley.png` `gt.multiitem.food/12006.png`
+    (`d299c9829a379ed98e35330209d87ea3242a6f0d4beb8d33847a6b48f7ad9205` — the Barley crop, MultiItemFood.java:59)
+  - `crop_rice.png` `gt.multiitem.food/12007.png`
+    (`828e7aaf8abefb993ebf779097fd5e8a93bdd49fb9f8b96260fda7bd878607fb` — the Rice crop, MultiItemFood.java:60)
   All 16x16 RGBA, CC0 1.0 per the upstream README block.

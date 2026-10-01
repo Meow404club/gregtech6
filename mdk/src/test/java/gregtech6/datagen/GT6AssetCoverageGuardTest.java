@@ -113,6 +113,7 @@ import gregtech6.registry.GT6GasCylinders;
 import gregtech6.registry.GT6FoamBlocks;
 import gregtech6.registry.GT6FoamSprays;
 import gregtech6.registry.GT6FoodCans;
+import gregtech6.registry.GT6CropFoods;
 import gregtech6.registry.GT6Foods;
 import gregtech6.registry.GTGrassBlocks;
 import gregtech6.registry.GT6HeatExchangers;
@@ -307,6 +308,7 @@ public class GT6AssetCoverageGuardTest {
 			GT6FeBatteries.class, GT6FeConverters.class, GT6FluxDynamos.class, GT6FoamBlocks.class,
 			GT6FoamSprays.class, GT6FoodCans.class, GT6Foods.class, // task food-items-core — the food-item T1 subset container
 			GT6BakeFoods.class, // task food-bake-items — the food T3 bake-chain container
+			GT6CropFoods.class, // task food-crop-items — the T5a berry/nut/fruit + fodder container
 			GTGrassBlocks.class, GT6HeatExchangers.class,
 			GT6Hoppers.class, GT6Kinetics.class, GT6Kitchen.class, GT6LargeMachines.class,
 			GT6Lasers.class, GT6Logistics.class, GT6LongDistanceTransformers.class,

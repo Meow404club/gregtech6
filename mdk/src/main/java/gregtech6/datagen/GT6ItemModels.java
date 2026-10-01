@@ -417,6 +417,17 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent("shape_foodmold_" + tMold, mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/shape_foodmold/" + tMold));
         }
+        // the food T5a crop band (task food-crop-items) — 61 item/generated models over the
+        // byte-identical upstream icon borrows (the T1 band walk form verbatim: 49 foods +
+        // 12 inedibles, gt.multiitem.food/<meta> per row — assets/README.md attribution)
+        for (gregtech6.registry.GT6CropFoods.CropFoodRow tCrop : gregtech6.registry.GT6CropFoods.FOOD_ROWS) {
+            withExistingParent(tCrop.id(), mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/food/" + tCrop.id().substring("food_".length())));
+        }
+        for (gregtech6.registry.GT6CropFoods.CropPlainRow tPlain : gregtech6.registry.GT6CropFoods.PLAIN_ROWS) {
+            withExistingParent(tPlain.id(), mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/food/" + tPlain.id().substring("food_".length())));
+        }
         // the extruder-mold row0 subset (task w1-press-extruder-molds) — 2 item/generated
         // models over the composed placeholder icons (the mold-plate/mold-rod 16x16 stdlib
         // generator, the P20 placeholder-PNG convention; the upstream multiitem icons are
