@@ -28,6 +28,9 @@ import gregapi.data.TD;
 import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
 
+import gregtech6.registry.GTFluidPipes;
+import gregtech6.registry.GTItemPipes;
+import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 
 import net.minecraft.resources.ResourceLocation;
@@ -38,10 +41,10 @@ import net.minecraft.world.level.material.Fluids;
 
 /**
  * The recipe-data-b2c-magnet row-stock pour test (the B2c-weld posture, two maps): the
- * magneticseparator.json file (the RM.MagneticSeparator fixed rows :51-53/:58/:61-63 + the
- * polarity-asymmetry walk :454-457 of Loader_Recipes_Ores.java, 179 rows) and the sluice.json
+ * magneticseparator.json file (the RM.MagneticSeparator fixed rows :51-54/:58-59/:61-64 + the
+ * polarity-asymmetry walk :454-457 of Loader_Recipes_Ores.java, 176 rows) and the sluice.json
  * file (the RM.Sluice ore walk :385-420 over the four FL.waters legs + the two Petrotheum
- * RecipeMapHandlerPrefix statements of Loader_Recipes_Handlers.java:672-673, 5000 rows) pour
+ * RecipeMapHandlerPrefix statements of Loader_Recipes_Handlers.java:672-673, 4930 rows) pour
  * through the real {@link GT6RecipeMapJsonLoader} seam with zero skips. RECOMPUTABILITY: the
  * rows were generated from a one-shot live registration dump (an uncommitted JUnit walking
  * GTMaterialItems.registrationOrder + the condition tags, folded by a /tmp generator — the
@@ -49,11 +52,15 @@ import net.minecraft.world.level.material.Fluids;
  * cross-checks recompute all three walk families against the live registration
  * (OreDictMaterial.mByProducts — the debt-byproducts-data face — plus the magnetic tags and
  * the UT.Code.select fallback) and fail the moment the frozen snapshot trails or outruns it.
- * The walk rows carry NO per-row comment (the cross-check IS their provenance); the 7 fixed
+ * The walk rows carry NO per-row comment (the cross-check IS their provenance); the 10 fixed
  * rows keep their per-line citations. The two TRUE NEGATIVE faces (the RH sand row
  * Loader_Recipes_Temporary.java:601, the Tropic sand row Compat_Recipes_Tropicraft.java:52)
- * and the three BLOCKED blockDust faces (:54/:59/:64 — OP.blockDust is off the port item
- * path) are declared in the file heads, not poured.
+ * are declared in the file heads, not poured. R2 (the review reversal): the :54/:59/:64
+ * blockDust faces pour too — the r1 BLOCKED claim looked only at the GTMaterialItems item
+ * path, but OP.blockDust lives on the GTMaterialBlocks block path
+ * (blockPathPrefixes + the GTMaterialPrefixBlockItem same-id ITEM bridge, the weld r2
+ * blockSolid precedent), and the id-universe check below runs the weld r2 THREE-universe form
+ * so this class of miss cannot recur.
  */
 public class GT6RecipeMapDataB2cMagnetRowsPourTest extends GTRecipesOfflineTestBase {
 
@@ -63,7 +70,7 @@ public class GT6RecipeMapDataB2cMagnetRowsPourTest extends GTRecipesOfflineTestB
 	/** The two map keys and the frozen census (the file-head Row census statements). */
 	private static final String MAGNET = "magneticseparator";
 	private static final String SLUICE = "sluice";
-	private static final Map<String, Integer> CENSUS = Map.of(MAGNET, 173, SLUICE, 4930);
+	private static final Map<String, Integer> CENSUS = Map.of(MAGNET, 176, SLUICE, 4930);
 
 	/** The frozen per-source accounting (the generation-time face; the conscious-bump ratchet). */
 	private static final Map<String, Integer> SOURCES = new LinkedHashMap<>();
@@ -71,12 +78,14 @@ public class GT6RecipeMapDataB2cMagnetRowsPourTest extends GTRecipesOfflineTestB
 		SOURCES.put(MAGNET + ".fixed:51", 1);
 		SOURCES.put(MAGNET + ".fixed:52", 1);
 		SOURCES.put(MAGNET + ".fixed:53", 1);
+		SOURCES.put(MAGNET + ".fixed:54", 1);
 		SOURCES.put(MAGNET + ".fixed:58", 1);
+		SOURCES.put(MAGNET + ".fixed:59", 1);
 		SOURCES.put(MAGNET + ".fixed:61", 1);
 		SOURCES.put(MAGNET + ".fixed:62", 1);
 		SOURCES.put(MAGNET + ".fixed:63", 1);
+		SOURCES.put(MAGNET + ".fixed:64", 1);
 		SOURCES.put(MAGNET + ".walk:454-457", 166);
-		SOURCES.put(MAGNET + ".blocked:54:59:64", 0);
 		SOURCES.put(MAGNET + ".tn:rh601+tropic52", 0);
 		SOURCES.put(SLUICE + ".walk:385-420", 3944);
 		SOURCES.put(SLUICE + ".petro:672", 493);
@@ -149,7 +158,8 @@ public class GT6RecipeMapDataB2cMagnetRowsPourTest extends GTRecipesOfflineTestB
 		assertTrue(tMag.contains("Loader_Recipes_Temporary.java:601") && tMag.contains("RH_Sand_Magnetite"),
 				"magnet: the RH-sand TRUE NEGATIVE is declared with its input item");
 		assertTrue(tMag.contains("Compat_Recipes_Tropicraft.java:52"), "magnet: the Tropic compat TRUE NEGATIVE is declared");
-		assertTrue(tLower.contains("blocked") && tMag.contains("OP.blockDust"), "magnet: the :54/:59/:64 blockDust faces are accounted");
+		assertTrue(tMag.contains("GTMaterialBlocks.blockPathPrefixes()") && tMag.contains("GTMaterialPrefixBlockItem"),
+				"magnet: the block-path bridge (the r2 un-blocked :54/:59/:64 faces) is declared");
 		assertTrue(tMag.contains("MAGNETIC_SEPARATOR") && tMag.contains("pinned 0"), "magnet: the PhaseGate zero-bump posture is declared");
 		assertTrue(tSlu.contains("Loader_Recipes_Ores.java:385-420"), "sluice: the ore walk is cited");
 		assertTrue(tSlu.contains("Loader_Recipes_Handlers.java:672-673"), "sluice: the Petrotheum statements are cited");
@@ -177,7 +187,7 @@ public class GT6RecipeMapDataB2cMagnetRowsPourTest extends GTRecipesOfflineTestB
 						MAGNET + ": the citation names the upstream line");
 			}
 		}
-		assertEquals(7, tCited, MAGNET + ": exactly the 7 fixed rows carry citations");
+		assertEquals(10, tCited, MAGNET + ": exactly the 10 fixed rows carry citations");
 		assertEquals(166, tMagRows.size() - tCited, MAGNET + ": the walk stock is uncommented");
 		for (JsonElement tElement : pourShipped(SLUICE)) {
 			assertFalse(tElement.getAsJsonObject().has("comment"), SLUICE + ": no per-row comments (the provenance IS the live-walk cross-check)");
@@ -337,6 +347,26 @@ public class GT6RecipeMapDataB2cMagnetRowsPourTest extends GTRecipesOfflineTestB
 		assertEquals("gt6:dust_tiny_neodymium", tBedrock.getAsJsonArray("outputs").get(4).getAsJsonObject().get("item").getAsString(), ":58 Nd");
 		assertEquals(3, tBedrock.getAsJsonArray("outputs").get(4).getAsJsonObject().get("count").getAsLong(), ":58 Nd x3");
 		assertEquals("gt6:dust_tiny_vanadium_pentoxide", tBedrock.getAsJsonArray("outputs").get(5).getAsJsonObject().get("item").getAsString(), ":58 V2O5");
+		// :54/:59/:64 — the blockDust faces (r2), eut 16/64/16 over duration 1296
+		JsonObject tS54 = findRow(tRows, "gt6:block_dust_sluice_sand", "gt6:dust_stone", 1296);
+		assertChanceRow(tS54, new long[] {9640, 5832, 5832, 5832, 5832, 5832});
+		assertEquals("gt6:dust_tiny_iron", tS54.getAsJsonArray("outputs").get(1).getAsJsonObject().get("item").getAsString(), ":54 Fe dustTiny");
+		assertEquals(9, tS54.getAsJsonArray("outputs").get(0).getAsJsonObject().get("count").getAsLong(), ":54 Stone dust x9");
+		JsonObject tS59 = findRow(tRows, "gt6:block_dust_bedrock", "gt6:dust_deepslate", 1296);
+		assertChanceRow(tS59, new long[] {7000, 3000, 3000, 3000, 3000, 3000});
+		assertEquals(64, tS59.get("eut").getAsLong(), ":59 eut 64");
+		assertEquals(9, tS59.getAsJsonArray("outputs").get(0).getAsJsonObject().get("count").getAsLong(), ":59 Deepslate x9");
+		assertEquals("gt6:dust_tiny_adamantine", tS59.getAsJsonArray("outputs").get(1).getAsJsonObject().get("item").getAsString(), ":59 Adamantine");
+		assertEquals("gt6:dust_tiny_rare_earth", tS59.getAsJsonArray("outputs").get(3).getAsJsonObject().get("item").getAsString(), ":59 RareEarth");
+		assertEquals(18, tS59.getAsJsonArray("outputs").get(3).getAsJsonObject().get("count").getAsLong(), ":59 RareEarth x18");
+		assertEquals("gt6:dust_tiny_neodymium", tS59.getAsJsonArray("outputs").get(4).getAsJsonObject().get("item").getAsString(), ":59 Nd");
+		assertEquals(27, tS59.getAsJsonArray("outputs").get(4).getAsJsonObject().get("count").getAsLong(), ":59 Nd x27");
+		assertEquals("gt6:dust_tiny_vanadium_pentoxide", tS59.getAsJsonArray("outputs").get(5).getAsJsonObject().get("item").getAsString(), ":59 V2O5");
+		assertEquals(27, tS59.getAsJsonArray("outputs").get(5).getAsJsonObject().get("count").getAsLong(), ":59 V2O5 x27");
+		JsonObject tS64 = findRow(tRows, "gt6:block_dust_moon_turf", "gt6:dust_basalt", 1296);
+		assertChanceRow(tS64, new long[] {3000, 972, 972, 972, 972, 972});
+		assertEquals("gt6:dust_tiny_meteoric_iron", tS64.getAsJsonArray("outputs").get(1).getAsJsonObject().get("item").getAsString(), ":64 MeteoricIron");
+		assertEquals(9, tS64.getAsJsonArray("outputs").get(1).getAsJsonObject().get("count").getAsLong(), ":64 MeteoricIron x9");
 		// :61-63 — MoonTurf, the MeteoricIron x9 leg and the 12/27/108 ladder
 		JsonObject tMoon = findRow(tRows, "gt6:dust_tiny_moon_turf", "gt6:dust_tiny_basalt", 16);
 		assertChanceRow(tMoon, new long[] {3000, 12, 12, 12, 12, 12});
@@ -361,13 +391,22 @@ public class GT6RecipeMapDataB2cMagnetRowsPourTest extends GTRecipesOfflineTestB
 				":673 the dustTiny SluiceSand additional output");
 	}
 
-	/** The id/energy face: every gt6 item id is registered, every fluid id is a known leg, eut/duration are typed, the smoke rows stay gone. */
+	/** The id/energy face over the THREE universes (the weld r2 form): every gt6 item id lives in GTMaterialItems ∪ the GTMaterialBlocks storage blocks ∪ the pipe rows; eut/duration are typed; the smoke rows stay gone. */
 	@Test
 	public void theStockIsRegisteredEutTypedAndSmokeFree() throws Exception {
 		GTMaterialItems.initMaterials();
 		Set<String> tItemUniverse = new HashSet<>();
 		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
 			tItemUniverse.add("gt6:" + GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
+		}
+		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialBlocks.registrationOrder()) {
+			tItemUniverse.add("gt6:" + GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
+		}
+		for (GTFluidPipes.FluidPipeRow tRow : GTFluidPipes.ROWS) {
+			tItemUniverse.add("gt6:" + tRow.path());
+		}
+		for (GTItemPipes.ItemPipeRow tRow : GTItemPipes.ROWS) {
+			tItemUniverse.add("gt6:" + tRow.path());
 		}
 		Set<String> tMissing = new HashSet<>();
 		int tForeignItems = 0;
@@ -389,7 +428,7 @@ public class GT6RecipeMapDataB2cMagnetRowsPourTest extends GTRecipesOfflineTestB
 					}
 				}
 				long tEut = tRow.get("eut").getAsLong();
-				if (MAGNET.equals(tKey) && tRow.has("comment") && tRow.get("comment").getAsString().contains(":58")) {
+				if (MAGNET.equals(tKey) && tRow.has("comment") && tRow.get("comment").getAsString().contains("eut 64")) {
 					assertEquals(64, tEut, ":58-59 carry eut 64");
 				} else {
 					assertEquals(16, tEut, "eut 16 on every other row");

@@ -1,5 +1,5 @@
 {
-  "comment": "task recipe-data-b2c-magnet - the Magnetic Separator static replay. Row source: the fixed rows and the magnetic walk of RM.MagneticSeparator in Loader_Recipes_Ores.java - SluiceSand 4 :51-54 (3 pour + :54 BLOCKED), Bedrock 2 :58-59 (1 pours + :59 BLOCKED), MoonTurf 4 :61-64 (3 pour + :64 BLOCKED; :61-64 were missing from the task-card source list, approved add 2026-10-01) and the purified-input walk :454-457 (166 rows) over MATERIAL_ARRAY minus ANTIMATTER/INVALID_MATERIAL, gated on the polarity asymmetry tMagnetList (:389-394: a magnetic self keeps its non-magnetic byproducts, a non-magnetic self its magnetic ones; UT.Code.select(i, self, list) :1458-1462 falls back to the material itself past the list end), chances tMagnet {10000,600x5} :383, outputs crushedCentrifuged + crushedCentrifugedTiny x18 (:455) / x2 (:456), eut 16, duration 144/16. DECLARED DEVIATION (frozen universe): the live walk runs per lookup over the port registration; the JSON freezes it to the GTMaterialItems.registrationOrder + condition-tag snapshot at generation time (the craftfrom 962-row / welder 2538-row deviation class), gated on full item-family resolution port-side. COMPACTED NULL SLOTS: 6 walk output slots name a byproduct whose crushedCentrifugedTiny item is unregistered port-side (the stone-family select fallbacks of BasalticMineralSand/GraniticMineralSand/Magnetite); upstream keeps such slots as mid-array nulls (Recipe ctor trims trailing only), the JSON compacts slot+chance together - the observable equivalent (each surviving output keeps its own chance). BLOCKED FIXED FACES: :54/:59/:64 - the blockDust input stacks (OP.blockDust) are off the port item path (GTMaterialItems.itemPathPrefixes), so those three fixed rows cannot be expressed; unlocking = a blockDust item-path card, declared NOT silently dropped. WALK ROW PROVENANCE: the 166 walk rows carry NO per-row comment - the provenance IS the GT6RecipeMapDataB2cMagnetRowsPourTest live-walk cross-check; the 7 fixed rows keep their per-line citations. REPLACED SMOKE ROW: the p29-w2 smoke row (minecraft:gravel + water 100 -> sand+flint, duration 16 eut 16) carried no upstream semantics and is gone. TRUE NEGATIVE FACES (declared, NOT poured): Loader_Recipes_Temporary.java:601 RH_Sand_Magnetite row - the MD.RH-gated input item IL.RH_Sand_Magnetite has no port face (foreign-mod item, P10; the outputs dust GraniticMineralSand/rockGt GraniteBlack/nugget Au/dustTiny Au exist but the row cannot match without its input); Compat_Recipes_Tropicraft.java:52 TROPIC_Sand_Mineral row - foreign compat class, the port carries no Tropic runtime (the generifier Compat_* precedent). PhaseGate: MAGNETIC_SEPARATOR stays pinned 0 - the phase-gate census pour arms the JsonLoader with an EMPTY pour (GT6RecipeMapPhaseGateTest.pourCensus), JSON stocks never enter the SNAPSHOT; this file is audited by its own RowsPourTest (the welder.json precedent). Row census: 7 fixed (3 SluiceSand + 1 Bedrock + 3 MoonTurf) + 166 walk = 173.",
+  "comment": "task recipe-data-b2c-magnet - the Magnetic Separator static replay (r2: the three blockDust faces un-blocked and poured, the row census 173 -> 176). Row source: the fixed rows and the magnetic walk of RM.MagneticSeparator in Loader_Recipes_Ores.java - SluiceSand 4 :51-54, Bedrock 2 :58-59, MoonTurf 4 :61-64 (:61-64 were missing from the task-card source list, approved add 2026-10-01) and the purified-input walk :454-457 (166 rows) over MATERIAL_ARRAY minus ANTIMATTER/INVALID_MATERIAL, gated on the polarity asymmetry tMagnetList (:389-394: a magnetic self keeps its non-magnetic byproducts, a non-magnetic self its magnetic ones; UT.Code.select(i, self, list) :1458-1462 falls back to the material itself past the list end), chances tMagnet {10000,600x5} :383, outputs crushedCentrifuged + crushedCentrifugedTiny x18 (:455) / x2 (:456), eut 16, duration 144/16. DECLARED DEVIATION (frozen universe): the live walk runs per lookup over the port registration; the JSON freezes it to the GTMaterialItems.registrationOrder + condition-tag snapshot at generation time (the craftfrom 962-row / welder 2538-row deviation class), gated on full item-family resolution port-side. COMPACTED NULL SLOTS: 6 walk output slots name a byproduct whose crushedCentrifugedTiny item is unregistered port-side (the stone-family select fallbacks of BasalticMineralSand/GraniticMineralSand/Magnetite); upstream keeps such slots as mid-array nulls (Recipe ctor trims trailing only), the JSON compacts slot+chance together - the observable equivalent (each surviving output keeps its own chance). BLOCK PATH BRIDGE (the r1 BLOCKED claim was wrong - reworked r2): the :54/:59/:64 blockDust input stacks resolve through the GTMaterialBlocks block path, not the GTMaterialItems item path - OP.blockDust sits in GTMaterialBlocks.blockPathPrefixes() and the (blockDust, SluiceSand/Bedrock/MoonTurf) pairs pass the same isGeneratingItem gate (the dust condition Or(DUSTS, DIRTY_DUSTS) over the dust()/stone() factories), with GTMaterialPrefixBlockItem registering the same id into the ITEM registry (the weld r2 blockSolid bridge, research.prefix-gap-survey reversal) - the ids resolve live and the rows pour verbatim. WALK ROW PROVENANCE: the 166 walk rows carry NO per-row comment - the provenance IS the GT6RecipeMapDataB2cMagnetRowsPourTest live-walk cross-check; the 7 fixed rows keep their per-line citations. REPLACED SMOKE ROW: the p29-w2 smoke row (minecraft:gravel + water 100 -> sand+flint, duration 16 eut 16) carried no upstream semantics and is gone. TRUE NEGATIVE FACES (declared, NOT poured): Loader_Recipes_Temporary.java:601 RH_Sand_Magnetite row - the MD.RH-gated input item IL.RH_Sand_Magnetite has no port face (foreign-mod item, P10; the outputs dust GraniticMineralSand/rockGt GraniteBlack/nugget Au/dustTiny Au exist but the row cannot match without its input); Compat_Recipes_Tropicraft.java:52 TROPIC_Sand_Mineral row - foreign compat class, the port carries no Tropic runtime (the generifier Compat_* precedent). PhaseGate: MAGNETIC_SEPARATOR stays pinned 0 - the phase-gate census pour arms the JsonLoader with an EMPTY pour (GT6RecipeMapPhaseGateTest.pourCensus), JSON stocks never enter the SNAPSHOT; this file is audited by its own RowsPourTest (the welder.json precedent). Row census: 10 fixed (4 SluiceSand + 2 Bedrock + 4 MoonTurf) + 166 walk = 176.",
   "recipes": [
     {
       "comment": "Loader_Recipes_Ores.java:51 verbatim (fixed row; eut 16 dur 16)",
@@ -50,6 +50,22 @@
       "eut": 16
     },
     {
+      "comment": "Loader_Recipes_Ores.java:54 verbatim (fixed row; eut 16 dur 1296)",
+      "inputs": [
+        {"item": "gt6:block_dust_sluice_sand", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:dust_stone", "count": 9, "chance": 9640},
+        {"item": "gt6:dust_tiny_iron", "count": 2, "chance": 5832},
+        {"item": "gt6:dust_tiny_neodymium", "count": 1, "chance": 5832},
+        {"item": "gt6:dust_tiny_nickel", "count": 1, "chance": 5832},
+        {"item": "gt6:dust_tiny_cobalt", "count": 1, "chance": 5832},
+        {"item": "gt6:dust_tiny_manganese", "count": 1, "chance": 5832}
+      ],
+      "duration": 1296,
+      "eut": 16
+    },
+    {
       "comment": "Loader_Recipes_Ores.java:58 verbatim (fixed row; eut 64 dur 144)",
       "inputs": [
         {"item": "gt6:dust_bedrock", "count": 1}
@@ -64,6 +80,38 @@
       ],
       "duration": 144,
       "eut": 64
+    },
+    {
+      "comment": "Loader_Recipes_Ores.java:59 verbatim (fixed row; eut 64 dur 1296)",
+      "inputs": [
+        {"item": "gt6:block_dust_bedrock", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:dust_deepslate", "count": 9, "chance": 7000},
+        {"item": "gt6:dust_tiny_adamantine", "count": 9, "chance": 3000},
+        {"item": "gt6:dust_tiny_atlarus", "count": 9, "chance": 3000},
+        {"item": "gt6:dust_tiny_rare_earth", "count": 18, "chance": 3000},
+        {"item": "gt6:dust_tiny_neodymium", "count": 27, "chance": 3000},
+        {"item": "gt6:dust_tiny_vanadium_pentoxide", "count": 27, "chance": 3000}
+      ],
+      "duration": 1296,
+      "eut": 64
+    },
+    {
+      "comment": "Loader_Recipes_Ores.java:64 verbatim (fixed row; eut 16 dur 1296)",
+      "inputs": [
+        {"item": "gt6:block_dust_moon_turf", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:dust_basalt", "count": 9, "chance": 3000},
+        {"item": "gt6:dust_tiny_meteoric_iron", "count": 9, "chance": 972},
+        {"item": "gt6:dust_tiny_neodymium", "count": 1, "chance": 972},
+        {"item": "gt6:dust_tiny_nickel", "count": 1, "chance": 972},
+        {"item": "gt6:dust_tiny_cobalt", "count": 1, "chance": 972},
+        {"item": "gt6:dust_tiny_manganese", "count": 1, "chance": 972}
+      ],
+      "duration": 1296,
+      "eut": 16
     },
     {
       "comment": "Loader_Recipes_Ores.java:61 verbatim (fixed row; eut 16 dur 16)",
