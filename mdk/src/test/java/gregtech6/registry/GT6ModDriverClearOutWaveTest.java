@@ -52,17 +52,22 @@ public class GT6ModDriverClearOutWaveTest {
      * ratchet protocol ADR-MDH4, histogram-verified pair-for-pair: 104 → 108 families, every
      * other family's count byte-identical; REVIEW FIX merge seat XVI). */
     private static final int BASELINE = 57113;
-    /** The per-domain kept-drop ledger (the card report's 对账表, offline-measured 2026-10-01). */
+    /** The per-domain kept-drop ledger (the card report's 对账表, offline-measured 2026-10-01),
+     * re-measured at review on the post-casing universe (probe run, forge offline leg): the
+     * casingMachine 210-material axis overlaps five domains' PRIMARY materials, whose casing
+     * pairs drop with their domain pin — TE +12, EIO +28, HBM +16, BOTA +16, MET +136
+     * (total 8026 → 8234; HaC/IC2/EP untouched, sum = joint = no cross-domain bleed).
+     * Review seat XVI. */
     private static final Map<String, Integer> PER_DOMAIN_DROPS = Map.of(
             MT.MD.HaC.mID, 211,
             MT.MD.IC2.mID, 75,
-            MT.MD.TE.mID, 324,
-            MT.MD.EIO.mID, 845,
-            MT.MD.HBM.mID, 892,
-            MT.MD.BOTA.mID, 1113,
+            MT.MD.TE.mID, 336,
+            MT.MD.EIO.mID, 873,
+            MT.MD.HBM.mID, 908,
+            MT.MD.BOTA.mID, 1129,
             MT.MD.GC_EXTRAPLANETS.mID, 1510,
-            MT.MD.MET.mID, 3056);
-    /** 57113 − 8026 = 49087: the eight-domain joint pin keeps the ledger arithmetic honest. */
+            MT.MD.MET.mID, 3192);
+    /** 57113 − 8234 = 48879: the eight-domain joint pin keeps the ledger arithmetic honest. */
     private static final int TOTAL_DROP = PER_DOMAIN_DROPS.values().stream().mapToInt(Integer::intValue).sum();
     /** Creative-visible prefix families before and after the wave — no family empties out
      * (97 + the 4 casingMachine families that landed post-freeze, see BASELINE). */
@@ -83,7 +88,7 @@ public class GT6ModDriverClearOutWaveTest {
     @Test
     public void perDomainKeptLedgerMatchesTheAtlas() {
         assertEquals(BASELINE, GTMaterialItems.registrationOrder().size(), "default universe unchanged (acceptance 2, zero-change proof)");
-        assertEquals(8026, TOTAL_DROP, "the eight-domain drop total (56273 → 48247)");
+        assertEquals(8234, TOTAL_DROP, "the eight-domain drop total (57113 → 48879)");
 
         Set<String> allDroppedNames = new HashSet<>();
         for (Map.Entry<String, Integer> tEntry : PER_DOMAIN_DROPS.entrySet()) {
@@ -114,7 +119,7 @@ public class GT6ModDriverClearOutWaveTest {
 
         // the eight-domain joint pin: exactly the 137 PRIMARY materials' pairs leave (no cross-domain bleed)
         for (String tDomain : PER_DOMAIN_DROPS.keySet()) GT6ModDrivers.setDriver(tDomain, DriverLevel.ABSENT);
-        assertEquals(BASELINE - TOTAL_DROP, GTMaterialItems.registrationOrder().size(), "all-eight ABSENT keeps 48247");
+        assertEquals(BASELINE - TOTAL_DROP, GTMaterialItems.registrationOrder().size(), "all-eight ABSENT keeps 48879");
         for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder())
             assertFalse(allDroppedNames.contains(tPair.material().mNameInternal),
                     "no PRIMARY material of any pinned domain survives the joint pin: " + tPair.material().mNameInternal);
@@ -178,7 +183,7 @@ public class GT6ModDriverClearOutWaveTest {
         GT6ModDrivers.reset();
         assertEquals(tDefaultTabs, tAbsentTabs, "no prefix family empties out — the tab set is unchanged");
         assertEquals(tDefaultTabItems - tEligible, tAbsentTabItems,
-                "the tab burden shrinks exactly by the tab-eligible share of the 8026 dropped pairs");
+                "the tab burden shrinks exactly by the tab-eligible share of the 8234 dropped pairs");
     }
 
     @Test

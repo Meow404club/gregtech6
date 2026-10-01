@@ -48,6 +48,21 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GT6ModDrivers;
 import gregtech6.registry.GT6ModDrivers.DriverLevel;
 
+/**
+ * The consumption-face pins of the clear-out wave: JSON rows referencing hidden ids bad-row
+ * out at reload, java walls drop through the upstream mat() null shape.
+ *
+ * <p><b>The third leg — the datagen walk face (review seat XVI):</b> the datagen recipe walks
+ * consume the same registration root. The proven NPE face (hopperRecipeBuilder,
+ * GTMaterialItems.get(...).get() under a live-FML seeded JVM) is guarded row-level by the
+ * f8ffa0bd1 review fix (the builder answers null, the walk callers skip — the JSON bad-row
+ * semantics); its convergence evidence is the runData both-legs rerun with a wiped output
+ * tree (forge 226952 files byte-identical to HEAD, neo datagen_tree_check OK 112037+67551).
+ * The remaining unguarded GTMaterialItems.get datagen sites are the re-activation card's
+ * obligation: the SEEDED_DOMAINS flip stays inert until every walk face carries the guard
+ * (activation preconditions: datagen-JVM short-circuit + the walk sweep + the committed-tree
+ * face — registration precedes GatherDataEvent, so a late reset cannot un-shrink the universe).
+ */
 public class GT6AbsentConsumptionLegTest extends GTRecipesOfflineTestBase {
 
     private static final Function<ResourceLocation, Item> sDefaultItems = GT6RecipeMapJsonLoader.sItemResolver;
