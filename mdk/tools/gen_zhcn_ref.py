@@ -3164,6 +3164,17 @@ LEGACY_BLOCK_BACKFILL = {
     'block.gt6.dark_oak_beam': '深色橡木梁',
     'block.gt6.rubber_wood_beam': '橡胶木梁',
     'block.gt6.wood_beam': '木梁',
+    # ---- the 9 tree planks (task gt-tree-planks) — hand rows, the <zhName>木板
+    # composition over the tree-family wording (no upstream zh face)
+    'block.gt6.rubber_planks': '橡胶树木板',
+    'block.gt6.maple_planks': '枫树木板',
+    'block.gt6.willow_planks': '柳树木板',
+    'block.gt6.blue_mahoe_planks': '蓝梧桐木板',
+    'block.gt6.hazel_planks': '榛树木板',
+    'block.gt6.cinnamon_planks': '肉桂木板',
+    'block.gt6.coconut_planks': '椰子树木板',
+    'block.gt6.rainbowood_planks': '彩虹木木板',
+    'block.gt6.blue_spruce_planks': '蓝云杉木板',
     # ---- the surface plants + fallen logs (task p30-w6-t2-surface-blocks)
     'block.gt6.glowtus': '荧光莲',
     'block.gt6.berry_bush': '浆果丛',

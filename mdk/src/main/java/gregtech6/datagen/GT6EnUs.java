@@ -2775,6 +2775,9 @@ public class GT6EnUs extends LanguageProvider {
             add("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_sapling"), tKind.enName() + " Sapling");
             add("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_log"), tKind.enName() + " Log");
             add("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_leaves"), tKind.enName() + " Leaves");
+            // task gt-tree-planks — the upstream LH rows verbatim (BlockTreePlanks.java:40-47,
+            // BlockTreePlanks2.java:45): "Rubberwood Planks" vs the sapling "Rubber"
+            add("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_planks"), tKind.plankEnName() + " Planks");
         }
     }
 

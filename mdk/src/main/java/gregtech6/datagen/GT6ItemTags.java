@@ -563,6 +563,9 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		for (RegistryObject<Item> tSapling : gregtech6.registry.GT6TreeBlocks.SAPLING_ITEMS) {
 			tag(net.minecraft.tags.ItemTags.SAPLINGS).add(item(tSapling.getId()));
 		}
+		for (RegistryObject<Item> tPlank : gregtech6.registry.GT6TreeBlocks.PLANK_ITEMS) { // task gt-tree-planks — the OD.plankWood face
+			tag(net.minecraft.tags.ItemTags.PLANKS).add(item(tPlank.getId()));
+		}
 	}
 
 	/**

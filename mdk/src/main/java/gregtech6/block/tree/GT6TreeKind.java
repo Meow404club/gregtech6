@@ -15,17 +15,22 @@ package gregtech6.block.tree;
  *
  * <p>{@code zhName} is the hand row (no upstream zh dump face exists for these blocks —
  * the anvil-family precedent, GT6ZhCn addAnvilUnits): the standard Chinese tree words.
+ *
+ * <p>{@code plankEnName} is the upstream plank display word (task gt-tree-planks,
+ * BlockTreePlanks.java:40-47 LH rows + BlockTreePlanks2.java:45) — verbatim differs
+ * from the sapling word on the rubber row ("Rubberwood" vs "Rubber"), which is why the
+ * column exists instead of reusing {@code enName}.
  */
 public enum GT6TreeKind {
-    RUBBER("rubber", "Rubber", "橡胶树"),
-    MAPLE("maple", "Maple", "枫树"),
-    WILLOW("willow", "Willow", "柳树"),
-    BLUE_MAHOE("blue_mahoe", "Blue Mahoe", "蓝梧桐"),
-    HAZEL("hazel", "Hazel", "榛树"),
-    CINNAMON("cinnamon", "Cinnamon", "肉桂"),
-    COCONUT("coconut", "Coconut", "椰子树"),
-    RAINBOWOOD("rainbowood", "Rainbowood", "彩虹木"),
-    BLUE_SPRUCE("blue_spruce", "Blue Spruce", "蓝云杉");
+    RUBBER("rubber", "Rubber", "橡胶树", "Rubberwood"),
+    MAPLE("maple", "Maple", "枫树", "Maple"),
+    WILLOW("willow", "Willow", "柳树", "Willow"),
+    BLUE_MAHOE("blue_mahoe", "Blue Mahoe", "蓝梧桐", "Blue Mahoe"),
+    HAZEL("hazel", "Hazel", "榛树", "Hazel"),
+    CINNAMON("cinnamon", "Cinnamon", "肉桂", "Cinnamon"),
+    COCONUT("coconut", "Coconut", "椰子树", "Coconut"),
+    RAINBOWOOD("rainbowood", "Rainbowood", "彩虹木", "Rainbowood"),
+    BLUE_SPRUCE("blue_spruce", "Blue Spruce", "蓝云杉", "Blue Spruce");
 
     /** The registry id segment ({@code <snake>_sapling/_log/_leaves}). */
     private final String mSnake;
@@ -33,11 +38,14 @@ public enum GT6TreeKind {
     private final String mEnName;
     /** The hand zh tree word (GT6ZhCn.addTreeBlocks). */
     private final String mZhName;
+    /** The upstream plank display word (BlockTreePlanks.java:40-47 / BlockTreePlanks2.java:45). */
+    private final String mPlankEnName;
 
-    GT6TreeKind(String aSnake, String aEnName, String aZhName) {
+    GT6TreeKind(String aSnake, String aEnName, String aZhName, String aPlankEnName) {
         mSnake = aSnake;
         mEnName = aEnName;
         mZhName = aZhName;
+        mPlankEnName = aPlankEnName;
     }
 
     public String snake() {
@@ -50,6 +58,11 @@ public enum GT6TreeKind {
 
     public String zhName() {
         return mZhName;
+    }
+
+    /** The upstream plank display word ({@code <plankEnName> + " Planks"}). */
+    public String plankEnName() {
+        return mPlankEnName;
     }
 
     /**
