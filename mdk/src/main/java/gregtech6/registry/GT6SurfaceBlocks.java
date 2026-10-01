@@ -190,11 +190,14 @@ public final class GT6SurfaceBlocks {
 	public static final RegistryObject<Block> GLOWTUS =
 			BLOCKS.register("glowtus", () -> new GT6GlowtusBlock(decoProperties(MapColor.PLANT, SoundType.GRASS)
 					.noCollission().lightLevel(aState -> 15)));
-	/** The berry bush, block-only (MTE 32759 "Berry Bush"; the berry NBT face cut, declared in GT6WildBushBlock). */
+	/** The berry bush (MTE 32759 "Berry Bush") — the growth state lives in the blockstate
+	 * (AGE_3+KIND, task bush-growth-blockstate; the five declared deviations in
+	 * GT6WildBushBlock), {@code randomTicks()} drives the vanilla growth roll. */
 	public static final RegistryObject<Block> BERRY_BUSH =
 			BLOCKS.register("berry_bush", () -> new GT6WildBushBlock(BlockBehaviour.Properties.of()
 					.mapColor(MapColor.PLANT).strength(0.5F, 0.3F) // Loader_MultiTileEntities.java:2030
-					.sound(SoundType.GRASS).noOcclusion().pushReaction(PushReaction.DESTROY)));
+					.sound(SoundType.GRASS).noOcclusion().pushReaction(PushReaction.DESTROY)
+					.randomTicks()));
 	/** The magnetite black sand (WorldgenBlackSand, the river-bed soil; the vanilla FallingBlock gravity idiom —
 	 * SandBlock died with the 1.21.2 merge so the shared face is the {@link GT6BlackSandBlock} subclass). */
 	public static final RegistryObject<Block> BLACK_SAND =
