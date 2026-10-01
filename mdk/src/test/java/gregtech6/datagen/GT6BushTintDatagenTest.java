@@ -4,9 +4,8 @@
  * the tintindex-0 model seat, multiplied per state by the kind's upstream BUSH BODY colour
  * (MultiTileEntityBush.java:236-240 {@code tBerryColor[0]}, stage-constant — the stage
  * colours [1..3] ride the CUT berry overlays) in {@code GT6BushTintListener}: the
- * blueberry 0x22ff22 / candleberry 0x44ff44 / cranberry 0x00dd00 rows
- * (MultiItemFood.java:397/:405/:409) and the cotton 0x22cc22 row (CS.java:1588/:1589,
- * the BushesGT.DEFAULT the kind-less item face keeps answering).
+ * nine-kind body table (MultiItemFood.java:397-429) and the cotton 0x22cc22 row
+ * (CS.java:1588/:1589, the BushesGT.DEFAULT the kind-less item face keeps answering).
  *
  * <p>Reads the committed generated tree on the classpath (the
  * {@link GT6MoldTintDatagenTest} form — no datagen run). The per-state arm drives a bare
@@ -38,10 +37,12 @@ public class GT6BushTintDatagenTest extends GTOfflineTestBase {
 	/** The upstream default bush colour, pinned literally (CS.java:1588 BushesGT.DEFAULT[0]). */
 	private static final int BUSH_TINT = 0xFF22CC22;
 
-	/** The upstream per-kind body colours, pinned literally (MultiItemFood.java:397/:405/:409 + :1588). */
+	/** The upstream per-kind body colours, pinned literally (MultiItemFood.java:397-429 + :1588). */
 	private static final int BLUEBERRY_TINT = 0xFF22FF22;
 	private static final int CANDLEBERRY_TINT = 0xFF44FF44;
 	private static final int CRANBERRY_TINT = 0xFF00DD00;
+	private static final int CURRANTS_TINT = 0xFF33FF33;
+	private static final int BRAMBLE_TINT = 0xFF11FF11;
 
 	private static GT6WildBushBlock BUSH;
 
@@ -117,6 +118,8 @@ public class GT6BushTintDatagenTest extends GTOfflineTestBase {
 				case BLUEBERRY -> BLUEBERRY_TINT;
 				case CANDLEBERRY -> CANDLEBERRY_TINT;
 				case CRANBERRY -> CRANBERRY_TINT;
+				case CURRANTS_BLACK, CURRANTS_WHITE, CURRANTS_RED -> CURRANTS_TINT;
+				case BLACKBERRY, RASPBERRY -> BRAMBLE_TINT;
 				case COTTON -> BUSH_TINT;
 			};
 			for (int tAge = 0; tAge <= 3; tAge++) {
@@ -129,8 +132,8 @@ public class GT6BushTintDatagenTest extends GTOfflineTestBase {
 						tKind + " at age " + tAge + ": a foreign tint index answers no-tint");
 			}
 		}
-		assertEquals(16, BUSH.getStateDefinition().getPossibleStates().size(),
-				"the arm walks the full 16-state grid the blockstate emits");
+		assertEquals(36, BUSH.getStateDefinition().getPossibleStates().size(),
+				"the arm walks the full 36-state grid the blockstate emits");
 	}
 
 	/** The borrow stays byte-identical to the upstream grayscale (a re-coloured PNG would double-multiply). */

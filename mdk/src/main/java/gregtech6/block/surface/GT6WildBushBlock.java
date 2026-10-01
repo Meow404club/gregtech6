@@ -71,20 +71,21 @@ import gregtech6.registry.GT6CropFoods;
  * single-block registration face and avoiding a 6× block-state spread.</li>
  * <li><b>Generic plantGtBerry planting face CUT</b>: the upstream right-click-a-berry
  * -onto-a-bush face (MultiTileEntityBush.java:173-178, OP.plantGtBerry + BushesGT.get)
- * stays unported — the {@link #KIND} quartet is fixed at the four worldgen kinds and
+ * stays unported — the {@link #KIND} nine is fixed at the worldgen kinds and
  * berries cannot be replanted. The Aether enchanted-grass {@code mSpeed = 2} row (:127)
  * is cut with it (foreign-mod compat, no port seat).</li>
  * </ol>
  *
- * <p>The {@link #KIND} quartet is the card ruling: the tint research card recorded the
- * BushesGT colour table as "3 berries + the string cotton" (CS.java:1581-1590 +
- * MultiItemFood.java:397/:405/:409) and pinned the KIND count at 4 (no expansion).
- * Factual note, declared: the upstream worldgen set is actually WIDER — BushesGT.MAP
- * receives 8 berry rows (MultiItemFood.java:397-429) plus the string default (:1589), so
- * the quartet is a card ruling, not the upstream full set. The berry carriers are the
- * T5a {@code GT6CropFoods} registrations; the cotton bush drops the vanilla
- * {@link Items#STRING} (WorldgenBushes.java:66 — the {@code Items.string} default; the
- * HarvestCraft {@code cottonItem} branch :69 is the foreign-conditional TRUE NEGATIVE).
+ * <p>The {@link #KIND} nine is the upstream worldgen full set: BushesGT.MAP receives the
+ * 8 berry rows (MultiItemFood.java:397-429 — blueberry/candleberry/cranberry, the three
+ * currants, blackberry, raspberry) plus the string default (:1589); gooseberry has no
+ * {@code BushesGT.put} and stays out. (The card originally pinned a 4-kind quartet off
+ * the research card's "3 berries + cotton" mis-read — the 2026-10-01 coordinator ruling
+ * corrected it to the full nine, the original intent "KIND = the MAP worldgen set".)
+ * The berry carriers are the T5a {@code GT6CropFoods} registrations; the cotton bush
+ * drops the vanilla {@link Items#STRING} (WorldgenBushes.java:66 — the
+ * {@code Items.string} default; the HarvestCraft {@code cottonItem} branch :69 is the
+ * foreign-conditional TRUE NEGATIVE).
  *
  * <p>The world face renders the upstream grayscale {@code bush.png} through the
  * tintindex-0 seat, tinted per state by the kind's BUSH BODY colour — the body colour is
@@ -104,7 +105,7 @@ public final class GT6WildBushBlock extends BushBlock implements BonemealableBlo
     /** The vanilla light gate (SweetBerryBushBlock.java:64 {@code getRawBrightness(pos.above(), 0) >= 9}). */
     public static final int GROWTH_LIGHT = 9;
 
-    /** The four worldgen kinds — the card ruling quartet (see the class javadoc factual note). */
+    /** The nine worldgen kinds — the upstream BushesGT.MAP full set (see the class javadoc). */
     public static final EnumProperty<Kind> KIND = EnumProperty.create("kind", Kind.class);
 
     /** The inset leaf-ball box (the non-full plant shape; MTE had a full-interact box). */
@@ -222,10 +223,11 @@ public final class GT6WildBushBlock extends BushBlock implements BonemealableBlo
     }
 
     /**
-     * One bush identity — the KIND quartet row. The colour is the upstream WORLD-render
+     * One bush identity — the KIND nine row. The colour is the upstream WORLD-render
      * BUSH BODY colour (MultiTileEntityBush.java:236-240 {@code tBerryColor[0]}, the
      * stage-constant face); the berry carrier is the T5a {@code GT6CropFoods} row id, or
-     * {@code null} for the vanilla string carrier (WorldgenBushes.java:66).
+     * {@code null} for the vanilla string carrier (WorldgenBushes.java:66). Rows ride the
+     * upstream MultiItemFood put order (:397-429), the string cotton last (the default).
      */
     public enum Kind implements net.minecraft.util.StringRepresentable {
 
@@ -235,6 +237,16 @@ public final class GT6WildBushBlock extends BushBlock implements BonemealableBlo
         CANDLEBERRY(0x44ff44, "food_candleberry"),
         /** MultiItemFood.java:409 (BushesGT.put 0x00dd00 body). */
         CRANBERRY(0x00dd00, "food_cranberry"),
+        /** MultiItemFood.java:413 (BushesGT.put 0x33ff33 body). */
+        CURRANTS_BLACK(0x33ff33, "food_currants_black"),
+        /** MultiItemFood.java:417 (BushesGT.put 0x33ff33 body). */
+        CURRANTS_WHITE(0x33ff33, "food_currants_white"),
+        /** MultiItemFood.java:421 (BushesGT.put 0x33ff33 body). */
+        CURRANTS_RED(0x33ff33, "food_currants_red"),
+        /** MultiItemFood.java:425 (BushesGT.put 0x11ff11 body). */
+        BLACKBERRY(0x11ff11, "food_blackberry"),
+        /** MultiItemFood.java:429 (BushesGT.put 0x11ff11 body). */
+        RASPBERRY(0x11ff11, "food_raspberry"),
         /** The string-cotton default bush (CS.java:1588/:1589 — the BushesGT.DEFAULT row). */
         COTTON(0x22cc22, null);
 

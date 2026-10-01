@@ -22,8 +22,9 @@ import gregtech6.registry.GT6SurfaceBlocks;
  * face answers the PER-STATE arm: the kind's upstream BUSH BODY colour —
  * {@code tBerryColor[0]} at every stage (MultiTileEntityBush.java:236-240; the stage
  * colours [1..3] ride the CUT berry overlay textures, so AGE does not move the tint) —
- * the blueberry 0x22ff22 / candleberry 0x44ff44 / cranberry 0x00dd00 rows
- * (MultiItemFood.java:397/:405/:409) and the cotton 0x22cc22 row (CS.java:1588/:1589).
+ * the nine-kind body table: blueberry 0x22ff22 / candleberry 0x44ff44 / cranberry
+ * 0x00dd00 / the three currants 0x33ff33 / blackberry + raspberry 0x11ff11
+ * (MultiItemFood.java:397-429) and the cotton 0x22cc22 row (CS.java:1588/:1589).
  * The tintindex-0 model seat and the grayscale borrow do not move.
  *
  * <p>The {@code GT6MoldTintListener} consumption shape, card-local subscriber (no

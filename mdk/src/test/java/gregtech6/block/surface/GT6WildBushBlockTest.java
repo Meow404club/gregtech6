@@ -1,6 +1,7 @@
 /**
  * Offline pins for task bush-growth-blockstate — the wild bush growth domain in its
- * blockstate form: the AGE_3 ↔ upstream mStage mapping, the KIND quartet, the vanilla
+ * blockstate form: the AGE_3 ↔ upstream mStage mapping, the KIND nine (the 2026-10-01
+ * coordinator ruling — the upstream BushesGT.MAP full set), the vanilla
  * growth roll (SweetBerryBushBlock.java:64) and the upstream harvest distribution
  * (MultiTileEntityBush.java:169 {@code ST.amount(1+rng(2), mBerry)}).
  *
@@ -69,8 +70,8 @@ class GT6WildBushBlockTest {
 		assertEquals(List.of(0, 1, 2, 3), List.copyOf(GT6WildBushBlock.AGE.getPossibleValues()),
 				"the four stages 0-3, the mStage range");
 		assertEquals(0, BUSH.defaultBlockState().getValue(GT6WildBushBlock.AGE), "birth = stage 0");
-		assertEquals(16, BUSH.getStateDefinition().getPossibleStates().size(),
-				"the full grid: 4 ages x 4 kinds");
+		assertEquals(36, BUSH.getStateDefinition().getPossibleStates().size(),
+				"the full grid: 4 ages x 9 kinds");
 		for (int tAge = 0; tAge < GT6WildBushBlock.MAX_AGE; tAge++) {
 			BlockState tState = BUSH.defaultBlockState().setValue(GT6WildBushBlock.AGE, tAge);
 			assertTrue(BUSH.isRandomlyTicking(tState), "age " + tAge + " rides the tick roll");
@@ -80,26 +81,28 @@ class GT6WildBushBlockTest {
 	}
 
 	// ------------------------------------------------------------------
-	// the KIND quartet pin (the card acceptance 2 — the T5a carrier tie)
+	// the KIND nine pin (the 2026-10-01 coordinator ruling — the MAP full set,
+	// the T5a carrier tie)
 	// ------------------------------------------------------------------
 
-	/** The 4-kind ruling: order, serialized names, the T5a food-row ids, the string cotton carrier. */
+	/** The 9-kind set: order, serialized names, the T5a food-row ids, the string cotton carrier. */
 	@Test
-	void kindQuartetIsTheCardRuling() {
+	void kindNineIsTheUpstreamWorldgenSet() {
 		GT6WildBushBlock.Kind[] tKinds = GT6WildBushBlock.Kind.values();
-		assertEquals(4, tKinds.length, "the card ruling quartet, no expansion");
-		assertEquals(List.of("blueberry", "candleberry", "cranberry", "cotton"),
-				List.of(tKinds[0].getSerializedName(), tKinds[1].getSerializedName(),
-						tKinds[2].getSerializedName(), tKinds[3].getSerializedName()),
-				"the serialized state names");
+		assertEquals(9, tKinds.length, "the BushesGT.MAP full set: 8 berries + the string cotton");
+		assertEquals(List.of("blueberry", "candleberry", "cranberry", "currants_black", "currants_white",
+						"currants_red", "blackberry", "raspberry", "cotton"),
+				java.util.Arrays.stream(tKinds).map(GT6WildBushBlock.Kind::getSerializedName).toList(),
+				"the serialized state names, upstream put order + cotton last");
 		List<String> tFoodRows = GT6CropFoods.FOOD_ROWS.stream().map(GT6CropFoods.CropFoodRow::id).toList();
-		assertEquals("food_blueberry", tKinds[0].foodPath(), "the T5a blueberry row");
-		assertEquals("food_candleberry", tKinds[1].foodPath(), "the T5a candleberry row");
-		assertEquals("food_cranberry", tKinds[2].foodPath(), "the T5a cranberry row");
-		assertTrue(tFoodRows.contains(tKinds[0].foodPath()) && tFoodRows.contains(tKinds[1].foodPath())
-				&& tFoodRows.contains(tKinds[2].foodPath()),
-				"the three berry carriers live in the T5a band (the berry() scan tie)");
-		assertSame(Items.STRING, tKinds[3].berry(),
+		for (int i = 0; i < 8; i++) {
+			assertEquals(List.of("food_blueberry", "food_candleberry", "food_cranberry", "food_currants_black",
+					"food_currants_white", "food_currants_red", "food_blackberry", "food_raspberry").get(i),
+					tKinds[i].foodPath(), "the T5a berry row " + tKinds[i]);
+			assertTrue(tFoodRows.contains(tKinds[i].foodPath()),
+					"the berry carrier lives in the T5a band (the berry() scan tie): " + tKinds[i]);
+		}
+		assertSame(Items.STRING, tKinds[8].berry(),
 				"the cotton bush drops the vanilla string (WorldgenBushes.java:66)");
 		assertSame(GT6WildBushBlock.Kind.COTTON, BUSH.defaultBlockState().getValue(GT6WildBushBlock.KIND),
 				"the default kind = the BushesGT.DEFAULT row (CS.java:1588) — the item-face continuity");
