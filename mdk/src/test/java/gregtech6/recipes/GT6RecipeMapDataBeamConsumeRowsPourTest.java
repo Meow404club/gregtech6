@@ -65,7 +65,7 @@ import net.minecraftforge.fluids.FluidStack;
 public class GT6RecipeMapDataBeamConsumeRowsPourTest extends GTRecipesOfflineTestBase {
 
 	/** The per-file total census (task beam-consume-increment deltas marked). */
-	private static final int SAWING_CENSUS = 3994, GENERIFIER_CENSUS = 8989, LATHE_CENSUS = 8;
+	private static final int SAWING_CENSUS = 3994, GENERIFIER_CENSUS = 9117, LATHE_CENSUS = 8; // 9117 = 8989 + the 128 weld-casing-increment casing rows (review-seat rebase seam sync: the pin was cut against the pre-casing baseline)
 	/** The beam-segment censuses: 7 pourable sawing calls x 5 legs, 7 generify rows, 8 lathe rows. */
 	private static final int SAWING_BEAM_ROWS = 35, GENERIFIER_BEAM_ROWS = 7, LATHE_BEAM_ROWS = 8;
 
