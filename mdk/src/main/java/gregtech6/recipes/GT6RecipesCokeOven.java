@@ -41,7 +41,9 @@ import gregapi.data.MT;
 import gregapi.data.OP;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
+import gregtech6.block.tree.GT6BeamKind;
 import gregtech6.fluid.GTFluids;
+import gregtech6.registry.GT6BeamBlocks;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 
@@ -82,8 +84,10 @@ import gregtech6.registry.GTMaterialItems;
  * resolvers below fall back to it, and the table carries all seven rows (39 total). The
  * Woods/OreDict/Crops/Tools dynamic surface (:176-180/:197-201, OreDict:205, Crops:76,
  * Tools:418) is replaced by the tag-driven {@link GT6CokeOvenTagListener} (one recipe per
- * #minecraft:logs item; beam/bamboo/wood-pellet have no tagged item and stay pooled —
- * the 8 wood-beam ITEMS exist since task beam-blocks-register, pooled by untagged-ness).
+ * #minecraft:logs item; beam/bamboo/wood-pellet have no tagged item — the 8 wood-beam
+ * rows since task beam-consume-increment ride the STATIC table below (the beam items
+ * existed since beam-blocks-register but are not log-tag members, so the tag listener
+ * never covered them; the pool justification was untagged-ness until this card).
  *
  * <p><b>Load timing</b> (ADR ruling ②): a self-contained MOD-bus listener pouring at
  * FMLCommonSetup.enqueueWork — the ConstructMod-time init (GTMachines.onModConstruct
@@ -105,10 +109,23 @@ public final class GT6RecipesCokeOven {
 	 * One transcribed upstream row: input (prefix, material, count), duration (ticks), the
 	 * fluid output as a gt6 fluid id path + amount in mB ({@code <= 0} = none — the upstream
 	 * NF slot), and the outputs. {@code note} carries the upstream line number for the audit
-	 * walk.
+	 * walk. The wood-beam rows (task beam-consume-increment) carry {@code inBeam} instead of
+	 * the prefix/material pair — the beams are block items outside the material universe.
 	 */
-	public record StaticRow(String note, OreDictPrefix inPrefix, OreDictMaterial inMaterial, int inCount,
-			long duration, String fluid, long fluidMB, Output... outputs) {}
+	public record StaticRow(String note, GT6BeamKind inBeam, OreDictPrefix inPrefix, OreDictMaterial inMaterial, int inCount,
+			long duration, String fluid, long fluidMB, Output... outputs) {
+
+		/** The prefix-material row form (the transcribed Loader_Recipes_Other rows). */
+		public StaticRow(String note, OreDictPrefix inPrefix, OreDictMaterial inMaterial, int inCount,
+				long duration, String fluid, long fluidMB, Output... outputs) {
+			this(note, null, inPrefix, inMaterial, inCount, duration, fluid, fluidMB, outputs);
+		}
+
+		/** The wood-beam row form (Loader_Recipes_Woods.java:197-201, task beam-consume-increment). */
+		public StaticRow(String note, GT6BeamKind aBeam, long duration, String fluid, long fluidMB, Output... outputs) {
+			this(note, aBeam, null, null, 1, duration, fluid, fluidMB, outputs);
+		}
+	}
 
 	/** The resolution seam: the live registry lookups by default, fixtures injected offline. */
 	static Function<Output, Item> sOutputItemResolver = GT6RecipesCokeOven::resolveItem;
@@ -118,8 +135,11 @@ public final class GT6RecipesCokeOven {
 	static Function<String, Fluid> sFluidResolver = GT6RecipesCokeOven::resolveFluid;
 
 	/**
-	 * The 39 transcribed material-universe rows (Loader_Recipes_Other.java:775-789 Coal,
-	 * :791-805 Lignite, :807-815 Oilshale), order mirroring the upstream file order.
+	 * The 47 transcribed rows: the 39 material-universe rows (Loader_Recipes_Other.java:775-789
+	 * Coal, :791-805 Lignite, :807-815 Oilshale) plus the 8 wood-beam rows (Loader_Recipes_Woods
+	 * .java:197-201, task beam-consume-increment), order mirroring the upstream files (the beam
+	 * walk order is the GT6BeamKind registration order — the upstream LIST_BEAMS dictionary
+	 * order differs only in the wood(:66)/rubber(:175) sequence).
 	 *
 	 * <p><b>Lazily built</b>: {@code TABLE} used to be a static field, but the
 	 * {@code @EventBusSubscriber} annotation scan class-loads this class at MOD CONSTRUCTION —
@@ -177,7 +197,19 @@ public final class GT6RecipesCokeOven {
 		new StaticRow(":812", OP.crushedPurifiedTiny   , MT.Oilshale, 9, 3600, FLUID_OIL, 250, new Output(OP.dustTiny, MT.Asphalt, 1)),
 		new StaticRow(":813", OP.crushedCentrifuged    , MT.Oilshale, 1, 3600, FLUID_OIL, 250, new Output(OP.dustTiny, MT.Asphalt, 1)),
 		new StaticRow(":814", OP.crushedCentrifugedTiny, MT.Oilshale, 9, 3600, FLUID_OIL, 250, new Output(OP.dustTiny, MT.Asphalt, 1)),
-		new StaticRow(":815", OP.blockDust             , MT.Oilshale, 1, 32400, FLUID_OIL, 2250, new Output(OP.dust, MT.Asphalt, 1)));
+		new StaticRow(":815", OP.blockDust             , MT.Oilshale, 1, 32400, FLUID_OIL, 2250, new Output(OP.dust, MT.Asphalt, 1)),
+		// Wood beams (Loader_Recipes_Woods.java:197-201 — task beam-consume-increment activates
+		// the beam-blocks-register pool; the per-beam shape is the BeamEntry.java:48-61 default
+		// chain: charcoal 1 + creosote 200, except the Rubber Wood face LoaderWoodDictionary
+		// .java:175 = creosote 300; :200 is the upstream addRecipe1 line)
+		new StaticRow(":200 oak_beam"        , GT6BeamKind.OAK        , 3600, FLUID_CREOSOTE, 200, new Output(OP.gem, MT.Charcoal, 1)),
+		new StaticRow(":200 spruce_beam"     , GT6BeamKind.SPRUCE     , 3600, FLUID_CREOSOTE, 200, new Output(OP.gem, MT.Charcoal, 1)),
+		new StaticRow(":200 birch_beam"      , GT6BeamKind.BIRCH      , 3600, FLUID_CREOSOTE, 200, new Output(OP.gem, MT.Charcoal, 1)),
+		new StaticRow(":200 jungle_beam"     , GT6BeamKind.JUNGLE     , 3600, FLUID_CREOSOTE, 200, new Output(OP.gem, MT.Charcoal, 1)),
+		new StaticRow(":200 acacia_beam"     , GT6BeamKind.ACACIA     , 3600, FLUID_CREOSOTE, 200, new Output(OP.gem, MT.Charcoal, 1)),
+		new StaticRow(":200 dark_oak_beam"   , GT6BeamKind.DARK_OAK   , 3600, FLUID_CREOSOTE, 200, new Output(OP.gem, MT.Charcoal, 1)),
+		new StaticRow(":200 rubber_wood_beam", GT6BeamKind.RUBBER_WOOD, 3600, FLUID_CREOSOTE, 300, new Output(OP.gem, MT.Charcoal, 1)),
+		new StaticRow(":200 wood_beam"       , GT6BeamKind.WOOD       , 3600, FLUID_CREOSOTE, 200, new Output(OP.gem, MT.Charcoal, 1)));
 		return tTable;
 	}
 
@@ -192,14 +224,15 @@ public final class GT6RecipesCokeOven {
 	 * The skipped upstream surface, kept as DATA for the audit walk (see class doc):
 	 * the block rows (:787-789/:803-805/:815) were p6/p7 pool and are BACKFILLED by task
 	 * prefixblock-registry (GTMaterialBlocks + the resolver fallback); the dynamic
-	 * log/beam family is now owned by the tag listener (beam/bamboo/wood-pellet have no
-	 * tagged counterpart → pooled; the 8 beam ITEMS exist since task
-	 * beam-blocks-register — they stay pooled by untagged-ness, not by absence).
+	 * log/beam family is owned by the tag listener (log face) — the beam face is NOT a
+	 * tag face (beams are not #minecraft:logs members), so its 8 rows are static table
+	 * rows since task beam-consume-increment (before that: the beam-blocks-register pool
+	 * by untagged-ness, before that: the p6 pool by item-absence).
 	 */
 	public static final List<String> SKIPPED_UPSTREAM = List.of(
 		"Loader_Recipes_Other.java:787-789/:803-805 — blockRaw/blockIngot/blockGem x Coal/Lignite: BACKFILLED by prefixblock-registry (GTMaterialBlocks block items; was the p6 pool)",
 		"Loader_Recipes_Other.java:815 — Oilshale blockDust row: BACKFILLED by prefixblock-registry (blockDust joined the block universe; was the p7 ruling)",
-		"Loader_Recipes_Woods.java:197-201 — beam family (was the p6 pool on item-absence: the 8 wood-beam items exist since task beam-blocks-register (gt6:oak_beam..gt6:wood_beam, the vanilla LIST_BEAMS subset LoaderWoodDictionary.java:51-56/:66/:175); they stay POOLED by untagged-ness — the wood surface is the #minecraft:logs tag listener and beams are not log-tag members; the per-beam rows (3600 t, creosote 200/300 mB, charcoal x1 — BeamEntry defaults, BeamEntry.java:35) ride a future coke-oven card if ever split from the tag mechanism)",
+		"Loader_Recipes_Woods.java:197-201 — beam family: ACTIVATED by beam-consume-increment as 8 static table rows (was the beam-blocks-register pool by untagged-ness, before that the p6 pool by item-absence; the 8 items gt6:oak_beam..gt6:wood_beam registered since beam-blocks-register are NOT #minecraft:logs members, so the tag listener never covered them — the rows carry the BeamEntry defaults, 3600 t, creosote 200/300 mB, charcoal x1, BeamEntry.java:35/:48-61 + LoaderWoodDictionary.java:175 for the 300 mB rubber face)",
 		"Loader_Recipes_Woods.java:165-180 log family — replaced by the #minecraft:logs tag listener (coordinator amendment 2026-08-30)",
 		"Loader_Recipes_Other.java:205 OreDict listener — no dynamic oredict surface; static pour only",
 		"Loader_Crops.java:76 bamboo / Loader_Tools.java:418 wood bullet (no counterpart item; p6 pool)");
@@ -272,6 +305,9 @@ public final class GT6RecipesCokeOven {
 
 	@Nullable
 	private static Item resolveInput(StaticRow aRow) {
+		if (aRow.inBeam() != null) { // the wood-beam rows: block items outside the material universe
+			return GT6BeamBlocks.ITEMS.get(aRow.inBeam().ordinal()).get(); // DeferredRegister handles, registration order
+		}
 		RegistryObject<Item> tHandle = GTMaterialItems.get(aRow.inPrefix(), aRow.inMaterial());
 		if (tHandle == null) tHandle = GTMaterialBlocks.get(aRow.inPrefix(), aRow.inMaterial()); // p8: the block universe
 		return tHandle == null ? null : tHandle.get();

@@ -23,6 +23,7 @@ import gregapi.data.MT;
 import gregapi.data.OP;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
+import gregtech6.block.tree.GT6BeamKind;
 import gregtech6.fluid.GTFluids;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
@@ -30,8 +31,10 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
  * The Coke Oven recipe pour (tasks cokeoven-processing + cokeoven-backfill +
- * prefixblock-registry): 39 rows = 32 item-universe rows + the 7 backfilled block rows
- * (Loader_Recipes_Other.java:787-789/:803-805/:815 — GTMaterialBlocks pairs).
+ * prefixblock-registry + beam-consume-increment): 47 rows = 32 item-universe rows + the 7
+ * backfilled block rows (Loader_Recipes_Other.java:787-789/:803-805/:815 — GTMaterialBlocks
+ * pairs) + the 8 wood-beam rows (Loader_Recipes_Woods.java:197-201, the GT6BeamKind universe,
+ * resolved through the beam registry input seam).
  * <ul>
  * <li>the transcription walk: every (prefix, material) pair of every row resolves inside
  *     the offline material universe (the union of {@link GTMaterialItems#registrationOrder}
@@ -42,9 +45,10 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
  *     Loader_Recipes_Other.java:807), and the p8 block rows (32400 t, 9*U/9*U2/27*U2/27*U4
  *     creosote + 9*U4 oil per the file scale), plus the full end-to-end pour + lookup
  *     through injected resolvers;</li>
- * <li>the pooled entries are now only the dynamic log family (beam/bamboo/wood-pellet),
- *     declared in {@link GT6RecipesCokeOven#SKIPPED_UPSTREAM}; the block rows are IN the
- *     table since p8 (declared there as backfilled);</li>
+ * <li>the pooled entries are now only the dynamic log face (bamboo/wood-pellet; the beam
+ *     face is static since beam-consume-increment), declared in
+ *     {@link GT6RecipesCokeOven#SKIPPED_UPSTREAM}; the block rows are IN the table since
+ *     p8 (declared there as backfilled);</li>
  * <li>the gt6:creosote/gt6:oil fluid id assertions (the registry itself is live-verified
  *     by the RCON chain — offline cannot touch the Forge registries).</li>
  * </ul>
@@ -62,6 +66,7 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 	 * mechanics only compare identities.
 	 */
 	private static final Map<PrefixMaterial, Item> SYNTHETIC_ITEMS = new java.util.HashMap<>();
+	private static final Map<GT6BeamKind, Item> SYNTHETIC_BEAMS = new java.util.HashMap<>();
 
 	@BeforeAll
 	static void buildSyntheticUniverse() {
@@ -88,6 +93,9 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 		for (PrefixMaterial tPair : GTMaterialBlocks.registrationOrder()) { // the p8 block universe
 			SYNTHETIC_ITEMS.putIfAbsent(tPair, tPool.get(tNext++ % tPool.size()));
 		}
+		for (GT6BeamKind tBeam : GT6BeamKind.values()) { // task beam-consume-increment: the beam universe
+			SYNTHETIC_BEAMS.put(tBeam, tPool.get(tNext++ % tPool.size()));
+		}
 		sDefaultOutputResolver = GT6RecipesCokeOven.sOutputItemResolver;
 		sDefaultInputResolver = GT6RecipesCokeOven.sInputItemResolver;
 		sDefaultFluidResolver = GT6RecipesCokeOven.sFluidResolver;
@@ -102,12 +110,20 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCokeOven.resetForTest();
 	}
 
+	/** The synthetic input resolver over both row forms (the prefix pairs and the beam items). */
+	private static Function<GT6RecipesCokeOven.StaticRow, Item> syntheticInputs() {
+		return tRow -> tRow.inBeam() != null
+				? SYNTHETIC_BEAMS.get(tRow.inBeam())
+				: SYNTHETIC_ITEMS.get(new PrefixMaterial(tRow.inPrefix(), tRow.inMaterial()));
+	}
+
 	/** Every row's input and output pairs must live in the registered universe (item + block, self-consistency). */
 	@Test
 	void walkAssertsEveryRowResolvesInTheUniverse() {
 		Set<PrefixMaterial> tUniverse = new HashSet<>(GTMaterialItems.registrationOrder());
 		tUniverse.addAll(GTMaterialBlocks.registrationOrder()); // the p8 block universe
 		for (GT6RecipesCokeOven.StaticRow tRow : GT6RecipesCokeOven.table()) {
+			if (tRow.inBeam() != null) continue; // beam rows validate through the beam input seam (beam-consume-increment); outputs below still ride the pair universe
 			assertTrue(tUniverse.contains(new PrefixMaterial(tRow.inPrefix(), tRow.inMaterial())),
 					"row " + tRow.note() + ": input " + tRow.inPrefix().mNameInternal + "/" + tRow.inMaterial().mNameInternal + " must be a registered pair");
 			for (GT6RecipesCokeOven.Output tOutput : tRow.outputs()) {
@@ -199,16 +215,15 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 	}
 
 	/**
-	 * The p8 flip: the seven block rows ARE transcribed (39 = 32 + 7), and the skip list
-	 * declares them backfilled instead of pooled; the remaining pools (beam, the log-family
-	 * replacement) stay declared. The beam pool entry rides the beam-blocks-register
-	 * refresh: the 8 wood-beam items EXIST (gt6:oak_beam..gt6:wood_beam), so the pool's
-	 * justification moved from item-absence to untagged-ness (the wood surface is the
-	 * #minecraft:logs tag listener; beams are not log-tag members).
+	 * The 47-total flip: the seven block rows ARE transcribed (backfilled by
+	 * prefixblock-registry) AND the 8 wood-beam rows are transcribed (activated by
+	 * beam-consume-increment — the pool chain ran item-absence -> untagged-ness ->
+	 * static rows, because beams are not #minecraft:logs members so the tag listener
+	 * never covered them).
 	 */
 	@Test
-	void blockRowsBackfilled39Total() {
-		assertEquals(39, GT6RecipesCokeOven.table().size(), "39 = 32 item-universe rows + 7 backfilled block rows");
+	void blockRowsBackfilledBeamRowsActivated47Total() {
+		assertEquals(47, GT6RecipesCokeOven.table().size(), "47 = 32 item-universe + 7 backfilled block + 8 wood-beam rows");
 		Map<String, GT6RecipesCokeOven.StaticRow> tByNote = new java.util.HashMap<>();
 		for (GT6RecipesCokeOven.StaticRow tRow : GT6RecipesCokeOven.table()) tByNote.put(tRow.note(), tRow);
 		for (String tNote : List.of(":787", ":788", ":789", ":803", ":804", ":805", ":815")) {
@@ -218,8 +233,9 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 		assertTrue(tSkipped.contains("BACKFILLED by prefixblock-registry"), "the block rows are declared backfilled, not pooled");
 		assertTrue(tSkipped.contains(":787-789/:803-805") && tSkipped.contains(":815"), "both former pool entries declare the backfill");
 		assertTrue(tSkipped.contains("beam"));
-		assertTrue(tSkipped.contains("beam-blocks-register"), "the beam pool entry declares the item registration follow-up");
-		assertTrue(tSkipped.contains("POOLED by untagged-ness"), "the beam pool survives on untagged-ness, no longer on 'no beam item'");
+		assertTrue(tSkipped.contains("beam-blocks-register"), "the beam entry names the item-registration card of its pool chain");
+		assertTrue(tSkipped.contains("ACTIVATED by beam-consume-increment"), "the beam face is a static 8-row activation, not a pool");
+		assertFalse(tSkipped.contains("POOLED by untagged-ness"), "the pooled wording must not survive the activation");
 		assertFalse(tSkipped.contains("no beam item"), "the retired absence wording must not survive the refresh");
 		assertTrue(tSkipped.contains("#minecraft:logs"), "the tag listener replaces the log family");
 	}
@@ -294,7 +310,7 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 	@Test
 	void pourResolvesAndRegistersAllRows() {
 		GT6RecipesCokeOven.sOutputItemResolver = tOutput -> SYNTHETIC_ITEMS.get(new PrefixMaterial(tOutput.prefix(), tOutput.material()));
-		GT6RecipesCokeOven.sInputItemResolver = tRow -> SYNTHETIC_ITEMS.get(new PrefixMaterial(tRow.inPrefix(), tRow.inMaterial()));
+		GT6RecipesCokeOven.sInputItemResolver = syntheticInputs();
 		GT6RecipesCokeOven.sFluidResolver = tFluidId -> Fluids.WATER; // stand-in carrier; the real fluid ids are asserted above
 
 		GT6RecipesCokeOven.load();
@@ -335,18 +351,18 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 	@Test
 	void unknownFluidIdSkipsRows() {
 		GT6RecipesCokeOven.sOutputItemResolver = tOutput -> SYNTHETIC_ITEMS.get(new PrefixMaterial(tOutput.prefix(), tOutput.material()));
-		GT6RecipesCokeOven.sInputItemResolver = tRow -> SYNTHETIC_ITEMS.get(new PrefixMaterial(tRow.inPrefix(), tRow.inMaterial()));
+		GT6RecipesCokeOven.sInputItemResolver = syntheticInputs();
 		GT6RecipesCokeOven.sFluidResolver = tFluidId -> GT6RecipesCokeOven.FLUID_CREOSOTE.equals(tFluidId) ? Fluids.WATER : null;
 
 		GT6RecipesCokeOven.load();
-		assertEquals(30, GT6RecipeMaps.COKE_OVEN.mRecipeList.size(), "the 9 oil rows skip when gt6:oil does not resolve (39 - 9 = 30)");
+		assertEquals(38, GT6RecipeMaps.COKE_OVEN.mRecipeList.size(), "the 9 oil rows skip when gt6:oil does not resolve (47 - 9 = 38)");
 	}
 
 	/** The oil-shale end-to-end lookup: dust Oilshale → dustTiny Asphalt + 250 mB oil (:807). */
 	@Test
 	void oilRowEndToEnd() {
 		GT6RecipesCokeOven.sOutputItemResolver = tOutput -> SYNTHETIC_ITEMS.get(new PrefixMaterial(tOutput.prefix(), tOutput.material()));
-		GT6RecipesCokeOven.sInputItemResolver = tRow -> SYNTHETIC_ITEMS.get(new PrefixMaterial(tRow.inPrefix(), tRow.inMaterial()));
+		GT6RecipesCokeOven.sInputItemResolver = syntheticInputs();
 		GT6RecipesCokeOven.sFluidResolver = tFluidId -> Fluids.WATER;
 
 		GT6RecipesCokeOven.load();
@@ -370,7 +386,7 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 	@Test
 	void blockRowEndToEnd() {
 		GT6RecipesCokeOven.sOutputItemResolver = tOutput -> SYNTHETIC_ITEMS.get(new PrefixMaterial(tOutput.prefix(), tOutput.material()));
-		GT6RecipesCokeOven.sInputItemResolver = tRow -> SYNTHETIC_ITEMS.get(new PrefixMaterial(tRow.inPrefix(), tRow.inMaterial()));
+		GT6RecipesCokeOven.sInputItemResolver = syntheticInputs();
 		GT6RecipesCokeOven.sFluidResolver = tFluidId -> Fluids.WATER;
 
 		GT6RecipesCokeOven.load();
@@ -399,7 +415,7 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCokeOven.sFluidResolver = tFluidId -> Fluids.WATER;
 		GT6RecipesCokeOven.load();
 		int tFirst = GT6RecipeMaps.COKE_OVEN.mRecipeList.size();
-		assertEquals(39, tFirst);
+		assertEquals(47, tFirst);
 		GT6RecipesCokeOven.load();
 		assertEquals(tFirst, GT6RecipeMaps.COKE_OVEN.mRecipeList.size(), "the second load must not stack");
 	}

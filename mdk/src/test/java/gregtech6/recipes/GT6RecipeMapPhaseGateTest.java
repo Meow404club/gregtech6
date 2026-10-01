@@ -94,7 +94,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 	private static final Map<String, Integer> SNAPSHOT = new LinkedHashMap<>();
 	static {
 		SNAPSHOT.put("FURNACE", 0);
-		SNAPSHOT.put("COKE_OVEN", 39);
+		SNAPSHOT.put("COKE_OVEN", 47); // beam-consume-increment: +8 wood-beam rows (Loader_Recipes_Woods.java:197-201, the GT6BeamKind static activation)
 		SNAPSHOT.put("SHREDDER", 398); // +45 task casing-machine-register (the shared-layer join, bumped by task squeezer-seed-legs after the two-commit verification: green 353 at f4077ef5d, red 398 at the casing merge 80bd8e605) — the 840 casingMachine-prefix registrations (4 prefixes x 210) light up 45 survivors of the ShCL RECYCLABLE ring gates (pourRecyclableRing, the GT6RecipesShCL:653 walk; this card ran its own registry domain and the recipes-domain ratchet follows here)
 		SNAPSHOT.put("CRUSHER", 1643); // +11 task machines-bumblelyzer-crucible — the bouleGt force-table item universe grows the ore-chain crush-back walk (the plate-gem/tiny/boule carriers)
 		SNAPSHOT.put("LATHE", 77); // +3 task machines-bumblelyzer-crucible — the same cascade over the lathe rod/wire walk
