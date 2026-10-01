@@ -200,14 +200,14 @@ public final class GT6Foods {
 		@Override
 		public void appendHoverText(ItemStack aStack, net.minecraft.world.level.Level aLevel, List<Component> aTooltip, TooltipFlag aFlag) {
 			super.appendHoverText(aStack, aLevel, aTooltip, aFlag);
-			aTooltip.add(Component.translatable(mTooltipKey));
+			if (mTooltipKey != null) aTooltip.add(Component.translatable(mTooltipKey));
 		}
 		//?} else {
 		/*@Override
 		public void appendHoverText(ItemStack aStack, Item.TooltipContext aContext, List<Component> aTooltip, TooltipFlag aFlag) {
 		//21.1: the hover signature carries the Item.TooltipContext (the GTPistolItem fork).
 			super.appendHoverText(aStack, aContext, aTooltip, aFlag);
-			aTooltip.add(Component.translatable(mTooltipKey));
+			if (mTooltipKey != null) aTooltip.add(Component.translatable(mTooltipKey));
 		}
 		*///?}
 	}

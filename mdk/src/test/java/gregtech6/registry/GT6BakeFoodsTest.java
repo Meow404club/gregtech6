@@ -15,6 +15,7 @@
 package gregtech6.registry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -186,11 +187,16 @@ public class GT6BakeFoodsTest {
 		}
 	}
 
-	/** The desc tooltip keys — the id-derived face (the GT6FoodsTest tooltipKeys form). */
+	/** The desc tooltip keys — the id-derived face, null on the empty-desc rows (the
+	 * raw-key guard: the four upstream "" rows emit no key, review-fix follow). */
 	@Test
 	public void tooltipKeysAreTheIdDerivedLiterals() {
 		for (GT6BakeFoods.BakeRow tRow : GT6BakeFoods.BAKE_ROWS) {
-			assertEquals("item.gt6." + tRow.id() + ".tooltip", tRow.tooltipKey());
+			if (tRow.enTooltip().isEmpty()) {
+				assertNull(tRow.tooltipKey(), tRow.id());
+			} else {
+				assertEquals("item.gt6." + tRow.id() + ".tooltip", tRow.tooltipKey());
+			}
 		}
 	}
 

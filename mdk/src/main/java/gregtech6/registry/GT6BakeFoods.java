@@ -79,9 +79,11 @@ public final class GT6BakeFoods {
 	 * and the alwaysEdible flag (the 4-flag head slot; T only on the Chum Burger).
 	 */
 	public record BakeRow(String id, String enName, int nutrition, float saturation, String enTooltip, boolean alwaysEdible) {
-		/** The desc tooltip lang key (the GT6Foods.FoodRow tooltipKey face). */
+		/** The desc tooltip lang key, null on the {@code ""} rows (the raw-key guard, the
+		 * GT6CropFoods.tooltipKey form — review fix, declared: the four empty-desc rows
+		 * must not emit a tooltip line, the upstream {@code ""} displays nothing). */
 		public String tooltipKey() {
-			return "item.gt6." + id + ".tooltip";
+			return enTooltip.isEmpty() ? null : "item.gt6." + id + ".tooltip";
 		}
 	}
 
