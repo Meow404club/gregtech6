@@ -2549,6 +2549,8 @@ direct	item.gt6.food_can_veggie_wide	宽食物罐头 (蔬菜)	hand
 direct	item.gt6.food_candleberry	蜡杨莓	hand
 direct	item.gt6.food_carrot_sliced	胡萝卜片	hand
 direct	item.gt6.food_carrot_sliced.tooltip	切片的胡萝卜	hand
+direct	item.gt6.food_cerublossom	暗影花	hand
+direct	item.gt6.food_cerublossom.tooltip	用于膜法	hand
 direct	item.gt6.food_cheese	奶酪	hand
 direct	item.gt6.food_cheese.tooltip	戳一戳	hand
 direct	item.gt6.food_cheese_sliced	奶酪片	hand
@@ -2588,6 +2590,8 @@ direct	item.gt6.food_cucumber_sliced.tooltip	黄~~~~~~~~~~~~~~~瓜~~~~~~~~~~~~~~
 direct	item.gt6.food_currants_black	黑醋栗	hand
 direct	item.gt6.food_currants_red	红醋栗	hand
 direct	item.gt6.food_currants_white	白醋栗	hand
+direct	item.gt6.food_desertnova	沙漠新星	hand
+direct	item.gt6.food_desertnova.tooltip	用于膜法	hand
 direct	item.gt6.food_dogmeat_cooked	烤狗肉	hand
 direct	item.gt6.food_dogmeat_cooked.tooltip	你真是日了狗了!	hand
 direct	item.gt6.food_dogmeat_raw	狗肉	hand

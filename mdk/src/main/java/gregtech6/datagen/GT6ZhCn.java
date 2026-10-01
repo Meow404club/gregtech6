@@ -2286,6 +2286,13 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.food_crop_oats"); // dump food.58
 		addDirect("item.gt6.food_crop_barley"); // dump food.59
 		addDirect("item.gt6.food_crop_rice"); // dump food.60
+		// task cbc-6-crop-test-faces — 两朵魔法花兜底物品 (dump gt.multiitem.food.12010/12011,
+		// tmp/gregtech.lang:8809-8812; en 名 = MultiItemFood.java:98-99 addItem 行 verbatim;
+		// 「用于膜法」为上游 zh 原貌, 不改)
+		addDirect("item.gt6.food_cerublossom"); // dump food.12010 暗影花
+		addDirect("item.gt6.food_cerublossom.tooltip"); // dump food.12010.tooltip 用于膜法
+		addDirect("item.gt6.food_desertnova"); // dump food.12011 沙漠新星
+		addDirect("item.gt6.food_desertnova.tooltip"); // dump food.12011.tooltip 用于膜法
 		addDirect("item.gt6.bending_cylinder_small"); // task food-can-row0 — dump gt.metatool.01.56 小型弯曲绕筒 (Loader_Tools.java:146 "Small Bending Cylinder")
 		addDirect("item.gt6.pickaxe"); // task w5-t1-dig-six — 镐 (dump tagprefix tool_head_pickaxe 镐头 :895, minus 头)
 		addDirect("item.gt6.pickaxe_gem"); // 镶尖镐 (dump tagprefix tool_head_pickaxe_gem 镶尖镐头 :896)

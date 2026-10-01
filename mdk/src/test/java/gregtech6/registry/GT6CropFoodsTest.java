@@ -11,7 +11,7 @@
  * intrusive-holder wall), so the assertion surface is the PURE table + registry-wiring
  * data + the FoodProperties construction (a vanilla record, constructible offline) —
  * the GT6FoodsTest posture verbatim. The inedible face is pinned at the table level: the
- * 12 PLAIN_ROWS register through the no-food Properties lambda (the registration code),
+ * the 14 PLAIN_ROWS register through the no-food Properties lambda (the registration code),
  * never through {@link GT6CropFoods#foodProperties}.
  */
 package gregtech6.registry;
@@ -62,12 +62,12 @@ public class GT6CropFoodsTest {
 		return new ResourceLocation("gt6", aPath);
 	}
 
-	/** The band census — EXACTLY 49 food rows + 12 inedibles = 61 registrations, zero skip. */
+	/** The band census — EXACTLY 49 food rows + 14 inedibles = 63 registrations, zero skip. */
 	@Test
 	public void theBandIsExactly49FoodsPlus12Inedibles() {
 		assertEquals(49, GT6CropFoods.FOOD_ROWS.size(), "the T5a food band: 49 rows");
-		assertEquals(12, GT6CropFoods.PLAIN_ROWS.size(), "the T5a inedibles: 4 apple cores + 8 fodder");
-		assertEquals(61, GT6CropFoods.ITEMS.getEntries().size(), "61 registrations total, zero skip");
+		assertEquals(14, GT6CropFoods.PLAIN_ROWS.size(), "the inedibles: 4 apple cores + 8 fodder + 2 magic flowers (cbc-6)");
+		assertEquals(63, GT6CropFoods.ITEMS.getEntries().size(), "63 registrations total, zero skip");
 	}
 
 	/**
@@ -109,15 +109,17 @@ public class GT6CropFoodsTest {
 	}
 
 	/**
-	 * The inedible ids + table order — the 4 apple cores then the 8 fodder rows (the
-	 * upstream order: cores :438-:459, grass states :53-56, crops :57-60). The cores carry
-	 * the mod-confusion tooltip, the grass/crop rows carry no key (the upstream "" rows).
+	 * The inedible ids + table order — the 4 apple cores, the 8 fodder rows, then the 2
+	 * magic flowers (the upstream order: cores :438-:459, grass states :53-56, crops :57-60,
+	 * flowers meta 12010-12011 :98-99). The cores carry the mod-confusion tooltip, the
+	 * grass/crop rows carry no key (the upstream "" rows), the flowers the magic tooltip.
 	 */
 	@Test
 	public void plainIdsRideTheUpstreamMetaOrder() {
 		String[] tIds = {"food_apple_green_core", "food_apple_yellow_core", "food_apple_red_core",
 				"food_apple_darkred_core", "food_grass", "food_grass_dry", "food_grass_moldy",
-				"food_grass_rotten", "food_crop_rye", "food_crop_oats", "food_crop_barley", "food_crop_rice"};
+				"food_grass_rotten", "food_crop_rye", "food_crop_oats", "food_crop_barley", "food_crop_rice",
+				"food_cerublossom", "food_desertnova"};
 		assertEquals(tIds.length, GT6CropFoods.PLAIN_ROWS.size());
 		for (int i = 0; i < tIds.length; i++) {
 			assertEquals(tIds[i], GT6CropFoods.PLAIN_ROWS.get(i).id(), "row " + i + " rides the upstream meta order");
@@ -127,6 +129,11 @@ public class GT6CropFoodsTest {
 		assertEquals("Make 9 of this into a Bale in order to dry it", GT6CropFoods.PLAIN_ROWS.get(4).enTooltip()); // :53
 		assertEquals("Useful for making a simple Fire Starter", GT6CropFoods.PLAIN_ROWS.get(5).enTooltip()); // :54
 		assertEquals("", GT6CropFoods.PLAIN_ROWS.get(8).enTooltip()); // the rye crop, :57
+		// the cbc-6 magic-flower face — the addItem lines verbatim (MultiItemFood.java:98-99)
+		assertEquals("Cerublossom", GT6CropFoods.PLAIN_ROWS.get(12).enName());
+		assertEquals("Used for magical Purposes", GT6CropFoods.PLAIN_ROWS.get(12).enTooltip());
+		assertEquals("Desert Nova", GT6CropFoods.PLAIN_ROWS.get(13).enName());
+		assertEquals("Used for magical Purposes", GT6CropFoods.PLAIN_ROWS.get(13).enTooltip());
 	}
 
 	/**
@@ -183,7 +190,7 @@ public class GT6CropFoodsTest {
 		assertEquals(31, tKeys, "the band's non-empty desc rows (49 foods - 18 empty: the 10 berries, 7 apple rows, hazelnut)");
 	}
 
-	/** The plain-row tooltip face: 6 non-empty keys (the cores + the 2 described grasses). */
+	/** The plain-row tooltip face: 8 non-empty keys (the cores + the 2 described grasses + the 2 magic flowers). */
 	@Test
 	public void plainTooltipKeysMatchTheUpstreamDescRows() {
 		int tKeys = 0;
@@ -195,7 +202,7 @@ public class GT6CropFoodsTest {
 				tKeys++;
 			}
 		}
-		assertEquals(6, tKeys, "4 apple cores + grass + dry grass (MultiItemFood.java:438-:459/:53-:54)");
+		assertEquals(8, tKeys, "4 apple cores + grass + dry grass (MultiItemFood.java:438-:459/:53-:54) + 2 flowers (:98-99)");
 	}
 
 	/**
@@ -253,6 +260,32 @@ public class GT6CropFoodsTest {
 			Path tPng = assetFile("textures/item/food/" + tBasename);
 			assertTrue(Files.isRegularFile(tPng), "the borrowed texture must exist: " + tPng);
 			String tHex = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(tPng)));
+			assertTrue(tReadme.contains(tBasename), tBasename + " — filename absent from assets/README.md");
+			assertTrue(tReadme.contains(tHex), tBasename + " — bytes hash to " + tHex + ", not grounded in the ledger");
+		}
+	}
+
+	/**
+	 * The 2 magic-flower placeholders (task cbc-6) — present, 16x16 PNG, and sha256-grounded
+	 * in the assets/README.md cbc-6 band (the borrow-grounding form; NOT byte-identical to
+	 * upstream, the declared P20 placeholder: re-drawing or re-encoding turns this red).
+	 */
+	@Test
+	public void magicFlowerPlaceholdersAreGroundedInTheLedger() throws Exception {
+		String[] tBasenames = {"cerublossom.png", "desertnova.png"};
+		String tReadme = Files.readString(mdkRoot().resolve("src/main/resources/assets/README.md"), StandardCharsets.UTF_8);
+		for (String tBasename : tBasenames) {
+			Path tPng = assetFile("textures/item/food/" + tBasename);
+			assertTrue(Files.isRegularFile(tPng), "the placeholder must exist: " + tPng);
+			byte[] tBytes = Files.readAllBytes(tPng);
+			assertTrue(tBytes.length > 24 && tBytes[0] == (byte)0x89 && tBytes[1] == 'P' && tBytes[2] == 'N' && tBytes[3] == 'G',
+					"PNG magic: " + tPng);
+			// the big-endian IHDR dimensions (the CropCardsTest ihdr face)
+			assertEquals(16, ((tBytes[16] & 0xFF) << 24) | ((tBytes[17] & 0xFF) << 16) | ((tBytes[18] & 0xFF) << 8) | (tBytes[19] & 0xFF),
+					"16px wide: " + tPng);
+			assertEquals(16, ((tBytes[20] & 0xFF) << 24) | ((tBytes[21] & 0xFF) << 16) | ((tBytes[22] & 0xFF) << 8) | (tBytes[23] & 0xFF),
+					"16px tall: " + tPng);
+			String tHex = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(tBytes));
 			assertTrue(tReadme.contains(tBasename), tBasename + " — filename absent from assets/README.md");
 			assertTrue(tReadme.contains(tHex), tBasename + " — bytes hash to " + tHex + ", not grounded in the ledger");
 		}

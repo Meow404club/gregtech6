@@ -191,14 +191,37 @@ public class CropCardsTest extends GTOfflineTestBase {
 
 	@Test
 	public void nullDropRowsSkipRegistration() {
-		assertNull(row("desertnova").drop(), ":643 the ARS item + the GT6 fallback both unported");
-		assertNull(GT6CropCards.card(row("desertnova")), "GT_BaseCrop.java:61 — no drop, no card");
-		assertNull(GT6CropCards.card(row("cerublossom")), ":644 same law");
+		// the declared absences stay null slots (the :61 law): Shimmerleaf's TC base seed,
+		// the Liveroots TF special drop, Cinderpearl's TC base seed
+		assertNull(row("shimmerleaf").baseSeed(), ":645 IL.TC_Shimmerleaf = foreign, declared absence");
+		assertNull(row("liveroots").specialDrops()[0], ":608 the TF_LiveRoot slot stays the null Seg");
+		assertNull(row("cinderpearl").baseSeed(), ":646 IL.TC_Cinderpearl = foreign, declared absence");
 		assertNull(GT6CropCards.resolve(null));
 	}
 
+	/**
+	 * The cbc-6 re-seat: :643-644 ride the GT6 fallback flowers (GT6CropFoods meta
+	 * 12010/12011, MultiItemFood.java:98-99) — drop = the ARS count 1 face, base seed =
+	 * the ARS count 4 face, both of the fallback item (the upstream
+	 * {@code get(1, fallback)/get(4, fallback)} shape, Compat_Recipes_IndustrialCraft
+	 * :643-644), and the cards LIVE under resolving resolvers (59 live, below).
+	 */
 	@Test
-	public void stubbedWalkYieldsFiftySevenLiveCardsAndThirtyFourBaseSeeds() {
+	public void theMagicRowsRideTheGt6FallbackFlowers() {
+		assertEquals("gt6:food_desertnova", row("desertnova").drop().id(), ":643 the IL.DesertNova fallback, count 1");
+		assertEquals(1, row("desertnova").drop().count());
+		assertEquals("gt6:food_desertnova", row("desertnova").baseSeed().id(), ":643 the base seed rides the fallback at 4");
+		assertEquals(4, row("desertnova").baseSeed().count());
+		assertEquals("gt6:food_cerublossom", row("cerublossom").drop().id(), ":644 the IL.Cerublossom fallback, count 1");
+		assertEquals(1, row("cerublossom").drop().count());
+		assertEquals("gt6:food_cerublossom", row("cerublossom").baseSeed().id(), ":644 the base seed rides the fallback at 4");
+		assertEquals(4, row("cerublossom").baseSeed().count());
+		assertNotNull(GT6CropCards.card(row("desertnova")), "GT_BaseCrop.java:61 — the drop resolves, the card lives");
+		assertNotNull(GT6CropCards.card(row("cerublossom")), ":644 same law");
+	}
+
+	@Test
+	public void stubbedWalkYieldsFiftyNineLiveCardsAndThirtySixBaseSeeds() {
 		int tLive = 0, tSeeded = 0;
 		Set<String> tNames = new HashSet<>();
 		for (GT6CropCards.CropCardRow tRow : GT6CropCards.rows()) {
@@ -214,8 +237,8 @@ public class CropCardsTest extends GTOfflineTestBase {
 				tSeeded++;
 			}
 		}
-		assertEquals(57, tLive, "59 rows minus the two declared-absence magic rows");
-		assertEquals(34, tSeeded, "the base-seed rows (grains ride the produce item, GT_BaseCrop.java:77)");
+		assertEquals(59, tLive, "59 rows, all live — the two magic rows ride the cbc-6 GT6 fallback flowers");
+		assertEquals(36, tSeeded, "the base-seed rows (grains ride the produce item, GT_BaseCrop.java:77; flowers the fallback at 4)");
 	}
 
 	@Test
@@ -262,6 +285,51 @@ public class CropCardsTest extends GTOfflineTestBase {
 		ItemStack tUnknown = new ItemStack(Items.WHEAT);
 		GT6CropSeeds.writeSeed(tUnknown, GT6CropSeeds.OWNER, "nosuchcrop", 1, 1, 1, 1);
 		assertNull(GT6CropSeeds.cropOf(tUnknown), "an unregistered crop id stays null");
+	}
+
+	/**
+	 * The seed tooltip IS the scan disclosure (task cbc-6, the ItemCropSeed.addInformation
+	 * :63-75 port): scan 4 discloses the three stat bytes after the crop name, scan 1 names
+	 * the crop only, scan 0 discloses nothing. The payload law guards keys, not the item
+	 * type (ItemCropSeed.getCropFromStack :125-132), so the face pins over a wheat stack.
+	 */
+	@Test
+	public void seedTooltipDisclosesByScanLevel() {
+		java.util.List<net.minecraft.network.chat.Component> tTooltip = new java.util.ArrayList<>();
+		ItemStack tScanned = new ItemStack(Items.WHEAT);
+		GT6CropSeeds.writeSeed(tScanned, GT6CropSeeds.OWNER, "rye", 7, 9, 11, 4);
+		GT6CropSeeds.appendSeedTooltip(tScanned, tTooltip);
+		assertEquals(4, tTooltip.size(), "the crop name line + the three stat lines at scan 4");
+		assertEquals("gt.crop.rye", ((net.minecraft.network.chat.contents.TranslatableContents) tTooltip.get(0).getContents()).getKey(),
+				"scan >= 1 names the crop through the cbc-3 lang family");
+		assertEquals("Gr 7", tTooltip.get(1).getString(), "the growth byte (the §2 face)");
+		assertEquals("Ga 9", tTooltip.get(2).getString(), "the gain byte (the §6 face)");
+		assertEquals("Re 11", tTooltip.get(3).getString(), "the resistance byte (the §3 face)");
+
+		java.util.List<net.minecraft.network.chat.Component> tNamed = new java.util.ArrayList<>();
+		ItemStack tScan1 = new ItemStack(Items.WHEAT);
+		GT6CropSeeds.writeSeed(tScan1, GT6CropSeeds.OWNER, "rye", 7, 9, 11, 1);
+		GT6CropSeeds.appendSeedTooltip(tScan1, tNamed);
+		assertEquals(1, tNamed.size(), "scan 1 discloses the name only (the stats stay hidden)");
+
+		java.util.List<net.minecraft.network.chat.Component> tBlind = new java.util.ArrayList<>();
+		ItemStack tScan0 = new ItemStack(Items.WHEAT);
+		GT6CropSeeds.writeSeed(tScan0, GT6CropSeeds.OWNER, "rye", 7, 9, 11, 0);
+		GT6CropSeeds.appendSeedTooltip(tScan0, tBlind);
+		assertTrue(tBlind.isEmpty(), "scan 0 = the undisclosed face (the upstream unknown-seed line), nothing shown");
+
+		java.util.List<net.minecraft.network.chat.Component> tUntagged = new java.util.ArrayList<>();
+		GT6CropSeeds.appendSeedTooltip(new ItemStack(Items.WHEAT), tUntagged);
+		assertTrue(tUntagged.isEmpty(), "a payload-less stack discloses nothing");
+	}
+
+	/** The cbc-6 fallback flowers exist in the T5a band — the crop-row seat is bound (the grain-bind census form). */
+	@Test
+	public void theMagicFallbacksSitInTheT5aBand() {
+		assertTrue(gregtech6.registry.GT6CropFoods.PLAIN_ROWS.stream().anyMatch(r -> r.id().equals("food_desertnova")),
+				"food_desertnova = the :643 fallback drop/base-seed carrier");
+		assertTrue(gregtech6.registry.GT6CropFoods.PLAIN_ROWS.stream().anyMatch(r -> r.id().equals("food_cerublossom")),
+				"food_cerublossom = the :644 fallback drop/base-seed carrier");
 	}
 
 	// ------------------------------------------------------------------ the ADR red lines

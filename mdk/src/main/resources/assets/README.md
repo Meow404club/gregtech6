@@ -12235,3 +12235,16 @@ Dedication** (same upstream `README.md` block as above).
   All 16x16 RGBA, CC0 1.0 per the upstream README block (the food-can faces on the
   MultiItemCans meta item, the food faces on MultiItemFood; cmp-verified 2026-10-01,
   79/79 byte-identical).
+
+## task cbc-6-crop-test-faces (2026-10-01) — the two magic-flower placeholder icons
+
+two COMPOSED placeholders: `gt6/textures/item/food/cerublossom.png` + `gt6/textures/item/food/desertnova.png` (the P20
+stdlib generator convention, 16x16 RGBA): the two magic-flower fallback items (MultiItemFood
+meta 12010/12011, the crop-row :643-644 seat) carry NO borrowable upstream icon — the
+`flowerCerublossom`/`flowerDesertNova` sprites are not in any repo snapshot (the
+tmp/gt6-1.7.10 assets prune item art; the port asset library never borrowed them). Hand-rolled
+8-petal flower pixels per flower (cerublossom = the 暗影花 violet petals + gold heart;
+desertnova = the 沙漠新星 desert-orange nova). NOT byte-identical to upstream — declared
+placeholder, swap for a borrow the day a snapshot surfaces. sha256
+`657bf0063261eb4b558db556dfc2ff3a8aeff9d0e2946446cb1e5fd83378bea3` /
+`6df7307f062bfa12d2e60ad81a3b1d821ce69e2872236d32fb2d248eb909c88e`.
