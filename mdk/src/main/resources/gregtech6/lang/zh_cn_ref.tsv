@@ -50,9 +50,11 @@ direct	block.gt6.black_sand	黑沙	hand
 direct	block.gt6.blackstone_anvil	黑石砧	hand
 direct	block.gt6.blue_mahoe_leaves	蓝梧桐树叶	hand
 direct	block.gt6.blue_mahoe_log	蓝梧桐原木	hand
+direct	block.gt6.blue_mahoe_planks	蓝梧桐木板	hand
 direct	block.gt6.blue_mahoe_sapling	蓝梧桐树苗	hand
 direct	block.gt6.blue_spruce_leaves	蓝云杉树叶	hand
 direct	block.gt6.blue_spruce_log	蓝云杉原木	hand
+direct	block.gt6.blue_spruce_planks	蓝云杉木板	hand
 direct	block.gt6.blue_spruce_sapling	蓝云杉树苗	hand
 direct	block.gt6.bookshelf_acacia	金合欢木书架	hand
 direct	block.gt6.bookshelf_birch	白桦木书架	hand
@@ -129,6 +131,7 @@ direct	block.gt6.cfoam_slab	建筑泡沫台阶	hand
 direct	block.gt6.chronometer	精确时间传感器	hand
 direct	block.gt6.cinnamon_leaves	肉桂树叶	hand
 direct	block.gt6.cinnamon_log	肉桂原木	hand
+direct	block.gt6.cinnamon_planks	肉桂木板	hand
 direct	block.gt6.cinnamon_sapling	肉桂树苗	hand
 direct	block.gt6.co2_laser	CO2激光器 (LV)	hand
 direct	block.gt6.co2_laser_t2	CO2激光器 (MV)	hand
@@ -137,6 +140,7 @@ direct	block.gt6.co2_laser_t4	CO2激光器 (EV)	hand
 direct	block.gt6.co2_laser_t5	CO2激光器 (IV)	hand
 direct	block.gt6.coconut_leaves	椰子树树叶	hand
 direct	block.gt6.coconut_log	椰子树原木	hand
+direct	block.gt6.coconut_planks	椰子树木板	hand
 direct	block.gt6.coconut_sapling	椰子树树苗	hand
 direct	block.gt6.crank	手摇曲柄	hand
 direct	block.gt6.crucible_adamantium	大型艾德曼合金坩埚	hand
@@ -244,6 +248,7 @@ direct	block.gt6.grass_yellow	草方块	hand
 direct	block.gt6.greg_o_lantern	格雷灯笼	hand
 direct	block.gt6.hazel_leaves	榛树树叶	hand
 direct	block.gt6.hazel_log	榛树原木	hand
+direct	block.gt6.hazel_planks	榛树木板	hand
 direct	block.gt6.hazel_sapling	榛树树苗	hand
 direct	block.gt6.heat_transmitter	传热装置	hand
 direct	block.gt6.heavyweightometer	重量级质量传感器	hand
@@ -319,6 +324,7 @@ direct	block.gt6.machine_wall_tungsten	钨壁板	hand
 direct	block.gt6.magic_absorber	魔法力场吸收器	hand
 direct	block.gt6.maple_leaves	枫树树叶	hand
 direct	block.gt6.maple_log	枫树原木	hand
+direct	block.gt6.maple_planks	枫树木板	hand
 direct	block.gt6.maple_sapling	枫树树苗	hand
 direct	block.gt6.mediumweightometer	中量级质量传感器	hand
 direct	block.gt6.mini_portal_end	微型末影传送门	hand
@@ -381,10 +387,12 @@ direct	block.gt6.rail_tungstencarbide	碳化钨轨道	hand
 direct	block.gt6.rail_tungstensteel	钨钢轨道	hand
 direct	block.gt6.rainbowood_leaves	彩虹木树叶	hand
 direct	block.gt6.rainbowood_log	彩虹木原木	hand
+direct	block.gt6.rainbowood_planks	彩虹木木板	hand
 direct	block.gt6.rainbowood_sapling	彩虹木树苗	hand
 direct	block.gt6.rotten_log	腐朽原木	hand
 direct	block.gt6.rubber_leaves	橡胶树树叶	hand
 direct	block.gt6.rubber_log	橡胶树原木	hand
+direct	block.gt6.rubber_planks	橡胶树木板	hand
 direct	block.gt6.rubber_sapling	橡胶树树苗	hand
 direct	block.gt6.rubber_wood_beam	橡胶木梁	hand
 direct	block.gt6.safe_keylocked_bronze	钥匙锁定青铜保险箱	hand
@@ -415,6 +423,7 @@ direct	block.gt6.ventilation_unit	通风单元	hand
 direct	block.gt6.water_wheel	水车	hand
 direct	block.gt6.willow_leaves	柳树树叶	hand
 direct	block.gt6.willow_log	柳树原木	hand
+direct	block.gt6.willow_planks	柳树木板	hand
 direct	block.gt6.willow_sapling	柳树树苗	hand
 direct	block.gt6.wire_electric_1x	1×导线	hand
 direct	block.gt6.wire_electric_2x	2×导线	hand

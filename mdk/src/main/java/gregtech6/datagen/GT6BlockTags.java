@@ -99,6 +99,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		addTreeBand(); // task w6-t1-trees-nine — the decisions.p25-leaves-logs-tags-deferred unlock
 		addSurfacePlantBand(); // task w6-t2-surface-blocks — the fallen logs (logs/axe) + the soil pair (shovel)
 		addBeamBand(); // task beam-blocks-register — the 8 wood beams join mineable/axe
+		addPlankBand(); // task gt-tree-planks — the 9 plank cubes (planks/axe)
 		addRailsBand(); // task rails-31-blocks — the 31 rails join #minecraft:rails
 		// the takeover seam: later cards tail-append their own add*Band() here
 		// (tags-prefix-materials: rolling batches).
@@ -279,6 +280,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	}
 
 	/**
+	/**
 	 * The wood-beam band (task beam-blocks-register): the 8 beams join
 	 * {@code minecraft:mineable/axe} — the upstream harvest-tool override
 	 * (BlockBaseBeam.java:54 {@code getHarvestTool = TOOL_axe}). NOT a #minecraft:logs
@@ -289,6 +291,23 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	private void addBeamBand() {
 		var tAxe = tag(BlockTags.MINEABLE_WITH_AXE);
 		for (RegistryObject<Block> tHandle : GT6BeamBlocks.BLOCKS) {
+			tAxe.add(tHandle.get());
+		}
+	}
+
+	/**
+	 * The plank band (task gt-tree-planks): the 9 GT6 plank cubes join
+	 * {@code #minecraft:planks} + {@code mineable/axe} — the upstream
+	 * {@code OM.reg(..., OD.plankWood)} walk (BlockTreePlanks.java:59-62 every meta except
+	 * the treated :10, BlockTreePlanks2.java:62-65) over the 9 port species rows, and the
+	 * axe face rides the vanilla planks row (vanilla-1.20.1 mineable/axe.json). The
+	 * function tag is LOAD-BEARING for crafting (the vanilla plank recipes gate on it).
+	 */
+	private void addPlankBand() {
+		var tPlanks = tag(BlockTags.PLANKS);
+		var tAxe = tag(BlockTags.MINEABLE_WITH_AXE);
+		for (RegistryObject<Block> tHandle : GT6TreeBlocks.PLANKS) {
+			tPlanks.add(tHandle.get());
 			tAxe.add(tHandle.get());
 		}
 	}

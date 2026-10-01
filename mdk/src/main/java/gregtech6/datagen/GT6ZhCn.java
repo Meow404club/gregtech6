@@ -845,9 +845,9 @@ public class GT6ZhCn extends LanguageProvider {
 
 	/**
 	 * The tree family zh faces (task w6-t1-trees-nine, the GT6EnUs.addTreeBlocks
-	 * mirror): the 27 block display names, all hand rows (no upstream zh dump face exists
+	 * mirror): the 27+9 block display names, all hand rows (no upstream zh dump face exists
 	 * for the 1.7.10 tree blocks — the anvil-family precedent), walked from
-	 * {@link gregtech6.registry.GT6TreeBlocks#KINDS}: "&lt;zhName&gt;树苗/原木/树叶" over the
+	 * {@link gregtech6.registry.GT6TreeBlocks#KINDS}: "&lt;zhName&gt;树苗/原木/树叶/木板" over the
 	 * TSV's direct band.
 	 */
 	private void addTreeUnits() {
@@ -855,6 +855,7 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_sapling"));
 			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_log"));
 			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_leaves"));
+			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_planks")); // task gt-tree-planks
 		}
 	}
 

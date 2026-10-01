@@ -278,6 +278,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addStoneSlabs(); // task debt-slab-gap — the 272 per-pair stone slabs (the upstream mSlabs[0] face)
         addGrassBlocks(); // task grass-block — the 6 per-pair GT grass variants
         addTreeBlocks(); // task w6-t1-trees-nine — the 27 per-pair tree blocks
+        addPlanks(); // task gt-tree-planks — the 9 per-pair plank cubes
         addFoamBlocks(); // task c-foam-block-family — the C-Foam pair + slabs + the owned carrier
         addSensors(); // task sensors-core — the three pioneer sensor blocks
         addAnvils(); // task c-anvil — the stone anvil pair
@@ -3673,6 +3674,25 @@ public final class GT6BlockStates extends BlockStateProvider {
             itemModels().withExistingParent(tSnake + "_leaves", modLoc("block/" + tSnake + "_leaves"));
         }
         LOGGER.info("GT6 tree blocks: 27 per-pair blockstates over 9 cross + 9 column + 9 leaves models");
+    }
+
+    /**
+     * Task gt-tree-planks — the 9 plank cubes ({@link gregtech6.registry.GT6TreeBlocks#PLANKS}):
+     * plain cube_all blockstates + item models, the vanilla planks idiom (the upstream
+     * BlockTreePlanks renders Textures.BlockIcons.PLANKS[meta] on every face — one texture
+     * per species, BlockTreePlanks.java:39 / BlockTreePlanks2.java:44). Textures are the
+     * upstream iconsets byte-borrows at {@code block/tree/planks_<snake>.png} (assets/README.md
+     * rows this card).
+     */
+    private void addPlanks() {
+        for (int i = 0; i < gregtech6.registry.GT6TreeBlocks.KINDS.size(); i++) {
+            gregtech6.block.tree.GT6TreeKind tKind = gregtech6.registry.GT6TreeBlocks.KINDS.get(i);
+            String tSnake = tKind.snake();
+            simpleBlock(gregtech6.registry.GT6TreeBlocks.PLANKS.get(i).get(),
+                    models().cubeAll(tSnake + "_planks", modLoc("block/tree/planks_" + tSnake)));
+            itemModels().withExistingParent(tSnake + "_planks", modLoc("block/" + tSnake + "_planks"));
+        }
+        LOGGER.info("GT6 planks: 9 cube_all blockstates over the 9 tree species");
     }
 
     /**

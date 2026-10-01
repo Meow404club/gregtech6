@@ -30,15 +30,19 @@ import gregtech6.worldgen.GT6Worldgen;
  * (GTGrassBlocks.PATHS rule), and the growsThrough face hands each sapling its
  * {@link GT6Worldgen#TREE_CONFIGURED_KEYS} entry.
  *
- * <p>Creative tabs: logs join {@code BUILDING_BLOCKS} (the upstream tabBlock join,
+ * <p>Creative tabs: logs+planks join {@code BUILDING_BLOCKS} (the upstream tabBlock join,
  * BlockBase.java:63), saplings+leaves join {@code NATURAL_BLOCKS} (the vanilla
  * sapling/leaves tab, CreativeModeTabs.java:635) — wired through the platform
  * {@code BuildCreativeModeTabContentsEvent} (the GTGrassBlocks.onBuildTabContents shape).
  *
  * <p>Self-contained {@code @EventBusSubscriber(MOD)} DeferredRegister attached from the
  * construct event (GTGrassBlocks.onModConstruct shape; ADR-P3-4: GT6Mod stays untouched).
- * The KJS registration face is declared DEFER to the kjs-binding card (the task-card
- * declaration); the worldgen JSON face is datapack-native and needs zero adaptation.
+ *
+ * <p>Task gt-tree-planks appends the 9 plank cubes ({@code <snake>_planks}, the upstream
+ * BlockTreePlanks meta 0-7 + BlockTreePlanks2 meta 0 face, LoaderWoodDictionary.java:69-113)
+ * to the same universe — 36 registrations total. The KJS registration face is declared
+ * DEFER to the kjs-binding card (the task-card declaration); the worldgen JSON face is
+ * datapack-native and needs zero adaptation.
  */
 @net.minecraftforge.fml.common.Mod.EventBusSubscriber(modid = "gt6", bus = net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6TreeBlocks {
@@ -55,8 +59,10 @@ public final class GT6TreeBlocks {
     public static final List<RegistryObject<Block>> LOGS = registerLogs();
     /** The 9 leaves, kind order. */
     public static final List<RegistryObject<Block>> LEAVES = registerLeaves();
+    /** The 9 planks, kind order (task gt-tree-planks — the upstream BlockTreePlanks meta 0-7 + BlockTreePlanks2 meta 0 face, LoaderWoodDictionary.java:69-113). */
+    public static final List<RegistryObject<Block>> PLANKS = registerPlanks();
 
-    /** The 27 block items, registration order (sapling-major, then log, then leaves). */
+    /** The 36 block items, registration order (sapling-major, then log, then leaves, then planks). */
     public static final List<RegistryObject<Item>> ITEMS = registerItems();
 
     /** The 9 sapling block items, kind order (the tab walks). */
@@ -65,8 +71,10 @@ public final class GT6TreeBlocks {
     public static final List<RegistryObject<Item>> LOG_ITEMS = ITEMS.subList(KINDS.size(), 2 * KINDS.size());
     /** The 9 leaves block items, kind order (the tab walks). */
     public static final List<RegistryObject<Item>> LEAF_ITEMS = ITEMS.subList(2 * KINDS.size(), 3 * KINDS.size());
+    /** The 9 plank block items, kind order (task gt-tree-planks — the tab walks). */
+    public static final List<RegistryObject<Item>> PLANK_ITEMS = ITEMS.subList(3 * KINDS.size(), 4 * KINDS.size());
 
-    /** The registry id of one family member: {@code <snake>_sapling} / {@code _log} / {@code _leaves}. */
+    /** The registry id of one family member: {@code <snake>_sapling} / {@code _log} / {@code _leaves} / {@code _planks}. */
     public static String path(GT6TreeKind aKind, String aSuffix) {
         return aKind.snake() + aSuffix;
     }
@@ -97,9 +105,18 @@ public final class GT6TreeBlocks {
         return List.copyOf(rList);
     }
 
+    /** The 9 planks (task gt-tree-planks): the 2x1 crafting-table plank face per species. */
+    private static List<RegistryObject<Block>> registerPlanks() {
+        List<RegistryObject<Block>> rList = new ArrayList<>(KINDS.size());
+        for (GT6TreeKind tKind : KINDS) {
+            rList.add(BLOCKS_REG.register(path(tKind, "_planks"), () -> new gregtech6.block.tree.GT6TreePlankBlock(tKind)));
+        }
+        return List.copyOf(rList);
+    }
+
     private static List<RegistryObject<Item>> registerItems() {
-        List<RegistryObject<Item>> rList = new ArrayList<>(3 * KINDS.size());
-        List<RegistryObject<Block>>[] tFamilies = new List[] {SAPLINGS, LOGS, LEAVES};
+        List<RegistryObject<Item>> rList = new ArrayList<>(4 * KINDS.size());
+        List<RegistryObject<Block>>[] tFamilies = new List[] {SAPLINGS, LOGS, LEAVES, PLANKS};
         for (List<RegistryObject<Block>> tFamily : tFamilies) {
             for (int i = 0; i < tFamily.size(); i++) {
                 int tIndex = i;
@@ -129,11 +146,14 @@ public final class GT6TreeBlocks {
         ITEMS_REG.register(tModBus);
     }
 
-    /** The tab joins (GTGrassBlocks.onBuildTabContents shape): logs = building, saplings+leaves = natural. */
+    /** The tab joins (GTGrassBlocks.onBuildTabContents shape): logs+planks = building, saplings+leaves = natural. */
     @net.minecraftforge.eventbus.api.SubscribeEvent
     public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
         if (aEvent.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
             for (RegistryObject<Item> tItem : LOG_ITEMS) {
+                aEvent.accept(new ItemStack(tItem.get()));
+            }
+            for (RegistryObject<Item> tItem : PLANK_ITEMS) { // task gt-tree-planks — the vanilla planks tab row
                 aEvent.accept(new ItemStack(tItem.get()));
             }
         } else if (aEvent.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
