@@ -12,6 +12,14 @@ planting, crossing, harvest and readout faces, with the tryPlantIn size
 argument carrying the mature arm — the upstream :464 signature, not a
 growth shortcut):
 
+  ADR-CB5 收官裁决条文 (task cbc-6-crop-test-faces, the chain-head verdict,
+  grep "ADR-CB5 收官裁决条文" to audit): 作物自然生长不进 RCON 断言 —
+  256t x N 周期在 RCON 会话不可行 (tier1 亦数千 tick; time set 与
+  randomTickSpeed 均不加速 BE 的 256t 定 tick), 生长正确性全权归离线
+  seeded 钉测 (CropMathTest / CropBlockEntityTest / CropEndToEndTest).
+  此结论不可再议; 本链的验收面恒为 放置/交互/读数 smoke 双腿
+  verdict [0, 0], 生长断言永不入册.
+
   A place: farmland + gt6:crop_sticks lands as the empty single stick
     ([crossing=false], readout "empty").
   B plant: /gt6crop plant <pos> rye -- the base-seed arm over the real
