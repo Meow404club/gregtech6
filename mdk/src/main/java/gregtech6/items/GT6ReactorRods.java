@@ -51,7 +51,9 @@ import gregtech6.reactor.neutron.ReactorRodKind;
  * <p>Creative tab: the upstream "Reactors" category pools into MACHINES_TAB (the
  * GT6Reactors pooling precedent). Textures: every rod shares the two borrowed
  * reactor_rods byte borrows (assets/README.md) — upstream differentiates the rods ONLY
- * by the material tint (mRGBa, RodBase.java:69-70), which rides the render-pool card.
+ * by the material tint (mRGBa, RodBase.java:69-70); the tint seat is unbuilt today
+ * (the render-pool card landed without the rod item face — the un-tinted shared icon
+ * stays the declared deviation).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6ReactorRods {

@@ -2341,8 +2341,9 @@ public final class GT6BlockStates extends BlockStateProvider {
      * {@link gregtech6.client.render.GTRodClientListener} replaces the per-state AND
      * item baked keys with {@link gregtech6.client.render.GTRodBakedModel}; this JSON
      * model stays as the fallback carrier and the item parent (the pipeBlockstate
-     * posture). The axle material TINT stays the tint-coverage-batch card's declared
-     * defer (this model rides untinted — GTMachinePaintTint untouched here).
+     * posture). The axle material TINT landed with task axle-tint-arm (the baked model's
+     * consumer-side arm; the inventory face is the registered axleRowTintARGB ItemColor)
+     * — this JSON fallback itself stays untinted.
      */
     private void addAxles() {
         ModelFile tModel = models().cubeColumn("axle", modLoc("block/axle"), modLoc("block/axle"));
@@ -2372,9 +2373,9 @@ public final class GT6BlockStates extends BlockStateProvider {
      * rotated per FACING with the addSensors band (FACING points AT the host). The
      * per-face colored top/bottom art stays unborrowed — the side icon textures every
      * face (the declared texture deviation, the borrow is the p12 card's). The elements
-     * carry tintindex 0 as the future tint seat (the material dye is the
-     * tint-coverage-batch card's declared defer — GTMachinePaintTint is NOT touched by
-     * this card, so the seat is inert today).
+     * carry tintindex 0 as the future tint seat (the material dye has landed nowhere
+     * since — the tint-coverage-batch card merged without the attachments, so the seat
+     * is inert today).
      */
     private void addAttachments() {
         ModelFile tTap = attachmentModel("block/attachment_tap", "tap", new float[][] {

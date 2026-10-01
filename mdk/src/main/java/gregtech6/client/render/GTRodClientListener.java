@@ -28,8 +28,8 @@ import gregtech6.registry.GTItemPipes;
  * <p>① PARAM TABLE (main-thread, at FMLClientSetupEvent — after registration, before the
  * first resource reload): every rod block registry path → its immutable
  * {@link GTRodBakedModel.Params} (borrowed texture set, PX_P diameter, overlay bands)
- * plus the tint carrier block (the pipe rows; the axles ride null — the paint-tint
- * coverage for the axle family is the tint-coverage-batch card's defer). The paths come
+ * plus the tint carrier block (the pipe/wire rows; the axles ride null — their tint
+ * resolves consumer-side off the state's GTAxleBlock carrier, task axle-tint-arm). The paths come
  * from the registration tables themselves ({@link GTFluidPipes#ROWS},
  * {@link GTItemPipes#ROWS}, {@link GT6Logistics#LOGISTICS_WIRE},
  * {@link GT6Kinetics#AXLE_BLOCKS}), so path drift is structurally impossible.
@@ -60,7 +60,8 @@ public final class GTRodClientListener {
 
 	private static volatile boolean sBuilt = false;
 
-	/** One row's bake identity: the model params plus the tint carrier (null = untinted). */
+	/** One row's bake identity: the model params plus the tint carrier (null = the axle rows —
+	 * the consumer-side axle arm keys on the state's GTAxleBlock carrier, task axle-tint-arm). */
 	public record Entry(GTRodBakedModel.Params params, @Nullable Block block) {}
 
 	private GTRodClientListener() {
@@ -127,8 +128,8 @@ public final class GTRodClientListener {
 		PARAMS.put(GT6Logistics.WIRE_PATH, new Entry(new GTRodBakedModel.Params(
 				LOGISTICS_WIRE, List.of(LOGISTICS_WIRE_OVERLAY), 6),
 				GT6Logistics.LOGISTICS_WIRE.get()));
-		// the 44 axles — the borrowed static axle sprite, no overlays, NO tint (the
-		// tint-coverage-batch card's declared defer; block = null keeps the model untinted)
+		// the 44 axles — the borrowed static axle sprite, no overlays; block = null routes
+		// the model's consumer-side axle tint arm (task axle-tint-arm)
 		for (var tAxle : GT6Kinetics.AXLE_BLOCKS.values()) {
 			PARAMS.put(tAxle.getId().getPath(), new Entry(new GTRodBakedModel.Params(
 					AXLE, List.of(), tAxle.get().diameterPx), null));
