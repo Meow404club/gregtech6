@@ -147,8 +147,16 @@ public final class GT6CropSeeds {
 	 */
 	@Nullable
 	public static ItemStack tryGenerate(GT6CropCard aCard, int aGrowth, int aGain, int aResistance, int aScan) {
+		// the bound check rides the holder face — RegistryObject.get()/DeferredHolder.get()
+		// THROW on an unbound registry, so the former get()==null dead check never answered
+		// the documented offline fallback (exposed by the cbc-6 end-to-end driver on the bare
+		// forge JVM; the neo FML test JVM binds live and skips this arm).
+		//? if forge {
+		if (!CROP_SEED.isPresent()) return null;
+		//?} else {
+		/*if (!CROP_SEED.isBound()) return null;
+		 *///?}
 		Item tItem = CROP_SEED.get();
-		if (tItem == null) return null;
 		ItemStack rStack = new ItemStack(tItem);
 		writeSeed(rStack, OWNER, aCard.name(), aGrowth, aGain, aResistance, aScan);
 		return rStack;
