@@ -55,6 +55,7 @@ class GT6RecipeGenerationGuardTest extends GTRecipesOfflineTestBase {
 			"gregtech6.recipes.GT6RecipesShCL",
 			"gregtech6.recipes.GT6RecipesStoneChisel",
 			"gregtech6.recipes.GT6RecipesCanner", // task canner-machine — the refill pour joins the ledger
+			"gregtech6.recipes.GT6RecipesMeat", // task food-meat-recipes — the listener-walk pour joins the ledger
 			"gregtech6.recipes.GT6RecipeMapJsonLoader", // task tier-b-rm-json-loader — the JSON subset tracker joins the ledger
 			"gregtech6.recipes.GT6RecipesMixer", // task c-foam-fluid-refill — the C-Foam rock/Pd pour joins the ledger
 			"gregtech6.recipes.GT6RecipesSifter", // task w1-sifter-compressor-wiremill — the W1 trio joins the ledger

@@ -73,6 +73,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 			"gregtech6.recipes.GT6RecipesShCL",
 			"gregtech6.recipes.GT6RecipesStoneChisel",
 			"gregtech6.recipes.GT6RecipesCanner",
+			"gregtech6.recipes.GT6RecipesMeat", // task food-meat-recipes — the listener-walk pour joins the ledger (30 canned + 12 fermenter + 16 mortar + 1 bath)
 			"gregtech6.recipes.GT6RecipeMapJsonLoader",
 			"gregtech6.recipes.GT6RecipesMixer",
 			"gregtech6.recipes.GT6RecipesSifter",
