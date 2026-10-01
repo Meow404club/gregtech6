@@ -45,6 +45,13 @@ import net.minecraft.world.level.levelgen.feature.configurations.RandomFeatureCo
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.DiskConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
+import net.minecraft.world.level.levelgen.feature.stateproviders.RandomizedIntStateProvider;
+import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
+import net.minecraft.util.random.SimpleWeightedRandomList;
+import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.level.block.state.BlockState;
+
+import gregtech6.block.surface.GT6WildBushBlock;
 import net.minecraft.world.level.levelgen.feature.stateproviders.RuleBasedBlockStateProvider;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
@@ -1237,8 +1244,23 @@ public final class GT6WorldgenDatagen {
     ) {
         FeatureUtils.register(ctx, GT6Worldgen.GLOWTUS_CONFIGURED, Feature.SIMPLE_BLOCK,
                 new SimpleBlockConfiguration(BlockStateProvider.simple(GT6SurfaceBlocks.GLOWTUS.get().defaultBlockState())));
+        // The bush (task bush-growth-blockstate): the KIND quartet weighted-uniform x the
+        // AGE 0-3 randomizer (the vanilla RandomizedIntStateProvider seat over the weighted
+        // kind states). DECLARED: the upstream kind pick is the position-noise index over
+        // BushesGT.MAP (WorldgenBushes.java:66 NoiseGenerator aX/2,300,aZ/2) — the port
+        // collapses the noise patching to per-placement uniform over the card's 4-kind
+        // ruling; the upstream birth stage is FIXED 3 (placeBushCore :86 NBT_STATE 3) —
+        // the card pins the RANDOMIZED birth stage (the card acceptance 5, the single-block
+        // world regrows from 0 so an all-ripe world would never re-green).
+        BlockState tBushBase = GT6SurfaceBlocks.BERRY_BUSH.get().defaultBlockState();
         FeatureUtils.register(ctx, GT6Worldgen.BUSH_CONFIGURED, Feature.SIMPLE_BLOCK,
-                new SimpleBlockConfiguration(BlockStateProvider.simple(GT6SurfaceBlocks.BERRY_BUSH.get().defaultBlockState())));
+                new SimpleBlockConfiguration(new RandomizedIntStateProvider(
+                        new WeightedStateProvider(new SimpleWeightedRandomList.Builder<BlockState>()
+                                .add(tBushBase.setValue(GT6WildBushBlock.KIND, GT6WildBushBlock.Kind.BLUEBERRY), 1)
+                                .add(tBushBase.setValue(GT6WildBushBlock.KIND, GT6WildBushBlock.Kind.CANDLEBERRY), 1)
+                                .add(tBushBase.setValue(GT6WildBushBlock.KIND, GT6WildBushBlock.Kind.CRANBERRY), 1)
+                                .add(tBushBase.setValue(GT6WildBushBlock.KIND, GT6WildBushBlock.Kind.COTTON), 1)),
+                        GT6WildBushBlock.AGE, UniformInt.of(0, GT6WildBushBlock.MAX_AGE))));
         BlockPredicate tSoil = BlockPredicate.matchesBlocks(Blocks.DIRT, Blocks.SAND, Blocks.RED_SAND,
                 Blocks.GRAVEL, Blocks.CLAY); // the WorldgenBlackSand.java:62 / WorldgenPit.java:67-69 replaceable set
         FeatureUtils.register(ctx, GT6Worldgen.BLACKSAND_CONFIGURED, Feature.DISK, new DiskConfiguration(

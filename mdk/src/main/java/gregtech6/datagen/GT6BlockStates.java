@@ -3725,9 +3725,12 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .end();
         simpleBlock(GT6SurfaceBlocks.GLOWTUS.get(), tGlowtus);
         itemModels().withExistingParent("glowtus", modLoc("block/glowtus"));
-        // the berry bush: the tinted cube (the grayscale tintable borrow, index 0)
-        simpleBlock(GT6SurfaceBlocks.BERRY_BUSH.get(),
-                tintedCubeAll("block/berry_bush", modLoc("block/berry_bush")));
+        // the berry bush: the tinted cube (the grayscale tintable borrow, index 0) over the
+        // full 16-state grid (AGE_3 x KIND, task bush-growth-blockstate) — one model, every
+        // state points at it (the per-state colour rides the GT6BushTintListener arm)
+        BlockModelBuilder tBerryBush = tintedCubeAll("berry_bush", modLoc("block/berry_bush"));
+        getVariantBuilder(GT6SurfaceBlocks.BERRY_BUSH.get())
+                .forAllStates(tState -> new ConfiguredModel[] {new ConfiguredModel(tBerryBush)});
         itemModels().withExistingParent("berry_bush", modLoc("block/berry_bush"));
         // the two finished cubes: black sand, turf
         for (String tPath : new String[] {"black_sand", "turf"}) {
