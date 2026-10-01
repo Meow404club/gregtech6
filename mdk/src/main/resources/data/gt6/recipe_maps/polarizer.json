@@ -1,5 +1,5 @@
 {
-  "comment": "task recipe-data-b2c-generify - the Polarizer static replay. Row sources: RM.Polarizer.add(RecipeMapHandlerMaterial) x3 - MT.Nd -> MT.NeodymiumMagnetic eut 128 (Loader_Recipes_Handlers.java:658), the ANY.Fe walk -> MT.IronMagnetic eut 16 (:714, 8 port group members), the ANY.Steel walk -> MT.SteelMagnetic eut 16 (:721, 3 port group members); condition Nor(PREFIX_UNUSED, PLANT_DROP, IS_CONTAINER, DUST_BASED, ORE, ORE_PROCESSING_BASED, scrapGt, ingotHot) :655 - dust-family, ore-family, container, plant-drop, scrap and hot-ingot prefixes are excluded upstream, which is why the magnetic rows ride ingots/plates/rods but no dusts; engine RecipeMapHandlerMaterial.addRecipeForPrefix gregapi/recipes/handlers/RecipeMapHandlerMaterial.java:127-138 - duration Math.max(1, units(prefix.mAmount, U, 144, roundUp)), fluid legs null. DECLARED DEVIATION (handler semantics -> JSON static rows): query-time lazy per-material generation frozen to the port universe snapshot (GTMaterialItems.registrationOrder, both-side item existence against the magnetic materials) - the craftfrom 962-row precedent deviation class. WALK ROW PROVENANCE: the 843 rows carry NO per-row comment (scale ruling) - the per-row provenance IS the GT6RecipeMapDataB2cGenerifyRowsPourTest live-walk cross-check over the live registration. DECLARED OVER-CAP: 843 rows / ~12k lines, over the 5000-line series soft cap by ruling, same methodology note as the generifier head. REPLACED SMOKE ROW: the p29-w1 smoke row (minecraft:redstone -> minecraft:glowstone_dust, duration 16 eut 16) carried no polarizer semantics and is gone. The magnetic materials are ported (MT.java:2473/:2476/:2477 setGenerifying anchors). Row census: 72 Nd + 555 Fe-walk + 216 Steel-walk = 843.",
+  "comment": "task recipe-data-b2c-generify - the Polarizer static replay. Row sources: RM.Polarizer.add(RecipeMapHandlerMaterial) x3 - MT.Nd -> MT.NeodymiumMagnetic eut 128 (Loader_Recipes_Handlers.java:658), the ANY.Fe walk -> MT.IronMagnetic eut 16 (:714, 8 port group members), the ANY.Steel walk -> MT.SteelMagnetic eut 16 (:721, 3 port group members); condition Nor(PREFIX_UNUSED, PLANT_DROP, IS_CONTAINER, DUST_BASED, ORE, ORE_PROCESSING_BASED, scrapGt, ingotHot) :655 - dust-family, ore-family, container, plant-drop, scrap and hot-ingot prefixes are excluded upstream, which is why the magnetic rows ride ingots/plates/rods but no dusts; engine RecipeMapHandlerMaterial.addRecipeForPrefix gregapi/recipes/handlers/RecipeMapHandlerMaterial.java:127-138 - duration Math.max(1, units(prefix.mAmount, U, 144, roundUp)), fluid legs null. DECLARED DEVIATION (handler semantics -> JSON static rows): query-time lazy per-material generation frozen to the port universe snapshot (GTMaterialItems.registrationOrder, both-side item existence against the magnetic materials) - the craftfrom 962-row precedent deviation class. WALK ROW PROVENANCE: the 887 rows carry NO per-row comment (scale ruling) - the per-row provenance IS the GT6RecipeMapDataB2cGenerifyRowsPourTest live-walk cross-check over the live registration. DECLARED OVER-CAP: 887 rows / ~13k lines, over the 5000-line series soft cap by ruling, same methodology note as the generifier head. REPLACED SMOKE ROW: the p29-w1 smoke row (minecraft:redstone -> minecraft:glowstone_dust, duration 16 eut 16) carried no polarizer semantics and is gone. The magnetic materials are ported (MT.java:2473/:2476/:2477 setGenerifying anchors). CASING RE-INCREMENT (task weld-casing-increment): the casingMachine* item families (registered port-side by casing-machine-register, 80bd8e605) pass the Nor condition gate - +44 walk rows (4 Nd + 28 Fe-walk + 12 Steel-walk), the engine semantics unchanged. Row census: 76 Nd + 583 Fe-walk + 228 Steel-walk = 887.",
   "recipes": [
     {
       "inputs": [
@@ -13487,6 +13487,446 @@
         }
       ],
       "duration": 18,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_cast_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_iron_magnetic", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_dense_cast_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_dense_iron_magnetic", "count": 1}
+      ],
+      "duration": 8064,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_dense_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_dense_iron_magnetic", "count": 1}
+      ],
+      "duration": 8064,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_dense_iron_compressed", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_dense_iron_magnetic", "count": 1}
+      ],
+      "duration": 8064,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_dense_knightmetal", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_dense_steel_magnetic", "count": 1}
+      ],
+      "duration": 8064,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_dense_meteoric_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_dense_iron_magnetic", "count": 1}
+      ],
+      "duration": 8064,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_dense_meteoric_steel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_dense_steel_magnetic", "count": 1}
+      ],
+      "duration": 8064,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_dense_meteorite", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_dense_iron_magnetic", "count": 1}
+      ],
+      "duration": 8064,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_dense_neodymium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_dense_neodymium_magnetic", "count": 1}
+      ],
+      "duration": 8064,
+      "eut": 128
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_dense_pig_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_dense_iron_magnetic", "count": 1}
+      ],
+      "duration": 8064,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_dense_steel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_dense_steel_magnetic", "count": 1}
+      ],
+      "duration": 8064,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_dense_wrought_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_dense_iron_magnetic", "count": 1}
+      ],
+      "duration": 8064,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_double_cast_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_double_iron_magnetic", "count": 1}
+      ],
+      "duration": 2016,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_double_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_double_iron_magnetic", "count": 1}
+      ],
+      "duration": 2016,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_double_iron_compressed", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_double_iron_magnetic", "count": 1}
+      ],
+      "duration": 2016,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_double_knightmetal", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_double_steel_magnetic", "count": 1}
+      ],
+      "duration": 2016,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_double_meteoric_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_double_iron_magnetic", "count": 1}
+      ],
+      "duration": 2016,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_double_meteoric_steel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_double_steel_magnetic", "count": 1}
+      ],
+      "duration": 2016,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_double_meteorite", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_double_iron_magnetic", "count": 1}
+      ],
+      "duration": 2016,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_double_neodymium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_double_neodymium_magnetic", "count": 1}
+      ],
+      "duration": 2016,
+      "eut": 128
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_double_pig_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_double_iron_magnetic", "count": 1}
+      ],
+      "duration": 2016,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_double_steel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_double_steel_magnetic", "count": 1}
+      ],
+      "duration": 2016,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_double_wrought_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_double_iron_magnetic", "count": 1}
+      ],
+      "duration": 2016,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_iron_magnetic", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_iron_compressed", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_iron_magnetic", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_knightmetal", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_steel_magnetic", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_meteoric_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_iron_magnetic", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_meteoric_steel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_steel_magnetic", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_meteorite", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_iron_magnetic", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_neodymium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_neodymium_magnetic", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 128
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_pig_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_iron_magnetic", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_quadruple_cast_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_quadruple_iron_magnetic", "count": 1}
+      ],
+      "duration": 3744,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_quadruple_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_quadruple_iron_magnetic", "count": 1}
+      ],
+      "duration": 3744,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_quadruple_iron_compressed", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_quadruple_iron_magnetic", "count": 1}
+      ],
+      "duration": 3744,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_quadruple_knightmetal", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_quadruple_steel_magnetic", "count": 1}
+      ],
+      "duration": 3744,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_quadruple_meteoric_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_quadruple_iron_magnetic", "count": 1}
+      ],
+      "duration": 3744,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_quadruple_meteoric_steel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_quadruple_steel_magnetic", "count": 1}
+      ],
+      "duration": 3744,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_quadruple_meteorite", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_quadruple_iron_magnetic", "count": 1}
+      ],
+      "duration": 3744,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_quadruple_neodymium", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_quadruple_neodymium_magnetic", "count": 1}
+      ],
+      "duration": 3744,
+      "eut": 128
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_quadruple_pig_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_quadruple_iron_magnetic", "count": 1}
+      ],
+      "duration": 3744,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_quadruple_steel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_quadruple_steel_magnetic", "count": 1}
+      ],
+      "duration": 3744,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_quadruple_wrought_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_quadruple_iron_magnetic", "count": 1}
+      ],
+      "duration": 3744,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_steel", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_steel_magnetic", "count": 1}
+      ],
+      "duration": 1152,
+      "eut": 16
+    },
+    {
+      "inputs": [
+        {"item": "gt6:casing_machine_wrought_iron", "count": 1}
+      ],
+      "outputs": [
+        {"item": "gt6:casing_machine_iron_magnetic", "count": 1}
+      ],
+      "duration": 1152,
       "eut": 16
     }
   ]

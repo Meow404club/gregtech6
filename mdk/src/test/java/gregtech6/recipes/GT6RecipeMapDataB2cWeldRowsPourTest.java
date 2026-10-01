@@ -1,6 +1,7 @@
 package gregtech6.recipes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -42,10 +43,11 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * The recipe-data-b2c-weld row-stock pour test (the B2c-generify posture, r2): the
- * welder.json file — the 46 {@code RM.Welder} RecipeMapHandlerPrefix statements of
+ * The recipe-data-b2c-weld row-stock pour test (the B2c-generify posture, r2 + the
+ * weld-casing-increment re-increment): the welder.json file — the 46 {@code RM.Welder}
+ * RecipeMapHandlerPrefix statements of
  * Loader_Recipes_Handlers.java:319-368 statically expanded over the port THREE-universe
- * item face (2971 rows) — pours through the real {@link GT6RecipeMapJsonLoader} seam with
+ * item face (4643 rows) — pours through the real {@link GT6RecipeMapJsonLoader} seam with
  * zero skips. RECOMPUTABILITY: the rows were generated from a one-shot live registration
  * dump (an uncommitted JUnit walking the three universes + the condition gates, folded by a
  * /tmp generator — the B2c zero-transcription method), and THIS test is the durable half:
@@ -61,9 +63,10 @@ import net.minecraft.world.level.material.Fluids;
  * chosen = the upstream registration order, Loader_MultiTileEntities.java:1823 item before
  * :1846 fluid). Per the scale ruling the walk rows carry NO per-row comment (the
  * cross-check IS their provenance); the file head carries the DECLARED OVER-CAP statement,
- * the dropped ST.tag selector leg (the loom precedent) and the 16 BLOCKED statement faces
- * (the casingMachine family is unregistered port-side, so the engine's own both-side
- * existence gate drops every material).
+ * the dropped ST.tag selector leg (the loom precedent) and the CASING RE-INCREMENT + FOLD
+ * RULING declarations (the r2 16 BLOCKED faces retired: casing-machine-register registered
+ * the four output families, and these rows pour the real gt6:casing_machine_ item-path
+ * body — the per-card casingSmall fold consumers are NOT migrated).
  */
 public class GT6RecipeMapDataB2cWeldRowsPourTest extends GTRecipesOfflineTestBase {
 
@@ -72,7 +75,7 @@ public class GT6RecipeMapDataB2cWeldRowsPourTest extends GTRecipesOfflineTestBas
 
 	/** The map key and the frozen census (the file-head Row census statement). */
 	private static final String KEY = "welder";
-	private static final int CENSUS = 2971; // 2320 cold + 651 hot
+	private static final int CENSUS = 4643; // 3784 cold + 859 hot
 
 	/**
 	 * One upstream statement (Loader_Recipes_Handlers.java:319-368; the single-input ctor
@@ -142,9 +145,10 @@ public class GT6RecipeMapDataB2cWeldRowsPourTest extends GTRecipesOfflineTestBas
 
 	/**
 	 * The frozen per-statement expansion table (the generation-time accounting face; the
-	 * 16 zero rows are the BLOCKED statement faces — the casingMachine family is
-	 * unregistered port-side). A registration change turns the live recomputation red and
-	 * this table is the conscious-bump ratchet.
+	 * casing rows carry the weld-casing-increment re-increment — 183 cold / 26 hot per
+	 * statement, the FURNACE tag partitioning each family's 209-material face). A
+	 * registration change turns the live recomputation red and this table is the
+	 * conscious-bump ratchet.
 	 */
 	private static final Map<Integer, Integer> STMT_CENSUS = new LinkedHashMap<>();
 	static {
@@ -152,8 +156,8 @@ public class GT6RecipeMapDataB2cWeldRowsPourTest extends GTRecipesOfflineTestBas
 				{326, 14}, {327, 14}, {328, 14}, {329, 180}, {330, 234}, {331, 234}, {332, 234},
 				{334, 71}, {335, 71}, {336, 71}, {337, 71}, {338, 71}, {339, 5}, {340, 5},
 				{341, 7}, {342, 7}, {343, 7}, {344, 26}, {345, 71}, {346, 71}, {347, 71},
-				{350, 183}, {351, 0}, {352, 0}, {353, 0}, {354, 0}, {355, 0}, {356, 0}, {357, 0}, {358, 0},
-				{360, 26}, {361, 0}, {362, 0}, {363, 0}, {364, 0}, {365, 0}, {366, 0}, {367, 0}, {368, 0}};
+				{350, 183}, {351, 183}, {352, 183}, {353, 183}, {354, 183}, {355, 183}, {356, 183}, {357, 183}, {358, 183},
+				{360, 26}, {361, 26}, {362, 26}, {363, 26}, {364, 26}, {365, 26}, {366, 26}, {367, 26}, {368, 26}};
 		for (int[] tPair : tPairs) STMT_CENSUS.put(tPair[0], tPair[1]);
 	}
 
@@ -195,7 +199,7 @@ public class GT6RecipeMapDataB2cWeldRowsPourTest extends GTRecipesOfflineTestBas
 				KEY + ": the tracker mirrors the map (a smaller number = WARN-skipped rows)");
 	}
 
-	/** The declaration shape pin: deviation + frozen + handler cite + selector + walk rows + over-cap + smoke row + output faces + blocked faces. */
+	/** The declaration shape pin: deviation + frozen + handler cite + selector + walk rows + over-cap + smoke row + output faces + the re-increment + fold ruling. */
 	@Test
 	public void theFileHeadKeepsItsDeclarationComments() throws Exception {
 		InputStream tStream = GT6RecipeMapDataB2cWeldRowsPourTest.class.getResourceAsStream("/data/gt6/recipe_maps/" + KEY + ".json");
@@ -216,12 +220,15 @@ public class GT6RecipeMapDataB2cWeldRowsPourTest extends GTRecipesOfflineTestBas
 				KEY + ": the two pipe families are named with their upstream carrier faces");
 		assertTrue(tComment.contains(":1823 item before :1846 fluid"),
 				KEY + ": the double-carried medium/large/huge faces declare the item-side choice");
-		assertTrue(tLower.contains("blocked statement faces"), KEY + ": the 16 zero-row statements are accounted");
-		assertTrue(tComment.contains("casingMachine") && tComment.contains("casingMachineDense"),
-				KEY + ": the blocked casingMachine family is named");
+		assertFalse(tLower.contains("blocked statement faces"),
+				KEY + ": the r2 BLOCKED faces are retired (the weld-casing-increment re-increment poured them)");
+		assertTrue(tLower.contains("casing re-increment"), KEY + ": the casing re-increment is declared");
+		assertTrue(tLower.contains("fold ruling"), KEY + ": the casingSmall-fold vs item-body ambiguity is ruled on");
+		assertTrue(tComment.contains("gt6:casing_machine_<mat>"),
+				KEY + ": the poured item-path body id form is named");
 	}
 
-	/** All 2971 rows are handler-walk expansions — none carries a per-row comment (the scale ruling). */
+	/** All 4643 rows are handler-walk expansions — none carries a per-row comment (the scale ruling). */
 	@Test
 	public void everyRowIsAnUncommentedWalkRow() throws Exception {
 		int tCommented = 0;
@@ -235,8 +242,9 @@ public class GT6RecipeMapDataB2cWeldRowsPourTest extends GTRecipesOfflineTestBas
 
 	/**
 	 * The per-statement ratchet: the frozen accounting table (STMT_CENSUS, the generation-time
-	 * expansion face with the 16 zero-row BLOCKED statements) must equal the live recomputation.
-	 * A registration change turns this red — re-pour and bump the table consciously.
+	 * expansion face with the weld-casing-increment re-increment rows) must equal the live
+	 * recomputation. A registration change turns this red — re-pour and bump the table
+	 * consciously.
 	 */
 	@Test
 	public void theStatementCensusMatchesTheFrozenExpansion() throws Exception {
@@ -399,7 +407,7 @@ public class GT6RecipeMapDataB2cWeldRowsPourTest extends GTRecipesOfflineTestBas
 		};
 	}
 
-	/** Spot checks — 18 rows across all four legs, the quality scaling, the fixed hot durations, the block + pipe faces. */
+	/** Spot checks — 24 rows across all four legs + the casing re-increment, the quality scaling, the fixed hot durations, the block + pipe faces. */
 	@Test
 	public void welderRowsAreUpstreamVerbatim() throws Exception {
 		JsonArray tRows = pourShipped();
@@ -445,6 +453,33 @@ public class GT6RecipeMapDataB2cWeldRowsPourTest extends GTRecipesOfflineTestBas
 				":326 cold item-pipe MEDIUM, 3U * 64*(4+1) / U — the slug id form, not the snakeCase");
 		assertEquals(48, findRow(tRows, "gt6:plate_curved_brass", "gt6:brass_item_pipe_medium", 48).get("duration").getAsLong(),
 				":341 hot item-pipe MEDIUM, fixed 48");
+		// the casing re-increment (:351-358/:361-368) — the real gt6:casing_machine_ body (the fold ruling):
+		// cold computed over 8U in (6 plate + 2 stickLong = 6U + 2U), hot fixed 16*n
+		assertEquals(1536, findRow(tRows, "gt6:plate_iron", "gt6:casing_machine_iron", 1536).get("duration").getAsLong(),
+				":351 cold plate x6 + stickLong x2 -> casingMachine, 8*64*3 (iron q2)");
+		assertEquals(2560, findRow(tRows, "gt6:plate_tungstensteel", "gt6:casing_machine_tungstensteel", 2560).get("duration").getAsLong(),
+				":351 cold, 8*64*5 (tungstensteel q4)");
+		assertEquals(128, findRow(tRows, "gt6:plate_copper", "gt6:casing_machine_copper", 128).get("duration").getAsLong(),
+				":361 hot plate x6 + stickLong x2 -> casingMachine, fixed 16*8");
+		assertEquals(224, findRow(tRows, "gt6:plate_double_copper", "gt6:casing_machine_double_copper", 224).get("duration").getAsLong(),
+				":362 hot plateDouble, fixed 16*14");
+		assertEquals(416, findRow(tRows, "gt6:plate_quadruple_copper", "gt6:casing_machine_quadruple_copper", 416).get("duration").getAsLong(),
+				":363 hot plateQuadruple, fixed 16*26");
+		assertEquals(896, findRow(tRows, "gt6:plate_dense_copper", "gt6:casing_machine_dense_copper", 896).get("duration").getAsLong(),
+				":364 hot plateDense, fixed 16*56");
+		// the :355 stick variant shares first-input/output/duration with :351 — disambiguated by the second slot
+		boolean tStickVariant = false;
+		for (JsonElement tElement : tRows) {
+			JsonObject tRow = tElement.getAsJsonObject();
+			JsonArray tIn = tRow.getAsJsonArray("inputs");
+			if (tIn.size() == 2 && "gt6:plate_iron".equals(tIn.get(0).getAsJsonObject().get("item").getAsString())
+					&& "gt6:stick_iron".equals(tIn.get(1).getAsJsonObject().get("item").getAsString())
+					&& "gt6:casing_machine_iron".equals(tRow.getAsJsonArray("outputs").get(0).getAsJsonObject().get("item").getAsString())) {
+				assertEquals(1536, tRow.get("duration").getAsLong(), ":355 cold stick variant (4U of sticks + 6U of plates)");
+				tStickVariant = true;
+			}
+		}
+		assertTrue(tStickVariant, ":355 the plate+stick casing variant exists");
 	}
 
 	/**

@@ -57,8 +57,9 @@ import gregtech6.registry.GTMaterialItems;
  * fill + the 17 fuel fill + the 4 breeder fill + the Tritium unpack, :742-744/:746-762/
  * :782-785/:789) and 20 Centrifuge rows (the 17 depleted + the 3 solid enriched,
  * :764-780/:787-790). The two core CRAFTING rows (:734/:738) stay pooled — the 'P'
- * (IL.PISTONS[4]) and 'M' (OP.casingMachineDense) legs have no port items (the
- * GT6CraftingRecipes.java:2867 absent-component ruling, declared on GT6ReactorRods).
+ * (IL.PISTONS[4]) leg has no port item (the GT6CraftingRecipes.java:2867 absent-component
+ * ruling, declared on GT6ReactorRods; the former 'M' OP.casingMachineDense absence is
+ * retired — the family is registered since casing-machine-register).
  *
  * <p><b>Row shape</b> — the fill rows are {@code addRecipe2(F, 16, 16, <stick|bolt×4>,
  * IL.Reactor_Rod_Empty.get(1), theRod)}: NOT buffered (the upstream F, unlike the laser
