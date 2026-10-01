@@ -164,6 +164,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addLongDistancePipes(); // task long-distance-pipes — the 16 wire metas + the two endpoints (hand rows, the dump faces)
 		addTechnologicalComponents(); // task debt-emitter-sensor-generators — the 30 component names (dump faces verbatim)
 		addRecipeMapViewerUnits(); // task issues #29/#34a — the 72 RM titles + the 16 cost-line keys (hand rows, the tsv direct band)
+		addCropCardUnits(); // task cbc-3-crop-data-assets — the 59 crop names + the seed item (hand rows, the tsv direct band; the dump carries zero gt.crop.* faces)
 	}
 
 	/**
@@ -2473,6 +2474,23 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addDirect(String aKey) {
 		RefRow tRow = reference.get("direct") == null ? null : reference.get("direct").get(aKey);
 		if (tRow != null && !tRow.skipped()) add(aKey, tRow.value());
+	}
+
+	/**
+	 * The 59 crop-card zh faces + the seed item (task cbc-3-crop-data-assets, the addTreeUnits
+	 * shape over the tsv direct band): the dump carries zero gt.crop.* rows (grep 0), so every
+	 * value is the hand layer — the zh names follow the upstream item words where a canonical
+	 * face exists (葡萄/草莓/黑麦/大麦/燕麦/水稻/茶叶/薄荷 family words, the TC 微光叶/烬珍珠
+	 * convention, the TF 活根/钢叶 convention) and coin the crop-pun names otherwise (蛋茄 for
+	 * the Eggplant egg-drop pun, 铜棉 Coppon, 银穗苇 Argentia). Walked over the GT6CropCards
+	 * ROWS so the keys cannot drift from the data rows. Hand rows (the TSV regen and this walk
+	 * land in the SAME commit).
+	 */
+	private void addCropCardUnits() {
+		addDirect("item.gt6.crop_seed");
+		for (gregtech6.crop.GT6CropCards.CropCardRow tRow : gregtech6.crop.GT6CropCards.rows()) {
+			addDirect("gt.crop." + tRow.name().toLowerCase().replaceAll(" ", ""));
+		}
 	}
 
 	/** The placeables band (task placeables) — the deco TE names over the tsv direct rows. */

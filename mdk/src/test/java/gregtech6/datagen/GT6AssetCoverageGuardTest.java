@@ -86,6 +86,7 @@ import gregtech6.item.GT6LubricantBucket;
 import gregtech6.items.GT6LaserGas;
 import gregtech6.items.GT6UsbSticks;
 import gregtech6.items.bees.GT6Bumbles;
+import gregtech6.crop.GT6CropSeeds;
 import gregtech6.registry.GT6Anvils;
 import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6BakeFoods;
@@ -325,6 +326,7 @@ public class GT6AssetCoverageGuardTest {
 			GT6Sensors.class, GT6SlicerBlades.class, GT6SprayCans.class, GT6StaticStorages.class,
 			GT6SurfaceBlocks.class, GT6Tanks.class, GT6Tools.class, GT6TreeBlocks.class,
 			GT6BeamBlocks.class, // task beam-blocks-register — the 8 wood-beam rows
+			GT6CropSeeds.class, // task cbc-3-crop-data-assets — the gt6:crop_seed item (the 59-card seed face)
 			GT6Turbines.class, GT6ZpmDechargers.class, GTEnergySources.class, GTBarrels.class, GTBlockEntities.class,
 			GTMachines.class, GTMultiBlocks.class, GTWires.class, GTFluidPipes.class,
 			GTItemPipes.class, GT6Covers.class, GT6Circuits.class, GT6LubricantBucket.class,
