@@ -1018,6 +1018,18 @@ SESSION_GROUPS = (
     # cover_hosts form (bbox-registered, no fresh_boot / mutates member).
     # --group anvil matches through the chain's file stem.
     ("anvil_run",),
+    # cbc-1-cropstick-base (the crop-breeding A-plan W1 serial head): the
+    # crop-stick live smoke -- a fresh z=616 band, x384..390 (x/z-disjoint from
+    # every registered band; the roster's former top was the z=600 x500..506
+    # coke-oven strip). Four arms on x-disjoint columns (place/plant 384,
+    # crossing 386, mature harvest 388, the immature negative 390), the
+    # /gt6crop acceptance channel (the GTBurnerCommand ruling). The ADR-CB5
+    # ruling in force at the chain head: the 256t growth cycle is NOT asserted
+    # live -- growth correctness is the offline seeded pin suite; the mature
+    # arm rides the tryPlantIn size face. Admission mirroring the P16 cluster
+    # form (bbox-registered, no fresh_boot / mutates member).
+    # --group crop_a_world matches through the chain's embedded name prefix.
+    ("crop_a_world",),
 )
 
 PROBE_MODULE = "keepfilter_reboot_probe"
