@@ -213,8 +213,10 @@ class GT6RecipesCropsRowsPourTest extends GTRecipesOfflineTestBase {
 	 * offline JVM binds no gt6 registry (the fermenter stays empty), while the neoforge FML
 	 * test JVM binds the REAL mod registries (research.fml-test-memory) — there the live
 	 * pour fires: the flour dust feeders + the wheat/hay listeners + the vanilla food band
-	 * (683 rows), the unmerged food-crop/fodder ids and the blockDust arm accounting for
-	 * every skip (1085).
+	 * + the food-crop fodder/grain ids, which went LIVE when food-crop-items landed on main
+	 * (the merge-state TRUE NEGATIVE flip over the cbc-5 original pin: 683 → 1240 poured,
+	 * 1085 → 528 skipped — REVIEW FIX merge seat). The blockDust arm (8 x 66, the structural
+	 * non-item-path prefix form) accounts for every skip.
 	 */
 	@Test
 	void registryStateAwareReconciliation() {
@@ -228,16 +230,18 @@ class GT6RecipesCropsRowsPourTest extends GTRecipesOfflineTestBase {
 			assertEquals(0, GT6RecipeMaps.FERMENTER.mRecipeList.size());
 		} else {
 			// the registry-bound leg: the live pour — the upstream-resolution pour face
-			assertEquals((tFlour + 2) * 66, GT6RecipeMaps.FERMENTER.mRecipeList.size(),
-					"the flour dust feeders + the cropWheat and baleWheat biomass legs");
-			assertEquals(683, GT6RecipesCrops.lastPoured(), "the bound pour ratchet");
-			assertEquals(tAttempted - 683, GT6RecipesCrops.lastSkipped(), "the bound skip ledger");
-			assertEquals(4, GT6RecipeMaps.SHREDDER.mRecipeList.size(), "wool + wheat mortarize + hay shred + potato remains");
-			assertEquals(2, GT6RecipeMaps.MORTAR.mRecipeList.size(), "the wheat mortarize + the potato remains (the grain inputs are the food-crop pool)");
+			// (the merge-state face: the 4 fodder + 4 grain-crop ids resolved once
+			// food-crop-items landed, +8 biomass feeders + the fodder/grain side rows)
+			assertEquals((tFlour + 10) * 66, GT6RecipeMaps.FERMENTER.mRecipeList.size(),
+					"the flour dust feeders + wheat/hay + the 4 fodder + the 4 grain-crop biomass legs");
+			assertEquals(1240, GT6RecipesCrops.lastPoured(), "the bound pour ratchet (the merge-state face)");
+			assertEquals(tAttempted - 1240, GT6RecipesCrops.lastSkipped(), "the bound skip ledger (the blockDust arm)");
+			assertEquals(8, GT6RecipeMaps.SHREDDER.mRecipeList.size(), "wool + wheat mortarize + hay shred + potato remains + the 4 grain mortarizes");
+			assertEquals(6, GT6RecipeMaps.MORTAR.mRecipeList.size(), "the wheat mortarize + the 4 grain mortarizes + the potato remains");
 			assertEquals(1, GT6RecipeMaps.COMPRESSOR.mRecipeList.size(), "the wheat compact → hay block");
 			assertEquals(1, GT6RecipeMaps.UNBOXINATOR.mRecipeList.size(), "the hay unpack → 9 wheat");
-			assertEquals(4, GT6RecipeMaps.MIXER.mRecipeList.size(), "the cropWheat mash legs");
-			assertEquals(1, GT6RecipeMaps.DRYING.mRecipeList.size(), "the cropWheat drying leg (the fodder id is the pool)");
+			assertEquals(20, GT6RecipeMaps.MIXER.mRecipeList.size(), "(the 4 grain crops + cropWheat) x the 4-water mash");
+			assertEquals(6, GT6RecipeMaps.DRYING.mRecipeList.size(), "the fodder + the 4 grain crops + wheat");
 			assertEquals(5, GT6RecipeMaps.SQUEEZER.mRecipeList.size());
 			assertEquals(5, GT6RecipeMaps.JUICER.mRecipeList.size());
 		}
