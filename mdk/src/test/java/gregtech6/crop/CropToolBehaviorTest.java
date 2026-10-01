@@ -16,6 +16,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.util.RandomSource;
+
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -60,10 +62,10 @@ public class CropToolBehaviorTest extends GTOfflineTestBase {
 	static final BlockPos POS = new BlockPos(2, 3, 4);
 
 	/** The vanilla-stack fixture twin of the rye row (the GrainCard ctor is package-visible). */
-	static final CropCardView RYEISH = new GT6CropGrains.GrainCard("rye", "Binnie", "food_crop_rye",
+	static final GT6CropCard RYEISH = new GT6CropGrains.GrainCard("rye", "Binnie", "food_crop_rye",
 			1, 7, 2, 7, new int[] {0, 4, 0, 0, 2}, new String[] {"Wheat", "Food", "Grain"}) {
-		@Override public List<ItemStack> gains(CropTileView aCrop) { return List.of(new ItemStack(Items.WHEAT)); }
-		@Override public ItemStack seeds(CropTileView aCrop) { return new ItemStack(Items.WHEAT_SEEDS); }
+		@Override public ItemStack pickGain(CropTileView aCrop, RandomSource aRNG) { return new ItemStack(Items.WHEAT); }
+		@Override public ItemStack seedStack(int aGrowth, int aGain, int aResistance, int aScan) { return new ItemStack(Items.WHEAT_SEEDS); }
 	};
 
 	@BeforeAll
@@ -122,7 +124,7 @@ public class CropToolBehaviorTest extends GTOfflineTestBase {
 	}
 
 	/** A planted tile at the given size with the 1/1/1 base stats (the /gt6crop plant face). */
-	private static GT6CropBlockEntity planted(CropCardView aCard, int aSize) {
+	private static GT6CropBlockEntity planted(GT6CropCard aCard, int aSize) {
 		GT6CropBlockEntity tTile = new GT6CropBlockEntity(sBeType, POS, sBlock.defaultBlockState());
 		tTile.tryPlantIn(aCard, aSize, 1, 1, 1, 0);
 		return tTile;
@@ -145,9 +147,9 @@ public class CropToolBehaviorTest extends GTOfflineTestBase {
 	public void waterCropAppliesTheTenfoldRate() {
 		GT6CropBlockEntity tTile = tile(sBlock);
 		assertTrue(CropWateringBehavior.waterCrop(tTile, 10), "10 mB flow into the dry tile");
-		assertEquals(100, tTile.getStorageWater(), "10 mB -> 100 hydration (:256 the *10 rate)");
+		assertEquals(100, tTile.storageWater(), "10 mB -> 100 hydration (:256 the *10 rate)");
 		assertTrue(CropWateringBehavior.waterCrop(tTile, 10), "(200-100)/10 = 10 mB still asked, the full tank amount flows");
-		assertEquals(200, tTile.getStorageWater(), "the carrier lands exactly on the 200 cap");
+		assertEquals(200, tTile.storageWater(), "the carrier lands exactly on the 200 cap");
 		assertFalse(CropWateringBehavior.waterCrop(tTile, 10), "at cap nothing flows, nothing drained");
 	}
 
@@ -158,23 +160,23 @@ public class CropToolBehaviorTest extends GTOfflineTestBase {
 	public void weedExSprayFillsToTheManualCap() {
 		GT6CropBlockEntity tTile = tile(sBlock);
 		assertTrue(CropWeedExBehavior.spray(tTile), "dry tile sprays");
-		assertEquals(100, tTile.getStorageWeedEX(), "the +100 dose lands at the manual cap");
+		assertEquals(100, tTile.storageWeedEx(), "the +100 dose lands at the manual cap");
 		assertFalse(CropWeedExBehavior.spray(tTile), "at the cap the spray refuses (nothing consumed)");
-		assertEquals(100, tTile.getStorageWeedEX(), "the refusal leaves the storage alone (NOT the dead-code +100 overshoot to 200)");
+		assertEquals(100, tTile.storageWeedEx(), "the refusal leaves the storage alone (NOT the dead-code +100 overshoot to 200)");
 	}
 
 	/** :1214 {@code limit = manual ? 100 : 150} — the partial state and the automatic face. */
 	@Test
 	public void weedExCapsDifferByManualArm() {
 		GT6CropBlockEntity tHalf = tile(sBlock);
-		tHalf.setStorageWeedEX(50);
+		tHalf.setStorages(0, 0, 50);
 		assertTrue(CropWeedExBehavior.spray(tHalf), "50 < 100 sprays");
-		assertEquals(100, tHalf.getStorageWeedEX(), "fill-to-cap: 50+100 clamps to 100, not 150");
+		assertEquals(100, tHalf.storageWeedEx(), "fill-to-cap: 50+100 clamps to 100, not 150");
 
 		GT6CropBlockEntity tAuto = tile(sBlock);
-		tAuto.setStorageWeedEX(100);
+		tAuto.setStorages(0, 0, 100);
 		assertTrue(CropWeedExBehavior.sprayAutomatic(tAuto), "the automatic face runs to 150");
-		assertEquals(150, tAuto.getStorageWeedEX(), "the automatic cap 150 (:1214)");
+		assertEquals(150, tAuto.storageWeedEx(), "the automatic cap 150 (:1214)");
 		assertFalse(CropWeedExBehavior.sprayAutomatic(tAuto), "150 = the automatic ceiling");
 		assertFalse(CropWeedExBehavior.spray(tAuto), "manual stays capped below the automatic state");
 	}
@@ -185,9 +187,7 @@ public class CropToolBehaviorTest extends GTOfflineTestBase {
 	@Test
 	public void cropnalyzerScanBumpsScanLevelAndReadsEveryStorage() {
 		GT6CropBlockEntity tTile = planted(GT6CropGrains.RYE, 3);
-		tTile.setStorageWater(120);
-		tTile.setStorageNutrients(40);
-		tTile.setStorageWeedEX(25);
+		tTile.setStorages(120, 40, 25);
 		tTile.setTerrainHumidity(3);
 		tTile.setTerrainNutrients(5);
 		tTile.setTerrainAirQuality(7);
@@ -199,10 +199,10 @@ public class CropToolBehaviorTest extends GTOfflineTestBase {
 		assertEquals("Plant -- Fertilizer: 40   Water: 120   Weed-Ex: 25", tLines.get(2), "the :89-93 Plant line (the three storages)");
 		assertEquals("Environment -- Nutrients: 5   Humidity: 3   Air-Quality: 7", tLines.get(3), "the :94-97 Environment line (the terrain three)");
 		assertEquals("Attributes: Wheat, Food, Grain", tLines.get(4), "the :99-100 Attributes line");
-		assertEquals(4, tTile.getScanLevel(), "the :78-80 first-scan bump to 4");
+		assertEquals(4, tTile.scanLevel(), "the :78-80 first-scan bump to 4");
 
 		CropnalyzerBehavior.scan(tTile, POS);
-		assertEquals(4, tTile.getScanLevel(), "the repeat scan does not re-bump");
+		assertEquals(4, tTile.scanLevel(), "the repeat scan does not re-bump");
 		assertEquals(4096L, CropnalyzerBehavior.COST_FIRST_SCAN, "upstream :79 V[6]");
 		assertEquals(64L, CropnalyzerBehavior.COST_RESCAN, "upstream :82 V[3]");
 	}
@@ -228,10 +228,10 @@ public class CropToolBehaviorTest extends GTOfflineTestBase {
 
 		int tDamage = CropScytheBehavior.harvestArea(tLevel, tCenter);
 		assertEquals(2, tDamage, "the two mature in-range tiles (:177-180), immature and far excluded");
-		assertEquals(2, tCentreTile.getCurrentSize(), "the afterHarvest reset rode the harvest");
-		assertEquals(2, tEastTile.getCurrentSize(), "the east neighbour harvested too");
-		assertEquals(3, tImmature.getCurrentSize(), "the immature tile untouched");
-		assertEquals(7, tFarTile.getCurrentSize(), "the out-of-range tile untouched");
+		assertEquals(2, tCentreTile.size(), "the afterHarvest reset rode the harvest");
+		assertEquals(2, tEastTile.size(), "the east neighbour harvested too");
+		assertEquals(3, tImmature.size(), "the immature tile untouched");
+		assertEquals(7, tFarTile.size(), "the out-of-range tile untouched");
 		// the drop COUNT is the :793-823 gaussian (0..2 per tile at tier 1) — the range pin,
 		// not an exact-count pin (the exact roll is CropBlockEntityTest's seeded domain)
 		assertTrue(tLevel.mDrops.size() >= 2, "each harvested tile spilled at least one drop (the harvest(T) world-drop face)");
@@ -271,29 +271,29 @@ public class CropToolBehaviorTest extends GTOfflineTestBase {
 	public void fertilizerManualArmPinsTheCarrier() {
 		GT6CropBlockEntity tTile = tile(sBlock);
 		assertTrue(tTile.applyFertilizer(true), "manual fertilizer applies");
-		assertEquals(100, tTile.getStorageNutrients(), "the +100 manual dose at the 100 cap (decompiled applyFertilizer :1228-1235)");
+		assertEquals(100, tTile.storageNutrients(), "the +100 manual dose at the 100 cap (decompiled applyFertilizer :1228-1235)");
 		assertFalse(tTile.applyFertilizer(true), "at cap refused");
 		GT6CropBlockEntity tAuto = tile(sBlock);
-		tAuto.setStorageNutrients(40);
+		tAuto.setStorages(tAuto.storageWater(), 40, tAuto.storageWeedEx());
 		assertTrue(tAuto.applyFertilizer(false), "the automatic face");
-		assertEquals(100, tAuto.getStorageNutrients(), "40+90 clamps to the 100 cap");
+		assertEquals(100, tAuto.storageNutrients(), "40+90 clamps to the 100 cap");
 	}
 
 	/** The scan face survives the save/load carrier (the NBT keys are the cross-line face). */
 	@Test
 	public void scanLevelAndStoragesRoundTripThroughNbt() {
 		GT6CropBlockEntity tTile = planted(GT6CropGrains.RYE, 2);
-		tTile.setStorageWater(180);
-		tTile.setStorageWeedEX(75);
+		tTile.setStorages(180, tTile.storageNutrients(), tTile.storageWeedEx());
+		tTile.setStorages(tTile.storageWater(), tTile.storageNutrients(), 75);
 		tTile.setScanLevel(4);
 		CompoundTag tTag = new CompoundTag();
 		tTile.saveCrop(tTag);
 		GT6CropBlockEntity tRead = tile(sBlock);
 		tRead.load(tTag);
-		assertEquals(180, tRead.getStorageWater(), "storageWater rides the :91-135 key set");
-		assertEquals(75, tRead.getStorageWeedEX(), "storageWeedEX rides");
-		assertEquals(4, tRead.getScanLevel(), "scanLevel rides");
-		assertEquals("rye", tRead.getCrop().name(), "the card rebinding (the registry-key face)");
-		assertEquals(3, tRead.getCrop().attributes().length, "the rye attribute row rides with the card");
+		assertEquals(180, tRead.storageWater(), "storageWater rides the :91-135 key set");
+		assertEquals(75, tRead.storageWeedEx(), "storageWeedEX rides");
+		assertEquals(4, tRead.scanLevel(), "scanLevel rides");
+		assertEquals("rye", tRead.crop().name(), "the card rebinding (the registry-key face)");
+		assertEquals(3, tRead.crop().attributes().length, "the rye attribute row rides with the card");
 	}
 }

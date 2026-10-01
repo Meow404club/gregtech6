@@ -33,7 +33,7 @@ public final class CropWateringBehavior {
 	 * at the 1:10 rate; true when water actually moved.
 	 */
 	public static boolean waterCrop(GT6CropBlockEntity aCrop, int aAvailableWater) {
-		int tDrained = drainForHydration(aCrop.getStorageWater(), aAvailableWater);
+		int tDrained = drainForHydration(aCrop.storageWater(), aAvailableWater);
 		if (tDrained <= 0) return false;
 		return aCrop.applyHydration(tDrained * 10);
 	}

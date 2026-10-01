@@ -35,21 +35,21 @@ public final class CropnalyzerBehavior {
 	 * upstream reads {@code getCrop()} unguarded).
 	 */
 	public static List<String> scan(GT6CropBlockEntity aCrop, BlockPos aPos) {
-		if (aCrop.getScanLevel() < 4) aCrop.setScanLevel(4);
+		if (aCrop.scanLevel() < 4) aCrop.setScanLevel(4);
 		List<String> rLines = new ArrayList<>();
 		rLines.add("--- X: " + aPos.getX() + " Y: " + aPos.getY() + " Z: " + aPos.getZ() + " ---");
-		rLines.add("Type -- Name: " + aCrop.getCrop().name()
-				+ "   Growth: " + aCrop.getStatGrowth()
-				+ "   Gain: " + aCrop.getStatGain()
-				+ "   Resistance: " + aCrop.getStatResistance());
-		rLines.add("Plant -- Fertilizer: " + aCrop.getStorageNutrients()
-				+ "   Water: " + aCrop.getStorageWater()
-				+ "   Weed-Ex: " + aCrop.getStorageWeedEX());
-		rLines.add("Environment -- Nutrients: " + aCrop.getTerrainNutrients()
-				+ "   Humidity: " + aCrop.getTerrainHumidity()
-				+ "   Air-Quality: " + aCrop.getTerrainAirQuality());
+		rLines.add("Type -- Name: " + aCrop.crop().name()
+				+ "   Growth: " + aCrop.statGrowth()
+				+ "   Gain: " + aCrop.statGain()
+				+ "   Resistance: " + aCrop.statResistance());
+		rLines.add("Plant -- Fertilizer: " + aCrop.storageNutrients()
+				+ "   Water: " + aCrop.storageWater()
+				+ "   Weed-Ex: " + aCrop.storageWeedEx());
+		rLines.add("Environment -- Nutrients: " + aCrop.terrainNutrients()
+				+ "   Humidity: " + aCrop.terrainHumidity()
+				+ "   Air-Quality: " + aCrop.terrainAirQuality());
 		String tAttributes = "";
-		for (String tAttribute : aCrop.getCrop().attributes()) tAttributes += ", " + tAttribute;
+		for (String tAttribute : aCrop.crop().attributes()) tAttributes += ", " + tAttribute;
 		rLines.add("Attributes:" + tAttributes.replaceFirst(",", "")); // the :99-100 shape verbatim
 		return rLines;
 	}

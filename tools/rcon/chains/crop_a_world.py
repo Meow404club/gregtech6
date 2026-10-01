@@ -21,9 +21,10 @@ growth shortcut):
   D mature arm: plant rye at size 7 (the :464 signature), /gt6crop harvest
     -- the produce drops as a real item entity (gt6:food_crop_rye pinned via
     execute-if-entity), the size resets to the after-harvest 2. The drop
-    COUNT is a gaussian roll (~24% zero per attempt, upstream :817 resets the
-    size regardless), so the arm rides a bounded re-plant loop: four
-    allow_failed attempts then the strict verdict (0.237^5 ~ 0.07% residual).
+    COUNT is a gaussian roll (~30% zero per attempt, upstream :817 resets the
+    size regardless), so the verdict is CUMULATIVE: eight plant/harvest
+    attempts with no intermediate sweep, then ONE strict produce-entity gate
+    (fails only if all eight rolled zero, 0.3^8 ~ 7e-5).
   E negative: an immature (size 1) harvest refuses -- harvested=false, the
     plant survives.
   F Cropnalyzer (card cbc-4-crop-tools): /gt6crop scan over a planted tile --
@@ -104,28 +105,21 @@ steps += [
     phase("D: the mature arm -- plant rye at 7 (the :464 size face) and harvest the produce"),
     *rig(MP, MS),
     # The drop COUNT is a gaussian roll (chance = 0.95^1 * 1.03^1 ~ 0.978 -> a zero-drop
-    # harvest resets the size and answers false, upstream :817 runs regardless) — a strict
-    # single-shot expect is a ~24% flake per pass. The bounded re-plant loop drives the
-    # per-attempt miss rate 0.237^5 ~ 0.07%: four allow_failed attempts (each re-plants the
-    # after-harvest size-2 tile back to 7, each sweeps any drops) then the strict verdict.
-    Step(f"gt6crop plant {MS} rye 7", expect="planted=rye size=7 ok=true"),
-    Step(f"gt6crop harvest {MS}", expect="harvested=true size=2", allow_failed=True),
-    Step(f"kill {ITEMS_MATURE}"),
-    Step(f"gt6crop plant {MS} rye 7", expect="planted=rye size=7 ok=true"),
-    Step(f"gt6crop harvest {MS}", expect="harvested=true size=2", allow_failed=True),
-    Step(f"kill {ITEMS_MATURE}"),
-    Step(f"gt6crop plant {MS} rye 7", expect="planted=rye size=7 ok=true"),
-    Step(f"gt6crop harvest {MS}", expect="harvested=true size=2", allow_failed=True),
-    Step(f"kill {ITEMS_MATURE}"),
-    Step(f"gt6crop plant {MS} rye 7", expect="planted=rye size=7 ok=true"),
-    Step(f"gt6crop harvest {MS}", expect="harvested=true size=2", allow_failed=True),
-    Step(f"kill {ITEMS_MATURE}"),
-    Step(f"gt6crop plant {MS} rye 7", expect="planted=rye size=7 ok=true"),
-    Step(f"gt6crop harvest {MS}", expect="harvested=true size=2"),
+    # harvest resets the size and answers false, upstream :817 runs regardless) -- a ~30%
+    # miss per attempt, and the fixed-seed persisted world makes the post-boot draw stream
+    # near-deterministic (a bad stretch repeats within a boot). So the verdict is
+    # CUMULATIVE: eight plant/harvest attempts with NO intermediate sweep, then ONE strict
+    # produce-entity gate -- the arm fails only if ALL eight rolled zero (0.3^8 ~ 7e-5).
+    # A strict verdict on the tail attempt alone stays a ~30% coin toss no matter how many
+    # allow_failed attempts precede it (observed live: [0,3]/[3,0] passes with the strict
+    # tail roll missing).
+    *([step
+       for _attempt in range(8)
+       for step in (Step(f"gt6crop plant {MS} rye 7", expect="planted=rye size=7 ok=true"),
+                    Step(f"gt6crop harvest {MS}", expect="harvested=true size=2", allow_failed=True))]),
     Step(f"execute if entity {ITEM_RYE} run gamerule keepInventory",
          expect="Gamerule keepInventory is currently set to"),
     Step(f"kill {ITEMS_MATURE}", expect="Killed"),
-
     phase("E: negative -- an immature harvest refuses and the plant survives"),
     *rig(NP, NS),
     Step(f"gt6crop plant {NS} rye 1", expect="planted=rye size=1 ok=true"),

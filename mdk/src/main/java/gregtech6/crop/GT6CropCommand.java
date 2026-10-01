@@ -158,7 +158,7 @@ public final class GT6CropCommand {
 				aContext.getSource().sendFailure(Component.literal("no crop sticks at " + tPos.toShortString()));
 				return 0;
 			}
-			if (tCrop.getCrop() == null) {
+			if (tCrop.crop() == null) {
 				aContext.getSource().sendFailure(Component.literal("empty crop sticks at " + tPos.toShortString()));
 				return 0;
 			}
