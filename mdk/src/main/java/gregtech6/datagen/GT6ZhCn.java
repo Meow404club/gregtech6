@@ -2084,9 +2084,11 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.shape_foodmold_toast"); // dump technological.10805
 		// task food-crop-items — 食物域 T5a 浆果/坚果/水果带+草料族 61 项 (dump gt.multiitem.food.{meta}
 		// 逐字, MultiItemFood.java:53-60+:273-486 行锚见 GT6CropFoods javadoc; 24 条空 desc 行双侧零键
-		// (上游 "" 注册即无 tooltip); food_grass/food_grass_dry/food_cinnamon 的 tooltip dump 空=上游 zh 未翻,
-		// 按 dump-verbatim 纪律不发 zh 键 (运行时 en 回落, zhKeysAreASubsetOfEnKeys 子集律);
-		// 280 凤梨树皮/290 椰子树木/250 Deez Nuz 为上游 zh 原貌, 不改)
+		// (上游 "" 注册即无 tooltip);
+		// 280 凤梨树皮/290 椰子树木/250 Deez Nuz 为上游 zh 原貌, 不改;
+		// REVIEW FIX (merge seat): food_grass/food_grass_dry/food_cinnamon 的 tooltip dump 行存在但值为空
+		// (:8792/:8794/:9042)=上游 zh 未翻 — 卡面"运行时 en 回落"设计留给 zh 面一个 3 键缺口,
+		// GT6ZhBackfillSpotCheckTest 零缺键契约红灯; 按 hand 行先例手撰 3 键 (zh 4888→4891=en), 不改上游名)
 		addDirect("item.gt6.food_lemon"); // dump food.273
 		addDirect("item.gt6.food_lemon.tooltip");
 		addDirect("item.gt6.food_lemon_sliced"); // dump food.274
@@ -2171,11 +2173,14 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.food_ananas.tooltip");
 		addDirect("item.gt6.food_ananas_sliced"); // dump food.477
 		addDirect("item.gt6.food_ananas_sliced.tooltip");
-		addDirect("item.gt6.food_cinnamon"); // dump food.482 (tooltip dump 空=en 回落)
+		addDirect("item.gt6.food_cinnamon"); // dump food.482 (凤梨树皮=上游原貌)
+		addDirect("item.gt6.food_cinnamon.tooltip"); // hand 别让任何人挑战你! (dump :9042 空值, 上游未翻)
 		addDirect("item.gt6.food_coconut"); // dump food.486
 		addDirect("item.gt6.food_coconut.tooltip");
-		addDirect("item.gt6.food_grass"); // dump food.53 (tooltip dump 缺行=en 回落)
-		addDirect("item.gt6.food_grass_dry"); // dump food.54 (tooltip dump 缺行=en 回落)
+		addDirect("item.gt6.food_grass"); // dump food.12000
+		addDirect("item.gt6.food_grass.tooltip"); // hand 9个合成为一捆以便晒干 (dump :8792 空值)
+		addDirect("item.gt6.food_grass_dry"); // dump food.12001
+		addDirect("item.gt6.food_grass_dry.tooltip"); // hand 可以用来制作简易的取火器 (dump :8794 空值)
 		addDirect("item.gt6.food_grass_moldy"); // dump food.55
 		addDirect("item.gt6.food_grass_rotten"); // dump food.56
 		addDirect("item.gt6.food_crop_rye"); // dump food.57

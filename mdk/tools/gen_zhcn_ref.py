@@ -1165,10 +1165,13 @@ HAND_TRANSLATIONS = {
     # ---- task food-crop-items — the T5a berry/nut/fruit band + fodder family, 95 rows.
     # Dump-verbatim over gt.multiitem.food.{meta} (row anchors MultiItemFood.java:53-60+
     # :273-486, the GT6CropFoods javadoc): 61 names + 34 tooltips. The 24 empty desc rows
-    # emit NO row on either locale; food_grass/food_grass_dry/food_cinnamon tooltips are
-    # DUMP-ABSENT (upstream zh never translated them) — no zh row, the runtime falls back
-    # to English per key. 280 凤梨树皮/290 椰子树木/250 Deez Nuz stay the upstream zh
-    # wordings verbatim (the dump-evidence discipline, no coder fix-ups).
+    # emit NO row on either locale. 280 凤梨树皮/290 椰子树木/250 Deez Nuz stay the
+    # upstream zh wordings verbatim (the dump-evidence discipline, no coder fix-ups).
+    # REVIEW FIX (merge seat): the three dump-absent tooltips (food_grass/food_grass_dry/
+    # food_cinnamon — dump rows :8792/:8794/:9042 exist with EMPTY values, upstream zh
+    # never translated them) are hand-authored here: the standing i18n contract
+    # (GT6ZhBackfillSpotCheckTest) demands zero en keys missing from zh — the card's
+    # "runtime en fallback" design left a 3-key gap and red the backfill gate.
     "item.gt6.food_lemon": ("柠檬", "hand"),
     "item.gt6.food_lemon.tooltip": ("别把它做成柠檬汁", "hand"),
     "item.gt6.food_lemon_sliced": ("柠檬片", "hand"),
@@ -1254,10 +1257,13 @@ HAND_TRANSLATIONS = {
     "item.gt6.food_ananas_sliced": ("菠萝片", "hand"),
     "item.gt6.food_ananas_sliced.tooltip": ("Ted真的找到过神奇菠萝吗?", "hand"),
     "item.gt6.food_cinnamon": ("凤梨树皮", "hand"),
+    "item.gt6.food_cinnamon.tooltip": ("别让任何人挑战你!", "hand"),
     "item.gt6.food_coconut": ("椰子树木", "hand"),
     "item.gt6.food_coconut.tooltip": ("他的椰子枪会突然射出，被打中的话一定很疼!", "hand"),
     "item.gt6.food_grass": ("草", "hand"),
+    "item.gt6.food_grass.tooltip": ("9个合成为一捆以便晒干", "hand"),
     "item.gt6.food_grass_dry": ("干草", "hand"),
+    "item.gt6.food_grass_dry.tooltip": ("可以用来制作简易的取火器", "hand"),
     "item.gt6.food_grass_moldy": ("发霉的草", "hand"),
     "item.gt6.food_grass_rotten": ("烂草", "hand"),
     "item.gt6.food_crop_rye": ("黑麦", "hand"),
