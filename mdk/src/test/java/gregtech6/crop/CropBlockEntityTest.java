@@ -82,8 +82,8 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		}
 
 		@Override
-		public ItemStack seedStack() {
-			return new ItemStack(Items.WHEAT_SEEDS);
+		public ItemStack seedStack(int aGrowth, int aGain, int aResistance, int aScan) {
+			return new ItemStack(Items.WHEAT_SEEDS); // the offline stand-in for the gt6:crop_seed payload
 		}
 	};
 
@@ -96,8 +96,8 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		}
 
 		@Override
-		public ItemStack seedStack() {
-			return new ItemStack(Items.WHEAT_SEEDS);
+		public ItemStack seedStack(int aGrowth, int aGain, int aResistance, int aScan) {
+			return new ItemStack(Items.WHEAT_SEEDS); // the offline stand-in for the gt6:crop_seed payload
 		}
 	};
 
@@ -135,6 +135,10 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		seedFluidTypeSize(); // the bare-JUnit leg: the Entity ctor's FluidType read dead-headed (the GTEntityBlockInventoryDropTest seam)
 		//?}
 		GTOfflineTestBase.unfreezeBlockEntityTypeRegistry();
+		// the crop registry rides the fixture cards offline (the live registry is
+		// GT6CropCards.ensureRegistered's 59-row walk; the NBT load face needs cropId=rye here)
+		GT6Crops.registerCrop(WHEATISH);
+		GT6Crops.registerCrop(DEADLY);
 		sBlock = block();
 		sBeType = BlockEntityType.Builder.of(
 				(aPos, aState) -> new GT6CropBlockEntity(sBeType, aPos, aState), sBlock).build(null);
@@ -741,7 +745,10 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 
 	// ---------------------------------------------------------------- structural
 
-	/** The ADR-CB2 self-enforcement  --  no ic2.* residue in the crop package. */
+	/** The scan needle, assembled from parts (the guard source stays residue-free itself). */
+	private static final String IC2_PACKAGE_NEEDLE = "ic2" + ".";
+
+	/** The ADR-CB2 self-enforcement  --  no IC2 package residue in the crop package. */
 	@Test
 	public void noIc2NameResidueInCropPackage() throws Exception {
 		Path tCrop = mdkRoot().resolve(Path.of("src", "main", "java", "gregtech6", "crop"));
@@ -751,12 +758,13 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 			tWalk.filter(aPath -> aPath.toString().endsWith(".java")).forEach(aPath -> {
 				try {
 					String tSource = Files.readString(aPath);
-					if (tSource.contains("ic2.")) tHits.add(aPath.getFileName().toString());
+					// the needle is assembled so this guard source carries no literal residue itself
+				if (tSource.contains(IC2_PACKAGE_NEEDLE)) tHits.add(aPath.getFileName().toString());
 				} catch (Exception aE) {
 					throw new RuntimeException(aE);
 				}
 			});
-			assertTrue(tHits.isEmpty(), "ic2.* residue in " + tHits);
+			assertTrue(tHits.isEmpty(), "IC2 package residue in " + tHits);
 		}
 	}
 

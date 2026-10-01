@@ -11877,3 +11877,165 @@ sha256 verified per file:
 
 All 16x16 RGBA. The crop/59-card stage art (crop/<name>/<1..maxSize>) is card cbc-3's
 census + borrow wave.
+## task cbc-3-crop-data-assets (2026-10-01) — the 59-crop stage sprite set, 248 paths / 141 unique entities
+
+Borrowed from **GregTech 6** (`tmp/gt6-1.7.10`, `src/main/resources/assets/gregtech/textures/
+blocks/crop/<name>/<stage>.png`): all 248 stage sprites of the 59 crop cards
+(GT_BaseCrop.java:160-163 renders crop/<name>/<1..maxSize>; the stage set = sum of the maxSize
+bands: 43×4 + 6×3 + 6×5 + 4×7 = 248). `cp -r` + `diff -r` clean (byte-identical), PNG magic +
+16x16 dimensions verified per file (the circuit-config borrow law: re-encoding turns red).
+Path mapping is IDENTITY: upstream `crop/<name>/<stage>.png` → `block/crop/<name>/<stage>.png`
+(the cbc-1 asset layout: block-face sprites under `block/`).
+
+Bookkeeping = 248 PATHS, 141 byte entities (the texture-census ruling): the table below lists
+the canonical path per sha256 with its duplicate paths — upstream itself reuses sprites across
+sibling crops/stages (the 25 dup groups: the berry-bush/vine-fruit stages, the four grains'
+stage 1-6 band, the reed family's grey mid-stages incl. diareed=withereed=blazereed stage 1 —
+upstream's own reuse, not a porting slip). Every path EXISTS in the tree so the cbc-4 block-model
+walk can reference any of them naively.
+
+- `block/crop/ananas/1.png` | `596f72fa84347421c016bc3c9b807060ee616caf34b0bb19596e47282c5a3130` | 1 |
+- `block/crop/ananas/2.png` | `f5d898c4d381a193515d3ba743949c4285793afb44d68ebff8e32fd4387cd45e` | 1 |
+- `block/crop/ananas/3.png` | `b8e07dbaad2b47b0d8c6ead4846ce0a1336b0e2f59cd14c6490b1cfff6df51ae` | 1 |
+- `block/crop/argentia/1.png` | `29bf6e0dea257c1fcdd7b1ce82f33ce9b68ad92e6e412b447c9a9d64e1171c50` | 6 | `chili/1.png` `cucumber/1.png` `indigo/1.png` `mint/1.png` `tea/1.png`
+- `block/crop/argentia/2.png` | `08fa22ef02cb0b6af4e432cbb5f2f22966d92b40ad22c0a996e81bd4a2a209b8` | 6 | `chili/2.png` `cucumber/2.png` `indigo/2.png` `mint/2.png` `tea/2.png`
+- `block/crop/argentia/3.png` | `6df6c24363152a4cf573c7b3f545b048dab329c2476124d2b717fe6469c167f1` | 1 |
+- `block/crop/argentia/4.png` | `4dc169eb77ec02ffcbf3aa50b05c44da36b2bed5bff4b8ccbe9ae150d2c44ff4` | 1 |
+- `block/crop/barley/1.png` | `0fe3d802d5a8b50742f3ba33813f899a8a7c6499104e6b6b6541778c8a6d60b1` | 4 | `oats/1.png` `rice/1.png` `rye/1.png`
+- `block/crop/barley/2.png` | `4fd3f5fa5b0a1d87202052fa06d0fbf1cef6ca0561a9add94caf1cf6a5096129` | 4 | `oats/2.png` `rice/2.png` `rye/2.png`
+- `block/crop/barley/3.png` | `d7e79c887da2a1ce016a67a75f0db3b7ada40d9b1b9e7ddf5c4e505f7eef837a` | 4 | `oats/3.png` `rice/3.png` `rye/3.png`
+- `block/crop/barley/4.png` | `86319a175a2a8e00cacf470f1b8b31d30e8b284f511bbda7706d68c600257499` | 4 | `oats/4.png` `rice/4.png` `rye/4.png`
+- `block/crop/barley/5.png` | `43bb43bb2a3edac44b632d189c4e29aa7f77e30c9feb001573538f3e1edfdc10` | 4 | `oats/5.png` `rice/5.png` `rye/5.png`
+- `block/crop/barley/6.png` | `46f4d7031f3864d607c4d63a5f22d4d5ebc37e08a43c072f1369e6c265cd3c1a` | 4 | `oats/6.png` `rice/6.png` `rye/6.png`
+- `block/crop/barley/7.png` | `734fea721b5cf85521c2e6d8747ad35ea26fc44adabab4e4d4e10d074ee69ce9` | 1 |
+- `block/crop/blackberries/1.png` | `89294ad462491ac44b54e9819da30bcbbe3c0dc3dd1853127b2d5b9340b75c55` | 8 | `cranberries/1.png` `greengrapes/1.png` `purplegrapes/1.png` `raspberries/1.png` `redgrapes/1.png` `tomatoplant/1.png` `whitegrapes/1.png`
+- `block/crop/blackberries/2.png` | `2f1acaed20017a51b6b425c2aacc03cfd196b6456413d1a61aed7eee3d6b0578` | 8 | `cranberries/2.png` `greengrapes/2.png` `purplegrapes/2.png` `raspberries/2.png` `redgrapes/2.png` `tomatoplant/2.png` `whitegrapes/2.png`
+- `block/crop/blackberries/3.png` | `47357b4e1543464fce9a761af6686b6f113abb6c2fe517bf09591332dc387676` | 8 | `cranberries/3.png` `greengrapes/3.png` `purplegrapes/3.png` `raspberries/3.png` `redgrapes/3.png` `tomatoplant/3.png` `whitegrapes/3.png`
+- `block/crop/blackberries/4.png` | `b3a1210c45c7adc40cfbc42b71bab61669a6b2468f1ee20ef9180a678f9a979e` | 1 |
+- `block/crop/blackcurrants/1.png` | `c9dbff2e642ce1bac5356962d38c1233ef11eaeb9b4760c437d521a8b9eda377` | 12 | `blueberrybush/1.png` `candleberrybush/1.png` `darkredappletree/1.png` `gooseberrybush/1.png` `greenappletree/1.png` `lemonplant/1.png` `redappletree/1.png` `redcurrants/1.png` `slimeplant/1.png` `whitecurrants/1.png` `yellowappletree/1.png`
+- `block/crop/blackcurrants/2.png` | `d7eedb210b1c7518fdc804fc3dab70af44fdd5aaeb770dfe82a6eb87b3be7e56` | 12 | `blueberrybush/2.png` `candleberrybush/2.png` `darkredappletree/2.png` `gooseberrybush/2.png` `greenappletree/2.png` `lemonplant/2.png` `redappletree/2.png` `redcurrants/2.png` `slimeplant/2.png` `whitecurrants/2.png` `yellowappletree/2.png`
+- `block/crop/blackcurrants/3.png` | `81689784f8b1d4d95cd6d4c7fe24d8afce472a6a76cb77bf6b3f424bbfb15e8d` | 12 | `blueberrybush/3.png` `candleberrybush/3.png` `darkredappletree/3.png` `gooseberrybush/3.png` `greenappletree/3.png` `lemonplant/3.png` `redappletree/3.png` `redcurrants/3.png` `slimeplant/3.png` `whitecurrants/3.png` `yellowappletree/3.png`
+- `block/crop/blackcurrants/4.png` | `8f2e830a84ed6fcc9ecfdfcbc9f1215a2361076a717a0f1689c0639d460647d1` | 6 | `blueberrybush/4.png` `candleberrybush/4.png` `gooseberrybush/4.png` `redcurrants/4.png` `whitecurrants/4.png`
+- `block/crop/blackcurrants/5.png` | `e32e3fc1ad7c377c6af819ed1ba2077cedbcce4d8708b19914f7d3b817f6e833` | 1 |
+- `block/crop/blazereed/1.png` | `da9bd1417eb30216f3c2dc41cf3dd0d60e1d1a040ce323a2649fdf7465f5bc77` | 3 | `diareed/1.png` `withereed/1.png`
+- `block/crop/blazereed/2.png` | `9a4c63c3691a6020b075b8b5458f236d344c96559e829153ed6d87421e4911a0` | 3 | `diareed/2.png` `withereed/2.png`
+- `block/crop/blazereed/3.png` | `d4f765adb1b83e60c3bc92c0b21b1cbb87737ff370418d68b525beed09e291a7` | 3 | `diareed/3.png` `withereed/3.png`
+- `block/crop/blazereed/4.png` | `472e33e40c23ffad40ac27ed6ebc7521d0ae707b0ad7930ddc67e37079bb2928` | 1 |
+- `block/crop/blueberrybush/5.png` | `2f0e06f9a2d2d5eae41fe2a01f39e9819c97afc5bd6d603c9100c361476cfe96` | 1 |
+- `block/crop/bobsyeruncleranks/1.png` | `cce5f00eb4632183324682c7a0555f155d820449f687e9c69b7e1f52463e60ab` | 3 | `liveroots/1.png` `steeleafranks/1.png`
+- `block/crop/bobsyeruncleranks/2.png` | `a21f43c4a6548394495dfe7af0fd3d2ee5b8b637977de7e93db471c30023b3e3` | 3 | `liveroots/2.png` `steeleafranks/2.png`
+- `block/crop/bobsyeruncleranks/3.png` | `d4f2b4285a9847dba9c54561f7dbdb1a564e685d31473fef58ea62c4e423df04` | 3 | `liveroots/3.png` `steeleafranks/3.png`
+- `block/crop/bobsyeruncleranks/4.png` | `336c3c016a95f0b151f8153f8b0159cb52fa22ed46869c2a80baae87e6062371` | 1 |
+- `block/crop/candleberrybush/5.png` | `60f78b73c97583ba849a36f28a5e5fa16a7c67b4c0ee7b8fcf119da079645547` | 1 |
+- `block/crop/cerublossom/1.png` | `3aabed22a4577f525566aee87ca397bd2f2c4a732198950493bd7fb72cb49f88` | 1 |
+- `block/crop/cerublossom/2.png` | `ba10b9b03df37929a8daa4d0a40898fdff78374366b3e683067f625129010334` | 1 |
+- `block/crop/cerublossom/3.png` | `eca452e57f2a6eaca5922f0b216d50109d85178fc003fa582b0f0fd8cc13b3b1` | 1 |
+- `block/crop/cerublossom/4.png` | `10694887166dfcbc18ed49c337019353c99962eacf54bea40f1adef467d2dd4e` | 1 |
+- `block/crop/chili/3.png` | `4222fa163ad934050a43d587f74832c434ec0922073fc3892efb4dfc354c69db` | 1 |
+- `block/crop/chili/4.png` | `d1ffb47f983f6a6ffe21f97c2730938d7f0bde600d5bda476986d2dfe7991056` | 1 |
+- `block/crop/cinderpearl/1.png` | `0e1650e0e4f7044fbdd92b0c4a0aea2d00c172726ffaf9ac6d34e6e80b86522c` | 1 |
+- `block/crop/cinderpearl/2.png` | `f6537fc7bd8d5cfb259e6184fce281bef58265d6fb37b9fa7c4e13f2fd8660f9` | 1 |
+- `block/crop/cinderpearl/3.png` | `1d77aa0b71b8837859c47abdb3e986934a649cad6c15fc9bcedc4fb0e96ea989` | 1 |
+- `block/crop/cinderpearl/4.png` | `c781da846ab77063a2c7266855c0b33f317a2c58b103e8d1ae2171d90403dac6` | 1 |
+- `block/crop/coppon/1.png` | `ddb4f8ba3eafc2daef33ffed8e96fb5de81bbd7d820ab54a98f0d54c3a79a750` | 1 |
+- `block/crop/coppon/2.png` | `a8a43889e9c16f18adab75508118c9e8efe73131813c688ec567400897dd3ced` | 1 |
+- `block/crop/coppon/3.png` | `ec3632bd036944d7c934fe297fa6bf98cd6707166a1df579a88d194e487b1d9b` | 1 |
+- `block/crop/corium/1.png` | `329d4a8c978320a4a9f7985a3a5e142bd4132fbcc40fcc18dc684ca45cf82a11` | 1 |
+- `block/crop/corium/2.png` | `7f49da2ca6e8ff2f3f14ccd0650fa17daf5072896fccbd10387157e10d1722b3` | 1 |
+- `block/crop/corium/3.png` | `4efae79bde0eb6bf87ab903dbb769c37d2a7c5e28e34be4a21a3ee5c7c185954` | 1 |
+- `block/crop/corium/4.png` | `26ef6ad133f7d992ca6aab30f024956d78247cb3186435eaeee953c9449e9ec0` | 1 |
+- `block/crop/corpseplant/1.png` | `6983d02e742ef8290bd3a53f5c0a5249fedf686002f7d129db2a82bfa45bd868` | 1 |
+- `block/crop/corpseplant/2.png` | `a150a79207651d6afb4df01324e91638f26946b4d34ce6033517a8a056cc77bc` | 1 |
+- `block/crop/corpseplant/3.png` | `b63d85139c9d424975fde7103210742a93d561f00b89af624ac238f2b7a223d2` | 1 |
+- `block/crop/corpseplant/4.png` | `60861480e9ac0d879616e4d9f7a498786310195417691065b0f865177643448f` | 1 |
+- `block/crop/cranberries/4.png` | `319cb36adf64641c55e8f8c25008a3d0f060b133c2025cd612b218b5d406b943` | 1 |
+- `block/crop/creeperweed/1.png` | `e87168c7e9c92f16ec6e5d00799fcecb0944d52663bf7cea63f19735b003008a` | 3 | `peanuts/1.png` `strawberries/1.png`
+- `block/crop/creeperweed/2.png` | `999804fbb62e2fb7dc851c4dfdc533ac164368bee7136fbc201eaa1a6b656d64` | 3 | `peanuts/2.png` `strawberries/2.png`
+- `block/crop/creeperweed/3.png` | `73f42556c10b2c72cc1ec22013c775a82a219e22180662efcb2e55b27a4169ce` | 1 |
+- `block/crop/creeperweed/4.png` | `093378668786503e035c3b7110ca4656ca37c91f9852f8ce3bf98d8a08464384` | 1 |
+- `block/crop/cucumber/3.png` | `fb5c5fb365dfb84ded5f5683303355c3ce41d73cb013f7c0025cb3343a176c9e` | 4 | `indigo/3.png` `mint/3.png` `tea/3.png`
+- `block/crop/cucumber/4.png` | `53deadc323fda30e50e3abb5e65981a1936e8e6ff475781ce82113a3d6d858bb` | 1 |
+- `block/crop/darkredappletree/4.png` | `7119ab1ab53cd09e998fcc92e6eb77532fbe5929965477a6194535ccf80d44e0` | 1 |
+- `block/crop/desertnova/1.png` | `4a9708a204e8e3985ba62f3b6eabc0dd3342d30e9ac774e4e5f9176862c2247c` | 1 |
+- `block/crop/desertnova/2.png` | `1fc1af984abe7657d809594d5408e729065e7c5e3638292677f48962319e1902` | 1 |
+- `block/crop/desertnova/3.png` | `0965cb626e15d117dec5a7c8e30feb2da26efd50c1a052031492e9dab6e035e6` | 1 |
+- `block/crop/desertnova/4.png` | `e7ba8d936104d16432ec63cfcb01c5aebe748af77b314e6931d78f6051cb65f6` | 1 |
+- `block/crop/diareed/4.png` | `21fdfe1bf7e0ba0bcff1089fd8a56c08275a992f7ffdbdd31face1e5ad98ab46` | 1 |
+- `block/crop/eggplant/1.png` | `8952389d9f97d39b98bad35b01df143dc91bdd137583c050f9e9a2eaa3058774` | 1 |
+- `block/crop/eggplant/2.png` | `44ce9428c8531c477a79b9c78ead30ba3513c262874eb3e573de7031faf71191` | 1 |
+- `block/crop/eggplant/3.png` | `a1d40457bf243365fcb5b1bb993208674e06cb4c404da588972388f5298f1ca9` | 1 |
+- `block/crop/enderbloom/1.png` | `ff6ba6517d4f1846caf54964b715d465ec46c326e0e813c23fc039c036a31f96` | 1 |
+- `block/crop/enderbloom/2.png` | `1f75be00d7bcddc311f6fd73dfc6611d247ba329b3ee2696818d288f669a8ed1` | 1 |
+- `block/crop/enderbloom/3.png` | `97dd7f97319fc415200d75a83e51e7eb4521967f385040f4e1487af50a633bd7` | 1 |
+- `block/crop/enderbloom/4.png` | `df6cf4922918fe43a2863b3741fc9036ca14c64ae4960291408fdb9caa73755c` | 1 |
+- `block/crop/flax/1.png` | `5ee38016f20d36354fe6b12f78a339a5a1c04bcdf21c3d4076ac4371078fbf3e` | 1 |
+- `block/crop/flax/2.png` | `66b3225edc48708dd78d97c60f04e375305ddc412de86174bc33349252994b09` | 1 |
+- `block/crop/flax/3.png` | `0136ac26e0a734fb33e95882f0d4d45abbd26be867c217bca530d9b649dc4576` | 1 |
+- `block/crop/flax/4.png` | `4654b0be1a83b918325e70f3dd53d8852e1b6f76353b5128a459587d64437e21` | 1 |
+- `block/crop/glowshrooms/1.png` | `9739ba0410add9eeb7918868e52431379fe9f6fc9d04280a06c9b4916ebc9cd0` | 1 |
+- `block/crop/glowshrooms/2.png` | `91a97b9306f6b0a800477d315d65abffb2545fbd607a997ce3cb11a7fb4e8fcb` | 1 |
+- `block/crop/glowshrooms/3.png` | `ee7adf3bf3368b4026e21bcdf737661dd864eaeb5492e49d924df98cca816814` | 1 |
+- `block/crop/gooseberrybush/5.png` | `303be58eaf5b51090b63dd7ae09a89634f301b1477afc01dfaa4e2d113a1e684` | 1 |
+- `block/crop/greenappletree/4.png` | `29bfb4d5cda940547813b012e17991caaa6138f29fe4f5910c33c8b174f2d952` | 1 |
+- `block/crop/greengrapes/4.png` | `c8e225cddc9b1db93382098ead1aa9b88a7f25a3bdac7d99d66bad531f6a8d15` | 1 |
+- `block/crop/indigo/4.png` | `1cd1ac0a0fc962f61db11030b8922a855d14163aec3fc483c494425151ec68f4` | 1 |
+- `block/crop/lemonplant/4.png` | `7c0c68ff10dc2a2604fa915fe8609fd9584ec72b94a477fa3463c332bf1eae86` | 1 |
+- `block/crop/liveroots/4.png` | `9e0fb4fbb2e10811d57b0147e1cf3c251a8387a3bd9af182d33512a198d6ba99` | 1 |
+- `block/crop/meatrose/1.png` | `b1e16b176b2d8bfbe2533c16a6940567c20206820746adf0b784b859ff4691cd` | 1 |
+- `block/crop/meatrose/2.png` | `bc6983a8a0f91c3aec0a54615e675fedf8dba1a3f8515a339891578f137cc8db` | 1 |
+- `block/crop/meatrose/3.png` | `09fc08cd88ce3d5a34dfc8f09707ece47ba5751a3a539ae5df2f65fe1697ea13` | 1 |
+- `block/crop/meatrose/4.png` | `2806fe6001245fec8f7b6b3aadb5cc72fc2bb0a85f18d1ca758c8a682a844a54` | 1 |
+- `block/crop/milkwart/1.png` | `3578d85fe543eef5b27910b2558cbd002a5db8f45f43679a35ad6ba7ede07150` | 1 |
+- `block/crop/milkwart/2.png` | `90bd082ee194b03bb2b179eae08241c0189357e787108419f969240bdea7abee` | 1 |
+- `block/crop/milkwart/3.png` | `60b70993544711fdfd45bb5bcb93eaf16609889b9f864d607da9027e912fb6a1` | 1 |
+- `block/crop/mint/4.png` | `1551f20a991f0f68d6bb77f755919d703723d3490b334b902ea83f2fd4e7b32e` | 1 |
+- `block/crop/oats/7.png` | `47ac1fb9e3a913aba1011fc7787fb52518d9d4ea181e40b810cb9e9488736db4` | 1 |
+- `block/crop/oilberries/1.png` | `ec60d525d7cbb228b0143ccf850d1a8a791a1f226c775a4253257acb97c8587d` | 1 |
+- `block/crop/oilberries/2.png` | `36e07782ccffdd499d9cea352736623cb0a38561e3f70d32c574d142e31e3d7f` | 1 |
+- `block/crop/oilberries/3.png` | `0270c307f0a9be05f9f4fffab1e251f3b960768e3ef98164742f0e0c287365c2` | 1 |
+- `block/crop/oilberries/4.png` | `2ff2a39f5ffa2ddae8be5d8e79fc4efe227a9c6d3c5953a6e3eb4a7307038396` | 1 |
+- `block/crop/onion/1.png` | `317ee21a122c1acfa34551d04ad8df524ac731b305caef3c9c30211e284a617a` | 1 |
+- `block/crop/onion/2.png` | `c7bf67f87942eebb77887aa952624df5ca6366e3c964c4dd9ea580b9f090b6e9` | 1 |
+- `block/crop/onion/3.png` | `e0f43ca432538d7a8f80c75fab48669916b2b5f2d2f170ad3eb4cd0a904fe4e7` | 1 |
+- `block/crop/onion/4.png` | `4c93cc0504a2d5b03bcabf4cf6ef2705b54871e5b7d6c0bf353c9ba6b8b80b17` | 1 |
+- `block/crop/peanuts/3.png` | `dbc377278d81f6c096cf6e9045af438f7e8c986d27a07d81930f4748f5577a05` | 2 | `strawberries/3.png`
+- `block/crop/peanuts/4.png` | `579569fd01caac0f30257e1872aabb0c045321da201cdd3155bc96e5ad2a025b` | 1 |
+- `block/crop/plumbilia/1.png` | `d3c75086b683452a375b7cb6c3e0fb78514146a92273f605585b825ca08664dc` | 1 |
+- `block/crop/plumbilia/2.png` | `71919279559037d3da9afb52c49038c21d4b84ec851091770615270d7224bd73` | 1 |
+- `block/crop/plumbilia/3.png` | `ae73fa56ec76b373e57a2951d0555dd395543df39ad754e6a8f45c4a076d38f2` | 1 |
+- `block/crop/plumbilia/4.png` | `3e3effec9518a62cf44a0a1bac27856c61c423d7b5aac2b9e7c28083c940709c` | 1 |
+- `block/crop/purplegrapes/4.png` | `fc39e945825fabe9f8d752aa6ed8e075f4a92b353339e3ac2a04dff600ff065f` | 1 |
+- `block/crop/raspberries/4.png` | `62940108673f6ce757e3c8c0a60f0285711ab638f06e162c4d9c59c11dfa2beb` | 1 |
+- `block/crop/redappletree/4.png` | `b8b8276e51df7e9195068b090cb161cc7561c55ee79638dd7f0f77a7a90530cf` | 1 |
+- `block/crop/redcurrants/5.png` | `fa9de61244fe5949993fed7d78e11d1c50e930ebd2484c9530b8828f2fb8f60a` | 1 |
+- `block/crop/redgrapes/4.png` | `79522c6d7e35ab5b4b60dcd96e7c61cdf317097ac07b29c7f1ce011e9f10b70c` | 1 |
+- `block/crop/rice/7.png` | `5dfd9d53e779845e97ad695f315a03194f9baea9ac1a89dca02d16d5bb48cb8e` | 1 |
+- `block/crop/rye/7.png` | `85d44cf0f8506978c0dcbb91815538ed7e39f6d334818c075feb91fdaae87861` | 1 |
+- `block/crop/shimmerleaf/1.png` | `ba736809ac9335e9ab206403e99837eefafeb2298f164ef4281027df859a8c87` | 1 |
+- `block/crop/shimmerleaf/2.png` | `f0381f1e8f928d11e8f17ee59a4f1e968a451e670695a9511c694a9a1ee5f213` | 1 |
+- `block/crop/shimmerleaf/3.png` | `6dcd0b20868a7e00b79b9bce7eefcc76499a34f584744d979601e5fdad2fad0a` | 1 |
+- `block/crop/shimmerleaf/4.png` | `d1b342cf8e868fc45ea3ff5d3933c3bd84bebba233e241c02b4fa2d063195cb7` | 1 |
+- `block/crop/slimeplant/4.png` | `53228cb02d42853dacb7275b3ebca50dd8c1accbc9b8e198ae0c2f976118e0f7` | 1 |
+- `block/crop/spidernip/1.png` | `a42e60a79867b85355ab749e7b7c0b4f325be4054ac108526d5d90360bd2f988` | 1 |
+- `block/crop/spidernip/2.png` | `b9a51ee5faa221a9ea911e62c798961437abf6a9ed317fcbe4da4702e84c2aeb` | 1 |
+- `block/crop/spidernip/3.png` | `963ee3ab5ee681cf1c739aad6f0cdf5fde8cbdd4628e1a6f86d0dc0edb794224` | 1 |
+- `block/crop/spidernip/4.png` | `964b8ec9c700f36ff0d010ee2dda61fca3e54b2368534fe3f84081922b8ceed0` | 1 |
+- `block/crop/steeleafranks/4.png` | `6cbcc9452dc797f1815ca4bc9048d4dded86b9010b60233cae53beec7e9c54fc` | 1 |
+- `block/crop/strawberries/4.png` | `8b0afc9130264409c1223a881d1de929a061d08dccaed1944e9f9401b30a75cd` | 1 |
+- `block/crop/tea/4.png` | `b170bd977b8276b676624c830b501aa75801e610511f4da30313e610d76c2d6c` | 1 |
+- `block/crop/tearstalks/1.png` | `cf9f11f36076b11bfb8fc1d4b646e6c01f9895075e81b3977c2e0544fde00a56` | 1 |
+- `block/crop/tearstalks/2.png` | `fadc740bec267cf89804f5d74666eca89e4d19eb310aabb2b0bb09ce22ac726d` | 1 |
+- `block/crop/tearstalks/3.png` | `fa306b10338e1609b2b19f04e714cbc4a974134ae9cb5482f8e80b87fe0526f0` | 1 |
+- `block/crop/tearstalks/4.png` | `05a90cd0726c25c8111a824543f860bf722b5613cd676d8309eda92e2c580d7b` | 1 |
+- `block/crop/tine/1.png` | `1c2a0181ccf099bb1a69f01668896e1c93318ea8b5e9c478a8af893c99337283` | 1 |
+- `block/crop/tine/2.png` | `c9ea8858b8bbcd9628d87d0ed9423749f497ae45e2b6bde7cc297b05409bd141` | 1 |
+- `block/crop/tine/3.png` | `79395c2cd2c89dca17d1db60f2be05c103369057a391bb780ffa26fccaee4cb4` | 1 |
+- `block/crop/tomatoplant/4.png` | `801f0abaf12c9d44de02807fc273528cdfd038677db7863b62a03ca3f6426a31` | 1 |
+- `block/crop/whitecurrants/5.png` | `3a8183f721f95ca5fc0f707d9c01a6691c03a17d4cb4c1dfad32401c4dd4ec2a` | 1 |
+- `block/crop/whitegrapes/4.png` | `4f753a7e73f76585e6957c82a561a567e67af8a771272beda7adeddaa52ccd81` | 1 |
+- `block/crop/withereed/4.png` | `8bb113bf2acb7fad7b2e4eff5bb01438e07e30c54d1245e9de15084a746e9095` | 1 |
+- `block/crop/yellowappletree/4.png` | `8793d8a3fec0190b39b3c07de62b613deb2f9efa83d45470b78d576082442cdb` | 1 |
+Also in this card: `item/crop_stick.png` re-seated from the cbc-1 committed blob (source IC2
+`items/crop/crop_stick.png`, sha256 `ffbdc867…` per the cbc-1 ledger row — byte-identical
+`git show | cmp` clean) as the gt6:crop_seed item model texture (IC2 renders ItemCrop itself
+with the crop-stick sprite, ItemCrop.java:27).

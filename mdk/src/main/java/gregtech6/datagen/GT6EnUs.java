@@ -200,6 +200,21 @@ public class GT6EnUs extends LanguageProvider {
         addConcrete(); // task concrete-blocks-register — table-tail append
         addBakeFoods(); // task food-bake-items — table-tail append
         addCropFoods(); // task food-crop-items — table-tail append
+        addCropCards(); // task cbc-3-crop-data-assets — table-tail append
+    }
+
+    /**
+     * The 59 crop-card display names + the seed item (task cbc-3-crop-data-assets): the en
+     * value IS the upstream {@code aCropName} argument verbatim (GT_BaseCrop.java:62
+     * {@code LH.add("gt.crop."+mName, aCropName)}), the key = the lowercased de-spaced name
+     * (GT_BaseCrop.java:59) — walked over the GT6CropCards.rows() so the key/value pairs cannot
+     * drift from the data rows. Plus item.gt6.crop_seed (the GT6CropSeeds item name).
+     */
+    private void addCropCards() {
+        add("item.gt6.crop_seed", "Crop Seeds");
+        for (gregtech6.crop.GT6CropCards.CropCardRow tRow : gregtech6.crop.GT6CropCards.rows()) {
+            add("gt.crop." + tRow.name().toLowerCase().replaceAll(" ", ""), tRow.name());
+        }
     }
 
     /**

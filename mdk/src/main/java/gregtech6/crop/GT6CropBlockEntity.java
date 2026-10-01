@@ -439,9 +439,9 @@ public class GT6CropBlockEntity extends BlockEntity implements CropTileView {
 
 	@Override
 	public ItemStack generateSeeds(GT6CropCard aCard, int aGrowth, int aGain, int aResistance, int aScan) {
-		// the INTERIM seed face (the base-seed copy, GT_BaseCrop.java:77); the stat-carrying
-		// ItemCropSeed form (TileEntityCrop.generateSeeds :894-897) is card cbc-3's GT6CropSeeds
-		return aCard == null ? ItemStack.EMPTY : aCard.seedStack();
+		// the seed face routes through the card: the stat-carrying gt6:crop_seed live, the
+		// base-seed copy while the seed item is unbound (the offline legs)
+		return aCard == null ? ItemStack.EMPTY : aCard.seedStack(aGrowth, aGain, aResistance, aScan);
 	}
 
 	@Override

@@ -287,6 +287,11 @@ public final class GT6ItemModels extends ItemModelProvider {
         withExistingParent("pincers", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/pincers"))
             .texture("layer1", modLoc("item/pincers_overlay"));
+        // the crop seed (task cbc-3-crop-data-assets): one plain generated item over the family
+        // crop-stick sprite — IC2 renders ItemCrop itself with crop_stick.png (ItemCrop.java:27),
+        // the cbc-1 borrow re-seated (assets/README.md, the cbc-3 ledger band).
+        withExistingParent("crop_seed", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/crop_stick"));
         // the electric nineteen (task w5-t6-electric-nineteen): the two-layer tool
         // face per id — layer0 = the head/tip sprite, layer1 = the handle/power-unit
         // pass (the upstream getIcon(false)/getIcon(true) pass order, the crowbar/cutter
