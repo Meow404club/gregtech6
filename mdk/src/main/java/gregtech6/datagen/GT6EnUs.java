@@ -196,6 +196,7 @@ public class GT6EnUs extends LanguageProvider {
         addBooks(); // task books-written — table-tail append
         addTechnologicalComponents(); // task debt-emitter-sensor-generators — table-tail append
         addFoodItems(); // task food-items-core — table-tail append
+        addBeams(); // task beam-blocks-register — table-tail append
     }
 
     /**
@@ -2774,6 +2775,19 @@ public class GT6EnUs extends LanguageProvider {
             add("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_sapling"), tKind.enName() + " Sapling");
             add("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_log"), tKind.enName() + " Log");
             add("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_leaves"), tKind.enName() + " Leaves");
+        }
+    }
+
+    /**
+     * The wood-beam family keys (task beam-blocks-register, 8 rows): block display names
+     * walked from {@link gregtech6.registry.GT6BeamBlocks#KINDS}, the en column IS the
+     * upstream LH row (BlockTreeBeam1.java:31-48 Oak/Spruce/Birch/Jungle,
+     * BlockTreeBeam2.java:31-48 Acacia/Dark Oak/Rubber Wood/Wood) — the kind's enName
+     * carries the composed name whole. Table-tail append, append-only.
+     */
+    private void addBeams() {
+        for (gregtech6.block.tree.GT6BeamKind tKind : gregtech6.registry.GT6BeamBlocks.KINDS) {
+            add("block.gt6." + gregtech6.registry.GT6BeamBlocks.path(tKind), tKind.enName());
         }
     }
 

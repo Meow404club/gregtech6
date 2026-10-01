@@ -141,6 +141,7 @@ import gregtech6.registry.GT6StaticStorages;
 import gregtech6.registry.GT6SurfaceBlocks;
 import gregtech6.registry.GT6Tanks;
 import gregtech6.registry.GT6Tools;
+import gregtech6.registry.GT6BeamBlocks;
 import gregtech6.registry.GT6TreeBlocks;
 import gregtech6.registry.GT6Turbines;
 import gregtech6.registry.GT6ZpmDechargers;
@@ -316,6 +317,7 @@ public class GT6AssetCoverageGuardTest {
 			GT6Reactors.class, // task debt-reactor-b-2x2-be — the 2x2 core row
 			GT6Sensors.class, GT6SlicerBlades.class, GT6SprayCans.class, GT6StaticStorages.class,
 			GT6SurfaceBlocks.class, GT6Tanks.class, GT6Tools.class, GT6TreeBlocks.class,
+			GT6BeamBlocks.class, // task beam-blocks-register — the 8 wood-beam rows
 			GT6Turbines.class, GT6ZpmDechargers.class, GTEnergySources.class, GTBarrels.class, GTBlockEntities.class,
 			GTMachines.class, GTMultiBlocks.class, GTWires.class, GTFluidPipes.class,
 			GTItemPipes.class, GT6Covers.class, GT6Circuits.class, GT6LubricantBucket.class,

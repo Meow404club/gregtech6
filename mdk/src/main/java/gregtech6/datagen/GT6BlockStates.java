@@ -294,6 +294,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addCells(); // task small-tank-cell — the 40 Capsule-Cell-Container rows (the one shared per-level model family)
         addCup(); // task small-tank-cup — the Porcelain Cup bowl (the 1px-wall per-level model family)
         addJug(); // task small-tank-jug — the Ceramic Jug (the rim-over-body per-level model family)
+        addBeams(); // task beam-blocks-register — the 8 wood-beam pillar blocks (the axle axis band form)
     }
 
     /**
@@ -1596,8 +1597,9 @@ public final class GT6BlockStates extends BlockStateProvider {
      * (top/bottom/side/front, spec 8): the front texture is the state carrier, mirroring the
      * upstream getTexture2 overlay pick (MultiTileEntityBasicMachine.java:1014, mActive →
      * mTexturesActive : mRunning → mTexturesRunning : mTexturesInactive); the y rotation maps
-     * the FACING property (model-space north = front). Textures are script-generated
-     * placeholder PNGs, not JSON.
+     * the FACING property (model-space north = front). The texture PNGs are the byte-identical
+     * upstream borrows (the assets README sha256 ledger; the oven-texture-borrow audit
+     * retired the former script-generated-placeholder wording).
      */
     private void addOven() {
         addMachine(GTMachines.OVEN.get(), "oven");
@@ -1872,8 +1874,10 @@ public final class GT6BlockStates extends BlockStateProvider {
      * The p22 two-element form. ACT-only since task b-port-overlay-render (the
      * Advanced Crafting Table is the one machine family with no borrowed side art — the
      * craftingtables/advanced upstream group ships fronts only — so it keeps the shared
-     * oven placeholder body and the single front decal; every addMachine family moved to
-     * {@link #familyMachineModel}).
+     * oven body texture set and the single front decal; every addMachine family moved to
+     * {@link #familyMachineModel}). The body PNGs are the byte-identical upstream borrows
+     * (the assets README sha256 ledger; the oven-texture-borrow audit retired the former
+     * placeholder-body wording).
      *
      * <p>Task paintable-tint-render: the vanilla {@code block/cube} element is re-declared
      * in the child with {@code tintindex 0} on EVERY face — the machine cube is six-texture,
@@ -4900,5 +4904,30 @@ public final class GT6BlockStates extends BlockStateProvider {
             return ConfiguredModel.builder().modelFile(tLevel == 0 ? tEmpty : tFilled[tLevel]).build();
         });
         itemModels().withExistingParent("ceramic_jug", tEmpty.getLocation());
+    }
+
+    /**
+     * The wood-beam family (task beam-blocks-register, 8 blocks): one {@code cube_column}
+     * model per kind over the two borrowed upstream PNGs (end = beam_top_&lt;kind&gt;, side =
+     * beam_side_&lt;kind&gt; — the BEAMS_1/BEAMS_2 icon pairs, Textures.java:260-277, indexed
+     * 2*(meta&amp;PILLAR_DATA)+(axis?0:1) at BlockBaseBeam.java:65), the axle axis band
+     * rotation map verbatim (X = x90+y90 / Y = none / Z = x90+y180 — the vanilla axisBlock
+     * idiom, the addAxles :2340-2344 form). Geometry is the full cube: upstream render id
+     * 31 (CS.java:764 PILLAR_RENDER) IS the vanilla log renderer — the beam has no reduced
+     * cross-section. The item form parents the block model (the axle band row).
+     */
+    private void addBeams() {
+        for (RegistryObject<Block> tHandle : gregtech6.registry.GT6BeamBlocks.BLOCKS) {
+            Block tBlock = tHandle.get();
+            gregtech6.block.tree.GT6BeamKind tKind = ((gregtech6.block.tree.GT6BeamBlock) tBlock).kind();
+            ModelFile tModel = models().cubeColumn(tHandle.getId().getPath(),
+                    modLoc("block/beam_side_" + tKind.snake()), modLoc("block/beam_top_" + tKind.snake()));
+            getVariantBuilder(tBlock).forAllStates(aState -> switch (aState.getValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS)) {
+                case X -> new ConfiguredModel[] {new ConfiguredModel(tModel, 90, 90, false)};
+                case Y -> new ConfiguredModel[] {new ConfiguredModel(tModel)};
+                case Z -> new ConfiguredModel[] {new ConfiguredModel(tModel, 90, 180, false)};
+            });
+            itemModels().withExistingParent(tHandle.getId().getPath(), tModel.getLocation());
+        }
     }
 }

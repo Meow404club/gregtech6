@@ -137,6 +137,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addPocketUnits();       // task w5-t7-pocket-eight — the 8+7 pocket face (hand rows, no dump face exists)
 		addArmorUnits();        // task w5-t8-armor-24
 		addTreeUnits();         // task w6-t1-trees-nine — the 27 tree-family rows (hand, the tsv direct band)
+		addBeamUnits();         // task beam-blocks-register — the 8 wood-beam rows (hand, the tsv direct band)
 		addSurfaceUnits();      // task w6-rocks-sticks
 		addSurfacePlantUnits(); // task w6-t2-surface-blocks — the 8 plant/log rows (hand, the tsv direct band)
 		// task ore-1-mech — 模板钉说明，本卡零键（zh ratchet 0）：矿域注册面
@@ -854,6 +855,20 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_sapling"));
 			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_log"));
 			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_leaves"));
+		}
+	}
+
+	/**
+	 * The wood-beam family zh faces (task beam-blocks-register, the addTreeUnits shape):
+	 * the 8 display names ride the reference table's hand layer, whose values are the
+	 * 1.7.10 zh dump faces verbatim (gt.block.beam.1.0-.3 橡木梁/云杉木梁/白桦木梁/丛林木梁,
+	 * gt.block.beam.2.0-.3 金合欢木梁/深色橡木梁/橡胶木梁/木梁 — the per-orientation dump
+	 * metas all repeat the four base words per block).
+	 * Hand rows (the TSV regen and this walk land in the SAME commit).
+	 */
+	private void addBeamUnits() {
+		for (gregtech6.block.tree.GT6BeamKind tKind : gregtech6.registry.GT6BeamBlocks.KINDS) {
+			addDirect("block.gt6." + gregtech6.registry.GT6BeamBlocks.path(tKind));
 		}
 	}
 

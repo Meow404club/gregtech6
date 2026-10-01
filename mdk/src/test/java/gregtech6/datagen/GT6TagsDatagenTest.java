@@ -200,7 +200,9 @@ class GT6TagsDatagenTest {
      * The axe band: the wood fluid barrel + the 9 GT6 tree logs (task w6-t1-trees-nine
      * — the addTreeBand walk order appended after the barrel; the census material mapping
      * keeps wood out of pickaxe) + the 4 fallen-log woods (task w6-t2-surface-blocks,
-     * the addSurfacePlantBand tail-append).
+     * the addSurfacePlantBand tail-append) + the 8 wood beams (task beam-blocks-register,
+     * the addBeamBand tail-append — the upstream harvest-tool override BlockBaseBeam.java:54
+     * {@code getHarvestTool = TOOL_axe}, kind order).
      */
     @Test
     void axeBandIsExactlyTheWoodBarrelAndTheTreeLogs() throws Exception {
@@ -208,7 +210,9 @@ class GT6TagsDatagenTest {
                 "gt6:rubber_log", "gt6:maple_log", "gt6:willow_log", "gt6:blue_mahoe_log",
                 "gt6:hazel_log", "gt6:cinnamon_log", "gt6:coconut_log", "gt6:rainbowood_log",
                 "gt6:blue_spruce_log",
-                "gt6:dead_log", "gt6:rotten_log", "gt6:mossy_log", "gt6:frozen_log"),
+                "gt6:dead_log", "gt6:rotten_log", "gt6:mossy_log", "gt6:frozen_log",
+                "gt6:oak_beam", "gt6:spruce_beam", "gt6:birch_beam", "gt6:jungle_beam",
+                "gt6:acacia_beam", "gt6:dark_oak_beam", "gt6:rubber_wood_beam", "gt6:wood_beam"),
                 tagValues("minecraft/tags/blocks/mineable/axe.json"));
     }
 

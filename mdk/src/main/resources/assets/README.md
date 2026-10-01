@@ -11122,3 +11122,34 @@ gets to it). Path mapping: upstream `jug/<layer>/<face>.png` →
 - `block/jug/overlay_top.png` — `f10e037c9301ffc100785bf586b88da43a9fa549e60a18ab8de9fde010963940` (upstream `jug/overlay/top.png`; real art, NOT the blank tile)
 - `block/jug/overlay_bottom.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `jug/overlay/bottom.png`; byte-identical to overlay_sides)
 - `item/clay_jug.png` — `2d4fb109b86ab8a3711e480a3368d78c54f12beeb9d9d4c91f6e8a2d9184a1f1` (upstream `gt.multiitem.randomtools/996.png`, MultiItemRandomTools.java:120 — the raw item icon)
+Wood-beam block textures, task beam-blocks-register: the 16 PNGs under
+`gt6/textures/block/beam_top_*.png` and `gt6/textures/block/beam_side_*.png`
+come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/iconsets/BEAM_TOP_<WOOD>.png`
+and `.../BEAM_SIDE_<WOOD>.png` (wood ∈ OAK/SPRUCE/BIRCH/JUNGLE — the BEAMS_1
+group, Textures.java:260-269 — and ACACIA/DARKOAK/RUBBERWOOD/WOOD — the BEAMS_2
+group, :270-277; the per-kind icon pair indexed
+`2*(meta&PILLAR_DATA)+(axis?0:1)`, BlockBaseBeam.java:65), byte-identical to
+upstream, cmp + sha256 verified per file:
+
+- `beam_side_acacia.png`      `2fe75b7f799bc0c905c9c5ebbd0da7b9ff4d3e962f2cb0a9c041d800fcdaf8a0`
+- `beam_side_birch.png`       `067570cc996ad9db3705aa8fb0a31a33abe25868cd3798a87d1e2a519ab6bef5`
+- `beam_side_dark_oak.png`     `cc2df784eccb6d32bb3243f317457aae0ae5039cbf56133ebca81c87e8cff008`
+- `beam_side_jungle.png`      `6f4ac051ead59da193ea625cf8211adbcfc7caa321b29c76943d3f9aeda14b87`
+- `beam_side_oak.png`         `c9ac39e363aa066e49c479ac2a9c9640232a1ead0b82d17a5f1a1e9014d3b467`
+- `beam_side_rubber_wood.png`  `183e6ab631723e7eeca90f70931ece7138bacf625cfe862058e6f127760bc836`
+- `beam_side_spruce.png`      `0b6085ee35cd549b67a4a87ec1317c34afcb17c10d3dc6e935d697ae48d7f393`
+- `beam_side_wood.png`        `a2e9094402a7cd7961baeaedff848a80ed972f452d9623ff690449f81c69860e`
+- `beam_top_acacia.png`       `a5298f2af6ebd8a1116eb2ab457cc7431e45129b86fbffe17fe50510cb419829`
+- `beam_top_birch.png`        `aee8da2ef0dc3e1094d26ae49c6f07acc9d02243f7a6c1b50e8f9cb3d8c4967c`
+- `beam_top_dark_oak.png`      `bbe055a3c023cd3241095396a791e837576476c992c2bba40cd55b7df53b02e5`
+- `beam_top_jungle.png`       `c5553ce6336fc5f17aaeb8665eca26d274c194dd8c68a7b3af5e674632b9feef`
+- `beam_top_oak.png`          `f0d9cc40fdcd94e7e46e296a92e3ebd121d7a471fe47708f603ce01b81125a9d`
+- `beam_top_rubber_wood.png`   `ac01916d990e06e5b1b1d8889f56ea6b87b72f39f9d469d6fbe05a64682ccceb`
+- `beam_top_spruce.png`       `109cf88ed3e8c9710e1f23ed19c7e60d3508a32ba42dd377ce6fbfe63bf5deb0`
+- `beam_top_wood.png`         `32abe24f27715308c9f3f613f50c9c2437499e4943a87986a360a8472adb6072`
+
+Filenames were lowercased/flat-mapped onto the `textures/block/` convention on
+borrow (1.20.1 `ResourceLocation` charset; the sprite ids are
+`gt6:block/beam_top_<wood>` / `gt6:block/beam_side_<wood>`); the PNG contents
+are byte-identical.

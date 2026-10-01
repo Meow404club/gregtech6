@@ -27,6 +27,7 @@ import gregtech6.registry.GTFluidPipes;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GT6TreeBlocks;
+import gregtech6.registry.GT6BeamBlocks;
 import gregtech6.registry.GT6SurfaceBlocks;
 import gregtech6.registry.GTStoneBlocks;
 import gregtech6.registry.GTWires;
@@ -97,6 +98,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		addShovelBand();
 		addTreeBand(); // task w6-t1-trees-nine — the decisions.p25-leaves-logs-tags-deferred unlock
 		addSurfacePlantBand(); // task w6-t2-surface-blocks — the fallen logs (logs/axe) + the soil pair (shovel)
+		addBeamBand(); // task beam-blocks-register — the 8 wood beams join mineable/axe
 		addRailsBand(); // task rails-31-blocks — the 31 rails join #minecraft:rails
 		// the takeover seam: later cards tail-append their own add*Band() here
 		// (tags-prefix-materials: rolling batches).
@@ -273,6 +275,21 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		}
 		for (RegistryObject<Block> tHandle : GT6TreeBlocks.SAPLINGS) {
 			tSaplings.add(tHandle.get());
+		}
+	}
+
+	/**
+	 * The wood-beam band (task beam-blocks-register): the 8 beams join
+	 * {@code minecraft:mineable/axe} — the upstream harvest-tool override
+	 * (BlockBaseBeam.java:54 {@code getHarvestTool = TOOL_axe}). NOT a #minecraft:logs
+	 * member: the tag listener family (GT6CokeOvenLogExpansion) keys on the vanilla log
+	 * tag and the beams are a separate upstream walk (the coke-oven beam rows stay the
+	 * SKIPPED_UPSTREAM declaration's domain).
+	 */
+	private void addBeamBand() {
+		var tAxe = tag(BlockTags.MINEABLE_WITH_AXE);
+		for (RegistryObject<Block> tHandle : GT6BeamBlocks.BLOCKS) {
+			tAxe.add(tHandle.get());
 		}
 	}
 }

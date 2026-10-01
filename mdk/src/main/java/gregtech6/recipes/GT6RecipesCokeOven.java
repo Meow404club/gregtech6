@@ -82,7 +82,8 @@ import gregtech6.registry.GTMaterialItems;
  * resolvers below fall back to it, and the table carries all seven rows (39 total). The
  * Woods/OreDict/Crops/Tools dynamic surface (:176-180/:197-201, OreDict:205, Crops:76,
  * Tools:418) is replaced by the tag-driven {@link GT6CokeOvenTagListener} (one recipe per
- * #minecraft:logs item; beam/bamboo/wood-pellet have no tagged item and stay pooled).
+ * #minecraft:logs item; beam/bamboo/wood-pellet have no tagged item and stay pooled —
+ * the 8 wood-beam ITEMS exist since task beam-blocks-register, pooled by untagged-ness).
  *
  * <p><b>Load timing</b> (ADR ruling ②): a self-contained MOD-bus listener pouring at
  * FMLCommonSetup.enqueueWork — the ConstructMod-time init (GTMachines.onModConstruct
@@ -192,12 +193,13 @@ public final class GT6RecipesCokeOven {
 	 * the block rows (:787-789/:803-805/:815) were p6/p7 pool and are BACKFILLED by task
 	 * prefixblock-registry (GTMaterialBlocks + the resolver fallback); the dynamic
 	 * log/beam family is now owned by the tag listener (beam/bamboo/wood-pellet have no
-	 * tagged counterpart → pooled).
+	 * tagged counterpart → pooled; the 8 beam ITEMS exist since task
+	 * beam-blocks-register — they stay pooled by untagged-ness, not by absence).
 	 */
 	public static final List<String> SKIPPED_UPSTREAM = List.of(
 		"Loader_Recipes_Other.java:787-789/:803-805 — blockRaw/blockIngot/blockGem x Coal/Lignite: BACKFILLED by prefixblock-registry (GTMaterialBlocks block items; was the p6 pool)",
 		"Loader_Recipes_Other.java:815 — Oilshale blockDust row: BACKFILLED by prefixblock-registry (blockDust joined the block universe; was the p7 ruling)",
-		"Loader_Recipes_Woods.java:197-201 — beam family (no beam item; p6 pool)",
+		"Loader_Recipes_Woods.java:197-201 — beam family (was the p6 pool on item-absence: the 8 wood-beam items exist since task beam-blocks-register (gt6:oak_beam..gt6:wood_beam, the vanilla LIST_BEAMS subset LoaderWoodDictionary.java:51-56/:66/:175); they stay POOLED by untagged-ness — the wood surface is the #minecraft:logs tag listener and beams are not log-tag members; the per-beam rows (3600 t, creosote 200/300 mB, charcoal x1 — BeamEntry defaults, BeamEntry.java:35) ride a future coke-oven card if ever split from the tag mechanism)",
 		"Loader_Recipes_Woods.java:165-180 log family — replaced by the #minecraft:logs tag listener (coordinator amendment 2026-08-30)",
 		"Loader_Recipes_Other.java:205 OreDict listener — no dynamic oredict surface; static pour only",
 		"Loader_Crops.java:76 bamboo / Loader_Tools.java:418 wood bullet (no counterpart item; p6 pool)");
