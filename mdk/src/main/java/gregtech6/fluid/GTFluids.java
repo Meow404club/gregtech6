@@ -27,6 +27,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 
+import gregapi.data.MT;
 import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.GT6Mod;
@@ -2635,7 +2636,7 @@ public final class GTFluids {
 	public static final List<ChemicalFluidSpec> BEE_ROW_FLUID_SPECS = List.of(
 		new ChemicalFluidSpec("dragon_breath"   , "Dragon's Breath"    , 300,  100,  200, 0xFFC864C8, true , 5), // :49 — aState=2 STATE_GASEOUS (viscosity 200, FL.java:1105) + the setDensity(100)/setLuminosity(5) literals
 		new ChemicalFluidSpec("concrete"        , "Wet Concrete"       , 300, 1000, 1000, 0xFF646464, false, 0), // :196 — MT.Concrete 100,100,100 (MT.java:1632)
-		new ChemicalFluidSpec("chocolate_molten", "Molten Chocolate"   , 313, 1000, 1000, 0xFF643200, false, 0), // :201 — the .heat(C+40) melting rule (MT.java:1336)
+		new ChemicalFluidSpec("chocolate_molten", "Molten Chocolate"   , 313, 1000, 1000, 0xFF643200, false, 0, MT.MD.HaC.mID), // :201 — the .heat(C+40) melting rule (MT.java:1336); mdh-3: the MT.Chocolate material-fluid face hides with its HaC PRIMARY attribution
 		new ChemicalFluidSpec("ice"             , "Near Frozen Water"  , 273, 1000, 1000, 0xFFC8C8FF, false, 0), // :364 — the C literal; MT.Ice setDensity 1.0 (MT.java:1013)
 		new ChemicalFluidSpec("soup_mushroom"   , "Mushroom Stew"      , 300, 1000, 1000, 0xFF96784C, false, 0), // :627 "mushroomsoup" — honest defaults; tint declared
 		new ChemicalFluidSpec("latex"           , "Latex"              , 300, 1000, 1000, 0xFFFAFAFA, false, 0), // :198 — MT.Latex 250,250,250 (MT.java:1225)
@@ -2780,7 +2781,7 @@ public final class GTFluids {
 		new ChemicalFluidSpec("enderair"  , "Ender Air"  , 280,     0,  200, 0xFFB4C87D, true ,  0), // :51 — the 280 K literal; tint declared (pale ender green)
 		// the UU pair (:72-73) — null displays riding the material local names, the 1-per-unit + 100 K literals
 		new ChemicalFluidSpec("uuamplifier", "UU-Amplifier", 100,  1000, 1000, 0xFFC400FF, false,  0), // :72 "UUAmplifier" — MT.UUAmplifier local (MT.java:2083, RGBa 196,0,255); the 1.0 g/cm³ default → 1000
-		new ChemicalFluidSpec("ic2uumatter", "UU-Matter"   , 100,  1000, 1000, 0xFF600080, false,  0), // :73 — MT.UUMatter local (MT.java:2084, RGBa 96,0,128); same carriers
+		new ChemicalFluidSpec("ic2uumatter", "UU-Matter"   , 100,  1000, 1000, 0xFF600080, false,  0, MT.MD.IC2.mID), // :73 — MT.UUMatter local (MT.java:2084, RGBa 96,0,128); same carriers; mdh-3: the UU-Matter material-fluid face hides with its IC2 PRIMARY attribution
 		// biomass (:83) — the :84 ic2biomass alias stays unported (the single-name ruling)
 		new ChemicalFluidSpec("biomass"   , "Biomass"     , 300,  1000, 1000, 0xFF00FF00, false,  0), // :83 — the null display rides the MT.Biomass local (MT.java:2053, RGBa 0,255,0); four-arg 300 K default
 		// mcguffium (:105)
@@ -2808,7 +2809,7 @@ public final class GTFluids {
 		new ChemicalFluidSpec("wax_molten"          , "Molten Wax"           ,  350,  1000, 1000, 0xFFFAFAFA, false, 0), // :205 — MT.Wax heat(350) (MT.java:2116); tint 250,250,250
 		new ChemicalFluidSpec("waxbee_molten"       , "Molten Bees Wax"      ,  350,  1000, 1000, 0xFFFADC6E, false, 0), // :206 — MT.WaxBee local "Bees Wax" (MT.java:2117); tint 250,220,110
 		new ChemicalFluidSpec("waxparaffin_molten"  , "Molten Paraffin Wax"  ,  400,  1000, 1000, 0xFFD2D2FA, false, 0), // :207 — MT.WaxParaffin heat(400) (MT.java:2119); tint 210,210,250
-		new ChemicalFluidSpec("waxplant_molten"     , "Molten Plant Wax"     ,  350,  1000, 1000, 0xFFD2FAD2, false, 0), // :208 — MT.WaxPlant local "Plant Wax" (MT.java:2120); tint 210,250,210
+		new ChemicalFluidSpec("waxplant_molten"     , "Molten Plant Wax"     ,  350,  1000, 1000, 0xFFD2FAD2, false, 0, MT.MD.HaC.mID), // :208 — MT.WaxPlant local "Plant Wax" (MT.java:2120); tint 210,250,210; mdh-3: the plant-wax material-fluid face hides with its HaC PRIMARY attribution
 		new ChemicalFluidSpec("waxrefractory_molten", "Molten Refractory Wax", 2600,  1000, 1000, 0xFFFA3232, false, 0), // :209 — MT.WaxRefractory heat(2600) (MT.java:2118); tint 250,50,50
 		new ChemicalFluidSpec("waxmagic_molten"     , "Molten Magic Wax"     ,  350,  1000, 1000, 0xFFC850C8, false, 0), // :210 — MT.WaxMagic local "Magic Wax" (MT.java:2121); tint 200,80,200
 		new ChemicalFluidSpec("waxamnesic_molten"   , "Molten WaxAmnesic"    ,  350,  1000, 1000, 0xFFB446FA, false, 0), // :211 — MT.WaxAmnesic carries NO setLocal (MT.java:2122): the en face rides the internal name verbatim (the upstream oversight kept); tint 180,70,250
