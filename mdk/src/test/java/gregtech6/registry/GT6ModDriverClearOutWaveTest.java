@@ -47,8 +47,11 @@ import gregtech6.registry.GT6ModDrivers.DriverLevel;
 
 public class GT6ModDriverClearOutWaveTest {
 
-    /** The default registration universe (the mdh-2 census, unchanged — acceptance 2). */
-    private static final int BASELINE = 56273;
+    /** The default registration universe (the mdh-2 census 56273 + the casing-machine-register
+     * 840 = 4 casing prefixes × 210 materials, which landed on main AFTER this card's freeze —
+     * ratchet protocol ADR-MDH4, histogram-verified pair-for-pair: 104 → 108 families, every
+     * other family's count byte-identical; REVIEW FIX merge seat XVI). */
+    private static final int BASELINE = 57113;
     /** The per-domain kept-drop ledger (the card report's 对账表, offline-measured 2026-10-01). */
     private static final Map<String, Integer> PER_DOMAIN_DROPS = Map.of(
             MT.MD.HaC.mID, 211,
@@ -59,10 +62,11 @@ public class GT6ModDriverClearOutWaveTest {
             MT.MD.BOTA.mID, 1113,
             MT.MD.GC_EXTRAPLANETS.mID, 1510,
             MT.MD.MET.mID, 3056);
-    /** 56273 − 8026 = 48247: the eight-domain joint pin keeps the ledger arithmetic honest. */
+    /** 57113 − 8026 = 49087: the eight-domain joint pin keeps the ledger arithmetic honest. */
     private static final int TOTAL_DROP = PER_DOMAIN_DROPS.values().stream().mapToInt(Integer::intValue).sum();
-    /** Creative-visible prefix families before and after the wave — no family empties out. */
-    private static final int TAB_PREFIX_COUNT = 97;
+    /** Creative-visible prefix families before and after the wave — no family empties out
+     * (97 + the 4 casingMachine families that landed post-freeze, see BASELINE). */
+    private static final int TAB_PREFIX_COUNT = 101;
 
     @BeforeAll
     public static void initMaterialSystem() {
