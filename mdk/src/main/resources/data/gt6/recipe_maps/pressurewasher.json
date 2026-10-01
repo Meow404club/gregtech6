@@ -1,10 +1,760 @@
 {
+  "comment": "task recipe-data-b2c-wash - the Pressure Washer static replay. Row source: the log-debarking walk of Loader_Recipes_Woods.java:165-167 (over the WoodDictionary.LIST_WOODS entries that carry a BeamEntry) through the wrapper RM.java:707 (eut 16, duration 64, water 200 mB) whose body :711-712 fans every row over the four FL.waters legs (FL.java:689 - water/mnwtr/distilled_water/spdew, 200 mB each): log x1 -> beam x1 + dust Bark x1 (the WoodEntry default bark, WoodEntry.java:143). The port-reachable walk: the 6 vanilla woods (LoaderWoodDictionary.java:51-56 - minecraft:oak/spruce/birch/jungle/acacia/dark_oak logs over the Beam1 0-3 / Beam2 0-1 faces = gt6:<wood>_beam) + the GT6 rubber tree (:69 LogA:0) = 7 logs x 4 legs = 28 rows. DECLARED DEVIATION (beam-face alignment): the upstream GT6-rubber debarking product is the BeamA:0 face (:69); the port's registered rubber-beam face is Beam2:2 (LoaderWoodDictionary.java:175 - the IC2/MFR-mod-tree face the GT6-only port keeps as its only rubber beam, gt6:rubber_wood_beam, per the beam-blocks-register card's declared unported list) and the row maps gt6:rubber_log onto it. The WOOD kind (IL.Beam = Beam2:3, the generify target) has NO static log-side row upstream - DEFAULT_BEAM only hangs off the mod-wood PlankEntry-only WoodEntries (GT_API_Post.java:433/565-566) - so its beam appears in no row. TRUE NEGATIVE FACES (declared, NOT poured): Loader_Recipes_OreDict.java:199/:201 - the logWood/logRubber event-listener rows (a mod log -> Beam2:2 (:199) or Beam2:3 (:201) + dust Bark): every GT6-only-reachable registration is gated off before the pressurewash - :182 early-returns the BlocksGT.Log1 family and :193 early-returns WoodDictionary.IGNORED_OREDICT_REGISTRATIONS, which every WoodEntry constructor feeds with its log item (WoodEntry.java:178), covering all 6 vanilla logs + the GT6 rubber log; the surviving registrants are foreign-mod logs only (P10 - the port carries no mod runtime; the magnet Tropicraft/RH precedent). RM.java:716-718 - the @Deprecated debarking aliases are skipped by declaration (note :716's default is water 1000, not the :707 water 200 - the alias face differs from the base wrapper; the port replays the :707 face the :167 walk actually flowed through). REPLACED SMOKE ROW: the p29 smoke row (minecraft:coarse_dirt + water 100 -> minecraft:dirt, duration 16 eut 16) carried no upstream semantics and is gone. PhaseGate: PRESSURE_WASHER stays pinned 0 - the phase-gate census pour arms the JsonLoader with an EMPTY pour (GT6RecipeMapPhaseGateTest.pourCensus), JSON stocks never enter the SNAPSHOT; this file is audited by its own RowsPourTest (the welder.json precedent). Row census: 28 (7 logs x the 4 FL.waters legs).",
   "recipes": [
     {
-      "inputs": [{"item": "minecraft:coarse_dirt", "count": 1}],
-      "fluidInputs": [{"fluid": "minecraft:water", "amount": 100}],
-      "outputs": [{"item": "minecraft:dirt", "count": 1}],
-      "duration": 16,
+      "comment": "Loader_Recipes_Woods.java:167 (oak; minecraft:water)",
+      "inputs": [
+        {
+          "item": "minecraft:oak_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:oak_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (oak; gt6:mnwtr)",
+      "inputs": [
+        {
+          "item": "minecraft:oak_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:oak_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (oak; gt6:distilled_water)",
+      "inputs": [
+        {
+          "item": "minecraft:oak_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:oak_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (oak; gt6:spdew)",
+      "inputs": [
+        {
+          "item": "minecraft:oak_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:oak_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (spruce; minecraft:water)",
+      "inputs": [
+        {
+          "item": "minecraft:spruce_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:spruce_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (spruce; gt6:mnwtr)",
+      "inputs": [
+        {
+          "item": "minecraft:spruce_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:spruce_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (spruce; gt6:distilled_water)",
+      "inputs": [
+        {
+          "item": "minecraft:spruce_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:spruce_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (spruce; gt6:spdew)",
+      "inputs": [
+        {
+          "item": "minecraft:spruce_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:spruce_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (birch; minecraft:water)",
+      "inputs": [
+        {
+          "item": "minecraft:birch_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:birch_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (birch; gt6:mnwtr)",
+      "inputs": [
+        {
+          "item": "minecraft:birch_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:birch_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (birch; gt6:distilled_water)",
+      "inputs": [
+        {
+          "item": "minecraft:birch_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:birch_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (birch; gt6:spdew)",
+      "inputs": [
+        {
+          "item": "minecraft:birch_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:birch_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (jungle; minecraft:water)",
+      "inputs": [
+        {
+          "item": "minecraft:jungle_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:jungle_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (jungle; gt6:mnwtr)",
+      "inputs": [
+        {
+          "item": "minecraft:jungle_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:jungle_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (jungle; gt6:distilled_water)",
+      "inputs": [
+        {
+          "item": "minecraft:jungle_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:jungle_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (jungle; gt6:spdew)",
+      "inputs": [
+        {
+          "item": "minecraft:jungle_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:jungle_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (acacia; minecraft:water)",
+      "inputs": [
+        {
+          "item": "minecraft:acacia_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:acacia_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (acacia; gt6:mnwtr)",
+      "inputs": [
+        {
+          "item": "minecraft:acacia_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:acacia_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (acacia; gt6:distilled_water)",
+      "inputs": [
+        {
+          "item": "minecraft:acacia_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:acacia_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (acacia; gt6:spdew)",
+      "inputs": [
+        {
+          "item": "minecraft:acacia_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:acacia_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (dark_oak; minecraft:water)",
+      "inputs": [
+        {
+          "item": "minecraft:dark_oak_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dark_oak_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (dark_oak; gt6:mnwtr)",
+      "inputs": [
+        {
+          "item": "minecraft:dark_oak_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dark_oak_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (dark_oak; gt6:distilled_water)",
+      "inputs": [
+        {
+          "item": "minecraft:dark_oak_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dark_oak_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (dark_oak; gt6:spdew)",
+      "inputs": [
+        {
+          "item": "minecraft:dark_oak_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dark_oak_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (rubber_wood; minecraft:water)",
+      "inputs": [
+        {
+          "item": "gt6:rubber_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rubber_wood_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (rubber_wood; gt6:mnwtr)",
+      "inputs": [
+        {
+          "item": "gt6:rubber_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rubber_wood_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (rubber_wood; gt6:distilled_water)",
+      "inputs": [
+        {
+          "item": "gt6:rubber_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rubber_wood_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Woods.java:167 (rubber_wood; gt6:spdew)",
+      "inputs": [
+        {
+          "item": "gt6:rubber_log",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 200
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rubber_wood_beam",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_bark",
+          "count": 1
+        }
+      ],
+      "duration": 64,
       "eut": 16
     }
   ]
