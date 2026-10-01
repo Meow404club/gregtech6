@@ -67,6 +67,16 @@ public class GTSenseItem extends Item {
 	/** Upstream getBaseDamage :50-52 — 3.0F kept verbatim. */
 	private static final float ATTACK_DAMAGE = 3.0F;
 
+	/**
+	 * The ToolCompat :102 crop-harvest suck gate (canCollectDropsDirectly =
+	 * ToolStats.canCollect() || AUTO_COLLECTING material, MultiItemTool.java:215-218):
+	 * ToolStats.java:77 defaults false and GT_Tool_Sense never overrides — the plain
+	 * sense does NOT sweep drops; the 4x2x4 suck face rides
+	 * {@code gregtech6.crop.behavior.CropScytheBehavior#suckBox} for a
+	 * collecting-material universe.
+	 */
+	public static final boolean COLLECTS_DROPS = false;
+
 	/** Upstream getSpeedMultiplier — default 1.0 — the 6.0F anchor. */
 	public static final float MINING_SPEED = 6.0F;
 
@@ -150,6 +160,34 @@ public class GTSenseItem extends Item {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * The crop arm (card cbc-4-crop-tools) — the upstream TOOL_sense right-click face
+	 * (Behavior_Tool -> IBlockToolable -> gregapi/block/ToolCompat.java:174-183): the
+	 * 3x3x3 neighbourhood of crop tiles harvests, each tile pays one durability point
+	 * (upstream tDamage += 10000, the :179 damage-unit fold). Runs BEFORE the block's
+	 * own use face, so holding the sense no longer spills clicks into the stick/harvest
+	 * right-click arms.
+	 */
+	@Override
+	public net.minecraft.world.InteractionResult useOn(net.minecraft.world.item.context.UseOnContext aContext) {
+		net.minecraft.world.level.Level tLevel = aContext.getLevel();
+		if (tLevel.getBlockEntity(aContext.getClickedPos()) instanceof gregtech6.crop.GT6CropBlockEntity) {
+			if (!tLevel.isClientSide && aContext.getPlayer() instanceof net.minecraft.server.level.ServerPlayer tPlayer) {
+				int tDamage = gregtech6.crop.behavior.CropScytheBehavior.harvestArea(tLevel, aContext.getClickedPos());
+				if (COLLECTS_DROPS) { // the ToolCompat :102 gate — dead until a collecting material exists
+					for (net.minecraft.world.item.ItemStack tStack : gregtech6.crop.behavior.CropScytheBehavior.suckBox(tLevel, aContext.getClickedPos())) {
+						tPlayer.getInventory().placeItemBackInInventory(tStack);
+					}
+				}
+				if (tDamage > 0) {
+					aContext.getItemInHand().hurtAndBreak(tDamage, tPlayer, e -> e.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+				}
+			}
+			return net.minecraft.world.InteractionResult.SUCCESS;
+		}
+		return net.minecraft.world.InteractionResult.PASS;
 	}
 
 	/** Upstream getToolDamagePerEntityAttack (default 100) — one point. */
