@@ -20,7 +20,10 @@ growth shortcut):
     the blockstate carrier flips to [crossing=true].
   D mature arm: plant rye at size 7 (the :464 signature), /gt6crop harvest
     -- the produce drops as a real item entity (gt6:food_crop_rye pinned via
-    execute-if-entity), the size resets to the after-harvest 2.
+    execute-if-entity), the size resets to the after-harvest 2. The drop
+    COUNT is a gaussian roll (~24% zero per attempt, upstream :817 resets the
+    size regardless), so the arm rides a bounded re-plant loop: four
+    allow_failed attempts then the strict verdict (0.237^5 ~ 0.07% residual).
   E negative: an immature (size 1) harvest refuses -- harvested=false, the
     plant survives.
 
@@ -92,6 +95,23 @@ steps += [
 
     phase("D: the mature arm -- plant rye at 7 (the :464 size face) and harvest the produce"),
     *rig(MP, MS),
+    # The drop COUNT is a gaussian roll (chance = 0.95^1 * 1.03^1 ~ 0.978 -> a zero-drop
+    # harvest resets the size and answers false, upstream :817 runs regardless) — a strict
+    # single-shot expect is a ~24% flake per pass. The bounded re-plant loop drives the
+    # per-attempt miss rate 0.237^5 ~ 0.07%: four allow_failed attempts (each re-plants the
+    # after-harvest size-2 tile back to 7, each sweeps any drops) then the strict verdict.
+    Step(f"gt6crop plant {MS} rye 7", expect="planted=rye size=7 ok=true"),
+    Step(f"gt6crop harvest {MS}", expect="harvested=true size=2", allow_failed=True),
+    Step(f"kill {ITEMS_MATURE}"),
+    Step(f"gt6crop plant {MS} rye 7", expect="planted=rye size=7 ok=true"),
+    Step(f"gt6crop harvest {MS}", expect="harvested=true size=2", allow_failed=True),
+    Step(f"kill {ITEMS_MATURE}"),
+    Step(f"gt6crop plant {MS} rye 7", expect="planted=rye size=7 ok=true"),
+    Step(f"gt6crop harvest {MS}", expect="harvested=true size=2", allow_failed=True),
+    Step(f"kill {ITEMS_MATURE}"),
+    Step(f"gt6crop plant {MS} rye 7", expect="planted=rye size=7 ok=true"),
+    Step(f"gt6crop harvest {MS}", expect="harvested=true size=2", allow_failed=True),
+    Step(f"kill {ITEMS_MATURE}"),
     Step(f"gt6crop plant {MS} rye 7", expect="planted=rye size=7 ok=true"),
     Step(f"gt6crop harvest {MS}", expect="harvested=true size=2"),
     Step(f"execute if entity {ITEM_RYE} run gamerule keepInventory",
