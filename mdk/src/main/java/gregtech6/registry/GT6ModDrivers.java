@@ -27,8 +27,9 @@ import gregapi.oredict.OreDictMaterial;
  * empty and every unknown modid answers "loaded", so with no seeded state every registration
  * mount sees exactly the pre-driver universe (pair-for-pair identical
  * {@link GTMaterialItems#registrationOrder()}, every fluid spec row registered). Content is
- * only ever hidden by an explicit ABSENT row — seeded from the environment here (mdh-3
- * batches), never by an implicit "mod not installed" walk.
+ * only ever hidden by an explicit ABSENT row — seeded from the environment here (real
+ * installs only; the mdh-3 batches land the actual row deletions), never by an implicit
+ * "mod not installed" walk.
  *
  * <p><b>ADR-MDH3 — this class is the ONLY ModList reference allowed in gregtech6 main
  * source:</b> the fmlcore ModList.INSTANCE is a private static and cannot be faked, and the
@@ -68,23 +69,23 @@ public final class GT6ModDrivers {
 	private static final Map<String, DriverLevel> OVERRIDES = new LinkedHashMap<>();
 
 	/**
-	 * The atlas domain set the environment seed walks (mdh-2's GT6ForeignMaterialAtlas fills
-	 * it): every domain not present in the live mod list flips to ABSENT at seed time. Empty
-	 * = nothing is ever seeded (this card's state — ADR-MDH1).
+	 * The atlas domain set the environment seed walks (mdh-2 filled it from
+	 * {@link GT6ForeignMaterialAtlas#seedableDomains()}): every domain not present in the
+	 * live mod list flips to ABSENT at seed time — but never inside a test JVM (the guard
+	 * below), where the foreign-mod absences are harness artifacts, not user installs.
 	 */
-	private static final List<String> SEEDED_DOMAINS = List.of();
+	private static final List<String> SEEDED_DOMAINS = GT6ForeignMaterialAtlas.seedableDomains();
 
 	/** One-shot latch: the environment is read once, at mod construct (upstream ModData.mLoaded timing). */
 	private static boolean seeded = false;
 
 	/**
-	 * Material → owning modid, {@code null} = unattributed = always visible. The default is
-	 * honest: the port carries no attribution data yet — mdh-2's GT6ForeignMaterialAtlas
-	 * becomes the production lookup (PRIMARY rows only; COMMON_SECONDARY never hides, ADR-MDH2).
-	 * Tests swap in fixtures via {@link #setMaterialDomain(Function)}.
+	 * Material → owning modid, {@code null} = unattributed = always visible. The production
+	 * source is the mdh-2 {@link GT6ForeignMaterialAtlas}: PRIMARY rows answer their domain,
+	 * COMMON_SECONDARY/GT6_SELF rows answer null and never hide (ADR-MDH2). Tests swap in
+	 * fixtures via {@link #setMaterialDomain(Function)}; {@code null} restores the atlas.
 	 */
-	private static final Function<OreDictMaterial, String> NO_ATTRIBUTION = material -> null;
-	private static Function<OreDictMaterial, String> materialDomain = NO_ATTRIBUTION;
+	private static Function<OreDictMaterial, String> materialDomain = GT6ForeignMaterialAtlas::domainOf;
 
 	private GT6ModDrivers() {
 	}
@@ -112,18 +113,36 @@ public final class GT6ModDrivers {
 
 	/**
 	 * One-time environment seed, called from the GT6Mod constructor: pin ABSENT for every
-	 * {@link #SEEDED_DOMAINS} entry the live mod list lacks. No FML (offline test JVM,
-	 * ModList == null) is a no-op — the all-PRESENT default survives untouched. The neo leg
-	 * (FML-booted test JVM) reaches the loop with an empty domain set today and lands the
-	 * same no-op; the branch shape is identical on both legs.
+	 * {@link #SEEDED_DOMAINS} entry the live mod list lacks. Two no-op guards: no FML
+	 * (offline test JVM, ModList == null — never touch, ADR-MDH1), and a test JVM with a
+	 * live FML (the neo junit-fml boot: it constructs this mod and registers everything
+	 * with a mod list holding only gt6 + system mods — the foreign-mod absences there are
+	 * harness artifacts, and seeding them would shrink the pinned registration universe
+	 * per-leg; the junit classpath probe keeps the seed inert, a real install never ships
+	 * junit on the game classpath).
 	 */
 	public static void seedFromEnvironment() {
 		if (seeded) return;
 		seeded = true;
 		ModList tModList = ModList.get();
 		if (tModList == null) return; // offline: no FML instance — never touch, never hide (ADR-MDH1)
+		if (inUnitTestJvm()) return; // junit-fml boot: harness artifact mod list, not a user install
 		for (String tModid : SEEDED_DOMAINS) {
 			if (!tModList.isLoaded(tModid)) OVERRIDES.put(tModid, DriverLevel.ABSENT);
+		}
+	}
+
+	/**
+	 * True when junit-jupiter rides the game classpath. ponytail: classpath probe, not an
+	 * FML testing flag — a hypothetical install that jar-in-jars junit would just stay in
+	 * the safe all-PRESENT default (nothing ever hides), which is the fail-visible side.
+	 */
+	private static boolean inUnitTestJvm() {
+		try {
+			Class.forName("org.junit.jupiter.api.Test", false, GT6ModDrivers.class.getClassLoader());
+			return true;
+		} catch (ClassNotFoundException aE) {
+			return false;
 		}
 	}
 
@@ -133,15 +152,15 @@ public final class GT6ModDrivers {
 		OVERRIDES.put(aModid, aLevel);
 	}
 
-	/** Test seam (ADR-MDH3): swap the material attribution source; {@code null} restores the default (no attribution). */
+	/** Test seam (ADR-MDH3): swap the material attribution source; {@code null} restores the production atlas lookup. */
 	public static void setMaterialDomain(Function<OreDictMaterial, String> aLookup) {
-		materialDomain = aLookup == null ? NO_ATTRIBUTION : aLookup;
+		materialDomain = aLookup == null ? GT6ForeignMaterialAtlas::domainOf : aLookup;
 	}
 
-	/** Test seam (ADR-MDH3): full pristine restore — empty table, no attribution, seed latch cleared. */
+	/** Test seam (ADR-MDH3): full pristine restore — empty table, atlas attribution, seed latch cleared. */
 	public static void reset() {
 		OVERRIDES.clear();
-		materialDomain = NO_ATTRIBUTION;
+		materialDomain = GT6ForeignMaterialAtlas::domainOf;
 		seeded = false;
 	}
 }
