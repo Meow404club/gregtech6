@@ -1940,6 +1940,57 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.food_can_rotten_large"); // dump :15
 		addDirect("item.gt6.food_can_rotten_huge"); // dump :16
 		addDirect("item.gt6.food_can_cookies_huge"); // task food-can-row0 — 超大食物罐头 (饼干) (dump cans.86 untranslated; 饼干 = the vanilla cookie face)
+		// task food-meat-items — 罐头域补全 50 项 (dump gt.multiitem.cans.{1-6,21-26,31-36,41-46,51-56,61-66,71-76} 逐字; cookies 81-85 dump 未译, 饼干同 86 家法; air 三罐 dump 未译, 罐装 air 词根 oredict/FL 家法)
+		addDirect("item.gt6.food_can_unknown_tiny"); // dump cans.1 迷你食物罐头 (未知)
+		addDirect("item.gt6.food_can_unknown_small"); // dump :2
+		addDirect("item.gt6.food_can_unknown_tall"); // dump :3
+		addDirect("item.gt6.food_can_unknown_wide"); // dump :4
+		addDirect("item.gt6.food_can_unknown_large"); // dump :5
+		addDirect("item.gt6.food_can_unknown_huge"); // dump :6
+		addDirect("item.gt6.food_can_veggie_tiny"); // dump cans.21 迷你食物罐头 (蔬菜)
+		addDirect("item.gt6.food_can_veggie_small"); // dump :22
+		addDirect("item.gt6.food_can_veggie_tall"); // dump :23
+		addDirect("item.gt6.food_can_veggie_wide"); // dump :24
+		addDirect("item.gt6.food_can_veggie_large"); // dump :25
+		addDirect("item.gt6.food_can_veggie_huge"); // dump :26
+		addDirect("item.gt6.food_can_fruit_tiny"); // dump cans.31 迷你食物罐头 (水果)
+		addDirect("item.gt6.food_can_fruit_small"); // dump :32
+		addDirect("item.gt6.food_can_fruit_tall"); // dump :33
+		addDirect("item.gt6.food_can_fruit_wide"); // dump :34
+		addDirect("item.gt6.food_can_fruit_large"); // dump :35
+		addDirect("item.gt6.food_can_fruit_huge"); // dump :36
+		addDirect("item.gt6.food_can_bread_tiny"); // dump cans.41 迷你食物罐头 (面包)
+		addDirect("item.gt6.food_can_bread_small"); // dump :42
+		addDirect("item.gt6.food_can_bread_tall"); // dump :43
+		addDirect("item.gt6.food_can_bread_wide"); // dump :44
+		addDirect("item.gt6.food_can_bread_large"); // dump :45
+		addDirect("item.gt6.food_can_bread_huge"); // dump :46
+		addDirect("item.gt6.food_can_meat_tiny"); // dump cans.51 迷你食物罐头 (肉)
+		addDirect("item.gt6.food_can_meat_small"); // dump :52
+		addDirect("item.gt6.food_can_meat_tall"); // dump :53
+		addDirect("item.gt6.food_can_meat_wide"); // dump :54
+		addDirect("item.gt6.food_can_meat_large"); // dump :55
+		addDirect("item.gt6.food_can_meat_huge"); // dump :56
+		addDirect("item.gt6.food_can_fish_tiny"); // dump cans.61 迷你食物罐头 (鱼)
+		addDirect("item.gt6.food_can_fish_small"); // dump :62
+		addDirect("item.gt6.food_can_fish_tall"); // dump :63
+		addDirect("item.gt6.food_can_fish_wide"); // dump :64
+		addDirect("item.gt6.food_can_fish_large"); // dump :65
+		addDirect("item.gt6.food_can_fish_huge"); // dump :66
+		addDirect("item.gt6.food_can_chum_tiny"); // dump cans.71 迷你食物罐头 (基友肉)
+		addDirect("item.gt6.food_can_chum_small"); // dump :72
+		addDirect("item.gt6.food_can_chum_tall"); // dump :73
+		addDirect("item.gt6.food_can_chum_wide"); // dump :74
+		addDirect("item.gt6.food_can_chum_large"); // dump :75
+		addDirect("item.gt6.food_can_chum_huge"); // dump :76
+		addDirect("item.gt6.food_can_cookies_tiny"); // dump cans.81 untranslated — 迷你食物罐头 (饼干), the 86 饼干 family word
+		addDirect("item.gt6.food_can_cookies_small"); // dump :82 untranslated, 同上
+		addDirect("item.gt6.food_can_cookies_tall"); // dump :83 untranslated, 同上
+		addDirect("item.gt6.food_can_cookies_wide"); // dump :84 untranslated, 同上
+		addDirect("item.gt6.food_can_cookies_large"); // dump :85 untranslated, 同上
+		addDirect("item.gt6.food_can_air"); // dump cans.32766 untranslated — 罐装空气 (Canned Air, the drink face MultiItemCans.java:111)
+		addDirect("item.gt6.food_can_air_nether"); // dump :32765 untranslated — 罐装热空气 (Canned Hot Air :110)
+		addDirect("item.gt6.food_can_air_end"); // dump :32764 untranslated — 罐装太空空气 (Canned Space Air :109)
 		// task food-items-core — 食物域 T1 九项 (dump gt.multiitem.food.{1000,1001,1060,1061,9010,9020,13000,32117,32119} 逐字, MultiItemFood.java:490-934)
 		addDirect("item.gt6.food_cheese");
 		addDirect("item.gt6.food_cheese.tooltip");
@@ -1949,6 +2000,50 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.food_brown_egg_boiled.tooltip");
 		addDirect("item.gt6.food_white_egg_boiled"); // dump food.1061 同文
 		addDirect("item.gt6.food_white_egg_boiled.tooltip");
+		// task food-meat-items — 蛋/肉族 T4a (dump gt.multiitem.food.{1051,1070-1074,1100-1103,1112,1113,1200-1202,1210,1211,1300,1301,1400,1401,1500,1501,1510,1511,1520,1521,10000,10010} 逐字, MultiItemFood.java:496-:798; 空描述行无 tooltip 键)
+		addDirect("item.gt6.food_white_egg"); // dump food.1051 鸡蛋
+		addDirect("item.gt6.food_white_egg.tooltip"); // dump 先有蛋, 后有鸡!
+		addDirect("item.gt6.food_egg_fried"); // dump food.1070 煎鸡蛋
+		addDirect("item.gt6.food_egg_scrambled"); // dump food.1071 炒蛋
+		addDirect("item.gt6.food_egg_sliced"); // dump food.1072 鸡蛋片
+		addDirect("item.gt6.food_egg_sliced.tooltip"); // dump 棒“ 鸡” 了
+		addDirect("item.gt6.food_egg_yolk"); // dump food.1073 蛋黄
+		addDirect("item.gt6.food_egg_yolk.tooltip"); // dump 就这样，蛋黄们
+		addDirect("item.gt6.food_egg_white"); // dump food.1074 蛋白
+		addDirect("item.gt6.food_ham_raw"); // dump food.1100 生的火腿
+		addDirect("item.gt6.food_ham_raw.tooltip"); // dump 会从猪身上掉落
+		addDirect("item.gt6.food_ham_cooked"); // dump food.1101 熟的火腿
+		addDirect("item.gt6.food_ham_slice_raw"); // dump food.1102 生的火腿片
+		addDirect("item.gt6.food_ham_slice_cooked"); // dump food.1103 熟的火腿片
+		addDirect("item.gt6.food_bacon_raw"); // dump food.1112 生的培根
+		addDirect("item.gt6.food_bacon_raw.tooltip"); // dump 会从猪身上掉落
+		addDirect("item.gt6.food_bacon_cooked"); // dump food.1113 烤培根
+		addDirect("item.gt6.food_rib_raw"); // dump food.1200 生的肋排
+		addDirect("item.gt6.food_rib_raw.tooltip"); // dump 从大型动物上掉落
+		addDirect("item.gt6.food_rib_cooked"); // dump food.1201 烤肋排
+		addDirect("item.gt6.food_rib_bbq"); // dump food.1202 烧烤酱风味烤肋排
+		addDirect("item.gt6.food_rib_bbq.tooltip"); // dump 人类高质量电子游戏肋排
+		addDirect("item.gt6.food_ribeyesteak_raw"); // dump food.1210 生的肋眼牛排
+		addDirect("item.gt6.food_ribeyesteak_raw.tooltip"); // dump 从大型动物上掉落
+		addDirect("item.gt6.food_ribeyesteak_cooked"); // dump food.1211 烤肋眼牛排
+		addDirect("item.gt6.food_ribeyesteak_cooked.tooltip"); // dump 它正盯着你.......
+		addDirect("item.gt6.food_dogmeat_raw"); // dump food.1300 狗肉
+		addDirect("item.gt6.food_dogmeat_raw.tooltip"); // dump 你的[慈悲]去哪里了?
+		addDirect("item.gt6.food_dogmeat_cooked"); // dump food.1301 烤狗肉
+		addDirect("item.gt6.food_dogmeat_cooked.tooltip"); // dump 你真是日了狗了!
+		addDirect("item.gt6.food_mutton_raw"); // dump food.1400 羊肉
+		addDirect("item.gt6.food_mutton_raw.tooltip"); // dump Beep Beep I'm a Sheep 歌词行 (ASCII 逐字)
+		addDirect("item.gt6.food_mutton_cooked"); // dump food.1401 烤羊肉
+		addDirect("item.gt6.food_horse_raw"); // dump food.1500 马肉
+		addDirect("item.gt6.food_horse_cooked"); // dump food.1501 烤马肉
+		addDirect("item.gt6.food_mule_raw"); // dump food.1510 骡肉
+		addDirect("item.gt6.food_mule_cooked"); // dump food.1511 烤骡肉
+		addDirect("item.gt6.food_donkey_raw"); // dump food.1520 驴肉
+		addDirect("item.gt6.food_donkey_cooked"); // dump food.1521 烤驴肉
+		addDirect("item.gt6.food_chum"); // dump food.10000 好基友肉块
+		addDirect("item.gt6.food_chum.tooltip"); // dump 哔~~~~~~~
+		addDirect("item.gt6.food_chum_on_stick"); // dump food.10010 棍子上的好基友肉块
+		addDirect("item.gt6.food_chum_on_stick.tooltip"); // dump 不要忘了尝尝我们的Chum-balaya!
 		addDirect("item.gt6.food_potato_chips"); // dump food.9010
 		addDirect("item.gt6.food_potato_chips.tooltip");
 		addDirect("item.gt6.food_chili_chips"); // dump food.9020

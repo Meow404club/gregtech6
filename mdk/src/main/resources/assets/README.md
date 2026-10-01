@@ -12072,3 +12072,166 @@ GT6PlankRegistrationTest.plankCensusPinsTheDomainSize pins the distribution).
 
 Copied on 2026-10-01. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
+- `gt6/textures/item/food/*.png` — the food-item egg/meat T4a subset (29 textures, task food-meat-items), byte-identical borrows renamed to the registered ids:
+  - `white_egg.png` `gt.multiitem.food/1051.png`
+    (`ca521ae0d46885a2025185e6ca605ed7948f23913e9049d9748b83f68160fd51`)
+  - `egg_fried.png` `gt.multiitem.food/1070.png`
+    (`e9fb26c02b9f754640a14313f9b4af462b68ca7630445054fa1b2e721fe4dad1`)
+  - `egg_scrambled.png` `gt.multiitem.food/1071.png`
+    (`c09afaa2f19cf9418ca49379c5a69950a405dccb05c85023062dc199695cb61c`)
+  - `egg_sliced.png` `gt.multiitem.food/1072.png`
+    (`275de1bc3787b37d1325214292fe031f74848115e6082b2197930e269ed05ce7`)
+  - `egg_yolk.png` `gt.multiitem.food/1073.png`
+    (`809530a06be1d383dbbd301248af760719fe91e1c7a17b2a87fb5e7246f39dae`)
+  - `egg_white.png` `gt.multiitem.food/1074.png`
+    (`940779401cf23e4a6b9eff8a7e30ebfea5c23ffe01e848a12d0648ca0678aa0a`)
+  - `ham_raw.png` `gt.multiitem.food/1100.png`
+    (`c3690814cca95d7db83cf38aa62063b7d08ad4b4ac6fd6ddee01e0817b53e52d`)
+  - `ham_cooked.png` `gt.multiitem.food/1101.png`
+    (`4eafc57ec26db6f8e32de3b321467351a1120451b657b3852ed44351379eaa99`)
+  - `ham_slice_raw.png` `gt.multiitem.food/1102.png`
+    (`fedb9bb3a7844c528e8c6fa42adf00e0be62f90d23d9d5b0cd23081024970949`)
+  - `ham_slice_cooked.png` `gt.multiitem.food/1103.png`
+    (`c741c4f2cb67677ade686049c6632d30bb7dee1a168ff370dee9afbc9369f2f4`)
+  - `bacon_raw.png` `gt.multiitem.food/1112.png`
+    (`6dbe40f1c75d3ea0f57138587cd6024ad8fea03cd4d6013bf09904770830eaaa`)
+  - `bacon_cooked.png` `gt.multiitem.food/1113.png`
+    (`c92ba7edfe4e4487e3f07211995d6d0d1269921de6bd258d6368a3ad4df27da2`)
+  - `rib_raw.png` `gt.multiitem.food/1200.png`
+    (`8a92a9ec73ccf512206f99a46708e2a87e3fcccd304228f7431c5da82012c635`)
+  - `rib_cooked.png` `gt.multiitem.food/1201.png`
+    (`5bef7c969c89ab13b0af9dd960ceda8d6348843ac0010e475a9c7f5e957f5206`)
+  - `rib_bbq.png` `gt.multiitem.food/1202.png`
+    (`04f91db074e40d211c779ca855e61a74e7a12396a3de77f848079507c54f707c`)
+  - `ribeyesteak_raw.png` `gt.multiitem.food/1210.png`
+    (`e1ffd81938082c72a654018f1aaaf11fdfcfeb383f66fcd319c034eaa3d75837`)
+  - `ribeyesteak_cooked.png` `gt.multiitem.food/1211.png`
+    (`c6489dcda0058aad4f2bba687694d8b6364ab3f41a41ded4be4fffed62f4d279`)
+  - `dogmeat_raw.png` `gt.multiitem.food/1300.png`
+    (`916a5da6476310e0d3f53bc6dffa1d90a02bb857461a93a0ea7705afcd92d985`)
+  - `dogmeat_cooked.png` `gt.multiitem.food/1301.png`
+    (`c689884fbffb6b4e600cfbd5b8254cc3b4997b17019a8a8bc25786a9e79b95c1`)
+  - `mutton_raw.png` `gt.multiitem.food/1400.png`
+    (`b5d00876d1f27aa5bb5665ab7b0343a4032fa33c79db65782c242201fb88ec1b`)
+  - `mutton_cooked.png` `gt.multiitem.food/1401.png`
+    (`a0acef5131e43dca08504a3fdba489fcb12afaa29ce33f3020dd25a72ff019df`)
+  - `horse_raw.png` `gt.multiitem.food/1500.png`
+    (`36e0f749e18e9d98b13be2427df453bf8c7be1ee3b5519f42873f1e8e1bc7e3d`)
+  - `horse_cooked.png` `gt.multiitem.food/1501.png`
+    (`ddebedfac62ab09a919618de54d2e5a31203af082024c236a506275c8d5d5ad2`)
+  - `mule_raw.png` `gt.multiitem.food/1510.png`
+    (`79659d9f4610a68ef16d624e789ac63365c63a5d291c4e3df13b353060b1794e`)
+  - `mule_cooked.png` `gt.multiitem.food/1511.png`
+    (`74e16399911eb02abf4eac3eae26391cbd367078cbf3afa13bda9267cb084ad5`)
+  - `donkey_raw.png` `gt.multiitem.food/1520.png`
+    (`abb310119ff598995cd6d9c709a99afbc23043ba763788aa67ec96bae02e0bd9`)
+  - `donkey_cooked.png` `gt.multiitem.food/1521.png`
+    (`a7632ff761793c36a8b04d851e8e25bb3a8b1e3a5b4d488c204e11372d2a32a0`)
+  - `chum.png` `gt.multiitem.food/10000.png`
+    (`34ec50b02c95c89f1ae6c205f9bca786e60723f26e7a369c71399ae23e37ddda`)
+  - `chum_on_stick.png` `gt.multiitem.food/10010.png`
+    (`3ece54597e065f6616e32621ced604b56e84b12076c3ec60d55626155c9545cb`)
+- `gt6/textures/item/food_can/*.png` — the food-can census completion (50 textures, task food-meat-items), byte-identical borrows renamed to the registered ids:
+  - `unknown_tiny.png` `gt.multiitem.cans/1.png`
+    (`93ad271d40903b016710e9c68f7c5afc276cde7175a91c936008a415a645a788`)
+  - `unknown_small.png` `gt.multiitem.cans/2.png`
+    (`86a2397da14f7fc57dea5793b91cb3eb36e904159a90e017144d1c3183d95a34`)
+  - `unknown_tall.png` `gt.multiitem.cans/3.png`
+    (`0b4e13e051fb55149c86ad9596b5bccb8b975b5e6055af1b7a273567dd87abee`)
+  - `unknown_wide.png` `gt.multiitem.cans/4.png`
+    (`f083ee50be1d1ec2712ccb14239f7e2505010c805b8973020ae84715f23bb282`)
+  - `unknown_large.png` `gt.multiitem.cans/5.png`
+    (`be159c3caeb62c43a469bc82b1f5fedadcf9bef0ea44f9296145185f6295b562`)
+  - `unknown_huge.png` `gt.multiitem.cans/6.png`
+    (`1daa9b014ce22c4c24562f654b903df3c4b8b3039c67c4ffce6a87867c7ea2f0`)
+  - `veggie_tiny.png` `gt.multiitem.cans/21.png`
+    (`8ce81f5470732a5dfe48e7c3ee2d616db3c9f68a50e5194011f3e95f72838c44`)
+  - `veggie_small.png` `gt.multiitem.cans/22.png`
+    (`c52fc6b792b2e219a56b0254740c8115d4dcdf1b4fd52e94d822ba08a9dced87`)
+  - `veggie_tall.png` `gt.multiitem.cans/23.png`
+    (`5c76508e8ada2a3cc9a2a0f5e5bb999c7d0382daa89ec80ce68d4ff22701cb48`)
+  - `veggie_wide.png` `gt.multiitem.cans/24.png`
+    (`a8a2fdaf132a9b6138ea59b21cedcddd1d4acf8471657e3c1b8ec72d76d8d683`)
+  - `veggie_large.png` `gt.multiitem.cans/25.png`
+    (`781a80fbbda3dd49c2ed2e5e9091dc7fcaac0ac4ce15065fcc226e79ebc369f8`)
+  - `veggie_huge.png` `gt.multiitem.cans/26.png`
+    (`880de1461276de223642d5a7d89292fd4516a6d3b900185fedf597d27ce63866`)
+  - `fruit_tiny.png` `gt.multiitem.cans/31.png`
+    (`4deb4f54772afe794be2591fd9fb8c214d5772c4540207d0329a9b82ce67de89`)
+  - `fruit_small.png` `gt.multiitem.cans/32.png`
+    (`8d507f9c2aed11f376369924b36df9c01532a93becc837cab03de00d2cec3bf8`)
+  - `fruit_tall.png` `gt.multiitem.cans/33.png`
+    (`3f5bc19f631232a91c5df757a8b20ba38897fc68e5a898d06c071f50cae012d8`)
+  - `fruit_wide.png` `gt.multiitem.cans/34.png`
+    (`d205294cd2ec1da2a327725994794d8e751442e9799acb8e744936893e0f946a`)
+  - `fruit_large.png` `gt.multiitem.cans/35.png`
+    (`d7f13a1857d6fcfb773c6b0f0e35ffabcf2779f37797832d46373a2622837228`)
+  - `fruit_huge.png` `gt.multiitem.cans/36.png`
+    (`97b46165d0ee39172f114a2b298f2df3813fac65fd47c33ef542f65e8222face`)
+  - `bread_tiny.png` `gt.multiitem.cans/41.png`
+    (`49cd3133524fe182e08a35e51b8755afeec953e254a7d22c190eb19a7102a8ee`)
+  - `bread_small.png` `gt.multiitem.cans/42.png`
+    (`b08860c0526b6edab90ddf0020550b9ed0d2ebd194c99a5cc127e6fcabc36149`)
+  - `bread_tall.png` `gt.multiitem.cans/43.png`
+    (`fdc27c82a60c18cca8514b95fd4f5cd383cfe1648d43e35ad4bfb27556535e81`)
+  - `bread_wide.png` `gt.multiitem.cans/44.png`
+    (`da6cb0c1936c18061091d8be9afd180c1aeee18f6883af48bca102422e46212e`)
+  - `bread_large.png` `gt.multiitem.cans/45.png`
+    (`b22e8e2fa1ad49ce27e8d22fe3ab20097aa31b1f59a453c1fc277234506c51f3`)
+  - `bread_huge.png` `gt.multiitem.cans/46.png`
+    (`31ea770f0c627bad228afd6a24006a37ce849449cb75f30d6e0b1a4f8a8979a7`)
+  - `meat_tiny.png` `gt.multiitem.cans/51.png`
+    (`0fa6d6373c520a1833c985cff9b186631ef5faba1dd3142e36682fa7eb51095f`)
+  - `meat_small.png` `gt.multiitem.cans/52.png`
+    (`8fbfc0293b71656a58fb2386535bb08782ef029617642b00974c476e0a3c036c`)
+  - `meat_tall.png` `gt.multiitem.cans/53.png`
+    (`05e9f5b309a9fb8bb88b9ded55628f83f826a9e0d4fd1d79b7b82a231eda7420`)
+  - `meat_wide.png` `gt.multiitem.cans/54.png`
+    (`43162ecbf81e24ecffd680fde26d692b5623857b1c0e60cf98618f02f10e67ab`)
+  - `meat_large.png` `gt.multiitem.cans/55.png`
+    (`9f44b1fc18a3ff3e1b1b911a9a315d8d3b847f0126199861e65a1133ba367d24`)
+  - `meat_huge.png` `gt.multiitem.cans/56.png`
+    (`d2f807138ff5a4e2947e966c279f02390c58d8917740d29488029ef9c1186ff0`)
+  - `fish_tiny.png` `gt.multiitem.cans/61.png`
+    (`2c52b459ffca6635dd7f77ddfffb74145d57bce60309b40d56a27b13e90da5e8`)
+  - `fish_small.png` `gt.multiitem.cans/62.png`
+    (`5d7e38b0a9a1d5a2b84f231875443e659358f6012e6de0167e87bef86578bd75`)
+  - `fish_tall.png` `gt.multiitem.cans/63.png`
+    (`e0f4e81e99bc28a0403315dc515825eff94e2f019016c27193c4f787d69fcc82`)
+  - `fish_wide.png` `gt.multiitem.cans/64.png`
+    (`7fa898fe5b50e5205bfe4b27b4179f1317ef1c3e073682f215775c8794d61674`)
+  - `fish_large.png` `gt.multiitem.cans/65.png`
+    (`d10800367305207ae38e01e58f8b7c09e2a388637375ffe30dc2ea5e33c1b97a`)
+  - `fish_huge.png` `gt.multiitem.cans/66.png`
+    (`dacb7f5a8f19fbd539084f0048e6f8a9c585ab03a938b2168b4dc83a8e334e40`)
+  - `chum_tiny.png` `gt.multiitem.cans/71.png`
+    (`e3d0c7b3e71a268d66ef7379472041761869dc65971d6c44a9e8ce8631c1508e`)
+  - `chum_small.png` `gt.multiitem.cans/72.png`
+    (`78d028943045aa4b3a83e212f5f59e8eccf0f6785cdec63bee93939f42f18727`)
+  - `chum_tall.png` `gt.multiitem.cans/73.png`
+    (`17c8c5437c33b2bc92b1c60e412461cb3b4120904e13a37ed2fb2f4e32912b14`)
+  - `chum_wide.png` `gt.multiitem.cans/74.png`
+    (`f7aca53120d93885895d031d5dbad0e543275c376eaf9812b8463b246cb50cfa`)
+  - `chum_large.png` `gt.multiitem.cans/75.png`
+    (`273b1e37dd02cbfefdb2eb21a124b0d6f87760546abbef807c52eca735fe3806`)
+  - `chum_huge.png` `gt.multiitem.cans/76.png`
+    (`06618249a5a259834d248159d91dd637ce48855ddf66691c687bd54bd7178cce`)
+  - `cookies_tiny.png` `gt.multiitem.cans/81.png`
+    (`2446d588bf91c699c2bc0a5f5ab3b33482937535fd53ef802465c3df8f753342`)
+  - `cookies_small.png` `gt.multiitem.cans/82.png`
+    (`d1179a4d4c941ec0f55df81757e8379a3cd34bab11698fd154b8f6a130b2251a`)
+  - `cookies_tall.png` `gt.multiitem.cans/83.png`
+    (`76817c14a67fecde816df8b4dfda65b8b6ba79af6b0d11a74f75b1755a0e3497`)
+  - `cookies_wide.png` `gt.multiitem.cans/84.png`
+    (`bfa8428fad34e89455e4c61e5578d105477ed7f3e0b2daa553be5fa89a8242b4`)
+  - `cookies_large.png` `gt.multiitem.cans/85.png`
+    (`31f3edce09b624dfdce937e7a88e7d6c96eb6b5bfb5f900b140d12468f6bb3ab`)
+  - `air_end.png` `gt.multiitem.cans/32764.png`
+    (`02b8c79d35d8204d9482db9803db800dbea5eaa070360c52a5ce9d8ad8be8532`)
+  - `air_nether.png` `gt.multiitem.cans/32765.png`
+    (`c05e9b73822020a075ccaf7a0744bcd6f4a74740bd71bf25db57cb9015ecc18c`)
+  - `air.png` `gt.multiitem.cans/32766.png`
+    (`e8e7132bc5b08632a036ca274c720e7ff9f570042fdd666c978454a56ec43112`)
+  All 16x16 RGBA, CC0 1.0 per the upstream README block (the food-can faces on the
+  MultiItemCans meta item, the food faces on MultiItemFood; cmp-verified 2026-10-01,
+  79/79 byte-identical).
