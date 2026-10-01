@@ -2249,6 +2249,7 @@ public class GT6EnUs extends LanguageProvider {
         };
     }
 
+    /**
      * Food-item family keys (task food-crop-items): the T5a berry/nut/fruit band + the
      * fodder family's display names + desc tooltips, walked over the
      * {@link gregtech6.registry.GT6CropFoods#FOOD_ROWS} +

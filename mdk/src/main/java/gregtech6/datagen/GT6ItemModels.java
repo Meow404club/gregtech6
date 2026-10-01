@@ -416,6 +416,7 @@ public final class GT6ItemModels extends ItemModelProvider {
         for (String tMold : new String[] {"empty", "bun", "bread", "baguette", "cylinder", "toast"}) {
             withExistingParent("shape_foodmold_" + tMold, mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/shape_foodmold/" + tMold));
+        }
         // the food T5a crop band (task food-crop-items) — 61 item/generated models over the
         // byte-identical upstream icon borrows (the T1 band walk form verbatim: 49 foods +
         // 12 inedibles, gt.multiitem.food/<meta> per row — assets/README.md attribution)
