@@ -5,8 +5,8 @@
  * <p>Policy pins asserted here (ADR-P20 §2):</p>
  * <ul>
  *   <li>the (iconset, prefix) COMBOS table in {@code mdk/tools/gen_textures.py} pins at
- *       2849 pairs over 40 sets (census 2026-08-30/09-06 + the casing-machine quartet wave, research card
- *       tasks.p20-research-texture-census);</li>
+ *       2853 pairs over 40 sets (census 2026-08-30/09-06 + the casing-machine quartet wave + the
+ *       plank prefix wave, research card tasks.p20-research-texture-census);</li>
  *   <li>every combo's PNG exists <em>exactly once</em> across the static tree
  *       (mdk/src/main/resources) ∪ the generated tree (mdk/src/generated/resources) —
  *       deliberately a union face, so W2 borrow waves migrating a PNG between trees
@@ -68,7 +68,7 @@ class GT6TextureCensusTest {
     private static final String TEXTURES_PREFIX = "assets/gt6/textures";
 
     /** The pinned (iconset, prefix) pair total — the task card's pin, from the script's COMBOS table. */
-    private static final int PINNED_COMBO_TOTAL = 2849; // +64 (task casing-machine-register: the 16 reachable sets x 4 machine-casing prefixes)
+    private static final int PINNED_COMBO_TOTAL = 2853; // +64 (task casing-machine-register: the 16 reachable sets x 4 machine-casing prefixes) +4 (task wood-planks-register: the plank prefix over its 4 reachable sets — wood/rough/leaf/fine, the WOOD-gated domain census)
 
     /**
      * The machine-wave borrowed families (task hygiene-lang-assets + task

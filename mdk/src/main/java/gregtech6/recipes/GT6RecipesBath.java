@@ -37,13 +37,19 @@ import gregtech6.fluid.GTFluids;
  * ({@code Oil_Seed/Lin/Hemp/Nut/Olive/Sunflower/Creosote} at 100 mB → the WoodTreated
  * plank) + 2 polished rows ({@code Oil_Fish} 1000 mB / {@code Oil_Whale} 500 mB → the
  * WoodPolished plank), every row duration 144 / EUt 0 / buffered (the
- * {@code addRecipe1(T, 0, 144, plank, oil, NF, treated)} shape). <b>The current port
- * universe pours ZERO rows from this ladder</b>: the plank prefix is not an item-path
- * prefix ({@code GTMaterialItems.itemPathPrefixes} has no {@code plank}) so no plank
- * item resolves, and the plant/fish-oil fluids are port-absent (only creosote lives,
- * {@code gt6:creosote}) so no oil resolves either. The ladder is wired LIVE against the
- * resolvers — the moment the plank items and the oil family land, the rows pour with no
- * code change here (the pour-face-forever rationale, pinned both ways by the test).
+ * {@code addRecipe1(T, 0, 144, plank, oil, NF, treated)} shape). <b>The pour face by
+ * universe generation</b>: the plank leg went LIVE with task wood-planks-register —
+ * {@code GTMaterialItems.itemPathPrefixes} now carries {@code plank} (WOOD-gated), so
+ * the resolver resolves every wood-family plank, and on a registry-bound JVM (the live
+ * server) the creosote treated leg pours {@code |ANY.WoodUntreated ∩ WOOD|} rows while
+ * the other 8 templates stay dormant on the port-absent plant/fish-oil fluids (only
+ * creosote lives, {@code gt6:creosote}). The OFFLINE test JVM still pours ZERO (both
+ * legs bind only in a mod registry: the item INDEX fills at RegisterEvent, the creosote
+ * RegistryObject only on forge — the {@code GT6RecipesBathTest} pin stays 0 on both
+ * legs, now attributed to registry binding rather than prefix absence). The ladder is
+ * wired LIVE against the resolvers — the moment the remaining oil fluids land, the rows
+ * pour with no code change here (the pour-face-forever rationale, pinned both ways by
+ * the test).
  *
  * <p><b>The declared dormancies (each upstream-conditional on an absent universe face):</b>
  * <ul>
@@ -130,8 +136,10 @@ public final class GT6RecipesBath {
 
 	/**
 	 * Pours the wood-oil ladder into {@link GT6RecipeMaps#BATH}. Idempotent; an
-	 * unresolvable row skips with a count. The current universe pours 0 (the class doc) —
-	 * the ladder is the live pour face, not dead code.
+	 * unresolvable row skips with a count. The offline universe pours 0 (both resolver
+	 * legs bind only in a mod registry — the class doc); on the live server the creosote
+	 * treated leg pours since task wood-planks-register. The ladder is the live pour
+	 * face, not dead code.
 	 */
 	public static synchronized void load() {
 		if (sLoaded) {LOGGER.debug("load() skipped: already poured (generation flag set)"); return;}
