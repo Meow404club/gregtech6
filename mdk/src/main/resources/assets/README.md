@@ -12039,3 +12039,36 @@ Also in this card: `item/crop_stick.png` re-seated from the cbc-1 committed blob
 `items/crop/crop_stick.png`, sha256 `ffbdc867…` per the cbc-1 ledger row — byte-identical
 `git show | cmp` clean) as the gt6:crop_seed item model texture (IC2 renders ItemCrop itself
 with the crop-stick sprite, ItemCrop.java:27).
+
+## Item material_sets borrows — the plank prefix (task wood-planks-register, 2026-10-01)
+
+The generic plank prefix item sprite (4 PNGs), byte-identical borrows from upstream
+`src/main/resources/assets/gregtech/textures/blocks/iconsets/PLANKS_WOOD.png` — the
+BLOCK iconset domain, deliberately NOT the items domain: upstream registers planks
+as BlockTreePlanks/2 blocks (Loader_Woods.java:62-65; the generic IL.Plank face =
+BlocksGT.Planks meta 9 "Wood Planks", Loader_Woods.java:74 + BlockTreePlanks.java:
+49) and the items materialicons/iconsets domains carry ZERO plank sprites (census,
+tmp/gt6-1.7.10 assets tree), so the meta-9 block face IS the upstream plank art.
+The port registers OP.plank as flat items (the declared item-path deviation,
+GTMaterialItems.itemPathPrefixes javadoc) and borrows the one block face under the
+item model name (`plank` — OP.plank.mNameInternal snake, the casing_machine
+serialization shape). One sprite per reachable material set, tinted at runtime by
+the ItemColor material tint (tintIndex 0, the material_sets seat method) exactly
+like every other material_sets borrow; per-species plank art (the 16 PLANKS_*.png
+iconsets) stays unpulled — the shared generic face + tint is the declared borrow
+ruling, the same uniformity the casingMachine quartet wave declared. Set list =
+the 4 texture sets reachable from the WOOD-gated plank domain (the census:
+wood 126 / rough 1 = Bark / leaf 2 = Steeleaf+Fireleaf / fine 1 = Marshmallow;
+GT6PlankRegistrationTest.plankCensusPinsTheDomainSize pins the distribution).
+
+- `WOOD` -> `gt6/textures/item/material_sets/wood/`:
+  - `plank.png` `f7acb1dfd1f99ef5181b3a420992099f2113adfc3972e0da5ad7fa012129838f`
+- `ROUGH` -> `gt6/textures/item/material_sets/rough/`:
+  - `plank.png` `f7acb1dfd1f99ef5181b3a420992099f2113adfc3972e0da5ad7fa012129838f`
+- `LEAF` -> `gt6/textures/item/material_sets/leaf/`:
+  - `plank.png` `f7acb1dfd1f99ef5181b3a420992099f2113adfc3972e0da5ad7fa012129838f`
+- `FINE` -> `gt6/textures/item/material_sets/fine/`:
+  - `plank.png` `f7acb1dfd1f99ef5181b3a420992099f2113adfc3972e0da5ad7fa012129838f`
+
+Copied on 2026-10-01. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).

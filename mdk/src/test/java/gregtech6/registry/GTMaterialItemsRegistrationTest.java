@@ -41,8 +41,10 @@ public class GTMaterialItemsRegistrationTest {
      * upstream constructs a PrefixItem for, in file order) plus the four casingMachine* additions
      * of task casing-machine-register (upstream itself holds them on the BLOCK path,
      * Loader_PrefixBlocks.java:48-51 — the declared deviation; conditions verbatim at OP.java
-     * :1274-1277). Independent of the production list: if the two ever drift, this test fails and
-     * forces a conscious decision.
+     * :1274-1277) and the plank addition of task wood-planks-register (the same deviation class:
+     * upstream planks are blocks, Loader_Woods.java:62-65; the material domain is the
+     * GTMaterialItems.generatesItemPathItem WOOD gate). Independent of the production list: if the
+     * two ever drift, this test fails and forces a conscious decision.
      */
     private static final List<String> UPSTREAM_ITEM_PATH = List.of(
         "dust", "dustSmall", "dustTiny", "dustDiv72", "dustImpure",
@@ -54,6 +56,7 @@ public class GTMaterialItemsRegistrationTest {
         "gearGtSmall", "gearGt", "rotor", "stick", "stickLong", "springSmall", "spring",
         "lens", "round", "bolt", "screw", "ring", "chain", "foil", "casingSmall",
         "casingMachine", "casingMachineDouble", "casingMachineQuadruple", "casingMachineDense",
+        "plank",
         "wireFine", "minecartWheels", "railGt",
         "plantGtBerry", "plantGtBlossom", "plantGtFiber", "plantGtTwig", "plantGtWart", "chemtube",
         "toolHeadRawSword", "toolHeadSword", "toolHeadRawPickaxe", "toolHeadPickaxe", "toolHeadPickaxeGem",
@@ -76,14 +79,17 @@ public class GTMaterialItemsRegistrationTest {
         List<OreDictPrefix> tProduction = GTMaterialItems.itemPathPrefixes();
         Set<String> tProductionNames = new TreeSet<>();
         for (OreDictPrefix tPrefix : tProduction) tProductionNames.add(tPrefix.mNameInternal);
-        assertEquals(new TreeSet<>(UPSTREAM_ITEM_PATH), tProductionNames, "production item path must equal the upstream Loader_Items.java:57-171 spec + the casingMachine quartet");
-        assertEquals(109, tProduction.size(), "105 upstream PrefixItems + the four casingMachine* item-path additions");
+        assertEquals(new TreeSet<>(UPSTREAM_ITEM_PATH), tProductionNames, "production item path must equal the upstream Loader_Items.java:57-171 spec + the casingMachine quartet + plank");
+        assertEquals(110, tProduction.size(), "105 upstream PrefixItems + the four casingMachine* additions + plank (task wood-planks-register)");
     }
 
     @Test
     public void independentRecountMatchesRegistrationOrder() {
-        // Independent walk: own code, same semantics (VALUES order, alias merge, isGeneratingItem,
-        // pair dedup, first-wins by id) — recomputed from the name spec, not from production helpers.
+        // Independent walk: own code, same semantics (VALUES order, alias merge, the per-material
+        // gate, pair dedup, first-wins by id) — recomputed from the name spec, not from production
+        // helpers. The plank WOOD gate is re-declared here (independent copy, task
+        // wood-planks-register): if the production gate ever drifts from this shape the recount
+        // diverges and this test fails.
         Set<String> tSpec = new HashSet<>(UPSTREAM_ITEM_PATH);
         Map<String, Integer> tPerPrefix = new LinkedHashMap<>();
         Set<String> tSeenIds = new HashSet<>();
@@ -96,7 +102,10 @@ public class GTMaterialItemsRegistrationTest {
                 tMaterial = MaterialRegistry.INSTANCE.get(tMaterial);
                 if (tMaterial == null || tMaterial.mID < 0) continue;
                 if (!tSeenMaterials.add(tMaterial)) continue;
-                if (!tPrefix.isGeneratingItem(tMaterial)) continue;
+                boolean tGenerates = tPrefix.mNameInternal.equals("plank")
+                    ? tMaterial.contains(TD.Properties.WOOD)
+                    : tPrefix.isGeneratingItem(tMaterial);
+                if (!tGenerates) continue;
                 String tId = GTMaterialItems.itemIdOf(tPrefix, tMaterial);
                 if (!tSeenIds.add(tId)) {tDrops++; continue;} // first-wins
                 tPerPrefix.merge(tPrefix.mNameInternal, 1, Integer::sum);
