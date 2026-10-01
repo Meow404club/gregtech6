@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:food_buns_sliced"
+    },
+    {
+      "item": "gt6:ingot_tofu"
+    }
+  ],
+  "result": {
+    "item": "gt6:food_burger_tofu"
+  }
+}

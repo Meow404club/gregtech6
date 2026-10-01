@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:food_dough_sugar_chocolate_raisins"
+    },
+    "k": {
+      "tag": "gt6:tools/knife"
+    }
+  },
+  "pattern": [
+    "kX"
+  ],
+  "result": {
+    "count": 4,
+    "item": "gt6:food_cookie_chocolate_raisins_raw"
+  },
+  "show_notification": true
+}

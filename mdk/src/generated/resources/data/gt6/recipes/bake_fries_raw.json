@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "minecraft:potato"
+    },
+    "k": {
+      "tag": "gt6:tools/knife"
+    }
+  },
+  "pattern": [
+    "k",
+    "X"
+  ],
+  "result": {
+    "item": "gt6:food_fries_raw"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:food_bread_sliced"
+    },
+    {
+      "item": "gt6:food_bread_sliced"
+    },
+    {
+      "item": "minecraft:cooked_beef"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:food_sandwich_steak"
+  }
+}

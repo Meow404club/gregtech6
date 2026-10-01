@@ -1,0 +1,53 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    [
+      {
+        "item": "gt6:food_dough_sugar"
+      },
+      {
+        "item": "gt6:food_dough_sugar_raisins"
+      },
+      {
+        "item": "gt6:food_dough_sugar_chocolate_raisins"
+      }
+    ],
+    [
+      {
+        "item": "gt6:food_dough_sugar"
+      },
+      {
+        "item": "gt6:food_dough_sugar_raisins"
+      },
+      {
+        "item": "gt6:food_dough_sugar_chocolate_raisins"
+      }
+    ],
+    [
+      {
+        "item": "gt6:food_dough_sugar"
+      },
+      {
+        "item": "gt6:food_dough_sugar_raisins"
+      },
+      {
+        "item": "gt6:food_dough_sugar_chocolate_raisins"
+      }
+    ],
+    [
+      {
+        "item": "gt6:food_dough_sugar"
+      },
+      {
+        "item": "gt6:food_dough_sugar_raisins"
+      },
+      {
+        "item": "gt6:food_dough_sugar_chocolate_raisins"
+      }
+    ]
+  ],
+  "result": {
+    "item": "gt6:food_cakebottom_raw"
+  }
+}

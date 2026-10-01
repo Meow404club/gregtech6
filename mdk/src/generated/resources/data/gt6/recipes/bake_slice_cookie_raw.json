@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:food_dough_chocolate"
+    },
+    "k": {
+      "tag": "gt6:tools/knife"
+    }
+  },
+  "pattern": [
+    "kX"
+  ],
+  "result": {
+    "count": 4,
+    "item": "gt6:food_cookie_raw"
+  },
+  "show_notification": true
+}

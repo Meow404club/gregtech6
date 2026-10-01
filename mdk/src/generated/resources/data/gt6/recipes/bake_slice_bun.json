@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:food_bun"
+    },
+    "k": {
+      "tag": "gt6:tools/knife"
+    }
+  },
+  "pattern": [
+    "kX"
+  ],
+  "result": {
+    "count": 2,
+    "item": "gt6:food_bun_sliced"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,389 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    [
+      {
+        "item": "minecraft:stick"
+      },
+      {
+        "item": "gt6:stick_wood_bleached"
+      },
+      {
+        "item": "gt6:stick_wood_tainted"
+      },
+      {
+        "item": "gt6:stick_maple"
+      },
+      {
+        "item": "gt6:stick_willow"
+      },
+      {
+        "item": "gt6:stick_blue_mahoe"
+      },
+      {
+        "item": "gt6:stick_hazel"
+      },
+      {
+        "item": "gt6:stick_cinnamonwood"
+      },
+      {
+        "item": "gt6:stick_coconutwood"
+      },
+      {
+        "item": "gt6:stick_rainbowood"
+      },
+      {
+        "item": "gt6:stick_blue_spruce"
+      },
+      {
+        "item": "gt6:stick_towerwood"
+      },
+      {
+        "item": "gt6:stick_witchwood"
+      },
+      {
+        "item": "gt6:stick_ogrewood"
+      },
+      {
+        "item": "gt6:stick_wyvernwood"
+      },
+      {
+        "item": "gt6:stick_aspen"
+      },
+      {
+        "item": "gt6:stick_douglas_fir"
+      },
+      {
+        "item": "gt6:stick_sycamore"
+      },
+      {
+        "item": "gt6:stick_white_cedar"
+      },
+      {
+        "item": "gt6:stick_white_elm"
+      },
+      {
+        "item": "gt6:stick_thorntree"
+      },
+      {
+        "item": "gt6:stick_silver_pine"
+      },
+      {
+        "item": "gt6:stick_alder"
+      },
+      {
+        "item": "gt6:stick_hawthorn"
+      },
+      {
+        "item": "gt6:stick_rowan"
+      },
+      {
+        "item": "gt6:stick_mahogany"
+      },
+      {
+        "item": "gt6:stick_palm"
+      },
+      {
+        "item": "gt6:stick_autumnwood"
+      },
+      {
+        "item": "gt6:stick_cypress"
+      },
+      {
+        "item": "gt6:stick_fir"
+      },
+      {
+        "item": "gt6:stick_japanese_maple"
+      },
+      {
+        "item": "gt6:stick_rainbow_eucalyptus"
+      },
+      {
+        "item": "gt6:stick_redwood"
+      },
+      {
+        "item": "gt6:stick_sakura"
+      },
+      {
+        "item": "gt6:stick_balsa"
+      },
+      {
+        "item": "gt6:stick_baobab"
+      },
+      {
+        "item": "gt6:stick_wood"
+      },
+      {
+        "item": "gt6:stick_cherrywood"
+      },
+      {
+        "item": "gt6:stick_wood_treated"
+      },
+      {
+        "item": "gt6:stick_chestnutwood"
+      },
+      {
+        "item": "gt6:stick_citruswood"
+      },
+      {
+        "item": "gt6:stick_wood_polished"
+      },
+      {
+        "item": "gt6:stick_cocobolowood"
+      },
+      {
+        "item": "gt6:stick_wood_rubber"
+      },
+      {
+        "item": "gt6:stick_ebony"
+      },
+      {
+        "item": "gt6:stick_bamboo"
+      },
+      {
+        "item": "gt6:stick_giganteumwood"
+      },
+      {
+        "item": "gt6:stick_skyroot"
+      },
+      {
+        "item": "gt6:stick_greenheart"
+      },
+      {
+        "item": "gt6:stick_weedwood"
+      },
+      {
+        "item": "gt6:stick_ipe"
+      },
+      {
+        "item": "gt6:stick_livingwood"
+      },
+      {
+        "item": "gt6:stick_kapok"
+      },
+      {
+        "item": "gt6:stick_dreamwood"
+      },
+      {
+        "item": "gt6:stick_larch"
+      },
+      {
+        "item": "gt6:stick_shimmerwood"
+      },
+      {
+        "item": "gt6:stick_limewood"
+      },
+      {
+        "item": "gt6:stick_greatwood"
+      },
+      {
+        "item": "gt6:stick_mahoe"
+      },
+      {
+        "item": "gt6:stick_silverwood"
+      },
+      {
+        "item": "gt6:stick_padauk"
+      },
+      {
+        "item": "gt6:stick_peanut_wood"
+      },
+      {
+        "item": "gt6:stick_papayawood"
+      },
+      {
+        "item": "gt6:stick_marshmallow"
+      },
+      {
+        "item": "gt6:stick_plumwood"
+      },
+      {
+        "item": "gt6:stick_poplar"
+      },
+      {
+        "item": "gt6:stick_sequoia"
+      },
+      {
+        "item": "gt6:stick_teak"
+      },
+      {
+        "item": "gt6:stick_walnutwood"
+      },
+      {
+        "item": "gt6:stick_wenge"
+      },
+      {
+        "item": "gt6:stick_zebrawood"
+      },
+      {
+        "item": "gt6:stick_pine"
+      },
+      {
+        "item": "gt6:stick_darkwood"
+      },
+      {
+        "item": "gt6:stick_etherealwood"
+      },
+      {
+        "item": "gt6:stick_goldwood"
+      },
+      {
+        "item": "gt6:stick_hellbark"
+      },
+      {
+        "item": "gt6:stick_jacaranda"
+      },
+      {
+        "item": "gt6:stick_mangrove"
+      },
+      {
+        "item": "gt6:stick_sacred_oak"
+      },
+      {
+        "item": "gt6:stick_magicwood"
+      },
+      {
+        "item": "gt6:stick_applewood"
+      },
+      {
+        "item": "gt6:stick_ashwood"
+      },
+      {
+        "item": "gt6:stick_beech"
+      },
+      {
+        "item": "gt6:stick_boxwood"
+      },
+      {
+        "item": "gt6:stick_brazilwood"
+      },
+      {
+        "item": "gt6:stick_butternutwood"
+      },
+      {
+        "item": "gt6:stick_cedar"
+      },
+      {
+        "item": "gt6:stick_elderwood"
+      },
+      {
+        "item": "gt6:stick_elm"
+      },
+      {
+        "item": "gt6:stick_eucalyptus"
+      },
+      {
+        "item": "gt6:stick_figwood"
+      },
+      {
+        "item": "gt6:stick_gingko"
+      },
+      {
+        "item": "gt6:stick_hemlock"
+      },
+      {
+        "item": "gt6:stick_hickory"
+      },
+      {
+        "item": "gt6:stick_holly"
+      },
+      {
+        "item": "gt6:stick_hornbeam"
+      },
+      {
+        "item": "gt6:stick_iroko"
+      },
+      {
+        "item": "gt6:stick_locust"
+      },
+      {
+        "item": "gt6:stick_logwood"
+      },
+      {
+        "item": "gt6:stick_maclura"
+      },
+      {
+        "item": "gt6:stick_olivewood"
+      },
+      {
+        "item": "gt6:stick_pearwood"
+      },
+      {
+        "item": "gt6:stick_pink_ivory"
+      },
+      {
+        "item": "gt6:stick_purpleheart"
+      },
+      {
+        "item": "gt6:stick_rosewood"
+      },
+      {
+        "item": "gt6:stick_sweetgum"
+      },
+      {
+        "item": "gt6:stick_syzgium"
+      },
+      {
+        "item": "gt6:stick_whitebeam"
+      },
+      {
+        "item": "gt6:stick_yew"
+      },
+      {
+        "item": "gt6:stick_oak"
+      },
+      {
+        "item": "gt6:stick_birch"
+      },
+      {
+        "item": "gt6:stick_spruce"
+      },
+      {
+        "item": "gt6:stick_junglewood"
+      },
+      {
+        "item": "gt6:stick_acacia"
+      },
+      {
+        "item": "gt6:stick_dark_oak"
+      },
+      {
+        "item": "gt6:stick_crimsonwood"
+      },
+      {
+        "item": "gt6:stick_warpedwood"
+      },
+      {
+        "item": "gt6:stick_foxfirewood"
+      },
+      {
+        "item": "gt6:stick_wood_compressed"
+      },
+      {
+        "item": "gt6:stick_wood_dead"
+      },
+      {
+        "item": "gt6:stick_wood_rotten"
+      },
+      {
+        "item": "gt6:stick_wood_mossy"
+      },
+      {
+        "item": "gt6:stick_wood_frozen"
+      },
+      {
+        "item": "gt6:stick_wood_scorched"
+      },
+      {
+        "item": "gt6:stick_wood_varnished"
+      }
+    ],
+    {
+      "item": "minecraft:baked_potato"
+    }
+  ],
+  "result": {
+    "item": "gt6:food_potato_on_stick_roasted"
+  }
+}
