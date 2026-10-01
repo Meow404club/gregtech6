@@ -11,12 +11,11 @@
  * port-authority {@link TD.Properties#WOOD} material gate (generatesItemPathItem) —
  * the domain the card declares because an unconditioned walk would flood every material.
  *
- * <p><b>The absorb seam (NOT re-poured here)</b>: the sawing increment card (task
+ * <p><b>The absorb seam (ABSORBED)</b>: the sawing increment card (task
  * sawing-plank-concrete-increment, the DECLARED IDENTITY MAPPING in its sawing.json
- * comment) rides IL.Plank -> minecraft:oak_planks until a plank registration card
- * lands, then re-pours onto the generic plank face (gt6:plank_wood — this card's
- * MT.Wood item). This card owns the ITEM face only: no recipe JSON changes, the
- * re-pour is that card's follow-up.
+ * comment) rode IL.Plank -> minecraft:oak_planks until the plank registration card
+ * landed; task plank-mapping-sweep (2026-10-01) then re-poured the 76 DECLARED rows
+ * (sawing.json 75 + unboxinator.json 1) onto this card's MT.Wood item (gt6:plank_wood).
  *
  * <p>Texture face: the only upstream plank art is the BLOCK iconset
  * (blocks/iconsets/PLANKS_WOOD.png, the meta-9 block face) — the items materialicons

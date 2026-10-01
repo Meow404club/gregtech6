@@ -178,6 +178,15 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		// gas-native 1000 mB/U face (3000/6000/12000 -> 4000/8000/16000), with the
 		// GT6RoastingRowsPourTest pins updated in the same commit (the declared out-of-boundary edit).
 		// Merge order: ... -> sawing -> b2-residual — this segment tail-appends after sawing's.
+		// task plank-mapping-sweep — the IDENTITY-MAPPING absorption over the poured JSON stocks
+		// (sawing.json 75 rows: the Vanilla:604-617 statics 70 + the Woods:192 :66 DEFAULT_BEAM row 5;
+		// unboxinator.json 1 row: the Vanilla:965 bookshelf unbox): the DECLARED IL.Plank ->
+		// minecraft:oak_planks face re-pours onto gt6:plank_wood (task wood-planks-register,
+		// OP.plank x MT.Wood). Row counts UNCHANGED (id-swap only, every census pin above holds);
+		// the upstream verbatim vanilla twin faces (the oak-log rows, the 7 BeamEntry vanilla-plank
+		// faces, the autocrafter input) stay untouched. The JSON seam stays OUT of this offline
+		// snapshot walk — pinned by the B2cSawing/BeamConsume/B2Residual RowsPourTest ratchets.
+		// Merge order: ... -> b2-residual -> this sweep.
 		SNAPSHOT.put("CUTTER", 0);
 		SNAPSHOT.put("BOXINATOR", 4); // +4 task food-bake-recipes — the :687/:726/:756 packs + the :360 fries pack (the plateDouble-Paper pair resolves live)
 		SNAPSHOT.put("UNBOXINATOR", 4); // +1 task cbc-5-crop-consumption — the :251 baleWheat unpack (the hay block -> 9 wheat, the LoaderItemList:761 Crop_Wheat alias) +3 task food-bake-recipes — the :687/:726/:756 unpacks (union seat XVII)

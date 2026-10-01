@@ -68,9 +68,16 @@ import net.minecraft.world.level.material.Fluids;
  * registration cards unlocked: the 9 GT6 tree-log plank legs (Woods:169), the :66
  * DEFAULT_BEAM row (Woods:192 — superseding the blocked note above), the :604-617
  * IL.Plank-output statics and the BlockMetaType:92 BlockColored/concrete face — the
- * IL.Plank generic-plank output rides the DECLARED IDENTITY MAPPING to
+ * IL.Plank generic-plank output rode the DECLARED IDENTITY MAPPING to
  * minecraft:oak_planks (the file head carries the citation; census 3959 -> 4274 = the
  * 4239 increment + the 35 merged beam-consume rows).
+ *
+ * <p>Task plank-mapping-sweep (2026-10-01) absorbed that mapping: the generic plank face
+ * landed (wood-planks-register, OP.plank x MT.Wood = gt6:plank_wood), so the 75 DECLARED
+ * rows (:604-617 statics 70 + the :66 DEFAULT_BEAM row 5) re-pour minecraft:oak_planks ->
+ * gt6:plank_wood, row counts unchanged. The upstream verbatim vanilla faces stay
+ * untouched: the oak-log twin rows and the 7 BeamEntry vanilla-plank faces keep their
+ * minecraft:*_planks ids (this recompute emits both faces exactly).
  */
 public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestBase {
 
@@ -173,7 +180,11 @@ public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestB
 		assertTrue(tComment.contains("IL.Plank = BlocksGT.Planks meta 9"), "the upstream IL.Plank face is cited");
 		assertTrue(tComment.contains("Loader_Woods.java:74") && tComment.contains("BlockTreePlanks.java:49"),
 				"the mapping's upstream citations ride the head");
-		assertTrue(tComment.contains("-> minecraft:oak_planks"), "the mapping target is declared");
+		assertTrue(tComment.contains("-> minecraft:oak_planks"), "the original mapping target is on record");
+		assertTrue(tComment.contains("-> gt6:plank_wood"), "the sweep re-pour target is declared");
+		assertTrue(tComment.contains("plank-mapping-sweep") && tComment.contains("wood-planks-register"),
+				"the absorbing sweep and the carrier registration card are named");
+		assertTrue(tComment.contains("82690ef28"), "the precedent commit of the original ruling is cited");
 		assertTrue(tComment.contains("gt-tree-planks") && tComment.contains("concrete-blocks-register"),
 				"the two registration cards that unlocked the faces are cited");
 		assertTrue(tComment.contains("beam-consume-increment"), "the pending beam-branch merge-order note is declared");
@@ -262,15 +273,16 @@ public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestB
 		assertRow(findRow(tRows, "gt6:cinnamon_log", "gt6:lubricant"),
 				">gt6:cinnamon_planks:6>gt6:dust_cinnamon:1", 128, 16, 4);
 		// Woods:192 :66 DEFAULT_BEAM row (sawing-plank-concrete-increment): BeamEntry 2-arg defaults buzz 7
-		// (BeamEntry.java:48-50), the plank output under the declared IL.Plank -> oak_planks identity mapping, Water leg
+		// (BeamEntry.java:48-50), the plank output re-poured onto gt6:plank_wood by task
+		// plank-mapping-sweep (the absorbed IL.Plank identity mapping), Water leg
 		assertRow(findRow(tRows, "gt6:wood_beam", "minecraft:water"),
-				">minecraft:oak_planks:7>gt6:dust_wood:1", 512, 16, 16);
+				">gt6:plank_wood:7>gt6:dust_wood:1", 512, 16, 16);
 		// :610 bed row (sawing-plank-concrete-increment): Items.bed -> red_bed, wool x3 tail, DistW leg
 		assertRow(findRow(tRows, "minecraft:red_bed", "gt6:distilled_water"),
-				">minecraft:oak_planks:3>minecraft:white_wool:3", 144, 16, 300);
+				">gt6:plank_wood:3>minecraft:white_wool:3", 144, 16, 300);
 		// :617 jukebox row: plank x8 + the diamond gem tail, Water leg (lube 100 x4 = 400 mB)
 		assertRow(findRow(tRows, "minecraft:jukebox", "minecraft:water"),
-				">minecraft:oak_planks:8>gt6:gem_diamond:1", 512, 16, 400);
+				">gt6:plank_wood:8>gt6:gem_diamond:1", 512, 16, 400);
 		// BlockStones:272 granite_black smooth slab -> plate x4 + dustSmall x2, Lubricant leg
 		assertRow(findRow(tRows, "gt6:granite_black_smooth_slab", "gt6:lubricant"),
 				">gt6:plate_granite_black:4>gt6:dust_small_granite_black:2", 16, 16, 50);
@@ -433,24 +445,24 @@ public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestB
 		emit(rKeys, 16, 16, 100, false, "minecraft:stone_bricks", 1, "minecraft:stone_brick_slab:2"); // :601
 		emit(rKeys, 16, 16, 100, false, "minecraft:nether_bricks", 1, "minecraft:nether_brick_slab:2"); // :602
 		emit(rKeys, 16, 16, 100, false, "minecraft:quartz_block", 1, "minecraft:quartz_slab:2"); // :603
-		// :604-617 — the plank-output statics (ACTIVATED at sawing-plank-concrete-increment under the declared
-		// IL.Plank -> minecraft:oak_planks identity mapping: IL.Plank = BlocksGT.Planks meta 9 "Wood Planks",
-		// Loader_Woods.java:74 / BlockTreePlanks.java:49; the port registers no generic plank face)
-		emit(rKeys, 16, 16, 100, false, "minecraft:oak_button", 1, "minecraft:oak_planks:1"); // :604
-		emit(rKeys, 16, 32, 100, false, "minecraft:oak_pressure_plate", 1, "minecraft:oak_planks:2"); // :605
-		emit(rKeys, 16, 32, 100, false, "minecraft:oak_sign", 1, "minecraft:oak_planks:2>gt6:dust_div72_wood:12"); // :606
-		emit(rKeys, 16, 32, 100, false, "minecraft:oak_door", 1, "minecraft:oak_planks:2"); // :607
+		// :604-617 — the plank-output statics (ACTIVATED at sawing-plank-concrete-increment; the
+		// IL.Plank identity mapping absorbed by task plank-mapping-sweep: the outputs re-pour onto
+		// gt6:plank_wood = OP.plank x MT.Wood, the wood-planks-register carrier)
+		emit(rKeys, 16, 16, 100, false, "minecraft:oak_button", 1, "gt6:plank_wood:1"); // :604
+		emit(rKeys, 16, 32, 100, false, "minecraft:oak_pressure_plate", 1, "gt6:plank_wood:2"); // :605
+		emit(rKeys, 16, 32, 100, false, "minecraft:oak_sign", 1, "gt6:plank_wood:2>gt6:dust_div72_wood:12"); // :606
+		emit(rKeys, 16, 32, 100, false, "minecraft:oak_door", 1, "gt6:plank_wood:2"); // :607
 		// :608 OM.dust(Wood, stick.mAmount x4) = 2U -> the :463 dust arm x2
-		emit(rKeys, 16, 32, 100, false, "minecraft:oak_fence_gate", 1, "minecraft:oak_planks:2>gt6:dust_wood:2"); // :608
-		emit(rKeys, 16, 48, 100, false, "minecraft:oak_trapdoor", 1, "minecraft:oak_planks:3"); // :609
-		emit(rKeys, 16, 48, 100, false, "minecraft:red_bed", 1, "minecraft:oak_planks:3>minecraft:white_wool:3"); // :610
-		emit(rKeys, 16, 64, 100, false, "minecraft:crafting_table", 1, "minecraft:oak_planks:4"); // :611
-		emit(rKeys, 16, 80, 100, false, "minecraft:oak_boat", 1, "minecraft:oak_planks:5"); // :612
-		emit(rKeys, 16, 96, 100, false, "minecraft:bookshelf", 1, "minecraft:oak_planks:6>minecraft:book:3"); // :613
-		emit(rKeys, 16, 128, 100, false, "minecraft:chest", 1, "minecraft:oak_planks:8"); // :614
-		emit(rKeys, 16, 128, 100, false, "minecraft:trapped_chest", 1, "minecraft:oak_planks:8>minecraft:tripwire_hook:1"); // :615
-		emit(rKeys, 16, 128, 100, false, "minecraft:note_block", 1, "minecraft:oak_planks:8>gt6:dust_redstone:1"); // :616
-		emit(rKeys, 16, 128, 100, false, "minecraft:jukebox", 1, "minecraft:oak_planks:8>gt6:gem_diamond:1"); // :617
+		emit(rKeys, 16, 32, 100, false, "minecraft:oak_fence_gate", 1, "gt6:plank_wood:2>gt6:dust_wood:2"); // :608
+		emit(rKeys, 16, 48, 100, false, "minecraft:oak_trapdoor", 1, "gt6:plank_wood:3"); // :609
+		emit(rKeys, 16, 48, 100, false, "minecraft:red_bed", 1, "gt6:plank_wood:3>minecraft:white_wool:3"); // :610
+		emit(rKeys, 16, 64, 100, false, "minecraft:crafting_table", 1, "gt6:plank_wood:4"); // :611
+		emit(rKeys, 16, 80, 100, false, "minecraft:oak_boat", 1, "gt6:plank_wood:5"); // :612
+		emit(rKeys, 16, 96, 100, false, "minecraft:bookshelf", 1, "gt6:plank_wood:6>minecraft:book:3"); // :613
+		emit(rKeys, 16, 128, 100, false, "minecraft:chest", 1, "gt6:plank_wood:8"); // :614
+		emit(rKeys, 16, 128, 100, false, "minecraft:trapped_chest", 1, "gt6:plank_wood:8>minecraft:tripwire_hook:1"); // :615
+		emit(rKeys, 16, 128, 100, false, "minecraft:note_block", 1, "gt6:plank_wood:8>gt6:dust_redstone:1"); // :616
+		emit(rKeys, 16, 128, 100, false, "minecraft:jukebox", 1, "gt6:plank_wood:8>gt6:gem_diamond:1"); // :617
 		emit(rKeys, 16, 64, 100, false, "minecraft:painting", 1, "minecraft:stick:8"); // :618
 		emit(rKeys, 16, 64, 100, false, "minecraft:item_frame", 1, "minecraft:stick:8"); // :619
 		// :620 OM.dust(Wood, stick.mAmount/3): U2/3 fails the U4 arm, the U9 arm conditions fail
@@ -481,7 +493,7 @@ public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestB
 		// plank = the vanilla jungle planks per WoodDictionary.PLANKS.get(Blocks.planks, 3)). Plus the :66
 		// DEFAULT_BEAM row (task sawing-plank-concrete-increment: the input gt6:wood_beam lives since
 		// beam-blocks-register; the BeamEntry 2-arg defaults BeamEntry.java:48-50 give mPlankCountBuzz 7 +
-		// mMaterialBeam MT.Wood; the plank output rides the IL.Plank identity mapping).
+		// mMaterialBeam MT.Wood; the plank output re-pours onto gt6:plank_wood — task plank-mapping-sweep).
 		String[][] tBeams = {
 				{"oak_beam", "oak_planks", "7", "dust_oak"},
 				{"spruce_beam", "spruce_planks", "7", "dust_spruce"},
@@ -494,7 +506,7 @@ public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestB
 			emit(rKeys, 16, 128, 4, false, "gt6:" + tBeam[0], 1,
 					"minecraft:" + tBeam[1] + ":" + tBeam[2] + ">gt6:" + tBeam[3] + ":1");
 		}
-		emit(rKeys, 16, 128, 4, false, "gt6:wood_beam", 1, "minecraft:oak_planks:7>gt6:dust_wood:1");
+		emit(rKeys, 16, 128, 4, false, "gt6:wood_beam", 1, "gt6:plank_wood:7>gt6:dust_wood:1");
 
 		// anchors 4+5 — BlockStones:272-274 + BlockMetaType:92 over the 272-pair universe
 		for (GTStoneBlocks.StoneSpec tStone : GTStoneBlocks.STONES) {

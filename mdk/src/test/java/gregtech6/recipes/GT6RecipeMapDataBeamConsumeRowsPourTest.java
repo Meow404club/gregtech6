@@ -61,6 +61,11 @@ import net.minecraftforge.fluids.FluidStack;
  * input == output, the handler mTargetGenerifying != self gate is the port canon; the
  * IL.Beam sawing row (:192 for :66) — the plank-output leg is the GT tree plank, the
  * gt-tree-planks card's face.
+ *
+ * <p>Task plank-mapping-sweep (2026-10-01) absorbed the sawing-card identity mapping: the
+ * :66 sawing rows' plank output pours gt6:plank_wood (the wood-planks-register carrier,
+ * OP.plank x MT.Wood); the six vanilla BeamEntry faces keep their upstream
+ * minecraft:*_planks ids (the BEAMS table carries both faces verbatim).
  */
 public class GT6RecipeMapDataBeamConsumeRowsPourTest extends GTRecipesOfflineTestBase {
 
@@ -89,7 +94,7 @@ public class GT6RecipeMapDataBeamConsumeRowsPourTest extends GTRecipesOfflineTes
 			{GT6BeamKind.ACACIA, "minecraft:acacia_planks", 7, "gt6:dust_acacia", "gt6:stick_long_acacia", 5},
 			{GT6BeamKind.DARK_OAK, "minecraft:dark_oak_planks", 7, "gt6:dust_dark_oak", "gt6:stick_long_dark_oak", 5},
 			{GT6BeamKind.RUBBER_WOOD, "minecraft:jungle_planks", 5, "gt6:dust_wood_rubber", "gt6:stick_long_wood_rubber", 2},
-			{GT6BeamKind.WOOD, "minecraft:oak_planks", 7, "gt6:dust_wood", "gt6:stick_long_wood", 5}}; // ACTIVATED by sawing-plank-concrete-increment: the IL.Plank -> oak_planks identity mapping
+			{GT6BeamKind.WOOD, "gt6:plank_wood", 7, "gt6:dust_wood", "gt6:stick_long_wood", 5}}; // ACTIVATED by sawing-plank-concrete-increment; the plank output re-poured onto gt6:plank_wood by task plank-mapping-sweep (the absorbed IL.Plank identity mapping)
 
 	private static final java.util.function.Function<ResourceLocation, Item> sDefaultItems = GT6RecipeMapJsonLoader.sItemResolver;
 	private static final java.util.function.Function<ResourceLocation, Fluid> sDefaultFluids = GT6RecipeMapJsonLoader.sFluidResolver;
@@ -167,10 +172,11 @@ public class GT6RecipeMapDataBeamConsumeRowsPourTest extends GTRecipesOfflineTes
 			}
 		}
 		for (Object[] tBeam : BEAMS) {
-			if (tBeam[1] == null) continue; // defensive: the WOOD row now carries the oak_planks identity mapping
+			if (tBeam[1] == null) continue; // defensive: the WOOD row carries the gt6:plank_wood sweep re-pour
+			String tPlank = (String) tBeam[1]; // the vanilla faces are "minecraft:*_planks", the WOOD face is the gt6 carrier
 			for (Object[] tLeg : LEGS) {
 				tExpected.add("gt6:" + snake((GT6BeamKind) tBeam[0]) + "_beam:1>" + tLeg[0] + "@" + (4L * (Long) tLeg[2])
-						+ ">" + (128L * (Long) tLeg[1]) + ">16>minecraft:" + plankId(tBeam) + ":" + tBeam[2] + ">" + tBeam[3] + ":1");
+						+ ">" + (128L * (Long) tLeg[1]) + ">16>" + tPlank + ":" + tBeam[2] + ">" + tBeam[3] + ":1");
 			}
 		}
 		Set<String> tMissing = new HashSet<>(tExpected);
@@ -363,10 +369,6 @@ public class GT6RecipeMapDataBeamConsumeRowsPourTest extends GTRecipesOfflineTes
 	private static Object[] byKind(GT6BeamKind aKind) {
 		for (Object[] tBeam : BEAMS) if (tBeam[0] == aKind) return tBeam;
 		throw new AssertionError(aKind + " missing from BEAMS");
-	}
-
-	private static String plankId(Object[] aBeam) {
-		return ((String) aBeam[1]).substring("minecraft:".length());
 	}
 
 	private static String snake(GT6BeamKind aKind) {
