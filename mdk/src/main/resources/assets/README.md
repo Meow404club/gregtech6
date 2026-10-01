@@ -8828,10 +8828,12 @@ Universal Public Domain Dedication** (same upstream `README.md` block as above).
   declared in GT6GlowtusBlock; sha256
   `97bea0cd9618fcec9ce67c235afbd83b11fec326068864afd35afe6f617a4326`)
 - `gt6/textures/block/berry_bush.png` — the berry bush (upstream
-  `machines/plants/bush/colored/bush.png`, the grayscale tintable icon PRE-COLOURED at
-  borrow time with the leaf-green multiplier (0.35, 0.62, 0.22) — the grass-card
-  pre-coloured-PNG precedent, the upstream tint rode the per-berry NBT colour;
-  sha256 `4bd8830da402ce8f636a6cd4bc9e293e72fb64d927d65221c63979071a8d8c23`)
+  `machines/plants/bush/colored/bush.png`, the grayscale tintable icon VERBATIM since
+  task bushesgt-tint-color — the w6-t2 pre-coloured borrow (multiplier (0.35, 0.62,
+  0.22)) retired; the tint now rides the tintindex-0 model seat multiplied by the
+  upstream default bush colour 0x22cc22 (MultiTileEntityBush.java:224/237,
+  CS.java:1588 BushesGT.DEFAULT) in GT6BushTintListener;
+  sha256 `2b6afbbd9c6f12d28908185e9ef5615da8600e82925a165bb8736fe45c48b683`)
 - `gt6/textures/block/black_sand.png` — the magnetite river sand (upstream
   `iconsets/SAND_MAGNETITE.png`; sha256
   `f512f0776c14d38f5a8c40e8277513e0c569cf2ddb460a0da5d1e9535e6529f8`)
