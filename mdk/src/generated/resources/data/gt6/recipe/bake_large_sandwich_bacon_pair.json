@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:food_baguette_sliced"
+    },
+    {
+      "item": "gt6:food_baguette_sliced"
+    },
+    {
+      "item": "gt6:food_bacon_cooked"
+    },
+    {
+      "item": "gt6:food_bacon_cooked"
+    },
+    {
+      "item": "gt6:food_bacon_cooked"
+    },
+    {
+      "item": "gt6:food_bacon_cooked"
+    },
+    {
+      "item": "gt6:food_bacon_cooked"
+    },
+    {
+      "item": "gt6:food_bacon_cooked"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:food_large_sandwich_bacon"
+  }
+}
