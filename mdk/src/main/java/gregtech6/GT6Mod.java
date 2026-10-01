@@ -21,6 +21,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import gregapi.oredict.MaterialGraph;
 import gregtech6.client.GTClientHandlers;
+import gregtech6.registry.GT6ModDrivers;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTModBusListener;
 
@@ -60,6 +61,7 @@ public class GT6Mod {
      *///?}
         Objects.requireNonNull(modBus, "mod event bus must be available at construct time");
         modBus.register(modBusListener);
+        GT6ModDrivers.seedFromEnvironment(); // mdh-1: one-time mod-presence seed — the FML mod list binds before any @Mod construct (fmlcore ModLoader.java:137-143), no-op without FML (ADR-MDH1/MDH3)
         modBus.addListener(this::onCommonSetup);
         // client-only event listening (RegisterColorHandlersEvent.Item fires on the client only); keep the side isolation inside the @OnlyIn class
         if (FMLEnvironment.dist == Dist.CLIENT) GTClientHandlers.init(modBus);

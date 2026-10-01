@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -167,6 +168,7 @@ public final class GTMaterialItems {
      */
     private static Enumeration enumerate() {
         Set<OreDictPrefix> tItemPath = new HashSet<>(itemPathPrefixes());
+        Predicate<OreDictMaterial> tGate = GT6ModDrivers.visibilityGate(); // the unified driver face (mdh-1)
         List<PrefixMaterial> tRaw = new ArrayList<>();
         int tNonItemPath = 0, tDuplicatePairs = 0;
         Set<PrefixMaterial> tSeenPairs = new HashSet<>();
@@ -182,6 +184,7 @@ public final class GTMaterialItems {
                 PrefixMaterial tPair = new PrefixMaterial(tPrefix, tMaterial);
                 if (!tSeenPairs.add(tPair)) {tDuplicatePairs++; continue;} // alias slot: the target already owns the item
                 if (!tPrefix.isGeneratingItem(tMaterial)) continue; // PrefixItem.java:104
+                if (!tGate.test(tMaterial)) continue; // GT6ModDrivers mount ① (mdh-1) — default all-PRESENT = pair-for-pair unchanged (ADR-MDH1)
                 tRaw.add(tPair);
             }
         }

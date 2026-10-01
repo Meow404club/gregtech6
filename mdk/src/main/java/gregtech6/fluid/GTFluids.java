@@ -32,6 +32,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.GT6Mod;
 import gregtech6.item.spraycan.GTSprayCanItem;
 import gregtech6.registry.GTFluidPipes;
+import gregtech6.registry.GT6ModDrivers;
 
 /**
  * The first GT6 fluid content registration (task fluid-pipes spec ⑥) — the official
@@ -447,7 +448,11 @@ public final class GTFluids {
 	 *                   gas = the gaseous declaration (upstream STATE_GASEOUS semantics:
 	 *                   FL.java:1105 sets density −100 / viscosity 200 for gas-state fluids).
 	 */
-	public record EngineFluidSpec(String name, int temperature, int density, int viscosity, int tint, boolean gas) {
+	public record EngineFluidSpec(String name, int temperature, int density, int viscosity, int tint, boolean gas, String driverDomain) {
+		/** mdh-1 mount ②: pre-atlas rows keep the short form — null driverDomain = GT core = always registered (ADR-MDH1). */
+		public EngineFluidSpec(String name, int temperature, int density, int viscosity, int tint, boolean gas) {
+			this(name, temperature, density, viscosity, tint, gas, null);
+		}
 		/** The lang/description key, the descriptionId the FluidType is registered with. */
 		public String descriptionId() {return "fluid.gt6." + name;}
 	}
@@ -508,6 +513,7 @@ public final class GTFluids {
 	private static EngineFluid engineFluid(String aName) {
 		EngineFluidSpec tSpec = engineSpec(aName);
 		if (tSpec == null) throw new IllegalArgumentException("no engine fluid spec: " + aName);
+		if (!GT6ModDrivers.isLoaded(tSpec.driverDomain())) return new EngineFluid(tSpec, null, null, null); // mdh-1 mount ②: absent domain = declared-unregistered shell (mdh-3 fills rows; default null = zero change, ADR-MDH1)
 		RegistryObject<FluidType> tType = FLUID_TYPES.register(tSpec.name(), () -> new FluidType(FluidType.Properties.create()
 				.descriptionId(tSpec.descriptionId())
 				.temperature(tSpec.temperature())
@@ -585,7 +591,11 @@ public final class GTFluids {
 	 * @param temperature in K; density/viscosity the liquid carriers; tint ARGB over the
 	 *                    vanilla water textures (the iron_molten :81 precedent)
 	 */
-	public record AquaFluidSpec(String name, String displayName, int temperature, int density, int viscosity, int tint) {
+	public record AquaFluidSpec(String name, String displayName, int temperature, int density, int viscosity, int tint, String driverDomain) {
+		/** mdh-1 mount ②: pre-atlas rows keep the short form — null driverDomain = GT core = always registered (ADR-MDH1). */
+		public AquaFluidSpec(String name, String displayName, int temperature, int density, int viscosity, int tint) {
+			this(name, displayName, temperature, density, viscosity, tint, null);
+		}
 		/** The lang/description key, the descriptionId the FluidType is registered with. */
 		public String descriptionId() {return "fluid.gt6." + name;}
 	}
@@ -678,6 +688,7 @@ public final class GTFluids {
 	 * FLOWING_SEAM maps — the Properties are built at registry-event time (see engineFluid).
 	 */
 	private static AquaFluid registerFluidFamily(AquaFluidSpec tSpec) {
+		if (!GT6ModDrivers.isLoaded(tSpec.driverDomain())) return new AquaFluid(tSpec, null, null, null); // mdh-1 mount ②: absent domain = declared-unregistered shell (mdh-3 fills rows; default null = zero change, ADR-MDH1)
 		RegistryObject<FluidType> tType = FLUID_TYPES.register(tSpec.name(), () -> new FluidType(FluidType.Properties.create()
 				.descriptionId(tSpec.descriptionId())
 				.temperature(tSpec.temperature())
@@ -2120,7 +2131,12 @@ public final class GTFluids {
 	 * luminosity the two plasma rows carry (the STATE_PLASMA lum 15, FL.java:1106).
 	 */
 	public record ChemicalFluidSpec(String name, String displayName, int temperature, int density,
-			int viscosity, int tint, boolean gas, int luminosity) {
+			int viscosity, int tint, boolean gas, int luminosity, String driverDomain) {
+		/** mdh-1 mount ②: pre-atlas rows keep the short form — null driverDomain = GT core = always registered (ADR-MDH1). */
+		public ChemicalFluidSpec(String name, String displayName, int temperature, int density,
+				int viscosity, int tint, boolean gas, int luminosity) {
+			this(name, displayName, temperature, density, viscosity, tint, gas, luminosity, null);
+		}
 		/** The lang/description key, the descriptionId the FluidType is registered with. */
 		public String descriptionId() {return "fluid.gt6." + name;}
 	}
@@ -2338,6 +2354,7 @@ public final class GTFluids {
 	/** The spec-first registration core of {@link #chemicalFluid} — shared with the hot/closure/lubricant families. */
 	private static ChemicalFluid specFluid(ChemicalFluidSpec aSpec, String aFamily) {
 		if (aSpec == null) throw new IllegalArgumentException("no " + aFamily + " spec");
+		if (!GT6ModDrivers.isLoaded(aSpec.driverDomain())) return new ChemicalFluid(aSpec, null, null, null); // mdh-1 mount ②: absent domain = declared-unregistered shell (mdh-3 fills rows; default null = zero change, ADR-MDH1)
 		RegistryObject<FluidType> tType = FLUID_TYPES.register(aSpec.name(), () -> new FluidType(FluidType.Properties.create()
 				.descriptionId(aSpec.descriptionId())
 				.temperature(aSpec.temperature())
