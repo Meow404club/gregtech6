@@ -227,6 +227,13 @@ public final class GT6OreLootTables {
         @Override
         protected void generate() {
             for (GT6OreBlocks.OreKey tKey : GT6OreBlocks.blocks().keySet()) {
+                // the sweep guard: the ore AXIS carries five driver-hidden-able materials (Azurite/
+                // Eudialyte TROPIC, CaF2 RoC, Jade ERE, Dolamide MO — all atlas PRIMARY), whose
+                // flood items vanish under an ABSENT pin while the block axis stays (mdh-3 scope
+                // ruling) — skip the material-item tables for a hidden key, the walk-leg semantics.
+                // Default mode never skips: the committed tree proves every walked pair exists.
+                if (tKey.kind() != GT6OreBlocks.FormKind.BROKEN
+                        && GTMaterialItems.get(tKey.kind() == GT6OreBlocks.FormKind.SMALL ? OP.rockGt : OP.oreRaw, tKey.material()) == null) continue;
                 Block tBlock = GT6OreBlocks.blocks().get(tKey).get();
                 switch (tKey.kind()) {
                     case BROKEN -> dropSelf(tBlock); // the mDrops==null default, PrefixBlock.java:227

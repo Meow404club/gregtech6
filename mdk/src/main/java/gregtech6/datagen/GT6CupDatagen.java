@@ -103,24 +103,29 @@ public final class GT6CupDatagen {
 			return net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance.hasItems(aItem);
 		}
 
-		/** The three rows (the leg-neutral builder chain). */
+		/** The three rows (the leg-neutral builder chain). The porcelain-dust pair rows skip when
+		 * MT.Porcelain is driver-hidden (IHL PRIMARY, atlas :2234 — the sweep semantics); the raw→cup
+		 * smelt row rides only GT6 registry items and stays. */
 		private void build(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aOutput) {
 			Item tRaw = GT6Cups.MODELED_PORCELAIN_CUP_RAW.get();
 			Item tCup = GT6Cups.PORCELAIN_CUP_ITEM.get();
-			Item tDust = GTMaterialItems.get(OP.dust, gregapi.data.MT.Porcelain).get();
-			// :78 — "kPR" (P porcelain dust, k knife mark, R rolling-pin mark)
-			ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tRaw)
-					.pattern("kPR")
-					.define('P', tDust)
-					.define('k', GT6ItemTags.TOOLS_KNIFE)
-					.define('R', GT6ItemTags.TOOLS_ROLLING_PIN)
-					.unlockedBy("has_porcelain_dust", has(tDust))
-					.save(aOutput, id("modeled_porcelain_cup"));
-			// :76 — the reverse shapeless tail: one raw → 1 porcelain dust
-			ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, tDust, 1)
-					.requires(tRaw)
-					.unlockedBy("has_modeled_porcelain_cup", has(tRaw))
-					.save(aOutput, id("modeled_porcelain_cup_reverse"));
+			var tDustHandle = GTMaterialItems.get(OP.dust, gregapi.data.MT.Porcelain);
+			if (tDustHandle != null) {
+				Item tDust = tDustHandle.get();
+				// :78 — "kPR" (P porcelain dust, k knife mark, R rolling-pin mark)
+				ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tRaw)
+						.pattern("kPR")
+						.define('P', tDust)
+						.define('k', GT6ItemTags.TOOLS_KNIFE)
+						.define('R', GT6ItemTags.TOOLS_ROLLING_PIN)
+						.unlockedBy("has_porcelain_dust", has(tDust))
+						.save(aOutput, id("modeled_porcelain_cup"));
+				// :76 — the reverse shapeless tail: one raw → 1 porcelain dust
+				ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, tDust, 1)
+						.requires(tRaw)
+						.unlockedBy("has_modeled_porcelain_cup", has(tRaw))
+						.save(aOutput, id("modeled_porcelain_cup_reverse"));
+			}
 			// Loader :2094 — RM.add_smelting(Porcelain_Cup_Raw → Porcelain_Cup), the :2177-band standard 200t/0xp face
 			SimpleCookingRecipeBuilder.smelting(Ingredient.of(tRaw), RecipeCategory.MISC, tCup, 0.0F, 200)
 					.unlockedBy("has_modeled_porcelain_cup", has(tRaw))

@@ -69,18 +69,34 @@ public final class GT6ModDrivers {
 	private static final Map<String, DriverLevel> OVERRIDES = new LinkedHashMap<>();
 
 	/**
-	 * The atlas domain set the environment seed walks. INERT again (review seat XVI): the
-	 * mdh-2 merge filled it with {@link GT6ForeignMaterialAtlas#seedableDomains()}, which
-	 * activated the hiding in every live non-junit FML JVM — the runData dev JVM included —
-	 * and NPE'd the datagen material walks (GT6CraftingRecipes.hopperRecipeBuilder, the
-	 * GTMaterialItems.get(...).get() face) and would have diverged the committed datagen
-	 * tree from the default-mode census. The activation belongs to the mdh-3 card, which
-	 * owes the datagen-walk consumption guards first (review ruling, main session 2026-10-01).
+	 * The atlas domain set the environment seed walks. Still INERT at the preconditions
+	 * commit (mdh-clearout-batch2): the re-activation lands after the three review-seat-XVI
+	 * preconditions — (1) the datagen-JVM short-circuit below (registration precedes
+	 * GatherDataEvent, so a seeded runData JVM cannot be un-shrunk by a late reset), (2) the
+	 * datagen-walk null-drop sweep over every GTMaterialItems.get call site the providers
+	 * walk, (3) the committed-tree byte-identity verdict. mdh-2's activation attempt
+	 * (SEEDED_DOMAINS = atlas.seedableDomains()) NPE'd GT6CraftingRecipes.hopperRecipeBuilder
+	 * in the runData JVM exactly because those were missing (f8ffa0bd1).
 	 */
 	private static final List<String> SEEDED_DOMAINS = List.of();
 
 	/** One-shot latch: the environment is read once, at mod construct (upstream ModData.mLoaded timing). */
 	private static boolean seeded = false;
+
+	/**
+	 * The datagen-context probe (activation precondition 1). The platform default reads
+	 * {@code DatagenModLoader.isRunningDataGen()} — set to true BEFORE the mod bootstrapping
+	 * on both legs (forge: {@code DatagenModLoader.begin} sets the flag then calls
+	 * {@code ModLoader.gatherAndInitializeMods}, DatagenModLoader.java:41-43; neo 21.1: the
+	 * same public flag, {@code begin()} puts it before the
+	 * {@code CommonModLoader.begin → gatherAndInitializeMods} chain, bytecode-verified) — so
+	 * at the GT6Mod constructor the flag already answers "datagen" in a runData JVM and the
+	 * seed short-circuits: datagen always walks the default full universe and the committed
+	 * tree never drifts with the environment (acceptance: offline runData byte-identical).
+	 * ponytail: seam field because no offline JVM can flip the platform flag — the walk-leg
+	 * test injects {@code true} to pin the short-circuit itself.
+	 */
+	private static java.util.function.BooleanSupplier datagenProbe = GT6ModDrivers::inDatagenJvm;
 
 	/**
 	 * Material → owning modid, {@code null} = unattributed = always visible. The production
@@ -127,12 +143,27 @@ public final class GT6ModDrivers {
 	public static void seedFromEnvironment() {
 		if (seeded) return;
 		seeded = true;
+		if (datagenProbe.getAsBoolean()) return; // datagen JVM: the walk face generates the default tree, never a seeded one (precondition 1)
 		ModList tModList = ModList.get();
 		if (tModList == null) return; // offline: no FML instance — never touch, never hide (ADR-MDH1)
 		if (inUnitTestJvm()) return; // junit-fml boot: harness artifact mod list, not a user install
 		for (String tModid : SEEDED_DOMAINS) {
 			if (!tModList.isLoaded(tModid)) OVERRIDES.put(tModid, DriverLevel.ABSENT);
 		}
+	}
+
+	/**
+	 * True when this JVM runs the data generators. The platform flag is live before any mod
+	 * constructs (see {@link #datagenProbe}); the class ships in the loader universal jar on
+	 * both legs, so the reference is safe in every game JVM. Leg delta is only the package
+	 * (net.minecraftforge.data.loading vs net.neoforged.neoforge.data.loading).
+	 */
+	private static boolean inDatagenJvm() {
+		//? if forge {
+		return net.minecraftforge.data.loading.DatagenModLoader.isRunningDataGen();
+		//?} else {
+		/*return net.neoforged.neoforge.data.loading.DatagenModLoader.isRunningDataGen();
+		 *///?}
 	}
 
 	/**
@@ -160,10 +191,16 @@ public final class GT6ModDrivers {
 		materialDomain = aLookup == null ? GT6ForeignMaterialAtlas::domainOf : aLookup;
 	}
 
+	/** Test seam: swap the datagen probe; {@code null} restores the platform flag read. */
+	public static void setDatagenProbe(java.util.function.BooleanSupplier aProbe) {
+		datagenProbe = aProbe == null ? GT6ModDrivers::inDatagenJvm : aProbe;
+	}
+
 	/** Test seam (ADR-MDH3): full pristine restore — empty table, atlas attribution, seed latch cleared. */
 	public static void reset() {
 		OVERRIDES.clear();
 		materialDomain = GT6ForeignMaterialAtlas::domainOf;
+		datagenProbe = GT6ModDrivers::inDatagenJvm;
 		seeded = false;
 	}
 }
