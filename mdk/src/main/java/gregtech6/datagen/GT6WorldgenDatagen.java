@@ -846,6 +846,12 @@ public final class GT6WorldgenDatagen {
      * MUST verify the target planet mod's actual modern modid before shipping the flip
      * (coordinator ruling 2026-09-18; "galacticraft" = the GT6 1.7.10 planet-domain
      * lineage, MD.GC = the ORE_PLANETS flags' original carrier).
+     *
+     * <p>Driver-face interlink (mdh-4 closeout): the unified registry-side mod-driver face
+     * is GT6ModDrivers (mdh series; isLoaded/visibilityGate) — the MD.GC lineage note here
+     * is static history and GC is an mdh-2 atlas (GT6ForeignMaterialAtlas) candidate,
+     * while the JSON not(mod_loaded) face built on this id STAYS datapack-domain (the
+     * KEEP ruling, see GT6BiomeModifierConditions).
      */
     public static final String PLANET_VEIN_TRIGGER_MODID = "galacticraft";
 
@@ -1040,6 +1046,10 @@ public final class GT6WorldgenDatagen {
      * (:247-252), marble 6 (:288-295), granite_red 5 (:359-365), komatiite 4 (:217-222).
      * The granite_red tantalite/columbite/coltan rows are the {@code !MD.HBM.mLoaded}
      * arm (:362-364) — no HBM on this port, they are the active upstream face.
+     *
+     * <p>Driver-face interlink (mdh-4 closeout): the unified mod-driver face is
+     * GT6ModDrivers (mdh series; isLoaded/visibilityGate) — this port-time static ruling
+     * ships as history; HBM is an mdh-2 atlas (GT6ForeignMaterialAtlas) takeover candidate.
      */
     public static final List<LensOreRow> LENS_ORE_TABLE = List.of(
         // -- kimberlite, :225-229 — the diamond-pipe bone ----------------------------
@@ -1537,6 +1547,9 @@ public final class GT6WorldgenDatagen {
     // roll INDEPENDENTLY (one WorldgenObject per row upstream, the :142 gate each) — NOT a
     // weighted exactly-one draw. The indicator columns (mIndicatorRocks=T on every row +
     // the flower pairs) are the declared spec deviation — the GTBedrockOreConfig javadoc.
+    // Driver-face interlink (mdh-4 closeout): unified mod-driver face = GT6ModDrivers (mdh
+    // series) — the MD.HEX row cut is port-time static history; HEX is an mdh-2 atlas
+    // (GT6ForeignMaterialAtlas) takeover candidate.
     // ------------------------------------------------------------------
 
     /** The row helper: an overworld (GEN_FLOOR) row. */

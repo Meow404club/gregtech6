@@ -73,6 +73,10 @@ class GT6BedrockOreWorldgenTest {
      * (Loader_Worldgen.java:725-770). The spec's "48 行" count: the upstream source has 47
      * rows (46 port + the :772 hexorium row, which rides the MD.HEX mod-gated compat pool
      * with the 21 mod-gated small-ore rows); the parity face is every PORT row matches.
+     *
+     * <p>Driver-face interlink (mdh-4 closeout): the MD.HEX cut is port-time static
+     * history — the unified mod-driver face is GT6ModDrivers (mdh series); HEX is an
+     * mdh-2 atlas (GT6ForeignMaterialAtlas) takeover candidate.
      */
     @Test
     void tableParityAgainstUpstream() {

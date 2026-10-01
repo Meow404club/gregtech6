@@ -174,6 +174,12 @@ public class GT6BiomeModifierConditions implements DataProvider {
      * NotCondition.Serializer's {@code value}; the dispatch/encoder orders make
      * {@code type} the first member of every condition object (the byte contract with
      * the neo leg's native emission — GT6DualDirectoryFaces rebrands it 1:1).
+     *
+     * <p>Division of labor (mdh-4 closeout, KEEP ruling): this emission is the port's ONE
+     * live runtime mod-presence condition and it stays — datapack conditions evaluate at
+     * datapack-load time, before any registry face exists, so they cannot migrate to the
+     * registry-side unified driver GT6ModDrivers (mdh series; isLoaded/visibilityGate);
+     * that driver owns the registration face only.
      */
     public static JsonArray conditionsArray(String aBrand) {
         JsonObject tModLoaded = new JsonObject();

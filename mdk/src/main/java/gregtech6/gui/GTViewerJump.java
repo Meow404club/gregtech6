@@ -47,6 +47,14 @@ public final class GTViewerJump {
 		return aEmiLoaded && GT6EmiPlugin.openRecipeMapPage(aMap);
 	}
 
+	/**
+	 * Runtime UI probe — KEEP (mdh-4 closeout): the division of labor with the unified
+	 * mod-driver face is directional. GT6ModDrivers (mdh series) is the REGISTRATION
+	 * driver (unknown domain defaults to present = register everything); this probe is
+	 * the UI-side runtime query that needs a real absent-to-false answer (the JEI/EMI
+	 * jump gates). Unifying the two must go through a pass-through query API — a separate
+	 * card, not a migration.
+	 */
 	private static boolean isLoaded(String aModId) {
 		//? if forge {
 		return net.minecraftforge.fml.ModList.get().isLoaded(aModId);

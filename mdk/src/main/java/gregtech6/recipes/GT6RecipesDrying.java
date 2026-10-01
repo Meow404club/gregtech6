@@ -412,6 +412,12 @@ public final class GT6RecipesDrying {
 	 * reads, RM.Drying ≈137 statements). The crops/resin BODIES are deliberately not
 	 * audited row-by-row here (they need their own domain cards); the food body POURED
 	 * with task drying-food-fluids — its entry stands as the poured annotation.
+	 *
+	 * <p>Driver-face interlink (mdh-4 closeout): the MD.* dead-row rulings inside this
+	 * DATA (HaC :742, the SC2 slimeball outputs) are port-time static history — the
+	 * unified mod-driver face is GT6ModDrivers (mdh series; isLoaded/visibilityGate);
+	 * HaC/SC2 are mdh-2 atlas (GT6ForeignMaterialAtlas) takeover candidates; the data
+	 * strings themselves stay untouched audit ledger.
 	 */
 	public static final List<String> SKIPPED_UPSTREAM = List.of(
 		"Loader_Recipes_Chem.java:544-545 Tropics_Water + :546-547 OceanGrC + :549-550 Brine + :554-555 Swampwater + :556-557 Stagnant_Water — the FL.exists() external-fluid guard rows (FL.java:124/:126/:131/:129/:128, no GT6 FL.create): CUT = the absent-fluid skip is the guard semantics; a compat-fluids card would carry them",

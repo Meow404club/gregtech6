@@ -158,6 +158,12 @@ public final class GTMaterialItems {
      * {@link OreDictPrefix#isGeneratingItem} (upstream PrefixItem.run, PrefixItem.java:104 =
      * forced || !blacklist && mCondition — NOT canGenerateItem, which drops the blacklist leg,
      * OreDictPrefix.java:285 vs :290).
+     *
+     * <p>Two-layer gate (mdh-4 closeout, KEEP ruling): layer 1 = the unified mod-driver
+     * pre-filter on the mod axis, GT6ModDrivers (mdh series; visibilityGate — the mdh-1
+     * mount point rides this walk); layer 2 = the OP.setCondition material-axis condition
+     * chain inside isGeneratingItem's mCondition leg — the gregapi chain stays as the
+     * second layer; the driver face does not replace it.
      */
     private static Enumeration enumerate() {
         Set<OreDictPrefix> tItemPath = new HashSet<>(itemPathPrefixes());

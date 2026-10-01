@@ -58,6 +58,11 @@ public record GTBedrockOreConfig(String name, OreDictMaterial material, int prob
      * the :772 hexorium row rides the MD.HEX mod-gated compat pool). Serialized inline in
      * the {@code gt6:bedrock_ores} configured-feature JSON — the same tier-a datapack face
      * as the vein/lens tables (edit the 1/P columns without touching Java).
+     *
+     * <p>Driver-face interlink (mdh-4 closeout): the MD.HEX row cut is port-time static
+     * history — the unified mod-driver face is GT6ModDrivers (mdh series;
+     * isLoaded/visibilityGate); HEX is an mdh-2 atlas (GT6ForeignMaterialAtlas) takeover
+     * candidate.
      */
     public record Table(List<GTBedrockOreConfig> rows) implements FeatureConfiguration {
         public static final Codec<Table> CODEC = GTBedrockOreConfig.CODEC

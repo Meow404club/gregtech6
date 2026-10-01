@@ -93,6 +93,11 @@ import gregtech6.registry.GTMaterialItems;
  *
  * <p><b>Load timing</b>: the GT6RecipesWiremill/ShCL form — self-contained MOD-bus
  * listener at FMLCommonSetup.enqueueWork, lazily built tables, generation-tracked pour flag.
+ *
+ * <p>Driver-face interlink (mdh-4 closeout): the {@code MD.RoC.owns("extracts")}
+ * compat-row cut in the audit above is port-time static history — the unified mod-driver
+ * face is GT6ModDrivers (mdh series; isLoaded/visibilityGate); RoC is an mdh-2 atlas
+ * (GT6ForeignMaterialAtlas) takeover candidate.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6RecipesSifter {
