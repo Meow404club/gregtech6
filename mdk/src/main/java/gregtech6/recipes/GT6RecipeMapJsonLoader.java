@@ -236,7 +236,13 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// static rows: the Microwave subclass synthesizes at lookup time, Cooking never
 			// had a row or a consumer, ToolHeads' per-material listener walk diverges from
 			// the port's steel-convergence tool fold — the W5 ruling d)
-			"microwave", "cooker", "toolhead", "mortar", "hammer");
+				"microwave", "cooker", "toolhead", "mortar", "hammer",
+				// task recipe-data-b2c-sawing — the second CUTTER file key: cutter.json sits at
+				// 4966700 of the 5242880-byte commit cap, so the RM.sawing scatter replay pours
+				// through its own key/file (sawing.json) into the SAME map (the tracker is keyed
+				// per file key, so the two subsets replace independently and /reload stays
+				// idempotent — the B1 press-key two-line precedent)
+				"sawing");
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
 
@@ -663,6 +669,9 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "toolhead" -> GT6RecipeMaps.TOOL_HEADS;
 			case "mortar" -> GT6RecipeMaps.MORTAR;
 			case "hammer" -> GT6RecipeMaps.HAMMER;
+			// task recipe-data-b2c-sawing — the second cutter key (the size-split ruling, see
+			// the POURABLE note): sawing.json pours into the SAME CUTTER map
+			case "sawing" -> GT6RecipeMaps.CUTTER;
 		default -> null;
 		};
 	}
