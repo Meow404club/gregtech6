@@ -36,25 +36,55 @@ import gregapi.oredict.OreDictMaterial;
  *
  * <p><b>Batches.</b> Batch 1 = the eight largest foreign domains by exact re-read count
  * (164 rows): Metallurgy 34, ExtraPlanets 27, harvestcraft 19, hbm 18, IC2 17, Botania 17,
- * EnderIO 16, ThermalExpansion 16. Batch 2 (NOT yet transcribed — the remaining domains, in
- * upstream line order): EtFu 7 (:2080-2086), Salt 1 (:2110), GrC 1 (:2113), NePl 3
+ * EnderIO 16, ThermalExpansion 16. Batch 2 (mdh-atlas-batch2, transcribed below) = the
+ * remaining 56 domains, 276 rows, 144 PRIMARY / 132 COMMON_SECONDARY / 0 GT6_SELF, in
+ * upstream line order: EtFu 7 (:2080-2086), Salt 1 (:2110), GrC 1 (:2113), NePl 3
  * (:2116-2118), NeLi 6 (:2121-2126), EnLi 3 (:2129-2131), GT5U 4 (:2195-2198, modid
- * "gregtech" = own, excluded from the seed), IHL 9 (:2226-2234), BC 2 (:2237-2238), FR 15
- * (:2241-2255), FRMB 3 (:2258-2260), BINNIE 2 (:2263-2264), TFC 13 (:2267-2279), TF 14
+ * "gregtech" = our own modid — never seedable), IHL 9 (:2226-2234), BC 2 (:2237-2238), FR
+ * 15 (:2241-2255), FRMB 3 (:2258-2260), BINNIE 2 (:2263-2264), TFC 13 (:2267-2279), TF 14
  * (:2282-2295), ERE 4 (:2298-2301), RC 8 (:2304-2311), IE 2 (:2314-2315), AE 5
  * (:2336-2340), PnC 1 (:2343), SC2 2 (:2346-2347), TiC 6 (:2350-2355), AA 1 (:2358), MFR 3
  * (:2379-2381), BR 5 (:2384-2388), ReC 2 (:2411-2412), RoC 15 unique (:2415-2431, Prismane
- * and Lonsdaleite are upstream duplicate rows), Mek 5 (:2434-2438), TC 9 (:2441-2449),
- * TCTE 1 (:2452), ALF 5 (:2474-2478), CANDY 4 (:2481-2484), GC_ADV_ROCKETRY 2
- * (:2487-2488), HEE 2 (:2491-2492), MaCu 6 (:2495-2500), ABYSSAL 4 (:2503-2506), Fossil 1
- * (:2509), DE 2 (:2512-2513), AV 3 (:2516-2518), PE 2 (:2521-2522), TROPIC 4 (:2525-2528),
- * BoP 4 (:2531-2534), FM 5 (:2537-2541), ARS 8 (:2544-2551), GC 10 (:2554-2563),
- * GC_GALAXYSPACE 8 (:2595-2602), MO 4 (:2605-2608), RT 2 (:2611-2612), ExU 2 (:2615-2616),
- * BTL 13 (:2619-2631), AETHER 7 (:2634-2640), RP 14 (:2643-2656), PR 1 (:2660), BP 1
- * (:2663), FZ 5 (:2666-2670), PFAA 5 (:2673-2677), UB 1 (:2680). Also batch-2 candidates
- * outside the MD-constant shape: the domain-less {@code COMMON_ORE} rows (:2201
- * Superconductor, :2204 Os, :2719-2721 Force/Forcicium/Forcillium) and the 15
- * {@code unused()} HBM rows (:4056-4070, mID &lt; 0 = no registered items).
+ * and Lonsdaleite are upstream duplicate rows :2416/:2423 and :2417/:2424), Mek 5
+ * (:2434-2438), TC 9 (:2441-2449), TCTE 1 (:2452), ALF 5 (:2474-2478), CANDY 4
+ * (:2481-2484), GC_ADV_ROCKETRY 2 (:2487-2488), HEE 2 (:2491-2492), MaCu 6 (:2495-2500),
+ * ABYSSAL 4 (:2503-2506), Fossil 1 (:2509), DE 2 (:2512-2513), AV 3 (:2516-2518), PE 2
+ * (:2521-2522), TROPIC 4 (:2525-2528), BoP 4 (:2531-2534), FM 5 (:2537-2541), ARS 8
+ * (:2544-2551), GC 10 (:2554-2563), GC_GALAXYSPACE 8 (:2595-2602), MO 4 (:2605-2608), RT 2
+ * (:2611-2612), ExU 2 (:2615-2616), BTL 13 (:2619-2631), AETHER 7 (:2634-2640), RP 13 of
+ * 14 (:2643-2656 — :2657 EnergiumCyan carries no {@code put()} and is not an attribution
+ * row), PR 1 (:2660), BP 1 (:2663), FZ 5 (:2666-2670), PFAA 5 (:2673-2677), UB 1 (:2680).
+ *
+ * <p><b>Batch-2 deferral (a verified upstream row NOT transcribed, recorded in the state
+ * ledger {@code tasks.mdh-atlas-batch2}):</b> {@code NikolineAlloy} (RP :2655) — a plain
+ * {@code put(MD.RP)} (PRIMARY shape, RP-exclusive, {@code visDefault(Nikolite)}) that owns
+ * the un-annotated GT6-created chemical row {@code nikolinealloy_molten}
+ * (GTFluids.java:2277), and mdh-3's fluid ratchet requires every PRIMARY material-fluid row
+ * to carry its domain annotation. This card may not touch GTFluids, and demoting a
+ * foreign-exclusive alloy to COMMON_SECONDARY would wrongly shield it from the clear-out
+ * forever — so the row waits for the clear-out card, which lands the annotation and the
+ * atlas row together. Its NePl neighbour {@code AncientDebris} (:2118) looked like a second
+ * deferral on the same grounds, but upstream flags it {@code COMMON_ORE} — the shared-ore
+ * shape that maps to COMMON_SECONDARY exactly like its sibling {@code Netherite} (:2116) —
+ * so it is transcribed below, never-hidden, and its un-annotated {@code ancientdebris_molten}
+ * row (GTFluids.java:2239) needs no annotation because COMMON_SECONDARY never clears.
+ * Kind-only deferrals do not exist: batch-2 GT6_SELF count is 0 (the review account found
+ * no theum-shaped material — every GT6 fluid-bearing candidate — honey/lubricant/wax
+ * family/seedoil/biomass/ethanol/plastic/indigo and the food-oil suite — is a real foreign
+ * mod's content that GT6 transcribed and rides in its own fluid/recipe faces, hence
+ * COMMON_SECONDARY, not SELF; the theum quartet stays the only reversal).
+ *
+ * <p><b>Batch-2 COMMON_SECONDARY evidence classes</b> (row comments carry the specifics):
+ * upstream {@code COMMON_ORE} flag; the SPEC secondary pairs (Cu→EtFu, W→RP, Hg→TC, Si→AE,
+ * Ge→Mek, Pb→FZ, Bi→TFC, Ti→MaCu, Steel→RC); the mdh-3 fluid-ratchet collisions above;
+ * GT6's own stone-suite/concrete faces (GTStoneBlocks StoneSpec rows, GT6RecipesMixer
+ * CFoam groups, GT6RecipesShCL); GT6 worldgen/surface faces (GTOreWorldgen, GT6OreBlocks,
+ * GT6SurfaceBlocks); port machine-face case-maps (GTItemPipes, GT6Hoppers, GTMachines,
+ * GTWireSpecs); GT6 own chains (GT6RecipesCokeOven creosote/coke, GTFluids own oil).
+ * Still outside the MD-constant shape (documented, untranscribable as data rows): the
+ * domain-less {@code COMMON_ORE} rows (:2201 Superconductor "rocketscience", :2204 Os
+ * "gravisuite", :2719-2721 Force/Forcicium/Forcillium) and the 15 {@code unused()} HBM
+ * rows (:4056-4070, mID &lt; 0 = no registered items, nothing to hide or clear).
  */
 public final class GT6ForeignMaterialAtlas {
 
@@ -251,18 +281,375 @@ public final class GT6ForeignMaterialAtlas {
 			new Row(() -> MT.Inolashite, MT.MD.MET.mID, AttributionKind.PRIMARY), // :2715 Nether
 			new Row(() -> MT.Amordrine, MT.MD.MET.mID, AttributionKind.PRIMARY)); // :2716
 
+	/**
+	 * The batch-2 table (mdh-atlas-batch2), rows in upstream block order; same anchor-comment
+	 * convention as batch 1. Append-only relative to batch 1: this list never edits a batch-1
+	 * line, and the batch-1 test pins stay verbatim on the {@link #ROWS} prefix.
+	 */
+	private static final List<Row> BATCH2_ROWS = List.of(
+			// ---- MD.EtFu "etfuturum" (upstream MT.java:2080-2086) ----
+			new Row(() -> MT.Cu, MT.MD.EtFu.mID, AttributionKind.COMMON_SECONDARY), // :2080 COMMON_ORE — SPEC secondary pair (shared element)
+			new Row(() -> MT.STONES.Deepslate, MT.MD.EtFu.mID, AttributionKind.COMMON_SECONDARY), // :2081 — GT6 own concrete face GT6RecipesMixer:166 black group
+			new Row(() -> MT.STONES.Granite, MT.MD.EtFu.mID, AttributionKind.COMMON_SECONDARY), // :2082 — GT6 stone-suite/concrete face (3 port files)
+			new Row(() -> MT.STONES.Diorite, MT.MD.EtFu.mID, AttributionKind.COMMON_SECONDARY), // :2083 — GT6RecipesMixer:164 CFoam white group
+			new Row(() -> MT.STONES.Andesite, MT.MD.EtFu.mID, AttributionKind.COMMON_SECONDARY), // :2084 — GT6RecipesMixer:164 CFoam white group
+			new Row(() -> MT.PrismarineLight, MT.MD.EtFu.mID, AttributionKind.PRIMARY), // :2085
+			new Row(() -> MT.PrismarineDark, MT.MD.EtFu.mID, AttributionKind.PRIMARY), // :2086
+			// ---- MD.Salt "SaltMod" (upstream MT.java:2110) ----
+			new Row(() -> MT.NaHCO3, MT.MD.Salt.mID, AttributionKind.PRIMARY), // :2110
+			// ---- MD.GrC "Growthcraft" (upstream MT.java:2113) ----
+			new Row(() -> MT.Butter, MT.MD.GrC.mID, AttributionKind.PRIMARY), // :2113
+			// ---- MD.NePl "netheriteplus" (upstream MT.java:2116-2118) ----
+			new Row(() -> MT.Netherite, MT.MD.NePl.mID, AttributionKind.COMMON_SECONDARY), // :2116 COMMON_ORE
+			new Row(() -> MT.NetherizedDiamond, MT.MD.NePl.mID, AttributionKind.PRIMARY), // :2117
+			new Row(() -> MT.AncientDebris, MT.MD.NePl.mID, AttributionKind.COMMON_SECONDARY), // :2118 COMMON_ORE — GT6-created row ancientdebris_molten GTFluids:2239 never needs annotation (CS never clears)
+			// ---- MD.NeLi "netherlicious" (upstream MT.java:2121-2126) ----
+			new Row(() -> MT.Efrine, MT.MD.NeLi.mID, AttributionKind.COMMON_SECONDARY), // :2121 COMMON_ORE
+			new Row(() -> MT.VoidCrystal, MT.MD.NeLi.mID, AttributionKind.COMMON_SECONDARY), // :2122 COMMON_ORE
+			new Row(() -> MT.Gloomstone, MT.MD.NeLi.mID, AttributionKind.COMMON_SECONDARY), // :2123 COMMON_ORE
+			new Row(() -> MT.OatAbyssal, MT.MD.NeLi.mID, AttributionKind.PRIMARY), // :2124
+			new Row(() -> MT.STONES.Basalt, MT.MD.NeLi.mID, AttributionKind.COMMON_SECONDARY), // :2125 — GT6 stone suite GTStoneBlocks:94 + GT6RecipesMixer:166
+			new Row(() -> MT.STONES.Blackstone, MT.MD.NeLi.mID, AttributionKind.COMMON_SECONDARY), // :2126 — GT6 stone-suite face (4 port files)
+			// ---- MD.EnLi "enderlicious" (upstream MT.java:2129-2131) ----
+			new Row(() -> MT.Sugilite, MT.MD.EnLi.mID, AttributionKind.COMMON_SECONDARY), // :2129 COMMON_ORE
+			new Row(() -> MT.EndSandWhite, MT.MD.EnLi.mID, AttributionKind.PRIMARY), // :2130
+			new Row(() -> MT.EndSandBlack, MT.MD.EnLi.mID, AttributionKind.PRIMARY), // :2131
+			// ---- MD.GT5U "gregtech" (upstream MT.java:2195-2198) — our own modid: PRIMARY answers
+			// "gregtech" (port setOriginalMod MT.java:3093-3096), always loaded, never seedable —
+			// the batch-1-only seed walk below keeps it out of SEEDED_DOMAINS.
+			new Row(() -> MT.HSSG, MT.MD.GT5U.mID, AttributionKind.PRIMARY), // :2195
+			new Row(() -> MT.HSSE, MT.MD.GT5U.mID, AttributionKind.PRIMARY), // :2196
+			new Row(() -> MT.HSSS, MT.MD.GT5U.mID, AttributionKind.PRIMARY), // :2197
+			new Row(() -> MT.PlatinumGroupSludge, MT.MD.GT5U.mID, AttributionKind.PRIMARY), // :2198
+			// ---- MD.IHL "ihl" (upstream MT.java:2226-2234) ----
+			new Row(() -> MT.SiC, MT.MD.IHL.mID, AttributionKind.PRIMARY), // :2226
+			new Row(() -> MT.H2Ca2B2Si2O10, MT.MD.IHL.mID, AttributionKind.PRIMARY), // :2227
+			new Row(() -> MT.H3BO3, MT.MD.IHL.mID, AttributionKind.PRIMARY), // :2228
+			new Row(() -> MT.Li2O, MT.MD.IHL.mID, AttributionKind.PRIMARY), // :2229
+			new Row(() -> MT.NaOH, MT.MD.IHL.mID, AttributionKind.PRIMARY), // :2230
+			new Row(() -> MT.NaHSO4, MT.MD.IHL.mID, AttributionKind.PRIMARY), // :2231
+			new Row(() -> MT.H2O2, MT.MD.IHL.mID, AttributionKind.PRIMARY), // :2232
+			new Row(() -> MT.Li2Fe2O4, MT.MD.IHL.mID, AttributionKind.PRIMARY), // :2233
+			new Row(() -> MT.Porcelain, MT.MD.IHL.mID, AttributionKind.PRIMARY), // :2234
+			// ---- MD.BC "BuildCraft|Core" (upstream MT.java:2237-2238) ----
+			new Row(() -> MT.Oil, MT.MD.BC.mID, AttributionKind.COMMON_SECONDARY), // :2237 — GT6 own oil registration GTFluids:358-388 + GT6RecipesCokeOven oil-shale rows
+			new Row(() -> MT.Fuel, MT.MD.BC.mID, AttributionKind.COMMON_SECONDARY), // :2238 — GT6 own fuel chain (GTFluids engine family :479)
+			// ---- MD.FR "Forestry" (upstream MT.java:2241-2255) ----
+			new Row(() -> MT.I, MT.MD.FR.mID, AttributionKind.PRIMARY), // :2241
+			new Row(() -> MT.Ash, MT.MD.FR.mID, AttributionKind.PRIMARY), // :2242
+			new Row(() -> MT.Peat, MT.MD.FR.mID, AttributionKind.PRIMARY), // :2243
+			new Row(() -> MT.PeatBituminous, MT.MD.FR.mID, AttributionKind.PRIMARY), // :2244
+			new Row(() -> MT.Apatite, MT.MD.FR.mID, AttributionKind.PRIMARY), // :2245
+			new Row(() -> MT.PhosphorusBlue, MT.MD.FR.mID, AttributionKind.PRIMARY), // :2246
+			new Row(() -> MT.Biomass, MT.MD.FR.mID, AttributionKind.COMMON_SECONDARY), // :2247 — GT6-created chemical row "biomass" GTFluids:2786 un-annotated (mdh-3 ratchet); GT6 own bio chain
+			new Row(() -> MT.BioFuel, MT.MD.FR.mID, AttributionKind.PRIMARY), // :2248
+			new Row(() -> MT.Ethanol, MT.MD.FR.mID, AttributionKind.COMMON_SECONDARY), // :2249 — GT6 own ethanol face GTFluids:482/:574, never-hide conservative
+			new Row(() -> MT.SeedOil, MT.MD.FR.mID, AttributionKind.COMMON_SECONDARY), // :2250 — GT6 own food-oil family GTFluids:1113, never-hide conservative
+			new Row(() -> MT.Honey, MT.MD.FR.mID, AttributionKind.COMMON_SECONDARY), // :2251 — GT6-created chemical row "honey" GTFluids:2579 (ratchet); GT6 bee chain, "for_honey" is the alias row :912
+			new Row(() -> MT.Honeydew, MT.MD.FR.mID, AttributionKind.COMMON_SECONDARY), // :2252 — GT6-created chemical row GTFluids:2580 (ratchet)
+			new Row(() -> MT.Wax, MT.MD.FR.mID, AttributionKind.COMMON_SECONDARY), // :2253 — GT6-created chemical row wax_molten GTFluids:2809 (ratchet); GT6 candle/bee chain
+			new Row(() -> MT.WaxBee, MT.MD.FR.mID, AttributionKind.COMMON_SECONDARY), // :2254 — waxbee_molten GTFluids:2810 (ratchet); GT6 own bee system
+			new Row(() -> MT.WaxRefractory, MT.MD.FR.mID, AttributionKind.COMMON_SECONDARY), // :2255 — waxrefractory_molten GTFluids:2813 (ratchet)
+			// ---- MD.FRMB "MagicBees" (upstream MT.java:2258-2260) ----
+			new Row(() -> MT.WaxMagic, MT.MD.FRMB.mID, AttributionKind.COMMON_SECONDARY), // :2258 — waxmagic_molten GTFluids:2814 (ratchet); conservative 待复核 (annotation rides the clear-out card)
+			new Row(() -> MT.WaxAmnesic, MT.MD.FRMB.mID, AttributionKind.COMMON_SECONDARY), // :2259 — waxamnesic_molten GTFluids:2815 (ratchet) 待复核
+			new Row(() -> MT.WaxSoulful, MT.MD.FRMB.mID, AttributionKind.COMMON_SECONDARY), // :2260 — waxsoulful_molten GTFluids:2816 (ratchet) 待复核
+			// ---- MD.BINNIE "BinnieCore" (upstream MT.java:2263-2264) ----
+			new Row(() -> MT.Bark, MT.MD.BINNIE.mID, AttributionKind.PRIMARY), // :2263
+			new Row(() -> MT.Hazelnut, MT.MD.BINNIE.mID, AttributionKind.PRIMARY), // :2264
+			// ---- MD.TFC "terrafirmacraft" (upstream MT.java:2267-2279) ----
+			new Row(() -> MT.Bi, MT.MD.TFC.mID, AttributionKind.COMMON_SECONDARY), // :2267 COMMON_ORE — SPEC secondary pair
+			new Row(() -> MT.Jasper, MT.MD.TFC.mID, AttributionKind.COMMON_SECONDARY), // :2268 — GT6 worldgen face (GT6OreBlocks/GTOreWorldgen)
+			new Row(() -> MT.WroughtIron, MT.MD.TFC.mID, AttributionKind.COMMON_SECONDARY), // :2269 — port re-registration host (batch-1 RefinedIron note, atlas :104 precedent)
+			new Row(() -> MT.RoseGold, MT.MD.TFC.mID, AttributionKind.COMMON_SECONDARY), // :2270 — port machine-face case-map GTItemPipes.java:97
+			new Row(() -> MT.SterlingSilver, MT.MD.TFC.mID, AttributionKind.COMMON_SECONDARY), // :2271 — GTItemPipes.java:96 case-map
+			new Row(() -> MT.BlackBronze, MT.MD.TFC.mID, AttributionKind.COMMON_SECONDARY), // :2272 — GTItemPipes.java:99 case-map
+			new Row(() -> MT.BismuthBronze, MT.MD.TFC.mID, AttributionKind.COMMON_SECONDARY), // :2273 — GT6Hoppers.java:129 + GTMachines.java:2629 case-maps
+			new Row(() -> MT.BlackSteel, MT.MD.TFC.mID, AttributionKind.PRIMARY), // :2274
+			new Row(() -> MT.RedSteel, MT.MD.TFC.mID, AttributionKind.PRIMARY), // :2275
+			new Row(() -> MT.BlueSteel, MT.MD.TFC.mID, AttributionKind.PRIMARY), // :2276
+			new Row(() -> MT.MeteoricBlackSteel, MT.MD.TFC.mID, AttributionKind.PRIMARY), // :2277
+			new Row(() -> MT.MeteoricBlueSteel, MT.MD.TFC.mID, AttributionKind.PRIMARY), // :2278
+			new Row(() -> MT.MeteoricRedSteel, MT.MD.TFC.mID, AttributionKind.PRIMARY), // :2279
+			// ---- MD.TF "TwilightForest" (upstream MT.java:2282-2295) ----
+			new Row(() -> MT.STONES.Mazestone, MT.MD.TF.mID, AttributionKind.COMMON_SECONDARY), // :2282 — GT6 own recipe faces GT6RecipesMixer/GT6RecipesShCL
+			new Row(() -> MT.STONES.Castlerock, MT.MD.TF.mID, AttributionKind.COMMON_SECONDARY), // :2283 — GT6RecipesMixer:165 CFoam white group
+			new Row(() -> MT.STONES.Deadrock, MT.MD.TF.mID, AttributionKind.COMMON_SECONDARY), // :2284 — GT6RecipesMixer/GT6RecipesShCL faces
+			new Row(() -> MT.LiveRoot, MT.MD.TF.mID, AttributionKind.PRIMARY), // :2285
+			new Row(() -> MT.IronWood, MT.MD.TF.mID, AttributionKind.PRIMARY), // :2286
+			new Row(() -> MT.Steeleaf, MT.MD.TF.mID, AttributionKind.PRIMARY), // :2287
+			new Row(() -> MT.Knightmetal, MT.MD.TF.mID, AttributionKind.PRIMARY), // :2288
+			new Row(() -> MT.FierySteel, MT.MD.TF.mID, AttributionKind.PRIMARY), // :2289
+			new Row(() -> MT.Fireleaf, MT.MD.TF.mID, AttributionKind.PRIMARY), // :2290
+			new Row(() -> MT.MeteoflameSteel, MT.MD.TF.mID, AttributionKind.PRIMARY), // :2291
+			new Row(() -> MT.MeteoflameBlackSteel, MT.MD.TF.mID, AttributionKind.PRIMARY), // :2292
+			new Row(() -> MT.MeteoflameBlueSteel, MT.MD.TF.mID, AttributionKind.PRIMARY), // :2293
+			new Row(() -> MT.MeteoflameRedSteel, MT.MD.TF.mID, AttributionKind.PRIMARY), // :2294
+			new Row(() -> MT.FlamascusSteel, MT.MD.TF.mID, AttributionKind.PRIMARY), // :2295
+			// ---- MD.ERE "erebus" (upstream MT.java:2298-2301) ----
+			new Row(() -> MT.STONES.Umber, MT.MD.ERE.mID, AttributionKind.COMMON_SECONDARY), // :2298 — GT6 stone-suite face
+			new Row(() -> MT.STONES.Gneiss, MT.MD.ERE.mID, AttributionKind.COMMON_SECONDARY), // :2299 — GT6 stone-suite face
+			new Row(() -> MT.PetrifiedWood, MT.MD.ERE.mID, AttributionKind.PRIMARY), // :2300
+			new Row(() -> MT.Jade, MT.MD.ERE.mID, AttributionKind.PRIMARY), // :2301
+			// ---- MD.RC "Railcraft" (upstream MT.java:2304-2311) ----
+			new Row(() -> MT.K, MT.MD.RC.mID, AttributionKind.PRIMARY), // :2304
+			new Row(() -> MT.S, MT.MD.RC.mID, AttributionKind.COMMON_SECONDARY), // :2305 COMMON_ORE
+			new Row(() -> MT.KNO3, MT.MD.RC.mID, AttributionKind.COMMON_SECONDARY), // :2306 COMMON_ORE
+			new Row(() -> MT.Firestone, MT.MD.RC.mID, AttributionKind.COMMON_SECONDARY), // :2307 COMMON_ORE
+			new Row(() -> MT.Creosote, MT.MD.RC.mID, AttributionKind.COMMON_SECONDARY), // :2308 — GT6 own coke-oven chain GT6RecipesCokeOven.java:62
+			new Row(() -> MT.TinAlloy, MT.MD.RC.mID, AttributionKind.COMMON_SECONDARY), // :2309 — port face (8 files incl. GTItemPipes case-maps) 待复核
+			new Row(() -> MT.Steel, MT.MD.RC.mID, AttributionKind.COMMON_SECONDARY), // :2310 — SPEC secondary pair; GT6 core (23 port files)
+			new Row(() -> MT.CoalCoke, MT.MD.RC.mID, AttributionKind.COMMON_SECONDARY), // :2311 — GT6 own coke-oven output GT6RecipesCokeOven.java:138-140
+			// ---- MD.IE "ImmersiveEngineering" (upstream MT.java:2314-2315) ----
+			new Row(() -> MT.Constantan, MT.MD.IE.mID, AttributionKind.COMMON_SECONDARY), // :2314 — shared multi-mod alloy (batch-1 Invar/Electrum sibling), 5 port files 待复核
+			new Row(() -> MT.WoodTreated, MT.MD.IE.mID, AttributionKind.COMMON_SECONDARY), // :2315 — GT6 own treated-wood face (10 port files) 待复核
+			// ---- MD.AE "appliedenergistics2" (upstream MT.java:2336-2340) ----
+			new Row(() -> MT.STONES.SkyStone, MT.MD.AE.mID, AttributionKind.COMMON_SECONDARY), // :2336 — GT6 own loot face GT6LootInjectionDatagen:325
+			new Row(() -> MT.Si, MT.MD.AE.mID, AttributionKind.COMMON_SECONDARY), // :2337 — SPEC secondary pair (upstream: "don't COMMON_ORE this!")
+			new Row(() -> MT.CertusQuartz, MT.MD.AE.mID, AttributionKind.COMMON_SECONDARY), // :2338 COMMON_ORE
+			new Row(() -> MT.ChargedCertusQuartz, MT.MD.AE.mID, AttributionKind.COMMON_SECONDARY), // :2339 COMMON_ORE
+			new Row(() -> MT.Fluix, MT.MD.AE.mID, AttributionKind.COMMON_SECONDARY), // :2340 COMMON_ORE
+			// ---- MD.PnC "PneumaticCraft" (upstream MT.java:2343) ----
+			new Row(() -> MT.IronCompressed, MT.MD.PnC.mID, AttributionKind.PRIMARY), // :2343
+			// ---- MD.SC2 "steamcraft2" (upstream MT.java:2346-2347) ----
+			new Row(() -> MT.IronCast, MT.MD.SC2.mID, AttributionKind.PRIMARY), // :2346
+			new Row(() -> MT.WhaleOil, MT.MD.SC2.mID, AttributionKind.COMMON_SECONDARY), // :2347 — GT6 own food-oil family GTFluids:1121, never-hide conservative
+			// ---- MD.TiC "TConstruct" (upstream MT.java:2350-2355) ----
+			new Row(() -> MT.Al, MT.MD.TiC.mID, AttributionKind.PRIMARY), // :2350 — upstream: "don't COMMON_ORE this!" (batch-1 Ta/Nb precedent)
+			new Row(() -> MT.Co, MT.MD.TiC.mID, AttributionKind.COMMON_SECONDARY), // :2351 COMMON_ORE
+			new Row(() -> MT.Ardite, MT.MD.TiC.mID, AttributionKind.COMMON_SECONDARY), // :2352 COMMON_ORE + GT6Hoppers/GTMachines case-maps
+			new Row(() -> MT.Alumite, MT.MD.TiC.mID, AttributionKind.PRIMARY), // :2353
+			new Row(() -> MT.Manyullyn, MT.MD.TiC.mID, AttributionKind.COMMON_SECONDARY), // :2354 — GT6Hoppers/GTItemPipes/GTMachines case-maps
+			new Row(() -> MT.AluminiumBrass, MT.MD.TiC.mID, AttributionKind.COMMON_SECONDARY), // :2355 — GTItemPipes case-map
+			// ---- MD.AA "ActuallyAdditions" (upstream MT.java:2358) ----
+			new Row(() -> MT.BlackQuartz, MT.MD.AA.mID, AttributionKind.PRIMARY), // :2358
+			// ---- MD.MFR "MineFactoryReloaded" (upstream MT.java:2379-2381) ----
+			new Row(() -> MT.MeatRaw, MT.MD.MFR.mID, AttributionKind.PRIMARY), // :2379
+			new Row(() -> MT.MeatCooked, MT.MD.MFR.mID, AttributionKind.PRIMARY), // :2380
+			new Row(() -> MT.Plastic, MT.MD.MFR.mID, AttributionKind.COMMON_SECONDARY), // :2381 — GT6-created chemical row "plastic" GTFluids:2801 (ratchet); GT6 own plastic chain
+			// ---- MD.BR "BigReactors" (upstream MT.java:2384-2388) ----
+			new Row(() -> MT.Yellorium, MT.MD.BR.mID, AttributionKind.COMMON_SECONDARY), // :2384 COMMON_ORE
+			new Row(() -> MT.Blutonium, MT.MD.BR.mID, AttributionKind.COMMON_SECONDARY), // :2385 COMMON_ORE
+			new Row(() -> MT.Cyanite, MT.MD.BR.mID, AttributionKind.COMMON_SECONDARY), // :2386 COMMON_ORE
+			new Row(() -> MT.Ludicrite, MT.MD.BR.mID, AttributionKind.COMMON_SECONDARY), // :2387 COMMON_ORE
+			new Row(() -> MT.Yellorite, MT.MD.BR.mID, AttributionKind.COMMON_SECONDARY), // :2388 COMMON_ORE
+			// ---- MD.ReC "ReactorCraft" (upstream MT.java:2411-2412) ----
+			new Row(() -> MT.In, MT.MD.ReC.mID, AttributionKind.PRIMARY), // :2411
+			new Row(() -> MT.TungstenCarbide, MT.MD.ReC.mID, AttributionKind.PRIMARY), // :2412
+			// ---- MD.RoC "RotaryCraft" (upstream MT.java:2415-2431; :2416/:2423 and :2417/:2424 are
+			// upstream duplicate statements of Prismane/Lonsdaleite — one row each here) ----
+			new Row(() -> MT.Anthracite, MT.MD.RoC.mID, AttributionKind.COMMON_SECONDARY), // :2415 COMMON_ORE
+			new Row(() -> MT.Prismane, MT.MD.RoC.mID, AttributionKind.PRIMARY), // :2416 (dup :2423)
+			new Row(() -> MT.Lonsdaleite, MT.MD.RoC.mID, AttributionKind.PRIMARY), // :2417 (dup :2424)
+			new Row(() -> MT.Lubricant, MT.MD.RoC.mID, AttributionKind.COMMON_SECONDARY), // :2418 — GT6 own lubricant GTFluids:2535/:2543 (Loader_Fluids.java:617), "rc lubricant" is the alias face
+			new Row(() -> MT.F, MT.MD.RoC.mID, AttributionKind.COMMON_SECONDARY), // :2419 — upstream: "don't COMMON_ORE this!"; internal name "fluorine" rides GT6's own chemical row GTFluids:2211 (mdh-3 ratchet), never-hide conservative
+			new Row(() -> MT.CaF2, MT.MD.RoC.mID, AttributionKind.PRIMARY), // :2420
+			new Row(() -> MT.AgI, MT.MD.RoC.mID, AttributionKind.PRIMARY), // :2421
+			new Row(() -> MT.InductiveAlloy, MT.MD.RoC.mID, AttributionKind.PRIMARY), // :2422
+			new Row(() -> MT.Cd_In_Ag_Alloy, MT.MD.RoC.mID, AttributionKind.PRIMARY), // :2425
+			new Row(() -> MT.HSLA, MT.MD.RoC.mID, AttributionKind.PRIMARY), // :2426
+			new Row(() -> MT.SpringSteel, MT.MD.RoC.mID, AttributionKind.PRIMARY), // :2427
+			new Row(() -> MT.AluminiumAlloy, MT.MD.RoC.mID, AttributionKind.PRIMARY), // :2428
+			new Row(() -> MT.TungstenAlloy, MT.MD.RoC.mID, AttributionKind.PRIMARY), // :2429
+			new Row(() -> MT.TungstenSintered, MT.MD.RoC.mID, AttributionKind.PRIMARY), // :2430
+			new Row(() -> MT.Bedrock_HSLA_Alloy, MT.MD.RoC.mID, AttributionKind.PRIMARY), // :2431
+			// ---- MD.Mek "Mekanism" (upstream MT.java:2434-2438) ----
+			new Row(() -> MT.RefinedGlowstone, MT.MD.Mek.mID, AttributionKind.PRIMARY), // :2434
+			new Row(() -> MT.RefinedObsidian, MT.MD.Mek.mID, AttributionKind.PRIMARY), // :2435
+			new Row(() -> MT.Ge, MT.MD.Mek.mID, AttributionKind.COMMON_SECONDARY), // :2436 COMMON_ORE — SPEC secondary pair
+			new Row(() -> MT.Basic, MT.MD.Mek.mID, AttributionKind.PRIMARY), // :2437
+			new Row(() -> MT.Elite, MT.MD.Mek.mID, AttributionKind.PRIMARY), // :2438
+			// ---- MD.TC "Thaumcraft" (upstream MT.java:2441-2449) ----
+			new Row(() -> MT.InfusedVis, MT.MD.TC.mID, AttributionKind.PRIMARY), // :2441
+			new Row(() -> MT.Silverwood, MT.MD.TC.mID, AttributionKind.PRIMARY), // :2442
+			new Row(() -> MT.Greatwood, MT.MD.TC.mID, AttributionKind.PRIMARY), // :2443
+			new Row(() -> MT.Tallow, MT.MD.TC.mID, AttributionKind.PRIMARY), // :2444
+			new Row(() -> MT.VoidMetal, MT.MD.TC.mID, AttributionKind.PRIMARY), // :2445
+			new Row(() -> MT.Thaumium, MT.MD.TC.mID, AttributionKind.COMMON_SECONDARY), // :2446 COMMON_ORE — shared thaum-nexus material 待复核
+			new Row(() -> MT.Amber, MT.MD.TC.mID, AttributionKind.COMMON_SECONDARY), // :2447 COMMON_ORE
+			new Row(() -> MT.Hg, MT.MD.TC.mID, AttributionKind.COMMON_SECONDARY), // :2448 COMMON_ORE — SPEC secondary pair
+			new Row(() -> MT.OREMATS.Cinnabar, MT.MD.TC.mID, AttributionKind.COMMON_SECONDARY), // :2449 COMMON_ORE
+			// ---- MD.TCTE "ThaumcraftExtras" (upstream MT.java:2452) ----
+			new Row(() -> MT.DarkThaumium, MT.MD.TCTE.mID, AttributionKind.PRIMARY), // :2452
+			// ---- MD.ALF "alfheim" (upstream MT.java:2474-2478) ----
+			new Row(() -> MT.Mauftrium, MT.MD.ALF.mID, AttributionKind.PRIMARY), // :2474
+			new Row(() -> MT.Elvorium, MT.MD.ALF.mID, AttributionKind.PRIMARY), // :2475
+			new Row(() -> MT.MuspelheimPower, MT.MD.ALF.mID, AttributionKind.PRIMARY), // :2476
+			new Row(() -> MT.NiflheimPower, MT.MD.ALF.mID, AttributionKind.PRIMARY), // :2477
+			new Row(() -> MT.Iffesal, MT.MD.ALF.mID, AttributionKind.PRIMARY), // :2478
+			// ---- MD.CANDY "candycraftmod" (upstream MT.java:2481-2484) ----
+			new Row(() -> MT.PEZ, MT.MD.CANDY.mID, AttributionKind.PRIMARY), // :2481
+			new Row(() -> MT.Licorice, MT.MD.CANDY.mID, AttributionKind.PRIMARY), // :2482
+			new Row(() -> MT.Nougat, MT.MD.CANDY.mID, AttributionKind.PRIMARY), // :2483
+			new Row(() -> MT.Marshmallow, MT.MD.CANDY.mID, AttributionKind.PRIMARY), // :2484
+			// ---- MD.GC_ADV_ROCKETRY "advancedRocketry" (upstream MT.java:2487-2488) ----
+			new Row(() -> MT.Iritanium, MT.MD.GC_ADV_ROCKETRY.mID, AttributionKind.PRIMARY), // :2487
+			new Row(() -> MT.TitaniumAluminide, MT.MD.GC_ADV_ROCKETRY.mID, AttributionKind.PRIMARY), // :2488
+			// ---- MD.HEE "HardcoreEnderExpansion" (upstream MT.java:2491-2492) ----
+			new Row(() -> MT.Endium, MT.MD.HEE.mID, AttributionKind.COMMON_SECONDARY), // :2491 COMMON_ORE
+			new Row(() -> MT.OREMATS.Sphalerite, MT.MD.HEE.mID, AttributionKind.COMMON_SECONDARY), // :2492 COMMON_ORE
+			// ---- MD.MaCu "Mariculture" (upstream MT.java:2495-2500) ----
+			new Row(() -> MT.Ti, MT.MD.MaCu.mID, AttributionKind.COMMON_SECONDARY), // :2495 — SPEC secondary pair (upstream: "don't COMMON_ORE this!"; GT6 titanium core, 20 port files)
+			new Row(() -> MT.TiO2, MT.MD.MaCu.mID, AttributionKind.COMMON_SECONDARY), // :2496 COMMON_ORE
+			new Row(() -> MT.FishCooked, MT.MD.MaCu.mID, AttributionKind.PRIMARY), // :2497
+			new Row(() -> MT.FishRaw, MT.MD.MaCu.mID, AttributionKind.PRIMARY), // :2498
+			new Row(() -> MT.FishRotten, MT.MD.MaCu.mID, AttributionKind.PRIMARY), // :2499
+			new Row(() -> MT.FishOil, MT.MD.MaCu.mID, AttributionKind.COMMON_SECONDARY), // :2500 — GT6 own food-oil family GTFluids:1120, never-hide conservative
+			// ---- MD.ABYSSAL "abyssalcraft" (upstream MT.java:2503-2506) ----
+			new Row(() -> MT.An, MT.MD.ABYSSAL.mID, AttributionKind.COMMON_SECONDARY), // :2503 COMMON_ORE
+			new Row(() -> MT.Cor, MT.MD.ABYSSAL.mID, AttributionKind.COMMON_SECONDARY), // :2504 COMMON_ORE
+			new Row(() -> MT.Dr, MT.MD.ABYSSAL.mID, AttributionKind.COMMON_SECONDARY), // :2505 COMMON_ORE
+			new Row(() -> MT.Etx, MT.MD.ABYSSAL.mID, AttributionKind.COMMON_SECONDARY), // :2506 COMMON_ORE
+			// ---- MD.Fossil "fossil" (upstream MT.java:2509) ----
+			new Row(() -> MT.AmberDominican, MT.MD.Fossil.mID, AttributionKind.COMMON_SECONDARY), // :2509 COMMON_ORE
+			// ---- MD.DE "DraconicEvolution" (upstream MT.java:2512-2513) ----
+			new Row(() -> MT.Draconium, MT.MD.DE.mID, AttributionKind.COMMON_SECONDARY), // :2512 COMMON_ORE
+			new Row(() -> MT.DraconiumAwakened, MT.MD.DE.mID, AttributionKind.PRIMARY), // :2513
+			// ---- MD.AV "Avaritia" (upstream MT.java:2516-2518) ----
+			new Row(() -> MT.CrystalMatrix, MT.MD.AV.mID, AttributionKind.PRIMARY), // :2516
+			new Row(() -> MT.CosmicNeutronium, MT.MD.AV.mID, AttributionKind.PRIMARY), // :2517
+			new Row(() -> MT.Infinity, MT.MD.AV.mID, AttributionKind.PRIMARY), // :2518
+			// ---- MD.PE "ProjectE" (upstream MT.java:2521-2522) ----
+			new Row(() -> MT.DarkMatter, MT.MD.PE.mID, AttributionKind.PRIMARY), // :2521
+			new Row(() -> MT.RedMatter, MT.MD.PE.mID, AttributionKind.PRIMARY), // :2522
+			// ---- MD.TROPIC "tropicraft" (upstream MT.java:2525-2528) ----
+			new Row(() -> MT.Zr, MT.MD.TROPIC.mID, AttributionKind.PRIMARY), // :2525
+			new Row(() -> MT.Zircon, MT.MD.TROPIC.mID, AttributionKind.PRIMARY), // :2526
+			new Row(() -> MT.Azurite, MT.MD.TROPIC.mID, AttributionKind.PRIMARY), // :2527
+			new Row(() -> MT.Eudialyte, MT.MD.TROPIC.mID, AttributionKind.PRIMARY), // :2528
+			// ---- MD.BoP "BiomesOPlenty" (upstream MT.java:2531-2534) ----
+			new Row(() -> MT.Topaz, MT.MD.BoP.mID, AttributionKind.COMMON_SECONDARY), // :2531 COMMON_ORE
+			new Row(() -> MT.Peridot, MT.MD.BoP.mID, AttributionKind.COMMON_SECONDARY), // :2532 COMMON_ORE
+			new Row(() -> MT.Amethyst, MT.MD.BoP.mID, AttributionKind.COMMON_SECONDARY), // :2533 COMMON_ORE
+			new Row(() -> MT.EnderAmethyst, MT.MD.BoP.mID, AttributionKind.COMMON_SECONDARY), // :2534 COMMON_ORE
+			// ---- MD.FM "meteors" (upstream MT.java:2537-2541) ----
+			new Row(() -> MT.Meteorite, MT.MD.FM.mID, AttributionKind.COMMON_SECONDARY), // :2537 COMMON_ORE
+			new Row(() -> MT.FrozenIron, MT.MD.FM.mID, AttributionKind.PRIMARY), // :2538
+			new Row(() -> MT.Kreknorite, MT.MD.FM.mID, AttributionKind.PRIMARY), // :2539
+			new Row(() -> MT.RedMeteor, MT.MD.FM.mID, AttributionKind.PRIMARY), // :2540
+			new Row(() -> MT.Frezarite, MT.MD.FM.mID, AttributionKind.PRIMARY), // :2541
+			// ---- MD.ARS "arsmagica2" (upstream MT.java:2544-2551) ----
+			new Row(() -> MT.Vinteum, MT.MD.ARS.mID, AttributionKind.COMMON_SECONDARY), // :2544 COMMON_ORE
+			new Row(() -> MT.VinteumPurified, MT.MD.ARS.mID, AttributionKind.PRIMARY), // :2545
+			new Row(() -> MT.ArcaneAsh, MT.MD.ARS.mID, AttributionKind.PRIMARY), // :2546
+			new Row(() -> MT.ArcaneCompound, MT.MD.ARS.mID, AttributionKind.PRIMARY), // :2547
+			new Row(() -> MT.Moonstone, MT.MD.ARS.mID, AttributionKind.COMMON_SECONDARY), // :2548 COMMON_ORE
+			new Row(() -> MT.Sunstone, MT.MD.ARS.mID, AttributionKind.COMMON_SECONDARY), // :2549 COMMON_ORE
+			new Row(() -> MT.Chimerite, MT.MD.ARS.mID, AttributionKind.COMMON_SECONDARY), // :2550 COMMON_ORE
+			new Row(() -> MT.BlueTopaz, MT.MD.ARS.mID, AttributionKind.COMMON_SECONDARY), // :2551 COMMON_ORE
+			// ---- MD.GC "GalacticraftCore" (upstream MT.java:2554-2563) ----
+			new Row(() -> MT.MeteoricIron, MT.MD.GC.mID, AttributionKind.COMMON_SECONDARY), // :2554 — GT6 own meteor face (GT6SurfaceBlocks + GT6LootTables/GT6LootInjectionDatagen) 待复核
+			new Row(() -> MT.MeteoricSteel, MT.MD.GC.mID, AttributionKind.PRIMARY), // :2555
+			new Row(() -> MT.Desh, MT.MD.GC.mID, AttributionKind.COMMON_SECONDARY), // :2556 COMMON_ORE
+			new Row(() -> MT.Cheese, MT.MD.GC.mID, AttributionKind.COMMON_SECONDARY), // :2557 COMMON_ORE (its chemical row cheese_molten stays un-annotated, mdh-3 ratchet)
+			new Row(() -> MT.STONES.MoonTurf, MT.MD.GC.mID, AttributionKind.COMMON_SECONDARY), // :2558 — GT6RecipesMixer:169 CFoam light-gray group
+			new Row(() -> MT.STONES.MoonRock, MT.MD.GC.mID, AttributionKind.COMMON_SECONDARY), // :2559 — GT6RecipesMixer:169 + stone-suite face
+			new Row(() -> MT.STONES.MarsSand, MT.MD.GC.mID, AttributionKind.COMMON_SECONDARY), // :2560 — GT6 stone-suite face
+			new Row(() -> MT.STONES.MarsRock, MT.MD.GC.mID, AttributionKind.COMMON_SECONDARY), // :2561 — GT6 stone-suite face
+			new Row(() -> MT.STONES.SpaceRock, MT.MD.GC.mID, AttributionKind.COMMON_SECONDARY), // :2562 — GT6 stone-suite face
+			new Row(() -> MT.Ultimate, MT.MD.GC.mID, AttributionKind.PRIMARY), // :2563
+			// ---- MD.GC_GALAXYSPACE "GalaxySpace" (upstream MT.java:2595-2602) ----
+			new Row(() -> MT.Duralumin, MT.MD.GC_GALAXYSPACE.mID, AttributionKind.COMMON_SECONDARY), // :2595 COMMON_ORE
+			new Row(() -> MT.Oriharukon, MT.MD.GC_GALAXYSPACE.mID, AttributionKind.COMMON_SECONDARY), // :2596 COMMON_ORE
+			new Row(() -> MT.Adamantite, MT.MD.GC_GALAXYSPACE.mID, AttributionKind.COMMON_SECONDARY), // :2597 COMMON_ORE
+			new Row(() -> MT.GlowstoneCeres, MT.MD.GC_GALAXYSPACE.mID, AttributionKind.PRIMARY), // :2598
+			new Row(() -> MT.GlowstoneIo, MT.MD.GC_GALAXYSPACE.mID, AttributionKind.PRIMARY), // :2599
+			new Row(() -> MT.GlowstoneEnceladus, MT.MD.GC_GALAXYSPACE.mID, AttributionKind.PRIMARY), // :2600
+			new Row(() -> MT.GlowstoneProteus, MT.MD.GC_GALAXYSPACE.mID, AttributionKind.PRIMARY), // :2601
+			new Row(() -> MT.GlowstonePluto, MT.MD.GC_GALAXYSPACE.mID, AttributionKind.PRIMARY), // :2602
+			// ---- MD.MO "mo" (upstream MT.java:2605-2608) ----
+			new Row(() -> MT.Tn, MT.MD.MO.mID, AttributionKind.PRIMARY), // :2605 — upstream: "don't COMMON_ORE this!"
+			new Row(() -> MT.TritaniumAlloy, MT.MD.MO.mID, AttributionKind.COMMON_SECONDARY), // :2606 COMMON_ORE
+			new Row(() -> MT.Dilithium, MT.MD.MO.mID, AttributionKind.PRIMARY), // :2607 — upstream: "don't COMMON_ORE this!"
+			new Row(() -> MT.Dolamide, MT.MD.MO.mID, AttributionKind.PRIMARY), // :2608
+			// ---- MD.RT "RandomThings" (upstream MT.java:2611-2612) ----
+			new Row(() -> MT.SpectreIron, MT.MD.RT.mID, AttributionKind.PRIMARY), // :2611
+			new Row(() -> MT.Ectoplasm, MT.MD.RT.mID, AttributionKind.PRIMARY), // :2612
+			// ---- MD.ExU "ExtraUtilities" (upstream MT.java:2615-2616) ----
+			new Row(() -> MT.Unstable, MT.MD.ExU.mID, AttributionKind.PRIMARY), // :2615
+			new Row(() -> MT.Bedrockium, MT.MD.ExU.mID, AttributionKind.PRIMARY), // :2616
+			// ---- MD.BTL "thebetweenlands" (upstream MT.java:2619-2631) ----
+			new Row(() -> MT.CrimsonMiddle, MT.MD.BTL.mID, AttributionKind.PRIMARY), // :2619
+			new Row(() -> MT.GreenMiddle, MT.MD.BTL.mID, AttributionKind.PRIMARY), // :2620
+			new Row(() -> MT.AquaMiddle, MT.MD.BTL.mID, AttributionKind.PRIMARY), // :2621
+			new Row(() -> MT.Valonite, MT.MD.BTL.mID, AttributionKind.PRIMARY), // :2622
+			new Row(() -> MT.Scabyst, MT.MD.BTL.mID, AttributionKind.PRIMARY), // :2623
+			new Row(() -> MT.SlimyBone, MT.MD.BTL.mID, AttributionKind.PRIMARY), // :2624
+			new Row(() -> MT.STONES.Betweenstone, MT.MD.BTL.mID, AttributionKind.COMMON_SECONDARY), // :2625 — GT6 stone-suite face
+			new Row(() -> MT.STONES.Pitstone, MT.MD.BTL.mID, AttributionKind.COMMON_SECONDARY), // :2626 — GT6 stone-suite face
+			new Row(() -> MT.STONES.Cragrock, MT.MD.BTL.mID, AttributionKind.COMMON_SECONDARY), // :2627 — GT6 stone-suite face
+			new Row(() -> MT.STONES.Templerock, MT.MD.BTL.mID, AttributionKind.COMMON_SECONDARY), // :2628 — GT6 stone-suite face
+			new Row(() -> MT.Weedwood, MT.MD.BTL.mID, AttributionKind.PRIMARY), // :2629
+			new Row(() -> MT.Syrmorite, MT.MD.BTL.mID, AttributionKind.COMMON_SECONDARY), // :2630 COMMON_ORE
+			new Row(() -> MT.Octine, MT.MD.BTL.mID, AttributionKind.COMMON_SECONDARY), // :2631 COMMON_ORE
+			// ---- MD.AETHER "aether" (upstream MT.java:2634-2640) ----
+			new Row(() -> MT.Skyroot, MT.MD.AETHER.mID, AttributionKind.PRIMARY), // :2634
+			new Row(() -> MT.STONES.Holystone, MT.MD.AETHER.mID, AttributionKind.COMMON_SECONDARY), // :2635 — GT6RecipesMixer:165 CFoam white group
+			new Row(() -> MT.Zanite, MT.MD.AETHER.mID, AttributionKind.COMMON_SECONDARY), // :2636 COMMON_ORE
+			new Row(() -> MT.AmberGolden, MT.MD.AETHER.mID, AttributionKind.COMMON_SECONDARY), // :2637 COMMON_ORE
+			new Row(() -> MT.Ambrosium, MT.MD.AETHER.mID, AttributionKind.COMMON_SECONDARY), // :2638 COMMON_ORE
+			new Row(() -> MT.Gravitite, MT.MD.AETHER.mID, AttributionKind.COMMON_SECONDARY), // :2639 COMMON_ORE
+			new Row(() -> MT.Continuum, MT.MD.AETHER.mID, AttributionKind.COMMON_SECONDARY), // :2640 COMMON_ORE
+			// ---- MD.RP "Redpower" (upstream MT.java:2643-2656; :2657 EnergiumCyan has no put() and
+			// :2655 NikolineAlloy is deferred — javadoc) ----
+			new Row(() -> MT.W, MT.MD.RP.mID, AttributionKind.COMMON_SECONDARY), // :2643 — SPEC secondary pair (upstream: "don't COMMON_ORE this!"; tungsten core, 16 port files)
+			new Row(() -> MT.Ag, MT.MD.RP.mID, AttributionKind.COMMON_SECONDARY), // :2644 COMMON_ORE — silver, 9 port files
+			new Row(() -> MT.Indigo, MT.MD.RP.mID, AttributionKind.COMMON_SECONDARY), // :2645 — GT6-created chemical row "indigo" GTFluids:2794 (ratchet) 待复核
+			new Row(() -> MT.Sapphire, MT.MD.RP.mID, AttributionKind.COMMON_SECONDARY), // :2646 — GT6 worldgen face (GTOreWorldgen/GT6OreBlocks/GT6WorldgenDatagen/GT6SurfaceBlocks)
+			new Row(() -> MT.GreenSapphire, MT.MD.RP.mID, AttributionKind.COMMON_SECONDARY), // :2647 — GT6 worldgen face
+			new Row(() -> MT.BlueSapphire, MT.MD.RP.mID, AttributionKind.COMMON_SECONDARY), // :2648 — GT6 worldgen face
+			new Row(() -> MT.Ruby, MT.MD.RP.mID, AttributionKind.COMMON_SECONDARY), // :2649 — GT6 worldgen face + GT6RecipesImplosion
+			new Row(() -> MT.BalasRuby, MT.MD.RP.mID, AttributionKind.COMMON_SECONDARY), // :2650 — GT6 worldgen face
+			new Row(() -> MT.STONES.Marble, MT.MD.RP.mID, AttributionKind.COMMON_SECONDARY), // :2651 — GT6 stone suite GTStoneBlocks:95 + GT6RecipesMixer:164
+			new Row(() -> MT.Brass, MT.MD.RP.mID, AttributionKind.COMMON_SECONDARY), // :2652 — shared alloy, 7 port files 待复核
+			new Row(() -> MT.RedAlloy, MT.MD.RP.mID, AttributionKind.COMMON_SECONDARY), // :2653 — GTWireSpecs case-map + GT6CraftingRecipes
+			new Row(() -> MT.Nikolite, MT.MD.RP.mID, AttributionKind.COMMON_SECONDARY), // :2654 COMMON_ORE — also GT6 worldgen face (GT6OreBlocks/GTOreWorldgen)
+			new Row(() -> MT.BlueAlloy, MT.MD.RP.mID, AttributionKind.COMMON_SECONDARY), // :2656 — GTWireSpecs case-map
+			// ---- MD.PR "ProjRed|Core" (upstream MT.java:2660) ----
+			new Row(() -> MT.ElectrotineAlloy, MT.MD.PR.mID, AttributionKind.PRIMARY), // :2660
+			// ---- MD.BP "bluepower" (upstream MT.java:2663) ----
+			new Row(() -> MT.PurpleAlloy, MT.MD.BP.mID, AttributionKind.PRIMARY), // :2663
+			// ---- MD.FZ "factorization" (upstream MT.java:2666-2670) ----
+			new Row(() -> MT.Pb, MT.MD.FZ.mID, AttributionKind.COMMON_SECONDARY), // :2666 COMMON_ORE — SPEC secondary pair (15 port files)
+			new Row(() -> MT.OREMATS.Galena, MT.MD.FZ.mID, AttributionKind.COMMON_SECONDARY), // :2667 COMMON_ORE
+			new Row(() -> MT.H2SO4, MT.MD.FZ.mID, AttributionKind.PRIMARY), // :2668
+			new Row(() -> MT.AquaRegia, MT.MD.FZ.mID, AttributionKind.PRIMARY), // :2669
+			new Row(() -> MT.DarkIron, MT.MD.FZ.mID, AttributionKind.PRIMARY), // :2670
+			// ---- MD.PFAA "PFAAGeologica" (upstream MT.java:2673-2677) ----
+			new Row(() -> MT.Bentonite, MT.MD.PFAA.mID, AttributionKind.PRIMARY), // :2673
+			new Row(() -> MT.Palygorskite, MT.MD.PFAA.mID, AttributionKind.PRIMARY), // :2674
+			new Row(() -> MT.Kaolinite, MT.MD.PFAA.mID, AttributionKind.PRIMARY), // :2675
+			new Row(() -> MT.OREMATS.BasalticMineralSand, MT.MD.PFAA.mID, AttributionKind.PRIMARY), // :2676
+			new Row(() -> MT.OREMATS.GraniticMineralSand, MT.MD.PFAA.mID, AttributionKind.PRIMARY), // :2677
+			// ---- MD.UB "UndergroundBiomes" (upstream MT.java:2680) ----
+			new Row(() -> MT.Lignite, MT.MD.UB.mID, AttributionKind.COMMON_SECONDARY)); // :2680 COMMON_ORE
+
 	/** Lazy PRIMARY index over material internal names — built after MT init, never at class-load. */
 	private static volatile Map<String, String> primaryByName;
 
-	/** The batch-1 rows (read-only). Batch-2 rows join this list as later cards transcribe them. */
+	/** The full table (batch 1 + batch 2), read-only, upstream block order preserved. */
+	private static final List<Row> ALL_ROWS = buildAllRows();
+
+	private static List<Row> buildAllRows() {
+		List<Row> rRows = new ArrayList<>(ROWS.size() + BATCH2_ROWS.size());
+		rRows.addAll(ROWS);
+		rRows.addAll(BATCH2_ROWS);
+		return List.copyOf(rRows);
+	}
+
+	/** The whole attribution table, batch 1 followed by batch 2 (read-only). */
 	public static List<Row> rows() {
-		return ROWS;
+		return ALL_ROWS;
 	}
 
 	/**
-	 * The distinct PRIMARY-row domains — exactly what {@code GT6ModDrivers.SEEDED_DOMAINS}
-	 * walks at environment-seed time (a domain with only COMMON_SECONDARY/GT6_SELF rows would
-	 * have nothing to hide and must not enter the seed).
+	 * The distinct PRIMARY-row domains of the batch-1 prefix — exactly what
+	 * {@code GT6ModDrivers.SEEDED_DOMAINS} walks at environment-seed time (a domain with only
+	 * COMMON_SECONDARY/GT6_SELF rows would have nothing to hide and must not enter the seed).
+	 *
+	 * <p>Deliberately still the batch-1 set (mdh-atlas-batch2 scope): batch-2 PRIMARY domains
+	 * join the seed only when the mdh clear-out card lands their activation — this card is
+	 * pure data, and growing the seed here would be a real-install behaviour change.
 	 */
 	public static List<String> seedableDomains() {
 		List<String> rDomains = new ArrayList<>();
@@ -291,7 +678,7 @@ public final class GT6ForeignMaterialAtlas {
 	/** Keyed by {@code mNameInternal}: the enumerate gate sees registry-resolved targets, not MT field identity. */
 	private static Map<String, String> buildPrimaryIndex() {
 		Map<String, String> rIndex = new LinkedHashMap<>();
-		for (Row tRow : ROWS) {
+		for (Row tRow : ALL_ROWS) {
 			if (tRow.kind() != AttributionKind.PRIMARY) continue;
 			OreDictMaterial tMaterial = tRow.material().get();
 			if (tMaterial != null && tMaterial.mID >= 0) rIndex.putIfAbsent(tMaterial.mNameInternal, tRow.domain());

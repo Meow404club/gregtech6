@@ -1,12 +1,15 @@
 /**
- * Tests for task mdh-2-atlas-mapping: the batch-1 foreign-material attribution table.
+ * Tests for the foreign-material attribution table (mdh-2 batch 1 + mdh-atlas-batch2 batch 2).
  *
- * <p>Pins, in acceptance order: the row census (eight domains, exact counts, exact
- * seedable modid set), the three-kind contract of ADR-MDH2 (PRIMARY answers its domain,
- * COMMON_SECONDARY/GT6_SELF never do — with the port's own carried attribution strings
- * ({@code setOriginalMod}, MT.java:3099+) cross-checking every row's domain), and the
- * secondary-attribution protection: under an ABSENT pin the domain's PRIMARY rows drop
- * from the registration universe while its COMMON_SECONDARY and GT6_SELF rows survive.
+ * <p>Pins, in acceptance order: the append-only ratchet (batch 1 is a verbatim 164-row
+ * prefix — eight domains, exact counts, exact seedable modid set, all mdh-2 numbers
+ * untouched), the batch-2 census (56 domains against the upstream MT.java:2060-2721 re-read
+ * account, with the one deferral — NikolineAlloy — accounted), the
+ * secondary-attribution census with the never-hide contract (SPEC pairs present as
+ * COMMON_SECONDARY, no batch-2 domain seedable, CS rows answer no domain and survive an
+ * ABSENT pin of their own domain), the three-kind contract of ADR-MDH2 with the port's
+ * carried attribution strings ({@code setOriginalMod}, MT.java:3099+) cross-checking every
+ * row's domain, and table integrity (unique material per domain, domains ⊆ MD.MD ids).
  *
  * <p>The offline JVM has no FML and the neo junit-fml JVM is kept out of seeding by the
  * GT6ModDrivers test-JVM guard, so every ABSENT state here is explicit seam injection.
@@ -14,11 +17,14 @@
 package gregtech6.registry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -31,6 +37,11 @@ import gregtech6.registry.GT6ForeignMaterialAtlas.AttributionKind;
 import gregtech6.registry.GT6ForeignMaterialAtlas.Row;
 
 public class GT6ForeignMaterialAtlasTest {
+
+    /** The mdh-2 batch-1 ratchet: the table's first 164 rows are the batch-1 transcription, never edited. */
+    private static final int BATCH1_ROWS = 164;
+    /** 164 + 276: batch 2 appends 56 domains / 276 rows (1 upstream row deferred — see batchTwoCensusPins). */
+    private static final int TOTAL_ROWS = 440;
 
     @BeforeAll
     public static void initMaterialSystem() {
@@ -60,7 +71,9 @@ public class GT6ForeignMaterialAtlasTest {
     @Test
     public void batchOneCensusPins() {
         List<Row> tRows = GT6ForeignMaterialAtlas.rows();
-        assertEquals(164, tRows.size(), "batch-1 total: the eight-domain transcription ratchet");
+        // The append-only ratchet: batch 1 is still exactly the mdh-2 prefix, unedited.
+        assertEquals(TOTAL_ROWS, tRows.size(), "total table: batch-1 164 + batch-2 276");
+        assertEquals(BATCH1_ROWS, countKind(tRows.subList(0, BATCH1_ROWS), null), "batch-1 prefix length");
 
         // Per-domain totals, upstream re-read order (each domain's block range in the atlas javadoc).
         assertEquals(19, tRows.stream().filter(tRow -> tRow.domain().equals(MT.MD.HaC.mID)).count(), "harvestcraft :2089-2107");
@@ -72,15 +85,163 @@ public class GT6ForeignMaterialAtlasTest {
         assertEquals(27, tRows.stream().filter(tRow -> tRow.domain().equals(MT.MD.GC_EXTRAPLANETS.mID)).count(), "ExtraPlanets :2566-2592");
         assertEquals(34, tRows.stream().filter(tRow -> tRow.domain().equals(MT.MD.MET.mID)).count(), "Metallurgy :2683-2716");
 
-        // Three-value account: 137 PRIMARY / 23 COMMON_SECONDARY / 4 GT6_SELF.
-        assertEquals(137, tRows.stream().filter(tRow -> tRow.kind() == AttributionKind.PRIMARY).count(), "PRIMARY total");
-        assertEquals(23, tRows.stream().filter(tRow -> tRow.kind() == AttributionKind.COMMON_SECONDARY).count(), "COMMON_SECONDARY total");
-        assertEquals(4, tRows.stream().filter(tRow -> tRow.kind() == AttributionKind.GT6_SELF).count(), "GT6_SELF total: the theum quartet only");
+        // Three-value account of the batch-1 prefix: 137 PRIMARY / 23 COMMON_SECONDARY / 4 GT6_SELF.
+        assertEquals(137, countKind(tRows.subList(0, BATCH1_ROWS), AttributionKind.PRIMARY), "batch-1 PRIMARY total");
+        assertEquals(23, countKind(tRows.subList(0, BATCH1_ROWS), AttributionKind.COMMON_SECONDARY), "batch-1 COMMON_SECONDARY total");
+        assertEquals(4, countKind(tRows.subList(0, BATCH1_ROWS), AttributionKind.GT6_SELF), "batch-1 GT6_SELF total: the theum quartet only");
 
-        // The seed walks exactly the eight PRIMARY-bearing domains, first-seen order.
+        // The seed walks exactly the eight PRIMARY-bearing batch-1 domains, first-seen order —
+        // batch-2 PRIMARY domains are deliberately not seedable (mdh-atlas-batch2 scope note).
         assertEquals(List.of(MT.MD.HaC.mID, MT.MD.IC2.mID, MT.MD.TE.mID, MT.MD.EIO.mID,
                 MT.MD.HBM.mID, MT.MD.BOTA.mID, MT.MD.GC_EXTRAPLANETS.mID, MT.MD.MET.mID),
-                GT6ForeignMaterialAtlas.seedableDomains(), "SEEDED_DOMAINS source: distinct PRIMARY domains in row order");
+                GT6ForeignMaterialAtlas.seedableDomains(), "SEEDED_DOMAINS source: distinct batch-1 PRIMARY domains in row order");
+    }
+
+    @Test
+    public void batchTwoCensusPins() {
+        List<Row> tRows = GT6ForeignMaterialAtlas.rows();
+        List<Row> tBatch2 = tRows.subList(BATCH1_ROWS, tRows.size());
+        assertEquals(276, tBatch2.size(), "batch-2 total: 56 domains, 1 upstream row deferred (NikolineAlloy)");
+
+        // Per-domain totals against the upstream MT.java re-read account (javadoc batch list).
+        assertEquals(7, countDomain(tBatch2, MT.MD.EtFu.mID), "etfuturum :2080-2086");
+        assertEquals(1, countDomain(tBatch2, MT.MD.Salt.mID), "SaltMod :2110");
+        assertEquals(1, countDomain(tBatch2, MT.MD.GrC.mID), "Growthcraft :2113");
+        assertEquals(3, countDomain(tBatch2, MT.MD.NePl.mID), "netheriteplus :2116-2118 — AncientDebris is COMMON_SECONDARY per its :2118 COMMON_ORE flag (sibling of Netherite :2116)");
+        assertEquals(6, countDomain(tBatch2, MT.MD.NeLi.mID), "netherlicious :2121-2126");
+        assertEquals(3, countDomain(tBatch2, MT.MD.EnLi.mID), "enderlicious :2129-2131");
+        assertEquals(4, countDomain(tBatch2, MT.MD.GT5U.mID), "GT5U :2195-2198 (modid gregtech = own, never seedable)");
+        assertEquals(9, countDomain(tBatch2, MT.MD.IHL.mID), "ihl :2226-2234");
+        assertEquals(2, countDomain(tBatch2, MT.MD.BC.mID), "BuildCraft :2237-2238");
+        assertEquals(15, countDomain(tBatch2, MT.MD.FR.mID), "Forestry :2241-2255");
+        assertEquals(3, countDomain(tBatch2, MT.MD.FRMB.mID), "MagicBees :2258-2260");
+        assertEquals(2, countDomain(tBatch2, MT.MD.BINNIE.mID), "BinnieCore :2263-2264");
+        assertEquals(13, countDomain(tBatch2, MT.MD.TFC.mID), "terrafirmacraft :2267-2279");
+        assertEquals(14, countDomain(tBatch2, MT.MD.TF.mID), "TwilightForest :2282-2295");
+        assertEquals(4, countDomain(tBatch2, MT.MD.ERE.mID), "erebus :2298-2301");
+        assertEquals(8, countDomain(tBatch2, MT.MD.RC.mID), "Railcraft :2304-2311");
+        assertEquals(2, countDomain(tBatch2, MT.MD.IE.mID), "ImmersiveEngineering :2314-2315");
+        assertEquals(5, countDomain(tBatch2, MT.MD.AE.mID), "appliedenergistics2 :2336-2340");
+        assertEquals(1, countDomain(tBatch2, MT.MD.PnC.mID), "PneumaticCraft :2343");
+        assertEquals(2, countDomain(tBatch2, MT.MD.SC2.mID), "steamcraft2 :2346-2347");
+        assertEquals(6, countDomain(tBatch2, MT.MD.TiC.mID), "TConstruct :2350-2355");
+        assertEquals(1, countDomain(tBatch2, MT.MD.AA.mID), "ActuallyAdditions :2358");
+        assertEquals(3, countDomain(tBatch2, MT.MD.MFR.mID), "MineFactoryReloaded :2379-2381");
+        assertEquals(5, countDomain(tBatch2, MT.MD.BR.mID), "BigReactors :2384-2388");
+        assertEquals(2, countDomain(tBatch2, MT.MD.ReC.mID), "ReactorCraft :2411-2412");
+        assertEquals(15, countDomain(tBatch2, MT.MD.RoC.mID), "RotaryCraft :2415-2431 — upstream 17 statements, Prismane/Lonsdaleite duplicated :2423/:2424");
+        assertEquals(5, countDomain(tBatch2, MT.MD.Mek.mID), "Mekanism :2434-2438");
+        assertEquals(9, countDomain(tBatch2, MT.MD.TC.mID), "Thaumcraft :2441-2449");
+        assertEquals(1, countDomain(tBatch2, MT.MD.TCTE.mID), "ThaumcraftExtras :2452");
+        assertEquals(5, countDomain(tBatch2, MT.MD.ALF.mID), "alfheim :2474-2478");
+        assertEquals(4, countDomain(tBatch2, MT.MD.CANDY.mID), "candycraftmod :2481-2484");
+        assertEquals(2, countDomain(tBatch2, MT.MD.GC_ADV_ROCKETRY.mID), "advancedRocketry :2487-2488");
+        assertEquals(2, countDomain(tBatch2, MT.MD.HEE.mID), "HardcoreEnderExpansion :2491-2492");
+        assertEquals(6, countDomain(tBatch2, MT.MD.MaCu.mID), "Mariculture :2495-2500");
+        assertEquals(4, countDomain(tBatch2, MT.MD.ABYSSAL.mID), "abyssalcraft :2503-2506");
+        assertEquals(1, countDomain(tBatch2, MT.MD.Fossil.mID), "fossil :2509");
+        assertEquals(2, countDomain(tBatch2, MT.MD.DE.mID), "DraconicEvolution :2512-2513");
+        assertEquals(3, countDomain(tBatch2, MT.MD.AV.mID), "Avaritia :2516-2518");
+        assertEquals(2, countDomain(tBatch2, MT.MD.PE.mID), "ProjectE :2521-2522");
+        assertEquals(4, countDomain(tBatch2, MT.MD.TROPIC.mID), "tropicraft :2525-2528");
+        assertEquals(4, countDomain(tBatch2, MT.MD.BoP.mID), "BiomesOPlenty :2531-2534");
+        assertEquals(5, countDomain(tBatch2, MT.MD.FM.mID), "meteors :2537-2541");
+        assertEquals(8, countDomain(tBatch2, MT.MD.ARS.mID), "arsmagica2 :2544-2551");
+        assertEquals(10, countDomain(tBatch2, MT.MD.GC.mID), "GalacticraftCore :2554-2563");
+        assertEquals(8, countDomain(tBatch2, MT.MD.GC_GALAXYSPACE.mID), "GalaxySpace :2595-2602");
+        assertEquals(4, countDomain(tBatch2, MT.MD.MO.mID), "mo :2605-2608");
+        assertEquals(2, countDomain(tBatch2, MT.MD.RT.mID), "RandomThings :2611-2612");
+        assertEquals(2, countDomain(tBatch2, MT.MD.ExU.mID), "ExtraUtilities :2615-2616");
+        assertEquals(13, countDomain(tBatch2, MT.MD.BTL.mID), "thebetweenlands :2619-2631");
+        assertEquals(7, countDomain(tBatch2, MT.MD.AETHER.mID), "aether :2634-2640");
+        assertEquals(13, countDomain(tBatch2, MT.MD.RP.mID), "Redpower :2643-2656 — upstream 14, :2655 NikolineAlloy deferred (GTFluids:2277 ratchet), :2657 EnergiumCyan has no put()");
+        assertEquals(1, countDomain(tBatch2, MT.MD.PR.mID), "ProjRed|Core :2660");
+        assertEquals(1, countDomain(tBatch2, MT.MD.BP.mID), "bluepower :2663");
+        assertEquals(5, countDomain(tBatch2, MT.MD.FZ.mID), "factorization :2666-2670");
+        assertEquals(5, countDomain(tBatch2, MT.MD.PFAA.mID), "PFAAGeologica :2673-2677");
+        assertEquals(1, countDomain(tBatch2, MT.MD.UB.mID), "UndergroundBiomes :2680");
+
+        // Batch-2 three-value account: 144 PRIMARY / 132 COMMON_SECONDARY / 0 GT6_SELF.
+        assertEquals(144, countKind(tBatch2, AttributionKind.PRIMARY), "batch-2 PRIMARY total");
+        assertEquals(132, countKind(tBatch2, AttributionKind.COMMON_SECONDARY), "batch-2 COMMON_SECONDARY total");
+        assertEquals(0, countKind(tBatch2, AttributionKind.GT6_SELF), "batch-2 GT6_SELF total: no theum-shaped reversal found (review account in atlas javadoc)");
+    }
+
+    @Test
+    public void batchTwoSecondaryCensusAndNeverHideContract() {
+        List<Row> tBatch2 = GT6ForeignMaterialAtlas.rows().subList(BATCH1_ROWS, TOTAL_ROWS);
+
+        // The SPEC secondary pairs are all present as COMMON_SECONDARY rows.
+        Map<String, String> tPairs = Map.of(
+                MT.MD.EtFu.mID, "Cu", MT.MD.RP.mID, "W", MT.MD.TC.mID, "Hg", MT.MD.AE.mID, "Si",
+                MT.MD.Mek.mID, "Ge", MT.MD.FZ.mID, "Pb", MT.MD.TFC.mID, "Bi", MT.MD.MaCu.mID, "Ti", MT.MD.RC.mID, "Steel");
+        for (Map.Entry<String, String> tPair : tPairs.entrySet()) {
+            Row tRow = tBatch2.stream().filter(t -> t.domain().equals(tPair.getKey())
+                    && t.kind() == AttributionKind.COMMON_SECONDARY
+                    && material(t) == fieldMaterial(tPair.getValue())).findFirst().orElse(null);
+            assertNotNull(tRow, "SPEC secondary pair must be COMMON_SECONDARY: " + tPair.getValue() + " → " + tPair.getKey());
+        }
+
+        // Never-clear flag: no batch-2 domain may enter the seed (the seed stays the batch-1 eight).
+        Set<String> tSeed = new HashSet<>(GT6ForeignMaterialAtlas.seedableDomains());
+        for (Row tRow : tBatch2) assertFalse(tSeed.contains(tRow.domain()), "batch-2 domain must not seed: " + tRow.domain());
+        assertEquals(8, tSeed.size(), "the seed stays the batch-1 eight");
+
+        // A batch-2 COMMON_SECONDARY row answers no domain and survives its own domain's ABSENT pin,
+        // while the domain's PRIMARY rows hide (ADR-MDH2 over batch-2 data; Thaumcraft has both kinds).
+        assertTrue(countRegistered("Thaumium") > 0, "TC precondition: Thaumium (COMMON_SECONDARY flag) registers");
+        assertTrue(countRegistered("VoidMetal") > 0, "TC precondition: VoidMetal (PRIMARY) registers");
+        assertEquals(null, GT6ForeignMaterialAtlas.domainOf(material(rowOf(tBatch2, "Thaumium"))), "CS row answers no domain");
+        GT6ModDrivers.setDriver(MT.MD.TC.mID, GT6ModDrivers.DriverLevel.ABSENT);
+        assertEquals(0, countRegistered("VoidMetal"), "TC PRIMARY rows hide under the ABSENT pin");
+        assertTrue(countRegistered("Thaumium") > 0, "TC COMMON_SECONDARY rows survive the ABSENT pin");
+        GT6ModDrivers.reset();
+        assertTrue(countRegistered("VoidMetal") > 0 && countRegistered("Thaumium") > 0, "reset restores both");
+    }
+
+    @Test
+    public void tableIntegrityUniqueRowsAndLegalDomains() {
+        // Every row's domain must be one of the port's MD.MD constant ids (reflection over the MD class).
+        Set<String> tLegal = new HashSet<>();
+        for (java.lang.reflect.Field tField : MT.MD.class.getFields()) {
+            try {
+                tLegal.add(((MT.MDRef) tField.get(null)).mID);
+            } catch (IllegalAccessException aE) {
+                throw new AssertionError(aE);
+            }
+        }
+        // No (domain, material) pair twice — the upstream duplicate statements (RoC Prismane/Lonsdaleite)
+        // were collapsed to one row each; every other material appears at most once per domain.
+        Set<String> tSeen = new HashSet<>();
+        for (Row tRow : GT6ForeignMaterialAtlas.rows()) {
+            assertTrue(tLegal.contains(tRow.domain()), "domain id must be an MD.MD constant: " + tRow.domain());
+            OreDictMaterial tMaterial = material(tRow);
+            assertTrue(tSeen.add(tRow.domain() + "/" + tMaterial.mNameInternal), "duplicate (domain, material) row: " + tMaterial.mNameInternal);
+        }
+        assertEquals(TOTAL_ROWS, tSeen.size(), "every row is unique");
+    }
+
+    // ---- helpers ----
+
+    private static Row rowOf(List<Row> aRows, String aInternalName) {
+        return aRows.stream().filter(t -> material(t).mNameInternal.equals(aInternalName)).findFirst().orElse(null);
+    }
+
+    /** The live MT field behind a pair name — object identity, robust against alias-hosted internal names (Ni→"Nickel", Cu→"Copper"). */
+    private static OreDictMaterial fieldMaterial(String aField) {
+        try {
+            return (OreDictMaterial) MT.class.getField(aField).get(null);
+        } catch (ReflectiveOperationException aE) {
+            throw new AssertionError(aE);
+        }
+    }
+
+    private static long countDomain(List<Row> aRows, String aDomain) {
+        return aRows.stream().filter(tRow -> tRow.domain().equals(aDomain)).count();
+    }
+
+    private static long countKind(List<Row> aRows, AttributionKind aKind) {
+        return aRows.stream().filter(tRow -> aKind == null || tRow.kind() == aKind).count();
     }
 
     @Test
