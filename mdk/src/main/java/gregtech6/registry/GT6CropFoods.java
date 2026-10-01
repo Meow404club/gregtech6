@@ -81,7 +81,9 @@ import gregtech6.GT6Mod;
  *
  * <p>KJS surface: REGISTRATION face only, deferred to the KJS binding card (the
  * GT6CrystalChargers.java:44 declaration form); the item models + textures are
- * datapack-domain, naturally moddable.
+ * datapack-domain, naturally moddable. Viewer face: none — no machine diagram, zero
+ * JEI/EMI surfaces (the food tab display walk is the only listing). Jade face: another
+ * card, not this wave (the cbc-6 face census).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6CropFoods {

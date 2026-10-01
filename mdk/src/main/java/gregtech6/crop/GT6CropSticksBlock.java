@@ -51,6 +51,11 @@ import gregtech6.registry.GT6CropSticks;
  * {@code entityInside} (onEntityCollision :485-499  --  1.20.1 fires it for every AABB-overlapped
  * non-air block, Entity.checkInsideBlocks :966-989, so the zero-collision box keeps the walk-
  * through feel AND the trample roll, the GTWireBlock precedent).
+ *
+ * <p>Face census (cbc-6 汇核): KJS face — registration defer, the binding card declaration;
+ * the recipe face is datapack-domain zero-adaptation. Viewer face — no machine diagram, zero
+ * JEI/EMI surfaces. Jade face — another card, not this wave. RCON face — none beyond the
+ * /gt6crop channel (the ADR-CB5 ruling: growth never enters RCON assertions).
  */
 public class GT6CropSticksBlock extends BaseEntityBlock {
 

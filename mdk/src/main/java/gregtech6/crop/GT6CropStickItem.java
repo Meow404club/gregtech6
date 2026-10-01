@@ -16,6 +16,10 @@ import gregtech6.registry.GT6CropSticks;
  * farmland seeds the crop-stick block (the :414 arm's tile-side twin); the second-stick
  * crossing upgrade lives on the BLOCK's use face (TileEntityCrop.rightClick :414-422), so
  * this item only owns the place-first-stick arm.
+ *
+ * <p>Face census (cbc-6 汇核): KJS face — registration defer, the binding card declaration;
+ * the recipe face is datapack-domain zero-adaptation. Viewer face — no machine diagram,
+ * zero JEI/EMI surfaces. Jade face — another card, not this wave. RCON face — none.
  */
 public class GT6CropStickItem extends Item {
 

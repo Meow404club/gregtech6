@@ -31,7 +31,9 @@ import gregtech6.registry.GT6Foods;
  * <p><b>KJS surface declaration (the task card wording)</b>: this card produces the
  * REGISTRATION face (one Block/BlockEntityType/Item set) with NO KubeJS-specific seam;
  * wiring an addon event for the crop ids is the declared defer to the KJS binding card
- * (the GT6Cups.java declaration form).
+ * (the GT6Cups.java declaration form). Recipe face: datapack-domain zero-adaptation.
+ * Viewer face: no machine diagram, zero JEI/EMI surfaces. Jade face: another card, not
+ * this wave (the cbc-6 face census).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6CropSticks {

@@ -35,6 +35,12 @@ import gregtech6.registry.GT6CropSticks;
  *
  * <p><b>Neighbor slots 0..3 = NORTH, SOUTH, EAST, WEST</b>  --  the attemptCrossing walk
  * order (TileEntityCrop.java:939-942) the seeded pins contract on.
+ *
+ * <p>Face census (cbc-6 汇核): KJS face — registration defer, the binding card declaration
+ * (the crop ids are plain DeferredRegister entries, no KubeJS seam); the recipe face is
+ * datapack-domain zero-adaptation. Viewer face — no machine diagram, zero JEI/EMI surfaces.
+ * Jade face — another card, not this wave. RCON face — the readout/plant/stick/harvest
+ * faces ARE the crop-a-world acceptance channel via /gt6crop (the GTBurnerCommand ruling).
  */
 public class GT6CropBlockEntity extends BlockEntity implements CropTileView {
 

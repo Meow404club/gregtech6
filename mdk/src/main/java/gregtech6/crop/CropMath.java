@@ -19,7 +19,8 @@ import net.minecraft.world.item.ItemStack;
  * it is part of the pinned contract.
  *
  * <p>RCON face: none — growth takes 256t × tier*200 cycles, offline seeded pins own correctness
- * (ADR-CB5 verdict); KJS face: none (algorithm layer).
+ * (ADR-CB5 verdict); KJS face: none (algorithm layer). Viewer face: none — no machine diagram,
+ * zero JEI/EMI surfaces. Jade face: another card, not this wave (the cbc-6 face-census).
  */
 public final class CropMath {
 

@@ -31,6 +31,11 @@ import net.minecraftforge.fml.common.Mod;
  *     Behavior_Cropnalyzer scanLevel-4 bump + the four readout lines through
  *     {@code gregtech6.crop.behavior.CropnalyzerBehavior#scan}.</li>
  * </ul>
+ *
+ * <p>Face census (cbc-6 汇核): RCON face — this command IS the crop-a-world acceptance
+ * channel (the ADR-CB5 verdict rides the chain head: natural growth never enters RCON
+ * assertions, correctness is the offline seeded pin suite). KJS face — none (command
+ * surface). Viewer face — none. Jade face — another card, not this wave.
  */
 @Mod.EventBusSubscriber(modid = "gt6")
 public final class GT6CropCommand {

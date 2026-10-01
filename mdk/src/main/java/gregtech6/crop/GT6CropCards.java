@@ -50,7 +50,10 @@ import net.minecraftforge.registries.RegistryObject;
  * README sha256 ledger band "crop stage sprites".
  *
  * <p>KJS face: REGISTRATION face only, deferred to the KJS binding card (the
- * GT6CrystalChargers.java declaration form). RCON face: none (offline registration card).
+ * GT6CrystalChargers.java declaration form); the recipe face is datapack-domain
+ * zero-adaptation. RCON face: none (offline registration card). Viewer face: none —
+ * no machine diagram, zero JEI/EMI surfaces. Jade face: another card, not this wave
+ * (the cbc-6 face census).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6CropCards {
