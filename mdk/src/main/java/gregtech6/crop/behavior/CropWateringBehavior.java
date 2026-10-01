@@ -15,8 +15,8 @@ import gregtech6.crop.GT6CropBlockEntity;
  * tile at 195 cannot top off the last 5 (the /10 rounds to 0, nothing flows, the click
  * still belonged to the crop). The 1.7.10 water-can behavior was never attached to any
  * item (dead INSTANCE), so the live carrier here is the jug face  --  its item landed on
- * main AFTER this card's cbc-1 baseline, the one-line {@code waterCrop} hookup rides the
- * merge queue (declared at the card report).
+ * main AFTER this card's cbc-1 baseline; the {@code useOn} hookup landed with task
+ * cbc-6-crop-test-faces (the {@link gregtech6.item.GT6JugBlockItem} crop arm).
  */
 public final class CropWateringBehavior {
 
