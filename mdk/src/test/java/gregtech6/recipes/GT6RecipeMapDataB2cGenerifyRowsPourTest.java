@@ -39,8 +39,9 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * The recipe-data-b2c-generify row-stock pour test (the B2c-roll posture, scaled): the two
- * handler-expansion map files of this card — generifier (8982 rows) and polarizer (843) —
+ * The recipe-data-b2c-generify row-stock pour test (the B2c-roll posture, scaled + the
+ * weld-casing-increment re-increment): the two
+ * handler-expansion map files of this card — generifier (9110 rows) and polarizer (887) —
  * pour through the real {@link GT6RecipeMapJsonLoader} seam with zero skips. RECOMPUTABILITY:
  * the rows were generated from a one-shot live registration dump (an uncommitted JUnit walking
  * GTMaterialItems.registrationOrder + the condition gates, emitted as TSV and folded by a
@@ -59,13 +60,13 @@ public class GT6RecipeMapDataB2cGenerifyRowsPourTest extends GTRecipesOfflineTes
 
 	/** The per-map census of this card: file key -> expected total rows (zero skips). */
 	private static final Map<String, Integer> CENSUS = Map.of(
-			"generifier", 8982, // 8690 walk + 238 stone family + 39 static items + 15 fluids
-			"polarizer", 843);  // 72 Nd + 555 Fe-walk + 216 Steel-walk
+			"generifier", 9110, // 8818 walk + 238 stone family + 39 static items + 15 fluids (+128: the weld-casing-increment re-increment)
+			"polarizer", 887);  // 76 Nd + 583 Fe-walk + 228 Steel-walk (+44: the weld-casing-increment re-increment)
 
 	/** The uncommented walk rows per map — the frozen walk snapshot sizes. */
 	private static final Map<String, Integer> WALK_CENSUS = Map.of(
-			"generifier", 8690,
-			"polarizer", 843);
+			"generifier", 8818,
+			"polarizer", 887);
 
 	/** The static direct-call rows keep their per-row upstream citation; these are their counts. */
 	private static final Map<String, Integer> STATIC_CITES = Map.ofEntries(
@@ -204,6 +205,13 @@ public class GT6RecipeMapDataB2cGenerifyRowsPourTest extends GTRecipesOfflineTes
 		assertEquals(128, tNd.get("eut").getAsLong(), "polarizer Nd statement eut = 128");
 		JsonObject tSteel = findRow(pourShipped("polarizer"), "gt6:ingot_steel", "gt6:ingot_steel_magnetic");
 		assertEquals(16, tSteel.get("eut").getAsLong(), "polarizer Steel-walk eut = 16");
+		// the casing re-increment — the casingMachine* items joined BOTH walks (casing-machine-register unlock)
+		JsonObject tGenCasing = findRow(pourShipped("generifier"), "gt6:casing_machine_quadruple_iron_compressed", "gt6:casing_machine_quadruple_iron");
+		assertEquals(26, tGenCasing.get("duration").getAsLong(), "generifier: casingMachineQuadruple 26U -> duration 26, eut 0");
+		assertEquals(0, tGenCasing.get("eut").getAsLong(), "generifier walk eut = 0 on the casing face too");
+		JsonObject tPolCasing = findRow(pourShipped("polarizer"), "gt6:casing_machine_steel", "gt6:casing_machine_steel_magnetic");
+		assertEquals(1152, tPolCasing.get("duration").getAsLong(), "polarizer: casingMachine 8U * 144/U = 1152");
+		assertEquals(16, tPolCasing.get("eut").getAsLong(), "polarizer casing face rides the ANY.Steel walk eut = 16");
 	}
 
 	/** Spot checks — the static face: vanilla charcoal, a fiber, a stone family row, a fluid row. */

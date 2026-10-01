@@ -43,8 +43,9 @@ import gregtech6.reactor.neutron.ReactorRodKind;
  *
  * <p>Declared poolings: the 1x1 core and its config gate stay deferred (the B-card ruling,
  * upstream default OFF); the two core CRAFTING rows (LME:734/:738) stay pooled — their
- * 'P' (IL.PISTONS[4]) and 'M' (OP.casingMachineDense) legs have no port items/blocks yet
- * (the GT6CraftingRecipes.java:2867 absent-component ruling). KJS surface: registration
+ * 'P' (IL.PISTONS[4]) leg has no port item yet (the GT6CraftingRecipes.java:2867
+ * absent-component ruling; the former 'M' OP.casingMachineDense absence is retired — the
+ * family is registered since casing-machine-register). KJS surface: registration
  * face only, deferred to the KJS binding card (the GT6Reactors declaration form).
  *
  * <p>Creative tab: the upstream "Reactors" category pools into MACHINES_TAB (the
