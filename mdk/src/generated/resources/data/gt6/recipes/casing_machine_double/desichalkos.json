@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:plate_double_desichalkos"
+    },
+    "Y": {
+      "item": "gt6:stick_long_desichalkos"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "YXX",
+    "XwX",
+    "XXY"
+  ],
+  "result": {
+    "item": "gt6:casing_machine_double_desichalkos"
+  },
+  "show_notification": true
+}

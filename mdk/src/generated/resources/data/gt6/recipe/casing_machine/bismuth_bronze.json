@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:plate_bismuth_bronze"
+    },
+    "Y": {
+      "item": "gt6:stick_long_bismuth_bronze"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "YXX",
+    "XwX",
+    "XXY"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:casing_machine_bismuth_bronze"
+  }
+}

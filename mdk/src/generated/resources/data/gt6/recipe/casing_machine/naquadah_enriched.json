@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:plate_naquadah_enriched"
+    },
+    "Y": {
+      "item": "gt6:stick_long_naquadah_enriched"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "YXX",
+    "XwX",
+    "XXY"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:casing_machine_naquadah_enriched"
+  }
+}

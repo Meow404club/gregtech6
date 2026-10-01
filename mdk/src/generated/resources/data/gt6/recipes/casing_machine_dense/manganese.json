@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:plate_dense_manganese"
+    },
+    "Y": {
+      "item": "gt6:stick_long_manganese"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "YXX",
+    "XwX",
+    "XXY"
+  ],
+  "result": {
+    "item": "gt6:casing_machine_dense_manganese"
+  },
+  "show_notification": true
+}

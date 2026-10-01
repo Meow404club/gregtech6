@@ -50,8 +50,10 @@ import gregtech6.item.MaterialPrefixItem;
  * wire/crate family (real conditions) pass it. Upstream gates by registration PATH instead: material
  * ITEMS exist only for the prefixes handed a PrefixItem in Loader_Items.java:57-171 (105 prefixes;
  * ores/blocks/stones/crates go through PrefixBlock, pipes/wires through MultiTileEntities, and
- * identical-name aliases exist purely for oredict parsing). This card owns the item path, so the
- * universe is that 105-prefix list — referenced via OP fields for compile-checked existence — while
+ * identical-name aliases exist purely for oredict parsing) — plus the four casingMachine* block-family
+ * prefixes the port deliberately registers as items (task casing-machine-register, the deviation
+ * declared on {@link #itemPathPrefixes}). This card owns the item path, so the universe is that
+ * 109-prefix list — referenced via OP fields for compile-checked existence — while
  * the walk below iterates ALL of {@link OreDictPrefix#VALUES} and explicitly skips the non-item paths
  * (aggregate counter in the registration log) so the deferral stays visible and auditable.
  * Block/MTE families are later cards; PREFIX_UNUSED aliases never generate.
@@ -219,10 +221,24 @@ public final class GTMaterialItems {
     }
 
     /**
-     * The upstream item-path prefixes: exactly the prefixes upstream constructs a PrefixItem for
+     * The upstream item-path prefixes: the 105 prefixes upstream constructs a PrefixItem for
      * (Loader_Items.java:57-171, verbatim membership in upstream file order; OP field references
-     * keep it compile-checked). NOT a port-authority invention — it is upstream's own item-path
-     * gate, see class javadoc.
+     * keep it compile-checked) plus the four machine-casing block-family prefixes (task
+     * casing-machine-register). NOT a port-authority invention for the 105 — that face is
+     * upstream's own item-path gate, see class javadoc.
+     *
+     * <p>The four {@code casingMachine*} additions are the declared item-path deviation (task
+     * casing-machine-register): upstream registers them as PrefixBlock_ BLOCKS
+     * (Loader_PrefixBlocks.java:48-51 — the port block family stays pooled, GTMaterialBlocks
+     * javadoc), so their port items are flat sprite adaptations of the block art, not upstream
+     * PrefixItems.
+     * The per-material gate needs zero port code: the OP conditions are already verbatim in the
+     * port (OP.java:1274-1277 — casingMachine = And(PARTS, SMITHABLE), the other three chain
+     * casingMachine via setCondition = OreDictPrefix.isTrue → canGenerateItem, OreDictPrefix.java:349)
+     * and {@link OreDictPrefix#isGeneratingItem} evaluates them unchanged; upstream carries no
+     * disableItemGeneration/forceItemGeneration rows for the family (OP.java:594-625 census).
+     * KJS/ CraftTweaker exposure of the new families is the kjs binding card's face (deferred —
+     * the registration bridge stays the single source; no KJS surface ships here).
      */
     /** Package-private for the spec-pinning test (GTMaterialItemsRegistrationTest). */
     static List<OreDictPrefix> itemPathPrefixes() {
@@ -238,9 +254,13 @@ public final class GTMaterialItems {
             OP.plateGemTiny, OP.plateGem, OP.plateTiny, OP.plate, OP.plateDouble, OP.plateTriple, OP.plateQuadruple, OP.plateQuintuple, OP.plateDense, OP.plateCurved,
             // :98-100 — scrap, rock, raw ore
             OP.scrapGt, OP.rockGt, OP.oreRaw,
-            // :102-119 — gears, rods, springs, tool-adjacent parts
+            // :102-119 — gears, rods, springs, tool-adjacent parts; the casingMachine quartet
+            // rides the casing group (upstream block path, Loader_PrefixBlocks.java:48-51 — the
+            // declared item-path deviation, see method javadoc)
             OP.gearGtSmall, OP.gearGt, OP.rotor, OP.stick, OP.stickLong, OP.springSmall, OP.spring,
-            OP.lens, OP.round, OP.bolt, OP.screw, OP.ring, OP.chain, OP.foil, OP.casingSmall, OP.wireFine, OP.minecartWheels, OP.railGt,
+            OP.lens, OP.round, OP.bolt, OP.screw, OP.ring, OP.chain, OP.foil, OP.casingSmall,
+            OP.casingMachine, OP.casingMachineDouble, OP.casingMachineQuadruple, OP.casingMachineDense,
+            OP.wireFine, OP.minecartWheels, OP.railGt,
             // :121-127 — plant drops and chemtube
             OP.plantGtBerry, OP.plantGtBlossom, OP.plantGtFiber, OP.plantGtTwig, OP.plantGtWart, OP.chemtube,
             // :131-166 — tool heads (raw + finished)

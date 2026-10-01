@@ -39,7 +39,8 @@
  * <p>task craftfrom-residual extension (the panel closeout — the 28 residual
  * statements in five shaped bands + the shapeless panel): the :149 gear twin rides
  * the SAME universe as the :148 rockGt row (the equality pin), :150 folds
- * +SMITHABLE, the casingMachine/cableGt/plank faces pour ZERO (no
+ * +SMITHABLE, the casingMachine faces UNLOCKED at 4x209=836 rows with the item
+ * family (task casing-machine-register; cableGt/plank still pour ZERO — no
  * MaterialPrefixItems — the fine-wire :169 seam), the small-parts/minecartWheels
  * universes ride the multi-face item-truth intersection under the verbatim
  * ANTIMATTER-only/COATED tails, the shapeless panel rides the per-material slot
@@ -643,14 +644,22 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
         assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.rotor, material("Iron")), tRow.getAsJsonObject("result").get("item").getAsString(), "the result item");
     }
 
-    /** Row-count pin: the casingMachine forms pour ZERO today (no MaterialPrefixItems — the MTE-block domain, the fine-wire :169 seam). */
+    /** Row-count pin: the casingMachine forms UNLOCKED with the item family (task casing-machine-register registers the four prefixes on the item path, so the dormant :152-155 band pours). */
     @Test
-    public void theCasingFormsPourZero() {
+    public void theCasingFormsPourWithTheItemFamily() {
         assertEquals(4, GT6CraftingRecipes.casingCraftFromForms().size(), "the :152-155 four statements");
-        assertEquals(0, GT6CraftingRecipes.casingCraftFromMaterialRows().size(),
-                "the :152-155 rows pour zero — no casingMachine MaterialPrefixItems (rows unlock with that item family)");
+        assertEquals(836, GT6CraftingRecipes.casingCraftFromMaterialRows().size(),
+                "the :152-155 rows pour 4x209 = 836 — the item-truth intersection over the registered quartet (210 items per family, one material lacks the plate/stickLong truth)");
+        assertEquals(209, GT6CraftingRecipes.casingCraftFromMaterialRows().stream().filter(r -> r.aForm().aKey().equals("casing_machine")).count(), "the :152 casing_machine face");
+        assertEquals(209, GT6CraftingRecipes.casingCraftFromMaterialRows().stream().filter(r -> r.aForm().aKey().equals("casing_machine_double")).count(), "the :153 casing_machine_double face");
+        assertEquals(209, GT6CraftingRecipes.casingCraftFromMaterialRows().stream().filter(r -> r.aForm().aKey().equals("casing_machine_quadruple")).count(), "the :154 casing_machine_quadruple face");
+        assertEquals(209, GT6CraftingRecipes.casingCraftFromMaterialRows().stream().filter(r -> r.aForm().aKey().equals("casing_machine_dense")).count(), "the :155 casing_machine_dense face");
         for (GT6CraftingRecipes.CasingCraftFromForm tForm : GT6CraftingRecipes.casingCraftFromForms()) {
             assertArrayEquals(new String[] {"YXX", "XwX", "XXY"}, tForm.aRows(), "the :152-155 grid verbatim: " + tForm.aKey());
+        }
+        // the verbatim condition tail: ANTIMATTER.NOT only — no ANTIMATTER material rides any row
+        for (GT6CraftingRecipes.CasingCraftFromMaterialRow tRow : GT6CraftingRecipes.casingCraftFromMaterialRows()) {
+            assertFalse(tRow.aMaterial().contains(gregapi.data.TD.Atomic.ANTIMATTER), "ANTIMATTER.NOT rides every row: " + tRow.aMaterial().mNameInternal);
         }
     }
 

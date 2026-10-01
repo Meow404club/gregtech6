@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:plate_dense_cd_in_ag_alloy"
+    },
+    "Y": {
+      "item": "gt6:stick_long_cd_in_ag_alloy"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "YXX",
+    "XwX",
+    "XXY"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:casing_machine_dense_cd_in_ag_alloy"
+  }
+}

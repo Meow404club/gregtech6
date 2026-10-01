@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "gt6:item/material_sets/metallic/casing_machine_dense",
+    "layer1": "gt6:item/material_sets/metallic/casing_machine_dense_overlay"
+  }
+}
