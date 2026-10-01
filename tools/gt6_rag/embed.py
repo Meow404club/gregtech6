@@ -23,9 +23,39 @@ from pathlib import Path
 TOOLS_DIR = Path(__file__).resolve().parent.parent
 CONFIG_PATH = TOOLS_DIR / "config.json"
 
+# brain 服务器（server._inflight_write）写的在途正常请求计数；索引侧让位用
+INFLIGHT_PATH = TOOLS_DIR.parent / "tmp" / "index" / "inflight.json"
+INFLIGHT_STALE_S = 900.0  # 计数泄漏兜底：文件超 15 分钟未更新视作无人在途
+                          # （server 启动即复位，这里只兜 kill -9 后残留）
+
 _config: dict | None = None
 # 直连本地服务必须绕过系统代理（本机曾因 http_proxy 环境吃 502）
 _opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+
+
+def _inflight_count() -> int:
+    try:
+        with open(INFLIGHT_PATH, encoding="utf-8") as f:
+            d = json.load(f)
+        if time.time() - float(d.get("ts", 0)) > INFLIGHT_STALE_S:
+            return 0
+        return max(0, int(d.get("n", 0)))
+    except (OSError, ValueError, TypeError, json.JSONDecodeError):
+        return 0  # 文件缺失/损坏 = 无让位需求，照常工作
+
+
+def _yield_to_interactive(poll_s: float = 1.5) -> None:
+    """索引嵌入让位：brain 有在途正常请求时等待，归零/过期/文件消失才继续。
+    只在 polite 路径（索引构建）调用；交互请求自身的嵌入绝不走这里。"""
+    waited = False
+    t0 = time.time()
+    while _inflight_count() > 0:
+        if not waited:
+            print("[embed] brain 交互请求在途，索引嵌入让位 ...", flush=True)
+            waited = True
+        time.sleep(poll_s)
+    if waited:
+        print(f"[embed] 让位结束（等待 {time.time() - t0:.1f}s），继续索引嵌入", flush=True)
 
 
 def load_config() -> dict:
@@ -149,7 +179,12 @@ def _token_estimate(texts: list[str]) -> int:
     return int((total_chars - cjk) / 4 + cjk / 1.5)
 
 
-def embed_texts(texts: list[str]) -> list[list[float]]:
+def _post_batch_after_yield(texts: list[str]) -> list[list[float]]:
+    _yield_to_interactive()
+    return _post_batch_fit(texts)
+
+
+def embed_texts(texts: list[str], polite: bool = False) -> list[list[float]]:
     """Embed with dynamic batch sizing + pipelined concurrent requests.
 
     The GPU-side server (llama-server, --parallel 12) splits one request's
@@ -158,6 +193,10 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
     `request_workers` requests concurrently (order-preserving), keeping all
     slots busy. Prefix caching (LCP) still applies per file since batches
     keep sibling chunks together.
+
+    polite=True（索引构建）：每个 HTTP 批次发送前检查 brain 在途交互请求，
+    有则等待让位——索引吞吐永远排在交互流量后面。交互路径（remember/recall/
+    search_code/state 缓存）保持默认 False，绝不互相让位。
     """
     cfg = load_config()
     dims = int(cfg.get("truncate_dims", 0))
@@ -189,11 +228,13 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
         batches.append(batch)
 
     if workers <= 1 or len(batches) <= 1:
-        raw = [_post_batch_fit(b) for b in batches]
+        post = _post_batch_after_yield if polite else _post_batch_fit
+        raw = [post(b) for b in batches]
     else:
         import concurrent.futures as _cf
+        post = _post_batch_after_yield if polite else _post_batch_fit
         with _cf.ThreadPoolExecutor(max_workers=workers) as ex:
-            raw = list(ex.map(_post_batch_fit, batches))  # ex.map preserves order
+            raw = list(ex.map(post, batches))  # ex.map preserves order
 
     out: list[list[float]] = []
     for group in raw:
