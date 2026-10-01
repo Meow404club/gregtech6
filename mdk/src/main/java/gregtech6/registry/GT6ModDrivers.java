@@ -69,12 +69,15 @@ public final class GT6ModDrivers {
 	private static final Map<String, DriverLevel> OVERRIDES = new LinkedHashMap<>();
 
 	/**
-	 * The atlas domain set the environment seed walks (mdh-2 filled it from
-	 * {@link GT6ForeignMaterialAtlas#seedableDomains()}): every domain not present in the
-	 * live mod list flips to ABSENT at seed time — but never inside a test JVM (the guard
-	 * below), where the foreign-mod absences are harness artifacts, not user installs.
+	 * The atlas domain set the environment seed walks. INERT again (review seat XVI): the
+	 * mdh-2 merge filled it with {@link GT6ForeignMaterialAtlas#seedableDomains()}, which
+	 * activated the hiding in every live non-junit FML JVM — the runData dev JVM included —
+	 * and NPE'd the datagen material walks (GT6CraftingRecipes.hopperRecipeBuilder, the
+	 * GTMaterialItems.get(...).get() face) and would have diverged the committed datagen
+	 * tree from the default-mode census. The activation belongs to the mdh-3 card, which
+	 * owes the datagen-walk consumption guards first (review ruling, main session 2026-10-01).
 	 */
-	private static final List<String> SEEDED_DOMAINS = GT6ForeignMaterialAtlas.seedableDomains();
+	private static final List<String> SEEDED_DOMAINS = List.of();
 
 	/** One-shot latch: the environment is read once, at mod construct (upstream ModData.mLoaded timing). */
 	private static boolean seeded = false;

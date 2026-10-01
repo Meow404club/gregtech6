@@ -248,7 +248,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		anvilBuilder(GT6Anvils.STONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.STONE).save(aConsumer, STONE_ANVIL_ID);
 		anvilBuilder(GT6Anvils.BLACKSTONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.BLACKSTONE).save(aConsumer, BLACKSTONE_ANVIL_ID);
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
-			hopperRecipeBuilder(tRow).save(aConsumer, hopperRecipeId(tRow));
+			ShapedRecipeBuilder tBuilder = hopperRecipeBuilder(tRow);
+			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON/wall skip semantics (mdh-3 wave readiness)
+			tBuilder.save(aConsumer, hopperRecipeId(tRow));
 		}
 		progressmeterBuilder().save(aConsumer, PROGRESSMETER_ID);
 		miniPortalNetherBuilder().save(aConsumer, MINI_PORTAL_NETHER_ID); // task portals-mini-nether-end
@@ -481,7 +483,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		anvilBuilder(GT6Anvils.STONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.STONE).save(aOutput, STONE_ANVIL_ID);
 		anvilBuilder(GT6Anvils.BLACKSTONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.BLACKSTONE).save(aOutput, BLACKSTONE_ANVIL_ID);
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
-			hopperRecipeBuilder(tRow).save(aOutput, hopperRecipeId(tRow));
+			ShapedRecipeBuilder tBuilder = hopperRecipeBuilder(tRow);
+			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON/wall skip semantics (mdh-3 wave readiness)
+			tBuilder.save(aOutput, hopperRecipeId(tRow));
 		}
 		progressmeterBuilder().save(aOutput, PROGRESSMETER_ID);
 		miniPortalNetherBuilder().save(aOutput, MINI_PORTAL_NETHER_ID); // task portals-mini-nether-end
@@ -1093,6 +1097,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * tool tags (the bending-cylinder tool-letter mapping).
 	 */
 	private ShapedRecipeBuilder hopperRecipeBuilder(GT6Hoppers.HopperRow aRow) {
+		// null-drop guard: a driver-hidden material has no registered curved plate — skip the
+		// row exactly like the JSON resolveItem bad-row face (the mdh-3 clear-out readiness,
+		// review seat XVI; the walk must never dereference an unregistered pair).
+		if (gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plateCurved, aRow.material().mt()) == null) return null;
 		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, GT6Hoppers.ITEMS_BY_PATH.get(aRow.path()).get())
 				.pattern(aRow.queue() ? "PCP" : "PwP")
 				.pattern("XCX")
