@@ -4952,6 +4952,8 @@ public final class GT6BlockStates extends BlockStateProvider {
             });
             itemModels().withExistingParent(tHandle.getId().getPath(), tModel.getLocation());
         }
+    }
+    /**
      * Task concrete-blocks-register — the 64 per-pair concrete blocks
      * ({@link gregtech6.registry.GT6ConcreteBlocks}, the Loader_Blocks.java:63/:67
      * families x 16 dye colours, full + {@code mSlabs[0]} slab each). The RENDER face is

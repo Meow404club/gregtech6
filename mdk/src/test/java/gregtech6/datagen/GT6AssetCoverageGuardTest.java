@@ -90,6 +90,7 @@ import gregtech6.registry.GT6Anvils;
 import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6Batteries;
 import gregtech6.registry.GT6BedrockOreBlocks;
+import gregtech6.registry.GT6ConcreteBlocks; // task concrete-blocks-register
 import gregtech6.registry.GT6BeeCombs;
 import gregtech6.registry.GT6BeeHives;
 import gregtech6.registry.GT6Boilers;
@@ -309,6 +310,7 @@ public class GT6AssetCoverageGuardTest {
 			GT6Lasers.class, GT6Logistics.class, GT6LongDistanceTransformers.class,
 			GT6LongDistPipes.class, GT6LongDistWires.class, GT6MagicAbsorbers.class, GT6Molds.class,
 			GT6Cells.class, // task small-tank-cell — the 40 Capsule-Cell-Container rows
+			GT6ConcreteBlocks.class, // task concrete-blocks-register — the 64 per-pair concrete blocks
 			GT6Cups.class, // task small-tank-cup — the Porcelain Cup row (block + raw item)
 			GT6Jugs.class, // task small-tank-jug — the Ceramic Jug row (block + raw item)
 			GT6MeasuringPot.class, // task issue45-c3 — the measuring pot family (block + raw item)
