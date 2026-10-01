@@ -434,6 +434,17 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent(tPlain.id(), mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/food/" + tPlain.id().substring("food_".length())));
         }
+        // the bottles-domain minimum (task food-bottles-min) — 3 item/generated models over
+        // the byte-identical upstream icon borrows (gt.multiitem.bottles/{3101,805,1101} —
+        // assets/README.md sha256 ledger), plus bottle_empty parenting the VANILLA
+        // glass_bottle model: upstream OP.bottle.dat(MT.Empty) (OP.java:229) is a material-
+        // prefix technical container with no own sprite anywhere in the upstream resources
+        // (the declared deviation, ledger-annotated)
+        withExistingParent("bottle_empty", mcLoc("item/glass_bottle"));
+        for (String tBorrow : new String[] {"food_ketchup", "food_barbecuesauce", "food_heavycream"}) {
+            withExistingParent(tBorrow, mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/bottle/" + tBorrow.substring("food_".length())));
+        }
         // the extruder-mold row0 subset (task w1-press-extruder-molds) — 2 item/generated
         // models over the composed placeholder icons (the mold-plate/mold-rod 16x16 stdlib
         // generator, the P20 placeholder-PNG convention; the upstream multiitem icons are

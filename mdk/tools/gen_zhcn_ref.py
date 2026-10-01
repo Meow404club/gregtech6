@@ -1220,6 +1220,15 @@ HAND_TRANSLATIONS = {
     "item.gt6.food_chum.tooltip": ("哔~~~~~~~", "hand"),
     "item.gt6.food_chum_on_stick": ("棍子上的好基友肉块", "hand"),
     "item.gt6.food_chum_on_stick.tooltip": ("不要忘了尝尝我们的Chum-balaya", "hand"),
+    # task food-bottles-min — 瓶域最小 4 项+瓶 tab: 三瓶 dump gt.multiitem.bottles.{3101,805,1101} 逐字
+    # (MultiItemBottles.java:257/:111/:139); 空瓶=OP.bottle.dat(MT.Empty) 组合词 空+瓶
+    # (dump gt.material.Empty=空 :4643 + oredict.prefix.suffix.bottle=瓶 :91217); tab=dump
+    # itemGroup.gt.multiitem.bottles:17954 格雷牌饮料 逐字; 三瓶 desc=dump 空串行=双侧零键
+    "item.gt6.bottle_empty": ("空瓶", "hand"),
+    "item.gt6.food_ketchup": ("番茄酱", "hand"),
+    "item.gt6.food_barbecuesauce": ("烧烤酱", "hand"),
+    "item.gt6.food_heavycream": ("鲜奶油", "hand"),
+    "itemGroup.gt6.bottles": ("格雷牌饮料", "hand"),
     "item.gt6.food_can_unknown_tiny": ("迷你食物罐头 (未知)", "hand"),
     "item.gt6.food_can_unknown_small": ("小食物罐头 (未知)", "hand"),
     "item.gt6.food_can_unknown_tall": ("高食物罐头 (未知)", "hand"),
