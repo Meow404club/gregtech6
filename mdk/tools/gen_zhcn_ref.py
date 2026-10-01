@@ -1489,6 +1489,33 @@ HAND_TRANSLATIONS = {
     "gt6.jei.cost.unit_secs": ("秒", "hand"),
     "gt6.jei.cost.unit_mins": ("分", "hand"),
     "gt6.jei.cost.start": ("启动: %s%s", "hand"),
+
+    # ---- task concrete-blocks-register (2026-10-01): the 16 dye colour units + the 4
+    # compose templates, the DUMP faces verbatim (gt.block.concrete.<meta> /
+    # gt.block.concrete.reinforced[.slab.0].<meta>, tmp/gregtech.lang:1722-1761). The
+    # colour word splits off as the gt6.dye.<id> small unit (褐色 for Brown — the dump
+    # word, 282 hits vs 棕色 0), the runtime compose
+    # keeps the dump string byte-equal ("%s混凝土" over "黑色" == "黑色混凝土").
+    "gt6.dye.black": ("黑色", "hand"),
+    "gt6.dye.red": ("红色", "hand"),
+    "gt6.dye.green": ("绿色", "hand"),
+    "gt6.dye.brown": ("褐色", "hand"),
+    "gt6.dye.blue": ("蓝色", "hand"),
+    "gt6.dye.purple": ("紫色", "hand"),
+    "gt6.dye.cyan": ("青色", "hand"),
+    "gt6.dye.light_gray": ("淡灰色", "hand"),
+    "gt6.dye.gray": ("灰色", "hand"),
+    "gt6.dye.pink": ("粉色", "hand"),
+    "gt6.dye.lime": ("黄绿色", "hand"),
+    "gt6.dye.yellow": ("黄色", "hand"),
+    "gt6.dye.light_blue": ("淡蓝色", "hand"),
+    "gt6.dye.magenta": ("品红", "hand"),
+    "gt6.dye.orange": ("橙色", "hand"),
+    "gt6.dye.white": ("白色", "hand"),
+    "gt6.concrete.block": ("%s混凝土", "hand"),
+    "gt6.concrete.block_reinforced": ("%s强化混凝土", "hand"),
+    "gt6.concrete.slab": ("%s混凝土半砖", "hand"),
+    "gt6.concrete.slab_reinforced": ("%s强化混凝土半砖", "hand"),
     "gt6.jei.cost.temperature": ("温度: %s%s", "hand"),
     "gt6.jei.cost.not_consumed": ("该物品不会被消耗", "hand"),
 }

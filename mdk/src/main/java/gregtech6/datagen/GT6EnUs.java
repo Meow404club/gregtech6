@@ -197,6 +197,7 @@ public class GT6EnUs extends LanguageProvider {
         addTechnologicalComponents(); // task debt-emitter-sensor-generators — table-tail append
         addFoodItems(); // task food-items-core — table-tail append
         addBeams(); // task beam-blocks-register — table-tail append
+        addConcrete(); // task concrete-blocks-register — table-tail append
     }
 
     /**
@@ -2098,6 +2099,27 @@ public class GT6EnUs extends LanguageProvider {
             "%s Windmill Tiles B",             // 14 WINDB   ".14"
             "%s Square Bricks"                 // 15 QBRIK   ".15"
     };
+
+    /**
+     * The concrete family faces (task concrete-blocks-register, the addStoneBlocks
+     * template form): the 16 {@code gt6.dye.<id>} small units (the CS.DYE_NAMES words,
+     * GTSprayCanItem.DYE_NAMES verbatim — the same values the spray-can band emits
+     * inline) + the 4 compose templates (the BlockColored.java:46/:58 LH ladder
+     * %s-ified: {@code DYE_NAMES[i] + " " + aDefaultLocalised [+ " Slab"]}, the dump
+     * faces gt.block.concrete[.reinforced][.slab.0].<meta>, "Light Gray Concrete" /
+     * "Light Gray Reinforced Concrete Slab" et al). The block classes compose at runtime
+     * (GT6ConcreteBlock/SlabBlock.getName over {@code GT6ConcreteBlock.dyeKey}).
+     */
+    private void addConcrete() {
+        for (int i = 0; i < 16; i++) {
+            add(gregtech6.block.concrete.GT6ConcreteBlock.dyeKey(i),
+                    gregtech6.item.spraycan.GTSprayCanItem.DYE_NAMES[i]);
+        }
+        add(gregtech6.block.concrete.GT6ConcreteBlock.BLOCK_NAME_KEY, "%s Concrete");
+        add(gregtech6.block.concrete.GT6ConcreteBlock.REINFORCED_NAME_KEY, "%s Reinforced Concrete");
+        add(gregtech6.block.concrete.GT6ConcreteSlabBlock.SLAB_NAME_KEY, "%s Concrete Slab");
+        add(gregtech6.block.concrete.GT6ConcreteSlabBlock.REINFORCED_SLAB_NAME_KEY, "%s Reinforced Concrete Slab");
+    }
 
     /**
      * Spray-can family keys (task spraycan-items): the 18 item display names + the family

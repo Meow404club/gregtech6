@@ -11177,3 +11177,24 @@ Filenames were lowercased/flat-mapped onto the `textures/block/` convention on
 borrow (1.20.1 `ResourceLocation` charset; the sprite ids are
 `gt6:block/beam_top_<wood>` / `gt6:block/beam_side_<wood>`); the PNG contents
 are byte-identical.
+
+
+## task concrete-blocks-register (2026-10-01) — the concrete 2-tile borrow
+
+Borrowed from **GregTech 6** (https://github.com/GregTech6/gregtech6), snapshot
+`tmp/gt6-1.7.10`, `src/main/resources/assets/gregtech/textures/blocks/iconsets/`:
+the 2 PNGs below (byte-identical, `cmp` clean 2/2, sha256 verified per file) are
+the concrete icon-set tiles (`Textures.BlockIcons.CONCRETE` /
+`CONCRETE_REINFORCED`, the enum-name path `iconsets/<NAME>.png`,
+Textures.java:181). Upstream mounts BOTH tiles on all 16 metas of their family
+via `UT.Code.fill` (Textures.java:704-705) and colours them by
+`DYES_INT[meta]` (BlockColored.java:63-73) — the tiles are grayscale by design
+(sampled: every pixel r==g==b, avg 225 / 224), NOT 16 pre-coloured sets.
+
+The port keeps exactly that face: the shared grayscale PNG per family rides the
+tintindex-0 models (the `tintedCubeAll`/`tintedSlabFamily` c-foam grammar) and
+the `GT6ConcreteTintListener` BlockColor resolves the per-block FIXED dye index.
+Zero per-colour PNGs exist or are needed.
+
+- `block/concrete.png` — `fd31a7e446d7a3023aeb304f09be7b693e97a313440d64bde42219be15a26142` (upstream `iconsets/CONCRETE.png`; BlockConcrete.java:51 `Textures.BlockIcons.CONCRETES`)
+- `block/concrete_reinforced.png` — `f8b1c0e1e829f261910d536b7b12aa50676e94a3f23f26561d9c06937f1d9041` (upstream `iconsets/CONCRETE_REINFORCED.png`; BlockConcreteReinforced.java:41 `Textures.BlockIcons.CONCRETES_REINFORCED`)

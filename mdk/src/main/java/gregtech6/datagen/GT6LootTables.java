@@ -134,6 +134,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task stoneblocks-render
                 new SubProviderEntry(GT6StoneSlabLoot::new, LootContextParamSets.BLOCK), // task debt-slab-gap — the 272 slab tables
+                new SubProviderEntry(GT6ConcreteBlockLoot::new, LootContextParamSets.BLOCK), // task concrete-blocks-register — the 64 concrete tables
                 new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task grass-block
                 new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-pipe-spray
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-block-family
@@ -197,6 +198,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6MachineBlockLoot::new, LootContextParamSets.BLOCK), // task painted-item-domain
                 new SubProviderEntry(GT6StoneBlockLoot::new, LootContextParamSets.BLOCK), // task stoneblocks-render
                 new SubProviderEntry(GT6StoneSlabLoot::new, LootContextParamSets.BLOCK), // task debt-slab-gap — the 272 slab tables
+                new SubProviderEntry(GT6ConcreteBlockLoot::new, LootContextParamSets.BLOCK), // task concrete-blocks-register — the 64 concrete tables
                 new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task grass-block
                 new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-pipe-spray
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-block-family
@@ -1953,6 +1955,57 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : stoneSlabLootBlocks()) add(tBlock, createSlabItemTable(tBlock));
+        }
+    }
+
+    /**
+     * The concrete-family block list (task concrete-blocks-register): the 32 full blocks
+     * then the 32 slabs, registration order.
+     */
+    public static List<Block> concreteLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>(64);
+        for (var tHandle : gregtech6.registry.GT6ConcreteBlocks.FULL_BLOCKS) rBlocks.add(tHandle.get());
+        for (var tHandle : gregtech6.registry.GT6ConcreteBlocks.SLAB_BLOCKS) rBlocks.add(tHandle.get());
+        return rBlocks;
+    }
+
+    /**
+     * The concrete-family loot provider (task concrete-blocks-register) — the upstream
+     * BlockMetaType drop face: the full block self-drops (1.7.10 BlockMetaType inherits
+     * BlockBase's self-drop default — {@code getItemDropped} null = itself, the stone
+     * family's same reading) and the slab rides the vanilla {@code createSlabItemTable}
+     * idiom the GT6StoneSlabLoot provider lands (doubles ONLY for the {@code double}
+     * state; the upstream double is the full block, a different block id — same economy,
+     * GTStoneSlabBlock.java javadoc). No silk/fortune arms (no override upstream),
+     * {@code requires_correct_tool_for_drops} NOT set (the card red line).
+     */
+    public static final class GT6ConcreteBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6ConcreteBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6ConcreteBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return concreteLootBlocks(); // narrowed to exactly the 64 blocks this provider owns
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : concreteLootBlocks()) {
+                if (tBlock instanceof gregtech6.block.concrete.GT6ConcreteSlabBlock) {
+                    add(tBlock, createSlabItemTable(tBlock));
+                } else {
+                    dropSelf(tBlock);
+                }
+            }
         }
     }
 

@@ -123,6 +123,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addCellUnits();         // task small-tank-cell — the 40 Fluid Containers rows (the dump faces verbatim)
 		addCupUnits();          // task small-tank-cup — the cup pair (the dump faces verbatim)
 		addJugUnits();          // task small-tank-jug — the jug pair (the dump faces verbatim)
+		addConcreteUnits();     // task concrete-blocks-register — the 16 dye units + 4 templates (the dump faces verbatim)
 		addCrucibleJadeUnits(); // task crucible-jade-face
 		addCommonJadeUnits();   // task jade-redesign-core — the common jade band (hand rows, the tsv direct band)
 		addMachineJadeUnits();  // task hygiene-lang — the machine/fluid jade band (hand rows, the tsv direct band)
@@ -841,6 +842,25 @@ public class GT6ZhCn extends LanguageProvider {
 		}
 		addDirect(gregtech6.block.GTGrassBlock.TOOLTIP_KEY);
 		addDirect(gregtech6.block.GTGrassBlock.TOOLTIP_SPRAY_KEY);
+	}
+
+	/**
+	 * The concrete family zh faces (task concrete-blocks-register, the addGrassUnits
+	 * shape over the dump faces verbatim): the 16 {@code gt6.dye.<id>} colour units
+	 * (the dump's 淡灰色/黄绿色/褐色 roots — gt.block.concrete.0-15, tmp/gregtech.lang
+	 * :1722-1737) + the 4 compose templates (gt.block.concrete[.reinforced][.slab.0]
+	 * .<meta> = "%s混凝土"/"%s强化混凝土"/"%s混凝土半砖"/"%s强化混凝土半砖" — the
+	 * colour word splits off as the small unit, the runtime compose keeps the dump
+	 * string byte-equal). All 20 ride the reference table's hand layer.
+	 */
+	private void addConcreteUnits() {
+		for (int i = 0; i < 16; i++) {
+			addDirect(gregtech6.block.concrete.GT6ConcreteBlock.dyeKey(i));
+		}
+		addDirect(gregtech6.block.concrete.GT6ConcreteBlock.BLOCK_NAME_KEY);
+		addDirect(gregtech6.block.concrete.GT6ConcreteBlock.REINFORCED_NAME_KEY);
+		addDirect(gregtech6.block.concrete.GT6ConcreteSlabBlock.SLAB_NAME_KEY);
+		addDirect(gregtech6.block.concrete.GT6ConcreteSlabBlock.REINFORCED_SLAB_NAME_KEY);
 	}
 
 	/**
