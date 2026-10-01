@@ -1858,6 +1858,9 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(GTWires.LASER_TAB_TITLE_KEY);
 		addDirect(GT6Tools.TAB_TITLE_KEY);
 		addDirect("itemGroup.gt6.food_cans"); // task food-can-row0 — dump itemgroup gt.multiitem.cans 格雷科技: 罐头 (MultiItemCans.java:41 category label)
+		addDirect("itemGroup.gt6.plank"); // task wood-planks-register — the plank prefix tab, the billet-row shape: NO dump
+			// itemGroup row exists (upstream OP.plank has no PrefixItem and hence no creative tab), so the tsv hand row
+			// 木板 (the %s木板 template's noun) joins via the direct band, not the dump itemgroup family
 	}
 
 	/**

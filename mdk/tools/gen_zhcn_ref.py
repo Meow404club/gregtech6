@@ -1762,6 +1762,10 @@ HAND_TRANSLATIONS = {
 # (en_us.json 2531 − zh_cn.json 2089, main census 2026-09-07) gets a hand-layer row:
 #   365 gt6.tagprefix.*  = 213 identity (en template == "%s" -> zh keeps "%s", the
 #                          TSV gem precedent) + 152 affixed templates;
+#   (task wood-planks-register rebalance: plank left the identity set for the affixed
+#    VOTED %s木板 face — the p23 identity rationale was "no plank items exist to
+#    name", void since the card registers 130 prefix items; now 212 identity + 153
+#    affixed, same 365 total)
 #   28 block.gt6.* + 21 fluid.gt6.* + 18 item.gt6.spray* + 3 gt6.spraycan.* tooltips
 #     + 5 gt6.material.* + 2 itemGroup.gt6.* tabs.
 # Affix arbitration posture (the research card's voting aid): PRIMARY vote = the
@@ -1792,7 +1796,7 @@ IDENTITY_TAGPREFIXES = (
     "list", "log", "lumar", "lump", "mana", "material", "mffs", "molecule",
     "motor", "mountain", "mushroom", "mystic", "obsidian", "ocean", "orb", "ore_gem",
     "pane_glass", "panel", "paper", "part", "pearl", "pebbles", "pellet", "petal",
-    "plains", "plank", "plant", "plasma", "plate_quad", "plating", "pole", "powder",
+    "plains", "plant", "plasma", "plate_quad", "plating", "pole", "powder",
     "projred", "pulp", "quartz", "raw", "reactor", "record", "reduced", "reed",
     "river", "rock", "rod", "rubble", "rune", "sand", "sapling", "savanna",
     "scoop", "scrap", "scraps", "seed", "shard", "shears", "sheet", "sheet_double",
@@ -1857,6 +1861,10 @@ VOTED_TAGPREFIXES = {
     "ore_small": "贫瘠%s矿",                     # 615 rows — the dump's Small Ore word
     "ore_vanillagranite": "花岗岩%s矿",           # 351 rows
     "ore_vanillastone": "石头%s矿",              # 413 rows
+    # task wood-planks-register — the dump block face verbatim: gt.block.planks.9=木木板 (:2458)
+    # = the material word 木 (gt.material.Wood=木, dump :5915) + 木板; the 9 tree-plank hand rows
+    # (block.gt6.<snake>_planks, the gt-tree-planks band below) compose the same 木板 tail.
+    "plank": "%s木板",
     "plant_gt_berry": "%s莓",                   # 1175 rows (plantGtBerry=%s莓)
     "plant_gt_blossom": "%s花",                  # 1175 rows
     "plant_gt_fiber": "%s线",                    # 1175 rows (dump verbatim)
@@ -2380,10 +2388,14 @@ MATERIAL_BACKFILL = {
     "gt6.material.superconductor": "超导体",   # TeamNED double-source cross
 }
 
-# ---- itemGroup.gt6.* (2): the P22 spray-can tab + the billet prefix tab (the billet
-# word = the existing %s坯料 template's noun).
+# ---- itemGroup.gt6.* (3): the P22 spray-can tab + the billet prefix tab (the billet
+# word = the existing %s坯料 template's noun) + the plank prefix tab (task
+# wood-planks-register — NO dump itemGroup row: upstream OP.plank has no PrefixItem
+# and so no creative tab, dump census; the word = the %s木板 template's noun, the
+# billet-row shape).
 TAB_BACKFILL = {
     "itemGroup.gt6.billet": "坯料",
+    "itemGroup.gt6.plank": "木板",
     "itemGroup.gt6.spray_cans": "喷漆罐",
 }
 

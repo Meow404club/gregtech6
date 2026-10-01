@@ -1907,7 +1907,7 @@ direct	gt6.tagprefix.pipe_restrictive_tiny	微型限流%s管道	hand
 direct	gt6.tagprefix.pipe_small	小型%s管道	hand
 direct	gt6.tagprefix.pipe_tiny	微型%s管道	hand
 direct	gt6.tagprefix.plains	%s	hand
-direct	gt6.tagprefix.plank	%s	hand
+direct	gt6.tagprefix.plank	%s木板	hand
 direct	gt6.tagprefix.plant	%s	hand
 direct	gt6.tagprefix.plant_gt_berry	%s莓	hand
 direct	gt6.tagprefix.plant_gt_blossom	%s花	hand
@@ -2964,6 +2964,7 @@ direct	itemGroup.gt6.item_pipes	物品管道	hand
 direct	itemGroup.gt6.laser_wires	激光导线	hand
 direct	itemGroup.gt6.machines	机器	hand
 direct	itemGroup.gt6.multiblocks	多方块	hand
+direct	itemGroup.gt6.plank	木板	hand
 direct	itemGroup.gt6.redstone_wires	红石导线	hand
 direct	itemGroup.gt6.spray_cans	喷漆罐	hand
 direct	itemGroup.gt6.tools	工具	hand
