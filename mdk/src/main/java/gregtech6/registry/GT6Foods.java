@@ -145,6 +145,12 @@ public final class GT6Foods {
 						for (RegistryObject<Item> tRow : FOODS) {
 							aOutput.accept(new ItemStack(tRow.get()));
 						}
+						// task food-bake-items: the T3 bake chain rides the SAME "GregTech: Nature
+						// & Foods" tab (all 60 rows are MultiItemFood items — the upstream
+						// per-multiitem tab discipline; the T1 rows lead, the T3 tail appends)
+						for (RegistryObject<Item> tRow : GT6BakeFoods.FOODS) {
+							aOutput.accept(new ItemStack(tRow.get()));
+						}
 					})
 					.build());
 
@@ -194,14 +200,14 @@ public final class GT6Foods {
 		@Override
 		public void appendHoverText(ItemStack aStack, net.minecraft.world.level.Level aLevel, List<Component> aTooltip, TooltipFlag aFlag) {
 			super.appendHoverText(aStack, aLevel, aTooltip, aFlag);
-			aTooltip.add(Component.translatable(mTooltipKey));
+			if (mTooltipKey != null) aTooltip.add(Component.translatable(mTooltipKey));
 		}
 		//?} else {
 		/*@Override
 		public void appendHoverText(ItemStack aStack, Item.TooltipContext aContext, List<Component> aTooltip, TooltipFlag aFlag) {
 		//21.1: the hover signature carries the Item.TooltipContext (the GTPistolItem fork).
 			super.appendHoverText(aStack, aContext, aTooltip, aFlag);
-			aTooltip.add(Component.translatable(mTooltipKey));
+			if (mTooltipKey != null) aTooltip.add(Component.translatable(mTooltipKey));
 		}
 		*///?}
 	}

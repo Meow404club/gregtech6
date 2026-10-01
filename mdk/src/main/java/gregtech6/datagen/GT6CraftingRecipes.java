@@ -38,6 +38,7 @@ import gregtech6.registry.GT6ElectricTransformers;
 import gregtech6.registry.GTWires;
 import gregtech6.registry.GTWireSpecs;
 import gregtech6.registry.GT6ExtruderMolds;
+import gregtech6.registry.GT6BakeFoods;
 import gregtech6.registry.GT6Hoppers;
 import gregtech6.registry.GT6FoodCans;
 import gregtech6.registry.GT6Anvils;
@@ -235,6 +236,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		pincersBuilder().save(aConsumer, PINCERS_ID);
 		shapeExtruderPlateBuilder().save(aConsumer, SHAPE_EXTRUDER_PLATE_ID);
 		shapeExtruderRodBuilder().save(aConsumer, SHAPE_EXTRUDER_ROD_ID);
+		for (FoodMoldRecipeRow tRow : foodMoldRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id()); // task food-bake-items
 		largeSteelCrucibleBuilder().save(aConsumer, LARGE_STEEL_CRUCIBLE_ID);
 		bathingPotSteelBuilder().save(aConsumer, BATHING_POT_STEEL_ID);
 		clayBowlForwardBuilder().save(aConsumer, CLAY_BOWL_FORWARD_ID);
@@ -467,6 +469,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		pincersBuilder().save(aOutput, PINCERS_ID);
 		shapeExtruderPlateBuilder().save(aOutput, SHAPE_EXTRUDER_PLATE_ID);
 		shapeExtruderRodBuilder().save(aOutput, SHAPE_EXTRUDER_ROD_ID);
+		for (FoodMoldRecipeRow tRow : foodMoldRecipeBuilders()) tRow.builder().save(aOutput, tRow.id()); // task food-bake-items
 		largeSteelCrucibleBuilder().save(aOutput, LARGE_STEEL_CRUCIBLE_ID);
 		bathingPotSteelBuilder().save(aOutput, BATHING_POT_STEEL_ID);
 		clayBowlForwardBuilder().save(aOutput, CLAY_BOWL_FORWARD_ID);
@@ -1804,6 +1807,61 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('x', GT6ItemTags.TOOLS_FILE)
 				.define('P', GT6ItemTags.EXTRUDER_SHAPE_BASE)
 				.unlockedBy("has_shape_base", has(GT6ItemTags.EXTRUDER_SHAPE_BASE));
+	}
+
+	/**
+	 * One food-mold crafting row — builder + save id (the CrucibleLadderRecipeRow form:
+	 * one builder walk, one save line per leg).
+	 */
+	private record FoodMoldRecipeRow(ShapedRecipeBuilder builder, ResourceLocation id) {
+	}
+
+	/**
+	 * The six food-mold crafting rows (task food-bake-items) — the upstream mold section
+	 * VERBATIM (MultiItemTechnological.java:336 the empty mold + :344-348 the five named
+	 * molds): the Empty Food Grade Mold folds from a StainlessSteel double plate under the
+	 * {@code "hf"/"xP"} tool strokes ('h' = {@code #gt6:tools/hard_hammer},
+	 * 'f' = {@code #gt6:tools/file}, 'x' = {@code #gt6:tools/wire_cutter} — the CR.java:359
+	 * craftingToolWirecutter letter; {@code 'P'} = {@code OP.plateDouble.dat(MT.StainlessSteel)}
+	 * → the GTMaterialItems plate_double item), and each named mold re-strikes the hammer
+	 * mark over the EMPTY mold ({@code 'P'} = {@code IL.Shape_Foodmold_Empty} exact item,
+	 * :344-348). The upstream MACHINE rows over these molds (the RM.Press/RollingMill/
+	 * Mixer dough faces) stay the T3b card's surface. The in-grid tools ride the vanilla
+	 * container-item channel (the pincers row's tool-mark form).
+	 */
+	private List<FoodMoldRecipeRow> foodMoldRecipeBuilders() {
+		Item tEmptyMold = GT6BakeFoods.MOLDS.get(0).get();
+		Item tSteelPlateDouble = GTMaterialItems.get(gregapi.data.OP.plateDouble, MT.StainlessSteel).get();
+		List<FoodMoldRecipeRow> rRows = new ArrayList<>();
+		rRows.add(new FoodMoldRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tEmptyMold)
+				.pattern("hf")
+				.pattern("xP")
+				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+				.define('f', GT6ItemTags.TOOLS_FILE)
+				.define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
+				.define('P', tSteelPlateDouble)
+				.unlockedBy("has_steel_plate_double", has(tSteelPlateDouble)),
+				new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_foodmold_empty")));
+		// the five named molds — {save-id suffix, the 3x3 stroke verbatim}; MOLDS order is
+		// empty, bun, bread, baguette, cylinder, toast so the strike walk maps index + 1
+		String[][] tStrikes = {
+				{"bun", "h  ", " P ", "   "},
+				{"bread", " h ", " P ", "   "},
+				{"baguette", "  h", " P ", "   "},
+				{"cylinder", "   ", " Ph", "   "},
+				{"toast", "   ", " P ", "  h"}};
+		for (int i = 0; i < tStrikes.length; i++) {
+			Item tMold = GT6BakeFoods.MOLDS.get(i + 1).get();
+			rRows.add(new FoodMoldRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tMold)
+					.pattern(tStrikes[i][1])
+					.pattern(tStrikes[i][2])
+					.pattern(tStrikes[i][3])
+					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+					.define('P', tEmptyMold)
+					.unlockedBy("has_empty_food_mold", has(tEmptyMold)),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_foodmold_" + tStrikes[i][0])));
+		}
+		return rRows;
 	}
 
 	// -------------------------------------------------------------------------

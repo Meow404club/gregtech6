@@ -198,6 +198,7 @@ public class GT6EnUs extends LanguageProvider {
         addFoodItems(); // task food-items-core — table-tail append
         addBeams(); // task beam-blocks-register — table-tail append
         addConcrete(); // task concrete-blocks-register — table-tail append
+        addBakeFoods(); // task food-bake-items — table-tail append
     }
 
     /**
@@ -2206,6 +2207,45 @@ public class GT6EnUs extends LanguageProvider {
             add(tRow.tooltipKey(), tRow.enTooltip());
         }
         add(gregtech6.registry.GT6Foods.TAB_TITLE_KEY, "GregTech: Nature & Foods");
+    }
+
+    /**
+     * Food-item family keys (task food-bake-items): the T3 bake chain's display names +
+     * desc tooltips, walked over the {@link gregtech6.registry.GT6BakeFoods#BAKE_ROWS} table
+     * + the {@link gregtech6.registry.GT6BakeFoods#MOLDS} set so the lang face cannot drift
+     * from the registered ids (the addFoodItems form). Values are the upstream registration-
+     * row wordings verbatim (the name + desc columns of the 60 MultiItemFood addItem lines,
+     * the row anchors in the BAKE_ROWS javadoc; the FOUR empty desc rows
+     * (Cookie 2005, Bun 5001, Sliced Bread 6002, Toasted Toast 14003) emit NO key on either
+     * locale — the upstream {@code ""} registration displays nothing, the dump's 5001/6002
+     * tooltip rows are stale-version content (the w5-t2 blade-band "dump tooltip 行异版不采"
+     * ruling), and the zh face keeps exact en cardinality (the backfill zero-missing +
+     * non-blank zh invariants)) and the six MultiItemTechnological.java:334-342 mold
+     * names. The molds carry no tooltip (upstream {@code ""} — no key at all). The tab title
+     * already landed with addFoodItems (the T1 band owns the single tab).
+     * Table-tail append, append-only.
+     */
+    private void addBakeFoods() {
+        for (gregtech6.registry.GT6BakeFoods.BakeRow tRow : gregtech6.registry.GT6BakeFoods.BAKE_ROWS) {
+            add("item.gt6." + tRow.id(), tRow.enName());
+            if (!tRow.enTooltip().isEmpty()) add(tRow.tooltipKey(), tRow.enTooltip());
+        }
+        for (RegistryObject<Item> tMold : gregtech6.registry.GT6BakeFoods.MOLDS) {
+            add("item.gt6." + tMold.getId().getPath(), moldEnName(tMold.getId().getPath()));
+        }
+    }
+
+    /** The upstream mold display names verbatim (MultiItemTechnological.java:334-342). */
+    private String moldEnName(String aPath) {
+        return switch (aPath) {
+            case "shape_foodmold_empty" -> "Empty Food Grade Mold";
+            case "shape_foodmold_bun" -> "Food Grade Mold (Bun)";
+            case "shape_foodmold_bread" -> "Food Grade Mold (Bread)";
+            case "shape_foodmold_baguette" -> "Food Grade Mold (Baguette)";
+            case "shape_foodmold_cylinder" -> "Food Grade Mold (Cylinder)";
+            case "shape_foodmold_toast" -> "Food Grade Mold (Toast)";
+            default -> throw new IllegalStateException("unmapped food mold: " + aPath);
+        };
     }
 
     /**

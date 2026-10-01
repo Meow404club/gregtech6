@@ -11575,3 +11575,159 @@ header).
 
 Copied on 2026-09-30. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
+- `gt6/textures/item/food/*.png` (T3 bake chain) + `gt6/textures/item/shape_foodmold/*.png`
+  — the food T3 registration face (task food-bake-items), byte-identical borrows renamed to
+  the registered item ids (the food-item T1 band form above; the molds from the technological
+  atlas — standalone sprite files, unlike the composed shape_extruder placeholders):
+  - `cookie_raw.png`                  `textures/items/gt.multiitem.food/2000.png`
+    (`19c4c357f9dc504a42c3ca07f69779f4925745f8e5be929fbe30d310993772e8` — the Cookie shaped
+    Dough, MultiItemFood.java:598)
+  - `cookie_raisins_raw.png`          `textures/items/gt.multiitem.food/2002.png`
+    (`44118b36fd7b254e7d200eeec039ac107d57523a81741915148acd79259f851b` — :605)
+  - `cookie_raisins.png`              `textures/items/gt.multiitem.food/2003.png`
+    (`ec8d4d6a960c80b8f0251f250cbc50801bacd3797f047194f173b034be962c7f` — the Raisin Cookie, :606)
+  - `cookie_chocolate_raisins_raw.png` `textures/items/gt.multiitem.food/2004.png`
+    (`19c4c357f9dc504a42c3ca07f69779f4925745f8e5be929fbe30d310993772e8` — :613; upstream
+    ships the identical sprite as 2000 — both raw cookie doughs share one texture)
+  - `cookie_chocolate_raisins.png`    `textures/items/gt.multiitem.food/2005.png`
+    (`8d1b03b3496d5962fac71129fee5eef624bdb78701f2a802924b9a7a86156a09` — the Cookie, :614)
+  - `cookie_abyssal_raw.png`          `textures/items/gt.multiitem.food/2006.png`
+    (`91cb5153cce0a4a63ce7846e7e3d17cf00fa15ae0bfbe4878707379bd72c4bc3` — :621)
+  - `cakebottom_raw.png`              `textures/items/gt.multiitem.food/3000.png`
+    (`aecece497e87f51ea30e66d4cee551418b6bc4702a2a92f66b7723a04f6d8ad6` — the Raw Cake
+    Bottom, :632)
+  - `cakebottom.png`                  `textures/items/gt.multiitem.food/3001.png`
+    (`b2614dae2c9a6c8d3abfa48afad99193fee31ab6b568f420f97adb829e4c353c` — the Cake
+    Bottom, :633)
+  - `dough_flat.png`                  `textures/items/gt.multiitem.food/4000.png`
+    (`198f41c47a51fd7660d9e90723f8252fcb98ffc317443304a26426c9efbc2624` — the Flattened
+    Dough, :640)
+  - `dough_flat_ketchup.png`          `textures/items/gt.multiitem.food/4002.png`
+    (`cc12f33de7240507d1057e0fcedcd4f0f595a0fb76d48e3ffaffe01a544547e1` — :641)
+  - `pizza_cheese_raw.png`            `textures/items/gt.multiitem.food/4010.png`
+    (`88ac3389ba02cff71d97cfc8bd304cff6bdefcf7f56dd887709a04166b8bac31` — the Raw Pizza
+    Margherita, :650)
+  - `pizza_cheese.png`                `textures/items/gt.multiitem.food/4011.png`
+    (`b6bd4dc5d347e31cccf35b4acccd9f867489ff4597556b5399b47faf1774bf22` — :651)
+  - `pizza_meat_raw.png`              `textures/items/gt.multiitem.food/4012.png`
+    (`a68952c8013b63d1f6637d5bf531a35f7b2081fa56d61d57136f0862fd758233` — :656)
+  - `pizza_meat.png`                  `textures/items/gt.multiitem.food/4013.png`
+    (`9faed84077ee47ffcd11ab9525ed36d890d7b6f6a7662c8482927c6a7dba83d6` — :657)
+  - `pizza_veggie_raw.png`            `textures/items/gt.multiitem.food/4014.png`
+    (`f1fb2eddd7d4fbb9d861f0b2da8a4f13c1baad2fc88c377f42fdde28df480e7a` — :662)
+  - `pizza_veggie.png`                `textures/items/gt.multiitem.food/4015.png`
+    (`4490559f062b612437cb75a0f76164cb30d4bfd5ddc731f70a83c0feb54134fa` — :663)
+  - `pizza_ananas_raw.png`            `textures/items/gt.multiitem.food/4016.png`
+    (`a12d772a19b26eb75e65c17432dddfbf99bfc116dd65f3e04f3b2c1ec269fc37` — the Raw Pizza
+    Hawaii, :666)
+  - `pizza_ananas.png`                `textures/items/gt.multiitem.food/4017.png`
+    (`4f2ad5d9b1358c2e6220c5f97e9bcd0a7c902e11f349c8b16cd0b373ff35d323` — :667)
+  - `bun_raw.png`                     `textures/items/gt.multiitem.food/5000.png`
+    (`429aca052fe0ae8dc8381c05bf33b912f189a1a724e12ed6f3222d54c8c44b33` — the Dough (Bun), :675)
+  - `bun.png`                         `textures/items/gt.multiitem.food/5001.png`
+    (`d8a0015eabc6a17d5dcd0c3039d51af7c2d7b9541f4b3c86af98887ac996318e` — the Bun, :676)
+  - `bun_sliced.png`                  `textures/items/gt.multiitem.food/5002.png`
+    (`61582e38b7a6e07d5e4e35733336bdb6e7450dd8068fea8671d19f7c2211f961` — :677)
+  - `buns_sliced.png`                 `textures/items/gt.multiitem.food/5003.png`
+    (`08c3482d48e068985460b06f142922eb008fde8303af9959251724921ff557ed` — :678)
+  - `burger_veggie.png`               `textures/items/gt.multiitem.food/5010.png`
+    (`74edca9cdcb75ffc08cfd4cf4cf8e4eed9477450d235a650987fdc75375e68d2` — the Veggie
+    Burger, :690)
+  - `burger_cheese.png`               `textures/items/gt.multiitem.food/5011.png`
+    (`891b78d47b4679fc3e24122e25681481011dfd5a273126e33bcb4c0dbe592398` — :691)
+  - `burger_meat.png`                 `textures/items/gt.multiitem.food/5012.png`
+    (`a1f374608439124b95bbf5f0b075896cd85c9a4663c93af414fea0a6f3124213` — the Hamburger, :692)
+  - `burger_chum.png`                 `textures/items/gt.multiitem.food/5013.png`
+    (`e06062e26c31507e8857860464c784430d5631ad6f419197ae89a2bbc903661b` — :693)
+  - `burger_tofu.png`                 `textures/items/gt.multiitem.food/5016.png`
+    (`34f4db2ba403e52aead5f4ea9eb9f5e22ab2b98b45af851d199505851ef362ef` — :694)
+  - `burger_soylent.png`              `textures/items/gt.multiitem.food/5017.png`
+    (`06133c90b88ecc5eac214188e88dcf8f105a17fd6757c869b3343484588c1e29` — :695)
+  - `burger_fish.png`                 `textures/items/gt.multiitem.food/5018.png`
+    (`46cc7c69d2103b62b4c1081d912bb1e17d4fb7b3876f8e40ffb7d9143cb5dbcd` — :696)
+  - `bread_raw.png`                   `textures/items/gt.multiitem.food/6000.png`
+    (`fb5b75874addadc6cc57dab63660db8a910f7ddfae5e84ec84e4efa27ce23d7a` — the Dough (Bread), :714)
+  - `bread_sliced.png`                `textures/items/gt.multiitem.food/6002.png`
+    (`1cec499bf88fb8ca14542de3d1ec83fd22a46b6f7c59724b131f20c330a1996f` — :716)
+  - `breads_sliced.png`               `textures/items/gt.multiitem.food/6003.png`
+    (`c309fb5eeba20ac54db29d91ec84da89ab2b139e10219cb0119d2bd02a8b4ef6` — :717)
+  - `sandwich_veggie.png`             `textures/items/gt.multiitem.food/6010.png`
+    (`364ec6794e320bb4cce44dcdeb69b4846a698ab68a2b066291b41c280396fb67` — the Veggie
+    Sandwich, :729)
+  - `sandwich_cheese.png`             `textures/items/gt.multiitem.food/6011.png`
+    (`26818a89c58c49dfb05f44c0ad660a80f6ffdcc29f0a9128d412fe52a206286a` — :730)
+  - `sandwich_bacon.png`              `textures/items/gt.multiitem.food/6014.png`
+    (`abbfa5b0654429e6f62dc2c1848a4d42a8d48b4426c34af5c23585819ee7c8b4` — :731)
+  - `sandwich_steak.png`              `textures/items/gt.multiitem.food/6015.png`
+    (`168f8c5054ccdad09442b91f928aeff6e1ee52fa7d624983a9901c0c43cdeac0` — :732)
+  - `baguette_raw.png`                `textures/items/gt.multiitem.food/7000.png`
+    (`207a96673bfa1da3e50f2e77b32bc2e225869e036b34c529d82908c5f4d74b09` — the Dough
+    (Baguette), :744)
+  - `baguette.png`                    `textures/items/gt.multiitem.food/7001.png`
+    (`358ebdcbe46623b4e7d0ac853353f3fea5f570bff2393137ecd5c1fd56b50222` — the Baguette, :745)
+  - `baguette_sliced.png`             `textures/items/gt.multiitem.food/7002.png`
+    (`18cff00831111dd3f5ebd122818f9603c7f1e5fb818165bddb72325714dfaf66` — :746)
+  - `baguettes_sliced.png`            `textures/items/gt.multiitem.food/7003.png`
+    (`fceac869c708ea4d4abda735b9ba5ec8a059d6d97f806c8c39bac6d37b634027` — :747)
+  - `large_sandwich_veggie.png`       `textures/items/gt.multiitem.food/7010.png`
+    (`a797749129ab06165cd33528cc1b18074f3bddc960990e78470a08310cb1f939` — the Large Veggie
+    Sandwich, :758)
+  - `large_sandwich_cheese.png`       `textures/items/gt.multiitem.food/7011.png`
+    (`57feccb6af424a955d0ebfb3f9d80260a45ab2fb3a2c49f8934ab9b861a82ed9` — :759)
+  - `large_sandwich_bacon.png`        `textures/items/gt.multiitem.food/7014.png`
+    (`82197bf4dbb340eb5369ed6df5b19ac0727b7ed1d68f55f7177e861b2b30fa6a` — :760)
+  - `large_sandwich_steak.png`        `textures/items/gt.multiitem.food/7015.png`
+    (`75e5fc88a55564c22c89ac5d21e43510b9de637d877b0ddb6b00ac356d305db8` — :761)
+  - `fries_raw.png`                   `textures/items/gt.multiitem.food/8000.png`
+    (`3ecfbef4b798bb8634bea6506c96c8f23faa8c6ca7e99eb3d913baf4d7eadc33` — the Potato
+    Strips, :354)
+  - `fries.png`                       `textures/items/gt.multiitem.food/8010.png`
+    (`2e325346b602bba7adfca2e541e7ab19512653507bcd81dae20fa582115a5731` — the Fries, :355)
+  - `fries_packaged.png`              `textures/items/gt.multiitem.food/8011.png`
+    (`905a4c8e286d33a87988574a277c426d638b7587ab2a9cb254a562f16f3b9729` — :356)
+  - `toast_raw.png`                   `textures/items/gt.multiitem.food/14000.png`
+    (`9bd16d3713c18664d9742b6d467f0c0207687619e52f7ee1d38b0b52e594ae75` — the Dough (Toast
+    Loaf), :774)
+  - `toast.png`                       `textures/items/gt.multiitem.food/14001.png`
+    (`5a9dfb720c95059c24268bd0971c3b21715055cb6c7a7aed523e4b12eac56d39` — the Loaf of
+    Toast, :775)
+  - `toast_sliced.png`                `textures/items/gt.multiitem.food/14002.png`
+    (`db3ee500e5f7a845954156e6014e49081162502f59a7f312b5b9cc2484fe02cb` — :776)
+  - `toasted_sliced.png`              `textures/items/gt.multiitem.food/14003.png`
+    (`10d9832c3183ee1278f75f2830059903af951b0a53d456bc5adce83b964838cc` — :777)
+  - `dough.png`                       `textures/items/gt.multiitem.food/32000.png`
+    (`5b4d5fb2197879b95e8a4597ed4e3b177a24cb71257157c275a1f7533ea70f47` — the Dough, :583)
+  - `dough_sugar.png`                 `textures/items/gt.multiitem.food/32001.png`
+    (`1a293aadde2411caea5fc6a5b0c5a8fb7c61123e82abb8178abb478c27f66ffe` — the Sugary
+    Dough, :584)
+  - `dough_chocolate.png`             `textures/items/gt.multiitem.food/32002.png`
+    (`aaca4eda487ccf4ec078b6e260a3ea26596411c348778a07c9addf743757ac3a` — :585)
+  - `dough_egg.png`                   `textures/items/gt.multiitem.food/32003.png`
+    (`0f963e91bc27edb59344b3ac96af041672b3c8655852181f8d12f2d288a8f56c` — :586)
+  - `dough_sugar_raisins.png`         `textures/items/gt.multiitem.food/32004.png`
+    (`2ae529822bad9a2a22a69ad46faabbbc05e59d05a62a97357cabb0429852e3ca` — :587)
+  - `dough_sugar_chocolate_raisins.png` `textures/items/gt.multiitem.food/32005.png`
+    (`0ddb135eebb3e48e4c54d165ab78381b16d21bff6c2065c30aa86ace71094210` — :588)
+  - `dough_abyssal.png`               `textures/items/gt.multiitem.food/32006.png`
+    (`7c6684d81924b030e2c0dad7e9edcce1899bf32dbc9ef2394847bba444112a24` — :589)
+  - `potato_on_stick.png`             `textures/items/gt.multiitem.food/32700.png`
+    (`64a545b4e7da9f7dcc9015b09e40e619bc3b115d82f755e8d868cbf83af844a9` — the Potato on a
+    Stick, :341)
+  - `potato_on_stick_roasted.png`     `textures/items/gt.multiitem.food/32701.png`
+    (`658d4393f5869f4f154bdfb8031c91c04df4bb8c796f8446efdd92908a43462e` — :347)
+  - `shape_foodmold/empty.png`        `textures/items/gt.multiitem.technological/10800.png`
+    (`4031fc4cf9aa4c348c9fdd8457bd3473da4dbfa26d60c7e90b66138bc5a65997` — the Empty Food
+    Grade Mold, MultiItemTechnological.java:334)
+  - `shape_foodmold/bun.png`          `textures/items/gt.multiitem.technological/10801.png`
+    (`fe1c97f96219c891758c38d34d6113beb845e31b694b781354645cf6f0a84727` — the Food Grade Mold (Bun), :338)
+  - `shape_foodmold/bread.png`        `textures/items/gt.multiitem.technological/10802.png`
+    (`ee6c03f1793023ef4e3c0bb8ffb5423412002a8f1fe211c27c6e21afaac92904` — the Food Grade Mold (Bread), :339)
+  - `shape_foodmold/baguette.png`     `textures/items/gt.multiitem.technological/10803.png`
+    (`bd25ccdfb986a733421986a24283a5555735fe4ec764f17e36316143f8640272` — the Food Grade
+    Mold (Baguette), :340)
+  - `shape_foodmold/cylinder.png`     `textures/items/gt.multiitem.technological/10804.png`
+    (`fb1714e66d41ce53f34304f628b96242b69bad5b9bafae66520764dcf50e95e3` — the Food Grade
+    Mold (Cylinder), :341)
+  - `shape_foodmold/toast.png`        `textures/items/gt.multiitem.technological/10805.png`
+    (`8e0eb8c82f63edc6d486ea3091e962e8010554cb1b62f452c81a3c33ce0d8475` — the Food Grade Mold (Toast), :342)
+  All 16x16 RGBA, CC0 1.0 per the upstream README block.

@@ -404,6 +404,19 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent(tFood.id(), mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/food/" + tFood.id().substring("food_".length())));
         }
+        // the food-item T3 bake chain (task food-bake-items) — 60 item/generated models over
+        // the byte-identical upstream icon borrows (the T1 band walk form verbatim), plus
+        // the 6 food-grade molds under item/shape_foodmold/ (the shape_extruder directory
+        // convention; the sprites ARE standalone technological-atlas files, unlike the
+        // composed shape_extruder placeholders — assets/README.md sha256 ledger)
+        for (gregtech6.registry.GT6BakeFoods.BakeRow tBake : gregtech6.registry.GT6BakeFoods.BAKE_ROWS) {
+            withExistingParent(tBake.id(), mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/food/" + tBake.id().substring("food_".length())));
+        }
+        for (String tMold : new String[] {"empty", "bun", "bread", "baguette", "cylinder", "toast"}) {
+            withExistingParent("shape_foodmold_" + tMold, mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/shape_foodmold/" + tMold));
+        }
         // the extruder-mold row0 subset (task w1-press-extruder-molds) — 2 item/generated
         // models over the composed placeholder icons (the mold-plate/mold-rod 16x16 stdlib
         // generator, the P20 placeholder-PNG convention; the upstream multiitem icons are

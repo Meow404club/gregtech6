@@ -2356,12 +2356,50 @@ direct	item.gt6.foam_spray_purple	建筑泡沫喷罐 (紫色)	hand
 direct	item.gt6.foam_spray_red	建筑泡沫喷罐 (红色)	hand
 direct	item.gt6.foam_spray_white	建筑泡沫喷罐 (白色)	hand
 direct	item.gt6.foam_spray_yellow	建筑泡沫喷罐 (黄色)	hand
+direct	item.gt6.food_baguette	法棍	hand
+direct	item.gt6.food_baguette.tooltip	我只是传送了面包!!!	hand
+direct	item.gt6.food_baguette_raw	生面团 (法棍)	hand
+direct	item.gt6.food_baguette_raw.tooltip	揉成了法式长棍的形状	hand
+direct	item.gt6.food_baguette_sliced	半根法式长棍	hand
+direct	item.gt6.food_baguette_sliced.tooltip	法式长棍的一半	hand
+direct	item.gt6.food_baguettes_sliced	切片法式长棍	hand
+direct	item.gt6.food_baguettes_sliced.tooltip	已切片	hand
+direct	item.gt6.food_bread_raw	生面团 (面包)	hand
+direct	item.gt6.food_bread_raw.tooltip	揉成了面包的形状	hand
+direct	item.gt6.food_bread_sliced	半片面包	hand
+direct	item.gt6.food_breads_sliced	切片面包	hand
+direct	item.gt6.food_breads_sliced.tooltip	已切片	hand
 direct	item.gt6.food_brown_egg_boiled	煮鸡蛋	hand
 direct	item.gt6.food_brown_egg_boiled.tooltip	煮了还是没煮? 这是一个问题	hand
+direct	item.gt6.food_bun	小面包	hand
+direct	item.gt6.food_bun_raw	面团(小面包)	hand
+direct	item.gt6.food_bun_raw.tooltip	揉成了馒头的样子	hand
+direct	item.gt6.food_bun_sliced	半块小面包	hand
+direct	item.gt6.food_bun_sliced.tooltip	小面包的一半	hand
+direct	item.gt6.food_buns_sliced	切片小面包	hand
+direct	item.gt6.food_buns_sliced.tooltip	已切片	hand
+direct	item.gt6.food_burger_cheese	奶酪汉堡	hand
+direct	item.gt6.food_burger_cheese.tooltip	奶酪味十足!	hand
+direct	item.gt6.food_burger_chum	好基友肉堡	hand
+direct	item.gt6.food_burger_chum.tooltip	Fum is Chum!	hand
+direct	item.gt6.food_burger_fish	鱼肉汉堡	hand
+direct	item.gt6.food_burger_fish.tooltip	闻起来就像鱼肉	hand
+direct	item.gt6.food_burger_meat	肉汉(jia)堡(mo)	hand
+direct	item.gt6.food_burger_meat.tooltip	MC 汉堡女皇出品	hand
+direct	item.gt6.food_burger_soylent	营养液汉堡	hand
+direct	item.gt6.food_burger_soylent.tooltip	别忘了你的营养液色拉和营养液可乐!	hand
+direct	item.gt6.food_burger_tofu	豆腐汉堡	hand
+direct	item.gt6.food_burger_tofu.tooltip	只是小面包里夹了一些白乎乎的东西	hand
+direct	item.gt6.food_burger_veggie	无肉汉堡	hand
+direct	item.gt6.food_burger_veggie.tooltip	无论你叫它什么, 它永远也不会带肉!	hand
 direct	item.gt6.food_butter	黄油	hand
 direct	item.gt6.food_butter.tooltip	一块纯脂肪	hand
 direct	item.gt6.food_butter_salted	盐味黄油	hand
 direct	item.gt6.food_butter_salted.tooltip	好像它本来就不健康一样	hand
+direct	item.gt6.food_cakebottom	烘焙蛋糕底座	hand
+direct	item.gt6.food_cakebottom.tooltip	我知道我跟你保证过会有一个蛋糕的.....但是...	hand
+direct	item.gt6.food_cakebottom_raw	蛋糕底座 (未烤制)	hand
+direct	item.gt6.food_cakebottom_raw.tooltip	用于做蛋糕	hand
 direct	item.gt6.food_can_cookies_huge	超大食物罐头 (饼干)	hand
 direct	item.gt6.food_can_empty	空食物罐头	hand
 direct	item.gt6.food_can_rotten_huge	超大食物罐头 (腐肉)	hand
@@ -2376,10 +2414,88 @@ direct	item.gt6.food_cheese_sliced	奶酪片	hand
 direct	item.gt6.food_cheese_sliced.tooltip	外星人入侵!!!, 发射奶酪!!!	hand
 direct	item.gt6.food_chili_chips	辣味薯片	hand
 direct	item.gt6.food_chili_chips.tooltip	辣的够呛	hand
+direct	item.gt6.food_cookie_abyssal_raw	深渊曲奇面团	hand
+direct	item.gt6.food_cookie_abyssal_raw.tooltip	用于烤制深渊曲奇	hand
+direct	item.gt6.food_cookie_chocolate_raisins	曲奇	hand
+direct	item.gt6.food_cookie_chocolate_raisins_raw	巧克力葡萄干曲奇面团	hand
+direct	item.gt6.food_cookie_chocolate_raisins_raw.tooltip	就像一块普通的巧克力曲奇 >:D	hand
+direct	item.gt6.food_cookie_raisins	葡萄干曲奇	hand
+direct	item.gt6.food_cookie_raisins.tooltip	你不喜欢? 关我什么事! 它很好吃!	hand
+direct	item.gt6.food_cookie_raisins_raw	葡萄干曲奇面团	hand
+direct	item.gt6.food_cookie_raisins_raw.tooltip	用于烤制葡萄干曲奇	hand
+direct	item.gt6.food_cookie_raw	曲奇面团	hand
+direct	item.gt6.food_cookie_raw.tooltip	用于烤制曲奇	hand
+direct	item.gt6.food_dough	面团	hand
+direct	item.gt6.food_dough.tooltip	做面包用	hand
+direct	item.gt6.food_dough_abyssal	深渊面团	hand
+direct	item.gt6.food_dough_abyssal.tooltip	用于烘焙深渊美食	hand
+direct	item.gt6.food_dough_chocolate	巧克力面团	hand
+direct	item.gt6.food_dough_chocolate.tooltip	我说了不要吃生面团!	hand
+direct	item.gt6.food_dough_egg	鸡蛋面团	hand
+direct	item.gt6.food_dough_egg.tooltip	用来制作意大利面	hand
+direct	item.gt6.food_dough_flat	摊平的面饼	hand
+direct	item.gt6.food_dough_flat.tooltip	用来做披萨	hand
+direct	item.gt6.food_dough_flat_ketchup	撒着番茄酱的面饼	hand
+direct	item.gt6.food_dough_flat_ketchup.tooltip	用以制作披萨	hand
+direct	item.gt6.food_dough_sugar	加糖的面团	hand
+direct	item.gt6.food_dough_sugar.tooltip	在烘焙过之前不要吃生面团	hand
+direct	item.gt6.food_dough_sugar_chocolate_raisins	加糖的巧克力葡萄干面团	hand
+direct	item.gt6.food_dough_sugar_chocolate_raisins.tooltip	就像巧克力饼干一样	hand
+direct	item.gt6.food_dough_sugar_raisins	加糖的葡萄干面团	hand
+direct	item.gt6.food_dough_sugar_raisins.tooltip	在烘焙之前不要吃生面团	hand
+direct	item.gt6.food_fries	薯条	hand
+direct	item.gt6.food_fries.tooltip	别把快递小哥煎了	hand
+direct	item.gt6.food_fries_packaged	薯条	hand
+direct	item.gt6.food_fries_packaged.tooltip	没有番茄酱	hand
+direct	item.gt6.food_fries_raw	土豆条	hand
+direct	item.gt6.food_fries_raw.tooltip	条状的马铃薯	hand
 direct	item.gt6.food_ice_cream	冰淇淋	hand
 direct	item.gt6.food_ice_cream.tooltip	牛奶基本款意式冰淇淋	hand
+direct	item.gt6.food_large_sandwich_bacon	大型培根三明治	hand
+direct	item.gt6.food_large_sandwich_bacon.tooltip	只为真男人!(女汉子也行)	hand
+direct	item.gt6.food_large_sandwich_cheese	大型奶酪三明治	hand
+direct	item.gt6.food_large_sandwich_cheese.tooltip	我需要一个奶酪味十足的说明!	hand
+direct	item.gt6.food_large_sandwich_steak	大型牛排三明治	hand
+direct	item.gt6.food_large_sandwich_steak.tooltip	是的,我曾经不小心把这东西称之为蒸汽三明治!	hand
+direct	item.gt6.food_large_sandwich_veggie	大型蔬菜三明治	hand
+direct	item.gt6.food_large_sandwich_veggie.tooltip	只是有点不值.......	hand
+direct	item.gt6.food_pizza_ananas	夏威夷披萨	hand
+direct	item.gt6.food_pizza_ananas.tooltip	这什么鬼?! 谁把菠萝放披萨里了!?	hand
+direct	item.gt6.food_pizza_ananas_raw	生的夏威夷披萨	hand
+direct	item.gt6.food_pizza_ananas_raw.tooltip	你真的把菠萝放在披萨上了?	hand
+direct	item.gt6.food_pizza_cheese	奶酪披萨	hand
+direct	item.gt6.food_pizza_cheese.tooltip	玛格丽特披萨	hand
+direct	item.gt6.food_pizza_cheese_raw	生的芝士披萨	hand
+direct	item.gt6.food_pizza_cheese_raw.tooltip	把它放进烤箱!	hand
+direct	item.gt6.food_pizza_meat	肉沫披萨	hand
+direct	item.gt6.food_pizza_meat.tooltip	非主流披萨, 它把自己切碎了!	hand
+direct	item.gt6.food_pizza_meat_raw	生的肉沫披萨	hand
+direct	item.gt6.food_pizza_meat_raw.tooltip	把它放进烤箱!	hand
+direct	item.gt6.food_pizza_veggie	蔬菜披萨	hand
+direct	item.gt6.food_pizza_veggie.tooltip	他们马上就会想要Gluten免费披萨了...	hand
+direct	item.gt6.food_pizza_veggie_raw	生的蔬菜披萨	hand
+direct	item.gt6.food_pizza_veggie_raw.tooltip	把它放进烤箱!	hand
 direct	item.gt6.food_potato_chips	薯片	hand
 direct	item.gt6.food_potato_chips.tooltip	嘎嘣脆!	hand
+direct	item.gt6.food_potato_on_stick	棍上土豆	hand
+direct	item.gt6.food_potato_on_stick.tooltip	就像一只螃蟹爪子	hand
+direct	item.gt6.food_potato_on_stick_roasted	棍上熟土豆	hand
+direct	item.gt6.food_potato_on_stick_roasted.tooltip	还是像一只螃蟹爪子	hand
+direct	item.gt6.food_sandwich_bacon	培根三明治	hand
+direct	item.gt6.food_sandwich_bacon.tooltip	史上最好三明治!	hand
+direct	item.gt6.food_sandwich_cheese	奶酪三明治	hand
+direct	item.gt6.food_sandwich_cheese.tooltip	跟我一起喊: 奶~~~~酪~~~~!	hand
+direct	item.gt6.food_sandwich_steak	牛排(steak)三明治	hand
+direct	item.gt6.food_sandwich_steak.tooltip	可不是'Steam 三明治'	hand
+direct	item.gt6.food_sandwich_veggie	蔬菜三明治	hand
+direct	item.gt6.food_sandwich_veggie.tooltip	没有肉!	hand
+direct	item.gt6.food_toast	吐司条	hand
+direct	item.gt6.food_toast.tooltip	不要传送面包!	hand
+direct	item.gt6.food_toast_raw	面团 (吐司条)	hand
+direct	item.gt6.food_toast_raw.tooltip	吐司条的形状	hand
+direct	item.gt6.food_toast_sliced	吐司	hand
+direct	item.gt6.food_toast_sliced.tooltip	面包第一，吐司第二	hand
+direct	item.gt6.food_toasted_sliced	烤吐司	hand
 direct	item.gt6.food_white_egg_boiled	煮鸡蛋	hand
 direct	item.gt6.food_white_egg_boiled.tooltip	煮了还是没煮? 这是一个问题	hand
 direct	item.gt6.hammer	锤	hand
@@ -2587,6 +2703,12 @@ direct	item.gt6.sensor_uv	传感器 (UV)	hand
 direct	item.gt6.sensor_zpm	传感器 (ZPM)	hand
 direct	item.gt6.shape_extruder_plate	模具 (板)	hand
 direct	item.gt6.shape_extruder_rod	模具 (杆)	hand
+direct	item.gt6.shape_foodmold_baguette	食物模具 (法式长棍)	hand
+direct	item.gt6.shape_foodmold_bread	食物模具 (面包)	hand
+direct	item.gt6.shape_foodmold_bun	食物模具 (小面包)	hand
+direct	item.gt6.shape_foodmold_cylinder	食物模具 (圆柱体)	hand
+direct	item.gt6.shape_foodmold_empty	空白食物模具	hand
+direct	item.gt6.shape_foodmold_toast	食物模具 (吐司)	hand
 direct	item.gt6.shape_slicer_eigths	切片器刀片 (八分之一)	hand
 direct	item.gt6.shape_slicer_eigths_hollow	切片器刀片 (中空八分之一)	hand
 direct	item.gt6.shape_slicer_empty	切片器刀片框架	hand

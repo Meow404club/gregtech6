@@ -4256,6 +4256,12 @@ public final class GTMachines {
 								// circuit precedent; the upstream Technological items tab is not ported)
 								aOutput.accept(new ItemStack(gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_PLATE.get()));
 								aOutput.accept(new ItemStack(gregtech6.registry.GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get()));
+								// task food-bake-items: the 6 food-grade molds — the same nearest-live-
+								// category face as the extruder pair (the upstream "GregTech: Technology"
+								// multiitem tab is not ported; the T3b Press rows consume them)
+								for (RegistryObject<Item> tFoodMold : gregtech6.registry.GT6BakeFoods.MOLDS) {
+									aOutput.accept(new ItemStack(tFoodMold.get()));
+								}
 						})
 					.build());
 
