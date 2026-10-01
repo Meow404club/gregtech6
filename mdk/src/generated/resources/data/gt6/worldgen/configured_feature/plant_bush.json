@@ -2,60 +2,99 @@
   "type": "minecraft:simple_block",
   "config": {
     "to_place": {
-      "type": "minecraft:randomized_int_state_provider",
-      "property": "age",
-      "source": {
-        "type": "minecraft:weighted_state_provider",
-        "entries": [
-          {
-            "data": {
-              "Name": "gt6:berry_bush",
-              "Properties": {
-                "age": "0",
-                "kind": "blueberry"
-              }
-            },
-            "weight": 1
+      "type": "minecraft:weighted_state_provider",
+      "entries": [
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "blueberry"
+            }
           },
-          {
-            "data": {
-              "Name": "gt6:berry_bush",
-              "Properties": {
-                "age": "0",
-                "kind": "candleberry"
-              }
-            },
-            "weight": 1
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "candleberry"
+            }
           },
-          {
-            "data": {
-              "Name": "gt6:berry_bush",
-              "Properties": {
-                "age": "0",
-                "kind": "cranberry"
-              }
-            },
-            "weight": 1
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "cranberry"
+            }
           },
-          {
-            "data": {
-              "Name": "gt6:berry_bush",
-              "Properties": {
-                "age": "0",
-                "kind": "cotton"
-              }
-            },
-            "weight": 1
-          }
-        ]
-      },
-      "values": {
-        "type": "minecraft:uniform",
-        "value": {
-          "max_inclusive": 3,
-          "min_inclusive": 0
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "currants_black"
+            }
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "currants_white"
+            }
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "currants_red"
+            }
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "blackberry"
+            }
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "raspberry"
+            }
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "cotton"
+            }
+          },
+          "weight": 1
         }
-      }
+      ]
     }
   }
 }

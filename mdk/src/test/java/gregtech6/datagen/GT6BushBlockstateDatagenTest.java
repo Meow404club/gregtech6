@@ -1,12 +1,13 @@
 /**
  * Offline pin for task bush-growth-blockstate — the generated-tree faces of the wild
- * bush's blockstate form. The blockstate emits the FULL 16-state grid (AGE_3 x KIND)
+ * bush's blockstate form. The blockstate emits the FULL 36-state grid (AGE_3 x KIND nine)
  * over the one tinted cube model (the colour rides the GT6BushTintListener per-state
- * arm, not the JSON), and the configured feature composes the vanilla
- * RandomizedIntStateProvider (the birth-stage randomization, the card acceptance 5) over
- * the WeightedStateProvider quartet (the kind spread — the upstream NoiseGenerator patch
- * index and the FIXED stage-3 birth, WorldgenBushes.java:66/:86, are the declared
- * collapses in GT6WorldgenDatagen).
+ * arm, not the JSON), and the configured feature is the weighted KIND nine at the
+ * upstream birth stage 3 VERBATIM (placeBushCore :86 NBT_STATE 3 — the 2026-10-01
+ * coordinator ruling: the birth stage follows the upstream; the growth/harvest mechanics
+ * alone ride the vanilla homolog). The kind spread collapses the upstream NoiseGenerator
+ * patch index (WorldgenBushes.java:66) to per-placement uniform — declared in
+ * GT6WorldgenDatagen.
  *
  * <p>Reads the committed generated tree on the classpath (the GT6BushTintDatagenTest
  * form — no datagen run).
@@ -29,6 +30,9 @@ import com.google.gson.JsonParser;
 
 public class GT6BushBlockstateDatagenTest {
 
+	private static final List<String> KINDS = List.of("blueberry", "candleberry", "cranberry",
+			"currants_black", "currants_white", "currants_red", "blackberry", "raspberry", "cotton");
+
 	private static JsonObject generatedJson(String aPath) throws Exception {
 		try (InputStream tStream = GT6BushBlockstateDatagenTest.class.getClassLoader()
 				.getResourceAsStream(aPath)) {
@@ -40,12 +44,12 @@ public class GT6BushBlockstateDatagenTest {
 
 	/** The blockstate grid: every AGE x KIND state points at the one tinted cube model. */
 	@Test
-	void theBlockstateEmitsTheFullSixteenStateGrid() throws Exception {
+	void theBlockstateEmitsTheFullThirtySixStateGrid() throws Exception {
 		JsonObject tVariants = generatedJson("assets/gt6/blockstates/berry_bush.json")
 				.getAsJsonObject("variants");
-		assertEquals(16, tVariants.size(), "4 ages x 4 kinds, every state seated");
+		assertEquals(36, tVariants.size(), "4 ages x 9 kinds, every state seated");
 		for (int tAge = 0; tAge <= 3; tAge++) {
-			for (String tKind : List.of("blueberry", "candleberry", "cranberry", "cotton")) {
+			for (String tKind : KINDS) {
 				String tKey = "age=" + tAge + ",kind=" + tKind;
 				assertTrue(tVariants.has(tKey), "the variant key " + tKey + " exists");
 				assertEquals("gt6:block/berry_bush", tVariants.getAsJsonObject(tKey).get("model").getAsString(),
@@ -55,34 +59,29 @@ public class GT6BushBlockstateDatagenTest {
 	}
 
 	/**
-	 * The configured feature: the AGE randomizer (property "age", uniform 0-3) over the
-	 * weighted KIND quartet — the plant_bush.json face of the birth-stage randomization.
+	 * The configured feature: the weighted KIND nine, every entry at the upstream birth
+	 * stage 3 (the placeBushCore :86 verbatim face — no randomizer; the vanilla homolog
+	 * covers the growth/harvest mechanics only).
 	 */
 	@Test
-	void theConfiguredFeatureRandomizesStageAndKind() throws Exception {
+	void theConfiguredFeatureSpawnsTheNineKindsAtStageThree() throws Exception {
 		JsonObject tToPlace = generatedJson("data/gt6/worldgen/configured_feature/plant_bush.json")
 				.getAsJsonObject("config").getAsJsonObject("to_place");
-		assertEquals("minecraft:randomized_int_state_provider", tToPlace.get("type").getAsString(),
-				"the vanilla AGE randomizer seat");
-		assertEquals("age", tToPlace.get("property").getAsString(), "the randomizer drives AGE");
-		JsonObject tValues = tToPlace.getAsJsonObject("values");
-		assertEquals("minecraft:uniform", tValues.get("type").getAsString(), "uniform over the stage range");
-		assertEquals(0, tValues.getAsJsonObject("value").get("min_inclusive").getAsInt(), "birth stage floor 0");
-		assertEquals(3, tValues.getAsJsonObject("value").get("max_inclusive").getAsInt(), "birth stage cap 3");
-		JsonObject tSource = tToPlace.getAsJsonObject("source");
-		assertEquals("minecraft:weighted_state_provider", tSource.get("type").getAsString(),
-				"the weighted KIND quartet seat");
-		JsonArray tEntries = tSource.getAsJsonArray("entries");
-		assertEquals(4, tEntries.size(), "the card ruling quartet, one entry per kind");
+		assertEquals("minecraft:weighted_state_provider", tToPlace.get("type").getAsString(),
+				"the weighted provider IS the provider — no randomizer seat");
+		JsonArray tEntries = tToPlace.getAsJsonArray("entries");
+		assertEquals(9, tEntries.size(), "the BushesGT.MAP full set, one entry per kind");
 		java.util.HashSet<String> tKinds = new java.util.HashSet<>();
 		for (int i = 0; i < tEntries.size(); i++) {
 			JsonObject tEntry = tEntries.get(i).getAsJsonObject();
 			assertEquals(1, tEntry.get("weight").getAsInt(), "uniform kind weights");
 			JsonObject tState = tEntry.getAsJsonObject("data");
 			assertEquals("gt6:berry_bush", tState.get("Name").getAsString(), "the bush block");
-			tKinds.add(tState.getAsJsonObject("Properties").get("kind").getAsString());
+			JsonObject tProps = tState.getAsJsonObject("Properties");
+			assertEquals("3", tProps.get("age").getAsString(),
+					"the birth stage = the upstream fixed 3 (placeBushCore :86 verbatim)");
+			tKinds.add(tProps.get("kind").getAsString());
 		}
-		assertEquals(java.util.Set.of("blueberry", "candleberry", "cranberry", "cotton"), tKinds,
-				"the four kinds cover the quartet");
+		assertEquals(new java.util.HashSet<>(KINDS), tKinds, "the nine kinds cover the full set");
 	}
 }
