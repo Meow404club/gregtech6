@@ -76,6 +76,21 @@ public final class GT6CropSeeds {
 		return rStack;
 	}
 
+	/**
+	 * The registry-tolerant face of {@link #generateSeeds} -- null while the gt6:crop_seed item
+	 * is unbound (the offline legs, where the card's interim base-seed face answers instead).
+	 * The merge-state wiring ({@link GT6CropCard#seedStack}) routes picked seeds here LIVE so a
+	 * picked seed carries its G/Ga/Re/scan payload (the ItemCropSeed :110-121 law).
+	 */
+	@Nullable
+	public static ItemStack tryGenerate(GT6CropCard aCard, int aGrowth, int aGain, int aResistance, int aScan) {
+		Item tItem = CROP_SEED.get();
+		if (tItem == null) return null;
+		ItemStack rStack = new ItemStack(tItem);
+		writeSeed(rStack, OWNER, aCard.name(), aGrowth, aGain, aResistance, aScan);
+		return rStack;
+	}
+
 	/** The stat writer — both legs share the put body, only the carrier envelope differs. */
 	public static void writeSeed(ItemStack aStack, String aOwner, String aCropId,
 			int aGrowth, int aGain, int aResistance, int aScan) {

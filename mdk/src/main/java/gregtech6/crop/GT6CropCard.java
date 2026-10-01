@@ -178,13 +178,14 @@ public class GT6CropCard {
 	}
 
 	/**
-	 * The picked-seed stack behind {@link CropTileView#generateSeeds} -- the INTERIM base-seed
-	 * copy (GT_BaseCrop.java:77 registers the grain item itself as the seed). The stat-carrying
-	 * seed item (IC2 ItemCropSeed NBT G/Ga/Re/scan, TileEntityCrop.generateSeeds :894-897) is
-	 * card cbc-3's face; the (growth, gain, resistance, scan) arguments ride
-	 * {@link CropTileView#generateSeeds} unchanged so the swap is one method here.
+	 * The picked-seed stack behind {@link CropTileView#generateSeeds} -- the stat-carrying
+	 * gt6:crop_seed payload live (TileEntityCrop.generateSeeds :894-897 -> ItemCropSeed
+	 * :110-121, cbc-3's GT6CropSeeds), falling back to the base-seed copy while the seed item
+	 * is unbound (the offline legs; GT_BaseCrop.java:77 registers the grain item as the seed).
 	 */
-	public ItemStack seedStack() {
+	public ItemStack seedStack(int aGrowth, int aGain, int aResistance, int aScan) {
+		ItemStack tSeed = GT6CropSeeds.tryGenerate(this, aGrowth, aGain, aResistance, aScan);
+		if (tSeed != null) return tSeed;
 		return mBaseSeed == null ? ItemStack.EMPTY : mBaseSeed.copy();
 	}
 

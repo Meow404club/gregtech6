@@ -22,7 +22,7 @@ import gregtech6.registry.GT6CropFoods;
  *
  * <p><b>Data rows</b>  --  the Compat_Recipes_IndustrialCraft.java:610-613 verbatim walk (the
  * ADR-CB1 dual-source anchors): Rye "Binnie" / Barley "Glitchfiend" / Oats "Pam" /
- * Rice "Ellpeck", all TIER 1, SIZE 7, growthSpeed 0 (the ADR-CB4 dead column  --  not ported),
+ * Rice "Ellpeck", all TIER 1, SIZE 7, the dead growth-speed column unported (ADR-CB4),
  * AH 2, HS 7, stats CH 0 / FD 4 / DF 0 / CO 0 / WD 2, attributes Wheat+Food+Grain. Drop and
  * base seed are BOTH the grain food item itself ({@code IL.Crop_*}  --  the GT6 1.7.10
  * registerBaseSeed(form, size 1, G 1, Ga 1, Re 1) shape, GT_BaseCrop.java:77), carried by
@@ -65,11 +65,8 @@ public final class GT6CropGrains {
 			return new ItemStack(item());
 		}
 
-		/** The seed  --  the same grain item (the interim seed face, GT_BaseCrop.java:77). */
-		@Override
-		public ItemStack seedStack() {
-			return new ItemStack(item());
-		}
+		// the picked seed rides the default seedStack face: a stat-carrying gt6:crop_seed live
+		// (the IC2 CropCard.getSeeds default), the grain-item base-seed copy offline
 	}
 
 	// the :610-613 rows
@@ -117,10 +114,14 @@ public final class GT6CropGrains {
 		return CROPS.get(aName);
 	}
 
-	/** The {@code registerCrop} seam (GT_BaseCrop.java:76)  --  dual-walked into {@link GT6Crops}. */
+	/**
+	 * The {@code registerCrop} seam (GT_BaseCrop.java:76)  --  the LOCAL grain-band map only
+	 * since the cbc-3 merge: the GT6Crops registry is owned by the 59-row
+	 * {@link GT6CropCards#ensureRegistered} walk (the four grain rows included), so a dual
+	 * registration here would shadow them with duplicates.
+	 */
 	public static void registerCrop(GT6CropCard aCard) {
 		CROPS.put(aCard.name(), aCard);
-		GT6Crops.registerCrop(aCard);
 	}
 
 	/**
