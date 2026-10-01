@@ -72,6 +72,7 @@ class GT6RecipeGenerationGuardTest extends GTRecipesOfflineTestBase {
 			"gregtech6.recipes.GT6RecipesSlicer", // task slicer-row-domain - the vanilla leather/paper pour joins the ledger
 			"gregtech6.recipes.maps.GT6RecipeMapBumblelyzer", // task machines-bumblelyzer-crucible — the display-stock reset hook joins the ledger // task fusion — the 18-row :949-966 block joins the ledger
 			"gregtech6.recipes.GT6RecipesReactorRods", // task debt-reactor-c-rods — the 45-row reactor-rod pour joins the ledger (the static-init hook is already in; the census was the lagging half)
+			"gregtech6.recipes.GT6RecipesCrops", // task cbc-5-crop-consumption — the crop consumption pour joins the ledger
 		};
 
 	private static Function<String, Fluid> sDefaultFluidResolver;

@@ -88,6 +88,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 			"gregtech6.recipes.GT6RecipesSlicer", // task slicer-row-domain - the vanilla leather/paper pour joins the ledger
 			"gregtech6.recipes.maps.GT6RecipeMapBumblelyzer", // task machines-bumblelyzer-crucible — the display-stock reset hook joins the ledger
 			"gregtech6.recipes.GT6RecipesReactorRods", // task debt-reactor-c-rods — the 45-row reactor-rod pour joins the ledger
+			"gregtech6.recipes.GT6RecipesCrops", // task cbc-5-crop-consumption — the crop consumption pour joins the ledger
 	};
 
 	/** The freeze-point snapshot: map field name → expected row count after the full census pour. Upstream registration order. */
@@ -95,7 +96,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 	static {
 		SNAPSHOT.put("FURNACE", 0);
 		SNAPSHOT.put("COKE_OVEN", 47); // beam-consume-increment: +8 wood-beam rows (Loader_Recipes_Woods.java:197-201, the GT6BeamKind static activation)
-		SNAPSHOT.put("SHREDDER", 398); // +45 task casing-machine-register (the shared-layer join, bumped by task squeezer-seed-legs after the two-commit verification: green 353 at f4077ef5d, red 398 at the casing merge 80bd8e605) — the 840 casingMachine-prefix registrations (4 prefixes x 210) light up 45 survivors of the ShCL RECYCLABLE ring gates (pourRecyclableRing, the GT6RecipesShCL:653 walk; this card ran its own registry domain and the recipes-domain ratchet follows here)
+		SNAPSHOT.put("SHREDDER", 406); // +45 task casing-machine-register (the shared-layer join, bumped by task squeezer-seed-legs after the two-commit verification: green 353 at f4077ef5d, red 398 at the casing merge 80bd8e605) — the 840 casingMachine-prefix registrations (4 prefixes x 210) light up 45 survivors of the ShCL RECYCLABLE ring gates (pourRecyclableRing, the GT6RecipesShCL:653 walk; this card ran its own registry domain and the recipes-domain ratchet follows here) +8 task cbc-5-crop-consumption — the wool seam white shred + the cropWheat/baleWheat + 4 grain + potato-remains mortarize-shredder rows
 		SNAPSHOT.put("CRUSHER", 1643); // +11 task machines-bumblelyzer-crucible — the bouleGt force-table item universe grows the ore-chain crush-back walk (the plate-gem/tiny/boule carriers)
 		SNAPSHOT.put("LATHE", 77); // +3 task machines-bumblelyzer-crucible — the same cascade over the lathe rod/wire walk
 		SNAPSHOT.put("CHISEL", 36);
@@ -104,17 +105,18 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("BURN", 7);
 		SNAPSHOT.put("GAS_FUELS", 0);
 		SNAPSHOT.put("DISTILLERY", 8);
-		SNAPSHOT.put("DRYING", 42);
+		SNAPSHOT.put("DRYING", 48); // +6 task cbc-5-crop-consumption — the fodder + 4 grain-crop + cropWheat drying legs
 		SNAPSHOT.put("CANNER", 84); // +5: the laser gas fill family closure (task debt-laser-gas-family, MultiItemTechnological.java:396-403 — neon/argon/krypton/xenon/carbonmonoxide pour; helium skips over the fixture arm) +1: task debt-hene-fluid — the heliumneon blend fluid row landed (MT.java:1024 → the Loader_Fluids.java:660 createGas walk), the :401 fill row pours; helium keeps the offline fixture skip +25: task debt-reactor-c-rods — the 24 reactor-rod fills (:742-744/:746-762/:782-785) + the :789 Tritium unpack pour
-		SNAPSHOT.put("MIXER", 56000);
+		SNAPSHOT.put("MIXER", 56020); // +20 task cbc-5-crop-consumption — (4 grain crops + cropWheat) x the 4-water mash walk
 		SNAPSHOT.put("SIFTING", 489); // +212 task debt-ore-purified-edge — the Loader_OreProcessing.java:351 DUST_ORE arm lands: 4 port families (gravel/sand/redsand/mud, the DUST_ORE-tagged prefixes of GT6OreBlocks.FAMILIES) x the material axis, every row resolving under the brick fixture; +52 task a-ore-axis-extension — the axis grew 53 -> 66 (4 x 13); +224 task b-gem-pool-extension — the axis grew 66 -> 122 (4 x 56, + 1: the 489th row is the grass row0)
 		// the ONE version-sensitive census: the Compressor walk rides the vanilla item
 		// universe, which differs 1.20.1 vs 1.21.1 by 109 compressibles — the per-leg pin
 		// (the stonecutter swap-table convention, GTRecipesOfflineTestBase shape)
 		//? if forge {
-		SNAPSHOT.put("COMPRESSOR", 2630);
+		SNAPSHOT.put("COMPRESSOR", 2631); // +1 task cbc-5-crop-consumption — the cropWheat compact leg (9 wheat -> the hay block, the LoaderItemList:760 alias)
 		//?} else {
-		/*SNAPSHOT.put("COMPRESSOR", 2517); // -4 task machines-bumblelyzer-crucible — the compressor walk derives from the live item universe, which the bouleGt force-table changed (the row-level mechanism rides the exclusion filters over the new gem-plate/tiny/boule items; the ratchet protocol: bump the verified drift, the walk-level accounting is the cutting-domain card's audit face)
+		/*SNAPSHOT.put("COMPRESSOR", 2518); // +1 task cbc-5-crop-consumption — the cropWheat compact leg (the same +1 as the forge leg).
+		// the base 2517 = -4 task machines-bumblelyzer-crucible — the compressor walk derives from the live item universe, which the bouleGt force-table changed (the row-level mechanism rides the exclusion filters over the new gem-plate/tiny/boule items; the ratchet protocol: bump the verified drift, the walk-level accounting is the cutting-domain card's audit face)
 		*///?}
 		SNAPSHOT.put("WIREMILL", 912);
 		SNAPSHOT.put("ROLLING_MILL", 0);
@@ -126,14 +128,14 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("CRUCIBLE_ALLOYING", 0);
 		SNAPSHOT.put("ANVIL", 145);
 		SNAPSHOT.put("ANVIL_BEND", 27);
-		SNAPSHOT.put("FERMENTER", 0);
+		SNAPSHOT.put("FERMENTER", 1716); // +1716 task cbc-5-crop-consumption — the RM.biomass 66-leg walk (RM.java:688-705) over 26 feeders: 16 flour-grain dust/blockDust arms + the 4 fodder items + the 4 grain crops + cropWheat + the baleWheat hay-block alias
 		SNAPSHOT.put("LOOM", 0);
 		SNAPSHOT.put("PRESSURE_WASHER", 0);
 		// task squeezer-seed-legs — the 4 vanilla seed-oil legs (squeezer.json, the cbc-5 leftover (4):
 		// the Loader_Recipes_Crops.java:256-305 oredict seed fan folded to wheat/melon/beetroot/pumpkin
 		// per the juicer.json rows-4-7 ruling) ride the SAME JSON seam, equally OUT of this offline
 		// snapshot walk and pinned per-file by GT6RecipeMapDataSqueezerSeedRowsPourTest.
-		SNAPSHOT.put("SQUEEZER", 20);
+		SNAPSHOT.put("SQUEEZER", 25); // +5 task cbc-5-crop-consumption — the vanilla-anchored crop juice legs (apple/melon/beet/carrot/potato)
 		SNAPSHOT.put("BEDROCK_ORE_LIST", 0);
 		SNAPSHOT.put("CLUSTER_MILL", 0);
 		SNAPSHOT.put("ROLL_BENDER", 0);
@@ -165,7 +167,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		// keeps every segment, neither rewrites another's line (the concrete lang-seam precedent).
 		SNAPSHOT.put("CUTTER", 0);
 		SNAPSHOT.put("BOXINATOR", 0);
-		SNAPSHOT.put("UNBOXINATOR", 0);
+		SNAPSHOT.put("UNBOXINATOR", 1); // +1 task cbc-5-crop-consumption — the :251 baleWheat unpack (the hay block -> 9 wheat, the LoaderItemList:761 Crop_Wheat alias)
 		SNAPSHOT.put("SLUICE", 0);
 		SNAPSHOT.put("AUTOCRAFTER", 0);
 		SNAPSHOT.put("STEAM_CRACKING", 0);
@@ -266,6 +268,9 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		capture(() -> GT6RecipesReactorRods.sRodResolver, aV -> GT6RecipesReactorRods.sRodResolver = aV);
 		capture(() -> GT6RecipesReactorRods.sMaterialResolver, aV -> GT6RecipesReactorRods.sMaterialResolver = aV);
 		capture(() -> GT6RecipesReactorRods.sTritiumResolver, aV -> GT6RecipesReactorRods.sTritiumResolver = aV);
+		capture(() -> GT6RecipesCrops.sMaterialItemResolver, aV -> GT6RecipesCrops.sMaterialItemResolver = aV);
+		capture(() -> GT6RecipesCrops.sIdItemResolver, aV -> GT6RecipesCrops.sIdItemResolver = aV);
+		capture(() -> GT6RecipesCrops.sFluidResolver, aV -> GT6RecipesCrops.sFluidResolver = aV);
 	}
 
 	private static <T> void capture(Supplier<T> aGetter, Consumer<T> aSetter) {
@@ -363,6 +368,11 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		GT6RecipesReactorRods.sRodResolver = aId -> new ItemStack(Items.PAPER);
 		GT6RecipesReactorRods.sMaterialResolver = GT6RecipeMapPhaseGateTest::brickStackOrNull;
 		GT6RecipesReactorRods.sTritiumResolver = () -> Fluids.LAVA;
+		// the crop-consumption face: id/material/fluid seams all resolve (the brick fixture;
+		// the row mechanics only compare identities — task cbc-5-crop-consumption)
+		GT6RecipesCrops.sMaterialItemResolver = GT6RecipeMapPhaseGateTest::brickOrNull;
+		GT6RecipesCrops.sIdItemResolver = aId -> Items.BRICK;
+		GT6RecipesCrops.sFluidResolver = aId -> Fluids.WATER;
 		GT6RecipeMaps.reset();
 		GT6RecipeMaps.init();
 	}
@@ -400,6 +410,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		GT6RecipesFusion.load();
 		GT6RecipesSlicer.load();
 		GT6RecipesReactorRods.load(); // task debt-reactor-c-rods — the 45-row pour (25 Canner + 20 Centrifuge) joins the census
+		GT6RecipesCrops.load(); // task cbc-5-crop-consumption — the crop consumption pour joins the census
 	}
 
 	/** The census and the hook ledger must move together (the guard test pins the same ledger against ITS array). */
