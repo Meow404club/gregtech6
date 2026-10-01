@@ -2720,7 +2720,8 @@ public final class GT6LootTables extends LootTableProvider {
     /**
      * The obtainable surface-plants + fallen-woods block list (task w6-t2-surface-blocks):
      * the plant quartet (glowtus/bush/black sand/turf) + the four fallen-log woods — all
-     * drop themselves (the bush's berry item face is the declared cut, GT6WildBushBlock).
+     * drop themselves (the bush's berries ride the right-click harvest, NOT loot —
+     * GT6WildBushBlock; breaking pays the bush itself, every state).
      */
     public static List<Block> plantLootBlocks() {
         List<Block> rList = new java.util.ArrayList<>();

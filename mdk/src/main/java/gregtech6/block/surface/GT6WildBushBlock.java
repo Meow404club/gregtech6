@@ -91,6 +91,9 @@ import gregtech6.registry.GT6CropFoods;
  * stage-constant upstream (MultiTileEntityBush.java:236-240, {@code tBerryColor[0]} at
  * every stage; the stage colours [1..3] ride the berry OVERLAY textures, which stay CUT
  * with the berry visual). {@code GT6BushTintListener} answers the per-state arm.
+ *
+ * <p>KJS surface: the REGISTRATION face stays deferred to the KJS binding card (the
+ * GT6Bumbles.java:71-72 declaration form) — no KJS adapter rides this card.
  */
 public final class GT6WildBushBlock extends BushBlock implements BonemealableBlock {
 
