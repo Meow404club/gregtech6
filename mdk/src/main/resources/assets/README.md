@@ -8854,6 +8854,30 @@ Universal Public Domain Dedication** (same upstream `README.md` block as above).
   `3d3b5a8f1973c6714f859cec1381e042f58b3ee9621e9bd97532502f10142366` /
   `ca3053f9843ff4f3475051e21667ccce90a4c575dc7dd7fbf7b59e207771b33c`)
 
+- `gt6/textures/block/tree/planks_<snake>.png` (×9) — the GT6 tree plank cubes (task
+  gt-tree-planks; upstream `iconsets/PLANKS_*.png`, renamed to the block ids at borrow
+  time — the upstream BlockTreePlanks renders `Textures.BlockIcons.PLANKS[meta]` on every
+  face, one texture per species). Byte-identical borrows, `cmp`-verified:
+  - `planks_rubber.png` — upstream `PLANKS_RUBBER.png` (the BlockTreePlanks meta 0 row);
+    sha256 `d76f4824f593e4af6e11ecfb09c3e970e4e67edd434ad0f923689da7c2e218c1`
+  - `planks_maple.png` — upstream `PLANKS_MAPLE.png` (meta 1); sha256
+    `9e20fa4143f60cb3265d088e2011d2b69bbd3bae65e0ec776626c8c7e6afd001`
+  - `planks_willow.png` — upstream `PLANKS_WILLOW.png` (meta 2); sha256
+    `0d96dcc6a354eb8bd5dfade38fe63e3215f287efc32900f330483c8ddac1641d`
+  - `planks_blue_mahoe.png` — upstream `PLANKS_BLUEMAHOE.png` (meta 3); sha256
+    `fb3b2c1830a791f488cf6e053590ca29a274194f2f095f7cede58915827fb23b`
+  - `planks_hazel.png` — upstream `PLANKS_HAZEL.png` (meta 4); sha256
+    `d12ad280486b25e3657fdb8cd257ad9c4e3f3161fe66483b76fefb672d755ab4`
+  - `planks_cinnamon.png` — upstream `PLANKS_CINNAMON.png` (meta 5); sha256
+    `259aac27015ec71eb1d411a774335aeaf65f9e9245dfb2ffb7e600174587425c`
+  - `planks_coconut.png` — upstream `PLANKS_COCONUT.png` (meta 6); sha256
+    `18d5fb258d2179269da0128b4e4898e352e2c76fa679003df86596d0db61ba6c`
+  - `planks_rainbowood.png` — upstream `PLANKS_RAINBOWOOD.png` (meta 7); sha256
+    `f4f8d4d2ed48abaddc0f0b0d44d0d40e096f7782cbe09fbdc1626818cd4ec5c1`
+  - `planks_blue_spruce.png` — upstream `PLANKS_BLUESPRUCE.png` (the BlockTreePlanks2
+    meta 0 row); sha256
+    `cdcd1a00aee8a52286297aba277b4f14cb71aaab936b8b3712e5e3808dee6821`
+
 - `gt6/textures/item/comb/comb_<name>.png` (×20) — the bee-comb item icons (task
   bees-lv1). PORT-GENERATED ART (not borrowed): one 16×16 five-cell honeycomb
   silhouette, per-comb tinted — the upstream 1.7.10 combs carry no dedicated item PNGs
