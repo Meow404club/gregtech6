@@ -153,6 +153,16 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		// this offline snapshot walk and pinned per-file by GT6RecipeMapDataB2cSawingRowsPourTest.
 		// Merge order: roll -> generify -> weld -> cut -> magnet -> sawing — this segment tail-appends
 		// after cut's (the rebase keeps every segment, neither rewrites another's line).
+		// task sawing-plank-concrete-increment — the ACTIVATION increment over sawing.json (census
+		// 3959 -> 4239, +280 = 56 calls x5): the 9 GT6 tree-log plank legs (Woods:169, the gt-tree-planks
+		// unlock) + the Woods:192 :66 DEFAULT_BEAM row (5, the beam-blocks-register unlock) + the
+		// Vanilla:604-617 IL.Plank-output statics (70) + the BlockMetaType:92 BlockColored/concrete face
+		// (160, the concrete-blocks-register unlock) — all under the declared IL.Plank -> minecraft:oak_planks
+		// identity mapping (the file head carries the ruling). Equally OUT of this offline snapshot walk
+		// (the same "sawing" JSON seam, CUTTER stays 0) and pinned per-file by the same
+		// GT6RecipeMapDataB2cSawingRowsPourTest ratchet. Merge order: sawing -> beam-consume-increment
+		// (pending branch, its 35 beam rows tail-append the same array) -> this card — the union rebase
+		// keeps every segment, neither rewrites another's line (the concrete lang-seam precedent).
 		SNAPSHOT.put("CUTTER", 0);
 		SNAPSHOT.put("BOXINATOR", 0);
 		SNAPSHOT.put("UNBOXINATOR", 0);
