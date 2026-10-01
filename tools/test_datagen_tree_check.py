@@ -395,9 +395,14 @@ class TestUniformIntValueNormalizer(unittest.TestCase):
     def test_placed_feature_band_registered(self):
         rel = PurePosixPath("data/gt6/worldgen/placed_feature/ore_small_overworld/tin.json")
         self.assertIsNotNone(mod._registered_band(rel))
-        # configured_feature 同 worldgen 段但不在此带（零注册 → 仅字节比对）
+        # configured_feature 同带同归一器（bush-growth-blockstate 注册：plant_bush.json
+        # 的 RandomizedIntStateProvider "values" IntProvider dispatch 双腿方言，
+        # 2026-10-01——旧负面钉随注册翻转）
+        self.assertIsNotNone(mod._registered_band(
+            PurePosixPath("data/gt6/worldgen/configured_feature/plant_bush.json")))
+        # 同 worldgen 段但未注册的带（零注册 → 仅字节比对）
         self.assertIsNone(mod._registered_band(
-            PurePosixPath("data/gt6/worldgen/configured_feature/ore_small_overworld/tin.json")))
+            PurePosixPath("data/gt6/worldgen/structure/example.json")))
 
     def test_uniform_value_wrap_applies(self):
         rel = PurePosixPath("data/gt6/worldgen/placed_feature/ore_small_overworld/copper.json")

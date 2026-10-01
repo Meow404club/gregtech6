@@ -527,6 +527,15 @@ def _band_biome_modifier(rel: PurePosixPath) -> bool:
             and rel.parts[2] in BIOME_BRANDS and rel.parts[3] == BIOME_BAND_DIR)
 
 
+def _band_worldgen_configured(rel: PurePosixPath) -> bool:
+    """configured_feature 带判定（坐深一层）：data/<ns>/worldgen/configured_feature/。
+    bush-growth-blockstate 注册证据：plant_bush.json 的 RandomizedIntStateProvider
+    "values" IntProvider dispatch 双腿方言（canonical 1367B vs node 1334B，
+    2026-10-01）——与 placed_feature 带同源（同 DFU dispatch 形差，归一器共用）。"""
+    return (len(rel.parts) >= 5 and rel.parts[0] == "data"
+            and rel.parts[2] == "worldgen" and rel.parts[3] == "configured_feature")
+
+
 def _norm_remove_diamond_medium(o: dict) -> bool:
     """remove_features 行 features 数组剔除 ore_diamond_medium（1.21.1 腿独有键）。
 
@@ -580,6 +589,9 @@ VALUE_NORMALIZERS: list[tuple[str, str, list[tuple[str, Callable[[dict], bool]]]
 # 变换保守：只动 remove_features 行的 features 数组、只剔该一键；add_features 行零施用。
 DEEP_VALUE_NORMALIZERS: list[tuple[str, Callable[[PurePosixPath], bool], list[tuple[str, Callable[[dict], bool]]]]] = [
     ("data/*/worldgen/placed_feature", _band_worldgen_placed, [
+        ("uniform-int-value-unwrap(1.21.1)", _norm_uniform_int_value),
+    ]),
+    ("data/*/worldgen/configured_feature", _band_worldgen_configured, [
         ("uniform-int-value-unwrap(1.21.1)", _norm_uniform_int_value),
     ]),
     ("data/*/biome_modifier", _band_biome_modifier, [
