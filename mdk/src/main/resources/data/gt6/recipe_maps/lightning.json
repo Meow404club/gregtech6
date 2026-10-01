@@ -1,14 +1,180 @@
 {
-  "recipes": [
+ "comment": "task b2-residual-maps - the RM.Lightning pour (the B2 residual data card). CENSUS + conversion: the ledger's 2 ruled legs (NetherStar Other:930 + the Dolamide pair Ores:339/:340) pour as 3 rows, and the RULING-EXTERNAL live-absorption face (main-session ruling 2026-10-01) adds the four stations the line-by-line read found live in the port universe: Chem:217/:218 (the K2S/Na2S + oxygen salt rows), Chem:271 (Adamantine) and Other:638 (Certus charge) = 7 new rows total (+1 seated smoke row). DECLARED DEVIATION (the ST.tag selector legs): :339/:340 carry ST.tag(1), :217/:218 ST.tag(2), :271/:638 ST.tag(1) - the JSON v1 schema cannot express damage/NBT config items, so the selector slots are dropped (the loom.json precedent, row semantics relax to selector-free). UNIT FACE: FL.Ender.make(L*4) = 4 x CS.L(144) = 576 mB (liquid-native); MT.O.gas(U*4) = 4000 mB (the gas native 1000 mB per U face, Loader_Fluids.java:66 MT.O.gas(FL.Reikygen.make(1000))). DECLARED BLOCKED / TRUE NEGATIVE / NOT POURED: Chem:88 the H2O2 row (mt.h2o2 fluid unregistered - the CHEMICAL_SPECS gap, the fluid-content card); Chem:216 the NO row (nitricoxide unregistered, same face); Other:913 the TE-gated NetherStar twin (FL.Ender_TE = the 'ender' TE alias, faithful absence - and it sits inside the FL.Redstone_TE.exists() gate); Chem:88/216 sit inside the FluidsGT.OXYGEN walk (one port member = oxygen) and the :217-:218 oxygen inputs ride it. WALK ROW PROVENANCE: provenance IS the GT6RecipeMapDataB2ResidualRowsPourTest live-walk cross-check. KJS face: datapack-domain JSON, naturally moddable, zero adaptation.",
+ "recipes": [
+  {
+   "inputs": [
     {
-      "inputs": [
-        { "item": "minecraft:quartz", "count": 1 },
-        { "item": "minecraft:glowstone_dust", "count": 1 }
-      ],
-      "fluidInputs": [{ "fluid": "minecraft:water", "amount": 1000 }],
-      "outputs": [{ "item": "minecraft:prismarine_crystals", "count": 1 }],
-      "duration": 64,
-      "eut": 16
+     "item": "minecraft:quartz",
+     "count": 1
+    },
+    {
+     "item": "minecraft:glowstone_dust",
+     "count": 1
     }
-  ]
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:prismarine_crystals",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Other:930 NetherStar leg - the blockSolid Netherite input is LIVE in the port universe (gt6:block_solid_netherite); FL.Ender = gt6:enderpearl_molten at L*4 = 576 mB (CS.L=144)",
+   "inputs": [
+    {
+     "item": "gt6:block_solid_netherite",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:enderpearl_molten",
+     "amount": 576
+    },
+    {
+     "fluid": "gt6:soulsandoil",
+     "amount": 5000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:gem_nether_star",
+     "count": 1
+    }
+   ],
+   "duration": 512,
+   "eut": 512
+  },
+  {
+   "comment": "Ores:339 Dolamide leg - crushedPurified x1 + the dropped ST.tag(1) selector -> crushedCentrifugedTiny x18 chance 8000",
+   "inputs": [
+    {
+     "item": "gt6:crushed_purified_dolamide",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:crushed_centrifuged_tiny_dolamide",
+     "count": 18,
+     "chance": 8000
+    }
+   ],
+   "duration": 2304,
+   "eut": 512
+  },
+  {
+   "comment": "Ores:340 Dolamide tiny leg -> crushedCentrifugedTiny x2 chance 8000",
+   "inputs": [
+    {
+     "item": "gt6:crushed_purified_tiny_dolamide",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:crushed_centrifuged_tiny_dolamide",
+     "count": 2,
+     "chance": 8000
+    }
+   ],
+   "duration": 256,
+   "eut": 512
+  },
+  {
+   "comment": "Chem:217 the ruling-external salt leg - K2S dust U*3 ladders to dust_tiny x3, output K2SO4 U*7 ladders to dust_small x7 (OM.java:460-468); the dropped ST.tag(2) selector",
+   "inputs": [
+    {
+     "item": "gt6:dust_tiny_potassium_sulfide",
+     "count": 3
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 4000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_potassium_sulfate",
+     "count": 7
+    }
+   ],
+   "duration": 512,
+   "eut": 256
+  },
+  {
+   "comment": "Chem:218 the Na2S twin -> dust_small_sodium_sulfate x7",
+   "inputs": [
+    {
+     "item": "gt6:dust_tiny_sodium_sulfide",
+     "count": 3
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 4000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_sodium_sulfate",
+     "count": 7
+    }
+   ],
+   "duration": 512,
+   "eut": 256
+  },
+  {
+   "comment": "Chem:271 the Adamantine leg - Adamantine U*7 ladders to dust_small x7; outputs MT.O.gas(U*4) = 4000 mB (the Reikygen-native 1000 mB per U face, FL.java:66; the port oxygen carrier) + MT.Ad dust U*3 -> dust_tiny_adamantium x3; the dropped ST.tag(1) selector",
+   "inputs": [
+    {
+     "item": "gt6:dust_small_adamantine",
+     "count": 7
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 4000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_adamantium",
+     "count": 3
+    }
+   ],
+   "duration": 128,
+   "eut": 2048
+  },
+  {
+   "comment": "Other:638 the Certus leg - gem CertusQuartz -> gem ChargedCertusQuartz; the dropped ST.tag(1) selector",
+   "inputs": [
+    {
+     "item": "gt6:gem_certus_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:gem_charged_certus_quartz",
+     "count": 1
+    }
+   ],
+   "duration": 2048,
+   "eut": 16
+  }
+ ]
 }

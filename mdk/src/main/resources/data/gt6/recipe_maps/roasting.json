@@ -1,44 +1,350 @@
 {
-  "recipes": [
+ "recipes": [
+  {
+   "comment": "task p29-w4-eu-bridge — the Roasting carbon rows, Loader_Recipes_Chem.java:397-403 verbatim over the addRecipe1(Recipe.java:187) arm: input dust + fluid INPUT CO2 -> fluid OUTPUT CO (the Boudouard reaction C + CO2 -> 2CO — the FIRST FluidStack after the input dust is the fluid INPUT, proven by the :408 oxygen rows Pyrite + O2 -> SO2 + Fe2O3 on the same overload). 16 EUt x 16. GAS UNIT CORRECTION (task b2-residual-maps, the DECLARED CORRECTION of p29-w4-eu-bridge 081f7f05b): MT.CO2.gas(N) = N x 1000 mB / U — the createGas carrier native amount is 1000 (Loader_Fluids.java:660 walk -> FL.java:1080 AmountPerUnit 1000 -> FL.java:1124 STATE_GASEOUS bind -> OreDictMaterial.java:1315-1319 units(aAmount, mGasUnit=U, native)); the original rows carried 432/864/1728 -> 576/1152/2304 from a U=144 liquid-arm calibration (the :390 LiCl.liquid arm, whose createMolten native IS 144 — correct for liquids, misapplied to the gas accessor, a 6.944x understatement); the true values 3000/6000/12000 -> 4000/8000/16000 stand here since this correction. The upstream ANY.C.mToThis / ANY.Diamond.mToThis walks (the polymorph arms) fold to the base members that carry port dust rows — the P8 registration-time-expansion form; Graphene stays excluded per the :397 guard.",
+   "inputs": [
     {
-      "comment": "task p29-w4-eu-bridge — the Roasting carbon rows, Loader_Recipes_Chem.java:397-403 verbatim over the addRecipe1(Recipe.java:187) arm: input dust + fluid INPUT CO2 -> fluid OUTPUT CO (the Boudouard reaction C + CO2 -> 2CO — the FIRST FluidStack after the input dust is the fluid INPUT, proven by the :408 oxygen rows Pyrite + O2 -> SO2 + Fe2O3 on the same overload). 16 EUt x 16. U = 144 (the :390 LiCl.liquid(U*144) = FL.Thorium_Salt.make(20736) calibration): 3*U = 432, 4*U = 576. The upstream ANY.C.mToThis / ANY.Diamond.mToThis walks (the polymorph arms) fold to the base members that carry port dust rows — the P8 registration-time-expansion form; Graphene stays excluded per the :397 guard.",
-      "inputs": [{ "item": "gt6:dust_carbon", "count": 1 }],
-      "fluidInputs": [{ "fluid": "gt6:carbondioxide", "amount": 432 }],
-      "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 576 }],
-      "duration": 16,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Chem.java:399 verbatim: charcoal dust + CO2 3U -> CO 4U, 16 EUt x 16.",
-      "inputs": [{ "item": "gt6:dust_charcoal", "count": 1 }],
-      "fluidInputs": [{ "fluid": "gt6:carbondioxide", "amount": 432 }],
-      "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 576 }],
-      "duration": 16,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Chem.java:400 verbatim: coal dust + CO2 6U -> CO 8U, 16 EUt x 16.",
-      "inputs": [{ "item": "gt6:dust_coal", "count": 1 }],
-      "fluidInputs": [{ "fluid": "gt6:carbondioxide", "amount": 864 }],
-      "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 1152 }],
-      "duration": 16,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Chem.java:401 verbatim: coal coke dust + CO2 6U -> CO 8U, 16 EUt x 16.",
-      "inputs": [{ "item": "gt6:dust_coal_coke", "count": 1 }],
-      "fluidInputs": [{ "fluid": "gt6:carbondioxide", "amount": 864 }],
-      "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 1152 }],
-      "duration": 16,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Chem.java:402-403 verbatim: the ANY.Diamond walk folds to the base diamond rung — diamond dust + CO2 12U -> CO 16U, 16 EUt x 16.",
-      "inputs": [{ "item": "gt6:dust_diamond", "count": 1 }],
-      "fluidInputs": [{ "fluid": "gt6:carbondioxide", "amount": 1728 }],
-      "fluidOutputs": [{ "fluid": "gt6:carbonmonoxide", "amount": 2304 }],
-      "duration": 16,
-      "eut": 16
+     "item": "gt6:dust_carbon",
+     "count": 1
     }
-  ]
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:carbondioxide",
+     "amount": 3000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:carbonmonoxide",
+     "amount": 4000
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Chem.java:399 verbatim: charcoal dust + CO2 3U -> CO 4U, 16 EUt x 16.",
+   "inputs": [
+    {
+     "item": "gt6:dust_charcoal",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:carbondioxide",
+     "amount": 3000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:carbonmonoxide",
+     "amount": 4000
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Chem.java:400 verbatim: coal dust + CO2 6U -> CO 8U, 16 EUt x 16.",
+   "inputs": [
+    {
+     "item": "gt6:dust_coal",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:carbondioxide",
+     "amount": 6000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:carbonmonoxide",
+     "amount": 8000
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Chem.java:401 verbatim: coal coke dust + CO2 6U -> CO 8U, 16 EUt x 16.",
+   "inputs": [
+    {
+     "item": "gt6:dust_coal_coke",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:carbondioxide",
+     "amount": 6000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:carbonmonoxide",
+     "amount": 8000
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Chem.java:402-403 verbatim: the ANY.Diamond walk folds to the base diamond rung — diamond dust + CO2 12U -> CO 16U, 16 EUt x 16.",
+   "inputs": [
+    {
+     "item": "gt6:dust_diamond",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:carbondioxide",
+     "amount": 12000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:carbonmonoxide",
+     "amount": 16000
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Chem.java:423-:427 verbatim over the OXYGEN walk - Li2O 3*U2 -> dustSmall x6",
+   "inputs": [
+    {
+     "item": "gt6:dust_lithium",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 500
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_lithium_oxide",
+     "count": 6
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Chem.java:423-:427 verbatim over the OXYGEN walk - V2O5 7*U2 -> dustSmall x14",
+   "inputs": [
+    {
+     "item": "gt6:dust_vanadium",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 2500
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_vanadium_pentoxide",
+     "count": 14
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Chem.java:423-:427 verbatim over the OXYGEN walk - Nb2O5 7*U2 -> dustSmall x14",
+   "inputs": [
+    {
+     "item": "gt6:dust_niobium",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 2500
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_niobium_pentoxide",
+     "count": 14
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Chem.java:423-:427 verbatim over the OXYGEN walk - Ta2O5 7*U2 -> dustSmall x14",
+   "inputs": [
+    {
+     "item": "gt6:dust_tantalum",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 2500
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_tantalum_pentoxide",
+     "count": 14
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Chem.java:423-:427 verbatim over the OXYGEN walk - CrO2 U -> dust x1",
+   "inputs": [
+    {
+     "item": "gt6:dust_chromium",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 2000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_chromium_dioxide",
+     "count": 1
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Chem.java:435 verbatim (the C + O2 -> CO2 combustion run, the same ANY.C/ANY.Diamond fold as the Boudouard five) - O2 2000 -> CO2 3000 at the 1000 mB/U gas face",
+   "inputs": [
+    {
+     "item": "gt6:dust_carbon",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 2000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:carbondioxide",
+     "amount": 3000
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Chem.java:436 verbatim (the C + O2 -> CO2 combustion run, the same ANY.C/ANY.Diamond fold as the Boudouard five) - O2 2000 -> CO2 3000 at the 1000 mB/U gas face",
+   "inputs": [
+    {
+     "item": "gt6:dust_charcoal",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 2000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:carbondioxide",
+     "amount": 3000
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Chem.java:437 verbatim (the C + O2 -> CO2 combustion run, the same ANY.C/ANY.Diamond fold as the Boudouard five) - O2 4000 -> CO2 6000 at the 1000 mB/U gas face",
+   "inputs": [
+    {
+     "item": "gt6:dust_coal",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 4000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:carbondioxide",
+     "amount": 6000
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Chem.java:438 verbatim (the C + O2 -> CO2 combustion run, the same ANY.C/ANY.Diamond fold as the Boudouard five) - O2 4000 -> CO2 6000 at the 1000 mB/U gas face",
+   "inputs": [
+    {
+     "item": "gt6:dust_coal_coke",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 4000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:carbondioxide",
+     "amount": 6000
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Chem.java:440 verbatim (the C + O2 -> CO2 combustion run, the same ANY.C/ANY.Diamond fold as the Boudouard five) - O2 8000 -> CO2 12000 at the 1000 mB/U gas face",
+   "inputs": [
+    {
+     "item": "gt6:dust_diamond",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 8000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:carbondioxide",
+     "amount": 12000
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  }
+ ],
+ "comment": "task b2-residual-maps - the RM.Roasting 53-station walk (the B2 residual data card). CENSUS ANCHOR: 53 stations, all in Loader_Recipes_Chem.java (:398-:464; Recipe.java and Loader_MultiTileEntities hits are non-row faces). Conversion stations->rows: 5 seated Boudouard rows (:398-:403, the ANY.C/ANY.Diamond walks fold to the five base dusts) + 5 new oxide rows (:423-:427, inside the single-member FluidsGT.OXYGEN walk - the port oxygen family is {oxygen}) + 5 new combustion rows (:435-:440, the same walks and fold as the Boudouard five) = 15 rows poured in file. NOT POURED, 38 row-instances: :408-:421 + :428-:432 (the 19 oxygen-leg SO2-output stations x1 member) and :446-:459 + :460-:464 (the 19 air-leg stations x the TWO port AIR members netherair/enderair - the plain 'air' fluid is unregistered upstream AND in port, the CoverVent declaration; the :446-:459 rows also carry the tChances multi-output chances) - ALL 38 instances output MT.SO2.gas and the SO2 fluid is unregistered in the port (the pooled fluid-registration card), so every one of them would WARN-skip live: the SO2 domain stays the pooled blockage, now with the air-walk member count stated. GAS UNIT FACE (the DECLARED CORRECTION, see the Boudouard row note): MT.CO2.gas(N) = N x 1000 mB / U (Loader_Fluids.java:660 -> FL.java:1080/:1124 -> OreDictMaterial.java:1315-1319); the combustion CO2 outputs pour at 3000/6000/12000. WALK ROW PROVENANCE: the new rows carry NO per-row comment beyond the upstream anchor - provenance IS the GT6RecipeMapDataB2ResidualRowsPourTest live-walk cross-check. KJS face: datapack-domain JSON, naturally moddable, zero adaptation."
 }

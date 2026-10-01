@@ -1,13 +1,46 @@
 {
-  "recipes": [
+ "comment": "task b2-residual-maps - the RM.Unboxinator single-row supplement (the B2 residual data card; the row the b2a midcard ruling deferred to this card). Poured: Loader_Recipes_Vanilla.java:965 RM.unbox(bookshelf -> book x3 + IL.Plank x3), eut 16 dur 16. IDENTITY MAPPING (declared, the sawing-card anchor): IL.Plank = Loader_Woods.java:74 ST.make(BlocksGT.Planks, 1, 9) = the 'Wood Planks' generic face - the port has no meta-9 generic plank block, so the output rides the ruled minecraft:oak_planks identity anchor (the wood-planks-register card re-pours this face when it lands). DECLARED NOT POURED: GT6_Main.java:386-:403 are ALL addFakeRecipe loot faces (Crate_Loot/Book_Loot/Bottle_Loot/Bag_Loot/TC_Loot/LOOTBAGS gates) - fake rows are the v1 row-flag boundary (the loader cannot mark mFakeRecipe), and the TC/LOOTBAGS members are foreign-mod gated; the Compat_Recipes_* unbox faces (Aether:100, Atum:70-:77, ...) are foreign-mod content. WALK ROW PROVENANCE: provenance IS the GT6RecipeMapDataB2ResidualRowsPourTest live-walk cross-check. KJS face: datapack-domain JSON, naturally moddable, zero adaptation.",
+ "recipes": [
+  {
+   "inputs": [
     {
-      "inputs": [{ "item": "minecraft:map", "count": 1 }],
-      "outputs": [
-        { "item": "minecraft:paper", "count": 8 },
-        { "item": "minecraft:compass", "count": 1 }
-      ],
-      "duration": 16,
-      "eut": 16
+     "item": "minecraft:map",
+     "count": 1
     }
-  ]
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:paper",
+     "count": 8
+    },
+    {
+     "item": "minecraft:compass",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Vanilla:965 the bookshelf unbox - book x3 + the IL.Plank(Loader_Woods.java:74 = Planks meta 9 Wood Planks) face rides the ruled minecraft:oak_planks IDENTITY MAPPING (the sawing-card IL.Plank anchor)",
+   "inputs": [
+    {
+     "item": "minecraft:bookshelf",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:book",
+     "count": 3
+    },
+    {
+     "item": "minecraft:oak_planks",
+     "count": 3
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  }
+ ]
 }
