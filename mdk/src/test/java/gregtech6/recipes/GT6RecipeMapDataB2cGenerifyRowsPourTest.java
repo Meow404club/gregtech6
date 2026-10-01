@@ -29,6 +29,8 @@ import gregapi.data.TD;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregapi.util.UT;
+import gregtech6.block.tree.GT6BeamKind;
+import gregtech6.registry.GT6BeamBlocks;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTStoneBlocks;
 
@@ -40,8 +42,13 @@ import net.minecraft.world.level.material.Fluids;
 
 /**
  * The recipe-data-b2c-generify row-stock pour test (the B2c-roll posture, scaled + the
- * weld-casing-increment re-increment): the two
- * handler-expansion map files of this card — generifier (9110 rows) and polarizer (887) —
+ * weld-casing-increment re-increment + the beam-consume-increment beam face): the two
+ * handler-expansion map files of this card — generifier (9117 rows: 8818 walk + 238 stone
+ * family + 39 static items + 15 fluids + the 128 weld-casing-increment casing rows + the
+ * 7 beam rows of task beam-consume-increment, Loader_Recipes_Woods.java:190 — the port beam
+ * universe generifying into the IL.Beam target gt6:wood_beam; the :66 IL.Beam self-row is a
+ * declared degenerate skip, the handler mTargetGenerifying != self gate canon) and polarizer
+ * (887) —
  * pour through the real {@link GT6RecipeMapJsonLoader} seam with zero skips. RECOMPUTABILITY:
  * the rows were generated from a one-shot live registration dump (an uncommitted JUnit walking
  * GTMaterialItems.registrationOrder + the condition gates, emitted as TSV and folded by a
@@ -60,7 +67,7 @@ public class GT6RecipeMapDataB2cGenerifyRowsPourTest extends GTRecipesOfflineTes
 
 	/** The per-map census of this card: file key -> expected total rows (zero skips). */
 	private static final Map<String, Integer> CENSUS = Map.of(
-			"generifier", 9110, // 8818 walk + 238 stone family + 39 static items + 15 fluids (+128: the weld-casing-increment re-increment)
+			"generifier", 9117, // 8818 walk + 238 stone family + 39 static items + 15 fluids + 7 beam (+128: the weld-casing-increment re-increment, +7: the beam-consume-increment beam face)
 			"polarizer", 887);  // 76 Nd + 583 Fe-walk + 228 Steel-walk (+44: the weld-casing-increment re-increment)
 
 	/** The uncommented walk rows per map — the frozen walk snapshot sizes. */
@@ -81,6 +88,7 @@ public class GT6RecipeMapDataB2cGenerifyRowsPourTest extends GTRecipesOfflineTes
 			Map.entry("BlockStones.java:409", 17), Map.entry("BlockStones.java:417", 17), Map.entry("BlockStones.java:443", 17),
 			Map.entry("BlockStones.java:452", 17), Map.entry("BlockStones.java:460", 17), Map.entry("BlockStones.java:468", 17),
 			Map.entry("BlockStones.java:477", 17), Map.entry("BlockStones.java:486", 17),
+			Map.entry("Loader_Recipes_Woods.java:190", 7), // task beam-consume-increment: the 7 port beams -> gt6:wood_beam
 			Map.entry("Loader_Recipes_Temporary.java:674", 1), Map.entry("Loader_Recipes_Temporary.java:675", 1),
 			Map.entry("Loader_Recipes_Temporary.java:676", 1), Map.entry("Loader_Recipes_Temporary.java:677", 1),
 			Map.entry("Loader_Recipes_Temporary.java:678", 1), Map.entry("Loader_Recipes_Temporary.java:680", 1),
@@ -332,6 +340,9 @@ public class GT6RecipeMapDataB2cGenerifyRowsPourTest extends GTRecipesOfflineTes
 		}
 		for (GTStoneBlocks.VariantKey tKey : GTStoneBlocks.registrationOrder()) {
 			tItemUniverse.add(GTStoneBlocks.path(tKey.stone().snake(), tKey.variant()));
+		}
+		for (GT6BeamKind tBeam : GT6BeamKind.values()) { // task beam-consume-increment: the beam universe
+			tItemUniverse.add(GT6BeamBlocks.path(tBeam));
 		}
 		tItemUniverse.add("grass"); // the GTGrassBlocks green base — a BLOCK item, outside GTMaterialItems
 		Set<String> tMissing = new HashSet<>();
