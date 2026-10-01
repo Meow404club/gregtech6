@@ -136,7 +136,7 @@ public final class GT6RecipesMeat {
 	@Nullable
 	static Item resolveFoodItem(String aId) {
 		int tColon = aId.indexOf(':');
-		return ForgeRegistries.ITEMS.getValue(new net.minecraft.resources.ResourceLocation(
+		return ForgeRegistries.ITEMS.getValue(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(
 				tColon < 0 ? "gt6" : aId.substring(0, tColon), aId.substring(tColon + 1)));
 	}
 
