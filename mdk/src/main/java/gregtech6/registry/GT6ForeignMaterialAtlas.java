@@ -643,18 +643,22 @@ public final class GT6ForeignMaterialAtlas {
 	}
 
 	/**
-	 * The distinct PRIMARY-row domains of the batch-1 prefix — exactly what
+	 * The distinct PRIMARY-row domains of the WHOLE table (batch 1 + batch 2, upstream block
+	 * order preserved by the append-only prefix property) — exactly what
 	 * {@code GT6ModDrivers.SEEDED_DOMAINS} walks at environment-seed time (a domain with only
 	 * COMMON_SECONDARY/GT6_SELF rows would have nothing to hide and must not enter the seed).
 	 *
-	 * <p>Deliberately still the batch-1 set (mdh-atlas-batch2 scope): batch-2 PRIMARY domains
-	 * join the seed only when the mdh clear-out card lands their activation — this card is
-	 * pure data, and growing the seed here would be a real-install behaviour change.
+	 * <p>Driven by the table rows, never a hand-copied list (the mdh-clearout-batch2 ruling):
+	 * the batch-2 rows joined the walk when the clear-out card landed the activation. The
+	 * GT5U rows carry our OWN modid ("gregtech" = self) — a domain that is by definition
+	 * always loaded, so it never enters the seed (the atlas javadoc's never-seedable note).
 	 */
 	public static List<String> seedableDomains() {
 		List<String> rDomains = new ArrayList<>();
-		for (Row tRow : ROWS) {
-			if (tRow.kind() == AttributionKind.PRIMARY && !rDomains.contains(tRow.domain())) rDomains.add(tRow.domain());
+		for (Row tRow : ALL_ROWS) {
+			if (tRow.kind() != AttributionKind.PRIMARY) continue;
+			if (tRow.domain().equals(MT.MD.GT5U.mID)) continue; // "gregtech" = our own modid — always loaded, never seedable
+			if (!rDomains.contains(tRow.domain())) rDomains.add(tRow.domain());
 		}
 		return rDomains;
 	}

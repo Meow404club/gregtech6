@@ -69,16 +69,18 @@ public final class GT6ModDrivers {
 	private static final Map<String, DriverLevel> OVERRIDES = new LinkedHashMap<>();
 
 	/**
-	 * The atlas domain set the environment seed walks. Still INERT at the preconditions
-	 * commit (mdh-clearout-batch2): the re-activation lands after the three review-seat-XVI
-	 * preconditions — (1) the datagen-JVM short-circuit below (registration precedes
-	 * GatherDataEvent, so a seeded runData JVM cannot be un-shrunk by a late reset), (2) the
-	 * datagen-walk null-drop sweep over every GTMaterialItems.get call site the providers
-	 * walk, (3) the committed-tree byte-identity verdict. mdh-2's activation attempt
-	 * (SEEDED_DOMAINS = atlas.seedableDomains()) NPE'd GT6CraftingRecipes.hopperRecipeBuilder
-	 * in the runData JVM exactly because those were missing (f8ffa0bd1).
+	 * The atlas domain set the environment seed walks: every entry the live mod list lacks
+	 * flips ABSENT at seed time (the mdh-clearout-batch2 activation). ACTIVATED now — the
+	 * three review-seat-XVI preconditions landed in 69a2e5d6b: (1) the datagen-JVM
+	 * short-circuit below (a runData JVM never seeds, so the committed tree stays
+	 * default-mode — the runData byte-identity rerun is the card's verdict), (2) the
+	 * datagen-walk null-drop sweep (every walk face a PRIMARY table member can reach carries
+	 * the skip guard), (3) the census re-signs (GT6ModDriverClearOutWaveTest batch-1 +
+	 * GT6ModDriverClearOutBatch2Test batch-2). mdh-2's first activation attempt
+	 * ({@link GT6ForeignMaterialAtlas#seedableDomains()} without the guards) NPE'd
+	 * GT6CraftingRecipes.hopperRecipeBuilder in the runData JVM (f8ffa0bd1).
 	 */
-	private static final List<String> SEEDED_DOMAINS = List.of();
+	private static final List<String> SEEDED_DOMAINS = GT6ForeignMaterialAtlas.seedableDomains();
 
 	/** One-shot latch: the environment is read once, at mod construct (upstream ModData.mLoaded timing). */
 	private static boolean seeded = false;

@@ -90,11 +90,17 @@ public class GT6ForeignMaterialAtlasTest {
         assertEquals(23, countKind(tRows.subList(0, BATCH1_ROWS), AttributionKind.COMMON_SECONDARY), "batch-1 COMMON_SECONDARY total");
         assertEquals(4, countKind(tRows.subList(0, BATCH1_ROWS), AttributionKind.GT6_SELF), "batch-1 GT6_SELF total: the theum quartet only");
 
-        // The seed walks exactly the eight PRIMARY-bearing batch-1 domains, first-seen order —
-        // batch-2 PRIMARY domains are deliberately not seedable (mdh-atlas-batch2 scope note).
-        assertEquals(List.of(MT.MD.HaC.mID, MT.MD.IC2.mID, MT.MD.TE.mID, MT.MD.EIO.mID,
-                MT.MD.HBM.mID, MT.MD.BOTA.mID, MT.MD.GC_EXTRAPLANETS.mID, MT.MD.MET.mID),
-                GT6ForeignMaterialAtlas.seedableDomains(), "SEEDED_DOMAINS source: distinct batch-1 PRIMARY domains in row order");
+        // The seed walks the PRIMARY-bearing domains of the WHOLE table (52: the batch-1 eight
+        // first in row order, then the batch-2 PRIMARY domains in row order) — the activation
+        // derivation, table-driven with the GT5U "gregtech"-modid rows excluded (mdh-clearout-batch2).
+        List<String> tSeed = GT6ForeignMaterialAtlas.seedableDomains();
+        assertEquals(MT.MD.HaC.mID, tSeed.get(0), "the batch-1 row order is the seed prefix");
+        assertEquals(8, (int) tSeed.stream().filter(tDomain -> List.of(MT.MD.HaC.mID, MT.MD.IC2.mID,
+                MT.MD.TE.mID, MT.MD.EIO.mID, MT.MD.HBM.mID, MT.MD.BOTA.mID, MT.MD.GC_EXTRAPLANETS.mID, MT.MD.MET.mID)
+                .contains(tDomain)).count(), "all eight batch-1 domains seed");
+        assertEquals(52, tSeed.size(), "the seed = 8 batch-1 + 44 batch-2 PRIMARY domains (56 batch-2 domains minus the 12 CS-only ones)");
+        assertFalse(tSeed.contains(MT.MD.GT5U.mID), "our own modid (gregtech) never seeds");
+        assertEquals(new HashSet<>(tSeed).size(), tSeed.size(), "no duplicate domains in the seed walk");
     }
 
     @Test
@@ -182,10 +188,18 @@ public class GT6ForeignMaterialAtlasTest {
             assertNotNull(tRow, "SPEC secondary pair must be COMMON_SECONDARY: " + tPair.getValue() + " → " + tPair.getKey());
         }
 
-        // Never-clear flag: no batch-2 domain may enter the seed (the seed stays the batch-1 eight).
+        // The activation form (mdh-clearout-batch2): every batch-2 domain with a PRIMARY row
+        // seeds; the CS-only domains have nothing to hide and stay out.
         Set<String> tSeed = new HashSet<>(GT6ForeignMaterialAtlas.seedableDomains());
-        for (Row tRow : tBatch2) assertFalse(tSeed.contains(tRow.domain()), "batch-2 domain must not seed: " + tRow.domain());
-        assertEquals(8, tSeed.size(), "the seed stays the batch-1 eight");
+        Set<String> tBatch2PrimaryDomains = new HashSet<>();
+        for (Row tRow : tBatch2) if (tRow.kind() == AttributionKind.PRIMARY) tBatch2PrimaryDomains.add(tRow.domain());
+        for (Row tRow : tBatch2) {
+            if (tRow.kind() != AttributionKind.PRIMARY) continue;
+            if (tRow.domain().equals(MT.MD.GT5U.mID)) continue; // our own modid — excluded by design
+            assertTrue(tSeed.contains(tRow.domain()), "a PRIMARY-bearing batch-2 domain seeds: " + tRow.domain());
+        }
+        assertEquals(45, tBatch2PrimaryDomains.size(), "the batch-2 PRIMARY-domain census (44 seedable + GT5U)");
+        assertEquals(52, tSeed.size(), "the seed = the batch-1 eight + the 44 batch-2 PRIMARY domains");
 
         // A batch-2 COMMON_SECONDARY row answers no domain and survives its own domain's ABSENT pin,
         // while the domain's PRIMARY rows hide (ADR-MDH2 over batch-2 data; Thaumcraft has both kinds).
