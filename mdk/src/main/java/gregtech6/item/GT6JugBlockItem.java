@@ -36,6 +36,8 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import gregtech6.registry.GT6DataComponents;
  *///?}
 
+import gregtech6.crop.GT6CropBlockEntity;
+import gregtech6.crop.behavior.CropWateringBehavior;
 import gregtech6.fluid.GTFluidLists;
 import gregtech6.tileentity.tank.GT6JugBlockEntity;
 import gregtech6.tileentity.tank.GT6JugItemFluidHandler;
@@ -61,8 +63,10 @@ import gregtech6.tileentity.tank.GT6JugItemFluidHandler;
  * <li><b>watering</b> ({@code useOn}, the upstream onItemUseFirst :202-228 over
  *     {@code canWaterCrops} :87): a water-holding jug right-clicked on a cauldron pours
  *     the upstream three tiers — 1000/667/334 L into LEVEL +3/+2/+1, the head gate
- *     refuses a full or under-334 L pour. The GrC paddy / IC2 ICropTile / TC crucible
- *     branches of :229-262 have no modern host — declared cuts.</li>
+ *     refuses a full or under-334 L pour. The TC crucible branch of :229-262 has no
+ *     modern host — declared cut. The GrC paddy branch stays cut; the IC2 ICropTile
+ *     branch (:253-260) IS ported as the crop-stick hydration arm (task cbc-6, the
+ *     cbc-4 declared hookup — {@link CropWateringBehavior} at the 1:10 rate).</li>
  * </ul>
  */
 public class GT6JugBlockItem extends BlockItem {
@@ -176,7 +180,38 @@ public class GT6JugBlockItem extends BlockItem {
 		if (GT6JugBlockEntity.CAN_WATER_CROPS && waterCauldron(aContext)) {
 			return InteractionResult.sidedSuccess(aContext.getLevel().isClientSide());
 		}
+		// the crop hydration arm (task cbc-6, the cbc-4 declared merge-seat hookup) — the
+		// :253-260 ICropTile arm of the same canWaterCrops walk: the water jug right-clicked
+		// on a crop-stick tile hydrates it at the 1:10 rate through CropWateringBehavior
+		// (the math is CropToolBehaviorTest-pinned); the click belongs to the crop even at
+		// 0 drain (the :260 T), the pour sound rides the cauldron arm's family face.
+		if (GT6JugBlockEntity.CAN_WATER_CROPS && waterCrop(aContext)) {
+			return InteractionResult.sidedSuccess(aContext.getLevel().isClientSide());
+		}
 		return super.useOn(aContext); // the placement face
+	}
+
+	/**
+	 * The crop hydration arm — the :253-260 body: drain min((200-hydration)/10, tank) mB
+	 * from the jug, pay 10 hydration per mB into the tile, the water splash. False when the
+	 * target is not a crop-stick tile or the jug holds no water (falls through to placement).
+	 */
+	private boolean waterCrop(UseOnContext aContext) {
+		ItemStack tStack = aContext.getItemInHand();
+		GT6JugItemFluidHandler tHandler = new GT6JugItemFluidHandler(tStack);
+		FluidStack tContent = tHandler.getFluidInTank(0);
+		if (tContent.isEmpty() || !"water".equals(GTFluidLists.name(tContent))) return false; // the :210 FL.water head
+		Level tLevel = aContext.getLevel();
+		if (!(tLevel.getBlockEntity(aContext.getClickedPos()) instanceof GT6CropBlockEntity tCrop)) return false;
+		int tDrained = CropWateringBehavior.drainForHydration(tCrop.storageWater(), tContent.getAmount());
+		if (tDrained > 0) {
+			tHandler.drain(new FluidStack(Fluids.WATER, tDrained), IFluidHandler.FluidAction.EXECUTE);
+			CropWateringBehavior.waterCrop(tCrop, tDrained);
+		}
+		if (!tLevel.isClientSide) {
+			tLevel.playSound(null, tCrop.getBlockPos(), SoundEvents.BUCKET_EMPTY, SoundSource.PLAYERS, 1.0F, 1.0F);
+		}
+		return true;
 	}
 
 	/** The cauldron pour (the :209-228 body): water only, the three tiers, BUCKET_EMPTY pour sound. */

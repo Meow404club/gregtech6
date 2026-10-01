@@ -22,7 +22,8 @@ import gregtech6.GT6Mod;
  * lemon→coconut, the 4 grape colours + 5 raisins, the 10 berries, the 3 GT6 apples of the
  * 4-colour family with their slices, peanut/hazelnut/ananas/cinnamon/coconut), the 4
  * inedible apple cores, and the fodder family (4 grass states + the 4 GT6 crops) — 61
- * rows total. The food-items-core {@code GT6Foods} shape verbatim (card-owned
+ * rows total (+ the 2 magic-flower fallback items of task cbc-6-crop-test-faces, the
+ * crop-row :643-644 seat = 63). The food-items-core {@code GT6Foods} shape verbatim (card-owned
  * self-contained {@code @EventBusSubscriber(MOD)} DeferredRegister attached from the
  * construct event; GT6Mod.java / GTModBusListener.java stay untouched; the rows ride the
  * SAME {@code gt6:food} creative tab, the GT6BakeFoods displayItems ride form).
@@ -80,7 +81,9 @@ import gregtech6.GT6Mod;
  *
  * <p>KJS surface: REGISTRATION face only, deferred to the KJS binding card (the
  * GT6CrystalChargers.java:44 declaration form); the item models + textures are
- * datapack-domain, naturally moddable.
+ * datapack-domain, naturally moddable. Viewer face: none — no machine diagram, zero
+ * JEI/EMI surfaces (the food tab display walk is the only listing). Jade face: another
+ * card, not this wave (the cbc-6 face census).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6CropFoods {
@@ -169,9 +172,10 @@ public final class GT6CropFoods {
 			new CropFoodRow("food_coconut", "Coconut", 2, 0.3F, "His Coconut Gun can fire in spurts. If he shoots ya, it's gonna hurt!"));
 
 	/**
-	 * The 12 inedible rows in upstream meta order (the 4 apple cores :438/:445/:452/:459,
-	 * the 4 grass states :53-56, the 4 crops :57-60). Plain items: the compost/feeding/
-	 * bale work rides the machine rows and the unpored block faces, not the item.
+	 * The 14 inedible rows in upstream meta order (the 4 apple cores :438/:445/:452/:459,
+	 * the 4 grass states :53-56, the 4 crops :57-60, the 2 magic flowers :98-99). Plain
+	 * items: the compost/feeding/bale work rides the machine rows and the unpored block
+	 * faces, not the item; the flowers are the cbc-6 crop-row fallback seat.
 	 */
 	public static final List<CropPlainRow> PLAIN_ROWS = List.of(
 			new CropPlainRow("food_apple_green_core", "Apple Core", "Not to be confused with the Mod"),
@@ -185,7 +189,18 @@ public final class GT6CropFoods {
 			new CropPlainRow("food_crop_rye", "Rye", ""),
 			new CropPlainRow("food_crop_oats", "Oats", ""),
 			new CropPlainRow("food_crop_barley", "Barley", ""),
-			new CropPlainRow("food_crop_rice", "Rice", ""));
+			new CropPlainRow("food_crop_rice", "Rice", ""),
+			// task cbc-6-crop-test-faces: the two magic-flower fallback items (MultiItemFood
+			// meta 12010/:98 + 12011/:99, the IL.Cerublossom/IL.DesertNova GT6 faces of the
+			// upstream IL.ARS_* conditional). The Behavior_Turn_Into(IL.ARS_*) swap face and
+			// the TD.Creative.HIDDEN-when-ARS-present tab face stay POOLED (ARS is foreign,
+			// the declared absence): here they are always the plain GT6 fallback flowers, the
+			// exact items the crop rows :643-644 seat as drop + base seed. Names + tooltips
+			// verbatim (en from the addItem lines, zh from the dump gt.multiitem.food.12010/
+			// 12011, tmp/gregtech.lang:8809-8812); the icons are COMPOSED placeholders (the
+			// P20 convention — the upstream flower item icons are not in any repo snapshot).
+			new CropPlainRow("food_cerublossom", "Cerublossom", "Used for magical Purposes"),
+			new CropPlainRow("food_desertnova", "Desert Nova", "Used for magical Purposes"));
 
 	/** The 49 registered crop foods, table order (the {@link #FOOD_ROWS} walk). */
 	public static final List<RegistryObject<Item>> FOODS = FOOD_ROWS.stream()

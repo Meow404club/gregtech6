@@ -19,7 +19,10 @@ import net.minecraft.world.item.ItemStack;
  * maxSize 5, growthDuration 300, not harvestable, no pick). Crossing consumes
  * {@link #crops()} order for its cumulative weight roll, so the order is part of the seeded contract.
  *
- * <p>KJS face: registration defer — binding card declaration (food/cup 家法), no recipe face here.
+ * <p>KJS face: registration defer — binding card declaration (food/cup 家法), no recipe face
+ * here (the recipe face is datapack-domain zero-adaptation).
+ * Viewer face: none — no machine diagram, zero JEI/EMI surfaces (pure data registry).
+ * Jade face: another card, not this wave (the cbc-6 face-census).
  */
 public class GT6Crops {
 

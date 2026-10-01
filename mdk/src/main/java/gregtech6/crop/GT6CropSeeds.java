@@ -6,12 +6,15 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
+
+import gregtech6.registry.GT6Foods;
 
 /**
  * The crop seed item — task cbc-3-crop-data-assets, the port of IC2's seed carrier
@@ -29,11 +32,13 @@ import net.minecraftforge.registries.RegistryObject;
  *
  * <p>The item model reuses the family crop-stick sprite (gt6:item/crop_stick — the same borrow
  * cbc-1 seated; IC2 itself renders ItemCrop with the crop_stick texture, ItemCrop.java:27);
- * the datagen model line lives in GT6ItemModels. NO creative-tab seat yet — the tab families
- * are other cards' universes (declared; the first world seat is
- * {@link GT6CropCards#ensureRegistered}'s base-seed table, which is the gameplay acquisition).
+ * the datagen model line lives in GT6ItemModels. Creative seat: the crop domain's
+ * "Nature &amp; Foods" tab ({@code gt6:food}, the GT6CropSticks seat form — task cbc-6).
  *
- * <p>KJS face: REGISTRATION face only, deferred to the KJS binding card. RCON face: none.
+ * <p>KJS face: REGISTRATION face only, deferred to the KJS binding card.
+ * RCON face: none. Viewer face: no machine diagram, zero JEI/EMI recipe surfaces — the
+ * tooltip IS the scan-information disclosure ({@link #appendSeedTooltip}, the
+ * ItemCropSeed.addInformation :63-75 port); Jade face: another card, not this wave.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6CropSeeds {
@@ -50,8 +55,66 @@ public final class GT6CropSeeds {
 	/** The seed stack stats — one byte per ICropSeed stat face. */
 	public record SeedData(String cropOwner, String cropId, int growth, int gain, int resistance, int scanLevel) {}
 
-	/** The seed item, id gt6:crop_seed. */
-	public static final RegistryObject<Item> CROP_SEED = ITEMS.register("crop_seed", () -> new Item(new Item.Properties()));
+	/**
+	 * The seed item, id gt6:crop_seed — the tooltip face rides it (the port of
+	 * ItemCropSeed.addInformation :63-75: scanLevel &gt;= 4 discloses the three stat
+	 * bytes, scanLevel &gt;= 1 names the crop through the cbc-3 {@code gt.crop.<name>}
+	 * keys; below 1 the payload is undisclosed, scan with the Cropnalyzer); the creative
+	 * seat rides the crop domain's "Nature &amp; Foods" tab (the GT6CropSticks seat form,
+	 * task cbc-6).
+	 */
+	public static final RegistryObject<Item> CROP_SEED = ITEMS.register("crop_seed", () -> new Item(new Item.Properties()) {
+		//? if forge {
+		@Override
+		public void appendHoverText(ItemStack aStack, net.minecraft.world.level.Level aLevel,
+			 java.util.List<net.minecraft.network.chat.Component> aTooltip, TooltipFlag aFlag) {
+			appendSeedTooltip(aStack, aTooltip);
+		}
+		//?} else {
+		/*@Override
+		public void appendHoverText(ItemStack aStack, Item.TooltipContext aContext,
+			 java.util.List<net.minecraft.network.chat.Component> aTooltip, TooltipFlag aFlag) {
+		//21.1: the hover signature carries the Item.TooltipContext (the GT6Foods.GT6FoodItem fork).
+			appendSeedTooltip(aStack, aTooltip);
+		}
+		 *///?}
+	});
+
+	/**
+	 * The scan disclosure — ItemCropSeed.addInformation :63-75: the stat lines only at
+	 * scan 4+ (the Cropnalyzer face, cbc-4), the crop name line from scan 1 (the
+	 * {@code gt.crop.<name>} key family, cbc-3's lang four-landing).
+	 */
+	static void appendSeedTooltip(ItemStack aStack, java.util.List<net.minecraft.network.chat.Component> aTooltip) {
+		SeedData tData = readSeed(aStack);
+		if (tData == null) return;
+		if (tData.scanLevel() >= 1) {
+			aTooltip.add(net.minecraft.network.chat.Component.translatable("gt.crop." + tData.cropId())
+					.withStyle(net.minecraft.ChatFormatting.GRAY));
+		}
+		if (tData.scanLevel() >= 4) {
+			aTooltip.add(net.minecraft.network.chat.Component.literal("Gr ")
+					.withStyle(net.minecraft.ChatFormatting.DARK_GREEN)
+					.append(net.minecraft.network.chat.Component.literal(String.valueOf(tData.growth()))
+							.withStyle(net.minecraft.ChatFormatting.GRAY)));
+			aTooltip.add(net.minecraft.network.chat.Component.literal("Ga ")
+					.withStyle(net.minecraft.ChatFormatting.GOLD)
+					.append(net.minecraft.network.chat.Component.literal(String.valueOf(tData.gain()))
+							.withStyle(net.minecraft.ChatFormatting.GRAY)));
+			aTooltip.add(net.minecraft.network.chat.Component.literal("Re ")
+					.withStyle(net.minecraft.ChatFormatting.AQUA)
+					.append(net.minecraft.network.chat.Component.literal(String.valueOf(tData.resistance()))
+							.withStyle(net.minecraft.ChatFormatting.GRAY)));
+		}
+	}
+
+	/** The food-tab seat (the crop domain's upstream home — the "Nature & Foods" band, the GT6CropSticks form). */
+	@SubscribeEvent
+	public static void onBuildTabContents(net.minecraftforge.event.BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GT6Foods.FOOD_TAB.getId())) {
+			aEvent.accept(new ItemStack(CROP_SEED.get()));
+		}
+	}
 
 	/** FMLConstructModEvent = the first mod-bus lifecycle stage (the GT6Foods shape). */
 	@SubscribeEvent
@@ -84,8 +147,16 @@ public final class GT6CropSeeds {
 	 */
 	@Nullable
 	public static ItemStack tryGenerate(GT6CropCard aCard, int aGrowth, int aGain, int aResistance, int aScan) {
+		// the bound check rides the holder face — RegistryObject.get()/DeferredHolder.get()
+		// THROW on an unbound registry, so the former get()==null dead check never answered
+		// the documented offline fallback (exposed by the cbc-6 end-to-end driver on the bare
+		// forge JVM; the neo FML test JVM binds live and skips this arm).
+		//? if forge {
+		if (!CROP_SEED.isPresent()) return null;
+		//?} else {
+		/*if (!CROP_SEED.isBound()) return null;
+		 *///?}
 		Item tItem = CROP_SEED.get();
-		if (tItem == null) return null;
 		ItemStack rStack = new ItemStack(tItem);
 		writeSeed(rStack, OWNER, aCard.name(), aGrowth, aGain, aResistance, aScan);
 		return rStack;

@@ -13,8 +13,13 @@ import net.minecraft.world.item.ItemStack;
  * <p>ADR-CB4: the upstream growth-speed constructor parameter is dead code (GT_BaseCrop.java:67,
  * assignment commented out, growth duration actually runs on tier*200) and is NOT ported.
  *
- * <p>KJS face: none (pure algorithm/data carrier, no recipe or registry binding on this class).
+ * <p>KJS face: none (pure algorithm/data carrier, no recipe or registry binding on this class;
+ * the registration defer binding card declaration lives on GT6CropCards/GT6CropSeeds/GT6Crops,
+ * the recipe face is datapack-domain zero-adaptation).
  * RCON face: none (pure offline domain card).
+ * Viewer face: none — no machine diagram, zero JEI/EMI surfaces (the crop cards render
+ * block sprites only).
+ * Jade face: another card, not this wave (the cbc-6 face-census declaration).
  */
 public class GT6CropCard {
 

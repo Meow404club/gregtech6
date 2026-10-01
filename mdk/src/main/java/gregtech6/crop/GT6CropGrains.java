@@ -33,6 +33,10 @@ import gregtech6.registry.GT6CropFoods;
  * {@link #baseSeed(ItemStack)} keys on registry KEYS, not live item references  --  the same
  * face that reads identically offline (the fixture-test posture). The item-stack-keyed
  * {@link GT6Crops#getBaseSeed} table is the cbc-3 registry fold.
+ *
+ * <p>Face census (cbc-6 汇核): KJS face — registration defer, the binding card declaration;
+ * the recipe face is datapack-domain zero-adaptation. Viewer face — no machine diagram,
+ * zero JEI/EMI surfaces. Jade face — another card, not this wave. RCON face — none.
  */
 public final class GT6CropGrains {
 

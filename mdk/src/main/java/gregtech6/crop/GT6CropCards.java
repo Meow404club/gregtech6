@@ -41,15 +41,19 @@ import net.minecraftforge.registries.RegistryObject;
  * T5a {@code gt6:food_*} band ids, work/food-crop-items — the same ids GT6RecipesCrops
  * consumes). Rows whose drops fail to resolve stay unregistered by the upstream null-drop law,
  * which is exactly what upstream itself does when the producing mod is absent (the foreign
- * ARS/TC/TF faces: Desert Nova / Cerublossom / Shimmerleaf / Cinderpearl base seeds and the
- * Liveroots special drop — declared absences, null slots in the rows).
+ * ARS/TC/TF faces: Shimmerleaf's TC base seed and the Liveroots special drop — declared
+ * absences, null slots in the rows; the Desert Nova / Cerublossom rows ride the GT6 fallback
+ * items, GT6CropFoods meta 12010/12011 — the cbc-6 re-seat).
  *
  * <p>Textures: every card renders crop/&lt;name&gt;/&lt;1..maxSize&gt; block sprites
  * (GT_BaseCrop.java:160-163) — borrowed byte-identical in the assets commit of this card, the
  * README sha256 ledger band "crop stage sprites".
  *
  * <p>KJS face: REGISTRATION face only, deferred to the KJS binding card (the
- * GT6CrystalChargers.java declaration form). RCON face: none (offline registration card).
+ * GT6CrystalChargers.java declaration form); the recipe face is datapack-domain
+ * zero-adaptation. RCON face: none (offline registration card). Viewer face: none —
+ * no machine diagram, zero JEI/EMI surfaces. Jade face: another card, not this wave
+ * (the cbc-6 face census).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6CropCards {
@@ -169,12 +173,15 @@ public final class GT6CropCards {
 		row( 640, "Peanuts"            , "Snoopy"                 , Seg.gt("gt6:food_peanut", 1), null, Seg.gt("gt6:food_peanut", 4), 3, 4, 1, 4, 1, 4, 0, 2, 4, "Bush", "Food", "Nut"),
 		row( 641, "Ananas"             , "Spongebob"              , Seg.gt("gt6:food_ananas", 1), null, Seg.gt("gt6:food_ananas", 4), 4, 3, 1, 3, 3, 3, 5, 1, 1, "Bush", "Food", "Fruit", "Pine", "Apple"),
 		// ---------------------------------------------------------------- magic :643-646 (4)
-		// :643-644 the drop was IL.ARS_* (foreign) with the IL.DesertNova/Cerublossom GT6 fallback —
-		// BOTH faces are unported (no port card registers them), and foreign ids stay unguessed; a
-		// null drop rides the upstream GT_BaseCrop.java:61 skip, so these two rows register nothing
-		// until a fallback-item card lands and re-seats the Seg.
-		row( 643, "Desert Nova"        , "Mithion"                , null, null, null, 6, 4, 1, 4, 5, 1, 7, 4,10, "Cactus", "Magic", "Fire", "Explosive"),
-		row( 644, "Cerublossom"        , "Mithion"                , null, null, null, 6, 4, 1, 4, 1, 1, 2, 4,10, "Flower", "Magic", "Shiny"),
+		// :643-644 the drop was IL.ARS_* (foreign) with the IL.DesertNova/Cerublossom GT6
+		// fallback — the fallback faces re-seated by task cbc-6-crop-test-faces onto the
+		// T5a-band items (GT6CropFoods meta 12010/12011, MultiItemFood.java:98-99): the
+		// drop rides the ARS count 1 and the base seed the ARS count 4, both of the GT6
+		// fallback item (the upstream get(1, fallback)/get(4, fallback) shape). The
+		// Behavior_Turn_Into swap face stays pooled (ARS foreign, the declared absence).
+		// The icons are the cbc-6 composed placeholders (assets/README.md).
+		row( 643, "Desert Nova"        , "Mithion"                , Seg.gt("gt6:food_desertnova"  , 1), null, Seg.gt("gt6:food_desertnova"  , 4), 6, 4, 1, 4, 5, 1, 7, 4,10, "Cactus", "Magic", "Fire", "Explosive"),
+		row( 644, "Cerublossom"        , "Mithion"                , Seg.gt("gt6:food_cerublossom" , 1), null, Seg.gt("gt6:food_cerublossom" , 4), 6, 4, 1, 4, 1, 1, 2, 4,10, "Flower", "Magic", "Shiny"),
 		row( 645, "Shimmerleaf"        , "Azanor"                 , Seg.mat(OP.chunkGt, MT.Hg, 1), null, null,11, 4, 1, 4, 5, 1, 4, 1, 8, "Flower", "Magic", "Shiny", "Metal", "Mercury"),
 		row( 646, "Cinderpearl"        , "Azanor"                 , Seg.van(Items.BLAZE_POWDER, 1), null, null, 8, 4, 1, 4, 3, 1, 8, 2, 8, "Flower", "Magic", "Fire", "Blaze", "Sulfur", "Ingredient"));
 	}
