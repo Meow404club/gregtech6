@@ -1,14 +1,1552 @@
 {
-  "recipes": [
+ "comment": "task b2-residual-maps - the RM.CryoMixer pour (the B2 residual data card). CENSUS ANCHOR + conversion: the ruled 37-row fruit-juice walk (Loader_Recipes_Food.java:829, the FRUIT_JUICE members of FL.java:187-224, exactly 37 upstream - the Juice base fluid :186 is NOT in the set; all 37 ride port foodB1 carriers) plus the RULING-EXTERNAL live-absorption face (main-session ruling 2026-10-01): the six Other:233-238 Cryotheum stations, each fanned by the FL.waters(1000) walk (four port members water/spdew/mnwtr/distilled_water) = 6 x 4 = 24 rows. Poured total 62 rows = 1 seated smoke row (minecraft:snowball+clay, untouched) + 37 juice + 24 Cryotheum. ENGINE FORM: addRecipe0 fluid-only rows (zero item slots - the upstream form; the loader pours fluid-input rows, the ghost guard only rejects rows with NO input leg at all); juice row = juice 125 + sweettea 125 -> icetea 250, eut 16, dur 16 (FL.Tea_Sweet = gt6:sweettea, FL.Tea_Ice = gt6:icetea). Cryotheum rows (Other:233-238 verbatim over the waters walk): :233/:235/:237 small form = dust_redstone x1 + dust_tiny_blizz x1 + niter-family dust x1, water-family x250 (FL.mul(tWater,1,4,T)) -> dust_cryotheum x2, dur 32; :234/:236/:238 big form = dust_redstone x4 + dust_tiny_blizz x4 (OM.dust(Blizz, U9*4) ladders to dustTiny x4, OM.java:460-468) + niter-family dust x4, water-family x1000 -> dust_cryotheum x8, dur 128; all eut 16. DECLARED BLOCKED / NOT POURED: MultiItemFood:848-849 (the ice-cream base walk) is ALREADY SEATED as the food-recipes-t1b JAVA band (GT6RecipesFood), not a JSON face. WALK ROW PROVENANCE: the rows carry NO per-row comment beyond the upstream anchor - provenance IS the GT6RecipeMapDataB2ResidualRowsPourTest live-walk cross-check. KJS face: datapack-domain JSON, naturally moddable, zero adaptation.",
+ "recipes": [
+  {
+   "inputs": [
     {
-      "inputs": [
-        {"item": "minecraft:snowball", "count": 1},
-        {"item": "minecraft:clay_ball", "count": 1}
-      ],
-      "fluidInputs": [{"fluid": "minecraft:water", "amount": 100}],
-      "outputs": [{"item": "minecraft:snow_block", "count": 1}],
-      "duration": 16,
-      "eut": 16
+     "item": "minecraft:snowball",
+     "count": 1
+    },
+    {
+     "item": "minecraft:clay_ball",
+     "count": 1
     }
-  ]
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 100
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:snow_block",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - kiwijuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:kiwijuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - juicelime",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicelime",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - juicelemon",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicelemon",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - juiceorange",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceorange",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - persimmonjuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:persimmonjuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - melonjuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:melonjuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - currantjuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:currantjuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - raspberryjuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:raspberryjuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - blackberryjuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:blackberryjuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - blueberryjuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:blueberryjuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - gooseberryjuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:gooseberryjuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - strawberryjuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:strawberryjuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - juiceplum",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceplum",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - juicepeach",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicepeach",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - juiceelderberry",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceelderberry",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - hellderberryjuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:hellderberryjuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - juicegrapefruit",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicegrapefruit",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - juiceapricot",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceapricot",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - juicepear",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicepear",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - grapejuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:grapejuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - grc_grapewine0",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:grc_grapewine0",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - juiceredgrape",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceredgrape",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - juicewhitegrape",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicewhitegrape",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - juiceapple",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceapple",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - grc_applecider0",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:grc_applecider0",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - juicepineapple",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicepineapple",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - juicebanana",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicebanana",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - juicecherry",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicecherry",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - juicecranberry",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicecranberry",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - cactusfruitjuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:cactusfruitjuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - mangojuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mangojuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - pomegranatejuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:pomegranatejuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - starfruitjuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:starfruitjuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - papayajuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:papayajuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - figjuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:figjuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - coconutmilk",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:coconutmilk",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Food:829 the FRUIT_JUICE walk - datejuice",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:datejuice",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:sweettea",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:icetea",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Other233 small form x waters walk - NaNO3",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_sodium_nitrate",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 250
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 2
+    }
+   ],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Other233 small form x waters walk - NaNO3",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_sodium_nitrate",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:spdew",
+     "amount": 250
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 2
+    }
+   ],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Other233 small form x waters walk - NaNO3",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_sodium_nitrate",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mnwtr",
+     "amount": 250
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 2
+    }
+   ],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Other233 small form x waters walk - NaNO3",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_sodium_nitrate",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 250
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 2
+    }
+   ],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Other233 big form x waters walk - NaNO3",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_sodium_nitrate",
+     "count": 4
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 8
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Other233 big form x waters walk - NaNO3",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_sodium_nitrate",
+     "count": 4
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:spdew",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 8
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Other233 big form x waters walk - NaNO3",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_sodium_nitrate",
+     "count": 4
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mnwtr",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 8
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Other233 big form x waters walk - NaNO3",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_sodium_nitrate",
+     "count": 4
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 8
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Other235 small form x waters walk - KNO3",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_potassium_nitrate",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 250
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 2
+    }
+   ],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Other235 small form x waters walk - KNO3",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_potassium_nitrate",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:spdew",
+     "amount": 250
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 2
+    }
+   ],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Other235 small form x waters walk - KNO3",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_potassium_nitrate",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mnwtr",
+     "amount": 250
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 2
+    }
+   ],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Other235 small form x waters walk - KNO3",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_potassium_nitrate",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 250
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 2
+    }
+   ],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Other235 big form x waters walk - KNO3",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_potassium_nitrate",
+     "count": 4
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 8
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Other235 big form x waters walk - KNO3",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_potassium_nitrate",
+     "count": 4
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:spdew",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 8
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Other235 big form x waters walk - KNO3",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_potassium_nitrate",
+     "count": 4
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mnwtr",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 8
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Other235 big form x waters walk - KNO3",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_potassium_nitrate",
+     "count": 4
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 8
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Other237 small form x waters walk - Niter",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_niter",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 250
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 2
+    }
+   ],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Other237 small form x waters walk - Niter",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_niter",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:spdew",
+     "amount": 250
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 2
+    }
+   ],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Other237 small form x waters walk - Niter",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_niter",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mnwtr",
+     "amount": 250
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 2
+    }
+   ],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Other237 small form x waters walk - Niter",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_niter",
+     "count": 1
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 250
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 2
+    }
+   ],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Other237 big form x waters walk - Niter",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_niter",
+     "count": 4
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 8
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Other237 big form x waters walk - Niter",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_niter",
+     "count": 4
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:spdew",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 8
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Other237 big form x waters walk - Niter",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_niter",
+     "count": 4
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mnwtr",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 8
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Other237 big form x waters walk - Niter",
+   "inputs": [
+    {
+     "item": "gt6:dust_redstone",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_niter",
+     "count": 4
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cryotheum",
+     "count": 8
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  }
+ ]
 }

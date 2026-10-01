@@ -165,6 +165,15 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		// GT6RecipeMapDataB2cSawingRowsPourTest ratchet. Merge order: sawing -> beam-consume-increment
 		// (pending branch, its 35 beam rows tail-append the same array) -> this card — the union rebase
 		// keeps every segment, neither rewrites another's line (the concrete lang-seam precedent).
+		// task b2-residual-maps — the six B2 residual maps (juicer 22 / roasting 15 / lightning 8 /
+		// cryomixer 62 / loom 27 / unboxinator 2 file rows) ride the JSON seam, equally OUT of this
+		// offline snapshot walk and pinned per-file by GT6RecipeMapDataB2ResidualRowsPourTest (the
+		// census ratchet + the loom ANY.Iron/ANY.Steel live-walk recompute). The card also carries
+		// the roasting DECLARED CORRECTION: the seated Boudouard rows' gas amounts were rewritten
+		// from the 432-family (the liquid-arm U=144 misapplied to the gas accessor) to the
+		// gas-native 1000 mB/U face (3000/6000/12000 -> 4000/8000/16000), with the
+		// GT6RoastingRowsPourTest pins updated in the same commit (the declared out-of-boundary edit).
+		// Merge order: ... -> sawing -> b2-residual — this segment tail-appends after sawing's.
 		SNAPSHOT.put("CUTTER", 0);
 		SNAPSHOT.put("BOXINATOR", 0);
 		SNAPSHOT.put("UNBOXINATOR", 1); // +1 task cbc-5-crop-consumption — the :251 baleWheat unpack (the hay block -> 9 wheat, the LoaderItemList:761 Crop_Wheat alias)
