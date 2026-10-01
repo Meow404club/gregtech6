@@ -43,7 +43,7 @@ import net.minecraft.world.level.material.Fluids;
 /**
  * The recipe-data-b2c-generify row-stock pour test (the B2c-roll posture, scaled + the
  * weld-casing-increment re-increment + the beam-consume-increment beam face): the two
- * handler-expansion map files of this card — generifier (9117 rows: 8818 walk + 238 stone
+ * handler-expansion map files of this card — generifier (9123 rows: 8818 walk + 238 stone
  * family + 39 static items + 15 fluids + the 128 weld-casing-increment casing rows + the
  * 7 beam rows of task beam-consume-increment, Loader_Recipes_Woods.java:190 — the port beam
  * universe generifying into the IL.Beam target gt6:wood_beam; the :66 IL.Beam self-row is a
@@ -67,7 +67,7 @@ public class GT6RecipeMapDataB2cGenerifyRowsPourTest extends GTRecipesOfflineTes
 
 	/** The per-map census of this card: file key -> expected total rows (zero skips). */
 	private static final Map<String, Integer> CENSUS = Map.of(
-			"generifier", 9117, // 8818 walk + 238 stone family + 39 static items + 15 fluids + 7 beam (+128: the weld-casing-increment re-increment, +7: the beam-consume-increment beam face)
+			"generifier", 9123, // 8818 walk + 238 stone family + 39 static items + 15 fluids + 7 beam + 6 qol stripped (+128: the weld-casing-increment re-increment, +7: the beam-consume-increment beam face, +6: the stripped-log-qol stripped-beam rows)
 			"polarizer", 887);  // 76 Nd + 583 Fe-walk + 228 Steel-walk (+44: the weld-casing-increment re-increment)
 
 	/** The uncommented walk rows per map — the frozen walk snapshot sizes. */
@@ -89,6 +89,7 @@ public class GT6RecipeMapDataB2cGenerifyRowsPourTest extends GTRecipesOfflineTes
 			Map.entry("BlockStones.java:452", 17), Map.entry("BlockStones.java:460", 17), Map.entry("BlockStones.java:468", 17),
 			Map.entry("BlockStones.java:477", 17), Map.entry("BlockStones.java:486", 17),
 			Map.entry("Loader_Recipes_Woods.java:190", 7), // task beam-consume-increment: the 7 port beams -> gt6:wood_beam
+			Map.entry("task stripped-log-qol", 6), // the stripped-log beam-ification QoL rows (task stripped-log-qol)
 			Map.entry("Loader_Recipes_Temporary.java:674", 1), Map.entry("Loader_Recipes_Temporary.java:675", 1),
 			Map.entry("Loader_Recipes_Temporary.java:676", 1), Map.entry("Loader_Recipes_Temporary.java:677", 1),
 			Map.entry("Loader_Recipes_Temporary.java:678", 1), Map.entry("Loader_Recipes_Temporary.java:680", 1),
