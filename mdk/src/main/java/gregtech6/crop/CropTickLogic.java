@@ -1,21 +1,19 @@
 package gregtech6.crop;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.biome.Biome;
 
 /**
- * The crop tick pure functions (ADR-CB5: every formula takes an injected {@link RandomSource}
- * and {@link CropTileView}/plain inputs  --  no Level, no BlockPos, no BE state  --  so growth
- * correctness is offline seeded-pinnable and the 256t cycle never needs a live server).
+ * The crop world-INPUT arithmetic (ADR-CB5: the pure functions over the terrain reads the BE
+ * shell gathers -- biome climate, farmland moisture, dirt stack, occlusion, sky). The gameplay
+ * mechanics (growth/weed/harvest/pick/trample) are {@link CropMath}'s since the cbc-2 merge
+ * (the single-engine ruling -- this class used to carry a parallel engine half before the
+ * cbc-1 -> cbc-2 integration retired it).
  *
  * <p>Every formula is the decompiled 1.12 TileEntityCrop verbatim (tmp/harvest/ic2-crops/
- * reference/ic2-source/decompiled/ic2/core/crop/TileEntityCrop.java  --  the ADR-CB1 mechanism
+ * reference/ic2-source/decompiled/ic2/core/crop/TileEntityCrop.java -- the ADR-CB1 mechanism
  * authority, GTNH 1.7.10 wiki cross-verified per research.crop-breeding), with the source
- * line anchor per member. The world READS (biome lookup, farmland scan, sky check) stay in
- * the BE shell; only the arithmetic lives here.
+ * line anchor per member.
  */
 public final class CropTickLogic {
 
@@ -85,126 +83,16 @@ public final class CropTickLogic {
 	 * vanilla biome (BiomeDictionary-only types)  --  unported, modded biomes fall out at 0 like
 	 * the PLAINS row. A null key (offline synthetic holders) = 0.
 	 */
-	public static int nutrientBiomeBonus(net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome> aBiome) {
+	public static int nutrientBiomeBonus(ResourceKey<Biome> aBiome) {
 		if (aBiome == null) return 0;
 		Integer tBonus = NUTRIENT_ROWS.get(aBiome);
 		return tBonus == null ? 0 : tBonus;
 	}
 
-	// -------------------------------------------------------------- the 256t cycle pieces
-
-	/**
-	 * The growth evaluation  --  TileEntityCrop.performGrowthTick :285-318 verbatim: base
-	 * {@code 3 + rand(7) + statGrowth}; minimum {@code max(0, (tier-1)*4 + G + Ga + Re)};
-	 * provided {@code weightInfluences(H,N,A) * 5}; surplus scales up, deficit
-	 * {@code aux = deficit*4} scales down and {@code aux > 100 && rand(32) > Re} kills the
-	 * plant (the caller applies {@code reset()}). Returns true when the plant died.
-	 */
-	public static boolean growthTick(CropTileView aCrop, CropCardView aCard, RandomSource aRandom) {
-		if (aCard == null) return false;
-		int tBaseGrowth = 3 + aRandom.nextInt(7) + aCrop.getStatGrowth();
-		int tMinimumQuality = (aCard.tier() - 1) * 4 + aCrop.getStatGrowth() + aCrop.getStatGain() + aCrop.getStatResistance();
-		tMinimumQuality = Math.max(0, tMinimumQuality);
-		int tProvidedQuality = aCard.weightInfluences(
-				aCrop.getTerrainHumidity(), aCrop.getTerrainNutrients(), aCrop.getTerrainAirQuality()) * 5;
-		int tTotalGrowth;
-		if (tProvidedQuality >= tMinimumQuality) {
-			tTotalGrowth = tBaseGrowth * (100 + (tProvidedQuality - tMinimumQuality)) / 100;
-		} else {
-			int tAux = (tMinimumQuality - tProvidedQuality) * 4;
-			if (tAux > 100 && aRandom.nextInt(32) > aCrop.getStatResistance()) {
-				return true; // the caller resets  --  the :301 reset() ride-along
-			}
-			tTotalGrowth = tBaseGrowth * (100 - tAux) / 100;
-			tTotalGrowth = Math.max(0, tTotalGrowth);
-		}
-		aCrop.setGrowthPoints(aCrop.getGrowthPoints() + tTotalGrowth);
-		return false;
-	}
-
-	/**
-	 * The empty-tile weed branch  --  TileEntityCrop.performTick :240-252 verbatim (the
-	 * crossing/spreading attempt arms ahead of it are cbc-2's engine hooks). RNG order is
-	 * contractual for the seeded pins: nextInt(100) first; the Weed-EX drain nextInt(10)
-	 * only when the tile is protected. Weed-EX > 0 fully suppresses (:241).
-	 */
-	public enum WeedRoll { NOTHING, DRAIN_WEED_EX, BECOME_WEED }
-
-	public static WeedRoll weedSelfGenRoll(int aStorageWeedEX, RandomSource aRandom) {
-		if (aRandom.nextInt(100) != 0 || aStorageWeedEX > 0) {
-			if (aStorageWeedEX > 0 && aRandom.nextInt(10) == 0) return WeedRoll.DRAIN_WEED_EX;
-			return WeedRoll.NOTHING;
-		}
-		return WeedRoll.BECOME_WEED;
-	}
-
-	/**
-	 * The weed-spread work gate  --  TileEntityCrop :280 verbatim
-	 * {@code crop.isWeed(this) && rand(50) - statGrowth <= 2}. The work itself (neighbor
-	 * conversion/grass seeding) is cbc-2's hook; this gate only paces it.
-	 */
-	public static boolean weedWorkDue(CropTileView aCrop, CropCardView aCard, RandomSource aRandom) {
-		return aCard.isWeed(aCrop) && aRandom.nextInt(50) - aCrop.getStatGrowth() <= 2;
-	}
-
-	/**
-	 * TileEntityCrop.performHarvest :793-823 verbatim  --  requires canBeHarvested; the count is
-	 * the Gaussian {@code round(gauss * chance * 0.6827 + chance)} over
-	 * {@code dropGainChance() * 1.03^Ga}; each gain item rolls {@code rand(100) <= Ga  ->  +1}
-	 * (:815). Returns null when nothing was harvestable (the :821 null contract).
-	 */
-	public static List<ItemStack> harvestGains(CropTileView aCrop, CropCardView aCard, RandomSource aRandom) {
-		if (!aCard.canBeHarvested(aCrop)) return null;
-		double tChance = aCard.dropGainChance() * Math.pow(1.03, aCrop.getStatGain());
-		int tDropCount = (int) Math.max(0L, Math.round(aRandom.nextGaussian() * tChance * 0.6827 + tChance));
-		List<ItemStack> tRet = new ArrayList<>(tDropCount);
-		for (int i = 0; i < tDropCount; i++) {
-			for (ItemStack tDrop : aCard.gains(aCrop)) {
-				if (!tDrop.isEmpty() && aRandom.nextInt(100) <= aCrop.getStatGain()) {
-					tDrop.grow(1);
-				}
-				tRet.add(tDrop);
-			}
-		}
-		return tRet;
-	}
-
-	/**
-	 * TileEntityCrop.pick :731-756 verbatim  --  the seed count only (the caller builds stacks
-	 * from {@code card.seeds} and resets): mature  ->  the (chance+1)*0.8 first roll + the
-	 * Ga-tapered second roll; immature  ->  the single 1.5x roll.
-	 */
-	public static int pickSeedCount(CropTileView aCrop, CropCardView aCard, RandomSource aRandom) {
-		if (aCard == null) return 0;
-		boolean tBonus = aCard.canBeHarvested(aCrop);
-		float tFirstChance = (float) (aCard.dropSeedChance(aCrop) * Math.pow(1.1, aCrop.getStatResistance()));
-		int tDropCount = 0;
-		if (tBonus) {
-			if (aRandom.nextFloat() <= (tFirstChance + 1.0F) * 0.8F) tDropCount++;
-			float tChance = aCard.dropSeedChance(aCrop) + aCrop.getStatGrowth() / 100.0F;
-			for (int index = 23; index < aCrop.getStatGain(); index++) tChance *= 0.95F;
-			if (aRandom.nextFloat() <= tChance) tDropCount++;
-		} else if (aRandom.nextFloat() <= tFirstChance * 1.5F) {
-			tDropCount++;
-		}
-		return tDropCount;
-	}
-
-	/**
-	 * TileEntityCrop.onEntityCollision :485-499 verbatim  --  the IC2 CropCard default gate
-	 * {@code LivingBase && isSprinting} (ic2/api/crops/CropCard.java :165-167, the GT6 cards
-	 * inherit it; the caller does the instanceof) rides in as the flag: 1% x
-	 * {@code rand(40) > statResistance} tramples (the caller resets + farmland -> dirt).
-	 */
-	public static boolean trampleDue(CropTileView aCrop, boolean aSprintingLivingEntity, RandomSource aRandom) {
-		if (!aSprintingLivingEntity) return false;
-		return aRandom.nextInt(100) == 0 && aRandom.nextInt(40) > aCrop.getStatResistance();
-	}
-
 	// -------------------------------------------------------------- the nutrient table rows
 
 	/** The vanilla-biome adaptation of the IC2Crops :131-143 table (see {@link #nutrientBiomeBonus}). */
-	private static final java.util.Map<net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome>, Integer> NUTRIENT_ROWS = java.util.Map.ofEntries(
+	private static final java.util.Map<ResourceKey<Biome>, Integer> NUTRIENT_ROWS = java.util.Map.ofEntries(
 			// JUNGLE +10
 			row(net.minecraft.world.level.biome.Biomes.JUNGLE, 10),
 			row(net.minecraft.world.level.biome.Biomes.BAMBOO_JUNGLE, 10),
@@ -253,8 +141,8 @@ public final class CropTickLogic {
 			row(net.minecraft.world.level.biome.Biomes.WARPED_FOREST, -10),
 			row(net.minecraft.world.level.biome.Biomes.BASALT_DELTAS, -10));
 
-	private static java.util.Map.Entry<net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome>, Integer> row(
-			net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome> aKey, int aBonus) {
+	private static java.util.Map.Entry<ResourceKey<Biome>, Integer> row(
+			ResourceKey<Biome> aKey, int aBonus) {
 		return java.util.Map.entry(aKey, aBonus);
 	}
 }

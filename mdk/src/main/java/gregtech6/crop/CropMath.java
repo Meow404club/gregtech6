@@ -332,8 +332,19 @@ public final class CropMath {
 		return -1;
 	}
 
-	/** Trample roll — port of onEntityCollision TileEntityCrop.java:492-498; block change stays with the BE. */
+	/**
+	 * Trample roll — port of onEntityCollision TileEntityCrop.java:492-498; block change stays
+	 * with the BE. The card hook rides first ({@code crop.onEntityCollision} — the sprint check
+	 * is caller-side; CropWeed answers false and never rolls, no RNG consumed on that arm).
+	 */
 	public static boolean isTrampled(@Nullable GT6CropCard aCard, CropTileView aCrop, RandomSource aRNG) {
-		return aCard != null && aRNG.nextInt(100) == 0 && aRNG.nextInt(40) > aCrop.statResistance();
+		return aCard != null && aCard.entityTramples()
+				&& aRNG.nextInt(100) == 0 && aRNG.nextInt(40) > aCrop.statResistance();
+	}
+
+	/** The caller-side sprint gate overload (CropCard :166 default = a living, sprinting entity);
+	 *  no RNG is consumed on the walk-by arm. */
+	public static boolean isTrampled(@Nullable GT6CropCard aCard, CropTileView aCrop, boolean aSprintingLiving, RandomSource aRNG) {
+		return aSprintingLiving && isTrampled(aCard, aCrop, aRNG);
 	}
 }

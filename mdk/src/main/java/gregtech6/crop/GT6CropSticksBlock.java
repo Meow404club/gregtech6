@@ -169,7 +169,7 @@ public class GT6CropSticksBlock extends BaseEntityBlock {
 	@Override
 	public void onRemove(BlockState aOldState, Level aLevel, BlockPos aPos, BlockState aNewState, boolean aIsMoving) {
 		if (!aOldState.is(aNewState.getBlock()) && !aLevel.isClientSide
-				&& aLevel.getBlockEntity(aPos) instanceof GT6CropBlockEntity tCrop && tCrop.getCrop() != null) {
+				&& aLevel.getBlockEntity(aPos) instanceof GT6CropBlockEntity tCrop && tCrop.crop() != null) {
 			tCrop.pick(aLevel, aPos);
 		}
 		super.onRemove(aOldState, aLevel, aPos, aNewState, aIsMoving);

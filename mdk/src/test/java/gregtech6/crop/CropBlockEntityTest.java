@@ -74,29 +74,29 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 	// ---------------------------------------------------------------- fixtures
 
 	/** The grain-shaped fixture card  --  vanilla wheat stacks (offline-constructible). */
-	static final CropCardView WHEATISH = new GT6CropGrains.GrainCard("rye", "Binnie", "food_crop_rye",
+	static final GT6CropCard WHEATISH = new GT6CropGrains.GrainCard("rye", "Binnie", "food_crop_rye",
 			1, 7, 2, 7, new int[] {0, 4, 0, 0, 2}, new String[] {"Wheat", "Food", "Grain"}) {
 		@Override
-		public List<ItemStack> gains(CropTileView aCrop) {
-			return List.of(new ItemStack(Items.WHEAT));
+		public ItemStack pickGain(CropTileView aCrop, RandomSource aRNG) {
+			return new ItemStack(Items.WHEAT);
 		}
 
 		@Override
-		public ItemStack seeds(CropTileView aCrop) {
+		public ItemStack seedStack() {
 			return new ItemStack(Items.WHEAT_SEEDS);
 		}
 	};
 
 	/** The kill-arm fixture: tier 10  ->  aux 144 > 100 vs the death roll. */
-	static final CropCardView DEADLY = new GT6CropGrains.GrainCard("deadly", "test", "food_crop_rye",
+	static final GT6CropCard DEADLY = new GT6CropGrains.GrainCard("deadly", "test", "food_crop_rye",
 			10, 7, 2, 7, new int[] {0, 0, 0, 0, 0}, new String[0]) {
 		@Override
-		public List<ItemStack> gains(CropTileView aCrop) {
-			return List.of(new ItemStack(Items.WHEAT));
+		public ItemStack pickGain(CropTileView aCrop, RandomSource aRNG) {
+			return new ItemStack(Items.WHEAT);
 		}
 
 		@Override
-		public ItemStack seeds(CropTileView aCrop) {
+		public ItemStack seedStack() {
 			return new ItemStack(Items.WHEAT_SEEDS);
 		}
 	};
@@ -275,7 +275,7 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		String[][] tRows = {
 				{"rye", "Binnie"}, {"barley", "Glitchfiend"}, {"oats", "Pam"}, {"rice", "Ellpeck"}};
 		for (String[] tRow : tRows) {
-			CropCardView tCard = GT6CropGrains.crop(tRow[0]);
+			GT6CropCard tCard = GT6CropGrains.crop(tRow[0]);
 			assertNotNull(tCard, tRow[0] + " registered");
 			assertTrue(tCard instanceof GT6CropGrains.GrainCard, "the GrainCard data form");
 			GT6CropGrains.GrainCard tGrain = (GT6CropGrains.GrainCard) tCard;
@@ -283,15 +283,13 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 			assertEquals(1, tCard.tier(), tRow[0] + " tier 1");
 			assertEquals(7, tCard.maxSize(), tRow[0] + " size 7");
 			assertEquals(7, tCard.harvestSize(), tRow[0] + " harvest size 7");
-			assertEquals(2, tCard.afterHarvestSize(), tRow[0] + " after-harvest 2");
-			assertEquals(200, tCard.growthDuration(null), tRow[0] + " tier*200 (CropCard :68-70)");
-			int[] tStats = tCard.properties();
-			assertEquals(5, tStats.length, tRow[0] + " five stats");
-			assertEquals(0, tStats[0], tRow[0] + " Chem 0");
-			assertEquals(4, tStats[1], tRow[0] + " Food 4");
-			assertEquals(0, tStats[2], tRow[0] + " Def 0");
-			assertEquals(0, tStats[3], tRow[0] + " Color 0");
-			assertEquals(2, tStats[4], tRow[0] + " Weed 2");
+			assertEquals(2, tCard.sizeAfterHarvest(), tRow[0] + " after-harvest 2");
+			assertEquals(200, tCard.growthDuration(), tRow[0] + " tier*200 (CropCard :68-70)");
+			assertEquals(0, tCard.stat(0), tRow[0] + " Chem 0");
+			assertEquals(4, tCard.stat(1), tRow[0] + " Food 4");
+			assertEquals(0, tCard.stat(2), tRow[0] + " Def 0");
+			assertEquals(0, tCard.stat(3), tRow[0] + " Color 0");
+			assertEquals(2, tCard.stat(4), tRow[0] + " Weed 2");
 			assertEquals(3, tCard.attributes().length, tRow[0] + " Wheat+Food+Grain");
 			assertEquals("Wheat", tCard.attributes()[0], tRow[0] + " attr head");
 		}
@@ -305,13 +303,13 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		assertTrue(WHEATISH.canGrow(tTile), "size 1 < 7 grows");
 		assertFalse(WHEATISH.canBeHarvested(tTile), "size 1 < harvestSize 7 refuses");
 		assertFalse(WHEATISH.canCross(tTile), "size+2=3 > 7 false (GT_BaseCrop :113-115)");
-		tTile.setCurrentSize(5);
+		tTile.setSize(5);
 		assertTrue(WHEATISH.canGrow(tTile), "5 < 7 grows");
 		assertFalse(WHEATISH.canBeHarvested(tTile), "5 < 7 refuses");
 		assertFalse(WHEATISH.canCross(tTile), "7 > 7 false");
-		tTile.setCurrentSize(6);
+		tTile.setSize(6);
 		assertTrue(WHEATISH.canCross(tTile), "8 > 7  --  the cross gate opens at 6");
-		tTile.setCurrentSize(7);
+		tTile.setSize(7);
 		assertFalse(WHEATISH.canGrow(tTile), "maxSize stops growth");
 		assertTrue(WHEATISH.canBeHarvested(tTile), "mature harvests");
 	}
@@ -345,13 +343,13 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		tTile.setTerrainAirQuality(5);
 
 		drive(tTile, tLevel, 255);
-		assertEquals(0, tTile.getGrowthPoints(), "no cycle before tick 256");
+		assertEquals(0, tTile.growthPoints(), "no cycle before tick 256");
 		drive(tTile, tLevel, 1);
 		// terrain 4/3/5  ->  provided = 12*5 = 60, minimum = 0 (tier 1, stats 0)  ->  base*(160)/100
 		RandomSource tMirror = RandomSource.create(42);
 		int tBaseGrowth = 3 + tMirror.nextInt(7);
 		int tExpected = tBaseGrowth * (100 + 60) / 100;
-		assertEquals(tExpected, tTile.getGrowthPoints(), "the first cycle = the transcribed formula under seed 42");
+		assertEquals(tExpected, tTile.growthPoints(), "the first cycle = the transcribed formula under seed 42");
 	}
 
 	/** The maturity drive  --  plant  ->  cycles  ->  size 7  ->  harvestable (the acceptance walk). */
@@ -363,9 +361,9 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		assertTrue(tTile.tryPlantIn(WHEATISH, 1, 1, 1, 1, 0), "the base-seed 1/1/1 stats");
 		// base growth ~13/cycle at the farmland rig  ->  ~16 cycles per size-up  ->  ~93 total
 		drive(tTile, tLevel, 256 * 150);
-		assertEquals(7, tTile.getCurrentSize(), "mature after the offline drive");
+		assertEquals(7, tTile.size(), "mature after the offline drive");
 		assertTrue(WHEATISH.canBeHarvested(tTile), "harvestable at 7");
-		assertTrue(tTile.getGrowthPoints() < 200, "the counter rests below duration at maturity");
+		assertTrue(tTile.growthPoints() < 200, "the counter rests below duration at maturity");
 	}
 
 	/** The deficit arms  --  :296-307  --  slowed growth and the quality death (aux > 100, rand(32) > Re). */
@@ -380,7 +378,7 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		tTile.setTerrainAirQuality(0);
 		// Re 0: rand(32) > 0 dies unless rand(32)==0 (1/32 survive)
 		drive(tTile, tLevel, 256);
-		assertTrue(tTile.getCrop() == null && tTile.getCurrentSize() == 1 || tTile.getGrowthPoints() == 0,
+		assertTrue(tTile.crop() == null && tTile.size() == 1 || tTile.growthPoints() == 0,
 				"the first deficit cycle either kills or rolls the 1/32 survive");
 
 		// the high-Re survival arm: Re 31  ->  rand(32) > 31 impossible  ->  survives, slowed only
@@ -390,8 +388,8 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		tHardy.setTerrainNutrients(0);
 		tHardy.setTerrainAirQuality(0);
 		drive(tHardy, tLevel, 256 * 3);
-		assertNotNull(tHardy.getCrop(), "Re 31 survives the aux>100 band");
-		assertEquals(0, tHardy.getGrowthPoints(), "aux 144  ->  the (100-144)/100 floor keeps growth at 0");
+		assertNotNull(tHardy.crop(), "Re 31 survives the aux>100 band");
+		assertEquals(0, tHardy.growthPoints(), "aux 144  ->  the (100-144)/100 floor keeps growth at 0");
 	}
 
 	// ---------------------------------------------------------------- terrain three
@@ -440,32 +438,32 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		tTile.updateTerrainNutrients(tLevel, POS);
 		tTile.updateTerrainAirQuality(tLevel, POS);
 		int tSwampBonus = tTile.biomeHumidityBonus();
-		assertEquals(tSwampBonus + 2 + 0 + 0, tTile.getTerrainHumidity(),
+		assertEquals(tSwampBonus + 2 + 0 + 0, tTile.terrainHumidity(),
 				"moist farmland +2, storage 0  ->  the (24)/25 term is 0 (the bonus rides the :176-179 face; the FORMULA pins live in the pure test)");
 		// the :551 scan counts CONSECUTIVE dirt from below(1) -- the farmland seat breaks it at 0
-		assertEquals(10 + 0 + 0, tTile.getTerrainNutrients(), "swamp +10, farmland below breaks the dirt walk");
+		assertEquals(10 + 0 + 0, tTile.terrainNutrients(), "swamp +10, farmland below breaks the dirt walk");
 		// the pure dirt stack arm: below(1..4) all dirt -> +4
 		for (int i = 1; i <= 4; i++) tLevel.mStates.put(POS.below(i), Blocks.DIRT.defaultBlockState());
 		tTile.updateTerrainNutrients(tLevel, POS);
-		assertEquals(10 + 4 + 0, tTile.getTerrainNutrients(), "swamp +10, four dirt +4, storage 0");
+		assertEquals(10 + 4 + 0, tTile.terrainNutrients(), "swamp +10, four dirt +4, storage 0");
 		// the corner-2x2 window (x-1..x, z-1..z): this rig answers getBlockEntity() null, so the
 		// tile's own cell rides the AIR face and nothing counts -- fresh rests at 9, fresh/2 = 4.
 		// POS.y=3: floor((3-40)/15) clamps to 0; sky +4  ->  0+4+4 = 8
-		assertEquals(8, tTile.getTerrainAirQuality(), "the open-sky read (fresh 9, the :515 head)");
+		assertEquals(8, tTile.terrainAirQuality(), "the open-sky read (fresh 9, the :515 head)");
 		// one wall stone  ->  fresh 8  ->  8/2 = 4 (the half-floor holds)
 		tLevel.mStates.put(new BlockPos(POS.getX() - 1, POS.getY(), POS.getZ() - 1), Blocks.STONE.defaultBlockState());
 		tTile.updateTerrainAirQuality(tLevel, POS);
-		assertEquals(0 + 4 + 4, tTile.getTerrainAirQuality(), "one occluded window cell (fresh 8, the half-floor holds)");
+		assertEquals(0 + 4 + 4, tTile.terrainAirQuality(), "one occluded window cell (fresh 8, the half-floor holds)");
 		// wall the remaining reachable window cells (the rig placed 3 stones; POS itself is the
 		// 4th window cell and rides AIR here)  ->  fresh 6  ->  6/2 = 3
 		tLevel.mStates.put(new BlockPos(POS.getX() - 1, POS.getY(), POS.getZ()), Blocks.STONE.defaultBlockState());
 		tLevel.mStates.put(new BlockPos(POS.getX(), POS.getY(), POS.getZ() - 1), Blocks.STONE.defaultBlockState());
 		tTile.updateTerrainAirQuality(tLevel, POS);
-		assertEquals(0 + 3 + 4, tTile.getTerrainAirQuality(), "the walled window (fresh 6)");
+		assertEquals(0 + 3 + 4, tTile.terrainAirQuality(), "the walled window (fresh 6)");
 		// buried: the sky flag off
 		tLevel.mSky = false;
 		tTile.updateTerrainAirQuality(tLevel, POS);
-		assertEquals(0 + 3 + 0, tTile.getTerrainAirQuality(), "canSeeSky off  ->  no +4");
+		assertEquals(0 + 3 + 0, tTile.terrainAirQuality(), "canSeeSky off  ->  no +4");
 	}
 
 	// ---------------------------------------------------------------- weed + weedEX
@@ -473,25 +471,33 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 	/** :240-252  --  Weed-EX fully suppresses the 1% self-gen and drains at 1/10 per protected cycle. */
 	@Test
 	public void weedExSuppressesAndDrainsSeeded() {
-		// the pure roll: protected tiles never roll BECOME_WEED, and the drain is the 1/10 arm
+		// the engine roll over empty NON-crossing tiles (tickCrop consumes exactly the
+		// weedSelfGenRoll sequence there: the crossing attempts short-circuit before any RNG):
+		// protected tiles never roll BECOME_WEED, and the drain is the 1/10 arm
+		CropLevel tLevel = new CropLevel();
+		GT6CropBlockEntity tTile = tile(tLevel);
+		tTile.setStorages(0, 0, 100);
 		int tBecame = 0;
 		int tDrained = 0;
 		RandomSource tRandom = RandomSource.create(7);
 		for (int i = 0; i < 10000; i++) {
-			CropTickLogic.WeedRoll tRoll = CropTickLogic.weedSelfGenRoll(100, tRandom);
-			switch (tRoll) {
-				case BECOME_WEED -> tBecame++;
-				case DRAIN_WEED_EX -> tDrained++;
-				case NOTHING -> {}
-			}
+			int tBefore = tTile.storageWeedEx();
+			CropMath.tickCrop(tTile, List.of(), tRandom);
+			if (tTile.crop() != null) tBecame++;
+			if (tTile.storageWeedEx() < tBefore) tDrained++;
+			tTile.clear();
+			tTile.setStorages(0, 0, 100);
 		}
 		assertEquals(0, tBecame, "Weed-EX > 0 fully suppresses (:241)");
 		assertTrue(tDrained > 900 && tDrained < 1100, "the 1/10 drain band, got " + tDrained);
 
+		GT6CropBlockEntity tBareTile = tile(tLevel);
 		int tBecameBare = 0;
 		RandomSource tBare = RandomSource.create(7);
 		for (int i = 0; i < 10000; i++) {
-			if (CropTickLogic.weedSelfGenRoll(0, tBare) == CropTickLogic.WeedRoll.BECOME_WEED) tBecameBare++;
+			CropMath.tickCrop(tBareTile, List.of(), tBare);
+			if (tBareTile.crop() != null) tBecameBare++;
+			tBareTile.clear();
 		}
 		assertTrue(tBecameBare > 80 && tBecameBare < 120, "the 1% band unprotected, got " + tBecameBare);
 	}
@@ -509,11 +515,11 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		}
 		CropLevel tLevel = new CropLevel();
 		GT6CropBlockEntity tTile = tile(tLevel);
-		tTile.setStorageWeedEX(150);
+		tTile.setStorages(0, 0, 150);
 		drive(tTile, tLevel, 256 * 200); // 200 cycles
-		assertEquals(tStorage, tTile.getStorageWeedEX(), "the shell's RNG walk = the transcription under seed 42");
-		assertTrue(tTile.getStorageWeedEX() < 150, "the storage actually drains");
-		assertNull(tTile.getCrop(), "an empty tile stays empty under Weed-EX");
+		assertEquals(tStorage, tTile.storageWeedEx(), "the shell's RNG walk = the transcription under seed 42");
+		assertTrue(tTile.storageWeedEx() < 150, "the storage actually drains");
+		assertNull(tTile.crop(), "an empty tile stays empty under Weed-EX");
 	}
 
 	// ---------------------------------------------------------------- harvest + pick
@@ -530,8 +536,8 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		for (ItemStack tDrop : tDrops) {
 			assertEquals(Items.WHEAT, tDrop.getItem(), "the gains face");
 		}
-		assertEquals(2, tTile.getCurrentSize(), "size  ->  afterHarvestSize (the :817 reset)");
-		assertNotNull(tTile.getCrop(), "harvest keeps the plant");
+		assertEquals(2, tTile.size(), "size  ->  afterHarvestSize (the :817 reset)");
+		assertNotNull(tTile.crop(), "harvest keeps the plant");
 
 		// the immature refusal  --  GT_BaseCrop :149
 		GT6CropBlockEntity tYoung = tile(tLevel);
@@ -556,9 +562,9 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		for (ItemEntity tDrop : tLevel.mDrops) {
 			assertTrue(tDrop.getItem().is(Items.WHEAT_SEEDS), "the seeds face built BEFORE reset");
 		}
-		assertNull(tTile.getCrop(), "the :764 reset");
-		assertEquals(1, tTile.getCurrentSize(), "reset to size 1");
-		assertEquals(0, tTile.getStatGrowth(), "stats wiped");
+		assertNull(tTile.crop(), "the :764 reset");
+		assertEquals(1, tTile.size(), "reset to size 1");
+		assertEquals(0, tTile.statGrowth(), "stats wiped");
 
 		// the size-1 band: dropSeedChance = 0  ->  the only route is the exact-zero float (rare)
 		GT6CropBlockEntity tBare = tile(tLevel);
@@ -578,8 +584,8 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		assertTrue(tTile.tryPlantIn(WHEATISH, 1, 1, 1, 1, 0), "plant on an empty stick");
 		// the :465 gate = null card || weed card || crossingBase -- an OCCUPIED tile replants (the :473 reset)
 		assertTrue(tTile.tryPlantIn(WHEATISH, 2, 3, 4, 5, 1), "an occupied tile replants over the reset");
-		assertEquals(2, tTile.getCurrentSize(), "the replant took");
-		assertEquals(3, tTile.getStatGrowth(), "the replanted stats took");
+		assertEquals(2, tTile.size(), "the replant took");
+		assertEquals(3, tTile.statGrowth(), "the replanted stats took");
 		// a planted tile refuses the crossing arm (:414 gate) and refuses foreign clicks
 		assertFalse(tTile.rightClick(tLevel, POS, new ItemStack(stickItem()), false), "the stick arm needs an empty tile");
 		assertFalse(tTile.rightClick(tLevel, POS, ItemStack.EMPTY, false), "an empty hand on an immature crop consumes nothing");
@@ -588,24 +594,24 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		ItemStack tGrain = new ItemStack(grainItem(), 3);
 		assertTrue(tEmpty.rightClick(tLevel, POS, tGrain, false), "the base-seed arm consumed");
 		assertEquals(2, tGrain.getCount(), "one grain consumed (the :454 shrink)");
-		assertNotNull(tEmpty.getCrop(), "planted from the item");
-		assertEquals(1, tEmpty.getCurrentSize(), "size 1 (GT_BaseCrop.java:77)");
-		assertEquals(1, tEmpty.getStatGrowth(), "G 1");
-		assertEquals(1, tEmpty.getStatGain(), "Ga 1");
-		assertEquals(1, tEmpty.getStatResistance(), "Re 1");
+		assertNotNull(tEmpty.crop(), "planted from the item");
+		assertEquals(1, tEmpty.size(), "size 1 (GT_BaseCrop.java:77)");
+		assertEquals(1, tEmpty.statGrowth(), "G 1");
+		assertEquals(1, tEmpty.statGain(), "Ga 1");
+		assertEquals(1, tEmpty.statResistance(), "Re 1");
 
 		// the crossing arm on a second empty tile  --  creative consumes nothing  --  and the downgrade
 		GT6CropBlockEntity tCross = tile(tLevel);
 		tLevel.mStates.put(POS, sBlock.defaultBlockState()); // the carrier state (the sync face walks the live state)
 		ItemStack tSticks = new ItemStack(stickItem(), 4);
 		assertTrue(tCross.rightClick(tLevel, POS, tSticks, true), "the stick arm consumed");
-		assertTrue(tCross.isCrossingBase(), "crossingBase set");
+		assertTrue(tCross.crossingBase(), "crossingBase set");
 		assertEquals(4, tSticks.getCount(), "creative does not consume (the :415 gate)");
 		assertEquals(Boolean.TRUE, tLevel.getBlockState(POS).getValue(GT6CropSticksBlock.CROSSING), "the blockstate carrier synced");
 		assertFalse(tCross.tryPlantIn(WHEATISH, 1, 1, 1, 1, 0), "a crossing tile refuses plants (:465)");
 		tLevel.mDrops.clear();
 		tCross.leftClick(tLevel, POS);
-		assertFalse(tCross.isCrossingBase(), "the :379-383 downgrade");
+		assertFalse(tCross.crossingBase(), "the :379-383 downgrade");
 		assertEquals(Boolean.FALSE, tLevel.getBlockState(POS).getValue(GT6CropSticksBlock.CROSSING), "the blockstate carrier re-synced");
 		assertEquals(1, tLevel.mDrops.size(), "one stick spills");
 		assertTrue(tLevel.mDrops.get(0).getItem().is(stickItem()), "the spill face");
@@ -622,7 +628,7 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		// Re 40: rand(40) > 40 impossible  --  the shield face
 		int tTrampled = 0;
 		for (int i = 0; i < 5000; i++) {
-			if (CropTickLogic.trampleDue(tTile, true, tLevel.getRandom())) tTrampled++;
+			if (CropMath.isTrampled(WHEATISH, tTile, true, tLevel.getRandom())) tTrampled++;
 		}
 		assertEquals(0, tTrampled, "Re 40 shields the crop");
 
@@ -631,7 +637,7 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		tEdge.tryPlantIn(WHEATISH, 7, 0, 0, 31, 0);
 		int tEdgeBreaks = 0;
 		for (int i = 0; i < 5000; i++) {
-			if (CropTickLogic.trampleDue(tEdge, true, tLevel.getRandom())) tEdgeBreaks++;
+			if (CropMath.isTrampled(WHEATISH, tEdge, true, tLevel.getRandom())) tEdgeBreaks++;
 		}
 		assertTrue(tEdgeBreaks > 3 && tEdgeBreaks < 20, "the Re-31 residual 1%*8/40 = 0.2%, got " + tEdgeBreaks);
 
@@ -639,15 +645,15 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		tSoft.tryPlantIn(WHEATISH, 7, 0, 0, 0, 0);
 		int tBroke = 0;
 		for (int i = 0; i < 20000; i++) {
-			if (CropTickLogic.trampleDue(tSoft, true, tLevel.getRandom())) tBroke++;
+			if (CropMath.isTrampled(WHEATISH, tSoft, true, tLevel.getRandom())) tBroke++;
 		}
 		assertTrue(tBroke > 130 && tBroke < 270, "the 1%*(40-0)/40 = 1% band, got " + tBroke);
-		assertFalse(CropTickLogic.trampleDue(tSoft, false, tLevel.getRandom()), "a walking entity never tramples");
+		assertFalse(CropMath.isTrampled(WHEATISH, tSoft, false, tLevel.getRandom()), "a walking entity never tramples");
 
 		// the BE gate: an empty tile ignores collisions entirely (the :486 crop null-guard)
 		GT6CropBlockEntity tBare = tile(tLevel);
 		tBare.onEntityCollision(tLevel, POS, null); // a null entity survives the crop==null early-out
-		assertNull(tBare.getCrop(), "empty tiles never trample");
+		assertNull(tBare.crop(), "empty tiles never trample");
 	}
 
 	// ---------------------------------------------------------------- NBT + load
@@ -659,9 +665,7 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		GT6CropBlockEntity tTile = tile(tLevel);
 		assertTrue(tTile.tryPlantIn(WHEATISH, 5, 7, 9, 11, 2), "planted with stats");
 		tTile.setGrowthPoints(123);
-		tTile.setStorageWater(120);
-		tTile.setStorageNutrients(40);
-		tTile.setStorageWeedEX(30);
+		tTile.setStorages(120, 40, 30);
 		tTile.setTerrainHumidity(3);
 		tTile.setTerrainNutrients(4);
 		tTile.setTerrainAirQuality(9);
@@ -673,20 +677,20 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 
 		GT6CropBlockEntity tLoaded = tile(tLevel);
 		tLoaded.load(tTag);
-		assertNotNull(tLoaded.getCrop(), "the card resolves by id");
-		assertEquals("rye", tLoaded.getCrop().name());
-		assertEquals(5, tLoaded.getCurrentSize());
-		assertEquals(123, tLoaded.getGrowthPoints());
-		assertEquals(7, tLoaded.getStatGrowth());
-		assertEquals(9, tLoaded.getStatGain());
-		assertEquals(11, tLoaded.getStatResistance());
-		assertEquals(2, tLoaded.getScanLevel());
-		assertEquals(120, tLoaded.getStorageWater());
-		assertEquals(40, tLoaded.getStorageNutrients());
-		assertEquals(30, tLoaded.getStorageWeedEX());
-		assertEquals(3, tLoaded.getTerrainHumidity());
-		assertEquals(4, tLoaded.getTerrainNutrients());
-		assertEquals(9, tLoaded.getTerrainAirQuality());
+		assertNotNull(tLoaded.crop(), "the card resolves by id");
+		assertEquals("rye", tLoaded.crop().name());
+		assertEquals(5, tLoaded.size());
+		assertEquals(123, tLoaded.growthPoints());
+		assertEquals(7, tLoaded.statGrowth());
+		assertEquals(9, tLoaded.statGain());
+		assertEquals(11, tLoaded.statResistance());
+		assertEquals(2, tLoaded.scanLevel());
+		assertEquals(120, tLoaded.storageWater());
+		assertEquals(40, tLoaded.storageNutrients());
+		assertEquals(30, tLoaded.storageWeedEx());
+		assertEquals(3, tLoaded.terrainHumidity());
+		assertEquals(4, tLoaded.terrainNutrients());
+		assertEquals(9, tLoaded.terrainAirQuality());
 
 		// the empty-stick carrier: crossingBase rides the tag without a card
 		GT6CropBlockEntity tEmpty = tile(tLevel);
@@ -697,15 +701,15 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		assertFalse(tEmptyTag.contains("cropId"), "an empty tile writes no card keys");
 		GT6CropBlockEntity tEmptyLoaded = tile(tLevel);
 		tEmptyLoaded.load(tEmptyTag);
-		assertTrue(tEmptyLoaded.isCrossingBase(), "the crossing face round-trips");
-		assertNull(tEmptyLoaded.getCrop(), "still an empty tile");
+		assertTrue(tEmptyLoaded.crossingBase(), "the crossing face round-trips");
+		assertNull(tEmptyLoaded.crop(), "still an empty tile");
 
 		// an unknown card id degrades to an empty stick (the load guard)
 		CompoundTag tGhost = tTag.copy();
 		tGhost.putString("cropId", "ghost_crop");
 		GT6CropBlockEntity tGhostTile = tile(tLevel);
 		tGhostTile.load(tGhost);
-		assertNull(tGhostTile.getCrop(), "unknown ids stay empty");
+		assertNull(tGhostTile.crop(), "unknown ids stay empty");
 	}
 
 	// ---------------------------------------------------------------- storage primitives
@@ -717,22 +721,22 @@ public class CropBlockEntityTest extends GTOfflineTestBase {
 		GT6CropBlockEntity tTile = tile(tLevel);
 		assertTrue(tTile.applyHydration(150), "hydrate");
 		assertTrue(tTile.applyHydration(100), "the overflow DRAINS TO the cap (the :1203 limit-storage face)");
-		assertEquals(200, tTile.getStorageWater(), "the 200 cap holds the remainder");
+		assertEquals(200, tTile.storageWater(), "the 200 cap holds the remainder");
 		assertFalse(tTile.applyHydration(10), "a full tank refuses");
-		tTile.setStorageNutrients(100);
+		tTile.setStorages(200, 100, 0);
 		assertFalse(tTile.applyFertilizer(true), "already at the 100 cap");
-		tTile.setStorageNutrients(0);
+		tTile.setStorages(200, 0, 0);
 		assertTrue(tTile.applyFertilizer(true), "manual +100");
-		assertEquals(100, tTile.getStorageNutrients());
-		tTile.setStorageNutrients(0);
+		assertEquals(100, tTile.storageNutrients());
+		tTile.setStorages(200, 0, 0);
 		assertTrue(tTile.applyFertilizer(false), "automatic +90");
-		assertEquals(90, tTile.getStorageNutrients());
+		assertEquals(90, tTile.storageNutrients());
 		assertTrue(tTile.applyWeedEx(60, true), "manual weedEx");
-		assertEquals(60, tTile.getStorageWeedEX());
+		assertEquals(60, tTile.storageWeedEx());
 		assertTrue(tTile.applyWeedEx(100, true), "the 100 cap stops at 100");
-		assertEquals(100, tTile.getStorageWeedEX());
+		assertEquals(100, tTile.storageWeedEx());
 		assertTrue(tTile.hasWeedEX(), "the -5 consumption read");
-		assertEquals(95, tTile.getStorageWeedEX(), "hasWeedEX burns 5 (:361-368)");
+		assertEquals(95, tTile.storageWeedEx(), "hasWeedEX burns 5 (:361-368)");
 	}
 
 	// ---------------------------------------------------------------- structural

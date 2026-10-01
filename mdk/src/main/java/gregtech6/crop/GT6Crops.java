@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -38,6 +40,11 @@ public class GT6Crops {
 		@Override
 		public boolean leftClickPicksSeed() {
 			return false; // CropWeed.java onLeftClick → false
+		}
+
+		@Override
+		public boolean entityTramples() {
+			return false; // CropWeed.java onEntityCollision → false
 		}
 	};
 
@@ -74,6 +81,16 @@ public class GT6Crops {
 	/** Port of Crops.getCrops(Crops.java:30) — registration order, WEED first. */
 	public static List<GT6CropCard> crops() {
 		return Collections.unmodifiableList(CROPS);
+	}
+
+	/** The by-name walk (the IC2 getCropCard(String, String) face) — first registration wins. */
+	@Nullable
+	public static GT6CropCard crop(String aName) {
+		if (aName == null) return null;
+		for (GT6CropCard tCard : CROPS) {
+			if (tCard.name().equals(aName)) return tCard;
+		}
+		return null;
 	}
 
 	/** Port of the IC2 BaseSeed record (ic2/api/crops/BaseSeed.java: crop+size+3 stats). */

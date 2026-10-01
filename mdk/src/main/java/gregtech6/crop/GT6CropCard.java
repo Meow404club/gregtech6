@@ -176,4 +176,24 @@ public class GT6CropCard {
 		}
 		return mDrop.copy();
 	}
+
+	/**
+	 * The picked-seed stack behind {@link CropTileView#generateSeeds} -- the INTERIM base-seed
+	 * copy (GT_BaseCrop.java:77 registers the grain item itself as the seed). The stat-carrying
+	 * seed item (IC2 ItemCropSeed NBT G/Ga/Re/scan, TileEntityCrop.generateSeeds :894-897) is
+	 * card cbc-3's face; the (growth, gain, resistance, scan) arguments ride
+	 * {@link CropTileView#generateSeeds} unchanged so the swap is one method here.
+	 */
+	public ItemStack seedStack() {
+		return mBaseSeed == null ? ItemStack.EMPTY : mBaseSeed.copy();
+	}
+
+	/**
+	 * The trample gate -- CropCard.java:165-169 {@code onEntityCollision} default (the sprint
+	 * check stays caller-side, the BE does the instanceof); CropWeed.java overrides it FALSE
+	 * (weeds never trample), so the default is true and the weed card says no.
+	 */
+	public boolean entityTramples() {
+		return true;
+	}
 }

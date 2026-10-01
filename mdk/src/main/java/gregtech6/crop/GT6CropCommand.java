@@ -60,7 +60,7 @@ public final class GT6CropCommand {
 		try {
 			BlockPos tPos = BlockPosArgument.getLoadedBlockPos(aContext, "pos");
 			String tName = StringArgumentType.getString(aContext, "crop");
-			CropCardView tCard = GT6CropGrains.crop(tName);
+			GT6CropCard tCard = GT6CropGrains.crop(tName);
 			if (tCard == null) {
 				aContext.getSource().sendFailure(Component.literal("unknown crop=" + tName));
 				return 0;
@@ -90,7 +90,7 @@ public final class GT6CropCommand {
 			// consumption  --  the :415 creative gate), not a field write
 			boolean tOk = tCrop.rightClick(aContext.getSource().getLevel(), tPos,
 					new net.minecraft.world.item.ItemStack(gregtech6.registry.GT6CropSticks.CROP_STICK_ITEM.get()), true);
-			aContext.getSource().sendSuccess(() -> Component.literal("crossing=" + tCrop.isCrossingBase() + " ok=" + tOk), false);
+			aContext.getSource().sendSuccess(() -> Component.literal("crossing=" + tCrop.crossingBase() + " ok=" + tOk), false);
 			return tOk ? 1 : 0;
 		} catch (Exception aE) {
 			aContext.getSource().sendFailure(Component.literal("stick failed: " + aE.getMessage()));
@@ -107,7 +107,7 @@ public final class GT6CropCommand {
 			}
 			boolean tHarvested = tCrop.performManualHarvest(aContext.getSource().getLevel(), tPos);
 			aContext.getSource().sendSuccess(() -> Component.literal(
-					"harvested=" + tHarvested + " size=" + tCrop.getCurrentSize() + " crop=" + (tCrop.getCrop() == null ? "null" : tCrop.getCrop().name())), false);
+					"harvested=" + tHarvested + " size=" + tCrop.size() + " crop=" + (tCrop.crop() == null ? "null" : tCrop.crop().name())), false);
 			return tHarvested ? 1 : 0;
 		} catch (Exception aE) {
 			aContext.getSource().sendFailure(Component.literal("harvest failed: " + aE.getMessage()));
