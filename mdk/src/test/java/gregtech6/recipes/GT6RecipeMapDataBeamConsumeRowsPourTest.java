@@ -65,9 +65,9 @@ import net.minecraftforge.fluids.FluidStack;
 public class GT6RecipeMapDataBeamConsumeRowsPourTest extends GTRecipesOfflineTestBase {
 
 	/** The per-file total census (task beam-consume-increment deltas marked). */
-	private static final int SAWING_CENSUS = 3994, GENERIFIER_CENSUS = 9117, LATHE_CENSUS = 8; // 9117 = 8989 + the 128 weld-casing-increment casing rows (review-seat rebase seam sync: the pin was cut against the pre-casing baseline)
+	private static final int SAWING_CENSUS = 4274, GENERIFIER_CENSUS = 9117, LATHE_CENSUS = 8; // 9117 = 8989 + the 128 weld-casing-increment casing rows; 4274 = 3994 + the 280 sawing-plank-concrete-increment rows (review-seat rebase seam syncs: the pins were cut against the pre-casing / pre-plank-concrete baselines)
 	/** The beam-segment censuses: 7 pourable sawing calls x 5 legs, 7 generify rows, 8 lathe rows. */
-	private static final int SAWING_BEAM_ROWS = 35, GENERIFIER_BEAM_ROWS = 7, LATHE_BEAM_ROWS = 8;
+	private static final int SAWING_BEAM_ROWS = 40, GENERIFIER_BEAM_ROWS = 7, LATHE_BEAM_ROWS = 8; // 40 = the 35 BeamEntry faces + the 5 :66 DEFAULT_BEAM legs (activated by sawing-plank-concrete-increment)
 
 	/** RM.java:723-730 leg fan (fluid, duration mult, lube mult) — the sawing-test LEGS face. */
 	private static final Object[][] LEGS = {
@@ -89,7 +89,7 @@ public class GT6RecipeMapDataBeamConsumeRowsPourTest extends GTRecipesOfflineTes
 			{GT6BeamKind.ACACIA, "minecraft:acacia_planks", 7, "gt6:dust_acacia", "gt6:stick_long_acacia", 5},
 			{GT6BeamKind.DARK_OAK, "minecraft:dark_oak_planks", 7, "gt6:dust_dark_oak", "gt6:stick_long_dark_oak", 5},
 			{GT6BeamKind.RUBBER_WOOD, "minecraft:jungle_planks", 5, "gt6:dust_wood_rubber", "gt6:stick_long_wood_rubber", 2},
-			{GT6BeamKind.WOOD, null, 0, "gt6:dust_wood", "gt6:stick_long_wood", 5}};
+			{GT6BeamKind.WOOD, "minecraft:oak_planks", 7, "gt6:dust_wood", "gt6:stick_long_wood", 5}}; // ACTIVATED by sawing-plank-concrete-increment: the IL.Plank -> oak_planks identity mapping
 
 	private static final java.util.function.Function<ResourceLocation, Item> sDefaultItems = GT6RecipeMapJsonLoader.sItemResolver;
 	private static final java.util.function.Function<ResourceLocation, Fluid> sDefaultFluids = GT6RecipeMapJsonLoader.sFluidResolver;
@@ -142,7 +142,7 @@ public class GT6RecipeMapDataBeamConsumeRowsPourTest extends GTRecipesOfflineTes
 	public void theFileHeadsCarryTheBeamIncrementDeclarations() throws Exception {
 		String tSawingHead = headOf("sawing");
 		assertTrue(tSawingHead.contains("ACTIVATED by task beam-consume-increment"), "sawing: the Woods:192 activation is declared");
-		assertTrue(tSawingHead.contains("stays BLOCKED on the plank-output face"), "sawing: the WOOD-face block is declared");
+		assertTrue(tSawingHead.contains("the :66 DEFAULT_BEAM row is ACTIVATED"), "sawing: the WOOD-face activation is declared (sawing-plank-concrete-increment)");
 		assertTrue(tSawingHead.contains("WoodDictionary.PLANKS.get(Blocks.planks, 3)"), "sawing: the rubber jungle-plank mapping is cited");
 		String tGenerifierHead = headOf("generifier");
 		assertTrue(tGenerifierHead.contains("BEAM INCREMENT (task beam-consume-increment)"), "generifier: the Woods:190 group is declared");
@@ -154,7 +154,7 @@ public class GT6RecipeMapDataBeamConsumeRowsPourTest extends GTRecipesOfflineTes
 		assertTrue(tLatheHead.contains("vanilla-crafting domain has no port band"), "lathe: the crafting-face declaration");
 	}
 
-	/** The sawing beam face: set-exact against the upstream recompute, verbatim pins, the WOOD-face absence. */
+	/** The sawing beam face: set-exact against the upstream recompute (the 8 faces incl. the :66 DEFAULT_BEAM), verbatim pins. */
 	@Test
 	public void theSawingBeamFaceIsUpstreamVerbatim() throws Exception {
 		JsonArray tRows = pourShipped("sawing");
@@ -167,7 +167,7 @@ public class GT6RecipeMapDataBeamConsumeRowsPourTest extends GTRecipesOfflineTes
 			}
 		}
 		for (Object[] tBeam : BEAMS) {
-			if (tBeam[1] == null) continue; // the WOOD face: plank leg blocked (gt-tree-planks card)
+			if (tBeam[1] == null) continue; // defensive: the WOOD row now carries the oak_planks identity mapping
 			for (Object[] tLeg : LEGS) {
 				tExpected.add("gt6:" + snake((GT6BeamKind) tBeam[0]) + "_beam:1>" + tLeg[0] + "@" + (4L * (Long) tLeg[2])
 						+ ">" + (128L * (Long) tLeg[1]) + ">16>minecraft:" + plankId(tBeam) + ":" + tBeam[2] + ">" + tBeam[3] + ":1");
@@ -184,11 +184,8 @@ public class GT6RecipeMapDataBeamConsumeRowsPourTest extends GTRecipesOfflineTes
 				">minecraft:oak_planks:7>gt6:dust_oak:1", 512, 16, 16);
 		assertRow(findRow(tRows, "gt6:rubber_wood_beam", "gt6:distilled_water"),
 				">minecraft:jungle_planks:5>gt6:dust_wood_rubber:1", 384, 16, 12);
-		// the WOOD face: no sawing row consumes the DEFAULT_BEAM
-		for (JsonElement tElement : tRows) {
-			assertFalse("gt6:wood_beam".equals(inputItem(tElement.getAsJsonObject())),
-					"the IL.Beam sawing face stays blocked (the gt-tree-planks card owns the GT-plank leg)");
-		}
+		// the :66 DEFAULT_BEAM face is active since sawing-plank-concrete-increment — its 5 legs
+		// ride the set-exact walk above (the BEAMS WOOD row emits them)
 	}
 
 	/** The lathe face: 8 rows, eut 16 / dur 80, the stick counts 5/5/5/5/5/5/2/5, dust tail. */
