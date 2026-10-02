@@ -2336,7 +2336,9 @@ public class GT6EnUs extends LanguageProvider {
      * label is the creative-tab ctor literal "GregTech: Bottles"
      * (MultiItemBottles.java:40). Task btl-bottles-families-b rides the same walk over
      * the 96 new families-B rows (171 total): the en-empty sauce/apple rows stay keyless,
-     * the oil/slime/rainbow/coconut descs are the en verbatim.
+     * the oil/slime/rainbow/coconut descs are the en verbatim. Task btl-dye-bottles rides
+     * it over the 48 dye rows (219 total): the names "Bottled {Water,Chemical,Flower}
+     * Dye" + the 48 "Color: *" tooltips are the :351-355 composes verbatim, all non-empty.
      */
     private void addBottles() {
         for (gregtech6.registry.GT6Bottles.BottleRow tRow : gregtech6.registry.GT6Bottles.ROWS) {

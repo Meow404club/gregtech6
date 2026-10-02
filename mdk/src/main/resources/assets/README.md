@@ -12840,3 +12840,109 @@ Dedication** (same upstream `README.md` block as above).
   same gt.multiitem.bottles/<meta>.png files as every other row; the on-disk oil sprites
   are distinct 16x16 art (8 distinct sha256s), not placeholders. Borrowed from the folder
   like the rest; zero placeholder rows.
+
+## GT6 bottle items, dye batch (task btl-dye-bottles, 2026-10-02)
+- `gt6/textures/item/bottle/*.png` — the dye registration batch (48 new textures: the
+  three 16-colour families of the MultiItemBottles.java:351-355 walk — the water-mixed
+  dyes 32100-32115 riding the dye_watermixed_* fluids, the chemical dyes 32116-32131 on
+  the dye_chemical_* fluids, the flower dyes 32132-32147 on the dye_flower_* fluids; one
+  id per colour per family, the port fluid id verbatim), byte-identical borrows renamed
+  to the registered item ids (cmp-verified 2026-10-02, 48/48 byte-identical; all 48
+  sources are distinct sha256s — zero same-hash reuse inside the batch, zero overlap
+  with the 170 already-landed bottle pngs, so no shared-source annotation rows):
+  - `dye_watermixed_black.png` `textures/items/gt.multiitem.bottles/32100.png`
+    (`31b2e81ed35251cf404d5dc92afa79a4ad4fe3f42d04a7c00bebde639e8c0145` — meta 32100, MultiItemBottles.java:352)
+  - `dye_watermixed_red.png` `textures/items/gt.multiitem.bottles/32101.png`
+    (`0db0dfa5f825d7535d8a722975880d308af443706c146712dbef7d4e6f9c39cc` — meta 32101, MultiItemBottles.java:352)
+  - `dye_watermixed_green.png` `textures/items/gt.multiitem.bottles/32102.png`
+    (`a6dbd754f31c98da2e3621ecabd9c96140d52a5c4bf3cf084411ecfca76cd514` — meta 32102, MultiItemBottles.java:352)
+  - `dye_watermixed_brown.png` `textures/items/gt.multiitem.bottles/32103.png`
+    (`90bf8ca0c62ed101c8a40a302bcb7f3f0d918b9e8deddc0b4fb0b081d9cd5de5` — meta 32103, MultiItemBottles.java:352)
+  - `dye_watermixed_blue.png` `textures/items/gt.multiitem.bottles/32104.png`
+    (`212dc73917d2c51a002fc67978416fe6a064bd254031736fcc0c8d6d910940fb` — meta 32104, MultiItemBottles.java:352)
+  - `dye_watermixed_purple.png` `textures/items/gt.multiitem.bottles/32105.png`
+    (`0687acc0c22cabf76e98b171cd3edbe3df1fbc4021f17a478c937f974323a09f` — meta 32105, MultiItemBottles.java:352)
+  - `dye_watermixed_cyan.png` `textures/items/gt.multiitem.bottles/32106.png`
+    (`8ce78ca90574fc4f19a0c47ec018dd214d775f0cff40aa121322fbb621f924b3` — meta 32106, MultiItemBottles.java:352)
+  - `dye_watermixed_light_gray.png` `textures/items/gt.multiitem.bottles/32107.png`
+    (`ddc06b94571631e474c1d0439d7601e55265a3b2deb11e8ca0e0244d7477186d` — meta 32107, MultiItemBottles.java:352)
+  - `dye_watermixed_gray.png` `textures/items/gt.multiitem.bottles/32108.png`
+    (`93a349dafad4d8f7b8d6e823c16ccc3760f1ec25c3c433b6cf2bbc3048320293` — meta 32108, MultiItemBottles.java:352)
+  - `dye_watermixed_pink.png` `textures/items/gt.multiitem.bottles/32109.png`
+    (`92c3b2ff4eebac8bc9c1421feb1ae79b82f877ffd6ed2a760e5afac30a5e86d9` — meta 32109, MultiItemBottles.java:352)
+  - `dye_watermixed_lime.png` `textures/items/gt.multiitem.bottles/32110.png`
+    (`ddc6d265ead286842d411b479d6e72e9d03a7c36fc86cccf1a2fe77e691dd1c7` — meta 32110, MultiItemBottles.java:352)
+  - `dye_watermixed_yellow.png` `textures/items/gt.multiitem.bottles/32111.png`
+    (`a45e295711cc6ffb1dfd656723280178dfd8879c80b2ea90bd7dbc9ffd0491bc` — meta 32111, MultiItemBottles.java:352)
+  - `dye_watermixed_light_blue.png` `textures/items/gt.multiitem.bottles/32112.png`
+    (`93015f123ed0c55dbb4b0e4ece512363e7f1a98bb5c5d99ae6ec1769ea4df1a8` — meta 32112, MultiItemBottles.java:352)
+  - `dye_watermixed_magenta.png` `textures/items/gt.multiitem.bottles/32113.png`
+    (`7569a4331e98420036e6fd8dd2f85e6ab3eb5a70b683c972ee426df47f9015b3` — meta 32113, MultiItemBottles.java:352)
+  - `dye_watermixed_orange.png` `textures/items/gt.multiitem.bottles/32114.png`
+    (`8ce0145e28f4d821033d2ab6fcad7d4eeeb78bcc34c7c068a4debcbd36b52370` — meta 32114, MultiItemBottles.java:352)
+  - `dye_watermixed_white.png` `textures/items/gt.multiitem.bottles/32115.png`
+    (`7dbad0fa913d88048409f33a67be171357e1061998ba9230f45a5c7f0030e4d1` — meta 32115, MultiItemBottles.java:352)
+  - `dye_chemical_black.png` `textures/items/gt.multiitem.bottles/32116.png`
+    (`224b455bf65869c34a8bd757aa1bf8db12ad6b947e1ddab7e63433d53084c729` — meta 32116, MultiItemBottles.java:353)
+  - `dye_chemical_red.png` `textures/items/gt.multiitem.bottles/32117.png`
+    (`890b409334955cc46fa08c6d6fbff41f7d37ed0ce39955865cd8499ccfb9ae51` — meta 32117, MultiItemBottles.java:353)
+  - `dye_chemical_green.png` `textures/items/gt.multiitem.bottles/32118.png`
+    (`4b1b837d29f785cc13525f24c6a56820eec4dd808499d6dda990fd7500075836` — meta 32118, MultiItemBottles.java:353)
+  - `dye_chemical_brown.png` `textures/items/gt.multiitem.bottles/32119.png`
+    (`5e1129059ed2fad4b2f4f305e9e7514711962e2c8bdb3620779b97257125dd2e` — meta 32119, MultiItemBottles.java:353)
+  - `dye_chemical_blue.png` `textures/items/gt.multiitem.bottles/32120.png`
+    (`3e93e543dfe84bf5392c6db6275382a720dd56ef8aef8813b0d7571e508c7306` — meta 32120, MultiItemBottles.java:353)
+  - `dye_chemical_purple.png` `textures/items/gt.multiitem.bottles/32121.png`
+    (`051467b41dd530d7a27fde21b35913406b5e6f38cfa91d0933d2aeacfb4e7727` — meta 32121, MultiItemBottles.java:353)
+  - `dye_chemical_cyan.png` `textures/items/gt.multiitem.bottles/32122.png`
+    (`e8e898d71f3e1454121baae23a992fb80220117fb6f13b4e76ca3a117718b5d7` — meta 32122, MultiItemBottles.java:353)
+  - `dye_chemical_light_gray.png` `textures/items/gt.multiitem.bottles/32123.png`
+    (`a355468f12e4c0666da08a3e39510081a5170bdc37d22b9b9e9a0b70846709d2` — meta 32123, MultiItemBottles.java:353)
+  - `dye_chemical_gray.png` `textures/items/gt.multiitem.bottles/32124.png`
+    (`a42d04d16f0e28618b167c2aebcd73486ecb9398c5d633da082444eecd0068af` — meta 32124, MultiItemBottles.java:353)
+  - `dye_chemical_pink.png` `textures/items/gt.multiitem.bottles/32125.png`
+    (`39381abb38c48d6ab56ea2370991069596c3c9ee28af7c75a5c908f63b6ff2be` — meta 32125, MultiItemBottles.java:353)
+  - `dye_chemical_lime.png` `textures/items/gt.multiitem.bottles/32126.png`
+    (`208c14335b3eb6cb0b33a0e48842a614f18db1d68a56bb049b725b040921fa68` — meta 32126, MultiItemBottles.java:353)
+  - `dye_chemical_yellow.png` `textures/items/gt.multiitem.bottles/32127.png`
+    (`3b90877da5c1caf6510683d4d1ee591d8aa4b1a79e7469b0db84964e2ae742ad` — meta 32127, MultiItemBottles.java:353)
+  - `dye_chemical_light_blue.png` `textures/items/gt.multiitem.bottles/32128.png`
+    (`0a6b6cbbc833d39e437a52a3e9686cec2afb5ede157207dc19675b3255d801b5` — meta 32128, MultiItemBottles.java:353)
+  - `dye_chemical_magenta.png` `textures/items/gt.multiitem.bottles/32129.png`
+    (`4701fe5a17e0342a27ce32e5841a706a0af01d1ab4de6dc916397a7bb217df11` — meta 32129, MultiItemBottles.java:353)
+  - `dye_chemical_orange.png` `textures/items/gt.multiitem.bottles/32130.png`
+    (`5ab274e7ef3b0c2f397e088fbb2b971927d2b8272602d1b389717c67f128f3b6` — meta 32130, MultiItemBottles.java:353)
+  - `dye_chemical_white.png` `textures/items/gt.multiitem.bottles/32131.png`
+    (`12119481e721f1ade760f7b6ca89f8342702c52dbbdad5462ff9bbcab337dfa1` — meta 32131, MultiItemBottles.java:353)
+  - `dye_flower_black.png` `textures/items/gt.multiitem.bottles/32132.png`
+    (`b7aa039b8417d48bb13dc0f2eae1c82348dcc939bb687b57735c52e08c8be983` — meta 32132, MultiItemBottles.java:354)
+  - `dye_flower_red.png` `textures/items/gt.multiitem.bottles/32133.png`
+    (`237ad04230b736d4b75526e8a8d3f1ccefb0e0b1b6a35ed4f0000a8104be0888` — meta 32133, MultiItemBottles.java:354)
+  - `dye_flower_green.png` `textures/items/gt.multiitem.bottles/32134.png`
+    (`b290c3ebe9a0415dca908201cb984a45d34a866d84ab81b66f48369b435d09a5` — meta 32134, MultiItemBottles.java:354)
+  - `dye_flower_brown.png` `textures/items/gt.multiitem.bottles/32135.png`
+    (`de260276243a80137f13db25a1d27119bd5030e62b3b604d1ad81bd4107f3b44` — meta 32135, MultiItemBottles.java:354)
+  - `dye_flower_blue.png` `textures/items/gt.multiitem.bottles/32136.png`
+    (`40f48f9c9bd199ac0dde520570743a880926c42934e9341e0649ca5ab111a803` — meta 32136, MultiItemBottles.java:354)
+  - `dye_flower_purple.png` `textures/items/gt.multiitem.bottles/32137.png`
+    (`aa98d96b539372e4a7650aa78093a62bb364becf685cc06f41cb470a5364feda` — meta 32137, MultiItemBottles.java:354)
+  - `dye_flower_cyan.png` `textures/items/gt.multiitem.bottles/32138.png`
+    (`5678c2feb7819271e5348a006e03e034902406c6e8d9a1f27245a4195d9d3902` — meta 32138, MultiItemBottles.java:354)
+  - `dye_flower_light_gray.png` `textures/items/gt.multiitem.bottles/32139.png`
+    (`fd89a8248385c5127065342fa8939949cfd5cdf8b233b77bbdc61ead64c9eaca` — meta 32139, MultiItemBottles.java:354)
+  - `dye_flower_gray.png` `textures/items/gt.multiitem.bottles/32140.png`
+    (`5babfdd141e809ae0906b4d3d3229c5d4db77f58f3a428813926804c7082d39a` — meta 32140, MultiItemBottles.java:354)
+  - `dye_flower_pink.png` `textures/items/gt.multiitem.bottles/32141.png`
+    (`21cf339738eba98bcb33204a4bed19d4e092c401670fc4cc23aa9af03f82dfe1` — meta 32141, MultiItemBottles.java:354)
+  - `dye_flower_lime.png` `textures/items/gt.multiitem.bottles/32142.png`
+    (`649f7a32a7e2d443f69e8d060581fd06182662fce41d9a4fa2916a8376fbeb2f` — meta 32142, MultiItemBottles.java:354)
+  - `dye_flower_yellow.png` `textures/items/gt.multiitem.bottles/32143.png`
+    (`61f5a573a8d3f2834b1e30eb9eb311c0014dd2097478cf03ce4ff42f3f94e1f1` — meta 32143, MultiItemBottles.java:354)
+  - `dye_flower_light_blue.png` `textures/items/gt.multiitem.bottles/32144.png`
+    (`9b28f38bb9af687a1f6710063a6e087d840bffd7418234bdb3a1d2b25d24d48e` — meta 32144, MultiItemBottles.java:354)
+  - `dye_flower_magenta.png` `textures/items/gt.multiitem.bottles/32145.png`
+    (`57982c8821d3d72b9e8f605cfe6a88a7f1c8a426bde37e505513a75552b62eff` — meta 32145, MultiItemBottles.java:354)
+  - `dye_flower_orange.png` `textures/items/gt.multiitem.bottles/32146.png`
+    (`c012e322529358e6bb442a62daf29734bd1c1ee0a344c32eb04377189dce1fea` — meta 32146, MultiItemBottles.java:354)
+  - `dye_flower_white.png` `textures/items/gt.multiitem.bottles/32147.png`
+    (`8225574850e42ee284bf9da1f2136500c676917abed754f4f9bfc4bb053e910c` — meta 32147, MultiItemBottles.java:354)

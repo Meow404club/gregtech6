@@ -17,12 +17,15 @@ import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
+import gregtech6.item.spraycan.GTSprayCanItem;
+
 /**
  * The GT6 bottles registration home — task food-bottles-min landed the MINIMUM 4-bottle
  * subset, task btl-bottles-families-a extends the table with the non-dye batch A: 71 rows
  * (75 total) covering the water family, the alcohol families, the honey/potion segment
  * and the ink/indigo/tail rows of the upstream {@code MultiItemBottles} domain (441
- * lines, ~152 bottles + the 48 dye bottles — the batch B cards). Every {@link #ROWS}
+ * lines, ~152 bottles + the 48 dye bottles — the batch B cards + the dye card). Every
+ * {@link #ROWS}
  * entry is one upstream registration row ({@code addItem(meta, name, ...)}), order = the
  * empty bottle first, then the upstream meta ascending.
  *
@@ -83,6 +86,18 @@ import net.minecraftforge.registries.RegistryObject;
  * folder sprites (gt.multiitem.bottles/<meta>.png — gregapi MultiItemRandom.java:366
  * registers the folder icon unconditionally, the census "material prefix texture family"
  * hypothesis refuted; the assets/README.md families-B ledger carries the note).
+ *
+ * <p>Task btl-dye-bottles closes the bottle domain with the dye walk (MultiItemBottles
+ * .java:351-355): 48 rows (219 total), three 16-colour families over the vanilla dye
+ * order 0=Black..15=White — the water-mixed dyes 32100-32115 on the dye_watermixed_*
+ * fluids (task btl-fluids-prereq), the chemical dyes 32116-32131 on the dye_chemical_*
+ * fluids, the flower dyes 32132-32147 on the dye_flower_* fluids. The rows share the
+ * category DYE_OREDICTS[i] seat (no own oredict identity), so every id rides its port
+ * fluid id VERBATIM (the convention (3) rule) — the build walk composes the ids from
+ * {@link GTSprayCanItem#DYE_IDS}/{@link GTSprayCanItem#DYE_NAMES}, the same tables the
+ * GTFluids dye families register under, so the bottle-id/fluid-id alignment and the
+ * zero-collision constraint are structural. All 48 sit on the meta {@code >= 32000}
+ * stack-64 side; none is HIDDEN (the walk rows carry no TD.Creative.HIDDEN).
  *
  * <p>KJS surface: REGISTRATION face only, deferred to the KJS binding card (the
  * GT6CrystalChargers.java:44 declaration form); the item models + textures are
@@ -329,6 +344,33 @@ public final class GT6Bottles {
 			new BottleRow( 5605, "coconutsmoothie"     , "Coconut Smoothie"        , "", false, 16), // :338 FL.Smoothie_Coconut
 			new BottleRow( 5700, "beetjuice"           , "Beet Juice"              , "", false, 16)); // :340 FL.Juice_Beet
 
+	/**
+	 * The dye rows (task btl-dye-bottles), the upstream walk verbatim
+	 * (MultiItemBottles.java:351-355) — three 16-colour families in the vanilla dye order
+	 * 0=Black..15=White: the water-mixed dyes 32100-32115 (:352, the dye_watermixed_*
+	 * fluids), the chemical dyes 32116-32131 (:353, dye_chemical_*), the flower dyes
+	 * 32132-32147 (:354, dye_flower_*). Every id is the port fluid id verbatim (the
+	 * convention (3) rule — the rows share the category DYE_OREDICTS[i] seat), composed
+	 * from the same {@link GTSprayCanItem#DYE_IDS}/{@link GTSprayCanItem#DYE_NAMES} tables
+	 * the GTFluids dye families register under, so the fluid mapping cannot drift; the
+	 * tooltip is the upstream {@code "Color: " + DYE_NAMES[i]} compose, non-empty on all
+	 * 48 (the dump 颜色: * faces, tmp/gregtech.lang:7080-7175). All rows stack 64 (the
+	 * :425 meta {@code >= 32000} side) and none is HIDDEN.
+	 */
+	public static final List<BottleRow> FAMILY_DYE_ROWS;
+	static {
+		String[] tFamilyIds = {"watermixed", "chemical", "flower"};
+		String[] tFamilyNames = {"Bottled Water Dye", "Bottled Chemical Dye", "Bottled Flower Dye"};
+		List<BottleRow> tRows = new ArrayList<>(3 * 16);
+		for (int tFamily = 0; tFamily < 3; tFamily++) {
+			for (int i = 0; i < 16; i++) {
+				tRows.add(new BottleRow(32100 + 16 * tFamily + i, "dye_" + tFamilyIds[tFamily] + "_" + GTSprayCanItem.DYE_IDS[i],
+						tFamilyNames[tFamily], "Color: " + GTSprayCanItem.DYE_NAMES[i], false, 64));
+			}
+		}
+		FAMILY_DYE_ROWS = List.copyOf(tRows);
+	}
+
 	private static int sIndexOf(List<BottleRow> aRows, int aMeta) {
 		for (int i = 0; i < aRows.size(); i++) {
 			if (aRows.get(i).meta() == aMeta) return i;
@@ -337,14 +379,15 @@ public final class GT6Bottles {
 	}
 
 	/**
-	 * The 171 rows in upstream identity order (the empty domain-entry item first, then the
+	 * The 219 rows in upstream identity order (the empty domain-entry item first, then the
 	 * metas ascending with the families-a landed seats preserved: BBQ 805 between the
 	 * 800-804 sauces and the apple rows, cream 1101 inside the milk family, ketchup 3101
-	 * between 30001 and 32000). Drives the models band, the lang walks and the tab.
+	 * between 30001 and 32000, the dye walk 32100-32147 between indigo 32001 and the tail
+	 * 32760). Drives the models band, the lang walks and the tab.
 	 */
 	public static final List<BottleRow> ROWS;
 	static {
-		List<BottleRow> tRows = new ArrayList<>(1 + FAMILY_A_ROWS.size() + FAMILY_B_ROWS.size() + 3);
+		List<BottleRow> tRows = new ArrayList<>(1 + FAMILY_A_ROWS.size() + FAMILY_B_ROWS.size() + FAMILY_DYE_ROWS.size() + 3);
 		tRows.add(EMPTY_ROW);
 		tRows.addAll(FAMILY_A_ROWS.subList(0, sIndexOf(FAMILY_A_ROWS, 1300))); // 0..701
 		tRows.addAll(FAMILY_B_ROWS.subList(sIndexOf(FAMILY_B_ROWS, 800), sIndexOf(FAMILY_B_ROWS, 900))); // 800..804
@@ -356,7 +399,9 @@ public final class GT6Bottles {
 		tRows.addAll(FAMILY_B_ROWS.subList(sIndexOf(FAMILY_B_ROWS, 1900), FAMILY_B_ROWS.size())); // 1900..5700
 		tRows.addAll(FAMILY_A_ROWS.subList(sIndexOf(FAMILY_A_ROWS, 30000), sIndexOf(FAMILY_A_ROWS, 32000))); // 30000..30001
 		tRows.add(KETCHUP_ROW); // 3101, the landed seat between 30001 and 32000
-		tRows.addAll(FAMILY_A_ROWS.subList(sIndexOf(FAMILY_A_ROWS, 32000), FAMILY_A_ROWS.size())); // 32000..32766
+		tRows.addAll(FAMILY_A_ROWS.subList(sIndexOf(FAMILY_A_ROWS, 32000), sIndexOf(FAMILY_A_ROWS, 32760))); // 32000..32001
+		tRows.addAll(FAMILY_DYE_ROWS); // 32100..32147, the dye walk
+		tRows.addAll(FAMILY_A_ROWS.subList(sIndexOf(FAMILY_A_ROWS, 32760), FAMILY_A_ROWS.size())); // 32760..32766
 		ROWS = List.copyOf(tRows);
 	}
 
@@ -385,9 +430,12 @@ public final class GT6Bottles {
 		for (BottleRow tRow : FAMILY_B_ROWS) {
 			BY_ID.put(tRow.id(), ITEMS.register(tRow.id(), () -> new Item(new Item.Properties().stacksTo(tRow.stackSize()))));
 		}
+		for (BottleRow tRow : FAMILY_DYE_ROWS) {
+			BY_ID.put(tRow.id(), ITEMS.register(tRow.id(), () -> new Item(new Item.Properties().stacksTo(tRow.stackSize()))));
+		}
 	}
 
-	/** The 171 holders in {@link #ROWS} order (the census-walk face the tests pin). */
+	/** The 219 holders in {@link #ROWS} order (the census-walk face the tests pin). */
 	public static final List<RegistryObject<Item>> BOTTLES = ROWS.stream().map(tRow -> BY_ID.get(tRow.id())).toList();
 
 	/** The tab face: the non-HIDDEN rows in {@link #ROWS} order (the TD.Creative.HIDDEN rows stay out). */

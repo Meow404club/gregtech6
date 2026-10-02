@@ -2323,7 +2323,9 @@ public class GT6ZhCn extends LanguageProvider {
 		// 空串行=双侧零键; task btl-bottles-families-b — walk 随 ROWS 扩到 171 行（py
 		// BOTTLES_FAMILIES_B_BACKFILL 同 commit）: dump 逐字, 油 1002-1007/椰奶 5600 desc
 		// dump 空串=en "Cooking Oil" 有词 → 手组成值 食用油（dump 词根 热食用油 :4723）,
-		// 酱/苹果行 en 空串=零键（mnwtr 先例）
+		// 酱/苹果行 en 空串=零键（mnwtr 先例）; task btl-dye-bottles — walk 扩到 219 行（py
+		// BOTTLES_DYE_BACKFILL 同 commit）: dump 32100-32147[.tooltip] 逐字（tmp/gregtech.lang
+		// :7080-7175）罐装水性染料/罐装化学染料/罐装植物染料 + 颜色: <色名>, 96 键全非空双侧落键
 		for (gregtech6.registry.GT6Bottles.BottleRow tRow : gregtech6.registry.GT6Bottles.ROWS) {
 			addDirect(tRow.langKey());
 			if (tRow.tooltipKey() != null) addDirect(tRow.tooltipKey());

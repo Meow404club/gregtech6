@@ -1,7 +1,8 @@
 /*
  * Offline census-ratchet tests for task btl-bottles-families-b: the families-B batch of
- * the MultiItemBottles domain (96 new rows over the families-a 75 = 171). Pins the full
- * 171-row order, the kitchen + smoothie segment census (the walk's ACTUAL row output —
+ * the MultiItemBottles domain (96 new rows over the families-a 75 = 171, 219 since the
+ * dye batch). Pins the full
+ * 219-row order, the kitchen + smoothie segment census (the walk's ACTUAL row output —
  * 69 smoothie rows, the census "~46" headline was an undercount, the row list is the
  * authority), the six new TD.Creative.HIDDEN rows, the stack column, the 13 en desc rows,
  * the 96 sha256-grounded borrows and the bilingual lang faces — the census is hardcoded
@@ -46,7 +47,7 @@ public class GT6BottlesFamiliesBTest {
 		}
 	}
 
-	/** The full 171-row order (the empty domain-entry item first, the metas ascending, the families-a landed seats preserved). */
+	/** The full 219-row order (the empty domain-entry item first, the metas ascending, the families-a landed seats preserved, the dye walk between indigo and the tail). */
 	private static final String[] THE_ORDER = {
 			"bottle_empty",
 			// the families-a prefix: water :45-:53, grape :56-:68, lemon/potato/reed/hops/wheat/beer :71-:103
@@ -98,16 +99,29 @@ public class GT6BottlesFamiliesBTest {
 			"coconutmilk", "coconutcream", "coconutsmoothie", "beetjuice",
 			// medicine :342-:343, ketchup (the landed seat between 30001 and 32000)
 			"medicine.heal", "medicine.laxative", "food_ketchup",
-			// ink/indigo :345-:349, tail :357-:408
+			// ink/indigo :345-:349, the dye walk :351-:355 (task btl-dye-bottles ratchet: the
+			// 48 dye rows ride between indigo and the tail), tail :357-:408
 			"bottle_ink", "bottle_indigo",
+			"dye_watermixed_black", "dye_watermixed_red", "dye_watermixed_green", "dye_watermixed_brown",
+			"dye_watermixed_blue", "dye_watermixed_purple", "dye_watermixed_cyan", "dye_watermixed_light_gray",
+			"dye_watermixed_gray", "dye_watermixed_pink", "dye_watermixed_lime", "dye_watermixed_yellow",
+			"dye_watermixed_light_blue", "dye_watermixed_magenta", "dye_watermixed_orange", "dye_watermixed_white",
+			"dye_chemical_black", "dye_chemical_red", "dye_chemical_green", "dye_chemical_brown",
+			"dye_chemical_blue", "dye_chemical_purple", "dye_chemical_cyan", "dye_chemical_light_gray",
+			"dye_chemical_gray", "dye_chemical_pink", "dye_chemical_lime", "dye_chemical_yellow",
+			"dye_chemical_light_blue", "dye_chemical_magenta", "dye_chemical_orange", "dye_chemical_white",
+			"dye_flower_black", "dye_flower_red", "dye_flower_green", "dye_flower_brown",
+			"dye_flower_blue", "dye_flower_purple", "dye_flower_cyan", "dye_flower_light_gray",
+			"dye_flower_gray", "dye_flower_pink", "dye_flower_lime", "dye_flower_yellow",
+			"dye_flower_light_blue", "dye_flower_magenta", "dye_flower_orange", "dye_flower_white",
 			"bottle_poison", "bottle_loot", "bottle_tar", "bottle_blood", "bottle_lubricant", "bottle_mercury",
 			"bottle_glue"};
 
-	/** The batch table = 96 rows, the whole table = 171 (the families-a 75 + this batch). */
+	/** The batch table = 96 rows, the whole table = 219 (the families-a 75 + families-B 96 + the dye 48). */
 	@Test
 	public void theBatchTableIsExactly96Rows() {
 		assertEquals(96, GT6Bottles.FAMILY_B_ROWS.size(), "the families-B batch");
-		assertEquals(171, GT6Bottles.ROWS.size(), "75 families-a + 96 families-B");
+		assertEquals(219, GT6Bottles.ROWS.size(), "75 families-a + 96 families-B + 48 dye");
 		assertEquals(THE_ORDER.length, GT6Bottles.ROWS.size(), "the census array covers every row");
 	}
 
@@ -176,7 +190,8 @@ public class GT6BottlesFamiliesBTest {
 			assertFalse(GT6Bottles.TAB_BOTTLES.stream().anyMatch(tHolder -> tHolder.getId().getPath().equals(tRow.id())),
 					"hidden row " + tRow.id() + " must not display in the tab");
 		}
-		assertEquals(171 - 20, GT6Bottles.TAB_BOTTLES.size(), "tab face = the non-hidden rows (14 A + 6 B hidden)");
+		// task btl-dye-bottles ratchet: 219 rows, 20 hidden (14 A + 6 B, none dye)
+		assertEquals(219 - 20, GT6Bottles.TAB_BOTTLES.size(), "tab face = the non-hidden rows (14 A + 6 B hidden)");
 	}
 
 	/** Every families-B meta sits below the 32000 split, so the batch stacks 16 across (:423-426). */
@@ -193,7 +208,8 @@ public class GT6BottlesFamiliesBTest {
 	 * cooking oils + the coconut milk ride "Cooking Oil" (:120-:127/:336), the three
 	 * slime bottles "Can be used as Glue too" (:204/:206/:208), the rainbow sap the
 	 * friendship line (:275). The en-empty rows (the sauces, the apples) emit NO tooltip
-	 * key (the GT6BakeFoods empty-desc ruling) — 19 desc rows over the whole table.
+	 * key (the GT6BakeFoods empty-desc ruling) — 19 desc rows at this batch's landing,
+	 * 67 over the whole table since the dye batch.
 	 */
 	@Test
 	public void enDescRowsAreVerbatim() {
@@ -207,7 +223,8 @@ public class GT6BottlesFamiliesBTest {
 		assertEquals("", rowByMeta(800).enTooltip(), ":106 the sauce en tooltip is empty");
 		assertNull(rowByMeta(800).tooltipKey(), "the en-empty rows emit no tooltip key");
 		long tEmptyDesc = GT6Bottles.ROWS.stream().filter(tRow -> tRow.enTooltip().isEmpty()).count();
-		assertEquals(171 - 19, tEmptyDesc, "19 desc rows over the whole table (6 A + 13 B)");
+		// task btl-dye-bottles ratchet: 219 rows, 67 descs (6 A + 13 B + 48 dye)
+		assertEquals(219 - 67, tEmptyDesc, "67 desc rows over the whole table (6 A + 13 B + 48 dye)");
 	}
 
 	/**
