@@ -71,7 +71,10 @@ steps += [
 # ------------------------------------------------- B: the pattern arm (config 2 = vertical 2)
 steps += [
     phase("B: the pattern arm — place, 存料带, selector whitelist, compute"),
-    Step(f"gt6act place {T}", expect="GT6 advanced_crafting_table placed"),
+    # the _steel is the act-matrix rename (07de53ee5): the command places the steel
+    # row and its success line says so — the pre-rename expect red was false (the
+    # fill/compute steps PASSing over it proved the place worked)
+    Step(f"gt6act place {T}", expect="GT6 advanced_crafting_table_steel placed"),
     Step(f"gt6act fill 24 minecraft:oak_planks 8 {T}", expect="GT6 ACT fill slot 24: 8x"),
     Step(f"gt6act fill 70 minecraft:oak_planks 40 {T}", expect="GT6 ACT fill slot 70: 40x"),
     # the whitelist negatives: a NON-selector item refuses slot 30 (the fill face), an

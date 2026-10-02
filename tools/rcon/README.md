@@ -279,7 +279,7 @@ R "gt6multiblock check 50 64 50"  --expect 1:block_formed=true    # 恢复成型
 ### ACT /gt6act（place|fill|selector|clear|compute|craft|sort|mode|stat；act-machine）
 
 ```bash
-R "gt6act place 412 64 20" --expect 1:"advanced_crafting_table placed"
+R "gt6act place 412 64 20" --expect 1:"advanced_crafting_table_steel placed"        # act-matrix 改名后的钢台行
 R "gt6act fill 24 minecraft:oak_planks 8 412 64 20" --expect 1:"fill slot 24: 8x"   # 格内实料
 R "gt6act selector 5 412 64 20" --expect 1:"config 5 into slot 30"                  # Selector Tag 入 30 槽
 R "gt6act compute 412 64 20" --expect 1:"grid=[...R..G..]" --expect 1:canDo=true    # 铺料+配方（config 2 竖2=木棍）
