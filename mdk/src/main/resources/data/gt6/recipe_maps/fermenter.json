@@ -1,10 +1,16 @@
 {
+ "comment": "Static-row replay of the upstream Fermenter (task recipe-data-b2b1). Sources: the meat/fish dust walk Loader_Recipes_Food.java:61-89, the drink legs :605-:645, the FluidsGT.WINE walk :647 (17 port members), the FluidsGT.FRUIT_JUICE walk :649 (37 port members, the B2a list), the potion walk Loader_Recipes_Potions.java:357-426 (70 rows), Loader_Recipes_Chem.java:329. DECLARED OUT (port blockers): Food :354/:357 (the listAllmeatraw listener — input universe is runtime oredict, not static ids), OreDict :191 (the logWood listener — BlocksGT.Log1 meta faces are unported), RM.biomass :688-703 (the parameterized biomass listener — inputs/speeds are call-site arguments, no static row exists), Chem :330 (FL.BiomassIC2 rides the unported \"ic2biomass\" alias — the single-name ruling). Census: 195 rows (7 smoke + 188 pour), zero skips.",
  "recipes": [
   {
+   "comment": "smoke row (task w1-eu-hu-families)",
    "inputs": [
     {
-     "item": "minecraft:wheat",
-     "count": 1
+     "item": "minecraft:wheat"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:sugar"
     }
    ],
    "fluidInputs": [
@@ -13,16 +19,11 @@
      "amount": 1000
     }
    ],
-   "outputs": [
-    {
-     "item": "minecraft:sugar",
-     "count": 1
-    }
-   ],
    "duration": 128,
    "eut": 16
   },
   {
+   "comment": "Loader_Recipes_Food.java:605 — Milk family -> Milk_Spoiled (50 mB)",
    "fluidInputs": [
     {
      "fluid": "gt6:milk",
@@ -39,6 +40,7 @@
    "eut": 16
   },
   {
+   "comment": "Loader_Recipes_Food.java:606 — Milk family -> Milk_Spoiled (50 mB)",
    "fluidInputs": [
     {
      "fluid": "gt6:grcmilk_milk",
@@ -55,6 +57,7 @@
    "eut": 16
   },
   {
+   "comment": "Loader_Recipes_Food.java:607 — Honeydew -> ShortMead",
    "fluidInputs": [
     {
      "fluid": "gt6:honeydew",
@@ -71,6 +74,7 @@
    "eut": 16
   },
   {
+   "comment": "Loader_Recipes_Food.java:608 — Juice_Pear -> Cider_Pear",
    "fluidInputs": [
     {
      "fluid": "gt6:juicepear",
@@ -87,6 +91,7 @@
    "eut": 16
   },
   {
+   "comment": "Loader_Recipes_Food.java:609 — Juice_Peach -> Cider_Peach",
    "fluidInputs": [
     {
      "fluid": "gt6:juicepeach",
@@ -103,6 +108,7 @@
    "eut": 16
   },
   {
+   "comment": "Loader_Recipes_Food.java:610 — Juice_Ananas -> Cider_Ananas (the \"binnie.winepineapple\" carrier)",
    "fluidInputs": [
     {
      "fluid": "gt6:juicepineapple",
@@ -116,6 +122,3146 @@
     }
    ],
    "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:61 — dust_tiny -> dust_tiny (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:dust_tiny_meat_raw"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_meat_rotten"
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:62 — dust_small -> dust_small (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:dust_small_meat_raw"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_meat_rotten"
+    }
+   ],
+   "duration": 36,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:63 — dust -> dust (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:dust_meat_raw"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_meat_rotten"
+    }
+   ],
+   "duration": 144,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:64 — nugget -> nugget (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:nugget_meat_raw"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:nugget_meat_rotten"
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:65 — chunk_gt -> chunk_gt (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:chunk_gt_meat_raw"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:chunk_gt_meat_rotten"
+    }
+   ],
+   "duration": 36,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:66 — billet -> billet (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:billet_meat_raw"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:billet_meat_rotten"
+    }
+   ],
+   "duration": 96,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:67 — ingot -> ingot (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:ingot_meat_raw"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:ingot_meat_rotten"
+    }
+   ],
+   "duration": 144,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:68 — dust_tiny -> dust_tiny (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:dust_tiny_meat_cooked"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_meat_rotten"
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:69 — dust_small -> dust_small (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:dust_small_meat_cooked"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_meat_rotten"
+    }
+   ],
+   "duration": 36,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:70 — dust -> dust (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:dust_meat_cooked"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_meat_rotten"
+    }
+   ],
+   "duration": 144,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:71 — nugget -> nugget (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:nugget_meat_cooked"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:nugget_meat_rotten"
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:72 — chunk_gt -> chunk_gt (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:chunk_gt_meat_cooked"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:chunk_gt_meat_rotten"
+    }
+   ],
+   "duration": 36,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:73 — billet -> billet (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:billet_meat_cooked"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:billet_meat_rotten"
+    }
+   ],
+   "duration": 96,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:74 — ingot -> ingot (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:ingot_meat_cooked"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:ingot_meat_rotten"
+    }
+   ],
+   "duration": 144,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:76 — dust_tiny -> dust_tiny (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:dust_tiny_fish_raw"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_fish_rotten"
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:77 — dust_small -> dust_small (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:dust_small_fish_raw"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_fish_rotten"
+    }
+   ],
+   "duration": 36,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:78 — dust -> dust (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:dust_fish_raw"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_fish_rotten"
+    }
+   ],
+   "duration": 144,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:79 — nugget -> nugget (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:nugget_fish_raw"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:nugget_fish_rotten"
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:80 — chunk_gt -> chunk_gt (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:chunk_gt_fish_raw"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:chunk_gt_fish_rotten"
+    }
+   ],
+   "duration": 36,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:81 — billet -> billet (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:billet_fish_raw"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:billet_fish_rotten"
+    }
+   ],
+   "duration": 96,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:82 — ingot -> ingot (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:ingot_fish_raw"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:ingot_fish_rotten"
+    }
+   ],
+   "duration": 144,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:83 — dust_tiny -> dust_tiny (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:dust_tiny_fish_cooked"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_fish_rotten"
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:84 — dust_small -> dust_small (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:dust_small_fish_cooked"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_fish_rotten"
+    }
+   ],
+   "duration": 36,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:85 — dust -> dust (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:dust_fish_cooked"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_fish_rotten"
+    }
+   ],
+   "duration": 144,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:86 — nugget -> nugget (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:nugget_fish_cooked"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:nugget_fish_rotten"
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:87 — chunk_gt -> chunk_gt (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:chunk_gt_fish_cooked"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:chunk_gt_fish_rotten"
+    }
+   ],
+   "duration": 36,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:88 — billet -> billet (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:billet_fish_cooked"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:billet_fish_rotten"
+    }
+   ],
+   "duration": 96,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:89 — ingot -> ingot (the seven meat/fish prefixes walk)",
+   "inputs": [
+    {
+     "item": "gt6:ingot_fish_cooked"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:ingot_fish_rotten"
+    }
+   ],
+   "duration": 144,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:611 — juiceapple 50 -> ciderapple 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceapple",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:ciderapple",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:612 — grc_applecider0 50 -> ciderapple 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:grc_applecider0",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:ciderapple",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:613 — ciderapple 50 -> applevinegar 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:ciderapple",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:applevinegar",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:614 — potion.goldenapplejuice 50 -> potion.goldencider 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.goldenapplejuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.goldencider",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:615 — potion.idunsapplejuice 50 -> potion.notchesbrew 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.idunsapplejuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.notchesbrew",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:616 — ricewater 50 -> sake 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:ricewater",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:sake",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:617 — mashwheat 50 -> whiskeywheat 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mashwheat",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:whiskeywheat",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:618 — whiskeywheat 50 -> glenmckenner 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:whiskeywheat",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:glenmckenner",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:619 — wheathopsmash 50 -> beer 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:wheathopsmash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:beer",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:620 — hopsmash 50 -> darkbeer 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:hopsmash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:darkbeer",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:621 — darkbeer 50 -> dragonblood 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:darkbeer",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:dragonblood",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:622 — reedwater 50 -> rumwhite 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:reedwater",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:rumwhite",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:623 — rumwhite 50 -> canevinegar 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:rumwhite",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:canevinegar",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:624 — rumdark 50 -> canevinegar 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:rumdark",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:canevinegar",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:625 — sake 50 -> ricevinegar 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:sake",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:ricevinegar",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:626 — winered 50 -> vinegar 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:winered",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:vinegar",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:627 — winewhite 50 -> vinegar 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:winewhite",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:vinegar",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:628 — wine 50 -> vinegar 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:wine",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:vinegar",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:629 — ricardosanchez 50 -> vinegar 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:ricardosanchez",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:vinegar",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:630 — juiceredgrape 50 -> winered 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceredgrape",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winered",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:631 — juicewhitegrape 50 -> winewhite 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicewhitegrape",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winewhite",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:632 — grapejuice 50 -> wine 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:grapejuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:wine",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:633 — grc_grapewine0 50 -> ricardosanchez 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:grc_grapewine0",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:ricardosanchez",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:634 — juiceapricot 50 -> wineapricot 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceapricot",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:wineapricot",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:635 — juicebanana 50 -> winebanana 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicebanana",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winebanana",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:636 — juicecarrot 50 -> winecarrot 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicecarrot",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winecarrot",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:637 — juicecherry 50 -> winecherry 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicecherry",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winecherry",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:638 — juicelemon 50 -> limoncello 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicelemon",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:limoncello",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:639 — juicelime 50 -> winecitrus 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicelime",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winecitrus",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:640 — juiceorange 50 -> winecitrus 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceorange",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winecitrus",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:641 — kiwijuice 50 -> winecitrus 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:kiwijuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winecitrus",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:642 — juicecranberry 50 -> winecranberry 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicecranberry",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winecranberry",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:643 — juiceelderberry 50 -> wineelderberry 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceelderberry",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:wineelderberry",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:644 — juiceplum 50 -> wineplum 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceplum",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:wineplum",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:645 — juicetomato 50 -> winetomato 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicetomato",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winetomato",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:647 — FluidsGT.WINE walk member juice_wine_fruit -> Wine_Fortified 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winefortified",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:647 — FluidsGT.WINE walk member limoncello -> Wine_Fortified 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:limoncello",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winefortified",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:647 — FluidsGT.WINE walk member wineagave -> Wine_Fortified 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:wineagave",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winefortified",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:647 — FluidsGT.WINE walk member wineapricot -> Wine_Fortified 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:wineapricot",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winefortified",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:647 — FluidsGT.WINE walk member winebanana -> Wine_Fortified 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:winebanana",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winefortified",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:647 — FluidsGT.WINE walk member winecarrot -> Wine_Fortified 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:winecarrot",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winefortified",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:647 — FluidsGT.WINE walk member winecherry -> Wine_Fortified 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:winecherry",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winefortified",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:647 — FluidsGT.WINE walk member winecitrus -> Wine_Fortified 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:winecitrus",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winefortified",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:647 — FluidsGT.WINE walk member winecranberry -> Wine_Fortified 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:winecranberry",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winefortified",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:647 — FluidsGT.WINE walk member wineelderberry -> Wine_Fortified 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:wineelderberry",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winefortified",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:647 — FluidsGT.WINE walk member wineplum -> Wine_Fortified 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:wineplum",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winefortified",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:647 — FluidsGT.WINE walk member winesparkling -> Wine_Fortified 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:winesparkling",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winefortified",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:647 — FluidsGT.WINE walk member winetomato -> Wine_Fortified 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:winetomato",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winefortified",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:647 — FluidsGT.WINE walk member wine -> Wine_Fortified 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:wine",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winefortified",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:647 — FluidsGT.WINE walk member ricardosanchez -> Wine_Fortified 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:ricardosanchez",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winefortified",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:647 — FluidsGT.WINE walk member winered -> Wine_Fortified 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:winered",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winefortified",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:647 — FluidsGT.WINE walk member winewhite -> Wine_Fortified 10",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:winewhite",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:winefortified",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member kiwijuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:kiwijuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member juicelime -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicelime",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member juicelemon -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicelemon",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member juiceorange -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceorange",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member persimmonjuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:persimmonjuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member melonjuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:melonjuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member currantjuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:currantjuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member raspberryjuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:raspberryjuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member blackberryjuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:blackberryjuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member blueberryjuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:blueberryjuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member gooseberryjuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:gooseberryjuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member strawberryjuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:strawberryjuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member juiceplum -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceplum",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member juicepeach -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicepeach",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member juiceelderberry -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceelderberry",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member hellderberryjuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:hellderberryjuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member juicegrapefruit -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicegrapefruit",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member juiceapricot -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceapricot",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member juicepear -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicepear",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member grapejuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:grapejuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member grc_grapewine0 -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:grc_grapewine0",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member juiceredgrape -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceredgrape",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member juicewhitegrape -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicewhitegrape",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member juiceapple -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juiceapple",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member grc_applecider0 -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:grc_applecider0",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member juicepineapple -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicepineapple",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member juicebanana -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicebanana",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member juicecherry -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicecherry",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member juicecranberry -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:juicecranberry",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member cactusfruitjuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:cactusfruitjuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member mangojuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mangojuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member pomegranatejuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:pomegranatejuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member starfruitjuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:starfruitjuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member papayajuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:papayajuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member figjuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:figjuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member coconutmilk -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:coconutmilk",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:649 — FluidsGT.FRUIT_JUICE walk member datejuice -> Wine_Fruit 25",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:datejuice",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:juice_wine_fruit",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:357 — Potion_Awkward -> Potion_Weakness_1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.awkward",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.weakness",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:358 — Potion_Mundane -> Potion_Weakness_1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.mundane",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.weakness",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:359 — Potion_Thick -> Potion_Weakness_1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.thick",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.weakness",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:360 — Potion_Heal_1 -> Potion_Harm_1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.health",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:361 — Potion_Heal_1S -> Potion_Harm_1S",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.health.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage.splash",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:362 — Potion_Heal_1D -> Potion_Harm_1D",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.health.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage.lingering",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:363 — Potion_Heal_2 -> Potion_Harm_2",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.health.strong",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage.strong",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:364 — Potion_Heal_2S -> Potion_Harm_2S",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.health.strong.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage.strong.splash",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:365 — Potion_Heal_2D -> Potion_Harm_2D",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.health.strong.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage.strong.lingering",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:366 — Potion_Jump_1 -> Potion_Slowness_1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.jump",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:367 — Potion_Jump_1S -> Potion_Slowness_1S",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.jump.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness.splash",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:368 — Potion_Jump_1D -> Potion_Slowness_1D",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.jump.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness.lingering",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:369 — Potion_Jump_2 -> Potion_Slowness_1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.jump.strong",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:370 — Potion_Jump_2S -> Potion_Slowness_1S",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.jump.strong.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness.splash",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:371 — Potion_Jump_2D -> Potion_Slowness_1D",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.jump.strong.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness.lingering",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:372 — Potion_Speed_1 -> Potion_Slowness_1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.speed",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:373 — Potion_Speed_1S -> Potion_Slowness_1S",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.speed.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness.splash",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:374 — Potion_Speed_1D -> Potion_Slowness_1D",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.speed.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness.lingering",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:375 — Potion_Speed_2 -> Potion_Slowness_1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.speed.strong",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:376 — Potion_Speed_2S -> Potion_Slowness_1S",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.speed.strong.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness.splash",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:377 — Potion_Speed_2D -> Potion_Slowness_1D",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.speed.strong.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness.lingering",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:378 — Potion_Speed_1L -> Potion_Slowness_1L",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.speed.long",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness.long",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:379 — Potion_Speed_1LS -> Potion_Slowness_1LS",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.speed.long.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness.long.splash",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:380 — Potion_Speed_1LD -> Potion_Slowness_1LD",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.speed.long.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness.long.lingering",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:381 — Potion_Strength_1 -> Potion_Weakness_1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.strength",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.weakness",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:382 — Potion_Strength_1S -> Potion_Weakness_1S",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.strength.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.weakness.splash",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:383 — Potion_Strength_1D -> Potion_Weakness_1D",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.strength.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.weakness.lingering",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:384 — Potion_Strength_2 -> Potion_Weakness_1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.strength.strong",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.weakness",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:385 — Potion_Strength_2S -> Potion_Weakness_1S",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.strength.strong.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.weakness.splash",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:386 — Potion_Strength_2D -> Potion_Weakness_1D",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.strength.strong.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.weakness.lingering",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:387 — Potion_Strength_1L -> Potion_Weakness_1L",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.strength.long",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.weakness.long",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:388 — Potion_Strength_1LS -> Potion_Weakness_1LS",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.strength.long.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.weakness.long.splash",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:389 — Potion_Strength_1LD -> Potion_Weakness_1LD",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.strength.long.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.weakness.long.lingering",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:390 — Potion_Regen_1 -> Potion_Poison_1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.regen",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.poison",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:391 — Potion_Regen_1S -> Potion_Poison_1S",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.regen.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.poison.splash",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:392 — Potion_Regen_1D -> Potion_Poison_1D",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.regen.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.poison.lingering",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:393 — Potion_Regen_2 -> Potion_Poison_2",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.regen.strong",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.poison.strong",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:394 — Potion_Regen_2S -> Potion_Poison_2S",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.regen.strong.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.poison.strong.splash",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:395 — Potion_Regen_2D -> Potion_Poison_2D",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.regen.strong.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.poison.strong.lingering",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:396 — Potion_Regen_1L -> Potion_Poison_1L",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.regen.long",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.poison.long",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:397 — Potion_Regen_1LS -> Potion_Poison_1LS",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.regen.long.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.poison.long.splash",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:398 — Potion_Regen_1LD -> Potion_Poison_1LD",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.regen.long.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.poison.long.lingering",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:399 — Potion_Poison_1 -> Potion_Harm_1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.poison",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:400 — Potion_Poison_1S -> Potion_Harm_1S",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.poison.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage.splash",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:401 — Potion_Poison_1D -> Potion_Harm_1D",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.poison.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage.lingering",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:402 — Potion_Poison -> Potion_Harm_2",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:poison",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage.strong",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:403 — Potion_Poison_2 -> Potion_Harm_2",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.poison.strong",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage.strong",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:404 — Potion_Poison_2S -> Potion_Harm_2S",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.poison.strong.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage.strong.splash",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:405 — Potion_Poison_2D -> Potion_Harm_2D",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.poison.strong.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage.strong.lingering",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:406 — Potion_Poison_1L -> Potion_Harm_1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.poison.long",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:407 — Potion_Poison_1LS -> Potion_Harm_1S",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.poison.long.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage.splash",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:408 — Potion_Poison_1LD -> Potion_Harm_1D",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.poison.long.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage.lingering",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:409 — Potion_FireResistance_1 -> Potion_Slowness_1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.fireresistance",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:410 — Potion_FireResistance_1S -> Potion_Slowness_1S",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.fireresistance.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness.splash",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:411 — Potion_FireResistance_1D -> Potion_Slowness_1D",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.fireresistance.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness.lingering",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:412 — Potion_FireResistance_1L -> Potion_Slowness_1L",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.fireresistance.long",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness.long",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:413 — Potion_FireResistance_1LS -> Potion_Slowness_1LS",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.fireresistance.long.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness.long.splash",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:414 — Potion_FireResistance_1LD -> Potion_Slowness_1LD",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.fireresistance.long.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.slowness.long.lingering",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:415 — Potion_NightVision_1 -> Potion_Invisibility_1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.nightvision",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.invisibility",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:416 — Potion_NightVision_1S -> Potion_Invisibility_1S",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.nightvision.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.invisibility.splash",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:417 — Potion_NightVision_1D -> Potion_Invisibility_1D",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.nightvision.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.invisibility.lingering",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:418 — Potion_NightVision_1L -> Potion_Invisibility_1L",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.nightvision.long",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.invisibility.long",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:419 — Potion_NightVision_1LS -> Potion_Invisibility_1LS",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.nightvision.long.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.invisibility.long.splash",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:420 — Potion_NightVision_1LD -> Potion_Invisibility_1LD",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.nightvision.long.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.invisibility.long.lingering",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:421 — Potion_WaterBreathing_1 -> Potion_Harm_1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.waterbreathing",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:422 — Potion_WaterBreathing_1S -> Potion_Harm_1S",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.waterbreathing.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage.splash",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:423 — Potion_WaterBreathing_1D -> Potion_Harm_1D",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.waterbreathing.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage.lingering",
+     "amount": 25
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:424 — Potion_WaterBreathing_1L -> Potion_Harm_1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.waterbreathing.long",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:425 — Potion_WaterBreathing_1LS -> Potion_Harm_1S",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.waterbreathing.long.splash",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage.splash",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Potions.java:426 — Potion_WaterBreathing_1LD -> Potion_Harm_1D",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:potion.waterbreathing.long.lingering",
+     "amount": 50
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion.damage.lingering",
+     "amount": 10
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Chem.java:329 — Biomass 40 -> Methane 8 (the :330 BiomassIC2 twin rides the unported \"ic2biomass\" alias, the single-name ruling)",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:biomass",
+     "amount": 40
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:methane",
+     "amount": 8
+    }
+   ],
+   "duration": 24,
    "eut": 16
   }
  ]
