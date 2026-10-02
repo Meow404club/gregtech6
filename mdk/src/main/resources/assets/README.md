@@ -11070,6 +11070,10 @@ there.
   - `ice_cream.png`        `textures/items/gt.multiitem.food/13000.png`
     (`bbdf943b76ae7c66a37b1c2d0eb3dd35ceaaf5f3a1f9e4373b5a454042d1573c` — the plain
     Ice Cream, :809; the 37-flavour family stays pooled)
+  - `ice_cream_raisin.png` `textures/items/gt.multiitem.food/13002.png`
+    (`c3b09e7b2af44892516038b0a38972c987a58a95379e30ac2e4b95da97a53b35` — the Raisin
+    Ice Cream, :811; task pool-drain-food-t5-tail — the one pooled flavour this card
+    registers, the family tail stays pooled)
   - `butter.png`           `textures/items/gt.multiitem.food/32117.png`
     (`f5349a2182073c177f21bc133bd491a78f7ed770d8a8aad2a517dfe3eb2c59c1` — the Butter,
     :933)
