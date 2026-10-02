@@ -253,6 +253,24 @@ class GT6TagsDatagenTest {
     }
 
     /**
+     * The wood-beam oredient band (task beam-oredict-seam): the 8 beam items are exactly
+     * the OD.beamWood members — upstream registers EVERY beam meta to the single oredict
+     * name "beamWood" (BlockBaseBeam.java:48 {@code for (i < 16) OM.reg(ST.make(this, 1, i),
+     * OD.beamWood)}; OD.java:150 the key; OP.java:393 the prefix comment "Usually as
+     * \"beamWood\""), so the port's per-wood items are that meta universe, kind order.
+     * Both tree faces pinned (the plural 1.20.1 form + the singular 21.1 form — the
+     * vanilla-tag-dual-tree discipline).
+     */
+    @Test
+    void beamWoodBandIsExactlyTheEightBeamItems() throws Exception {
+        List<String> tBeams = List.of(
+                "gt6:oak_beam", "gt6:spruce_beam", "gt6:birch_beam", "gt6:jungle_beam",
+                "gt6:acacia_beam", "gt6:dark_oak_beam", "gt6:rubber_wood_beam", "gt6:wood_beam");
+        assertEquals(tBeams, tagValues("gt6/tags/items/beam_wood.json"));
+        assertEquals(tBeams, tagValues("gt6/tags/item/beam_wood.json"));
+    }
+
+    /**
      * The shovel band, rolling batch 1: the blockDust prefix family — walk-exact
      * membership (mirror of the provider's filtered walk), the 3777-2681=1096 census count,
      * all gt6. PIN recomputed at merge order (the conscious-update duty, S3 2045c78d):

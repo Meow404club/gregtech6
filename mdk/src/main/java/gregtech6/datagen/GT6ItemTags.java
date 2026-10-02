@@ -87,6 +87,22 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	public static final TagKey<Item> COMBS_CROSSBRED = gt6("combs/crossbred");
 
 	/**
+	 * The OD.beamWood oredient translation — #gt6:beam_wood (task beam-oredict-seam, the
+	 * snake rule). Upstream carries ONE oredict name for the whole wood-beam universe:
+	 * {@code OD.beamWood} (OD.java:150; the OP.beam prefix comment OP.java:393 "Usually as
+	 * \"beamWood\"" — prefix "beam" + material "Wood" composes the same name for prefix
+	 * items, while the GT6 beam BLOCKS register manually). Every beam meta joins it:
+	 * BlockBaseBeam.java:48 {@code for (int i = 0; i < 16; i++) OM.reg(ST.make(this, 1, i),
+	 * OD.beamWood);} — the port's 8 per-wood items are that meta universe (the kind-order
+	 * walk over {@link gregtech6.registry.GT6BeamBlocks#ITEMS}, the addFallenLogTags shape).
+	 * Future consumers key the TAG, not the items (the upstream 'W' faces:
+	 * Loader_MultiTileEntities.java:1891 pipeHuge Wood, :1666 the Huge Wooden Axle 'S' slot).
+	 * KJS surface: datagen-domain JSON is pack-editable as-is; the registration-face KJS
+	 * bindings defer to the kjs binding card (the GT6Bumbles.java:71-72 precedent).
+	 */
+	public static final TagKey<Item> BEAM_WOOD = gt6("beam_wood");
+
+	/**
 	 * The craftingToolHardHammer oredient translation — #gt6:tools/hard_hammer (task
 	 * tool-hammer-wrench spec ④, the TOOLS_FILE/TOOLS_SAW snake shape). Upstream key
 	 * {@code OreDictToolNames.hammer = "craftingToolHardHammer"} (CS.java:1890); the
@@ -461,6 +477,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		addTreeTags(); // task w6-t1-trees-nine — the decisions.p25-leaves-logs-tags-deferred unlock
 		addFallenLogTags(); // task w6-t2-surface-blocks — the 4 fallen-log item faces (the coke-oven rebuild source)
 		addCombTags(); // task bumbliary-recipes — the OD.beeCombCrossbred face over the ten crossbred combs
+		addBeamTags(); // task beam-oredict-seam — the OD.beamWood face over the 8 wood beams
 	}
 
 	/**
@@ -472,6 +489,18 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	private void addCombTags() {
 		for (gregtech6.registry.GT6BeeCombs.CombSpec tSpec : gregtech6.registry.GT6BeeCombs.COMB_SPECS) {
 			if (tSpec.meta() >= 30100) tag(COMBS_CROSSBRED).add(item(gt6Rl(tSpec.itemId())));
+		}
+	}
+
+	/**
+	 * The wood-beam oredient band (task beam-oredict-seam): the 8 beam items join
+	 * {@code #gt6:beam_wood} — the OD.beamWood face (BlockBaseBeam.java:48, the whole-meta
+	 * registration the port's per-wood items subsume). Kind order, the addFallenLogTags
+	 * walk shape over the registration list.
+	 */
+	private void addBeamTags() {
+		for (RegistryObject<Item> tBeam : gregtech6.registry.GT6BeamBlocks.ITEMS) {
+			tag(BEAM_WOOD).add(item(tBeam.getId()));
 		}
 	}
 
