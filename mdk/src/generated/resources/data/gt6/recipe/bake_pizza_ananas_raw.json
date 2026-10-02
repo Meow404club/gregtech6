@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:food_dough_flat_ketchup"
+    },
+    {
+      "item": "gt6:food_ananas_sliced"
+    },
+    {
+      "item": "gt6:food_ananas_sliced"
+    },
+    {
+      "item": "gt6:food_ham_slice_cooked"
+    },
+    {
+      "item": "gt6:food_cheese_sliced"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:food_pizza_ananas_raw"
+  }
+}

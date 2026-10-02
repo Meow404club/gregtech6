@@ -60,8 +60,11 @@ import gregtech6.GT6Mod;
  * Sandwiches.INGREDIENTS seats; the FoodsGT.put vanilla meat/fish values table
  * (:514-:526 — the sandwich/canning data domain, zero port surface, the T4b rows); the
  * TC aspects; the IItemRottable rot face; the Behavior_FeedDog/FeedCat faces; the
- * {@code setFluidContainerStats(0, 8)} faces; the ice-cream 37-flavour family, the
- * scrap-meat 1998 and the ingot-bar metas 32101-32115 (:925-:932, the T3/pool rows); and
+ * {@code setFluidContainerStats(0, 8)} faces; the ice-cream 36-flavour family tail
+ * (task pool-drain-food-t5-tail registered the ONE pooled raisin row :811 — the
+ * machine-row unlock for the food-machine-tail card — the remaining flavours stay
+ * pooled), the scrap-meat 1998 and the ingot-bar metas 32101-32115 (:925-:932, the
+ * T3/pool rows); and
  * every recipe row (smelting, kX slicing, the Slicer/Shredder/Mortar/Fermenter listener
  * block Loader_Recipes_Food.java:350-:516 — the T4b row-backfill card's surface).
  *
@@ -108,9 +111,9 @@ public final class GT6Foods {
 	}
 
 	/**
-	 * The 38 rows in upstream meta order (MultiItemFood.java:490/:491/:497/:498/:496/
-	 * :1070/:1071/:1072/:1073/:1074/:529-:560/:563-:578/:594/:798/:365/:374/:809/:933/
-	 * :934) — the registration, tab, datagen and test walk all ride THIS table so the
+	 * The 39 rows in upstream meta order (MultiItemFood.java:490/:491/:497/:498/:496/
+	 * :1070/:1071/:1072/:1073/:1074/:529-:560/:563-:578/:594/:798/:365/:374/:809/:811/
+	 * :933/:934) — the registration, tab, datagen and test walk all ride THIS table so the
 	 * faces cannot drift.
 	 */
 	public static final List<FoodRow> FOOD_ROWS = List.of(
@@ -152,14 +155,18 @@ public final class GT6Foods {
 			new FoodRow("food_donkey_cooked", "Grilled Donkey Meat", 8, 1.6F, "", false),
 			new FoodRow("food_chum", "Chum", 5, 1.6F, "Chum is Fum!", true),
 			new FoodRow("food_chum_on_stick", "Chum on a Stick", 5, 1.6F, "Don't forget to try our Chum-balaya", true),
-			// back to the chips/ice-cream/butter metas (:365/:374/:809/:933/:934):
-			new FoodRow("food_potato_chips", "Potato Chips", 7, 1.2F, "Crunchy", false),
-			new FoodRow("food_chili_chips", "Chili Chips", 7, 1.2F, "Spicy", false),
-			new FoodRow("food_ice_cream", "Ice Cream", 1, 0.6F, "Basic Milk Gelato", false),
-			new FoodRow("food_butter", "Butter", 1, 4.0F, "A chunk of pure Fat", false),
-			new FoodRow("food_butter_salted", "Salted Butter", 1, 4.0F, "As if it wasn't unhealthy already", false));
+		// back to the chips/ice-cream/butter metas (:365/:374/:809/:811/:933/:934):
+		new FoodRow("food_potato_chips", "Potato Chips", 7, 1.2F, "Crunchy", false),
+		new FoodRow("food_chili_chips", "Chili Chips", 7, 1.2F, "Spicy", false),
+		new FoodRow("food_ice_cream", "Ice Cream", 1, 0.6F, "Basic Milk Gelato", false),
+		// task pool-drain-food-t5-tail — the one pooled ice-cream flavour the port needed
+		// for the MultiItemFood.java:811 row (the food-machine-tail card's :156 Mixer row
+		// unlocks off this carrier):
+		new FoodRow("food_ice_cream_raisin", "Raisin Ice Cream", 1, 0.6F, "Dry and Grapey Gelato", false),
+		new FoodRow("food_butter", "Butter", 1, 4.0F, "A chunk of pure Fat", false),
+		new FoodRow("food_butter_salted", "Salted Butter", 1, 4.0F, "As if it wasn't unhealthy already", false));
 
-	/** The 38 registered foods, table order (the {@link #FOOD_ROWS} walk). */
+	/** The 39 registered foods, table order (the {@link #FOOD_ROWS} walk). */
 	public static final List<RegistryObject<Item>> FOODS = FOOD_ROWS.stream()
 			.map(aRow -> ITEMS.<Item>register(aRow.id(), () -> new GT6FoodItem(foodProps(aRow), aRow.enTooltip().isEmpty() ? null : aRow.tooltipKey())))
 			.toList();

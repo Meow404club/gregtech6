@@ -2701,6 +2701,8 @@ direct	item.gt6.food_horse_cooked	烤马肉	hand
 direct	item.gt6.food_horse_raw	马肉	hand
 direct	item.gt6.food_ice_cream	冰淇淋	hand
 direct	item.gt6.food_ice_cream.tooltip	牛奶基本款意式冰淇淋	hand
+direct	item.gt6.food_ice_cream_raisin	葡萄干冰淇淋	hand
+direct	item.gt6.food_ice_cream_raisin.tooltip	葡萄干与意式冰淇淋的结合	hand
 direct	item.gt6.food_ketchup	番茄酱	hand
 direct	item.gt6.food_large_sandwich_bacon	大型培根三明治	hand
 direct	item.gt6.food_large_sandwich_bacon.tooltip	只为真男人!(女汉子也行)	hand

@@ -2052,6 +2052,10 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.food_chili_chips.tooltip");
 		addDirect("item.gt6.food_ice_cream"); // dump food.13000
 		addDirect("item.gt6.food_ice_cream.tooltip");
+		// task pool-drain-food-t5-tail — 葡萄干冰淇淋 (dump gt.multiitem.food.13002 逐字,
+		// MultiItemFood.java:811; tooltip dump gt.multiitem.food.13002.tooltip 逐字)
+		addDirect("item.gt6.food_ice_cream_raisin"); // dump food.13002 葡萄干冰淇淋
+		addDirect("item.gt6.food_ice_cream_raisin.tooltip"); // dump 葡萄干与意式冰淇淋的结合
 		addDirect("item.gt6.food_butter"); // dump food.32117
 		addDirect("item.gt6.food_butter.tooltip");
 		addDirect("item.gt6.food_butter_salted"); // dump food.32119

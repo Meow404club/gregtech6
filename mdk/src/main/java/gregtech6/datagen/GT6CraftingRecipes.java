@@ -2063,7 +2063,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						.unlockedBy("has_chum", has(tChum)),
 				bakeId("chum_on_stick")));
 
-		// :652/:658 — the leg-complete pizza rows (the :664 veggie / :670 ananas legs are T5-absent, declared)
+		// :652/:658 + the T5 legs — the leg-complete pizza rows PLUS the :664 veggie /
+		// :670 ananas legs (task pool-drain-food-t5-tail; the four crop slices resolved
+		// live off GT6CropFoods, the ham slice / cheese slice off GT6Foods)
 		rRows.add(BakeCraftRow.of(ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, bakeItem(GT6RecipesBakeIds.PIZZA_CHEESE_RAW))
 						.requires(bakeItem(GT6RecipesBakeIds.DOUGH_FLAT_KETCHUP))
 						.requires(tCheeseSliced, 3)
@@ -2074,18 +2076,39 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						.requires(materialItemOrThrow(gregapi.data.OP.dust, MT.MeatCooked))
 						.unlockedBy("has_flat_ketchup", has(bakeItem(GT6RecipesBakeIds.DOUGH_FLAT_KETCHUP))),
 				bakeId("pizza_meat_raw")));
+		// :664 — Ketchup Flat Dough + Cucumber/Tomato/Onion Sliced → Raw Veggie Pizza
+		rRows.add(BakeCraftRow.of(ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, bakeItem(GT6RecipesBakeIds.PIZZA_VEGGIE_RAW))
+						.requires(bakeItem(GT6RecipesBakeIds.DOUGH_FLAT_KETCHUP))
+						.requires(cropFoodItem(8)) // GT6CropFoods index 8 = food_cucumber_sliced (:296)
+						.requires(cropFoodItem(3)) // index 3 = food_tomato_sliced (:279)
+						.requires(cropFoodItem(6)) // index 6 = food_onion_sliced (:290)
+						.unlockedBy("has_flat_ketchup", has(bakeItem(GT6RecipesBakeIds.DOUGH_FLAT_KETCHUP))),
+				bakeId("pizza_veggie_raw")));
+		// :670 — Ketchup Flat Dough + 2 Ananas Sliced + Cooked Ham Slice + Cheese Slice → Raw Pizza Hawaii
+		rRows.add(BakeCraftRow.of(ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, bakeItem(GT6RecipesBakeIds.PIZZA_ANANAS_RAW))
+						.requires(bakeItem(GT6RecipesBakeIds.DOUGH_FLAT_KETCHUP))
+						.requires(cropFoodItem(46), 2) // GT6CropFoods index 46 = food_ananas_sliced (:476)
+						.requires(foodItem(13)) // GT6Foods index 13 = food_ham_slice_cooked (:535, meta 1103)
+						.requires(tCheeseSliced)
+						.unlockedBy("has_flat_ketchup", has(bakeItem(GT6RecipesBakeIds.DOUGH_FLAT_KETCHUP))),
+				bakeId("pizza_ananas_raw")));
 
 		// :699-:710 — the burger assembly; the leg-complete rows + the :709/:710 chum legs
-		// (task food-crafting-tail; the :697/:698 veggie rows are T5-absent, declared)
+		// (task food-crafting-tail) + the :697/:698 veggie legs (task pool-drain-food-t5-tail)
 		burgerRows(rRows, tCheeseSliced);
 
 		// :735-:770 — the sandwich assembly; the leg-complete rows + the :737/:738/:767/:768
-		// bacon legs (task food-crafting-tail; the veggie rows are T5-absent, declared)
+		// bacon legs (task food-crafting-tail) + the :733/:734/:763/:764 veggie legs
+		// (task pool-drain-food-t5-tail)
 		sandwichRows(rRows, tCheeseSliced);
 		return rRows;
 	}
 
-	/** The :699-:710 burger rows — the buns/bun-pair shapes over the material-ingot, cheese-slice and chum legs (the "foodChum" oredict member is the lone GT6 chum :594). */
+	/**
+	 * The :699-:710 burger rows — the buns/bun-pair shapes over the material-ingot, cheese-slice and
+	 * chum legs (the "foodChum" oredict member is the lone GT6 chum :594), plus the :697/:698 veggie
+	 * legs over the GT6CropFoods slice trio (task pool-drain-food-t5-tail).
+	 */
 	private void burgerRows(List<BakeCraftRow> aRows, Item aCheeseSliced) {
 		Object[][] tBurgers = {
 				{GT6RecipesBakeIds.BURGER_CHEESE, null, aCheeseSliced, 3, "burger_cheese_buns", "burger_cheese_pair"},
@@ -2108,15 +2131,38 @@ public class GT6CraftingRecipes extends RecipeProvider {
 							.unlockedBy("has_bun_sliced", has(bakeItem(GT6RecipesBakeIds.BUN_SLICED))),
 					bakeId((String) tBurger[5])));
 		}
+		// :697 — Buns_Sliced + Cucumber/Tomato/Onion Sliced → Veggie Burger
+		Item tCucumber = cropFoodItem(8), tTomato = cropFoodItem(3), tOnion = cropFoodItem(6);
+		aRows.add(BakeCraftRow.of(ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, bakeItem(GT6RecipesBakeIds.BURGER_VEGGIE))
+						.requires(bakeItem(GT6RecipesBakeIds.BUNS_SLICED))
+						.requires(tCucumber)
+						.requires(tTomato)
+						.requires(tOnion)
+						.unlockedBy("has_bun_sliced", has(bakeItem(GT6RecipesBakeIds.BUN_SLICED))),
+				bakeId("burger_veggie_buns")));
+		// :698 — Bun_Sliced ×2 + the slice trio → Veggie Burger
+		aRows.add(BakeCraftRow.of(ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, bakeItem(GT6RecipesBakeIds.BURGER_VEGGIE))
+						.requires(bakeItem(GT6RecipesBakeIds.BUN_SLICED), 2)
+						.requires(tCucumber)
+						.requires(tTomato)
+						.requires(tOnion)
+						.unlockedBy("has_bun_sliced", has(bakeItem(GT6RecipesBakeIds.BUN_SLICED))),
+				bakeId("burger_veggie_pair")));
 	}
 
-	/** The :735-:740/:765-:770 sandwich rows — the cheese, steak and bacon legs (the "foodBaconcooked" oredict member is the lone GT6 grilled bacon :542; the veggie rows are declared). */
+	/**
+	 * The :733-:740/:763-:770 sandwich rows — the cheese, steak and bacon legs (the
+	 * "foodBaconcooked" oredict member is the lone GT6 grilled bacon :542) plus the
+	 * :733/:734 and :763/:764 veggie legs (task pool-drain-food-t5-tail; the cheese
+	 * slice counts ride the upstream 5/7 literals — the pre-card 6/8 was the
+	 * bake_sandwich_cheese_off_by_one bug, closed here).
+	 */
 	private void sandwichRows(List<BakeCraftRow> aRows, Item aCheeseSliced) {
 		Object[][] tSandwiches = {
-				{GT6RecipesBakeIds.SANDWICH_CHEESE, GT6RecipesBakeIds.BREADS_SLICED, GT6RecipesBakeIds.BREAD_SLICED, aCheeseSliced, 6, "sandwich_cheese_breads", "sandwich_cheese_pair"},
+				{GT6RecipesBakeIds.SANDWICH_CHEESE, GT6RecipesBakeIds.BREADS_SLICED, GT6RecipesBakeIds.BREAD_SLICED, aCheeseSliced, 5, "sandwich_cheese_breads", "sandwich_cheese_pair"}, // :735/:736 — 5 slices
 				{GT6RecipesBakeIds.SANDWICH_BACON, GT6RecipesBakeIds.BREADS_SLICED, GT6RecipesBakeIds.BREAD_SLICED, foodItem(15), 3, "sandwich_bacon_breads", "sandwich_bacon_pair"}, // :737/:738
 				{GT6RecipesBakeIds.SANDWICH_STEAK, GT6RecipesBakeIds.BREADS_SLICED, GT6RecipesBakeIds.BREAD_SLICED, Items.COOKED_BEEF, 1, "sandwich_steak_breads", "sandwich_steak_pair"},
-				{GT6RecipesBakeIds.LARGE_SANDWICH_CHEESE, GT6RecipesBakeIds.BAGUETTES_SLICED, GT6RecipesBakeIds.BAGUETTE_SLICED, aCheeseSliced, 8, "large_sandwich_cheese_baguettes", "large_sandwich_cheese_pair"},
+				{GT6RecipesBakeIds.LARGE_SANDWICH_CHEESE, GT6RecipesBakeIds.BAGUETTES_SLICED, GT6RecipesBakeIds.BAGUETTE_SLICED, aCheeseSliced, 7, "large_sandwich_cheese_baguettes", "large_sandwich_cheese_pair"}, // :765/:766 — 7 slices
 				{GT6RecipesBakeIds.LARGE_SANDWICH_BACON, GT6RecipesBakeIds.BAGUETTES_SLICED, GT6RecipesBakeIds.BAGUETTE_SLICED, foodItem(15), 6, "large_sandwich_bacon_baguettes", "large_sandwich_bacon_pair"}, // :767/:768
 				{GT6RecipesBakeIds.LARGE_SANDWICH_STEAK, GT6RecipesBakeIds.BAGUETTES_SLICED, GT6RecipesBakeIds.BAGUETTE_SLICED, Items.COOKED_BEEF, 2, "large_sandwich_steak_baguettes", "large_sandwich_steak_pair"}};
 		for (Object[] tSandwich : tSandwiches) {
@@ -2131,6 +2177,29 @@ public class GT6CraftingRecipes extends RecipeProvider {
 							.unlockedBy("has_sliced_bread", has(bakeItem((int) tSandwich[2]))),
 					bakeId((String) tSandwich[6])));
 		}
+		// the veggie legs — Breads/Baguettes_Sliced (or the sliced pair ×2) + the Cucumber
+		// ×2/×3 + Tomato ×2/×3 + Onion ×1 ladder (:733/:734 and :763/:764)
+		Item tCucumber = cropFoodItem(8), tTomato = cropFoodItem(3), tOnion = cropFoodItem(6);
+		aRows.add(BakeCraftRow.of(ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, bakeItem(GT6RecipesBakeIds.SANDWICH_VEGGIE))
+						.requires(bakeItem(GT6RecipesBakeIds.BREADS_SLICED))
+						.requires(tCucumber, 2).requires(tTomato, 2).requires(tOnion)
+						.unlockedBy("has_sliced_bread", has(bakeItem(GT6RecipesBakeIds.BREAD_SLICED))),
+				bakeId("sandwich_veggie_breads")));
+		aRows.add(BakeCraftRow.of(ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, bakeItem(GT6RecipesBakeIds.SANDWICH_VEGGIE))
+						.requires(bakeItem(GT6RecipesBakeIds.BREAD_SLICED), 2)
+						.requires(tCucumber, 2).requires(tTomato, 2).requires(tOnion)
+						.unlockedBy("has_sliced_bread", has(bakeItem(GT6RecipesBakeIds.BREAD_SLICED))),
+				bakeId("sandwich_veggie_pair")));
+		aRows.add(BakeCraftRow.of(ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, bakeItem(GT6RecipesBakeIds.LARGE_SANDWICH_VEGGIE))
+						.requires(bakeItem(GT6RecipesBakeIds.BAGUETTES_SLICED))
+						.requires(tCucumber, 3).requires(tTomato, 3).requires(tOnion)
+						.unlockedBy("has_sliced_bread", has(bakeItem(GT6RecipesBakeIds.BAGUETTE_SLICED))),
+				bakeId("large_sandwich_veggie_baguettes")));
+		aRows.add(BakeCraftRow.of(ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, bakeItem(GT6RecipesBakeIds.LARGE_SANDWICH_VEGGIE))
+						.requires(bakeItem(GT6RecipesBakeIds.BAGUETTE_SLICED), 2)
+						.requires(tCucumber, 3).requires(tTomato, 3).requires(tOnion)
+						.unlockedBy("has_sliced_bread", has(bakeItem(GT6RecipesBakeIds.BAGUETTE_SLICED))),
+				bakeId("large_sandwich_veggie_pair")));
 	}
 
 	// -------------------------------------------------------------------------
@@ -2211,8 +2280,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * raisin cookies, :626 the Abyssal cookie ELSE-leg (the :623 NeLi_Cookie leg is the
 	 * foreign gate — the GT6-only face), :634 the cake bottom, :653/:659/:665/:671 the pizza
 	 * quartet, :679 the bun, :718 the raw bread (→ vanilla Items.bread, the Food_Bread alias
-	 * :715), :748 the baguette, :778/:779 the toast pair. The :590 Abyssal-Dough → NeLi_Bread
-	 * row is the foreign-gated TRUE NEGATIVE (declared, no row).
+	 * :715), :748 the baguette, :778/:779 the toast pair — plus the :317 egg row (task
+	 * pool-drain-food-t5-tail, the Loader_Recipes_Food.java:317 smelt: the vanilla egg →
+	 * Food_Egg_Fried; the listener-channel faces — the itemEggBig ×4 tAmount leg and the GT
+	 * twin eggs — have no datagen carrier, declared at the row). The :590 Abyssal-Dough →
+	 * NeLi_Bread row is the foreign-gated TRUE NEGATIVE (declared, no row).
 	 */
 	private List<BakeSmeltRow> bakeSmeltRows() {
 		Object[][] tSmelts = {
@@ -2237,6 +2309,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			Item tOut = tSmelt[1] == null ? (tSmelt[2].equals("smelt_cookie") || tSmelt[2].equals("smelt_cookie_abyssal") ? Items.COOKIE : Items.BREAD) : bakeItem((int) tSmelt[1]);
 			rRows.add(new BakeSmeltRow(bakeSmeltBuilder(tIn, tOut), bakeId((String) tSmelt[2])));
 		}
+		// :317 — RM.add_smelting(aEvent.mStack, IL.Food_Egg_Fried.get(tAmount)); the vanilla
+		// egg rides the listener at tAmount=1 (the GT6MeatDatagen smelt JSON shape)
+		rRows.add(new BakeSmeltRow(bakeSmeltBuilder(Items.EGG, foodItem(5)), bakeId("smelt_egg"))); // index 5 = food_egg_fried (:499, meta 1070)
 		return rRows;
 	}
 
@@ -2301,6 +2376,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		return gregtech6.registry.GT6Foods.FOODS.get(aIndex).get();
 	}
 
+	/** A crop food by the {@link gregtech6.registry.GT6CropFoods#FOOD_ROWS} index (the T5a table walk, the same id-pinning the GT6CropFoodsTest census rides). */
+	private Item cropFoodItem(int aIndex) {
+		return gregtech6.registry.GT6CropFoods.FOODS.get(aIndex).get();
+	}
+
 	/** The bake row save id — {@code bake_<name>} under the gt6 namespace. */
 	private static ResourceLocation bakeId(String aName) {
 		return new ResourceLocation(GT6DataGenerators.MOD_ID, "bake_" + aName);
@@ -2324,16 +2404,16 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		static final int BUN = gregtech6.recipes.GT6RecipesBake.BAKE_BUN;
 		static final int BUN_SLICED = gregtech6.recipes.GT6RecipesBake.BAKE_BUN_SLICED;
 		static final int BUNS_SLICED = gregtech6.recipes.GT6RecipesBake.BAKE_BUNS_SLICED;
-		static final int BURGER_CHEESE = 23, BURGER_MEAT = 24, BURGER_CHUM = 25, BURGER_TOFU = 26, BURGER_SOYLENT = 27, BURGER_FISH = 28;
+		static final int BURGER_VEGGIE = 22, BURGER_CHEESE = 23, BURGER_MEAT = 24, BURGER_CHUM = 25, BURGER_TOFU = 26, BURGER_SOYLENT = 27, BURGER_FISH = 28;
 		static final int BREAD_RAW = gregtech6.recipes.GT6RecipesBake.BAKE_BREAD_RAW;
 		static final int BREAD_SLICED = gregtech6.recipes.GT6RecipesBake.BAKE_BREAD_SLICED;
 		static final int BREADS_SLICED = gregtech6.recipes.GT6RecipesBake.BAKE_BREADS_SLICED;
-		static final int SANDWICH_CHEESE = 33, SANDWICH_BACON = 34, SANDWICH_STEAK = 35;
+		static final int SANDWICH_VEGGIE = 32, SANDWICH_CHEESE = 33, SANDWICH_BACON = 34, SANDWICH_STEAK = 35;
 		static final int BAGUETTE_RAW = gregtech6.recipes.GT6RecipesBake.BAKE_BAGUETTE_RAW;
 		static final int BAGUETTE = gregtech6.recipes.GT6RecipesBake.BAKE_BAGUETTE;
 		static final int BAGUETTE_SLICED = gregtech6.recipes.GT6RecipesBake.BAKE_BAGUETTE_SLICED;
 		static final int BAGUETTES_SLICED = gregtech6.recipes.GT6RecipesBake.BAKE_BAGUETTES_SLICED;
-		static final int LARGE_SANDWICH_CHEESE = 41, LARGE_SANDWICH_BACON = 42, LARGE_SANDWICH_STEAK = 43;
+		static final int LARGE_SANDWICH_VEGGIE = 40, LARGE_SANDWICH_CHEESE = 41, LARGE_SANDWICH_BACON = 42, LARGE_SANDWICH_STEAK = 43;
 		static final int FRIES_RAW = gregtech6.recipes.GT6RecipesBake.BAKE_FRIES_RAW;
 		static final int FRIES = gregtech6.recipes.GT6RecipesBake.BAKE_FRIES;
 		static final int FRIES_PACKAGED = gregtech6.recipes.GT6RecipesBake.BAKE_FRIES_PACKAGED;

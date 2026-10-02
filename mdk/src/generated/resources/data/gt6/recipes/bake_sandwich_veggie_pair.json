@@ -9,22 +9,22 @@
       "item": "gt6:food_bread_sliced"
     },
     {
-      "item": "gt6:food_cheese_sliced"
+      "item": "gt6:food_cucumber_sliced"
     },
     {
-      "item": "gt6:food_cheese_sliced"
+      "item": "gt6:food_cucumber_sliced"
     },
     {
-      "item": "gt6:food_cheese_sliced"
+      "item": "gt6:food_tomato_sliced"
     },
     {
-      "item": "gt6:food_cheese_sliced"
+      "item": "gt6:food_tomato_sliced"
     },
     {
-      "item": "gt6:food_cheese_sliced"
+      "item": "gt6:food_onion_sliced"
     }
   ],
   "result": {
-    "item": "gt6:food_sandwich_cheese"
+    "item": "gt6:food_sandwich_veggie"
   }
 }

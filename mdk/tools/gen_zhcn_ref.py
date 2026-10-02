@@ -1028,6 +1028,10 @@ HAND_TRANSLATIONS = {
     "item.gt6.food_chili_chips.tooltip": ("辣的够呛", "hand"),
     "item.gt6.food_ice_cream": ("冰淇淋", "hand"),
     "item.gt6.food_ice_cream.tooltip": ("牛奶基本款意式冰淇淋", "hand"),
+    # task pool-drain-food-t5-tail: the raisin ice cream (dump gt.multiitem.food.13002[.tooltip]
+    # verbatim, MultiItemFood.java:811)
+    "item.gt6.food_ice_cream_raisin": ("葡萄干冰淇淋", "hand"),
+    "item.gt6.food_ice_cream_raisin.tooltip": ("葡萄干与意式冰淇淋的结合", "hand"),
     "item.gt6.food_butter": ("黄油", "hand"),
     "item.gt6.food_butter.tooltip": ("一块纯脂肪", "hand"),
     "item.gt6.food_butter_salted": ("盐味黄油", "hand"),

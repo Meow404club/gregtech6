@@ -403,8 +403,9 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent(tPath, mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/food_can/" + tPath.substring("food_can_".length())));
         }
-        // the food-item family (task food-items-core, T4a-extended by food-meat-items) —
-        // 38 item/generated models over the byte-identical upstream icon borrows
+        // the food-item family (task food-items-core, T4a-extended by food-meat-items, the
+        // pool-drain-food-t5-tail raisin row) — 39 item/generated models over the
+        // byte-identical upstream icon borrows
         // (gt.multiitem.food/<meta> per row — assets/README.md attribution), walked over
         // FOOD_ROWS so the model ids cannot drift (the food-can band convention; the
         // texture file drops the food_ family prefix, food_can_rotten_tiny →
