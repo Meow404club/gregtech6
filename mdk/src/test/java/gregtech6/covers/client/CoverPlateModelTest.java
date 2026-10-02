@@ -202,6 +202,42 @@ public class CoverPlateModelTest extends GTOfflineRenderTestBase {
 		assertEquals(t - e, tNorth.get(1).box()[5], 1e-12);
 	}
 
+	/**
+	 * The facet family (task cover-underlay-census, upstream CoverVent :78-79): the vent's
+	 * outer face keeps the two-layer census stack [base, front], while the null-pass back
+	 * quad and the rim quads swap the background for the vent's dedicated facet sprites —
+	 * single sprites, no base behind a facet (upstream returns ONE texture per attachment
+	 * face). The borrowed back/sides PNGs live in textures/block/vent/ (assets README).
+	 */
+	@Test
+	void facetCoverPlansItsBackAndRimSprites() {
+		ResourceLocation tVentFront = new gregtech6.covers.covers.CoverVent().getCoverTextureSurface((byte) 0, null);
+		ResourceLocation tVentBack = new ResourceLocation("gt6", "block/vent/back");
+		ResourceLocation tVentSides = new ResourceLocation("gt6", "block/vent/sides");
+		Map<Direction, ResourceLocation> tSprites = new HashMap<>();
+		tSprites.put(Direction.UP, tVentFront);
+		GTCoverRenderSnapshot tSnapshot = new GTCoverRenderSnapshot(tSprites);
+		double e = CoverPlateModel.PLATE_EPSILON, t = CoverPlateModel.PLATE_THICKNESS;
+		double[] tBaseSlab = {-e, 1 - t, -e, 1 + e, 1 + e, 1 + e};
+
+		// the outer face: the ordinary double-layer census stack — the facet only touches back/rim
+		List<CoverPlateModel.PlateQuad> tUp = CoverPlateModel.planQuads(tSnapshot, Direction.UP);
+		assertEquals(2, tUp.size());
+		assertLegacyQuad(tUp.get(0), Direction.UP, true, GTCoverRenderSnapshot.SPRITE_PLATE_BASE, tBaseSlab);
+		assertEquals(tVentFront, tUp.get(1).sprite());
+		assertEquals(1, tUp.get(1).layer(), "the vent front rides the offset foreground layer");
+
+		// the null pass: the unculled back face carries the vent's back art, not the base
+		List<CoverPlateModel.PlateQuad> tNull = CoverPlateModel.planQuads(tSnapshot, null);
+		assertEquals(1, tNull.size());
+		assertLegacyQuad(tNull.get(0), Direction.DOWN, false, tVentBack, tBaseSlab);
+
+		// the rim pass: the vent's sides art, not the base
+		List<CoverPlateModel.PlateQuad> tRim = CoverPlateModel.planQuads(tSnapshot, Direction.NORTH);
+		assertEquals(1, tRim.size());
+		assertLegacyQuad(tRim.get(0), Direction.NORTH, true, tVentSides, tBaseSlab);
+	}
+
 	/** The pre-p11 quad contract: the legacy emission rule, the unmoved slab, the face sprite, layer 0. */
 	private static void assertLegacyQuad(CoverPlateModel.PlateQuad aQuad, Direction aFace, boolean aCull,
 			ResourceLocation aSprite, double[] aBox) {

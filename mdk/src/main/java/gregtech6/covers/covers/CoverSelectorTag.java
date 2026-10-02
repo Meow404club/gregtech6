@@ -27,7 +27,10 @@ import gregtech6.util.UT6;
  * {@code BlockTextureMulti(sTexturesBase, sTextures[mMode])} (:59); this port's plate
  * renderer is single-sprite (the CoverShutter precedent), so the 16 shipped sprites are
  * the pre-composited underlay+digit pairs. The {@code BACKGROUND_COVER} attachment/
- * holder faces (:60-61) fold into the same sprite.
+ * holder faces (:60-61) fold into the same sprite — RETIRED by task
+ * cover-underlay-census: the underlay census restores the shared base as the plate's
+ * layer 0 (the full upstream stack base+underlay+digit minus the fold), the pre-composite
+ * itself stays (the surface hook still returns one sprite).
  */
 public class CoverSelectorTag extends AbstractCoverAttachmentSelector {
 

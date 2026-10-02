@@ -18,22 +18,39 @@ import gregtech6.client.render.GTRenderSnapshot;
  * {@code List<ResourceLocation>} — the upstream {@code BlockTextureMulti} stack, bottom
  * first — instead of the single sprite that folded the double-layer covers flat.
  *
- * <p><b>Why the layer table lives here</b> (the census, task render-cover-multilayer):
- * upstream renders each cover's 2px plate box with the cover's ATTACHMENT texture
- * (TileEntityBase06Covers.java:449-463 — the odd per-cover pass boxes
- * {@code BOXES_COVERS} and paints {@code getCoverTextureAttachment} on the plate's
- * front/back faces), and every port-registered cover returns a two-layer multi there:
- * {@code BlockTextureMulti.get(BACKGROUND_COVER, fg)} with
+ * <p><b>Why the layer table lives here</b> (the census, task render-cover-multilayer;
+ * widened by task cover-underlay-census): upstream renders each cover's 2px plate box
+ * with the cover's ATTACHMENT texture (TileEntityBase06Covers.java:449-463 — the odd
+ * per-cover pass boxes {@code BOXES_COVERS} and paints {@code getCoverTextureAttachment}
+ * on the plate's front/back faces), and most port-registered covers return a two-layer
+ * multi there: {@code BlockTextureMulti.get(BACKGROUND_COVER, fg)} with
  * {@code BACKGROUND_COVER = "machines/covers/base"} (AbstractCoverDefault.java:111) —
  * controller :62, auto-controller :64, shutter :88, filter :140, conveyor :84,
  * robot arm :111, pump :88, conductors :32/:60, the iron plate via CoverTextureSimple
- * :50, the emitter via the attachment wrap :112 over its surface multi :111. The single
- * exception is the cover controller, whose own background is
+ * :50, the emitter via the attachment wrap :112 over its surface multi :111, and (the
+ * cover-underlay-census widening) the fluid filter CoverFilterFluid :132, the tag
+ * selector CoverSelectorTag :60, the crafting table CoverCrafting via CoverTextureMulti
+ * :71 and the asphalt plate via CoverTextureSimple :50. The single exception is the
+ * cover controller, whose own background is
  * {@code "machines/covers/coverswitch/base"} (CoverControllerCovers.java:101/:104), not
- * the shared base. The port's single-sprite snapshot folded that background away — the
+ * the shared base. The three facet covers (vent :77-84, drain :246-253, pressure valve
+ * :80-91) wrap NO base upstream — but their flush-host surface pass (TileEntityBase06Covers
+ * :453) still paints {@code BlockTextureMulti.get(hostTexture, surface)}: the host wall
+ * under the art. The port's plate replaces that host face, so the census entry stands in
+ * for it — the same single-sprite-fold defect, same fix. The port's single-sprite
+ * snapshot folded that background away — the
  * {@link #UNDERLAYS} census table restores it as layer 0 beneath the surface sprite.
  * Pure single-layer faces (a sprite with no census entry) stay exactly one layer, so
  * the plate plan for them is byte-identical to the pre-p11 planner.
+ *
+ * <p><b>The facet table</b> (task cover-underlay-census): upstream CoverVent :78-79
+ * dispatches its attachment texture per texture side — the cover face gets
+ * {@code vent/front}, the opposite face {@code vent/back}, the four rim faces
+ * {@code vent/sides} (the holder :79 repeats the sides). The port folds all that into
+ * the single surface sprite; {@link #FACETS} restores the back/rim pair, and
+ * CoverPlateModel paints it on the null-pass back quad and the rim quads (single
+ * sprites, upstream verbatim — no base stacks there; drain :247 shares the identical
+ * three-texture shape and rides the same follow-up).
  *
  * <p>Layer order = upstream {@code BlockTextureMulti} order: the background first, the
  * surface sprite last (the top layer). {@link #sprite(Direction)} keeps returning the
@@ -71,6 +88,12 @@ public record GTCoverRenderSnapshot(Map<Direction, ResourceLocation> coverSprite
 	 * classes' own sprite constants so the two cannot drift.
 	 */
 	private static final Map<ResourceLocation, ResourceLocation> UNDERLAYS = buildUnderlays();
+
+	/** The facet pair of a faceted cover (upstream CoverVent.java:78-79): the attachment BACK face sprite + the rim/holder face sprite. */
+	public record Facets(ResourceLocation back, ResourceLocation rim) {}
+
+	/** The facet table — surface sprite id → the back/rim pair the plate model paints on the null/rim passes. */
+	private static final Map<ResourceLocation, Facets> FACETS = buildFacets();
 
 	public GTCoverRenderSnapshot {
 		coverSprites = Map.copyOf(coverSprites); // second freeze line of defense beside the builder
@@ -136,6 +159,11 @@ public record GTCoverRenderSnapshot(Map<Direction, ResourceLocation> coverSprite
 		return UNDERLAYS.get(aSurfaceSprite);
 	}
 
+	/** @return the facet pair beneath that surface sprite or null (the plain flat-plate family). Pure and static for the offline pins. */
+	public static Facets facetsOf(ResourceLocation aSurfaceSprite) {
+		return FACETS.get(aSurfaceSprite);
+	}
+
 	/** The census table — each entry cites its upstream BlockTextureMulti line (see the class doc census). */
 	private static Map<ResourceLocation, ResourceLocation> buildUnderlays() {
 		Map<ResourceLocation, ResourceLocation> rMap = new HashMap<>();
@@ -161,6 +189,28 @@ public record GTCoverRenderSnapshot(Map<Direction, ResourceLocation> coverSprite
 		}
 		// the cover controller's OWN background (CoverControllerCovers :101 with sTextureBackground :104):
 		rMap.put(new ResourceLocation("gt6", "block/cover_switch/circuit"), SPRITE_COVER_SWITCH_BASE);
+		// — the cover-underlay-census widening — the attachment-wrap family (upstream wraps fg in BACKGROUND_COVER):
+		rMap.put(new ResourceLocation("gt6", "block/filterfluid/normal"), SPRITE_PLATE_BASE);      // CoverFilterFluid :132 (fg :139)
+		rMap.put(new ResourceLocation("gt6", "block/filterfluid/inverted"), SPRITE_PLATE_BASE);    // CoverFilterFluid :132 (fg :138)
+		for (int i = 0; i < 16; i++) {
+			// the tag-selector ladder (CoverSelectorTag :60 — surface = multi(selectortag/underlay, digit), wrapped in BACKGROUND_COVER;
+			// the port's 16 shipped PNGs pre-composite underlay+digit, so the census base completes the 3-layer stack)
+			rMap.put(new ResourceLocation("gt6", "block/selectortag/" + i), SPRITE_PLATE_BASE);
+		}
+		rMap.put(new ResourceLocation("gt6", "block/crafting/0"), SPRITE_PLATE_BASE);              // CoverCrafting → CoverTextureMulti :71 (fg folder :42)
+		rMap.put(new ResourceLocation("gt6", "block/asphalt"), SPRITE_PLATE_BASE);                 // CoverAsphalt → CoverTextureSimple :50
+		// the facet family — NO BACKGROUND_COVER wrap upstream (vent :77-84 / drain :246-253 / pressure valve :80-91 are
+		// single-texture attachments), but the flush-host surface pass :453 still pairs the host wall under the art; the
+		// port's plate replaces that host face, so the base stands in for it (the same single-sprite-fold defect):
+		rMap.put(new ResourceLocation("gt6", "block/vent/front"), SPRITE_PLATE_BASE);              // CoverVent :77 (surface)
+		rMap.put(new ResourceLocation("gt6", "block/drain/front"), SPRITE_PLATE_BASE);             // CoverDrain :246 (surface)
+		rMap.put(new ResourceLocation("gt6", "block/pressurevalve/front"), SPRITE_PLATE_BASE);     // CoverPressureValve :80 (surface)
 		return Map.copyOf(rMap);
+	}
+
+	/** The facet table — the one faceted family (upstream CoverVent :77-84; drain :247 shares the shape, same follow-up). */
+	private static Map<ResourceLocation, Facets> buildFacets() {
+		return Map.of(new ResourceLocation("gt6", "block/vent/front"),
+				new Facets(new ResourceLocation("gt6", "block/vent/back"), new ResourceLocation("gt6", "block/vent/sides")));
 	}
 }
