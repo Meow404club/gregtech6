@@ -2764,15 +2764,27 @@ public final class GTFluids {
 		return tFluid;
 	}
 
-	/** The ChemicalFluid-list arm of {@link #liveFluidSource}. */
-	private static Fluid specSourceOrNull(String aName, List<ChemicalFluid> aList) {
-		for (ChemicalFluid tFamily : aList) if (tFamily.spec.name().equals(aName)) return tFamily.source.get();
+	/**
+	 * The ChemicalFluid-list arm of {@link #liveFluidSource}: the spec-named family's live
+	 * SOURCE fluid, or null — a null source means the row is a driver-gated unregistered
+	 * shell (mdh-1 mount ②, {@code specFluid}'s absent-domain form) and the fluid is absent,
+	 * which the OrNull contract answers as null, never an NPE. Package-private for the
+	 * offline pin test (the GT6RecipesBees test-seam house form).
+	 */
+	static Fluid specSourceOrNull(String aName, List<ChemicalFluid> aList) {
+		for (ChemicalFluid tFamily : aList) if (tFamily.spec.name().equals(aName)) return tFamily.source == null ? null : tFamily.source.get();
 		return null;
 	}
 
-	/** The AquaFluid-list arm of {@link #liveFluidSource} (structurally identical wrapper). */
-	private static Fluid aquaSourceOrNull(String aName, List<AquaFluid> aList) {
-		for (AquaFluid tFamily : aList) if (tFamily.spec.name().equals(aName)) return tFamily.source.get();
+	/**
+	 * The AquaFluid-list arm of {@link #liveFluidSource} (structurally identical wrapper):
+	 * the spec-named family's live SOURCE fluid, or null — a null source means the row is a
+	 * driver-gated unregistered shell (mdh-1 mount ②, {@code registerFluidFamily}'s
+	 * absent-domain form) and the fluid is absent, never an NPE. Package-private for the
+	 * offline pin test (the GT6RecipesBees test-seam house form).
+	 */
+	static Fluid aquaSourceOrNull(String aName, List<AquaFluid> aList) {
+		for (AquaFluid tFamily : aList) if (tFamily.spec.name().equals(aName)) return tFamily.source == null ? null : tFamily.source.get();
 		return null;
 	}
 
@@ -3054,6 +3066,7 @@ public final class GTFluids {
 			// task engine-fuel-fluids — the engine family, one smoke line per fluid (the
 			// live registry keys, mirroring the four per-fluid lines above)
 			for (EngineFluid tFamily : engineFluids()) {
+				if (tFamily.source == null) continue; // the mdh-3 gated shell — absent domain, nothing registered to smoke
 				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}{}",
 						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
 						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
@@ -3063,6 +3076,7 @@ public final class GTFluids {
 			}
 			// task aqua-fluids — the aqua family, the same smoke line shape
 			for (AquaFluid tFamily : aquaFluids()) {
+				if (tFamily.source == null) continue; // the mdh-3 gated shell — absent domain, nothing registered to smoke
 				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {} (aqua family, {})",
 						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
 						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
@@ -3072,6 +3086,7 @@ public final class GTFluids {
 			}
 			// task drying-rows-backfill-2 — the simple-liquid family, the same smoke line shape
 			for (AquaFluid tFamily : simpleLiquids()) {
+				if (tFamily.source == null) continue; // the mdh-3 gated shell — absent domain, nothing registered to smoke
 				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {} (simple liquid, {})",
 						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
 						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
@@ -3081,6 +3096,7 @@ public final class GTFluids {
 			}
 			// task drying-food-fluids — the food family, the same smoke line shape
 			for (AquaFluid tFamily : foodFluids()) {
+				if (tFamily.source == null) continue; // the mdh-3 gated shell — absent domain, nothing registered to smoke
 				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {} (food family, {})",
 						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
 						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
@@ -3091,6 +3107,7 @@ public final class GTFluids {
 			// task dye-chemical-fluids — the dye-chemical family (with-block rows), the same
 			// smoke line shape plus the block key and the DYES_INT tint index face
 			for (DyeChemicalFluid tFamily : DYE_CHEMICALS) {
+				if (tFamily.source == null) continue; // the mdh-3 gated shell — absent domain, nothing registered to smoke
 				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}, block {} (dye-chemical family, {}, dye index {})",
 						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
 						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
@@ -3100,6 +3117,8 @@ public final class GTFluids {
 						tFamily.displayName(),
 						tFamily.dyeIndex);
 			}
+			// the own-domain fixed rows (CHLORINE, the CFOAM base below): plain RegistryObject
+			// finals behind no driver gate — always registered, never shells, no guard (mdh-3 audit)
 			GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {} (chlorine — the p24 carrier, zero consumers until the Canner card)",
 					ForgeRegistries.FLUIDS.getKey(CHLORINE.get()),
 					ForgeRegistries.FLUIDS.getKey(CHLORINE_FLOWING.get()),
@@ -3114,6 +3133,7 @@ public final class GTFluids {
 					CFOAM_DENSITY,
 					ForgeRegistries.BLOCKS.getKey(CFOAM_BLOCK.get()));
 			for (CFoamFluid tFamily : CFOAMS) {
+				if (tFamily.source == null) continue; // the mdh-3 gated shell — absent domain, nothing registered to smoke
 				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}, block {} (c-foam family, {}, dye index {})",
 						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
 						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
@@ -3124,6 +3144,7 @@ public final class GTFluids {
 						tFamily.dyeIndex);
 			}
 			for (CFoamFluid tFamily : CFOAMS_OWNED) {
+				if (tFamily.source == null) continue; // the mdh-3 gated shell — absent domain, nothing registered to smoke
 				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}, block {} (c-foam owned family, {}, dye index {})",
 						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
 						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
@@ -3136,6 +3157,7 @@ public final class GTFluids {
 			// task w4-f1-chemicals — the chemical family, the same smoke line shape
 			// (temperature K, density, the gaseous/plasma markers, the lum face on the plasmas)
 			for (ChemicalFluid tFamily : CHEMICALS) {
+				if (tFamily.source == null) continue; // the mdh-3 gated shell — absent domain, nothing registered to smoke
 				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}{}{} (chemical family, {})",
 						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
 						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
