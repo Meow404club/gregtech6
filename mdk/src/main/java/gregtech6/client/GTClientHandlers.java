@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.color.item.ItemColor;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.locale.Language;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregtech6.block.material.GTMaterialPrefixBlock;
@@ -18,6 +22,7 @@ import gregtech6.client.render.GTItemPaintTint;
 import gregtech6.client.render.GTMachinePaintTint;
 import gregtech6.client.render.GTRodBakedModel;
 import gregtech6.client.wire.GTWireTint;
+import gregtech6.item.GT6Circuits;
 import gregtech6.item.GTMaterialPrefixBlockItem;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.items.tools.GT6ToolLadder;
@@ -69,6 +74,27 @@ public final class GTClientHandlers {
         modBus.addListener(GTClientHandlers::onRegisterToolIdentityItemColors); // task identity-seam: the crowbar material identity tint, inventory half
         modBus.addListener(GTClientHandlers::onRegisterStorageReactorPaintItemColors); // task tint-coverage-batch: the metal storage + reactor row tint, inventory half
         modBus.addListener(GTClientHandlers::onRegisterAxleRowTintItemColors); // task axle-tint-arm: the 44 axle rows' material tint, inventory half
+        modBus.addListener(GTClientHandlers::onClientSetup); // task circuit-config-icons: the circuit per-config item property
+    }
+
+    /**
+     * The Selector Tag's per-config model property (task circuit-config-icons): the
+     * configuration number rides the {@code Damage} NBT (1.20.1) / the opaque CUSTOM_DATA
+     * envelope (21.1) — both legs read through the shared {@link GT6Circuits#configurationOf}
+     * face. The value is UNCLAMPED on purpose: the {@code ClampedItemPropertyFunction} parent
+     * clamps {@code call} to [0,1] (vanilla ItemProperties.java:36-39 shape), which would fold
+     * every config above 1 onto the config-1 rung; the plain {@code ItemPropertyFunction} keeps
+     * the raw integer the model override ladder matches against (the generated
+     * {@code integrated_circuit.json} overrides, descending 24-0 — ItemOverrides.resolve takes
+     * the FIRST entry whose predicate value is <= the property value, ItemOverrides.java:83-99).
+     * Upstream map: {@code getIconFromDamage} = {@code mIcons[meta&255]} with configs 0-24
+     * registered (ItemIntegratedCircuit.java:90-118).
+     */
+    private static void onClientSetup(FMLClientSetupEvent event) {
+        ItemPropertyFunction tConfiguration =
+            (aStack, aLevel, aEntity, aSeed) -> GT6Circuits.configurationOf(aStack);
+        ItemProperties.register(GT6Circuits.INTEGRATED_CIRCUIT.get(),
+            ResourceLocation.fromNamespaceAndPath("gt6", "config"), tConfiguration);
     }
 
     /** Material tint for every registered material prefix item (GTCEu TagPrefixItem.java:55-57 isomorph). */

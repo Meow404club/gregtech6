@@ -6,7 +6,10 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GT6BookText;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 /**
@@ -452,8 +455,11 @@ public final class GT6ItemModels extends ItemModelProvider {
         // the battery family (task w4-battery-storage): 37 item/generated models over
         // the per-family upstream sprite borrows (the bake_battery_textures.py products,
         // assets/README.md attribution), walked over the ROWS table so model ids cannot
-        // drift; the 5 cells share one cell sprite; the 7 circuit carriers reuse the
-        // in-repo item/integrated_circuit.png (no new file, the declared placeholder);
+        // drift; the 5 cells share one cell sprite; the 7 circuit carriers each show their
+        // upstream tier art (task circuit-config-icons: the gt.multiitem.technological
+        // 30301-30306 borrows, assets/README.md attribution — tier-0 has no upstream item
+        // of its own, LoaderOreDictReRegistrations.java:375 makes the T1 Basic item the
+        // gt:circuit0 ground, so primitive rides the same 30301 art, the declared share);
         // the 12 box items parent their block models (the dynamo band convention)
         for (gregtech6.registry.GT6Batteries.BatteryRow tRow : gregtech6.registry.GT6Batteries.ROWS) {
             withExistingParent(tRow.path(), mcLoc("item/generated"))
@@ -465,7 +471,7 @@ public final class GT6ItemModels extends ItemModelProvider {
         }
         for (String tPath : gregtech6.registry.GT6Batteries.CIRCUIT_ITEMS.keySet()) {
             withExistingParent(tPath, mcLoc("item/generated"))
-                .texture("layer0", modLoc("item/integrated_circuit"));
+                .texture("layer0", modLoc("item/circuit/" + tPath.substring("circuit_".length())));
         }
         // (the 12 box ITEMS parent their block models from GT6BlockStates.addBatteryBoxes —
         //  the item face validates against the blockstates provider's own output, the dynamo band convention)
@@ -601,12 +607,33 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("block/crafting/0"));
         withExistingParent("cover_asphalt", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/asphalt"));
-        // the Integrated Circuit item (task distillery-family ①) — item/generated over
-        // the byte-identical upstream icon borrow (gt.integrated_circuit/0.png, config 0 —
-        // the 256-icon damage ladder is the declared single-model cut, assets/README.md
-        // attribution)
-        withExistingParent("integrated_circuit", mcLoc("item/generated"))
-            .texture("layer0", modLoc("item/integrated_circuit"));
+        // the Integrated Circuit item (task distillery-family ①, per-config icon ladder
+        // task circuit-config-icons) — the base model keeps item/generated over the config-0
+        // borrow (gt.integrated_circuit/0.png) as the no-payload face, and the upstream
+        // per-config art is restored by 25 override variants: the ladder walks config 24
+        // down to 0 because ItemOverrides.resolve takes the FIRST override whose predicate
+        // value is <= the property value (ItemOverrides.java:83-99 both legs), so descending
+        // order selects exactly the stack's configuration (ItemIntegratedCircuit.java:118
+        // registers configs 0-24, getIconFromDamage :93-95 rides meta&255). The property is
+        // the client-side gt6:config registration (GTClientHandlers.onClientSetup, the
+        // configurationOf face); payload-less stacks read 0 and land on the base model.
+        // Declared deviation: damage 25-255 (the mode-prefixed payloads) shows the config-24
+        // art where upstream shows its never-registered null icon (the :118 TODO cut).
+        // (the variant names carry the explicit item/ folder prefix — a slashed name
+        //  skips the provider's folder extension, the r8-tex-sensors pitfall verbatim;
+        //  without it the override target gt6:item/... misses the file)
+        for (int i = 0; i < 25; i++) {
+            withExistingParent("item/integrated_circuit/config_" + i, mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/integrated_circuit/" + i));
+        }
+        ItemModelBuilder tCircuit = withExistingParent("integrated_circuit", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/integrated_circuit/0"));
+        for (int i = 24; i >= 0; i--) {
+            tCircuit = tCircuit.override()
+                .predicate(new ResourceLocation("gt6", "config"), i)
+                .model(new ModelFile.UncheckedModelFile(modLoc("item/integrated_circuit/config_" + i)))
+                .end();
+        }
         // the Lubricant Bucket item (task w4-hot-lube ④) — item/generated over the
         // byte-identical vanilla bucket icon borrow (assets/README.md attribution; the
         // crafting-ingredient face needs a neutral bucket glyph, the filled/tinted upgrade
