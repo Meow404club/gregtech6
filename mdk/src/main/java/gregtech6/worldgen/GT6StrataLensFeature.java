@@ -11,7 +11,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
+import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.stone.StoneVariant;
+import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GTStoneBlocks;
 
 /**
@@ -40,6 +42,10 @@ import gregtech6.registry.GTStoneBlocks;
  * at the deepslate band, the modern mNoDeep face (research.p30-w6-deepslate-strata).
  * Multi-origin overlaps resolve deterministically: every position has exactly one writing
  * chunk and that chunk walks the origin window in the pinned order.
+ *
+ * <p><b>The 1% gem arm</b> (task small-gem-1pct): each stone write rolls the upstream
+ * WorldgenStoneLayers.java:112-116 fallback — see {@link GT6SmallGemFallback} for the
+ * pool, the seeded sequence and the declared deviations.
  *
  * <p>KJS face (card declaration): the lens table is datapack JSON (the configured-feature
  * config); this class is the registry face, out of KJS scope (GT6Features javadoc clause).
@@ -89,13 +95,31 @@ public class GT6StrataLensFeature extends Feature<GTLensConfig.Table> {
         Block tBlock = resolveStone(aLens.stone());
         if (tBlock == null) return false;
         net.minecraft.world.level.block.state.BlockState tState = tBlock.defaultBlockState();
+        // the current layer's small-ore face (upstream tScan[3].mOreSmall): the lens stone's
+        // own ore family — an unmapped stone keeps the mOreSmall-null posture and never
+        // spends a roll (GT6SmallGemFallback javadoc)
+        GT6OreBlocks.OreFamily tFamily = GT6OreBlocks.stoneToOreFamilies().get(tBlock);
         return GT6LensGenerator.generateSlice(aLens, aRandom, aOriginMinX, aOriginMinZ,
                 aClipMinX, aClipMaxX, aClipMinZ, aClipMaxZ, (aX, aY, aZ) -> {
                     BlockPos tPos = new BlockPos(aX, aY, aZ);
                     if (aLevel.getBlockState(tPos).is(BlockTags.STONE_ORE_REPLACEABLES)) {
-                        aLevel.setBlock(tPos, tState, 2);
+                        aLevel.setBlock(tPos, smallGemOrStone(aRandom, tFamily, tState), 2);
                     }
                 });
+    }
+
+    /**
+     * The WorldgenStoneLayers.java:112-116 fallback arm: on the 1/100 hit the stone write
+     * becomes the picked pool gem's SMALL ore block on this stone base (the host-skin form
+     * of GT6BedrockOreFeature.ore); every miss/null arm writes the plain lens stone.
+     */
+    private static net.minecraft.world.level.block.state.BlockState smallGemOrStone(Random aRandom,
+            GT6OreBlocks.OreFamily aFamily, net.minecraft.world.level.block.state.BlockState aStone) {
+        if (aFamily == null) return aStone;
+        OreDictMaterial tGem = GT6SmallGemFallback.roll(aRandom);
+        if (tGem == null) return aStone;
+        var tHandle = GT6OreBlocks.get(aFamily, GT6OreBlocks.FormKind.SMALL, tGem);
+        return tHandle == null ? aStone : tHandle.get().defaultBlockState();
     }
 
     /** The STONE-variant block of a stone snake, or null for an unknown row (no datapack crash face). */
