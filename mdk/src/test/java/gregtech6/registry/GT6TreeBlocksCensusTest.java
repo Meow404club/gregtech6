@@ -37,6 +37,11 @@ class GT6TreeBlocksCensusTest {
             net.minecraft.server.Bootstrap.bootStrap();
         } catch (Throwable ignored) {
         }
+        // the TREE_BIOME_MODIFIER_KEYS touch below runs the whole GT6WorldgenDatagen clinit,
+        // whose vein/bedrock tables capture MT.* fields one-shot — un-booted they freeze as
+        // null for every later suite in this fork JVM (the full-suite 159->110 run-order
+        // lottery). Same material boot every other worldgen-table consumer carries.
+        GTMaterialItems.initMaterials();
     }
 
     /** The 9 species, upstream Saplings_AB meta 0-7 + Saplings_CD meta 0 order. */
