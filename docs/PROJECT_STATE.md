@@ -1,4 +1,4 @@
-# 项目状态（镜像·维护期版 2026-09-30 · r10）
+# 项目状态（镜像·维护期版 2026-10-02 · 渲染积压大波收官）
 
 > 权威数据在 MCP `gt6-brain` 的 state/记忆/KG 里。本文件自 2026-09-27 起改为**维护期精简镜像**：
 > P1-P38 逐阶段详账已蒸馏归档至 [docs/archive/ARCHIVE-2026-09-27-p1-p37.md](archive/ARCHIVE-2026-09-27-p1-p37.md)
@@ -9,7 +9,36 @@
 GT6（1.7.10 GregTech6）→ 现代移植：1.20.1 Forge + 1.21.1 NeoForge 双节点（Stonecutter）。
 内容完成度 97-98%+，2026-09-24 发布 v0.1.0（GitHub Release，双 jar），现处**还债/维护阶段**（2026-09-26 起）。
 
-## 当前态（2026-09-30 · r10 还债波收官）
+## 当前态（2026-10-03 · 池排空波开场）
+
+- **池排空波已开场**（用户裁定：池尾小卡族全部清空+修实机崩端；push 逐次等用户指令）。
+  首卡 P0 **fluids-null-source-fix 已合入**（merge=399666218）：实机裸装装载期崩端修复——
+  CHEMICALS 三行带域（hydrogenperoxide→IHL/sulfuricacid→FZ/aquaregia→FZ）在缺席域成
+  declared-unregistered 壳行（source=null），消费端 OrNull 契约返 null 不再 NPE +
+  onCommonSetup 八家族冒烟循环 continue 守卫；钉测 GTFluidsNullSourceTest 3 测红绿法在库。
+  在途/排队：berry-overlay、mdh-5-block-worldgen-axis、pool-drain-food-t5-tail、
+  pool-drain-removal-channel、btl 三卡（btl-fluids-prereq 待本 P0 后释放 GTFluids 单写者）。
+
+## 前态（2026-10-02 · 渲染积压大波收官+push）
+
+- **渲染积压大波全收官并一次性推送**（main=1b7f55d82=origin/main，push 跨度 f009fc3cb..1b7f55d82
+  共 321 提交，push rev2 语义=就这一次、此后逐次等用户指令）：
+  **主线**：杂交 A 线全链（T5a+cbc-1..6 零 IC2 依赖+E2E 六代 stat 钉测）+#46 统一 mod 驱动注册点
+  全量收口（注册宇宙 57113→41605，kept 对账 15508）+食品域 T1-T5+crafting 增量+T4b 烘焙罐头
+  （Canner 计数逐位 {9,4,1,9,4,2,1} 上游 stackSize 语义）+**modularui 历史重写**（c13e141 真父嫁接+
+  我方 12 提交全 GPG 重签+force-with-lease 推公开仓+bare 镜像同步，fork 血统 git 层面成立）
+  +forge-test-hygiene（forge 全量基线首次全绿）+stripped-qol+wild-bush+plank 链+B2 域全图+GUI 五连。
+- **孤儿卡清剿 12/12**（git branch --no-merged 复核逮住的多轮压缩漏点，三席 XII/XIII/XIV 清完）；
+  残支全清（b2a SUPERSEDED+12 支已合残支删，worktree 只剩主仓）。
+- **收官插曲：席位 XIV 全量终验揪 6F 既有红**（Squeezer 4F=b2b2 回放未随动旧钉+boot 括号缺
+  12 流体 id；TreePlank 2F=直接 new 撞注册冻结）→裁定先修后 push→fullrun-reds-fix（CENSUS 41+
+  退役负钉+物品宇宙拆面+反射 unfreeze 先例形）→席 XV 全量终验 **558 类 4437T/0F/0E/5S 全绿**。
+- **移交下波待用户裁定**：池尾小卡族归属（T5 四物品/移除通道/机器行族/berry overlay/
+  worldgen-block 轴/骡肉修复/mutton-rabbit/chum 毒土豆/余瓶染料瓶——倾向另波）；
+  已知项：bake_sandwich_cheese_off_by_one（defer）；T4b 池尾内容决策卡。
+- 治理待办：KG 蒸馏（4122 节点超阈）+handoff/merge 历史记忆硬删（收官锚点 id1289 已写全）。
+
+## 前态（2026-09-30 · r10 还债波收官）
 
 - **r10 还债波七卡全部合入**（main=fb479f3f1，两审查席 5+2 全 approve，用户指令「把还债的能做的先做了」）：
   **数据丢失级两枚**：r4-24d 大机 mTanksInput 字段遮蔽（12 台大机输入罐存档即失+大 Mixer/Bath
