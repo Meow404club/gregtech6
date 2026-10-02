@@ -5,32 +5,32 @@
       "faces": {
         "down": {
           "cullface": "down",
-          "texture": "#all",
+          "texture": "#down",
           "tintindex": 0
         },
         "east": {
           "cullface": "east",
-          "texture": "#all",
+          "texture": "#east",
           "tintindex": 0
         },
         "north": {
           "cullface": "north",
-          "texture": "#all",
+          "texture": "#north",
           "tintindex": 0
         },
         "south": {
           "cullface": "south",
-          "texture": "#all",
+          "texture": "#south",
           "tintindex": 0
         },
         "up": {
           "cullface": "up",
-          "texture": "#all",
+          "texture": "#up",
           "tintindex": 0
         },
         "west": {
           "cullface": "west",
-          "texture": "#all",
+          "texture": "#west",
           "tintindex": 0
         }
       },
@@ -44,10 +44,125 @@
         16,
         16
       ]
+    },
+    {
+      "faces": {
+        "north": {
+          "cullface": "north",
+          "texture": "#bush_overlay"
+        }
+      },
+      "from": [
+        0,
+        0,
+        -0.01
+      ],
+      "to": [
+        16,
+        16,
+        0
+      ]
+    },
+    {
+      "faces": {
+        "south": {
+          "cullface": "south",
+          "texture": "#bush_overlay"
+        }
+      },
+      "from": [
+        0,
+        0,
+        16
+      ],
+      "to": [
+        16,
+        16,
+        16.01
+      ]
+    },
+    {
+      "faces": {
+        "west": {
+          "cullface": "west",
+          "texture": "#bush_overlay"
+        }
+      },
+      "from": [
+        -0.01,
+        0,
+        0
+      ],
+      "to": [
+        0,
+        16,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "cullface": "east",
+          "texture": "#bush_overlay"
+        }
+      },
+      "from": [
+        16,
+        0,
+        0
+      ],
+      "to": [
+        16.01,
+        16,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#bush_overlay"
+        }
+      },
+      "from": [
+        0,
+        -0.01,
+        0
+      ],
+      "to": [
+        16,
+        0,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "up": {
+          "cullface": "up",
+          "texture": "#bush_overlay"
+        }
+      },
+      "from": [
+        0,
+        16,
+        0
+      ],
+      "to": [
+        16,
+        16.01,
+        16
+      ]
     }
   ],
+  "render_type": "minecraft:cutout",
   "textures": {
-    "all": "gt6:block/berry_bush",
-    "particle": "#all"
+    "bush_overlay": "gt6:block/bush_parts/overlay_bush",
+    "down": "gt6:block/berry_bush",
+    "east": "gt6:block/berry_bush",
+    "north": "gt6:block/berry_bush",
+    "particle": "gt6:block/berry_bush",
+    "south": "gt6:block/berry_bush",
+    "up": "gt6:block/berry_bush",
+    "west": "gt6:block/berry_bush"
   }
 }
