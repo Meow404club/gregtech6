@@ -46,8 +46,8 @@ public class GTFluidsFoodFamilyTest extends GTOfflineTestBase {
 		assertEquals(6, GTFluids.AQUA_SPECS.size(), "the aqua-fluids six, never appended");
 		assertEquals(List.of("spdew", "mnwtr", "water_geothermal", "water_boiling", "hot_water", "cold_water"),
 				GTFluids.AQUA_SPECS.stream().map(GTFluids.AquaFluidSpec::name).toList());
-		assertEquals(4, GTFluids.SIMPLE_LIQUID_SPECS.size(), "the p19 simple-liquid pair + the task chem-fluids-unlock brine/spruceresin pair (the same flag-shape family)");
-		assertEquals(List.of("seawater", "waterdirty", "brine", "spruceresin"),
+		assertEquals(7, GTFluids.SIMPLE_LIQUID_SPECS.size(), "the p19 simple-liquid pair + the task chem-fluids-unlock brine/spruceresin pair + the task btl-fluids-prereq bottle trio (the same flag-shape family)");
+		assertEquals(List.of("seawater", "waterdirty", "brine", "spruceresin", "swampwater", "stagnantwater", "tar"),
 				GTFluids.SIMPLE_LIQUID_SPECS.stream().map(GTFluids.AquaFluidSpec::name).toList());
 	}
 

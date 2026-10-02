@@ -2395,7 +2395,10 @@ FLUID_BACKFILL = {
     "fluid.gt6.seawater": "海水",
     "fluid.gt6.spdew": "幻露",             # en semantics: Spectral Dew (research-card anchor)
     "fluid.gt6.spruceresin": "云杉树脂",   # task chem-fluids-unlock — no dump face, the hand row (the coffee 咖啡 precedent)
+    "fluid.gt6.stagnantwater": "死水",     # task btl-fluids-prereq — no dump face, the hand row (the spruceresin precedent)
     "fluid.gt6.steam": "蒸汽",
+    "fluid.gt6.swampwater": "沼泽水",      # task btl-fluids-prereq — no dump face, the hand row
+    "fluid.gt6.tar": "焦油",               # task btl-fluids-prereq — the FL.java:435 main id, no dump face, the hand row; the "tarfluid" alias stays unregistered
     "fluid.gt6.water_boiling": "沸水",
     "fluid.gt6.water_geothermal": "温泉水",
     "fluid.gt6.waterdirty": "污水",        # en semantics: Dirty Water
@@ -2425,6 +2428,46 @@ DYE_CHEMICAL_BACKFILL = {
     "fluid.gt6.dye_chemical_orange": "橙色化学染料",      # dump S:fluid.dye.chemical.orange
     "fluid.gt6.dye_chemical_white": "白色化学染料",       # dump S:fluid.dye.chemical.white
     "fluid.gt6.chlorine": "氯",                           # dump S:fluid.chlorine :168
+}
+
+# ---- dye bottle fluids (32): hand translations with dump anchors — task
+# btl-fluids-prereq. The dump carries both families verbatim (S:fluid.dye.watermixed.*
+# tmp/gregtech.lang:262-277, S:fluid.dye.flower.* :246-261). Keys are the port snake ids
+# (dye_<family>_<DYE_IDS[i]>, GTFluids.DyeFluid.name — the same spray-can snake the
+# dye-chemical family rides); values are the dump faces verbatim, keyed by colour.
+DYE_BOTTLE_BACKFILL = {
+    "fluid.gt6.dye_watermixed_black": "黑色水性染料",      # dump S:fluid.dye.watermixed.black
+    "fluid.gt6.dye_watermixed_red": "红色水性染料",        # dump S:fluid.dye.watermixed.red
+    "fluid.gt6.dye_watermixed_green": "绿色水性染料",      # dump S:fluid.dye.watermixed.green
+    "fluid.gt6.dye_watermixed_brown": "褐色水性染料",      # dump S:fluid.dye.watermixed.brown
+    "fluid.gt6.dye_watermixed_blue": "蓝色水性染料",       # dump S:fluid.dye.watermixed.blue
+    "fluid.gt6.dye_watermixed_purple": "紫色水性染料",     # dump S:fluid.dye.watermixed.purple
+    "fluid.gt6.dye_watermixed_cyan": "青色水性染料",       # dump S:fluid.dye.watermixed.cyan
+    "fluid.gt6.dye_watermixed_light_gray": "淡灰色水性染料", # dump S:fluid.dye.watermixed.lightgray
+    "fluid.gt6.dye_watermixed_gray": "灰色水性染料",       # dump S:fluid.dye.watermixed.gray
+    "fluid.gt6.dye_watermixed_pink": "粉色水性染料",       # dump S:fluid.dye.watermixed.pink
+    "fluid.gt6.dye_watermixed_lime": "黄绿色水性染料",     # dump S:fluid.dye.watermixed.lime
+    "fluid.gt6.dye_watermixed_yellow": "黄色水性染料",     # dump S:fluid.dye.watermixed.yellow
+    "fluid.gt6.dye_watermixed_light_blue": "淡蓝色水性染料", # dump S:fluid.dye.watermixed.lightblue
+    "fluid.gt6.dye_watermixed_magenta": "品红水性染料",    # dump S:fluid.dye.watermixed.magenta
+    "fluid.gt6.dye_watermixed_orange": "橙色水性染料",     # dump S:fluid.dye.watermixed.orange
+    "fluid.gt6.dye_watermixed_white": "白色水性染料",      # dump S:fluid.dye.watermixed.white
+    "fluid.gt6.dye_flower_black": "黑色植物染料",          # dump S:fluid.dye.flower.black
+    "fluid.gt6.dye_flower_red": "红色植物染料",            # dump S:fluid.dye.flower.red
+    "fluid.gt6.dye_flower_green": "绿色植物染料",          # dump S:fluid.dye.flower.green
+    "fluid.gt6.dye_flower_brown": "褐色植物染料",          # dump S:fluid.dye.flower.brown
+    "fluid.gt6.dye_flower_blue": "蓝色植物染料",           # dump S:fluid.dye.flower.blue
+    "fluid.gt6.dye_flower_purple": "紫色植物染料",         # dump S:fluid.dye.flower.purple
+    "fluid.gt6.dye_flower_cyan": "青色植物染料",           # dump S:fluid.dye.flower.cyan
+    "fluid.gt6.dye_flower_light_gray": "淡灰色植物染料",   # dump S:fluid.dye.flower.lightgray
+    "fluid.gt6.dye_flower_gray": "灰色植物染料",           # dump S:fluid.dye.flower.gray
+    "fluid.gt6.dye_flower_pink": "粉色植物染料",           # dump S:fluid.dye.flower.pink
+    "fluid.gt6.dye_flower_lime": "黄绿色植物染料",         # dump S:fluid.dye.flower.lime
+    "fluid.gt6.dye_flower_yellow": "黄色植物染料",         # dump S:fluid.dye.flower.yellow
+    "fluid.gt6.dye_flower_light_blue": "淡蓝色植物染料",   # dump S:fluid.dye.flower.lightblue
+    "fluid.gt6.dye_flower_magenta": "品红植物染料",        # dump S:fluid.dye.flower.magenta
+    "fluid.gt6.dye_flower_orange": "橙色植物染料",         # dump S:fluid.dye.flower.orange
+    "fluid.gt6.dye_flower_white": "白色植物染料",          # dump S:fluid.dye.flower.white
 }
 
 # ---- spray domain (18 items + 3 tooltips) + 2 tabs: ALL hand (P22 keys, no upstream
@@ -3801,7 +3844,7 @@ NAMING_FLUID_BACKFILL = {
     "fluid.gt6.mercury": "汞",                      # S:fluid.mercury :411
     "fluid.gt6.sluicejuice": "废水",                # S:fluid.sluicejuice :858
 }
-for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL, MOLD_CRUCIBLE_GAP_BACKFILL, ARMOR_BACKFILL, BUMBLE_BACKFILL, POTION_DRINK_BACKFILL, FOOD_FLUID_BACKFILL, CHEM_FLUID_BACKFILL, NAMING_FLUID_BACKFILL, LEGACY_ITEM_BACKFILL, LEGACY_BLOCK_BACKFILL, ROW_MISC_BACKFILL):
+for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, DYE_BOTTLE_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL, MOLD_CRUCIBLE_GAP_BACKFILL, ARMOR_BACKFILL, BUMBLE_BACKFILL, POTION_DRINK_BACKFILL, FOOD_FLUID_BACKFILL, CHEM_FLUID_BACKFILL, NAMING_FLUID_BACKFILL, LEGACY_ITEM_BACKFILL, LEGACY_BLOCK_BACKFILL, ROW_MISC_BACKFILL):
     for _key, _value in _backfill.items():
         if _key in HAND_TRANSLATIONS:
             sys.exit(f"backfill row {_key} already in the hand layer")

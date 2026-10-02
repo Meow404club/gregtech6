@@ -208,7 +208,7 @@ public class GTFluidsDyeChemicalFamilyTest extends GTOfflineTestBase {
 	public void theEarlierFluidTablesAreUntouched() {
 		assertEquals(9, GTFluids.ENGINE_SPECS.size());
 		assertEquals(6, GTFluids.AQUA_SPECS.size());
-		assertEquals(4, GTFluids.SIMPLE_LIQUID_SPECS.size(), "the p19 pair + the chem-fluids-unlock brine/spruceresin pair");
+		assertEquals(7, GTFluids.SIMPLE_LIQUID_SPECS.size(), "the p19 pair + the chem-fluids-unlock brine/spruceresin pair + the btl-fluids-prereq bottle trio");
 		assertEquals(4, GTFluids.FOOD_FLUID_SPECS.size());
 		// the new ids are NOT rows of any earlier family lookup
 		for (String tId : deadEndPaths()) {

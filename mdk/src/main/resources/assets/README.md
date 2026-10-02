@@ -5183,6 +5183,24 @@ for the 32 family rows; the base `gt6:cfoam` row rides the carrier untinted (the
 construction-foam grey IS the base look, the decisions.p26-cfoam-fluid-naming ruling).
 Copied on 2026-09-08.
 
+Dye bottle-fluid carrier textures, task btl-fluids-prereq: TWO grayscale tint-carriers
+borrowed from upstream
+`src/main/resources/assets/gregtech/textures/blocks/fluids/` — `dyes.water.png` →
+`gt6/textures/block/fluids/dyes_water.png` sha256
+`a22a5b3784fe29c6c0959ca754f062fd82ff8fedbe66d9feeaf82d8a065da43f` and `dyes.flower.png`
+→ `dyes_flower.png` sha256
+`a22a5b3784fe29c6c0959ca754f062fd82ff8fedbe66d9feeaf82d8a065da43f` (the two upstream
+carriers are the SAME strip byte-for-byte — one grayscale sheet serves both families,
+the per-family identity riding the runtime tint). Both are the single-texture shared
+still=flow form (Loader_Fluids.java:115-116, one IIconContainer per family for all 16
+`dye.watermixed.*` / `dye.flower.*` rows); the 16x512 strip is the 32-frame animation
+(upstream `.mcmeta` frametime 2, borrowed byte-identical as `dyes_water.png.mcmeta` /
+`dyes_flower.png.mcmeta`, sha256
+`20c309d9ff4175bf0f04b4c57efbd58fa1915f1c69907abd3bd91d6d01b70138` each — the same
+frametime-2 file the dye-chemical/cfoam carriers ride). The per-colour identity rides
+the runtime FluidType tint = `GTSprayCanItem.DYES_INT[i]` (CS.java:470) — zero new
+colour data. Copied on 2026-10-02.
+
 GT grass block family textures, task grass-block: TWELVE 16x16 RGBA PNGs borrowed
 byte-identical from upstream
 `src/main/resources/assets/gregtech/textures/blocks/iconsets/`, renamed to the

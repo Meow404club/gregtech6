@@ -256,7 +256,7 @@ public class GTFluidsFoodB1Test extends GTOfflineTestBase {
 	@Test
 	public void earlierTablesAreUntouched() {
 		assertEquals(6, GTFluids.AQUA_SPECS.size());
-		assertEquals(4, GTFluids.SIMPLE_LIQUID_SPECS.size(), "the p19 pair + the chem-fluids-unlock brine/spruceresin pair");
+		assertEquals(7, GTFluids.SIMPLE_LIQUID_SPECS.size(), "the p19 pair + the chem-fluids-unlock brine/spruceresin pair + the btl-fluids-prereq bottle trio");
 		assertEquals(4, GTFluids.FOOD_FLUID_SPECS.size());
 		assertEquals(80, GTFluids.CHEMICAL_SPECS.size(), "the chemical domain rides its own cards (48 through debt-hene-fluid + 32 task chem-fluids-unlock B2 blocker batch)");
 	}
