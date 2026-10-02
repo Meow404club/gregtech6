@@ -45,7 +45,7 @@ import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
 	 * crafting GUI 0, front/back = belt/charging GUI 1, other faces no GUI — each GUI
 	 * through its own ModularUI factory (the GT6BumbliaryMUI.Factory form, no MenuType).
 	 */
-	public class GTAdvancedCraftingTableBlock extends GTEntityBlock {
+public class GTAdvancedCraftingTableBlock extends GTEntityBlock {
 
 	/** Facing property (horizontal — the shared single instance, the ADR-P16-2 alias). */
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
