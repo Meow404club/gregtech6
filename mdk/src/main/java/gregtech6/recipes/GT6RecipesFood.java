@@ -125,10 +125,12 @@ public final class GT6RecipesFood {
 	 * instead of silently rewiring the rows).
 	 */
 	public static final int FOOD_CHEESE = 0, FOOD_BROWN_EGG_BOILED = 3, FOOD_WHITE_EGG_BOILED = 4,
-			FOOD_POTATO_CHIPS = 33, FOOD_CHILI_CHIPS = 34, FOOD_ICE_CREAM = 35, FOOD_BUTTER = 36, FOOD_BUTTER_SALTED = 37;
+			FOOD_POTATO_CHIPS = 33, FOOD_CHILI_CHIPS = 34, FOOD_ICE_CREAM = 35, FOOD_BUTTER = 37, FOOD_BUTTER_SALTED = 38;
 	// REVIEW FIX seat XVII: the T4a egg/meat rows joined FOOD_ROWS out of this card's band
 	// (upstream meta order — white_egg :496 + cheese_sliced insert ahead of the boiled twins),
 	// shifting every post-egg index; bumped to the current 38-row table, the pin test validates.
+	// +1 again (task pool-drain-food-t5-tail): food_ice_cream_raisin :811 joined FOOD_ROWS at
+	// index 36 — the upstream meta slot between the ice cream :809 and the butter :933.
 
 	/** The five target maps of the band (the enum keeps the lazy table registry-free). */
 	public enum Target {COAGULATOR, CRYO_MIXER, CENTRIFUGE, MIXER, BATH}

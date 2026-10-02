@@ -53,9 +53,9 @@ import gregtech6.registry.GTMaterialItems;
  * <li>the POUR-FACE-FOREVER — with the dormant pairs bound the SAME load() pours all 28;</li>
  * <li>the DECLARED ledger + the DATAGEN census — SKIPPED_UPSTREAM carries the absent-leg
  *     and POOLED faces (the datagen band rows are NOT duplicated into it), and the
- *     committed {@code bake_*.json} generation census matches the band (56 crafting + 15
+ *     committed {@code bake_*.json} generation census matches the band (64 crafting + 16
  *     smelt rows over data/gt6/recipes/ — 38 from food-bake-recipes + 18 from
- *     food-crafting-tail).</li>
+ *     food-crafting-tail + 8 veggie legs + 1 egg smelt from pool-drain-food-t5-tail).</li>
  * </ol>
  */
 class GT6RecipesBakeTest extends GTRecipesOfflineTestBase {
@@ -268,7 +268,9 @@ class GT6RecipesBakeTest extends GTRecipesOfflineTestBase {
 				{10, "food_pizza_cheese_raw"}, {11, "food_pizza_cheese"}, {12, "food_pizza_meat_raw"}, {13, "food_pizza_meat"},
 				{14, "food_pizza_veggie_raw"}, {15, "food_pizza_veggie"}, {16, "food_pizza_ananas_raw"}, {17, "food_pizza_ananas"},
 				{23, "food_burger_cheese"}, {24, "food_burger_meat"}, {25, "food_burger_chum"}, {26, "food_burger_tofu"}, {27, "food_burger_soylent"}, {28, "food_burger_fish"},
-				{33, "food_sandwich_cheese"}, {34, "food_sandwich_bacon"}, {35, "food_sandwich_steak"}, {41, "food_large_sandwich_cheese"}, {42, "food_large_sandwich_bacon"}, {43, "food_large_sandwich_steak"},
+				{22, "food_burger_veggie"}, // the pool-drain-food-t5-tail burger output (the meta-5010 slot)
+				{32, "food_sandwich_veggie"}, {33, "food_sandwich_cheese"}, {34, "food_sandwich_bacon"}, {35, "food_sandwich_steak"},
+				{40, "food_large_sandwich_veggie"}, {41, "food_large_sandwich_cheese"}, {42, "food_large_sandwich_bacon"}, {43, "food_large_sandwich_steak"},
 				{50, "food_toasted_sliced"}, {58, "food_potato_on_stick"}, {59, "food_potato_on_stick_roasted"}};
 		for (Object[] tPin : tMirrorPins) assertEquals(tPin[1], GT6BakeFoods.BAKE_ROWS.get((int) tPin[0]).id(), "BAKE_ROWS mirror index " + tPin[0]);
 	}
@@ -419,7 +421,7 @@ class GT6RecipesBakeTest extends GTRecipesOfflineTestBase {
 	}
 
 	/**
-	 * The committed datagen generation census: 56 crafting + 15 smelt bake rows over
+	 * The committed datagen generation census: 64 crafting + 16 smelt bake rows over
 	 * data/gt6/recipes/ (the bake_*.json set), each with its advancement companion.
 	 */
 	@Test
@@ -438,13 +440,18 @@ class GT6RecipesBakeTest extends GTRecipesOfflineTestBase {
 				"bake_burger_tofu_buns", "bake_burger_tofu_pair", "bake_burger_soylent_buns", "bake_burger_soylent_pair",
 				"bake_burger_fish_buns", "bake_burger_fish_pair",
 				"bake_sandwich_cheese_breads", "bake_sandwich_cheese_pair", "bake_sandwich_steak_breads", "bake_sandwich_steak_pair",
-				"bake_large_sandwich_cheese_baguettes", "bake_large_sandwich_cheese_pair", "bake_large_sandwich_steak_baguettes", "bake_large_sandwich_steak_pair"};
+				"bake_large_sandwich_cheese_baguettes", "bake_large_sandwich_cheese_pair", "bake_large_sandwich_steak_baguettes", "bake_large_sandwich_steak_pair",
+				// the pool-drain-food-t5-tail veggie legs: pizzas 2 + burgers 2 + sandwiches 4
+				"bake_pizza_veggie_raw", "bake_pizza_ananas_raw",
+				"bake_burger_veggie_buns", "bake_burger_veggie_pair",
+				"bake_sandwich_veggie_breads", "bake_sandwich_veggie_pair",
+				"bake_large_sandwich_veggie_baguettes", "bake_large_sandwich_veggie_pair"};
 		String[] tSmelt = {"bake_smelt_potato_on_stick", "bake_smelt_cookie", "bake_smelt_cookie_raisins", "bake_smelt_cookie_choco_raisins",
 				"bake_smelt_cookie_abyssal", "bake_smelt_cakebottom", "bake_smelt_pizza_cheese", "bake_smelt_pizza_meat",
 				"bake_smelt_pizza_veggie", "bake_smelt_pizza_ananas", "bake_smelt_bun", "bake_smelt_bread_raw", "bake_smelt_baguette",
-				"bake_smelt_toast", "bake_smelt_toast_sliced"};
-		assertEquals(56, tCraft.length, "56 crafting rows (38 food-bake-recipes + 18 food-crafting-tail)");
-		assertEquals(15, tSmelt.length, "15 smelt rows");
+				"bake_smelt_toast", "bake_smelt_toast_sliced", "bake_smelt_egg"};
+		assertEquals(64, tCraft.length, "64 crafting rows (38 food-bake-recipes + 18 food-crafting-tail + 8 pool-drain-food-t5-tail)");
+		assertEquals(16, tSmelt.length, "16 smelt rows (15 + the :317 egg)");
 		for (String tId : tCraft) tExpected.put("data/gt6/recipes/" + tId + ".json", "data/gt6/advancements/recipes/misc/" + tId + ".json");
 		for (String tId : tSmelt) tExpected.put("data/gt6/recipes/" + tId + ".json", "data/gt6/advancements/recipes/misc/" + tId + ".json");
 		int tFound = 0;
@@ -453,13 +460,14 @@ class GT6RecipesBakeTest extends GTRecipesOfflineTestBase {
 			assertTrue(classpathHas(tEntry.getValue()), "the advancement " + tEntry.getValue() + " is committed");
 			tFound++;
 		}
-		assertEquals(71, tFound, "71 bake generations (56 + 15)");
+		assertEquals(80, tFound, "80 bake generations (64 + 16)");
 		// a verbatim spot: the :147 press analog is runtime, but the :718 smelt row output is the vanilla bread
 		String tBread = classpathJson("data/gt6/recipes/bake_smelt_bread_raw.json");
 		assertTrue(tBread.contains("minecraft:bread"), ":718 — Bread_Raw smelts into the vanilla bread (the Food_Bread alias)");
 		String tCookie = classpathJson("data/gt6/recipes/bake_smelt_cookie.json");
 		assertTrue(tCookie.contains("minecraft:cookie"), ":599 — Cookie_Raw smelts into the vanilla cookie");
 		theFoodCraftingTailRowsAreVerbatim();
+		theT5VeggieRowsAreVerbatim();
 	}
 
 	/**
@@ -512,6 +520,63 @@ class GT6RecipesBakeTest extends GTRecipesOfflineTestBase {
 	/** The plain substring occurrence count (the repeated-entry count face over the compact JSON). */
 	private static int occurrences(String aJson, String aNeedle) {
 		return aJson.split(aNeedle, -1).length - 1;
+	}
+
+	/**
+	 * The pool-drain-food-t5-tail verbatim pins (over the committed JSON, the upstream
+	 * line anchors): the :664/:670 pizza legs, the :697/:698 burger legs, the :733/:734
+	 * and :763/:764 veggie sandwich ladders, the off-by-one CLOSURE (the cheese
+	 * sandwich counts ride the upstream :735/:736 = 5 and :765/:766 = 7 slice literals,
+	 * not the pre-card 6/8), and the :317 egg smelt.
+	 */
+	private void theT5VeggieRowsAreVerbatim() throws Exception {
+		// :664 — Ketchup Flat Dough + the crop slice trio → Raw Veggie Pizza
+		String tVeggiePizza = classpathJson("data/gt6/recipes/bake_pizza_veggie_raw.json");
+		assertTrue(tVeggiePizza.contains("\"item\":\"gt6:food_dough_flat_ketchup\""), ":664 — the ketchup flat dough base");
+		assertTrue(tVeggiePizza.contains("\"item\":\"gt6:food_cucumber_sliced\""), ":664 — the cucumber slice");
+		assertTrue(tVeggiePizza.contains("\"item\":\"gt6:food_tomato_sliced\""), ":664 — the tomato slice");
+		assertTrue(tVeggiePizza.contains("\"item\":\"gt6:food_onion_sliced\""), ":664 — the onion slice");
+		assertTrue(tVeggiePizza.contains("\"item\":\"gt6:food_pizza_veggie_raw\""), ":664 — Raw Veggie Pizza out");
+		// :670 — + 2 Ananas Sliced + Ham Slice :535 + Cheese Slice → Raw Pizza Hawaii
+		String tAnanasPizza = classpathJson("data/gt6/recipes/bake_pizza_ananas_raw.json");
+		assertEquals(2, occurrences(tAnanasPizza, "gt6:food_ananas_sliced"), ":670 — 2 ananas slices");
+		assertTrue(tAnanasPizza.contains("\"item\":\"gt6:food_ham_slice_cooked\""), ":670 — the cooked ham slice (:535)");
+		assertTrue(tAnanasPizza.contains("\"item\":\"gt6:food_pizza_ananas_raw\""), ":670 — Raw Pizza Hawaii out");
+		// :697/:698 — the veggie burger both bun shapes (1 pre-sliced / 2 sliced + the trio)
+		String tVeggieBuns = classpathJson("data/gt6/recipes/bake_burger_veggie_buns.json");
+		assertTrue(tVeggieBuns.contains("\"item\":\"gt6:food_buns_sliced\""), ":697 — Buns_Sliced in");
+		assertEquals(1, occurrences(tVeggieBuns, "gt6:food_cucumber_sliced"), ":697 — 1 cucumber slice");
+		assertTrue(tVeggieBuns.contains("\"item\":\"gt6:food_burger_veggie\""), ":697 — Veggie Burger out");
+		String tVeggiePair = classpathJson("data/gt6/recipes/bake_burger_veggie_pair.json");
+		assertEquals(2, occurrences(tVeggiePair, "gt6:food_bun_sliced"), ":698 — 2 bun slices in");
+		// :733/:734 — the veggie sandwich ladder (2+2+1 over the pre-sliced pack / the pair)
+		String tSandBreads = classpathJson("data/gt6/recipes/bake_sandwich_veggie_breads.json");
+		assertTrue(tSandBreads.contains("\"item\":\"gt6:food_breads_sliced\""), ":733 — Breads_Sliced in");
+		assertEquals(2, occurrences(tSandBreads, "gt6:food_cucumber_sliced"), ":733 — 2 cucumber slices");
+		assertEquals(2, occurrences(tSandBreads, "gt6:food_tomato_sliced"), ":733 — 2 tomato slices");
+		assertEquals(1, occurrences(tSandBreads, "gt6:food_onion_sliced"), ":733 — 1 onion slice");
+		assertTrue(tSandBreads.contains("\"item\":\"gt6:food_sandwich_veggie\""), ":733 — Veggie Sandwich out");
+		String tSandPair = classpathJson("data/gt6/recipes/bake_sandwich_veggie_pair.json");
+		assertEquals(2, occurrences(tSandPair, "gt6:food_bread_sliced"), ":734 — 2 bread slices in");
+		// :763/:764 — the large veggie ladder (3+3+1 over Baguettes_Sliced / the pair)
+		String tLargeBaguettes = classpathJson("data/gt6/recipes/bake_large_sandwich_veggie_baguettes.json");
+		assertTrue(tLargeBaguettes.contains("\"item\":\"gt6:food_baguettes_sliced\""), ":763 — Baguettes_Sliced in");
+		assertEquals(3, occurrences(tLargeBaguettes, "gt6:food_cucumber_sliced"), ":763 — 3 cucumber slices");
+		assertEquals(3, occurrences(tLargeBaguettes, "gt6:food_tomato_sliced"), ":763 — 3 tomato slices");
+		assertEquals(1, occurrences(tLargeBaguettes, "gt6:food_onion_sliced"), ":763 — 1 onion slice");
+		assertTrue(tLargeBaguettes.contains("\"item\":\"gt6:food_large_sandwich_veggie\""), ":763 — Large Veggie Sandwich out");
+		String tLargePair = classpathJson("data/gt6/recipes/bake_large_sandwich_veggie_pair.json");
+		assertEquals(2, occurrences(tLargePair, "gt6:food_baguette_sliced"), ":764 — 2 baguette slices in");
+		// the off-by-one closure — the cheese sandwich JSON carries the upstream 5/7 slice
+		// counts (known_bugs.bake_sandwich_cheese_off_by_one: the pre-card 6/8)
+		assertEquals(5, occurrences(classpathJson("data/gt6/recipes/bake_sandwich_cheese_breads.json"), "gt6:food_cheese_sliced"),
+				":735 — 5 cheese slices (the off-by-one closure, was 6)");
+		assertEquals(7, occurrences(classpathJson("data/gt6/recipes/bake_large_sandwich_cheese_baguettes.json"), "gt6:food_cheese_sliced"),
+				":765 — 7 cheese slices (the off-by-one closure, was 8)");
+		// :317 — the vanilla egg smelts into Food_Egg_Fried
+		String tEggSmelt = classpathJson("data/gt6/recipes/bake_smelt_egg.json");
+		assertTrue(tEggSmelt.contains("\"item\":\"minecraft:egg\""), ":317 — the vanilla egg in");
+		assertTrue(tEggSmelt.contains("\"result\":\"gt6:food_egg_fried\""), ":317 — Food_Egg_Fried out");
 	}
 
 	// ---------------------------------------------------------------- helpers

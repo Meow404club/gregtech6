@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:food_dough_flat_ketchup"
+    },
+    {
+      "item": "gt6:food_cucumber_sliced"
+    },
+    {
+      "item": "gt6:food_tomato_sliced"
+    },
+    {
+      "item": "gt6:food_onion_sliced"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:food_pizza_veggie_raw"
+  }
+}

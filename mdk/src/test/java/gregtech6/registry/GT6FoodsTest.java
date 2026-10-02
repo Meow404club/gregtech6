@@ -60,18 +60,19 @@ public class GT6FoodsTest {
 	}
 
 	/**
-	 * The T4a table is EXACTLY 38 items — one row per upstream addItem line, zero skip:
+	 * The table is EXACTLY 39 items — one row per upstream addItem line, zero skip:
 	 * the T1 nine (cheese 1000 + slice 1001, boiled eggs 1060/1061, chips 9010/9020, ice
 	 * cream 13000, butters 32117/32119) + the egg family tail (white egg 1051 :496, fried/
 	 * scrambled/sliced/yolk/white 1070-1074 :499-:503) + the meat/chum families (MultiItem
-	 * Food.java:529-:560/:563-:578/:594/:798). The vanilla-egg alias Food_Brown_Egg :495
+	 * Food.java:529-:560/:563-:578/:594/:798) + the pool-drain-food-t5-tail raisin row
+	 * (food_ice_cream_raisin 13002, :811). The vanilla-egg alias Food_Brown_Egg :495
 	 * registers nothing (it IS the vanilla item), the scrap-meat 1998 and the ingot-bar
-	 * metas 32101-32115 stay POOLED (the T3 rows), the 37-flavour ice-cream family stays
-	 * the T3 pool.
+	 * metas 32101-32115 stay POOLED (the T3 rows), the ice-cream flavour tail stays the
+	 * pool.
 	 */
 	@Test
-	public void registeredSubsetIsExactlyThe38Rows() {
-		assertEquals(38, GT6Foods.ITEMS.getEntries().size(), "the T4a table: 38 rows, zero skip");
+	public void registeredSubsetIsExactlyThe39Rows() {
+		assertEquals(39, GT6Foods.ITEMS.getEntries().size(), "the 39-row table, zero skip");
 	}
 
 	/**
@@ -82,6 +83,7 @@ public class GT6FoodsTest {
 	public void foodRowsCarryTheUpstreamMetaAnchors() {
 		Object[][] tAnchors = {
 				// the T1 nine (MultiItemFood.java:490/:491/:497/:498/:365/:374/:809/:933/:934)
+				// + the pool-drain-food-t5-tail raisin row (:811, meta 13002, the ice-cream slot)
 				{"food_cheese", 1000}, {"food_cheese_sliced", 1001},
 				{"food_white_egg", 1051}, {"food_brown_egg_boiled", 1060}, {"food_white_egg_boiled", 1061},
 				{"food_egg_fried", 1070}, {"food_egg_scrambled", 1071}, {"food_egg_sliced", 1072},
@@ -97,8 +99,9 @@ public class GT6FoodsTest {
 				{"food_donkey_raw", 1520}, {"food_donkey_cooked", 1521},
 				{"food_chum", 10000}, {"food_chum_on_stick", 10010},
 				{"food_potato_chips", 9010}, {"food_chili_chips", 9020},
-				{"food_ice_cream", 13000}, {"food_butter", 32117}, {"food_butter_salted", 32119}};
-		assertEquals(38, tAnchors.length);
+				{"food_ice_cream", 13000}, {"food_ice_cream_raisin", 13002},
+				{"food_butter", 32117}, {"food_butter_salted", 32119}};
+		assertEquals(39, tAnchors.length);
 		for (int i = 0; i < tAnchors.length; i++) {
 			assertEquals(tAnchors[i][0], GT6Foods.FOOD_ROWS.get(i).id(), "row " + i + " rides the upstream meta order");
 			assertEquals(rl((String) tAnchors[i][0]), GT6Foods.FOODS.get(i).getId(), "row " + i + " registered under the row id");
@@ -112,15 +115,15 @@ public class GT6FoodsTest {
 	 * alwaysEdible (FoodStat.java:64-67 — T only on the two Chum rows :594/:798, F
 	 * elsewhere). The White Egg :496 carries NO FoodStat — edible()=F and NO food
 	 * component. Anchors per index = the census walk above (:490/:491/:496/:497/:498/
-	 * :499-:503/:529-:560/:563-:578/:594/:798/:365/:374/:809/:933/:934).
+	 * :499-:503/:529-:560/:563-:578/:594/:798/:365/:374/:809/:811/:933/:934).
 	 */
 	@Test
 	public void foodPropertiesAreTheUpstreamFoodStatLiterals() {
-		int[] tNutrition = {2, 1, 0, 2, 2, 2, 2, 1, 1, 1, 3, 10, 1, 3, 1, 3, 3, 10, 10, 3, 10, 2, 8, 2, 7, 2, 8, 3, 10, 2, 8, 5, 5, 7, 7, 1, 1, 1};
+		int[] tNutrition = {2, 1, 0, 2, 2, 2, 2, 1, 1, 1, 3, 10, 1, 3, 1, 3, 3, 10, 10, 3, 10, 2, 8, 2, 7, 2, 8, 3, 10, 2, 8, 5, 5, 7, 7, 1, 1, 1, 1};
 		float[] tSaturation = {1.2F, 0.6F, 0.0F, 1.2F, 1.2F, 1.2F, 1.2F, 0.6F, 1.2F, 1.2F,
 				0.6F, 1.6F, 0.6F, 1.6F, 0.9F, 1.8F, 0.6F, 1.6F, 1.6F, 0.6F, 1.6F, 0.6F, 1.6F, 0.6F, 2.0F,
-				0.6F, 1.6F, 0.8F, 1.8F, 0.6F, 1.6F, 1.6F, 1.6F, 1.2F, 1.2F, 0.6F, 4.0F, 4.0F};
-		boolean[] tAlwaysEdible = new boolean[38];
+				0.6F, 1.6F, 0.8F, 1.8F, 0.6F, 1.6F, 1.6F, 1.6F, 1.2F, 1.2F, 0.6F, 0.6F, 4.0F, 4.0F};
+		boolean[] tAlwaysEdible = new boolean[39];
 		tAlwaysEdible[31] = true; // food_chum (MultiItemFood.java:594 — the T,F,T,T flag tail)
 		tAlwaysEdible[32] = true; // food_chum_on_stick (:798 — the T,F,T,T flag tail)
 		assertEquals(tNutrition.length, GT6Foods.FOOD_ROWS.size());

@@ -2248,7 +2248,8 @@ public class GT6EnUs extends LanguageProvider {
      * from the registered ids (the addFoodCans form). Values are the upstream
      * registration-row wordings verbatim: the name + desc columns of the anchor lines
      * (MultiItemFood.java:490 "Click the Cheese", :491, :495-:503 the egg family,
-     * :529-:560/:563-:578/:594/:798 the meat family, :365, :374, :809, :933, :934); a row
+     * :529-:560/:563-:578/:594/:798 the meat family, :365, :374, :809, :811 the
+     * pool-drain-food-t5-tail raisin row, :933, :934); a row
      * with an EMPTY desc column emits NO tooltip key (the upstream renders no line), and
      * the tab label "GregTech: Nature & Foods" (MultiItemFood.java:48, the upstream
      * creative-tab ctor literal). Table-tail append, append-only.
